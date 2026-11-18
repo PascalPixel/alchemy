@@ -58,10 +58,7 @@ extern struct SceneRegion gGabombaStatueChamber_IdolExitRegions[];
 #include "shared/tables.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
-
-/// The colour bare centred messages are written in, set white again under the
-/// statue's warm glow.
-#define CENTERED_TEXT_COLOR OBJ_PLTT_COLOR(0, 15)
+#include "window/window.h"
 
 /// How far, in pixels, the lift's map layers move between the two floors, a
 /// pixel a frame.

@@ -29,6 +29,7 @@
 #include "field/event.h"
 #include "field/event_commands.h"
 #include "scene/dehkan_plateau.h"
+#include "scene/scene.h"
 #include "window/item_icon.h"
 #include "graphics/palette_buffers.h"
 
@@ -37,8 +38,6 @@ void Sprite_StartAnimation(void *animation, s32 value);
 u8 *Sprite_AddAnimation(void *animation, s32 id);
 
 #include "field/map_grid.h"
-
-#define DIFF(a, b) ((a) - (b) >= 0 ? (a) - (b) : (b) - (a))
 
 /// A water pillar or spout drawn over its cell: its place, height and resting
 /// height, kind, state (1 a spout, 2 a pillar on an actor), the actor's
@@ -122,10 +121,6 @@ struct VentEntry {
   FIXED value;
 };
 
-/// The most vents a room has, and the most actors their puffs land on.
-#define VENTS_MAX 16
-#define VENT_IDS_MAX 4
-
 /// The vents of the room, in the inventory snapshot's spare space: their frame
 /// counter, the room's hook run each frame, its vents and the actors their
 /// puffs land on, besides the leader.
@@ -195,7 +190,6 @@ static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
 #include "field/field.h"
 #include "field/map.h"
 #include "types.h"
-#include "scene/scene.h"
 #include "scene/ground_effects.h"
 #include "sound/sound.h"
 #include "battle/battle.h"
@@ -229,11 +223,8 @@ static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
 
 #include "../field/field_effect_move.c"
 
-#define EFFECT_SPAWN FieldEffect_Spawn
-#define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
-#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect_spawn.c"
 
@@ -2668,8 +2659,6 @@ s32 AquaRockInside_AdvanceStreams(s32 first, s32 target) {
 }
 #undef SET_BG1CNT_PRIORITY
 
-#define VENT_TOUCHING Vent_IsTouching
-#define VENT_BOUNCE Vent_Bounce
 #include "../field/actor_vent_bounce.c"
 
 #include "shared/actor_start_scripted.h"
@@ -2751,11 +2740,6 @@ void AquaRockInside_StartVents(u16 *points, u16 *ids, void (*cycle)(void)) {
   }
   Task_AddFrame(Vent_Update, TASK_PASS_FRAME);
 }
-
-/// Vent index's entry, reached as the first entry of the work index entries
-/// on, as the accessors below read it.
-#define VENT_AT(work, index)                                                   \
-  ((struct VentWork *)((u8 *)(work) + (index) * sizeof(struct VentEntry)))
 
 /// Unused: whether vent index is blowing now.
 UNUSED s32 Vent_IsBlowing(s32 index) {
@@ -2897,14 +2881,8 @@ u32 gWaterDropScript[] = {
 };
 // clang-format on
 
-#undef VENT_TOUCHING
-#undef VENT_BOUNCE
-#undef VENT_AT
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
 #undef EFFECT_SPRITE_PRIORITY
 #undef DEFINE_AQUA_ROCK_INSIDE_READ_TABLET
 #undef SET_BG1CNT_PRIORITY

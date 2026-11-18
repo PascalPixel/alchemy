@@ -261,11 +261,8 @@ struct Actor *AnkohlRuins_CreateActor(s32 x, s32 y, s32 z, s32 type) {
 
 #include "../field/field_effect_move.c"
 
-#define EFFECT_SPAWN FieldEffect_Spawn
-#define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
-#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect_spawn.c"
 
@@ -2553,10 +2550,7 @@ struct Trigger gAnkohlRuins_SandDoorsTriggers[] = {
 struct Trigger gAnkohlRuins_LeftProngTriggers[] = {
     {TRIGGER_TABLE_END},
 };
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
 #undef EFFECT_SPRITE_PRIORITY
 #undef DEFINE_ANKOHL_RUINS_OPEN_ONCE

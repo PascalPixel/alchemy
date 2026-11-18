@@ -218,6 +218,9 @@ enum YampiDesertScorpionActorId {
   ACTOR_PSYNERGY_STONE_ROOM_SAND_RIPPLE,
   ACTOR_KING_SCORPION_ROOM_KING_SCORPION = STAKE(13),
   ACTOR_KING_SCORPION_ROOM_SAND_RIPPLE,
+  // In a render of the room's north end with the King Scorpion cornered there
+  // (entrance 4, FLAG_YAMPI_DESERT_SCORPION_CORNERED set), the scorpion, its
+  // sand ripple and the thirteen stakes are on stage, and this boulder is not.
   /// Unused: a brown boulder placed at the origin, which nothing moves, so it
   /// is never on stage.
   ACTOR_KING_SCORPION_ROOM_BOULDER
@@ -240,6 +243,11 @@ enum YampiDesertTrainersWhipChestActorId {
 /// Scorpion is fought.
 enum YampiDesertScorpionPitActorId {
   ACTOR_KING_SCORPION = ACTOR_FIRST_PLACED,
+  // In a render of the room once the pit is dug
+  // (FLAG_YAMPI_DESERT_ROCK_PIT_DUG_UP set), it stands at (232, 200) in the
+  // middle of the pit, and the photo differs from one before the dig only in
+  // the pit's nine cells: nothing of it shows. YampiDesert_SetUpScorpionPit's
+  // Geyser_Add raises the geyser from it.
   /// The unseen point the geyser rises from, moved between the four
   /// rocks once Scoop has dug the pit there.
   ACTOR_GEYSER

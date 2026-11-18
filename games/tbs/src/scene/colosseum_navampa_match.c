@@ -270,9 +270,6 @@ enum {
                          ///< (ColosseumNavampaMatch_RollLongLog)
   /// The byte of flags that keeps ACTOR_STONE's column.
   FLAG_STONE_COLUMN = FLAG_AREA_TEMP_70,
-  /// Someone has reached the arena
-  /// (Colosso_TakePrize).
-  FLAG_ARENA_REACHED = FLAG_SCENE_TEMP_11,
   /// ACTOR_LOG_AREA_STONE_A has settled. The next two flags are B's and C's.
   FLAG_FIRST_LOG_AREA_STONE_SETTLED = FLAG_SCENE_TEMP_14
 };

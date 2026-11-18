@@ -298,10 +298,7 @@ enum {
   /// The bytes of flags that keep the Mini-Maze's three pillars' columns.
   FLAG_MINI_MAZE_FIRST_PILLAR_COLUMN = FLAG_AREA_TEMP_40,
   FLAG_MINI_MAZE_SECOND_PILLAR_COLUMN = FLAG_AREA_TEMP_48,
-  FLAG_MINI_MAZE_THIRD_PILLAR_COLUMN = FLAG_AREA_TEMP_50,
-  /// Someone has reached the arena
-  /// (Colosso_TakePrize).
-  FLAG_ARENA_REACHED = FLAG_SCENE_TEMP_11
+  FLAG_MINI_MAZE_THIRD_PILLAR_COLUMN = FLAG_AREA_TEMP_50
 };
 
 /// SPRITE_FALLING_LOG's animations (falling_log.tsv).

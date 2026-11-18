@@ -15,6 +15,10 @@ enum ColossoSoloExit {
 /// Closes the step trigger at each match scene's arena. Nothing in the game
 /// sets it.
 #define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_SCENE_TEMP_10
+/// Someone has reached the arena: whoever comes second, Isaac
+/// (Colosso_TakePrize) or the opponent (Colosso_UpdatePathOpponent), walks up
+/// to the second prize.
+#define FLAG_ARENA_REACHED FLAG_SCENE_TEMP_11
 
 void Colosso_PlaceFriendsAtCheeringSpots(void);
 

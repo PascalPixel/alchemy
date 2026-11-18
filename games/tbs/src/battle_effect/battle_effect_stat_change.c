@@ -276,6 +276,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
         if (mode == STAT_BOOST_IMPACT) {
           Matrix_RotateX(-frame * STAT_BOOST_FLARE_SPIN);
         } else if (mode == STAT_BOOST_GUARD) {
+          // Guard's flares close in without turning.
         } else if (mode == STAT_BOOST_WARD) {
           Matrix_RotateY(frame * STAT_BOOST_FLARE_SPIN);
         } else {

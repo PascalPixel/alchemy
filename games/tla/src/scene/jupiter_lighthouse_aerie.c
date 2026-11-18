@@ -77,11 +77,6 @@ enum JupiterLighthouseAerieActorId {
   ACTOR_LID
 };
 
-/// The frames JupiterLighthouse_RaiseAngels raises an angel and tilts the
-/// lid, then lifts all three once both angels are energized.
-#define ANGEL_RISE_FRAMES 64
-#define LID_LIFT_FRAMES 256
-
 /// What JupiterLighthouse_RaiseAngels raises: one angel, or the second of
 /// the two and then the lid with both angels.
 enum AngelRise {

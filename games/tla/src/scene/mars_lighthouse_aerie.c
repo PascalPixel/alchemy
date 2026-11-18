@@ -1252,8 +1252,8 @@ void MarsLighthouseAerie_FlickerParent(struct Actor *actor) {
     FieldActor_SetSpriteColor(actor, SPRITE_COLOR_HIDDEN);
 }
 
-extern u32 gMarsLighthouseAerie_ShebaToBodiesScript[];
-extern u32 gMarsLighthouseAerie_JennaToBodiesScript[];
+extern u32 gMarsLighthouseAerie_ShebaToThosePeopleScript[];
+extern u32 gMarsLighthouseAerie_JennaToThosePeopleScript[];
 extern u32 gMarsLighthouseAerie_JennaTurnScript[];
 extern u32 gMarsLighthouseAerie_LeaderTurnScript[];
 extern u32 gMarsLighthouseAerie_IsaacTurnScript[];
@@ -1432,9 +1432,9 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   Actor_SetSpeed(ACTOR_SHEBA_STAND_IN, 0.8);
   Actor_SetSpeed(ACTOR_JENNA_STAND_IN, 0.8);
   Actor_SetScript(ACTOR_SHEBA_STAND_IN,
-                  (s32)gMarsLighthouseAerie_ShebaToBodiesScript);
+                  (s32)gMarsLighthouseAerie_ShebaToThosePeopleScript);
   Actor_SetScript(ACTOR_JENNA_STAND_IN,
-                  (s32)gMarsLighthouseAerie_JennaToBodiesScript);
+                  (s32)gMarsLighthouseAerie_JennaToThosePeopleScript);
   Actor_SetSpeed(ACTOR_KRADEN, 2.4);
   Actor_WalkToAndWait(ACTOR_KRADEN, 540, 340);
   FieldActor_Jump(ACTOR_KRADEN, 4, 10);
@@ -1978,8 +1978,10 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
       actor->speedLimit = Math_Sin(Random16() * 0xffff >> 20) * 24;
       actor->speedLimit = FIXEDtoINT(anchor->speedLimit);
       sprite->nextFrame = 0;
-      /* FAKEMATCH(temporary): the priority bits set in attribute 2's high byte
-       * with the mask held in a local; plainly, sprite->priority = 1. */
+      /* FAKEMATCH(signature): the priority bits set through a u8 view of
+       * attribute 2's high byte; as sprite->priority = 1. */
+      /* FAKEMATCH(temporary): the view's mask held in a local; as
+       * ~(OBJ_PRIORITY(3) >> 8) in place. */
       mask = ~(OBJ_PRIORITY(3) >> 8);
       ((u8 *)sprite)[9] = (((u8 *)sprite)[9] & mask) | OBJ_PRIORITY(1) >> 8;
     }
@@ -3272,7 +3274,7 @@ u32 gMarsLighthouseAerie_GaretReadyScript[] = {
     SC_END,
 };
 
-u32 gMarsLighthouseAerie_ShebaToBodiesScript[] = {
+u32 gMarsLighthouseAerie_ShebaToThosePeopleScript[] = {
     SC_ANIMATION(ANIM_WALK),
     SC_MOVE(472, 0, 320),
     SC_SYNC,
@@ -3283,7 +3285,7 @@ u32 gMarsLighthouseAerie_ShebaToBodiesScript[] = {
     SC_END,
 };
 
-u32 gMarsLighthouseAerie_JennaToBodiesScript[] = {
+u32 gMarsLighthouseAerie_JennaToThosePeopleScript[] = {
     SC_ANIMATION(ANIM_WALK),
     SC_MOVE(476, 0, 328),
     SC_SYNC,

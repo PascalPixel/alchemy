@@ -129,7 +129,6 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
         if (rock->y > toFIXED(50))
           rock->y = toFIXED(50);
       }
-      // Every target flashes white for 8 frames at each crash.
       if (frame == gSpire_DropFrames[i] + SPIRE_FALL_FRAMES) {
         EFFECT_FOR_EACH_TARGET(j, args)
           BattleEffect_TintBattler(args->targets[j], SPRITE_COLOR_WHITE,

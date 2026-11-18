@@ -304,8 +304,3 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
 #undef DRAIN_MOTES_PER_TARGET
 #undef DRAIN_DRAWN
 #undef TRUE_COLLIDE_VIOLET
-
-// The parts after this one read PARTICLES as SHARDS (stat_change.c) and MOTES
-// (up to burst_shower.c).
-#define SHARDS PARTICLES
-#define MOTES PARTICLES

@@ -171,7 +171,6 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
         }
       }
 
-      // The targets flash white as they are healed, four frames apart.
       EFFECT_FOR_EACH_TARGET(i, args) {
         if (frame == i * 4 + 64) {
           Sound_PlayFar(SE_RECOVERY);

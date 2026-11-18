@@ -108,6 +108,8 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
+  /* FAKEMATCH(temporary): the heap slots held in a local for the second
+   * blitter's read; as Ram_HeapSlots->ramCodePaired there. */
   heap = Ram_HeapSlots;
 
   BattleEffect_StartCanvasLayer(0);
@@ -359,9 +361,16 @@ void BattleEffect_RunFormicAcid(struct BattleEffectParams *args) {
   BattleEffect_RunLobbedShells(args, LOBBED_SHELLS_FORMIC_ACID);
 }
 
-/// The bursts, after the shells in PARTICLES: eight for each shell, four
-/// shells' worth for each target.
+/// The bursts, after the shells in PARTICLES: LOBBED_SHELLS_PIECE_SLOTS for
+/// each shell, LOBBED_SHELLS_TARGET_SHELLS shells' worth for each target.
 #define LOBBED_SHELLS_BURSTS (PARTICLES + 256)
+#define LOBBED_SHELLS_PIECE_SLOTS 8
+#define LOBBED_SHELLS_TARGET_SHELLS 4 ///< Mud's shells for each target
+/// Piece `n` of the burst of target `target`'s shell `shell`.
+#define LOBBED_SHELLS_PIECE(target, shell, n)                                  \
+  LOBBED_SHELLS_BURSTS[((target) * LOBBED_SHELLS_TARGET_SHELLS + (shell)) *    \
+                           LOBBED_SHELLS_PIECE_SLOTS +                         \
+                       (n)]
 #define LOBBED_SHELLS_SLOTS 16        ///< particles reserved for each target
 #define LOBBED_SHELLS_BURST_SLOTS 256 ///< burst particles after the shells
 #define LOBBED_SHELLS_SMOKE_PICTURES 16000 ///< the smoke pictures in the sheet
@@ -412,7 +421,6 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
 
-  // Mud's canvas holds its Djinni's entrance first.
   if (mode == LOBBED_SHELLS_MUD) {
     BattleEffect_StartCanvasLayer(0);
     BattleEffect_RunDjinniEntrance(
@@ -476,9 +484,6 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   }
   EFFECT_FREE_PARTICLES(i, LOBBED_SHELLS_BURSTS, LOBBED_SHELLS_BURST_SLOTS);
 
-  // The blitter pair for the user's side; Mad Spatter and Mud clear the
-  // canvas each frame and turn blending off, the others fade it to three
-  // quarters.
   BattleEffect_FetchRectangleBlitters(args->side, draw);
   if (mode == LOBBED_SHELLS_MAD_SPATTER || mode == LOBBED_SHELLS_MUD) {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
@@ -542,10 +547,10 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
                 count = LOBBED_SHELLS_SMOKE_PUFFS;
               else
                 count = LOBBED_SHELLS_SHARDS;
-              // Each shell has eight slots: Mud's sixteen shards share eight
-              // with the next shell's burst, and the later burst takes them.
+              // Mud's LOBBED_SHELLS_SHARDS share half their slots with the
+              // next shell's burst, and the later burst takes them.
               for (n = 0; n != count; n++) {
-                piece = &LOBBED_SHELLS_BURSTS[(k * 4 + i) * 8 + n];
+                piece = &LOBBED_SHELLS_PIECE(k, i, n);
                 SET_POSITION(piece, shot->x, shot->y, shot->z);
                 if (LOBBED_SHELLS_SHATTER(mode) == 0) {
                   SET_VELOCITY(piece, ((Random16() & 63) - 32) << 11, 0,
@@ -608,8 +613,6 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
 
-  // Rotten Blood and Decompose clear both canvases and go on into Impair's and
-  // Dull's effects.
   if (mode == LOBBED_SHELLS_ROTTEN_BLOOD || mode == LOBBED_SHELLS_DECOMPOSE) {
     Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
     Iwram_ClearWords(canvas, CANVAS_VIEW_BYTES);
@@ -635,6 +638,9 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
 #undef DJINN_BEAMS_MOTE_HEIGHT
 #undef DJINN_BEAMS_DJINNI_PICTURE
 #undef LOBBED_SHELLS_BURSTS
+#undef LOBBED_SHELLS_PIECE_SLOTS
+#undef LOBBED_SHELLS_TARGET_SHELLS
+#undef LOBBED_SHELLS_PIECE
 #undef LOBBED_SHELLS_SLOTS
 #undef LOBBED_SHELLS_BURST_SLOTS
 #undef LOBBED_SHELLS_SMOKE_PICTURES

@@ -242,6 +242,8 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
         struct Particle *sparkle = &work->particles[i];
 
         sparkle->velocityX = INTtoFIXED(Random16() & 127);
+        // DEAD: never true, as highest was just kept above lowest; the ROM
+        // keeps the compare and its arm.
         if (highest == lowest)
           sparkle->velocityY = INTtoFIXED(lowest);
         else

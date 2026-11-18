@@ -137,9 +137,10 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
   gBgScroll[1].x = 0;
   IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT,
                       BGCNT_PRIORITY(1) | BGCNT_256_COLORS |
-                          BGCNT_SCREEN_BASE(31),
+                          BGCNT_SCREEN_BASE(BATTLE_BG1_SCREEN_BLOCK),
                       IO_WRITE_HALFWORD);
-  Iwram_FillWords((void *)&BG_PLTT_COLOR(6, 0), 256, COLOR_PAIR(RGB_WHITE));
+  Iwram_FillWords((void *)&BG_PLTT_COLOR(6, 0), BATTLE_BACKGROUND_COLORS * 2,
+                  COLOR_PAIR(RGB_WHITE));
   Sound_PlayFar(SE_POWER_UP);
   BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE, POSE_CAST, 0,
                            30);
@@ -162,8 +163,8 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
                                BATTLE_BACKGROUND_ID(battle), -1);
     }
 
-    // From frame 8, step each of colours 6 to 13 one shade towards the
-    // battle background's.
+    // From frame 8, step each colour of BG palettes 6 to 13 one shade towards
+    // the battle background's.
     if (frame > 7) {
       u16 *pal;
 
@@ -1722,7 +1723,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
 
     gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
     BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background,
-                             BACKGROUND_DARKEN_FRAMES);
+                             BACKGROUND_DARKENED_LEVEL);
   }
   wait(1);
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;

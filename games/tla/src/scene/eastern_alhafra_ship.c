@@ -49,10 +49,11 @@
 /// tells of his power only then.
 #define FLAG_EOLEO_LIFTED 0x8ae
 
-/// Where the party comes back after the battle with Briggs's crew, as The
-/// Broken Seal's Altin Peak names its own, and the entrance it then counts as:
-/// the foot of the stairs down from the room the party boards into.
-enum { ENTRANCE_FOOT_OF_STAIRS = 3, ENTRANCE_AFTER_BATTLE = 99 };
+/// Where the party comes back after the battle with Briggs and a Sea Fighter
+/// of his crew, numbered 99 as The Broken Seal's Altin Peak numbers its own,
+/// and the entrance it then counts as: the foot of the stairs down from the
+/// room the party boards into.
+enum { ENTRANCE_FOOT_OF_STAIRS = 3, ENTRANCE_AFTER_BRIGGS_BATTLE = 99 };
 
 /// The people and things aboard, numbering the rows of
 /// gEasternAlhafraShip_ActorPlacements whose sprites are not the party's.
@@ -207,7 +208,7 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
-  if (gMainRoutineWork.entrance == ENTRANCE_AFTER_BATTLE) {
+  if (gMainRoutineWork.entrance == ENTRANCE_AFTER_BRIGGS_BATTLE) {
     GameFlag_Set(FLAG_MAYOR_ARRIVED_AT_THE_SHIP);
     GameFlag_Set(FLAG_BRIGGS_CAUGHT);
     gMainRoutineWork.returnEntrance = ENTRANCE_FOOT_OF_STAIRS;
@@ -555,7 +556,7 @@ void EasternAlhafraShip_MayorArrives(void) {
   Actor_WalkByById(ACTOR_BRIGGS_MATE, 0, -16);
   Event_Wait(10);
   Event_SetAfterBattleDestination(SCENE_EASTERN_ALHAFRA_SHIP,
-                                  ENTRANCE_AFTER_BATTLE);
+                                  ENTRANCE_AFTER_BRIGGS_BATTLE);
 
   gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
   Field_RequestBattleFromEncounterTable(10, 1);

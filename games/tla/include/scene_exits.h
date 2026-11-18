@@ -219,6 +219,9 @@ enum {
 enum {
   VENUS_LIGHTHOUSE_ENTRANCE_FROM_VENUS_LIGHTHOUSE_A = 2,
   VENUS_LIGHTHOUSE_ENTRANCE_FROM_VENUS_LIGHTHOUSE_B = 9,
+  /// Where a battle lost in the prologue sends the party, from Suhalla Gate's
+  /// three rooms and from the Ruffian's battle here: Jenna wakes by the door.
+  VENUS_LIGHTHOUSE_ENTRANCE_AFTER_DEFEAT = 98,
 };
 /// SceneId_VenusLighthouseEntrance's exits.
 enum {

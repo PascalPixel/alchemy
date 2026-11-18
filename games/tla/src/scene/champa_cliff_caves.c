@@ -30,13 +30,14 @@
 #define FLAG_CHAMPA_BRIGGS_STOPPED_PARTY 0x974
 
 /// Where the party comes back to the Avimander's room after losing to it
-/// (Event_SetDefeatDestination) or beating it, as The Broken Seal's Altin
-/// Peak names its own; the party then stands in the forge room by its way in
-/// from the passage west of it (ENTRANCE_FORGE_ROOM, which exit 22 leads to).
+/// (Event_SetDefeatDestination) or beating it, the second numbered 99 as The
+/// Broken Seal's Altin Peak numbers its own; the party then stands in the forge
+/// room by its way in from the passage west of it (ENTRANCE_FORGE_ROOM, which
+/// exit 22 leads to).
 enum {
   ENTRANCE_FORGE_ROOM = 23,
   ENTRANCE_AFTER_DEFEAT = 98,
-  ENTRANCE_AFTER_BATTLE = 99
+  ENTRANCE_AFTER_AVIMANDER_BATTLE = 99
 };
 
 /// Avimander's battle: slot 5 of ENCOUNTER_TABLE_SERPENT, between the
@@ -451,7 +452,7 @@ s32 Scene_Initialize(void) {
   if (party->next == SCENE_CHAMPA_CLIFF_CAVES_AVIMANDER) {
     if (party->entrance == ENTRANCE_AFTER_DEFEAT)
       ChampaCliffCaves_AskIfBriggsLearned();
-    if (party->entrance == ENTRANCE_AFTER_BATTLE) {
+    if (party->entrance == ENTRANCE_AFTER_AVIMANDER_BATTLE) {
       party->returnEntrance = ENTRANCE_FORGE_ROOM;
       party->entrance = ENTRANCE_FORGE_ROOM;
       ChampaCliffCaves_ObabaMournsSalamander();
@@ -1111,7 +1112,7 @@ void ChampaCliffCaves_FightAvimander(void) {
     Event_SetDefeatDestination(SCENE_CHAMPA_CLIFF_CAVES_AVIMANDER,
                                ENTRANCE_AFTER_DEFEAT);
     Event_SetAfterBattleDestination(SCENE_CHAMPA_CLIFF_CAVES_AVIMANDER,
-                                    ENTRANCE_AFTER_BATTLE);
+                                    ENTRANCE_AFTER_AVIMANDER_BATTLE);
     Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
     Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_SERPENT,
                                           ENCOUNTER_SLOT_AVIMANDER);

@@ -69,13 +69,14 @@ enum {
   TRIGGER_UPPER_WHIRLWIND_NORTHEAST
 };
 
-/// A cracked tile's cell behavior on the floors, and up on the hover hall's
-/// ledges; each takes the next one up as it cracks.
-enum { CELL_BEHAVIOR_CRACKED_TILE = 33, CELL_BEHAVIOR_UPPER_CRACKED_TILE = 43 };
+/// A cracked tile's cell behavior up on the hover hall's ledges, which takes
+/// the next one up as it cracks; the floors' are CELL_BEHAVIOR_CRACKED_TILE.
+enum { CELL_BEHAVIOR_UPPER_CRACKED_TILE = 43 };
 
-/// Through a cracked tile to the room's own floor below: the exit and the
-/// entrance it lands at share the number.
-enum { THROUGH_CRACKED_TILE = 13, THROUGH_UPPER_CRACKED_TILE = 14 };
+/// Through a cracked tile of the ledges to the floor below, on the room's own
+/// map: the exit and the entrance it lands at share the number, as
+/// THROUGH_CRACKED_TILE's do.
+enum { THROUGH_UPPER_CRACKED_TILE = 14 };
 
 /// The entrances Scene_Initialize tells apart: the lower hall's two stairs,
 /// north and south, and the hover hall's two.

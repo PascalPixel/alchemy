@@ -67,13 +67,6 @@ enum { PILLAR_GAP_X = 6, PILLAR_GAP_Z = 14 };
 /// The frames the dropped pillar is given to land.
 #define PILLAR_LANDING_FRAMES 30
 
-/// A cracked tile's cell behavior, and the next one up as it cracks.
-enum { CELL_BEHAVIOR_CRACKED_TILE = 33 };
-
-/// Through a cracked tile to the room's own floor below: the exit and the
-/// entrance it lands at share the number.
-enum { THROUGH_CRACKED_TILE = 13 };
-
 struct Actor;
 s32 CrackedTile_Step(void);
 void MapGrid_SetAttributeBAt(s32 x, s32 z, s32 a, s32 b);

@@ -12,9 +12,10 @@
 ///   Punch Ant hops out at the two before the Psynergy Stone
 ///   (SuhallaGate_PunchAntHopsFromWest), and whose far end leads to Idejima.
 ///
-/// Every battle sends the party back to its room's ENTRANCE_AFTER_BATTLE, and
-/// a lost one to the Venus Lighthouse's entrance. Back from each, its flag set,
-/// the beaten Ruffians lie where they fell.
+/// Every battle sends the party back to ENTRANCE_AFTER_SUHALLA_GATE_BATTLE in
+/// its room, and a lost one to the Venus Lighthouse's entrance
+/// (VENUS_LIGHTHOUSE_ENTRANCE_AFTER_DEFEAT). Back from each, its flag set, the
+/// beaten Ruffians lie where they fell.
 #include "djinn_ids.h"
 #include "flags.h"
 #include "item_ids.h"
@@ -52,10 +53,9 @@
 /// Mint.
 #define FLAG_SUHALLA_GATE_MINT 0xfb4
 
-/// The entrance each room's battles send the party back to.
-#define ENTRANCE_AFTER_BATTLE 99
-/// The Venus Lighthouse entrance a lost battle sends the party back to.
-#define ENTRANCE_VENUS_LIGHTHOUSE_DEFEAT 98
+/// The entrance each room's battle sends the party back to, 99 in each of the
+/// three.
+#define ENTRANCE_AFTER_SUHALLA_GATE_BATTLE 99
 
 /// The road's one placed actor.
 enum SuhallaGateRoadActorId {
@@ -143,7 +143,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// Back from his battle, the road's Ruffian lies beaten by it.
 void SuhallaGate_SetUpRoad(void) {
-  if (gMainRoutineWork.entrance == ENTRANCE_AFTER_BATTLE)
+  if (gMainRoutineWork.entrance == ENTRANCE_AFTER_SUHALLA_GATE_BATTLE)
     Event_SetFlag(FLAG_SUHALLA_GATE_RUFFIAN_BEATEN);
   if (Event_GetFlag(FLAG_SUHALLA_GATE_RUFFIAN_BEATEN)) {
     Actor_SetPosition(ACTOR_ROAD_RUFFIAN, 456, 312);
@@ -157,7 +157,7 @@ void SuhallaGate_SetUpRoad(void) {
 /// Back from the ambush, its three Ruffians lie beaten before the crevice.
 void SuhallaGate_SetUpCliffs(void) {
   MapGrid_CopyCellAttributes(108, 38, 1, 1, 102, 56);
-  if (gMainRoutineWork.entrance == ENTRANCE_AFTER_BATTLE)
+  if (gMainRoutineWork.entrance == ENTRANCE_AFTER_SUHALLA_GATE_BATTLE)
     Event_SetFlag(FLAG_SUHALLA_GATE_AMBUSH_BEATEN);
   if (Event_GetFlag(FLAG_SUHALLA_GATE_AMBUSH_BEATEN)) {
     Actor_SetPosition(ACTOR_WEST_RUFFIAN, 590, 920);
@@ -183,7 +183,7 @@ void SuhallaGate_SetUpCliffs(void) {
 /// Back from the Punch Ant's battle, Kraden talks it over.
 void SuhallaGate_SetUpCave(void) {
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0 &&
-      gMainRoutineWork.entrance == ENTRANCE_AFTER_BATTLE)
+      gMainRoutineWork.entrance == ENTRANCE_AFTER_SUHALLA_GATE_BATTLE)
     SuhallaGate_AfterPunchAntBattle();
 }
 
@@ -269,9 +269,9 @@ void SuhallaGate_RuffianSpotsParty(void) {
   Event_ShowMessageThenWait(ACTOR_ROAD_RUFFIAN, 0, 10);
   Actor_WalkToAndWait(ACTOR_ROAD_RUFFIAN, 456, 312);
   Event_SetAfterBattleDestination(SCENE_SUHALLA_GATE_HOUSE,
-                                  ENTRANCE_AFTER_BATTLE);
+                                  ENTRANCE_AFTER_SUHALLA_GATE_BATTLE);
   Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
-                             ENTRANCE_VENUS_LIGHTHOUSE_DEFEAT);
+                             VENUS_LIGHTHOUSE_ENTRANCE_AFTER_DEFEAT);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   Field_RequestBattleFromEncounterTable(9, 1);
   Event_End();
@@ -317,9 +317,9 @@ void SuhallaGate_RuffiansAmbushParty(void) {
   Actor_SetAnimation(ACTOR_MIDDLE_RUFFIAN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_EAST_RUFFIAN, ANIM_NOD);
   FieldEvent_SetAfterBattleDestination(SCENE_SUHALLA_GATE_AMBUSH,
-                                       ENTRANCE_AFTER_BATTLE);
+                                       ENTRANCE_AFTER_SUHALLA_GATE_BATTLE);
   Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
-                             ENTRANCE_VENUS_LIGHTHOUSE_DEFEAT);
+                             VENUS_LIGHTHOUSE_ENTRANCE_AFTER_DEFEAT);
   work->battleType = BATTLE_TYPE_NO_ESCAPE;
   Field_RequestBattleFromEncounterTable(9, 2);
   Event_End();
@@ -336,9 +336,9 @@ void SuhallaGate_FightPunchAnt(void) {
                          owner->z.part[0].integer);
   Event_Wait(20);
   Event_SetAfterBattleDestination(SCENE_SUHALLA_GATE_PSYNERGY_STONE,
-                                  ENTRANCE_AFTER_BATTLE);
+                                  ENTRANCE_AFTER_SUHALLA_GATE_BATTLE);
   Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
-                             ENTRANCE_VENUS_LIGHTHOUSE_DEFEAT);
+                             VENUS_LIGHTHOUSE_ENTRANCE_AFTER_DEFEAT);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   Field_RequestBattleFromEncounterTable(9, 3);
   Event_End();
@@ -530,7 +530,7 @@ struct SceneEntrance gSuhallaGate_RoadEntrances[] = {
     {3, CONDITION_ALWAYS, 136, 0, 304, FACING_SOUTH, 0, 32, 32, 272, 544, 0},
     {SUHALLA_GATE_HOUSE_FROM_SUHALLA_GATE_AMBUSH_B, CONDITION_ALWAYS, 360, 0, 296, FACING_EAST, 0, 336, 32, 736, 496, 0},
     {SUHALLA_GATE_HOUSE_FROM_VENUS_LIGHTHOUSE_ENTRANCE_EAST, CONDITION_ALWAYS, 664, 0, 424, FACING_WEST, 0, 336, 32, 736, 496, 0},
-    {ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 472, 0, 312, FACING_WEST, 0, 336, 32, 736, 496, 0},
+    {ENTRANCE_AFTER_SUHALLA_GATE_BATTLE, CONDITION_ALWAYS, 472, 0, 312, FACING_WEST, 0, 336, 32, 736, 496, 0},
     {SCENE_TABLE_END},
 };
 
@@ -540,7 +540,7 @@ struct SceneEntrance gSuhallaGate_CliffsEntrances[] = {
     {3, CONDITION_ALWAYS, 40, 0, 912, FACING_EAST, 0, 16, 608, 720, 1008, 0},
     {SUHALLA_GATE_AMBUSH_FROM_SUHALLA_GATE_HOUSE_B, CONDITION_ALWAYS, 680, 0, 904, FACING_WEST, 0, 16, 608, 720, 1008, 0},
     {SUHALLA_GATE_AMBUSH_FROM_SUHALLA_GATE_PSYNERGY_STONE, CONDITION_ALWAYS, 616, 0, 920, FACING_SOUTH, 0, 16, 608, 720, 1008, 0},
-    {ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 616, 0, 920, FACING_SOUTH, 0, 16, 608, 720, 1008, 0},
+    {ENTRANCE_AFTER_SUHALLA_GATE_BATTLE, CONDITION_ALWAYS, 616, 0, 920, FACING_SOUTH, 0, 16, 608, 720, 1008, 0},
     {SCENE_TABLE_END},
 };
 
@@ -549,7 +549,7 @@ struct SceneEntrance gSuhallaGate_CaveEntrances[] = {
     {2, CONDITION_ALWAYS, 184, 0, 168, FACING_SOUTH, 0, 24, 24, 280, 256, 0},
     {3, CONDITION_ALWAYS, 280, 0, 344, FACING_SOUTH, 0, 208, 288, 704, 640, 0},
     {4, CONDITION_ALWAYS, 664, 0, 616, FACING_NORTH, 0, 208, 288, 704, 640, 0},
-    {ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 528, 0, 432, FACING_SOUTH, 0, 208, 288, 704, 640, 0},
+    {ENTRANCE_AFTER_SUHALLA_GATE_BATTLE, CONDITION_ALWAYS, 528, 0, 432, FACING_SOUTH, 0, 208, 288, 704, 640, 0},
     {SCENE_TABLE_END},
 };
 

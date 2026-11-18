@@ -41,8 +41,9 @@ s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
 
 #include "shared/tables.h"
 
-/// The background colours at the start of the palette fade's source.
-#define PALETTE_FADE_BG_COLORS (14 * PALETTE_COLORS)
+/// The OBJ colours a palette fade keeps after its BG colours, palettes 0 to
+/// 13.
+#define PALETTE_FADE_OBJ_COLORS (14 * PALETTE_COLORS)
 
 /// Set once Burst has broken the pillar in the Water of Life chest's room.
 #define FLAG_YAMPI_DESERT_CAVE_CHEST_ROOM_PILLAR_BURST FLAG_AREA_TEMP_00
@@ -523,7 +524,7 @@ void YampiDesertCave_SetMarkColors(u16 *slots, u16 *colours, u16 *a, u16 *b) {
   Dma_Set((const void *)BG_PLTT, fade->palette,
           DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS / 2), REG_DMA3);
   Dma_Set((const void *)OBJ_PLTT, &fade->palette[PALETTE_FADE_BG_COLORS],
-          DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS / 2), REG_DMA3);
+          DMA_COPY_WORDS(PALETTE_FADE_OBJ_COLORS / 2), REG_DMA3);
   PaletteFade_SetTarget(FIXED_ONE, 0);
   if (gMainRoutineWork.teleportState == 2)
     YampiDesertCave_ArriveByTeleport();

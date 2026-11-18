@@ -242,9 +242,6 @@ extern u8 gDebugTextEnabled;
 /// Broken Seal's Djinn tutorial encounter, here an unused Mars Djinni's
 /// battle: rows of formations.c.
 #define DEBUG_FIRST_ENCOUNTER 69
-/// Up and Down step the chooser's encounter by DEBUG_LARGE_STEP, as the other
-/// debug menus' L and R, Left and Right by one.
-#define DEBUG_LARGE_STEP 10
 #define DJINN_TUTORIAL_ENCOUNTER 28
 
 /// Debug: the battle test menu, which never returns. It fights encounter 69

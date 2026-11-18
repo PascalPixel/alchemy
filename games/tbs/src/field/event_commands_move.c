@@ -97,7 +97,7 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
   Vector_AddPolarOffset(toFIXED(16), angle, &position);
   Actor_SetMoveTargetFar(pusher, position.x, position.y, position.z);
   FieldEffect_SnapScaleToFull(pusher);
-  // The hand floats (motion flag bit 2) at up to 4 pixels a frame.
+  // The hand floats at up to 4 pixels a frame.
   pusher->speedLimit = toFIXED(4);
   pusher->acceleration = toFIXED(1) / 2;
   pusher->motionFlags = ACTOR_FLOATS;
@@ -142,10 +142,10 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
     beyond.y = target->y.fixed;
     beyond.z = target->z.fixed;
     Vector_AddPolarOffset(toFIXED(32), direction, &beyond);
-    // A wall (2) or ground more than 8 pixels higher (1) stops the push;
-    // level ground or a drop does not.
+    // A wall or higher ground stops the push; level ground or a drop does
+    // not.
     if (MapGrid_CheckCollisionFar(target, (struct FieldPosition *)&position) >
-        0) {
+        COLLISION_NONE) {
       Actor_SelectAnimationFar(pusher, MOVE_HAND_ANIMATION_FLEX);
       if ((gFrameCount & 15) == 0)
         Sound_PlayFar(SE_MENU_ERROR);
@@ -193,7 +193,8 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
     x = position.x;
     z = position.z;
     Actor_SelectAnimationFar(
-        pusher, gFieldEffect_QuadrantModes[(u16)(angle - direction) >> 14]);
+        pusher,
+        gFieldEffect_QuadrantModes[(u16)(angle - direction) / (TRIG_TURN / 4)]);
     wait(15);
     target->paused = 0;
     target->speedLimit = toFIXED(1) / 5;
@@ -227,7 +228,8 @@ void FieldPsynergy_SteerPushedTarget(s32 targetId) {
   target->update = effectWork->savedCallback;
   FieldPsynergy_StopCasterUpdate();
   if (moved == 1)
-    (Actor_GetById(effectWork->firstActorId))->steeringFlags |= 1;
+    Actor_GetById(effectWork->firstActorId)->steeringFlags |=
+        ACTOR_FACES_MOTION;
   FieldPsynergy_FadeFromCastColor();
   UpdateRisingParticleBurst(pusher);
 }

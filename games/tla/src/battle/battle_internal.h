@@ -95,9 +95,6 @@
 /// passing the letter to BattleUnit_SetFar.
 #define NAME_LETTER_FIRST_TOO 0x8000
 #define NAME_LETTER_MASK 0x7fff
-/// The letters the Japanese edition names enemies with, A to Z; elsewhere they
-/// are nine digits (battle_formation.c's NAME_LETTER_COUNT).
-#define NAME_LETTER_ALPHABET 26
 
 /// A list place code's side bit, set for the enemies' list, and its place in
 /// the list (Battle_GetUnitAtPlace): PLACE_ENEMY is PLACE_PARTY with the side

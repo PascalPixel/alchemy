@@ -206,13 +206,6 @@ void BattleUnit_Strengthen(s32 unitId) {
   Heap_Release(saved);
 }
 
-/// The name suffixes an enemy can take: the alphabet in Japanese, nine digits
-/// elsewhere, as String_FindFirstDigit reads them back.
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define NAME_SUFFIX_COUNT NAME_LETTER_ALPHABET
-#else
-#define NAME_SUFFIX_COUNT 9
-#endif
 /// The suffixes a class's mask holds, one bit each.
 #define NAME_SUFFIX_MASK_BITS 32
 

@@ -9,6 +9,18 @@
 #include "static_assert.h"
 #include "game/item.h"
 
+/// The letters A to Z, which the Japanese edition gives enemies as name
+/// suffixes.
+#define NAME_LETTER_ALPHABET 26
+/// The name suffixes that tell enemies of one kind apart, one more character
+/// after the name (BattleUnit_Set): the alphabet in Japanese, the digits 1 to 9
+/// elsewhere, as String_FindFirstDigit reads them back.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define NAME_SUFFIX_COUNT NAME_LETTER_ALPHABET
+#else
+#define NAME_SUFFIX_COUNT 9
+#endif
+
 /// The size the STATIC_ASSERTs below hold struct Unit to, and the action id's
 /// bits in an action list entry.
 enum {

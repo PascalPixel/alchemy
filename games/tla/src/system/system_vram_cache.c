@@ -46,6 +46,7 @@ s32 VramCache_AllocateBlocks(u32 id, u32 size) {
       break;
     }
   occupied:
+    // Skip an owned block by its owner's whole size.
     block += (u32)gVramCacheEntries[gVramCacheBlockOwners[block]].size /
              VRAM_BLOCK_BYTES;
   }
@@ -56,38 +57,31 @@ s32 VramCache_AllocateBlocks(u32 id, u32 size) {
 /// Unused: returns the length, in blocks, of the longest run of free blocks.
 UNUSED s32 VramCache_GetLongestFreeRun(void) {
   s32 run = 0;
-  u8 *owner = gVramCacheBlockOwners;
   s32 longestRun = 0;
-  s32 remaining = VRAM_BLOCK_COUNT;
+  s32 i;
 
-  do {
-    if (*owner++ != VRAM_BLOCK_OWNER_FREE) {
+  for (i = 0; i < VRAM_BLOCK_COUNT; i++) {
+    if (gVramCacheBlockOwners[i] != VRAM_BLOCK_OWNER_FREE) {
       run = 0;
     } else {
       run++;
       if (longestRun < run)
         longestRun = run;
     }
-    remaining--;
-  } while (remaining != 0);
+  }
   return longestRun;
 }
 
 /// Counts the free blocks (owner VRAM_BLOCK_OWNER_FREE) of the sprite VRAM
 /// cache's VRAM_BLOCK_COUNT.
 s32 VramCache_CountFreeBlocks(void) {
-  u8 *marker = gVramCacheBlockOwners;
-  s32 freeCount;
-  s32 remaining;
+  s32 freeCount = 0;
+  s32 i;
 
-  freeCount = 0;
-  remaining = VRAM_BLOCK_COUNT;
-  do {
-    if (*marker++ == VRAM_BLOCK_OWNER_FREE) {
+  for (i = 0; i < VRAM_BLOCK_COUNT; i++) {
+    if (gVramCacheBlockOwners[i] == VRAM_BLOCK_OWNER_FREE)
       freeCount++;
-    }
-    remaining--;
-  } while (remaining != 0);
+  }
   return freeCount;
 }
 
@@ -135,11 +129,8 @@ s32 VramCache_ReleaseVram(u32 no) {
   if (no >= VRAM_CACHE_ENTRY_COUNT)
     return -1;
   if (entry->size > VRAM_CACHE_SIZE_NO_BLOCKS) {
-    s32 value;
-
     VramCache_FreeBlocks(no);
-    value = 1;
-    entry->size = value;
+    entry->size = 1;
   }
   return 0;
 }
@@ -157,6 +148,7 @@ s32 VramCache_Load(u32 no, u32 size, const void *src) {
     return 0;
   if (size > VRAM_CACHE_LOAD_MAX)
     return 0;
+  // A same-size upload keeps its existing VRAM run.
   if (entry->size > VRAM_CACHE_SIZE_NO_BLOCKS) {
     if (entry->size != size) {
       VramCache_FreeEntry(no);
@@ -169,6 +161,7 @@ s32 VramCache_Load(u32 no, u32 size, const void *src) {
   }
 
   if (offset != -1) {
+    // Commit the allocation before copying, clearing or leaving its pixels.
     dst = (void *)(OBJ_VRAM0 + offset);
     entry->size = size;
     entry->offset = offset;
@@ -185,24 +178,16 @@ s32 VramCache_Load(u32 no, u32 size, const void *src) {
 
 /// Frees every VRAM block and every cache entry.
 void VramCache_Reset(void) {
+  struct VramCacheEntry *entry;
+  u8 *owner = gVramCacheBlockOwners;
   u32 count;
-  u32 limit;
-  u8 *marker = gVramCacheBlockOwners;
 
-  count = 0;
-  limit = VRAM_BLOCK_COUNT - 1;
-  for (; count <= limit; count++)
-    *marker++ = VRAM_BLOCK_OWNER_FREE;
-  {
-    struct VramCacheEntry *entry = gVramCacheEntries;
-
-    count = 0;
-    do {
-      entry->offset |= VRAM_CACHE_OFFSET_FREE;
-      entry->size = 0;
-      entry++;
-      count++;
-    } while (count < VRAM_CACHE_ENTRY_COUNT);
+  for (count = 0; count < VRAM_BLOCK_COUNT; count++)
+    *owner++ = VRAM_BLOCK_OWNER_FREE;
+  entry = gVramCacheEntries;
+  for (count = 0; count < VRAM_CACHE_ENTRY_COUNT; count++, entry++) {
+    entry->offset |= VRAM_CACHE_OFFSET_FREE;
+    entry->size = 0;
   }
 }
 
@@ -255,6 +240,9 @@ s32 AffineMatrix_Build(s32 angle, s32 xScale, s32 yScale) {
   coefficient = matrix->coefficients;
   gOamMatrixCount = index + 1;
   if ((xScale == yScale || xScale == -yScale) && angle == 0) {
+    // Unrotated and evenly scaled (or mirrored): pa and pd are the scale's
+    // reciprocals (FIXED_ONE / scale, the 8.8 inverse of an 8.8 scale), pb and
+    // pc 0, two halfwords to a row.
     s32 reciprocal;
     s32 xReciprocal;
 
@@ -263,11 +251,11 @@ s32 AffineMatrix_Build(s32 angle, s32 xScale, s32 yScale) {
     if (xScale == -yScale)
       xReciprocal = -reciprocal;
 
-    // pa alone in the first row, and pd alone in the second row's high
-    // halfword.
     matrix->rows[0] = (u16)xReciprocal;
-    matrix->rows[1] = reciprocal << 16;
+    matrix->rows[1] = (u32)reciprocal << 16;
   } else {
+    // The inverse of rotate-then-scale: a 16.16 sine over an 8.8 scale is an
+    // 8.8 coefficient.
     FIXED sine;
     FIXED cosine;
 

@@ -84,11 +84,8 @@ void Event_End(void);
 void Shop_Run(s32 shop, s32 keeper);
 void Sanctum_Run(s32 keeper);
 void Inn_CheckIn(s32 shop, s32 keeper);
-void Event_FinishScreenTransition(void);
-void Event_WaitTransitionFrames(void);
 
-void FieldEffect_StartBlankOverlay(s32 a);
-void Event_StartScreenTransition(void);
+void FieldEffect_StartBlankOverlay(s32 actor);
 
 extern struct ActorPlacement gYallamRooms_Placements[];
 extern struct ActorPlacement gYallamRoomsInnPlacements[];
@@ -576,9 +573,9 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 // clang-format off
-/// The villager who asks about children's songs wanders between two corners of
+/// The villager who asks about children's songs paces between two corners of
 /// the room.
-u32 gYallamRooms_SongLoverWanders[] = {
+u32 gYallamRooms_ChildrensSongsVillagerPacing[] = {
     SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_PUSHABLE | ACTOR_SOLID),
     SC_ACCELERATION(0.1),
     SC_SPEED(0.3),
@@ -660,8 +657,8 @@ struct ActorPlacement gYallamRoomsInnPlacements[] = {
                     TALK_FACING_PARTY_AND_BACK, 0),
 #endif
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS,
-                    (s32)gYallamRooms_SongLoverWanders, 88, 0, 104, FACING_EAST,
-                    TALK_FACING_PARTY, 0),
+                    (s32)gYallamRooms_ChildrensSongsVillagerPacing, 88, 0, 104,
+                    FACING_EAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR, CONDITION_ALWAYS,
                     MOVEMENT_TYPE_STAND, 424, 0, 88, FACING_SOUTHEAST,
                     TALK_FACING_PARTY_AND_BACK, 0),

@@ -390,9 +390,11 @@ enum ItemId {
   ITEM_MAGMA_BALL
 };
 
-/// Item filters an item trigger can take in place of one item
-/// (Item_MatchesFilter): any weapon, armor, shield or helm, or any item.
+/// An item trigger's filter in place of one item (Item_MatchesFilter): any
+/// weapon, armor, shield or helm, the heavier items Trial Road's chests take.
 #define ITEM_FILTER_EQUIPMENT 510
+/// An item trigger's filter in place of one item: any item, whatever is shown
+/// to Moapa and his Knights in Shaman Village.
 #define ITEM_FILTER_ANY 511
 
 #endif

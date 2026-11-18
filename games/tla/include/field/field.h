@@ -41,6 +41,16 @@ s32 Party_ShowJoinedMessageFar(s32 event_id, s32 value);
 s32 Party_ShowPairJoinedMessageFar(s32 first, s32 second);
 s32 Field_CheckSpheresOverlap(FIXED *a, s32 radius_a, FIXED *b, s32 radius_b);
 
+/// SpriteDissolve_Step clears one pixel of each 8-bit tile a step, in
+/// gSpriteDissolve_PixelOrder's order, so a tile is gone after this many.
+#define DISSOLVE_TILE_PIXELS 64
+/// The step the first tile starts to dissolve at; each tile after it starts a
+/// step sooner.
+#define DISSOLVE_FIRST_STEP 64
+/// The steps a dissolve takes, four a frame: in the field, SpriteDissolve_Run
+/// and SpriteDissolve_RunMany's, and in battle a felled enemy's (PLAY_FELLED).
+#define DISSOLVE_STEPS (DISSOLVE_FIRST_STEP + DISSOLVE_TILE_PIXELS)
+
 struct Sprite;
 struct ScreenPoint;
 struct Particle;

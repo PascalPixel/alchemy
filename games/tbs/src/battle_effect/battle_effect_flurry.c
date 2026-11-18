@@ -4,9 +4,12 @@
 
 #include "battle_effect_internal.h"
 
-#define FLURRY_WAITING_MOTES                                                   \
-  768                          ///< motes in PARTICLES, waiting above the target
-#define FLURRY_DRAWN_MOTES 512 ///< of which the strikes draw
+/// The motes in PARTICLES, waiting above the target.
+#define FLURRY_WAITING_MOTES 768
+/// The motes the strikes draw, from the first.
+#define FLURRY_DRAWN_MOTES 512
+/// Each strike's run of PARTICLES, from the strike's number times this.
+#define FLURRY_MOTES_PER_STRIKE 32
 
 /// Each plays the flurry mode `basic`, `stronger` or `strongest` as the
 /// effect's variant (enum EffectVariant) says.
@@ -72,8 +75,8 @@ enum FlurryColumn {
   FLURRY_ARC_SHEET, ///< the arcs (enum FlurryArcs)
   FLURRY_PALETTE,   ///< whose palette (enum FlurryPalette)
   FLURRY_STRIKES,
-  FLURRY_MOTES,    ///< motes thrown by each strike, at most the 32 of
-                   ///< its run of PARTICLES
+  FLURRY_MOTES,    ///< motes thrown by each strike, at most
+                   ///< FLURRY_MOTES_PER_STRIKE
   FLURRY_INTERVAL, ///< frames between strikes
   FLURRY_FRAMES,   ///< frames in the whole effect
   FLURRY_FLASH     ///< 1 fills the canvas with level 47 on each hit
@@ -242,7 +245,8 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
           Sound_PlayFar(SE_HEAVY_IMPACT);
         }
         for (j = 0; j != gFlurry_Styles[mode][FLURRY_MOTES]; j++)
-          PARTICLES[i * 32 + j].variant = (Random16() & 7) + 15;
+          PARTICLES[i * FLURRY_MOTES_PER_STRIKE + j].variant =
+              (Random16() & 7) + 15;
       }
       if (frame >= start + 2 && frame < start + 14)
         draw[0](canvas,
@@ -290,6 +294,9 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
+#undef FLURRY_WAITING_MOTES
+#undef FLURRY_DRAWN_MOTES
+#undef FLURRY_MOTES_PER_STRIKE
 #undef FLURRY_FLASH_PICTURES
 #undef FLURRY_WAVE_PICTURES
 #undef FLURRY_DEFINE_BY_VARIANT

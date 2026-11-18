@@ -60,6 +60,10 @@
 #define THOR_LINE_MOTES 48
 #define THOR_LINES_FRAME 64
 
+/// The level the canvas is left at the frame before the beam falls: the sky
+/// floods with light.
+#define THOR_BEAM_FLASH_LEVEL 26
+
 /// The beam of light: a ramp of levels THOR_BEAM_WIDTH wide, brightest in its
 /// middle, down from THOR_BEAM_TOP, its tip narrowing a pixel each side a row
 /// over THOR_BEAM_TIP_ROWS rows, and THOR_BEAM_SPEED rows longer each frame;
@@ -78,6 +82,8 @@
 
 #define THOR_BOLTS 30 ///< violet bolts, one each 2 frames from THOR_BOLTS_FRAME
 #define THOR_FLASHES 6 ///< the canvas flashes, one each 8 frames from then
+/// The level each flash fills the canvas to.
+#define THOR_BOLT_FLASH_LEVEL 16
 
 /// The crackles of lightning around Thor: within 8 pixels across and 40 up
 /// and down of him.
@@ -223,8 +229,9 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     // The colours cycle through the hues.
     BattleEffect_UpdatePhasePalette(frame * 2, TRIG_TURN - DEGtoANG(120),
                                     DEGtoANG(120), 0);
-    if (frame == 150) {
-      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(26));
+    if (frame == THOR_BEAM_FRAME - 1) {
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR,
+                          CANVAS_FILL_WORD(THOR_BEAM_FLASH_LEVEL));
     } else {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE,
                           CANVAS_FADE_THREE_QUARTERS);
@@ -416,7 +423,10 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
     // Nothing in Thor reads these THOR_STRAY_PARTICLES particles, and
     // BattleEffect_RunImpactBurst overwrites them; only their random draws
     // change what is drawn later.
-    // XXX (no evidence): what they were for; no code that reads them is left.
+    // XXX (no evidence): what they were for; Nereid and Whirlwind give
+    // particles a place and a delay the same way and read them no more than
+    // Thor does, as The Lost Age's Thor does, so no code that reads them is
+    // left in either game.
     for (i = 0; i != THOR_STRAY_PARTICLES; i++) {
       work->particles[i].x = (Random16() & 31) - 16;
       work->particles[i].y = Random16() & 63;
@@ -474,7 +484,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         s32 mirrorX;
         for (i = 0; i != THOR_FLASHES; i++) {
           if (frame == i * 8 + THOR_BOLTS_FRAME) {
-            Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(16));
+            Iwram_FillWords(canvas, CANVAS_BYTES,
+                            CANVAS_FILL_WORD(THOR_BOLT_FLASH_LEVEL));
           }
         }
         for (i = 0; i != THOR_BOLTS; i++) {
@@ -643,3 +654,5 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
 #undef THOR_DIMMED_MOTES
 #undef THOR_LAUNCH_SPARKS
 #undef THOR_SPRITE_PICTURES
+#undef THOR_BEAM_FLASH_LEVEL
+#undef THOR_BOLT_FLASH_LEVEL

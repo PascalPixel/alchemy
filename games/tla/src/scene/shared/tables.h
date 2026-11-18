@@ -1,5 +1,6 @@
 /// @file
-/// The packed push step the scenes' push tables are written in.
+/// The packed push step the scenes' push tables are written in, and how many
+/// kinds of thing their push tables list.
 #ifndef ALCHEMY_SCENE_SHARED_TABLES_H
 #define ALCHEMY_SCENE_SHARED_TABLES_H
 
@@ -11,5 +12,10 @@
 #define PUSH_STEP_X(step) ((s32)(step) >> 16)
 /// A PUSH_STEP's z, in pixels.
 #define PUSH_STEP_Z(step) ((s16)(step))
+
+/// The sprites that can be pushed, each with its footprint: the rows of a
+/// scene's gPushKinds and gPushFootprints, a log, a pipe and a fallen column,
+/// each lying west to east and north to south.
+#define PUSH_KINDS 6
 
 #endif

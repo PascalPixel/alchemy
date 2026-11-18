@@ -119,21 +119,18 @@ void LemurianShipDeck_TryHeldDoor(void) {
   Event_End();
 }
 
-/// The background palette the deck's two colour cycles turn every eighth
-/// frame: the blues of the band along the hull and the surf.
-#define DECK_PALETTE ((volatile u16 *)&BG_PLTT_COLOR(11, 0))
-
-/// Defines a task that moves colours last-1 .. first of DECK_PALETTE one place
-/// up and the last round to first, every eighth frame.
+/// Defines a task that moves colours last-1 .. first of LEMURIAN_SHIP_PALETTE
+/// one place up and the last round to first, every eighth frame.
 #define DEFINE_ROTATE_PALETTE_COLORS(name, last, first)                        \
   void name(void) {                                                            \
     if ((gFrameCount & 7) == 0) {                                              \
-      s16 saved = DECK_PALETTE[last];                                          \
+      s16 saved = BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, last);                  \
       s32 i;                                                                   \
                                                                                \
       for (i = last; i != first; i--)                                          \
-        DECK_PALETTE[i] = DECK_PALETTE[i - 1];                                 \
-      DECK_PALETTE[first] = saved;                                             \
+        BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, i) =                              \
+            BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, i - 1);                       \
+      BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, first) = saved;                     \
     }                                                                          \
   }
 

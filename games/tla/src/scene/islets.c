@@ -2371,9 +2371,6 @@ void Islets_JumpForward(void) {
   return;
 }
 
-/// The sprites that can be pushed, each with its footprint.
-enum { PUSH_KINDS = 6 };
-
 extern s8 gPushFootprints[][4];
 
 /// Makes the cells under a pushable actor solid, by its footprint: the sprite

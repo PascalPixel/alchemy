@@ -1,12 +1,4 @@
-/// The first three actors of a room whose crumbling pillars all share one
-/// sprite's picture, as crumbling_pillar.h numbers them: the stand-in drawn in
-/// a pillar's place, and the two that hold the cracked picture and the whole
-/// one.
-enum CrumblingPillarStandIn {
-  ACTOR_PILLAR_STAND_IN = ACTOR_FIRST_PLACED,
-  ACTOR_CRACKED_PILLAR_SPRITE,
-  ACTOR_WHOLE_PILLAR_SPRITE
-};
+#include "pillar_stand_in.h"
 
 /// Unused: as MagmaRockInside_RestoreCrumblingPillars, in a room whose pillars
 /// share one sprite, as Dehkan Plateau's CrumblingPillar_PlaceWithStandIns

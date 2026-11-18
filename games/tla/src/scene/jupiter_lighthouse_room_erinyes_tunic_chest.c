@@ -112,8 +112,6 @@ s16 gLightSpritePriority BSS_DATA;
 struct CellTarget gCrackedTiles BSS_DATA;
 struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind);
 s32 MapGrid_CheckCollision(struct Actor *actor, s32 *position);
-/// The sprites that can be pushed, each with its footprint.
-enum { PUSH_KINDS = 6 };
 
 extern u16 gPushKinds[PUSH_KINDS];
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);

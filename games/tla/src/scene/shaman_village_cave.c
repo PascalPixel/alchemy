@@ -72,10 +72,6 @@ enum ShamanVillageCaveEntrance {
 
 void Message_CloseFinishedWindows(void);
 
-/// The actor script's work value 11, which sets or tests the Y scale as
-/// SW_SCALE_Y does (gActorScript_OperandHandlerTable gives both one handler).
-#define SW_SCALE_Y_DUPLICATE 11
-
 /// The cave's actors, numbering the rows of gActorPlacements.
 enum ShamanVillageCaveActorId {
   /// The weeds Whirlwind scatters from the wall below the first room's west

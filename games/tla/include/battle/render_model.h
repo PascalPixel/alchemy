@@ -47,6 +47,9 @@ struct RenderModel {
   u8 scrollV; ///< how far the texture is scrolled down
 };
 
+/// A texture's scroll wraps within 128 texels.
+#define TEXTURE_SCROLL_MASK 0x7f
+
 /// Draws a list of models, ended by a cleared entry: each model's rasterizer is
 /// copied into IWRAM for a run of its kind, and its texture with it where there
 /// is room.

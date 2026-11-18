@@ -19,10 +19,6 @@ enum {
   SERIAL_TIMER_RELOAD = 0xc963
 };
 
-/// The SIO_ERROR bit of a SIOCNT value, taken out by shifts as SIO_ID_OF takes
-/// the id.
-#define SIO_ERROR_OF(control) (((control) << 25) >> 31)
-
 /// Sets the routine the save calls between sector writes (0 for none) and
 /// starts its count again at 0 of SAVE_SECTORS_PER_PART; does nothing while
 /// no save workspace (heap slot HEAP_SLOT_SAVE) is allocated.

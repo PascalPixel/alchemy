@@ -23,11 +23,7 @@
 #include "field/scene_tables.h"
 #include "sprite_ids.h"
 
-extern u8 gMapGridCellBuffer[];
-
 void Pound_SinkTarget(u16 *list, s32 mode, s32 count);
-s32 MapGrid_GetCellWord(u32 layer, s32 x, s32 y);
-s32 MapGrid_SetCellWord(u32 layer, s32 x, s32 y, s32 value);
 void IzumoRuins_ShowStakeState(struct Actor *actor);
 void Event_End(void);
 void Actor_DisableById(s32 id);
@@ -35,8 +31,8 @@ void FlagBlock_ApplyFlags(const void *data);
 void Actor_LiftTargetBlock(const void *data);
 void Actor_PlaceMovedBlock(void);
 
-extern s16 gIzumoRuins_FirstRoomMovablePillars[];
-extern s16 gIzumoRuins_SecondRoomMovablePillars[];
+extern s16 gIzumoRuins_FirstRoomPillars[];
+extern s16 gIzumoRuins_SecondRoomPillars[];
 extern s16 gIzumoRuins_FirstRoomStakes[];
 extern s16 gIzumoRuins_SecondRoomStakes[];
 extern s16 gIzumoRuins_Puddles[];
@@ -130,71 +126,38 @@ enum {
   ACTOR_FIRST_ROOM_PILLAR
 };
 
-/// The second room's six stone pillars Move pushes, in a ring at its north
-/// end, the first two side by side at its top.
+/// The second room's six stone pillars Move pushes, in a ring round the stone
+/// tablet at its north end.
 enum {
-  ACTOR_SECOND_ROOM_PILLAR_A = ACTOR_FIRST_PLACED + 2,
-  ACTOR_SECOND_ROOM_PILLAR_B,
-  ACTOR_SECOND_ROOM_PILLAR_C,
-  ACTOR_SECOND_ROOM_PILLAR_D,
-  ACTOR_SECOND_ROOM_PILLAR_E,
-  ACTOR_SECOND_ROOM_PILLAR_F
+  ACTOR_RING_NORTHWEST_PILLAR = ACTOR_FIRST_PLACED + 2,
+  ACTOR_RING_NORTHEAST_PILLAR,
+  ACTOR_RING_WEST_PILLAR,
+  ACTOR_RING_SOUTHWEST_PILLAR,
+  ACTOR_RING_SOUTHEAST_PILLAR,
+  ACTOR_RING_EAST_PILLAR
 };
 
-/// Set while a stake is sunk: each room's first and second, and the first
-/// room's third.
-#define FLAG_FIRST_STAKE_SUNK FLAG_SCENE_TEMP_00
-#define FLAG_SECOND_STAKE_SUNK FLAG_SCENE_TEMP_01
-#define FLAG_THIRD_STAKE_SUNK FLAG_SCENE_TEMP_02
+/// Set while Pound has driven a stake into the ground: each room's first and
+/// second, and the first room's third.
+#define FLAG_FIRST_STAKE_POUNDED FLAG_SCENE_TEMP_00
+#define FLAG_SECOND_STAKE_POUNDED FLAG_SCENE_TEMP_01
+#define FLAG_THIRD_STAKE_POUNDED FLAG_SCENE_TEMP_02
 /// Set once Frost has frozen a puddle of the first room.
 #define FLAG_WEST_PUDDLE_FROZEN FLAG_SCENE_TEMP_03
 #define FLAG_EAST_PUDDLE_FROZEN FLAG_SCENE_TEMP_04
 
-/// A map cell's word as MapGrid_GetCellWord reads it: its collision code, the
-/// cell behavior, over its attribute bits (enum MapCellAttribute).
-#define CELL_WORD(behavior, attributes) ((behavior) << 8 | (attributes))
-#define CELL_WORD_ATTRIBUTES 0xff
+/// The cell between the ring's two south pillars, south of the stone tablet:
+/// kept a wall while Move carries a pillar, so that none is set down there.
+#define RING_SOUTH_GAP_COLUMN 50
+#define RING_SOUTH_GAP_ROW 13
 
 /// How far a standing stake's top rises over the ground under it, in height
 /// steps of 8 pixels.
 #define STAKE_HEIGHT_STEPS 4
 
-/// Reads a map cell's collision code and attribute bits as one word
-/// (CELL_WORD): of map layer 0 to 2, or of the spare cell buffer above that.
-/// Returns 0 with no map.
-s32 MapGrid_GetCellWord(u32 layer, s32 x, s32 y) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  u8 *cell;
+#include "../field/map_cell_get.c"
 
-  if (map == NULL)
-    return 0;
-  if (layer <= MAPGRID_LAYER_OVERHEAD)
-    cell = (u8 *)map->layers[layer].cells;
-  else
-    cell = gMapGridCellBuffer;
-  cell += (x + (y << 7)) << 2;
-  return (cell[2] << 8) | cell[3];
-}
-
-/// Writes bytes 2 and 3 of a map cell, as MapGrid_GetCellWord reads them.
-/// Returns what they held, or 0 with no map.
-s32 MapGrid_SetCellWord(u32 layer, s32 x, s32 y, s32 value) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  u8 *cell;
-  s32 old;
-
-  if (map == NULL)
-    return 0;
-  if (layer <= MAPGRID_LAYER_OVERHEAD)
-    cell = (u8 *)map->layers[layer].cells;
-  else
-    cell = gMapGridCellBuffer;
-  cell += (x + (y << 7)) << 2;
-  old = (cell[2] << 8) | cell[3];
-  cell[2] = value >> 8;
-  cell[3] = value;
-  return old;
-}
+#include "shared/map_cell_set.c"
 
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height);
 
@@ -208,28 +171,28 @@ void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height);
 void IzumoRuins_ShowStakeState(struct Actor *actor) {
   s32 column = FIELD_CELL(actor->x.fixed);
   s32 row = FIELD_CELL(actor->z.fixed);
-  s32 lower = MapGrid_GetCellWord(MAPGRID_LAYER_GROUND, column, row);
-  s32 upper = MapGrid_GetCellWord(MAPGRID_LAYER_OVERHEAD, column, row);
+  s32 lower = MapCell_GetAttributes(MAPGRID_LAYER_GROUND, column, row);
+  s32 upper = MapCell_GetAttributes(MAPGRID_LAYER_OVERHEAD, column, row);
   s32 height = CELL_HEIGHT_STEPS(
       Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed));
 
   if (Event_GetFlag(actor->timer)) {
-    upper |= CELL_WORD(CELL_BEHAVIOR_WALL, 0);
+    upper |= CELL_ATTRIBUTES(CELL_BEHAVIOR_WALL, 0);
     lower &= ~MAP_CELL_JUMP;
     if (CELL_HEIGHT_STEPS(actor->groundHeight) != height)
       height -= STAKE_HEIGHT_STEPS;
     Scene_SetActorSpritePriority((struct Actor *)actor, 3);
   } else {
-    if (lower >> 8 != CELL_BEHAVIOR_SAND)
-      upper = CELL_WORD(CELL_BEHAVIOR_WALL, upper & CELL_WORD_ATTRIBUTES);
+    if (CELL_CODE(lower) != CELL_BEHAVIOR_SAND)
+      upper = CELL_ATTRIBUTES(CELL_BEHAVIOR_WALL, upper & CELL_ATTRIBUTE_BITS);
     else
-      upper = CELL_WORD(CELL_BEHAVIOR_SAND, upper & CELL_WORD_ATTRIBUTES);
+      upper = CELL_ATTRIBUTES(CELL_BEHAVIOR_SAND, upper & CELL_ATTRIBUTE_BITS);
     lower |= MAP_CELL_JUMP;
     height += STAKE_HEIGHT_STEPS;
     Scene_SetActorSpritePriority((struct Actor *)actor, 2);
   }
-  MapGrid_SetCellWord(MAPGRID_LAYER_GROUND, column, row, lower);
-  MapGrid_SetCellWord(MAPGRID_LAYER_OVERHEAD, column, row, upper);
+  MapCell_SetAttributes(MAPGRID_LAYER_GROUND, column, row, lower);
+  MapCell_SetAttributes(MAPGRID_LAYER_OVERHEAD, column, row, upper);
   MapGrid_SetCellHeight(FIELD_CELL_ORIGIN(column), FIELD_CELL_ORIGIN(row),
                         actor->layer, height);
 }
@@ -311,10 +274,11 @@ void IzumoRuins_FreezePuddle(void) {
 /// byte), the leader walks on the upper layer, in the sand.
 void IzumoRuins_SinkIntoSand(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 cell = MapGrid_GetCellWord(2, FIELD_CELL(leader->x.fixed),
-                                 FIELD_CELL(leader->z.fixed));
+  s32 cell =
+      MapCell_GetAttributes(MAPGRID_LAYER_OVERHEAD, FIELD_CELL(leader->x.fixed),
+                            FIELD_CELL(leader->z.fixed));
 
-  if (cell >> 8 == CELL_BEHAVIOR_SAND)
+  if (CELL_CODE(cell) == CELL_BEHAVIOR_SAND)
     leader->layer = 2;
 }
 
@@ -325,32 +289,36 @@ void Leader_SetLayer(void) {
   leader->layer = 0;
 }
 
-/// Move's cast on a pillar lifts it; in the second room the overhead cell
-/// (50, 13) is first made a wall.
+/// Move's cast on a pillar lifts it; in the second room the gap south of the
+/// stone tablet is first made a wall.
 void IzumoRuins_StartMovingPillar(void) {
   if (gMainRoutineWork.next == SCENE_IZUMO_RUINS_FIRST_ROOM) {
-    Actor_LiftTargetBlock(gIzumoRuins_FirstRoomMovablePillars);
+    Actor_LiftTargetBlock(gIzumoRuins_FirstRoomPillars);
   } else {
     /* FAKEMATCH(signature): the cell read through an s16 return type. */
-    MapGrid_SetCellWord(MAPGRID_LAYER_OVERHEAD, 50, 13,
-                        CELL_WORD(CELL_BEHAVIOR_WALL, 0) |
-                            (((s16 (*)(u32, s32, s32))MapGrid_GetCellWord)(
-                                 MAPGRID_LAYER_OVERHEAD, 50, 13) &
-                             CELL_WORD_ATTRIBUTES));
-    Actor_LiftTargetBlock(gIzumoRuins_SecondRoomMovablePillars);
+    MapCell_SetAttributes(MAPGRID_LAYER_OVERHEAD, RING_SOUTH_GAP_COLUMN,
+                          RING_SOUTH_GAP_ROW,
+                          CELL_ATTRIBUTES(CELL_BEHAVIOR_WALL, 0) |
+                              (((s16 (*)(u32, s32, s32))MapCell_GetAttributes)(
+                                   MAPGRID_LAYER_OVERHEAD,
+                                   RING_SOUTH_GAP_COLUMN, RING_SOUTH_GAP_ROW) &
+                               CELL_ATTRIBUTE_BITS));
+    Actor_LiftTargetBlock(gIzumoRuins_SecondRoomPillars);
   }
 }
 
-/// Move sets a pillar down; in the second room the overhead cell (50, 13) is
-/// open ground again.
+/// Move sets a pillar down; in the second room the gap south of the stone
+/// tablet is open ground again.
 void IzumoRuins_FinishMovingPillar(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_PlaceMovedBlock();
   if (gMainRoutineWork.next == SCENE_IZUMO_RUINS_SECOND_ROOM)
-    MapGrid_SetCellWord(MAPGRID_LAYER_OVERHEAD, 50, 13,
-                        MapGrid_GetCellWord(MAPGRID_LAYER_OVERHEAD, 50, 13) &
-                            CELL_WORD_ATTRIBUTES);
+    MapCell_SetAttributes(
+        MAPGRID_LAYER_OVERHEAD, RING_SOUTH_GAP_COLUMN, RING_SOUTH_GAP_ROW,
+        MapCell_GetAttributes(MAPGRID_LAYER_OVERHEAD, RING_SOUTH_GAP_COLUMN,
+                              RING_SOUTH_GAP_ROW) &
+            CELL_ATTRIBUTE_BITS);
   Event_End();
 }
 
@@ -385,15 +353,15 @@ s32 Scene_Initialize(void) {
       ACTOR_PRIORITY_IGNORES_RISES;
   FieldEffect_StartBlankOverlay(0);
   if (gMainRoutineWork.next == SCENE_IZUMO_RUINS_FIRST_ROOM) {
-    Actor_PlaceBlocks(gIzumoRuins_FirstRoomMovablePillars);
+    Actor_PlaceBlocks(gIzumoRuins_FirstRoomPillars);
     IzumoRuins_PlaceStakes((u16 *)gIzumoRuins_FirstRoomStakes);
     FlagBlock_PlaceAll(gIzumoRuins_Puddles);
   } else {
-    Actor_Get(ACTOR_SECOND_ROOM_PILLAR_A)->priorityFlags |=
+    Actor_Get(ACTOR_RING_NORTHWEST_PILLAR)->priorityFlags |=
         ACTOR_PRIORITY_IGNORES_RISES;
-    Actor_Get(ACTOR_SECOND_ROOM_PILLAR_B)->priorityFlags |=
+    Actor_Get(ACTOR_RING_NORTHEAST_PILLAR)->priorityFlags |=
         ACTOR_PRIORITY_IGNORES_RISES;
-    Actor_PlaceBlocks(gIzumoRuins_SecondRoomMovablePillars);
+    Actor_PlaceBlocks(gIzumoRuins_SecondRoomPillars);
     IzumoRuins_PlaceStakes((u16 *)gIzumoRuins_SecondRoomStakes);
     if (Event_GetFlag(FLAG_IZUMO_RUINS_POOL_PARCHED)) {
       MapGrid_CopyCellAttributes(7, 2, 8, 7, 7, 12);
@@ -430,14 +398,14 @@ u32 gRubble_BurstScript[] = {
 #include "shared/field_effect_duration_scripts.c"
 
 /// The pillars Move can lift in each room, ended by -1.
-s16 gIzumoRuins_FirstRoomMovablePillars[] = {
+s16 gIzumoRuins_FirstRoomPillars[] = {
     ACTOR_FIRST_ROOM_PILLAR, -1,
 };
 
-s16 gIzumoRuins_SecondRoomMovablePillars[] = {
-    ACTOR_SECOND_ROOM_PILLAR_A, ACTOR_SECOND_ROOM_PILLAR_B,
-    ACTOR_SECOND_ROOM_PILLAR_C, ACTOR_SECOND_ROOM_PILLAR_D,
-    ACTOR_SECOND_ROOM_PILLAR_E, ACTOR_SECOND_ROOM_PILLAR_F,
+s16 gIzumoRuins_SecondRoomPillars[] = {
+    ACTOR_RING_NORTHWEST_PILLAR, ACTOR_RING_NORTHEAST_PILLAR,
+    ACTOR_RING_WEST_PILLAR, ACTOR_RING_SOUTHWEST_PILLAR,
+    ACTOR_RING_SOUTHEAST_PILLAR, ACTOR_RING_EAST_PILLAR,
     -1, 0,
 };
 
@@ -450,15 +418,15 @@ const s32 *gFieldEffect_DurationScripts[] = {
 /// Pound's stakes in each room (IzumoRuins_PlaceStakes): actor, unused, and
 /// the flag set while it is sunk; ended by -1.
 s16 gIzumoRuins_FirstRoomStakes[] = {
-    ACTOR_FIRST_STAKE, 0, FLAG_FIRST_STAKE_SUNK,
-    ACTOR_SECOND_STAKE, 0, FLAG_SECOND_STAKE_SUNK,
-    ACTOR_THIRD_STAKE, 0, FLAG_THIRD_STAKE_SUNK,
+    ACTOR_FIRST_STAKE, 0, FLAG_FIRST_STAKE_POUNDED,
+    ACTOR_SECOND_STAKE, 0, FLAG_SECOND_STAKE_POUNDED,
+    ACTOR_THIRD_STAKE, 0, FLAG_THIRD_STAKE_POUNDED,
     -1,
 };
 
 s16 gIzumoRuins_SecondRoomStakes[] = {
-    ACTOR_FIRST_STAKE, 0, FLAG_FIRST_STAKE_SUNK,
-    ACTOR_SECOND_STAKE, 0, FLAG_SECOND_STAKE_SUNK,
+    ACTOR_FIRST_STAKE, 0, FLAG_FIRST_STAKE_POUNDED,
+    ACTOR_SECOND_STAKE, 0, FLAG_SECOND_STAKE_POUNDED,
     -1,
 };
 
@@ -532,11 +500,12 @@ struct Trigger gIzumoRuins_FirstRoomTriggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS),
-     ACTOR_FIRST_STAKE, FLAG_FIRST_STAKE_SUNK, EVENT(IzumoRuins_PoundStake)},
+     ACTOR_FIRST_STAKE, FLAG_FIRST_STAKE_POUNDED, EVENT(IzumoRuins_PoundStake)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS),
-     ACTOR_SECOND_STAKE, FLAG_SECOND_STAKE_SUNK, EVENT(IzumoRuins_PoundStake)},
+     ACTOR_SECOND_STAKE, FLAG_SECOND_STAKE_POUNDED,
+     EVENT(IzumoRuins_PoundStake)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS),
-     ACTOR_THIRD_STAKE, FLAG_THIRD_STAKE_SUNK, EVENT(IzumoRuins_PoundStake)},
+     ACTOR_THIRD_STAKE, FLAG_THIRD_STAKE_POUNDED, EVENT(IzumoRuins_PoundStake)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_WEST_PUDDLE,
      FLAG_WEST_PUDDLE_FROZEN, EVENT(IzumoRuins_FreezePuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_EAST_PUDDLE,
@@ -560,40 +529,41 @@ struct Trigger gIzumoRuins_SecondRoomTriggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS),
-     ACTOR_FIRST_STAKE, FLAG_FIRST_STAKE_SUNK, EVENT(IzumoRuins_PoundStake)},
+     ACTOR_FIRST_STAKE, FLAG_FIRST_STAKE_POUNDED, EVENT(IzumoRuins_PoundStake)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS),
-     ACTOR_SECOND_STAKE, FLAG_SECOND_STAKE_SUNK, EVENT(IzumoRuins_PoundStake)},
+     ACTOR_SECOND_STAKE, FLAG_SECOND_STAKE_POUNDED,
+     EVENT(IzumoRuins_PoundStake)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 50,
      CONDITION_ALWAYS, EVENT(IzumoRuins_ParchThePool)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
-     ACTOR_SECOND_ROOM_PILLAR_A, CONDITION_ALWAYS,
+     ACTOR_RING_NORTHWEST_PILLAR, CONDITION_ALWAYS,
      EVENT(IzumoRuins_StartMovingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_ROOM_PILLAR_A,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_RING_NORTHWEST_PILLAR,
      CONDITION_ALWAYS, EVENT(IzumoRuins_FinishMovingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
-     ACTOR_SECOND_ROOM_PILLAR_B, CONDITION_ALWAYS,
+     ACTOR_RING_NORTHEAST_PILLAR, CONDITION_ALWAYS,
      EVENT(IzumoRuins_StartMovingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_ROOM_PILLAR_B,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_RING_NORTHEAST_PILLAR,
      CONDITION_ALWAYS, EVENT(IzumoRuins_FinishMovingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
-     ACTOR_SECOND_ROOM_PILLAR_C, CONDITION_ALWAYS,
+     ACTOR_RING_WEST_PILLAR, CONDITION_ALWAYS,
      EVENT(IzumoRuins_StartMovingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_ROOM_PILLAR_C,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_RING_WEST_PILLAR, CONDITION_ALWAYS,
+     EVENT(IzumoRuins_FinishMovingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
+     ACTOR_RING_SOUTHWEST_PILLAR, CONDITION_ALWAYS,
+     EVENT(IzumoRuins_StartMovingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_RING_SOUTHWEST_PILLAR,
      CONDITION_ALWAYS, EVENT(IzumoRuins_FinishMovingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
-     ACTOR_SECOND_ROOM_PILLAR_D, CONDITION_ALWAYS,
+     ACTOR_RING_SOUTHEAST_PILLAR, CONDITION_ALWAYS,
      EVENT(IzumoRuins_StartMovingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_ROOM_PILLAR_D,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_RING_SOUTHEAST_PILLAR,
      CONDITION_ALWAYS, EVENT(IzumoRuins_FinishMovingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
-     ACTOR_SECOND_ROOM_PILLAR_E, CONDITION_ALWAYS,
+     ACTOR_RING_EAST_PILLAR, CONDITION_ALWAYS,
      EVENT(IzumoRuins_StartMovingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_ROOM_PILLAR_E,
-     CONDITION_ALWAYS, EVENT(IzumoRuins_FinishMovingPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
-     ACTOR_SECOND_ROOM_PILLAR_F, CONDITION_ALWAYS,
-     EVENT(IzumoRuins_StartMovingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_ROOM_PILLAR_F,
-     CONDITION_ALWAYS, EVENT(IzumoRuins_FinishMovingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_RING_EAST_PILLAR, CONDITION_ALWAYS,
+     EVENT(IzumoRuins_FinishMovingPillar)},
     {TRIGGER_TABLE_END},
 };

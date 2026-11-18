@@ -219,9 +219,6 @@ enum { TRIGGER_SWITCH = 50, TRIGGER_EAST_OF_SWITCH };
 /// The step trigger before Charon's slate.
 enum { TRIGGER_BEFORE_CHARON_SLATE = 30 };
 
-/// The Djinn of each element the game places, before its two spares.
-enum { DJINN_FOUND_PER_ELEMENT = 18 };
-
 /// The sanctum's lasting flags: each pillar Moved onto its place, each
 /// element's torch lit, the Dragon Skin room's north door opened by all four,
 /// and Charon's slate's words heard.
@@ -257,6 +254,21 @@ enum { DJINN_FOUND_PER_ELEMENT = 18 };
 /// How far below a plate or the pillar of light its lit picture is kept, in
 /// cells.
 #define LIT_PICTURE_ROWS 26
+
+/// The four torches over the Dragon Skin room's north door, on the wall's row
+/// z 152: each element's x and the height its flame burns at.
+#define VENUS_TORCH_X 520
+#define VENUS_TORCH_Y 48
+#define MERCURY_TORCH_X 552
+#define MERCURY_TORCH_Y 48
+#define MARS_TORCH_X 504
+#define MARS_TORCH_Y 40
+#define JUPITER_TORCH_X 568
+#define JUPITER_TORCH_Y 40
+#define TORCH_ROW_Z 152
+
+/// REG_BLDALPHA's low byte, the top target's weight.
+#define BLEND_ALPHA_TOP_MASK 0xff
 
 /// A spark ring's sixteenths of a turn; an orb starts at every second one.
 #define SPARK_RING_STEPS 16
@@ -488,7 +500,8 @@ s32 AnemosInnerSanctum_CircleOrb(struct Actor *actor) {
   FIXED radius;
 
   actor->timer += actor->userValue;
-  SET_ACTOR_POSITION(actor, actor->bounce, actor->gravity, toFIXED(152));
+  SET_ACTOR_POSITION(actor, actor->bounce, actor->gravity,
+                     toFIXED(TORCH_ROW_Z));
   FieldVector_AddPolarOffsetFX(actor->riseBaseY, actor->timer, &actor->x.fixed);
   radius = actor->riseBaseY - toFIXED(1);
   actor->riseBaseY = radius;
@@ -630,7 +643,7 @@ s16 speed;
 
   for (i = 0; i != SPARK_RING_STEPS;) {
     struct Actor *object =
-        (FieldActor_Create(SPRITE_PARTICLE, x, y, toFIXED(152)));
+        (FieldActor_Create(SPRITE_PARTICLE, x, y, toFIXED(TORCH_ROW_Z)));
     s32 angle = i * (TRIG_TURN / SPARK_RING_STEPS);
 
     FieldVector_AddPolarOffset(32, angle, &object->x.fixed);
@@ -652,15 +665,16 @@ s16 speed;
   }
 }
 
-/// Leaves a flame of the given palette burning on the torch at x, z.
-void AnemosInnerSanctum_LightTorch(x, z, palette) s32 x;
-s32 z;
+/// Leaves a flame of the given palette burning on the torch at x and height y
+/// on the torches' row.
+void AnemosInnerSanctum_LightTorch(x, y, palette) s32 x;
+s32 y;
 s16 palette;
 {
   struct Actor *object;
 
-  object = FieldActor_Create(SPRITE_PARTICLE, INTtoFIXED(x), INTtoFIXED(z + 3),
-                             toFIXED(152));
+  object = FieldActor_Create(SPRITE_PARTICLE, INTtoFIXED(x), INTtoFIXED(y + 3),
+                             toFIXED(TORCH_ROW_Z));
   object->motionFlags = ACTOR_FLOATS;
   FieldActor_SetSpriteColor(object, (u16)palette);
   Scene_SetActorSpritePriority(object, 2);
@@ -688,7 +702,7 @@ void AnemosInnerSanctum_LightSymbol(void) {
   volatile u16 alpha = REG_BLDALPHA;
   s32 x, z;
   s32 targetX = 0;
-  s32 targetZ = 0;
+  s32 targetY = 0;
   s16 type = work->stepTrigger - TRIGGER_VENUS_SYMBOL + SPRITE_VENUS_DJINNI;
   s16 trigger = work->stepTrigger;
   s32 index = trigger - TRIGGER_VENUS_SYMBOL;
@@ -712,8 +726,8 @@ void AnemosInnerSanctum_LightSymbol(void) {
   switch (trigger) {
   case TRIGGER_VENUS_SYMBOL:
     base = FLAG_DJINNI(DJINNI_FLINT);
-    targetX = 520;
-    targetZ = 48;
+    targetX = VENUS_TORCH_X;
+    targetY = VENUS_TORCH_Y;
     if (GameFlag_Get(FLAG_ANEMOS_VENUS_TORCH_LIT)) {
       GameFlag_Set(FLAG_SCENE_TEMP_00);
       return;
@@ -722,8 +736,8 @@ void AnemosInnerSanctum_LightSymbol(void) {
   case TRIGGER_MERCURY_SYMBOL:
     palette = SPRITE_COLOR_BGR;
     base = FLAG_DJINNI(DJINNI_FIZZ);
-    targetX = 552;
-    targetZ = 48;
+    targetX = MERCURY_TORCH_X;
+    targetY = MERCURY_TORCH_Y;
     if (GameFlag_Get(FLAG_ANEMOS_MERCURY_TORCH_LIT)) {
       GameFlag_Set(FLAG_SCENE_TEMP_00);
       return;
@@ -732,8 +746,8 @@ void AnemosInnerSanctum_LightSymbol(void) {
   case TRIGGER_MARS_SYMBOL:
     palette = SPRITE_COLOR_RED_TINT;
     base = FLAG_DJINNI(DJINNI_FORGE);
-    targetX = 504;
-    targetZ = 40;
+    targetX = MARS_TORCH_X;
+    targetY = MARS_TORCH_Y;
     if (GameFlag_Get(FLAG_ANEMOS_MARS_TORCH_LIT)) {
       GameFlag_Set(FLAG_SCENE_TEMP_00);
       return;
@@ -742,8 +756,8 @@ void AnemosInnerSanctum_LightSymbol(void) {
   case TRIGGER_JUPITER_SYMBOL:
     palette = SPRITE_COLOR_RBG;
     base = FLAG_DJINNI(DJINNI_GUST);
-    targetX = 568;
-    targetZ = 40;
+    targetX = JUPITER_TORCH_X;
+    targetY = JUPITER_TORCH_Y;
     if (GameFlag_Get(FLAG_ANEMOS_JUPITER_TORCH_LIT)) {
       GameFlag_Set(FLAG_SCENE_TEMP_00);
       return;
@@ -751,7 +765,7 @@ void AnemosInnerSanctum_LightSymbol(void) {
     break;
   }
 
-  for (i = (u16)base; i != (u16)base + DJINN_FOUND_PER_ELEMENT; i++) {
+  for (i = (u16)base; i != (u16)base + DJINNI_SPARE_FIRST; i++) {
     if (GameFlag_Get(i)) {
       found[count] = i - base;
       count++;
@@ -781,7 +795,7 @@ void AnemosInnerSanctum_LightSymbol(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_Interpolate(60);
   BlendScript_Suspend();
-  alpha = alpha & 0xff;
+  alpha = alpha & BLEND_ALPHA_TOP_MASK;
   REG_BLDALPHA = BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
   cellX = x >> 4;
   cellZ = z >> 4;
@@ -826,11 +840,11 @@ void AnemosInnerSanctum_LightSymbol(void) {
     FieldEvent_Wait(8);
   }
 
-  if (count != DJINN_FOUND_PER_ELEMENT) {
+  if (count != DJINNI_SPARE_FIRST) {
     FieldEvent_Wait(96);
     Actor_StartScript(djinni, gAnemosInnerSanctum_DjinniSinksScript);
     BlendScript_Suspend();
-    alpha = REG_BLDALPHA & 0xff;
+    alpha = REG_BLDALPHA & BLEND_ALPHA_TOP_MASK;
     PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
     PaletteFade_Interpolate(60);
     for (i = alpha; i != 0;) {
@@ -866,7 +880,7 @@ void AnemosInnerSanctum_LightSymbol(void) {
     Event_PlaySound(SE_SHIMMER);
     {
       FIXED ringX = INTtoFIXED(targetX);
-      FIXED ringY = INTtoFIXED(targetZ);
+      FIXED ringY = INTtoFIXED(targetY);
 
       AnemosInnerSanctum_SparkRing(ringX, ringY, palette, TRIG_TURN * 8 / 256);
       FieldEvent_Wait(10);
@@ -882,7 +896,7 @@ void AnemosInnerSanctum_LightSymbol(void) {
     PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_Interpolate(32);
     Event_PlaySound(SE_FLASH);
-    AnemosInnerSanctum_LightTorch(targetX, targetZ, palette);
+    AnemosInnerSanctum_LightTorch(targetX, targetY, palette);
     FieldEvent_Wait(80);
     if (GameFlag_Get(FLAG_ANEMOS_VENUS_TORCH_LIT) &&
         GameFlag_Get(FLAG_ANEMOS_MERCURY_TORCH_LIT) &&
@@ -1542,19 +1556,23 @@ s32 Scene_Initialize(void) {
                       (s32)gAnemosInnerSanctum_CycleColors,
                       (s32)gAnemosInnerSanctum_CycleSlots);
     if (Event_GetFlag(FLAG_ANEMOS_VENUS_TORCH_LIT)) {
-      AnemosInnerSanctum_LightTorch(520, 48, SPRITE_COLOR_NORMAL);
+      AnemosInnerSanctum_LightTorch(VENUS_TORCH_X, VENUS_TORCH_Y,
+                                    SPRITE_COLOR_NORMAL);
       MapGrid_CopyCellsTo(85, 34, 85, 8, 9, 8);
     }
     if (Event_GetFlag(FLAG_ANEMOS_MERCURY_TORCH_LIT)) {
-      AnemosInnerSanctum_LightTorch(552, 48, SPRITE_COLOR_BGR);
+      AnemosInnerSanctum_LightTorch(MERCURY_TORCH_X, MERCURY_TORCH_Y,
+                                    SPRITE_COLOR_BGR);
       MapGrid_CopyCellsTo(101, 34, 101, 8, 9, 8);
     }
     if (Event_GetFlag(FLAG_ANEMOS_MARS_TORCH_LIT)) {
-      AnemosInnerSanctum_LightTorch(504, 40, SPRITE_COLOR_RED_TINT);
+      AnemosInnerSanctum_LightTorch(MARS_TORCH_X, MARS_TORCH_Y,
+                                    SPRITE_COLOR_RED_TINT);
       MapGrid_CopyCellsTo(85, 46, 85, 20, 9, 8);
     }
     if (Event_GetFlag(FLAG_ANEMOS_JUPITER_TORCH_LIT)) {
-      AnemosInnerSanctum_LightTorch(568, 40, SPRITE_COLOR_RBG);
+      AnemosInnerSanctum_LightTorch(JUPITER_TORCH_X, JUPITER_TORCH_Y,
+                                    SPRITE_COLOR_RBG);
       MapGrid_CopyCellsTo(101, 46, 101, 20, 9, 8);
     }
     if (Event_GetFlag(FLAG_ANEMOS_NORTH_DOOR_OPEN)) {

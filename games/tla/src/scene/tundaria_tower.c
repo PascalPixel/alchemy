@@ -85,17 +85,6 @@ void TundariaTower_StartEffectScript(struct FieldEffect *effect,
 #define ACTOR_SECOND_LEDGE_PILLAR (ACTOR_FIRST_PLACED + 4)
 #define ACTOR_FIRST_LEDGE_PILLAR (ACTOR_FIRST_PLACED + 5)
 
-/// A 16.16 coordinate in half cells, 8 pixels, and a half cell's 16.16 origin.
-#define FIELD_HALF_CELL(coordinate) ((coordinate) >> 19)
-#define FIELD_HALF_CELL_ORIGIN(halfCell) ((halfCell) << 19)
-
-/// The frame a field Psynergy's acting events are last called with, as it
-/// finishes (the field's FIELD_PSYNERGY_FINISHED).
-#define FIELD_PSYNERGY_FINISHED 999
-
-/// The puffs of a ring of dust, round a full turn; one more closes it.
-#define DUST_RING_PUFFS 16
-
 /// The entrances Scene_Initialize sets up apart: the crystal's chamber of the
 /// Center Prong's rooms, and where the party lands from the slides.
 enum {
@@ -121,7 +110,6 @@ enum {
 #define FLAG_LEFT_WATER_PARCHED 0x942
 #define FLAG_RIGHT_WATER_PARCHED 0x943
 #define FLAG_CRYSTAL_BROKEN 0x944 ///< Burst broke the crystal round the prong
-#define FLAG_CENTER_PRONG_TAKEN 0x945
 #define FLAG_SECOND_LEDGE_PILLAR_SET 0x946
 #define FLAG_FIRST_LEDGE_PILLAR_SET 0x947
 /// Burst opened the brown wall outside, in the Burst Brooch's room.
@@ -134,6 +122,14 @@ enum {
 #define FLAG_ICE_COLUMN_POUNDED FLAG_SCENE_TEMP_00
 /// Reveal shows the hidden way through the icy wall in the room of pillars.
 #define FLAG_HIDDEN_WAY_REVEALED FLAG_SCENE_TEMP_12
+
+/// How far a standing ice column's top rises over the ground under it, in
+/// height steps of 8 pixels.
+#define ICE_COLUMN_HEIGHT_STEPS 4
+
+/// A pillar's starting cell, kept in its timer while it slides: its column
+/// over its row's byte.
+#define START_CELL_ROW_MASK 0xff
 
 /// The tower's own cell behaviors, the cells its step and Psynergy triggers
 /// name; a cell's attributes hold its behavior in their high byte
@@ -154,7 +150,7 @@ enum TundariaTowerCellBehavior {
 void TundariaTower_AdvanceIceChip(union FieldObject *object);
 void TundariaTower_ScatterIceChips(struct Vector3 *position, s32 count,
                                    FIXED scale);
-void TundariaTower_UpdateFallingRocks(void);
+void Particle_UpdateFalling(void);
 void TundariaTower_StartFallingRocks(void);
 void TundariaTower_EndFallingRocks(void);
 void TundariaTower_UpdateBrownWallCell(void);
@@ -179,55 +175,36 @@ void TundariaTower_FightReflux(void) {
 
 #include "../field/map_cell_get.c"
 
-extern u8 gMapGridCellBuffer[];
-
-/// Replaces a cell's collision code and attributes, returning the old value.
-s32 MapCell_SetAttributes(u32 layer, s32 x, s32 z, s32 value) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  u8 *cell;
-  s32 old;
-
-  if (map == NULL)
-    return 0;
-  if (layer <= 2)
-    cell = (u8 *)map->layers[layer].cells;
-  else
-    cell = gMapGridCellBuffer;
-  cell += (x + (z << 7)) << 2;
-  old = (cell[2] << 8) | cell[3];
-  cell[2] = value >> 8;
-  cell[3] = value;
-  return old;
-}
+#include "shared/map_cell_set.c"
 
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 terrain, s32 height);
 
 /// Sets the cell under an ice column by its Pound flag, kept in its timer:
-/// standing, the cell is raised 4 half cells, walled and marked MAP_CELL_JUMP,
-/// and the column drawn at sprite priority 2; pounded flat, the cell is cleared
-/// and lowered back and the column drawn at priority 3.
+/// standing, the cell is raised ICE_COLUMN_HEIGHT_STEPS, walled and marked
+/// MAP_CELL_JUMP, and the column drawn at sprite priority 2; pounded flat, the
+/// cell is cleared and lowered back and the column drawn at priority 3.
 void TundariaTower_SetColumnCell(struct Actor *actor) {
   s32 x = FIELD_CELL(actor->x.fixed);
   s32 z = FIELD_CELL(actor->z.fixed);
-  s32 attr0 = MapCell_GetAttributes(0, x, z);
-  s32 attr2 = MapCell_GetAttributes(2, x, z);
-  s32 height = FIELD_HALF_CELL(
+  s32 attr0 = MapCell_GetAttributes(MAPGRID_LAYER_GROUND, x, z);
+  s32 attr2 = MapCell_GetAttributes(MAPGRID_LAYER_OVERHEAD, x, z);
+  s32 height = CELL_HEIGHT_STEPS(
       Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed));
 
   if (GameFlag_Get(actor->timer)) {
-    attr2 &= ~(CELL_BEHAVIOR_WALL << 8);
+    attr2 &= ~CELL_ATTRIBUTES(CELL_BEHAVIOR_WALL, 0);
     attr0 &= ~MAP_CELL_JUMP;
-    if (FIELD_HALF_CELL(actor->groundHeight) != height)
-      height -= 4;
+    if (CELL_HEIGHT_STEPS(actor->groundHeight) != height)
+      height -= ICE_COLUMN_HEIGHT_STEPS;
     Scene_SetActorSpritePriority(actor, 3);
   } else {
-    attr2 = (attr2 & 0xff) | CELL_BEHAVIOR_WALL << 8;
+    attr2 = CELL_ATTRIBUTES(CELL_BEHAVIOR_WALL, attr2 & CELL_ATTRIBUTE_BITS);
     attr0 |= MAP_CELL_JUMP;
-    height += 4;
+    height += ICE_COLUMN_HEIGHT_STEPS;
     Scene_SetActorSpritePriority(actor, 2);
   }
-  MapCell_SetAttributes(0, x, z, attr0);
-  MapCell_SetAttributes(2, x, z, attr2);
+  MapCell_SetAttributes(MAPGRID_LAYER_GROUND, x, z, attr0);
+  MapCell_SetAttributes(MAPGRID_LAYER_OVERHEAD, x, z, attr2);
   MapGrid_SetCellHeight(FIELD_CELL_ORIGIN(x), FIELD_CELL_ORIGIN(z),
                         actor->layer, height);
 }
@@ -597,7 +574,7 @@ void TundariaTower_LiftPillar(void) {
     Actor_LiftTargetBlock(gTundariaTowerLiftPillarsPillars);
     actor = work->movedBlock;
     actor->timer = ((FIELD_CELL(actor->x.fixed)) << 8) |
-                   ((FIELD_CELL(actor->z.fixed)) & 0xff);
+                   ((FIELD_CELL(actor->z.fixed)) & START_CELL_ROW_MASK);
   } else if (party->next == SCENE_TUNDARIA_TOWER_BURST_BROOCH) {
     Actor_LiftTargetBlock(gTundariaTowerBurstBroochPillar);
   }
@@ -617,7 +594,7 @@ void TundariaTower_SlidePillar(s32 unused, s32 actorArg) {
   Event_Start();
   Event_ResolvePendingActions(0);
   dx = (FIELD_CELL(actor->x.fixed)) - (actor->timer >> 8);
-  dz = (FIELD_CELL(actor->z.fixed)) - (actor->timer & 0xff);
+  dz = (FIELD_CELL(actor->z.fixed)) - (actor->timer & START_CELL_ROW_MASK);
   actor->speedLimit = toFIXED(1) / 2;
   while ((MapCell_GetAttributes(1, (FIELD_CELL(actor->x.fixed)) + dx,
                                 (FIELD_CELL(actor->z.fixed)) + dz) >>
@@ -1541,35 +1518,7 @@ void TundariaTower_SetLeaderCellShape(s32 level, s32 layer) {
   Actor_SetCellShape(level, layer, gMainRoutineWork.leaderActorId);
 }
 
-/// Each frame, draws and moves the falling rocks still playing.
-void TundariaTower_UpdateFallingRocks(void) {
-  struct ParticleWork *work = Ram_HeapSlots->menuWork;
-  struct Particle *particle = work->particles;
-  struct ParticleSprite *sprite = work->sprites;
-  s32 i;
-  FIXED step = -(toFIXED(1) / 2);
-
-  i = ARRAY_COUNT(work->particles) - 1;
-  do {
-    if ((u32)particle->variant <= 19) {
-      u16 *base = &work->tile;
-      s32 mask = 7;
-      s32 tile = (u16)((*base + ((particle->variant >> 2) & mask) * 8) & 0x3ff);
-      s32 attr = sprite->attr2;
-
-      sprite->attr2 = (attr & ~0x3ff) | tile;
-      EffectSprite_DrawAtWorldPosition(sprite, particle);
-      BattleEffect_StepVector3(particle, 63, step);
-      particle->variant++;
-    }
-    i--;
-    sprite++;
-    particle++;
-  } while (i >= 0);
-}
-
-/// The falling rocks in flight at once.
-#define ROCK_COUNT 64
+#include "shared/particle_update_falling.h"
 
 /// The falling rocks' work: their tiles, the rocks and their sprites, in a ring
 /// that next walks round.
@@ -1586,8 +1535,8 @@ struct RockWork {
 // thrown up and out along it.
 #include "shared/rock_spawn.h"
 
-/// The falling rocks' setup: loads their picture, sets up 64 small sprites,
-/// marks each rock idle and starts the task that spawns them.
+/// The falling rocks' setup: loads their picture, sets up ROCK_COUNT small
+/// sprites, marks each rock idle and starts the task that spawns them.
 void TundariaTower_StartFallingRocks(void) {
   struct RockWork *work =
       HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct RockWork));
@@ -1619,14 +1568,14 @@ void TundariaTower_StartFallingRocks(void) {
 
     work->next = zero;
   }
-  Task_AddFrame(TundariaTower_UpdateFallingRocks, TASK_PASS_FRAME);
+  Task_AddFrame(Particle_UpdateFalling, TASK_PASS_FRAME);
 }
 
 /// Stops the falling rocks and frees their pictures and work.
 void TundariaTower_EndFallingRocks(void) {
   struct RockWork *work = Ram_HeapSlots->menuWork;
 
-  Task_Remove(TundariaTower_UpdateFallingRocks);
+  Task_Remove(Particle_UpdateFalling);
   VramCache_FreeEntry(work->resource);
   HeapSlot_Release(HEAP_SLOT_MENU);
 }

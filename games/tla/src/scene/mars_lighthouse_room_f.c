@@ -1373,8 +1373,6 @@ UNUSED struct Actor *Whirlwind_Spawn(struct Actor *source) {
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 
-#define ABS(value) ((value) < 0 ? -(value) : (value))
-
 #include "shared/actor_is_touching.h"
 
 #include "shared/actor_is_beside.h"
@@ -1390,8 +1388,6 @@ extern s32 gScriptedPart_Script[];
 #include "shared/ride_spawn_forward.c"
 
 #include "shared/ride_update_landing.h"
-
-#define ABS(value) ((value) < 0 ? -(value) : (value))
 
 void Ride_UpdateDrift(struct Actor *actor);
 
@@ -1556,15 +1552,12 @@ extern u32 gEmbers_Script[];
 #undef position
 #undef WORK
 
-#define ABS(x) ((x) < 0 ? -(x) : (x))
-
 s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 terrain, s32 x, s32 z);
 void Actor_ScatterCrumbs(struct Actor *actor);
 void Embers_Spawn(s32 x, s32 y, s32 z, s32 speed);
 extern u8 gInventorySnapshot[];
 
 #include "shared/actor_roll_and_crumble.c"
-#undef ABS
 
 void Actor_HoldDuringEvent(struct Actor *actor);
 
@@ -1591,7 +1584,6 @@ void Actor_SetupScriptedFor(struct Actor *actor, s32 unused);
 
 #undef DEFINE_BURST_WALL
 #undef DEFINE_FROST_PUDDLE
-#undef ABS
 #undef IWRAM
 #undef position
 #undef WORK
@@ -1659,8 +1651,6 @@ enum { PUSH_KINDS = 6 };
 
 extern u16 gPushKinds[PUSH_KINDS];
 extern s8 gPushFootprints[][4];
-
-#define ABS(x) ((x) < 0 ? -(x) : (x))
 
 /// Makes the cells under a pushable actor solid, by its footprint.
 s32 PushTarget_FillFootprint(s32 id) {
@@ -1855,7 +1845,6 @@ void PushTarget_Push(struct PushTarget target) {
 }
 
 #include "shared/actor_stop_at_push_target.h"
-#undef ABS
 
 #include "shared/light_sprites_draw.h"
 
@@ -2204,7 +2193,6 @@ s8 gPushFootprints[][4] = {
 #include "shared/push_leader_steps.c"
 // clang-format on
 
-#undef ABS
 #undef MapLayer
 
 void MarsLighthouseRoomF_JumpGapOrPushStone(void);

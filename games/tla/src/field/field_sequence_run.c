@@ -33,14 +33,15 @@ s32 Leader_StepOffTightrope(void);
 /// The two nibbles of a scene's attributes (Field_GetSceneAttributes).
 #define NIBBLE_LOW(value) ((value) & 15)
 #define NIBBLE_HIGH(value) (((value) >> 4) & 15)
-/// The hazard count's limit each scene starts with, as The Broken Seal's.
+/// The hazard count's limit each scene starts with, in steps on hazard cells:
+/// the hazard deals its damage each time the count reaches it.
 #define HAZARD_LIMIT_DEFAULT 16
 /// A Teleport destination's World Picture marker (FlagEntry.value's high
 /// nibble): 1 for a place the party walks to; 2 for Lemuria's, which it
 /// reaches aboard the ship.
 #define PLACE_MARKER_ON_FOOT (1 << 4)
 #define PLACE_MARKER_ABOARD (2 << 4)
-/// The sprite VRAM blocks the pause menu needs free, or the field's sprites
+/// The sprite VRAM blocks the Pause menu needs free, or the field's sprites
 /// stop drawing while it runs.
 #define PAUSE_MENU_VRAM_BLOCKS 136
 /// The search code aboard the ship facing sea of world map collision 3: the
@@ -70,6 +71,7 @@ s32 FieldSequence_Run(void) {
   s32 talk;
   s32 packed;
 
+  // Set up the scene.
   work = HeapSlot_AllocEwram(HEAP_SLOT_FIELD, sizeof(struct FieldWork));
   Iwram_ClearWordsEntry(work, sizeof(struct FieldWork));
   GameFlag_Clear(FLAG_IN_BATTLE);
@@ -118,8 +120,8 @@ s32 FieldSequence_Run(void) {
     MapGrid_CenterOnFollowedPointFar();
   }
   // XXX (no evidence): what flag 0x11f means; every scene start clears it,
-  // The Broken Seal's does not, and nothing in the game's source sets or reads
-  // it by its number.
+  // The Broken Seal's does not, and nothing in either game's code, tables,
+  // debug flag lists or cleared ranges of flags sets or reads it.
   GameFlag_Clear(0x11f);
   PaletteFade_Initialize();
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
@@ -138,6 +140,9 @@ s32 FieldSequence_Run(void) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
   }
   work->previousCell = gMapGridCellBuffer;
+  // A fresh entry (not a return from battle) resets the hazard count to its
+  // defaults (damage 1 every HAZARD_LIMIT_DEFAULT steps), the stopped actor and
+  // Cloak.
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     Scene_SetRestartPoint();
     gMainRoutineWork.hazardLimit = HAZARD_LIMIT_DEFAULT;
@@ -158,6 +163,7 @@ s32 FieldSequence_Run(void) {
   Field_UpdateHoverReady();
   wait(2);
   SCENE_ENTRIES->initialize();
+  // The scene's initialization may already have taken an exit.
   code = work->exit;
   if (code != 0) {
     result = code;
@@ -165,6 +171,7 @@ s32 FieldSequence_Run(void) {
     goto done;
   }
   GameFlag_Clear(FLAG_KEEP_PARTY_POSITION);
+  // Fade in, show the area name and give what was left pending.
   if (Field_CountRequests() == 0) {
     value = work->transitionActive;
     if (value == 0) {
@@ -181,6 +188,8 @@ s32 FieldSequence_Run(void) {
         HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
       }
       PLTT_BACKDROP = 0;
+      // An arrival the last scene asked for (Entrance_PlayArrival) plays
+      // through the fade; with none, wait out half of it.
       if (!Entrance_PlayArrival())
         wait((work->transitionFrames + 1) / 2);
     }
@@ -240,12 +249,14 @@ s32 FieldSequence_Run(void) {
   entrance = &gMainRoutineWork.entrance;
   layer = &gMainRoutineWork.layer;
   for (;;) {
+    // Note where the leader is, for the requests to use.
     GameFlag_Set(FLAG_FIELD_HANDLING_REQUESTS);
     leader = Field_GetPartyActor();
     Actor_StartIdleFar(leader);
     SET_POSITION(party, leader->x.fixed, 0, leader->z.fixed);
     party->heading = leader->facing;
     *layer = leader->layer;
+    // Handle the pending requests, most urgent first.
     while (Field_CountRequests() != 0) {
       if (work->exit != 0) {
         result = work->exit;
@@ -255,6 +266,7 @@ s32 FieldSequence_Run(void) {
       if (work->raisedTrigger != 0) {
         work->busy = 1;
         if (work->raisedTrigger == FIELD_RAISED_TRIGGER_PARTY_FELL) {
+          // Characters fell to poison or hazardous ground.
           Leader_StopMoving();
           WorldMap_Freeze();
           for (value = 0; value < work->fallenCount; value++) {
@@ -265,6 +277,7 @@ s32 FieldSequence_Run(void) {
                                  FIELD_MESSAGE_ZOOM);
           }
           if (work->survivorCount == 0) {
+            // The whole party fell: back to the restart point with 1 HP.
             if (*leaderId == ACTOR_FELIX)
               Actor_SelectAnimationFar(leader, ANIM_LEADER_FALL_ON_FACE);
             else
@@ -353,6 +366,7 @@ s32 FieldSequence_Run(void) {
         Field_RunPushCell(work->pushCell);
         work->pushCell = 0;
       } else if (work->encounter != 0) {
+        // A random encounter: save the actors and go to the battle.
         Leader_StopMoving();
         ObjectTable_Snapshot();
         party->returnMusic = -1;
@@ -364,6 +378,8 @@ s32 FieldSequence_Run(void) {
         work->encounter = 0;
         *steps = 0;
       } else if (work->aButton != 0) {
+        // Talk to the actor ahead, or examine the cell ahead, or open the field
+        // menu if neither has an event.
         AreaNameWindow_HideFar();
         talk = 0;
         if (gMainRoutineWork.ownerOverride == 0)
@@ -386,6 +402,7 @@ s32 FieldSequence_Run(void) {
         }
         work->aButton = 0;
       } else if (work->fieldMenu != 0) {
+        // The field menu (B + Select in debug mode opens the flag editor).
         AreaNameWindow_HideFar();
         Leader_StopMoving();
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
@@ -434,6 +451,8 @@ s32 FieldSequence_Run(void) {
         WorldMap_ReloadPendingAreaGraphics();
         work->item = 0;
       } else if (work->pauseMenu != 0) {
+        // The Pause menu (in debug mode, B opens the scene select and L the
+        // palette editor).
         Sound_PlayFar(SE_MENU_CURSOR_MOVE);
         Leader_StopMoving();
         WorldMap_Freeze();
@@ -469,6 +488,7 @@ s32 FieldSequence_Run(void) {
             PauseMenu_RunFar(0);
             system->suspended = 0;
           } else {
+            // "The Pause Menu is not available now."
             FieldMessage_ShowFar((s32)MsgFieldPauseUnavailable,
                                  FIELD_MESSAGE_ZOOM);
           }
@@ -478,6 +498,8 @@ s32 FieldSequence_Run(void) {
         work->pauseMenu = 0;
       }
     }
+    // Hand the leader back to the player, with the control order for how the
+    // party moves, and run the walking update until the next request.
     GameFlag_Clear(FLAG_FIELD_HANDLING_REQUESTS);
     if (Field_GetPartyActor() != NULL)
       Actor_StartRenderModeScriptFar();
@@ -506,18 +528,19 @@ done:
 }
 
 /// Returns the cell behavior of the map cell 16 pixels ahead of the party
-/// leader when there is something to search there: a fixed search spot whose
-/// ground is level with the leader or up to 16 pixels above it, or a behavior
-/// the scene has an examine trigger for; aboard the ship on the World Map,
-/// SHIP_SEA_EXAMINE_CODE before sea of collision 3. Returns 0 otherwise.
+/// leader when there is something to search there: a fixed search spot
+/// (CELL_BEHAVIOR_JAR to CELL_BEHAVIOR_WELL) whose ground is level with the
+/// leader or up to 16 pixels above it, or a behavior the scene has an examine
+/// trigger for; aboard the ship on the World Map, SHIP_SEA_EXAMINE_CODE before
+/// sea of collision 3. Returns 0 otherwise.
 s32 Actor_GetTriggerCellAheadOfCurrent(void) {
   struct FieldWork *work;
   struct MapWork *map;
   struct Actor *leader;
   union PolarOffsetPosition probePosition;
   struct MapCell *cell;
-  s32 collisionCode;
-  s32 terrainHeight;
+  s32 behavior;
+  s32 groundHeight;
   s32 result;
 
   result = 0;
@@ -533,6 +556,8 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
 
       Vector_AddPolarOffset(toFIXED(16), leader->facing, position);
     }
+    // World Map cells are 32 pixels square, 32 to a row; map cells 16 pixels
+    // square, MAPGRID_SIZE to a row.
     if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
       s32 x, z;
 
@@ -548,19 +573,18 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
       x = probePosition.vector.x;
       z = probePosition.vector.z;
       cell += (x / toFIXED(MAPGRID_CELL_PIXELS)) +
-              ((z / toFIXED(MAPGRID_CELL_PIXELS)) << 7);
+              (z / toFIXED(MAPGRID_CELL_PIXELS)) * MAPGRID_SIZE;
     }
-    collisionCode = cell->collisionCode;
-    if (collisionCode >= CELL_BEHAVIOR_JAR &&
-        collisionCode <= CELL_BEHAVIOR_WELL) {
-      terrainHeight = MapGrid_GetTerrainHeightFar(
+    behavior = cell->collisionCode;
+    if (behavior >= CELL_BEHAVIOR_JAR && behavior <= CELL_BEHAVIOR_WELL) {
+      groundHeight = MapGrid_GetTerrainHeightFar(
           leader->layer, probePosition.vector.x, probePosition.vector.z);
-      if (terrainHeight >= leader->y.fixed &&
-          terrainHeight <= leader->y.fixed + toFIXED(16)) {
-        result = collisionCode;
+      if (groundHeight >= leader->y.fixed &&
+          groundHeight <= leader->y.fixed + toFIXED(16)) {
+        result = behavior;
       }
-    } else if (Scene_FindTrigger(TRIGGER_EXAMINE, collisionCode) != 0) {
-      result = collisionCode;
+    } else if (Scene_FindTrigger(TRIGGER_EXAMINE, behavior) != 0) {
+      result = behavior;
     }
     if (result == 0 && work->mode == ACTOR_SYSTEM_WORLD_MAP) {
       if (gMainRoutineWork.ownerOverride != 0 &&
@@ -571,46 +595,49 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
   return result;
 }
 
-/// The twin of The Broken Seal's routine: places the party at
-/// its entrance from the area overlay's entrance list and clamps the camera
-/// to that entrance's bounds. With findEntrance it looks the entrance up and
-/// returns 0 when there is none; without, it takes the first row.
+/// Places the party at the entrance it came in by, from the scene's entrance
+/// rows, unless it keeps its position, and sets the map's scroll bounds, at
+/// least a screen (240 x 160 pixels) wide and tall. With findEntrance it looks
+/// the entrance up and returns 0 when there is none; without, it takes the
+/// scene's first row.
 s32 Scene_ApplyEntrance(s32 findEntrance) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 entrance = gMainRoutineWork.entrance;
-  const struct SceneEntrance *entry = SCENE_ENTRIES->entrances();
-  s32 found = 0;
+  const struct SceneEntrance *entranceEntry = SCENE_ENTRIES->entrances();
+  s32 foundEntrance = 0;
   s32 left;
 
   if (findEntrance) {
-    while (entry->entrance != -1) {
-      if (entry->entrance == entrance &&
-          (entry->requiredFlag == -1 || GameFlag_Get(entry->requiredFlag))) {
-        found = 1;
+    while (entranceEntry->entrance != -1) {
+      if (entranceEntry->entrance == entrance &&
+          (entranceEntry->requiredFlag == -1 ||
+           GameFlag_Get(entranceEntry->requiredFlag))) {
+        foundEntrance = 1;
         break;
       }
-      entry++;
+      entranceEntry++;
     }
-    if (!found)
+    if (!foundEntrance)
       return 0;
   }
 
+  // Camera bounds apply even when returning to a saved party position.
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-    SET_POSITION(&gMainRoutineWork, toFIXED(entry->x), toFIXED(entry->y),
-                 toFIXED(entry->z));
-    gMainRoutineWork.heading = entry->facing;
+    SET_POSITION(&gMainRoutineWork, toFIXED(entranceEntry->x),
+                 toFIXED(entranceEntry->y), toFIXED(entranceEntry->z));
+    gMainRoutineWork.heading = entranceEntry->facing;
     gMainRoutineWork.layer = 0;
   }
 
-  left = entry->cameraLeft;
+  left = entranceEntry->cameraLeft;
   if (left != -1)
     map->minX = toFIXED(left);
-  if (entry->cameraTop != -1)
-    map->minZ = toFIXED(entry->cameraTop);
-  if (entry->cameraRight != -1)
-    map->maxX = toFIXED(entry->cameraRight);
-  if (entry->cameraBottom != -1)
-    map->maxZ = toFIXED(entry->cameraBottom);
+  if (entranceEntry->cameraTop != -1)
+    map->minZ = toFIXED(entranceEntry->cameraTop);
+  if (entranceEntry->cameraRight != -1)
+    map->maxX = toFIXED(entranceEntry->cameraRight);
+  if (entranceEntry->cameraBottom != -1)
+    map->maxZ = toFIXED(entranceEntry->cameraBottom);
 
   if (map->minX + toFIXED(DISPLAY_WIDTH) > map->maxX)
     map->minX = map->maxX - toFIXED(DISPLAY_WIDTH);
@@ -687,16 +714,16 @@ s32 Field_PlaceAtEntrance(void) {
       while (*(s8 *)cursor != -1) {
         {
           left = *(s8 *)cursor;
-          leftEdge = left << 4;
+          leftEdge = left * MAPGRID_CELL_PIXELS;
           cursor++;
           top = *(s8 *)cursor;
-          topEdge = top << 4;
+          topEdge = top * MAPGRID_CELL_PIXELS;
           cursor++;
           right = *(s8 *)cursor;
-          rightEdge = right << 4;
+          rightEdge = right * MAPGRID_CELL_PIXELS;
           cursor++;
           bottom = *(s8 *)cursor;
-          bottomEdge = bottom << 4;
+          bottomEdge = bottom * MAPGRID_CELL_PIXELS;
           cursor++;
           if (x >= leftEdge && x <= rightEdge && z - height >= topEdge &&
               z - height <= bottomEdge) {
@@ -739,11 +766,11 @@ s16 Stream_ReadS16(u8 **cursor) {
 /// gMainRoutineWork.entrance, else on a map by the map's own entrance stream
 /// (Field_PlaceAtEntrance), else by the scene's first entrance row.
 void BattleMap_ApplySceneEntranceView(void) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 done;
 
   done = Scene_ApplyEntrance(1);
-  if (event->mode == ACTOR_SYSTEM_MAP && done == 0)
+  if (work->mode == ACTOR_SYSTEM_MAP && done == 0)
     done = Field_PlaceAtEntrance();
   if (done == 0)
     Scene_ApplyEntrance(0);

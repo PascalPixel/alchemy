@@ -2,8 +2,15 @@
 /// Gaia Rock's climbing walls, which its outside and inside overlays keep a
 /// copy of.
 
-/// Each frame while the leader is moved by the keys alone: the collision code
-/// of the wall cell he stands before, 1 to 230, is his step trigger.
+/// The cell behaviors that raise a step trigger, as Field_UpdateWalking reads
+/// them; those above are the field's own (CELL_BEHAVIOR_CLOAK and on).
+#define CELL_BEHAVIOR_EVENT_FIRST 1
+#define CELL_BEHAVIOR_EVENT_LAST 230
+
+/// Each frame while the leader climbs a wall (Field_ClimbUp and Field_ClimbDown
+/// leave the keys alone moving him): the cell behavior of the overhead layer's
+/// cell where he is drawn, if one that raises a step trigger, is his step
+/// trigger.
 void GaiaRock_TriggerWallCell(void) {
   if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_KEYS) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -12,11 +19,15 @@ void GaiaRock_TriggerWallCell(void) {
     s32 x = actor->x.fixed / toFIXED(16);
     s32 z =
         (actor->z.fixed - actor->y.fixed + (toFIXED(0.5) - 1)) / toFIXED(16);
-    struct MapCell *cells = map->layers[2].cells;
-    struct MapCell *cell = &cells[x + (z << 7)];
-    s32 code = cell->collisionCode;
+    struct MapCell *cells = map->layers[MAPGRID_LAYER_OVERHEAD].cells;
+    struct MapCell *cell = &cells[x + z * MAPGRID_SIZE];
+    s32 behavior = cell->collisionCode;
 
-    if (code >= 1 && code <= 230)
-      work->stepTrigger = code;
+    if (behavior >= CELL_BEHAVIOR_EVENT_FIRST &&
+        behavior <= CELL_BEHAVIOR_EVENT_LAST)
+      work->stepTrigger = behavior;
   }
 }
+
+#undef CELL_BEHAVIOR_EVENT_FIRST
+#undef CELL_BEHAVIOR_EVENT_LAST

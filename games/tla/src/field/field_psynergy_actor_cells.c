@@ -160,7 +160,7 @@ struct Actor *Leader_FindActorAhead(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   FIXED position[3];
   // The leader's facing rounded to the nearest quarter turn, in sixteenths.
-  s32 angle = (leader->facing / FACING_STEP + 2) & 12;
+  s32 angle = (leader->facing / FACING_STEP + 2) & 0xc;
   struct Actor *found;
 
   position[0] = leader->x.fixed;
@@ -229,7 +229,7 @@ void EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
   sprite->pivotY = pivotY;
   shape =
       ((attributes >> OBJ_SIZE_SHIFT) | (attributes >> (OBJ_SHAPE_SHIFT - 2))) &
-      15;
+      0xf;
   sprite->width = gOam_ShapeSizes[shape][0];
   sprite->height = gOam_ShapeSizes[shape][1];
   words = (u32 *)&sprite->oam;

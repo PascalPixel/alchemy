@@ -44,18 +44,6 @@ void BattleEffect_StepPaletteToResource(s32 resourceId) {
           REG_DMA3);
 }
 
-/// The canvas as shown, in BG2's tiles.
-#define BG_VRAM ((void *)BG_CHAR_BLOCK(1))
-/// The two blitters in their heap slots, for the draws that build their own.
-#define BLITTER ((DrawRectangle)Ram_HeapSlots->ramCode)
-#define ALT_BLITTER ((DrawRectangle)Ram_HeapSlots->ramCodePaired)
-
-/// A line's sideways sway as its BG2X value in work->bg2xLines, which the
-/// wave HBlank DMA writes line by line. BG2X counts 256ths of a canvas pixel,
-/// so a sway of toFIXED(n) moves the line n / 4 canvas pixels: n / 2 screen
-/// pixels where the canvas is shown at twice its width.
-#define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
-
 /// The casting impacts, by effect kind less 100: each is named for the first
 /// ability whose effect entry selects it as a casting impact; those no ability
 /// selects are named UNUSED_ and for what they load or share. The kinds before
@@ -833,7 +821,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       REG_BG2PA = Q_8_8(1);
       REG_BG2X = (CANVAS_SIZE / 2 - targetPos.x) << 8;
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
-      Iwram_ClearWords(BG_VRAM, CANVAS_VIEW_BYTES);
+      Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
       Iwram_ClearWords(canvas, CANVAS_VIEW_BYTES);
       REG_BLDCNT = 0;
     }
@@ -853,7 +841,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         kind == CASTING_IMPACT_IMPACT_UNUSED_GATHERING ||
         kind == CASTING_IMPACT_IMPACT_UNUSED_MYSTIC_FLAME ||
         kind == CASTING_IMPACT_IMPACT_UNUSED_COMETS) {
-      Iwram_ClearWords(BG_VRAM, CANVAS_VIEW_BYTES);
+      Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
       Iwram_ClearWords(canvas, CANVAS_VIEW_BYTES);
       action->prelude = 0;
       Task_Remove(Palette_StepFadeTransfer);
@@ -879,7 +867,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
     // clears the canvas and hands off to BattleEffect_RunSparkGroups' rising
     // sparks.
     if (kind == CASTING_IMPACT_IMPACT_UNUSED_SEVERE_BLOW) {
-      Iwram_ClearWords(BG_VRAM, CANVAS_VIEW_BYTES);
+      Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
       Iwram_ClearWords(canvas, CANVAS_VIEW_BYTES);
       action->prelude = 0;
       Task_Remove(Palette_StepFadeTransfer);
@@ -890,7 +878,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
       return;
     }
     Iwram_ClearWords(canvas, CANVAS_VIEW_BYTES);
-    Iwram_ClearWords(BG_VRAM, CANVAS_VIEW_BYTES);
+    Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
     // Hammersphere's colours 1 to 63 are greys, from black to white.
     if (kind == CASTING_IMPACT_IMPACT_HAMMERSPHERE) {
       for (i = 1; i != SHEET_PALETTE_COLORS; i++) {
@@ -1723,7 +1711,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         EFFECT_RELEASE_BLITTERS();
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                             BLITTER_TRANSPARENT);
-        blitters[0] = BLITTER;
+        blitters[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
         if (frame == 0) {
           for (i = 0; i != 16 * SARCOPHAGUS_COFFIN_WIDTH; i++)
             work->sheet[i] = Random16() & 31;
@@ -1810,15 +1798,17 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             HeapSlot_Release(HEAP_SLOT_RAM_CODE);
             flags = EFFECT_CLIP_BOUNDS;
             EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, flags, BLITTER_ADDITIVE);
-            BLITTER(canvas, pictures + m * PICTURE_BYTES(BITE_HALF),
-                    targetPos.x / 2 - BITE_HALF_WIDTH, 56, BITE_HALF_WIDTH,
-                    BITE_HALF_HEIGHT);
+            ((DrawRectangle)Ram_HeapSlots->ramCode)(
+                canvas, pictures + m * PICTURE_BYTES(BITE_HALF),
+                targetPos.x / 2 - BITE_HALF_WIDTH, 56, BITE_HALF_WIDTH,
+                BITE_HALF_HEIGHT);
             HeapSlot_Release(HEAP_SLOT_RAM_CODE);
             flags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
             EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, flags, BLITTER_ADDITIVE);
           }
-          BLITTER(canvas, pictures + m * PICTURE_BYTES(BITE_HALF),
-                  targetPos.x / 2, 56, BITE_HALF_WIDTH, BITE_HALF_HEIGHT);
+          ((DrawRectangle)Ram_HeapSlots->ramCode)(
+              canvas, pictures + m * PICTURE_BYTES(BITE_HALF), targetPos.x / 2,
+              56, BITE_HALF_WIDTH, BITE_HALF_HEIGHT);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE);
           BattleEffect_FetchRectangleBlitters(action->side, blitters);
         }
@@ -1865,7 +1855,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                               EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                               BLITTER_TRANSPARENT);
-        blitters[0] = BLITTER;
+        blitters[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
         scrollPos += scrollSpeed;
         if (frame > 6)
           scrollSpeed = scrollSpeed * 48 / DAMPING_SCALE;
@@ -1924,7 +1914,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                               EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                               BLITTER_TRANSPARENT);
-        blitters[0] = BLITTER;
+        blitters[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
         scrollPos += scrollSpeed;
         if (frame == 5)
           scrollPos += toFIXED(32);
@@ -3028,7 +3018,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         kind == CASTING_IMPACT_IMPACT_ICE_CRUSH ||
         kind == CASTING_IMPACT_IMPACT_HAMMERSPHERE ||
         kind == CASTING_IMPACT_IMPACT_ARMOR_CRUSH) {
-      Iwram_ClearWords(BG_VRAM, CANVAS_VIEW_BYTES);
+      Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
       Iwram_ClearWords(canvas, CANVAS_VIEW_BYTES);
       action->prelude = 0;
       Task_Remove(Palette_StepFadeTransfer);
@@ -3061,10 +3051,6 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
     EFFECT_FINISH_CANVAS();
   }
 }
-#undef BG_VRAM
-#undef BLITTER
-#undef ALT_BLITTER
-#undef CANVAS_WAVE_BG2X
 #undef CASTING_IMPACT_DJINN_KINDS
 #undef CASTING_IMPACT_ORB_PICTURES
 #undef CASTING_IMPACT_DJINNI_WIDTH

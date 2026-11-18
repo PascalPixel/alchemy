@@ -738,7 +738,8 @@ enum CanvasFadeShare { CANVAS_FADE_HALF = 50, CANVAS_FADE_THREE_QUARTERS = 75 };
 
 /// A line's 16.16 sideways sway as its BG2X value in work->bg2xLines, which the
 /// wave HBlank DMA writes line by line. BG2X counts 256ths of a canvas pixel,
-/// so a sway of toFIXED(n) moves the line n / 4 canvas pixels.
+/// so a sway of toFIXED(n) moves the line n / 4 canvas pixels: n / 2 screen
+/// pixels where the canvas is shown at twice its width.
 #define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
 
 /// Which way BattleEffect_WipeCanvas sweeps.

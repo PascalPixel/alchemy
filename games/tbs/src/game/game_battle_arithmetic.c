@@ -144,27 +144,27 @@ s32 Equipment_GetUnleashRateBonus(struct Unit *unit) {
 }
 
 /// Rolls whether a character's weapon unleashes, 5 percent a point of its
-/// chance. Returns the unleash action, or 1 for a plain attack.
+/// chance. Returns the unleash's ability, or ABILITY_ATTACK for a plain attack.
 s32 RollWeaponUnleash(struct Unit *unit) {
   const struct ItemDefinition *item;
   FIXED rate;
 
   if (unit->classId == CLASS_NONE) {
-    return 1;
+    return ABILITY_ATTACK;
   }
   item = Inventory_GetEquippedDefinition(unit, ITEM_TYPE_WEAPON);
   if (item == NULL) {
-    return 1;
+    return ABILITY_ATTACK;
   }
-  if (item->unleashAbility == 0) {
-    return 1;
+  if (item->unleashAbility == ABILITY_NONE) {
+    return ABILITY_ATTACK;
   }
   rate = FIXED_ONE *
          (Equipment_GetUnleashRateBonus(unit) + item->unleashChance * 5) / 100;
-  if (rate > (Battle_Random() & 0xFFFF)) {
+  if (rate > (Battle_Random() & 0xffff)) {
     return item->unleashAbility;
   }
-  return 1;
+  return ABILITY_ATTACK;
 }
 
 /// Returns the base chance in percent of an effect; a negative one is fixed,
@@ -219,8 +219,8 @@ s32 Battle_GetEffectBaseSuccessRate(s32 effectId) {
   return -fixedChance;
 }
 
-/// Returns 1 when the unit is weak to the effect, as its enemy kind or class
-/// lists.
+/// Returns 1 when the unit is weak to the effect: one of the three its enemy
+/// kind or class lists.
 s32 BattleAbility_IsWeakToEffect(const struct Unit *target, s32 effectId) {
   const u8 *weakEffects;
   s32 weaknessIndex;

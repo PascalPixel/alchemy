@@ -1,3 +1,6 @@
+/// Ram_HeapSlots->actors, as field_internal.h counts them.
+#define ACTOR_COUNT 64
+
 /// The leader slides over ice from the cell they stand on: from its centre in
 /// the direction the pad holds, or else from its edge toward the centre, then
 /// cell by cell until a wall, a raised cell or another actor stops them.
@@ -42,7 +45,7 @@ retry:
   dz = targetZ - actor->z.fixed;
   dx = targetX - actor->x.fixed;
   if (Iwram_MulFX(dx, dx) + Iwram_MulFX(dz, dz) < toFIXED(4)) {
-    angle = gSlideOnIce_AnglesByKey[(gInput.held >> 4) & 15];
+    angle = gSlideOnIce_AnglesByKey[DPAD_INDEX(gInput.held)];
     // -1 for no direction, tested as its halfword.
     if ((u16)angle == DPAD_ANGLE_NONE)
 #if !TLA_PATCH_1
@@ -52,7 +55,7 @@ retry:
 #endif
   } else {
     angle = Trig_Atan(targetZ - actor->z.fixed, targetX - actor->x.fixed);
-    angle = (angle + DEGtoANG(45)) & 0xc000;
+    angle = FACING_NEAREST_CARDINAL(angle);
   }
   FieldVector_AddPolarOffset(16, angle, position);
   cell = MapGrid_GetCellBehaviorAt(*layer, position[0], position[2]);
@@ -72,8 +75,8 @@ retry:
   actor->acceleration = toFIXED(1) / 10;
   actor->timer = 0;
   Actor_SetMoveTarget(actor, x, actor->y.fixed, z);
-  Actor_SelectAnimation(actor, 2);
-  Actor_SetAnimationSpeed(actor, 48);
+  Actor_SelectAnimation(actor, ANIM_WALK);
+  Actor_SetAnimationSpeed(actor, ANIMATION_STEP_NORMAL * 3);
 #if !TLA_PATCH_1
   FieldActor_WaitForMove(actor);
 #else
@@ -101,8 +104,8 @@ retry:
     radius = actor->radius - 2;
     entry = Ram_HeapSlots->actors;
     flags = &entry->collisionFlags;
-    for (j = 0; j <= 63; j++, flags += sizeof(*entry), entry++) {
-      if (entry->script != NULL && (1 & *flags) && entry != actor) {
+    for (j = 0; j < ACTOR_COUNT; j++, flags += sizeof(*entry), entry++) {
+      if (entry->script != NULL && (ACTOR_SOLID & *flags) && entry != actor) {
         if (Event_CheckSpheresOverlap(&entry->x.fixed, radius, position,
                                       entry->radius - 2) >= 0)
           goto blocked;
@@ -138,5 +141,7 @@ end:
   actor->update = NULL;
   actor->steeringFlags |= ACTOR_FACES_MOTION;
   actor->acceleration = toFIXED(1) / 4;
-  Actor_SelectAnimation(actor, 1);
+  Actor_SelectAnimation(actor, ANIM_STAND);
 }
+
+#undef ACTOR_COUNT

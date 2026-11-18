@@ -785,10 +785,10 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *actor) {
                                 &rightPosition);
           if ((WorldMap_IsWalkable(actor, &position) |
                WorldMap_IsWalkable(actor, &leftPosition) |
-               WorldMap_IsWalkable(actor, &rightPosition)) != 0)
-            continue;
-          angle = (s16)direction;
-          goto update_object;
+               WorldMap_IsWalkable(actor, &rightPosition)) == 0) {
+            angle = (s16)direction;
+            goto update_object;
+          }
         }
         collision |= PLAYER_STEP_BLOCKED_BY_MAP;
       }

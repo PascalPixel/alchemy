@@ -18,10 +18,13 @@
 #define TRANSITION_EDGE_OFFSETS 32
 /// Where the centre-line transition puts its two lines once they meet: below
 /// the screen, so no switch happens.
-#define CENTRE_LINE_HIDDEN_FIRST 200
-#define CENTRE_LINE_HIDDEN_SECOND 250
+#define CENTER_LINE_HIDDEN_FIRST 200
+#define CENTER_LINE_HIDDEN_SECOND 250
 /// The colour the dissolve covers the screen in, the window palette's last.
 #define DISSOLVE_COVER_COLOR 15
+/// REG_WINOUT's high byte, what the sprite window shows, which a window
+/// transition keeps as it was.
+#define WINOUT_WINOBJ_MASK 0xff00
 
 /// Each VBlank, before drawing: turns windows 0 and 1 on, writes the first four
 /// values of the shown page into WININ, WINOUT, WIN0H and WIN1H, and has DMA 0
@@ -441,7 +444,7 @@ void ScreenTransition_InitializeBattleEffectState(s32 mode) {
   state->mode = mode;
   state->value = 0;
   state->mask = WININ_WIN0_ALL | WININ_WIN1_ALL;
-  state->active = (REG_WINOUT & 0xff00) | WINOUT_WIN01_BG0;
+  state->active = (REG_WINOUT & WINOUT_WINOBJ_MASK) | WINOUT_WIN01_BG0;
   Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_FRAME);
   Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PASS_VBLANK - 10);
 }
@@ -463,19 +466,20 @@ struct ScreenTransitionState *ScreenTransition_AllocateAndClearState(void) {
   return state;
 }
 
-/// Fades the screen in over frames frames. mode's high byte is its enum
-/// ScreenTransitionStyle: from black, from the backdrop colour, a window
-/// transition (its low byte an enum WindowTransitionMode), a dissolve or
-/// opening from the centre line (which a non-zero low byte makes flicker).
+/// Fades the screen in over frames frames. mode is a SCENE_TRANSITION: its
+/// high byte an enum ScreenTransitionStyle (from black, from the backdrop
+/// colour, a window transition whose low byte is an enum WindowTransitionMode,
+/// a dissolve, or opening from the centre line, which a non-zero low byte makes
+/// flicker).
 void ScreenTransition_Start(s32 mode, s32 frames) {
   struct MapViewWork *display;
   s32 variant;
-  s32 transitionKind;
+  s32 style;
 
   display = (struct MapViewWork *)Ram_HeapSlots->mapGrid;
-  transitionKind = (mode >> 8) & 0xff;
-  variant = mode & 0xff;
-  switch (transitionKind) {
+  style = SCENE_TRANSITION_STYLE(mode);
+  variant = SCENE_TRANSITION_VARIANT(mode);
+  switch (style) {
   case TRANSITION_FADE:
     ScreenFade_ToBlack(0);
     ScreenFade_FromBlack(frames);
@@ -495,7 +499,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
     state->mode = variant;
     state->value = 0;
     state->mask = WININ_WIN0_ALL;
-    state->active = (REG_WINOUT & 0xff00) | WINOUT_WIN01_BG0;
+    state->active = (REG_WINOUT & WINOUT_WINOBJ_MASK) | WINOUT_WIN01_BG0;
     Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_FRAME);
     Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PASS_VBLANK - 10);
     wait(1);
@@ -557,11 +561,11 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
 /// in.
 void ScreenTransition_Finish(s32 mode, s32 frames) {
   s32 variant;
-  s32 transitionKind;
+  s32 style;
 
-  transitionKind = (mode >> 8) & 0xff;
-  variant = mode & 0xff;
-  switch (transitionKind) {
+  style = SCENE_TRANSITION_STYLE(mode);
+  variant = SCENE_TRANSITION_VARIANT(mode);
+  switch (style) {
   case TRANSITION_FADE:
     ScreenFade_FromBlack(0);
     ScreenFade_ToBlack(frames);
@@ -576,7 +580,7 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
     state->mode = variant;
     state->value = TRANSITION_OPEN;
     state->mask = WININ_WIN0_ALL;
-    state->active = (REG_WINOUT & 0xff00) | WINOUT_WIN01_BG0;
+    state->active = (REG_WINOUT & WINOUT_WINOBJ_MASK) | WINOUT_WIN01_BG0;
     Task_Add(ScreenTransition_UpdateScanlineTable, TASK_PASS_FRAME);
     Task_Add(FieldEffect_StartWindowHBlankDma, TASK_PASS_VBLANK - 10);
     wait(1);
@@ -690,8 +694,8 @@ void ScreenTransition_Update(void) {
   // Once the lines meet at the centre they are put below the screen.
   edgeDistance = state->value;
   if (edgeDistance >= DISPLAY_HEIGHT / 2) {
-    window->windowTop = CENTRE_LINE_HIDDEN_FIRST;
-    window->windowBottom = CENTRE_LINE_HIDDEN_SECOND;
+    window->windowTop = CENTER_LINE_HIDDEN_FIRST;
+    window->windowBottom = CENTER_LINE_HIDDEN_SECOND;
   } else {
     window->windowTop = edgeDistance;
     window->windowBottom = DISPLAY_HEIGHT - 1 - edgeDistance;
@@ -728,8 +732,8 @@ void ScreenTransition_UpdateFromCentre(void) {
 
   edgeDistance = state->value;
   if (edgeDistance >= DISPLAY_HEIGHT / 2) {
-    window->windowTop = CENTRE_LINE_HIDDEN_FIRST;
-    window->windowBottom = CENTRE_LINE_HIDDEN_SECOND;
+    window->windowTop = CENTER_LINE_HIDDEN_FIRST;
+    window->windowBottom = CENTER_LINE_HIDDEN_SECOND;
   } else if (edgeDistance != 0 && (gFrameCount & 1)) {
     window->windowTop = edgeDistance + DISPLAY_HEIGHT / 2;
     window->windowBottom = DISPLAY_HEIGHT / 2 - edgeDistance;
@@ -764,24 +768,24 @@ again:
   switch (state->irqPhase) {
   case DISPLAY_TRANSITION_IRQ_WAIT_FIRST:
     if (scanline >= state->irqFirstLine) {
-      REG_DISPCNT = (REG_DISPCNT & 0xfff8) | DISPCNT_MODE_2;
+      REG_DISPCNT = (REG_DISPCNT & (u16)~DISPCNT_MODE_MASK) | DISPCNT_MODE_2;
       state->irqPhase = DISPLAY_TRANSITION_IRQ_DONE;
     }
     break;
   case DISPLAY_TRANSITION_IRQ_WAIT_SECOND:
     if (scanline >= state->irqSecondLine) {
-      REG_DISPCNT &= 0xfff8;
+      REG_DISPCNT &= (u16)~DISPCNT_MODE_MASK;
       state->irqPhase = DISPLAY_TRANSITION_IRQ_DONE;
     }
     break;
   case DISPLAY_TRANSITION_IRQ_WAIT_EITHER:
     if (scanline >= state->irqFirstLine) {
-      REG_DISPCNT = (REG_DISPCNT & 0xfff8) | DISPCNT_MODE_2;
+      REG_DISPCNT = (REG_DISPCNT & (u16)~DISPCNT_MODE_MASK) | DISPCNT_MODE_2;
       state->irqPhase++;
       goto again;
     }
     if (scanline >= state->irqSecondLine) {
-      REG_DISPCNT &= 0xfff8;
+      REG_DISPCNT &= (u16)~DISPCNT_MODE_MASK;
       state->irqPhase = DISPLAY_TRANSITION_IRQ_WAIT_FIRST;
       goto again;
     }
@@ -889,6 +893,7 @@ void ScreenTransition_InitializeState(s32 value) {
 #undef TRANSITION_NOISE_EDGE_MAX
 #undef TRANSITION_RIPPLE_LINES_MAX
 #undef TRANSITION_EDGE_OFFSETS
-#undef CENTRE_LINE_HIDDEN_FIRST
-#undef CENTRE_LINE_HIDDEN_SECOND
+#undef CENTER_LINE_HIDDEN_FIRST
+#undef CENTER_LINE_HIDDEN_SECOND
 #undef DISSOLVE_COVER_COLOR
+#undef WINOUT_WINOBJ_MASK

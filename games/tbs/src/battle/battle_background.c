@@ -268,7 +268,7 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y, s32 zoom) {
 UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 #endif
   FIXED span = BATTLE_CAMERA_DISTANCE;
-  // UB: zoom is never set, so the scale is whatever its register held; UBFIX
+  // UB: zoom is never set, so the scale is whatever it happens to hold; UBFIX
   // takes it as a parameter.
 #ifndef UBFIX
   s32 zoom;

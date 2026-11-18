@@ -65,8 +65,6 @@ extern const struct Scale gMeteorBlow_DoubleScale;
 #define METEOR_BLOW_CONE_PROJECTED 22336
 #define METEOR_BLOW_CONE_CORNERS 24384
 #define METEOR_BLOW_CONE_MESH 25408
-/// A texture's scroll wraps within 128 texels.
-#define TEXTURE_SCROLL_MASK 0x7f
 
 /// Where DustBlobSheet, BillowTexture and FlameBandTexture are decoded in the
 /// effect's pictures.

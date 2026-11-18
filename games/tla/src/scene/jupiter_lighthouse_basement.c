@@ -58,9 +58,6 @@
 /// The side room's sparks, which take turns at the particle sheet's two
 /// swells.
 #define JUPITER_LIGHTHOUSE_BASEMENT_SPARK_COUNT 16
-/// How long a spark lives before it starts again: a slow swell and the 12
-/// frames it stays gone after, or a quick one.
-enum { SPARK_SLOW_LIFETIME = 212, SPARK_QUICK_LIFETIME = 116 };
 
 /// The cells Cyclone acts on in the teleporters' room: the weeds round the
 /// near teleporter, the five of the Mad Plant's patch that hide nothing, the
@@ -194,7 +191,7 @@ void JupiterLighthouse_RestartSpark(struct Actor *actor) {
     SET_ACTOR_POSITION(actor, position[0], position[1], position[2]);
   }
   actor->userValue = actor->timer;
-  if (actor->timer == SPARK_SLOW_LIFETIME)
+  if (actor->timer == PARTICLE_SLOW_LIFETIME)
     Actor_SelectAnimation(actor, ANIM_PARTICLE_SLOW_SWELL);
   else
     Actor_SelectAnimation(actor, ANIM_PARTICLE_QUICK_SWELL);
@@ -252,10 +249,10 @@ void JupiterLighthouse_SpawnSparks(void) {
     ((struct FieldSprite *)actor->sprite)->priority = 1;
     Actor_SetBlendMode(actor, OBJ_MODE_SEMI_TRANSPARENT);
     if (i & 1) {
-      actor->timer = SPARK_SLOW_LIFETIME;
+      actor->timer = PARTICLE_SLOW_LIFETIME;
       actor->userValue = 0;
     } else {
-      actor->timer = SPARK_QUICK_LIFETIME;
+      actor->timer = PARTICLE_QUICK_LIFETIME;
       actor->userValue = 0;
     }
     i++;

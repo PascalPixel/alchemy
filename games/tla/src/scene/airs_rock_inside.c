@@ -460,10 +460,6 @@ extern struct ActorPlacement gAirsRockInside_CoinsChestPlacements[];
 void TilesetAnim_SuspendAll(void);
 void TilesetAnim_ResumeAll(void);
 
-/// How long a mote drifts before it scatters again: a slow swell and the 12
-/// frames it stays gone after, or a quick one.
-enum { MOTE_SLOW_LIFETIME = 212, MOTE_QUICK_LIFETIME = 116 };
-
 /// A mote of light moves on to a random spot, x 176 to 431 pixels and y and z
 /// up to 31 and 127 pixels past the leader's, to drift there for its timer's
 /// frames, swelling slowly or quickly by its lifetime.
@@ -476,7 +472,7 @@ void AirsRockInside_ScatterMote(struct Actor *actor) {
     actor->z.fixed = leader->z.fixed + INTtoFIXED(Random16() & 127);
   }
   actor->userValue = actor->timer;
-  if (actor->timer == MOTE_SLOW_LIFETIME)
+  if (actor->timer == PARTICLE_SLOW_LIFETIME)
     Actor_SelectAnimation(actor, ANIM_PARTICLE_SLOW_SWELL);
   else
     Actor_SelectAnimation(actor, ANIM_PARTICLE_QUICK_SWELL);
@@ -3080,10 +3076,10 @@ void AirsRockInside_SpawnMotes(void) {
     Actor_SetSpriteFlags(actor, 0);
     Actor_SetSpriteColor(actor, SPRITE_COLOR_RBG);
     if (i & 1) {
-      actor->timer = MOTE_SLOW_LIFETIME;
+      actor->timer = PARTICLE_SLOW_LIFETIME;
       actor->userValue = 0;
     } else {
-      actor->timer = MOTE_QUICK_LIFETIME;
+      actor->timer = PARTICLE_QUICK_LIFETIME;
       actor->userValue = 0;
     }
     Actor_SetBlendMode(actor, 1);

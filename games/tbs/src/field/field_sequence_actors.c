@@ -10,6 +10,18 @@ enum {
   ACTOR_DJINNI_FLAG_COUNT = ELEMENT_COUNT * 20
 };
 
+/// A placement row's sprite: 0 to 7 is a party member, who keeps that actor id;
+/// one up to this takes the next free slot, and one above it, which no table
+/// names, takes the slot of the row before.
+#define PLACEMENT_SPRITE_MAX 9989
+
+/// The ids Actor_Lookup answers: more than the ACTOR_ID_COUNT slots, so one
+/// past them reads the field work's members after the slots.
+#define LOOKUP_ID_COUNT 192
+
+/// An Actor_Create id of enum ActorCreateKind `kind`, above its sprite.
+#define ACTOR_CREATE_KIND(kind) ((kind) << 12)
+
 /// Returns the sprite of character, which is the character itself except that
 /// FLAG_CHILDHOOD gives Isaac and Garet SPRITE_ISAAC_CHILD and
 /// SPRITE_GARET_CHILD, and FLAG_ISAAC_WEARS_TUNIC gives grown Isaac sprite
@@ -85,7 +97,7 @@ void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
     // row sets actorIndex.
     if (entry->sprite <= 7)
       actorIndex = entry->sprite;
-    else if (entry->sprite <= 9989)
+    else if (entry->sprite <= PLACEMENT_SPRITE_MAX)
       actorIndex = slot++;
     condition = entry->condition;
     if (!GameFlag_IsConditionActive(condition))
@@ -249,8 +261,8 @@ void Actor_ResetForLeader(struct ActorPlacement *table) {
 
   // The camera follows this leader and starts at its resolved ground height;
   // the map scrolls by the camera's position. It takes no sprite.
-  camera = Actor_CreateFar(ACTOR_CREATE_NO_SPRITE << 12, actor->x.fixed,
-                           actor->y.fixed, actor->z.fixed);
+  camera = Actor_CreateFar(ACTOR_CREATE_KIND(ACTOR_CREATE_NO_SPRITE),
+                           actor->x.fixed, actor->y.fixed, actor->z.fixed);
   camera->groundHeight = actor->groundHeight;
   Actor_StartCameraFar(camera, (s32)actor);
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
@@ -329,6 +341,9 @@ void Scene_AssignViewFlags(struct ActorPlacement *entry) {
   }
 }
 
+/// The byte of struct Sprite after its slot, whose bit 0 is retainCacheEntry.
+#define SPRITE_CACHE_FLAGS (offsetof(struct Sprite, slot) + 1)
+
 /// Releases the placed actors far from the view's centre: more than 160 pixels
 /// to either side, 200 pixels north or 100 pixels south. Actors at (0, 0) stay.
 void Actor_ClearOutOfBounds(void) {
@@ -352,6 +367,7 @@ void Actor_ClearOutOfBounds(void) {
   top = centerZ - toFIXED(200);
   bottom = centerZ + toFIXED(100);
   actorSlot = &work->actors[ACTOR_FIRST_PLACED];
+  // Every bit of SPRITE_CACHE_FLAGS but retainCacheEntry.
   releaseCacheMask = ~1;
 
   for (i = 0; i < PLACED_MAX; i++) {
@@ -369,13 +385,13 @@ void Actor_ClearOutOfBounds(void) {
           u32 flags;
 
           // ACTOR_SPRITE_ONE makes the release free the actor's one
-          // sprite, and clearing retainCacheEntry (bit 0 of sprite byte 29)
-          // frees its VRAM cache entry with it, even one shared with a
-          // neighbour (ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE).
+          // sprite, and clearing retainCacheEntry frees its VRAM cache entry
+          // with it, even one shared with a neighbour
+          // (ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE).
           *removed = ACTOR_SPRITE_ONE;
           sprite = (u8 *)actor->sprite;
-          flags = sprite[29];
-          sprite[29] = flags & releaseCacheMask;
+          flags = sprite[SPRITE_CACHE_FLAGS];
+          sprite[SPRITE_CACHE_FLAGS] = flags & releaseCacheMask;
           Actor_ReleaseFar(actor);
           sprite = NULL;
           *actorSlot = (struct Actor *)sprite;
@@ -427,14 +443,14 @@ void Actor_ClearAll(void) {
   }
 }
 
-/// Returns the actor in slot index (below ACTOR_ID_COUNT), or NULL.
+/// Returns the actor in slot actorIndex (below LOOKUP_ID_COUNT), or NULL.
 void *Actor_Lookup(u32 actorIndex) {
   u8 *workBytes = (u8 *)gFieldWork;
   u32 slotOffset;
 #ifdef UBFIX
   void *object;
 #endif
-  if (actorIndex > 191)
+  if (actorIndex > LOOKUP_ID_COUNT - 1)
     return 0;
   slotOffset = (actorIndex * 4) + offsetof(struct FieldWork, actors);
 #ifdef UBFIX
@@ -564,3 +580,7 @@ void Actor_Restore(void) {
 #undef FLAG_IN_VIEW
 #undef FLAG_OUT_OF_VIEW
 #undef PLACED_MAX
+#undef PLACEMENT_SPRITE_MAX
+#undef LOOKUP_ID_COUNT
+#undef ACTOR_CREATE_KIND
+#undef SPRITE_CACHE_FLAGS

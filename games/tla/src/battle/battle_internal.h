@@ -236,6 +236,10 @@ struct BattleLinkedActionState {
 /// sprites.
 #define ACTOR_SPRITE_GROUP_SIZE 4
 
+/// Where a battle object's resource keeps its sprite slot, above its sprite:
+/// (slot << RESOURCE_SLOT_SHIFT) | sprite.
+#define RESOURCE_SLOT_SHIFT 12
+
 // What BattleActionRun_Build returns besides 0, which stages the action.
 #define ACTION_REPORTED -1 ///< the action failed and its message is shown
 #define ACTION_NOTHING_TO_SHOW -2 ///< nothing to stage or show

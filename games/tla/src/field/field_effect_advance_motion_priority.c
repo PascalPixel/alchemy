@@ -7,6 +7,11 @@
 #include "field/event.h"
 #include "field/sprite.h"
 
+/// A drifting effect loses a FIELD_EFFECT_DRAG_X-th of its x speed and a
+/// FIELD_EFFECT_DRAG_Z-th of its z speed each frame.
+#define FIELD_EFFECT_DRAG_X 18
+#define FIELD_EFFECT_DRAG_Z 16
+
 /// FieldEffect_AdvanceMotion, then gives the effect's sprite the leader's
 /// sprite priority, so the effect is drawn at the leader's depth.
 void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object) {
@@ -14,7 +19,7 @@ void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object) {
   s32 velocityX = effect->velocity.x;
   s32 velocityZ;
   struct MainRoutineWork *party;
-  struct Sprite *sprite;
+  struct FieldSprite *sprite;
   struct Actor *leader;
   struct PlacedSprite *to;
   struct PlacedSprite *from;
@@ -23,8 +28,8 @@ void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object) {
   effect->y += effect->velocity.y;
   velocityZ = effect->velocity.z;
   effect->z += velocityZ;
-  effect->velocity.x = velocityX - velocityX / 18;
-  effect->velocity.z = velocityZ - velocityZ / 16;
+  effect->velocity.x = velocityX - velocityX / FIELD_EFFECT_DRAG_X;
+  effect->velocity.z = velocityZ - velocityZ / FIELD_EFFECT_DRAG_Z;
   effect->scaleX += effect->scaleRateX;
   sprite = effect->sprite;
   effect->scaleY += effect->scaleRateY;
@@ -37,3 +42,6 @@ void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object) {
   from = (struct PlacedSprite *)leader->sprite;
   to->priority = from->priority;
 }
+
+#undef FIELD_EFFECT_DRAG_X
+#undef FIELD_EFFECT_DRAG_Z

@@ -261,6 +261,9 @@ enum { MAP_WADING_MUD = 2 };
 /// and how many the stump sinks before it is gone.
 #define LEADER_SINK_ROWS 20
 #define STUMP_SINK_ROWS 24
+/// Each frame the leader walks on the mud sinks them by this share of the full
+/// depth, and 1 more.
+#define MUD_SINK_FRAMES 96
 
 /// The vents' gusts: each vent blows south along a column of cells whose step
 /// trigger is TRIGGER_FIRST_GUST plus its place in its room's list
@@ -1189,7 +1192,15 @@ void TaopoSwamp_DripAtRandom(void) {
   }
 }
 
-/// The vents room's cycle of 480 frames: two sets of vents blow in turn, and
+/// The vents' cycle in the vents room, the pillar gap and the drips room.
+#define VENT_CYCLE_FRAMES 480
+/// The lava rocks' room's vents blow for ROCK_ROOM_VENTS_BLOW_FRAMES of every
+/// ROCK_ROOM_VENT_CYCLE_FRAMES.
+#define ROCK_ROOM_VENTS_BLOW_FRAMES 180
+#define ROCK_ROOM_VENT_CYCLE_FRAMES 240
+
+/// The vents room's cycle of VENT_CYCLE_FRAMES: two sets of vents blow in turn,
+/// and
 /// while the second blows with the east pillar over its vent, Flower is blown
 /// off its ledge.
 void TaopoSwamp_CycleDjinniVents(void) {
@@ -1234,11 +1245,12 @@ void TaopoSwamp_CycleDjinniVents(void) {
       !Event_GetFlag(FLAG_DJINNI(DJINNI_FLOWER)) &&
       !Event_GetFlag(FLAG_TAOPO_SWAMP_FLOWER_OFF_LEDGE))
     gFieldWork->raisedTrigger = TRIGGER_FLOWER_IN_GUST;
-  Vent_AdvanceCounter(480);
+  Vent_AdvanceCounter(VENT_CYCLE_FRAMES);
 }
 
-/// The pillar gap's vents' cycle: they blow for 120 frames in 480, and while
-/// they blow they break the spot's ice pillar or blow its puddle away.
+/// The pillar gap's vents' cycle: they blow for 120 frames in
+/// VENT_CYCLE_FRAMES, and while they blow they break the spot's ice pillar or
+/// blow its puddle away.
 void TaopoSwamp_CycleSpotVent(void) {
   s32 timer = Vent_GetCounter();
 
@@ -1260,7 +1272,7 @@ void TaopoSwamp_CycleSpotVent(void) {
     else if (Event_GetFlag(FLAG_TAOPO_SWAMP_SPOT_WET))
       TaopoSwamp_BlowAwayPuddle(8);
   }
-  Vent_AdvanceCounter(480);
+  Vent_AdvanceCounter(VENT_CYCLE_FRAMES);
 }
 
 /// As TaopoSwamp_CycleSpotVent, for the spot the ceiling drips onto.
@@ -1285,10 +1297,10 @@ void TaopoSwamp_CycleDripVent(void) {
     else if (Event_GetFlag(FLAG_TAOPO_SWAMP_SPOT_WET))
       TaopoSwamp_BlowAwayDripPuddle(ACTOR_DRIP_PUDDLE);
   }
-  Vent_AdvanceCounter(480);
+  Vent_AdvanceCounter(VENT_CYCLE_FRAMES);
 }
 
-/// The lava rocks' room's vents' cycle: they blow for 180 frames in 240.
+/// The lava rocks' room's vents' cycle.
 void TaopoSwamp_CycleRockRoomVents(void) {
   switch (Vent_GetCounter()) {
   case 0:
@@ -1296,13 +1308,13 @@ void TaopoSwamp_CycleRockRoomVents(void) {
     Vent_SetBlowing(1, 1);
     Scene_QueueMusic(SE_AMBIENT_WATER);
     break;
-  case 180:
+  case ROCK_ROOM_VENTS_BLOW_FRAMES:
     Vent_SetBlowing(0, 0);
     Vent_SetBlowing(1, 0);
     Scene_QueueMusic(-1);
     break;
   }
-  Vent_AdvanceCounter(240);
+  Vent_AdvanceCounter(ROCK_ROOM_VENT_CYCLE_FRAMES);
 }
 
 /// A drop from the ceiling lands: it splashes and grows the puddle below by
@@ -1957,7 +1969,7 @@ void TaopoSwamp_SinkInMud(void) {
     step = LEADER_SINK_ROWS * MUD_DEPTH_ROW;
     if (gInput & KEY_B)
       step = step * 3 >> 1;
-    state->depth += step / 96 + 1;
+    state->depth += step / MUD_SINK_FRAMES + 1;
   }
   sprite->sunkRows = state->depth / MUD_DEPTH_ROW;
   state->footing = FOOTING_MUD;

@@ -12,6 +12,10 @@
 #define SPRITE_ID_MASK 0xfff
 #define SPRITE_SECOND_PART 0x2001
 
+/// The orbs of RESOURCE_COLOURED_ORBS, one 256-colour tile each: sixteen in
+/// five colours, large and small, three colours twice.
+#define ORB_PICTURES 16
+
 struct ResourceObject;
 struct Sprite;
 

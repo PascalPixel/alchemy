@@ -95,8 +95,6 @@ enum JupiterLighthouseRoomRedKeyActorId {
 #define RING_PULSES 20
 /// The sparks of the activation's ring, from the leader to the beam.
 #define ACTIVATION_SPARKS 96
-/// The coloured orbs' pictures, one 256-colour tile each.
-#define ORB_PICTURES 16
 #include "text/msg_ids.h"
 
 struct Actor;

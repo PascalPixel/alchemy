@@ -11,8 +11,6 @@
 
 /// The PCM keys gScaleTable has a code for, 0 to 179.
 #define SCALE_KEY_COUNT 180
-/// A semitone in a pitch, kept in 1/256 semitone, as driver.c keeps it.
-enum { SOUND_PITCH_SEMITONE = 256 };
 /// Moves a pitch in 1/256 semitone to the top byte of a 32-bit fraction, the
 /// share of the step to the next key that umul3232H32 takes.
 #define PITCH_FRACTION_SHIFT 24

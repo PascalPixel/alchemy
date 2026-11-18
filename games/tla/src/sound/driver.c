@@ -400,13 +400,6 @@ enum { SOUND_PAN_LEFT = -128, SOUND_PAN_RIGHT = 127 };
 /// 1.0 in the factor (SOUND_MODULATION_ONE + modAmount) / SOUND_MODULATION_ONE
 /// by which volume modulation scales a track's volume.
 enum { SOUND_MODULATION_ONE = 128 };
-/// A semitone in a track's pitch, kept in 1/256 semitone, and in its tune and
-/// bend, in 1/64, and its pitch modulation, in 1/16.
-enum {
-  SOUND_PITCH_SEMITONE = 256,
-  SOUND_TUNE_SEMITONE = 64,
-  SOUND_MODULATION_SEMITONE = 16
-};
 
 /// Recalculates dirty stereo volumes and pitch from track settings and
 /// modulation.

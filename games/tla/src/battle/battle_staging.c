@@ -11,9 +11,9 @@
 #include "battle/presentation.h"
 
 /// A party member's attack effect, staged by id range (EFFECT_BY_ID_RANGE):
-/// effect 1 for Isaac, Garet, Felix, Jenna and Piers, 4 for Ivan, Mia and
-/// Sheba, any other none. The Broken Seal writes the same choice inline in
-/// BattleActionRun_Build.
+/// ATTACK_EFFECT_SLASH for Isaac, Garet, Felix, Jenna and Piers,
+/// ATTACK_EFFECT_WAVE for Ivan, Mia and Sheba, as their gBattleSprites rows
+/// give, any other none.
 s32 BattleUnit_GetPartyAttackEffect(s32 characterId) {
   /* FAKEMATCH(temporary): the character copied to id, so that characterId
      carries the effect. */
@@ -26,12 +26,12 @@ s32 BattleUnit_GetPartyAttackEffect(s32 characterId) {
   case FELIX:
   case JENNA:
   case PIERS:
-    characterId = EFFECT_BY_ID_RANGE | 1;
+    characterId = EFFECT_BY_ID_RANGE | ATTACK_EFFECT_SLASH;
     break;
   case IVAN:
   case MIA:
   case SHEBA:
-    characterId = EFFECT_BY_ID_RANGE | 4;
+    characterId = EFFECT_BY_ID_RANGE | ATTACK_EFFECT_WAVE;
     break;
   }
   return characterId;
@@ -266,6 +266,8 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
       battle->plan.partnerId = swap;
       battle->plan.battleEffect = BattleUnit_GetPartyAttackEffect(
           Unit_Get(battle->plan.unitId)->enemyId);
+      // A partner striking its own side: "<partner>, stop hitting yourself!"
+      // at itself, "<partner> attacks an ally!" at another.
       if (((battle->plan.unitId ^ battle->plan.targetIds[0]) >> 7) == 0) {
         MessageArgument_PushFar(battle->plan.unitId, MESSAGE_ARGUMENT_ACTOR);
         if (battle->plan.unitId == battle->plan.targetIds[0])
@@ -287,8 +289,10 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
       battle->skipPlayback = 1;
       BattleStaging_RunPsynergyCast(&battle->plan, CAST_DJINNI);
       battle->skipPlayback = 0;
+      // "Djinn are recovering more quickly!"
       BattleMessage_ShowAndWaitFar((s32)&MsgDjinnRecoverFaster);
       kept = DjinnRecovery_CountDownSide(battle->plan.targetIds[0] > ALLY_MAX);
+      // "But no Djinn are in Recovery!"
       if (kept == 0)
         BattleMessage_ShowAndWaitFar((s32)(MsgDjinnRecoverFaster + 1));
       if (kept <= 1)
@@ -380,9 +384,9 @@ void BattleStaging_BuildTargetList(struct BattlePlan *plan,
   effect->initialValue = 1;
 }
 
-/// Plays a flee action, The Broken Seal's BattleStaging_RunFlee without its
-/// last wait: the party runs unless encounterMode is 2, and an enemy gets away
-/// 7 times in 10. Returns 1 when the party got away.
+/// Plays a unit's attempt to run: the party runs off one by one unless the roll
+/// failed ("But there's no escape!"); an enemy gets away 7 times in 10. Returns
+/// 1 when the party got away.
 s32 BattleStaging_RunFlee(struct BattlePlan *plan) {
   s32 completed;
   struct BattleBackgroundWork *presentation = Ram_HeapSlots->battleBackground;
@@ -599,7 +603,8 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
 
 /// Clears the highlights, applies each target's effect and runs the events.
 /// With no targets, only waits for the message to advance.
-s32 BattleStaging_RunActorEntries(struct BattlePlan *plan, s32 unused) {
+UNREAD_RESULT BattleStaging_RunActorEntries(struct BattlePlan *plan,
+                                            s32 unused) {
   s32 targetIndex;
 
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);

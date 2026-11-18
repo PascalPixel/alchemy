@@ -911,7 +911,8 @@ s32 Scene_Initialize(void) {
     Actor_Get(ACTOR_FENCE_BOULDER)->collisionFlags |= ACTOR_NOT_TARGETED;
     Actor_SetPosition(ACTOR_ROCKSLIDE_SURVIVOR, 83, 265);
     Actor_WalkToAndWait(ACTOR_ROCKSLIDE_SURVIVOR, 83, 273);
-    Actor_SetAnimation(ACTOR_ROCKSLIDE_SURVIVOR, 5);
+    Actor_SetAnimation(ACTOR_ROCKSLIDE_SURVIVOR,
+                       YOUNG_MAN_WITH_BROWN_HAIR_ANIMATION_LIE);
     Actor_Get(ACTOR_ROCKSLIDE_SURVIVOR)->radius = 12;
     Actor_SetScript(ACTOR_ROCKSLIDE_SURVIVOR,
                     gValeKradensCottage_RockslideSurvivorSquashes);
@@ -1020,7 +1021,9 @@ static void ValeKradensCottage_TalkToRockslideSurvivor(void) {
         Actor_FaceActor(ACTOR_ROCKSLIDE_SURVIVOR, ACTOR_PARTY_LEADER, 0);
         Actor_SetAnimation(ACTOR_ROCKSLIDE_SURVIVOR, ANIM_STAND);
         Actor_Jump(ACTOR_ROCKSLIDE_SURVIVOR, 4, 40);
-        Actor_SetAnimation(ACTOR_ROCKSLIDE_SURVIVOR, 6);
+        Actor_SetAnimation(
+            ACTOR_ROCKSLIDE_SURVIVOR,
+            YOUNG_MAN_WITH_BROWN_HAIR_ANIMATION_LOOK_HIMSELF_OVER);
         Actor_ShowEmote(ACTOR_ROCKSLIDE_SURVIVOR,
                         EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
         // "Wait... That's strange... I'm not hurt at all!"

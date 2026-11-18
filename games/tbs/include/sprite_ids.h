@@ -783,6 +783,10 @@ enum OldManWithCaneAnimation {
 /// SPRITE_YOUNG_MAN_WITH_BROWN_HAIR's animations beyond enum ActorAnimation
 /// (young_man_with_brown_hair.tsv).
 enum YoungManWithBrownHairAnimation {
+  /// Lying on his side on the ground.
+  YOUNG_MAN_WITH_BROWN_HAIR_ANIMATION_LIE = 5,
+  /// Standing with his arms held out, turning his head to look himself over.
+  YOUNG_MAN_WITH_BROWN_HAIR_ANIMATION_LOOK_HIMSELF_OVER = 6,
   /// Sitting bound, squirming.
   YOUNG_MAN_WITH_BROWN_HAIR_ANIMATION_TIED_UP = 7,
   /// Seen from behind, both arms raised against something before him.

@@ -228,6 +228,8 @@ enum DisplayControl {
 #define BG_SCREEN_BLOCK(n) ((u8 *)VRAM + (n) * BG_SCREEN_SIZE)
 #define TILE_SIZE_4BPP 32 ///< bytes in an 8x8 tile of 16 colours
 #define TILE_SIZE_8BPP 64 ///< bytes in an 8x8 tile of 256 colours
+/// The bytes of one pixel row of a 16-colour tile.
+#define TILE_ROW_SIZE_4BPP (TILE_SIZE_4BPP / 8)
 /// The tiles a sprite of `width` by `height` pixels takes in sprite tile
 /// memory, counted in its 32-byte steps, of 16 colours and of 256 (two steps a
 /// tile): a picture's sprites follow one another so.
@@ -517,6 +519,9 @@ enum ObjMode {
 /// behind, and its 16-colour palette.
 #define OBJ_PRIORITY(n) ((n) << 10)
 #define OBJ_PALETTE(n) ((n) << 12)
+/// The sprite priority bits of attribute 2's high byte, which holds its
+/// priority and palette.
+#define ATTR2_HIGH_PRIORITY_MASK (OBJ_PRIORITY(3) >> 8)
 /// An affine sprite's matrix number, attribute 1's bits 9 to 13, in the attr01
 /// word.
 #define OBJ_MATRIX(n) ((n) << 25)

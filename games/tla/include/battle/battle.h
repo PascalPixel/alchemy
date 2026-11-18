@@ -163,6 +163,14 @@ void BattleHighlight_SetModes(u16 *, s32);
 void BattleMessage_WaitForAdvance(void);
 void BattleActionOrder_Sort(struct BattleActionRecord *actions, s32 count);
 void BattleCamera_SetCommandView(s32 scene);
+
+/// The battle's multipliers are 256ths: this one keeps an amount as it is,
+/// and Battle_GetElementMultiplier returns it for no element difference.
+#define BATTLE_MULTIPLIER_ONE 256
+/// The element power at which healing is neither stronger nor weaker
+/// (Battle_CalculateRecovery): each point above it counts as two points of
+/// element difference.
+#define HEALING_BASE_POWER 100
 s32 Battle_GetElementMultiplier(s32 selector, s32 mode);
 s32 Djinn_SetFar(s32 unitId, s32 element, s32 index);
 s32 Field_MeasurePsynergyReach(s32 effect, s32 from, s32 to);

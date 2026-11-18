@@ -1,11 +1,13 @@
 /// @file
 /// The effect spawner each field overlay keeps its own copy of, the twin of The
-/// Broken Seal's EFFECT_SPAWN (scene/shared/field_effect_spawn.c). The
-/// including file names its overlay's copy and the imports it calls:
-/// EFFECT_SPAWN, EFFECT_CREATE, EFFECT_SET_MODE, EFFECT_SET_SCRIPT and
-/// EFFECT_SCRIPTS. A file that also defines EFFECT_SPRITE_PRIORITY creates the
-/// actor as an event does (FieldActor_Create) and gives the sprite the
-/// requested priority itself before Scene_SetActorSpritePriority.
+/// Broken Seal's EFFECT_SPAWN (scene/shared/field_effect_spawn.c).
+/// system/field_effect.h names the copy, the import that creates its actor and
+/// the duration scripts it picks from: EFFECT_SPAWN, EFFECT_CREATE and
+/// EFFECT_SCRIPTS. The including scene gives only EFFECT_SET_MODE and
+/// EFFECT_SET_SCRIPT, the routines it calls to choose the effect's animation
+/// and start its script. A file that also defines EFFECT_SPRITE_PRIORITY
+/// creates the actor as an event does (FieldActor_Create) and gives the sprite
+/// the requested priority itself before Scene_SetActorSpritePriority.
 #include "types.h"
 #include "system/main_routine_work.h"
 #include "field/field_sprite.h"

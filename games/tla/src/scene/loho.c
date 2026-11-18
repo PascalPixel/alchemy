@@ -652,7 +652,11 @@ enum { SHOP_LOHO = 30 };
 enum { LOHO_INN = 13 };
 
 /// The inn's counter: the woman who keeps the shop checks the party in, so the
-/// inn's lines are hers; the counter itself is an unseen marker.
+/// inn's lines are hers; the counter itself is an unseen marker. Talking across
+/// the counter from the east (render guide moment, MOMENT_PLACE=267,3
+/// MOMENT_STAND=208,128,32768 MOMENT_HOLD=32,16,0,70,1,3 MOMENT_ACTORS=8,9)
+/// shows her stepped up behind it beside the marker, which adds nothing to the
+/// screen, and "It's 66 coins for a room." beside her orange-haired portrait.
 void Loho_TalkToInnkeeper(void) {
   Inn_CheckIn(LOHO_INN, ACTOR_VILLAGER_ON_COMMERCE);
 }

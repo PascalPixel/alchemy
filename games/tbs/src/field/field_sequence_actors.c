@@ -60,8 +60,6 @@ s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 childhood) {
   return sprite;
 }
 
-#define MAPGRID_CELLS ((struct MapGridCell *)Ram_MapGridCellBuffer)
-
 /// Creates the actors of a scene's actor placement table (ended by sprite -1),
 /// and records the table among the scene's tables.
 void Event_SpawnActorPlacements(struct ActorPlacement *entry, s32 slot) {
@@ -573,7 +571,6 @@ void Actor_Restore(void) {
   }
 }
 
-#undef MAPGRID_CELLS
 #undef FLAG_IN_VIEW
 #undef FLAG_OUT_OF_VIEW
 #undef PLACED_MAX

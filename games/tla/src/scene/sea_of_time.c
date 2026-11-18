@@ -1070,7 +1070,7 @@ void SeaOfTime_FacePoseidon(void) {
   gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
   Event_SetAfterBattleDestination(SCENE_SEA_OF_TIME_TO_LEMURIA,
                                   ENTRANCE_AFTER_POSEIDON);
-  Field_RequestBattleFromEncounterTable(12, 6);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_SERPENT, 6);
   Event_End();
 }
 

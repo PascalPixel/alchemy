@@ -78,6 +78,7 @@
 #include "scene/colosso_setup.h"
 #include "scene/colosso_solo.h"
 #include "scene/import.h"
+#include "scene/sleep_z.h"
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
 #include "system/input.h"
@@ -1161,10 +1162,6 @@ s32 Scene_Initialize(void) {
   }
   return 0;
 }
-
-/// A drifting Z's two steps, timer (east) and userValue (up), are steps of a
-/// 256th of a pixel a frame.
-#define SLEEP_Z_STEPS_PER_PIXEL 256
 
 /// Advances one of the particles that rise from the sleeping Isaac after the
 /// last match.

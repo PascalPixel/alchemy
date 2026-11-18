@@ -128,7 +128,8 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
     // swayed by up to 32 either way.
     line = work->bg2xLines;
     for (i = 0, angle = -(wave << 9); i != DISPLAY_HEIGHT; i++) {
-      *line++ = ((i << 18) - ((Trig_Sin(angle) * 128)) + toFIXED(4)) >> 10;
+      *line++ =
+          CANVAS_WAVE_BG2X((i << 18) - Trig_Sin(angle) * 128 + toFIXED(4));
       angle += TRIG_TURN / 128;
     }
 

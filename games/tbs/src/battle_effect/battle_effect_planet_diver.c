@@ -245,11 +245,11 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
     row = work->bg2xLines;
     if (work->args->side == EFFECT_SIDE_ENEMIES) {
       for (i = 0; i != DISPLAY_HEIGHT; i++)
-        *row++ =
-            (toFIXED(6) - Trig_Sin((frame + i) * (TRIG_TURN / 32)) * 6) >> 10;
+        *row++ = CANVAS_WAVE_BG2X(toFIXED(6) -
+                                  Trig_Sin((frame + i) * (TRIG_TURN / 32)) * 6);
     } else {
       for (i = 0; i != DISPLAY_HEIGHT; i++)
-        *row++ = Trig_Sin((frame + i) * (TRIG_TURN / 32)) * 6 >> 10;
+        *row++ = CANVAS_WAVE_BG2X(Trig_Sin((frame + i) * (TRIG_TURN / 32)) * 6);
     }
 
     EFFECT_FOR_EACH_TARGET(k, work->args) {
@@ -311,10 +311,9 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
 
 /// Unused: no row of gAbilityBattleEffects in either game names its kind, and
 /// the handler table is reached with no other kind (BattleEffect_RunFromTable),
-/// so the player never sees it. Its code draws four spirals on a circle of
-/// radius 16 about the point 40 pixels above each target, one target after
-/// another, 16 frames apart and for 59 frames each, turning a 128th of a turn
-/// a frame; each target takes its damage pose 32 frames into its turn.
+/// so the player never sees it. Its code draws the spirals about the point 40
+/// pixels above each target in turn, turning a 128th of a turn a frame; each
+/// target takes its damage pose 32 frames into its turn.
 void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -357,12 +356,13 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
     row = work->bg2xLines;
     if (work->args->side == EFFECT_SIDE_ENEMIES) {
       for (i = 0; i != DISPLAY_HEIGHT; i++)
-        *row++ =
-            (toFIXED(8) - Trig_Sin((frame + i) * (TRIG_TURN / 64)) * 8) >> 10;
+        *row++ = CANVAS_WAVE_BG2X(toFIXED(8) -
+                                  Trig_Sin((frame + i) * (TRIG_TURN / 64)) * 8);
     } else {
       for (i = 0; i != DISPLAY_HEIGHT; i++)
-        *row++ = (Trig_Sin((frame + i) * (TRIG_TURN / 64)) * 8 >> 10) -
-                 (NARROW_CANVAS_PARTY_X << 8);
+        *row++ =
+            CANVAS_WAVE_BG2X(Trig_Sin((frame + i) * (TRIG_TURN / 64)) * 8) -
+            (NARROW_CANVAS_PARTY_X << 8);
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
     EFFECT_FOR_EACH_TARGET(member, work->args) {

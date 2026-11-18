@@ -15,6 +15,8 @@
 #define GAIA_EARLY_ROCKS 6
 /// The rocks' motion is work->particles[GAIA_FIRST_ROCK] on.
 #define GAIA_FIRST_ROCK 10
+/// The columns gGaia_LateRockColumns gives the rocks after the early ones.
+#define GAIA_LATE_ROCK_COLUMNS 6
 /// A rock waits this many frames longer than the rock after it before it first
 /// flies.
 #define GAIA_ROCK_STAGGER 4
@@ -161,7 +163,9 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
     SET_VELOCITY(rock, i, 1, toFIXED(1) / 2);
     rock->variant = GAIA_ROCKS * GAIA_ROCK_STAGGER - i * GAIA_ROCK_STAGGER;
   }
-  for (i = 0; i != 6; i++)
+  // DEAD: the sixth column lands on the particle after the last rock, which
+  // nothing reads; the ROM keeps the store.
+  for (i = 0; i != GAIA_LATE_ROCK_COLUMNS; i++)
     work->particles[GAIA_FIRST_ROCK + GAIA_EARLY_ROCKS + i].x =
         gGaia_LateRockColumns[i];
 

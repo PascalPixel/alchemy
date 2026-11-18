@@ -254,6 +254,9 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
 #endif
     if (c == 0)
       break;
+    // Colour, style, line spacing and new lines take effect; the other control
+    // codes are skipped with their operands, as are codes 11, 12 and 14, whose
+    // meaning is open (window_decode.c).
 #if (LANGUAGE == LANGUAGE_JAPANESE)
     if (c < TEXT_COMMANDS) {
 #else
@@ -283,6 +286,8 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
       case TEXT_WINDOW_STATE:
       case TEXT_ACTOR_NAME_START:
         text++;
+        // Skip the second operand too.
+        // Fall through.
       case 11:
       case 12:
       case TEXT_ACTOR_NAME:
@@ -399,6 +404,8 @@ void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
         case TEXT_WINDOW_STATE:
         case TEXT_ACTOR_NAME_START:
           text++;
+          // Skip the second operand too.
+          // Fall through.
         case TEXT_COLORS_RESET:
         case TEXT_COLOR:
         case TEXT_OUTLINE:
@@ -430,10 +437,11 @@ void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
 /// The digits String_FormatNumber writes, in buffer[1] to [12].
 #define NUMBER_DIGITS 12
 
-/// Writes value as decimal text into buffer (14 bytes) and returns where the
-/// text starts. With width 0 the number has no padding and a minus sign when
-/// negative; otherwise it is right-aligned in width characters (up to 12) and
-/// unsigned. Each digit divides by 10 through the long-multiply helpers.
+/// Writes value as decimal text into buffer (NUMBER_DIGITS + 2 bytes) and
+/// returns where the text starts. With width 0 the number has no padding and a
+/// minus sign when negative; otherwise it is right-aligned in width characters
+/// (up to NUMBER_DIGITS) and unsigned. Each digit divides by 10 through the
+/// long-multiply helpers.
 u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width) {
   s32 offset;
   s32 value;
@@ -451,7 +459,8 @@ u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width) {
     value = 0U - value;
   }
 
-  // Twelve digits, then spaces for the leading zeros and the sign in front.
+  // The digits, then spaces for the leading zeros (the last digit stays) and
+  // the sign in front; the byte after them ends the text.
   buffer[0] = ' ';
   for (offset = NUMBER_DIGITS; offset != 0; offset--) {
     buffer[offset] =

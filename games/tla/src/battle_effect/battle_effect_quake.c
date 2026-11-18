@@ -10,19 +10,15 @@
 /// ground cut from the background.
 #define QUAKE_WALL_PICTURE 7680
 
-/// The byte of pixel (x, y) in a 32-tile-wide 8bpp character block.
-#define BG_DOT(x, y)                                                           \
+/// The byte of pixel (x, y) in the battle background's tiles, laid out 32 to a
+/// row in 256 colours.
+#define BACKGROUND_PIXEL_OFFSET(x, y)                                          \
   (((x) & 7) + (((x) / 8) << 6) + (((y) & 7) << 3) + (((y) / 8) << 11))
 
-/// Three rock pillars rise from the ground, left to right four frames apart,
-/// and sink again; targets standing on one are thrown into the air.
+/// Three rock pillars rise from the left, 4 frames apart, and sink again,
+/// throwing the targets standing on them into the air.
 ///
-/// Setup: the band of background under the targets (x 32-71, y 96-111) is
-/// cut out of BG character memory to cap each pillar. Frame loop: each
-/// pillar's height follows a sine over its rise time, a target over a
-/// pillar is launched upward, and a target that lands flashes; the camera
-/// shakes all the while. The variant chooses the length, the rise time and
-/// the shake.
+/// Abilities: Quake, Earthquake, Quake Sphere.
 void BattleEffect_RunQuake(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -42,24 +38,24 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
-  EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1)); // no horizontal stretch
-  REG_BLDCNT = 0;                                // no blending
+  // The canvas at its own width, opaque: the pillars hide what is behind them.
+  EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
+  REG_BLDCNT = 0;
   Resource_LoadAndDecompress(RESOURCE_ROCK_WALL_SHEET,
                              work->sheet + QUAKE_WALL_PICTURE, 1, 1);
 
-  // Copy the background's characters and cut the band out of them.
-  Iwram_CopyWords(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(2), 32768);
+  // Cut the strip of ground that caps each pillar from the battle background.
+  Iwram_CopyWords(Ram_MapCellBuffer, (void *)BG_CHAR_BLOCK(2),
+                  2 * BG_CHAR_SIZE);
   for (row = 0; row != 16; row++) {
     y = row + 96;
     for (col = 0; col != QUAKE_PILLAR_WIDTH; col++) {
-      s32 pixel = BG_DOT(col + 32, y);
+      s32 pixel = BACKGROUND_PIXEL_OFFSET(col + 32, y);
 
       work->sheet[row * QUAKE_PILLAR_WIDTH + col] = Ram_MapCellBuffer[pixel];
     }
   }
 
-  // On the far side the canvas moves 112 pixels right, and the targets'
-  // screen positions with it.
   if (args->side == EFFECT_SIDE_PARTY) {
     REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
     xOffset = -NARROW_CANVAS_PARTY_X;
@@ -69,38 +65,36 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
   draw = (DrawRectangle)Ram_HeapSlots->ramCode;
-  for (member = 0; member != args->targetCount; member++)
-    work->particles[member].variant = 0; // 1 once landed
-  work->transferMode =
-      CANVAS_COPY_AND_CLEAR; // clear the canvas on each transfer
-  work->transferValue = 0;
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  EFFECT_FOR_EACH_TARGET(member, args)
+    work->particles[member].variant = 0;
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   heights = gRockWall_Heights;
   work->shakeFrames = 128;
   Sound_PlayFar(SE_RUMBLE);
 
   for (frame = 0; frame != gQuake_Timings[args->variant][TIMING_FRAMES];
        frame++) {
-    Matrix_Initialize();
-    Matrix_SetLookAt(camera->eye, camera->focus);
-    // The results begin 16 frames before the end.
+    EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame == gQuake_Timings[args->variant][TIMING_FRAMES] - 16)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
-    // The pillars rise from frames 16, 20 and 24.
     for (column = 0; column != 3; column++) {
-      s32 start = column * 4 + 16;
+      s32 riseFrame = column * 4 + 16;
 
-      if ((frame & 31) + 32 == start) // never true: the left side is >= 32
+      // DEAD: never true, as the left side is 32 or more and riseFrame at
+      // most 24; the ROM keeps the test and its store.
+      if ((frame & 31) + 32 == riseFrame)
         heights.column[column] += 32;
-      if (frame >= start &&
-          frame < start + gQuake_Timings[args->variant][TIMING_RISE_FRAMES]) {
+      if (frame >= riseFrame &&
+          frame <
+              riseFrame + gQuake_Timings[args->variant][TIMING_RISE_FRAMES]) {
         s32 height;
         s32 top;
 
-        // Up and down along a sine, 1/64 of a turn a frame.
+        // A pillar rises and sinks along a sine, once, twice or three times by
+        // variant.
         height = FIXEDtoINT(heights.column[column] *
-                            Trig_Sin((frame - start) << 10));
+                            Trig_Sin((frame - riseFrame) * (TRIG_TURN / 64)));
         if (height < 0)
           height = -height;
         top = 112 - height;
@@ -109,21 +103,19 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
         draw(canvas, work->sheet, column * QUAKE_PILLAR_WIDTH + 8, 96 - height,
              QUAKE_PILLAR_WIDTH, 16);
 
-        // Launch the targets standing on the pillar.
-        for (member = 0; member != args->targetCount; member++) {
+        // Throw up the targets standing on the pillar.
+        EFFECT_FOR_EACH_TARGET(member, args) {
           struct MotionObject *object;
 
           object = BattleObject_GetFar(args->targets[member])->object;
-          point[0] = object->x;
-          point[1] = object->y;
-          point[2] = object->z;
+          SET_VECTOR(point, object->x, object->y, object->z);
           EffectPosition_ProjectPoint(point, &screen);
           screen.x += xOffset;
           if (screen.x >= column * QUAKE_PILLAR_WIDTH + 8 &&
               screen.x <=
                   column * QUAKE_PILLAR_WIDTH + 8 + QUAKE_PILLAR_WIDTH &&
               screen.y >= top) {
-            object->velocityY = toFIXED(12); // 12 pixels a frame upward
+            object->velocityY = toFIXED(12);
             object->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
           }
           if (object->y < 0)
@@ -133,8 +125,8 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
       }
     }
 
-    // A target that lands flashes in palette 7 for 5 frames.
-    for (member = 0; member != args->targetCount; member++) {
+    // Each target flashes white once, as it lands.
+    EFFECT_FOR_EACH_TARGET(member, args) {
       struct MotionObject *object;
       struct Particle *state;
 
@@ -153,3 +145,7 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
 
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
+
+#undef QUAKE_PILLAR_WIDTH
+#undef QUAKE_WALL_PICTURE
+#undef BACKGROUND_PIXEL_OFFSET

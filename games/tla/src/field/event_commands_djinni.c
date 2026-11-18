@@ -15,7 +15,14 @@
 #include "field/scene_call.h"
 #include "macros.h"
 
-#define DJINNI_CLONE_MAX 8 ///< afterimages of the leaping Djinni
+#define DJINNI_AFTERIMAGES 8 ///< afterimages of the leaping Djinni
+
+/// The frames a Jupiter Djinni's light widens, and later closes in over, so
+/// that it ends where it began; and the frames it circles and drifts.
+#define DJINNI_LIGHT_RADIUS_FRAMES 60
+#define DJINNI_LIGHT_CIRCLING_FRAMES 40
+#define DJINNI_LIGHT_DRIFTING_FRAMES 40
+
 /// The states of a Jupiter Djinni's light particle, in order.
 enum DjinniLightState {
   DJINNI_LIGHT_WIDENING = 0, ///< circles as its radius grows
@@ -51,14 +58,16 @@ void Actor_MoveHalfwayTowardTarget(struct Actor *actor) {
 }
 
 #if TLA_PATCH_1
-#define LEAP_SOUND 153
+#define LEAP_SOUND SE_HIGH_JUMP
 #else
-#define LEAP_SOUND 136
+#define LEAP_SOUND SE_WHOOSH
 #endif
 
 /// A Djinni's battle start: the Djinni (actor id) bounces twice, turns to face
-/// the leader, hops back 16 pixels three times, then leaps 64 pixels at the
-/// party trailing eight afterimages tinted for its element.
+/// the leader with an anger vein over it, jumps three times where it stands,
+/// spinning and each time higher, then leaps 16 pixels at the leader trailing
+/// eight afterimages tinted for its element, and stops once it has come down
+/// within 20 pixels of the leader's height.
 void Djinn_RunBattleStartHop(s32 djinniId) {
   struct Actor *djinni;
   struct Actor *leader;
@@ -70,7 +79,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   s32 sprite;
   s32 tint;
   s32 i;
-  UNUSED struct Actor *copies[DJINNI_CLONE_MAX];
+  UNUSED struct Actor *copies[DJINNI_AFTERIMAGES];
 
   djinni = Actor_GetById(djinniId);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -87,7 +96,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   wait(10);
   djinni->facing = back;
   Actor_ShowEmoteById(djinniId, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 50);
-  Actor_GetById(djinniId)->steeringFlags &= ~1;
+  Actor_GetById(djinniId)->steeringFlags &= ~ACTOR_FACES_MOTION;
   djinni->motionFlags = ACTOR_FALLS;
   djinni->update = (void (*)(void))FieldEffect_AdvanceSpinAngle;
 #if TLA_PATCH_1
@@ -124,7 +133,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
     tint = SPRITE_COLOR_BLUE_TINT;
   sharedSprite = NULL;
   prev = djinni;
-  for (i = 0; i < DJINNI_CLONE_MAX; i++) {
+  for (i = 0; i < DJINNI_AFTERIMAGES; i++) {
     copy = Actor_CreateFar(sprite, djinni->x.fixed, djinni->y.fixed,
                            djinni->z.fixed);
     // DEAD: nothing reads copies; the ROM keeps the store and its slot.
@@ -219,15 +228,15 @@ void Djinn_JoinParty(s32 actor, s32 element, s32 djinni) {
   Event_End();
 }
 
-/// Puts a Djinni's actor back where its battle started from: for a
-/// pending Djinni battle (pendingDjinni 300 to 380,
-/// FLAG_KEEP_PARTY_POSITION set, the battle over) the scene's actor placed
-/// for that Djinni (condition = its flag) goes back to its placement's
+/// Puts a Djinni's actor back where its battle started from: for a pending
+/// Djinni battle (pendingDjinni from DJINNI_BATTLE_EVENT_FIRST, one for each
+/// Djinni, FLAG_KEEP_PARTY_POSITION set, the battle over) the scene's actor
+/// placed for that Djinni (condition = its flag) goes back to its placement's
 /// position, or 32 pixels north of the leader when the event has DJINN_NO_HOP
-/// set, and stands (animation 1). FieldSequence_Run calls it as it
-/// rebuilds the scene, only while an event is still pending after
-/// Djinn_ResolvePending's first call, that is after a won battle; the second
-/// call then makes this actor join the party.
+/// set, and stands. FieldSequence_Run calls it as it rebuilds the scene, only
+/// while an event is still pending after Djinn_ResolvePending's first call,
+/// that is after a won battle; the second call then makes this actor join the
+/// party.
 void Djinn_RestoreActorAfterBattle(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   u32 raw = (u16)party->pendingDjinni;
@@ -378,11 +387,10 @@ void Djinn_AdvanceSpinAngle(struct Actor *djinni) {
 }
 
 /// Field effect sprite callback of a Jupiter Djinni's light particles: each
-/// circles its centre while it widens for 60 frames, circles 40, drifts toward
-/// a point 20 pixels over the leader for 40, closes in for 60 and is freed. It
-/// turns 1/32 turn a frame throughout, and its radius grows, then shrinks, by 1
-/// pixel a frame. The slot's origin is the centre, in screen coordinates
-/// (Camera_WorldToScreen).
+/// circles its centre while it widens, circles, drifts toward a point 20 pixels
+/// over the leader and closes in, and is freed. It turns 1/32 turn a frame
+/// throughout, and its radius grows, then shrinks, by 1 pixel a frame. The
+/// slot's origin is the centre, in screen coordinates (Camera_WorldToScreen).
 void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
   struct Actor *target;
   struct Vector3 position;
@@ -391,13 +399,13 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
   if (particle->state == DJINNI_LIGHT_WIDENING) {
     particle->orbitRadius += 1;
     particle->orbitAngle += 1;
-    if ((s16)particle->age == 60) {
+    if ((s16)particle->age == DJINNI_LIGHT_RADIUS_FRAMES) {
       particle->age = 0;
       particle->state += 1;
     }
   } else if (particle->state == DJINNI_LIGHT_CIRCLING) {
     particle->orbitAngle += 1;
-    if ((s16)particle->age == 40) {
+    if ((s16)particle->age == DJINNI_LIGHT_CIRCLING_FRAMES) {
       particle->age = 0;
       particle->state += 1;
     }
@@ -409,14 +417,14 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
     Camera_WorldToScreen(&position);
     particle->originX += (position.x - particle->originX) / 8;
     particle->originZ += (position.z - particle->originZ) / 8;
-    if ((s16)particle->age == 40) {
+    if ((s16)particle->age == DJINNI_LIGHT_DRIFTING_FRAMES) {
       particle->age = 0;
       particle->state += 1;
     }
   } else if (particle->state == DJINNI_LIGHT_CLOSING) {
     particle->orbitRadius -= 1;
     particle->orbitAngle += 1;
-    if ((s16)particle->age == 60) {
+    if ((s16)particle->age == DJINNI_LIGHT_RADIUS_FRAMES) {
       particle->age = 0;
       particle->state += 1;
     }
@@ -431,4 +439,8 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
   particle->z = position.z;
 }
 
-#undef DJINNI_CLONE_MAX
+#undef DJINNI_AFTERIMAGES
+#undef LEAP_SOUND
+#undef DJINNI_LIGHT_RADIUS_FRAMES
+#undef DJINNI_LIGHT_CIRCLING_FRAMES
+#undef DJINNI_LIGHT_DRIFTING_FRAMES

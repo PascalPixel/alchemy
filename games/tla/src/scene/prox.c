@@ -58,6 +58,7 @@
 #include "system/task.h"
 #include "text/msg_ids.h"
 #include "scene/falling_rocks.h"
+#include "scene/scene.h"
 
 /// The south gate on the farewell, by the rows of
 /// gProx_SouthGateFarewellPlacements; the party's rows go to their party
@@ -207,17 +208,11 @@ enum ProxCavesActorId { ACTOR_OLD_MAN_FEARING_FOR_WEYARD = ACTOR_FIRST_PLACED };
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 extern const s32 *gFieldEffect_DurationScripts[];
 void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
-#define EFFECT_SPAWN FieldEffect_Spawn
-#define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
-#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
 
 #define FIELD_AT(base, type, off)                                              \
   (((struct {                                                                  \
@@ -330,8 +325,6 @@ extern u32 gFieldEffect_MediumScript[];
 
 /// Smoke rises from the village's chimneys while the storm is over.
 void Prox_SmokeFromChimneys(void);
-
-#define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
 /// The sixteenth of a turn a heading points into, as a mask.
 #define HEADING_SECTOR_MASK (TRIG_TURN - FACING_STEP)
@@ -1184,9 +1177,6 @@ void Prox_StartScoop(void) { MapGrid_CopyCellAttributes(25, 2, 1, 1, 25, 9); }
 /// After the Scoop, the dug ground's collision is filled back in.
 void Prox_EndScoop(void) { MapGrid_CopyCellAttributes(25, 3, 1, 1, 25, 9); }
 
-/// The frames a cloud of smoke rises before it is released.
-#define SMOKE_FRAMES 60
-
 /// Drifts a chimney's smoke sideways ever faster, raises and widens it, and
 /// releases it when its frames run out.
 void Prox_RiseSmoke(struct Actor *actor) {
@@ -1366,7 +1356,6 @@ void Prox_ComeDownStairs(s32 westOrSouth) {
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   Prox_EndEvent();
 }
-#undef BYTE_AT
 #undef FIELD_AT
 
 #define FIELD_AT(base, type, off)                                              \
@@ -2325,7 +2314,6 @@ struct Position {
   FIXED z;
 };
 
-s32 Map_GetTerrainHeight(u8 layer, s32 x, s32 z);
 extern s16 gSlideOnIce_AnglesByKey[];
 
 #include "shared/leader_slide_on_ice.h"

@@ -77,8 +77,6 @@ enum LohoRoomsActorId {
   ACTOR_BEARDED_MAN_ON_THE_CANNON ///< Loho_TalkAboutCannon
 };
 
-/// The Golem Core under the boulder, dug up.
-#define FLAG_LOHO_GOLEM_CORE_DUG 0xff7
 /// Set once Lift has raised the boulder, this visit.
 #define FLAG_LOHO_BOULDER_LIFTED FLAG_SCENE_TEMP_01
 

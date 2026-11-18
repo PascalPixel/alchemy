@@ -528,8 +528,6 @@ void JupiterLighthouse_HealTarget(s32 actorId, s32 target) {
   Actor_SetAnimation(target, 1);
 }
 
-#define EVENT_WORK ((struct FieldWork *)Ram_HeapSlots->fieldWork)
-
 /// On the way to the fight by the aerie, Alex appears behind Felix, asks
 /// whether he will light the beacon, tells him to save his friends and heals
 /// the party; from then on there are no encounters and Retreat is blocked.
@@ -573,11 +571,11 @@ void JupiterLighthouse_AlexHealsTheParty(void) {
     Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
     // "And you're sure that's all you're going to do?"
     FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 5);
-    EVENT_WORK->message++;
+    gFieldWork->message++;
   } else {
     Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
     FieldEvent_Wait(10);
-    EVENT_WORK->message++;
+    gFieldWork->message++;
     // "Hmph. They consider you their enemy, and yet you pity them."
     FieldEvent_ShowMessageThenWait(ACTOR_ALEX, 0, 5);
   }
@@ -600,7 +598,7 @@ void JupiterLighthouse_AlexHealsTheParty(void) {
   FieldEvent_Wait(30);
   JupiterLighthouse_HealTarget(ACTOR_ALEX, ACTOR_FELIX);
   Party_RestoreHpPp(1);
-  Message_ShowCentered((s16)EVENT_WORK->message++, 5);
+  Message_ShowCentered((s16)gFieldWork->message++, 5);
   FieldEvent_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   FieldEvent_Wait(30);
@@ -674,7 +672,6 @@ s32 Scene_PrepareMap(void) {
 }
 
 #include "shared/scene_set_arrival_flags.c"
-#undef EVENT_WORK
 
 #include "shared/palette_cycle_set_pauses_in_events.h"
 
@@ -876,22 +873,15 @@ UNUSED void LightSprites_SetPriority(s32 value) {
 
 #include "../field/field_effect_move.c"
 
-#undef EVENT_WORK
 extern const s32 *gFieldEffect_DurationScripts[];
 
 void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 
-#define EFFECT_SPAWN FieldEffect_Spawn
-#define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
-#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
 
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"

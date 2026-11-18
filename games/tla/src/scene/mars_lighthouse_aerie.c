@@ -240,13 +240,7 @@ void MarsLighthouseAerie_OrbitBeaconFire(struct Actor *actor) {
 
   cosine = Trig_Cos(angle);
   counter = &actor->riseCounter;
-  {
-    s32 radius = actor->speedLimit + *counter;
-    struct Actor *a;
-
-    a = anchor;
-    along = a->x.fixed + cosine * (radius + 6);
-  }
+  along = anchor->x.fixed + cosine * (actor->speedLimit + *counter + 6);
   actor->x.fixed = along;
   sine = Math_Sin(angle);
   across = anchor->z.fixed + sine * (*counter + 4);
@@ -494,8 +488,6 @@ extern s32 gMarsLighthouseAerie_GaretReadyScript[];
 /// The party reaches the beacon in the storm, and the voice calls them
 /// betrayers before the Doom Dragon's battle.
 void MarsLighthouseAerie_FaceDoomDragon(void) {
-  u8 *motionFlags;
-  u16 *dispcnt;
   struct MainRoutineWork *work;
   u16 *textColor;
   struct Actor *actor;
@@ -1110,19 +1102,17 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   actor->scaleY = FIXED_ONE / 16;
   Actor_SetPosition(ACTOR_DOOM_DRAGON, 512, 280);
   System_Wait(1);
-  motionFlags = &actor->motionFlags;
-  *motionFlags = 0;
+  actor->motionFlags = 0;
   FieldActor_SetPositionAndResetMotion(actor, toFIXED(512), toFIXED(48),
                                        toFIXED(280));
   System_Wait(1);
-  *motionFlags = 0;
+  actor->motionFlags = 0;
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   PaletteFade_Interpolate(20);
-  dispcnt = (u16 *)&REG_DISPCNT;
   Event_PlaySound(MUS_ALEX);
   Actor_RunScriptAndWait(ACTOR_DOOM_DRAGON,
                          gMarsLighthouseAerie_DoomDragonRiseScript);
-  *dispcnt = *dispcnt & ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON);
+  REG_DISPCNT &= ~(DISPCNT_BG1_ON | DISPCNT_BG2_ON);
   PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_Interpolate(40);
   Actor_SetSpeedAndAcceleration(ACTOR_DOOM_DRAGON, 3.2, 0.2);
@@ -1167,7 +1157,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
   PaletteFade_Interpolate(1);
   System_Wait(1);
-  *dispcnt |= DISPCNT_BG1_ON | DISPCNT_BG2_ON;
+  REG_DISPCNT |= DISPCNT_BG1_ON | DISPCNT_BG2_ON;
   Actor_SetPosition(ACTOR_PIERS, 488, 320);
   Actor_SetPosition(work->leaderActorId, 504, 320);
   Actor_SetPosition(ACTOR_ISAAC, 520, 320);
@@ -1191,7 +1181,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   PaletteFade_Interpolate(40);
   System_Wait(40);
   actor->gravity = toFIXED(1) / 4;
-  *motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
+  actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   FieldEvent_Wait(30);
   Event_PlaySound(SE_BANE_ESCAPE);
   MapGrid_SetShake(2, 4, 1);

@@ -3285,11 +3285,6 @@ void TrialRoad_StepOnTrap(const u16 *table) {
   }
 }
 
-/// A drifting effect loses a FIELD_EFFECT_DRAG_X-th of its x speed and a
-/// FIELD_EFFECT_DRAG_Z-th of its z speed each frame.
-#define FIELD_EFFECT_DRAG_X 18
-#define FIELD_EFFECT_DRAG_Z 16
-
 /// The dust's motion each frame, as Effect_AdvanceMotionAtLeaderPriority's: it
 /// drifts, slows, grows and spins, drawn at the leader's sprite priority.
 void TrialRoad_DriftDust(union FieldObject *object) {
@@ -3327,9 +3322,6 @@ void TrialRoad_DriftDust(union FieldObject *object) {
   bits.priority = source.priority;
   to->bits = bits;
 }
-
-#undef FIELD_EFFECT_DRAG_X
-#undef FIELD_EFFECT_DRAG_Z
 
 extern s32 gDust_ScatterScript[];
 

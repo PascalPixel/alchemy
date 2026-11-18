@@ -1,7 +1,7 @@
 /// @file
 /// The motion of an object a vent throws out, shared by overlays 678 and 67C.
-/// The including file has its overlay's local header (struct VentWork,
-/// VENT_WORK, DIFF) and names the two functions: VENT_TOUCHING and
+/// scene/scene.h, which the including scene reads first, gives it struct
+/// VentWork, VENT_WORK, DIFF and the two functions' names, VENT_TOUCHING and
 /// VENT_BOUNCE.
 
 /// Whether object a rests on object b: within 12 pixels of it in x and 8 in z,

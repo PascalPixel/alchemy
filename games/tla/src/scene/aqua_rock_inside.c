@@ -110,31 +110,6 @@ struct BeamWork {
   struct Splash splashes[SPLASH_ENTRIES];
 };
 
-/// One vent: whether it blows, the frames to its next puff, its position and
-/// its gust's speed, in 16.16 pixels a frame.
-struct VentEntry {
-  s16 active;
-  s16 timer;
-  FIXED x;
-  FIXED y;
-  FIXED z;
-  FIXED value;
-};
-
-/// The vents of the room, in the inventory snapshot's spare space: their frame
-/// counter, the room's hook run each frame, its vents and the actors their
-/// puffs land on, besides the leader.
-struct VentWork {
-  s32 counter;
-  s32 (*hook)(void);
-  struct VentEntry entries[VENTS_MAX];
-  u16 ids[VENT_IDS_MAX];
-};
-
-extern u8 gInventorySnapshot[];
-#define VENT_WORK                                                              \
-  ((struct VentWork *)(gInventorySnapshot + INVENTORY_SNAPSHOT_SPARE))
-
 void Actor_StartScript(struct Actor *actor, const void *data);
 void Map_LoadCellsAndShapes(void);
 void MessageArgument_Push(s32 item, s32 mode);

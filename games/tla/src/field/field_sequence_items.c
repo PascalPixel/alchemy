@@ -237,10 +237,6 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
   return result;
 }
 
-/// A distance beyond any field Psynergy's reach, as field_sequence_targets.c
-/// writes it.
-#define BEYOND_REACH 9999
-
 /// Chooses what a Psynergy of the given kind acts on, for
 /// Scene_FindPsynergyTrigger: among the scene's Psynergy triggers for that
 /// kind whose condition holds (and whose direction, if any, the leader faces),
@@ -385,5 +381,3 @@ s32 Field_RunPsynergyEndEvents(u32 packed) {
   FieldPsynergy_End();
   return 0;
 }
-
-#undef BEYOND_REACH

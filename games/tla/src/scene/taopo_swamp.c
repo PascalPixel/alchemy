@@ -218,26 +218,6 @@ struct SceneState {
 
 extern struct SceneState gSceneState;
 
-/// One vent: whether it blows, the frames to its next puff, its position and
-/// its gust's speed, in 16.16 pixels a frame.
-struct VentEntry {
-  s16 active;
-  s16 timer;
-  FIXED x;
-  FIXED y;
-  FIXED z;
-  FIXED value;
-};
-
-/// The vents of the room: their frame counter, the room's hook run each frame,
-/// its vents and the actors their puffs land on, besides the leader.
-struct VentWork {
-  s32 counter;
-  s32 (*hook)(void);
-  struct VentEntry entries[VENTS_MAX];
-  u16 ids[VENT_IDS_MAX];
-};
-
 /// MapWork as far as groundEffects, read through its bits, the footprints and
 /// the kind of wading, as Shrine of the Sea God reads it.
 struct MapWorkGroundEffects {
@@ -286,11 +266,6 @@ enum {
 /// gTaopoSwampVentsVents: covering one makes the one beside it blow twice as
 /// far, and the one beside the east pillar's then reaches Flower's ledge.
 enum { VENT_BESIDE_WEST_PILLAR = 2, VENT_BESIDE_EAST_PILLAR = 8 };
-
-extern u8 gInventorySnapshot[];
-/// The vents' work, in the inventory snapshot's spare space.
-#define VENT_WORK                                                              \
-  ((struct VentWork *)(gInventorySnapshot + INVENTORY_SNAPSHOT_SPARE))
 
 void Vent_Bounce(struct Actor *actor);
 extern u32 gTaopoSwamp_PuffRises[];
@@ -2168,7 +2143,6 @@ void Vent_SetGust(s32 index, s32 value) {
 }
 
 #include "shared/vent_set_id.h"
-#undef VENT_WORK
 #undef DEFINE_TAOPO_SWAMP_FREEZE_SPOT
 #undef DEFINE_DRIP_AT_RANDOM
 

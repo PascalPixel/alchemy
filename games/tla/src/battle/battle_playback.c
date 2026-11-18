@@ -53,8 +53,8 @@ s32 BattlePlayback_SchedulePhase(s32 frames) {
 #define FELLED_FLASH 1024
 /// The Djinn bonus's colour cycle lasts 30 frames.
 #define FELLED_FLASH_FRAMES 30
-/// A sprite dissolves over SpriteDissolve_Step's 128 steps, four a frame.
-#define DISSOLVE_STEPS 128
+/// A felled enemy's sprite dissolves over field/field.h's DISSOLVE_STEPS,
+/// four a frame.
 #define DISSOLVE_STEPS_PER_FRAME 4
 /// PLAY_FELLED's timer at the dissolve's first frame.
 #define FELLED_DISSOLVE_START 5

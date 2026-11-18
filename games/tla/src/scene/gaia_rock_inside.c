@@ -1360,11 +1360,6 @@ void GaiaRockInside_ReadSandTablet(void) {
   Event_End();
 }
 
-/// A drifting effect loses a FIELD_EFFECT_DRAG_X-th of its x speed and a
-/// FIELD_EFFECT_DRAG_Z-th of its z speed each frame.
-#define FIELD_EFFECT_DRAG_X 18
-#define FIELD_EFFECT_DRAG_Z 16
-
 /// The dust's update: it moves by its velocity, slowing a little across the
 /// ground each frame, and grows and spins.
 void Effect_AdvanceMotionLocal(union FieldObject *object) {
@@ -1389,9 +1384,6 @@ void Effect_AdvanceMotionLocal(union FieldObject *object) {
   effect->scaleY += effect->scaleRateY;
   sprite->rotation += effect->spin;
 }
-
-#undef FIELD_EFFECT_DRAG_X
-#undef FIELD_EFFECT_DRAG_Z
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,

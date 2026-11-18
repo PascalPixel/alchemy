@@ -13,7 +13,8 @@
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
 /// The frames the aerie's JupiterLighthouse_RaiseAngels takes to raise an
-/// angel, and then to lift both angels and the lid off the well.
+/// angel and tilt the lid, and then to lift both angels and the lid off the
+/// well once both are energized.
 #define ANGEL_RISE_FRAMES 64
 #define LID_LIFT_FRAMES 256
 

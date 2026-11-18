@@ -55,14 +55,6 @@ void Animation_WaitForTrackEnd(struct Sprite *sprite) {
   }
 }
 
-/// A dissolve clears one pixel of each 8-bit tile a step, in
-/// gSpriteDissolve_PixelOrder's order, so a tile is gone after this many.
-#define DISSOLVE_TILE_PIXELS 64
-/// The step the first tile starts to dissolve at; each tile after it starts a
-/// step sooner.
-#define DISSOLVE_FIRST_STEP 64
-/// The steps a dissolve takes, four a frame.
-#define DISSOLVE_STEPS (DISSOLVE_FIRST_STEP + DISSOLVE_TILE_PIXELS)
 /// How much further along the pixel order each tile reads than the tile
 /// before, besides the step it is ahead.
 #define DISSOLVE_ORDER_STRIDE 16

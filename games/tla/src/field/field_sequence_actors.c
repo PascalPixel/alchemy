@@ -20,11 +20,6 @@ enum {
   DJINN_FLAG_COUNT = ELEMENT_COUNT * DJINN_PER_ELEMENT
 };
 
-/// The actor snapshot (gSnapshotObjects): how many actors it keeps, and the
-/// slot id that marks an empty place and ends the list, as The Broken Seal's
-/// ActorSnapshot.
-enum { ACTOR_SNAPSHOT_CAPACITY = 32, ACTOR_SNAPSHOT_EMPTY = 255 };
-
 /// A placement row's sprite: 0 to 7 is a party member, who keeps that actor id;
 /// one up to this takes the next free slot, and one above it, which no table
 /// names, takes the slot of the row before.

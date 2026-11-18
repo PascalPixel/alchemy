@@ -38,13 +38,15 @@ const u8 gAnimationFacing_ThreePictures[16] = {
     MIRRORED(1), MIRRORED(1), MIRRORED(2), MIRRORED(2), 2, 2, 2, 1,
 };
 
-/// Unused: nothing in The Lost Age reads the five-picture facings.
-const u8 gAnimationFacing_FivePictures[16] = {
+/// Unused: The Broken Seal's sixteen-sector table for its five pictures,
+/// which nothing in The Lost Age reads.
+const u8 gAnimationFacing_FivePicturesUnused[16] = {
     1, 0, 0, 3, 3, MIRRORED(0), MIRRORED(0), MIRRORED(1),
     MIRRORED(1), MIRRORED(2), MIRRORED(2), 4, 4, 2, 2, 1,
 };
 
-/// Six pictures over 64 sectors, laid out otherwise than The Broken Seal's.
+/// ANIM_FACING_FIVE_PICTURES's table: five pictures over 64 sectors, where
+/// The Broken Seal's has 16.
 const u8 gAnimationFacing_SixPictures[64] = {
     1, 1, 1, 1, 0, 0, 0, 0,
     0, 0, 0, 0, 3, 3, 3, 3,
@@ -101,8 +103,8 @@ const s32 gScript_MainScript[1] = {
     SC_END,
 };
 
-/// Halfwords that follow the main script; no code names them, in either game.
-const s16 gActorScript_EndScriptTail[8] = {
+/// Halfwords that follow the idle script; no code names them, in either game.
+const s16 gActorScript_IdleScriptTail[8] = {
     4096, -8192, 12288, -16384, 24576, -32768, 16384, 0,
 };
 

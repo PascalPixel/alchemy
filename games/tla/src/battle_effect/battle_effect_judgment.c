@@ -5,7 +5,7 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-#define JUDGMENT_GATHER_FRAMES 160 ///< frames of the gathering
+#define JUDGMENT_GATHER_FRAMES 160
 #define JUDGMENT_SWEEP_FRAMES 336
 /// The gathering's crash: the canvas fills to JUDGMENT_CRASH_LEVEL the frame
 /// before, then the beams fall.
@@ -13,7 +13,7 @@
 #define JUDGMENT_CRASH_LEVEL 42
 #define JUDGMENT_FORMATION_OBJECTS 16 ///< sprites in the formation, 4x4
 #define JUDGMENT_FORMATION_COLUMNS 4
-#define JUDGMENT_FORMATION_SPRITE_SIZE 32 ///< each sprite is 32 pixels square
+#define JUDGMENT_FORMATION_SPRITE_SIZE 32
 /// The formation's last pose, its lion shield held before it
 /// (WingedKnightCTiles), draws JUDGMENT_SHIELD_FORWARD_OBJECTS of the sprites
 /// and leaves the three JUDGMENT_SHIELD_FORWARD_EMPTY says empty.
@@ -86,7 +86,7 @@
 #define JUDGMENT_SWEEP_BEACH 150
 #define JUDGMENT_SWEEP_FOREST 214
 #define JUDGMENT_SWEEP_RETURN 280
-#define JUDGMENT_WAVE_SIZE 120 ///< the wave picture is 120x120
+#define JUDGMENT_WAVE_SIZE 120
 /// The level the wave's rings are drawn at.
 #define JUDGMENT_RING_LEVEL 20
 /// Where the canvas sits on the screen in the sweep: the wave picture
@@ -719,7 +719,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
     }
     // It explodes in flashes.
-    if (frame >= 64 && frame < 66) {
+    if (frame >= JUDGMENT_SWEEP_EXPLOSION && frame < 66) {
       EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,
                           JUDGMENT_SHEET_FLASH_SMALL, 52, 51);
     }

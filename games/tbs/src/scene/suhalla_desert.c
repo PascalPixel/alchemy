@@ -816,7 +816,9 @@ static void SuhallaDesert_SetUpFirstMapStorms(void) {
     hazeWeight = BLEND_WEIGHT_MAX;
     Scene_QueueMusic(SE_SANDSTORM);
   }
-  // The haze at full weight once a storm has risen, else not at all.
+  // The haze at full weight once a storm has risen, else not at all:
+  // BLEND_ALPHA(hazeWeight, BLEND_WEIGHT_MAX - hazeWeight), its bottom weight
+  // written first.
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
                       ((BLEND_WEIGHT_MAX - hazeWeight) << 8) | hazeWeight,
                       IO_WRITE_HALFWORD);
@@ -871,7 +873,9 @@ static void SuhallaDesert_SetUpSecondMapStorms(void) {
     hazeWeight = BLEND_WEIGHT_MAX;
     Scene_QueueMusic(SE_SANDSTORM);
   }
-  // The haze at full weight once a storm has risen, else not at all.
+  // The haze at full weight once a storm has risen, else not at all:
+  // BLEND_ALPHA(hazeWeight, BLEND_WEIGHT_MAX - hazeWeight), its bottom weight
+  // written first.
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
                       ((BLEND_WEIGHT_MAX - hazeWeight) << 8) | hazeWeight,
                       IO_WRITE_HALFWORD);

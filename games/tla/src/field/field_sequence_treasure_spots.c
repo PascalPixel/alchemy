@@ -56,10 +56,6 @@ s32 SceneItem_FindPosition(s32 value, s32 *out) {
 
 void Actor_ShowItemIconById(s32 id, s32 item);
 
-/// The most treasure spots a scene places, each an actor from
-/// FIELD_TREASURE_ACTOR on.
-#define TREASURE_SPOT_MAX 16
-
 /// The chest sprite's animations.
 enum {
   TREASURE_SPOT_CHEST_OPEN = 2, ///< standing open

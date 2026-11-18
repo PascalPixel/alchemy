@@ -111,7 +111,9 @@ s32 Field_GetCollisionAheadOfLeader(void) {
     x = position[0];
     cell = (u8 *)map->layers[0].cells;
     z = position[2];
-    cell += (x / toFIXED(16) + z / toFIXED(16) * MAPGRID_SIZE << 2);
+    cell += (x / toFIXED(MAPGRID_CELL_PIXELS) +
+                 z / toFIXED(MAPGRID_CELL_PIXELS) * MAPGRID_SIZE
+             << 2);
   }
   return cell[2];
 }
@@ -134,7 +136,8 @@ s32 Field_GetCollisionUnderLeader(void) {
             ((position.z / toFIXED(32)) & 31) * 32);
   } else {
     cell = map->layers[0].cells;
-    cell += position.x / toFIXED(16) + position.z / toFIXED(16) * MAPGRID_SIZE;
+    cell += position.x / toFIXED(MAPGRID_CELL_PIXELS) +
+            position.z / toFIXED(MAPGRID_CELL_PIXELS) * MAPGRID_SIZE;
   }
   return cell->collisionCode;
 }
@@ -234,7 +237,8 @@ void Field_UpdateWalking(u32 layer, FIXED x, FIXED y, FIXED z) {
       tile = map->layers[layer].cells;
     else
       tile = (struct MapCell *)Ram_MapCellBuffer;
-    tile = &tile[x / toFIXED(16) + z / toFIXED(16) * MAPGRID_SIZE];
+    tile = &tile[x / toFIXED(MAPGRID_CELL_PIXELS) +
+                 z / toFIXED(MAPGRID_CELL_PIXELS) * MAPGRID_SIZE];
     event = tile->collisionCode;
     attributes = tile->attributeB;
   }

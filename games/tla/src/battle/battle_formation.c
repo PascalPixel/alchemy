@@ -1,6 +1,6 @@
 /// @file
-/// Enemy formations: the enemies chosen, levelled and lettered, and each enemy
-/// class's sprite, palette, size and attack effect.
+/// Enemy formations: the enemies chosen, levelled and told apart by name
+/// suffixes, and each enemy class's sprite, palette, size and attack effect.
 // Part of battle.c.
 
 #include "battle_internal.h"
@@ -206,17 +206,17 @@ void BattleUnit_Strengthen(s32 unitId) {
   Heap_Release(saved);
 }
 
-/// The name letters an enemy can take: the alphabet in Japanese, nine digits
+/// The name suffixes an enemy can take: the alphabet in Japanese, nine digits
 /// elsewhere, as String_FindFirstDigit reads them back.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define NAME_LETTER_COUNT NAME_LETTER_ALPHABET
+#define NAME_SUFFIX_COUNT NAME_LETTER_ALPHABET
 #else
-#define NAME_LETTER_COUNT 9
+#define NAME_SUFFIX_COUNT 9
 #endif
-/// The letters a class's mask holds, one bit each.
-#define NAME_LETTER_MASK_BITS 32
+/// The suffixes a class's mask holds, one bit each.
+#define NAME_SUFFIX_MASK_BITS 32
 
-/// Gives an enemy of the class its name letter, which tells it from others of
+/// Gives an enemy of the class its name suffix, which tells it from others of
 /// its kind: digits abroad and the alphabet in Japanese. Returns -1 when five
 /// classes are already listed.
 s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
@@ -233,17 +233,17 @@ s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
   }
   if (classIndex != classCount) {
     attempt = 0;
-    // The second of its class: letters 0 and 1 both taken.
+    // The second of its class: suffixes 0 and 1 both taken.
     if (battle->lastNameLetter[classIndex] < 0) {
       battle->lastNameLetter[classIndex] = 1;
       battle->nameLetterMasks[classIndex] = 3;
       return NAME_LETTER_FIRST_TOO | 1;
     }
-    // The next letter after the last given that is free; after 32 tries the
+    // The next suffix after the last given that is free; after 32 tries the
     // last one tried is reused.
-    for (; attempt < NAME_LETTER_MASK_BITS; attempt++) {
+    for (; attempt < NAME_SUFFIX_MASK_BITS; attempt++) {
       battle->lastNameLetter[classIndex] =
-          (battle->lastNameLetter[classIndex] + 1) % NAME_LETTER_COUNT;
+          (battle->lastNameLetter[classIndex] + 1) % NAME_SUFFIX_COUNT;
       if ((battle->nameLetterMasks[classIndex] &
            (1 << battle->lastNameLetter[classIndex])) == 0)
         break;
@@ -257,19 +257,19 @@ s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
     battle->enemyKinds[classCount] = classId;
     battle->nameLetterMasks[classCount] = 0;
     battle->enemyKindCount = classCount + 1;
-    return NAME_LETTER_COUNT;
+    return NAME_SUFFIX_COUNT;
   }
   return -1;
 }
 
-/// Frees a departing enemy's name letter for the next of its class.
+/// Frees a departing enemy's name suffix for the next of its class.
 UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId) {
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   struct Unit *unit;
   s32 count = battle->enemyKindCount;
   s32 index;
   s32 nameLength;
-  s32 letter;
+  s32 suffix;
   s32 classId;
 
   unit = Unit_Get(unitId);
@@ -289,20 +289,20 @@ UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId) {
       break;
   }
 
-  // UB: an empty name shifts by NAME_LETTER_MASK_BITS, which the ARM turns
-  // into 0, so no letter is freed. A name with no letter instead uses its
+  // UB: an empty name shifts by NAME_SUFFIX_MASK_BITS, which the ARM turns
+  // into 0, so no suffix is freed. A name with no suffix instead uses its
   // last character as one.
-  letter = NAME_LETTER_MASK_BITS;
+  suffix = NAME_SUFFIX_MASK_BITS;
 #ifdef UBFIX
   if (nameLength == 0)
     return;
 #endif
   if (nameLength > 0)
-    letter = unit->name[nameLength - 1] - LIST_MARKER_CHAR;
-  battle->nameLetterMasks[index] &= ~(1 << letter);
+    suffix = unit->name[nameLength - 1] - LIST_MARKER_CHAR;
+  battle->nameLetterMasks[index] &= ~(1 << suffix);
 }
 
-/// Gives the first enemy of the class on the field the first letter (0),
+/// Gives the first enemy of the class on the field the first suffix (0),
 /// appended to its name, once a second of its class arrives.
 s32 BattleEnemy_LetterFirstOfKind(s32 enemyId) {
   struct Unit *unit;
@@ -319,14 +319,14 @@ s32 BattleEnemy_LetterFirstOfKind(s32 enemyId) {
     if (unit->enemyId != enemyId)
       continue;
     // nameByte still holds BATTLE_SIDE_ENEMY here, used as the index after
-    // the letter; nameIndex holds the terminator, 0.
+    // the suffix; nameIndex holds the terminator, 0.
     nameIndex = 0;
     if (unit->name[0] == 0) {
       unit->name[0] = LIST_MARKER_CHAR;
       unit->name[nameByte] = nameIndex;
       return;
     }
-    // The name's end, then the letter and a new terminator after it.
+    // The name's end, then the suffix and a new terminator after it.
   scan_slots:
     nameIndex++;
     if (nameIndex > UNIT_NAME_SIZE - 2)
@@ -530,17 +530,17 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
   memberOrEnemyIndex = 0;
   if (enemyClasses[0] != 0) {
     for (;;) {
-      // Repeated enemy classes get distinct letters within this encounter.
-      s32 letter =
+      // Repeated enemy classes get distinct suffixes within this encounter.
+      s32 suffix =
           BattleEnemy_ClaimNameLetter(enemyClasses[memberOrEnemyIndex], 1);
       struct Unit *unit;
       s32 enemyId;
 
-      if (letter & NAME_LETTER_FIRST_TOO)
+      if (suffix & NAME_LETTER_FIRST_TOO)
         BattleEnemy_LetterFirstOfKind(enemyClasses[memberOrEnemyIndex]);
       BattleUnit_SetFar(memberOrEnemyIndex + FIRST_ENEMY_UNIT,
                         enemyClasses[memberOrEnemyIndex],
-                        letter & NAME_LETTER_MASK);
+                        suffix & NAME_LETTER_MASK);
       unit = Unit_Get(memberOrEnemyIndex + FIRST_ENEMY_UNIT);
       if (levelAdjustment != 0)
         BattleEnemy_AdjustLevel(memberOrEnemyIndex + FIRST_ENEMY_UNIT,

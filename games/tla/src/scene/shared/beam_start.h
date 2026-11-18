@@ -1,8 +1,3 @@
-/// A flame thrower's reach, in whole pixels, and its flame (enum
-/// FlameThrowerFlags), the two halves of its flags in the flame thrower tables.
-#define FLAME_THROWER_REACH_BITS 0xf
-#define FLAME_THROWER_FLAG_BITS 0xf0
-
 /// Sets the flame throwers going, unless the scene starts where the party was:
 /// up to four listed actors with their flags and reach, and up to four actors
 /// their flames stop at; then what is called back when a flame meets a blocked

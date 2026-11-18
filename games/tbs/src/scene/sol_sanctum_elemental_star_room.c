@@ -2139,10 +2139,10 @@ static void SolSanctumElementalStarRoom_GiveMythrilBags(void) {
   work->message = savedMessage;
 }
 
-/// Sparkles fall about Alex, one every other frame, and he blinks into sight
-/// from WARP_IN_BLINK_FRAME, as Saturos and Alex warp in on Mercury
-/// Lighthouse's aerie.
+/// Sparkles fall about Alex, one every other frame, as Saturos and Alex warp in
+/// on Mercury Lighthouse's aerie.
 #define WARP_FRAMES 32
+/// The frame of his warp in from which Alex blinks into sight.
 #define WARP_IN_BLINK_FRAME 20
 
 /// Alex warps in where he has been placed, hidden.
@@ -2217,11 +2217,11 @@ struct ActorPlacement gSolSanctumElementalStarRoom_ActorPlacements[] = {
     ACTOR_PLACEMENT(ACTOR_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(ACTOR_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, 3, 0),
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_EAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        0, 0, 0, FACING_SOUTH, 3, 0),
+        0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(SPRITE_SATUROS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_MENARDI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,

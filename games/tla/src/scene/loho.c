@@ -14,6 +14,7 @@
 #include "field/event_inline.h"
 #include "battle/battle.h"
 #include "field/field.h"
+#include "field/field_sequence.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "system/math_table.h"
@@ -307,7 +308,7 @@ inPlace:
   }
   Dma_Set((const void *)(s32)Field_ExplosionPalette,
           (void *)&OBJ_PLTT_COLOR(LOHO_SPARK_PALETTE, 0),
-          DMA_COPY_HALFWORDS(16), REG_DMA3);
+          DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
   for (i = 0; i < LOHO_BLAST_FRAMES; i++) {
     if ((i & 31) == 0) {
       Event_PlaySound(SE_CRASH);
@@ -818,7 +819,8 @@ void Loho_SetUpTown(void) {
 /// The houses open with the window transition; the inn counter's marker casts
 /// no shadow.
 void Loho_SetUpRooms(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_INN_COUNTER), 0);
 }
 
@@ -960,11 +962,12 @@ s32 gLoho_FirstMinerReturns[] = {
 };
 
 /// Run on the cannon as the crew sets off with it: it rises two pixels off the
-/// ground. The commands after the first SC_END are never reached.
+/// ground.
 s32 gLoho_CannonRises[] = {
     SC_MOVE_BY(0, 2, 0),
     SC_SYNC,
     SC_END,
+    // Unused: never reached after the first SC_END.
     SC_ANIMATION(5),
     SC_WAIT(1),
     SC_END,

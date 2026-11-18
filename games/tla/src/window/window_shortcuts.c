@@ -44,8 +44,7 @@ void AreaNameWindow_Update(void) {
   u16 framesLeft;
 
   work = TIMED_NOTICE_WORK;
-  // Adding (u16)-1 takes one off in 16 bits.
-  work->noticeFrames = (framesLeft = work->noticeFrames + (u16)-1);
+  work->noticeFrames = framesLeft = work->noticeFrames - 1;
   if (framesLeft == 0) {
     Window_Close(work->noticeWindow, 2);
     Task_Remove(AreaNameWindow_Update);

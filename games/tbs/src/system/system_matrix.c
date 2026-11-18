@@ -9,6 +9,17 @@
 
 #define MATRIX_DMA (DMA_COPY_WORDS(MATRIX_WORDS)) ///< one matrix
 
+/// Matrix_BuildLookAt's reciprocals divide FIXED_ONE << RECIPROCAL_SHIFT,
+/// 2^31, the most a u32 holds: the quotient shifted right by RECIPROCAL_SHIFT
+/// is FIXED_ONE over a whole-number divisor, and doubled it is the 16.16
+/// reciprocal of a 16.16 divisor.
+#define RECIPROCAL_SHIFT 15
+
+/// Matrix_ProjectPoint's depth drops its low PROJECTION_DEPTH_SHIFT bits,
+/// and the focal length gains the rest of FIXED_ONE's, so that the focal
+/// length over the depth comes out in 16.16 within 32 bits.
+#define PROJECTION_DEPTH_SHIFT 11
+
 typedef s32 (*Dot3Fn)(s32 ax, s32 bx, s32 ay, s32 by, s32 az, s32 bz);
 
 /// Allocates the one-level save area (heap slot HEAP_SLOT_MATRIX_STACK),
@@ -242,18 +253,19 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
   s32 scale;
   s32 ez;
   s32 t;
-  u32 num = 0x80000000; // 2^31, the dividend of each reciprocal
+  u32 dividend = (u32)FIXED_ONE << RECIPROCAL_SHIFT;
 
-  // Copy the dot product routine to the stack and call it there
+  // Copy the dot product routine to the stack and call it there.
   dot = (Dot3Fn)code;
   Dma_Set(RelocatedInnerProduct, code, DMA_COPY_WORDS(7), REG_DMA3);
 
-  // The view axis d, pointing from the target back to the eye, normalized
+  // The view axis d, pointing from the target back to the eye, normalized:
+  // its length in whole pixels, and FIXED_ONE over it, negated.
   dx = target[0] - eye[0];
   dy = target[1] - eye[1];
   dz = target[2] - eye[2];
   t = Iwram_Sqrt(dot(dx >> 8, dx >> 8, dy >> 8, dy >> 8, dz >> 8, dz >> 8));
-  scale = Iwram_UnsignedDivide(num, t) >> 15;
+  scale = Iwram_UnsignedDivide(dividend, t) >> RECIPROCAL_SHIFT;
   scale = -scale;
   /* FAKEMATCH(dead): the normalization in a once-only block. */
   do {
@@ -263,26 +275,27 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
     uz = -dx;
   } while (0);
 
-  // The sideways axis u = (dz, 0, -dx), normalized
+  // The sideways axis u = (dz, 0, -dx), normalized.
   t = Iwram_MulFX(dy, dy);
   scale = FIXED_ONE;
   if (scale - t > 0)
-    scale = Iwram_UnsignedDivide(num, Math_SqrtFX(scale - t)) << 1;
+    scale = Iwram_UnsignedDivide(dividend, Math_SqrtFX(scale - t)) << 1;
   ux = Iwram_MulFX(dz, scale);
   uz = Iwram_MulFX(uz, scale);
 
-  // The up axis v, the cross product of d and u, normalized
+  // The up axis v, the cross product of d and u, normalized.
   vx = Iwram_MulFX(dy, uz);
   vy = Iwram_MulFX(dz, ux) - Iwram_MulFX(dx, uz);
   vz = -Iwram_MulFX(dy, ux);
-  scale = Iwram_UnsignedDivide(num, Math_SqrtFX(dot(vx, vx, vy, vy, vz, vz)))
-          << 1;
+  scale =
+      Iwram_UnsignedDivide(dividend, Math_SqrtFX(dot(vx, vx, vy, vy, vz, vz)))
+      << 1;
   vx = Iwram_MulFX(vx, scale);
   vy = Iwram_MulFX(vy, scale);
   vz = Iwram_MulFX(vz, scale);
 
   // The three axes are the matrix columns; the translation is each axis's
-  // dot product with the eye, negated
+  // dot product with the eye, negated.
   ex = eye[0];
   ey = eye[1];
   ez = eye[2];
@@ -324,7 +337,8 @@ void Projection_SetFieldOfView(u32 fieldOfView, FIXED nearDepth,
 
   halfAngle = (s32)fieldOfView / 2;
   sine = Trig_Sin(halfAngle);
-  // Iwram_RatioMulQ14(d, v) is v * FIXED_ONE / d: here 80 * cos / sin
+  // Iwram_RatioMulQ14(d, v) is v * FIXED_ONE / d: here
+  // (DISPLAY_HEIGHT / 2) * cos / sin
   focal = Iwram_RatioMulQ14(sine, Trig_Cos(halfAngle) * (DISPLAY_HEIGHT / 2));
   gProjection.near = nearDepth;
   gProjection.focal = focal;
@@ -351,17 +365,16 @@ s32 Matrix_ProjectPoint(const void *point, s32 *screen) {
 
   Iwram_TransformVector(point, screen);
   projection = &gProjection;
-  // The camera looks down -z, so a point in front of it has a negative z
+  // The camera looks down -z, so a point in front of it has a negative z.
   depth = -screen[2];
   result = 0;
   if (depth >= projection->near && depth <= projection->far) {
-    screen[2] = depth >> 16;
+    screen[2] = FIXEDtoINT(depth);
     if (projection->focal != 0) {
-      u32 shifted = (u32)depth >> 11;
+      u32 shifted = (u32)depth >> PROJECTION_DEPTH_SHIFT;
 
-      // (focal << 5) / (depth >> 11) is focal * FIXED_ONE / depth, focal over
-      // depth in 16.16, without the low 11 bits of the depth
-      scale = Iwram_UnsignedDivide(projection->focal << 5, shifted);
+      scale = Iwram_UnsignedDivide(
+          projection->focal * (FIXED_ONE >> PROJECTION_DEPTH_SHIFT), shifted);
     } else {
       scale = FIXED_ONE * 33 / 25; // 1.32
     }
@@ -373,3 +386,5 @@ s32 Matrix_ProjectPoint(const void *point, s32 *screen) {
 }
 
 #undef MATRIX_DMA
+#undef RECIPROCAL_SHIFT
+#undef PROJECTION_DEPTH_SHIFT

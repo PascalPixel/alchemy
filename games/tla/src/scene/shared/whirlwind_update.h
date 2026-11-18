@@ -1,9 +1,5 @@
-/// The raised trigger a whirlwind raises as it catches the leader, which each
-/// scene with whirlwinds answers with Whirlwind_CarryLeader.
-#define RAISED_TRIGGER_WHIRLWIND 200
-/// How near the leader a whirlwind catches it, in pixels across the ground and
-/// in height.
-#define WHIRLWIND_CATCH_REACH 12
+#include "whirlwind_catch.h"
+
 /// The sprite priority bits of an OAM attribute 2's high byte.
 #define ATTR2_HIGH_PRIORITY_MASK (OBJ_PRIORITY(3) >> 8)
 
@@ -24,7 +20,6 @@ void Whirlwind_Update(struct Actor *self) {
   Actor_SetAnimationSpeed(self, ANIMATION_STEP_NORMAL);
   if ((++*(u16 *)&self->timer & 31) == 31)
     Event_PlaySound(SE_WATER_LEVEL);
-  // The whirlwind takes the leader's sprite priority.
   {
     s8 *to = self->sprite;
     s8 *from = leader->sprite;

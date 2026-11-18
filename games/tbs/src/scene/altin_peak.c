@@ -125,10 +125,11 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-// The water's flicker timer, and the spray's direction (FACING_EAST or
-// FACING_WEST) and origin.
+/// The water's flicker timer.
 u16 gAltinPeak_FlickerTimer BSS_DATA;
+/// The spray's direction, FACING_EAST or FACING_WEST.
 s32 gAltinPeak_SprayDirection BSS_DATA;
+/// The spray's origin.
 s32 gAltinPeak_SprayOrigin[3] BSS_DATA;
 u8 gAltinPeak_UnusedAfterSprayOrigin[16] BSS_DATA;
 /// Frames left on the water palette's current step (gAltinPeak_PaletteScript).
@@ -224,10 +225,10 @@ static void AltinPeak_StartPaletteAnimation(void);
 
 /// Each room's water beast fight returns the party to ENTRANCE_AFTER_BATTLE.
 ///
-/// Unused: no exit or event leads to ENTRANCE_UNUSED. It stands at the way in
-/// of each water beast's room and the Hydros statue's, and the statue room's
-/// setup lands the party there as it does from AltinPeakFallingRocks.
-enum { ENTRANCE_UNUSED = 98, ENTRANCE_AFTER_BATTLE = 99 };
+/// ENTRANCE_ROOM_START stands at the way in of each water beast's room and the
+/// Hydros statue's, and the statue room's setup lands the party there as it
+/// does from AltinPeakFallingRocks. Unused: no exit or event leads to it.
+enum { ENTRANCE_ROOM_START = 98, ENTRANCE_AFTER_BATTLE = 99 };
 
 /// The rooms' actors, from their actor placements.
 ///
@@ -1753,7 +1754,7 @@ static void AltinPeak_RestoreHydrosStatueRoom(void) {
   }
   entrance = gMainRoutineWork.entrance;
   if (entrance == ALTIN_PEAK_HYDROS_STATUE_FROM_ALTIN_PEAK_FALLING_ROCKS ||
-      entrance == ENTRANCE_UNUSED) {
+      entrance == ENTRANCE_ROOM_START) {
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
       leader = Actor_Get(ACTOR_PARTY_LEADER);
       Event_Start();
@@ -2630,7 +2631,7 @@ struct SceneEntrance gAltinPeak_EntrancesOther[] = {
 struct SceneEntrance gAltinPeak_FirstWaterBeastEntrances[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_FIRST_WATER_BEAST_FROM_ALTIN, CONDITION_ALWAYS, 456, 0, 520, FACING_NORTH, 0, 0, 56, 506, 530, 0},
-    {ENTRANCE_UNUSED, CONDITION_ALWAYS, 456, 0, 488, FACING_NORTH, 0, 0, 56, 506, 530, 0},
+    {ENTRANCE_ROOM_START, CONDITION_ALWAYS, 456, 0, 488, FACING_NORTH, 0, 0, 56, 506, 530, 0},
     {ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 104, 0, 232, FACING_SOUTH, 0, 0, 56, 506, 530, 0},
     {SCENE_TABLE_END},
 };
@@ -2647,7 +2648,7 @@ struct SceneEntrance gAltinPeak_SecondWaterBeastEntrances[] = {
     {ALTIN_PEAK_SECOND_WATER_BEAST_FROM_ALTIN_PEAK_RAIL_TUNNEL, CONDITION_ALWAYS, 488, 0, 560, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_SECOND_WATER_BEAST_LAKE_FROM_CHEST_ROOM, CONDITION_ALWAYS, 664, 0, 380, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_FROM_LAKE, CONDITION_ALWAYS, 904, 0, 214, FACING_NORTH, 0, 842, 40, 1016, 248, 0},
-    {ENTRANCE_UNUSED, CONDITION_ALWAYS, 488, 0, 560, FACING_NORTH, 0, -1, -1, -1, -1, 0},
+    {ENTRANCE_ROOM_START, CONDITION_ALWAYS, 488, 0, 560, FACING_NORTH, 0, -1, -1, -1, -1, 0},
     {ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 320, 0, 472, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {SCENE_TABLE_END},
 };
@@ -2667,7 +2668,7 @@ struct SceneEntrance gAltinPeak_SouthEntranceEntrances[] = {
 struct SceneEntrance gAltinPeak_ThirdWaterBeastEntrances[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_THIRD_WATER_BEAST_FROM_ALTIN_PEAK_POOL, CONDITION_ALWAYS, 585, 0, 501, FACING_NORTH, 0, 0, 0, 798, 530, 0},
-    {ENTRANCE_UNUSED, CONDITION_ALWAYS, 585, 0, 501, FACING_NORTH, 0, 0, 0, 798, 530, 0},
+    {ENTRANCE_ROOM_START, CONDITION_ALWAYS, 585, 0, 501, FACING_NORTH, 0, 0, 0, 798, 530, 0},
     {ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 747, 0, 258, FACING_SOUTH, 0, 0, 0, 798, 530, 0},
     {SCENE_TABLE_END},
 };
@@ -2715,7 +2716,7 @@ struct SceneEntrance gAltinPeak_FallingRocksEntrances[] = {
 struct SceneEntrance gAltinPeak_HydrosStatueEntrances[] = {
     {0, CONDITION_ALWAYS, 160, 0, 160, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ALTIN_PEAK_HYDROS_STATUE_FROM_ALTIN_PEAK_FALLING_ROCKS, CONDITION_ALWAYS, 88, 4, 424, FACING_SOUTH, 0, 0, 0, 448, 524, 0},
-    {ENTRANCE_UNUSED, CONDITION_ALWAYS, 88, 4, 424, FACING_SOUTH, 0, 0, 0, 448, 524, 0},
+    {ENTRANCE_ROOM_START, CONDITION_ALWAYS, 88, 4, 424, FACING_SOUTH, 0, 0, 0, 448, 524, 0},
     {ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 328, 0, 118, FACING_NORTH, 0, 0, 0, 448, 524, 0},
     {SCENE_TABLE_END},
 };

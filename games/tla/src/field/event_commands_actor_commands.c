@@ -192,8 +192,11 @@ void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
   sprite->rotation = angle + DEGtoANG(90);
 }
 
+/// Item 0's icon, a gold coin, which an actor shows for coins.
+#define COIN_ICON_ITEM 0
+
 /// Shows an actor as an item's icon, its sprite's only picture: the item, or
-/// for coins (SCOOPED_COINS) item 0's icon, a gold coin.
+/// for coins (SCOOPED_COINS) COIN_ICON_ITEM's.
 void Actor_ShowItemIconById(s32 id, s32 item) {
   struct Actor *actor = Actor_GetById(id);
   struct Sprite *sprite;
@@ -206,7 +209,7 @@ void Actor_ShowItemIconById(s32 id, s32 item) {
     if (kind == ACTOR_SPRITE_ONE) {
       sprite = actor->sprite;
       if (item & SCOOPED_COINS)
-        item = ITEM_NONE;
+        item = COIN_ICON_ITEM;
       icon = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
       Dma_Fill32(0, icon->tiles, ICON_TILE_BYTES);
 #ifdef UBFIX

@@ -12,11 +12,6 @@
 #include "system/system.h"
 #include "system/task.h"
 
-/// Sprite.flags: the sprite keeps the picture last drawn and only turns to
-/// mirror it, set once a battle's motion releases the buffer its layer drew
-/// from (BattleMotion_ReleaseBuffer).
-#define SPRITE_FLAG_KEEP_PICTURE (1 << 5)
-
 /// SpriteAnimation.mode: how a layer's pictures are packed, each with its
 /// decoder.
 enum SpritePictureCodec {
@@ -24,11 +19,6 @@ enum SpritePictureCodec {
   SPRITE_PICTURE_TAGGED_LZ = 1, ///< Decompress_TaggedLz's format
   SPRITE_PICTURE_LZ = 3         ///< LZ-compressed
 };
-
-/// A sprite's shadow, 16 by 8 pixels: its half width and half height, both
-/// doubled when the sprite is drawn double-size.
-#define SHADOW_HALF_WIDTH 8
-#define SHADOW_HALF_HEIGHT 4
 
 /// Runs each of the player's animation channels on to its next stop (an
 /// end, hold, jump or play command), taking the frames and
@@ -177,6 +167,7 @@ s32 Sprite_ComposePicture(struct Sprite *obj, u32 dir) {
   select_direction:
     switch (layer->kind) {
     case ANIM_FACING_ONE_PICTURE:
+      // Only the first eight of its entries are read.
       facing = gAnimationFacing_OnePicture[FACING_SECTOR(dir, 8)];
       break;
     case ANIM_FACING_FRONT_BACK:
@@ -189,7 +180,7 @@ s32 Sprite_ComposePicture(struct Sprite *obj, u32 dir) {
     case ANIM_FACING_THREE_PICTURES:
       facing = gAnimationFacing_ThreePictures[FACING_SECTOR(dir, 16)];
       break;
-    case ANIM_FACING_SIX_PICTURES:
+    case ANIM_FACING_FIVE_PICTURES:
       facing = gAnimationFacing_SixPictures[FACING_SECTOR(dir, 64)];
       break;
     case ANIM_FACING_EIGHT_PICTURES:
@@ -454,7 +445,7 @@ void Render_ApplyProjectedPlacement(struct Sprite *object, s32 *pos, s32 *scale,
     halfHeight <<= 1;
   }
 
-  // The 16 by 8 shadow, centred on the ground below the object.
+  // The shadow, centred on the ground below the object.
   y = FIXEDtoINT(pz - pw) - SHADOW_HALF_HEIGHT;
   if ((object->flags & SPRITE_FLAG_SHADOW) && y < DISPLAY_HEIGHT) {
     part = &object->shadow;
@@ -676,7 +667,7 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
       else {
         // A plain sprite has no matrix: 8 in the matrix field is OAM's
         // horizontal flip bit, set while scaleX is negative.
-        matrix = (u32)scaleX >> 31;
+        matrix = scaleX < 0;
         matrix <<= 3;
       }
       if (scaleX != 0 && scaleY != 0) {
@@ -684,7 +675,8 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
         ((u32 *)&sprite->image)[1] =
             (((u32 *)&sprite->image)[1] & OAM_ATTR01_KEPT_BITS) |
             (affine << 8) | OBJ_AFFINE_MATRIX(matrix) |
-            // x's 9 bits into attribute 1, y's 8 into attribute 0.
+            // OBJ_POSITION as shifts: x's 9 bits into attribute 1, y's 8 into
+            // attribute 0.
             ((u32)(screen[0] - halfWidth + offsetX) << 23 >> 7) |
             (u8)(screen[1] - halfHeight + offsetY);
         if (depth == 0) {

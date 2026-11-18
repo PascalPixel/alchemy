@@ -113,11 +113,6 @@ enum VaultRevisitActorId {
   ACTOR_SAP = ACTOR_FIRST_PLACED + 13
 };
 
-/// The bit of a child round the well's timer that is set while the party
-/// talks to it, so that it stops whichever way it faces
-/// (Vault_UpdateWalkingVillager).
-enum { VILLAGER_TALKED_TO = 2 };
-
 /// Area flags for what the townspeople have already said, kept while the
 /// party stays in Vault's scenes. A Mind Read before someone has spoken plays
 /// the conversation first.
@@ -223,7 +218,7 @@ static void VaultRevisit_GreetWarriorGuy(void) {
   actor->facing = facing;
   wait(1);
   Event_End();
-  actor->timer = 1;
+  actor->timer = VILLAGER_IS_BOY;
   GameFlag_Set(FLAG_VAULT_REVISIT_BOY_ROUND_THE_WELL_SPOKE);
 }
 
@@ -321,7 +316,7 @@ static void VaultRevisit_ReadMindOnFeelingBrave(void) {
     GameFlag_Set(FLAG_VAULT_REVISIT_BOY_ROUND_THE_WELL_SPOKE);
   }
   Event_End();
-  Actor_Get(ACTOR_BOY_ROUND_THE_WELL)->timer = 1;
+  Actor_Get(ACTOR_BOY_ROUND_THE_WELL)->timer = VILLAGER_IS_BOY;
 }
 
 /// Mind Read on the girl round the well. Grown-ups always get so scared.
@@ -586,7 +581,7 @@ s32 Scene_Initialize(void) {
   wait(1);
   Actor_Get(ACTOR_BOY_ROUND_THE_WELL)->update =
       (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
-  Actor_Get(ACTOR_BOY_ROUND_THE_WELL)->timer = 1;
+  Actor_Get(ACTOR_BOY_ROUND_THE_WELL)->timer = VILLAGER_IS_BOY;
   Actor_Get(ACTOR_GIRL_ROUND_THE_WELL)->update =
       (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
   Actor_Get(ACTOR_GIRL_ROUND_THE_WELL)->timer = 0;

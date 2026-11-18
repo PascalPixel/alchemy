@@ -14,10 +14,14 @@ enum StatusScreenStep {
   STATUS_STEP_EQUIPMENT = 3 ///< their equipment page
 };
 
-// A bit over the page mode of StatusScreen_DrawStatusAilments and
-// ItemMenu_DrawMemberStatus: draw without clearing the window first, as for a
+// The page modes of StatusScreen_DrawStatusAilments and
+// ItemMenu_DrawMemberStatus, in the mode's low byte: the party row's summary,
+// or the full status page, with the elemental levels, Power and Resist.
+enum { STATUS_PAGE_SUMMARY = 0, STATUS_PAGE_FULL = 1 };
+// A bit over the page mode: draw without clearing the window first, as for a
 // window just opened.
-#define STATUS_PAGE_NO_CLEAR 0x100
+#define STATUS_PAGE_NO_CLEAR (1 << 8)
+#define STATUS_PAGE_MODE_MASK (STATUS_PAGE_NO_CLEAR - 1)
 
 /// The worn items' rows in ItemMenu_DrawCategory's window, 16 pixels apart:
 /// weapon, helm, shield and armor from the top. A slot's label stands on its
@@ -27,9 +31,23 @@ enum StatusScreenStep {
 #define EQUIPPED_ICON_X 216
 #define EQUIPPED_ICON_Y(row) (EQUIPPED_ROW_Y(row) + 32)
 
-/// The Djinn figures stand in a row 32 pixels apart, at y STATUS_FIGURE_ROW_Y.
+/// The Djinn figures stand in a row 32 pixels apart, at y STATUS_FIGURE_ROW_Y,
+/// over the status page's Djinn counts. On the full status page those stand
+/// three tiles higher, and the figures at STATUS_FIGURE_FULL_PAGE_ROW_Y; the
+/// pages after it put them above the screen.
 #define STATUS_FIGURE_X(index) (130 + (index) * 32)
 #define STATUS_FIGURE_ROW_Y 128
+#define STATUS_FIGURE_FULL_PAGE_ROW_Y 104
+#define STATUS_FIGURE_HIDDEN_Y -16
+
+/// The Djinn list (DjinnMenu_ShowCurrentList): a column for each element, its
+/// Djinni figure standing over it.
+#define DJINN_LIST_COLUMN_WIDTH 56
+#define DJINN_LIST_FIGURE_X(element) (32 + (element) * DJINN_LIST_COLUMN_WIDTH)
+#define DJINN_LIST_FIGURE_Y 56
+/// The window map entry of the first element icon, in palette 1 as
+/// TILEMAP_ENTRY_ICON gives it; the four elements follow it in order.
+#define STATUS_ELEMENT_TILE (BG_TILE_PALETTE(1) | 1)
 
 /// The status page's four element columns, 4 tiles apart from tile 15, where
 /// each element's icon stands; its figures end left of it.
@@ -62,7 +80,7 @@ s32 PartyMemberChooser_Open(void) {
       u16 value;
     } y;
 
-    y.value = 26;
+    y.value = MENU_MEMBER_Y;
     for (index = 3; index >= 0; index--)
       state->memberY[index] = y.value;
   }
@@ -220,6 +238,7 @@ s32 StatusScreen_RunPages(void) {
     case STATUS_STEP_STATUS:
       MenuIcon_SetActive(1);
       result = StatusScreen_SelectCommand();
+      // STATUS_STEP_MEMBER for -1, STATUS_STEP_PSYNERGY otherwise.
       changed = ~result;
       step = (-changed | changed) >> 31;
       step <<= 1;
@@ -234,6 +253,7 @@ s32 StatusScreen_RunPages(void) {
     case STATUS_STEP_EQUIPMENT:
       MenuIcon_SetActive(0);
       result = ItemMenu_SelectItem();
+      // STATUS_STEP_MEMBER for -1, STATUS_STEP_STATUS otherwise.
       changed = ~result;
       step = (-changed | changed) >> 31;
       break;
@@ -311,9 +331,9 @@ void DjinnMenu_ShowCurrentList(void) {
   menu->cursor->motion = ICON_HIDDEN;
   menu->secondCursor->motion = ICON_HIDDEN;
   for (i = 0; i < 4; i++) {
-    menu->slotX[i] = 32 + i * 56;
-    menu->slotY[i] = 56;
-    menu->memberY[i] = 26;
+    menu->slotX[i] = DJINN_LIST_FIGURE_X(i);
+    menu->slotY[i] = DJINN_LIST_FIGURE_Y;
+    menu->memberY[i] = MENU_MEMBER_Y;
   }
   wait(1);
   while (!GameFlag_Get(FLAG_MENU_START_PRESSED)) {
@@ -328,11 +348,12 @@ void DjinnMenu_ShowCurrentList(void) {
           djinn =
               element * DJINN_PER_ELEMENT + (row + (page * 8 + page) + 7) % 18;
           if (GameFlag_Get(FLAG_DJINNI(djinn))) {
-            // The element icons are tiles 1 to 4, drawn in palette 1.
-            Window_SetTilemapEntryFar(window, BG_TILE_PALETTE(1) + 1 + element,
-                                      element * 7 + 1, row + 1, 0);
+            Window_SetTilemapEntryFar(
+                window, STATUS_ELEMENT_TILE + element,
+                element * (DJINN_LIST_COLUMN_WIDTH / 8) + 1, row + 1, 0);
             Text_DrawMessageAsTilesFar(djinn + MsgDjinnName, window,
-                                       element * 56 + 16, row * 8 + 8);
+                                       element * DJINN_LIST_COLUMN_WIDTH + 16,
+                                       row * 8 + 8);
           }
         }
       }
@@ -503,7 +524,6 @@ s32 PsynergyMenu_ChooseMember(void) {
   Text_DrawMessageAsTilesFar((s32)MsgChooseCharacter + 1, menu->selectorWindow,
                              0, 16);
   while (1) {
-    // PERM
     if (pending) {
       selection = (selection + count) % count;
       // DEAD: Unit_Get's result is not used; the ROM keeps the call.
@@ -645,7 +665,7 @@ void StatusScreen_ShowMemberStatus(s32 resource, s32 frame) {
     StatusScreen_DrawStatusAilments(handle, resource, STATUS_PAGE_NO_CLEAR);
     return;
   }
-  StatusScreen_DrawStatusAilments(handle, resource, 0);
+  StatusScreen_DrawStatusAilments(handle, resource, STATUS_PAGE_SUMMARY);
 }
 
 // The pressed keys, read again at each test.
@@ -695,14 +715,15 @@ s32 StatusScreen_SelectCommand(void) {
   else
     hasDjinn = 0;
   for (i = 3; i >= 0; i--)
-    menu->rowY[i] = 104;
+    menu->rowY[i] = STATUS_FIGURE_FULL_PAGE_ROW_Y;
   done = 0;
   MenuCursor_Slide(-10, 88);
 
   while (done == 0 && !GameFlag_Get(FLAG_MENU_START_PRESSED)) {
     // DEAD: Unit_Get's result is not used; the ROM keeps the call.
     Unit_Get(menu->selectedIds[0]);
-    StatusScreen_DrawStatusAilments(window, menu->selectedIds[0], 1);
+    StatusScreen_DrawStatusAilments(window, menu->selectedIds[0],
+                                    STATUS_PAGE_FULL);
     count = StatusScreen_BuildAvailability(entries, 1, menu->selectedIds[0]);
     hasAilments = 0;
     if (count == 0)
@@ -802,7 +823,7 @@ s32 StatusScreen_SelectCommand(void) {
   WindowSprite_PrepareForRedrawFar(menu->helpWindow);
   WindowSprite_RedrawSavedRectFar(window);
   for (i = 3; i >= 0; i--)
-    menu->rowY[i] = -16;
+    menu->rowY[i] = STATUS_FIGURE_HIDDEN_Y;
   return result;
 }
 
@@ -962,7 +983,7 @@ void StatusScreen_DrawStatusAilments(s32 window, s32 ownerId, s32 mode) {
   unit = Unit_Get(ownerId);
   // The Djinn row, in tiles: higher on the full page (mode 1), which has the
   // elemental rows below it.
-  if ((mode & 0xff) == 1)
+  if ((mode & STATUS_PAGE_MODE_MASK) == STATUS_PAGE_FULL)
     djinnRow = 7;
   else
     djinnRow = 10;
@@ -982,7 +1003,7 @@ void StatusScreen_DrawStatusAilments(s32 window, s32 ownerId, s32 mode) {
   // The four element icons, then the Djinn counts and, in mode 1, the
   // elemental levels, Power and Resist.
   Text_SetColorFar(TEXT_COLOR_NORMAL);
-  if (mode == 1 || hasDjinn == 1) {
+  if (mode == STATUS_PAGE_FULL || hasDjinn == 1) {
     Window_SetTilemapEntryFar(window, 1, 15, djinnRow, TILEMAP_ENTRY_ICON);
     Window_SetTilemapEntryFar(window, 2, 19, djinnRow, TILEMAP_ENTRY_ICON);
     Window_SetTilemapEntryFar(window, 3, 23, djinnRow, TILEMAP_ENTRY_ICON);
@@ -990,7 +1011,7 @@ void StatusScreen_DrawStatusAilments(s32 window, s32 ownerId, s32 mode) {
   }
   if (hasDjinn)
     Text_DrawMessageAsTilesFar(MsgDjinnLabel, window, 64, (djinnRow + 1) * 8);
-  if (mode == 1) {
+  if (mode == STATUS_PAGE_FULL) {
     if (!hasDjinn)
       djinnRow--;
     MENU_DRAW_STATUS_LABEL(gMenu_LvString, window, 64, (djinnRow + 2) * 8);
@@ -1002,7 +1023,7 @@ void StatusScreen_DrawStatusAilments(s32 window, s32 ownerId, s32 mode) {
     if (hasDjinn)
       Text_DrawNumberInWindowFar(unit->djinnHeldCounts[element], 1, window,
                                  STATUS_ELEMENT_X(element), (djinnRow + 1) * 8);
-    if ((mode & 0xff) == 1) {
+    if ((mode & STATUS_PAGE_MODE_MASK) == STATUS_PAGE_FULL) {
       if (hasDjinn) {
         Text_DrawNumberInWindowFar(unit->djinnSetCounts[element], 1, window,
                                    STATUS_ELEMENT_X(element) - 16,
@@ -1040,6 +1061,11 @@ extern const u8 gMenu_PpString[];
 #define STATUS_STAT_X 192
 #endif
 
+/// Stat label `stat`, 0 to 3, of "Attack", "Defense", "Agility" and "Luck",
+/// MsgStatLabel and the three after it, counted back from MsgExpLabel.
+#define STAT_LABEL(stat)                                                       \
+  ((s32)MsgExpLabel - (MSGNO(MsgExpLabel) - MSGNO(MsgStatLabel) - (stat)))
+
 /// Draws the top rows of party member memberId's status page into window: name,
 /// class, level, experience, HP and PP on the left, Attack, Defense, Agility
 /// and Luck on the right.
@@ -1074,10 +1100,10 @@ void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags) {
   }
   /* FAKEMATCH(temporary): "Attack", "Defense", "Agility" and "Luck",
      MsgStatLabel and the three after it, counted back from MsgExpLabel. */
-  Text_DrawMessageAsTilesFar((s32)MsgExpLabel - 23, window, 152, 0);
-  Text_DrawMessageAsTilesFar((s32)MsgExpLabel - 22, window, 152, 8);
-  Text_DrawMessageAsTilesFar((s32)MsgExpLabel - 21, window, 152, 16);
-  Text_DrawMessageAsTilesFar((s32)MsgExpLabel - 20, window, 152, 24);
+  Text_DrawMessageAsTilesFar(STAT_LABEL(0), window, 152, 0);
+  Text_DrawMessageAsTilesFar(STAT_LABEL(1), window, 152, 8);
+  Text_DrawMessageAsTilesFar(STAT_LABEL(2), window, 152, 16);
+  Text_DrawMessageAsTilesFar(STAT_LABEL(3), window, 152, 24);
   Text_DrawNumberInWindowFar(unit->atk, STATUS_STAT_DIGITS, window,
                              STATUS_STAT_X, 0);
   Text_DrawNumberInWindowFar(unit->def, STATUS_STAT_DIGITS, window,
@@ -1090,6 +1116,7 @@ void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags) {
 
 #undef STATUS_STAT_DIGITS
 #undef STATUS_STAT_X
+#undef STAT_LABEL
 
 // The rows one page of the list shows: Japanese fits six, the other editions
 // five.
@@ -1951,8 +1978,12 @@ void Menu_PlaceEntryActorsInGrid(s32 originX, s32 originY, s32 columns) {
   }
 }
 
+/// The side of a cell of the grids Menu_PlaceEntryActorInGrid places icons in.
+#define ENTRY_ICON_CELL_SIZE 16
+
 /// Places icon at cell index (an index above 31 is taken as 0) of a grid of
-/// 16x16 cells, columns wide, from (originX, originY), and shows it.
+/// ENTRY_ICON_CELL_SIZE square cells, columns wide, from (originX, originY),
+/// and shows it.
 void Menu_PlaceEntryActorInGrid(struct WindowSprite *icon, s32 index,
                                 s32 originX, s32 originY, s32 columns) {
   s32 entryIndex;
@@ -1961,8 +1992,8 @@ void Menu_PlaceEntryActorInGrid(struct WindowSprite *icon, s32 index,
   if (entryIndex > MENU_ENTRY_ICONS - 1) {
     entryIndex = 0;
   }
-  icon->y = (entryIndex / columns * 16) + originY;
-  icon->x = (entryIndex % columns * 16) + originX;
+  icon->y = (entryIndex / columns * ENTRY_ICON_CELL_SIZE) + originY;
+  icon->x = (entryIndex % columns * ENTRY_ICON_CELL_SIZE) + originX;
   Icon_PrepareActor(icon);
 }
 

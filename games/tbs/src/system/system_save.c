@@ -22,10 +22,11 @@ enum {
 };
 
 /// Where a file's second copy of the play time lies in its second part:
-/// Save_BuildFileSummary (window/screens_save.c) writes it 256 bytes into
+/// Save_BuildFileSummary (window/screens_save.c) writes it into
 /// gSceneLocalState, which opens the save image's second half, after the part's
 /// header.
-#define SAVE_SECOND_PLAY_TIME_OFFSET (sizeof(struct SaveSectorHeader) + 256)
+#define SAVE_SECOND_PLAY_TIME_OFFSET                                           \
+  (sizeof(struct SaveSectorHeader) + SECOND_PART_PLAY_TIME_WORD * sizeof(u32))
 
 /// Allocates the save workspace (heap slot HEAP_SLOT_SAVE), installs the flash
 /// library's SAVE_FLASH_TIMER handler, identifies the flash chip (up to eight
@@ -243,8 +244,8 @@ u32 Save_DeletePart(s32 partId) {
   return NONZERO(deletionResult);
 }
 
-/// Sums the first 4072 payload bytes of the workspace's sector buffer; the
-/// final eight payload bytes are excluded.
+/// Sums the first SAVE_CHECKSUM_BYTES payload bytes of the workspace's sector
+/// buffer; the final eight payload bytes are excluded.
 s32 Save_ChecksumSector(void) {
   struct SaveWork *work;
   u32 limit;

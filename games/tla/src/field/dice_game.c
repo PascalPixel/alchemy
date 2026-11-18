@@ -53,10 +53,6 @@
 #define GREEN_DIGIT_TILES 640   ///< 0 to 9, 32 by 32, the total
 #define PINK_DIGIT_TILES 816    ///< 0 to 9, 16 by 16
 
-/// The 16-colour tiles a sprite of width by height pixels takes: a picture's
-/// sprites follow one another so in OBJ VRAM.
-#define SPRITE_TILES(width, height) ((width) / 8 * ((height) / 8))
-
 /// The dome's picture begins with its 224 colours, the dice faces' with 64,
 /// each before its tiles.
 #define DOME_PALETTE_COLORS 224
@@ -64,6 +60,13 @@
 
 /// A glowing picture's channels rise by up to twice this many levels.
 #define GLOW_LEVELS 16
+
+/// The x the choices, Higher and Lower or Double Up and Cash Out, rest at;
+/// once A is pressed the one not chosen slides away 12 pixels a frame.
+#define CHOICE_COLUMN_X 64
+/// The chosen choice's number bobs by a sine shifted down this far: up to 4
+/// pixels and back every 32 frames.
+#define CHOICE_BOB_SHIFT 14
 
 /// The sprite palettes SuperLuckyDice_Run gives its pictures, after the six the
 /// dice faces' copy fills; the last four are loaded again for each part of a
@@ -110,9 +113,6 @@ enum SuperLuckyDiceResult {
 #define DICE_LOWEST_TOTAL DICE_COUNT
 #define DICE_HIGHEST_TOTAL (DICE_COUNT * DICE_FACE_COUNT)
 #define DICE_MIDDLE_TOTAL ((DICE_LOWEST_TOTAL + DICE_HIGHEST_TOTAL) / 2)
-
-/// A palette's 16 colours in bytes, as each picture's resource begins.
-#define PALETTE_BYTES (PALETTE_COLORS * 2)
 
 /// The pictures a state asks SuperLuckyDice_Run to load before the next frame.
 enum SuperLuckyDicePictures {
@@ -489,9 +489,6 @@ enum SuperLuckyDiceState {
 #define DICE_TOUCH_DISTANCE 70
 /// The round dome's radius: a die beyond it is turned back inward.
 #define DICE_DOME_RADIUS 200
-/// A damping keeps this many 64ths of a speed: a bounce keeps 48 of a die's
-/// speed up and 56 of its speed along the dome, and every frame 63 of each.
-#define DAMPING_SCALE 64
 /// The depths from the camera a die is drawn between: nearer or further is
 /// drawn as at the limit, and the nearer, the larger.
 #define DICE_NEAREST_DEPTH 350
@@ -506,10 +503,6 @@ enum SuperLuckyDiceState {
 #define DICE_TILES_PER_FACE 3
 #define DICE_ROLL_PER_FACE (DICE_TILES_PER_FACE * DICE_ROLL_PER_TILE)
 #define DICE_ROLL_TURN (DICE_FACE_COUNT * DICE_ROLL_PER_FACE) ///< six faces
-
-/// An affine parameter in an OamWords entry's attr2 word, its high half: the
-/// entries 4n to 4n + 3 hold affine matrix n's four.
-#define OBJ_AFFINE_PARAMETER(value) ((value) << 16)
 
 /// Throws the four dice from a row left of the centre, 24 pixels apart and 96
 /// up, each with a random push up and into the dome and a random roll; it
@@ -1141,13 +1134,13 @@ void SuperLuckyDice_Run(void) {
       // coins a coin a frame; A pays the rest at once and goes back to
       // throwing.
       if (++timer == 20) {
-        if (winnings <= 9)
+        if (winnings < 10)
           digits = 1;
-        else if (winnings <= 99)
+        else if (winnings < 100)
           digits = 2;
         else if (winnings < 1000)
           digits = 3;
-        else if (winnings <= 9999)
+        else if (winnings < 10000)
           digits = 4;
         else
           digits = 5;
@@ -1453,13 +1446,13 @@ void SuperLuckyDice_Run(void) {
             OBJ_PALETTE(DICE_PALETTE_TIMES_SIGN);
         spriteCount++;
       }
-      if (multiplier <= 9)
+      if (multiplier < 10)
         multiplierDigits = 1;
-      else if (multiplier <= 99)
+      else if (multiplier < 100)
         multiplierDigits = 2;
       else if (multiplier < 1000)
         multiplierDigits = 3;
-      else if (multiplier <= 9999)
+      else if (multiplier < 10000)
         multiplierDigits = 4;
       else
         multiplierDigits = 5;
@@ -1482,21 +1475,23 @@ void SuperLuckyDice_Run(void) {
       s32 wobble;
       s32 left;
 
-      x = (timer > 0 && lower == 1) ? timer * 12 + 64 : 64;
-      wobble =
-          lower == 0
-              ? Trig_Sin(frame * (TRIG_TURN / 64) & (TRIG_TURN / 2 - 1)) >> 14
-              : 0;
+      x = (timer > 0 && lower == 1) ? timer * 12 + CHOICE_COLUMN_X
+                                    : CHOICE_COLUMN_X;
+      wobble = lower == 0
+                   ? Trig_Sin(frame * (TRIG_TURN / 64) & (TRIG_TURN / 2 - 1)) >>
+                         CHOICE_BOB_SHIFT
+                   : 0;
       left = x + slide * 15;
       if (target < DICE_HIGHEST_TOTAL)
         spriteCount =
             SuperLuckyDice_DrawNumber(spriteCount, left - 110, wobble + 60,
                                       target + 1, DICE_PALETTE_RELOADED_C, 2);
-      x = (timer > 0 && lower == 0) ? timer * 12 + 64 : 64;
-      wobble =
-          lower == 1
-              ? Trig_Sin(frame * (TRIG_TURN / 64) & (TRIG_TURN / 2 - 1)) >> 14
-              : 0;
+      x = (timer > 0 && lower == 0) ? timer * 12 + CHOICE_COLUMN_X
+                                    : CHOICE_COLUMN_X;
+      wobble = lower == 1
+                   ? Trig_Sin(frame * (TRIG_TURN / 64) & (TRIG_TURN / 2 - 1)) >>
+                         CHOICE_BOB_SHIFT
+                   : 0;
       left = x + slide * 15;
       if (target > DICE_LOWEST_TOTAL)
         spriteCount =
@@ -1505,9 +1500,9 @@ void SuperLuckyDice_Run(void) {
       for (index = 0; index != 3; index++) {
         s32 column;
 
-        column = 64;
+        column = CHOICE_COLUMN_X;
         if (timer > 0 && lower == 1)
-          column = timer * 12 + 64;
+          column = timer * 12 + CHOICE_COLUMN_X;
         column += slide * 15;
         column -= 120;
         sprites->oam[spriteCount].attr01 =
@@ -1516,9 +1511,9 @@ void SuperLuckyDice_Run(void) {
             OBJ_PALETTE(DICE_PALETTE_RELOADED_A) |
             (HIGHER_TILES + index * SPRITE_TILES(32, 32));
         spriteCount++;
-        column = 64;
+        column = CHOICE_COLUMN_X;
         if (timer > 0 && lower == 0)
-          column = timer * 12 + 64;
+          column = timer * 12 + CHOICE_COLUMN_X;
         column += slide * 15;
         column -= 120;
         sprites->oam[spriteCount].attr01 =
@@ -1535,9 +1530,9 @@ void SuperLuckyDice_Run(void) {
       for (index = 0; index != 5; index++) {
         s32 column;
 
-        column = 64;
+        column = CHOICE_COLUMN_X;
         if (timer > 0 && cashOut == 1)
-          column = timer * 12 + 64;
+          column = timer * 12 + CHOICE_COLUMN_X;
         column += slide * 15;
         column -= 120;
         sprites->oam[spriteCount].attr01 =
@@ -1546,9 +1541,9 @@ void SuperLuckyDice_Run(void) {
             (DOUBLE_UP_TILES + index * SPRITE_TILES(32, 32)) |
             OBJ_PALETTE(DICE_PALETTE_RELOADED_C);
         spriteCount++;
-        column = 64;
+        column = CHOICE_COLUMN_X;
         if (timer > 0 && cashOut == 0)
-          column = timer * 12 + 64;
+          column = timer * 12 + CHOICE_COLUMN_X;
         column += slide * 15;
         column -= 120;
         sprites->oam[spriteCount].attr01 =
@@ -1667,12 +1662,16 @@ void SuperLuckyDice_Run(void) {
       if (screen[2] > DICE_FARTHEST_DEPTH)
         screen[2] = DICE_FARTHEST_DEPTH;
       spriteDepth[drawOrder[index]] = screen[2] - DICE_NEAREST_DEPTH;
-      x = screen[0] - 3072 / (spriteDepth[drawOrder[index]] / 4 + 64);
-      y = screen[1] - 2048 / (spriteDepth[drawOrder[index]] / 4 + 64);
+      // The sprite's corner, up and left of the die's point by less the
+      // further it is.
+      x = screen[0] - Q_8_8(12) / (spriteDepth[drawOrder[index]] / 4 +
+                                   DICE_NEAREST_SCALE / 2);
+      y = screen[1] - Q_8_8(8) / (spriteDepth[drawOrder[index]] / 4 +
+                                  DICE_NEAREST_SCALE / 2);
       if (y + 92 > -16) {
         sprites->oam[spriteCount].attr01 =
-            (OBJ_AFFINE_MATRIX(drawOrder[index]) | OBJ_X((x + 632) & 0x1ff) |
-             ((y + 348) & 255)) |
+            (OBJ_AFFINE_MATRIX(drawOrder[index]) |
+             OBJ_X((x + 632) & OBJ_X_MASK) | ((y + 348) & 255)) |
             OBJ_SIZE_16X16 | OBJ_256_COLORS | OBJ_DOUBLE_SIZE | OBJ_AFFINE;
         sprites->oam[spriteCount].attr2 =
             (gSuperLuckyDice_FaceTiles[die->variant / DICE_ROLL_PER_TILE]
@@ -1688,7 +1687,7 @@ void SuperLuckyDice_Run(void) {
       for (index = 0; index != DICE_COUNT; index++) {
         s32 x;
         s32 y;
-        s32 half;
+        s32 scale;
 
         die = &dice->particles[index];
 
@@ -1702,13 +1701,13 @@ void SuperLuckyDice_Run(void) {
           screen[2] = DICE_FARTHEST_DEPTH;
         spriteDepth[DICE_COUNT + index] = screen[2] - DICE_NEAREST_DEPTH;
         spriteDepth[DICE_COUNT + index] += (s16)FIXEDtoINT(die->y);
-        half = spriteDepth[DICE_COUNT + index] / 2 + 128;
-        x = screen[0] - 6144 / half;
-        y = screen[1] - 3072 / half;
+        scale = spriteDepth[DICE_COUNT + index] / 2 + DICE_NEAREST_SCALE;
+        x = screen[0] - Q_8_8(24) / scale;
+        y = screen[1] - Q_8_8(12) / scale;
         if (y + 92 > -16) {
           sprites->oam[spriteCount].attr01 =
               (OBJ_AFFINE_MATRIX(DICE_COUNT + index) |
-               OBJ_X((x + 632) & 0x1ff)) |
+               OBJ_X((x + 632) & OBJ_X_MASK)) |
               ((y + 348) & 255) | OBJ_SIZE_16X16 | OBJ_256_COLORS |
               OBJ_DOUBLE_SIZE | OBJ_AFFINE;
           sprites->oam[spriteCount].attr2 = DICE_SHADOW_TILE | OBJ_PRIORITY(2);

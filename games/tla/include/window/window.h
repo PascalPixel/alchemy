@@ -573,8 +573,9 @@ enum PauseMenuEntry {
 /// The speaker's voice in a packed argument, as Message_OpenWindow takes it
 /// out.
 #define MESSAGE_WINDOW_VOICE_OF(packed) (((u32)(packed) << 4) >> 20)
-/// The window options of a packed argument.
-#define MESSAGE_WINDOW_OPTIONS_MASK 0xffff
+/// The window options of a packed argument: the bits below the speaker's
+/// voice.
+#define MESSAGE_WINDOW_OPTIONS_MASK (MESSAGE_WINDOW_VOICE(1) - 1)
 
 /// Message_OpenWindow's window options, in packed's low bits.
 enum MessageWindowOption {

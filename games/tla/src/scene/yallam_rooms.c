@@ -13,6 +13,7 @@
 #include "field/actor_script.h"
 #include "field/event_inline.h"
 #include "field/field.h"
+#include "field/field_sequence.h"
 #include "field/field_sprite.h"
 #include "field/field_work.h"
 #include "field/scene_tables.h"
@@ -329,10 +330,11 @@ void YallamRooms_TalkToInnkeeper(s32 actor) {
   }
 }
 
-/// Unused: Yallam has no Sanctum, and no trigger talks to its priest. The
-/// priest tends the party across the counter, and otherwise speaks of the hope
-/// a Sanctum brings to far-off shores.
-UNUSED void YallamRooms_TalkToPriest(s32 actor) {
+/// Unused: Yallam's sanctum is a room of MikasallaRoomsSanctum, whose own
+/// MikasallaRooms_TalkToYallamHealer runs it, and nothing in Yallam's rooms
+/// calls this copy. The healer tends the party across the counter, and
+/// otherwise speaks of the hope a Sanctum brings to far-off shores.
+UNUSED void YallamRooms_TalkToHealer(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
@@ -434,7 +436,7 @@ void YallamRooms_TalkToSunshine(void) {
       // "Well, look at that! You went to get some raw materials for me..."
       Event_ShowMessage(ACTOR_SUNSHINE, 0);
       Actor_FallOverById(ACTOR_SUNSHINE, DEGtoANG(270));
-      Actor_SetSpriteFlags(Actor_GetById(ACTOR_SUNSHINE), 1);
+      Actor_SetSpriteFlags(Actor_GetById(ACTOR_SUNSHINE), SPRITE_FLAG_SHADOW);
       Actor_SetDestination(gMainRoutineWork.leaderActorId, 488, 408);
       Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
       Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
@@ -538,7 +540,8 @@ void YallamRooms_TalkToSunshinesWife(s32 actor) {
 s32 Scene_Initialize(void) {
   s32 scene;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 

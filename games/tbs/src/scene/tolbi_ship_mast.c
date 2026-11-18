@@ -15,7 +15,7 @@
 /// the restart point (gMainRoutineWork.restartScene) is set to
 /// SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT, which starts the voyage over.
 ///
-/// While the ship is under way, the setup sways the view. The ship is under way
+/// While the ship is under way, the setup rocks the view. The ship is under way
 /// when it is rowing, or at sea after the first attack, and neither at the
 /// island nor at Tolbi.
 ///
@@ -114,13 +114,13 @@ static void TolbiShipMast_RockView(void);
 static s32 TolbiShipMast_GetRowingBalance(void);
 static s32 TolbiShipMast_GetSeatRowValue(u32 seat);
 
-s32 gTolbiShipMast_DriftY BSS_DATA ALIGNED(16);
-s32 gTolbiShipMast_DriftX BSS_DATA;
-s32 gTolbiShipMast_SwayY BSS_DATA;
-s32 gTolbiShipMast_SwayUnused BSS_DATA;
+s32 gTolbiShipMast_RockOffsetY BSS_DATA ALIGNED(16);
+s32 gTolbiShipMast_RockOffsetX BSS_DATA;
+s32 gTolbiShipMast_RockAngleY BSS_DATA;
+s32 gTolbiShipMast_RockUnused BSS_DATA;
 s32 gTolbiShipMast_CameraCenter[2] BSS_DATA;
 s32 gTolbiShipMast_CameraOrigin[2] BSS_DATA;
-s32 gTolbiShipMast_SwayX BSS_DATA;
+s32 gTolbiShipMast_RockAngleX BSS_DATA;
 
 /// The scene's one actor placement row.
 enum TolbiShipMastActorId {
@@ -224,10 +224,10 @@ static void TolbiShipMast_GrowActorScale(struct Actor *actor) {
 
 /// Which way TolbiShipMast_DriftBird moves an actor along each axis. It is kept
 /// in the actor's timer (the drift) and its work (the bob).
-enum TolbiShipMastSway {
-  SWAY_INCREASING = 0, ///< the drift speeding up, or the bob rising
-  SWAY_DECREASING = 1, ///< the drift slowing, or the bob sinking
-  SWAY_HELD = 9        ///< held at zero; nothing here sets it
+enum TolbiShipMastDrift {
+  DRIFT_INCREASING = 0, ///< the drift speeding up, or the bob rising
+  DRIFT_DECREASING = 1, ///< the drift slowing, or the bob sinking
+  DRIFT_HELD = 9        ///< held at zero; nothing here sets it
 };
 
 /// The rowers' balance (TolbiShipMast_GetRowingBalance) that takes the ship off
@@ -237,17 +237,17 @@ enum { ROWING_BALANCE_OFF_COURSE = 11 };
 /// Randomly reverses horizontal drift and vertical bobbing at their limits.
 static s32 TolbiShipMast_DriftBird(struct Actor *actor) {
   // The drift: riseBaseY is the speed added to x each frame.
-  if (actor->timer == SWAY_HELD) {
+  if (actor->timer == DRIFT_HELD) {
     actor->riseBaseY = 0;
-  } else if (actor->timer != SWAY_INCREASING) {
+  } else if (actor->timer != DRIFT_INCREASING) {
     actor->riseBaseY -= Random_Below(2048);
     if (actor->riseBaseY < -toFIXED(3) / 4) {
-      actor->timer = SWAY_INCREASING;
+      actor->timer = DRIFT_INCREASING;
     }
   } else {
     actor->riseBaseY += Random_Below(2048);
     if (actor->riseBaseY > toFIXED(3) / 4) {
-      actor->timer = SWAY_DECREASING;
+      actor->timer = DRIFT_DECREASING;
     }
   }
   if (actor->x.fixed > toFIXED(40) && actor->x.fixed < toFIXED(320)) {
@@ -255,17 +255,17 @@ static s32 TolbiShipMast_DriftBird(struct Actor *actor) {
   }
 
   // The bob, between the deck and 16 pixels up.
-  if ((s16)actor->userValue == SWAY_HELD) {
+  if ((s16)actor->userValue == DRIFT_HELD) {
     actor->y.fixed = 0;
-  } else if ((s16)actor->userValue != SWAY_INCREASING) {
+  } else if ((s16)actor->userValue != DRIFT_INCREASING) {
     actor->y.fixed -= Random_Below(toFIXED(3) / 4);
     if (actor->y.fixed < 0) {
-      actor->userValue = SWAY_INCREASING;
+      actor->userValue = DRIFT_INCREASING;
     }
   } else {
     actor->y.fixed += Random_Below(toFIXED(3) / 4);
     if (actor->y.fixed > toFIXED(16)) {
-      actor->userValue = SWAY_DECREASING;
+      actor->userValue = DRIFT_DECREASING;
     }
   }
   return 1;
@@ -333,7 +333,7 @@ static void TolbiShipMast_FindAnchorCharm(void) {
   }
 }
 
-/// The mast's setup sways the view while the ship is under way, puts the
+/// The mast's setup rocks the view while the ship is under way, puts the
 /// lookout to his spot once the charm is back, and plays what the entrance
 /// calls for.
 s32 Scene_Initialize(void) {
@@ -346,8 +346,8 @@ s32 Scene_Initialize(void) {
        GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) &&
       GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) == 0 &&
       GameFlag_Get(FLAG_TOLBI_SHIP_AT_ISLAND) == 0) {
-    gTolbiShipMast_SwayX = (u16)Random_Next();
-    gTolbiShipMast_SwayY = (u16)Random_Next();
+    gTolbiShipMast_RockAngleX = (u16)Random_Next();
+    gTolbiShipMast_RockAngleY = (u16)Random_Next();
     Task_AddFrame(TolbiShipMast_RockView, TASK_PASS_FRAME);
   }
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0 &&
@@ -834,18 +834,18 @@ static void TolbiShipMast_AnnounceLand(void) {
 /// the camera's origin each frame.
 static void TolbiShipMast_RockView(void) {
   s32 *camera = ((struct MapGridScrollWork *)gMapGridWork[0])->origin;
-  FIXED swayX = Trig_Cos(gTolbiShipMast_SwayX);
-  s32 swayY = Trig_Sin(gTolbiShipMast_SwayY);
+  FIXED rockX = Trig_Cos(gTolbiShipMast_RockAngleX);
+  s32 rockY = Trig_Sin(gTolbiShipMast_RockAngleY);
 
-  *camera++ += swayX;
-  swayY *= 4;
-  *camera += swayY;
-  gTolbiShipMast_DriftX += swayX;
-  gTolbiShipMast_DriftY += swayY;
-  gTolbiShipMast_SwayX += Random_Below(384);
-  gTolbiShipMast_SwayY += Random_Below(512);
-  gTolbiShipMast_SwayX &= TRIG_ANGLE_MASK;
-  gTolbiShipMast_SwayY &= TRIG_ANGLE_MASK;
+  *camera++ += rockX;
+  rockY *= 4;
+  *camera += rockY;
+  gTolbiShipMast_RockOffsetX += rockX;
+  gTolbiShipMast_RockOffsetY += rockY;
+  gTolbiShipMast_RockAngleX += Random_Below(384);
+  gTolbiShipMast_RockAngleY += Random_Below(512);
+  gTolbiShipMast_RockAngleX &= TRIG_ANGLE_MASK;
+  gTolbiShipMast_RockAngleY &= TRIG_ANGLE_MASK;
 }
 
 /// The rowing balance of the chosen passengers. It is the values of those at

@@ -141,8 +141,8 @@ s32 Scene_Initialize(void) {
 /// The lettering's sprite palette.
 enum { LETTERING_PALETTE = 15 };
 /// In the German, Spanish, French and Italian pictures, the lettering's rows at
-/// the bottom of the screen, and the colours the picture opens with.
-enum { LETTERING_ROWS = 32, LETTERING_PICTURE_COLORS = 224 };
+/// the bottom of the screen.
+enum { LETTERING_ROWS = 32 };
 
 /// Loads the logo's lettering sprites and their palette.
 static void Title_LoadSprites(s32 unused) {
@@ -158,8 +158,8 @@ static void Title_LoadSprites(s32 unused) {
     gTitleVramBlock = VramCache_FindFreeEntry();
   // The resource opens with its colours, before its compressed data.
   Dma_Set(encodedGraphics, (void *)OBJ_PLTT,
-          DMA_COPY_WORDS(LETTERING_PICTURE_COLORS / 2), REG_DMA3);
-  encodedGraphics += LETTERING_PICTURE_COLORS * 2;
+          DMA_COPY_WORDS(LOGO_PALETTE_COLORS / 2), REG_DMA3);
+  encodedGraphics += LOGO_PALETTE_COLORS * 2;
   FieldDecompress_TaggedLz(encodedGraphics, decodedSprites);
   // The picture is a whole screen in 256 colours (to_be_continued_de.png and
   // the others). The lettering is its bottom LETTERING_ROWS rows: 120 sprites
@@ -312,7 +312,7 @@ static void Title_LoadBackground(void) {
   u32 screenY;
   u16 tileIndex;
   struct ScrollPair *bgScroll;
-  s32 blankTile = OFFSCREEN_TILE;
+  s32 offscreenTile = OFFSCREEN_TILE;
 
   resourceId = RESOURCE_GOLDEN_SUN_LOGO;
   ScreenFade_ToBlack(0);
@@ -330,8 +330,8 @@ static void Title_LoadBackground(void) {
   for (screenY = 0; screenY <= 19; screenY++) {
     for (screenX = 0; screenX <= 29; screenX++)
       *tilemap++ = tileIndex++;
-    *tilemap++ = blankTile;
-    *tilemap++ = blankTile;
+    *tilemap++ = offscreenTile;
+    *tilemap++ = offscreenTile;
   }
   bgScroll = (struct ScrollPair *)gBgScroll;
   for (screenY = 0; screenY <= 3; screenY++) {

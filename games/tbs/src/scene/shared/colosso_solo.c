@@ -1,12 +1,12 @@
-
-// The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
-// before Isaac runs, Garet, Ivan and Mia each look around the stages on their
-// own and choose where to cheer from, and the guide at each stage describes it
-// and offers a friend's cheering there.
-//
-// Each match scene defines its own two exits before including this file:
-// COLOSSO_SOLO_TO_RACE, its way from lending a hand to the race, and
-// COLOSSO_SOLO_TO_COLOSSEUM, its way back out to the Colosseum.
+/// @file
+/// The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
+/// before Isaac runs, Garet, Ivan and Mia each look around the stages on their
+/// own and choose where to cheer from, and the guide at each stage describes it
+/// and offers a friend's cheering there.
+///
+/// Each match scene defines its own two exits before including this file:
+/// COLOSSO_SOLO_TO_RACE, its way from lending a hand to the race, and
+/// COLOSSO_SOLO_TO_COLOSSEUM, its way back out to the Colosseum.
 
 // Byte flags (eight flags each) holding where a friend cheers from: the cell
 // column at COLOSSO_CHEER_COLUMN + 16 * character and the cell row at

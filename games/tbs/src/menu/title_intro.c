@@ -363,6 +363,7 @@ void Title_LoadIntroBackgrounds(void) {
 #endif
 #if LANGUAGE == LANGUAGE_GERMAN
 #define PROMPT_ROWS 2
+#define PROMPT_ROW_HEIGHT 8
 #define PROMPT_SPRITES 3
 #define PROMPT_X 80
 #define PROMPT_Y 116
@@ -380,9 +381,9 @@ void Title_LoadIntroBackgrounds(void) {
 #define PROMPT_Y 124
 #endif
 
-/// The first tile of character block 1, as BG2 numbers its 256-colour tiles
-/// from block 0: where the title picture's and the Nintendo logo's tiles go.
-#define CHAR_BLOCK_1_TILE_8BPP (BG_CHAR_SIZE / TILE_SIZE_8BPP)
+/// The title picture's first tile: character block 1's, as BG2 numbers its
+/// 256-colour tiles from block 0.
+#define TITLE_PICTURE_TILE (BG_CHAR_SIZE / TILE_SIZE_8BPP)
 
 /// Plays the title intro: the view rises up the peak towards the sun, the
 /// clouds slower behind it, while the sun's lens flare swings up, until just
@@ -526,7 +527,7 @@ s32 Title_ShowIntro(s32 prompt) {
       Dma_Set(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(1),
               DMA_COPY_HALFWORDS(SCREEN_TILE_BYTES / 2), REG_DMA3);
       tilemap = (u16 *)BG_SCREEN_BLOCK(6);
-      tile = CHAR_BLOCK_1_TILE_8BPP;
+      tile = TITLE_PICTURE_TILE;
       i = 0;
       break;
     }
@@ -577,7 +578,8 @@ s32 Title_ShowIntro(s32 prompt) {
       u32 row;
       s32 y;
 
-      for (row = 0, y = PROMPT_Y; row < PROMPT_ROWS; y += 8, row++) {
+      for (row = 0, y = PROMPT_Y; row < PROMPT_ROWS;
+           y += PROMPT_ROW_HEIGHT, row++) {
         for (j = 0, x = PROMPT_X; j < PROMPT_SPRITES; j++) {
           sprite->x = x;
           sprite->y = y;
@@ -601,7 +603,7 @@ s32 Title_ShowIntro(s32 prompt) {
       REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_BG0 |
                    BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 |
                    BLDCNT_TGT2_BD;
-      REG_BLDALPHA = (BLEND_WEIGHT_MAX - level) * 256 + level;
+      REG_BLDALPHA = (BLEND_WEIGHT_MAX - level) * BLEND_ALPHA(0, 1) + level;
     }
     if ((gKeysPressed & (KEY_A | KEY_START)) != 0) {
       result = 1;
@@ -621,6 +623,10 @@ s32 Title_ShowIntro(s32 prompt) {
 UNUSED void Title_NoOpPalette(void) {}
 
 #define LOGO_PALETTE_BYTES (LOGO_PALETTE_COLORS * 2)
+
+/// The Nintendo logo's first tile: character block 1's, as BG2 numbers its
+/// 256-colour tiles from block 0.
+#define NINTENDO_LOGO_TILE (BG_CHAR_SIZE / TILE_SIZE_8BPP)
 
 /// Shows the Nintendo logo with its jingle. With mode 0 it fades in and holds
 /// two seconds; otherwise it waits a second, fades in, holds three seconds and
@@ -654,7 +660,7 @@ s32 Title_ShowNintendoLogo(s32 mode) {
   Dma_Set(Ram_MapGridCellBuffer, BG_CHAR_BLOCK(1),
           DMA_COPY_WORDS(SCREEN_TILE_BYTES / 4), REG_DMA3);
   // Pad the 30-tile picture to the hardware map's 32-tile row width.
-  tileIndex = CHAR_BLOCK_1_TILE_8BPP;
+  tileIndex = NINTENDO_LOGO_TILE;
   tilemap = (u16 *)BG_SCREEN_BLOCK(6);
   for (i = 0; i < DISPLAY_TILE_HEIGHT; i++) {
     for (column = 0; column < DISPLAY_TILE_WIDTH; column++)
@@ -911,8 +917,9 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
       for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
         colorWork = *source++;
         red = RGB_RED(colorWork);
-        colorWork = Iwram_SignedDivide(
-            red + (RGB_GREEN(colorWork)) + (RGB_BLUE(colorWork)), 10);
+        colorWork =
+            Iwram_SignedDivide(red + RGB_GREEN(colorWork) + RGB_BLUE(colorWork),
+                               SEPIA_SHADE_DIVISOR);
         red = colorWork * 4 + 5;
         blue = colorWork * 3 + 5;
         /* FAKEMATCH(dead): two XORs with red that cancel. */
@@ -1069,7 +1076,7 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
       green = ((colorWork << BRIGHTNESS_GREEN_SHIFT) &
                (GREEN_BITS << BRIGHTNESS_GREEN_SHIFT));
       blue = (colorWork & BLUE_BITS);
-      colorWork = Iwram_SignedDivide(red + green + blue, 96);
+      colorWork = Iwram_SignedDivide(red + green + blue, CUSTOM_TINT_DIVISOR);
       red = colorWork * tintRed;
       green = colorWork * tintGreen;
       blue = colorWork * tintBlue;
@@ -1091,7 +1098,7 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
       colorWork = *source++;
       red = RGB_RED(colorWork);
       colorWork = Iwram_SignedDivide(
-          (red + (RGB_GREEN(colorWork)) + (RGB_BLUE(colorWork))) << 4,
+          (red + RGB_GREEN(colorWork) + RGB_BLUE(colorWork)) << 4,
           tintRed + tintGreen + tintBlue);
       red = Iwram_MulFX(INTtoFIXED((colorWork * tintRed) >> 4),
                         (s32)INTtoFIXED(tintRed) >> 4);

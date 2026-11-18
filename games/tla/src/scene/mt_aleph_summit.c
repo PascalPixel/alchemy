@@ -63,9 +63,7 @@ enum {
 
 #include "../field/field_effect_move.c"
 
-/// The background colours the palette fade keeps, palettes 0 to 13, and the
-/// fade's three channels of one 16-colour palette.
-#define FADED_BG_COLORS (14 * PALETTE_COLORS)
+/// The palette fade's three channels of one 16-colour palette.
 #define PALETTE_CHANNELS (3 * PALETTE_COLORS)
 
 #include "shared/tables.h"
@@ -173,7 +171,7 @@ void MtAlephSummit_ShiftColors(u16 *colors, s32 count, s32 delta) {
 void MtAlephSummit_PulseColors(void) {
   u16 *src = (u16 *)&BG_PLTT_COLOR(6, 1);
   u16 *dst = (u16 *)&BG_PLTT_COLOR(4, 1);
-  // A 64th of a turn a frame, as the ROM computes it: a 32nd, then halved.
+  // The pulse turns a 64th of a turn a frame.
   s32 delta = FIXEDtoINT(Math_Sin(gFrameCount * (TRIG_TURN / 32) / 2) * 2);
   s32 i;
 
@@ -272,6 +270,44 @@ void MtAlephSummit_StepColorsToward(u16 *colors, u16 *target, s32 count);
 void MtAlephSummit_ShiftColors(u16 *colors, s32 count, s32 delta);
 void MtAlephSummit_PulseColors(void);
 
+/// Alex's climb as the Golden Sun forms: he creeps up the mountain's side a
+/// pixel every 30 frames for CREEP_STEPS steps, the camera drifting after him
+/// from the third; the sky turns gold in SKY_GOLD_STEPS steps of four frames;
+/// then he climbs two pixels every eight frames for CLIMB_STEPS steps, the
+/// camera panning up to the summit at CLIMB_CAMERA_STEP and the screen fading
+/// out at CLIMB_FADE_STEP.
+#define CREEP_STEPS 10
+#define SKY_GOLD_STEPS 10
+#define CLIMB_STEPS 20
+#define CLIMB_CAMERA_STEP 16
+#define CLIMB_FADE_STEP 19
+
+/// Alex takes the power. While the summit shakes, background 2 scrolls eight
+/// pixels every five frames for BG2_SCROLL_STEPS steps. Then, in POWER_STEPS
+/// steps of four frames, Alex turns golden at POWER_ALEX_GOLDEN and the column
+/// of light (background 1) blends in a level every two steps, up to 8 by
+/// POWER_BLEND_PAUSE and on from POWER_BLEND_RESUME to full strength by
+/// POWER_BLEND_FULL; the summit (palette 4) turns to palette 6's gold from
+/// POWER_SUMMIT_GOLDEN; the background brightens a level a step from
+/// POWER_WHITEN; and at POWER_TREMOR the earth trembles and the colours saved
+/// at the start are put back under the brightening.
+#define BG2_SCROLL_STEPS 30
+#define POWER_STEPS 84
+#define POWER_ALEX_GOLDEN 16
+#define POWER_SUMMIT_GOLDEN 20
+#define POWER_BLEND_PAUSE 28
+#define POWER_BLEND_RESUME 34
+#define POWER_BLEND_FULL 50
+#define POWER_WHITEN 50
+#define POWER_TREMOR 51
+
+/// The Wise One's blinks at each of its four sways as Alex gathers his power.
+#define WISE_ONE_BLINKS 10
+
+/// The passes of the other entrances' hold on the summit, which waits no
+/// frame between them.
+#define SUMMIT_HOLD_PASSES 320
+
 /// Plays the stretch of the ending the entrance names, the Golden Sun forming
 /// or Alex taking its power until Mt. Aleph sinks, then goes on to the credits
 /// or the epilogue.
@@ -284,7 +320,6 @@ s32 Scene_Initialize(void) {
   s32 r, g, b, value;
   s32 c;
   u16 *color, *out;
-  u8 *message;
   struct Actor *actor;
   volatile u32 *held;
   struct HeapSlots *slots;
@@ -296,7 +331,7 @@ s32 Scene_Initialize(void) {
   Actor_SetPosition(ACTOR_FELIX, 0, 0);
   mode = gMainRoutineWork.entrance;
   if (mode == ENTRANCE_SKIP_TO_CREDITS) {
-    Event_SetDestination(SCENE_STAFF_CREDIT, 72);
+    Event_SetDestination(SCENE_STAFF_CREDIT, STAFF_CREDIT_FROM_MT_ALEPH_SUMMIT);
   } else if (mode == ENTRANCE_GOLDEN_SUN_FORMS) {
     FieldCamera_MoveTo(256, CAMERA_KEEP, 128, 0);
     FieldCamera_SetSpeed(1);
@@ -315,7 +350,7 @@ s32 Scene_Initialize(void) {
     FieldCamera_WaitForArrival();
     FieldCamera_MoveTo(316, CAMERA_KEEP, 318, 1);
     FieldCamera_WaitForArrival();
-    for (i = 0; i != 10; i++) {
+    for (i = 0; i != CREEP_STEPS; i++) {
       if (i == 3) {
         FieldCamera_SetSpeed(0.1);
         FieldCamera_MoveTo(316, CAMERA_KEEP, 300, 1);
@@ -326,9 +361,9 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimationSpeedById(ACTOR_ALEX, 0);
     // DEAD: nothing reads the buffer in this stretch; the ROM keeps the copy.
     Iwram_CopyWords(buffer, (void *)&BG_PLTT_COLOR(0, 4), 14);
-    // Background palette 0's colours 7 to 14 warm a step every four frames,
-    // red rising and blue falling to no less than 8.
-    for (j = 0; j != 10; j++) {
+    // The sky, background palette 0's colours 7 to 14, turns gold: red rises
+    // and blue falls to no less than 8.
+    for (j = 0; j != SKY_GOLD_STEPS; j++) {
       out = (u16 *)&BG_PLTT_COLOR(0, 7);
       color = out;
       for (i = 0; i != 8; i++) {
@@ -357,7 +392,7 @@ s32 Scene_Initialize(void) {
     }
     Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
     System_Wait(30);
-    FieldEvent_SetMessageId(MsgGoldenSunFormation);
+    FieldEvent_SetMessageId((s32)MsgGoldenSunFormation);
     // "The Golden Sun... The very quintessence of Alchemy's power! It's..."
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_ALEX, 0);
     System_Wait(30);
@@ -365,12 +400,12 @@ s32 Scene_Initialize(void) {
     // "Wait for me! Please, wait! Wait until I reach the summit of Mt. Aleph!"
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_ALEX, 0);
     Actor_SetAnimationSpeedById(ACTOR_ALEX, ANIMATION_STEP_NORMAL * 2);
-    for (i = 0; i != 20; i++) {
-      if (i == 16) {
+    for (i = 0; i != CLIMB_STEPS; i++) {
+      if (i == CLIMB_CAMERA_STEP) {
         FieldCamera_MoveTo(316, CAMERA_KEEP, 128, 1);
         FieldCamera_SetSpeed(2);
       }
-      if (i == 19)
+      if (i == CLIMB_FADE_STEP)
         Event_FinishScreenTransition();
       Actor_Get(ACTOR_ALEX)->z.fixed -= toFIXED(2);
       System_Wait(8);
@@ -380,7 +415,7 @@ s32 Scene_Initialize(void) {
     slots = Ram_HeapSlots;
     fade = slots->paletteFade;
     Iwram_CopyWords(buffer, (void *)&BG_PLTT_COLOR(0, 0),
-                    FADED_BG_COLORS * sizeof(u16));
+                    PALETTE_FADE_BG_COLORS * sizeof(u16));
     FieldCamera_MoveTo(256, CAMERA_KEEP, 144, 0);
     FieldCamera_SetSpeed(1);
     Actor_SetAnimation(ACTOR_ALEX, 14);
@@ -405,7 +440,7 @@ s32 Scene_Initialize(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     MapGrid_SetShake(4, 4, 1);
-    for (i = 0; i != 30; i++) {
+    for (i = 0; i != BG2_SCROLL_STEPS; i++) {
       gBgScroll[2].y += 8;
       FieldEvent_Wait(5);
     }
@@ -417,37 +452,37 @@ s32 Scene_Initialize(void) {
     REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(2, BLEND_WEIGHT_MAX),
                         IO_WRITE_HALFWORD);
-    for (j = 0; j != 84; j++) {
-      if (j == 16) {
+    for (j = 0; j != POWER_STEPS; j++) {
+      if (j == POWER_ALEX_GOLDEN) {
         Event_PlaySound(SE_SPIN);
         Actor_SetAnimation(ACTOR_ALEX, 16);
       }
-      if (j == 51) {
+      if (j == POWER_TREMOR) {
         Event_PlaySound(SE_TREMOR);
         Iwram_CopyWordsEntry(buffer, (void *)&BG_PLTT_COLOR(0, 0),
-                             FADED_BG_COLORS * sizeof(u16));
+                             PALETTE_FADE_BG_COLORS * sizeof(u16));
         Iwram_CopyWordsEntry(&fade->target[4 * PALETTE_CHANNELS],
                              &fade->target[6 * PALETTE_CHANNELS],
                              PALETTE_CHANNELS * sizeof(u16));
       }
-      if (j >= 16 && j <= 28) {
-        value = (j - 16) / 2 + 2;
+      if (j >= POWER_ALEX_GOLDEN && j <= POWER_BLEND_PAUSE) {
+        value = (j - POWER_ALEX_GOLDEN) / 2 + 2;
         IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
                             BLEND_ALPHA(value, BLEND_WEIGHT_MAX),
                             IO_WRITE_HALFWORD);
       }
-      if (j >= 34 && j <= 50) {
-        value = (j - 34) / 2 + 8;
+      if (j >= POWER_BLEND_RESUME && j <= POWER_BLEND_FULL) {
+        value = (j - POWER_BLEND_RESUME) / 2 + 8;
         IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
                             BLEND_ALPHA(value, BLEND_WEIGHT_MAX),
                             IO_WRITE_HALFWORD);
       }
-      if (j >= 20 && j <= 51)
+      if (j >= POWER_SUMMIT_GOLDEN && j <= POWER_TREMOR)
         MtAlephSummit_StepColorsToward((u16 *)&BG_PLTT_COLOR(4, 0),
                                        (u16 *)&BG_PLTT_COLOR(6, 0), 16);
-      if (j > 49)
-        MtAlephSummit_ShiftColors((u16 *)&BG_PLTT_COLOR(0, 0), FADED_BG_COLORS,
-                                  1);
+      if (j >= POWER_WHITEN)
+        MtAlephSummit_ShiftColors((u16 *)&BG_PLTT_COLOR(0, 0),
+                                  PALETTE_FADE_BG_COLORS, 1);
       System_Wait(4);
     }
     FieldActor_SetSpritePriority(ACTOR_ALEX, 3);
@@ -460,13 +495,15 @@ s32 Scene_Initialize(void) {
     Event_PlaySound(SE_POWER_UP);
     System_Wait(1);
     Task_AddFrame(MtAlephSummit_PulseColors, TASK_PASS_FRAME);
+    // The background walks back to the saved colours, a level a step, as many
+    // steps as a channel has levels.
     j = 0;
     do {
       MtAlephSummit_StepColorsToward((u16 *)&BG_PLTT_COLOR(0, 0), buffer,
-                                     FADED_BG_COLORS);
+                                     PALETTE_FADE_BG_COLORS);
       System_Wait(4);
       j++;
-    } while (j != 32);
+    } while (j != RGB_LEVEL_MAX + 1);
     FieldActor_SetSpritePriority(ACTOR_ALEX, 1);
     Actor_SetAnimation(ACTOR_ALEX, 1);
     FieldCamera_MoveTo(256, CAMERA_KEEP, 128, 1);
@@ -477,7 +514,7 @@ s32 Scene_Initialize(void) {
     Actor_RunRepeatedMotion(ACTOR_ALEX, 2);
     FieldEvent_Wait(5);
     Event_PlaySound(SOUND_FADE_OUT_BGM);
-    FieldEvent_SetMessageId(MsgGoldenSunEternalLifeAndPower);
+    FieldEvent_SetMessageId((s32)MsgGoldenSunEternalLifeAndPower);
     // "At last! I have it! Eternal life...and limitless power!"
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0, 5);
     Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTH, 0);
@@ -511,7 +548,7 @@ s32 Scene_Initialize(void) {
     Actor_WalkToAndWait(ACTOR_WISE_ONE, 216, 96);
     Actor_FaceDirection(ACTOR_ALEX, FACING_SOUTHEAST, 0);
     Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-    FieldEvent_SetMessageId(MsgGoldenSunEternalLifeAndPower + 4);
+    FieldEvent_SetMessageId((s32)MsgGoldenSunEternalLifeAndPower + 4);
     // "Wh-Who are you?"
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0, 5);
     Event_PlaySound(MUS_ELEMENTAL_STARS);
@@ -534,7 +571,6 @@ s32 Scene_Initialize(void) {
     FieldEvent_Wait(5);
     // "Wish to? I just got it!"
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0, 5);
-    message = MsgGoldenSunEternalLifeAndPower;
     Actor_SetAnimation(ACTOR_WISE_ONE, 5);
     // "No. Your power is nearly limitless, but it has boundaries."
     FieldEvent_ShowMessageThenWait(ACTOR_WISE_ONE, 0, 5);
@@ -547,8 +583,7 @@ s32 Scene_Initialize(void) {
     // "Yes. You also have nearly endless life. And your Psynergy is..."
     FieldEvent_ShowMessageThenWait(ACTOR_WISE_ONE, 0, 5);
     Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-    message += 12;
-    FieldEvent_SetMessageId(message);
+    FieldEvent_SetMessageId((s32)MsgGoldenSunEternalLifeAndPower + 12);
     // "If you are trying to anger me, have a little taste of exactly how..."
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0, 5);
     Actor_SetAnimation(ACTOR_ALEX, 13);
@@ -574,7 +609,7 @@ s32 Scene_Initialize(void) {
         Actor_SetSpriteColorById(ACTOR_WISE_ONE, 0);
         FieldEvent_Wait(3);
         i++;
-      } while (i != 10);
+      } while (i != WISE_ONE_BLINKS);
       j++;
     } while (j != 4);
     Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
@@ -718,7 +753,7 @@ s32 Scene_Initialize(void) {
       if (j == 47)
         Actor_SetPosition(ACTOR_WISE_ONE, 0, 0);
       if (j == 64) {
-        PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
+        PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
         PaletteFade_Interpolate(64);
       }
       ((struct MapWork *)slots)->layers[1].offsetY -= toFIXED(1);
@@ -730,7 +765,7 @@ s32 Scene_Initialize(void) {
     Event_PlaySound(SE_BANE_ESCAPE);
     FieldEvent_Wait(120);
     FieldTask_Remove(MtAlephSummit_PulseColors);
-    PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
+    PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
     PaletteFade_Interpolate(1);
     System_Wait(1);
     Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
@@ -742,7 +777,7 @@ s32 Scene_Initialize(void) {
     gFieldWork->transition = 0;
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    for (j = 0; j != 320; j++) {
+    for (j = 0; j != SUMMIT_HOLD_PASSES; j++) {
       held = &gInput.held;
       if (*held & KEY_B)
         j = 0;

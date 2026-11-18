@@ -43,11 +43,13 @@ s32 Field_UsePsynergy(u32 code) {
 
   // Where Psynergy has no effect.
   if (GameFlag_Get(FLAG_IN_BATTLE_ARENA)) {
+    // "<Psynergy>!!! ...Nothing happened."
     PSYNERGY_MESSAGE(userId, abilityId, MsgKey0dbb);
     return 0;
   }
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     if (abilityId == ABILITY_REVEAL || abilityId == ABILITY_RING) {
+      // "<Psynergy>!!! ...Nothing happened."
       PSYNERGY_MESSAGE(userId, abilityId, MsgKey0dbb);
       return 0;
     }
@@ -58,11 +60,13 @@ s32 Field_UsePsynergy(u32 code) {
         work->raisedTrigger = WORLD_MAP_RAISED_TAKE_OFF;
         return 0;
       }
+      // "<Psynergy>!!! ...Nothing happened."
       PSYNERGY_MESSAGE(userId, abilityId, MsgKey0dbb);
       return 0;
     }
   }
   if (gMainRoutineWork.ownerOverride != 0 && abilityId == ABILITY_SAND) {
+    // "Sand!!! ...Nothing happened."
     PSYNERGY_MESSAGE(userId, ABILITY_SAND, MsgKey0dbb);
     return 0;
   }
@@ -70,10 +74,12 @@ s32 Field_UsePsynergy(u32 code) {
   // Retreat: ask, then go back to where the party entered this area.
   if (abilityId == ABILITY_RETREAT) {
     if (GameFlag_Get(FLAG_RETREAT_BLOCKED)) {
+      // "Retreat... It doesn't work here."
       PSYNERGY_MESSAGE(userId, ABILITY_RETREAT, MsgKey0dbd);
       return 0;
     }
     MessageArgument_PushFar(ABILITY_RETREAT, MESSAGE_ARGUMENT_ABILITY);
+    // "Use Retreat?" Yes: retreat; No: nothing more.
     FieldMessage_ShowFar((s32)&MsgKey0dbc, FIELD_MESSAGE_ZOOM |
                                                FIELD_MESSAGE_KEEP_OPEN |
                                                FIELD_MESSAGE_LOWER);
@@ -118,6 +124,7 @@ s32 Field_UsePsynergy(u32 code) {
   if (abilityId == ABILITY_TELEPORT &&
       gMainRoutineWork.next != SCENE_WORLD_MAP && before == NULL &&
       after == NULL && during == NULL) {
+    // "Teleport... It doesn't work here."
     PSYNERGY_MESSAGE(userId, ABILITY_TELEPORT, MsgKey0dbd);
     return 0;
   }
@@ -133,6 +140,7 @@ s32 Field_UsePsynergy(u32 code) {
       // Retreat was already accepted: take its exit back.
       if (retreat)
         work->exit = 0;
+      // "<Psynergy>... Not enough PP."
       PSYNERGY_MESSAGE(userId, abilityId, MsgKey0dba);
       return 0;
     }

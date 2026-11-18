@@ -6,16 +6,42 @@
 #include "sounds.h"
 
 #define DEATH_PLUNGE_FRAMES 96
+/// The plunge strikes: the target flashes, the user flashes and the damage
+/// shows.
+#define DEATH_PLUNGE_STRIKE_FRAME 54
+/// Both land the right way up, and Death Leap's rings start to fade.
+#define DEATH_PLUNGE_LAND_FRAME 64
+/// How far toward the target the user runs, in hundredths of the way.
+#define DEATH_PLUNGE_RUN_PERCENT 90
+/// The flashes thrown in a ring after the strike.
+#define DEATH_PLUNGE_RING_FLASHES 16
+
+/// Death Leap's bursts, given a countdown that sets out four a frame, of which
+/// the first DEATH_LEAP_BURSTS fly from the target; each shows
+/// FlashBurstSheet's six pictures for four frames apiece as it rises.
+#define DEATH_LEAP_BURST_SLOTS 32
+#define DEATH_LEAP_BURSTS 16
+#define DEATH_LEAP_BURST_FRAMES (6 * 4)
+/// Death Leap's two rings of light, FireRingTexture a quarter turn apart, swell
+/// from a quarter of their size by an eighth a frame (FIXED_ONE >>
+/// (16 - DEATH_LEAP_RING_GROWTH_SHIFT)) and fade DEATH_LEAP_RING_FADE a frame
+/// from DEATH_PLUNGE_LAND_FRAME.
+#define DEATH_LEAP_RINGS 2
+#define DEATH_LEAP_RING_GROWTH_SHIFT 13
+#define DEATH_LEAP_RING_FADE 4
 
 /// The user runs at the first target, both leap and turn upside down, and on
-/// the hit they bounce apart while a ball of fire swells over them.
+/// the hit they bounce apart while a ball of fire swells over them. Death Leap
+/// draws in violet: bursts fly up from the target and two rings of light
+/// swell over it.
 ///
 /// Abilities: Death Plunge, Death Leap.
 void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
-  DrawRectangle draw[2];
+  /* LEFTOVER(frame): draw[1], the idle half of the pair. */
+  BlitterPair draw;
   struct BattleObject *first;
   struct BattleObject *second;
   struct Actor *user;
@@ -29,17 +55,17 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   FIXED point[3];
   struct ScreenPoint screen;
   struct ModelTexture texture;
-  struct Particle *spark;
+  struct Particle *burst;
   struct RenderModel *model;
   void *vertices;
   s32 i;
-  u8 *pixels; // The jaw's texture, held for the whole effect.
+  u8 *pixels;
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
 
-  // Set up the canvas, the flash sheet, the jaw's texture and a clipped MAX
-  // blitter.
+  // Set up the canvas, the flash sheet, the rings' texture and a clipped
+  // blitter keeping the brighter; Death Leap takes violet colours.
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, work->sheet, 1, 1);
   pixels = Ram_MapCellBuffer;
@@ -59,12 +85,12 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
-  // The user runs nine tenths of the way to the target.
+  // The run, most of the way to the target.
   first = BattleObject_GetFar(args->user);
   second = BattleObject_GetFar(args->targets[0]);
   user = first->object;
   target = second->object;
-  percent = 90;
+  percent = DEATH_PLUNGE_RUN_PERCENT;
   x = user->x.fixed + percent * (target->x.fixed - user->x.fixed) / 100;
   z = user->z.fixed + percent * (target->z.fixed - user->z.fixed) / 100;
   userHeight = BattleUnit_GetEffectHeightFar(args->user);
@@ -72,7 +98,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   EffectPosition_ProjectBattler(args->targets[0], &targetScreen);
   Actor_StartIdleFar(user);
   Actor_SetMoveTargetFar(user, x, 0, z);
-  Actor_SelectAnimationFar(user, 2);
+  Actor_SelectAnimationFar(user, POSE_LEAP);
   user->snapToTarget = 1;
   user->steeringFlags = 1;
   user->acceleration = toFIXED(2);
@@ -82,7 +108,7 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
   for (frame = 0; frame != DEATH_PLUNGE_FRAMES; frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
-    // Frame 0: both leap. Frame 11: both turn upside down.
+    // Both leap at 15 pixels a frame, and soon turn upside down.
     if (frame == 0) {
       target->velocityY = toFIXED(15);
       target->gravity = toFIXED(57) / 100;
@@ -96,13 +122,13 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
       target->y.fixed += targetHeight;
     }
 
-    // Frame 54: the hit. The target flashes and both are thrown back, the
-    // user to where he started.
-    if (frame == 54) {
+    // The target flashes and both bounce; the user heads back towards the
+    // middle of the field.
+    if (frame == DEATH_PLUNGE_STRIKE_FRAME) {
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 10);
       target->velocityY = toFIXED(8);
-      target->gravity = toFIXED(67) / 100;
+      target->gravity = BATTLE_UNIT_GRAVITY;
       user->velocityY = toFIXED(5);
       user->gravity = toFIXED(47) / 100;
       user->acceleration = toFIXED(1);
@@ -113,20 +139,18 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
     }
 
     if (args->variant == EFFECT_VARIANT_BASIC) {
-      // The flash, and the ring of flashes, at the user.
-      Matrix_Initialize();
-      Matrix_SetLookAt(camera->eye, camera->focus);
-      point[0] = user->x.fixed;
-      point[1] = user->y.fixed;
-      point[2] = user->z.fixed;
+      // One big flash on the user, then a ring of flashes.
+      EFFECT_VIEW_FROM_CAMERA(camera);
+      SET_VECTOR(point, user->x.fixed, user->y.fixed, user->z.fixed);
       EffectPosition_ProjectPoint(point, &screen);
       screen.x >>= 1;
-      if (frame == 54 || frame == 55)
-        draw[0](canvas, work->sheet, screen.x - 16, screen.y - 16,
-                FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
+      if (frame == DEATH_PLUNGE_STRIKE_FRAME ||
+          frame == DEATH_PLUNGE_STRIKE_FRAME + 1)
+        draw[0](canvas, work->sheet, screen.x - FLASH_BURST_WIDTH / 2,
+                screen.y - 16, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
       if (frame >= 56 && frame <= 67) {
-        for (i = 0; i != 16; i++) {
-          s32 angle = i << 12;
+        for (i = 0; i != DEATH_PLUNGE_RING_FLASHES; i++) {
+          s32 angle = i * (TRIG_TURN / DEATH_PLUNGE_RING_FLASHES);
           s32 rx = screen.x + (FIXEDtoINT(Trig_Sin(angle) * (frame - 46) * 2));
           s32 ry =
               (FIXEDtoINT(Trig_Cos(angle) * (frame - 46) * 2)) - frame + 100;
@@ -138,51 +162,50 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
         }
       }
     } else if (frame > 55) {
-      // Frame 56: 32 sparks burst from the target, each a quarter frame
-      // later than the one before.
+      // The bursts fly from the target.
       if (frame == 56) {
-        spark = work->particles;
-        for (i = 0; i != 32; i++) {
+        burst = work->particles;
+        for (i = 0; i != DEATH_LEAP_BURST_SLOTS; i++) {
           s32 angle;
           s32 force;
 
-          spark->x = INTtoFIXED(targetScreen.x / 2);
-          spark->y = INTtoFIXED(targetScreen.y - 16);
+          burst->x = INTtoFIXED(targetScreen.x / 2);
+          burst->y = INTtoFIXED(targetScreen.y - 16);
           angle = Random16();
           force = (Random16() & 255) + 64;
-          spark->velocityX = (Trig_Sin(angle) * force) >> 6;
-          spark->velocityY = (Trig_Cos(angle) * force) >> 5;
-          spark->variant = -i / 4;
-          spark++;
+          burst->velocityX = (Trig_Sin(angle) * force) >> 6;
+          burst->velocityY = (Trig_Cos(angle) * force) >> 5;
+          burst->variant = -i / 4;
+          burst++;
         }
       }
 
-      // Each spark plays the flash's 6 cells over 24 frames as it flies up.
-      for (i = 0; i != 16; i++) {
-        spark = &work->particles[i];
-        if (spark->variant >= 0 && spark->variant <= 23) {
-          draw[0](canvas, work->sheet + ((spark->variant / 4) << 11),
-                  FIXED_INTEGER_PART(spark->x) - 16,
-                  FIXED_INTEGER_PART(spark->y) - 32, FLASH_BURST_WIDTH,
-                  FLASH_BURST_HEIGHT);
-          Particle_AdvanceWithGravity2D(spark, 62, -toFIXED(1) / 8);
+      for (i = 0; i != DEATH_LEAP_BURSTS; i++) {
+        burst = &work->particles[i];
+        if (burst->variant >= 0 && burst->variant < DEATH_LEAP_BURST_FRAMES) {
+          draw[0](canvas,
+                  work->sheet + burst->variant / 4 * PICTURE_BYTES(FLASH_BURST),
+                  FIXED_INTEGER_PART(burst->x) - FLASH_BURST_WIDTH / 2,
+                  FIXED_INTEGER_PART(burst->y) - FLASH_BURST_HEIGHT / 2,
+                  FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
+          Particle_AdvanceWithGravity2D(burst, 62, -toFIXED(1) / 8);
         }
-        spark->variant++;
+        burst->variant++;
       }
     }
 
     if (args->variant == EFFECT_VARIANT_STRONGER) {
-      // The jaw, twice, a quarter turn apart: it grows from frame 56 and
-      // fades out from frame 64.
+      // The rings swell from frame 56.
       vertices = Heap_AllocEwram(512);
       model = Render_AllocateModelList(1);
       if (frame > 55) {
-        FIXED scale = ((frame - 56) << 13) + FIXED_ONE / 4;
-        s32 alpha = 0;
+        FIXED scale =
+            ((frame - 56) << DEATH_LEAP_RING_GROWTH_SHIFT) + FIXED_ONE / 4;
+        s32 shade = 0;
 
-        if (frame > 63)
-          alpha = (64 - frame) * 4;
-        if (alpha > -64) {
+        if (frame >= DEATH_PLUNGE_LAND_FRAME)
+          shade = (DEATH_PLUNGE_LAND_FRAME - frame) * DEATH_LEAP_RING_FADE;
+        if (shade > MODEL_SHADE_INVISIBLE) {
           s32 angle;
 
           texture.logWidth = 7;
@@ -192,8 +215,8 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
           model->mesh = gBattleEffect_LargeSquareMesh;
           model->vertices = vertices;
           texture.pixels = pixels;
-          model->shade = alpha;
-          for (i = 0, angle = DEGtoANG(45); i != 2;
+          model->shade = shade;
+          for (i = 0, angle = DEGtoANG(45); i != DEATH_LEAP_RINGS;
                angle += DEGtoANG(90), i++) {
             Matrix_Initialize();
             Matrix_Translate(INTtoFIXED(targetScreen.x / 2 - 64), toFIXED(32),
@@ -211,15 +234,15 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
       Heap_Release(vertices);
     }
 
-    // Frame 64: both land the right way up.
-    if (frame == 64) {
+    // Both turn right side up again.
+    if (frame == DEATH_PLUNGE_LAND_FRAME) {
       target->scaleY = -target->scaleY;
       user->scaleY = -user->scaleY;
       user->y.fixed -= userHeight;
       target->y.fixed -= targetHeight;
       Actor_SelectAnimationFar(user, 0);
     }
-    if (frame == 54) {
+    if (frame == DEATH_PLUNGE_STRIKE_FRAME) {
       if (args->variant == EFFECT_VARIANT_BASIC)
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       else
@@ -237,3 +260,15 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
 
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
+
+#undef DEATH_PLUNGE_FRAMES
+#undef DEATH_PLUNGE_STRIKE_FRAME
+#undef DEATH_PLUNGE_LAND_FRAME
+#undef DEATH_PLUNGE_RUN_PERCENT
+#undef DEATH_PLUNGE_RING_FLASHES
+#undef DEATH_LEAP_BURST_SLOTS
+#undef DEATH_LEAP_BURSTS
+#undef DEATH_LEAP_BURST_FRAMES
+#undef DEATH_LEAP_RINGS
+#undef DEATH_LEAP_RING_GROWTH_SHIFT
+#undef DEATH_LEAP_RING_FADE

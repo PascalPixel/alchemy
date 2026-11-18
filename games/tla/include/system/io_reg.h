@@ -445,6 +445,10 @@ enum KeyMask {
 #define RGB_LEVEL_MAX 31
 /// The brightest colour, every channel at its highest level.
 #define RGB_WHITE RGB(RGB_LEVEL_MAX, RGB_LEVEL_MAX, RGB_LEVEL_MAX)
+/// A 15-bit colour's red, green and blue bits.
+#define RED_BITS RGB(RGB_LEVEL_MAX, 0, 0)
+#define GREEN_BITS RGB(0, RGB_LEVEL_MAX, 0)
+#define BLUE_BITS RGB(0, 0, RGB_LEVEL_MAX)
 /// Video RAM: background tiles and maps, then sprite tiles.
 #define VRAM 0x06000000
 #define BG_CHAR_SIZE 16384  ///< bytes in a character block, 16 KB

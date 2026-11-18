@@ -6,22 +6,16 @@
 /// MUS_ ids are music and jingles, SE_ ids sound effects, as their sequences
 /// in sound/songs are named. A row of the empty song (dummy_song_header), which
 /// plays nothing, has no name, and the next named row's number is written
-/// after it. A sequence nothing plays by name yet keeps its number as its
-/// placeholder, unless The Lost Age names the same sequence, whose name it then
-/// takes. Unused: every such sequence is one no code or table in the game
-/// plays, by name or by number; only the sound test (SoundTest_Run), which
-/// nothing calls, can start one, so none is heard where a name could come from.
-/// The named ones are the code's own, the field music gScene_MusicRules and
-/// gEncounter_BattleMusic choose, and the voices and defeat sounds reached by
-/// adding to a first id. Three rows are controls no sound plays from. They are
-/// named as pret names its sounds: music by the place or moment the player
-/// knows it from, or by what it sounds like where it marks many moments
-/// (MUS_OMINOUS), a sound effect by what it sounds like or the moment it marks,
-/// from its comment and its uses. Sound_Play tests the controls
-/// SOUND_FADE_OUT_BGM and SOUND_FADE_OUT_ACTION_SE first, then the ranges: from
-/// SOUND_SE_FIRST on the player its gSongTable row names, from
-/// SOUND_JINGLE_FIRST jingles, below that music, where SOUND_KEEP_BGM is also a
-/// control (sound_driver_symbols.h).
+/// after it. A sequence with no name yet keeps its number as its placeholder:
+/// no code or table in the game plays one, by name or by number, and only the
+/// sound test (SoundTest_Run), which nothing calls, can start it. Music is
+/// named by the place or moment the player knows it from, or by what it sounds
+/// like where it marks many moments (MUS_OMINOUS); a sound effect by what it
+/// sounds like or the moment it marks. Three rows are controls no sound plays
+/// from. Sound_Play tests the controls SOUND_FADE_OUT_BGM and
+/// SOUND_FADE_OUT_ACTION_SE first, then the ranges: from SOUND_SE_FIRST on the
+/// player its gSongTable row names, from SOUND_JINGLE_FIRST jingles, below that
+/// music, where SOUND_KEEP_BGM is also a control (sound_driver_symbols.h).
 
 enum SoundId {
   /// Field music of Vale, of Vault, and of Altin once

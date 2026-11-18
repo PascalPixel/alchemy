@@ -218,8 +218,8 @@ typedef struct {
 /// The maze's path, kept in the inventory snapshot's spare room.
 #define gPath ((Path *)(gInventorySnapshot + 648))
 
-/// Set once the plant on a step of the maze has pointed the way on, for this
-/// visit.
+/// Set once the plant on a step of the maze has pointed the way on; it points
+/// again whenever the party comes back to that step.
 #define FLAG_MAZE_PLANT_POINTED(step) (0xa50 + (step))
 /// The maze's path is laid for this visit (GaiaRockInside_LayMaze).
 #define FLAG_MAZE_LAID FLAG_AREA_TEMP_F0
@@ -400,7 +400,7 @@ void GaiaRockInside_RaiseDust(void) {
   options.update = FieldEffect_AdvanceMotion;
   options.startScaleX = FIXED_ONE * 16 / 25;
   options.startScaleY = FIXED_ONE * 16 / 25;
-  for (i = 0; i <= 16; i++) {
+  for (i = 0; i <= DUST_RING_PUFFS; i++) {
     s32 angle;
     FIXED velocity[3];
     FIXED cosine;
@@ -422,7 +422,7 @@ void GaiaRockInside_RaiseDust(void) {
   Event_PlaySound(SE_THUMP);
   Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 49);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_SIT);
   MapGrid_SetShake(5, 5, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
@@ -715,7 +715,7 @@ void GaiaRockInside_PulseUpDownArrow(struct Actor *actor) {
 }
 
 /// Growth on the plant of a maze step: it grows into an arrow pointing the way
-/// on, and stays one for this visit.
+/// on, and stays one from then on.
 void GaiaRockInside_PlantPointsTheWay(s32 unused, u32 id) {
   struct Actor *actor = Actor_Get(id);
   u32 direction;
@@ -1000,10 +1000,10 @@ void GaiaRockInside_MeetSusa(void) {
   Event_End();
 }
 
-/// Talking to Susa while he stands: once he has attacked the Serpent he says
-/// it is still too strong, in other words once any beam of sunlight reaches
-/// the lair; before that he stops, turns to the leader and sends the party
-/// aside.
+/// Talking to Susa, unless the party is holding him up. After his attack on
+/// the Serpent he says he is done for once any beam of sunlight reaches the
+/// lair, and otherwise that the Serpent is still too strong; before it he
+/// stops, turns to the leader and sends the party aside.
 void GaiaRockInside_TalkToSusa(void) {
   if (Actor_Get(ACTOR_SUSA)->refused > 2)
     return;
@@ -1014,10 +1014,12 @@ void GaiaRockInside_TalkToSusa(void) {
         Event_GetFlag(FLAG_WEST_ALTAR_SUNBEAM) ||
         Event_GetFlag(FLAG_EAST_ALTAR_SUNBEAM) ||
         Event_GetFlag(FLAG_BUSHES_SUNBEAM))
+      // "I'm done for... That dragon has finished me off..."
       FieldEvent_SetMessageId((s32)MsgGaiaRockInsideImDoneForThatDragon);
     else
+      // "The serpent is still too strong. If only there were a way to weaken
+      // it further..."
       FieldEvent_SetMessageId((s32)MsgGaiaRockInsideTheSerpentIsStillToo);
-    // "The serpent is still too strong. If only there were a way to weaken..."
     Event_ShowMessage(ACTOR_SUSA, 0);
   } else {
     if (Actor_Get(ACTOR_CASK)->script == gGaiaRockInside_CaskEmptiesScript)
@@ -1147,6 +1149,11 @@ enum { SAND_RISING_SPARKS = 16 };
 /// countdown ends with the last's.
 enum { LEARN_SPARKS = 16, LEARN_SPARK_INTERVAL = 8, LEARN_SPIRAL_FRAMES = 15 };
 
+/// Half a turn of an orbit's phase, 64 to the turn (Orbit_Update): the falling
+/// sparks take every other phase short of it, one each 2 pixels up a column
+/// round Felix, so their circles widen and narrow again up the column.
+enum { ORBIT_HALF_TURN = 32 };
+
 /// Felix touches the slate in the lair and learns Sand: he and the slate rise
 /// among circling sparks, then settle.
 void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
@@ -1234,7 +1241,7 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
   }
   Sound_Play(SE_SHIMMER);
   wait(16);
-  for (i = 2; i != 32; i += 2) {
+  for (i = 2; i != ORBIT_HALF_TURN; i += 2) {
     struct Actor *spark =
         FieldActor_Create(SPRITE_PARTICLE, b->x.fixed,
                           b->y.fixed + toFIXED(i) - toFIXED(8), b->z.fixed);
@@ -1278,6 +1285,9 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
 void Actor_MoveToObject(s32 id, s32 target);
 void BlendScript_Suspend(void);
 void BlendScript_Resume(void);
+
+/// REG_BLDALPHA's low byte, the top target's weight.
+#define BLEND_ALPHA_TOP_MASK 0xff
 
 /// Talking to the slate: Kraden urges Felix to touch it, the ground shakes and
 /// the slate teaches him Sand (GaiaRockInside_FelixLearnsSand), and Kraden
@@ -1325,7 +1335,7 @@ void GaiaRockInside_ReadSandTablet(void) {
   FieldMapGrid_WaitForShakeToSettle();
   BlendScript_Suspend();
   Io_Read16(&REG_BLDALPHA, &level);
-  level &= 0xff;
+  level &= BLEND_ALPHA_TOP_MASK;
   while (level != 0) {
     REG_BLDALPHA = level | BLEND_ALPHA(0, 16);
     level--;
@@ -1361,6 +1371,11 @@ void GaiaRockInside_ReadSandTablet(void) {
   Event_End();
 }
 
+/// A drifting effect loses a FIELD_EFFECT_DRAG_X-th of its x speed and a
+/// FIELD_EFFECT_DRAG_Z-th of its z speed each frame.
+#define FIELD_EFFECT_DRAG_X 18
+#define FIELD_EFFECT_DRAG_Z 16
+
 /// The dust's update: it moves by its velocity, slowing a little across the
 /// ground each frame, and grows and spins.
 void Effect_AdvanceMotionLocal(union FieldObject *object) {
@@ -1376,8 +1391,8 @@ void Effect_AdvanceMotionLocal(union FieldObject *object) {
   velocityZ = effect->velocity.z;
   effect->z += velocityZ;
 
-  effect->velocity.x = velocityX - velocityX / 18;
-  effect->velocity.z = velocityZ - velocityZ / 16;
+  effect->velocity.x = velocityX - velocityX / FIELD_EFFECT_DRAG_X;
+  effect->velocity.z = velocityZ - velocityZ / FIELD_EFFECT_DRAG_Z;
 
   scaleRateX = effect->scaleRateX;
   effect->scaleX += scaleRateX;
@@ -1385,6 +1400,9 @@ void Effect_AdvanceMotionLocal(union FieldObject *object) {
   effect->scaleY += effect->scaleRateY;
   sprite->rotation += effect->spin;
 }
+
+#undef FIELD_EFFECT_DRAG_X
+#undef FIELD_EFFECT_DRAG_Z
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -1412,7 +1430,7 @@ void GaiaRockInside_RingOfDust(void) {
                         &options);
       i += 2;
     }
-  } while (i <= 16);
+  } while (i <= TRIG_TURN / FACING_STEP);
 }
 
 /// The pixels the slate rises from the lair's floor, one every 2 frames.
@@ -1435,7 +1453,7 @@ void GaiaRockInside_RaiseSandTablet(void) {
   MapGrid_SetShake(10, 10, 1);
   Event_PlaySound(SE_TREMOR);
   BlendScript_Suspend();
-  level &= 0xff;
+  level &= BLEND_ALPHA_TOP_MASK;
   while (level != 0) {
     REG_BLDALPHA = level | BLEND_ALPHA(0, 16);
     level--;
@@ -1502,7 +1520,7 @@ void GaiaRockInside_ChallengeSerpent(void) {
     } else {
       Event_SetDefeatDestination(scene, ENTRANCE_BEATEN_BY_SERPENT);
     }
-    Field_RequestBattleFromEncounterTable(12, count);
+    Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_SERPENT, count);
   }
 }
 
@@ -1621,9 +1639,8 @@ void GaiaRockInside_PlaceDollOnFirstAltar(void) {
       eastFace->velocityY = Random16();
       System_Wait(1);
     }
-    i = 40;
-    MapGrid_CopyCells(119, 31, 1, 2, 89, i);
-    MapGrid_CopyCells(119, 31, 1, 2, 100, i);
+    MapGrid_CopyCells(119, 31, 1, 2, 89, 40);
+    MapGrid_CopyCells(119, 31, 1, 2, 100, 40);
     Event_SetFlag(FLAG_FIRST_ALTAR_FACES_MOVED);
   } else {
     for (i = 0; i < FACE_TREMBLE_LONG_FRAMES; i++) {
@@ -1956,6 +1973,9 @@ s32 GaiaRockInside_RecordStumpSpots(void) {
       secondIndex = i;
   }
   {
+    /* FAKEMATCH(temporary): the second spot shifted to the top half byte in a
+     * local, and the byte sign-extended by hand; plainly,
+     * (s8)(firstIndex | secondIndex << 4). */
     u32 high = secondIndex << 28;
     return GameFlag_SetByte(FLAG_STUMP_SPOTS,
                             (s32)((firstIndex << 24) | high) >> 24);
@@ -2255,8 +2275,8 @@ s32 Scene_Initialize(void) {
       Event_WaitTransitionFrames();
       Event_Wait(60);
       {
-        // The maze has no exit 20, and none is taken by it: one beam is
-        // always waiting to be shown.
+        // The maze has no exit 20: with no beam waiting the party would stay
+        // in the lair, but one always is.
         s32 ending = 20;
         if (Test(FLAG_ALTAR_ROOM_SUNBEAM_TO_SHOW)) {
           GameFlag_Clear(FLAG_ALTAR_ROOM_SUNBEAM_TO_SHOW);
@@ -3370,6 +3390,9 @@ extern u32 gGaiaRockInside_FlyingRockScript[];
 /// The rocks that burst out as a statue rises.
 enum { STATUE_ROCKS = 16 };
 
+/// The leader standing still, ANIM_STILL's picture held.
+enum { ANIM_LEADER_STILL = 38 };
+
 /// A statue rises under the leader in a burst of rocks, lifting him with it;
 /// he lands on top, and its flag is set.
 void GaiaRockInside_StatueRisesUnderLeader(s32 id, s32 flag) {
@@ -3377,6 +3400,7 @@ void GaiaRockInside_StatueRisesUnderLeader(s32 id, s32 flag) {
   s32 gravity = leader->gravity;
   struct Actor *pillar;
   s32 i;
+  s32 frame;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -3415,12 +3439,12 @@ void GaiaRockInside_StatueRisesUnderLeader(s32 id, s32 flag) {
   MapGrid_SetShake(2, 2, 0.9);
   Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Actor_SelectAnimation(leader, 40);
+  Actor_SelectAnimation(leader, ANIM_LEADER_FLAIL);
   FieldEvent_Wait(40);
   Event_PlaySound(SE_DUST_PUFF);
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   leader->gravity = toFIXED(33) / 100;
-  for (id = 0; id < 180; id++) {
+  for (frame = 0; frame < 180; frame++) {
     System_Wait(1);
     if (leader->y.fixed <= leader->groundHeight)
       break;
@@ -3429,7 +3453,7 @@ void GaiaRockInside_StatueRisesUnderLeader(s32 id, s32 flag) {
   leader->gravity = gravity;
   Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_REMOVE);
-  Actor_SelectAnimation(leader, 38);
+  Actor_SelectAnimation(leader, ANIM_LEADER_STILL);
   MapGrid_SetShake(1, 4, 1);
   System_Wait(10);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);

@@ -186,7 +186,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// where it is), swelling slowly or quickly as its lifetime is long or short.
 void JupiterLighthouse_RestartSpark(struct Actor *actor) {
   if (Random16() & 0xff) {
-    s32 position[3];
+    FIXED position[3];
     s32 radius;
     s32 angle;
 
@@ -239,16 +239,11 @@ void JupiterLighthouse_UpdateSpark(struct Actor *actor) {
 /// one swells slowly.
 void JupiterLighthouse_SpawnSparks(void) {
   s32 i;
-  s32 next;
-
   struct Actor *actor;
-  s16 *lifetime;
-  s16 *framesLeft;
 
   i = 0;
   do {
-    actor = (FieldActor_Create(SPRITE_PARTICLE, 0, 0, 0));
-
+    actor = FieldActor_Create(SPRITE_PARTICLE, 0, 0, 0);
     actor->motionFlags = 0;
     actor->priorityFlags = 0;
     actor->speedLimit = i * (toFIXED(1) / 16) + toFIXED(1) / 2;
@@ -259,19 +254,14 @@ void JupiterLighthouse_SpawnSparks(void) {
     FieldActor_SetSpriteColor(actor, SPRITE_COLOR_RBG);
     ((struct FieldSprite *)actor->sprite)->priority = 1;
     Actor_SetBlendMode(actor, OBJ_MODE_SEMI_TRANSPARENT);
-    lifetime = &actor->timer;
-    framesLeft = &actor->userValue;
-    next = i + 1;
     if (i & 1) {
-      s32 frames = SPARK_SLOW_LIFETIME;
-      *lifetime = frames;
-      *framesLeft = 0;
+      actor->timer = SPARK_SLOW_LIFETIME;
+      actor->userValue = 0;
     } else {
-      s32 frames = SPARK_QUICK_LIFETIME;
-      *lifetime = frames;
-      *framesLeft = 0;
+      actor->timer = SPARK_QUICK_LIFETIME;
+      actor->userValue = 0;
     }
-    i = next;
+    i++;
   } while (i != SPARK_COUNT);
 }
 

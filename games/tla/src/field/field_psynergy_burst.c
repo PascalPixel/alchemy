@@ -21,6 +21,11 @@
 #define BURST_EXPLOSION_PALETTE 15
 /// How much of a screen shake is kept each frame.
 #define BURST_SHAKE_DECAY (FIXED_ONE * 9 / 10)
+/// The explosions the last and largest blast starts, on its first frame and
+/// again on its fifth.
+#define BURST_FINAL_EXPLOSIONS 10
+/// The sparks drawn when Burst is cast at nothing.
+#define BURST_SPARKS_AT_NOTHING 12
 
 /// Burst's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the glow disc that swells
 /// in front of the caster on the canvas sprite, the 32 sparks that fly into it,
@@ -69,13 +74,13 @@ void FieldPsynergy_UpdateBurst(void) {
     i = 0;
     frames = &canvas->drawnFrames;
     red = RGB_LEVEL_MAX;
-    blue = RGB_LEVEL_MAX << 10;
-    for (; i <= 31; i++) {
-      s32 green =
-          (((Trig_Sin((((u32)*frames >> 1) + i << 16) + 0x90000 >> 5) * 12) >>
-            16) +
-           16)
-          << 5;
+    blue = RGB(0, 0, RGB_LEVEL_MAX);
+    // The glow's 32 colours: red and blue full, green 16 give or take 12 on a
+    // sine wave a 32nd of a turn on from colour to colour, which moves on a
+    // colour every two frames.
+    for (; i < PALETTE_COLORS * 2; i++) {
+      u32 angle = ((((u32)*frames >> 1) + i) * TRIG_TURN + TRIG_TURN * 9) / 32;
+      s32 green = RGB(0, FIXEDtoINT(Trig_Sin(angle) * 12) + 16, 0);
 
       Io_Write16(green | blue | red, palette++);
     }
@@ -196,9 +201,9 @@ void FieldPsynergy_UpdateBurst(void) {
       break;
     case 6:
       if (work->timer == 0)
-        work->newBursts = 10;
+        work->newBursts = BURST_FINAL_EXPLOSIONS;
       if (work->timer == 4)
-        work->newBursts = 10;
+        work->newBursts = BURST_FINAL_EXPLOSIONS;
       if (work->timer == 0) {
         MapGrid_SetScreenShakeFar(toFIXED(12), toFIXED(12), BURST_SHAKE_DECAY);
         Sound_PlayFar(SE_CRASH);
@@ -215,7 +220,7 @@ void FieldPsynergy_UpdateBurst(void) {
     }
   } else {
     particle = work->sparks;
-    for (i = 0; i < 12; i++) {
+    for (i = 0; i < BURST_SPARKS_AT_NOTHING; i++) {
       if ((u32)particle->timer <= 29) {
         sprite = &work->sparkSprites[i];
         sprite->x = particle->x + toFIXED(canvas->x);

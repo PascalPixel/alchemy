@@ -24,13 +24,13 @@ u16 *Tile_BuildCellPictures(u16 *scanlineBounds, u16 *tilemap) {
 
   for (tileRow = 0; tileRow < DISPLAY_TILE_HEIGHT; tileRow++) {
     bottomLeft = 0;
-    left = bottomLeft;
-    topLeft = bottomLeft;
-    bottomRight = bottomLeft;
-    right = bottomRight;
-    topRight = bottomRight;
-    foundLeftEdge = bottomRight;
-    tileColumn = bottomRight;
+    left = 0;
+    topLeft = 0;
+    bottomRight = 0;
+    right = 0;
+    topRight = 0;
+    foundLeftEdge = 0;
+    tileColumn = 0;
     scanlineBounds++;
     for (; tileColumn < DISPLAY_TILE_WIDTH; tileColumn++) {
       u16 tile = *tilemap++;
@@ -46,7 +46,7 @@ u16 *Tile_BuildCellPictures(u16 *scanlineBounds, u16 *tilemap) {
           right = left + 8;
           topLeft = left + 1;
           bottomLeft = left;
-          topRight = bottomLeft + 7;
+          topRight = left + 7;
           bottomRight = right;
           foundLeftEdge++;
           break;
@@ -66,9 +66,9 @@ u16 *Tile_BuildCellPictures(u16 *scanlineBounds, u16 *tilemap) {
           left = tileColumn * 8;
           right = left + 8;
           bottomLeft = left;
-          topLeft = bottomLeft;
+          topLeft = left;
           bottomRight = right;
-          topRight = bottomRight;
+          topRight = right;
           foundLeftEdge++;
         }
       } else {

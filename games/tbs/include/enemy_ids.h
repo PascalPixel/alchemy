@@ -150,7 +150,7 @@ enum EnemyId {
   ENEMY_CREEPER,
   ENEMY_SPIRIT,
   /// The battle that ends Flint's lesson on the world map
-  /// (WorldMap_ShowDjinnTutorial, slot 6 of
+  /// (WorldMap_ExplainSettingDjinn, slot 6 of
   /// ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT): ENEMY_ZOMBIE's stats but agility 1,
   /// and it leaves no coins, item or experience.
   ENEMY_ZOMBIE_DJINN_LESSON,

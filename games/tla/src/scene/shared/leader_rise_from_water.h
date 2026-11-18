@@ -1,6 +1,7 @@
-/// Unless the party returns to where it was, the leader appears 16 pixels north
-/// of the entrance, tinted blue, as the screen opens, then comes south in a
-/// trail of mist and takes his own colours and shadow back on the way.
+/// Unless the party returns to where it was, the leader appears in the
+/// waterfall 16 pixels north of the entrance, tinted blue, as the screen opens,
+/// then comes south out of it in a trail of mist and takes his own colours and
+/// shadow back on the way.
 void Leader_RiseFromWater(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 

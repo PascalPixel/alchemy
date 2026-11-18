@@ -15,6 +15,8 @@
 #include "field/object.h"
 #include "battle/battle_camera.h"
 #include "field/world_map.h"
+#include "window/window.h"
+#include "window/window_tile.h"
 
 #define WORLD_MAP_BG_PALETTE ((s16 *)BG_PLTT)
 
@@ -35,25 +37,16 @@
 /// with one row of gWorldMap_GraphicsResources.
 #define WORLD_MAP_REGION_GROUP 10
 
-/// BG1's picture of 256 colours: 32 by 24 tiles from char block 1 on, which
-/// the world picture scrolls through, wrapping (WorldMapPicture_DrawRow).
-#define PICTURE_FIRST_TILE (BG_CHAR_SIZE / TILE_SIZE_8BPP)
-#define PICTURE_TILE_ROWS 24
 /// The still picture on BG1 (WorldMap_StartStillPicture): 32 by 20 of the
-/// picture's tiles, from its fifth row on.
+/// world picture's tiles, from its fifth row on.
 #define STILL_PICTURE_TILES_ACROSS 32
 #define STILL_PICTURE_TILE_ROWS 20
 #define STILL_PICTURE_FIRST_TILE                                               \
-  (PICTURE_FIRST_TILE + 4 * STILL_PICTURE_TILES_ACROSS)
+  (WORLD_PICTURE_FIRST_TILE + 4 * STILL_PICTURE_TILES_ACROSS)
 /// While the still picture shows, the perspective's window lies below the
 /// screen, so no line is drawn in perspective.
 #define STILL_PICTURE_WINDOW_TOP 200
 #define STILL_PICTURE_WINDOW_BOTTOM 255
-
-/// Two screen entries in a word, tiles n and n + 1 side by side, for numbering
-/// a map's tiles two at a time; adding TILE_PAIR_STEP moves both on by two.
-#define TILE_PAIR(n) ((u32)((n) + 1) << 16 | (n))
-#define TILE_PAIR_STEP ((u32)2 << 16 | 2)
 
 /// Sets up the world map's perspective view: BG2 and BG3 in affine mode, the
 /// camera work, the projection, the per-scanline ground plane routine in RAM
@@ -328,7 +321,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   // BG1's map (screen block 5) is filled with tile 127 of WINDOW_PALETTE, and
   // screen block 6 numbers the picture's tiles in rows, two a word: the still
   // picture's, then on round the picture.
-  Dma_Fill32(0xf07ff07f, BG_SCREEN_BLOCK(5),
+  Dma_Fill32(WINDOW_TILE_PAIR(WINDOW_TILE(127)), BG_SCREEN_BLOCK(5),
              24 * BG_SCREEN_WIDTH * sizeof(u16));
   screenTiles = (u32 *)BG_SCREEN_BLOCK(6);
   tilePair = TILE_PAIR(STILL_PICTURE_FIRST_TILE);
@@ -338,14 +331,14 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
       tilePair += TILE_PAIR_STEP;
     }
   }
-  tilePair = TILE_PAIR(PICTURE_FIRST_TILE);
-  for (row = 0; row < PICTURE_TILE_ROWS; row++) {
+  tilePair = TILE_PAIR(WORLD_PICTURE_FIRST_TILE);
+  for (row = 0; row < WORLD_PICTURE_TILE_ROWS; row++) {
     for (column = 0; column < BG_SCREEN_WIDTH / 2; column++) {
       *screenTiles++ = tilePair;
       tilePair += TILE_PAIR_STEP;
     }
   }
-  tilePair = TILE_PAIR(PICTURE_FIRST_TILE);
+  tilePair = TILE_PAIR(WORLD_PICTURE_FIRST_TILE);
   for (row = 0; row < 4; row++) {
     for (column = 0; column < BG_SCREEN_WIDTH / 2; column++) {
       *screenTiles++ = tilePair;
@@ -361,7 +354,7 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
 void WorldMap_ApplyAffinePage(void) {
   struct WorldMapAffinePair(*affinePages)[DISPLAY_HEIGHT] =
       ((struct WorldMapAffineWork *)Ram_HeapSlots->worldMapAffine)->pages;
-  s32 displayControl = (s16)(REG_DISPCNT & 0xfff8);
+  s32 displayControl = (s16)(REG_DISPCNT & ~DISPCNT_MODE_MASK);
   u32 *affineRegisters = (u32 *)&REG_BG2PA;
   struct WorldMapView *perspective =
       (struct WorldMapView *)Ram_HeapSlots->mapGrid;
@@ -390,7 +383,7 @@ void WorldMap_ApplyAffinePage(void) {
     Dma_Set(affineSource, (void *)&REG_BG2PA,
             (DMA_ENABLE | DMA_START_HBLANK | DMA_REPEAT | DMA_32BIT |
              DMA_DEST_RELOAD)
-                    << 16 |
+                    << DMA_CONTROL_SHIFT |
                 sizeof(struct WorldMapAffinePair) / 4,
             (u32 *)dma0);
   }

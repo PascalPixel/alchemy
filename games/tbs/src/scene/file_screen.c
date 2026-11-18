@@ -945,8 +945,9 @@ leave:;
 /// Unused: unpacks the tiles into a scratch buffer, then fills a grid of the
 /// window tilemap, in VRAM and in its shadow, at the window's cell: each
 /// cell's tile the row times the window's width plus the column.
-UNUSED static void FileScreen_FillTileGrid(struct Window *window,
-                                           const void *compressedTiles) {
+UNUSED static void
+FileScreen_FillTileGridByWindowWidth(struct Window *window,
+                                     const void *compressedTiles) {
   u16 *shadow;
   u16 *vram;
   void *decodedTiles;
@@ -974,8 +975,9 @@ UNUSED static void FileScreen_FillTileGrid(struct Window *window,
 }
 
 /// Unused: fills a grid of the window tilemap with the tiles from
-/// TILE_GRID_FIRST_TILE on.
-UNUSED static void FileScreen_FillTileGridInOrder(const struct Window *window) {
+/// TILE_GRID_FIRST_TILE on, TILE_GRID_COLUMNS to a row.
+UNUSED static void
+FileScreen_FillTileGridByGridWidth(const struct Window *window) {
   s16 *mirror = ((struct WindowWork *)gWindowWork[0])->tilemap;
   s16 *buffer = Heap_AllocEwram(768);
   s16 *vram;
@@ -1235,6 +1237,9 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     }
   }
 
+  // The first seven bytes: the four levels, seven bits each, low byte first,
+  // and the Djinn held, seven bits an element; byte 3 holds the levels' last
+  // four bits above the Djinn's first four.
   out[0] = levelBits;
   out[1] = levelBits >> 8;
   out[2] = levelBits >> 16;

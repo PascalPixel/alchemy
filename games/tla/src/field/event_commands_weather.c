@@ -8,6 +8,11 @@
 #include "sounds.h"
 #include "field/field.h"
 #include "field/ground_mask.h"
+#include "field/event.h"
+
+/// The frames of a ground particle's splash (gFieldEffect_GroundParticleFrames,
+/// five halfwords each), played from the last down to the first.
+#define GROUND_PARTICLE_FRAMES 16
 
 /// Task of GroundParticles_Start: The Broken Seal's Weather_UpdateRain, kept
 /// whole. Each particle plays its 16 frames of
@@ -22,7 +27,7 @@ void GroundParticles_Update(void) {
   struct GroundParticle *particle = work->particles;
   u32 i;
 
-  for (i = 0; i < 64; i++, particle++) {
+  for (i = 0; i < WEATHER_PARTICLE_COUNT; i++, particle++) {
     const s16 *frame;
     s32 x;
     s32 y;
@@ -42,7 +47,7 @@ void GroundParticles_Update(void) {
       frame++;
       particle->shape = *(u8 *)frame;
       particle->size = *(u8 *)(frame + 1);
-      Oam_AddSpriteAtDepthClamped(particle, 240);
+      Oam_AddSpriteAtDepthClamped(particle, OAM_DEPTH_WINDOW);
     }
     if (particle->timer == 0) {
       s32 *focus = map->origin;
@@ -52,7 +57,7 @@ void GroundParticles_Update(void) {
       particle->posX = x;
       particle->posZ = y;
       particle->posY = MapGrid_GetTerrainHeightFar(0, x, y);
-      particle->timer = 16;
+      particle->timer = GROUND_PARTICLE_FRAMES;
     }
   }
 }
@@ -73,7 +78,7 @@ void Weather_UpdateRain(void) {
   s32 originZ = origin[1];
   u32 i;
 
-  for (i = 0; i < 64; i++, particle++) {
+  for (i = 0; i < WEATHER_PARTICLE_COUNT; i++, particle++) {
     const s16 *frame;
     s32 x;
     s32 y;
@@ -92,7 +97,7 @@ void Weather_UpdateRain(void) {
       particle->tile = work->tileBase;
       particle->shape = 1;
       particle->size = 2;
-      Oam_AddSpriteAtDepthClamped(particle, 240);
+      Oam_AddSpriteAtDepthClamped(particle, OAM_DEPTH_WINDOW);
     }
     if (particle->timer == 0) {
       s32 *focus = map->origin;
@@ -107,47 +112,45 @@ void Weather_UpdateRain(void) {
   }
 }
 
-void PaletteFade_SetTarget(s32 value, s32 mode);
-#define PaletteFade_SetTarget PaletteFade_SetTarget
-
 /// Task for the storm: lightning flashes the BG colours three times, 5 frames
-/// apart, with thunder; while lightning is on, the next burst comes 50 to 550
+/// apart, with thunder; while lightning is on, the next burst comes 51 to 549
 /// frames later. While FLAG_WEATHER_HELD is set no burst comes.
 void Weather_UpdateLightning(void) {
   struct FieldBlendWork *work = Ram_HeapSlots->fieldBlend;
   struct PaletteFade *target = Ram_HeapSlots->paletteFade;
-  s16 *timer = &work->timer;
-
   if (work->timer < 0)
     return;
   if (GameFlag_Get(FLAG_WEATHER_HELD))
     work->timer = 128;
   switch (work->timer--) {
   case 0:
+    // The burst ends: arm the next, 150 frames plus up to 399 less up to 99.
     if (work->enabled != 0) {
-      u32 a = Random16();
-      u32 b = Random16();
-      u32 draw = a * 24;
-      u32 jitter = b * 100;
-      work->timer = (((draw + a) << 4) >> 16) - (jitter >> 16) + 150;
+      work->timer = Random_Below(400) - Random_Below(100) + 150;
       if (work->loud != 0)
         Sound_PlayFar(SE_THUNDER_LOUD);
       else
         Sound_PlayFar(SE_THUNDER);
     }
+    // fall through
   case 5:
   case 10:
-    PaletteFade_SetTarget(work, 1);
-    Dma_Set(work->delta, target->delta, DMA_COPY_WORDS(672), REG_DMA3);
+    // A frame after each flash: fade back to the dark colours over 12 frames.
+    PaletteFade_SetTarget((s32)work, 1);
+    Dma_Set(work->delta, target->delta,
+            DMA_COPY_WORDS(sizeof target->delta / 4), REG_DMA3);
     target->duration = 12;
     target->step = 0;
     break;
   case 1:
   case 6:
   case 11:
-    PaletteFade_SetTarget(work->to, 1);
+    // The flash: the lit colours, in one frame.
+    PaletteFade_SetTarget((s32)work->to, 1);
     target->duration = 1;
     target->step = 0;
     break;
   }
 }
+
+#undef GROUND_PARTICLE_FRAMES

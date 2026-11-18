@@ -33,6 +33,9 @@ struct RenderModel;
 #define MOLOCH_SPREAD_FRAME 136
 /// How far the rings lean back.
 #define MOLOCH_RING_TILT 3000
+/// The level the canvas is cleared to each frame as the screen brightens to
+/// white, before its last two frames at the brightest.
+#define MOLOCH_WHITENING_LEVEL 16
 
 /// Moloch. A shower of 256 motes drifts down the screen and, from frame
 /// 91, gathers toward the middle; from frame 97 flames rise in twelve columns
@@ -334,7 +337,8 @@ void BattleEffect_RunMoloch(struct BattleEffectParams *args) {
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(2));
         Graphics_LoadGreyRamp();
       } else if ((u32)(frame - 256) <= 15) {
-        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
+        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR,
+                            CANVAS_FILL_WORD(MOLOCH_WHITENING_LEVEL));
         if (frame > 269)
           work->transferValue = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
         Palette_BrightenBgEntries(2, 2, 2);
@@ -631,8 +635,6 @@ struct StripQuad;
 #define IRIS_PSYNERGY_SOUNDS 11
 #define IRIS_DOOR_SOUNDS 5
 #define IRIS_POWER_UP_SOUNDS 6
-/// The enable bit of DMA 3's control, read with its count as one word.
-#define DMA3_BUSY (DMA_ENABLE << 16)
 /// As she appears, a ring of IRIS_APPEAR_RING_POINTS motes spreads about her, a
 /// pixel a frame.
 #define IRIS_APPEAR_RING_POINTS 256
@@ -662,6 +664,11 @@ struct StripQuad;
 #define IRIS_CAMERA_YAW (offsetof(struct BattleCamera, yaw) / sizeof(s16))
 /// The 128 background colours the scene fades (entries 96 to 223).
 #define IRIS_FADE_COLORS 128
+/// The colour they step toward, a level at a time, once the circle of light
+/// widens.
+#define IRIS_FADE_TARGET_RED 23
+#define IRIS_FADE_TARGET_GREEN 1
+#define IRIS_FADE_TARGET_BLUE 15
 
 /// The petal objects' work, in the map cell buffer at byte 8000.
 struct IrisPetals {
@@ -1100,7 +1107,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   Iris_WipeScreen(0, 4, Iris_ChangeBackdrop);
   IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
-  while (((volatile struct DmaRegisters *)REG_DMA3)->control & DMA3_BUSY) {
+  while (((volatile struct DmaRegisters *)REG_DMA3)->control & DMA_BUSY) {
   }
   EFFECT_PRESENT_CANVAS(work);
   REG_BG2PA = Q_8_8(0.5);
@@ -1246,7 +1253,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
       }
       // To frame 71 the circle rises and narrows while the background
       // brightens a level every 16 frames; then it widens, and every eight
-      // frames each background colour steps toward red 23, green 1, blue 15.
+      // frames each background colour steps toward the IRIS_FADE_TARGET colour.
       if (frame <= 71) {
         scene->y -= toFIXED(1);
         scene->radius -= toFIXED(1) / 16;
@@ -1277,11 +1284,11 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
               s32 g = RGB_GREEN((u16)c);
               s32 r = RGB_RED(c);
 
-              if (r < 23)
+              if (r < IRIS_FADE_TARGET_RED)
                 r++;
-              if (g > 1)
+              if (g > IRIS_FADE_TARGET_GREEN)
                 g--;
-              if (b < 15)
+              if (b < IRIS_FADE_TARGET_BLUE)
                 b++;
               {
                 u16 v = RGB(r, g, b);
@@ -1427,7 +1434,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
         if ((u32)(frame - 351) <= 14)
           lift = Trig_Sin((frame - 350) << 10) << 6;
         else if (frame > 365)
-          lift = ((366 - frame) * 5 << 17) + toFIXED(64);
+          lift = (366 - frame) * toFIXED(10) + toFIXED(64);
         if (frame <= 229)
           lift = (Trig_Sin((frame << 6) - (IRIS_APPEAR_FRAME << 6)) << 6) -
                  IRIS_ARRIVAL_DROP;
@@ -2227,7 +2234,7 @@ void BattleEffect_RunIris(struct BattleEffectParams *args) {
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Iris_RestoreBattle();
   IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
-  while (((volatile struct DmaRegisters *)REG_DMA3)->control & DMA3_BUSY) {
+  while (((volatile struct DmaRegisters *)REG_DMA3)->control & DMA_BUSY) {
   }
   EFFECT_PRESENT_CANVAS(work);
   REG_BG2PA = Q_8_8(0.5);
@@ -3236,6 +3243,7 @@ void Render_DrawModelList(struct RenderModel *model) {
 #undef MOLOCH_SPRITES
 #undef MOLOCH_FLAME_LIFE
 #undef MOLOCH_RING_TEXTURE
+#undef MOLOCH_WHITENING_LEVEL
 #undef IRIS_MOTE_FADES
 #undef IRIS_DROPS
 #undef IRIS_DROP_WIDTH
@@ -3271,6 +3279,9 @@ void Render_DrawModelList(struct RenderModel *model) {
 #undef IRIS_GODDESS_SPRITES
 #undef IRIS_GODDESS_TILE
 #undef IRIS_FADE_COLORS
+#undef IRIS_FADE_TARGET_RED
+#undef IRIS_FADE_TARGET_GREEN
+#undef IRIS_FADE_TARGET_BLUE
 #undef IRIS_PETAL_WORK
 #undef IRIS_SCENE
 #undef IRIS_STREAK_POINTS

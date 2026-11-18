@@ -383,8 +383,8 @@ static void KalayTolbiDocks_TalkToWomanWithAMessage(void) {
 }
 
 /// At Kalay Docks, spoken to on the shore after the party has handed over its
-/// ticket and gone ashore, the ticket taker asks it to board the ship when it
-/// is finished.
+/// ticket and gone ashore, the man checking tickets asks it to board the ship
+/// when it is finished.
 static void KalayTolbiDocks_RemindBoardShip(void) {
 #if !TBS_PATCH_3
   ((void)Actor_Get(ACTOR_PARTY_LEADER));
@@ -406,8 +406,8 @@ static void KalayTolbiDocks_RemindBoardShip(void) {
   }
 }
 
-/// At Kalay Docks, the ticket taker at the ship's plank asks for the party's
-/// tickets when it faces him from the east.
+/// At Kalay Docks, the man checking tickets at the ship's plank asks for the
+/// party's tickets when it faces him from the east.
 static void KalayTolbiDocks_TalkToManCheckingTickets(void) {
   s32 ticketHolder;
   s32 ticketSlot;
@@ -473,8 +473,8 @@ static void KalayTolbiDocks_TalkToManCheckingTickets(void) {
 }
 
 /// At Kalay Docks, once the tour's group has left Kalay, the dock worker
-/// explains the tickets: hand one over to board, give it to the ticket taker,
-/// or wait on board for the ship to sail.
+/// explains the tickets: hand one over to board, give it to the man checking
+/// tickets, or wait on board for the ship to sail.
 static void KalayTolbiDocks_TalkToDockWorker(void) {
   Event_Start();
 
@@ -498,9 +498,9 @@ static void KalayTolbiDocks_TalkToDockWorker(void) {
 /// The boarding ticket's price in coins, for the four of them.
 #define TICKET_PRICE 600
 
-/// In the room at Kalay Docks, until the ship has crossed, the ticket seller
-/// offers tickets for the four of them at TICKET_PRICE, with the party's coins
-/// shown beside the question.
+/// In the room at Kalay Docks, until the ship has crossed, the woman selling
+/// tickets offers tickets for the four of them at TICKET_PRICE, with the
+/// party's coins shown beside the question.
 static void KalayTolbiDocks_TalkToWomanSellingTickets(void) {
   struct Window *coinsWindow;
   struct MainRoutineWork *state;

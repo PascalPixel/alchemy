@@ -28,7 +28,7 @@ enum BurstShowerMode {
   BURST_SHOWER_MODE_TYPHOON_BLOW,
   BURST_SHOWER_MODE_DJINNFEST,
   BURST_SHOWER_MODE_HEAT_KISS,
-  BURST_SHOWER_MODE_FIRE_DANCE_UNLEASH,
+  BURST_SHOWER_MODE_FIRE_DANCE_ENEMY,
   BURST_SHOWER_MODE_GRAVEL_BLOW,
   BURST_SHOWER_MODE_DARKSOL_GASP,
   BURST_SHOWER_MODE_FURY,
@@ -45,7 +45,6 @@ enum BurstShowerMode {
 #define MUSIC_NOTE_WIDTH 32
 #define MUSIC_NOTE_HEIGHT 32
 #define MUSIC_NOTE_COUNT 3
-#define BUBBLE_SIZE 24
 /// DemonFaceSheet's face.
 #define DEMON_FACE_WIDTH 32
 #define DEMON_FACE_HEIGHT 64
@@ -65,8 +64,6 @@ enum BurstShowerMode {
 #define AGING_GAS_BURSTS 16
 #define AGING_GAS_MOTES 128
 #define AGING_GAS_DRAWN_MOTES 24
-/// The motes, in the map cell buffer.
-#define MOTES ((struct Particle *)Ram_MapCellBuffer)
 
 /// Restarts DMA channel 0 as an H-blank transfer of the effect work's line
 /// table into BG2X, one word a line.
@@ -199,11 +196,11 @@ void BattleEffect_RunHeatKiss(struct BattleEffectParams *args) {
   BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_HEAT_KISS);
 }
 
-/// Fire Dance as the Staff unleashes it.
+/// Fire Dance as the enemies cast it.
 ///
 /// Abilities: Fire Dance.
 void BattleEffect_RunFireDanceUnleash(struct BattleEffectParams *args) {
-  BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_FIRE_DANCE_UNLEASH);
+  BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_FIRE_DANCE_ENEMY);
 }
 
 /// Abilities: Gravel Blow.
@@ -228,7 +225,7 @@ void BattleEffect_RunAgingGas(struct BattleEffectParams *args) {
 /// The user takes its leap pose and animates fast while the burst shower
 /// plays.
 ///
-/// Abilities: Gel, Fire Dance.
+/// Abilities: Gel, Fire Dance (the Salamander Rod's unleash).
 void BattleEffect_RunFireDance(struct BattleEffectParams *args) {
   struct Actor *actor;
 
@@ -279,7 +276,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
       mode == BURST_SHOWER_MODE_BLACK_ICE ||
       mode == BURST_SHOWER_MODE_DJINNFEST ||
       mode == BURST_SHOWER_MODE_HEAT_KISS ||
-      mode == BURST_SHOWER_MODE_FIRE_DANCE_UNLEASH)
+      mode == BURST_SHOWER_MODE_FIRE_DANCE_ENEMY)
     BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   else
     BattleEffect_StartCanvasLayer(0);
@@ -399,7 +396,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
                     SHEET_PALETTE_BYTES);
-  } else if (mode == BURST_SHOWER_MODE_FIRE_DANCE_UNLEASH) {
+  } else if (mode == BURST_SHOWER_MODE_FIRE_DANCE_ENEMY) {
     Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET, work->sheet, 1, 0);
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
@@ -420,12 +417,13 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
              mode == BURST_SHOWER_MODE_TYPHOON_BLOW) {
     // The bubble, each row written twice.
     Resource_LoadAndDecompress(RESOURCE_BLUE_BEAM_SHEET, work->sheet, 1, 1);
-    for (row = 0; row != BUBBLE_SIZE; row++) {
-      for (column = 0; column != BUBBLE_SIZE; column++) {
-        work->sheet[VOLLEY_B_BEAM + row * 2 * BUBBLE_SIZE + column] =
-            work->sheet[row * BUBBLE_SIZE + column];
-        work->sheet[VOLLEY_B_BEAM + row * 2 * BUBBLE_SIZE + BUBBLE_SIZE +
-                    column] = work->sheet[row * BUBBLE_SIZE + column];
+    for (row = 0; row != BLUE_BUBBLE_HEIGHT; row++) {
+      for (column = 0; column != BLUE_BUBBLE_WIDTH; column++) {
+        work->sheet[VOLLEY_B_BEAM + row * 2 * BLUE_BUBBLE_WIDTH + column] =
+            work->sheet[row * BLUE_BUBBLE_WIDTH + column];
+        work->sheet[VOLLEY_B_BEAM + row * 2 * BLUE_BUBBLE_WIDTH +
+                    BLUE_BUBBLE_WIDTH + column] =
+            work->sheet[row * BLUE_BUBBLE_WIDTH + column];
       }
     }
     if (mode == BURST_SHOWER_MODE_TOXIC_BREATH)
@@ -515,7 +513,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
              mode == BURST_SHOWER_MODE_FUGUE ||
              mode == BURST_SHOWER_MODE_DJINNFEST ||
              mode == BURST_SHOWER_MODE_HEAT_KISS ||
-             mode == BURST_SHOWER_MODE_FIRE_DANCE_UNLEASH ||
+             mode == BURST_SHOWER_MODE_FIRE_DANCE_ENEMY ||
              mode == BURST_SHOWER_MODE_CHAR) {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   } else {
@@ -580,7 +578,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
       user->y -= 40;
     if (mode == BURST_SHOWER_MODE_DJINNFEST)
       user->y -= 16;
-    if (mode == BURST_SHOWER_MODE_FIRE_DANCE_UNLEASH)
+    if (mode == BURST_SHOWER_MODE_FIRE_DANCE_ENEMY)
       user->y -= 16;
     if (mode == BURST_SHOWER_MODE_AGING_GAS) {
       user->y -= 24;
@@ -615,7 +613,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
       object = BattleObject_GetFar(args->targets[0])->object;
       half = BattleUnit_GetEffectHeightFar(args->targets[0]) / 2;
       for (i = 0; i != AGING_GAS_MOTES; i++) {
-        struct Particle *mote = &MOTES[i];
+        struct Particle *mote = &PARTICLES[i];
 
         SET_POSITION(mote, object->x, object->y + half, object->z);
         mote->velocityX = ((Random16() & 0xff) - 128) << 10;
@@ -689,7 +687,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
         aim.x = targets[target].x + (Random16() & 31) - 16;
         if (mode == BURST_SHOWER_MODE_FUGUE ||
             mode == BURST_SHOWER_MODE_DJINNFEST ||
-            mode == BURST_SHOWER_MODE_FIRE_DANCE_UNLEASH)
+            mode == BURST_SHOWER_MODE_FIRE_DANCE_ENEMY)
           aim.y = targets[target].y + (Random16() & 127) - 32;
         else if (mode == BURST_SHOWER_MODE_TOXIC_BREATH ||
                  mode == BURST_SHOWER_MODE_BLACK_ICE ||
@@ -760,9 +758,9 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
                    mode == BURST_SHOWER_MODE_TYPHOON_BLOW) {
           if (age > 1)
             pair[0](canvas, work->sheet + VOLLEY_B_BEAM,
-                    FIXED_INTEGER_PART(shot->x) - BUBBLE_SIZE / 2,
-                    FIXED_INTEGER_PART(shot->y) - BUBBLE_SIZE, BUBBLE_SIZE,
-                    BUBBLE_SIZE * 2);
+                    FIXED_INTEGER_PART(shot->x) - BLUE_BUBBLE_WIDTH / 2,
+                    FIXED_INTEGER_PART(shot->y) - BLUE_BUBBLE_HEIGHT,
+                    BLUE_BUBBLE_WIDTH, BLUE_BUBBLE_HEIGHT * 2);
         } else if (mode == BURST_SHOWER_MODE_FUGUE ||
                    mode == BURST_SHOWER_MODE_DJINNFEST) {
           cel = i / 2 % 3;
@@ -792,7 +790,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
           pair[0](canvas,
                   work->sheet + gSpire_ShardPictures[cel] + VOLLEY_B_GLOW, x, y,
                   width, height);
-        } else if (mode == BURST_SHOWER_MODE_FIRE_DANCE_UNLEASH) {
+        } else if (mode == BURST_SHOWER_MODE_FIRE_DANCE_ENEMY) {
           FIXED wobble = Trig_Sin((i * 2 + frame) * (TRIG_TURN / 32));
           s32 y;
           cel = age >> 2;
@@ -946,7 +944,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
         Matrix_Initialize();
         Matrix_SetLookAt(camera->eye, camera->focus);
         for (i = 0; i != AGING_GAS_DRAWN_MOTES; i++) {
-          struct Particle *mote = &MOTES[i];
+          struct Particle *mote = &PARTICLES[i];
           s32 height = 12;
 
           if (mote->variant >= 0) {
@@ -1001,7 +999,6 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
 #undef MUSIC_NOTE_WIDTH
 #undef MUSIC_NOTE_HEIGHT
 #undef MUSIC_NOTE_COUNT
-#undef BUBBLE_SIZE
 #undef DEMON_FACE_WIDTH
 #undef DEMON_FACE_HEIGHT
 #undef MUSIC_NOTE_DIMMING
@@ -1013,4 +1010,3 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
 #undef AGING_GAS_BURSTS
 #undef AGING_GAS_MOTES
 #undef AGING_GAS_DRAWN_MOTES
-#undef MOTES

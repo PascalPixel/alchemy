@@ -6,10 +6,11 @@
 /// MUS_ ids are music and jingles, SE_ ids sound effects, as their sequences in
 /// sound/songs are named. A row of the empty song (Sound_EmptySong), which
 /// plays nothing, has no name, and the next named row's number is written after
-/// it. A sequence with no name yet keeps its number as its placeholder. Four
-/// rows are controls no sound plays from. Sound_Play tests the controls first,
-/// then the ranges: from SOUND_SE_FIRST to SOUND_SE_END on the player its
-/// gSongTable row names, from SOUND_JINGLE_FIRST jingles, music otherwise
+/// it. A sequence with no name yet keeps its number as its placeholder: those
+/// the game plays say where, and no code, table or actor script plays the rest.
+/// Four rows are controls no sound plays from. Sound_Play tests the controls
+/// first, then the ranges: from SOUND_SE_FIRST to SOUND_SE_END on the player
+/// its gSongTable row names, from SOUND_JINGLE_FIRST jingles, music otherwise
 /// (sound_driver_symbols.h).
 
 enum SoundId {
@@ -339,8 +340,9 @@ enum SoundId {
   SE_THUMP,
   SE_STONE_GRIND,
   SE_WARP,
-  /// Played as Gaia Rock's altar faces part, at Zagan's frame 32
-  /// (BattleEffect_RunZagan) and in Megiddo's dive (BattleEffect_RunMegiddo).
+  /// Played as a face over one of Gaia Rock's altars shakes and slides aside,
+  /// at Zagan's frame 32 as it gallops in its blaze (BattleEffect_RunZagan),
+  /// and as Megiddo's sun starts to fall (BattleEffect_RunMegiddo).
   SE_191,
   /// Shriek's and Harpy's cry as their streaks set out
   /// (BattleEffect_RunStreakVolley, mode 1): SE_SPARKS's notes on voice 25; The
@@ -394,7 +396,8 @@ enum SoundId {
   SE_WHIRLWIND,
   SE_LIFT,
   SE_224,
-  /// Played at Moloch's frame 90 (BattleEffect_RunMoloch).
+  /// Played as Moloch's white cloud starts billowing up from the ground under
+  /// the falling flakes, at its frame 90 (BattleEffect_RunMoloch).
   SE_225,
   SE_LOG_PUSH,
   SE_TOPPLE,
@@ -570,8 +573,7 @@ enum SoundId {
   SE_RISE_WITH_SPARKS_LOW,
   SE_558,
   /// SE_UNUSED_COIN_PAYOUT_C an octave lower on SE_ICE_CRACK's voice, with four
-  /// notes more;
-  /// nothing plays it.
+  /// notes more; nothing plays it.
   SE_UNUSED_COIN_PAYOUT_LOW,
   /// A doorway of Mars Lighthouse's dragon-statue room flashing as it is
   /// stepped toward.
@@ -626,8 +628,10 @@ enum SoundId {
   SE_580,
   /// The leader jumping down a hole of the Gabomba Statue.
   SE_GABOMBA_STATUE_HOLE,
-  /// Played as the Anemos Inner Sanctum's statue moves once its seven tiles
-  /// glow, and as the Gabomba Statue's flashing cog stops.
+  /// Played as an Anemos Inner Sanctum lift turns its arrow up and floats, once
+  /// the room's seven round switches are pressed
+  /// (AnemosInnerSanctum_PressRoundSwitch), and as the Gabomba Statue's
+  /// flashing cog drops into place (GabombaStatue_CogsTurnBack).
   SE_582,
   SE_583,
   /// Played as the party presses a switch or button in Mars Lighthouse, the

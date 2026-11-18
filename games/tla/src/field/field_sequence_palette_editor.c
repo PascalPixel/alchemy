@@ -9,12 +9,14 @@
 // The palettes, as plain halfwords, and where the editor draws: from column
 // 13 of row 1 of screen block 4.
 #define EDITOR_PALETTE ((u16 *)BG_PLTT)
-#define EDITOR_MAP ((u16 *)BG_SCREEN_BLOCK(4) + 32 + 13)
-#define EDITOR_HEX_DIGIT 0xf0e0 ///< the tile of digit 0, in WINDOW_PALETTE
-#define EDITOR_MAP_ROW 32 ///< tile entries from one row of the map to the next
-/// The swatch tiles, from tile 208 of character block 0: colour n is drawn with
-/// EDITOR_SWATCH_TILE + n.
+#define EDITOR_MAP ((u16 *)BG_SCREEN_BLOCK(4) + BG_SCREEN_WIDTH + 13)
+/// The swatch sheet's tiles, from tile 208 of character block 0: colour n is
+/// drawn with EDITOR_SWATCH_TILE + n, and the 32 tiles after the swatches show
+/// the numbers 0 to 31.
 #define EDITOR_SWATCH_TILE 208
+/// The map entry of the tile showing the number 0, in WINDOW_PALETTE: number n
+/// is EDITOR_NUMBER_TILE + n.
+#define EDITOR_NUMBER_TILE WINDOW_TILE(EDITOR_SWATCH_TILE + PALETTE_COLORS)
 /// The editor cycles through the map's 14 background palettes.
 #define EDITOR_PALETTES 14
 /// START blinks the colour every 10 frames: white, the colour, black, the
@@ -22,7 +24,7 @@
 #define EDITOR_BLINK_FRAMES 10
 
 /// The debug palette editor (L on the Pause menu in debug mode). Shows colours
-/// 1 to 15 of a palette with their red, green and blue values in hex.
+/// 1 to 15 of a palette with their red, green and blue levels, 0 to 31.
 void PaletteEditor_Run(void) {
   s32 palette = 0;
   s32 channel = 1;
@@ -42,28 +44,28 @@ void PaletteEditor_Run(void) {
 redraw:
   // Column 0 shows the palette number and R, G, B; columns 1 to 15 show each
   // colour's swatch, drawn in the palette being edited, and its three channels.
-  tile = (palette << 12) + EDITOR_SWATCH_TILE + 1;
-  paletteColor = &EDITOR_PALETTE[palette * 16 + 1];
+  tile = BG_TILE_PALETTE(palette) + EDITOR_SWATCH_TILE + 1;
+  paletteColor = &EDITOR_PALETTE[palette * PALETTE_COLORS + 1];
   swatchColumn = EDITOR_MAP;
   tileEntry = swatchColumn;
-  *tileEntry = EDITOR_HEX_DIGIT + palette;
-  tileEntry += EDITOR_MAP_ROW;
+  *tileEntry = EDITOR_NUMBER_TILE + palette;
+  tileEntry += BG_SCREEN_WIDTH;
   *tileEntry = WINDOW_TILE('R');
-  tileEntry += EDITOR_MAP_ROW;
+  tileEntry += BG_SCREEN_WIDTH;
   *tileEntry = WINDOW_TILE('G');
-  tileEntry += EDITOR_MAP_ROW;
+  tileEntry += BG_SCREEN_WIDTH;
   *tileEntry = WINDOW_TILE('B');
   swatchColumn++;
-  for (i = 1; i < 16; i++) {
+  for (i = 1; i < PALETTE_COLORS; i++) {
     tileEntry = swatchColumn;
     *tileEntry = tile++;
     rgb555 = *paletteColor++;
-    tileEntry += EDITOR_MAP_ROW;
-    *tileEntry = RGB_RED(rgb555) + EDITOR_HEX_DIGIT;
-    tileEntry += EDITOR_MAP_ROW;
-    *tileEntry = RGB_GREEN(rgb555) + EDITOR_HEX_DIGIT;
-    tileEntry += EDITOR_MAP_ROW;
-    *tileEntry = RGB_BLUE(rgb555) + EDITOR_HEX_DIGIT;
+    tileEntry += BG_SCREEN_WIDTH;
+    *tileEntry = RGB_RED(rgb555) + EDITOR_NUMBER_TILE;
+    tileEntry += BG_SCREEN_WIDTH;
+    *tileEntry = RGB_GREEN(rgb555) + EDITOR_NUMBER_TILE;
+    tileEntry += BG_SCREEN_WIDTH;
+    *tileEntry = RGB_BLUE(rgb555) + EDITOR_NUMBER_TILE;
     swatchColumn++;
   }
   wait(1);
@@ -81,11 +83,11 @@ redraw:
     if (gInput.repeat & KEY_LEFT) {
       color--;
       if (color <= 0)
-        color = 15;
+        color = PALETTE_COLORS - 1;
     }
     if (gInput.repeat & KEY_RIGHT) {
       color++;
-      if (color > 15)
+      if (color > PALETTE_COLORS - 1)
         color = 1;
     }
     if (gInput.repeat & KEY_L) {
@@ -101,7 +103,7 @@ redraw:
       goto redraw;
     }
     if (gInput.repeat & KEY_A) {
-      paletteColor = &EDITOR_PALETTE[palette * 16 + color];
+      paletteColor = &EDITOR_PALETTE[palette * PALETTE_COLORS + color];
       rgb555 = *paletteColor;
       red = RGB_RED(rgb555);
       green = RGB_GREEN(rgb555);
@@ -116,7 +118,7 @@ redraw:
       goto redraw;
     }
     if (gInput.repeat & KEY_B) {
-      paletteColor = &EDITOR_PALETTE[palette * 16 + color];
+      paletteColor = &EDITOR_PALETTE[palette * PALETTE_COLORS + color];
       rgb555 = *paletteColor;
       red = RGB_RED(rgb555);
       green = RGB_GREEN(rgb555);
@@ -132,7 +134,7 @@ redraw:
     }
     if (gInput.repeat & KEY_START) {
       // red counts the frames here.
-      paletteColor = &EDITOR_PALETTE[palette * 16 + color];
+      paletteColor = &EDITOR_PALETTE[palette * PALETTE_COLORS + color];
       rgb555 = *paletteColor;
       red = 0;
       for (;;) {
@@ -154,7 +156,8 @@ redraw:
     }
     if (gInput.repeat & KEY_SELECT)
       break;
-    gFrameCount; // a read whose value is not used
+    // DEAD: a read of gFrameCount nothing uses; the ROM keeps its load.
+    gFrameCount;
     wait(1);
   }
   Window_LoadGraphics();
@@ -163,8 +166,7 @@ redraw:
 
 #undef EDITOR_PALETTE
 #undef EDITOR_MAP
-#undef EDITOR_HEX_DIGIT
-#undef EDITOR_MAP_ROW
+#undef EDITOR_NUMBER_TILE
 #undef EDITOR_SWATCH_TILE
 #undef EDITOR_PALETTES
 #undef EDITOR_BLINK_FRAMES

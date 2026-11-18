@@ -67,9 +67,9 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     tileX = FIELD_CELL(actor->x.fixed);
     tileZ = FIELD_CELL(actor->z.fixed);
     middleCells =
-        &map->layers[MAPGRID_LAYER_MIDDLE].cells[tileX + (tileZ << 7)];
-    overheadCells =
-        &map->layers[MAPGRID_LAYER_OVERHEAD].cells[tileX + (tileZ << 7)];
+        &map->layers[MAPGRID_LAYER_MIDDLE].cells[tileX + tileZ * MAPGRID_SIZE];
+    overheadCells = &map->layers[MAPGRID_LAYER_OVERHEAD]
+                         .cells[tileX + tileZ * MAPGRID_SIZE];
     middleOffsetX = FIELD_CELL(map->layers[MAPGRID_LAYER_MIDDLE].offsetX);
     middleOffsetZ = FIELD_CELL(map->layers[MAPGRID_LAYER_MIDDLE].offsetY);
     overheadOffsetX = FIELD_CELL(map->layers[MAPGRID_LAYER_OVERHEAD].offsetX);
@@ -119,7 +119,8 @@ void Actor_RollAndCrumble(struct Actor *actor) {
       // A fireball's hit (a flame's is 1) raises STEP_TRIGGER_FIREBALL_HIT.
       hit->active = 2;
       hit->car = actor;
-      fieldWork->stepTrigger = hit->hitTrigger + 2;
+      fieldWork->stepTrigger = hit->hitTrigger + (STEP_TRIGGER_FIREBALL_HIT -
+                                                  STEP_TRIGGER_FLAME_HIT);
     }
   } else if (state == 1) {
     actor->paused = 0;

@@ -1,5 +1,19 @@
-/// Puts the pillars of a list back where their flags left them.
-void MagmaRockInside_RestorePillars(u16 *list) {
+/// The first three actors of a room whose crumbling pillars all share one
+/// sprite's picture, as crumbling_pillar.h numbers them: the stand-in drawn in
+/// a pillar's place, and the two that hold the cracked picture and the whole
+/// one.
+enum CrumblingPillarStandIn {
+  ACTOR_PILLAR_STAND_IN = ACTOR_FIRST_PLACED,
+  ACTOR_CRACKED_PILLAR_SPRITE,
+  ACTOR_WHOLE_PILLAR_SPRITE
+};
+
+/// Unused: as MagmaRockInside_RestoreCrumblingPillars, in a room whose pillars
+/// share one sprite, as Dehkan Plateau's CrumblingPillar_PlaceWithStandIns
+/// does: first loads the stand-in's and the two pictures' sprites beside the
+/// leader, the cracked one showing its cracks, then puts them out of sight; a
+/// cracked pillar takes the cracked picture.
+UNUSED void MagmaRockInside_RestorePillars(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *actor;
   s32 id;
@@ -11,18 +25,19 @@ void MagmaRockInside_RestorePillars(u16 *list) {
   s32 index;
   u8 *grid = gMapShapeGrid; /* the shape grid, read once */
 
-  Actor_MoveToObject(8, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(9, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(10, gMainRoutineWork.leaderActorId);
+  Actor_MoveToObject(ACTOR_PILLAR_STAND_IN, gMainRoutineWork.leaderActorId);
+  Actor_MoveToObject(ACTOR_CRACKED_PILLAR_SPRITE,
+                     gMainRoutineWork.leaderActorId);
+  Actor_MoveToObject(ACTOR_WHOLE_PILLAR_SPRITE, gMainRoutineWork.leaderActorId);
   System_Wait(1);
-  Pillar_TakeOutOfPlay(8);
-  Pillar_TakeOutOfPlay(9);
-  Pillar_TakeOutOfPlay(10);
-  Actor_SetAnimation(9, 0);
+  Pillar_TakeOutOfPlay(ACTOR_PILLAR_STAND_IN);
+  Pillar_TakeOutOfPlay(ACTOR_CRACKED_PILLAR_SPRITE);
+  Pillar_TakeOutOfPlay(ACTOR_WHOLE_PILLAR_SPRITE);
+  Actor_SetAnimation(ACTOR_CRACKED_PILLAR_SPRITE, 0);
   System_Wait(1);
-  Actor_SetPosition(8, 0, 0);
-  Actor_SetPosition(9, 0, 0);
-  Actor_SetPosition(10, 0, 0);
+  Actor_SetPosition(ACTOR_PILLAR_STAND_IN, 0, 0);
+  Actor_SetPosition(ACTOR_CRACKED_PILLAR_SPRITE, 0, 0);
+  Actor_SetPosition(ACTOR_WHOLE_PILLAR_SPRITE, 0, 0);
   System_Wait(1);
   while (*list != ACTOR_LIST_END) {
     id = list[0];
@@ -47,11 +62,11 @@ void MagmaRockInside_RestorePillars(u16 *list) {
       height =
           Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
       Actor_DisableById(id);
-      cell->attributeB = 128;
-      *slot =
-          MapCollision_FindOrAddTag(actor->layer, shape, (height >> 19) + 4);
+      cell->attributeB = MAP_CELL_JUMP;
+      *slot = MapCollision_FindOrAddTag(actor->layer, shape,
+                                        CELL_HEIGHT_STEPS(height) + 4);
       if (Event_GetFlag(flag))
-        Actor_CopyGraphics(id, 9);
+        Actor_CopyGraphics(id, ACTOR_CRACKED_PILLAR_SPRITE);
     }
     list += 2;
   }

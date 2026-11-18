@@ -21,7 +21,8 @@
 /// burst out, one less upward, and two more as they gather.
 #define LIQUIFIER_BURST_SHIFT 8
 
-/// Where FlashBurstSheet is decoded: gEffectScratch's address.
+/// Where FlashBurstSheet is decoded: the map cell buffer's second 16 KB, where
+/// FireRingTexture, decoded to gEffectScratch, replaces it.
 #define LIQUIFIER_FLASH_BURST_PICTURES (Ram_MapCellBuffer + 16384)
 
 /// Where GlowBandTextureA is decoded in the effect's pictures.
@@ -492,7 +493,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
     s32 size = i * 2 + 2;
 
     BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size,
-                                   toFIXED(1.30518));
+                                   FIXED_ONE * 2673 / 2048);
     discs[i] = offset;
     offset += (i * 2 + 3) * size / 2;
   }

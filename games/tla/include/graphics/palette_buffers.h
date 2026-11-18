@@ -14,12 +14,17 @@
 /// colours.
 #define TITLE_PALETTE_FADE_CHANNELS (512 * 3)
 
-/// The colour channels a PaletteFade moves: B, G and R for each of its 448
-/// colours.
-#define PALETTE_FADE_CHANNELS (448 * 3)
+/// The BG colours a PaletteFade moves, palettes 0 to 13, and the OBJ colours
+/// that follow them, as many.
+#define PALETTE_FADE_BG_COLORS (14 * PALETTE_COLORS)
+#define PALETTE_FADE_OBJ_COLORS (14 * PALETTE_COLORS)
+/// The colour channels a PaletteFade moves: B, G and R for each of its BG and
+/// OBJ colours.
+#define PALETTE_FADE_CHANNELS                                                  \
+  ((PALETTE_FADE_BG_COLORS + PALETTE_FADE_OBJ_COLORS) * 3)
 
 /// The entry that ends a u16 list of palette slots or of colours.
-#define PALETTE_LIST_END 0xffff
+#define PALETTE_LIST_END 65535
 
 /// A colour buffer for all 512 palette colours: the source palette, the shown
 /// and target colour channels, their steps, and two pages of packed colours.
@@ -47,10 +52,6 @@ STATIC_ASSERT(offsetof(struct TitlePaletteFade, target) == 4096);
 STATIC_ASSERT(offsetof(struct TitlePaletteFade, delta) == 7168);
 STATIC_ASSERT(offsetof(struct TitlePaletteFade, packed) == 10240);
 STATIC_ASSERT(offsetof(struct TitlePaletteFade, page) == 12288);
-
-/// The BG colours a palette fade keeps, palettes 0 to 13, before its OBJ
-/// colours.
-#define PALETTE_FADE_BG_COLORS (14 * PALETTE_COLORS)
 
 /// The palette fade (HEAP_SLOT_PALETTE_FADE) that fades the BG and OBJ
 /// palettes: the source palette, the shown and target colour channels, their
@@ -93,17 +94,18 @@ void TitlePaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
                                      s32 frames);
 void TitlePaletteFade_Release(void);
 
-/// A palette tint, a palette fade's build mode: below 0x8000 one RGB555 colour
-/// for all.
+/// A palette tint, a palette fade's build mode: up to RGB_WHITE, one RGB555
+/// colour for all.
 enum PaletteTint {
   /// The backdrop colour (palette RAM's first colour) for all.
-  PALETTE_TINT_FROM_SOURCE = 0x8000,
+  PALETTE_TINT_FROM_SOURCE = RGB_WHITE + 1,
   PALETTE_TINT_NONE = 0x10000, ///< each colour unchanged
   PALETTE_TINT_GRAYSCALE,      ///< grey of brightness (2R + 4G + B) / 7
   /// Brownish grey: the brightness (R + G + B) / 10, red at 4 times it plus
   /// 5, green and blue 3 times plus 5, each held to 8 to 28.
   PALETTE_TINT_SEPIA,
-  /// Half R + 10, two thirds G + 8, B - 7; black stays black.
+  /// Half R + 10, two thirds G + 8, B - 7; black stays black. The title's
+  /// (TitlePaletteFade) is PALETTE_TINT_WARM_DARK's, black included.
   PALETTE_TINT_WARM,
   /// Each channel held to a narrow range, then G and B + 2: the field's fade
   /// holds R 8 to 29, G 14 to 25, B 14 to 27 and leaves the first colour; the

@@ -79,6 +79,6 @@ s32 BattleFormation_GetRandomMember(s32 recordId);
 s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 n);
 UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId);
 s32 BattleEnemy_LetterFirstOfKind(s32 classId);
-void Enemy_Update(void);
+void BattlePlacement_RelayoutEnemies(void);
 
 #endif

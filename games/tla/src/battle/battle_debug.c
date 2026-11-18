@@ -48,8 +48,8 @@ void ScriptedBattle_SaveUnits(void) {
            * built. */
           pp = (u16)unit->pp;
           base = gScriptedBattle_SnapshotVitals;
-          // The address as an integer sum, i * 4 first: &base[i] puts the
-          // base first in the add.
+          /* FAKEMATCH(signature): the address summed as an integer, its
+           * offset first; as &base[i]. */
           pv = (struct SnapshotVitals *)(i * 4 + (s32)base);
           /* FAKEMATCH(dead): a store the tag loop's init overwrites. */
           if (i == 300)
@@ -90,10 +90,9 @@ void ScriptedBattle_SaveUnits(void) {
   }
 }
 
-/// Restores the five units ScriptedBattle_SaveUnits snapshotted: for each one
-/// still in the battle party and listed, the first three's four tag bytes and
-/// each one's 25 snapshot bytes, and the last two's HP and PP through
-/// Unit_SetHpFar and Unit_SetPpFar.
+/// Restores the five units ScriptedBattle_SaveUnits snapshotted, each one
+/// still in the battle and listed then: the first three's summon boosts, each
+/// one's statuses, and the last two's HP and PP.
 void ScriptedBattle_RestoreUnits(void) {
   s32 i;
   s32 j;
@@ -148,88 +147,109 @@ void Unit_UpdateClassFar(s32 owner);
 /// after it.
 #define DEBUG_PAIRED_SETS_FIRST 70
 
-/// Debug: replaces the party with parameter set number preset, each member at
-/// its level with its Djinn, abilities and equipped items. Returns 1 when the
-/// table ends before that set.
-s32 DebugParameterSet_Load(s32 preset) {
+/// The last row of gDebug_ParameterSets; the scan reports a missing parameter
+/// set past it.
+#define DEBUG_PARAMETER_SET_LAST_ROW 440
+
+/// Debug: replaces the party with parameter set number set, each member at its
+/// level with its Djinn, abilities and equipped items. Returns 1 when the table
+/// ends before that set.
+s32 DebugParameterSet_Load(s32 set) {
+  // The next Djinni number of each element to hand out.
   s32 nextDjinn[ELEMENT_COUNT];
-  struct Unit *state;
-  s32 owner;
-  s32 done;
+  struct Unit *member;
+  s32 unitId;
+  s32 notFound;
   s32 row;
-  s32 j;
-  s32 set;
+  s32 djinnIndex;
+  s32 currentSet;
   s32 i;
 
-  done = 0;
-  Party_RemoveMemberFar(0);
-  Party_RemoveMemberFar(1);
-  Party_RemoveMemberFar(2);
-  Party_RemoveMemberFar(3);
+  notFound = 0;
+  // Empty the party and the Djinn on standby; the parameter set's rows add
+  // its party members back.
+  Party_RemoveMemberFar(ISAAC);
+  Party_RemoveMemberFar(GARET);
+  Party_RemoveMemberFar(IVAN);
+  Party_RemoveMemberFar(MIA);
   Party_RemoveMemberFar(JENNA);
   Party_RemoveMemberFar(FELIX);
   Party_RemoveMemberFar(SHEBA);
-  Party_RemoveMemberFar(7);
-  Djinn_GetRecoveryTableFar(0)->list.count = done;
+  Party_RemoveMemberFar(PIERS);
+  Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY)->list.count = notFound;
 
-  set = 0;
+  currentSet = 0;
   for (i = 0; i < ELEMENT_COUNT; i++)
     nextDjinn[i] = 0;
 
+  // Parameter sets are runs of rows each ended by a DEBUG_PARAMETER_SET_END
+  // row; skip to the run numbered set and apply its rows, and from
+  // DEBUG_PAIRED_SETS_FIRST on the odd run after it too.
   for (row = 0;; row++) {
-    owner = gDebug_ParameterSets[row].owner;
-    if ((u32)row > 440) {
-      done = 1;
+    unitId = gDebug_ParameterSets[row].owner;
+    if ((u32)row > DEBUG_PARAMETER_SET_LAST_ROW) {
+      notFound = 1;
       break;
     }
-    if (owner == -1) {
-      if (set < DEBUG_PAIRED_SETS_FIRST) {
-        if (set == preset)
+    if (unitId == DEBUG_PARAMETER_SET_END) {
+      if (currentSet < DEBUG_PAIRED_SETS_FIRST) {
+        if (currentSet == set)
           break;
-      } else if (set == (preset | 1)) {
+      } else if (currentSet == (set | 1)) {
         break;
       }
-      set++;
+      currentSet++;
       continue;
     }
-    if (set < preset)
+    if (currentSet < set)
       continue;
 
-    Party_AddMemberFar(owner);
-    Unit_LevelUpToFar(owner, gDebug_ParameterSets[row].level);
-    state = Unit_Get(owner);
+    Party_AddMemberFar(unitId);
+    Unit_LevelUpToFar(unitId, gDebug_ParameterSets[row].level);
+
+    // Start from no Djinn and no abilities.
+    member = Unit_Get(unitId);
     for (i = 0; i < ELEMENT_COUNT; i++) {
-      state->djinnHeldCounts[i] = 0;
-      state->djinnSetCounts[i] = 0;
-      state->djinnHeld[i] = 0;
-      state->djinnSet[i] = 0;
+      member->djinnHeldCounts[i] = 0;
+      member->djinnSetCounts[i] = 0;
+      member->djinnHeld[i] = 0;
+      member->djinnSet[i] = 0;
     }
     for (i = 0; i < PSYNERGY_SLOTS; i++)
-      *&state->psynergy[i].encodedAction = 0;
+      *&member->psynergy[i].encodedAction = 0;
     for (i = 0; i < 2; i++) {
       if (gDebug_ParameterSets[row].actions[i] != 0)
-        Unit_LearnPsynergyFar(owner, gDebug_ParameterSets[row].actions[i]);
+        Unit_LearnPsynergyFar(unitId, gDebug_ParameterSets[row].actions[i]);
     }
+
+    // Djinn are numbered across the party, so no two party members get the
+    // same: from this game's own first Djinni of each element, wrapping within
+    // its eighteen.
     for (i = 0; i < ELEMENT_COUNT; i++) {
-      for (j = 0; j < gDebug_ParameterSets[row].djinnCounts[i]; j++) {
-        Djinn_GiveFar(owner, i,
+      for (djinnIndex = 0;
+           djinnIndex < gDebug_ParameterSets[row].djinnCounts[i];
+           djinnIndex++) {
+        Djinn_GiveFar(unitId, i,
                       (nextDjinn[i] + DJINN_OWN_FIRST) % DJINNI_SPARE_FIRST);
-        Djinn_SetFar(owner, i,
+        Djinn_SetFar(unitId, i,
                      (nextDjinn[i] + DJINN_OWN_FIRST) % DJINNI_SPARE_FIRST);
         nextDjinn[i]++;
       }
     }
+
+    // Empty the inventory, removing slot 0 one time more than there are
+    // slots, then add and equip the row's items.
     for (i = 0; i < (INVENTORY_SLOTS + 1); i++)
-      Inventory_RemoveFar(owner, 0);
+      Inventory_RemoveFar(unitId, 0);
     for (i = 0; i < 6; i++) {
       if (gDebug_ParameterSets[row].items[i] != 0)
         Inventory_EquipFar(
-            owner,
-            Inventory_AddItemFar(owner, gDebug_ParameterSets[row].items[i]));
+            unitId,
+            Inventory_AddItemFar(unitId, gDebug_ParameterSets[row].items[i]));
     }
-    Unit_UpdateClassFar(owner);
+    Unit_UpdateClassFar(unitId);
   }
-  return done;
+  return notFound;
 }
 
 /// Does nothing; the debug battle menu calls it when Start is pressed, as The
@@ -244,15 +264,15 @@ extern u8 gDebugTextEnabled;
 #define DEBUG_FIRST_ENCOUNTER 69
 #define DJINN_TUTORIAL_ENCOUNTER 28
 
-/// Debug: the battle test menu, which never returns. It fights encounter 69
-/// again and again with auto battle on, unless Down is held at the start to
-/// open the chooser of encounter and parameter set.
+/// Debug: the battle test menu, which never returns. It fights the first
+/// encounter again and again with auto battle on, unless Down is held at the
+/// start to open the chooser of encounter and parameter set.
 void DebugBattle_RunMenu(void) {
   s32 startModeSet = 0;
   s32 down = gInput.held & KEY_DOWN;
   s32 encounter;
-  s32 preset;
-  s32 loadedPreset;
+  s32 set;
+  s32 loadedSet;
   struct InputState *input;
   struct MainRoutineWork *m;
   u16 *backdropId;
@@ -267,17 +287,13 @@ restart:
   encounter = DEBUG_FIRST_ENCOUNTER;
   GameFlag_Set(FLAG_AUTO_BATTLE);
   if (down) {
-    preset = 0;
-    loadedPreset = -1;
+    set = 0;
+    loadedSet = -1;
     GameFlag_Clear(FLAG_AUTO_BATTLE);
     input = &gInput;
-    // Held for the loop's life: the backdrop id's value loads before its
-    // address.
     backdropId = (u16 *)&gMainRoutineWork.battleBackground;
     for (;;) {
-      // The Broken Seal's FLAG_CHILDHOOD, under which the characters show as
-      // children (ISAAC_CHILD).
-      GameFlag_Clear(0x20);
+      GameFlag_Clear(FLAG_CHILDHOOD);
       wait(1);
       for (;;) {
         if (input->repeat & KEY_RIGHT)
@@ -289,9 +305,9 @@ restart:
         if (input->repeat & KEY_DOWN)
           encounter += DEBUG_LARGE_STEP;
         if (input->repeat & KEY_R)
-          preset++;
+          set++;
         if (input->repeat & KEY_L)
-          preset--;
+          set--;
         if (input->repeat & KEY_A)
           break;
         if (input->repeat & KEY_START)
@@ -302,14 +318,15 @@ restart:
           startModeSet = 1;
         wait(1);
       }
-      if (preset != loadedPreset) {
+      if (set != loadedSet) {
         MainRoutineWork_InitializeDefaultsFar();
-        DebugParameterSet_Load(preset);
-        loadedPreset = preset;
+        DebugParameterSet_Load(set);
+        loadedSet = set;
       }
+      // A fights; Down still held makes it a link battle.
       if (input->held & KEY_DOWN)
         GameFlag_Set(FLAG_LINK_BATTLE);
-      Unit_CalculateFar(0);
+      Unit_CalculateFar(ISAAC);
       *backdropId = RESOURCE_COLOSSO_BACKDROP;
       m = &gMainRoutineWork;
       if (encounter == DJINN_TUTORIAL_ENCOUNTER)
@@ -318,6 +335,7 @@ restart:
       if (startModeSet)
         m->battleType = BATTLE_TYPE_DEBUG;
       Battle_Run(encounter);
+      // Rebuild what the battle replaced, then return to the chooser.
       gDebugTextEnabled = 1;
       Window_LoadGraphics();
       DebugText_Clear();
@@ -326,6 +344,7 @@ restart:
       VramCache_Reset();
     }
   }
+  // Without Down: the same auto battle, over and over.
   GameFlag_Set(FLAG_DEBUG_BATTLE);
   Battle_Run(DEBUG_FIRST_ENCOUNTER);
   goto restart;

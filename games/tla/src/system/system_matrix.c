@@ -13,11 +13,22 @@ struct ProjectedPoint {
   s32 z;
 };
 
-// gCurrentMatrix contains twelve s32 values in 16.16 (1.0 = FIXED_ONE).
-// Entries 0-8 form the 3x3 rotation; entries 9-11 hold the translation.
+// The 3D transform. gCurrentMatrix is MATRIX_WORDS s32 in 16.16 fixed point
+// (1.0 is FIXED_ONE): [0] to [8] a 3x3 rotation, then the translation.
 // Iwram_MultiplyMatrix multiplies the supplied matrix into the current one.
 
-#define MATRIX_DMA DMA_COPY_WORDS(12) ///< DMA for one matrix.
+#define MATRIX_DMA (DMA_COPY_WORDS(MATRIX_WORDS)) ///< one matrix
+
+/// Matrix_BuildLookAt's reciprocals divide FIXED_ONE << RECIPROCAL_SHIFT,
+/// 2^31, the most a u32 holds: the quotient shifted right by RECIPROCAL_SHIFT
+/// is FIXED_ONE over a whole-number divisor, and doubled it is the 16.16
+/// reciprocal of a 16.16 divisor.
+#define RECIPROCAL_SHIFT 15
+
+/// Render_ProjectPoint's depth drops its low PROJECTION_DEPTH_SHIFT bits,
+/// and the focal length gains the rest of FIXED_ONE's, so that the focal
+/// length over the depth comes out in 16.16 within 32 bits.
+#define PROJECTION_DEPTH_SHIFT 11
 
 /// The cosine: the sine a quarter turn on.
 #define COS(a) Trig_Sin((a) + DEGtoANG(90))
@@ -25,8 +36,8 @@ struct ProjectedPoint {
 /// An empty routine.
 void Render_EmptyHook(void) {}
 
-/// Allocates the matrix-save storage and sets the current matrix to the unit
-/// matrix.
+/// Allocates the one-level save area (heap slot HEAP_SLOT_MATRIX_STACK),
+/// clears gMatrixStackDepth and resets gCurrentMatrix to the unit matrix.
 void Matrix_Initialize(void) {
   gMatrixStackTop =
       HeapSlot_AllocEwram(HEAP_SLOT_MATRIX_STACK, sizeof(gCurrentMatrix));
@@ -77,7 +88,8 @@ void Matrix_ResetUnit(void) {
   Matrix_SetCurrentUnit();
 }
 
-/// Rotates gCurrentMatrix by `angles` about the X, Y and Z axes.
+/// Rotates gCurrentMatrix by angles[0], angles[1] and angles[2] about the X, Y
+/// and Z axes, in that order, with one combined matrix.
 void Matrix_Rotate(s32 *angles) {
   FIXED sinX;
   s32 cosX;
@@ -88,7 +100,6 @@ void Matrix_Rotate(s32 *angles) {
   MATRIX matrix;
 
   sinX = Trig_Sin(angles[0]);
-
   cosX = COS(angles[0]);
   sinY = Trig_Sin(angles[1]);
   cosY = COS(angles[1]);
@@ -126,7 +137,7 @@ static __inline__ void Matrix_StoreUnit(void *matrix) {
       : "r0", "r1", "r2", "r3", "r4", "memory");
 }
 
-/// Applies a rotation about the X axis.
+/// Rotates gCurrentMatrix about the X axis by `angle`.
 void Matrix_RotateX(s32 angle) {
   MATRIX matrix;
   FIXED sine;
@@ -143,7 +154,7 @@ void Matrix_RotateX(s32 angle) {
   Iwram_MultiplyMatrix(matrix);
 }
 
-/// Applies a rotation about the Y axis.
+/// Rotates gCurrentMatrix about the Y axis by `angle`.
 void Matrix_RotateY(s32 angle) {
   MATRIX matrix;
   FIXED sine;
@@ -160,7 +171,7 @@ void Matrix_RotateY(s32 angle) {
   Iwram_MultiplyMatrix(matrix);
 }
 
-/// Makes the current matrix a rotation about the Y axis.
+/// Makes gCurrentMatrix a rotation about the Y axis by `angle`.
 void Matrix_SetRotateY(s32 angle) {
   FIXED *matrix = gCurrentMatrix;
   FIXED sine;
@@ -176,7 +187,7 @@ void Matrix_SetRotateY(s32 angle) {
   matrix[6] = sine;
 }
 
-/// Applies a rotation about the Z axis.
+/// Rotates gCurrentMatrix about the Z axis by `angle`.
 void Matrix_RotateZ(s32 angle) {
   MATRIX matrix;
   FIXED sine;
@@ -193,7 +204,7 @@ void Matrix_RotateZ(s32 angle) {
   Iwram_MultiplyMatrix(matrix);
 }
 
-/// Applies a translation by position, X, Y and Z in 16.16.
+/// Translates gCurrentMatrix by `position` (x, y, z in 16.16).
 void Matrix_TranslateVector(const FIXED *position) {
   MATRIX matrix;
 
@@ -205,7 +216,7 @@ void Matrix_TranslateVector(const FIXED *position) {
   Iwram_MultiplyMatrix(matrix);
 }
 
-/// Applies a translation by x, y and z in 16.16.
+/// Translates gCurrentMatrix by `x`, `y` and `z` in 16.16.
 void Matrix_Translate(FIXED x, FIXED y, FIXED z) {
   MATRIX matrix;
 
@@ -217,14 +228,14 @@ void Matrix_Translate(FIXED x, FIXED y, FIXED z) {
   Iwram_MultiplyMatrix(matrix);
 }
 
-/// Sets the current matrix's translation to position.
+/// Sets gCurrentMatrix's translation to `position`.
 void Matrix_SetTranslation(const FIXED *position) {
   gCurrentMatrix[MATRIX_TRANSLATION_X] = position[0];
   gCurrentMatrix[MATRIX_TRANSLATION_Y] = position[1];
   gCurrentMatrix[MATRIX_TRANSLATION_Z] = position[2];
 }
 
-/// Applies a scale by scale's X, Y and Z factors in 16.16.
+/// Scales gCurrentMatrix by `scale` (x, y, z factors in 16.16).
 void Matrix_ScaleVector(const FIXED *scale) {
   MATRIX matrix;
 
@@ -236,7 +247,7 @@ void Matrix_ScaleVector(const FIXED *scale) {
   Iwram_MultiplyMatrix(matrix);
 }
 
-/// Applies a scale by x, y and z in 16.16.
+/// Scales gCurrentMatrix by `x`, `y` and `z` in 16.16.
 void Matrix_Scale(FIXED x, FIXED y, FIXED z) {
   MATRIX matrix;
 
@@ -248,7 +259,7 @@ void Matrix_Scale(FIXED x, FIXED y, FIXED z) {
   Iwram_MultiplyMatrix(matrix);
 }
 
-/// Applies the same scale on all three axes.
+/// Scales gCurrentMatrix by `scale` on all three axes.
 void Matrix_ScaleUniform(FIXED scale) {
   MATRIX matrix;
 
@@ -259,6 +270,7 @@ void Matrix_ScaleUniform(FIXED scale) {
   matrix[8] = scale;
   Iwram_MultiplyMatrix(matrix);
 }
+
 /// Rotates gCurrentMatrix by `angles` and translates it by `position` in one
 /// matrix. Reached through the far-call table.
 void Matrix_RotateTranslate(s32 *angles, FIXED *position) {
@@ -271,7 +283,6 @@ void Matrix_RotateTranslate(s32 *angles, FIXED *position) {
   MATRIX matrix;
 
   sinX = Trig_Sin(angles[0]);
-
   cosX = COS(angles[0]);
   sinY = Trig_Sin(angles[1]);
   cosY = COS(angles[1]);
@@ -294,8 +305,8 @@ void Matrix_RotateTranslate(s32 *angles, FIXED *position) {
   Iwram_MultiplyMatrix(matrix);
 }
 
-/// Applies rotation, scaling by row and translation together.
-/// scale: scale factors for rows 1-3 of the rotation matrix.
+/// Rotates by `angles`, scales each rotation row by `scale` and translates by
+/// `position`, in one matrix.
 void Matrix_RotateTranslateScale(s32 *angles, FIXED *position, FIXED *scale) {
   FIXED sinX, cosX, sinY;
   s32 cosY;
@@ -305,12 +316,7 @@ void Matrix_RotateTranslateScale(s32 *angles, FIXED *position, FIXED *scale) {
   MATRIX matrix;
 
   sinX = Trig_Sin(angles[0]);
-  {
-    s32 quarter;
-
-    quarter = DEGtoANG(90);
-    cosX = Trig_Sin(angles[0] + quarter);
-  }
+  cosX = COS(angles[0]);
   sinY = Trig_Sin(angles[1]);
   cosY = COS(angles[1]);
   sinZ = Trig_Sin(angles[2]);
@@ -365,7 +371,7 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
   s32 ez;
   s32 length;
   FIXED levelSquared;
-  u32 num = 0x80000000; // 2^31, the dividend of each reciprocal
+  u32 dividend = (u32)FIXED_ONE << RECIPROCAL_SHIFT;
   /* FAKEMATCH(pin): divide fixed to a register. */
   register u32 (*divide)(u32 dividend, u32 divisor) asm("r9");
   /* FAKEMATCH(pin): mul fixed to a register. */
@@ -379,15 +385,14 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
     Dma_Set(RelocatedInnerProduct, code, DMA_COPY_WORDS(8), REG_DMA3);
   }
 
-  // Unit viewing direction d, from target to eye.
+  // The view axis d, pointing from the target back to the eye, normalized:
+  // its length in whole pixels, and FIXED_ONE over it, negated.
   dx = target[0] - eye[0];
   dy = target[1] - eye[1];
   dz = target[2] - eye[2];
   length =
       Iwram_Sqrt(dot(dx >> 8, dx >> 8, dy >> 8, dy >> 8, dz >> 8, dz >> 8));
-  // 2^31 / length >> 15 is FIXED_ONE / length, the length's reciprocal,
-  // negated to turn d round, from the target to the eye.
-  scale = divide(num, length) >> 15;
+  scale = divide(dividend, length) >> RECIPROCAL_SHIFT;
   scale = -scale;
   /* FAKEMATCH(dead): the normalization in a once-only block. */
   do {
@@ -401,7 +406,7 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
   levelSquared = FIXED_ONE - mul(dy, dy);
   scale = FIXED_ONE;
   if (levelSquared > 0)
-    scale = divide(num, Math_SqrtFX(levelSquared)) << 1;
+    scale = divide(dividend, Math_SqrtFX(levelSquared)) << 1;
   ux = mul(dz, scale);
   uz = mul(uz, scale);
 
@@ -409,7 +414,7 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
   vx = mul(dy, uz);
   vy = mul(dz, ux) - mul(dx, uz);
   vz = -mul(dy, ux);
-  scale = divide(num, Math_SqrtFX(dot(vx, vx, vy, vy, vz, vz))) << 1;
+  scale = divide(dividend, Math_SqrtFX(dot(vx, vx, vy, vy, vz, vz))) << 1;
   vx = mul(vx, scale);
   vy = mul(vy, scale);
   vz = mul(vz, scale);
@@ -457,9 +462,7 @@ void Projection_SetFieldOfView(s32 fieldOfView, FIXED nearDepth,
 
   halfAngle = fieldOfView / 2;
   sine = Trig_Sin(halfAngle);
-  // The cosine, as the sine a quarter turn on: DISPLAY_HEIGHT / 2 * cos / sin.
-  focal = Iwram_RatioMulQ14(sine, Trig_Sin(halfAngle + DEGtoANG(90)) *
-                                      (DISPLAY_HEIGHT / 2));
+  focal = Iwram_RatioMulQ14(sine, COS(halfAngle) * (DISPLAY_HEIGHT / 2));
   gProjection.near = nearDepth;
   gProjection.focal = focal;
   gProjection.far = farDepth;
@@ -474,11 +477,6 @@ void Projection_Set(u32 focal, u32 nearDepth, u32 farDepth) {
   projection->far = farDepth;
 }
 
-/// Transforms `vector` by gCurrentMatrix into `result`.
-static inline void Render_TransformVector(const void *vector, FIXED *result) {
-  Iwram_TransformVectorEntry(vector, result);
-}
-
 /// Transforms `point` by gCurrentMatrix and projects it onto the screen into
 /// `screen`, returning the scale at its depth; a point outside the near and far
 /// depths keeps its view coordinates and returns 0.
@@ -490,17 +488,16 @@ s32 Render_ProjectPoint(const void *point, struct ProjectedPoint *screen) {
   s32 x;
   s32 y;
 
-  Render_TransformVector(point, &view.x);
+  Iwram_TransformVector(point, &view.x);
   depth = -view.z;
   projection = &gProjection;
   if (depth >= projection->near && depth <= projection->far) {
     screen->z = FIXEDtoINT(depth);
     if (projection->focal != 0) {
-      u32 shifted = (u32)depth >> 11;
+      u32 shifted = (u32)depth >> PROJECTION_DEPTH_SHIFT;
 
-      // (focal << 5) / (depth >> 11) is focal * FIXED_ONE / depth, focal over
-      // depth in 16.16, the shifts keeping both within 32 bits.
-      scale = Iwram_UnsignedDivide(projection->focal << 5, shifted);
+      scale = Iwram_UnsignedDivide(
+          projection->focal * (FIXED_ONE >> PROJECTION_DEPTH_SHIFT), shifted);
     } else {
       scale = FIXED_ONE * 33 / 25; // 1.32
     }
@@ -515,6 +512,8 @@ s32 Render_ProjectPoint(const void *point, struct ProjectedPoint *screen) {
 }
 
 #undef MATRIX_DMA
+#undef RECIPROCAL_SHIFT
+#undef PROJECTION_DEPTH_SHIFT
 #undef COS
 #undef Math_SqrtFX
 #undef RelocatedInnerProduct

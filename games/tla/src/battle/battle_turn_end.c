@@ -185,6 +185,11 @@ s32 BattleUnit_CountDownSleep(s32 unitId) {
   return 0;
 }
 
+/// Unit.psySeal's low three bits, Bind's turns left; Luff's seal above them
+/// loses PSY_SEAL_LUFF_TURN a turn.
+#define PSY_SEAL_BIND_MASK 7
+#define PSY_SEAL_LUFF_TURN 8
+
 /// Counts down both seals in Unit.psySeal and returns 1 when the last
 /// ends; only Bind's, once Luff's is gone, may end early.
 s32 BattleUnit_CountDownPsynergySeal(s32 unitId) {
@@ -199,13 +204,13 @@ s32 BattleUnit_CountDownPsynergySeal(s32 unitId) {
   /* FAKEMATCH(dead): the seal byte masked again. */
   turns = sealCounter & 0xFF;
   if (turns != 0) {
-    // In the byte, adding (u8)-8 takes 8 off and adding (u8)-1 takes 1 off.
-    if (turns > 7U) {
-      turns += (u8)-8;
+    // In the byte, adding (u8)-n takes n off.
+    if (turns > (u32)PSY_SEAL_BIND_MASK) {
+      turns += (u8)-PSY_SEAL_LUFF_TURN;
       unit->psySeal = turns;
       sealCounter = turns;
     }
-    if (sealCounter & 7) {
+    if (sealCounter & PSY_SEAL_BIND_MASK) {
       decremented = sealCounter + (u8)-1;
       unit->psySeal = decremented;
       sealCounter = decremented;
@@ -213,8 +218,9 @@ s32 BattleUnit_CountDownPsynergySeal(s32 unitId) {
     remaining = sealCounter;
     if (remaining == 0)
       return 1;
-    if (remaining <= 7U && BattleUnit_RollCounterEarlyEnd(
-                               unitId, unit->psySeal, EARLY_END_BIND) != 0) {
+    if (remaining <= (u32)PSY_SEAL_BIND_MASK &&
+        BattleUnit_RollCounterEarlyEnd(unitId, unit->psySeal, EARLY_END_BIND) !=
+            0) {
       unit->psySeal = 0U;
       return 1;
     }
@@ -939,7 +945,7 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
     // At 0 the Reaper takes far more HP than any unit has.
     reaper = &unit->grimReaper;
     if (*reaper != 0 && !BattleUnit_KeepsOneHp(unitId) && --*reaper == 0 &&
-        Unit_AddHpFar(unitId, 0xc0000000) == 0) {
+        Unit_AddHpFar(unitId, DEFEAT_HP_CHANGE) == 0) {
       BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
       BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)MsgReaperCalls);
       BattlePlayback_Push(PLAYBACK_HIT, unitId);

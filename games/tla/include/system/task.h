@@ -31,15 +31,18 @@ STATIC_ASSERT(offsetof(struct Task, flags) == 6);
 /// task is suspended, so no pass matches it.
 ///
 /// The two passes: the VBlank handler runs TASK_PASS_VBLANK's tasks, and
-/// wait() runs TASK_PASS_FRAME's once a frame.
+/// wait() runs TASK_PASS_FRAME's once a frame. Each ranks 0x80, the middle of
+/// the low byte, so a task added at TASK_PASS_FRAME + 10 runs before those
+/// added at TASK_PASS_FRAME.
 #define TASK_PASS_FRAME 0x480
 #define TASK_PASS_VBLANK 0xc80
-/// An empty slot's priority, sorted last.
-#define TASK_PRIORITY_EMPTY 0xffff
-/// A removed task's priority: its odd high byte matches no pass, and it sorts
-/// to the front of the table.
+/// An empty slot's priority, sorted last: the sort reads priorities signed.
+#define TASK_PRIORITY_EMPTY -1
+/// A removed task's priority: its odd high byte matches no pass, and as the
+/// highest priority it sorts to the front of the table.
 #define TASK_PRIORITY_REMOVED 0x7fff
 
+/// A task's priority's high byte: the pass it runs in.
 #define TASK_STATE_HIGH(task) (((u8 *)&(task)->priority)[1])
 /// The bit of a task's high priority byte (TASK_STATE_HIGH) that suspends it.
 #define TASK_SUSPENDED 1

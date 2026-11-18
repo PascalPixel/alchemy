@@ -113,7 +113,8 @@ STATIC_ASSERT(offsetof(struct BattleAffineHdma, affine) == 16);
 STATIC_ASSERT(offsetof(struct BattleAffineHdma, lines) == 32);
 
 struct BattlePlan;
-s32 BattleStaging_RunActorEntries(struct BattlePlan *plan, s32 unused);
+UNREAD_RESULT BattleStaging_RunActorEntries(struct BattlePlan *plan,
+                                            s32 unused);
 
 void BattleStaging_BuildTargetList(struct BattlePlan *plan,
                                    struct BattlePresentationWork *work);

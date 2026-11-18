@@ -184,8 +184,8 @@ s32 BattleFlee_PlayRun(struct BattleActionRecord *action) {
   return 0;
 }
 
-/// Auto battle: shows that a standing unit is defending. The message is
-/// `<unit> is defending`. Returns -1 for an invalid unit id, 0 otherwise.
+/// Auto battle: shows that a standing unit is defending, "<unit> is
+/// defending!". Returns -1 for an invalid unit id, 0 otherwise.
 s32 AutoBattle_ShowDefend(s16 *script) {
   s32 objectId;
   s32 result;
@@ -206,13 +206,8 @@ s32 AutoBattle_ShowDefend(s16 *script) {
   return 0;
 }
 
-/// Auto battle: casts Psynergy. The camera turns to the caster's side and
-/// the caster raises its hand; the target side fades out, its living units
-/// are readied alone, the Psynergy's effect (kind action->parameter) plays
-/// on them, and everyone fades back in. Returns -1 for an invalid unit or
-/// target. Called by AutoBattle_RunAction for COMMAND_PSYNERGY. Writes
-/// REG_BLDCNT and REG_BLDALPHA and the actors' colour modes, and leaves the
-/// battle objects readied again.
+/// Auto battle: casts Psynergy, the caster's side fading out while its effect
+/// plays on the target side. Returns -1 for an invalid unit or target.
 s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
   u16 visibleUnits[UNIT_MAX];
   struct BattlePresentationWork context;
@@ -245,6 +240,8 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
   Random16();
   actorRecord = BattleObject_Get(actorId)->object;
 
+  // The caster's side, taken as the side the target is not on, and the
+  // caster's POSE_CAST when its id is among that side's first sideCount ids.
   if (targetId >= 0 && targetId <= ALLY_MAX) {
     sideCount = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, visibleUnits);
     sideStart = FIRST_ENEMY_UNIT;
@@ -258,6 +255,8 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
       Actor_SelectAnimationFar((struct Actor *)actorRecord, POSE_CAST);
   }
 
+  // Fade the caster's side out over 16 frames, and close the party status
+  // window.
   wait(30);
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
   for (index = 0; index != sideCount; index++)
@@ -268,6 +267,7 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
   }
   PartyStatus_DrawFar(PARTY_STATUS_CLOSED);
 
+  // Ready only the target side's living units, and play the effect.
   if (targetId >= FIRST_ENEMY_UNIT) {
     u32 count = BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, visibleUnits);
     for (index = 0; livingCount != count; index++) {
@@ -296,6 +296,7 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
     context.side = EFFECT_SIDE_ENEMIES;
   BattleEffect_RunSummonFar((s32 *)&context);
 
+  // Bring every unit back and fade the caster's side in.
   wait(10);
   BattleObject_Put();
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
@@ -312,8 +313,8 @@ s32 AutoBattle_RunPsynergy(struct BattleActionRecord *action) {
   return 0;
 }
 
-/// Unused: an auto battle attack. "<unit> attacks!", the attacker leaps up to
-/// its target, the blow, and both return. Returns -1 when either id is not a
+/// Unused auto battle attack: "<unit> attacks!", the attacker leaps up to its
+/// target, the blow, and both return. Returns -1 when either id is not a
 /// battle object.
 UNUSED s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
   struct BattlePresentationWork work;
@@ -362,12 +363,9 @@ UNUSED s32 AutoBattle_RunApproachAttack(struct BattleActionRecord *input) {
   return 0;
 }
 
-/// Auto battle: an attack or an item. Turns the camera to the acting unit's
-/// side, poses the unit and plays the battle effect (kind action->parameter) on
-/// the first living unit of the target's side, then sends both back. Returns -1
-/// for an invalid unit. Called by AutoBattle_RunAction for
-/// COMMAND_ATTACK, COMMAND_ITEM and any other command but fleeing, defending
-/// and Psynergy.
+/// Auto battle: an attack or an item, played on the first living unit of the
+/// target's side as each element's pillar in turn. Returns -1 for an invalid
+/// unit.
 s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   struct BattlePresentationWork work;
   struct BattleBackgroundWork *transition = Ram_HeapSlots->battleBackground;
@@ -399,8 +397,11 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   else
     work.count =
         BattleUnit_ListLiving(BATTLE_SIDE_MASK_PARTY, (u16 *)work.actors);
+  // The status window without its PP row (see PARTY_STATUS_SUMMONS).
   PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus &
                       ~PARTY_STATUS_SHOW_PP);
+  // The unit raises its hand (POSE_CAST); then only the first living unit of
+  // the target's side takes the effect.
   object = BattleObject_Get(work.actor)->object;
   Actor_SelectAnimationFar((struct Actor *)object, POSE_CAST);
   Actor_SetAnimationSpeedFar((struct Actor *)object, ANIMATION_STEP_NORMAL);
@@ -413,6 +414,7 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
     BattleUnit_ListLiving(BATTLE_SIDE_MASK_ENEMIES, (u16 *)work.actors);
     work.count = 1;
   }
+  // Keep each target's sprite entries' parameters for the effect.
   for (i = 0; i != work.count; i++) {
     struct Sprite *animation =
         (struct Sprite *)BattleObject_Get(work.actors[i])->object->records;
@@ -446,8 +448,8 @@ s32 AutoBattle_RunAttackOrItem(struct BattleActionRecord *action) {
   return 0;
 }
 
-/// Unused: auto battle damage. Takes damage HP from a unit and shows it, with
-/// "A bitter blow!" or "A critical hit!" first when showMessage is set.
+/// Unused auto battle damage: takes damage HP from a unit and shows it, with "A
+/// bitter blow!" or "A critical hit!" first when showMessage is set.
 UNUSED void AutoBattle_ApplyDamage(u32 unitId, s32 damage, s32 showMessage,
                                    u8 *context) {
   u8 localContext[4];

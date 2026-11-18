@@ -138,7 +138,7 @@
 /// The game flag of an enemy the party has defeated, set by
 /// BattleEnemy_RecordDefeat outside the monster battles; the monster battles
 /// choose only formations of defeated enemies (BattleFormation_AverageLevel).
-#define ENEMY_DEFEATED_FLAG(classId) ((classId) + 0x600)
+#define ENEMY_DEFEATED_FLAG(classId) ((classId) + FLAG_ENEMY_DEFEATED_FIRST)
 /// The enemies that have a defeated flag, the flags 0x600 to 0x7ff.
 #define ENEMY_DEFEATED_FLAG_COUNT 512
 
@@ -239,6 +239,10 @@ struct BattleLinkedActionState {
 /// Where a battle object's resource keeps its sprite slot, above its sprite:
 /// (slot << RESOURCE_SLOT_SHIFT) | sprite.
 #define RESOURCE_SLOT_SHIFT 12
+
+/// An HP change that defeats any unit: the Grim Reaper's call deals it, and the
+/// debug defeat.
+#define DEFEAT_HP_CHANGE 0xc0000000
 
 // What BattleActionRun_Build returns besides 0, which stages the action.
 #define ACTION_REPORTED -1 ///< the action failed and its message is shown
@@ -348,9 +352,11 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y);
 /// the 16.16 brightness, so level 60 is black.
 #define BACKGROUND_LEVEL_STEP (FIXED_ONE / 60)
 
-/// BG1 during a battle: 256 colours, priority 3, its map in screen block 31.
+/// BG1 during a battle: 256 colours, priority 3, its map in screen block
+/// BATTLE_BG1_SCREEN_BLOCK.
 #define BATTLE_BG1CNT                                                          \
-  (BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31))
+  (BGCNT_PRIORITY(3) | BGCNT_256_COLORS |                                      \
+   BGCNT_SCREEN_BASE(BATTLE_BG1_SCREEN_BLOCK))
 
 /// BattleActionRecord.target of a held unit's lost action (COMMAND_NONE, from
 /// Battle_BuildEnemyActions): as a place code, place 0 of the other side, the

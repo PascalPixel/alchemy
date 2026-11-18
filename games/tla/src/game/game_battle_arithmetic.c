@@ -142,27 +142,27 @@ s32 Equipment_GetUnleashRateBonus(struct Unit *unit) {
 }
 
 /// Rolls whether a character's weapon unleashes, 5 percent a point of its
-/// chance. Returns the unleash action, or 1 for a plain attack.
+/// chance. Returns the unleash's ability, or ABILITY_ATTACK for a plain attack.
 s32 RollWeaponUnleash(struct Unit *owner) {
   struct ItemDefinition *item;
   FIXED rate;
 
   if (owner->classId == CLASS_NONE) {
-    return 1;
+    return ABILITY_ATTACK;
   }
   item = Inventory_GetEquippedDefinition(owner, ITEM_TYPE_WEAPON);
   if (item == NULL) {
-    return 1;
+    return ABILITY_ATTACK;
   }
-  if (item->unleashAbility == 0) {
-    return 1;
+  if (item->unleashAbility == ABILITY_NOTHING) {
+    return ABILITY_ATTACK;
   }
   rate = FIXED_ONE *
          (Equipment_GetUnleashRateBonus(owner) + item->unleashChance * 5) / 100;
   if (rate > (s32)(Battle_Random() & 0xFFFF)) {
     return item->unleashAbility;
   }
-  return 1;
+  return ABILITY_ATTACK;
 }
 
 /// Returns the base chance in percent of an effect; a negative one is fixed,

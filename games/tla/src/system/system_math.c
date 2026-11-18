@@ -12,26 +12,27 @@ u32 Random16(void) {
   u32 value = gRandomSeed * MULTIPLIER + INCREMENT;
 
   gRandomSeed = value;
-  return (value << 8) >> 16;
+  return (u16)(value >> 8);
 }
 
 /// Moves the point `position` by `radius` in direction `angle` on the ground
 /// plane: x by the cosine, z by the sine.
-void Vector_AddPolarOffset(FIXED radius, s32 angle, s32 *position) {
+void Vector_AddPolarOffset(FIXED radius, s32 angle, FIXED *position) {
   *position++ += Iwram_MulFX(radius, Trig_Sin(angle + DEGtoANG(90)));
   position++;
   *position += Iwram_MulFX(radius, Trig_Sin(angle));
 }
 
-/// The angle between neighbouring entries of gMath_TanTable, 1/256 of a quarter
-/// turn, and the tangent of its last searched entry (gMath_TanTable[255]), in
-/// 8.8, beyond which Trig_Atan gives a quarter turn.
-#define ATAN_ENTRY_ANGLE (DEGtoANG(90) / 256)
+/// The entries of gMath_TanTable in a quarter turn, which Trig_Atan searches,
+/// the angle between neighbouring entries, and the tangent of the last one
+/// searched, in 8.8, beyond which Trig_Atan gives a quarter turn.
+#define ATAN_ENTRIES 256
+#define ATAN_ENTRY_ANGLE (DEGtoANG(90) / ATAN_ENTRIES)
 #define ATAN_RATIO_MAX 64362
 
-/// Returns the angle of the vector (x, y), in 1/65536 turns from 0 to 65535,
-/// measured from the y axis: 0 along +y, a quarter turn along +x; (0, 0) gives
-/// 0. It binary-searches the tangent table to 1/256 of a quarter turn.
+/// Returns the angle of the vector (x, y), from 0 to TRIG_TURN - 1, measured
+/// from the y axis: 0 along +y, a quarter turn along +x; (0, 0) gives 0. It
+/// binary-searches the tangent table to ATAN_ENTRY_ANGLE.
 s32 Trig_Atan(s32 x, s32 y) {
   const u16 *table;
   s32 value;
@@ -56,55 +57,56 @@ s32 Trig_Atan(s32 x, s32 y) {
 
     ratio = Iwram_UnsignedDivide(value << 8, ratio);
     result = DEGtoANG(90);
-    // Beyond entry 255's tangent, use the quarter-turn limit instead of
+    // Beyond the last entry's tangent, use the quarter-turn limit instead of
     // the largest angle the eight search bits can represent.
     if (ratio <= ATAN_RATIO_MAX) {
-      // Eight comparisons halve the table each time, choosing the angle's
-      // bits from an eighth of a turn down to ATAN_ENTRY_ANGLE.
-      table = &gMath_TanTable[127];
+      // Eight comparisons halve the entries searched each time. Each decides
+      // one bit of the entry's index, from the highest down, and so of the
+      // angle, from an eighth of a turn down to ATAN_ENTRY_ANGLE.
+      table = &gMath_TanTable[ATAN_ENTRIES / 2 - 1];
       result = 0;
       bit = DEGtoANG(45);
 
       value = *table;
-      table -= 64;
+      table -= ATAN_ENTRIES / 4;
       if (ratio > value) {
         result += bit;
-        table += 128;
+        table += ATAN_ENTRIES / 2;
       }
       value = *table;
       bit >>= 1;
-      table -= 32;
+      table -= ATAN_ENTRIES / 8;
       if (ratio > value) {
         result += bit;
-        table += 64;
+        table += ATAN_ENTRIES / 4;
       }
       value = *table;
       bit >>= 1;
-      table -= 16;
+      table -= ATAN_ENTRIES / 16;
       if (ratio > value) {
         result += bit;
-        table += 32;
+        table += ATAN_ENTRIES / 8;
       }
       value = *table;
       bit >>= 1;
-      table -= 8;
+      table -= ATAN_ENTRIES / 32;
       if (ratio > value) {
         result += bit;
-        table += 16;
+        table += ATAN_ENTRIES / 16;
       }
       value = *table;
       bit >>= 1;
-      table -= 4;
+      table -= ATAN_ENTRIES / 64;
       if (ratio > value) {
         result += bit;
-        table += 8;
+        table += ATAN_ENTRIES / 32;
       }
       value = *table;
       bit >>= 1;
-      table -= 2;
+      table -= ATAN_ENTRIES / 128;
       if (ratio > value) {
         result += bit;
-        table += 4;
+        table += ATAN_ENTRIES / 64;
       }
       value = *table;
       table--;
@@ -127,6 +129,9 @@ s32 Trig_Atan(s32 x, s32 y) {
   return (u16)result;
 }
 
+/// The bits of a 32-bit value's square root.
+#define ROOT_BITS 16
+
 /// Returns the integer square root of `value`, rounded down, a bit at a time;
 /// a negative `value` gives 0. Reached through the far-call table.
 s32 Math_IntegerSqrt(s32 value) {
@@ -138,7 +143,7 @@ s32 Math_IntegerSqrt(s32 value) {
   // remainder is value - result squared.
   remainder = value;
   result = 0;
-  for (bit = 15; bit >= 0; bit -= 1) {
+  for (bit = ROOT_BITS - 1; bit >= 0; bit -= 1) {
     trial = (result << (bit + 1)) + (1 << (bit * 2));
     if (trial <= remainder) {
       result |= 1 << bit;

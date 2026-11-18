@@ -24,9 +24,10 @@ void BattleObject_Reset(struct BattleObject *actor, s32 keep);
 #define BEAST_ARRIVAL_FRAMES 30
 #define BEAST_DEPARTURE_FRAMES 16
 
-/// Sprite.flags: the sprite keeps the picture it has, no longer drawn again
-/// from its layers, only mirrored as its facing turns.
-#define SPRITE_FLAG_PICTURE_KEPT (1 << 5)
+/// A critical hit's zoom on the attacker and its target, in percent: from
+/// CRITICAL_ZOOM_START, CRITICAL_ZOOM_GAIN more by the end of the run up.
+#define CRITICAL_ZOOM_START 100
+#define CRITICAL_ZOOM_GAIN 30
 
 /// The beasts called up in battle (ABILITY_WILD_WOLF to ABILITY_CALL_DULLAHAN):
 /// for a call that lands, saves the battle object it borrows and brings in the
@@ -255,7 +256,7 @@ void BattleMotion_ReleaseBuffer(struct SavedBattleObject *saved) {
     {
       struct Sprite *record = GetMotionRecord(object, 0);
 
-      record->flags = SPRITE_FLAG_PICTURE_KEPT | record->flags;
+      record->flags = SPRITE_FLAG_KEEP_PICTURE | record->flags;
     }
     Sprite_RemoveAnimationAtFar(GetMotionRecord(object, 0), 0);
   }
@@ -459,8 +460,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
       BattleActor_SpawnObjectsForList(criticalPair, 0);
     }
     // The battle effect starts 8 frames before the run up ends, at least one
-    // frame after it began; a critical hit zooms in on the pair meanwhile, from
-    // 100 to 130 percent.
+    // frame after it began; a critical hit zooms in on the pair meanwhile.
     frames -= 8;
     if (frames <= 0)
       frames = 1;
@@ -472,8 +472,9 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
         if (zoomOnCritical != 0) {
           first = work.actor;
           second = work.firstTarget;
-          BattleCamera_SetViewAtPairMidpoint(first, second,
-                                             index * 30 / frames + 100);
+          BattleCamera_SetViewAtPairMidpoint(
+              first, second,
+              index * CRITICAL_ZOOM_GAIN / frames + CRITICAL_ZOOM_START);
         }
         wait(1);
       }

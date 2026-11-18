@@ -8,6 +8,9 @@
 #include "resource_ids.h"
 #include "window/window.h"
 
+// Debug text: a 32x20-character screen of window font tiles in BG0, written
+// from gDebugTextCursor onwards; characters are tile numbers in WINDOW_PALETTE.
+
 /// The number buffer's hexadecimal: eight digits.
 #define HEX_DIGITS 8
 /// The number buffer's decimal: a sign place and up to ten digits.
@@ -22,15 +25,11 @@ void String_FormatHex(u32 value) {
   s32 index = HEX_DIGITS - 1;
 
   do {
-    buffer[index] = digits[value & 0xF];
+    buffer[index] = digits[value & 0xf];
     value >>= 4;
     index--;
   } while (index >= 0);
-
-  {
-    u8 *terminator = gNumberTextBuffer;
-    terminator[HEX_DIGITS] = 0;
-  }
+  gNumberTextBuffer[HEX_DIGITS] = 0;
 }
 
 /// Writes `value` to the number buffer as DECIMAL_DIGITS_MAX + 1 characters:
@@ -64,15 +63,15 @@ void String_FormatDecimal(s32 value) {
     gNumberTextBuffer[i] = ' ';
 }
 
-/// Writes `count` blank characters (tile 0 in palette 15, the window palette)
-/// at the debug text cursor and moves it on.
+/// Writes `count` blank characters (WINDOW_TILE_BLANK) at the debug text cursor
+/// and moves it on, when debug text is on.
 void DebugText_PrintBlanks(u32 count) {
   u16 *dst = gDebugTextCursor;
   u32 i;
 
   if (gDebugTextEnabled != 0) {
     for (i = 0; i < count; i++)
-      *dst++ = BG_TILE_PALETTE(WINDOW_PALETTE);
+      *dst++ = WINDOW_TILE_BLANK;
     gDebugTextCursor = dst;
   }
 }
@@ -105,24 +104,23 @@ void DebugText_Print(const u8 *text) {
   }
 }
 
-// Both format into a right-aligned buffer and write digits characters from its
-// end.
-
-/// Hexadecimal, digits places (1 to HEX_DIGITS, or HEX_DIGITS if out of range).
+/// Prints the last `digits` hexadecimal digits of `value` (1 to HEX_DIGITS;
+/// anything else prints all of them). Reached through the far-call table.
 void DebugText_PrintHex(u32 value, s32 digits) {
   if (digits < 1 || digits > HEX_DIGITS)
     digits = HEX_DIGITS;
   String_FormatHex(value);
-  DebugText_Print((const u8 *)(((u32)&gNumberTextHexEnd) - digits));
+  DebugText_Print(gNumberTextHexEnd - digits);
 }
 
-/// Signed decimal, digits places (1 to DECIMAL_DIGITS_MAX, or
-/// DECIMAL_DIGITS_MAX if out of range).
+/// Prints the last `digits` characters of `value` in signed decimal (1 to
+/// DECIMAL_DIGITS_MAX; anything else prints DECIMAL_DIGITS_MAX). Reached
+/// through the far-call table.
 void DebugText_PrintDecimal(s32 value, s32 digits) {
   if (digits < 1 || digits > DECIMAL_DIGITS_MAX)
     digits = DECIMAL_DIGITS_MAX;
   String_FormatDecimal(value);
-  DebugText_Print((const u8 *)(((u32)&gNumberTextDecimalEnd) - digits));
+  DebugText_Print(gNumberTextDecimalEnd - digits);
 }
 
 /// Blanks the debug text screen, homes the cursor and points BG0 at it.
@@ -134,9 +132,10 @@ void DebugText_Clear(void) {
 }
 
 /// Loads the window font and border tiles into BG character block 0, the window
-/// palette into palette 15 with its gradient colours, and the basic sprite
+/// palette into WINDOW_PALETTE with its gradient colours, and the basic sprite
 /// palettes.
 void Window_LoadGraphics(void) {
+  // 2048 words: 8 KB, 256 tiles of 4 bits a pixel
   Dma_Set(Resource_GetTableEntry(RESOURCE_WINDOW_TILES),
           (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(2048), REG_DMA3);
   Dma_Set((const void *)gWindow_Palette,
@@ -167,3 +166,7 @@ void Palette_LoadBasicSpriteColors(void) {
   Dma_Set((const void *)gSystem_BasicColorPalette, (void *)OBJ_PLTT,
           DMA_COPY_HALFWORDS(224), REG_DMA3);
 }
+
+#undef HEX_DIGITS
+#undef DECIMAL_DIGITS_MAX
+#undef DEBUG_TEXT_MAX_LENGTH

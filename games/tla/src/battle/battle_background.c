@@ -1,7 +1,7 @@
 /// @file
 /// The battle background, its palette and modes, the camera's zoom and the
-/// units' highlights, the star field behind a summon and a unit's element
-/// effect.
+/// units' highlights, and a unit's element glow: the star field of a cast, the
+/// streaks, the pillar and the burst.
 // Part of battle.c.
 
 #include "battle_internal.h"
@@ -362,15 +362,16 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
 
 /// Points the battle camera at the ground between two units, with a zoom in
 /// percent.
-void BattleCamera_SetViewAtPairMidpoint(s32 a, s32 b, s32 zoom) {
-  struct MotionObject *obj_a = BattleObject_Get(a)->object;
-  struct MotionObject *obj_b = BattleObject_Get(b)->object;
-  s32 ax = obj_a->x;
-  s32 bx = obj_b->x;
-  s32 az = obj_a->z;
-  s32 bz = obj_b->z;
-  s32 x = (bx + ax) / 2;
-  s32 z = (bz + az) / 2;
+void BattleCamera_SetViewAtPairMidpoint(s32 firstUnitId, s32 secondUnitId,
+                                        s32 zoom) {
+  struct MotionObject *first = BattleObject_Get(firstUnitId)->object;
+  struct MotionObject *second = BattleObject_Get(secondUnitId)->object;
+  FIXED firstX = first->x;
+  FIXED secondX = second->x;
+  FIXED firstZ = first->z;
+  FIXED secondZ = second->z;
+  FIXED x = (secondX + firstX) / 2;
+  FIXED z = (secondZ + firstZ) / 2;
 
   BattleCamera_SetView(x, 0, z, zoom);
 }
@@ -406,8 +407,8 @@ UNUSED void Battle_BrightenAllLayers(void) {
   REG_BLDCNT = BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN;
 }
 
-/// Returns the 16.16 product of a and b.
-FIXED Battle_MulFX(FIXED a, FIXED b) { return Iwram_MulFX(a, b); }
+/// Unused: returns the 16.16 product of a and b.
+UNUSED FIXED Battle_MulFX(FIXED a, FIXED b) { return Iwram_MulFX(a, b); }
 
 /// What BattleTransition_InitializeEntries treats as an array of these;
 /// Matrix_SetUnit writes over it as a matrix.
@@ -419,7 +420,8 @@ struct BattleTransitionEntry {
 
 /// Unused: sets entries to the identity transform, then stores the first word's
 /// old value plus its new one in the second.
-void BattleTransition_InitializeEntries(struct BattleTransitionEntry *entries) {
+UNUSED void
+BattleTransition_InitializeEntries(struct BattleTransitionEntry *entries) {
   u32 previous = entries[0].value;
 
   CAMELOT_ASM("the fixed-register unit matrix store of matrix.h")
@@ -427,17 +429,8 @@ void BattleTransition_InitializeEntries(struct BattleTransitionEntry *entries) {
   entries[0].sum = previous + entries[0].value;
 }
 
-void BattleEffect_StartTiledCanvas(s32 mode);
-void BattleEffect_EndCanvasLayer(void);
-void BattleEffect_RunDrainMotes(void *effect, s32 mode);
-s32 MapGrid_GetAttributeBAt(s32 x, s32 z, s32 layer);
-u8 MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value);
-void Shop_InitializeWork(void);
-s32 Inn_RoomPrice(s32 innId);
-void Shop_ReleaseWork(void);
-
 /// Unused: returns value divided by 16.
-s32 BattleBackground_DivideBy16(s32 value) { return value / 16; }
+UNUSED s32 BattleBackground_DivideBy16(s32 value) { return value / 16; }
 
 // What Select picks: another value in the Japanese release.
 #if LANGUAGE == LANGUAGE_JAPANESE
@@ -452,11 +445,11 @@ s32 BattleBackground_DivideBy16(s32 value) { return value / 16; }
 #define DEBUG_VALUE_TENS 10
 #define DEBUG_VALUE_HUNDREDS 100
 
-/// A debug choice of a battle value: with Start held, the d-pad and L/R step
-/// the battle work's debugValue by its ones, tens and hundreds until A takes
-/// it; Select held picks DEBUG_VALUE_SELECT and R held DEBUG_VALUE_R;
-/// otherwise value comes back unchanged.
-s32 Battle_AdjustDebugValue(s32 value) {
+/// Unused debug aid: with Start held, the d-pad and L/R step the battle work's
+/// debugValue by its ones, tens and hundreds until A takes it; Select held
+/// picks DEBUG_VALUE_SELECT and R held DEBUG_VALUE_R; otherwise value comes
+/// back unchanged.
+UNUSED s32 Battle_AdjustDebugValue(s32 value) {
   if (gInput.held & KEY_START) {
     while (1) {
       struct BattleWork *work = Ram_HeapSlots->battleWork;
@@ -488,12 +481,12 @@ s32 Battle_AdjustDebugValue(s32 value) {
 }
 
 /// Sets the sprite mode of a unit's picture and its shadow.
-void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode) {
-  struct BattleObject *slot = BattleObject_Get(actorId);
+void BattleHighlight_SetSpriteMode(s32 unitId, s32 mode) {
+  struct BattleObject *slot = BattleObject_Get(unitId);
   struct MotionObject *object;
   struct Sprite *record;
   struct Sprite **records;
-  s32 i;
+  s32 recordIndex;
 
   if (slot == 0)
     return;
@@ -509,22 +502,22 @@ void BattleHighlight_SetSpriteMode(s32 actorId, s32 mode) {
   }
   case ACTOR_SPRITE_GROUP: {
     records = object->records;
-    i = 0;
+    recordIndex = 0;
     do {
       record = *records++;
       if (record == 0)
         break;
       record->image.objectMode = mode;
       record->shadow.objectMode = mode;
-      i++;
-    } while (i <= 3);
+      recordIndex++;
+    } while (recordIndex < ACTOR_SPRITE_GROUP_SIZE);
     break;
   }
   }
 }
 
 /// Unused: makes every unit's sprites semi-transparent but selectedUnitId's.
-void BattleHighlight_SetOtherSpriteModes(s32 selectedUnitId) {
+UNUSED void BattleHighlight_SetOtherSpriteModes(s32 selectedUnitId) {
   s16 unitIds[UNIT_MAX];
   s32 unitCount = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
   s32 unitIndex;
@@ -680,17 +673,20 @@ struct Ring {
 #define STAR_FIELD_PIXEL_SHIFT 10
 #define STAR_FIELD_PIXEL (1 << STAR_FIELD_PIXEL_SHIFT)
 
-/// The star field's work: the canvas sheet, sixteen sparks, three rings, the
-/// frames counted, whether the canvas is ready, and its centre.
+/// The star field's work, for the 45 frames of a cast's glow.
 struct SparkWork {
+  /// The blue ring sheet's pictures, the sparks' and the rings'.
   u8 sheet[4544];
   struct Spark sparks[STAR_FIELD_SPARKS];
   struct Ring rings[STAR_FIELD_RINGS];
-  s32 frames;
-  s32 ready;
+  s32 frames; ///< frames drawn; new sparks start only in the first
+              ///< STAR_FIELD_SPAWN_FRAMES
+  s32 ready;  ///< 1 when a drawn frame waits for ElementGlow_UploadStarField
+  /// Where BG2 shows the 128 by 128 canvas, in 8.8 pixels: ElementGlow_Play
+  /// keeps it on the unit.
   s32 originX;
   s32 originY;
-  s32 originPending;
+  s32 originPending; ///< 1 once the origin is queued for REG_BG2X
 };
 
 typedef void (*DrawFunc)(void *dest, u8 *src, s32 x, s32 y, s32 width,
@@ -702,11 +698,9 @@ extern const u8 gElementGlow_StarSizes[];
 extern const s32 gElementGlow_StarPictures[];
 extern const s32 gElementGlow_RingPictures[];
 
-/// Steps the star field behind a summon one frame: its sparks spiral in
-/// towards the centre along a damped spiral and shrink as they near it; while
-/// the field is young (24 frames) a spark that dies is born again on a random
-/// ring. Then three rings drift outward through their four frames. The canvas
-/// is marked ready for the transfer at the end.
+/// Draws the star field's next frame: each spark falls towards the centre and
+/// shrinks as its life runs out, a spent one starting again while the field is
+/// young, and the three rings move outward.
 void ElementGlow_UpdateStarField(void) {
   s32 j;
   s32 frame;
@@ -814,8 +808,8 @@ void ElementGlow_UpdateStarField(void) {
 
 s32 ColorBuffer_ScaleThreeQuarters(void *source, void *destination, s32 size);
 
-/// Copies the star field's canvas into BG character block 1 at three quarters
-/// of its brightness once the field marks it ready.
+/// Copies the drawn canvas to BG2's tiles, at three quarters of its
+/// brightness.
 s32 ElementGlow_UploadStarField(void) {
   void *source = Ram_HeapSlots->battleCanvas;
   struct SparkWork *work = Ram_HeapSlots->battleEffect;
@@ -840,11 +834,9 @@ static __inline__ s32 PolarY(s32 angle, s32 radius) {
   return Iwram_MulFX(Trig_Sin(angle), radius);
 }
 
-/// Sets up the star field behind a summon: sixteen sparks on random rings
-/// around the centre, three rings leaving it at thirds of a turn, the blue ring
-/// sheet with the element's colours (Venus yellow, Mercury blue, Mars red,
-/// Jupiter violet), BG2 unscaled at the origin, the additive and max blitters,
-/// and the two frame callbacks.
+/// Starts a star field of the element: sixteen sparks on random rings and three
+/// rings 120 degrees apart, in the element's colours. Returns the upload task's
+/// index.
 s32 ElementGlow_InitializeStarField(s32 element) {
   struct SparkWork *work;
   struct Spark *spark;
@@ -933,10 +925,7 @@ s32 ElementGlow_InitializeStarField(s32 element) {
   return Task_Add(ElementGlow_UploadStarField, TASK_PASS_FRAME);
 }
 
-/// Ends a star field: clears the tiles in character block 1, releases its
-/// four heap slots, turns BG2 off and removes both its tasks. Called by
-/// ElementGlow_Play once mode 0's field has played. Returns Task_Remove's
-/// result, which the caller does not read.
+/// Ends a star field and turns BG2 off.
 s32 ElementGlow_End(s32 unused) {
   Iwram_ClearWordsEntry((void *)BG_CHAR_BLOCK(1), BG_CHAR_SIZE);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
@@ -949,14 +938,12 @@ s32 ElementGlow_End(s32 unused) {
   return Task_Remove(ElementGlow_UpdateStarField);
 }
 
-/// Does nothing; nothing calls it.
-void ElementGlow_ReservedNoOp(void) {}
+/// Unused: does nothing.
+UNUSED void ElementGlow_ReservedNoOp(void) {}
 
-/// Plays a unit's element glow in one of four ways, and returns when it is
-/// over: 0, the star field around the unit while the backdrop darkens over 25
-/// frames (45 frames); 1, the prepared canvas scene of the kind, centred on the
-/// unit (40 frames); 2, the ice fleck burst; 3, the gathering burst.
-void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
+/// Plays a glow of the element about a unit, and returns when it is over: the
+/// star field, the streaks, the pillar or the burst.
+void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
   struct ScreenPoint starPosition;
   struct ScreenPoint streakPosition;
   struct BattlePresentationWork pillarLaunch;
@@ -988,7 +975,7 @@ void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
   if (mode == GLOW_STAR_FIELD) {
     // The star field for 45 frames, the background darkening for the first 25.
     IoWriteQueue_Store16((u32)&REG_BLDALPHA, BLEND_ALPHA(14, BLEND_WEIGHT_MAX));
-    ElementGlow_InitializeStarField(kind);
+    ElementGlow_InitializeStarField(element);
     for (frame = 0, pos = &starPosition; frame < STAR_FIELD_FRAMES; frame++) {
       brightness = &session->brightness;
       ime = &REG_IME;
@@ -998,7 +985,7 @@ void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
                           *brightness =
                               FIXED_ONE - frame * BACKGROUND_LEVEL_STEP,
                           BATTLE_BG_PALETTE_COLORS);
-      BattleMotion_ProjectScaledPosition(unit, (s32 *)pos);
+      BattleMotion_ProjectScaledPosition(unitId, (s32 *)pos);
       work->originX = (STAR_FIELD_CENTER - pos->x) << 8;
       work->originY = (STAR_FIELD_CENTER - pos->y) << 8;
       IO_WRITE_QUEUE_PUSH_IME(ime, (u32)&REG_BG2X, (u32)&work->originX,
@@ -1006,11 +993,12 @@ void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
       work->originPending = 1;
       wait(1);
     }
-    ElementGlow_End(kind);
+    ElementGlow_End(element);
   } else if (mode == GLOW_STREAKS) {
-    BattleEffect_StartElementStreaksFar(kind);
+    // The streaks for 40 frames, their canvas centred on the unit likewise.
+    BattleEffect_StartElementStreaksFar(element);
     for (frame = 0; frame < 40; frame++) {
-      BattleMotion_ProjectScaledPosition(unit, (s32 *)&streakPosition);
+      BattleMotion_ProjectScaledPosition(unitId, (s32 *)&streakPosition);
       origin[0] = (STAR_FIELD_CENTER - streakPosition.x) << 8;
       origin[1] = (STAR_FIELD_CENTER - streakPosition.y) << 8;
       IO_WRITE_QUEUE_PUSH((u32)&REG_BG2X, (u32)origin, DMA_COPY_WORDS(2));
@@ -1018,36 +1006,39 @@ void ElementGlow_Play(s32 unit, s32 kind, s32 mode, s32 variant) {
     }
     BattleEffect_EndElementStreaksFar();
   } else if (mode == GLOW_PILLAR) {
+    // The pillar and the burst run a battle effect with the unit as its user
+    // and only target.
     pillarLaunch.flags = 0;
-    pillarLaunch.kind = kind;
+    pillarLaunch.kind = element;
     pillarLaunch.variant = variant;
-    pillarLaunch.actor = unit;
-    pillarLaunch.actors[0] = unit;
-    pillarLaunch.firstTarget = unit;
+    pillarLaunch.actor = unitId;
+    pillarLaunch.actors[0] = unitId;
+    pillarLaunch.firstTarget = unitId;
     pillarLaunch.count = 1;
     pillarLaunch.initialValue = 1;
     BattleEffect_RunElementPillarFar(&pillarLaunch);
   } else {
     burstLaunch.flags = 0;
-    burstLaunch.kind = kind;
+    burstLaunch.kind = element;
     burstLaunch.variant = 0;
-    burstLaunch.actor = unit;
-    burstLaunch.firstTarget = unit;
-    burstLaunch.actors[0] = unit;
+    burstLaunch.actor = unitId;
+    burstLaunch.firstTarget = unitId;
+    burstLaunch.actors[0] = unitId;
     burstLaunch.count = 1;
     burstLaunch.initialValue = 1;
     BattleEffect_RunElementBurstFar(&burstLaunch);
   }
 }
 
-/// Puts the background's palette back undarkened, at level 0.
-/// Called by BattleStaging_HideField and BattleStaging_RunPsynergyCast.
+/// Copies the background's saved palette back undarkened, as the star field of
+/// ElementGlow_Play leaves it dark.
 void BattleBackground_RestorePalette(void) {
   BattleBackground_SetPaletteLevel(0, 0);
 }
 
-/// Removes the VCount interrupt's handler; nothing calls it.
-void Irq_RemoveVCountHandler(void) { Irq_SetHandler(IRQ_VCOUNT, 0, 0); }
+/// Unused: removes the VCount interrupt's handler, as BattleTransition_Run
+/// installs one.
+UNUSED void Irq_RemoveVCountHandler(void) { Irq_SetHandler(IRQ_VCOUNT, 0, 0); }
 
 /// The average level of a formation's enemy kinds, counting only kinds the
 /// player has defeated (ENEMY_DEFEATED_FLAG, or all with

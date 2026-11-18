@@ -129,7 +129,7 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite, s32 *position,
 
 s32 Render_ProjectPoint(const void *point, s32 *screen);
 void Scene_SetArrivalFlags(s32 unused);
-s32 Message_OpenWindowFar(s32, s32, s32, s32);
+s32 Message_OpenWindowFar(s32 message, s32 x, s32 y, s32 packed);
 void AreaNameWindow_HideFar(void);
 s32 Window_IsClosedFar(s32);
 

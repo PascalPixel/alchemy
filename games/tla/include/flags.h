@@ -77,6 +77,10 @@
 #define FLAG_TRANSFERRED_VAULT_WARNED_OF_ESCAPED_THIEVES 0x825
 /// How many flags gDataTransfer_Flags lists.
 #define TRANSFERRED_FLAG_COUNT 6
+/// The flag after the six DataTransfer_Apply copies from The Broken Seal's
+/// save: no code sets it, so Madra_MeetKarst's test of it never passes.
+#define FLAG_TRANSFERRED_NOT_COPIED                                            \
+  (FLAG_TRANSFERRED_DODONPA_LOCKED_UP + TRANSFERRED_FLAG_COUNT)
 /// Flags of The Broken Seal's save, by its own names and numbers:
 /// DataTransfer_Apply reads them (gDataTransfer_Flags), and the Clear scene
 /// sets them from a password (gClear_ImportedFlags).
@@ -518,8 +522,10 @@
 #define FLAG_DAILA_GREETER_ASKED 0x843
 /// Set as Alex leaves Daila for Madra.
 #define FLAG_DAILA_MET_ALEX 0x84b
-/// Set once Scoop has dug up the Psy Crystal under Daila's puddle.
-#define FLAG_DAILA_PSY_CRYSTAL_DUG 0x300
+/// Daila's area flag: set as Scoop digs up the Psy Crystal under its puddle,
+/// and cleared once the party enters another area. That the crystal was taken
+/// is kept by its gSceneItems row's flag, 0xf5e.
+#define FLAG_DAILA_PSY_CRYSTAL_DUG FLAG_AREA_TEMP_00
 /// Set once the healer of Daila's Sanctum has sent the party to Master Poi;
 /// after that the Sanctum serves them across its counter.
 #define FLAG_DAILA_HEALER_SENT_TO_POI 0x847
@@ -1160,8 +1166,9 @@
 /// (WorldMap_ShowGoldenBoots), cleared as they are picked up.
 #define FLAG_GOLDEN_BOOTS_ON_MAP 0xa77
 /// Unused: nothing sets it but the debug flag editor. In the Japanese release,
-/// set, Text_MeasureDecoded keeps each line's character count, by which the
-/// line is spread across its window; clear, it reads what the stack held.
+/// while it is set, every line of a message but its last is spread across the
+/// window (Text_MeasureDecoded keeps each line's character count); clear, the
+/// count is read from what the stack held.
 #define FLAG_SPREAD_LINES 0xc00
 
 #endif

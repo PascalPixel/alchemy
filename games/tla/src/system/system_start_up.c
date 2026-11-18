@@ -16,15 +16,22 @@ void System_Initialize(void) {
   {
     volatile u16 *dma0 = REG_DMA0;
 
+    // DMA0CNT_H: drop the HBlank repeat timing, then the enable bit
     dma0[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
     dma0[5] &= ~DMA_ENABLE;
     dma0[5];
   }
   Io_Write16(WAITCNT_GAME, &REG_WAITCNT);
-  Dma_Fill32(0, (void *)IWRAM_START, 30720);
+  // Clear IWRAM up to gCartridgeResetMarker; the stacks above it are in use.
+  Dma_Fill32(0, (void *)IWRAM_START, 30 * 1024);
   Heap_Initialize();
   System_InstallIwramAndIrqs();
+#ifdef UBFIX
+  gIoWriteQueue.count = 0;
+  gIoWriteQueue.pad = 0;
+#else
   *(u32 *)&gIoWriteQueue.count = 0;
+#endif
   gDebugTextEnabled = 0;
   gDebugMode = 0;
   gCpuLoadDisplayEnabled = 0;
@@ -35,6 +42,7 @@ void System_Initialize(void) {
   Irq_SetHandler(IRQ_VBLANK, 1, System_VBlankHandler);
   Irq_SetHandler(IRQ_GAMEPAK, 1, Iwram_Halt);
   Io_Write16(KEYCNT_SOFT_RESET, &REG_KEYCNT);
+  // Start audio and frame services only after the interrupt handlers are ready.
   Sound_InitializeFar();
   VramCache_Reset();
   Task_ResetAll();
@@ -49,7 +57,7 @@ void System_Initialize(void) {
 
 /// Unused: waits out frames forever; the frame loop still runs the
 /// tasks.
-void System_IdleForever(void) {
+UNUSED void System_IdleForever(void) {
   volatile struct InputState *input = &gInput;
 
   for (;;) {
@@ -118,8 +126,10 @@ void System_CopyBuildStamp(void) {
   gBuildStamp[3] = 0;
 }
 
-/// An empty routine.
-void Resource_ReservedNoOp(s32 count) {}
+/// An exported stub that does nothing with its argument. The title, the staff
+/// credits, Lucky Dice, Super Lucky Dice and Lucky Wheels call it with a
+/// far-call resource id.
+void Resource_ReservedNoOp(s32 unused) {}
 
 /// Returns the ROM address of resource `index` from the resource directory.
 /// Called throughout the game before decoding a resource.
@@ -225,13 +235,20 @@ void Irq_Ignore(void) {}
 /// (gIrqVector) at its dispatcher, installs the default handler table and
 /// enables the VBlank, keypad and cartridge-removed interrupts.
 void System_InstallIwramAndIrqs(void) {
+  // Keep interrupts masked while replacing both the dispatcher and its table.
   Io_Write16(0, &REG_IME);
   Dma_Set(IwramResident_Rom, Ram_IwramIrqMain, DMA_COPY_WORDS(1024), REG_DMA3);
   *Ram_IrqVector = IwramIrqMain;
   Dma_Set(gDefaultIrqHandlers, gIrqHandlers, DMA_COPY_WORDS(IRQ_COUNT),
           REG_DMA3);
   Io_Write16(0, &REG_DISPSTAT);
+  // Disarmed until System_Initialize arms the soft-reset keys
   Io_Write16(KEYCNT_DISARMED, &REG_KEYCNT);
   Io_Write16(INTR_FLAG_VBLANK | INTR_FLAG_KEYPAD | INTR_FLAG_GAMEPAK, &REG_IE);
   Io_Write16(1, &REG_IME);
 }
+
+#undef THUMB_BL_HIGH
+#undef THUMB_BL_LOW
+#undef THUMB_BL_OFFSET_BITS
+#undef THUMB_BL_HIGH_SHIFT

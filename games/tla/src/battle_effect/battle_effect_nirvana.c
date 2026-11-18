@@ -997,7 +997,6 @@ void BattleEffect_RunHeavyDivide(struct BattleEffectParams *args) {
 void BattleEffect_RunStrongHit(struct BattleEffectParams *args) {
   BattleEffect_RunHeavyBlow(args, HEAVY_BLOW_STRONG_HIT);
 }
-#undef BLITTER
 #undef NIRVANA_FRAMES
 #undef NIRVANA_SPARKS
 #undef NIRVANA_RING_RADIUS

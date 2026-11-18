@@ -94,11 +94,8 @@ enum KandoreanTempleChestbeaterRoomActorId {
   ACTOR_BOILING_POT = ACTOR_FIRST_PLACED,
   /// The red embers the pot boils over: an actor in the pot's sprite at the
   /// pot's place, in its animation 2, the sheet's last picture alone. It is
-  /// drawn underfoot with no shadow, and stays glowing on the floor when the
-  /// pot is chucked aside. The room watched from beside the sign (render guide
-  /// moment, MOMENT_PLACE=16,1 MOMENT_STAND=360,520 MOMENT_ACTORS=9) shows it
-  /// adding nothing under the pot, and, with the pot pushed west
-  /// (MOMENT_SET=0x302,0x304), red embers on the floor where the pot stood.
+  /// drawn underfoot with no shadow, hidden under the pot, and stays glowing on
+  /// the floor where the pot stood when the pot is chucked aside.
   ACTOR_EMBERS_UNDER_THE_POT,
   /// The sign by the hot floor, which tells of Master Poi's trial.
   ACTOR_POIS_SIGN,
@@ -208,7 +205,8 @@ enum {
   FLAG_PILLAR_LIFTED_OFF_VENT = FLAG_SCENE_TEMP_0A,
   /// Move is carrying the vent room's pillar.
   FLAG_PILLAR_MOVING = FLAG_SCENE_TEMP_0B,
-  /// Steam blows from the vent room's west or east vent.
+  /// The vent room's west or east vent blows, its column of water rising out
+  /// of its hole under its cover.
   FLAG_WEST_VENT_BLOWING = FLAG_SCENE_TEMP_0C,
   FLAG_EAST_VENT_BLOWING = FLAG_SCENE_TEMP_0D,
   /// The vents' rush of steam is playing (SE_WAVE).
@@ -649,8 +647,8 @@ void KandoreanTemple_UpdateVentSteam(struct Actor *actor) {
   actor->y.fixed += actor->gravity;
   vz = actor->riseBaseY;
   actor->z.fixed += vz;
-  actor->bounce = vx - vx / 18;
-  actor->riseBaseY = vz - vz / 16;
+  actor->bounce = vx - vx / FIELD_EFFECT_DRAG_X;
+  actor->riseBaseY = vz - vz / FIELD_EFFECT_DRAG_Z;
   rate = actor->speedLimit;
   scale = actor->scaleX;
   sprite = actor->sprite;
@@ -725,8 +723,8 @@ void KandoreanTemple_UpdateStreamSteam(struct Actor *actor) {
   actor->y.fixed += actor->gravity;
   vz = actor->riseBaseY;
   actor->z.fixed += vz;
-  actor->bounce = vx - vx / 18;
-  actor->riseBaseY = vz - vz / 16;
+  actor->bounce = vx - vx / FIELD_EFFECT_DRAG_X;
+  actor->riseBaseY = vz - vz / FIELD_EFFECT_DRAG_Z;
   rate = actor->speedLimit;
   scale = actor->scaleX;
   sprite = actor->sprite;

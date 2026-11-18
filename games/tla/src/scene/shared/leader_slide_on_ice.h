@@ -1,4 +1,4 @@
-/// The leader slides cell by cell over ice until something stops it: a wall,
+/// The leader slides cell by cell over ice until something stops them: a wall,
 /// ground more than 8 pixels up, a solid actor, or the end of the ice.
 void Leader_SlideOnIce(void) {
   struct Vector3 probe;
@@ -54,7 +54,7 @@ top:
   FieldVector_AddPolarOffset(16, heading, &probe);
   nextBehavior =
       FieldMapGrid_GetCellBehaviorAt(*layer, position->x, position->z);
-  if (nextBehavior == 255 ||
+  if (nextBehavior == CELL_BEHAVIOR_WALL ||
       Map_GetTerrainHeight(*layer, position->x, position->z) - actor->y.fixed >
           toFIXED(8)) {
     actor->facing = heading;
@@ -70,7 +70,7 @@ top:
   actor->acceleration = toFIXED(1) / 10;
   actor->timer = 0;
   FieldActor_SetMoveTargetFX(actor, startX, actor->y.fixed, startZ);
-  Actor_SelectAnimation(actor, 2);
+  Actor_SelectAnimation(actor, ANIM_WALK);
   Actor_SetAnimationSpeed(actor, ANIMATION_STEP_NORMAL * 3);
   FieldActor_WaitForMove(actor);
   actor->update = Actor_SteerByPad;
@@ -78,7 +78,7 @@ top:
     FieldVector_AddPolarOffset(16, heading, &probe);
     next = &probe;
     nextBehavior = FieldMapGrid_GetCellBehaviorAt(*layer, next->x, next->z);
-    if (nextBehavior == 255) {
+    if (nextBehavior == CELL_BEHAVIOR_WALL) {
       break;
     }
     if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y.fixed >
@@ -127,5 +127,5 @@ done:
   actor->update = NULL;
   actor->steeringFlags |= ACTOR_FACES_MOTION;
   actor->acceleration = toFIXED(1) / 4;
-  Actor_SelectAnimation(actor, 1);
+  Actor_SelectAnimation(actor, ANIM_STAND);
 }

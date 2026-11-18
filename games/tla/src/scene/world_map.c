@@ -429,10 +429,6 @@ enum WorldMapEntrance {
   WORLD_MAP_DEBUG_SAILING = 99
 };
 
-/// Alhafra Manor's entrance back from the view of Air's Rock, beside the man
-/// who showed it (alhafra_manor.c's ENTRANCE_BACK_FROM_THE_VIEW).
-#define ALHAFRA_MANOR_FROM_WORLD_MAP_VIEW 80
-
 /// The world map's exits its story scenes leave by (gSceneExits).
 enum WorldMapExit {
   WORLD_MAP_EXIT_IDEJIMA_DRIFTING = 64,

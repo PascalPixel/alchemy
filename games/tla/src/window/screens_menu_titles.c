@@ -10,8 +10,6 @@
 
 #define Decompress_ByteLz ((void (*)(void *, void *))Decompress_ByteLz)
 
-/// A command icon's pixels: 32x32 at a byte a pixel.
-#define COMMAND_ICON_BYTES (32 * 32)
 /// A row of a command icon's 8x8 tiles, four across, as a sprite holds them.
 #define COMMAND_ICON_TILE_ROW_BYTES (4 * TILE_SIZE_8BPP)
 
@@ -563,7 +561,6 @@ UNUSED void Graphics_InstallBg1VCountHandler(void) {
 
 #undef Decompress_ByteLz
 #undef Text_DrawStringAtOffset
-#undef COMMAND_ICON_BYTES
 #undef COMMAND_ICON_TILE_ROW_BYTES
 #undef ROW_LAST_PIXEL_SHIFT
 #undef COMMAND_ICON_COLORS

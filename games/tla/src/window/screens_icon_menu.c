@@ -82,8 +82,6 @@
 void Graphics_ExpandVramTilesByColorTable(u16 *tiles);
 
 #define COMMAND_ICON_X(state) ((state)->icons[0].oam.f.x)
-/// A command icon's pixels: 32x32 at a byte a pixel.
-#define COMMAND_ICON_BYTES (32 * 32)
 
 /// Collects the party's commands for a turn into `commands`, one for each of
 /// the `commandCount` units in `actors`, with two nested functions: the party
@@ -1785,7 +1783,6 @@ UNUSED void DebugSceneSelect_Schedule(void) {
 #undef PASSWORD_TEXT_Y
 #undef PASSWORD_LINE_HEIGHT
 #undef PAIR_WIDTH
-#undef COMMAND_ICON_BYTES
 #undef ICON_MENU_BOTTOM_ROW
 #undef ICON_ROW_LINES
 #undef PULSE_OVERHANG_X

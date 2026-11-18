@@ -289,6 +289,8 @@ enum BattleTargetHint {
 
 /// The command window's top tile row: it runs along the bottom three rows.
 #define COMMAND_ROW_TOP 17
+/// A command icon's pixels: 32x32 at a byte a pixel.
+#define COMMAND_ICON_BYTES (32 * 32)
 
 /// A space's width in pixels.
 #if LANGUAGE == LANGUAGE_JAPANESE

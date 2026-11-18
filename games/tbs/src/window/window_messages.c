@@ -14,12 +14,6 @@
 /// when the next byte is loaded.
 #define BIT_STREAM_STOP (1 << 7)
 
-/// Speakers up to Garet's child sprite take their portrait from
-/// gPortrait_CharacterMap, the others from gPortrait_SpriteMap; the portraits
-/// of those others are numbered from PORTRAIT_OTHER_FIRST (Icon_LoadWithPalette
-/// takes it as the row PORTRAIT_JUPITER_DJINNI).
-#define PORTRAIT_OTHER_FIRST 128
-
 /// Decodes message into text (a u16 string) with no length limit: text must
 /// have room for the whole message and its terminator.
 void Message_DecodeRawUnbounded(s32 message, u16 *text) {
@@ -493,8 +487,11 @@ void Portrait_ClearSlots(void) {
   } while (index != 2);
 }
 
-/// Returns the portrait of a character or another speaker's sprite (from
-/// PORTRAIT_OTHER_FIRST for those), or -1 when it has none.
+/// Returns the portrait of a character or another speaker's sprite, or -1 when
+/// it has none: speakers up to Garet's child sprite take theirs from
+/// gPortrait_CharacterMap, the others from gPortrait_SpriteMap, numbered from
+/// PORTRAIT_SPRITE_MAP_FIRST (Icon_LoadWithPalette takes it as the row
+/// PORTRAIT_JUPITER_DJINNI).
 s32 Portrait_GetForSpeaker(u32 value) {
   s32 result = -1;
   s32 portraitIndex = 0;
@@ -522,7 +519,7 @@ s32 Portrait_GetForSpeaker(u32 value) {
       if (speakerId == value) {
         portraitIndex++;
         result = gPortrait_SpriteMap[portraitIndex];
-        result += PORTRAIT_OTHER_FIRST;
+        result += PORTRAIT_SPRITE_MAP_FIRST;
         break;
       }
       portraitIndex += 2;

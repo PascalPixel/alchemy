@@ -5,8 +5,6 @@
 
 #include "battle_effect_internal.h"
 
-/// The battle background's colours, BG palettes 6 to 13.
-#define BATTLE_BACKGROUND_COLORS (8 * PALETTE_COLORS)
 /// A word of two palette entries, both `color`.
 #define COLOR_PAIR(color) ((color) << 16 | (color))
 
@@ -167,6 +165,9 @@ void BattleEffect_RunDeathPlunge(struct BattleEffectParams *args) {
 /// A sword drifts sideways 0 to 3 steps of two pixels a frame, and its picture
 /// is its step's: velocityX is the step << BLADE_RAIN_STEP_SHIFT.
 #define BLADE_RAIN_STEP_SHIFT 17
+/// Where on the canvas the first sword waits for its turn; each four after it
+/// wait a pixel higher.
+#define BLADE_RAIN_WAIT_Y 24
 
 /// Swords fall slanting in on the first target, one every 4 frames, and stick
 /// in the ground.
@@ -211,7 +212,7 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
     blade = &work->particles[i];
     column = Random16() % 96 + 16;
     blade->x = column;
-    blade->y = INTtoFIXED(24 - i / 4);
+    blade->y = toFIXED(BLADE_RAIN_WAIT_Y - i / 4);
     if (column <= 43)
       blade->velocityX = 3;
     else if (column <= 51)
@@ -602,7 +603,9 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
                       BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(0) |
                           BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31),
                       IO_WRITE_HALFWORD);
-  Iwram_FillWords((void *)&BG_PLTT_COLOR(6, 0), 256, COLOR_PAIR(RGB_WHITE));
+  Iwram_FillWords((void *)&BG_PLTT_COLOR(6, 0),
+                  BATTLE_BACKGROUND_COLORS * sizeof(u16),
+                  COLOR_PAIR(RGB_WHITE));
   Sound_PlayFar(SE_POWER_UP);
   BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_WHITE,
                            POSE_CAST, 0, 30);
@@ -678,19 +681,19 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
           y2 = octantY + centreY;
           if (y1 < 0)
             y1 = 0;
-          if (y2 > 119)
-            y2 = 119;
+          if (y2 > BATTLE_BACKGROUND_HEIGHT - 1)
+            y2 = BATTLE_BACKGROUND_HEIGHT - 1;
           if (x1 < 0)
             x1 = 0;
-          if (x2 > 255)
-            x2 = 255;
+          if (x2 > BATTLE_BACKGROUND_WIDTH - 1)
+            x2 = BATTLE_BACKGROUND_WIDTH - 1;
           SHATTERING_OPENING_PLOT_CORNERS(x1, x2, y1, y2);
           x1 = leftX + 1;
           x2 = octantX + SHATTERING_OPENING_DISC_X + 1;
           if (x1 < 0)
             x1 = 0;
-          if (x2 > 255)
-            x2 = 255;
+          if (x2 > BATTLE_BACKGROUND_WIDTH - 1)
+            x2 = BATTLE_BACKGROUND_WIDTH - 1;
           SHATTERING_OPENING_PLOT_CORNERS(x1, x2, y1, y2);
 
           x2 = octantY + centreX;
@@ -700,19 +703,19 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
           y1 = centreY - octantX;
           if (x1 < 0)
             x1 = 0;
-          if (x2 > 255)
-            x2 = 255;
+          if (x2 > BATTLE_BACKGROUND_WIDTH - 1)
+            x2 = BATTLE_BACKGROUND_WIDTH - 1;
           if (y1 < 0)
             y1 = 0;
-          if (y2 > 119)
-            y2 = 119;
+          if (y2 > BATTLE_BACKGROUND_HEIGHT - 1)
+            y2 = BATTLE_BACKGROUND_HEIGHT - 1;
           SHATTERING_OPENING_PLOT_CORNERS(x1, x2, y1, y2);
           x1 = innerLeftX + 1;
           x2 = octantY + SHATTERING_OPENING_DISC_X + 1;
           if (x1 < 0)
             x1 = 0;
-          if (x2 > 255)
-            x2 = 255;
+          if (x2 > BATTLE_BACKGROUND_WIDTH - 1)
+            x2 = BATTLE_BACKGROUND_WIDTH - 1;
           SHATTERING_OPENING_PLOT_CORNERS(x1, x2, y1, y2);
 
           error -= octantY * 2 + 1;
@@ -840,6 +843,9 @@ struct Streak {
 #define ELEMENT_BURST_BURST_WIDTH 48
 #define ELEMENT_BURST_BURST_HEIGHT 48
 #define ELEMENT_BURST_BURST (5 * PICTURE_BYTES(ELEMENT_BURST_SPARK))
+/// A burst mote's shortest life in frames; by its index a mote lives up to
+/// twice as long, less one.
+#define ELEMENT_BURST_MOTE_LIFE 16
 
 /// Sparks in an element's colours flare at four corners around a unit and motes
 /// spiral in, then a burst of light plays over it.
@@ -887,10 +893,13 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
     PARTICLES[i].z = (Random16() & 0x1ff) + 1024;
     PARTICLES[i].variant = -i;
   }
+  // A mote's x is its angle and y its distance from the user; its variant
+  // counts down its life.
   for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
     work->particles[i].x = Random16() & TRIG_ANGLE_MASK;
     work->particles[i].y = (Random16() & 31) + 16;
-    work->particles[i].variant = (i & 15) + 16;
+    work->particles[i].variant =
+        (i & (ELEMENT_BURST_MOTE_LIFE - 1)) + ELEMENT_BURST_MOTE_LIFE;
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
@@ -1071,7 +1080,6 @@ void BattleEffect_EndElementStreaks(void) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-#undef BATTLE_BACKGROUND_COLORS
 #undef COLOR_PAIR
 #undef DEATH_PLUNGE_FRAMES
 #undef DEATH_PLUNGE_RUN_PERCENT
@@ -1079,6 +1087,7 @@ void BattleEffect_EndElementStreaks(void) {
 #undef BLADE_RAIN_FRAMES
 #undef BLADE_RAIN_SWORDS
 #undef BLADE_RAIN_STEP_SHIFT
+#undef BLADE_RAIN_WAIT_Y
 #undef ELEMENT_PILLAR_FRAMES
 #undef ELEMENT_BLEND_LEVEL
 #undef ELEMENT_SPIRAL_MOTES
@@ -1096,3 +1105,4 @@ void BattleEffect_EndElementStreaks(void) {
 #undef STREAKS
 #undef STREAK_START_DISTANCE
 #undef STREAK_LENGTH
+#undef ELEMENT_BURST_MOTE_LIFE

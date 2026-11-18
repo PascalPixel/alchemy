@@ -370,8 +370,9 @@ void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
 #define LUCKY_WHEELS_PAYLINES 7
 #define LUCKY_WHEELS_MIDDLE_LINE 3
 #define LUCKY_WHEELS_BET_MAX 4
-/// The pulls of the lever after the first, before betting again.
-#define LUCKY_WHEELS_RESPINS 4
+/// The pulls of the lever a bet buys: "You have only 5 chances to pull the
+/// lever."
+#define LUCKY_WHEELS_PULLS 5
 /// The wheels' symbols, in icons.png's order.
 enum LuckyWheelsSymbol {
   LUCKY_WHEELS_SHIRT,
@@ -639,7 +640,7 @@ void LuckyWheels_Update(void) {
       if (work->pressed & KEY_A) {
         work->timer = 0;
         fx->frame = 0;
-        if (work->spins == LUCKY_WHEELS_RESPINS) {
+        if (work->spins == LUCKY_WHEELS_PULLS - 1) {
           work->spins = 0;
           work->cursor = 0;
           work->state = LUCKY_WHEELS_BETTING;
@@ -873,7 +874,7 @@ void LuckyWheels_Update(void) {
           work->phase = 0;
           Window_CloseFar(work->window, 1);
 #if LUCKY_WHEELS_HINT_BEFORE_LAST_SPIN
-          if (work->spins < LUCKY_WHEELS_RESPINS)
+          if (work->spins < LUCKY_WHEELS_PULLS - 1)
 #endif
           {
             work->window = Window_CreateFar(3, 16, 24, 4, 6);
@@ -892,7 +893,7 @@ void LuckyWheels_Update(void) {
             Text_DrawMessageAsTilesFar(message + 1, work->window, 0, 8);
           }
 #endif
-          if (work->spins == LUCKY_WHEELS_RESPINS) {
+          if (work->spins == LUCKY_WHEELS_PULLS - 1) {
             s32 left = PartyInventory_CountItemFar(ITEM_GAME_TICKET);
             struct Window *window;
             s32 message;
@@ -1032,7 +1033,7 @@ void LuckyWheels_Update(void) {
 
   // One sprite for each pull of the lever, the first and its re-pulls; the
   // current pull's takes other tiles.
-  for (i = 0; i != LUCKY_WHEELS_RESPINS + 1; i++) {
+  for (i = 0; i != LUCKY_WHEELS_PULLS; i++) {
     work->oam[sprite].attr01 =
         objMode | OBJ_X(i * 16 + 32) | 3 | OBJ_SIZE_32X16 | OBJ_256_COLORS;
     if (i == work->spins)

@@ -51,12 +51,13 @@
 #define SWORD_CARD_SHARD_FRAMES 36
 #define SWORD_CARD_SHARD_TOP 48
 #define SWORD_CARD_SHARD_SPEED 64
-/// The shard pictures (PaletteRampImage) in the sheet, followed by seven
-/// copies of them, each SWORD_CARD_SHARD_DIMMING levels darker than the one
-/// before but never blank.
-#define SWORD_CARD_SHARD_PICTURES 9600
-#define SWORD_CARD_SHARD_BYTES 696 ///< bytes in each copy
-#define SWORD_CARD_SHARD_COPIES 8  ///< the pictures and their darker copies
+/// The stat reduction's shard pictures (PaletteRampImage, drawn through
+/// gStatChange_ShardPictures) in the sheet, followed by seven copies of them,
+/// each SWORD_CARD_SHARD_DIMMING levels darker than the one before but never
+/// blank.
+#define STAT_REDUCTION_SHARD_PICTURES 9600
+#define STAT_REDUCTION_SHARD_BYTES 696 ///< bytes in each copy
+#define STAT_REDUCTION_SHARD_COPIES 8  ///< the pictures and their darker copies
 #define SWORD_CARD_SHARD_DIMMING 6
 /// A line's 16.16 sideways sway as its BG2X value in work->bg2xLines.
 #define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
@@ -140,18 +141,19 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
     Resource_LoadAndDecompress(RESOURCE_SWORD_CARD_SHEET, CARD, 1, 1);
     Resource_LoadAndDecompress(RESOURCE_DAGGER_SHEET, work->sheet, 1, 0);
     Resource_LoadAndDecompress(RESOURCE_PALETTE_RAMP_IMAGE,
-                               work->sheet + SWORD_CARD_SHARD_PICTURES, 0, 0);
-    for (i = 1; i != SWORD_CARD_SHARD_COPIES; i++) {
-      for (j = 0; j != SWORD_CARD_SHARD_BYTES; j++) {
-        s32 shade = work->sheet[SWORD_CARD_SHARD_PICTURES + j];
+                               work->sheet + STAT_REDUCTION_SHARD_PICTURES, 0,
+                               0);
+    for (i = 1; i != STAT_REDUCTION_SHARD_COPIES; i++) {
+      for (j = 0; j != STAT_REDUCTION_SHARD_BYTES; j++) {
+        s32 shade = work->sheet[STAT_REDUCTION_SHARD_PICTURES + j];
 
         if (shade > 0) {
           shade -= i * SWORD_CARD_SHARD_DIMMING;
           if (shade <= 0)
             shade = 1;
         }
-        work->sheet[SWORD_CARD_SHARD_PICTURES + i * SWORD_CARD_SHARD_BYTES +
-                    j] = shade;
+        work->sheet[STAT_REDUCTION_SHARD_PICTURES +
+                    i * STAT_REDUCTION_SHARD_BYTES + j] = shade;
       }
     }
     totalFrames = 116;
@@ -260,7 +262,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
             // first, unused after the flight, holds the cleared pixel.
             for (j = 0; j != CARD_WIDTH; j++) {
               /* FAKEMATCH(dead): first cleared inside the test, or'd into the
-               * step. */
+               * step; as first = 0 at the top of the outer body. */
               if (steps[(i & 7) * CARD_WIDTH + j] ==
                   ((frame - CARD_FLIGHT_FRAMES) | (first = 0)))
                 card[i * CARD_WIDTH + j] = first;
@@ -406,6 +408,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
           s32 angle = Random16() & TRIG_ANGLE_MASK;
           s32 force = 127;
 
+          // A random force below 128.
           force &= Random16();
 
           step = &work->particles[i];
@@ -428,8 +431,8 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
 
         if (time > SWORD_CARD_DAGGER_FRAMES + 4) {
           fade = (time - SWORD_CARD_DAGGER_FRAMES) / 4;
-          if (fade > SWORD_CARD_SHARD_COPIES - 1)
-            fade = SWORD_CARD_SHARD_COPIES - 1;
+          if (fade > STAT_REDUCTION_SHARD_COPIES - 1)
+            fade = STAT_REDUCTION_SHARD_COPIES - 1;
         }
         for (i = 0; i != SWORD_CARD_SHARDS; i++) {
           s32 picture;
@@ -437,8 +440,8 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
           step = &work->particles[i];
           picture = i % 4 * 3 + (step->variant + time) / 8 % 3;
           draw[0](canvas,
-                  work->sheet + SWORD_CARD_SHARD_PICTURES +
-                      (fade * SWORD_CARD_SHARD_BYTES +
+                  work->sheet + STAT_REDUCTION_SHARD_PICTURES +
+                      (fade * STAT_REDUCTION_SHARD_BYTES +
                        gStatChange_ShardPictures[picture]),
                   overflow + FIXED_INTEGER_PART(step->x) -
                       gStatChange_ShardWidths[picture] / 2,
@@ -542,8 +545,8 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
 #undef SWORD_CARD_SHARD_FRAMES
 #undef SWORD_CARD_SHARD_TOP
 #undef SWORD_CARD_SHARD_SPEED
-#undef SWORD_CARD_SHARD_PICTURES
-#undef SWORD_CARD_SHARD_BYTES
-#undef SWORD_CARD_SHARD_COPIES
+#undef STAT_REDUCTION_SHARD_PICTURES
+#undef STAT_REDUCTION_SHARD_BYTES
+#undef STAT_REDUCTION_SHARD_COPIES
 #undef SWORD_CARD_SHARD_DIMMING
 #undef CANVAS_WAVE_BG2X

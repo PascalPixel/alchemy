@@ -23,12 +23,25 @@
 /// whole cel above it.
 #define PROCNE_WHIRLWIND_FOOT_HEIGHT 48
 #define PROCNE_DUST (3 * PROCNE_WHIRLWIND_CEL)
-#define PROCNE_COMETS 13824
+#define PROCNE_COMET_PICTURES 13824
 
 #define PROCNE_DUST_MOTES 24 ///< dust motes that swirl up the whirlwind
+/// How much faster a dust mote circles the whirlwind each frame, up to
+/// PROCNE_DUST_SPIN_MAX, in 1/65536 turns a frame.
+#define PROCNE_DUST_SPIN_GAIN 50
+#define PROCNE_DUST_SPIN_MAX (TRIG_TURN / 16)
 /// The distance from the whirlwind's centre, in half pixels, that the lifted
 /// targets spiral in to.
 #define PROCNE_CORE_RADIUS 16
+/// How much faster the lifted targets circle each frame, in 1/65536 turns a
+/// frame, and how fast they circle once Procne arrives.
+#define PROCNE_SPIN_GAIN 48
+#define PROCNE_SKY_SPIN 6000
+
+/// Procne's sway: sixty-fourths of the wave's sine, as 16.16 pixels a frame,
+/// across and up and down; it bobs twice as far over its first 64 frames.
+#define PROCNE_SWAY 32
+#define PROCNE_BOB 16
 
 /// Procne's particles in work->particles: the sparks that gather on it, the
 /// ring of light each comet leaves, then one per comet.
@@ -185,7 +198,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
 
         if (frame < PROCNE_ARRIVAL_FRAME) {
           if (frame > index * 16 + 16)
-            spin[index] += 48;
+            spin[index] += PROCNE_SPIN_GAIN;
           if (radius[index] <= 31)
             actor->y.fixed += toFIXED(6);
           else
@@ -271,9 +284,9 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           point[index].velocityY += point[index].velocityX * 2;
           if (point[index].velocityY > TRIG_TURN)
             point[index].velocityY -= TRIG_TURN;
-          point[index].velocityX += 50;
-          if (point[index].velocityX > TRIG_TURN / 16)
-            point[index].velocityX = TRIG_TURN / 16;
+          point[index].velocityX += PROCNE_DUST_SPIN_GAIN;
+          if (point[index].velocityX > PROCNE_DUST_SPIN_MAX)
+            point[index].velocityX = PROCNE_DUST_SPIN_MAX;
           point[index].velocityY += TRIG_TURN / 32;
           point[index].y += point[index].velocityY * 2;
           if (point[index].y > toFIXED(48)) {
@@ -302,7 +315,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
       resource = Resource_GetTableEntry(RESOURCE_VIOLET_COMET_SHEET);
       Iwram_CopyWords(BG_PLTT, resource, SHEET_PALETTE_BYTES);
       resource += SHEET_PALETTE_BYTES;
-      Decompress_TaggedLz(resource, work->sheet + PROCNE_COMETS);
+      Decompress_TaggedLz(resource, work->sheet + PROCNE_COMET_PICTURES);
 
       for (index = 0; index != PROCNE_STRIKES * PROCNE_STRIKE_SPARK_ROWS;
            index++) {
@@ -328,18 +341,19 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
 
       EFFECT_FOR_EACH_TARGET(index, work->args) {
         radius[index] = PROCNE_CORE_RADIUS;
-        spin[index] = 6000;
+        spin[index] = PROCNE_SKY_SPIN;
       }
     }
 
     // Procne sways, pushed by each comet.
     if (frame >= PROCNE_ARRIVAL_FRAME) {
       scale = unitScale;
-      size = 16;
+      size = PROCNE_BOB;
       if (frame - PROCNE_ARRIVAL_FRAME <= 64)
-        size = 32;
+        size = PROCNE_BOB * 2;
 
-      wave.x -= (Trig_Sin((frame - PROCNE_ARRIVAL_FRAME) << 7) * 32) >> 6;
+      wave.x -=
+          (Trig_Sin((frame - PROCNE_ARRIVAL_FRAME) << 7) * PROCNE_SWAY) >> 6;
       wave.y += (Trig_Sin((frame - PROCNE_ARRIVAL_FRAME) << 9) * size) >> 6;
       wave.x += drift.x;
       wave.y += drift.y;
@@ -472,6 +486,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
           if (frame == launch) {
             comet->x = (FIXEDtoINT(wave.x) >> 1) + 32;
             comet->y = FIXEDtoINT(wave.y) - 4;
+            // Where it leaves Procne, kept for the ring of light.
             comet->velocityX = (FIXEDtoINT(wave.x) >> 1) + 32;
             comet->velocityY = FIXEDtoINT(wave.y) - 4;
 
@@ -571,9 +586,15 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
 #undef PROCNE_WHIRLWIND_CEL
 #undef PROCNE_WHIRLWIND_FOOT_HEIGHT
 #undef PROCNE_DUST
-#undef PROCNE_COMETS
+#undef PROCNE_COMET_PICTURES
 #undef PROCNE_DUST_MOTES
+#undef PROCNE_DUST_SPIN_GAIN
+#undef PROCNE_DUST_SPIN_MAX
 #undef PROCNE_CORE_RADIUS
+#undef PROCNE_SPIN_GAIN
+#undef PROCNE_SKY_SPIN
+#undef PROCNE_SWAY
+#undef PROCNE_BOB
 #undef PROCNE_GATHERING_SPARKS
 #undef PROCNE_RING
 #undef PROCNE_RING_MOTES

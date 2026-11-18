@@ -17,6 +17,9 @@ struct DmaRegisters {
   u32 control;
 };
 
+/// DMA3, the channel the game copies with, as its three registers.
+#define DMA3 ((volatile struct DmaRegisters *)&REG_DMA3SAD)
+
 /// Fills `size` bytes at `destination` with the halfword `value` by DMA3, from
 /// a volatile copy of it on the stack.
 #define Dma_Fill16(value, destination, size)                                   \

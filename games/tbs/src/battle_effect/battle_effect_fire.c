@@ -6,13 +6,6 @@
 
 /// The embers set up in PARTICLES: no row of gFire_Counts may ask for more.
 #define FIRE_EMBERS 64
-/// An ember in flight is drawn at size MOTE_SIZE_MAX at depth
-/// FIRE_EMBER_DEPTH_NEAR or nearer, one size smaller every
-/// FIRE_EMBER_DEPTH_STEP farther, its depth held below FIRE_EMBER_DEPTH_FAR.
-#define MOTE_SIZE_MAX 10
-#define FIRE_EMBER_DEPTH_NEAR 160
-#define FIRE_EMBER_DEPTH_STEP 64
-#define FIRE_EMBER_DEPTH_FAR 799
 /// The frames of an impact flare: its six pictures, two frames each.
 #define FIRE_FLARE_FRAMES 12
 
@@ -96,9 +89,9 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
 
         Projection_Point(ember, &screen);
         screen.x >>= 1;
-        CLAMP(screen.depth, FIRE_EMBER_DEPTH_NEAR, FIRE_EMBER_DEPTH_FAR);
-        size = MOTE_SIZE_MAX -
-               (screen.depth - FIRE_EMBER_DEPTH_NEAR) / FIRE_EMBER_DEPTH_STEP;
+        CLAMP(screen.depth, MOTE_DEPTH_NEAR, MOTE_DEPTH_FAR);
+        size =
+            MOTE_SIZE_MAX - (screen.depth - MOTE_DEPTH_NEAR) / MOTE_DEPTH_STEP;
         EFFECT_DRAW_MOTE(draw[frame < launchFrame + 48 ? 1 : 0], canvas, sheet,
                          screen.x, screen.y, size);
         ember->x += ember->velocityX;
@@ -178,8 +171,4 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
 }
 
 #undef FIRE_EMBERS
-#undef MOTE_SIZE_MAX
-#undef FIRE_EMBER_DEPTH_NEAR
-#undef FIRE_EMBER_DEPTH_STEP
-#undef FIRE_EMBER_DEPTH_FAR
 #undef FIRE_FLARE_FRAMES

@@ -641,7 +641,8 @@ void Iris_WipeScreen(u8 side, u8 speed, void (*midpoint)(void)) {
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY, CANVAS_FADE_THREE_QUARTERS);
+  // CANVAS_COPY does not read the 75.
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY, 75);
   REG_BG2PA = Q_8_8(0.28125); // about 3.6 times as wide
 
   // The band, column i: rising to the brightest level over the left edge,

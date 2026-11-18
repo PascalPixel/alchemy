@@ -151,11 +151,15 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
 
 /// The small Venus Djinni in the portal sheet.
 #define GROUND_DJINNI_PICTURE 26048
-/// The crackles round the portals, four a portal, in work->particles from
-/// GROUND_FIRST_CRACKLE.
+/// The portals set out in work->particles from 0, and the first of them, the
+/// ones drawn.
+#define GROUND_PORTALS 8
+#define GROUND_PORTALS_DRAWN 6
+/// The crackles round the portals in work->particles from
+/// GROUND_FIRST_CRACKLE, GROUND_CRACKLES_PER_PORTAL a portal.
 #define GROUND_FIRST_CRACKLE 32
-#define GROUND_CRACKLES 32
 #define GROUND_CRACKLES_PER_PORTAL 4
+#define GROUND_CRACKLES (GROUND_PORTALS * GROUND_CRACKLES_PER_PORTAL)
 
 /// After a Venus Djinni enters, six glowing portals leave the user, swirl and
 /// close in on the first target, each striking it as it arrives.
@@ -198,7 +202,9 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
   user = GetBattleObjectSlotFar(work->args->user)->actor;
   target = GetBattleObjectSlotFar(work->args->targets[0])->actor;
   // The portals fan out from above the user.
-  for (i = 0; i != 8; i++) {
+  // DEAD: the last two portals are set out but never drawn or moved; the ROM
+  // keeps their stores.
+  for (i = 0; i != GROUND_PORTALS; i++) {
     struct Particle *portal = &work->particles[i];
 
     SET_POSITION(portal, user->x.fixed, toFIXED(66), user->z.fixed);
@@ -236,6 +242,8 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
               SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
     }
     // Crackles flicker round each portal.
+    // DEAD: the crackles of the two portals never drawn are rolled too; the ROM
+    // keeps the rolls.
     if ((frame & 1) == 0) {
       for (i = 0; i != GROUND_CRACKLES; i++) {
         struct Particle *crackle = &work->particles[GROUND_FIRST_CRACKLE + i];
@@ -245,7 +253,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
       }
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
-    for (i = 0; i != 6; i++) {
+    for (i = 0; i != GROUND_PORTALS_DRAWN; i++) {
       struct Particle *portal = &work->particles[i];
 
       if (portal->variant == 1) {
@@ -350,3 +358,5 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY) {
 #undef GROUND_FIRST_CRACKLE
 #undef GROUND_CRACKLES
 #undef GROUND_CRACKLES_PER_PORTAL
+#undef GROUND_PORTALS
+#undef GROUND_PORTALS_DRAWN

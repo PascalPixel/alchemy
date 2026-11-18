@@ -62,30 +62,35 @@ enum SlashSheetPicture {
       PICTURE_BYTES(ATALANTA_SHAFT_MIDDLE)
 };
 
-#define TRAILS ((struct Particle *)Ram_MapCellBuffer)
-#define MATRICES (Ram_MapCellBuffer + 14336)
+/// The trail particles' random rotations, after the particles in PARTICLES.
+#define ATALANTA_MATRICES (Ram_MapCellBuffer + 14336)
 #define OBJ_VRAM ((u8 *)OBJ_VRAM0)
 
+/// Atalanta's sprites: four rows of three 32x32 pieces, the last row two.
 #define ATALANTA_PIECES 11
 
 #define ATALANTA_FALL_FRAMES 88 ///< frames of the shafts' fall
 
-#define ATALANTA_SHAFTS 16 ///< shafts of light that gather over the field
+#define ATALANTA_SHAFTS 16      ///< shafts of light that gather over the field
+#define ATALANTA_TRAIL_MOTES 24 ///< motes in each gathering shaft's trail
+/// The shafts placed for the fall, of which the first ATALANTA_FALLING_SHAFTS
+/// rain down on the targets.
+#define ATALANTA_PLACED_SHAFTS 32
+#define ATALANTA_FALLING_SHAFTS 24
 
-#define ATALANTA_TRAIL_MOTES 24    ///< motes in each gathering shaft's trail
-#define ATALANTA_FALLING_SHAFTS 24 ///< shafts that rain down on the targets
+/// How far below its projected point a trail mote is drawn.
+#define ATALANTA_TRAIL_DROP 16
+
+/// A landed shaft's burst: EmberStreakSheet's six flame pictures, four frames
+/// each, the shaft still showing over the first three.
+#define ATALANTA_BURST_PICTURE_FRAMES 4
+#define ATALANTA_BURST_FRAMES (6 * ATALANTA_BURST_PICTURE_FRAMES)
+#define ATALANTA_BURST_SHAFT_FRAMES (3 * ATALANTA_BURST_PICTURE_FRAMES)
 
 /// Under a violet sky Atalanta flies across the screen while sixteen shafts of
-/// light gather trails of motes, flash and fly off; then shafts rain down
+/// light gather trails of motes, flash and fly off; then 24 shafts rain down
 /// diagonally on the targets and burst in light, hitting each target as they
 /// land.
-///
-/// Atalanta is built from eleven sprites. First loop (220 frames, A or B
-/// skips): she follows her path table, and from frame 64 a shaft every eight
-/// frames draws its trails in, flashes for five frames and flies off. Second
-/// loop (88 frames): 32 shafts fall from the sky, the first 24 two frames
-/// apart, and burst on the ground, each one shaking the screen and flashing a
-/// target.
 ///
 /// Abilities: Atalanta.
 void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
@@ -94,7 +99,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   struct SpritePlacement position;
   struct ScreenPoint target;
   DrawRectangle draw[2];
-  struct BattleBackgroundWork *presentation;
+  struct BattleBackgroundWork *view;
   void *canvas;
   struct BattleEffectWork *work;
   s8 *path;
@@ -110,12 +115,13 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   u8 *tiles;
   u8 *picture;
 
-  presentation = Ram_HeapSlots->battleBackground;
+  view = Ram_HeapSlots->battleBackground;
   tiles = Ram_MapCellBuffer;
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;
   sheet = Ram_HeapSlots->battleSheet;
   scrollX = gBgScroll[1].x;
+  // The screen wipes to black before Atalanta appears.
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP);
   BattleEffect_ConfigureEffectDisplay();
   PLTT_BACKDROP = 0;
@@ -125,13 +131,11 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_FILL);
   BattleEffect_SelectLivingTargets(work->args);
 
-  // Atalanta: eleven sprite objects with their tiles.
+  // Atalanta's eleven sprites, with her palette and tiles.
   Ram_HeapSlots->battleWork->keepBackdropPalette = 1;
   picture = Resource_GetTableEntry(RESOURCE_LEAF_WARRIOR_TILES);
   Iwram_CopyWords(OBJ_PLTT, picture, OBJ_PLTT_SIZE);
-  // Two steps: one `+= 512` reuses the size's constant across the call.
-  picture += 256;
-  picture += 256;
+  picture += OBJ_PLTT_SIZE;
   Decompress_TaggedLz(picture, tiles);
   for (i = 0; i != ATALANTA_PIECES; i++) {
     struct Sprite *piece = EffectSprite_CreateWithTiles(
@@ -164,13 +168,14 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   work->scrollStepX = -1;
   work->scrollStepY = 0;
   Task_Add(BattleEffect_AdvanceScrollOnInterval, TASK_PASS_VBLANK);
-  presentation->busy = 1;
+  view->busy = 1;
   BattleEffect_WipeCanvas(CANVAS_WIPE_DOWN, CANVAS_WIPE_CLEAR);
   EFFECT_SHOW_WIDE_CANVAS(BLEND_WEIGHT_MAX);
   pathX = 0;
   pathY = 0;
 
-  // Each shaft: a place on the canvas and 24 trails in random orientations.
+  // Each shaft starts at a random spot with its trail of motes, each turned
+  // at random.
   for (i = 0; i != ATALANTA_SHAFTS; i++) {
     struct Particle *shaft = &work->particles[i];
 
@@ -180,19 +185,21 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
     shaft->velocityY = 0;
     shaft->variant = 0;
     for (j = 0; j != ATALANTA_TRAIL_MOTES; j++) {
-      TRAILS[i * ATALANTA_TRAIL_MOTES + j].x = (Random16() & 15) + 48;
+      PARTICLES[i * ATALANTA_TRAIL_MOTES + j].x = (Random16() & 15) + 48;
       Matrix_Initialize();
       Matrix_RotateZ(Random16() & TRIG_ANGLE_MASK);
       Matrix_RotateX(Random16() & TRIG_ANGLE_MASK);
       Matrix_RotateY(Random16() & TRIG_ANGLE_MASK);
-      Matrix_Get(MATRICES + (i * ATALANTA_TRAIL_MOTES + j) * sizeof(MATRIX));
+      Matrix_Get(ATALANTA_MATRICES +
+                 (i * ATALANTA_TRAIL_MOTES + j) * sizeof(MATRIX));
     }
   }
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
 
+  // The gathering (A or B ends it).
   for (frame = 0; frame != 220 && !(gInput.repeat & (KEY_A | KEY_B)); frame++) {
-    // Atalanta flies her path: two absolute words, then a step a frame.
+    // Atalanta flies along her path: where she starts, then a step a frame.
     if (frame <= 209) {
       if (frame == 0) {
         pathX = (path[0] << 8) + (u8)path[1];
@@ -208,13 +215,13 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
       for (row = 0; row != 4; row++) {
         for (column = 0; column != 3; column++) {
           if (row != 3 || column != 2) {
-            position.x = (pathX + 80 + column * 32) * 65536;
-            position.y = INTtoFIXED(64 - pathY + row * 32);
+            position.x = toFIXED(pathX + 80 + column * 32);
+            position.y = toFIXED(64 - pathY + row * 32);
             if (row == 3)
-              position.x = (pathX + 80 + column * 32 + 32) * 65536;
+              position.x = toFIXED(pathX + 80 + column * 32 + 32);
             Render_ApplyProjectedPlacementFar(work->sprites[row * 3 + column],
-                                              &position, gAtalanta_UnitScale,
-                                              0);
+                                              SpritePlacement_Values(&position),
+                                              gAtalanta_UnitScale, 0);
           }
         }
       }
@@ -284,18 +291,17 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
           }
         } else {
           for (j = 0; j != ATALANTA_TRAIL_MOTES; j++) {
-            struct Particle *trail = &TRAILS[i * ATALANTA_TRAIL_MOTES + j];
+            struct Particle *trail = &PARTICLES[i * ATALANTA_TRAIL_MOTES + j];
 
             if (trail->x > 0) {
-              Matrix_Load(MATRICES +
+              Matrix_Load(ATALANTA_MATRICES +
                           (i * ATALANTA_TRAIL_MOTES + j) * sizeof(MATRIX));
               point[0] = trail->x;
               EffectPosition_ProjectPoint(point, &screen);
               screen.x = (screen.x >> 1) + x;
-              screen.y = screen.y + y + 16;
+              screen.y = screen.y + y + ATALANTA_TRAIL_DROP;
               trail->x -= 4;
-              draw[1](canvas, sheet + gBattleEffect_MotePictures[4],
-                      screen.x - 2, screen.y - 5, 5, 10);
+              EFFECT_DRAW_MOTE(draw[1], canvas, sheet, screen.x, screen.y, 5);
             }
           }
         }
@@ -304,16 +310,17 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
     EFFECT_PRESENT_CANVAS(work);
   }
 
-  // Atalanta leaves: the sky stops, the palette is restored and the
-  // pieces go.
+  // Atalanta leaves: the sky stops, the palettes are restored and her
+  // sprites go.
   Task_Remove(BattleEffect_AdvanceScrollOnInterval);
-  presentation->busy = 0;
+  view->busy = 0;
   gBgScroll[1].x = scrollX;
   BattleEffect_SetupBlendedDisplay();
   Palette_LoadBasicSpriteColors();
-  Dma_Set(OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0),
+  Dma_Set(OBJ_PLTT, (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
-  BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
+  BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
+      BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   for (i = 0; i != ATALANTA_PIECES; i++)
     Sprite_DestroyFar(work->sprites[i]);
   REG_BG2PA = Q_8_8(0.5);
@@ -321,8 +328,9 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_EMBER_STREAK_SHEET, Ram_MapCellBuffer, 1,
                              0);
 
-  // 32 shafts fall from the sky, over the targets where there are any.
-  for (i = 0; i != 32; i++) {
+  // The shafts start above the sky, each aimed at a target where there is
+  // one.
+  for (i = 0; i != ATALANTA_PLACED_SHAFTS; i++) {
     struct Particle *shaft = &work->particles[i];
     s32 member = i % 6;
 
@@ -336,26 +344,38 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
     }
     shaft->variant = -1;
   }
+  // The shafts rain down on the targets, two frames apart.
   for (frame = 0; frame != ATALANTA_FALL_FRAMES; frame++) {
     for (i = 0; i != ATALANTA_FALLING_SHAFTS; i++) {
       struct Particle *shaft = &work->particles[i];
 
       if (frame >= i * 2 || frame > 40) {
         if (shaft->variant >= 0) {
-          // On the ground: six flame pictures, four frames each, the shaft
-          // still showing for the first three.
-          if (shaft->variant <= 23) {
-            s32 cell = shaft->variant / 4;
+          // A landed shaft bursts in light.
+          if (shaft->variant < ATALANTA_BURST_FRAMES) {
+            s32 flame = shaft->variant / ATALANTA_BURST_PICTURE_FRAMES;
             u32 width;
 
+            // UB: width is assigned in one argument and read in another.
+#ifdef UBFIX
+            width = gBattleEffect_PuffArcPictureWidths[flame];
             draw[i & 1](
-                canvas, Ram_MapCellBuffer + gBattleEffect_PuffArcPictures[cell],
+                canvas,
+                Ram_MapCellBuffer + gBattleEffect_PuffArcPictures[flame],
+                shaft->x - (width >> 1) - 8,
+                shaft->y + gBattleEffect_PuffArcPictureBiasY[flame] - 40, width,
+                gBattleEffect_PuffArcPictureHeights[flame]);
+#else
+            draw[i & 1](
+                canvas,
+                Ram_MapCellBuffer + gBattleEffect_PuffArcPictures[flame],
                 shaft->x -
-                    ((width = gBattleEffect_PuffArcPictureWidths[cell]) >> 1) -
+                    ((width = gBattleEffect_PuffArcPictureWidths[flame]) >> 1) -
                     8,
-                shaft->y + gBattleEffect_PuffArcPictureBiasY[cell] - 40, width,
-                gBattleEffect_PuffArcPictureHeights[cell]);
-            if (shaft->variant <= 11) {
+                shaft->y + gBattleEffect_PuffArcPictureBiasY[flame] - 40, width,
+                gBattleEffect_PuffArcPictureHeights[flame]);
+#endif
+            if (shaft->variant < ATALANTA_BURST_SHAFT_FRAMES) {
               EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet,
                                   ATALANTA_SHAFT_TOP, shaft->x + 4,
                                   shaft->y - 40);
@@ -366,7 +386,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
           }
           shaft->variant++;
         } else {
-          // Falling: the blade sinks into the ground below y = 56.
+          // Falling: the shaft sinks into the ground below y = 56.
           s32 height = 24;
 
           if (shaft->y > 56)
@@ -400,4 +420,12 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   }
   EFFECT_FINISH_CANVAS();
 }
+
+#undef ATALANTA_MATRICES
 #undef OBJ_VRAM
+#undef ATALANTA_PIECES
+#undef ATALANTA_PLACED_SHAFTS
+#undef ATALANTA_TRAIL_DROP
+#undef ATALANTA_BURST_PICTURE_FRAMES
+#undef ATALANTA_BURST_FRAMES
+#undef ATALANTA_BURST_SHAFT_FRAMES

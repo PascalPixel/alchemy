@@ -40,13 +40,8 @@
 #define THOR_BOLT_WIDTH 72
 #define THOR_BOLT_HEIGHT 72
 
-/// The dimmed copies of the mote pictures: DIMMED_MOTE_SETS sets of
-/// MOTE_SET_BYTES, set i with every level capped at DIMMED_MOTE_CAP(i), 7
-/// levels lower than the set before, set 0 not at all. Thor's ring darkens
-/// through them once the beam has fallen.
-#define DIMMED_MOTE_SETS 8
-#define DIMMED_MOTE_CAP(set) (CANVAS_LEVEL_BRIGHTEST + 1 - (set) * 7)
-/// Where Thor keeps its dimmed motes in its sheet.
+/// Where Thor keeps its dimmed copies of the mote pictures in its sheet; its
+/// ring darkens through them once the beam has fallen.
 #define THOR_DIMMED_MOTES 10000
 
 #define THOR_SPRITES 9 ///< Thor's sprites, in SUMMON_FORMATION_THOR
@@ -158,12 +153,12 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
 
   {
     s32 offset;
-    for (i = 0, offset = 0; i != DIMMED_MOTE_SETS; i++) {
+    for (i = 0, offset = 0; i != DIMMED_COPIES; i++) {
       u8 *src;
       for (j = 0, src = sprites; j != MOTE_SET_BYTES; j++) {
         s32 v = *src++;
 
-        EFFECT_CAP_LEVEL(v, DIMMED_MOTE_CAP(i));
+        EFFECT_CAP_LEVEL(v, DIMMED_COPY_CAP(i));
         (work->sheet + THOR_DIMMED_MOTES)[offset + j] = v;
       }
       offset += j;
@@ -306,8 +301,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       if (frame > 155) {
         level = frame - 156;
       }
-      if (level > DIMMED_MOTE_SETS - 1) {
-        level = DIMMED_MOTE_SETS - 1;
+      if (level > DIMMED_COPIES - 1) {
+        level = DIMMED_COPIES - 1;
       }
       if (frame <= 139) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
@@ -646,7 +641,5 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
 #undef THOR_PARTICLES
 #undef THOR_HAMMER_GLOW_PICTURE
 #undef THOR_DIMMED_MOTES
-#undef DIMMED_MOTE_SETS
-#undef DIMMED_MOTE_CAP
 #undef THOR_LAUNCH_SPARKS
 #undef THOR_SPRITE_PICTURES

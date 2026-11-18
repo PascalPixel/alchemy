@@ -1,5 +1,5 @@
-
-// The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3).
+/// @file
+/// The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3).
 
 /// The leader pushes the actor standing in the next cell ahead one cell on
 /// (a rock, a weight or a stone pillar on the stages), when nothing solid

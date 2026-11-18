@@ -7,32 +7,60 @@
 
 struct MeshTriangle;
 
-#define DOME_ROWS 16
-#define DOME_COLUMNS 16
-
-/// Where VenusDjinnSmallSheet is decoded in the effect's pictures.
-#define GEODE_VENUS_DJINN_SMALL_PICTURES 26048
-
 #define GEODE_FRAMES 74
 
-/// Where BillowTexture is decoded in the effect's pictures.
-#define GEODE_BILLOW 18192
-/// The dome's projected corners, its corners and its mesh, in the effect's
-/// pictures.
-#define GEODE_VERTICES 2048
-#define GEODE_MESH 3072
+/// The clod of earth: the battlefield's picture wrapped round a cylinder of
+/// GEODE_CYLINDER_RADIUS, GEODE_CLOD_RINGS rings of GEODE_CLOD_RING_VERTICES
+/// stacked GEODE_RING_SPACING apart, which over GEODE_ROLL_FRAMES rolls up
+/// into a ball of GEODE_CLOD_RADIUS, its rings from pole to pole.
+#define GEODE_CLOD_RINGS 16
+#define GEODE_CLOD_RING_VERTICES 16
+#define GEODE_CLOD_VERTICES (GEODE_CLOD_RINGS * GEODE_CLOD_RING_VERTICES)
+#define GEODE_RING_SPACING 8
+#define GEODE_CLOD_TOP (-GEODE_CLOD_RINGS * GEODE_RING_SPACING / 2)
+#define GEODE_RING_TURN (DEGtoANG(180) / (GEODE_CLOD_RINGS - 1))
+#define GEODE_CYLINDER_RADIUS 56
+#define GEODE_CLOD_RADIUS 48
+#define GEODE_ROLL_FRAMES 16
+/// From GEODE_TUMBLE_FRAME the clod tumbles forward, faster and then slower,
+/// along a sine that advances GEODE_TUMBLE_STEP a frame.
+#define GEODE_TUMBLE_FRAME 8
+#define GEODE_TUMBLE_STEP 924
+/// BG2 shows the canvas at zoom / GEODE_ZOOM_ONE times its width: twice, the
+/// battlefield at its own size, while the clod is flat, and once when it is
+/// round.
+#define GEODE_ZOOM_ONE 32
 
-/// The Venus Djinni tears up the battlefield itself: the screen is copied
-/// into a texture and peeled up into a spinning dome over the target as the
-/// palette fades, the Djinni flies across to it, and at frame 48 the dome
-/// slams down in rings of dust before the backdrop fades back in.
+/// From GEODE_FLIGHT_FRAME the clod flies onto the target over
+/// GEODE_FLIGHT_FRAMES, the Djinni streaking behind it, and lands at
+/// GEODE_CRASH_FRAME.
+#define GEODE_FLIGHT_FRAME 36
+#define GEODE_FLIGHT_FRAMES 12
+#define GEODE_CRASH_FRAME (GEODE_FLIGHT_FRAME + GEODE_FLIGHT_FRAMES)
+/// The billows lean back GEODE_BILLOW_TILT.
+#define GEODE_BILLOW_TILT 1000
+
+/// The effect's pictures open with the clod's projected corners, then its
+/// corners and its mesh; BillowTexture and VenusDjinnSmallSheet are decoded
+/// further on.
+#define GEODE_CLOD_CORNERS                                                     \
+  (GEODE_CLOD_VERTICES * sizeof(struct ProjectedVertex))
+#define GEODE_CLOD_MESH                                                        \
+  (GEODE_CLOD_CORNERS + GEODE_CLOD_VERTICES * sizeof(struct ModelVertex))
+#define GEODE_BILLOW 18192
+#define GEODE_DJINNI_PICTURE 26048 ///< the small Venus Djinni
+
+/// The battlefield itself rolls up into a clod of earth over the caster,
+/// spinning and tumbling, and flies onto the target with the Venus Djinni
+/// streaking behind it in fire; it lands in a white flash, billows of fire
+/// burst up and the screen shakes, and the backdrop comes back.
 ///
 /// Abilities: Geode.
 void BattleEffect_RunGeode(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
-  // Unused: blit[1], the idle half of the pair, gives the stack frame its 4
-  // bytes.
+  /* LEFTOVER(frame): blit[1], the pair's idle second blitter, which the ROM's
+   * frame reserves and never touches; as one DrawRectangle. */
   DrawRectangle blit[2];
   struct BattleBackgroundWork *backdrop;
   u8 *projected;
@@ -49,7 +77,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
   struct ScreenPoint source;
   struct ScreenPoint target;
   struct ModelTexture texture;
-  struct ModelTexture dust;
+  struct ModelTexture billow;
   struct RenderModel *model;
   struct RenderModel *rings;
   s32 frame;
@@ -85,21 +113,22 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK + 15);
   Task_Add(Display_ApplyBg2Affine, TASK_PASS_VBLANK + 127);
   projected = work->sheet;
-  vertices = (struct ModelVertex *)(work->sheet + GEODE_VERTICES);
-  mesh = work->sheet + GEODE_MESH;
+  vertices = (struct ModelVertex *)(work->sheet + GEODE_CLOD_CORNERS);
+  mesh = work->sheet + GEODE_CLOD_MESH;
   pitch = 0;
   battle = Ram_HeapSlots->battleWork;
   caster = BattleObject_GetFar(args->user)->object;
   gBgScroll[1].x = -56;
-  // The battlefield's picture, later the dome's texture.
+  // The battlefield's picture, the clod's texture: BG2's 256-colour tiles
+  // copied a tile's line at a time into plain lines of pixels.
   picture = gMapGridCellBuffer;
   {
     u8 *cell = picture;
     s32 x;
 
-    // Take the battlefield's picture off BG2's tiles, row by row.
-    for (i = 0; i <= 119; i++) {
-      for (x = 0; x <= 2047; x += 64) {
+    for (i = 0; i < BATTLE_BACKGROUND_HEIGHT; i++) {
+      for (x = 0; x < BATTLE_BACKGROUND_WIDTH / 8 * TILE_SIZE_8BPP;
+           x += TILE_SIZE_8BPP) {
         Iwram_CopyWordsEntry(
             cell, (u8 *)BG_CHAR_BLOCK(2) + (((i / 8) << 8) + (i & 7)) * 8 + x,
             8);
@@ -108,8 +137,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
     }
   }
   Resource_LoadAndDecompress(RESOURCE_VENUS_DJINN_SMALL_SHEET,
-                             work->sheet + GEODE_VENUS_DJINN_SMALL_PICTURES, 1,
-                             1);
+                             work->sheet + GEODE_DJINNI_PICTURE, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_BILLOW_TEXTURE,
                              work->sheet + GEODE_BILLOW, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
@@ -117,13 +145,15 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
                        SHEET_PALETTE_BYTES);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BG2PA, Q_8_8(0.5), IO_WRITE_HALFWORD);
   Actor_SetAnimationSpeedFar(caster, ANIMATION_STEP_NORMAL * 3);
-  Mesh_BuildGrid(mesh, DOME_COLUMNS, DOME_ROWS, 16, 8);
+  Mesh_BuildGrid(mesh, GEODE_CLOD_RING_VERTICES, GEODE_CLOD_RINGS,
+                 BATTLE_BACKGROUND_WIDTH / GEODE_CLOD_RING_VERTICES,
+                 GEODE_RING_SPACING);
 
   for (frame = 0; frame != GEODE_FRAMES; frame++) {
     EffectPosition_ProjectBattler(args->user, &source);
     EffectPosition_ProjectBattler(args->targets[0], &target);
 
-    // The backdrop's palette fades toward the battle's.
+    // The backdrop's colours come down from the entrance's white to its own.
     if (frame <= 11) {
       u16 *from = battle->palette;
       u16 *to = (u16 *)&BG_PLTT_COLOR(6, 0);
@@ -173,7 +203,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
                           IO_WRITE_HALFWORD);
       Iwram_ClearWordsEntry(canvas, CANVAS_VIEW_BYTES);
       gBgScroll[1].y = 78;
-      gBgScroll[1].x = 64 - source.x;
+      gBgScroll[1].x = CANVAS_SIZE / 2 - source.x;
       REG_BG1CNT &= ~BGCNT_PRIORITY(3);
       REG_BG1CNT |= BGCNT_PRIORITY(1);
       REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
@@ -193,7 +223,7 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
                           IO_WRITE_HALFWORD);
     }
     if (frame == 18) {
-      BattleEffect_TintBattler(args->user, TINT_KEEP, 2, 0, -1);
+      BattleEffect_TintBattler(args->user, TINT_KEEP, POSE_LEAP, 0, -1);
     }
     if (frame == 36) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -201,91 +231,104 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
     }
     if ((u32)(frame - 34) <= 5) {
       if (args->side == EFFECT_SIDE_ENEMIES) {
-        REG_WIN0H = WIN_RANGE(32, 240);
-        REG_WIN1H = WIN_RANGE(32, 240);
+        REG_WIN0H = WIN_RANGE(32, DISPLAY_WIDTH);
+        REG_WIN1H = WIN_RANGE(32, DISPLAY_WIDTH);
       } else {
-        REG_WIN0H = WIN_RANGE(0, 208);
-        REG_WIN1H = WIN_RANGE(0, 208);
+        REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH - 32);
+        REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH - 32);
       }
     } else if (frame == 40) {
       REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
       REG_WIN1H = WIN_RANGE(0, DISPLAY_WIDTH);
     }
 
-    // The Djinni flies to the target.
-    if ((u32)(frame - 36) <= 25) {
-      s32 t = frame - 36;
+    // The clod, now on BG1, flies onto the target with the Djinni behind it,
+    // drawn twice to glow twice as bright in the canvas's orange, its trail
+    // fading by half a frame.
+    if ((u32)(frame - GEODE_FLIGHT_FRAME) <= 25) {
+      s32 t = frame - GEODE_FLIGHT_FRAME;
       s32 x;
       s32 y;
 
-      if (t > 12) {
-        t = 12;
+      if (t > GEODE_FLIGHT_FRAMES) {
+        t = GEODE_FLIGHT_FRAMES;
       }
-      x = source.x + (target.x - source.x) * t / 12;
-      y = (t << 6) / 12 + 16;
-      gBgScroll[1].x = 64 - x;
-      gBgScroll[1].y = t * -46 / 12 + 78;
+      x = source.x + (target.x - source.x) * t / GEODE_FLIGHT_FRAMES;
+      y = t * 64 / GEODE_FLIGHT_FRAMES + 16;
+      gBgScroll[1].x = CANVAS_SIZE / 2 - x;
+      gBgScroll[1].y = t * -46 / GEODE_FLIGHT_FRAMES + 78;
       if (args->side == EFFECT_SIDE_ENEMIES) {
         x = x / 2 + 20;
       } else {
         x = x / 2 - 20;
       }
-      blit[0](canvas, work->sheet + GEODE_VENUS_DJINN_SMALL_PICTURES, x - 10,
-              y - 48, SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
-      blit[0](canvas, work->sheet + GEODE_VENUS_DJINN_SMALL_PICTURES, x - 10,
-              y - 48, SMALL_DJINNI_WIDTH, SMALL_DJINNI_HEIGHT);
+      blit[0](canvas, work->sheet + GEODE_DJINNI_PICTURE,
+              x - SMALL_DJINNI_WIDTH / 2, y - 48, SMALL_DJINNI_WIDTH,
+              SMALL_DJINNI_HEIGHT);
+      blit[0](canvas, work->sheet + GEODE_DJINNI_PICTURE,
+              x - SMALL_DJINNI_WIDTH / 2, y - 48, SMALL_DJINNI_WIDTH,
+              SMALL_DJINNI_HEIGHT);
     }
 
-    // The battlefield peels up into a dome.
+    // The battlefield rolls up into the clod over the caster.
     if ((u32)frame <= 34) {
-      s32 size;
+      s32 zoom;
       s32 centerX;
       s32 centerY;
       s32 height;
       s32 angle;
 
       curl = frame;
-      if (curl > 16) {
-        curl = 16;
+      if (curl > GEODE_ROLL_FRAMES) {
+        curl = GEODE_ROLL_FRAMES;
       }
-      size = 64 - curl * 2;
+      zoom = GEODE_ZOOM_ONE * 2 - curl * (GEODE_ZOOM_ONE / GEODE_ROLL_FRAMES);
       // DEAD: frame >= 0 is always true inside this range, so the defaults are
       // always overwritten; the ROM keeps both moves and the compare.
-      centerX = 120;
+      centerX = DISPLAY_WIDTH / 2;
       centerY = -16;
       if (frame >= 0) {
         s32 f = frame;
 
-        if (f > 16) {
-          f = 16;
+        if (f > GEODE_ROLL_FRAMES) {
+          f = GEODE_ROLL_FRAMES;
         }
-        centerX = (source.x - 120) * f / 16 + 120;
-        centerY = 46 * f / 16 - 16;
+        centerX = (source.x - DISPLAY_WIDTH / 2) * f / GEODE_ROLL_FRAMES +
+                  DISPLAY_WIDTH / 2;
+        centerY = 46 * f / GEODE_ROLL_FRAMES - 16;
       }
-      work->bg2x = (64 - (centerX << 5) / size) << 8;
+      work->bg2x = (CANVAS_SIZE / 2 - centerX * GEODE_ZOOM_ONE / zoom) << 8;
       work->bg2y = centerY << 8;
       {
-        s32 ratio = 8192 / size;
+        s32 ratio = Q_8_8(1) * GEODE_ZOOM_ONE / zoom;
 
         work->bg2pa = ratio;
         work->bg2pd = Q_8_8(1);
       }
-      for (row = 0, height = -64, angle = 0; row != DOME_ROWS;
-           height += 8, angle += 2184, row++) {
-        s32 lift = FIXEDtoINT((-Trig_Cos(angle) * 3) << 4);
-        s32 reach = FIXEDtoINT(Trig_Sin(angle) * 48);
+      // Each ring moves from its place on the cylinder toward its place on
+      // the ball as the clod curls.
+      for (row = 0, height = GEODE_CLOD_TOP, angle = 0; row != GEODE_CLOD_RINGS;
+           row++) {
+        s32 ballY = FIXEDtoINT(-Trig_Cos(angle) * GEODE_CLOD_RADIUS);
+        s32 ballRadius = FIXEDtoINT(Trig_Sin(angle) * GEODE_CLOD_RADIUS);
         s32 column;
         s32 y;
         s32 radius;
-        y = (lift - height) * curl / 16 + height;
-        radius = (reach - 56) * curl / 16 + 56;
-        for (column = 0; column != DOME_COLUMNS; column++) {
-          vertices[row * DOME_COLUMNS + column].x =
-              FIXEDtoINT(Trig_Sin(column << 12) * radius);
-          vertices[row * DOME_COLUMNS + column].y = y;
-          vertices[row * DOME_COLUMNS + column].z =
-              FIXEDtoINT(Trig_Cos(column << 12) * radius);
+        y = (ballY - height) * curl / GEODE_ROLL_FRAMES + height;
+        radius =
+            (ballRadius - GEODE_CYLINDER_RADIUS) * curl / GEODE_ROLL_FRAMES +
+            GEODE_CYLINDER_RADIUS;
+        for (column = 0; column != GEODE_CLOD_RING_VERTICES; column++) {
+          s32 turn = column * (TRIG_TURN / GEODE_CLOD_RING_VERTICES);
+
+          vertices[row * GEODE_CLOD_RING_VERTICES + column].x =
+              FIXEDtoINT(Trig_Sin(turn) * radius);
+          vertices[row * GEODE_CLOD_RING_VERTICES + column].y = y;
+          vertices[row * GEODE_CLOD_RING_VERTICES + column].z =
+              FIXEDtoINT(Trig_Cos(turn) * radius);
         }
+        height += GEODE_RING_SPACING;
+        angle += GEODE_RING_TURN;
       }
       model = Render_AllocateModelList(1);
       texture.logWidth = 8;
@@ -299,16 +342,17 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       model->scrollU = 0;
       model->scrollV = 0;
       Matrix_Initialize();
-      if (frame > 7) {
-        pitch += Trig_Sin(frame * 924 - 7392) >> 5;
+      if (frame >= GEODE_TUMBLE_FRAME) {
+        pitch +=
+            Trig_Sin((frame - GEODE_TUMBLE_FRAME) * GEODE_TUMBLE_STEP) >> 5;
         Matrix_RotateX(pitch * 3 / 2);
       }
-      Matrix_RotateY(frame << 9);
-      Render_TransformVertices(vertices, projected, 256);
+      Matrix_RotateY(frame * (TRIG_TURN / 128));
+      Render_TransformVertices(vertices, projected, GEODE_CLOD_VERTICES);
       Render_DrawModelList(model);
       Heap_Release(model);
     }
-    if (frame == 48) {
+    if (frame == GEODE_CRASH_FRAME) {
       Sound_PlayFar(SE_CRASH);
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
@@ -317,30 +361,30 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
 
-    // Rings of dust.
-    if (frame > 47) {
+    // Billows of fire burst from where the clod lands: four flared rings
+    // stretched tall that grow and fade, turning one way and the other.
+    if (frame >= GEODE_CRASH_FRAME) {
       void *ring = Heap_AllocEwram(512);
 
       rings = Render_AllocateModelList(1);
-      dust.logWidth = 6;
-      dust.logHeight = 6;
-      dust.pixels = work->sheet + GEODE_BILLOW;
+      billow.logWidth = 6;
+      billow.logHeight = 6;
+      billow.pixels = work->sheet + GEODE_BILLOW;
       rings->kind = MODEL_SHADED_ADDITIVE;
-      rings->texture = &dust;
+      rings->texture = &billow;
       rings->mesh = gBattleEffect_RingMesh;
       rings->vertices = ring;
       rings->scrollU = 0;
       rings->scrollV = 0;
       for (i = 0; i != 4; i++) {
-        s32 start = gGeode_WaveStarts[i] + 48;
+        s32 start = gGeode_WaveStarts[i] + GEODE_CRASH_FRAME;
         FIXED scale;
         s32 shade;
 
         if (frame <= start) {
           continue;
         }
-        scale = (((frame - start) * gGeode_WaveGrowth[i] * 125) << 4) +
-                FIXED_ONE / 2;
+        scale = (frame - start) * gGeode_WaveGrowth[i] * 2000 + FIXED_ONE / 2;
         shade = (start - frame) * 8 + 56;
         if (shade > 0) {
           shade = 0;
@@ -350,14 +394,14 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
         }
         rings->shade = shade;
         Matrix_Initialize();
-        Matrix_Translate(INTtoFIXED(target.x / 2 - 64),
+        Matrix_Translate(INTtoFIXED(target.x / 2 - CANVAS_SIZE / 2),
                          INTtoFIXED(gGeode_WaveHeights[i]), 0);
         Matrix_Scale(scale >> 1, scale << 2, scale >> 1);
-        Matrix_RotateX(1000);
+        Matrix_RotateX(GEODE_BILLOW_TILT);
         if (i & 1) {
-          Matrix_RotateY((i * 4 + frame) << 11);
+          Matrix_RotateY((i * 4 + frame) * (TRIG_TURN / 32));
         } else {
-          Matrix_RotateY((i * 4 - frame) << 11);
+          Matrix_RotateY((i * 4 - frame) * (TRIG_TURN / 32));
         }
         Render_TransformVertices(gGeode_RingCorners, ring, 32);
         Render_DrawModelList(rings);
@@ -367,20 +411,21 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
     }
     if (frame == 61) {
       backdrop->busy = 0;
-      Iwram_FillWordsEntry((void *)&BG_PLTT_COLOR(6, 0), 256, 0);
+      Iwram_FillWordsEntry((void *)&BG_PLTT_COLOR(6, 0),
+                           BATTLE_BACKGROUND_COLORS * 2, 0);
     }
     if (frame == 62) {
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background, -1);
     }
     if ((u32)(frame - 63) <= 4) {
-      battle->brightness = (frame << 13) - toFIXED(7.75);
+      battle->brightness = (frame - 62) * (FIXED_ONE / 8);
       ColorBuffer_ScaleFar(battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
                            battle->brightness, BATTLE_BACKGROUND_COLORS);
     }
-    if (frame == 48) {
+    if (frame == GEODE_CRASH_FRAME) {
       work->shakeFrames = 16;
     }
-    if (frame > 47) {
+    if (frame >= GEODE_CRASH_FRAME) {
       BattleCamera_Shake(8, 8);
     }
     EFFECT_END_FRAME(work);
@@ -390,6 +435,3 @@ void BattleEffect_RunGeode(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
-#undef BLITTER
-#undef DOME_ROWS
-#undef DOME_COLUMNS

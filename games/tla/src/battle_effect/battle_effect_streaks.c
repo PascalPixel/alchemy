@@ -1,5 +1,6 @@
 /// @file
-/// Streak volleys and mote fountains.
+/// Streak volleys (Sonic Wave, Shriek, War Cry ...) and mote fountains (Sleep
+/// Star, Soothing Star, Slaver).
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
@@ -7,8 +8,19 @@
 #include "gamepak/far_call/battle.h"
 #include "resource_ids.h"
 
-/// The streak volley's styles (BattleEffect_RunStreakVolley), each a row of
-/// gStreaks_Styles.
+/// Column `n` of style `mode`'s row of gStreaks_Styles, four flags a style.
+#define STREAKS_VALUE(mode, n) gStreaks_Styles[(mode) * 4 + (n)]
+#define STREAKS_ANIMATE 0 ///< nonzero: the streak cycles through three images
+#define STREAKS_HIT 1     ///< nonzero: play the hit sound and flash the target
+#define STREAKS_MOTION                                                         \
+  2 ///< the target's knockback on the hit (enum BattleKnockback, -1: none)
+/// nonzero: the struck target trembles from side to side
+#define STREAKS_SHAKE 3
+
+#define STREAKS_MAX 3 ///< streaks fired at each target
+
+/// The streak volley's styles (BattleEffect_RunStreakVolley): its colour and
+/// its row of gStreaks_Styles.
 enum StreakStyle {
   STREAKS_STYLE_EMBER,  ///< Sonic Wave
   STREAKS_STYLE_LIME,   ///< Shriek and Harpy, and the unused
@@ -64,27 +76,23 @@ UNUSED void BattleEffect_RunLimeStreaks(struct BattleEffectParams *args) {
   BattleEffect_RunStreakVolley(args, STREAKS_STYLE_LIME);
 }
 
+/// The blitters' clip on both axes, the header's EFFECT_CLIP_BOUNDS, for
+/// battle_effect_target_strike.c, the next part, which draws with it.
 #define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
-#define STREAKS_VALUE(mode, n) gStreaks_Styles[(mode) * 4 + (n)]
-#define STREAKS_ANIMATE 0 ///< cycle the streak through its three pictures
-#define STREAKS_HIT 1     ///< sound the hit and flash the target
-#define STREAKS_MOTION 2  ///< the target's recoil motion, or -1
-#define STREAKS_SHAKE 3   ///< tremble the target after the hit
-
-#define STREAKS_MAX 3 ///< streaks for each target
-
-// Sonic Wave (mode 0), Shriek (1), Banshee Howl (2), Wicked Howl (3) and War
-// Cry (4): effect kinds 300 to 305.
-
+/// FiveModeImage's streaks: three animation frames, each six pictures that
+/// grow; each picture is the lower half of a ring, and the upper half is it
+/// drawn flipped, so a streak flies as a ring of light.
+#define STREAK_WIDTH 20
 #define STREAK_HEIGHT 40
+#define STREAK_FRAME_BYTES (6 * PICTURE_BYTES(STREAK))
+#define STREAKS_SPACING 6       ///< frames between streaks
+#define STREAKS_FLIGHT 24       ///< frames from user to target
 #define STREAKS_TARGET_DELAY 32 ///< frames between targets
 
-/// FiveModeImage's streaks: three animation frames, each six pictures that
-/// grow; the lower half is the upper drawn flipped.
-#define STREAK_WIDTH 20
-#define STREAK_FRAME_BYTES (6 * PICTURE_BYTES(STREAK))
-#define STREAKS_SPACING 6 ///< frames between streaks
+/// A line's 16.16 sideways sway as the BG2X value of the effect's bg2xLines,
+/// which the wave HBlank DMA writes line by line.
+#define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
 
 /// Fires the streaks at each target in turn from above the user; each leaves a
 /// fading trail.
@@ -134,78 +142,77 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
   // The streak pictures, and the mode's colours.
   Resource_LoadAndDecompress(RESOURCE_FIVE_MODE_IMAGE, work->sheet, 0, 0);
   switch (mode) {
-  case 0:
+  case STREAKS_STYLE_EMBER:
     resource = RESOURCE_EMBER_STREAK_SHEET;
     break;
-  case 1:
+  case STREAKS_STYLE_LIME:
     resource = RESOURCE_LIME_PALETTE;
     break;
-  case 2:
+  case STREAKS_STYLE_VIOLET:
     resource = RESOURCE_VIOLET_PALETTE_D;
     break;
-  case 3:
+  case STREAKS_STYLE_RED:
     resource = RESOURCE_RED_PALETTE_B;
     break;
-  case 4:
+  case STREAKS_STYLE_CYAN:
   default:
     resource = RESOURCE_CYAN_PALETTE;
     break;
   }
   Iwram_CopyWordsEntry((void *)BG_PLTT, Resource_GetTableEntry(resource),
                        SHEET_PALETTE_BYTES);
-  work->transferMode =
-      CANVAS_COPY_AND_FADE; // each transfer halves the old picture,
-  work->transferValue = CANVAS_FADE_HALF; // leaving a trail
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  // Each transfer halves the old picture, leaving a trail.
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   source = BattleObject_GetFar(args->user)->object;
   {
-    s32 total = streaks * args->targetCount * STREAKS_SPACING + 48;
+    // The loop counts STREAKS_SPACING for each streak though targets are
+    // STREAKS_TARGET_DELAY apart, so with three or four targets it stops
+    // before the last one's second flash.
+    s32 totalFrames = streaks * args->targetCount * STREAKS_SPACING + 48;
 
-    // Each streak flies from 20 pixels above the user to 20 pixels above
-    // its target in 24 frames.
-    for (k = 0; k != args->targetCount; k++) {
+    // Each streak flies from lift above the user to lift above its target.
+    EFFECT_FOR_EACH_TARGET(k, args) {
       target = BattleObject_GetFar(args->targets[k])->object;
       for (j = 0; j != streaks; j++) {
         struct Particle *streak = &work->particles[k * streaks + j];
 
         SET_POSITION(streak, source->x, source->y + lift, source->z);
-        streak->velocityX = (target->x - streak->x) / 24;
-        streak->velocityY = (target->y + lift - streak->y) / 24;
-        streak->velocityZ = (target->z - streak->z) / 24;
-        streak->variant = 0; // frames since it set out
+        SET_VELOCITY(streak, (target->x - streak->x) / STREAKS_FLIGHT,
+                     (target->y + lift - streak->y) / STREAKS_FLIGHT,
+                     (target->z - streak->z) / STREAKS_FLIGHT);
+        streak->variant = 0; // frames since the streak set off
       }
     }
 
-    for (frame = 0; frame != total; frame++) {
+    for (frame = 0; frame != totalFrames; frame++) {
       s32 *row = work->bg2xLines;
 
-      // Wobble BG2's 160 lines on a sine wave, and fade the last 16
-      // frames out.
+      // A sine wave of BG2X offsets for the wave HBlank DMA, which nothing arms
+      // here, so the canvas does not ripple. The last 16 frames fade out.
       for (k = 0; k != DISPLAY_HEIGHT; k++)
-        *row++ = (toFIXED(8) - Trig_Sin((frame + k) << 12) * 2) >> 10;
-      if (frame > total - 16)
-        REG_BLDALPHA = BLEND_ALPHA(total - frame, BLEND_WEIGHT_MAX);
+        *row++ = CANVAS_WAVE_BG2X(toFIXED(8) -
+                                  Trig_Sin((frame + k) * (TRIG_TURN / 16)) * 2);
+      if (frame > totalFrames - 16)
+        REG_BLDALPHA = EFFECT_BLEND_CANVAS(totalFrames - frame);
 
-      Matrix_Initialize();
-      Matrix_SetLookAt(camera->eye, camera->focus);
-      for (k = 0; k != args->targetCount; k++) {
-        // Each target's streaks set out with the mode's cry.
+      EFFECT_VIEW_FROM_CAMERA(camera);
+      EFFECT_FOR_EACH_TARGET(k, args) {
+        // Each target's streaks set out with the style's cry.
         if (frame == k * STREAKS_TARGET_DELAY) {
-          if (mode == 1)
+          if (mode == STREAKS_STYLE_LIME)
             Sound_PlayFar(SE_SHRIEK);
-          if (mode == 2)
+          if (mode == STREAKS_STYLE_VIOLET)
             Sound_PlayFar(SE_STONE_GRIND);
-          if (mode == 3)
+          if (mode == STREAKS_STYLE_RED)
             Sound_PlayFar(SE_BOSS_ROAR);
-          if (mode == 4)
+          if (mode == STREAKS_STYLE_CYAN)
             Sound_PlayFar(SE_ITEM_BREAK);
         }
         if (frame >= k * STREAKS_TARGET_DELAY) {
           for (j = 0; j != streaks; j++) {
-            // lift is reused for the streak's start frame; a local of its own
-            // differs.
-            lift = k * STREAKS_TARGET_DELAY + j * 6;
+            // From here lift holds the streak's start frame.
+            lift = k * STREAKS_TARGET_DELAY + j * STREAKS_SPACING;
             if (frame >= lift) {
               struct Particle *streak = &work->particles[k * streaks + j];
               s32 step;
@@ -217,22 +224,23 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
               if (step > 5)
                 step = 5;
               if (STREAKS_VALUE(mode, STREAKS_ANIMATE)) {
-                u8 *cell = &work->sheet[step * 800 +
-                                        frame / 2 % 3 * STREAK_FRAME_BYTES];
+                u8 *picture = &work->sheet[step * PICTURE_BYTES(STREAK) +
+                                           frame / 2 % 3 * STREAK_FRAME_BYTES];
 
-                drawUpper(canvas, cell, position.x - 10,
+                drawUpper(canvas, picture, position.x - STREAK_WIDTH / 2,
                           position.y - STREAK_HEIGHT, STREAK_WIDTH,
                           STREAK_HEIGHT);
-                drawLower(canvas, cell, position.x - 10, position.y,
-                          STREAK_WIDTH, STREAK_HEIGHT);
+                drawLower(canvas, picture, position.x - STREAK_WIDTH / 2,
+                          position.y, STREAK_WIDTH, STREAK_HEIGHT);
               } else {
-                u8 *cell = &work->sheet[step * 800 + 2 * STREAK_FRAME_BYTES];
+                u8 *picture = &work->sheet[step * PICTURE_BYTES(STREAK) +
+                                           2 * STREAK_FRAME_BYTES];
 
-                drawUpper(canvas, cell, position.x - 10,
+                drawUpper(canvas, picture, position.x - STREAK_WIDTH / 2,
                           position.y - STREAK_HEIGHT, STREAK_WIDTH,
                           STREAK_HEIGHT);
-                drawLower(canvas, cell, position.x - 10, position.y,
-                          STREAK_WIDTH, STREAK_HEIGHT);
+                drawLower(canvas, picture, position.x - STREAK_WIDTH / 2,
+                          position.y, STREAK_WIDTH, STREAK_HEIGHT);
               }
               Particle_AdvanceWithGravity3D(streak, PARTICLE_DAMPING_NONE, 0);
               streak->variant++;
@@ -294,25 +302,43 @@ enum MoteFountainMode {
   MOTE_FOUNTAIN_SLAVER            ///< Slaver
 };
 
+enum { MOTE_FOUNTAIN_INITIALIZED_COUNT = 256, MOTE_VISIBLE_COUNT = 128 };
+
+/// Motes burst out of the user and float up, wobbling, as they drift across the
+/// field onto the targets, and each target flinches in turn.
+///
 /// Abilities: Sleep Star.
 void BattleEffect_RunSleepStar(struct BattleEffectParams *args) {
   BattleEffect_RunMoteFountain(args, MOTE_FOUNTAIN_DRIFTING);
 }
 
+/// Orange healing motes burst out of the user and float up close to it, and
+/// each target glows in turn with the recovery sound.
+///
 /// Abilities: Soothing Star.
 void BattleEffect_RunSoothingStar(struct BattleEffectParams *args) {
   BattleEffect_RunMoteFountain(args, MOTE_FOUNTAIN_FOUNTAIN_HEALING);
 }
 
+/// Green drops are flung up from the user in a half-circle fan and fall,
+/// bouncing off the ground, then Impair plays on the targets.
+///
 /// Abilities: Slaver.
 void BattleEffect_RunSlaver(struct BattleEffectParams *args) {
   BattleEffect_RunMoteFountain(args, MOTE_FOUNTAIN_SLAVER);
 }
 
-/// The motes live in the map cell buffer.
-#define EFFECT_STEPS ((struct Particle *)Ram_MapCellBuffer)
-
 #define MOTE_FOUNTAIN_FOUNTAIN_FRAMES 128
+#define MOTE_FOUNTAIN_SLAVER_FRAMES 96
+
+/// The projected depths over which a mote is sized, nearest to farthest: it is
+/// drawn MOTE_FOUNTAIN_LARGEST pixels wide (and twice as tall) at
+/// FLARE_DEPTH_NEAR or nearer, a pixel narrower for every
+/// MOTE_FOUNTAIN_DEPTH_STEP farther.
+#define FLARE_DEPTH_NEAR 314
+#define FLARE_DEPTH_FAR 634
+#define MOTE_FOUNTAIN_LARGEST 6
+#define MOTE_FOUNTAIN_DEPTH_STEP 64
 
 /// Motes burst out of the user and float upwards, wobbling, and each target
 /// reacts in turn.
@@ -330,7 +356,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   s32 resource;
   s32 frame;
   s32 i;
-  s32 group = 32; // motes that start together
+  s32 group = 32; // motes that set out together, 8 frames apart
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
@@ -341,8 +367,8 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   else
     BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
 
-  // Motes draw at their maximum; the second blitter, mirrored top to
-  // bottom, is loaded but not used.
+  // Motes keep the brighter of their level and the canvas's; the second
+  // blitter, mirrored top to bottom, is loaded but not used.
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
@@ -359,15 +385,15 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
                        SHEET_PALETTE_BYTES);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-  // Launch every mote from the user in 16.16 fixed point, with a speed and
-  // a direction of its own. Slaver throws them up, faster, in a half-circle
+  // Launch every mote from the user, with a speed and a direction of its
+  // own. Slaver throws them up, faster, in a half-circle
   // fan turned by the user's side, from up to 16 pixels higher.
   source = BattleObject_GetFar(args->user)->object;
-  for (i = 0; i != 256; i++) {
+  for (i = 0; i != MOTE_FOUNTAIN_INITIALIZED_COUNT; i++) {
     s32 speed;
     s32 angle;
 
-    mote = &EFFECT_STEPS[i];
+    mote = &PARTICLES[i];
     if (mode == MOTE_FOUNTAIN_SLAVER) {
       if (args->side == EFFECT_SIDE_ENEMIES)
         angle = (Random16() & 0x7fff) + DEGtoANG(180);
@@ -397,34 +423,33 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
     }
   }
 
-  frames = 96;
+  frames = MOTE_FOUNTAIN_SLAVER_FRAMES;
   if (mode != MOTE_FOUNTAIN_SLAVER)
-    frames = 128;
+    frames = MOTE_FOUNTAIN_FOUNTAIN_FRAMES;
   for (frame = 0; frame != frames; frame++) {
-    Matrix_Initialize();
-    Matrix_SetLookAt(camera->eye, camera->focus);
+    EFFECT_VIEW_FROM_CAMERA(camera);
     if (mode == MOTE_FOUNTAIN_SLAVER && frame == 0)
       Sound_PlayFar(SE_CURSE);
 
-    for (i = 0; i != MOTE_FOUNTAIN_FOUNTAIN_FRAMES; i++) {
-      mote = &EFFECT_STEPS[i];
+    for (i = 0; i != MOTE_VISIBLE_COUNT; i++) {
+      mote = &PARTICLES[i];
       if (frame >= i / group * 8 && mote->variant >= 0) {
         s32 size;
 
-        // Sway the mote, project it and size it by its depth: 6 pixels
-        // near, 1 far.
-        point[0] = mote->x + Trig_Sin((i * 4 + mote->variant) << 10) * 16;
+        // Motes wobble and grow as they near the camera.
+        point[0] =
+            mote->x + Trig_Sin((i * 4 + mote->variant) * (TRIG_TURN / 64)) * 16;
         point[1] = mote->y;
         point[2] = mote->z;
         EffectPosition_ProjectPoint(point, &position);
         position.x >>= 1;
-        if (position.depth <= 313)
-          position.depth = 314;
-        if (position.depth > 634)
-          position.depth = 634;
-        size = 6 - (position.depth - 314) / 64;
-        draw[0](canvas, sheet + gBattleEffect_MotePictures[size - 1],
-                position.x - size / 2, position.y - size, size, size * 2);
+        if (position.depth < FLARE_DEPTH_NEAR)
+          position.depth = FLARE_DEPTH_NEAR;
+        if (position.depth > FLARE_DEPTH_FAR)
+          position.depth = FLARE_DEPTH_FAR;
+        size = MOTE_FOUNTAIN_LARGEST -
+               (position.depth - FLARE_DEPTH_NEAR) / MOTE_FOUNTAIN_DEPTH_STEP;
+        EFFECT_DRAW_MOTE(draw[0], canvas, sheet, position.x, position.y, size);
 
         // Slaver's drops fall and bounce off the ground; the others rise
         // slowly. Sleep Star's drift away from the user's side.
@@ -479,4 +504,22 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
     BattleEffect_EndCanvasLayer();
   }
 }
-#undef EFFECT_STEPS
+#undef STREAKS_VALUE
+#undef STREAKS_ANIMATE
+#undef STREAKS_HIT
+#undef STREAKS_MOTION
+#undef STREAKS_SHAKE
+#undef STREAKS_MAX
+#undef STREAK_WIDTH
+#undef STREAK_HEIGHT
+#undef STREAK_FRAME_BYTES
+#undef STREAKS_SPACING
+#undef STREAKS_FLIGHT
+#undef STREAKS_TARGET_DELAY
+#undef CANVAS_WAVE_BG2X
+#undef MOTE_FOUNTAIN_FOUNTAIN_FRAMES
+#undef MOTE_FOUNTAIN_SLAVER_FRAMES
+#undef FLARE_DEPTH_NEAR
+#undef FLARE_DEPTH_FAR
+#undef MOTE_FOUNTAIN_LARGEST
+#undef MOTE_FOUNTAIN_DEPTH_STEP

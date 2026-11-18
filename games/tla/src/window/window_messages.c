@@ -418,6 +418,9 @@ void Message_DecodeAppend(s32 message) {
 #else
 #define PLOT_GLYPH_ROWS 14
 #endif
+/// A glyph row's pixels fill a halfword from its high bit: moved up by this,
+/// the leftmost pixel is the word's sign bit.
+#define GLYPH_ROW_BITS 16
 
 /// Plots a glyph's rows of bits onto the story crawl's canvas at dst, one byte
 /// a pixel in color, leftmost pixel from the high bit; clear bits are left.
@@ -429,7 +432,7 @@ void Text_PlotGlyphRows(u16 *rows, u8 *dst, s32 color) {
   for (y = 0; y != PLOT_GLYPH_ROWS; y++) {
     bits = *rows++ & ~3;
     p = dst;
-    bits <<= 16;
+    bits <<= GLYPH_ROW_BITS;
     while (bits != 0) {
       if (bits < 0)
         *p = color;
@@ -601,6 +604,10 @@ void Message_Find(struct TextReader *reader, s32 message) {
 
 extern const void *const Text_MessageContexts[][2];
 
+/// Set above a refilled byte's remaining bits: a bit buffer that has shifted
+/// down to it is empty.
+#define BIT_BUFFER_MARKER 0x80
+
 /// Decodes the next symbol of a message. Messages are Huffman coded with one
 /// tree per previous symbol: the previous code picks the tree, the message's
 /// bits walk it to a leaf, and the leaf's 12-bit symbol is returned and
@@ -638,7 +645,7 @@ UNUSED s32 Text_DecodeSymbolInC(struct TextReader *reader) {
   rank = 0;
   // The tree is its shape in preorder, a bit a node: 0 a branch, 1 a leaf.
   // Bits are read from each byte's lowest up; a buffer that has shifted down
-  // to its marker bit (the 0x80 put above each byte's last bit) is empty.
+  // to its marker bit (BIT_BUFFER_MARKER) is empty.
   // A text bit of 0 takes the left branch; 1 skips the left subtree,
   // counting its leaves in rank, and takes the right.
   for (;;) {
@@ -647,7 +654,7 @@ UNUSED s32 Text_DecodeSymbolInC(struct TextReader *reader) {
     if (bit != 0 && treeBits == 0) {
       treeBits = *tree++;
       bit = treeBits & 1;
-      treeBits = (treeBits >> 1) | 0x80;
+      treeBits = (treeBits >> 1) | BIT_BUFFER_MARKER;
     }
     if (bit != 0)
       break;
@@ -656,7 +663,7 @@ UNUSED s32 Text_DecodeSymbolInC(struct TextReader *reader) {
     if (bit != 0 && textBits == 0) {
       textBits = *text++;
       bit = textBits & 1;
-      textBits = (textBits >> 1) | 0x80;
+      textBits = (textBits >> 1) | BIT_BUFFER_MARKER;
     }
     if (bit == 0)
       continue;
@@ -667,7 +674,7 @@ UNUSED s32 Text_DecodeSymbolInC(struct TextReader *reader) {
       if (bit != 0 && treeBits == 0) {
         treeBits = *tree++;
         bit = treeBits & 1;
-        treeBits = (treeBits >> 1) | 0x80;
+        treeBits = (treeBits >> 1) | BIT_BUFFER_MARKER;
       }
       if (bit == 0)
         depth++;
@@ -849,4 +856,6 @@ void Portrait_CloseWindow(s32 id) {
 
 #undef DECODE_EUROPEAN
 #undef PLOT_GLYPH_ROWS
+#undef GLYPH_ROW_BITS
+#undef BIT_BUFFER_MARKER
 #undef KANJI_FIRST_CODE

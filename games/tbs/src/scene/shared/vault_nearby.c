@@ -10,14 +10,21 @@
 #define STOP_RANGE 18
 #define TALK_STOP_RANGE 26
 
-/// The update routine of the two children round the well. Their timer holds two
-/// bits: bit 0 picks the partner (set for ACTOR_BOY_ROUND_THE_WELL, whose
-/// partner is ACTOR_GIRL_ROUND_THE_WELL; clear for
-/// ACTOR_GIRL_ROUND_THE_WELL) and bit 1 is set while the party talks to them.
-/// A villager stops when close to and facing its partner, and otherwise when
-/// the leader is within STOP_RANGE in front of it. While a talk is pending
-/// (FieldWork's talk) or Mind Read is on the range is TALK_STOP_RANGE, and a
-/// villager being talked to stops whichever way it faces.
+/// The bits of a child round the well's timer.
+enum {
+  /// Set for ACTOR_BOY_ROUND_THE_WELL, whose partner is
+  /// ACTOR_GIRL_ROUND_THE_WELL; clear for the girl.
+  VILLAGER_IS_BOY = 1,
+  /// Set while the party talks to it, so that it stops whichever way it faces.
+  VILLAGER_TALKED_TO = 2
+};
+
+/// The update routine of the two children round the well, by their timer's
+/// VILLAGER_IS_BOY and VILLAGER_TALKED_TO. A villager stops when close to and
+/// facing its partner, and otherwise when the leader is within STOP_RANGE in
+/// front of it. While a talk is pending (FieldWork's talk) or Mind Read is on
+/// the range is TALK_STOP_RANGE, and a villager being talked to stops whichever
+/// way it faces.
 static UNREAD_RESULT Vault_UpdateWalkingVillager(struct Actor *actor) {
   u8 *windowWork = gWindowWork[0];
   struct FieldWork *work = gFieldWork;
@@ -26,7 +33,7 @@ static UNREAD_RESULT Vault_UpdateWalkingVillager(struct Actor *actor) {
   struct Actor *partner;
   struct Actor *player;
 
-  if ((actor->timer & 1) != 0) {
+  if ((actor->timer & VILLAGER_IS_BOY) != 0) {
     partner = Actor_GetById(ACTOR_GIRL_ROUND_THE_WELL);
   } else {
     partner = Actor_GetById(ACTOR_BOY_ROUND_THE_WELL);
@@ -39,7 +46,7 @@ static UNREAD_RESULT Vault_UpdateWalkingVillager(struct Actor *actor) {
 
   if ((s16)work->talk != 0 || windowWork[WINDOW_WORK_MIND_READ_OFFSET] != 0) {
     range = TALK_STOP_RANGE;
-    if ((actor->timer & 2) != 0) {
+    if ((actor->timer & VILLAGER_TALKED_TO) != 0) {
       force = 1;
     }
   }

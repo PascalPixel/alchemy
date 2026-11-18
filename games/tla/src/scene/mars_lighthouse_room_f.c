@@ -20,7 +20,7 @@
 /// flames, Reveal shows the stepping stones, and a hole drops the party below.
 ///
 /// The Venus tower (F4): gaps jumped and filled with stones Carry lifts, a
-/// statue pushed into the flames, a tightrope, and statues that hide flame
+/// statue pushed off a ledge, a tightrope, and statues that hide flame
 /// throwers or the way on.
 
 #include "flags.h"
@@ -74,7 +74,7 @@
 #include "scene/airs_rock.h"
 
 #define FLAG_JUPITER_STATUE_BLOCKS_FLAMES 0xa37
-#define FLAG_VENUS_STATUE_BLOCKS_FLAMES 0xa38
+#define FLAG_VENUS_STATUE_PUSHED_OFF_LEDGE 0xa38
 #define FLAG_ICEBERGS_MELTED 0xa40
 /// The button's flame thrower has reached the Mars tower's torch.
 #define FLAG_MARS_TORCH_LIT 0xa42
@@ -97,16 +97,16 @@
 
 /// The Mars tower (F1). Its first rooms: the flame thrower the button sets
 /// moving, the torch its flame lights (two actors, lit and unlit), the torch
-/// below it that shoots at the center wall, its fireball, and the unseen point
-/// at the wall's foot. Its pipe room: two pipes that can be pushed, the four
-/// places its fire comes from, and a dragon statue.
+/// below it that shoots at the center wall, its glint and fireball, and the
+/// unseen point at the wall's foot. Its pipe room: two pipes that can be
+/// pushed, the four places its fire comes from, and a dragon statue.
 enum {
   ACTOR_BUTTON_FLAME_THROWER = 8,
   ACTOR_MARS_TORCH = 9,
   ACTOR_UNLIT_MARS_TORCH = 10,
   ACTOR_WALL_TORCH = 11,
-  ACTOR_WALL_FIREBALL = 12,
-  ACTOR_WALL_FIREBALL_ROLL = 13,
+  ACTOR_WALL_SPARKLE = 12,  ///< the glint that leaves the torch
+  ACTOR_WALL_FIREBALL = 13, ///< the fireball the glint sets rolling
   ACTOR_CENTER_WALL = 14,
   ACTOR_MARS_PIPE_A = 15,
   ACTOR_MARS_PIPE_B = 16,
@@ -122,7 +122,7 @@ enum {
 /// The Mercury tower (F2): three pushable pipes, two puddles for Frost, the
 /// unseen points at the pipes' ends where the fire bursts out, the flame
 /// thrower Blaze lights, the torch the mended pipeline lights (lit and unlit),
-/// and the torch that shoots at the icebergs.
+/// and the torch that shoots at the icebergs, with its glint and fireball.
 enum {
   ACTOR_MERCURY_PIPE_A = 8,
   ACTOR_MERCURY_PIPE_B = 9,
@@ -136,13 +136,13 @@ enum {
   ACTOR_MERCURY_TORCH = 17,
   ACTOR_UNLIT_MERCURY_TORCH = 18,
   ACTOR_ICEBERG_TORCH = 19,
-  ACTOR_ICEBERG_FIREBALL = 21,
-  ACTOR_ICEBERG_FIREBALL_ROLL = 22
+  ACTOR_ICEBERG_SPARKLE = 21, ///< the glint that leaves the torch
+  ACTOR_ICEBERG_FIREBALL = 22 ///< the fireball the glint sets rolling
 };
 
 /// The Jupiter tower (F3): its flame throwers, the purple block Move drops into
 /// the gap, the white dragon statue Move pushes into the flames, and the torch
-/// whose fireball drops.
+/// above the great carved dragon, with its glint and fireball.
 enum {
   ACTOR_JUPITER_FLAME_THROWER_A = 8,
   ACTOR_JUPITER_FLAME_THROWER_B,
@@ -151,12 +151,12 @@ enum {
   ACTOR_JUPITER_STATUE = 12,
   ACTOR_UPPER_FLAME_THROWER = 13,
   ACTOR_DROP_TORCH = 14,
-  ACTOR_DROP_FIREBALL = 15,
-  ACTOR_DROP_FIREBALL_ROLL = 16
+  ACTOR_DROP_SPARKLE = 15, ///< the glint that leaves the torch
+  ACTOR_DROP_FIREBALL = 16 ///< the fireball that drops where the glint stops
 };
 
 /// The Venus tower (F4): the tightrope's posts, the three stones Carry lifts,
-/// its flame throwers, the robed stone statue pushed into the flames, the
+/// its flame throwers, the robed stone statue pushed off the ledge, the
 /// statues before the two doorways, which stand aside once moved, the five that
 /// hide flame throwers, and those three hidden flame throwers.
 enum {
@@ -211,7 +211,7 @@ void Leader_PushObjectAhead(void);
 void Actor_SetBlendMode(struct Actor *actor, u32 value);
 FIXED Trig_Cos(s32 angle);
 
-void MarsLighthouseRoomF_MoveVenusStatueIntoFlames(s32 unused, s32 id);
+void MarsLighthouseRoomF_MoveVenusStatueOffLedge(s32 unused, s32 id);
 void Actor_SetupScriptedPart(struct Actor *actor, s32 part);
 void MarsLighthouseRoomF_FillGapsWithStones(void);
 void MarsLighthouseRoomF_RouteFireThroughPipes(void);
@@ -275,7 +275,7 @@ void MarsLighthouseRoomF_JumpGap(void);
 
 void MarsLighthouseRoomF_PushStoneAlongLedge(void);
 
-void MarsLighthouseRoomF_PushVenusStatueIntoFlames(void);
+void MarsLighthouseRoomF_PushVenusStatueOffLedge(void);
 
 void MarsLighthouseRoomF_PushPipe(void);
 
@@ -449,19 +449,18 @@ void MarsLighthouseRoomF_JumpGapOrPushStone(void) {
 /// Walking west at a gap: across it.
 void MarsLighthouseRoomF_JumpGap(void) { Field_TryJumpForward(); }
 
-/// Walking into a stone on the ledge: it is pushed, unless (from patch 1) a
-/// second stands right behind it.
 #if TLA_PATCH_1
 
-/// Pushing a stone along the ledge: it moves unless another stone stands
-/// beyond it.
+/// Pushing a stone along the ledge: from patch 1 it moves only while no other
+/// stone stands beyond it.
 void MarsLighthouseRoomF_PushStoneAlongLedge(void) {
   s32 position[3];
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 angle = actor->facing >> 12;
+  s32 angle = FACING_INDEX(actor->facing);
 
-  // The facing in sixteenths of a turn, rounded to the nearest quarter.
-  angle = ((angle + 2) & 12) << 12;
+  // The facing rounded to the nearest of east, south, west and north: two
+  // sixteenths on, whole quarters kept, and back from sixteenths to a facing.
+  angle = ((angle + 2) & 0xc) << 12;
   position[0] = actor->x.fixed;
   position[1] = (actor->y.fixed + toFIXED(4)) & ~(toFIXED(8) - 1);
   position[2] = actor->z.fixed;
@@ -480,31 +479,32 @@ void MarsLighthouseRoomF_PushStoneAlongLedge(void) {
 
 #else
 
-/// Pushing a stone along the ledge: it moves unless another stone stands
-/// beyond it.
+/// Pushing a stone along the ledge: it moves.
 void MarsLighthouseRoomF_PushStoneAlongLedge(void) { Leader_PushObjectAhead(); }
 
 #endif
 
 extern s16 gMarsLighthouseRoomF_StatueFlameThrowers[];
 
-/// Move brings the statue to cell x 50, where it blocks the flame thrower.
-void MarsLighthouseRoomF_MoveVenusStatueIntoFlames(s32 unused, s32 id) {
+/// Move brings the statue east to cell x 50, off the ledge's end, and it drops
+/// to the floor below.
+void MarsLighthouseRoomF_MoveVenusStatueOffLedge(s32 unused, s32 id) {
   struct Actor *actor = Actor_Get(id);
 
   if (FIELD_CELL(actor->x.fixed) == 50) {
-    Event_SetFlag(FLAG_VENUS_STATUE_BLOCKS_FLAMES);
+    Event_SetFlag(FLAG_VENUS_STATUE_PUSHED_OFF_LEDGE);
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   }
 }
 
-/// Pushed east to cell x 50, the statue blocks the flame thrower.
-void MarsLighthouseRoomF_PushVenusStatueIntoFlames(void) {
+/// Pushed east to cell x 50, off the ledge's end, the statue drops to the floor
+/// below.
+void MarsLighthouseRoomF_PushVenusStatueOffLedge(void) {
   struct Actor *actor = Actor_Get(ACTOR_PUSHED_STATUE);
 
   Leader_PushObjectAhead();
   if (FIELD_CELL(actor->x.fixed) == 50) {
-    Event_SetFlag(FLAG_VENUS_STATUE_BLOCKS_FLAMES);
+    Event_SetFlag(FLAG_VENUS_STATUE_PUSHED_OFF_LEDGE);
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   }
 }
@@ -515,11 +515,11 @@ void MarsLighthouseRoomF_StartMovingStone(s32 unused, s32 id) {
     Actor_Get(ACTOR_FIRST_STONE)->motionFlags = 0;
 }
 
-/// A push or Move ends: the statue may now block the flames, and the first
+/// A push or Move ends: the statue may now drop off the ledge, and the first
 /// stone settles (from patch 1, into a gap it fills).
 void MarsLighthouseRoomF_StopMovingStone(s32 unused, s32 id) {
   if (id == ACTOR_PUSHED_STATUE) {
-    MarsLighthouseRoomF_MoveVenusStatueIntoFlames(unused, ACTOR_PUSHED_STATUE);
+    MarsLighthouseRoomF_MoveVenusStatueOffLedge(unused, ACTOR_PUSHED_STATUE);
   } else if (id == ACTOR_FIRST_STONE) {
     Actor_Get(ACTOR_FIRST_STONE)->motionFlags =
         ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -1007,13 +1007,7 @@ void MarsLighthouseRoomF_MeltPuddle(s32 id) {
 
   cell += offset << 2;
   cell[2] = 0;
-  {
-    u8 *flags = &Actor_Get(id)->priorityFlags;
-    s32 value = 2;
-
-    value |= *flags;
-    *flags = value;
-  }
+  ActorFlags_Set(&Actor_Get(id)->priorityFlags, ACTOR_PRIORITY_UNDERFOOT);
 }
 
 #define DEFINE_FROST_PUDDLE(name, n1, n2)                                      \
@@ -1267,7 +1261,7 @@ s32 Scene_Initialize(void) {
         Actor_SetPosition(ACTOR_UPPER_DOORWAY_STATUE, 536, 552);
     }
     Actor_GetById(ACTOR_PUSHED_STATUE)->motionFlags = 0;
-    if (Flag_IsSet(FLAG_VENUS_STATUE_BLOCKS_FLAMES)) {
+    if (Flag_IsSet(FLAG_VENUS_STATUE_PUSHED_OFF_LEDGE)) {
       Actor_SetPosition(ACTOR_PUSHED_STATUE, 808, 312);
       Actor_GetById(ACTOR_PUSHED_STATUE)->y.fixed = 0;
       Actor_GetById(ACTOR_PUSHED_STATUE)->groundHeight = 0;
@@ -1300,21 +1294,21 @@ s32 Scene_PrepareMap(void) {
 
 /// The torch below the lit one shoots its fireball at the center wall.
 void MarsLighthouseRoomF_ShootFireballAtWall(void) {
-  Actor_Attach(ACTOR_WALL_TORCH, ACTOR_WALL_FIREBALL, ACTOR_WALL_FIREBALL_ROLL,
+  Actor_Attach(ACTOR_WALL_TORCH, ACTOR_WALL_SPARKLE, ACTOR_WALL_FIREBALL,
                FACING_SOUTH, gMarsLighthouseRoomF_FireballToWall);
 }
 
 /// The flame reaches the torch, which shoots its fireball at the icebergs.
 void MarsLighthouseRoomF_ShootFireballAtIcebergs(void) {
-  Actor_Attach(ACTOR_ICEBERG_TORCH, ACTOR_ICEBERG_FIREBALL,
-               ACTOR_ICEBERG_FIREBALL_ROLL, FACING_SOUTH,
+  Actor_Attach(ACTOR_ICEBERG_TORCH, ACTOR_ICEBERG_SPARKLE,
+               ACTOR_ICEBERG_FIREBALL, FACING_SOUTH,
                gMarsLighthouseRoomF_FireballToIcebergs);
   Ride_SetEntry(3, FLAME_SPARK | 3);
 }
 
 /// The flame reaches the torch, whose fireball drops to the floor below.
 void MarsLighthouseRoomF_DropFireball(void) {
-  Actor_Attach(ACTOR_DROP_TORCH, ACTOR_DROP_FIREBALL, ACTOR_DROP_FIREBALL_ROLL,
+  Actor_Attach(ACTOR_DROP_TORCH, ACTOR_DROP_SPARKLE, ACTOR_DROP_FIREBALL,
                FACING_SOUTH, gMarsLighthouseRoomF_FireballDrop);
 }
 
@@ -1509,7 +1503,7 @@ s32 Fireball_CarryLeader(void) {
 #ifdef UBFIX
   Party_TakeFallDamage();
 #else
-  ((s32 (*)(s32, s32))Party_TakeFallDamage)(-10, 0);
+  ((s32 (*)(s32, s32))Party_TakeFallDamage)(-FALL_DAMAGE, 0);
 #endif
   FieldCamera_SetSpeed(7);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
@@ -1520,7 +1514,7 @@ s32 Fireball_CarryLeader(void) {
   Flag_Clear(FLAG_MENU_OPEN);
   leader->update = (void (*)(void))Actor_Blink;
   leader->facing = FACING_SOUTH;
-  Actor_SelectAnimation(leader, 49);
+  Actor_SelectAnimation(leader, ANIM_LEADER_SIT);
   while (ride->car->timer == 0) {
     if (MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x.fixed,
                                                 leader->z.fixed) != 7) {
@@ -1686,8 +1680,9 @@ s32 PushTarget_FillFootprint(s32 id) {
 
   if ((u16)shape != gPushKinds[(u16)i]) {
     do {
-      // The kind's index steps as a 16.16 number.
-      j = (u16)FIXEDtoINT(INTtoFIXED(i) + INTtoFIXED(1));
+      /* FAKEMATCH(temporary): the step taken in the high halfword, as the push
+       * footprints' copies of this search have it. */
+      j = (u16)FIXEDtoINT(toFIXED(i + 1));
       i = j;
     } while (j <= PUSH_KINDS - 1 && (u16)shape != gPushKinds[j]);
   }
@@ -1764,7 +1759,15 @@ void PushTarget_Push(struct PushTarget target) {
   s32 speed;
   s32 acceleration;
 
-  direction = leader->facing >> 16;
+  // BUG: the leader's facing is taken as a 16.16 number, whose whole part is
+  // always 0 for this 16-bit angle, where its sixteenth (FACING_INDEX) was
+  // meant: every push takes direction 0 (east), so the pushed thing rolls with
+  // animation 2 whichever way it goes and the leader's step after it is none.
+#ifdef BUGFIX
+  direction = FACING_INDEX(leader->facing);
+#else
+  direction = FIXEDtoINT(leader->facing);
+#endif
   footprint = target.footprint;
   speed = leader->speedLimit;
   acceleration = leader->acceleration;
@@ -1791,7 +1794,8 @@ void PushTarget_Push(struct PushTarget target) {
   }
   Actor_Get(gMainRoutineWork.leaderActorId)->update = Actor_StopAtPushTarget;
   System_Wait(4);
-  if ((u32)(direction - 6) <= 7)
+  if (direction >= FACING_INDEX(FACING_SOUTHWEST) &&
+      direction <= FACING_INDEX(FACING_NORTH_NORTHEAST))
     Actor_SelectAnimation(actor, 3);
   else
     Actor_SelectAnimation(actor, 2);
@@ -1801,9 +1805,21 @@ void PushTarget_Push(struct PushTarget target) {
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.1);
-  Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
-                             toFIXED(gPushLeaderSteps[direction]) >> 31,
-                             toFIXED(gPushLeaderSteps[direction]) >> 17);
+  // BUG: the leader's step after the push reads both halves from the step's
+  // z: x is its sign and z its half (half of PUSH_STEP_X and PUSH_STEP_Z was
+  // meant). With direction 0 both are 0.
+  {
+    s32 step = gPushLeaderSteps[direction];
+
+#ifdef BUGFIX
+    Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
+                               PUSH_STEP_X(step) / 2, PUSH_STEP_Z(step) / 2);
+#else
+    Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
+                               toFIXED(step) >> 31,
+                               FIXEDtoINT(toFIXED(step)) >> 1);
+#endif
+  }
   if (target.callback != 0)
     target.callback();
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
@@ -2125,7 +2141,7 @@ s32 gMarsLighthouseRoomF_FireballToWall[] = {
     SC_SYNC,
     SC_MOVE(248, 22, 688),
     SC_SYNC,
-    SC_SET(37, (s32)MarsLighthouseRoomF_CrackCenterWall),
+    SC_SET(SW_WATCHED_ACTOR, (s32)MarsLighthouseRoomF_CrackCenterWall),
     SC_CALL(Actor_Park),
     SC_END,
 };
@@ -2138,7 +2154,7 @@ s32 gMarsLighthouseRoomF_FireballToIcebergs[] = {
     SC_SYNC,
     SC_MOVE(184, 54, 576),
     SC_SYNC,
-    SC_SET(37, (s32)MarsLighthouseRoomF_MeltIcebergs),
+    SC_SET(SW_WATCHED_ACTOR, (s32)MarsLighthouseRoomF_MeltIcebergs),
     SC_CALL(Actor_Park),
     SC_END,
 };
@@ -2409,8 +2425,8 @@ LATE_DATA struct Trigger gMarsLighthouseRoomF_VenusTowerTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_FIRST_STONE, CONDITION_ALWAYS, MARS_LIGHTHOUSE_ROOM_F_FILL_GAPS_WITH_STONES},
     {PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_SECOND_STONE, CONDITION_ALWAYS, MARS_LIGHTHOUSE_ROOM_F_FILL_GAPS_WITH_STONES},
     {PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_THIRD_STONE, CONDITION_ALWAYS, MARS_LIGHTHOUSE_ROOM_F_FILL_GAPS_WITH_STONES},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 33, FLAG_VENUS_STATUE_BLOCKS_FLAMES, EVENT(MarsLighthouseRoomF_PushVenusStatueIntoFlames)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PUSHED_STATUE, FLAG_VENUS_STATUE_BLOCKS_FLAMES, EVENT(MarsLighthouseRoomF_MoveVenusStatueIntoFlames)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 33, FLAG_VENUS_STATUE_PUSHED_OFF_LEDGE, EVENT(MarsLighthouseRoomF_PushVenusStatueOffLedge)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PUSHED_STATUE, FLAG_VENUS_STATUE_PUSHED_OFF_LEDGE, EVENT(MarsLighthouseRoomF_MoveVenusStatueOffLedge)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_UPPER_DOORWAY_STATUE, CONDITION_ALWAYS, 0},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TRAP_STATUE_A, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_UncoverFlameThrower)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_TRAP_STATUE_B, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_UncoverFlameThrower)},

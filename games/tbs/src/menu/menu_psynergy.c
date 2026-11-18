@@ -300,9 +300,9 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
 
 /// Says how the selected Psynergy is used from the menu: 0 on the field once
 /// the menu closes (the scene has an event for its field Psynergy,
-/// fieldPsynergy, and what the leader faces), 2 on the whole party (range
-/// 0xff), 1 on one chosen party member when its target mode is 2, and 0
-/// otherwise.
+/// fieldPsynergy, and what the leader faces), 2 on the whole party
+/// (ABILITY_RANGE_ALL), 1 on one chosen party member when it targets
+/// ABILITY_TARGET_ALLIES, and 0 otherwise.
 s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
   struct AbilityDefinition *action;
   s32 targetModeDifference;
@@ -964,15 +964,15 @@ s32 PsynergyMenu_DrawDetailPage(struct Window *window, s32 *work,
   return 1;
 }
 
+/// The tile of the list window's top border where the page numbers end, with
+/// their right arrow, as the item list's do.
+#define PAGE_NUMBERS_RIGHT 15
+
 /// Draws one page of the Psynergy list into window: up to five names with their
 /// icons and PP costs, Psynergy the party member cannot afford in the no-HP
 /// colour and one restricted here in the low-HP colour, the page numbers, and
 /// the help line (how to set a shortcut while Select is held, else how to
 /// change party member).
-/// The page numbers end, with their right arrow, at tile 15 of the list
-/// window's top border, as the item list's do.
-#define PAGE_NUMBERS_RIGHT 15
-
 s32 PsynergyMenu_DrawActionPage(struct Window *window, s32 unused,
                                 const struct PagedList *pageState) {
   u32 firstEntry;
@@ -1037,8 +1037,6 @@ s32 PsynergyMenu_DrawActionPage(struct Window *window, s32 unused,
 }
 
 /// The Psynergy list of the party member in sideIndex, five a page.
-#undef PAGE_NUMBERS_RIGHT
-
 s32 PsynergyMenu_RunList(s32 sideIndex) {
   struct PsynergyMenuWork *menu;
   struct AbilityDefinition *ability;
@@ -1290,6 +1288,7 @@ s32 PsynergyMenu_IsActionRestricted(s32 actionEntry) {
   return 1;
 }
 
+#undef PAGE_NUMBERS_RIGHT
 #undef PSYNERGY_PROMPT_TILES
 #undef PSYNERGY_PROMPT_TILES_SIZE
 #undef PSYNERGY_DETAIL_ROW_X

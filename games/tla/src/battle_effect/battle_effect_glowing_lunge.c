@@ -1,25 +1,36 @@
 /// @file
-/// A lunge behind a glowing streak.
+/// Rushing strikes (Bone Charge, Brute Force, Onslaught, Headbutt, Stun Muscle,
+/// Living Armor), and the handlers that play the mirrored wall.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
 
-#define LUNGE_FRAMES 60
-#define LUNGE_STREAK_FRAMES 15 ///< the streak follows the caster
-#define LUNGE_HIT_FRAME 8      ///< the caster reaches the target
-#define LUNGE_FLASH_FRAMES 12  ///< the flash at the target grows and fades
-#define SPARK_COUNT 64
-#define BURST_COUNT 16 ///< mode 5's flame bursts
+#define RUSHING_STRIKE_FRAMES 60
+#define RUSHING_STRIKE_FRAME 8 ///< the user strikes; the ring and sparks start
+#define RUSHING_STRIKE_BURST_FRAMES 15 ///< the burst hides the user rushing in
+#define RUSHING_STRIKE_RING_FRAMES 12  ///< the ring where it hits swells
+#define RUSHING_STRIKE_SPARK_COUNT 64
+/// The first two sparks' frames to live; each pair after lives one more.
+#define RUSHING_STRIKE_SPARK_LIFE 16
+#define RUSHING_STRIKE_SPARKS ((struct Particle *)(Ram_MapCellBuffer + 16384))
+#define RUSHING_STRIKE_EXPLOSIONS 16 ///< Living Armor's
+#define RUSHING_STRIKE_EXPLOSION_PICTURE_FRAMES 4
+/// FlashBurstSheet's six pictures, four frames apiece.
+#define RUSHING_STRIKE_EXPLOSION_FRAMES 24
 
-/// Where FlashBurstSheet is decoded in the effect's pictures.
-#define RUSHING_STRIKE_FLASH_BURST_PICTURES 2048
+/// The burst: FlamePlumeSheet's 32x32 plume above the same plume upside down.
+#define RUSHING_STRIKE_BURST_WIDTH 32
+#define RUSHING_STRIKE_BURST_HEIGHT 64
+#define RUSHING_STRIKE_PLUME_SIZE 32
+/// Where FlashBurstSheet is decoded in the effect's pictures, after the burst.
+#define RUSHING_STRIKE_EXPLOSION_PICTURES PICTURE_BYTES(RUSHING_STRIKE_BURST)
 
-/// The user rushes at the first target; a ring flares where it hits and sparks
-/// scatter.
+/// The user rushes at the first target in a burst of light; a ring flares where
+/// it hits and sparks scatter, and Living Armor's hit raises explosions.
 void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   struct ModelTexture texture;
   DrawRectangle draw[2];
-  u8 *flashPixels = Ram_MapCellBuffer;
+  u8 *ringPixels = Ram_MapCellBuffer;
   s32 height;
   struct ScreenPoint target;
   struct ScreenPoint caster;
@@ -28,7 +39,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   void *canvas = Ram_HeapSlots->battleCanvas;
   s32 frame;
   struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
-  u8 *sparkCels = Ram_HeapSlots->battleSheet;
+  u8 *motePictures = Ram_HeapSlots->battleSheet;
   struct MotionObject *targetObject;
   struct RenderModel *quad;
   void *vertices;
@@ -36,26 +47,29 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   s32 row;
   s32 column;
   s32 scale;
-  s32 flashFrame;
+  s32 ringFrame;
   s32 brightness;
   s32 resource;
 
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, draw);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sparkCels, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motePictures, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, Ram_MapCellBuffer, 0,
                              0);
 
-  // The streak: the 32x32 flare, then the same flare upside down below it.
+  // The burst: the plume, then the same plume upside down below it.
   Resource_LoadAndDecompress(RESOURCE_FLAME_PLUME_SHEET, work->sheet, 0, 0);
-  for (row = 0; row != 32; row++)
-    for (column = 0; column != 32; column++)
-      work->sheet[32 * 32 + (31 - row) * 32 + column] =
-          work->sheet[row * 32 + column];
+  for (row = 0; row != RUSHING_STRIKE_PLUME_SIZE; row++)
+    for (column = 0; column != RUSHING_STRIKE_PLUME_SIZE; column++)
+      work->sheet[RUSHING_STRIKE_PLUME_SIZE * RUSHING_STRIKE_PLUME_SIZE +
+                  (RUSHING_STRIKE_PLUME_SIZE - 1 - row) *
+                      RUSHING_STRIKE_PLUME_SIZE +
+                  column] =
+          work->sheet[row * RUSHING_STRIKE_PLUME_SIZE + column];
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
-                             work->sheet + RUSHING_STRIKE_FLASH_BURST_PICTURES,
-                             1, 0);
+                             work->sheet + RUSHING_STRIKE_EXPLOSION_PICTURES, 1,
+                             0);
   switch (mode) {
   case RUSHING_STRIKE_BONE_CHARGE:
     resource = RESOURCE_FIRE_PILLAR_SHEET_B;
@@ -79,20 +93,20 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
-  // The caster lunges at the target.
+  // The user rushes at the target.
   BattleEffect_SetApproachMotion(args->user, args->targets[0], 10, 80);
   Actor_SetAnimationSpeedFar(BattleObject_GetFar(args->user)->object,
                              ANIMATION_STEP_NORMAL * 3);
   targetObject = BattleObject_GetFar(args->targets[0])->object;
   EffectPosition_ProjectBattler(args->targets[0], &target);
 
-  for (frame = 0; frame != LUNGE_FRAMES; frame++) {
-    // The first frame readies the sparks and mode 5's bursts at the
-    // target, 8 pixels to the outside of it, flying back the other way.
+  for (frame = 0; frame != RUSHING_STRIKE_FRAMES; frame++) {
+    // The first frame readies the sparks and Living Armor's explosions at the
+    // target, 8 pixels out from it, flying back the way the user came.
     if (frame == 0) {
-      struct Particle *spark = Ram_MapCellBuffer + 16384;
+      struct Particle *spark = RUSHING_STRIKE_SPARKS;
 
-      for (i = 0; i != SPARK_COUNT; i++, spark++) {
+      for (i = 0; i != RUSHING_STRIKE_SPARK_COUNT; i++, spark++) {
         spark->x = targetObject->x;
         if (spark->x < 0)
           spark->x += -toFIXED(8);
@@ -105,27 +119,27 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
         spark->velocityZ = ((Random16() & 255) - 128) << 11;
         if (spark->x > 0)
           spark->velocityX = -spark->velocityX;
-        spark->variant = i / 2 + 16;
+        spark->variant = i / 2 + RUSHING_STRIKE_SPARK_LIFE;
       }
-      for (i = 0; i != SPARK_COUNT; i++) {
-        struct Particle *burst = &work->particles[i];
-        burst->x = targetObject->x;
-        if (burst->x < 0)
-          burst->x += -toFIXED(8);
+      for (i = 0; i != RUSHING_STRIKE_SPARK_COUNT; i++) {
+        struct Particle *explosion = &work->particles[i];
+        explosion->x = targetObject->x;
+        if (explosion->x < 0)
+          explosion->x += -toFIXED(8);
         else
-          burst->x += toFIXED(8);
-        burst->y = targetObject->y + toFIXED(14);
-        burst->z = targetObject->z;
-        burst->velocityX = ((Random16() & 511) - 256) << 10;
-        burst->velocityY = ((Random16() & 255) - 64) << 10;
-        burst->velocityZ = ((Random16() & 255) - 128) << 10;
-        if (burst->x > 0)
-          burst->velocityX = -burst->velocityX;
-        burst->variant = 0;
+          explosion->x += toFIXED(8);
+        explosion->y = targetObject->y + toFIXED(14);
+        explosion->z = targetObject->z;
+        explosion->velocityX = ((Random16() & 511) - 256) << 10;
+        explosion->velocityY = ((Random16() & 255) - 64) << 10;
+        explosion->velocityZ = ((Random16() & 255) - 128) << 10;
+        if (explosion->x > 0)
+          explosion->velocityX = -explosion->velocityX;
+        explosion->variant = 0;
       }
     }
 
-    // The streak, on the caster for its first 15 frames.
+    // The burst at the user as it rushes in.
     EffectPosition_ProjectBattler(args->user, &caster);
     vertices = Heap_AllocEwram(32);
     quad = Render_AllocateModelList(1);
@@ -138,7 +152,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     quad->kind = MODEL_SHADED_MAX;
     quad->vertices = vertices;
     quad->shade = brightness;
-    if (frame < LUNGE_STREAK_FRAMES) {
+    if (frame < RUSHING_STRIKE_BURST_FRAMES) {
       Matrix_Initialize();
       Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
       Matrix_Translate(INTtoFIXED(caster.x - 128), INTtoFIXED(caster.y - 88),
@@ -152,22 +166,22 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
       Render_DrawModelList(quad);
     }
 
-    // The flash at the target grows for twelve frames from the hit and
-    // darkens from its fifth.
-    flashFrame = frame - LUNGE_HIT_FRAME;
-    if (frame >= LUNGE_HIT_FRAME &&
-        frame < LUNGE_HIT_FRAME + LUNGE_FLASH_FRAMES) {
+    // The ring where it hits swells, four times as tall as it is wide, and
+    // darkens after its fifth frame.
+    ringFrame = frame - RUSHING_STRIKE_FRAME;
+    if (frame >= RUSHING_STRIKE_FRAME &&
+        frame < RUSHING_STRIKE_FRAME + RUSHING_STRIKE_RING_FRAMES) {
       if (mode == RUSHING_STRIKE_STUN_MUSCLE)
-        scale = (flashFrame << 12) + FIXED_ONE / 16;
+        scale = ringFrame * (FIXED_ONE / 16) + FIXED_ONE / 16;
       else
-        scale = flashFrame * 3048 + 3048;
-      brightness = 32 - flashFrame * 8;
+        scale = ringFrame * 3048 + 3048;
+      brightness = 32 - ringFrame * 8;
       if (brightness > 0)
         brightness = 0;
       quad->shade = brightness;
       texture.logWidth = 7;
       texture.logHeight = 7;
-      texture.pixels = flashPixels;
+      texture.pixels = ringPixels;
       quad->kind = MODEL_SHADED_ADDITIVE;
       quad->mesh = gBattleEffect_LargeSquareMesh;
       Matrix_Initialize();
@@ -185,9 +199,8 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     Heap_Release(quad);
     Heap_Release(vertices);
 
-    // The hit.
-    if (frame == LUNGE_HIT_FRAME) {
-      EFFECT_STRIKE_TARGET(args, 0, LUNGE_HIT_FRAME, KNOCKBACK_HURL);
+    if (frame == RUSHING_STRIKE_FRAME) {
+      EFFECT_STRIKE_TARGET(args, 0, 8, KNOCKBACK_HURL);
       if (mode == RUSHING_STRIKE_LIVING_ARMOR)
         EFFECT_SHOW_DAMAGE(SE_CRASH);
       else
@@ -196,14 +209,14 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     }
 
     // From the hit on, the sparks fly and burn down, drawn by turns with
-    // the two blitters; their cel shrinks as they burn.
-    if (frame >= LUNGE_HIT_FRAME && frame < 64) {
+    // the two blitters; their picture shrinks as they burn.
+    if (frame >= RUSHING_STRIKE_FRAME && frame < 64) {
       struct Particle *spark;
 
       Matrix_Initialize();
       Matrix_SetLookAt(camera->eye, camera->focus);
-      spark = Ram_MapCellBuffer + 16384;
-      for (i = 0; i != SPARK_COUNT; i++, spark++) {
+      spark = RUSHING_STRIKE_SPARKS;
+      for (i = 0; i != RUSHING_STRIKE_SPARK_COUNT; i++, spark++) {
         s32 life = spark->variant;
 
         if (life >= 0) {
@@ -212,32 +225,34 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
           EffectPosition_ProjectPoint(&spark->x, &screen);
           screen.x >>= 1;
           height = size * 2;
-          draw[i & 1](canvas, sparkCels + gBattleEffect_MotePictures[size - 1],
+          draw[i & 1](canvas,
+                      motePictures + gBattleEffect_MotePictures[size - 1],
                       screen.x - size / 2, screen.y - size, size, height);
           Particle_AdvanceWithGravity3D(spark, 60, -toFIXED(1) / 128);
           spark->variant--;
         }
       }
 
-      // Mode 5's flame bursts rise through six 32x64 cels in 24 frames.
+      // Living Armor's explosions rise, flashing and burning out.
       if (mode == RUSHING_STRIKE_LIVING_ARMOR) {
 
-        for (i = 0; i != BURST_COUNT; i++) {
-          struct Particle *burst = &work->particles[i];
-          s32 life = burst->variant;
+        for (i = 0; i != RUSHING_STRIKE_EXPLOSIONS; i++) {
+          struct Particle *explosion = &work->particles[i];
+          s32 life = explosion->variant;
 
-          if (life >= 0 && life < 24) {
-            s32 cel = life / 4;
+          if (life >= 0 && life < RUSHING_STRIKE_EXPLOSION_FRAMES) {
+            s32 picture = life / RUSHING_STRIKE_EXPLOSION_PICTURE_FRAMES;
 
-            EffectPosition_ProjectPoint(&burst->x, &screen);
+            EffectPosition_ProjectPoint(&explosion->x, &screen);
             screen.x >>= 1;
             draw[0](canvas,
-                    work->sheet + RUSHING_STRIKE_FLASH_BURST_PICTURES +
-                        (cel << 11),
-                    screen.x - 16, screen.y - 32, FLASH_BURST_WIDTH,
+                    work->sheet + RUSHING_STRIKE_EXPLOSION_PICTURES +
+                        picture * PICTURE_BYTES(FLASH_BURST),
+                    screen.x - FLASH_BURST_WIDTH / 2,
+                    screen.y - FLASH_BURST_HEIGHT / 2, FLASH_BURST_WIDTH,
                     FLASH_BURST_HEIGHT);
-            Particle_AdvanceWithGravity3D(burst, 60, toFIXED(1) / 8);
-            burst->variant++;
+            Particle_AdvanceWithGravity3D(explosion, 60, toFIXED(1) / 8);
+            explosion->variant++;
           }
         }
       }
@@ -271,9 +286,17 @@ void BattleEffect_RunRecovery(struct BattleEffectParams *args) {
 void BattleEffect_RunSack(struct BattleEffectParams *args) {
   BattleEffect_RunMirroredWall(args, MIRRORED_WALL_SACK);
 }
-#undef LUNGE_FRAMES
-#undef LUNGE_STREAK_FRAMES
-#undef LUNGE_HIT_FRAME
-#undef LUNGE_FLASH_FRAMES
-#undef SPARK_COUNT
-#undef BURST_COUNT
+#undef RUSHING_STRIKE_FRAMES
+#undef RUSHING_STRIKE_FRAME
+#undef RUSHING_STRIKE_BURST_FRAMES
+#undef RUSHING_STRIKE_RING_FRAMES
+#undef RUSHING_STRIKE_SPARK_COUNT
+#undef RUSHING_STRIKE_SPARK_LIFE
+#undef RUSHING_STRIKE_SPARKS
+#undef RUSHING_STRIKE_EXPLOSIONS
+#undef RUSHING_STRIKE_EXPLOSION_PICTURE_FRAMES
+#undef RUSHING_STRIKE_EXPLOSION_FRAMES
+#undef RUSHING_STRIKE_BURST_WIDTH
+#undef RUSHING_STRIKE_BURST_HEIGHT
+#undef RUSHING_STRIKE_PLUME_SIZE
+#undef RUSHING_STRIKE_EXPLOSION_PICTURES

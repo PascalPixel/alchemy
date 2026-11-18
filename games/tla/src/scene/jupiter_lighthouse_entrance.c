@@ -206,7 +206,7 @@ void Actor_StartScript(struct Actor *actor, const s32 *script);
 
 #include "shared/whirlwind_spawn_upper.h"
 
-// Unused here: nothing in the entrance sets it as an actor's update.
+// Unused: nothing in the entrance sets Actor_EmitRisingSparks as an update.
 #include "shared/actor_emit_rising_sparks.h"
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"

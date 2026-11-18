@@ -145,21 +145,22 @@
 #include "window/screens.h"
 #include "text/msg_ids.h"
 
-u8 gKalay_UnusedBeforeDanceStep[12] BSS_DATA ALIGNED(8);
-/// Which of the two guides' turns Kalay_AlternateGuidesPacing is at, 0 to 4.
-s32 gKalay_DanceStep BSS_DATA;
+/// Unused: twelve bytes nothing reads or writes.
+u8 gKalay_UnusedBeforePacingStep[12] BSS_DATA ALIGNED(8);
+/// Which of the two guides' turns Kalay_UpdatePacingGuides is at, 0 to 4.
+s32 gKalay_PacingStep BSS_DATA;
 
 extern s32 gKalay_TileStepByFacing[];
 extern s32 gKalay_TourGroupWalkScript[];
 extern s32 gKalay_TourGroupLeaveScript[];
-extern s32 gKalay_TouristFidgetScript[];
+extern s32 gKalay_WaitingTouristScript[];
 extern s32 gKalay_GuideCountScript[];
 extern s32 gKalay_GuidePaceScript[];
 extern s32 gKalay_HeadGuideStopScript[];
 extern s32 gKalay_SecondGuideStopScript[];
 extern s32 gKalay_HeadGuideReturnScript[];
 extern s32 gKalay_SecondGuideReturnScript[];
-extern s32 gKalay_PartyFidgetScript[];
+extern s32 gKalay_PartyLookAboutScript[];
 extern s32 gKalay_PartyGatherScript[];
 extern s32 gKalay_FrostGrowScript[];
 extern struct SceneEntrance gKalay_NoEntrances[];
@@ -305,10 +306,10 @@ static void Kalay_PrepareHammetPalace(void);
 static void Kalay_PrepareTunnelEntrance(void);
 static void Kalay_PrepareTunnelPassage(void);
 static void Kalay_PrepareTunnelTreasureRoom(void);
-static void Kalay_StartTouristsFidgeting(void);
-static void Kalay_StartTouristFidgeting(s32 actorId);
+static void Kalay_StartTouristsWaiting(void);
+static void Kalay_StartTouristWaiting(s32 actorId);
 static void Kalay_StartGuidesPacing(void);
-static void Kalay_AlternateGuidesPacing(void);
+static void Kalay_UpdatePacingGuides(void);
 static void Kalay_IvanMeetsPalaceGuards(void);
 static void Kalay_HammetReturnsToPalace(void);
 static void Kalay_UpdateTunnelPassages(void);
@@ -327,9 +328,10 @@ static void Kalay_ScorchJoins(void) {
   Djinn_JoinParty(ACTOR_SCORCH, ELEMENT_MARS, DJINNI_INDEX(DJINNI_SCORCH));
 }
 
-/// In Kalay, while the tour waits, a tourist now and then nods, shakes his head
-/// or turns.
-static s32 Kalay_UpdateTouristFidget(struct Actor *actor) {
+/// An actor script call, each frame: in Kalay, while the tour waits, a tourist
+/// now and then nods, shakes his head or turns up to half a turn, and then
+/// waits a random 0 to 79 frames.
+static s32 Kalay_UpdateWaitingTourist(struct Actor *actor) {
   u32 action;
   u32 nextTimer;
 
@@ -466,7 +468,7 @@ static void Kalay_TalkAboutLeavingHome(void) {
 /// Spoken to from any side but the north, the guard at the Kalay Tunnel
 /// Entrance asks `Do you want to go to the cave up ahead?`, and turns the
 /// party away either way.
-static void Kalay_AskAboutCaveAccess(void) {
+static void Kalay_AskAboutGoingToCave(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
   // From the north he only stands in the way.
@@ -642,6 +644,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_SetPosition(ACTOR_SECOND_GUIDE, 364, 272);
     Sound_Play(SOUND_FADE_OUT_BGM);
     Message_SetVoiceFromActor(ACTOR_HEAD_GUIDE);
+    // "OK! Are we all listening? Let's stop right here."
     FieldMessage_ShowCentered(MsgKalayOkListeningLets, 1, 0);
     Sound_Play(MUS_DJINN_LESSON);
     Event_Wait(10);
@@ -762,8 +765,9 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_WalkToAndWait(ACTOR_SECOND_GUIDE, 251, 284);
     Actor_WalkToAndWait(ACTOR_SECOND_GUIDE, 246, 296);
     Actor_FaceDirection(ACTOR_SECOND_GUIDE, FACING_NORTH, 0);
-    // The tourists fidget while the guides count them.
-    Kalay_StartTouristsFidgeting();
+    // The tourists wait, nodding, shaking their heads and turning, while the
+    // guides count them.
+    Kalay_StartTouristsWaiting();
     Event_Wait(40);
     Actor_SetSpeed(ACTOR_SECOND_GUIDE, 1.6);
     Actor_WalkToAndWait(ACTOR_SECOND_GUIDE, 228, 296);
@@ -818,23 +822,26 @@ static void Kalay_WatchTourGroupDeparture(void) {
     wait(1);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST, FACING_WEST, 10);
     Actor_ShowEmote(ACTOR_FIRST_TOURIST, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+    // "What's going on? Why aren't we leaving for Tolbi yet?"
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST, 0, 10);
-    Kalay_StartTouristFidgeting(ACTOR_FIRST_TOURIST);
+    Kalay_StartTouristWaiting(ACTOR_FIRST_TOURIST);
     Event_Wait(80);
     Actor_Stop(ACTOR_FIRST_TOURIST + 1);
     wait(1);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 1, FACING_NORTH_NORTHEAST, 20);
     Actor_RunRepeatedMotion(ACTOR_FIRST_TOURIST + 1, 2);
+    // "There are a lot of people waiting to see Colosso, here!"
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST + 1, 0, 10);
-    Kalay_StartTouristFidgeting(ACTOR_FIRST_TOURIST + 1);
+    Kalay_StartTouristWaiting(ACTOR_FIRST_TOURIST + 1);
     Event_Wait(160);
     Actor_Stop(ACTOR_FIRST_TOURIST + 5);
     wait(1);
     Actor_FaceDirection(ACTOR_FIRST_TOURIST + 5, FACING_SOUTH_SOUTHWEST, 10);
     Actor_ShowEmote(ACTOR_FIRST_TOURIST + 5, EMOTE_IN_FRONT | EMOTE_QUESTION,
                     60);
+    // "Hey? What's up? Why are the guides pacing back and forth?"
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST + 5, 0, 10);
-    Kalay_StartTouristFidgeting(ACTOR_FIRST_TOURIST + 5);
+    Kalay_StartTouristWaiting(ACTOR_FIRST_TOURIST + 5);
     Event_Wait(80);
     Actor_Stop(ACTOR_FIRST_TOURIST + 3);
     wait(1);
@@ -843,7 +850,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Event_SetMessageId(message + 6);
     // "Come on! Why aren't we leaving yet?"
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST + 3, 0, 10);
-    Task_Remove(Kalay_AlternateGuidesPacing);
+    Task_Remove(Kalay_UpdatePacingGuides);
     Actor_Stop(ACTOR_HEAD_GUIDE);
     Actor_Stop(ACTOR_SECOND_GUIDE);
     wait(1);
@@ -859,10 +866,10 @@ static void Kalay_WatchTourGroupDeparture(void) {
     message += 5;
     Actor_RunRepeatedMotion(ACTOR_FIRST_TOURIST + 2, 2);
     Event_SetMessageId(message);
-    // "Uh-oh... We're short one person... Now where could he be?"
+    // "I hear there was a landslide on the road to Tolbi. We paid..."
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST + 2, 0, 20);
-    Kalay_StartTouristFidgeting(ACTOR_FIRST_TOURIST + 2);
-    Kalay_StartTouristFidgeting(ACTOR_FIRST_TOURIST + 3);
+    Kalay_StartTouristWaiting(ACTOR_FIRST_TOURIST + 2);
+    Kalay_StartTouristWaiting(ACTOR_FIRST_TOURIST + 3);
     do {
       wait(1);
     } while (Actor_Get(ACTOR_HEAD_GUIDE)->timer == 0 ||
@@ -878,7 +885,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Event_SetMessageId(message);
     // "We have to decide if we're entering Colosso once we reach Tolbi."
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST + 4, 0, 10);
-    Kalay_StartTouristFidgeting(ACTOR_FIRST_TOURIST + 4);
+    Kalay_StartTouristWaiting(ACTOR_FIRST_TOURIST + 4);
     Actor_Stop(ACTOR_OURANOS);
     Actor_Stop(ACTOR_FIRST_TOURIST + 6);
     wait(1);
@@ -890,11 +897,11 @@ static void Kalay_WatchTourGroupDeparture(void) {
     message += 3;
     Actor_SetAnimationAndWait(ACTOR_OURANOS, ANIM_SHAKE_HEAD);
     Event_SetMessageId(message);
-    // "We have to decide if we're entering Colosso once we reach Tolbi."
+    // "Right when we're leaving, they tell us we have to ride a boat?..."
     Event_ShowMessageThenWait(ACTOR_OURANOS, 0, 10);
     Actor_RunRepeatedMotion(ACTOR_FIRST_TOURIST + 6, 1);
     Actor_SetAnimation(ACTOR_FIRST_TOURIST + 6, ANIM_SHAKE_HEAD);
-    // "I hear there was a landslide on the road to Tolbi. We paid..."
+    // "It's just a shame a man like you can't ride on a boat, Ouranos."
     Event_ShowMessageThenWait(ACTOR_FIRST_TOURIST + 6, 0, 10);
     Actor_ShowEmote(ACTOR_OURANOS, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
     Actor_ShowEmote(ACTOR_HEAD_GUIDE, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
@@ -1041,6 +1048,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_FaceDirection(ACTOR_LATE_TOURIST, FACING_NORTH, 40);
     Actor_FaceDirection(ACTOR_LATE_TOURIST, FACING_SOUTH_SOUTHWEST, 40);
     Actor_ShowEmote(ACTOR_LATE_TOURIST, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
+    // "Hmm... Now where did my tour group get to...?"
     Event_ShowMessageThenWait(ACTOR_LATE_TOURIST, 0, 10);
     Actor_FaceDirection(ACTOR_LATE_TOURIST, FACING_EAST, 40);
     Actor_FaceDirection(ACTOR_LATE_TOURIST, FACING_NORTH, 40);
@@ -1048,8 +1056,10 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Actor_SetAttachedEffect(ACTOR_LATE_TOURIST,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_Jump(ACTOR_LATE_TOURIST, 4, 40);
+    // "No! They wouldn't have left without me, would they?"
     Event_ShowMessageThenWait(ACTOR_LATE_TOURIST, 0, 20);
     Actor_RunRepeatedMotion(ACTOR_LATE_TOURIST, 2);
+    // "Oh, no! I'd better get moving!"
     Event_ShowMessageThenWait(ACTOR_LATE_TOURIST, 0, 10);
     Actor_Jump(ACTOR_LATE_TOURIST, 4, 40);
     Actor_SetSpeed(ACTOR_LATE_TOURIST, 1.2);
@@ -1113,15 +1123,16 @@ static void Kalay_StartTrackingLeader(void) {
   }
 }
 
-/// Touching step trigger 19 in the Kalay Tunnel (KalayTunnelTreasureRoom) lets
-/// the leader's depth priority follow his position.
-static void Kalay_EnableLeaderAutomaticPriority(void) {
+/// Touching step trigger 19 in the Kalay Tunnel (KalayTunnelTreasureRoom) frees
+/// the leader's depth priority to follow his position
+/// (ACTOR_PRIORITY_AUTOMATIC).
+static void Kalay_FreeLeaderPriority(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
 }
 
-/// Touching step trigger 18 in the Kalay Tunnel (KalayTunnelTreasureRoom) keeps
-/// the leader's depth priority fixed.
-static void Kalay_DisableLeaderAutomaticPriority(void) {
+/// Touching step trigger 18 in the Kalay Tunnel (KalayTunnelTreasureRoom) fixes
+/// the leader's depth priority where it is.
+static void Kalay_FixLeaderPriority(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 }
 
@@ -1396,20 +1407,20 @@ static void Kalay_PrepareTunnelTreasureRoom(void) {
   }
 }
 
-/// All eight tourists in Kalay start fidgeting.
-static void Kalay_StartTouristsFidgeting(void) {
-  Kalay_StartTouristFidgeting(ACTOR_FIRST_TOURIST);
-  Kalay_StartTouristFidgeting(ACTOR_FIRST_TOURIST + 1);
-  Kalay_StartTouristFidgeting(ACTOR_FIRST_TOURIST + 2);
-  Kalay_StartTouristFidgeting(ACTOR_FIRST_TOURIST + 3);
-  Kalay_StartTouristFidgeting(ACTOR_FIRST_TOURIST + 5);
-  Kalay_StartTouristFidgeting(ACTOR_FIRST_TOURIST + 4);
-  Kalay_StartTouristFidgeting(ACTOR_FIRST_TOURIST + 6);
-  Kalay_StartTouristFidgeting(ACTOR_OURANOS);
+/// All eight tourists in Kalay start waiting.
+static void Kalay_StartTouristsWaiting(void) {
+  Kalay_StartTouristWaiting(ACTOR_FIRST_TOURIST);
+  Kalay_StartTouristWaiting(ACTOR_FIRST_TOURIST + 1);
+  Kalay_StartTouristWaiting(ACTOR_FIRST_TOURIST + 2);
+  Kalay_StartTouristWaiting(ACTOR_FIRST_TOURIST + 3);
+  Kalay_StartTouristWaiting(ACTOR_FIRST_TOURIST + 5);
+  Kalay_StartTouristWaiting(ACTOR_FIRST_TOURIST + 4);
+  Kalay_StartTouristWaiting(ACTOR_FIRST_TOURIST + 6);
+  Kalay_StartTouristWaiting(ACTOR_OURANOS);
 }
 
-/// A tourist starts fidgeting after a random pause.
-static void Kalay_StartTouristFidgeting(s32 actorId) {
+/// A tourist starts waiting (Kalay_UpdateWaitingTourist) after a random pause.
+static void Kalay_StartTouristWaiting(s32 actorId) {
   struct Actor *actor;
   u32 random;
 
@@ -1417,49 +1428,50 @@ static void Kalay_StartTouristFidgeting(s32 actorId) {
   actor->timer = actorId;
   random = Random_Next();
   actor->userValue = (random * 5) >> 12;
-  Actor_StartScript(actor, gKalay_TouristFidgetScript);
+  Actor_StartScript(actor, gKalay_WaitingTouristScript);
 }
 
 /// The guides speed up and start pacing in turn.
 static void Kalay_StartGuidesPacing(void) {
-  gKalay_DanceStep = 0;
+  gKalay_PacingStep = 0;
   Actor_SetSpeed(ACTOR_HEAD_GUIDE, 1.6);
   Actor_SetSpeed(ACTOR_SECOND_GUIDE, 1.6);
-  Task_AddFrame(Kalay_AlternateGuidesPacing, TASK_PASS_FRAME);
+  Task_AddFrame(Kalay_UpdatePacingGuides, TASK_PASS_FRAME);
 }
 
-/// Each guide paces in turn, starting when the other finishes.
-static void Kalay_AlternateGuidesPacing(void) {
-  switch (gKalay_DanceStep) {
+/// Task: the guides take turns, each counting the tourists and then pacing,
+/// one starting when the other finishes.
+static void Kalay_UpdatePacingGuides(void) {
+  switch (gKalay_PacingStep) {
   case 0:
     Kalay_ClearScriptDone(Actor_Get(ACTOR_SECOND_GUIDE));
     Actor_SetScript(ACTOR_SECOND_GUIDE, gKalay_GuideCountScript);
-    gKalay_DanceStep++;
+    gKalay_PacingStep++;
     break;
   case 1:
     if (Actor_Get(ACTOR_SECOND_GUIDE)->timer != 0) {
       Kalay_ClearScriptDone(Actor_Get(ACTOR_HEAD_GUIDE));
       Actor_SetScript(ACTOR_HEAD_GUIDE, gKalay_GuidePaceScript);
-      gKalay_DanceStep++;
+      gKalay_PacingStep++;
     }
     break;
   case 2:
     if (Actor_Get(ACTOR_HEAD_GUIDE)->timer != 0) {
       Kalay_ClearScriptDone(Actor_Get(ACTOR_HEAD_GUIDE));
       Actor_SetScript(ACTOR_HEAD_GUIDE, gKalay_GuideCountScript);
-      gKalay_DanceStep++;
+      gKalay_PacingStep++;
     }
     break;
   case 3:
     if (Actor_Get(ACTOR_HEAD_GUIDE)->timer != 0) {
       Kalay_ClearScriptDone(Actor_Get(ACTOR_SECOND_GUIDE));
       Actor_SetScript(ACTOR_SECOND_GUIDE, gKalay_GuidePaceScript);
-      gKalay_DanceStep++;
+      gKalay_PacingStep++;
     }
     break;
   case 4:
     if (Actor_Get(ACTOR_SECOND_GUIDE)->timer != 0) {
-      gKalay_DanceStep = 0;
+      gKalay_PacingStep = 0;
     }
     break;
   }
@@ -1728,7 +1740,7 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
   // Seed the party idle phases for the arrival conversation.
   Actor_Get(ACTOR_PARTY_LEADER)->userValue = Random_Below(80);
-  Actor_SetScript(ACTOR_PARTY_LEADER, gKalay_PartyFidgetScript);
+  Actor_SetScript(ACTOR_PARTY_LEADER, gKalay_PartyLookAboutScript);
   Actor_Jump(ACTOR_BUNZA, 2, 20);
   Actor_SetAnimationAndWait(ACTOR_BUNZA, ANIM_NOD);
   Event_SetMessageId(MsgKalayWeveArrivedHammet);
@@ -1761,9 +1773,9 @@ static void Kalay_HammetReturnsToPalace(void) {
   Actor_Get(ACTOR_GARET)->userValue = Random_Below(80);
   Actor_Get(ACTOR_IVAN)->userValue = Random_Below(80);
   Actor_Get(ACTOR_MIA)->userValue = Random_Below(80);
-  Actor_SetScript(ACTOR_GARET, gKalay_PartyFidgetScript);
-  Actor_SetScript(ACTOR_IVAN, gKalay_PartyFidgetScript);
-  Actor_SetScript(ACTOR_MIA, gKalay_PartyFidgetScript);
+  Actor_SetScript(ACTOR_GARET, gKalay_PartyLookAboutScript);
+  Actor_SetScript(ACTOR_IVAN, gKalay_PartyLookAboutScript);
+  Actor_SetScript(ACTOR_MIA, gKalay_PartyLookAboutScript);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
   // "Arrived where?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | 2, 0, 10);
@@ -1983,8 +1995,9 @@ static void Kalay_PushTunnelStatue(void) {
   direction = FACING_INDEX(leader->facing);
   leaderX = leader->x.part[0].integer;
   probeStep = gKalay_TileStepByFacing[direction];
-  statue = Actor_FindAtCell((leaderX + (FIXEDtoINT(probeStep))) >> 4,
-                            (leader->z.part[0].integer + (s16)probeStep) >> 4);
+  statue = Actor_FindAtCell(
+      (leaderX + DIRECTION_STEP_X(probeStep)) >> 4,
+      (leader->z.part[0].integer + DIRECTION_STEP_Z(probeStep)) >> 4);
   if (statue != NULL) {
     statue->layer = 2;
     Actor_StepFrom(&destination, statue, gKalay_TileStepByFacing[direction]);
@@ -2013,11 +2026,12 @@ static void Kalay_PushTunnelStatue(void) {
 }
 
 /// A passage's opening frames, copied in turn over its doorway: each one map
-/// column five cells tall from row 58, columns 67 to 74. The passage counts as
-/// open (FLAG_TUNNEL_FIRST_PASSAGE_OPEN, FLAG_TUNNEL_SECOND_PASSAGE_OPEN) from
-/// column 70's.
+/// column five cells tall from row 58. This is the first frame's column.
 #define PASSAGE_FIRST_FRAME_COLUMN 67
+/// The frame from which the passage counts as open
+/// (FLAG_TUNNEL_FIRST_PASSAGE_OPEN, FLAG_TUNNEL_SECOND_PASSAGE_OPEN).
 #define PASSAGE_OPEN_FRAME_COLUMN 70
+/// The last frame's column.
 #define PASSAGE_LAST_FRAME_COLUMN 74
 
 /// The half-cell column each statue must be pushed west to, or past, to open
@@ -2032,9 +2046,6 @@ static void Kalay_UpdateTunnelPassages(void) {
   s32 firstPassageOpen;
   struct Actor *frostEffect;
   u32 i;
-  s32 span;
-  s32 height;
-  s32 width;
 
   // Open each passage only after its corresponding statue reaches the trigger.
   firstStatue = Actor_Get(ACTOR_FIRST_STATUE);
@@ -2044,58 +2055,52 @@ static void Kalay_UpdateTunnelPassages(void) {
       FIELD_HALF_CELL(firstStatue->x.fixed) <= FIRST_STATUE_OPENING_HALF_CELL) {
     frostEffect = Actor_Get(ACTOR_PUDDLE);
     Event_Start();
-    MapGrid_CopyCellAttributes(7, 44, 1, 1, firstPassageOpen, 1);
+    MapGrid_CopyCellAttributes(7, 44, 1, 1, 0, 1);
     i = PASSAGE_FIRST_FRAME_COLUMN;
-    width = 1;
-    height = 5;
     do {
-      MapGrid_CopyCellsTo(i, 58, 78, 41, width, height);
+      MapGrid_CopyCellsTo(i, 58, 78, 41, 1, 5);
       Event_Wait(4);
       if (i == PASSAGE_OPEN_FRAME_COLUMN) {
         GameFlag_Set(FLAG_TUNNEL_FIRST_PASSAGE_OPEN);
       }
       i++;
     } while (i <= PASSAGE_LAST_FRAME_COLUMN);
-    span = 2;
-    MapGrid_CopyCellsTo(16, 109, 13, 109, 3, span);
+    MapGrid_CopyCellsTo(16, 109, 13, 109, 3, 2);
     Event_Wait(40);
     frostEffect->scaleX = FIXED_ONE / 10;
     frostEffect->scaleY = FIXED_ONE / 10;
     Actor_SetPosition(ACTOR_PUDDLE, 150, 728);
     Actor_SetScript(ACTOR_PUDDLE, gKalay_FrostGrowScript);
-    height = 1;
-    MapGrid_CopyCellsTo(67, 64, 71, 44, height, span);
-    MapGrid_CopyCellsTo(67, 64, 72, 44, height, span);
-    MapGrid_CopyCellsTo(67, 68, 73, 43, height, span);
-    MapGrid_CopyCellsTo(67, 68, 74, 43, height, span);
-    MapGrid_CopyCellsTo(67, 64, 75, 44, height, span);
-    MapGrid_CopyCellsTo(67, 66, 76, 44, height, span);
-    MapGrid_CopyCellsTo(67, 64, 77, 44, height, span);
-    MapGrid_CopyCellsTo(67, 64, 78, 44, height, span);
-    MapGrid_CopyCellsTo(67, 64, 79, 44, height, span);
-    MapGrid_CopyCellsTo(67, 66, 80, 44, height, span);
-    MapGrid_CopyCellsTo(2, 0, 9, 42, span, span);
+    MapGrid_CopyCellsTo(67, 64, 71, 44, 1, 2);
+    MapGrid_CopyCellsTo(67, 64, 72, 44, 1, 2);
+    MapGrid_CopyCellsTo(67, 68, 73, 43, 1, 2);
+    MapGrid_CopyCellsTo(67, 68, 74, 43, 1, 2);
+    MapGrid_CopyCellsTo(67, 64, 75, 44, 1, 2);
+    MapGrid_CopyCellsTo(67, 66, 76, 44, 1, 2);
+    MapGrid_CopyCellsTo(67, 64, 77, 44, 1, 2);
+    MapGrid_CopyCellsTo(67, 64, 78, 44, 1, 2);
+    MapGrid_CopyCellsTo(67, 64, 79, 44, 1, 2);
+    MapGrid_CopyCellsTo(67, 66, 80, 44, 1, 2);
+    MapGrid_CopyCellsTo(2, 0, 9, 42, 2, 2);
     Event_Wait(40);
-    MapGrid_CopyCellsTo(68, 64, 71, 44, height, span);
-    MapGrid_CopyCellsTo(68, 64, 72, 44, height, span);
-    MapGrid_CopyCellsTo(68, 68, 73, 43, height, span);
-    MapGrid_CopyCellsTo(68, 68, 74, 43, height, span);
-    MapGrid_CopyCellsTo(68, 64, 75, 44, height, span);
-    MapGrid_CopyCellsTo(68, 66, 76, 44, height, span);
-    MapGrid_CopyCellsTo(68, 64, 77, 44, height, span);
-    MapGrid_CopyCellsTo(68, 64, 78, 44, height, span);
-    MapGrid_CopyCellsTo(68, 64, 79, 44, height, span);
-    MapGrid_CopyCellsTo(68, 66, 80, 44, height, span);
-    MapGrid_CopyCellsTo(4, 0, 9, 42, span, span);
+    MapGrid_CopyCellsTo(68, 64, 71, 44, 1, 2);
+    MapGrid_CopyCellsTo(68, 64, 72, 44, 1, 2);
+    MapGrid_CopyCellsTo(68, 68, 73, 43, 1, 2);
+    MapGrid_CopyCellsTo(68, 68, 74, 43, 1, 2);
+    MapGrid_CopyCellsTo(68, 64, 75, 44, 1, 2);
+    MapGrid_CopyCellsTo(68, 66, 76, 44, 1, 2);
+    MapGrid_CopyCellsTo(68, 64, 77, 44, 1, 2);
+    MapGrid_CopyCellsTo(68, 64, 78, 44, 1, 2);
+    MapGrid_CopyCellsTo(68, 64, 79, 44, 1, 2);
+    MapGrid_CopyCellsTo(68, 66, 80, 44, 1, 2);
+    MapGrid_CopyCellsTo(4, 0, 9, 42, 2, 2);
     Event_Wait(40);
-    span = 10;
-    MapGrid_CopyCellsTo(7, 11, 7, 42, span, 8);
-    MapGrid_CopyCellsTo(71, 12, 71, 43, span, 13);
-    span = 44;
-    MapGrid_CopyCellAttributes(6, 13, 12, 12, 6, span);
+    MapGrid_CopyCellsTo(7, 11, 7, 42, 10, 8);
+    MapGrid_CopyCellsTo(71, 12, 71, 43, 10, 13);
+    MapGrid_CopyCellAttributes(6, 13, 12, 12, 6, 44);
     Event_Wait(40);
     Kalay_StartTrackingLeader();
-    MapGrid_CopyCellAttributes(0, 1, 1, 1, 7, span);
+    MapGrid_CopyCellAttributes(0, 1, 1, 1, 7, 44);
     Event_End();
   }
   if (GameFlag_Get(FLAG_TUNNEL_SECOND_PASSAGE_OPEN) == 0 &&
@@ -2103,41 +2108,36 @@ static void Kalay_UpdateTunnelPassages(void) {
           SECOND_STATUE_OPENING_HALF_CELL) {
     Event_Start();
     i = PASSAGE_FIRST_FRAME_COLUMN;
-    width = 1;
-    height = 5;
     do {
-      MapGrid_CopyCellsTo(i, 58, 107, 41, width, height);
+      MapGrid_CopyCellsTo(i, 58, 107, 41, 1, 5);
       Event_Wait(4);
       if (i == PASSAGE_OPEN_FRAME_COLUMN) {
         GameFlag_Set(FLAG_TUNNEL_SECOND_PASSAGE_OPEN);
       }
       i++;
     } while (i <= PASSAGE_LAST_FRAME_COLUMN);
-    height = 2;
-    MapGrid_CopyCellsTo(45, 109, 42, 109, 3, height);
+    MapGrid_CopyCellsTo(45, 109, 42, 109, 3, 2);
     Event_Wait(40);
-    span = 1;
-    MapGrid_CopyCellsTo(67, 64, 102, 44, span, height);
-    MapGrid_CopyCellsTo(67, 64, 103, 44, span, height);
-    MapGrid_CopyCellsTo(67, 64, 104, 44, span, height);
-    MapGrid_CopyCellsTo(67, 66, 105, 44, span, height);
-    MapGrid_CopyCellsTo(67, 64, 106, 44, span, height);
-    MapGrid_CopyCellsTo(67, 64, 107, 44, span, height);
-    MapGrid_CopyCellsTo(67, 64, 108, 44, span, height);
-    MapGrid_CopyCellsTo(67, 66, 109, 44, span, height);
+    MapGrid_CopyCellsTo(67, 64, 102, 44, 1, 2);
+    MapGrid_CopyCellsTo(67, 64, 103, 44, 1, 2);
+    MapGrid_CopyCellsTo(67, 64, 104, 44, 1, 2);
+    MapGrid_CopyCellsTo(67, 66, 105, 44, 1, 2);
+    MapGrid_CopyCellsTo(67, 64, 106, 44, 1, 2);
+    MapGrid_CopyCellsTo(67, 64, 107, 44, 1, 2);
+    MapGrid_CopyCellsTo(67, 64, 108, 44, 1, 2);
+    MapGrid_CopyCellsTo(67, 66, 109, 44, 1, 2);
     Event_Wait(40);
-    MapGrid_CopyCellsTo(68, 64, 102, 44, span, height);
-    MapGrid_CopyCellsTo(68, 64, 103, 44, span, height);
-    MapGrid_CopyCellsTo(68, 64, 104, 44, span, height);
-    MapGrid_CopyCellsTo(68, 66, 105, 44, span, height);
-    MapGrid_CopyCellsTo(68, 64, 106, 44, span, height);
-    MapGrid_CopyCellsTo(68, 64, 107, 44, span, height);
-    MapGrid_CopyCellsTo(68, 64, 108, 44, span, height);
-    MapGrid_CopyCellsTo(68, 66, 109, 44, span, height);
+    MapGrid_CopyCellsTo(68, 64, 102, 44, 1, 2);
+    MapGrid_CopyCellsTo(68, 64, 103, 44, 1, 2);
+    MapGrid_CopyCellsTo(68, 64, 104, 44, 1, 2);
+    MapGrid_CopyCellsTo(68, 66, 105, 44, 1, 2);
+    MapGrid_CopyCellsTo(68, 64, 106, 44, 1, 2);
+    MapGrid_CopyCellsTo(68, 64, 107, 44, 1, 2);
+    MapGrid_CopyCellsTo(68, 64, 108, 44, 1, 2);
+    MapGrid_CopyCellsTo(68, 66, 109, 44, 1, 2);
     Event_Wait(40);
-    span = 8;
-    MapGrid_CopyCellsTo(38, 14, 38, 44, span, 4);
-    MapGrid_CopyCellsTo(102, 14, 102, 44, span, 12);
+    MapGrid_CopyCellsTo(38, 14, 38, 44, 8, 4);
+    MapGrid_CopyCellsTo(102, 14, 102, 44, 8, 12);
     MapGrid_CopyCellAttributes(37, 13, 10, 12, 37, 43);
     Event_Wait(40);
     Kalay_StartTrackingLeader();
@@ -2145,10 +2145,12 @@ static void Kalay_UpdateTunnelPassages(void) {
   }
 }
 
-// UB: the routine returns nothing, so SC_CALL takes whatever value is left as
-// its status, which is not 0. Repeat once per frame until the actor is
-// released, with an explicit status in the modern build.
-// Advance a particle, damp its velocity, and expire its lifetime.
+/// An actor script call, each frame: a tunnel particle swells and drifts, each
+/// frame losing a 256th of its sideways speed and a 16th of its vertical speed.
+/// On its last frame it stops and moves to x 0 at height 0, and then it is
+/// released.
+// UB: returns nothing, so SC_CALL takes whatever value is left as its result,
+// which is not 0, and calls it again the next frame; UBFIX returns 1.
 #ifdef UBFIX
 static s32 Kalay_UpdateTunnelParticle(struct Actor *particle) {
 #else
@@ -2306,8 +2308,8 @@ s32 gKalay_TourGroupLeaveScript[] = {
     SC_END,
 };
 
-s32 gKalay_TouristFidgetScript[] = {
-    SC_CALL(Kalay_UpdateTouristFidget),
+s32 gKalay_WaitingTouristScript[] = {
+    SC_CALL(Kalay_UpdateWaitingTourist),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
@@ -2419,7 +2421,7 @@ s32 gKalay_SecondGuideReturnScript[] = {
     SC_END,
 };
 
-s32 gKalay_PartyFidgetScript[] = {
+s32 gKalay_PartyLookAboutScript[] = {
     SC_CALL(Scene_LookAboutRandomly),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
@@ -2798,7 +2800,7 @@ struct Trigger gKalay_HammetPalaceTriggers[] = {
 struct Trigger gKalay_TunnelEntranceTriggers[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, KALAY_TUNNEL_ENTRANCE_TO_KALAY_TUNNEL_CAVE },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, KALAY_TUNNEL_ENTRANCE_TO_WORLD_MAP_NORTH },
-    { TRIGGER_TALK, ACTOR_TUNNEL_GUARD, CONDITION_ALWAYS, EVENT(Kalay_AskAboutCaveAccess) },
+    { TRIGGER_TALK, ACTOR_TUNNEL_GUARD, CONDITION_ALWAYS, EVENT(Kalay_AskAboutGoingToCave) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TUNNEL_GUARD, CONDITION_ALWAYS, MSGNO(MsgKalayPassageClosedByOrders) },
     { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_TUNNEL_ENTRANCE_NUT, FLAG_KALAY_TUNNEL_ENTRANCE_NUT_CAUGHT, EVENT(Kalay_CatchTunnelEntranceNut) },
     { TRIGGER_TABLE_END },
@@ -2837,8 +2839,8 @@ struct Trigger gKalay_TunnelTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_TUNNEL_PUDDLE_FROZEN, EVENT(Kalay_FreezePuddle) },
     { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Kalay_StopTrackingLeader) },
     { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Kalay_StartTrackingLeader) },
-    { TRIGGER_STEP, 18, CONDITION_ALWAYS, EVENT(Kalay_DisableLeaderAutomaticPriority) },
-    { TRIGGER_STEP, 19, CONDITION_ALWAYS, EVENT(Kalay_EnableLeaderAutomaticPriority) },
+    { TRIGGER_STEP, 18, CONDITION_ALWAYS, EVENT(Kalay_FixLeaderPriority) },
+    { TRIGGER_STEP, 19, CONDITION_ALWAYS, EVENT(Kalay_FreeLeaderPriority) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_KALAY_TUNNEL_SPIRIT_GLOVES_CHEST, FIND_ITEM(ITEM_SPIRIT_GLOVES) },
     { TRIGGER_TALK, ACTOR_SCORCH, CONDITION_ALWAYS, EVENT(Kalay_ScorchJoins) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_KALAY_TUNNEL_SLEEP_BOMB_CHEST, FIND_ITEM(ITEM_SLEEP_BOMB) },

@@ -127,6 +127,10 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// by row, each tile 64 bytes row by row.
 #define CANVAS_PIXEL_OFFSET(x, y)                                              \
   ((((y) / 8 * CANVAS_TILES + (x) / 8) * 8 + ((y) & 7)) * 8 + ((x) & 7))
+/// The byte of pixel (x, y) of the battle background: 8x8 tiles of 256
+/// colours, 64 bytes each, 32 to a row, from BG_CHAR_BLOCK(2).
+#define BACKGROUND_PIXEL_OFFSET(x, y)                                          \
+  (((x) & 7) + (((x) / 8) << 6) + (((y) & 7) << 3) + (((y) / 8) << 11))
 
 /// The battle view, under the top window and over the menus: screen lines 16
 /// to 135.
@@ -213,16 +217,30 @@ static inline void Dma_Stop(volatile u16 *channel) {
 
 /// The bytes of one set of the ten mote pictures: 2 * (1 + 4 + ... + 100).
 #define MOTE_SET_BYTES 770
+/// A picture's dimmed copies: DIMMED_COPIES of it, copy i with every level
+/// capped at DIMMED_COPY_CAP(i), 7 levels lower than the copy before, copy 0
+/// not at all. Thor's ring and Judgment's darken through copies of the mote
+/// pictures, a stat reduction's shards through copies of the shard.
+#define DIMMED_COPIES 8
+#define DIMMED_COPY_CAP(copy) (CANVAS_LEVEL_BRIGHTEST + 1 - (copy) * 7)
 
 /// The bytes of the six glint pictures that open the tornado sheet.
 #define GLINT_SET_BYTES                                                        \
   (19 * 31 + 23 * 31 + 23 * 31 + 19 * 21 + 16 * 21 + 17 * 24)
 
-/// Draws mote picture `size` (1 to 10: size pixels wide, twice that tall),
-/// centred across x and standing on y.
+/// Draws mote picture `size` (1 to MOTE_SIZE_MAX: size pixels wide, twice that
+/// tall), centred across x and standing on y.
 #define EFFECT_DRAW_MOTE(draw, canvas, sheet, x, y, size)                      \
   (draw)(canvas, (sheet) + gBattleEffect_MotePictures[(size) - 1],             \
          (x) - (size) / 2, (y) - (size), size, (size) * 2)
+/// The largest of the ten mote pictures.
+#define MOTE_SIZE_MAX 10
+/// A mote sized by its depth is drawn one size smaller for every
+/// MOTE_DEPTH_STEP past MOTE_DEPTH_NEAR, its depth held between
+/// MOTE_DEPTH_NEAR and MOTE_DEPTH_FAR.
+#define MOTE_DEPTH_NEAR 160
+#define MOTE_DEPTH_FAR 799
+#define MOTE_DEPTH_STEP 64
 
 /// Draws flare picture `size`, a square, centred on (x, y).
 #define EFFECT_DRAW_FLARE(draw, canvas, sheet, x, y, size)                     \
@@ -429,6 +447,12 @@ enum RedCrescentPicture {
 #define EFFECT_SET_CANVAS_AFFINE()                                             \
   (REG_BG2X = 0, REG_BG2Y = -(BATTLE_VIEW_TOP << 8), REG_BG2PA = Q_8_8(0.5),   \
    REG_BG2PB = 0, REG_BG2PC = 0, REG_BG2PD = Q_8_8(1))
+
+/// A line's sideways sway as its BG2X value in work->bg2xLines, which the
+/// wave HBlank DMA writes line by line. BG2X counts 256ths of a canvas pixel,
+/// so a sway of toFIXED(n) moves the line n / 4 canvas pixels: n / 2 screen
+/// pixels where the canvas is shown at twice its width.
+#define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
 
 /// Writes one row of BG2's map for the canvas, two tiles at a time.
 #define EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset)                       \

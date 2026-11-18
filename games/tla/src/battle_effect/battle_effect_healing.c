@@ -7,7 +7,7 @@
 
 #define HEALING_SPARKS 512 ///< sparks in PARTICLES
 
-#define HEALING_DJINNI_PICTURE 4096 ///< the Djinni picture in the sheet
+#define HEALING_DJINNI_PICTURE 4096
 /// How far the Djinni sways to either side, in screen pixels.
 #define HEALING_DJINNI_SWAY 20
 /// Each target's motes: HEALING_MOTES for the stronger variant, half that for
@@ -29,8 +29,8 @@
 /// so that the canvas shown at twice its width draws it round.
 #define HEALING_BUBBLE_SHEET 2048
 #define HEALING_BUBBLE 8192
-#define HEALING_BUBBLE_WIDTH 12
-#define HEALING_BUBBLE_HEIGHT 24
+#define HEALING_BUBBLE_WIDTH (BLUE_BUBBLE_WIDTH / 2)
+#define HEALING_BUBBLE_HEIGHT BLUE_BUBBLE_HEIGHT
 
 /// The healing motes' modes (BattleEffect_RunHealingMotes), each named for the
 /// first ability that plays it.
@@ -477,23 +477,24 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
         if (mode == HEALING_MODE_PLY || mode == HEALING_MODE_PSY_CRYSTAL ||
             mode == HEALING_MODE_SALT || mode == HEALING_MODE_SPRING ||
             mode == HEALING_MODE_ETHER || mode == HEALING_MODE_EDDY) {
-          Matrix_RotateY((frame - start) << 9);
+          Matrix_RotateY((frame - start) * (TRIG_TURN / 128));
         } else if (mode == HEALING_MODE_BREATH) {
-          Matrix_RotateY(((frame - start) << 9) * 4);
+          Matrix_RotateY((frame - start) * (TRIG_TURN / 32));
         } else if (mode == HEALING_MODE_AURA) {
           // Aura's motes close in without turning.
         } else if (mode == HEALING_MODE_REVERSE_STAR) {
-          Matrix_RotateZ(frame << 9);
+          Matrix_RotateZ(frame * (TRIG_TURN / 128));
         } else if (mode == HEALING_MODE_WISH) {
-          Matrix_RotateX(frame << 9);
-          Matrix_RotateZ(frame << 9);
+          Matrix_RotateX(frame * (TRIG_TURN / 128));
+          Matrix_RotateZ(frame * (TRIG_TURN / 128));
         } else if (mode == HEALING_MODE_CURE || mode == HEALING_MODE_EDDY) {
-          Matrix_RotateY((frame - member * HEALING_CURE_RING_LAG) << 9);
+          Matrix_RotateY((frame - member * HEALING_CURE_RING_LAG) *
+                         (TRIG_TURN / 128));
         } else if (mode == HEALING_MODE_CURE_POISON) {
-          Matrix_RotateY((frame - start) << 9);
+          Matrix_RotateY((frame - start) * (TRIG_TURN / 128));
         } else {
-          Matrix_RotateY((frame - start) << 9);
-          Matrix_RotateX((frame - start) << 9);
+          Matrix_RotateY((frame - start) * (TRIG_TURN / 128));
+          Matrix_RotateX((frame - start) * (TRIG_TURN / 128));
         }
 
         // Four motes appear each frame; Cure Poison's, Restore's and Tonic's
@@ -595,7 +596,3 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
 
   EFFECT_FINISH_CANVAS();
 }
-
-/// The particles in the map cell buffer, as PARTICLES: the rays and bolts after
-/// this part read them by this name, and battle_effect_bolt.c undefines it.
-#define SPARKS ((struct Particle *)Ram_MapCellBuffer)

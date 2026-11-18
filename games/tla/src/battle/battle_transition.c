@@ -23,10 +23,25 @@
 /// The curtain's tile n in BG character block 1.
 #define CURTAIN_TILE(n)                                                        \
   (BG_CHAR_BLOCK(1) + (TRANSITION_CURTAIN_FIRST_TILE + (n)) * TILE_SIZE_4BPP)
-/// The curtain's solid tile takes one of eight variants, a new one every four
-/// frames (BattleTransition_UploadTileVariant).
-#define CURTAIN_VARIANTS 8
-#define CURTAIN_VARIANT_FRAMES 4
+/// The closed curtain's colour, which fills its first tile.
+#define TRANSITION_CURTAIN_COLOR 3
+/// Eight variants of the curtain's first tile, a new one every four frames
+/// (BattleTransition_UploadTileVariant).
+#define TRANSITION_CURTAIN_VARIANTS 8
+#define TRANSITION_VARIANT_FRAMES 4
+/// BG0's top 32 lines, which roll down into place as the curtain opens: BG0
+/// starts scrolled up by as many, and the VCount interrupt at the band's
+/// bottom clears the scroll for the lines below.
+#define TRANSITION_BG0_BAND 32
+/// The camera turns 360 of TRIG_TURN's 65,536 a frame (about 2 degrees) as
+/// the curtain opens, ending at DEGtoANG(45) as the zoom ends.
+#define TRANSITION_TURN_SPEED 360
+#define TRANSITION_START_YAW                                                   \
+  (TRIG_TURN + DEGtoANG(45) - TRANSITION_OPEN_FRAMES * TRANSITION_TURN_SPEED)
+
+/// REG_MOSAIC's largest block size, 16 pixels: each of its sizes is a four-bit
+/// field holding the size less one.
+#define MOSAIC_SIZE_MAX 15
 
 /// The battle background's picture: 32 tiles to a row and 15 rows, its first
 /// 256 tiles in character block 2 and the rest in block 3.
@@ -38,9 +53,8 @@
 /// row of its own screen block, which BattleBackground_Load leaves clear.
 #define BACKGROUND_FIRST_TILE 512
 #define BACKGROUND_CLEAR_TILE 1023
-/// A row of BG1's flat map: 32 entries, in bytes and in words.
-#define TILEMAP_ROW_BYTES (BG_SCREEN_WIDTH * 2)
-#define TILEMAP_ROW_WORDS (BG_SCREEN_WIDTH / 2)
+/// The words that hold a row of a background map's 32 entries two at a time.
+#define MAP_ROW_WORDS (MAP_ROW_BYTES / 4)
 
 /// Fades the screen to black over sixteen frames as every background's
 /// mosaic grows, then shows no layer. Sets REG_BLDCNT to darken the
@@ -72,7 +86,7 @@ s32 BattleTransition_RunMosaicFadeOut(void) {
                     BLDCNT_TGT2_BD;
 
   ScreenFade_ToBlack(16);
-  for (mosaicSize = 0; mosaicSize <= 15; mosaicSize++) {
+  for (mosaicSize = 0; mosaicSize <= MOSAIC_SIZE_MAX; mosaicSize++) {
     Random16();
     Random16();
     Random16();
@@ -123,19 +137,19 @@ void BattleTransition_BuildTilemap(s32 *destination) {
   s32 entry;
   u32 index;
 
-  Iwram_FillWords(destination, 4 * TILEMAP_ROW_BYTES, -1);
-  destination += 4 * TILEMAP_ROW_WORDS;
-  Iwram_FillWords(destination, 2 * TILEMAP_ROW_BYTES,
+  Iwram_FillWords(destination, 4 * MAP_ROW_BYTES, -1);
+  destination += 4 * MAP_ROW_WORDS;
+  Iwram_FillWords(destination, 2 * MAP_ROW_BYTES,
                   WINDOW_TILE_PAIR(BACKGROUND_CLEAR_TILE));
-  entry = (BACKGROUND_FIRST_TILE + 1) << 16 | BACKGROUND_FIRST_TILE;
-  destination += 2 * TILEMAP_ROW_WORDS;
+  entry = TILE_PAIR(BACKGROUND_FIRST_TILE);
+  destination += 2 * MAP_ROW_WORDS;
   index = 0;
   do {
     index++;
     *destination++ = entry;
-    entry += WINDOW_TILE_PAIR(2);
-  } while (index < BACKGROUND_PICTURE_ROWS * TILEMAP_ROW_WORDS);
-  Iwram_FillWords(destination, 10 * TILEMAP_ROW_BYTES,
+    entry += TILE_PAIR_STEP;
+  } while (index < BACKGROUND_PICTURE_ROWS * MAP_ROW_WORDS);
+  Iwram_FillWords(destination, 10 * MAP_ROW_BYTES,
                   WINDOW_TILE_PAIR(BACKGROUND_CLEAR_TILE));
 }
 
@@ -160,9 +174,9 @@ void BattleBackground_ShowZoomedPage(void) {
 void BattleTransition_UploadTileVariant(void) {
   u32 variant = *(s32 *)Ram_HeapSlots->battleEntryTimer - 1;
 
-  if (variant < CURTAIN_VARIANTS * CURTAIN_VARIANT_FRAMES)
+  if (variant < TRANSITION_CURTAIN_VARIANTS * TRANSITION_VARIANT_FRAMES)
     Dma_Set(gBattleTransition_CurtainVariants +
-                variant / CURTAIN_VARIANT_FRAMES * TILE_SIZE_4BPP,
+                variant / TRANSITION_VARIANT_FRAMES * TILE_SIZE_4BPP,
             CURTAIN_TILE(0), DMA_COPY_WORDS(TILE_SIZE_4BPP / 4), REG_DMA3);
 }
 
@@ -178,14 +192,15 @@ void BattleTransition_AdvanceTimer(void) {
   timer = (u32 *)Ram_HeapSlots->battleEntryTimer;
   frame = *timer;
   camera = (struct BattleCamera *)Ram_HeapSlots->cameraWork;
+  // BG0's top band rolls down from frame 20 to frame 52.
   scroll = 52 - frame;
-  if (scroll > 32)
-    scroll = 32;
+  if (scroll > TRANSITION_BG0_BAND)
+    scroll = TRANSITION_BG0_BAND;
   if (scroll < 0)
     scroll = 0;
   gBgScroll[0].y = scroll;
   if (frame <= TRANSITION_OPEN_FRAMES)
-    camera->yaw = frame * 360 + 44928;
+    camera->yaw = frame * TRANSITION_TURN_SPEED + TRANSITION_START_YAW;
   next = (*timer = *timer + 1);
   if (next <= TRANSITION_OPEN_FRAMES) {
     BattleCamera_SetView(0, 0, 0,
@@ -233,8 +248,8 @@ void BattleTransition_ResetBg0Scroll(void) {
 }
 
 /// Opens the battle against formation kind with enemyCount enemies: the curtain
-/// opening, then each enemy announced (formations 74 to 76 and 638 wait a
-/// second instead); for formations 78 to 80 the shattering opening over the
+/// opening, then the enemies announced (Karst and Agatio's battles wait a
+/// second instead); for the Doom Dragon's the shattering opening over the
 /// Serpent's stars.
 void BattleTransition_Run(s32 enemyCount, s32 kind) {
   struct BattlePresentationWork work;
@@ -274,7 +289,8 @@ void BattleTransition_Run(s32 enemyCount, s32 kind) {
     view->busy = 0;
     view->mode = BATTLE_BACKGROUND_FIXED;
     REG_DISPCNT = DISPCNT_MODE_1;
-    IWRAM_FILL_WORDS(CURTAIN_TILE(0), TILE_SIZE_4BPP, PIXELS_4BPP(3));
+    IWRAM_FILL_WORDS(CURTAIN_TILE(0), TILE_SIZE_4BPP,
+                     PIXELS_4BPP(TRANSITION_CURTAIN_COLOR));
     IWRAM_FILL_WORDS(CURTAIN_TILE(8), TILE_SIZE_4BPP, 0);
     REG_BG1CNT =
         BGCNT_CHAR_BASE(1) | BGCNT_SCREEN_BASE(TRANSITION_CURTAIN_SCREEN);
@@ -297,7 +313,9 @@ void BattleTransition_Run(s32 enemyCount, s32 kind) {
           *map++ = tile;
       }
     }
-    y = 32;
+    // BG0 starts scrolled up by its band, and BG1 at the same 32 lines,
+    // BATTLE_BACKGROUND_SCROLL_Y.
+    y = TRANSITION_BG0_BAND;
     gBgScroll[1].x = 8;
     gBgScroll[0].y = y;
     gBgScroll[1].y = y;
@@ -319,13 +337,14 @@ void BattleTransition_Run(s32 enemyCount, s32 kind) {
     *timer = zero;
     Task_Add(BattleTransition_AdvanceTimer, TASK_PASS_FRAME);
     Task_Add(BattleTransition_DrawRows, TASK_PASS_VBLANK);
-    Irq_SetHandler(IRQ_VCOUNT, 32, BattleTransition_ResetBg0Scroll);
+    Irq_SetHandler(IRQ_VCOUNT, TRANSITION_BG0_BAND,
+                   BattleTransition_ResetBg0Scroll);
     gBgScroll[0].y = y;
     wait(1);
     PartyStatus_CreateWindowFar(Ram_HeapSlots->battleWork->partyStatus);
     wait(20);
-    IoWriteQueue_ClearBits16((u32)&REG_BG0CNT, 2);
-    IoWriteQueue_SetBits16((u32)&REG_BG0CNT, 0);
+    IoWriteQueue_ClearBits16((u32)&REG_BG0CNT, BGCNT_PRIORITY(2));
+    IoWriteQueue_SetBits16((u32)&REG_BG0CNT, BGCNT_PRIORITY(0));
     // Karst and Agatio's battles open with no announcement.
     if ((u32)(kind - FORMATION_KARST_AND_AGATIO_A) <=
             FORMATION_KARST_AND_AGATIO_C - FORMATION_KARST_AND_AGATIO_A ||
@@ -373,12 +392,13 @@ void BattleTransition_Run(s32 enemyCount, s32 kind) {
     BattleEffect_RunShatteringOpeningFar(&work);
     BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
     *timer = zero;
-    Irq_SetHandler(IRQ_VCOUNT, 32, BattleTransition_ResetBg0Scroll);
+    Irq_SetHandler(IRQ_VCOUNT, TRANSITION_BG0_BAND,
+                   BattleTransition_ResetBg0Scroll);
     wait(1);
     wait(20);
     PartyStatus_CreateWindowFar(Ram_HeapSlots->battleWork->partyStatus);
-    IoWriteQueue_ClearBits16((u32)&REG_BG0CNT, 2);
-    IoWriteQueue_SetBits16((u32)&REG_BG0CNT, 0);
+    IoWriteQueue_ClearBits16((u32)&REG_BG0CNT, BGCNT_PRIORITY(2));
+    IoWriteQueue_SetBits16((u32)&REG_BG0CNT, BGCNT_PRIORITY(0));
     REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
     count = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, shown);
     shown[count] = BATTLE_UNIT_LIST_END;
@@ -398,9 +418,9 @@ void BattleTransition_Run(s32 enemyCount, s32 kind) {
     Irq_SetHandler(IRQ_VCOUNT, 0, 0);
   }
   Irq_SetHandler(IRQ_VCOUNT, 0, 0);
-  REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
+  REG_BG1CNT = BATTLE_BG1CNT;
   wait(1);
-  REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
+  REG_BG1CNT = BATTLE_BG1CNT;
   REG_BG0CNT &= ~BGCNT_PRIORITY(2);
   gBgScroll[1].x = 8;
   REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |

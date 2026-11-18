@@ -40,8 +40,6 @@ extern const struct SpriteScale gKirin_ChargeScale;
 #define KIRIN_BURSTS_DRAWN 6
 /// The canvas's usual weight over the battle, as battle_effect_canvas.c's.
 #define CANVAS_BLEND_LEVEL 14
-/// The largest of the ten mote pictures.
-#define MOTE_SIZE_MAX 10
 
 /// Over a scrolling forest Kirin bounds in through a hoop of light, trailing
 /// fire; then it charges in from the right across the targets, each bursting
@@ -404,7 +402,6 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
 #undef KIRIN_BURSTS_FREED
 #undef KIRIN_BURSTS_DRAWN
 #undef CANVAS_BLEND_LEVEL
-#undef MOTE_SIZE_MAX
 
 /// Sets BG2's horizontal scale back to one texel a pixel above the stretched
 /// lines.
@@ -412,10 +409,3 @@ void BattleEffect_ResetBg2Pa(void) { REG_BG2PA = Q_8_8(1); }
 
 /// Stretches BG2 to twice its width from the current line down.
 void BattleEffect_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
-
-// Ends the frame counts battle_effect_particle_streams.c and
-// battle_effect_ragnarok.c leave defined, and battle_effect_annihilation.c's
-// HIT_FRAME, before battle_effect_thrash.c defines its own.
-#undef SCENE_FRAMES
-#undef RESULTS_FRAME
-#undef HIT_FRAME

@@ -120,7 +120,8 @@ enum CastingImpact {
 /// The impact particles that carry the rising pictures: flash bursts, skulls
 /// or puffs of smoke.
 #define CASTING_IMPACT_RISING_PICTURES 16
-/// The frames a rising picture lives, and a flash burst, two to each picture.
+/// The frames a rising puff of smoke lives, four to each of its six pictures,
+/// and a flash burst, two to each of its six.
 #define CASTING_IMPACT_RISING_LIFE 24
 #define CASTING_IMPACT_BURST_LIFE 12
 /// Broil's ember streaks.
@@ -156,6 +157,10 @@ enum CastingImpact {
 /// The flame Forcible Arm and Truncheon Fist drop.
 #define FALLING_FLAME_WIDTH 32
 #define FALLING_FLAME_HEIGHT 64
+/// Bad Omen's skulls rise faster by the frame, the slowest by toFIXED(1) / 32
+/// more a frame, written as a shift of 1, and each of the next three twice as
+/// fast as the one before.
+#define BAD_OMEN_SKULL_LIFT_SHIFT 11
 
 /// Where Mortal Danger draws `picture`, one of the reaper's seven pictures
 /// (REAPER_PICTURE_X), for the casting `side`.
@@ -612,7 +617,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           base = toFIXED(4);
           phase = frame * (TRIG_TURN / 16);
           for (; i != DISPLAY_HEIGHT; i++) {
-            s32 offset = (base - ((Trig_Sin(phase) * 4))) >> 10;
+            s32 offset = CANVAS_WAVE_BG2X(base - Trig_Sin(phase) * 4);
             *scanline++ = offset;
             phase += TRIG_TURN / 32;
           }
@@ -1162,6 +1167,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
         s32 imageY;
         if (frame <= 5) {
           if (work->args->side == EFFECT_SIDE_ENEMIES) {
+            /* FAKEMATCH(temporary): imageX halves targetPos.x written out, its
+             * sign bit added before the shift, in both arms. */
             imageX = targetPos.x;
             imageX += (u32)imageX >> 31;
             imageX >>= 1;
@@ -1197,9 +1204,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
                             projected.x - SKULL_WIDTH / 2,
                             projected.y - SKULL_HEIGHT / 2, SKULL_WIDTH,
                             SKULL_HEIGHT);
-            // Each skull of four rises faster: toFIXED(1) / 32 to toFIXED(1)
-            // / 4.
-            Particle_AdvanceWithGravity3D(step, 60, 1 << ((i & 3) + 11));
+            Particle_AdvanceWithGravity3D(
+                step, 60, 1 << ((i & 3) + BAD_OMEN_SKULL_LIFT_SHIFT));
             step->variant++;
           }
         }
@@ -1323,3 +1329,4 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
 #undef CASTING_IMPACT_IMPACT_PARTICLES
 #undef CASTING_IMPACT_IMPACT_PARTICLE_COUNT
 #undef CASTING_IMPACT_PICTURE_X
+#undef BAD_OMEN_SKULL_LIFT_SHIFT

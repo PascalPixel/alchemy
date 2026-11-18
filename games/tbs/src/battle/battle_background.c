@@ -7,10 +7,12 @@
 
 // The value Select picks in the debug value editor.
 #if TBS_PATCH_1
-#define DEBUG_SELECT_VALUE 399
+#define DEBUG_VALUE_SELECT 399
 #else
-#define DEBUG_SELECT_VALUE 480
+#define DEBUG_VALUE_SELECT 480
 #endif
+/// The debug value editor's step for up and down; left and right step by one.
+#define DEBUG_VALUE_COARSE_STEP 100
 
 /// The zoomed background's BG2CNT for the first 256 picture tiles: a 256 by
 /// 256 affine map in screen block 7, 256 colours, priority 2.
@@ -266,7 +268,7 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y, s32 zoom) {
 UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
 #endif
   FIXED span = BATTLE_CAMERA_DISTANCE;
-  // UB: zoom is never set, so the scale is whatever its register held; UBFIX
+  // UB: zoom is never set, so the scale is whatever it happens to hold; UBFIX
   // takes it as a parameter.
 #ifndef UBFIX
   s32 zoom;
@@ -335,7 +337,7 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   sourceBounds[1] = 0;
   sourceBounds[2] = 0;
 
-  // The eye 510 pixels back from the focus.
+  // The eye BATTLE_CAMERA_DISTANCE back from the focus.
   result = Iwram_RatioMulQ14(span, alpha);
   Projection_Set(span, result, span * 2);
   Matrix_Initialize();
@@ -411,13 +413,14 @@ struct BattleTransitionEntry {
 };
 
 /// Unused: lightens every layer by REG_BLDY.
-void BattleBackground_SetBlendControl(void) {
+UNUSED void BattleBackground_SetBlendControl(void) {
   REG_BLDCNT = BLDCNT_TGT1_ALL | BLDCNT_EFFECT_LIGHTEN;
 }
 
 /// Unused: sets entries to the identity transform, then stores the first word's
 /// old value plus its new one in the second.
-void BattleTransition_InitializeEntries(struct BattleTransitionEntry *entries) {
+UNUSED void
+BattleTransition_InitializeEntries(struct BattleTransitionEntry *entries) {
   // XXX (no evidence): what the sum is for; nothing calls this in either game.
   u32 previous = entries[0].value;
 
@@ -426,12 +429,12 @@ void BattleTransition_InitializeEntries(struct BattleTransitionEntry *entries) {
   entries[0].sum = previous + entries[0].value;
 }
 
-/// Unused.
-s32 BattleBackground_DivideBy16(s32 value) { return value / 16; }
+/// Unused: returns value divided by 16.
+UNUSED s32 BattleBackground_DivideBy16(s32 value) { return value / 16; }
 
 /// Unused debug aid: while Start is held, edits a value with the d-pad until A
-/// takes it; with Select held, returns DEBUG_SELECT_VALUE.
-s32 Battle_AdjustDebugValue(s32 selectedValue) {
+/// takes it; with Select held, returns DEBUG_VALUE_SELECT.
+UNUSED s32 Battle_AdjustDebugValue(s32 selectedValue) {
   struct BattleWork *battle;
 
   if (gKeysHeld & KEY_START) {
@@ -442,9 +445,9 @@ s32 Battle_AdjustDebugValue(s32 selectedValue) {
       if (gKeysRepeat & KEY_RIGHT)
         battle->debugValue++;
       if (gKeysRepeat & KEY_UP)
-        battle->debugValue -= 100;
+        battle->debugValue -= DEBUG_VALUE_COARSE_STEP;
       if (gKeysRepeat & KEY_DOWN)
-        battle->debugValue += 100;
+        battle->debugValue += DEBUG_VALUE_COARSE_STEP;
       if (gKeysPressed & KEY_A)
         selectedValue = battle->debugValue;
       else {
@@ -455,7 +458,7 @@ s32 Battle_AdjustDebugValue(s32 selectedValue) {
     }
   }
   if (gKeysHeld & KEY_SELECT)
-    selectedValue = DEBUG_SELECT_VALUE;
+    selectedValue = DEBUG_VALUE_SELECT;
   return selectedValue;
 }
 
@@ -495,7 +498,7 @@ void BattleHighlight_SetSpriteMode(s32 unitId, s32 mode) {
 }
 
 /// Unused: makes every unit's sprites semi-transparent but selectedUnitId's.
-void BattleHighlight_SetOtherSpriteModes(s32 selectedUnitId) {
+UNUSED void BattleHighlight_SetOtherSpriteModes(s32 selectedUnitId) {
   s16 unitIds[UNIT_MAX];
   s32 unitCount = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, unitIds);
   s32 unitIndex;
@@ -589,3 +592,5 @@ void BattleHighlight_SetModes(u16 *selectedUnits, s32 mode) {
 #undef BACKGROUND_PALETTE_BYTES
 #undef BACKGROUND_PAN_X
 #undef HIGHLIGHT_RAMP_HALF
+#undef DEBUG_VALUE_SELECT
+#undef DEBUG_VALUE_COARSE_STEP

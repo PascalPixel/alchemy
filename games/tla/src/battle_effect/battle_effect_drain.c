@@ -7,9 +7,14 @@
 
 /// Break and Drain take the targets in turn, this many frames apart.
 #define DRAIN_TARGET_FRAMES 20
-#define DRAIN_ICE_SHARDS_PER_TARGET 128
-/// The canvas line at the targets' feet, below which a falling shard goes out.
-#define DRAIN_GROUND_Y 112
+
+#define BREAK_SHARDS_PER_TARGET 128
+/// Break runs DRAIN_TARGET_FRAMES a target and then this many while the last
+/// shards fall.
+#define BREAK_FALL_FRAMES 56
+#define BREAK_HIT_FRAME 32
+/// The canvas row below which a falling shard goes out.
+#define BREAK_SHARD_GROUND 112
 
 /// What BattleEffect_RunDrainMotes draws, each named for the ability that plays
 /// it.
@@ -46,7 +51,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw = (DrawRectangle)Ram_HeapSlots->ramCode;
 
-  EFFECT_FREE_PARTICLES(i, PARTICLES, 8 * DRAIN_ICE_SHARDS_PER_TARGET);
+  EFFECT_FREE_PARTICLES(i, PARTICLES, 8 * BREAK_SHARDS_PER_TARGET);
 
   EFFECT_VIEW_FROM_CAMERA(camera);
 
@@ -58,7 +63,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
     struct Particle *shard;
     struct ScreenPoint *position;
 
-    offset = member * DRAIN_ICE_SHARDS_PER_TARGET * sizeof(struct Particle);
+    offset = member * BREAK_SHARDS_PER_TARGET * sizeof(struct Particle);
     /* FAKEMATCH(temporary): position holds &screen. */
     position = &screen;
     object = BattleObject_GetFar(args->targets[member])->object;
@@ -69,7 +74,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
     EffectPosition_ProjectPoint(point, position);
     screen.x >>= 1;
     for (i = 0, shard = (struct Particle *)(Ram_MapCellBuffer + offset);
-         i != DRAIN_ICE_SHARDS_PER_TARGET; i++) {
+         i != BREAK_SHARDS_PER_TARGET; i++) {
       s32 radius;
       s32 angle;
       s32 lift;
@@ -78,6 +83,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
       angle = Random16() & TRIG_ANGLE_MASK;
       shard->x = ((Trig_Sin(angle) * radius) >> 7) + INTtoFIXED(screen.x);
       shard->y = ((Trig_Cos(angle) * radius) >> 3) + INTtoFIXED(screen.y);
+      // Thrown up at 2 to 6 pixels a frame, and up to a pixel a frame aside.
       shard->velocityX = (128 - (Random16() & 0xff)) << 9;
       lift = Random16() & 0xff;
       shard->variant = 0;
@@ -88,14 +94,15 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  for (frame = 0; frame != args->targetCount * DRAIN_TARGET_FRAMES + 56;
+  for (frame = 0;
+       frame != args->targetCount * DRAIN_TARGET_FRAMES + BREAK_FALL_FRAMES;
        frame++) {
-    if (frame == 32)
+    if (frame == BREAK_HIT_FRAME)
       EFFECT_SHOW_DAMAGE(0);
     for (member = 0; member != args->targetCount; member++) {
       s32 offset;
 
-      offset = member * DRAIN_ICE_SHARDS_PER_TARGET * sizeof(struct Particle);
+      offset = member * BREAK_SHARDS_PER_TARGET * sizeof(struct Particle);
       if (frame == member * DRAIN_TARGET_FRAMES) {
         Sound_PlayFar(SE_CRACK);
         BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_WHITE,
@@ -106,7 +113,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
         struct Particle *shard;
 
         for (i = 0, shard = (struct Particle *)(Ram_MapCellBuffer + offset);
-             i != DRAIN_ICE_SHARDS_PER_TARGET; i++) {
+             i != BREAK_SHARDS_PER_TARGET; i++) {
           if (shard->variant >= 0) {
             s32 size;
 
@@ -116,7 +123,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
             Particle_AdvanceWithGravity2D(shard, 62, gDrain_Gravities[i & 3]);
             shard->variant++;
             if (shard->velocityY > 0 &&
-                FIXED_INTEGER_PART(shard->y) > DRAIN_GROUND_Y)
+                FIXED_INTEGER_PART(shard->y) > BREAK_SHARD_GROUND)
               shard->variant = -1;
           }
           shard++;
@@ -151,6 +158,20 @@ void BattleEffect_RunTrueCollide(struct BattleEffectParams *args) {
 
 #define DRAIN_MOTES_PER_TARGET 128
 #define DRAIN_DRAWN 32 ///< motes drawn for each target
+/// Drain runs DRAIN_TARGET_FRAMES a target and then this many; the user glows
+/// from DRAIN_GLOW_FRAME until DRAIN_GLOW_END_FRAMES before the end.
+#define DRAIN_END_FRAMES 72
+#define DRAIN_GLOW_FRAME 40
+#define DRAIN_GLOW_END_FRAMES 20
+#define DRAIN_HIT_FRAME 64
+/// A mote homes in on the user this many frames after its target's turn,
+/// each mote a frame after the one before, gaining a 256th of the distance a
+/// frame.
+#define DRAIN_PULL_DELAY 10
+#define DRAIN_PULL(distance) ((distance) >> 8)
+/// A mote goes out within this many pixels of the middle of the user, across
+/// and in depth.
+#define DRAIN_ARRIVAL_DISTANCE 16
 /// The red and blue of True Collide's first colour, a dim violet.
 #define TRUE_COLLIDE_VIOLET 21
 
@@ -234,20 +255,22 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   Sound_PlayFar(SE_SWIRL);
 
-  for (frame = 0; frame != args->targetCount * DRAIN_TARGET_FRAMES + 72;
+  for (frame = 0;
+       frame != args->targetCount * DRAIN_TARGET_FRAMES + DRAIN_END_FRAMES;
        frame++) {
     struct MotionObject *user;
     s32 halfHeight;
 
     user = BattleObject_GetFar(args->user)->object;
     halfHeight = BattleUnit_GetEffectHeightFar(args->user) / 2;
-    if (frame == 64)
+    if (frame == DRAIN_HIT_FRAME)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
     EFFECT_VIEW_FROM_CAMERA(camera);
-    if (frame == 40)
+    if (frame == DRAIN_GLOW_FRAME)
       BattleEffect_TintBattler(args->user, SPRITE_COLOR_WHITE, TINT_KEEP,
                                TINT_KEEP, 0);
-    if (frame == args->targetCount * DRAIN_TARGET_FRAMES + 52)
+    if (frame == args->targetCount * DRAIN_TARGET_FRAMES + DRAIN_END_FRAMES -
+                     DRAIN_GLOW_END_FRAMES)
       BattleEffect_TintBattler(args->user, SPRITE_COLOR_NORMAL, TINT_KEEP,
                                TINT_KEEP, 0);
     for (member = 0; member != args->targetCount; member++) {
@@ -274,19 +297,21 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
             }
 
             // After a moment a mote is pulled into the user.
-            if (frame > member * DRAIN_TARGET_FRAMES + i + 10) {
+            if (frame > member * DRAIN_TARGET_FRAMES + i + DRAIN_PULL_DELAY) {
               s32 dx;
               s32 dy;
               s32 dz;
 
-              dx = (user->x - mote->x) >> 8;
-              dy = (user->y + halfHeight - mote->y) >> 8;
-              dz = (user->z - mote->z) >> 8;
+              dx = DRAIN_PULL(user->x - mote->x);
+              dy = DRAIN_PULL(user->y + halfHeight - mote->y);
+              dz = DRAIN_PULL(user->z - mote->z);
               mote->velocityX += dx;
               mote->velocityY += dy;
               mote->velocityZ += dz;
-              if ((dx > -toFIXED(1) / 16 && dx < toFIXED(1) / 16) &&
-                  (dz > -toFIXED(1) / 16 && dz < toFIXED(1) / 16))
+              if ((dx > -DRAIN_PULL(toFIXED(DRAIN_ARRIVAL_DISTANCE)) &&
+                   dx < DRAIN_PULL(toFIXED(DRAIN_ARRIVAL_DISTANCE))) &&
+                  (dz > -DRAIN_PULL(toFIXED(DRAIN_ARRIVAL_DISTANCE)) &&
+                   dz < DRAIN_PULL(toFIXED(DRAIN_ARRIVAL_DISTANCE))))
                 mote->variant = -1;
             }
           }
@@ -299,8 +324,18 @@ void BattleEffect_RunDrainMotes(struct BattleEffectParams *args, s32 mode) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-#undef DRAIN_ICE_SHARDS_PER_TARGET
-#undef DRAIN_GROUND_Y
+#undef DRAIN_TARGET_FRAMES
+#undef BREAK_SHARDS_PER_TARGET
+#undef BREAK_FALL_FRAMES
+#undef BREAK_HIT_FRAME
+#undef BREAK_SHARD_GROUND
 #undef DRAIN_MOTES_PER_TARGET
 #undef DRAIN_DRAWN
+#undef DRAIN_END_FRAMES
+#undef DRAIN_GLOW_FRAME
+#undef DRAIN_GLOW_END_FRAMES
+#undef DRAIN_HIT_FRAME
+#undef DRAIN_PULL_DELAY
+#undef DRAIN_PULL
+#undef DRAIN_ARRIVAL_DISTANCE
 #undef TRUE_COLLIDE_VIOLET

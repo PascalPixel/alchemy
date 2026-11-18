@@ -82,10 +82,10 @@
 #define FLAG_CRUMBLING_PILLAR_A_CRACKED FLAG_SCENE_TEMP_00
 #define FLAG_CRUMBLING_PILLAR_B_CRACKED FLAG_SCENE_TEMP_02
 // Set once the cave door's cell has run (MagmaRock_EnterCave), so that it waits
-// until the leader steps onto it again by himself (MagmaRock_ReopenCaveDoor).
+// until the leader steps onto it again by himself (MagmaRock_ResetCaveDoor).
 #define FLAG_CAVE_DOOR_USED FLAG_SCENE_TEMP_F8
 // Set while the high west level's statue answers Burst, from the leader's step
-// beside it (MagmaRock_ReadyLowerStatue) to his step away.
+// beside it (MagmaRock_ReadyHighWestStatue) to his step away.
 #define FLAG_HIGH_WEST_STATUE_READY FLAG_SCENE_TEMP_12
 // Set while a magma rock knocks the leader off the wall
 // (MagmaRock_KnockLeaderOffWall); the rolling rocks keep quiet meanwhile.
@@ -430,23 +430,23 @@ void MagmaRock_StartPushingPillar(void) {
     Actor_LiftTargetBlock(gMagmaRock_SlidePillars);
   } else if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
     if (gMainRoutineWork.entrance <= SALAMANDER_TAIL_HIGH_WEST_LAST_ENTRANCE) {
-      Actor_LiftTargetBlock(gMagmaRock_SalamanderTailLowerPillars);
+      Actor_LiftTargetBlock(gMagmaRock_SalamanderTailHighWestPillars);
       // Unlike the rest of the scene, these tests give the high east level's
       // last entrance to the low west level's pillars, and the low west
       // level's last to the low east level's.
     } else if (gMainRoutineWork.entrance <
                SALAMANDER_TAIL_HIGH_EAST_LAST_ENTRANCE) {
-      Actor_LiftTargetBlock(gMagmaRock_SalamanderTailMiddlePillars);
+      Actor_LiftTargetBlock(gMagmaRock_SalamanderTailHighEastPillars);
     } else if (gMainRoutineWork.entrance <
                SALAMANDER_TAIL_LOW_WEST_LAST_ENTRANCE) {
       MapGrid_CopyCellAttributes(79, 46, 2, 1, 79, 36);
-      Actor_LiftTargetBlock(gMagmaRock_SalamanderTailUpperPillars);
+      Actor_LiftTargetBlock(gMagmaRock_SalamanderTailLowWestPillars);
     } else {
       if (work->child->z.part[0].integer == 600)
         MapGrid_CopyCellAttributes(104, 38, 1, 1, 103, 38);
       else
         MapGrid_CopyCellAttributes(94, 44, 5, 1, 99, 38);
-      Actor_LiftTargetBlock(gMagmaRock_SalamanderTailTopPillars);
+      Actor_LiftTargetBlock(gMagmaRock_SalamanderTailLowEastPillars);
     }
   }
   MagmaRockInside_ClearBlockCells(event->movedBlock);
@@ -473,18 +473,18 @@ s32 MagmaRock_FinishPushingPillar(void) {
     Blocks_MarkCells(gMagmaRock_SlidePillars);
   } else if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
     if (gMainRoutineWork.entrance <= SALAMANDER_TAIL_HIGH_WEST_LAST_ENTRANCE) {
-      Blocks_MarkCells(gMagmaRock_SalamanderTailLowerPillars);
+      Blocks_MarkCells(gMagmaRock_SalamanderTailHighWestPillars);
     } else if (gMainRoutineWork.entrance <=
                SALAMANDER_TAIL_HIGH_EAST_LAST_ENTRANCE) {
-      Blocks_MarkCells(gMagmaRock_SalamanderTailMiddlePillars);
+      Blocks_MarkCells(gMagmaRock_SalamanderTailHighEastPillars);
     } else if (gMainRoutineWork.entrance <=
                SALAMANDER_TAIL_LOW_WEST_LAST_ENTRANCE) {
       MapGrid_CopyCellAttributes(79, 37, 2, 1, 79, 36);
-      Blocks_MarkCells(gMagmaRock_SalamanderTailUpperPillars);
+      Blocks_MarkCells(gMagmaRock_SalamanderTailLowWestPillars);
     } else {
       MapGrid_CopyCellAttributes(103, 39, 1, 1, 103, 38);
       MapGrid_CopyCellAttributes(99, 42, 5, 1, 99, 38);
-      Blocks_MarkCells(gMagmaRock_SalamanderTailTopPillars);
+      Blocks_MarkCells(gMagmaRock_SalamanderTailLowEastPillars);
     }
   }
   x = FIELD_CELL(pillar->x.fixed);
@@ -795,13 +795,13 @@ void MagmaRock_TargetStatue(s32 stage) {
 
   if (party->next == SCENE_MAGMA_ROCK_SALAMANDER_TAIL_CHEST) {
     if (party->entrance <= SALAMANDER_TAIL_HIGH_WEST_LAST_ENTRANCE)
-      table = gMagmaRock_SalamanderTailLowerStatues;
+      table = gMagmaRock_SalamanderTailHighWestStatues;
     else if (party->entrance <= SALAMANDER_TAIL_HIGH_EAST_LAST_ENTRANCE)
-      table = gMagmaRock_SalamanderTailMiddleStatues;
+      table = gMagmaRock_SalamanderTailHighEastStatues;
     else if (party->entrance <= SALAMANDER_TAIL_LOW_WEST_LAST_ENTRANCE)
-      table = gMagmaRock_SalamanderTailUpperStatues;
+      table = gMagmaRock_SalamanderTailLowWestStatues;
     else
-      table = gMagmaRock_SalamanderTailTopStatues;
+      table = gMagmaRock_SalamanderTailLowEastStatues;
   } else if (party->next == SCENE_MAGMA_ROCK_STATUE) {
     table = gMagmaRock_StatueStatues;
   }
@@ -1192,17 +1192,17 @@ void MagmaRock_BurnStatue(struct Actor *actor) {
       FIXED z = actor->z.fixed;
 
       if (entrance <= SALAMANDER_TAIL_HIGH_WEST_LAST_ENTRANCE)
-        id = MagmaRock_LookUpCellStatue(x, z,
-                                        gMagmaRock_SalamanderTailLowerStatues);
+        id = MagmaRock_LookUpCellStatue(
+            x, z, gMagmaRock_SalamanderTailHighWestStatues);
       else if (entrance <= SALAMANDER_TAIL_HIGH_EAST_LAST_ENTRANCE)
-        id = MagmaRock_LookUpCellStatue(x, z,
-                                        gMagmaRock_SalamanderTailMiddleStatues);
+        id = MagmaRock_LookUpCellStatue(
+            x, z, gMagmaRock_SalamanderTailHighEastStatues);
       else if (entrance <= SALAMANDER_TAIL_LOW_WEST_LAST_ENTRANCE)
-        id = MagmaRock_LookUpCellStatue(x, z,
-                                        gMagmaRock_SalamanderTailUpperStatues);
+        id = MagmaRock_LookUpCellStatue(
+            x, z, gMagmaRock_SalamanderTailLowWestStatues);
       else
-        id = MagmaRock_LookUpCellStatue(x, z,
-                                        gMagmaRock_SalamanderTailTopStatues);
+        id = MagmaRock_LookUpCellStatue(
+            x, z, gMagmaRock_SalamanderTailLowEastStatues);
     }
     fifthPart = Actor_Get(id);
     fifthPart->flameLevel = 4;
@@ -1270,7 +1270,7 @@ DEFINE_MAGMA_ROCK_BURST_STATUE_COLUMN(MagmaRock_BurstCrackedPillarE,
 
 /// Stepping onto the cave door's cell by himself lets it take the leader in
 /// again.
-void MagmaRock_ReopenCaveDoor(void) {
+void MagmaRock_ResetCaveDoor(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   if (party->movementMode != LEADER_MOVEMENT_KEYS)
@@ -1307,14 +1307,14 @@ void MagmaRock_CheckCrumblingPillars(void) {
 
 /// Stepping beside the high west level's statue readies it: its cell answers
 /// Burst as a firing statue's.
-void MagmaRock_ReadyLowerStatue(void) {
+void MagmaRock_ReadyHighWestStatue(void) {
   Field_SetCellBehaviorAt(0, toFIXED(264), toFIXED(552),
                           MAGMA_ROCK_CELL_FIRING_STATUE);
   Event_SetFlag(FLAG_HIGH_WEST_STATUE_READY);
 }
 
 /// Stepping away from it resets it: its cell is plain ground again.
-void MagmaRock_UnreadyLowerStatue(void) {
+void MagmaRock_ResetHighWestStatue(void) {
   Field_SetCellBehaviorAt(0, toFIXED(264), toFIXED(552), CELL_BEHAVIOR_NORMAL);
   Event_ClearFlag(FLAG_HIGH_WEST_STATUE_READY);
 }
@@ -1429,7 +1429,7 @@ void MagmaRock_PushPillarEast(void) {
   MagmaRockInside_SetCellShape(*terrainId, FIELD_CELL(actor->x.fixed),
                                FIELD_CELL(actor->z.fixed),
                                CELL_HEIGHT_STEPS(actor->groundHeight) + 4);
-  Blocks_MarkCells(gMagmaRock_SalamanderTailUpperPillars);
+  Blocks_MarkCells(gMagmaRock_SalamanderTailLowWestPillars);
   position[0] = FIELD_CELL(actor->x.fixed);
   position[2] = FIELD_CELL(actor->z.fixed);
   if (position[0] == 16 && position[2] == 36)
@@ -1464,7 +1464,7 @@ void MagmaRock_PushPillarWest(void) {
   MagmaRockInside_SetCellShape(*terrainId, FIELD_CELL(actor->x.fixed),
                                FIELD_CELL(actor->z.fixed),
                                CELL_HEIGHT_STEPS(actor->groundHeight) + 4);
-  Blocks_MarkCells(gMagmaRock_SalamanderTailTopPillars);
+  Blocks_MarkCells(gMagmaRock_SalamanderTailLowEastPillars);
   position[0] = FIELD_CELL(actor->x.fixed);
   position[2] = FIELD_CELL(actor->z.fixed);
   if (position[0] == 35 && position[2] == 38)
@@ -1796,13 +1796,13 @@ s32 Scene_Initialize(void) {
       s32 id;
 
       MagmaRock_RestoreCrumblingPillars(gMagmaRock_CrumblingPillars);
-      MagmaRockInside_RaiseActorCells(gMagmaRock_SalamanderTailLowerStatues);
+      MagmaRockInside_RaiseActorCells(gMagmaRock_SalamanderTailHighWestStatues);
       Tightrope_Initialize();
       MagmaRock_PlaceTightrope(0, ACTOR_HIGH_WEST_TIGHTROPE_WEST_POST,
                                ACTOR_HIGH_WEST_TIGHTROPE_EAST_POST);
       if (Event_GetFlag(FLAG_HIGH_WEST_PILLAR_B_PUSHED))
         Actor_SetPosition(ACTOR_HIGH_WEST_PILLAR_B, 440, 536);
-      Actor_PlaceBlocks(gMagmaRock_SalamanderTailLowerPillars);
+      Actor_PlaceBlocks(gMagmaRock_SalamanderTailHighWestPillars);
       id = *entrance;
       if (id == ENTRANCE_HIGH_WEST_FROM_BELOW_A) {
         if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
@@ -1846,8 +1846,9 @@ s32 Scene_Initialize(void) {
         }
         if (Event_GetFlag(FLAG_HIGH_EAST_PILLAR_PUSHED))
           Actor_SetPosition(ACTOR_HIGH_EAST_PILLAR, 888, 568);
-        Actor_PlaceBlocks(gMagmaRock_SalamanderTailMiddlePillars);
-        MagmaRockInside_RaiseActorCells(gMagmaRock_SalamanderTailMiddleStatues);
+        Actor_PlaceBlocks(gMagmaRock_SalamanderTailHighEastPillars);
+        MagmaRockInside_RaiseActorCells(
+            gMagmaRock_SalamanderTailHighEastStatues);
         if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
           actor = Actor_GetById(ACTOR_HIGH_EAST_STATUE_CAP_A);
           other = toFIXED(1);
@@ -1890,13 +1891,14 @@ s32 Scene_Initialize(void) {
       } else if (*entrance <= SALAMANDER_TAIL_LOW_WEST_LAST_ENTRANCE) {
         if (Event_GetFlag(FLAG_LOW_WEST_PILLAR_PUSHED))
           Actor_SetPosition(ACTOR_LOW_WEST_PILLAR, 264, 584);
-        rise = (s32)gMagmaRock_SalamanderTailUpperPillars;
+        rise = (s32)gMagmaRock_SalamanderTailLowWestPillars;
         Actor_PlaceBlocks(rise);
         Blocks_MarkCells(rise);
         Rope_Initialize();
         Call4((void (*)())MagmaRock_PlaceRope, 0, FLAG_LOW_WEST_ROPE_LASHED,
               ACTOR_LOW_WEST_ROPE_EAST_POST, ACTOR_LOW_WEST_ROPE_WEST_POST);
-        MagmaRockInside_RaiseActorCells(gMagmaRock_SalamanderTailUpperStatues);
+        MagmaRockInside_RaiseActorCells(
+            gMagmaRock_SalamanderTailLowWestStatues);
         if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
           actor = Actor_GetById(ACTOR_LOW_WEST_STATUE_CAP_A);
           other = toFIXED(1);
@@ -1921,7 +1923,8 @@ s32 Scene_Initialize(void) {
           goto move;
         }
       } else {
-        MagmaRockInside_RaiseActorCells(gMagmaRock_SalamanderTailTopStatues);
+        MagmaRockInside_RaiseActorCells(
+            gMagmaRock_SalamanderTailLowEastStatues);
         if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
           actor = Actor_GetById(ACTOR_LOW_EAST_STATUE_CAP);
           actor->x.fixed += toFIXED(1);
@@ -1935,7 +1938,7 @@ s32 Scene_Initialize(void) {
           Actor_SetPosition(ACTOR_LOW_EAST_PILLAR_A, 648, 600);
         if (Event_GetFlag(FLAG_LOW_EAST_PILLAR_B_PUSHED))
           Actor_SetPosition(ACTOR_LOW_EAST_PILLAR_B, 568, 616);
-        MagmaRock_SettleBlocks(gMagmaRock_SalamanderTailTopPillars);
+        MagmaRock_SettleBlocks(gMagmaRock_SalamanderTailLowEastPillars);
         if (Event_GetFlag(FLAG_VINE_A_GROWN))
           MapGrid_CopyCellAttributes(121, 48, 1, 3, 123, 48);
         if (Event_GetFlag(FLAG_VINE_B_GROWN))
@@ -2466,12 +2469,12 @@ s16 gMagmaRock_SlideStatues[] = {
 
 /// The pillars Move pushes on the Salamander Tail room's high west level, ended
 /// by -1.
-s16 gMagmaRock_SalamanderTailLowerPillars[] = {
+s16 gMagmaRock_SalamanderTailHighWestPillars[] = {
     ACTOR_HIGH_WEST_PILLAR_A, ACTOR_HIGH_WEST_PILLAR_B, -1,
 };
 
 /// The high west level's statues, as gMagmaRock_SlideStatues.
-s16 gMagmaRock_SalamanderTailLowerStatues[] = {
+s16 gMagmaRock_SalamanderTailHighWestStatues[] = {
     ACTOR_HIGH_WEST_FIRING_STATUE, MAGMA_ROCK_CELL_FIRING_STATUE, -1,
     -1,
 };
@@ -2485,36 +2488,36 @@ s16 gMagmaRock_CrumblingPillars[] = {
 };
 
 /// The high east level's statues, as gMagmaRock_SlideStatues.
-s16 gMagmaRock_SalamanderTailMiddleStatues[] = {
+s16 gMagmaRock_SalamanderTailHighEastStatues[] = {
     ACTOR_HIGH_EAST_COLUMN_STATUE_A, MAGMA_ROCK_CELL_COLUMN_STATUE_A, ACTOR_HIGH_EAST_STATUE_CAP_A,
     ACTOR_HIGH_EAST_COLUMN_STATUE_B, MAGMA_ROCK_CELL_COLUMN_STATUE_B, ACTOR_HIGH_EAST_STATUE_CAP_B,
     -1,
 };
 
 /// The pillars Move pushes on the high east level, ended by -1.
-s16 gMagmaRock_SalamanderTailMiddlePillars[] = {
+s16 gMagmaRock_SalamanderTailHighEastPillars[] = {
     ACTOR_HIGH_EAST_PILLAR, -1,
 };
 
 /// The low west level's statues, as gMagmaRock_SlideStatues.
-s16 gMagmaRock_SalamanderTailUpperStatues[] = {
+s16 gMagmaRock_SalamanderTailLowWestStatues[] = {
     ACTOR_LOW_WEST_COLUMN_STATUE_A, MAGMA_ROCK_CELL_COLUMN_STATUE_A, ACTOR_LOW_WEST_STATUE_CAP_A,
     ACTOR_LOW_WEST_COLUMN_STATUE_B, MAGMA_ROCK_CELL_COLUMN_STATUE_B, ACTOR_LOW_WEST_STATUE_CAP_B,
     -1,
 };
 
 /// The pillars Move pushes on the low west level, ended by -1.
-s16 gMagmaRock_SalamanderTailUpperPillars[] = {
+s16 gMagmaRock_SalamanderTailLowWestPillars[] = {
     ACTOR_LOW_WEST_PILLAR, -1,
 };
 
 /// The pillars Move pushes on the low east level, ended by -1.
-s16 gMagmaRock_SalamanderTailTopPillars[] = {
+s16 gMagmaRock_SalamanderTailLowEastPillars[] = {
     ACTOR_LOW_EAST_PILLAR_A, ACTOR_LOW_EAST_PILLAR_B, -1,
 };
 
 /// The low east level's statues, as gMagmaRock_SlideStatues.
-s16 gMagmaRock_SalamanderTailTopStatues[] = {
+s16 gMagmaRock_SalamanderTailLowEastStatues[] = {
     ACTOR_LOW_EAST_FIRING_STATUE_A, MAGMA_ROCK_CELL_FIRING_STATUE, -1,
     ACTOR_LOW_EAST_COLUMN_STATUE, MAGMA_ROCK_CELL_COLUMN_STATUE_A, ACTOR_LOW_EAST_STATUE_CAP,
     ACTOR_LOW_EAST_FIRING_STATUE_B, MAGMA_ROCK_CELL_FIRING_STATUE_B, -1,
@@ -2703,7 +2706,7 @@ struct Trigger gMagmaRock_Triggers[] = {
      MAGMA_ROCK_CELL_CAVE_DOOR, FLAG_CAVE_DOOR_USED,
      EVENT(MagmaRock_EnterCave)},
     {TRIGGER_STEP, MAGMA_ROCK_CELL_CAVE_DOOR, CONDITION_ALWAYS,
-     EVENT(MagmaRock_ReopenCaveDoor)},
+     EVENT(MagmaRock_ResetCaveDoor)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_SLIDE_BOULDER, CONDITION_ALWAYS, 0},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(MagmaRock_StartPushingPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(MagmaRock_FinishPushingPillar)},
@@ -2777,9 +2780,9 @@ struct Trigger gMagmaRock_SalamanderTailHighWestTriggers[] = {
      MAGMA_ROCK_CELL_CRACKED_PILLAR_A, FLAG_CRACKED_PILLAR_A_BURST,
      EVENT(MagmaRock_BurstCrackedPillarA)},
     {TRIGGER_STEP, MAGMA_ROCK_CELL_BESIDE_HIGH_WEST_STATUE,
-     FLAG_HIGH_WEST_STATUE_READY, EVENT(MagmaRock_ReadyLowerStatue)},
+     FLAG_HIGH_WEST_STATUE_READY, EVENT(MagmaRock_ReadyHighWestStatue)},
     {TRIGGER_STEP, MAGMA_ROCK_CELL_PAST_HIGH_WEST_STATUE, CONDITION_ALWAYS,
-     EVENT(MagmaRock_UnreadyLowerStatue)},
+     EVENT(MagmaRock_ResetHighWestStatue)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST),
      MAGMA_ROCK_CELL_FIRING_STATUE, CONDITION_ALWAYS,
      EVENT(MagmaRock_ResolveBeforeBurst)},

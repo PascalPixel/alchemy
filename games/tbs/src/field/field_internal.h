@@ -98,6 +98,10 @@ enum CellPicturePacking {
 #define MAPGRID_ANIMATION_SCRIPT (Ram_MapGridShapes + 4096)
 #define MAPGRID_BLEND_SCRIPT (Ram_MapGridShapes + 7680)
 
+/// One of the world map area's four tile sets, half a character block; they
+/// are decoded one after another into gBgTileBuffer.
+#define WORLD_MAP_TILE_SET_BYTES 8192
+
 /// A row of gSpritePictureCache_Sources: the packed resource that holds an
 /// animation number's pictures, ending at number 0.
 struct SpritePictureCacheSource {

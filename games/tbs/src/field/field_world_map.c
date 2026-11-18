@@ -34,9 +34,6 @@ struct WorldMapCell {
 
 #define WORLD_MAP_CELLS ((struct WorldMapCell *)Ram_CellPictures)
 
-/// A world map tile set: the four tile resources are 8 KB each, half a
-/// character block.
-#define WORLD_MAP_TILE_SET_BYTES 8192
 /// A world map tile is 16 by 16 cells.
 #define WORLD_MAP_TILE_CELLS 16
 /// The world map is 16 by 16 tiles, 512 pixels each, wrapping; each layer's
@@ -787,7 +784,6 @@ void WorldMap_LoadDefaultCellsAndUpdateBlock(void) {
 
 #undef WORLD_MAP_BG_PALETTE
 #undef WORLD_MAP_CELLS
-#undef WORLD_MAP_TILE_SET_BYTES
 #undef WORLD_MAP_TILE_CELLS
 #undef WORLD_MAP_TILES_ACROSS
 #undef WORLD_MAP_LAYER_TILES

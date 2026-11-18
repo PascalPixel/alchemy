@@ -15,9 +15,6 @@
 /// Message_SetVoiceFromActor's key for no voice: it clears the voice.
 #define MESSAGE_VOICE_NONE 0x80000000
 
-/// Portrait_OpenWindow's window is 5 tiles square.
-#define PORTRAIT_WINDOW_TILES 5
-
 /// The event command "open message": opens the event's current message in a
 /// speech window next to the speaking actor, with the speaker's portrait beside
 /// it when it has one, and moves on to the next message.
@@ -139,13 +136,13 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
       Text_GetMessageSizeAltFar(message, &left, &top, &width, &height);
       message = -1;
       if (top > y)
-        portraitTop = top - PORTRAIT_WINDOW_TILES;
+        portraitTop = top - 5;
       else
         portraitTop = top + height;
       if (portraitTop < 0)
         portraitTop = top + height;
-      else if (portraitTop + PORTRAIT_WINDOW_TILES > DISPLAY_TILE_HEIGHT - 1)
-        portraitTop = top - PORTRAIT_WINDOW_TILES;
+      else if (portraitTop + 5 > DISPLAY_TILE_HEIGHT - 1)
+        portraitTop = top - 5;
       if (top < portraitTop) {
         s32 lines = height;
 
@@ -471,7 +468,6 @@ void Camera_SetSpeedParameters(FIXED first, FIXED second) {
   work->camera->acceleration = second;
 }
 #undef MESSAGE_VOICE_NONE
-#undef PORTRAIT_WINDOW_TILES
 #undef MESSAGE_POSITION_WIDTH
 #undef MESSAGE_POSITION_HEIGHT
 #undef MESSAGE_POSITION_MARGIN_X

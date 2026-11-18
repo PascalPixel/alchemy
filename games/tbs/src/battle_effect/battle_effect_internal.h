@@ -63,6 +63,9 @@
 #define EFFECT_BLEND_ADD BLEND_ALPHA(BLEND_WEIGHT_MAX, BLEND_WEIGHT_MAX)
 /// The canvas at `level` sixteenths over the whole battle under it.
 #define EFFECT_BLEND_CANVAS(level) BLEND_ALPHA(level, BLEND_WEIGHT_MAX)
+/// The canvas's usual weight over the battle, in sixteenths: every canvas
+/// opens with it.
+#define CANVAS_BLEND_LEVEL 14
 
 // Display, palette and per-line work (README.md, "Around the canvas").
 // The tasks read the current effect's work block, so the runner that
@@ -149,6 +152,8 @@ static inline void Dma_Stop(volatile u16 *channel) {
 /// The frames the battle background darkens behind an effect's canvas
 /// (work->fadeFrames, Palette_StepFadeTransfer).
 #define BACKGROUND_DARKEN_FRAMES 24
+/// The level a canvas darkens the battle background to, a level a frame.
+#define BACKGROUND_DARKENED_LEVEL BACKGROUND_DARKEN_FRAMES
 
 /// A sheet resource opens with its 64 colours, ahead of its compressed
 /// pictures.

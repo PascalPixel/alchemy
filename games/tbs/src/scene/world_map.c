@@ -41,7 +41,7 @@
 ///   first time.
 /// - Flint, the first Djinni, circles his spot until the party walks up to him
 ///   (WorldMap_MeetFlint). He joins and teaches how Djinn are set and put on
-///   standby, and a tutorial battle follows.
+///   standby, and a lesson battle follows.
 /// - Hammet's caravan. It plays the first time the party touches Vault
 ///   (WORLD_MAP_HAMMETS_CARAVAN_LEAVES). The caravan, cut off from Kalay by the
 ///   destroyed bridge, turns north for Lunpa as the ground shakes and a rock
@@ -144,9 +144,9 @@ extern s32 gBlackOrbLeaderScript[];
 extern s32 gEndingAlexWalk[];
 extern s32 gEndingKradenWalk[];
 extern s32 gEndingJennaWalk[];
-extern s32 gQuakeDustScript[];
+extern s32 gQuakeCloudScript[];
 extern s32 gCrossingShipSailsWest[];
-extern s32 gCrossingShipVeersNorth[];
+extern s32 gCrossingShipDriftsNorth[];
 extern s32 gIslandDriftsEast[];
 extern struct SceneEntrance gWorldSceneEntrances[];
 extern u32 gWorldMapExits[];
@@ -404,8 +404,7 @@ enum {
 static void WorldMap_MeetVine(void) {
   struct FieldWork *work = gFieldWork;
 
-  if (gMainRoutineWork.encounterSteps >=
-      Math_Divide(work->encounterThreshold * 9, 10)) {
+  if (gMainRoutineWork.encounterSteps >= work->encounterThreshold * 9 / 10) {
     if ((u32)Random_Next() < 32768) {
       Field_RequestDjinnBattle(DJINN_NO_HOP | ACTOR_VENUS_DJINNI, DJINNI_VINE);
       work->encounterBias = 0;
@@ -422,7 +421,7 @@ static void WorldMap_MeetCorona(void) {
   s32 *steps = &routine->encounterSteps;
   struct FieldWork *work = gFieldWork;
 
-  if (*steps >= Math_Divide(work->encounterThreshold * 9, 10)) {
+  if (*steps >= work->encounterThreshold * 9 / 10) {
     Field_RequestDjinnBattle(DJINN_NO_HOP | ACTOR_CORONA, DJINNI_CORONA);
     work->encounterBias = 0;
   }
@@ -435,7 +434,7 @@ static void WorldMap_MeetHail(void) {
   s32 *steps = &routine->encounterSteps;
   struct FieldWork *work = gFieldWork;
 
-  if (*steps >= Math_Divide(work->encounterThreshold * 9, 10)) {
+  if (*steps >= work->encounterThreshold * 9 / 10) {
     Field_RequestDjinnBattle(DJINN_NO_HOP | ACTOR_HAIL, DJINNI_HAIL);
     work->encounterBias = 0;
   }
@@ -570,10 +569,12 @@ static s32 WorldMap_SetUpStorm(struct Actor *actor) {
   return 0;
 }
 
-/// Called each frame by the storm's actor script (gWorldMapStormScript).
-static s32 WorldMap_BlinkActorSprite(struct Actor *actor) {
-  if ((actor->spriteStorageKind & 1) && (gFrameCount & 1))
-    actor->spriteStorageKind ^= 1;
+/// Called each frame by the storm's actor script (gWorldMapStormScript): it
+/// hides the storm on odd frames, but WorldMap_UpdateAreaContacts shows it
+/// again in the same frame, and it is drawn in every frame.
+static s32 WorldMap_HideStormOnOddFrames(struct Actor *actor) {
+  if ((actor->spriteStorageKind & ACTOR_SPRITE_ONE) && (gFrameCount & 1))
+    actor->spriteStorageKind ^= ACTOR_SPRITE_ONE;
   return 1;
 }
 
@@ -725,10 +726,10 @@ static void WorldMap_UpdateAreaContacts(void) {
     x = actor->x.fixed;
     z = actor->z.fixed;
     if (x < left || x > right || z < top || z > bottom) {
-      actor->spriteStorageKind = 0;
+      actor->spriteStorageKind = ACTOR_SPRITE_NONE;
       continue;
     }
-    actor->spriteStorageKind = 1;
+    actor->spriteStorageKind = ACTOR_SPRITE_ONE;
     if (gDebugMode != 0 && GameFlag_Get(FLAG_DEBUG_STEPS_OFF) != 0) {
       continue;
     }
@@ -1383,7 +1384,7 @@ static void WorldMap_SailUntilLandSighted(void) {
   Actor_SetSpeed(ACTOR_CROSSING_SHIP, 0.6);
   actor->timer = 0;
   if (WorldMap_GetRowingBalance() == ROWING_BALANCE_OFF_COURSE) {
-    Actor_SetScript(ACTOR_CROSSING_SHIP, gCrossingShipVeersNorth);
+    Actor_SetScript(ACTOR_CROSSING_SHIP, gCrossingShipDriftsNorth);
   } else {
     Actor_SetScript(ACTOR_CROSSING_SHIP, gCrossingShipSailsWest);
   }
@@ -1422,8 +1423,10 @@ static void WorldMap_SailIntoTolbi(void) {
   Event_End();
 }
 
-/// Demonstrates setting a Djinni and placing it on standby.
-static void WorldMap_ShowDjinnTutorial(void) {
+/// Flint explains how a Djinni is set and put on standby, running the Djinn
+/// menu for each part of the lesson, then starts the lesson battle. "After
+/// bringing a Djinni into your party, you must set it to somebody."
+static void WorldMap_ExplainSettingDjinn(void) {
   WorldMap_Unfreeze();
   WorldMap_StartZoom(FIXED_ONE, 6);
   Event_WaitForZoomTransition();
@@ -1453,7 +1456,7 @@ static void WorldMap_ShowDjinnTutorial(void) {
 #define FLINT_GROW_FRAMES 16
 
 /// Walking up to Flint makes him join the party and show how Djinn are set
-/// and put on standby. Then comes the tutorial battle.
+/// and put on standby. Then comes the lesson battle.
 static void WorldMap_MeetFlint(void) {
   struct Actor *djinni;
   struct Actor *leader;
@@ -1599,7 +1602,7 @@ static void WorldMap_MeetFlint(void) {
     // "..., the Venus Djinni, is now Isaac's ally!"
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
     Sound_Play(MUS_DJINN_LESSON);
-    WorldMap_ShowDjinnTutorial();
+    WorldMap_ExplainSettingDjinn();
     WorldMap_Unfreeze();
     return;
   }
@@ -1614,7 +1617,7 @@ static void WorldMap_MeetFlint(void) {
   Actor_FaceActor(ACTOR_VENUS_DJINNI, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_VENUS_DJINNI, 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_LEADER_LEAN_BACK);
-  // Offer the tutorial again, then demonstrate setting and standby.
+  // Offer the lesson again, then explain setting and standby.
   Event_SetMessageId(MsgWorldMapSeeDjinnUseful);
   Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
   Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
@@ -1648,7 +1651,7 @@ static void WorldMap_MeetFlint(void) {
       // "Well, then, I guess I'll start from the beginning, OK?"
       Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
       Actor_WalkToAndWait(ACTOR_VENUS_DJINNI, FIXEDtoINT(x), FIXEDtoINT(z));
-      WorldMap_ShowDjinnTutorial();
+      WorldMap_ExplainSettingDjinn();
       WorldMap_Unfreeze();
       return;
     }
@@ -1894,7 +1897,7 @@ static void WorldMap_IodemCallsIsaacBack(void) {
 
 /// Searching the wreck off Gateway Cave shows "The wreckage of a ship
 /// scuttled off the coast."
-static void WorldMap_SearchShipwreck(void) {
+static void WorldMap_SearchWreckage(void) {
   Event_Start();
 #if !TBS_PATCH_3
   WorldMap_Freeze();
@@ -2267,7 +2270,7 @@ static void WorldMap_UpdateLighthouseQuake(void) {
     actor->scaleX = scale;
     actor->scaleY = scale;
     Actor_SelectAnimation(actor, 1);
-    Actor_StartScript(actor, gQuakeDustScript);
+    Actor_StartScript(actor, gQuakeCloudScript);
   }
   if (gFrameCount % 3 == 0) {
     switch (Random_Below(4)) {
@@ -2624,7 +2627,8 @@ WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse) {
   Task_AddFrame(WorldMap_UpdateTransitionBlend, TASK_PASS_FRAME);
   Event_Start();
   WORLD_MAP_QUEUE_TRANSITION_PICTURE(buffer, WORLD_MAP_LIGHT_BALL(7));
-  Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
+  Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind =
+      ACTOR_SPRITE_NONE;
   gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -2673,9 +2677,9 @@ WorldMap_PlayLighthouseTransition(enum WorldMapLighthouse lighthouse) {
   GameFlag_Set(FLAG_SKIP_SCENE_CHANGE_SOUND);
 }
 
-/// An actor's update routine that blinks it and now and then creates its
-/// attached effects.
-UNUSED static void WorldMap_UpdateBlinkingLinkedEffects(struct Actor *actor) {
+/// Unused: an actor's update routine that flashes it white, two frames on and
+/// two off, and every sixteenth frame creates its attached effects.
+UNUSED static void WorldMap_UpdateFlashingLinkedEffects(struct Actor *actor) {
   if ((gFrameCount & 2) != 0) {
     Actor_SetColorMode(actor, SPRITE_COLOR_WHITE);
   } else {
@@ -2686,8 +2690,8 @@ UNUSED static void WorldMap_UpdateBlinkingLinkedEffects(struct Actor *actor) {
   }
 }
 
-/// An actor's update routine that cycles its palettes and now and then
-/// creates its attached effects.
+/// Unused: an actor's update routine that cycles its colour modes and every
+/// sixteenth frame creates its attached effects.
 UNUSED static void WorldMap_UpdateCyclingLinkedEffects(struct Actor *actor) {
   if ((gFrameCount & 1) != 0) {
     Actor_SetColorMode(actor, (gFrameCount >> 1) % 6);
@@ -2968,9 +2972,9 @@ s32 gEndingJennaWalk[] = {
     SC_END,
 };
 
-/// A puff of dust in the lighthouse quake (WorldMap_UpdateLighthouseQuake):
+/// A cloud of dust in the lighthouse quake (WorldMap_UpdateLighthouseQuake):
 /// it lasts 16 frames.
-s32 gQuakeDustScript[] = {
+s32 gQuakeCloudScript[] = {
     SC_WAIT(16),
     SC_RELEASE,
 };
@@ -2992,7 +2996,7 @@ s32 gCrossingShipSailsWest[] = {
 };
 
 /// As gCrossingShipSailsWest, drifting 2 pixels north with each step.
-s32 gCrossingShipVeersNorth[] = {
+s32 gCrossingShipDriftsNorth[] = {
     SC_ANIMATION(ANIM_WALK),
     SC_MOVE_BY(-8, 0, -2),
     SC_SYNC,
@@ -3343,7 +3347,7 @@ s32 gWorldMapIodemScript[] = {
 
 s32 gWorldMapStormScript[] = {
     SC_CALL(WorldMap_SetUpStorm),
-    SC_CALL(WorldMap_BlinkActorSprite),
+    SC_CALL(WorldMap_HideStormOnOddFrames),
     SC_END,
 };
 
@@ -3554,7 +3558,7 @@ struct Trigger gWorldTriggers[] = {
     { TRIGGER_STEP, CELL_BEHAVIOR_WORLD_MAP_VINE, FLAG_DJINNI(DJINNI_VINE), EVENT(WorldMap_MeetVine) },
     { TRIGGER_STEP, CELL_BEHAVIOR_WORLD_MAP_CORONA, FLAG_DJINNI(DJINNI_CORONA), EVENT(WorldMap_MeetCorona) },
     { TRIGGER_STEP, CELL_BEHAVIOR_WORLD_MAP_HAIL, FLAG_DJINNI(DJINNI_HAIL), EVENT(WorldMap_MeetHail) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_WORLD_MAP_SHIPWRECK, CONDITION_ALWAYS, EVENT(WorldMap_SearchShipwreck) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_WORLD_MAP_SHIPWRECK, CONDITION_ALWAYS, EVENT(WorldMap_SearchWreckage) },
     { USE_ITEM(ITEM_BLACK_ORB), CELL_BEHAVIOR_WORLD_MAP_SHIPWRECK, FLAG_BLACK_ORB_RETURNED, EVENT(WorldMap_UseBlackOrb) },
     { EXAMINE_TRIGGER(EXAMINE_GROUND), CELL_BEHAVIOR_WORLD_MAP_TURTLE_BOOTS, FLAG_WORLD_MAP_TURTLE_BOOTS, FIND_ITEM(ITEM_TURTLE_BOOTS) },
     { TRIGGER_TALK, ACTOR_IODEM, CONDITION_ALWAYS, EVENT(WorldMap_TalkAboutBlackOrb) },

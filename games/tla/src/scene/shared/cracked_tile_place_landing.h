@@ -1,5 +1,6 @@
-/// On landing below a cracked tile, puts the leader on the cell the flag bytes
-/// saved, offset from (x, z), and starts the screen effect.
+/// When the leader has fallen through a cracked tile, sets him in the middle of
+/// the cell the two flag bytes saved, counted from cell (x, z), clears them,
+/// centres the view on him and drops him in with the screen transition effect.
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -11,8 +12,8 @@ void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
 
     GameFlag_SetByte(gCrackedTiles.flagByte, 0);
     GameFlag_SetByte(gCrackedTiles.flagByte + 8, 0);
-    leader->x.fixed = ((dx + x) << 20) + toFIXED(8);
-    leader->z.fixed = ((dz + z) << 20) + toFIXED(8);
+    leader->x.fixed = FIELD_CELL_CENTER(dx + x);
+    leader->z.fixed = FIELD_CELL_CENTER(dz + z);
     marker = work->camera;
     marker->x.fixed = leader->x.fixed;
     marker->z.fixed = leader->z.fixed;

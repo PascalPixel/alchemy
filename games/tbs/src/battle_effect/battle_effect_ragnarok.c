@@ -4,22 +4,34 @@
 
 #include "battle_effect_internal.h"
 
-/// FlameBladeSheet's blade, and where the flash graphics start after it.
-#define FLAME_BLADE_WIDTH 64
-#define FLAME_BLADE_HEIGHT 128
-#define RAGNAROK_FLASH_PICTURES PICTURE_BYTES(FLAME_BLADE)
-/// The canvas row the blade is cut off at, as it sinks into the ground.
-#define RAGNAROK_BLADE_BOTTOM 104
-/// A flash's life it is drawn for: six pictures, three frames each.
-#define RAGNAROK_FLASH_FRAMES 18
+/// FlameBladeSheet's blade, then FlashBurstSheet's pictures.
+#define RAGNAROK_BLADE_WIDTH 64
+#define RAGNAROK_BLADE_HEIGHT 128
+#define RAGNAROK_FLASH_PICTURES PICTURE_BYTES(RAGNAROK_BLADE)
+/// The blade comes down to RAGNAROK_BLADE_HOLD_TOP, and is cut off at the
+/// canvas row RAGNAROK_BLADE_FLOOR as it sinks into the ground.
+#define RAGNAROK_BLADE_HOLD_TOP 16
+#define RAGNAROK_BLADE_FLOOR 104
+/// A flash waits out its life, the ring's inner ones least, and in its last
+/// FLASH_BURN_FRAMES burns down through six pictures, three frames each.
+#define FLASH_LIFE 25
+#define FLASH_BURN_FRAMES 18
+/// The canvas row the sparks bounce on.
+#define RAGNAROK_GROUND_Y 108
 
-#define RAGNAROK_FRAMES 80
 #define RAGNAROK_COLUMNS 2  ///< columns that strike
 #define RAGNAROK_SEEDED 3   ///< columns given particles; the third is unused
 #define RAGNAROK_FLASHES 16 ///< flashes kept per column
 #define RAGNAROK_RING 12    ///< of which drawn as the ring
 #define RAGNAROK_SPARKS 340 ///< sparks kept per column
 #define RAGNAROK_DRAWN_SPARKS 256 ///< of which flown
+
+#define RAGNAROK_FRAMES 80
+#define BLADE_SWING_FRAMES 10 ///< the blade comes down
+#define BLADE_HOLD_FRAME 20   ///< then holds, then creeps on
+#define BLADE_LAST_FRAME 39
+#define FIRST_STRIKE_FRAME 16 ///< each column strikes 8 frames after the last
+#define RESULTS_FRAME 40
 
 /// A huge flaming blade swings down over the targets and light bursts over
 /// them twice.
@@ -68,7 +80,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
 
       flash->x = Trig_Sin(angle) * radius;
       flash->y = -(Trig_Cos(angle) * radius);
-      flash->variant = i / 2 + 25;
+      flash->variant = i / 2 + FLASH_LIFE;
     }
 
     for (i = 0; i != RAGNAROK_SPARKS; i++) {
@@ -99,56 +111,57 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
     if (frame == 18) {
       Sound_PlayFar(SE_CRASH);
     }
-    if (frame == 40) {
+    if (frame == RESULTS_FRAME) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
 
-    // The blade.
-    if (frame <= 39) {
+    // The blade: down 16 pixels a frame from above the canvas, held, then
+    // creeping on.
+    if (frame <= BLADE_LAST_FRAME) {
       s32 height;
       s32 x;
       s32 top;
 
-      height = FLAME_BLADE_HEIGHT;
+      height = RAGNAROK_BLADE_HEIGHT;
       if (work->args->side == EFFECT_SIDE_PARTY) {
-        if (frame <= 9) {
+        if (frame < BLADE_SWING_FRAMES) {
           x = frame * 10 - 8;
-          top = frame * 16 - FLAME_BLADE_HEIGHT;
-        } else if (frame > 20) {
+          top = frame * 16 - RAGNAROK_BLADE_HEIGHT;
+        } else if (frame > BLADE_HOLD_FRAME) {
           x = frame + 62;
           top = frame * 2 - 24;
         } else {
           x = 82;
-          top = 16;
+          top = RAGNAROK_BLADE_HOLD_TOP;
         }
       } else {
-        if (frame <= 9) {
+        if (frame < BLADE_SWING_FRAMES) {
           x = 128 - frame * 10;
-          top = frame * 16 - FLAME_BLADE_HEIGHT;
-        } else if (frame > 20) {
+          top = frame * 16 - RAGNAROK_BLADE_HEIGHT;
+        } else if (frame > BLADE_HOLD_FRAME) {
           x = 58 - frame;
           top = frame * 2 - 24;
         } else {
           x = 38;
-          top = 16;
+          top = RAGNAROK_BLADE_HOLD_TOP;
         }
       }
-      if (top + FLAME_BLADE_HEIGHT > RAGNAROK_BLADE_BOTTOM) {
-        height = height - top - (FLAME_BLADE_HEIGHT - RAGNAROK_BLADE_BOTTOM);
+      if (top + RAGNAROK_BLADE_HEIGHT > RAGNAROK_BLADE_FLOOR) {
+        height = height - top - (RAGNAROK_BLADE_HEIGHT - RAGNAROK_BLADE_FLOOR);
       }
       if (height > 0) {
-        blit[0](canvas, work->sheet, x - FLAME_BLADE_WIDTH / 2, top,
-                FLAME_BLADE_WIDTH, height);
+        blit[0](canvas, work->sheet, x - RAGNAROK_BLADE_WIDTH / 2, top,
+                RAGNAROK_BLADE_WIDTH, height);
       }
     }
 
-    if (frame > 16) {
+    if (frame > FIRST_STRIKE_FRAME) {
       BattleEffect_StepPaletteToResource(RESOURCE_BLAST_SHEET);
     }
 
     // The two columns of light strike, with flashes and then sparks.
     for (col = 0; col != RAGNAROK_COLUMNS; col++) {
-      s32 start = col * 8 + 16;
+      s32 start = col * 8 + FIRST_STRIKE_FRAME;
 
       if (frame == start) {
         work->shakeFrames = 12;
@@ -171,7 +184,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
           x = FIXEDtoINT(flash->x) +
               gRagnarok_StrikeColumns[work->args->side][col];
           life = flash->variant;
-          if (life >= 0 && life < RAGNAROK_FLASH_FRAMES) {
+          if (life >= 0 && life < FLASH_BURN_FRAMES) {
             blit[0](canvas,
                     work->sheet +
                         gRagnarok_FlashPictures[life / 3] *
@@ -199,7 +212,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
                                           toFIXED(1) / 16);
             spark->variant--;
             y = spark->y;
-            if (y > toFIXED(108)) {
+            if (y > toFIXED(RAGNAROK_GROUND_Y)) {
               spark->velocityY = -spark->velocityY / 2;
             } else {
               x = spark->x;
@@ -240,15 +253,23 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-#undef FLAME_BLADE_WIDTH
-#undef FLAME_BLADE_HEIGHT
+#undef RAGNAROK_BLADE_WIDTH
+#undef RAGNAROK_BLADE_HEIGHT
 #undef RAGNAROK_FLASH_PICTURES
-#undef RAGNAROK_BLADE_BOTTOM
-#undef RAGNAROK_FLASH_FRAMES
-#undef RAGNAROK_FRAMES
+#undef RAGNAROK_BLADE_HOLD_TOP
+#undef RAGNAROK_BLADE_FLOOR
+#undef FLASH_LIFE
+#undef FLASH_BURN_FRAMES
+#undef RAGNAROK_GROUND_Y
 #undef RAGNAROK_COLUMNS
 #undef RAGNAROK_SEEDED
 #undef RAGNAROK_FLASHES
 #undef RAGNAROK_RING
 #undef RAGNAROK_SPARKS
 #undef RAGNAROK_DRAWN_SPARKS
+#undef RAGNAROK_FRAMES
+#undef BLADE_SWING_FRAMES
+#undef BLADE_HOLD_FRAME
+#undef BLADE_LAST_FRAME
+#undef FIRST_STRIKE_FRAME
+#undef RESULTS_FRAME

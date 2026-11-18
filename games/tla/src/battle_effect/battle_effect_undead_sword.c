@@ -1097,10 +1097,11 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
 #define DIAMOND_BERG_CRYSTAL_BITMAP_PICTURES 20000
 #define DIAMOND_BERG_WIDTH 48
 #define DIAMOND_BERG_HEIGHT 104
-/// The berg drops DIAMOND_BERG_DROP_SPEED lines a frame, then each blow drives
-/// it DIAMOND_BERG_BLOW_DEPTH further, and the ground cuts it off at
-/// DIAMOND_BERG_GROUND.
+/// The berg drops DIAMOND_BERG_DROP_SPEED lines a frame, then each of
+/// DIAMOND_BERG_BLOWS blows drives it DIAMOND_BERG_BLOW_DEPTH further, and the
+/// ground cuts it off at DIAMOND_BERG_GROUND.
 #define DIAMOND_BERG_DROP_SPEED 16
+#define DIAMOND_BERG_BLOWS 8
 #define DIAMOND_BERG_BLOW_DEPTH 8
 #define DIAMOND_BERG_GROUND 108
 
@@ -1347,7 +1348,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
       model->mesh = gBattleEffect_LargeSquareMesh;
       model->scrollU = 0;
       model->scrollV = 0;
-      for (k = 0; k != 8; k++) {
+      for (k = 0; k != DIAMOND_BERG_BLOWS; k++) {
         s32 t = frame - 31 - k * 8;
         s32 scale;
         s32 shade;
@@ -1450,6 +1451,7 @@ void BattleEffect_RunDiamondBerg(struct BattleEffectParams *args) {
 #undef DIAMOND_BERG_WIDTH
 #undef DIAMOND_BERG_HEIGHT
 #undef DIAMOND_BERG_DROP_SPEED
+#undef DIAMOND_BERG_BLOWS
 #undef DIAMOND_BERG_BLOW_DEPTH
 #undef DIAMOND_BERG_GROUND
 #undef DIAMOND_BERG_BILLOW

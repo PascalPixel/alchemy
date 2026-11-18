@@ -80,9 +80,12 @@ struct SpritePictureCache {
   void *pictures; ///< the decoded pictures, their offsets made pointers
 };
 
+/// A picture cache's tag holds its slot above the sprite id's bits.
+#define PICTURE_CACHE_TAG_SLOT_SHIFT 12
 /// A sprite id with the sprite picture cache its pictures load into, as a
 /// SpritePictureCache's tag holds them.
-#define SPRITE_PICTURE_TAG(slot, id) ((id) + ((slot) << 12))
+#define SPRITE_PICTURE_TAG(slot, id)                                           \
+  ((id) + ((slot) << PICTURE_CACHE_TAG_SLOT_SHIFT))
 
 /// The actor system's work: the flag that suspends sprite projection, the
 /// outline's edge and fill colours, and the sprite picture caches. Heap slot 6.

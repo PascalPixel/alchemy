@@ -697,8 +697,9 @@ enum SpriteId {
   SPRITE_KEY,
   SPRITE_JAIL_KEY,
   SPRITE_SANDSTORM,
-  /// Moapa's battle shadow: three ellipses, right of centre, left of it and
-  /// centred, where SPRITE_BATTLE_SHADOW has one centred.
+  /// Moapa's battle shadow (BattleObject_Make): spr_685.png's three pictures
+  /// put the battle shadow's ellipse right of centre, left of it and centred,
+  /// where SPRITE_BATTLE_SHADOW's one picture has it centred.
   SPRITE_MOAPA_SHADOW,
   SPRITE_BATTLE_SHADOW = 686,
   SPRITE_BATTLE_SHADOW_NARROW,

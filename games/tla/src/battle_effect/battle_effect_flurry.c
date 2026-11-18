@@ -124,9 +124,8 @@ FLURRY_DEFINE_BY_VARIANT(BattleEffect_RunDoublestep, FLURRY_GUST,
 #define FLURRY_SMOKE_PICTURE_FRAMES 4
 #define FLURRY_SMOKE_FRAMES (6 * FLURRY_SMOKE_PICTURE_FRAMES)
 
-/// The header's CANVAS_WAVE_BG2X again: battle_effect_streaks.c,
-/// battle_effect_planet_diver.c, battle_effect_condemn.c and
-/// battle_effect_target_motes.c #undef it before this part.
+/// The header's CANVAS_WAVE_BG2X again: battle_effect_target_motes.c #undefs
+/// it before this part.
 #define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
 
 /// The bytes of a gFlurry_Styles row, one row a mode.

@@ -482,6 +482,20 @@ void EasternAlhafraShip_CountAnswer();
 /// A geyser's compressed tiles (graphics/field/geyser.png).
 extern const u8 gField_GeyserTiles[];
 
+/// The geysers Scoop digs up in Gondowan Cliffs and in Yampi Desert's scorpion
+/// pit (each scene's struct GeyserWork): the most sprites Geyser_Draw queues in
+/// a frame, and the geysers a room can have.
+#define GEYSER_SPRITES 80
+#define GEYSER_ENTRIES 16
+/// A geyser's six-second round, and the frames of it at which it starts to rise
+/// and to fall.
+#define GEYSER_PERIOD_FRAMES 360
+#define GEYSER_RISE_FRAME 60
+#define GEYSER_FALL_FRAME 240
+/// The terrain id and collision slot of the first geyser: the geysers take the
+/// last GEYSER_ENTRIES of the 256 terrain ids.
+#define GEYSER_FIRST_TERRAIN (256 - GEYSER_ENTRIES)
+
 /// See gField_CachedTilesA (graphics/field/cached_b.png).
 extern u8 gField_CachedTilesB[];
 
@@ -525,6 +539,12 @@ struct Window;
 #define HULL_BAND_LAST_COLOR 9
 #define SURF_FIRST_COLOR 12
 #define SURF_LAST_COLOR 15
+/// The same run of four as Gondowan Cliffs (background palette 0) and SW Atteka
+/// Islet (palette 3) turn their water's colours in place
+/// (GondowanCliffs_CycleWaterColors, Settlements_CycleWaterColors): its first
+/// colour and how many.
+#define FIRST_WATER_COLOR 12
+#define WATER_COLORS 4
 
 /// The vents of Aqua Rock and Taopo Swamp (struct VentWork, shared/vent_*.h):
 /// the most vents a room has, and the most actors besides the leader their
@@ -535,5 +555,13 @@ struct Window;
 /// whether it rests on another in x and z (field/actor_vent_bounce.c). Each is
 /// read twice.
 #define DIFF(a, b) ((a) - (b) >= 0 ? (a) - (b) : (b) - (a))
+/// The names field/actor_vent_bounce.c's two routines take in both rooms'
+/// copies: whether a thrown object rests on another, and its motion.
+#define VENT_TOUCHING Vent_IsTouching
+#define VENT_BOUNCE Vent_Bounce
+/// Vent index's entry, reached as the first entry of the work index entries
+/// on, as the vents' accessors (Vent_SetBlowing, Vent_SetGust) read it.
+#define VENT_AT(work, index)                                                   \
+  ((struct VentWork *)((u8 *)(work) + (index) * sizeof(struct VentEntry)))
 
 #endif

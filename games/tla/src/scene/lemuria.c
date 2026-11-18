@@ -632,8 +632,9 @@ s16 gLemuria_RippleLines[2][160] BSS_DATA ALIGNED(16);
 /// Background palette `n`, as the water's colour cycle turns it.
 #define WATER_PALETTE(n) ((volatile u16 *)&BG_PLTT_COLOR(n, 0))
 
-/// The water's cycling colours in each of its palettes.
-enum { FIRST_WATER_COLOR = 1, LAST_WATER_COLOR = 14 };
+/// The water's cycling colours in each of its palettes, 1 to 14: all but the
+/// palette's first and last.
+enum { WATER_CYCLE_FIRST_COLOR = 1, WATER_CYCLE_LAST_COLOR = 14 };
 
 /// Every fourth frame rotates the water's colours of background palettes 7 and
 /// 8 by one place.
@@ -642,14 +643,14 @@ void Lemuria_CycleWaterColors(void) {
     s16 saved;
     s32 i;
 
-    saved = WATER_PALETTE(7)[LAST_WATER_COLOR];
-    for (i = LAST_WATER_COLOR; i != FIRST_WATER_COLOR; i--)
+    saved = WATER_PALETTE(7)[WATER_CYCLE_LAST_COLOR];
+    for (i = WATER_CYCLE_LAST_COLOR; i != WATER_CYCLE_FIRST_COLOR; i--)
       WATER_PALETTE(7)[i] = WATER_PALETTE(7)[i - 1];
-    WATER_PALETTE(7)[FIRST_WATER_COLOR] = saved;
-    saved = WATER_PALETTE(8)[LAST_WATER_COLOR];
-    for (i = LAST_WATER_COLOR; i != FIRST_WATER_COLOR; i--)
+    WATER_PALETTE(7)[WATER_CYCLE_FIRST_COLOR] = saved;
+    saved = WATER_PALETTE(8)[WATER_CYCLE_LAST_COLOR];
+    for (i = WATER_CYCLE_LAST_COLOR; i != WATER_CYCLE_FIRST_COLOR; i--)
       WATER_PALETTE(8)[i] = WATER_PALETTE(8)[i - 1];
-    WATER_PALETTE(8)[FIRST_WATER_COLOR] = saved;
+    WATER_PALETTE(8)[WATER_CYCLE_FIRST_COLOR] = saved;
   }
 }
 

@@ -20,6 +20,9 @@ void Field_RequestBattleFromEncounterTable(s32 zone, s32 slot) {
   Encounter_SelectBattleMusic(zone, slot);
 }
 
+/// The low bits of Field_RequestDjinnBattle's flag: the Djinni's actor.
+#define DJINN_ACTOR_MASK 0xff
+
 /// Sets up the battle with Djinni number `no`. The low 8 bits of flag are the
 /// Djinni's actor, which hops first unless DJINN_NO_HOP is set.
 void Field_RequestDjinnBattle(s32 flag, s32 no) {
@@ -29,7 +32,7 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
 
   work = gFieldWork;
   skipHop = flag & DJINN_NO_HOP;
-  flag &= 0xff;
+  flag &= DJINN_ACTOR_MASK;
 
   if (skipHop == 0)
     Djinn_RunBattleStartHop(flag);
@@ -46,9 +49,11 @@ void Field_RequestDjinnBattle(s32 flag, s32 no) {
     Encounter_ResolveWorldMapZoneAndBackdrop(&leader->x.fixed);
   }
   // Key 0 is no listed encounter, so every Djinni battle takes MUS_BATTLE, the
-  // last song in gEncounter_BattleMusic.
+  // last of gEncounter_BattleMusic.
   Encounter_SelectBattleMusic(0, 0);
 }
+
+#undef DJINN_ACTOR_MASK
 
 /// Sets the after-battle destination (gMainRoutineWork.afterBattleScene and
 /// afterBattleEntrance), where the party goes once the coming battle is won.
@@ -66,7 +71,7 @@ void Event_SetDefeatDestination(s32 sceneId, s32 entrance) {
 
 /// Makes the event leave for entrance entrance of scene sceneId: sets
 /// gMainRoutineWork.next and entrance and raises the exit request
-/// EXIT_KEEP_DESTINATION (999), so the field sequence leaves on its next pass.
+/// EXIT_KEEP_DESTINATION, so the field sequence leaves on its next pass.
 void Event_LeaveFor(u16 sceneId, u16 entrance) {
   struct FieldWork *work = gFieldWork;
   gMainRoutineWork.next = sceneId;

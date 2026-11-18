@@ -18,6 +18,17 @@ struct WindowSprite;
 #define QUANTITY_BAR_CHOSEN 10
 #define QUANTITY_BAR_HELD 2
 
+/// Rows of the shop stock table, as an event passes them to Shop_Run: Daila's
+/// weapon, armor and item shops, and Izumo's general store, which the debug
+/// rooms' shopkeepers also open. A town no other room opens a shop of names
+/// its rows itself.
+enum {
+  SHOP_DAILA_WEAPONS = 1,
+  SHOP_DAILA_ARMOR = 2,
+  SHOP_DAILA_ITEMS = 3,
+  SHOP_IZUMO = 24
+};
+
 void Shop_InitializeWork(void);
 void Shop_ReleaseWork(void);
 s32 Shop_SelectBuy(void);

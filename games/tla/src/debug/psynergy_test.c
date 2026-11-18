@@ -43,6 +43,7 @@
 #include "window/window.h"
 #include "scene/sparkle.h"
 #include "scene/event_layer.h"
+#include "shop/shop.h"
 
 /// MadPlant_LeapAtLeader through this room's own row of the import table
 /// (imports.inc), whose place in the list shapes the room's table.
@@ -56,15 +57,6 @@ void Import_DebugMadPlantLeap(s32 sprite, s32 x, s32 z);
 #define FLAG_STATUE_DUG FLAG_AREA_TEMP_03
 #define FLAG_WICKED_MACE_TAKEN FLAG_AREA_TEMP_10
 #define FLAG_KRADEN_MOVED FLAG_SCENE_TEMP_00
-
-/// The shops ACTOR_SHOPKEEPER opens: Daila's three and Izumo's, by their rows
-/// of the shop stock table.
-enum {
-  SHOP_DAILA_WEAPONS = 1,
-  SHOP_DAILA_ARMOR = 2,
-  SHOP_DAILA_ITEMS = 3,
-  SHOP_IZUMO = 24
-};
 
 /// The room's actors that run its tests, numbered in the order of
 /// gActorPlacements after the party's four rows.

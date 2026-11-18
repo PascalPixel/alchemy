@@ -37,6 +37,7 @@
 #include "text/msg_ids.h"
 #include "field/actor_script.h"
 #include "fixed_math.h"
+#include "shop/shop.h"
 
 /// The drained village's puddles dried by Parch for this visit, one flag each,
 /// in the order of the puddles' rows, and frozen into pillars by Frost.
@@ -243,9 +244,6 @@ void Daila_TalkBoat(void) {
   Event_ShowMessageAndWait(BOAT_ASKER, 0);
   Event_End();
 }
-
-/// Daila's shops, as Shop_Run numbers them.
-enum { SHOP_DAILA_ITEMS = 3 };
 
 /// Daila's item shop: facing the counter opens it; otherwise the keeper worries
 /// that Tavi and Riki have not been seen lately.

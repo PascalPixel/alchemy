@@ -2,11 +2,6 @@
 /// Gaia Rock's climbing walls, which its outside and inside overlays keep a
 /// copy of.
 
-/// The cell behaviors that raise a step trigger, as Field_UpdateWalking reads
-/// them; those above are the field's own (CELL_BEHAVIOR_CLOAK and on).
-#define CELL_BEHAVIOR_EVENT_FIRST 1
-#define CELL_BEHAVIOR_EVENT_LAST 230
-
 /// Each frame while the leader climbs a wall (Field_ClimbUp and Field_ClimbDown
 /// leave the keys alone moving him): the cell behavior of the overhead layer's
 /// cell where he is drawn, if one that raises a step trigger, is his step
@@ -28,6 +23,3 @@ void GaiaRock_TriggerWallCell(void) {
       work->stepTrigger = behavior;
   }
 }
-
-#undef CELL_BEHAVIOR_EVENT_FIRST
-#undef CELL_BEHAVIOR_EVENT_LAST

@@ -109,8 +109,6 @@ s32 Field_MeasurePsynergyHeight(s32 id, struct Actor *actor, s32 *position) {
 
 // The Lift-style animation measures height by the actor's footing, not y.
 #define ANIMATION_MEASURES_FOOTING 18
-/// A distance beyond any field Psynergy's reach.
-#define BEYOND_REACH 9999
 /// A facing's sixteenths of a turn (FACING_STEP), as a shift.
 #define FACING_STEP_SHIFT 12
 
@@ -326,5 +324,4 @@ void Leader_PushObjectAhead(void) {
 }
 
 #undef ANIMATION_MEASURES_FOOTING
-#undef BEYOND_REACH
 #undef FACING_STEP_SHIFT

@@ -336,10 +336,9 @@ UNUSED void PsynergyTest2_DropActor(s32 mode, s32 id, s32 x, s32 z) {
   }
 }
 
-/// Unused: the Psynergy test's Scoop helpers (PsynergyTest_DigCells and the
-/// rest), copied here with nothing calling them.
-UNUSED void PsynergyTest2_RaiseMonster(s32 mode, s32 x, s32 z, s32 row,
-                                       s32 column) {
+/// Unused: the Psynergy test's PsynergyTest_RaiseStatue again.
+UNUSED void PsynergyTest2_RaiseStatue(s32 mode, s32 x, s32 z, s32 row,
+                                      s32 column) {
   struct Actor *actor;
 
   if (mode == 1) {

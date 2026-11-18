@@ -114,6 +114,8 @@ enum MessageDecodeFlag {
 
 /// The last character code the window's text tiles cover.
 #define TEXT_LAST_FONT_CODE 255
+/// In Japanese, the codes after the font's are kanji (gFont_KanjiGlyphs).
+#define KANJI_FIRST_CODE (TEXT_LAST_FONT_CODE + 1)
 
 /// WindowSprite.kind: what a window sprite owns besides itself, which
 /// WindowSprite_Release frees.

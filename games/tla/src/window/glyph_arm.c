@@ -16,8 +16,6 @@
 #define SCREEN_TILE_COLUMNS 30
 /// The fonts start at the space.
 #define FONT_FIRST_CODE ' '
-/// In Japanese, the codes after the font's are kanji (gFont_KanjiGlyphs).
-#define KANJI_FIRST_CODE (TEXT_LAST_FONT_CODE + 1)
 /// The Japanese small font's rows: a byte each.
 #define SMALL_FONT_ROWS 10
 /// A halfword of four 4-bit pixels, all colour `color`: what

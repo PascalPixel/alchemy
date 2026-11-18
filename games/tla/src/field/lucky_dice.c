@@ -39,21 +39,44 @@
 #include "text/msg_ids.h"
 #include "system/matrix.h"
 
-// A table of signs nothing reads.
+/// What a throw's four numbers make, in the rules' words: "If two numbers match
+/// on either the dice or the table... it's called a pair, and you don't win or
+/// lose anything. Two pair doubles your money. Triple matches triple your
+/// money. Four of a kind is perfect, and you win five times your bet."
+/// Every result has its lettering (hand_titles.png: "Perfect!!!", "Triple!",
+/// "Two Pair!" and "One Pair!"), numbered from 0.
+enum LuckyDiceResult {
+  DICE_RESULT_NONE = -1, ///< no two numbers alike: the bet is lost
+  DICE_RESULT_PERFECT,   ///< all four alike: DICE_PERFECT_PAYOUT times the bet
+  DICE_RESULT_TRIPLE,    ///< three alike: three times the bet
+  DICE_RESULT_TWO_PAIR,  ///< two pairs: twice the bet
+  DICE_RESULT_ONE_PAIR   ///< one pair: the bet back
+};
+
+/// Unused: a table of signs.
 const s32 gLuckyDice_UnusedSigns[] = {-1, 1, -1, 1, -1, -1, 1, 1};
 
-/// How many sprites each kind of result's lettering takes, 32 pixels each, by
-/// LuckyDice_Run's resultKind: 0 all four numbers alike, 1 three alike, 2 two
-/// pairs and 3 one pair.
-const u8 gLuckyDice_LabelCounts[] = {5, 4, 3, 3};
+/// How many sprites each result's lettering takes, 32 pixels each.
+const u8 gLuckyDice_LabelCounts[] = {
+    [DICE_RESULT_PERFECT] = 5,
+    [DICE_RESULT_TRIPLE] = 4,
+    [DICE_RESULT_TWO_PAIR] = 3,
+    [DICE_RESULT_ONE_PAIR] = 3,
+};
 
-/// The first tile of each kind of result's lettering, in 16-pixel steps from
+/// The first tile of each result's lettering, in 16-pixel steps from
 /// DICE_NUMBER_TILES.
 const u8 gLuckyDice_LabelTiles[] = {
-    28,  48,  64, 76,
+    [DICE_RESULT_PERFECT] = 28,
+    [DICE_RESULT_TRIPLE] = 48,
+    [DICE_RESULT_TWO_PAIR] = 64,
+    [DICE_RESULT_ONE_PAIR] = 76,
 #if LANGUAGE != LANGUAGE_JAPANESE
-    28,  248, 64,
-    248, // never read
+    // Four more, which nothing reads.
+    28,
+    248,
+    64,
+    248,
 #endif
 };
 
@@ -316,22 +339,9 @@ s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, FIXED scale,
 #define DICE_BOARD_PALETTE_COLORS 224
 #define DICE_SPRITES_PALETTE_COLORS 256
 
-/// The 16-colour tiles a sprite of width by height pixels takes, and the
-/// 256-colour ones, in OAM's 32-byte steps: a picture's sprites follow one
-/// another so in OBJ VRAM.
-#define SPRITE_TILES(width, height) ((width) / 8 * ((height) / 8))
-#define SPRITE_TILES_8BPP(width, height) (2 * SPRITE_TILES(width, height))
-/// An affine parameter in an OamWords entry's attr2 word, its high half: the
-/// entries 4n to 4n + 3 hold affine matrix n's four.
-#define OBJ_AFFINE_PARAMETER(value) ((value) << 16)
-
 /// A die's or a shadow's affine scale at DICE_NEAREST_DEPTH, in 256ths: drawn
 /// at twice its size, and smaller by half of its depth past it.
 #define DICE_NEAREST_SCALE 128
-/// A damping keeps this many 64ths of a speed: a bounce keeps 48 of a die's
-/// speed off a side or the floor and 56 of its speed along the floor, and
-/// every frame 63 of each.
-#define DAMPING_SCALE 64
 
 /// What the Lucky Dice screen is doing.
 enum LuckyDiceState {
@@ -356,7 +366,7 @@ void LuckyDice_Run(void) {
   s32 spinRate[DICE_COUNT];
   s32 flashTimer[DICE_COUNT];   // set on a win; nothing here reads it
   s32 luckyNumbers[DICE_COUNT]; // the two numbers shown at the top, never equal
-  s32 drawOrder[DICE_COUNT];    // the dice, back to front
+  s32 drawOrder[DICE_COUNT];    // the dice, the nearest first
   s32 matchedNumbers[2];
   u16 *spritePalette;
   struct DiceWork *diceWork;
@@ -461,7 +471,7 @@ void LuckyDice_Run(void) {
   spriteCount = 0;
   state = LUCKY_DICE_AIM;
   resultTimer = 0;
-  resultKind = -1;
+  resultKind = DICE_RESULT_NONE;
   winnings = 0;
   payoutTimer = 0;
   for (index = 0; index != DICE_COUNT; index++) {
@@ -499,7 +509,7 @@ void LuckyDice_Run(void) {
       Window_CreateFar(DICE_HELP_WINDOW_X, 16, DICE_HELP_WINDOW_WIDTH, 4, 6);
   sprites->helpWindow = window;
   // ":Throw" and ":Quit" after their buttons, ten and eleven messages after
-  // the coins label.
+  // the coins label (the English text's MsgLuckyDiceThrow and the next).
   Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins + 10, window, 0, 0);
   Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins + 11, sprites->helpWindow,
                              0, 8);
@@ -708,6 +718,8 @@ void LuckyDice_Run(void) {
       } while (luckyNumbers[0] == luckyNumbers[1]);
     }
 
+    // Draw the dice nearest first, so that the nearer is in front (an
+    // insertion sort on depth), each scaled by its distance.
     for (index = 0; index != DICE_COUNT; index++) {
       drawOrder[index] = index;
     }
@@ -742,8 +754,8 @@ void LuckyDice_Run(void) {
       dieY = screen[1] - halfSize;
       if (dieY + 96 > -16) {
         sprites->oam[spriteCount].attr01 =
-            (OBJ_AFFINE_MATRIX(drawOrder[index]) | OBJ_X((dieX + 632) & 0x1ff) |
-             ((dieY + 352) & 255)) |
+            (OBJ_AFFINE_MATRIX(drawOrder[index]) |
+             OBJ_X((dieX + 632) & OBJ_X_MASK) | ((dieY + 352) & OBJ_Y_MASK)) |
             OBJ_SIZE_16X16 | OBJ_256_COLORS | OBJ_DOUBLE_SIZE | OBJ_AFFINE;
         sprites->oam[spriteCount].attr2 =
             (gLuckyDice_FaceTiles[rollingDie->variant / DICE_ROLL_PER_TILE]
@@ -797,8 +809,9 @@ void LuckyDice_Run(void) {
       shadowY = screen[1];
       if (shadowY + 88 > -16) {
         sprites->oam[spriteCount].attr01 =
-            (OBJ_AFFINE_MATRIX(index + 2) | OBJ_X((shadowX + 624) & 0x1ff)) |
-            ((shadowY + 344) & 255) | OBJ_SIZE_16X16 | OBJ_256_COLORS |
+            (OBJ_AFFINE_MATRIX(index + 2) |
+             OBJ_X((shadowX + 624) & OBJ_X_MASK)) |
+            ((shadowY + 344) & OBJ_Y_MASK) | OBJ_SIZE_16X16 | OBJ_256_COLORS |
             OBJ_DOUBLE_SIZE | OBJ_AFFINE;
         sprites->oam[spriteCount].attr2 = OBJ_PRIORITY(2) | DICE_SHADOW_TILE;
         spriteCount++;
@@ -927,13 +940,13 @@ void LuckyDice_Run(void) {
       if (stoppedDice == DICE_COUNT) {
         state = LUCKY_DICE_RESULT;
         resultTimer = 0;
-        resultKind = -1;
+        resultKind = DICE_RESULT_NONE;
         winnings = 0;
         payoutTimer = 60;
         if (numbers[0] == numbers[1] && numbers[0] == numbers[2] &&
             numbers[0] == numbers[3]) {
           flashTimer[0] = flashTimer[1] = DICE_PERFECT_FLASH_FRAMES;
-          resultKind = 0;
+          resultKind = DICE_RESULT_PERFECT;
           if (numbers[0] == luckyNumbers[0]) {
             winnings =
                 bet * (DICE_PERFECT_PAYOUT * DICE_FIRST_LUCKY_MULTIPLIER);
@@ -961,14 +974,14 @@ void LuckyDice_Run(void) {
             winnings = bet;
             Text_DrawNumberInWindowFar(gMainRoutineWork.coins, DICE_COIN_DIGITS,
                                        sprites->coinsWindow, 0, 0);
-            resultKind = 3;
+            resultKind = DICE_RESULT_ONE_PAIR;
           }
           if (pairCount == 2) {
             winnings = bet * 2;
             Text_DrawNumberInWindowFar(gMainRoutineWork.coins, DICE_COIN_DIGITS,
                                        sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = DICE_FLASH_FRAMES;
-            resultKind = 2;
+            resultKind = DICE_RESULT_TWO_PAIR;
             Sound_PlayFar(MUS_JINGLE_SMALL);
           }
           if (pairCount == 3) {
@@ -976,7 +989,7 @@ void LuckyDice_Run(void) {
             Text_DrawNumberInWindowFar(gMainRoutineWork.coins, DICE_COIN_DIGITS,
                                        sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = DICE_FLASH_FRAMES;
-            resultKind = 1;
+            resultKind = DICE_RESULT_TRIPLE;
             Sound_PlayFar(MUS_JINGLE_MEDIUM);
           }
         }

@@ -6,7 +6,7 @@
 
 /// The hue circle, in whole degrees and in degrees as 16.16.
 #define HUE_DEGREES 360
-#define HUE_CIRCLE (HUE_DEGREES << 16)
+#define HUE_CIRCLE toFIXED(HUE_DEGREES)
 
 /// A line's offset in Mind Read's wave at a phase: a sine 4 pixels either way,
 /// a turn every 160 phase steps.

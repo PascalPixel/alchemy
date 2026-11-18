@@ -50,7 +50,7 @@ const u16 gMath_TwoPiSteps[8] = {
 
 /// The sine at 0, 90, 180 and 270 degrees, in 16.16.
 const s32 gMath_QuadrantSin[4] = {
-    0, 65536, 0, -65536,
+    0, toFIXED(1), 0, toFIXED(-1),
 };
 
 /// Tangents scaled by 256: index i is tan(i * 45 / 128 degrees),

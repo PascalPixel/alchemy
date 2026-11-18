@@ -1,21 +1,24 @@
 /// @file
-/// One routine of the canvas layer, not yet understood.
+/// The canvas wipe: the ragged sweep that blacks out or clears the canvas as
+/// the summons and the larger effects open and close.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
 
-/// Wipes the whole canvas to one colour with a ragged edge: each row (or
-/// column) lags a random 0 to 63 pixels behind the front, which speeds up as
-/// it goes. Returns when the wipe is done, a frame at a time: 23 frames
-/// across, 15 down.
+/// How far a row of BattleEffect_WipeCanvas's wipe lags behind its front, at
+/// most: each row lags a random 0 to WIPE_LAG_MAX pixels.
+#define WIPE_LAG_MAX 63
+
+/// A direction BattleEffect_WipeCanvas leaves the canvas alone for; no caller
+/// passes it.
+#define CANVAS_WIPE_NONE 3
+
+/// Wipes the whole canvas to one colour with a ragged edge, a frame at a time:
+/// 23 frames across, 15 down. Each frame sets work->transferPending, so the
+/// caller's transfer task must already be running.
 ///
-/// Called by the summons and effects that open on a wiped canvas: Boreas,
-/// Thor, Atalanta, Neptune, Kirin, Ramses, the particle streams and
-/// Judgment. Writes the canvas and sets work->transferPending each frame;
-/// the caller's transfer task must already be running.
-///
-/// direction: CANVAS_WIPE_ACROSS sweeps left to right, anything else top to
-///            bottom (enum CanvasWipeDirection).
+/// direction: CANVAS_WIPE_ACROSS sweeps left to right, CANVAS_WIPE_NONE does
+///            nothing, anything else sweeps top to bottom.
 /// fill: what the wipe leaves (enum CanvasWipeFill).
 void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
   struct BattleEffectWork *work;
@@ -23,14 +26,14 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
   u8 delay[CANVAS_SIZE];
   s32 x;
   s32 y;
-  s32 pos;
+  s32 wipePosition;
 
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;
   for (x = 0; x != CANVAS_SIZE; x++)
-    delay[x] = Random16() & 0x3f;
+    delay[x] = Random16() & WIPE_LAG_MAX;
 
-  if (direction == 1) {
+  if (direction == CANVAS_WIPE_ACROSS) {
     s32 front;
     s32 speed;
 
@@ -42,16 +45,16 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
       speed++;
       for (; x != front; x++) {
         for (y = 0; y != CANVAS_SIZE; y++) {
-          pos = x - delay[y];
-          if (pos >= 0)
-            if (pos <= 127)
-              canvas[(((y / 8) * 16 + pos / 8) * 8 + (y & 7)) * 8 + (pos & 7)] =
-                  1 - fill;
+          wipePosition = x - delay[y];
+          if (wipePosition >= 0)
+            if (wipePosition < CANVAS_SIZE)
+              canvas[CANVAS_PIXEL_OFFSET(wipePosition, y)] = 1 - fill;
         }
       }
       EFFECT_PRESENT_CANVAS(work);
+      // The across wipe runs on to 256, further than it needs to finish.
     } while (front <= 256);
-  } else if (direction != 3) {
+  } else if (direction != CANVAS_WIPE_NONE) {
     s32 front;
     s32 speed;
 
@@ -63,19 +66,14 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
       speed += 4;
       for (; y != front; y++) {
         for (x = 0; x != CANVAS_SIZE; x++) {
-          pos = y - delay[x];
-          if (pos >= 0)
-            if (pos <= 127)
-              canvas[(((pos / 8) * 16 + x / 8) * 8 + (pos & 7)) * 8 + (x & 7)] =
-                  1 - fill;
+          wipePosition = y - delay[x];
+          if (wipePosition >= 0)
+            if (wipePosition < CANVAS_SIZE)
+              canvas[CANVAS_PIXEL_OFFSET(x, wipePosition)] = 1 - fill;
         }
       }
       EFFECT_PRESENT_CANVAS(work);
-    } while (front <= 191);
+    } while (front <= CANVAS_SIZE + WIPE_LAG_MAX);
   }
 }
 #undef BLITTER
-#undef SPARK_COUNT
-#undef IWRAM
-#undef PLTT
-#undef SPARKS

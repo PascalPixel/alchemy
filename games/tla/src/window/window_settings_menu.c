@@ -355,8 +355,6 @@ void Icon_PrepareActorFar(struct WindowSprite *icon);
 void CommandIcon_Load(s32 index, s32 value, s32 flag);
 void FieldMessage_Show(s32 message, s32 mode);
 
-#define PRESSED (((volatile struct InputState *)&gInput)->pressed)
-
 /// Runs the settings menu (window colour and brightness, message speed, speech,
 /// auto-sleep) until A or START keeps the settings (returns 0) or B drops them
 /// (returns -1).
@@ -470,7 +468,7 @@ s32 SettingsMenu_Run(void) {
     MenuTitle_Bob(pair);
     wait(1);
 
-    if (PRESSED & KEY_SELECT) {
+    if (gInput.pressed & KEY_SELECT) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       work->preset++;
       redraw = 1;
@@ -480,12 +478,12 @@ s32 SettingsMenu_Run(void) {
       *brightness = gOptionMenu_BrightnessPresets[work->preset];
       continue;
     }
-    if (PRESSED & 9) {
+    if (gInput.pressed & 9) {
       result = 0;
       Sound_PlayFar(SE_MENU_CONFIRM);
       break;
     }
-    if (PRESSED & KEY_B) {
+    if (gInput.pressed & KEY_B) {
       result = -1;
       Sound_PlayFar(SE_MENU_CANCEL);
       break;
@@ -658,8 +656,6 @@ struct WindowSprite *MenuTitle_Create(s32 group, struct Window *input, s32 x,
 void Icon_PrepareActorFar(struct WindowSprite *icon);
 void CommandIcon_Load(s32 index, s32 value, s32 flag);
 
-#define KEYS_PRESSED (((struct InputState *)&gInput)->pressed)
-
 /// Runs the Pause menu until the player picks an entry (enum
 /// PauseMenuEntry) or cancels with B or START (-1).
 /// The result counts in the full entry table even when only Change settings is
@@ -734,12 +730,12 @@ s32 PauseMenu_Choose(s32 initial) {
     }
     MenuTitle_Bob(pair);
     wait(1);
-    if (KEYS_PRESSED & KEY_A) {
+    if (gInput.pressed & KEY_A) {
       result = selected;
       Sound_PlayFar(SE_MENU_CONFIRM);
       break;
     }
-    if (KEYS_PRESSED & (KEY_B | KEY_START)) {
+    if (gInput.pressed & (KEY_B | KEY_START)) {
       result = -1;
       Sound_PlayFar(SE_MENU_CANCEL);
       break;
@@ -757,12 +753,12 @@ s32 PauseMenu_Choose(s32 initial) {
       continue;
     }
     if (gDebugMode != 0) {
-      if (KEYS_PRESSED & KEY_R) {
+      if (gInput.pressed & KEY_R) {
         result = PAUSE_MENU_DEBUG_R;
         Sound_PlayFar(SE_MENU_CONFIRM);
         break;
       }
-      if (KEYS_PRESSED & KEY_L) {
+      if (gInput.pressed & KEY_L) {
         result = PAUSE_MENU_DEBUG_L;
         Sound_PlayFar(SE_MENU_CONFIRM);
         break;
@@ -791,6 +787,4 @@ s32 PauseMenu_Choose(s32 initial) {
 #undef CHOICE_RIGHT
 #undef FIRST_CHOICE_RIGHT
 #undef SETTINGS_HEADING
-#undef PRESSED
-#undef KEYS_PRESSED
 #undef HEADING_Y

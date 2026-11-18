@@ -42,7 +42,7 @@ void Whirlwind_Update(struct Actor *self) {
             leader->facing = self->facing;
             leader->watchedActor = self;
             leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-            work->raisedTrigger = RAISED_TRIGGER_WHIRLWIND;
+            work->raisedTrigger = RAISED_RIDE_WHIRLWIND;
             gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
             self->riseCounter = 1;
             self->riseEnabled = 1;
@@ -65,5 +65,4 @@ void Whirlwind_Update(struct Actor *self) {
   gWhirlwindRiding = 0;
 }
 
-#undef RAISED_TRIGGER_WHIRLWIND
 #undef WHIRLWIND_CATCH_REACH

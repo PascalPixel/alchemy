@@ -172,12 +172,11 @@ enum AirsRockInsideGustStop {
   GUST_STOP_BRIDGE_EAST_WEST = 6
 };
 
-/// The triggers this scene raises (FieldWork.raisedTrigger), each room reading
-/// them its own way: a statue's whirlwind carrying the leader, a vent's puff
-/// reaching him, and in the Reveal tablet room, a cell he has left, as
-/// TRIGGER_LEFT_CELL plus its collision code.
+/// The triggers this scene raises (FieldWork.raisedTrigger) besides a statue's
+/// whirlwind carrying the leader (RAISED_RIDE_WHIRLWIND), each room reading
+/// them its own way: a vent's puff reaching him, and in the Reveal tablet room,
+/// a cell he has left, as TRIGGER_LEFT_CELL plus its collision code.
 enum AirsRockInsideRaisedTrigger {
-  TRIGGER_RIDE_WHIRLWIND = 200,
   TRIGGER_PUFF_REACHES_LEADER = 201,
   TRIGGER_LEFT_CELL = 200,
   TRIGGER_FIRST_VANISHING_STONE = TRIGGER_LEFT_CELL +
@@ -835,7 +834,7 @@ enum { WHIRLWIND_REACH_ABOVE = 16 };
 /// when it faces north, and where the overhead layer reads
 /// CELL_BEHAVIOR_AIRS_ROCK_INSIDE_WHIRLWIND_END it fades (facing north) or
 /// rises. The first time it comes within reach of the leader it carries him
-/// along (TRIGGER_RIDE_WHIRLWIND). It stops while the leader moves as sand, a
+/// along (RAISED_RIDE_WHIRLWIND). It stops while the leader moves as sand, a
 /// menu or Psynergy is up, or an item is in use.
 void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -886,7 +885,7 @@ void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
       leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       ((struct FieldSprite *)leader->sprite)->priority =
           ((struct FieldSprite *)shot->sprite)->priority;
-      work->raisedTrigger = TRIGGER_RIDE_WHIRLWIND;
+      work->raisedTrigger = RAISED_RIDE_WHIRLWIND;
       gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
       shot->riseCounter = 1;
       shot->riseEnabled = 1;
@@ -1010,7 +1009,7 @@ void AirsRockInside_MovePooledWhirlwind(struct Actor *shot) {
       leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       ((struct FieldSprite *)leader->sprite)->priority =
           ((struct FieldSprite *)shot->sprite)->priority;
-      work->raisedTrigger = TRIGGER_RIDE_WHIRLWIND;
+      work->raisedTrigger = RAISED_RIDE_WHIRLWIND;
       gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
       shot->riseCounter = 1;
       shot->riseEnabled = 1;
@@ -3855,7 +3854,7 @@ struct Trigger gAirsRockInside_HallTriggers[] = {
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_HALL_MOVABLE_STATUE, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_HALL_MOVABLE_STATUE, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},
-    {TRIGGER_RAISED, TRIGGER_RIDE_WHIRLWIND, CONDITION_ALWAYS, EVENT(AirsRockInside_RideWhirlwind)},
+    {TRIGGER_RAISED, RAISED_RIDE_WHIRLWIND, CONDITION_ALWAYS, EVENT(AirsRockInside_RideWhirlwind)},
     {TRIGGER_TABLE_END},
 };
 
@@ -3874,7 +3873,7 @@ struct Trigger gAirsRockInside_VialChestTriggers[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), ACTOR_VIAL_CHEST_TWISTER_ROCK, FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN, EVENT(AirsRockInside_StartWhirlwind)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_VIAL_CHEST_TWISTER_ROCK, FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN, EVENT(AirsRockInside_TakeOverWhirlwind)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_VIAL_CHEST_TWISTER_ROCK, FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN, EVENT(AirsRockInside_WakeVialChestStatue)},
-    {TRIGGER_RAISED, TRIGGER_RIDE_WHIRLWIND, CONDITION_ALWAYS, EVENT(AirsRockInside_RideWhirlwind)},
+    {TRIGGER_RAISED, RAISED_RIDE_WHIRLWIND, CONDITION_ALWAYS, EVENT(AirsRockInside_RideWhirlwind)},
     {TRIGGER_TABLE_END},
 };
 
@@ -3892,7 +3891,7 @@ struct Trigger gAirsRockInside_ClarityCircletChestTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CLARITY_CIRCLET_CHEST_THIRD_PILLAR, FLAG_AIRS_ROCK_CLARITY_CIRCLET_CHEST_THIRD_PILLAR_PLACED, EVENT(AirsRockInside_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_CLARITY_CIRCLET_CHEST_STATUE_B, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CLARITY_CIRCLET_CHEST_STATUE_B, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},
-    {TRIGGER_RAISED, TRIGGER_RIDE_WHIRLWIND, CONDITION_ALWAYS, EVENT(AirsRockInside_RideWhirlwind)},
+    {TRIGGER_RAISED, RAISED_RIDE_WHIRLWIND, CONDITION_ALWAYS, EVENT(AirsRockInside_RideWhirlwind)},
     {TRIGGER_RAISED, TRIGGER_PUFF_REACHES_LEADER, CONDITION_ALWAYS, EVENT(AirsRockInside_RideClarityCircletVent)},
     {TRIGGER_TABLE_END},
 };
@@ -3982,7 +3981,7 @@ struct Trigger gAirsRockInside_FaceWarpTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_RAISED, TRIGGER_PUFF_REACHES_LEADER, CONDITION_ALWAYS, EVENT(AirsRockInside_RideFaceWarp)},
-    {TRIGGER_RAISED, TRIGGER_RIDE_WHIRLWIND, CONDITION_ALWAYS, EVENT(AirsRockInside_RideWhirlwind)},
+    {TRIGGER_RAISED, RAISED_RIDE_WHIRLWIND, CONDITION_ALWAYS, EVENT(AirsRockInside_RideWhirlwind)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FACE_WARP_THIRD_PILLAR, FLAG_AIRS_ROCK_FACE_WARP_THIRD_PILLAR_PLACED, EVENT(AirsRockInside_StartPushingPillar)},
@@ -4005,7 +4004,7 @@ struct Trigger gAirsRockInside_CoinsChestTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(AirsRockInside_StampCellUnderLeader)},
-    {TRIGGER_RAISED, TRIGGER_RIDE_WHIRLWIND, CONDITION_ALWAYS, EVENT(AirsRockInside_RideWhirlwind)},
+    {TRIGGER_RAISED, RAISED_RIDE_WHIRLWIND, CONDITION_ALWAYS, EVENT(AirsRockInside_RideWhirlwind)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_COINS_CHEST_PILLAR, FLAG_AIRS_ROCK_COINS_CHEST_PILLAR_PLACED, EVENT(AirsRockInside_StartPushingPillar)},

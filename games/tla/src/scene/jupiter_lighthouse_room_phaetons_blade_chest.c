@@ -69,10 +69,6 @@ enum {
   TRIGGER_UPPER_WHIRLWIND_NORTHEAST
 };
 
-/// The trigger a whirlwind raises as it reaches the leader, which then rides
-/// it (as Air's Rock's).
-enum { TRIGGER_RIDE_WHIRLWIND = 200 };
-
 /// A cracked tile's cell behavior on the floors, and up on the hover hall's
 /// ledges; each takes the next one up as it cracks.
 enum { CELL_BEHAVIOR_CRACKED_TILE = 33, CELL_BEHAVIOR_UPPER_CRACKED_TILE = 43 };
@@ -436,7 +432,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_STEP, TRIGGER_UPPER_WHIRLWIND_NORTHWEST, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RaiseUpperWhirlwind)},
     {TRIGGER_STEP, TRIGGER_UPPER_WHIRLWIND_SOUTHEAST, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RaiseUpperWhirlwind)},
     {TRIGGER_STEP, TRIGGER_UPPER_WHIRLWIND_NORTHEAST, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RaiseUpperWhirlwind)},
-    {TRIGGER_RAISED, TRIGGER_RIDE_WHIRLWIND, CONDITION_ALWAYS, EVENT(Whirlwind_CarryLeader)},
+    {TRIGGER_RAISED, RAISED_RIDE_WHIRLWIND, CONDITION_ALWAYS, EVENT(Whirlwind_CarryLeader)},
     {TRIGGER_STEP, CELL_BEHAVIOR_CRACKED_TILE, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnLowerCrackedTile)},
     {TRIGGER_STEP, CELL_BEHAVIOR_CRACKED_TILE + 1, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnCrackedTileOrWhirlwind)},
     {TRIGGER_STEP, CELL_BEHAVIOR_CRACKED_TILE + 2, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnLowerCrackedTile)},

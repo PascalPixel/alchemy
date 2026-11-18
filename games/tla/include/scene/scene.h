@@ -562,6 +562,13 @@ struct Window;
 /// Shaman Village's and Kibombo's, each scene's own copy of the same drift.
 #define SMOKE_FRAMES 60
 
+/// The raised trigger a whirlwind raises as it catches the leader, which each
+/// scene with whirlwinds answers by carrying him off on it: the Jupiter
+/// Lighthouse rooms with Whirlwind_CarryLeader (shared/whirlwind_update.h
+/// raises it), Air's Rock with AirsRock_RideWhirlwind and its inside with
+/// AirsRockInside_RideWhirlwind.
+#define RAISED_RIDE_WHIRLWIND 200
+
 /// The vents of Aqua Rock and Taopo Swamp (struct VentWork, shared/vent_*.h):
 /// the most vents a room has, and the most actors besides the leader their
 /// puffs land on.

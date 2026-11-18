@@ -1146,10 +1146,6 @@ extern s16 gGroundParticleFrames[];
 
 #include "shared/ground_particles_draw.h"
 
-/// The frames of a ground particle's splash (gGroundParticleFrames, five
-/// halfwords each), played from the last down to the first.
-#define GROUND_PARTICLE_FRAMES 16
-
 /// Starts the sparkles: their tiles decoded into VRAM and every sparkle on the
 /// ground at the map's origin with a staggered timer, drawn semi-transparent
 /// (GroundParticles_Draw); the overlay's copy of

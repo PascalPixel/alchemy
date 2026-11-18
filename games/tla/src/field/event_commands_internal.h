@@ -71,10 +71,6 @@
 /// back into it: FieldEffect_Interpolate's tenths.
 #define GROW_STEPS 10
 
-/// The frames of a ground particle's splash (gFieldEffect_GroundParticleFrames,
-/// five halfwords each), played from the last down to the first.
-#define GROUND_PARTICLE_FRAMES 16
-
 /// Move's hand and Carry shed the same short-lived falling particle: it falls
 /// under a gravity of 0.1 pixel a frame, each frame, and is freed after 12
 /// frames.

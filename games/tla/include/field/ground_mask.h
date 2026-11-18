@@ -48,6 +48,10 @@ struct GroundParticle {
 /// GroundParticle.timer after the decrement that counts a live particle down,
 /// when it was already free (0): the u16 wraps.
 #define GROUND_PARTICLE_FREED 65535
+/// The frames of a ground particle's splash (gFieldEffect_GroundParticleFrames,
+/// or a scene's own gGroundParticleFrames, five halfwords each), played from
+/// the last down to the first.
+#define GROUND_PARTICLE_FRAMES 16
 
 /// WeatherWork.particles.
 #define WEATHER_PARTICLE_COUNT 64

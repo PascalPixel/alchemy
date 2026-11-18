@@ -6,6 +6,7 @@
 
 #include "edition.h"
 #include "types.h"
+#include "field/sprite.h"
 #include "gamepak/far_call.h"
 
 /// A battle sprite id's low twelve bits, the sprite. The bits above hold the
@@ -14,6 +15,6 @@
 /// What the Kraken's and the Fusion Dragon's second part adds to their first:
 /// the next sprite, its pictures two slots on, past the two slots a large
 /// enemy's first part takes.
-#define SPRITE_SECOND_PART 0x2001
+#define SPRITE_SECOND_PART SPRITE_PICTURE_TAG(2, 1)
 
 #endif

@@ -15,7 +15,7 @@
 #include "flags.h"
 #include "item_ids.h"
 
-/// The trades along the islets, each set once done: the log Pushed into the
+/// The trades along the islets, each set once done: the log pushed into the
 /// water, the dog's, Pengus's Pretty Stone, the cow's, the bird's, and the Li'l
 /// Turtle given to Lonesome George.
 #define FLAG_LOG_PUSHED_INTO_WATER 0xa2c
@@ -24,18 +24,18 @@
 #define FLAG_COW_TRADED 0xaa3
 #define FLAG_BIRD_TRADED 0xaa4
 #define FLAG_GEORGE_HAS_THE_TURTLE 0xaa5
-/// For this visit, each islet's own: Pengus and Pengulina hop together since
-/// the Pretty Stone; the cow's trade or Lonesome George's turtle turned down,
-/// so each asks again at once; the crates dropped into the pier's water, and
-/// both of them filling it; the pier's puddle frozen; the treasure hunters'
+/// For this visit, each islet's own: Pengus chasing Pengulina round the snow
+/// since the Pretty Stone; the cow's trade or Lonesome George's turtle turned
+/// down, so each asks again at once; each crate dropped from its ledge, and the
+/// two come to rest in one cell; the puddle frozen; the treasure hunters'
 /// slip; the bird back on its nest; the dog's trade just made; the party at
 /// the Sea of Time's secret spot; and Reveal shown, holding the icebergs.
-#define FLAG_PENGUINS_HOPPING FLAG_SCENE_TEMP_00
+#define FLAG_PENGUS_CHASING_PENGULINA FLAG_SCENE_TEMP_00
 #define FLAG_RED_CLOTH_REFUSED FLAG_SCENE_TEMP_01
 #define FLAG_TURTLE_REFUSED FLAG_SCENE_TEMP_01
 #define FLAG_CRATE_A_DROPPED FLAG_SCENE_TEMP_10
 #define FLAG_CRATE_B_DROPPED FLAG_SCENE_TEMP_11
-#define FLAG_CRATES_FILL_WATER FLAG_SCENE_TEMP_12
+#define FLAG_CRATES_IN_ONE_CELL FLAG_SCENE_TEMP_12
 #define FLAG_PUDDLE_FROZEN FLAG_SCENE_TEMP_13
 #define FLAG_TREASURE_HUNTERS_LET_SLIP FLAG_SCENE_TEMP_14
 #define FLAG_BIRD_ON_NEST FLAG_SCENE_TEMP_15
@@ -75,12 +75,9 @@
 #include "scene/shrine_of_the_sea_god.h"
 #include "scene/ground_effects.h"
 
-/// The Mind Read wave's counter that stops its crescents and their sound
-/// (event_commands_mind_read.c), set as Lonesome George carries the party.
-enum { MIND_READ_COUNTER_STOPPED = 99 };
-
-/// SE Angara Islet's step trigger where a crate floats in the water: walking
-/// south into it pushes the crate on (Islets_SaveCratePositions).
+/// SE Angara Islet's step trigger left where a crate stood before it was pushed
+/// to its ledge's edge: walking south into it pushes the crate on, off the
+/// ledge (Islets_SaveCratePositions).
 enum { STEP_TRIGGER_PUSH_CRATE_ON = 21 };
 
 /// E Tundaria Islet's raised trigger: the leader fallen into the water among
@@ -142,8 +139,6 @@ extern u32 gIslets_PacingSonScript[];
 extern u16 gIslets_DoorFrames[];
 extern u16 gIslets_NoDoorFrames[];
 
-void Islets_ShimmerWater(void);
-
 void Field_TryJumpForward();
 
 void PushedActor_FillGridAttributeRectangle(s32 layer, s32 x, s32 z, u32 width,
@@ -189,8 +184,8 @@ enum {
 };
 /// N Osenia Islet: the cow, and a blue orb drawn hidden.
 enum { ACTOR_COW = 10, ACTOR_BLUE_ORB = 11 };
-/// SE Angara Islet: the two treasure hunters, the bird that trades, and the
-/// two crates pushed into the water.
+/// SE Angara Islet: the two treasure hunters, the bird that trades, the two
+/// crates pushed off their ledges, and the puddle.
 enum {
   ACTOR_TREASURE_HUNTER = 8,
   ACTOR_TREASURE_HUNTERS_PARTNER = 9,
@@ -230,7 +225,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 #include "system/vector3.h"
 
 void Actor_StartScript(struct Actor *actor, const void *script);
-void Islets_StopWaterShimmer(void);
+void PaletteCycle_Stop(void);
 
 void Islets_StartWaveDma(void);
 void Islets_FillWaveLines(void);
@@ -280,7 +275,7 @@ extern u16 gPushKinds[];
 
 void Islets_SetCellCollision(s32 x, s32 z, s32 layers, s32 value);
 void Islets_FinishPushingCrate(void);
-void Islets_SetSonsTargetableByHeight(void);
+void Islets_SetSonsTargetedByHeight(void);
 void Leader_PushObjectAhead(void);
 s32 MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *position);
 struct Actor *Actor_FindAtCell(struct Vector3 *position, s32 mode);
@@ -290,7 +285,6 @@ void PushTarget_Push(struct PushTarget target);
 void Islets_PlayFootsteps(void);
 void Islets_RideOnLonesomeGeorge(struct Actor *actor);
 void Actor_EmitWadingSplashes(struct Actor *actor);
-void Islets_StartWaterShimmer(void);
 void Actor_MoveToObject(s32 actorId, s32 target);
 void FieldPsynergy_StopMindReadWave(void);
 
@@ -366,7 +360,7 @@ void Islets_TalkToPengus(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (Event_GetFlag(FLAG_PENGUS_GAVE_PRETTY_STONE)) {
-    if (Event_GetFlag(FLAG_PENGUINS_HOPPING)) {
+    if (Event_GetFlag(FLAG_PENGUS_CHASING_PENGULINA)) {
       Actor_FaceActor(ACTOR_PENGUS, gMainRoutineWork.leaderActorId, 0);
       FieldEvent_SetMessageId((s32)MsgPenPenPen);
     } else {
@@ -393,7 +387,7 @@ void Islets_MindReadPengus(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (Event_GetFlag(FLAG_PENGUS_GAVE_PRETTY_STONE)) {
-    if (Event_GetFlag(FLAG_PENGUINS_HOPPING)) {
+    if (Event_GetFlag(FLAG_PENGUS_CHASING_PENGULINA)) {
       FieldEvent_SetMessageId((s32)MsgThereIsNothing);
     } else {
       FieldEvent_SetMessageId((s32)MsgIMSoHappy);
@@ -415,7 +409,7 @@ void Islets_TalkToPengulina(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (Event_GetFlag(FLAG_PENGUS_GAVE_PRETTY_STONE)) {
-    if (Event_GetFlag(FLAG_PENGUINS_HOPPING)) {
+    if (Event_GetFlag(FLAG_PENGUS_CHASING_PENGULINA)) {
       Actor_FaceActor(ACTOR_PENGULINA, gMainRoutineWork.leaderActorId, 0);
       FieldEvent_SetMessageId((s32)MsgPenPenPehnnnn);
     } else {
@@ -438,7 +432,7 @@ void Islets_MindReadPengulina(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (Event_GetFlag(FLAG_PENGUS_GAVE_PRETTY_STONE)) {
-    if (Event_GetFlag(FLAG_PENGUINS_HOPPING)) {
+    if (Event_GetFlag(FLAG_PENGUS_CHASING_PENGULINA)) {
       FieldEvent_SetMessageId((s32)MsgPengusIsPretty);
     } else {
       FieldEvent_SetMessageId((s32)MsgIMSoGlad);
@@ -471,7 +465,7 @@ void Islets_TalkToHealer(void) {
   return;
 }
 
-/// The treasure hunter on the pier lets slip why they are there, his partner
+/// The treasure hunter by the tent lets slip why they are there, his partner
 /// covers it up the first time, then they are busy.
 void Islets_TalkToTreasureHunters(void) {
 
@@ -479,7 +473,8 @@ void Islets_TalkToTreasureHunters(void) {
   FieldEvent_ResolvePendingActions(0);
   if (!Event_GetFlag(FLAG_TREASURE_HUNTERS_LET_SLIP)) {
     FieldEvent_SetMessageId((s32)MsgWeLikeThis);
-    // "We like this island. A lot... That's why we're here... Because we..."
+    // "We like this island. A lot... That's why we're here... Because we like
+    // it." "We sure aren't looking for Treasure Isle! Nope!"
     Event_ShowMessage(ACTOR_TREASURE_HUNTER, 0);
     Actor_SetAttachedEffect(ACTOR_TREASURE_HUNTERS_PARTNER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -488,7 +483,8 @@ void Islets_TalkToTreasureHunters(void) {
     Event_ShowMessage(ACTOR_TREASURE_HUNTERS_PARTNER, 0);
     Actor_FaceDirectionAndWait(ACTOR_TREASURE_HUNTER, FACING_EAST);
     FieldActor_Jump(ACTOR_TREASURE_HUNTERS_PARTNER, 4, 10);
-    // "Don't listen to that guy. He didn't say anything about Treasure..."
+    // "Don't listen to that guy. He didn't say anything about Treasure Isle.
+    // Nothing at all."
     Event_ShowMessage(ACTOR_TREASURE_HUNTERS_PARTNER, 0);
     Actor_SetAttachedEffect(ACTOR_TREASURE_HUNTERS_PARTNER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -505,7 +501,7 @@ void Islets_TalkToTreasureHunters(void) {
   return;
 }
 
-/// The treasure hunter's partner on the pier talks of the Eastern Sea.
+/// The treasure hunter's partner by the tent talks of the Eastern Sea.
 void Islets_TalkToTreasureHuntersPartner(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -980,7 +976,7 @@ void Islets_LonesomeGeorgeThanks(struct Actor *gift) {
   Event_ShowMessage(ACTOR_LONESOME_GEORGE, 0);
   ((struct MindReadWork *)HeapSlot_AllocEwram(HEAP_SLOT_MIND_READ,
                                               sizeof(struct MindReadWork)))
-      ->counter = MIND_READ_COUNTER_STOPPED;
+      ->counter = MIND_READ_QUIET;
   Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
   leader->update = Actor_EmitWadingSplashes;
@@ -1002,7 +998,7 @@ void Islets_LonesomeGeorgeThanks(struct Actor *gift) {
   Actor_SetDestination(ACTOR_LONESOME_GEORGE, 288, 538);
   FieldEvent_Wait(20);
   FieldPsynergy_RestoreMindReadPalette();
-  Islets_StopWaterShimmer();
+  PaletteCycle_Stop();
   gift->update = Actor_EmitWadingSplashes;
   Actor_SelectAnimation(gift, 2);
   FieldActor_SetMoveTarget(gift, 288, 0, 538);
@@ -1141,7 +1137,7 @@ void Islets_GiveTurtle(void) {
       Event_ShowMessage(ACTOR_LONESOME_GEORGE, 0);
       ((struct MindReadWork *)HeapSlot_AllocEwram(HEAP_SLOT_MIND_READ,
                                                   sizeof(struct MindReadWork)))
-          ->counter = MIND_READ_COUNTER_STOPPED;
+          ->counter = MIND_READ_QUIET;
       FieldActor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
       Actor_FaceDirectionAndWait(ACTOR_LONESOME_GEORGE, FACING_SOUTH_SOUTHWEST);
       Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
@@ -1161,7 +1157,7 @@ void Islets_GiveTurtle(void) {
       Actor_SetDestination(ACTOR_LONESOME_GEORGE, 288, 538);
       FieldEvent_Wait(40);
       FieldPsynergy_RestoreMindReadPalette();
-      Islets_StopWaterShimmer();
+      PaletteCycle_Stop();
       Actor_GetById(ACTOR_LIL_TURTLE)->update = Actor_EmitWadingSplashes;
       Actor_WalkTo(ACTOR_LIL_TURTLE, 288, 538);
       FieldEvent_Wait(20);
@@ -1210,7 +1206,7 @@ void Islets_RideBackToIsland(void) {
     Event_ShowMessage(ACTOR_LONESOME_GEORGE, 0);
     ((struct MindReadWork *)HeapSlot_AllocEwram(HEAP_SLOT_MIND_READ,
                                                 sizeof(struct MindReadWork)))
-        ->counter = MIND_READ_COUNTER_STOPPED;
+        ->counter = MIND_READ_QUIET;
     FieldActor_Jump(gMainRoutineWork.leaderActorId, 6, 0);
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
     Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 152, 768);
@@ -1233,7 +1229,7 @@ void Islets_RideBackToIsland(void) {
     do {
       System_Wait(1);
     } while (*done == 0);
-    Islets_StopWaterShimmer();
+    PaletteCycle_Stop();
     System_Wait(1);
     gFieldWork->transition =
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
@@ -1314,7 +1310,8 @@ void Islets_StartWaveDma(void) {
 }
 
 /// Fills the next table of BG1 scroll lines with a sine wave that moves each
-/// frame, for the water's HBlank ripple.
+/// frame, swaying each line up to 2 pixels either way, for the water's HBlank
+/// ripple.
 void Islets_FillWaveLines(void) {
   struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[2];
   s16 *lines = gIslets_WaveLines[gIslets_WaveTableIndex ^ 1];
@@ -1325,13 +1322,14 @@ void Islets_FillWaveLines(void) {
   for (*count = 0; *count != DISPLAY_HEIGHT; (*count)++) {
     sine = Math_Sin((*count + (u8)gFrameCount + FIXEDtoINT(layer->y)) << 9);
     v[0] = sine;
-    *lines++ = FIXEDtoINT(layer->x) + (sine >> 15) + *count % 3 - 1;
+    *lines++ = FIXEDtoINT(layer->x) + FIXEDtoINT_TWICE(sine) + *count % 3 - 1;
   }
   gIslets_WaveTableIndex ^= 1;
 }
 
-/// The water ripples by an HBlank wave on BG1.
-void Islets_StartWave(void) {
+/// Unused: starts the water's ripple, an HBlank wave on BG1, as Lemuria's
+/// water ripples.
+UNUSED void Islets_StartWave(void) {
   Task_AddFrame(Islets_FillWaveLines, TASK_PASS_FRAME);
   Task_AddFrame(Islets_StartWaveDma, TASK_PASS_VBLANK);
 }
@@ -1474,8 +1472,10 @@ void Islets_SetCellCollision(s32 x, s32 z, s32 layers, s32 value) {
   }
 }
 
-/// Keeps the two crates' places as they are pushed; a crate pushed into the
-/// water at (7, 28) or (12, 25) floats there, the way over it open.
+/// Keeps the two crates' places as they are pushed; with one crate in the cell
+/// above the other's, (7, 28) over (7, 29) or (12, 25) over (12, 26), the
+/// lower one's cell is opened on the upper layer, so that the other can be
+/// pushed into it.
 void Islets_StartPushingCrate(void) {
   struct Actor *actor;
   s32 *x0;
@@ -1501,8 +1501,9 @@ void Islets_StartPushingCrate(void) {
     Islets_SetCellCollision(gIslets_SecondCrateX, gIslets_SecondCrateZ, 2, 0);
 }
 
-/// After a crate is pushed, makes the cells it rests on solid, or floats both
-/// crates where the pier's water is filled by them.
+/// After a crate is pushed, makes the cells it rests on solid. A crate pushed
+/// off its ledge, to (12, 26) or (7, 29), drops with a rattle; pushed where the
+/// other already rests, the two rest in that one cell for good.
 void Islets_FinishPushingCrate(void) {
   struct Actor *first = Actor_Get(ACTOR_CRATE_A);
   struct Actor *second = Actor_Get(ACTOR_CRATE_B);
@@ -1554,7 +1555,7 @@ void Islets_FinishPushingCrate(void) {
       Islets_SetCellCollision(first->x.fixed, first->z.fixed, 3, 0);
       Islets_SetCellCollision(second->x.fixed, second->z.fixed, 3, 0);
       MapGrid_CopyCellAttributes(7, 3, 1, 1, 12, 26);
-      Event_SetFlag(FLAG_CRATES_FILL_WATER);
+      Event_SetFlag(FLAG_CRATES_IN_ONE_CELL);
       first->riseCounter = 1;
       second->riseCounter = 1;
     }
@@ -1578,7 +1579,7 @@ void Islets_FinishPushingCrate(void) {
       Islets_SetCellCollision(first->x.fixed, first->z.fixed, 3, 0);
       Islets_SetCellCollision(second->x.fixed, second->z.fixed, 3, 0);
       MapGrid_CopyCellAttributes(7, 3, 1, 1, 7, 29);
-      Event_SetFlag(FLAG_CRATES_FILL_WATER);
+      Event_SetFlag(FLAG_CRATES_IN_ONE_CELL);
       first->riseCounter = 1;
       second->riseCounter = 1;
     }
@@ -1610,7 +1611,7 @@ void Islets_SaveCratePositions(void) {
   Event_End();
 }
 
-/// Frost on the pier's puddle: the cells become an ice pillar.
+/// Frost on the puddle: the cells become an ice pillar.
 void Islets_FreezePuddle(void) {
   MapGrid_CopyCellAttributes(5, 2, 1, 2, 5, 28);
   Event_SetFlag(FLAG_PUDDLE_FROZEN);
@@ -1719,7 +1720,10 @@ void Islets_OpenDoorAndEnter(void) {
   Actor_SetAnimation(party->leaderActorId, ANIM_WALK);
   Actor_SetSpeed(party->leaderActorId, 0.5);
   FieldActor_SetMoveTargetFX(
-      actor, toFIXED(8 - FIXEDtoINT(actor->x.fixed) % 16) + actor->x.fixed,
+      actor,
+      toFIXED(MAPGRID_CELL_PIXELS / 2 -
+              FIXEDtoINT(actor->x.fixed) % MAPGRID_CELL_PIXELS) +
+          actor->x.fixed,
       actor->y.fixed, actor->z.fixed);
   FieldActor_WaitForMove(actor);
   actor->facing = FACING_NORTH;
@@ -1737,13 +1741,13 @@ void Islets_OpenDoorAndEnter(void) {
   FieldEvent_SetExitRequest(*exit);
 }
 
-/// Leaves by the step trigger's exit, stopping the water's shimmer.
+/// Leaves by the step trigger's exit, stopping the surf's palette cycles.
 void Islets_LeaveByStep(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Islets_StopWaterShimmer();
+  PaletteCycle_Stop();
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -1764,7 +1768,10 @@ void Islets_EnterDoor(void) {
   Actor_SetAnimation(party->leaderActorId, ANIM_WALK);
   Actor_SetSpeed(party->leaderActorId, 0.5);
   FieldActor_SetMoveTargetFX(
-      actor, toFIXED(8 - FIXEDtoINT(actor->x.fixed) % 16) + actor->x.fixed,
+      actor,
+      toFIXED(MAPGRID_CELL_PIXELS / 2 -
+              FIXEDtoINT(actor->x.fixed) % MAPGRID_CELL_PIXELS) +
+          actor->x.fixed,
       actor->y.fixed, actor->z.fixed);
   FieldActor_WaitForMove(actor);
   actor->facing = FACING_NORTH;
@@ -1825,7 +1832,7 @@ void Islets_ArriveBackAtIsland(void) {
   Actor_FaceDirectionAndWait(ACTOR_LONESOME_GEORGE, FACING_SOUTH);
   work = Ram_HeapSlots->fieldWork;
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Islets_StartWaterShimmer();
+  PaletteCycle_Start();
 }
 
 extern u32 gIslets_GeorgeSwimsToSecretSpotScript[];
@@ -1884,7 +1891,7 @@ void Islets_ArriveAtSecretSpot(void) {
   Event_ShowMessage(ACTOR_LONESOME_GEORGE, 0);
   FieldPsynergy_StopMindReadWave();
   Actor_FaceDirectionAndWait(ACTOR_LONESOME_GEORGE, FACING_SOUTH);
-  Islets_StartWaterShimmer();
+  PaletteCycle_Start();
 #if TLA_PATCH_1
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
 #endif
@@ -1911,9 +1918,9 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// A task: the sailor's two sons are skipped by talk and
-/// Psynergy while the leader is down on the dock.
-void Islets_SetSonsTargetableByHeight(void) {
+/// A task: the sailor's two sons, up on the pier, are skipped by talk and
+/// Psynergy while the leader is down in the water.
+void Islets_SetSonsTargetedByHeight(void) {
   if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed > toFIXED(8)) {
     Actor_Get(ACTOR_SAILORS_SON)->collisionFlags &= ~ACTOR_NOT_TARGETED;
     Actor_Get(ACTOR_SAILORS_OTHER_SON)->collisionFlags &= ~ACTOR_NOT_TARGETED;
@@ -1950,7 +1957,7 @@ void Islets_InitializeWestIndra(void) {
   } else {
     Actor_SetAnimation(ACTOR_DOG, 5);
   }
-  Task_AddFrame(Islets_SetSonsTargetableByHeight, TASK_PASS_FRAME);
+  Task_AddFrame(Islets_SetSonsTargetedByHeight, TASK_PASS_FRAME);
 }
 
 /// Readies an iceberg to drift: a platform that moves at 0.3 pixels a frame.
@@ -2042,10 +2049,10 @@ void Islets_DriftIcebergs(void) {
   } while (--*owed != 0);
 }
 
-extern u32 gIslets_PengusAndPengulinaHopScript[];
+extern u32 gIslets_PengusChasesPengulinaScript[];
 
 /// Sets up E Tundaria Islet: the icebergs' drift, the log in the water once it
-/// is pushed, and Pengus and Pengulina hopping together once the Pretty Stone
+/// is pushed, and Pengus chasing Pengulina round the snow once the Pretty Stone
 /// is given.
 void Islets_InitializeEastTundaria(void) {
   struct Actor *actor;
@@ -2098,9 +2105,9 @@ void Islets_InitializeEastTundaria(void) {
     Actor_Get(ACTOR_PENGULINA)->collisionFlags |= ACTOR_BLOCKED_BY_SOLID;
     Actor_SetSpeed(ACTOR_PENGUS, 2);
     Actor_SetSpeed(ACTOR_PENGULINA, 1.6);
-    Actor_SetScript(ACTOR_PENGUS, gIslets_PengusAndPengulinaHopScript);
-    Actor_SetScript(ACTOR_PENGULINA, gIslets_PengusAndPengulinaHopScript);
-    Event_SetFlag(FLAG_PENGUINS_HOPPING);
+    Actor_SetScript(ACTOR_PENGUS, gIslets_PengusChasesPengulinaScript);
+    Actor_SetScript(ACTOR_PENGULINA, gIslets_PengusChasesPengulinaScript);
+    Event_SetFlag(FLAG_PENGUS_CHASING_PENGULINA);
   }
 }
 
@@ -2129,8 +2136,8 @@ void Islets_InitializeNorthOsenia(void) {
   Actor_Get(ACTOR_BLUE_ORB)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 }
 
-/// Sets up SE Angara Islet: the bird, the crates (floating once both have been
-/// pushed into the water) and the puddle (an ice pillar once frozen).
+/// Sets up SE Angara Islet: the bird, the crates (resting in one cell once both
+/// have been pushed there) and the puddle (an ice pillar once frozen).
 void Islets_InitializeSoutheastAngara(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *actor = Actor_Get(ACTOR_BIRD);
@@ -2148,7 +2155,7 @@ void Islets_InitializeSoutheastAngara(void) {
   Actor_SetPosition(ACTOR_PARKED_MARKER, 0, 0);
   Actor_DisableById(ACTOR_CRATE_A);
   Actor_DisableById(ACTOR_CRATE_B);
-  set = Event_GetFlag(FLAG_CRATES_FILL_WATER);
+  set = Event_GetFlag(FLAG_CRATES_IN_ONE_CELL);
   if (set) {
     struct Actor *first = Actor_Get(ACTOR_CRATE_A);
     struct Actor *second = Actor_Get(ACTOR_CRATE_B);
@@ -2178,9 +2185,18 @@ void Islets_InitializeSoutheastAngara(void) {
     MapGrid_CopyCellAttributes(5, 2, 1, 2, 5, 28);
 }
 
-void Islets_StartPaletteCycle(void);
+/// The Sea of Time Islet's surf, two palette cycles of the same four colours:
+/// the foam along the shore in the shallows, and the surf round the islets and
+/// their rocks out at sea, each turned one place every sixth frame.
+enum {
+  SHALLOWS_SURF_PALETTE = 3,
+  SEA_SURF_PALETTE = 4,
+  SURF_FIRST_COLOR = 12,
+  SURF_COLORS = 4,
+  SURF_CYCLE_DELAY = 5
+};
 
-/// Sets up the Sea of Time Islet: the water's palette cycle, Lonesome George
+/// Sets up the Sea of Time Islet: the surf's palette cycles, Lonesome George
 /// and the Li'l Turtle once given, and the ride's arrival or return by
 /// entrance.
 void Islets_InitializeSeaOfTime(void) {
@@ -2192,9 +2208,11 @@ void Islets_InitializeSeaOfTime(void) {
   Map_SetUpperLevelWading(map);
   if (gMainRoutineWork.entrance == SEA_OF_TIME_ISLET_FROM_APOJII_ISLANDS_SHOPS)
     Event_ClearFlag(FLAG_SHOW_AREA_NAME);
-  Islets_StartPaletteCycle();
-  PaletteCycle_Add(3, 12, 5, 4);
-  PaletteCycle_Add(4, 12, 5, 4);
+  PaletteCycle_Initialize();
+  PaletteCycle_Add(SHALLOWS_SURF_PALETTE, SURF_FIRST_COLOR, SURF_CYCLE_DELAY,
+                   SURF_COLORS);
+  PaletteCycle_Add(SEA_SURF_PALETTE, SURF_FIRST_COLOR, SURF_CYCLE_DELAY,
+                   SURF_COLORS);
   if (Event_GetFlag(FLAG_GEORGE_HAS_THE_TURTLE) &&
       (done = Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) == 0) {
     Actor_SetPosition(ACTOR_LIL_TURTLE, 280, 468);
@@ -2235,12 +2253,12 @@ void Islets_InitializeSeaOfTime(void) {
 #endif
       Event_StartScreenTransition();
       Event_WaitTransitionFrames();
-      Islets_StartWaterShimmer();
+      PaletteCycle_Start();
     }
   } else {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    Islets_StartWaterShimmer();
+    PaletteCycle_Start();
   }
   Event_End();
 }
@@ -2250,7 +2268,7 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 /// Allocates the palette cycling queue (HEAP_SLOT_PALETTE_CYCLES) with its four
 /// entries cleared.
-void Islets_StartPaletteCycle(void) {
+void PaletteCycle_Initialize(void) {
   struct PaletteCycleWork *paletteCycles;
   struct PaletteCycle *cycle;
   u16 cycleIndex;
@@ -2282,23 +2300,24 @@ void Islets_StartPaletteCycle(void) {
 
 #include "text/msg_ids.h"
 
-/// Starts the water's shimmer each frame (Islets_ShimmerWater).
-void Islets_StartWaterShimmer(void) {
-  Task_AddFrame(&Islets_ShimmerWater, TASK_PASS_FRAME);
+/// Starts the palette cycles' task, as the surf moves while the party is on the
+/// Sea of Time Islet.
+void PaletteCycle_Start(void) {
+  Task_AddFrame(&PaletteCycle_Step, TASK_PASS_FRAME);
   return;
 }
 
-/// Stops the water's shimmer.
-void Islets_StopWaterShimmer(void) {
-  FieldTask_Remove(Islets_ShimmerWater);
+/// Stops the palette cycles' task; their queue stays for the next start.
+void PaletteCycle_Stop(void) {
+  FieldTask_Remove(PaletteCycle_Step);
   return;
 }
 
 #define gPaletteWork ((struct PaletteCycleWork *)Ram_HeapSlots->paletteCycles)
 
-/// A task: turns each queued palette cycle one colour on when its delay runs
-/// out, unless Psynergy or a menu is open.
-void Islets_ShimmerWater(void) {
+/// The palette cycles' task: each queued cycle whose timer has run out rotates
+/// its run of colours one place further, unless Psynergy or a menu is open.
+void PaletteCycle_Step(void) {
   if (gFieldWork->psynergy == 0 && gFieldWork->fieldMenu == 0 &&
       gFieldWork->pauseMenu == 0) {
     struct PaletteCycleWork *work = gPaletteWork;
@@ -2381,9 +2400,9 @@ s32 PushTarget_FillFootprint(s32 id) {
     do {
       /* FAKEMATCH(temporary): the step taken in the high halfword, as the push
        * footprints' copies of this search have it. */
-      next = (i + 1) * 65536;
-      index = (u32)next >> 16;
-      i = next >> 16;
+      next = toFIXED(i + 1);
+      index = FIXEDtoINT((u32)next);
+      i = FIXEDtoINT(next);
     } while (index <= PUSH_KINDS - 1 && (u16)kind != gPushKinds[index]);
   }
   fromX = (u16)i;
@@ -2448,7 +2467,15 @@ void PushTarget_Push(struct PushTarget target) {
   s32 speed;
   s32 acceleration;
 
-  direction = leader->facing >> 16;
+  // BUG: the leader's facing is taken as a 16.16 number, whose whole part is
+  // always 0 for this 16-bit angle, where its sixteenth (FACING_INDEX) was
+  // meant: every push takes direction 0 (east), so the pushed thing rolls with
+  // animation 2 whichever way it goes and the leader's step after it is none.
+#ifdef BUGFIX
+  direction = FACING_INDEX(leader->facing);
+#else
+  direction = FIXEDtoINT(leader->facing);
+#endif
   footprint = target.footprint;
   speed = leader->speedLimit;
   acceleration = leader->acceleration;
@@ -2475,7 +2502,8 @@ void PushTarget_Push(struct PushTarget target) {
   }
   Actor_Get(gMainRoutineWork.leaderActorId)->update = Actor_StopAtPushTarget;
   System_Wait(4);
-  if ((u32)(direction - 6) <= 7)
+  if (direction >= FACING_INDEX(FACING_SOUTHWEST) &&
+      direction <= FACING_INDEX(FACING_NORTH_NORTHEAST))
     Actor_SelectAnimation(actor, 3);
   else
     Actor_SelectAnimation(actor, 2);
@@ -2485,9 +2513,21 @@ void PushTarget_Push(struct PushTarget target) {
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.1);
-  Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
-                             toFIXED(gPushLeaderSteps[direction]) >> 31,
-                             toFIXED(gPushLeaderSteps[direction]) >> 17);
+  // BUG: the leader's step after the push reads both halves from the step's
+  // z: x is its sign and z its half (half of PUSH_STEP_X and PUSH_STEP_Z was
+  // meant). With direction 0 both are 0.
+  {
+    s32 step = gPushLeaderSteps[direction];
+
+#ifdef BUGFIX
+    Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
+                               PUSH_STEP_X(step) / 2, PUSH_STEP_Z(step) / 2);
+#else
+    Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
+                               toFIXED(step) >> 31,
+                               FIXEDtoINT(toFIXED(step)) >> 1);
+#endif
+  }
   if (target.callback != 0)
     target.callback();
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
@@ -2625,7 +2665,9 @@ u32 gIslets_BirdCirclesScript[] = {
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-u32 gIslets_PengusAndPengulinaHopScript[] = {
+/// A loop round the snow that Pengus and Pengulina both waddle, Pengus the
+/// faster, so that he chases her.
+u32 gIslets_PengusChasesPengulinaScript[] = {
     SC_ANIMATION(2),
     SC_MOVE(234, 0, 240),
     SC_SYNC,
@@ -2975,17 +3017,17 @@ struct Trigger gIslets_SoutheastAngaraTriggers[] = {
          TRIGGER_FLAG_FACING | FACING_NORTH,
      11, CONDITION_ALWAYS, 11},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), STEP_TRIGGER_PUSH_CRATE_ON,
-     FLAG_CRATES_FILL_WATER, EVENT(Islets_SaveCratePositions)},
-    {TRIGGER_PUSH, 0, FLAG_CRATES_FILL_WATER, EVENT(Islets_StartPushingCrate)},
+     FLAG_CRATES_IN_ONE_CELL, EVENT(Islets_SaveCratePositions)},
+    {TRIGGER_PUSH, 0, FLAG_CRATES_IN_ONE_CELL, EVENT(Islets_StartPushingCrate)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
-     ACTOR_CRATE_A, FLAG_CRATES_FILL_WATER, EVENT(Islets_StartPushingCrate)},
+     ACTOR_CRATE_A, FLAG_CRATES_IN_ONE_CELL, EVENT(Islets_StartPushingCrate)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
-     ACTOR_CRATE_B, FLAG_CRATES_FILL_WATER, EVENT(Islets_StartPushingCrate)},
-    {TRIGGER_PUSHED, 0, FLAG_CRATES_FILL_WATER,
+     ACTOR_CRATE_B, FLAG_CRATES_IN_ONE_CELL, EVENT(Islets_StartPushingCrate)},
+    {TRIGGER_PUSHED, 0, FLAG_CRATES_IN_ONE_CELL,
      EVENT(Islets_FinishPushingCrate)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CRATE_A, FLAG_CRATES_FILL_WATER,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CRATE_A, FLAG_CRATES_IN_ONE_CELL,
      EVENT(Islets_FinishPushingCrate)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CRATE_B, FLAG_CRATES_FILL_WATER,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CRATE_B, FLAG_CRATES_IN_ONE_CELL,
      EVENT(Islets_FinishPushingCrate)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_PUDDLE_FROZEN,
      EVENT(Islets_FreezePuddle)},

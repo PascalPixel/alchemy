@@ -95,15 +95,13 @@
 #define MENU_ROW_COUNT 8
 #endif
 
-// The shop's buying screen: the coins and price windows' widths.
+// The shop's buying screen: the price window's width. The coins window's is
+// SHOP_MONEY_WINDOW_WIDTH (shop_internal.h).
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define SHOP_MONEY_WIDTH 11
 #define SHOP_PRICE_WIDTH 14
 #elif LANGUAGE == LANGUAGE_GERMAN
-#define SHOP_MONEY_WIDTH 12
 #define SHOP_PRICE_WIDTH 16
 #else
-#define SHOP_MONEY_WIDTH 12
 #define SHOP_PRICE_WIDTH 15
 #endif
 

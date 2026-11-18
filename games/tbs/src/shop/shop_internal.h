@@ -153,9 +153,9 @@ enum {
 #define SHOP_EMPTY_GRID_Y 20
 #endif
 
-// Outside Japan the coins window is a tile wider, and every counter's item
-// description (Shop_DrawMessage, shop_buy.c) is drawn as tiles
-// (Text_DrawMessageAsTilesFar) rather than into a text canvas.
+// Outside Japan the coins window (ShopWork.moneyWindow) is a tile wider, and
+// every counter's item description (Shop_DrawMessage, shop_buy.c) is drawn as
+// tiles (Text_DrawMessageAsTilesFar) rather than into a text canvas.
 #if LANGUAGE != LANGUAGE_JAPANESE
 #define SHOP_MONEY_WINDOW_WIDTH 12
 #define SHOP_DRAW_MESSAGE Text_DrawMessageAsTilesFar

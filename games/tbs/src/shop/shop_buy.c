@@ -35,8 +35,9 @@ s32 Shop_SelectBuy(void) {
   s16 *stockIds;
 
   shop->itemWindow = 0;
-  shop->moneyWindow = Window_CreateFar(
-      30 - SHOP_MONEY_WIDTH, 7, SHOP_MONEY_WIDTH, 4, WINDOW_FLAG_INSTANT);
+  shop->moneyWindow =
+      Window_CreateFar(30 - SHOP_MONEY_WINDOW_WIDTH, 7, SHOP_MONEY_WINDOW_WIDTH,
+                       4, WINDOW_FLAG_INSTANT);
   Shop_DrawMoney();
   priceWindow =
       Window_CreateFar(0, 8, SHOP_PRICE_WIDTH, 4, WINDOW_FLAG_INSTANT);

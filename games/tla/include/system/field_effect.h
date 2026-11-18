@@ -127,6 +127,19 @@ enum EffectDuration {
 /// EFFECT_SCALE_TO_TARGET grows over.
 #define EFFECT_SCRIPT_REPEAT_COUNT 3
 
+/// The names field/field_effect_spawn.c compiles a scene's copy of the effect
+/// spawner under, the same in every scene that includes it: the spawner, the
+/// import that creates its actor, and the duration scripts EFFECT_SCRIPT_MASK
+/// picks from. The scene names EFFECT_SET_MODE and EFFECT_SET_SCRIPT itself.
+#define EFFECT_SPAWN FieldEffect_Spawn
+#define EFFECT_CREATE Import_ActorCreate
+#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
+
+/// A drifting effect loses a FIELD_EFFECT_DRAG_X-th of its x speed and a
+/// FIELD_EFFECT_DRAG_Z-th of its z speed each frame.
+#define FIELD_EFFECT_DRAG_X 18
+#define FIELD_EFFECT_DRAG_Z 16
+
 /// Sixteen puffs of dust in a ring round the leader as he lands from above,
 /// the first thrown twice.
 #define DUST_RING_PUFFS 16

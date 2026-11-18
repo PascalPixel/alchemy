@@ -38,6 +38,11 @@ struct CellTarget {
   struct CellTargetEntry entries[128];
 };
 
+/// The bytes of the hole mask's picture (a CellTarget's tile), the sprite drawn
+/// in the OBJ window over the leader's cell as he sinks through the floor: 16
+/// by 32 pixels, eight tiles of colour 1. TILE_SIZE_4BPP is system/io_reg.h's.
+#define HOLE_MASK_BYTES (8 * TILE_SIZE_4BPP)
+
 /// The map cell of a 16.16 coordinate with a watched cell's 64 bit ORed in,
 /// as each copy of the cell-target handler in the Jupiter and Mars Lighthouse
 /// overlays and overlay 6B0 builds its row. The name is ours.

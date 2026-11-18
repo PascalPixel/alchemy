@@ -110,7 +110,7 @@ enum {
 #define HALTING_SPEECH_LENGTH 10
 /// An operand is stored one more than its value, so that none is 0, the end
 /// code; adding this takes the one off in the halfword written.
-#define OPERAND_UNBIAS 0xFFFFU
+#define OPERAND_UNBIAS ((u32)(u16)-1)
 /// The Mystery Man's or Woman's name is decoded into ten halfwords, the end
 /// code's included.
 #define MYSTERY_NAME_CAPACITY 10

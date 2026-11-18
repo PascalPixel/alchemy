@@ -11,8 +11,9 @@
 #include "window/window.h"
 
 // Widths in tiles that fit each language's text: the "Set Djinni" window
-// (MsgSetDjinni), the condition list, and the Mystery names' copy, which
-// Japanese decodes raw where the other languages copy it expanded.
+// (MsgSetDjinni) and the list of conditions an action cures; and the Mystery
+// names' copy, which Japanese decodes raw where the other languages copy it
+// expanded.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define TARGET_SET_DJINNI_WIDTH 8
 #define TARGET_CONDITION_LIST_WIDTH 14
@@ -35,9 +36,14 @@ extern const u8 gOwnerStatus_PvString[];
 s32 System_GetLanguage(void);
 #endif
 
-// The help window's column, `back` tiles left of the aimed member; a window
-// `windowWidth` tiles wide that would reach the screen's last column stands
-// against the right edge instead.
+/// The HP and PP window's width, and the one-line windows' of a revival or a
+/// cure of poison.
+#define TARGET_GAUGE_WIDTH 13
+#define TARGET_ONE_LINE_WIDTH 12
+
+// The help window's column, `back` tiles left of the aimed party member's; a
+// window `windowWidth` tiles wide that would run past the screen's right edge
+// stands against it instead.
 #define TARGET_HELP_COLUMN(back, windowWidth)                                  \
   {                                                                            \
     s32 anchor = selectedPosition.x / 8;                                       \
@@ -46,8 +52,10 @@ s32 System_GetLanguage(void);
       helpColumn = DISPLAY_TILE_WIDTH - (windowWidth);                         \
   }
 
+// The window listing the conditions an action cures, helpRow down and `count`
+// lines tall.
 #if TLA_PATCH_2
-// These editions widen the condition list by a tile for Spanish as it runs.
+// These editions widen it by a tile for Spanish as it runs.
 #define TARGET_CONDITION_LIST_WIDTH_SPANISH 17
 #define TARGET_CONDITION_LIST_WINDOW()                                         \
   {                                                                            \
@@ -76,8 +84,25 @@ s32 System_GetLanguage(void);
   }
 #endif
 
-// What the selection redraws: the spread's targets and their markers, and at
-// the start every part.
+/// The enemy name window, the screen's width from row 12, and the pixels of
+/// its interior the name is kept within.
+#define TARGET_NAME_WINDOW_ROW 12
+#define TARGET_NAME_INTERIOR_WIDTH ((DISPLAY_TILE_WIDTH - 2) * 8)
+
+/// Where the battle view slides while a target is chosen
+/// (BattleMenuWork.targetViewOffset): 16 pixels down when aiming at the
+/// enemies, 2 up when aiming at the party or the user.
+#define TARGET_VIEW_OFFSET_ENEMIES 16
+#define TARGET_VIEW_OFFSET_PARTY (-2)
+
+/// TargetTrack.flags: easing halfway to its unit each frame, in the current
+/// spread, and one frame of staying put (bits 7 to 2 count those frames).
+#define CURSOR_EASING (1 << 0)
+#define CURSOR_IN_SPREAD (1 << 1)
+#define CURSOR_HOLD_FRAME (1 << 2)
+
+/// What the selection redraws: the spread's targets and their markers, and at
+/// the start every part.
 #define TARGET_REDRAW_SPREAD 1
 #define TARGET_REDRAW_ALL 0xFFFF
 
@@ -98,11 +123,13 @@ s32 System_GetLanguage(void);
 /// ABILITY_TARGET_SELF only `selection` itself, anything else the enemies.
 /// `spread` is its range: 1 one unit, n the aimed one and n - 1 either side,
 /// ABILITY_RANGE_ALL every one (the cursor does not move); 0 counts as 1.
-/// `kind` is Battle_ClassifyEntryKind's class, or TARGET_HINT_SET_DJINNI: on a
-/// party member it opens a window of what the action would do (its HP or PP,
-/// the statuses it cures, "Set Djinni"). Returns the target chosen,
-/// PLACE_PARTY | its party slot or PLACE_ENEMY | its enemy slot, or -1 when
-/// cancelled.
+/// `kind` (enum BattleTargetHint) is Battle_ClassifyEntryKind's class, or
+/// TARGET_HINT_SET_DJINNI: on a party member it opens a window of what the
+/// action would do (its HP or PP, the statuses it cures, "Set Djinni"), and a
+/// reviving or curing action not aimed at everyone starts on the first party
+/// member who needs it, TARGET_HINT_LAST_TARGET on the party member last
+/// aimed at. Returns the target chosen, PLACE_PARTY | its party slot or
+/// PLACE_ENEMY | its enemy slot, or -1 when cancelled.
 s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   u16 candidateIds[8];
   struct SelectionSprite cursorSprites[6];
@@ -157,11 +184,12 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   if (spread == 0)
     spread = 1;
   if (mode == ABILITY_TARGET_ALLIES || mode == ABILITY_TARGET_SELF)
-    BATTLE_MENU_WORK->targetViewOffset = -2;
+    BATTLE_MENU_WORK->targetViewOffset = TARGET_VIEW_OFFSET_PARTY;
   else
-    BATTLE_MENU_WORK->targetViewOffset = 16;
+    BATTLE_MENU_WORK->targetViewOffset = TARGET_VIEW_OFFSET_ENEMIES;
   for (i = 0; i < 6; i++)
     cursorTracks[i].flags = 0;
+  // The candidates: the party, the acting unit alone, or the enemies.
   targetIndex = -1;
   if (mode == ABILITY_TARGET_ALLIES) {
     for (i = 0; i <= 5 && battle->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
@@ -177,8 +205,12 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       targetCount++;
     }
   }
+  // Keep the candidate list separate from the markers drawn for a spread.
   candidateIds[targetCount] = BATTLE_UNIT_LIST_END;
   candidateCount = targetCount;
+  // Restorative actions prefer an ally who benefits from their effect, and
+  // TARGET_HINT_LAST_TARGET the unit last aimed at. Otherwise the cursor
+  // starts on the acting unit when it is a candidate.
   if (mode == ABILITY_TARGET_ALLIES) {
     if (spread != ABILITY_RANGE_ALL && kind != TARGET_HINT_NONE) {
       found = 0;
@@ -230,6 +262,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     if (j != targetCount)
       targetIndex = j;
   }
+  // Else the middle one; then step back past empty places and, in a link
+  // battle, past downed enemies.
   if (targetIndex < 0)
     targetIndex = (targetCount - 1) / 2;
   while (candidateIds[targetIndex] == BATTLE_UNIT_REMOVED ||
@@ -238,9 +272,11 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     targetIndex = targetIndex + targetCount - 1;
     targetIndex %= targetCount;
   }
+  // Aimed at enemies or itself, the cursor starts at the acting unit (at y
+  // 128), stays two frames, then eases to the target.
   if (mode != ABILITY_TARGET_ALLIES) {
     BattleMotion_ProjectConditionalPositionFar(selection, &actorPosition);
-    cursorTracks[0].flags = 8;
+    cursorTracks[0].flags = CURSOR_HOLD_FRAME * 2;
     cursorTracks[0].x = actorPosition.x;
     cursorTracks[0].y = 128;
   }
@@ -248,7 +284,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   /* FAKEMATCH(barrier): an empty asm once selection and mode are dead. */
   __asm__("" : : : "r8", "r10");
 #endif
-  window = Window_Create(0, 12, 30, 4,
+  window = Window_Create(0, TARGET_NAME_WINDOW_ROW, DISPLAY_TILE_WIDTH, 4,
                          WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
                              WINDOW_FLAG_OUTLINED_TEXT);
 
@@ -263,12 +299,16 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       ((u32 *)firstSprite)[1] = OBJ_SIZE_16X16 | OBJ_256_COLORS;
       ((u32 *)firstSprite)[2] = 0;
     } while (0);
+    // The cursor: 32 frames (256 bytes each), a frame every four frames,
+    // bobbing 2 pixels each way every 16 frames.
     firstSprite->tile =
         VramCache_Reload(cursorSlot, ((gFrameCount >> 2) & 31) * 256 +
                                          gMenu_AnimatedCursorTiles);
     TARGET_BOB(selectedPosition.y);
     y = selectedPosition.y;
-    if (cursorTracks[0].flags & 1) {
+    // Ease halfway each frame; the other markers show once the cursor is
+    // within 7 pixels of its target.
+    if (cursorTracks[0].flags & CURSOR_EASING) {
       cursorX = (selectedPosition.x + cursorTracks[0].x) / 2;
       cursorY = (y + cursorTracks[0].y) / 2;
       if ((selectedPosition.x - cursorX < 0
@@ -279,21 +319,23 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       cursorTracks[0].x = cursorX;
       selectedPosition.y = cursorY;
       cursorTracks[0].y = cursorY;
-    } else if (cursorTracks[0].flags <= 3) {
+    } else if (cursorTracks[0].flags < CURSOR_HOLD_FRAME) {
       cursorTracks[0].x = selectedPosition.x;
       selectedPosition.y = y;
       cursorTracks[0].y = y;
-      cursorTracks[0].flags = 1;
+      cursorTracks[0].flags = CURSOR_EASING;
     } else {
       selectedPosition.x = cursorTracks[0].x;
       selectedPosition.y = cursorTracks[0].y;
-      cursorTracks[0].flags -= 4;
-      if (cursorTracks[0].flags <= 3)
-        cursorTracks[0].flags = 1;
+      cursorTracks[0].flags -= CURSOR_HOLD_FRAME;
+      if (cursorTracks[0].flags < CURSOR_HOLD_FRAME)
+        cursorTracks[0].flags = CURSOR_EASING;
     }
     firstSprite->x = selectedPosition.x - 8;
     firstSprite->y = selectedPosition.y - 16;
     Oam_AddSpriteAtDepth(firstSprite, OAM_DEPTH_WINDOW);
+    // The other markers' scale: 11/16 beside an aimed one, full size when the
+    // action takes every unit.
     if (spread == ABILITY_RANGE_ALL) {
       effect.scaleX = Q_8_8(1);
       effect.scaleY = Q_8_8(1);
@@ -304,17 +346,19 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     effect.angle = 0;
     matrix = OamMatrix_AllocFromTransform(&effect);
 
+    // The aim moved: list the units the range covers, the aimed one first,
+    // mark them, and redraw the window for the aimed one.
     if (redraw & TARGET_REDRAW_SPREAD) {
       targetCount = 0;
       for (i = 0; i < 6; i++)
-        cursorTracks[i].flags &= ~2;
+        cursorTracks[i].flags &= ~CURSOR_IN_SPREAD;
       for (i = 0; (u32)i < spread; i++) {
         n = targetIndex + i;
         if (n < candidateCount && candidateIds[n] != BATTLE_UNIT_REMOVED) {
           spreadActorIds[targetCount] = candidateIds[n];
-          cursorTracks[i].flags |= 2;
+          cursorTracks[i].flags |= CURSOR_IN_SPREAD;
           if (cursorTracks[i].index != i) {
-            cursorTracks[i].flags &= ~1;
+            cursorTracks[i].flags &= ~CURSOR_EASING;
             cursorTracks[i].index = i;
           }
           spreadTrackIndices[targetCount] = i;
@@ -323,9 +367,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         if (i != 0 && (n = targetIndex - i) >= 0 &&
             candidateIds[n] != BATTLE_UNIT_REMOVED) {
           spreadActorIds[targetCount] = candidateIds[n];
-          cursorTracks[6 - i].flags |= 2;
+          cursorTracks[6 - i].flags |= CURSOR_IN_SPREAD;
           if (cursorTracks[6 - i].index != -i) {
-            cursorTracks[6 - i].flags &= ~1;
+            cursorTracks[6 - i].flags &= ~CURSOR_EASING;
             cursorTracks[6 - i].index = -i;
           }
           spreadTrackIndices[targetCount] = 6 - i;
@@ -333,14 +377,16 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         }
       }
       for (i = 0; i < 6; i++) {
-        if ((cursorTracks[i].flags & 2) == 0)
+        if ((cursorTracks[i].flags & CURSOR_IN_SPREAD) == 0)
           cursorTracks[i].index = 6;
       }
       spreadActorIds[targetCount] = BATTLE_UNIT_LIST_END;
       BattleHighlight_SetModesFar(spreadActorIds, HIGHLIGHT_SELECTED);
-      // The (u32) compares the stored id unsigned, as the bytes do.
+      // A party member: the window of what the action does, placed by the
+      // party member's tile column and kept on screen. The aimed unit is
+      // remembered for TARGET_HINT_LAST_TARGET.
       if ((u32)(BATTLE_MENU_WORK->lastTarget = candidateIds[targetIndex]) <=
-          7) {
+          ALLY_MAX) {
         if (spread != ABILITY_RANGE_ALL && kind != TARGET_HINT_NONE) {
           unit = Unit_Get(candidateIds[targetIndex]);
           BattleMotion_ProjectConditionalPositionFar(candidateIds[targetIndex],
@@ -392,8 +438,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             Text_SetColor(TEXT_COLOR_WHITE);
             break;
           case TARGET_HINT_HP:
-            TARGET_HELP_COLUMN(7, 13);
-            conditionWindow = Window_Create(helpColumn, 8, 13, 3, 6);
+            TARGET_HELP_COLUMN(7, TARGET_GAUGE_WIDTH);
+            conditionWindow =
+                Window_Create(helpColumn, 8, TARGET_GAUGE_WIDTH, 3, 6);
 #if TLA_PATCH_2
             switch (System_GetLanguage()) {
             case CARTRIDGE_LANGUAGE_GERMAN:
@@ -420,8 +467,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             Text_DrawNumberInWindow(unit->hpMax, 4, conditionWindow, 56, 0);
             break;
           case TARGET_HINT_PP:
-            TARGET_HELP_COLUMN(7, 13);
-            conditionWindow = Window_Create(helpColumn, 8, 13, 3, 6);
+            TARGET_HELP_COLUMN(7, TARGET_GAUGE_WIDTH);
+            conditionWindow =
+                Window_Create(helpColumn, 8, TARGET_GAUGE_WIDTH, 3, 6);
             Text_DrawStringAtOffset(gOwnerStatus_PpString, conditionWindow, 0,
                                     0);
             Text_DrawNumberInWindow(unit->pp, 4, conditionWindow, 16, 0);
@@ -430,16 +478,18 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             Text_DrawNumberInWindow(unit->ppMax, 4, conditionWindow, 56, 0);
             break;
           case TARGET_HINT_REVIVE:
-            TARGET_HELP_COLUMN(7, 12);
-            conditionWindow = Window_Create(helpColumn, 8, 12, 3, 6);
+            TARGET_HELP_COLUMN(7, TARGET_ONE_LINE_WIDTH);
+            conditionWindow =
+                Window_Create(helpColumn, 8, TARGET_ONE_LINE_WIDTH, 3, 6);
             if (unit->hp != 0)
               goto no_condition;
             Text_DrawMessageAsTiles((s32)MsgEffectDowned, conditionWindow, 0,
                                     0);
             break;
           case TARGET_HINT_CURE_POISON:
-            TARGET_HELP_COLUMN(7, 12);
-            conditionWindow = Window_Create(helpColumn, 8, 12, 3, 6);
+            TARGET_HELP_COLUMN(7, TARGET_ONE_LINE_WIDTH);
+            conditionWindow =
+                Window_Create(helpColumn, 8, TARGET_ONE_LINE_WIDTH, 3, 6);
             if (unit->poison == 0)
               goto no_condition;
             Text_DrawMessageAsTiles((s32)MsgEffectCurePoison, conditionWindow,
@@ -459,6 +509,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
               count++;
             if (count == 0)
               count = 1;
+            // The list ends on row 10, as the one-line windows do, and starts
+            // no higher than row 4.
             helpRow = 9 - count;
             if (helpRow <= 3)
               helpRow = 4;
@@ -572,6 +624,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           }
         }
       } else if (spread != ABILITY_RANGE_ALL) {
+        // An enemy: its name, centred under it and kept within the window;
+        // ENEMY_MYSTERY_MAN and ENEMY_MYSTERY_WOMAN are named "Mystery Man"
+        // and "Mystery Woman".
         target = Unit_Get(candidateIds[targetIndex]);
         BattleMotion_ProjectConditionalPositionFar(candidateIds[targetIndex],
                                                    &namePosition);
@@ -594,8 +649,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         width = Text_GetWideStringWidth(targetName);
         namePosition.x -= width / 2;
         namePosition.x -= 8;
-        if (namePosition.x + width > 224)
-          namePosition.x = 224 - width;
+        if (namePosition.x + width > TARGET_NAME_INTERIOR_WIDTH)
+          namePosition.x = TARGET_NAME_INTERIOR_WIDTH - width;
         if (namePosition.x < 0)
           namePosition.x = 0;
         Text_ClearCanvas();
@@ -612,7 +667,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
                                                    &markerPosition);
         TARGET_BOB(markerPosition.y);
         *marker = *firstSprite;
-        if (track->flags & 1) {
+        if (track->flags & CURSOR_EASING) {
           s32 x = (markerPosition.x + track->x) / 2;
           s32 y = (markerPosition.y + track->y) / 2;
 
@@ -624,7 +679,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           s32 x = marker->x;
           s32 y = marker->y + 8;
 
-          track->flags = 1;
+          track->flags = CURSOR_EASING;
           markerPosition.x = x;
           track->x = x;
           markerPosition.y = y;
@@ -655,6 +710,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         BATTLE_MENU_WORK->tutorialDelay--;
       }
     }
+    // A: the aimed unit's side and place; the loop ends after this frame.
     if (pressed & KEY_A) {
       s32 id = candidateIds[targetIndex];
       s32 k;
@@ -724,8 +780,17 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 #undef TARGET_CONDITION_LIST_WIDTH
 #undef TARGET_MYSTERY_NAME_COPY
 #undef TARGET_MYSTERY_NAME_CAPACITY
+#undef TARGET_GAUGE_WIDTH
+#undef TARGET_ONE_LINE_WIDTH
 #undef TARGET_HELP_COLUMN
 #undef TARGET_CONDITION_LIST_WINDOW
 #undef TARGET_BOB
+#undef TARGET_NAME_WINDOW_ROW
+#undef TARGET_NAME_INTERIOR_WIDTH
+#undef TARGET_VIEW_OFFSET_ENEMIES
+#undef TARGET_VIEW_OFFSET_PARTY
+#undef CURSOR_EASING
+#undef CURSOR_IN_SPREAD
+#undef CURSOR_HOLD_FRAME
 #undef TARGET_REDRAW_SPREAD
 #undef TARGET_REDRAW_ALL

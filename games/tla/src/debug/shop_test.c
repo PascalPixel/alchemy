@@ -41,8 +41,13 @@
 /// The entrance that brings Isaac's party in (Party_AddIsaacsParty).
 #define ENTRANCE_WITH_ISAACS_PARTY 99
 
-/// The room's people, numbered in the order of gActorPlacements, each named
-/// for what talking to it opens (gSceneEvents).
+// Set while Sunshine forges what the party brought him, as Yallam's
+// FLAG_SUNSHINE_FORGING is; here only leaving the room clears it.
+#define FLAG_SHOP_TEST_SUNSHINE_FORGING FLAG_SCENE_TEMP_00
+
+/// The room's people, numbered in the order of gActorPlacements: the shops'
+/// people, then the testers, each named for what talking to it opens
+/// (gSceneEvents).
 enum ShopTestActorId {
   ACTOR_INNKEEPER = ACTOR_FIRST_PLACED,
   ACTOR_SANCTUM_PRIEST,
@@ -65,7 +70,9 @@ enum ShopTestActorId {
   ACTOR_ITEM_SELECTOR,
   ACTOR_TREASURE,
   ACTOR_DJINN,
-  ACTOR_AILMENTS,
+  /// Talking to her takes HP and PP and afflicts the party
+  /// (ShopTest_DamageAndAfflictParty).
+  ACTOR_FORTUNE_TELLER,
   /// Four light bulbs, which do nothing when talked to (ShopTest_NoOp).
   ACTOR_LIGHT_BULB_A,
   ACTOR_LIGHT_BULB_B,
@@ -99,13 +106,14 @@ void ShopTest_BrowseMessageRange(s32 message, s32 count) {
 
   window = Portrait_OpenWindow(SPRITE_YOUNG_MAN_IN_GREEN, 0, 0, 0);
   for (i = 0; i < count; i++) {
-    // Sample name, item and number substitutions before each message: Garet,
-    // the Shamshir and 123456.
+    // A sample name, item and number for each message to show: Garet, the
+    // Shamshir and a number of six digits.
     MessageArgument_Push(GARET, MESSAGE_ARGUMENT_ACTOR);
     MessageArgument_Push(ITEM_SHAMSHIR, MESSAGE_ARGUMENT_ITEM);
     MessageArgument_Push(123456, MESSAGE_ARGUMENT_NUMBER);
     Message_CloseFinishedWindows();
-    Message_OpenWindow(message, 5, 0, MESSAGE_WINDOW_FIXED_X | 2);
+    Message_OpenWindow(message, 5, 0,
+                       MESSAGE_WINDOW_FIXED_X | MESSAGE_WINDOW_UNREAD);
     frames = 0;
     if (!(gInput.held & (KEY_A | KEY_B))) {
       do {
@@ -144,10 +152,10 @@ done:
   Window_Close(window, 2);
 }
 
-void Shop_Run(s32 kind, s32 value);
+void Shop_Run(s32 stockRow, s32 keeper);
 void Sanctum_Run(void);
-void Inn_CheckIn(s32 kind, s32 value);
-void ItemPicker_RunToShow(s32 *a, s32 *b);
+void Inn_CheckIn(s32 innId, s32 keeper);
+void ItemPicker_RunToShow(s32 *selectedUnit, s32 *selectedSlot);
 void NameEntry_EditMemberName(s32 index);
 void Summon_ShowLearnedMessage(s32 value);
 void Summon_Learn(s32 summonId);
@@ -224,7 +232,7 @@ void ShopTest_TalkToSunshine(s32 actor) {
       Event_SetMessageId(message + 2);
     }
     Event_ShowMessageAndWait(actor, 0);
-  } else if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
+  } else if (Event_GetFlag(FLAG_SHOP_TEST_SUNSHINE_FORGING)) {
     Event_SetMessageId((s32)MsgICanTWait);
     // "I can't wait to see what I'm going to wind up making with this......"
     Event_ShowMessageAndWait(actor, 0);
@@ -243,7 +251,7 @@ void ShopTest_TalkToSunshine(s32 actor) {
       Event_ShowMessageAndWait(actor, 0);
       Forge_Run(actor);
       if (Forge_GetItem())
-        Event_SetFlag(FLAG_SCENE_TEMP_00);
+        Event_SetFlag(FLAG_SHOP_TEST_SUNSHINE_FORGING);
     } else {
       Event_SetMessageId(message + 2);
       // "Hm... Maybe I made a mistake. It's hard to tell... If you want..."
@@ -259,7 +267,7 @@ void ShopTest_TalkToSunshinesWife(s32 actor) {
     Event_SetMessageId((s32)MsgThisThisIs);
     // "This? This is the blacksmith Sunshine's smithy, the best forge in..."
     Event_ShowMessageAndWait(actor, 0);
-  } else if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
+  } else if (Event_GetFlag(FLAG_SHOP_TEST_SUNSHINE_FORGING)) {
     Event_SetMessageId((s32)MsgItTakesOur);
     // "It takes our Sunshine a long time to finish the items he works on...."
     Event_ShowMessageAndWait(actor, 0);
@@ -302,11 +310,12 @@ void ShopTest_TalkToSunshinesWife(s32 actor) {
   }
 }
 
-/// Opens the picker a full party drops an item with, and discards the choice.
+/// Opens the item picker for an item to show, as Naribwe's fortune-teller asks
+/// for one, and discards the member and slot chosen.
 void ShopTest_TestItemSelection(void) {
-  s32 pos[2];
+  s32 selection[2];
 
-  ItemPicker_RunToShow(&pos[1], &pos[0]);
+  ItemPicker_RunToShow(&selection[1], &selection[0]);
 }
 
 /// The name entry screen for each of the eight characters in turn.
@@ -516,7 +525,7 @@ struct Trigger gSceneEvents[] = {
      EVENT(ShopTest_RunLevelEditor)},
     {TRIGGER_TALK, ACTOR_ITEM_SELECTOR, CONDITION_ALWAYS,
      EVENT(ShopTest_SelectItem)},
-    {TRIGGER_TALK, ACTOR_AILMENTS, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_FORTUNE_TELLER, CONDITION_ALWAYS,
      EVENT(ShopTest_DamageAndAfflictParty)},
     {TRIGGER_TALK, ACTOR_TREASURE, CONDITION_ALWAYS,
      EVENT(ShopTest_GiveEquipmentTestStock)},
@@ -536,7 +545,7 @@ void GameFlag_RefreshLureCap(void);
 
 /// Takes HP and PP from Felix, Jenna and Sheba, poisons and haunts Felix,
 /// curses and envenoms Jenna, and breaks the first item each of Felix and
-/// Jenna holds that may break when used. Talking to ACTOR_AILMENTS.
+/// Jenna holds that may break when used. Talking to ACTOR_FORTUNE_TELLER.
 void ShopTest_DamageAndAfflictParty(void) {
   struct Unit *unit;
   struct ItemDefinition *item;
@@ -850,10 +859,11 @@ void ShopTest_OpenIconBrowser(void) { DebugBrowser_Icons(); }
 void ShopTest_OpenPortraitBrowser(void) { DebugBrowser_Portraits(); }
 
 /// Unused: the Psynergy test's PsynergyTest_DigCells again.
-UNUSED void ShopTest_DigCells(s32 mode, s32 a, s32 b, s32 c, s32 d, s32 e,
-                              s32 f) {
+UNUSED void ShopTest_DigCells(s32 mode, s32 sourceX, s32 sourceY, s32 width,
+                              s32 height, s32 destinationX, s32 destinationY) {
   if (mode == 1)
-    Map_CopyCellsRect(a, b, c, d, e, f);
+    Map_CopyCellsRect(sourceX, sourceY, width, height, destinationX,
+                      destinationY);
 }
 
 /// Unused: the Psynergy test's PsynergyTest_GrowActor again.
@@ -894,14 +904,13 @@ UNUSED void ShopTest_DropActor(s32 mode, s32 id, s32 x, s32 z) {
   }
 }
 
-void Field_RequestBattleFromEncounterTable(s32 scene, s32 entrance);
+void Field_RequestBattleFromEncounterTable(s32 zone, s32 slot);
 
-/// Mode 1 places a brown boulder at (x, z) in pixels; mode 2 grows a winged
-/// statue there from two fifths to full size while it turns, then turns it
-/// opposite the leader's facing and passes scene and entrance on to
-/// Field_RequestBattleFromEncounterTable.
-UNUSED void ShopTest_RaiseMonster(s32 mode, s32 x, s32 z, s32 scene,
-                                  s32 entrance) {
+/// Unused: the Psynergy test's PsynergyTest_RaiseStatue again. Mode 1 places a
+/// brown boulder at (x, z) in pixels; mode 2 grows a winged statue there from
+/// two fifths to full size while it turns, then turns it opposite the leader's
+/// facing and starts the battle in slot `slot` of encounter zone `zone`.
+UNUSED void ShopTest_RaiseStatue(s32 mode, s32 x, s32 z, s32 zone, s32 slot) {
   struct Actor *actor;
 
   if (mode == 1) {
@@ -932,7 +941,7 @@ UNUSED void ShopTest_RaiseMonster(s32 mode, s32 x, s32 z, s32 scene,
       actor->scaleY = FIXED_ONE;
       actor->facing =
           Actor_GetById(gMainRoutineWork.leaderActorId)->facing + DEGtoANG(180);
-      Field_RequestBattleFromEncounterTable(scene, entrance);
+      Field_RequestBattleFromEncounterTable(zone, slot);
     }
   }
 }

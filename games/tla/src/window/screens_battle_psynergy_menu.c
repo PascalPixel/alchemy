@@ -94,10 +94,12 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
     iconSlots[i] = VramCache_AllocEntry(128);
     sprites[i].oam.f.tile = VramCache_Reload(iconSlots[i], (const void *)-1);
   }
-  // XXX (no evidence): what shows tiles 0, 1, 16 and 17 of the second text
-  // range (TEXT_EXTRA_TILE_FIRST), which take the top and bottom tees here;
-  // no window code names an entry of them, and there is no recording of an
-  // open battle list.
+  // The border's tees go into tiles 0, 1, 16 and 17 of the second text range,
+  // which nothing shows here. In battle BG1 takes 8bpp tiles from character
+  // block 0 (BATTLE_BG1CNT), so these are its tiles COMMAND_ROW_ICON_TILE and
+  // COMMAND_ROW_ICON_TILE + 8, the first command icon's top-left and
+  // bottom-left; BattleCommandRow_Run turns BG1 off as it returns, before a
+  // list opens, and draws its icons there again when it opens next.
   Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, TEXT_EXTRA_TILE_FIRST);
   Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, TEXT_EXTRA_TILE_FIRST + 1);
   Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, TEXT_EXTRA_TILE_FIRST + 16);

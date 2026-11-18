@@ -5,9 +5,8 @@
 /// the clouds into white, and scrolls down the lighthouse in its valley while a
 /// gull flies off towards it and `The Lost Age` comes into focus.
 ///
-/// One object, as The Broken Seal's title_intro.c is. The gull's frames and
-/// path are logo.c; the prompt's levels and the fade's channel curves are
-/// title_intro_tables.c.
+/// The gull's frames and path are logo.c; the prompt's levels and the fade's
+/// channel curves are title_intro_tables.c.
 
 #include "types.h"
 #include "sounds.h"
@@ -34,9 +33,9 @@
 #include "field/actor.h"
 #include "resource_ids.h"
 
-/// The screen blocks of the intro's maps, as The Broken Seal's: the near clouds
-/// on BG2 and the far ones on BG1, which the lighthouse later takes; the cards'
-/// text on BG3 and the line blended in over it on BG0.
+/// The screen blocks of the intro's maps: the near clouds on BG2 and the far
+/// ones on BG1, which the lighthouse later takes; the cards' text on BG3 and
+/// the line blended in over it on BG0.
 #define INTRO_FRONT_SCREEN 30
 #define INTRO_BACK_SCREEN 31
 #define INTRO_CARD_SCREEN 29

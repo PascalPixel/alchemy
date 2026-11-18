@@ -102,11 +102,9 @@ void Window_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
   *windowY = y;
 }
 
-s32 Message_Decode(s32, s32);
-
 /// Decodes message and returns its text's width and height in pixels.
-void Text_MeasureMessage(s32 no, s32 *x, s32 *y) {
-  Text_MeasureDecoded(Message_Decode(no, 0), x, y, 0);
+void Text_MeasureMessage(s32 message, s32 *x, s32 *y) {
+  Text_MeasureDecoded(Message_Decode(message, 0), (u32 *)x, (u32 *)y, 0);
 }
 
 /// Builds the render entries of message no and fits its window on screen,
@@ -128,17 +126,11 @@ void Text_MeasureMessage(s32 no, s32 *x, s32 *y) {
 DEFINE_GET_RESOURCE_DIMENSIONS(Text_GetMessageSize, 0)
 DEFINE_GET_RESOURCE_DIMENSIONS(Text_GetMessageSizeAlt, 1)
 
-void Text_ResetStyle(void);
-
 /// Measures decoded text from entryIndex to its first page's end: returns the
 /// width of the longest line and the height (TEXT_LINE_HEIGHT a line) in
-/// pixels. With spacing set, fills one entry per line with the extra gap
-/// between characters, in 1/256 pixel, that spreads the line to fill the
-/// window. spacing, when non-NULL, has room for four line entries. A page of
-/// more than four lines keeps measuring into the fourth. It sets
-/// WindowWork.outline to each TEXT_OUTLINE operand it passes and leaves it at
-/// the last, the style the next glyphs are drawn in unless the style is reset
-/// first (Window_Create resets it).
+/// pixels. With spacing set, fills one entry per line, four at most, with the
+/// extra gap between characters, in 1/256 pixel, that spreads the line across
+/// the window. It leaves WindowWork.outline at the last style it passed.
 void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
                          u16 *spacing) {
   struct WindowWork *work;
@@ -259,8 +251,8 @@ done:
   lineWidths[lines] = lineWidth;
   if (width < lineWidth)
     width = lineWidth;
-  // The German release drops the 2 pixels a window's mode adds, and French and
-  // Italian follow it; Spanish, released with Italian, keeps them.
+  // While a mind-read window is open the text is 2 pixels wider, except in the
+  // German release and the French and Italian after it (Spanish keeps them).
 #if !TLA_PATCH_2 || LANGUAGE == LANGUAGE_SPANISH
   if (work->mindRead)
     width = width + 2;
@@ -311,18 +303,12 @@ done:
   Text_ResetStyle();
 }
 
-void Text_ResetStyle(void);
-
-/// Measures decoded text from start over all its pages: the width of the first
-/// page's longest line and the height of its tallest page, in pixels, with each
-/// line's extra character gap in spacing as Text_MeasureDecoded.
-/// The text must fit 16 page-height slots; this routine does not clamp the page
-/// count. Unlike Text_MeasureDecoded it puts no ceiling on the gaps
-/// outside Japanese, and a page break restarts neither the line count nor the
-/// line's width, so the gaps past the first page do not fit their lines; its
-/// one caller, Window_FitOnScreen with flags bit 0, is reached only from
-/// Text_GetMessageSizeAlt, which passes no spacing. It changes
-/// WindowWork.outline as Text_MeasureDecoded does.
+/// Measures decoded text from entryIndex over all its pages: the width of the
+/// first page's longest line and the height of its tallest page, in pixels,
+/// with each line's extra character gap in spacing as Text_MeasureDecoded.
+/// The text must fit 16 pages. Outside Japanese the gaps have no ceiling, and
+/// past the first page they do not fit their lines; its one caller,
+/// Text_GetMessageSizeAlt, passes no spacing.
 void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
                           u16 *spacing) {
   u32 pageHeights[16];
@@ -464,7 +450,8 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
     }
   }
 done:
-  // From the German release on, a window's mode no longer adds its 2 pixels.
+  // From the German release on, a mind-read window is no longer 2 pixels
+  // wider.
 #if !TLA_PATCH_2
   if (work->mindRead != 0)
     maxWidth += 2;

@@ -107,10 +107,11 @@ struct WindowSprite *CommandIcon_Create(s32 icon, s32 remap,
 }
 
 /// Makes the sprite `obj` pulse: scales it about its centre by
-/// gWindowSprite_PulseScales (in 1/65536, used in 1/256), one step every two
-/// frames, and puts it on draw layer 252.
+/// gWindowSprite_PulseScales (16.16, used as 8.8), one step every two frames,
+/// and puts it on draw layer 252.
 void WindowSprite_Pulse(struct WindowSprite *obj) {
-  s32 scale = gWindowSprite_PulseScales[(gVBlankCount >> 1) & 7] / 256;
+  s32 scale = gWindowSprite_PulseScales[(gVBlankCount >> 1) & 7] /
+              (FIXED_ONE / Q_8_8(1));
   struct AffineTransform effect;
 
   if (obj != 0) {
@@ -379,9 +380,9 @@ s32 ItemIcon_LoadIntoSlot(s32 resource, s32 index) {
   return result;
 }
 
-/// Builds the icon of ability `resource` in a transfer block taken from heap
-/// slot 17, reloads VRAM cache entry `index` with it and returns the entry's
-/// first tile.
+/// Builds the icon of ability `resource` in a transfer block taken from
+/// HEAP_SLOT_GLYPH_TRANSFER, reloads VRAM cache entry `index` with it and
+/// returns the entry's first tile.
 s32 Resource_LoadIndexedEntryToBuffer(s32 resource, s32 index) {
   s32 tile;
   s32 slot;
@@ -451,12 +452,12 @@ s32 Link_CreateCountdownLabelWindow(void) {
 s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon) {
   GlyphTransfer *buffer =
       HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
-  u16 *base = Resource_GetTableEntry(RESOURCE_COMMAND_ICONS);
-  u8 **slot = &buffer->encoded;
-  void *target = (void *)((u32)base + base[icon]);
+  u16 *offsetTable = Resource_GetTableEntry(RESOURCE_COMMAND_ICONS);
+  u8 **encoded = &buffer->encoded;
+  void *target = (void *)((u32)offsetTable + offsetTable[icon]);
   s32 tile;
 
-  *slot = target;
+  *encoded = target;
   Decompress_ByteLz(target, buffer);
   tile = VramCache_Reload(slotIndex, (s32)buffer);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);

@@ -158,7 +158,7 @@ s32 ItemMenu_Run(void) {
 typedef s32 (*ItemWordCopyFn)(void *dst, const void *src, s32 size);
 
 /// Iwram_CopyWords's routine reached from IwramIrqMain rather than at its
-/// fixed address, as in The Broken Seal.
+/// fixed address: the trade's snapshot copies call it this way.
 #define ITEM_IWRAM_COPY_WORDS                                                  \
   ((ItemWordCopyFn)(IwramIrqMain + Iwram_CopyWordsOffset))
 
@@ -191,7 +191,8 @@ enum ItemMenuStep {
 };
 
 #ifdef MODERN
-// Called with no prototype in scope, as its bytes need; a current GCC gets
+// The item menu calls this with no prototype in scope, so its argument takes
+// the old promotions; a current GCC, which refuses implicit declarations, gets
 // it here.
 void Unit_RefreshPsynergyFar(s32 unit);
 #endif
@@ -1591,9 +1592,9 @@ s32 Inventory_RemoveFirstUnflagged(s32 memberId) {
 }
 
 // Where the cursor points at a command. The German, French and Spanish
-// releases ask two helpers of their own (named by their German addresses):
-// the first reads x from a table that sets the middle column 9 pixels left of
-// the even 40-pixel spacing the other releases compute, the second gives y.
+// releases ask two helpers of their own: the first reads x from a table that
+// sets the middle column 9 pixels left of the even 40-pixel spacing the other
+// releases compute, the second gives y.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH) ||          \
     (LANGUAGE == LANGUAGE_SPANISH)
 s32 ItemMenu_GetCommandCursorX(s32 column, s32 row);
@@ -1764,8 +1765,6 @@ s32 ItemMenu_ChooseCommand(void) {
 }
 
 #undef COMMAND_CURSOR_Y
-
-// The item menu work block, as this function reads it.
 
 #define COMMAND_DISABLED (-1)
 #define COMMAND_AVAILABLE 1
@@ -1998,7 +1997,7 @@ void Window_CloseFar(s32, s32);
 /// The item menu's Details screen: describes the item entry value in a window
 /// over the top half (ITEM_DETAILS_WINDOW_WIDTH) and waits for A or B. Up and
 /// Down move an unused counter from 0 to 4. Returns the counter after A or
-/// Start, or -1 after B. The twin of The Broken Seal's ItemMenu_ShowDetails.
+/// Start, or -1 after B.
 s32 ItemMenu_ShowDetails(s32 value) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 changed = 1;
@@ -2879,8 +2878,8 @@ s32 ItemMenu_DrawItemDetailPage(s32 listWindow, void *memberWork,
 #define ITEM_PAGE_ICONS_X 116
 #define ENTRY_X 24
 #endif
-/// Draws the names on one five-row page of the item list: The Broken Seal's
-/// ItemMenu_DrawNamePage over this game's menu offsets.
+/// Draws one page of the item list into window: a divider, the page's icons and
+/// page numbers, and up to five item names.
 s32 ItemMenu_DrawNamePage(s32 window, s32 unused,
                           const struct PagedList *state) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;

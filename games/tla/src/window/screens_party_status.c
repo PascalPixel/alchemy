@@ -13,8 +13,9 @@
 #define PARTY_STATUS_DJINN_WIDTH 5 ///< the Djinn column, in battle
 
 /// Sizes the party status window by the party: a column of six tiles a party
-/// member (four at most outside battle), one more row with flag 1 and five more
-/// columns with flag 2, against the screen's right edge.
+/// member (four at most outside battle), one more row with PARTY_STATUS_SHOW_PP
+/// and the Djinn column with PARTY_STATUS_SHOW_DJINN, against the screen's
+/// right edge.
 void PartyStatus_BuildLayoutBounds(s32 flags) {
   struct PartyStatusWindow *state = Ram_HeapSlots->partyStatus;
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
@@ -39,9 +40,9 @@ void PartyStatus_BuildLayoutBounds(s32 flags) {
   members *= PARTY_STATUS_COLUMN_WIDTH;
   width = members + 1;
   if (flags & PARTY_STATUS_SHOW_DJINN)
-    width = members + 6;
+    width = members + 1 + PARTY_STATUS_DJINN_WIDTH;
 
-  x = 30;
+  x = DISPLAY_TILE_WIDTH;
   x -= width;
   state->x = x;
   state->y = 0;
@@ -150,6 +151,8 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
 #define PARTY_STATUS_BAR_LENGTH 40
 #define BAR_TILE_COLOR 14
 #define BAR_TILE_SHADOW_COLOR 1
+/// A 4bpp tile row: eight pixels of four bits, one word.
+#define TILE_ROW_BITS 32
 
 /// Recolours the five bar tiles at (x, y) in `window` to show a bar `length`
 /// pixels long (0 to PARTY_STATUS_BAR_LENGTH).
@@ -192,9 +195,9 @@ UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
     } else if (length >= 0) {
 #endif
       bar <<= length * 4;
-      bar |= PIXELS_4BPP(8) >> (32 - length * 4);
+      bar |= PIXELS_4BPP(8) >> (TILE_ROW_BITS - length * 4);
       shadow <<= length * 4;
-      shadow |= PIXELS_4BPP(13) >> (32 - length * 4);
+      shadow |= PIXELS_4BPP(13) >> (TILE_ROW_BITS - length * 4);
     }
     for (row = 0; row <= (fullLength != 0 ? 2 : 0); row++) {
       pixels = *TILE_ROW_FROM_BOTTOM(tile, row);
@@ -370,5 +373,6 @@ void PartyStatus_Close(void) {
 #undef PARTY_STATUS_BAR_LENGTH
 #undef BAR_TILE_COLOR
 #undef BAR_TILE_SHADOW_COLOR
+#undef TILE_ROW_BITS
 #undef PARTY_STATUS_DJINN_WIDTH
 #undef PARTY_STATUS_COLUMN_WIDTH

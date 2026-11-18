@@ -866,6 +866,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 #define PULSE_OVERHANG_LINES(scale)                                            \
   ((((scale) - Q_8_8(1)) * 32 + 255) / 512 + 1)
 
+/// A WIN_RANGE value's end, its low byte: the window's right edge.
+#define WIN_RANGE_END_MASK 0xff
+
 /// Draws the icon menu's icons, a task of the icon menus (IconMenu_Open). Each
 /// icon is a 32x32, 256-colour sprite, and one at x 0 is not drawn; the
 /// selected one pulses, double-size, between 1.19 and 1.31 times its size, in
@@ -911,8 +914,9 @@ void IconMenu_DrawIcons(void) {
     if (index == work->selection) {
       s32 left = x + pulseScale * 7 / 512 - 20;
 
-      // On the top row the double-size box starts above the screen: its y
-      // wraps within OAM's 8 bits.
+      // The icon grows about the middle of its 64-pixel double-size box. On
+      // the top row the box starts above the screen, its y wrapped within
+      // OAM's 8 bits, and the icon's top edge stays at the screen's top.
       if (entry->y != 0)
         spriteY = entry->y + pulseScale * 3 / 256 - 20;
       else
@@ -951,7 +955,7 @@ void IconMenu_DrawIcons(void) {
     index = ICON_ROW_LINES;
     if (index < lastLine) {
       do {
-        *edge = (*edge & 0xff) | span;
+        *edge = (*edge & WIN_RANGE_END_MASK) | span;
         index++;
         edge += 2;
       } while (index < lastLine);
@@ -962,7 +966,7 @@ void IconMenu_DrawIcons(void) {
     span <<= 8;
     edge = &page->lines[0].span;
     for (index = 0; index < ICON_ROW_LINES; index++) {
-      *edge = (*edge & 0xff) | span;
+      *edge = (*edge & WIN_RANGE_END_MASK) | span;
       edge += 2;
     }
   } else {
@@ -977,7 +981,7 @@ void IconMenu_DrawIcons(void) {
     index = firstLine;
     if (index < ICON_MENU_BOTTOM_ROW * 8) {
       do {
-        *edge = (*edge & 0xff) | span;
+        *edge = (*edge & WIN_RANGE_END_MASK) | span;
         index++;
         edge += 2;
       } while (index < ICON_MENU_BOTTOM_ROW * 8);
@@ -989,7 +993,7 @@ void IconMenu_DrawIcons(void) {
     edge = &page->lines[ICON_MENU_BOTTOM_ROW * 8].span;
     for (index = ICON_MENU_BOTTOM_ROW * 8; index < DISPLAY_HEIGHT; index++) {
       // firstLine, done with, carries the mask that keeps the right edge.
-      firstLine = 0xff;
+      firstLine = WIN_RANGE_END_MASK;
       *edge = (*edge & firstLine) | span;
       edge += 2;
     }
@@ -1108,14 +1112,14 @@ static inline s32 AbsoluteDifference(s32 diff, s32 lhs, s32 rhs) {
 /// made for the player to watch (Menu_AnimateSelectionToEntry). Returns goal.
 s32 IconMenu_AnimateTo(s32 start, s32 goal) {
   s16 resourceBase;
-  s16 cur;
+  s16 selection;
   s32 diff;
   s32 resourceId;
-  s32 dist;
-  s32 pos;
+  s32 distance;
+  s32 position;
   s32 step;
   s32 delay;
-  const u8 *table;
+  const u8 *stepDelays;
   struct IconMenuWork *state;
 
   state = Ram_HeapSlots->iconMenu;
@@ -1124,7 +1128,7 @@ s32 IconMenu_AnimateTo(s32 start, s32 goal) {
   state->selection = (s16)start;
   if (goal < start)
     step = -1;
-  pos = start;
+  position = start;
 
   for (;;) {
     WindowSprite_PrepareForRedraw(state->window);
@@ -1136,19 +1140,19 @@ s32 IconMenu_AnimateTo(s32 start, s32 goal) {
     }
     Text_DrawMessageAsTiles(resourceId, state->window, 0, 0);
 
-    cur = state->selection;
-    table = gMenu_SelectionStepDelays;
-    diff = cur - goal;
-    dist = AbsoluteDifference(diff, cur, goal);
-    wait(table[dist] + delay);
+    selection = state->selection;
+    stepDelays = gMenu_SelectionStepDelays;
+    diff = selection - goal;
+    distance = AbsoluteDifference(diff, selection, goal);
+    wait(stepDelays[distance] + delay);
 
-    if (pos == goal)
+    if (position == goal)
       break;
 
-    state->selection = (s16)((u16)state->selection + step);
+    state->selection += step;
     Sound_PlayFar(SE_MENU_CURSOR_MOVE);
     delay = 0;
-    pos += step;
+    position += step;
   }
 
   wait(48);
@@ -1160,17 +1164,18 @@ s32 IconMenu_AnimateTo(s32 start, s32 goal) {
 /// block it allocates and frees.
 void CommandIcon_LoadIntoSlot(s32 slot, s32 index) {
   s32 size = COMMAND_ICON_BYTES;
-  void *buffer = (void *)Heap_Alloc(size);
-  u16 *base = Resource_GetTableEntry(RESOURCE_COMMAND_ICONS);
+  void *buffer = Heap_Alloc(size);
+  u16 *offsetTable = Resource_GetTableEntry(RESOURCE_COMMAND_ICONS);
 
-  Decompress_ByteLz((void *)((u32)base + base[index]), buffer);
+  Decompress_ByteLz((void *)((u32)offsetTable + offsetTable[index]), buffer);
   VramCache_Load(slot, size, buffer);
   Heap_Release(buffer);
 }
 
-/// Appends a command icon if fewer than six are present. It starts on the
-/// bottom row; IconMenu_Center or IconMenu_LayoutIcons places the row. Its
-/// VRAM cache entry is taken unchecked.
+/// Appends a command icon while the menu has room for one (IconMenuWork's six
+/// entries). It starts on the bottom row; IconMenu_Center or
+/// IconMenu_LayoutIcons places the row. Its VRAM cache entry is taken
+/// unchecked.
 void IconMenu_AddIcon(s32 icon) {
   struct IconMenuWork *work;
   struct IconMenuEntry *entry;
@@ -1180,7 +1185,7 @@ void IconMenu_AddIcon(s32 icon) {
 
   work = Ram_HeapSlots->iconMenu;
   index = work->count;
-  if (index <= 5) {
+  if (index < (s32)ARRAY_COUNT(work->entries)) {
     work->count++;
     entry = &work->entries[index];
     slot = VramCache_FindFreeEntry();
@@ -1203,12 +1208,11 @@ void IconMenu_Center(s32 row, s32 width, s32 resourceBase) {
   s32 i;
   s32 count;
 
-  width += 2;
-  work->width = width;
+  work->width = width + 2;
   work->labelBase = resourceBase;
   work->row = row;
   count = work->count;
-  x = 15 - (count * 3 + work->width * 2 / 3) / 2;
+  x = DISPLAY_TILE_WIDTH / 2 - (count * 3 + work->width * 2 / 3) / 2;
   for (i = 0; i < work->count; i++) {
     struct IconMenuEntry *entry = &work->entries[i];
 
@@ -1220,16 +1224,14 @@ void IconMenu_Center(s32 row, s32 width, s32 resourceBase) {
 }
 
 /// Places the icons three tiles apart from tile (x, y), then opens their label
-/// window just after them.
+/// window, `width` + 2 tiles wide, just after them.
 void IconMenu_LayoutIcons(s32 x, s32 y, s32 width, s32 resourceBase) {
   struct IconMenuWork *work;
   s32 i;
   struct IconMenuEntry *entry;
-  s16 *widthp;
 
   work = Ram_HeapSlots->iconMenu;
-  widthp = &work->width;
-  *widthp = width + 2;
+  work->width = width + 2;
   work->labelBase = resourceBase;
   work->row = y;
   for (i = 0; i < work->count; i++) {
@@ -1238,7 +1240,7 @@ void IconMenu_LayoutIcons(s32 x, s32 y, s32 width, s32 resourceBase) {
     entry->x = x << 3;
     x += 3;
   }
-  work->window = Window_Create(x, y, *widthp, 3, WINDOW_FLAG_INSTANT);
+  work->window = Window_Create(x, y, work->width, 3, WINDOW_FLAG_INSTANT);
 }
 
 /// Reads the signed command-position mapping used by the icon menu.
@@ -1255,16 +1257,17 @@ s32 FieldMenu_SelectCommand(s32 selection) {
   s32 offset;
   s32 groupTriple;
   s32 result;
-  s8 *table;
+  s8 *commandPositions;
 
   if (Party_SumDjinnCountsFar(-1) == 0) {
     group = 1;
   }
 
   groupTriple = group * 3;
-  table = gMenu_TopEntryPositionByCommand;
+  commandPositions = gMenu_TopEntryPositionByCommand;
   offset = groupTriple << 1;
-  selection = IconMenu_ReadCommandPosition(table, selection + offset) - 1;
+  selection =
+      IconMenu_ReadCommandPosition(commandPositions, selection + offset) - 1;
   if (selection < 0) {
     selection = 0;
   }
@@ -1784,3 +1787,4 @@ UNUSED void DebugSceneSelect_Schedule(void) {
 #undef ICON_ROW_LINES
 #undef PULSE_OVERHANG_X
 #undef PULSE_OVERHANG_LINES
+#undef WIN_RANGE_END_MASK

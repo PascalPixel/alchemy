@@ -59,7 +59,8 @@ s32 BattleParty_ChooseReserve(s32 slot) {
     menu = Ram_HeapSlots->battleMenuWork;
     if (count <= 0)
       return -1;
-    // The party place is the slot's low byte.
+    // BattleTarget_RunSelection's PLACE_PARTY | place: the place is its low
+    // byte.
     slot &= 0xff;
     current = battle->partyUnits[slot];
     Sound_PlayFar(SE_MENU_CONFIRM);
@@ -74,7 +75,9 @@ s32 BattleParty_ChooseReserve(s32 slot) {
 #else
         if (gInput.pressed & KEY_A) {
 #endif
-          if (BattleUnit_ListLivingIdsFar(1, 0) == 0) {
+          // The preview already stands in the slot: a swap that would leave
+          // no one standing is refused.
+          if (BattleUnit_ListLivingIdsFar(BATTLE_SIDE_MASK_PARTY, 0) == 0) {
             Sound_PlayFar(SE_MENU_ERROR);
             goto test;
           }

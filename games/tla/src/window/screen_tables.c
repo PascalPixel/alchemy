@@ -1,5 +1,5 @@
 /// @file
-/// The screens' tables from the save summary's level label to the menu bars'
+/// The screens' tables from the save summary's level label to the range icons'
 /// patterns: the name entry's marks and labels, the Djinn and party sprites,
 /// the summons' abilities and the window sprites' motions.
 
@@ -105,13 +105,15 @@ const u8 gMenuTitleBobOffsets[8] = {0, 0, 1, 2, 3, 3, 2, 1};
 
 /// A window sprite's pulse, its scale one step every two frames: about 1.10 up
 /// to 1.22 and back.
-const s32 gWindowSprite_PulseScales[8] = {
+const FIXED gWindowSprite_PulseScales[8] = {
     toFIXED(1.1),  toFIXED(1.13), toFIXED(1.16), toFIXED(1.19),
     toFIXED(1.22), toFIXED(1.19), toFIXED(1.16), toFIXED(1.13),
 };
 
-/// A row of 4-bit pixels for the centre tile and one for the end tile, colour
-/// 5 where the pattern marks, growing a pixel at a time.
+/// A row of 4-bit pixels for the centre tile and one for the end tile of a
+/// Psynergy range icon, colour 5 where the pattern marks
+/// (Menu_BuildLocalizedPatternTiles); a word's lowest nibble is its leftmost
+/// pixel.
 const struct BarPatternRow gMenu_BarPatternRows[6] = {
     {0x00055000, 0x00000000}, {0x05055050, 0x00000000},
     {0x05055050, 0x00000005}, {0x05055050, 0x00000505},

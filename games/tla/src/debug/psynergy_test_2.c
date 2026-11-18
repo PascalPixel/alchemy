@@ -1,7 +1,8 @@
 /// @file
 /// The second debug room of Psynergy tests: Douse and Pound take an actor away,
 /// Grind and Tremor are tried on another, which scatters rocks when talked to,
-/// Burst breaks a wall, a rope is coiled, and one step starts a battle.
+/// Burst breaks a wall and a rope is coiled. Its step into a battle answers a
+/// cell behavior no cell of the room's map holds.
 
 #include "battle/battle.h"
 #include "field/field_sequence.h"
@@ -23,6 +24,7 @@
 #include "field/field_sequence_event.h"
 #include "field/call.h"
 #include "window/item_icon.h"
+#include "window/message_speed.h"
 #include "field/effect_sprite.h"
 #include "flags.h"
 #include "field/particle.h"
@@ -34,7 +36,7 @@
 #include "system/task.h"
 #include "fixed_math.h"
 
-// The battle the step on cell 30 starts, once.
+// The battle the step on cell behavior 30 starts, once.
 #define FLAG_BATTLE_FOUGHT FLAG_SCENE_TEMP_20
 
 /// The room's actors, numbered in the order of gActorPlacements.
@@ -48,8 +50,8 @@ enum PsynergyTest2ActorId {
 #define ROCK_SHEET_BYTES 1280 ///< the falling rock's pictures, decompressed
 #define ROCK_FRAMES 20        ///< how long a rock flies
 
-/// The rocks a talk scatters, in heap slot 220: their tiles, 64 rocks and their
-/// sprites, the next rock to use, and where the tiles are in VRAM.
+/// The rocks a talk scatters, in the menu's heap slot: their tiles, 64 rocks
+/// and their sprites, the next rock to use, and where the tiles are in VRAM.
 struct RockWork {
   u8 tiles[ROCK_SHEET_BYTES];
   struct Particle rocks[ROCK_COUNT];
@@ -93,19 +95,20 @@ void PsynergyTest2_PoundTarget(s32 mode) {
 /// The event for Tremor on ACTOR_STAKE, which does nothing.
 void PsynergyTest2_IgnoreTremor(void) {}
 
-/// Grind on ACTOR_STAKE sets its animation 3.
+/// Grind on ACTOR_STAKE stands the stone stake up again.
 void PsynergyTest2_GrindActor(void) { Actor_SetAnimationById(ACTOR_STAKE, 3); }
 
-/// Burst on cell 50 copies in the broken wall, a 1 by 2 block from (49, 1),
-/// cell behaviors and all.
+/// Burst on cell behavior 50 copies in the broken wall, a 1 by 2 block from
+/// (49, 1), cell behaviors and all.
 void PsynergyTest2_BurstWall(s32 mode) {
   if (mode == 1) {
-    MapGrid_CopyCellsLayered(49, 1, 1, 2, 34, mode);
+    MapGrid_CopyCellsLayered(49, 1, 1, 2, 34, 1);
     MapGrid_CopyCellAttributes(49, 1, 1, 2, 34, 3);
   }
 }
 
-/// Stepping onto cell 30 starts a battle, the first time only.
+/// Stepping onto cell behavior 30 starts a battle, the first time only; no cell
+/// of the room's map holds 30, so it never runs.
 void PsynergyTest2_StepIntoBattle(void) {
   if (!Event_GetFlag(FLAG_BATTLE_FOUGHT)) {
     Event_SetFlag(FLAG_BATTLE_FOUGHT);
@@ -126,14 +129,15 @@ void PsynergyTest2_ScatterRocks(s32 id) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-/// Sets screen transition 256 and event mode 2, and coils the rope.
+/// Fades the room in over the backdrop, sets the fast message speed, coils the
+/// rope and shows the stake sunk flat.
 s32 Scene_Initialize(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   work->sceneAttributeHigh = 0;
   work->sceneAttributeLow = 0;
-  gMainRoutineWork.messageSpeed = 2;
+  gMainRoutineWork.messageSpeed = MESSAGE_SPEED_FAST;
   Rope_Initialize();
   // Coils rope 0 between the two posts.
   Value3((s32 (*)())Rope_Coil, 0, ACTOR_FIRST_POST, ACTOR_SECOND_POST);
@@ -334,10 +338,9 @@ UNUSED void PsynergyTest2_DropActor(s32 mode, s32 id, s32 x, s32 z) {
   }
 }
 
-/// Unused: the Psynergy test's Scoop helpers (PsynergyTest_DigCells and the
-/// rest), copied here with nothing calling them.
-UNUSED void PsynergyTest2_RaiseMonster(s32 mode, s32 x, s32 z, s32 row,
-                                       s32 column) {
+/// Unused: the Psynergy test's PsynergyTest_RaiseStatue again.
+UNUSED void PsynergyTest2_RaiseStatue(s32 mode, s32 x, s32 z, s32 row,
+                                      s32 column) {
   struct Actor *actor;
 
   if (mode == 1) {

@@ -2,8 +2,8 @@
 #define ALCHEMY_DJINN_MENU_H
 
 /// @file
-/// The Djinn menu's work, held in the menu heap slot
-/// (Ram_HeapSlots->menuWork) while the menu is open.
+/// The Djinn menu: its lists, backdrop and work, the fields of a Djinni's list
+/// entry, and the Djinn tutorial's lines.
 
 #include "static_assert.h"
 #include "types.h"
@@ -15,8 +15,9 @@
 #define DJINN_ENTRY_INDEX 31      ///< its number within its element
 #define DJINN_ENTRY_ELEMENT 0xe0  ///< its element (enum Element)
 #define DJINN_ENTRY_MEMBER 0xf00  ///< the party member holding it
-#define DJINN_ENTRY_IS_SET 0x8000 ///< set; an unset one is drawn in colour 2
+#define DJINN_ENTRY_IS_SET 0x8000 ///< set; a standby one is TEXT_COLOR_RED
 
+#define DJINN_ELEMENTS 4
 #define DJINN_LIST_MEMBERS 8 ///< list columns: one per party member
 #define DJINN_LIST_ROWS 10   ///< entries one party member's list holds
 
@@ -80,7 +81,14 @@ struct DjinnPreviewWindow {
   s16 y;
 };
 
-/// The Djinn menu's work, laid out as ItemMenuWork is; it names only what the
+/// DjinnMenuWork.pending's bits: what the chosen pair still waits for.
+enum DjinnPending {
+  DJINN_PENDING_SECOND = 1, ///< Unused: a second Djinni is to be chosen
+  DJINN_PENDING_CONFIRM = 2 ///< a give or trade awaits its confirmation
+};
+
+/// The Djinn menu's work, in the HEAP_SLOT_MENU heap slot from the menu's
+/// opening to its closing, laid out as ItemMenuWork is: it names only what the
 /// Djinn screen reads, and says whose the rest is.
 struct DjinnMenuWork {
   u8 unused[8];    ///< no view of the menu work names it
@@ -90,7 +98,7 @@ struct DjinnMenuWork {
   struct WindowSprite *cursor;
   /// The second of ItemMenuWork's sideIcons; not named here.
   struct WindowSprite *secondSideIcon;
-  s8 selectedColumn[2];
+  s8 selectedColumn[2];   ///< each side's party member, an index into members
   s8 sideCount[2];        ///< ItemMenuWork's; not named here
   u8 unusedAfterSides[4]; ///< no view of the menu work names it
   s32 itemWindow;         ///< ItemMenuWork's and ShopWork's; not named here
@@ -108,35 +116,39 @@ struct DjinnMenuWork {
   s32 helpWindow;
   u8 cursorGrid[4];       ///< ItemMenuWork's cursor grid; not named here
   void *memberSprites[8]; ///< the party members' figures
-  s16 memberX[8];
-  s16 memberY[8];
+  s16 memberX[8];         ///< screen pixels
+  s16 memberY[8];         ///< screen pixels
   FIXED memberScale[8];   ///< ItemMenuWork's; not named here
   s16 memberSpriteIds[8]; ///< ItemMenuWork's; not named here
-  u16 selection[2];
-  u16 pairEntries[2];
+  u16 selection[2];       ///< each side's cursor (DJINN_CURSOR_ROW_STRIDE)
+  u16 pairEntries[2];     ///< each side's chosen list entry
   struct WindowSprite *secondCursor;
   u8 unusedBeforeArrows[4]; ///< no view of the menu work names it
   /// The up and down arrows beside the party row (MenuCursor_Create).
   struct WindowSprite *pageArrows[2];
   struct DjinnMenuBackdrop *backdrop;
-  u8 unusedAfterBackdrop[64]; ///< no view of the menu work names it
-  u16 entries[32];            ///< ItemMenuWork's items; not named here
-  u16 members[8];             ///< the party in order
-  u8 pairCount;               ///< not read by name here
+  u8 unusedAfterBackdrop[64];      ///< no view of the menu work names it
+  u16 entries[32];                 ///< ItemMenuWork's items; not named here
+  u16 members[DJINN_LIST_MEMBERS]; ///< the party in order
+  u8 pairCount;                    ///< not read by name here
   u8 memberCount;
-  u8 shownMember[2];
+  u8 shownMember[2]; ///< the party member giving and the one receiving
   /// ItemMenuWork's selectedItemIcon; not named here.
   struct WindowSprite *selectedIcon;
-  u16 pending;
+  u16 pending;        ///< DjinnPending bits
   s16 completionFlag; ///< ItemMenuWork's; not named here
   void *figures[4];   ///< ItemMenuWork's; not named here
   u16 slotX[4];
   u16 slotY[4];
   s32 figurePhases[4];  ///< ItemMenuWork's figureScales; not named here
   u16 figureFacings[4]; ///< ItemMenuWork's; not named here
+  /// The Djinn chosen on each side: index in their element, element, party
+  /// member.
+  ///@{
   u8 pairIndex[2];
   u8 pairElement[2];
   u8 pairMember[2];
+  ///@}
   s16 messageOffset; ///< ItemMenuWork's; not named here
 };
 
@@ -149,8 +161,5 @@ STATIC_ASSERT(offsetof(struct DjinnMenuWork, backdrop) == 384);
 STATIC_ASSERT(offsetof(struct DjinnMenuWork, members) == 516);
 STATIC_ASSERT(offsetof(struct DjinnMenuWork, shownMember) == 534);
 STATIC_ASSERT(offsetof(struct DjinnMenuWork, pairMember) == 604);
-
-/// The four elements' Djinn, Venus to Jupiter.
-#define DJINN_ELEMENTS 4
 
 #endif

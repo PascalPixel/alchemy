@@ -5,6 +5,15 @@
 #include "window_internal.h"
 #include "resource_ids.h"
 
+extern u8 *gIcon_BasePointerTable[];
+extern u8 *gIcon_OverlayPointerTable[];
+extern u8 *gIcon_MarkPointers[];
+extern u8 *gIcon_DigitPointers[];
+
+void Icon_Decode(GlyphTransfer *glyph, s32 outlined);
+void Icon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
+                             s32 *tileOut, s32 reuse);
+
 /// Returns how many item icons the icon table holds; Icon_BuildItemIconTiles
 /// draws icon 0 for a number past them.
 s32 Icon_CountItemIcons(void) { return gItemIconsEnd - gItemIcons; }
@@ -12,11 +21,6 @@ s32 Icon_CountItemIcons(void) { return gItemIconsEnd - gItemIcons; }
 /// Returns how many Psynergy icons the icon table holds;
 /// Icon_BuildAbilityIconTiles draws icon 0 for a number past them.
 s32 Icon_CountPsynergyIcons(void) { return gPsynergyIconsEnd - gPsynergyIcons; }
-
-extern u8 *gIcon_BasePointerTable[];
-extern u8 *gIcon_OverlayPointerTable[];
-
-void Icon_Decode(GlyphTransfer *work, s32 layer);
 
 /// Builds a command icon (overlay overlayIcon over base baseIcon) and loads it
 /// into a sprite tile slot: *slot, or a free one when reuse is 0.
@@ -39,13 +43,6 @@ void Icon_BuildCommandIconTiles(s32 overlayIcon, s32 baseIcon, s32 *slot,
   *tileOut = VramCache_Load(*slot, 2 * 2 * TILE_SIZE_4BPP, work->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 }
-
-extern u8 *gIcon_BasePointerTable[];
-
-void Icon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
-                             s32 *tileOut, s32 reuse);
-void Icon_Decode(GlyphTransfer *work, s32 overlay);
-s32 Icon_CountItemIcons(void);
 
 /// Builds the icon of a battle action's item.
 void Ability_RequestGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
@@ -87,13 +84,6 @@ void Icon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
   *tileOut = VramCache_Load(*cacheSlot, 2 * 2 * TILE_SIZE_4BPP, work->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 }
-
-extern u8 *gIcon_BasePointerTable[];
-extern u8 *gItemIcons[];
-extern u8 *gIcon_MarkPointers[];
-extern u8 *gIcon_DigitPointers[];
-
-void Icon_Decode(GlyphTransfer *work, s32 overlay);
 
 /// Draws an item's icon into the glyph work buffer from its inventory code
 /// (enum InventoryEncoding) with the layers asked for (ICON_ flags): the frame,
@@ -151,6 +141,8 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
     count = (code & INVENTORY_QUANTITY_MASK) >> INVENTORY_QUANTITY_SHIFT;
     count++;
   }
+  // Counts up to a full stack show: the ones digit from digits 0 to 9, the
+  // tens from a second set at 10 to 12.
   if (count != 0 && count <= INVENTORY_STACK_MAX) {
     s32 ones = count % 10;
 
@@ -192,8 +184,6 @@ s32 Icon_BuildMiscIconTiles(s32 icon, s32 unused, s32 cacheSlot) {
   return 1;
 }
 
-void Icon_Decode(GlyphTransfer *work, s32 layer);
-
 /// Decodes item code's icon (the first icon for code 0) into the glyph work.
 void Icon_DrawItem(s32 code) {
   GlyphTransfer *state = Ram_HeapSlots->glyphTransfer;
@@ -208,13 +198,6 @@ void Icon_DrawItem(s32 code) {
   state->height = 2;
   Icon_Decode(state, 0);
 }
-
-extern u8 *gIcon_BasePointerTable[];
-
-void Icon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
-                                s32 *tileOut, s32 reuse);
-void Icon_Decode(GlyphTransfer *work, s32 overlay);
-s32 Icon_CountPsynergyIcons(void);
 
 /// Builds the Psynergy icon of a battle action, as Icon_BuildAbilityIconTiles.
 void Ability_LoadGlyph(s32 action, s32 withBase, s32 *slot, s32 *tile,
@@ -256,8 +239,6 @@ void Icon_BuildAbilityIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
   *tileOut = VramCache_Load(*cacheSlot, 2 * 2 * TILE_SIZE_4BPP, work->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 }
-
-void Icon_Decode(GlyphTransfer *work, s32 overlay);
 
 /// Draws one of the other icons into the glyph work buffer.
 void Icon_DrawMisc(u32 index) {

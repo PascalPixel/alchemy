@@ -99,7 +99,7 @@ void Sanctum_ShowKeeperMessage(s32 messageId) {
   messageId = Sanctum_GetServiceMessage(messageId);
   Message_OpenWindowFar(messageId, 5, 0,
                         MESSAGE_WINDOW_VOICE(voice) | MESSAGE_WINDOW_FIXED_X |
-                            2);
+                            MESSAGE_WINDOW_UNREAD);
   while (Message_AllTypedFar() == 0)
     wait(1);
   wait(1);
@@ -121,7 +121,7 @@ void Sanctum_ShowKeeperMessageHidingCursor(s32 messageId) {
   Message_CloseFinishedWindowsFar();
   Message_OpenWindowFar(messageId, 5, 0,
                         MESSAGE_WINDOW_VOICE(voice) | MESSAGE_WINDOW_FIXED_X |
-                            2);
+                            MESSAGE_WINDOW_UNREAD);
   while (Message_AllTypedFar() == 0)
     wait(1);
   wait(1);
@@ -560,6 +560,8 @@ void Sanctum_RunMemberIconBurst(s32 member) {
          effectIndex--) {
       s32 flag = *active;
 
+      // DEAD: the byte moved to the top of the word, which cannot change
+      // whether it is zero; the ROM keeps the shift.
       flag <<= 24;
 
       active += sizeof(struct FieldParticle);

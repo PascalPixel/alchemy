@@ -7,9 +7,12 @@
 #include "window/item_icon.h"
 #include "window/window.h"
 
-/// Runs the save screen's selection until a choice completes: saving (refused
-/// while FLAG_CANNOT_SAVE_HERE or FLAG_NO_PLACE_TO_SAVE is set), sleep mode or
-/// the options. Returns -1 when the screen is cancelled and 0 otherwise.
+/// Handles Save your quest, Sleep and Change settings from the Pause menu.
+/// Saving is refused, with its message, while FLAG_CANNOT_SAVE_HERE or
+/// FLAG_NO_PLACE_TO_SAVE is set. A refused or cancelled save or a cancelled
+/// settings menu reopens the Pause menu on the same entry; cancelling the Pause
+/// menu returns -1. Sleep shows its message and sets gSleepRequested. Otherwise
+/// returns 0.
 s32 PauseMenu_Run(void) {
   s32 selection = 0;
 
@@ -19,16 +22,19 @@ again:
     return -1;
   if (selection == PAUSE_MENU_SAVE_QUEST) {
     if (GameFlag_Get(FLAG_CANNOT_SAVE_HERE)) {
+      // "Cannot save here"
       FieldMessage_Show((s32)MsgCannotSaveHere, FIELD_MESSAGE_ZOOM);
       goto again;
     }
     if (GameFlag_Get(FLAG_NO_PLACE_TO_SAVE)) {
+      // "This is no place for that!"
       FieldMessage_Show((s32)MsgNoPlaceForThat, FIELD_MESSAGE_ZOOM);
       goto again;
     }
     if (Save_ToChosenFile() == -1)
       goto again;
   } else if (selection == PAUSE_MENU_SLEEP) {
+    // "Activating Sleep Mode. Press Select and the L & R Buttons to exit."
     FieldMessage_Show((s32)MsgSleepMode, FIELD_MESSAGE_ZOOM);
     gSleepRequested = selection;
   } else if (selection == PAUSE_MENU_CHANGE_SETTINGS) {

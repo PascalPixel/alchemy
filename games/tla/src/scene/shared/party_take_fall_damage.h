@@ -1,4 +1,11 @@
-/// The party takes 10 damage from a fall; who goes down is noted.
+/// The HP each party member loses when a flame or a rolling fireball knocks the
+/// leader down.
+#define FALL_DAMAGE 10
+
+/// A flame or a rolling fireball has knocked the leader down: each party member
+/// loses FALL_DAMAGE HP and the leader shows the hit; each member it brings
+/// down is listed, loses their poison and raises
+/// FIELD_RAISED_TRIGGER_PARTY_FELL, as a hazard's damage does.
 void Party_TakeFallDamage(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 leader = FieldParty_GetLeaderActor();
@@ -6,11 +13,13 @@ void Party_TakeFallDamage(void) {
   s32 i;
   s16 hp[8];
 
-  (void *)Actor_Get(leader);
+  // DEAD: the leader's actor, looked up and not used (a hazard's damage makes
+  // him flinch with it); the ROM keeps the call.
+  (void)Actor_Get(leader);
   count = Party_CountMembers();
   for (i = 0; i < count; i++)
     hp[i] = Unit_Get(gMainRoutineWork.party[i])->hp;
-  Party_AddHp(-10, 0);
+  Party_AddHp(-FALL_DAMAGE, 0);
   work->fallenCount = 0;
   work->survivorCount = 0;
   Actor_SetAttachedEffect(leader,

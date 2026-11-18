@@ -16,6 +16,7 @@
 
 #define MERCURY_PARTICLE_MAX 24  ///< droplets (one a field effect sprite)
 #define MERCURY_AFTERIMAGE_MAX 8 ///< afterimages of the rising Djinni
+#define MERCURY_RISE_FRAMES 15   ///< frames the Djinni rises, 8 pixels each
 
 /// Moves the actor halfway to the actor it watches; a copy of
 /// Actor_MoveHalfwayTowardTarget.
@@ -44,11 +45,7 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   s32 remaining;
   s32 resourceId;
   struct Actor *copies[MERCURY_AFTERIMAGE_MAX];
-  struct {
-    s32 x;
-    s32 y;
-    s32 z;
-  } position;
+  struct Vector3 position;
 
   djinni = Actor_GetById(djinniId);
   if (djinni == NULL)
@@ -65,6 +62,8 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   Sound_PlayFar(SE_NOTE_HIGH);
   Actor_RunRepeatedMotion(djinniId, 1);
   wait(20);
+
+  // Three hops, at 3, 5 and 7 pixels a frame.
   Sound_PlayFar(SE_JUMP);
   Actor_Jump(djinniId, 3, 14);
   Sound_PlayFar(SE_JUMP);
@@ -73,11 +72,14 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   Actor_Jump(djinniId, 7, 18);
   wait(20);
 
+  // Eight afterimages of the same sprite at 15/16 size, each closing half
+  // the distance to the one before it every frame, sharing one VRAM cache
+  // entry, as in Djinn_RunBattleStartHop.
   kind = ((struct Sprite *)djinni->sprite)->entries[0]->animationId;
   resource = NULL;
   previous = djinni;
   cursor = copies;
-  for (remaining = 7; remaining >= 0; remaining--) {
+  for (remaining = MERCURY_AFTERIMAGE_MAX - 1; remaining >= 0; remaining--) {
     copy = Actor_CreateFar(kind, djinni->x.fixed, djinni->y.fixed,
                            djinni->z.fixed);
     *cursor++ = copy;
@@ -101,13 +103,13 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   resourceId = resource->slot;
   Sound_PlayFar(SE_HIGH_JUMP);
   djinni->motionFlags = 0;
-  for (remaining = 14; remaining >= 0; remaining--) {
+  for (remaining = MERCURY_RISE_FRAMES - 1; remaining >= 0; remaining--) {
     djinni->y.fixed += toFIXED(8);
     wait(1);
   }
   Actor_ReleaseFar(djinni);
   list = copies;
-  for (remaining = 7; remaining >= 0; remaining--)
+  for (remaining = MERCURY_AFTERIMAGE_MAX - 1; remaining >= 0; remaining--)
     Actor_ReleaseFar((*list++));
   if (resourceId != VRAM_CACHE_ENTRY_COUNT)
     VramCache_FreeEntry(resourceId);
@@ -118,8 +120,10 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
                            ANIM_LEADER_ARMS_RAISED);
   wait(20);
 
+  // The droplets (SPRITE_DROPLET), one a frame, from where the Djinni was on
+  // screen (FieldEffect_UpdateRandomTargetParticle moves them).
   SET_POSITION(&position, djinni->x.fixed, djinni->y.fixed, djinni->z.fixed);
-  Camera_WorldToScreen(&position.x);
+  Camera_WorldToScreen(&position);
 
   effect = effectWork->particles;
   remaining = MERCURY_PARTICLE_MAX - 1;
@@ -146,3 +150,4 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
 
 #undef MERCURY_PARTICLE_MAX
 #undef MERCURY_AFTERIMAGE_MAX
+#undef MERCURY_RISE_FRAMES

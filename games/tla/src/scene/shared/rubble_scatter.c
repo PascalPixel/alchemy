@@ -1,5 +1,5 @@
-/// Scatters dust and rubble around the leader's feet; with spread, they fly
-/// outward.
+/// Eight clouds of dust rise in a row across the leader, 2 pixels apart, and
+/// fly out from him in eight directions when `spread` is set.
 void Dust_Scatter(s32 spread) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
@@ -8,9 +8,9 @@ void Dust_Scatter(s32 spread) {
   FIXED y;
 
   do {
-    y = leader->y.fixed - ((Random_Below(14)) << 16);
+    y = leader->y.fixed - toFIXED(Random_Below(14));
     effect = (struct FieldEffect *)FieldActor_Create(
-        SPRITE_DUST_CLOUD, (i << 17) + leader->x.fixed - toFIXED(8),
+        SPRITE_DUST_CLOUD, i * toFIXED(2) + leader->x.fixed - toFIXED(8),
         y - toFIXED(2), leader->z.fixed);
     if (effect != 0) {
       frame = Sprite_ShareVramCacheEntry(effect->sprite, frame);
@@ -23,7 +23,7 @@ void Dust_Scatter(s32 spread) {
       effect->sprite->priority = 1;
       if (spread != 0) {
         effect->velocity.x =
-            Iwram_MulFX(Trig_Cos(i * DEGtoANG(45)), FIXED_ONE * 6 / 5);
+            Iwram_MulFX(Trig_Cos(i * DEGtoANG(45)), toFIXED(6) / 5);
         effect->velocity.z = Math_Sin(i * DEGtoANG(45));
       } else {
         effect->velocity.x = spread;

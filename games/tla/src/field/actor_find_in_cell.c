@@ -5,20 +5,27 @@
 #include "system/ram_buffer.h"
 #include "field/actor.h"
 #include "field/field_sequence_event.h"
+#include "field/field_work.h"
+#include "field/scene_tables.h"
 
-/// Returns the first of objects 8 to 63 standing in the same 16-pixel cell
-/// as position (x, y and z), or NULL. Callers pass the object asking; the
-/// search does not use it.
+/// Returns the first placed actor (ACTOR_FIRST_PLACED up to the treasure spots,
+/// FIELD_TREASURE_ACTOR) standing in the same 16-pixel cell as position (x, y
+/// and z), or NULL. Callers pass the actor asking; the search does not use it.
 struct Actor *Actor_FindInCell(s32 *position, struct Actor *self) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u32 i;
-  void **objects;
+  struct Actor **objects;
   struct Actor *actor;
 
-  i = 8;
-  objects = &work->actors[8];
-  for (; i < 64; i++) {
+  i = ACTOR_FIRST_PLACED;
+  objects = &work->actors[ACTOR_FIRST_PLACED];
+  for (; i < FIELD_TREASURE_ACTOR; i++) {
     actor = *objects++;
+    // UB: ObjectTable_Clear leaves unused slots null.
+#ifdef UBFIX
+    if (actor == NULL)
+      continue;
+#endif
     if (FIELD_CELL(position[0]) == FIELD_CELL(actor->x.fixed) &&
         FIELD_CELL(position[1]) == FIELD_CELL(actor->y.fixed) &&
         FIELD_CELL(position[2]) == FIELD_CELL(actor->z.fixed))

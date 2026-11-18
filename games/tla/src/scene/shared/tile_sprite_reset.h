@@ -1,9 +1,13 @@
-/// Resets a tile sprite to the map's tile, frame 0.
+#include "field/perspective.h"
+
+/// An actor script's call: turns the actor's sprite to the yaw of the World
+/// Map's view (the map grid's heap slot holds the WorldMapView there), clears
+/// its sprite flags and goes on with the script.
 s32 TileSprite_Reset(struct Actor *actor) {
-  u16 *tile = (u16 *)((u8 *)Ram_HeapSlots->mapGrid + 286);
+  struct WorldMapView *view = (struct WorldMapView *)Ram_HeapSlots->mapGrid;
   struct FieldSprite *sprite = actor->sprite;
 
-  sprite->rotation = *tile;
+  sprite->rotation = view->yaw;
   sprite->flags = 0;
   return 1;
 }

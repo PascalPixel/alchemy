@@ -1,14 +1,15 @@
-/// Lets an actor fall until it lands, at most a second, then stops it.
+/// Lets an actor fall, waits up to sixty frames for it to land and ten more,
+/// then holds it still.
 void Actor_WaitToLand(s32 id) {
-  s32 n = 60;
+  s32 remainingFrames = 60;
   struct Actor *actor = Actor_Get(id);
 
   actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  while (n != 0) {
+  while (remainingFrames != 0) {
     System_Wait(1);
     if (actor->velocityY == 0)
       break;
-    n--;
+    remainingFrames--;
   }
   System_Wait(10);
   actor->motionFlags = 0;

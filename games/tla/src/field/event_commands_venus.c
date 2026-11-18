@@ -9,8 +9,12 @@
 
 struct FieldEffectWork;
 
-/// A Venus Djinni joining the party, as The Broken Seal's
-/// Djinn_RunVenusJoinEffect.
+/// The motes that circle down onto the leader as a Venus Djinni joins.
+enum { VENUS_JOIN_MOTES = 24 };
+
+/// A Venus Djinni joins the party: it hops twice, spins and leaps, then shrinks
+/// away; the leader turns to the camera and plays ANIM_LEADER_ARMS_RAISED while
+/// 24 particles rise round it (FieldEffect_UpdateRadialSpread).
 void Djinn_RunVenusJoinEffect(s32 djinniId) {
   struct Actor *leader;
   struct Actor *djinni;
@@ -63,7 +67,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
 
   // One rising particle a frame into each of the 24 field effect sprites.
   effect = effectWork->particles;
-  remaining = 23;
+  remaining = ARRAY_COUNT(effectWork->particles) - 1;
   do {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialSpread);
@@ -86,8 +90,8 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   MapGrid_SetScreenShakeFar(1, 1, 1);
   wait(30);
 
-  // 24 motes, evenly spread round a circle, 120 pixels above the leader.
-  for (remaining = 0; remaining <= 23; remaining++) {
+  // The motes, evenly spread round a circle, 120 pixels above the leader.
+  for (remaining = 0; remaining < VENUS_JOIN_MOTES; remaining++) {
     position.x = leader->x.fixed;
     position.y = leader->y.fixed + toFIXED(120);
     position.z = leader->z.fixed;
@@ -97,7 +101,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
       djinni->scaleY = scale;
       djinni->scaleX = scale;
       djinni->orbitFrames = 100;
-      djinni->orbitAngle = remaining * TRIG_TURN / 24;
+      djinni->orbitAngle = remaining * TRIG_TURN / VENUS_JOIN_MOTES;
       djinni->update = (void (*)(void))FieldEffect_UpdateDescendingOrbitActor;
       djinni->motionFlags = 0;
       Actor_SelectAnimationFar(djinni, 7);
@@ -137,14 +141,12 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   FieldEffect_ReleaseSlots();
 }
 
-struct FieldEffectWork;
-
 /// Field effect sprite callback of a Mercury Djinni's droplets: each falls from
 /// 100 pixels above (on screen) to a random point 2 to 8 pixels round a spot 15
 /// to 20 pixels over the leader, at 3 to 6 pixels a frame, and where it lands
-/// splashes 12 pixels in a random direction, at half size, with sound 143. It
-/// then falls again 6 frames later, until Djinn_RunMercuryJoinEffect
-/// sets its state to 2: its next splash is its last.
+/// splashes 12 pixels in a random direction, at half size, with SE_CRACK. It
+/// then falls again 6 frames later, until Djinn_RunMercuryJoinEffect sets its
+/// state to MERCURY_DROPLET_LAST_FALL: its next splash is its last.
 void FieldEffect_UpdateRandomTargetParticle(struct FieldParticle *effect) {
   struct Actor *source;
   struct Vector3 position;

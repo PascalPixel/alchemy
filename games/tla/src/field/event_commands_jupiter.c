@@ -45,7 +45,8 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   Sound_PlayFar(SE_HIGH_JUMP);
   Actor_Jump(djinniId, 12, 22);
 
-  // 24 light particles from where the Djinni is on screen.
+  // 24 light particles, every one the effect work has, from where the
+  // Djinni is on screen.
   position.x = djinni->x.fixed;
   position.y = djinni->y.fixed;
   position.z = djinni->z.fixed;
@@ -53,8 +54,9 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   Actor_ReleaseFar(djinni);
   Sound_PlayFar(SE_SCATTER);
   effect = effectWork->particles;
-  remainingParticles = 23;
-  // One a frame, each with a random sprite param of 0 to 6.
+  remainingParticles = ARRAY_COUNT(effectWork->particles) - 1;
+  // One a frame, each in a random colour mode from SPRITE_COLOR_NORMAL to
+  // SPRITE_COLOR_GREY.
   do {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_RunAngledApproachPhases);
@@ -103,40 +105,35 @@ void FieldEffect_AdvanceAngleWithRamp(struct Actor *actor) {
   }
 }
 
-/// Spins an object 1/8 turn and shrinks it by 7/1024 a frame, destroying it
-/// once its scale falls below 3/16.
+/// Per-frame update: spins an actor 1/8 turn and shrinks it by 7/1024 a frame,
+/// releasing it once its scale falls below 3/16, 119 frames from full size.
+/// The Mars Djinni's joining shrinks the Djinni away with it.
 void FieldEffect_ShrinkActorAndDestroySlow(void *obj) {
+  struct Actor *actor = obj;
   s32 step = -(FIXED_ONE * 7 / 1024);
   s32 scaleY;
   s32 scale;
   s32 angle;
 
-  scaleY = ((struct MotionObject *)obj)->scaleY + step;
-  scale = ((struct MotionObject *)obj)->scaleX;
-  ((struct MotionObject *)obj)->scaleY = scaleY;
-  angle = ((struct MotionObject *)obj)->angle;
+  scaleY = actor->scaleY + step;
+  scale = actor->scaleX;
+  actor->scaleY = scaleY;
+  angle = actor->facing;
   scale += step;
-  ((struct MotionObject *)obj)->angle = angle + DEGtoANG(45);
-  ((struct MotionObject *)obj)->scaleX = scale;
+  actor->facing = angle + DEGtoANG(45);
+  actor->scaleX = scale;
   if (scale < FIXED_ONE * 3 / 16)
-    Actor_ReleaseFar(obj);
+    Actor_ReleaseFar(actor);
 }
 
-struct FieldEffectWork;
-
-#define Actor_SetChildValueUnlessFifteenFar                                    \
-  ((void (*)(s32, s32))Sprite_SetAnimationColorModesFar)
-#define gEffectWork Ram_HeapSlots->fieldEffectWork
-
-/// Field effect sprite callback of a Mars Djinni's sparks: the spark flies 120
+/// Field effect sprite callback of a Mars Djinni's sparks (enum
+/// MarsSparkState): the spark flies 120
 /// pixels up the screen (give or take 3/32 turn) from its origin at up to 5
 /// pixels a frame and starts over, until it stops where it arrives, hidden; 40
 /// frames later it swarms to points within 4 pixels of one 20 pixels over the
 /// leader, until it is freed once it arrives.
 void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
-  // The leader through its typed sprite: as struct Actor's untyped one, the
-  // sprite's load waits on the stores before it.
-  struct EffectOwner *owner;
+  struct Actor *owner;
   struct Vector3 position;
   s32 state;
 
@@ -156,11 +153,13 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
     effect->targetZ = position.z;
     effect->acceleration = toFIXED(5);
     effect->speedMax = toFIXED(5);
-    effect->turnStepLimited = state;
+    effect->turnStepLimited = 0;
     effect->state++;
 
+    // At the leader's sprite priority, until MARS_SPARK_RISING brings it in
+    // front after 3 frames.
     ((struct Sprite *)effect->actor)->image.priority =
-        owner->sprite->image.priority;
+        (*(struct Sprite **)&owner->sprite)->image.priority;
     effect->flags = 0;
     effect->age = 0;
     if ((gVBlankCount & 1) != 0)
@@ -168,7 +167,7 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
   } else if (state == MARS_SPARK_RISING) {
     if ((s16)effect->age == 3) {
       ((struct Sprite *)effect->actor)->image.priority = 0;
-      effect->flags = 4;
+      effect->flags = FIELD_PARTICLE_LIFTED_BY_Z;
     }
     if (FieldParticle_HasPendingTarget(effect) == 0)
       effect->state--;
@@ -177,7 +176,7 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
       effect->originX = effect->x;
       effect->originZ = effect->z;
       ((struct Sprite *)effect->actor)->image.priority = 0;
-      effect->flags = 4;
+      effect->flags = FIELD_PARTICLE_LIFTED_BY_Z;
       effect->render = 0;
       effect->state++;
       effect->callbackDelay = 40;
@@ -186,8 +185,8 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
     effect->render = 1;
     effect->x = effect->originX;
     effect->z = effect->originZ;
-    SET_POSITION(&position, owner->position.x, owner->position.y + toFIXED(20),
-                 owner->position.z);
+    SET_POSITION(&position, owner->x.fixed, owner->y.fixed + toFIXED(20),
+                 owner->z.fixed);
     Camera_WorldToScreen(&position);
     Vector_AddPolarOffset(toFIXED(4), Random16(), &position);
     effect->targetX = position.x;
@@ -203,6 +202,3 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
       FieldEffect_ClearOwnedSlot(effect);
   }
 }
-
-#undef Actor_SetChildValueUnlessFifteenFar
-#undef gEffectWork

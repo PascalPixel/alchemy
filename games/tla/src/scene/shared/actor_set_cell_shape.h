@@ -1,15 +1,18 @@
-/// Sets the shape of the cell under an actor `level` steps above its ground.
-void Actor_SetCellShape(s32 level, s32 layer, s32 owner) {
-  struct Actor *actor = Actor_GetById(owner);
+/// Gives the cell of `layer` under an actor the shape of the ground there,
+/// `level` steps of 8 pixels (CELL_HEIGHT_STEPS) higher, or lower when
+/// negative, as a crumbling pillar sinks 4.
+void Actor_SetCellShape(s32 level, s32 layer, s32 id) {
+  struct Actor *actor = Actor_GetById(id);
   u8 *shape = Ram_MapShapeGrid + (Ram_HeapSlots->mapGrid->layers[layer].cells -
                                   (struct MapCell *)Ram_MapCellBuffer);
-  s32 value =
+  s32 kind =
       MapGrid_GetTerrainKind(actor->layer, actor->x.fixed, actor->z.fixed);
-  s32 height =
-      Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed) >> 19;
+  s32 height = CELL_HEIGHT_STEPS(
+      Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed));
 
   height += level;
 
-  shape += actor->x.fixed / toFIXED(16) + actor->z.fixed / toFIXED(16) * 128;
-  *shape = MapCollision_FindOrAddTag(actor->layer, value, height);
+  shape += actor->x.fixed / toFIXED(16) +
+           actor->z.fixed / toFIXED(16) * MAPGRID_SIZE;
+  *shape = MapCollision_FindOrAddTag(actor->layer, kind, height);
 }

@@ -1,7 +1,13 @@
-/// Sets the flame throwers going: each listed actor with its flags and reach,
-/// the actors their flames stop at, what is called back when one does and the
-/// step trigger a hit raises; then blends the flames over the room and starts
-/// their puffs.
+/// A flame thrower's reach, in whole pixels, and its flame (enum
+/// FlameThrowerFlags), the two halves of its flags in the flame thrower tables.
+#define FLAME_THROWER_REACH_BITS 0xf
+#define FLAME_THROWER_FLAG_BITS 0xf0
+
+/// Sets the flame throwers going, unless the scene starts where the party was:
+/// up to four listed actors with their flags and reach, and up to four actors
+/// their flames stop at; then what is called back when a flame meets a blocked
+/// one and the step trigger a hit raises. Blends the flames over the room and
+/// starts their puffs.
 void FlameThrowers_Start(u16 *targets, u16 *stops, s32 onBlocked,
                          s32 hitTrigger) {
   struct FlameHitWork *work = RIDE_WORK;
@@ -11,7 +17,7 @@ void FlameThrowers_Start(u16 *targets, u16 *stops, s32 onBlocked,
   s32 value;
   s32 one;
   s32 flags;
-  s32 height;
+  s32 reach;
   struct Actor *actor;
   s32 alpha;
   s32 control;
@@ -19,8 +25,8 @@ void FlameThrowers_Start(u16 *targets, u16 *stops, s32 onBlocked,
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0) {
     for (i = 0; i < 4 && (id = *targets++) > 0; i++) {
       flags = *targets;
-      height = flags & 15;
-      flags &= 0xf0;
+      reach = flags & FLAME_THROWER_REACH_BITS;
+      flags &= FLAME_THROWER_FLAG_BITS;
       actor = Actor_Get(id);
       targets++;
       if (actor != NULL) {
@@ -31,7 +37,7 @@ void FlameThrowers_Start(u16 *targets, u16 *stops, s32 onBlocked,
         entry->active = one;
         entry->flags = flags;
         entry->actor = Actor_Get(id);
-        entry->reach = toFIXED(height);
+        entry->reach = toFIXED(reach);
         entry->timer = i;
         entry++;
       }

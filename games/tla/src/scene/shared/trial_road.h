@@ -1,5 +1,5 @@
-#ifndef TLA_TRIAL_ROAD_H
-#define TLA_TRIAL_ROAD_H
+#ifndef ALCHEMY_TRIAL_ROAD_H
+#define ALCHEMY_TRIAL_ROAD_H
 
 #include "types.h"
 #include "system/ram_buffer.h"
@@ -33,18 +33,19 @@ extern u8 gInventorySnapshot[];
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 
 void Actor_StartScript(struct Actor *actor, const void *script);
-void Actor_JumpDownLedge(s32 id, s32 a, s32 b);
+void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param);
 s32 Field_FindNearbyTalkTarget(s32 id);
 s32 Import_FieldTryJumpForward(void);
 
-void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
-void TrialRoad_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
-                                s32 g);
-void Import_MadPlantLeapAtLeader(s32 a, s32 b, s32 c);
+void Field_RequestBattleFromEncounterTable(s32 row, s32 column);
+void TrialRoad_CopyTouchedCells(s32 x, s32 z, s32 layerIndex, s32 width,
+                                s32 height, s32 toX, s32 toZ);
+void Import_MadPlantLeapAtLeader(s32 sprite, s32 x, s32 z);
 
-static __inline__ void Cyclone_CopyTouchedCells_(s32 a, s32 b, s32 c, s32 d,
-                                                 s32 e, s32 f, s32 g) {
-  TrialRoad_CopyTouchedCells(a, b, c, d, e, f, g);
+static __inline__ void Cyclone_CopyTouchedCells_(s32 x, s32 z, s32 layerIndex,
+                                                 s32 width, s32 height, s32 toX,
+                                                 s32 toZ) {
+  TrialRoad_CopyTouchedCells(x, z, layerIndex, width, height, toX, toZ);
 }
 
 /// The store-flag form of a logical not.

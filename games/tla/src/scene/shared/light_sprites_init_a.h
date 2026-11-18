@@ -1,8 +1,10 @@
-/// Sets up the glow sprites from the field's cached tiles A.
-void LightSprites_InitA(void) {
+/// Unused: loads the first set of light pictures (gField_CachedTilesA) into
+/// VRAM and starts drawing the lit actors (none yet), small, each at its own
+/// priority.
+UNUSED void LightSprites_InitA(void) {
   u8 *buffer = BumpAlloc(3072);
 
-  Iwram_ClearWordsEntry(gLightSpriteActors, 64);
+  Iwram_ClearWordsEntry(gLightSpriteActors, sizeof(gLightSpriteActors));
   Decompress_TaggedLz(gField_CachedTilesA, buffer);
   gLightSpriteTile = VramCache_FindFreeEntry();
   VramCache_Load(gLightSpriteTile, 3072, buffer);

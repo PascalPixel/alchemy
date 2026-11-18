@@ -59,7 +59,7 @@ const s16 gWorldMap_EncounterRules[][4] = {
     {15, BATTLE_ENVIRONMENT_FOREST, -1, 79},
     {16, BATTLE_ENVIRONMENT_BLIZZARD, -1, 78},
     {16, BATTLE_ENVIRONMENT_BLIZZARD_FOREST, -1, 79},
-    { -1, 0, 0, 0 },
+    {-1},
 };
 
 /// The same aboard the ship (LEADER_MOVEMENT_SHIP).
@@ -67,7 +67,7 @@ const s16 gWorldMap_ShipEncounterRules[][4] = {
     {7, BATTLE_ENVIRONMENT_SEA, -1, 52},
     {8, BATTLE_ENVIRONMENT_SEA, -1, 77},
     {9, BATTLE_ENVIRONMENT_SEA, -1, 52},
-    { -1, 0, 0, 0 },
+    {-1},
 };
 
 /// The encounter of each Djinni battle (Encounter_GetDjinnFormation): {zone,

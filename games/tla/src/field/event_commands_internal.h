@@ -2,9 +2,10 @@
 #define ALCHEMY_EVENT_COMMANDS_INTERNAL_H
 
 /// @file
-/// What every part of the event_commands object shares: its includes.
-/// event_commands.c includes it before the parts, and each part includes it
-/// too.
+/// What every part of event_commands.c shares: its includes and the macros
+/// and types more than one part uses. event_commands.c includes it before the
+/// parts, and each part includes it too, so that a part read on its own
+/// resolves. It places no bytes.
 
 #include "battle/battle.h"
 #include "window/message_argument.h"
@@ -110,8 +111,8 @@ enum MarsSparkState {
 /// smaller than what they follow.
 #define AFTERIMAGE_SCALE (FIXED_ONE * 15 / 16)
 
-/// gMainRoutineWork.pendingDjinni's parts, as Djinn_ResolvePending reads them,
-/// as The Broken Seal's. bits: 15..12 kind | 11..0 event or flag.
+/// gMainRoutineWork.pendingDjinni's parts, as Djinn_ResolvePending reads them.
+/// bits: 15..12 kind | 11..0 event or flag.
 #define DJINN_PENDING_KIND_MASK 0xf000
 #define DJINN_PENDING_EVENT_MASK 0xfff
 /// A Djinni battle's event without DJINN_NO_HOP.

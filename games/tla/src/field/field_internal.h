@@ -38,6 +38,7 @@
 #include "sound/sound.h"
 #include "system/ram_code.h"
 #include "field/field_sequence.h"
+#include "sprite_ids.h"
 
 /// How far off its heading the leader's pad movement probes for a clear way:
 /// a sixteenth of a turn, 22.5 degrees, and three times that.
@@ -117,10 +118,10 @@ struct MapHeaderLayer {
   u8 periodY; ///< 8-pixel tiles
 };
 
-/// Where a layout's tileset animation and blend scripts are decoded, in the
-/// map collision buffer after the collision, as The Broken Seal's.
+/// Where a layout's tileset animation script is decoded, in the map collision
+/// buffer after the collision, as The Broken Seal's; its blend script follows
+/// at MAPGRID_BLEND_SCRIPT (field/map_grid.h).
 #define MAPGRID_ANIMATION_SCRIPT (Ram_MapCollision + 4096)
-#define MAPGRID_BLEND_SCRIPT (Ram_MapCollision + 7680)
 
 /// A layout's header: the camera's bounds, the layers' priorities, tile
 /// bases and setup, and the offsets, from the header's start, of its packed
@@ -140,7 +141,8 @@ struct MapHeader {
   s32 shapes;       ///< into gMapShapeGrid
   s32 animation;    ///< the tileset animation script, or 0 for none
   s32 blend;        ///< the blend script, or 0 for none
-  s32 script;       ///< into Ram_MapCollision + 0x2000
+  /// Into Ram_MapCollision after its MAPGRID_SHAPE_TABLE_BYTES.
+  s32 script;
 };
 
 /// FieldWork as the sand trail reads its priority
@@ -160,7 +162,8 @@ struct MapGridTilePosition {
 /// One step of a map edit: the rectangle of cells to copy from and the
 /// wait after it.
 struct MapGridCellAnimationStep {
-  u16 source; ///< the source rectangle's x in cells, or 0xffff to end
+  /// The source rectangle's x in cells, or MAPGRID_ANIMATION_STEPS_END.
+  u16 source;
   /// The source rectangle's y, width and height in cells, and the frames to
   /// wait after the copy.
   s16 y, width, height, delay;
@@ -220,9 +223,9 @@ enum AnimationFacingKind {
   ANIM_FACING_EIGHT_PICTURES_MIRRORED = 88
 };
 
-/// A facing table entry: the picture's offset from the base picture, and the
-/// bit that mirrors it.
+/// A facing table entry's offset of its picture from the base picture.
 #define ANIM_FACING_PICTURE_MASK 7
+/// A facing table entry's bit that mirrors its picture.
 #define ANIM_FACING_MIRRORED (1 << 7)
 /// The sector a facing angle lies in, a turn cut into `sectors`.
 #define FACING_SECTOR(dir, sectors)                                            \
@@ -281,11 +284,9 @@ enum {
 
 /// Sprite ids the field's own code creates actors of.
 enum {
-  FIELD_SPRITE_RIPPLE = 24, ///< the ripple behind the leader in shallow water
-  FIELD_SPRITE_FOOTPRINT = 25, ///< a footprint, on maps that show them
   /// The ripple behind the leader or the ship in the world map's shallow
-  /// water, rings that widen and fade (spr_269.png).
-  WORLD_MAP_SPRITE_RIPPLE = 269,
+  /// water, rings that widen and fade.
+  WORLD_MAP_SPRITE_RIPPLE = SPRITE_SPLASH_RING,
   /// The puffs the ship leaves behind it as it sails or flies low, on
   /// gActor_WakeScript (spr_356.png).
   WORLD_MAP_SPRITE_WAKE = 356

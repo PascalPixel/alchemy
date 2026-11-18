@@ -1,4 +1,7 @@
-/// Stops an actor and starts its scripted puff.
+/// Readies a vent's puff: it stops, is drawn behind the actors around it, its
+/// sprite at OBJ `priority`, shadowless and tinted SPRITE_COLOR_RED_TINT, and
+/// breaks up (the dust cloud's animation 2) without spinning or growing until
+/// gTaopoSwamp_PuffRises releases it, 44 frames on.
 void Actor_StartScripted(struct Actor *actor, s32 priority) {
   actor->motionFlags = 0;
   actor->collisionFlags = 0;
@@ -7,7 +10,7 @@ void Actor_StartScripted(struct Actor *actor, s32 priority) {
   Actor_SetSpriteFlags(actor, 0);
   Actor_SelectAnimation(actor, 2);
   Actor_StartScript(actor, gTaopoSwamp_PuffRises);
-  FieldActor_SetSpriteColor(actor, 10);
+  FieldActor_SetSpriteColor(actor, SPRITE_COLOR_RED_TINT);
   actor->timer = 0;
   actor->speedLimit = 0;
   actor->acceleration = 0;

@@ -279,7 +279,7 @@ void AncientLemuria_HeadForTheDock(void) {
   if (!GameFlag_Get(FLAG_BLUE_STATUE_MOVED) ||
       GameFlag_Get(FLAG_MET_KING_HYDROS)) {
     Sound_Play(SE_MAP_EXIT);
-    Import_EventSetExitRequest(2);
+    Import_EventSetExitRequest(ANCIENT_LEMURIA_TO_LEMURIA_DOCK_EAST_A);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -297,7 +297,7 @@ void AncientLemuria_HeadForTheDock(void) {
       Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
     }
     Actor_SetSpeed(ACTOR_KRADEN, 1.2);
-    Actor_SetAnimationById(ACTOR_KRADEN, 2);
+    Actor_SetAnimationById(ACTOR_KRADEN, ANIM_WALK);
     actor = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (actor != NULL)
       Actor_SetDestinationById(ACTOR_KRADEN, actor->x.part[0].integer,
@@ -372,13 +372,13 @@ s32 Scene_PrepareMap(void) {
 
   if (entrance == 1)
     GameFlag_Set(FLAG_LEMURIA_OTHER_WAY_IN);
-  else if (entrance == 2)
+  else if (entrance == ANCIENT_LEMURIA_FROM_LEMURIA_DOCK_EAST_A)
     GameFlag_Clear(FLAG_LEMURIA_OTHER_WAY_IN);
-  else if (entrance == 3)
+  else if (entrance == ANCIENT_LEMURIA_FROM_LEMURIA)
     GameFlag_Clear(FLAG_LEMURIA_OTHER_WAY_IN);
   else if (entrance == 4)
     GameFlag_Set(FLAG_LEMURIA_OTHER_WAY_IN);
-  else if (entrance == 5)
+  else if (entrance == ANCIENT_LEMURIA_FROM_LEMURIA_DOCK_EAST_B)
     GameFlag_Set(FLAG_LEMURIA_OTHER_WAY_IN);
   if (GameFlag_Get(FLAG_LEMURIA_OTHER_WAY_IN)) {
     MapGrid_CopyCellPictureCellsRect(38, 47, 26, 12, 8, 47);
@@ -487,12 +487,12 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(30);
   Actor_SetAnimationById(ACTOR_FELIX, ANIM_SHAKE_HEAD);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_SECOND_LEMURIAN, 2);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_SECOND_LEMURIAN, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, ANIM_NOD);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_LEMURIAN, 0, 10);
   Actor_MoveToObject(ACTOR_PIERS, ACTOR_FELIX);
@@ -524,12 +524,12 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_WalkByAndWait(ACTOR_SECOND_LEMURIAN, -8, 8);
   Actor_FaceDirection(ACTOR_SECOND_LEMURIAN, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, ANIM_NOD);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_LEMURIAN, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, 4);
+  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, ANIM_SHAKE_HEAD);
   Event_ShowMessageThenWait(ACTOR_SECOND_LEMURIAN, 0, 10);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
@@ -542,7 +542,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(30);
-  Actor_SetAnimationById(ACTOR_KRADEN, 3);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(25);
   Actor_StartRepeatedMotion(ACTOR_LEMURIAN, 3);
@@ -606,10 +606,10 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirectionById(ACTOR_PIERS, FACING_EAST, 0);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(10);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, ANIM_NOD);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_LEMURIAN, 0, 10);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
@@ -619,15 +619,15 @@ void AncientLemuria_MeetTheLemurians(void) {
   Event_ShowMessageThenWait(ACTOR_SECOND_LEMURIAN, 0, 10);
   Actor_FaceDirectionById(ACTOR_LEMURIAN, FACING_EAST, 0);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, ANIM_NOD);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_LEMURIAN, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, ANIM_NOD);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_SECOND_LEMURIAN, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, ANIM_NOD);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, ANIM_NOD);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_LEMURIAN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_SECOND_LEMURIAN, FACING_SOUTH_SOUTHWEST, 0);
@@ -639,7 +639,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_SMILE, 55);
-  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, ANIM_NOD);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_LEMURIAN, 0, 10);
   Actor_FaceDirection(ACTOR_LEMURIAN, FACING_NORTH_NORTHEAST, 0);
@@ -691,24 +691,24 @@ void AncientLemuria_MeetTheLemurians(void) {
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   Actor_FaceDirectionById(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, ANIM_NOD);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, ANIM_NOD);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_LEMURIAN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_SECOND_LEMURIAN, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(30);
-  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, ANIM_NOD);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_LEMURIAN, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, ANIM_NOD);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_SECOND_LEMURIAN, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_LEMURIAN, 2);
@@ -720,7 +720,7 @@ void AncientLemuria_MeetTheLemurians(void) {
       Event_Wait(25);
       Actor_FaceDirectionById(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
       Event_Wait(30);
-      Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+      Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
       Event_Wait(10);
       Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
       gFieldWork->message++;
@@ -773,18 +773,18 @@ void AncientLemuria_MeetTheLemurians(void) {
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, ANIM_NOD);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_SECOND_LEMURIAN, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_LEMURIAN, 2);
   Event_Wait(10);
   Event_ShowMessageThenWait(ACTOR_LEMURIAN, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, 4);
+  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, ANIM_SHAKE_HEAD);
   Event_ShowMessageThenWait(ACTOR_SECOND_LEMURIAN, 0, 10);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  Actor_SetAnimationById(ACTOR_LEMURIAN, 3);
-  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, 3);
+  Actor_SetAnimationById(ACTOR_LEMURIAN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, ANIM_NOD);
   Event_Wait(25);
   FieldCamera_FollowActor(ACTOR_SECOND_LEMURIAN, 1);
   Actor_WalkBy(ACTOR_SECOND_LEMURIAN, 0, -32);
@@ -835,7 +835,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHEAST, 0);
   Actor_FaceDirectionById(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(30);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(20);
@@ -850,7 +850,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAnimationById(ACTOR_FELIX, ANIM_NOD);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_PIERS, 1.2);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_WALK);
@@ -861,7 +861,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
-  Actor_SetAnimationById(ACTOR_KRADEN, 2);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
     Actor_SetDestinationById(ACTOR_KRADEN, leader->x.part[0].integer,

@@ -186,11 +186,9 @@ s32 FieldSequence_Run(void) {
     }
     arrivalState = gMainRoutineWork.teleportState;
     if (arrivalState == 1) {
-      // Through a pointer: stored as teleportState, the byte is read and masked
-      // with a 0 made before the store, which then serves ownerOverride.
+      // teleportState = 2, through its address.
       *(s8 *)&gMainRoutineWork.teleportState = 2;
-      // Once-only: inside the block the 0's one use counts at loop depth, so
-      // it stays in a register across Teleport_PlaySparksAndFade.
+      /* FAKEMATCH(dead): a once-only loop round the arrival. */
       do {
         s32 zero = 0;
 

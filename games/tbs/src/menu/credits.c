@@ -7,6 +7,7 @@
 #include "flags.h"
 #include "resource_ids.h"
 #include "battle/battle.h"
+#include "battle/battle_work.h"
 #include "field/field.h"
 #include "field/map_grid_scroll.h"
 #include "game/game.h"
@@ -53,9 +54,8 @@
 #define CREDITS_TEXT_COLOR 15
 #define CREDITS_SHADOW_COLOR 1
 
-/// A battle background resource begins with its colours, the palette half it
-/// takes; its packed tiles follow.
-#define BATTLE_BACKGROUND_COLORS 128
+/// A battle background resource begins with its BATTLE_BACKGROUND_COLORS
+/// colours, the palette half it takes; its packed tiles follow.
 #define BATTLE_BACKGROUND_PALETTE_BYTES (BATTLE_BACKGROUND_COLORS * 2)
 /// A battle background's tiles of 256 colours, 256 by 120 pixels.
 #define BATTLE_BACKGROUND_TILES 480
@@ -65,8 +65,6 @@
 /// character block 0, and BG2's, over character block 2.
 #define CREDITS_BG3_SCREEN_BLOCK 15
 #define CREDITS_BG2_SCREEN_BLOCK 31
-/// A tilemap word: two map entries side by side, `left` in its low half.
-#define TILEMAP_PAIR(left, right) (((right) << 16) | (left))
 /// A tilemap row's words.
 #define TILEMAP_ROW_WORDS (BG_SCREEN_WIDTH / 2)
 /// The tile the margins show: the character block's last, which lies in the
@@ -182,15 +180,15 @@ void Credits_LoadBackground(u32 resourceId, s32 alternate) {
 /// over fifteen rows, three blank rows, then a zeroed tail.
 void Credits_BuildBackgroundTilemap(u32 *destination) {
   s32 i;
-  u32 blankTiles = TILEMAP_PAIR(CREDITS_BLANK_TILE, CREDITS_BLANK_TILE);
-  u32 tilePair = TILEMAP_PAIR(0, 1);
+  u32 blankTiles = MAP_ENTRY_PAIR(CREDITS_BLANK_TILE, CREDITS_BLANK_TILE);
+  u32 tilePair = MAP_ENTRY_PAIR(0, 1);
 
   // Pad above and below the picture so vertical wrapping stays blank.
   for (i = 0; i < 2 * TILEMAP_ROW_WORDS; i++)
     *destination++ = blankTiles;
   for (i = 0; i < BATTLE_BACKGROUND_TILES / 2; i++) {
     *destination++ = tilePair;
-    tilePair += TILEMAP_PAIR(2, 2);
+    tilePair += MAP_ENTRY_PAIR(2, 2);
   }
   for (i = 0; i < 3 * TILEMAP_ROW_WORDS; i++)
     *destination++ = blankTiles;

@@ -36,20 +36,6 @@
 /// and four Djinn sprites, one for each element, over the file's Djinn counts.
 #define FILE_LIST_SPRITE_SPACING 3
 
-/// What the file list is choosing a file for, which decides the files the
-/// cursor may stop on.
-enum FileMenuMode {
-  FILE_LIST_SAVE,     ///< saving: any file, empty ones too
-  FILE_LIST_CONTINUE, ///< continuing: files not yet cleared
-  FILE_LIST_COPY,     ///< copying: any file with data
-  FILE_LIST_ERASE,    ///< erasing: any file with data
-  /// The title's Battle: files that have found a Djinni.
-  FILE_LIST_EXTRA,
-  FILE_LIST_CLEARED, ///< the title's Send: cleared files only
-  /// The title's Update: files saved before FLAG_REUNITED was set.
-  FILE_LIST_UPDATE
-};
-
 #include "window/window.h"
 #include "gamepak/far_call/field.h"
 

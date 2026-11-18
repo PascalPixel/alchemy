@@ -70,17 +70,6 @@ enum FileAction {
   SAVE_ACTION_UPDATE = 5
 };
 
-/// What the file list chooses a file for (Save_ChooseAndLoadFile), as
-/// window/screens_save.c's enum FileMenuMode: a file not yet cleared to
-/// continue, one for the Battle Arena, a cleared one to start again from, and
-/// one saved before the party reunited, to update.
-enum {
-  FILE_LIST_CONTINUE = 1,
-  FILE_LIST_EXTRA = 4,
-  FILE_LIST_CLEARED = 5,
-  FILE_LIST_UPDATE = 6
-};
-
 /// The two secret button codes: unlocked, held and progress of each.
 extern s16 gClear_CodeUnlocked;
 

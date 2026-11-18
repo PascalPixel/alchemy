@@ -517,6 +517,9 @@ enum ObjMode {
 /// behind, and its 16-colour palette.
 #define OBJ_PRIORITY(n) ((n) << 10)
 #define OBJ_PALETTE(n) ((n) << 12)
+/// The sprite priority bits of attribute 2's high byte, which holds its
+/// priority and palette.
+#define ATTR2_HIGH_PRIORITY_MASK (OBJ_PRIORITY(3) >> 8)
 /// An affine sprite's matrix number, attribute 1's bits 9 to 13, in the attr01
 /// word.
 #define OBJ_MATRIX(n) ((n) << 25)

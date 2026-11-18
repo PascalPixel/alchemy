@@ -60,7 +60,7 @@ struct GroundParticle {
 
 /// GroundParticle.timer after the decrement that counts a live particle down,
 /// when it was already free (0): the u16 wraps.
-#define GROUND_PARTICLE_FREED 0xffff
+#define GROUND_PARTICLE_FREED 65535
 
 STATIC_ASSERT(offsetof(struct GroundParticle, positionX) == 12);
 STATIC_ASSERT(sizeof(struct GroundParticle) == 32);

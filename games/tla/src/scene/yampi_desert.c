@@ -130,7 +130,7 @@ void YampiDesert_StepOntoStakeTops(void);
 void YampiDesert_OpenLadderPit(void);
 void YampiDesert_SetBlocksShown(s32 show);
 void YampiDesert_HideBlocks(void);
-void YampiDesert_SetActorsShown(s32 show, s32 first, u32 count);
+void Actors_SetDrawn(s32 show, s32 first, u32 count);
 void YampiDesert_UpdateSandFlow(void);
 void YampiDesert_CheckUpperLevel(void);
 void YampiDesert_OpenScoopHole(void);
@@ -1114,11 +1114,11 @@ void YampiDesert_SetBlocksShown(s32 show) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_YAMPI_DESERT_TRAINERS_WHIP_CHEST)
-    YampiDesert_SetActorsShown(show, ACTOR_WHIP_CHEST_ROOM_FIRST_BLOCK, 2);
+    Actors_SetDrawn(show, ACTOR_WHIP_CHEST_ROOM_FIRST_BLOCK, 2);
   else if (scene == SCENE_YAMPI_DESERT_BLOW_MACE_CHEST)
-    YampiDesert_SetActorsShown(show, ACTOR_BLOW_MACE_CHEST_ROOM_FIRST_BLOCK,
-                               ACTOR_BLOW_MACE_CHEST_ROOM_LAST_BLOCK -
-                                   ACTOR_BLOW_MACE_CHEST_ROOM_FIRST_BLOCK + 1);
+    Actors_SetDrawn(show, ACTOR_BLOW_MACE_CHEST_ROOM_FIRST_BLOCK,
+                    ACTOR_BLOW_MACE_CHEST_ROOM_LAST_BLOCK -
+                        ACTOR_BLOW_MACE_CHEST_ROOM_FIRST_BLOCK + 1);
 }
 
 /// Shows the room's unseen blocks.
@@ -1133,19 +1133,7 @@ void YampiDesert_HideBlocks(void) {
   GameFlag_Clear(FLAG_YAMPI_DESERT_BLOCKS_SHOWN);
 }
 
-/// Shows `count` actors from `first`, or hides them.
-void YampiDesert_SetActorsShown(s32 show, s32 first, u32 count) {
-  u32 i;
-
-  for (i = 0; i < count; i++) {
-    struct Actor *actor = Actor_GetById(first + i);
-
-    if (show)
-      actor->priorityFlags &= ~ACTOR_PRIORITY_NOT_DRAWN;
-    else
-      actor->priorityFlags |= ACTOR_PRIORITY_NOT_DRAWN;
-  }
-}
+#include "shared/actors_set_hidden.c"
 
 extern u32 gYampiDesert_MayorRunsAhead[];
 extern u32 gYampiDesert_TravelersFollow[];

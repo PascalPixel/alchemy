@@ -1,13 +1,13 @@
 /// @file
 /// Beneath Jupiter Lighthouse, reached by the Cyclone teleporter in its
-/// grounds (SceneId_JupiterLighthouseBasementTeleporters). Cyclone clears three
-/// patches of bushes, the second hiding a Mad Plant
-/// (JupiterLighthouse_UncoverMadPlant); Hover on the purple tile crosses to the
-/// far teleporter, whose Cyclone takes the party up to the ground floor inside
-/// the main gates (JupiterLighthouse_TeleportToGroundFloor), and the near one
-/// back up to the grounds. Its side room
-/// (SceneId_JupiterLighthouseBasementPsynergyStone) is lit by sixteen sparks
-/// that rise and drift over its floor.
+/// grounds (SceneId_JupiterLighthouseBasementTeleporters). Cyclone scatters the
+/// weeds round each teleporter and a patch between them where a Mad Plant
+/// hides (JupiterLighthouse_UncoverMadPlant); Hover on the purple tile crosses
+/// to the far teleporter, whose Cyclone takes the party up to the ground floor
+/// inside the main gates (JupiterLighthouse_TeleportToGroundFloor), and the
+/// near one back up to the grounds. Its side room
+/// (SceneId_JupiterLighthouseBasementPsynergyStone) holds a Psynergy Stone, and
+/// sixteen sparks rise and sway out of the dark in its middle.
 #include "flags.h"
 #include "battle/battle.h"
 #include "field/field_sequence.h"
@@ -55,11 +55,33 @@
 #include "field/actor_script.h"
 #include "fixed_math.h"
 
+/// The side room's sparks, which take turns at the particle sheet's two
+/// swells.
+#define SPARK_COUNT 16
+/// How long a spark lives before it starts again: a slow swell and the 12
+/// frames it stays gone after, or a quick one.
+enum { SPARK_SLOW_LIFETIME = 212, SPARK_QUICK_LIFETIME = 116 };
+/// SPRITE_PARTICLE's swells, from a speck to its full glow, held 32 frames,
+/// and back: slowly, 12 frames a step, or quickly, 6.
+enum { ANIM_PARTICLE_SLOW_SWELL = 9, ANIM_PARTICLE_QUICK_SWELL };
+
+/// The cells Cyclone acts on in the teleporters' room: the weeds round the
+/// near teleporter, the five of the Mad Plant's patch that hide nothing, the
+/// weeds round the far teleporter, the two teleporters and the Mad Plant's own.
+enum {
+  TRIGGER_NEAR_WEEDS = 30,
+  TRIGGER_MAD_PLANT_WEEDS,
+  TRIGGER_FAR_WEEDS,
+  TRIGGER_NEAR_TELEPORTER,
+  TRIGGER_FAR_TELEPORTER,
+  TRIGGER_MAD_PLANT = 38
+};
+
 struct EffectOptions;
 
 void Actor_DepartInRing(s32 id);
 
-void MapGrid_SetAttributeBAt();
+u8 MapGrid_SetAttributeBAt(s32 x, s32 z, s32 layer, s32 value);
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
@@ -74,19 +96,19 @@ u16 gPaletteCycleUnlitColors[14] BSS_DATA;
 s16 gLightSpriteTile BSS_DATA;
 s16 gLightSpriteCount BSS_DATA;
 struct Actor *gLightSpriteActors[16] BSS_DATA;
-struct LightOam gLightSpriteOam[16] BSS_DATA;
-s16 gLightSpriteLargeOam BSS_DATA;
-s16 gJupiterLighthouse_LightLevel BSS_DATA;
+struct LightOam gLightSpriteOams[16] BSS_DATA;
+s16 gLightSpritesLarge BSS_DATA;
+s16 gLightSpritePriority BSS_DATA;
 struct CellTarget gCrackedTiles BSS_DATA;
 /// Sets a map cell's ground height (MapGrid_SetCellHeight, through the
 /// overlay's import).
-void Import_MapGridSetCellHeight();
+void Import_MapGridSetCellHeight(s32 x, s32 z, s32 layer, s32 height);
 
 void Leader_CenterInCell(void);
 
-void JupiterLighthouse_ClearSecondBushes(void);
+void JupiterLighthouse_ScatterMadPlantWeeds(void);
 
-void JupiterLighthouse_ClearThirdBushes(void);
+void JupiterLighthouse_ScatterFarWeeds(void);
 
 void JupiterLighthouse_TeleportToEntrance(void);
 
@@ -94,10 +116,9 @@ extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
 
-void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
-                                 s32 g);
-
 s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
+
+s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -109,21 +130,22 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-extern struct Trigger gJupiterLighthouseBasement_Triggers[];
-extern struct Trigger gJupiterLighthouseBasement_Room2Triggers[];
+extern struct Trigger gJupiterLighthouseBasement_TeleportersTriggers[];
+extern struct Trigger gJupiterLighthouseBasement_PsynergyStoneTriggers[];
 
-/// Cyclone clears the first patch of the basement's bushes.
-void JupiterLighthouse_ClearFirstBushes(void) {
+/// Cyclone scatters the weeds round the near teleporter, the one up to the
+/// grounds.
+void JupiterLighthouse_ScatterNearWeeds(void) {
   FieldTileCopies_CopyTouchedCells(69, 0, 4, 4, 67, 24, 1);
 }
 
-/// Cyclone clears the second patch of bushes.
-void JupiterLighthouse_ClearSecondBushes(void) {
+/// Cyclone scatters weeds of the patch a Mad Plant hides in.
+void JupiterLighthouse_ScatterMadPlantWeeds(void) {
   FieldTileCopies_CopyTouchedCells(64, 0, 4, 3, 89, 28, 1);
 }
 
-/// Cyclone clears the bushes hiding a Mad Plant: until it is beaten it leaps at
-/// the leader and its battle begins.
+/// Cyclone scatters the weeds over the Mad Plant: until it is beaten it leaps
+/// at the leader and its battle begins.
 void JupiterLighthouse_UncoverMadPlant(void) {
   FieldTileCopies_CopyTouchedCells(64, 0, 4, 3, 89, 28, 1);
   if (!Event_GetFlag(FLAG_MAD_PLANT(3))) {
@@ -134,30 +156,34 @@ void JupiterLighthouse_UncoverMadPlant(void) {
   }
 }
 
-/// Cyclone clears the third patch of bushes.
-void JupiterLighthouse_ClearThirdBushes(void) {
+/// Cyclone scatters the weeds round the far teleporter, the one up to the
+/// ground floor.
+void JupiterLighthouse_ScatterFarWeeds(void) {
   FieldTileCopies_CopyTouchedCells(69, 1, 4, 3, 108, 31, 1);
 }
 
-/// The teleporter's ring takes the party to the entrance (exit 4).
+/// The near teleporter's ring takes the party up to the grounds.
 void JupiterLighthouse_TeleportToEntrance(void) {
-  Import_EventSetExitRequest(4);
+  Import_EventSetExitRequest(
+      JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS_TO_JUPITER_LIGHTHOUSE_ENTRANCE);
 }
 
-/// The teleporter's ring takes the party to the ground floor (exit 6).
+/// The far teleporter's ring takes the party up to the ground floor.
 void JupiterLighthouse_TeleportToGroundFloor(void) {
-  Import_EventSetExitRequest(6);
+  Import_EventSetExitRequest(
+      JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS_TO_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON);
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next ==
       (s32)&SceneId_JupiterLighthouseBasementPsynergyStone)
-    return gJupiterLighthouseBasement_Room2Triggers;
-  return gJupiterLighthouseBasement_Triggers;
+    return gJupiterLighthouseBasement_PsynergyStoneTriggers;
+  return gJupiterLighthouseBasement_TeleportersTriggers;
 }
 
-/// Sends a spark back to a random place within its circle on the side room's
-/// floor, to rise for its lifetime again (116 or 212 frames).
+/// Starts a spark's life again, 32 pixels below the floor at a random point 8
+/// to 40 pixels from the middle of the dark (one time in 256 it starts from
+/// where it is), swelling slowly or quickly as its lifetime is long or short.
 void JupiterLighthouse_RestartSpark(struct Actor *actor) {
   if (Random16() & 0xff) {
     s32 position[3];
@@ -171,18 +197,19 @@ void JupiterLighthouse_RestartSpark(struct Actor *actor) {
     SET_ACTOR_POSITION(actor, position[0], position[1], position[2]);
   }
   actor->userValue = actor->timer;
-  if (actor->timer == 212)
-    Actor_SelectAnimation(actor, 9);
+  if (actor->timer == SPARK_SLOW_LIFETIME)
+    Actor_SelectAnimation(actor, ANIM_PARTICLE_SLOW_SWELL);
   else
-    Actor_SelectAnimation(actor, 10);
+    Actor_SelectAnimation(actor, ANIM_PARTICLE_QUICK_SWELL);
 }
 
 void TilesetAnim_SuspendAll(void);
 void TilesetAnim_ResumeAll(void);
 void JupiterLighthouse_LoadPalettes(s32 mode);
 
-/// A spark's update: it stands still while Psynergy or a menu is up, waits out
-/// its starting delay, and otherwise rises, swaying, until it restarts.
+/// A spark's update: it stands still, and the room's tile animations with it,
+/// while Psynergy or a menu is up; otherwise it waits out its starting delay,
+/// then rises, swaying east and west, until its life starts again.
 void JupiterLighthouse_UpdateSpark(struct Actor *actor) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -207,15 +234,16 @@ void JupiterLighthouse_UpdateSpark(struct Actor *actor) {
   actor->y.fixed += actor->speedLimit;
 }
 
-/// Places the side room's sixteen sparks, each starting a little later and
-/// rising a little faster than the one before.
+/// Places the side room's sixteen sparks, each starting 64 frames after the
+/// one before and rising a sixteenth of a pixel a frame faster; every second
+/// one swells slowly.
 void JupiterLighthouse_SpawnSparks(void) {
   s32 i;
   s32 next;
 
   struct Actor *actor;
-  s16 *action;
-  s16 *timer;
+  s16 *lifetime;
+  s16 *framesLeft;
 
   i = 0;
   do {
@@ -223,33 +251,33 @@ void JupiterLighthouse_SpawnSparks(void) {
 
     actor->motionFlags = 0;
     actor->priorityFlags = 0;
-    actor->speedLimit = (i << 12) + toFIXED(1) / 2;
-    actor->acceleration = (i << 12) + toFIXED(1) / 2;
+    actor->speedLimit = i * (toFIXED(1) / 16) + toFIXED(1) / 2;
+    actor->acceleration = i * (toFIXED(1) / 16) + toFIXED(1) / 2;
     actor->update = (void (*)(void))JupiterLighthouse_UpdateSpark;
     actor->riseEnabled = i << 3;
     Actor_SetSpriteFlags(actor, 0);
     FieldActor_SetSpriteColor(actor, SPRITE_COLOR_RBG);
     ((struct FieldSprite *)actor->sprite)->priority = 1;
-    Actor_SetBlendMode(actor, 1);
-    action = &actor->timer;
-    timer = (s16 *)&actor->userValue;
+    Actor_SetBlendMode(actor, OBJ_MODE_SEMI_TRANSPARENT);
+    lifetime = &actor->timer;
+    framesLeft = &actor->userValue;
     next = i + 1;
     if (i & 1) {
-      s32 parameter = 212;
-      *action = parameter;
-      *timer = 0;
+      s32 frames = SPARK_SLOW_LIFETIME;
+      *lifetime = frames;
+      *framesLeft = 0;
     } else {
-      s32 parameter = 116;
-      *action = parameter;
-      *timer = 0;
+      s32 frames = SPARK_QUICK_LIFETIME;
+      *lifetime = frames;
+      *framesLeft = 0;
     }
     i = next;
-  } while (i != 16);
+  } while (i != SPARK_COUNT);
 }
 
-/// Sets up the basement room being entered: the teleporters' palettes and the
-/// ring the party arrives in, or the Psynergy stone room's blended sparks.
-/// Returns 0.
+/// Sets up the basement room being entered: the teleporters' palettes, cycling
+/// whether or not the lighthouse is lit, and the ring the party arrives in by
+/// teleporter, or the Psynergy Stone room's blended sparks. Returns 0.
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -257,10 +285,12 @@ s32 Scene_Initialize(void) {
       (s32)&SceneId_JupiterLighthouseBasementTeleporters) {
     JupiterLighthouse_LoadPalettes(1);
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
-        gMainRoutineWork.entrance == 4)
+        gMainRoutineWork.entrance ==
+            JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS_FROM_JUPITER_LIGHTHOUSE_ENTRANCE)
       Actor_DepartInRing(gMainRoutineWork.leaderActorId);
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
-        gMainRoutineWork.entrance == 6)
+        gMainRoutineWork.entrance ==
+            JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS_FROM_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON)
       Actor_DepartInRing(gMainRoutineWork.leaderActorId);
   }
   if (gMainRoutineWork.next ==
@@ -310,8 +340,8 @@ void Actor_RaiseFromCell(s32 id) {
   actor->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
   height = Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
   Import_MapGridSetCellHeight(actor->x.fixed, actor->z.fixed, 0,
-                              (height >> 19) + 6);
-  MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, 128);
+                              CELL_HEIGHT_STEPS(height) + 6);
+  MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, MAP_CELL_JUMP);
 }
 
 #include "shared/whirlwind_carry_leader_lower.h"
@@ -328,164 +358,25 @@ void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 
 #include "shared/whirlwind_spawn.h"
 
-/// An actor's update: every eighth frame, a sparkle rising from a random point
-/// of it.
-s32 JupiterLighthouse_RaiseSparkles(struct Actor *actor) {
-  struct EffectOptions params;
-
-  if ((gFrameCount & 7) == 0) {
-    FIXED x;
-    FIXED y;
-
-    params.priority = 3;
-    params.startScaleX = FIXED_ONE * 7 / 10;
-    params.startScaleY = FIXED_ONE * 7 / 10;
-    params.palette = 14;
-    x = actor->x.fixed + toFIXED((Random_Below(9)) - 4);
-    y = actor->y.fixed + toFIXED(32 - (Random_Below(20)));
-    FieldEffect_Spawn(x, y, actor->z.fixed, 0,
-                      (s32)(toFIXED(Random_Below(5)) + toFIXED(5)) / 10, 0,
-                      EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
-                          EFFECT_USE_PALETTE,
-                      &params);
-  }
-  return 0;
-}
+#include "shared/actor_emit_rising_sparks.h"
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 
-/// A task: queues the lit actors' sprites, 16 by 16 or, when large, 32 by 64,
-/// at their animation picture and depth, skipping those off screen.
-void LightSprites_Draw(void) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  s32 *view = &map->viewX;
-  s32 viewX, viewZ, tile, viewY;
-  struct LightOam *oam;
-  s32 i;
-  viewX = view[0] & FIELD_PIXEL_MASK;
-  viewZ = view[1] & FIELD_PIXEL_MASK;
-  tile = gVramCacheEntries[gLightSpriteTile].offset >> 5;
-  viewY = map->origin[1];
-  oam = gLightSpriteOam;
-
-  for (i = 0; i < gLightSpriteCount; i++) {
-    struct Actor *actor = gLightSpriteActors[i];
-    if (actor != 0 && actor->x.fixed != 0) {
-      s32 big, ox;
-      FIXED y, z;
-      s32 oy, depth;
-      s32 frame;
-      u32 *word;
-      ox = actor->x.fixed - viewX;
-      y = actor->y.fixed - viewY + toFIXED(8);
-      z = actor->z.fixed - viewZ - viewY;
-      oy = z - y;
-      depth = FIXEDtoINT(y + z) + 58;
-      big = gLightSpriteLargeOam;
-      big = gLightSpriteLargeOam;
-      if (big == 0) {
-        s32 x, sy;
-        frame = actor->timer;
-        x = FIXEDtoINT(ox);
-        sy = FIXEDtoINT(oy);
-        ox = x - 8;
-        oy = sy - 16;
-        if ((u32)(x + 7) > 334 || oy <= -16 || oy > 239)
-          continue;
-        ox &= 0x1ff;
-        oy &= 0xff;
-        word = (u32 *)oam;
-        *word++ = 0;
-        *word++ = oy | (ox << 16) | 0x40002000;
-        *word = (tile + frame * 8) | 0x800;
-        if (gJupiterLighthouse_LightLevel == -1)
-          oam->priority = BattleEffect_GetObjectPriority(actor);
-        else
-          oam->priority = gJupiterLighthouse_LightLevel;
-        Oam_AddSpriteAtDepthClamped(oam, depth);
-        oam++;
-      } else {
-        s32 x, sy;
-        frame = actor->timer;
-        x = FIXEDtoINT(ox);
-        sy = FIXEDtoINT(oy);
-        ox = x - 8;
-        oy = sy - 64;
-        if ((u32)(x + 23) > 350 || oy <= -64 || oy > 175)
-          continue;
-        ox &= 0x1ff;
-        oy &= 0xff;
-        word = (u32 *)oam;
-        *word++ = 0;
-        *word++ = oy | (ox << 16) | 0xc000a000;
-        *word = (tile + frame * 8) | 0x800;
-        if (gJupiterLighthouse_LightLevel == -1)
-          oam->priority = BattleEffect_GetObjectPriority(actor);
-        else
-          oam->priority = gJupiterLighthouse_LightLevel;
-        Oam_AddSpriteAtDepthClamped(oam, depth);
-        oam++;
-      }
-    }
-  }
-}
+#include "shared/light_sprites_draw.h"
 
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
-/// Loads the first set of light pictures into VRAM and starts drawing the lit
-/// actors (none yet), small.
-void LightSprites_InitA(void) {
-  u8 *buffer = BumpAlloc(3072);
+#include "shared/light_sprites_init_a.h"
 
-  Iwram_ClearWordsEntry(gLightSpriteActors, sizeof(gLightSpriteActors));
-  Decompress_TaggedLz(gField_CachedTilesA, buffer);
-  gLightSpriteTile = VramCache_FindFreeEntry();
-  VramCache_Load(gLightSpriteTile, 3072, buffer);
-  Heap_Release(buffer);
-  Task_Add(LightSprites_Draw, TASK_PASS_FRAME);
-  gLightSpriteCount = 0;
-  gLightSpriteLargeOam = 0;
-  gJupiterLighthouse_LightLevel = -1;
-}
+#include "shared/light_sprites_init_b.h"
 
-/// Loads the second set of light pictures into VRAM and starts drawing the lit
-/// actors (none yet), small.
-void LightSprites_InitB(void) {
-  u8 *buffer = Heap_Alloc(3072);
-
-  Iwram_ClearWordsEntry(gLightSpriteActors, sizeof(gLightSpriteActors));
-  Decompress_TaggedLz(gField_CachedTilesB, buffer);
-  gLightSpriteTile = VramCache_FindFreeEntry();
-  Vram_Load(gLightSpriteTile, 2048, buffer);
-  Heap_Release(buffer);
-  Task_AddFrame(LightSprites_Draw, TASK_PASS_FRAME);
-  gLightSpriteCount = 0;
-  gLightSpriteLargeOam = 0;
-  gJupiterLighthouse_LightLevel = -1;
-}
-
-/// Loads the third set of light pictures into VRAM and starts drawing the lit
-/// actors (none yet), large.
-void LightSprites_InitC(void) {
-  u8 *buffer = BumpAlloc(2048);
-
-  Iwram_ClearWordsEntry(gLightSpriteActors, sizeof(gLightSpriteActors));
-  Decompress_TaggedLz(gField_CachedTilesC, buffer);
-  gLightSpriteTile = VramCache_FindFreeEntry();
-  Vram_Load(gLightSpriteTile, 2048, buffer);
-  Heap_Release(buffer);
-  Task_AddFrame(LightSprites_Draw, TASK_PASS_FRAME);
-  gLightSpriteCount = 0;
-  gLightSpriteLargeOam = 1;
-  gJupiterLighthouse_LightLevel = -1;
-}
+#include "shared/light_sprites_init_c.h"
 
 #include "shared/light_sprites_add.h"
 
-/// Sets the priority the lit actors are drawn at; -1 takes each one's own.
-void JupiterLighthouse_SetLightLevel(s32 value) {
-  gJupiterLighthouse_LightLevel = value;
-}
+/// Sets the priority the lit actors' sprites are drawn at; -1 takes each
+/// one's own.
+void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
 #include "../field/actor_set_sprite_priority.c"
 
@@ -505,17 +396,8 @@ extern const s32 *gFieldEffect_DurationScripts[];
 
 #include "shared/cracked_tile_find_lower.h"
 
-void TilesetAnim_SuspendAll(void);
-void TilesetAnim_ResumeAll(void);
-void JupiterLighthouse_RestartSpark(struct Actor *actor);
-void JupiterLighthouse_LoadPalettes(s32 mode);
-
 #include "shared/leader_center_in_cell.h"
 
-// Centers the leader on its cell, plays sound 161 and copies the cell below
-// the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
-// one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
 struct CellTargetEntry;
@@ -534,7 +416,7 @@ void CrackedTile_Fall();
 
 #include "shared/cracked_tile_place_landing.h"
 
-void JupiterLighthouse_ClearFirstBushes(void);
+void JupiterLighthouse_ScatterNearWeeds(void);
 void JupiterLighthouse_UncoverMadPlant(void);
 void JupiterLighthouse_TeleportToGroundFloor(void);
 
@@ -559,21 +441,21 @@ struct ActorPlacement gActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct Trigger gJupiterLighthouseBasement_Triggers[] = {
+struct Trigger gJupiterLighthouseBasement_TeleportersTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30, CONDITION_ALWAYS, EVENT(JupiterLighthouse_ClearFirstBushes)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 31, CONDITION_ALWAYS, EVENT(JupiterLighthouse_ClearSecondBushes)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 32, CONDITION_ALWAYS, EVENT(JupiterLighthouse_ClearThirdBushes)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 33, CONDITION_ALWAYS, EVENT(JupiterLighthouse_TeleportToEntrance)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 34, CONDITION_ALWAYS, EVENT(JupiterLighthouse_TeleportToGroundFloor)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 38, CONDITION_ALWAYS, EVENT(JupiterLighthouse_UncoverMadPlant)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), TRIGGER_NEAR_WEEDS, CONDITION_ALWAYS, EVENT(JupiterLighthouse_ScatterNearWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), TRIGGER_MAD_PLANT_WEEDS, CONDITION_ALWAYS, EVENT(JupiterLighthouse_ScatterMadPlantWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), TRIGGER_FAR_WEEDS, CONDITION_ALWAYS, EVENT(JupiterLighthouse_ScatterFarWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), TRIGGER_NEAR_TELEPORTER, CONDITION_ALWAYS, EVENT(JupiterLighthouse_TeleportToEntrance)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), TRIGGER_FAR_TELEPORTER, CONDITION_ALWAYS, EVENT(JupiterLighthouse_TeleportToGroundFloor)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), TRIGGER_MAD_PLANT, CONDITION_ALWAYS, EVENT(JupiterLighthouse_UncoverMadPlant)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gJupiterLighthouseBasement_Room2Triggers[] = {
+struct Trigger gJupiterLighthouseBasement_PsynergyStoneTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_TABLE_END},
 };

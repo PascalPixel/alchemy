@@ -102,7 +102,6 @@
 
 /// BG1 during a battle: 256 colours, priority 3, its map in screen block
 /// BATTLE_BG1_SCREEN_BLOCK.
-#define BATTLE_BG1_SCREEN_BLOCK 31
 #define BATTLE_BG1CNT                                                          \
   (BGCNT_PRIORITY(3) | BGCNT_256_COLORS |                                      \
    BGCNT_SCREEN_BASE(BATTLE_BG1_SCREEN_BLOCK))
@@ -147,11 +146,6 @@
 /// gLinkStatus: both consoles are connected.
 #define LINK_BOTH_CONNECTED 3
 
-/// The frames a link battle tolerates without a connection before it gives
-/// up: a count above it pauses the battle (BattleWork.linkPaused) or fails
-/// the sync or transfer under way (battle_link.c, battle_turn.c).
-#define LINK_MAX_MISSED_FRAMES 24
-
 /// The two battle sprites drawn in two parts: the sprite after each is its
 /// second part, which EnemySprite_LoadIntoSlots loads into further
 /// enemy sprite slots and BattleObject_SpawnObjectsForList shows as the
@@ -191,16 +185,6 @@ enum BattleCastKind {
 /// may target lists no one, or no one there is worth the ability.
 #define TARGET_PICK_SIDE_EMPTY -2
 #define TARGET_PICK_NONE -1
-
-/// The list place codes the target pickers return (battle_targeting.c,
-/// Battle_FindUnitPlace): a place in the party's list or the enemies',
-/// or'd with the side's tag.
-#define PLACE_PARTY (1 << 8)
-#define PLACE_ENEMY (PLACE_PARTY | PLACE_ENEMY_SIDE)
-/// A place code's side bit, set for the enemies' list, and its place in the
-/// list (Battle_GetUnitAtPlace).
-#define PLACE_ENEMY_SIDE (1 << 7)
-#define PLACE_INDEX_MASK ((1 << 4) - 1)
 
 /// BattleAction.target of a held unit's lost action (COMMAND_NONE, from
 /// Battle_BuildEnemyActions and

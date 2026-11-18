@@ -437,6 +437,9 @@ void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y, s32 zoom);
 #else
 void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y);
 #endif
+/// BG1's map during a battle, a screen block: the battle background's, where
+/// the command row also places its icons' tiles.
+#define BATTLE_BG1_SCREEN_BLOCK 31
 /// BG1's vertical scroll that sets the battle background in the battle view.
 #define BATTLE_BACKGROUND_SCROLL_Y 32
 /// BattleCamera_SetView's zoom, in percent, for the battle's usual view.

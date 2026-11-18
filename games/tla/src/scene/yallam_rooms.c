@@ -36,8 +36,9 @@
 
 void MessageArgument_Push(u32 value, u32 kind);
 
-/// The inn's actors (SceneId_YallamRoomsInn), numbering the rows of
-/// gYallamRoomsInnPlacements; Sunshine's house is beside it.
+/// The actors of SceneId_YallamRoomsInn, numbering the rows of
+/// gYallamRoomsInnPlacements: its map holds two houses, the inn and Sunshine's
+/// smithy.
 enum YallamRoomsInnActorId {
   /// "Yepp had three different songs he used to sing."
   ACTOR_YEPP_SONGS_VILLAGER = ACTOR_FIRST_PLACED,
@@ -646,7 +647,8 @@ struct ActorPlacement gYallamRooms_Placements[] = {
 };
 // clang-format on
 
-/// The inn and Sunshine's house, in YallamRoomsInnActorId order.
+/// The two houses, the inn and Sunshine's smithy, in YallamRoomsInnActorId
+/// order.
 struct ActorPlacement gYallamRoomsInnPlacements[] = {
 #if !TLA_PATCH_2
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS,

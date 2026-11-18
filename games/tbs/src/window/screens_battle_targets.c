@@ -4,17 +4,92 @@
 
 #include "screens_internal.h"
 
+// Widths in tiles that fit each language's text: the "Set Djinni" window
+// (MsgTargetSetDjinni) and the list of conditions an action cures; and the
+// Mystery names' copy, which Japanese decodes raw where the other languages
+// copy it expanded.
 #if LANGUAGE == LANGUAGE_JAPANESE
+#define TARGET_SET_DJINNI_WIDTH 8
+#define TARGET_CONDITION_LIST_WIDTH 14
 #define TARGET_MYSTERY_NAME_COPY Message_DecodeRaw
 #define TARGET_MYSTERY_NAME_CAPACITY 10
 #else
+#define TARGET_SET_DJINNI_WIDTH 9
+#define TARGET_CONDITION_LIST_WIDTH 16
 #define TARGET_MYSTERY_NAME_COPY Message_CopyExpanded
 #define TARGET_MYSTERY_NAME_CAPACITY 14
 #endif
 
-/// A target marker's track: where it is, its state flags and the target it
-/// follows.
-struct CursorSlot {
+#if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
+// These editions size the windows by the cartridge's language as it runs:
+// wider for Italian and Spanish.
+#define TARGET_SET_DJINNI_WIDTH_ITALIAN 10
+#define TARGET_SET_DJINNI_WIDTH_SPANISH 11
+#define TARGET_CONDITION_LIST_WIDTH_SPANISH 17
+#endif
+
+/// The HP and PP window's width, and the one-line windows' of a revival or a
+/// cure of poison.
+#define TARGET_GAUGE_WIDTH 13
+#define TARGET_ONE_LINE_WIDTH 12
+
+// The help window's column, `back` tiles left of the aimed party member's; a
+// window `windowWidth` tiles wide that would run past the screen's right edge
+// stands against it instead.
+#define TARGET_HELP_COLUMN(back, windowWidth)                                  \
+  {                                                                            \
+    s32 anchor = selectedPosition.x / 8;                                       \
+                                                                               \
+    helpColumn = anchor - (back);                                              \
+    if (anchor + (windowWidth) - (back) > DISPLAY_TILE_WIDTH - 1)              \
+      helpColumn = DISPLAY_TILE_WIDTH - (windowWidth);                         \
+  }
+
+// The window listing the conditions an action cures, helpRow down and `count`
+// lines tall.
+#if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
+#define TARGET_CONDITION_LIST_WINDOW()                                         \
+  {                                                                            \
+    s32 anchor = selectedPosition.x / 8;                                       \
+                                                                               \
+    helpColumn = anchor - 7;                                                   \
+    if (System_GetLanguage() == CARTRIDGE_LANGUAGE_SPANISH) {                  \
+      if (anchor + TARGET_CONDITION_LIST_WIDTH_SPANISH - 7 >                   \
+          DISPLAY_TILE_WIDTH - 1)                                              \
+        helpColumn = DISPLAY_TILE_WIDTH - TARGET_CONDITION_LIST_WIDTH_SPANISH; \
+      conditionWindow =                                                        \
+          Window_Create(helpColumn, helpRow,                                   \
+                        TARGET_CONDITION_LIST_WIDTH_SPANISH, count + 2, 6);    \
+    } else {                                                                   \
+      if (anchor + TARGET_CONDITION_LIST_WIDTH - 7 > DISPLAY_TILE_WIDTH - 1)   \
+        helpColumn = DISPLAY_TILE_WIDTH - TARGET_CONDITION_LIST_WIDTH;         \
+      conditionWindow = Window_Create(                                         \
+          helpColumn, helpRow, TARGET_CONDITION_LIST_WIDTH, count + 2, 6);     \
+    }                                                                          \
+  }
+#else
+#define TARGET_CONDITION_LIST_WINDOW()                                         \
+  {                                                                            \
+    TARGET_HELP_COLUMN(7, TARGET_CONDITION_LIST_WIDTH);                        \
+    conditionWindow = Window_Create(                                           \
+        helpColumn, helpRow, TARGET_CONDITION_LIST_WIDTH, count + 2, 6);       \
+  }
+#endif
+
+/// The enemy name window, the screen's width from row 12, and the pixels of
+/// its interior the name is kept within.
+#define TARGET_NAME_WINDOW_ROW 12
+#define TARGET_NAME_INTERIOR_WIDTH ((DISPLAY_TILE_WIDTH - 2) * 8)
+
+/// Where the battle view slides while a target is chosen
+/// (BattleMenuWork.targetViewOffset): 16 pixels down when aiming at the
+/// enemies, 2 up when aiming at the party or the user.
+#define TARGET_VIEW_OFFSET_ENEMIES 16
+#define TARGET_VIEW_OFFSET_PARTY (-2)
+
+/// One of the target cursor's markers: where it stands, its state flags and
+/// which listed unit it marks.
+struct TargetTrack {
   u8 x; ///< screen pixels
   u8 y; ///< screen pixels
   /// bits: 7..2 frames to stay put (CURSOR_HOLD_FRAME each) | 1
@@ -23,14 +98,14 @@ struct CursorSlot {
   s8 index; ///< the place it follows from the aimed one; 6 when unused
 };
 
-/// CursorSlot.flags: easing halfway to its unit each frame, in the current
+/// TargetTrack.flags: easing halfway to its unit each frame, in the current
 /// spread, and one frame of staying put.
 #define CURSOR_EASING (1 << 0)
 #define CURSOR_IN_SPREAD (1 << 1)
 #define CURSOR_HOLD_FRAME (1 << 2)
 
 /// What the selection redraws: the spread's targets and their markers, and at
-/// the start every part (as The Lost Age names them).
+/// the start every part.
 #define TARGET_REDRAW_SPREAD 1
 #define TARGET_REDRAW_ALL 0xFFFF
 
@@ -54,9 +129,9 @@ struct CursorSlot {
 s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   u16 candidateIds[8];
   struct SelectionSprite cursorSprites[6];
-  struct CursorSlot cursorTracks[6];
+  struct TargetTrack cursorTracks[6];
   struct ScreenPoint actorPosition;
-  u16 spreadActorIds[14];
+  u16 spreadActorIds[UNIT_MAX];
   u8 spreadTrackIndices[8];
   struct ScreenPoint selectedPosition;
   u16 targetName[UNIT_NAME_SIZE];
@@ -88,7 +163,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   s32 width;
   s32 repeated;
   s32 result;
-  struct CursorSlot *track;
+  struct TargetTrack *track;
   struct SelectionSprite *marker;
   struct SelectionSprite *firstSprite;
   struct Unit *target;
@@ -103,9 +178,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   if (spread == 0)
     spread = 1;
   if (mode == ABILITY_TARGET_ALLIES || mode == ABILITY_TARGET_SELF)
-    gBattleMenuWork->targetViewOffset = -2;
+    gBattleMenuWork->targetViewOffset = TARGET_VIEW_OFFSET_PARTY;
   else
-    gBattleMenuWork->targetViewOffset = 16;
+    gBattleMenuWork->targetViewOffset = TARGET_VIEW_OFFSET_ENEMIES;
   for (i = 0; i < 6; i++)
     cursorTracks[i].flags = 0;
   // The candidates: the party, the acting unit alone, or the enemies.
@@ -200,7 +275,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   /* FAKEMATCH(barrier): an empty asm once selection and mode are dead. */
   __asm__("" : : : "r8", "r10");
 #endif
-  window = Window_Create(0, 12, 30, 4,
+  window = Window_Create(0, TARGET_NAME_WINDOW_ROW, DISPLAY_TILE_WIDTH, 4,
                          WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
                              WINDOW_FLAG_OUTLINED_TEXT);
   do {
@@ -323,10 +398,10 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           cursorTracks[i].index = 6;
       }
       spreadActorIds[targetCount] = BATTLE_UNIT_LIST_END;
-      BattleHighlight_SetModesFar(spreadActorIds, 1);
-      // A party member (units 0 to 7): the window of what the action does,
-      // placed by the party member's tile column (anchor) and kept on screen.
-      if (candidateIds[targetIndex] <= 7) {
+      BattleHighlight_SetModesFar(spreadActorIds, HIGHLIGHT_SELECTED);
+      // A party member: the window of what the action does, placed by the
+      // party member's tile column and kept on screen.
+      if (candidateIds[targetIndex] <= ALLY_MAX) {
         if (spread != ABILITY_RANGE_ALL && kind != TARGET_HINT_NONE) {
           unit = Unit_GetFar(candidateIds[targetIndex]);
           BattleMotion_ProjectConditionalPositionFar(
@@ -335,52 +410,52 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           if (conditionWindow != 0)
             Window_Close(conditionWindow, 1);
           switch (kind) {
-          case TARGET_HINT_SET_DJINNI: {
-            s32 anchor;
-
-            anchor = selectedPosition.x / 8;
-            helpColumn = anchor - 4;
+          case TARGET_HINT_SET_DJINNI:
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
+          {
+            s32 anchor = selectedPosition.x / 8;
+
+            helpColumn = anchor - 4;
             if (System_GetLanguage() == CARTRIDGE_LANGUAGE_ITALIAN) {
-              if (anchor + 6 > DISPLAY_TILE_WIDTH - 1)
-                helpColumn = 20;
-              conditionWindow = Window_Create(helpColumn, 8, 10, 3, 6);
+              if (anchor + TARGET_SET_DJINNI_WIDTH_ITALIAN - 4 >
+                  DISPLAY_TILE_WIDTH - 1)
+                helpColumn =
+                    DISPLAY_TILE_WIDTH - TARGET_SET_DJINNI_WIDTH_ITALIAN;
+              conditionWindow = Window_Create(
+                  helpColumn, 8, TARGET_SET_DJINNI_WIDTH_ITALIAN, 3, 6);
             } else if (System_GetLanguage() == CARTRIDGE_LANGUAGE_SPANISH) {
-              if (anchor + 7 > DISPLAY_TILE_WIDTH - 1)
-                helpColumn = 19;
-              conditionWindow = Window_Create(helpColumn, 8, 11, 3, 6);
+              if (anchor + TARGET_SET_DJINNI_WIDTH_SPANISH - 4 >
+                  DISPLAY_TILE_WIDTH - 1)
+                helpColumn =
+                    DISPLAY_TILE_WIDTH - TARGET_SET_DJINNI_WIDTH_SPANISH;
+              conditionWindow = Window_Create(
+                  helpColumn, 8, TARGET_SET_DJINNI_WIDTH_SPANISH, 3, 6);
             } else {
-              if (anchor + 5 > DISPLAY_TILE_WIDTH - 1)
-                helpColumn = 21;
-              conditionWindow = Window_Create(helpColumn, 8, 9, 3, 6);
+              if (anchor + TARGET_SET_DJINNI_WIDTH - 4 > DISPLAY_TILE_WIDTH - 1)
+                helpColumn = DISPLAY_TILE_WIDTH - TARGET_SET_DJINNI_WIDTH;
+              conditionWindow =
+                  Window_Create(helpColumn, 8, TARGET_SET_DJINNI_WIDTH, 3, 6);
             }
-#elif LANGUAGE == LANGUAGE_FRENCH
-            if (anchor + 5 > DISPLAY_TILE_WIDTH - 1)
-              helpColumn = 21;
-            conditionWindow = Window_Create(helpColumn, 8, 9, 3, 6);
-#elif LANGUAGE == LANGUAGE_JAPANESE
-            if (anchor + 4 > DISPLAY_TILE_WIDTH - 1)
-              helpColumn = 22;
-            conditionWindow = Window_Create(helpColumn, 8, 8, 3, 6);
-#else
-            if (anchor + 4 > DISPLAY_TILE_WIDTH - 1)
-              helpColumn = 22;
-            conditionWindow = Window_Create(helpColumn, 8, 9, 3, 6);
-#endif
           }
+#else
+#if TBS_PATCH_1 && !TBS_PATCH_3 && !defined(BUGFIX)
+            // BUG: placed as the Japanese window, 8 tiles wide; this one is 9,
+            // so against the right edge its last column is past the screen's.
+            TARGET_HELP_COLUMN(4, 8);
+#else
+            TARGET_HELP_COLUMN(4, TARGET_SET_DJINNI_WIDTH);
+#endif
+            conditionWindow =
+                Window_Create(helpColumn, 8, TARGET_SET_DJINNI_WIDTH, 3, 6);
+#endif
             Text_SetColor(TEXT_COLOR_RED);
             Text_DrawMessageAsTiles(MsgTargetSetDjinni, conditionWindow, 0, 0);
             Text_SetColor(TEXT_COLOR_WHITE);
             break;
-          case TARGET_HINT_HP: {
-            s32 anchor;
-
-            anchor = selectedPosition.x / 8;
-            helpColumn = anchor - 7;
-            if (anchor + 6 > DISPLAY_TILE_WIDTH - 1)
-              helpColumn = 17;
-            conditionWindow = Window_Create(helpColumn, 8, 13, 3, 6);
-          }
+          case TARGET_HINT_HP:
+            TARGET_HELP_COLUMN(7, TARGET_GAUGE_WIDTH);
+            conditionWindow =
+                Window_Create(helpColumn, 8, TARGET_GAUGE_WIDTH, 3, 6);
 #if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
             switch (System_GetLanguage()) {
             case CARTRIDGE_LANGUAGE_GERMAN:
@@ -409,15 +484,10 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
                                     conditionWindow, 48, 0);
             Text_DrawNumberInWindow(unit->hpMax, 4, conditionWindow, 56, 0);
             break;
-          case TARGET_HINT_PP: {
-            s32 anchor;
-
-            anchor = selectedPosition.x / 8;
-            helpColumn = anchor - 7;
-            if (anchor + 6 > DISPLAY_TILE_WIDTH - 1)
-              helpColumn = 17;
-            conditionWindow = Window_Create(helpColumn, 8, 13, 3, 6);
-          }
+          case TARGET_HINT_PP:
+            TARGET_HELP_COLUMN(7, TARGET_GAUGE_WIDTH);
+            conditionWindow =
+                Window_Create(helpColumn, 8, TARGET_GAUGE_WIDTH, 3, 6);
             Text_DrawStringAtOffset((u8 *)gBattleStatusScreen_PpString,
                                     conditionWindow, 0, 0);
             Text_DrawNumberInWindow(unit->pp, 4, conditionWindow, 16, 0);
@@ -425,28 +495,18 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
                                     conditionWindow, 48, 0);
             Text_DrawNumberInWindow(unit->ppMax, 4, conditionWindow, 56, 0);
             break;
-          case TARGET_HINT_REVIVE: {
-            s32 anchor;
-
-            anchor = selectedPosition.x / 8;
-            helpColumn = anchor - 7;
-            if (anchor + 5 > DISPLAY_TILE_WIDTH - 1)
-              helpColumn = 18;
-            conditionWindow = Window_Create(helpColumn, 8, 12, 3, 6);
-          }
+          case TARGET_HINT_REVIVE:
+            TARGET_HELP_COLUMN(7, TARGET_ONE_LINE_WIDTH);
+            conditionWindow =
+                Window_Create(helpColumn, 8, TARGET_ONE_LINE_WIDTH, 3, 6);
             if (unit->hp != 0)
               goto no_condition;
             Text_DrawMessageAsTiles(MsgTargetDowned, conditionWindow, 0, 0);
             break;
-          case TARGET_HINT_CURE_POISON: {
-            s32 anchor;
-
-            anchor = selectedPosition.x / 8;
-            helpColumn = anchor - 7;
-            if (anchor + 5 > DISPLAY_TILE_WIDTH - 1)
-              helpColumn = 18;
-            conditionWindow = Window_Create(helpColumn, 8, 12, 3, 6);
-          }
+          case TARGET_HINT_CURE_POISON:
+            TARGET_HELP_COLUMN(7, TARGET_ONE_LINE_WIDTH);
+            conditionWindow =
+                Window_Create(helpColumn, 8, TARGET_ONE_LINE_WIDTH, 3, 6);
             if (unit->poison == 0)
               goto no_condition;
             Text_DrawMessageAsTiles(MsgTargetCurePoison, conditionWindow, 0, 0);
@@ -465,38 +525,12 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
               count++;
             if (count == 0)
               count = 1;
+            // The list ends on row 10, as the one-line windows do, and starts
+            // no higher than row 4.
             helpRow = 9 - count;
             if (helpRow <= 3)
               helpRow = 4;
-            {
-              s32 anchor;
-
-              anchor = selectedPosition.x / 8;
-              helpColumn = anchor - 7;
-#if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
-              if (System_GetLanguage() == CARTRIDGE_LANGUAGE_SPANISH) {
-                if (anchor + 10 > DISPLAY_TILE_WIDTH - 1)
-                  helpColumn = 13;
-                conditionWindow =
-                    Window_Create(helpColumn, helpRow, 17, count + 2, 6);
-              } else {
-                if (anchor + 9 > DISPLAY_TILE_WIDTH - 1)
-                  helpColumn = 14;
-                conditionWindow =
-                    Window_Create(helpColumn, helpRow, 16, count + 2, 6);
-              }
-#elif LANGUAGE == LANGUAGE_JAPANESE
-              if (anchor + 7 > DISPLAY_TILE_WIDTH - 1)
-                helpColumn = 16;
-              conditionWindow =
-                  Window_Create(helpColumn, helpRow, 14, count + 2, 6);
-#else
-              if (anchor + 9 > DISPLAY_TILE_WIDTH - 1)
-                helpColumn = 14;
-              conditionWindow =
-                  Window_Create(helpColumn, helpRow, 16, count + 2, 6);
-#endif
-            }
+            TARGET_CONDITION_LIST_WINDOW();
             count = 0;
             if (unit->delusion != 0) {
               Text_DrawMessageAsTiles(MsgTargetCureDelusion, conditionWindow, 0,
@@ -549,35 +583,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
             helpRow = 9 - count;
             if (helpRow <= 3)
               helpRow = 4;
-            {
-              s32 anchor;
-
-              anchor = selectedPosition.x / 8;
-              helpColumn = anchor - 7;
-#if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
-              if (System_GetLanguage() == CARTRIDGE_LANGUAGE_SPANISH) {
-                if (anchor + 10 > DISPLAY_TILE_WIDTH - 1)
-                  helpColumn = 13;
-                conditionWindow =
-                    Window_Create(helpColumn, helpRow, 17, count + 2, 6);
-              } else {
-                if (anchor + 9 > DISPLAY_TILE_WIDTH - 1)
-                  helpColumn = 14;
-                conditionWindow =
-                    Window_Create(helpColumn, helpRow, 16, count + 2, 6);
-              }
-#elif LANGUAGE == LANGUAGE_JAPANESE
-              if (anchor + 7 > DISPLAY_TILE_WIDTH - 1)
-                helpColumn = 16;
-              conditionWindow =
-                  Window_Create(helpColumn, helpRow, 14, count + 2, 6);
-#else
-              if (anchor + 9 > DISPLAY_TILE_WIDTH - 1)
-                helpColumn = 14;
-              conditionWindow =
-                  Window_Create(helpColumn, helpRow, 16, count + 2, 6);
-#endif
-            }
+            TARGET_CONDITION_LIST_WINDOW();
             count = 0;
             if (unit->poison != 0) {
               Text_DrawMessageAsTiles(MsgTargetCurePoison, conditionWindow, 0,
@@ -624,9 +630,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
           }
         }
       } else if (spread != ABILITY_RANGE_ALL) {
-        // An enemy: its name, centred under it and kept on the 224 pixels
-        // of the window; ENEMY_MYSTERY_MAN and ENEMY_MYSTERY_WOMAN are named
-        // "Mystery Man" and "Mystery Woman".
+        // An enemy: its name, centred under it and kept within the window;
+        // ENEMY_MYSTERY_MAN and ENEMY_MYSTERY_WOMAN are named "Mystery Man"
+        // and "Mystery Woman".
         target = Unit_GetFar(candidateIds[targetIndex]);
         BattleMotion_ProjectConditionalPositionFar(
             candidateIds[targetIndex], ScreenPoint_Coordinates(&namePosition));
@@ -649,8 +655,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         width = Text_GetWideStringWidth(targetName);
         namePosition.x -= width / 2;
         namePosition.x -= 8;
-        if (namePosition.x + width > 224)
-          namePosition.x = 224 - width;
+        if (namePosition.x + width > TARGET_NAME_INTERIOR_WIDTH)
+          namePosition.x = TARGET_NAME_INTERIOR_WIDTH - width;
         if (namePosition.x < 0)
           namePosition.x = 0;
         Text_ClearCanvas();
@@ -763,12 +769,29 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   if (conditionWindow != 0)
     Window_Close(conditionWindow, 1);
   Window_Close(window, 1);
-  BattleHighlight_SetModesFar(candidateIds, 0);
+  BattleHighlight_SetModesFar(candidateIds, HIGHLIGHT_OFF);
   gBattleMenuWork->targetViewOffset = 0;
   wait(1);
   return targetIndex;
 }
 
+#undef TARGET_SET_DJINNI_WIDTH
+#undef TARGET_CONDITION_LIST_WIDTH
+#undef TARGET_MYSTERY_NAME_COPY
+#undef TARGET_MYSTERY_NAME_CAPACITY
+#if LANGUAGE == LANGUAGE_SPANISH || LANGUAGE == LANGUAGE_ITALIAN
+#undef TARGET_SET_DJINNI_WIDTH_ITALIAN
+#undef TARGET_SET_DJINNI_WIDTH_SPANISH
+#undef TARGET_CONDITION_LIST_WIDTH_SPANISH
+#endif
+#undef TARGET_GAUGE_WIDTH
+#undef TARGET_ONE_LINE_WIDTH
+#undef TARGET_HELP_COLUMN
+#undef TARGET_CONDITION_LIST_WINDOW
+#undef TARGET_NAME_WINDOW_ROW
+#undef TARGET_NAME_INTERIOR_WIDTH
+#undef TARGET_VIEW_OFFSET_ENEMIES
+#undef TARGET_VIEW_OFFSET_PARTY
 #undef CURSOR_EASING
 #undef CURSOR_IN_SPREAD
 #undef CURSOR_HOLD_FRAME

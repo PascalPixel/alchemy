@@ -27,43 +27,44 @@ enum FleeChance {
 /// An empty action's priority, below every other as the sort reads it (s16).
 #define PRIORITY_LOWEST 32768
 
-/// Turns the battle camera to the view the commands are chosen in: the focus 5
-/// pixels up, a quarter turn of yaw, a slight downward pitch, 750 pixels away.
-void BattleCamera_SetCommandView(s32 pos) {
-  struct BattleCamera *state = Ram_HeapSlots->cameraWork;
-  struct BattleBackgroundWork *secondary = Ram_HeapSlots->battleBackground;
-  struct Point local;
+/// Sets the camera up for the fixed view the battle shows while commands are
+/// chosen, raised by verticalOffset pixels.
+void BattleCamera_SetCommandView(s32 verticalOffset) {
+  struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
+  struct BattleBackgroundWork *view = Ram_HeapSlots->battleBackground;
+  struct Point eyeOffset;
   u32 result;
-  s32 one;
 
-  state->focus[1] = toFIXED(5);
-  state->focus[0] = 0;
-  state->focus[2] = 0;
-  secondary->targetYaw = DEGtoANG(90);
-  state->yaw = DEGtoANG(90);
-  state->pitch = TRIG_TURN - TRIG_TURN * 3 / 64;
-  state->followPosition = 0;
-  state->distance = toFIXED(750);
-  state->followEye = 0;
+  // The focus 5 pixels up, a quarter turn of yaw, a slight downward pitch, 750
+  // pixels away.
+  camera->focus[1] = toFIXED(5);
+  camera->focus[0] = 0;
+  camera->focus[2] = 0;
+  view->targetYaw = DEGtoANG(90);
+  camera->yaw = DEGtoANG(90);
+  camera->pitch = TRIG_TURN - TRIG_TURN * 3 / 64;
+  camera->followPosition = 0;
+  camera->distance = toFIXED(750);
+  camera->followEye = 0;
 
   Matrix_Initialize();
-  Matrix_TranslateVector(&state->focus[0]);
-  Matrix_RotateY((s16)state->yaw);
-  Matrix_RotateX((s16)state->pitch);
+  Matrix_TranslateVector(&camera->focus[0]);
+  Matrix_RotateY((s16)camera->yaw);
+  Matrix_RotateX((s16)camera->pitch);
 
-  SET_POSITION(&local, 0, 0, state->distance);
-  Iwram_TransformVector(&local, (s32 *)state);
-  one = 1;
+  SET_POSITION(&eyeOffset, 0, 0, camera->distance);
+  Iwram_TransformVector(&eyeOffset, (s32 *)camera);
 
   result = Iwram_RatioMulQ14(toFIXED(969), FIXED_ONE * 3 / 4);
   Projection_Set(0, result, toFIXED(1938));
 
-  gProjection.centerY = pos + BATTLE_PROJECTION_CENTER_Y;
-  secondary->busy = one;
-  BattleCamera_SetRange(toFIXED(120), toFIXED(118 - pos), 0, 8 << 8,
+  // While the view is busy, BattleCamera_SetRange leaves BG1's scroll alone.
+  gProjection.centerY = verticalOffset + BATTLE_PROJECTION_CENTER_Y;
+  view->busy = 1;
+  BattleCamera_SetRange(toFIXED(120), toFIXED(118 - verticalOffset), 0, 8 << 8,
                         FIXED_ONE * 2);
-  secondary->flag = one;
-  secondary->busy = 0;
+  view->flag = 1;
+  view->busy = 0;
 }
 
 #define Unit_CalculateFar ((void (*)(u16))Unit_CalculateFar)
@@ -478,9 +479,7 @@ void Palette_CopyWithBrightnessOffset(s32 offset) {
         green = 0;
       if (red < 0)
         red = 0;
-      adjusted = blue << 10;
-      adjusted |= green << 5;
-      adjusted |= red;
+      adjusted = RGB(red, green, blue);
       ((u16 *)BG_PLTT)[index - PALETTE_COLORS] = adjusted;
     }
     source = BASIC_COLORS_PALETTE;

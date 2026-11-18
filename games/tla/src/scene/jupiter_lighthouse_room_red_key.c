@@ -93,8 +93,8 @@ enum JupiterLighthouseRoomRedKeyActorId {
 #define ACTIVATION_CELL_Z 41
 /// The times the ring of sparks pulses, each pause shorter than the last.
 #define RING_PULSES 20
-/// The spark ring's sparks.
-#define SPARK_COUNT 96
+/// The sparks of the activation's ring, from the leader to the beam.
+#define ACTIVATION_SPARKS 96
 /// The coloured orbs' pictures, one 256-colour tile each.
 #define ORB_PICTURES 16
 #include "text/msg_ids.h"
@@ -102,13 +102,6 @@ enum JupiterLighthouseRoomRedKeyActorId {
 struct Actor;
 struct CellTarget;
 struct CellTargetEntry;
-
-enum {
-  EFFECT_DEFAULT_TYPE = 285,
-  EFFECT_SCALE_ONE = FIXED_ONE,
-  EFFECT_OPTION_MASK = 0xffff0000,
-  EFFECT_SCRIPT_REPEAT_COUNT = 3
-};
 
 extern u32 gOrbScript[];
 
@@ -732,8 +725,8 @@ struct Spark {
 /// sprites, the ring's two ends and its VRAM entry.
 struct SparkWork {
   u8 tiles[ORB_PICTURES * TILE_SIZE_8BPP];
-  struct Spark sparks[SPARK_COUNT];
-  struct EffectSprite sprites[SPARK_COUNT];
+  struct Spark sparks[ACTIVATION_SPARKS];
+  struct EffectSprite sprites[ACTIVATION_SPARKS];
   s32 from[3];
   s32 to[3];
   s16 next;
@@ -751,7 +744,7 @@ void JupiterLighthouse_UpdateSparkRing(void) {
   s32 duration;
   s32 i;
 
-  for (i = SPARK_COUNT - 1; i >= 0; sprite++, i--, spark++) {
+  for (i = ACTIVATION_SPARKS - 1; i >= 0; sprite++, i--, spark++) {
     duration = spark->duration;
     if (spark->age < 0 || spark->age > duration)
       continue;
@@ -799,7 +792,7 @@ void JupiterLighthouse_AddSparks(s32 count) {
       spark->duration = speed;
       spark->age = 0;
       work->next++;
-      work->next %= SPARK_COUNT;
+      work->next %= ACTIVATION_SPARKS;
     } while (--i != 0);
   }
 }
@@ -831,7 +824,7 @@ void JupiterLighthouse_StartSparkRing(const s32 *from, const s32 *to) {
   i = 0;
   spark = work->sparks;
   sprite = work->sprites;
-  for (; i <= SPARK_COUNT - 1; i++, sprite++, spark++) {
+  for (; i <= ACTIVATION_SPARKS - 1; i++, sprite++, spark++) {
     JupiterLighthouse_InitSparkSprite(sprite, 4, 4, 0,
                                       tile + (i & (ORB_PICTURES - 1)) * 2);
     sprite->oam.fullColor = 1;

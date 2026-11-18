@@ -39,7 +39,7 @@ void Leader_SlideOnIceAhead(void) {
     FieldVector_AddPolarOffset(16, heading, position);
     nextBehavior =
         FieldMapGrid_GetCellBehaviorAt(*layer, position->x, position->z);
-    if (nextBehavior == 255 ||
+    if (nextBehavior == CELL_BEHAVIOR_WALL ||
         Map_GetTerrainHeight(*layer, position->x, position->z) -
                 actor->y.fixed >
             toFIXED(8)) {
@@ -62,7 +62,7 @@ void Leader_SlideOnIceAhead(void) {
       FieldVector_AddPolarOffset(16, heading, &probe);
       next = &probe;
       nextBehavior = FieldMapGrid_GetCellBehaviorAt(*layer, next->x, next->z);
-      if (nextBehavior == 255) {
+      if (nextBehavior == CELL_BEHAVIOR_WALL) {
         break;
       }
       if (Map_GetTerrainHeight(*layer, next->x, next->z) - actor->y.fixed >

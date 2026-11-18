@@ -548,8 +548,6 @@ struct BlazeWork {
   s8 mode; ///< enum BlazeMode
 };
 
-#define EffectSprite_DrawAtWorldPosition EffectSprite_DrawAtWorldPosition
-
 /// The frame callback of FieldPsynergy_Blaze's spray. Every fourth frame while
 /// it is emitting, a free one of sixteen drops starts at the origin with the
 /// mode's speed (BLAZE_LONG_SPRAY faster, longer and lighter) along the

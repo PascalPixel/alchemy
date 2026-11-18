@@ -15,9 +15,6 @@
 #include "macros.h"
 #include "version.h"
 
-// Two 16.16 coordinates fall in the same 16-pixel cell, rounding to nearest.
-#define SAME_CELL(a, b) ((((a) - (b) + toFIXED(8)) >> 20) == 0)
-
 /// What a shortcut key's assignment requests, bits 15..14
 /// (Field_RequestShortcut), as The Broken Seal's.
 enum FieldShortcutKind {
@@ -452,12 +449,8 @@ void Actor_SpawnWaterSplash(struct Actor *actor, s32 mode) {
     }
   }
 }
-#undef SAME_CELL
 
 extern struct MapCell gMapGridCellBuffer[];
-
-// Two 16.16 coordinates fall in the same 16-pixel cell, rounding to nearest.
-#define SAME_CELL(a, b) ((((a) - (b) + toFIXED(8)) >> 20) == 0)
 
 /// SC_PLAYER: moves the player on the field by the direction pad: walking or
 /// running, sliding around walls, pushing movable actors, turning, playing the
@@ -817,4 +810,3 @@ counted:
   actor->scriptCursor++;
   return 1;
 }
-#undef SAME_CELL

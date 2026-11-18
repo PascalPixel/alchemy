@@ -136,9 +136,6 @@ void FieldEffect_CircleAnchor(struct Actor *effect) {
   }
 }
 
-#define Actor_SetPositionAndResetMotionFar                                     \
-  ((s32 (*)(void *, s32, s32, s32))Actor_SetPositionAndResetMotionFar)
-
 /// Shrinks an event-selected Whirlwind target each frame; below half size,
 /// moves it to the origin, stops it and removes the update.
 void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *actor) {
@@ -156,7 +153,6 @@ void FieldEffect_ShrinkActorScaleUntilHalf(struct Actor *actor) {
 /// Runs Whirlwind cast on a target, using the target already stored in the
 /// field effect.
 void FieldPsynergy_WhirlwindOnTarget(s32 unused) { FieldPsynergy_Whirlwind(); }
-#undef Actor_SetPositionAndResetMotionFar
 
 void Vector_AddPolarOffset(FIXED radius, s32 angle, s32 *position);
 void BattleEffect_AgeAndCueAtEighty(struct Actor *actor);
@@ -608,7 +604,6 @@ void FieldPsynergy_Catch(void) {
   FieldPsynergy_FadeFromCastColor();
 }
 
-#define EffectSprite_DrawAtWorldPosition EffectSprite_DrawAtWorldPosition
 void Rope_GetEndNodePosition(s32 target, struct Vector3 *position);
 
 /// Task of the Lash: its scattering particles along the rope.

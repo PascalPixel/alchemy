@@ -8,10 +8,6 @@
 #include "field/object.h"
 #include "field/ground_mask.h"
 
-/// The frames of a ground particle's splash (gFieldEffect_GroundParticleFrames,
-/// five halfwords each), played from the last down to the first.
-#define GROUND_PARTICLE_FRAMES 16
-
 /// mote.png's 16 by 16 pictures, four tiles each: two of each size, the
 /// motes shrinking as they rise and flickering between the two.
 #define MOTE_PICTURE_TILES 4
@@ -232,7 +228,6 @@ void FieldMotes_Update(void) {
   }
 }
 
-#undef GROUND_PARTICLE_FRAMES
 #undef MOTE_PICTURE_TILES
 #undef MOTE_LARGE
 #undef MOTE_MEDIUM

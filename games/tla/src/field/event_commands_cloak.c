@@ -39,10 +39,6 @@
 /// The times the caster blinks as Cloak hides it.
 #define CLOAK_BLINKS 10
 
-/// The steps, one a frame, in which the rain cloud grows out of the caster on
-/// its way to the target or shrinks back into it: FieldEffect_Interpolate's
-/// tenths.
-#define GROW_STEPS 10
 /// The drops Douse rains: cast at nothing, cast on a target, and cast on a
 /// target where they sway down (FieldEffectWork.lit).
 #define DOUSE_DROPS 10
@@ -481,7 +477,6 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
 
 #undef CLOAK_END
 #undef CLOAK_BLINKS
-#undef GROW_STEPS
 #undef DOUSE_DROPS
 #undef DOUSE_DROPS_ON_TARGET
 #undef DOUSE_SWAYING_DROPS_ON_TARGET

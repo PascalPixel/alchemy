@@ -10,12 +10,8 @@
 #include "field/ground_mask.h"
 #include "field/event.h"
 
-/// The frames of a ground particle's splash (gFieldEffect_GroundParticleFrames,
-/// five halfwords each), played from the last down to the first.
-#define GROUND_PARTICLE_FRAMES 16
-
 /// Task of GroundParticles_Start: The Broken Seal's Weather_UpdateRain, kept
-/// whole. Each particle plays its 16 frames of
+/// whole. Each particle plays its GROUND_PARTICLE_FRAMES frames of
 /// gFieldEffect_GroundParticleFrames on a random spot near the leader, held
 /// while FLAG_WEATHER_HELD is set.
 void GroundParticles_Update(void) {
@@ -94,7 +90,8 @@ void Weather_UpdateRain(void) {
       particle->priority = 1;
       particle->x = x;
       particle->y = y;
-      particle->tile = work->tileBase;
+      /* FAKEMATCH(signature): the tile base read as long. */
+      particle->tile = *(long *)&work->tileBase;
       particle->shape = 1;
       particle->size = 2;
       Oam_AddSpriteAtDepthClamped(particle, OAM_DEPTH_WINDOW);
@@ -152,5 +149,3 @@ void Weather_UpdateLightning(void) {
     break;
   }
 }
-
-#undef GROUND_PARTICLE_FRAMES

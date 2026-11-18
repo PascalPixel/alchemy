@@ -4,9 +4,8 @@
 
 #include "field_sequence_internal.h"
 
-/// A whole pixel coordinate's map cell, in pixels, and the same for a screen
-/// row in an OAM entry's 8-bit y.
-#define MAPGRID_CELL_PIXEL_MASK 0xfff0
+/// A screen row's map cell, in pixels, in an OAM entry's 8-bit y, as
+/// MAPGRID_CELL_PIXEL_MASK takes a whole pixel coordinate's.
 #define CELL_GRID_ROW_MASK 0xf0
 
 /// Each frame of the fade overlay: on each of the two cells beside the actor
@@ -121,5 +120,4 @@ void FadeOverlay_Suspend(void) { Task_SuspendAll(FadeOverlay_DrawMarks); }
 /// Draws the fade overlay again after FadeOverlay_Suspend.
 void FadeOverlay_Resume(void) { Task_ResumeAll(FadeOverlay_DrawMarks); }
 
-#undef MAPGRID_CELL_PIXEL_MASK
 #undef CELL_GRID_ROW_MASK

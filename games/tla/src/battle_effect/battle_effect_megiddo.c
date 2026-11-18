@@ -656,4 +656,3 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
                            BACKGROUND_DARKEN_FRAMES);
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
-#undef BLITTER

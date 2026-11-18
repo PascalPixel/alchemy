@@ -240,10 +240,6 @@ enum { TRIGGER_BEFORE_CHARON_SLATE = 30 };
 /// from the Orihalcon chest room (AnemosInnerSanctum_ArriveOnGuardianLift).
 #define ACTOR_GUARDIAN_LIFT (ACTOR_FIRST_PLACED + 3)
 
-/// The spawner's flags that ask for one of the options' fields
-/// (EFFECT_USE_PALETTE and up).
-#define EFFECT_OPTION_MASK 0xffff0000
-
 /// The first column of the middle layer's cells in these rooms' maps (their
 /// map_layer 128, 0): the Dragon Skin room draws its plates, torches' light and
 /// pillar of light there.
@@ -266,9 +262,6 @@ enum { TRIGGER_BEFORE_CHARON_SLATE = 30 };
 #define JUPITER_TORCH_X 568
 #define JUPITER_TORCH_Y 40
 #define TORCH_ROW_Z 152
-
-/// REG_BLDALPHA's low byte, the top target's weight.
-#define BLEND_ALPHA_TOP_MASK 0xff
 
 /// A spark ring's sixteenths of a turn; an orb starts at every second one.
 #define SPARK_RING_STEPS 16

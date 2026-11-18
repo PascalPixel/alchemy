@@ -10,11 +10,13 @@
 
 /// Column `n` of style `mode`'s row of gStreaks_Styles, four flags a style.
 #define STREAKS_VALUE(mode, n) gStreaks_Styles[(mode) * 4 + (n)]
-#define STREAKS_ANIMATE 0 ///< nonzero: the streak cycles through three images
-#define STREAKS_HIT 1     ///< nonzero: play the hit sound and flash the target
-#define STREAKS_MOTION                                                         \
-  2 ///< the target's knockback on the hit (enum BattleKnockback, -1: none)
-/// nonzero: the struck target trembles from side to side
+/// Nonzero: the streak cycles through three images.
+#define STREAKS_ANIMATE 0
+/// Nonzero: play the hit sound and flash the target.
+#define STREAKS_HIT 1
+/// The target's knockback on the hit (enum BattleKnockback, -1: none).
+#define STREAKS_MOTION 2
+/// Nonzero: the struck target trembles from side to side.
 #define STREAKS_SHAKE 3
 
 #define STREAKS_MAX 3 ///< streaks fired at each target
@@ -75,10 +77,6 @@ void BattleEffect_RunWickedHowl(struct BattleEffectParams *args) {
 UNUSED void BattleEffect_RunLimeStreaks(struct BattleEffectParams *args) {
   BattleEffect_RunStreakVolley(args, STREAKS_STYLE_LIME);
 }
-
-/// The blitters' clip on both axes, the header's EFFECT_CLIP_BOUNDS, for
-/// battle_effect_target_strike.c, the next part, which draws with it.
-#define CLIP (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
 /// FiveModeImage's streaks: three animation frames, each six pictures that
 /// grow; each picture is the lower half of a ring, and the upper half is it
@@ -297,9 +295,9 @@ void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
 
 /// The mote fountain's modes (BattleEffect_RunMoteFountain).
 enum MoteFountainMode {
-  MOTE_FOUNTAIN_FOUNTAIN_HEALING, ///< Soothing Star
-  MOTE_FOUNTAIN_DRIFTING,         ///< Sleep Star
-  MOTE_FOUNTAIN_SLAVER            ///< Slaver
+  MOTE_FOUNTAIN_HEALING,  ///< Soothing Star
+  MOTE_FOUNTAIN_DRIFTING, ///< Sleep Star
+  MOTE_FOUNTAIN_SLAVER    ///< Slaver
 };
 
 enum { MOTE_FOUNTAIN_INITIALIZED_COUNT = 256, MOTE_VISIBLE_COUNT = 128 };
@@ -317,7 +315,7 @@ void BattleEffect_RunSleepStar(struct BattleEffectParams *args) {
 ///
 /// Abilities: Soothing Star.
 void BattleEffect_RunSoothingStar(struct BattleEffectParams *args) {
-  BattleEffect_RunMoteFountain(args, MOTE_FOUNTAIN_FOUNTAIN_HEALING);
+  BattleEffect_RunMoteFountain(args, MOTE_FOUNTAIN_HEALING);
 }
 
 /// Green drops are flung up from the user in a half-circle fan and fall,
@@ -328,7 +326,7 @@ void BattleEffect_RunSlaver(struct BattleEffectParams *args) {
   BattleEffect_RunMoteFountain(args, MOTE_FOUNTAIN_SLAVER);
 }
 
-#define MOTE_FOUNTAIN_FOUNTAIN_FRAMES 128
+#define MOTE_FOUNTAIN_FRAMES 128
 #define MOTE_FOUNTAIN_SLAVER_FRAMES 96
 
 /// The projected depths over which a mote is sized, nearest to farthest: it is
@@ -362,7 +360,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
   sheet = Ram_HeapSlots->battleSheet;
-  if (mode == MOTE_FOUNTAIN_FOUNTAIN_HEALING)
+  if (mode == MOTE_FOUNTAIN_HEALING)
     BattleEffect_StartCanvasLayer(0);
   else
     BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
@@ -375,7 +373,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
-  if (mode == MOTE_FOUNTAIN_FOUNTAIN_HEALING)
+  if (mode == MOTE_FOUNTAIN_HEALING)
     resource = RESOURCE_ORANGE_PALETTE_A;
   else if (mode == MOTE_FOUNTAIN_DRIFTING)
     resource = RESOURCE_EARTH_WALL_SHEET;
@@ -417,7 +415,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
       mote->velocityZ = -(Trig_Cos(angle) * speed << 1) >> 8;
     }
     mote->variant = (Random16() & 31) + 48;
-    if (mode == MOTE_FOUNTAIN_FOUNTAIN_HEALING) {
+    if (mode == MOTE_FOUNTAIN_HEALING) {
       mote->velocityX /= 2;
       mote->velocityZ /= 2;
     }
@@ -425,7 +423,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
 
   frames = MOTE_FOUNTAIN_SLAVER_FRAMES;
   if (mode != MOTE_FOUNTAIN_SLAVER)
-    frames = MOTE_FOUNTAIN_FOUNTAIN_FRAMES;
+    frames = MOTE_FOUNTAIN_FRAMES;
   for (frame = 0; frame != frames; frame++) {
     EFFECT_VIEW_FROM_CAMERA(camera);
     if (mode == MOTE_FOUNTAIN_SLAVER && frame == 0)
@@ -479,7 +477,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
                                    POSE_DAMAGE, i, 8);
         }
       }
-    } else if (mode == MOTE_FOUNTAIN_FOUNTAIN_HEALING) {
+    } else if (mode == MOTE_FOUNTAIN_HEALING) {
       for (i = 0; i != args->targetCount; i++) {
         if (frame == i * 8 + 48) {
           Sound_PlayFar(SE_RECOVERY);
@@ -517,7 +515,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
 #undef STREAKS_FLIGHT
 #undef STREAKS_TARGET_DELAY
 #undef CANVAS_WAVE_BG2X
-#undef MOTE_FOUNTAIN_FOUNTAIN_FRAMES
+#undef MOTE_FOUNTAIN_FRAMES
 #undef MOTE_FOUNTAIN_SLAVER_FRAMES
 #undef FLARE_DEPTH_NEAR
 #undef FLARE_DEPTH_FAR

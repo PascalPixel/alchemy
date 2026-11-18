@@ -6,7 +6,7 @@
 #include "sounds.h"
 
 #define STAR_MINE_FRAMES 144
-#define STARS 6
+#define STAR_MINE_STARS 6
 /// The flash bursts' slots in work->particles after the stars, eight for each
 /// star, and the sparks', in PARTICLES.
 #define STAR_MINE_FLASH_BURSTS 48
@@ -25,13 +25,12 @@
 #define STAR_HALF (PICTURE_BYTES(STAR) / 2)
 /// The flash bursts and the sparks each star bursts into.
 #define STAR_BURST_FLASH_BURSTS 4
-#define STAR_BURST_SPARKS (STAR_MINE_SPARKS / STARS)
+#define STAR_BURST_SPARKS (STAR_MINE_SPARKS / STAR_MINE_STARS)
 /// Where FlashBurstSheet is decoded in the effect's pictures.
 #define STAR_MINE_FLASH_BURST_PICTURES 16384
 /// A flash burst plays FlashBurstSheet's pictures, a flash turning to a
 /// fireball that burns out, FLASH_BURST_PICTURE_FRAMES frames apiece; its
 /// first two frames are not drawn.
-#define FLASH_BURST_PICTURES 6
 #define FLASH_BURST_PICTURE_FRAMES 4
 
 /// Six twinkling stars (a 24 by 48 picture mirrored both ways from the
@@ -101,7 +100,8 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
     if (frame == 0) {
       struct Particle *thrown;
 
-      for (i = 0, thrown = work->particles; i != STARS; i++, thrown++) {
+      for (i = 0, thrown = work->particles; i != STAR_MINE_STARS;
+           i++, thrown++) {
         struct Actor *caster = BattleObject_GetFar(args->user)->object;
         s32 height = BattleUnit_GetEffectHeightFar(args->user) / 2;
         s32 velocity;
@@ -120,13 +120,14 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
         thrown->variant = 0;
       }
       for (i = 0; i != STAR_MINE_FLASH_BURSTS; i++) {
-        work->particles[STARS + i].variant = -1;
+        work->particles[STAR_MINE_STARS + i].variant = -1;
       }
       EFFECT_FREE_PARTICLES(i, PARTICLES, STAR_MINE_SPARKS);
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
 
-    for (i = 0, star = work->particles, delay = 0, firstSpark = 0; i != STARS;
+    for (i = 0, star = work->particles, delay = 0, firstSpark = 0;
+         i != STAR_MINE_STARS;
          star++, delay += 8, firstSpark += STAR_BURST_SPARKS, i++) {
       s32 k;
       struct Actor *target;
@@ -176,7 +177,7 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
 
       // Passed its target: the burst.
       for (k = 0; k != STAR_BURST_FLASH_BURSTS; k++) {
-        particle = &work->particles[STARS + delay + k];
+        particle = &work->particles[STAR_MINE_STARS + delay + k];
         particle->x = INTtoFIXED(screenPosition.x);
         particle->y = INTtoFIXED(screenPosition.y);
         particle->velocityX = ((Random16() & 127) - 64) << 12;
@@ -207,9 +208,9 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
     }
 
     for (i = 0; i != STAR_MINE_FLASH_BURSTS; i++) {
-      particle = &work->particles[STARS + i];
+      particle = &work->particles[STAR_MINE_STARS + i];
       if ((u32)particle->variant <
-          FLASH_BURST_PICTURES * FLASH_BURST_PICTURE_FRAMES) {
+          FLASH_BURST_PICTURE_COUNT * FLASH_BURST_PICTURE_FRAMES) {
         if (particle->variant > 1) {
           blitters[0](canvas,
                       work->sheet + STAR_MINE_FLASH_BURST_PICTURES +
@@ -280,9 +281,10 @@ struct CornerRow {
 /// scattered from its top at frame 134.
 #define RISING_DRAGON_ENEMY_VERTICES 4096
 #define RISING_DRAGON_ENEMY_STRIP 8192
-#define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 16384))
-#define SPARK_COUNT 256
-#define TRAIL_SPARKS (SPARK_COUNT / 2)
+#define RISING_DRAGON_ENEMY_SPARKS                                             \
+  ((struct Particle *)(Ram_MapCellBuffer + 16384))
+#define RISING_DRAGON_ENEMY_SPARK_COUNT 256
+#define TRAIL_SPARKS (RISING_DRAGON_ENEMY_SPARK_COUNT / 2)
 
 /// The dragon's body: a strip of SEGMENTS rows, RISING_DRAGON_ENEMY_BODY_WIDTH
 /// across, each row swaying RISING_DRAGON_ENEMY_ROW_PHASE further along than
@@ -390,9 +392,10 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
         work->particles[i].variant = -1;
       }
       for (i = 0; i != TRAIL_SPARKS; i++) {
-        SPARKS[TRAIL_SPARKS + i].variant = -1;
+        RISING_DRAGON_ENEMY_SPARKS[TRAIL_SPARKS + i].variant = -1;
       }
-      for (i = 0, spawned = SPARKS; i != TRAIL_SPARKS; i++, spawned++) {
+      for (i = 0, spawned = RISING_DRAGON_ENEMY_SPARKS; i != TRAIL_SPARKS;
+           i++, spawned++) {
         s32 angle;
         s32 speed;
 
@@ -494,8 +497,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
           yaw = TRIG_TURN * 3 / 4;
           camera->yaw = yaw;
         }
-        for (i = 0; i != SPARK_COUNT; i++) {
-          SPARKS[i].variant = -1;
+        for (i = 0; i != RISING_DRAGON_ENEMY_SPARK_COUNT; i++) {
+          RISING_DRAGON_ENEMY_SPARKS[i].variant = -1;
         }
         height = 220;
       }
@@ -609,7 +612,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
         Heap_Release(model);
 
         if (frame == 134) {
-          for (i = 0, scatter = SPARKS; i != SPARK_COUNT; i++, scatter++) {
+          for (i = 0, scatter = RISING_DRAGON_ENEMY_SPARKS;
+               i != RISING_DRAGON_ENEMY_SPARK_COUNT; i++, scatter++) {
             s32 angle;
             s32 speed;
 
@@ -643,7 +647,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
              i != RISING_DRAGON_ENEMY_FLASH_BURSTS; i++, particle++) {
           s32 age = particle->variant;
 
-          if ((u32)age < FLASH_BURST_PICTURES * FLASH_BURST_PICTURE_FRAMES) {
+          if ((u32)age <
+              FLASH_BURST_PICTURE_COUNT * FLASH_BURST_PICTURE_FRAMES) {
             if (age > 1) {
               blit[0](canvas,
                       work->sheet + RISING_DRAGON_ENEMY_FLASH_BURST_PICTURES +
@@ -671,7 +676,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
           }
           first = slot * 2;
           for (i = 0, startY = INTtoFIXED(y),
-              trail = &SPARKS[TRAIL_SPARKS + first];
+              trail = &RISING_DRAGON_ENEMY_SPARKS[TRAIL_SPARKS + first];
                i != 2; i++, trail++) {
             s32 random;
             s32 angle;
@@ -701,7 +706,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
           if (frame > 59) {
             gravity = toFIXED(1) / 4;
           }
-          for (i = 0, spark = SPARKS; i != SPARK_COUNT; i++, spark++) {
+          for (i = 0, spark = RISING_DRAGON_ENEMY_SPARKS;
+               i != RISING_DRAGON_ENEMY_SPARK_COUNT; i++, spark++) {
             s32 size;
 
             if (spark->variant < 0) {
@@ -764,7 +770,7 @@ void BattleEffect_RunLivingArmor(struct BattleEffectParams *args) {
   BattleEffect_RunRushingStrike(args, RUSHING_STRIKE_LIVING_ARMOR);
 }
 #undef STAR_MINE_FRAMES
-#undef STARS
+#undef STAR_MINE_STARS
 #undef STAR_MINE_FLASH_BURSTS
 #undef STAR_MINE_SPARKS
 #undef STAR_MINE_PULL
@@ -774,14 +780,12 @@ void BattleEffect_RunLivingArmor(struct BattleEffectParams *args) {
 #undef STAR_HALF
 #undef STAR_BURST_FLASH_BURSTS
 #undef STAR_BURST_SPARKS
-#undef FLASH_BURST_PICTURES
 #undef FLASH_BURST_PICTURE_FRAMES
 #undef BACKDROP_FIRST_TILE
 #undef BACKDROP_ROWS
 #undef BACKDROP_RIGHT_HALF
-#undef BLITTER
-#undef SPARKS
-#undef SPARK_COUNT
+#undef RISING_DRAGON_ENEMY_SPARKS
+#undef RISING_DRAGON_ENEMY_SPARK_COUNT
 #undef TRAIL_SPARKS
 #undef RISING_DRAGON_ENEMY_VERTICES
 #undef RISING_DRAGON_ENEMY_STRIP

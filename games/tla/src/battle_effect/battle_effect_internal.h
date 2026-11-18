@@ -188,6 +188,13 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 /// The particles the map cell buffer holds when an effect lays its particles
 /// over it from the start.
 #define PARTICLE_POOL_COUNT 1024
+/// Nereid's drops burst up, in BattleEffect_RunNereid and in the unused copy of
+/// it: every free one of the first NEREID_BURST_DROPS as the columns gather,
+/// then NEREID_DROPS_A_FRAME a frame while they rise.
+#define NEREID_BURST_DROPS 256
+#define NEREID_DROPS_A_FRAME 16
+/// The sprites that draw Megaera, in her summon and in her formation.
+#define MEGAERA_OBJECTS 11
 
 /// The canvas: 128x128 pixels, one byte each, in its heap slot and in VRAM at
 /// BG_CHAR_BLOCK(1) (CANVAS_BYTES).

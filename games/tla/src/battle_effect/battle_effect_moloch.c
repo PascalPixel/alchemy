@@ -3267,7 +3267,6 @@ void Render_DrawModelList(struct RenderModel *model) {
 #undef IRIS_DOT_HEIGHT
 #undef IRIS_SPRAY_WIDTH
 #undef IRIS_SPRAY_HEIGHT
-#undef BLITTER
 #undef HALF
 #undef IRIS_PETALS
 #undef IRIS_PETAL_FRAMES

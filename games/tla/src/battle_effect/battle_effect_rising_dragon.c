@@ -540,7 +540,6 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 #undef TARGET_ANCHOR_PERCENT
-#undef BLITTER
 #undef DRAGON_SEGMENTS
 #undef FIGURE_FRAMES
 #undef FIGURE_SPARK_BURST_FRAME

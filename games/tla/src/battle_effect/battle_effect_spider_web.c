@@ -219,22 +219,8 @@ extern const struct Scale gUlysses_ShipScale;
 /// quarters of its size and shrinks a little.
 #define ULYSSES_CRESCENT_SCALE(t) ((Trig_Sin((t) << 10) * 48) / 64)
 
-/// BG1's map while it shows the rune circles: the battle's own BG1 map.
-#define CANVAS_BG1_SCREEN 31
-/// The bytes and the words of one row of a background map, 32 entries.
-#define MAP_ROW_BYTES (BG_SCREEN_WIDTH * 2)
+/// The words of one row of a background map, 32 entries.
 #define MAP_ROW_WORDS (BG_SCREEN_WIDTH / 2)
-/// Two entries of a background map in one word: `left`, then the one to its
-/// right.
-#define MAP_ENTRY_PAIR(left, right) ((u32)(right) << 16 | (left))
-/// The tile BG1 shows around a picture of its own, the last a map entry can
-/// name.
-#define BG1_CLEAR_TILE 1023
-/// BG character block 2's first tile, counted from BG1's character base.
-#define BG1_BLOCK2_FIRST_TILE (2 * BG_CHAR_SIZE / TILE_SIZE_8BPP)
-
-/// The canvas's usual weight over the battle, in sixteenths.
-#define CANVAS_BLEND_LEVEL 14
 
 #define ULYSSES_FRAMES 326 ///< frames of the runes, the summoning and the fire
 /// The flame bursts and the rune circles open, the second
@@ -1034,13 +1020,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
 #undef ULYSSES_CRESCENT_WIDTH
 #undef ULYSSES_CRESCENT_HEIGHT
 #undef ULYSSES_CRESCENT_SCALE
-#undef CANVAS_BG1_SCREEN
-#undef MAP_ROW_BYTES
 #undef MAP_ROW_WORDS
-#undef MAP_ENTRY_PAIR
-#undef BG1_CLEAR_TILE
-#undef BG1_BLOCK2_FIRST_TILE
-#undef CANVAS_BLEND_LEVEL
 #undef ULYSSES_FRAMES
 #undef ULYSSES_RUNE_CIRCLES_FRAME
 #undef ULYSSES_RUNE_CIRCLE_INTERVAL

@@ -213,9 +213,6 @@ static inline s32 Serial_AddErrorFlag(s32 status) {
   return status;
 }
 
-/// DMA3, the channel the game copies with, as its three registers.
-#define DMA3 ((volatile struct DmaRegisters *)&REG_DMA3SAD)
-
 /// Starts a DMA 3 transfer; control_ is the unit count with the DMA_ flags
 /// << 16.
 #define START_DMA(source_, destination_, control_)                             \

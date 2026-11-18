@@ -1,33 +1,44 @@
 /// @file
-/// Crystal: a spinning crystal and drifting shards.
+/// Crystal.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-#define BLITTER ((DrawRectangle)Ram_HeapSlots->ramCode)
 #define CRYSTAL_FRAMES 103
-#define CRYSTAL_SHARDS 32
-/// The sixteen shaded discs, 2 to 32 pixels across, and where their offsets
-/// in the map cell buffer are kept in the effect's pictures.
+/// From this frame the canvas fades out, two sixteenths a frame, from the
+/// level it is shown at.
+#define CRYSTAL_FADE_FRAME 96
+#define CRYSTAL_BLEND_LEVEL ((CRYSTAL_FRAMES - CRYSTAL_FADE_FRAME) * 2)
+/// The orbs of light that rise around the target.
+#define CRYSTAL_ORBS 32
+/// Sixteen shaded discs, 2 to 32 pixels across, the orbs' pictures, drawn into
+/// the map cell buffer; where each starts is kept in the effect's pictures at
+/// CRYSTAL_DISC_OFFSETS.
 #define CRYSTAL_DISCS 16
 #define CRYSTAL_DISC_OFFSETS 10000
+/// Where the cog's picture is made in the map cell buffer: CogTexture's
+/// quarter mirrored into a picture twice as wide and as tall.
+#define CRYSTAL_COG_PICTURE 16384
+/// The cog's largest scale, about 1.74, which the model is drawn at half of.
+#define CRYSTAL_COG_SCALE_MAX 114000
+/// The cog's tilt about the x axis, about 16 degrees.
+#define CRYSTAL_COG_TILT 3000
 
 /// Where VenusDjinnSmallSheet is decoded in the effect's pictures.
 #define CRYSTAL_VENUS_DJINN_SMALL_PICTURES 26048
 
-/// Abilities: Crystal.
+/// A Venus Djinni appears and its small picture dives onto the target; a
+/// glowing cog spins and grows flat on the ground under the targets while
+/// orbs of light rise around them, pulsing, and each target flashes white as
+/// it is healed.
 ///
-/// Sixteen shaded discs, 2 to 32 pixels across, are built in the map cell
-/// buffer. A pillar of light rises at the target for 20 frames while a
-/// textured crystal spins up over it from frame 16; from frame 48 thirty-two
-/// shards, one every two frames, drift up from around the target, pulsing in
-/// size and jittering until they settle, and the targets flash at frames 64,
-/// 68, ... before the scene fades out from frame 96.
+/// Abilities: Crystal.
 void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
-  // Unused: draw[1] gives the stack frame its 4 bytes.
+  /* LEFTOVER(frame): draw[1], the pair's idle second blitter, which the ROM's
+   * frame reserves and never touches; as one DrawRectangle. */
   DrawRectangle draw[2];
   u16 *discOffsets;
   s32 center[3];
@@ -38,6 +49,8 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
   s32 i;
   s32 size;
   s32 offset;
+  /* FAKEMATCH(signature): the map cell buffer's address held as an integer
+   * and summed with its offset first; as u8 *cells and cells + offset. */
   s32 cells;
 
   work = Ram_HeapSlots->battleEffect;
@@ -51,7 +64,8 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
     offset += (i * 2 + 3) * size / 2;
   }
   Resource_LoadAndDecompress(RESOURCE_COG_TEXTURE, work->sheet, 0, 0);
-  Picture_MirrorIntoQuadrants(work->sheet, Ram_MapCellBuffer + 16384, 64, 64);
+  Picture_MirrorIntoQuadrants(work->sheet,
+                              Ram_MapCellBuffer + CRYSTAL_COG_PICTURE, 64, 64);
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(
       args,
@@ -63,7 +77,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry(RESOURCE_BLAST_SHEET),
                        SHEET_PALETTE_BYTES);
-  REG_BLDALPHA = EFFECT_BLEND_CANVAS(14);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(CRYSTAL_BLEND_LEVEL);
   if (args->side == EFFECT_SIDE_PARTY) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
@@ -72,44 +86,47 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                         BLITTER_ADDITIVE);
   }
-  draw[0] = BLITTER;
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   {
     struct BattleCamera *camera;
-    struct Actor *target;
+    struct MotionObject *target;
 
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
-    Task_Add((s32)BattleEffect_ProcessPendingGraphicsTransfer,
-             TASK_PASS_VBLANK);
+    Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
     camera = Ram_HeapSlots->cameraWork;
     target = BattleObject_GetFar(args->targets[0])->object;
 
     for (frame = 0; frame != CRYSTAL_FRAMES; frame++) {
+      // The orbs start in a ring around the first target: velocityX holds the
+      // phase of an orb's pulse, velocityY its rising speed, velocityZ its
+      // size.
       if (frame == 0) {
-        struct Particle *shard;
-        for (i = 0, shard = work->particles; i != CRYSTAL_SHARDS;
-             i++, shard++) {
+        struct Particle *orb;
+        for (i = 0, orb = work->particles; i != CRYSTAL_ORBS; i++, orb++) {
           s32 angle = Random16();
           s32 radius = (Random16() & 63) + 80;
 
-          SET_POSITION(shard,
-                       target->x.fixed + ((Trig_Sin(angle) * radius) >> 1),
+          SET_POSITION(orb, target->x + ((Trig_Sin(angle) * radius) >> 1),
                        toFIXED(8), (Trig_Cos(angle) * radius) >> 1);
-          shard->velocityX = Random16();
-          shard->velocityY = (Random16() & TRIG_ANGLE_MASK) + toFIXED(4);
-          shard->velocityZ = (Random16() & 7) + 4;
-          shard->variant = -1;
+          orb->velocityX = Random16();
+          orb->velocityY = (Random16() & (FIXED_ONE - 1)) + toFIXED(4);
+          orb->velocityZ = (Random16() & 7) + 4;
+          orb->variant = -1;
         }
       }
-      if (frame > 95) {
-        REG_BLDALPHA = BLEND_ALPHA(206 - frame * 2, BLEND_WEIGHT_MAX);
+      if (frame >= CRYSTAL_FADE_FRAME) {
+        REG_BLDALPHA = EFFECT_BLEND_CANVAS(CRYSTAL_FRAMES * 2 - frame * 2);
       }
       Matrix_Initialize();
       Matrix_SetLookAt(camera->eye, camera->focus);
 
-      // The pillar of light.
+      // The small Djinni dives, swaying, onto the target, drawn twice over
+      // its first four frames.
       if (frame <= 19) {
-        s32 x = (FIXEDtoINT(Trig_Sin(frame << 11) * 8)) + center[0] / 2 - 10;
-        s32 y = (FIXEDtoINT(Trig_Cos(frame << 11) * 4)) + center[1] - 24;
+        s32 x = (FIXEDtoINT(Trig_Sin(frame * (TRIG_TURN / 32)) * 8)) +
+                center[0] / 2 - 10;
+        s32 y = (FIXEDtoINT(Trig_Cos(frame * (TRIG_TURN / 32)) * 4)) +
+                center[1] - 24;
 
         y += frame * 3;
 
@@ -121,38 +138,40 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
         }
       }
 
-      // The shards, one more every two frames from frame 48.
+      // The orbs rise, one more every two frames from frame 48, their sizes
+      // pulsing.
       if (frame > 47) {
-        struct Particle *shard;
-        for (i = 0, shard = work->particles; i != CRYSTAL_SHARDS;
-             i++, shard++) {
+        struct Particle *orb;
+        for (i = 0, orb = work->particles; i != CRYSTAL_ORBS; i++, orb++) {
           if (frame >= i * 2 + 48) {
             s32 width;
 
-            EffectPosition_ProjectPoint(&shard->x, &screen);
+            EffectPosition_ProjectPoint(&orb->x, &screen);
             screen.x >>= 1;
-            width = shard->velocityZ;
-            width += FIXEDtoINT(Trig_Sin(shard->velocityX) * width / 2);
-            shard->velocityX += toFIXED(1) / 64;
+            width = orb->velocityZ;
+            width += FIXEDtoINT(Trig_Sin(orb->velocityX) * width / 2);
+            orb->velocityX += toFIXED(1) / 64;
             width *= 2;
             if ((u32)(width - 2) <= 61) {
-              s32 cell = (width - 2) / 2;
+              s32 disc = (width - 2) / 2;
               s32 x = screen.x;
               s32 y = screen.y;
 
-              if (shard->variant == 0) {
+              // DEAD: never true, as every orb's variant stays -1; the ROM
+              // keeps the test and the jitter.
+              if (orb->variant == 0) {
                 x += (Random16() & 7) - 4;
                 y += (Random16() & 7) - 4;
               }
-              Canvas_BlitAtFoot((u8 *)((s16)discOffsets[cell] + cells), x, y,
+              Canvas_BlitAtFoot((u8 *)((s16)discOffsets[disc] + cells), x, y,
                                 width);
             }
-            shard->y += shard->velocityY;
+            orb->y += orb->velocityY;
           }
         }
       }
 
-      for (i = 0; i != args->targetCount; i++) {
+      EFFECT_FOR_EACH_TARGET(i, args) {
         if (frame == i * 4 + 64) {
           Sound_PlayFar(SE_RECOVERY);
           BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
@@ -160,7 +179,7 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
         }
       }
 
-      // The crystal, spinning and growing from frame 16.
+      // The cog, spinning and growing from frame 16.
       Matrix_Initialize();
       gProjection.centerY = 104;
       {
@@ -173,18 +192,19 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
         model->vertices = vertices;
         texture.logWidth = 7;
         texture.logHeight = 7;
-        texture.pixels = Ram_MapCellBuffer + 16384;
+        texture.pixels = Ram_MapCellBuffer + CRYSTAL_COG_PICTURE;
         if (frame > 15) {
-          FIXED scale = (frame << 12) - FIXED_ONE;
+          FIXED scale = frame * (FIXED_ONE / 16) - FIXED_ONE;
 
-          if (scale > 114000) {
-            scale = 114000;
+          if (scale > CRYSTAL_COG_SCALE_MAX) {
+            scale = CRYSTAL_COG_SCALE_MAX;
           }
           model->shade = 0;
-          Matrix_RotateX(-3000);
-          Matrix_Translate(INTtoFIXED(center[0] / 2 - 64), toFIXED(40), 0);
+          Matrix_RotateX(-CRYSTAL_COG_TILT);
+          Matrix_Translate(INTtoFIXED(center[0] / 2 - CANVAS_SIZE / 2),
+                           toFIXED(40), 0);
           Matrix_ScaleUniform(scale >> 1);
-          Matrix_RotateY(frame << 9);
+          Matrix_RotateY(frame * (TRIG_TURN / 128));
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, vertices,
                                    4);
           Render_DrawModelList(model);
@@ -199,8 +219,14 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
   }
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
-#undef BLITTER
+
 #undef CRYSTAL_FRAMES
-#undef CRYSTAL_SHARDS
+#undef CRYSTAL_FADE_FRAME
+#undef CRYSTAL_BLEND_LEVEL
+#undef CRYSTAL_ORBS
 #undef CRYSTAL_DISCS
 #undef CRYSTAL_DISC_OFFSETS
+#undef CRYSTAL_COG_PICTURE
+#undef CRYSTAL_COG_SCALE_MAX
+#undef CRYSTAL_COG_TILT
+#undef CRYSTAL_VENUS_DJINN_SMALL_PICTURES

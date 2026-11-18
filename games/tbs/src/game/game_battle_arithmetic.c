@@ -4,9 +4,6 @@
 
 #include "game_internal.h"
 
-/// The battle's multipliers are 256ths: this one keeps an amount as it is.
-#define BATTLE_MULTIPLIER_ONE 256
-
 /// Returns the multiplier, 256 for 1x, for an element difference: 256 plus 1.28
 /// a point, the difference held to -200 to 200, its effect half with halve.
 s32 Battle_GetElementMultiplier(s32 input, s32 halve) {
@@ -94,10 +91,6 @@ s32 Battle_CalculatePsynergyPower(s32 power, s32 elementDifference,
   return scaledPower / (BATTLE_MULTIPLIER_ONE * BATTLE_MULTIPLIER_ONE);
 }
 
-/// The element power at which healing is neither stronger nor weaker: each
-/// point above it counts as two points of element difference.
-#define HEALING_BASE_POWER 100
-
 /// Returns the amount healed: power times powerMultiplier and the multiplier
 /// for the healer's element power above HEALING_BASE_POWER.
 s32 Battle_CalculateRecovery(s32 power, s32 elementPower, s32 powerMultiplier) {
@@ -151,28 +144,27 @@ s32 Equipment_GetUnleashRateBonus(struct Unit *unit) {
 }
 
 /// Rolls whether a character's weapon unleashes, 5 percent a point of its
-/// chance. Returns the unleash action, or 1 for a plain attack.
+/// chance. Returns the unleash's ability, or ABILITY_ATTACK for a plain attack.
 s32 RollWeaponUnleash(struct Unit *unit) {
   const struct ItemDefinition *item;
   FIXED rate;
 
   if (unit->classId == CLASS_NONE) {
-    return 1;
+    return ABILITY_ATTACK;
   }
   item = Inventory_GetEquippedDefinition(unit, ITEM_TYPE_WEAPON);
   if (item == NULL) {
-    return 1;
+    return ABILITY_ATTACK;
   }
-  if (item->unleashAbility == 0) {
-    return 1;
+  if (item->unleashAbility == ABILITY_NONE) {
+    return ABILITY_ATTACK;
   }
-  rate =
-      toFIXED(Equipment_GetUnleashRateBonus(unit) + item->unleashChance * 5) /
-      100;
-  if (rate > (Battle_Random() & 0xFFFF)) {
+  rate = FIXED_ONE *
+         (Equipment_GetUnleashRateBonus(unit) + item->unleashChance * 5) / 100;
+  if (rate > (Battle_Random() & 0xffff)) {
     return item->unleashAbility;
   }
-  return 1;
+  return ABILITY_ATTACK;
 }
 
 /// Returns the base chance in percent of an effect; a negative one is fixed,
@@ -227,8 +219,8 @@ s32 Battle_GetEffectBaseSuccessRate(s32 effectId) {
   return -fixedChance;
 }
 
-/// Returns 1 when the unit is weak to the effect, as its enemy kind or class
-/// lists.
+/// Returns 1 when the unit is weak to the effect: one of the three its enemy
+/// kind or class lists.
 s32 BattleAbility_IsWeakToEffect(const struct Unit *target, s32 effectId) {
   const u8 *weakEffects;
   s32 weaknessIndex;

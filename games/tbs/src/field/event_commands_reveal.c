@@ -4,8 +4,6 @@
 
 #include "event_commands_internal.h"
 
-#define ACTOR_COUNT 64 ///< gActors
-
 /// Draws every live actor whose sprite shows a rock (SPRITE_ROCK) in the colour
 /// mode value: Reveal greys the rocks with the backgrounds as it starts
 /// (SPRITE_COLOR_GREY) and gives them back their colours as it ends
@@ -160,5 +158,3 @@ void FieldPsynergy_EndReveal(void) {
     }
   }
 }
-
-#undef ACTOR_COUNT

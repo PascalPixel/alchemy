@@ -49,7 +49,7 @@ void IzumoRooms_RecognizeTheHeroes(s32 mode);
 void IzumoRooms_ShowMove(void);
 extern s32 gIzumoRooms_FirstDancerScript[];
 extern s32 gIzumoRooms_SecondDancerScript[];
-extern s32 gIzumoRooms_CryingScript[];
+extern s32 gIzumoRooms_HeavingScript[];
 
 /// Whether the other of the two women dancing in Susa's house is clear of the
 /// spot by the doorway this one steps to; their scripts wait on it.
@@ -1461,9 +1461,9 @@ s32 gIzumoRooms_SecondDancerScript[] = {
 };
 
 // clang-format off
-/// A girl crying ("*Sniff* How could we sacrifice our beloved Kushinada?"):
-/// her sprite heaves, squashed and stretched three times, then rests.
-s32 gIzumoRooms_CryingScript[] = {
+/// A girl heaves with sobs ("*Sniff* How could we sacrifice our beloved
+/// Kushinada?"): her sprite is squashed and stretched three times, then rests.
+s32 gIzumoRooms_HeavingScript[] = {
     SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
     SC_ANIMATION(0),
     SC_LABEL(1),
@@ -1520,8 +1520,8 @@ s32 gIzumoRooms_CryingScript[] = {
     -1,
 };
 
-/// Kushinada on her seat of stones heaves as the crying girl does, with longer
-/// rests.
+/// Kushinada on her seat of stones heaves as gIzumoRooms_HeavingScript's girl
+/// does, with longer rests.
 s32 gIzumoRooms_KushinadaHeavingScript[] = {
     SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_PUSHABLE | ACTOR_SOLID),
     SC_LABEL(1),
@@ -1606,7 +1606,7 @@ struct ActorPlacement gIzumoRooms_ActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_IZUMO_MAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_ORANGE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 632, 0, 88, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_HEALER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 560, 0, 328, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_IZUMO_GIRL, CONDITION_ALWAYS, (s32)gIzumoRooms_CryingScript, 504, 0, 360, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_GIRL, CONDITION_ALWAYS, (s32)gIzumoRooms_HeavingScript, 504, 0, 360, FACING_SOUTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_IZUMO_GIRL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 392, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
@@ -1630,7 +1630,7 @@ struct ActorPlacement gIzumoRooms_ActorPlacementsOnceTheSerpentIsSlain[] = {
     ACTOR_PLACEMENT(SPRITE_IZUMO_MAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 104, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_ORANGE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 632, 0, 88, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_HEALER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 560, 0, 328, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_IZUMO_GIRL, CONDITION_ALWAYS, (s32)gIzumoRooms_CryingScript, 600, 0, 360, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IZUMO_GIRL, CONDITION_ALWAYS, (s32)gIzumoRooms_HeavingScript, 600, 0, 360, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_IZUMO_GIRL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 376, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_LADY_UZUME, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 144, 0, 520, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_IZUMO_WOMAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 624, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),

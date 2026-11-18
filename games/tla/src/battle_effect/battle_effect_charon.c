@@ -158,6 +158,31 @@ extern const struct Scale gCharon_FinaleScale;
 #define CHARON_FLASHES 3 ///< the backdrop's flashes, at gCharon_FlashFrames
 /// The frame the rune seal is stamped on the ground, after the canvas flashes.
 #define CHARON_SEAL_FRAME 56
+/// The rune seal glows this many levels brighter than its own colours, pulsing
+/// by CHARON_SEAL_GLOW_PULSE either way.
+#define CHARON_SEAL_GLOW 16
+#define CHARON_SEAL_GLOW_PULSE 12
+/// The red dusk the backdrop fades toward: its own colours this many levels
+/// darker in green and blue and CHARON_DUSK_REDDENING redder, and after the
+/// flash that brings the rings of fire, CHARON_DEEP_DUSK_DIMMING darker.
+#define CHARON_DUSK_DIMMING 16
+#define CHARON_DEEP_DUSK_DIMMING 20
+#define CHARON_DUSK_REDDENING 8
+/// The deep red the wisp darkens to from white.
+#define CHARON_WISP_RED_MIN 12
+#define CHARON_WISP_GREEN_MIN 4
+#define CHARON_WISP_BLUE_MIN 4
+/// The dark disc rimmed in magenta swells at this x on the canvas, and from
+/// CHARON_DISC_SWAY_FRAME sways as far either side of it.
+#define CHARON_DISC_X 54
+#define CHARON_DISC_SWAY_FRAME 350
+/// The top of the attack's ramp, a pink violet: full red with these levels of
+/// green and blue.
+#define CHARON_RAMP_GREEN 8
+#define CHARON_RAMP_BLUE 27
+/// Each flash as the targets are drawn in fades the background back to this
+/// many levels darker in green, and half that in red and blue.
+#define CHARON_FLASH_DIMMING 20
 
 /// Charon: over a red wasteland a violet whirlpool turns about a red dome that
 /// rises out of it; in a white flash among dark shards Charon appears and
@@ -451,7 +476,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       pulsePlace[0] = toFIXED(114);
       // DEAD: sealFrame is never negative here; the ROM keeps the test and its
       // other height.
-      pulsePlace[2] = INTtoFIXED(sealFrame >= 0 ? 78 : 100);
+      pulsePlace[2] = sealFrame >= 0 ? toFIXED(78) : toFIXED(100);
       Render_ApplyProjectedPlacementFar(OBJECTS[0], pulsePlace, &pulseScale.x,
                                         0);
     }
@@ -488,9 +513,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
           tg = RGB_GREEN(*target);
           tr = RGB_RED(*target);
         } else {
-          tb = RGB_BLUE(*target) - 16;
-          tg = RGB_GREEN(*target) - 16;
-          tr = RGB_RED(*target) + 8;
+          tb = RGB_BLUE(*target) - CHARON_DUSK_DIMMING;
+          tg = RGB_GREEN(*target) - CHARON_DUSK_DIMMING;
+          tr = RGB_RED(*target) + CHARON_DUSK_REDDENING;
         }
         if (tb < 0) {
           tb = 0;
@@ -520,20 +545,20 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         if (r > RGB_LEVEL_MAX) {
           r = RGB_LEVEL_MAX;
         }
-        if (r < 12) {
-          r = 12;
+        if (r < CHARON_WISP_RED_MIN) {
+          r = CHARON_WISP_RED_MIN;
         }
         if (g > RGB_LEVEL_MAX) {
           g = RGB_LEVEL_MAX;
         }
-        if (g < 4) {
-          g = 4;
+        if (g < CHARON_WISP_GREEN_MIN) {
+          g = CHARON_WISP_GREEN_MIN;
         }
         if (b > RGB_LEVEL_MAX) {
           b = RGB_LEVEL_MAX;
         }
-        if (b < 4) {
-          b = 4;
+        if (b < CHARON_WISP_BLUE_MIN) {
+          b = CHARON_WISP_BLUE_MIN;
         }
         OBJ_PLTT_COLOR(CHARON_WISP_PALETTE, 1 + i) = RGB(r, g, b);
       }
@@ -930,9 +955,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
             s32 b = RGB_BLUE(*color);
             s32 g = RGB_GREEN(*color);
             s32 r = RGB_RED(*color);
-            s32 tb = RGB_BLUE(*target) - 20;
-            s32 tg = RGB_GREEN(*target) - 20;
-            s32 tr = RGB_RED(*target) + 8;
+            s32 tb = RGB_BLUE(*target) - CHARON_DEEP_DUSK_DIMMING;
+            s32 tg = RGB_GREEN(*target) - CHARON_DEEP_DUSK_DIMMING;
+            s32 tr = RGB_RED(*target) + CHARON_DUSK_REDDENING;
 
             if (tb < 0) {
               tb = 0;
@@ -1027,9 +1052,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         Render_ApplyProjectedPlacementFar(OBJECTS[CHARON_REVEAL], finalePlace,
                                           &finaleScale.x, 0);
       }
-      // From frame 347 the canvas is drawn opaque in magenta: a glowing disc
-      // swells, and from frame 350 sways across; the backdrop flashes white at
-      // frames 357 and 376.
+      // From frame 347 the canvas is drawn opaque in magenta: a dark disc
+      // rimmed in magenta swells, and from CHARON_DISC_SWAY_FRAME sways across;
+      // the backdrop flashes white at frames 357 and 376.
       if (frame == 347) {
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
         REG_BLDCNT = 0;
@@ -1051,12 +1076,13 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       }
       if (frame > 346) {
         s32 radius = (frame - 345) * 4;
-        s32 centerX = 54;
+        s32 centerX = CHARON_DISC_X;
 
-        if (frame > 349) {
-          centerX =
-              (FIXEDtoINT(-(Trig_Sin((frame - 350) * (TRIG_TURN / 64)) * 54))) +
-              54;
+        if (frame >= CHARON_DISC_SWAY_FRAME) {
+          centerX = (FIXEDtoINT(-(Trig_Sin((frame - CHARON_DISC_SWAY_FRAME) *
+                                           (TRIG_TURN / 64)) *
+                                  CHARON_DISC_X))) +
+                    CHARON_DISC_X;
         }
         if (frame == 360) {
           work->transferMode = CANVAS_COPY;
@@ -1098,9 +1124,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
               tg = RGB_GREEN(*target);
               tr = RGB_RED(*target);
             } else {
-              tb = RGB_BLUE(*target) - 16;
-              tg = RGB_GREEN(*target) - 16;
-              tr = RGB_RED(*target) + 8;
+              tb = RGB_BLUE(*target) - CHARON_DUSK_DIMMING;
+              tg = RGB_GREEN(*target) - CHARON_DUSK_DIMMING;
+              tr = RGB_RED(*target) + CHARON_DUSK_REDDENING;
             }
             if (tb < 0) {
               tb = 0;
@@ -1219,7 +1245,9 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         u16 *entry = (u16 *)&BG_PLTT_COLOR(CHARON_SEAL_PALETTE, 0);
 
         for (i = 0; i != PALETTE_COLORS; i++, color++, entry++) {
-          s32 add = (FIXEDtoINT(Trig_Cos(sealFrame << 9) * 12)) + 16;
+          s32 add =
+              (FIXEDtoINT(Trig_Cos(sealFrame << 9) * CHARON_SEAL_GLOW_PULSE)) +
+              CHARON_SEAL_GLOW;
           s32 r = RGB_RED(*color) + add;
           s32 g = RGB_GREEN(*color) + add;
           s32 b = RGB_BLUE(*color) + add;
@@ -1239,7 +1267,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
     }
     // The canvas flashes as the seal comes: half bright, then white.
     if (frame == 54) {
-      Iwram_FillWords(canvas, CANVAS_VIEW_BYTES, CANVAS_FILL_WORD(32));
+      Iwram_FillWords(canvas, CANVAS_VIEW_BYTES,
+                      CANVAS_FILL_WORD((CANVAS_LEVEL_BRIGHTEST + 1) / 2));
     }
     if (frame == 55) {
       Iwram_FillWords(canvas, CANVAS_VIEW_BYTES,
@@ -1368,7 +1397,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON;
   wait(1);
   battle->keepBackdropPalette = 0;
-  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background, 24);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background,
+                           BACKGROUND_DARKENED_LEVEL);
   IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
   IWRAM_FILL_WORDS((void *)BG_CHAR_BLOCK(1), CANVAS_BYTES, 0);
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
@@ -1386,8 +1416,8 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   for (i = 1; i != SHEET_PALETTE_COLORS; i++) {
     s32 q = i * 2 / 3;
     s32 r = RGB_LEVEL_MAX - q;
-    s32 g = 8 - i / 2;
-    s32 b = 27 - q;
+    s32 g = CHARON_RAMP_GREEN - i / 2;
+    s32 b = CHARON_RAMP_BLUE - q;
 
     if (r < 0) {
       r = 0;
@@ -1443,9 +1473,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
   }
 
   width = CHARON_COLUMN_END;
-  // Each flash fades the background back to 20 levels darker in green, and
-  // half that in red and blue.
-  dimming = 20;
+  dimming = CHARON_FLASH_DIMMING;
   frame = 0;
   do {
     if ((gInput.repeat & (KEY_A | KEY_B)) && frame < 120) {
@@ -1591,7 +1619,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
 
           for (j = 0; j != BATTLE_BACKGROUND_COLORS; j++) {
             s32 tr = RGB_RED(target[j]) - dimming / 2;
-            s32 tg = RGB_GREEN(target[j]) - 20;
+            s32 tg = RGB_GREEN(target[j]) - CHARON_FLASH_DIMMING;
             s32 tb = RGB_BLUE(target[j]) - dimming / 2;
             s32 r = RGB_RED(color[j]);
             s32 g = RGB_GREEN(color[j]);

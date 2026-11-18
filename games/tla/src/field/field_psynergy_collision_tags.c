@@ -28,13 +28,15 @@ void FlagBlock_PlaceAllMarkingEdges(struct ActorFlag *list) {
     actor->collisionFlags &= ~ACTOR_SOLID;
     Actor_SetSpriteFlagsFar(actor, 0);
     cell->collisionCode = CELL_BEHAVIOR_WALL;
-    MapGrid_MarkJumpIfOpen(actor->x.fixed + toFIXED(16), actor->z.fixed,
+    MapGrid_MarkJumpIfOpen(actor->x.fixed + toFIXED(MAPGRID_CELL_PIXELS),
+                           actor->z.fixed, actor->layer, actor->groundHeight);
+    MapGrid_MarkJumpIfOpen(actor->x.fixed - toFIXED(MAPGRID_CELL_PIXELS),
+                           actor->z.fixed, actor->layer, actor->groundHeight);
+    MapGrid_MarkJumpIfOpen(actor->x.fixed,
+                           actor->z.fixed + toFIXED(MAPGRID_CELL_PIXELS),
                            actor->layer, actor->groundHeight);
-    MapGrid_MarkJumpIfOpen(actor->x.fixed - toFIXED(16), actor->z.fixed,
-                           actor->layer, actor->groundHeight);
-    MapGrid_MarkJumpIfOpen(actor->x.fixed, actor->z.fixed + toFIXED(16),
-                           actor->layer, actor->groundHeight);
-    MapGrid_MarkJumpIfOpen(actor->x.fixed, actor->z.fixed - toFIXED(16),
+    MapGrid_MarkJumpIfOpen(actor->x.fixed,
+                           actor->z.fixed - toFIXED(MAPGRID_CELL_PIXELS),
                            actor->layer, actor->groundHeight);
     if (GameFlag_Get(flag)) {
       Actor_SelectAnimationFar(actor, PUDDLE_ANIMATION_FROZEN);
@@ -120,8 +122,8 @@ void FlagBlock_ApplyFlags(struct ActorFlag *list) {
 
 /// Returns the index of the actor's cell in its map layer.
 s32 Actor_GetCellIndex(struct Actor *actor) {
-  return actor->x.fixed / toFIXED(16) +
-         (actor->z.fixed / toFIXED(16)) * MAPGRID_SIZE;
+  return actor->x.fixed / toFIXED(MAPGRID_CELL_PIXELS) +
+         (actor->z.fixed / toFIXED(MAPGRID_CELL_PIXELS)) * MAPGRID_SIZE;
 }
 
 /// Returns the index of the shape table's entry (gMapGridShapes) of kind key

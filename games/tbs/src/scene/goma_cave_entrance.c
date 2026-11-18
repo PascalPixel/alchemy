@@ -1,12 +1,12 @@
 /// @file
 /// Goma Cave Entrance (SceneId_GomaCaveEntrance), the mouth of the cave in
-/// the Goma Range between Vault and Bilibin, where Ivan rejoins the party.
+/// the Goma Range between Vault and Bilibin, where Ivan joins the party.
 ///
 /// A stump caught in ivy (ACTOR_STUMP, held by ACTOR_STUMP_IVY) blocks the
 /// way on. Until FLAG_GOMA_CAVE_IVAN_JOINED is set, Move on it runs
 /// GomaCaveEntrance_IvanJoins. Garet says their Psynergy can't free it.
 /// Only once the thieves in Vault are jailed (FLAG_VAULT_THIEVES_JAILED) does
-/// Ivan walk up, blow the ivy off with Whirlwind and rejoin with the Shaman's
+/// Ivan walk up, blow the ivy off with Whirlwind and join with the Shaman's
 /// Rod equipped.
 ///
 /// The ivy is never the player's target (ACTOR_NOT_TARGETED), so that event
@@ -170,7 +170,8 @@ static void GomaCaveEntrance_PushWestPillar(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.2);
   Actor_SetSpeed(ACTOR_WEST_PILLAR, 0.2);
   Sound_Play(SE_PUSH);
-  // A cell east or west, by the trigger.
+  // A cell, MAPGRID_CELL_PIXELS, east from TRIGGER_PUSH_WEST_PILLAR_EAST, west
+  // from TRIGGER_PUSH_WEST_PILLAR_WEST.
   offsetX = (TRIGGER_PUSH_WEST_PILLAR_EAST + TRIGGER_PUSH_WEST_PILLAR_WEST -
              (work->stepTrigger << 1))
             << 4;
@@ -439,7 +440,7 @@ static void GomaCaveEntrance_IvanJoins(void) {
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
     Actor_SetAnimationAndWait(ACTOR_GARET, ANIM_NOD);
     Event_Wait(20);
-    // "Please, allow me to join your quest.": Ivan rejoins with his rod.
+    // "Please, allow me to join your quest.": Ivan joins with his rod.
     Event_AddPartyMember(IVAN, 1);
     Event_Wait(60);
     GomaCaveEntrance_GiveShamansRod();
@@ -516,9 +517,9 @@ static void GomaCaveEntrance_SpinStump(struct Actor *actor) {
 
 #include "shared/actor_wait_below_height.c"
 
-/// The frames the stump tips before it leaps, and the puffs that burst round it
-/// as it lands.
+/// The frames the stump tips before it leaps.
 #define STUMP_TIP_FRAMES 18
+/// The puffs of dust that burst round the stump as it lands.
 #define STUMP_LANDING_PUFFS 17
 
 /// The stump leaps out of the way and sinks in the pool.

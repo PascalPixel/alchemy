@@ -120,7 +120,7 @@ enum ShopPriceKind {
 };
 
 /// What the sanctum does for one party member; each kind picks the party
-/// member's status it needs, its fee and its cure (sanctum.c).
+/// member's status it needs, its donation and its cure (shop_sanctum.c).
 enum SanctumService {
   SANCTUM_SERVICE_REVIVE,      ///< for a downed party member (HP 0)
   SANCTUM_SERVICE_CURE_POISON, ///< for poison or deadly poison

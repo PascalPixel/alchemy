@@ -33,6 +33,7 @@
 #include "system/frame.h"
 #include "system/heap_slots.h"
 #include "scene/scene.h"
+#include "scene/title.h"
 #include "field/map_grid.h"
 #include "window/screens.h"
 #include "window/window.h"
@@ -57,22 +58,6 @@
 #include "graphics/text_font.h"
 #include "game/character_ids.h"
 #include "system/save.h"
-
-/// The logo the screen shows, as the title's: an 8-bit background on BG2, its
-/// map in screen block 6 and its tiles from tile 416 of character block 0.
-#define LOGO_BGCNT (BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6))
-#define LOGO_MAP ((u16 *)BG_SCREEN_BLOCK(6))
-#define LOGO_FIRST_TILE 416
-#define LOGO_TILES (BG_CHAR_BLOCK(0) + LOGO_FIRST_TILE * TILE_SIZE_8BPP)
-/// The map entry after each row's 30 visible tiles.
-#define LOGO_BLANK_TILE 511
-/// The logo's palette, at the start of its resource before its tiles.
-#define LOGO_PALETTE_COLORS 224
-
-/// The File Screen's entrance from the epilogue, which offers to save the
-/// cleared game (epilogue.c); the title and the Battle Arena's lobby come in
-/// by the other.
-#define FILE_SCREEN_FROM_EPILOGUE 2
 
 /// SceneId_Title's entrances (title.c): the logos and the intro, then this
 /// screen; and the opening credits, then the prologue.
@@ -124,7 +109,7 @@ s32 IconMenu_ChooseSendOption(s32 mode);
 
 s32 Clear_EnterPassword(void);
 
-extern s8 gClear_CursorWobble[];
+extern s8 gClear_CursorBob[];
 void Clear_ApplyImportedData(s32 mode, u8 *data);
 /// Decodes length symbols of an entered password (src) into dst, undoing The
 /// Broken Seal's FileScreen_EncodePassword: each symbol less its place, the
@@ -185,8 +170,8 @@ void Clear_LoadBackground(void) {
 
   tilemap = LOGO_MAP;
   tile = LOGO_FIRST_TILE;
-  for (y = 0; y < 20; y++) {
-    for (x = 0; x < 30; x++)
+  for (y = 0; y < DISPLAY_TILE_HEIGHT; y++) {
+    for (x = 0; x < DISPLAY_TILE_WIDTH; x++)
       *tilemap++ = tile++;
     *tilemap++ = blankTile;
     *tilemap++ = blankTile;
@@ -293,8 +278,8 @@ void InventorySnapshot_Restore(void);
 void StatusScreen_Run(void);
 
 /// The game's state as a file holds it, from gSaveBuffer (system/save.h's
-/// save image).
-#define SAVE_IMAGE_BYTES 12288
+/// save image): a save part's three sectors.
+#define SAVE_IMAGE_BYTES (SAVE_SECTORS_PER_PART * SAVE_SECTOR_SIZE)
 /// Where the data a password or link screen brings in waits for
 /// DataTransfer_Apply, as a save image: after the state set aside at the
 /// start of the map cell buffer, free on this screen.
@@ -345,7 +330,7 @@ s32 Scene_Initialize(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   // After the epilogue: the cleared game may be saved, then the title.
-  if (gMainRoutineWork.entrance == FILE_SCREEN_FROM_EPILOGUE) {
+  if (gMainRoutineWork.entrance == CLEAR_FROM_EPILOGUE) {
     do {
       message = (s32)MsgSaveYourAdventure;
       // "Save your adventure?"
@@ -691,22 +676,53 @@ s32 Scene_PrepareMap(void) { return 0; }
 #define PASSWORD_CRC_SEED 0xffff
 #define PASSWORD_CRC_POLYNOMIAL 0x1021
 #define PASSWORD_CRC_TOP_BIT 0x8000 ///< of its 16 bits
-/// Where a Gold password's parts start among its bytes: the party's items, 15
-/// a member in nine bits each; their quantities, five bits for each of the 23
-/// items that stack (gClear_ImportedStackItems); and the coins, high byte
-/// first.
+/// Where a password's parts start among its bytes: the four levels and the
+/// Djinn from the first, the story flags, then Silver's and Bronze's
+/// Psynergy items, which Gold has not; the stats rows after those, two party
+/// members to a row; and Gold's alone, the party's items, 15 a member in nine
+/// bits each, their quantities, five bits for each of the 23 items that stack
+/// (gClear_ImportedStackItems), and the coins, high byte first.
+#define PASSWORD_FLAGS_BYTE 7
+#define PASSWORD_KEY_ITEMS_BYTE 8
+#define PASSWORD_STATS_ROW_BYTES 15
 #define PASSWORD_ITEMS_BYTE 39
 #define PASSWORD_QUANTITIES_BYTE 107
 #define PASSWORD_COINS_BYTE 165
 #define PASSWORD_STACK_ITEMS 23
+/// A stacking item's quantity in the password: its five bits.
+#define PASSWORD_QUANTITY_MASK                                                 \
+  (INVENTORY_QUANTITY_MASK >> INVENTORY_QUANTITY_SHIFT)
+/// A party member's base stats in the password, two words of fields: HP (11
+/// bits), PP (11) and Attack (10); then Defense (10), Agility (10) and Luck (8)
+/// over four bits of 0. This game reads Attack, Defense and Agility back in
+/// nine bits and Luck in seven.
+#define PASSWORD_HP_SHIFT 21
+#define PASSWORD_PP_SHIFT 10
+#define PASSWORD_DEFENSE_SHIFT 22
+#define PASSWORD_AGILITY_SHIFT 12
+#define PASSWORD_LUCK_SHIFT 4
 /// A password glyph's sprite: four tiles, 16 pixels square.
 #define GLYPH_SPRITE_BYTES (4 * TILE_SIZE_4BPP)
 /// A unit's Djinn, djinnHeld to djinnSetCounts.
 #define UNIT_DJINN_BYTES 40
 
-u8 gClear_PasswordText[PASSWORD_GOLD_LENGTH] BSS_DATA;
-u8 gClear_PasswordCodes[60] BSS_DATA;
-u8 gClear_PasswordWork[PASSWORD_GOLD_BYTES] BSS_DATA;
+/// The password as entered, a symbol a byte: a Gold password is 260 symbols,
+/// which the Japanese buffer holds exactly, as in The Broken Seal.
+// XXX (no evidence): why the other editions reserve 320, and the Japanese 60
+// bytes after the decoded password; nothing in this game writes or reads past
+// 260 or the decoded bytes, so the bytes show only the space.
+#if TLA_PATCH_1
+#define PASSWORD_BUFFER_SIZE 320
+#else
+#define PASSWORD_BUFFER_SIZE PASSWORD_GOLD_LENGTH
+#endif
+u8 gClear_PasswordText[PASSWORD_BUFFER_SIZE] BSS_DATA;
+/// The entered password's bytes, decoded (Clear_DecodePassword).
+u8 gClear_DecodedPassword[PASSWORD_GOLD_BYTES] BSS_DATA;
+#if !TLA_PATCH_1
+/// Unused: the Japanese edition's 60 bytes after the decoded password.
+u8 gClear_PasswordSpare[60] BSS_DATA;
+#endif
 
 /// The password grid's glyph sprites, one for each place of a page.
 struct PasswordWork {
@@ -716,83 +732,99 @@ struct PasswordWork {
   u8 unused[26];                       ///< cleared on entry, read by nothing
 };
 
-#if (LANGUAGE == LANGUAGE_JAPANESE)
+/// The password's symbols in the font: in the Japanese edition kana in their
+/// order (charmap_tla_ja.tsv's codes), あ to そ, た to ん and を, then with the
+/// voiced mark が to ぞ, だ, で, ど and ば to ぼ; in the others capitals
+/// without I and O, the digits 2 to 9, small letters without l and o, then ! ?
+/// # & $ % + and =.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define SYMBOL_TA 15
+#define SYMBOL_N 44
+#define SYMBOL_WO 45
+#define SYMBOL_GA 46
+#define SYMBOL_DA 56
+#define SYMBOL_BA 59
+/// The character codes of kana that start runs in the font's order, as The
+/// Broken Seal's window/text_font.h names them.
+#define KANA_WO 134 ///< を
+#define KANA_A 145  ///< あ, then い to そ
+#define KANA_KA 150 ///< か, then き to そ
+#define KANA_TA 224 ///< た, then ち to ん
+#define KANA_TE 227 ///< て
+#define KANA_TO 228 ///< と
+#define KANA_HA 234 ///< は, then ひ to ほ
+#define KANA_N 253  ///< ん
 /// A kana's code with the voiced mark, gFont_MarkGlyphCodes's second.
 #define VOICED(code) ((code) | 1 << TEXT_MARK_SHIFT)
-
-/// The character a cell of the password grid stands for, in the Japanese
-/// font's codes: kana, the voiced ones with the dakuten mark in the high byte.
-void Clear_GetPasswordCharacter(s32 cell, u16 *text) {
-  text[1] = 0;
-  text[2] = 0;
-  if (cell <= 14)
-    text[0] = cell + 145;
-  else if (cell <= 43)
-    text[0] = cell + 209;
-  else if (cell == 45)
-    text[0] = 134;
-  else if (cell == 44)
-    text[0] = 253;
-  else if (cell <= 55)
-    text[0] = VOICED(cell + 104);
-  else if (cell == 56)
-    text[0] = VOICED(224);
-  else if (cell == 57)
-    text[0] = VOICED(227);
-  else if (cell == 58)
-    text[0] = VOICED(228);
-  else
-    text[0] = VOICED(cell + 175);
-}
 #else
-/// The character a cell of the password grid stands for, in the font's
-/// codes: capitals without I and O, the digits 2 to 9, small letters without
-/// l and o, then symbols.
+#define SYMBOL_DIGITS 24
+#define SYMBOL_SMALL_LETTERS 32
+#define SYMBOL_SIGNS 56
+#endif
+
+/// The character a password symbol stands for, in the font's codes, a kana's
+/// voiced mark in its top bits.
 void Clear_GetPasswordCharacter(s32 cell, u16 *text) {
   text[1] = 0;
   text[2] = 0;
-  if (cell <= 7)
+#if LANGUAGE != LANGUAGE_JAPANESE
+  if (cell <= 'H' - 'A')
     text[0] = cell + 'A';
-  else if (cell <= 12)
+  else if (cell <= 'N' - 'A' - 1)
     text[0] = cell + 'A' + 1;
-  else if (cell <= 23)
+  else if (cell <= 'Z' - 'A' - 2)
     text[0] = cell + 'A' + 2;
-  else if (cell <= 31)
-    text[0] = cell + 26;
-  else if (cell <= 42)
-    text[0] = cell + 'A';
-  else if (cell <= 44)
-    text[0] = cell + 'A' + 1;
-  else if (cell <= 55)
-    text[0] = cell + 'A' + 2;
-  else if (cell == 56)
+  else if (cell < SYMBOL_SMALL_LETTERS)
+    text[0] = cell - SYMBOL_DIGITS + '2';
+  else if (cell <= SYMBOL_SMALL_LETTERS + 'k' - 'a')
+    text[0] = cell - SYMBOL_SMALL_LETTERS + 'a';
+  else if (cell <= SYMBOL_SMALL_LETTERS + 'n' - 'a' - 1)
+    text[0] = cell - SYMBOL_SMALL_LETTERS + 'a' + 1;
+  else if (cell <= SYMBOL_SMALL_LETTERS + 'z' - 'a' - 2)
+    text[0] = cell - SYMBOL_SMALL_LETTERS + 'a' + 2;
+  else if (cell == SYMBOL_SIGNS)
     text[0] = '!';
-  else if (cell == 57)
+  else if (cell == SYMBOL_SIGNS + 1)
     text[0] = '?';
-  else if (cell == 58)
+  else if (cell == SYMBOL_SIGNS + 2)
     text[0] = '#';
-  else if (cell == 59)
+  else if (cell == SYMBOL_SIGNS + 3)
     text[0] = '&';
-  else if (cell == 60)
+  else if (cell == SYMBOL_SIGNS + 4)
     text[0] = '$';
-  else if (cell == 61)
+  else if (cell == SYMBOL_SIGNS + 5)
     text[0] = '%';
-  else if (cell == 62)
+  else if (cell == SYMBOL_SIGNS + 6)
     text[0] = '+';
   else
     text[0] = '=';
-}
+#else
+  if (cell < SYMBOL_TA)
+    text[0] = cell + KANA_A;
+  else if (cell < SYMBOL_N)
+    text[0] = cell - SYMBOL_TA + KANA_TA;
+  else if (cell == SYMBOL_WO)
+    text[0] = KANA_WO;
+  else if (cell == SYMBOL_N)
+    text[0] = KANA_N;
+  else if (cell < SYMBOL_DA)
+    text[0] = VOICED(cell - SYMBOL_GA + KANA_KA);
+  else if (cell == SYMBOL_DA)
+    text[0] = VOICED(KANA_TA);
+  else if (cell == SYMBOL_DA + 1)
+    text[0] = VOICED(KANA_TE);
+  else if (cell == SYMBOL_DA + 2)
+    text[0] = VOICED(KANA_TO);
+  else
+    text[0] = VOICED(cell - SYMBOL_BA + KANA_HA);
 #endif
+}
 
 /// The transferred data's game flags, and its main routine work and what
 /// follows (system/save.h's save image).
 #define TRANSFERRED_FLAGS (TRANSFERRED_SAVE + SAVE_IMAGE_GAME_FLAGS)
 #define TRANSFERRED_MAIN_ROUTINE_WORK                                          \
   (TRANSFERRED_SAVE + SAVE_IMAGE_MAIN_ROUTINE_WORK)
-/// Where The Broken Seal's save image keeps its units (gCharacterUnits), 32
-/// bytes before this game's SAVE_IMAGE_UNITS: its image from the main routine
-/// work on is copied that much further on, its units landing on this game's.
-#define BROKEN_SEAL_SAVE_IMAGE_UNITS 1280
 
 /// The first letter of the greeting this screen answers The Broken Seal with,
 /// before V, T and S: the one its FILE_SCREEN_LINK_LANGUAGE_TAG waits for.
@@ -809,6 +841,12 @@ void Clear_GetPasswordCharacter(s32 cell, u16 *text) {
 #else
 #define LINK_LANGUAGE_TAG 'U'
 #endif
+
+/// Receiving by cable stops waiting after this long, almost three hours, and
+/// ends with "Data transfer was interrupted" once The Broken Seal goes unheard
+/// this long, as its LINK_SEND_FRAMES and LINK_SILENT_FRAMES.
+#define LINK_RECEIVE_FRAMES 600000
+#define LINK_SILENT_FRAMES 10
 
 // The windows are as wide as each language's text needs.
 #if (LANGUAGE == LANGUAGE_FRENCH)
@@ -840,7 +878,8 @@ s32 Clear_ReceiveByLink(void) {
   u8 *flags;
   u16 *request;
 
-  window = Window_Create(RECEIVE_WINDOW_X, 5, RECEIVE_WINDOW_WIDTH, 8, 2);
+  window = Window_Create(RECEIVE_WINDOW_X, 5, RECEIVE_WINDOW_WIDTH, 8,
+                         WINDOW_FLAG_INSTANT);
   // "Preparing to receive", "saved Clear Data" and "B Button: Quit".
   message = (s32)MsgFieldPreparingToReceive;
   Text_DrawMessage(message, window, 0, 4);
@@ -849,7 +888,7 @@ s32 Clear_ReceiveByLink(void) {
   Serial_Initialize();
   System_Wait(10);
 restart:
-  mask = 3;
+  mask = LINK_STATUS_HEARD_BOTH;
   goto poll;
 scan:
   if ((gLinkStatus & mask) == mask) {
@@ -876,7 +915,7 @@ receive:
   System_Wait(10);
   Serial_StartReceive(TRANSFERRED_SAVE);
   System_Wait(10);
-  linkMask = 3;
+  linkMask = LINK_STATUS_HEARD_BOTH;
   idle = 0;
   ok = 1;
   shown = 0;
@@ -885,7 +924,8 @@ transfer:
   if (!shown && gSerialReceivedSize != 0) {
     shown = 1;
     Window_Close(window, 2);
-    window = Window_Create(STATUS_WINDOW_X, 10, STATUS_WINDOW_WIDTH, 4, 2);
+    window = Window_Create(STATUS_WINDOW_X, 10, STATUS_WINDOW_WIDTH, 4,
+                           WINDOW_FLAG_INSTANT);
     Text_DrawMessage((s32)MsgFieldTransferringData, window, 0, 4);
   }
   if (i == 9 && gSerialReceivedSize == 0) {
@@ -903,14 +943,14 @@ transfer:
   idle++;
   if ((gLinkStatus & linkMask) == linkMask)
     idle = 0;
-  if (idle == 10) {
+  if (idle == LINK_SILENT_FRAMES) {
     ok = 0;
     goto done;
   }
   if (gSerialReceiveDestination != 0) {
     System_Wait(1);
     i++;
-    if (i < 600000)
+    if (i < LINK_RECEIVE_FRAMES)
       goto transfer;
   }
 done:
@@ -946,8 +986,8 @@ done:
 
 /// This overlay's copy of Window_SetTextTileRect (window/screens_name_entry.c):
 /// ORs all of `palette` into the palette number of each entry of a rectangle
-/// of a window's tilemap, clipped to the screen, after clearing only its
-/// lowest bit.
+/// of a window's tilemap, clipped to the screen, after clearing only the bit
+/// in which WINDOW_PALETTE and HIGHLIGHT_PALETTE differ.
 void Clear_DrawGridCell(const struct Window *window, s32 x, s32 y, s32 width,
                         s32 height, u32 palette) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
@@ -983,7 +1023,7 @@ void Clear_DrawGridCell(const struct Window *window, s32 x, s32 y, s32 width,
       while (remaining != 0) {
         u32 entry = *cell;
 
-        entry &= ~0x1000;
+        entry &= ~BG_TILE_PALETTE(WINDOW_PALETTE ^ HIGHLIGHT_PALETTE);
         entry |= palette;
         remaining--;
         *cell = entry;
@@ -1027,21 +1067,27 @@ static inline void Cursor_Show(struct MenuCursor *cursor, s32 x, s32 y) {
   MenuCursor_Advance(cursor);
 }
 
+/// The page numbers under the grid: 20 tiles from this one of character block
+/// 0, which Graphics_ExpandVramTilesByColorTable builds from the UI's digits
+/// '0' to '9', first with colour 1 drawn as 10, then in their own colours; and
+/// their tilemap entries, + n giving page n + 1's number, the page shown lit
+/// (The Broken Seal's window/window.h names).
+#define PAGE_DIGITS_TILE 768
+#define PAGE_NUMBER_TILE WINDOW_TILE(PAGE_DIGITS_TILE + 1)
+#define PAGE_NUMBER_LIT_TILE WINDOW_TILE(PAGE_DIGITS_TILE + 10 + 1)
+
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 /// The Japanese grid has 20 columns of kana and its side column is 20.
 #define SIDE_COLUMN 20
 #define SIDE_HIGHLIGHT_WIDTH 3
 #define CHECK_WINDOW_X 8
 #define CHECK_WINDOW_WIDTH 14
-/// Japanese decodes into the bytes after its 260-byte entered password.
-#define DECODED_PASSWORD gClear_PasswordCodes
 #define CURSOR_ON_SIDE_COLUMN(column) ((column) == SIDE_COLUMN)
 #else
 #define SIDE_COLUMN 16
 #define SIDE_HIGHLIGHT_WIDTH 6
 #define CHECK_WINDOW_X 5
 #define CHECK_WINDOW_WIDTH 20
-#define DECODED_PASSWORD gClear_PasswordWork
 #define CURSOR_ON_SIDE_COLUMN(column) ((column) > SIDE_COLUMN - 1)
 #endif
 
@@ -1138,7 +1184,8 @@ s32 Clear_EnterPassword(void) {
   row = 0;
   work = Heap_AllocEwram(sizeof(struct PasswordWork));
   advance = 0;
-  Graphics_ExpandVramTilesByColorTable(BG_CHAR_BLOCK(0) + 768 * TILE_SIZE_4BPP);
+  Graphics_ExpandVramTilesByColorTable(BG_CHAR_BLOCK(0) +
+                                       PAGE_DIGITS_TILE * TILE_SIZE_4BPP);
   if (mode == PASSWORD_LEVEL_GOLD) {
     length = PASSWORD_GOLD_LENGTH;
   } else {
@@ -1147,9 +1194,9 @@ s32 Clear_EnterPassword(void) {
       length = PASSWORD_BRONZE_LENGTH;
   }
   pages = length / PASSWORD_SYMBOLS_PER_PAGE + 1;
-  window = Window_Create(1, 13, 29, 6, 2);
+  window = Window_Create(1, 13, 29, 6, WINDOW_FLAG_INSTANT);
   DRAW_KEYS(window)
-  grid = Window_Create(5, 1, 20, 12, 2);
+  grid = Window_Create(5, 1, 20, 12, WINDOW_FLAG_INSTANT);
   for (i = 0; i != ARRAY_COUNT(work->unused); i++)
     work->unused[i] = 0;
   for (i = 0; i != PASSWORD_GOLD_LENGTH; i++)
@@ -1274,8 +1321,8 @@ s32 Clear_EnterPassword(void) {
 
       if (col > 4)
         x += 10;
-      x += gClear_CursorWobble[frame];
-      y += gClear_CursorWobble[(frame + 5) & 7];
+      x += gClear_CursorBob[frame];
+      y += gClear_CursorBob[(frame + 5) & 7];
       Cursor_Show(&gridStore, x, y);
     }
     if (advance > 0 && ++advance == 8) {
@@ -1283,9 +1330,7 @@ s32 Clear_EnterPassword(void) {
       cursor++;
     }
     if (advance == 0) {
-      s32 mask;
       u16 raw;
-      s32 keys;
       struct InputState *input = &gInput;
 
       if (column == SIDE_COLUMN && row == 0)
@@ -1294,11 +1339,7 @@ s32 Clear_EnterPassword(void) {
         raw = input->repeat;
       else
         raw = input->pressed;
-      keys = (s16)raw;
-      keys <<= 16;
-      mask = KEY_A << 16;
-      mask &= keys;
-      if (mask && state == 0) {
+      if ((raw & KEY_A) && state == 0) {
         action = 0;
         if (column == SIDE_COLUMN) {
           if (row == 0)
@@ -1334,15 +1375,17 @@ s32 Clear_EnterPassword(void) {
           s16 crc;
 
           action = Clear_DecodePassword(gClear_PasswordText, length,
-                                        DECODED_PASSWORD);
+                                        gClear_DecodedPassword);
           crcLength = action - PASSWORD_CRC_BYTES;
-          check = Clear_CalculatePasswordCrc16(crcLength, DECODED_PASSWORD);
+          check =
+              Clear_CalculatePasswordCrc16(crcLength, gClear_DecodedPassword);
 
           state = 0;
-          box = Window_Create(CHECK_WINDOW_X, 12, CHECK_WINDOW_WIDTH, 3, 2);
+          box = Window_Create(CHECK_WINDOW_X, 12, CHECK_WINDOW_WIDTH, 3,
+                              WINDOW_FLAG_INSTANT);
           crc = check;
-          if (DECODED_PASSWORD[crcLength] == (u16)crc >> 8 &&
-              DECODED_PASSWORD[action - 1] == (u16)crc % 256) {
+          if (gClear_DecodedPassword[crcLength] == (u16)crc >> 8 &&
+              gClear_DecodedPassword[action - 1] == (u16)crc % 256) {
             Text_DrawMessageAsTiles((s32)MsgFieldPasswordAccepted, box, 0, 0);
             Sound_Play(SE_MENU_CONFIRM);
             do {
@@ -1360,7 +1403,7 @@ s32 Clear_EnterPassword(void) {
             Party_AddMember(GARET);
             Party_AddMember(IVAN);
             Party_AddMember(MIA);
-            Clear_ApplyImportedData(mode, DECODED_PASSWORD);
+            Clear_ApplyImportedData(mode, gClear_DecodedPassword);
             Window_Close(box, 2);
             Window_Close(grid, 2);
             Window_Close(window, 2);
@@ -1414,14 +1457,12 @@ s32 Clear_EnterPassword(void) {
       for (i = 0, y = 2; i != 4; i++, y += 2)
         Window_DrawDividerLine(grid, 0, y, 18, y);
     }
-    // The page numbers, on WINDOW_PALETTE: tile 769 + n is the digit n + 1,
-    // and 779 + n the same digit in the second colouring, for the page shown.
     {
       for (i = 0; i != pages; i++) {
-        s32 tile = i + WINDOW_TILE(769);
+        s32 tile = i + PAGE_NUMBER_TILE;
 
         if (i == page)
-          tile = i + WINDOW_TILE(779);
+          tile = i + PAGE_NUMBER_LIT_TILE;
         Window_SetTilemapEntry(grid, tile, i - pages + 18, 10, 0);
       }
     }
@@ -1462,11 +1503,17 @@ s32 Clear_EnterPassword(void) {
   }
 }
 
-/// Unpacks the tiles into a scratch block, then fills a 16 by 8 block
-/// of the window tilemap, in VRAM and in its shadow, at the window's cell: each
+/// The grid of the window tilemap the two unused routines below fill: 16 by
+/// 8 entries; the second's tiles start at TILE_GRID_FIRST_TILE.
+#define TILE_GRID_COLUMNS 16
+#define TILE_GRID_ROWS 8
+#define TILE_GRID_FIRST_TILE 32
+
+/// Unused: unpacks the tiles into a scratch buffer, then fills a grid of the
+/// window tilemap, in VRAM and in its shadow, at the window's cell: each
 /// cell's tile the row times the window's width plus the column.
-UNUSED void Clear_DrawPanel(struct Window *window,
-                            const void *compressedTiles) {
+UNUSED void Clear_FillTileGrid(struct Window *window,
+                               const void *compressedTiles) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u16 *shadow;
   u16 *vram;
@@ -1477,25 +1524,25 @@ UNUSED void Clear_DrawPanel(struct Window *window,
 
   decodedTiles = Heap_AllocEwram(768);
   Decompress_TaggedLz(compressedTiles, decodedTiles);
-  cell = (s16)window->y * 32 + (s16)window->x;
+  cell = (s16)window->y * BG_SCREEN_WIDTH + (s16)window->x;
   vram = (u16 *)WINDOW_TILEMAP_VRAM + cell;
   shadow = &work->tilemap[0][cell];
-  for (row = 0; row <= 7; row++) {
-    for (col = 0; col <= 15; col++) {
+  for (row = 0; row < TILE_GRID_ROWS; row++) {
+    for (col = 0; col < TILE_GRID_COLUMNS; col++) {
       s16 tile = WINDOW_TILE(window->width * row + col);
 
       *vram++ = tile;
       *shadow++ = tile;
     }
-    vram += 16;
-    shadow += 16;
+    vram += BG_SCREEN_WIDTH - TILE_GRID_COLUMNS;
+    shadow += BG_SCREEN_WIDTH - TILE_GRID_COLUMNS;
   }
   Heap_Release(decodedTiles);
 }
 
-/// Fills a 16 by 8 block of the window tilemap with the tiles from 32
-/// on.
-UNUSED void Clear_DrawLowerPanel(struct Window *window) {
+/// Unused: fills a grid of the window tilemap with the tiles from
+/// TILE_GRID_FIRST_TILE on.
+UNUSED void Clear_FillTileGridInOrder(struct Window *window) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   u16 *shadow;
   u16 *vram;
@@ -1505,18 +1552,19 @@ UNUSED void Clear_DrawLowerPanel(struct Window *window) {
   s32 cell;
 
   buffer = Heap_AllocEwram(768);
-  cell = (s16)window->y * 32 + (s16)window->x;
+  cell = (s16)window->y * BG_SCREEN_WIDTH + (s16)window->x;
   vram = (u16 *)WINDOW_TILEMAP_VRAM + cell;
   shadow = &work->tilemap[0][cell];
-  for (row = 0; row <= 7; row++) {
-    for (col = 0; col <= 15; col++) {
-      s16 tile = WINDOW_TILE(row * 16 + col + 32);
+  for (row = 0; row < TILE_GRID_ROWS; row++) {
+    for (col = 0; col < TILE_GRID_COLUMNS; col++) {
+      s16 tile =
+          WINDOW_TILE(row * TILE_GRID_COLUMNS + col + TILE_GRID_FIRST_TILE);
 
       *vram++ = tile;
       *shadow++ = tile;
     }
-    vram += 16;
-    shadow += 16;
+    vram += BG_SCREEN_WIDTH - TILE_GRID_COLUMNS;
+    shadow += BG_SCREEN_WIDTH - TILE_GRID_COLUMNS;
   }
   Heap_Release(buffer);
 }
@@ -1542,13 +1590,18 @@ void Clear_ApplyImportedData(s32 mode, u8 *in) {
   s32 position;
   s32 bit;
 
+  // Bytes 0 to 6 hold the four levels, seven bits each, then the 28 Djinn, a
+  // bit each, sharing byte 3.
   levelBits = in[0] | in[1] << 8 | in[2] << 16 | (in[3] & 0xf0) << 20;
   djinnBits = (in[3] & 0x0f) | in[4] << 4 | in[5] << 12 | in[6] << 20;
-  flagBits = in[7];
-  keyItemBits = in[8];
+  flagBits = in[PASSWORD_FLAGS_BYTE];
+  keyItemBits = in[PASSWORD_KEY_ITEMS_BYTE];
 
+  // Silver and Gold carry the stats rows. Each packs two party members in
+  // PASSWORD_STATS_ROW_BYTES: each one's first word and the top 28 bits of its
+  // second, whose low four bits are always 0.
   if (mode != PASSWORD_LEVEL_BRONZE) {
-    s32 statsOffset = 8 + (mode != PASSWORD_LEVEL_GOLD);
+    s32 statsOffset = PASSWORD_KEY_ITEMS_BYTE + (mode != PASSWORD_LEVEL_GOLD);
 
     for (i = 0; i != 2; i++) {
       packedStats[i * 4] = in[statsOffset] << 24 | in[statsOffset + 1] << 16 |
@@ -1563,7 +1616,7 @@ void Clear_ApplyImportedData(s32 mode, u8 *in) {
       packedStats[i * 4 + 3] =
           in[statsOffset + 11] << 28 | in[statsOffset + 12] << 20 |
           in[statsOffset + 13] << 12 | in[statsOffset + 14] << 4;
-      statsOffset += 15;
+      statsOffset += PASSWORD_STATS_ROW_BYTES;
     }
     for (i = 0; i != 4; i++) {
       struct BattleBaseStats *stats =
@@ -1572,13 +1625,13 @@ void Clear_ApplyImportedData(s32 mode, u8 *in) {
       s32 at = i * 8;
 
 #define WORD (*(u32 *)((u8 *)packedStats + at))
-      stats->baseHp = WORD >> 21;
-      stats->basePp = WORD << 11 >> 21;
+      stats->baseHp = WORD >> PASSWORD_HP_SHIFT;
+      stats->basePp = WORD >> PASSWORD_PP_SHIFT & 0x7ff;
       stats->baseAttack = WORD & 0x1ff;
       at += 4;
-      stats->baseDefense = WORD >> 22 & 0x1ff;
-      stats->baseAgility = WORD >> 12 & 0x1ff;
-      stats->baseLuck = WORD >> 4 & 0x7f;
+      stats->baseDefense = WORD >> PASSWORD_DEFENSE_SHIFT & 0x1ff;
+      stats->baseAgility = WORD >> PASSWORD_AGILITY_SHIFT & 0x1ff;
+      stats->baseLuck = WORD >> PASSWORD_LUCK_SHIFT & 0x7f;
 #undef WORD
     }
   }
@@ -1656,17 +1709,17 @@ void Clear_ApplyImportedData(s32 mode, u8 *in) {
       for (m = 0; m != PASSWORD_STACK_ITEMS; m++) {
         j = 0;
         if (bit < 0) {
-          j = in[position] << -bit & 0x1f;
+          j = in[position] << -bit & PASSWORD_QUANTITY_MASK;
           position++;
           bit += 8;
         }
-        j += in[position] >> bit & 0x1f;
+        j += in[position] >> bit & PASSWORD_QUANTITY_MASK;
         bit -= 5;
         if (bit == -5) {
           position++;
           bit = 3;
         }
-        j &= 0x1f;
+        j &= PASSWORD_QUANTITY_MASK;
         for (n = 0; n != INVENTORY_SLOTS; n++) {
           if ((unit->inventory[n] & INVENTORY_ITEM_ID_MASK) ==
               gClear_ImportedStackItems[m])
@@ -1774,11 +1827,12 @@ UNUSED s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     if (value < 0)
       value = 0;
     base->baseLuck = value;
-    packedStats[i * 2] =
-        (u32)base->baseHp << 21 | base->basePp << 10 | base->baseAttack;
-    *(u32 *)((u8 *)packedStats + outputIndex) = (u32)base->baseDefense << 22 |
-                                                base->baseAgility << 12 |
-                                                base->baseLuck << 4;
+    packedStats[i * 2] = (u32)base->baseHp << PASSWORD_HP_SHIFT |
+                         base->basePp << PASSWORD_PP_SHIFT | base->baseAttack;
+    *(u32 *)((u8 *)packedStats + outputIndex) =
+        (u32)base->baseDefense << PASSWORD_DEFENSE_SHIFT |
+        base->baseAgility << PASSWORD_AGILITY_SHIFT |
+        base->baseLuck << PASSWORD_LUCK_SHIFT;
     if (unit->level > UNIT_LEVEL_MAX)
       unit->level = UNIT_LEVEL_MAX;
     value = unit->level;
@@ -1787,6 +1841,8 @@ UNUSED s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     levelBits |= unit->level << (i * 7);
     for (j = 0; j != 4; j++)
       djinnBits += unit->djinnHeld[j] << (j * 7);
+    // Which of the eight Psynergy items (gClear_PasswordKeyItems) any party
+    // member carries.
     for (j = 0; j != INVENTORY_SLOTS; j++) {
       s32 item = unit->inventory[j] & INVENTORY_ITEM_ID_MASK;
 
@@ -1797,6 +1853,7 @@ UNUSED s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     }
     outputIndex += 8;
   }
+  // The largest password also carries inventories, stack counts and coins.
   if (mode == PASSWORD_LEVEL_GOLD) {
     outputIndex = PASSWORD_ITEMS_BYTE;
     bitOffset = 0;
@@ -1849,8 +1906,11 @@ UNUSED s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     out[PASSWORD_COINS_BYTE + 1] = (u32)gMainRoutineWork.coins >> 8;
     out[PASSWORD_COINS_BYTE + 2] = gMainRoutineWork.coins;
   }
+  // Silver and Gold carry the stats rows. Each packs two party members in
+  // PASSWORD_STATS_ROW_BYTES: each one's first word and the top 28 bits of its
+  // second, whose low four bits are always 0.
   if (mode != PASSWORD_LEVEL_BRONZE) {
-    s32 statsOffset = 8 + (mode != PASSWORD_LEVEL_GOLD);
+    s32 statsOffset = PASSWORD_KEY_ITEMS_BYTE + (mode != PASSWORD_LEVEL_GOLD);
 
     for (i = 0; i != 2; i++) {
       out[statsOffset] = packedStats[i * 4] >> 24;
@@ -1870,7 +1930,7 @@ UNUSED s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
       out[statsOffset + 12] = packedStats[i * 4 + 3] >> 20;
       out[statsOffset + 13] = packedStats[i * 4 + 3] >> 12;
       out[statsOffset + 14] = packedStats[i * 4 + 3] >> 4;
-      statsOffset += 15;
+      statsOffset += PASSWORD_STATS_ROW_BYTES;
     }
   }
   out[0] = levelBits;
@@ -1880,9 +1940,9 @@ UNUSED s32 Clear_PackPasswordData(s32 unused, s32 mode, u8 *out) {
   out[4] = djinnBits >> 4;
   out[5] = djinnBits >> 12;
   out[6] = djinnBits >> 20;
-  out[7] = flagBits;
+  out[PASSWORD_FLAGS_BYTE] = flagBits;
   if (mode != PASSWORD_LEVEL_GOLD)
-    out[8] = keyItemBits;
+    out[PASSWORD_KEY_ITEMS_BYTE] = keyItemBits;
   return length;
 }
 
@@ -1986,7 +2046,10 @@ u16 gClear_ExtraButtonCode[] = {
 #endif
 };
 
-s8 gClear_CursorWobble[] = {
+/// The grid cursor's bobbing offsets in pixels, which Clear_EnterPassword adds
+/// to its x at step (gVBlankCount >> 1) & 7 and to its y five steps on, so
+/// that it circles.
+s8 gClear_CursorBob[] = {
     0, 1, 2, 3, 3, 2, 1, 0,
 };
 
@@ -1999,13 +2062,24 @@ u8 gClear_ThirdPasswordRow[] = "abcde fghij kmnpq r";
 u8 gClear_FourthPasswordRow[] = "stuvw xyz!? #&$%+ =";
 #endif
 
-/// The six story flags of a password's byte 7, by The Broken Seal's numbers,
-/// which DataTransfer_Apply reads them by: its FLAG_DODONPA_LOCKED_UP,
-/// FLAG_WON_COLOSSO, FLAG_HSU_RESCUED_WITHOUT_PARTY,
-/// FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED, FLAG_VISITED_SICK_DORA and
-/// FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES.
+/// Flags of The Broken Seal's save, by its own names and numbers, which
+/// DataTransfer_Apply reads (game/experience_table.c names them the same).
+#define FLAG_BROKEN_SEAL_VISITED_SICK_DORA 0x81e
+#define FLAG_BROKEN_SEAL_VAULT_WARNED_OF_ESCAPED_THIEVES 0x868
+#define FLAG_BROKEN_SEAL_HSU_RESCUED_WITHOUT_PARTY 0x8b3
+#define FLAG_BROKEN_SEAL_CROSSBONE_ISLE_DEADBEARD_DEFEATED 0x8d1
+#define FLAG_BROKEN_SEAL_DODONPA_LOCKED_UP 0x941
+#define FLAG_BROKEN_SEAL_WON_COLOSSO 0x951
+
+/// The six story flags of a password's PASSWORD_FLAGS_BYTE, by The Broken
+/// Seal's numbers, which DataTransfer_Apply reads them by.
 u16 gClear_ImportedFlags[] = {
-    0x941, 0x951, 0x8b3, 0x8d1, 0x81e, 0x868,
+    FLAG_BROKEN_SEAL_DODONPA_LOCKED_UP,
+    FLAG_BROKEN_SEAL_WON_COLOSSO,
+    FLAG_BROKEN_SEAL_HSU_RESCUED_WITHOUT_PARTY,
+    FLAG_BROKEN_SEAL_CROSSBONE_ISLE_DEADBEARD_DEFEATED,
+    FLAG_BROKEN_SEAL_VISITED_SICK_DORA,
+    FLAG_BROKEN_SEAL_VAULT_WARNED_OF_ESCAPED_THIEVES,
 };
 // clang-format on
 
@@ -2050,7 +2124,6 @@ s16 gClear_ExtraCodeHeld = 0;
 #undef RETURN_TO_SAVED
 #undef TRANSFERRED_FLAGS
 #undef TRANSFERRED_MAIN_ROUTINE_WORK
-#undef BROKEN_SEAL_SAVE_IMAGE_UNITS
 #undef TRANSFERRED_SAVE
 #undef LINK_LANGUAGE_TAG
 #undef QUESTION_MESSAGE
@@ -2062,9 +2135,14 @@ s16 gClear_ExtraCodeHeld = 0;
 #undef SIDE_HIGHLIGHT_WIDTH
 #undef CHECK_WINDOW_X
 #undef CHECK_WINDOW_WIDTH
-#undef DECODED_PASSWORD
 #undef CURSOR_ON_SIDE_COLUMN
 #undef DRAW_KEYS
+#undef PAGE_DIGITS_TILE
+#undef PAGE_NUMBER_TILE
+#undef PAGE_NUMBER_LIT_TILE
+#undef TILE_GRID_COLUMNS
+#undef TILE_GRID_ROWS
+#undef TILE_GRID_FIRST_TILE
 #undef WORD
 
 // clang-format off
@@ -2092,7 +2170,12 @@ LATE_DATA s32 gClear_PasswordMembers[] = {
 
 /// The same flags, as the unused Clear_PackPasswordData reads them.
 LATE_DATA u16 gClear_PasswordFlags[] = {
-    0x941, 0x951, 0x8b3, 0x8d1, 0x81e, 0x868,
+    FLAG_BROKEN_SEAL_DODONPA_LOCKED_UP,
+    FLAG_BROKEN_SEAL_WON_COLOSSO,
+    FLAG_BROKEN_SEAL_HSU_RESCUED_WITHOUT_PARTY,
+    FLAG_BROKEN_SEAL_CROSSBONE_ISLE_DEADBEARD_DEFEATED,
+    FLAG_BROKEN_SEAL_VISITED_SICK_DORA,
+    FLAG_BROKEN_SEAL_VAULT_WARNED_OF_ESCAPED_THIEVES,
 };
 
 LATE_DATA u16 gClear_PasswordKeyItems[] = {

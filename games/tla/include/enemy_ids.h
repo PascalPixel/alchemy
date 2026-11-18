@@ -12,6 +12,10 @@
 /// How many enemies enemy_table.c defines.
 #define ENEMY_COUNT 380
 
+/// The highest enemy id a battle unit takes; an id past the table's rows takes
+/// its first row.
+#define ENEMY_ID_MAX 1000
+
 /// Enemy id `id`'s row of enemy_table.c.
 #define ENEMY_ROW(id) ((id) - ENEMY_ID_FIRST)
 

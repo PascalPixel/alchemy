@@ -1,3 +1,6 @@
+/// The bytes of the hole mask's picture: 16 by 32 pixels of 16 colours.
+#define HOLE_MASK_BYTES (8 * TILE_SIZE_4BPP)
+
 /// CrackedTile_Find under the name the lower floors call it by.
 s32 CrackedTile_FindLower(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   struct CellTarget *table = &gCrackedTiles;
@@ -23,13 +26,13 @@ s32 CrackedTile_FindLower(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
   map = Ram_HeapSlots->mapGrid;
   layer = &map->layers[0];
   cells = layer->cells;
-  x0 = (layer->offsetX + map->minX) >> 20;
-  z0 = (layer->offsetY + map->minZ) >> 20;
-  width = (map->maxX - map->minX) >> 20;
-  height = (map->maxZ - map->minZ) >> 20;
-  cells += ((map->minZ >> 20) << 7) + (map->minX >> 20);
+  x0 = FIELD_CELL(layer->offsetX + map->minX);
+  z0 = FIELD_CELL(layer->offsetY + map->minZ);
+  width = FIELD_CELL(map->maxX - map->minX);
+  height = FIELD_CELL(map->maxZ - map->minZ);
+  cells += FIELD_CELL(map->minZ) * MAPGRID_SIZE + FIELD_CELL(map->minX);
   for (j = 0; j < height; j++) {
-    cell = cells + (j << 7);
+    cell = cells + j * MAPGRID_SIZE;
     for (i = 0; i < width; i++, cell++) {
       event = cell->collisionCode;
       if (event != 0 && event >= kind) {
@@ -67,16 +70,20 @@ s32 CrackedTile_FindLower(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
       entry++;
     }
   }
-  buffer = Heap_Alloc(256);
+  // The hole mask CrackedTile_Update draws into the OBJ window: a 16 by 32
+  // sprite whose every pixel is colour 1, eight to a word.
+  buffer = Heap_Alloc(HOLE_MASK_BYTES);
   {
     u32 *word = buffer;
 
-    for (k = 0; k < 64; k++)
+    for (k = 0; k < HOLE_MASK_BYTES / 4; k++)
       *word++ = 0x11111111;
   }
   table->tile = VramCache_FindFreeEntry();
-  Vram_Load(table->tile, 256, buffer);
+  Vram_Load(table->tile, HOLE_MASK_BYTES, buffer);
   Heap_Release(buffer);
   Task_AddFrame(CrackedTile_Update, TASK_PASS_FRAME);
   return table->count;
 }
+
+#undef HOLE_MASK_BYTES

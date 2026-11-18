@@ -1,12 +1,12 @@
-
-// Mercury Lighthouse and its entrance, once the pool is woken: standing at the
-// pool's heart (CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART) gives the leader
-// three lights, shown as a column of light over them. Each hop into the pool
-// (the floor's region, its cell behavior) spends one, and a light comes to hold
-// the leader up where they land. A hop within the pool with no light left sinks
-// the leader, who is put back at the heart.
-// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM takes the lights away, and Retreat
-// removes the column.
+/// @file
+/// Mercury Lighthouse and its entrance, once the pool is woken: standing at the
+/// pool's heart (CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART) gives the leader
+/// three lights, shown as a column of light over them. Each hop into the pool
+/// (the floor's region, its cell behavior) spends one, and a light comes to
+/// hold the leader up where they land. A hop within the pool with no light left
+/// sinks the leader, who is put back at the heart.
+/// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM takes the lights away, and Retreat
+/// removes the column.
 
 /// A charging spark rises a pixel a frame for this many frames, its scale
 /// following half a turn of sine.

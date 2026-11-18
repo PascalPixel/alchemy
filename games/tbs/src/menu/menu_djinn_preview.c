@@ -9,10 +9,15 @@
 /// party members once a second, a few frames into it: a hop takes
 /// DJINN_PREVIEW_HOP_FRAMES frames along half a sine wave of
 /// DJINN_PREVIEW_HOP_SINE_HEIGHT pixels, cut flat at DJINN_PREVIEW_HOP_HEIGHT.
+/// It would dip no deeper than DJINN_PREVIEW_HOP_DEPTH below its line, and its
+/// slide would start over after DJINN_PREVIEW_SLIDE_FRAMES frames; a hop
+/// reaches neither.
 #define DJINN_PREVIEW_HOP_FRAMES 30
 #define DJINN_PREVIEW_HOP_DELAY 5
 #define DJINN_PREVIEW_HOP_SINE_HEIGHT 16
 #define DJINN_PREVIEW_HOP_HEIGHT 6
+#define DJINN_PREVIEW_HOP_DEPTH 12
+#define DJINN_PREVIEW_SLIDE_FRAMES 35
 
 /// The tilemap rows at the top of the screen that a tutorial message covers,
 /// saved before it opens and put back after it closes.
@@ -450,6 +455,8 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       s32 rise;
       s32 slide;
 
+      // DEAD: step never reaches DJINN_PREVIEW_HOP_FRAMES, so the modulo
+      // leaves it as it is; the ROM keeps its division.
       rise = -Iwram_MulFX(DJINN_PREVIEW_HOP_SINE_HEIGHT,
                           Trig_Sin((step % DJINN_PREVIEW_HOP_FRAMES) *
                                    (DEGtoANG(180) / DJINN_PREVIEW_HOP_FRAMES)));
@@ -457,12 +464,15 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
         rise = -DJINN_PREVIEW_HOP_HEIGHT;
       }
       // DEAD: rise is never positive, the hop's half sine wave staying above
-      // the line, so the bound of 12 never applies; the ROM keeps its test.
-      if (rise > 12) {
-        rise = 12;
+      // the line, so DJINN_PREVIEW_HOP_DEPTH never applies; the ROM keeps its
+      // test.
+      if (rise > DJINN_PREVIEW_HOP_DEPTH) {
+        rise = DJINN_PREVIEW_HOP_DEPTH;
       }
-      // step never reaches 35, so the slide never wraps.
-      slide = (step % 35) * 2;
+      // DEAD: step never reaches DJINN_PREVIEW_SLIDE_FRAMES, so the modulo
+      // leaves it as it is and the slide never wraps; the ROM keeps its
+      // division.
+      slide = (step % DJINN_PREVIEW_SLIDE_FRAMES) * 2;
       DjinnFigures_SetSlotPosition(0, slide + 34, rise + 20, 0);
       if (mode == DJINN_COMPARE_TRADE) {
         DjinnFigures_SetSlotPosition(1, 99 - slide, 36 - rise, 0);

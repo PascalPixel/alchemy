@@ -173,9 +173,11 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
         case TEXT_NEWLINE:
           x += TILE_TEXT_NEWLINE_WIDTH;
           break;
+        // Codes 11, 12, 14 and TEXT_ACTOR_NAME_START, which nothing in this
+        // game acts on, are skipped with their operands.
         case 14:
         case TEXT_WINDOW_STATE:
-        case 28:
+        case TEXT_ACTOR_NAME_START:
           text++;
           // Skip the second operand too.
           // Fall through.
@@ -346,16 +348,18 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
 /// Marks the text tiles the tilemap shows, and frees those it no longer shows:
 /// a tile taken but not marked shown (its state exactly TEXT_TILE_TAKEN).
 void Window_MarkVisibleTextTiles(void) {
-  u8 *base = gWindowWork[0];
-  u16 *cursor = (u16 *)base;
+  struct WindowWork *work = WINDOW_WORK;
+  u16 *cursor = work->tilemap;
   s32 width = DISPLAY_TILE_WIDTH;
-  u32 alternateTiles = ((struct WindowWork *)base)->extraTextTiles;
+  u32 alternateTiles = work->extraTextTiles;
   s32 row;
   s32 x;
 
-  // The cursor never skips the two hidden columns that end each 32-entry
-  // row, so the scan covers the tilemap's first 600 entries in order: row 18
-  // from column 24 on and row 19 are never marked shown.
+  // BUG: the cursor never skips the two hidden columns that end each row of
+  // BG_SCREEN_WIDTH entries, so the scan covers the tilemap's first
+  // DISPLAY_TILE_WIDTH * DISPLAY_TILE_HEIGHT entries in order, and the text
+  // tiles of the last row and a half are never marked shown: the loop below
+  // frees them while they are still on the screen.
   for (row = DISPLAY_TILE_HEIGHT; row != 0; row--) {
     for (x = 0; x < width; x++) {
       u32 tileId = *cursor++ & TILE_NUMBER_MASK;
@@ -365,15 +369,17 @@ void Window_MarkVisibleTextTiles(void) {
            tileId <= TEXT_EXTRA_TILE_FIRST + TEXT_TILES - 1)) {
         u32 attributeIndex = TEXT_TILE_STATE_INDEX(tileId);
 
-        ((struct WindowWork *)base)->textTileState[attributeIndex] |=
-            TEXT_TILE_SHOWN;
+        work->textTileState[attributeIndex] |= TEXT_TILE_SHOWN;
       }
     }
+#ifdef BUGFIX
+    cursor += BG_SCREEN_WIDTH - width;
+#endif
   }
 
-  for (row = 0; row < 2 * TEXT_TILES; row++, base++) {
-    if (((struct WindowWork *)base)->textTileState[0] == TEXT_TILE_TAKEN)
-      ((struct WindowWork *)base)->textTileState[0] = 0;
+  for (row = 0; row < 2 * TEXT_TILES; row++) {
+    if (work->textTileState[row] == TEXT_TILE_TAKEN)
+      work->textTileState[row] = 0;
   }
 }
 
@@ -381,35 +387,18 @@ void Window_MarkVisibleTextTiles(void) {
 /// TEXT_EXTRA_TILE_FIRST), and with allowAlternateTiles set lets text take that
 /// range too; the first range's tiles keep their state.
 void Text_UseExtraTiles(s32 allowAlternateTiles) {
+  struct WindowWork *work = WINDOW_WORK;
   s32 i;
-  s32 j;
-  s8 *attributes;
-  s8 *tileAttributes;
-  u8 *work;
 
-  work = gWindowWork[0];
   if (allowAlternateTiles != 0) {
-    ((struct WindowWork *)work)->extraTextTiles = 1;
-    allowAlternateTiles = 0;
-    for (i = TEXT_TILES,
-        attributes =
-             (s8 *)((struct WindowWork *)work)->textTileState + TEXT_TILES;
-         i <= 2 * TEXT_TILES - 1; i += 1) {
-      *attributes = allowAlternateTiles;
-      attributes += 1;
-    }
+    work->extraTextTiles = 1;
+    for (i = TEXT_TILES; i <= 2 * TEXT_TILES - 1; i++)
+      work->textTileState[i] = 0;
     return;
   }
-  ((struct WindowWork *)work)->extraTextTiles = 0;
-  allowAlternateTiles = 0;
-  tileAttributes =
-      (s8 *)((struct WindowWork *)work)->textTileState + TEXT_TILES;
-  j = TEXT_TILES - 1;
-  do {
-    j -= 1;
-    *tileAttributes = allowAlternateTiles;
-    tileAttributes += 1;
-  } while (j >= 0);
+  work->extraTextTiles = 0;
+  for (i = TEXT_TILES; i <= 2 * TEXT_TILES - 1; i++)
+    work->textTileState[i] = 0;
 }
 
 /// Unused: does nothing.

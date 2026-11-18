@@ -60,8 +60,8 @@ enum {
 /// The column at the water's edge, where the river log pushed west tips in.
 #define RIVER_EDGE_COLUMN 12
 /// How far the curse tints the cliff until it is lifted: green and blue lose
-/// a sixth of themselves (KolimaPalette_Curse).
-#define CURSE_STRENGTH 6
+/// 1 / CURSE_DIVISOR of themselves (KolimaPalette_Curse).
+#define CURSE_DIVISOR 6
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gKolimaForestCliffEntrances;
@@ -129,7 +129,7 @@ s32 Scene_Initialize(void) {
   Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 1);
 
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-    KolimaPalette_Curse(CURSE_STRENGTH);
+    KolimaPalette_Curse(CURSE_DIVISOR);
   }
   return 0;
 }

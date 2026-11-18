@@ -14,12 +14,6 @@
 /// when the next byte is loaded.
 #define BIT_STREAM_STOP (1 << 7)
 
-/// Speakers up to Garet's child sprite take their portrait from
-/// gPortrait_CharacterMap, the others from gPortrait_SpriteMap; the portraits
-/// of those others are numbered from PORTRAIT_OTHER_FIRST (Icon_LoadWithPalette
-/// takes it as the row PORTRAIT_JUPITER_DJINNI).
-#define PORTRAIT_OTHER_FIRST 128
-
 /// Decodes message into text (a u16 string) with no length limit: text must
 /// have room for the whole message and its terminator.
 void Message_DecodeRawUnbounded(s32 message, u16 *text) {
@@ -153,7 +147,7 @@ void Window_CloseAll(s32 unused) {
       Window_Close(window, 0);
     i++;
     message++;
-  } while (i != 3);
+  } while (i != ARRAY_COUNT(work->messages));
 
   // Free each message whose window has closed; while one is still closing,
   // wait a frame.
@@ -177,7 +171,7 @@ void Window_CloseAll(s32 unused) {
       }
       i++;
       message++;
-    } while (i != 3);
+    } while (i != ARRAY_COUNT(work->messages));
     i = 0;
     if (done)
       break;
@@ -325,7 +319,7 @@ void Message_CloseFinishedWindows(void) {
     }
     i++;
     message++;
-  } while (i != 3);
+  } while (i != ARRAY_COUNT(WINDOW_WORK->messages));
   wait(10);
 }
 
@@ -344,16 +338,12 @@ void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset) {
   work = WINDOW_WORK;
   x = 8;
   y = 8;
-  // the window starts as NULL, though every path that reads it assigns it
-  // first; the same zero is the style argument below
   messageWindow = NULL;
   entryIndex = Message_Decode(message, 1);
   if (work->textBuffer[entryIndex] != 0) {
     Text_GetMessageSize(message, &x, &y, (u32 *)&width, (u32 *)&height);
     x = (DISPLAY_TILE_WIDTH - width) >> 1;
     y = ((15 - height) >> 1) + yOffset;
-    // Flags 2 is WINDOW_FLAG_INSTANT; mode is CENTERED_MESSAGE_BARE in the
-    // second branch.
     if (mode != CENTERED_MESSAGE_BARE)
       messageWindow = Window_Create(x, y, width, height, 0);
     else {
@@ -490,11 +480,14 @@ void Portrait_ClearSlots(void) {
   do {
     work->portraitPictures[index] = PORTRAIT_SLOT_EMPTY;
     index++;
-  } while (index != 2);
+  } while (index != ARRAY_COUNT(work->portraitPictures));
 }
 
-/// Returns the portrait of a character or another speaker's sprite (from
-/// PORTRAIT_OTHER_FIRST for those), or -1 when it has none.
+/// Returns the portrait of a character or another speaker's sprite, or -1 when
+/// it has none: speakers up to Garet's child sprite take theirs from
+/// gPortrait_CharacterMap, the others from gPortrait_SpriteMap, numbered from
+/// PORTRAIT_SPRITE_MAP_FIRST (Icon_LoadWithPalette takes it as the row
+/// PORTRAIT_JUPITER_DJINNI).
 s32 Portrait_GetForSpeaker(u32 value) {
   s32 result = -1;
   s32 portraitIndex = 0;
@@ -522,7 +515,7 @@ s32 Portrait_GetForSpeaker(u32 value) {
       if (speakerId == value) {
         portraitIndex++;
         result = gPortrait_SpriteMap[portraitIndex];
-        result += PORTRAIT_OTHER_FIRST;
+        result += PORTRAIT_SPRITE_MAP_FIRST;
         break;
       }
       portraitIndex += 2;
@@ -598,7 +591,7 @@ void Portrait_CloseWindow(u32 speaker) {
 #endif
     if ((u8)portraitSprite->kind == WINDOW_SPRITE_PORTRAIT &&
         (u8)portraitSprite->index == resourceId) {
-      Window_Close(window, 2);
+      Window_Close(window, WINDOW_FLAG_INSTANT);
       return;
     }
   }

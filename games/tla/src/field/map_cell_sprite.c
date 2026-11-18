@@ -15,14 +15,12 @@
 #include "field/map_grid.h"
 #include "graphics/vram_tab.h"
 #include "field/cell_target.h"
+#include "field/field_sprite.h"
 
 /// The mask, HOLE_MASK_WIDTH by 32, hangs from HOLE_MASK_TOP pixels down its
 /// cell.
 #define HOLE_MASK_WIDTH 16
 #define HOLE_MASK_TOP 14
-/// The bits of a sprite's x and y in its OAM attributes.
-#define OBJ_X_MASK 0x1ff
-#define OBJ_Y_MASK 0xff
 
 extern struct CellTarget gCrackedTiles;
 
@@ -40,7 +38,7 @@ void CrackedTile_Update(void) {
   struct MapWork *map;
   s32 *view;
   s32 viewX, viewZ, viewY, tile;
-  s32 x, height, z, sy, depth;
+  s32 screenX, height, z, screenY, depth;
 
   if (table->current == -1)
     return;
@@ -63,29 +61,29 @@ void CrackedTile_Update(void) {
   viewZ = view[1] & FIELD_PIXEL_MASK;
   viewY = map->origin[1];
   tile = gVramCacheEntries[table->tile].offset >> 5;
-  x = FIELD_CELL_ORIGIN(entry->x) - viewX;
+  screenX = FIELD_CELL_ORIGIN(entry->x) - viewX;
   height = Map_GetTerrainHeight(0, FIELD_CELL_ORIGIN(entry->x),
                                 FIELD_CELL_ORIGIN(entry->z)) -
            viewY;
   z = FIELD_CELL_ORIGIN(entry->z) - viewZ - viewY;
-  sy = z - height;
-  x = FIXEDtoINT(x);
+  screenY = z - height;
+  screenX = FIXEDtoINT(screenX);
   height += z;
   height = FIXEDtoINT(height);
-  sy = FIXEDtoINT(sy);
-  sy += HOLE_MASK_TOP;
-  depth = height + 58;
-  if ((u32)(x + HOLE_MASK_WIDTH - 1) > 334 || sy < -15 || sy > 239)
+  screenY = FIXEDtoINT(screenY);
+  screenY += HOLE_MASK_TOP;
+  depth = height + SCENE_SPRITE_DEPTH;
+  if ((u32)(screenX + HOLE_MASK_WIDTH - 1) > 334 || screenY < -15 ||
+      screenY > 239)
     return;
-  x &= OBJ_X_MASK;
-  sy &= OBJ_Y_MASK;
+  screenX &= OBJ_X_MASK;
+  screenY &= OBJ_Y_MASK;
   table->oam[0] = 0;
-  table->oam[1] = sy | OBJ_X(x) | OBJ_SIZE_16X32 | OBJ_MODE(OBJ_MODE_WINDOW);
+  table->oam[1] =
+      screenY | OBJ_X(screenX) | OBJ_SIZE_16X32 | OBJ_MODE(OBJ_MODE_WINDOW);
   table->oam[2] = tile | OBJ_PRIORITY(1);
   CELL_PUSH_SLOT_ENTRY(table->oam, depth);
 }
 
 #undef HOLE_MASK_WIDTH
 #undef HOLE_MASK_TOP
-#undef OBJ_X_MASK
-#undef OBJ_Y_MASK

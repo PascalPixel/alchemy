@@ -793,15 +793,16 @@ void FieldPsynergy_EndReveal(void) {
   }
 }
 
-/// A sprout whose leaf swells into an arrowhead pointing one of four ways
-/// (Gaia Rock's); Growth leaves it as it is.
-#define SPRITE_POINTING_SPROUT 394
+/// Gaia Rock's arrow plant, a sprig whose leaf swells into an arrowhead
+/// pointing one of four ways.
+#define SPRITE_ARROW_PLANT 394
 
 /// Growth cast on a target: the burst of particles, then the target takes its
 /// grown animation and the underfoot priority, with SE_RECOVERY. Sprouting
 /// leaves (SPRITE_SPROUTING_LEAVES) instead drop five vines round the
-/// Psynergy's position and hang a vine (HangingVine_Hang); the pointing sprout
-/// only plays SE_RECOVERY.
+/// Psynergy's position and hang a vine (HangingVine_Hang). On an arrow plant
+/// Growth's own effect only plays SE_RECOVERY; the scene's event turns it into
+/// an arrow (GaiaRockInside_PlantPointsTheWay).
 void FieldPsynergy_GrowthOnTarget(s32 unused) {
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct Actor *target = scene->child;
@@ -813,7 +814,7 @@ void FieldPsynergy_GrowthOnTarget(s32 unused) {
   FieldEffect_SpawnBurstParticleField();
   if (Actor_GetSpriteIdFar(target) == SPRITE_SPROUTING_LEAVES)
     kind = 1;
-  if (Actor_GetSpriteIdFar(target) == SPRITE_POINTING_SPROUT)
+  if (Actor_GetSpriteIdFar(target) == SPRITE_ARROW_PLANT)
     kind = 2;
 
   if (kind == 0) {
@@ -1020,11 +1021,9 @@ void FieldPsynergy_LiftOnTarget(void) {
   FieldPsynergy_FadeFromCastColor();
 }
 
-#define LIFT_SPARKLES 24 ///< scattered as the hands meet
-
 /// Lift cast with no target: two hands appear 32 pixels to either side of the
-/// spot, close 24 pixels in and meet with a crash that scatters LIFT_SPARKLES
-/// fragments, then vanish.
+/// spot, close 24 pixels in and meet with a crash that scatters
+/// ITEM_BREAK_SHARD_MAX sparkles, then vanish.
 void FieldPsynergy_Lift(void) {
   struct FieldEffectWork *work;
   struct Actor *obj;
@@ -1051,7 +1050,7 @@ void FieldPsynergy_Lift(void) {
 
   Actor_WaitForMoveFar(pair[0]);
   Sound_PlayFar(SE_HEAVY_IMPACT);
-  for (n = 0; n < LIFT_SPARKLES; n++) {
+  for (n = 0; n < ITEM_BREAK_SHARD_MAX; n++) {
     SET_POSITION(&pos, work->x, work->y + toFIXED(16), work->z);
     obj = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
     if (obj != 0) {

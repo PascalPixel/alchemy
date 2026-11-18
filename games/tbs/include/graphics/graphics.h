@@ -22,8 +22,9 @@
 /// The map entry a screen-wide picture gives each row's two columns past the
 /// screen's edge, which never show.
 #define OFFSCREEN_TILE 511
-/// The Nintendo, Camelot and Golden Sun logos' pictures each begin with their
-/// 224 background colours.
+/// The colours a screen-wide 256-colour picture resource opens with, before its
+/// packed tiles: the Nintendo, Camelot and Golden Sun logos' and the To Be
+/// Continued pictures'.
 #define LOGO_PALETTE_COLORS 224
 
 /// Which way the screen fade goes: 0 towards black, 1 towards white.

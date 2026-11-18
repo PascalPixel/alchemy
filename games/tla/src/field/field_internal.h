@@ -194,8 +194,8 @@ struct WaitingActor {
 };
 
 /// SpriteAnimation.kind: the facing table a sprite animation's pictures follow
-/// (Sprite_ComposePicture), as The Broken Seal names them; this game's six
-/// pictures are kind 5.
+/// (Sprite_ComposePicture), as The Broken Seal names them; this game's five
+/// pictures cover 64 sectors.
 enum AnimationFacingKind {
   ANIM_FACING_NONE = 0,        ///< the script's own picture whatever the facing
   ANIM_FACING_ONE_PICTURE = 1, ///< 8 sectors: one picture, mirrored to the left
@@ -204,10 +204,10 @@ enum AnimationFacingKind {
   /// Unused, with no facing table: drawn as ANIM_FACING_NONE. The sprite
   /// viewer rings it ten round, as The Broken Seal's does its four pictures.
   ANIM_FACING_FOUR_PICTURES = 4,
-  ANIM_FACING_SIX_PICTURES = 5, ///< 64 sectors
-  /// Unused, with no facing table: The Broken Seal's number for its six
-  /// pictures, which the sprite viewer still rings ten round.
-  ANIM_FACING_SIX_PICTURES_UNDRAWN = 6,
+  ANIM_FACING_FIVE_PICTURES = 5, ///< 64 sectors here, 16 in The Broken Seal
+  /// Unused, with no facing table: drawn as ANIM_FACING_NONE. The sprite
+  /// viewer still rings it ten round.
+  ANIM_FACING_SIX_PICTURES = 6,
   /// 8 sectors centred on the compass directions, a picture for each.
   ANIM_FACING_EIGHT_PICTURES = 8,
   /// ANIM_FACING_FRONT_BACK's table for a sprite drawn in two parts, the
@@ -255,6 +255,7 @@ enum {
   ACTOR_COUNT = 64,               ///< Ram_HeapSlots->actors
   ANIM_OBJECT_COUNT = 64,         ///< sprites and sprite animations
   ANIM_LAYER_COUNT = 4,           ///< Sprite.entries
+  RUNNING_LIST_SLOTS = 14,        ///< the actor slots Actor_ListRunning reads
   /// Sixteenths of a frame taken off a sprite animation's timer each frame: one
   /// frame.
   SPRITE_ANIMATION_NORMAL_STEP = 16
@@ -284,9 +285,6 @@ enum {
 
 /// Sprite ids the field's own code creates actors of.
 enum {
-  /// The ripple behind the leader or the ship in the world map's shallow
-  /// water, rings that widen and fade.
-  WORLD_MAP_SPRITE_RIPPLE = SPRITE_SPLASH_RING,
   /// The puffs the ship leaves behind it as it sails or flies low, on
   /// gActor_WakeScript (spr_356.png).
   WORLD_MAP_SPRITE_WAKE = 356

@@ -4,10 +4,16 @@
 
 #include "field_internal.h"
 
+/// The longest MapGrid_WaitForShakeToSettle waits, five seconds.
 #define MAPGRID_SHAKE_SETTLE_FRAMES 300
+/// The largest shake that counts as settled, just under 1/256 pixel.
 #define MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE (toFIXED(1) / 256 - 1)
-#define TILEMAP_TILE_BANK_BYTES (256 * (8 * 8))
-#define TILEMAP_MAP_BANK_BYTES (64 * 64)
+/// One of the world map area's four tile sets, decoded one after another into
+/// gBgTileBuffer, as field_world_map.c defines it.
+#define WORLD_MAP_TILE_SET_BYTES 8192
+/// One of the world map's two tile maps of one-byte tiles, BG3's and then
+/// BG2's, as WorldMap_StartStillPicture copies them into gDecodeBuffer.
+#define WORLD_MAP_TILE_MAP_BYTES (64 * 64)
 
 /// Changes the shake without restarting an axis whose argument is negative.
 /// Amplitudes are 16.16 pixels and decay is a 16.16 multiplier per frame.
@@ -28,15 +34,14 @@ void MapGrid_SetScreenShake(FIXED shakeX, FIXED shakeY, FIXED shakeDecay) {
   }
 }
 
-/// Waits until both shake amplitudes are below 1/256 pixel, with a 300-frame
-/// limit for a shake whose decay never settles.
+/// Waits until both shake amplitudes have settled, at most
+/// MAPGRID_SHAKE_SETTLE_FRAMES for a shake whose decay never settles.
 void MapGrid_WaitForShakeToSettle(void) {
   struct MapGridScrollWork *grid;
   s32 waitedFrames;
 
   grid = gMapGridWork[0];
   waitedFrames = 0;
-  // 300 frames is five seconds; 255 in 16.16 is just under 1/256 pixel.
   // A decay of 1.0 or more never settles, so the limit ends the wait.
   while (waitedFrames < MAPGRID_SHAKE_SETTLE_FRAMES &&
          (grid->shakeX > MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE ||
@@ -48,9 +53,9 @@ void MapGrid_WaitForShakeToSettle(void) {
   grid->shakeDecay = 0;
 }
 
-/// The copied ARM kernel reads the BG2 affine row from each 32-byte pair and
-/// writes 240 by 160 pixels as 256-colour tiles; it returns the address past
-/// the last pair, where its row cursor stops.
+/// The ARM routine copied to RAM reads the BG2 affine row from each 32-byte
+/// pair and writes 240 by 160 pixels as 256-colour tiles; it returns the
+/// address past the last pair, where its row cursor stops.
 typedef const struct WorldMapAffinePair *(*TileMapRowDrawer)(
     const struct WorldMapAffinePair *lines, u8 *pixels, const u8 *tiles,
     const u8 *map);
@@ -59,15 +64,15 @@ typedef const struct WorldMapAffinePair *(*TileMapRowDrawer)(
 /// WorldMap_StartStillPicture supplies 160 pairs and a 240 by 160 byte output.
 void TileMap_DrawRowsFromRam(const struct WorldMapAffinePair *lines,
                              u8 *pixels) {
-  const u8 *base;
+  const u8 *maps;
 
-  // The second tile and map banks are BG2.
-  base = gDecodeBuffer;
+  // The third tile set and the second tile map are BG2's.
+  maps = gDecodeBuffer;
   RamCode_LoadSlot(HEAP_SLOT_RAM_CODE_TEMP, TileMap_DrawRows,
                    TileMap_DrawRowsCodeSize);
   ((TileMapRowDrawer)gHeapSlots[HEAP_SLOT_RAM_CODE_TEMP])(
-      lines, pixels, gBgTileBuffer + TILEMAP_TILE_BANK_BYTES,
-      base + TILEMAP_MAP_BANK_BYTES);
+      lines, pixels, gBgTileBuffer + 2 * WORLD_MAP_TILE_SET_BYTES,
+      maps + WORLD_MAP_TILE_MAP_BYTES);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_TEMP);
 }
 
@@ -79,12 +84,14 @@ void WorldMap_BuildScanlineTable(FIXED pitchSlope, s32 *position,
   FIXED horizon;
   FIXED focus;
   s32 line;
-  FIXED distance;
+  FIXED slope;
   FIXED difference;
   FIXED scale;
   FIXED horizontalSquared;
-  s32 verticalSquared;
-  FIXED diagonal;
+  FIXED verticalSquared;
+  FIXED halfScale;
+  FIXED rayHeight;
+  FIXED groundDistance;
   s32 vertical;
   s32 groundHeight = 0;
   s32 horizontal;
@@ -95,33 +102,35 @@ void WorldMap_BuildScanlineTable(FIXED pitchSlope, s32 *position,
   Iwram_TransformVector(groundPoint, cameraPoint);
   horizon = cameraPoint[1] - Iwram_MulFX(cameraPoint[2], pitchSlope);
   focus = -gProjection.focal;
-  for (line = 0; line < FIELD_VIEW_HEIGHT / FIXED_ONE; line++) {
+  for (line = 0; line < DISPLAY_HEIGHT; line++) {
     // The line's ray slope: its offset from the projection's centre line over
     // the focal length.
-    distance = Iwram_RatioMulQ14(focus, toFIXED(gProjection.centerY - line));
+    slope = Iwram_RatioMulQ14(focus, toFIXED(gProjection.centerY - line));
     // A ray parallel to the ground would divide by zero.
-    difference = distance - pitchSlope;
+    difference = slope - pitchSlope;
     if (difference == 0)
       difference = 1;
     scale = Iwram_RatioMulQ14(difference, horizon);
     // A negative scale is a line below the horizon, whose ray meets the
     // ground; the lines above it are sky and get zeros.
     if (scale < 0) {
-      // MulFX by FIXED_ONE / 2 halves: the width scale is half the line's scale
-      // over the focal length, and the distance below is stored halved.
-      diagonal = Iwram_MulFX(-scale, FIXED_ONE / 2);
-      scanline->scale = Iwram_RatioMulQ14(gProjection.focal, diagonal);
-      diagonal = Iwram_MulFX(scale, distance);
-      // The distance is the root of the two squared terms.
+      // The width scale is half the line's scale over the focal length, and
+      // the depth is stored halved.
+      halfScale = Iwram_MulFX(-scale, FIXED_ONE / 2);
+      scanline->scale = Iwram_RatioMulQ14(gProjection.focal, halfScale);
+      rayHeight = Iwram_MulFX(scale, slope);
+      // The distance along the ground from the followed point: the root of
+      // the two squared terms, taken in sixteenths (the root of a 16.16
+      // square comes back in 8.8), with the sign of the vertical term.
       horizontal = (cameraPoint[2] - scale) >> 4;
-      vertical = (diagonal - cameraPoint[1]) >> 4;
+      vertical = (rayHeight - cameraPoint[1]) >> 4;
       horizontalSquared = Iwram_MulFX(horizontal, horizontal);
       verticalSquared = Iwram_MulFX(vertical, vertical);
-      verticalSquared = Iwram_Sqrt(horizontalSquared + verticalSquared) << 12;
-      // The ground distance takes the sign of the vertical term.
+      groundDistance = Iwram_Sqrt(horizontalSquared + verticalSquared)
+                       << (8 + 4);
       if (vertical < 0)
-        verticalSquared = -verticalSquared;
-      scanline->depth = Iwram_MulFX(verticalSquared, FIXED_ONE / 2);
+        groundDistance = -groundDistance;
+      scanline->depth = Iwram_MulFX(groundDistance, FIXED_ONE / 2);
     } else {
       scanline->scale = 0;
       scanline->depth = 0;
@@ -134,5 +143,5 @@ void WorldMap_BuildScanlineTable(FIXED pitchSlope, s32 *position,
 
 #undef MAPGRID_SHAKE_SETTLE_FRAMES
 #undef MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE
-#undef TILEMAP_TILE_BANK_BYTES
-#undef TILEMAP_MAP_BANK_BYTES
+#undef WORLD_MAP_TILE_SET_BYTES
+#undef WORLD_MAP_TILE_MAP_BYTES

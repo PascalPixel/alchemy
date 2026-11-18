@@ -13,13 +13,14 @@
 #define VIOLET_LIGHTNING_PICTURE_BYTES (VIOLET_LIGHTNING_WIDTH * 64)
 #define DEMON_FACE_WIDTH 32
 #define DEMON_FACE_HEIGHT 64
+#define BURST_SHOWER_FRAMES 64     ///< frames the shower lasts
 #define BURST_SHOWER_BURSTS 48     ///< one fired a frame from frame 0
 #define BURST_SHOWER_BURST_LIFE 24 ///< frames each burst lives
 
 /// The burst shower's styles, its mode argument.
 enum BurstShowerMode {
   BURST_SHOWER_MODE_FLASH,
-  BURST_SHOWER_MODE_ICE,       ///< in the ice block palette
+  BURST_SHOWER_MODE_ICE,       ///< unused: in the ice block palette
   BURST_SHOWER_MODE_SPRAY,     ///< in the water spray palette
   BURST_SHOWER_MODE_PINK,      ///< pink, fired from 16 pixels higher
   BURST_SHOWER_MODE_DJINNI,    ///< Mars Djinni palette, 28 pixels in front
@@ -64,9 +65,9 @@ void BattleEffect_RunDarkBlessing(struct BattleEffectParams *args) {
 void BattleEffect_RunAcidBlessing(struct BattleEffectParams *args) {
   BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_PINK);
 }
-/// Shows violet lightning between the user and targets instead of bursts: a
-/// bolt flickers through three pictures in front of the user, and the targets
-/// flash in turn without being knocked back.
+/// Violet lightning reaches from the user across to the targets instead of
+/// bursts, on a canvas shown three times as wide, flickering through three
+/// pictures, and the targets flash in turn without being knocked back.
 ///
 /// Abilities: Storm Blessing.
 void BattleEffect_RunStormBlessing(struct BattleEffectParams *args) {
@@ -86,7 +87,6 @@ void BattleEffect_RunEvilBlessing(struct BattleEffectParams *args) {
 void BattleEffect_RunDeadlyGas(struct BattleEffectParams *args) {
   BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_DJINNI);
 }
-#define BURST_SHOWER_FRAMES 64
 
 /// The user fires one burst a frame at a point near one of the targets, taking
 /// them in turn, and each target is hit in turn.
@@ -198,7 +198,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
   }
   if (mode == BURST_SHOWER_MODE_LIGHTNING) {
     origin.x = origin.x / 3;
-    REG_BG2PA = Q_8_8(1.0 / 3);
+    REG_BG2PA = Q_8_8(1.0 / 3); // three times the width
   }
 
   for (i = 0; i != work->args->targetCount; i++) {
@@ -220,8 +220,8 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
       }
     }
 
-    // The lightning mode flickers its bolt in front of the user; the others
-    // fire bursts at the targets.
+    // The lightning mode flickers its bolt from the user towards the targets;
+    // the others fire bursts at them.
     if (mode == BURST_SHOWER_MODE_LIGHTNING) {
       if (work->args->side == EFFECT_SIDE_PARTY) {
         draw[0](canvas,
@@ -233,19 +233,22 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
         draw[0](canvas,
                 (work->sheet + BURST_SHOWER_PICTURES) +
                     frame / 3 % 3 * VIOLET_LIGHTNING_PICTURE_BYTES,
-                origin.x - 70, origin.y - 32, VIOLET_LIGHTNING_WIDTH,
-                VIOLET_LIGHTNING_HEIGHT);
+                origin.x - (VIOLET_LIGHTNING_WIDTH - 2), origin.y - 32,
+                VIOLET_LIGHTNING_WIDTH, VIOLET_LIGHTNING_HEIGHT);
       }
     } else {
       aim[0] = (targetSpots[target].x + (Random16() & 31)) - 16;
       aim[1] = (targetSpots[target].y + (Random16() & 63)) - 16;
-      if (frame <= BURST_SHOWER_BURSTS - 1) {
-        // The canvas is half the screen's width but the burst's speed is not
-        // halved, so it covers only three quarters of its height to the target.
-        work->particles[frame].x = origin.x << 15;
+      if (frame < BURST_SHOWER_BURSTS) {
+        // A burst moves a 32nd of the way to its aim a frame for
+        // BURST_SHOWER_BURST_LIFE frames: three quarters of the way down, and
+        // across the half-width canvas half again as far, past the targets.
+        work->particles[frame].x = origin.x * (toFIXED(1) / 2);
         work->particles[frame].y = INTtoFIXED(origin.y);
-        work->particles[frame].velocityX = (aim[0] - origin.x) << 11;
-        work->particles[frame].velocityY = (aim[1] - origin.y) << 11;
+        work->particles[frame].velocityX =
+            (aim[0] - origin.x) * (toFIXED(1) / 32);
+        work->particles[frame].velocityY =
+            (aim[1] - origin.y) * (toFIXED(1) / 32);
         work->particles[frame].variant = 0;
       }
     }

@@ -1082,7 +1082,7 @@ static void TunnelRuins_HideVanishingStatues(void) {
   Actor_SetPosition(ACTOR_EAST_VANISHING_STATUE, 0, 0);
 }
 
-/// The five marks before the door, lit squares in the floor: the corners and
+/// The five marks before the door the statues must stand on: the corners and
 /// middle of a square of cells. Each corner statue belongs on the opposite
 /// corner, and the south statue in the middle.
 enum {

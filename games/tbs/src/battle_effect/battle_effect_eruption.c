@@ -42,13 +42,9 @@ enum {
 /// frames, then is gone.
 #define ERUPTION_PUFF_FRAMES 21
 /// A mote is drawn ERUPTION_MOTE_LARGEST pixels wide (and twice as tall) at
-/// the nearest depth, a pixel narrower for every ERUPTION_MOTE_DEPTH_STEP
-/// farther, its depth clamped from ERUPTION_MOTE_DEPTH_NEAR to
-/// ERUPTION_MOTE_DEPTH_FAR.
+/// MOTE_DEPTH_NEAR or nearer, a size smaller for every MOTE_DEPTH_STEP
+/// farther.
 #define ERUPTION_MOTE_LARGEST 9
-#define ERUPTION_MOTE_DEPTH_NEAR 160
-#define ERUPTION_MOTE_DEPTH_FAR 799
-#define ERUPTION_MOTE_DEPTH_STEP 64
 
 /// A fountain of motes and puffs of smoke bursts up beside the targets and
 /// falls back, hitting the targets one after another.
@@ -135,10 +131,9 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
         Projection_Point(mote, &screen);
         screen.x >>= 1;
         screen.x += work->args->side * 32 - 16;
-        CLAMP(screen.depth, ERUPTION_MOTE_DEPTH_NEAR, ERUPTION_MOTE_DEPTH_FAR);
-        size =
-            ERUPTION_MOTE_LARGEST - (screen.depth - ERUPTION_MOTE_DEPTH_NEAR) /
-                                        ERUPTION_MOTE_DEPTH_STEP;
+        CLAMP(screen.depth, MOTE_DEPTH_NEAR, MOTE_DEPTH_FAR);
+        size = ERUPTION_MOTE_LARGEST -
+               (screen.depth - MOTE_DEPTH_NEAR) / MOTE_DEPTH_STEP;
         draw[0](canvas,
                 work->sheet +
                     (gBattleEffect_MotePictures[size - 1] +
@@ -237,6 +232,3 @@ void BattleEffect_DoNothing(void) {}
 #undef ERUPTION_PUFFS
 #undef ERUPTION_PUFF_FRAMES
 #undef ERUPTION_MOTE_LARGEST
-#undef ERUPTION_MOTE_DEPTH_NEAR
-#undef ERUPTION_MOTE_DEPTH_FAR
-#undef ERUPTION_MOTE_DEPTH_STEP

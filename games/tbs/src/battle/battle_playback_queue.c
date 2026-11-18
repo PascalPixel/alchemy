@@ -45,10 +45,6 @@ UNREAD_RESULT BattleUnit_ClearStatuses(s32 unitId) {
   BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
 }
 
-/// The advance arrow's attribute 0: a 256-colour, semi-transparent tall
-/// sprite; with attribute 1's size 0 it is 8 by 16 pixels.
-#define ADVANCE_ARROW_ATTR0 0xa400
-
 /// Shows the bobbing arrow at the message window and waits for the player to go
 /// on.
 UNREAD_RESULT BattleMessage_WaitForAdvance(void) {
@@ -76,8 +72,10 @@ UNREAD_RESULT BattleMessage_WaitForAdvance(void) {
     IoWriteQueue_ClearBits16((u32)&REG_WINOUT, WINOUT_WIN01_BG2);
     IoWriteQueue_SetBits16((u32)&REG_WINOUT, WINOUT_WIN01_OBJ);
     Io_Write16(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0), &REG_BLDALPHA);
-    // Both attribute words are set whole, as PLAY_ADVANCE sets them.
-    prompt->oam.word.attr01 = ADVANCE_ARROW_ATTR0;
+    // Both attribute words are set whole, as PLAY_ADVANCE sets them: an 8 by
+    // 16 arrow of 256 colours, blended with what is behind it.
+    prompt->oam.word.attr01 =
+        OBJ_SIZE_8X16 | OBJ_256_COLORS | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
     prompt->oam.word.attr23 = 0;
     prompt->oam.f.tile = VramCache_Reload(tileSlot, pictureTiles);
     prompt->oam.f.x = window->x * 8 + (offset->x >> 8) + 4;
@@ -254,5 +252,3 @@ u32 BattlePlayback_Push(u32 opcode, u32 operand) {
   queue->count = index + 1;
   return opcode;
 }
-
-#undef ADVANCE_ARROW_ATTR0

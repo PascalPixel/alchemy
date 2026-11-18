@@ -504,14 +504,14 @@ static void ColosseumSatrageMatch_MoveRidingLog(s32 logId, s32 offsetX,
     FieldActor_SetMoveTargetFX(log, destinationX, log->y.fixed, destinationZ);
   }
   if (offsetX < 0 || offsetZ < 0) {
-    Actor_SelectAnimation(log, 4);
+    Actor_SelectAnimation(log, FLOATING_LOG_ANIMATION_ROLL_WEST_OR_NORTH);
   } else {
-    Actor_SelectAnimation(log, 3);
+    Actor_SelectAnimation(log, FLOATING_LOG_ANIMATION_ROLL_EAST_OR_SOUTH);
   }
   Sound_Play(SE_LOG_PUSH);
   Actor_WaitForMove(rider);
   Sound_Play(SE_STOP_ACTION_SE);
-  Actor_SelectAnimation(log, 2);
+  Actor_SelectAnimation(log, FLOATING_LOG_ANIMATION_SETTLE);
   Event_End();
 }
 
@@ -1701,7 +1701,8 @@ struct Trigger gColosseumSatrageMatchTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LOG_ROLLING_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoWallImAmazedPeopleCanActuallyCross) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WALL_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoWallBoyThatBitOverThereMust) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOARD_WALK_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoWallIHeardBabiGotTheLog) },
-    { TRIGGER_RAISED, 99, CONDITION_ALWAYS, EVENT(Colosso_TakePlaceForMatch) },
+    { TRIGGER_RAISED, COLOSSO_TAKE_PLACE_TRIGGER, CONDITION_ALWAYS,
+      EVENT(Colosso_TakePlaceForMatch) },
     { TRIGGER_TABLE_END },
 };
 

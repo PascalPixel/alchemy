@@ -7,6 +7,7 @@
 #include "resource_ids.h"
 #include "sounds.h"
 #include "field/field_sequence.h"
+#include "shop/shop.h"
 
 /// Each item command's state in the grid.
 #define ITEM_COMMAND_STATE_DISABLED (-1)
@@ -157,9 +158,7 @@ s32 ItemMenu_Run(void) {
 typedef s32 (*ItemWordCopyFn)(void *dst, const void *src, s32 size);
 
 /// Iwram_CopyWords's routine reached from IwramIrqMain rather than at its
-/// fixed address, as in The Broken Seal: the trade's snapshot copies load the
-/// linked address after their arguments (at Iwram_CopyWords the constant is
-/// loaded before them).
+/// fixed address, as in The Broken Seal.
 #define ITEM_IWRAM_COPY_WORDS                                                  \
   ((ItemWordCopyFn)(IwramIrqMain + Iwram_CopyWordsOffset))
 
@@ -836,7 +835,7 @@ void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
 
   Menu_PlaceOwnerEntryObjects(MenuCursor_Create(menu), 2, 2);
   for (ownerIndex = 3; ownerIndex >= 0; ownerIndex--)
-    menu->memberY[ownerIndex] = 26;
+    menu->memberY[ownerIndex] = MENU_MEMBER_Y;
 
   {
     u8 zero = 0;
@@ -853,9 +852,13 @@ void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
   }
 }
 
+/// Menu_SpawnIconEntries makes the icons a row of the eight-wide icon grid at
+/// a time (columnCount), as the Psynergy screen places its own.
+#define ICON_GRID_ROW 8
+
 /// Creates the 32 item icon sprites in window, off screen until placed: slots 0
-/// to 7 at x 248, the rest at x 256, all at y 168, each showing item graphic
-/// slot of the same number.
+/// to 7 at MENU_ICON_HIDDEN_X, the rest 8 pixels further, all at
+/// MENU_ICON_HIDDEN_Y, each showing item graphic slot of the same number.
 void Menu_SpawnIconEntries(struct ItemMenuWork *menu, struct Window *window) {
   struct WindowSprite **firstIcons;
   s32 firstSlot;
@@ -873,26 +876,26 @@ void Menu_SpawnIconEntries(struct ItemMenuWork *menu, struct Window *window) {
       *firstIcons++ = WindowSprite_CreateFromResourceFar(
           ICON_KIND_ITEM, firstSlot, window, MENU_ICON_HIDDEN_X, y);
       firstSlot++;
-    } while (firstSlot <= 7);
+    } while (firstSlot < ICON_GRID_ROW);
   }
 
-  secondSlot = 8;
+  secondSlot = ICON_GRID_ROW;
   {
     s32 y = MENU_ICON_HIDDEN_Y;
 
-    secondIcons = &menu->entryIcons[8];
+    secondIcons = &menu->entryIcons[ICON_GRID_ROW];
     do {
       *secondIcons++ = WindowSprite_CreateFromResourceFar(
           ICON_KIND_ITEM, secondSlot, window, 256, y);
       secondSlot++;
-    } while (secondSlot <= 15);
+    } while (secondSlot < 2 * ICON_GRID_ROW);
   }
 
-  remainingSlot = 16;
+  remainingSlot = 2 * ICON_GRID_ROW;
   {
     s32 y = MENU_ICON_HIDDEN_Y;
 
-    remainingIcons = &menu->entryIcons[16];
+    remainingIcons = &menu->entryIcons[2 * ICON_GRID_ROW];
     do {
       *remainingIcons++ = WindowSprite_CreateFromResourceFar(
           ICON_KIND_ITEM, remainingSlot, window, 256, y);
@@ -2509,10 +2512,13 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
         Text_DrawMessageAsTilesFar(HOW_MANY_MESSAGE, window, HOW_MANY_X,
                                    HOW_MANY_Y);
         Dma_Set(gMenu_QuantityTiles, tiles, DMA_COPY_WORDS(64), REG_DMA3);
-        QuantityBar_FillFar(INVENTORY_STACK_MAX, 14, tiles);
-        QuantityBar_FillFar(baseQuantity + quantityRange, 0, tiles);
-        QuantityBar_FillFar(baseQuantity + value + 1, 10, tiles);
-        QuantityBar_FillFar(baseQuantity, 2, tiles);
+        QuantityBar_FillFar(INVENTORY_STACK_MAX, QUANTITY_BAR_OUT_OF_REACH,
+                            tiles);
+        QuantityBar_FillFar(baseQuantity + quantityRange, QUANTITY_BAR_OPEN,
+                            tiles);
+        QuantityBar_FillFar(baseQuantity + value + 1, QUANTITY_BAR_CHOSEN,
+                            tiles);
+        QuantityBar_FillFar(baseQuantity, QUANTITY_BAR_HELD, tiles);
         VramCache_Load(entry, 256, tiles);
         Text_DrawNumberInWindowFar(value + 1, 2, window, 32, 32);
         Text_DrawMessageAsTilesFar(

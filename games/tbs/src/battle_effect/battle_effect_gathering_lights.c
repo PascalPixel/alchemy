@@ -33,12 +33,10 @@ void BattleEffect_RunHaunting(struct BattleEffectParams *args) {
 /// MemberBurstImage's three lights.
 #define MEMBER_BURST_WIDTH 20
 #define MEMBER_BURST_HEIGHT 32
-/// How far the canvas's ripple sways each line, in pixels either side of its
-/// middle; the wave moves a 64th of a turn a line and a frame.
+/// How far the canvas's ripple sways each line either side of its middle, in
+/// CANVAS_WAVE_BG2X's quarter canvas pixels (4 canvas pixels, 8 on screen); the
+/// wave moves a 64th of a turn a line and a frame.
 #define GATHERING_LIGHTS_RIPPLE 16
-/// A line's 16.16 sideways sway as the BG2X value of the effect's bg2xLines,
-/// which the wave HBlank DMA writes line by line.
-#define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
 
 /// For each target in turn, lights burst out of the user and are pulled into
 /// the middle of the target's body, which is struck as they arrive; the effect
@@ -174,4 +172,3 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
 
 #undef GATHERING_LIGHTS_SLOTS
 #undef GATHERING_LIGHTS_RIPPLE
-#undef CANVAS_WAVE_BG2X

@@ -8,8 +8,7 @@
 struct MeshTriangle;
 struct StripQuad;
 
-/// Where MarsDjinnSmallSheet is decoded in the effect's pictures.
-#define DJINNI_CHARGE_MARS_DJINN_SMALL_PICTURES 4096
+#define DJINNI_CHARGE_DJINNI_PICTURE 4096 ///< the small Mars Djinni
 
 /// The last two particles: the one that keeps the camera's focus at the start,
 /// and the one that holds the Djinni's offset from it and its step toward the
@@ -21,22 +20,47 @@ struct StripQuad;
 /// Where GlowOrbSheet (Core) or FlashBurstSheet (Cannon) is decoded in the
 /// effect's pictures.
 #define DJINNI_CHARGE_BURST_PICTURES 8192
-/// The ball's projected corners and its mesh, in the map cell buffer.
-#define DJINNI_CHARGE_VERTICES (Ram_MapCellBuffer + 8192)
-#define DJINNI_CHARGE_MESH (Ram_MapCellBuffer + 16384)
+/// Cannon's blast trailing from the Djinni: PetalSheet's four cones of light,
+/// decoded into the map cell buffer.
+#define DJINNI_CHARGE_BLAST_WIDTH 60
+#define DJINNI_CHARGE_BLAST_HEIGHT 100
 
-/// The body of Core (mode 0) and Cannon (mode 1): the Mars Djinni flies at
-/// the target. For Core it pulls back, then drives in and strikes four times
-/// before a glowing orb (a sphere of 8 by 8 vertices, its mesh built on the
-/// first frame) swells over the target and bursts; for Cannon it shoots
-/// straight in and strikes once, behind a gust of petals.
+/// While the Djinni pulls back, its step toward the target grows by a 1024th
+/// of the way a frame; as it drives in, by a 128th.
+#define DJINNI_CHARGE_PULL_BACK_SHIFT 10
+#define DJINNI_CHARGE_DRIVE_SHIFT 7
+/// The debris each of Core's strikes throws.
+#define DJINNI_CHARGE_STRIKE_DEBRIS 16
+
+/// Core's ball of fire: DustBlobSheet in the orange palette on a sphere of
+/// DJINNI_CHARGE_FIREBALL_RINGS rings of DJINNI_CHARGE_FIREBALL_RING_VERTICES,
+/// from pole to pole, rolled DJINNI_CHARGE_FIREBALL_TILT one way or the other
+/// by the targets' side. Its corners are in the map cell buffer, its projected
+/// corners and its mesh after them.
+#define DJINNI_CHARGE_FIREBALL_RINGS 8
+#define DJINNI_CHARGE_FIREBALL_RING_VERTICES 8
+#define DJINNI_CHARGE_FIREBALL_VERTICES                                        \
+  (DJINNI_CHARGE_FIREBALL_RINGS * DJINNI_CHARGE_FIREBALL_RING_VERTICES)
+#define DJINNI_CHARGE_FIREBALL_RING_TURN                                       \
+  (DEGtoANG(180) / (DJINNI_CHARGE_FIREBALL_RINGS - 1))
+#define DJINNI_CHARGE_FIREBALL_RADIUS 48
+#define DJINNI_CHARGE_FIREBALL_TILT 20576
+#define DJINNI_CHARGE_FIREBALL_PROJECTED (Ram_MapCellBuffer + 8192)
+#define DJINNI_CHARGE_FIREBALL_MESH (Ram_MapCellBuffer + 16384)
+
+/// The small Mars Djinni charges the target. In Core it pulls back over the
+/// caster inside a ball of fire, then drives in onto the target as the ball
+/// swells, strikes it seven times, throwing debris, and turns into a glowing
+/// orb that burns out; in Cannon it shoots straight in, a cone of blast
+/// trailing from it, and strikes once in a burst of flame and debris.
 void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
   u8 *mesh;
   u8 *projected;
   u8 *cells;
   void *canvas;
   struct BattleEffectWork *work;
-  // Unused: blit[1] gives the stack frame its 4 bytes.
+  /* LEFTOVER(frame): blit[1], the pair's idle second blitter, which the ROM's
+   * frame reserves and never touches; as one DrawRectangle. */
   BlitterPair blit;
   s32 frame;
   struct BattleCamera *camera;
@@ -50,8 +74,8 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
   s32 count;
   s32 i;
 
-  mesh = DJINNI_CHARGE_MESH;
-  projected = DJINNI_CHARGE_VERTICES;
+  mesh = DJINNI_CHARGE_FIREBALL_MESH;
+  projected = DJINNI_CHARGE_FIREBALL_PROJECTED;
   cells = gMapGridCellBuffer;
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
@@ -90,9 +114,9 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
     work->particles[DJINNI_CHARGE_START].y = focus[1];
     work->particles[DJINNI_CHARGE_START].z = focus[2];
     Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
-    Resource_LoadAndDecompress(
-        RESOURCE_MARS_DJINN_SMALL_SHEET,
-        work->sheet + DJINNI_CHARGE_MARS_DJINN_SMALL_PICTURES, 1, 1);
+    Resource_LoadAndDecompress(RESOURCE_MARS_DJINN_SMALL_SHEET,
+                               work->sheet + DJINNI_CHARGE_DJINNI_PICTURE, 1,
+                               1);
     if (mode == DJINNI_CHARGE_CORE) {
       Resource_LoadAndDecompress(RESOURCE_DUST_BLOB_SHEET, work->sheet, 1, 1);
       Resource_LoadAndDecompress(RESOURCE_GLOW_ORB_SHEET,
@@ -108,7 +132,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
       frames = 50;
     }
     REG_BG2PA = Q_8_8(0.5);
-    Actor_SetAnimationSpeedFar(caster, 240);
+    Actor_SetAnimationSpeedFar(caster, ANIMATION_STEP_NORMAL * 15);
 
     for (frame = 0; frame != frames; frame++) {
       if (frame == 0) {
@@ -140,13 +164,14 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
       Matrix_SetLookAt(camera->eye, camera->focus);
 
       if (mode == DJINNI_CHARGE_CORE) {
+        // The camera turns for the first 16 frames.
         if ((u32)frame <= 15) {
           s32 turn;
 
           // DEAD: frame is at most 15 here, so the second arm never runs; the
           // ROM keeps its test.
           if (frame <= 71) {
-            turn = 256;
+            turn = TRIG_TURN / 256;
           } else {
             turn = 2560 - (frame << 5);
           }
@@ -163,11 +188,14 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
           focus[2] -= work->particles[DJINNI_CHARGE_STEP].z;
           if (frame <= 15) {
             work->particles[DJINNI_CHARGE_STEP].x +=
-                work->particles[DJINNI_CHARGE_STEP].velocityX >> 10;
+                work->particles[DJINNI_CHARGE_STEP].velocityX >>
+                DJINNI_CHARGE_PULL_BACK_SHIFT;
             work->particles[DJINNI_CHARGE_STEP].y +=
-                work->particles[DJINNI_CHARGE_STEP].velocityY >> 10;
+                work->particles[DJINNI_CHARGE_STEP].velocityY >>
+                DJINNI_CHARGE_PULL_BACK_SHIFT;
             work->particles[DJINNI_CHARGE_STEP].z +=
-                work->particles[DJINNI_CHARGE_STEP].velocityZ >> 10;
+                work->particles[DJINNI_CHARGE_STEP].velocityZ >>
+                DJINNI_CHARGE_PULL_BACK_SHIFT;
           }
           work->particles[DJINNI_CHARGE_STEP].x =
               work->particles[DJINNI_CHARGE_STEP].x * 56 / DAMPING_SCALE;
@@ -184,11 +212,14 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
           focus[1] += work->particles[DJINNI_CHARGE_STEP].y;
           focus[2] += work->particles[DJINNI_CHARGE_STEP].z;
           work->particles[DJINNI_CHARGE_STEP].x +=
-              work->particles[DJINNI_CHARGE_STEP].velocityX >> 7;
+              work->particles[DJINNI_CHARGE_STEP].velocityX >>
+              DJINNI_CHARGE_DRIVE_SHIFT;
           work->particles[DJINNI_CHARGE_STEP].y +=
-              work->particles[DJINNI_CHARGE_STEP].velocityY >> 7;
+              work->particles[DJINNI_CHARGE_STEP].velocityY >>
+              DJINNI_CHARGE_DRIVE_SHIFT;
           work->particles[DJINNI_CHARGE_STEP].z +=
-              work->particles[DJINNI_CHARGE_STEP].velocityZ >> 7;
+              work->particles[DJINNI_CHARGE_STEP].velocityZ >>
+              DJINNI_CHARGE_DRIVE_SHIFT;
         } else if (frame <= 72 && !(frame & 3)) {
           s32 thrown = 0;
 
@@ -217,7 +248,7 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
             p->velocityY = ((Random16() & 511) + 256) << 9;
             p->velocityZ = 0;
             p->variant = (Random16() & 15) + 16;
-            if (++thrown == 16) {
+            if (++thrown == DJINNI_CHARGE_STRIKE_DEBRIS) {
               break;
             }
           }
@@ -228,11 +259,14 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
           focus[1] += work->particles[DJINNI_CHARGE_STEP].y;
           focus[2] += work->particles[DJINNI_CHARGE_STEP].z;
           work->particles[DJINNI_CHARGE_STEP].x +=
-              work->particles[DJINNI_CHARGE_STEP].velocityX >> 7;
+              work->particles[DJINNI_CHARGE_STEP].velocityX >>
+              DJINNI_CHARGE_DRIVE_SHIFT;
           work->particles[DJINNI_CHARGE_STEP].y +=
-              work->particles[DJINNI_CHARGE_STEP].velocityY >> 7;
+              work->particles[DJINNI_CHARGE_STEP].velocityY >>
+              DJINNI_CHARGE_DRIVE_SHIFT;
           work->particles[DJINNI_CHARGE_STEP].z +=
-              work->particles[DJINNI_CHARGE_STEP].velocityZ >> 7;
+              work->particles[DJINNI_CHARGE_STEP].velocityZ >>
+              DJINNI_CHARGE_DRIVE_SHIFT;
         }
         if (frame == 15) {
           work->shakeFrames = 6;
@@ -259,23 +293,26 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
         }
       }
 
-      // The Djinni.
+      // The Djinni, which in Core turns into a glowing orb, and Cannon's blast.
       EffectPosition_ProjectPoint(focus, &screen);
       if (mode == DJINNI_CHARGE_CORE) {
         if (frame <= 73) {
-          blit[0](canvas, work->sheet + DJINNI_CHARGE_MARS_DJINN_SMALL_PICTURES,
-                  screen.x / 2 - 10, screen.y - 20, SMALL_DJINNI_WIDTH,
+          blit[0](canvas, work->sheet + DJINNI_CHARGE_DJINNI_PICTURE,
+                  screen.x / 2 - SMALL_DJINNI_WIDTH / 2,
+                  screen.y - SMALL_DJINNI_HEIGHT / 2, SMALL_DJINNI_WIDTH,
                   SMALL_DJINNI_HEIGHT);
         } else if (frame <= 93) {
           blit[0](canvas,
                   work->sheet + DJINNI_CHARGE_BURST_PICTURES +
                       ((frame - 74) / 4) * PICTURE_BYTES(GLOW_ORB),
-                  screen.x / 2 - 20, screen.y - 20, GLOW_ORB_WIDTH,
+                  screen.x / 2 - GLOW_ORB_WIDTH / 2,
+                  screen.y - GLOW_ORB_HEIGHT / 2, GLOW_ORB_WIDTH,
                   GLOW_ORB_HEIGHT);
         }
       } else if (frame <= 22) {
-        blit[0](canvas, work->sheet + DJINNI_CHARGE_MARS_DJINN_SMALL_PICTURES,
-                screen.x / 2 - 10, screen.y - 20, SMALL_DJINNI_WIDTH,
+        blit[0](canvas, work->sheet + DJINNI_CHARGE_DJINNI_PICTURE,
+                screen.x / 2 - SMALL_DJINNI_WIDTH / 2,
+                screen.y - SMALL_DJINNI_HEIGHT / 2, SMALL_DJINNI_WIDTH,
                 SMALL_DJINNI_HEIGHT);
         if (mode == DJINNI_CHARGE_CANNON && frame > 1) {
           s32 picture = (frame / 4) & 3;
@@ -286,10 +323,11 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
           } else {
             x = screen.x / 2 - 46;
           }
-          // The buffer by its own name: its constant address is the sum's
-          // second operand, where the cells pointer would be its first.
-          blit[0](canvas, Ram_MapCellBuffer + picture * 6000, x, screen.y - 50,
-                  60, 100);
+          blit[0](canvas,
+                  Ram_MapCellBuffer +
+                      picture * PICTURE_BYTES(DJINNI_CHARGE_BLAST),
+                  x, screen.y - DJINNI_CHARGE_BLAST_HEIGHT / 2,
+                  DJINNI_CHARGE_BLAST_WIDTH, DJINNI_CHARGE_BLAST_HEIGHT);
         }
       }
 
@@ -330,7 +368,8 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
           blit[0](canvas,
                   work->sheet + DJINNI_CHARGE_BURST_PICTURES +
                       picture * PICTURE_BYTES(FLASH_BURST),
-                  debris.x / 2 - 16, debris.y - 32, FLASH_BURST_WIDTH,
+                  debris.x / 2 - FLASH_BURST_WIDTH / 2,
+                  debris.y - FLASH_BURST_HEIGHT / 2, FLASH_BURST_WIDTH,
                   FLASH_BURST_HEIGHT);
           Particle_AdvanceWithGravity3D(p, 62, -toFIXED(1) / 64);
           p->variant--;
@@ -338,13 +377,13 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
       }
       if (mode == DJINNI_CHARGE_CORE) {
         if (frame == 24) {
-          BattleEffect_TintBattler(args->user, TINT_KEEP, 2, 0, -1);
+          BattleEffect_TintBattler(args->user, TINT_KEEP, POSE_LEAP, 0, -1);
         }
       } else if (frame == 0) {
-        BattleEffect_TintBattler(args->user, TINT_KEEP, 2, 0, -1);
+        BattleEffect_TintBattler(args->user, TINT_KEEP, POSE_LEAP, 0, -1);
       }
 
-      // Core's glowing orb.
+      // Core's ball of fire, its sphere built on the first frame.
       if (mode == DJINNI_CHARGE_CORE && frame <= 89) {
         FIXED scale;
 
@@ -353,19 +392,26 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
           s32 row;
           s32 angle;
 
-          Mesh_BuildGrid(mesh, 8, 8, 8, 8);
-          for (row = 0, angle = 0; row != 8; angle += TRIG_TURN / 14, row++) {
-            s32 y = FIXEDtoINT(-Trig_Cos(angle) * 48);
-            s32 radius = FIXEDtoINT(Trig_Sin(angle) * 48);
+          Mesh_BuildGrid(mesh, DJINNI_CHARGE_FIREBALL_RING_VERTICES,
+                         DJINNI_CHARGE_FIREBALL_RINGS, 8, 8);
+          for (row = 0, angle = 0; row != DJINNI_CHARGE_FIREBALL_RINGS;
+               angle += DJINNI_CHARGE_FIREBALL_RING_TURN, row++) {
+            s32 y =
+                FIXEDtoINT(-Trig_Cos(angle) * DJINNI_CHARGE_FIREBALL_RADIUS);
+            s32 radius =
+                FIXEDtoINT(Trig_Sin(angle) * DJINNI_CHARGE_FIREBALL_RADIUS);
             struct ModelVertex *vertex = (struct ModelVertex *)cells;
             s32 k;
 
-            for (k = 0; k != 8; k++) {
-              s32 x = FIXEDtoINT(Trig_Sin(k << 13) * radius);
+            for (k = 0; k != DJINNI_CHARGE_FIREBALL_RING_VERTICES; k++) {
+              s32 turn = k * (TRIG_TURN / DJINNI_CHARGE_FIREBALL_RING_VERTICES);
+              s32 x = FIXEDtoINT(Trig_Sin(turn) * radius);
+              struct ModelVertex *corner =
+                  &vertex[row * DJINNI_CHARGE_FIREBALL_RING_VERTICES + k];
 
-              vertex[row * 8 + k].y = y;
-              vertex[row * 8 + k].x = x;
-              vertex[row * 8 + k].z = FIXEDtoINT(Trig_Cos(k << 13) * radius);
+              corner->y = y;
+              corner->x = x;
+              corner->z = FIXEDtoINT(Trig_Cos(turn) * radius);
             }
           }
         }
@@ -373,17 +419,17 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
         texture.logHeight = 5;
         texture.pixels = work->sheet;
         Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
-        gProjection.centerX = 60;
+        gProjection.centerX = BATTLE_PROJECTION_CENTER_X / 2;
         Matrix_TranslateVector(focus);
         Matrix_Translate(0, toFIXED(16), 0);
         if (args->side == EFFECT_SIDE_ENEMIES) {
-          Matrix_RotateZ(20576);
+          Matrix_RotateZ(DJINNI_CHARGE_FIREBALL_TILT);
         } else {
-          Matrix_RotateZ(TRIG_TURN - 20576);
+          Matrix_RotateZ(TRIG_TURN - DJINNI_CHARGE_FIREBALL_TILT);
         }
         scale = FIXED_ONE * 5 / 8;
         if (frame > 31) {
-          scale = (frame << 10) + FIXED_ONE / 8;
+          scale = frame * (FIXED_ONE / 64) + FIXED_ONE / 8;
         }
         Matrix_ScaleUniform(scale);
         if (frame > 3) {
@@ -403,7 +449,8 @@ void BattleEffect_RunDjinniCharge(struct BattleEffectParams *args, s32 mode) {
           model->scrollV = frame & 63;
           model->shade = shade;
           model->flags = 3;
-          Render_ProjectVertices(cells, projected, 64);
+          Render_ProjectVertices(cells, projected,
+                                 DJINNI_CHARGE_FIREBALL_VERTICES);
           Render_DrawModelList(model);
         }
         gProjection.centerX = BATTLE_PROJECTION_CENTER_X;

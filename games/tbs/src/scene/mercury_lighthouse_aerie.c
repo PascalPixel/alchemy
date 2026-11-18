@@ -31,7 +31,7 @@
 ///   test).
 /// - Getting about. Six platforms dip under the leader, who jumps two cells
 ///   from one to the next (cell behaviors 10 and 11;
-///   places/mercury-lighthouse-aerie/events/MercuryLighthouseAerie_LandOnPlatform.gif).
+///   places/mercury-lighthouse-aerie/events/MercuryLighthouseAerie_StepOntoPlatform.gif).
 ///   The lift leads down to Mercury Lighthouse's
 ///   SceneId_MercuryLighthouseExterior (mercury_lighthouse.c), arriving at
 ///   MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE by the Fountain
@@ -1559,8 +1559,8 @@ static void MercuryLighthouseAerie_RideLiftDown(void) {
   Event_End();
 }
 
-/// Sparkles rise about each of Saturos and Alex in turn, a frame each, before
-/// they vanish or once they have appeared.
+/// Sparkles rise about Saturos and Alex by turns, one a frame, as they warp
+/// out, and fall about them as they warp in.
 #define WARP_FRAMES 32
 
 /// The frame of their warp in from which Saturos and Alex blink into sight.

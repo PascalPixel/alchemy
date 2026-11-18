@@ -5,44 +5,74 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-struct StripQuad;
-
 #define FIRE_PUPPET_FRAMES 103
+/// The ghost's trail is PUPPET_SEGMENTS pairs of corners, laid in the map cell
+/// buffer: the corners, those Render_TransformVertices makes of them at
+/// PUPPET_STRIP_VERTICES, and the trail's mesh at PUPPET_STRIP_MESH, whose
+/// quads each take 4 texels of StreakTexture across and its 32 down.
 #define PUPPET_SEGMENTS 33
-/// The arm's corners, their projections and its strip's mesh, in the map cell
-/// buffer.
+#define PUPPET_CORNERS (PUPPET_SEGMENTS * 2)
+#define PUPPET_QUADS (PUPPET_SEGMENTS - 1)
 #define PUPPET_STRIP_VERTICES (Ram_MapCellBuffer + 4096)
 #define PUPPET_STRIP_MESH (Ram_MapCellBuffer + 8192)
-/// The last particle keeps the target's position, and its scale in velocityX
-/// and velocityY.
-#define FIRE_PUPPET_SAVED_TARGET 63
+/// The last particle keeps a copy of the target's place and scale.
+#define PUPPET_TARGET_COPY (work->particles[ARRAY_COUNT(work->particles) - 1])
+
+/// The ghost rises at PUPPET_RISE_FRAME, its trail curling a further
+/// PUPPET_CURL_SPEED a segment each frame up to PUPPET_CURL_MAX; it strikes at
+/// PUPPET_STRIKE_FRAME, and from PUPPET_RETURN_FRAME it uncurls and shrinks
+/// back into the caster over PUPPET_RETURN_FRAMES.
+#define PUPPET_RISE_FRAME 16
+#define PUPPET_CURL_SPEED 44
+#define PUPPET_CURL_MAX 1424
+#define PUPPET_STRIKE_FRAME 54
+#define PUPPET_RETURN_FRAME 74
+#define PUPPET_RETURN_FRAMES 32
+/// The caster kneels, grey, until this frame.
+#define PUPPET_CASTER_RISE_FRAME 100
+/// The skull grows from half size by this much a step of the curl, to about
+/// full size at PUPPET_CURL_MAX.
+#define PUPPET_SKULL_GROWTH 23
+
+/// The trail is PUPPET_WIDTH wide, pinched by up to PUPPET_PINCH along a sine
+/// that runs PUPPET_PINCH_STEP a segment, starting five segments before the
+/// caster: 33 pixels at the caster, 6 at its narrowest, near the middle, and 47
+/// at the skull.
+#define PUPPET_WIDTH 50
+#define PUPPET_PINCH 44
+#define PUPPET_PINCH_STEP 862
+#define PUPPET_PINCH_START (5 * PUPPET_PINCH_STEP)
+/// The trail sways up to PUPPET_SWAY pixels at the skull, less towards the
+/// caster, a wave that runs along it a segment a frame.
+#define PUPPET_SWAY 16
+/// The skull's turn at the trail's end, against the trail's own turn there.
+#define PUPPET_SKULL_TURN 22384
 
 /// Where GhostSkullTexture is decoded in the effect's pictures.
 #define FIRE_PUPPET_GHOST_SKULL 16384
 
-/// From the caster rises a flaming arm (33 segments of two vertices each, a
-/// scrolling textured strip) that reaches up and over to 1424 units, with a
-/// hand at its end; at frame 54 it strikes, hitting every target, and from
-/// frame 74 it shrinks back. The target's position is kept in the work's
-/// last particle.
+/// The caster kneels, grey, and its ghost rises from it: a trail of blue
+/// streaks that curls up and over the battle with a skull at its head. The
+/// skull dives on the targets, the screen flashes white and every target is
+/// thrown back; then the ghost shrinks back into the caster, who stands again.
 ///
 /// Abilities: Fire Puppet.
 void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
-  u8 *buffer;
+  u8 *mesh;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
   u8 *sprites;
   struct BattleCamera *camera;
   struct MotionObject *target;
-  struct ScreenPoint pos;
+  struct ScreenPoint caster;
   struct ModelTexture texture;
   struct RenderModel *model;
   s32 endX;
   s32 endY;
   s32 i;
 
-  buffer = PUPPET_STRIP_MESH;
+  mesh = PUPPET_STRIP_MESH;
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   camera = Ram_HeapSlots->cameraWork;
@@ -57,27 +87,29 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   target = BattleObject_GetFar(args->targets[0])->object;
-  // Default: set for real below, when j reaches 32.
+  // Default: set for real below, at the trail's last segment.
   endX = 0;
   endY = 0;
-  work->particles[FIRE_PUPPET_SAVED_TARGET].x = target->x;
-  work->particles[FIRE_PUPPET_SAVED_TARGET].y = target->y;
-  work->particles[FIRE_PUPPET_SAVED_TARGET].z = target->z;
-  work->particles[FIRE_PUPPET_SAVED_TARGET].velocityX = target->scaleX;
-  work->particles[FIRE_PUPPET_SAVED_TARGET].velocityY = target->scaleY;
+  // DEAD: nothing reads the copy; the ROM keeps the stores.
+  PUPPET_TARGET_COPY.x = target->x;
+  PUPPET_TARGET_COPY.y = target->y;
+  PUPPET_TARGET_COPY.z = target->z;
+  PUPPET_TARGET_COPY.velocityX = target->scaleX;
+  PUPPET_TARGET_COPY.velocityY = target->scaleY;
   Resource_LoadAndDecompress(RESOURCE_STREAK_TEXTURE, work->sheet, 0, 0);
+  // DEAD: Fire Puppet draws none of these sprites; the ROM keeps the load.
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_GHOST_SKULL_TEXTURE,
                              work->sheet + FIRE_PUPPET_GHOST_SKULL, 0, 0);
+  // The ghost takes the Mercury Djinn's blues.
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry(RESOURCE_MERCURY_DJINN_SHEET),
                        SHEET_PALETTE_BYTES);
   REG_BG2PA = Q_8_8(0.5);
-  Render_BuildQuadStrip(buffer, 4, 32, 32);
+  Render_BuildQuadStrip(mesh, 4, 32, PUPPET_QUADS);
 
   for (frame = 0; frame != FIRE_PUPPET_FRAMES; frame++) {
-    Matrix_Initialize();
-    Matrix_SetLookAt(camera->eye, camera->focus);
+    EFFECT_VIEW_FROM_CAMERA(camera);
     if (frame == 0) {
       BattleEffect_TintBattler(args->user, SPRITE_COLOR_GREY, POSE_PARTY_HELD,
                                0, -1);
@@ -85,11 +117,11 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
     if (frame == 8) {
       Sound_PlayFar(SE_CURSE);
     }
-    if (frame == 100) {
+    if (frame == PUPPET_CASTER_RISE_FRAME) {
       BattleEffect_TintBattler(args->user, SPRITE_COLOR_NORMAL, POSE_ENEMY_HELD,
                                0, -1);
     }
-    if (frame == 54) {
+    if (frame == PUPPET_STRIKE_FRAME) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       Sound_PlayFar(SE_POWER_UP);
@@ -102,76 +134,88 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
                                  POSE_DAMAGE, i, 8);
       }
     }
-    if (frame > 15) {
-      s32 length;
+    if (frame >= PUPPET_RISE_FRAME) {
+      s32 curl;
       s32 j;
-      struct ModelVertex(*cells)[2] =
+      struct ModelVertex(*corners)[2] =
           (struct ModelVertex(*)[2])Ram_MapCellBuffer;
       u8 *projected = PUPPET_STRIP_VERTICES;
       s32 shade;
 
-      length = frame * 44 - 704;
-      if (length > 1424) {
-        length = 1424;
+      curl = (frame - PUPPET_RISE_FRAME) * PUPPET_CURL_SPEED;
+      if (curl > PUPPET_CURL_MAX) {
+        curl = PUPPET_CURL_MAX;
       }
-      if (frame > 73) {
-        length = 4680 - frame * 44;
+      if (frame >= PUPPET_RETURN_FRAME) {
+        curl =
+            PUPPET_CURL_MAX - (frame - PUPPET_RETURN_FRAME) * PUPPET_CURL_SPEED;
       }
 
-      // The arm's vertices, thicker at its root.
+      // The trail curls about a point beside its root: segment j lies j * curl
+      // round it, its two corners the trail's width apart.
       for (j = 0; j != PUPPET_SEGMENTS; j++) {
-        s32 width = 50 - (FIXEDtoINT(Trig_Sin(j * 862 + 4310) * 44));
-        s32 wobble = (FIXEDtoINT(Trig_Sin((frame + j) << 11) << 4)) * j / 32;
+        s32 width =
+            PUPPET_WIDTH -
+            (FIXEDtoINT(Trig_Sin(j * PUPPET_PINCH_STEP + PUPPET_PINCH_START) *
+                        PUPPET_PINCH));
+        s32 sway = (FIXEDtoINT(Trig_Sin((frame + j) * (TRIG_TURN / 32)) *
+                               PUPPET_SWAY)) *
+                   j / (PUPPET_SEGMENTS - 1);
         s32 outer;
 
         i = 0;
-        outer = width + wobble;
+        outer = width + sway;
         do {
-          cells[j][i].x =
-              (FIXEDtoINT(Trig_Cos(j * length) * (i * width + wobble + 16))) -
+          corners[j][i].x =
+              (FIXEDtoINT(Trig_Cos(j * curl) * (i * width + sway + 16))) -
               outer / 2 - 16;
-          cells[j][i].y = -(
-              FIXEDtoINT(Trig_Sin(j * length) * (i * width + j + wobble + 32)));
-          cells[j][i].z = 0;
+          corners[j][i].y =
+              -(FIXEDtoINT(Trig_Sin(j * curl) * (i * width + j + sway + 32)));
+          corners[j][i].z = 0;
           i++;
         } while (i != 2);
+        // The skull's place, the middle of the last segment.
         if (j == PUPPET_SEGMENTS - 1) {
-          endX =
-              (FIXEDtoINT(Trig_Cos(length << 5) * (width / 2 + wobble + 16))) -
-              (width + wobble) / 2 - 16;
-          endY = -(FIXEDtoINT(Trig_Sin(length << 5) *
-                              (width / 2 + j + wobble + 32)));
+          endX = (FIXEDtoINT(Trig_Cos(curl * (PUPPET_SEGMENTS - 1)) *
+                             (width / 2 + sway + 16))) -
+                 (width + sway) / 2 - 16;
+          endY = -(FIXEDtoINT(Trig_Sin(curl * (PUPPET_SEGMENTS - 1)) *
+                              (width / 2 + j + sway + 32)));
         }
       }
 
+      // The trail, its streaks running along it 4 texels a frame.
       model = Render_AllocateModelList(1);
       shade = 0;
       texture.logWidth = 7;
       texture.logHeight = 5;
       texture.pixels = work->sheet;
       model->kind = MODEL_SHADED_MAX;
-      model->mesh = buffer;
+      model->mesh = mesh;
       model->vertices = projected;
       model->shade = shade;
       model->texture = &texture;
-      EffectPosition_ProjectScaledBattler(args->user, &pos);
+      EffectPosition_ProjectScaledBattler(args->user, &caster);
       model->scrollV = 0;
       model->scrollU = 127 & ~(frame << 2);
       Matrix_Initialize();
-      Matrix_Translate(INTtoFIXED(pos.x / 2 - 64),
-                       INTtoFIXED(pos.y) - toFIXED(42), 0);
+      Matrix_Translate(INTtoFIXED(caster.x / 2 - CANVAS_SIZE / 2),
+                       INTtoFIXED(caster.y) - toFIXED(42), 0);
       Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
       if (args->side == EFFECT_SIDE_PARTY) {
         Matrix_RotateY(DEGtoANG(180));
       }
       Matrix_RotateZ(DEGtoANG(90));
-      if (frame > 73) {
-        Matrix_ScaleUniform((212 << 10) - (frame << 11));
+      if (frame >= PUPPET_RETURN_FRAME) {
+        Matrix_ScaleUniform(FIXED_ONE - (frame - PUPPET_RETURN_FRAME) *
+                                            (FIXED_ONE / PUPPET_RETURN_FRAMES));
       }
-      Render_TransformVertices(Ram_MapCellBuffer, PUPPET_STRIP_VERTICES, 66);
+      Render_TransformVertices(Ram_MapCellBuffer, PUPPET_STRIP_VERTICES,
+                               PUPPET_CORNERS);
       Render_DrawModelList(model);
 
-      // The hand at the arm's end.
+      // The skull at the trail's end, swelling from half its size as the
+      // trail curls out.
       model->mesh = gBattleEffect_SquareMesh;
       texture.logWidth = 6;
       texture.logHeight = 6;
@@ -181,8 +225,8 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
       texture.pixels = work->sheet + FIRE_PUPPET_GHOST_SKULL;
       model->shade = 0;
       Matrix_Translate(INTtoFIXED(endX), INTtoFIXED(endY), 0);
-      Matrix_RotateZ(22384 - (length << 5));
-      Matrix_ScaleUniform(length * 23 + FIXED_ONE / 2);
+      Matrix_RotateZ(PUPPET_SKULL_TURN - curl * (PUPPET_SEGMENTS - 1));
+      Matrix_ScaleUniform(curl * PUPPET_SKULL_GROWTH + FIXED_ONE / 2);
       Render_TransformVertices(gBattleEffect_SquareCorners, projected, 4);
       Render_DrawModelList(model);
       Heap_Release(model);
@@ -196,31 +240,34 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-#define SWING_FRAMES 52
-/// Whiplash's sheet: the whip's slash in five cels, one after another.
-#define WHIPLASH_SLASH_A 0
-#define WHIPLASH_SLASH_A_WIDTH 48
-#define WHIPLASH_SLASH_A_HEIGHT 96
-#define WHIPLASH_SLASH_B (WHIPLASH_SLASH_A + PICTURE_BYTES(WHIPLASH_SLASH_A))
-#define WHIPLASH_SLASH_B_WIDTH 38
-#define WHIPLASH_SLASH_B_HEIGHT 92
-#define WHIPLASH_SLASH_C (WHIPLASH_SLASH_B + PICTURE_BYTES(WHIPLASH_SLASH_B))
-#define WHIPLASH_SLASH_C_WIDTH 30
-#define WHIPLASH_SLASH_C_HEIGHT 76
-#define WHIPLASH_SLASH_D (WHIPLASH_SLASH_C + PICTURE_BYTES(WHIPLASH_SLASH_C))
-#define WHIPLASH_SLASH_D_WIDTH 56
-#define WHIPLASH_SLASH_D_HEIGHT 96
-#define WHIPLASH_SLASH_E (WHIPLASH_SLASH_D + PICTURE_BYTES(WHIPLASH_SLASH_D))
-#define WHIPLASH_SLASH_E_WIDTH 56
-#define WHIPLASH_SLASH_E_HEIGHT 88
-#define SWING_HIT_FRAME 18
-#define SPARK_COUNT 256
+#define WHIPLASH_FRAMES 52
+/// The frame the lash strikes the target.
+#define WHIPLASH_HIT_FRAME 18
+/// SlashFlameSheet: the violet lash in five pictures, shown one after another
+/// for WHIPLASH_LASH_PICTURE_FRAMES apiece.
+#define WHIPLASH_LASH_A 0
+#define WHIPLASH_LASH_A_WIDTH 48
+#define WHIPLASH_LASH_A_HEIGHT 96
+#define WHIPLASH_LASH_B (WHIPLASH_LASH_A + PICTURE_BYTES(WHIPLASH_LASH_A))
+#define WHIPLASH_LASH_B_WIDTH 38
+#define WHIPLASH_LASH_B_HEIGHT 92
+#define WHIPLASH_LASH_C (WHIPLASH_LASH_B + PICTURE_BYTES(WHIPLASH_LASH_B))
+#define WHIPLASH_LASH_C_WIDTH 30
+#define WHIPLASH_LASH_C_HEIGHT 76
+#define WHIPLASH_LASH_D (WHIPLASH_LASH_C + PICTURE_BYTES(WHIPLASH_LASH_C))
+#define WHIPLASH_LASH_D_WIDTH 56
+#define WHIPLASH_LASH_D_HEIGHT 96
+#define WHIPLASH_LASH_E (WHIPLASH_LASH_D + PICTURE_BYTES(WHIPLASH_LASH_D))
+#define WHIPLASH_LASH_E_WIDTH 56
+#define WHIPLASH_LASH_E_HEIGHT 88
+#define WHIPLASH_LASH_PICTURE_FRAMES 6
+/// The motes the lash's crack sprays, kept as particles in the map cell
+/// buffer.
+#define WHIPLASH_MOTES 256
 
-/// A swing. A five-cel slash sweeps across the caster's front, six frames a
-/// cel, mirrored on the far side; at frame 18 the target is knocked back and
-/// flashes, the result phase starts, and 256 sparks spray from the slash's
-/// end toward the target, half of them falling and half rising as they burn
-/// down.
+/// A lash of violet light swings out from the caster and cracks down on the
+/// target, which is thrown up and flashes, and motes spray from where the lash
+/// struck, half of them rising and half falling as they burn down.
 ///
 /// Abilities: Whiplash.
 void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
@@ -229,16 +276,17 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
   u8 *canvas;
   struct ScreenPoint caster;
   s32 frame;
-  struct Particle *spark;
-  // Unused: draw[1] gives the stack frame its 4 bytes.
+  struct Particle *mote;
+  /* LEFTOVER(frame): draw[1], the pair's idle second blitter, which the ROM's
+   * frame reserves and never touches; as one DrawRectangle. */
   DrawRectangle draw[2];
-  u8 *sparkCels;
+  u8 *sprites;
   s32 i;
 
   heap = Ram_HeapSlots;
   work = (struct BattleEffectWork *)heap->battleEffect;
   canvas = heap->battleCanvas;
-  sparkCels = heap->battleSheet;
+  sprites = heap->battleSheet;
 
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   if (args->side == EFFECT_SIDE_ENEMIES) {
@@ -249,105 +297,105 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
     draw[0] = (DrawRectangle)heap->ramCode;
   }
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sparkCels, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_SLASH_FLAME_SHEET, work->sheet, 0, 0);
   Iwram_CopyWordsEntry((void *)BG_PLTT,
                        Resource_GetTableEntry(RESOURCE_VIOLET_PALETTE_F),
                        SHEET_PALETTE_BYTES);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  for (frame = 0; frame != SWING_FRAMES; frame++) {
-    // The slash, its cels anchored to the caster's front.
+  for (frame = 0; frame != WHIPLASH_FRAMES; frame++) {
+    // The lash, its pictures placed by the caster.
     EffectPosition_ProjectBattler(args->user, &caster);
     if (args->side == EFFECT_SIDE_ENEMIES) {
-      switch (frame / 6) {
+      switch (frame / WHIPLASH_LASH_PICTURE_FRAMES) {
       case 0:
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_SLASH_A,
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_LASH_A,
                             caster.x / 2 - 48, caster.y - 120);
         break;
       case 1:
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_SLASH_B,
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_LASH_B,
                             caster.x / 2 - 38, caster.y - 120);
         break;
       case 2:
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_SLASH_C,
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_LASH_C,
                             caster.x / 2 - 38, caster.y - 100);
         break;
       case 3:
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_SLASH_D,
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_LASH_D,
                             caster.x / 2 - 64, caster.y - 88);
         break;
       case 4:
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_SLASH_E,
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_LASH_E,
                             caster.x / 2 - 64, caster.y - 88);
         break;
       }
     } else {
-      switch (frame / 6) {
+      switch (frame / WHIPLASH_LASH_PICTURE_FRAMES) {
       case 0:
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_SLASH_A,
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_LASH_A,
                             caster.x / 2, caster.y - 120);
         break;
       case 1:
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_SLASH_B,
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_LASH_B,
                             caster.x / 2, caster.y - 120);
         break;
       case 2:
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_SLASH_C,
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_LASH_C,
                             caster.x / 2, caster.y - 100);
         break;
       case 3:
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_SLASH_D,
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_LASH_D,
                             caster.x / 2, caster.y - 88);
         break;
       case 4:
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_SLASH_E,
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_LASH_E,
                             caster.x / 2, caster.y - 88);
         break;
       }
     }
 
-    // The hit, and the sparks sprayed from 48 pixels out.
-    if (frame == SWING_HIT_FRAME) {
+    // The hit, and the motes sprayed from 48 pixels out, towards the target.
+    if (frame == WHIPLASH_HIT_FRAME) {
       BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HOP);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 16);
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       work->shakeFrames = 8;
-      for (i = 0; i != SPARK_COUNT; i++) {
+      for (i = 0; i != WHIPLASH_MOTES; i++) {
         s32 angle;
         s32 speed;
 
-        spark = &((struct Particle *)Ram_MapCellBuffer)[i];
+        mote = &((struct Particle *)Ram_MapCellBuffer)[i];
         if (args->side == EFFECT_SIDE_ENEMIES)
-          spark->x = INTtoFIXED(caster.x / 2 - 48);
+          mote->x = INTtoFIXED(caster.x / 2 - 48);
         else
-          spark->x = INTtoFIXED(caster.x / 2 + 48);
-        spark->y = INTtoFIXED(caster.y - (Random16() & 7));
+          mote->x = INTtoFIXED(caster.x / 2 + 48);
+        mote->y = INTtoFIXED(caster.y - (Random16() & 7));
         angle = (Random16() & 0x7fff) + DEGtoANG(90);
         speed = Random16() & 255;
         if (args->side == EFFECT_SIDE_ENEMIES)
-          spark->velocityX = ((Trig_Sin(angle) * speed) >> 4) - toFIXED(8);
+          mote->velocityX = ((Trig_Sin(angle) * speed) >> 4) - toFIXED(8);
         else
-          spark->velocityX = ((Trig_Sin(angle) * speed) >> 4) + toFIXED(8);
-        spark->velocityY = (Trig_Cos(angle) * (speed + 64)) >> 5;
-        spark->variant = (Random16() & 15) + 16;
+          mote->velocityX = ((Trig_Sin(angle) * speed) >> 4) + toFIXED(8);
+        mote->velocityY = (Trig_Cos(angle) * (speed + 64)) >> 5;
+        mote->variant = (Random16() & 15) + 16;
       }
     }
-    if (frame > SWING_HIT_FRAME - 1) {
-      for (i = 0; i != SPARK_COUNT; i++) {
-        spark = &((struct Particle *)Ram_MapCellBuffer)[i];
-        if (spark->variant >= 0) {
-          s32 size = (spark->variant >> 3) + 1;
+    if (frame >= WHIPLASH_HIT_FRAME) {
+      for (i = 0; i != WHIPLASH_MOTES; i++) {
+        mote = &((struct Particle *)Ram_MapCellBuffer)[i];
+        if (mote->variant >= 0) {
+          s32 size = (mote->variant >> 3) + 1;
 
-          draw[0](canvas, sparkCels + gBattleEffect_MotePictures[size - 1],
-                  FIXED_INTEGER_PART(spark->x) - size / 2,
-                  FIXED_INTEGER_PART(spark->y) - size, size, size * 2);
+          EFFECT_DRAW_MOTE(draw[0], canvas, sprites,
+                           FIXED_INTEGER_PART(mote->x),
+                           FIXED_INTEGER_PART(mote->y), size);
           if (i & 1)
-            Particle_AdvanceWithGravity2D(spark, 60, -toFIXED(1) / 8);
+            Particle_AdvanceWithGravity2D(mote, 60, -toFIXED(1) / 8);
           else
-            Particle_AdvanceWithGravity2D(spark, 60, toFIXED(1) / 16);
-          spark->variant--;
+            Particle_AdvanceWithGravity2D(mote, 60, toFIXED(1) / 16);
+          mote->variant--;
         }
       }
     }
@@ -358,11 +406,44 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
 
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
-#undef BLITTER
 #undef FIRE_PUPPET_FRAMES
 #undef PUPPET_SEGMENTS
+#undef PUPPET_CORNERS
+#undef PUPPET_QUADS
 #undef PUPPET_STRIP_VERTICES
 #undef PUPPET_STRIP_MESH
-#undef SWING_FRAMES
-#undef SWING_HIT_FRAME
-#undef SPARK_COUNT
+#undef PUPPET_TARGET_COPY
+#undef PUPPET_RISE_FRAME
+#undef PUPPET_CURL_SPEED
+#undef PUPPET_CURL_MAX
+#undef PUPPET_STRIKE_FRAME
+#undef PUPPET_RETURN_FRAME
+#undef PUPPET_RETURN_FRAMES
+#undef PUPPET_CASTER_RISE_FRAME
+#undef PUPPET_SKULL_GROWTH
+#undef PUPPET_WIDTH
+#undef PUPPET_PINCH
+#undef PUPPET_PINCH_STEP
+#undef PUPPET_PINCH_START
+#undef PUPPET_SWAY
+#undef PUPPET_SKULL_TURN
+#undef FIRE_PUPPET_GHOST_SKULL
+#undef WHIPLASH_FRAMES
+#undef WHIPLASH_HIT_FRAME
+#undef WHIPLASH_LASH_A
+#undef WHIPLASH_LASH_A_WIDTH
+#undef WHIPLASH_LASH_A_HEIGHT
+#undef WHIPLASH_LASH_B
+#undef WHIPLASH_LASH_B_WIDTH
+#undef WHIPLASH_LASH_B_HEIGHT
+#undef WHIPLASH_LASH_C
+#undef WHIPLASH_LASH_C_WIDTH
+#undef WHIPLASH_LASH_C_HEIGHT
+#undef WHIPLASH_LASH_D
+#undef WHIPLASH_LASH_D_WIDTH
+#undef WHIPLASH_LASH_D_HEIGHT
+#undef WHIPLASH_LASH_E
+#undef WHIPLASH_LASH_E_WIDTH
+#undef WHIPLASH_LASH_E_HEIGHT
+#undef WHIPLASH_LASH_PICTURE_FRAMES
+#undef WHIPLASH_MOTES

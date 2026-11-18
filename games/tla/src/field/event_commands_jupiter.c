@@ -13,8 +13,9 @@
 #include "macros.h"
 
 /// A Jupiter Djinni joins the party: it bounces three times, spins and leaps
-/// away, leaving 24 light particles that circle and then close on the leader,
-/// who turns to the camera and raises its arms.
+/// away, leaving a light particle in every slot of the effect work, which
+/// circle and then close on the leader, who turns to the camera and raises its
+/// arms.
 void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   struct Vector3 position;
   struct Actor *djinni;
@@ -45,7 +46,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   Sound_PlayFar(SE_HIGH_JUMP);
   Actor_Jump(djinniId, 12, 22);
 
-  // 24 light particles, every one the effect work has, from where the
+  // A light particle in every slot the effect work has, from where the
   // Djinni is on screen.
   position.x = djinni->x.fixed;
   position.y = djinni->y.fixed;

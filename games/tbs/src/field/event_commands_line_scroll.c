@@ -4,17 +4,6 @@
 
 #include "event_commands_internal.h"
 
-/// n words each HBlank, as for a row of scroll registers written together.
-#define DMA_HBLANK_WORDS_PER_LINE(n)                                           \
-  ((DMA_ENABLE | DMA_START_HBLANK | DMA_REPEAT | DMA_DEST_RELOAD | DMA_32BIT)  \
-       << 16 |                                                                 \
-   (n))
-/// The entries of a wave's sine, one cycle.
-#define LINE_SCROLL_WAVE_ENTRIES 256
-/// A wave's offset is its sine entry times its 16.16 amplitude, over this: an
-/// amplitude of FIXED_ONE swings 16 pixels each way.
-#define LINE_SCROLL_WAVE_SCALE 256
-
 /// VBlank-pass task for the line scroll: restarts DMA 0 each VBlank to copy the
 /// current page's BG1 to BG3 scroll offsets into the scroll registers one
 /// scanline at a time.
@@ -141,7 +130,3 @@ void LineScroll_Stop(void) {
   dma0[5] = (u16)~DMA_ENABLE & dma0[5];
   (void)dma0[5];
 }
-
-#undef DMA_HBLANK_WORDS_PER_LINE
-#undef LINE_SCROLL_WAVE_ENTRIES
-#undef LINE_SCROLL_WAVE_SCALE

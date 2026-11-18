@@ -22,11 +22,22 @@ void Field_StartColorTransition(s32 frames, s32 color);
 #define ACTOR_FIRST_LAYER(actor)                                               \
   (((struct Sprite *)(actor)->sprite)->entries[0])
 
-/// Blaze: a jet of flame sprays from the caster, with smoke, for up to 80
-/// frames or until B is pressed: red, or violet, yellow or blue to match the
-/// torch (SPRITE_MARS_TORCH_LIT) it is cast at. Each actor it reaches runs its
-/// Blaze event, and one that is lit by it ends the jet, its actor id kept in
-/// the field work. Cast at nothing, the nearest torch in reach is the target.
+/// A distance beyond any field Psynergy's reach, as field_sequence_targets.c
+/// writes it.
+#define BEYOND_REACH 9999
+/// The jet's longest spray, in frames; B ends it sooner.
+#define BLAZE_SPRAY_FRAMES 80
+/// How far in front of the caster the jet's drops are drawn.
+#define BLAZE_DROP_DEPTH 10
+
+/// Blaze: a jet of flame sprays from the caster, with smoke, until B is pressed
+/// or for BLAZE_SPRAY_FRAMES at most: red, or violet, yellow or blue to match
+/// the torch (SPRITE_MARS_TORCH_LIT) it is cast at. Each actor it reaches runs
+/// its Blaze event, and one that is lit by it ends the jet, its actor id kept
+/// in the field work. Cast at nothing, the nearest fire in reach is the target:
+/// a brazier, a lit candlestick, a lit Mars Lighthouse torch, or an actor
+/// wearing SPRITE_EXCLAMATION_BUBBLE (the Gondowan Cliffs hideout's unseen
+/// marker at its fire).
 void FieldPsynergy_Blaze(void) {
   struct BlazeWork *work;
   struct FieldWork *event;
@@ -76,12 +87,13 @@ void FieldPsynergy_Blaze(void) {
     work->origin[0] = scene->x;
     work->origin[1] = scene->y + toFIXED(16);
     work->origin[2] = scene->z;
-    best = 9999;
+    best = BEYOND_REACH;
     for (i = 0; i < FIELD_ACTOR_COUNT; i++) {
       cursor.actor = event->actors[i];
       id = ACTOR_FIRST_LAYER(cursor.actor)->animationId;
       if (cursor.actor != NULL && cursor.actor->script != NULL &&
-          (id == 410 || id == 304 || id == 386 || id == 418)) {
+          (id == SPRITE_EXCLAMATION_BUBBLE || id == SPRITE_BRAZIER ||
+           id == SPRITE_LIT_CANDLESTICK || id == SPRITE_MARS_TORCH_LIT)) {
         distance = Field_MeasurePsynergyReach(scene->fieldPsynergy,
                                               scene->firstActorId, i);
         if (distance != -1 && best > distance) {
@@ -175,7 +187,7 @@ void FieldPsynergy_Blaze(void) {
       sprite = &work->drops[j];
 
       EffectSprite_Init(sprite, 15, 24, OBJ_SIZE_32X32, tile);
-      sprite->depth = BattleEffect_GetObjectDepth(caster) + 10;
+      sprite->depth = BattleEffect_GetObjectDepth(caster) + BLAZE_DROP_DEPTH;
       sprite->oam.priority = BattleEffect_GetObjectPriority(caster);
       sprite->oam.fullColor = 1;
       sprite->oam.palette = 0;
@@ -192,7 +204,7 @@ void FieldPsynergy_Blaze(void) {
 
       EffectSprite_Init(sprite, 8, 15, OBJ_SIZE_16X16, tile);
       sprite->scaleY = sprite->scaleX = FIXED_ONE * 3 / 4;
-      sprite->depth = 250;
+      sprite->depth = EFFECT_SPRITE_FRONT_DEPTH;
       sprite->oam.priority = 0;
       sprite->oam.fullColor = 1;
       sprite->oam.palette = 0;
@@ -202,7 +214,7 @@ void FieldPsynergy_Blaze(void) {
     wait(1);
     work->emitting = 1;
     Task_Add(Blaze_UpdateSpray, TASK_PASS_FRAME);
-    for (k = 0; k < FIELD_ACTOR_COUNT; k++) {
+    for (k = 0; k < BLAZE_SPRAY_FRAMES; k++) {
       wait(1);
       if (work->hit != 0) {
         pending = Scene_FindPsynergyTrigger(
@@ -239,20 +251,15 @@ void FieldPsynergy_Blaze(void) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-// Whether a script object stands where it may not.
-
-/// The script objects (Ram_HeapSlots->actors).
-#define SCRIPT_OBJECT_COUNT 64
-
-/// The event work's mode in which the cell test is skipped.
-#define EVENT_MODE_NO_CELL_TEST 3
+/// The actors' slots (Ram_HeapSlots->actors), as field_internal.h counts them.
+#define ACTOR_COUNT 64
 
 /// Nonzero when the map blocks an actor at (x, z) on a layer at a height.
 s32 MapGrid_CheckCollisionAtFar(s32 x, s32 z, s32 layer, s32 height);
 
-/// Says whether object is blocked: 1 when, outside event mode 3,
-/// MapGrid_CheckCollisionAtFar reports its cell, ORed with 2 when it overlaps
-/// any other collidable script object (each radius less 2 pixels).
+/// Says whether an actor stands where it may not: 1 when, outside the World
+/// Map, MapGrid_CheckCollisionAtFar reports its cell, ORed with 2 when it
+/// overlaps any other solid actor (each radius less 2 pixels).
 s32 Actor_CheckBlocked(struct Actor *actor) {
   s32 result;
   struct Actor *other;
@@ -260,13 +267,13 @@ s32 Actor_CheckBlocked(struct Actor *actor) {
 
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   result = 0;
-  if (work->mode != EVENT_MODE_NO_CELL_TEST) {
+  if (work->mode != ACTOR_SYSTEM_WORLD_MAP) {
     if (MapGrid_CheckCollisionAtFar(actor->x.fixed, actor->z.fixed, 0,
                                     actor->groundHeight) != 0)
       result = 1;
   }
   other = Ram_HeapSlots->actors;
-  for (i = SCRIPT_OBJECT_COUNT - 1; i >= 0; i--, other++) {
+  for (i = ACTOR_COUNT - 1; i >= 0; i--, other++) {
     if (other->script != NULL && (other->collisionFlags & ACTOR_SOLID) &&
         other != actor) {
       if (Field_CheckSpheresOverlapFar(&actor->x.fixed, actor->radius - 2,
@@ -276,3 +283,8 @@ s32 Actor_CheckBlocked(struct Actor *actor) {
   }
   return result;
 }
+
+#undef BEYOND_REACH
+#undef BLAZE_SPRAY_FRAMES
+#undef BLAZE_DROP_DEPTH
+#undef ACTOR_COUNT

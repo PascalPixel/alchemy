@@ -4,9 +4,8 @@
 /// (JupiterLighthouse_FlashSky).
 s32 Actor_EmitRisingSparks(struct Actor *actor) {
   struct EffectOptions puff;
-  s32 framePhase = gFrameCount & 7;
 
-  if (framePhase == 0) {
+  if ((gFrameCount & 7) == 0) {
     FIXED x;
     FIXED y;
     FIXED speed;
@@ -18,7 +17,7 @@ s32 Actor_EmitRisingSparks(struct Actor *actor) {
     x = actor->x.fixed + toFIXED(Random_Below(9) - 4);
     y = actor->y.fixed + toFIXED(32 - Random_Below(20));
     speed = toFIXED(Random_Below(5) + 5) / 10;
-    FieldEffect_Spawn(x, y, actor->z.fixed, 0, speed, framePhase,
+    FieldEffect_Spawn(x, y, actor->z.fixed, 0, speed, 0,
                       EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
                           EFFECT_USE_START_SCALE,
                       &puff);

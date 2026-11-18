@@ -5,6 +5,7 @@
 #include "battle_effect_internal.h"
 
 #define TORCH_FRAMES 96
+#define TORCH_FADE_FRAMES 8 ///< the disc fades in, and later out, over these
 
 /// The ring level drawn brightest: the levels either side of it dim toward 0
 /// and toward the disc's edge.
@@ -13,6 +14,8 @@
 /// to the five bits a colour holds; blue's lower cap cuts to the same level.
 #define TORCH_CHANNEL_MAX 255
 #define TORCH_BLUE_MAX 250
+/// How far a line sways either way: 32 canvas pixels, toFIXED(4) to a pixel.
+#define TORCH_SWAY (32 * 4)
 
 /// A fiery disc fades in, its rings running outward while every line of
 /// the display ripples, then fades out.
@@ -28,17 +31,17 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
   s32 y;
   s32 dx;
   s32 dy;
-  s32 cy;
-  s32 d;
+  s32 centerY;
+  s32 distance;
   s32 i;
-  s32 t;
-  s32 r;
-  s32 g;
-  s32 b;
+  s32 shade;
+  s32 red;
+  s32 green;
+  s32 blue;
   s32 frame;
   s32 wave;
   s32 level;
-  u16 *pal;
+  u16 *ramp;
   s32 angle;
   s32 *line;
 
@@ -61,51 +64,51 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
   // the other three.
   for (y = 0; y != CANVAS_SIZE / 2; y++) {
     for (x = 0; x != CANVAS_SIZE / 2; x++) {
-      cy = y / 8 + CANVAS_SIZE / 2;
-      dy = y - cy;
+      centerY = y / 8 + CANVAS_SIZE / 2;
+      dy = y - centerY;
       dx = x - CANVAS_SIZE / 2;
-      d = Iwram_Sqrt(dx * dx + dy * dy);
-      d /= 2;
-      if (d == 0)
-        d = 1;
-      if (d > CANVAS_LEVEL_BRIGHTEST)
-        d = CANVAS_LEVEL_BRIGHTEST;
-      work->sheet[y * CANVAS_SIZE + x] = d;
-      work->sheet[y * CANVAS_SIZE + CANVAS_SIZE - 1 - x] = d;
-      work->sheet[(CANVAS_SIZE - 1 - y) * CANVAS_SIZE + x] = d;
+      distance = Iwram_Sqrt(dx * dx + dy * dy);
+      distance /= 2;
+      if (distance == 0)
+        distance = 1;
+      if (distance > CANVAS_LEVEL_BRIGHTEST)
+        distance = CANVAS_LEVEL_BRIGHTEST;
+      work->sheet[y * CANVAS_SIZE + x] = distance;
+      work->sheet[y * CANVAS_SIZE + CANVAS_SIZE - 1 - x] = distance;
+      work->sheet[(CANVAS_SIZE - 1 - y) * CANVAS_SIZE + x] = distance;
       work->sheet[(CANVAS_SIZE - 1 - y) * CANVAS_SIZE + CANVAS_SIZE - 1 - x] =
-          d;
+          distance;
     }
   }
 
   // Its colours: red rises from the first level, green from the sixth and blue
   // from the eighth, so the rings run from dark red to pale orange at
   // TORCH_BRIGHTEST_LEVEL.
-  pal = (u16 *)Ram_MapGridCellBuffer;
+  ramp = (u16 *)Ram_MapGridCellBuffer;
   for (i = 1; i != CANVAS_LEVEL_BRIGHTEST + 1; i++) {
     if (i >= TORCH_BRIGHTEST_LEVEL)
-      t = 2 * TORCH_BRIGHTEST_LEVEL - i;
+      shade = 2 * TORCH_BRIGHTEST_LEVEL - i;
     else
-      t = i;
-    r = t * 9;
-    g = (t - 6) * 7;
-    b = (t - 8) * 7;
-    if (r < 0)
-      r = 0;
-    if (g < 0)
-      g = 0;
-    if (b < 0)
-      b = 0;
-    if (r > TORCH_CHANNEL_MAX)
-      r = TORCH_CHANNEL_MAX;
-    if (g > TORCH_CHANNEL_MAX)
-      g = TORCH_CHANNEL_MAX;
-    if (b > TORCH_BLUE_MAX)
-      b = TORCH_BLUE_MAX;
-    r >>= 3;
-    g >>= 3;
-    b >>= 3;
-    pal[i] = ((u16 *)BG_PLTT)[i] = RGB(r, g, b);
+      shade = i;
+    red = shade * 9;
+    green = (shade - 6) * 7;
+    blue = (shade - 8) * 7;
+    if (red < 0)
+      red = 0;
+    if (green < 0)
+      green = 0;
+    if (blue < 0)
+      blue = 0;
+    if (red > TORCH_CHANNEL_MAX)
+      red = TORCH_CHANNEL_MAX;
+    if (green > TORCH_CHANNEL_MAX)
+      green = TORCH_CHANNEL_MAX;
+    if (blue > TORCH_BLUE_MAX)
+      blue = TORCH_BLUE_MAX;
+    red >>= 3;
+    green >>= 3;
+    blue >>= 3;
+    ramp[i] = ((u16 *)BG_PLTT)[i] = RGB(red, green, blue);
   }
 
   draw[0](canvas, work->sheet, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
@@ -114,21 +117,22 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
 
   // Fade the disc in, ripple the display, then fade it out.
   for (frame = 0; frame != TORCH_FRAMES; frame++) {
-    if (frame <= 8) {
+    if (frame <= TORCH_FADE_FRAMES) {
       level = frame * 2;
       wave = level;
       REG_BLDALPHA = EFFECT_BLEND_CANVAS(level);
     } else {
       wave = frame * 2;
     }
-    if (frame > 88)
-      REG_BLDALPHA = EFFECT_BLEND_CANVAS(192 - frame * 2);
+    if (frame > TORCH_FRAMES - TORCH_FADE_FRAMES)
+      REG_BLDALPHA = EFFECT_BLEND_CANVAS(TORCH_FRAMES * 2 - frame * 2);
 
     // Each line starts one canvas pixel further along than the one above,
-    // swayed by up to 32 either way.
+    // swayed either way by up to TORCH_SWAY.
     line = work->bg2xLines;
     for (i = 0, angle = -(wave << 9); i != DISPLAY_HEIGHT; i++) {
-      *line++ = ((i << 18) - ((Trig_Sin(angle) * 128)) + toFIXED(4)) >> 10;
+      *line++ = CANVAS_WAVE_BG2X(i * toFIXED(4) - Trig_Sin(angle) * TORCH_SWAY +
+                                 toFIXED(4));
       angle += TRIG_TURN / 128;
     }
 
@@ -138,12 +142,10 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
     if (frame > 127) {
       work->transferPending = 1;
     } else {
-      pal[1] = pal[CANVAS_LEVEL_BRIGHTEST];
-      Dma_Set(pal + CANVAS_LEVEL_BRIGHTEST - 1, pal + CANVAS_LEVEL_BRIGHTEST,
-              DMA_COPY_HALFWORDS(CANVAS_LEVEL_BRIGHTEST - 1) |
-                  (DMA_SRC_DEC | DMA_DEST_DEC) << 16,
-              REG_DMA3);
-      IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT[1], (u32)(pal + 1),
+      ramp[1] = ramp[CANVAS_LEVEL_BRIGHTEST];
+      Dma_Set(ramp + CANVAS_LEVEL_BRIGHTEST - 1, ramp + CANVAS_LEVEL_BRIGHTEST,
+              DMA_COPY_HALFWORDS_DOWN(CANVAS_LEVEL_BRIGHTEST - 1), REG_DMA3);
+      IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT[1], (u32)(ramp + 1),
                           DMA_COPY_HALFWORDS(CANVAS_LEVEL_BRIGHTEST));
     }
     wait(1);
@@ -171,6 +173,8 @@ void BattleEffect_RunKite(struct BattleEffectParams *args) {
 }
 
 #undef TORCH_FRAMES
+#undef TORCH_FADE_FRAMES
 #undef TORCH_BRIGHTEST_LEVEL
 #undef TORCH_CHANNEL_MAX
 #undef TORCH_BLUE_MAX
+#undef TORCH_SWAY

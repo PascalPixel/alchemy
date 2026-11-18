@@ -141,12 +141,6 @@ static void Vault_FaceActorAndWait(s32 actorId, s32 other, s32 delay);
 
 #include "shared/vault_nearby.c"
 
-/// How near in front of her, in pixels, the leader stops a walking villager,
-/// and how near while a talk is pending or Mind Read is on, as for the
-/// children round the well (shared/vault_nearby.c).
-#define STOP_RANGE 18
-#define TALK_STOP_RANGE 26
-
 /// The woman wanting the roof fixed walks about looking for the man who should
 /// be fixing it and stops to face the leader when near, or while a conversation
 /// holds the field.
@@ -343,7 +337,7 @@ static void Vault_PityIvan(void) {
   struct Actor *actor = Actor_Get(ACTOR_BOY_ROUND_THE_WELL);
   s16 savedFacing = actor->facing;
 
-  actor->timer |= 2;
+  actor->timer |= VILLAGER_TALKED_TO;
   Event_Start();
   Event_SetMessageId(MsgVaultPoorGuyLeft);
   Actor_SetAnimation(ACTOR_BOY_ROUND_THE_WELL, ANIM_STILL);
@@ -352,7 +346,7 @@ static void Vault_PityIvan(void) {
   actor->facing = savedFacing;
   wait(1);
   Event_End();
-  actor->timer &= 1;
+  actor->timer &= VILLAGER_IS_BOY;
 }
 
 /// In Vault while the rod is missing, the girl round the well stops. Hammet's
@@ -361,7 +355,7 @@ static void Vault_TalkOfHammetsCaravan(void) {
   struct Actor *actor = Actor_Get(ACTOR_GIRL_ROUND_THE_WELL);
   s16 savedFacing = actor->facing;
 
-  actor->timer |= 2;
+  actor->timer |= VILLAGER_TALKED_TO;
   Event_Start();
   Event_SetMessageId(MsgVaultMasterHammetsCaravan);
   Actor_SetAnimation(ACTOR_GIRL_ROUND_THE_WELL, ANIM_STILL);
@@ -370,7 +364,7 @@ static void Vault_TalkOfHammetsCaravan(void) {
   actor->facing = savedFacing;
   wait(1);
   Event_End();
-  actor->timer &= 1;
+  actor->timer &= VILLAGER_IS_BOY;
 }
 
 /// In Vault, once the suspects' minds are read, the woman wanting the roof
@@ -442,7 +436,7 @@ static void Vault_AskWhetherIvanWentToLunpa(void) {
   struct Actor *actor = Actor_Get(ACTOR_BOY_ROUND_THE_WELL);
   s16 savedFacing = actor->facing;
 
-  actor->timer |= 2;
+  actor->timer |= VILLAGER_TALKED_TO;
   Event_Start();
   Event_SetMessageId(MsgVaultDidntGoLunpa);
   if (GameFlag_Get(FLAG_IN_PARTY(IVAN)) != 0)
@@ -453,7 +447,7 @@ static void Vault_AskWhetherIvanWentToLunpa(void) {
   actor->facing = savedFacing;
   wait(1);
   Event_End();
-  actor->timer &= 1;
+  actor->timer &= VILLAGER_IS_BOY;
 }
 
 /// In Vault after the thieves are jailed, the girl round the well speaks.
@@ -462,7 +456,7 @@ static void Vault_ThankForCapturingThieves(void) {
   struct Actor *actor = Actor_Get(ACTOR_GIRL_ROUND_THE_WELL);
   s16 savedFacing = actor->facing;
 
-  actor->timer |= 2;
+  actor->timer |= VILLAGER_TALKED_TO;
   Event_Start();
   Event_SetMessageId(MsgVaultEveryoneGratefulCaptured);
   Actor_SetAnimation(ACTOR_GIRL_ROUND_THE_WELL, ANIM_STILL);
@@ -471,7 +465,7 @@ static void Vault_ThankForCapturingThieves(void) {
   actor->facing = savedFacing;
   wait(1);
   Event_End();
-  actor->timer &= 1;
+  actor->timer &= VILLAGER_IS_BOY;
 }
 
 /// In Vault after the thieves are jailed, the strongman on watch asks about the
@@ -548,7 +542,7 @@ static void Vault_ReadMindOnTravelers(void) {
 
 /// In Vault, Mind Read on the boy round the well.
 static void Vault_ReadMindOnIvan(void) {
-  Actor_Get(ACTOR_BOY_ROUND_THE_WELL)->timer |= 2;
+  Actor_Get(ACTOR_BOY_ROUND_THE_WELL)->timer |= VILLAGER_TALKED_TO;
   Event_Start();
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
     Event_SetMessageId(MsgVaultBetWasThoseThreeCreeps);
@@ -559,13 +553,13 @@ static void Vault_ReadMindOnIvan(void) {
   }
   Vault_ShowThought(ACTOR_BOY_ROUND_THE_WELL);
   Event_End();
-  Actor_Get(ACTOR_BOY_ROUND_THE_WELL)->timer &= 1;
+  Actor_Get(ACTOR_BOY_ROUND_THE_WELL)->timer &= VILLAGER_IS_BOY;
 }
 
 /// In Vault, Mind Read on the girl round the well. Riches can't save you from
 /// a volcano, or the party must be stronger than they look.
 static void Vault_ReadMindOnWealth(void) {
-  Actor_Get(ACTOR_GIRL_ROUND_THE_WELL)->timer |= 2;
+  Actor_Get(ACTOR_GIRL_ROUND_THE_WELL)->timer |= VILLAGER_TALKED_TO;
   Event_Start();
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0)
     Event_SetMessageId(MsgVaultSupposeDoesntMatterHowRich);
@@ -573,7 +567,7 @@ static void Vault_ReadMindOnWealth(void) {
     Event_SetMessageId(MsgVaultMustStrongerThanLookHave);
   Vault_ShowThought(ACTOR_GIRL_ROUND_THE_WELL);
   Event_End();
-  Actor_Get(ACTOR_GIRL_ROUND_THE_WELL)->timer &= 1;
+  Actor_Get(ACTOR_GIRL_ROUND_THE_WELL)->timer &= VILLAGER_IS_BOY;
 }
 
 /// In Vault, Mind Read on the strongman on watch. Everyone knows the three at
@@ -789,7 +783,7 @@ s32 Scene_Initialize(void) {
   // questions).
   Actor_CreateConfigured(128, 0, 420, SPRITE_CRATE);
   actor = Actor_Get(ACTOR_BOY_ROUND_THE_WELL);
-  actor->timer = 1;
+  actor->timer = VILLAGER_IS_BOY;
   actor->update = (void (*)(struct Actor *))Vault_UpdateWalkingVillager;
   actor = Actor_Get(ACTOR_GIRL_ROUND_THE_WELL);
   actor->timer = 0;
@@ -929,6 +923,7 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   anchor = Actor_Get(ACTOR_VAULT_DOG);
   if (anchor == NULL)
     return;
+  // Up to four pixels either way of the dog, Random_Below(8) - 4 on each roll.
   x = Random_Next();
   z = Random_Next();
   x <<= 3;
@@ -937,8 +932,8 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   x -= 4;
   z = (u32)z >> 16;
   z -= 4;
-  x <<= 16;
-  z <<= 16;
+  x = INTtoFIXED(x);
+  z = INTtoFIXED(z);
   x += anchor->x.fixed;
   y = anchor->y.fixed;
   z += anchor->z.fixed;

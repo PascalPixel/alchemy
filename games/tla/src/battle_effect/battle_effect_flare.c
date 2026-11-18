@@ -5,7 +5,15 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-#define FLAME_COUNT 9
+#define FLARE_FRAMES 60 ///< frames of the flare
+
+#define FLARE_ARC_COUNT 9 ///< flames on the arc
+/// The half ellipse's radii, across and up and down, in canvas pixels.
+#define FLARE_ARC_RADIUS_X 32
+#define FLARE_ARC_RADIUS_Y 16
+/// A flame's six pictures, four frames each, before it goes out.
+#define FLARE_FLAME_PICTURES 6
+#define FLARE_PICTURE_FRAMES 4
 
 /// Nine flames rise one after another along half an ellipse.
 ///
@@ -16,14 +24,12 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
   s32 frame;
   DrawRectangle draw;
   s32 i;
-  s32 cell;
-  u32 w;
-  s32 sign;
-  s32 org;
-  s32 angle;
-  s32 stagger;
-  struct Particle *puff;
-  struct Particle *p;
+  s32 picture;
+  u32 width;
+  s32 direction;
+  s32 originX;
+  struct Particle *arcFlame;
+  struct Particle *flame;
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
@@ -35,27 +41,27 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
   draw = (DrawRectangle)Ram_HeapSlots->ramCode;
 
-  // The arc: from -90 degrees in steps of 22.5.
-  if (args->targets[0] > 127) {
-    org = 0;
-    sign = 1;
+  // The arc of flames, from the canvas's left edge over the enemies and back
+  // from its right half over the party, each flame starting four frames
+  // after the one before.
+  if (args->targets[0] >= FIRST_ENEMY_UNIT) {
+    originX = 0;
+    direction = 1;
   } else {
-    org = 64;
-    sign = -1;
+    originX = CANVAS_SIZE / 2;
+    direction = -1;
   }
-  angle = -DEGtoANG(90);
-  i = 0;
-  stagger = 0;
-  puff = work->particles;
-  do {
-    puff->x = ((sign * (FIXEDtoINT(Trig_Sin(angle) << 5))) + org) + 20;
-    puff->y = (FIXEDtoINT(Trig_Cos(angle) << 4)) + 40;
-    puff->variant = stagger;
-    angle += TRIG_TURN / 16;
-    stagger -= 4;
-    i += 1;
-    puff++;
-  } while (i != FLAME_COUNT);
+  for (i = 0; i != FLARE_ARC_COUNT; i++) {
+    s32 angle = i * (TRIG_TURN / 16) - DEGtoANG(90);
+
+    arcFlame = &work->particles[i];
+    arcFlame->x =
+        ((direction * FIXEDtoINT(Trig_Sin(angle) * FLARE_ARC_RADIUS_X)) +
+         originX) +
+        20;
+    arcFlame->y = FIXEDtoINT(Trig_Cos(angle) * FLARE_ARC_RADIUS_Y) + 40;
+    arcFlame->variant = -i * 4;
+  }
 
   work->transferMode = CANVAS_COPY_AND_FADE;
   if (args->variant == EFFECT_VARIANT_STRONGEST)
@@ -64,49 +70,73 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
     work->transferValue = CANVAS_FADE_HALF;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   Sound_PlayFar(SE_WHOOSH);
-  frame = 0;
-  do {
+  for (frame = 0; frame != FLARE_FRAMES; frame++) {
     if (frame == 24)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
-    // A flame moves to its next picture every four frames and goes out
-    // after the sixth.
-    i = 0;
-    p = work->particles;
-    do {
-      if (p->variant >= 0 && p->variant <= 23) {
-        cell = p->variant / 4;
-        draw(canvas, work->sheet + gBattleEffect_PuffArcPictures[cell],
-             p->x - ((w = gBattleEffect_PuffArcPictureWidths[cell]) >> 1),
-             p->y + gBattleEffect_PuffArcPictureBiasY[cell], w,
-             gBattleEffect_PuffArcPictureHeights[cell]);
-        if (args->variant != EFFECT_VARIANT_BASIC)
-          draw(canvas, work->sheet + gBattleEffect_PuffArcPictures[cell],
-               p->x - ((w = gBattleEffect_PuffArcPictureWidths[cell]) >> 1),
-               (p->y + gBattleEffect_PuffArcPictureBiasY[cell]) - 16, w,
-               gBattleEffect_PuffArcPictureHeights[cell]);
-        if (args->variant == EFFECT_VARIANT_STRONGEST)
-          draw(canvas, work->sheet + gBattleEffect_PuffArcPictures[cell],
-               p->x - ((w = gBattleEffect_PuffArcPictureWidths[cell]) >> 1),
-               (p->y + gBattleEffect_PuffArcPictureBiasY[cell]) - 32, w,
-               gBattleEffect_PuffArcPictureHeights[cell]);
+    // Each flame plays its pictures and goes out; Flare Wall's and Flare
+    // Storm's stack a second and a third above it.
+    for (i = 0; i != FLARE_ARC_COUNT; i++) {
+      flame = &work->particles[i];
+      if (flame->variant >= 0 &&
+          flame->variant < FLARE_FLAME_PICTURES * FLARE_PICTURE_FRAMES) {
+        picture = flame->variant / FLARE_PICTURE_FRAMES;
+        // UB: width is assigned in one argument and read in another.
+#ifdef UBFIX
+        width = gBattleEffect_PuffArcPictureWidths[picture];
+        draw(canvas, work->sheet + gBattleEffect_PuffArcPictures[picture],
+             flame->x - (width >> 1),
+             flame->y + gBattleEffect_PuffArcPictureBiasY[picture], width,
+             gBattleEffect_PuffArcPictureHeights[picture]);
+#else
+        draw(canvas, work->sheet + gBattleEffect_PuffArcPictures[picture],
+             flame->x -
+                 ((width = gBattleEffect_PuffArcPictureWidths[picture]) >> 1),
+             flame->y + gBattleEffect_PuffArcPictureBiasY[picture], width,
+             gBattleEffect_PuffArcPictureHeights[picture]);
+#endif
+        if (args->variant != EFFECT_VARIANT_BASIC) {
+#ifdef UBFIX
+          width = gBattleEffect_PuffArcPictureWidths[picture];
+          draw(canvas, work->sheet + gBattleEffect_PuffArcPictures[picture],
+               flame->x - (width >> 1),
+               (flame->y + gBattleEffect_PuffArcPictureBiasY[picture]) - 16,
+               width, gBattleEffect_PuffArcPictureHeights[picture]);
+#else
+          draw(canvas, work->sheet + gBattleEffect_PuffArcPictures[picture],
+               flame->x -
+                   ((width = gBattleEffect_PuffArcPictureWidths[picture]) >> 1),
+               (flame->y + gBattleEffect_PuffArcPictureBiasY[picture]) - 16,
+               width, gBattleEffect_PuffArcPictureHeights[picture]);
+#endif
+        }
+        if (args->variant == EFFECT_VARIANT_STRONGEST) {
+#ifdef UBFIX
+          width = gBattleEffect_PuffArcPictureWidths[picture];
+          draw(canvas, work->sheet + gBattleEffect_PuffArcPictures[picture],
+               flame->x - (width >> 1),
+               (flame->y + gBattleEffect_PuffArcPictureBiasY[picture]) - 32,
+               width, gBattleEffect_PuffArcPictureHeights[picture]);
+#else
+          draw(canvas, work->sheet + gBattleEffect_PuffArcPictures[picture],
+               flame->x -
+                   ((width = gBattleEffect_PuffArcPictureWidths[picture]) >> 1),
+               (flame->y + gBattleEffect_PuffArcPictureBiasY[picture]) - 32,
+               width, gBattleEffect_PuffArcPictureHeights[picture]);
+#endif
+        }
       }
-      i += 1;
-      p->variant += 1;
-      p++;
-    } while (i != FLAME_COUNT);
+      flame->variant++;
+    }
 
-    // Hit the targets, eight frames apart.
-    i = 0;
-    while (i != args->targetCount) {
+    // The targets flash red, eight frames apart.
+    EFFECT_FOR_EACH_TARGET(i, args) {
       if (frame == (i * 8) + 16)
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_RED_TINT,
                                  POSE_DAMAGE, i, 12);
-      i += 1;
     }
     EFFECT_END_FRAME(work);
-    frame += 1;
-  } while (frame != 60);
+  }
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
@@ -114,26 +144,32 @@ void BattleEffect_RunFlare(struct BattleEffectParams *args) {
 
 /// Lists the indices within indexRadius of where currentValue sits in values,
 /// up to entryLimit, and returns how many.
-s32 BattleEffect_BuildCenteredIndexList(BattleEffectIndexWindow *window,
-                                        s16 *output) {
-  s32 length = window->indexRadius * 2 + 1;
-  s32 entryCount = 0;
-  s32 center = 0;
-  s32 entryIndex;
+UNUSED s32 BattleEffect_BuildCenteredIndexList(BattleEffectIndexWindow *window,
+                                               s16 *output) {
+  s32 windowLength = window->indexRadius * 2 + 1;
+  s32 outputCount = 0;
+  s32 centerIndex = 0;
+  s32 windowIndex;
 
-  for (entryIndex = 0; entryIndex != length; entryIndex++) {
-    if (window->currentValue == window->values[entryIndex]) {
-      center = entryIndex;
+  for (windowIndex = 0; windowIndex != windowLength; windowIndex++) {
+    if (window->currentValue == window->values[windowIndex]) {
+      centerIndex = windowIndex;
       break;
     }
   }
-  for (entryIndex = 0; entryIndex != length; entryIndex++) {
-    s32 battleValue = center + entryIndex - window->indexRadius;
+  for (windowIndex = 0; windowIndex != windowLength; windowIndex++) {
+    s32 index = centerIndex + windowIndex - window->indexRadius;
 
-    if (battleValue >= 0 && battleValue < window->entryLimit) {
-      output[entryCount++] = battleValue;
+    if (index >= 0 && index < window->entryLimit) {
+      output[outputCount++] = index;
     }
   }
-  return entryCount;
+  return outputCount;
 }
-#undef FLAME_COUNT
+
+#undef FLARE_FRAMES
+#undef FLARE_ARC_COUNT
+#undef FLARE_ARC_RADIUS_X
+#undef FLARE_ARC_RADIUS_Y
+#undef FLARE_FLAME_PICTURES
+#undef FLARE_PICTURE_FRAMES

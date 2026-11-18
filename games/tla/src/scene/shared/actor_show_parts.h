@@ -1,5 +1,3 @@
-#define SPRITE_MOAI_WATER 381
-
 /// Unused: gives a moai its water, drawn in front of it: the pool in the top of
 /// its head, rippling (animation 2).
 UNUSED void Moai_AddWater(s32 id) {
@@ -16,5 +14,3 @@ UNUSED void Moai_AddWater(s32 id) {
     Actor_SelectAnimation(actor, 2);
   }
 }
-
-#undef SPRITE_MOAI_WATER

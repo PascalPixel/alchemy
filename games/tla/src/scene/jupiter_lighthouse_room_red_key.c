@@ -712,7 +712,7 @@ s32 MapGrid_GetCellBehavior(s32 x, s32 z, s32 layer);
 
 #include "shared/whirlwind_spawn.h"
 
-// Unused here: nothing in the hall sets it as an actor's update.
+// Unused: nothing in the hall sets Actor_EmitRisingSparks as an update.
 #include "shared/actor_emit_rising_sparks.h"
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"

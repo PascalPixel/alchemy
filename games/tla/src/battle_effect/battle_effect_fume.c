@@ -4,8 +4,6 @@
 
 #include "battle_effect_internal.h"
 
-struct StripQuad;
-
 /// One corner of the plume: signed x, y and depth.
 struct Corner {
   s8 x;
@@ -14,25 +12,53 @@ struct Corner {
 };
 
 #define FUME_FRAMES 50
+/// The frame the plume's head reaches the target and the target is hit.
+#define FUME_HIT_FRAME 22
+/// The plume is FUME_SEGMENTS pairs of corners, laid in the map cell buffer:
+/// the corners, those Render_TransformVertices makes of them at
+/// FUME_STRIP_VERTICES, and the plume's mesh at FUME_STRIP_MESH, whose quads
+/// each take 4 texels of SmokeBandSheet's flames across and its 32 down.
 #define FUME_SEGMENTS 33
-/// The arc grows by FUME_ARC_GROWTH a frame at its head, and later its tail,
-/// up to its whole span.
-#define FUME_ARC_GROWTH 44
-#define FUME_ARC_SPAN 988
-/// The strip's mesh and its transformed corners, in the map cell buffer.
+#define FUME_CORNERS (FUME_SEGMENTS * 2)
+#define FUME_QUADS (FUME_SEGMENTS - 1)
 #define FUME_STRIP_VERTICES (Ram_MapCellBuffer + 4096)
 #define FUME_STRIP_MESH (Ram_MapCellBuffer + 8192)
+/// The plume arcs from the caster over to the target. Its head goes
+/// FUME_ARC_GROWTH further each frame, and from the level's FUME_TAIL_START
+/// its tail follows, each up to FUME_ARC_SPAN; a point's angle on the arc is
+/// FUME_SEGMENTS times its place.
+#define FUME_ARC_GROWTH 44
+#define FUME_ARC_SPAN 988
+/// The plume thickens 4 pixels a segment from its tail up to FUME_THICKNESS,
+/// times the level's width.
+#define FUME_THICKNESS 24
+/// The plume sways up to FUME_SWAY pixels at its head, less towards its tail,
+/// a wave that runs along it a segment a frame.
+#define FUME_SWAY 4
+/// From this frame the plume dims, 8 shades a frame.
+#define FUME_DIM_FRAME 34
+/// The head's scale, seven eighths of the plume's width.
+#define FUME_HEAD_SCALE(width) ((width) * 28 / 32)
+
+/// The fireballs that burst from the target: FUME_BURSTS_MAX are set out at
+/// the hit, four more showing each frame, and a level draws gFume_Levels'
+/// FUME_SPARKS of them. Each shows FlashBurstSheet's six pictures in turn,
+/// FUME_BURST_PICTURE_FRAMES apiece, for FUME_BURST_FRAMES.
+#define FUME_BURSTS_MAX 32
+#define FUME_BURST_PICTURE_FRAMES 4
+#define FUME_BURST_FRAMES 24
 
 /// Where FlashBurstSheet is decoded in the effect's pictures.
 #define FUME_FLASH_BURST_PICTURES 2048
-/// Where ClawSlashSheet is decoded in the effect's pictures.
-#define FUME_CLAW_SLASH_PICTURES 16384
+/// Where ClawSlashSheet, a dragon's head of flame, is decoded in the effect's
+/// pictures.
+#define FUME_DRAGON_HEAD_PICTURES 16384
 
-/// A band of smoke arcs from the caster to the target (33 segments of two
-/// vertices each, a scrolling textured strip), its head growing 44 units a
-/// frame and its tail following from the level's start frame; a claw strikes
-/// at the arc's end until frame 22, when the target is hit, pushed back and
-/// sparks burst from it. The camera shakes harder at higher levels.
+/// A plume of flames rises from the caster and arcs over onto the target, a
+/// dragon's head of fire at its front. As the head strikes, the screen flashes
+/// white, the target is thrown back and fireballs burst from it; the plume
+/// follows its head down and fades. The stronger the level, the thicker the
+/// plume, the more fireballs and the harder the shake.
 ///
 /// Abilities: Fume, Serpent Fume, Dragon Fume.
 void BattleEffect_RunFume(struct BattleEffectParams *args) {
@@ -53,11 +79,11 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
   struct ScreenPoint target;
   struct ModelTexture texture;
   struct RenderModel *model;
-  struct Particle *spark;
+  struct Particle *burst;
   struct Particle *particle;
   s32 i;
-  void *buffer;
-  u8 *strip;
+  void *vertices;
+  u8 *mesh;
   struct Corner *corners;
 
   work = Ram_HeapSlots->battleEffect;
@@ -67,6 +93,7 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
+  // Default: set for real below, at the plume's last segment.
   endX = 0;
   endY = 0;
   EffectPosition_ProjectBattler(args->user, &caster);
@@ -75,19 +102,20 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
                              work->sheet + FUME_FLASH_BURST_PICTURES, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_CLAW_SLASH_SHEET,
-                             work->sheet + FUME_CLAW_SLASH_PICTURES, 1, 0);
+                             work->sheet + FUME_DRAGON_HEAD_PICTURES, 1, 0);
   REG_BG2PA = Q_8_8(0.5);
-  Render_BuildQuadStrip(FUME_STRIP_MESH, 4, 32, 32);
+  Render_BuildQuadStrip(FUME_STRIP_MESH, 4, 32, FUME_QUADS);
 
   for (frame = 0; frame != FUME_FRAMES; frame++) {
     if (frame == 0) {
       arc.head = 0;
       arc.tail = 0;
+      // No fireball shows until the hit.
       for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
-        work->particles[i].variant = 24;
+        work->particles[i].variant = FUME_BURST_FRAMES;
       }
     }
-    if (frame == 22) {
+    if (frame == FUME_HIT_FRAME) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       EFFECT_SHOW_DAMAGE(SE_CLATTER);
@@ -96,28 +124,29 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
                                     toFIXED(2), 120);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 20);
-      for (i = 0; i != 32; i++) {
-        spark = &work->particles[i];
-        spark->variant = -i / 4 + 2;
-        spark->x = INTtoFIXED(target.x / 2);
-        spark->y = INTtoFIXED(target.y + (Random16() & 15) - 32);
-        spark->velocityX =
+      for (i = 0; i != FUME_BURSTS_MAX; i++) {
+        burst = &work->particles[i];
+        burst->variant = -i / 4 + 2;
+        burst->x = INTtoFIXED(target.x / 2);
+        burst->y = INTtoFIXED(target.y + (Random16() & 15) - 32);
+        burst->velocityX =
             ((Random16() % gFume_Levels[args->variant][FUME_SPREAD]) -
              (gFume_Levels[args->variant][FUME_SPREAD] >> 1))
             << 12;
-        spark->velocityY = (192 - (Random16() & 255)) << 10;
+        burst->velocityY = (192 - (Random16() & 255)) << 10;
       }
     }
     for (i = 0; i != gFume_Levels[args->variant][FUME_SPARKS]; i++) {
       particle = &work->particles[i];
-      if ((u32)particle->variant <= 23) {
+      if ((u32)particle->variant < FUME_BURST_FRAMES) {
         if (particle->variant > 1) {
           blit[0](canvas,
                   work->sheet + FUME_FLASH_BURST_PICTURES +
-                      ((particle->variant / 4) << 11),
-                  FIXED_INTEGER_PART(particle->x) - 16,
-                  FIXED_INTEGER_PART(particle->y) - 32, FLASH_BURST_WIDTH,
-                  FLASH_BURST_HEIGHT);
+                      particle->variant / FUME_BURST_PICTURE_FRAMES *
+                          PICTURE_BYTES(FLASH_BURST),
+                  FIXED_INTEGER_PART(particle->x) - FLASH_BURST_WIDTH / 2,
+                  FIXED_INTEGER_PART(particle->y) - FLASH_BURST_HEIGHT / 2,
+                  FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
         }
         Particle_AdvanceWithGravity2D(particle, 60,
                                       -gFume_Levels[args->variant][FUME_LIFT]);
@@ -125,9 +154,8 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
       particle->variant++;
     }
 
-    buffer = FUME_STRIP_VERTICES;
-    // The strip mesh held in a per-frame local, as the vertex buffer is.
-    strip = FUME_STRIP_MESH;
+    vertices = FUME_STRIP_VERTICES;
+    mesh = FUME_STRIP_MESH;
     corners = (struct Corner *)gMapGridCellBuffer;
     // DEAD: frame never falls below 0; the ROM keeps the compare and branch.
     if (frame >= 0) {
@@ -150,12 +178,15 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
         }
       }
 
-      // The arc's vertices, two per segment, widening over the first six.
+      // The plume's corners, two a segment, stepping evenly from the tail's
+      // angle towards the head's on an ellipse from the caster to the target.
       for (j = 0, step = arc.head - arc.tail, sweep = 0, vertex = 0;
            j != FUME_SEGMENTS; sweep += step, vertex += 2, j++) {
         s32 distance = caster.x / 8 - target.x / 8;
-        s32 angle = sweep + arc.tail * 33;
-        s32 wobble = (FIXEDtoINT(Trig_Sin((frame + j) << 12) << 2)) * j / 32;
+        s32 angle = sweep + arc.tail * FUME_SEGMENTS;
+        s32 sway =
+            (FIXEDtoINT(Trig_Sin((frame + j) * (TRIG_TURN / 16)) * FUME_SWAY)) *
+            j / (FUME_SEGMENTS - 1);
         s32 height;
         s32 thickness;
         s32 radiusX;
@@ -168,15 +199,15 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
         }
         height = gFume_Levels[args->variant][FUME_HEIGHT];
         thickness = j * 4;
-        if (thickness > 24) {
-          thickness = 24;
+        if (thickness > FUME_THICKNESS) {
+          thickness = FUME_THICKNESS;
         }
         thickness = thickness * width / FIXED_ONE;
         i = 0;
         half = thickness / -2;
         baseY = height + half;
-        radiusY = baseY + wobble;
-        radiusX = distance + half + wobble;
+        radiusY = baseY + sway;
+        radiusX = distance + half + sway;
         for (; i != 2; i++) {
           corners[vertex + i].x =
               (FIXEDtoINT(Trig_Cos(angle) * radiusX)) - distance;
@@ -186,14 +217,14 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
           radiusX += thickness;
         }
         if (j == FUME_SEGMENTS - 1) {
-          endX = (FIXEDtoINT((distance + wobble) * Trig_Cos(angle))) - distance;
-          endY = -(FIXEDtoINT((height + wobble) * Trig_Sin(angle)));
+          endX = (FIXEDtoINT((distance + sway) * Trig_Cos(angle))) - distance;
+          endY = -(FIXEDtoINT((height + sway) * Trig_Sin(angle)));
         }
       }
 
       shade = 0;
-      if (frame > 33) {
-        shade = (34 - frame) * 8;
+      if (frame >= FUME_DIM_FRAME) {
+        shade = (FUME_DIM_FRAME - frame) * 8;
       }
       if (shade > MODEL_SHADE_INVISIBLE) {
         model = Render_AllocateModelList(1);
@@ -201,35 +232,36 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
         model->texture = &texture;
         model->shade = shade;
         model->scrollV = 0;
-        model->vertices = buffer;
+        model->vertices = vertices;
         if (arc.head > arc.tail) {
+          // The plume, its flames running along it 8 texels a frame.
           texture.logWidth = 6;
           texture.logHeight = 5;
           texture.pixels = work->sheet;
-          model->mesh = strip;
+          model->mesh = mesh;
           model->scrollU = 127 & ~(frame << 3);
           Matrix_Initialize();
-          Matrix_Translate(INTtoFIXED(caster.x / 2 - 64),
+          Matrix_Translate(INTtoFIXED(caster.x / 2 - CANVAS_SIZE / 2),
                            INTtoFIXED(caster.y) - toFIXED(64), 0);
           Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
           if (args->side == EFFECT_SIDE_PARTY) {
             Matrix_RotateY(DEGtoANG(180));
           }
           Matrix_ScaleUniform(FIXED_ONE * 4);
-          Render_TransformVertices(corners, buffer, 66);
+          Render_TransformVertices(corners, vertices, FUME_CORNERS);
           Render_DrawModelList(model);
 
-          // The claw at the arc's end.
-          if (frame <= 22) {
+          // The head at the plume's end, turned with the arc, until it strikes.
+          if (frame <= FUME_HIT_FRAME) {
             model->mesh = gBattleEffect_SquareMesh;
             texture.logWidth = 6;
             texture.logHeight = 6;
             model->scrollU = 0;
-            texture.pixels = work->sheet + FUME_CLAW_SLASH_PICTURES;
+            texture.pixels = work->sheet + FUME_DRAGON_HEAD_PICTURES;
             Matrix_Translate(INTtoFIXED(endX), INTtoFIXED(endY), 0);
-            Matrix_RotateZ(DEGtoANG(90) - arc.head * 32);
-            Matrix_ScaleUniform(width * 28 / 32);
-            Render_TransformVertices(gBattleEffect_SquareCorners, buffer, 4);
+            Matrix_RotateZ(DEGtoANG(90) - arc.head * (FUME_SEGMENTS - 1));
+            Matrix_ScaleUniform(FUME_HEAD_SCALE(width));
+            Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
             Render_DrawModelList(model);
           }
         }
@@ -244,10 +276,21 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
-#undef BLITTER
 #undef FUME_FRAMES
+#undef FUME_HIT_FRAME
 #undef FUME_SEGMENTS
-#undef FUME_ARC_GROWTH
-#undef FUME_ARC_SPAN
+#undef FUME_CORNERS
+#undef FUME_QUADS
 #undef FUME_STRIP_VERTICES
 #undef FUME_STRIP_MESH
+#undef FUME_ARC_GROWTH
+#undef FUME_ARC_SPAN
+#undef FUME_THICKNESS
+#undef FUME_SWAY
+#undef FUME_DIM_FRAME
+#undef FUME_HEAD_SCALE
+#undef FUME_BURSTS_MAX
+#undef FUME_BURST_PICTURE_FRAMES
+#undef FUME_BURST_FRAMES
+#undef FUME_FLASH_BURST_PICTURES
+#undef FUME_DRAGON_HEAD_PICTURES

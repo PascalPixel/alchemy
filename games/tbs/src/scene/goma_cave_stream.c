@@ -153,9 +153,9 @@ static void GomaCaveStream_SpinStump(struct Actor *actor) {
 
 #include "shared/actor_wait_below_height.c"
 
-/// The frames the stump tips before it leaps, and the puffs that burst round it
-/// as it lands, as in Goma Cave's entrance.
+/// The frames the stump tips before it leaps, as in Goma Cave's entrance.
 #define STUMP_TIP_FRAMES 18
+/// The puffs of dust that burst round the stump as it lands.
 #define STUMP_LANDING_PUFFS 17
 
 /// The stump leaps out of the way and sinks in the water.

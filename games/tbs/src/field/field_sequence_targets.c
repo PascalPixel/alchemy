@@ -4,12 +4,16 @@
 
 #include "field_sequence_internal.h"
 
+/// How far, in pixels, a field Psynergy reaches when
+/// gFieldEffect_TargetRangeByMode does not list its kind.
+#define TARGET_RANGE_DEFAULT 16
+
 /// Returns how far, in pixels, a field Psynergy of the given kind reaches:
 /// gFieldEffect_TargetRangeByMode (field_sequence_tables.c) pairs kinds with
-/// ranges, ended by -1, and a kind not listed reaches 16 pixels.
+/// ranges, ended by -1.
 s32 Field_GetPsynergyTargetRange(s32 kind) {
   const s16 *rangeEntry = gFieldEffect_TargetRangeByMode;
-  s32 range = 16;
+  s32 range = TARGET_RANGE_DEFAULT;
   s32 listedKind = *rangeEntry;
 
   while (listedKind != -1) {
@@ -25,8 +29,9 @@ s32 Field_GetPsynergyTargetRange(s32 kind) {
 }
 
 /// Returns the actor nearest to actor id that it could talk to, or -1: within
-/// 48 pixels of height and 32 pixels of distance and, beyond 11 pixels, within
-/// 3/16 of a turn (67.5 degrees) of the direction it faces.
+/// 48 pixels of height and 32 pixels of distance (an ACTOR_NEAR_TALK actor's
+/// counted ten thirteenths) and, beyond 11 pixels, within 3/16 of a turn
+/// (67.5 degrees) of the direction it faces.
 s32 Field_FindNearbyTalkTarget(s32 id) {
   struct Actor *source;
   struct Actor *candidate;
@@ -59,7 +64,8 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
         continue;
 
       candidate = Actor_Lookup(actorIndex);
-      if (candidate == 0 || (candidate->collisionFlags & 8) != 0)
+      if (candidate == 0 ||
+          (candidate->collisionFlags & ACTOR_NOT_TARGETED) != 0)
         continue;
 
       // y is height: an actor more than 48 pixels above or below is out
@@ -71,7 +77,6 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
         continue;
       }
 
-      // The distance in pixels.
       dx = (candidate->x.fixed - source->x.fixed) / FIXED_ONE;
       dy = (candidate->y.fixed - source->y.fixed) / FIXED_ONE;
       dz = (candidate->z.fixed - source->z.fixed) / FIXED_ONE;
@@ -81,13 +86,11 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
       squaredZ = dz * dz;
       squaredDistance = squaredX + squaredY + squaredZ;
       distance = Iwram_Sqrt(squaredDistance);
-      if ((candidate->collisionFlags & 4) != 0)
+      if ((candidate->collisionFlags & ACTOR_NEAR_TALK) != 0)
         distance = distance * 10 / 13;
       if (distance >= nearestDistance)
         continue;
 
-      // Close actors count from any side; further ones must be within
-      // 3/16 of a turn (67.5 degrees) of where the actor faces.
       angle = (u16)Trig_Atan(candidate->z.fixed - source->z.fixed,
                              candidate->x.fixed - source->x.fixed);
       if (distance > 11) {
@@ -107,7 +110,11 @@ s32 Field_FindNearbyTalkTarget(s32 id) {
 }
 
 /// Returns the actor nearest in front of actor id that a field Psynergy of the
-/// given kind can reach, or -1.
+/// given kind can reach, or -1: within its range (an ACTOR_NEAR_PSYNERGY
+/// actor's counted two thirds), within 8 pixels of height (more for Catch,
+/// Douse and Mind Read) and, beyond 11 pixels, within a cone either side of
+/// its facing's quarter turn, narrower beyond 19 pixels and wider for Mind
+/// Read.
 s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
   struct Actor *source;
   struct Actor *candidate;
@@ -129,7 +136,6 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
   if (source == 0)
     return nearestActorId;
 
-  // The facing rounded to the nearest of the four quarter turns.
   facingQuadrant = FACING_NEAREST_CARDINAL(source->facing);
   // BUG: one past the actor table: Actor_Lookup(ACTOR_ID_COUNT) is the first
   // treasure spot's actor, so the map's first chest or Psynergy Stone is a
@@ -143,11 +149,9 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
       continue;
 
     candidate = Actor_Lookup(actorIndex);
-    if (candidate == 0 || (candidate->collisionFlags & 8) != 0)
+    if (candidate == 0 || (candidate->collisionFlags & ACTOR_NOT_TARGETED) != 0)
       continue;
 
-    // The height allowed: 8 pixels, or 48 for Catch, 64 for Douse, 16 for
-    // Mind Read.
     heightLimit = toFIXED(8);
     if (kind == FIELD_PSYNERGY_CATCH)
       heightLimit = toFIXED(48);
@@ -183,14 +187,11 @@ s32 Field_FindNearbyPsynergyTarget(s32 id, s32 kind) {
     if (distance >= nearestDistance)
       continue;
 
-    // The cone: TRIG_TURN * 3 / 32 (about 34 degrees) either side up to 19
-    // pixels, TRIG_TURN / 16 (22.5 degrees) beyond; DEGtoANG(45) (45 degrees)
-    // for Mind Read.
     angle = (u16)Trig_Atan(candidate->z.fixed - source->z.fixed,
                            candidate->x.fixed - source->x.fixed);
-    coneHalfAngle = TRIG_TURN * 3 / 32;
+    coneHalfAngle = DEGtoANG(33.75);
     if (distance > 19)
-      coneHalfAngle = TRIG_TURN / 16;
+      coneHalfAngle = DEGtoANG(22.5);
     if (kind == FIELD_PSYNERGY_MIND_READ)
       coneHalfAngle = DEGtoANG(45);
 
@@ -227,8 +228,9 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actorId, s32 target,
   return emitter;
 }
 
-/// Gives every part of an actor's sprite (but those at palette 15) palette - 1,
-/// or for palette 0 the next palette of a cycle that changes every 2 frames.
+/// Gives each running layer of an actor's one sprite the colour mode
+/// palette - 1 (SPRITE_COLOR_NORMAL for 1), or for 0 the next of Mind Read's
+/// caster cycle, a mode every 2 frames; a hidden layer stays hidden.
 void Actor_SetSpritePalette(struct Actor *actor, s32 palette) {
   struct Sprite *sprite;
   struct SpriteAnimation **entrySlot;

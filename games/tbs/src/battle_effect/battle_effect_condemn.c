@@ -14,8 +14,6 @@
 /// How far the reaper sways across and up and down as it circles, in pixels.
 #define CONDEMN_SWAY_X 16
 #define CONDEMN_SWAY_Y 4
-/// A line's 16.16 sideways sway as its BG2X value in work->bg2xLines.
-#define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
 /// The level a canvas darkens the battle background to, a level a frame.
 #define BACKGROUND_DARKENED_LEVEL BACKGROUND_DARKEN_FRAMES
 
@@ -260,7 +258,6 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
 #undef CONDEMN_BOUNCE_FRAME
 #undef CONDEMN_SWAY_X
 #undef CONDEMN_SWAY_Y
-#undef CANVAS_WAVE_BG2X
 #undef BACKGROUND_DARKENED_LEVEL
 #undef CONDEMN_PICTURE_X
 #undef CONDEMN_PICTURE_Y

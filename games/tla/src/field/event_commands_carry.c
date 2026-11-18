@@ -19,11 +19,9 @@
 #include "field/object.h"
 #include "fixed_math.h"
 
-#define CARRY_SPARKLES 24 ///< scattered as the hands meet
-
 /// Carry cast with no target: two hands appear 32 pixels to either side of
 /// the spot, close 24 pixels in and meet with a crash that scatters
-/// CARRY_SPARKLES sparkles, then vanish.
+/// ITEM_BREAK_SHARD_MAX sparkles, then vanish.
 void FieldPsynergy_Carry(void) {
   struct FieldEffectWork *work;
   struct Actor *obj;
@@ -51,7 +49,7 @@ void FieldPsynergy_Carry(void) {
 
   Actor_WaitForMoveFar(pair[0]);
   Sound_PlayFar(SE_HEAVY_IMPACT);
-  for (n = 0; n < CARRY_SPARKLES; n++) {
+  for (n = 0; n < ITEM_BREAK_SHARD_MAX; n++) {
     SET_POSITION(&pos, work->x, work->y + toFIXED(16), work->z);
     obj = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
     if (obj != 0) {
@@ -68,8 +66,6 @@ void FieldPsynergy_Carry(void) {
   Actor_ReleaseFar(pair[1]);
   FieldPsynergy_FadeFromCastColor();
 }
-
-#undef CARRY_SPARKLES
 
 /// Spawns a hand (SPRITE_MOVE_HAND) with the item break sound and grows it,
 /// spinning 1/8 turn a frame, from a quarter to full size over 24 frames; angle

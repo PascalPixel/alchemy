@@ -35,6 +35,12 @@
 /// its packed picture.
 #define BACKGROUND_PALETTE_BYTES (BATTLE_BG_PALETTE_COLORS * 2)
 
+/// The fixed background's sideways pan in 8.8 pixels while the zoom is below
+/// 1; from 1 on it moves three 8.8 pixels a step of the camera's yaw, so the
+/// picture turns with the camera, and is the same when the camera faces the
+/// party's actions (YAW_PARTY_ACTION).
+#define BACKGROUND_PAN_X Q_8_8(8)
+
 /// Sets the palette brightness. Level 0 transfers the original colours
 /// unchanged.
 void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
@@ -193,14 +199,12 @@ void BattleCamera_SetRange(FIXED centerX, FIXED centerY, s32 offsetX,
   u32 scanline;
   u32 lowerHalfLine;
 
-  // The sideways pan, 8.8 pixels: 8 when zoomed out, else 104 less three
-  // times the yaw, so the picture turns with the camera.
-  panX = 8 << 8;
+  panX = BACKGROUND_PAN_X;
   wrap = 0;
   ratio = FIXED_ONE;
   if (scale >= ratio) {
     wrap = BGCNT_WRAP;
-    panX = (104 << 8) + -(s16)camera->yaw * 3;
+    panX = BACKGROUND_PAN_X + YAW_PARTY_ACTION * 3 + -(s16)camera->yaw * 3;
   }
   if (scanlines == NULL)
     return;
@@ -212,7 +216,8 @@ void BattleCamera_SetRange(FIXED centerX, FIXED centerY, s32 offsetX,
     return;
 
   // The affine parameters: a plain zoom, the reference point moved so the
-  // centre stays put, 16 pixels up.
+  // centre stays put and the picture's top row is the first line below the
+  // plane's hidden lines.
   line = scanlines->lines[scanlines->page ^ 1];
   ratio = Iwram_RatioMulQ14(scale, ratio);
   step = ratio >> 8;
@@ -224,7 +229,8 @@ void BattleCamera_SetRange(FIXED centerX, FIXED centerY, s32 offsetX,
   x = Iwram_MulFX(ratio, Iwram_MulFX(centerX, scale - FIXED_ONE));
   y = Iwram_MulFX(ratio, Iwram_MulFX(centerY, scale - FIXED_ONE));
   affine->x = ((x + toFIXED(0.5) - 1) >> 8) + offsetX + panX;
-  affine->y = ((y + toFIXED(0.5) - 1) >> 8) + offsetY - (16 << 8);
+  affine->y = ((y + toFIXED(0.5) - 1) >> 8) + offsetY -
+              Q_8_8(BACKGROUND_PLANE_HIDDEN_LINES);
   // The first line that reaches the picture's lower half at this zoom.
   lowerHalfLine =
       FIXEDtoINT(Iwram_RatioMulQ14(
@@ -441,11 +447,15 @@ s32 BattleBackground_DivideBy16(s32 value) { return value / 16; }
 #endif
 /// What R picks, in every release.
 #define DEBUG_VALUE_R 399
+/// The digits the debug value steps: left and right step its ones, up and
+/// down its tens, L and R its hundreds.
+#define DEBUG_VALUE_TENS 10
+#define DEBUG_VALUE_HUNDREDS 100
 
 /// A debug choice of a battle value: with Start held, the d-pad and L/R step
-/// the battle work's debugValue (by 1, 10 and 100) until A takes it; Select
-/// held picks DEBUG_VALUE_SELECT and R held DEBUG_VALUE_R; otherwise value
-/// comes back unchanged.
+/// the battle work's debugValue by its ones, tens and hundreds until A takes
+/// it; Select held picks DEBUG_VALUE_SELECT and R held DEBUG_VALUE_R;
+/// otherwise value comes back unchanged.
 s32 Battle_AdjustDebugValue(s32 value) {
   if (gInput.held & KEY_START) {
     while (1) {
@@ -456,13 +466,13 @@ s32 Battle_AdjustDebugValue(s32 value) {
       if (gInput.repeat & KEY_RIGHT)
         work->debugValue++;
       if (gInput.repeat & KEY_L)
-        work->debugValue -= 100;
+        work->debugValue -= DEBUG_VALUE_HUNDREDS;
       if (gInput.repeat & KEY_R)
-        work->debugValue += 100;
+        work->debugValue += DEBUG_VALUE_HUNDREDS;
       if (gInput.repeat & KEY_UP)
-        work->debugValue -= 10;
+        work->debugValue -= DEBUG_VALUE_TENS;
       if (gInput.repeat & KEY_DOWN)
-        work->debugValue += 10;
+        work->debugValue += DEBUG_VALUE_TENS;
       if (gInput.pressed & KEY_A) {
         value = work->debugValue;
         break;
@@ -639,7 +649,7 @@ void BattleHighlight_SetModes(u16 *actors, s32 mode) {
 /// One of the star field's sparks, drawn inward to the centre. Sixteen live
 /// in SparkWork.sparks; a spent one starts again while the field is young.
 struct Spark {
-  s32 motion[6]; ///< x, y, z, then their velocities, in 1/1024 canvas pixels
+  s32 motion[6]; ///< x, y, z, then their velocities, in STAR_FIELD_PIXEL units
   s32 life;      ///< frames left
 };
 
@@ -665,6 +675,10 @@ struct Ring {
 /// The blue ring sheet's colours, before its pictures; an element's palette
 /// replaces them.
 #define STAR_FIELD_COLORS 64
+/// The sparks and rings move in 1/1024 canvas pixels: STAR_FIELD_PIXEL to a
+/// pixel.
+#define STAR_FIELD_PIXEL_SHIFT 10
+#define STAR_FIELD_PIXEL (1 << STAR_FIELD_PIXEL_SHIFT)
 
 /// The star field's work: the canvas sheet, sixteen sparks, three rings, the
 /// frames counted, whether the canvas is ready, and its centre.
@@ -760,11 +774,11 @@ void ElementGlow_UpdateStarField(void) {
       spark->motion[3] = (-spark->motion[0] >> 7) + (spark->motion[1] >> 8);
       spark->motion[4] = (-spark->motion[1] >> 7) + (-spark->motion[0] >> 8);
       spark->motion[5] = 0;
-      life = spark->life = (radius >> 13) + 1;
+      life = spark->life = radius / (8 * STAR_FIELD_PIXEL) + 1;
     }
     if (life != 0) {
-      x = (spark->motion[0] >> 10) + STAR_FIELD_CENTER;
-      y = (spark->motion[1] >> 10) + STAR_FIELD_CENTER;
+      x = (spark->motion[0] >> STAR_FIELD_PIXEL_SHIFT) + STAR_FIELD_CENTER;
+      y = (spark->motion[1] >> STAR_FIELD_PIXEL_SHIFT) + STAR_FIELD_CENTER;
       frame = life;
       if (frame < 0)
         frame = 0;
@@ -779,8 +793,8 @@ void ElementGlow_UpdateStarField(void) {
   for (ring = work->rings, j = STAR_FIELD_RINGS - 1; j >= 0; j--, ring++) {
     ring->x += ring->velocityX;
     ring->y += ring->velocityY;
-    ringX = ring->x >> 10;
-    ringY = ring->y >> 10;
+    ringX = ring->x >> STAR_FIELD_PIXEL_SHIFT;
+    ringY = ring->y >> STAR_FIELD_PIXEL_SHIFT;
     phase = 3 - ring->age / 8;
     if (phase >= 0) {
       ring->age++;
@@ -817,12 +831,12 @@ s32 ElementGlow_UploadStarField(void) {
 }
 
 /// Returns the x of the point at angle and radius from the origin.
-static __inline__ s32 PolarX(s32 angle, FIXED radius) {
+static __inline__ s32 PolarX(s32 angle, s32 radius) {
   return Iwram_MulFX(Trig_Cos(angle), radius);
 }
 
 /// Returns the y of the point at angle and radius from the origin.
-static __inline__ s32 PolarY(s32 angle, FIXED radius) {
+static __inline__ s32 PolarY(s32 angle, s32 radius) {
   return Iwram_MulFX(Trig_Sin(angle), radius);
 }
 
@@ -857,18 +871,18 @@ s32 ElementGlow_InitializeStarField(s32 element) {
     spark->motion[3] = (-spark->motion[0] >> 7) + (spark->motion[1] >> 8);
     spark->motion[4] = (-spark->motion[1] >> 7) + (-spark->motion[0] >> 8);
     spark->motion[5] = 0;
-    spark->life = (radius >> 13) + 1;
+    spark->life = radius / (8 * STAR_FIELD_PIXEL) + 1;
   }
   for (i = 0; i < STAR_FIELD_RINGS; i++) {
-    FIXED radius = toFIXED(1) / 16;
+    s32 radius = 4 * STAR_FIELD_PIXEL;
     s32 angle;
 
     ring = &work->rings[i];
     angle = i * (DEGtoANG(120));
     ring->x = PolarX(angle, radius);
     ring->y = PolarY(angle, radius);
-    ring->velocityX = PolarX(angle, toFIXED(1) / 128);
-    ring->velocityY = PolarY(angle, toFIXED(1) / 128);
+    ring->velocityX = PolarX(angle, STAR_FIELD_PIXEL / 2);
+    ring->velocityY = PolarY(angle, STAR_FIELD_PIXEL / 2);
     ring->age = 0;
   }
   work->frames = 0;
@@ -907,11 +921,14 @@ s32 ElementGlow_InitializeStarField(s32 element) {
    * never touches it; as the call left out. */
   if (0)
     BattleEffect_BuildBlitterFar(HEAP_SLOT_RAM_CODE, 7, 7, 3, 3);
-  // Clipped to the canvas, the additive blitter and then the max one: the
-  // clip flags in the low four bits and the blend mode above them, packed as
-  // BattleEffect_LoadBlitter takes them.
-  BattleEffect_LoadBlitterFar(HEAP_SLOT_RAM_CODE, 0x03);
-  BattleEffect_LoadBlitterFar(HEAP_SLOT_RAM_CODE_PAIRED, 0x13);
+  // Clipped to the canvas, the additive blitter and then the one that keeps
+  // the brighter colour, packed as BattleEffect_LoadBlitter takes them.
+  BattleEffect_LoadBlitterFar(HEAP_SLOT_RAM_CODE, COMPOSITE_CLIP_X |
+                                                      COMPOSITE_CLIP_Y |
+                                                      BLITTER_ADDITIVE << 4);
+  BattleEffect_LoadBlitterFar(HEAP_SLOT_RAM_CODE_PAIRED, COMPOSITE_CLIP_X |
+                                                             COMPOSITE_CLIP_Y |
+                                                             BLITTER_MAX << 4);
   Task_Add(ElementGlow_UpdateStarField, TASK_PASS_FRAME);
   return Task_Add(ElementGlow_UploadStarField, TASK_PASS_FRAME);
 }

@@ -20,9 +20,9 @@
 #define WORLD_MAP_TILE_MAP_BYTES                                               \
   (WORLD_MAP_TILE_MAP_WIDTH * WORLD_MAP_TILE_MAP_WIDTH)
 
-/// The bit of a world map cell's top byte, its word's bit 31, that makes it a
+/// The bit of a world map block's top byte, its word's bit 31, that makes it a
 /// beach.
-#define WORLD_MAP_CELL_BEACH (1 << 7)
+#define WORLD_MAP_BLOCK_BEACH (1 << 7)
 
 /// The sets of rows of gWorldMap_TerrainBehaviorTable, 16 collision values
 /// each, which differ in the battles their walkable ground and forest give.
@@ -34,7 +34,7 @@ enum TerrainBehaviorRows {
   TERRAIN_ROWS_BLIZZARD = 64
 };
 
-/// The encounter regions (WorldMapCell.region) whose cells take rows of their
+/// The encounter regions (WorldMapCell.region) whose blocks take rows of their
 /// own.
 enum {
   AIRS_ROCK_DESERT_REGION = 12,     ///< the desert round Air's Rock
@@ -44,33 +44,33 @@ enum {
 };
 
 /// Returns the world map's battle environment at position from
-/// gWorldMap_TerrainBehaviorTable, by its collision value and its cell's rows,
-/// and stores the cell's encounter region in encounterRegion.
+/// gWorldMap_TerrainBehaviorTable, by its collision value and its block's rows,
+/// and stores the block's encounter region in encounterRegion.
 u8 WorldMap_GetBattleEnvironment(struct WorldPosition *position,
                                  s32 *encounterRegion) {
   s32 collisionKind = WorldMap_GetCollision(position);
   s32 x = position->x;
   s32 y;
   s32 rows = TERRAIN_ROWS_PLAIN;
-  u32 cellX;
+  u32 blockX;
   u32 index;
-  u32 *cell;
+  u32 *block;
   u32 region;
 
   // The bias rounds a negative coordinate towards zero, as division would.
   if (x < 0)
     x += toFIXED(32) - 1;
-  cellX = WORLD_MAP_BLOCK(x) & (WORLD_MAP_VIEW_CELLS - 1);
+  blockX = WORLD_MAP_BLOCK(x) & (WORLD_MAP_VIEW_CELLS - 1);
   y = position->y;
   if (y < 0)
     y += toFIXED(32) - 1;
 
-  index = cellX + ((WORLD_MAP_BLOCK(y) & (WORLD_MAP_VIEW_CELLS - 1)) << 5);
-  cell = gCellPictures + index;
-  if (((u8 *)cell)[3] & WORLD_MAP_CELL_BEACH)
+  index = blockX + ((WORLD_MAP_BLOCK(y) & (WORLD_MAP_VIEW_CELLS - 1)) << 5);
+  block = gCellPictures + index;
+  if (((u8 *)block)[3] & WORLD_MAP_BLOCK_BEACH)
     rows = TERRAIN_ROWS_BEACH;
 
-  region = ((struct WorldMapCell *)cell)->region;
+  region = ((struct WorldMapCell *)block)->region;
   *encounterRegion = region;
   if (region >= SNOWFIELD_REGION_FIRST)
     rows = TERRAIN_ROWS_SNOWFIELD;

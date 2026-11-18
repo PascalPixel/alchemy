@@ -1,9 +1,10 @@
 /// @file
 /// The leader is thrown back by the flames that struck them: they take the fall
 /// damage, blink, and are pushed cell by cell in the flames' direction,
-/// sliding over ice, until a wall, another actor or a ledge stops them. Three
+/// sliding over ice, until a wall, another actor or a ledge stops them. Four
 /// Mars Lighthouse rooms keep a copy; each includes this file as text after
-/// defining KNOCK_BACK, its name, and the names its copy calls:
+/// shared/party_take_fall_damage.h (FALL_DAMAGE) and after defining
+/// KNOCK_BACK, its name, and the names its copy calls:
 /// KNOCK_BACK_TAKE_DAMAGE, KNOCK_BACK_BLINK, the update hook while they are
 /// thrown, KNOCK_BACK_SET_ANIMATION, KNOCK_BACK_CELL_ATTRIBUTE and
 /// KNOCK_BACK_CHECK_COLLISION.
@@ -23,8 +24,9 @@ s32 KNOCK_BACK(void) {
 #ifdef UBFIX
     KNOCK_BACK_TAKE_DAMAGE();
 #else
-    // UB: the fall damage takes no arguments and returns nothing.
-    ((s32 (*)())KNOCK_BACK_TAKE_DAMAGE)(-10, 0);
+    // UB: the fall damage takes no arguments and returns nothing; it is
+    // called with the HP change it makes.
+    ((s32 (*)())KNOCK_BACK_TAKE_DAMAGE)(-FALL_DAMAGE, 0);
 #endif
     actor = Actor_Get(main->leaderActorId);
     work = RIDE_WORK;
@@ -32,7 +34,7 @@ s32 KNOCK_BACK(void) {
     FieldEvent_ResolvePendingActions(0);
     actor->update = KNOCK_BACK_BLINK;
     actor->facing = DEGtoANG(90);
-    KNOCK_BACK_SET_ANIMATION(actor, 49);
+    KNOCK_BACK_SET_ANIMATION(actor, ANIM_LEADER_SIT);
     for (;;) {
       if (KNOCK_BACK_CELL_ATTRIBUTE(actor->layer, actor->x.fixed,
                                     actor->z.fixed) == TERRAIN_ROUNDED_SQUARE) {

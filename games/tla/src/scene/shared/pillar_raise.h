@@ -1,4 +1,4 @@
-/// Raises the cell under each listed pillar four height steps, to its top, and
+/// Raises the cell under each listed pillar 32 pixels, to its top, and
 /// marks it MAP_CELL_JUMP and MAP_CELL_CLIMBABLE, and the cell south of it, its
 /// face, climbable; then puts the leader back on the ground if it rose over
 /// him.
@@ -29,7 +29,7 @@ void Pillar_Raise(u16 *list) {
     actor->motionFlags = 0;
     actor->collisionFlags = 0;
     Actor_SetSpriteFlags(actor, 0);
-    level += 4;
+    level += CELL_HEIGHT_STEPS(toFIXED(32));
     newShape = MapCollision_FindOrAddTag(*layer, shape, level);
     shapes += index;
     index <<= 2;

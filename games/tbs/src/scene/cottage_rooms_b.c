@@ -804,7 +804,7 @@ ramp:
   Sound_Play(SE_FLAME_FLARE);
   wait(10);
   for (i = 0; i < BLEND_WEIGHT_MAX; i++) {
-    SetBlendAlpha(BLEND_ALPHA(15, 16) - i);
+    SetBlendAlpha(BLEND_ALPHA(BLEND_WEIGHT_MAX - 1, BLEND_WEIGHT_MAX) - i);
     wait(1);
   }
   // Dora and Isaac look back, startled, then nod to each other.

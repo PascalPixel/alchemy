@@ -14,7 +14,6 @@
 #include "field/scene_call.h"
 #include "macros.h"
 
-#define MERCURY_PARTICLE_MAX 24  ///< droplets (one a field effect sprite)
 #define MERCURY_AFTERIMAGE_MAX 8 ///< afterimages of the rising Djinni
 #define MERCURY_RISE_FRAMES 15   ///< frames the Djinni rises, 8 pixels each
 
@@ -72,9 +71,9 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   Actor_Jump(djinniId, 7, 18);
   wait(20);
 
-  // Eight afterimages of the same sprite at 15/16 size, each closing half
-  // the distance to the one before it every frame, sharing one VRAM cache
-  // entry, as in Djinn_RunBattleStartHop.
+  // MERCURY_AFTERIMAGE_MAX afterimages of the same sprite at 15/16 size, each
+  // closing half the distance to the one before it every frame, sharing one
+  // VRAM cache entry, as in Djinn_RunBattleStartHop.
   kind = ((struct Sprite *)djinni->sprite)->entries[0]->animationId;
   resource = NULL;
   previous = djinni;
@@ -126,7 +125,7 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   Camera_WorldToScreen(&position);
 
   effect = effectWork->particles;
-  remaining = MERCURY_PARTICLE_MAX - 1;
+  remaining = ARRAY_COUNT(effectWork->particles) - 1;
   do {
     FieldParticle_Initialize(effect, SPRITE_DROPLET, position.x, position.z);
     FieldParticle_SetCallback(effect,
@@ -148,6 +147,5 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   FieldEffect_ReleaseSlots();
 }
 
-#undef MERCURY_PARTICLE_MAX
 #undef MERCURY_AFTERIMAGE_MAX
 #undef MERCURY_RISE_FRAMES

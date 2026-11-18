@@ -31,14 +31,9 @@
 /// the first eight flashes; the rest play the flash pictures. The Lost Age
 /// keeps the same count for Dragon Cloud (gDragonCloud_SparkCounts).
 #define DRAGON_CLOUD_DRAWN_EMBERS 48
-/// An ember is drawn at size DRAGON_CLOUD_EMBER_SIZE_MAX at depth
-/// DRAGON_CLOUD_EMBER_DEPTH_NEAR or nearer, one size smaller every
-/// DRAGON_CLOUD_EMBER_DEPTH_STEP farther, its depth held below
-/// DRAGON_CLOUD_EMBER_DEPTH_FAR.
+/// An ember is drawn at size DRAGON_CLOUD_EMBER_SIZE_MAX at MOTE_DEPTH_NEAR or
+/// nearer, one size smaller every MOTE_DEPTH_STEP farther.
 #define DRAGON_CLOUD_EMBER_SIZE_MAX 9
-#define DRAGON_CLOUD_EMBER_DEPTH_NEAR 160
-#define DRAGON_CLOUD_EMBER_DEPTH_STEP 64
-#define DRAGON_CLOUD_EMBER_DEPTH_FAR 799
 /// The flash and puff animations: six pictures, two frames each.
 #define DRAGON_CLOUD_ANIMATION_PICTURES 6
 
@@ -248,13 +243,12 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
 
           Projection_Point(&ember->x, &position);
           position.x >>= 1;
-          if (position.depth < DRAGON_CLOUD_EMBER_DEPTH_NEAR)
-            position.depth = DRAGON_CLOUD_EMBER_DEPTH_NEAR;
-          if (position.depth > DRAGON_CLOUD_EMBER_DEPTH_FAR)
-            position.depth = DRAGON_CLOUD_EMBER_DEPTH_FAR;
+          if (position.depth < MOTE_DEPTH_NEAR)
+            position.depth = MOTE_DEPTH_NEAR;
+          if (position.depth > MOTE_DEPTH_FAR)
+            position.depth = MOTE_DEPTH_FAR;
           size = DRAGON_CLOUD_EMBER_SIZE_MAX -
-                 (position.depth - DRAGON_CLOUD_EMBER_DEPTH_NEAR) /
-                     DRAGON_CLOUD_EMBER_DEPTH_STEP;
+                 (position.depth - MOTE_DEPTH_NEAR) / MOTE_DEPTH_STEP;
           if (i >= DRAGON_CLOUD_DRAWN_EMBERS) {
             if (ember->variant < 2 * DRAGON_CLOUD_ANIMATION_PICTURES) {
               draw[0](canvas,
@@ -322,7 +316,4 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
 #undef DRAGON_CLOUD_PUFF_RADIUS_Y
 #undef DRAGON_CLOUD_DRAWN_EMBERS
 #undef DRAGON_CLOUD_EMBER_SIZE_MAX
-#undef DRAGON_CLOUD_EMBER_DEPTH_NEAR
-#undef DRAGON_CLOUD_EMBER_DEPTH_STEP
-#undef DRAGON_CLOUD_EMBER_DEPTH_FAR
 #undef DRAGON_CLOUD_ANIMATION_PICTURES

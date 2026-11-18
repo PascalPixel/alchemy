@@ -193,6 +193,10 @@ void FieldPsynergy_CycloneOnTarget(void) { FieldPsynergy_Cyclone(); }
 #define WHIRLWIND_RESIZE_STEP (FIXED_ONE / 32)
 #define WHIRLWIND_RESIZE_FRAMES 32
 #define ACTOR_RESIZE_FRAMES 16
+/// The whirl's arcs spread by a step that keeps CYCLONE_SPREAD_KEPT of every
+/// CYCLONE_SPREAD_SCALE parts of itself each frame.
+#define CYCLONE_SPREAD_KEPT 123
+#define CYCLONE_SPREAD_SCALE 128
 
 /// Cyclone ("Conjure wind to scatter weeds."): the caster spins in a whirlwind
 /// of blue and white drawn on the canvas sprite, and the weeds on the cells
@@ -268,7 +272,7 @@ void FieldPsynergy_Cyclone(void) {
     spread += step;
     if (spread > toFIXED(28))
       spread = toFIXED(28);
-    step = step * 123 / 128;
+    step = step * CYCLONE_SPREAD_KEPT / CYCLONE_SPREAD_SCALE;
     canvas->angle += TRIG_TURN / 64;
     canvas->command = CANVAS_UPLOAD_AND_DARKEN_ONE_LEVEL;
     wait(1);
@@ -517,6 +521,9 @@ enum BlazeMode {
 
 /// The drops of Blaze's spray, and the smoke puffs they leave.
 #define BLAZE_DROPS 16
+/// The frames a drop of the spray lives, in BLAZE_LONG_SPRAY and otherwise.
+#define BLAZE_LONG_DROP_FRAMES 33
+#define BLAZE_DROP_FRAMES 25
 
 /// Blaze's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the flame tiles, 16 flames
 /// and 16 smoke puffs with their motion, where the jet starts and where it
@@ -545,7 +552,8 @@ struct BlazeWork {
 
 /// The frame callback of FieldPsynergy_Blaze's spray. Every fourth frame while
 /// it is emitting, a free one of sixteen drops starts at the origin with the
-/// mode's speed (mode 3 faster, longer and lighter) along the spray's angle.
+/// mode's speed (BLAZE_LONG_SPRAY faster, longer and lighter) along the
+/// spray's angle.
 /// Each live drop grows, cycles its four tiles, is drawn at its position, and
 /// dies after the mode's lifetime, on reaching an object of the event work's
 /// list (whose index is kept and which stops the spray for the frame) or on
@@ -576,11 +584,11 @@ void Blaze_UpdateSpray(void) {
           sprite->depth = BattleEffect_GetObjectDepth(scene->mainActor);
         if (work->mode == BLAZE_LONG_SPRAY) {
           work->speed = toFIXED(12) / 5;
-          work->lifetime = 33;
+          work->lifetime = BLAZE_LONG_DROP_FRAMES;
           work->gravity = toFIXED(3) / 32;
         } else {
           work->speed = toFIXED(9) / 5;
-          work->lifetime = 25;
+          work->lifetime = BLAZE_DROP_FRAMES;
           work->gravity = toFIXED(1) / 8;
         }
         SET_POSITION(particle, work->origin[0], work->origin[1],
@@ -687,6 +695,10 @@ void Blaze_UpdateSpray(void) {
 #undef WHIRLWIND_RESIZE_FRAMES
 #undef ACTOR_RESIZE_FRAMES
 #undef DEPART_FRAMES
+#undef CYCLONE_SPREAD_KEPT
+#undef CYCLONE_SPREAD_SCALE
+#undef BLAZE_LONG_DROP_FRAMES
+#undef BLAZE_DROP_FRAMES
 
 void Teleport_PlaySparks(void);
 

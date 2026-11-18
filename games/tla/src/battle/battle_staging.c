@@ -137,9 +137,6 @@ void BattleStaging_PlanAuroraField(struct BattlePlan *plan) {
   }
 }
 
-/// The far depth well past the battlefield: the largest whole 16.16 number.
-#define BATTLE_FAR_DEPTH toFIXED(32767)
-
 /// Sends every battler back to its spot.
 void BattleParty_ReturnAllToSpots(void) {
   u16 ids[UNIT_MAX];
@@ -192,11 +189,12 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
     s32 (*ratioMul)(s32, s32) = Iwram_RatioMulQ14Entry;
 
     /* FAKEMATCH(temporary): BATTLE_CAMERA_DISTANCE built in a local in two
-     * steps each time it is passed; as the name passed twice. */
-    param = 255;
+     * steps each time it is passed, its half in pixels shifted back up by 17;
+     * as the name passed twice. */
+    param = FIXEDtoINT(BATTLE_CAMERA_DISTANCE) / 2;
     param <<= 17;
     ratio = ratioMul(param, FIXED_ONE * 3 / 4);
-    param = 255;
+    param = FIXEDtoINT(BATTLE_CAMERA_DISTANCE) / 2;
     param <<= 17;
     Projection_Set(param, ratio, BATTLE_FAR_DEPTH);
   }

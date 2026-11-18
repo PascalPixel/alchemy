@@ -218,7 +218,7 @@ void WorldMap_StartStillPicture(void) {
   struct WorldMapAffineWork *affineWork = Ram_HeapSlots->worldMapAffine;
   struct WorldMapView *perspective =
       (struct WorldMapView *)Ram_HeapSlots->mapGrid;
-  u32 *resources;
+  const u32 *resources;
 
   perspective->animationActive = 1;
   Task_SuspendAll(TilesetAnim_Update);
@@ -257,7 +257,7 @@ void WorldMap_ShowBg1FromBuffer(void) {
 /// the default cells back and returns to the perspective view.
 s32 WorldMap_LoadAreaGraphics(void) {
   struct WorldMapView *perspective;
-  u32 *resources;
+  const u32 *resources;
   u8 *buffer;
   s16 backdropColor;
 

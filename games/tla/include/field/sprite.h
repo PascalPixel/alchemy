@@ -277,6 +277,9 @@ enum ActorAnimation {
   /// Slumping and falling forward onto his face, then lying there: the leader
   /// as the whole party falls.
   ANIM_LEADER_FALL_ON_FACE = 36,
+  /// ANIM_STILL's picture held again, as the leader lands on a statue that
+  /// rises under him.
+  ANIM_LEADER_STILL = 38,
   /// Swinging an arm out to throw something.
   ANIM_LEADER_TOSS = 39,
   /// Seen from behind, arms flung up and waving: the leader carried over a

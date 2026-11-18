@@ -239,6 +239,26 @@ struct DiceCamera {
   FIXED focus[3];
 };
 
+/// The dice games' numbers, Lucky Dice's and Super Lucky Dice's alike: a die's
+/// faces.
+#define DICE_FACE_COUNT 6
+/// A throw costs ten coins for each level of the party's average.
+#define DICE_BET_PER_LEVEL 10
+/// The coins, and Super Lucky Dice's bet, are drawn with six digits.
+#define DICE_COIN_DIGITS 6
+/// The dice screen fades in and out over 16 frames, a sixteenth of full
+/// brightness a frame.
+#define DICE_FADE_FRAMES 16
+/// The depths from the camera a die or its shadow is drawn between: nearer or
+/// further is drawn as at the limit, and the nearer, the larger.
+#define DICE_NEAREST_DEPTH 350
+#define DICE_FARTHEST_DEPTH 650
+/// Where the dice's shadow starts in OBJ VRAM, in 16-colour tiles (32 bytes,
+/// half a 256-colour tile): after the rolling die's eighteen 256-colour views.
+#define DICE_SHADOW_TILE 144
+/// A thrown die starts spinning at this rate, its roll angle a frame.
+#define DICE_THROW_SPIN 300
+
 /// A party member's unit as the field reads it: its gauges and its HP and PP.
 struct FieldUnit {
   u8 unused[20]; ///< no code names it

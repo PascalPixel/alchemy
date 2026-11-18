@@ -32,6 +32,9 @@ STATIC_ASSERT(offsetof(struct PaletteCycle, colors) == 12);
 STATIC_ASSERT(sizeof(struct PaletteCycleWork) == 180);
 STATIC_ASSERT(offsetof(struct PaletteCycleWork, count) == 176);
 
+/// The palette cycling queue, in its heap slot (HEAP_SLOT_PALETTE_CYCLES).
+#define gPaletteWork ((struct PaletteCycleWork *)Ram_HeapSlots->paletteCycles)
+
 void PaletteCycle_Initialize(void);
 s32 PaletteCycle_Add(s16 bank, s16 index, s16 delay, s16 count);
 void PaletteQueue_Stop(void);

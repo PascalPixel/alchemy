@@ -155,6 +155,8 @@ enum DisplayControl {
 /// A REG_BLDALPHA value: top and bottom are the two targets' weights, out
 /// of BLEND_WEIGHT_MAX.
 #define BLEND_ALPHA(top, bottom) ((top) | ((bottom) << 8))
+/// REG_BLDALPHA's low byte, the top target's weight.
+#define BLEND_ALPHA_TOP_MASK 0xff
 #define REG_BLDY (*(volatile u16 *)0x04000054) ///< fade level, 0 to 16
 /// REG_BLDY's whole fade: the targets drawn all white, or all black.
 #define BLEND_FADE_MAX 16

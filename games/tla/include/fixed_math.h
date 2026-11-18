@@ -22,6 +22,9 @@ typedef s32 FIXED;
 /// The whole pixels of a 16.16 value, toFIXED() undone: an arithmetic shift, so
 /// a negative value rounds down.
 #define FIXEDtoINT(value) ((value) >> 16)
+/// The whole-pixel half of a 16.16 coordinate, read in place as its high
+/// halfword.
+#define PIXEL_PART(v) (((s16 *)&(v))[1])
 /// Twice a 16.16 value, as a whole number: FIXEDtoINT a shift short.
 #define FIXEDtoINT_TWICE(value) ((value) >> 15)
 /// Four times a 16.16 value, as a whole number: FIXEDtoINT two shifts short.

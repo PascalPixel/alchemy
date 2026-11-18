@@ -77,6 +77,15 @@
 #define FLAG_TRANSFERRED_VAULT_WARNED_OF_ESCAPED_THIEVES 0x825
 /// How many flags gDataTransfer_Flags lists.
 #define TRANSFERRED_FLAG_COUNT 6
+/// Flags of The Broken Seal's save, by its own names and numbers:
+/// DataTransfer_Apply reads them (gDataTransfer_Flags), and the Clear scene
+/// sets them from a password (gClear_ImportedFlags).
+#define FLAG_BROKEN_SEAL_VISITED_SICK_DORA 0x81e
+#define FLAG_BROKEN_SEAL_VAULT_WARNED_OF_ESCAPED_THIEVES 0x868
+#define FLAG_BROKEN_SEAL_HSU_RESCUED_WITHOUT_PARTY 0x8b3
+#define FLAG_BROKEN_SEAL_CROSSBONE_ISLE_DEADBEARD_DEFEATED 0x8d1
+#define FLAG_BROKEN_SEAL_DODONPA_LOCKED_UP 0x941
+#define FLAG_BROKEN_SEAL_WON_COLOSSO 0x951
 
 /// The system flags: what the field, battles and menus keep about their own
 /// working, shared with the scenes that set or test them, rather than the

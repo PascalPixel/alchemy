@@ -432,6 +432,12 @@ enum RedCrescentPicture {
 /// A shard turns through its three pictures, one each SHARD_TURN of its
 /// variant.
 #define SHARD_TURN 96
+/// PaletteRampImage's shard pictures (drawn through gStatChange_ShardPictures),
+/// where the stat reduction and the Sword Card decode them in the sheet,
+/// followed by seven copies of them, each darker than the one before.
+#define STAT_REDUCTION_SHARD_PICTURES 9600
+#define STAT_REDUCTION_SHARD_BYTES 696 ///< bytes in each copy
+#define STAT_REDUCTION_SHARD_COPIES 8  ///< the pictures and their darker copies
 
 /// LightningPillarSheet's pillar, in two pictures.
 #define LIGHTNING_PILLAR_WIDTH 48

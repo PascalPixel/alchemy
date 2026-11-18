@@ -605,12 +605,8 @@ void BattleEffect_RunWeaken(struct BattleEffectParams *args) {
   BattleEffect_RunStatReduction(args, STAT_REDUCTION_WEAKEN);
 }
 
-/// The shard picture in the sheet, followed by seven copies of it, each
-/// with its colour levels capped 7 lower than the one before.
-#define STAT_REDUCTION_SHARD_PICTURES 9600
-#define STAT_REDUCTION_SHARD_BYTES 696 ///< bytes in each copy
-#define STAT_REDUCTION_SHARD_COPIES 8  ///< the picture and its darker copies
-/// The level copy `copy` of the shard picture is capped at.
+/// The level copy `copy` of the shard pictures is capped at, 7 lower than the
+/// one before.
 #define STAT_REDUCTION_SHARD_CAP(copy) (CANVAS_LEVEL_BRIGHTEST + 1 - (copy) * 7)
 /// Each target throws STAT_REDUCTION_TARGET_SHARDS shards from its own run of
 /// STAT_REDUCTION_TARGET_PARTICLES particles, STAT_REDUCTION_TARGET_DELAY
@@ -806,9 +802,6 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
 #undef STAT_BOOST_FLARE_DEPTH_FAR
 #undef STAT_BOOST_DJINNI_SWAY
 #undef STAT_BOOST_PARTY_CANVAS_X
-#undef STAT_REDUCTION_SHARD_PICTURES
-#undef STAT_REDUCTION_SHARD_BYTES
-#undef STAT_REDUCTION_SHARD_COPIES
 #undef STAT_REDUCTION_SHARD_CAP
 #undef STAT_REDUCTION_TARGET_PARTICLES
 #undef STAT_REDUCTION_TARGET_SHARDS

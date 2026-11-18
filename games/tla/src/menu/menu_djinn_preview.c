@@ -8,16 +8,24 @@
 
 void Menu_CreatePairEntryObjects(s32 first, s32 second);
 
-/// The window tilemap's top rows the Djinn tutorial saves while its line
-/// shows over them.
-#define TUTORIAL_SAVED_ROWS 8
+/// The Djinni figures of a give or trade preview hop across between the two
+/// party members once every DJINN_PREVIEW_HOP_PERIOD frames, a few frames into
+/// it: a hop takes DJINN_PREVIEW_HOP_FRAMES frames along half a sine wave of
+/// DJINN_PREVIEW_HOP_SINE_HEIGHT pixels, cut flat at DJINN_PREVIEW_HOP_HEIGHT.
+/// A figure may sink to DJINN_PREVIEW_HOP_DEPTH below its line, which the half
+/// sine never does, and its slide would wrap after DJINN_PREVIEW_SLIDE_STEPS
+/// steps, which a hop never reaches.
+#define DJINN_PREVIEW_HOP_PERIOD 60
+#define DJINN_PREVIEW_HOP_FRAMES 30
+#define DJINN_PREVIEW_HOP_DELAY 5
+#define DJINN_PREVIEW_HOP_SINE_HEIGHT 16
+#define DJINN_PREVIEW_HOP_HEIGHT 6
+#define DJINN_PREVIEW_HOP_DEPTH 12
+#define DJINN_PREVIEW_SLIDE_STEPS 35
 
-/// The preview's figures move on a one-second cycle: after PREVIEW_STEP_DELAY
-/// frames still, a step counts PREVIEW_STEP_FRAMES frames, half a turn of a
-/// hop's sine, then holds until the cycle ends.
-#define PREVIEW_CYCLE_FRAMES 60
-#define PREVIEW_STEP_DELAY 5
-#define PREVIEW_STEP_FRAMES 30
+/// The tilemap rows at the top of the screen that a tutorial message covers,
+/// saved before it opens and put back after it closes.
+#define DJINN_TUTORIAL_COVERED_ROWS 8
 
 /// Shows or hides the menu's cursor around a line of the Djinn tutorial: the
 /// four stores of its two message steps, in both games. The name is ours.
@@ -200,11 +208,16 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     if ((otherEntry & DJINN_ENTRY_IS_SET) == 0)
       Text_SetColorFar(TEXT_COLOR_RED);
     DjinnMenu_DrawEntry(help, 40, 16, otherEntry);
-  } else if (mode - 2 <= 1) {
+  } else if (mode == DJINN_COMPARE_STANDBY || mode == DJINN_COMPARE_SET) {
     if ((chosenEntry & DJINN_ENTRY_IS_SET) != 0)
       Text_SetColorFar(TEXT_COLOR_RED);
     DjinnMenu_DrawEntry(help, 40, 16, chosenEntry);
-    Window_SetTilemapEntryFar(help, WINDOW_TILE(662), 7, 1, 0);
+    // The blinking down arrow between the two, a tile of BG character block
+    // 1, the block after the windows' own.
+    Window_SetTilemapEntryFar(
+        help,
+        WINDOW_TILE(BG_CHAR_SIZE / TILE_SIZE_4BPP + DJINN_BACKDROP_BORDER_TILE),
+        7, 1, 0);
   }
 
   for (;;) {
@@ -219,7 +232,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       u8 *saved;
       s32 size;
 
-      size = TUTORIAL_SAVED_ROWS * sizeof(work->tilemap[0]);
+      size = DJINN_TUTORIAL_COVERED_ROWS * sizeof(work->tilemap[0]);
       saved = Heap_AllocEwram(size);
       pressed = 0;
       repeat = 0;
@@ -365,11 +378,11 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     }
 
     frame++;
-    step = frame % PREVIEW_CYCLE_FRAMES - PREVIEW_STEP_DELAY;
+    step = frame % DJINN_PREVIEW_HOP_PERIOD - DJINN_PREVIEW_HOP_DELAY;
     if (step < 0)
       step = 0;
-    if (step > PREVIEW_STEP_FRAMES - 1)
-      step = PREVIEW_STEP_FRAMES - 1;
+    if (step > DJINN_PREVIEW_HOP_FRAMES - 1)
+      step = DJINN_PREVIEW_HOP_FRAMES - 1;
     // Both figures held at three quarters of their size.
     DjinnFigures_SetSlotPhase(0, -(FIXED_ONE * 3 / 4));
     DjinnFigures_SetSlotPhase(1, -(FIXED_ONE * 3 / 4));
@@ -377,13 +390,17 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       FIXED rise;
       s32 slide;
 
-      rise = -Iwram_MulFX(16, Trig_Sin(step % PREVIEW_STEP_FRAMES *
-                                       (DEGtoANG(180) / PREVIEW_STEP_FRAMES)));
-      if (rise < -6)
-        rise = -6;
-      if (rise > 12)
-        rise = 12;
-      slide = step % 35 * 2;
+      rise = -Iwram_MulFX(DJINN_PREVIEW_HOP_SINE_HEIGHT,
+                          Trig_Sin(step % DJINN_PREVIEW_HOP_FRAMES *
+                                   (DEGtoANG(180) / DJINN_PREVIEW_HOP_FRAMES)));
+      if (rise < -DJINN_PREVIEW_HOP_HEIGHT)
+        rise = -DJINN_PREVIEW_HOP_HEIGHT;
+      // DEAD: rise is never positive, the hop's half sine wave staying above
+      // the line, so DJINN_PREVIEW_HOP_DEPTH never applies; the ROM keeps its
+      // test.
+      if (rise > DJINN_PREVIEW_HOP_DEPTH)
+        rise = DJINN_PREVIEW_HOP_DEPTH;
+      slide = step % DJINN_PREVIEW_SLIDE_STEPS * 2;
       DjinnFigures_SetSlotPosition(0, slide + 34, rise + 20);
       if (mode == DJINN_COMPARE_TRADE)
         DjinnFigures_SetSlotPosition(1, 99 - slide, 36 - rise);
@@ -413,16 +430,16 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
         break;
       }
       Sound_PlayFar(SE_MENU_CANCEL);
-      result = -1;
+      result = DJINN_RESULT_BACK;
       break;
     }
     if ((pressed & KEY_START) != 0) {
       Sound_PlayFar(SE_MENU_CANCEL);
-      result = -2;
+      result = DJINN_RESULT_START;
       break;
     } else if ((pressed & KEY_B) != 0) {
       Sound_PlayFar(SE_MENU_CANCEL);
-      result = -1;
+      result = DJINN_RESULT_BACK;
       break;
     } else if ((pressed & KEY_R) != 0) {
       if (mode <= DJINN_COMPARE_GIVE) {
@@ -580,8 +597,8 @@ s32 DjinnMenu_ShowMemberStatus(void) {
       UiRender_MarkRow(render, window->y);
     }
     frame++;
-    blink = frame % PREVIEW_CYCLE_FRAMES - PREVIEW_STEP_DELAY;
-    CLAMP(blink, 0, PREVIEW_STEP_FRAMES - 1);
+    blink = frame % DJINN_PREVIEW_HOP_PERIOD - DJINN_PREVIEW_HOP_DELAY;
+    CLAMP(blink, 0, DJINN_PREVIEW_HOP_FRAMES - 1);
     DjinnFigures_SetSlotPosition(0, 32, MENU_FIGURE_HIDDEN_Y);
     // DEAD: the test cannot change the result, redraw = 0 alone does the same;
     // the ROM keeps the compare (its twin also steps a phase under it).
@@ -597,12 +614,12 @@ s32 DjinnMenu_ShowMemberStatus(void) {
     }
     if (pressedKeys & KEY_START) {
       Sound_PlayFar(SE_MENU_CANCEL);
-      result = -2;
+      result = DJINN_RESULT_START;
       break;
     }
     if (pressedKeys & (KEY_A | KEY_B | KEY_R | KEY_L)) {
       Sound_PlayFar(SE_MENU_CANCEL);
-      result = -1;
+      result = DJINN_RESULT_BACK;
       break;
     }
     if (repeatedKeys & KEY_LEFT) {
@@ -637,8 +654,6 @@ s32 DjinnMenu_ShowMemberStatus(void) {
 
 s32 Djinn_CheckGiveBalance(s32 self, s32 other);
 
-/// Marks in table each other owner a djinn can move to from self and keep the
-/// party's djinn balanced, and returns how many there are.
 /// Marks recipients that would leave unequal Djinn totals after a direct give.
 /// Returns how many recipients would need a trade instead.
 ///
@@ -674,7 +689,6 @@ s32 Djinn_MarkTradeOnlyRecipients(s8 *requiresTrade, s32 sourceMemberColumn) {
 
 void Djinn_CountOwned(u8 *counts);
 
-// Test whether moving one from from to to preserves the balance.
 /// Tests whether a hypothetical give leaves every pair of party members within
 /// one Djinn.
 s32 Djinn_CheckGiveBalance(s32 from, s32 to) {

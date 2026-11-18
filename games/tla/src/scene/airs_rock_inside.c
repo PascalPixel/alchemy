@@ -107,9 +107,6 @@
 /// the turning bridge.
 #define ELIXIR_CHEST_PILLAR_ON_BRIDGE_X 65
 
-/// Party_AddPp's amount that fills every member's PP.
-#define PARTY_PP_REPLENISH 999
-
 /// The hall's entrance from the Reveal tablet's room, and where the party
 /// lands after dropping from the Vial chest room (AirsRockInside_LandInHall);
 /// the Vial chest room's entrance on the lift from the hall
@@ -129,24 +126,11 @@ enum {
   HALL_LAST_NORTHEAST_ROOM_ENTRANCE = 13
 };
 
-/// A coordinate's half cell, 8 pixels square: the pillars' places are
-/// counted in them.
-#define FIELD_HALF_CELL(coordinate) ((coordinate) >> 19)
-/// The 16.16 coordinate of a half cell's first pixel, FIELD_HALF_CELL undone.
-#define FIELD_HALF_CELL_ORIGIN(halfCell) ((halfCell) << 19)
-
-/// MapCell_GetAttributes's halfword: the collision code over the second
-/// attribute byte (MapCell.attributeB).
-#define CELL_CODE(attributes) ((attributes) >> 8)
-#define CELL_CODE_BITS 0xff00
-#define CELL_ATTRIBUTES(code, bits) (((code) << 8) | (bits))
-
-/// A 16.16 height in the 8-pixel steps a map cell's height is set in
-/// (MapGrid_SetCellHeight).
-#define CELL_HEIGHT_STEPS(height) ((height) >> 19)
-
 /// The light's picture (RESOURCE_LIGHTNING_MAP): 16 rows of 4 screen entries,
-/// copied into the top left of a screen block whose rows hold 32 entries.
+/// copied into the top left of a screen block whose rows hold 32 entries. Its
+/// map numbers the tiles from 512, and clearing the top two bits of each
+/// entry's tile number (0xfcff) numbers them from the start of character
+/// block 0, where its tiles are loaded.
 enum { LIGHTNING_MAP_ROWS = 16, LIGHTNING_MAP_COLUMNS = 4 };
 #define BG_SCREEN_ROW_BYTES (32 * 2)
 
@@ -495,10 +479,16 @@ extern struct ActorPlacement gAirsRockInside_CoinsChestPlacements[];
 void TilesetAnim_SuspendAll(void);
 void TilesetAnim_ResumeAll(void);
 
+/// SPRITE_PARTICLE's swells, from a speck to its full glow, held 32 frames,
+/// and back: slowly, 12 frames a step, or quickly, 6.
+enum { ANIM_PARTICLE_SLOW_SWELL = 9, ANIM_PARTICLE_QUICK_SWELL };
+/// How long a mote drifts before it scatters again: a slow swell and the 12
+/// frames it stays gone after, or a quick one.
+enum { MOTE_SLOW_LIFETIME = 212, MOTE_QUICK_LIFETIME = 116 };
+
 /// A mote of light moves on to a random spot, x 176 to 431 pixels and y and z
 /// up to 31 and 127 pixels past the leader's, to drift there for its timer's
-/// frames: the motes that drift for 212 frames take the sheet's animation 9,
-/// the others 10.
+/// frames, swelling slowly or quickly by its lifetime.
 void AirsRockInside_ScatterMote(struct Actor *actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
@@ -508,15 +498,19 @@ void AirsRockInside_ScatterMote(struct Actor *actor) {
     actor->z.fixed = leader->z.fixed + INTtoFIXED(Random16() & 127);
   }
   actor->userValue = actor->timer;
-  if (actor->timer == 212)
-    Actor_SelectAnimation(actor, 9);
+  if (actor->timer == MOTE_SLOW_LIFETIME)
+    Actor_SelectAnimation(actor, ANIM_PARTICLE_SLOW_SWELL);
   else
-    Actor_SelectAnimation(actor, 10);
+    Actor_SelectAnimation(actor, ANIM_PARTICLE_QUICK_SWELL);
 }
 
-/// A mote's update: after its start delay it sways as it drifts upward,
-/// scattering again when its time is up; it and the map's animations stop
-/// while a menu, Psynergy or an item is in use.
+/// Four times a 16.16 value, as a whole number: FIXEDtoINT two shifts short.
+#define FIXEDtoINT_FOUR_TIMES(value) ((value) >> 14)
+
+/// A mote's update: after its start delay it sways as it drifts upward, a
+/// sway every 64 pixels of depth and every 128 of height, scattering again
+/// when its time is up; it and the map's animations stop while a menu,
+/// Psynergy or an item is in use.
 void AirsRockInside_DriftMote(struct Actor *actor) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -536,8 +530,10 @@ void AirsRockInside_DriftMote(struct Actor *actor) {
   if (actor->userValue == 0)
     AirsRockInside_ScatterMote(actor);
   actor->userValue--;
-  actor->x.fixed +=
-      Trig_Cos(((actor->z.fixed >> 14) + (actor->y.fixed >> 15)) << 8) / 2;
+  actor->x.fixed += Trig_Cos((FIXEDtoINT_FOUR_TIMES(actor->z.fixed) +
+                              FIXEDtoINT_TWICE(actor->y.fixed))
+                             << 8) /
+                    2;
   actor->y.fixed += actor->speedLimit;
 }
 
@@ -593,12 +589,20 @@ void AirsRockInside_SetStakeCells(struct Actor *actor) {
   MapGrid_SetCellHeight(px, pz, actor->layer, height);
 }
 
+/// A stake's picture in OBJ VRAM (stake.png): 32 by 64 pixels of 256-colour
+/// tiles, four to each 8-pixel row, the stake itself within the first three
+/// of them. A partner rising is drawn from its target's picture: the top
+/// STAKE_TOP_ROWS rows at once, then a row a step.
+enum { STAKE_ROW_TILES = 4, STAKE_DRAWN_TILES = 3, STAKE_TOP_ROWS = 3 };
+#define STAKE_ROW_BYTES (STAKE_ROW_TILES * TILE_SIZE_8BPP)
+
 /// One step of Pound on a stake: the target sinks and its partner, the other
 /// of its pair, rises. On step 0 the partner's picture is cleared and the top
-/// of the target's drawn over it, 28 pixels up; on steps 1 to 5 more of it is
-/// drawn as it comes down; through step 7 the target flattens. In mode 1 both
-/// settle, the target's flag is set and the partner's cleared, they take their
-/// next poses and their cells are set again (AirsRockInside_SetStakeCells).
+/// of the target's drawn over it, 28 pixels up; on steps 1 to 5 a row more of
+/// it is drawn as it comes down; through step 7 the target flattens. In mode 1
+/// both settle, the target's flag is set and the partner's cleared, they take
+/// their next poses and their cells are set again
+/// (AirsRockInside_SetStakeCells).
 void AirsRockInside_PoundStake(s32 mode, s32 step) {
   s16 *pair = &((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)
                    ->secondActorId;
@@ -620,21 +624,18 @@ void AirsRockInside_PoundStake(s32 mode, s32 step) {
     first->watchedActor = (void *)(entry->offset + OBJ_VRAM0);
     Dma_Fill32(step, second->watchedActor, entry->size);
     Dma_Set(first->watchedActor, second->watchedActor,
-            DMA_COPY_WORDS(24 * TILE_SIZE_4BPP / 4), REG_DMA3);
+            DMA_COPY_WORDS(STAKE_TOP_ROWS * STAKE_ROW_BYTES / 4), REG_DMA3);
     first->watchedActor =
-        (void *)((u8 *)first->watchedActor + 24 * TILE_SIZE_4BPP);
+        (void *)((u8 *)first->watchedActor + STAKE_TOP_ROWS * STAKE_ROW_BYTES);
     second->watchedActor =
-        (void *)((u8 *)second->watchedActor + 24 * TILE_SIZE_4BPP);
+        (void *)((u8 *)second->watchedActor + STAKE_TOP_ROWS * STAKE_ROW_BYTES);
   } else if (step <= 5) {
-    // XXX: why each step copies 6 tiles but moves on 8; the shape of the
-    // stake's sprite in its VRAM cache entry would settle it.
     second->y.fixed += toFIXED(26) / 5;
     Dma_Set(first->watchedActor, second->watchedActor,
-            DMA_COPY_WORDS(6 * TILE_SIZE_4BPP / 4), REG_DMA3);
-    first->watchedActor =
-        (void *)((u8 *)first->watchedActor + 8 * TILE_SIZE_4BPP);
+            DMA_COPY_WORDS(STAKE_DRAWN_TILES * TILE_SIZE_8BPP / 4), REG_DMA3);
+    first->watchedActor = (void *)((u8 *)first->watchedActor + STAKE_ROW_BYTES);
     second->watchedActor =
-        (void *)((u8 *)second->watchedActor + 8 * TILE_SIZE_4BPP);
+        (void *)((u8 *)second->watchedActor + STAKE_ROW_BYTES);
   }
   if (step <= 7)
     first->scaleY += -(FIXED_ONE * 31 / 256);
@@ -809,8 +810,9 @@ void AirsRockInside_RideWhirlwind(void) {
     break;
   default:
     angle = ride->facing;
-    leader->x.fixed = FIELD_HALF_CELL_ORIGIN(
-        (FIELD_HALF_CELL(ride->x.fixed) & ~1) + (angle >>= 13) - 1);
+    leader->x.fixed =
+        FIELD_HALF_CELL_ORIGIN((FIELD_HALF_CELL(ride->x.fixed) & ~1) +
+                               (angle = FACING_EIGHTH_INDEX(angle)) - 1);
     leader->z.fixed = FIELD_HALF_CELL_ORIGIN(
         (FIELD_HALF_CELL(ride->z.fixed) & ~1) - (angle & 2) + 1);
     Actor_SetSpriteFlags(leader, 1);
@@ -847,13 +849,16 @@ void AirsRockInside_RideWhirlwind(void) {
 extern u32 gAirsRockInside_WhirlwindFadesScript[];
 extern u32 gAirsRockInside_WhirlwindRisesScript[];
 
+/// How near a whirlwind comes to catch the leader, in pixels: above him while
+/// others move him, in his cell's row, else across the ground on his level.
+enum { WHIRLWIND_REACH_ABOVE = 16, WHIRLWIND_REACH = 8 };
+
 /// A statue's whirlwind: it moves 1.5 pixels a frame the way it faces, upward
 /// when it faces north, and where the overhead layer reads
 /// CELL_BEHAVIOR_AIRS_ROCK_INSIDE_WHIRLWIND_END it fades (facing north) or
-/// rises. The first time it reaches the leader (within 16 pixels above him
-/// while something else moves him, else 8 on his level) it carries him along
-/// (TRIGGER_RIDE_WHIRLWIND). It stops while
-/// the leader moves as sand, a menu or Psynergy is up, or an item is in use.
+/// rises. The first time it comes within reach of the leader it carries him
+/// along (TRIGGER_RIDE_WHIRLWIND). It stops while the leader moves as sand, a
+/// menu or Psynergy is up, or an item is in use.
 void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -887,11 +892,13 @@ void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
     leaderPosition = &leader->x.fixed;
     shotPosition = &shot->x.fixed;
     if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_KEYS) {
-      if (Position_DistanceAbove(leaderPosition, shotPosition) <= 16 &&
+      if (Position_DistanceAbove(leaderPosition, shotPosition) <=
+              WHIRLWIND_REACH_ABOVE &&
           FIELD_CELL(leader->z.fixed) == FIELD_CELL(shot->z.fixed))
         near = 1;
     } else {
-      if (Position_FlatDistance(leaderPosition, shotPosition) <= 8 &&
+      if (Position_FlatDistance(leaderPosition, shotPosition) <=
+              WHIRLWIND_REACH &&
           FIELD_CELL(leader->y.fixed) == FIELD_CELL(shot->y.fixed))
         near = 1;
     }
@@ -1009,11 +1016,13 @@ void AirsRockInside_MovePooledWhirlwind(struct Actor *shot) {
     leaderPosition = &leader->x.fixed;
     shotPosition = &shot->x.fixed;
     if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_KEYS) {
-      if (Position_DistanceAbove(leaderPosition, shotPosition) <= 16 &&
+      if (Position_DistanceAbove(leaderPosition, shotPosition) <=
+              WHIRLWIND_REACH_ABOVE &&
           FIELD_CELL(leader->z.fixed) == FIELD_CELL(shot->z.fixed))
         near = 1;
     } else {
-      if (Position_FlatDistance(leaderPosition, shotPosition) <= 8 &&
+      if (Position_FlatDistance(leaderPosition, shotPosition) <=
+              WHIRLWIND_REACH &&
           FIELD_CELL(leader->y.fixed) == FIELD_CELL(shot->y.fixed))
         near = 1;
     }
@@ -1844,7 +1853,10 @@ void AirsRockInside_BurstDust(s32 x, s32 z) {
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 }
 
-/// Twelve sparks rise one after another around x, z.
+/// The sparks AirsRockInside_ScatterSparks raises, 5 frames apart.
+enum { SCATTERED_SPARKS = 12 };
+
+/// Sparks rise one after another around x, z.
 void AirsRockInside_ScatterSparks(s32 x, s32 z) {
   struct EffectOptions options;
   struct Vector3 position;
@@ -1854,7 +1866,7 @@ void AirsRockInside_ScatterSparks(s32 x, s32 z) {
   options.priority = 1;
   options.startScaleX = FIXED_ONE * 4 / 5;
   options.startScaleY = FIXED_ONE * 3;
-  for (i = 0; i != 12; i++) {
+  for (i = 0; i != SCATTERED_SPARKS; i++) {
     position.x = x + INTtoFIXED(Random16() & 31) - toFIXED(16);
     position.y = toFIXED(4);
     position.z = z;
@@ -2506,7 +2518,7 @@ void AirsRockInside_SpawnOrbitSpark(struct Actor *source) {
 s32 AirsRockInside_OrbitAnchor(struct Orbiter *orbiter) {
   struct Actor *anchor = orbiter->anchor;
 
-  orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
+  orbiter->angle += (s16)orbiter->speed >> 1;
   orbiter->x = anchor->x.fixed;
   orbiter->y = anchor->y.fixed + toFIXED(8);
   orbiter->z = anchor->z.fixed;
@@ -2518,7 +2530,7 @@ s32 AirsRockInside_OrbitAnchor(struct Orbiter *orbiter) {
     return 1;
   AirsRockInside_SpawnOrbitSpark(orbiter);
   orbiter->orbitRadius -= toFIXED(4);
-  orbiter->angle += (s32)(orbiter->speed << 16) >> 17;
+  orbiter->angle += (s16)orbiter->speed >> 1;
   orbiter->x = anchor->x.fixed;
   orbiter->y = anchor->y.fixed + toFIXED(8);
   orbiter->z = anchor->z.fixed;
@@ -2544,8 +2556,15 @@ extern s32 gAirsRockInside_SeekingSparkScript[];
 extern s32 gAirsRockInside_TabletSettleScript[];
 extern s32 gAirsRockInside_ShebaSettleScript[];
 
+/// The sparks that rise from the tablet as it lifts.
+enum { TABLET_SPARKS = 16 };
 /// The sparks that spiral in on Sheba, one set out every ORBITING_SPARK_FRAMES.
 enum { ORBITING_SPARKS = 16, ORBITING_SPARK_FRAMES = 8 };
+/// The sparks that then close in on her start every 2 pixels up her, each
+/// circling out as far as the sine of its height in 64ths of a turn
+/// (Orbit_Update's phase), short of SEEKING_SPARK_PHASES, half a turn, where
+/// the sine is 0 again.
+enum { SEEKING_SPARK_PHASES = 32 };
 
 /// The tablet rises in a rumble, sparks circle Sheba and she learns Reveal.
 void AirsRockInside_ShebaLearnsReveal(s32 tabletId, s32 shebaId) {
@@ -2576,7 +2595,7 @@ void AirsRockInside_ShebaLearnsReveal(s32 tabletId, s32 shebaId) {
   Actor_ConfigureSpriteColor(tabletId, SPRITE_COLOR_BLINK);
   REG_BLDALPHA = BLEND_ALPHA(8, 16);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
-  for (i = 0; i != 16; i++) {
+  for (i = 0; i != TABLET_SPARKS; i++) {
     struct Actor *spark = Import_ActorCreate(SPRITE_PARTICLE, tablet->x.fixed,
                                              tablet->y.fixed, tablet->z.fixed);
     Sound_Play(SE_GLITTER);
@@ -2632,7 +2651,7 @@ void AirsRockInside_ShebaLearnsReveal(s32 tabletId, s32 shebaId) {
   }
   Sound_Play(SE_SHIMMER);
   wait(16);
-  for (i = 2; i != 32; i += 2) {
+  for (i = 2; i != SEEKING_SPARK_PHASES; i += 2) {
     struct Actor *spark = FieldActor_Create(
         SPRITE_PARTICLE, sheba->x.fixed,
         sheba->y.fixed + toFIXED(i) - toFIXED(8), sheba->z.fixed);
@@ -2856,21 +2875,21 @@ void AirsRockInside_StepOntoStake(void) {
   first->watchedActor = (void *)(entry->offset + OBJ_VRAM0);
   Dma_Fill32(busy, second->watchedActor, entry->size);
   Dma_Set(first->watchedActor, second->watchedActor,
-          DMA_COPY_WORDS(24 * TILE_SIZE_4BPP / 4), REG_DMA3);
+          DMA_COPY_WORDS(STAKE_TOP_ROWS * STAKE_ROW_BYTES / 4), REG_DMA3);
   first->watchedActor =
-      (void *)((u8 *)first->watchedActor + 24 * TILE_SIZE_4BPP);
+      (void *)((u8 *)first->watchedActor + STAKE_TOP_ROWS * STAKE_ROW_BYTES);
   second->watchedActor =
-      (void *)((u8 *)second->watchedActor + 24 * TILE_SIZE_4BPP);
+      (void *)((u8 *)second->watchedActor + STAKE_TOP_ROWS * STAKE_ROW_BYTES);
   leader->motionFlags = busy;
   for (i = 0; i != 8; i++) {
     if (i <= 4) {
       second->y.fixed += toFIXED(26) / 5;
       Dma_Set(first->watchedActor, second->watchedActor,
-              DMA_COPY_WORDS(6 * TILE_SIZE_4BPP / 4), REG_DMA3);
+              DMA_COPY_WORDS(STAKE_DRAWN_TILES * TILE_SIZE_8BPP / 4), REG_DMA3);
       first->watchedActor =
-          (void *)((u8 *)first->watchedActor + 8 * TILE_SIZE_4BPP);
+          (void *)((u8 *)first->watchedActor + STAKE_ROW_BYTES);
       second->watchedActor =
-          (void *)((u8 *)second->watchedActor + 8 * TILE_SIZE_4BPP);
+          (void *)((u8 *)second->watchedActor + STAKE_ROW_BYTES);
     }
     leader->y.fixed += -(toFIXED(7) / 2);
     leader->groundHeight = leader->y.fixed;
@@ -3065,8 +3084,7 @@ void AirsRockInside_RiseOnLift(void) {
 }
 
 /// Eight motes of light drift about the hall, each starting a little after the
-/// last; the odd ones drift for 212 frames before they scatter again, the even
-/// ones for 116.
+/// last; the odd ones swell slowly, the even ones quickly.
 void AirsRockInside_SpawnMotes(void) {
   struct Actor *actor;
   s32 i = 0;
@@ -3085,10 +3103,10 @@ void AirsRockInside_SpawnMotes(void) {
     Actor_SetSpriteFlags(actor, 0);
     Actor_SetSpriteColor(actor, SPRITE_COLOR_RBG);
     if (i & 1) {
-      actor->timer = 212;
+      actor->timer = MOTE_SLOW_LIFETIME;
       actor->userValue = 0;
     } else {
-      actor->timer = 116;
+      actor->timer = MOTE_QUICK_LIFETIME;
       actor->userValue = 0;
     }
     Actor_SetBlendMode(actor, 1);
@@ -3174,15 +3192,16 @@ void AirsRockInside_LandInHall(void) {
   Sound_Play(SE_DUST_PUFF);
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   FieldEvent_Wait(24);
-  options.palette = 7;
+  options.palette = SPRITE_COLOR_WHITE;
   options.update = FieldEffect_AdvanceMotion;
   options.startScaleX = FIXED_ONE * 4 / 5;
   options.startScaleY = FIXED_ONE * 4 / 5;
-  for (i = 0; i <= 16; i++) {
+  // A puff each sixteenth of a turn, the last over the first.
+  for (i = 0; i <= TRIG_TURN / FACING_STEP; i++) {
     s32 angle;
     FIXED velocity[3];
 
-    angle = i * (TRIG_TURN / 16);
+    angle = i * FACING_STEP;
     velocity[0] = Trig_Cos(angle);
     velocity[1] = 0;
     velocity[2] = Trig_Sin(angle);
@@ -3193,7 +3212,7 @@ void AirsRockInside_LandInHall(void) {
     FieldEffect_Spawn(leader->x.fixed, leader->y.fixed, leader->z.fixed,
                       velocity[0], velocity[1], velocity[2],
                       EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
-                          EFFECT_USE_PALETTE | 1,
+                          EFFECT_USE_PALETTE | EFFECT_SCRIPT_MEDIUM,
                       &options);
   }
   Sound_Play(SE_THUMP);

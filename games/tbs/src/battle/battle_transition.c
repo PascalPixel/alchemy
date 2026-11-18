@@ -38,7 +38,7 @@
 
 /// REG_MOSAIC's largest block size, 16 pixels: each of its sizes is a four-bit
 /// field holding the size less one.
-#define MOSAIC_SIZE_MAX 0xf
+#define MOSAIC_SIZE_MAX 15
 
 /// The bytes of a row of a background map, and the words that hold its 32
 /// entries two at a time.

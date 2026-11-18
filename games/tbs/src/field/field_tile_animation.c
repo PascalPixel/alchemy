@@ -17,7 +17,7 @@
 #define TILESET_ANIM_WIDE_TILE_BYTES (TILE_SIZE_4BPP * 2)
 #define TILESET_ANIM_MARKER 0xfd00 ///< low four bits: the animation it starts
 #define TILESET_ANIM_MARKER_PAUSED 0x80 ///< a marker's bit: start it paused
-#define TILESET_ANIM_MARKER_CHANNEL_MASK 0xf ///< a marker's animation
+#define TILESET_ANIM_MARKER_ANIMATION_MASK 0xf ///< a marker's animation
 // The first source tile read from gMapGridAnimTiles rather than VRAM, for
 // 32-byte and for 64-byte (wide) tiles: both bases put it at its start.
 #define TILESET_ANIM_RAM_TILE 1536
@@ -152,7 +152,7 @@ void TilesetAnim_StartAll(const u16 *script) {
   while (marker != TILESET_ANIM_LOOP) {
     if ((marker & TILESET_ANIM_OPCODE_MASK) == TILESET_ANIM_MARKER) {
       struct TilesetAnim *channel;
-      u32 channelIndex = marker & TILESET_ANIM_MARKER_CHANNEL_MASK;
+      u32 channelIndex = marker & TILESET_ANIM_MARKER_ANIMATION_MASK;
       u32 paused = 0;
       if (marker & TILESET_ANIM_MARKER_PAUSED)
         paused = 1;
@@ -395,7 +395,7 @@ void PaletteCycle_Step(void) {
 #undef TILESET_ANIM_ARGUMENT_MASK
 #undef TILESET_ANIM_MARKER
 #undef TILESET_ANIM_MARKER_PAUSED
-#undef TILESET_ANIM_MARKER_CHANNEL_MASK
+#undef TILESET_ANIM_MARKER_ANIMATION_MASK
 #undef TILESET_ANIM_RAM_TILE
 #undef TILESET_ANIM_RAM_WIDE_TILE
 #undef BLEND_SCRIPT_LOOP

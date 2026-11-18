@@ -21,10 +21,9 @@ enum AudioCommandMask {
 /// 21024 a second, and sound bias resolution 1 (from bits 23..20).
 #define AUDIO_INITIAL_MODE 0x0099FA00
 
-/// A sound for Sound_Play, as The Broken Seal's: bits 11..0 the sound number,
-/// 15..12 flags, with this game's ranges. SOUND_FADE_OUT_BGM, SOUND_KEEP_BGM,
-/// SOUND_FADE_OUT_ACTION_SE and SOUND_FADE_OUT_EXIT_SE are rows of the song
-/// table, in sounds.h.
+/// A sound for Sound_Play: bits 11..0 the sound number, 15..12 flags.
+/// SOUND_FADE_OUT_BGM, SOUND_KEEP_BGM, SOUND_FADE_OUT_ACTION_SE and
+/// SOUND_FADE_OUT_EXIT_SE are rows of the song table, in sounds.h.
 enum SoundControl {
   SOUND_NUM_MASK = 0xfff,
   SOUND_FLAGS_MASK = 0xf000,
@@ -54,9 +53,8 @@ enum MusicPlayerId {
   MUSIC_PLAYER_SE_LAST = 7
 };
 
-/// The reverb codes of The Broken Seal's mixer. This game's
-/// Sound_LoadReverbCode loads none of them, and Sound_GetReverbCode gives every
-/// music SOUND_REVERB_LONG.
+/// The mixer's reverb codes. Sound_LoadReverbCode loads none of them, and
+/// Sound_GetReverbCode gives every music SOUND_REVERB_LONG.
 enum SoundReverbCode {
   SOUND_REVERB_MONO,
   SOUND_REVERB_CROSSED,

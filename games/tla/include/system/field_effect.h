@@ -73,7 +73,7 @@ struct FieldEffect {
   /// 1/65536 turns per frame; zeroed by the spawner.
   u16 spin;
   s16 userValue; ///< Actor's; not named by this view
-  s32 countdown; ///< no TLA code names it
+  s32 countdown; ///< no code names it
   /// Called each frame while the effect is live: the spawner sets
   /// FieldEffect_UpdateMotionScaleAndSpin, or options.update.
   void (*update)(union FieldObject *object);
@@ -118,6 +118,10 @@ enum EffectDuration {
   EFFECT_SCRIPT_MEDIUM = 1, ///< held 46 frames
   EFFECT_SCRIPT_LONG = 2    ///< held 128 frames
 };
+
+/// Sixteen puffs of dust in a ring round the leader as he lands from above,
+/// the first thrown twice.
+#define DUST_RING_PUFFS 16
 
 /// The options of a spawned field effect, each used when its EFFECT_USE_ flag
 /// (or EFFECT_SCALE_TO_TARGET) is set.

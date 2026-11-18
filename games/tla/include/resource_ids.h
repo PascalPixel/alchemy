@@ -768,6 +768,19 @@ extern char ResourceId_WhirlwindMap;
 /// ShamanVillage_BlowAwaySand.
 extern char ResourceId_WhirlwindTiles;
 #define RESOURCE_WHIRLWIND_TILES ((s32)&ResourceId_WhirlwindTiles)
+/// Whirlwind's picture is drawn on BG0, the windows' layer: its tiles, two rows
+/// of WHIRLWIND_ROW_TILES (the top halves, then the bottom ones), go over BG
+/// tiles WHIRLWIND_TOP_TILE and WHIRLWIND_BOTTOM_TILE of character block 3, and
+/// its map, WHIRLWIND_MAP_WIDTH by WHIRLWIND_MAP_HEIGHT cells numbering them
+/// from WHIRLWIND_MAP_FIRST_TILE, into the windows' screen block, whose other
+/// entries take WHIRLWIND_FILL_TILE.
+#define WHIRLWIND_ROW_TILES 26
+#define WHIRLWIND_TOP_TILE 320
+#define WHIRLWIND_BOTTOM_TILE 352
+#define WHIRLWIND_MAP_FIRST_TILE 512
+#define WHIRLWIND_MAP_WIDTH 16
+#define WHIRLWIND_MAP_HEIGHT 18
+#define WHIRLWIND_FILL_TILE 16
 /// Loaded by AirsRockInside_WakeHallStatue, AirsRockInside_WakeVialChestStatue,
 /// AirsRock_WhirlwindOpensTheTop and JupiterLighthouse_FlashSky.
 extern char ResourceId_LightningMap;

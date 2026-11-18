@@ -40,9 +40,8 @@ enum {
   COMPOSITE_MAX,
   COMPOSITE_ADDITIVE
 };
-// The Lost Age numbers its blitter modes in the reverse of The Broken Seal's
-// order: BattleEffect_BuildBlitter builds additive for 0, max for 1,
-// transparent for 2.
+// BattleEffect_BuildBlitter builds additive for 0, max for 1, transparent for
+// 2.
 enum { BLITTER_ADDITIVE, BLITTER_MAX, BLITTER_TRANSPARENT, BLITTER_COPY };
 s32 BattleEffect_BuildBlitter(s32 slot, s32 width_shift, s32 height_shift,
                               s32 flags, u32 mode);

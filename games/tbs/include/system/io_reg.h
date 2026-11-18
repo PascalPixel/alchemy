@@ -56,6 +56,8 @@ enum DisplayControl {
   DISPCNT_WIN1_ON = 0x4000,
   DISPCNT_OBJWIN_ON = 0x8000 ///< the sprite window OBJ_MODE_WINDOW draws
 };
+/// REG_DISPCNT's three video mode bits, which hold a DISPCNT_MODE_ value.
+#define DISPCNT_MODE_MASK 0x0007
 // The text backgrounds' scroll offsets, write-only: the map pixel, 0 to 511,
 // at the screen's left edge (HOFS) or top edge (VOFS).
 #define REG_BG1HOFS (*(volatile u16 *)0x04000014) ///< BG1, horizontal
@@ -239,6 +241,10 @@ enum DisplayControl {
 #define BG_SCREEN_SIZE 2048 ///< bytes in a screen block, 2 KB
 /// Tiles in a row of a screen block, whose map is 32 tiles square.
 #define BG_SCREEN_WIDTH 32
+/// The bytes of one row of a text background map, 32 entries.
+#define MAP_ROW_BYTES (BG_SCREEN_WIDTH * 2)
+/// Two background map entries side by side, written a word at a time.
+#define MAP_ENTRY_PAIR(left, right) ((right) << 16 | (left))
 /// A screen block entry's 16-colour palette, in its top four bits (its flip
 /// bits are window.h's TILE_HFLIP and TILE_VFLIP).
 #define BG_TILE_PALETTE(n) ((n) << 12)
@@ -338,14 +344,21 @@ enum DisplayControl {
 #define DMA_FILL_HALFWORDS(n) ((DMA_ENABLE | DMA_SRC_FIXED) << 16 | (n))
 #define DMA_FILL_WORDS(n) ((DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 | (n))
 #define DMA_COPY_HALFWORDS(n) (DMA_ENABLE << 16 | (n))
+/// n halfwords copied from the last back to the first, source and destination
+/// stepping down, so that a run can move up over itself.
+#define DMA_COPY_HALFWORDS_DOWN(n)                                             \
+  ((DMA_ENABLE | DMA_SRC_DEC | DMA_DEST_DEC) << 16 | (n))
 /// A halfword each HBlank, as for a scroll or a window edge.
 #define DMA_HBLANK_HALFWORD_PER_LINE                                           \
   ((DMA_ENABLE | DMA_START_HBLANK | DMA_REPEAT | DMA_DEST_RELOAD) << 16 | 1)
-/// A word each HBlank, as for a pair of registers written together.
-#define DMA_HBLANK_WORD_PER_LINE                                               \
+/// n words each HBlank, as for the affine registers of a background written
+/// together.
+#define DMA_HBLANK_WORDS_PER_LINE(n)                                           \
   ((DMA_ENABLE | DMA_START_HBLANK | DMA_REPEAT | DMA_DEST_RELOAD | DMA_32BIT)  \
        << 16 |                                                                 \
-   1)
+   (n))
+/// A word each HBlank, as for a pair of registers written together.
+#define DMA_HBLANK_WORD_PER_LINE DMA_HBLANK_WORDS_PER_LINE(1)
 
 /// BIOS CpuSet control flags, above its count.
 #define CPU_SET_SRC_FIXED 0x01000000
@@ -393,9 +406,15 @@ enum ObjMode {
 /// An affine sprite's matrix number, attribute 1's bits 9 to 13, in the attr01
 /// word.
 #define OBJ_MATRIX(n) ((n) << 25)
+/// An affine parameter in the high half of an OamWords entry's attr2 word: the
+/// entries 4n to 4n + 3 hold affine matrix n's four.
+#define OBJ_AFFINE_PARAMETER(value) ((value) << 16)
 /// Attribute 1's nine bits of x: a sprite left of the screen is at 512 less
 /// its distance.
 #define OBJ_X_MASK 0x1ff
+/// A sprite's place in its attr01 word: x in attribute 1's nine bits and y in
+/// attribute 0's eight, each wrapped as the screen wraps them.
+#define OBJ_POSITION(x, y) (OBJ_X((x) & OBJ_X_MASK) | ((y) & 0xff))
 /// Attribute 2's ten bits of tile number, counted in 4-bit tiles from the
 /// start of sprite VRAM.
 #define OBJ_TILE_MASK 0x3ff

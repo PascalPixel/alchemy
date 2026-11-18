@@ -41,7 +41,7 @@ void OseniaCliffs_CyclePalette(void);
 
 /// Set once the party has lashed the second rope, which stays tied for the
 /// visit.
-#define FLAG_ROPE_LASHED 0x203
+#define FLAG_OSENIA_CLIFFS_ROPE_LASHED 0x203
 
 /// The actors, numbering the rows of gActorPlacements.
 enum OseniaCliffsActorId {
@@ -74,7 +74,7 @@ void Rope_Lash(s32 a, s32 b, s32 c);
 /// ACTOR_FOURTH_ROPE_POST, and it stays tied for the rest of the visit.
 void OseniaCliffs_LashRope(void) {
   Rope_Lash(1, ACTOR_THIRD_ROPE_POST, ACTOR_FOURTH_ROPE_POST);
-  Event_SetFlag(FLAG_ROPE_LASHED);
+  Event_SetFlag(FLAG_OSENIA_CLIFFS_ROPE_LASHED);
 }
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
@@ -98,7 +98,7 @@ s32 Scene_Initialize(void) {
   Rope_Tie(0, ACTOR_SECOND_ROPE_POST, ACTOR_FIRST_ROPE_POST);
   Actor_SetAnimation(ACTOR_SECOND_ROPE_POST, 4);
   Actor_SetAnimation(ACTOR_FIRST_ROPE_POST, 4);
-  FieldRope_Place(1, FLAG_ROPE_LASHED, ACTOR_THIRD_ROPE_POST,
+  FieldRope_Place(1, FLAG_OSENIA_CLIFFS_ROPE_LASHED, ACTOR_THIRD_ROPE_POST,
                   ACTOR_FOURTH_ROPE_POST);
   return 0;
 }
@@ -186,7 +186,7 @@ struct Trigger gSceneEvents[] = {
      CONDITION_ALWAYS, MSGNO(MsgMadraBriggsNewShip)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WAVE_DAMAGE,
      CONDITION_ALWAYS, MSGNO(MsgMadraPirateAttackParties)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_THIRD_ROPE_POST, FLAG_ROPE_LASHED,
-     EVENT(OseniaCliffs_LashRope)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_THIRD_ROPE_POST,
+     FLAG_OSENIA_CLIFFS_ROPE_LASHED, EVENT(OseniaCliffs_LashRope)},
     {TRIGGER_TABLE_END},
 };

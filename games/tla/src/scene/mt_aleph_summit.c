@@ -78,17 +78,11 @@ extern u32 gFieldEffect_LongScript[];
 void FieldCamera_WaitForArrival(void);
 
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
-#define EFFECT_SPAWN FieldEffect_Spawn
-#define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
-#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 

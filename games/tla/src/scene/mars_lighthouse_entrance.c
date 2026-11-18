@@ -87,10 +87,6 @@
 #define FLAG_LAPIS_SECOND_SHEET_SHOWN FLAG_SCENE_TEMP_31
 #define FLAG_HIDDEN_CIRCLE_SHEET_SHOWN FLAG_SCENE_TEMP_32
 #define FLAG_DRAGON_FACE_AWAKE FLAG_SCENE_TEMP_34
-/// The cell the leader fell through, its column and row, a byte of area flags
-/// each, for the room below to land him under it.
-#define FLAG_BYTE_FALL_COLUMN FLAG_AREA_TEMP_40
-#define FLAG_BYTE_FALL_ROW FLAG_AREA_TEMP_48
 
 /// The teleport circles that lead within one room, each the collision code of
 /// its circle's cells, its exit and the entrance on it: the Teleport Lapis
@@ -119,9 +115,6 @@ enum {
 /// MAP_CELL_CLIMBABLE.
 #define MAP_CELL_FLOOR_HOLE MAP_CELL_CLIMBABLE
 
-/// The sprite that hides the leader as he sinks through a hole: 16 by 32
-/// pixels, eight tiles of colour 1.
-#define HOLE_MASK_BYTES (8 * TILE_SIZE_4BPP)
 /// The frames the leader takes to shrink and sink out of sight through a hole.
 #define SINK_FRAMES 40
 
@@ -134,10 +127,6 @@ enum { LAPIS_STATUE_BLOCKING_COLUMN = 20, VALKYRIE_STATUE_BLOCKING_COLUMN = 5 };
 /// pushed west from its place, from where it slides on to the ice's west end,
 /// and pushed east from there, from where it slides back.
 enum { ICE_STATUE_PUSHED_WEST_COLUMN = 11, ICE_STATUE_PUSHED_EAST_COLUMN = 10 };
-
-/// The spawner's flags that ask for one of the options' fields
-/// (EFFECT_USE_PALETTE and up).
-#define EFFECT_OPTION_MASK 0xffff0000
 
 /// The first hall (Fugue's room): two ice cones, the first placed out of sight
 /// at the map's corner, the shaft of ice Grind cracks (an unseen marker on it)
@@ -1529,19 +1518,7 @@ s32 MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *position);
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 a);
 extern u8 gInventorySnapshot[];
 
-#define KNOCK_BACK Leader_KnockBack
-#define KNOCK_BACK_TAKE_DAMAGE Party_TakeFallDamage
-#define KNOCK_BACK_BLINK Actor_Blink
-#define KNOCK_BACK_SET_ANIMATION Actor_SelectAnimation
-#define KNOCK_BACK_CELL_ATTRIBUTE MapGrid_GetCellAttributeLowNibbleOrBump
-#define KNOCK_BACK_CHECK_COLLISION MapGrid_CheckCollision
 #include "shared/leader_knock_back.c"
-#undef KNOCK_BACK
-#undef KNOCK_BACK_TAKE_DAMAGE
-#undef KNOCK_BACK_BLINK
-#undef KNOCK_BACK_SET_ANIMATION
-#undef KNOCK_BACK_CELL_ATTRIBUTE
-#undef KNOCK_BACK_CHECK_COLLISION
 
 /// Hit by the flames, the leader is knocked back.
 void MarsLighthouseEntrance_KnockBackIfHit(void) {

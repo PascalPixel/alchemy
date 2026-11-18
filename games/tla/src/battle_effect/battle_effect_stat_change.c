@@ -16,9 +16,9 @@ enum StatBoostMode {
   STAT_BOOST_FLASH,   ///< a pane of light, in Mars colours
   STAT_BOOST_IRON,    ///< a shield, in Venus colours, the backdrop turning grey
   STAT_BOOST_UNUSED,  ///< a shield, in Mercury colours; no ability's effect
-                     ///< plays it
-  STAT_BOOST_SHADE,         ///< a pane of light, in Mercury colours
-  STAT_BOOST_COAL,          ///< a gust of wind, in Mars colours
+                      ///< plays it
+  STAT_BOOST_SHADE,   ///< a pane of light, in Mercury colours
+  STAT_BOOST_COAL,    ///< a gust of wind, in Mars colours
   STAT_BOOST_CRUCIBLE_FIRE, ///< Impact's burst without the gathering lights
   STAT_BOOST_STEAM, ///< a shield, in Mercury colours, the backdrop turning to
                     ///< Jupiter's

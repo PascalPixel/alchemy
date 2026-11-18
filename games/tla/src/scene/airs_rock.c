@@ -2048,8 +2048,8 @@ u32 gAirsRock_WhirlwindRisesScript[] = {
 
 s32 gAirsRock_RubbleScript[] = {
     SC_WAIT(1),
-    SC_ADD(SW_SCALE_X, -1310),
-    SC_ADD(SW_SCALE_Y, -1310),
+    SC_ADD(SW_SCALE_X, -FIXED_ONE / 50),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 50),
     SC_LOOP(32, SC_TOP),
     SC_WAIT(1),
     SC_POSITION(0, 0, 0),

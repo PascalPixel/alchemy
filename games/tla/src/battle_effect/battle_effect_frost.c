@@ -5,16 +5,35 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-#define CHIPS ((struct Particle *)Ram_MapCellBuffer)
+/// The variant's row of gFrost_Timings, read by column (RISE_MOTES,
+/// RISE_COLUMNS, RISE_FRAME).
+#define FROST_TIMING(variant, column) gFrost_Timings[(variant) * 3 + (column)]
 
-#define TIMING(field) gFrost_Timings[args->variant * 3 + (field)]
-
-// Motes swirl up around the targets while ice pillars rise one by one;
-// then everything bursts.
+/// A row of gFrost_MoundSpots.
+enum {
+  FROST_MOUND_X,   ///< canvas x of the mound's left edge
+  FROST_MOUND_FOOT ///< canvas y of its foot
+};
+#define FROST_MOUND_SPOT(i, column) gFrost_MoundSpots[(i) * 2 + (column)]
 
 /// The ice mounds' pictures in IceChipSheet are all as wide; their heights are
 /// gFrost_MoundHeights.
 #define FROST_MOUND_WIDTH 32
+
+/// The motes still drawn once they burst, of the variant's RISE_MOTES.
+#define FROST_BURST_MOTES 16
+/// How far below the centre the motes sink before the burst, in pixels; they
+/// are drawn only between this depth and as high above.
+#define FROST_MOTE_DEPTH 48
+/// The ice chips thrown up at the burst; only the first FROST_CHIPS_DRAWN are
+/// drawn.
+#define FROST_CHIPS 32
+#define FROST_CHIPS_DRAWN 24
+/// The sparkles that rise over the burst.
+#define FROST_SPARKLES 32
+/// A sparkle's frames: two for each of gBattleEffect_SparklePictures' nine,
+/// counted down.
+#define FROST_SPARKLE_LIFE 18
 
 /// Motes of ice spiral down and in while mounds of ice spring up; at the burst
 /// the motes spread and rise, chips fly up and sparkles rise.
@@ -24,11 +43,11 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
-  u8 *dots;
+  u8 *sparkleSheet;
   DrawRectangle *draw;
   s32 count;
-  s32 ymin;
-  s32 ymax;
+  s32 lowest;
+  s32 highest;
   FIXED xyz[3];
   struct ScreenPoint screen;
   FIXED point[3];
@@ -38,10 +57,11 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  dots = Ram_HeapSlots->battleSheet;
+  sparkleSheet = Ram_HeapSlots->battleSheet;
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress(RESOURCE_ICE_CHIP_SHEET, work->sheet, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_SPARKLE_DOTS, dots, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_SPARKLE_DOTS, sparkleSheet, 0, 0);
+  /* FAKEMATCH(temporary): draw holds pair; the plain form calls pair[1]. */
   BattleEffect_FetchRectangleBlitters(0, draw = pair);
 
   // A mote: x holds its angle, z its radius, y its height.
@@ -57,175 +77,215 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   if (args->side == EFFECT_SIDE_PARTY)
     REG_BG2X = -(NARROW_CANVAS_PARTY_X << 8);
 
-  for (frame = 0; frame != TIMING(RISE_FRAME) + 50; frame++) {
-    ymin = toFIXED(120);
-    ymax = 0;
-    if (frame == TIMING(RISE_FRAME) + 11)
+  for (frame = 0; frame != FROST_TIMING(args->variant, RISE_FRAME) + 50;
+       frame++) {
+    lowest = toFIXED(120);
+    highest = 0;
+    if (frame == FROST_TIMING(args->variant, RISE_FRAME) + 11)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
-    point[0] = 0;
-    point[1] = 0;
-    point[2] = toFIXED(512);
+    SET_VECTOR(point, 0, 0, toFIXED(512));
     Matrix_Initialize();
     Matrix_TranslateVector(point);
     if (frame >= 36 && frame < 64 && (frame & 3) == 0)
       Sound_PlayFar(SE_ICE);
     if (frame == 85)
       Sound_PlayFar(SE_WHOOSH);
-    for (i = 0; i != args->targetCount; i++) {
+    EFFECT_FOR_EACH_TARGET(i, args) {
       if (frame == i * 4 + 40)
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_BLUE_TINT,
                                  POSE_DAMAGE, TINT_KEEP, 0);
     }
 
-    // The motes: before the burst they close in and climb to 48 pixels as
-    // they turn; after it they spread and fall, and their heights bound the
-    // smoke.
-    if (frame < TIMING(RISE_FRAME))
-      count = TIMING(RISE_MOTES);
+    // Motes spiral in and sink.
+    if (frame < FROST_TIMING(args->variant, RISE_FRAME))
+      count = FROST_TIMING(args->variant, RISE_MOTES);
     else
-      count = 16;
-    if (frame < TIMING(RISE_FRAME) + 35) {
+      count = FROST_BURST_MOTES;
+    if (frame < FROST_TIMING(args->variant, RISE_FRAME) + 35) {
       for (i = 0; i != count; i++) {
         if (frame > i) {
-          s32 cel = i % 8;
+          s32 picture = i % 8;
 
           mote = &work->particles[i];
-          if (mote->y < INTtoFIXED(48 - i / 2) && mote->y > -toFIXED(48)) {
-            struct ScreenPoint *pos;
+          if (mote->y < INTtoFIXED(FROST_MOTE_DEPTH - i / 2) &&
+              mote->y > -toFIXED(FROST_MOTE_DEPTH)) {
+            struct ScreenPoint *position;
             u32 width;
             u32 height;
 
-            xyz[0] = mote->z * Trig_Sin(mote->x);
-            xyz[1] = mote->y;
-            xyz[2] = mote->z * Trig_Cos(mote->x);
-            EffectPosition_ProjectPoint(xyz, pos = &screen);
-            pos->x = (pos->x >> 17) + 64;
-            pos->y = FIXED_INTEGER_PART(pos->y) + 60;
-            draw[1](canvas, work->sheet + gFrost_MoteCells[cel],
-                    pos->x - ((width = gFrost_MoteWidths[cel]) >> 1),
-                    pos->y - ((height = gFrost_MoteHeights[cel]) >> 1), width,
-                    height);
+            SET_VECTOR(xyz, mote->z * Trig_Sin(mote->x), mote->y,
+                       mote->z * Trig_Cos(mote->x));
+            /* FAKEMATCH(temporary): position holds &screen; the plain form
+               writes screen.x and screen.y. */
+            EffectPosition_ProjectPoint(xyz, position = &screen);
+            position->x = (FIXEDtoINT(position->x) >> 1) + 64;
+            position->y = FIXED_INTEGER_PART(position->y) + 60;
+            // UB: width is assigned in one argument and read in another.
+#ifdef UBFIX
+            width = gFrost_MoteWidths[picture];
+            height = gFrost_MoteHeights[picture];
+            draw[1](canvas, work->sheet + gFrost_MoteCells[picture],
+                    position->x - (width >> 1), position->y - (height >> 1),
+                    width, height);
+#else
+            draw[1](canvas, work->sheet + gFrost_MoteCells[picture],
+                    position->x - ((width = gFrost_MoteWidths[picture]) >> 1),
+                    position->y - ((height = gFrost_MoteHeights[picture]) >> 1),
+                    width, height);
+#endif
           }
-          if (frame < TIMING(RISE_FRAME)) {
+          if (frame < FROST_TIMING(args->variant, RISE_FRAME)) {
             if (frame > i + 16) {
               if (mote->z > 4)
                 mote->z -= 2;
-              if (mote->y < toFIXED(48))
+              if (mote->y < toFIXED(FROST_MOTE_DEPTH))
                 mote->y += toFIXED(5);
               mote->x += TRIG_TURN / 128;
             }
           } else {
             mote->z += 8;
             mote->y -= INTtoFIXED(i % 5 + 2);
-            if (ymin > mote->y)
-              ymin = mote->y;
-            if (ymax < mote->y)
-              ymax = mote->y;
+            if (lowest > mote->y)
+              lowest = mote->y;
+            if (highest < mote->y)
+              highest = mote->y;
           }
         }
       }
     }
-    ymin += toFIXED(64);
-    ymax += toFIXED(64);
+    lowest += toFIXED(64);
+    highest += toFIXED(64);
 
-    // The pillars, 32 pixels wide: one more every three frames from frame
-    // 36, drawn MAX for the last seven frames before the burst.
-    if (frame < TIMING(RISE_FRAME)) {
-      for (i = 0; i != TIMING(RISE_COLUMNS); i++) {
+    // Ice mounds spring up.
+    if (frame < FROST_TIMING(args->variant, RISE_FRAME)) {
+      for (i = 0; i != FROST_TIMING(args->variant, RISE_COLUMNS); i++) {
         if (i < (frame - 36) / 3) {
-          s32 cel = i % 3;
+          s32 picture = i % 3;
           u32 height;
 
-          if (frame >= TIMING(RISE_FRAME) - 7) {
-            draw[1](canvas, work->sheet + gFrost_MoundPictures[cel],
-                    gFrost_MoundSpots[i * 2],
-                    gFrost_MoundSpots[i * 2 + 1] -
-                        (height = gFrost_MoundHeights[cel]),
+          if (frame >= FROST_TIMING(args->variant, RISE_FRAME) - 7) {
+#ifdef UBFIX
+            height = gFrost_MoundHeights[picture];
+            draw[1](canvas, work->sheet + gFrost_MoundPictures[picture],
+                    FROST_MOUND_SPOT(i, FROST_MOUND_X),
+                    FROST_MOUND_SPOT(i, FROST_MOUND_FOOT) - height,
                     FROST_MOUND_WIDTH, height);
+#else
+            draw[1](canvas, work->sheet + gFrost_MoundPictures[picture],
+                    FROST_MOUND_SPOT(i, FROST_MOUND_X),
+                    FROST_MOUND_SPOT(i, FROST_MOUND_FOOT) -
+                        (height = gFrost_MoundHeights[picture]),
+                    FROST_MOUND_WIDTH, height);
+#endif
           } else {
-            pair[0](canvas, work->sheet + gFrost_MoundPictures[cel],
-                    gFrost_MoundSpots[i * 2],
-                    gFrost_MoundSpots[i * 2 + 1] -
-                        (height = gFrost_MoundHeights[cel]),
+#ifdef UBFIX
+            height = gFrost_MoundHeights[picture];
+            pair[0](canvas, work->sheet + gFrost_MoundPictures[picture],
+                    FROST_MOUND_SPOT(i, FROST_MOUND_X),
+                    FROST_MOUND_SPOT(i, FROST_MOUND_FOOT) - height,
                     FROST_MOUND_WIDTH, height);
+#else
+            pair[0](canvas, work->sheet + gFrost_MoundPictures[picture],
+                    FROST_MOUND_SPOT(i, FROST_MOUND_X),
+                    FROST_MOUND_SPOT(i, FROST_MOUND_FOOT) -
+                        (height = gFrost_MoundHeights[picture]),
+                    FROST_MOUND_WIDTH, height);
+#endif
           }
         }
       }
     }
 
-    // The chips: at the burst 32 leap up from below (24 are drawn).
-    if (frame == TIMING(RISE_FRAME)) {
-      for (i = 0; i != 32; i++) {
-        struct Particle *chip = &CHIPS[i];
+    // Chips fly up at the burst.
+    // BUG: velocityX is never set, so a chip drifts sideways by whatever word
+    // its PARTICLES slot last held. Nothing in a battle clears that buffer,
+    // the map grid's cells, so the word is the field's cells or an earlier
+    // effect's particles or pictures.
+    if (frame == FROST_TIMING(args->variant, RISE_FRAME)) {
+      for (i = 0; i != FROST_CHIPS; i++) {
+        struct Particle *chip = &PARTICLES[i];
 
         SET_POSITION(chip, INTtoFIXED(Random16() & 127),
                      INTtoFIXED((Random16() & 15) + 80),
                      ((Random16() & 63) - 32) << 12);
+#ifdef BUGFIX
+        chip->velocityX = 0;
+#endif
         chip->velocityY = ((-Random16() & 15) - 16) << 13;
         chip->variant = (Random16() & 15) + 16;
       }
     }
-    if (frame >= TIMING(RISE_FRAME)) {
-      for (i = 0; i != 24; i++) {
-        struct Particle *chip = &CHIPS[i];
+    if (frame >= FROST_TIMING(args->variant, RISE_FRAME)) {
+      for (i = 0; i != FROST_CHIPS_DRAWN; i++) {
+        struct Particle *chip = &PARTICLES[i];
 
         if (chip->variant >= 0) {
-          s32 cel = i % 8;
+          s32 picture = i % 8;
 
-          draw[1](canvas, work->sheet + gFrost_ChipCells[cel],
+          draw[1](canvas, work->sheet + gFrost_ChipCells[picture],
                   FIXED_INTEGER_PART(chip->x), FIXED_INTEGER_PART(chip->y),
-                  gFrost_ChipWidths[cel], gFrost_ChipHeights[cel]);
+                  gFrost_ChipWidths[picture], gFrost_ChipHeights[picture]);
           chip->x += chip->velocityX;
           chip->y += chip->velocityY;
           chip->variant--;
         }
-        if (ymin > chip->y)
-          ymin = chip->y;
-        if (ymax < chip->y)
-          ymax = chip->y;
+        if (lowest > chip->y)
+          lowest = chip->y;
+        if (highest < chip->y)
+          highest = chip->y;
       }
     }
-    ymin >>= 16;
-    ymax >>= 16;
-    if (ymax <= ymin)
-      ymax = ymin + 1;
+    lowest = FIXEDtoINT(lowest);
+    highest = FIXEDtoINT(highest);
+    if (highest <= lowest)
+      highest = lowest + 1;
 
-    // The smoke: from the burst it fills the height of the motes and chips
-    // and rises half a pixel a frame.
-    if (frame == TIMING(RISE_FRAME)) {
-      for (i = 0; i != 32; i++) {
-        struct Particle *puff = &work->particles[i];
+    // Sparkles rise over the motes and chips.
+    if (frame == FROST_TIMING(args->variant, RISE_FRAME)) {
+      for (i = 0; i != FROST_SPARKLES; i++) {
+        struct Particle *sparkle = &work->particles[i];
 
-        puff->velocityX = INTtoFIXED(Random16() & 127);
-        if (ymax == ymin)
-          puff->velocityY = INTtoFIXED(ymin);
+        sparkle->velocityX = INTtoFIXED(Random16() & 127);
+        if (highest == lowest)
+          sparkle->velocityY = INTtoFIXED(lowest);
         else
-          puff->velocityY = INTtoFIXED(Random16() % (ymax - ymin) + ymin);
-        puff->variant = (Random16() & 15) + 20;
+          sparkle->velocityY =
+              INTtoFIXED(Random16() % (highest - lowest) + lowest);
+        sparkle->variant = (Random16() & 15) + 20;
       }
     }
-    if (frame >= TIMING(RISE_FRAME)) {
-      s32 rise = (frame - TIMING(RISE_FRAME)) / 2;
+    if (frame >= FROST_TIMING(args->variant, RISE_FRAME)) {
+      s32 rise = (frame - FROST_TIMING(args->variant, RISE_FRAME)) / 2;
 
-      for (i = 0; i != 32; i++) {
-        struct Particle *puff = &work->particles[i];
+      for (i = 0; i != FROST_SPARKLES; i++) {
+        struct Particle *sparkle = &work->particles[i];
 
-        if (puff->variant >= 0 && puff->variant <= 17) {
-          s32 cel = (17 - puff->variant) / 2;
+        if (sparkle->variant >= 0 && sparkle->variant < FROST_SPARKLE_LIFE) {
+          s32 picture = (FROST_SPARKLE_LIFE - 1 - sparkle->variant) / 2;
           u32 size;
 
-          draw[1](canvas, dots + gBattleEffect_SparklePictures[cel],
-                  FIXED_INTEGER_PART(puff->velocityX) -
-                      ((size = gBattleEffect_SparkleSizes[cel]) >> 1),
-                  FIXED_INTEGER_PART(puff->velocityY) - (size >> 1) - rise,
+#ifdef UBFIX
+          size = gBattleEffect_SparkleSizes[picture];
+          draw[1](canvas, sparkleSheet + gBattleEffect_SparklePictures[picture],
+                  FIXED_INTEGER_PART(sparkle->velocityX) - (size >> 1),
+                  FIXED_INTEGER_PART(sparkle->velocityY) - (size >> 1) - rise,
                   size, size);
+#else
+          draw[1](canvas, sparkleSheet + gBattleEffect_SparklePictures[picture],
+                  FIXED_INTEGER_PART(sparkle->velocityX) -
+                      ((size = gBattleEffect_SparkleSizes[picture]) >> 1),
+                  FIXED_INTEGER_PART(sparkle->velocityY) - (size >> 1) - rise,
+                  size, size);
+#endif
         }
-        puff->variant--;
-        if ((puff->variant == -1 || puff->variant == 17) &&
-            frame < TIMING(RISE_FRAME) + 35) {
-          puff->variant = 17;
-          puff->velocityX = INTtoFIXED(Random16() & 127);
-          puff->velocityY = INTtoFIXED(Random16() % (ymax - ymin) + ymin);
+        sparkle->variant--;
+        if ((sparkle->variant == -1 ||
+             sparkle->variant == FROST_SPARKLE_LIFE - 1) &&
+            frame < FROST_TIMING(args->variant, RISE_FRAME) + 35) {
+          sparkle->variant = FROST_SPARKLE_LIFE - 1;
+          sparkle->velocityX = INTtoFIXED(Random16() & 127);
+          sparkle->velocityY =
+              INTtoFIXED(Random16() % (highest - lowest) + lowest);
         }
       }
     }
@@ -236,4 +296,13 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
-#undef CHIPS
+
+#undef FROST_TIMING
+#undef FROST_MOUND_SPOT
+#undef FROST_MOUND_WIDTH
+#undef FROST_BURST_MOTES
+#undef FROST_MOTE_DEPTH
+#undef FROST_CHIPS
+#undef FROST_CHIPS_DRAWN
+#undef FROST_SPARKLES
+#undef FROST_SPARKLE_LIFE

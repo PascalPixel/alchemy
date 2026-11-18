@@ -1,8 +1,9 @@
 /// @file
-/// Magma Rock's inside, the volcano's heart: the Moai that flood its rooms with
-/// lava when Burst wakes them, the platforms that ride the lava and the gates
-/// that drain it, the pillars pushed into it, Fury the Djinni, and deep inside
-/// the tablet where Jenna learns Blaze and the flames Blaze moves.
+/// Magma Rock's inside, the volcano's heart: the statues whose fire, once Burst
+/// wakes them, sets great stone faces pouring lava into its rooms, the
+/// platforms that ride the lava and the floor switches whose gates drain it,
+/// the pillars pushed into it, Fury the Djinni, and deep inside the tablet
+/// where Jenna learns Blaze and the flames Blaze moves.
 
 #include "sprite_ids.h"
 #include "graphics/palette_buffers.h"

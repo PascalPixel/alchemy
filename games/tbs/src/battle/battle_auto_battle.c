@@ -91,9 +91,8 @@ s32 AutoBattle_RunAction(struct BattleAction *action) {
 
   action->target = BattleAbility_ReplaceDefeated(action);
   view = gBattleBackgroundWork;
-  // Here any unit id above 4 counts as an enemy, Jenna's 5 included
-  // (character_ids.h).
-  if (action->unitId > 4)
+  // Here any unit id above Felix's counts as an enemy, Jenna's included.
+  if (action->unitId > FELIX)
     yaw = YAW_ENEMY_ACTION;
   else
     yaw = YAW_PARTY_ACTION;

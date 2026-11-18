@@ -1,8 +1,9 @@
 /// @file
-/// Magma Rock's inside, the volcano's heart: the Moai that flood its rooms with
-/// lava when Burst wakes them, the platforms that ride the lava and the gates
-/// that drain it, the pillars pushed into it, Fury the Djinni, and deep inside
-/// the tablet where Jenna learns Blaze and the flames Blaze moves.
+/// Magma Rock's inside, the volcano's heart: the statues whose fire, once Burst
+/// wakes them, sets great stone faces pouring lava into its rooms, the
+/// platforms that ride the lava and the floor switches whose gates drain it,
+/// the pillars pushed into it, Fury the Djinni, and deep inside the tablet
+/// where Jenna learns Blaze and the flames Blaze moves.
 
 #include "sprite_ids.h"
 #include "graphics/palette_buffers.h"
@@ -123,7 +124,8 @@ enum MagmaRockInsideLuckyMedalChestActorId {
 };
 
 /// The entrance: the statue whose fire floods it, the columns standing in the
-/// lava, the pillar pushed into it and the lost Mars Djinni.
+/// lava, the pillar pushed into it, an unseen marker on its floor switch and
+/// the Mars Djinni Fire19.
 enum MagmaRockInsideEntranceActorId {
   ACTOR_STATUE = ACTOR_FIRST_PLACED,
   ACTOR_COLUMN_A,
@@ -133,15 +135,14 @@ enum MagmaRockInsideEntranceActorId {
   ACTOR_COLUMN_E,
   ACTOR_COLUMN_F,
   ACTOR_ENTRANCE_PILLAR,
-  ACTOR_ENTRANCE_MARKER, ///< unseen (SPRITE_UNSEEN_MARKER), raised over the
-                         ///< lava
-  ACTOR_FIRE19           ///< the spare Mars Djinni "Fire19"
+  ACTOR_ENTRANCE_SWITCH_MARKER,
+  ACTOR_FIRE19 ///< the spare Mars Djinni "Fire19"
 };
 
-/// Fury's room: the statue, two lava platforms, the pillar pushed into the
-/// lava, the tightrope's posts and Fury.
+/// Fury's room: the statue, an unseen marker on its floor switch, two lava
+/// platforms, the pillar pushed into the lava, the tightrope's posts and Fury.
 enum MagmaRockInsideFuryActorId {
-  ACTOR_FURY_MARKER = ACTOR_FIRST_PLACED + 1, ///< unseen (SPRITE_UNSEEN_MARKER)
+  ACTOR_FURY_SWITCH_MARKER = ACTOR_FIRST_PLACED + 1,
   ACTOR_WEST_PLATFORM,
   ACTOR_FURY_PILLAR,
   ACTOR_EAST_PLATFORM,
@@ -171,11 +172,12 @@ enum MagmaRockInsideCrackedPillarsActorId {
   ACTOR_LOWER_COLUMN
 };
 
-/// The Golem Core's room: two unseen markers raised over the lava and the two
-/// chains hanging from its ceiling, which Whirlwind swings.
+/// The Golem Core's room: unseen markers on its two floor switches and the two
+/// chains hanging down its wall either side of its doorway, which Whirlwind
+/// swings.
 enum MagmaRockInsideGolemCoreChestActorId {
-  ACTOR_MARKER_A = ACTOR_FIRST_PLACED,
-  ACTOR_MARKER_B,
+  ACTOR_NORTH_SWITCH_MARKER = ACTOR_FIRST_PLACED,
+  ACTOR_SOUTH_SWITCH_MARKER,
   ACTOR_HANGING_CHAIN_A,
   ACTOR_HANGING_CHAIN_B
 };
@@ -356,9 +358,9 @@ void Particle_UpdateFalling(void);
 
 void MagmaRockInside_FightFury(void);
 
-void MagmaRockInside_UnblockMovedPillar(void);
-void MagmaRockInside_BlockMovedPillar(void);
-void MagmaRockInside_PushPillarIntoLava(void);
+void MagmaRockInside_StartPushingPillar(void);
+void MagmaRockInside_FinishPushingPillar(void);
+void MagmaRockInside_LeapOverLava(void);
 
 void MagmaRockInside_DrainLava(void);
 
@@ -615,7 +617,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 /// When a pillar starts to be pushed: frees the cells it blocked.
-void MagmaRockInside_UnblockMovedPillar(void) {
+void MagmaRockInside_StartPushingPillar(void) {
   struct FieldWork *work;
   s16 scene;
 
@@ -636,7 +638,7 @@ void MagmaRockInside_UnblockMovedPillar(void) {
 
 /// When a pushed pillar comes to rest: blocks its cells again and puts it on
 /// the layer of the ground it rests on.
-void MagmaRockInside_BlockMovedPillar(void) {
+void MagmaRockInside_FinishPushingPillar(void) {
   struct Actor *actor = gFieldWork->movedBlock;
   s32 scene;
   s32 x;
@@ -757,10 +759,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-/// An object's update: every fourth frame it spawns a flame puff with
-/// its own script at a random point within 4 pixels of the object along z,
-/// moving along z at a random speed; every sixteenth frame it also plays sound
-/// SE_WHOOSH at the object.
+/// A statue's flying fire's update: it trails an ember every fourth frame, a
+/// few pixels to either side, and whooshes every sixteenth.
 void MagmaRockInside_TrailEmbers(struct Actor *actor) {
   struct EffectOptions options;
   u32 frame = gFrameCount;
@@ -782,18 +782,13 @@ void MagmaRockInside_TrailEmbers(struct Actor *actor) {
       &options);
 }
 
-/// Flashes an actor in colour 10 on the frames its mask picks.
+/// Tints an actor red on the frames its mask picks.
 void MagmaRockInside_FlashStatue(struct Actor *actor) {
   if (gFrameCount & actor->flashMask)
     FieldActor_SetSpriteColor(actor, SPRITE_COLOR_RED_TINT);
   else
     FieldActor_SetSpriteColor(actor, SPRITE_COLOR_NORMAL);
 }
-
-// The cell watch's table lookup over (id, cell, value) rows ended by
-// ACTOR_LIST_END: for the row of the cell under the watch, sets the watch's
-// object to the row's object and returns its value; otherwise returns the value
-// of the last row passed (0 for none).
 
 /// Looks up the cell under the field Psynergy in an (actor, cell, value) table
 /// ended by ACTOR_LIST_END: on a match, makes the row's actor the target and
@@ -825,11 +820,11 @@ extern s16 gMagmaRockInside_CrackedPillarsStatues[];
 
 void MagmaRockInside_FlashStatue(struct Actor *actor);
 
-/// The cell watch's callback: in modes 2 and 3 it finds the actor on the
-/// leader's cell in the room's table (the cracked pillars' room has its own)
-/// and sets it blinking (MagmaRockInside_FlashStatue) by frame-count bit 2 in
-/// mode 2 or bit 1 in mode 3.
-void MagmaRockInside_TargetStatue(s32 mode) {
+/// Burst on a statue's cell: at each small explosion (stage 2) and at the last
+/// blast (stage 3) it finds the statue in the room's table (the cracked
+/// pillars' room has its own) and sets it blinking red
+/// (MagmaRockInside_FlashStatue), faster at the last blast.
+void MagmaRockInside_TargetStatue(s32 stage) {
   u16 *table;
   struct FieldEffectWork *watch = Ram_HeapSlots->fieldEffectWork;
   s32 scene;
@@ -842,7 +837,7 @@ void MagmaRockInside_TargetStatue(s32 mode) {
   } else if (scene == SCENE_MAGMA_ROCK_INSIDE_CRACKED_PILLARS) {
     table = gMagmaRockInside_CrackedPillarsStatues;
   }
-  if (mode == 2) {
+  if (stage == 2) {
     struct Actor *actor;
 
     MagmaRockInside_FindStatue(table);
@@ -850,7 +845,7 @@ void MagmaRockInside_TargetStatue(s32 mode) {
     actor->flashMask = 4;
     actor->update = (void (*)(void))MagmaRockInside_FlashStatue;
   }
-  if (mode == 3) {
+  if (stage == 3) {
     struct Actor *actor;
 
     MagmaRockInside_FindStatue(table);
@@ -1054,9 +1049,10 @@ void MagmaRockInside_BurstCrackedPillar(s32 stage, s32 cue) {
     Actor_SelectAnimation(work->child, CRACKED_PILLAR_ANIMATION_CRUMBLE);
 }
 
-/// The leader springs onto the pillar ahead and pushes it into the lava, where
-/// it sinks to make a stepping stone.
-void MagmaRockInside_PushPillarIntoLava(void) {
+/// Stepping onto a cell at the lava's edge: with something standing in the lava
+/// a cell ahead, a sunken column or pillar or a lava platform, the leader
+/// springs onto it, keeping pace with it as it moves.
+void MagmaRockInside_LeapOverLava(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *target;
   FIXED position[3];
@@ -2031,19 +2027,20 @@ void MagmaRockInside_TrailSparks(struct Actor *actor) {
                     &options);
 }
 
-extern s32 gMagmaRockInside_BlazeCasterScript[];
-extern s32 gMagmaRockInside_TorchScript[];
-extern s32 gMagmaRockInside_SparkScript[];
-extern s32 gMagmaRockInside_BlazeWatcherScript[];
+extern s32 gMagmaRockInside_TabletRiseScript[];
+extern s32 gMagmaRockInside_RisingSparkScript[];
+extern s32 gMagmaRockInside_CirclingSparkScript[];
+extern s32 gMagmaRockInside_JennaRiseScript[];
 extern s32 gMagmaRockInside_OrbitScript[];
-extern s32 gMagmaRockInside_BlazeCasterReturnScript[];
-extern s32 gMagmaRockInside_BlazeWatcherReturnScript[];
+extern s32 gMagmaRockInside_TabletSettleScript[];
+extern s32 gMagmaRockInside_JennaSettleScript[];
 
-/// The Blaze tablet's lesson: flames burst round the first actor, sparks circle
-/// in to the second and rise round it, and the screen flashes white.
-void MagmaRockInside_LearnBlaze(s32 a, s32 b) {
-  struct Actor *first = Actor_GetById(a);
-  struct Actor *second = Actor_GetById(b);
+/// The Blaze tablet's lesson: the tablet lifts, shooting sparks up, sparks
+/// circle in to the one who learns and rise round her as she lifts too, and
+/// the screen flashes white.
+void MagmaRockInside_LearnBlaze(s32 tabletId, s32 learnerId) {
+  struct Actor *tablet = Actor_GetById(tabletId);
+  struct Actor *learner = Actor_GetById(learnerId);
   struct Actor *actor;
   struct Actor *spark;
   struct Actor *riser;
@@ -2055,31 +2052,31 @@ void MagmaRockInside_LearnBlaze(s32 a, s32 b) {
    * touches. */
   s32 unused[3];
 
-  script = gMagmaRockInside_BlazeWatcherScript;
+  script = gMagmaRockInside_JennaRiseScript;
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   Event_Wait(30);
   FieldCamera_SetSpeed(0.5);
-  FieldCamera_MoveToFX(toFIXED(first->x.part[0].integer),
-                       toFIXED(first->y.part[0].integer),
-                       toFIXED(first->z.part[0].integer), 1);
+  FieldCamera_MoveToFX(toFIXED(tablet->x.part[0].integer),
+                       toFIXED(tablet->y.part[0].integer),
+                       toFIXED(tablet->z.part[0].integer), 1);
   Event_PlaySound(SE_RUMBLE);
   MapGrid_SetShake(2, 2, 1);
   PaletteFade_SetSource(PALETTE_TINT_NONE, 0);
   PaletteFade_SetTarget(PALETTE_TINT_WARM, 1);
   PaletteFade_StartInterpolation(60);
-  first->motionFlags = 0;
-  first->acceleration = toFIXED(1) / 5;
-  first->speedLimit = toFIXED(1) / 5;
-  Actor_SetScript(a, gMagmaRockInside_BlazeCasterScript);
+  tablet->motionFlags = 0;
+  tablet->acceleration = toFIXED(1) / 5;
+  tablet->speedLimit = toFIXED(1) / 5;
+  Actor_SetScript(tabletId, gMagmaRockInside_TabletRiseScript);
   Event_PlaySound(SE_TABLET_RISE);
   Event_Wait(45);
-  Actor_SetSpriteColorById(a, SPRITE_COLOR_BLINK);
+  Actor_SetSpriteColorById(tabletId, SPRITE_COLOR_BLINK);
   REG_BLDALPHA = BLEND_ALPHA(8, 16);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
   i = 0;
   do {
-    actor = (struct Actor *)Import_ActorCreate(SPRITE_PARTICLE, first->x.fixed,
-                                               first->y.fixed, first->z.fixed);
+    actor = (struct Actor *)Import_ActorCreate(
+        SPRITE_PARTICLE, tablet->x.fixed, tablet->y.fixed, tablet->z.fixed);
     Event_PlaySound(SE_GLITTER);
     actor->x.fixed += ((Random16() & 31) - 16) << 16;
     actor->y.fixed += ((Random16() & 15) - 8) << 16;
@@ -2091,7 +2088,7 @@ void MagmaRockInside_LearnBlaze(s32 a, s32 b) {
     Actor_SelectAnimation(actor, 7);
     Actor_SetSpriteFlags(actor, 0);
     Actor_SetBlendMode(actor, 1);
-    Actor_StartScript(actor, gMagmaRockInside_TorchScript);
+    Actor_StartScript(actor, gMagmaRockInside_RisingSparkScript);
     REG_BLDALPHA = BLEND_ALPHA(4, 16);
     wait(2);
     REG_BLDALPHA = BLEND_ALPHA(10, 16);
@@ -2105,15 +2102,15 @@ void MagmaRockInside_LearnBlaze(s32 a, s32 b) {
   REG_BLDALPHA = BLEND_ALPHA(8, 16);
   wait(30);
   for (i = 0; i != LEARN_SPARKS; i++) {
-    spark = FieldActor_Create(SPRITE_PARTICLE, second->x.fixed, second->y.fixed,
-                              second->z.fixed);
+    spark = FieldActor_Create(SPRITE_PARTICLE, learner->x.fixed,
+                              learner->y.fixed, learner->z.fixed);
     Event_PlaySound(SE_SPARKS);
     spark->timer = (Random16() & 0x7fff) + DEGtoANG(180);
     spark->userValue = (((i & 1) << 1) - 1) << ((Random16() & 3) + 9);
     noMotion = 0;
     spark->motionFlags = noMotion;
     spark->riseBaseY = toFIXED(122);
-    spark->watchedActor = second;
+    spark->watchedActor = learner;
     spark->stepsLeft =
         (LEARN_SPARKS - i) * LEARN_SPARK_INTERVAL + LEARN_SPIRAL_FRAMES;
     FieldActor_SetSpriteColor(spark, SPRITE_COLOR_RED_TINT);
@@ -2123,13 +2120,13 @@ void MagmaRockInside_LearnBlaze(s32 a, s32 b) {
     Actor_SetBlendMode(spark, 1);
     FieldVector_AddPolarOffsetFX(spark->riseBaseY, spark->timer,
                                  &spark->x.fixed);
-    Actor_StartScript(spark, gMagmaRockInside_SparkScript);
+    Actor_StartScript(spark, gMagmaRockInside_CirclingSparkScript);
     if (i == 3) {
-      Actor_SetSpriteColorById(b, SPRITE_COLOR_BLINK);
-      second->motionFlags = noMotion;
-      second->acceleration = toFIXED(1) / 5;
-      second->speedLimit = toFIXED(1) / 5;
-      Actor_SetScript(b, script);
+      Actor_SetSpriteColorById(learnerId, SPRITE_COLOR_BLINK);
+      learner->motionFlags = noMotion;
+      learner->acceleration = toFIXED(1) / 5;
+      learner->speedLimit = toFIXED(1) / 5;
+      Actor_SetScript(learnerId, script);
     }
     wait(LEARN_SPARK_INTERVAL);
   }
@@ -2137,9 +2134,9 @@ void MagmaRockInside_LearnBlaze(s32 a, s32 b) {
   wait(16);
   i = 2;
   do {
-    riser = FieldActor_Create(SPRITE_PARTICLE, second->x.fixed,
-                              second->y.fixed + i * toFIXED(1) - toFIXED(8),
-                              second->z.fixed);
+    riser = FieldActor_Create(SPRITE_PARTICLE, learner->x.fixed,
+                              learner->y.fixed + i * toFIXED(1) - toFIXED(8),
+                              learner->z.fixed);
     riser->timer = Random16();
     riser->userValue = TRIG_TURN / 32;
     ((struct Orbit *)riser)->phase = i;
@@ -2147,7 +2144,7 @@ void MagmaRockInside_LearnBlaze(s32 a, s32 b) {
     riser->bounce = riser->x.fixed;
     riser->riseBaseY = 0;
     riser->gravity = riser->z.fixed;
-    riser->watchedActor = second;
+    riser->watchedActor = learner;
     riser->motionFlags = (u16)0;
     riser->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
     FieldActor_SetSpriteColor(riser, SPRITE_COLOR_RED_TINT);
@@ -2163,16 +2160,16 @@ void MagmaRockInside_LearnBlaze(s32 a, s32 b) {
   PaletteFade_StartInterpolation(8);
   wait(16);
   MapGrid_SetShake(0, 0, 0);
-  Actor_SetSpriteColorById(a, SPRITE_COLOR_NORMAL);
-  Actor_SetSpriteColorById(b, SPRITE_COLOR_NORMAL);
+  Actor_SetSpriteColorById(tabletId, SPRITE_COLOR_NORMAL);
+  Actor_SetSpriteColorById(learnerId, SPRITE_COLOR_NORMAL);
   Event_PlaySound(SE_FLASH);
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   PaletteFade_StartInterpolation(80);
-  Actor_SetScript(a, gMagmaRockInside_BlazeCasterReturnScript);
-  Actor_SetScript(b, gMagmaRockInside_BlazeWatcherReturnScript);
-  second->update = (void (*)(void))MagmaRockInside_TrailSparks;
+  Actor_SetScript(tabletId, gMagmaRockInside_TabletSettleScript);
+  Actor_SetScript(learnerId, gMagmaRockInside_JennaSettleScript);
+  learner->update = (void (*)(void))MagmaRockInside_TrailSparks;
   wait(120);
-  second->update = NULL;
+  learner->update = NULL;
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Scene_PlayMusic();
   wait(1);
@@ -2444,7 +2441,8 @@ s32 MagmaRockInside_SwapCells(u32 layer, s32 x, s32 y, s32 value);
     REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;      \
   }
 
-/// Stands an actor 20 pixels up, falling, as a platform others may stand on.
+/// Stands an actor 20 pixels up, falling, as a platform others may stand on:
+/// the unseen markers on the floor switches.
 static __inline__ void Raise(s32 id) {
   struct Actor *actor = Actor_GetById(id);
 
@@ -2495,7 +2493,7 @@ s32 Scene_Initialize(void) {
     MagmaRockInside_RaiseActorCells(gMagmaRockInside_Statues);
     Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
-    Raise(ACTOR_ENTRANCE_MARKER);
+    Raise(ACTOR_ENTRANCE_SWITCH_MARKER);
     if (Event_GetFlag(FLAG_ENTRANCE_FLOODED))
       MagmaRockInside_SetEntranceFlooded();
     else
@@ -2510,7 +2508,7 @@ s32 Scene_Initialize(void) {
     MagmaRockInside_RaiseActorCells(gMagmaRockInside_Statues);
     Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
-    Raise(ACTOR_FURY_MARKER);
+    Raise(ACTOR_FURY_SWITCH_MARKER);
     MagmaRockInside_StartLavaPlatform(ACTOR_WEST_PLATFORM,
                                       gMagmaRockInside_FuryWestPlatformPath,
                                       FLAG_FURY_FLOODED);
@@ -2601,8 +2599,8 @@ s32 Scene_Initialize(void) {
         ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
     HangingVine_Place(ACTOR_HANGING_CHAIN_A, 1);
     HangingVine_Place(ACTOR_HANGING_CHAIN_B, 1);
-    Raise(ACTOR_MARKER_A);
-    Raise(ACTOR_MARKER_B);
+    Raise(ACTOR_NORTH_SWITCH_MARKER);
+    Raise(ACTOR_SOUTH_SWITCH_MARKER);
     if (Event_GetFlag(FLAG_LOWER_ROOMS_FLOODED)) {
       MagmaRockInside_SwapCells(0, 22, 26, 0);
       MagmaRockInside_SwapCells(0, 25, 26, 0);
@@ -3238,8 +3236,8 @@ s32 gMagmaRockInside_FlameScript[] = {
     SC_END,
 };
 
-/// A flame bursting from the tablet: its actor script.
-s32 gMagmaRockInside_TorchScript[] = {                                                               
+/// A spark shooting up from the Blaze tablet as it lifts: its actor script.
+s32 gMagmaRockInside_RisingSparkScript[] = {                                                               
       SC_MOVE_BY(0, 160, 0),                                           
       SC_SYNC,                                                                 
       SC_RELEASE,                                                                 
@@ -3247,7 +3245,7 @@ s32 gMagmaRockInside_TorchScript[] = {
   };
 
 /// A circling spark's actor script (MagmaRockInside_OrbitParent).
-s32 gMagmaRockInside_SparkScript[] = {
+s32 gMagmaRockInside_CirclingSparkScript[] = {
     SC_CALL(MagmaRockInside_OrbitParent),
     SC_RELEASE,
     SC_END,
@@ -3260,24 +3258,24 @@ s32 gMagmaRockInside_OrbitScript[] = {
       SC_CALL(Orbit_Update), SC_CALL(Actor_AimAtWatched), SC_CALL(MagmaRockInside_DriftForSteps), SC_RELEASE, SC_END,         
   };
 
-/// The tablet reader's actor script as Blaze is learned (MagmaRockInside_LearnBlaze).
-s32 gMagmaRockInside_BlazeCasterScript[] = {                                                               
+/// The Blaze tablet's actor script as it lifts in the lesson (MagmaRockInside_LearnBlaze).
+s32 gMagmaRockInside_TabletRiseScript[] = {                                                               
       SC_MOVE_BY(0, 24, 0),                                            
       SC_SYNC,                                                                 
       SC_SET(SW_MOTION, 4),                                                    
       SC_END,                                                                  
   };
 
-/// The second actor's script as the sparks circle it (MagmaRockInside_LearnBlaze).
-s32 gMagmaRockInside_BlazeWatcherScript[] = {                                                               
+/// Jenna's actor script as the sparks circle in to her (MagmaRockInside_LearnBlaze).
+s32 gMagmaRockInside_JennaRiseScript[] = {                                                               
       SC_MOVE_BY(0, 16, 0),                                            
       SC_SYNC,                                                                 
       SC_SET(SW_MOTION, 4),                                                    
       SC_END,                                                                  
   };
 
-/// The tablet reader's actor script as the lesson ends.
-s32 gMagmaRockInside_BlazeCasterReturnScript[] = {                                                               
+/// The Blaze tablet's actor script as the lesson ends: it settles back.
+s32 gMagmaRockInside_TabletSettleScript[] = {                                                               
       SC_SET(SW_MOTION, 0),                                                    
       SC_MOVE_BY(0, -24, 0),                                           
       SC_SYNC,                                                                 
@@ -3285,8 +3283,8 @@ s32 gMagmaRockInside_BlazeCasterReturnScript[] = {
       SC_END,                                                                  
   };
 
-/// The second actor's script as the lesson ends.
-s32 gMagmaRockInside_BlazeWatcherReturnScript[] = {                                                               
+/// Jenna's actor script as the lesson ends: she settles back.
+s32 gMagmaRockInside_JennaSettleScript[] = {                                                               
       SC_SET(SW_MOTION, 0),                                                    
       SC_MOVE_BY(0, -16, 0),                                           
       SC_SYNC,                                                                 
@@ -3527,9 +3525,9 @@ struct Trigger gMagmaRockInside_Triggers[] = {
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 8, CONDITION_ALWAYS, 8},
     {STEP_TRIGGER_WALKING, 70, CONDITION_ALWAYS,
-     EVENT(MagmaRockInside_PushPillarIntoLava)},
+     EVENT(MagmaRockInside_LeapOverLava)},
     {STEP_TRIGGER_WALKING, 78, CONDITION_ALWAYS,
-     EVENT(MagmaRockInside_PushPillarIntoLava)},
+     EVENT(MagmaRockInside_LeapOverLava)},
     {TRIGGER_TABLE_END},
 };
 
@@ -3547,14 +3545,14 @@ struct Trigger gMagmaRockInside_EntranceTriggers[] = {
     {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_FIRE19, CONDITION_ALWAYS,
      EVENT(MagmaRockInside_MeetDjinni)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS,
-     EVENT(MagmaRockInside_UnblockMovedPillar)},
+     EVENT(MagmaRockInside_StartPushingPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS,
-     EVENT(MagmaRockInside_BlockMovedPillar)},
+     EVENT(MagmaRockInside_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_ENTRANCE_PILLAR, FLAG_ENTRANCE_PILLAR_PUSHED,
-     EVENT(MagmaRockInside_UnblockMovedPillar)},
+     EVENT(MagmaRockInside_StartPushingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ENTRANCE_PILLAR,
-     FLAG_ENTRANCE_PILLAR_PUSHED, EVENT(MagmaRockInside_BlockMovedPillar)},
+     FLAG_ENTRANCE_PILLAR_PUSHED, EVENT(MagmaRockInside_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST), 50,
      CONDITION_ALWAYS, EVENT(MagmaRockInside_ResolveBeforeBurst)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 50,
@@ -3579,18 +3577,18 @@ struct Trigger gMagmaRockInside_FuryTriggers[] = {
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(MagmaRockInside_DrainLava)},
     {STEP_TRIGGER_WALKING, 70, CONDITION_ALWAYS,
-     EVENT(MagmaRockInside_PushPillarIntoLava)},
+     EVENT(MagmaRockInside_LeapOverLava)},
     {TRIGGER_TALK, ACTOR_FURY, CONDITION_ALWAYS,
      EVENT(MagmaRockInside_FightFury)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS,
-     EVENT(MagmaRockInside_UnblockMovedPillar)},
+     EVENT(MagmaRockInside_StartPushingPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS,
-     EVENT(MagmaRockInside_BlockMovedPillar)},
+     EVENT(MagmaRockInside_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_FURY_PILLAR, FLAG_FURY_PILLAR_PUSHED,
-     EVENT(MagmaRockInside_UnblockMovedPillar)},
+     EVENT(MagmaRockInside_StartPushingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FURY_PILLAR,
-     FLAG_FURY_PILLAR_PUSHED, EVENT(MagmaRockInside_BlockMovedPillar)},
+     FLAG_FURY_PILLAR_PUSHED, EVENT(MagmaRockInside_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST), 50,
      CONDITION_ALWAYS, EVENT(MagmaRockInside_ResolveBeforeBurst)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 50,
@@ -3617,34 +3615,34 @@ struct Trigger gMagmaRockInside_CrackedPillarsTriggers[] = {
     {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
     {STEP_TRIGGER_WALKING, 70, CONDITION_ALWAYS,
-     EVENT(MagmaRockInside_PushPillarIntoLava)},
+     EVENT(MagmaRockInside_LeapOverLava)},
     {STEP_TRIGGER_WALKING, 71, IF_FLAG_SET(FLAG_FURY_FLOODED),
-     EVENT(MagmaRockInside_PushPillarIntoLava)},
+     EVENT(MagmaRockInside_LeapOverLava)},
     {STEP_TRIGGER_WALKING, 72, CONDITION_ALWAYS,
-     EVENT(MagmaRockInside_PushPillarIntoLava)},
+     EVENT(MagmaRockInside_LeapOverLava)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 73, CONDITION_ALWAYS,
-     EVENT(MagmaRockInside_PushPillarIntoLava)},
+     EVENT(MagmaRockInside_LeapOverLava)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 75, CONDITION_ALWAYS,
-     EVENT(MagmaRockInside_PushPillarIntoLava)},
+     EVENT(MagmaRockInside_LeapOverLava)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS,
-     EVENT(MagmaRockInside_UnblockMovedPillar)},
+     EVENT(MagmaRockInside_StartPushingPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS,
-     EVENT(MagmaRockInside_BlockMovedPillar)},
+     EVENT(MagmaRockInside_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_PILLAR_A, FLAG_PILLAR_A_PUSHED,
-     EVENT(MagmaRockInside_UnblockMovedPillar)},
+     EVENT(MagmaRockInside_StartPushingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_A, FLAG_PILLAR_A_PUSHED,
-     EVENT(MagmaRockInside_BlockMovedPillar)},
+     EVENT(MagmaRockInside_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_PILLAR_B, FLAG_PILLAR_B_PUSHED,
-     EVENT(MagmaRockInside_UnblockMovedPillar)},
+     EVENT(MagmaRockInside_StartPushingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_B, FLAG_PILLAR_B_PUSHED,
-     EVENT(MagmaRockInside_BlockMovedPillar)},
+     EVENT(MagmaRockInside_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_PILLAR_C, FLAG_PILLAR_C_PUSHED,
-     EVENT(MagmaRockInside_UnblockMovedPillar)},
+     EVENT(MagmaRockInside_StartPushingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_C, FLAG_PILLAR_C_PUSHED,
-     EVENT(MagmaRockInside_BlockMovedPillar)},
+     EVENT(MagmaRockInside_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 71,
      FLAG_CRACKED_PILLAR_A_BURST, EVENT(MagmaRockInside_BurstCrackedPillarA)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 72,
@@ -3715,21 +3713,21 @@ struct Trigger gMagmaRockInside_SalamanderTailChestTriggers[] = {
     {TRIGGER_EXIT, 18, CONDITION_ALWAYS, 18},
     {TRIGGER_EXIT, 19, CONDITION_ALWAYS, 19},
     {STEP_TRIGGER_WALKING, 70, IF_FLAG_SET(FLAG_LOWER_ROOMS_FLOODED),
-     EVENT(MagmaRockInside_PushPillarIntoLava)},
+     EVENT(MagmaRockInside_LeapOverLava)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS,
-     EVENT(MagmaRockInside_UnblockMovedPillar)},
+     EVENT(MagmaRockInside_StartPushingPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS,
-     EVENT(MagmaRockInside_BlockMovedPillar)},
+     EVENT(MagmaRockInside_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_NORTH_PILLAR, FLAG_NORTH_PILLAR_PUSHED,
-     EVENT(MagmaRockInside_UnblockMovedPillar)},
+     EVENT(MagmaRockInside_StartPushingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_NORTH_PILLAR,
-     FLAG_NORTH_PILLAR_PUSHED, EVENT(MagmaRockInside_BlockMovedPillar)},
+     FLAG_NORTH_PILLAR_PUSHED, EVENT(MagmaRockInside_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_EAST_PILLAR, FLAG_EAST_PILLAR_PUSHED,
-     EVENT(MagmaRockInside_UnblockMovedPillar)},
+     EVENT(MagmaRockInside_StartPushingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_PILLAR,
-     FLAG_EAST_PILLAR_PUSHED, EVENT(MagmaRockInside_BlockMovedPillar)},
+     FLAG_EAST_PILLAR_PUSHED, EVENT(MagmaRockInside_FinishPushingPillar)},
     {TRIGGER_TABLE_END},
 };
 
@@ -3752,14 +3750,14 @@ struct Trigger gMagmaRockInside_EmberStoneTriggers[] = {
     {TRIGGER_EXAMINE, 31, FLAG_MAGMA_BALL_TAKEN,
      EVENT(MagmaRockInside_ExamineEmberStone)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS,
-     EVENT(MagmaRockInside_UnblockMovedPillar)},
+     EVENT(MagmaRockInside_StartPushingPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS,
-     EVENT(MagmaRockInside_BlockMovedPillar)},
+     EVENT(MagmaRockInside_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_LEDGE_PILLAR, FLAG_LEDGE_PILLAR_PUSHED,
-     EVENT(MagmaRockInside_UnblockMovedPillar)},
+     EVENT(MagmaRockInside_StartPushingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LEDGE_PILLAR,
-     FLAG_LEDGE_PILLAR_PUSHED, EVENT(MagmaRockInside_BlockMovedPillar)},
+     FLAG_LEDGE_PILLAR_PUSHED, EVENT(MagmaRockInside_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_FALLEN_FLAME_A, CONDITION_ALWAYS, EVENT(MagmaRockInside_TakeFlame)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST),

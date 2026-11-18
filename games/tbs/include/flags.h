@@ -49,18 +49,17 @@
 /// Field_RequestShortcut); Vault's inn sets it while the party corners the
 /// suspects.
 #define FLAG_MENUS_RAISE_TRIGGER 0x107
-// Lit lighthouses. Inside a lit lighthouse, the Adepts of its element regain
-// PP faster (game_units.c). Each lighthouse's scenes set its flag on every
+// The party is inside a lighthouse, where the Adepts of its element regain PP
+// faster (game_units.c). Each lighthouse's scenes set its flag on every
 // arrival, and Scene_Arrive clears all four when the party enters another area,
 // so a flag is set only while the party is inside.
-/// The party is inside Venus Lighthouse, which is lit.
+/// The party is inside Venus Lighthouse.
 #define FLAG_VENUS_LIGHTHOUSE_LIT 0x110
-/// The party is inside Mercury Lighthouse, which is already lit when the
-/// party reaches its aerie.
+/// The party is inside Mercury Lighthouse.
 #define FLAG_MERCURY_LIGHTHOUSE_LIT 0x111
-/// Mars Lighthouse is lit; no scene in The Broken Seal sets it.
+/// The party is inside Mars Lighthouse; no scene in The Broken Seal sets it.
 #define FLAG_MARS_LIGHTHOUSE_LIT 0x112
-/// Jupiter Lighthouse is lit; no scene in The Broken Seal sets it.
+/// The party is inside Jupiter Lighthouse; no scene in The Broken Seal sets it.
 #define FLAG_JUPITER_LIGHTHOUSE_LIT 0x113
 /// The next scene keeps the music that is playing; main_routine.c clears
 /// FLAG_KEEP_MUSIC_ONCE as it does, and leaves FLAG_KEEP_MUSIC_HELD set.

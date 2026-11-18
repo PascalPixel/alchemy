@@ -435,7 +435,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       drift = (420 - frame) * (toFIXED(1) / 16);
       sway += -toFIXED(1) / 4;
     } else if ((u32)(frame - 472) <= 13) {
-      drift = drift - ((frame - 472) << 12) + CATASTROPHE_SWING_DRIFT;
+      s32 swingFrame = frame - 472;
+
+      drift = drift - swingFrame * (toFIXED(1) / 16) + CATASTROPHE_SWING_DRIFT;
       sway += CATASTROPHE_SWING_SINK;
     } else if ((u32)(frame - 486) <= 8) {
       drift += toFIXED(0.125);
@@ -613,9 +615,12 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         }
       }
     }
+    // The red haze dims by a 64th every other frame, to about half.
     if ((u32)(frame - 554) <= 31 && !((frame - 554) & 1)) {
+      s32 dimFrame = frame - 554;
+
       ColorBuffer_ScaleFar(battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
-                           FIXED_ONE - ((frame - 554) << 10),
+                           FIXED_ONE - dimFrame * (FIXED_ONE / 64),
                            BATTLE_BACKGROUND_COLORS);
     }
     // The top row's pictures stand in for the lowest four's from frame 339 to
@@ -1326,12 +1331,13 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           aerialTexture.pixels = cellBuffer;
           for (i = 0; i != 3; i++) {
             s32 k = i * (DEGtoANG(120)) + DEGtoANG(60);
-            s32 tone = aerialShade + (FIXEDtoINT(Trig_Cos(a + k) << 3)) - 16;
+            s32 sideShade =
+                aerialShade + (FIXEDtoINT(Trig_Cos(a + k) << 3)) - 16;
             s32 v;
 
             Matrix_Push();
             Matrix_RotateZ(i * (DEGtoANG(120)) + DEGtoANG(60));
-            aerialModel->shade = tone;
+            aerialModel->shade = sideShade;
             Matrix_Translate(0, -toFIXED(16), 0);
             v = CATASTROPHE_SEAL_SIDE_TILT;
             if (frame > 63) {

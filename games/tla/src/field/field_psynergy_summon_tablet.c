@@ -231,7 +231,7 @@ void SummonTablet_PlayRunes(s32 targetId) {
   s32 runeTile;
   s32 pebbleTile;
   s32 timer;
-  s32 wave;
+  s32 runeFrame;
   s32 delay;
   s32 angle;
   s32 i;
@@ -327,23 +327,24 @@ void SummonTablet_PlayRunes(s32 targetId) {
       }
       break;
     case 1:
-      // Each rune lights up three times, in a wave across and down the rows.
+      // Each rune lights up three times, a frame later for each place across
+      // or down the rows.
       for (i = 0; i < TABLET_RUNE_COUNT; i++) {
         struct EffectSprite *rune;
-        wave = i % TABLET_RUNE_ROW + i / TABLET_RUNE_ROW;
-        wave = timer - wave;
+        runeFrame = i % TABLET_RUNE_ROW + i / TABLET_RUNE_ROW;
+        runeFrame = timer - runeFrame;
         rune = &work->runeSprites[i];
-        if (wave == 0)
+        if (runeFrame == 0)
           rune->oam.index += RUNE_LIT;
-        if (wave == 3)
+        if (runeFrame == 3)
           rune->oam.index += -RUNE_LIT;
-        if (wave == 8)
+        if (runeFrame == 8)
           rune->oam.index += RUNE_LIT;
-        if (wave == 10)
+        if (runeFrame == 10)
           rune->oam.index += -RUNE_LIT;
-        if (wave == 16)
+        if (runeFrame == 16)
           rune->oam.index += RUNE_LIT;
-        if (wave == 18)
+        if (runeFrame == 18)
           rune->oam.index += -RUNE_LIT;
       }
       if (timer == 0)

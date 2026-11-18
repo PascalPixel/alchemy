@@ -297,10 +297,6 @@ enum BattleTargetHint {
 #define WINDOW_SPRITE_SPACE_WIDTH 5
 #endif
 
-/// The last of the twelve range icons, which ABILITY_RANGE_ALL takes; range n
-/// takes icon n - 1.
-#define RANGE_ICON_ALL 11
-
 /// A sprite speaker's portrait is numbered PORTRAIT_FIRST_SPRITE_PORTRAIT more
 /// than its entry in gPortrait_SpriteMap: Icon_LoadWithPalette takes portrait
 /// PORTRAIT_FIRST_SPRITE_PORTRAIT + n from icon PORTRAIT_FIRST_SPRITE_ICON + n.

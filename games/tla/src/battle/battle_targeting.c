@@ -473,8 +473,7 @@ void BattleUnit_ClearStatuses(s32 unitId) {
 /// Waits for the player to advance a battle message: once the window has
 /// finished printing, shows the bobbing arrow at its corner until B is held,
 /// or A, B, L or R is pressed (or held, after 16 frames), then plays the
-/// cursor sound. The Broken Seal's BattleMessage_WaitForAdvance, with the
-/// message window read from its heap slot.
+/// cursor sound.
 void BattleMessage_WaitForAdvance(void) {
   struct AdvanceArrowSprite *prompt;
   struct AdvanceArrowSprite promptStorage;
@@ -520,8 +519,8 @@ void BattleMessage_WaitForAdvance(void) {
   wait(1);
 }
 
-/// The Broken Seal's routine: shows the cursor
-/// bobbing at (x, y) and waits for A, B, L or R; returns 1.
+/// Shows the cursor bobbing at (x, y) and waits for the player to go on with A,
+/// B, L or R; returns 1.
 s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y) {
   struct MenuPoint position;
   s32 pointerTiles;

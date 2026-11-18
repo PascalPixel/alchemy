@@ -7,14 +7,18 @@
 /// Runs Force cast on a target, through FieldPsynergy_Force.
 void FieldPsynergy_ForceOnTarget(s32 unused) { FieldPsynergy_Force(); }
 
+/// The flashes that burst from over the caster's head, one every 2 frames.
+#define FORCE_FLASHES 12
+
 /// Writes the position 16 pixels above the actor.
 static __inline__ void FieldEffect_GetPositionAboveActor(struct Actor *actor,
                                                          struct Vector3 *pos) {
   SET_POSITION(pos, actor->x.fixed, actor->y.fixed + ABOVE, actor->z.fixed);
 }
 
-/// A shot appears in front of the caster, grows and flies forward with three
-/// afterimages; what it hits (effectWork->child) is pushed 16 pixels.
+/// Flashes burst from over the caster's head, then a fist (SPRITE_MOVE_HAND)
+/// appears in front of it, grows and flies forward with three afterimages;
+/// what it hits (effectWork->child) is pushed 16 pixels.
 void FieldPsynergy_Force(void) {
   struct Actor *target;
   s32 eventTarget;
@@ -37,8 +41,7 @@ void FieldPsynergy_Force(void) {
   Sound_PlayFar(SE_PSYNERGY_START);
   effect = effectWork->particles;
 
-  // 12 flashes burst from over the caster's head, one every 2 frames.
-  for (i = 0; i <= 11; i++) {
+  for (i = 0; i < FORCE_FLASHES; i++) {
     caster = effectWork->mainActor;
     FieldEffect_GetPositionAboveActor(caster, &pos);
     Camera_WorldToScreen(&pos);
@@ -52,7 +55,7 @@ void FieldPsynergy_Force(void) {
     effect++;
   }
 
-  // The shot: 8 pixels in front of the caster, growing from 0.25 to full
+  // The fist: 8 pixels in front of the caster, growing from 0.25 to full
   // size by 5/256 a frame (39 frames).
   caster = effectWork->mainActor;
   pos.x = caster->x.fixed;
@@ -128,7 +131,7 @@ void FieldPsynergy_Force(void) {
     }
   }
 
-  // Wait, at most 60 frames, for the shot's script to end.
+  // Wait, at most 60 frames, for the fist's script to end.
   for (i = 0; i <= 59 && (projectile)->script != NULL; i++)
     wait(1);
 
@@ -162,3 +165,5 @@ void FieldPsynergy_Force(void) {
   if (resourceSlot != VRAM_CACHE_ENTRY_COUNT)
     VramCache_FreeEntry(resourceSlot);
 }
+
+#undef FORCE_FLASHES

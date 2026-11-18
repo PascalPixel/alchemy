@@ -13,9 +13,6 @@ enum {
   /// Priority 2, the field's for its sprites: in front of a map layer at 3, or
   /// at 2 since a sprite wins a tie, and behind one at 1.
   ANIM_OAM_FIELD_PRIORITY = OBJ_PRIORITY(2),
-  /// A picture cache's tag holds its slot above the animation id's bits, as
-  /// SPRITE_PICTURE_TAG does.
-  PICTURE_CACHE_TAG_SLOT_SHIFT = 12,
   /// Rows of gSpritePictureCache_Sources searched, at most.
   PICTURE_CACHE_SOURCES_MAX = 256,
   /// Picture offsets at the head of a decoded set, at most.

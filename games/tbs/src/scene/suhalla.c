@@ -64,9 +64,6 @@ extern struct Trigger gSuhallaTriggersLater[];
 /// A return that keeps the party's position draws it grown again.
 #define FLAG_SUHALLA_SPROUT_GROWN FLAG_SCENE_TEMP_01
 
-/// The sprout's animation once Growth has grown it.
-enum { SPROUT_ANIMATION_GROWN = 4 };
-
 /// Suhalla's people and its sprout, numbering the rows of both actor
 /// placement tables from ACTOR_FIRST_PLACED.
 ///

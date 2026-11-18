@@ -108,8 +108,6 @@ extern struct ActorPlacement gTunnelRuinsActorPlacementsOther[];
 extern struct Trigger gTunnelRuinsGreatStatueTriggers[];
 extern struct Trigger gTunnelRuinsTriggersOther[];
 
-#define FIELD_STAGED_ACTOR_IMPORTS
-
 /// The actors of TunnelRuinsGreatStatue, in the order of its actor placements.
 ///
 /// They are two pairs of pillars to push or Move, three small pillars, three

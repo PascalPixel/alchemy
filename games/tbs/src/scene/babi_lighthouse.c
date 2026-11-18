@@ -99,8 +99,6 @@ extern struct Trigger gBabiLighthouse_LuffTriggers[];
 extern struct Trigger gBabiLighthouse_StoneDoorTriggers[];
 extern struct Trigger gBabiLighthouse_RoadTriggers[];
 
-#define FIELD_STAGED_ACTOR_IMPORTS
-
 /// BabiLighthouseStoneDoor, before the stone door: the door's two halves,
 /// Iodem, the strongman who saw the kidnappers go through, a grey-haired man, a
 /// young man and Faran.

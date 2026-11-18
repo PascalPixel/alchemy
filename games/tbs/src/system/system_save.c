@@ -13,7 +13,6 @@ enum {
   /// Sectors scanned; as a sector number, "none" in the functions below.
   SAVE_SECTOR_COUNT = 16,
   SAVE_PART_NONE = 16, ///< the part id of a free or invalidated sector
-  SAVE_FILE_COUNT = 3, ///< save files; file n is parts n and n + 3
   /// The highest counter a write keeps; a copy written past it is
   /// rewritten as 1.
   SAVE_COUNTER_LIMIT = 65000,

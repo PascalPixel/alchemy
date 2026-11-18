@@ -2,8 +2,9 @@
 #define ALCHEMY_TOLBI_SHIP_H
 
 /// @file
-/// What the Tolbi-bound Ship's deck (tolbi_ship_deck.c) and the rooms below
-/// it (ship_rooms.c) share on the voyage.
+/// What the Tolbi-bound Ship's deck (tolbi_ship_deck.c), the rooms below it
+/// (ship_rooms.c), its mast (tolbi_ship_mast.c) and the World Map's voyage
+/// (world_map.c) share.
 
 #include "flags.h"
 
@@ -15,6 +16,12 @@
 #define FLAG_TOLBI_SHIP_MONSTERS_BELOWDECKS FLAG_AREA_TEMP_01
 /// The Kraken is on deck, and the deck shakes until it is defeated.
 #define FLAG_TOLBI_SHIP_KRAKEN_ON_DECK FLAG_AREA_TEMP_02
+
+/// The rowers' balance that takes the ship off course to the island: the
+/// rowing values of the passengers in the first and third seats (the west
+/// seats) less those in the second and fourth (TolbiShipMast_GetRowingBalance,
+/// WorldMap_GetRowingBalance).
+#define ROWING_BALANCE_OFF_COURSE 11
 
 /// A speaker, which is the actor with the speaker bits for where its message
 /// window and portrait open.

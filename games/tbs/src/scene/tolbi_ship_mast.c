@@ -75,6 +75,7 @@
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "scene/import.h"
+#include "scene/tolbi_ship.h"
 #include "sound/sound.h"
 #include "system/heap_slots.h"
 #include "system/main_routine_work.h"
@@ -229,10 +230,6 @@ enum TolbiShipMastDrift {
   DRIFT_DECREASING = 1, ///< the drift slowing, or the bob sinking
   DRIFT_HELD = 9        ///< held at zero; nothing here sets it
 };
-
-/// The rowers' balance (TolbiShipMast_GetRowingBalance) that takes the ship off
-/// course, as world_map.c names it.
-enum { ROWING_BALANCE_OFF_COURSE = 11 };
 
 /// Randomly reverses horizontal drift and vertical bobbing at their limits.
 static s32 TolbiShipMast_DriftBird(struct Actor *actor) {

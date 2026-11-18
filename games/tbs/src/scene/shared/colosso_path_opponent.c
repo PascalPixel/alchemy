@@ -42,7 +42,7 @@ static void Colosso_UpdatePathOpponent(void) {
       } else {
         x = work->gauge.finishX - toFIXED(12);
       }
-      if (GameFlag_Get(FLAG_SCENE_TEMP_11)) {
+      if (GameFlag_Get(FLAG_ARENA_REACHED)) {
         fz = work->gauge.finishZ + toFIXED(16);
         itemActorId = &work->gauge.finishItemActorIdB;
       } else {
@@ -53,7 +53,7 @@ static void Colosso_UpdatePathOpponent(void) {
       actor->acceleration = toFIXED(1) / 4;
       actor->speedLimit = toFIXED(1);
       FieldActor_SetMoveTargetFX(actor, x, 0, fz);
-      GameFlag_Set(FLAG_SCENE_TEMP_11);
+      GameFlag_Set(FLAG_ARENA_REACHED);
       Actor_StartScript(actor, gColosso_OpponentFinishScript);
       return;
     }

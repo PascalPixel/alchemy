@@ -184,15 +184,6 @@ extern s32 *gLogRoomsA_ThiefRuns[];
 #define MAYOR_AFTER_THIEVES_Z 464
 #endif
 
-/// The stock and inn numbers Vault's counters open, as log_rooms_b.c names
-/// them.
-enum {
-  VAULT_WEAPON_STOCK = 4,
-  VAULT_ARMOR_STOCK = 5,
-  VAULT_ITEM_STOCK = 6,
-  VAULT_INN = 1
-};
-
 /// A cornering lasts half a second before the chase raises an event.
 #define LOG_ROOMS_A_CORNERED_FRAMES 30
 

@@ -232,9 +232,7 @@ enum {
   FLAG_PIPEWORKS_PIPE_PUSHED = FLAG_AREA_TEMP_02,
   FLAG_PLANT_GROWN = FLAG_AREA_TEMP_03, ///< by Growth, before the Broken Bridge
   /// The byte of flags that keeps the Rock Challenge's second rock's column.
-  FLAG_SECOND_ROCK_COLUMN = FLAG_AREA_TEMP_10,
-  /// Someone has reached the arena (Colosso_TakePrize).
-  FLAG_ARENA_REACHED = FLAG_SCENE_TEMP_11
+  FLAG_SECOND_ROCK_COLUMN = FLAG_AREA_TEMP_10
 };
 
 /// The Broken Bridge's cycle, in frames, counted down: the bridge lies down,

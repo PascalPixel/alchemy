@@ -30,9 +30,6 @@ s32 BattleObject_GetPalette(s32 id) { return BattleObject_Get(id)->palette; }
 #define ENEMY_SPRITE_SLOTS 6
 /// Each enemy sprite slot owns 16 KB of Ram_EnemySpriteSlots.
 #define ENEMY_SPRITE_SLOT_SIZE (16 * 1024)
-/// A picture cache's tag holds its slot above the sprite's bits, as
-/// SPRITE_PICTURE_TAG does.
-#define PICTURE_CACHE_TAG_SLOT_SHIFT 12
 
 /// Returns 1 if an enemy of the class would find room among the enemy sprite
 /// slots, two side by side for a large one.
@@ -192,4 +189,3 @@ s32 BattleUnit_GetWeaponSprite(s32 unitId) {
 
 #undef ENEMY_SPRITE_SLOTS
 #undef ENEMY_SPRITE_SLOT_SIZE
-#undef PICTURE_CACHE_TAG_SLOT_SHIFT

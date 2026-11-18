@@ -4,8 +4,6 @@
 
 #include "screens_internal.h"
 
-// The three save files.
-#define SAVE_FILE_COUNT 3
 #define SAVE_PART_BYTES 4096
 #define SAVE_NO_FREE_FILE 999
 

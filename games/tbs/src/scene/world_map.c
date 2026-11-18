@@ -109,6 +109,7 @@
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "scene/import.h"
+#include "scene/tolbi_ship.h"
 #include "scene/walk_into_leader.h"
 #include "scene/world_map_attached_effects.h"
 #include "sound/sound.h"
@@ -315,10 +316,6 @@ enum WorldMapCellBehavior {
 /// Raised by WorldMap_UpdateStormTimer when the party's time in the air runs
 /// out.
 enum WorldMapRaisedTrigger { RAISED_STORM_TIME_UP = 99 };
-
-/// The rowers' balance (WorldMap_GetRowingBalance) that takes the Tolbi-bound
-/// Ship off course to the island.
-enum { ROWING_BALANCE_OFF_COURSE = 11 };
 
 /// SPRITE_WORLD_MAP_BRIDGE's animation once Kolima Bridge's drawbridge is down.
 enum { WORLD_MAP_BRIDGE_ANIMATION_LOWERED = 2 };

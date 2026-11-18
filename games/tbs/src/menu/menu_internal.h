@@ -12,6 +12,7 @@
 #include "item_ids.h"
 #include "macros.h"
 #include "battle/battle.h"
+#include "battle/battle_unit.h"
 #include "field/field.h"
 #include "game/game.h"
 #include "graphics/graphics.h"
@@ -26,11 +27,6 @@
 #include "system/system.h"
 #include "system/vram_cache.h"
 #include "window/message_speed.h"
-
-/// AbilityDefinition.flags: where an ability or item can be used, as the
-/// Psynergy list says ("Usable in the field", "Usable in battle").
-#define ABILITY_USABLE_IN_FIELD 0x40
-#define ABILITY_USABLE_IN_BATTLE 0x80
 
 /// Game flags of the menus. Start was pressed: every menu screen unwinds and
 /// the whole menu closes.

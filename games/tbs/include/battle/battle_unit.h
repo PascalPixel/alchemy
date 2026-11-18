@@ -232,7 +232,9 @@ struct AbilityDefinition {
   u8 reservedAfterType[3]; ///< 0 in every row
 };
 
-/// AbilityDefinition.flags: where an ability can be used.
+/// AbilityDefinition.flags: where an ability, or the ability an item calls,
+/// can be used, as the Status screen's Psynergy list says ("Can be used in
+/// Towns/Dungeons", "Can be used in Battle").
 enum AbilityUse {
   ABILITY_USABLE_IN_FIELD = 0x40, ///< can be used outside battle
   ABILITY_USABLE_IN_BATTLE = 0x80 ///< can be used in battle; else greyed there

@@ -102,8 +102,6 @@ extern struct Trigger gMogallForestQuartz_Triggers[];
 extern struct Trigger gMogallForestKillerApe_Triggers[];
 extern struct Trigger gMogallForestSidePaths_Triggers[];
 
-#define FIELD_STAGED_ACTOR_IMPORTS
-
 /// Actors of the first area (SceneId_MogallForestSign), numbered in the
 /// order of gMogallForestSign_ActorPlacements.
 enum MogallForestSignActorId {

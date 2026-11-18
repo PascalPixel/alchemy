@@ -294,6 +294,8 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
+/// Sets the scene's arrival flags and loads the lighthouse's palettes before
+/// the map is built. Returns 0.
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
   JupiterLighthouse_LoadPalettes(0);

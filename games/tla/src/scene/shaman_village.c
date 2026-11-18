@@ -531,8 +531,7 @@ void ShamanVillage_BlowAwaySand(void) {
           Actor_GetById(ACTOR_TWISTER_ROCK)->y.fixed,
           Actor_GetById(ACTOR_TWISTER_ROCK)->z.fixed);
       /* FAKEMATCH(signature): the rock's priority read from attribute 2's
-       * high byte as a signed byte, masked and shifted; plainly, its
-       * struct SpriteAttr2High priority. */
+       * high byte as a signed byte, masked and shifted. */
       ((struct SpriteAttr2High *)spark->sprite)->priority =
           (((s8 *)Actor_GetById(ACTOR_TWISTER_ROCK)->sprite)[9] &
            (OBJ_PRIORITY(3) >> 8)) >>

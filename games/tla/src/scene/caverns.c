@@ -265,6 +265,10 @@ void Caverns_StartMovingAngaraBlock(void) {
                         FIELD_CELL(actor->z.fixed), actor->riseBaseY);
 }
 
+/// A dust puff loses a DUST_DRAG_X-th of its speed east or west each frame, and
+/// a DUST_DRAG_Z-th of its speed north or south.
+enum { DUST_DRAG_X = 12, DUST_DRAG_Z = 10 };
+
 /// A dust puff's step: drifts, slows, grows and spins.
 void Caverns_DriftDust(union FieldObject *object) {
   struct FieldEffect *effect = &object->effect;
@@ -272,8 +276,8 @@ void Caverns_DriftDust(union FieldObject *object) {
   effect->x += effect->velocity.x;
   effect->y += effect->velocity.y;
   effect->z += effect->velocity.z;
-  effect->velocity.x -= effect->velocity.x / 12;
-  effect->velocity.z -= effect->velocity.z / 10;
+  effect->velocity.x -= effect->velocity.x / DUST_DRAG_X;
+  effect->velocity.z -= effect->velocity.z / DUST_DRAG_Z;
   effect->scaleX += effect->scaleRateX;
   effect->scaleY += effect->scaleRateY;
   effect->sprite->rotation += effect->spin;
@@ -526,7 +530,7 @@ void Caverns_JumpEastAcrossGap(void) {
 }
 
 /// Osenia Cavern's one actor, the row of gCaverns_Placements: an unseen marker
-/// set at the passage the leader steps down into.
+/// Caverns_WalkIntoPassage sets down as the leader climbs into a passage.
 enum CavernsOseniaActorId { ACTOR_PASSAGE_MARKER = ACTOR_FIRST_PLACED };
 
 void Caverns_OpenOseniaPassage(void);

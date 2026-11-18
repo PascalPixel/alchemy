@@ -890,7 +890,11 @@ enum DjinnColumnFlag {
 /// which also makes the Djinni figure grow in again.
 enum DjinnRedraw { DJINN_REDRAW_ALL = 1, DJINN_REDRAW_MOVED = 2 };
 
-/// The Djinn list's chooser.
+/// The Djinn list's chooser. DJINN_SELECT_DJINNI picks a Djinni in any party
+/// member's column: R sets it or puts it on standby at once, R held with Select
+/// does so for every Djinni, L shows the member's status and Select the help.
+/// DJINN_SELECT_ACTION picks what to do with it, by the column chosen. While
+/// the tutorial runs, its steps press the buttons.
 s32 DjinnMenu_SelectDjinn(s32 mode) {
   s8 columnFlags[DJINN_LIST_MEMBERS];
   u8 requiresTrade[16];

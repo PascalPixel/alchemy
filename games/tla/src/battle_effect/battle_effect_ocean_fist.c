@@ -47,8 +47,8 @@
 
 /// A swirling blue torrent rises from the ground at the target, spray bursting
 /// at its foot, while drops shoot up through it and a fountain of them bursts
-/// beside it. At OCEAN_FIST_STRIKE_FRAME the target is struck and thrown
-/// up, the column fades and the drops fall back.
+/// at once. At OCEAN_FIST_STRIKE_FRAME the target is struck and thrown up, the
+/// column fades and the drops fall back.
 ///
 /// Abilities: Ocean Fist.
 void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
@@ -86,12 +86,7 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
     for (frame = 0; frame != OCEAN_FIST_FRAMES;
          scroll += OCEAN_FIST_COLUMN_RISE, frame++) {
       if (frame == 0) {
-        s32 *life = &PARTICLES->variant;
-
-        for (i = 0; i != OCEAN_FIST_DROPS; i++) {
-          *life = -1;
-          life += sizeof(struct Particle) / sizeof(s32);
-        }
+        EFFECT_FREE_PARTICLES(i, PARTICLES, OCEAN_FIST_DROPS);
         // DEAD: the column's pictures are already decoded; the ROM keeps the
         // second load.
         Resource_LoadAndDecompress(RESOURCE_WHIRL_BEAM_SHEET, work->sheet, 1,

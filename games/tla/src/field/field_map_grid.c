@@ -27,6 +27,11 @@
 /// The cell picture number the renderer draws, the low 11 bits: the copies
 /// that use MAPGRID_CELL_PICTURE_ID_MASK carry the bit above it as well.
 #define MAPGRID_DRAWN_PICTURE_MASK 0x7ff
+/// The shift that leaves a cell word's drawn picture number on top, the bits
+/// above it shifted out. Shifted back down by one less it is the number times
+/// 2, the picture's offset in words in Ram_MapBlocks (a word for each of its
+/// two rows of 2 tiles); by two less, times 4, its offset in halfwords.
+#define MAPGRID_DRAWN_PICTURE_SHIFT 21
 /// The map's 128 by 128 cell words.
 #define MAPGRID_CELLS ((u32 *)Ram_MapGridCellBuffer)
 /// A layer's visible area in cells: the screen's 15 by 10, and the row and
@@ -412,7 +417,8 @@ void MapGrid_RenderCellPictureRow(u32 layer, s32 tileX, s32 tileY) {
     u32 cellPictureWordOffset;
 
     sourceCell = cells + sourceRow + sourceColumn;
-    cellPictureWordOffset = (*sourceCell << 21) >> 20;
+    cellPictureWordOffset = (*sourceCell << MAPGRID_DRAWN_PICTURE_SHIFT) >>
+                            (MAPGRID_DRAWN_PICTURE_SHIFT - 1);
     cellPictureRows = (u32 *)Ram_MapBlocks;
     cellPictureRows += cellPictureWordOffset;
     screenTile = screenMap + (screenRowOffset + screenColumnOffset) * 2;
@@ -434,7 +440,9 @@ static __inline__ void CopyCellPictureHalfColumn(u32 *cell, u8 *screenMap,
                                                  u32 tileHalf) {
   u16 *cellPictureEntry;
   u8 *screenTile;
-  u32 index = ((*cell << 21) >> 19) + tileHalf;
+  u32 index = ((*cell << MAPGRID_DRAWN_PICTURE_SHIFT) >>
+               (MAPGRID_DRAWN_PICTURE_SHIFT - 2)) +
+              tileHalf;
 
   cellPictureEntry = (u16 *)Ram_MapBlocks;
   cellPictureEntry += index;
@@ -598,7 +606,8 @@ static __inline__ void CopyCellPictureToScreen(u32 *cell, u8 *screenMap,
                                                u32 screenColumnOffset) {
   u32 *cellPictureRows;
   u8 *screenTile;
-  u32 index = (*cell << 21) >> 20;
+  u32 index = (*cell << MAPGRID_DRAWN_PICTURE_SHIFT) >>
+              (MAPGRID_DRAWN_PICTURE_SHIFT - 1);
 
   cellPictureRows = (u32 *)Ram_MapBlocks;
   cellPictureRows += index;
@@ -987,6 +996,9 @@ void MapGrid_SetShownLayers(u32 layerFlags) {
 // copy the cells' attributes rather than their pictures.
 #define MAP_EDIT_FLAG_MASK 0xfff
 #define MAP_EDIT_ATTRIBUTES 0x1000
+/// The flag word of all ones that ends a map's edits, the one that one more
+/// wraps to 0.
+#define MAP_EDITS_END 0xffff
 
 /// Plays every edit of the map whose flag is set, as Map_ApplyFlagEdits does,
 /// bit 12 of an edit's flag word choosing attributes over pictures.
@@ -998,7 +1010,7 @@ void Map_ApplySetFlagEdits(void) {
   cursor = gMapScene + (u16)Map_ReadEditU16(&cursor);
   for (;;) {
     entry = (u16)Map_ReadEditU16(&cursor);
-    if (((entry + 1) & 0xffff) == 0)
+    if (((entry + 1) & MAP_EDITS_END) == 0)
       return;
     if (GameFlag_Get(entry & MAP_EDIT_FLAG_MASK) != 0) {
       srcX = *cursor++;
@@ -1055,7 +1067,7 @@ void Map_ApplyFlagEdits(s32 flag, s32 attributes) {
   cursor = gMapScene + (u16)Map_ReadEditU16(&cursor);
   for (;;) {
     entry = (u16)Map_ReadEditU16(&cursor);
-    if (((entry + 1) & 0xffff) == 0)
+    if (((entry + 1) & MAP_EDITS_END) == 0)
       return;
     if ((entry & MAP_EDIT_FLAG_MASK) == flag) {
       srcX = *cursor++;

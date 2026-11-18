@@ -149,6 +149,9 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define EFFECT_BLEND_ADD BLEND_ALPHA(BLEND_WEIGHT_MAX, BLEND_WEIGHT_MAX)
 /// The canvas at `level` sixteenths over the whole battle under it.
 #define EFFECT_BLEND_CANVAS(level) BLEND_ALPHA(level, BLEND_WEIGHT_MAX)
+/// The canvas's usual weight over the battle, in sixteenths: every canvas
+/// opens with it.
+#define CANVAS_BLEND_LEVEL 14
 /// The element pillar's and element burst's canvas weight over the battle.
 #define ELEMENT_BLEND_LEVEL 12
 /// The motes the element pillar and element burst set up in PARTICLES; the

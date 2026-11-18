@@ -313,6 +313,9 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
   (BATTLE_BACKGROUND_WIDTH * BATTLE_BACKGROUND_HEIGHT)
 /// The battle background's colours, BG palettes 6 to 13.
 #define BATTLE_BACKGROUND_COLORS (8 * PALETTE_COLORS)
+/// A background's scroll (struct BgScroll) is a halfword: a negative scroll is
+/// held BG_SCROLL_WRAP above itself, and read back by taking it away.
+#define BG_SCROLL_WRAP (1 << 16)
 /// Two entries of a background map in one word: `left`, then the one to its
 /// right.
 #define MAP_ENTRY_PAIR(left, right) ((u32)(right) << 16 | (left))
@@ -327,7 +330,7 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define PALETTE_BANK_BYTES 32
 /// A word of two palette entries, both `color`, to fill a palette a word at a
 /// time.
-#define COLOR_PAIR(color) ((color) * 0x10001)
+#define COLOR_PAIR(color) ((color) << 16 | (color))
 
 /// A model's shade (RenderModel.shade) is added to each of its pixels' canvas
 /// levels: at this or below, nothing of the model is left to draw, and the
@@ -1035,14 +1038,11 @@ void BattleEffect_StepPaletteToResource(s32 resource);
 void BattleEffect_WipeCanvas(s32 direction, s32 fill);
 
 // particle_streams.c
-void Palette_BrightenBattleBg(s32 red_delta, s32 green_delta, s32 blue_delta);
 void BattleEffect_PlaceFormationObjects(s32 formation, s32 x, s32 z);
 void BattleEffect_RunImpactBurst(s32 formation, s32 x, FIXED y);
 void BattleEffect_ArmPaletteHBlankDma(void);
 void Render_ApplyProjectedPlacementFar(struct Sprite *sprite, s32 *position,
                                        s32 *scale, s32 mode);
-void Palette_BrightenSavedBattleBg(s32 redDelta, s32 greenDelta, s32 blueDelta);
-void Palette_BrightenBgEntries(s32 blue_delta, s32 green_delta, s32 red_delta);
 
 // ramses.c
 // An actor's recoil motion, through a far call.
@@ -1090,10 +1090,6 @@ void BattleEffect_RunMirroredWall(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_RunGeyser(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_RunStarSwarm(struct BattleEffectParams *effect, s32 mode);
 void BattleEffect_RunBubbleColumn(struct BattleEffectParams *effect);
-
-// helm_splitter.c
-void BattleMotion_ApproachTargetFar(s32 actorId, s32 targetId,
-                                    s32 travelDivisor, s32 initialVelocityY);
 
 // legend.c
 void BattleEffect_RunElementCards(struct BattleEffectParams *effect, s32 mode);

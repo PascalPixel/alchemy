@@ -1019,9 +1019,8 @@ void AirsRock_RideWhirlwind(void) {
 extern u32 gAirsRock_WhirlwindRisesScript[];
 extern u32 gAirsRock_WhirlwindFadesScript[];
 
-/// How near a whirlwind passes to pick up the leader or end on another actor,
-/// in pixels: across the ground, or across the wall the leader climbs.
-#define WHIRLWIND_REACH 8
+/// How near a whirlwind passes to pick up the leader across the wall he
+/// climbs, in pixels; across the ground it is WHIRLWIND_REACH.
 #define WHIRLWIND_REACH_ON_WALL 16
 
 /// A statue's whirlwind's update: it travels its way, picks up a leader it

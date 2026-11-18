@@ -88,12 +88,12 @@ u8 GameFlag_DecrementByte(s32 flag) {
 }
 
 /// The bits of a nibble flag, low or high in its byte by its number's bit 2.
-#define GAME_FLAG_NIBBLE 0xf
+#define GAME_FLAG_NIBBLE_MASK 0xf
 
 /// Returns the four bits a flag is in, 0 to 15.
 s32 GameFlag_GetNibble(u32 flag) {
   s32 shift = flag & 4;
-  s32 mask = GAME_FLAG_NIBBLE << shift;
+  s32 mask = GAME_FLAG_NIBBLE_MASK << shift;
   flag = GAME_FLAG_BYTE(flag);
 
   return (gGameFlagBytes[flag] & mask) >> shift;
@@ -102,7 +102,7 @@ s32 GameFlag_GetNibble(u32 flag) {
 /// Sets the four bits `flag` is in. Only game.s's bare veneer reaches it;
 /// nothing calls it by name.
 void GameFlag_SetNibble(s32 flag, s32 value) {
-  s32 nibble = GAME_FLAG_NIBBLE;
+  s32 nibble = GAME_FLAG_NIBBLE_MASK;
   s32 shift = flag & 4;
   s32 mask = nibble << shift;
   u8 *flags = gGameFlagBytes;

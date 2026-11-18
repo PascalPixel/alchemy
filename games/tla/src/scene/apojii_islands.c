@@ -910,13 +910,13 @@ UNUSED void ApojiiIslands_FlowWithStream(void) {
                               ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
       FieldActor_SetMoveTargetFX(leader, leader->x.fixed, leader->y.fixed,
                                  leader->z.fixed + toFIXED(8));
-      Actor_SelectAnimation(leader, 49);
+      Actor_SelectAnimation(leader, ANIM_LEADER_SIT);
       FieldActor_WaitForMove(leader);
       do {
         System_Wait(1);
       } while (leader->y.fixed != leader->groundHeight);
       ApojiiIslands_SpawnSplash(leader);
-      Actor_SelectAnimation(leader, 49);
+      Actor_SelectAnimation(leader, ANIM_LEADER_SIT);
       System_Wait(3);
     } else {
       position[0] = leader->x.fixed;
@@ -962,7 +962,7 @@ UNUSED void Leader_SpinAway(s32 entrance) {
   leader->motionFlags = 0;
   leader->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   Event_PlaySound(SE_SPLASH_SMALL);
-  Actor_SelectAnimation(leader, 18);
+  Actor_SelectAnimation(leader, ANIM_LEADER_TUMBLE_IN_WATER);
   Event_PlaySound(SE_SPIN_AWAY);
   for (i = 0; i < 60; i++) {
     s32 angle;
@@ -1055,11 +1055,11 @@ void ApojiiIslands_DrawCellMarkers(void) {
       continue;
     if ((u32)(y + 39) > 286)
       continue;
-    left &= 0x1ff;
+    left &= OBJ_X_MASK;
     /* FAKEMATCH(dead): a self-update of Ram_HeapSlots->mapGrid after left's
      * mask. */
     Ram_HeapSlots->mapGrid += 0;
-    top &= 0xff;
+    top &= OBJ_Y_MASK;
     attr = record->oam;
     kind = record->kind;
     picture = kind * MARKER_PICTURE_TILES;
@@ -1133,14 +1133,14 @@ void ApojiiIslands_AddCellMarkers(u32 base, s32 level, s32 restLevel) {
               terrain[(u16)x + ((u16)z << 7)] = MAP_SHAPE_MARKED;
             }
           }
-          /* FAKEMATCH(temporary): the step taken in the high halfword, as
+          /* FAKEMATCH(temporary): the step taken through a 16.16 value, as
            * the push footprints' searches take theirs; plainly, x++. */
-          x = (x + 1) * 65536 >> 16;
+          x = FIXEDtoINT(toFIXED(x + 1));
           cell++;
         } while ((u16)x < width);
       }
       /* FAKEMATCH(temporary): the same step; plainly, z++. */
-      z = (z + 1) * 65536 >> 16;
+      z = FIXEDtoINT(toFIXED(z + 1));
     } while ((u16)z < height);
   }
 }
@@ -1148,6 +1148,10 @@ void ApojiiIslands_AddCellMarkers(u32 base, s32 level, s32 restLevel) {
 extern s16 gGroundParticleFrames[];
 
 #include "shared/ground_particles_draw.h"
+
+/// The frames of a ground particle's splash (gGroundParticleFrames, five
+/// halfwords each), played from the last down to the first.
+#define GROUND_PARTICLE_FRAMES 16
 
 /// Starts the sparkles: their tiles decoded into VRAM and every sparkle on the
 /// ground at the map's origin with a staggered timer, drawn semi-transparent
@@ -1183,7 +1187,7 @@ void ApojiiIslands_StartSparkles(void) {
     p->posX = 0;
     p->posZ = 0;
     p->posY = toFIXED(Map_GetTerrainHeight(0, 0, 0));
-    p->timer = (i & 15) + 1;
+    p->timer = (i & (GROUND_PARTICLE_FRAMES - 1)) + 1;
     i++;
     p++;
   } while (i < ARRAY_COUNT(work->particles));

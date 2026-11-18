@@ -67,10 +67,6 @@
 #define FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN 0x899
 #define FLAG_REVEAL_TABLET_READ 0x8d4
 
-/// Set while the leader rides a whirlwind (AirsRockInside_RideWhirlwind): the
-/// statues breathe theirs without a flare.
-#define FLAG_RIDING_WHIRLWIND FLAG_SCENE_TEMP_50
-
 /// The paired stakes room's stakes, each set while it is down; B and C go
 /// down as the party comes in.
 #define FLAG_STAKE_A_DOWN FLAG_SCENE_TEMP_00
@@ -126,12 +122,6 @@ enum {
   HALL_LAST_NORTHEAST_ROOM_ENTRANCE = 13
 };
 
-/// The light's picture (RESOURCE_LIGHTNING_MAP): 16 rows of 4 screen entries,
-/// copied into the top left of a screen block whose rows hold 32 entries. Its
-/// map numbers the tiles from 512, and clearing the top two bits of each
-/// entry's tile number (0xfcff) numbers them from the start of character
-/// block 0, where its tiles are loaded.
-enum { LIGHTNING_MAP_ROWS = 16, LIGHTNING_MAP_COLUMNS = 4 };
 #define BG_SCREEN_ROW_BYTES (32 * 2)
 
 /// A map grid cell kept in one word, x in the high half and z in the low, as
@@ -849,9 +839,9 @@ void AirsRockInside_RideWhirlwind(void) {
 extern u32 gAirsRockInside_WhirlwindFadesScript[];
 extern u32 gAirsRockInside_WhirlwindRisesScript[];
 
-/// How near a whirlwind comes to catch the leader, in pixels: above him while
-/// others move him, in his cell's row, else across the ground on his level.
-enum { WHIRLWIND_REACH_ABOVE = 16, WHIRLWIND_REACH = 8 };
+/// How near a whirlwind comes to catch the leader above him while others move
+/// him, in his cell's row, in pixels; on his level it is WHIRLWIND_REACH.
+enum { WHIRLWIND_REACH_ABOVE = 16 };
 
 /// A statue's whirlwind: it moves 1.5 pixels a frame the way it faces, upward
 /// when it faces north, and where the overhead layer reads
@@ -1949,6 +1939,7 @@ void AirsRockInside_WakeHallStatue(void) {
   buffer = Heap_Alloc(LIGHTNING_MAP_ROWS * LIGHTNING_MAP_COLUMNS * 2);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_MAP), buffer);
   cell = buffer;
+  // The map's tile numbers less 512.
   for (i = 0; i != LIGHTNING_MAP_ROWS * LIGHTNING_MAP_COLUMNS; i++) {
     *cell &= 0xfcff;
     cell++;
@@ -2245,6 +2236,7 @@ void AirsRockInside_WakeVialChestStatue(void) {
   buffer = Heap_Alloc(LIGHTNING_MAP_ROWS * LIGHTNING_MAP_COLUMNS * 2);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_MAP), buffer);
   cell = buffer;
+  // The map's tile numbers less 512.
   for (i = 0; i != LIGHTNING_MAP_ROWS * LIGHTNING_MAP_COLUMNS; i++) {
     *cell &= 0xfcff;
     cell++;

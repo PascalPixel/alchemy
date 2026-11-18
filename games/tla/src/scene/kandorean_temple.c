@@ -98,7 +98,10 @@ enum KandoreanTempleChestbeaterRoomActorId {
   /// The red embers the pot boils over: an actor in the pot's sprite at the
   /// pot's place, in its animation 2, the sheet's last picture alone. It is
   /// drawn underfoot with no shadow, and stays glowing on the floor when the
-  /// pot is chucked aside.
+  /// pot is chucked aside. The room watched from beside the sign (render guide
+  /// moment, MOMENT_PLACE=16,1 MOMENT_STAND=360,520 MOMENT_ACTORS=9) shows it
+  /// adding nothing under the pot, and, with the pot pushed west
+  /// (MOMENT_SET=0x302,0x304), red embers on the floor where the pot stood.
   ACTOR_EMBERS_UNDER_THE_POT,
   /// The sign by the hot floor, which tells of Master Poi's trial.
   ACTOR_POIS_SIGN,
@@ -518,9 +521,10 @@ void *Scene_GetTriggers(void) {
 
 /// Each call of KandoreanTemple_LeaveSplashRings on a moving wader counts two
 /// toward the next ring on the water, or four when half its speeds across and
-/// down together pass SPLASH_RING_FAST_SPEED; past SPLASH_RING_STRIDE a ring
-/// spreads at its feet.
-#define SPLASH_RING_FAST_SPEED toFIXED(0.73243)
+/// down together pass SPLASH_RING_FAST_SPEED (a 16.16 speed, just under three
+/// quarters of a pixel a frame); past SPLASH_RING_STRIDE a ring spreads at its
+/// feet.
+#define SPLASH_RING_FAST_SPEED 48000
 #define SPLASH_RING_STRIDE 40
 
 /// Unused: takes the leader's shadow away and counts one step of its wading

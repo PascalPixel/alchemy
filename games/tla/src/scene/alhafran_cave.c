@@ -63,7 +63,7 @@ void FlagBlock_PlaceAllMarkingEdges(const void *data);
 /// Set once Pound has sunk the jail's stake.
 #define FLAG_JAIL_STAKE_POUNDED FLAG_SCENE_TEMP_01
 /// Set once Frost has frozen the cave's puddle.
-#define FLAG_PUDDLE_FROZEN FLAG_SCENE_TEMP_03
+#define FLAG_ALHAFRAN_CAVE_PUDDLE_FROZEN FLAG_SCENE_TEMP_03
 /// The cave's actors (SceneId_AlhafranCave), numbering the rows of
 /// gAlhafranCave_CaveActorPlacements.
 enum AlhafranCaveActorId {
@@ -837,7 +837,7 @@ void AlhafranCave_CycleKeyColors(void) { Actor_CycleSpriteColors(); }
 
 // clang-format off
 s16 gAlhafranCave_Puddles[] = {
-    ACTOR_CAVE_PUDDLE, FLAG_PUDDLE_FROZEN, -1, 0,
+    ACTOR_CAVE_PUDDLE, FLAG_ALHAFRAN_CAVE_PUDDLE_FROZEN, -1, 0,
 };
 
 s32 gAlhafranCave_GuardStepsAsideScript[] = {
@@ -933,7 +933,7 @@ struct Trigger gAlhafranCave_CaveTriggers[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(AlhafranCave_LowerBridgeCells)},
     {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(AlhafranCave_RaiseBridgeCells)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_CAVE_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT(AlhafranCave_FreezePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_CAVE_PUDDLE, FLAG_ALHAFRAN_CAVE_PUDDLE_FROZEN, EVENT(AlhafranCave_FreezePuddle)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(AlhafranCave_CastSand)},
     {TRIGGER_TABLE_END},
 };
@@ -964,7 +964,7 @@ struct Trigger gAlhafranCave_JailTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_JAIL_ROPE_LOW_POST, FLAG_JAIL_ROPE_TIED, 0},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_JAIL_STAKE, FLAG_JAIL_STAKE_POUNDED, EVENT(AlhafranCave_PoundStake)},
     // The cave's Frost row, repeated in the jail's table.
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_CAVE_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT(AlhafranCave_FreezePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_CAVE_PUDDLE, FLAG_ALHAFRAN_CAVE_PUDDLE_FROZEN, EVENT(AlhafranCave_FreezePuddle)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_CRATE, CONDITION_ALWAYS, EVENT(AlhafranCave_StartMovingCrate)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CRATE, CONDITION_ALWAYS, EVENT(AlhafranCave_FinishMovingCrate)},
     {TRIGGER_TABLE_END},

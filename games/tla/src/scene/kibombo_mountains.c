@@ -55,9 +55,9 @@
 /// For this visit: the first and second puddles of the Disk Axe room frozen,
 /// the Waft room's puddle frozen and its sprout grown, and the dog's pillar and
 /// the guard's crate dropped.
-#define FLAG_FIRST_PUDDLE_FROZEN FLAG_SCENE_TEMP_10
-#define FLAG_SECOND_PUDDLE_FROZEN FLAG_SCENE_TEMP_11
-#define FLAG_PUDDLE_FROZEN FLAG_SCENE_TEMP_21
+#define FLAG_DISK_AXE_ROOM_FIRST_PUDDLE_FROZEN FLAG_SCENE_TEMP_10
+#define FLAG_DISK_AXE_ROOM_SECOND_PUDDLE_FROZEN FLAG_SCENE_TEMP_11
+#define FLAG_WAFT_ROOM_PUDDLE_FROZEN FLAG_SCENE_TEMP_21
 #define FLAG_SPROUT_GROWN FLAG_SCENE_TEMP_22
 #define FLAG_DOG_PILLAR_DROPPED FLAG_SCENE_TEMP_23
 #define FLAG_GUARD_CRATE_DROPPED FLAG_SCENE_TEMP_24
@@ -97,7 +97,9 @@ enum KibomboMountainsWaftActorId {
   ACTOR_WAFT,
   /// Unused: an unseen marker under the trees south of the dog's pillar. It
   /// draws nothing, no trigger or event names it, and Scene_Initialize only
-  /// takes away its shadow and collision.
+  /// takes away its shadow and collision. The room watched beside it (render
+  /// guide moment, MOMENT_PLACE=107,4 MOMENT_STAND=712,640 MOMENT_ACTORS=19)
+  /// shows it among the trees, changing nothing on screen.
   ACTOR_UNSEEN_MARKER
 };
 
@@ -230,7 +232,7 @@ void KibomboMountains_FreezePuddle(void) {
   actor->priorityFlags = 0;
   actor->motionFlags = 0;
   MapGrid_CopyCellAttributes(24, 32, 1, 1, 22, 32);
-  Event_SetFlag(FLAG_PUDDLE_FROZEN);
+  Event_SetFlag(FLAG_WAFT_ROOM_PUDDLE_FROZEN);
 }
 
 /// Growth on the plant: it grows into a vine to climb to Waft.
@@ -372,7 +374,7 @@ void KibomboMountains_FreezeFirstPuddle(void) {
   actor->priorityFlags = 0;
   actor->motionFlags = 0;
   MapGrid_CopyCellAttributes(6, 16, 1, 1, 4, 16);
-  Event_SetFlag(FLAG_FIRST_PUDDLE_FROZEN);
+  Event_SetFlag(FLAG_DISK_AXE_ROOM_FIRST_PUDDLE_FROZEN);
 }
 
 /// Frost freezes the chest room's second puddle into a pillar.
@@ -382,7 +384,7 @@ void KibomboMountains_FreezeSecondPuddle(void) {
   actor->priorityFlags = 0;
   actor->motionFlags = 0;
   MapGrid_CopyCellAttributes(8, 30, 1, 1, 10, 30);
-  Event_SetFlag(FLAG_SECOND_PUDDLE_FROZEN);
+  Event_SetFlag(FLAG_DISK_AXE_ROOM_SECOND_PUDDLE_FROZEN);
 }
 
 /// As a pair of the chest room's crates starts to move, the cells under them
@@ -494,7 +496,7 @@ s32 Scene_Initialize(void) {
       Map_CopyCellAttributeRect(30, 35, 1, 1, 28, 34);
       Map_CopyCellAttributeRect(30, 34, 1, 1, 28, 33);
     }
-    if (GameFlag_Get(FLAG_PUDDLE_FROZEN))
+    if (GameFlag_Get(FLAG_WAFT_ROOM_PUDDLE_FROZEN))
       MapGrid_CopyCellAttributes(24, 32, 1, 1, 22, 32);
     if (GameFlag_Get(FLAG_DOG_PILLAR_DROPPED))
       MapGrid_CopyCellAttributes(49, 28, 1, 1, 47, 28);
@@ -527,9 +529,9 @@ s32 Scene_Initialize(void) {
     Rope_Initialize();
     FieldRope_Place(0, FLAG_KIBOMBO_ROPE_TIED, ACTOR_WEST_ROPE_POST,
                     ACTOR_EAST_ROPE_POST);
-    if (GameFlag_Get(FLAG_FIRST_PUDDLE_FROZEN))
+    if (GameFlag_Get(FLAG_DISK_AXE_ROOM_FIRST_PUDDLE_FROZEN))
       MapGrid_CopyCellAttributes(6, 16, 1, 1, 4, 16);
-    if (GameFlag_Get(FLAG_SECOND_PUDDLE_FROZEN))
+    if (GameFlag_Get(FLAG_DISK_AXE_ROOM_SECOND_PUDDLE_FROZEN))
       MapGrid_CopyCellAttributes(8, 30, 1, 1, 10, 30);
     if (GameFlag_Get(FLAG_KIBOMBO_FIRST_PILLAR_DROPPED)) {
       actor = Actor_GetById(ACTOR_FIRST_DROPPED_PILLAR);
@@ -1137,7 +1139,7 @@ struct Trigger gKibomboMountains_WaftTriggers[] = {
     {TRIGGER_TALK, ACTOR_GUARD_CRATE, IF_FLAG_SET(FLAG_GUARD_KNOCKED_OUT), MSGNO(MsgKibomboMountainsHeyWhosThereGetMe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUARD_CRATE, IF_FLAG_SET(FLAG_GUARD_KNOCKED_OUT), MSGNO(MsgKibomboMountainsItsDarkItsCrampedSomebody)},
     {TRIGGER_TALK, ACTOR_WAFT, CONDITION_ALWAYS, EVENT(KibomboMountains_FightWaft)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT(KibomboMountains_FreezePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_WAFT_ROOM_PUDDLE_FROZEN, EVENT(KibomboMountains_FreezePuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_SPROUT_GROWN, EVENT(KibomboMountains_GrowVine)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_CAVERN_BUSH, CONDITION_ALWAYS, EVENT(KibomboMountains_BlowAwayBush)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_DOG_PILLAR, CONDITION_ALWAYS, EVENT(KibomboMountains_DropOffLedge)},
@@ -1164,8 +1166,8 @@ struct Trigger gKibomboMountains_DiskAxeChestTriggers[] = {
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(KibomboMountains_StartPushingChestRoomCrate)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(KibomboMountains_FinishPushingChestRoomCrate)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_WEST_ROPE_POST, FLAG_KIBOMBO_ROPE_TIED, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE, FLAG_FIRST_PUDDLE_FROZEN, EVENT(KibomboMountains_FreezeFirstPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SECOND_PUDDLE, FLAG_SECOND_PUDDLE_FROZEN, EVENT(KibomboMountains_FreezeSecondPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE, FLAG_DISK_AXE_ROOM_FIRST_PUDDLE_FROZEN, EVENT(KibomboMountains_FreezeFirstPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SECOND_PUDDLE, FLAG_DISK_AXE_ROOM_SECOND_PUDDLE_FROZEN, EVENT(KibomboMountains_FreezeSecondPuddle)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_WEST_TORCH, CONDITION_ALWAYS, 0},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_EAST_TORCH, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_DROPPED_PILLAR, CONDITION_ALWAYS, EVENT(KibomboMountains_FinishPushingChestRoomCrate)},

@@ -80,18 +80,12 @@ enum {
 #define FLAG_FIRST_PILLAR_DROPPED 0x920
 #define FLAG_SECOND_PILLAR_DROPPED 0x921
 
-/// The 8-pixel half cell a 16.16 coordinate lies in, as airs_rock_inside.c
-/// defines it until field_coordinate.h does: the pillars' places are counted
-/// in half cells.
-#define FIELD_HALF_CELL(coordinate) ((coordinate) >> 19)
+/// The leader's sheet animation that holds ANIM_STILL's picture again, which
+/// sprite.h does not name yet.
+enum { ANIM_LEADER_STILL = 38 };
 
-/// The leader's sheet animations sprite.h does not name yet: waving his arms
-/// for balance, seen from behind (felix.tsv's pictures 6, 14, 7, 8 and 12), and
-/// ANIM_STILL's picture held again.
-enum { ANIM_LEADER_WAVE_ARMS = 40, ANIM_LEADER_STILL = 38 };
-
-/// The whirlwind's circling leaves, and the dust puffs a rising statue throws.
-enum { WHIRLWIND_LEAVES = 16, STATUE_DUST_PUFFS = 16 };
+/// The whirlwind's circling leaves, and the rocks a rising statue throws out.
+enum { WHIRLWIND_LEAVES = 16, STATUE_DEBRIS = 16 };
 
 struct Actor;
 
@@ -118,7 +112,7 @@ void GaiaRock_PlaceStatue(s32 id, s32 x, s32 y, s32 z);
 
 extern s32 gGaiaRock_StatueRiseScript[];
 
-extern u32 gGaiaRock_DustScript[];
+extern u32 gGaiaRock_DebrisScript[];
 extern u32 gGaiaRock_PillarScript[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -643,43 +637,44 @@ void GaiaRock_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
   Actor_SetSpriteFlags(actor, 0);
 }
 
-/// The statue id rises under the leader in a burst of dust and lifts him; once
+/// The statue id rises under the leader in a burst of rocks and lifts him; once
 /// he is back on the ground, the flag is set.
 void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 gravity = leader->gravity;
-  struct Actor *pillar;
+  struct Actor *statue;
   s32 i;
+  s32 frame;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  pillar = Actor_Get(id);
+  statue = Actor_Get(id);
   GaiaRock_PlaceStatue(id, leader->x.fixed, leader->y.fixed, leader->z.fixed);
-  Actor_StartScript(pillar, gGaiaRock_StatueRiseScript);
-  for (i = 0; i < STATUE_DUST_PUFFS; i++) {
-    struct Actor *dust =
+  Actor_StartScript(statue, gGaiaRock_StatueRiseScript);
+  for (i = 0; i < STATUE_DEBRIS; i++) {
+    struct Actor *debris =
         FieldActor_Create(SPRITE_ROCK, leader->x.fixed,
                           leader->y.fixed + toFIXED(16), leader->z.fixed);
 
-    if (dust != 0) {
+    if (debris != 0) {
       s32 angle;
       s32 speed;
       u32 size;
       s32 scale;
 
-      Actor_StartScript(dust, gGaiaRock_DustScript);
+      Actor_StartScript(debris, gGaiaRock_DebrisScript);
       angle = Random16();
       speed = Random16();
       size = Random16();
       scale = (size >> 1) + FIXED_ONE / 8;
-      dust->velocityY = Iwram_MulFX(speed * 8, Trig_Cos(angle));
-      dust->velocityX = Iwram_MulFX(speed * 8, Math_Sin(angle));
-      dust->acceleration = 0;
-      dust->scaleX = scale;
-      dust->scaleY = scale;
-      dust->gravity = toFIXED(33) / 100;
-      dust->bounce = FIXED_ONE / 2;
+      debris->velocityY = Iwram_MulFX(speed * 8, Trig_Cos(angle));
+      debris->velocityX = Iwram_MulFX(speed * 8, Math_Sin(angle));
+      debris->acceleration = 0;
+      debris->scaleX = scale;
+      debris->scaleY = scale;
+      debris->gravity = toFIXED(33) / 100;
+      debris->bounce = FIXED_ONE / 2;
     }
   }
   Event_PlaySound(SE_STATUE_RISE);
@@ -687,12 +682,12 @@ void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag) {
   MapGrid_SetShake(2, 2, 0.9);
   Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Actor_SelectAnimation(leader, ANIM_LEADER_WAVE_ARMS);
+  Actor_SelectAnimation(leader, ANIM_LEADER_FLAIL);
   FieldEvent_Wait(40);
   Event_PlaySound(SE_DUST_PUFF);
   leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   leader->gravity = toFIXED(33) / 100;
-  for (id = 0; id < 180; id++) {
+  for (frame = 0; frame < 180; frame++) {
     System_Wait(1);
     if (leader->y.fixed <= leader->groundHeight)
       break;
@@ -899,7 +894,7 @@ s32 gGaiaRock_WindScript[] = {
     SC_RELEASE,
 };
 
-u32 gGaiaRock_DustScript[] = {
+u32 gGaiaRock_DebrisScript[] = {
     SC_WAIT(40),
     SC_LABEL(1),
     SC_SET(SW_SPRITE_KIND, ACTOR_SPRITE_NONE),

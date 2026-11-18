@@ -123,13 +123,9 @@ enum AttekaInletShoreActorId {
 /// he comes.
 #define ACTOR_HAMMETS_GIFT_CHEST 65
 
-/// BG palette 11, whose two runs of colours turn a step at a time: 4 to 9 are
-/// the blues of the band along the ship's hull, 12 to 15 the surf on the shore.
+/// BG palette 11, whose two runs of colours turn a step at a time: the blues of
+/// the band along the ship's hull and the surf on the shore.
 #define CYCLE_PALETTE 11
-#define HULL_BAND_FIRST_COLOR 4
-#define HULL_BAND_LAST_COLOR 9
-#define SURF_FIRST_COLOR 12
-#define SURF_LAST_COLOR 15
 
 /// Geode, the Venus Djinni uncovered on the shore, joins the party.
 void AttekaInlet_GeodeJoins(void) {

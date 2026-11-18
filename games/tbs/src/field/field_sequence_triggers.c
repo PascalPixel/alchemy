@@ -60,7 +60,8 @@ struct ActorPlacement *Scene_FindActorPlacement(s32 id) {
   return NULL;
 #else
 found:
-  // BUG: a missing actor leaves entry NULL if the final table is absent.
+  // UB: with the last table absent and no row matched, placement is NULL here
+  // and is read all the same.
   if ((s16)placement->sprite == -1)
     return NULL;
   return placement;
@@ -87,21 +88,11 @@ s32 GameFlag_IsConditionActive(s32 condition) {
 /// condition: one with more flags than its kind, unless its result is a mimic
 /// battle (FIND_MIMIC).
 u32 Scene_ExamineTriggerIgnoresCondition(s32 flags, s32 result) {
-  u32 mimicDifference;
-  s32 searchFlags;
-  u32 ignoresCondition;
-
   if ((flags & TRIGGER_KIND_MASK) != TRIGGER_EXAMINE)
     return 0;
-  searchFlags = flags & EXAMINE_TRIGGER_MASK;
-  ignoresCondition = 0;
-  if (searchFlags != TRIGGER_EXAMINE) {
-    mimicDifference = (result & FIND_TYPE_MASK) ^ FIND_MIMIC;
-    ignoresCondition = mimicDifference | (0U - mimicDifference);
-    // 1 when mimicDifference is not 0.
-    ignoresCondition >>= 31;
-  }
-  return ignoresCondition;
+  if ((flags & EXAMINE_TRIGGER_MASK) == TRIGGER_EXAMINE)
+    return 0;
+  return NONZERO((result & FIND_TYPE_MASK) ^ FIND_MIMIC);
 }
 
 /// Returns the first of the scene's triggers of kind for target whose condition
@@ -114,8 +105,9 @@ const struct Trigger *Scene_FindTrigger(s32 kind, s32 target) {
       ((struct Actor *)Actor_Lookup(gMainRoutineWork.leaderActorId))->facing;
 
   flags = trigger->kind;
-  // Preserve the full control word: direction and push-delay bits refine kind.
   while (flags != -1) {
+    // DEAD: flags already holds trigger->kind; the ROM keeps the second load of
+    // it once the condition holds.
     if ((flags & TRIGGER_KIND_MASK) == kind && (u8)trigger->subject == target &&
         (Scene_ExamineTriggerIgnoresCondition(flags, trigger->value) != 0 ||
          (GameFlag_IsConditionActive(trigger->condition) != 0 &&
@@ -168,44 +160,45 @@ const struct Trigger *Scene_FindTrigger(s32 kind, s32 target) {
 /// Unused: runs the loaded overlay's initialize entry.
 UNUSED void Overlay_CallInitialize(void) { gOverlayArea.initialize(); }
 
-/// Returns the talk trigger of actor id, or 0: for the actor
-/// stopped with Halt
+/// Returns the talk trigger of actor id, or 0: for the actor stopped with Halt
 /// (gMainRoutineWork.haltedActor), its TRIGGER_TALK_HALTED event if it has
 /// one, the event for talking to it while it is stopped (Crossbone Isle's Bane
 /// has one).
 const struct Trigger *Scene_FindActorTalkTrigger(s32 id) {
   const struct Trigger *talkTrigger = Scene_FindTrigger(TRIGGER_TALK, id);
-  s32 pausedActorId = gMainRoutineWork.haltedActor;
+  s32 haltedActorId = gMainRoutineWork.haltedActor;
 
-  if (pausedActorId == id) {
-    const struct Trigger *pausedTrigger =
-        Scene_FindTrigger(TRIGGER_TALK_HALTED, pausedActorId);
+  if (haltedActorId == id) {
+    const struct Trigger *haltedTrigger =
+        Scene_FindTrigger(TRIGGER_TALK_HALTED, haltedActorId);
 
-    if (pausedTrigger != 0) {
-      return pausedTrigger;
+    if (haltedTrigger != 0) {
+      return haltedTrigger;
     }
   }
   return talkTrigger;
 }
 
 /// Talks to actor id: shows its event's message or calls its event function,
-/// with the actor stopped and turned as its placement says.
+/// with the actor stopped and turned as its placement says. The actor Halt has
+/// stopped answers its TRIGGER_TALK_HALTED event if it has one; else it says
+/// its talk message in halting speech, or, in place of a talk function, one of
+/// its sprite's two Halted lines.
 s32 Scene_TalkToActor(s32 id) {
   struct ActorPlacement *placement = Scene_FindActorPlacement(id);
   s32 result = -1;
   struct Actor *actor = Actor_GetById(id);
   const struct Trigger *trigger;
-  s32 actorPaused = 0;
+  s32 actorHalted = 0;
   u32 savedAngle;
-  u32 talkFacing;
-  s32 usePausedDialogue = 0;
+  s32 decodeFlags = 0;
 
   if (gMainRoutineWork.haltedActor == id) {
-    actorPaused = 1;
+    actorHalted = 1;
     trigger = Scene_FindTrigger(TRIGGER_TALK_HALTED, id);
     if (trigger == 0) {
       trigger = Scene_FindTrigger(TRIGGER_TALK, id);
-      usePausedDialogue = 1;
+      decodeFlags = MESSAGE_DECODE_HALTING_SPEECH;
       if (trigger == 0) {
         return -1;
       }
@@ -227,15 +220,14 @@ s32 Scene_TalkToActor(s32 id) {
   }
 
   if (trigger != 0 && trigger->value != 0) {
-    if (!actorPaused) {
+    if (!actorHalted) {
       // Stop the actor; with any talk facing but TALK_FACING_KEEP, also stop
       // the leader and make each watch the other.
       actor->paused = 1;
       Actor_SetAnimationSpeedFar(actor, 0);
       savedAngle = actor->facing;
-      talkFacing = (u8)placement->talkFacing << 24;
-      if (talkFacing <= (TALK_FACING_PARTY_AND_BACK << 24) ||
-          talkFacing == (TALK_FACING_PARTY_THEN_WATCH << 24)) {
+      if ((u8)placement->talkFacing <= TALK_FACING_PARTY_AND_BACK ||
+          (s8)placement->talkFacing == TALK_FACING_PARTY_THEN_WATCH) {
         struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
         leader->targetX = leader->x.fixed;
@@ -248,7 +240,7 @@ s32 Scene_TalkToActor(s32 id) {
     // A result below TRIGGER_RESULT_MESSAGE_END is a message; above, a function
     // to call.
     if (trigger->value < TRIGGER_RESULT_MESSAGE_END) {
-      Message_SetDecodeFlagsFar(usePausedDialogue);
+      Message_SetDecodeFlagsFar(decodeFlags);
       Event_Start();
       Event_SetMessageId(trigger->value);
       Event_ShowMessageAndWait(id, 0);
@@ -257,13 +249,13 @@ s32 Scene_TalkToActor(s32 id) {
       Leader_StopMoving();
       ((void (*)(s32))trigger->value)(id);
     }
-    if (!actorPaused) {
+    if (!actorHalted) {
       // An actor whose script has ended goes back to what its talk facing
       // says: watching the leader or its old angle.
       if (actor->script[actor->scriptCursor] == SCRIPT_CMD_END) {
         if ((s8)placement->talkFacing == TALK_FACING_PARTY_THEN_WATCH) {
           actor->watchedActor = Actor_GetById(gMainRoutineWork.leaderActorId);
-          actor->steeringFlags |= 1;
+          actor->steeringFlags |= ACTOR_FACES_MOTION;
           Actor_SetMovementType(actor, (s32)gActor_FaceWatchedScript);
         } else if ((s8)placement->talkFacing == TALK_FACING_PARTY_AND_BACK) {
           actor->timer = savedAngle;
@@ -276,9 +268,7 @@ s32 Scene_TalkToActor(s32 id) {
     result = 0;
   }
 finish:
-  // Both a normal event and the paused actor's fallback line release
-  // the pause.
-  if (actorPaused) {
+  if (actorHalted) {
     FieldPsynergy_ResumeHaltedActor(gMainRoutineWork.haltedActor);
     gMainRoutineWork.haltedActor = -1;
   }
@@ -497,11 +487,13 @@ s32 Field_ExamineCell(s32 tile) {
               Party_AddPp(PSYNERGY_STONE_PP, 0);
               PartyStatus_CreateWindowFar(PARTY_STATUS_SHOW_PP);
               Sound_PlayFar(SE_RECOVERY);
+              // "The party's PP is fully restored!"
               FieldMessage_ShowFar(MsgGotPsynergyStone + 1, FIELD_MESSAGE_ZOOM);
               PartyStatus_CloseFar();
               Actor_SelectAnimationFar(object, 2);
               Sound_PlayFar(SE_GLITTER);
               Event_Wait(30);
+              // "The Psynergy Stone disappeared..."
               FieldMessage_ShowFar(MsgGotPsynergyStone + 2, FIELD_MESSAGE_ZOOM);
               TreasureSpot_Hide(tile);
               if (condition != -1)
@@ -561,12 +553,14 @@ s32 Field_ExamineCell(s32 tile) {
                                               trigger->value & FIND_ITEM_MASK);
               wait(30);
               recipient = PartyInventory_AddFar((u16)trigger->value);
-              // messageOffset is reused here as the item id's 0xffff mask.
-              messageOffset = 0xffff;
+              // messageOffset now masks the inventory entry the chest gave.
+              messageOffset = INVENTORY_QUANTITY_MASK | INVENTORY_ENTRY_MASK;
               if (recipient == -1) {
                 MessageArgument_PushFar(trigger->value & FIND_ITEM_MASK,
                                         MESSAGE_ARGUMENT_ITEM);
                 FieldMessage_ShowFar(MsgFoundItem, FIELD_MESSAGE_ZOOM);
+                // "But Isaac's party can't carry any more, so they left it
+                // behind."
                 FieldMessage_ShowFar(MsgFoundItem + 4, FIELD_MESSAGE_ZOOM);
                 Actor_ReleaseIfPresent(object);
                 if ((trigger->kind & EXAMINE_TRIGGER_MASK) ==

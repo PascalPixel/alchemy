@@ -109,11 +109,6 @@ struct TargetTrack {
 #define TARGET_REDRAW_SPREAD 1
 #define TARGET_REDRAW_ALL 0xFFFF
 
-/// The place codes the selection returns, as battle_internal.h names them: a
-/// place in the party's list, or with the side bit set the enemies'.
-#define PLACE_PARTY (1 << 8)
-#define PLACE_ENEMY (PLACE_PARTY | (1 << 7))
-
 /// Lets the player choose the target of an action of unit `selection`, with a
 /// cursor over the aimed unit and smaller markers on the others its range
 /// covers. `mode` is the action's targetMode: ABILITY_TARGET_ALLIES the party,
@@ -797,5 +792,3 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 #undef CURSOR_HOLD_FRAME
 #undef TARGET_REDRAW_SPREAD
 #undef TARGET_REDRAW_ALL
-#undef PLACE_PARTY
-#undef PLACE_ENEMY

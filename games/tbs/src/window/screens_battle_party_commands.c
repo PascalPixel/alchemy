@@ -4,10 +4,6 @@
 
 #include "screens_internal.h"
 
-/// BattleAction.target's place code for place 0 of the party's list, as
-/// BattleTarget_RunSelection returns it: battle_side.h's PLACE_PARTY, which
-/// screens_battle_targets.c undefines before this part.
-#define PLACE_PARTY (1 << 8)
 /// Flee's priority, above every other action's: the party flees first in the
 /// turn.
 #define FLEE_PRIORITY 32766
@@ -787,6 +783,5 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   return commandCount;
 }
 
-#undef PLACE_PARTY
 #undef FLEE_PRIORITY
 #undef OVERFLOWED_PRIORITY

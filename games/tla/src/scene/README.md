@@ -107,8 +107,8 @@ here: what kind of action, on which actor or cell, under what condition,
 and what runs.
 
 ```c
-{TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS,
- EVENT(GarohRooms_TalkToWeaponMerchant)},
+{TRIGGER_TALK, ACTOR_WEAPONS_VENDOR, CONDITION_ALWAYS,
+ EVENT(GarohRooms_TalkToWeaponsVendor)},
 {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIFTH_PUDDLE,
  FLAG_DAILA_PUDDLE_FROZEN_FIRST + 4, EVENT(Scene_RaiseHeldActor)},
 ```

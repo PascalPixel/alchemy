@@ -1,8 +1,11 @@
 /// @file
-/// Aqua Rock's outside, the island south of the Apojii Islands, in the rooms
-/// of this overlay: currents the party runs against, a pillar Moved before
-/// the red Moai, dry Moai that Douse turns into new streams, puddles to
-/// Frost, and the tear-shaped rock whose Douse opens the way inside
+/// Aqua Rock's outside, the island south of the Apojii Islands, in two rooms
+/// of this overlay. On the slopes, red moai pour streams that stop now and
+/// then, a pillar Moved before one stops it for good, Douse fills a dry moai
+/// and turns a Water Stone's streams back uphill, and the guardian moai step
+/// aside once the Apojii's Aqua Stone is Doused. In the Mist Sabre chest's
+/// room, Frost freezes puddles into steps, Move drops two rocks into the
+/// stream, and Douse on its Water Stone opens the way inside
 /// (aqua_rock_inside.c).
 
 #include "../field/actor_set_sprite_priority.c"
@@ -35,8 +38,11 @@ u8 *Sprite_AddAnimation(void *animation, s32 id);
 
 #include "scene_ids.h"
 
-/// A bubble or drop of the cell markers: its place, its age in frames and its
-/// sprite's attributes.
+/// The bubbles a stream carries along at once.
+#define BUBBLE_COUNT 64
+
+/// A bubble a stream carries: its place, its age in frames and its sprite's
+/// attributes.
 struct Bubble {
   s32 x;
   s32 y;
@@ -45,29 +51,30 @@ struct Bubble {
   u32 oam[3];
 };
 
-/// The cell markers' work: the actor they come from, their VRAM entry, the next
-/// free bubble, which way they go (rising when positive) and 64 bubbles.
-struct AquaRockWork {
+/// The bubbles' work: the actor they come from, their VRAM entry, the next
+/// free bubble, which way they go (up the stream when positive) and the
+/// bubbles.
+struct AquaRockBubbles {
   struct Actor *object;
   u16 vramEntry;
   u16 next;
   s16 direction;
   u8 unusedAfterDirection[2]; ///< no code names it
-  struct Bubble bubbles[64];
+  struct Bubble bubbles[BUBBLE_COUNT];
 };
 
 void Actor_StartScript(struct Actor *actor, const void *data);
 s32 Actor_EmitMist(struct Actor *actor);
 
-void AquaRock_TurnSprite(struct Actor *actor);
-void AquaRock_SinkOrFlow(struct Actor *actor);
-void AquaRock_DrawRisingCellMarkers(void);
-void AquaRock_DrawFallingCellMarkers(void);
-void AquaRock_DrawCellMarkers(void);
+void AquaRock_TurnFish(struct Actor *actor);
+void AquaRock_FlowSparkleUpStream(struct Actor *actor);
+void AquaRock_DrawRisingBubbles(void);
+void AquaRock_DrawFallingBubbles(void);
+void AquaRock_DrawBubbles(void);
 
 extern u32 gAquaRock_SplashScript[];
 extern u32 gWaterDropScript[];
-/// The cell markers' tiles, compressed (graphics/aqua_rock/tiles.s).
+/// The bubbles' four frames, compressed (graphics/aqua_rock/tiles.s).
 extern const u8 gAquaRock_MarkerTiles[];
 extern s16 gAquaRock_SlopesRegions[];
 extern s16 gAquaRock_MistSabreChestRegions[];
@@ -75,59 +82,107 @@ extern struct ActorPlacement gAquaRock_Placements[];
 extern struct ActorPlacement gAquaRock_SlopesPlacements[];
 extern struct ActorPlacement gAquaRock_MistSabreChestPlacements[];
 
-/// The slopes by the entrance (gAquaRock_SlopesPlacements).
-/// Aqua Rock's lasting flags outside: the pillar Moved before the Moai, the
-/// two rocks dropped into the current, the Moai stepped aside from the way in,
-/// the streams the Water Stone has turned back (Douse turns them each time),
-/// and the Moai and the tear-shaped rock Douse has filled.
-#define FLAG_AQUA_ROCK_PILLAR_BEFORE_MOAI 0x950
+/// Aqua Rock's lasting flags outside: the slopes' second pillar Moved into
+/// the hole in its ledge, the two rocks Moved into the Mist Sabre chest's
+/// room's stream, the guardian moai stepped aside, the streams the slopes'
+/// Water Stone has turned back (each Douse turns them again), the Mist Sabre
+/// chest's room's Water Stone Doused, and the dry moai filled.
+#define FLAG_AQUA_ROCK_PILLAR_IN_HOLE 0x950
 #define FLAG_AQUA_ROCK_FIRST_ROCK_DROPPED 0x951
 #define FLAG_AQUA_ROCK_SECOND_ROCK_DROPPED 0x952
 #define FLAG_AQUA_ROCK_MOAI_STEPPED_ASIDE 0x955
 #define FLAG_AQUA_ROCK_STREAMS_TURNED_BACK 0xa68
-#define FLAG_AQUA_ROCK_DRY_MOAI_DOUSED 0xa69
-#define FLAG_AQUA_ROCK_TEAR_ROCK_DOUSED 0xa6b
+#define FLAG_AQUA_ROCK_MIST_SABRE_CHEST_WATER_STONE_DOUSED 0xa69
+#define FLAG_AQUA_ROCK_DRY_MOAI_FILLED 0xa6b
+/// While the party is on the island: the cell of the pillar Move sets before
+/// the top's red moai, kept as two bytes, and whether it stands before the
+/// west or the east one, which stops that moai's stream.
+#define FLAG_PILLAR_COLUMN FLAG_AREA_TEMP_10
+#define FLAG_PILLAR_ROW FLAG_AREA_TEMP_18
+#define FLAG_PILLAR_BEFORE_WEST_MOAI FLAG_AREA_TEMP_20
+#define FLAG_PILLAR_BEFORE_EAST_MOAI FLAG_AREA_TEMP_21
+/// This visit's flags. Each of the four red moai's streams, stopped
+/// (AquaRock_TimeStreams).
+#define FLAG_WEST_MOAI_STREAM_STOPPED FLAG_SCENE_TEMP_00
+#define FLAG_EAST_MOAI_STREAM_STOPPED FLAG_SCENE_TEMP_01
+#define FLAG_LOWER_WEST_MOAI_STREAM_STOPPED FLAG_SCENE_TEMP_02
+#define FLAG_LOWER_EAST_MOAI_STREAM_STOPPED FLAG_SCENE_TEMP_03
+/// Frost on each of the Mist Sabre chest's room's three puddles.
+#define FLAG_PUDDLE_A_FROZEN FLAG_SCENE_TEMP_21
+#define FLAG_PUDDLE_B_FROZEN FLAG_SCENE_TEMP_22
+#define FLAG_PUDDLE_C_FROZEN FLAG_SCENE_TEMP_23
 
+/// The cells before the top's west and east red moai, where the pillar stops a
+/// stream; the column of the hole in the ledge; and the column of the Mist
+/// Sabre chest's room's stream, where a rock Moved drops in.
+#define WEST_MOAI_COLUMN 7
+#define EAST_MOAI_COLUMN 15
+#define MOAI_FRONT_ROW 35
+#define PILLAR_HOLE_COLUMN 32
+#define ROCK_STREAM_COLUMN 53
+
+/// The trigger StepIntoCurrent raises for a leader the current carries over
+/// the edge of the falls (AquaRock_DropDownFalls).
+#define TRIGGER_DROP_DOWN_FALLS 44
+
+/// The leader's animations: flailing his arms as he drops, tumbling head over
+/// heels in a burst of spray, and sitting on the ground, legs out, arms flung
+/// up and then lowered.
+#define ANIM_LEADER_FLAIL 40
+#define ANIM_LEADER_TUMBLE_IN_WATER 18
+#define ANIM_LEADER_SIT 49
+
+/// A moai's water, a sprite added to its own: the pool in the top of its head
+/// and the water pouring from its mouth. And the fish of the slopes' pools.
+#define SPRITE_MOAI_WATER 381
+#define SPRITE_FISH 401
+
+/// The slopes (gAquaRock_SlopesPlacements).
 enum AquaRockSlopesActorId {
-  /// The rock's sixteen Moai statues.
+  /// The slopes' sixteen moai: four red ones, the first two at the top, then
+  /// the dry one, two green ones and nine green ones lower down that share
+  /// one sprite.
   ACTOR_FIRST_MOAI = ACTOR_FIRST_PLACED,
-  /// The dried-up Moai Douse sets flowing again (AquaRock_DouseDryMoai).
-  ACTOR_DRY_MOAI = ACTOR_FIRST_MOAI + 7,
-  /// The five Moai that step aside together (AquaRock_MoaiStepAside).
-  ACTOR_FIRST_STEPPING_MOAI = ACTOR_FIRST_MOAI + 9,
-  /// The last of the sixteen Moai.
+  /// The grey moai Douse fills, so that it pours a stream
+  /// (AquaRock_DouseDryMoai).
+  ACTOR_DRY_MOAI = ACTOR_FIRST_MOAI + 4,
+  ACTOR_FIRST_BOTTOM_MOAI = ACTOR_FIRST_MOAI + 7,
+  /// The five guardian moai that stand in the way in, until they step aside
+  /// together (AquaRock_MoaiStepAside).
+  ACTOR_FIRST_GUARDIAN_MOAI = ACTOR_FIRST_MOAI + 9,
   ACTOR_LAST_MOAI = ACTOR_FIRST_MOAI + 15,
-  /// The pillars Move pushes before the Moai.
-  ///@{
-  ACTOR_FIRST_PILLAR = ACTOR_FIRST_MOAI + 16,
-  ACTOR_SECOND_PILLAR,
-  ///@}
-  /// The Water Stone that turns the stream when Doused.
+  /// The pillar Move sets before the top's red moai, and the pillar on the
+  /// ledge Move pushes into its hole.
+  ACTOR_MOAI_PILLAR,
+  ACTOR_LEDGE_PILLAR,
+  /// The Water Stone whose Douse turns the streams back uphill.
   ACTOR_WATER_STONE,
-  /// The three drifters in the water (sprite 401), on gAquaRock_DriftScript and
-  /// gAquaRock_SlowDriftScript.
-  ACTOR_FIRST_DRIFTER
+  /// The three fish of the pools (gAquaRock_FishScript and
+  /// gAquaRock_SlowFishScript).
+  ACTOR_FIRST_FISH
 };
 
 /// The Mist Sabre chest's room (gAquaRock_MistSabreChestPlacements).
 enum AquaRockMistSabreChestActorId {
+  /// The Water Stone whose Douse opens the way inside.
   ACTOR_MIST_SABRE_WATER_STONE = ACTOR_FIRST_PLACED,
-  /// The three puddles Frost freezes.
+  /// The three puddles Frost freezes into steps.
   ///@{
   ACTOR_PUDDLE_A,
   ACTOR_PUDDLE_B,
   ACTOR_PUDDLE_C,
   ///@}
-  /// The two ember stones Move pushes into the current.
+  /// The two rocks Move pushes into the stream.
   ///@{
-  ACTOR_FIRST_EMBER_STONE,
-  ACTOR_SECOND_EMBER_STONE,
+  ACTOR_FIRST_ROCK,
+  ACTOR_SECOND_ROCK,
   ///@}
   /// An unseen marker the bubbles and sparkles rise from once the streams are
   /// turned back.
   ACTOR_BUBBLE_MARKER,
-  /// Where the stream the dry Moai pours out starts, dropping water.
-  ACTOR_STREAM_SOURCE
+  /// An unseen marker in the pool where, once its Water Stone is Doused,
+  /// rings of water rise and the leader sinks inside (AquaRock_SinkInside).
+  ACTOR_WAY_INSIDE
 };
 extern struct Trigger gAquaRock_Triggers[];
 extern struct Trigger gAquaRock_SlopesTriggers[];
@@ -182,9 +237,9 @@ static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
 #include "macros.h"
 #include "shared/tables.h"
 
-/// Creates a hidden, still actor of `kind` at a point, untargeted, in colour 15
-/// and drawn underfoot.
-struct Actor *AquaRock_CreateActor(s32 x, s32 y, s32 z, s32 kind) {
+/// Unused: creates an unseen, still actor of `kind` at a point, untargeted and
+/// drawn underfoot.
+UNUSED struct Actor *AquaRock_CreateActor(s32 x, s32 y, s32 z, s32 kind) {
   struct Actor *actor = Import_ActorCreate(kind, x, y, z);
 
   if (actor != 0) {
@@ -192,7 +247,7 @@ struct Actor *AquaRock_CreateActor(s32 x, s32 y, s32 z, s32 kind) {
     actor->motionFlags = 0;
     actor->collisionFlags = ACTOR_NOT_TARGETED;
     Actor_SetSpriteFlags(actor, 0);
-    Actor_SetSpriteColor(actor, 15);
+    Actor_SetSpriteColor(actor, SPRITE_COLOR_HIDDEN);
     actor->priorityFlags |=
         ACTOR_PRIORITY_UNDERFOOT | ACTOR_PRIORITY_IGNORES_RISES;
     return actor;
@@ -215,51 +270,55 @@ struct Actor *AquaRock_CreateActor(s32 x, s32 y, s32 z, s32 kind) {
 struct Actor;
 
 void AquaRock_SetSparkleAnchor(s32 id);
-void AquaRock_SetCellMarkerAnchor(s32 id);
+void AquaRock_SetBubbleAnchor(s32 id);
 void AquaRock_FlowWithStream(void);
 void AquaRock_SpawnSplash(struct Actor *actor);
-void AquaRock_SetMoaiFace(s32 id);
+void AquaRock_AddMoaiWater(s32 id);
 void Actor_EmitWaterDrop(struct Actor *actor);
 
 void AquaRock_KeepLeaderPriority(void);
-void AquaRock_StartCellMarkers(void);
+void AquaRock_StartBubbles(void);
 void AquaRock_StartSparkles(void);
 void AquaRock_MoaiStepAside(void);
 void AquaRock_SetUpStreams(void);
 void AquaRock_ArriveFromPassage(void);
-void AquaRock_SpinOut(void);
-void AquaRock_DropIn(void);
+void AquaRock_ArriveFromInside(void);
+void AquaRock_ArriveUpStream(void);
 
 extern s16 gGroundParticleFrames[];
 
-s32 AquaRock_StartDrifter(struct Actor *actor);
+s32 AquaRock_StartFish(struct Actor *actor);
 void AquaRock_RideStreamUp(void);
 void AquaRock_StepIntoCurrent(void);
 
-void AquaRock_DouseTearRock(void);
+void AquaRock_DouseDryMoai(void);
 
 void AquaRock_DropDownFalls(void);
 
-/// One of the rock's water streams, which turns on and off with its flag:
-/// each change runs down it as a wave, copying three cells a row from the
-/// open or closed pictures beside it, a row every four frames.
+/// One of the streams the moai pour, which stops and starts with its flag: each
+/// change runs down it as a wave, copying three cells a row from the flowing
+/// or stopped pictures beside it, a row every four frames.
 struct AquaRockStream {
-  s16 pictureSourceX, pictureSourceY; ///< its pictures, closed then open
-  s16 cellSourceX, cellSourceY;       ///< its cells, closed then open
+  s16 pictureSourceX, pictureSourceY; ///< its pictures, flowing then stopped
+  s16 cellSourceX, cellSourceY;       ///< its cells, flowing then stopped
   s16 pictureX, pictureY;             ///< where its pictures are copied
   s16 cellX, cellY;                   ///< where its cells are copied
   s16 height;                         ///< its rows
-  /// The flag that opens it; with 0x1000 the stream is open while it is clear.
+  /// The flag that stops it, or IF_FLAG_SET of one that sets it flowing.
   s16 flag;
-  s16 shown;       ///< the flag's value it was last told
-  s16 waveRow[2];  ///< each wave's row times four; 9999 for none
-  s16 waveOpen[2]; ///< whether each wave opens the stream or closes it
+  s16 shown;        ///< the flag's value it was last told
+  s16 waveRow[2];   ///< each wave's row times four, or STREAM_NO_WAVE
+  s16 waveStops[2]; ///< whether each wave stops the stream or starts it
   s16 nextWave;
 };
 
-/// The five streams AquaRock_UpdateStreams turns on and off.
+/// AquaRockStream.waveRow for no wave.
+#define STREAM_NO_WAVE 9999
+
+/// The five moai streams AquaRock_UpdateStreams stops and starts: the four red
+/// moai's and the dry moai's.
 struct AquaRockStream gAquaRock_Streams[5] BSS_DATA ALIGNED(16);
-struct AquaRockWork gAquaRock_CellMarkers BSS_DATA;
+struct AquaRockBubbles gAquaRock_Bubbles BSS_DATA;
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -275,8 +334,8 @@ const u8 *Scene_GetExitRegions(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/// A drifter's script call: picks a random spot ahead within 16 pixels of its
-/// home and moves there; after three misses it turns around.
+/// A fish's script call: picks a random spot ahead within 16 pixels of its
+/// home and swims there; after three misses it turns around.
 s32 AquaRock_PickRandomSpot(struct Actor *actor) {
   struct Vector3 spot;
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
@@ -301,14 +360,15 @@ again:
     a = Random16();
     b = Random16();
     Vector_AddPolarOffset(distance, actor->facing + (a >> 2) - (b >> 2), &spot);
+    // The spot's distance from home in whole pixels, rounded toward zero.
     x = spot.x;
     if (x < 0)
       x += FIXED_ONE - 1;
-    dx = (x >> 16) - actor->timer;
+    dx = FIXEDtoINT(x) - actor->timer;
     coordinate = spot.z;
     if (coordinate < 0)
       coordinate += FIXED_ONE - 1;
-    dz = (coordinate >> 16) - (s16)actor->userValue;
+    dz = FIXEDtoINT(coordinate) - (s16)actor->userValue;
     if (dx * dx + dz * dz > maxDistanceSquared)
       goto again;
     goto found;
@@ -325,8 +385,8 @@ end:
   return x;
 }
 
-/// A drifter's update: its sprite turns with its facing.
-void AquaRock_TurnSprite(struct Actor *actor) {
+/// A fish's update: its sprite turns with its facing.
+void AquaRock_TurnFish(struct Actor *actor) {
   struct FieldSprite *sprite;
   s32 angle;
 
@@ -335,14 +395,14 @@ void AquaRock_TurnSprite(struct Actor *actor) {
   sprite->rotation = angle + DEGtoANG(90);
 }
 
-/// A drifter's script call: hides its sprite and gives it its speed and its
+/// A fish's script call: takes away its shadow and gives it its speed and its
 /// turning update.
-s32 AquaRock_StartDrifter(struct Actor *actor) {
+s32 AquaRock_StartFish(struct Actor *actor) {
   Actor_SetSpriteFlags(actor, 0);
   actor->speedLimit = toFIXED(1);
   actor->acceleration = toFIXED(1) / 20;
   actor->collisionFlags = 0;
-  actor->update = (void (*)(void))AquaRock_TurnSprite;
+  actor->update = (void (*)(void))AquaRock_TurnFish;
   return 0;
 }
 
@@ -356,9 +416,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gAquaRock_Placements;
 }
 
-/// A drop's update: it falls until it reaches the water, then flows north, and
-/// is released at the bottom or the edge.
-void AquaRock_SinkOrFlow(struct Actor *actor) {
+/// Unused: a sparkle's update. It rises to the water's surface and then flows
+/// north up the stream, until it reaches the top or the stream's end.
+void AquaRock_FlowSparkleUpStream(struct Actor *actor) {
   if (Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed) > actor->y.fixed)
     actor->y.fixed += toFIXED(2);
   else
@@ -369,8 +429,9 @@ void AquaRock_SinkOrFlow(struct Actor *actor) {
     Actor_Release(actor);
 }
 
-/// Now and then a drop falls from somewhere along the actor's 48-pixel width.
-void AquaRock_DripAtRandom(struct Actor *actor) {
+/// Unused: now and then a sparkle starts up the stream from somewhere along the
+/// actor's 48-pixel width.
+UNUSED void AquaRock_SpawnSparkleAtRandom(struct Actor *actor) {
   if ((u32)Random16() < 4096) {
     struct Actor *child;
     s32 spread = Random16();
@@ -381,26 +442,26 @@ void AquaRock_DripAtRandom(struct Actor *actor) {
                                actor->z.fixed);
     if (child != 0) {
       Actor_SetSpriteFlags(child, 0);
-      child->update = (void (*)(void))AquaRock_SinkOrFlow;
+      child->update = (void (*)(void))AquaRock_FlowSparkleUpStream;
       child->motionFlags = 0;
     }
   }
 }
 
-/// Each frame: a stream whose flag has changed sends a wave down it, opening or
-/// closing it a row every four frames.
+/// Each frame: a stream whose flag has changed sends a wave down it, stopping
+/// or starting it a row every four frames.
 void AquaRock_UpdateStreams(void) {
   struct AquaRockStream *entry;
   s32 n, i, flag;
 
   entry = gAquaRock_Streams;
   for (n = 0; n <= 4; n++, entry++) {
-    flag = GameFlag_Get(entry->flag & 0xfff);
-    if (entry->flag & 0x1000)
+    flag = GameFlag_Get(entry->flag & (CONDITION_FLAG_SET - 1));
+    if (entry->flag & CONDITION_FLAG_SET)
       flag ^= 1;
     if (entry->shown != flag) {
       entry->waveRow[entry->nextWave] = 0;
-      entry->waveOpen[entry->nextWave] = flag;
+      entry->waveStops[entry->nextWave] = flag;
       if (++entry->nextWave > 1)
         entry->nextWave = 0;
       entry->shown = flag;
@@ -410,7 +471,7 @@ void AquaRock_UpdateStreams(void) {
       if (row < entry->height * 4) {
         s32 inverse;
         row /= 4;
-        flag = entry->waveOpen[i];
+        flag = entry->waveStops[i];
         inverse = flag ^ 1;
         if (entry->waveRow[i] & 1) {
           MapGrid_CopyCellsLayered(flag * 3 + entry->pictureSourceX,
@@ -438,44 +499,48 @@ extern s32 gAquaRock_SecondStreamTimer;
 extern s32 gAquaRock_ThirdStreamTimer;
 extern s32 gAquaRock_FourthStreamTimer;
 
-/// Unless flag 0x104 is set, runs four 240-frame timers
-/// (gAquaRock_FirstStreamTimer to gAquaRock_FourthStreamTimer) that hold flags
-/// 0x200 to 0x203 set for their last 90 frames; in their first 150 the first
-/// two follow flags 0x320 and 0x321 and the last two are clear.
+/// The frames of a red moai's stream's cycle, and the last of them it stops
+/// for.
+#define STREAM_CYCLE_FRAMES 240
+#define STREAM_STOP_FRAMES 90
+
+/// Each frame, while no event runs: each red moai's stream flows and then
+/// stops for the end of its cycle; the top two stay stopped while the pillar
+/// stands before them.
 void AquaRock_TimeStreams(void) {
   if (GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS))
     return;
-  if (gAquaRock_FirstStreamTimer <= 149) {
-    if (GameFlag_Get(FLAG_AREA_TEMP_20))
-      GameFlag_Set(FLAG_SCENE_TEMP_00);
+  if (gAquaRock_FirstStreamTimer < STREAM_CYCLE_FRAMES - STREAM_STOP_FRAMES) {
+    if (GameFlag_Get(FLAG_PILLAR_BEFORE_WEST_MOAI))
+      GameFlag_Set(FLAG_WEST_MOAI_STREAM_STOPPED);
     else
-      GameFlag_Clear(FLAG_SCENE_TEMP_00);
+      GameFlag_Clear(FLAG_WEST_MOAI_STREAM_STOPPED);
   } else {
-    GameFlag_Set(FLAG_SCENE_TEMP_00);
+    GameFlag_Set(FLAG_WEST_MOAI_STREAM_STOPPED);
   }
-  if (++gAquaRock_FirstStreamTimer > 239)
+  if (++gAquaRock_FirstStreamTimer >= STREAM_CYCLE_FRAMES)
     gAquaRock_FirstStreamTimer = 0;
-  if (gAquaRock_SecondStreamTimer <= 149) {
-    if (GameFlag_Get(FLAG_AREA_TEMP_21))
-      GameFlag_Set(FLAG_SCENE_TEMP_01);
+  if (gAquaRock_SecondStreamTimer < STREAM_CYCLE_FRAMES - STREAM_STOP_FRAMES) {
+    if (GameFlag_Get(FLAG_PILLAR_BEFORE_EAST_MOAI))
+      GameFlag_Set(FLAG_EAST_MOAI_STREAM_STOPPED);
     else
-      GameFlag_Clear(FLAG_SCENE_TEMP_01);
+      GameFlag_Clear(FLAG_EAST_MOAI_STREAM_STOPPED);
   } else {
-    GameFlag_Set(FLAG_SCENE_TEMP_01);
+    GameFlag_Set(FLAG_EAST_MOAI_STREAM_STOPPED);
   }
-  if (++gAquaRock_SecondStreamTimer > 239)
+  if (++gAquaRock_SecondStreamTimer >= STREAM_CYCLE_FRAMES)
     gAquaRock_SecondStreamTimer = 0;
-  if (gAquaRock_ThirdStreamTimer <= 149)
-    GameFlag_Clear(FLAG_SCENE_TEMP_02);
+  if (gAquaRock_ThirdStreamTimer < STREAM_CYCLE_FRAMES - STREAM_STOP_FRAMES)
+    GameFlag_Clear(FLAG_LOWER_WEST_MOAI_STREAM_STOPPED);
   else
-    GameFlag_Set(FLAG_SCENE_TEMP_02);
-  if (++gAquaRock_ThirdStreamTimer > 239)
+    GameFlag_Set(FLAG_LOWER_WEST_MOAI_STREAM_STOPPED);
+  if (++gAquaRock_ThirdStreamTimer >= STREAM_CYCLE_FRAMES)
     gAquaRock_ThirdStreamTimer = 0;
-  if (gAquaRock_FourthStreamTimer <= 149)
-    GameFlag_Clear(FLAG_SCENE_TEMP_03);
+  if (gAquaRock_FourthStreamTimer < STREAM_CYCLE_FRAMES - STREAM_STOP_FRAMES)
+    GameFlag_Clear(FLAG_LOWER_EAST_MOAI_STREAM_STOPPED);
   else
-    GameFlag_Set(FLAG_SCENE_TEMP_03);
-  if (++gAquaRock_FourthStreamTimer > 239)
+    GameFlag_Set(FLAG_LOWER_EAST_MOAI_STREAM_STOPPED);
+  if (++gAquaRock_FourthStreamTimer >= STREAM_CYCLE_FRAMES)
     gAquaRock_FourthStreamTimer = 0;
 }
 
@@ -496,53 +561,57 @@ void AquaRock_TimeStreams(void) {
   (stream)->flag = (flag_);                                                    \
   (stream)->shown = GameFlag_Get(flag_) ^ 1;                                   \
   (stream)->nextWave = 0;                                                      \
-  (stream)->waveRow[1] = 9999;                                                 \
-  (stream)->waveRow[0] = 9999
+  (stream)->waveRow[1] = STREAM_NO_WAVE;                                       \
+  (stream)->waveRow[0] = STREAM_NO_WAVE
 
-/// Sets the five streams with their pictures, cells and flags, opens the first
-/// two where the pillar left them open, and starts the streams' tasks.
+/// Sets the five streams with their pictures, cells and flags, stops at once
+/// the top two the pillar stands before, and starts the streams' tasks.
 void AquaRock_SetUpStreams(void) {
   struct AquaRockStream *entry = gAquaRock_Streams;
 
-  STREAM_SET(entry, 64, 74, 76, 74, 70, 10, 6, 74, 36, FLAG_SCENE_TEMP_00);
+  STREAM_SET(entry, 64, 74, 76, 74, 70, 10, 6, 74, 36,
+             FLAG_WEST_MOAI_STREAM_STOPPED);
   entry++;
-  STREAM_SET(entry, 70, 74, 82, 74, 78, 10, 14, 74, 36, FLAG_SCENE_TEMP_01);
+  STREAM_SET(entry, 70, 74, 82, 74, 78, 10, 14, 74, 36,
+             FLAG_EAST_MOAI_STREAM_STOPPED);
   entry++;
-  STREAM_SET(entry, 90, 93, 102, 93, 103, 26, 39, 90, 15, FLAG_SCENE_TEMP_02);
+  STREAM_SET(entry, 90, 93, 102, 93, 103, 26, 39, 90, 15,
+             FLAG_LOWER_WEST_MOAI_STREAM_STOPPED);
   entry++;
-  STREAM_SET(entry, 96, 93, 108, 93, 107, 26, 43, 90, 15, FLAG_SCENE_TEMP_03);
+  STREAM_SET(entry, 96, 93, 108, 93, 107, 26, 43, 90, 15,
+             FLAG_LOWER_EAST_MOAI_STREAM_STOPPED);
   entry++;
   STREAM_SET(entry, 116, 95, 122, 95, 96, 32, 32, 96, 13,
-             IF_FLAG_SET(FLAG_AQUA_ROCK_TEAR_ROCK_DOUSED));
-  if (GameFlag_Get(FLAG_AREA_TEMP_20))
-    GameFlag_Set(FLAG_SCENE_TEMP_00);
+             IF_FLAG_SET(FLAG_AQUA_ROCK_DRY_MOAI_FILLED));
+  if (GameFlag_Get(FLAG_PILLAR_BEFORE_WEST_MOAI))
+    GameFlag_Set(FLAG_WEST_MOAI_STREAM_STOPPED);
   else
-    GameFlag_Clear(FLAG_SCENE_TEMP_00);
-  if (GameFlag_Get(FLAG_AREA_TEMP_21))
-    GameFlag_Set(FLAG_SCENE_TEMP_01);
+    GameFlag_Clear(FLAG_WEST_MOAI_STREAM_STOPPED);
+  if (GameFlag_Get(FLAG_PILLAR_BEFORE_EAST_MOAI))
+    GameFlag_Set(FLAG_EAST_MOAI_STREAM_STOPPED);
   else
-    GameFlag_Clear(FLAG_SCENE_TEMP_01);
-  if (GameFlag_Get(FLAG_SCENE_TEMP_00)) {
-    struct AquaRockStream *opened = &gAquaRock_Streams[0];
-    MapGrid_CopyCellsLayered(opened->pictureSourceX + 3, opened->pictureSourceY,
-                             3, opened->height, opened->pictureX,
-                             opened->pictureY);
-    MapGrid_CopyCells(opened->cellSourceX + 3, opened->cellSourceY, 3,
-                      opened->height, opened->cellX, opened->cellY);
-    opened->waveRow[1] = 9999;
-    opened->waveRow[0] = 9999;
-    opened->shown = 1;
+    GameFlag_Clear(FLAG_EAST_MOAI_STREAM_STOPPED);
+  if (GameFlag_Get(FLAG_WEST_MOAI_STREAM_STOPPED)) {
+    struct AquaRockStream *stream = &gAquaRock_Streams[0];
+    MapGrid_CopyCellsLayered(stream->pictureSourceX + 3, stream->pictureSourceY,
+                             3, stream->height, stream->pictureX,
+                             stream->pictureY);
+    MapGrid_CopyCells(stream->cellSourceX + 3, stream->cellSourceY, 3,
+                      stream->height, stream->cellX, stream->cellY);
+    stream->waveRow[1] = STREAM_NO_WAVE;
+    stream->waveRow[0] = STREAM_NO_WAVE;
+    stream->shown = 1;
   }
-  if (GameFlag_Get(FLAG_SCENE_TEMP_01)) {
-    struct AquaRockStream *opened = &gAquaRock_Streams[1];
-    MapGrid_CopyCellsLayered(opened->pictureSourceX + 3, opened->pictureSourceY,
-                             3, opened->height, opened->pictureX,
-                             opened->pictureY);
-    MapGrid_CopyCells(opened->cellSourceX + 3, opened->cellSourceY, 3,
-                      opened->height, opened->cellX, opened->cellY);
-    opened->waveRow[1] = 9999;
-    opened->waveRow[0] = 9999;
-    opened->shown = 1;
+  if (GameFlag_Get(FLAG_EAST_MOAI_STREAM_STOPPED)) {
+    struct AquaRockStream *stream = &gAquaRock_Streams[1];
+    MapGrid_CopyCellsLayered(stream->pictureSourceX + 3, stream->pictureSourceY,
+                             3, stream->height, stream->pictureX,
+                             stream->pictureY);
+    MapGrid_CopyCells(stream->cellSourceX + 3, stream->cellSourceY, 3,
+                      stream->height, stream->cellX, stream->cellY);
+    stream->waveRow[1] = STREAM_NO_WAVE;
+    stream->waveRow[0] = STREAM_NO_WAVE;
+    stream->shown = 1;
   }
   Task_AddFrame(AquaRock_TimeStreams, TASK_PASS_FRAME);
   Task_Add(AquaRock_UpdateStreams, TASK_PASS_FRAME);
@@ -550,26 +619,25 @@ void AquaRock_SetUpStreams(void) {
 
 #include "shared/actor_flicker_child.h"
 
-/// A Moai's update while it flashes: its colour every other two frames.
-void AquaRock_FlashMoai(struct Actor *actor) {
+/// Unused: a moai's update while it flashes, grey every other two frames.
+UNUSED void AquaRock_FlashMoai(struct Actor *actor) {
   if (gFrameCount & 2)
-    Actor_SetSpriteColorMode(actor, 6);
+    Actor_SetSpriteColorMode(actor, SPRITE_COLOR_GREY);
   else
-    Actor_SetSpriteColorMode(actor, 0);
+    Actor_SetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
 }
 
 /// A flashing actor's last update: its sprite's colour back to normal.
 void AquaRock_StopFlashing(struct Actor *actor) {
-  Actor_SetSpriteColorMode(actor, 0);
+  Actor_SetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
   actor->update = 0;
 }
 
 void TilesetAnim_Pause(s32 layer);
 
-/// Toggles FLAG_AQUA_ROCK_STREAMS_TURNED_BACK and with it which of two layer
-/// pairs is shown: four rounds of a random colour value, then one pair's blend
-/// scripts and layer fields set and the other's cleared, while the object
-/// blinks.
+/// Douse on the slopes' Water Stone: it flickers, the screen flashes four
+/// colours and turns white, and the streams turn back to run uphill, bubbles
+/// rising from the stone; Doused again, they run downhill once more.
 void AquaRock_DouseWaterStone(s32 unused, s32 id) {
   struct Actor *actor = Actor_GetById(id);
   s32 i;
@@ -602,7 +670,7 @@ void AquaRock_DouseWaterStone(s32 unused, s32 id) {
     TilesetAnim_Resume(7);
     TilesetAnim_Resume(8);
     actor->update = (void (*)(void))AquaRock_StopFlashing;
-    AquaRock_SetCellMarkerAnchor(ACTOR_WATER_STONE);
+    AquaRock_SetBubbleAnchor(ACTOR_WATER_STONE);
   } else {
     GameFlag_Clear(FLAG_AQUA_ROCK_STREAMS_TURNED_BACK);
     MapGrid_CopyCells(65, 64, 1, 2, 51, 82);
@@ -612,7 +680,7 @@ void AquaRock_DouseWaterStone(s32 unused, s32 id) {
     TilesetAnim_Resume(5);
     TilesetAnim_Resume(6);
     actor->update = (void (*)(void))AquaRock_StopFlashing;
-    AquaRock_SetCellMarkerAnchor(0);
+    AquaRock_SetBubbleAnchor(0);
   }
   Event_Wait(30);
   PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
@@ -623,52 +691,56 @@ void AquaRock_DouseWaterStone(s32 unused, s32 id) {
 
 void GameFlag_SetByte(s32 flag, s32 value);
 
-/// Move on a pillar: the first remembers its cell and opens a stream when it
-/// stands in one; the second, pushed to column 32, drops before the Moai.
-void AquaRock_MovePillarBeforeMoai(s32 unused, s32 id) {
+/// Move on a pillar. The pillar by the top's red moai keeps its cell in the
+/// area's flags, and stopped before one of them stops that moai's stream; the
+/// ledge's pillar, pushed onto its hole, drops into it.
+void AquaRock_MovePillar(s32 unused, s32 id) {
 
-  if (id == ACTOR_FIRST_PILLAR) {
+  if (id == ACTOR_MOAI_PILLAR) {
     s32 column;
     s32 row;
 
-    struct Actor *first = Actor_GetById(ACTOR_FIRST_PILLAR);
+    struct Actor *first = Actor_GetById(ACTOR_MOAI_PILLAR);
 
     column = FIELD_CELL(first->x.fixed);
     row = FIELD_CELL(first->z.fixed);
-    GameFlag_SetByte(FLAG_AREA_TEMP_10, column);
-    GameFlag_SetByte(FLAG_AREA_TEMP_18, row);
-    GameFlag_ClearBit_(FLAG_AREA_TEMP_20);
-    GameFlag_Clear(FLAG_AREA_TEMP_21);
-    if (column == 7 && row == 35)
-      GameFlag_Set(FLAG_AREA_TEMP_20);
-    if (column == 15 && row == 35)
-      GameFlag_Set(FLAG_AREA_TEMP_21);
-  } else if (id == ACTOR_SECOND_PILLAR) {
-    struct Actor *actor = Actor_GetById(ACTOR_SECOND_PILLAR);
+    GameFlag_SetByte(FLAG_PILLAR_COLUMN, column);
+    GameFlag_SetByte(FLAG_PILLAR_ROW, row);
+    /* FAKEMATCH(wrapper): the west flag cleared through a call layer; as
+     * GameFlag_Clear. */
+    GameFlag_ClearBit_(FLAG_PILLAR_BEFORE_WEST_MOAI);
+    GameFlag_Clear(FLAG_PILLAR_BEFORE_EAST_MOAI);
+    if (column == WEST_MOAI_COLUMN && row == MOAI_FRONT_ROW)
+      GameFlag_Set(FLAG_PILLAR_BEFORE_WEST_MOAI);
+    if (column == EAST_MOAI_COLUMN && row == MOAI_FRONT_ROW)
+      GameFlag_Set(FLAG_PILLAR_BEFORE_EAST_MOAI);
+  } else if (id == ACTOR_LEDGE_PILLAR) {
+    struct Actor *actor = Actor_GetById(ACTOR_LEDGE_PILLAR);
 
-    if (FIELD_CELL(actor->x.fixed) == 32) {
+    if (FIELD_CELL(actor->x.fixed) == PILLAR_HOLE_COLUMN) {
       wait(30);
       actor->z.fixed += toFIXED(1);
-      GameFlag_Set(FLAG_AQUA_ROCK_PILLAR_BEFORE_MOAI);
+      GameFlag_Set(FLAG_AQUA_ROCK_PILLAR_IN_HOLE);
     }
   }
 }
 
-/// Waits, for 60 frames at most, until the actor has risen to `limit`.
-void AquaRock_WaitToRiseTo(struct Actor *actor, s32 limit) {
+/// Unused: waits until the actor has come down to `height`, a second at most.
+UNUSED void Actor_WaitBelowHeight(struct Actor *actor, FIXED height) {
   s32 frames = 60;
 
   while (frames != 0) {
     wait(1);
     frames--;
-    if (actor->y.fixed <= limit)
+    if (actor->y.fixed <= height)
       break;
   }
 }
 
-/// Each frame in a stream turned back: the current carries the leader north
-/// and, at its head on the slopes, spins him up and out by exit 6; otherwise
-/// the stream flows south.
+/// Each frame in a stream turned back: the current carries the leader north,
+/// splashing, and at its head on the slopes spins him up and out into the Mist
+/// Sabre chest's room; while the streams run downhill the current carries him
+/// south instead.
 void AquaRock_RideStreamUp(void) {
   struct Actor *leader, *carried;
   struct Vector3 ahead;
@@ -728,7 +800,8 @@ void AquaRock_RideStreamUp(void) {
       }
       gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
       Event_End();
-      Import_EventSetExitRequest(6);
+      Import_EventSetExitRequest(
+          AQUA_ROCK_MOAI_TO_AQUA_ROCK_MIST_SABRE_CHEST_C);
       return;
     }
     ahead.x = leader->x.fixed + (toFIXED(57) / 10);
@@ -751,12 +824,12 @@ void AquaRock_RideStreamUp(void) {
 
 /// The attribute byte of a cell of a layer.
 static inline u8 CellAttribute(struct MapCell *cells, s32 row, s32 col) {
-  cells += row * 128 + col;
+  cells += row * MAPGRID_SIZE + col;
   return cells->attributeB;
 }
 
-/// Each frame: a leader stepping into a current's cell is carried, or, while
-/// moved by others, sent on by trigger 44.
+/// Each frame on a current's cell: a leader walking in is carried away, and
+/// one the current already carries over the falls' edge drops down them.
 void AquaRock_StepIntoCurrent(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -768,7 +841,7 @@ void AquaRock_StepIntoCurrent(void) {
     col = FIELD_CELL(actor->x.fixed);
     row = FIELD_CELL(actor->z.fixed - actor->y.fixed - toFIXED(12));
     if (CellAttribute(map->layers[1].cells, row, col) != 0)
-      work->raisedTrigger = 44;
+      work->raisedTrigger = TRIGGER_DROP_DOWN_FALLS;
   } else {
     col = FIELD_CELL(actor->x.fixed);
     row = FIELD_CELL(actor->z.fixed - actor->y.fixed);
@@ -777,18 +850,19 @@ void AquaRock_StepIntoCurrent(void) {
   }
 }
 
-/// Douse on the tear-shaped rock: it fills, the Moai beside it changes colour
-/// and face, and the way inside opens.
-void AquaRock_DouseTearRock(void) {
+/// Douse on the dry moai: it fills, turns blue and pours, and its stream down
+/// the slopes starts to flow.
+void AquaRock_DouseDryMoai(void) {
   MapGrid_CopyCellAttributes(62, 41, 1, 2, 33, 41);
   MapGrid_CopyCellPictureCellsRect(125, 32, 3, 13, 96, 32);
   MapGrid_CopyCellPictureCellsRect(61, 96, 3, 13, 32, 96);
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_MOAI + 4), 5);
-  AquaRock_SetMoaiFace(ACTOR_FIRST_MOAI + 4);
-  GameFlag_Set(FLAG_AQUA_ROCK_TEAR_ROCK_DOUSED);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_DRY_MOAI), SPRITE_COLOR_BRG);
+  AquaRock_AddMoaiWater(ACTOR_DRY_MOAI);
+  GameFlag_Set(FLAG_AQUA_ROCK_DRY_MOAI_FILLED);
 }
 
-/// The leader drops down the falls and lands, for at most three seconds.
+/// The leader drops down the falls, flailing, and lands, for at most three
+/// seconds.
 void AquaRock_DropDownFalls(void) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 saved = actor->gravity;
@@ -799,7 +873,7 @@ void AquaRock_DropDownFalls(void) {
   Event_ResolvePendingActions(0);
   FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Actor_SelectAnimation(actor, 40);
+  Actor_SelectAnimation(actor, ANIM_LEADER_FLAIL);
   actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   for (i = 0; i < 180; i++) {
     wait(1);
@@ -809,63 +883,65 @@ void AquaRock_DropDownFalls(void) {
   state = &gMainRoutineWork;
   actor->gravity = saved;
   FieldEffect_SetAttached(state->leaderActorId, ATTACHED_EFFECT_REMOVE);
-  Actor_SetSpriteFlags(actor, 1);
-  Actor_SelectAnimation(actor, 1);
+  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
+  Actor_SelectAnimation(actor, ANIM_STAND);
   state->movementMode = LEADER_MOVEMENT_WALK;
   Event_End();
 }
 
-/// Defines a puddle's freezing: the actor stills, its cell takes (n1, n2)'s
-/// attributes at column n3, and flag n4 is set.
-#define DEFINE_AQUA_ROCK_SET_MOVED(name, n1, n2, n3, n4)                       \
+/// Defines Frost on a puddle: it freezes into a step, its cell taking the
+/// attributes of the frozen cell at (sourceX, row), and its flag is set.
+#define DEFINE_AQUA_ROCK_FREEZE_PUDDLE(name, sourceX, row, column, flag)       \
   void name(s32 unused, s32 id) {                                              \
     struct Actor *actor = Actor_GetById(id);                                   \
                                                                                \
     actor->priorityFlags = 0;                                                  \
     actor->motionFlags = 0;                                                    \
-    MapGrid_CopyCellAttributes(n1, n2, 1, 1, n3, n2);                          \
-    GameFlag_Set(n4);                                                          \
+    MapGrid_CopyCellAttributes(sourceX, row, 1, 1, column, row);               \
+    GameFlag_Set(flag);                                                        \
   }
 
 /// Frost on the Mist Sabre chest's room's first puddle: it freezes into a step.
-DEFINE_AQUA_ROCK_SET_MOVED(AquaRock_FreezeFirstPuddle, 42, 32, 44,
-                           FLAG_SCENE_TEMP_21)
+DEFINE_AQUA_ROCK_FREEZE_PUDDLE(AquaRock_FreezeFirstPuddle, 42, 32, 44,
+                               FLAG_PUDDLE_A_FROZEN)
 
 /// Frost on the second puddle: it freezes into a step.
-DEFINE_AQUA_ROCK_SET_MOVED(AquaRock_FreezeSecondPuddle, 48, 32, 46,
-                           FLAG_SCENE_TEMP_22)
+DEFINE_AQUA_ROCK_FREEZE_PUDDLE(AquaRock_FreezeSecondPuddle, 48, 32, 46,
+                               FLAG_PUDDLE_B_FROZEN)
 
 /// Frost on the third puddle: it freezes into a step.
-DEFINE_AQUA_ROCK_SET_MOVED(AquaRock_FreezeThirdPuddle, 44, 44, 46,
-                           FLAG_SCENE_TEMP_23)
+DEFINE_AQUA_ROCK_FREEZE_PUDDLE(AquaRock_FreezeThirdPuddle, 44, 44, 46,
+                               FLAG_PUDDLE_C_FROZEN)
 
-/// Defines a rock's drop: pushed to column 53 it drops a pixel, flag n1 is set
-/// and its cell in row n2 opens.
-#define DEFINE_AQUA_ROCK_DROP_AT_COLUMN(name, n1, n2)                          \
+/// Defines Move on a rock: pushed to the stream's column it drops in, its flag
+/// is set and its cell in `row` takes the attributes of the stream's
+/// rock-filled cell.
+#define DEFINE_AQUA_ROCK_DROP_AT_COLUMN(name, flag, row)                       \
   void name(s32 unused, s32 id) {                                              \
     struct Actor *actor = Actor_GetById(id);                                   \
     s32 column = FIELD_CELL(actor->x.fixed);                                   \
                                                                                \
-    if (column == 53) {                                                        \
+    if (column == ROCK_STREAM_COLUMN) {                                        \
       wait(30);                                                                \
       actor->z.fixed += toFIXED(1);                                            \
-      GameFlag_Set(n1);                                                        \
-      Map_CopyCellAttributeRect(54, 58, 1, 1, column, n2);                     \
+      GameFlag_Set(flag);                                                      \
+      Map_CopyCellAttributeRect(54, 58, 1, 1, column, row);                    \
     }                                                                          \
   }
 
-/// Move on the first ember stone to column 53: it drops into the current.
+/// Move on the first rock to the stream: it drops in.
 DEFINE_AQUA_ROCK_DROP_AT_COLUMN(AquaRock_DropFirstRock,
                                 FLAG_AQUA_ROCK_FIRST_ROCK_DROPPED, 52)
 
-/// Move on the second ember stone to column 53: it drops into the current.
+/// Move on the second rock to the stream: it drops in.
 DEFINE_AQUA_ROCK_DROP_AT_COLUMN(AquaRock_DropSecondRock,
                                 FLAG_AQUA_ROCK_SECOND_ROCK_DROPPED, 58)
 
-/// Sets FLAG_AQUA_ROCK_DRY_MOAI_DOUSED after four rounds of a random colour
-/// value, runs the blend scripts, then moves the camera to actor 15, starts
-/// its update and plays cue 623 six times.
-void AquaRock_DouseDryMoai(s32 unused, s32 id) {
+/// Douse on the Mist Sabre chest's room's Water Stone: the screen flashes four
+/// colours and turns white, the stone's bubbles start, the pool's cells change
+/// and the camera pans down to the pool, where rings of water start to rise
+/// over the way inside.
+void AquaRock_DouseMistSabreChestWaterStone(s32 unused, s32 id) {
   struct Actor *actor = Actor_GetById(id);
   s32 i;
 
@@ -886,11 +962,11 @@ void AquaRock_DouseDryMoai(s32 unused, s32 id) {
   PaletteFade_SetTarget(RGB_WHITE, PALETTES_ALL);
   PaletteFade_StartInterpolation(20);
   Event_Wait(20);
-  GameFlag_Set(FLAG_AQUA_ROCK_DRY_MOAI_DOUSED);
+  GameFlag_Set(FLAG_AQUA_ROCK_MIST_SABRE_CHEST_WATER_STONE_DOUSED);
   Map_CopyCellAttributeRect(15, 48, 1, 1, 16, 48);
   Map_CopyCellAttributeRect(17, 50, 1, 1, 16, 50);
   actor->update = (void (*)(void))AquaRock_StopFlashing;
-  AquaRock_SetCellMarkerAnchor(ACTOR_MIST_SABRE_WATER_STONE);
+  AquaRock_SetBubbleAnchor(ACTOR_MIST_SABRE_WATER_STONE);
   MapGrid_CopyCellPictureCellsRect(64, 68, 5, 13, 14, 94);
   Map_CopyCellAttributeRect(64, 68, 5, 8, 14, 34);
   Event_Wait(30);
@@ -900,12 +976,11 @@ void AquaRock_DouseDryMoai(s32 unused, s32 id) {
   FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(248, -32, 760, 1);
   FieldCamera_WaitForArrival();
-  Actor_SetPosition(ACTOR_STREAM_SOURCE, 264, 792);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_STREAM_SOURCE), 0);
-  Actor_GetById(ACTOR_STREAM_SOURCE)->collisionFlags = 0;
-  Actor_GetById(ACTOR_STREAM_SOURCE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  Actor_GetById(ACTOR_STREAM_SOURCE)->update =
-      (void (*)(void))Actor_EmitWaterDrop;
+  Actor_SetPosition(ACTOR_WAY_INSIDE, 264, 792);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_WAY_INSIDE), 0);
+  Actor_GetById(ACTOR_WAY_INSIDE)->collisionFlags = 0;
+  Actor_GetById(ACTOR_WAY_INSIDE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+  Actor_GetById(ACTOR_WAY_INSIDE)->update = (void (*)(void))Actor_EmitWaterDrop;
   Event_Wait(30);
   for (i = 0; i < 6; i++) {
     Sound_Play(SE_WADE);
@@ -925,12 +1000,13 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gAquaRock_Triggers;
 }
 
-/// Each frame: the leader's sprite priority, 2 while moved by others
-/// (LEADER_MOVEMENT_KEYS) and 1 otherwise.
+/// Each frame on the slopes: the leader is drawn at sprite priority 2 while a
+/// current carries him, behind the falls, and at 1 otherwise.
 void AquaRock_KeepLeaderPriority(void) {
   struct Actor *actor = Actor_GetById(Party_GetLeaderActor());
 
-  if (actor != 0 && (actor->spriteStorageKind & 15) == 1) {
+  if (actor != 0 &&
+      (actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE) {
     struct FieldSprite *sprite;
     s32 priority;
 
@@ -942,9 +1018,9 @@ void AquaRock_KeepLeaderPriority(void) {
   }
 }
 
-/// Arriving by the stream from below: the leader spins up out of the water and
-/// lands, going on north or south by the key held.
-void AquaRock_SpinOut(void) {
+/// Arriving from inside, the Vial chest's room below: the leader spins up out
+/// of the pool and lands, going on north or south by the key held.
+void AquaRock_ArriveFromInside(void) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 saved = actor->motionFlags;
   s32 i;
@@ -970,7 +1046,7 @@ void AquaRock_SpinOut(void) {
   AquaRock_SpawnSplash(actor);
   actor->motionFlags = saved;
   actor->velocityY = toFIXED(8);
-  Actor_SetSpriteFlags(actor, 1);
+  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   up = gInput.held & KEY_UP;
   state = &gMainRoutineWork;
   if (up)
@@ -980,8 +1056,9 @@ void AquaRock_SpinOut(void) {
   Event_End();
 }
 
-/// Arriving from above: the leader spins down into the water and walks out.
-void AquaRock_DropIn(void) {
+/// Arriving by the slopes' stream turned back: it throws the leader spinning
+/// up out of the water, and he walks out onto the bank.
+void AquaRock_ArriveUpStream(void) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 saved = actor->motionFlags;
   s32 i;
@@ -1004,39 +1081,45 @@ void AquaRock_DropIn(void) {
   AquaRock_SpawnSplash(actor);
   actor->motionFlags = saved;
   actor->velocityY = toFIXED(12);
-  Actor_SetSpriteFlags(actor, 1);
+  Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, 680, 912);
   Event_End();
 }
 
-/// A stepping Moai's update: it sways, the swing growing to 1/128 turn.
-void AquaRock_SwayMoai(struct Actor *actor) {
+/// The farthest a guardian moai rocks either way as it shakes.
+#define MOAI_SHAKE (TRIG_TURN / 128)
+
+/// A guardian moai's update as it moves aside: it shakes, the swing growing
+/// over 16 frames to MOAI_SHAKE.
+void AquaRock_ShakeMoai(struct Actor *actor) {
   struct FieldSprite *sprite = actor->sprite;
   s16 *amplitude;
 
   actor->timer += DEGtoANG(45);
   amplitude = (s16 *)&actor->userValue;
-  *amplitude += 32;
-  if (*amplitude > TRIG_TURN / 128)
-    *amplitude = TRIG_TURN / 128;
+  *amplitude += MOAI_SHAKE / 16;
+  if (*amplitude > MOAI_SHAKE)
+    *amplitude = MOAI_SHAKE;
   sprite->rotation = Iwram_MulFX(Trig_Sin(actor->timer), *amplitude);
 }
 
-/// A stepping Moai's update as it settles: the swing dies away.
-void AquaRock_SwayMoaiBack(struct Actor *actor) {
+/// A guardian moai's update once it has moved: the swing dies away over 32
+/// frames.
+void AquaRock_StopShakingMoai(struct Actor *actor) {
   struct FieldSprite *sprite = actor->sprite;
   s16 *amplitude;
 
   actor->timer += DEGtoANG(45);
   amplitude = (s16 *)&actor->userValue;
-  *amplitude -= 16;
+  *amplitude -= MOAI_SHAKE / 32;
   if (*amplitude < 0) {
     *amplitude = 0;
   }
   sprite->rotation = Iwram_MulFX(Trig_Sin(actor->timer), *amplitude);
 }
 
-/// The last stepping Moai's update: it rocks gently, leaning.
+/// The last guardian moai's update: it keeps rocking gently, leaning a little,
+/// a sixty-fourth of a turn either way.
 void AquaRock_RockMoai(struct Actor *actor) {
   struct FieldSprite *sprite = actor->sprite;
 
@@ -1044,10 +1127,10 @@ void AquaRock_RockMoai(struct Actor *actor) {
   sprite->rotation = Trig_Sin(actor->timer) / 64 + TRIG_TURN * 3 / 128;
 }
 
-/// Scatters objects 17 to 21 under cue 184, lines them up 32 pixels apart
-/// at z 824, then settles them under cue 298 and leaves object 21 rocking;
-/// sets FLAG_KEEP_PARTY_POSITION and FLAG_AQUA_ROCK_MOAI_STEPPED_ASIDE and
-/// clears FLAG_SHOW_AREA_NAME.
+/// Arriving by the north way, as Douse wakes the Apojii Islands' Aqua Stone:
+/// the five guardian moai shake and move aside into a row clear of the way
+/// in, the last left rocking, and the party goes back to the Apojii Islands
+/// where it stood.
 void AquaRock_MoaiStepAside(void) {
   s32 i;
 
@@ -1058,35 +1141,35 @@ void AquaRock_MoaiStepAside(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Sound_Play(SE_POP_UP);
-  i = ACTOR_FIRST_STEPPING_MOAI;
+  i = ACTOR_FIRST_GUARDIAN_MOAI;
   do {
     {
       struct Actor *actor = Actor_GetById(i);
 
       actor->speedLimit = toFIXED(1) / 4;
       actor->acceleration = toFIXED(1) / 64;
-      actor->update = (void (*)(void))AquaRock_SwayMoai;
+      actor->update = (void (*)(void))AquaRock_ShakeMoai;
       actor->timer = Random16();
       actor->userValue = 0;
     }
-  } while (++i <= ACTOR_FIRST_STEPPING_MOAI + 4);
+  } while (++i <= ACTOR_FIRST_GUARDIAN_MOAI + 4);
   Event_Wait(60);
   Map_CopyCellsRect(64, 69, 11, 4, 87, 53);
-  Actor_SetDestination(ACTOR_FIRST_STEPPING_MOAI, 392, 824);
-  Actor_SetDestination(ACTOR_FIRST_STEPPING_MOAI + 1, 424, 824);
-  Actor_SetDestination(ACTOR_FIRST_STEPPING_MOAI + 2, 456, 824);
-  Actor_SetDestination(ACTOR_FIRST_STEPPING_MOAI + 3, 488, 824);
-  Actor_SetDestinationById(ACTOR_FIRST_STEPPING_MOAI + 4, 520, 824);
+  Actor_SetDestination(ACTOR_FIRST_GUARDIAN_MOAI, 392, 824);
+  Actor_SetDestination(ACTOR_FIRST_GUARDIAN_MOAI + 1, 424, 824);
+  Actor_SetDestination(ACTOR_FIRST_GUARDIAN_MOAI + 2, 456, 824);
+  Actor_SetDestination(ACTOR_FIRST_GUARDIAN_MOAI + 3, 488, 824);
+  Actor_SetDestinationById(ACTOR_FIRST_GUARDIAN_MOAI + 4, 520, 824);
   Event_Wait(240);
   Map_CopyCellsRect(64, 66, 11, 7, 87, 50);
-  i = ACTOR_FIRST_STEPPING_MOAI;
+  i = ACTOR_FIRST_GUARDIAN_MOAI;
   do {
-    Actor_GetById(i)->update = (void (*)(void))AquaRock_SwayMoaiBack;
-  } while (++i <= ACTOR_FIRST_STEPPING_MOAI + 4);
+    Actor_GetById(i)->update = (void (*)(void))AquaRock_StopShakingMoai;
+  } while (++i <= ACTOR_FIRST_GUARDIAN_MOAI + 4);
   Sound_Play(SE_STOP_EXIT_SE);
   Event_Wait(60);
   {
-    struct Actor *actor = Actor_GetById(ACTOR_FIRST_STEPPING_MOAI + 4);
+    struct Actor *actor = Actor_GetById(ACTOR_FIRST_GUARDIAN_MOAI + 4);
 
     actor->update = (void (*)(void))AquaRock_RockMoai;
     actor->timer = 0;
@@ -1095,7 +1178,7 @@ void AquaRock_MoaiStepAside(void) {
   Event_WaitTransitionFrames();
   GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
   GameFlag_Clear(FLAG_SHOW_AREA_NAME);
-  Import_EventSetExitRequest(77);
+  Import_EventSetExitRequest(AQUA_ROCK_MOAI_TO_APOJII_ISLANDS);
   Event_End();
   GameFlag_Set(FLAG_AQUA_ROCK_MOAI_STEPPED_ASIDE);
 }
@@ -1113,48 +1196,48 @@ s32 Scene_Initialize(void) {
   map->wading = MAP_WADING_UPPER_LEVEL;
   Scene_QueueMusic(SE_AMBIENT_WATER);
   if (scene == SCENE_AQUA_ROCK_MOAI) {
-    Actor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_MOAI), 4);
-    Actor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_MOAI + 1), 4);
-    Actor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_MOAI + 2), 4);
-    Actor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_MOAI + 3), 4);
-    if (GameFlag_Get(FLAG_AQUA_ROCK_TEAR_ROCK_DOUSED))
-      Actor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_MOAI + 4), 5);
+    Actor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_MOAI), SPRITE_COLOR_GBR);
+    Actor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_MOAI + 1), SPRITE_COLOR_GBR);
+    Actor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_MOAI + 2), SPRITE_COLOR_GBR);
+    Actor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_MOAI + 3), SPRITE_COLOR_GBR);
+    if (GameFlag_Get(FLAG_AQUA_ROCK_DRY_MOAI_FILLED))
+      Actor_SetSpriteColor(Actor_GetById(ACTOR_DRY_MOAI), SPRITE_COLOR_BRG);
     else
-      Actor_SetSpriteColor(Actor_GetById(ACTOR_FIRST_MOAI + 4), 6);
-    AquaRock_SetMoaiFace(ACTOR_FIRST_MOAI);
-    AquaRock_SetMoaiFace(ACTOR_FIRST_MOAI + 1);
-    AquaRock_SetMoaiFace(ACTOR_FIRST_MOAI + 2);
-    AquaRock_SetMoaiFace(ACTOR_FIRST_MOAI + 3);
-    AquaRock_SetMoaiFace(ACTOR_FIRST_MOAI + 5);
-    AquaRock_SetMoaiFace(ACTOR_FIRST_MOAI + 6);
-    for (id = ACTOR_DRY_MOAI; id <= ACTOR_LAST_MOAI; id++)
-      AquaRock_SetMoaiFace(id);
-    for (id = ACTOR_FIRST_MOAI; id < ACTOR_DRY_MOAI; id++)
+      Actor_SetSpriteColor(Actor_GetById(ACTOR_DRY_MOAI), SPRITE_COLOR_GREY);
+    AquaRock_AddMoaiWater(ACTOR_FIRST_MOAI);
+    AquaRock_AddMoaiWater(ACTOR_FIRST_MOAI + 1);
+    AquaRock_AddMoaiWater(ACTOR_FIRST_MOAI + 2);
+    AquaRock_AddMoaiWater(ACTOR_FIRST_MOAI + 3);
+    AquaRock_AddMoaiWater(ACTOR_FIRST_MOAI + 5);
+    AquaRock_AddMoaiWater(ACTOR_FIRST_MOAI + 6);
+    for (id = ACTOR_FIRST_BOTTOM_MOAI; id <= ACTOR_LAST_MOAI; id++)
+      AquaRock_AddMoaiWater(id);
+    for (id = ACTOR_FIRST_MOAI; id < ACTOR_FIRST_BOTTOM_MOAI; id++)
       Actor_SetSpritePriority(id, 3);
-    for (id = ACTOR_DRY_MOAI; id <= ACTOR_LAST_MOAI; id++)
+    for (id = ACTOR_FIRST_BOTTOM_MOAI; id <= ACTOR_LAST_MOAI; id++)
       Actor_SetSpritePriority(id, 1);
-    Actor_GetById(ACTOR_DRY_MOAI)->retainSpriteCache = 2;
-    Actor_SetAnimationById(ACTOR_DRY_MOAI, 3);
-    for (id = ACTOR_DRY_MOAI + 1; id <= ACTOR_LAST_MOAI; id++) {
+    Actor_GetById(ACTOR_FIRST_BOTTOM_MOAI)->retainSpriteCache = 2;
+    Actor_SetAnimationById(ACTOR_FIRST_BOTTOM_MOAI, 3);
+    for (id = ACTOR_FIRST_BOTTOM_MOAI + 1; id <= ACTOR_LAST_MOAI; id++) {
       Actor_SetAnimationById(id, 1);
       Actor_SetAnimationById(id, 0);
     }
-    if (GameFlag_Get(FLAG_AQUA_ROCK_PILLAR_BEFORE_MOAI))
-      Actor_SetPosition(ACTOR_SECOND_PILLAR, 520, 584);
-    x = GameFlag_GetByte(FLAG_AREA_TEMP_10);
-    z = GameFlag_GetByte(FLAG_AREA_TEMP_18);
+    if (GameFlag_Get(FLAG_AQUA_ROCK_PILLAR_IN_HOLE))
+      Actor_SetPosition(ACTOR_LEDGE_PILLAR, 520, 584);
+    x = GameFlag_GetByte(FLAG_PILLAR_COLUMN);
+    z = GameFlag_GetByte(FLAG_PILLAR_ROW);
     if (z != 0)
       Actor_SetHorizontalPositionWithTerrain(
-          ACTOR_FIRST_PILLAR, (x << 20) + toFIXED(8), (z << 20) + toFIXED(8));
+          ACTOR_MOAI_PILLAR, FIELD_CELL_CENTER(x), FIELD_CELL_CENTER(z));
     Actor_GetById(Party_GetLeaderActor())->priorityFlags |=
         ACTOR_PRIORITY_IGNORES_RISES;
     Task_Add(AquaRock_KeepLeaderPriority, TASK_PASS_FRAME);
-    Actor_SetSpritePriority(ACTOR_FIRST_DRIFTER + 1, 1);
-    Value2((s32 (*)())Actor_SetSpritePriority, ACTOR_FIRST_PILLAR, 1);
-    AquaRock_StartCellMarkers();
+    Actor_SetSpritePriority(ACTOR_FIRST_FISH + 1, 1);
+    Value2((s32 (*)())Actor_SetSpritePriority, ACTOR_MOAI_PILLAR, 1);
+    AquaRock_StartBubbles();
     AquaRock_StartSparkles();
     if (GameFlag_Get(FLAG_AQUA_ROCK_STREAMS_TURNED_BACK)) {
-      AquaRock_SetCellMarkerAnchor(ACTOR_WATER_STONE);
+      AquaRock_SetBubbleAnchor(ACTOR_WATER_STONE);
       AquaRock_SetSparkleAnchor(ACTOR_WATER_STONE);
       TilesetAnim_Pause(5);
       TilesetAnim_Pause(6);
@@ -1163,50 +1246,51 @@ s32 Scene_Initialize(void) {
       Actor_GetById(ACTOR_WATER_STONE)->update = AquaRock_StopFlashing;
     }
     Actor_SetSpritePriority(ACTOR_WATER_STONE, 1);
-    if (gMainRoutineWork.entrance == 5)
+    if (gMainRoutineWork.entrance == AQUA_ROCK_MOAI_FROM_WORLD_MAP_NORTH)
       AquaRock_MoaiStepAside();
     if (GameFlag_Get(FLAG_AQUA_ROCK_MOAI_STEPPED_ASIDE)) {
-      Actor_SetPosition(ACTOR_FIRST_STEPPING_MOAI, 392, 824);
-      Actor_SetPosition(ACTOR_FIRST_STEPPING_MOAI + 1, 424, 824);
-      Actor_SetPosition(ACTOR_FIRST_STEPPING_MOAI + 2, 456, 824);
-      Actor_SetPosition(ACTOR_FIRST_STEPPING_MOAI + 3, 488, 824);
-      Actor_SetPosition(ACTOR_FIRST_STEPPING_MOAI + 4, 520, 824);
+      Actor_SetPosition(ACTOR_FIRST_GUARDIAN_MOAI, 392, 824);
+      Actor_SetPosition(ACTOR_FIRST_GUARDIAN_MOAI + 1, 424, 824);
+      Actor_SetPosition(ACTOR_FIRST_GUARDIAN_MOAI + 2, 456, 824);
+      Actor_SetPosition(ACTOR_FIRST_GUARDIAN_MOAI + 3, 488, 824);
+      Actor_SetPosition(ACTOR_FIRST_GUARDIAN_MOAI + 4, 520, 824);
       MapGrid_CopyCellAttributes(64, 66, 9, 3, 24, 53);
       MapGrid_CopyCells(64, 66, 11, 7, 87, 50);
-      Actor_GetById(ACTOR_FIRST_STEPPING_MOAI + 4)->update = AquaRock_RockMoai;
+      Actor_GetById(ACTOR_FIRST_GUARDIAN_MOAI + 4)->update = AquaRock_RockMoai;
     }
-    if (GameFlag_Get(FLAG_AQUA_ROCK_TEAR_ROCK_DOUSED)) {
+    if (GameFlag_Get(FLAG_AQUA_ROCK_DRY_MOAI_FILLED)) {
       MapGrid_CopyCellAttributes(62, 41, 1, 2, 33, 41);
       MapGrid_CopyCellPictureCellsRect(116, 95, 3, 13, 96, 32);
       MapGrid_CopyCellsLayered(122, 95, 3, 13, 32, 96);
-      AquaRock_SetMoaiFace(ACTOR_FIRST_MOAI + 4);
+      AquaRock_AddMoaiWater(ACTOR_DRY_MOAI);
     }
     AquaRock_SetUpStreams();
-    if (gMainRoutineWork.entrance == 4)
+    if (gMainRoutineWork.entrance ==
+        AQUA_ROCK_MOAI_FROM_AQUA_ROCK_INSIDE_RUSTY_SWORD_CHEST)
       AquaRock_ArriveFromPassage();
   } else if (scene == SCENE_AQUA_ROCK_MIST_SABRE_CHEST) {
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_BUBBLE_MARKER), 0);
-    if (GameFlag_Get(FLAG_SCENE_TEMP_21))
+    if (GameFlag_Get(FLAG_PUDDLE_A_FROZEN))
       MapGrid_CopyCellAttributes(42, 32, 1, 1, 44, 32);
-    if (GameFlag_Get(FLAG_SCENE_TEMP_22))
+    if (GameFlag_Get(FLAG_PUDDLE_B_FROZEN))
       MapGrid_CopyCellAttributes(48, 32, 1, 1, 46, 32);
-    if (GameFlag_Get(FLAG_SCENE_TEMP_23))
+    if (GameFlag_Get(FLAG_PUDDLE_C_FROZEN))
       MapGrid_CopyCellAttributes(44, 44, 1, 1, 46, 44);
-    Actor_SetAnimationById(ACTOR_FIRST_EMBER_STONE, 2);
+    Actor_SetAnimationById(ACTOR_FIRST_ROCK, 2);
     if (GameFlag_Get(FLAG_AQUA_ROCK_FIRST_ROCK_DROPPED)) {
-      Actor_SetPosition(ACTOR_FIRST_EMBER_STONE, 856, 840);
+      Actor_SetPosition(ACTOR_FIRST_ROCK, 856, 840);
       MapGrid_CopyCellAttributes(54, 58, 1, 1, 53, 52);
     }
-    Actor_SetAnimationById(ACTOR_SECOND_EMBER_STONE, 2);
+    Actor_SetAnimationById(ACTOR_SECOND_ROCK, 2);
     if (GameFlag_Get(FLAG_AQUA_ROCK_SECOND_ROCK_DROPPED)) {
-      Actor_SetPosition(ACTOR_SECOND_EMBER_STONE, 856, 936);
+      Actor_SetPosition(ACTOR_SECOND_ROCK, 856, 936);
       MapGrid_CopyCellAttributes(54, 58, 1, 1, 53, 58);
     }
     if (gMainRoutineWork.entrance == 5 || gMainRoutineWork.entrance == 7) {
-      AquaRock_StartCellMarkers();
+      AquaRock_StartBubbles();
       AquaRock_StartSparkles();
       if (GameFlag_Get(FLAG_AQUA_ROCK_STREAMS_TURNED_BACK)) {
-        AquaRock_SetCellMarkerAnchor(ACTOR_BUBBLE_MARKER);
+        AquaRock_SetBubbleAnchor(ACTOR_BUBBLE_MARKER);
         AquaRock_SetSparkleAnchor(ACTOR_BUBBLE_MARKER);
       } else {
         TilesetAnim_Pause(7);
@@ -1216,19 +1300,19 @@ s32 Scene_Initialize(void) {
       }
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_BUBBLE_MARKER), 0);
     } else {
-      AquaRock_StartCellMarkers();
+      AquaRock_StartBubbles();
       AquaRock_StartSparkles();
       Actor_GetById(ACTOR_MIST_SABRE_WATER_STONE)->update =
           AquaRock_StopFlashing;
-      if (GameFlag_Get(FLAG_AQUA_ROCK_DRY_MOAI_DOUSED)) {
-        AquaRock_SetCellMarkerAnchor(ACTOR_MIST_SABRE_WATER_STONE);
+      if (GameFlag_Get(FLAG_AQUA_ROCK_MIST_SABRE_CHEST_WATER_STONE_DOUSED)) {
+        AquaRock_SetBubbleAnchor(ACTOR_MIST_SABRE_WATER_STONE);
         AquaRock_SetSparkleAnchor(ACTOR_MIST_SABRE_WATER_STONE);
-        Actor_SetPosition(ACTOR_STREAM_SOURCE, 264, 792);
-        Actor_SetSpriteFlags(Actor_GetById(ACTOR_STREAM_SOURCE), 0);
-        Actor_GetById(ACTOR_STREAM_SOURCE)->collisionFlags = 0;
-        Actor_GetById(ACTOR_STREAM_SOURCE)->priorityFlags |=
+        Actor_SetPosition(ACTOR_WAY_INSIDE, 264, 792);
+        Actor_SetSpriteFlags(Actor_GetById(ACTOR_WAY_INSIDE), 0);
+        Actor_GetById(ACTOR_WAY_INSIDE)->collisionFlags = 0;
+        Actor_GetById(ACTOR_WAY_INSIDE)->priorityFlags |=
             ACTOR_PRIORITY_UNDERFOOT;
-        Actor_GetById(ACTOR_STREAM_SOURCE)->update = Actor_EmitWaterDrop;
+        Actor_GetById(ACTOR_WAY_INSIDE)->update = Actor_EmitWaterDrop;
         Map_CopyCellAttributeRect(15, 48, 1, 1, 16, 48);
         Map_CopyCellAttributeRect(17, 50, 1, 1, 16, 50);
         MapGrid_CopyCellPictureCellsRect(64, 68, 5, 13, 14, 94);
@@ -1236,11 +1320,12 @@ s32 Scene_Initialize(void) {
       }
     }
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-      if (gMainRoutineWork.entrance == 1)
-        AquaRock_SpinOut();
+      if (gMainRoutineWork.entrance ==
+          AQUA_ROCK_MIST_SABRE_CHEST_FROM_AQUA_ROCK_INSIDE_VIAL_CHEST)
+        AquaRock_ArriveFromInside();
       entrance = &gMainRoutineWork.entrance;
-      if (*entrance == 6)
-        AquaRock_DropIn();
+      if (*entrance == AQUA_ROCK_MIST_SABRE_CHEST_FROM_AQUA_ROCK_MOAI_C)
+        AquaRock_ArriveUpStream();
     }
   }
   return 0;
@@ -1250,9 +1335,9 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 /// A splash at the actor's feet, on its sprite's priority.
 void AquaRock_SpawnSplash(struct Actor *actor) {
-  struct Actor *child =
-      Import_ActorCreate(14, actor->x.fixed, actor->y.fixed + toFIXED(4),
-                         actor->z.fixed + toFIXED(4));
+  struct Actor *child = Import_ActorCreate(SPRITE_WADING_SPLASH, actor->x.fixed,
+                                           actor->y.fixed + toFIXED(4),
+                                           actor->z.fixed + toFIXED(4));
   struct FieldSprite *parentSprite = actor->sprite;
 
   if (child != 0) {
@@ -1271,8 +1356,9 @@ void AquaRock_SpawnSplash(struct Actor *actor) {
 
 #include "shared/actor_emit_water_drop.h"
 
-/// Each frame in a stream: the current carries the leader south, splashing, and
-/// off a ledge he drops with the water.
+/// Each frame in a stream running downhill: the current carries the leader
+/// south, splashing, and off a ledge he drops with the water and lands sitting
+/// down.
 void AquaRock_FlowWithStream(void) {
   struct Actor *anchor;
   s32 owner;
@@ -1301,13 +1387,13 @@ void AquaRock_FlowWithStream(void) {
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_SetMoveTarget(leader, leader->x.fixed, leader->y.fixed,
                         leader->z.fixed + toFIXED(8));
-    Actor_SelectAnimation(leader, 49);
+    Actor_SelectAnimation(leader, ANIM_LEADER_SIT);
     Actor_WaitForMove(leader);
     do {
       wait(1);
     } while (leader->y.fixed != leader->groundHeight);
     AquaRock_SpawnSplash(leader);
-    Actor_SelectAnimation(leader, 49);
+    Actor_SelectAnimation(leader, ANIM_LEADER_SIT);
     wait(3);
     return;
   }
@@ -1334,13 +1420,13 @@ void AquaRock_FlowWithStream(void) {
   leader->facing = FACING_SOUTH;
 }
 
-/// Gives a Moai its face: the face animation added to its sprite, its first
-/// frame shown, then animation 2 started.
-void AquaRock_SetMoaiFace(s32 id) {
+/// Gives a moai its water: the pool in the top of its head, pouring from its
+/// mouth.
+void AquaRock_AddMoaiWater(s32 id) {
   struct Actor *actor = Actor_GetById(id);
 
   if (actor != 0) {
-    u8 *meta = Sprite_AddAnimation(actor->sprite, 381);
+    u8 *meta = Sprite_AddAnimation(actor->sprite, SPRITE_MOAI_WATER);
 
     meta[5] = 0;
     meta[6] = 0;
@@ -1349,8 +1435,10 @@ void AquaRock_SetMoaiFace(s32 id) {
   }
 }
 
-/// The leader spins up out of the water and away, to `exit`.
-void AquaRock_SpinUpAndAway(s32 exit) {
+/// Once the Water Stone is Doused, stepping on the way inside: the leader
+/// tumbles and spins down into the pool and leaves by `exit`, to the Vial
+/// chest's room inside.
+void AquaRock_SinkInside(s32 exit) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 i;
   s32 angle;
@@ -1361,7 +1449,7 @@ void AquaRock_SpinUpAndAway(s32 exit) {
   actor->motionFlags = 0;
   actor->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   Sound_Play(SE_SPLASH_SMALL);
-  Actor_SelectAnimation(actor, 18);
+  Actor_SelectAnimation(actor, ANIM_LEADER_TUMBLE_IN_WATER);
   Sound_Play(SE_SPIN_AWAY);
   for (i = 0; i < 60; i++) {
     if (i == 30)
@@ -1371,16 +1459,13 @@ void AquaRock_SpinUpAndAway(s32 exit) {
     angle += TRIG_TURN / 16;
     actor->facing = angle;
     if ((i & 7) == 0)
-      AquaRock_SpawnSplash(Actor_GetById(ACTOR_STREAM_SOURCE));
+      AquaRock_SpawnSplash(Actor_GetById(ACTOR_WAY_INSIDE));
     wait(1);
   }
   Event_End();
   Import_EventSetExitRequest(exit);
 }
 
-// Every other frame, emits particle 7 (5 on every other such frame) from the
-// object, 26 pixels up, swaying with the frame count and drifting by a random
-// amount.
 #include "shared/actor_emit_mist.h"
 
 /// The leader walks into the sparkling passage in a mist and leaves by
@@ -1398,7 +1483,7 @@ void AquaRock_EnterSparklingPassage(s32 entrance) {
   Actor_SetAnimationById(*owner, 2);
   Actor_SetDestinationOffsetById(*owner, 0, -8);
   Actor_WaitForMoveById(*owner);
-  Actor_SetSpriteColor(Actor_GetById(*owner), 9);
+  Actor_SetSpriteColor(Actor_GetById(*owner), SPRITE_COLOR_BLUE_TINT);
   Actor_SetSpriteFlags(Actor_GetById(*owner), 0);
   leader->update = 0;
   Event_FinishScreenTransition();
@@ -1423,15 +1508,15 @@ void AquaRock_ArriveFromPassage(void) {
     Actor_SetHorizontalPositionWithTerrain(
         *owner, toFIXED(leader->x.part[0].integer),
         toFIXED(leader->z.part[0].integer) - toFIXED(16));
-    Actor_SetSpriteColor(Actor_GetById(*owner), 9);
+    Actor_SetSpriteColor(Actor_GetById(*owner), SPRITE_COLOR_BLUE_TINT);
     Actor_SetSpriteFlags(Actor_GetById(*owner), 0);
     Event_StartScreenTransition();
     Sound_Play(SE_SPARKLING_PASSAGE);
     leader->update = (void (*)(void))Actor_EmitMist;
     Actor_SetSpeed(*owner, 0.4);
     Actor_WalkByAndWaitById(*owner, 0, 8);
-    Actor_SetSpriteColor(Actor_GetById(*owner), 0);
-    Actor_SetSpriteFlags(Actor_GetById(*owner), 1);
+    Actor_SetSpriteColor(Actor_GetById(*owner), SPRITE_COLOR_NORMAL);
+    Actor_SetSpriteFlags(Actor_GetById(*owner), SPRITE_FLAG_SHADOW);
     ((struct FieldSprite *)leader->sprite)->priority = 1;
     offset = 10;
     Actor_WalkByAndWaitById(*owner, 0, offset);
@@ -1443,9 +1528,10 @@ void AquaRock_ArriveFromPassage(void) {
   }
 }
 
-/// Each frame: bubbles rise from the anchor actor now and then, and those in
-/// view are drawn.
-void AquaRock_DrawRisingCellMarkers(void) {
+/// Each frame, for bubbles going up: now and then one starts from the actor
+/// they come from, and each rises up the stream, north, until it reaches the
+/// top; those in view are drawn.
+void AquaRock_DrawRisingBubbles(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
 #ifndef UBFIX
   s32 *view = &map->viewX;
@@ -1460,7 +1546,7 @@ void AquaRock_DrawRisingCellMarkers(void) {
   s32 viewZ = view[1] & FIELD_PIXEL_MASK;
 #endif
   s32 lift = map->origin[1];
-  struct AquaRockWork *work = &gAquaRock_CellMarkers;
+  struct AquaRockBubbles *work = &gAquaRock_Bubbles;
   u32 tile = gVramCacheEntries[work->vramEntry].offset >> 5;
   struct Actor *source;
   struct Bubble *entry;
@@ -1472,18 +1558,18 @@ void AquaRock_DrawRisingCellMarkers(void) {
     entry->y = source->y.fixed;
     entry->z = source->z.fixed;
     entry->age = 0;
-    if (++work->next > 63)
+    if (++work->next > BUBBLE_COUNT - 1)
       work->next = 0;
   }
   entry = work->bubbles;
-  for (i = 63; i >= 0; i--, entry++) {
+  for (i = BUBBLE_COUNT - 1; i >= 0; i--, entry++) {
     if (entry->x != 0) {
       // screenX holds the ground's height here, before its own value.
       screenX = Map_GetTerrainHeight(0, entry->x, entry->z);
       if (screenX > entry->y)
         entry->y += toFIXED(2);
       else
-        entry->z -= 2 << 16;
+        entry->z -= toFIXED(2);
       if (FIELD_CELL(entry->y) == 23)
         entry->x = 0;
       if (FIELD_CELL(entry->z) == 48)
@@ -1497,10 +1583,10 @@ void AquaRock_DrawRisingCellMarkers(void) {
       z -= lift;
       screenY = z - y;
       y += z;
-      y >>= 16;
-      screenX = x >> 16;
+      y = FIXEDtoINT(y);
+      screenX = FIXEDtoINT(x);
       x = screenX - 4;
-      screenY >>= 16;
+      screenY = FIXEDtoINT(screenY);
       screenY -= 4;
       z = y + 58;
       // screenX now holds its offset into the range test (on screen from
@@ -1510,7 +1596,7 @@ void AquaRock_DrawRisingCellMarkers(void) {
         x &= 0x1ff;
         screenY &= 255;
         entry->oam[0] = 0;
-        entry->oam[1] = screenY | (x << 16) | 0x2000;
+        entry->oam[1] = screenY | OBJ_X(x) | OBJ_256_COLORS;
         entry->oam[2] = (tile + (entry->age & 3) * 2) | OBJ_PRIORITY(1);
         Oam_AddSpriteAtDepth(entry->oam, z);
       }
@@ -1518,15 +1604,16 @@ void AquaRock_DrawRisingCellMarkers(void) {
   }
 }
 
-/// Each frame: drops fall from the anchor actor now and then, and those in view
-/// are drawn.
-void AquaRock_DrawFallingCellMarkers(void) {
+/// Each frame, for bubbles going down: now and then one starts from the actor
+/// they come from, and each falls down the stream, south, until it reaches the
+/// bottom; those in view are drawn.
+void AquaRock_DrawFallingBubbles(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
   s32 viewX = view[0] & FIELD_PIXEL_MASK;
   s32 viewZ = view[1] & FIELD_PIXEL_MASK;
   s32 lift = map->origin[1];
-  struct AquaRockWork *work = &gAquaRock_CellMarkers;
+  struct AquaRockBubbles *work = &gAquaRock_Bubbles;
   u32 tile = gVramCacheEntries[work->vramEntry].offset >> 5;
   struct Actor *source;
   struct Bubble *bubble;
@@ -1538,11 +1625,11 @@ void AquaRock_DrawFallingCellMarkers(void) {
     bubble->y = source->y.fixed;
     bubble->z = source->z.fixed;
     bubble->age = 0;
-    if (++work->next > 63)
+    if (++work->next > BUBBLE_COUNT - 1)
       work->next = 0;
   }
   bubble = work->bubbles;
-  for (i = 63; i >= 0; i--, bubble++) {
+  for (i = BUBBLE_COUNT - 1; i >= 0; i--, bubble++) {
     if (bubble->x != 0) {
       if (Map_GetTerrainHeight(0, bubble->x, bubble->z) < bubble->y)
         bubble->y -= toFIXED(2);
@@ -1559,17 +1646,17 @@ void AquaRock_DrawFallingCellMarkers(void) {
       z -= viewZ;
       z -= lift;
       row = z - y;
-      screenX = x >> 16;
+      screenX = FIXEDtoINT(x);
       y += z;
       x = screenX - 4;
-      screenY = (row >> 16) - 4;
-      y >>= 16;
+      screenY = FIXEDtoINT(row) - 4;
+      y = FIXEDtoINT(y);
       depth = y + 58;
       if ((u32)(screenX + 11) <= 334 && screenY > -16 && screenY <= 239) {
         x &= 0x1ff;
         screenY &= 255;
         bubble->oam[0] = 0;
-        bubble->oam[1] = screenY | (x << 16) | 0x2000;
+        bubble->oam[1] = screenY | OBJ_X(x) | OBJ_256_COLORS;
         bubble->oam[2] = (tile + (bubble->age & 3) * 2) | OBJ_PRIORITY(1);
         Oam_AddSpriteAtDepth(bubble->oam, depth);
       }
@@ -1577,39 +1664,38 @@ void AquaRock_DrawFallingCellMarkers(void) {
   }
 }
 
-/// Each frame: the bubbles rise or the drops fall, by the markers' direction.
-void AquaRock_DrawCellMarkers(void) {
-  if (gAquaRock_CellMarkers.direction > 0)
-    AquaRock_DrawRisingCellMarkers();
+/// Each frame: the bubbles go up or down the stream, as their direction says.
+void AquaRock_DrawBubbles(void) {
+  if (gAquaRock_Bubbles.direction > 0)
+    AquaRock_DrawRisingBubbles();
   else
-    AquaRock_DrawFallingCellMarkers();
+    AquaRock_DrawFallingBubbles();
 }
 
-/// Clears the cell markers, loads their tiles into VRAM and starts their
-/// drawing.
-void AquaRock_StartCellMarkers(void) {
-  struct AquaRockWork *work = &gAquaRock_CellMarkers;
+/// Clears the bubbles, loads their tiles into VRAM and starts their drawing.
+void AquaRock_StartBubbles(void) {
+  struct AquaRockBubbles *work = &gAquaRock_Bubbles;
   void *buffer;
 
-  Iwram_ClearWordsEntry(work, sizeof(struct AquaRockWork));
+  Iwram_ClearWordsEntry(work, sizeof(struct AquaRockBubbles));
   buffer = MemAlloc_(256);
   Decompress_TaggedLz(gAquaRock_MarkerTiles, buffer);
   work->vramEntry = VramCache_FindFreeEntry();
   VramCache_Load(work->vramEntry, 256, buffer);
   Heap_Release(buffer);
-  ((s32 (*)(void *, s32))Task_Add)(AquaRock_DrawCellMarkers, TASK_PASS_FRAME);
+  ((s32 (*)(void *, s32))Task_Add)(AquaRock_DrawBubbles, TASK_PASS_FRAME);
 }
 
-/// Sets the actor the cell markers come from, or with 0 none: drops fall from
-/// actor 8, and bubbles rise from any other.
-void AquaRock_SetCellMarkerAnchor(s32 id) {
-  struct AquaRockWork *work = &gAquaRock_CellMarkers;
+/// Sets the actor the bubbles come from, or with 0 none: they fall from the
+/// Mist Sabre chest's room's Water Stone and rise from any other.
+void AquaRock_SetBubbleAnchor(s32 id) {
+  struct AquaRockBubbles *work = &gAquaRock_Bubbles;
 
   if (id == 0) {
     work->object = 0;
   } else {
     work->object = Actor_GetById(id);
-    if (id == 8)
+    if (id == ACTOR_MIST_SABRE_WATER_STONE)
       work->direction = -1;
     else
       work->direction = 1;
@@ -1618,9 +1704,8 @@ void AquaRock_SetCellMarkerAnchor(s32 id) {
 
 #include "shared/ground_particles_draw.h"
 
-/// Starts the sparkles: 64 sprites on the ground at the origin, their tiles
-/// decoded into VRAM, and GroundParticles_Draw scheduled in TASK_PASS_FRAME to
-/// move them; the overlay's copy of FieldEffect_InitializeSparkles.
+/// Starts the sparkles: their sprites on the ground at the origin, their
+/// tiles decoded into VRAM, and GroundParticles_Draw scheduled to move them.
 void AquaRock_StartSparkles(void) {
   struct GroundParticleWork *work =
       HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct GroundParticleWork));
@@ -1633,9 +1718,7 @@ void AquaRock_StartSparkles(void) {
   size = 0;
   zero = size;
   Dma_Set((const void *)&zero, work,
-          (DMA_ENABLE | DMA_32BIT | DMA_SRC_FIXED) << 16 |
-              sizeof(struct GroundParticleWork) / 4,
-          REG_DMA3);
+          DMA_FILL_WORDS(sizeof(struct GroundParticleWork) / 4), REG_DMA3);
   buf = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gField_GroundTiles, buf);
   work->entry = VramCache_FindFreeEntry();
@@ -1656,7 +1739,7 @@ void AquaRock_StartSparkles(void) {
     p->timer = (i & 15) + 1;
     i++;
     p++;
-  } while (i < 64);
+  } while (i < ARRAY_COUNT(work->particles));
   Task_Add(GroundParticles_Draw, TASK_PASS_FRAME);
 }
 
@@ -1673,9 +1756,9 @@ void AquaRock_SetSparkleAnchor(s32 id) {
 // clang-format off
 #include "shared/field_effect_duration_scripts.c"
 
-/// A drifter's script: it moves to random spots, resting between.
-s32 gAquaRock_DriftScript[] = {
-    SC_CALL((s32)AquaRock_StartDrifter),
+/// A fish's script: it swims to random spots, resting between.
+s32 gAquaRock_FishScript[] = {
+    SC_CALL((s32)AquaRock_StartFish),
     SC_LABEL(1),
     SC_ANIMATION(2),
     SC_CALL((s32)AquaRock_PickRandomSpot),
@@ -1696,9 +1779,9 @@ s32 gAquaRock_DriftScript[] = {
     SC_END,
 };
 
-/// A drifter's script: it moves to random spots, resting longer between.
-s32 gAquaRock_SlowDriftScript[] = {
-    SC_CALL((s32)AquaRock_StartDrifter),
+/// A fish's script: it swims to random spots, resting longer between.
+s32 gAquaRock_SlowFishScript[] = {
+    SC_CALL((s32)AquaRock_StartFish),
     SC_LABEL(1),
     SC_WAIT(60),
     SC_ANIMATION(2),
@@ -1726,8 +1809,8 @@ u32 gAquaRock_SplashScript[] = {
     SC_RELEASE,
 };
 
-/// A water drop's script: it rises a quarter of a pixel a frame for 31 frames,
-/// then is released.
+/// A ring of water's script: it rises a quarter of a pixel a frame for 31
+/// frames, then is released.
 u32 gWaterDropScript[] = {
     SC_ADD(SW_Y, toFIXED(1) / 4),
     SC_WAIT(1),
@@ -1736,7 +1819,7 @@ u32 gWaterDropScript[] = {
 };
 // clang-format on
 
-#undef DEFINE_AQUA_ROCK_SET_MOVED
+#undef DEFINE_AQUA_ROCK_FREEZE_PUDDLE
 #undef DEFINE_AQUA_ROCK_DROP_AT_COLUMN
 #undef EFFECT_SPAWN
 #undef EFFECT_CREATE
@@ -1830,9 +1913,9 @@ LATE_DATA struct ActorPlacement gAquaRock_SlopesPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 552, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_WATER_DROP_LARGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 840, 0, 600, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(401, CONDITION_ALWAYS, (s32)gAquaRock_DriftScript, 376, 0, 960, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(401, CONDITION_ALWAYS, (s32)gAquaRock_DriftScript, 136, 0, 904, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(401, CONDITION_ALWAYS, (s32)gAquaRock_SlowDriftScript, 144, 0, 912, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FISH, CONDITION_ALWAYS, (s32)gAquaRock_FishScript, 376, 0, 960, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FISH, CONDITION_ALWAYS, (s32)gAquaRock_FishScript, 136, 0, 904, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FISH, CONDITION_ALWAYS, (s32)gAquaRock_SlowFishScript, 144, 0, 912, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -1850,17 +1933,14 @@ LATE_DATA struct ActorPlacement gAquaRock_MistSabreChestPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-/// The first timed stream's frame count, which AquaRock_TimeStreams turns on and
-/// off.
+/// The frame counts of the four red moai's streams' cycles
+/// (AquaRock_TimeStreams).
 LATE_DATA s32 gAquaRock_FirstStreamTimer = 0;
 
-/// The second timed stream's frame count.
 LATE_DATA s32 gAquaRock_SecondStreamTimer = 0;
 
-/// The third timed stream's frame count.
 LATE_DATA s32 gAquaRock_ThirdStreamTimer = 0;
 
-/// The fourth timed stream's frame count.
 LATE_DATA s32 gAquaRock_FourthStreamTimer = 0;
 
 /// The scene's other rooms' triggers.
@@ -1868,42 +1948,42 @@ LATE_DATA struct Trigger gAquaRock_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// The slopes' exits, streams, Move on the pillars and Douse on the Water Stone,
-/// the dry Moai and the tear-shaped rock.
+/// The slopes' exits, currents and streams, Move on the pillars and Douse on
+/// the dry moai and the Water Stone.
 LATE_DATA struct Trigger gAquaRock_SlopesTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {STEP_TRIGGER_FACING(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(AquaRock_EnterSparklingPassage)},
-    {TRIGGER_STEP, 30, FLAG_AREA_TEMP_20, EVENT(AquaRock_StepIntoCurrent)},
-    {TRIGGER_STEP, 31, FLAG_AREA_TEMP_21, EVENT(AquaRock_StepIntoCurrent)},
+    {TRIGGER_STEP, 30, FLAG_PILLAR_BEFORE_WEST_MOAI, EVENT(AquaRock_StepIntoCurrent)},
+    {TRIGGER_STEP, 31, FLAG_PILLAR_BEFORE_EAST_MOAI, EVENT(AquaRock_StepIntoCurrent)},
     {TRIGGER_STEP, 32, CONDITION_ALWAYS, EVENT(AquaRock_StepIntoCurrent)},
     {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(AquaRock_StepIntoCurrent)},
     {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(AquaRock_FlowWithStream)},
     {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(AquaRock_RideStreamUp)},
-    {TRIGGER_RAISED, 44, CONDITION_ALWAYS, EVENT(AquaRock_DropDownFalls)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), 12, FLAG_AQUA_ROCK_TEAR_ROCK_DOUSED, EVENT(AquaRock_DouseTearRock)},
+    {TRIGGER_RAISED, TRIGGER_DROP_DOWN_FALLS, CONDITION_ALWAYS, EVENT(AquaRock_DropDownFalls)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_DRY_MOAI, FLAG_AQUA_ROCK_DRY_MOAI_FILLED, EVENT(AquaRock_DouseDryMoai)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_WATER_STONE, FLAG_AQUA_ROCK_STREAMS_TURNED_BACK, EVENT(AquaRock_DouseWaterStone)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR, CONDITION_ALWAYS, EVENT(AquaRock_MovePillarBeforeMoai)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_PILLAR, FLAG_AQUA_ROCK_PILLAR_BEFORE_MOAI, EVENT(AquaRock_MovePillarBeforeMoai)},
-    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AquaRock_MovePillarBeforeMoai)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_MOAI_PILLAR, CONDITION_ALWAYS, EVENT(AquaRock_MovePillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LEDGE_PILLAR, FLAG_AQUA_ROCK_PILLAR_IN_HOLE, EVENT(AquaRock_MovePillar)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AquaRock_MovePillar)},
     {TRIGGER_TABLE_END},
 };
 
-/// The Mist Sabre chest's room's exits, streams, puddles to Frost and rocks to
-/// drop.
+/// The Mist Sabre chest's room's way inside, exits, streams, puddles to Frost,
+/// rocks to drop and Water Stone to Douse.
 LATE_DATA struct Trigger gAquaRock_MistSabreChestTriggers[] = {
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(AquaRock_SpinUpAndAway)},
+    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(AquaRock_SinkInside)},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(AquaRock_FlowWithStream)},
     {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(AquaRock_RideStreamUp)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_A, FLAG_SCENE_TEMP_21, EVENT(AquaRock_FreezeFirstPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_B, FLAG_SCENE_TEMP_22, EVENT(AquaRock_FreezeSecondPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_C, FLAG_SCENE_TEMP_23, EVENT(AquaRock_FreezeThirdPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_EMBER_STONE, FLAG_AQUA_ROCK_FIRST_ROCK_DROPPED, EVENT(AquaRock_DropFirstRock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_EMBER_STONE, FLAG_AQUA_ROCK_SECOND_ROCK_DROPPED, EVENT(AquaRock_DropSecondRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_A, FLAG_PUDDLE_A_FROZEN, EVENT(AquaRock_FreezeFirstPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_B, FLAG_PUDDLE_B_FROZEN, EVENT(AquaRock_FreezeSecondPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_C, FLAG_PUDDLE_C_FROZEN, EVENT(AquaRock_FreezeThirdPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_ROCK, FLAG_AQUA_ROCK_FIRST_ROCK_DROPPED, EVENT(AquaRock_DropFirstRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_ROCK, FLAG_AQUA_ROCK_SECOND_ROCK_DROPPED, EVENT(AquaRock_DropSecondRock)},
     {TRIGGER_PUSHED, 0, FLAG_AQUA_ROCK_SECOND_ROCK_DROPPED, EVENT(AquaRock_DropSecondRock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_MIST_SABRE_WATER_STONE, FLAG_AQUA_ROCK_DRY_MOAI_DOUSED, EVENT(AquaRock_DouseDryMoai)},
+    {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_MIST_SABRE_WATER_STONE, FLAG_AQUA_ROCK_MIST_SABRE_CHEST_WATER_STONE_DOUSED, EVENT(AquaRock_DouseMistSabreChestWaterStone)},
     {TRIGGER_TABLE_END},
 };

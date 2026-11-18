@@ -7,10 +7,6 @@
 #include "gamepak/far_call/battle.h"
 #include "gamepak/far_call/field.h"
 
-/// The header's CANVAS_BLEND_LEVEL again: battle_effect_display.c and
-/// battle_effect_canvas.c #undef it before this part.
-#define CANVAS_BLEND_LEVEL 14
-
 /// Shows the battle background, as dark as the canvas's fade left it, behind a
 /// cleared canvas, and fades out the action's sound effects.
 void BattleEffect_SetupBlendedDisplay(void) {

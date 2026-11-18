@@ -209,8 +209,8 @@ s32 Scene_PrepareMap(void) {
     struct Actor *actor = Actor_Get(ACTOR_PILLAR);
 
     actor->motionFlags = 0;
-    actor->groundHeight = -toFIXED(32);
-    actor->y.fixed = -toFIXED(32);
+    actor->groundHeight = toFIXED(-PILLAR_SINK_DEPTH);
+    actor->y.fixed = toFIXED(-PILLAR_SINK_DEPTH);
     Actor_SetPosition(ACTOR_PILLAR, 104, 232);
     MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, 0);
     MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, MAP_CELL_JUMP);

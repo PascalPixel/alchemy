@@ -198,8 +198,12 @@ void JupiterLighthouse_FinishMovingPillar(s32 unused, s32 id) {
   }
 }
 
-/// Leaves by exit 12.
-void JupiterLighthouse_LeaveByCyclone(void) { Import_EventSetExitRequest(12); }
+/// Cyclone on the teleporter's pad takes the party to the room of locked
+/// doors, where they arrive in a ring.
+void JupiterLighthouse_LeaveByCyclone(void) {
+  Import_EventSetExitRequest(
+      JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_TO_JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_SOUTHWEST);
+}
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 

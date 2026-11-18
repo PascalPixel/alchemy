@@ -3,6 +3,7 @@
 
 #include "fixed_math.h"
 #include "types.h"
+#include "flags.h"
 #include "system/system.h"
 #include "system/ram_buffer.h"
 #include "system/main_routine_work.h"
@@ -12,6 +13,12 @@
 #include "field/map_grid.h"
 
 #define ABS(value) ((value) < 0 ? -(value) : (value))
+
+/// The cell the leader fell through, its column and row, a byte of area flags
+/// each: MarsLighthouseEntrance_FallThroughCrack keeps them, and the star room
+/// below lands him under it.
+#define FLAG_BYTE_FALL_COLUMN FLAG_AREA_TEMP_40
+#define FLAG_BYTE_FALL_ROW FLAG_AREA_TEMP_48
 
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 s32 Map_GetTerrainHeight(s32 terrain, s32 x, s32 z);

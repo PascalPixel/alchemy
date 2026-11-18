@@ -417,14 +417,9 @@ enum WorldMapEntrance {
   WORLD_MAP_DEBUG_SAILING = 99
 };
 
-/// The world map's exits its story scenes leave by (gSceneExits).
-enum WorldMapExit {
-  WORLD_MAP_EXIT_IDEJIMA_DRIFTING = 64,
-  WORLD_MAP_EXIT_IDEJIMA = 65,
-  WORLD_MAP_EXIT_SHIP_TILLER = 66,
-  WORLD_MAP_EXIT_IDEJIMA_AFTER_DRIFT = 77,
-  WORLD_MAP_EXIT_AQUA_ROCK = 78
-};
+/// The exit the Venus Lighthouse's collapse leaves by, to the world map's own
+/// entrance where Idejima drifts; the story's other exits are scene_exits.h's.
+enum WorldMapExit { WORLD_MAP_TO_IDEJIMA_DRIFTING = 64 };
 
 void Leader_Search(void);
 
@@ -1804,7 +1799,7 @@ void WorldMap_WatchVenusLighthouseCollapse(void) {
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_SetExitRequest(WORLD_MAP_EXIT_IDEJIMA_DRIFTING);
+  FieldEvent_SetExitRequest(WORLD_MAP_TO_IDEJIMA_DRIFTING);
   FieldEvent_Wait(120);
 }
 
@@ -1881,7 +1876,7 @@ void WorldMap_ShowIdejimaDrifting(void) {
   BG_PLTT_COLOR(0, 0) = RGB_WHITE;
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_SetExitRequest(WORLD_MAP_EXIT_IDEJIMA_AFTER_DRIFT);
+  FieldEvent_SetExitRequest(WORLD_MAP_TO_IDEJIMA_NORTH_B);
 }
 
 /// Idejima drifts north; a tidal wave rises behind it and carries it away.
@@ -2001,7 +1996,7 @@ void WorldMap_DriftNorthOfContinent(void) {
   // UB: WorldMap_LoadTidalWave takes no argument, but this call passes 0.
   ((void (*)(s32))WorldMap_LoadTidalWave)(0);
 #endif
-  FieldEvent_SetExitRequest(WORLD_MAP_EXIT_IDEJIMA);
+  FieldEvent_SetExitRequest(WORLD_MAP_TO_IDEJIMA_NORTHEAST);
 }
 
 /// The leader is hidden and released, the screen fades and the camera moves;
@@ -2129,7 +2124,7 @@ void WorldMap_SailToShipDeck(void) {
   Actor_MoveToAndWait(ACTOR_SHIP, 10720, 9075);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_SetExitRequest(WORLD_MAP_EXIT_SHIP_TILLER);
+  FieldEvent_SetExitRequest(WORLD_MAP_TO_LEMURIAN_SHIP_TILLER_A);
 }
 
 /// The ship's first flight once it has wings (FLAG_SHIP_HAS_FLOWN).
@@ -2329,7 +2324,7 @@ void WorldMap_CarryPartyToAquaRock(void) {
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_End();
-  FieldEvent_SetExitRequest(WORLD_MAP_EXIT_AQUA_ROCK);
+  FieldEvent_SetExitRequest(WORLD_MAP_TO_AQUA_ROCK_MOAI_NORTH);
 }
 
 /// Turns a placed actor's sprite with the World Map's view and shows it.
@@ -2842,12 +2837,15 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
 
 LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS(WorldMap),
-    SCENE_EXIT(WORLD_MAP_EXIT_IDEJIMA_DRIFTING, WorldMap,
+    SCENE_EXIT(WORLD_MAP_TO_IDEJIMA_DRIFTING, WorldMap,
                WORLD_MAP_FROM_IDEJIMA_NORTH_B),
-    SCENE_EXIT(WORLD_MAP_EXIT_IDEJIMA, Idejima, 2),
-    SCENE_EXIT(WORLD_MAP_EXIT_SHIP_TILLER, LemurianShipTiller, 10),
-    SCENE_EXIT(WORLD_MAP_EXIT_IDEJIMA_AFTER_DRIFT, Idejima, 12),
-    SCENE_EXIT(WORLD_MAP_EXIT_AQUA_ROCK, AquaRockMoai, 5),
+    SCENE_EXIT(WORLD_MAP_TO_IDEJIMA_NORTHEAST, Idejima,
+               IDEJIMA_FROM_WORLD_MAP_SOUTH),
+    SCENE_EXIT(WORLD_MAP_TO_LEMURIAN_SHIP_TILLER_A, LemurianShipTiller,
+               LEMURIAN_SHIP_TILLER_FROM_WORLD_MAP_C),
+    SCENE_EXIT(WORLD_MAP_TO_IDEJIMA_NORTH_B, Idejima, 12),
+    SCENE_EXIT(WORLD_MAP_TO_AQUA_ROCK_MOAI_NORTH, AquaRockMoai,
+               AQUA_ROCK_MOAI_FROM_WORLD_MAP_NORTH),
     SCENE_EXIT(WORLD_MAP_TO_IDEJIMA_SOUTHWEST, Idejima,
                IDEJIMA_FROM_WORLD_MAP_SOUTHWEST),
     SCENE_EXIT_UNLESS(WORLD_MAP_TO_DAILA_SOUTH, DailaFlooded,

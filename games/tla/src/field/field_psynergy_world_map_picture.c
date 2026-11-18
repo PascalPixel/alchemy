@@ -35,10 +35,7 @@
 #define PICTURE_HEIGHT 384
 #define PICTURE_TILES_ACROSS (PICTURE_WIDTH / 8)
 #define PICTURE_ROW_BYTES (PICTURE_TILES_ACROSS * TILE_SIZE_8BPP)
-#define PICTURE_TILE_ROWS 24
-#define PICTURE_FIRST_TILE (BG_CHAR_SIZE / TILE_SIZE_8BPP)
-#define PICTURE_TILES (PICTURE_TILE_ROWS * BG_SCREEN_WIDTH)
-#define PICTURE_MAP_START (4 * BG_SCREEN_WIDTH)
+#define PICTURE_TILES (WORLD_PICTURE_TILE_ROWS * BG_SCREEN_WIDTH)
 /// The scroll that shows the picture's bottom right corner.
 #define PICTURE_SCROLL_MAX_X toFIXED(PICTURE_WIDTH - DISPLAY_WIDTH)
 #define PICTURE_SCROLL_MAX_Y toFIXED(PICTURE_HEIGHT - DISPLAY_HEIGHT)
@@ -46,12 +43,6 @@
 /// scrolled in.
 #define PICTURE_DRAWN_COLUMNS (DISPLAY_WIDTH / 8 + 1)
 #define PICTURE_DRAWN_ROWS (DISPLAY_HEIGHT / 8 + 1)
-/// The 8-pixel tile a 16.16 coordinate lies in.
-#define FIELD_TILE(coordinate) ((coordinate) >> 19)
-/// Two screen entries in a word, tiles n and n + 1 side by side, for numbering
-/// a map's tiles two at a time; adding TILE_PAIR_STEP moves both on by two.
-#define TILE_PAIR(n) ((u32)((n) + 1) << 16 | (n))
-#define TILE_PAIR_STEP ((u32)2 << 16 | 2)
 
 /// The cursor's limits on the picture, in pixels; y goes from 0.
 ///@{
@@ -339,7 +330,7 @@ void WorldPicture_UpdateMarkers(void) {
         continue;
       if (y > 163)
         continue;
-      marker->x = x & 0x1ff;
+      marker->x = x & OBJ_X_MASK;
       marker->y = y;
     } else {
       marker->x = WORLD_MAP_SCALE(placeX) - 1;
@@ -542,19 +533,20 @@ void WorldMapPicture_Draw(void) {
     z = bottom;
   gBgScroll[1].x = FIXEDtoINT(x);
   gBgScroll[1].y = FIXEDtoINT(z);
-  x = FIELD_TILE((u32)x);
+  x = FIELD_HALF_CELL((u32)x);
   column = x;
-  firstRow = FIELD_TILE((u32)z);
+  firstRow = FIELD_HALF_CELL((u32)z);
   for (row = 0; row < PICTURE_DRAWN_ROWS; row++) {
     bufferRow = firstRow + row;
     unwrapped = bufferRow;
     /* FAKEMATCH(barrier): an empty asm reading x. */
     asm("" : : "r"(x));
-    if (bufferRow >= PICTURE_TILE_ROWS)
-      bufferRow -= PICTURE_TILE_ROWS;
+    if (bufferRow >= WORLD_PICTURE_TILE_ROWS)
+      bufferRow -= WORLD_PICTURE_TILE_ROWS;
     // z is reused for the tile's place in BG1's map, and x for the cell.
     z = (column & (BG_SCREEN_WIDTH - 1)) + unwrapped * BG_SCREEN_WIDTH;
-    tile = (z + PICTURE_MAP_START) % PICTURE_TILES + PICTURE_FIRST_TILE;
+    tile = (z + WORLD_PICTURE_MAP_START) % PICTURE_TILES +
+           WORLD_PICTURE_FIRST_TILE;
     Decompress_TaggedLz((u8 *)graphics + graphics[unwrapped + 1],
                         buffer + bufferRow * PICTURE_ROW_BYTES);
     x = bufferRow * PICTURE_TILES_ACROSS;
@@ -598,11 +590,12 @@ void WorldMapPicture_DrawRow(u32 column, s32 row) {
     resource = RESOURCE_WORLD_MAP_PICTURE;
   graphics = Resource_GetTableEntry(resource);
   unwrapped = row;
-  if (row >= PICTURE_TILE_ROWS)
-    row -= PICTURE_TILE_ROWS;
+  if (row >= WORLD_PICTURE_TILE_ROWS)
+    row -= WORLD_PICTURE_TILE_ROWS;
   cell = row * PICTURE_TILES_ACROSS + column;
   tile = (column & (BG_SCREEN_WIDTH - 1)) + row * BG_SCREEN_WIDTH;
-  tile = (tile + PICTURE_MAP_START) % PICTURE_TILES + PICTURE_FIRST_TILE;
+  tile = (tile + WORLD_PICTURE_MAP_START) % PICTURE_TILES +
+         WORLD_PICTURE_FIRST_TILE;
   Decompress_TaggedLz((u8 *)graphics + graphics[unwrapped + 1],
                       Ram_MapCellBuffer + row * PICTURE_ROW_BYTES);
   // From patch 1 the copy stops at the picture's last column instead of
@@ -639,16 +632,16 @@ void WorldMapPicture_DrawColumn(s32 column, s32 row) {
     s32 cell = line;
     s32 tile;
 
-    if (line >= PICTURE_TILE_ROWS)
-      cell = line - PICTURE_TILE_ROWS;
+    if (line >= WORLD_PICTURE_TILE_ROWS)
+      cell = line - WORLD_PICTURE_TILE_ROWS;
     tile = ((column & (BG_SCREEN_WIDTH - 1)) + line * BG_SCREEN_WIDTH +
-            PICTURE_MAP_START) %
+            WORLD_PICTURE_MAP_START) %
            PICTURE_TILES;
     cell *= PICTURE_TILES_ACROSS;
     cell = WorldMap_AddColumn(column, cell);
     cell *= TILE_SIZE_8BPP;
     tile *= TILE_SIZE_8BPP;
-    line = VRAM + PICTURE_FIRST_TILE * TILE_SIZE_8BPP;
+    line = VRAM + WORLD_PICTURE_FIRST_TILE * TILE_SIZE_8BPP;
     Dma_Set(Ram_MapCellBuffer + cell, (u8 *)line + tile,
             DMA_COPY_WORDS(TILE_SIZE_8BPP / 4), REG_DMA3);
   }
@@ -719,8 +712,8 @@ void WorldMapPicture_UpdateScroll(void) {
       if (y > limit)
         y = limit;
     }
-    column = FIELD_TILE((u32)x);
-    row = FIELD_TILE((u32)y);
+    column = FIELD_HALF_CELL((u32)x);
+    row = FIELD_HALF_CELL((u32)y);
     if ((SCROLL_X ^ x) & toFIXED(8)) {
       if (SCROLL_X < x)
         WorldMapPicture_DrawColumn(column + DISPLAY_WIDTH / 8, row);
@@ -828,19 +821,19 @@ s32 WorldPicture_Show(s32 mode) {
     // BG1's map numbers the picture's tiles as WorldMap_LoadGraphics does,
     // two a word: from the fifth row, then on round.
     tiles = (u32 *)BG_SCREEN_BLOCK(6);
-    tile = TILE_PAIR(PICTURE_FIRST_TILE + PICTURE_MAP_START);
-    for (row = 0; row < PICTURE_TILE_ROWS - 4; row++)
+    tile = TILE_PAIR(WORLD_PICTURE_FIRST_TILE + WORLD_PICTURE_MAP_START);
+    for (row = 0; row < WORLD_PICTURE_TILE_ROWS - 4; row++)
       for (column = 0; column < BG_SCREEN_WIDTH / 2; column++) {
         *tiles++ = tile;
         tile += TILE_PAIR_STEP;
       }
-    tile = TILE_PAIR(PICTURE_FIRST_TILE);
-    for (row = 0; row < PICTURE_TILE_ROWS; row++)
+    tile = TILE_PAIR(WORLD_PICTURE_FIRST_TILE);
+    for (row = 0; row < WORLD_PICTURE_TILE_ROWS; row++)
       for (column = 0; column < BG_SCREEN_WIDTH / 2; column++) {
         *tiles++ = tile;
         tile += TILE_PAIR_STEP;
       }
-    tile = TILE_PAIR(PICTURE_FIRST_TILE);
+    tile = TILE_PAIR(WORLD_PICTURE_FIRST_TILE);
     for (row = 0; row < 4; row++)
       for (column = 0; column < BG_SCREEN_WIDTH / 2; column++) {
         *tiles++ = tile;
@@ -1034,17 +1027,11 @@ const struct FlagEntry *FlagEntries_GetTable(void) { return gFlagEntries; }
 #undef PICTURE_HEIGHT
 #undef PICTURE_TILES_ACROSS
 #undef PICTURE_ROW_BYTES
-#undef PICTURE_TILE_ROWS
-#undef PICTURE_FIRST_TILE
 #undef PICTURE_TILES
-#undef PICTURE_MAP_START
 #undef PICTURE_SCROLL_MAX_X
 #undef PICTURE_SCROLL_MAX_Y
 #undef PICTURE_DRAWN_COLUMNS
 #undef PICTURE_DRAWN_ROWS
-#undef FIELD_TILE
-#undef TILE_PAIR
-#undef TILE_PAIR_STEP
 #undef WORLD_MAP_CURSOR_MIN_X
 #undef WORLD_MAP_CURSOR_MAX_X
 #undef WORLD_MAP_CURSOR_MAX_Y

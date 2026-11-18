@@ -16,10 +16,10 @@
 ///   brings Isaac and Garet in from Vale (vale_eruption.c) to
 ///   SANCTUM_FROM_VALE_ERUPTION. There Dora, the Mayor and the healers hear
 ///   what happened on the mountain, acted out in sepia
-///   (Sanctum_ReenactSolSanctum). For the account, the palette fade turns every
+///   (Sanctum_ActOutSolSanctum). For the account, the palette fade turns every
 ///   background and sprite palette to PALETTE_TINT_SEPIA, and after it fades
 ///   back to PALETTE_TINT_NONE over 60 frames. The Great Healer asks Isaac to
-///   take on the Wise One's quest (Sanctum_RequestQuestAcceptance). Each time
+///   take on the Wise One's quest (Sanctum_AskToAcceptQuest). Each time
 ///   his Psynergy shows, ACTOR_HEALER_AFTERIMAGE, a copy of him in
 ///   SPRITE_COLOR_RED_TINT, jumps round him by a few pixels a frame
 ///   (Sanctum_UpdateHealerAfterimage) while effects circle him
@@ -27,7 +27,7 @@
 ///   Sanctum_ReceiveWiseOnesMission and sets FLAG_SANCTUM_QUEST_ACCEPTED, and
 ///   SANCTUM_TO_VALE_PLAZA takes the two to SceneId_ValePlaza (vale_plaza.c).
 ///   Refusing leaves the room to gSanctum_QuestTriggers. The Great Healer asks
-///   again when spoken to (Sanctum_ReconsiderQuest), and the door draws a
+///   again when spoken to (Sanctum_AskQuestAgain), and the door draws a
 ///   warning (FLAG_SANCTUM_WARNED_BEFORE_LEAVING). Leaving anyway ends the game
 ///   (Sanctum_LeaveAfterRefusing): `And so the world began drifting toward its
 ///   fated destruction...` From there the player can start again from the Great
@@ -105,8 +105,8 @@ extern struct Trigger gSanctum_ValeTriggersAfterKalay[];
 extern struct Trigger gSanctum_AltinTriggers[];
 extern struct Trigger gSanctum_BilibinTriggers[];
 extern struct Trigger gSanctum_XianTriggers[];
-extern s32 gSanctum_CursorBob[];
-extern s32 gSanctum_OwnerEffectScript[];
+extern s32 gSanctum_CursorOffsets[];
+extern s32 gSanctum_OrbitingSparkleScript[];
 extern s32 gSanctum_SparkEndScript[];
 
 /// After the quest is refused, the Great Healer has warned that stepping
@@ -115,11 +115,6 @@ extern s32 gSanctum_SparkEndScript[];
 /// The party is starting again from the Great Healer after refusing the quest,
 /// so the account of Sol Sanctum is skipped.
 #define FLAG_SANCTUM_QUEST_RESTARTED FLAG_SCENE_TEMP_01
-
-// Scene flags, in Vale Sanctum: 00 is set once the Great Healer has
-// warned Isaac that leaving the village cannot be undone; 01 marks the visit
-// after a refusal (SANCTUM_FROM_QUEST_RESTART), which skips the account of Sol
-// Sanctum.
 
 /// The placed actors, numbering the rows of the table
 /// Scene_GetActorPlacements returns for the entrance.
@@ -172,7 +167,7 @@ enum SanctumActorId {
   ACTOR_GOLD_STATUE
 };
 
-static void Sanctum_RequestQuestAcceptance(void);
+static void Sanctum_AskToAcceptQuest(void);
 static void Sanctum_ReceiveWiseOnesMission(void);
 static void Sanctum_ShowHealerAfterimage(void);
 static void Sanctum_HideHealerAfterimage(void);
@@ -186,7 +181,7 @@ static void Sanctum_SpawnOrbitingEffect(s32 actorId, s32 angleStep);
 /// after accepting Isaac and Garet.
 #define WISE_ONE_VANISH_SPARKS 32
 static s32 Sanctum_ChooseRestartOption(void);
-static void Sanctum_ReenactSolSanctum(void);
+static void Sanctum_ActOutSolSanctum(void);
 static void Sanctum_RaiseItemIcon(s32 item, FIXED fixedX, FIXED fixedY,
                                   FIXED fixedZ);
 static void Sanctum_SpawnActorSpark(s32 id);
@@ -308,12 +303,12 @@ static void Sanctum_ReadMindAboutGoldenStatue(void) {
   Actor_SetAnimation(ACTOR_SANCTUM_MEMBER, ANIM_STAND);
   Event_Wait(2);
   Event_ShowMessage(ACTOR_SANCTUM_MEMBER, 0);
-  Actor_SetMovementTypeById(ACTOR_SANCTUM_MEMBER, 2);
+  Actor_SetMovementTypeById(ACTOR_SANCTUM_MEMBER, MOVEMENT_TYPE_WANDER);
   Event_End();
 }
 
 /// Vale Sanctum: talking to the Great Healer after Isaac has refused the quest.
-static void Sanctum_ReconsiderQuest(void) {
+static void Sanctum_AskQuestAgain(void) {
   Event_Start();
   Event_SetMessageId(MsgSanctumAreYouSure);
   // "Are you sure?"
@@ -437,7 +432,7 @@ s32 Scene_Initialize(void) {
   case SANCTUM_FROM_VALE_ERUPTION:
     Sanctum_RestoreQuestFloor();
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-      Sanctum_RequestQuestAcceptance();
+      Sanctum_AskToAcceptQuest();
     }
     // Fall through.
   case SANCTUM_FROM_ALTIN:
@@ -449,7 +444,7 @@ s32 Scene_Initialize(void) {
     Sanctum_RestoreQuestFloor();
     GameFlag_Set(FLAG_SANCTUM_QUEST_RESTARTED);
     if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
-      Sanctum_RequestQuestAcceptance();
+      Sanctum_AskToAcceptQuest();
     }
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
     break;
@@ -476,6 +471,10 @@ static void Sanctum_WarnBeforeLeaving(void) {
   Event_End();
 }
 
+/// The last and palest colour of the room's first palette, a pale cream on its
+/// brightest highlights.
+#define ROOM_PALEST_COLOR 15
+
 /// Vale Sanctum: leaving after refusing the quest (cell behavior 1) ends the
 /// game.
 static void Sanctum_LeaveAfterRefusing(void) {
@@ -493,11 +492,11 @@ static void Sanctum_LeaveAfterRefusing(void) {
   PaletteFade_StartInterpolation(120);
   Event_Wait(180);
   paletteWork = gPaletteFadeWork;
-  // Colour 15 of the first BG palette fades to white rather than sepia: its
-  // blue, green and red channels, each held in blue's place.
-  paletteWork->target[3 * 15] = RGB_LEVEL_MAX << BLUE_SHIFT;
-  paletteWork->target[3 * 15 + 1] = RGB_LEVEL_MAX << BLUE_SHIFT;
-  paletteWork->target[3 * 15 + 2] = RGB_LEVEL_MAX << BLUE_SHIFT;
+  // ROOM_PALEST_COLOR fades to white rather than sepia: its blue, green and
+  // red channels, each held in blue's place.
+  paletteWork->target[3 * ROOM_PALEST_COLOR] = RGB_LEVEL_MAX << BLUE_SHIFT;
+  paletteWork->target[3 * ROOM_PALEST_COLOR + 1] = RGB_LEVEL_MAX << BLUE_SHIFT;
+  paletteWork->target[3 * ROOM_PALEST_COLOR + 2] = RGB_LEVEL_MAX << BLUE_SHIFT;
   paletteWork->page = 0;
   paletteWork->duration = 1;
   paletteWork->step = 1;
@@ -560,7 +559,7 @@ static inline void Sanctum_ShowAllEmotes(void) {
 
 /// Vale Sanctum, SANCTUM_FROM_VALE_ERUPTION and SANCTUM_FROM_QUEST_RESTART: the
 /// Great Healer asks Isaac to take on the quest.
-static void Sanctum_RequestQuestAcceptance(void) {
+static void Sanctum_AskToAcceptQuest(void) {
   u32 effectIndex;
 
   Event_Start();
@@ -590,7 +589,7 @@ static void Sanctum_RequestQuestAcceptance(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     // Reenact the journey before explaining the quest.
-    Sanctum_ReenactSolSanctum();
+    Sanctum_ActOutSolSanctum();
     PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_StartInterpolation(60);
     Event_Wait(100);
@@ -1528,6 +1527,7 @@ static void Sanctum_ShowHealerAfterimage(void) {
   sprite->image.priority = 2;
 }
 
+/// Takes the afterimage away, off the map.
 static void Sanctum_HideHealerAfterimage(void) {
   struct Actor *state = Actor_Get(ACTOR_HEALER_AFTERIMAGE);
   state->update = 0;
@@ -1591,7 +1591,7 @@ static void Sanctum_SpawnOrbitingEffect(s32 actorId, s32 angleStep) {
                                center->y.fixed + toFIXED(45), center->z.fixed);
     if (effect != NULL) {
       sprite = effect->sprite;
-      Actor_StartScript(effect, gSanctum_OwnerEffectScript);
+      Actor_StartScript(effect, gSanctum_OrbitingSparkleScript);
       effect->motionFlags = 0;
       effect->timer = 0;
       effect->userValue = angleStep;
@@ -1649,7 +1649,7 @@ static s32 Sanctum_ChooseRestartOption(void) {
     if (gKeysRepeat & KEYS_VERTICAL) {
       choice ^= 1;
     }
-    x = gSanctum_CursorBob[(gVBlankCount >> 1) & 15] + CURSOR_X;
+    x = gSanctum_CursorOffsets[(gVBlankCount >> 1) & 15] + CURSOR_X;
     FieldMenuArrow_SetPosition(&cursor, x, (choice << 4) + 60);
     Event_Wait(1);
   }
@@ -1660,7 +1660,7 @@ static s32 Sanctum_ChooseRestartOption(void) {
 
 /// Vale Sanctum, the quest's account: Isaac and Garet act out, in sepia, what
 /// happened in Sol Sanctum.
-static void Sanctum_ReenactSolSanctum(void) {
+static void Sanctum_ActOutSolSanctum(void) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
   Actor_SetSpeed(ACTOR_GARET, 1.5);
   Actor_RunRepeatedMotion(ACTOR_GARETS_GRANDFATHER, 2);
@@ -2048,7 +2048,7 @@ static void Sanctum_TalkToHealerOnVisit(void) {
   case SANCTUM_FROM_QUEST_RESTART:
   case SANCTUM_QUEST_UNUSED:
     Event_End();
-    Sanctum_ReconsiderQuest();
+    Sanctum_AskQuestAgain();
     return;
   default:
     break;
@@ -2225,7 +2225,7 @@ struct ActorPlacement gSanctum_VaultBilibinActorPlacements[] = {
         200, 0, 130, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         200, 0, 200, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_SANCTUM_GOLD_STATUE, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_SANCTUM_GOLD_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         8, 0, 8, FACING_SOUTH, TALK_FACING_PARTY, 0),
     { SCENE_TABLE_END },
 };
@@ -2284,7 +2284,7 @@ struct Trigger gSanctum_VaultRevisitTriggers[] = {
 };
 
 struct Trigger gSanctum_QuestTriggers[] = {
-    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT(Sanctum_ReconsiderQuest) },
+    { TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT(Sanctum_AskQuestAgain) },
     { TRIGGER_TALK, ACTOR_GARET, CONDITION_ALWAYS, MSGNO(MsgSanctumItIsATerribleBurdenTo) },
     { TRIGGER_TALK, ACTOR_DORA, CONDITION_ALWAYS, MSGNO(MsgSanctumMotherWouldNeverDoubtYourCourage) },
     { TRIGGER_TALK, ACTOR_GARETS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgSanctumIDontBlameYouICouldnt) },
@@ -2347,12 +2347,15 @@ struct Trigger gSanctum_XianTriggers[] = {
 };
 // clang-format on
 
-/// The choice cursor's sideways bob in pixels, one step every two frames.
-s32 gSanctum_CursorBob[] = {
+/// The choice cursor's offset to the right in pixels, swaying a step every two
+/// frames.
+s32 gSanctum_CursorOffsets[] = {
     0, 0, 0, 1, 1, 1, 2, 2, 3, 4, 3, 2, 2, 1, 1, 1,
 };
 
-s32 gSanctum_OwnerEffectScript[] = {
+/// A sparkle circling the Great Healer rises half a pixel a frame for 96
+/// frames, then is gone.
+s32 gSanctum_OrbitingSparkleScript[] = {
     SC_ADD(SW_Y, -toFIXED(1) / 2),
     SC_ADD(SW_TARGET_Y, -toFIXED(1) / 2),
     SC_WAIT(1),

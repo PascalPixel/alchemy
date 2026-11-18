@@ -14,6 +14,9 @@
 #define RUSHING_STRIKE_SPARK_LIFE 16
 #define RUSHING_STRIKE_SPARKS ((struct Particle *)(Ram_MapCellBuffer + 16384))
 #define RUSHING_STRIKE_EXPLOSIONS 16 ///< Living Armor's
+/// The explosions set up at the hit, of which RUSHING_STRIKE_EXPLOSIONS are
+/// drawn.
+#define RUSHING_STRIKE_EXPLOSION_SLOTS 64
 #define RUSHING_STRIKE_EXPLOSION_PICTURE_FRAMES 4
 /// FlashBurstSheet's six pictures, four frames apiece.
 #define RUSHING_STRIKE_EXPLOSION_FRAMES 24
@@ -121,7 +124,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
           spark->velocityX = -spark->velocityX;
         spark->variant = i / 2 + RUSHING_STRIKE_SPARK_LIFE;
       }
-      for (i = 0; i != RUSHING_STRIKE_SPARK_COUNT; i++) {
+      for (i = 0; i != RUSHING_STRIKE_EXPLOSION_SLOTS; i++) {
         struct Particle *explosion = &work->particles[i];
         explosion->x = targetObject->x;
         if (explosion->x < 0)
@@ -210,6 +213,8 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
 
     // From the hit on, the sparks fly and burn down, drawn by turns with
     // the two blitters; their picture shrinks as they burn.
+    // DEAD: frame < 64 is always true, as the loop ends at
+    // RUSHING_STRIKE_FRAMES; the ROM keeps the compare.
     if (frame >= RUSHING_STRIKE_FRAME && frame < 64) {
       struct Particle *spark;
 
@@ -294,6 +299,7 @@ void BattleEffect_RunSack(struct BattleEffectParams *args) {
 #undef RUSHING_STRIKE_SPARK_LIFE
 #undef RUSHING_STRIKE_SPARKS
 #undef RUSHING_STRIKE_EXPLOSIONS
+#undef RUSHING_STRIKE_EXPLOSION_SLOTS
 #undef RUSHING_STRIKE_EXPLOSION_PICTURE_FRAMES
 #undef RUSHING_STRIKE_EXPLOSION_FRAMES
 #undef RUSHING_STRIKE_BURST_WIDTH

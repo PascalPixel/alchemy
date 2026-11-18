@@ -37,7 +37,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   void *canvas;
   BlitterPair draw;
   /* LEFTOVER(frame): position[1], which the ROM's frame reserves and never
-   * touches. */
+   * touches; as one struct ScreenPoint. */
   struct ScreenPoint position[2];
   FIXED swayCenter[2];
   s32 drawReaper;
@@ -49,13 +49,10 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-
-  // The canvas is cleared to 0 as the transfer starts.
+  /* FAKEMATCH(temporary): the canvas's clear word held in a local; as 0 passed
+   * to EFFECT_START_TRANSFER. */
   transferValue = 0;
 
-  // Set up: the reaper with its palette, the crescent's fades in the map
-  // buffer, two transparent blitters (the second flipped) and the ripple's
-  // HBlank DMA.
   BattleEffect_StartTiledCanvas(BGCNT_WRAP);
   REG_BG2PA = Q_8_8(1);
   cells = gMapGridCellBuffer;
@@ -158,23 +155,23 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     if (drawReaper != 0) {
       s32 side = args->side;
 
-      if (side == 0) {
+      if (side == EFFECT_SIDE_ENEMIES) {
         pictureColumn = 0;
         pictureRow = 0;
       } else {
         pictureColumn = 1;
         /* FAKEMATCH(dead): i is 160 here. */
         pictureRow = i >> 31;
-        /* FAKEMATCH(dead): side = 0, never read. */
-        side = 0;
+        /* FAKEMATCH(dead): side set again, never read. */
+        side = EFFECT_SIDE_ENEMIES;
       }
-      if (frame <= 71) {
+      if (frame < CONDEMN_SWING_FRAME) {
         draw[args->side](canvas, work->sheet,
                          CONDEMN_PICTURE_X(pictureColumn, 0),
                          CONDEMN_PICTURE_Y(pictureRow, 0) + screenY,
                          REAPER_SHEET_RAISED_WIDTH, REAPER_SHEET_RAISED_HEIGHT);
       } else {
-        if (frame <= 75)
+        if (frame <= CONDEMN_SWING_FRAME + 3)
           draw[args->side](
               canvas, work->sheet, CONDEMN_PICTURE_X(pictureColumn, 0),
               CONDEMN_PICTURE_Y(pictureRow, 0) + screenY,
@@ -183,30 +180,35 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
                             REAPER_SHEET_SWUNG,
                             CONDEMN_PICTURE_X(pictureColumn, 1),
                             CONDEMN_PICTURE_Y(pictureRow, 1) + screenY);
-        if (frame >= 72 && frame <= 73)
+        if (frame >= CONDEMN_SWING_FRAME && frame <= CONDEMN_SWING_FRAME + 1)
           Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
                                CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-        if (frame >= 74 && frame <= 75)
+        if (frame >= CONDEMN_SWING_FRAME + 2 &&
+            frame <= CONDEMN_SWING_FRAME + 3)
           EFFECT_DRAW_PICTURE(draw[args->side], canvas, work->sheet,
                               REAPER_SHEET_CRESCENT,
                               CONDEMN_PICTURE_X(pictureColumn, 2),
                               CONDEMN_PICTURE_Y(pictureRow, 2) + screenY);
-        if (frame >= 76 && frame <= 77)
+        if (frame >= CONDEMN_SWING_FRAME + 4 &&
+            frame <= CONDEMN_SWING_FRAME + 5)
           EFFECT_DRAW_PICTURE(draw[args->side], canvas, gMapGridCellBuffer,
                               RED_CRESCENT_FADE_A,
                               CONDEMN_PICTURE_X(pictureColumn, 3),
                               CONDEMN_PICTURE_Y(pictureRow, 3) + screenY);
-        if (frame >= 78 && frame <= 79)
+        if (frame >= CONDEMN_SWING_FRAME + 6 &&
+            frame <= CONDEMN_SWING_FRAME + 7)
           EFFECT_DRAW_PICTURE(draw[args->side], canvas, gMapGridCellBuffer,
                               RED_CRESCENT_FADE_B,
                               CONDEMN_PICTURE_X(pictureColumn, 4),
                               CONDEMN_PICTURE_Y(pictureRow, 4) + screenY);
-        if (frame >= 80 && frame <= 81)
+        if (frame >= CONDEMN_SWING_FRAME + 8 &&
+            frame <= CONDEMN_SWING_FRAME + 9)
           EFFECT_DRAW_PICTURE(draw[args->side], canvas, gMapGridCellBuffer,
                               RED_CRESCENT_FADE_C,
                               CONDEMN_PICTURE_X(pictureColumn, 5),
                               CONDEMN_PICTURE_Y(pictureRow, 5) + screenY);
-        if (frame >= 82 && frame <= 83)
+        if (frame >= CONDEMN_SWING_FRAME + 10 &&
+            frame <= CONDEMN_SWING_FRAME + 11)
           EFFECT_DRAW_PICTURE(draw[args->side], canvas, gMapGridCellBuffer,
                               RED_CRESCENT_FADE_D,
                               CONDEMN_PICTURE_X(pictureColumn, 6),
@@ -227,8 +229,6 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(work);
   }
 
-  // Finish: the tasks, then the battle background loaded again, as dark as
-  // the canvas left it.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,

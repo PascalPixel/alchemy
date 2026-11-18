@@ -7,10 +7,6 @@
 /// (JupiterLighthouse_CheckBlockOnCell), so the way out to the entrance stays
 /// open. A Cyclone on the teleporter here leads back down
 /// (JupiterLighthouse_LeaveByCyclone).
-///
-/// After the scene's own code come the shared field effect spawner and the
-/// cracked tiles' routines, which it links between; this room has no cracked
-/// tiles.
 
 #include "shared/tables.h"
 #include "flags.h"
@@ -310,8 +306,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
 #include "../field/field_effect_move.c"
 
 #undef FLAG_GATES_BUTTON_HELD
-// The floor's copy of the effect spawner, and the cracked tiles, found, cracked
-// and fallen through.
+// The floor's copy of the effect spawner.
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
@@ -325,6 +320,8 @@ extern const s32 *gFieldEffect_DurationScripts[];
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
 
+// Unused: the cracked tiles' routines, found, cracked and fallen through; this
+// room has no cracked tiles, and nothing here calls them.
 #include "shared/cracked_tile_find_lower.h"
 
 #include "shared/leader_center_in_cell.h"

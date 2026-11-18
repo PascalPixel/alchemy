@@ -112,10 +112,20 @@ STATIC_ASSERT(offsetof(struct SceneEntrance, cameraLeft) == 14);
 /// named in scene_exits.h.
 #define SCENE_EXIT(exit, map, entrance)                                        \
   (((u32)(exit) << 20) + ((u32)(entrance) << 12) + (u32)&SceneId_##map)
-/// An exit with a flag word after it (bit 28): the exit is taken unless `flag`
-/// is set, and when it is set the search goes on to the next exit.
+/// An exit word's scene.
+#define EXIT_SCENE_MASK 0xfff
+/// An exit word's entrance.
+#define ENTRANCE(word) (((word) & 0xff000) >> 12)
+/// An exit word's exit kind.
+#define EXIT_ID(word) (((word) & 0x0ff00000) >> 20)
+/// An exit word's bit 28: a flag word follows it.
+#define EXIT_HAS_FLAG 0x10000000
+/// The exit kind that matches whatever exit the scene ended on.
+#define EXIT_ID_ANY 255
+/// An exit with a flag word after it: the exit is taken unless `flag` is set,
+/// and when it is set the search goes on to the next exit.
 #define SCENE_EXIT_UNLESS(exit, map, entrance, flag)                           \
-  (SCENE_EXIT(exit, map, entrance) + 0x10000000), (u32)(flag)
+  (SCENE_EXIT(exit, map, entrance) + EXIT_HAS_FLAG), (u32)(flag)
 /// The last header word: it ends the last scene's exits and the table.
 #define SCENE_EXITS_END 511
 /// Where a scene numbers its door or exit cells by their exits (Imil, Mercury

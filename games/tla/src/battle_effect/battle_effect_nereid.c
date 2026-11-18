@@ -26,9 +26,6 @@
 #define NEREID_DROPS_A_FRAME 16
 /// The canvas line below which a falling drop has sunk into the waves.
 #define NEREID_WAVES_Y 104
-/// Particles given a place and a delay that nothing reads again.
-#define NEREID_UNREAD_FIRST 24
-#define NEREID_UNREAD_COUNT 16
 
 /// Nereid rides in on her turtle over rising waves, columns of water and spray
 /// rise over the targets, and she bursts away. A or B skips ahead to her
@@ -70,8 +67,10 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
     velocity.x = -toFIXED(16);
     velocity.y = -toFIXED(4);
     EFFECT_FREE_PARTICLES(k, work->particles, 64);
-    for (k = 0; k != NEREID_UNREAD_COUNT; k++) {
-      point = &work->particles[NEREID_UNREAD_FIRST + k];
+    // DEAD: work->particles 24 to 39 get a place and a delay nothing reads;
+    // the ROM keeps the stores.
+    for (k = 0; k != 16; k++) {
+      point = &work->particles[24 + k];
       point->x = Random16() & 127;
       point->y = (Random16() & 7) + 56;
       point->variant = -(Random16() & 15);
@@ -170,8 +169,9 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
                   120 - rise, WATER_WAVE_WIDTH, WATER_WAVE_HEIGHT);
       }
 
-      // Drops swell as they clear: they fall under gravity until frame 80, then
-      // rise away, and a falling drop that sinks into the waves is freed.
+      // Drops swell as they clear: they fall under gravity until
+      // NEREID_COLUMNS_END_FRAME, then rise away, and a falling drop that sinks
+      // into the waves is freed.
       for (k = 0; k != NEREID_DROPS; k++) {
         drop = &drops[k];
         if (drop->variant >= 0) {
@@ -194,7 +194,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
                            FIXED_INTEGER_PART(drop->y), size);
           drop->x += drop->velocityX;
           drop->y += drop->velocityY;
-          if (frame > 80)
+          if (frame > NEREID_COLUMNS_END_FRAME)
             drop->velocityY += -toFIXED(1) / 2;
           else
             drop->velocityY += gNereid_Gravity[k & 3];
@@ -208,7 +208,7 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
       }
 
       // The targets bounce and flash white.
-      if (frame <= 79) {
+      if (frame < NEREID_COLUMNS_END_FRAME) {
         for (k = 0; k != args->targetCount; k++) {
           if (frame > 29) {
             s32 phase = frame % 12;
@@ -244,8 +244,6 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
 #undef NEREID_BURST_DROPS
 #undef NEREID_DROPS_A_FRAME
 #undef NEREID_WAVES_Y
-#undef NEREID_UNREAD_FIRST
-#undef NEREID_UNREAD_COUNT
 // NEREID_FRAMES, NEREID_COLUMNS_FRAME, NEREID_COLUMNS_END_FRAME,
 // NEREID_OBJECTS, NEREID_DROPS, NEREID_COLUMN_PICTURE and NEREID_COLUMNS stay
 // defined: particle_streams.c's copy of Nereid runs by them.

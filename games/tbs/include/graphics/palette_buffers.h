@@ -88,9 +88,9 @@ enum PaletteTint {
   /// Each colour unchanged; the tints after it are numbered on from it.
   PALETTE_TINT_NONE = 0x10000,
   PALETTE_TINT_GRAYSCALE, ///< grey of brightness (2R + 4G + B) / 7
-  /// Brownish grey: the brightness (R + G + B) / 10, red at 4 times it plus
-  /// 5, green and blue 3 times plus 5, each held to SEPIA_LEVEL_MIN to
-  /// SEPIA_LEVEL_MAX.
+  /// Brownish grey: the shade (R + G + B) / SEPIA_SHADE_DIVISOR, red at 4
+  /// times it plus 5, green and blue 3 times plus 5, each held to
+  /// SEPIA_LEVEL_MIN to SEPIA_LEVEL_MAX.
   PALETTE_TINT_SEPIA,
   /// Half R + 10, two thirds G + 8, B - 7; black stays black.
   PALETTE_TINT_WARM,
@@ -105,7 +105,8 @@ enum PaletteTint {
   /// carrying an RGB555 colour in the low 15 bits; any other value is the
   /// address of a ready buffer to copy.
   PALETTE_TINT_FLAGS = 0x100000,
-  /// The brightness (2R + 4G + B) times the colour carried.
+  /// The brightness (2R + 4G + B) times the colour carried, over
+  /// CUSTOM_TINT_DIVISOR.
   PALETTE_TINT_CUSTOM = 0x200000,
   /// The brightness R + G + B shared out in the proportions of the colour
   /// carried.
@@ -119,6 +120,13 @@ enum PaletteTint {
 #define BRIGHTNESS_RED_SHIFT (BLUE_SHIFT + 1)
 #define BRIGHTNESS_GREEN_SHIFT (BLUE_SHIFT - GREEN_SHIFT + 2)
 
+/// PALETTE_TINT_CUSTOM gives each channel the brightness 2R + 4G + B times the
+/// tint's level over this, so white reaches full level under a tint level of
+/// 14.
+#define CUSTOM_TINT_DIVISOR 96
+
+/// PALETTE_TINT_SEPIA's shade is a colour's R + G + B over this, 0 to 9.
+#define SEPIA_SHADE_DIVISOR 10
 /// PALETTE_TINT_SEPIA holds each channel to these levels.
 #define SEPIA_LEVEL_MIN 8
 #define SEPIA_LEVEL_MAX 28

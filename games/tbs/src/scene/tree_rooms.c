@@ -580,7 +580,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   wait(4);
   MapGrid_CopyCells(26, 35, 1, 4, 10, 40);
   wait(80);
-  // Tret comes to: "Oh... Mmmmm... What has happened to me?"
+  // Tret comes to.
   Event_SetMessageId(MsgTretMmmmm);
   // "Oh... Mmmmm..."
   FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
@@ -918,7 +918,8 @@ static void TretPalette_UpdateMapTint(void) {
     gTreeRooms_TintIndex = 0;
 }
 
-/// Plays one of Tret's face changes with its original pauses.
+/// Plays one of Tret's face changes, six frames to a picture, and waits twelve
+/// frames after it.
 static void TreeRooms_ChangeFace(s32 change) {
   switch (change) {
   case TRET_FACE_CHANGE_CLOSE_EYES:

@@ -50,9 +50,9 @@
 #include "graphics/palette_buffers.h"
 #include "macros.h"
 
-/// A facing rounded to the nearest of the four directions, as The Broken
-/// Seal's scene_tables.h has it.
-#define FACING_NEAREST_CARDINAL(facing) (((facing) + DEGtoANG(45)) & 0xc000)
+/// The quarter of a turn a facing lies in, what is past it dropped: east,
+/// south, west or north, as The Broken Seal's scene_tables.h has it.
+#define FACING_QUARTER(facing) ((facing) & 0xc000)
 
 /// Story flags of the mast puzzle and its events.
 #define FLAG_FIRST_CRATE_SUNK 0x8a0  ///< ACTOR_FIRST_CRATE
@@ -81,7 +81,8 @@ enum { ENTRANCE_MANOR_BRIGGS_ESCAPES = 81 };
 /// gEasternAlhafra_Placements whose sprites are not the party's; the things
 /// keep their rows in gEasternAlhafra_PlacementsAfterBriggsCaught.
 enum EasternAlhafraActorId {
-  /// The posts Lash ties a rope between (Rope_Place).
+  /// The posts Lash ties a rope between (Rope_Place): one at the tip of the
+  /// ship's bow, where Lash is cast, and one on the cliff to its east.
   ///@{
   ACTOR_ROPE_POST = ACTOR_FIRST_PLACED,
   ACTOR_SECOND_ROPE_POST,
@@ -478,8 +479,9 @@ void EasternAlhafra_RollLog(void) {
 
   log = Actor_GetById(ACTOR_LOG);
   lastRock = Actor_GetById(ACTOR_LAST_ROCK);
-  facing = FACING_NEAREST_CARDINAL(
-      Actor_GetById(gMainRoutineWork.leaderActorId)->facing);
+  // The cardinal heading nearest the leader's facing.
+  facing = FACING_QUARTER(
+      Actor_GetById(gMainRoutineWork.leaderActorId)->facing + DEGtoANG(45));
   if (lastRock != NULL && Event_GetFlag(FLAG_LAST_ROCK_SUNK) == 0)
     MapGrid_SetCellBehavior(lastRock->x.fixed, lastRock->z.fixed, 2,
                             CELL_BEHAVIOR_WALL);
@@ -714,11 +716,10 @@ void EasternAlhafra_FillWaveLines(void) {
 
   line = gEasternAlhafra_WaveLines[gEasternAlhafra_WaveTableIndex[0] ^ 1];
   for (i = 0; i != DISPLAY_HEIGHT; i++) {
-    *line++ =
-        FIXEDtoINT(layer->y) +
-        (Math_Sin(((u8)gFrameCount - i - FIXEDtoINT(layer->y) + DISPLAY_HEIGHT)
-                  << 9) >>
-         15);
+    *line++ = FIXEDtoINT(layer->y) +
+              FIXEDtoINT_TWICE(Math_Sin(
+                  ((u8)gFrameCount - i - FIXEDtoINT(layer->y) + DISPLAY_HEIGHT)
+                  << 9));
   }
   gEasternAlhafra_WaveTableIndex[0] ^= 1;
 }
@@ -2413,9 +2414,6 @@ void BattleEffect_StepVector3(struct Particle *particle, s32 damping, s32 step);
 
 #include "shared/particle_update_falling.h"
 
-/// The falling rocks thrown up at once at most.
-#define ROCK_COUNT 64
-
 /// The falling rocks' work: their tiles, the rocks and their sprites, in a
 /// ring that next walks round.
 struct RockWork {
@@ -2454,7 +2452,7 @@ void EasternAlhafra_StartFallingRocks(void) {
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
-    sprite->depth = 240;
+    sprite->depth = OAM_DEPTH_WINDOW;
     rock->timer = -1;
   }
   {
@@ -2498,9 +2496,9 @@ s32 PushTarget_FillFootprint(s32 id) {
     do {
       /* FAKEMATCH(temporary): the step taken in the high halfword, as the push
        * footprints' copies of this search have it. */
-      next = (i + 1) * 65536;
-      index = (u32)next >> 16;
-      i = next >> 16;
+      next = toFIXED(i + 1);
+      index = FIXEDtoINT((u32)next);
+      i = FIXEDtoINT(next);
     } while (index <= PUSH_KINDS - 1 && (u16)kind != gPushKinds[index]);
   }
   fromX = (u16)i;
@@ -2554,7 +2552,15 @@ void PushTarget_Push(struct PushTarget target) {
   s32 speed;
   s32 acceleration;
 
-  direction = leader->facing >> 16;
+  // BUG: the leader's facing is taken as a 16.16 number, whose whole part is
+  // always 0 for this 16-bit angle, where its sixteenth (FACING_INDEX) was
+  // meant: every push takes direction 0 (east), so the pushed thing rolls with
+  // animation 2 whichever way it goes and the leader's step after it is none.
+#ifdef BUGFIX
+  direction = FACING_INDEX(leader->facing);
+#else
+  direction = FIXEDtoINT(leader->facing);
+#endif
   footprint = target.footprint;
   speed = leader->speedLimit;
   acceleration = leader->acceleration;
@@ -2581,7 +2587,8 @@ void PushTarget_Push(struct PushTarget target) {
   }
   Actor_Get(gMainRoutineWork.leaderActorId)->update = Actor_StopAtPushTarget;
   System_Wait(4);
-  if ((u32)(direction - 6) <= 7)
+  if (direction >= FACING_INDEX(FACING_SOUTHWEST) &&
+      direction <= FACING_INDEX(FACING_NORTH_NORTHEAST))
     Actor_SelectAnimation(actor, 3);
   else
     Actor_SelectAnimation(actor, 2);
@@ -2591,9 +2598,21 @@ void PushTarget_Push(struct PushTarget target) {
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.1);
-  Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
-                             toFIXED(gPushLeaderSteps[direction]) >> 31,
-                             toFIXED(gPushLeaderSteps[direction]) >> 17);
+  // BUG: the leader's step after the push reads both halves from the step's
+  // z: x is its sign and z its half (half of PUSH_STEP_X and PUSH_STEP_Z was
+  // meant). With direction 0 both are 0.
+  {
+    s32 step = gPushLeaderSteps[direction];
+
+#ifdef BUGFIX
+    Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
+                               PUSH_STEP_X(step) / 2, PUSH_STEP_Z(step) / 2);
+#else
+    Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
+                               toFIXED(step) >> 31,
+                               FIXEDtoINT(toFIXED(step)) >> 1);
+#endif
+  }
   if (target.callback != 0)
     target.callback();
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);

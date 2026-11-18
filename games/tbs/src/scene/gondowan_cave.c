@@ -52,10 +52,10 @@
 /// drop makes that copy, and so does every arrival by
 /// GONDOWAN_CAVE_FROM_WORLD_MAP_EAST, solved or not.
 ///
-/// Nothing the player sees depends on it. In tbs-en the screen is the same
-/// either way. The leader jumps the crevice at row 17 (step triggers 10 and
-/// 11) from either side either way, and the pillar settles at the same height
-/// in each of columns 41 to 44 either way.
+/// Nothing the player sees depends on it: the screen is the same, the leader
+/// jumps the crevice at row 17 (step triggers 10 and 11) from either side, and
+/// the pillar settles at the same height in each of columns 41 to 44, with the
+/// copy made or not.
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -345,8 +345,10 @@ static void GondowanCave_LeaveToWorldMapEast(void) {
 
   work = gFieldWork;
   Event_Start();
-  // XXX (no evidence): what flags 0x9a3, 0x9a4 and 0x9a6 hold; only this
-  // block, which nothing reaches, touches them.
+  // XXX (no evidence): what story flags 0x9a3, 0x9a4 and 0x9a6 hold, among
+  // FLAG_GONDOWAN_CAVE_STUMP_MOVED and FLAG_GONDOWAN_CAVE_PILLAR_DROPPED; only
+  // this block touches them, nothing in either game reads them, and nothing
+  // sets FLAG_SCENE_TEMP_04, so no play or render shows them.
   if (GameFlag_Get(FLAG_SCENE_TEMP_04) != 0) {
     GameFlag_Clear(0x9a3);
     Event_ClearFlag(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
@@ -679,7 +681,8 @@ struct Trigger gGondowanCaveRiverTriggers[] = {
     { TRIGGER_TABLE_END },
 };
 
-/// FLAG_SCENE_TEMP_05 ends Move on the pillar.
+/// Move on the pillar would end on FLAG_SCENE_TEMP_05, which nothing sets; once
+/// the pillar has dropped, it stands at (0, 0), out of reach.
 struct Trigger gGondowanCaveTriggers[] = {
     { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(GondowanCave_LeaveToWorldMapEast) },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_NORTH },

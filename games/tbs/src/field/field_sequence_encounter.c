@@ -4,8 +4,8 @@
 
 #include "field_sequence_internal.h"
 
-/// encounter_zones.c defines the zones; the code reads them through struct
-/// EncounterZone or as halfwords (gEncounterZones in battle.h).
+// encounter_zones.c defines the zones; the code reads them through struct
+// EncounterZone or as halfwords (gEncounterZones in battle.h).
 
 /// Chooses the current scene's encounter zones, one for each kind of ground the
 /// party can stand on (gFieldWork->encounterZones, read by
@@ -43,7 +43,7 @@ void Encounter_SelectMapZones(s32 useRules) {
 
   // Ground zero is normally safe; the rule can move the first zone onto it.
   *groundZones++ = 0;
-  for (i = 0; i <= 6; i++) {
+  for (i = 0; i < ARRAY_COUNT(work->encounterZones) - 1; i++) {
     *groundZones++ = zone;
     if (zone != 0)
       zone++;
@@ -53,9 +53,9 @@ void Encounter_SelectMapZones(s32 useRules) {
     work->encounterZones[1] = 0;
   }
   work->encounterBias = 0;
-  // 16 in 16.16: Encounter_CountStepsAndSelectFormation starts a battle once
+  // Encounter_CountStepsAndSelectFormation starts a battle once
   // gMainRoutineWork.encounterSteps reaches it.
-  work->encounterThreshold = 16 * FIXED_ONE;
+  work->encounterThreshold = toFIXED(16);
   BattleBackground_SelectForMap();
 }
 
@@ -148,22 +148,27 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, FIXED steps) {
       work->encounterBias = bias;
     }
     // The rate and the bias divide the step, so a higher rate (a party above
-    // the zone's level) means smaller steps and fewer battles.
-    step = Iwram_RatioMulQ14((rate << 20) + ((rate << 4) - 16) * bias, 1 << 20);
+    // the zone's level) means smaller steps and fewer battles: a step is
+    // 16 / (16 * rate + 16 * (rate - 1) * bias), that is
+    // 1 / (rate + (rate - 1) * bias) with bias a 16.16 fraction from -1 to 1.
+    step = Iwram_RatioMulQ14(rate * toFIXED(16) + (rate - 1) * 16 * bias,
+                             toFIXED(16));
     total = gMainRoutineWork.encounterSteps += Iwram_MulFX(step, steps);
     if (total < work->encounterThreshold)
       return 0;
   }
 
-  // Draw one of the eight formations by weight.
+  // Draw one of the zone's formations by weight.
   work->encounterBias = 0;
   sum = 0;
   for (i = 0; i < ENCOUNTER_GROUP_COUNT; i++)
     sum += entry->weights[i];
-  // Zone zero stays encounter-free even when flag 351 bypasses the rate checks.
+  // Zone zero stays encounter-free even when FLAG_IGNORE_ENCOUNTER_CHECKS
+  // bypasses the rate checks.
   if (sum == 0)
     return 0;
-  // Random16 is below 65536, so this draw is below sum and must stop in 0..7.
+  // Random16 is below 65536, so this draw is below sum and must stop at one of
+  // the ENCOUNTER_GROUP_COUNT formations.
   pick = (Random16() * sum) >> 16;
   pick -= entry->weights[0];
   i = 0;
@@ -219,7 +224,8 @@ s16 Encounter_GetDjinnFormation(s32 djinni) {
 #ifdef UBFIX
   return Encounter_GetFormationAtSlot(battle->zone, battle->slot);
 #else
-  // UB: no return statement; the result of the call is left in r0.
+  // UB: no return statement; callers get the formation only because it is the
+  // last call's result.
   Encounter_GetFormationAtSlot(battle->zone, battle->slot);
 #endif
 }
@@ -333,29 +339,29 @@ void BattleBackground_SelectForMap(void) {
 /// Chooses the battle background for a World Map battle environment (enum
 /// BattleEnvironment; any other gives Sol Sanctum's) and sets
 /// gMainRoutineWork.battleBackground.
-void BattleBackground_SelectForEnvironment(s32 behavior) {
+void BattleBackground_SelectForEnvironment(s32 environment) {
   u16 backdrop;
 
-  switch (behavior - 1) {
-  case BATTLE_ENVIRONMENT_GRASSLAND - 1:
-    backdrop = (u32)RESOURCE_GRASSLAND_BACKDROP;
+  switch (environment) {
+  case BATTLE_ENVIRONMENT_GRASSLAND:
+    backdrop = RESOURCE_GRASSLAND_BACKDROP;
     break;
-  case BATTLE_ENVIRONMENT_FOREST - 1:
-    backdrop = (u32)RESOURCE_FOREST_BACKDROP;
+  case BATTLE_ENVIRONMENT_FOREST:
+    backdrop = RESOURCE_FOREST_BACKDROP;
     break;
-  case BATTLE_ENVIRONMENT_DESERT - 1:
-    backdrop = (u32)RESOURCE_DESERT_BACKDROP;
+  case BATTLE_ENVIRONMENT_DESERT:
+    backdrop = RESOURCE_DESERT_BACKDROP;
     break;
-  case BATTLE_ENVIRONMENT_BEACH - 1:
-  case BATTLE_ENVIRONMENT_SHALLOWS - 1:
-    backdrop = (u32)RESOURCE_BEACH_BACKDROP;
+  case BATTLE_ENVIRONMENT_BEACH:
+  case BATTLE_ENVIRONMENT_SHALLOWS:
+    backdrop = RESOURCE_BEACH_BACKDROP;
     break;
-  case BATTLE_ENVIRONMENT_SNOWFIELD - 1:
-  case BATTLE_ENVIRONMENT_SNOW_FOREST - 1:
-    backdrop = (u32)RESOURCE_SNOWFIELD_BACKDROP;
+  case BATTLE_ENVIRONMENT_SNOWFIELD:
+  case BATTLE_ENVIRONMENT_SNOW_FOREST:
+    backdrop = RESOURCE_SNOWFIELD_BACKDROP;
     break;
   default:
-    backdrop = (u32)RESOURCE_SOL_SANCTUM_BACKDROP;
+    backdrop = RESOURCE_SOL_SANCTUM_BACKDROP;
     break;
   }
   gMainRoutineWork.battleBackground = backdrop;

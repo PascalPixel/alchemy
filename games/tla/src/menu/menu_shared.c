@@ -338,7 +338,10 @@ void StatusPanel_Draw(struct Window *unused, s32 owner, s32 slot, s32 mode) {
 #if (LANGUAGE != LANGUAGE_JAPANESE)
 /// The pixels the field allows each digit. The Latin font's digits are 7
 /// pixels wide, so the digits themselves take a pixel less each.
-#define FIELD_PIXELS_PER_DIGIT 8
+#define NUMBER_PIXELS_PER_DIGIT 8
+/// Where CountDigitsAtLeastTwo would stop counting: past an s32's 10 digits,
+/// so it only bounds the loop.
+#define DIGIT_COUNT_LIMIT 16
 
 /// Returns how many decimal digits number has, but at least 2: 0-99 give 2,
 /// 100-999 give 3, 1000-9999 give 4. The count starts with the units digit,
@@ -348,9 +351,7 @@ void StatusPanel_Draw(struct Window *unused, s32 owner, s32 slot, s32 mode) {
 static inline s32 CountDigitsAtLeastTwo(s32 number) {
   s32 count;
 
-  // 16 only bounds the loop: an s32 has at most 10 digits, so the count
-  // always stops first.
-  for (count = 1; count < 16; count++) {
+  for (count = 1; count < DIGIT_COUNT_LIMIT; count++) {
     number /= 10;
     if (number < 10) {
       break;
@@ -385,7 +386,7 @@ void Text_DrawNumberRightAligned(s32 number, s32 window, s32 x, s32 y) {
 
   // Step x back to the field's left edge; the number writer right-aligns the
   // number in a field of width characters.
-  x -= width * FIELD_PIXELS_PER_DIGIT;
+  x -= width * NUMBER_PIXELS_PER_DIGIT;
   Text_DrawNumberAtOffsetFar(number, width, window, x, y);
 }
 
@@ -720,13 +721,13 @@ void PsynergyMenu_PositionMemberEntry(struct WindowSprite **slot, s32 index,
   Icon_PrepareActor(icon);
 }
 
-/// Places the icon in *slot at slotIndex (0 above 15) in a columns-wide grid of
-/// 24x16 cells from (originX, originY), and shows it.
+/// Places the icon in *slot at slotIndex (0 above INVENTORY_SLOTS) in a
+/// columns-wide grid of 24x16 cells from (originX, originY), and shows it.
 void ItemMenu_PlaceIcon(struct WindowSprite **slot, s32 slotIndex, s32 originX,
                         s32 originY, s32 columns) {
   struct WindowSprite *icon;
 
-  if (slotIndex > 15)
+  if (slotIndex > INVENTORY_SLOTS)
     slotIndex = 0;
   icon = *slot;
   icon->y = slotIndex / columns * 16 + originY;
@@ -1016,11 +1017,13 @@ void Palette_LightenHighlight(s32 paletteNumber) {
   u32 green;
   u32 blue;
 
+  // Both transfers copy the same 32 bytes, first as 16 halfwords and then as
+  // 8 words.
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
           DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
           DMA_COPY_WORDS(8), REG_DMA3);
-  blue = palette[WINDOW_BACKGROUND_COLOR] >> 10;
+  blue = palette[WINDOW_BACKGROUND_COLOR] >> RGB_BLUE_SHIFT;
   green = RGB_GREEN(palette[WINDOW_BACKGROUND_COLOR]);
   red = RGB_RED(palette[WINDOW_BACKGROUND_COLOR]);
   blue += HIGHLIGHT_LIGHTEN_STEPS;
@@ -1246,3 +1249,4 @@ UNUSED void UiPalette_SetYellowColor(void) {
 }
 
 #undef STATUS_PANEL_LEARN_NOTE_Y
+#undef DIGIT_COUNT_LIMIT

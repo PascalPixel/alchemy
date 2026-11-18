@@ -3,11 +3,16 @@
 // Part of window.c.
 
 #include "window_internal.h"
+#include "system/mul_fx.h"
 
 // The glyph's pixels, 16 to a line as its tiles are read: 16 lines for the
 // Japanese font, 24 for the other languages' taller one.
 #define GLYPH_BUFFER_WIDTH 16
 #define GLYPH_PIXEL(x, y) ((y) * GLYPH_BUFFER_WIDTH + (x))
+
+/// The second character of a pair, in bits 8 to 23 of its code.
+#define GLYPH_PAIR_SECOND(code) (((code) << 8) >> 16)
+
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #define GLYPH_PIXELS_SIZE (GLYPH_BUFFER_WIDTH * 16)
 #else
@@ -69,8 +74,7 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
   }
   Iwram_ClearWordsEntry(pixels, GLYPH_PIXELS_SIZE);
 #else
-  // A joined pair carries its second character above bit 8.
-  secondIndex = (code << 8) >> 16;
+  secondIndex = GLYPH_PAIR_SECOND(code);
   code &= TEXT_LAST_FONT_CODE;
   firstIndex = code - TEXT_SPACE;
   glyph = (const u8 *)gFont_Glyphs + firstIndex * sizeof(struct FontGlyph);
@@ -333,7 +337,7 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
 #endif
       }
 #endif
-      x += Glyph_Draw(window, c, x, y, 0);
+      x += Glyph_Draw(window, c, x, y, GLYPH_DRAW_CHARACTER);
     }
   }
 }
@@ -428,19 +432,13 @@ void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
   work->dirty = 1;
 }
 
-u32 Math_UnsignedMulHigh(u32 a, u32 b);
-
 /// The digits String_FormatNumber writes, in buffer[1] to [12].
 #define NUMBER_DIGITS 12
-
-/// 2^32 / 10, rounded up: the high word of a product by it divides by 10.
-#define RECIPROCAL_OF_10 (0xffffffffU / 10 + 1)
 
 /// Writes value as decimal text into buffer (14 bytes) and returns where the
 /// text starts. With width 0 the number has no padding and a minus sign when
 /// negative; otherwise it is right-aligned in width characters (up to 12) and
-/// unsigned. Each digit divides by 10 through the long-multiply helpers, by
-/// RECIPROCAL_OF_10.
+/// unsigned. Each digit divides by 10 through the long-multiply helpers.
 u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width) {
   s32 offset;
   s32 value;
@@ -462,8 +460,8 @@ u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width) {
   buffer[0] = ' ';
   for (offset = NUMBER_DIGITS; offset != 0; offset--) {
     buffer[offset] =
-        Math_UnsignedMulHighAdd(value, RECIPROCAL_OF_10, -10) + '0';
-    value = Math_UnsignedMulHigh(value, RECIPROCAL_OF_10);
+        Math_UnsignedMulHighAdd(value, RECIPROCAL_OF(10), -10) + '0';
+    value = Math_UnsignedMulHigh(value, RECIPROCAL_OF(10));
   }
 
   offset = 0;
@@ -505,6 +503,6 @@ u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width) {
 #undef GLYPH_PIXELS_SIZE
 #undef GLYPH_PIXEL
 #undef GLYPH_BUFFER_WIDTH
-#undef RECIPROCAL_OF_10
+#undef GLYPH_PAIR_SECOND
 #undef WIDE_WIDTH_FIXED
 #undef FONT_GLYPH

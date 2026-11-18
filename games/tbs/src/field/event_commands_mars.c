@@ -6,7 +6,9 @@
 
 /// A Mars Djinni joins the party: it turns to the camera, bounces three times,
 /// spins ever faster and shrinks away in a fountain of 24 sparks
-/// (FieldEffect_UpdateMarsSpark).
+/// (FieldEffect_UpdateMarsSpark). The leader turns to the camera and raises
+/// its arms, the sparks swarm it while it pulses for 100 frames, and the
+/// sparks vanish.
 void Djinn_RunMarsJoinEffect(s32 djinniId) {
   struct Vector3 position;
   FIXED scale;
@@ -24,8 +26,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
   FieldEffect_InitializeSlots();
   effectWork = gFieldEffectWork;
-  // Tint the screen red: PALETTE_TINT_CUSTOM | RGB(16, 4, 4), the form
-  // event_commands_mercury.c spells out for its blue.
+  // Tint the screen red.
   Shop_SaveAndTintFieldPaletteFar(PALETTE_TINT_CUSTOM | RGB(16, 4, 4));
   wait(30);
   // Turn to face the camera (FACING_SOUTH), then bounce three times, a rising
@@ -53,9 +54,9 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   position.z = djinni->z.fixed;
   Camera_WorldToScreen(&position);
 
-  // One spark a frame into each of the 24 field effect sprites.
+  // One spark a frame into each of the field effect sprites.
   effect = effectWork->particles;
-  remaining = 23;
+  remaining = PSYNERGY_EFFECT_SLOT_COUNT - 1;
   do {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateMarsSpark);
@@ -102,13 +103,16 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   FieldEffect_ReleaseSlots();
 }
 
-/// Spins and shrinks an actor by 1,024 a frame, then releases it: 53 frames
-/// from full size.
-DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkActorAndDestroyFast, -1024)
+/// Spins an actor an eighth of a turn and shrinks it by 1/64 of its size a
+/// frame, then releases it: 53 frames from full size. The Venus Djinni's
+/// joining shrinks the Djinni away with it.
+DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkActorAndDestroyFast,
+                          -(FIXED_ONE / 64))
 
 /// Per-frame update of a Venus Djinni's falling motes: each circles the leader
-/// on a shrinking spiral (radius timer * 0.4 pixels) while it sinks a pixel a
-/// frame, and is released 20 pixels above the leader's feet.
+/// a 32nd of a turn a frame on a shrinking spiral (0.4 pixels of radius for
+/// each frame left) while it sinks a pixel a frame, and is released 20 pixels
+/// above the leader's feet.
 void FieldEffect_UpdateDescendingOrbitActor(struct Actor *mote) {
   struct Vector3 position;
   struct Actor *leader;
@@ -123,7 +127,8 @@ void FieldEffect_UpdateDescendingOrbitActor(struct Actor *mote) {
   position.x = leader->x.fixed;
   position.z = leader->z.fixed;
   Vector_AddPolarOffset(frames * (toFIXED(2) / 5),
-                        (frames << 11) + mote->orbitAngle, &position);
+                        frames * (TRIG_TURN / 32) + mote->orbitAngle,
+                        &position);
   mote->x.fixed = position.x;
   mote->z.fixed = position.z;
   y = mote->y.fixed - toFIXED(1);

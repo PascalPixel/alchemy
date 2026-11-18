@@ -224,7 +224,7 @@ enum ElevatorAscent { ASCENT_AT_ONCE, ASCENT_RISING };
 
 void JupiterLighthouse_LowerElevator(s32 mode);
 void JupiterLighthouse_RaiseElevator(s32 mode);
-void JupiterLighthouse_PlaceAngelsAndLid(void);
+void JupiterLighthouse_PlaceRaisedActors(void);
 
 s32 HangingVine_Place();
 
@@ -2250,7 +2250,7 @@ s32 Scene_Initialize(void) {
   Actor_Get(ACTOR_FLOATING_PLATFORM_F)->priorityFlags |=
       ACTOR_PRIORITY_PLATFORM;
   if (!Event_GetFlag(FLAG_JUPITER_BEACON_LIT)) {
-    JupiterLighthouse_PlaceAngelsAndLid();
+    JupiterLighthouse_PlaceRaisedActors();
   } else {
     Actor_Get(ACTOR_UNSEEN_LID)->scaleX = 0;
   }
@@ -2340,61 +2340,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 
-/// The frames the aerie's JupiterLighthouse_RaiseAngels raises an angel and
-/// tilts the lid, then lifts all three once both angels are energized.
-#define ANGEL_RISE_FRAMES 64
-#define LID_LIFT_FRAMES 256
-
-/// Places the lid and the angels over the well where the aerie's energizing
-/// left them: each angel the archers have energized raised with the lid tilted
-/// away from it, and all three lifted clear once both are.
-void JupiterLighthouse_PlaceAngelsAndLid(void) {
-  struct Actor *left = Actor_GetById(ACTOR_LEFT_ANGEL);
-  struct Actor *right = Actor_GetById(ACTOR_RIGHT_ANGEL);
-  struct Actor *lid = Actor_GetById(ACTOR_LID);
-  struct FieldSprite *sprite = lid->sprite;
-
-  Actor_SetPosition(ACTOR_UNSEEN_LID, 512, 248);
-  Actor_SetPosition(ACTOR_LID, 512, 248);
-  Actor_SetPosition(ACTOR_LEFT_ANGEL, 472, 256);
-  Actor_SetPosition(ACTOR_RIGHT_ANGEL, 552, 256);
-  Actor_GetById(ACTOR_UNSEEN_LID)->scaleX = 0;
-  lid->motionFlags = 0;
-  lid->y.fixed = lid->groundHeight;
-  left->motionFlags = 0;
-  left->y.fixed = left->groundHeight;
-  right->motionFlags = 0;
-  right->y.fixed = right->groundHeight;
-  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED)) {
-    left->y.fixed += ANGEL_RISE_FRAMES * (toFIXED(1) / 10);
-    lid->y.fixed += ANGEL_RISE_FRAMES * (toFIXED(3) / 100);
-    lid->x.fixed -= ANGEL_RISE_FRAMES * (toFIXED(1) / 25);
-    sprite->rotation += TRIG_TURN / 32;
-    Actor_SetSpriteColorMode(Actor_GetById(ACTOR_LEFT_ANGEL), SPRITE_COLOR_GBR);
-    Actor_SetSpriteColorMode(Actor_GetById(ACTOR_LEFT_ARCHER),
-                             SPRITE_COLOR_GBR);
-  }
-  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
-    right->y.fixed += ANGEL_RISE_FRAMES * (toFIXED(1) / 10);
-    lid->y.fixed += ANGEL_RISE_FRAMES * (toFIXED(3) / 100);
-    lid->x.fixed += ANGEL_RISE_FRAMES * (toFIXED(1) / 25);
-    sprite->rotation -= TRIG_TURN / 32;
-    Actor_SetSpriteColorMode(Actor_GetById(ACTOR_RIGHT_ANGEL),
-                             SPRITE_COLOR_GBR);
-    Actor_SetSpriteColorMode(Actor_GetById(ACTOR_RIGHT_ARCHER),
-                             SPRITE_COLOR_GBR);
-  }
-  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED) &&
-      Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
-    left->y.fixed += LID_LIFT_FRAMES * (toFIXED(1) / 10);
-    right->y.fixed += LID_LIFT_FRAMES * (toFIXED(1) / 10);
-    lid->y.fixed += LID_LIFT_FRAMES * (toFIXED(1) / 10) +
-                    ANGEL_RISE_FRAMES * (toFIXED(3) / 100);
-    left->motionFlags = ACTOR_FLOATS;
-    right->motionFlags = ACTOR_FLOATS;
-    lid->motionFlags = ACTOR_FLOATS;
-  }
-}
+#include "shared/jupiter_lighthouse_place_raised_actors.h"
 
 #include "shared/light_sprites_draw.h"
 
@@ -2417,17 +2363,11 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #include "../field/field_effect_move.c"
 
 extern const s32 *gFieldEffect_DurationScripts[];
-#define EFFECT_SPAWN FieldEffect_Spawn
-#define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
-#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
 
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"

@@ -48,6 +48,7 @@
 #include "fixed_math.h"
 #include "graphics/display_transition.h"
 #include "window/item_icon.h"
+#include "window/window.h"
 #include "field/map_grid.h"
 #include "macros.h"
 #include "system/input.h"
@@ -65,10 +66,6 @@
 #include "text/msg_ids.h"
 #include "system/io_write.h"
 
-/// The colour bare centred messages are written in, set white again under the
-/// statue's warm glow.
-#define CENTERED_TEXT_COLOR OBJ_PLTT_COLOR(0, 15)
-
 #define FLAG_MARS_STAR_TAKEN 0xa3a ///< Felix took it from where Agatio left it
 #define FLAG_ADEPTS_WOKE 0xa3b     ///< Agatio and Karst woke after the battle
 #define FLAG_DRAGON_ICE_CRACKED 0xa4a
@@ -81,11 +78,6 @@
 /// From patch 1: the ice is burst, and fireballs still on their way no longer
 /// crack it.
 #define FLAG_DRAGON_ICE_BURST FLAG_SCENE_TEMP_38
-/// The cell the leader fell through, its column and row, a byte of area flags
-/// each, which MarsLighthouseEntrance_FallThroughCrack keeps for this room to
-/// land him under it.
-#define FLAG_BYTE_FALL_COLUMN FLAG_AREA_TEMP_40
-#define FLAG_BYTE_FALL_ROW FLAG_AREA_TEMP_48
 
 /// The room's own ways between its parts: the dragon hall's south end and the
 /// west doorway of a long corridor lead to each other, and the corridor's east
@@ -1110,7 +1102,7 @@ struct RiseTimer {
   s32 frames;
 };
 
-#define SPARK_FRAMES 60 ///< a spark's life
+#define RISING_SPARK_FRAMES 60 ///< a spark's life
 
 /// A spark rises and grows for a second, then is gone.
 void MarsLighthouseStarRoom_UpdateRisingSpark(struct Actor *actor) {
@@ -1193,7 +1185,7 @@ void MarsLighthouseStarRoom_SpawnRisingSparks(void) {
     Actor_SetSpriteFlags(actor, 0);
     actor->scaleX = FIXED_ONE / 2;
     actor->scaleY = FIXED_ONE / 2;
-    *(s32 *)&actor->watchedActor = SPARK_FRAMES;
+    *(s32 *)&actor->watchedActor = RISING_SPARK_FRAMES;
     actor->update = MarsLighthouseStarRoom_UpdateRisingSpark;
     Actor_SelectAnimation(actor, 5);
     Actor_SetBlendMode(actor, 1);
@@ -1353,19 +1345,7 @@ s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
 s32 MapGrid_CheckCollision(struct Actor *actor, struct Vector3 *position);
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 a);
 
-#define KNOCK_BACK Leader_KnockBack
-#define KNOCK_BACK_TAKE_DAMAGE Party_TakeFallDamage
-#define KNOCK_BACK_BLINK Actor_Blink
-#define KNOCK_BACK_SET_ANIMATION Actor_SelectAnimation
-#define KNOCK_BACK_CELL_ATTRIBUTE MapGrid_GetCellAttributeLowNibbleOrBump
-#define KNOCK_BACK_CHECK_COLLISION MapGrid_CheckCollision
 #include "shared/leader_knock_back.c"
-#undef KNOCK_BACK
-#undef KNOCK_BACK_TAKE_DAMAGE
-#undef KNOCK_BACK_BLINK
-#undef KNOCK_BACK_SET_ANIMATION
-#undef KNOCK_BACK_CELL_ATTRIBUTE
-#undef KNOCK_BACK_CHECK_COLLISION
 
 /// Hit by the flames, the leader is knocked back.
 void MarsLighthouseStarRoom_KnockBackIfHit(void) {
@@ -1508,17 +1488,11 @@ void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 #undef Position
 extern const s32 *gFieldEffect_DurationScripts[];
 void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
-#define EFFECT_SPAWN FieldEffect_Spawn
-#define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
-#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
 
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepth
 #include "../field/map_cell_sprite.c"

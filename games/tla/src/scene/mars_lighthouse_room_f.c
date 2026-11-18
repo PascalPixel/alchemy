@@ -1452,19 +1452,7 @@ UNUSED s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
 
 #include "shared/actor_blink.h"
 
-#define KNOCK_BACK Leader_KnockBack
-#define KNOCK_BACK_TAKE_DAMAGE Party_TakeFallDamage
-#define KNOCK_BACK_BLINK Actor_Blink
-#define KNOCK_BACK_SET_ANIMATION Actor_SelectAnimation
-#define KNOCK_BACK_CELL_ATTRIBUTE MapGrid_GetCellAttributeLowNibbleOrBump
-#define KNOCK_BACK_CHECK_COLLISION MapGrid_CheckCollision
 #include "shared/leader_knock_back.c"
-#undef KNOCK_BACK
-#undef KNOCK_BACK_TAKE_DAMAGE
-#undef KNOCK_BACK_BLINK
-#undef KNOCK_BACK_SET_ANIMATION
-#undef KNOCK_BACK_CELL_ATTRIBUTE
-#undef KNOCK_BACK_CHECK_COLLISION
 
 /// Hit by the flames, the leader is knocked back.
 void MarsLighthouseRoomF_KnockBackIfHit(void) {
@@ -1591,17 +1579,11 @@ void Actor_SetupScriptedFor(struct Actor *actor, s32 unused);
 #undef Camera_SetBounds
 void Actor_StartScript(struct Actor *actor, const void *script);
 extern const s32 *gFieldEffect_DurationScripts[];
-#define EFFECT_SPAWN FieldEffect_Spawn
-#define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
-#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
 
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
@@ -1724,12 +1706,7 @@ static inline s32 PushTarget_CheckCollision(struct Actor *actor,
 
 #include "shared/push_target_find_slide.h"
 
-/// The whole-pixel half of a 16.16 coordinate.
-#define PIXEL_PART(v) (((s16 *)&(v))[1])
-
 #include "shared/push_target_find_ahead.h"
-
-#undef PIXEL_PART
 
 /// The leader pushes the object to its resting place: the cells it leaves are
 /// floor again and the cells it comes to are walls.

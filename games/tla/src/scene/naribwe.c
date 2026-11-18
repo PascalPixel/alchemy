@@ -29,7 +29,7 @@
 #define FLAG_WEEDS_SCATTERED FLAG_SCENE_TEMP_01
 
 /// The rope between the two posts, tied by Lash, for this visit.
-#define FLAG_ROPE_TIED FLAG_SCENE_TEMP_02
+#define FLAG_NARIBWE_ROPE_TIED FLAG_SCENE_TEMP_02
 
 /// Naribwe, by the rows of the village's placements (the same before and
 /// after the return from Kibombo); the last row goes to Isaac's party slot.
@@ -373,7 +373,7 @@ s32 Scene_Initialize(void) {
   if (Event_GetFlag(FLAG_WEEDS_SCATTERED))
     Actor_SetPosition(ACTOR_WEEDS, 0, 0);
   Rope_Initialize();
-  Rope_Place(0, FLAG_ROPE_TIED, ACTOR_ROPE_POST, ACTOR_ROPE_END);
+  Rope_Place(0, FLAG_NARIBWE_ROPE_TIED, ACTOR_ROPE_POST, ACTOR_ROPE_END);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_ROPE_POST), 0);
   Actor_DisableById(ACTOR_ROPE_END);
   return 0;
@@ -600,7 +600,8 @@ struct Trigger gNaribwe_Triggers[] = {
      CONDITION_ALWAYS, EVENT(Naribwe_PrepareBlaze)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WEEDS, FLAG_WEEDS_SCATTERED,
      EVENT(Naribwe_ScatterWeeds)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST, FLAG_ROPE_TIED, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST, FLAG_NARIBWE_ROPE_TIED,
+     0},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(Naribwe_RevealChest)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
@@ -669,7 +670,8 @@ struct Trigger gNaribwe_TriggersOnReturn[] = {
      CONDITION_ALWAYS, EVENT(Naribwe_PrepareBlaze)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WEEDS, FLAG_WEEDS_SCATTERED,
      EVENT(Naribwe_ScatterWeeds)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST, FLAG_ROPE_TIED, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST, FLAG_NARIBWE_ROPE_TIED,
+     0},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(Naribwe_RevealChest)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,

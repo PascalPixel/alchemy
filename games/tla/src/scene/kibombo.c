@@ -1945,9 +1945,6 @@ void Kibombo_RaiseEmbers(void) {
   }
 }
 
-/// How long a cloud of smoke drifts before it is gone, in frames.
-#define SMOKE_FRAMES 60
-
 /// A cloud of smoke's update: drifts sideways and up, swelling, until its
 /// SMOKE_FRAMES are out.
 void Kibombo_UpdateSmoke(struct Actor *actor) {

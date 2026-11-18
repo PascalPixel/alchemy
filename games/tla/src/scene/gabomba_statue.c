@@ -32,8 +32,8 @@
 
 /// The ladder-top blocks are drawn (GabombaStatue_RestoreLadderTopBlocks).
 #define FLAG_LADDER_TOP_BLOCKS_DRAWN FLAG_SCENE_TEMP_00
-#define FLAG_FIRST_ROPE_TIED FLAG_SCENE_TEMP_01  ///< by Rope_Place
-#define FLAG_SECOND_ROPE_TIED FLAG_SCENE_TEMP_02 ///< by Rope_Place
+#define FLAG_GABOMBA_FIRST_ROPE_TIED FLAG_SCENE_TEMP_01  ///< by Rope_Place
+#define FLAG_GABOMBA_SECOND_ROPE_TIED FLAG_SCENE_TEMP_02 ///< by Rope_Place
 /// A tied rope has stopped the cogs (GabombaStatue_LashRope).
 #define FLAG_COGS_STOPPED FLAG_SCENE_TEMP_03
 /// The party has fallen in beside Steel, who can then be talked to.
@@ -216,11 +216,8 @@ enum {
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 extern const s32 *gFieldEffect_DurationScripts[];
 
-#define EFFECT_SPAWN FieldEffect_Spawn
-#define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
-#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
 
 /// Steel, the Djinni waiting in this room.
@@ -2360,9 +2357,9 @@ void GabombaStatue_InitializeElixirChest(void) {
       !Event_GetFlag(FLAG_GABOMBA_SECOND_STAKE_POUNDED))
     Actor_Get(ACTOR_FLASHING_COG)->y.fixed = toFIXED(16);
   Rope_Initialize();
-  FieldRope_Place(0, FLAG_FIRST_ROPE_TIED, ACTOR_FIRST_ROPE_POST_A,
+  FieldRope_Place(0, FLAG_GABOMBA_FIRST_ROPE_TIED, ACTOR_FIRST_ROPE_POST_A,
                   ACTOR_FIRST_ROPE_POST_B);
-  FieldRope_Place(1, FLAG_SECOND_ROPE_TIED, ACTOR_SECOND_ROPE_POST_A,
+  FieldRope_Place(1, FLAG_GABOMBA_SECOND_ROPE_TIED, ACTOR_SECOND_ROPE_POST_A,
                   ACTOR_SECOND_ROPE_POST_B);
   GabombaStatue_HideElixirChestHoleShadows();
 }
@@ -2370,7 +2367,7 @@ void GabombaStatue_InitializeElixirChest(void) {
 /// Sets up Steel's room: its rope, and the fall in from the turntable room.
 void GabombaStatue_InitializeSteel(void) {
   Rope_Initialize();
-  FieldRope_Place(0, FLAG_FIRST_ROPE_TIED, ACTOR_STEEL_ROPE_POST_A,
+  FieldRope_Place(0, FLAG_GABOMBA_FIRST_ROPE_TIED, ACTOR_STEEL_ROPE_POST_A,
                   ACTOR_STEEL_ROPE_POST_B);
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     s32 entrance = (u16)gMainRoutineWork.entrance;
@@ -4245,8 +4242,8 @@ LATE_DATA struct Trigger gGabombaStatue_ElixirChestTriggers[] = {
     {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_FIRST_HOLE, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoElixirChestHole)},
     {TRIGGER_STEP, CELL_BEHAVIOR_PINION_GAP, CONDITION_ALWAYS, EVENT(GabombaStatue_ElixirPinionsCarryLeaderSouth)},
     {TRIGGER_STEP, CELL_BEHAVIOR_PINION_GAP_TURNED_BACK, CONDITION_ALWAYS, EVENT(GabombaStatue_ElixirPinionsCarryLeaderNorth)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_FIRST_ROPE_POST_A, FLAG_FIRST_ROPE_TIED, EVENT(GabombaStatue_LashRope)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_SECOND_ROPE_POST_A, FLAG_SECOND_ROPE_TIED, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_FIRST_ROPE_POST_A, FLAG_GABOMBA_FIRST_ROPE_TIED, EVENT(GabombaStatue_LashRope)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_SECOND_ROPE_POST_A, FLAG_GABOMBA_SECOND_ROPE_TIED, 0},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_FIRST_STAKE, FLAG_GABOMBA_FIRST_STAKE_POUNDED, EVENT(GabombaStatue_PoundStake)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_SECOND_STAKE, FLAG_GABOMBA_SECOND_STAKE_POUNDED, EVENT(GabombaStatue_PoundStake)},
     {TRIGGER_RAISED, RAISED_COGS_TURN_BACK, FLAG_GABOMBA_COGS_TURNED_BACK, EVENT(GabombaStatue_CogsTurnBack)},
@@ -4265,7 +4262,7 @@ LATE_DATA struct Trigger gGabombaStatue_SteelTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_COG_END, CONDITION_ALWAYS, EVENT(GabombaStatue_HopAcrossEastOrWest)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_COG_END, CONDITION_ALWAYS, EVENT(GabombaStatue_HopAcrossNorthOrSouth)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_COG_END, CONDITION_ALWAYS, EVENT(GabombaStatue_HopAcrossNorthOrSouth)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_STEEL_ROPE_POST_A, FLAG_FIRST_ROPE_TIED, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_STEEL_ROPE_POST_A, FLAG_GABOMBA_FIRST_ROPE_TIED, 0},
     {TRIGGER_TALK, ACTOR_STEEL, IF_FLAG_SET(FLAG_LANDED_BESIDE_STEEL), EVENT(GabombaStatue_FightSteel)},
     {TRIGGER_TABLE_END},
 };

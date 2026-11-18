@@ -8,11 +8,8 @@
 #include "../field/field_effect_move.c"
 #include "field/actor_view.h"
 #include "field/field.h"
-#define EFFECT_SPAWN FieldEffect_Spawn
-#define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
-#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
 
 #include "system/task.h"
@@ -941,11 +938,8 @@ void Garoh_CrossEastEdge(void) {
 
 #include "../field/field_effect_advance_motion.c"
 
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
 #undef DEFINE_GAROH_LOAD_PALETTE
 #undef DEFINE_GAROH_TRIGGER_AT_CELL
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,

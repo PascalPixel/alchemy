@@ -57,8 +57,8 @@
 /// Story flags of the mast puzzle and its events.
 #define FLAG_FIRST_CRATE_SUNK 0x8a0  ///< ACTOR_FIRST_CRATE
 #define FLAG_SECOND_CRATE_SUNK 0x8a1 ///< ACTOR_SECOND_CRATE
-#define FLAG_STAKE_POUNDED 0x8a2
-#define FLAG_ROPE_LASHED 0x8a3
+#define FLAG_EASTERN_ALHAFRA_STAKE_POUNDED 0x8a2
+#define FLAG_EASTERN_ALHAFRA_ROPE_LASHED 0x8a3
 #define FLAG_LAST_ROCK_SUNK 0x8a4  ///< ACTOR_LAST_ROCK
 #define FLAG_FIRST_ROCK_SUNK 0x8a5 ///< ACTOR_FIRST_ROCK
 #define FLAG_LOG_ROLLED 0x8a6
@@ -819,7 +819,8 @@ s32 Scene_Initialize(void) {
   if (Event_GetFlag(FLAG_LOG_ROLLED) == 0)
     PushTarget_FillFootprint(ACTOR_LOG);
   Rope_Initialize();
-  Rope_Place(0, FLAG_ROPE_LASHED, ACTOR_ROPE_POST, ACTOR_SECOND_ROPE_POST);
+  Rope_Place(0, FLAG_EASTERN_ALHAFRA_ROPE_LASHED, ACTOR_ROPE_POST,
+             ACTOR_SECOND_ROPE_POST);
   Actor_Get(ACTOR_ROPE_POST)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   Actor_Get(ACTOR_SECOND_ROPE_POST)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
@@ -829,7 +830,7 @@ s32 Scene_Initialize(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_TIGHTROPE_END), 0);
   Pillar_Place(gEasternAlhafra_PoundStakes);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_STAKE), 0);
-  flag = Event_GetFlag(FLAG_STAKE_POUNDED);
+  flag = Event_GetFlag(FLAG_EASTERN_ALHAFRA_STAKE_POUNDED);
   if (flag == 0) {
     actor = Actor_Get(ACTOR_FIRST_STAKE_ROPE_START);
     /* FAKEMATCH(dead): the not-targeted bit set in a once-only block. */
@@ -2529,9 +2530,6 @@ extern s32 gPushLeaderSteps[];
 
 #include "shared/push_target_find_slide.h"
 
-/// The whole-pixel half of a 16.16 coordinate.
-#define PIXEL_PART(v) (((s16 *)&(v))[1])
-
 #include "shared/push_target_find_ahead.h"
 
 /// The leader pushes the object to its resting place: the cells it leaves are
@@ -2655,7 +2653,6 @@ void PushTarget_Push(struct PushTarget target) {
 
 #include "shared/actor_set_cell_open.h"
 
-#undef PIXEL_PART
 #include "text/msg_ids.h"
 
 void EasternAlhafra_ReachMastBlock(void);
@@ -2682,7 +2679,7 @@ u16 gEasternAlhafra_UnusedActorList[] = {
 /// The stake Pound sinks: actor, how its cell opens (Actor_SetCellOpen) and its
 /// flag.
 u16 gEasternAlhafra_PoundStakes[] = {
-    ACTOR_STAKE, 1, FLAG_STAKE_POUNDED, ACTOR_LIST_END,
+    ACTOR_STAKE, 1, FLAG_EASTERN_ALHAFRA_STAKE_POUNDED, ACTOR_LIST_END,
 };
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -2787,8 +2784,8 @@ struct Trigger gSceneEvents[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_KNOCKED_DOWN, CONDITION_ALWAYS, MSGNO(MsgIJustCame)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_WORKER, CONDITION_ALWAYS, MSGNO(MsgBriggsSaidTheBoat)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 10, FLAG_ALHAFRA_MAST_CLEARED, EVENT(EasternAlhafra_BurstMastBlock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST, FLAG_ROPE_LASHED, 0},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_STAKE, FLAG_STAKE_POUNDED, EVENT(EasternAlhafra_PoundStake)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST, FLAG_EASTERN_ALHAFRA_ROPE_LASHED, 0},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_STAKE, FLAG_EASTERN_ALHAFRA_STAKE_POUNDED, EVENT(EasternAlhafra_PoundStake)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_CRATE, FLAG_FIRST_CRATE_SUNK, EVENT(EasternAlhafra_StartPushing)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CRATE, FLAG_FIRST_CRATE_SUNK, EVENT(EasternAlhafra_FinishPushing)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_SECOND_CRATE, FLAG_SECOND_CRATE_SUNK, EVENT(EasternAlhafra_StartPushing)},

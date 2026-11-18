@@ -153,9 +153,6 @@ enum CrossboneIsleActorId {
 /// island's map. Four scene temp flags run from this one, one a plant.
 enum { FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN = FLAG_SCENE_TEMP_40 };
 
-/// The sprout's animation once Growth has grown it.
-enum { SPROUT_ANIMATION_GROWN = 4 };
-
 /// The twelve floating logs of the ninth floor's side room
 /// (SceneId_CrossboneIsleFloatingLogs), lettered A to L.
 ///

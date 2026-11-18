@@ -165,8 +165,7 @@ enum {
   /// animations show picture 0, a purple glow.
   TURNING_ROCK_ANIMATION_MOSSY = 2,
   ANIM_HSU_STRUGGLE = 5,
-  ANIM_MONK_MEDITATE = 5,
-  SPROUT_ANIMATION_GROWN = 4
+  ANIM_MONK_MEDITATE = 5
 };
 
 /// The cell behaviors Lama Temple's triggers answer.

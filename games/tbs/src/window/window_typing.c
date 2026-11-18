@@ -26,17 +26,6 @@ void Text_ScrollCanvasUp(s32 step) {
   }
 }
 
-#if LANGUAGE != LANGUAGE_JAPANESE
-/// Two narrow characters whose glyphs come to this many pixels at most are
-/// drawn together in one 16-pixel cell.
-#define GLYPH_PAIR_WIDTH_MAX 15
-#endif
-#if LANGUAGE == LANGUAGE_SPANISH
-/// As GLYPH_PAIR_WIDTH_MAX, in the outlined style, which widens each glyph by
-/// one.
-#define GLYPH_PAIR_OUTLINED_WIDTH_MAX 14
-#endif
-
 /// What Message_Type reports.
 enum {
   CHANNEL_STEP_RUNNING = 0, ///< the text goes on next frame
@@ -435,5 +424,3 @@ s32 Message_Type(struct Message *message) {
 #undef CANVAS_COLUMNS
 #undef CANVAS_COLUMN_WORDS
 #undef CANVAS_KEPT_ROWS
-#undef GLYPH_PAIR_WIDTH_MAX
-#undef GLYPH_PAIR_OUTLINED_WIDTH_MAX

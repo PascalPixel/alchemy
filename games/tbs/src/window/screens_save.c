@@ -27,10 +27,8 @@
 /// digits keep their leading zero.
 #define WITH_LEADING_ZERO(n) ((n) + 100)
 
-/// The word of the save buffer's second half, counted from gSceneLocalState,
-/// that holds the second copy of the play time: gInventorySnapshot's last
-/// word, past gSceneLocalState's SCENE_LOCAL_STATE_WORDS (system/ewram.s).
-#define SECOND_PART_PLAY_TIME_WORD 64
+/// The words of gSceneLocalState (system/ewram.s), which gInventorySnapshot
+/// follows.
 #define SCENE_LOCAL_STATE_WORDS 30
 /// The words from gGameFlagBytes that a file's checksum sums.
 #define SAVE_CHECKSUM_WORDS 968

@@ -121,6 +121,10 @@ extern u8 gBgTileBuffer[];
 /// edges.
 #define MAPGRID_SIZE 128
 #define MAPGRID_CELL_PIXELS 16
+/// The map grid's cells, row by row, in Ram_MapGridCellBuffer
+/// (system/ram_buffer.h): the cell at column x, row y is
+/// MAPGRID_CELLS[y * MAPGRID_SIZE + x].
+#define MAPGRID_CELLS ((struct MapGridCell *)Ram_MapGridCellBuffer)
 /// A whole pixel coordinate's map cell, in pixels.
 #define MAPGRID_CELL_PIXEL_MASK 0xfff0
 /// The low four bits of a shape's first byte: its kind, which height

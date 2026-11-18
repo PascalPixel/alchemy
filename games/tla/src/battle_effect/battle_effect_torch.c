@@ -19,10 +19,6 @@
 /// pixels.
 #define TORCH_SWAY (32 * 4)
 
-/// A line's sideways sway, in quarter canvas pixels (toFIXED(4) to a pixel),
-/// as the BG2X value of the effect's bg2xLines table.
-#define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
-
 /// A fiery disc fades in over the battle, its rings running outward while
 /// every line of the display ripples; the target is struck, the disc fades
 /// out.
@@ -194,4 +190,3 @@ void BattleEffect_RunKite(struct BattleEffectParams *args) {
 #undef TORCH_CHANNEL_MAX
 #undef TORCH_BLUE_MAX
 #undef TORCH_SWAY
-#undef CANVAS_WAVE_BG2X

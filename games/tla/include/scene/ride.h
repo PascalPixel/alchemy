@@ -85,4 +85,15 @@ enum {
 #define RIDE_WORK                                                              \
   ((struct FlameHitWork *)(gInventorySnapshot + INVENTORY_SNAPSHOT_SPARE))
 
+/// The knock-back (shared/leader_knock_back.c) as the four Mars Lighthouse
+/// rooms that keep a copy name it, and what it calls: the fall damage the
+/// leader takes, the update hook that blinks him while he is thrown, his
+/// animation, the terrain of his cell, and the collision check a step ahead.
+#define KNOCK_BACK Leader_KnockBack
+#define KNOCK_BACK_TAKE_DAMAGE Party_TakeFallDamage
+#define KNOCK_BACK_BLINK Actor_Blink
+#define KNOCK_BACK_SET_ANIMATION Actor_SelectAnimation
+#define KNOCK_BACK_CELL_ATTRIBUTE MapGrid_GetCellAttributeLowNibbleOrBump
+#define KNOCK_BACK_CHECK_COLLISION MapGrid_CheckCollision
+
 #endif

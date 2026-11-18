@@ -84,6 +84,10 @@ struct TriggerEvent {
   u32 value;
 };
 
+/// A distance beyond any field Psynergy's reach, where the search for its
+/// nearest target starts.
+#define BEYOND_REACH 9999
+
 /// A row of a scene's actor placement table as the field reads it: its
 /// sprite, condition, movement type, position, facing, the facing it takes
 /// to talk and its flags.

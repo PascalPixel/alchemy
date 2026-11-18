@@ -46,8 +46,6 @@ UNUSED void BattleEffect_StartActorMotionRandomDistance(s32 id) {
 /// first NEREID_BURST_DROPS; from NEREID_COLUMNS_FRAME the next
 /// NEREID_DROPS_A_FRAME free ones burst up each frame; a falling drop that
 /// passes NEREID_SINK_Y has sunk back into the waves.
-#define NEREID_BURST_DROPS 256
-#define NEREID_DROPS_A_FRAME 16
 #define NEREID_SINK_Y 104
 
 /// Unused: nothing reaches it (no handler, summon case or call). A second copy
@@ -281,7 +279,6 @@ extern const struct Scale gFormationObjects_LargeScale;
 
 /// The grid formations' sprites stand this many pixels apart.
 #define FORMATION_SPACING 32
-#define MEGAERA_OBJECTS 11 ///< the sprites that draw Megaera
 
 /// Arranges work->sprites in a formation (enum SummonFormation); x and z are
 /// its origin in 16.16 pixels.
@@ -1278,11 +1275,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   BattleEffect_EndCanvasLayer();
 }
 
-#undef NEREID_BURST_DROPS
-#undef NEREID_DROPS_A_FRAME
 #undef NEREID_SINK_Y
 #undef FORMATION_SPACING
-#undef MEGAERA_OBJECTS
 #undef PARTICLE_STREAMS_FALL_FRAMES
 #undef PARTICLE_STREAMS_BURST_FRAMES
 #undef PARTICLE_STREAMS_DAMAGE_FRAME

@@ -163,6 +163,14 @@ enum TextStyle {
   TEXT_STYLE_SPIN = 5      ///< WINDOW_SPRITE_MOTION_SPIN, a pixel wider too
 };
 
+/// Outside Japanese, two narrow characters whose glyphs come to this many
+/// pixels at most are drawn together in one 16-pixel cell (Message_Type,
+/// Text_DrawWideStringAtOffset).
+#define GLYPH_PAIR_WIDTH_MAX 15
+/// As GLYPH_PAIR_WIDTH_MAX, in Spanish, in the outlined style, which widens
+/// each glyph by one.
+#define GLYPH_PAIR_OUTLINED_WIDTH_MAX 14
+
 /// The window animation a message can start (TEXT_WINDOW_STATE): the window's
 /// frame grows by a tile and its text sprites pulse, for the message's
 /// countdown.

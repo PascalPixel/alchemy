@@ -75,17 +75,10 @@
 #define ITEM_LIST_PAGE_ICONS_X 120
 #define ITEM_LIST_NAME_X 32
 #endif
-/// The page numbers end, with their right arrow, at tile 15 of the item list
-/// window's top border.
-#define PAGE_NUMBERS_RIGHT 15
 
 /// The bytes of window tiles (BG character block 1) the menu draws over, which
 /// it saves while it is open and puts back as it closes.
 #define SAVED_WINDOW_TILE_BYTES 8192
-
-/// Menu_SpawnIconEntries makes the icons a row of the eight-wide icon grid at
-/// a time (columnCount), as the Psynergy screen places its own.
-#define ICON_GRID_ROW 8
 
 /// The field menu's Item screen (FieldMenu_Run, FIELD_MENU_ITEM): choose a
 /// party member, one of their items and a command.
@@ -2939,9 +2932,7 @@ s32 ItemMenu_RunList(s32 sideIndex) {
 #undef ITEM_DROP_QUESTION_X
 #undef ITEM_LIST_PAGE_ICONS_X
 #undef ITEM_LIST_NAME_X
-#undef PAGE_NUMBERS_RIGHT
 #undef SAVED_WINDOW_TILE_BYTES
-#undef ICON_GRID_ROW
 #undef ITEM_IWRAM_COPY_WORDS
 #undef ITEM_COMMAND_STATE_DISABLED
 #undef ITEM_COMMAND_STATE_AVAILABLE

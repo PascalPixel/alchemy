@@ -208,8 +208,6 @@ void MercuryLighthouse_ChargeLights(void) {
   Event_End();
 }
 
-#define MAPGRID_CELLS ((struct MapGridCell *)Ram_MapGridCellBuffer)
-
 /// CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_RIM: the leader loses their lights,
 /// and the column swells and fades away.
 void MercuryLighthouse_LoseLights(void) {

@@ -18,7 +18,8 @@
 #define STAR_CORNERS 10
 #define STAR_CORNER_ANGLE ((TRIG_TURN + STAR_CORNERS - 1) / STAR_CORNERS)
 
-/// How fast the camera swings round, slowing from frame 40 to a stop.
+/// How fast the camera swings round, in 1/65536 turns a frame, slowing from
+/// frame 40 to a stop.
 #define ASTRAL_BLAST_TURN_SPEED 128
 /// A new star leaves every 12 frames, spinning a 64th of a turn a frame.
 #define ASTRAL_BLAST_STAR_INTERVAL 12

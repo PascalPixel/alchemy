@@ -133,10 +133,6 @@ enum LaliveroCellBehavior { CELL_BEHAVIOR_LALIVERO_SANCTUM_GATE = 6 };
 /// attributes Scene_Initialize copies onto cells the party may not cross.
 enum { WALL_CELL_X = 20, WALL_CELL_Y = 23 };
 
-/// A chest searched while facing the given way.
-#define EXAMINE_CHEST_FACING(facing)                                           \
-  (EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | (facing))
-
 /// In Lalivero, on either visit, talking to Torch, a Mars Djinni, makes it join
 /// the party.
 static void Lalivero_TalkToTorch(void) {

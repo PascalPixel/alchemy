@@ -19,7 +19,6 @@
 #define PRISM_CAMERA_TURN 192
 #define PRISM_CAMERA_SLOWING 96
 #define PRISM_CAMERA_STOP 104
-#define SHARDS_PER_CRYSTAL 16
 /// The x in gPrism_ShardStarts under the middle of the crystal.
 #define SHARD_STARTS_MIDDLE_X 40
 #define PRISM_GROUND_Y toFIXED(56) ///< y 56, where the crystals shatter
@@ -178,8 +177,6 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
 #undef SHARD_STARTS_MIDDLE_X
 #undef PRISM_GROUND_Y
 
-/// Twice a 16.16 value, as a whole number: FIXEDtoINT a shift short.
-#define FIXEDtoINT_TWICE(value) ((value) >> 15)
 /// The ramp's colours, one a canvas level.
 #define PHASE_RAMP_COLORS (CANVAS_LEVEL_BRIGHTEST + 1)
 /// A channel's level at the top of the ramp, about which the sine sways it by

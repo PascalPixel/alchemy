@@ -12,6 +12,11 @@
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 #define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
 
+/// The frames the aerie's JupiterLighthouse_RaiseAngels takes to raise an
+/// angel, and then to lift both angels and the lid off the well.
+#define ANGEL_RISE_FRAMES 64
+#define LID_LIFT_FRAMES 256
+
 struct EffectOptions;
 
 extern u8 gDecodeFillByte;

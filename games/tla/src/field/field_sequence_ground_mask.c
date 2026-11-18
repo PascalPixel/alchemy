@@ -3,9 +3,8 @@
 /// in fade and blank forms, and the effect sprites that draw them.
 // Part of field_sequence.c.
 
-/// A whole pixel coordinate's map cell, in pixels, and the same for a screen
-/// row in an OAM entry's 8-bit y.
-#define MAPGRID_CELL_PIXEL_MASK 0xfff0
+/// A screen row's map cell, in pixels, in an OAM entry's 8-bit y, as
+/// MAPGRID_CELL_PIXEL_MASK is for a whole pixel coordinate.
 #define CELL_GRID_ROW_MASK 0xf0
 
 /// Each frame of the fade overlay: on each of the two cells beside the actor
@@ -243,5 +242,4 @@ void EffectSprite_InitWithFadeOverlayBlended(struct EffectSprite *sprite, s32 a,
   sprite->oam.objectMode = 1;
 }
 
-#undef MAPGRID_CELL_PIXEL_MASK
 #undef CELL_GRID_ROW_MASK

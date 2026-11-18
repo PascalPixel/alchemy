@@ -10,20 +10,26 @@
 #define EFFECT_ADVANCE_LINKAGE static
 #endif
 
-/// An effect's update routine: move by its velocity, which loses an eighteenth
-/// of its x and a sixteenth of its z each frame, and grow and spin at its
-/// rates.
+/// A drifting effect loses a FIELD_EFFECT_DRAG_X-th of its x speed and a
+/// FIELD_EFFECT_DRAG_Z-th of its z speed each frame.
+#define FIELD_EFFECT_DRAG_X 18
+#define FIELD_EFFECT_DRAG_Z 16
+
+/// An effect's update routine: move by its velocity, slowing in x and z, and
+/// grow and spin at its rates.
 EFFECT_ADVANCE_LINKAGE void FieldEffect_AdvanceMotion(struct Actor *actor) {
   struct FieldEffect *effect = ((struct FieldEffect *)actor);
 
   effect->x += effect->velocity.x;
   effect->y += effect->velocity.y;
   effect->z += effect->velocity.z;
-  effect->velocity.x -= effect->velocity.x / 18;
-  effect->velocity.z -= effect->velocity.z / 16;
+  effect->velocity.x -= effect->velocity.x / FIELD_EFFECT_DRAG_X;
+  effect->velocity.z -= effect->velocity.z / FIELD_EFFECT_DRAG_Z;
   effect->scaleX += effect->scaleRateX;
   effect->scaleY += effect->scaleRateY;
   effect->sprite->rotation += effect->spin;
 }
 
 #undef EFFECT_ADVANCE_LINKAGE
+#undef FIELD_EFFECT_DRAG_X
+#undef FIELD_EFFECT_DRAG_Z

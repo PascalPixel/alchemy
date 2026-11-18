@@ -8,4 +8,12 @@ struct Actor;
 s32 Vault_StopIfFacingNear(struct Actor *actor, struct Actor *target, s32 range,
                            s32 force);
 
+/// How near in front of it, in pixels, a walker stops for its partner, and for
+/// the leader: STOP_RANGE, or TALK_STOP_RANGE while a talk is pending or Mind
+/// Read is on. Vault's villagers stop so (Vault_StopIfFacingNear), and Tolbi's
+/// two running children stop the same way (Tolbi_KidStopForTarget).
+#define PARTNER_STOP_RANGE 32
+#define STOP_RANGE 18
+#define TALK_STOP_RANGE 26
+
 #endif

@@ -60,6 +60,7 @@
 #include "scene/field_effect_spawn.h"
 #include "scene/import.h"
 #include "scene/sol_sanctum_elemental_star_ring_setup.h"
+#include "scene/sparkle_warp.h"
 #include "scene/walk_into_leader.h"
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
@@ -2138,12 +2139,6 @@ static void SolSanctumElementalStarRoom_GiveMythrilBags(void) {
   PartyInventory_Add(ITEM_MYTHRIL_BAG);
   work->message = savedMessage;
 }
-
-/// Sparkles fall about Alex, one every other frame, as Saturos and Alex warp in
-/// on Mercury Lighthouse's aerie.
-#define WARP_FRAMES 32
-/// The frame of his warp in from which Alex blinks into sight.
-#define WARP_IN_BLINK_FRAME 20
 
 /// Alex warps in where he has been placed, hidden.
 static void SolSanctumElementalStarRoom_AlexWarpsIn(void) {

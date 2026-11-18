@@ -78,6 +78,7 @@
 #include "scene/actor_nearest.h"
 #include "scene/field_effect_spawn.h"
 #include "scene/import.h"
+#include "scene/sparkle_warp.h"
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
 #include "system/heap_slots.h"
@@ -1558,13 +1559,6 @@ static void MercuryLighthouseAerie_RideLiftDown(void) {
       MERCURY_LIGHTHOUSE_AERIE_TO_MERCURY_LIGHTHOUSE_EXTERIOR);
   Event_End();
 }
-
-/// Sparkles rise about Saturos and Alex by turns, one a frame, as they warp
-/// out, and fall about them as they warp in.
-#define WARP_FRAMES 32
-
-/// The frame of their warp in from which Saturos and Alex blink into sight.
-#define WARP_IN_BLINK_FRAME 20
 
 /// Saturos and Alex exit out in a column of sparkles and vanish.
 static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {

@@ -1180,6 +1180,8 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
     Actor_SetSpeed(ACTOR_KRADEN, 0.3);
     actor = Actor_Get(ACTOR_KRADEN);
     {
+      /* FAKEMATCH(temporary): Kraden's cleared steering flags held in a local
+       * and stored after frame = 0. */
       s32 flags = (u8)~ACTOR_FACES_MOTION;
 
       flags &= actor->steeringFlags;

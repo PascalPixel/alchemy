@@ -482,13 +482,38 @@ void EasternAlhafraShip_CountAnswer();
 /// A geyser's compressed tiles (graphics/field/geyser.png).
 extern const u8 gField_GeyserTiles[];
 
+/// The geysers Scoop digs up in Gondowan Cliffs and in Yampi Desert's scorpion
+/// pit (each scene's struct GeyserWork): the most sprites Geyser_Draw queues in
+/// a frame, and the geysers a room can have.
+#define GEYSER_SPRITES 80
+#define GEYSER_ENTRIES 16
+/// A geyser's six-second round, and the frames of it at which it starts to rise
+/// and to fall.
+#define GEYSER_PERIOD_FRAMES 360
+#define GEYSER_RISE_FRAME 60
+#define GEYSER_FALL_FRAME 240
+/// The terrain id and collision slot of the first geyser: the geysers take the
+/// last GEYSER_ENTRIES of the 256 terrain ids.
+#define GEYSER_FIRST_TERRAIN (256 - GEYSER_ENTRIES)
+/// The geysers' work (each scene's struct GeyserWork), kept in the inventory
+/// snapshot's spare space.
+#define GEYSER_WORK                                                            \
+  ((struct GeyserWork *)(gInventorySnapshot + INVENTORY_SNAPSHOT_SPARE))
+
 /// See gField_CachedTilesA (graphics/field/cached_b.png).
 extern u8 gField_CachedTilesB[];
 
 /// See gField_CachedTilesA (graphics/field/cached_c.png).
 extern u8 gField_CachedTilesC[];
 
-// The cell stampers keep their last cell and the block they copy.
+/// The cell stampers of Air's Rock's and Magma Rock's insides keep the last
+/// cell they stamped under the leader in one word, x in the high half and z in
+/// the low (AirsRockInside_StampCellUnderLeader,
+/// MagmaRockInside_StampStepCell): the word for cell (x, z), and the x and z a
+/// word holds.
+#define CELL_KEY(x, z) (((x) << 16) + (z))
+#define CELL_KEY_X(key) ((key) >> 16)
+#define CELL_KEY_Z(key) ((key) & 0xffff)
 
 void LineScroll_InitWave(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f, s32 g);
 
@@ -525,6 +550,17 @@ struct Window;
 #define HULL_BAND_LAST_COLOR 9
 #define SURF_FIRST_COLOR 12
 #define SURF_LAST_COLOR 15
+/// The same run of four as Gondowan Cliffs (background palette 0) and SW Atteka
+/// Islet (palette 3) turn their water's colours in place
+/// (GondowanCliffs_CycleWaterColors, Settlements_CycleWaterColors): its first
+/// colour and how many.
+#define FIRST_WATER_COLOR 12
+#define WATER_COLORS 4
+
+/// The frames a puff of smoke from a chimney or a cooking fire rises and
+/// swells before it is released: Prox's, Kalt Island's (the Settlements),
+/// Shaman Village's and Kibombo's, each scene's own copy of the same drift.
+#define SMOKE_FRAMES 60
 
 /// The vents of Aqua Rock and Taopo Swamp (struct VentWork, shared/vent_*.h):
 /// the most vents a room has, and the most actors besides the leader their
@@ -535,5 +571,13 @@ struct Window;
 /// whether it rests on another in x and z (field/actor_vent_bounce.c). Each is
 /// read twice.
 #define DIFF(a, b) ((a) - (b) >= 0 ? (a) - (b) : (b) - (a))
+/// The names field/actor_vent_bounce.c's two routines take in both rooms'
+/// copies: whether a thrown object rests on another, and its motion.
+#define VENT_TOUCHING Vent_IsTouching
+#define VENT_BOUNCE Vent_Bounce
+/// Vent index's entry, reached as the first entry of the work index entries
+/// on, as the vents' accessors (Vent_SetBlowing, Vent_SetGust) read it.
+#define VENT_AT(work, index)                                                   \
+  ((struct VentWork *)((u8 *)(work) + (index) * sizeof(struct VentEntry)))
 
 #endif

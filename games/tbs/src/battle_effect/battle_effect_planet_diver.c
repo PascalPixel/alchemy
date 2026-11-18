@@ -126,8 +126,9 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
         // where the chips start; the next frame projects the user afresh.
         // On EFFECT_SIDE_PARTY the nudge moves y, so the chips start 8 pixels
         // lower rather than 8 pixels across.
-        // XXX (no evidence): whether screenPosition.x += 8 was meant, as side
-        // 0 moves x; only the author's intent would say.
+        // XXX (no evidence): whether the party side's nudge was meant to move
+        // x, as the enemies' side does; The Lost Age's Planet Diver was
+        // rewritten without it, and nothing else shows the intent.
         if (work->args->side == EFFECT_SIDE_ENEMIES) {
           draw[0](canvas, work->sheet, screenPosition.x - FLAMEBALL_WIDTH / 2,
                   screenPosition.y - 52, FLAMEBALL_WIDTH, FLAMEBALL_HEIGHT);
@@ -308,6 +309,9 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
 #define ORBITING_SPIRALS_RADIUS 16
 #define ORBITING_SPIRALS_INTERVAL 16
 #define ORBITING_SPIRALS_LIFE 60
+/// The canvas's scroll on the party side until the first frame's wave rows
+/// replace it, 8 pixels short of NARROW_CANVAS_PARTY_X.
+#define ORBITING_SPIRALS_PARTY_START_X (NARROW_CANVAS_PARTY_X - 8)
 
 /// Unused: no row of gAbilityBattleEffects in either game names its kind, and
 /// the handler table is reached with no other kind (BattleEffect_RunFromTable),
@@ -341,7 +345,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   if (work->args->side == EFFECT_SIDE_PARTY) {
-    REG_BG2X = -(104 << 8);
+    REG_BG2X = -(ORBITING_SPIRALS_PARTY_START_X << 8);
     offsetX = -NARROW_CANVAS_PARTY_X;
   } else {
     offsetX = 0;
@@ -421,3 +425,4 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
 #undef ORBITING_SPIRALS_RADIUS
 #undef ORBITING_SPIRALS_INTERVAL
 #undef ORBITING_SPIRALS_LIFE
+#undef ORBITING_SPIRALS_PARTY_START_X

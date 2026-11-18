@@ -1,6 +1,6 @@
 /// @file
-/// The hideout in the Gondowan Cliffs where four warriors from Kibombo camp,
-/// until Briggs is caught (FLAG_BRIGGS_CAUGHT).
+/// The hideout in the Gondowan Cliffs where four warriors from Kibombo camp
+/// round a fire, until Briggs is caught (FLAG_BRIGGS_CAUGHT).
 
 #include "field/field.h"
 #include "flags.h"
@@ -21,20 +21,23 @@
 #include "field/actor_script.h"
 #include "sprite_ids.h"
 
-/// The hideout's placed actors: the campfire, drawn by two actors at one spot,
+/// The hideout's placed actors: an unseen marker and the fire at one spot,
 /// then the four Kibombo warriors, named for what each says when spoken to.
 enum GondowanCliffsHideoutActorId {
-  ACTOR_CAMPFIRE = ACTOR_FIRST_PLACED, ///< the actor under the fire
-  ACTOR_CAMPFIRE_FLAMES,               ///< SPRITE_FIRE
+  /// An unseen marker at the fire (SPRITE_EXCLAMATION_BUBBLE's blank first
+  /// picture), which the camera pans to as the warriors are found.
+  ACTOR_FIRE_MARKER = ACTOR_FIRST_PLACED,
+  ACTOR_FIRE,
   ACTOR_WARRIOR_FROM_KIBOMBO,
   ACTOR_WARRIOR_BLAMING_THE_COLLISION,
   ACTOR_WARRIOR_CLAIMING_TO_CAMP,
   ACTOR_WARRIOR_AWAITING_FRIENDS
 };
 
-extern struct ActorPlacement gPlacementsWithoutWarriors[];
-extern struct ActorPlacement gPlacementsWithWarriors[];
-extern u32 gGondowanCliffsHideout_StandScript[];
+extern struct ActorPlacement
+    gGondowanCliffsHideout_PlacementsAfterBriggsCaught[];
+extern struct ActorPlacement gGondowanCliffsHideout_Placements[];
+extern u32 gGondowanCliffsHideout_FireMarkerScript[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -46,8 +49,8 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (GameFlag_Get(FLAG_BRIGGS_CAUGHT))
-    return gPlacementsWithoutWarriors;
-  return gPlacementsWithWarriors;
+    return gGondowanCliffsHideout_PlacementsAfterBriggsCaught;
+  return gGondowanCliffsHideout_Placements;
 }
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
@@ -60,7 +63,7 @@ void GondowanCliffsHideout_WarriorsAreFound(void) {
     Event_ResolvePendingActions(0);
     Event_SetMessageId((s32)MsgKibomboWarriorsFound);
     FieldCamera_SetSpeed(1);
-    FieldCamera_FollowActor(ACTOR_CAMPFIRE, 1);
+    FieldCamera_FollowActor(ACTOR_FIRE_MARKER, 1);
     FieldCamera_WaitForArrival();
     Actor_FaceActorById(ACTOR_WARRIOR_FROM_KIBOMBO, ACTOR_FELIX, 2);
     Actor_SetAttachedEffect(ACTOR_WARRIOR_FROM_KIBOMBO,
@@ -90,11 +93,11 @@ void GondowanCliffsHideout_WarriorsAreFound(void) {
   GameFlag_Set(FLAG_KIBOMBO_WARRIORS_FOUND);
 }
 
-/// Entering the hideout: clears the campfire's sprite flags.
+/// Entering the hideout: the fire and its marker cast no shadow.
 s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_CAMPFIRE), 0);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_CAMPFIRE_FLAMES), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRE_MARKER), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRE), 0);
   return 0;
 }
 
@@ -105,7 +108,8 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-u32 gGondowanCliffsHideout_StandScript[] = {
+/// The fire marker's script: it shows its sheet's blank first picture.
+u32 gGondowanCliffsHideout_FireMarkerScript[] = {
     SC_ANIMATION(0),
     SC_END,
 };
@@ -124,8 +128,8 @@ u32 gSceneExits[] = {
 };
 
 // clang-format off
-struct ActorPlacement gPlacementsWithWarriors[] = {
-    ACTOR_PLACEMENT(410, CONDITION_ALWAYS, (s32)gGondowanCliffsHideout_StandScript, 216, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
+struct ActorPlacement gGondowanCliffsHideout_Placements[] = {
+    ACTOR_PLACEMENT(SPRITE_EXCLAMATION_BUBBLE, CONDITION_ALWAYS, (s32)gGondowanCliffsHideout_FireMarkerScript, 216, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SPRITE_KIBOMBO_WARRIOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1, 0, 0, FACING_WEST, TALK_FACING_PARTY, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {SPRITE_KIBOMBO_WARRIOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 2, 0, 0, FACING_NORTH, TALK_FACING_PARTY, ACTOR_PLACEMENT_AT_SCENE_POINT},
@@ -136,15 +140,16 @@ struct ActorPlacement gPlacementsWithWarriors[] = {
 // clang-format on
 
 // clang-format off
-struct ActorPlacement gPlacementsWithoutWarriors[] = {
-    ACTOR_PLACEMENT(410, CONDITION_ALWAYS, (s32)gGondowanCliffsHideout_StandScript, 216, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
+struct ActorPlacement gGondowanCliffsHideout_PlacementsAfterBriggsCaught[] = {
+    ACTOR_PLACEMENT(SPRITE_EXCLAMATION_BUBBLE, CONDITION_ALWAYS, (s32)gGondowanCliffsHideout_FireMarkerScript, 216, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on
 
 struct Trigger gSceneEvents[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS,
+     GONDOWAN_CLIFFS_HIDEOUT_TO_GONDOWAN_CLIFFS},
     {TRIGGER_STEP, 10, FLAG_KIBOMBO_WARRIORS_FOUND,
      EVENT(GondowanCliffsHideout_WarriorsAreFound)},
     {TRIGGER_TALK, ACTOR_WARRIOR_FROM_KIBOMBO, CONDITION_ALWAYS,

@@ -59,11 +59,6 @@ extern s16 gTitleRevealFrame;
 /// The lettering's 18 sprites, in the overlay's BSS (scene/title_bss.s).
 extern struct TitleSprite gTitleSprites[];
 
-/// The REG_BLDY level that darkens a layer to black.
-#define BLEND_FADE_MAX 16
-/// Set in a DMA channel's control word while its copy runs.
-#define DMA_BUSY ((u32)DMA_ENABLE << 16)
-
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }

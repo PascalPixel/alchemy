@@ -18,6 +18,7 @@
 #include "field/event_commands.h"
 #include "field/event_inline.h"
 #include "field/field.h"
+#include "field/field_coordinate.h"
 #include "field/field_event.h"
 #include "field/field_sequence_event.h"
 #include "field/map_grid.h"
@@ -68,10 +69,6 @@ s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
 #define FLAG_BYTE_YAMPI_DESERT_CAVE_RIPPLE_STEP FLAG_SCENE_TEMP_78
 /// The steps the ripple takes at each point of its path.
 #define RIPPLE_STEPS_PER_POINT 32
-
-/// The 16.16 coordinate of an 8-pixel half cell's corner: the ripple's path
-/// is counted in half cells.
-#define FIELD_HALF_CELL_ORIGIN(halfCell) ((halfCell) << 19)
 
 /// The lava cave's battle backdrop, Valukar's battle's.
 extern char ResourceId_LavaCaveBackdrop;

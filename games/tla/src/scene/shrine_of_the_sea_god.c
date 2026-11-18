@@ -36,9 +36,11 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
+#include "scene/ground_effects.h"
 #include "scene/scene.h"
 #include "scene/shrine_of_the_sea_god.h"
 #include "sound/sound.h"
+#include "system/field_effect.h"
 #include "system/frame.h"
 #include "system/io_reg.h"
 #include "system/io_write.h"
@@ -54,11 +56,8 @@ void FieldEffect_StartBlankOverlay(s32 object);
 #include "../field/actor_set_sprite_priority.c"
 
 #include "../field/field_effect_move.c"
-#define EFFECT_SPAWN FieldEffect_Spawn
-#define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
-#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
 
 #define FLAG_CROSSROADS_PILLAR_MOVED                                           \
@@ -69,11 +68,11 @@ void FieldEffect_StartBlankOverlay(s32 object);
 #define FLAG_DJINNI_RAN_PAST 0x876   ///< its footprints are gone
 #define FLAG_DJINNI_BY_LEDGE 0x877   ///< it waits by the ledge
 #define FLAG_DJINNI_ON_LEDGE 0x87c   ///< it hopped up onto the ledge
-#define FLAG_FIRST_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
-#define FLAG_SECOND_PUDDLE_FROZEN FLAG_SCENE_TEMP_01
-#define FLAG_THIRD_PUDDLE_FROZEN FLAG_SCENE_TEMP_02
-#define FLAG_ROPE_TIED FLAG_SCENE_TEMP_03
-#define FLAG_SECOND_ROPE_TIED FLAG_SCENE_TEMP_04
+#define FLAG_SHRINE_FIRST_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
+#define FLAG_SHRINE_SECOND_PUDDLE_FROZEN FLAG_SCENE_TEMP_01
+#define FLAG_SHRINE_THIRD_PUDDLE_FROZEN FLAG_SCENE_TEMP_02
+#define FLAG_SHRINE_ROPE_TIED FLAG_SCENE_TEMP_03
+#define FLAG_SHRINE_SECOND_ROPE_TIED FLAG_SCENE_TEMP_04
 #define FLAG_DJINNI_CHASE_OVER FLAG_SCENE_TEMP_05
 #define FLAG_DJINNI_TRAPPED FLAG_SCENE_TEMP_06
 #define FLAG_TORCH_AT_NORTH_WALL FLAG_SCENE_TEMP_07
@@ -89,22 +88,6 @@ void FieldEffect_StartBlankOverlay(s32 object);
 #define FLAG_FIGHTING_BREATH FLAG_AREA_TEMP_40
 #define FLAG_BREATH_TRAPPED_EAST FLAG_AREA_TEMP_41
 #define FLAG_BREATH_TRAPPED_WEST FLAG_AREA_TEMP_42
-
-enum { MAP_WADING_UPPER_LEVEL = 1 };
-
-/// MapWork as far as groundEffects, read through its bits, the footprints and
-/// the kind of wading; map_grid.h keeps the byte whole. A room with a second
-/// level sets wading to MAP_WADING_UPPER_LEVEL.
-struct MapWorkGroundEffects {
-  u8 before[offsetof(struct MapWork, groundEffects)];
-  u8 footprints : 2;
-  u8 wading : 2;
-  u8 unused : 4;
-};
-
-/// Sets the map's kind of wading to that of a room with a second level.
-#define Map_SetUpperLevelWading(map)                                           \
-  (((struct MapWorkGroundEffects *)(map))->wading = MAP_WADING_UPPER_LEVEL)
 
 void Actor_DisableById(s32 actor);
 void Actor_LiftTargetBlock(const void *script);
@@ -811,19 +794,19 @@ void ShrineOfTheSeaGod_SetUpPuddle(s32 actor) {
 /// Frost on the first puddle turns it to an ice pillar.
 void ShrineOfTheSeaGod_FreezeFirstPuddle(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 8, 18);
-  GameFlag_Set(FLAG_FIRST_PUDDLE_FROZEN);
+  GameFlag_Set(FLAG_SHRINE_FIRST_PUDDLE_FROZEN);
 }
 
 /// Frost on the second puddle turns it to an ice pillar.
 void ShrineOfTheSeaGod_FreezeSecondPuddle(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 10, 18);
-  GameFlag_Set(FLAG_SECOND_PUDDLE_FROZEN);
+  GameFlag_Set(FLAG_SHRINE_SECOND_PUDDLE_FROZEN);
 }
 
 /// Frost on the third puddle turns it to an ice pillar.
 void ShrineOfTheSeaGod_FreezeThirdPuddle(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 10, 17);
-  GameFlag_Set(FLAG_THIRD_PUDDLE_FROZEN);
+  GameFlag_Set(FLAG_SHRINE_THIRD_PUDDLE_FROZEN);
 }
 
 /// Move lifts the room's torch, or in the crossroads its stone pillar.
@@ -1005,11 +988,8 @@ void ShrineOfTheSeaGod_DrawLeaderBehind(void) {
 
 #include "../field/field_effect_advance_motion.c"
 
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
 
 FIXED gShrineOfTheSeaGod_BridgeOffset[3] BSS_DATA;
 
@@ -2042,7 +2022,7 @@ void ShrineOfTheSeaGod_InitializeRope(void) {
   Map_SetUpperLevelWading(map);
   FieldTask_AddFrame(ShrineOfTheSeaGod_TrackUpperLevel, TASK_PASS_FRAME);
   Rope_Initialize();
-  Rope_Place(0, FLAG_ROPE_TIED, ACTOR_ROPE_ROOM_EAST_POST,
+  Rope_Place(0, FLAG_SHRINE_ROPE_TIED, ACTOR_ROPE_ROOM_EAST_POST,
              ACTOR_ROPE_ROOM_WEST_POST);
   if (GameFlag_Get(FLAG_RIKI_GAVE_UP)) {
     Actor_SetHorizontalPositionWithTerrain(ACTOR_RIKI, 0, 0);
@@ -2169,11 +2149,11 @@ void ShrineOfTheSeaGod_InitializeBreath(void) {
   ShrineOfTheSeaGod_SetUpPuddle(ACTOR_FIRST_PUDDLE);
   ShrineOfTheSeaGod_SetUpPuddle(ACTOR_SECOND_PUDDLE);
   ShrineOfTheSeaGod_SetUpPuddle(ACTOR_THIRD_PUDDLE);
-  if (GameFlag_Get(FLAG_FIRST_PUDDLE_FROZEN))
+  if (GameFlag_Get(FLAG_SHRINE_FIRST_PUDDLE_FROZEN))
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 8, 18);
-  if (GameFlag_Get(FLAG_SECOND_PUDDLE_FROZEN))
+  if (GameFlag_Get(FLAG_SHRINE_SECOND_PUDDLE_FROZEN))
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 10, 18);
-  if (GameFlag_Get(FLAG_THIRD_PUDDLE_FROZEN))
+  if (GameFlag_Get(FLAG_SHRINE_THIRD_PUDDLE_FROZEN))
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 10, 17);
   FieldTask_AddFrame(ShrineOfTheSeaGod_LayerPuddles, TASK_PASS_FRAME);
   Actor_PlaceBlocks(gShrineOfTheSeaGod_PushedActors);
@@ -2257,9 +2237,9 @@ void ShrineOfTheSeaGod_InitializePillars(void) {
     Actor_SetSpritePriority(ACTOR_SECOND_BROKEN_BRIDGE_MIDDLE, 3);
   }
   Rope_Initialize();
-  Call4((void (*)())Rope_Place, 0, FLAG_ROPE_TIED, ACTOR_SOUTH_ROPE_EAST_POST,
-        ACTOR_SOUTH_ROPE_WEST_POST);
-  Rope_Place(1, FLAG_SECOND_ROPE_TIED, ACTOR_NORTH_ROPE_WEST_POST,
+  Call4((void (*)())Rope_Place, 0, FLAG_SHRINE_ROPE_TIED,
+        ACTOR_SOUTH_ROPE_EAST_POST, ACTOR_SOUTH_ROPE_WEST_POST);
+  Rope_Place(1, FLAG_SHRINE_SECOND_ROPE_TIED, ACTOR_NORTH_ROPE_WEST_POST,
              ACTOR_NORTH_ROPE_EAST_POST);
   Actor_DisableById(ACTOR_FIRST_BRIDGE_SPLASH);
   Actor_GetById(ACTOR_FIRST_BRIDGE_SPLASH)->motionFlags = 0;
@@ -2619,7 +2599,7 @@ struct Trigger gShrineOfTheSeaGodRopeTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_ROOM_EAST_POST, FLAG_ROPE_TIED, EVENT(ShrineOfTheSeaGod_LashRope)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_ROOM_EAST_POST, FLAG_SHRINE_ROPE_TIED, EVENT(ShrineOfTheSeaGod_LashRope)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(ShrineOfTheSeaGod_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(ShrineOfTheSeaGod_EndSand)},
     {TRIGGER_STEP, 10, FLAG_RIKI_GAVE_UP, EVENT(ShrineOfTheSeaGod_ThrowRopeAgain)},
@@ -2664,11 +2644,14 @@ struct Trigger gShrineOfTheSeaGodBreathTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, 4},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE,
-     FLAG_FIRST_PUDDLE_FROZEN, EVENT(ShrineOfTheSeaGod_FreezeFirstPuddle)},
+     FLAG_SHRINE_FIRST_PUDDLE_FROZEN,
+     EVENT(ShrineOfTheSeaGod_FreezeFirstPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SECOND_PUDDLE,
-     FLAG_SECOND_PUDDLE_FROZEN, EVENT(ShrineOfTheSeaGod_FreezeSecondPuddle)},
+     FLAG_SHRINE_SECOND_PUDDLE_FROZEN,
+     EVENT(ShrineOfTheSeaGod_FreezeSecondPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_THIRD_PUDDLE,
-     FLAG_THIRD_PUDDLE_FROZEN, EVENT(ShrineOfTheSeaGod_FreezeThirdPuddle)},
+     FLAG_SHRINE_THIRD_PUDDLE_FROZEN,
+     EVENT(ShrineOfTheSeaGod_FreezeThirdPuddle)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(ShrineOfTheSeaGod_LiftBlock)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS,
      EVENT(ShrineOfTheSeaGod_SetDownTorch)},
@@ -2717,9 +2700,9 @@ struct Trigger gShrineOfTheSeaGodPillarsTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_SOUTH_ROPE_EAST_POST,
-     FLAG_ROPE_TIED, 0},
+     FLAG_SHRINE_ROPE_TIED, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_NORTH_ROPE_WEST_POST,
-     FLAG_SECOND_ROPE_TIED, 0},
+     FLAG_SHRINE_SECOND_ROPE_TIED, 0},
     {TRIGGER_STEP, 5, FLAG_FIRST_BRIDGE_BROKEN,
      EVENT(ShrineOfTheSeaGod_BreakFirstBridge)},
     {TRIGGER_STEP, 6, FLAG_SECOND_BRIDGE_BROKEN,

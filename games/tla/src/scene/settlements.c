@@ -51,17 +51,10 @@
 #include "system/input.h"
 #include "text/msg_ids.h"
 
-#define EFFECT_SPAWN FieldEffect_Spawn
-#define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
-#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
 
-#undef EFFECT_SPAWN
-
-/// The apple, taken.
-#define FLAG_KALT_ISLAND_APPLE_TAKEN 0xf5d
 /// Kalt Island's rope, tied by Lash, for this visit.
 #define FLAG_KALT_ROPE_TIED FLAG_SCENE_TEMP_03
 /// Kalt Island: set by a step onto a cell of step code 10 and cleared by one
@@ -93,11 +86,6 @@
 #define FLAG_WALL_CRATE_OFF_STEP FLAG_SCENE_TEMP_04
 /// Hesperia Settlement: Growth has made the sprout a vine.
 #define FLAG_VINE_GROWN FLAG_SCENE_TEMP_30
-
-/// The water's four colours in SW Atteka Islet's background palette 3, which
-/// turn in place (Settlements_CycleWaterColors).
-#define FIRST_WATER_COLOR 12
-#define WATER_COLORS 4
 
 /// The bush on the Gondowan Settlement's stairs is cut.
 #define FLAG_STAIRS_BUSH_CUT 0xa60
@@ -546,9 +534,6 @@ const struct Trigger *Scene_GetTriggers(void) {
     return gSettlements_AttekaIsletHousesTriggers;
   return gSettlements_Triggers;
 }
-
-/// The frames a puff of smoke rises before it is released, as Prox's do.
-#define SMOKE_FRAMES 60
 
 /// Drifts a chimney's puff sideways ever faster, raises and widens it, and
 /// releases it when its frames run out.
@@ -1145,11 +1130,8 @@ void Settlements_SplashCrate(s32 id) {
 
 #include "../field/field_effect_advance_motion.c"
 
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
 #undef SINK
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,

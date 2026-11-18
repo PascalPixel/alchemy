@@ -61,15 +61,8 @@ void Leader_CenterInCell(void);
 /// shortcut to the rooms below.
 #define FLAG_GRAY_BLOCK_DROPPED 0xa0d
 /// For this visit: Lash has tied the rope between the two tightrope posts.
-#define FLAG_ROPE_TIED FLAG_SCENE_TEMP_00
+#define FLAG_JUPITER_LIGHTHOUSE_ROPE_TIED FLAG_SCENE_TEMP_00
 #include "macros.h"
-
-/// Plays an actor's animation and lets frames pass before the event goes on.
-#define Actor_AnimateThenWait(id, animation, frames)                           \
-  do {                                                                         \
-    Actor_SetAnimation(id, animation);                                         \
-    FieldEvent_Wait(frames);                                                   \
-  } while (0)
 
 struct CellTarget;
 struct CellTargetEntry;
@@ -167,17 +160,8 @@ enum { ENTRANCE_AFTER_THE_FIGHT = 77, ENTRANCE_ISAAC_AND_IVAN_FALL = 99 };
 /// The energy block's gap: the cell it drops into and lights the path from.
 enum { ENERGY_BLOCK_GAP_CELL_X = 63, ENERGY_BLOCK_GAP_CELL_Z = 15 };
 
-/// The lightning bolt's picture (RESOURCE_LIGHTNING_TILES and
-/// RESOURCE_LIGHTNING_MAP), shown on BG0 for the strike: its tiles at the start
-/// of character block 0, and its map, LIGHTNING_MAP_ROWS rows of
-/// LIGHTNING_MAP_COLUMNS numbered from tile 512, on screen block
-/// LIGHTNING_SCREEN_BLOCK.
-#define LIGHTNING_TILES 64
-#define LIGHTNING_MAP_ROWS 16
-#define LIGHTNING_MAP_COLUMNS 4
-#define LIGHTNING_SCREEN_BLOCK 4
-/// The bits of a map entry that number the map's tiles from 512; cleared, the
-/// map draws the tiles at the start of character block 0.
+/// The bits of a lightning map entry that number the map's tiles from 512;
+/// cleared, the map draws the tiles at the start of character block 0.
 #define LIGHTNING_MAP_TILE_BASE_MASK 0x300
 
 /// More HP or PP than anyone has, so that taking it away leaves none; and the
@@ -1752,7 +1736,8 @@ s32 Scene_Initialize(void) {
   HangingVine_Place(ACTOR_FIRST_PLACED + 6, 1);
   HangingVine_Place(ACTOR_FIRST_PLACED + 7, 1);
   Rope_Initialize();
-  Rope_Place(0, FLAG_ROPE_TIED, ACTOR_EAST_ROPE_POST, ACTOR_WEST_ROPE_POST);
+  Rope_Place(0, FLAG_JUPITER_LIGHTHOUSE_ROPE_TIED, ACTOR_EAST_ROPE_POST,
+             ACTOR_WEST_ROPE_POST);
   gWhirlwindRiding = 0;
   actor = Actor_Get(ACTOR_WEST_UPPER_GUST);
   actor->motionFlags = 0;
@@ -1897,7 +1882,6 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #undef WORD_AT
 #undef PLACE
 #undef EVENT_WORK
-#undef ACTOR_SET_MODE_AND_WAIT
 extern const s32 *gFieldEffect_DurationScripts[];
 
 void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
@@ -2104,7 +2088,7 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_PUSH, -1, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartMovingBlock)},
     {TRIGGER_PUSHED, -1, CONDITION_ALWAYS, EVENT(JupiterLighthouse_FinishMovingBlock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 23, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_EAST_ROPE_POST, FLAG_ROPE_TIED, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_EAST_ROPE_POST, FLAG_JUPITER_LIGHTHOUSE_ROPE_TIED, 0},
     {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(Whirlwind_CarryLeader)},
     {TRIGGER_TABLE_END},
 };

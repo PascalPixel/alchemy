@@ -37,6 +37,7 @@
 #include "field/perspective.h"
 #include "field/scene_tables.h"
 #include "field/sprite.h"
+#include "field/world_map.h"
 #include "game/game.h"
 #include "game/owner_state.h"
 #include "graphics/palette_buffers.h"
@@ -139,10 +140,10 @@ enum WorldMapCellBehavior {
 /// A block's terrain byte: the party may step ashore from the open sea here.
 #define WORLD_MAP_BLOCK_LANDING (1 << 6)
 
-/// The base of the cell behaviors an area's placed actor raises when touched
-/// (gWorldMap_PlacedActors), as The Broken Seal's; the areas with two ways in
-/// choose one by the leader's approach.
-enum { STEP_TRIGGER_AREA_BASE = 100 };
+/// The step trigger an area's placed actor raises when touched
+/// (gWorldMap_PlacedActors, from field/world_map.h's STEP_TRIGGER_AREA_BASE),
+/// as The Broken Seal's; the areas with two ways in choose one by the leader's
+/// approach.
 #define STEP_TRIGGER_AREA(area) (STEP_TRIGGER_AREA_BASE + (area))
 /// Daila's, Yallam's and Prox's slots among gWorldMap_PlacedActors.
 enum { PLACED_DAILA = 0, PLACED_YALLAM = 25, PLACED_PROX = 50 };

@@ -33,6 +33,7 @@
 #include "field/field_sequence_event.h"
 #include "field/actor_view.h"
 #include "field/actor_script.h"
+#include "scene/scene.h"
 #include "scene/event_layer.h"
 #include "text/msg_ids.h"
 #include "field/sprite.h"
@@ -164,14 +165,6 @@ s32 Actor_IsFacingNear(struct Actor *self, struct Actor *other, s32 range) {
 }
 
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
-
-/// How near, in pixels, the walking children heed: the other child they face,
-/// the leader they face, and the leader come so near that they walk on.
-enum {
-  CHILD_SEES_CHILD_RANGE = 18,
-  CHILD_SEES_LEADER_RANGE = 26,
-  CHILD_WALKS_ON_RANGE = 11
-};
 
 /// An update for the two walking children: each stands while it is talked to,
 /// while Mind Read shows its thoughts, or while it faces the other child or the
@@ -632,8 +625,9 @@ s16 gLemuria_RippleLines[2][160] BSS_DATA ALIGNED(16);
 /// Background palette `n`, as the water's colour cycle turns it.
 #define WATER_PALETTE(n) ((volatile u16 *)&BG_PLTT_COLOR(n, 0))
 
-/// The water's cycling colours in each of its palettes.
-enum { FIRST_WATER_COLOR = 1, LAST_WATER_COLOR = 14 };
+/// The water's cycling colours in each of its palettes, 1 to 14: all but the
+/// palette's first and last.
+enum { WATER_CYCLE_FIRST_COLOR = 1, WATER_CYCLE_LAST_COLOR = 14 };
 
 /// Every fourth frame rotates the water's colours of background palettes 7 and
 /// 8 by one place.
@@ -642,14 +636,14 @@ void Lemuria_CycleWaterColors(void) {
     s16 saved;
     s32 i;
 
-    saved = WATER_PALETTE(7)[LAST_WATER_COLOR];
-    for (i = LAST_WATER_COLOR; i != FIRST_WATER_COLOR; i--)
+    saved = WATER_PALETTE(7)[WATER_CYCLE_LAST_COLOR];
+    for (i = WATER_CYCLE_LAST_COLOR; i != WATER_CYCLE_FIRST_COLOR; i--)
       WATER_PALETTE(7)[i] = WATER_PALETTE(7)[i - 1];
-    WATER_PALETTE(7)[FIRST_WATER_COLOR] = saved;
-    saved = WATER_PALETTE(8)[LAST_WATER_COLOR];
-    for (i = LAST_WATER_COLOR; i != FIRST_WATER_COLOR; i--)
+    WATER_PALETTE(7)[WATER_CYCLE_FIRST_COLOR] = saved;
+    saved = WATER_PALETTE(8)[WATER_CYCLE_LAST_COLOR];
+    for (i = WATER_CYCLE_LAST_COLOR; i != WATER_CYCLE_FIRST_COLOR; i--)
       WATER_PALETTE(8)[i] = WATER_PALETTE(8)[i - 1];
-    WATER_PALETTE(8)[FIRST_WATER_COLOR] = saved;
+    WATER_PALETTE(8)[WATER_CYCLE_FIRST_COLOR] = saved;
   }
 }
 
@@ -786,10 +780,6 @@ s32 Scene_Initialize(void) {
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
-
-/// A sliver of a turn off a heading: an actor turning round to face the
-/// opposite way turns by the side the nudge leans to.
-enum { FACING_NUDGE = 10 };
 
 /// Kraden, stepping onto the path west or east of the avenue, looks round and
 /// runs up it to the palace.

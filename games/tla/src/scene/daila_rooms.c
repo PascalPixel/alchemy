@@ -38,6 +38,7 @@
 #include "scene/ground_effects.h"
 #include "window/window.h"
 #include "game/item.h"
+#include "shop/shop.h"
 #include "version.h"
 #include "text/msg_ids.h"
 
@@ -100,9 +101,6 @@ enum DailaRoomsActorIdAfterRescue {
 /// The way into the house on the islet with the cow (NorthOseniaIslet), which
 /// this overlay also holds: the family by entrance 7.
 enum { ENTRANCE_COW_ISLET_HOUSE = 7 };
-
-/// The shops of Daila, as Shop_Run numbers them.
-enum { SHOP_DAILA_WEAPONS = 1, SHOP_DAILA_ARMOR = 2 };
 
 /// Daila's inn, as Inn_CheckIn numbers the inns.
 enum { DAILA_INN = 0 };

@@ -103,8 +103,10 @@ enum {
 #define LEDGE_INSCRIPTION_PALETTE 13
 /// The hall's palette whose last six colours are an unlit inscription's.
 #define UNLIT_INSCRIPTION_PALETTE 2
-#define GLOW_COLORS 6      ///< a glow's run of colours, which turns round
-#define GLOW_STEP_FRAMES 8 ///< frames before the run turns one colour on
+/// An inscription's glow: a run of INSCRIPTION_GLOW_COLORS colours that turns
+/// round, one colour on every INSCRIPTION_GLOW_STEP_FRAMES frames.
+#define INSCRIPTION_GLOW_COLORS 6
+#define INSCRIPTION_GLOW_STEP_FRAMES 8
 /// The first of each element's six colours in palettes 8 and 9, and of the
 /// ledge inscription's in palette 13.
 enum {
@@ -342,41 +344,46 @@ void MarsLighthouseRoomM_CycleLedgeInscription(void) {
                          sizeof(gMarsLighthouseRoomM_LedgeElementColors));
     gMarsLighthouseRoomM_LedgeCycleFrame = 0;
   }
-  base = gMarsLighthouseRoomM_LedgeCycleFrame / GLOW_STEP_FRAMES % GLOW_COLORS;
+  base = gMarsLighthouseRoomM_LedgeCycleFrame / INSCRIPTION_GLOW_STEP_FRAMES %
+         INSCRIPTION_GLOW_COLORS;
   Iwram_CopyWordsEntry(gMarsLighthouseRoomM_LedgePalette,
                        gMarsLighthouseRoomM_LedgeSavedPalette,
                        sizeof(gMarsLighthouseRoomM_LedgeSavedPalette));
   if (entrance ==
           MARS_LIGHTHOUSE_ROOM_M_FLAME_FROM_MARS_LIGHTHOUSE_VENUS_TOWER &&
       Event_GetFlag(FLAG_VENUS_FLAME_LIT)) {
-    for (i = 0; i < GLOW_COLORS; i++)
+    for (i = 0; i < INSCRIPTION_GLOW_COLORS; i++)
       gMarsLighthouseRoomM_LedgePalette[LEDGE_GLOW + i] =
           gMarsLighthouseRoomM_LedgeElementColors[VENUS_GLOW +
-                                                  (base + i) % GLOW_COLORS];
+                                                  (base + i) %
+                                                      INSCRIPTION_GLOW_COLORS];
   }
   if (entrance ==
           MARS_LIGHTHOUSE_ROOM_M_FLAME_FROM_MARS_LIGHTHOUSE_MERCURY_TOWER &&
       Event_GetFlag(FLAG_MERCURY_FLAME_LIT)) {
-    for (i = 0; i < GLOW_COLORS; i++)
+    for (i = 0; i < INSCRIPTION_GLOW_COLORS; i++)
       gMarsLighthouseRoomM_LedgePalette[LEDGE_GLOW + i] =
           gMarsLighthouseRoomM_LedgeElementColors[MERCURY_GLOW +
-                                                  (base + i) % GLOW_COLORS];
+                                                  (base + i) %
+                                                      INSCRIPTION_GLOW_COLORS];
   }
   if (entrance ==
           MARS_LIGHTHOUSE_ROOM_M_FLAME_FROM_MARS_LIGHTHOUSE_MARS_TOWER &&
       Event_GetFlag(FLAG_MARS_FLAME_LIT)) {
-    for (i = 0; i < GLOW_COLORS; i++)
+    for (i = 0; i < INSCRIPTION_GLOW_COLORS; i++)
       gMarsLighthouseRoomM_LedgePalette[LEDGE_GLOW + i] =
           gMarsLighthouseRoomM_LedgeElementColors[MARS_GLOW +
-                                                  (base + i) % GLOW_COLORS];
+                                                  (base + i) %
+                                                      INSCRIPTION_GLOW_COLORS];
   }
   if (entrance ==
           MARS_LIGHTHOUSE_ROOM_M_FLAME_FROM_MARS_LIGHTHOUSE_JUPITER_TOWER &&
       Event_GetFlag(FLAG_JUPITER_FLAME_LIT)) {
-    for (i = 0; i < GLOW_COLORS; i++)
+    for (i = 0; i < INSCRIPTION_GLOW_COLORS; i++)
       gMarsLighthouseRoomM_LedgePalette[LEDGE_GLOW + i] =
           gMarsLighthouseRoomM_LedgeElementColors[JUPITER_GLOW +
-                                                  (base + i) % GLOW_COLORS];
+                                                  (base + i) %
+                                                      INSCRIPTION_GLOW_COLORS];
   }
   IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(LEDGE_INSCRIPTION_PALETTE, 0),
                       (u32)gMarsLighthouseRoomM_LedgePalette,
@@ -465,20 +472,21 @@ void MarsLighthouseRoomM_CycleHallInscriptions(void) {
                          sizeof(gMarsLighthouseRoomM_HallElementColors));
     gMarsLighthouseRoomM_HallCycleFrame = 0;
   }
-  base = gMarsLighthouseRoomM_HallCycleFrame / GLOW_STEP_FRAMES % GLOW_COLORS;
-  for (i = 0; i < GLOW_COLORS; i++) {
+  base = gMarsLighthouseRoomM_HallCycleFrame / INSCRIPTION_GLOW_STEP_FRAMES %
+         INSCRIPTION_GLOW_COLORS;
+  for (i = 0; i < INSCRIPTION_GLOW_COLORS; i++) {
     gMarsLighthouseRoomM_HallPalette.colors[JUPITER_GLOW + i] =
         gMarsLighthouseRoomM_HallElementColors
-            .colors[JUPITER_GLOW + (base + i) % GLOW_COLORS];
+            .colors[JUPITER_GLOW + (base + i) % INSCRIPTION_GLOW_COLORS];
     gMarsLighthouseRoomM_HallPalette.colors[VENUS_GLOW + i] =
         gMarsLighthouseRoomM_HallElementColors
-            .colors[VENUS_GLOW + (base + i) % GLOW_COLORS];
+            .colors[VENUS_GLOW + (base + i) % INSCRIPTION_GLOW_COLORS];
     gMarsLighthouseRoomM_HallPalette.colors[MERCURY_GLOW + i] =
         gMarsLighthouseRoomM_HallElementColors
-            .colors[MERCURY_GLOW + (base + i) % GLOW_COLORS];
+            .colors[MERCURY_GLOW + (base + i) % INSCRIPTION_GLOW_COLORS];
     gMarsLighthouseRoomM_HallPalette.colors[MARS_GLOW + i] =
         gMarsLighthouseRoomM_HallElementColors
-            .colors[MARS_GLOW + (base + i) % GLOW_COLORS];
+            .colors[MARS_GLOW + (base + i) % INSCRIPTION_GLOW_COLORS];
   }
   if (!Event_GetFlag(FLAG_VENUS_FLAME_LIT))
     Iwram_CopyWordsEntry(&gMarsLighthouseRoomM_HallPalette.colors[VENUS_GLOW],

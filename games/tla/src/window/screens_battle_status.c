@@ -136,10 +136,10 @@ s32 Unit_GetExperienceForLevelFar(s32 member, s32 level);
 #define SUMMARY_DRAW_PAGE_MARKS(window, count, rowBase)                        \
   {                                                                            \
     for (j = 0; j < ((count) + 3) / 4; j++) {                                  \
-      s32 tile = LIST_TILE_PAGE_NUMBER + j;                                    \
+      s32 tile = PAGE_NUMBER_TILE + j;                                         \
                                                                                \
       if (j == (rowBase) / 4)                                                  \
-        tile = LIST_TILE_PAGE_NUMBER_LIT + j;                                  \
+        tile = PAGE_NUMBER_LIT_TILE + j;                                       \
       Window_SetTilemapEntry(                                                  \
           window, tile, (window)->width - ((count) + 3) / 4 + j - 10, 7, 0);   \
     }                                                                          \

@@ -25,6 +25,7 @@
 #include "field/event_commands.h"
 #include "scene/scene.h"
 #include "field/actor_script.h"
+#include "shop/shop.h"
 #include "text/msg_ids.h"
 
 /// Story flags: Uzume has told the party where Susa went; her prayer for him
@@ -154,9 +155,6 @@ void IzumoRooms_TalkToPriest(s32 actor) {
     Event_End();
   }
 }
-
-/// Izumo's shops, as Shop_Run numbers them.
-enum { SHOP_IZUMO = 24 };
 
 /// Izumo's inn, as Inn_CheckIn numbers the inns.
 enum { IZUMO_INN = 9 };

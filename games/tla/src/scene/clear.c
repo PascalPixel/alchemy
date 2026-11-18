@@ -59,10 +59,6 @@
 #include "game/character_ids.h"
 #include "system/save.h"
 
-/// SceneId_Title's entrances (title.c): the logos and the intro, then this
-/// screen; and the opening credits, then the prologue.
-enum { TITLE_START = 1, TITLE_CREDITS = 8 };
-
 /// The file menu's choices, as FileList_SelectAction returns them
 /// (gMenu_SaveSlotActionByPosition), as The Broken Seal's enum FileAction.
 enum FileAction {
@@ -72,17 +68,6 @@ enum FileAction {
   SAVE_ACTION_ERASE = 3,
   SAVE_ACTION_BATTLE = 4,
   SAVE_ACTION_UPDATE = 5
-};
-
-/// What the file list chooses a file for (Save_ChooseAndLoadFile), as
-/// window/screens_save.c's enum FileMenuMode: a file not yet cleared to
-/// continue, one for the Battle Arena, a cleared one to start again from, and
-/// one saved before the party reunited, to update.
-enum {
-  FILE_LIST_CONTINUE = 1,
-  FILE_LIST_EXTRA = 4,
-  FILE_LIST_CLEARED = 5,
-  FILE_LIST_UPDATE = 6
 };
 
 /// The two secret button codes: unlocked, held and progress of each.
@@ -1062,15 +1047,6 @@ static inline void Cursor_Show(struct MenuCursor *cursor, s32 x, s32 y) {
   MenuCursor_Set(cursor, x, y, 1);
   MenuCursor_Advance(cursor);
 }
-
-/// The page numbers under the grid: 20 tiles from this one of character block
-/// 0, which Graphics_ExpandVramTilesByColorTable builds from the UI's digits
-/// '0' to '9', first with colour 1 drawn as 10, then in their own colours; and
-/// their tilemap entries, + n giving page n + 1's number, the page shown lit
-/// (The Broken Seal's window/window.h names).
-#define PAGE_DIGITS_TILE 768
-#define PAGE_NUMBER_TILE WINDOW_TILE(PAGE_DIGITS_TILE + 1)
-#define PAGE_NUMBER_LIT_TILE WINDOW_TILE(PAGE_DIGITS_TILE + 10 + 1)
 
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 /// The Japanese grid has 20 columns of kana and its side column is 20.
@@ -2124,9 +2100,6 @@ s16 gClear_ExtraCodeHeld = 0;
 #undef CHECK_WINDOW_WIDTH
 #undef CURSOR_ON_SIDE_COLUMN
 #undef DRAW_KEYS
-#undef PAGE_DIGITS_TILE
-#undef PAGE_NUMBER_TILE
-#undef PAGE_NUMBER_LIT_TILE
 #undef TILE_GRID_COLUMNS
 #undef TILE_GRID_ROWS
 #undef TILE_GRID_FIRST_TILE

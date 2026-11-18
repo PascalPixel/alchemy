@@ -36,15 +36,7 @@
 #include "fixed_math.h"
 #include "battle/battle_unit.h"
 #include "window/window.h"
-
-/// The shops the shopkeepers open: Daila's three and Izumo's, by their rows
-/// of the shop stock table.
-enum {
-  SHOP_DAILA_WEAPONS = 1,
-  SHOP_DAILA_ARMOR = 2,
-  SHOP_DAILA_ITEMS = 3,
-  SHOP_IZUMO = 24
-};
+#include "shop/shop.h"
 
 /// The entrance that brings Isaac's party in (Party_AddIsaacsParty).
 #define ENTRANCE_WITH_ISAACS_PARTY 99

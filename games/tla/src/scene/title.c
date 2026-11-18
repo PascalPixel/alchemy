@@ -75,21 +75,6 @@ s32 Save_ScanFileSummaries(void);
 s32 Title_ShowNintendoLogo(s32 mode);
 void Title_ShowCamelotLogo(s32 unused);
 
-/// The title's entrances, named by what each plays; TITLE_FROM_IDEJIMA, at the
-/// end of the prologue, plays the intro once more, then the game with Felix.
-enum {
-  /// The Nintendo and Camelot logos and the intro, then the clear-data screen
-  /// (power-on, and after saving the clear data).
-  TITLE_START = 1,
-  /// The intro without its prompt, then the prologue with Jenna.
-  TITLE_PROLOGUE = 2,
-  /// Credits_Run, then TITLE_PROLOGUE.
-  TITLE_CREDITS = 8,
-  /// Unused: nothing sends the party here. The Golden Sun logo with "To Be
-  /// Continued" under it, held up to a minute, then TITLE_PROLOGUE.
-  TITLE_TO_BE_CONTINUED = 10,
-};
-
 /// The overlay's initialize entry, which plays what the entrance asks for.
 s32 Scene_Initialize(void) {
   s32 waitFrames;
@@ -174,8 +159,8 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// The lettering's sprite palette.
-enum { LETTERING_PALETTE = 15 };
+/// The sprite palette of the "To Be Continued" lettering.
+enum { TO_BE_CONTINUED_PALETTE = 15 };
 
 /// Loads the logo's lettering sprites and their palette.
 void Title_LoadSprites(s32 unused) {
@@ -189,7 +174,7 @@ void Title_LoadSprites(s32 unused) {
     gTitleVramBlock = VramCache_FindFreeEntry();
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_INTRO_TILES_B),
                       decodedSprites);
-  Dma_Set(decodedSprites, (void *)&OBJ_PLTT_COLOR(LETTERING_PALETTE, 0),
+  Dma_Set(decodedSprites, (void *)&OBJ_PLTT_COLOR(TO_BE_CONTINUED_PALETTE, 0),
           DMA_COPY_WORDS(PALETTE_COLORS / 2), REG_DMA3);
   VramCache_Load(gTitleVramBlock, 40 * TILE_SIZE_4BPP,
                  decodedSprites + PALETTE_COLORS * 2);
@@ -228,7 +213,7 @@ void Title_UpdateSpriteReveal(void) {
     *attributes++ = 0;
     *attributes++ = OBJ_X(screenX) | screenY | OBJ_SIZE_8X16 |
                     OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-    *attributes++ = OBJ_PALETTE(LETTERING_PALETTE) | tileIndex;
+    *attributes++ = OBJ_PALETTE(TO_BE_CONTINUED_PALETTE) | tileIndex;
     revealAge = gTitleRevealFrame / 2 - column;
     if (revealAge < 0)
       revealAge = 0;

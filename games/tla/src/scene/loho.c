@@ -106,20 +106,11 @@ extern s32 gLoho_VillagerPaces[];
 
 extern s16 gLoho_DoorOpening[];
 
-/// The sparks the cannon's blast throws over the screen.
-#define LOHO_SPARK_COUNT 96
-/// How long the blast throws sparks, in frames.
+/// How long the blast throws sparks (EXPLOSION_SPARK_COUNT of them,
+/// scene/scene.h), in frames.
 #define LOHO_BLAST_FRAMES 120
-/// A spark's life in frames: the explosion sheet's eight pictures, four frames
-/// each.
-#define LOHO_SPARK_FRAMES 32
-/// The sprite palette the blast loads the sparks' colours into
-/// (Field_ExplosionPalette).
-#define LOHO_SPARK_PALETTE 15
-/// The sparks' depth slot among the field's sprites.
-#define LOHO_SPARK_DEPTH 100
 
-/// One of the 96 sparks the cannon's blast throws over the screen: the link the
+/// One of the sparks the cannon's blast throws over the screen: the link the
 /// sprite list threads it by, its sprite, and its age in frames, negative while
 /// it waits to appear.
 struct LohoSpark {
@@ -288,7 +279,7 @@ inPlace:
   Actor_WaitForMoveById(ACTOR_MAGMA_BALL);
   Actor_SetPosition(ACTOR_MAGMA_BALL, 0, 0);
   MapGrid_SetShake(7, 7, 1);
-  table = (struct LohoSpark *)Heap_AllocEwram(LOHO_SPARK_COUNT *
+  table = (struct LohoSpark *)Heap_AllocEwram(EXPLOSION_SPARK_COUNT *
                                               sizeof(struct LohoSpark));
   {
     void *buffer = Heap_Alloc(4096);
@@ -300,12 +291,12 @@ inPlace:
     Heap_Release(buffer);
   }
   timer = &table->age;
-  for (i = 0; i < LOHO_SPARK_COUNT; i++) {
+  for (i = 0; i < EXPLOSION_SPARK_COUNT; i++) {
     *timer = -(Random16() << 5 >> 16);
     timer += 4;
   }
   Dma_Set((const void *)(s32)Field_ExplosionPalette,
-          (void *)&OBJ_PLTT_COLOR(LOHO_SPARK_PALETTE, 0),
+          (void *)&OBJ_PLTT_COLOR(EXPLOSION_SPARK_PALETTE, 0),
           DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
   for (i = 0; i < LOHO_BLAST_FRAMES; i++) {
     if ((i & 31) == 0) {
@@ -322,19 +313,19 @@ inPlace:
         spark->sprite.words[1] = 0;
         spark->sprite.oam.x = Random_Below(96) + 72;
         spark->sprite.oam.y = Random16() >> 10;
-        spark->sprite.oam.palette = LOHO_SPARK_PALETTE;
+        spark->sprite.oam.palette = EXPLOSION_SPARK_PALETTE;
         spark->sprite.oam.priority = 0;
       }
       if (spark->age >= 0) {
         spark->sprite.oam.tile = tiles + (spark->age >> 2) * 4;
-        Oam_AddSpriteAtDepthClamped(spark, LOHO_SPARK_DEPTH);
+        Oam_AddSpriteAtDepthClamped(spark, EXPLOSION_SPARK_DEPTH);
       }
       spark->age++;
-      if (spark->age >= LOHO_SPARK_FRAMES) {
+      if (spark->age >= EXPLOSION_SPARK_FRAMES) {
         spark->age = -(Random_Below(7));
       }
       spark++;
-    } while ((s32)spark <= (s32)&table[LOHO_SPARK_COUNT - 1]);
+    } while ((s32)spark <= (s32)&table[EXPLOSION_SPARK_COUNT - 1]);
     wait(1);
   }
   VramCache_FreeEntry(entry);

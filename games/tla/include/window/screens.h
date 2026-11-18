@@ -122,6 +122,21 @@ enum FieldMenuCommand {
   FIELD_MENU_STATUS = 4
 };
 
+/// What the file list is choosing a file for (FileList_SelectFile, and
+/// Save_ChooseAndLoadFile for the File Screen), which decides the files the
+/// cursor may stop on.
+enum FileMenuMode {
+  FILE_LIST_SAVE,     ///< saving: any file, empty ones too
+  FILE_LIST_CONTINUE, ///< continuing: files not yet cleared
+  FILE_LIST_COPY,     ///< copying: any file with data
+  FILE_LIST_ERASE,    ///< erasing: any file with data
+  /// The title's Battle: files that have found a Djinni.
+  FILE_LIST_EXTRA,
+  FILE_LIST_CLEARED, ///< the title's Send: cleared files only
+  /// The title's Update: files saved before FLAG_REUNITED was set.
+  FILE_LIST_UPDATE
+};
+
 /// The places of the transfer method menu.
 enum TransferMethod { TRANSFER_METHOD_PASSWORD = 0, TRANSFER_METHOD_CABLE = 1 };
 

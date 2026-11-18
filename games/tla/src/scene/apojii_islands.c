@@ -256,10 +256,10 @@ static __inline__ void Camera_MoveWithinMapBounds_(FIXED x, FIXED a, FIXED z,
 /// The palettes the colour cycles read and write: background palettes but for
 /// the last.
 enum {
-  SEA_PALETTE = 3,    ///< the village's sea
-  SHORE_PALETTE = 13, ///< the village's shore
-  FALLS_PALETTE = 3,  ///< the islet's falls
-  SPRAY_PALETTE = 4,  ///< the islet's spray
+  VILLAGE_SEA_PALETTE = 3, ///< the village's sea
+  SHORE_PALETTE = 13,      ///< the village's shore
+  FALLS_PALETTE = 3,       ///< the islet's falls
+  SPRAY_PALETTE = 4,       ///< the islet's spray
   /// The village's palette the woken Aqua Stone's colours are loaded from.
   STONE_PALETTE = 4,
   /// The sprite palette they turn in, which the spring's markers take.
@@ -415,7 +415,7 @@ void ApojiiIslands_CycleSeaColors(void) {
     return;
   if (gApojiiIslands_SeaCycleFrame == -1) {
     Iwram_CopyWords(gApojiiIslands_SeaColors,
-                    (void *)&BG_PLTT_COLOR(SEA_PALETTE, 0),
+                    (void *)&BG_PLTT_COLOR(VILLAGE_SEA_PALETTE, 0),
                     sizeof(gApojiiIslands_SeaColors));
     Iwram_CopyWordsEntry(gApojiiIslands_SeaCycled, gApojiiIslands_SeaColors,
                          sizeof(gApojiiIslands_SeaCycled));
@@ -434,7 +434,7 @@ void ApojiiIslands_CycleSeaColors(void) {
     gApojiiIslands_ShoreCycled[CYCLE_FIRST_COLOR + j] =
         gApojiiIslands_ShoreColors[CYCLE_FIRST_COLOR + k];
   }
-  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(SEA_PALETTE, 0),
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(VILLAGE_SEA_PALETTE, 0),
                       (u32)gApojiiIslands_SeaCycled, DMA_COPY_WORDS(8));
   IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(SHORE_PALETTE, 0),
                       (u32)gApojiiIslands_ShoreCycled, DMA_COPY_WORDS(8));

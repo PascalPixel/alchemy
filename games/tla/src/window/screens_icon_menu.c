@@ -133,7 +133,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   forcedCount = 0;
   Resource_LoadIndexedIntoBuffer(largeIconSlot, 0);
   Graphics_ExpandVramTilesByColorTable(
-      (u16 *)(BG_CHAR_BLOCK(0) + LIST_PAGE_DIGITS_TILE * TILE_SIZE_4BPP));
+      (u16 *)(BG_CHAR_BLOCK(0) + PAGE_DIGITS_TILE * TILE_SIZE_4BPP));
   Link_DrawPageArrows(LIST_PAGE_ARROW_VRAM);
   Menu_BuildLocalizedPatternTiles();
   state->swappedUnit = -1;

@@ -1628,9 +1628,6 @@ void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 #include "shared/leader_slide_on_ice_ahead.h"
 #undef Field_CheckSpheresOverlap
 
-/// The sprites that can be pushed, each with its footprint.
-enum { PUSH_KINDS = 6 };
-
 extern u16 gPushKinds[PUSH_KINDS];
 extern s8 gPushFootprints[][4];
 

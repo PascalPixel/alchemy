@@ -225,9 +225,9 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
 
       if (count > 4) {
         for (index = 0; index < (count + 3) / 4; index++) {
-          tile = index + LIST_TILE_PAGE_NUMBER;
+          tile = index + PAGE_NUMBER_TILE;
           if (index == firstEntry / 4)
-            tile = index + LIST_TILE_PAGE_NUMBER_LIT;
+            tile = index + PAGE_NUMBER_LIT_TILE;
           Window_SetTilemapEntry(
               window, tile, window->width - (count + 3) / 4 + index - 2, -1, 0);
         }
@@ -268,9 +268,9 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
 
     if (count > 4) {
       for (index = 0; index < (count + 3) / 4; index++) {
-        tile = index + LIST_TILE_PAGE_NUMBER;
+        tile = index + PAGE_NUMBER_TILE;
         if ((gFrameCount & 15) <= 11 && index == firstEntry / 4)
-          tile = index + LIST_TILE_PAGE_NUMBER_LIT;
+          tile = index + PAGE_NUMBER_LIT_TILE;
         Window_SetTilemapEntry(
             window, tile, window->width - (count + 3) / 4 + index - 2, -1, 0);
       }

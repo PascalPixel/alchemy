@@ -144,6 +144,38 @@ struct Orbit {
   s16 speed; ///< its turn a frame, slowed by 128 a frame once grown
 };
 
+/// Half a turn of an Orbit's phase, 64 to the turn: the sparks that rise round
+/// one who learns a Psynergy take every other phase short of it, one each 2
+/// pixels up a column round him, so their circles widen and narrow again up
+/// the column.
+#define ORBIT_HALF_TURN 32
+
+/// The sparks that rise from a Psynergy's tablet as it lifts, flashing.
+#define TABLET_RISING_SPARKS 16
+
+/// The LEARN_SPARKS that circle the one who learns a Psynergy start
+/// LEARN_SPARK_INTERVAL frames apart, 122 pixels out, and close 8 pixels a
+/// frame (Orbiter_Spiral) to 2 pixels in LEARN_SPIRAL_FRAMES; each one's
+/// countdown ends with the last's.
+///@{
+#define LEARN_SPARKS 16
+#define LEARN_SPARK_INTERVAL 8
+#define LEARN_SPIRAL_FRAMES 15
+///@}
+
+/// How far a pillar sinks, its top then level with the floor: into the floor
+/// as Blaze at a torch lowers it in Magma Rock, and into its gap as Move drops
+/// it in Jupiter Lighthouse.
+#define PILLAR_SINK_DEPTH 32
+
+/// SPRITE_PARTICLE's swells, from a speck to its full glow, held 32 frames,
+/// and back: slowly, 12 frames a step, or quickly, 6. Jupiter Lighthouse's
+/// sparks and the motes of light inside Air's Rock take turns at them.
+enum { ANIM_PARTICLE_SLOW_SWELL = 9, ANIM_PARTICLE_QUICK_SWELL };
+/// How long such a particle lives before it starts again: a slow swell and the
+/// 12 frames it stays gone after, or a quick one.
+enum { PARTICLE_SLOW_LIFETIME = 212, PARTICLE_QUICK_LIFETIME = 116 };
+
 /// A glow sprite queued for the OAM: the link at its depth, attributes 0 and 1
 /// as one word, and attribute 2's fields.
 struct LightOam {
@@ -474,6 +506,15 @@ s32 Speaker_GetVoice(s32 object);
 
 /// An explosion's 16 sprite colours (graphics/field/explosion_palette.png).
 extern const u16 Field_ExplosionPalette[];
+/// The sparks of the explosion that Loho's cannon blast and the Northern
+/// Reaches' shattered ice wall throw over the screen: how many, a spark's life
+/// in frames (the explosion sheet's eight pictures, four frames each), the
+/// sprite palette their colours are loaded into (Field_ExplosionPalette), and
+/// their depth slot among the field's sprites.
+#define EXPLOSION_SPARK_COUNT 96
+#define EXPLOSION_SPARK_FRAMES 32
+#define EXPLOSION_SPARK_PALETTE 15
+#define EXPLOSION_SPARK_DEPTH 100
 
 void FieldPsynergy_StartCast(void);
 
@@ -568,6 +609,15 @@ struct Window;
 /// raises it), Air's Rock with AirsRock_RideWhirlwind and its inside with
 /// AirsRockInside_RideWhirlwind.
 #define RAISED_RIDE_WHIRLWIND 200
+
+/// How near, in pixels, the two walking children of Lemuria and of Contigo
+/// heed: the other child they face, the leader they face, and the leader come
+/// so near that they walk on (Lemuria_NoticeLeader, Contigo_PauseWhenFaced).
+enum {
+  CHILD_SEES_CHILD_RANGE = 18,
+  CHILD_SEES_LEADER_RANGE = 26,
+  CHILD_WALKS_ON_RANGE = 11
+};
 
 /// The vents of Aqua Rock and Taopo Swamp (struct VentWork, shared/vent_*.h):
 /// the most vents a room has, and the most actors besides the leader their

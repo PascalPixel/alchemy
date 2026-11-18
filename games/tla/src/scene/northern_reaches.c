@@ -97,20 +97,11 @@ struct ExplosionSpark {
   s32 age;
 };
 
-/// The wall breaks into 54 shards, nine columns of six, and 96 sparks of the
-/// explosion fly about it.
+/// The wall breaks into 54 shards, nine columns of six, and the explosion's
+/// sparks (EXPLOSION_SPARK_COUNT, scene/scene.h) fly about it.
 #define ICE_SHARD_COUNT 54
-#define NORTHERN_REACHES_SPARK_COUNT 96
 /// How long a shard flies, in frames.
 #define ICE_SHARD_FRAMES 60
-/// A spark's life in frames: the explosion sheet's eight pictures, four frames
-/// each.
-#define NORTHERN_REACHES_SPARK_FRAMES 32
-/// The sprite palette the sparks' colours are loaded into
-/// (Field_ExplosionPalette).
-#define SPARK_PALETTE 15
-/// The sparks' depth slot among the field's sprites.
-#define SPARK_DEPTH 100
 /// The buffer a sheet is unpacked into.
 #define SHEET_BUFFER_SIZE 4096
 
@@ -425,8 +416,8 @@ void NorthernReaches_ShatterIceWall(s32 unused, FIXED *position,
     shard->age = 0;
     shard++;
   }
-  sparks = Heap_AllocEwram(NORTHERN_REACHES_SPARK_COUNT *
-                           sizeof(struct ExplosionSpark));
+  sparks =
+      Heap_AllocEwram(EXPLOSION_SPARK_COUNT * sizeof(struct ExplosionSpark));
   /* FAKEMATCH(temporary): the size held in the local that then takes the
    * buffer. */
   sheet = (void *)SHEET_BUFFER_SIZE;
@@ -437,11 +428,12 @@ void NorthernReaches_ShatterIceWall(s32 unused, FIXED *position,
   sparkTiles = VramCache_Load(sparkEntry, 1024, sheet);
   Heap_Release(sheet);
   timer = &sparks->age;
-  for (i = NORTHERN_REACHES_SPARK_COUNT - 1; i >= 0; i--) {
+  for (i = EXPLOSION_SPARK_COUNT - 1; i >= 0; i--) {
     *timer = -(Random16() << 5 >> 16);
     timer += 4;
   }
-  Dma_Set(Field_ExplosionPalette, (void *)&OBJ_PLTT_COLOR(SPARK_PALETTE, 0),
+  Dma_Set(Field_ExplosionPalette,
+          (void *)&OBJ_PLTT_COLOR(EXPLOSION_SPARK_PALETTE, 0),
           DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
   for (frame = 0; frame <= 149; frame++) {
     if ((frame & 31) == 0) {
@@ -481,19 +473,19 @@ void NorthernReaches_ShatterIceWall(s32 unused, FIXED *position,
         spark->oam.words.second = 0;
         spark->oam.oam.x = (Random16() << 7 >> 16) + 52;
         spark->oam.oam.y = (Random16() << 6 >> 16) + 16;
-        spark->oam.oam.palette = SPARK_PALETTE;
+        spark->oam.oam.palette = EXPLOSION_SPARK_PALETTE;
         spark->oam.oam.priority = 0;
       }
       if (spark->age >= 0) {
         spark->oam.oam.index = sparkTiles + (spark->age >> 2) * 4;
-        Oam_AddSpriteAtDepthClamped(spark, SPARK_DEPTH);
+        Oam_AddSpriteAtDepthClamped(spark, EXPLOSION_SPARK_DEPTH);
       }
       spark->age++;
-      if (spark->age >= NORTHERN_REACHES_SPARK_FRAMES) {
+      if (spark->age >= EXPLOSION_SPARK_FRAMES) {
         spark->age = -(Random_Below(7));
       }
       spark++;
-    } while ((s32)spark <= (s32)&sparks[NORTHERN_REACHES_SPARK_COUNT - 1]);
+    } while ((s32)spark <= (s32)&sparks[EXPLOSION_SPARK_COUNT - 1]);
     wait(1);
   }
   VramCache_FreeEntry(sparkEntry);

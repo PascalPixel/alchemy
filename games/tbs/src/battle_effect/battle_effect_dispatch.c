@@ -148,11 +148,6 @@ void BattleEffect_SelectLivingTargets(struct BattleEffectParams *args) {
   BattleObject_SpawnObjectsForListFar(list, 0);
 }
 
-/// The level a canvas darkens the battle background to, a level a frame.
-#define BACKGROUND_DARKENED_LEVEL BACKGROUND_DARKEN_FRAMES
-/// The canvas's usual weight over the battle, in sixteenths.
-#define CANVAS_BLEND_LEVEL 14
-
 /// Shows the battle background, darkened as a canvas leaves it, behind a
 /// cleared canvas.
 void BattleEffect_SetupBlendedDisplay(void) {
@@ -174,9 +169,6 @@ void BattleEffect_SetupBlendedDisplay(void) {
   REG_DISPCNT = EFFECT_DISPCNT;
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
 }
-
-#undef BACKGROUND_DARKENED_LEVEL
-#undef CANVAS_BLEND_LEVEL
 
 /// Updates every effect group of one unit's battle object.
 void BattleEffect_TintBattler(s32 unitId, s32 palette, s32 animation,

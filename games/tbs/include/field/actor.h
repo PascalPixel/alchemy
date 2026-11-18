@@ -7,6 +7,7 @@
 #include "fixed_math.h"
 #include "static_assert.h"
 #include "types.h"
+#include "field/actor_arm_view.h"
 #include "field/field_work.h"
 
 /// How a scene fades in and out: SCENE_TRANSITION's high byte, which
@@ -185,13 +186,6 @@ STATIC_ASSERT(offsetof(struct Actor, speedLimit) == 48);
 STATIC_ASSERT(offsetof(struct Actor, targetX) == 56);
 STATIC_ASSERT(offsetof(struct Actor, sprite) == 80);
 STATIC_ASSERT(offsetof(struct Actor, update) == 108);
-
-/// The values of Actor.targetX, targetY and targetZ that are not
-/// coordinates.
-enum ActorTarget {
-  /// A target coordinate that is not set: the actor has no target.
-  ACTOR_NO_TARGET = (s32)0x80000000
-};
 
 /// Preserves the current action and motion when assigning a watched actor.
 enum ActorWatchFlag { ACTOR_WATCH_KEEP_MOTION = 0x10000 };

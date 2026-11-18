@@ -5,10 +5,6 @@
 
 #include "field_sequence_internal.h"
 
-/// The frames the leader pushes against a step trigger, a ledge, a gap or a
-/// wall before it runs, jumps or climbs.
-#define FIELD_PUSH_FRAMES 12
-
 /// What an examine trigger is on (enum ExamineTarget), the control bits 8..4
 /// EXAMINE_TRIGGER() packs it into.
 #define EXAMINE_TARGET(kind) (((kind) >> 4) & 0x1f)
@@ -357,7 +353,8 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
 
 /// Runs the event of a cell the leader pushes against (CELL_BEHAVIOR_LEDGE to
 /// CELL_BEHAVIOR_JUMP_FORWARD, and CELL_BEHAVIOR_JUMP_FORWARD_UNREACHED), once
-/// it has pushed for more than 12 frames; the count then restarts.
+/// it has pushed for more than FIELD_PUSH_FRAMES frames; the count then
+/// restarts.
 s32 Field_RunPushCell(s32 behavior) {
   struct FieldWork *work = gFieldWork;
   s32 leader = gMainRoutineWork.leaderActorId;
@@ -609,7 +606,6 @@ s32 Field_ExamineCell(s32 tile) {
   return 0;
 }
 
-#undef FIELD_PUSH_FRAMES
 #undef EXAMINE_TARGET
 #undef FIND_ITEM_MASK
 #undef PSYNERGY_STONE_PP

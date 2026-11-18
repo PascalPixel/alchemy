@@ -10,6 +10,7 @@
 #include "battle/battle.h"
 #include "battle/battle_action_run.h"
 #include "battle/playback_queue.h"
+#include "debug/debug.h"
 #include "field/actor.h"
 #include "field/event.h"
 #include "field/field_psynergy_work.h"
@@ -44,8 +45,6 @@ extern struct Trigger gMenuTest_Triggers[];
 extern s32 gMenuTest_NextLevel;
 extern s32 gMenuTest_FillLetter;
 
-/// The debug item browser covers IDs 0 through 269.
-#define DEBUG_ITEM_COUNT 270
 #define DEBUG_ITEM_ROW_STEP 10  ///< Right and Left move ten numbers.
 #define DEBUG_ITEM_PAGE_STEP 30 ///< R and L move thirty.
 

@@ -99,6 +99,11 @@ struct WorldPosition {
 /// The layout's cell pictures, 32 KB of EWRAM at 0x02020000: each cell picture
 /// 8 bytes, its four tile entries. MapGrid_LoadMap decodes them in.
 extern u32 gCellPictures[];
+/// The World Map's 32-pixel blocks, 32 to a row of gCellPictures, wrapping
+/// round: a 16.16 coordinate shifted down this far is a block.
+#define WORLD_MAP_BLOCK_SHIFT 21
+#define WORLD_MAP_BLOCK_PIXELS 32
+#define WORLD_MAP_BLOCKS_ACROSS 32
 
 /// The tileset animations' tiles, 16 KB of EWRAM at 0x02028000.
 extern u8 gMapGridAnimTiles[];
@@ -116,6 +121,8 @@ extern u8 gBgTileBuffer[];
 /// edges.
 #define MAPGRID_SIZE 128
 #define MAPGRID_CELL_PIXELS 16
+/// A whole pixel coordinate's map cell, in pixels.
+#define MAPGRID_CELL_PIXEL_MASK 0xfff0
 /// The low four bits of a shape's first byte: its kind, which height
 /// function reads its samples (gMapGrid_TerrainHeightFunctions).
 #define MAPGRID_SHAPE_KIND_MASK 0xf

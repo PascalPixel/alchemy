@@ -14,8 +14,6 @@
 /// How far the reaper sways across and up and down as it circles, in pixels.
 #define CONDEMN_SWAY_X 16
 #define CONDEMN_SWAY_Y 4
-/// The level a canvas darkens the battle background to, a level a frame.
-#define BACKGROUND_DARKENED_LEVEL BACKGROUND_DARKEN_FRAMES
 
 /// Where `picture`, one of the reaper's seven pictures, is drawn
 /// (REAPER_PICTURE_X), by the casting side's `column` and `row`.
@@ -258,6 +256,5 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
 #undef CONDEMN_BOUNCE_FRAME
 #undef CONDEMN_SWAY_X
 #undef CONDEMN_SWAY_Y
-#undef BACKGROUND_DARKENED_LEVEL
 #undef CONDEMN_PICTURE_X
 #undef CONDEMN_PICTURE_Y

@@ -20,6 +20,16 @@ enum BattleUnitListMark {
   BATTLE_UNIT_LIST_END = 255 ///< ends the list
 };
 
+/// The list place codes the target pickers return (battle_targeting.c,
+/// BattleTarget_RunSelection, Battle_FindUnitPlace): a place in the party's
+/// list or the enemies', or'd with the side's tag.
+#define PLACE_PARTY (1 << 8)
+#define PLACE_ENEMY (PLACE_PARTY | PLACE_ENEMY_SIDE)
+/// A place code's side bit, set for the enemies' list, and its place in the
+/// list (Battle_GetUnitAtPlace).
+#define PLACE_ENEMY_SIDE (1 << 7)
+#define PLACE_INDEX_MASK ((1 << 4) - 1)
+
 /// Which sides a unit list takes, as BattleUnit_ListLiving reads it.
 enum BattleSideMask {
   BATTLE_SIDE_MASK_PARTY = 1,

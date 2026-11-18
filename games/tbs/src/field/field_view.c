@@ -8,9 +8,6 @@
 #define MAPGRID_SHAKE_SETTLE_FRAMES 300
 /// The largest shake that counts as settled, just under 1/256 pixel.
 #define MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE (toFIXED(1) / 256 - 1)
-/// One of the world map area's four tile sets, decoded one after another into
-/// gBgTileBuffer, as field_world_map.c defines it.
-#define WORLD_MAP_TILE_SET_BYTES 8192
 /// One of the world map's two tile maps of one-byte tiles, BG3's and then
 /// BG2's, as WorldMap_StartStillPicture copies them into gDecodeBuffer.
 #define WORLD_MAP_TILE_MAP_BYTES (64 * 64)
@@ -143,5 +140,4 @@ void WorldMap_BuildScanlineTable(FIXED pitchSlope, s32 *position,
 
 #undef MAPGRID_SHAKE_SETTLE_FRAMES
 #undef MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE
-#undef WORLD_MAP_TILE_SET_BYTES
 #undef WORLD_MAP_TILE_MAP_BYTES

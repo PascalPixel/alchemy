@@ -158,9 +158,6 @@ void BattleEffect_FlushPendingGraphicsTransfer(void) {
 
 /// The battle background's first BG palette, of the eight its colours take.
 #define BATTLE_BACKGROUND_PALETTE 6
-/// The canvas's usual weight over the battle, in sixteenths: every canvas
-/// opens with it.
-#define CANVAS_BLEND_LEVEL 14
 
 /// Writes the window, display and blend registers the effect keeps in its
 /// work, all at once.
@@ -376,8 +373,6 @@ void BattleEffect_StartTiledCanvas(s32 bgControl) {
   }
 }
 
-/// The level a canvas darkens the battle background to, a level a frame.
-#define BACKGROUND_DARKENED_LEVEL BACKGROUND_DARKEN_FRAMES
 /// The levels the battle background brightens by each frame as the canvas
 /// closes, back to its own colours.
 #define BACKGROUND_RESTORE_STEP 3
@@ -601,8 +596,6 @@ void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
 #undef WIPE_LAG_MAX
 #undef WIPE_ACROSS_END
 #undef BATTLE_BACKGROUND_PALETTE
-#undef CANVAS_BLEND_LEVEL
-#undef BACKGROUND_DARKENED_LEVEL
 #undef BACKGROUND_RESTORE_STEP
 #undef CANVAS_BG1_SCREEN
 #undef BG1_MAP_ROW

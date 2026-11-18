@@ -16,4 +16,7 @@
 /// tile 208 of character block 0, one tile a colour.
 extern const u8 gDebug_PaletteSwatchTiles[];
 
+/// The debug item browsers' item numbers, 0 to 269, wrapping.
+#define DEBUG_ITEM_COUNT 270
+
 #endif

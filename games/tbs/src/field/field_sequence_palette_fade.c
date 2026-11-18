@@ -4,26 +4,28 @@
 
 #include "field_sequence_internal.h"
 
-// Palette work stores 224 BG colours and 224 OBJ colours, each as B, G, R.
+/// The colours a palette fade moves: the BG's 224, then the OBJ's 224.
 #define COLOR_MAX 448
 #define COLOR_HALF 224
-#define COLOR_CHANNEL_COUNT (COLOR_MAX * 3)
-/// A colour's red, green and blue bits as RGB555 lays them out.
-#define RED_BITS RGB(RGB_LEVEL_MAX, 0, 0)
-#define GREEN_BITS RGB(0, RGB_LEVEL_MAX, 0)
-#define BLUE_BITS RGB(0, 0, RGB_LEVEL_MAX)
 /// Palette fade work holds each channel of a colour in bits 14..10 of a
-/// halfword, where RGB555 keeps blue: green's bits move up 5 to get there,
-/// red's CHANNEL_SHIFT.
-#define CHANNEL_SHIFT 10
+/// halfword, where RGB555 keeps blue: green's bits move up
+/// BLUE_SHIFT - GREEN_SHIFT to get there, red's BLUE_SHIFT.
 #define BLUE_CHANNEL(color) ((color) & BLUE_BITS)
-#define GREEN_CHANNEL(color) (((color) & GREEN_BITS) << 5)
-#define RED_CHANNEL(color) (((color) & RED_BITS) << CHANNEL_SHIFT)
+#define GREEN_CHANNEL(color)                                                   \
+  (((color) & GREEN_BITS) << (BLUE_SHIFT - GREEN_SHIFT))
+#define RED_CHANNEL(color) (((color) & RED_BITS) << BLUE_SHIFT)
 /// For the brightness 2R + 4G + B: red's level doubled and green's
 /// quadrupled, each in the channel's place.
 #define RED_CHANNEL_DOUBLED(color)                                             \
-  (((color) << (CHANNEL_SHIFT + 1)) & (RED_BITS << (CHANNEL_SHIFT + 1)))
-#define GREEN_CHANNEL_QUADRUPLED(color) (((color) << 7) & (GREEN_BITS << 7))
+  (((color) << BRIGHTNESS_RED_SHIFT) & (RED_BITS << BRIGHTNESS_RED_SHIFT))
+#define GREEN_CHANNEL_QUADRUPLED(color)                                        \
+  (((color) << BRIGHTNESS_GREEN_SHIFT) & (GREEN_BITS << BRIGHTNESS_GREEN_SHIFT))
+/// PALETTE_TINT_SEPIA's shade is a colour's R + G + B over this, 0 to 9.
+#define SEPIA_SHADE_DIVISOR 10
+/// PALETTE_TINT_CUSTOM gives each channel the brightness 2R + 4G + B times the
+/// tint's level over this, so white reaches full level under a tint level of
+/// 14.
+#define CUSTOM_TINT_DIVISOR 96
 
 /// Sets each channel of step (three for each of the 448 colours) to the amount
 /// to add each frame for source to reach target in frames frames; with frames
@@ -35,7 +37,7 @@ void PaletteFade_CalculateSteps(s16 *source, s16 *target, s16 *step,
   s32 targetChannel;
 
   if (frames > 0) {
-    remainingChannels = COLOR_CHANNEL_COUNT - 1;
+    remainingChannels = PALETTE_FADE_CHANNELS - 1;
     do {
       sourceChannel = *source;
       targetChannel = *target;
@@ -66,7 +68,7 @@ void PaletteFade_Update(void) {
   // target itself, so rounding in the steps never leaves the colours short.
   if (++work->step < work->duration) {
     u16 *currentChannel = work->current;
-    for (i = 0; i < COLOR_CHANNEL_COUNT; i++) {
+    for (i = 0; i < PALETTE_FADE_CHANNELS; i++) {
       *currentChannel++ += *channelDelta++;
     }
   } else {
@@ -84,9 +86,10 @@ void PaletteFade_Update(void) {
     i = COLOR_MAX;
     current = work->current;
     for (; i != 0; i--) {
-      *packed++ = (current[0] & blueMask) |
-                  (((s16)current[1] >> 5) & GREEN_BITS) |
-                  (((s16)current[2] >> CHANNEL_SHIFT) & RED_BITS);
+      *packed++ =
+          (current[0] & blueMask) |
+          (((s16)current[1] >> (BLUE_SHIFT - GREEN_SHIFT)) & GREEN_BITS) |
+          (((s16)current[2] >> BLUE_SHIFT) & RED_BITS);
       current += 3;
     }
   }
@@ -154,8 +157,8 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
       for (i = 0; i < colorCount; i++) {
         color = *src++;
         red = RGB_RED(color);
-        color =
-            Iwram_SignedDivide(red + RGB_GREEN(color) + RGB_BLUE(color), 10);
+        color = Iwram_SignedDivide(red + RGB_GREEN(color) + RGB_BLUE(color),
+                                   SEPIA_SHADE_DIVISOR);
         red = color * 4 + 5;
         blue = color * 3 + 5;
         green = blue;
@@ -309,7 +312,7 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
       red = RED_CHANNEL_DOUBLED(color);
       green = GREEN_CHANNEL_QUADRUPLED(color);
       blue = BLUE_CHANNEL(color);
-      color = Iwram_SignedDivide(red + green + blue, 96);
+      color = Iwram_SignedDivide(red + green + blue, CUSTOM_TINT_DIVISOR);
       red = color * tintRed;
       green = color * tintGreen;
       blue = color * tintBlue;
@@ -445,20 +448,17 @@ s32 PaletteFade_ClampChannel(s32 value) {
 /// Clamps a colour channel in its place (bits 14..10) to at most the
 /// brightest level.
 s32 PaletteFade_ClampShiftedChannel(s32 value) {
-  if (value > RGB_LEVEL_MAX << CHANNEL_SHIFT)
-    value = RGB_LEVEL_MAX << CHANNEL_SHIFT;
+  if (value > RGB_LEVEL_MAX << BLUE_SHIFT)
+    value = RGB_LEVEL_MAX << BLUE_SHIFT;
   return value;
 }
 
 #undef COLOR_MAX
 #undef COLOR_HALF
-#undef COLOR_CHANNEL_COUNT
-#undef RED_BITS
-#undef GREEN_BITS
-#undef BLUE_BITS
-#undef CHANNEL_SHIFT
 #undef BLUE_CHANNEL
 #undef GREEN_CHANNEL
 #undef RED_CHANNEL
 #undef RED_CHANNEL_DOUBLED
 #undef GREEN_CHANNEL_QUADRUPLED
+#undef SEPIA_SHADE_DIVISOR
+#undef CUSTOM_TINT_DIVISOR

@@ -4,8 +4,6 @@
 
 #include "battle_internal.h"
 
-/// An Actor_Create id of enum ActorCreateKind `kind`, above its sprite.
-#define ACTOR_CREATE_KIND(kind) ((kind) << 12)
 /// The Actor_Create kind a battle object's actor is made with: one that makes
 /// no sprite, its battle sprites being attached afterwards.
 #define BATTLE_OBJECT_ACTOR_KIND 15

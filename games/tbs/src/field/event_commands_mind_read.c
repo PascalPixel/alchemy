@@ -72,9 +72,10 @@ void FieldPsynergy_StopMindReadWave(void) {
 
 /// Task of the wave effect: once its delay has run out, writes
 /// the next page of scanline offsets (a sine wave of 4 pixels either way),
-/// steps the colour fade and the hue, keeps the caster's colours lit, and
-/// every 60 frames sends three particles (SPRITE_CRESCENT) from the target to
-/// the caster, with SE_PSYNERGY_START.
+/// steps the colour fade and the hue every other frame, keeps the caster's
+/// colours cycling, and at the start of each 61-frame cycle sends three
+/// particles (SPRITE_CRESCENT), 8 frames apart, from the target to the caster,
+/// with SE_PSYNERGY_START.
 void FieldPsynergy_UpdateMindReadWave(void) {
   struct MindReadWork *work = gMindReadWork;
   u16 *line;
@@ -246,8 +247,7 @@ void FieldEffect_ReleaseOnArrival(struct Actor *actor) {
   s32 targetX;
 
   targetX = actor->targetX;
-  if (targetX == ACTOR_NO_TARGET) // no destination
-  {
+  if (targetX == ACTOR_NO_TARGET) {
     targetY = actor->targetY;
     if ((targetY == targetX) && (actor->targetZ == targetY)) {
       Actor_StartScriptFar(actor, gFieldEffect_UntargetedActorScript);

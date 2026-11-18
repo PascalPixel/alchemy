@@ -9,8 +9,6 @@
 #include "field/event_commands.h"
 #include "field/field_sequence.h"
 
-#define NULL ((void *)0)
-
 struct Actor;
 
 #endif

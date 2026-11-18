@@ -13,8 +13,6 @@
 /// A flame's six pictures, four frames each, before it goes out.
 #define FLARE_FLAME_PICTURES 6
 #define FLARE_PICTURE_FRAMES 4
-/// The canvas's usual weight over the battle, in sixteenths.
-#define CANVAS_BLEND_LEVEL 14
 
 /// Nine flames rise one after another along half an ellipse.
 ///
@@ -176,4 +174,3 @@ UNUSED s32 BattleEffect_BuildCenteredIndexList(BattleEffectIndexWindow *window,
 #undef FLARE_ARC_RADIUS_Y
 #undef FLARE_FLAME_PICTURES
 #undef FLARE_PICTURE_FRAMES
-#undef CANVAS_BLEND_LEVEL

@@ -147,106 +147,108 @@ enum { SHOP_NARIBWE_WEAPONS = 14, SHOP_NARIBWE_ARMOR = 15 };
 /// Naribwe's inn, as Inn_CheckIn numbers the inns.
 enum { NARIBWE_INN = 5 };
 
-/// The weapon shopkeeper: across the counter, the shop; from anywhere else,
-/// advice to take a weapon to the fortune-teller.
-void NaribweRooms_RecommendFortuneTeller(s32 actor) {
+/// The weapon merchant sells across the counter; from anywhere else he advises
+/// taking a weapon to the fortune-teller.
+void NaribweRooms_TalkToWeaponMerchant(s32 speaker) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Shop_Run(SHOP_NARIBWE_WEAPONS, actor);
+    Shop_Run(SHOP_NARIBWE_WEAPONS, speaker);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgNaribweInteriorsIfYouAreBurdened);
     // "If you are burdened with many concerns, take a weapon to the..."
-    Event_ShowMessage(actor, 0);
+    Event_ShowMessage(speaker, 0);
     Event_End();
   }
 }
 
-/// The weapon shopkeeper once Gabomba's message is carried: across the
-/// counter, the shop; from anywhere else, how out-of-town customers are always
-/// sent to the fortune-teller.
-void NaribweRooms_RecommendFortuneTellerOnReturn(s32 actor) {
+/// The weapon merchant once Gabomba's message is carried: across the counter he
+/// sells; from anywhere else he sends out-of-town customers to the
+/// fortune-teller.
+void NaribweRooms_TalkToWeaponMerchantOnReturn(s32 speaker) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Shop_Run(SHOP_NARIBWE_WEAPONS, actor);
+    Shop_Run(SHOP_NARIBWE_WEAPONS, speaker);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgNaribweInteriorsWheneverIGetCustomers);
     // "Whenever I get customers from out of town, I always tell them the..."
-    Event_ShowMessage(actor, 0);
+    Event_ShowMessage(speaker, 0);
     Event_End();
   }
 }
 
-/// The armor shopkeeper: across the counter, the shop; from anywhere else,
-/// advice to visit the fortune-teller while in the village.
-void NaribweRooms_SendToFortuneTeller(s32 actor) {
+/// The armor merchant sells across the counter; from anywhere else he advises
+/// visiting the fortune-teller while in the village.
+void NaribweRooms_TalkToArmorMerchant(s32 speaker) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Shop_Run(SHOP_NARIBWE_ARMOR, actor);
+    Shop_Run(SHOP_NARIBWE_ARMOR, speaker);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId(
         (s32)MsgNaribweInteriorsYouShouldVisitFortuneTeller);
     // "You should visit the fortune- teller while you are in our village...."
-    Event_ShowMessage(actor, 0);
+    Event_ShowMessage(speaker, 0);
     Event_End();
   }
 }
 
-/// The armor shopkeeper once Gabomba's message is carried: across the counter,
-/// the shop; from anywhere else, the fortune-teller for anything one wishes to
-/// know.
-void NaribweRooms_SendToFortuneTellerOnReturn(s32 actor) {
+/// The armor merchant once Gabomba's message is carried: across the counter he
+/// sells; from anywhere else he sends the party to the fortune-teller for
+/// anything it wishes to know.
+void NaribweRooms_TalkToArmorMerchantOnReturn(s32 speaker) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Shop_Run(SHOP_NARIBWE_ARMOR, actor);
+    Shop_Run(SHOP_NARIBWE_ARMOR, speaker);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgNaribweInteriorsIfYouWishToKnow);
     // "If you wish to know anything, go to the fortune-teller. He's fast..."
-    Event_ShowMessage(actor, 0);
+    Event_ShowMessage(speaker, 0);
     Event_End();
   }
 }
 
-/// "Our cooking is famous all across Gondowan."
-void NaribweRooms_TalkAboutCooking(s32 actor) {
+/// The innkeeper opens the inn across the counter; from anywhere else she talks
+/// of the village's cooking.
+void NaribweRooms_TalkToInnkeeper(s32 speaker) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Inn_CheckIn(NARIBWE_INN, actor);
+    Inn_CheckIn(NARIBWE_INN, speaker);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgNaribweInteriorsOurCookingIsFamousAll);
     // "Our cooking is famous all across Gondowan. If you find you like it..."
-    Event_ShowMessage(actor, 0);
+    Event_ShowMessage(speaker, 0);
     Event_End();
   }
 }
 
-/// The innkeeper once Gabomba's message is carried: across the counter, the
-/// inn; from anywhere else, too many travelers to remember Piers among them.
-void NaribweRooms_TalkAboutTravelers(s32 actor) {
+/// The innkeeper once Gabomba's message is carried: across the counter she
+/// opens the inn; from anywhere else she sees too many travelers to remember
+/// Piers.
+void NaribweRooms_TalkToInnkeeperOnReturn(s32 speaker) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Inn_CheckIn(NARIBWE_INN, actor);
+    Inn_CheckIn(NARIBWE_INN, speaker);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgNaribweInteriorsISeeSoManyTravelers);
     // "I see so many travelers... How am I supposed to remember who Piers..."
-    Event_ShowMessage(actor, 0);
+    Event_ShowMessage(speaker, 0);
     Event_End();
   }
 }
@@ -796,8 +798,9 @@ s32 NaribweRooms_ListMissingDjinn(s32 limit, s32 group, s32 *out) {
 /// found, is picked at random; when it has passed none by, the first still to
 /// be found of the element it has found the fewest of.
 u8 *NaribweRooms_GetDjinniHint(void) {
-  s32 *hints = (s32 *)Value2((s32 (*)())HeapSlot_AllocEwram,
-                             HEAP_SLOT_DJINNI_HINTS, 320);
+  s32 *hints =
+      (s32 *)Value2((s32 (*)())HeapSlot_AllocEwram, HEAP_SLOT_DJINNI_HINTS,
+                    ELEMENT_COUNT * DJINN_PER_ELEMENT * sizeof(s32));
   s32 limits[ELEMENT_COUNT];
   s32 count = 0;
   s32 lowest = HINT_LIMIT_ABOVE_ALL;
@@ -1098,13 +1101,13 @@ struct Trigger gNaribweRooms_Triggers[] = {
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_BODY_PAINT, CONDITION_ALWAYS,
      MSGNO(MsgNaribweInteriorsByPaintingOurBodies)},
     {TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS,
-     EVENT(NaribweRooms_RecommendFortuneTeller)},
+     EVENT(NaribweRooms_TalkToWeaponMerchant)},
     {TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS,
-     EVENT(NaribweRooms_SendToFortuneTeller)},
+     EVENT(NaribweRooms_TalkToArmorMerchant)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_ADVENTURE, CONDITION_ALWAYS,
      MSGNO(MsgNaribweInteriorsIfYouLikeAdventure)},
     {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS,
-     EVENT(NaribweRooms_TalkAboutCooking)},
+     EVENT(NaribweRooms_TalkToInnkeeper)},
     {TRIGGER_TALK, ACTOR_FORTUNE_TABLE, CONDITION_ALWAYS,
      EVENT(NaribweRooms_TalkToFortuneTeller)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
@@ -1156,13 +1159,13 @@ struct Trigger gNaribweRooms_TriggersOnReturn[] = {
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_BODY_PAINT, CONDITION_ALWAYS,
      MSGNO(MsgNaribweInteriorsReadingFortunesInPeoplesItems)},
     {TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS,
-     EVENT(NaribweRooms_RecommendFortuneTellerOnReturn)},
+     EVENT(NaribweRooms_TalkToWeaponMerchantOnReturn)},
     {TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS,
-     EVENT(NaribweRooms_SendToFortuneTellerOnReturn)},
+     EVENT(NaribweRooms_TalkToArmorMerchantOnReturn)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_ADVENTURE, CONDITION_ALWAYS,
      MSGNO(MsgIfIsTraveling)},
     {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS,
-     EVENT(NaribweRooms_TalkAboutTravelers)},
+     EVENT(NaribweRooms_TalkToInnkeeperOnReturn)},
     {TRIGGER_TALK, ACTOR_FORTUNE_TABLE, CONDITION_ALWAYS,
      EVENT(NaribweRooms_TalkToFortuneTeller)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),

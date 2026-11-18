@@ -70,11 +70,16 @@ enum { FACING_NUDGE = 10 };
 #define FACING_NEAREST_CARDINAL(facing)                                        \
   ((u16)(((facing) + DEGtoANG(45)) & ~0x3fff))
 
-enum { SCENE_TABLE_END = -1, CONDITION_ALWAYS = -1 };
+/// In the first column of a scene table, ends the table.
+enum { SCENE_TABLE_END = -1 };
 
-/// A table row's condition: CONDITION_ALWAYS, a flag number that must be clear,
-/// or IF_FLAG_SET of a flag that must be set.
-enum { CONDITION_FLAG_SET = 0x1000 };
+/// A table row's condition: CONDITION_ALWAYS, a flag number that must be
+/// clear, or IF_FLAG_SET of a flag that must be set
+/// (GameFlag_IsConditionActive).
+enum {
+  CONDITION_ALWAYS = -1,
+  CONDITION_FLAG_SET = 0x1000 ///< the flag must be set, not clear
+};
 
 /// A condition that holds while flag is set.
 #define IF_FLAG_SET(flag) ((flag) | CONDITION_FLAG_SET)
@@ -134,8 +139,8 @@ struct SceneEntrance {
 /// how it behaves, where it stands and which way it faces, and how it turns to
 /// talk.
 struct ActorPlacement {
-  s16 sprite;    ///< the actor's sprite; -1 ends the table
-  s16 condition; ///< CONDITION_ALWAYS (-1), or a flag condition
+  s16 sprite;    ///< the actor's sprite; SCENE_TABLE_END ends the table
+  s16 condition; ///< CONDITION_ALWAYS, or a flag condition
   /// A movement type (enum MovementType) or an actor script, for
   /// Actor_SetMovementType.
   s32 behavior;
@@ -199,7 +204,7 @@ struct Trigger {
   /// What the trigger answers: an actor id or a tile code. Item triggers read
   /// it as bits: 15..12 facing | 11 needs facing | 7..0 target
   s16 subject;
-  s16 condition; ///< CONDITION_ALWAYS (-1), or a flag condition
+  s16 condition; ///< CONDITION_ALWAYS, or a flag condition
   u32 value;     ///< a message (FIND_MESSAGE) or an event (EVENT)
 };
 
@@ -251,7 +256,7 @@ struct TriggerView {
 /// in sixteenths of a turn.
 #define TRIGGER_FACING_MASK 0xf000
 /// A step trigger that needs the leader to have pushed against it for more
-/// than 12 frames, or 2 with STEP_TRIGGER_FLAG_QUICK.
+/// than FIELD_PUSH_FRAMES, or 2 frames with STEP_TRIGGER_FLAG_QUICK.
 #define STEP_TRIGGER_FLAG_WALKING 0x200
 /// With STEP_TRIGGER_FLAG_WALKING, 2 frames of pushing are enough.
 #define STEP_TRIGGER_FLAG_QUICK 0x800
@@ -279,8 +284,12 @@ struct TriggerView {
 enum ExitStyle {
   EXIT_STYLE_NORMAL = 0x00, ///< with SE_MAP_EXIT
   EXIT_STYLE_SILENT = 0x10,
-  EXIT_STYLE_STAIRS_UP = 0x20,   ///< with the stairs-up sound and walk
-  EXIT_STYLE_STAIRS_DOWN = 0x30, ///< with the stairs-down sound and walk
+  /// With SE_STAIRS_UP and ANIM_LEADER_LEAVE; the next scene plays
+  /// ANIM_LEADER_ARRIVE (FLAG_ARRIVAL_STAIRS_UP).
+  EXIT_STYLE_STAIRS_UP = 0x20,
+  /// With SE_STAIRS_DOWN and ANIM_LEADER_LEAVE_ALTERNATE; the next scene
+  /// plays ANIM_LEADER_ARRIVE_ALTERNATE (FLAG_ARRIVAL_STAIRS_DOWN).
+  EXIT_STYLE_STAIRS_DOWN = 0x30,
   /// With SE_MAP_EXIT and a hidden layer on the leader's sprite
   /// (Exit_AddHiddenLeaderLayer).
   EXIT_STYLE_HIDDEN_LAYER = 0x50,
@@ -382,12 +391,12 @@ enum PsynergyPhase {
 /// they run.
 #define FIELD_PSYNERGY_FINISHED 999
 
-/// The control word of a Psynergy trigger (TRIGGER_PSYNERGY) in the given
-/// phase, as Scene_FindPsynergyTrigger compares it (bits 31..28 phase
-/// | 3..0 kind).
 /// A Psynergy trigger's phase bits, 31..28.
 #define PSYNERGY_PHASE_SHIFT 28
 #define PSYNERGY_PHASE_MASK (15u << PSYNERGY_PHASE_SHIFT)
+/// The control word of a Psynergy trigger (TRIGGER_PSYNERGY) in the given
+/// phase, as Scene_FindPsynergyTrigger compares it (bits 31..28 phase
+/// | 3..0 kind).
 #define PSYNERGY_TRIGGER(phase)                                                \
   ((u32)(phase) << PSYNERGY_PHASE_SHIFT | TRIGGER_PSYNERGY)
 #define PSYNERGY_TRIGGER_ANY PSYNERGY_TRIGGER(PSYNERGY_PHASE_ANY)

@@ -18,6 +18,14 @@
 #define FONT_FIRST_CODE ' '
 /// In Japanese, the codes after the font's are kanji (gFont_KanjiGlyphs).
 #define KANJI_FIRST_CODE (TEXT_LAST_FONT_CODE + 1)
+/// A main-font glyph's bytes, as struct FontGlyph lays one out: its width, then
+/// its rows, a halfword each; Glyph_DrawArm reads the codes up to
+/// TEXT_LAST_FONT_CODE as MAIN_FONT_GLYPH_BYTES apart in every edition, the
+/// Japanese layout of 12 rows.
+#define MAIN_FONT_GLYPH_BYTES 26
+/// A main-font row's pixels, a bit each in its halfword, the leftmost the top
+/// bit: shifted up by this, the leftmost is the word's sign bit.
+#define GLYPH_ROW_BITS 16
 /// The Japanese small font's rows: a byte each.
 #define SMALL_FONT_ROWS 10
 /// A halfword of four 4-bit pixels, all colour `color`: what
@@ -169,10 +177,11 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
 #endif
       return fontWidth;
     }
-    // Main-font entries begin with their advance width: 26 bytes, the width and
-    // 12 rows of 16 pixels, the leftmost in the top bit.
-    glyphRows = (const u16 *)((const u8 *)gFont_Glyphs +
-                              (character - FONT_FIRST_CODE) * 26);
+    // Main-font entries begin with their advance width, then rows of 16
+    // pixels, the leftmost in the top bit.
+    glyphRows =
+        (const u16 *)((const u8 *)gFont_Glyphs +
+                      (character - FONT_FIRST_CODE) * MAIN_FONT_GLYPH_BYTES);
     glyphWidth = *glyphRows++;
   } else {
 #if (LANGUAGE == LANGUAGE_JAPANESE)
@@ -220,7 +229,7 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
     }
     row = 0;
     bits = glyphRows[0];
-    bits <<= 16;
+    bits <<= GLYPH_ROW_BITS;
     nextGlyphRow = glyphRows + 1;
     if (y < TEXT_CANVAS_PIXEL_HEIGHT) {
       vram = TEXT_CANVAS_VRAM;
@@ -247,7 +256,7 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
         if (nextRow > 11)
           break;
         bits = *nextGlyphRow++;
-        bits <<= 16;
+        bits <<= GLYPH_ROW_BITS;
         if (y + nextRow >= TEXT_CANVAS_PIXEL_HEIGHT)
           break;
       }

@@ -47,18 +47,24 @@ s32 System_GetLanguage(void);
   }
 
 #if TLA_PATCH_2
+// These editions widen the condition list by a tile for Spanish as it runs.
+#define TARGET_CONDITION_LIST_WIDTH_SPANISH 17
 #define TARGET_CONDITION_LIST_WINDOW()                                         \
   {                                                                            \
     s32 anchor = selectedPosition.x / 8;                                       \
     helpColumn = anchor - 7;                                                   \
     if (System_GetLanguage() == CARTRIDGE_LANGUAGE_SPANISH) {                  \
-      if (anchor + 10 > 29)                                                    \
-        helpColumn = 13;                                                       \
-      conditionWindow = Window_Create(helpColumn, helpRow, 17, count + 2, 6);  \
+      if (anchor + TARGET_CONDITION_LIST_WIDTH_SPANISH - 7 >                   \
+          DISPLAY_TILE_WIDTH - 1)                                              \
+        helpColumn = DISPLAY_TILE_WIDTH - TARGET_CONDITION_LIST_WIDTH_SPANISH; \
+      conditionWindow =                                                        \
+          Window_Create(helpColumn, helpRow,                                   \
+                        TARGET_CONDITION_LIST_WIDTH_SPANISH, count + 2, 6);    \
     } else {                                                                   \
-      if (anchor + 9 > 29)                                                     \
-        helpColumn = 14;                                                       \
-      conditionWindow = Window_Create(helpColumn, helpRow, 16, count + 2, 6);  \
+      if (anchor + TARGET_CONDITION_LIST_WIDTH - 7 > DISPLAY_TILE_WIDTH - 1)   \
+        helpColumn = DISPLAY_TILE_WIDTH - TARGET_CONDITION_LIST_WIDTH;         \
+      conditionWindow = Window_Create(                                         \
+          helpColumn, helpRow, TARGET_CONDITION_LIST_WIDTH, count + 2, 6);     \
     }                                                                          \
   }
 #else
@@ -94,8 +100,9 @@ s32 System_GetLanguage(void);
 /// ABILITY_RANGE_ALL every one (the cursor does not move); 0 counts as 1.
 /// `kind` is Battle_ClassifyEntryKind's class, or TARGET_HINT_SET_DJINNI: on a
 /// party member it opens a window of what the action would do (its HP or PP,
-/// the statuses it cures, "Set Djinni"). Returns the target chosen, 0x100 | its
-/// party slot or 0x180 | its enemy slot, or -1 when cancelled.
+/// the statuses it cures, "Set Djinni"). Returns the target chosen,
+/// PLACE_PARTY | its party slot or PLACE_ENEMY | its enemy slot, or -1 when
+/// cancelled.
 s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   u16 candidateIds[8];
   struct SelectionSprite cursorSprites[6];
@@ -657,7 +664,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       for (k = 0; k <= 5 && battle->partyUnits[k] != BATTLE_UNIT_LIST_END;
            k++) {
         if (battle->partyUnits[k] == id) {
-          result = 0x100 | k;
+          result = PLACE_PARTY | k;
           break;
         }
       }
@@ -665,7 +672,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
         for (k = 0; k <= 5 && battle->enemyIds[k] != BATTLE_UNIT_LIST_END;
              k++) {
           if (battle->enemyIds[k] == id) {
-            result = 0x180 | k;
+            result = PLACE_ENEMY | k;
             break;
           }
         }
@@ -712,6 +719,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
 #if TLA_PATCH_2
 #undef TARGET_SET_DJINNI_WIDTH_ITALIAN
 #undef TARGET_SET_DJINNI_WIDTH_SPANISH
+#undef TARGET_CONDITION_LIST_WIDTH_SPANISH
 #endif
 #undef TARGET_CONDITION_LIST_WIDTH
 #undef TARGET_MYSTERY_NAME_COPY

@@ -317,10 +317,17 @@ void *Glyph_AddBlankSprite(struct Window *window, s32 character, s32 x, s32 y) {
 #define PAGE_ARROW_OFFSET_Y (-1)
 #endif
 
+#if (LANGUAGE == LANGUAGE_JAPANESE)
+/// The tiles a voiced mark takes in place of its own over the frame's top edge
+/// and over a divider; a semi-voiced mark takes the next.
+#define MARK_OVER_BORDER_TILE 30
+#define MARK_OVER_DIVIDER_TILE 14
+#endif
+
 /// Puts a character into a window's tilemap as a tile at tile (x, y) of its
-/// interior, as ☀️'s Window_PutGlyph; GLYPH_DRAW_PAGE_ARROW instead shows the
-/// next-page arrow sprite on the interior's last tile. In Japanese, a kana mark
-/// goes in the tile above the character before it.
+/// interior; GLYPH_DRAW_PAGE_ARROW instead shows the next-page arrow sprite on
+/// the interior's last tile. In Japanese, a kana mark goes in the tile above
+/// the character before it.
 void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
   struct WindowWork *base = WINDOW_WORK;
   u16 *tilemap = base->tilemap[0];
@@ -372,7 +379,7 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
       // frame's top edge or a divider, the mark takes another tile.
       u32 line;
 
-      line = ((s16)win->y + y) * 32;
+      line = ((s16)win->y + y) * BG_SCREEN_WIDTH;
       // XXX (no evidence): whether a mark ever lands on a top edge or a
       // divider, where this puts tiles 30 and 31 (in window_tiles_tla_ja.png
       // the HP label's second tile and the PP label) or 14 and 15 (the
@@ -380,10 +387,10 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
       // open a tla-ja window drawn by tiles with a voiced kana on its top line.
       switch (tilemap[line + ((s16)win->x + x)]) {
       case WINDOW_TILE_BORDER_TOP:
-        tile -= 192;
+        tile -= TEXT_MARK_VOICED - MARK_OVER_BORDER_TILE;
         break;
       case WINDOW_TILE_DIVIDER_HORIZONTAL:
-        tile -= 208;
+        tile -= TEXT_MARK_VOICED - MARK_OVER_DIVIDER_TILE;
         break;
       }
     } else {
@@ -654,6 +661,9 @@ void WindowSprite_UpdateAll(void) {
         }
         break;
       case WINDOW_SPRITE_MOTION_SPIN:
+        // animationStep is the angle, three 256ths of a turn a frame, a turn
+        // in about 85 frames, while the sprite circles its place four pixels
+        // out.
         effect.plain.scaleX = Q_8_8(1);
         effect.plain.scaleY = Q_8_8(1);
         output->animationStep += TRIG_TURN * 3 / 256;
@@ -661,10 +671,12 @@ void WindowSprite_UpdateAll(void) {
         sprite->affineIndex = OamMatrix_AllocFromTransform(&effect.plain);
         sprite->affine = 1;
         sprite->x = output->x -
-                    (Trig_Sin(effect.plain.angle + TRIG_TURN * 29 / 32) >> 14) -
+                    FIXEDtoINT_FOUR_TIMES(
+                        Trig_Sin(effect.plain.angle + TRIG_TURN * 29 / 32)) -
                     2;
         sprite->y = output->y -
-                    (Trig_Cos(effect.plain.angle + TRIG_TURN * 13 / 32) >> 14) -
+                    FIXEDtoINT_FOUR_TIMES(
+                        Trig_Cos(effect.plain.angle + TRIG_TURN * 13 / 32)) -
                     2;
         break;
       case WINDOW_SPRITE_MOTION_WOBBLE:
@@ -744,5 +756,9 @@ void WindowSprite_UpdateAll(void) {
 #undef GLYPH_SPRITE_OFFSET_Y
 #undef PAGE_ARROW_OFFSET_X
 #undef PAGE_ARROW_OFFSET_Y
+#if (LANGUAGE == LANGUAGE_JAPANESE)
+#undef MARK_OVER_BORDER_TILE
+#undef MARK_OVER_DIVIDER_TILE
+#endif
 #undef TILEMAP_WIDTH
 #undef TILEMAP_ENTRIES

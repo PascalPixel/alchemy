@@ -17,14 +17,8 @@
 
 void BattleObject_Reset(struct BattleObject *actor, s32 keep);
 
-/// The bit set in every enemy's unit id (FIRST_ENEMY_UNIT and up), and so the
-/// side a unit fights on.
-#define UNIT_ID_ENEMY_BIT FIRST_ENEMY_UNIT
-
-/// The sprite slot a called beast borrows, after the six enemy slots, and
-/// where a battle object's resource keeps its slot, above its sprite.
+/// The sprite slot a called beast borrows, after the six enemy slots.
 #define BEAST_SPRITE_SLOT 7
-#define RESOURCE_SLOT_SHIFT 12
 
 /// The frames a called beast takes to drop in, and to rise away.
 #define BEAST_ARRIVAL_FRAMES 30
@@ -33,10 +27,6 @@ void BattleObject_Reset(struct BattleObject *actor, s32 keep);
 /// Sprite.flags: the sprite keeps the picture it has, no longer drawn again
 /// from its layers, only mirrored as its facing turns.
 #define SPRITE_FLAG_PICTURE_KEPT (1 << 5)
-
-/// The Broken Seal's effect kind for Severe Blow, whose status window drops
-/// its PP row while it plays; no row of gAbilityBattleEffects gives it here.
-#define EFFECT_ID_SEVERE_BLOW 135
 
 /// The beasts called up in battle (ABILITY_WILD_WOLF to ABILITY_CALL_DULLAHAN):
 /// for a call that lands, saves the battle object it borrows and brings in the

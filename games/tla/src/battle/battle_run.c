@@ -19,10 +19,6 @@
 #include "menu/djinn_menu.h"
 #include "sound/sound_driver_symbols.h"
 
-/// Battle_Run's results besides the number of enemies defeated.
-#define BATTLE_OUTCOME_LOST -1
-#define BATTLE_OUTCOME_FLED 999
-
 /// The six enemy units, which Unit_Get reads for unit ids 128 to 133 while the
 /// battle lasts (heap slot HEAP_SLOT_ENEMY_UNITS).
 #define ENEMY_UNITS_SIZE (ENEMY_BATTLE_SIZE * BATTLE_UNIT_SIZE)

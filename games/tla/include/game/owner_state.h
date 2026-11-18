@@ -50,11 +50,6 @@ enum ClassSeries {
 #define UNIT_HP_REGEN_MAX 10000
 #define UNIT_PP_REGEN_MAX 200
 
-/// A full HP or PP gauge (Unit.hpGauge, ppGauge): the gauge is the
-/// current value over the maximum in 2.14 fixed point.
-#define UNIT_GAUGE_SHIFT 14
-#define UNIT_GAUGE_FULL (1 << UNIT_GAUGE_SHIFT)
-
 /// How many actions a class can teach (ClassDefinition.abilities).
 #define CLASS_ABILITY_SLOTS 16
 

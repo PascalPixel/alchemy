@@ -59,8 +59,6 @@ s32 Enemy_HasSpriteRoom(s32 classId) {
 
 /// Each enemy sprite slot owns 16 KB of the sprite buffers, gActorSpriteSlots.
 #define ENEMY_SPRITE_SLOT_SIZE 16384
-/// Where a battle object's resource keeps its sprite slot, above its sprite.
-#define RESOURCE_SLOT_SHIFT 12
 
 /// Loads an enemy's battle sprite into the first free enemy sprite slots: one
 /// slot, or two neighbouring ones for a large enemy. A few sprites load a

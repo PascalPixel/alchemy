@@ -54,9 +54,6 @@ enum WindowTransitionMode {
   WINDOW_TRANSITION_LEADER_LOW = 77
 };
 
-/// The exit request that leaves for the scene and entrance already chosen.
-#define EXIT_KEEP_DESTINATION 999
-
 /// A rule choosing a scene's field music, ended by id -1: a scene or an area
 /// (byScene), an entrance (-1 for any), a flag that must be set (-1 for none)
 /// and the song.

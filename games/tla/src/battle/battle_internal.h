@@ -95,9 +95,6 @@
 /// passing the letter to BattleUnit_SetFar.
 #define NAME_LETTER_FIRST_TOO 0x8000
 #define NAME_LETTER_MASK 0x7fff
-/// The letters the Japanese edition names enemies with, A to Z; elsewhere they
-/// are nine digits (battle_formation.c's NAME_LETTER_COUNT).
-#define NAME_LETTER_ALPHABET 26
 
 /// A list place code's side bit, set for the enemies' list, and its place in
 /// the list (Battle_GetUnitAtPlace): PLACE_ENEMY is PLACE_PARTY with the side
@@ -232,20 +229,16 @@ struct BattleLinkedActionState {
 /// The keys that take the player on past a message: A, B, L and R.
 #define KEY_ADVANCE (KEY_A | KEY_B | KEYS_SHOULDERS)
 
-/// The battle camera's distance from its focus in the default view.
-#define BATTLE_CAMERA_DISTANCE toFIXED(510)
-
-/// The gravity a battle unit falls under, about 0.67 pixels a frame per frame
-/// in 16.16: BattleMotion_ReturnToSpot sets it whenever a unit goes back to its
-/// spot.
-#define BATTLE_UNIT_GRAVITY (toFIXED(67) / 100)
-
 /// Inventory_GetEquippedItemFar's slot for the weapon.
 #define EQUIP_WEAPON 1
 
 /// A group's sprite word (ACTOR_SPRITE_GROUP) points to a table of four
 /// sprites.
 #define ACTOR_SPRITE_GROUP_SIZE 4
+
+/// Where a battle object's resource keeps its sprite slot, above its sprite:
+/// (slot << RESOURCE_SLOT_SHIFT) | sprite.
+#define RESOURCE_SLOT_SHIFT 12
 
 // What BattleActionRun_Build returns besides 0, which stages the action.
 #define ACTION_REPORTED -1 ///< the action failed and its message is shown

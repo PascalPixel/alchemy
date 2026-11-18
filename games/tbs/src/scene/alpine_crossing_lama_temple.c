@@ -554,6 +554,9 @@ static void LamaTemple_TalkToHealer(void) {
   Event_End();
 }
 
+/// The row Feizhi runs along, from (536, 216) west to (408, 216).
+#define FEIZHI_ROW 13
+
 /// Feizhi runs up behind the party and goes ahead to look for Hsu.
 static void AlpineCrossing_FeizhiArrives(void) {
   struct Actor *leader;
@@ -576,7 +579,7 @@ static void AlpineCrossing_FeizhiArrives(void) {
     leader->update = (void (*)(struct Actor *))AlpineCrossing_LeaderFaceFeizhi;
 #endif
     leader = Actor_Get(ACTOR_PARTY_LEADER);
-    if (FIELD_CELL(leader->z.fixed) == 13) {
+    if (FIELD_CELL(leader->z.fixed) == FEIZHI_ROW) {
       Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 440, 200);
     }
     Actor_SetSpeed(ACTOR_FEIZHI, 2);

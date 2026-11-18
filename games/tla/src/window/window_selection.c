@@ -652,8 +652,6 @@ SelectionMenu_GetCursorNode(struct SelectionMenuWork *screen) {
 
 #define SELECTION_FIXED 999
 
-#define NODE_KIND_YES_NO 6
-
 /// The row's last place, the fifth: the cursor stepping onto it with more
 /// entries to come scrolls the row instead.
 #define SELECTION_LAST_PLACE 4
@@ -709,7 +707,7 @@ u32 SelectionMenu_RunWithSounds(u32 mode) {
 
       if (gInput.pressed & KEY_A) {
         result = screen->top + screen->cursorIndex;
-        if (screen->head->kind == NODE_KIND_YES_NO) {
+        if (screen->head->kind == ICON_KIND_YES_NO) {
           if (result == 0)
             Sound_PlayFar(SE_MENU_CONFIRM);
           else
@@ -1524,6 +1522,5 @@ u32 Menu_RunSelectionForValue(u32 value) {
 #undef SELECTION_FIXED
 #undef NODE_STATUS_SCROLLING
 #undef NODE_STATUS_SHOWN
-#undef NODE_KIND_YES_NO
 #undef SELECTION_LAST_PLACE
 #undef ARROW_SCROLL_FRAMES

@@ -214,9 +214,6 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   return 0;
 }
 
-/// PsynergyEntry.encodedAction's top bit: the action comes from the class.
-#define PSYNERGY_FROM_CLASS_SHIFT 15
-
 /// Hands out the spoils after a victory: experience to each party member still
 /// standing, with every level gained, then the coins, then the items best
 /// first.

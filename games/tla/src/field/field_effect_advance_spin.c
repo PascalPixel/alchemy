@@ -7,11 +7,6 @@
 #include "system/field_effect.h"
 #include "field/event.h"
 
-/// A drifting effect loses a FIELD_EFFECT_DRAG_X-th of its x speed and a
-/// FIELD_EFFECT_DRAG_Z-th of its z speed each frame.
-#define FIELD_EFFECT_DRAG_X 18
-#define FIELD_EFFECT_DRAG_Z 16
-
 /// FieldEffect_AdvanceMotion with a fixed spin: moves the effect by its
 /// velocity, which loses drag, grows it at its rates and turns its sprite a
 /// sixteenth of a turn each frame. Nothing calls it.
@@ -37,6 +32,3 @@ UNUSED void FieldEffect_AdvanceMotionAndSpin(union FieldObject *object) {
   effect->scaleY += effect->scaleRateY;
   effect->sprite->rotation += TRIG_TURN / 16;
 }
-
-#undef FIELD_EFFECT_DRAG_X
-#undef FIELD_EFFECT_DRAG_Z

@@ -15,14 +15,6 @@
 #include "fixed_math.h"
 #include "sprite_ids.h"
 
-/// The sprite an effect takes unless EFFECT_USE_TYPE gives another.
-#define EFFECT_DEFAULT_TYPE SPRITE_DUST_CLOUD
-/// The spawn flags that pick an option, above the script number.
-#define EFFECT_OPTION_MASK 0xffff0000
-/// Where a duration script holds its repeat count, the frames
-/// EFFECT_SCALE_TO_TARGET grows over.
-#define EFFECT_SCRIPT_REPEAT_COUNT 3
-
 extern struct Actor *EFFECT_CREATE(s32 type, s32 x, s32 y, s32 z);
 extern const s32 *EFFECT_SCRIPTS[];
 struct Actor *Actor_GetById(u32 objectId);
@@ -113,7 +105,3 @@ void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_UPDATE) != 0)
     effect->update = options->update;
 }
-
-#undef EFFECT_DEFAULT_TYPE
-#undef EFFECT_OPTION_MASK
-#undef EFFECT_SCRIPT_REPEAT_COUNT

@@ -193,6 +193,8 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 /// then NEREID_DROPS_A_FRAME a frame while they rise.
 #define NEREID_BURST_DROPS 256
 #define NEREID_DROPS_A_FRAME 16
+/// The sprites that draw Megaera, in her summon and in her formation.
+#define MEGAERA_OBJECTS 11
 
 /// The canvas: 128x128 pixels, one byte each, in its heap slot and in VRAM at
 /// BG_CHAR_BLOCK(1) (CANVAS_BYTES).

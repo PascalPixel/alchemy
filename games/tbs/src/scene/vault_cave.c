@@ -636,14 +636,15 @@ static void VaultCave_RunRumble(void) {
   fadeLevel = 6;
   lowFadeLevel = 6;
   frame = 0;
-  upperFadeBits = fadeLevel << 10;
-  // XXX: the blend is built as a colour is, lowFadeLevel in bits 0-4,
-  // fadeLevel in 5-9 and its first value in 10-14, so REG_BLDALPHA takes
-  // lowFadeLevel as EVA and 24, above full, as EVB; a recording of the
-  // rumble's fade would show whether the screen fades as the scene means.
+  // The pool's blend is built as a colour is, lowFadeLevel, fadeLevel and its
+  // first value in RGB's three fields: REG_BLDALPHA takes lowFadeLevel as the
+  // water's weight and 24, above full, as the floor's, so the water thins away
+  // in four steps over the drained floor below it.
+  upperFadeBits = fadeLevel << BLUE_SHIFT;
   do {
-    IoWriteQueue_Store16((u32)&REG_BLDALPHA,
-                         upperFadeBits | (fadeLevel << 5) | lowFadeLevel);
+    IoWriteQueue_Store16((u32)&REG_BLDALPHA, upperFadeBits |
+                                                 (fadeLevel << GREEN_SHIFT) |
+                                                 lowFadeLevel);
     Event_Wait(1);
     if (frame % 20 == 0) {
       lowFadeLevel--;

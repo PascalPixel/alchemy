@@ -49,10 +49,10 @@
 ///   the room at Tolbi Docks (COTTAGE_ROOMS_E_FROM_TOLBI_DOCKS), whose area
 ///   name is Tolbi Docks.
 ///
-///   In the Kalay room a woman sells the boarding ticket, 600 coins for the
-///   four of them (FLAG_KALAY_DOCKS_TICKET_BOUGHT), until the ship has sailed.
-///   Then she says it will not leave again for the monsters at sea. In the
-///   Tolbi room no tickets are sold at all, the sea being too dangerous.
+///   In the Kalay room a woman sells the boarding ticket, TICKET_PRICE coins
+///   for the four of them (FLAG_KALAY_DOCKS_TICKET_BOUGHT), until the ship has
+///   sailed. Then she says it will not leave again for the monsters at sea. In
+///   the Tolbi room no tickets are sold at all, the sea being too dangerous.
 ///
 /// - Tolbi Docks (TolbiDocks) is where the ship lands after the crossing.
 ///   Stepping off (step trigger 20, FLAG_TOLBI_DOCKS_ARRIVALS_GREETED) the
@@ -408,7 +408,7 @@ static void KalayTolbiDocks_RemindBoardShip(void) {
 
 /// At Kalay Docks, the ticket taker at the ship's plank asks for the party's
 /// tickets when it faces him from the east.
-static void KalayTolbiDocks_TalkToTicketTaker(void) {
+static void KalayTolbiDocks_TalkToManCheckingTickets(void) {
   s32 ticketHolder;
   s32 ticketSlot;
   s16 cardinalFacing;
@@ -495,15 +495,18 @@ static void KalayTolbiDocks_TalkToDockWorker(void) {
   Event_End();
 }
 
+/// The boarding ticket's price in coins, for the four of them.
+#define TICKET_PRICE 600
+
 /// In the room at Kalay Docks, until the ship has crossed, the ticket seller
-/// offers tickets for the four of them at 600 coins, with the party's coins
+/// offers tickets for the four of them at TICKET_PRICE, with the party's coins
 /// shown beside the question.
-static void KalayTolbiDocks_TalkToTicketSeller(void) {
+static void KalayTolbiDocks_TalkToWomanSellingTickets(void) {
   struct Window *coinsWindow;
   struct MainRoutineWork *state;
-  s32 ticketPrice = 600;
-
+  s32 ticketPrice = TICKET_PRICE;
   s32 coinLabel;
+
   Event_Start();
   if (Event_GetFlag(FLAG_KALAY_DOCKS_TICKET_BOUGHT) != 0) {
     Event_SetMessageId(MsgKalayHandInTicketPlank);
@@ -554,7 +557,6 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
         gFieldWork->message += 3;
         // "All right then, please take your ticket."
         Event_ShowMessage(ACTOR_SELLING_TICKETS, 0);
-        // Complete both inventory and coin changes only after confirmation.
         Party_GiveItem(ITEM_BOAT_TICKET, 0);
         Event_SetFlag(FLAG_KALAY_DOCKS_TICKET_BOUGHT);
         Party_AdjustCoins(-ticketPrice);
@@ -859,7 +861,8 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Event_Wait(20);
   Actor_Get(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI)->paused = 0;
-  Actor_SetMovementTypeById(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 2);
+  Actor_SetMovementTypeById(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI,
+                            MOVEMENT_TYPE_WANDER);
   actor = Actor_Get(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI);
   actor->timer = actor->x.fixed / toFIXED(1);
   actor->userValue = actor->z.fixed / toFIXED(1);
@@ -868,7 +871,7 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
 
 /// At Tolbi Docks after Colosso, the first time the party comes to the pier, it
 /// watches the tour guide tell an angry young man his ticket was refunded.
-static void KalayTolbiDocks_PassengersConfrontTourGuide(void) {
+static void KalayTolbiDocks_PassengersBlameTourGuide(void) {
   struct Actor *actor;
 
   GameFlag_Set(FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED);
@@ -1317,8 +1320,8 @@ struct Trigger gKalayTolbiDocks_KalayTriggers[] = {
     { TRIGGER_TALK, ACTOR_WOMAN_WITH_A_MESSAGE, CONDITION_ALWAYS, EVENT(KalayTolbiDocks_TalkToWomanWithAMessage) },
     { TRIGGER_TALK, ACTOR_CHECKING_TICKETS, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayTolbiDocksTodayThereAreSupposedToBe) },
     { TRIGGER_TALK, ACTOR_DOCK_WORKER, FLAG_KALAY_COLOSSO_TOUR_LEFT, MSGNO(MsgKalayTolbiDocksTheShipWillBeOpenUntil) },
-    { TALK_TRIGGER_FACING(FACING_EAST), ACTOR_CHECKING_TICKETS, FLAG_KALAY_DOCKS_WENT_ASHORE, EVENT(KalayTolbiDocks_TalkToTicketTaker) },
-    { TALK_TRIGGER_FACING(FACING_WEST), ACTOR_CHECKING_TICKETS, FLAG_KALAY_DOCKS_WENT_ASHORE, EVENT(KalayTolbiDocks_TalkToTicketTaker) },
+    { TALK_TRIGGER_FACING(FACING_EAST), ACTOR_CHECKING_TICKETS, FLAG_KALAY_DOCKS_WENT_ASHORE, EVENT(KalayTolbiDocks_TalkToManCheckingTickets) },
+    { TALK_TRIGGER_FACING(FACING_WEST), ACTOR_CHECKING_TICKETS, FLAG_KALAY_DOCKS_WENT_ASHORE, EVENT(KalayTolbiDocks_TalkToManCheckingTickets) },
 #if !TBS_PATCH_3
     { TRIGGER_TALK, ACTOR_CHECKING_TICKETS, CONDITION_ALWAYS, EVENT(KalayTolbiDocks_RemindBoardShip) },
 #else
@@ -1379,7 +1382,7 @@ struct Trigger gKalayTolbiDocks_TolbiTriggersStranded[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, TOLBI_DOCKS_TO_WORLD_MAP },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, TOLBI_DOCKS_TO_TOLBI_SHIP_DECK },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(KalayTolbiDocks_OpenDoorAndLeave) },
-    { TRIGGER_STEP, 50, FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED, EVENT(KalayTolbiDocks_PassengersConfrontTourGuide) },
+    { TRIGGER_STEP, 50, FLAG_TOLBI_DOCKS_TOUR_GROUP_BLAMED, EVENT(KalayTolbiDocks_PassengersBlameTourGuide) },
     { TRIGGER_TALK, ACTOR_MAN_HEARING_OF_THE_SCARY_TRIP, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksThereAreManyHereWhoWant) },
     { TRIGGER_TALK, ACTOR_MAN_DONE_SAILING, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksHangingAroundHereLikeThisAnd) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_HEARING_OF_THE_SCARY_TRIP, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksIfBothTheCaptainAndKaja) },
@@ -1406,7 +1409,7 @@ struct Trigger gKalayTolbiDocks_TolbiTriggersStranded[] = {
 struct Trigger gKalayTolbiDocks_RoomTriggers[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, COTTAGE_ROOMS_E_TO_KALAY_DOCKS },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, COTTAGE_ROOMS_E_TO_TOLBI_DOCKS },
-    { TRIGGER_TALK, ACTOR_SELLING_TICKETS, CONDITION_ALWAYS, EVENT(KalayTolbiDocks_TalkToTicketSeller) },
+    { TRIGGER_TALK, ACTOR_SELLING_TICKETS, CONDITION_ALWAYS, EVENT(KalayTolbiDocks_TalkToWomanSellingTickets) },
     { TRIGGER_TALK, ACTOR_OLD_MAN_AWAITING_THE_REPLACEMENT_SHIP, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksHmmmThatsStrangeIsntTheReplacement) },
     { TRIGGER_TALK, ACTOR_OLD_WOMAN_EXCITED_FOR_TOLBI, CONDITION_ALWAYS, MSGNO(MsgKalayTolbiDocksOnceWeveCrossedTheKaragolWell) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SELLING_TICKETS, FLAG_KALAY_DOCKS_TICKET_BOUGHT, MSGNO(MsgKalayTolbiDocksIFeelSortOfBadThat) },

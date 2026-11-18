@@ -42,9 +42,10 @@ s32 OamMatrix_AllocFromTransform(struct AffineTransform *source) {
   matrix = &gOamMatrices[index];
   coefficient = matrix->coefficients;
   if ((xScale == yScale || -xScale == yScale) && angle == 0) {
-    // Unrotated and evenly scaled (or mirrored): only the diagonal is set.
+    // Unrotated and evenly scaled (or mirrored): pa and pd are the scale's
+    // reciprocals (FIXED_ONE / scale, the 8.8 inverse of an 8.8 scale), pb and
+    // pc 0, two halfwords to a row.
     s32 reciprocal;
-    // FIXED_ONE / scale is the 8.8 inverse of an 8.8 scale.
     s32 xReciprocal;
 
     reciprocal = Iwram_SignedDivide(FIXED_ONE, yScale);
@@ -56,7 +57,7 @@ s32 OamMatrix_AllocFromTransform(struct AffineTransform *source) {
     matrix->rows[1] = (u32)reciprocal << 16;
   } else {
     // The inverse of rotate-then-scale: a 16.16 sine over an 8.8 scale is
-    // an 8.8 coefficient
+    // an 8.8 coefficient.
     FIXED sine;
     FIXED cosine;
 

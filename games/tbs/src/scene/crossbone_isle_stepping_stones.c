@@ -31,14 +31,14 @@
 ///
 /// - SceneId_CrossboneIsleStackedPillars, off the seventh floor, a cave of
 ///   cliffs and ladders. It has four pillars that Move and Carry shift, a
-///   ladder, and pillars to jump across. The four pillars settle and redraw
-///   their footprints after every push
+///   ladder, and pillars to jump across. The four pillars settle after every
+///   push, and the cells they stand on follow them
 ///   (CrossboneIsleSteppingStones_MovePillar).
 ///
 /// - SceneId_CrossboneIsleDragonStatue, off the eighth floor, by a dragon
 ///   statue: three puddles that Frost freezes into pillars of ice.
 ///
-///   Frost on the third makes the pillar in it rise and thaws a frozen second
+///   Frost on the third makes the pillar in it rise and melts a frozen second
 ///   puddle. The third freezes only if the leader was not standing on it.
 ///
 ///   A boulder moved with Move sinks into place at SINKING_BOULDER_COLUMN.
@@ -80,7 +80,7 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-extern s32 gCrossboneIsleSteppingStones_ActionTable[];
+extern s32 gCrossboneIsleSteppingStones_IceShineScript[];
 extern u16 gCrossboneIsleSteppingStones_SwitchCloseSteps[];
 extern u16 gCrossboneIsleSteppingStones_SwitchOpenSteps[];
 extern u16 gCrossboneIsleSteppingStones_FloodgateCloseSteps[];
@@ -248,9 +248,9 @@ CrossboneIsleSteppingStones_StopAtGroundOrHeight(struct Actor *actor,
   actor->targetY = ACTOR_NO_TARGET;
 }
 
-/// Finds the actor's footprint dimensions, grid position, and map-layer
-/// origin.
-static s32 CrossboneIsleSteppingStones_QueryFootprint(
+/// Finds the cells the actor covers: their width and depth, the top-left one,
+/// and the cell where the map grid's layer 1 starts.
+static s32 CrossboneIsleSteppingStones_QueryCoveredCells(
     s32 id, u32 *width, u32 *depth, struct PushedActorProbe *probe,
     s32 *layerOriginX, s32 *layerOriginZ) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
@@ -292,7 +292,7 @@ static s32 CrossboneIsleSteppingStones_QueryFootprint(
     farExtent = -farExtent;
   }
   *width = (coordinate + farExtent) >> 4;
-  // Move from the actor's center to the footprint's top-left cell.
+  // Move from the actor's center to the top-left cell it covers.
   probe->position.x +=
       INTtoFIXED(gPushedActor_FootprintBounds[probe->footprintIndex * 4]);
   {
@@ -310,17 +310,17 @@ static s32 CrossboneIsleSteppingStones_QueryFootprint(
   return 1;
 }
 
-/// Draws a log's footprint where it floats on CrossboneIsleFloodgate's raised
-/// water, lying across or along the room as the log does, and puts its
-/// actor under the leader.
-static s32 CrossboneIsleSteppingStones_DrawRaisedFootprint(s32 actorId) {
+/// Floats one of CrossboneIsleFloodgate's logs on the raised water: it bobs
+/// under the leader's feet, and its cells are redrawn as a floating log lying
+/// across or along the room as it does.
+static s32 CrossboneIsleSteppingStones_FloatLog(s32 actorId) {
   struct Actor *actor = Actor_Get(actorId);
   u32 width, depth;
   s32 layerOriginX, layerOriginZ;
   struct PushedActorProbe probe;
   s32 cellX, cellZ;
 
-  if (CrossboneIsleSteppingStones_QueryFootprint(
+  if (CrossboneIsleSteppingStones_QueryCoveredCells(
           actorId, &width, &depth, &probe, &layerOriginX, &layerOriginZ) == 0) {
     return 0;
   }
@@ -329,7 +329,7 @@ static s32 CrossboneIsleSteppingStones_DrawRaisedFootprint(s32 actorId) {
   cellZ = probe.position.z;
   MapGrid_CopyCellAttributes(2, 2, width, depth, cellX, cellZ);
 
-  Actor_SelectAnimation(actor, 4);
+  Actor_SelectAnimation(actor, LOG_ANIMATION_FLOAT);
   actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
 
   if (width > depth) {
@@ -343,26 +343,27 @@ static s32 CrossboneIsleSteppingStones_DrawRaisedFootprint(s32 actorId) {
   return 1;
 }
 
-/// Redraws CrossboneIsleFloodgate's seven logs floating on the raised water.
-static inline void CrossboneIsleSteppingStones_DrawFloatingLogs(void) {
-  CrossboneIsleSteppingStones_DrawRaisedFootprint(ACTOR_FIRST_LOG + 1);
-  CrossboneIsleSteppingStones_DrawRaisedFootprint(ACTOR_FIRST_LOG + 2);
-  CrossboneIsleSteppingStones_DrawRaisedFootprint(ACTOR_FIRST_LOG + 3);
-  CrossboneIsleSteppingStones_DrawRaisedFootprint(ACTOR_FIRST_LOG + 4);
-  CrossboneIsleSteppingStones_DrawRaisedFootprint(ACTOR_FIRST_LOG + 5);
-  CrossboneIsleSteppingStones_DrawRaisedFootprint(ACTOR_FIRST_LOG + 6);
-  CrossboneIsleSteppingStones_DrawRaisedFootprint(ACTOR_FIRST_LOG + 7);
+/// Floats CrossboneIsleFloodgate's seven logs on the raised water.
+static inline void CrossboneIsleSteppingStones_FloatLogs(void) {
+  CrossboneIsleSteppingStones_FloatLog(ACTOR_FIRST_LOG + 1);
+  CrossboneIsleSteppingStones_FloatLog(ACTOR_FIRST_LOG + 2);
+  CrossboneIsleSteppingStones_FloatLog(ACTOR_FIRST_LOG + 3);
+  CrossboneIsleSteppingStones_FloatLog(ACTOR_FIRST_LOG + 4);
+  CrossboneIsleSteppingStones_FloatLog(ACTOR_FIRST_LOG + 5);
+  CrossboneIsleSteppingStones_FloatLog(ACTOR_FIRST_LOG + 6);
+  CrossboneIsleSteppingStones_FloatLog(ACTOR_FIRST_LOG + 7);
 }
 
-/// Restores the ground cell pictures and cell behaviors under the
-/// actor's footprint.
-static s32 CrossboneIsleSteppingStones_RestoreGroundFootprint(s32 actorId) {
+/// Strands one of CrossboneIsleFloodgate's logs on the floor as the water
+/// drains: the cells under it are restored from the map and walled off, and it
+/// lies still.
+static s32 CrossboneIsleSteppingStones_StrandLog(s32 actorId) {
   struct Actor *actor = Actor_Get(actorId);
   u32 width, depth;
   s32 layerOriginX, layerOriginZ;
   struct PushedActorProbe probe;
 
-  if (CrossboneIsleSteppingStones_QueryFootprint(
+  if (CrossboneIsleSteppingStones_QueryCoveredCells(
           actorId, &width, &depth, &probe, &layerOriginX, &layerOriginZ) == 0) {
     return 0;
   }
@@ -487,8 +488,9 @@ static s32 CrossboneIsleSteppingStones_LowerActorToLedge(s32 id, s32 far) {
   return found;
 }
 
-/// Shrinks the pillar and lowers its height for up to thirty-two frames.
-static void CrossboneIsleSteppingStones_ShrinkPillar(s32 index) {
+/// Sinks the pillar into the floor, a tenth of its height and 0.8 pixels a
+/// frame, until a tenth of it is left (at most 32 frames).
+static void CrossboneIsleSteppingStones_SinkPillar(s32 index) {
   struct Actor *actor = Actor_Get(index);
   u32 elapsedFrames;
 
@@ -572,12 +574,11 @@ static s32 CrossboneIsleSteppingStones_TryJumpAcrossPillar(void) {
     destination.z = (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
     Vector_AddPolarOffset(toFIXED(32), jumpDirection, &destination);
 #else
-    // Two steps on: the step's X half read in place as 16.16 pixels, and its
-    // Z half shifted up into the integer part, the X half falling off.
+    // Two steps on.
     step = gPushedActor_DirectionSteps[jumpDirection];
-    destination.x = leader->x.fixed + ((step & 0xffff0000) * 2);
+    destination.x = leader->x.fixed + (DIRECTION_STEP_X_FIXED(step) * 2);
     destination.y = leader->y.fixed;
-    step = INTtoFIXED(step) * 2;
+    step = DIRECTION_STEP_Z_FIXED(step) * 2;
     destination.z = leader->z.fixed + step;
 #endif
     if (PushedActor_FindAtTile(&destination, leader) == 0 &&
@@ -709,7 +710,7 @@ struct PillarPlacement {
 };
 
 /// Where one of CrossboneIsleStackedPillars's pillars stands, the ground cell
-/// saved under it and its footprint flag.
+/// saved under it and its flag of standing under another pillar.
 struct PillarSlot {
   s32 x; ///< 16-pixel map cells
   s32 y; ///< 16-pixel map cells
@@ -721,11 +722,14 @@ struct PillarSlot {
 static struct PillarSlot sPillarSlots[4] ALIGNED(16);
 static struct FieldPosition sProbePosition;
 static struct BgScroll sOtherWaterScroll[3];
+/// The percent chance that a line of the top WATER_DISSOLVE_LINES shows the
+/// other water level: 0 when the water starts to change, then a point higher
+/// each frame until every line shows it.
 static s32 sOtherWaterChance;
 
 /// HBlank handler while the water changes level: the next line, if one of the
-/// top WATER_DISSOLVE_LINES, shows the other water level by chance (out of
-/// 100), else the backgrounds' own scroll.
+/// top WATER_DISSOLVE_LINES, shows the other water level with
+/// sOtherWaterChance, else the backgrounds' own scroll.
 static void CrossboneIsleSteppingStones_JitterBackgroundScroll(void) {
   u32 line = REG_VCOUNT;
   u32 *src = &((u32 *)gBgScroll)[1];
@@ -760,8 +764,9 @@ static void CrossboneIsleSteppingStones_PrepareWaterScroll(void) {
   other[2].y += WATER_PANEL_SCROLL_Y;
 }
 
-/// Reveals the alternate water tiles through a gradually randomized scroll
-/// transition.
+/// CrossboneIsleFloodgate's water changes level: over 100 frames, more and
+/// more of the top lines show the stream at its other level, then the map
+/// takes it.
 static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
   s32 waterRaised;
 
@@ -775,7 +780,6 @@ static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
     MapGrid_DrawCellPanel(10, 83, 16, 5, 1, 10, 31);
     MapGrid_DrawCellPanel(42, 83, 16, 5, 2, 10, 31);
   }
-  // The chance a line shows the other level climbs to 100 over 100 frames.
   sOtherWaterChance = 0;
   Task_AddFrame(CrossboneIsleSteppingStones_PrepareWaterScroll,
                 TASK_PASS_FRAME);
@@ -787,7 +791,7 @@ static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
   do {
     wait(1);
   } while (++sOtherWaterChance <= 100);
-  // Commit the water tiles, then remove the scroll task and HBlank handler.
+  // The map takes the new level for good.
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED) == 0) {
     MapGrid_CopyCellsTo(0, 32, 32, 0, 32, 32);
@@ -830,7 +834,7 @@ static void CrossboneIsleSteppingStones_FlipWaterSwitch(void) {
                          28);
     MapGrid_CopyCellsTo(65, 40, 16, 27, 2, 4);
     CrossboneIsleSteppingStones_AnimateWaterLevel();
-    CrossboneIsleSteppingStones_DrawFloatingLogs();
+    CrossboneIsleSteppingStones_FloatLogs();
     MapGrid_CopyCellAttributes(24, 3, 1, 1, 24, 8);
     GameFlag_Set(FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED);
   } else {
@@ -846,13 +850,13 @@ static void CrossboneIsleSteppingStones_FlipWaterSwitch(void) {
     MapGrid_AnimateCells(gCrossboneIsleSteppingStones_FloodgateOpenSteps, 80,
                          24);
     CrossboneIsleSteppingStones_AnimateWaterLevel();
-    CrossboneIsleSteppingStones_RestoreGroundFootprint(ACTOR_FIRST_LOG + 1);
-    CrossboneIsleSteppingStones_RestoreGroundFootprint(ACTOR_FIRST_LOG + 2);
-    CrossboneIsleSteppingStones_RestoreGroundFootprint(ACTOR_FIRST_LOG + 3);
-    CrossboneIsleSteppingStones_RestoreGroundFootprint(ACTOR_FIRST_LOG + 4);
-    CrossboneIsleSteppingStones_RestoreGroundFootprint(ACTOR_FIRST_LOG + 5);
-    CrossboneIsleSteppingStones_RestoreGroundFootprint(ACTOR_FIRST_LOG + 6);
-    CrossboneIsleSteppingStones_RestoreGroundFootprint(ACTOR_FIRST_LOG + 7);
+    CrossboneIsleSteppingStones_StrandLog(ACTOR_FIRST_LOG + 1);
+    CrossboneIsleSteppingStones_StrandLog(ACTOR_FIRST_LOG + 2);
+    CrossboneIsleSteppingStones_StrandLog(ACTOR_FIRST_LOG + 3);
+    CrossboneIsleSteppingStones_StrandLog(ACTOR_FIRST_LOG + 4);
+    CrossboneIsleSteppingStones_StrandLog(ACTOR_FIRST_LOG + 5);
+    CrossboneIsleSteppingStones_StrandLog(ACTOR_FIRST_LOG + 6);
+    CrossboneIsleSteppingStones_StrandLog(ACTOR_FIRST_LOG + 7);
     MapGrid_CopyCellAttributes(24, 4, 1, 1, 24, 8);
     GameFlag_Clear(FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED);
   }
@@ -1011,7 +1015,8 @@ static void CrossboneIsleSteppingStones_SortPillarActors(void) {
 }
 
 /// Move or Carry on one of CrossboneIsleStackedPillars's pillars, and after
-/// each push there: the pillars settle, and their footprints follow them.
+/// each push there: the pillars settle, and the cells they stand on follow
+/// them.
 static void CrossboneIsleSteppingStones_MovePillar(void) {
   u32 id;
   struct Actor *actor;
@@ -1053,7 +1058,7 @@ static void CrossboneIsleSteppingStones_MovePillar(void) {
         Sound_Play(SE_STONE_GRIND);
         actor->y.fixed = 0;
         actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-        CrossboneIsleSteppingStones_ShrinkPillar(id);
+        CrossboneIsleSteppingStones_SinkPillar(id);
         actor->x.fixed = 0;
         actor->y.fixed = 0;
         actor->z.fixed = 0;
@@ -1166,8 +1171,9 @@ CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority(struct Actor *actor) {
   RETURN_UNREAD(0);
 }
 
-/// Remembers the frozen puddle, installs its priority update routine, and
-/// starts its flicker script.
+/// Frost has frozen a puddle in CrossboneIsleDragonStatue into a pillar of ice:
+/// its flag is set, its cell takes a pillar's attributes and it shines
+/// (gCrossboneIsleSteppingStones_IceShineScript).
 static void CrossboneIsleSteppingStones_FreezePuddle(s32 id) {
   struct Actor *actor;
 
@@ -1183,7 +1189,7 @@ static void CrossboneIsleSteppingStones_FreezePuddle(s32 id) {
                              FIELD_CELL(actor->z.fixed));
   GameFlag_Set(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN + id -
                ACTOR_FIRST_PUDDLE);
-  Actor_SetScript(id, gCrossboneIsleSteppingStones_ActionTable);
+  Actor_SetScript(id, gCrossboneIsleSteppingStones_IceShineScript);
   Event_End();
 }
 
@@ -1271,15 +1277,16 @@ static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
       &options);
 }
 
-/// Emits a randomized particle from the thawing puddle every eight frames.
+/// Every eight frames, a white particle rises from somewhere on the melting
+/// puddle.
 static UNREAD_RESULT
-CrossboneIsleSteppingStones_SpawnThawParticle(struct Actor *actor) {
+CrossboneIsleSteppingStones_SpawnMeltParticle(struct Actor *actor) {
   struct EffectOptions options;
   u32 phase = gFrameCount & 7;
   FIXED x;
   FIXED y;
   FIXED z;
-  s32 scale;
+  s32 velocityY;
 
   if (phase != 0)
     RETURN_UNREAD(0);
@@ -1291,9 +1298,9 @@ CrossboneIsleSteppingStones_SpawnThawParticle(struct Actor *actor) {
   x = actor->x.fixed + INTtoFIXED(Random_Below(17) - 8);
   y = actor->y.fixed + INTtoFIXED(Random_Below(17));
   z = actor->z.fixed + INTtoFIXED(Random_Below(17) - 8);
-  scale = Math_Divide(INTtoFIXED(Random_Below(5)) + toFIXED(3), 10);
+  velocityY = Math_Divide(INTtoFIXED(Random_Below(5)) + toFIXED(3), 10);
 
-  FieldEffect_Spawn(x, y, z, 0, scale, phase,
+  FieldEffect_Spawn(x, y, z, 0, velocityY, phase,
                     EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE |
                         EFFECT_SCRIPT_MEDIUM,
                     &options);
@@ -1315,7 +1322,7 @@ static void CrossboneIsleSteppingStones_FreezeThirdPuddle(void) {
     Event_Wait(20);
     MapGrid_CopyCellsTo(73, 10, 60, 10, 1, 2);
     Event_Wait(20);
-    // The third puddle freezes while the previously frozen second puddle thaws.
+    // The third puddle freezes while the frozen second puddle melts.
     Task_AddFrame(CrossboneIsleSteppingStones_SpawnFrostParticle,
                   TASK_PASS_FRAME);
     Event_Wait(40);
@@ -1323,10 +1330,10 @@ static void CrossboneIsleSteppingStones_FreezeThirdPuddle(void) {
                       1) != 0) {
 #ifdef UBFIX
       Actor_Get(ACTOR_SECOND_PUDDLE)->update =
-          CrossboneIsleSteppingStones_SpawnThawParticle;
+          CrossboneIsleSteppingStones_SpawnMeltParticle;
 #else
       Actor_Get(ACTOR_SECOND_PUDDLE)->update = (void (*)(
-          struct Actor *))CrossboneIsleSteppingStones_SpawnThawParticle;
+          struct Actor *))CrossboneIsleSteppingStones_SpawnMeltParticle;
 #endif
       Actor_SetAnimation(ACTOR_SECOND_PUDDLE, PUDDLE_ANIMATION_MELT);
       Actor_WaitForAnimationChange(ACTOR_SECOND_PUDDLE);
@@ -1426,9 +1433,9 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gCrossboneIsleSteppingStonesTriggersOther;
 }
 
-/// Prepares the lowered actor's collision and draw priority below the
-/// leader.
-static void CrossboneIsleSteppingStones_PrepLoweredActor(s32 id) {
+/// Lays an actor in the floor below the leader: not solid, drawn under his
+/// feet at priority 2, and without a shadow.
+static void CrossboneIsleSteppingStones_SetBelowLeader(s32 id) {
   struct Actor *actor = Actor_Get(id);
 
   actor->collisionFlags &= ~ACTOR_SOLID;
@@ -1438,15 +1445,15 @@ static void CrossboneIsleSteppingStones_PrepLoweredActor(s32 id) {
   actor->sprite->image.priority = 2;
 }
 
-/// Restores a previously frozen pillar's mode, map cell, priority update
-/// routine, and script.
-static void CrossboneIsleSteppingStones_RestoreFlaggedPillar(s32 actorId) {
+/// A puddle Frost has frozen stands as its pillar of ice again, with its cell,
+/// its priority routine and its shine.
+static void CrossboneIsleSteppingStones_RestoreFrozenPuddle(s32 actorId) {
   struct Actor *actor;
 
   actor = Actor_Get(actorId);
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN +
                    actorId - ACTOR_FIRST_PUDDLE) != 0) {
-    Actor_SelectAnimation(actor, 5);
+    Actor_SelectAnimation(actor, PUDDLE_ANIMATION_PILLAR);
 #ifdef UBFIX
     actor->update = CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority;
 #else
@@ -1455,7 +1462,7 @@ static void CrossboneIsleSteppingStones_RestoreFlaggedPillar(s32 actorId) {
 #endif
     MapGrid_CopyCellAttributes(20, 14, 1, 1, FIELD_CELL(actor->x.fixed),
                                FIELD_CELL(actor->z.fixed));
-    Actor_SetScript(actorId, gCrossboneIsleSteppingStones_ActionTable);
+    Actor_SetScript(actorId, gCrossboneIsleSteppingStones_IceShineScript);
   }
 }
 
@@ -1493,8 +1500,8 @@ static void CrossboneIsleSteppingStones_UpdateLeaderPriority(void) {
   }
 }
 
-/// Restores each room's pillar footprints, water state, and persistent puzzle
-/// state.
+/// Sets up the room: the cells under its pillars and logs, and the
+/// floodgate's water and the puzzles as a battle left them.
 s32 Scene_Initialize(void) {
   struct Actor *actor;
   u32 i;
@@ -1524,7 +1531,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellsTo(79, 34, 84, 24, 1, 2);
       MapGrid_CopyCellsTo(0, 32, 32, 0, 32, 32);
       MapGrid_CopyCellsTo(32, 32, 64, 0, 32, 32);
-      CrossboneIsleSteppingStones_DrawFloatingLogs();
+      CrossboneIsleSteppingStones_FloatLogs();
       MapGrid_CopyCellAttributes(24, 3, 1, 1, 24, 8);
     }
   } else if (gMainRoutineWork.next == SCENE_CROSSBONE_ISLE_STACKED_PILLARS) {
@@ -1577,14 +1584,14 @@ s32 Scene_Initialize(void) {
     Actor_Get(ACTOR_FIRST_LOG + 1)->motionFlags = 0;
 #endif
     CrossboneIsleSteppingStones_MoveSinkingBoulder();
-    CrossboneIsleSteppingStones_PrepLoweredActor(ACTOR_FIRST_PUDDLE);
-    CrossboneIsleSteppingStones_PrepLoweredActor(ACTOR_SECOND_PUDDLE);
-    CrossboneIsleSteppingStones_PrepLoweredActor(ACTOR_THIRD_PUDDLE);
-    CrossboneIsleSteppingStones_RestoreFlaggedPillar(ACTOR_FIRST_PUDDLE);
-    CrossboneIsleSteppingStones_RestoreFlaggedPillar(ACTOR_SECOND_PUDDLE);
-    CrossboneIsleSteppingStones_RestoreFlaggedPillar(ACTOR_THIRD_PUDDLE);
+    CrossboneIsleSteppingStones_SetBelowLeader(ACTOR_FIRST_PUDDLE);
+    CrossboneIsleSteppingStones_SetBelowLeader(ACTOR_SECOND_PUDDLE);
+    CrossboneIsleSteppingStones_SetBelowLeader(ACTOR_THIRD_PUDDLE);
+    CrossboneIsleSteppingStones_RestoreFrozenPuddle(ACTOR_FIRST_PUDDLE);
+    CrossboneIsleSteppingStones_RestoreFrozenPuddle(ACTOR_SECOND_PUDDLE);
+    CrossboneIsleSteppingStones_RestoreFrozenPuddle(ACTOR_THIRD_PUDDLE);
     Actor_Get(ACTOR_THIRD_PUDDLE)->update = 0;
-    CrossboneIsleSteppingStones_PrepLoweredActor(ACTOR_RISING_PILLAR);
+    CrossboneIsleSteppingStones_SetBelowLeader(ACTOR_RISING_PILLAR);
     Actor_Get(ACTOR_RISING_PILLAR)->collisionFlags |= ACTOR_NOT_TARGETED;
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN +
                      2) == 0) {
@@ -1609,12 +1616,13 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-/// The glint of a puddle Frost has frozen in CrossboneIsleDragonStatue.
+/// The shine on a pillar of ice Frost has made of a puddle in
+/// CrossboneIsleDragonStatue.
 ///
 /// The timer carries a colour mode to
 /// CrossboneIsleSteppingStones_SetSpriteColorFromTimer, with green and blue
 /// swapped for two frames in every eight.
-s32 gCrossboneIsleSteppingStones_ActionTable[] = {
+s32 gCrossboneIsleSteppingStones_IceShineScript[] = {
     SC_SET(SW_TIMER, SPRITE_COLOR_RBG),
     SC_CALL(CrossboneIsleSteppingStones_SetSpriteColorFromTimer),
     SC_WAIT(2),

@@ -405,10 +405,14 @@ void JupiterLighthouse_SpawnBeaconParticle(void) {
   }
 }
 
+/// The furthest south the view may lie, in pixels, with the lit beacon's light
+/// drawn over the well.
+#define BEACON_ORB_VIEW_Z_MAX 177
+
 /// The lit beacon's light (ACTOR_BEACON_ORB) pulses over the well while the
-/// view's z is at most 177 pixels: full size on odd frames, 1.3 times the size
-/// and 7 pixels lower on even ones. Further south it is put away at the
-/// origin.
+/// view lies no further south than BEACON_ORB_VIEW_Z_MAX: full size on odd
+/// frames, 1.3 times the size and 7 pixels lower on even ones. Further south
+/// it is put away at the origin.
 void JupiterLighthouse_PulseBeacon(void) {
   struct Actor *actor = Actor_Get(ACTOR_BEACON_ORB);
   struct MapWork *map = Ram_HeapSlots->mapGrid;
@@ -419,7 +423,7 @@ void JupiterLighthouse_PulseBeacon(void) {
   if (actor == NULL)
     return;
 #endif
-  if (FIXEDtoINT(map->viewZ) <= 177) {
+  if (FIXEDtoINT(map->viewZ) <= BEACON_ORB_VIEW_Z_MAX) {
     ((struct SpriteAnimation
           *)((struct FieldSprite *)Actor_Get(ACTOR_BEACON_ORB)->sprite)
          ->record)

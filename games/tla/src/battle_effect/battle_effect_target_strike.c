@@ -286,6 +286,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     Resource_LoadAndDecompress(
         RESOURCE_SMOKE_SHEET, work->sheet + TARGET_STRIKE_SMOKE_PICTURES, 1, 0);
 
+  /* LEFTOVER(template): a per-target loop whose count is 1, the first target
+   * only. */
   for (k = 0; k != 1; k++) {
     // The wisps start at the target's feet, waiting (-1) until a hit.
     target = BattleObject_GetFar(args->targets[k])->object;
@@ -642,6 +644,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
     draw[1] = BLITTER_ALTERNATE;
+    /* LEFTOVER(template): a per-target loop whose count is 1, the user only. */
     for (k = 0; k != 1; k++) {
       source = BattleObject_GetFar(args->user)->object;
 

@@ -497,12 +497,16 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       for (; i != AZUL_PARTS; i++, piece += AZUL_PART_POINTS * 2, p++) {
         s32 cx = piece[0] >> 1;
         s32 cy = piece[1];
+        s32 dx;
+        s32 dy;
 
         SET_POSITION(p, INTtoFIXED(cx), INTtoFIXED(cy), 0);
         // A shard flies out a 16th of a pixel a frame across, and a 64th
         // down, for each pixel it lies from the centre.
-        p->velocityX = (cx - AZUL_SHATTER_CENTER) << 12;
-        p->velocityY = (cy - AZUL_SHATTER_CENTER) << 10;
+        dx = cx - AZUL_SHATTER_CENTER;
+        dy = cy - AZUL_SHATTER_CENTER;
+        p->velocityX = dx * (toFIXED(1) / 16);
+        p->velocityY = dy * (toFIXED(1) / 64);
         p->velocityZ = ((Random16() & 127) << 2) + 512;
         if (Random16() & 1) {
           p->velocityZ = -p->velocityZ;

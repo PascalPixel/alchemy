@@ -207,10 +207,15 @@ enum AnemosInnerSanctumSymbolTrigger {
   TRIGGER_FLOOR_BETWEEN_SYMBOLS
 };
 
-/// The first of the seven round switches' step triggers, each with its own
-/// scene flag from FLAG_SCENE_TEMP_00 (AnemosInnerSanctum_PressRoundSwitch);
-/// FLAG_SCENE_TEMP_07 is set once all seven are pressed and the lift is ready.
+/// The first of the seven round switches' step triggers
+/// (AnemosInnerSanctum_PressRoundSwitch).
 enum { TRIGGER_FIRST_ROUND_SWITCH = 50, ROUND_SWITCHES = 7 };
+/// Set as each round switch is pressed, lighting it; the macro takes the
+/// switch's place from the first.
+#define FLAG_ROUND_SWITCH_PRESSED(n) (FLAG_SCENE_TEMP_00 + (n))
+/// Set once all seven round switches are pressed: the room's lift floats,
+/// ready to carry the party.
+#define FLAG_LIFT_READY FLAG_SCENE_TEMP_07
 /// The ready lift's step trigger, in the elevator and Orihalcon chest rooms.
 enum { TRIGGER_LIFT = 11 };
 /// The switches room's step triggers: the switch, and the cell east of it
@@ -1034,7 +1039,7 @@ extern s32 gAnemosInnerSanctum_SwitchGlowScript[];
 
 /// A round switch stepped on: it lights under the leader in a burst of blue
 /// rings and its scene flag is set; once all seven are pressed, the room's
-/// lift floats up with its arrow pointing up (FLAG_SCENE_TEMP_07), ready to
+/// lift floats up with its arrow pointing up (FLAG_LIFT_READY), ready to
 /// carry the party.
 void AnemosInnerSanctum_PressRoundSwitch(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -1064,11 +1069,11 @@ void AnemosInnerSanctum_PressRoundSwitch(void) {
   Actor_SelectAnimation(actor, ENERGY_CHARGE_ANIMATION_BURST);
   Actor_SetSpriteFlags(actor, 0);
   Actor_StartScript(actor, gAnemosInnerSanctum_SwitchGlowScript);
-  Event_SetFlag(work->stepTrigger - TRIGGER_FIRST_ROUND_SWITCH +
-                FLAG_SCENE_TEMP_00);
-  all = Event_GetFlag(FLAG_SCENE_TEMP_00);
+  Event_SetFlag(FLAG_ROUND_SWITCH_PRESSED(work->stepTrigger -
+                                          TRIGGER_FIRST_ROUND_SWITCH));
+  all = Event_GetFlag(FLAG_ROUND_SWITCH_PRESSED(0));
   for (i = 1; i != ROUND_SWITCHES; i++)
-    all &= Event_GetFlag(FLAG_SCENE_TEMP_00 + i);
+    all &= Event_GetFlag(FLAG_ROUND_SWITCH_PRESSED(i));
   if (all) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -1082,7 +1087,7 @@ void AnemosInnerSanctum_PressRoundSwitch(void) {
     FieldEvent_Wait(10);
     Event_PlaySound(SE_582);
     Actor_SetAnimation(id, ARROW_PANEL_ANIMATION_UP);
-    Event_SetFlag(FLAG_SCENE_TEMP_07);
+    Event_SetFlag(FLAG_LIFT_READY);
     Actor_Get(id)->motionFlags = ACTOR_FLOATS;
     FieldEvent_Wait(80);
     Event_End();
@@ -1597,21 +1602,21 @@ s32 Scene_Initialize(void) {
     if (gMainRoutineWork.entrance == ENTRANCE_ROUND_SWITCHES) {
       if (Event_GetFlag(FLAG_ELEVATOR_LIFT_RISEN))
         Actor_SetPosition(ACTOR_ELEVATOR_LIFT, 0, 0);
-      if (Event_GetFlag(FLAG_SCENE_TEMP_07))
+      if (Event_GetFlag(FLAG_LIFT_READY))
         Actor_Get(ACTOR_ELEVATOR_LIFT)->motionFlags = ACTOR_FLOATS;
-      if (Event_GetFlag(FLAG_SCENE_TEMP_00))
+      if (Event_GetFlag(FLAG_ROUND_SWITCH_PRESSED(0)))
         MapGrid_CopyCellsTo(54, 87, 44, 86, 1, 1);
-      if (Event_GetFlag(FLAG_SCENE_TEMP_01))
+      if (Event_GetFlag(FLAG_ROUND_SWITCH_PRESSED(1)))
         MapGrid_CopyCellsTo(54, 87, 46, 86, 1, 1);
-      if (Event_GetFlag(FLAG_SCENE_TEMP_02))
+      if (Event_GetFlag(FLAG_ROUND_SWITCH_PRESSED(2)))
         MapGrid_CopyCellsTo(54, 87, 43, 87, 1, 1);
-      if (Event_GetFlag(FLAG_SCENE_TEMP_03))
+      if (Event_GetFlag(FLAG_ROUND_SWITCH_PRESSED(3)))
         MapGrid_CopyCellsTo(54, 87, 45, 87, 1, 1);
-      if (Event_GetFlag(FLAG_SCENE_TEMP_04))
+      if (Event_GetFlag(FLAG_ROUND_SWITCH_PRESSED(4)))
         MapGrid_CopyCellsTo(54, 87, 47, 87, 1, 1);
-      if (Event_GetFlag(FLAG_SCENE_TEMP_05))
+      if (Event_GetFlag(FLAG_ROUND_SWITCH_PRESSED(5)))
         MapGrid_CopyCellsTo(54, 87, 44, 88, 1, 1);
-      if (Event_GetFlag(FLAG_SCENE_TEMP_06))
+      if (Event_GetFlag(FLAG_ROUND_SWITCH_PRESSED(6)))
         MapGrid_CopyCellsTo(54, 87, 46, 88, 1, 1);
       Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
           ACTOR_PRIORITY_IGNORES_RISES;
@@ -1665,29 +1670,29 @@ s32 Scene_Initialize(void) {
             ACTOR_PRIORITY_PLATFORM;
       } else {
         Actor_SetPosition(ACTOR_ORIHALCON_CHEST_LIFT, 0, 0);
-        Event_SetFlag(FLAG_SCENE_TEMP_00);
-        Event_SetFlag(FLAG_SCENE_TEMP_01);
-        Event_SetFlag(FLAG_SCENE_TEMP_02);
-        Event_SetFlag(FLAG_SCENE_TEMP_03);
-        Event_SetFlag(FLAG_SCENE_TEMP_04);
-        Event_SetFlag(FLAG_SCENE_TEMP_05);
-        Event_SetFlag(FLAG_SCENE_TEMP_06);
+        Event_SetFlag(FLAG_ROUND_SWITCH_PRESSED(0));
+        Event_SetFlag(FLAG_ROUND_SWITCH_PRESSED(1));
+        Event_SetFlag(FLAG_ROUND_SWITCH_PRESSED(2));
+        Event_SetFlag(FLAG_ROUND_SWITCH_PRESSED(3));
+        Event_SetFlag(FLAG_ROUND_SWITCH_PRESSED(4));
+        Event_SetFlag(FLAG_ROUND_SWITCH_PRESSED(5));
+        Event_SetFlag(FLAG_ROUND_SWITCH_PRESSED(6));
       }
-      if (Event_GetFlag(FLAG_SCENE_TEMP_07))
+      if (Event_GetFlag(FLAG_LIFT_READY))
         Actor_Get(ACTOR_ORIHALCON_CHEST_LIFT)->motionFlags = ACTOR_FLOATS;
-      if (Event_GetFlag(FLAG_SCENE_TEMP_00))
+      if (Event_GetFlag(FLAG_ROUND_SWITCH_PRESSED(0)))
         MapGrid_CopyCellsTo(17, 71, 8, 69, 1, 1);
-      if (Event_GetFlag(FLAG_SCENE_TEMP_05))
+      if (Event_GetFlag(FLAG_ROUND_SWITCH_PRESSED(5)))
         MapGrid_CopyCellsTo(17, 71, 6, 71, 1, 1);
-      if (Event_GetFlag(FLAG_SCENE_TEMP_01))
+      if (Event_GetFlag(FLAG_ROUND_SWITCH_PRESSED(1)))
         MapGrid_CopyCellsTo(17, 71, 5, 75, 1, 1);
-      if (Event_GetFlag(FLAG_SCENE_TEMP_02))
+      if (Event_GetFlag(FLAG_ROUND_SWITCH_PRESSED(2)))
         MapGrid_CopyCellsTo(17, 71, 8, 75, 1, 1);
-      if (Event_GetFlag(FLAG_SCENE_TEMP_03))
+      if (Event_GetFlag(FLAG_ROUND_SWITCH_PRESSED(3)))
         MapGrid_CopyCellsTo(17, 71, 11, 75, 1, 1);
-      if (Event_GetFlag(FLAG_SCENE_TEMP_04))
+      if (Event_GetFlag(FLAG_ROUND_SWITCH_PRESSED(4)))
         MapGrid_CopyCellsTo(17, 71, 8, 73, 1, 1);
-      if (Event_GetFlag(FLAG_SCENE_TEMP_06))
+      if (Event_GetFlag(FLAG_ROUND_SWITCH_PRESSED(6)))
         MapGrid_CopyCellsTo(17, 71, 10, 71, 1, 1);
     } else if (entrance == THROUGH_FIRST_CRACKED_FLOOR) {
       CrackedTile_Find(TRIGGER_FIRST_CRACKED_FLOOR, FLAG_SCENE_TEMP_80,
@@ -2252,14 +2257,14 @@ struct Trigger gAnemosInnerSanctum_ElevatorTriggers[] = {
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
-    {TRIGGER_STEP, TRIGGER_LIFT, IF_FLAG_SET(FLAG_SCENE_TEMP_07), EVENT(AnemosInnerSanctum_RideLiftUp)},
-    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH, FLAG_SCENE_TEMP_00, EVENT(AnemosInnerSanctum_PressRoundSwitch)},
-    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 1, FLAG_SCENE_TEMP_01, EVENT(AnemosInnerSanctum_PressRoundSwitch)},
-    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 2, FLAG_SCENE_TEMP_02, EVENT(AnemosInnerSanctum_PressRoundSwitch)},
-    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 3, FLAG_SCENE_TEMP_03, EVENT(AnemosInnerSanctum_PressRoundSwitch)},
-    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 4, FLAG_SCENE_TEMP_04, EVENT(AnemosInnerSanctum_PressRoundSwitch)},
-    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 5, FLAG_SCENE_TEMP_05, EVENT(AnemosInnerSanctum_PressRoundSwitch)},
-    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 6, FLAG_SCENE_TEMP_06, EVENT(AnemosInnerSanctum_PressRoundSwitch)},
+    {TRIGGER_STEP, TRIGGER_LIFT, IF_FLAG_SET(FLAG_LIFT_READY), EVENT(AnemosInnerSanctum_RideLiftUp)},
+    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH, FLAG_ROUND_SWITCH_PRESSED(0), EVENT(AnemosInnerSanctum_PressRoundSwitch)},
+    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 1, FLAG_ROUND_SWITCH_PRESSED(1), EVENT(AnemosInnerSanctum_PressRoundSwitch)},
+    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 2, FLAG_ROUND_SWITCH_PRESSED(2), EVENT(AnemosInnerSanctum_PressRoundSwitch)},
+    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 3, FLAG_ROUND_SWITCH_PRESSED(3), EVENT(AnemosInnerSanctum_PressRoundSwitch)},
+    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 4, FLAG_ROUND_SWITCH_PRESSED(4), EVENT(AnemosInnerSanctum_PressRoundSwitch)},
+    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 5, FLAG_ROUND_SWITCH_PRESSED(5), EVENT(AnemosInnerSanctum_PressRoundSwitch)},
+    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 6, FLAG_ROUND_SWITCH_PRESSED(6), EVENT(AnemosInnerSanctum_PressRoundSwitch)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_StartMovingBlock)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_FinishMovingBlock)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_ELEVATOR_FIRST_PILLAR, FLAG_ANEMOS_ELEVATOR_FIRST_PILLAR_PLACED, EVENT(AnemosInnerSanctum_StartMovingBlock)},
@@ -2318,14 +2323,14 @@ struct Trigger gAnemosInnerSanctum_OrihalconChestTriggers[] = {
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
-    {TRIGGER_STEP, TRIGGER_LIFT, IF_FLAG_SET(FLAG_SCENE_TEMP_07), EVENT(AnemosInnerSanctum_RideLiftUp)},
-    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH, FLAG_SCENE_TEMP_00, EVENT(AnemosInnerSanctum_PressRoundSwitch)},
-    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 1, FLAG_SCENE_TEMP_01, EVENT(AnemosInnerSanctum_PressRoundSwitch)},
-    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 2, FLAG_SCENE_TEMP_02, EVENT(AnemosInnerSanctum_PressRoundSwitch)},
-    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 3, FLAG_SCENE_TEMP_03, EVENT(AnemosInnerSanctum_PressRoundSwitch)},
-    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 4, FLAG_SCENE_TEMP_04, EVENT(AnemosInnerSanctum_PressRoundSwitch)},
-    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 5, FLAG_SCENE_TEMP_05, EVENT(AnemosInnerSanctum_PressRoundSwitch)},
-    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 6, FLAG_SCENE_TEMP_06, EVENT(AnemosInnerSanctum_PressRoundSwitch)},
+    {TRIGGER_STEP, TRIGGER_LIFT, IF_FLAG_SET(FLAG_LIFT_READY), EVENT(AnemosInnerSanctum_RideLiftUp)},
+    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH, FLAG_ROUND_SWITCH_PRESSED(0), EVENT(AnemosInnerSanctum_PressRoundSwitch)},
+    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 1, FLAG_ROUND_SWITCH_PRESSED(1), EVENT(AnemosInnerSanctum_PressRoundSwitch)},
+    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 2, FLAG_ROUND_SWITCH_PRESSED(2), EVENT(AnemosInnerSanctum_PressRoundSwitch)},
+    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 3, FLAG_ROUND_SWITCH_PRESSED(3), EVENT(AnemosInnerSanctum_PressRoundSwitch)},
+    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 4, FLAG_ROUND_SWITCH_PRESSED(4), EVENT(AnemosInnerSanctum_PressRoundSwitch)},
+    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 5, FLAG_ROUND_SWITCH_PRESSED(5), EVENT(AnemosInnerSanctum_PressRoundSwitch)},
+    {TRIGGER_STEP, TRIGGER_FIRST_ROUND_SWITCH + 6, FLAG_ROUND_SWITCH_PRESSED(6), EVENT(AnemosInnerSanctum_PressRoundSwitch)},
     {TRIGGER_STEP, TRIGGER_FIRST_CRACKED_FLOOR, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_FallThroughFirstCracks)},
     {TRIGGER_STEP, TRIGGER_FIRST_CRACKED_FLOOR + 1, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_FallThroughFirstCracks)},
     {TRIGGER_STEP, TRIGGER_SECOND_CRACKED_FLOOR, CONDITION_ALWAYS, EVENT(AnemosInnerSanctum_FallThroughSecondCracks)},

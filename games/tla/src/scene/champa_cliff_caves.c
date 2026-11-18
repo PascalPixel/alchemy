@@ -830,6 +830,7 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   Event_End();
 }
 
+/// Whether the game flag is set.
 static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Get(flag); }
 
 /// Talking to Obaba at her counter: she takes the next prong the party carries,
@@ -865,6 +866,8 @@ first:
   PartyInventory_Remove(item);
 chosen:
   if (item != -1) {
+    /* FAKEMATCH(wrapper): each prong's flag tested through a call layer; as
+     * GameFlag_Get. */
     if (!GameFlag_Test_(FLAG_OBABA_SAW_FIRST_PRONG)) {
       GameFlag_Set(FLAG_OBABA_SAW_FIRST_PRONG);
       ChampaCliffCaves_ObabaSeesAWeapon(item);
@@ -890,11 +893,11 @@ chosen:
     // fear from the sea.", "Yes, there's no doubt about it. Those must truly
     // be fragments of the legendary trident." and "The trident seems to have
     // some amazing power..."
-    if (!GameFlag_Test_(FLAG_OBABA_SAW_FIRST_PRONG))
+    if (!GameFlag_Get(FLAG_OBABA_SAW_FIRST_PRONG))
       Event_SetMessageId((s32)MsgIMeanIt);
-    else if (!GameFlag_Test_(FLAG_OBABA_SAW_SECOND_PRONG))
+    else if (!GameFlag_Get(FLAG_OBABA_SAW_SECOND_PRONG))
       Event_SetMessageId((s32)MsgTheLegendSaysThat);
-    else if (!GameFlag_Test_(FLAG_TRIDENT_FORGED))
+    else if (!GameFlag_Get(FLAG_TRIDENT_FORGED))
       Event_SetMessageId((s32)MsgYesThereS);
     else
       Event_SetMessageId((s32)MsgTheTridentSeems);

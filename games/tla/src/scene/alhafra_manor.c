@@ -41,15 +41,12 @@ enum AlhafraManorEntrance {
   ENTRANCE_MAYORS_ROOM = 8,
   /// The watchtower, where the man gazing at Air's Rock stands.
   ENTRANCE_WATCHTOWER = 14,
-  /// Back from the world map's view of Air's Rock
-  /// (AlhafraManor_PointOutAirsRock), beside the man who showed it.
-  ENTRANCE_BACK_FROM_THE_VIEW = 80,
   /// Where Eastern Alhafra sends the party to see Briggs escape from the
   /// manor (AlhafraManor_BriggsEscapes).
   ENTRANCE_BRIGGS_ESCAPES = 81,
   /// Unused: no exit leads here. The camera pans west across the room and
   /// waits for a key, then the party enters again by
-  /// ENTRANCE_BACK_FROM_THE_VIEW.
+  /// ALHAFRA_MANOR_FROM_WORLD_MAP_VIEW.
   ENTRANCE_PAN_WEST = 99
 };
 
@@ -321,7 +318,7 @@ s32 Scene_Initialize(void) {
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Actor_GetById(ACTOR_OLD_MAN_ON_INDRA)->update =
       AlhafraManor_KeepToTheLeadersLayer;
-  if (gMainRoutineWork.entrance == ENTRANCE_BACK_FROM_THE_VIEW) {
+  if (gMainRoutineWork.entrance == ALHAFRA_MANOR_FROM_WORLD_MAP_VIEW) {
     gMainRoutineWork.entrance = gMainRoutineWork.returnEntrance =
         ENTRANCE_WATCHTOWER;
     Actor_FaceDirectionById(ACTOR_MAN_GAZING_AT_AIRS_ROCK,
@@ -355,7 +352,8 @@ s32 Scene_Initialize(void) {
     FieldCamera_MoveWithinMapBounds(toFIXED(144), cameraY, cameraZ, 1);
     while (gInput.held == 0)
       wait(1);
-    Event_SetDestination(SCENE_ALHAFRA_MANOR, ENTRANCE_BACK_FROM_THE_VIEW);
+    Event_SetDestination(SCENE_ALHAFRA_MANOR,
+                         ALHAFRA_MANOR_FROM_WORLD_MAP_VIEW);
   }
   return 0;
 }
@@ -792,8 +790,8 @@ void AlhafraManor_KeepToTheLeadersLayer(void) { Actor_TakeLeaderLayer(); }
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {ENTRANCE_BACK_FROM_THE_VIEW, CONDITION_ALWAYS, 760, 0, 320, FACING_SOUTH,
-     0, -1, -1, -1, -1, 0},
+    {ALHAFRA_MANOR_FROM_WORLD_MAP_VIEW, CONDITION_ALWAYS, 760, 0, 320,
+     FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {ENTRANCE_BRIGGS_ESCAPES, CONDITION_ALWAYS, 312, 0, 120, FACING_NORTHEAST,
      0, 224, 16, 464, 192, 0},
     {ENTRANCE_PAN_WEST, CONDITION_ALWAYS, 520, 0, 520, FACING_NORTH, 0, -1, -1,

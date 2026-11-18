@@ -57,9 +57,10 @@ enum { ACTOR_KRADEN = 23, ACTOR_AKAFUBU = 24 };
 /// room above, held 36 pixels up in SPRITE_COLOR_HIDDEN, so that nothing of
 /// it shows (GabombaStatue_HideActor).
 enum { ACTOR_BONE_ARMLET_LADDER_TOP_BLOCK = 8 };
-// XXX (no evidence): what the ladder-top blocks are for; drawn or hidden,
-// they show nothing in a still of either room, and only watching the leader
-// climb such a ladder with them drawn and then hidden could tell.
+// XXX (no evidence): what the ladder-top blocks are for; drawn or hidden they
+// change nothing on screen, since SPRITE_COLOR_HIDDEN draws every pixel of
+// them transparent and the display has no sprite window they could cut, so
+// nothing the player sees tells what they were meant to do.
 enum {
   ACTOR_FIRST_ROPE_POST_A = 8,
   ACTOR_FIRST_ROPE_POST_B,

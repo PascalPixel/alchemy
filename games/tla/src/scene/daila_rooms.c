@@ -666,7 +666,7 @@ s32 Scene_Initialize(void) {
       }
       Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
           ACTOR_PRIORITY_IGNORES_RISES;
-      Actor_GetById(ACTOR_TEAR_SPOT)->priorityFlags |=
+      Actor_GetById(ACTOR_OLD_WOMAN_ON_THE_KANDOREAN_TEMPLE)->priorityFlags |=
           ACTOR_PRIORITY_IGNORES_RISES;
       Actor_GetById(ACTOR_ARMOR_MERCHANT)->priorityFlags |=
           ACTOR_PRIORITY_IGNORES_RISES;

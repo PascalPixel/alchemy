@@ -738,7 +738,8 @@ void AirsRock_WhirlwindClearsWall(void) {
   }
   Heap_Release(buffer);
   Event_PlaySound(SE_GLITTER);
-  Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->riseCounter = 9;
+  Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->riseCounter =
+      SPRITE_COLOR_BLUE_TINT;
   Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->riseEnabled = 1;
   Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->update = AirsRock_FlickerTarget;
   for (i = 0; i != 45; i++) {
@@ -777,7 +778,7 @@ void AirsRock_WhirlwindClearsWall(void) {
   REG_DISPCNT |= DISPCNT_BG0_ON;
   MapGrid_SetShake(1, 1, 1);
   for (i = 0; i != 64; i++) {
-    REG_BLDALPHA = ((15 - (i >> 2)) << 8) | (i >> 2);
+    REG_BLDALPHA = ((BLEND_WEIGHT_MAX - 1 - (i >> 2)) << 8) | (i >> 2);
     Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->riseCounter = Random16() & 7;
     FieldEvent_Wait(1);
   }
@@ -808,7 +809,7 @@ void AirsRock_WhirlwindClearsWall(void) {
                           &options);
       }
       REG_BLDALPHA =
-          (((j >> 4) & 15) << 8) | (BLEND_WEIGHT_MAX - ((j >> 4) & 15));
+          (((j >> 4) & 0xf) << 8) | (BLEND_WEIGHT_MAX - ((j >> 4) & 0xf));
       Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->riseCounter = Random16() & 7;
       FieldEvent_Wait(1);
     } while (j != 255);
@@ -822,7 +823,7 @@ void AirsRock_WhirlwindClearsWall(void) {
   REG_BLDALPHA = BLEND_ALPHA(15, 0);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
-  Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->riseCounter = 6;
+  Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->riseCounter = SPRITE_COLOR_GREY;
   for (i = 0; i != 65; i++) {
     REG_BLDALPHA = ((i >> 2) << 8) | (BLEND_WEIGHT_MAX - (i >> 2));
     FieldEvent_Wait(1);
@@ -1080,7 +1081,7 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
     }
   }
   actors = &work->actors[ACTOR_FIRST_PLACED];
-  for (i = ACTOR_FIRST_PLACED; i != 64; i++) {
+  for (i = ACTOR_FIRST_PLACED; i != FIELD_TREASURE_ACTOR; i++) {
     other = *actors++;
     if (other->script != 0) {
       launcher = shot->watchedActor;
@@ -1292,15 +1293,16 @@ void AirsRock_WhirlwindOpensTheTop(void) {
   }
   cell = buffer;
   for (i = 0; i != LIGHTNING_MAP_ROWS; i++) {
-    Dma_Set(cell,
-            (void *)(BG_SCREEN_BLOCK(LIGHTNING_SCREEN_BLOCK) +
-                     i * BG_SCREEN_WIDTH * sizeof(u16)),
-            DMA_COPY_WORDS(LIGHTNING_MAP_COLUMNS * sizeof(u16) / 4), REG_DMA3);
+    Dma_Set(
+        cell,
+        (void *)(BG_SCREEN_BLOCK(LIGHTNING_SCREEN_BLOCK) + i * MAP_ROW_BYTES),
+        DMA_COPY_WORDS(LIGHTNING_MAP_COLUMNS * sizeof(u16) / 4), REG_DMA3);
     cell += LIGHTNING_MAP_COLUMNS;
   }
   Heap_Release(buffer);
   Event_PlaySound(SE_GLITTER);
-  Actor_Get(ACTOR_TWISTER_ROCK_AT_THE_TOP)->riseCounter = 9;
+  Actor_Get(ACTOR_TWISTER_ROCK_AT_THE_TOP)->riseCounter =
+      SPRITE_COLOR_BLUE_TINT;
   Actor_Get(ACTOR_TWISTER_ROCK_AT_THE_TOP)->riseEnabled = 1;
   Actor_Get(ACTOR_TWISTER_ROCK_AT_THE_TOP)->update = AirsRock_FlickerTarget;
   for (i = 0; i != 45; i++) {
@@ -1466,9 +1468,12 @@ void AirsRock_LiftFog(void) {
   for (i = 0; i != DISPLAY_HEIGHT; i++) {
     spread = (DISPLAY_HEIGHT - i) >> 2;
     wave = Math_Sin((i + (u8)gFrameCount) << 8);
-    // Swayed by up to half the line's height above the foot, scattered at
-    // random, and kept within 64 pixels one way and 56 the other.
-    value = (Iwram_MulFX(wave, (WHIRLWIND_FOOT_LINE - i) << 10) >> 11) - 4;
+    // Swayed by up to half the line's height above the foot, less 4, and
+    // jittered by up to a quarter of the lines below; a line swung past 56
+    // pixels one way or 64 the other is pulled back by as much.
+    value = (Iwram_MulFX(wave, (WHIRLWIND_FOOT_LINE - i) * (FIXED_ONE / 64)) >>
+             11) -
+            4;
     line[0] = value;
     line[0] += Random16() % (spread * 2) - spread;
     if (line[0] > 56)
@@ -1545,7 +1550,8 @@ void AirsRock_WhirlwindClearsFog(void) {
   }
   Heap_Release(buffer);
   Event_PlaySound(SE_GLITTER);
-  Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->riseCounter = 9;
+  Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->riseCounter =
+      SPRITE_COLOR_BLUE_TINT;
   Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->riseEnabled = 1;
   Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->update = AirsRock_FlickerTarget;
   for (i = 0; i != 45; i++) {
@@ -1617,7 +1623,7 @@ void AirsRock_WhirlwindClearsFog(void) {
   REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 0);
   REG_BLDCNT = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->riseCounter = 6;
+  Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->riseCounter = SPRITE_COLOR_GREY;
   for (i = 0; i != 129; i++) {
     REG_BLDALPHA = ((i >> 3) << 8) | (BLEND_WEIGHT_MAX - (i >> 3));
     FieldEvent_Wait(1);

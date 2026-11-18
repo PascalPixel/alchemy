@@ -122,8 +122,6 @@ enum {
   HALL_LAST_NORTHEAST_ROOM_ENTRANCE = 13
 };
 
-#define BG_SCREEN_ROW_BYTES (32 * 2)
-
 /// The collision codes this scene reads by name. On the overhead layer a
 /// whirlwind ends where it reaches WHIRLWIND_END; on the ground a raised
 /// stake's top is STAKE_TOP; in the hall the tower's door is TOWER_DOOR, and
@@ -1903,7 +1901,7 @@ void AirsRockInside_FlickerTarget(struct Actor *actor) {
 /// the statue beside it, which starts breathing whirlwinds
 /// (FLAG_AIRS_ROCK_HALL_STATUE_WOKEN).
 void AirsRockInside_WakeHallStatue(void) {
-  u16 *buffer = Heap_Alloc(2048);
+  u16 *buffer = Heap_Alloc(LIGHTNING_TILES * TILE_SIZE_4BPP);
   u16 *cell;
   struct Actor *spark;
   u32 i;
@@ -1911,12 +1909,14 @@ void AirsRockInside_WakeHallStatue(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
-  Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
+  Io_Write16(BGCNT_SCREEN_BASE(LIGHTNING_SCREEN_BLOCK), &REG_BG0CNT);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_TILES), buffer);
-  Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(512), REG_DMA3);
+  Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0),
+          DMA_COPY_WORDS(LIGHTNING_TILES * TILE_SIZE_4BPP / 4), REG_DMA3);
   Heap_Release(buffer);
-  Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(4), 2048);
-  buffer = Heap_Alloc(LIGHTNING_MAP_ROWS * LIGHTNING_MAP_COLUMNS * 2);
+  Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(LIGHTNING_SCREEN_BLOCK),
+             BG_SCREEN_SIZE);
+  buffer = Heap_Alloc(LIGHTNING_MAP_ROWS * LIGHTNING_MAP_COLUMNS * sizeof(u16));
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_MAP), buffer);
   cell = buffer;
   // The map's tile numbers less 512.
@@ -1926,13 +1926,15 @@ void AirsRockInside_WakeHallStatue(void) {
   }
   cell = buffer;
   for (i = 0; i != LIGHTNING_MAP_ROWS; i++) {
-    Dma_Set(cell, (void *)(BG_SCREEN_BLOCK(4) + i * BG_SCREEN_ROW_BYTES),
-            DMA_COPY_WORDS(LIGHTNING_MAP_COLUMNS / 2), REG_DMA3);
+    Dma_Set(
+        cell,
+        (void *)(BG_SCREEN_BLOCK(LIGHTNING_SCREEN_BLOCK) + i * MAP_ROW_BYTES),
+        DMA_COPY_WORDS(LIGHTNING_MAP_COLUMNS * sizeof(u16) / 4), REG_DMA3);
     cell += LIGHTNING_MAP_COLUMNS;
   }
   Heap_Release(buffer);
   Sound_Play(SE_GLITTER);
-  Actor_GetById(ACTOR_HALL_TWISTER_ROCK)->riseCounter = 9;
+  Actor_GetById(ACTOR_HALL_TWISTER_ROCK)->riseCounter = SPRITE_COLOR_BLUE_TINT;
   Actor_GetById(ACTOR_HALL_TWISTER_ROCK)->riseEnabled = 1;
   Actor_GetById(ACTOR_HALL_TWISTER_ROCK)->update = AirsRockInside_FlickerTarget;
   for (i = 0; i != 45; i++) {
@@ -2200,7 +2202,7 @@ void AirsRockInside_FinishPushingPillar(void) {
 /// with the light it sends, which flashes across the room, opens the cells at
 /// (68, 84) and wakes the statue (FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN).
 void AirsRockInside_WakeVialChestStatue(void) {
-  u16 *buffer = Heap_Alloc(2048);
+  u16 *buffer = Heap_Alloc(LIGHTNING_TILES * TILE_SIZE_4BPP);
   u16 *cell;
   struct Actor *spark;
   u32 i;
@@ -2208,12 +2210,14 @@ void AirsRockInside_WakeVialChestStatue(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
-  Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
+  Io_Write16(BGCNT_SCREEN_BASE(LIGHTNING_SCREEN_BLOCK), &REG_BG0CNT);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_TILES), buffer);
-  Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0), DMA_COPY_WORDS(512), REG_DMA3);
+  Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0),
+          DMA_COPY_WORDS(LIGHTNING_TILES * TILE_SIZE_4BPP / 4), REG_DMA3);
   Heap_Release(buffer);
-  Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(4), 2048);
-  buffer = Heap_Alloc(LIGHTNING_MAP_ROWS * LIGHTNING_MAP_COLUMNS * 2);
+  Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(LIGHTNING_SCREEN_BLOCK),
+             BG_SCREEN_SIZE);
+  buffer = Heap_Alloc(LIGHTNING_MAP_ROWS * LIGHTNING_MAP_COLUMNS * sizeof(u16));
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_MAP), buffer);
   cell = buffer;
   // The map's tile numbers less 512.
@@ -2223,13 +2227,16 @@ void AirsRockInside_WakeVialChestStatue(void) {
   }
   cell = buffer;
   for (i = 0; i != LIGHTNING_MAP_ROWS; i++) {
-    Dma_Set(cell, (void *)(BG_SCREEN_BLOCK(4) + i * BG_SCREEN_ROW_BYTES),
-            DMA_COPY_WORDS(LIGHTNING_MAP_COLUMNS / 2), REG_DMA3);
+    Dma_Set(
+        cell,
+        (void *)(BG_SCREEN_BLOCK(LIGHTNING_SCREEN_BLOCK) + i * MAP_ROW_BYTES),
+        DMA_COPY_WORDS(LIGHTNING_MAP_COLUMNS * sizeof(u16) / 4), REG_DMA3);
     cell += LIGHTNING_MAP_COLUMNS;
   }
   Heap_Release(buffer);
   Sound_Play(SE_GLITTER);
-  Actor_GetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)->riseCounter = 9;
+  Actor_GetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)->riseCounter =
+      SPRITE_COLOR_BLUE_TINT;
   Actor_GetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)->riseEnabled = 1;
   Actor_GetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)->update =
       AirsRockInside_FlickerTarget;
@@ -3195,7 +3202,8 @@ void AirsRockInside_LandInHall(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   leader->gravity = toFIXED(1);
   leader->bounce = FIXED_ONE / 4;
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Event_End();
 }
 
@@ -3205,7 +3213,8 @@ s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 i, z;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
   GameFlag_Set(FLAG_TIGHTROPES_GUST_PATH_CLEARED);

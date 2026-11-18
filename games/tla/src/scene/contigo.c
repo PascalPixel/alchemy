@@ -43,6 +43,27 @@
 #define REUNION_HAMMA_PORTRAIT_Y 10
 #endif
 
+/// What the dice and wheels attendants say as the party comes back from a
+/// game (Contigo_InitializeLuckyDice); the Spanish text numbers these lines
+/// differently.
+#if LANGUAGE == LANGUAGE_SPANISH
+#define COINS_WON_MESSAGE ((s32)MsgContigoHeyYaDontHaveEnough + 1)
+#define COINS_LOST_MESSAGE ((s32)MsgContigoHeyYaDontHaveEnough + 2)
+#define READ_SIGN_MESSAGE ((s32)MsgContigoYaWonCoinTalkAbout)
+#define CONGRATULATIONS_MESSAGE ((s32)MsgContigoYaLostCoinBetterLuck)
+#define FIRST_PRIZE_MESSAGE ((s32)MsgContigoTheRulesAreListedOn)
+#define NEXT_PRIZE_MESSAGE ((s32)MsgContigoCongratulations)
+#define COME_AGAIN_MESSAGE ((s32)MsgContigoComeAgain)
+#else
+#define COINS_WON_MESSAGE ((s32)MsgContigoYaWonCoinTalkAbout)
+#define COINS_LOST_MESSAGE ((s32)MsgContigoYaLostCoinBetterLuck)
+#define READ_SIGN_MESSAGE ((s32)MsgContigoTheRulesAreListedOn)
+#define CONGRATULATIONS_MESSAGE ((s32)MsgContigoCongratulations)
+#define FIRST_PRIZE_MESSAGE ((s32)MsgContigoYouWonHereYouGo)
+#define NEXT_PRIZE_MESSAGE ((s32)MsgContigoAndYouWonHereYou)
+#define COME_AGAIN_MESSAGE ((s32)MsgContigoComeAgain)
+#endif
+
 /// Set as the party leaves the dice hall for one of its games, so that the
 /// hall greets it on its way back by the game's entrance.
 #define FLAG_LEFT_FOR_A_GAME 0x9e5
@@ -144,11 +165,12 @@ enum ContigoReunionActorId { ACTOR_HAMMA = ACTOR_FIRST_PLACED, ACTOR_KRADEN };
 
 /// The dice and wheels hall (gContigo_LuckyDicePlacements).
 enum ContigoLuckyDiceActorId {
-  /// Who runs Super Lucky Dice, and who explains it beside him.
-  ///@{
-  ACTOR_SUPER_LUCKY_DICE_HOST = ACTOR_FIRST_PLACED,
-  ACTOR_SUPER_LUCKY_DICE_GUIDE,
-  ///@}
+  /// A young man with fair hair (SPRITE_YOUNG_MAN_WITH_FAIR_HAIR), who runs
+  /// Super Lucky Dice (Contigo_OfferSuperLuckyDice).
+  ACTOR_SUPER_LUCKY_DICE_ATTENDANT = ACTOR_FIRST_PLACED,
+  /// Beside him, in his sprite, pointing the party to the rules: "If you want
+  /// to learn about the rules to Super Lucky Dice, just check out the sign."
+  ACTOR_SUPER_LUCKY_DICE_RULES_ATTENDANT,
   /// The players: "This kid's got unlucky written all over his face" (his
   /// thought); "If you lose the hi-lo game, you don't win anything...";
   /// "I almost always get at least one pair..."
@@ -157,22 +179,27 @@ enum ContigoLuckyDiceActorId {
   ACTOR_OLD_MAN_ON_THE_HI_LO_GAME,
   ACTOR_WOMAN_WHO_LOSES_AT_HI_LO,
   ///@}
-  /// The sign of Super Lucky Dice's rules.
-  ACTOR_SUPER_LUCKY_DICE_SIGN,
-  /// Who runs Lucky Dice, and who points to its sign.
+  /// The sign of Super Lucky Dice's rules (Contigo_ReadSuperLuckyDiceRules).
+  ACTOR_SUPER_LUCKY_DICE_RULES_SIGN,
+  /// A young man with fair hair, in other colours, who runs Lucky Dice
+  /// (Contigo_OfferLuckyDice).
+  ACTOR_LUCKY_DICE_ATTENDANT,
+  /// Beside him, in his sprite, pointing the party to the rules: "Read the
+  /// sign if ya don't know the rules."
+  ACTOR_LUCKY_DICE_RULES_ATTENDANT,
+  /// Lucky Dice's two signs: how to play (Contigo_ReadLuckyDiceRules), and
+  /// what pairs, triples and four of a kind win (Contigo_ReadLuckyDicePairs).
   ///@{
-  ACTOR_LUCKY_DICE_HOST,
-  ACTOR_LUCKY_DICE_GUIDE,
+  ACTOR_LUCKY_DICE_RULES_SIGN,
+  ACTOR_LUCKY_DICE_PAIRS_SIGN,
   ///@}
-  /// Lucky Dice's two signs of its rules.
-  ///@{
-  ACTOR_LUCKY_DICE_SIGN,
-  ACTOR_SECOND_LUCKY_DICE_SIGN,
-  ///@}
+  /// A young woman in green (SPRITE_YOUNG_WOMAN_IN_GREEN), who runs Lucky
+  /// Wheels (Contigo_TalkToWheelsAttendant).
   ACTOR_LUCKY_WHEELS_ATTENDANT,
-  /// Lucky Wheels' signs: its rules, and its prizes.
+  /// Lucky Wheels' signs: its rules (Contigo_ReadLuckyWheelsRules), and its
+  /// prizes (Contigo_ReadLuckyWheelsPrizes).
   ///@{
-  ACTOR_LUCKY_WHEELS_SIGN,
+  ACTOR_LUCKY_WHEELS_RULES_SIGN,
   ACTOR_LUCKY_WHEELS_PRIZE_SIGN
   ///@}
 };
@@ -234,7 +261,7 @@ struct Actor;
 void Actor_MoveToObject(s32 actor, s32 target);
 void FieldCamera_WaitForArrival(void);
 void Party_AddIsaacsParty(void);
-void Contigo_SendToLuckyWheels(s32 mode);
+void Contigo_OfferLuckyWheels(s32 mode);
 void Contigo_OpenSanctumDoor(s32 sourceX, s32 sourceY, s32 doorX, s32 doorY);
 
 #include "system/task.h"
@@ -323,12 +350,12 @@ void Contigo_TalkToArmorMerchant(void);
 void Contigo_TalkToInnkeeper(void);
 
 void Contigo_AskAboutSuperDice(void);
-void Contigo_ExplainSuperDice(void);
-void Contigo_ExplainLuckyDice(void);
-void Contigo_ExplainLuckyDiceAgain(void);
+void Contigo_ReadSuperLuckyDiceRules(void);
+void Contigo_ReadLuckyDiceRules(void);
+void Contigo_ReadLuckyDicePairs(void);
 void Contigo_TalkToWheelsAttendant(void);
-void Contigo_ExplainLuckyWheels(void);
-void Contigo_ListLuckyWheelsPrizes(void);
+void Contigo_ReadLuckyWheelsRules(void);
+void Contigo_ReadLuckyWheelsPrizes(void);
 void Contigo_AskAboutGeoglyph(void);
 void Contigo_TalkToDoubtingBoy(void);
 void Contigo_TalkAboutTheShip(void);
@@ -354,8 +381,8 @@ void Contigo_RevealMiddleDoor(void);
 
 void Contigo_ForceFreesDjinni(void);
 
-void Contigo_SendToLuckyDice(void);
-void Contigo_SendToSuperLuckyDice(void);
+void Contigo_OfferLuckyDice(void);
+void Contigo_OfferSuperLuckyDice(void);
 void Contigo_EnterSanctumWestDoor(void);
 void Contigo_EnterSanctumEastDoor(void);
 void Contigo_ReturnToNewHome(void);
@@ -753,7 +780,7 @@ void Contigo_BabyThinks(void) {
     FieldMessage_Show((s32)MsgContigoTheBabysForeheadIsFurrowed, 1);
   Actor_SetAnimationById(ACTOR_BABY, 3);
   PaletteFade_SetSource(PALETTE_TINT_NONE, PALETTES_ALL);
-  PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(4, 4, 16), 1);
+  PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(4, 4, 16), PALETTES_BG);
   PaletteFade_StartInterpolation(16);
   BattleEffect_StartArcEffect();
   BattleEffect_SetObjectUpdateMode(Actor_GetById(ACTOR_BABY), 2);
@@ -792,11 +819,12 @@ void Contigo_BabyThinks(void) {
   PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(16);
   if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS))
+    // "Goo goo. Gaa gaa... Waaa!"
     Event_SetMessageId((s32)MsgContigoGooGooGaaGaaWaaa);
   else
+    // "Babu bawaba bibaw."
     Event_SetMessageId((s32)MsgContigoBabuBawabaBibaw);
   Actor_RunRepeatedMotion(ACTOR_BABY, 2);
-  // "Babu bawaba bibaw."
   Event_ShowMessageAndWait(ACTOR_BABY, 0);
   Actor_SetAnimationById(ACTOR_BABY, 1);
   FieldActor_ShowEmote(ACTOR_YOUNG_MAN_ON_THE_SIBLINGS,
@@ -817,9 +845,9 @@ void Contigo_BabyThinks(void) {
   Event_End();
 }
 
-void Shop_Run(s32 a, s32 b);
-void Sanctum_Run(s32 a);
-void Inn_CheckIn(s32 a, s32 b);
+void Shop_Run(s32 stockRow, s32 keeperId);
+void Sanctum_Run(s32 unitId);
+void Inn_CheckIn(s32 innId, s32 actorId);
 
 #include "shared/leader_is_facing_north.h"
 
@@ -842,10 +870,11 @@ void Contigo_TalkToItemMerchant(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS))
+      // "It's always such a letdown when you finish off a major task like..."
       Event_SetMessageId((s32)MsgContigoItsAlwaysSuchALetdown);
     else
+      // "The villagers are working their hardest to complete the wings and..."
       Event_SetMessageId((s32)MsgContigoTheVillagersAreWorkingTheir);
-    // "The villagers are working their hardest to complete the wings and..."
     Event_ShowMessageAndWait(ACTOR_ITEM_MERCHANT, 0);
     Event_End();
   }
@@ -860,10 +889,11 @@ void Contigo_TalkToWeaponMerchant(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS))
+      // "A cannon? Yeah, I think I heard something about a town up in..."
       Event_SetMessageId((s32)MsgContigoACannonYeahIThink);
     else
+      // "It was a longstanding tradition that people in Atteka would take a..."
       Event_SetMessageId((s32)MsgContigoItWasALongstandingTradition);
-    // "It was a longstanding tradition that people in Atteka would take a..."
     Event_ShowMessageAndWait(ACTOR_WEAPON_MERCHANT, 0);
     Event_End();
   }
@@ -878,10 +908,11 @@ void Contigo_TalkToArmorMerchant(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS))
+      // "Now that the wings are finished, I doubt anyone will be buying any..."
       Event_SetMessageId((s32)MsgContigoNowThatTheWingsAre);
     else
+      // "Mining materials in the ruins is dangerous work, so my armor is..."
       Event_SetMessageId((s32)MsgContigoMiningMaterialsInTheRuins);
-    // "Mining materials in the ruins is dangerous work, so my armor is..."
     Event_ShowMessageAndWait(ACTOR_ARMOR_MERCHANT, 0);
     Event_End();
   }
@@ -896,12 +927,14 @@ void Contigo_TalkToInnkeeper(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS))
+      // "All of our work and all of our celebration are finally at an end...."
       Event_SetMessageId((s32)MsgContigoAllOfOurWorkAnd);
     else if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT))
+      // "You have to hurry! I think the ship from the geoglyphs is going to..."
       Event_SetMessageId((s32)MsgContigoYouHaveToHurryI);
     else
+      // "We've had so many people coming to Contigo lately that we're full..."
       Event_SetMessageId((s32)MsgContigoWeveHadSoManyPeople);
-    // "We've had so many people coming to Contigo lately that we're full..."
     Event_ShowMessageAndWait(ACTOR_INNKEEPER, 0);
     Event_End();
   }
@@ -916,12 +949,14 @@ void Contigo_TalkToHealer(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS))
+      // "It was a miracle that made all of the legends of the Anemos come..."
       Event_SetMessageId((s32)MsgContigoItWasAMiracleThat);
     else if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT))
+      // "A flying ship... Surely, it must be a miracle. I'll have to study..."
       Event_SetMessageId((s32)MsgContigoAFlyingShipSurelyIt);
     else
+      // "The real miracle will be if these wings actually make a boat fly...."
       Event_SetMessageId((s32)MsgContigoTheRealMiracleWillBe);
-    // "The real miracle will be if these wings actually make a boat fly...."
     Event_ShowMessageAndWait(ACTOR_HEALER, 0);
     Event_End();
   }
@@ -939,91 +974,122 @@ void Contigo_AskAboutSuperDice(void) {
 }
 
 /// Reading the sign of Super Lucky Dice's rules.
-void Contigo_ExplainSuperDice(void) {
+void Contigo_ReadSuperLuckyDiceRules(void) {
   s32 msg;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   msg = (s32)MsgContigoSuperLuckyDiceTheRules;
+  // "Super Lucky Dice The Rules of the Game."
   FieldMessage_Show(msg, 1);
+  // "Throw all four dice onto the table in a single toss."
   FieldMessage_Show(msg + 1, 1);
+  // "If two of the dice match, it's a push, and you win your money back."
   FieldMessage_Show(msg + 2, 1);
+  // "If three of the dice match, you win back twice the bet you placed."
   FieldMessage_Show(msg + 3, 1);
+  // "If you get two pairs of matching dice, you win three times the bet you..."
   FieldMessage_Show(msg + 4, 1);
+  // "If all four dice match, it's a perfect toss! You win eight times your..."
   FieldMessage_Show(msg + 5, 1);
+  // "If you get one pair, two pair, three of a kind, or a perfect four, you..."
   FieldMessage_Show(msg + 6, 1);
+  // "You have to guess whether the next roll of the dice will be more or..."
   FieldMessage_Show(msg + 7, 1);
+  // "If you win the hi-lo game, you double your winnings! You can do this..."
   FieldMessage_Show(msg + 8, 1);
   Event_End();
 }
 
 /// Reading the first sign of Lucky Dice's rules.
-void Contigo_ExplainLuckyDice(void) {
+void Contigo_ReadLuckyDiceRules(void) {
   s32 msg;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   msg = (s32)MsgContigoLuckyDice;
+  // "Lucky Dice"
   FieldMessage_Show(msg, 1);
+  // "Throw the dice on the table and try to get the same numbers."
   FieldMessage_Show(msg + 1, 1);
+  // "Prizes are based on the numbers rolled and where each die lands."
   FieldMessage_Show(msg + 2, 1);
+  // "The more numbers that match, the more you win."
   FieldMessage_Show(msg + 3, 1);
   Event_End();
 }
 
-/// Reading the second sign of Lucky Dice's rules.
-void Contigo_ExplainLuckyDiceAgain(void) {
+/// Reading Lucky Dice's second sign: what pairs, triples and four of a kind
+/// win.
+void Contigo_ReadLuckyDicePairs(void) {
   s32 msg;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   msg = (s32)MsgContigoLuckyDiceB;
+  // "Lucky Dice"
   FieldMessage_Show(msg, 1);
+  // "If two numbers match on either the dice or the table..."
   FieldMessage_Show(msg + 1, 1);
+  // "it's called a pair, and you don't win or lose anything."
   FieldMessage_Show(msg + 2, 1);
+  // "Two pair doubles your money. Triple matches triple your money."
   FieldMessage_Show(msg + 3, 1);
+  // "Four of a kind is perfect, and you win five times your bet."
   FieldMessage_Show(msg + 4, 1);
+  // "Plus, if your dice come up perfect on the Perfect Bonus spot on the..."
   FieldMessage_Show(msg + 5, 1);
   Event_End();
 }
 
-/// Talking to the Lucky Wheels attendant (Contigo_SendToLuckyWheels).
+/// Talking to the Lucky Wheels attendant (Contigo_OfferLuckyWheels).
 void Contigo_TalkToWheelsAttendant(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
-  Contigo_SendToLuckyWheels(0);
+  Contigo_OfferLuckyWheels(0);
   Event_End();
 }
 
 /// Reading the sign of Lucky Wheels' rules.
-void Contigo_ExplainLuckyWheels(void) {
+void Contigo_ReadLuckyWheelsRules(void) {
   s32 msg;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   msg = (s32)MsgContigoLuckyWheelsRules;
+  // "Lucky Wheels Rules"
   FieldMessage_Show(msg, 1);
+  // "Pull the lever and try to line up matching icons to win big."
   FieldMessage_Show(msg + 1, 1);
+  // "You have only 5 chances to pull the lever."
   FieldMessage_Show(msg + 2, 1);
+  // "Press the star to keep a wheel from spinning and match other wheels."
   FieldMessage_Show(msg + 3, 1);
+  // "You get 1 line for 1 game ticket, 3 lines for 2 tickets,"
   FieldMessage_Show(msg + 4, 1);
+  // "5 lines for 3 tickets, and 7 lines for 4 tickets. Use all your tickets..."
   FieldMessage_Show(msg + 5, 1);
   Event_End();
 }
 
 /// Reading the sign of Lucky Wheels' prizes.
-void Contigo_ListLuckyWheelsPrizes(void) {
+void Contigo_ReadLuckyWheelsPrizes(void) {
   s32 msg;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   msg = (s32)MsgContigoLuckyWheelsPrizes;
+  // "Lucky Wheels Prizes"
   FieldMessage_Show(msg, 1);
+  // "Prizes are determined by which icons you match."
   FieldMessage_Show(msg + 1, 1);
+  // "Shirts win undershirts, Rings win rings, Boots win boots,"
   FieldMessage_Show(msg + 2, 1);
+  // "Stars and Hearts win you items..."
   FieldMessage_Show(msg + 3, 1);
   // The Spanish sign ends after four messages.
 #if LANGUAGE != LANGUAGE_SPANISH
+  // "And Moons are wild°they can win you anything."
   FieldMessage_Show(msg + 4, 1);
 #endif
   Event_End();
@@ -1055,17 +1121,23 @@ void Contigo_TalkToDoubtingBoy(void) {
     Actor_FaceActorById(ACTOR_BOY_DOUBTING_THE_LEGENDS,
                         gMainRoutineWork.leaderActorId, 0);
     if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS) != 0)
+      // "I've seen a lot of weird things lately... Maybe I ought to listen..."
       Event_SetMessageId((s32)MsgContigoIveSeenALotOf);
     else if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0)
+      // "That crater behind the village is supposed to be where the city of..."
       Event_SetMessageId((s32)MsgContigoThatCraterBehindTheVillage);
     else
+      // "If you want to get a look at the Anemos geoglyphs, you ought to go..."
       Event_SetMessageId((s32)MsgContigoIfYouWantToGet);
   } else {
     if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS) != 0)
+      // "Wait... The city of Anemos flew up into the sky? All right, that's..."
       Event_SetMessageId((s32)MsgContigoWaitTheCityOfAnemos);
     else if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0)
+      // "Cities flying up into the sky? I don't buy that for a second!"
       Event_SetMessageId((s32)MsgContigoCitiesFlyingUpIntoThe);
     else
+      // "The Anemos geoglyphs are the most amazing carvings I've ever seen..."
       Event_SetMessageId((s32)MsgContigoTheAnemosGeoglyphsAreThe);
   }
   Event_ShowMessageAndWait(ACTOR_BOY_DOUBTING_THE_LEGENDS, 0);
@@ -1089,13 +1161,17 @@ void Contigo_TalkAboutTheShip(void) {
     Actor_FaceActorById(ACTOR_GIRL_ON_THE_SHIP, gMainRoutineWork.leaderActorId,
                         0);
     if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS) != 0)
+      // "It wasn't what I expected, but seeing the ship take off was still..."
       Event_SetMessageId((s32)MsgContigoItWasntWhatIExpected);
     else
+      // "Our people have labored for some time to build the Wings of the..."
       Event_SetMessageId((s32)MsgContigoOurPeopleHaveLaboredFor);
   } else {
     if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS) != 0)
+      // "All of those legends did nothing but build up people's..."
       Event_SetMessageId((s32)MsgContigoAllOfThoseLegendsDid);
     else
+      // "We built the Wings of Anemos out of materials we found in the..."
       Event_SetMessageId((s32)MsgContigoWeBuiltTheWingsOf);
   }
   Event_ShowMessageAndWait(ACTOR_GIRL_ON_THE_SHIP, 0);
@@ -1226,7 +1302,7 @@ void Contigo_NarrowCameraBounds(void) {
 }
 
 /// The trigger Scoop raises once Salt has appeared: it joins the party.
-enum { RAISED_SALT_FOUND = 200 };
+enum ContigoRaisedTrigger { RAISED_SALT_FOUND = 200 };
 
 /// Scoop in the gap in the middle of the weed patch: until the party has Salt,
 /// Salt appears there and turns to the leader.
@@ -1371,12 +1447,13 @@ void Contigo_SetUpWingParts(void) {
   Actor_SetAnimationById(ACTOR_LOOSE_PART_G, 0);
 }
 
-extern void MessageArgument_Push(s32 value, s32 digits);
+extern void MessageArgument_Push(s32 value, s32 kind);
 void Event_LeaveFor(s32 scene, s32 entrance);
 
-/// The lucky wheels attendant: checks the game tickets and free item slots,
-/// then sends the player in.
-void Contigo_SendToLuckyWheels(s32 spoken) {
+/// The Lucky Wheels attendant in Contigo checks tickets and inventory space
+/// before sending the party to the game; spoken is nonzero as the party comes
+/// back from it.
+void Contigo_OfferLuckyWheels(s32 spoken) {
   s32 tickets = PartyInventory_CountItem(ITEM_GAME_TICKET);
   s32 room;
 
@@ -1385,25 +1462,31 @@ void Contigo_SendToLuckyWheels(s32 spoken) {
     s32 message = (s32)MsgContigoStepRightUpAndTry;
 
     Event_SetMessageId(message);
+    // "Step right up and try your hand at lucky wheels!"
     Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
     if (tickets == 0) {
+      // "You gotta have game tickets to play."
       Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
       return;
     }
     Event_SetMessageId(message + 2);
     MessageArgument_Push(tickets, MESSAGE_ARGUMENT_NUMBER);
+    // "You have ... game ticket, Felix. Would you like to use these tickets?"
     FieldMessage_ShowAtActor(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
     if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
         1) {
+      // "The rules are listed on the sign. Take a look, take a look."
       Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
       return;
     }
     room = PartyInventory_CountFreeSlots();
     if (room == 0) {
       Event_SetMessageId(message + 4);
+      // "You can't carry any more items. Are you sure you want to play?"
       FieldMessage_ShowAtActor(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
     } else if (room <= 6) {
       Event_SetMessageId(message + 5);
+      // "If you win anything, you might not be able to take it with you..."
       FieldMessage_ShowAtActor(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
     }
     if (room <= 6 && Event_AskYesNoWithActorAnimation(
@@ -1444,7 +1527,7 @@ void Contigo_SendToLuckyWheels(s32 spoken) {
 /// The prize for an icon matched on the Lucky Wheels: one of the icon's three,
 /// never the one it gave last; the Moon picks an icon at random, and a negative
 /// icon gives nothing.
-s32 Contigo_PickPrize(s32 icon) {
+s32 Contigo_SelectLuckyWheelsPrize(s32 icon) {
   struct MainRoutineWork *state;
   s32 cursor;
   s32 variant;
@@ -1474,8 +1557,10 @@ enum {
   LUCKY_DICE_LARGE_WIN = 20000
 };
 
-/// The dice game attendant: the fee is ten coins a level.
-void Contigo_SendToLuckyDice(void) {
+/// Talking to the Lucky Dice attendant in Contigo offers a game, at
+/// LUCKY_DICE_COINS_PER_LEVEL coins for each level of the party's average
+/// level.
+void Contigo_OfferLuckyDice(void) {
   u32 price = Party_GetAverageLevel() * LUCKY_DICE_COINS_PER_LEVEL;
 
   Event_Start();
@@ -1483,14 +1568,14 @@ void Contigo_SendToLuckyDice(void) {
   if ((u32)gMainRoutineWork.coins < price) {
     Event_SetMessageId((s32)MsgContigoHeyYaDontHaveEnough);
     // "Hey! Ya don't have enough coins! Ya gotta pay to play."
-    FieldMessage_ShowAtActor(ACTOR_LUCKY_DICE_HOST, 0);
+    FieldMessage_ShowAtActor(ACTOR_LUCKY_DICE_ATTENDANT, 0);
     return;
   }
   Event_SetMessageId((s32)MsgContigoHeyBuddyWannaTryYer);
   MessageArgument_Push(price, MESSAGE_ARGUMENT_NUMBER);
   // "Hey, buddy, wanna try yer luck at the dice? It's coin to play." Yes: "OK!
   // Then take the dice." No: "No? Oh, well. Who's next?"
-  FieldMessage_ShowAtActor(ACTOR_LUCKY_DICE_HOST, 0);
+  FieldMessage_ShowAtActor(ACTOR_LUCKY_DICE_ATTENDANT, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       0) {
     /* FAKEMATCH(pin): the scene state's address fixed to a register. */
@@ -1499,7 +1584,7 @@ void Contigo_SendToLuckyDice(void) {
     *state = gMainRoutineWork.coins;
     ObjectTable_Snapshot();
     // "OK! Then take the dice."
-    Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_HOST, 0);
+    Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_ATTENDANT, 0);
     GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
     GameFlag_Set(FLAG_LEFT_FOR_A_GAME);
     wait(1);
@@ -1509,13 +1594,14 @@ void Contigo_SendToLuckyDice(void) {
   } else {
     gFieldWork->message++;
     // "No? Oh, well. Who's next?"
-    Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_HOST, 0);
+    Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_ATTENDANT, 0);
   }
   Event_End();
 }
 
-/// The Super Lucky Dice attendant: the same check without the fee shown.
-void Contigo_SendToSuperLuckyDice(void) {
+/// Talking to the Super Lucky Dice attendant offers a game at the same price,
+/// which his offer does not say.
+void Contigo_OfferSuperLuckyDice(void) {
   u32 price = Party_GetAverageLevel() * LUCKY_DICE_COINS_PER_LEVEL;
 
   Event_Start();
@@ -1523,13 +1609,13 @@ void Contigo_SendToSuperLuckyDice(void) {
   if ((u32)gMainRoutineWork.coins < price) {
     Event_SetMessageId((s32)MsgContigoSorryPalButYouveGotta);
     // "Sorry, pal, but you've gotta have more coins to play."
-    FieldMessage_ShowAtActor(ACTOR_LUCKY_DICE_HOST, 0);
+    FieldMessage_ShowAtActor(ACTOR_LUCKY_DICE_ATTENDANT, 0);
     return;
   }
   Event_SetMessageId((s32)MsgContigoWelcomeWelcomeStepRightUp);
   // "Welcome, welcome, step right up! Care for a round of Super Lucky Dice?"
   // Yes: "OK, then let 'em roll!" No: "Oh really? That's a shame!"
-  FieldMessage_ShowAtActor(ACTOR_SUPER_LUCKY_DICE_HOST, 0);
+  FieldMessage_ShowAtActor(ACTOR_SUPER_LUCKY_DICE_ATTENDANT, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       0) {
     /* FAKEMATCH(pin): the scene state's address fixed to a register. */
@@ -1538,7 +1624,7 @@ void Contigo_SendToSuperLuckyDice(void) {
     *state = gMainRoutineWork.coins;
     ObjectTable_Snapshot();
     // "OK, then let 'em roll!"
-    Event_ShowMessageAndWait(ACTOR_SUPER_LUCKY_DICE_HOST, 0);
+    Event_ShowMessageAndWait(ACTOR_SUPER_LUCKY_DICE_ATTENDANT, 0);
     GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
     GameFlag_Set(FLAG_LEFT_FOR_A_GAME);
     wait(1);
@@ -1548,7 +1634,7 @@ void Contigo_SendToSuperLuckyDice(void) {
   } else {
     gFieldWork->message++;
     // "Oh really? That's a shame!"
-    Event_ShowMessageAndWait(ACTOR_SUPER_LUCKY_DICE_HOST, 0);
+    Event_ShowMessageAndWait(ACTOR_SUPER_LUCKY_DICE_ATTENDANT, 0);
   }
   Event_End();
 }
@@ -1621,7 +1707,10 @@ struct SparkleWork gContigo_SparkleWork BSS_DATA ALIGNED(16);
 void Contigo_StartSparkle(struct Actor *actor, struct SparkleWork *work);
 void Contigo_StopSparkle(struct Actor *actor);
 
-/// The reunion scene. It opens with "Glad you kept your promise".
+/// The reunion with Isaac's party, on entering this room from the village's
+/// north once the beacon is lit (Contigo_InitializeShops): the two parties
+/// make peace, Kraden tells why Felix has been lighting the beacons, and
+/// Hamma comes to send them all to Mars Lighthouse as one party.
 void Contigo_TheReunion(void) {
   struct Actor *actor;
   s32 answer;
@@ -1789,16 +1878,19 @@ void Contigo_TheReunion(void) {
   if (answer == 0) {
     Actor_WaitForAnimationChange(gMainRoutineWork.leaderActorId);
     Actor_SetAnimationById(ACTOR_IVAN, ANIM_NOD);
+    // "Except that we had only just begun our journey, and we simply..."
     Event_ShowMessageAndWait(ACTOR_IVAN, 0);
     gFieldWork->message++;
   } else {
     Actor_WaitForAnimationChange(gMainRoutineWork.leaderActorId);
     gFieldWork->message++;
     Actor_SetAnimationById(ACTOR_IVAN, ANIM_SHAKE_HEAD);
+    // "He's right. They were too powerful then... It would have been..."
     Event_ShowMessageAndWait(ACTOR_IVAN, 0);
   }
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  // "There's more to it than that. He had another reason to light the..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTHWEST, 0);
@@ -1807,13 +1899,16 @@ void Contigo_TheReunion(void) {
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
   Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_SOUTH);
   FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  // "Unless the lighthouse beacons are all lit, Weyard will eventually be..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 20);
+  // "Destroyed? But...how? Why?"
   Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_SOUTHWEST);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  // "King Hydros, ruler of Lemuria, says that our world is steadily shrinking."
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Actor_FaceDirectionById(ACTOR_ISAAC, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_GARET, FACING_EAST, 0);
@@ -1824,27 +1919,36 @@ void Contigo_TheReunion(void) {
   FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_WEST);
   Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
+  // "Elemental energy drives the growth of civilization. Without it, we and..."
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 20);
   FieldActor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  // "All that because the lighthouses aren't illuminated?"
   Event_ShowMessageAndWait(ACTOR_MIA, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
   FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 40);
+  // "According to my research, that seems to be the case."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_SetAttachedEffect(ACTOR_GARET,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
+  // "But...once the lighthouses are all lit, you said the world would end..."
   Event_ShowMessageAndWait(ACTOR_GARET, 0);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
+  // "That...might be true, too... But if we do nothing, the world will..."
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 80);
+  // "Wait for the end of the world to come or wind up accidentally..."
   Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
   Actor_SetAnimationById(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  // "Nothing is certain. There is no way to prevent the world from reaching..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
+  // "However, we can fight to save the world from withering away due to the..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_SOUTHEAST);
-  Event_OpenMessage(SPEAKER_WINDOW_ABOVE | 1, 0);
+  // "And, Felix, you knew this? You were helping them because you knew what..."
+  Event_OpenMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
@@ -1853,20 +1957,24 @@ void Contigo_TheReunion(void) {
     Actor_WaitForAnimationChange(gMainRoutineWork.leaderActorId);
     Actor_SetAttachedEffect(ACTOR_GARET,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+    // "You're a lot smarter than I remember you being..."
     Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
     gFieldWork->message++;
   } else {
     Actor_WaitForAnimationChange(gMainRoutineWork.leaderActorId);
     FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
     gFieldWork->message++;
+    // "You just figured it out along the way, huh? That's still pretty..."
     Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
   }
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirectionById(ACTOR_ISAAC, FACING_EAST, 0);
   FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  // "Why did you wait so long to tell me? I would have helped you..."
   Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
   Actor_SetAnimationById(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+  // "You wouldn't have done it before, Isaac... It would have meant..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
@@ -1878,6 +1986,7 @@ void Contigo_TheReunion(void) {
   Actor_SetHorizontalPositionAndAngleWithTerrain(ACTOR_HAMMA, toFIXED(160),
                                                  toFIXED(466), angle);
   wait(1);
+  // "Now that we know all of this, shouldn't we be going?"
   Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
   Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId, ACTOR_HAMMA);
   Actor_WatchAndSetScript(ACTOR_JENNA, ACTOR_HAMMA);
@@ -1896,6 +2005,7 @@ void Contigo_TheReunion(void) {
   Actor_SetSpeed(ACTOR_HAMMA, 0.8);
   Actor_WalkToAndWait(ACTOR_HAMMA, 146, 406);
   FieldActor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+  // "Hamma!"
   Event_ShowMessageAndWait(ACTOR_MIA, 0);
   Actor_Stop(gMainRoutineWork.leaderActorId);
   Actor_Stop(ACTOR_JENNA);
@@ -1907,6 +2017,7 @@ void Contigo_TheReunion(void) {
   Actor_Stop(ACTOR_IVAN);
   Sound_Play(MUS_REUNION);
   Actor_SetAnimationAndWait(ACTOR_HAMMA, ANIM_NOD);
+  // "Hello again..."
   Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
@@ -1918,10 +2029,13 @@ void Contigo_TheReunion(void) {
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(20);
   FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 20);
+  // "Hamma! You...know Isaac? And his companions, too?"
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHEAST);
   Actor_SetAnimationById(ACTOR_ISAAC, ANIM_NOD);
   Event_Wait(10);
+  // Isaac: "We met at the temple on the edge of the Lamakan Desert...", and
+  // Hamma at once: "I'm Hamma, descendant of the Anemos."
   FieldEvent_ShowTwoMessagesAndWait(ACTOR_ISAAC, 5, 5, 8, 10, ACTOR_HAMMA, 9,
                                     20, 18, REUNION_HAMMA_PORTRAIT_Y, 10);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTHEAST, 0);
@@ -1936,24 +2050,31 @@ void Contigo_TheReunion(void) {
   FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
   Actor_SetAnimationById(ACTOR_HAMMA, ANIM_NOD);
+  // "I was born in Contigo, and I inherited the power of the Anemos."
   Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
   Actor_SetAttachedEffect(ACTOR_GARET,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(20);
+  // "Hey... We just got into Contigo, and we found out this is where Ivan..."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
+  // "Yeah... We also learned that he's got a sister!"
   Event_ShowMessageAndWait(ACTOR_MIA, 0);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_WEST);
+  // "Sister... You don't mean..."
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   FieldActor_ShowEmote(ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 0);
   Actor_FaceDirectionAndRefreshById(ACTOR_HAMMA, FACING_EAST);
+  // "That would be me, yes."
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_HAMMA, 0);
   Actor_SetSpeed(ACTOR_IVAN, 0.8);
   Actor_WalkToAndWait(ACTOR_IVAN, 130, 400);
   Actor_FaceDirectionById(ACTOR_IVAN, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(ACTOR_HAMMA, FACING_WEST);
+  // "Not now, Ivan... This isn't the time."
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_HAMMA, 0);
   FieldActor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Actor_SetAnimationById(ACTOR_HAMMA, ANIM_SHAKE_HEAD);
+  // "Three lighthouses have been lit... The elements have been thrown out..."
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_HAMMA, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHWEST, 0);
@@ -1963,6 +2084,7 @@ void Contigo_TheReunion(void) {
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 40);
   Actor_FaceDirectionAndWait(ACTOR_HAMMA, FACING_NORTH_NORTHEAST);
+  // "Jupiter is growing stronger, and the north grows colder with every..."
   Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHEAST, 0);
@@ -1972,21 +2094,26 @@ void Contigo_TheReunion(void) {
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTHWEST, 0);
   Actor_SetAnimationById(ACTOR_HAMMA, ANIM_SHAKE_HEAD);
+  // "You must hurry to Mars Lighthouse. Ignite its beacon, before all of..."
   Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
+  // "Mars Lighthouse? Agatio has the Mars Star. He's on his way to light it..."
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   Contigo_StartSparkle(actor, &gContigo_SparkleWork);
   Event_Wait(80);
   Contigo_StopSparkle(actor);
   Actor_SetAnimationAndWait(ACTOR_HAMMA, ANIM_SHAKE_HEAD);
+  // "I doubt they will be able to light the Mars beacon..."
   Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
   Actor_SetAttachedEffect(ACTOR_PIERS,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  // "Why's that?"
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Contigo_StartSparkle(actor, &gContigo_SparkleWork);
   Event_Wait(80);
   Contigo_StopSparkle(actor);
   Actor_FaceDirectionAndWait(ACTOR_HAMMA, FACING_NORTH_NORTHEAST);
   Actor_SetAnimationById(ACTOR_HAMMA, ANIM_SHAKE_HEAD);
+  // "There is a powerful force that does not want to see Mars rekindled."
   Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
   Actor_SetAttachedEffect(ACTOR_ISAAC,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -2007,6 +2134,7 @@ void Contigo_TheReunion(void) {
   Event_Wait(20);
   Actor_FaceDirectionAndRefreshById(ACTOR_HAMMA, angle);
   Actor_SetAnimationById(ACTOR_HAMMA, ANIM_SHAKE_HEAD);
+  // "You will fail as well...unless you pool your strengths together and..."
   Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
   Actor_FaceDirectionById(ACTOR_ISAAC, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_GARET, FACING_EAST, 0);
@@ -2017,6 +2145,7 @@ void Contigo_TheReunion(void) {
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
   Actor_Jump(ACTOR_KRADEN, 4, 10);
+  // "This is bad. We have to go...now!"
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Actor_SetAnimationById(ACTOR_ISAAC, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_GARET, ANIM_NOD);
@@ -2027,9 +2156,12 @@ void Contigo_TheReunion(void) {
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_NOD);
   FieldActor_ShowEmote(ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+  // "I had hoped that you would feel that way..."
   Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
+  // "I've prepared a gift for you, to aid you on your way to Mars Lighthouse."
   Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
   Actor_SetAnimationById(ACTOR_HAMMA, ANIM_NOD);
+  // "I must leave you now, but we will meet at the inlet."
   Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
   Sound_Play(SOUND_FADE_OUT_BGM);
   FieldCamera_MoveTo(180, CAMERA_KEEP, 410, 1);
@@ -2040,6 +2172,7 @@ void Contigo_TheReunion(void) {
   FieldCamera_WaitForArrival();
   Scene_PlayMusic();
   FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  // "I'm sorry we left Venus Lighthouse without seeing you... I'm sorry for..."
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 20);
@@ -2050,42 +2183,52 @@ void Contigo_TheReunion(void) {
   Actor_Jump(ACTOR_JENNA, 2, 0);
   Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTH);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
+  // "Maybe when this is all over, we can all go on a trip together."
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Actor_FaceDirectionAndWait(ACTOR_SHEBA, FACING_NORTHWEST);
   Actor_SetAttachedEffect(ACTOR_SHEBA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
+  // "Hey, Jenna, you sure seem calm, considering that we're racing to meet..."
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHEAST, 0);
   FieldActor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_SMILE, 20);
+  // "I'm just relieved that we've sorted our differences..."
   Event_ShowMessageAndWait(ACTOR_MIA, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_NOD);
+  // "Me too, Mia... We could not have stood divided against a common foe."
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
+  // "Yeah, I guess I'm a little happy that we're not going to have to beat..."
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_GARET, 0);
   Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTH);
   Actor_SetAnimationById(ACTOR_ISAAC, ANIM_NOD);
+  // "Listen, this is Felix's quest now... We're just doing what we can to..."
   Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
   FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 20);
+  // "Aren't you happy?"
   FieldMessage_ShowAtActor(ACTOR_JENNA, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       0) {
     Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST);
     Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
+    // "Everything's finally come together... This is how it was meant to..."
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
     gFieldWork->message++;
   } else {
     Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHEAST);
     gFieldWork->message++;
     Actor_SetAnimationById(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
+    // "Don't worry about the future, Felix... Enjoy this brief moment's..."
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | ACTOR_KRADEN, 0);
   }
   Actor_WalkToAndWait(ACTOR_KRADEN, 146, 368);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 40);
   Actor_FaceDirectionById(ACTOR_KRADEN, FACING_EAST, 40);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST);
+  // "But Hamma's waiting for us. Let's go to our ship!"
   Event_ShowMessageAndWait(
       SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_KRADEN, 0);
   Actor_SetAnimationById(ACTOR_ISAAC, ANIM_NOD);
@@ -2532,123 +2675,116 @@ void Contigo_InitializeShops(void) {
   }
 }
 
-// The lines the prize counter speaks: the Spanish text numbers them
-// differently.
-#if LANGUAGE == LANGUAGE_SPANISH
-#define COINS_WON_MESSAGE ((s32)MsgContigoHeyYaDontHaveEnough + 1)
-#define COINS_LOST_MESSAGE ((s32)MsgContigoHeyYaDontHaveEnough + 2)
-#define READ_SIGN_MESSAGE ((s32)MsgContigoYaWonCoinTalkAbout)
-#define CONGRATULATIONS_MESSAGE ((s32)MsgContigoYaLostCoinBetterLuck)
-#define FIRST_PRIZE_MESSAGE ((s32)MsgContigoTheRulesAreListedOn)
-#define NEXT_PRIZE_MESSAGE ((s32)MsgContigoCongratulations)
-#define COME_AGAIN_MESSAGE ((s32)MsgContigoComeAgain)
-#else
-#define COINS_WON_MESSAGE ((s32)MsgContigoYaWonCoinTalkAbout)
-#define COINS_LOST_MESSAGE ((s32)MsgContigoYaLostCoinBetterLuck)
-#define READ_SIGN_MESSAGE ((s32)MsgContigoTheRulesAreListedOn)
-#define CONGRATULATIONS_MESSAGE ((s32)MsgContigoCongratulations)
-#define FIRST_PRIZE_MESSAGE ((s32)MsgContigoYouWonHereYouGo)
-#define NEXT_PRIZE_MESSAGE ((s32)MsgContigoAndYouWonHereYou)
-#define COME_AGAIN_MESSAGE ((s32)MsgContigoComeAgain)
-#endif
-
 void ItemDisplay_ShowItem(s32 item, s32 count);
 
-/// Sets up the dice hall: its small hosts and their colours, and on the party's
-/// return from a game the coins won or lost and the prizes.
+/// Sets up the dice hall: its signs drawn small and its attendants' colours,
+/// and on the party's return from a game the coins won or lost, or the
+/// prizes.
 void Contigo_InitializeLuckyDice(void) {
-  s32 diff;
-  s8 *list;
+  s32 coinChange;
+  s8 *wonPrizes;
   s8 *prize;
   s32 item;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-  Contigo_ShrinkActor(ACTOR_SUPER_LUCKY_DICE_SIGN);
-  Contigo_ShrinkActor(ACTOR_LUCKY_DICE_SIGN);
-  Contigo_ShrinkActor(ACTOR_SECOND_LUCKY_DICE_SIGN);
-  Contigo_ShrinkActor(ACTOR_LUCKY_WHEELS_SIGN);
+  Contigo_ShrinkActor(ACTOR_SUPER_LUCKY_DICE_RULES_SIGN);
+  Contigo_ShrinkActor(ACTOR_LUCKY_DICE_RULES_SIGN);
+  Contigo_ShrinkActor(ACTOR_LUCKY_DICE_PAIRS_SIGN);
+  Contigo_ShrinkActor(ACTOR_LUCKY_WHEELS_RULES_SIGN);
   Contigo_ShrinkActor(ACTOR_LUCKY_WHEELS_PRIZE_SIGN);
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_LUCKY_DICE_HOST), SPRITE_COLOR_GRB);
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_LUCKY_DICE_GUIDE), SPRITE_COLOR_RBG);
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_SUPER_LUCKY_DICE_HOST),
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_LUCKY_DICE_ATTENDANT),
+                       SPRITE_COLOR_GRB);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_LUCKY_DICE_RULES_ATTENDANT),
+                       SPRITE_COLOR_RBG);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_SUPER_LUCKY_DICE_ATTENDANT),
                        SPRITE_COLOR_NORMAL);
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_SUPER_LUCKY_DICE_GUIDE),
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_SUPER_LUCKY_DICE_RULES_ATTENDANT),
                        SPRITE_COLOR_BGR);
   if (!Event_GetFlag(FLAG_LEFT_FOR_A_GAME))
     return;
   GameFlag_Clear(FLAG_LEFT_FOR_A_GAME);
+  // The dice games come back here to report the change in the party's coins.
   if (gMainRoutineWork.entrance == ENTRANCE_FROM_SUPER_LUCKY_DICE) {
-    diff = gMainRoutineWork.coins - *(s32 *)gSceneState;
+    coinChange = gMainRoutineWork.coins - *(s32 *)gSceneState;
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    if (diff > 0) {
-      if (diff >= LUCKY_DICE_LARGE_WIN)
+    if (coinChange > 0) {
+      if (coinChange >= LUCKY_DICE_LARGE_WIN)
         Sound_Play(MUS_JINGLE_LARGE);
-      else if (diff >= LUCKY_DICE_MEDIUM_WIN)
+      else if (coinChange >= LUCKY_DICE_MEDIUM_WIN)
         Sound_Play(MUS_JINGLE_MEDIUM);
       else
         Sound_Play(MUS_JINGLE_SMALL);
       Event_Wait(20);
       Event_SetMessageId(COINS_WON_MESSAGE);
-      MessageArgument_Push(diff, MESSAGE_ARGUMENT_NUMBER);
-      Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_HOST, 0);
+      MessageArgument_Push(coinChange, MESSAGE_ARGUMENT_NUMBER);
+      // "Ya won ... coin! Talk about lucky!"
+      Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_ATTENDANT, 0);
       Sound_WaitForJingle();
-    } else if (diff < 0) {
+    } else if (coinChange < 0) {
       Event_SetMessageId(COINS_LOST_MESSAGE);
-      MessageArgument_Push(-diff, MESSAGE_ARGUMENT_NUMBER);
-      Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_HOST, 0);
+      MessageArgument_Push(-coinChange, MESSAGE_ARGUMENT_NUMBER);
+      // "Ya lost ... coin. Better luck next time."
+      Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_ATTENDANT, 0);
     }
     Event_End();
   } else if (gMainRoutineWork.entrance == ENTRANCE_FROM_LUCKY_DICE) {
-    diff = gMainRoutineWork.coins - *(s32 *)gSceneState;
+    coinChange = gMainRoutineWork.coins - *(s32 *)gSceneState;
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
-    if (diff > 0) {
-      if (diff >= LUCKY_DICE_LARGE_WIN)
+    if (coinChange > 0) {
+      if (coinChange >= LUCKY_DICE_LARGE_WIN)
         Sound_Play(MUS_JINGLE_LARGE);
-      else if (diff >= LUCKY_DICE_MEDIUM_WIN)
+      else if (coinChange >= LUCKY_DICE_MEDIUM_WIN)
         Sound_Play(MUS_JINGLE_MEDIUM);
       else
         Sound_Play(MUS_JINGLE_SMALL);
       Event_Wait(20);
       Event_SetMessageId(COINS_WON_MESSAGE);
-      MessageArgument_Push(diff, MESSAGE_ARGUMENT_NUMBER);
-      Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_HOST, 0);
+      MessageArgument_Push(coinChange, MESSAGE_ARGUMENT_NUMBER);
+      // "Ya won ... coin! Talk about lucky!"
+      Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_ATTENDANT, 0);
       Sound_WaitForJingle();
-    } else if (diff < 0) {
+    } else if (coinChange < 0) {
       Event_SetMessageId(COINS_LOST_MESSAGE);
-      MessageArgument_Push(-diff, MESSAGE_ARGUMENT_NUMBER);
-      Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_HOST, 0);
+      MessageArgument_Push(-coinChange, MESSAGE_ARGUMENT_NUMBER);
+      // "Ya lost ... coin. Better luck next time."
+      Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_ATTENDANT, 0);
     }
     Event_End();
   } else if (gMainRoutineWork.entrance == ENTRANCE_FROM_LUCKY_WHEELS) {
-    list = gMainRoutineWork.wheelsPrizes;
+    // Lucky Wheels comes back with the icons matched, for the attendant to
+    // award a prize for each.
+    wonPrizes = gMainRoutineWork.wheelsPrizes;
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     Event_Wait(20);
-    if (list[0] == -1) {
-      Contigo_SendToLuckyWheels(1);
-    } else if (list[0] == -2) {
+    if (wonPrizes[0] == -1) {
+      Contigo_OfferLuckyWheels(1);
+    } else if (wonPrizes[0] == -2) {
       Event_SetMessageId(READ_SIGN_MESSAGE);
+      // "The rules are listed on the sign. Take a look, take a look."
       Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
     } else {
       Event_SetMessageId(CONGRATULATIONS_MESSAGE);
+      // "Congratulations!"
       Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
-      if (list[0] != -1) {
-        prize = list;
+      if (wonPrizes[0] != -1) {
+        prize = wonPrizes;
         do {
-          if (prize == list)
+          if (prize == wonPrizes)
             Event_SetMessageId(FIRST_PRIZE_MESSAGE);
           else
             Event_SetMessageId(NEXT_PRIZE_MESSAGE);
-          item = Contigo_PickPrize(*prize);
+          item = Contigo_SelectLuckyWheelsPrize(*prize);
           MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
+          // "You won ...! Here you go.", then "And you won ...! Here you go."
           Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
           ItemDisplay_ShowItem(item, 3);
           PartyInventory_GiveItem(item, 0);
@@ -2658,6 +2794,7 @@ void Contigo_InitializeLuckyDice(void) {
       }
       gMainRoutineWork.wheelsPrizes[0] = -2;
       Event_SetMessageId(COME_AGAIN_MESSAGE);
+      // "Come again!"
       Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
     }
     Event_End();
@@ -2729,13 +2866,6 @@ void Contigo_RaiseSparkle(struct Actor *actor) {
     }
   }
 }
-#undef COINS_WON_MESSAGE
-#undef COINS_LOST_MESSAGE
-#undef READ_SIGN_MESSAGE
-#undef CONGRATULATIONS_MESSAGE
-#undef FIRST_PRIZE_MESSAGE
-#undef NEXT_PRIZE_MESSAGE
-#undef COME_AGAIN_MESSAGE
 
 /// Sets up the sparkle: loads its picture and its four 16 by 16 sprites, and
 /// hands the object to its update, Contigo_RaiseSparkle.
@@ -2827,7 +2957,7 @@ u32 gContigo_SparkleTiles[] = {
 #include "shared/field_effect_duration_scripts.c"
 
 /// The Lucky Wheels' prizes, three to each icon that wins them
-/// (Contigo_PickPrize).
+/// (Contigo_SelectLuckyWheelsPrize).
 u32 gContigo_WheelsPrizes[] = {
     ITEM_MYTHRIL_SHIRT, ITEM_SILK_SHIRT,  ITEM_RUNNING_SHIRT,
     ITEM_HYPER_BOOTS,   ITEM_QUICK_BOOTS, ITEM_FUR_BOOTS,
@@ -3113,14 +3243,14 @@ struct ActorPlacement gContigo_GeoglyphPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 760, 0, 346, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 343, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_SIGN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 720, 0, 360, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(422, CONDITION_ALWAYS, 7, 720, 0, 606, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(422, CONDITION_ALWAYS, 7, 752, 0, 606, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(422, CONDITION_ALWAYS, 7, 784, 0, 622, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(423, CONDITION_ALWAYS, 7, 776, 0, 590, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(423, CONDITION_ALWAYS, 7, 808, 0, 606, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(423, CONDITION_ALWAYS, 7, 744, 0, 614, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(423, CONDITION_ALWAYS, 7, 808, 0, 622, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(423, CONDITION_ALWAYS, 7, 826, 0, 622, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(422, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 720, 0, 606, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(422, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 752, 0, 606, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(422, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 784, 0, 622, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(423, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 776, 0, 590, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(423, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 808, 0, 606, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(423, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 744, 0, 614, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(423, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 808, 0, 622, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(423, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 826, 0, 622, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(680, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 700, 0, 604, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(680, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 616, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(680, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 824, 0, 668, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
@@ -3199,18 +3329,18 @@ struct Trigger gContigo_Triggers[] = {
 };
 
 struct Trigger gContigo_VillageTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 8, CONDITION_ALWAYS, 8},
-    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 10, CONDITION_ALWAYS, 10},
-    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 11, CONDITION_ALWAYS, 11},
-    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, CONTIGO_TO_WORLD_MAP},
+    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 2, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_SHOPS_SOUTH},
+    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 3, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_SHOPS_SOUTHWEST},
+    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 4, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_LUCKY_DICE_SOUTHWEST},
+    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 5, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_SHOPS_WEST},
+    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 6, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_LUCKY_DICE_NORTHEAST},
+    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 7, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_LUCKY_DICE_EAST},
+    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 8, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_SHOPS_EAST},
+    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 9, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_SHOPS_NORTHEAST_A},
+    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 10, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_SHOPS_NORTHEAST_B},
+    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 11, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_SHOPS_NORTH},
+    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_GEOGLYPH},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 30, CONDITION_ALWAYS, EVENT(Contigo_TeleportOut)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 39, CONDITION_ALWAYS, EVENT(Contigo_ScatterFirstWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 40, CONDITION_ALWAYS, EVENT(Contigo_ScatterSecondWeeds)},
@@ -3277,9 +3407,9 @@ struct Trigger gContigo_VillageTriggers[] = {
 };
 
 struct Trigger gContigo_GeoglyphTriggers[] = {
-    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 21},
+    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, CONTIGO_GEOGLYPH_TO_CONTIGO},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS, EVENT(Contigo_EnterSanctumWestDoor)},
-    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 14, CONDITION_ALWAYS, 23},
+    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 14, CONDITION_ALWAYS, CONTIGO_GEOGLYPH_TO_ANEMOS_INNER_SANCTUM_ENTRANCE_NORTHEAST},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 15, CONDITION_ALWAYS, EVENT(Contigo_EnterSanctumEastDoor)},
     {TRIGGER_TALK, ACTOR_VISITOR_FROM_AFAR, CONDITION_ALWAYS, MSGNO(MsgContigoIveComeALongWay)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VISITOR_FROM_AFAR, CONDITION_ALWAYS, MSGNO(MsgContigoTheGuysCarryingTheOther)},
@@ -3319,13 +3449,13 @@ struct Trigger gContigo_GeoglyphTriggers[] = {
 };
 
 struct Trigger gContigo_ShopsTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_EXIT, 21, CONDITION_ALWAYS, 21},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, CONTIGO_SHOPS_TO_CONTIGO_SOUTH},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, CONTIGO_SHOPS_TO_CONTIGO_SOUTHWEST},
+    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, CONTIGO_SHOPS_TO_CONTIGO_NORTHEAST_B},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, CONTIGO_SHOPS_TO_CONTIGO_EAST},
+    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, CONTIGO_SHOPS_TO_CONTIGO_NORTHEAST_A},
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, CONTIGO_SHOPS_TO_CONTIGO_WEST},
+    {TRIGGER_EXIT, 21, CONDITION_ALWAYS, CONTIGO_SHOPS_TO_ATTEKA_INLET_GEODE},
     {TRIGGER_TALK, ACTOR_MAN_ON_IVANS_RETURN, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheSiblingsWhoInheritedThe)},
     {TRIGGER_TALK, ACTOR_MAN_ON_IVANS_RETURN, CONDITION_ALWAYS, MSGNO(MsgContigoIGuessTheLighthouseWas)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_IVANS_RETURN, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheFamiliesOfChildrenWho)},
@@ -3411,7 +3541,7 @@ struct Trigger gContigo_ShopsTriggers[] = {
 };
 
 struct Trigger gContigo_ShopsReunionTriggers[] = {
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, CONTIGO_SHOPS_TO_CONTIGO_NORTH},
     {TRIGGER_TALK, ACTOR_HAMMA, CONDITION_ALWAYS, MSGNO(MsgContigoNoMatterWhatHappensYou)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HAMMA, CONDITION_ALWAYS, MSGNO(MsgContigoMyHeartIsWithYou)},
     {TRIGGER_STEP, 20, FLAG_HAMMA_WELCOMED_PARTY, EVENT(Contigo_ReturnToNewHome)},
@@ -3422,36 +3552,29 @@ struct Trigger gContigo_ShopsReunionTriggers[] = {
 };
 
 struct Trigger gContigo_LuckyDiceTriggers[] = {
-    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
-    {TRIGGER_TALK, ACTOR_SUPER_LUCKY_DICE_HOST, CONDITION_ALWAYS, EVENT(Contigo_SendToSuperLuckyDice)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SUPER_LUCKY_DICE_HOST, CONDITION_ALWAYS, MSGNO(MsgContigoWhenTheyLoseTheyCall)},
-    {TRIGGER_TALK, ACTOR_SUPER_LUCKY_DICE_GUIDE, CONDITION_ALWAYS, MSGNO(MsgContigoIfYouWantToLearn)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SUPER_LUCKY_DICE_GUIDE, CONDITION_ALWAYS, MSGNO(MsgContigoItsNotAToughGame)},
-    {TRIGGER_TALK, ACTOR_SUPER_LUCKY_DICE_SIGN, CONDITION_ALWAYS, EVENT(Contigo_ExplainSuperDice)},
+    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, CONTIGO_LUCKY_DICE_TO_CONTIGO_NORTHEAST},
+    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, CONTIGO_LUCKY_DICE_TO_CONTIGO_EAST},
+    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, CONTIGO_LUCKY_DICE_TO_CONTIGO_SOUTHWEST},
+    {TRIGGER_TALK, ACTOR_SUPER_LUCKY_DICE_ATTENDANT, CONDITION_ALWAYS, EVENT(Contigo_OfferSuperLuckyDice)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SUPER_LUCKY_DICE_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgContigoWhenTheyLoseTheyCall)},
+    {TRIGGER_TALK, ACTOR_SUPER_LUCKY_DICE_RULES_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgContigoIfYouWantToLearn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SUPER_LUCKY_DICE_RULES_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgContigoItsNotAToughGame)},
+    {TRIGGER_TALK, ACTOR_SUPER_LUCKY_DICE_RULES_SIGN, CONDITION_ALWAYS, EVENT(Contigo_ReadSuperLuckyDiceRules)},
     {TRIGGER_TALK, ACTOR_MAN_WARY_OF_UNLUCKY_PLAYERS, CONDITION_ALWAYS, EVENT(Contigo_AskAboutSuperDice)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_WARY_OF_UNLUCKY_PLAYERS, CONDITION_ALWAYS, MSGNO(MsgContigoThisKidsGotUnluckyWritten)},
     {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_HI_LO_GAME, CONDITION_ALWAYS, MSGNO(MsgContigoIfYouLoseTheHi)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_HI_LO_GAME, CONDITION_ALWAYS, MSGNO(MsgContigoItsToughToKnowWhen)},
     {TRIGGER_TALK, ACTOR_WOMAN_WHO_LOSES_AT_HI_LO, CONDITION_ALWAYS, MSGNO(MsgContigoIAlmostAlwaysGetAt)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_WHO_LOSES_AT_HI_LO, CONDITION_ALWAYS, MSGNO(MsgContigoICanWinICan)},
-    {TRIGGER_TALK, ACTOR_LUCKY_DICE_HOST, CONDITION_ALWAYS, EVENT(Contigo_SendToLuckyDice)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUCKY_DICE_HOST, CONDITION_ALWAYS, MSGNO(MsgContigoWinningOrLosingIsPure)},
-    {TRIGGER_TALK, ACTOR_LUCKY_DICE_GUIDE, CONDITION_ALWAYS, MSGNO(MsgContigoReadTheSignIfYa)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUCKY_DICE_GUIDE, CONDITION_ALWAYS, MSGNO(MsgContigoTheRulesForLuckyDice)},
-    {TRIGGER_TALK, ACTOR_LUCKY_DICE_SIGN, CONDITION_ALWAYS, EVENT(Contigo_ExplainLuckyDice)},
-    {TRIGGER_TALK, ACTOR_SECOND_LUCKY_DICE_SIGN, CONDITION_ALWAYS, EVENT(Contigo_ExplainLuckyDiceAgain)},
+    {TRIGGER_TALK, ACTOR_LUCKY_DICE_ATTENDANT, CONDITION_ALWAYS, EVENT(Contigo_OfferLuckyDice)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUCKY_DICE_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgContigoWinningOrLosingIsPure)},
+    {TRIGGER_TALK, ACTOR_LUCKY_DICE_RULES_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgContigoReadTheSignIfYa)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUCKY_DICE_RULES_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgContigoTheRulesForLuckyDice)},
+    {TRIGGER_TALK, ACTOR_LUCKY_DICE_RULES_SIGN, CONDITION_ALWAYS, EVENT(Contigo_ReadLuckyDiceRules)},
+    {TRIGGER_TALK, ACTOR_LUCKY_DICE_PAIRS_SIGN, CONDITION_ALWAYS, EVENT(Contigo_ReadLuckyDicePairs)},
     {TRIGGER_TALK, ACTOR_LUCKY_WHEELS_ATTENDANT, CONDITION_ALWAYS, EVENT(Contigo_TalkToWheelsAttendant)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUCKY_WHEELS_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgContigoHmmIWonderIfThese)},
-    {TRIGGER_TALK, ACTOR_LUCKY_WHEELS_SIGN, CONDITION_ALWAYS, EVENT(Contigo_ExplainLuckyWheels)},
-    {TRIGGER_TALK, ACTOR_LUCKY_WHEELS_PRIZE_SIGN, CONDITION_ALWAYS, EVENT(Contigo_ListLuckyWheelsPrizes)},
+    {TRIGGER_TALK, ACTOR_LUCKY_WHEELS_RULES_SIGN, CONDITION_ALWAYS, EVENT(Contigo_ReadLuckyWheelsRules)},
+    {TRIGGER_TALK, ACTOR_LUCKY_WHEELS_PRIZE_SIGN, CONDITION_ALWAYS, EVENT(Contigo_ReadLuckyWheelsPrizes)},
     {TRIGGER_TABLE_END},
 };
-#undef COINS_WON_MESSAGE
-#undef COINS_LOST_MESSAGE
-#undef READ_SIGN_MESSAGE
-#undef CONGRATULATIONS_MESSAGE
-#undef FIRST_PRIZE_MESSAGE
-#undef NEXT_PRIZE_MESSAGE
-#undef COME_AGAIN_MESSAGE

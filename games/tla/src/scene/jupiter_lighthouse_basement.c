@@ -223,8 +223,10 @@ void JupiterLighthouse_UpdateSpark(struct Actor *actor) {
   if (actor->userValue == 0)
     JupiterLighthouse_RestartSpark(actor);
   actor->userValue--;
-  actor->x.fixed +=
-      Trig_Cos(((actor->z.fixed >> 14) + (actor->y.fixed >> 15)) << 8) / 2;
+  actor->x.fixed += Trig_Cos((FIXEDtoINT_FOUR_TIMES(actor->z.fixed) +
+                              FIXEDtoINT_TWICE(actor->y.fixed)) *
+                             (TRIG_TURN / 256)) /
+                    2;
   actor->y.fixed += actor->speedLimit;
 }
 

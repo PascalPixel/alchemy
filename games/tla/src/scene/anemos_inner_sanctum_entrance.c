@@ -163,7 +163,8 @@ void AnemosInnerSanctumEntrance_ShadowChallenges(void) {
   FieldMessage_ShowCentered((s32)&MsgIAmTheShadow, 0, 6);
   gMainRoutineWork.pendingDjinni = IF_FLAG_SET(FLAG_DULLAHAN_BEATEN);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
-  Field_RequestBattleFromEncounterTable(103, 3);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_HIDDEN_BOSSES,
+                                        HIDDEN_BOSS_ANEMOS);
   GameFlag_Set(FLAG_DULLAHAN_FOUGHT);
 }
 

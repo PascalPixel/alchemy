@@ -265,7 +265,13 @@ void StatusScreen_Run(void);
 /// DataTransfer_Apply, as a save image: after the state set aside at the
 /// start of the map cell buffer, free on this screen.
 #define TRANSFERRED_SAVE (Ram_MapCellBuffer + SAVE_IMAGE_BYTES)
+/// A save image from the game flags to the units' end: the flags, the main
+/// routine work and the party's units.
+#define SAVE_IMAGE_STATE_BYTES                                                 \
+  (SAVE_IMAGE_UNITS + sizeof(gCharacterUnits) - SAVE_IMAGE_GAME_FLAGS)
 
+/// The width of the answers "Yeah!" and "Wait a sec" to "Play on EASY level?"
+/// and the two questions after it, as each language's words need.
 #if (LANGUAGE == LANGUAGE_JAPANESE)
 #define YEAH_WIDTH 6
 #elif (LANGUAGE == LANGUAGE_SPANISH)
@@ -682,6 +688,11 @@ s32 Scene_PrepareMap(void) { return 0; }
 #define PASSWORD_DEFENSE_SHIFT 22
 #define PASSWORD_AGILITY_SHIFT 12
 #define PASSWORD_LUCK_SHIFT 4
+#define PASSWORD_PP_MASK 0x7ff   ///< eleven bits
+#define PASSWORD_STAT_MASK 0x1ff ///< nine bits: Attack, Defense and Agility
+#define PASSWORD_LUCK_MASK 0x7f  ///< seven bits
+/// A level in the password's first bytes: seven bits each.
+#define PASSWORD_LEVEL_MASK 0x7f
 /// A password glyph's sprite: four tiles, 16 pixels square.
 #define GLYPH_SPRITE_BYTES (4 * TILE_SIZE_4BPP)
 /// A unit's Djinn, djinnHeld to djinnSetCounts.
@@ -949,17 +960,25 @@ done:
   Serial_RemoveIrqHandlers();
   System_Wait(10);
   Window_Close(window, 2);
+  // The flags and the fields before the Djinn recovery list come over in
+  // place, as both games keep them; then The Broken Seal's main routine work
+  // and units, moved on by as much as this game's list is longer, so that its
+  // units land on this game's.
   flags = gGameFlagBytes;
-  Iwram_CopyWords(flags, TRANSFERRED_FLAGS, 532);
+  Iwram_CopyWords(flags, TRANSFERRED_FLAGS,
+                  SAVE_IMAGE_MAIN_ROUTINE_WORK - SAVE_IMAGE_GAME_FLAGS +
+                      offsetof(struct MainRoutineWork, djinnRecovery));
   Iwram_CopyWords(flags +
                       (SAVE_IMAGE_MAIN_ROUTINE_WORK - SAVE_IMAGE_GAME_FLAGS) +
                       (SAVE_IMAGE_UNITS - BROKEN_SEAL_SAVE_IMAGE_UNITS),
-                  TRANSFERRED_MAIN_ROUTINE_WORK, 3360);
+                  TRANSFERRED_MAIN_ROUTINE_WORK,
+                  BROKEN_SEAL_SAVE_IMAGE_UNITS + sizeof(gCharacterUnits) -
+                      SAVE_IMAGE_MAIN_ROUTINE_WORK);
   Unit_Calculate(0);
   Unit_Calculate(1);
   Unit_Calculate(2);
   Unit_Calculate(3);
-  Iwram_CopyWords(TRANSFERRED_FLAGS, flags, 3904);
+  Iwram_CopyWords(TRANSFERRED_FLAGS, flags, SAVE_IMAGE_STATE_BYTES);
   FieldWindowColor_Apply(gMainRoutineWork.windowHue,
                          gMainRoutineWork.windowBrightness);
   return 1;
@@ -1386,7 +1405,8 @@ s32 Clear_EnterPassword(void) {
             StatusScreen_Run();
             // DEAD: the flags and party copied where RESTORE_SAVE_IMAGE
             // copies the whole state next; the ROM keeps the copy.
-            Iwram_CopyWords(TRANSFERRED_FLAGS, gGameFlagBytes, 3904);
+            Iwram_CopyWords(TRANSFERRED_FLAGS, gGameFlagBytes,
+                            SAVE_IMAGE_STATE_BYTES);
             return 0;
           }
           Sound_Play(SE_MENU_CANCEL);
@@ -1598,12 +1618,12 @@ void Clear_ApplyImportedData(s32 mode, u8 *in) {
 
 #define WORD (*(u32 *)((u8 *)packedStats + at))
       stats->baseHp = WORD >> PASSWORD_HP_SHIFT;
-      stats->basePp = WORD >> PASSWORD_PP_SHIFT & 0x7ff;
-      stats->baseAttack = WORD & 0x1ff;
+      stats->basePp = WORD >> PASSWORD_PP_SHIFT & PASSWORD_PP_MASK;
+      stats->baseAttack = WORD & PASSWORD_STAT_MASK;
       at += 4;
-      stats->baseDefense = WORD >> PASSWORD_DEFENSE_SHIFT & 0x1ff;
-      stats->baseAgility = WORD >> PASSWORD_AGILITY_SHIFT & 0x1ff;
-      stats->baseLuck = WORD >> PASSWORD_LUCK_SHIFT & 0x7f;
+      stats->baseDefense = WORD >> PASSWORD_DEFENSE_SHIFT & PASSWORD_STAT_MASK;
+      stats->baseAgility = WORD >> PASSWORD_AGILITY_SHIFT & PASSWORD_STAT_MASK;
+      stats->baseLuck = WORD >> PASSWORD_LUCK_SHIFT & PASSWORD_LUCK_MASK;
 #undef WORD
     }
   }
@@ -1618,7 +1638,7 @@ void Clear_ApplyImportedData(s32 mode, u8 *in) {
   for (i = 0; i != 4; i++) {
     struct Unit *unit = Unit_Get(gClear_ImportedMembers[i]);
 
-    *(u8 *)&unit->level = levelBits >> (i * 7) & 0x7f;
+    *(u8 *)&unit->level = levelBits >> (i * 7) & PASSWORD_LEVEL_MASK;
 #if TLA_PATCH_1
     unit->experience = Unit_GetExperienceForLevel(i, unit->level);
 #endif
@@ -2089,7 +2109,6 @@ s16 gClear_ExtraCodeHeld = 0;
 #undef TRANSFERRED_MAIN_ROUTINE_WORK
 #undef TRANSFERRED_SAVE
 #undef LINK_LANGUAGE_TAG
-#undef QUESTION_MESSAGE
 #undef RECEIVE_WINDOW_X
 #undef RECEIVE_WINDOW_WIDTH
 #undef STATUS_WINDOW_X

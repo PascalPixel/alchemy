@@ -523,7 +523,7 @@ void JupiterLighthouse_HealTarget(s32 actorId, s32 target) {
   BattleEffect_SetObjectUpdateMode(Actor_Get(actorId), 0);
   BattleEffect_WaitForArcGroups();
   BattleEffect_EndArcEffect();
-  Actor_SetAnimation(target, 1);
+  Actor_SetAnimation(target, ANIM_STAND);
 }
 
 /// On the way to the fight by the aerie, Alex appears behind Felix, asks

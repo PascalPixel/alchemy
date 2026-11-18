@@ -181,6 +181,8 @@ void AlhafranCave_FinishMovingCrate(void) {}
 void AlhafranCave_TalkToBriggs(s32 id) {
   FieldEvent_SetMessageId((s32)MsgOhStoppedBy);
   // "Oh, stopped by for a visit, did you?"
+  // Yes: "I wish that I'd met you under different circumstances..."
+  // No: "Ah, so you just came here to check up on us? Hah! Well, as you can..."
   Event_OpenMessage(id, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
       0) {

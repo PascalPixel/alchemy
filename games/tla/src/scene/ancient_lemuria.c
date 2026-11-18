@@ -279,7 +279,7 @@ void AncientLemuria_HeadForTheDock(void) {
   if (!GameFlag_Get(FLAG_BLUE_STATUE_MOVED) ||
       GameFlag_Get(FLAG_MET_KING_HYDROS)) {
     Sound_Play(SE_MAP_EXIT);
-    Import_EventSetExitRequest(2);
+    Import_EventSetExitRequest(ANCIENT_LEMURIA_TO_LEMURIA_DOCK_EAST_A);
   } else {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -297,7 +297,7 @@ void AncientLemuria_HeadForTheDock(void) {
       Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
     }
     Actor_SetSpeed(ACTOR_KRADEN, 1.2);
-    Actor_SetAnimationById(ACTOR_KRADEN, 2);
+    Actor_SetAnimationById(ACTOR_KRADEN, ANIM_WALK);
     actor = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (actor != NULL)
       Actor_SetDestinationById(ACTOR_KRADEN, actor->x.part[0].integer,
@@ -372,13 +372,13 @@ s32 Scene_PrepareMap(void) {
 
   if (entrance == 1)
     GameFlag_Set(FLAG_LEMURIA_OTHER_WAY_IN);
-  else if (entrance == 2)
+  else if (entrance == ANCIENT_LEMURIA_FROM_LEMURIA_DOCK_EAST_A)
     GameFlag_Clear(FLAG_LEMURIA_OTHER_WAY_IN);
-  else if (entrance == 3)
+  else if (entrance == ANCIENT_LEMURIA_FROM_LEMURIA)
     GameFlag_Clear(FLAG_LEMURIA_OTHER_WAY_IN);
   else if (entrance == 4)
     GameFlag_Set(FLAG_LEMURIA_OTHER_WAY_IN);
-  else if (entrance == 5)
+  else if (entrance == ANCIENT_LEMURIA_FROM_LEMURIA_DOCK_EAST_B)
     GameFlag_Set(FLAG_LEMURIA_OTHER_WAY_IN);
   if (GameFlag_Get(FLAG_LEMURIA_OTHER_WAY_IN)) {
     MapGrid_CopyCellPictureCellsRect(38, 47, 26, 12, 8, 47);
@@ -453,6 +453,7 @@ void AncientLemuria_MeetTheLemurians(void) {
     FieldEffect_SetAttached(ACTOR_SECOND_LEMURIAN,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(40);
+    // "That's quite something! Who are you, that you could defeat that..."
     Event_ShowMessageThenWait(ACTOR_SECOND_LEMURIAN, 0, 10);
     gFieldWork->message++;
   } else {
@@ -462,23 +463,28 @@ void AncientLemuria_MeetTheLemurians(void) {
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(40);
     gFieldWork->message++;
+    // "But clearly, you are here, and the beast is gone..."
     Event_ShowMessageThenWait(ACTOR_SECOND_LEMURIAN, 0, 0);
     Actor_Jump(ACTOR_SECOND_LEMURIAN, 6, 15);
     Actor_Jump(ACTOR_SECOND_LEMURIAN, 6, 23);
     Event_Wait(10);
   }
   Actor_ShowEmote(ACTOR_LEMURIAN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "If you are strong enough to defeat Poseidon, you are too dangerous to..."
   Event_ShowMessageThenWait(ACTOR_LEMURIAN, 0, 10);
   Actor_ShowEmote(ACTOR_SECOND_LEMURIAN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "The king's orders are clear! We cannot grant you entry."
   Event_ShowMessageThenWait(ACTOR_SECOND_LEMURIAN, 0, 10);
   FieldActor_LaunchFromLeader(ACTOR_KRADEN, 16, -16, FACING_NORTH_NORTHWEST);
   Actor_WaitForMoveById(ACTOR_KRADEN);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "King? Who is your king?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
   Actor_FaceDirection(ACTOR_LEMURIAN, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_LEMURIAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "His Highness, King Hydros, of course..."
   Event_ShowMessageThenWait(ACTOR_LEMURIAN, 0, 10);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
@@ -487,16 +493,19 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(30);
   Actor_SetAnimationById(ACTOR_FELIX, ANIM_SHAKE_HEAD);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 4);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_SECOND_LEMURIAN, 2);
   Event_Wait(10);
+  // "His Majesty has ruled over Lemuria for centuries."
   Event_ShowMessageThenWait(ACTOR_SECOND_LEMURIAN, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, ANIM_NOD);
   Event_Wait(10);
+  // "King Hydros has decreed that Lemuria must be kept safe from dangerous..."
   Event_ShowMessageThenWait(ACTOR_LEMURIAN, 0, 10);
   Actor_MoveToObject(ACTOR_PIERS, ACTOR_FELIX);
   Actor_GetById(ACTOR_PIERS)->scaleX = 0;
+  // "You say that we are dangerous, but do you include me as well?"
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_FaceDirectionById(ACTOR_LEMURIAN, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_SECOND_LEMURIAN, FACING_WEST, 0);
@@ -512,8 +521,10 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_ShowEmote(ACTOR_LEMURIAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_SECOND_LEMURIAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                   30);
+  // "Piers!"
   FieldMessage_ShowAtActor(ACTOR_LEMURIAN, 0);
   Event_Wait(20);
+  // "Piers!"
   Event_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_SECOND_LEMURIAN, 0, 0);
   Message_CloseFinishedWindows();
   Event_Wait(10);
@@ -524,14 +535,17 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_WalkByAndWait(ACTOR_SECOND_LEMURIAN, -8, 8);
   Actor_FaceDirection(ACTOR_SECOND_LEMURIAN, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, ANIM_NOD);
   Event_Wait(10);
+  // "Did you join them in battle against Poseidon?"
   Event_ShowMessageThenWait(ACTOR_LEMURIAN, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, 4);
+  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, ANIM_SHAKE_HEAD);
+  // "Impossible! Everyone knows you possess great courage, but you still..."
   Event_ShowMessageThenWait(ACTOR_SECOND_LEMURIAN, 0, 10);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "Such comments do us all a great disservice! I battled fiercely..."
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(35);
@@ -542,7 +556,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(30);
-  Actor_SetAnimationById(ACTOR_KRADEN, 3);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(25);
   Actor_StartRepeatedMotion(ACTOR_LEMURIAN, 3);
@@ -557,10 +571,12 @@ void AncientLemuria_MeetTheLemurians(void) {
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(30);
+  // "Leave our landing to me."
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_SetSpeed(ACTOR_PIERS, 1);
   Actor_WalkByAndWait(ACTOR_PIERS, 0, -16);
   Event_Wait(10);
+  // "You have my word that we shall create no problems during our stay..."
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_StartRepeatedMotion(ACTOR_LEMURIAN, 2);
   Actor_RunRepeatedMotion(ACTOR_SECOND_LEMURIAN, 2);
@@ -569,29 +585,38 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_FaceDirection(ACTOR_SECOND_LEMURIAN, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(30);
   Actor_ShowEmote(ACTOR_LEMURIAN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "Piers, I know you are a man of your word, but the king's orders must..."
   Event_ShowMessageThenWait(ACTOR_LEMURIAN, 0, 10);
   Actor_ShowEmote(ACTOR_SECOND_LEMURIAN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "You understand that we cannot simply ignore the king's orders, don't..."
   Event_ShowMessageThenWait(ACTOR_SECOND_LEMURIAN, 0, 10);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "What is King Hydros doing..."
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "So, you people really take your kings seriously, don't you?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
   Actor_Jump(ACTOR_LEMURIAN, 6, 15);
   Actor_Jump(ACTOR_LEMURIAN, 6, 23);
   Actor_ShowEmote(ACTOR_LEMURIAN, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "Insolent pup! Do not dishonor the king of Lemuria! We are peaceful..."
   Event_ShowMessageThenWait(ACTOR_LEMURIAN, 0, 10);
   Actor_SetSpritePriority(ACTOR_KRADEN, 2);
   Actor_Jump(ACTOR_KRADEN, 6, 15);
   Actor_Jump(ACTOR_KRADEN, 6, 23);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
+  // "Pup? I must be twice your age! Who are you calling "pup"?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
   Actor_ShowEmote(ACTOR_SECOND_LEMURIAN, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  // "You wish to see Lemuria, and yet you know so little of us! I am far..."
   Event_ShowMessageThenWait(ACTOR_SECOND_LEMURIAN, 0, 10);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  // "Pah! Older than me?! Inconceivable!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
   Actor_FaceDirectionById(ACTOR_PIERS, FACING_SOUTHEAST, 0);
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  // "Er... Actually, Kraden, these two are perhaps older than all of you..."
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_StartRepeatedMotion(ACTOR_KRADEN, 3);
   Actor_SetAttachedEffect(ACTOR_KRADEN,
@@ -599,48 +624,58 @@ void AncientLemuria_MeetTheLemurians(void) {
   Event_Wait(50);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   Event_Wait(10);
+  // "Babi must have spoken of this to you. In Lemuria, time passes quite..."
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  // "Ah... Well... I suppose I recall something of that sort or another..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
   Actor_WalkByAndWait(ACTOR_KRADEN, 0, -16);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirectionById(ACTOR_PIERS, FACING_EAST, 0);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(10);
+  // "But perhaps I was rude, and I hope you accept my apology..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, ANIM_NOD);
   Event_Wait(10);
+  // "Well, just so long as we're clear on that."
   Event_ShowMessageThenWait(ACTOR_LEMURIAN, 0, 10);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_SECOND_LEMURIAN, FACING_WEST, 0);
   Event_Wait(20);
+  // "But if your fighting is as skilled as your wordplay, then perhaps you..."
   Event_ShowMessageThenWait(ACTOR_SECOND_LEMURIAN, 0, 10);
   Actor_FaceDirectionById(ACTOR_LEMURIAN, FACING_EAST, 0);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, ANIM_NOD);
   Event_Wait(10);
+  // "I agree. Perhaps His Majesty will provide an exception in their case."
   Event_ShowMessageThenWait(ACTOR_LEMURIAN, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, ANIM_NOD);
   Event_Wait(10);
+  // "King Hydros might be willing to reverse his order if we confer with..."
   Event_ShowMessageThenWait(ACTOR_SECOND_LEMURIAN, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, ANIM_NOD);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, ANIM_NOD);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_LEMURIAN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_SECOND_LEMURIAN, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(30);
   Actor_ShowEmote(ACTOR_LEMURIAN, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "We shall speak with him at once!"
   Event_ShowMessageThenWait(ACTOR_LEMURIAN, 0, 10);
   Actor_ShowEmote(ACTOR_SECOND_LEMURIAN, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "King Hydros has been seeking news from beyond the Sea of Time. He..."
   Event_ShowMessageThenWait(ACTOR_SECOND_LEMURIAN, 0, 10);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_SMILE, 55);
-  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, ANIM_NOD);
   Event_Wait(10);
+  // "Wait here."
   Event_ShowMessageThenWait(ACTOR_LEMURIAN, 0, 10);
   Actor_FaceDirection(ACTOR_LEMURIAN, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_SECOND_LEMURIAN, FACING_NORTH_NORTHWEST, 0);
@@ -651,9 +686,11 @@ void AncientLemuria_MeetTheLemurians(void) {
   Event_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
   Event_Wait(10);
+  // "How long do you think we'll be waiting?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
   Actor_FaceDirectionById(ACTOR_PIERS, FACING_EAST, 0);
   Event_Wait(20);
+  // "Good point. Time means little to most Lemurians. Mere moments to us..."
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_StartRepeatedMotion(ACTOR_LEMURIAN, 3);
   Actor_SetAttachedEffect(ACTOR_LEMURIAN,
@@ -669,18 +706,22 @@ void AncientLemuria_MeetTheLemurians(void) {
   FieldCamera_WaitForArrival();
   Event_Wait(10);
   Actor_ShowEmote(ACTOR_LEMURIAN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "You seem young to me, and yet you are probably an old man among your..."
   Event_ShowMessageThenWait(ACTOR_LEMURIAN, 0, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 55);
   Actor_ShowEmote(ACTOR_SECOND_LEMURIAN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "King Hydros instructed us to be kind to the elderly at all times."
   Event_ShowMessageThenWait(ACTOR_SECOND_LEMURIAN, 0, 10);
   Actor_FaceDirectionById(ACTOR_LEMURIAN, FACING_EAST, 0);
   Event_Wait(20);
+  // "They seem trustworthy enough... Shall we let them in?"
   Event_ShowMessageThenWait(ACTOR_LEMURIAN, 0, 10);
   Actor_FaceDirection(ACTOR_SECOND_LEMURIAN, FACING_WEST, 0);
   Event_Wait(20);
+  // "I can see no reason not to. We won't get in trouble, will we?"
   Event_ShowMessageThenWait(ACTOR_SECOND_LEMURIAN, 0, 10);
   Actor_FaceDirectionById(ACTOR_PIERS, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_KRADEN, FACING_WEST, 0);
@@ -690,29 +731,34 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "I will be with them! Now, please, let me walk the streets of my home..."
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   Actor_FaceDirectionById(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(20);
+  // "I beseech you!"
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, ANIM_NOD);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, ANIM_NOD);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_LEMURIAN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_SECOND_LEMURIAN, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(30);
-  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_LEMURIAN, ANIM_NOD);
   Event_Wait(10);
+  // "Then we place our trust in each of you. You may enter. But...don't do..."
   Event_ShowMessageThenWait(ACTOR_LEMURIAN, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, ANIM_NOD);
   Event_Wait(10);
+  // "If you cause any trouble, we'll hunt you down and exact swift and..."
   Event_ShowMessageThenWait(ACTOR_SECOND_LEMURIAN, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_LEMURIAN, 2);
   Event_Wait(10);
+  // "Do we have your word?"
   FieldMessage_ShowAtActor(ACTOR_LEMURIAN, 0);
   if ((s8)gMainRoutineWork.weirdAnswers <= 4) {
     result = FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0);
@@ -720,8 +766,9 @@ void AncientLemuria_MeetTheLemurians(void) {
       Event_Wait(25);
       Actor_FaceDirectionById(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
       Event_Wait(30);
-      Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+      Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
       Event_Wait(10);
+      // "Ooo! Ooo! Finally! What could be waiting for me in Lemuria? I..."
       Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
       gFieldWork->message++;
     } else {
@@ -732,6 +779,7 @@ void AncientLemuria_MeetTheLemurians(void) {
       Event_Wait(30);
       Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
       gFieldWork->message++;
+      // "We've come a long way to see Lemuria. I won't have anything ruin..."
       Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
     }
     gFieldWork->message += 2;
@@ -750,6 +798,7 @@ void AncientLemuria_MeetTheLemurians(void) {
       Actor_ShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_WINCE, 50);
       Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
       Event_Wait(10);
+      // "But thank you for speaking honestly. Sometimes, you can say the..."
       Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
       gFieldWork->message++;
     } else {
@@ -761,6 +810,7 @@ void AncientLemuria_MeetTheLemurians(void) {
       Actor_Jump(ACTOR_KRADEN, 6, 15);
       Actor_Jump(ACTOR_KRADEN, 6, 23);
       gFieldWork->message++;
+      // "What!? Are you INSANE!? Or maybe you think you're funny? Because..."
       Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
     }
     Actor_FaceDirectionAndRefreshById(ACTOR_PIERS, FACING_NORTH);
@@ -770,21 +820,26 @@ void AncientLemuria_MeetTheLemurians(void) {
   Event_Wait(15);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   Event_Wait(10);
+  // "Oh, hush. I'll keep a close eye on them. You have nothing to fear."
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, 3);
+  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, ANIM_NOD);
   Event_Wait(10);
+  // "Very well, Piers. We place our faith in you, then. Enter freely and..."
   Event_ShowMessageThenWait(ACTOR_SECOND_LEMURIAN, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_LEMURIAN, 2);
   Event_Wait(10);
+  // "You must already be aware of this, but you are not permitted to enter..."
   Event_ShowMessageThenWait(ACTOR_LEMURIAN, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, 4);
+  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, ANIM_SHAKE_HEAD);
+  // "If the king were to find out about this, we'd be in big trouble."
   Event_ShowMessageThenWait(ACTOR_SECOND_LEMURIAN, 0, 10);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "Don't worry! I won't let that happen."
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  Actor_SetAnimationById(ACTOR_LEMURIAN, 3);
-  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, 3);
+  Actor_SetAnimationById(ACTOR_LEMURIAN, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_SECOND_LEMURIAN, ANIM_NOD);
   Event_Wait(25);
   FieldCamera_FollowActor(ACTOR_SECOND_LEMURIAN, 1);
   Actor_WalkBy(ACTOR_SECOND_LEMURIAN, 0, -32);
@@ -803,24 +858,30 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_WalkByAndWait(ACTOR_KRADEN, 0, -10);
   Actor_FaceDirectionById(ACTOR_KRADEN, FACING_WEST, 0);
   Event_Wait(20);
+  // "Is this Hydros really so fearsome?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
   Actor_FaceDirectionById(ACTOR_PIERS, FACING_EAST, 0);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+  // "Fearsome isn't the right word... King Hydros has lived longer than..."
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  // "While everyone respects him and holds him in great reverence... It..."
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_PIERS, 2);
   Event_Wait(10);
+  // "I certainly do not fear him. The king... He..."
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   Event_Wait(40);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  // "He what?"
   Event_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 10);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 50);
   Actor_FaceDirectionById(ACTOR_PIERS, FACING_EAST, 0);
   Event_Wait(30);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
+  // "You will understand once you meet the king yourself."
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_FaceDirectionById(ACTOR_PIERS, FACING_NORTH, 0);
   Event_Wait(20);
@@ -829,13 +890,15 @@ void AncientLemuria_MeetTheLemurians(void) {
   Event_Wait(10);
   Actor_FaceDirectionById(ACTOR_PIERS, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(30);
+  // "But that does not matter now. Let's go!"
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  // "To Lemuria... The city you've all been longing to see..."
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHEAST, 0);
   Actor_FaceDirectionById(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(30);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   Event_Wait(20);
@@ -850,7 +913,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
   Event_Wait(20);
   Actor_SetAnimationById(ACTOR_FELIX, ANIM_NOD);
-  Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
+  Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(20);
   Actor_SetSpeed(ACTOR_PIERS, 1.2);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_WALK);
@@ -861,7 +924,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Actor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
-  Actor_SetAnimationById(ACTOR_KRADEN, 2);
+  Actor_SetAnimationById(ACTOR_KRADEN, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
     Actor_SetDestinationById(ACTOR_KRADEN, leader->x.part[0].integer,

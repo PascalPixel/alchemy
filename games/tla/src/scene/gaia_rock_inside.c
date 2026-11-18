@@ -100,6 +100,11 @@ enum {
   ACTOR_ARROW_PLANT = 8
 };
 
+/// The exit the lair would take after showing a beam if none waited: the maze
+/// has no exit of this number, but the party only comes in by entrance 20 from
+/// the event of a face or bushes that sets a beam's flag first.
+#define EXIT_NO_SUNBEAM 20
+
 /// The trigger Susa's hook raises when the party has blocked him or his cask
 /// (GaiaRockInside_CheckBlocked).
 #define RAISED_SUSA_BLOCKED 42
@@ -352,7 +357,8 @@ void GaiaRockInside_JumpDownByAltar(void) {
   OverlayObject_PrepareObject(toFIXED(712), 0, toFIXED(468), SPRITE_CRATE);
   OverlayObject_PrepareObject(toFIXED(712), 0, toFIXED(490), SPRITE_CRATE);
   // 0x800 is no colour the dust's byte keeps, and not the bit that skips the
-  // wait for the landing: the jump goes as with 0.
+  // wait for the landing, which Taopo Swamp's and Ankohl Ruins' drops like this
+  // one pass: the jump goes as with 0.
   GaiaRockInside_JumpDownLedge(gMainRoutineWork.leaderActorId,
                                ANIM_LEADER_SPRING, 0x800);
   Event_PlaySound(SE_FALL);
@@ -2243,9 +2249,7 @@ s32 Scene_Initialize(void) {
       Event_WaitTransitionFrames();
       Event_Wait(60);
       {
-        // The maze has no exit 20: with no beam waiting the party would stay
-        // in the lair, but one always is.
-        s32 ending = 20;
+        s32 ending = EXIT_NO_SUNBEAM;
         if (Test(FLAG_ALTAR_ROOM_SUNBEAM_TO_SHOW)) {
           GameFlag_Clear(FLAG_ALTAR_ROOM_SUNBEAM_TO_SHOW);
           GameFlag_Set(FLAG_ALTAR_ROOM_SUNBEAM);

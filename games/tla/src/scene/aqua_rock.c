@@ -176,9 +176,6 @@ extern struct Trigger gAquaRock_Triggers[];
 extern struct Trigger gAquaRock_SlopesTriggers[];
 extern struct Trigger gAquaRock_MistSabreChestTriggers[];
 
-/// Whether the game flag is set.
-static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Get(flag); }
-
 /// Clears the game flag.
 static __inline__ void GameFlag_ClearBit_(s32 flag) { GameFlag_Clear(flag); }
 
@@ -1101,13 +1098,18 @@ void AquaRock_StopShakingMoai(struct Actor *actor) {
   sprite->rotation = Iwram_MulFX(Trig_Sin(actor->timer), *amplitude);
 }
 
-/// The last guardian moai's update: it keeps rocking gently, leaning a little,
-/// a sixty-fourth of a turn either way.
+/// The last guardian moai rocks a sixty-fourth of a turn either way: its sine,
+/// whose one is a whole turn, divided by this.
+#define MOAI_ROCK_DIVISOR 64
+/// The last guardian moai's lean, about which it rocks.
+#define MOAI_LEAN (TRIG_TURN * 3 / 128)
+
+/// The last guardian moai's update: it keeps rocking gently, leaning a little.
 void AquaRock_RockMoai(struct Actor *actor) {
   struct FieldSprite *sprite = actor->sprite;
 
   actor->timer += TRIG_TURN / 256;
-  sprite->rotation = Trig_Sin(actor->timer) / 64 + TRIG_TURN * 3 / 128;
+  sprite->rotation = Trig_Sin(actor->timer) / MOAI_ROCK_DIVISOR + MOAI_LEAN;
 }
 
 /// Arriving by the north way, as Douse wakes the Apojii Islands' Aqua Stone:
@@ -1481,7 +1483,6 @@ void AquaRock_ArriveFromPassage(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 flag = GameFlag_Get(FLAG_KEEP_PARTY_POSITION);
   s32 *owner = &gMainRoutineWork.leaderActorId;
-  s32 offset;
 
   if (flag == 0) {
     Event_Start();
@@ -1501,8 +1502,7 @@ void AquaRock_ArriveFromPassage(void) {
     Actor_SetSpriteColor(Actor_GetById(*owner), SPRITE_COLOR_NORMAL);
     Actor_SetSpriteFlags(Actor_GetById(*owner), SPRITE_FLAG_SHADOW);
     ((struct FieldSprite *)leader->sprite)->priority = 1;
-    offset = 10;
-    Actor_WalkByAndWaitById(*owner, 0, offset);
+    Actor_WalkByAndWaitById(*owner, 0, 10);
     leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     leader->update = (void (*)(void))flag;
     Event_NoOp();
@@ -1576,8 +1576,8 @@ void AquaRock_DrawRisingBubbles(void) {
       // -11 to 323).
       screenX += 11;
       if ((u32)screenX <= 334 && screenY > -16 && screenY <= 239) {
-        x &= 0x1ff;
-        screenY &= 255;
+        x &= OBJ_X_MASK;
+        screenY &= OBJ_Y_MASK;
         entry->oam[0] = 0;
         entry->oam[1] = screenY | OBJ_X(x) | OBJ_256_COLORS;
         entry->oam[2] = (tile + (entry->age & 3) * 2) | OBJ_PRIORITY(1);
@@ -1636,8 +1636,8 @@ void AquaRock_DrawFallingBubbles(void) {
       y = FIXEDtoINT(y);
       depth = y + 58;
       if ((u32)(screenX + 11) <= 334 && screenY > -16 && screenY <= 239) {
-        x &= 0x1ff;
-        screenY &= 255;
+        x &= OBJ_X_MASK;
+        screenY &= OBJ_Y_MASK;
         bubble->oam[0] = 0;
         bubble->oam[1] = screenY | OBJ_X(x) | OBJ_256_COLORS;
         bubble->oam[2] = (tile + (bubble->age & 3) * 2) | OBJ_PRIORITY(1);
@@ -1713,13 +1713,13 @@ void AquaRock_StartSparkles(void) {
     size = (u32)p;
     *(u32 *)size = 0;
     size += 4;
-    *(u32 *)size = OBJ_SIZE_16X16 | OBJ_MODE(1);
+    *(u32 *)size = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
     size += 4;
     *(u32 *)size = OBJ_PRIORITY(1) | OBJ_PALETTE(11);
     p->posX = 0;
     p->posZ = 0;
     p->posY = toFIXED(Map_GetTerrainHeight(0, 0, 0));
-    p->timer = (i & 15) + 1;
+    p->timer = (i & (GROUND_PARTICLE_FRAMES - 1)) + 1;
     i++;
     p++;
   } while (i < ARRAY_COUNT(work->particles));

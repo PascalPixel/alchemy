@@ -221,6 +221,7 @@ void JupiterLighthouse_UseBlueKey(s32 item) {
 /// Examining a locked door: says it is locked.
 void JupiterLighthouse_TryLockedDoor(void) {
   gFieldWork->fieldMenu = 1;
+  // "The door's locked."
   Message_ShowCentered(MsgFieldDoorLocked, 1);
 }
 
@@ -275,6 +276,10 @@ void JupiterLighthouse_SendUpBeamLights(void) {
   }
 }
 
+/// Sets up the room as the party enters: the passage hidden, each opened door
+/// drawn open, the lights sent up the beam, and a party come up from the room
+/// below carried, spinning, up the beam to land on the floor, or one come by
+/// Cyclone from the Erinyes Tunic's room arriving in a ring. Returns 0.
 s32 Scene_Initialize(void) {
   struct Actor *leader;
   s32 flag;
@@ -330,6 +335,9 @@ s32 Scene_Initialize(void) {
 
 void JupiterLighthouse_LoadPalettes(s32 value);
 
+/// Sets the scene's arrival flags and loads the lighthouse's palettes; lets
+/// the leader walk onto the blocks, raises them once the lighthouse is
+/// activated, and puts the bridge block back over the gap. Returns 0.
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
   JupiterLighthouse_LoadPalettes(0);

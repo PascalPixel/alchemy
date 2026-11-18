@@ -58,9 +58,9 @@ enum JupiterLighthouseAerieActorId {
   /// The blocks Move pushes into the gaps at the ends of the archers' paths.
   ACTOR_LEFT_PATH_BLOCK = ACTOR_RIGHT_ARCHER + 1,
   ACTOR_RIGHT_PATH_BLOCK,
-  /// The seedlings below the well that HangingVine_Place hangs as vines.
-  ACTOR_WEST_VINE,
-  ACTOR_EAST_VINE,
+  /// The chains hanging down the wall below the well (HangingVine_Place).
+  ACTOR_WEST_CHAIN,
+  ACTOR_EAST_CHAIN,
   /// The six platforms floating over the shafts either side of the well, west
   /// to east.
   ACTOR_FLOATING_PLATFORM_A,
@@ -93,6 +93,8 @@ enum BeamSide { BEAM_LEFT, BEAM_RIGHT };
 /// its top, 16 pixels higher, which keeps the leader from walking through it.
 #define LEDGE_HEIGHT (32 / 8)
 #define PATH_BLOCK_TOP_HEIGHT (48 / 8)
+/// The frames a path block set down in its gap is given to land.
+#define PATH_BLOCK_LANDING_FRAMES 30
 
 extern s32 gPaletteCycleFrame;
 
@@ -309,7 +311,7 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
         do {
           System_Wait(1);
           i++;
-          if (i > 29)
+          if (i > PATH_BLOCK_LANDING_FRAMES - 1)
             break;
         } while (actor->y.fixed > actor->groundHeight || actor->velocityY != 0);
       }
@@ -341,7 +343,7 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
         do {
           System_Wait(1);
           i++;
-          if (i > 29)
+          if (i > PATH_BLOCK_LANDING_FRAMES - 1)
             break;
         } while (actor->y.fixed > actor->groundHeight || actor->velocityY != 0);
       }
@@ -370,7 +372,7 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 /// Sets up the aerie as the party enters: the window in, the palettes, the
-/// vines, the floating platforms the leader may step onto, and the angels and
+/// chains, the floating platforms the leader may step onto, and the angels and
 /// the lid as far as they have risen. Returns 0.
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
@@ -382,8 +384,8 @@ s32 Scene_Initialize(void) {
     Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
         ACTOR_PRIORITY_IGNORES_RISES;
   JupiterLighthouse_LoadPalettes(0);
-  Import_HangingVinePlace(ACTOR_WEST_VINE, 1);
-  Import_HangingVinePlace(ACTOR_EAST_VINE, 1);
+  Import_HangingVinePlace(ACTOR_WEST_CHAIN, 1);
+  Import_HangingVinePlace(ACTOR_EAST_CHAIN, 1);
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
   Actor_Get(ACTOR_FLOATING_PLATFORM_A)->priorityFlags |=
@@ -893,10 +895,14 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gSceneExits[] = {                                                        
-      SCENE_EXITS(JupiterLighthouseAerie),       SCENE_EXIT(JUPITER_LIGHTHOUSE_AERIE_TO_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_SOUTHEAST, JupiterLighthouseRoomCrackedFloor, JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_FROM_JUPITER_LIGHTHOUSE_AERIE_SOUTHEAST), SCENE_EXIT(JUPITER_LIGHTHOUSE_AERIE_TO_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_EAST, JupiterLighthouseRoomCrackedFloor, JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_FROM_JUPITER_LIGHTHOUSE_AERIE_EAST),     
-      SCENE_EXIT(JUPITER_LIGHTHOUSE_AERIE_TO_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_WEST, JupiterLighthouseRoomCrackedFloor, JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_FROM_JUPITER_LIGHTHOUSE_AERIE_WEST), SCENE_EXIT(JUPITER_LIGHTHOUSE_AERIE_TO_JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST, JupiterLighthouseRoomPhaetonsBladeChest, JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST_FROM_JUPITER_LIGHTHOUSE_AERIE), SCENE_EXITS_END,           
-  };
+u32 gSceneExits[] = {
+    SCENE_EXITS(JupiterLighthouseAerie),
+    SCENE_EXIT(JUPITER_LIGHTHOUSE_AERIE_TO_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_SOUTHEAST, JupiterLighthouseRoomCrackedFloor, JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_FROM_JUPITER_LIGHTHOUSE_AERIE_SOUTHEAST),
+    SCENE_EXIT(JUPITER_LIGHTHOUSE_AERIE_TO_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_EAST, JupiterLighthouseRoomCrackedFloor, JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_FROM_JUPITER_LIGHTHOUSE_AERIE_EAST),
+    SCENE_EXIT(JUPITER_LIGHTHOUSE_AERIE_TO_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_WEST, JupiterLighthouseRoomCrackedFloor, JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_FROM_JUPITER_LIGHTHOUSE_AERIE_WEST),
+    SCENE_EXIT(JUPITER_LIGHTHOUSE_AERIE_TO_JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST, JupiterLighthouseRoomPhaetonsBladeChest, JUPITER_LIGHTHOUSE_ROOM_PHAETONS_BLADE_CHEST_FROM_JUPITER_LIGHTHOUSE_AERIE),
+    SCENE_EXITS_END,
+};
 
 struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),

@@ -63,6 +63,9 @@
 /// The sand rooms' switches pressed, the sand rising in each.
 #define FLAG_FIRST_SAND_SWITCH_PRESSED FLAG_SCENE_TEMP_02
 #define FLAG_SECOND_SAND_SWITCH_PRESSED FLAG_SCENE_TEMP_03
+/// Set while Reveal is shown: the sand's sprites are hidden, and the fifth
+/// room's gap lies open.
+#define FLAG_ANKOHL_RUINS_REVEAL_SHOWN FLAG_SCENE_TEMP_05
 
 /// The trigger codes the rooms' code raises or tests: the great face's cells
 /// that board it, the ledge the flowing sand carries the leader off, and the
@@ -125,6 +128,8 @@ enum AnkohlRuinsFirstRoomActorId {
   ACTOR_STONE_FACE_A = ACTOR_FIRST_PLACED + 2,
   ACTOR_STONE_FACE_B,
   ACTOR_STONE_FACE_C,
+  /// Unused: placed at (0, 0), off the room; at its place in the row the
+  /// wall's own face stands split open on a doorway.
   ACTOR_STONE_FACE_D,
   ACTOR_STONE_FACE_E,
   ACTOR_STONE_FACE_F,
@@ -431,7 +436,7 @@ void AnkohlRuins_RiseFromSand(void) {
 /// Before Move: opens the cells under the pillar about to move in the rooms
 /// that have one (the first, third, fourth and fifth); in the fifth, the half
 /// face for the gap also copies the rows the gap opens (from patch 1, only
-/// while FLAG_SCENE_TEMP_05 is set).
+/// while Reveal is shown).
 void AnkohlRuins_StartMovingPillar(s32 unused, s32 id) {
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_STONE_FACES) {
     if (id == ACTOR_FIRST_ROOM_PILLAR) {
@@ -464,7 +469,8 @@ void AnkohlRuins_StartMovingPillar(s32 unused, s32 id) {
 #if !TLA_PATCH_1
     if (id == ACTOR_FACE_HALF_FOR_THE_GAP)
 #else
-    if (id == ACTOR_FACE_HALF_FOR_THE_GAP && Event_GetFlag(FLAG_SCENE_TEMP_05))
+    if (id == ACTOR_FACE_HALF_FOR_THE_GAP &&
+        Event_GetFlag(FLAG_ANKOHL_RUINS_REVEAL_SHOWN))
 #endif
       MapGrid_CopyCells(35, 98, 3, 5, 25, 98);
   }
@@ -839,7 +845,7 @@ void AnkohlRuins_ScatterWeeds(s32 a, s32 id) {
     Event_SetFlag(FLAG_FOURTH_ROOM_WEEDS_SCATTERED(id));
 }
 
-/// Each frame, while Reveal is not shown (FLAG_SCENE_TEMP_05) and the sand is
+/// Each frame, while Reveal is not shown and the sand is
 /// less than 32 pixels deep, places the eight sprites of the sand's window,
 /// each moved by the level as its kind says, and raises map layer 1, the sand,
 /// by the level over its base.
@@ -859,7 +865,8 @@ void AnkohlRuins_DrawSand(void) {
   struct AnkohlRuinsSprite *sprite = work->sprites;
   s32 i;
 
-  if (Event_GetFlag(FLAG_SCENE_TEMP_05) == 0 && work->level < toFIXED(32)) {
+  if (Event_GetFlag(FLAG_ANKOHL_RUINS_REVEAL_SHOWN) == 0 &&
+      work->level < toFIXED(32)) {
     for (i = 0; i <= 7; i++) {
       u32 kind = sprite->kind;
       FIXED x = sprite->x;
@@ -1391,8 +1398,8 @@ void AnkohlRuins_PushStatueIntoGap(void) {
 
 /// Reveal shows the fifth room's gap.
 void AnkohlRuins_RevealGap(void) {
-#if TLA_PATCH_1 /* The Japanese edition does not touch FLAG_SCENE_TEMP_05. */
-  Event_SetFlag(FLAG_SCENE_TEMP_05);
+#if TLA_PATCH_1 /* The Japanese edition leaves the flag alone. */
+  Event_SetFlag(FLAG_ANKOHL_RUINS_REVEAL_SHOWN);
 #endif
   MapGrid_CopyCells(35, 34, 3, 5, 25, 34);
   MapGrid_CopyCells(35, 98, 3, 3, 25, 98);
@@ -1401,17 +1408,21 @@ void AnkohlRuins_RevealGap(void) {
 /// Reveal ends: the gap is hidden again.
 void AnkohlRuins_HideGap(void) {
 #if TLA_PATCH_1
-  Event_ClearFlag(FLAG_SCENE_TEMP_05);
+  Event_ClearFlag(FLAG_ANKOHL_RUINS_REVEAL_SHOWN);
 #endif
   MapGrid_CopyCells(40, 34, 3, 5, 25, 34);
   MapGrid_CopyCells(40, 98, 3, 3, 25, 98);
 }
 
-/// Reveal begins: FLAG_SCENE_TEMP_05 hides the sand's sprites.
-void AnkohlRuins_StartReveal(void) { GameFlag_Set(FLAG_SCENE_TEMP_05); }
+/// Reveal begins: the sand's sprites are hidden.
+void AnkohlRuins_StartReveal(void) {
+  GameFlag_Set(FLAG_ANKOHL_RUINS_REVEAL_SHOWN);
+}
 
 /// Reveal ends: the sand's sprites show again.
-void AnkohlRuins_EndReveal(void) { GameFlag_Clear(FLAG_SCENE_TEMP_05); }
+void AnkohlRuins_EndReveal(void) {
+  GameFlag_Clear(FLAG_ANKOHL_RUINS_REVEAL_SHOWN);
+}
 
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_STONE_FACES)
@@ -2445,7 +2456,7 @@ struct Trigger gAnkohlRuins_GreatFaceTriggers[] = {
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(AnkohlRuins_BoardRaft)},
+    {TRIGGER_STEP, TRIGGER_BOARD_GREAT_FACE, CONDITION_ALWAYS, EVENT(AnkohlRuins_BoardRaft)},
     {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(AnkohlRuins_BoardRaftAgain)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_THIRD_ROOM_PILLAR, FLAG_THIRD_ROOM_PILLAR_MOVED, EVENT(AnkohlRuins_StartMovingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_THIRD_ROOM_PILLAR, FLAG_THIRD_ROOM_PILLAR_MOVED, EVENT(AnkohlRuins_FinishMovingPillar)},
@@ -2512,7 +2523,7 @@ struct Trigger gAnkohlRuins_CrystalPowderChestTriggers[] = {
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 13, CONDITION_ALWAYS, EVENT(AnkohlRuins_JumpDownLedge)},
     {TRIGGER_EXIT, 26, CONDITION_ALWAYS, 26},
-    {TRIGGER_STEP, 66, CONDITION_ALWAYS, EVENT(AnkohlRuins_PushedOffLedge)},
+    {TRIGGER_STEP, TRIGGER_PUSHED_OFF_LEDGE, CONDITION_ALWAYS, EVENT(AnkohlRuins_PushedOffLedge)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIFTH_ROOM_PILLAR, FLAG_FIFTH_ROOM_PILLAR_MOVED, EVENT(AnkohlRuins_StartMovingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIFTH_ROOM_PILLAR, FLAG_FIFTH_ROOM_PILLAR_MOVED, EVENT(AnkohlRuins_FinishMovingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FACE_HALF_FOR_THE_GAP, FLAG_FACE_HALF_PUSHED_INTO_GAP, EVENT(AnkohlRuins_StartMovingPillar)},
@@ -2533,12 +2544,12 @@ struct Trigger gAnkohlRuins_SandDoorsTriggers[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 23, CONDITION_ALWAYS, 23},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 28, CONDITION_ALWAYS, 28},
-    {TRIGGER_STEP, 40, FLAG_SCENE_TEMP_02, EVENT(AnkohlRuins_PressFirstSandSwitch)},
+    {TRIGGER_STEP, 40, FLAG_FIRST_SAND_SWITCH_PRESSED, EVENT(AnkohlRuins_PressFirstSandSwitch)},
     {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(AnkohlRuins_OpenFirstSandDoor)},
-    {TRIGGER_STEP, 42, FLAG_SCENE_TEMP_03, EVENT(AnkohlRuins_PressSecondSandSwitch)},
+    {TRIGGER_STEP, 42, FLAG_SECOND_SAND_SWITCH_PRESSED, EVENT(AnkohlRuins_PressSecondSandSwitch)},
     {TRIGGER_STEP, 43, CONDITION_ALWAYS, EVENT(AnkohlRuins_OpenSecondSandDoor)},
-    {TRIGGER_RAISED, 68, CONDITION_ALWAYS, EVENT(AnkohlRuins_RaiseFirstSand)},
-    {TRIGGER_RAISED, 69, CONDITION_ALWAYS, EVENT(AnkohlRuins_RaiseSecondSand)},
+    {TRIGGER_RAISED, TRIGGER_RAISE_FIRST_SAND, CONDITION_ALWAYS, EVENT(AnkohlRuins_RaiseFirstSand)},
+    {TRIGGER_RAISED, TRIGGER_RAISE_SECOND_SAND, CONDITION_ALWAYS, EVENT(AnkohlRuins_RaiseSecondSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_SinkIntoSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_RiseFromSand)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_StartReveal)},

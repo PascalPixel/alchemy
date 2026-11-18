@@ -674,20 +674,20 @@ void Champa_JennaAndShebaGlare(s32 firstId, s32 secondId) {
 
   y = first->y.fixed;
   Champa_SpawnGlareSpark(first->x.fixed, y + rise, first->z.fixed,
-                         toFIXED(1) / 16, 15);
+                         DEGtoANG(22.5), 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
   y = second->y.fixed;
   Champa_SpawnGlareSpark(second->x.fixed, y + rise, second->z.fixed,
-                         toFIXED(15) / 16, 15);
+                         DEGtoANG(337.5), 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
   Champa_SpawnGlareSpark(first->x.fixed, first->y.fixed + rise, first->z.fixed,
-                         toFIXED(1) / 16, 15);
+                         DEGtoANG(22.5), 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
   Champa_SpawnGlareSpark(second->x.fixed, second->y.fixed + rise,
-                         second->z.fixed, toFIXED(15) / 16, 15);
+                         second->z.fixed, DEGtoANG(337.5), 15);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(15);
 }

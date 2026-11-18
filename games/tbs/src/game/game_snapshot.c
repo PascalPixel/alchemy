@@ -65,11 +65,11 @@ void InventorySnapshot_Save(void) {
       Unit_UpdateClass(unitId);
       Unit_Calculate(unitId);
     }
-    // Keep shortcuts and party order with the inventory snapshot.
     *save++ = firstShortcut;
     *save++ = secondShortcut;
+    // UB: the party order's four bytes are read as two halfwords, through a
+    // pointer of another type.
 #ifdef UBFIX
-    // Party order is a byte array; pack its two saved halfwords explicitly.
     save[0] = gMainRoutineWork.party[0] | (gMainRoutineWork.party[1] << 8);
     save[1] = gMainRoutineWork.party[2] | (gMainRoutineWork.party[3] << 8);
 #else
@@ -102,6 +102,8 @@ void InventorySnapshot_Restore(void) {
 
     gMainRoutineWork.firstShortcut = *source++;
     gMainRoutineWork.secondShortcut = *source++;
+    // UB: the party order's four bytes are written as two halfwords, through a
+    // pointer of another type.
 #ifdef UBFIX
     gMainRoutineWork.party[0] = source[0];
     gMainRoutineWork.party[1] = source[0] >> 8;

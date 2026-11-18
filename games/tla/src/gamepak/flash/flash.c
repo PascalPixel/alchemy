@@ -11,10 +11,6 @@
 
 typedef u8 (*FlashByteRead)(u8 *address);
 
-/// The id a Macronix chip answers with (Flash_ChipMacronix's): its device id
-/// 0x1c above the maker id 0xc2.
-#define FLASH_ID_MACRONIX (0x1c << 8 | 0xc2)
-
 /// Enters flash ID mode, waits for the chip and reads its device and
 /// manufacturer IDs.
 s32 ReadFlashId(void) {

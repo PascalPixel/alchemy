@@ -70,6 +70,7 @@
 #include "scene/actor_pulse.h"
 #include "scene/event_psynergy.h"
 #include "scene/import.h"
+#include "scene/vale.h"
 #include "scene/walk_into_leader.h"
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
@@ -251,7 +252,8 @@ enum StormNightAreaFlag {
 //   Isaac came, stands open.
 // - FLAG_VALE_SHOVING_MANS_DOOR_OPEN: the stout man has run out of the door of
 //   VALE_PROLOGUE_TO_COTTAGE_ROOMS_A_SOUTH, leaving it open.
-// - FLAG_VALE_ON_BRIDGE: the leader is on the rope bridge over the river.
+// - FLAG_VALE_ON_BRIDGE (scene/vale.h, as Vale has it): the leader is on the
+//   rope bridge over the river.
 
 static s32 sShakeDone;
 static s32 sShakeShift;
@@ -294,11 +296,6 @@ static s32 ValePrologue_RerollHeadingOnCountdown(struct Actor *actor) {
 /// The stout man has run out of his door and shoved Isaac, leaving the door
 /// open.
 #define FLAG_VALE_SHOVING_MANS_DOOR_OPEN FLAG_SCENE_TEMP_06
-/// The leader is on the rope bridge over the river. While it is set, the
-/// bridge's cells take the deck's shapes and cell behaviors, its two middle
-/// rows walkable at the deck's height and its rails walls. Stepping off puts
-/// back the river's, walled water between open banks.
-#define FLAG_VALE_ON_BRIDGE FLAG_SCENE_TEMP_10
 
 /// Returns where the party appears.
 const struct SceneEntrance *Scene_GetEntrances(void) {

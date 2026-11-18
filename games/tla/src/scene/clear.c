@@ -265,6 +265,10 @@ void StatusScreen_Run(void);
 /// DataTransfer_Apply, as a save image: after the state set aside at the
 /// start of the map cell buffer, free on this screen.
 #define TRANSFERRED_SAVE (Ram_MapCellBuffer + SAVE_IMAGE_BYTES)
+/// A save image from the game flags to the units' end: the flags, the main
+/// routine work and the party's units.
+#define SAVE_IMAGE_STATE_BYTES                                                 \
+  (SAVE_IMAGE_UNITS + sizeof(gCharacterUnits) - SAVE_IMAGE_GAME_FLAGS)
 
 /// The width of the answers "Yeah!" and "Wait a sec" to "Play on EASY level?"
 /// and the two questions after it, as each language's words need.
@@ -956,17 +960,25 @@ done:
   Serial_RemoveIrqHandlers();
   System_Wait(10);
   Window_Close(window, 2);
+  // The flags and the fields before the Djinn recovery list come over in
+  // place, as both games keep them; then The Broken Seal's main routine work
+  // and units, moved on by as much as this game's list is longer, so that its
+  // units land on this game's.
   flags = gGameFlagBytes;
-  Iwram_CopyWords(flags, TRANSFERRED_FLAGS, 532);
+  Iwram_CopyWords(flags, TRANSFERRED_FLAGS,
+                  SAVE_IMAGE_MAIN_ROUTINE_WORK - SAVE_IMAGE_GAME_FLAGS +
+                      offsetof(struct MainRoutineWork, djinnRecovery));
   Iwram_CopyWords(flags +
                       (SAVE_IMAGE_MAIN_ROUTINE_WORK - SAVE_IMAGE_GAME_FLAGS) +
                       (SAVE_IMAGE_UNITS - BROKEN_SEAL_SAVE_IMAGE_UNITS),
-                  TRANSFERRED_MAIN_ROUTINE_WORK, 3360);
+                  TRANSFERRED_MAIN_ROUTINE_WORK,
+                  BROKEN_SEAL_SAVE_IMAGE_UNITS + sizeof(gCharacterUnits) -
+                      SAVE_IMAGE_MAIN_ROUTINE_WORK);
   Unit_Calculate(0);
   Unit_Calculate(1);
   Unit_Calculate(2);
   Unit_Calculate(3);
-  Iwram_CopyWords(TRANSFERRED_FLAGS, flags, 3904);
+  Iwram_CopyWords(TRANSFERRED_FLAGS, flags, SAVE_IMAGE_STATE_BYTES);
   FieldWindowColor_Apply(gMainRoutineWork.windowHue,
                          gMainRoutineWork.windowBrightness);
   return 1;
@@ -1393,7 +1405,8 @@ s32 Clear_EnterPassword(void) {
             StatusScreen_Run();
             // DEAD: the flags and party copied where RESTORE_SAVE_IMAGE
             // copies the whole state next; the ROM keeps the copy.
-            Iwram_CopyWords(TRANSFERRED_FLAGS, gGameFlagBytes, 3904);
+            Iwram_CopyWords(TRANSFERRED_FLAGS, gGameFlagBytes,
+                            SAVE_IMAGE_STATE_BYTES);
             return 0;
           }
           Sound_Play(SE_MENU_CANCEL);

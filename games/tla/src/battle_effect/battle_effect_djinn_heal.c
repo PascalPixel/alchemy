@@ -316,7 +316,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   s32 none;
   u8 *ringPixels;
   s32 size;
-  s32 scroll;
+  s32 bgX;
   s32 frame;
   s32 i;
   s32 j;
@@ -337,8 +337,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
 
   // The battle flashes away as the summons' openings do, stopping while the
   // white covers the screen.
-  for (scroll = -80, frame = 0; frame != SUMMON_OPENING_LOAD_FRAME + 1;
-       frame++) {
+  for (bgX = -80, frame = 0; frame != SUMMON_OPENING_LOAD_FRAME + 1; frame++) {
     if (frame == SUMMON_OPENING_LOAD_FRAME) {
       gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
       BattleEffect_SelectLivingTargets(work->args);
@@ -374,8 +373,8 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
             i + ZAGAN_STREAK_LEVEL;
       }
     }
-    scroll += 4;
-    REG_BG2X = scroll << 8;
+    bgX += 4;
+    REG_BG2X = bgX << 8;
     EFFECT_PRESENT_CANVAS(work);
   }
   blit = blitters;

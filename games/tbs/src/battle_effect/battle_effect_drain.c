@@ -70,6 +70,7 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
       angle = Random16() & TRIG_ANGLE_MASK;
       shard->x = ((Trig_Sin(angle) * radius) >> 7) + INTtoFIXED(screen.x);
       shard->y = ((Trig_Cos(angle) * radius) >> 3) + INTtoFIXED(screen.y);
+      // Thrown up at 2 to 6 pixels a frame, and up to a pixel a frame aside.
       shard->velocityX = (128 - (Random16() & 0xff)) << 9;
       lift = Random16() & 0xff;
       shard->variant = 0;

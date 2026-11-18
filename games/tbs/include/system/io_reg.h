@@ -428,6 +428,11 @@ enum ObjMode {
 /// Attribute 2's ten bits of tile number, counted in 4-bit tiles from the
 /// start of sprite VRAM.
 #define OBJ_TILE_MASK 0x3ff
+/// The tile numbers a sprite of width by height pixels takes, of 16 colours
+/// and of 256 (two numbers to a tile): a picture's sprites follow one another
+/// so in sprite VRAM.
+#define SPRITE_TILES(width, height) ((width) / 8 * ((height) / 8))
+#define SPRITE_TILES_8BPP(width, height) (2 * SPRITE_TILES(width, height))
 /// Attribute 0 holds eight bits of a sprite's y, so its y wraps round at 256
 /// lines.
 #define OBJ_Y_RANGE 256

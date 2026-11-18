@@ -59,17 +59,9 @@
 #define LUCKY_WHEELS_ICON_COLORS 240
 /// The jackpot banner's and the title letters' sprite palette.
 #define LUCKY_WHEELS_JACKPOT_PALETTE 15
-/// Attribute 0 holds eight bits of a sprite's y, so its y wraps round at 256
-/// lines.
-#define OBJ_Y_RANGE 256
 /// A palette's 16 colours in bytes, as each 16-colour picture's resource
 /// begins.
 #define PALETTE_BYTES (PALETTE_COLORS * 2)
-/// The tiles a sprite of width by height pixels takes, of 16 colours and of
-/// 256 (two to a tile in OAM's 32-byte steps): a picture's sprites follow one
-/// another so.
-#define SPRITE_TILES(width, height) ((width) / 8 * ((height) / 8))
-#define SPRITE_TILES_8BPP(width, height) (2 * SPRITE_TILES(width, height))
 /// The Spanish title's first letter is its last letter's tile turned over both
 /// ways, drawn 16 pixels left and 8 down.
 #define LUCKY_WHEELS_TITLE_FIRST_TURNED (LANGUAGE == LANGUAGE_SPANISH)
@@ -410,8 +402,6 @@ enum LuckyWheelsPrize {
 #define LUCKY_WHEELS_SPARK_COUNT (4 * LUCKY_WHEELS_BURST_SPARKS)
 /// A spark's size steps down every 12 frames of its life, from 2 or 3 to 1.
 #define LUCKY_WHEELS_SPARK_SHRINK_FRAMES 12
-/// A damping keeps this many 64ths of a speed: a spark keeps 60 a frame.
-#define DAMPING_SCALE 64
 /// A held direction moves the cursor once, waits 12 frames, then moves it
 /// again with 4 frames between each move.
 #define LUCKY_WHEELS_REPEAT_DELAY 12

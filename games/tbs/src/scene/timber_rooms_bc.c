@@ -80,14 +80,14 @@ extern struct Trigger gTimberRoomsC_TriggersAfterLighthouse[];
 
 static void TimberRoomsBC_TellFaranAboutJenna(void);
 
-/// An entrance that sets FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED.
+/// An entrance of either scene that sets FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED,
+/// as after Venus Lighthouse, without the report to Faran that
+/// TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE plays.
 ///
 /// No exit leads to it and the entrance table has no row for it. Only the
 /// debug scene selector, which exits to any entrance from 0 to 99, reaches
 /// it.
-enum {
-  ENTRANCE_FROM_AERIE = 90,
-};
+enum { TIMBER_ROOMS_ENTRANCE_AFTER_LIGHTHOUSE = 90 };
 
 /// The shops' stock rows, whose type column in sStockTable says they sell
 /// weapons, armor and items, and the inn.
@@ -831,7 +831,7 @@ s32 Scene_Initialize(void) {
   s16 entrance;
   struct Actor *actor;
 
-  if (gMainRoutineWork.entrance == ENTRANCE_FROM_AERIE) {
+  if (gMainRoutineWork.entrance == TIMBER_ROOMS_ENTRANCE_AFTER_LIGHTHOUSE) {
     GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
   }
   gFieldWork->transition =

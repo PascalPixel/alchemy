@@ -68,12 +68,16 @@ extern struct Trigger gLaliveroTriggersAfterLighthouse[];
 
 static void Lalivero_TalkAboutIdejimaShip(void);
 
-/// Entrances that set up the later visit, 90 as if the party had also seen the
-/// ship at Idejima (FLAG_SAW_SHIP_AT_IDEJIMA). No exit leads to them and the
-/// entrance table has no row for them (the aerie's exit leads into Faran's
-/// house). Only the debug scene selector, which exits to any entrance from 0 to
-/// 99, reaches them.
-enum { ENTRANCE_FROM_AERIE = 90, ENTRANCE_FROM_AERIE_QUIETLY = 91 };
+/// Entrances that set up the visit after Venus Lighthouse, the first as if the
+/// party had also seen the ship at Idejima (FLAG_SAW_SHIP_AT_IDEJIMA). No exit
+/// leads to them and the entrance table has no row for them (the aerie's exit
+/// leads into Faran's house, TIMBER_ROOMS_C_FROM_VENUS_LIGHTHOUSE_AERIE). Only
+/// the debug scene selector, which exits to any entrance from 0 to 99, reaches
+/// them.
+enum {
+  LALIVERO_ENTRANCE_AFTER_LIGHTHOUSE = 90,
+  LALIVERO_ENTRANCE_AFTER_LIGHTHOUSE_QUIETLY = 91
+};
 
 /// The placed actors, numbered in the order of gLaliveroActorPlacements.
 /// gLaliveroActorPlacementsAfterLighthouse, for the later visit, places the
@@ -859,11 +863,11 @@ s32 Scene_Initialize(void) {
   GlyphTransfer *icon;
 
   // Coming back from the lighthouse switches the town to its later state.
-  if (gMainRoutineWork.entrance == ENTRANCE_FROM_AERIE) {
+  if (gMainRoutineWork.entrance == LALIVERO_ENTRANCE_AFTER_LIGHTHOUSE) {
     GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
     GameFlag_Set(FLAG_SAW_SHIP_AT_IDEJIMA);
   }
-  if (gMainRoutineWork.entrance == ENTRANCE_FROM_AERIE_QUIETLY) {
+  if (gMainRoutineWork.entrance == LALIVERO_ENTRANCE_AFTER_LIGHTHOUSE_QUIETLY) {
     GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED);
   }
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);

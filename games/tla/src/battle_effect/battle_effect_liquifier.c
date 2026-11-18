@@ -341,9 +341,6 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-#define Actor_SetAnimationSpeedFar                                             \
-  ((s32 (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
-
 /// The canvas burst's modes (BattleEffect_RunCanvasBurst).
 enum CanvasBurstMode {
   CANVAS_BURST_SHRED,      ///< a glow grows on the target as rays close on it
@@ -749,5 +746,4 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
     wait(1);
   }
 }
-#undef Actor_SetAnimationSpeedFar
 #undef CANVAS_BURST_BALL

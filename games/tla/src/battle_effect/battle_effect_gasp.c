@@ -25,9 +25,6 @@ struct StripQuad;
     Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE);                         \
     Matrix_RotateZ((p)->z);                                                    \
   } while (0)
-/// The header's CANVAS_WAVE_BG2X again: battle_effect_torch.c #undefs it before
-/// this part.
-#define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
 
 /// The last three particles: the point a mode centres on (Shine's Djinni in
 /// flight, Emu's target), Shine's fall towards the target, and where its

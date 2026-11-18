@@ -728,7 +728,6 @@ extern const struct SevenWidths gIris_NarrowingPillarWidths;
 extern const struct FourSpans gIris_LeftStripSpans;
 extern const struct FourSpans gIris_RightStripSpans;
 
-#define SCENE (&IRIS_SCENE)
 #define STREAK(i, j)                                                           \
   (((struct IrisPoint *)IRIS_STREAK_POINTS)[(i) * IRIS_STREAK_LENGTH + (j)])
 #define FADE_PLTT ((u16 *)&BG_PLTT_COLOR(6, 0))
@@ -903,7 +902,7 @@ static inline void Iris_DrawSplash(s32 t, s32 x, s32 y, s32 small) {
 /// splash in rings; pillars of light climb, the scene fills with rising motes,
 /// rays turn about the centre, and the screen whitens as she heals the party.
 void BattleEffect_RunIris(struct BattleEffectParams *args) {
-  typeof(SCENE) scene = SCENE;
+  struct IrisScene *scene = &IRIS_SCENE;
   struct IrisPoint(*streaks)[IRIS_STREAK_LENGTH] = IRIS_STREAK_POINTS;
   u8 *canvas = Ram_HeapSlots->battleCanvas;
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
@@ -3284,7 +3283,6 @@ void Render_DrawModelList(struct RenderModel *model) {
 #undef IRIS_PETAL_WORK
 #undef IRIS_SCENE
 #undef IRIS_STREAK_POINTS
-#undef SCENE
 #undef STREAK
 #undef FADE_PLTT
 #undef DECOMPRESS_IN_BLOCK

@@ -328,9 +328,6 @@ void BattleEffect_RunDjinniEntrance(struct BattleEffectParams *args, u32 packed,
   REG_BLDALPHA = EFFECT_BLEND_ADD;
 }
 
-#define Actor_SetAnimationSpeedFar                                             \
-  ((s32 (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
-
 /// Six comets fly at each target, three frames apart, and burst into a flash
 /// and sparks; the effect's variant picks one of three comets.
 ///
@@ -482,8 +479,6 @@ void BattleEffect_RunIceBlessing(struct BattleEffectParams *args) {
 void BattleEffect_RunChillBreath(struct BattleEffectParams *args) {
   BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_CHILL_BREATH);
 }
-
-#define ABS(v) ((v) < 0 ? -(v) : (v))
 
 /// The particle buffer at the map cell buffer: flashes from 0, sparks from
 /// 100, the smoke trails from 512, the falling-streak particles from 960.

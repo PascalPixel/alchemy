@@ -20,9 +20,6 @@ enum DragonFireMode {
                             ///< colours
 };
 
-/// The reciprocal of `d` as a 32-bit fraction, rounded up: the high word of
-/// v times it is v / d, for the small v divided here.
-#define RECIPROCAL_OF(d) (0xffffffffU / (d) + 1)
 /// v % 3, through the multiply-high routine and the reciprocal of 3, sparing
 /// a division.
 #define MODULO_THREE(v) Math_UnsignedMulHighAdd((v), RECIPROCAL_OF(3), -3)
@@ -576,7 +573,6 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   }
 }
 
-#undef RECIPROCAL_OF
 #undef MODULO_THREE
 #undef PROCNE_FRAMES
 #undef PROCNE_ARRIVAL_FRAME

@@ -9,10 +9,6 @@
 /// SheepCardSheet's four sheep follow it.
 #define CARD (gMapGridCellBuffer + 24638)
 #define CARD_SHEEP (Ram_MapCellBuffer + 24638 + CARD_WIDTH * CARD_HEIGHT)
-/// The header's SHEEP_WIDTH and SHEEP_HEIGHT again:
-/// battle_effect_target_motes.c #undefs them before this part.
-#define SHEEP_WIDTH 32
-#define SHEEP_HEIGHT 32
 /// After the Death and Sword cards' pictures: the step of the dissolve, 0 to
 /// 15, at which each pixel clears, for eight rows repeated down the card.
 #define CARD_DISSOLVE_STEPS (CARD + CARD_WIDTH * CARD_HEIGHT)

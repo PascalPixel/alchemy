@@ -285,9 +285,6 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
     copy((void *)BG_PLTT, palette, SHEET_PALETTE_BYTES);                       \
   }
 
-/// A damping is a fraction of a speed kept each frame, out of DAMPING_SCALE:
-/// speed * damping / DAMPING_SCALE.
-#define DAMPING_SCALE 64
 /// The damping that keeps a particle's whole speed.
 #define PARTICLE_DAMPING_NONE DAMPING_SCALE
 

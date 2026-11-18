@@ -124,10 +124,6 @@ FLURRY_DEFINE_BY_VARIANT(BattleEffect_RunDoublestep, FLURRY_GUST,
 #define FLURRY_SMOKE_PICTURE_FRAMES 4
 #define FLURRY_SMOKE_FRAMES (6 * FLURRY_SMOKE_PICTURE_FRAMES)
 
-/// The header's CANVAS_WAVE_BG2X again: battle_effect_target_motes.c #undefs
-/// it before this part.
-#define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
-
 /// The bytes of a gFlurry_Styles row, one row a mode.
 enum FlurryColumn {
   FLURRY_ARC_SHEET, ///< the arcs (enum FlurryArcs)

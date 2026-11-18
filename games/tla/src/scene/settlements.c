@@ -70,8 +70,9 @@
 /// SW Atteka Islet: the crate has gone down the falls with no pillar to stop
 /// it, and is lost.
 #define FLAG_FALLS_CRATE_LOST FLAG_SCENE_TEMP_06
-/// SW Atteka Islet: the crate has bobbed in the water at (16, 12).
-#define FLAG_FALLS_CRATE_BOBBED FLAG_SCENE_TEMP_07
+/// SW Atteka Islet: the crate, moved off the grass's south edge at (16, 12),
+/// has dropped 64 pixels down the cliff there.
+#define FLAG_FALLS_CRATE_DROPPED FLAG_SCENE_TEMP_07
 /// SW Atteka Islet: Lift has raised the boulder.
 #define FLAG_BOULDER_LIFTED FLAG_SCENE_TEMP_08
 /// Hesperia Settlement: the party walks along the top of the wall.
@@ -900,8 +901,8 @@ void Settlements_SinkPillar(void) {
   } while (i > 0)
 
 /// A crate pushed into the falls at (11, 9) sinks, slides down the falls and is
-/// lost, or once the pillar has sunk comes to rest below; at (16, 12) it bobs a
-/// moment.
+/// lost, or once the pillar has sunk comes to rest below; off the edge at
+/// (16, 12) it drops down the cliff.
 void Settlements_SlideCrateDownFalls(void) {
   struct Actor *actor = Actor_GetById(ACTOR_FALLS_CRATE);
   s32 column = FIELD_CELL(actor->x.fixed);
@@ -946,14 +947,14 @@ void Settlements_SlideCrateDownFalls(void) {
       Event_SetFlag(FLAG_FALLS_CRATE_AT_REST);
     }
     Event_End();
-  } else if (!Event_GetFlag(FLAG_FALLS_CRATE_BOBBED) && column == 16 &&
+  } else if (!Event_GetFlag(FLAG_FALLS_CRATE_DROPPED) && column == 16 &&
              row == 12) {
     MapGrid_CopyCellAttributes(17, 12, 1, 1, column, row);
     flags = &actor->motionFlags;
-    *flags = 3;
+    *flags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     FieldEvent_Wait(30);
     *flags = 0;
-    Event_SetFlag(FLAG_FALLS_CRATE_BOBBED);
+    Event_SetFlag(FLAG_FALLS_CRATE_DROPPED);
     Event_End();
   }
 }

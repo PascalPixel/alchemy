@@ -43,16 +43,24 @@ enum PostAnimation {
 
 // The ropes Lash ties (HEAP_SLOT_ROPE): eight slots, each a chain of nodes
 // between two posts, coiled at the first post until tied; tied, the rope runs
-// to the far post and is wound round it. A tied rope can be crossed hand over
-// hand (LEADER_MOVEMENT_ROPE). Pushing at a rope's post for ROPE_PUSH_STEPS
-// steps raises FIELD_RAISED_TRIGGER_ROPE_ON, whose scene event puts the leader
-// on the rope; on it, it raises FIELD_RAISED_TRIGGER_ROPE_OFF. Each step along
-// it (Actor_CrossRope) adds half a pixel to the rope's swing, up to two: the
-// middle of the rope bobs that far either way of its line, a cycle of 16
-// frames that loses a twentieth a frame.
+// from post to post and is wound round both. Probes of the Shrine of the Sea
+// God's rope room (render probe --only scene --scene ShrineOfTheSeaGodRope
+// --edition tla-en) show rope 0 coiled round the foot of its first post from
+// --entrance 2, and with the shrine's FLAG_ROPE_TIED set (--set 0x203) wound
+// round that post from --entrance 2 and round the far post from --entrance 0.
+// A tied rope can be crossed hand over hand (LEADER_MOVEMENT_ROPE). Pushing at
+// a rope's post for more than ROPE_PUSH_STEPS frames raises
+// FIELD_RAISED_TRIGGER_ROPE_ON, whose scene event puts the leader on the rope;
+// on it, it raises FIELD_RAISED_TRIGGER_ROPE_OFF. Actor_CrossRope, which
+// gActor_RopeScript runs once a frame, adds half a pixel to the rope's swing,
+// up to two, on each frame it sends the leader on toward a node, so the swing
+// is full within a few frames of setting off. Rope_Update and Rope_LayBowed bow
+// the middle of the rope that far either way of its line, in a cycle of 16
+// frames, the swing losing a twentieth a frame. The code settles the swing;
+// the render probe stages a scene and plays no crossing.
 
-/// The steps the leader pushes against a rope's or tightrope's post before it
-/// steps on.
+/// The leader steps onto a rope or tightrope once it has pushed against its
+/// post (FieldWork.blockedSteps) for more than this many frames.
 #define ROPE_PUSH_STEPS 12
 
 /// A post whose riseEnabled byte holds this keeps in watchedActor a hook giving
@@ -772,9 +780,12 @@ void Rope_Place(s32 index, s32 flag, s32 firstId, s32 secondId) {
 }
 
 // The tightropes (HEAP_SLOT_TIGHTROPE): ropes stretched straight from post to
-// post across a drop, as in Champa, that the party walks
-// (LEADER_MOVEMENT_TIGHTROPE) and that wobble underfoot. The family copies the
-// ropes' routines.
+// post across a drop, that the party walks (LEADER_MOVEMENT_TIGHTROPE) and that
+// wobble underfoot. The family copies the ropes' routines. A probe of Champa
+// (render probe --only scene --scene Champa --entrance 4 --edition tla-en)
+// shows tightrope 0, which Champa's Scene_Initialize strings between
+// ACTOR_TIGHTROPE_START and ACTOR_TIGHTROPE_END, running straight from its post
+// across the drop between two ledges.
 
 /// Allocates the tightropes' work, loads their node picture and starts
 /// Tightrope_Draw and Tightrope_Update.
@@ -1354,8 +1365,12 @@ enum HangingVineLinkKind {
 // The hanging vines (HEAP_SLOT_HANGING_VINE): eight slots, each seven links
 // hung below an anchor actor, as the leafy vine that hangs down a wall in Gaia
 // Rock's altar room. A vine sways, swings less while the leader stands beside
-// it, and once Whirlwind blows on it, swings the leader across
-// (HangingVine_Swing).
+// it (HangingVine_Update), and once Whirlwind blows on it, swings the leader
+// across (HangingVine_Swing, which FieldPsynergy_Whirlwind calls on its
+// target). A probe of that room (render probe --only scene --scene
+// GaiaRockInsideAltar --entrance 5 --edition tla-en) shows the vine
+// gaia_rock_inside.c hangs on ACTOR_HANGING_VINE as leaves down the wall to
+// just over the leader's head.
 
 /// Starts the hanging vines: takes and clears their work, loads the vine's
 /// pictures for an anchor of SPRITE_SPROUTING_LEAVES, else the chain's, and

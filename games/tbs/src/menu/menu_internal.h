@@ -123,6 +123,12 @@ enum ItemTargetMode {
 
 /// Inventory icons occupy five columns in the fifteen-slot list.
 #define MENU_ITEM_GRID_COLUMNS 5
+/// The icon grids are eight wide: Menu_SpawnIconEntries and
+/// PsynergyMenu_CreateEntryGrid make their icons a row at a time.
+#define ICON_GRID_ROW 8
+/// The tile of the Item and Psynergy list windows' top border where the page
+/// numbers end, with their right arrow (PagedList_DrawPageNumbers).
+#define PAGE_NUMBERS_RIGHT 15
 
 /// What StatusPanel_Draw shows below the name and statuses: the low byte of its
 /// mode.

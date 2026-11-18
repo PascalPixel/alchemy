@@ -107,6 +107,12 @@ enum { TARGET_MOTES_GLINT_PICTURES = 9600 };
 /// The frames the effect runs on after the last target's motes start.
 #define TARGET_MOTES_RUN_ON 32
 #define TARGET_MOTES_WIDE_RUN_ON 64
+/// The frames the effect runs on after the damage shows. Demon Fire's user
+/// sets off DEMON_FIRE_LEAP_FRAMES before then and reaches the first target
+/// over DEMON_FIRE_APPROACH_FRAMES, striking it as the damage shows.
+#define TARGET_MOTES_DAMAGE_END_FRAMES 32
+#define DEMON_FIRE_LEAP_FRAMES 14
+#define DEMON_FIRE_APPROACH_FRAMES 16
 /// VortexSheet's water drop, after its three 16x64 swirls.
 #define DROWN_DROP_WIDTH 12
 #define DROWN_DROP_HEIGHT 24
@@ -193,18 +199,18 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
   for (frame = 0; frame != total; frame++) {
     struct BattleCamera *camera = gBattleCamera;
 
-    // Demon Fire: the user steps up to the first target over 16 frames and
-    // strikes it.
+    // Demon Fire: the user steps up to the first target and strikes it.
     if (mode == TARGET_MOTES_DEMON_FIRE) {
-      if (frame == total - 46)
+      if (frame ==
+          total - TARGET_MOTES_DAMAGE_END_FRAMES - DEMON_FIRE_LEAP_FRAMES)
         BattleMotion_ApproachTargetFar(work->args->user, work->args->targets[0],
-                                       16, 0);
-      if (frame == total - 32) {
+                                       DEMON_FIRE_APPROACH_FRAMES, 0);
+      if (frame == total - TARGET_MOTES_DAMAGE_END_FRAMES) {
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
         BattleMotion_ApplyKnockbackFar(work->args->targets[0], KNOCKBACK_HURL);
         work->shakeFrames = 8;
       }
-    } else if (frame == total - 32) {
+    } else if (frame == total - TARGET_MOTES_DAMAGE_END_FRAMES) {
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
     }
     row = work->bg2xLines;
@@ -340,6 +346,15 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 #define SLEEP_FRAMES 148
 #define SLEEP_SEEDED 32 ///< particles cleared at the start
 #define SLEEP_SHEEP 12  ///< sheep dropped
+/// The sheep drop SLEEP_SHEEP_STAGGER frames apart; the targets fall asleep
+/// SLEEP_TARGET_STAGGER frames apart from SLEEP_ASLEEP_FRAME, and the damage
+/// shows at SLEEP_DAMAGE_FRAME.
+#define SLEEP_SHEEP_STAGGER 4
+#define SLEEP_ASLEEP_FRAME 64
+#define SLEEP_TARGET_STAGGER 16
+#define SLEEP_DAMAGE_FRAME 80
+/// The ground the sheep were meant to bounce off.
+#define SLEEP_GROUND_Y toFIXED(92)
 /// SheepSheet: four pictures, then the four drawn flipped.
 #define SHEEP_WIDTH 32
 #define SHEEP_HEIGHT 32
@@ -394,7 +409,7 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   for (frame = 0; frame != SLEEP_FRAMES; frame++) {
     struct BattleCamera *camera = gBattleCamera;
 
-    if (frame == 80)
+    if (frame == SLEEP_DAMAGE_FRAME)
       EFFECT_SHOW_DAMAGE(0);
     EFFECT_FOR_EACH_TARGET(targetIndex, work->args) {
       struct Actor *target;
@@ -403,17 +418,19 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(anchor, target->x.fixed, toFIXED(40), target->z.fixed);
       Matrix_TranslateVector(anchor);
-      if (frame == targetIndex * 16 + 64)
+      if (frame == targetIndex * SLEEP_TARGET_STAGGER + SLEEP_ASLEEP_FRAME)
         BattleEffect_TintBattler(work->args->targets[targetIndex],
                                  SPRITE_COLOR_NORMAL, POSE_DAMAGE, TINT_KEEP,
                                  0);
     }
     for (particleIndex = 0; particleIndex != SLEEP_SHEEP; particleIndex++) {
       current = &sheep[particleIndex];
-      if (frame > particleIndex * 4 && current->y <= toFIXED(128) - 1) {
+      if (frame > particleIndex * SLEEP_SHEEP_STAGGER &&
+          current->y <= toFIXED(CANVAS_SIZE) - 1) {
         s32 picture;
 
-        picture = (current->variant / SHEEP_TUMBLE_STEP) & 7;
+        picture =
+            (current->variant / SHEEP_TUMBLE_STEP) & (SHEEP_PICTURES * 2 - 1);
         if (picture < SHEEP_PICTURES)
           drawUpright(canvas, work->sheet + picture * PICTURE_BYTES(SHEEP),
                       FIXEDtoINT(current->x) - SHEEP_WIDTH / 2,
@@ -429,17 +446,17 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
         current->y += current->velocityY;
         current->velocityY += toFIXED(1) / 8;
         current->variant += current->z;
-        // BUG: meant to bounce a sheep off the ground (y 92), tumbling faster,
-        // but it tests for a speed of exactly 0 just after gravity was added,
-        // so the sheep almost always fall on through. BUGFIX bounces any sheep
-        // that is falling.
+        // BUG: meant to bounce a sheep off the ground, tumbling faster, but it
+        // tests for a speed of exactly 0 just after gravity was added, so the
+        // sheep almost always fall on through. BUGFIX bounces any sheep that
+        // is falling.
 #ifdef BUGFIX
-        if (current->y > toFIXED(92) && current->velocityY > 0) {
+        if (current->y > SLEEP_GROUND_Y && current->velocityY > 0) {
 #else
-        if (current->y > toFIXED(92) && current->velocityY == 0) {
+        if (current->y > SLEEP_GROUND_Y && current->velocityY == 0) {
 #endif
           s32 speed = current->velocityY + 1;
-          current->y = toFIXED(92);
+          current->y = SLEEP_GROUND_Y;
           current->z += 4;
           current->velocityY = -speed / 2;
         }
@@ -450,15 +467,21 @@ void BattleEffect_RunSleep(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-/// FlameColumnSheet: the flame's nine pictures, then the marker at the
-/// target's feet.
+#define CURSE_CANDLE_FRAMES 72 ///< how long each target's candle burns
+/// The frames between one target's candle and the next's.
+#define CURSE_STAGGER 16
+/// The flame flickers through its pictures, CURSE_FLICKER_FRAMES a picture.
+#define CURSE_FLICKER_FRAMES 6
+
+/// FlameColumnSheet: the flame's nine pictures, then the candle.
 #define CURSE_FLAME_WIDTH 16
 #define CURSE_FLAME_HEIGHT 12
-#define CURSE_MARKER_PICTURE_WIDTH 16
-#define CURSE_MARKER_PICTURE_HEIGHT 20
-#define CURSE_MARKER_PICTURE (9 * PICTURE_BYTES(CURSE_FLAME))
+#define CURSE_FLAME_PICTURES 9
+#define CURSE_CANDLE_WIDTH 16
+#define CURSE_CANDLE_HEIGHT 20
+#define CURSE_CANDLE_PICTURE (CURSE_FLAME_PICTURES * PICTURE_BYTES(CURSE_FLAME))
 
-/// A small flame burns above each target in turn, over a marker at its feet.
+/// A candle stands on each target's head in turn, a small flame burning on it.
 ///
 /// Abilities: Curse; Lucid Prophecy.
 void BattleEffect_RunCurse(struct BattleEffectParams *args) {
@@ -466,7 +489,7 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   void *canvas;
   /* LEFTOVER(frame): draw[1], the idle half of the pair. */
   BlitterPair draw;
-  struct Particle *marker;
+  struct Particle *candle;
   s32 i;
   s32 frame;
   s32 start;
@@ -489,6 +512,7 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
   work->transferValue = 0;
   draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  // Each flame starts at a random point of its flicker.
   EFFECT_FOR_EACH_TARGET(i, work->args) {
     work->particles[i].variant = Random16() & 63;
   }
@@ -498,32 +522,34 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
     }
     i = 0;
     if (work->args->targetCount != 0) {
-      marker = work->particles;
+      candle = work->particles;
       do {
-        start = i << 4;
+        start = i * CURSE_STAGGER;
         if (frame == start) {
           Sound_PlayFar(SE_CRACK);
         }
-        if (frame >= start && frame < start + 72) {
+        if (frame >= start && frame < start + CURSE_CANDLE_FRAMES) {
           Projection_ScaledUnit(work->args->targets[i], &screenPosition);
           if (work->args->side == EFFECT_SIDE_PARTY) {
             screenPosition.x -= NARROW_CANVAS_PARTY_X;
           }
           y = screenPosition.y;
           screenPosition.y = y - 16;
-          draw[0](canvas, work->sheet + CURSE_MARKER_PICTURE,
-                  screenPosition.x - CURSE_MARKER_PICTURE_WIDTH / 2,
-                  y - CURSE_MARKER_PICTURE_HEIGHT, CURSE_MARKER_PICTURE_WIDTH,
-                  CURSE_MARKER_PICTURE_HEIGHT);
+          draw[0](canvas, work->sheet + CURSE_CANDLE_PICTURE,
+                  screenPosition.x - CURSE_CANDLE_WIDTH / 2,
+                  y - CURSE_CANDLE_HEIGHT, CURSE_CANDLE_WIDTH,
+                  CURSE_CANDLE_HEIGHT);
+          // DEAD: always true here; the ROM keeps the test.
           if (frame >= start) {
-            picture = ((frame - start) + marker->variant) / 6 % 9;
+            picture = ((frame - start) + candle->variant) /
+                      CURSE_FLICKER_FRAMES % CURSE_FLAME_PICTURES;
             draw[0](canvas, work->sheet + picture * PICTURE_BYTES(CURSE_FLAME),
                     screenPosition.x - CURSE_FLAME_WIDTH / 2,
                     screenPosition.y - 16, CURSE_FLAME_WIDTH,
                     CURSE_FLAME_HEIGHT);
           }
         }
-        marker++;
+        candle++;
         i++;
       } while (i != work->args->targetCount);
     }
@@ -552,4 +578,16 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
 #undef SLEEP_FRAMES
 #undef SLEEP_SEEDED
 #undef SLEEP_SHEEP
-#undef CURSE_MARKER_PICTURE
+#undef TARGET_MOTES_DAMAGE_END_FRAMES
+#undef DEMON_FIRE_LEAP_FRAMES
+#undef DEMON_FIRE_APPROACH_FRAMES
+#undef SLEEP_SHEEP_STAGGER
+#undef SLEEP_ASLEEP_FRAME
+#undef SLEEP_TARGET_STAGGER
+#undef SLEEP_DAMAGE_FRAME
+#undef SLEEP_GROUND_Y
+#undef CURSE_CANDLE_FRAMES
+#undef CURSE_STAGGER
+#undef CURSE_FLICKER_FRAMES
+#undef CURSE_FLAME_PICTURES
+#undef CURSE_CANDLE_PICTURE

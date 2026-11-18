@@ -460,9 +460,6 @@ extern struct ActorPlacement gAirsRockInside_CoinsChestPlacements[];
 void TilesetAnim_SuspendAll(void);
 void TilesetAnim_ResumeAll(void);
 
-/// SPRITE_PARTICLE's swells, from a speck to its full glow, held 32 frames,
-/// and back: slowly, 12 frames a step, or quickly, 6.
-enum { ANIM_PARTICLE_SLOW_SWELL = 9, ANIM_PARTICLE_QUICK_SWELL };
 /// How long a mote drifts before it scatters again: a slow swell and the 12
 /// frames it stays gone after, or a quick one.
 enum { MOTE_SLOW_LIFETIME = 212, MOTE_QUICK_LIFETIME = 116 };

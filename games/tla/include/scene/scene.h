@@ -168,6 +168,11 @@ struct Orbit {
 /// it in Jupiter Lighthouse.
 #define PILLAR_SINK_DEPTH 32
 
+/// SPRITE_PARTICLE's swells, from a speck to its full glow, held 32 frames,
+/// and back: slowly, 12 frames a step, or quickly, 6. Jupiter Lighthouse's
+/// sparks and the motes of light inside Air's Rock take turns at them.
+enum { ANIM_PARTICLE_SLOW_SWELL = 9, ANIM_PARTICLE_QUICK_SWELL };
+
 /// A glow sprite queued for the OAM: the link at its depth, attributes 0 and 1
 /// as one word, and attribute 2's fields.
 struct LightOam {

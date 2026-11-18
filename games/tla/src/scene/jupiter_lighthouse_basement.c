@@ -61,9 +61,6 @@
 /// How long a spark lives before it starts again: a slow swell and the 12
 /// frames it stays gone after, or a quick one.
 enum { SPARK_SLOW_LIFETIME = 212, SPARK_QUICK_LIFETIME = 116 };
-/// SPRITE_PARTICLE's swells, from a speck to its full glow, held 32 frames,
-/// and back: slowly, 12 frames a step, or quickly, 6.
-enum { ANIM_PARTICLE_SLOW_SWELL = 9, ANIM_PARTICLE_QUICK_SWELL };
 
 /// The cells Cyclone acts on in the teleporters' room: the weeds round the
 /// near teleporter, the five of the Mad Plant's patch that hide nothing, the

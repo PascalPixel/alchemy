@@ -145,6 +145,9 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
                     screenPosition.y - MEMBER_BURST_HEIGHT / 2,
                     MEMBER_BURST_WIDTH, MEMBER_BURST_HEIGHT);
             Particle_AdvanceWithGravity3D(mote, 62, 0);
+            // Thirty frames on, the light is pulled toward the middle of its
+            // target's body, its speed gaining a 512th of the distance a frame,
+            // and is gone once within 32 pixels of it across and in depth.
             if (frame > k * GATHERING_LIGHTS_TARGET_FRAMES + i + 30) {
               s32 dx = (target->x.fixed - mote->x) >> 9;
               s32 dy = (target->y.fixed + half - mote->y) >> 9;

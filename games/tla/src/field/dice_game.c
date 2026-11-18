@@ -96,22 +96,22 @@ enum SuperLuckyDiceResult {
   DICE_RESULT_PERFECT = 5 ///< all four alike
 };
 
-/// The rules, as Contigo's sign gives them: four dice thrown at once; two
-/// alike pay the bet back, three alike twice it, two pairs three times and all
-/// four alike eight times; then up to five hi-lo games, each won doubling the
-/// winnings.
-#define DICE_COUNT 4
+/// Super Lucky Dice's rules, as Contigo's sign gives them: four dice thrown at
+/// once; two alike pay the bet back, three alike twice it, two pairs three
+/// times and all four alike eight times; then up to five hi-lo games, each won
+/// doubling the winnings.
+#define SUPER_LUCKY_DICE_COUNT 4
 #define DICE_FACE_COUNT 6
-#define DICE_ONE_PAIR_PAYOUT 1
-#define DICE_TRIPLE_PAYOUT 2
-#define DICE_TWO_PAIR_PAYOUT 3
-#define DICE_PERFECT_PAYOUT 8
+#define SUPER_LUCKY_DICE_ONE_PAIR_PAYOUT 1
+#define SUPER_LUCKY_DICE_TRIPLE_PAYOUT 2
+#define SUPER_LUCKY_DICE_TWO_PAIR_PAYOUT 3
+#define SUPER_LUCKY_DICE_PERFECT_PAYOUT 8
 #define DICE_FINAL_GAME 5 ///< the fifth hi-lo game, the "Final Game"
 
 /// The totals four dice can throw, four ones to four sixes, and the one between
 /// them that the hi-lo game's target is reset to.
-#define DICE_LOWEST_TOTAL DICE_COUNT
-#define DICE_HIGHEST_TOTAL (DICE_COUNT * DICE_FACE_COUNT)
+#define DICE_LOWEST_TOTAL SUPER_LUCKY_DICE_COUNT
+#define DICE_HIGHEST_TOTAL (SUPER_LUCKY_DICE_COUNT * DICE_FACE_COUNT)
 #define DICE_MIDDLE_TOTAL ((DICE_LOWEST_TOTAL + DICE_HIGHEST_TOTAL) / 2)
 
 /// The pictures a state asks SuperLuckyDice_Run to load before the next frame.
@@ -310,8 +310,8 @@ s32 SuperLuckyDice_ScoreDice(s32 *dice) {
     score = DICE_RESULT_PERFECT;
   } else {
     pairs = 0;
-    for (i = 0; i != DICE_COUNT - 1; i++) {
-      for (j = i + 1; j != DICE_COUNT; j++) {
+    for (i = 0; i != SUPER_LUCKY_DICE_COUNT - 1; i++) {
+      for (j = i + 1; j != SUPER_LUCKY_DICE_COUNT; j++) {
         if (dice[i] == dice[j]) {
           matches[pairs] = dice[i];
           pairs++;
@@ -486,7 +486,7 @@ enum SuperLuckyDiceState {
 #define DICE_THROW_SPIN 300
 #define DICE_BOUNCE_SPIN_LOSS 20
 /// Two dice whose centres come closer than this push each other apart.
-#define DICE_TOUCH_DISTANCE 70
+#define SUPER_LUCKY_DICE_TOUCH_DISTANCE 70
 /// The round dome's radius: a die beyond it is turned back inward.
 #define DICE_DOME_RADIUS 200
 /// The depths from the camera a die is drawn between: nearer or further is
@@ -510,7 +510,7 @@ enum SuperLuckyDiceState {
 #define DICE_GAME_THROW(dice, spinRate)                                        \
   {                                                                            \
     struct DiceParticle *die;                                                  \
-    for (index = 0; index != DICE_COUNT; index++) {                            \
+    for (index = 0; index != SUPER_LUCKY_DICE_COUNT; index++) {                \
       die = &(dice)->particles[index];                                         \
       die->z = 0;                                                              \
       die->y = toFIXED(96);                                                    \
@@ -527,12 +527,12 @@ enum SuperLuckyDiceState {
 /// throw costs ten coins per level of the party's average.
 void SuperLuckyDice_Run(void) {
   u16 bgPalette[BG_PLTT_COLORS];
-  s32 spinRate[DICE_COUNT];
-  s32 spriteDepth[DICE_COUNT * 2]; // the dice, then their shadows
-  s32 numbers[DICE_COUNT];         // each die's face, 0 for a one
+  s32 spinRate[SUPER_LUCKY_DICE_COUNT];
+  s32 spriteDepth[SUPER_LUCKY_DICE_COUNT * 2]; // the dice, then their shadows
+  s32 numbers[SUPER_LUCKY_DICE_COUNT];         // each die's face, 0 for a one
   s32 groundPoint[3];
   s32 screen[3];
-  s32 drawOrder[DICE_COUNT];
+  s32 drawOrder[SUPER_LUCKY_DICE_COUNT];
   u16 *spritePalette;
   u8 *cellBuffer;
   struct DiceWork *dice;
@@ -714,7 +714,7 @@ void SuperLuckyDice_Run(void) {
     struct DiceParticle *die;
 
     die = dice->particles;
-    for (index = 0; index != DICE_COUNT; index++) {
+    for (index = 0; index != SUPER_LUCKY_DICE_COUNT; index++) {
       // DEAD: a random place, replaced at once by one on the circle (its two
       // rolls still advance the random numbers); the ROM keeps its stores.
       SET_POSITION(die, ((Random16() & 127) - 64) << 16, 0,
@@ -928,7 +928,7 @@ void SuperLuckyDice_Run(void) {
       struct DiceParticle *other;
 
       stoppedDice = 0;
-      for (index = 0; index != DICE_COUNT; index++) {
+      for (index = 0; index != SUPER_LUCKY_DICE_COUNT; index++) {
         s32 wallX, wallZ;
 
         die = &dice->particles[index];
@@ -936,7 +936,8 @@ void SuperLuckyDice_Run(void) {
         die->x += die->velocityX;
         die->y += die->velocityY;
         die->z += die->velocityZ;
-        for (otherIndex = 0; otherIndex != DICE_COUNT; otherIndex++) {
+        for (otherIndex = 0; otherIndex != SUPER_LUCKY_DICE_COUNT;
+             otherIndex++) {
           other = &dice->particles[otherIndex];
           if (index != otherIndex) {
             s32 separationX, separationY, separationZ, separation;
@@ -946,7 +947,9 @@ void SuperLuckyDice_Run(void) {
             separationZ = FIXEDtoINT(die->z - other->z);
             if (separationX * separationX + separationY * separationY +
                     separationZ * separationZ <=
-                DICE_TOUCH_DISTANCE * DICE_TOUCH_DISTANCE - 1) {
+                SUPER_LUCKY_DICE_TOUCH_DISTANCE *
+                        SUPER_LUCKY_DICE_TOUCH_DISTANCE -
+                    1) {
               separation = Iwram_Sqrt(separationX * separationX +
                                       separationY * separationY +
                                       separationZ * separationZ);
@@ -1025,11 +1028,11 @@ void SuperLuckyDice_Run(void) {
           stoppedDice++;
         }
       }
-      if (stoppedDice == DICE_COUNT) {
+      if (stoppedDice == SUPER_LUCKY_DICE_COUNT) {
         state = SUPER_LUCKY_DICE_RESULT;
         timer = 0;
         total = 0;
-        for (index = 0; index != DICE_COUNT; index++)
+        for (index = 0; index != SUPER_LUCKY_DICE_COUNT; index++)
           total = total + numbers[index] + 1;
       }
     } else if (state == SUPER_LUCKY_DICE_RESULT) {
@@ -1056,19 +1059,19 @@ void SuperLuckyDice_Run(void) {
           switch (resultKind) {
           case DICE_RESULT_PERFECT:
             jingle = MUS_JINGLE_LARGE;
-            multiplier = DICE_PERFECT_PAYOUT;
+            multiplier = SUPER_LUCKY_DICE_PERFECT_PAYOUT;
             break;
           case DICE_RESULT_ONE_PAIR:
             jingle = MUS_JINGLE_SMALL;
-            multiplier = DICE_ONE_PAIR_PAYOUT;
+            multiplier = SUPER_LUCKY_DICE_ONE_PAIR_PAYOUT;
             break;
           case DICE_RESULT_TWO_PAIR:
             jingle = MUS_JINGLE_MEDIUM;
-            multiplier = DICE_TWO_PAIR_PAYOUT;
+            multiplier = SUPER_LUCKY_DICE_TWO_PAIR_PAYOUT;
             break;
           case DICE_RESULT_TRIPLE:
             jingle = MUS_JINGLE_SMALL;
-            multiplier = DICE_TRIPLE_PAYOUT;
+            multiplier = SUPER_LUCKY_DICE_TRIPLE_PAYOUT;
             break;
           }
         } else if (lower == 0) {
@@ -1637,9 +1640,9 @@ void SuperLuckyDice_Run(void) {
 
     // The dice in order of depth (an insertion sort), each scaled by its
     // distance.
-    for (index = 0; index != DICE_COUNT; index++)
+    for (index = 0; index != SUPER_LUCKY_DICE_COUNT; index++)
       drawOrder[index] = index;
-    for (index = 1; index != DICE_COUNT; index++) {
+    for (index = 1; index != SUPER_LUCKY_DICE_COUNT; index++) {
       s32 sortedDie;
 
       sortedDie = drawOrder[index];
@@ -1650,7 +1653,7 @@ void SuperLuckyDice_Run(void) {
         drawOrder[otherIndex + 1] = drawOrder[otherIndex];
       drawOrder[otherIndex + 1] = sortedDie;
     }
-    for (index = 0; index != DICE_COUNT; index++) {
+    for (index = 0; index != SUPER_LUCKY_DICE_COUNT; index++) {
       struct DiceParticle *die;
       s32 x;
       s32 y;
@@ -1684,7 +1687,7 @@ void SuperLuckyDice_Run(void) {
     {
       struct DiceParticle *die;
 
-      for (index = 0; index != DICE_COUNT; index++) {
+      for (index = 0; index != SUPER_LUCKY_DICE_COUNT; index++) {
         s32 x;
         s32 y;
         s32 scale;
@@ -1699,14 +1702,16 @@ void SuperLuckyDice_Run(void) {
           screen[2] = DICE_NEAREST_DEPTH;
         if (screen[2] > DICE_FARTHEST_DEPTH)
           screen[2] = DICE_FARTHEST_DEPTH;
-        spriteDepth[DICE_COUNT + index] = screen[2] - DICE_NEAREST_DEPTH;
-        spriteDepth[DICE_COUNT + index] += (s16)FIXEDtoINT(die->y);
-        scale = spriteDepth[DICE_COUNT + index] / 2 + DICE_NEAREST_SCALE;
+        spriteDepth[SUPER_LUCKY_DICE_COUNT + index] =
+            screen[2] - DICE_NEAREST_DEPTH;
+        spriteDepth[SUPER_LUCKY_DICE_COUNT + index] += (s16)FIXEDtoINT(die->y);
+        scale = spriteDepth[SUPER_LUCKY_DICE_COUNT + index] / 2 +
+                DICE_NEAREST_SCALE;
         x = screen[0] - Q_8_8(24) / scale;
         y = screen[1] - Q_8_8(12) / scale;
         if (y + 92 > -16) {
           sprites->oam[spriteCount].attr01 =
-              (OBJ_AFFINE_MATRIX(DICE_COUNT + index) |
+              (OBJ_AFFINE_MATRIX(SUPER_LUCKY_DICE_COUNT + index) |
                OBJ_X((x + 632) & OBJ_X_MASK)) |
               ((y + 348) & 255) | OBJ_SIZE_16X16 | OBJ_256_COLORS |
               OBJ_DOUBLE_SIZE | OBJ_AFFINE;
@@ -1722,7 +1727,7 @@ void SuperLuckyDice_Run(void) {
           OBJ_X(DISPLAY_WIDTH) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
       sprites->oam[spriteCount].attr2 = 0;
     }
-    for (index = 0; index != DICE_COUNT * 2; index++) {
+    for (index = 0; index != SUPER_LUCKY_DICE_COUNT * 2; index++) {
       // The sprite's matrix: its scale on the diagonal and none across.
       u16 affineA;
       u16 affineB;

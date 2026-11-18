@@ -19,6 +19,19 @@
 /// wall before it runs, jumps or climbs, as in The Broken Seal.
 #define FIELD_PUSH_FRAMES 12
 
+/// What an examine trigger is on (enum ExamineTarget), the control bits 8..4
+/// EXAMINE_TRIGGER() packs it into.
+#define EXAMINE_TARGET(kind) (((kind) >> 4) & 0x1f)
+/// The PP a Psynergy Stone gives each party member, enough to fill it: "The
+/// party's PP is fully restored!"
+#define PSYNERGY_STONE_PP 1999
+
+/// A field of a container's ContainerRow, from the place its row would have
+/// were the rows counted from actor 0: they count from FIELD_TREASURE_ACTOR.
+#define CONTAINER_FIELD(rowOfId, field)                                        \
+  (*(s16 *)((rowOfId) - FIELD_TREASURE_ACTOR * sizeof(struct ContainerRow) +   \
+            offsetof(struct ContainerRow, field)))
+
 /// The encounter zone whose slots hold the Mimics' formations; slots from 8
 /// go on in the next zone.
 #define ENCOUNTER_ZONE_MIMIC 104
@@ -60,7 +73,7 @@ found:
 /// CONDITION_FLAG_SET holds while that flag is set, any other while its flag is
 /// clear.
 s32 GameFlag_IsConditionActive(s32 condition) {
-  s32 flagState;
+  s32 flagSet;
 
   if (condition == -1) {
     return 1;
@@ -68,8 +81,8 @@ s32 GameFlag_IsConditionActive(s32 condition) {
   if (CONDITION_FLAG_SET & condition) {
     return GameFlag_Get(condition);
   }
-  flagState = GameFlag_Get(condition);
-  return 1 - ((u32)((0 - flagState) | flagState) >> 31);
+  flagSet = GameFlag_Get(condition);
+  return flagSet == 0;
 }
 
 // The Lost Age's form of the field's trigger search (the Broken Seal's
@@ -212,19 +225,21 @@ s32 Scene_TalkToActor(s32 id) {
     if (id != SCOOPED_ITEM_ACTOR) {
       row = SceneItem_GetRows();
       if (row != NULL) {
-        u8 *end = (u8 *)row + id * 8;
+        u8 *rowOfId = (u8 *)row + id * sizeof(struct ContainerRow);
         s16 *p;
-        // Actor id's ContainerRow, 8 bytes a row from FIELD_TREASURE_ACTOR:
-        // its type, point, flag and contents.
-        p = (s16 *)(end - 512);
+
+        /* FAKEMATCH(temporary): each field read through the byte pointer
+           rowOfId and p; as row[id - FIELD_TREASURE_ACTOR].type and the rest.
+         */
+        p = &CONTAINER_FIELD(rowOfId, type);
         type = *p;
         index = id;
         found = 1;
-        p = (s16 *)(end - 510);
+        p = &CONTAINER_FIELD(rowOfId, point);
         point = *p;
-        p = (s16 *)(end - 508);
+        p = &CONTAINER_FIELD(rowOfId, flag);
         flag = *p;
-        p = (s16 *)(end - 506);
+        p = &CONTAINER_FIELD(rowOfId, contents);
         contents = *p;
       }
     } else {
@@ -238,14 +253,14 @@ s32 Scene_TalkToActor(s32 id) {
     if (found) {
       found = type;
       if ((u16)(type - CONTAINER_CHEST) <= CONTAINER_MIMIC - CONTAINER_CHEST)
-        found = 1;
+        found = EXAMINE_CHEST;
       if ((u16)(type - CONTAINER_PSYNERGY_STONE) <=
           CONTAINER_STONE_TABLET - CONTAINER_PSYNERGY_STONE)
-        found = 5;
+        found = EXAMINE_GROUND;
       if (type == CONTAINER_STONE_TABLET)
-        found = 26;
+        found = EXAMINE_STONE_TABLET;
       if (type == CONTAINER_POND)
-        found = 32;
+        found = EXAMINE_POND;
       Event_Start();
       busy = &object->paused;
       *busy = 1;
@@ -276,9 +291,11 @@ s32 Scene_TalkToActor(s32 id) {
         FieldMessage_ShowFar((s32)&MsgGotPsynergyStone,
                              FIELD_MESSAGE_ZOOM |
                                  FIELD_MESSAGE_WAITING_FOR_SOUND);
-        Party_AddPp(1999, 0);
+        Party_AddPp(PSYNERGY_STONE_PP, 0);
         PartyStatus_CreateWindowFar(PARTY_STATUS_SHOW_PP);
         Sound_PlayFar(SE_RECOVERY);
+        // "<leader>'s PP are maxed out!" alone, else "The party's PP is
+        // fully restored!"
         if (Party_CountMembersFar() == 1)
           FieldMessage_ShowFar((s32)&MsgGotPsynergyStone + 6,
                                FIELD_MESSAGE_ZOOM);
@@ -371,6 +388,8 @@ s32 Scene_TalkToActor(s32 id) {
           if (slot == -1) {
             MessageArgument_PushFar(contents, MESSAGE_ARGUMENT_ITEM);
             FieldMessage_ShowFar((s32)&MsgFoundItem, FIELD_MESSAGE_ZOOM);
+            // "But <leader>'s party can't carry any more, so they left it
+            // behind."
             FieldMessage_ShowFar((s32)&MsgFoundItem + 4, FIELD_MESSAGE_ZOOM);
             if (type != CONTAINER_GROUND)
               Actor_ReleaseIfPresent(shown);
@@ -645,7 +664,7 @@ s32 Field_ExamineCell(s32 id) {
     s32 flags = event->control;
 
     condition = event->condition;
-    kind = (flags >> 4) & 31;
+    kind = EXAMINE_TARGET(flags);
     if (!(event->subject & TRIGGER_SUBJECT_OWN_EFFECT) && kind != 0) {
       Leader_StopMoving();
       FieldMessage_ShowFar(kind + (s32)&MsgTileChecked, FIELD_MESSAGE_ZOOM);
@@ -672,8 +691,10 @@ s32 Field_ExamineCell(s32 id) {
       }
     }
   } else {
-    FieldMessage_ShowFar((s32)&MsgTileChecked + 5, FIELD_MESSAGE_ZOOM);
-    FieldMessage_ShowFar((s32)&MsgTileResult + 5, FIELD_MESSAGE_ZOOM);
+    FieldMessage_ShowFar((s32)&MsgTileChecked + EXAMINE_GROUND,
+                         FIELD_MESSAGE_ZOOM);
+    FieldMessage_ShowFar((s32)&MsgTileResult + EXAMINE_GROUND,
+                         FIELD_MESSAGE_ZOOM);
   }
   GameFlag_Clear(FLAG_NOTHING_HAPPENS);
   return 0;

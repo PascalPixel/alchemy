@@ -1539,13 +1539,6 @@ static s32 FuchinFallsCave_SetDustPalette(struct Actor *actor) {
   return 0;
 }
 
-/// The spawn flags that ask for one of struct EffectOptions' fields
-/// (EFFECT_USE_PALETTE and up), as field_effect_spawn.c names them.
-#define EFFECT_OPTION_MASK 0xffff0000
-/// The word of a dust script holding its SC_LOOP count, the frames the dust
-/// grows over.
-#define EFFECT_SCRIPT_REPEAT_COUNT 3
-
 /// Creates scripted cave dust with the requested velocity, palette and scale.
 void ImilFuchinFalls_SpawnDust(FIXED x, FIXED y, FIXED z, s32 velocityX,
                                s32 velocityY, s32 velocityZ, u32 flags,

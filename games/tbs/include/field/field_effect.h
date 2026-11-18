@@ -108,12 +108,18 @@ enum EffectSpawnFlags {
   /// script's repeat count.
   EFFECT_SCALE_TO_TARGET = 0x40000,
   EFFECT_USE_START_SCALE = 0x80000, ///< options.startScaleX and startScaleY
-  EFFECT_USE_TYPE = 0x100000,       ///< options.type, else SPRITE_DUST_PUFF
+  EFFECT_USE_TYPE = 0x100000,       ///< options.type, else EFFECT_DEFAULT_TYPE
   EFFECT_USE_SCRIPT = 0x200000,     ///< options.script, run in mode 1
   EFFECT_USE_ROTATION = 0x400000,   ///< options.rotation, as the sprite's
   EFFECT_USE_SPIN = 0x800000,       ///< options.spin
   EFFECT_USE_UPDATE = 0x1000000     ///< options.update
 };
+/// The spawn flags that pick one of struct EffectOptions' fields
+/// (EFFECT_USE_PALETTE and up), above the script number.
+#define EFFECT_OPTION_MASK 0xffff0000
+/// The sprite an effect takes unless EFFECT_USE_TYPE gives another
+/// (sprite_ids.h).
+#define EFFECT_DEFAULT_TYPE SPRITE_DUST_PUFF
 
 /// The scripts EFFECT_SCRIPT_MASK picks from gFieldEffect_DurationScripts, in a
 /// scene's spawner and the resident one alike: each holds the effect for a
@@ -124,6 +130,9 @@ enum EffectDuration {
   EFFECT_SCRIPT_MEDIUM = 1, ///< 44 repeats in a scene, 46 frames resident
   EFFECT_SCRIPT_LONG = 2    ///< 126 repeats in a scene, 128 frames resident
 };
+/// The word of a duration script that holds its repeat count, the frames
+/// EFFECT_SCALE_TO_TARGET grows over.
+#define EFFECT_SCRIPT_REPEAT_COUNT 3
 
 /// The resident scripts, by EffectDuration (field_sequence_tables.c).
 extern const s32 gFieldEffect_ShortEffectScript[];

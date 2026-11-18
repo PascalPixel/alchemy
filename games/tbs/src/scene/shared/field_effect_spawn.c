@@ -22,12 +22,6 @@ void FieldEffect_UpdateMotionScaleAndSpin(struct Actor *actor) {
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-enum {
-  EFFECT_DEFAULT_TYPE = SPRITE_DUST_PUFF,
-  EFFECT_OPTION_MASK = 0xffff0000,
-  EFFECT_SCRIPT_REPEAT_COUNT = 3
-};
-
 /// Starts with linear motion and the leader's draw order; options can override
 /// it.
 static inline void FieldEffect_InitializeMotion(struct FieldEffect *effect,

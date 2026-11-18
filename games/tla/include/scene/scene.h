@@ -619,6 +619,9 @@ struct Window;
 /// chest's), the kind CrackedTile_Find looks for; a tile takes the next one up
 /// as it cracks.
 enum { CELL_BEHAVIOR_CRACKED_TILE = 33 };
+/// The fall through such a tile to the floor below, on the room's own map: the
+/// exit it takes and the entrance it lands at share the number.
+enum { THROUGH_CRACKED_TILE = 13 };
 
 /// How near, in pixels, the two walking children of Lemuria and of Contigo
 /// heed: the other child they face, the leader they face, and the leader come

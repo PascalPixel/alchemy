@@ -68,10 +68,6 @@ enum { TRIGGER_DOOR_BUTTON = 20, TRIGGER_OFF_DOOR_BUTTON = 21 };
 /// the next one up as it cracks; the room's own are CELL_BEHAVIOR_CRACKED_TILE.
 enum { CELL_BEHAVIOR_SINGLE_CRACKED_TILE = 43 };
 
-/// Through a cracked tile to the hall below, on the same map: the exit and the
-/// entrance it lands at share the number.
-enum { THROUGH_CRACKED_TILE = 13 };
-
 /// The entrances to the room of cracked tiles: up the stairs from the hall
 /// below, and down the stairs from the room above.
 enum {

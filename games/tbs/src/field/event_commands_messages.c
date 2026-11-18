@@ -7,8 +7,8 @@
 /// Message_SetVoiceFromActor's actor id for no voice: it clears the voice.
 #define MESSAGE_VOICE_NONE 0x80000000
 
-/// A speaker's portrait window, PORTRAIT_TILES tiles square.
-#define PORTRAIT_TILES 5
+/// Portrait_OpenWindow's window is 5 tiles square.
+#define PORTRAIT_WINDOW_TILES 5
 
 /// The event command "open message": opens the event's current message in a
 /// speech window next to the speaking actor, with the speaker's portrait beside
@@ -140,13 +140,13 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
                                 (u32 *)&height);
       message = -1;
       if (top > y)
-        portraitTop = top - PORTRAIT_TILES;
+        portraitTop = top - PORTRAIT_WINDOW_TILES;
       else
         portraitTop = top + height;
       if (portraitTop < 0)
         portraitTop = top + height;
-      else if (portraitTop + PORTRAIT_TILES > DISPLAY_TILE_HEIGHT - 1)
-        portraitTop = top - PORTRAIT_TILES;
+      else if (portraitTop + PORTRAIT_WINDOW_TILES > DISPLAY_TILE_HEIGHT - 1)
+        portraitTop = top - PORTRAIT_WINDOW_TILES;
       if (top < portraitTop) {
         s32 lines = height;
 
@@ -171,13 +171,13 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
                                 (u32 *)&height);
       message = found;
       if (top > y)
-        portraitTop = top - PORTRAIT_TILES;
+        portraitTop = top - PORTRAIT_WINDOW_TILES;
       else
         portraitTop = top + height;
       if (portraitTop < 0)
         portraitTop = top + height;
-      else if (portraitTop + PORTRAIT_TILES > DISPLAY_TILE_HEIGHT - 1)
-        portraitTop = top - PORTRAIT_TILES;
+      else if (portraitTop + PORTRAIT_WINDOW_TILES > DISPLAY_TILE_HEIGHT - 1)
+        portraitTop = top - PORTRAIT_WINDOW_TILES;
     }
     if (top < y) {
       s32 lines = height;
@@ -500,7 +500,7 @@ void Message_SetVoiceFromActor(s32 actorId) {
 }
 
 #undef MESSAGE_VOICE_NONE
-#undef PORTRAIT_TILES
+#undef PORTRAIT_WINDOW_TILES
 #undef MESSAGE_POSITION_WIDTH
 #undef MESSAGE_POSITION_HEIGHT
 #undef MESSAGE_POSITION_MARGIN_X

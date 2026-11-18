@@ -174,8 +174,8 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// The lettering's sprite palette.
-enum { LETTERING_PALETTE = 15 };
+/// The sprite palette of the "To Be Continued" lettering.
+enum { TO_BE_CONTINUED_PALETTE = 15 };
 
 /// Loads the logo's lettering sprites and their palette.
 void Title_LoadSprites(s32 unused) {
@@ -189,7 +189,7 @@ void Title_LoadSprites(s32 unused) {
     gTitleVramBlock = VramCache_FindFreeEntry();
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_INTRO_TILES_B),
                       decodedSprites);
-  Dma_Set(decodedSprites, (void *)&OBJ_PLTT_COLOR(LETTERING_PALETTE, 0),
+  Dma_Set(decodedSprites, (void *)&OBJ_PLTT_COLOR(TO_BE_CONTINUED_PALETTE, 0),
           DMA_COPY_WORDS(PALETTE_COLORS / 2), REG_DMA3);
   VramCache_Load(gTitleVramBlock, 40 * TILE_SIZE_4BPP,
                  decodedSprites + PALETTE_COLORS * 2);
@@ -228,7 +228,7 @@ void Title_UpdateSpriteReveal(void) {
     *attributes++ = 0;
     *attributes++ = OBJ_X(screenX) | screenY | OBJ_SIZE_8X16 |
                     OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-    *attributes++ = OBJ_PALETTE(LETTERING_PALETTE) | tileIndex;
+    *attributes++ = OBJ_PALETTE(TO_BE_CONTINUED_PALETTE) | tileIndex;
     revealAge = gTitleRevealFrame / 2 - column;
     if (revealAge < 0)
       revealAge = 0;

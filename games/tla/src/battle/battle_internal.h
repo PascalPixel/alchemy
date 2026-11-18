@@ -232,9 +232,6 @@ struct BattleLinkedActionState {
 /// The keys that take the player on past a message: A, B, L and R.
 #define KEY_ADVANCE (KEY_A | KEY_B | KEYS_SHOULDERS)
 
-/// The battle camera's distance from its focus in the default view.
-#define BATTLE_CAMERA_DISTANCE toFIXED(510)
-
 /// The gravity a battle unit falls under, about 0.67 pixels a frame per frame
 /// in 16.16: BattleMotion_ReturnToSpot sets it whenever a unit goes back to its
 /// spot.

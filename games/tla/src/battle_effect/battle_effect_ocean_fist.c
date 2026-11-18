@@ -5,29 +5,58 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-#define BLITTER ((DrawRectangle)Ram_HeapSlots->ramCode)
 #define OCEAN_FIST_FRAMES 92
-#define OCEAN_DROPS 512
-/// WhirlBeamSheet's three pictures of the column, each three 64-line bands.
+/// The drops stop rising and the target is struck; the column fades from here
+/// for OCEAN_FIST_FADE_FRAMES.
+#define OCEAN_FIST_STRIKE_FRAME 32
+#define OCEAN_FIST_FADE_FRAMES 12
+/// The damage is shown, and the camera's long shake gives way to a harder one.
+#define OCEAN_FIST_DAMAGE_FRAME 38
+
+/// The column: WhirlBeamSheet's three pictures of a swirling torrent, one a
+/// frame in turn, each drawn in up to three bands one above another from its
+/// foot up to its top, which rises OCEAN_FIST_COLUMN_RISE lines a frame from
+/// the bottom of the view.
 #define OCEAN_FIST_COLUMN_WIDTH 96
 #define OCEAN_FIST_COLUMN_HEIGHT 64
-/// Where FlashBurstSheet, the spray, is decoded in the map cell buffer.
-#define OCEAN_FIST_SPRAY 16384
+#define OCEAN_FIST_COLUMN_PICTURES 3
+#define OCEAN_FIST_COLUMN_BANDS 3
+#define OCEAN_FIST_COLUMN_FRAMES 42
+#define OCEAN_FIST_COLUMN_RISE 8
+/// The canvas line the column stands on, where the drops leave from; a falling
+/// drop is gone below OCEAN_FIST_DROP_FLOOR.
+#define OCEAN_FIST_COLUMN_FOOT_Y 108
+#define OCEAN_FIST_DROP_FLOOR 104
 
-/// A column of water (three pictures of the work's sheet, each halved in
-/// brightness from frame 32 to 43) rises at the target and is drawn top-down
-/// for 42 frames; spray bursts at its foot, and drops of the map cell
-/// buffer's 512 fly up from the target for the first 32 frames, with a
-/// fountain of 256 at frame 28. The target is struck at frame 32 and pushed
-/// back.
+/// FlashBurstSheet, the spray, decoded after the drops in the map cell buffer.
+#define OCEAN_FIST_SPRAY_SHEET (Ram_MapCellBuffer + 16384)
+/// The sprays given a countdown, of which the first OCEAN_FIST_SPRAYS burst at
+/// the column's foot, one a frame; each shows the sheet's six pictures for
+/// three frames apiece.
+#define OCEAN_FIST_SPRAY_SLOTS 32
+#define OCEAN_FIST_SPRAYS 24
+#define OCEAN_FIST_SPRAY_FRAMES (6 * 3)
+
+/// The drops, in the map cell buffer: up to OCEAN_FIST_DROPS_A_FRAME leave the
+/// column's foot each frame until the strike, and at OCEAN_FIST_FOUNTAIN_FRAME
+/// every free one of the first OCEAN_FIST_FOUNTAIN_DROPS bursts up at once.
+#define OCEAN_FIST_DROPS 512
+#define OCEAN_FIST_DROPS_A_FRAME 16
+#define OCEAN_FIST_FOUNTAIN_DROPS 256
+#define OCEAN_FIST_FOUNTAIN_FRAME 28
+
+/// A swirling blue torrent rises from the ground at the target, spray bursting
+/// at its foot, while drops shoot up through it and a fountain of them bursts
+/// beside it. At OCEAN_FIST_STRIKE_FRAME the target is struck and thrown
+/// up, the column fades and the drops fall back.
 ///
 /// Abilities: Ocean Fist.
 void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
-  u8 *spraySheet = Ram_MapCellBuffer + OCEAN_FIST_SPRAY;
+  u8 *spraySheet = OCEAN_FIST_SPRAY_SHEET;
   void *canvas;
   struct BattleEffectWork *work;
   u8 *sprites;
-  DrawRectangle blitters[2];
+  BlitterPair blitters;
   struct ScreenPoint target;
   struct Particle *drops = (struct Particle *)gMapGridCellBuffer;
   struct Particle *drop;
@@ -54,37 +83,42 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
 
   {
     s32 scroll = 0;
-    for (frame = 0; frame != OCEAN_FIST_FRAMES; scroll += 8, frame++) {
+    for (frame = 0; frame != OCEAN_FIST_FRAMES;
+         scroll += OCEAN_FIST_COLUMN_RISE, frame++) {
       if (frame == 0) {
-        s32 *life = &((struct Particle *)Ram_MapCellBuffer)->variant;
+        s32 *life = &PARTICLES->variant;
 
-        for (i = 0; i != OCEAN_DROPS; i++) {
+        for (i = 0; i != OCEAN_FIST_DROPS; i++) {
           *life = -1;
           life += sizeof(struct Particle) / sizeof(s32);
         }
+        // DEAD: the column's pictures are already decoded; the ROM keeps the
+        // second load.
         Resource_LoadAndDecompress(RESOURCE_WHIRL_BEAM_SHEET, work->sheet, 1,
                                    0);
         Sound_PlayFar(SE_CRASH);
         work->shakeFrames = 4;
         halfWidth = OCEAN_FIST_COLUMN_WIDTH / 2;
         width = OCEAN_FIST_COLUMN_WIDTH;
-        sheet = Ram_MapCellBuffer + OCEAN_FIST_SPRAY;
+        sheet = OCEAN_FIST_SPRAY_SHEET;
       }
-      if (frame == 32) {
+      if (frame == OCEAN_FIST_STRIKE_FRAME) {
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  POSE_DAMAGE, 0, 8);
         BattleEffect_StartActorMotion(args->targets[0], 1, 0, 0, toFIXED(15),
                                       100);
       }
-      if (frame == 38) {
+      if (frame == OCEAN_FIST_DAMAGE_FRAME) {
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
         work->shakeFrames = 16;
       }
 
-      // Frames 32 to 43: each in turn, the column's pictures dim.
-      if ((u32)(frame - 32) <= 11) {
-        u8 *pixel =
-            work->sheet + (frame % 3) * PICTURE_BYTES(OCEAN_FIST_COLUMN);
+      // From the strike, each frame halves the brightness of the picture
+      // shown, so each of the three fades to a sixteenth.
+      if (frame >= OCEAN_FIST_STRIKE_FRAME &&
+          frame < OCEAN_FIST_STRIKE_FRAME + OCEAN_FIST_FADE_FRAMES) {
+        u8 *pixel = work->sheet + (frame % OCEAN_FIST_COLUMN_PICTURES) *
+                                      PICTURE_BYTES(OCEAN_FIST_COLUMN);
 
         for (i = 0; i != PICTURE_BYTES(OCEAN_FIST_COLUMN); i++) {
           s32 value = *pixel;
@@ -94,24 +128,24 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
         }
       }
 
-      // The column, three 64-line bands scrolling up from line 120.
-      if (frame >= 0 && frame <= 41) {
-        s32 top = 120 - scroll;
-        s32 picture = frame % 3;
+      // The column, its bands scrolling up as its top rises.
+      if (frame >= 0 && frame < OCEAN_FIST_COLUMN_FRAMES) {
+        s32 top = BATTLE_VIEW_HEIGHT - scroll;
+        s32 picture = frame % OCEAN_FIST_COLUMN_PICTURES;
         s32 x = target.x / 2;
-        s32 phase = scroll % 64;
+        s32 phase = scroll % OCEAN_FIST_COLUMN_HEIGHT;
 
         if (top < 0) {
           top = 0;
         }
-        for (i = 0; i != 3; i++) {
-          s32 y = i * 64 - phase;
-          s32 height = 108 - y;
+        for (i = 0; i != OCEAN_FIST_COLUMN_BANDS; i++) {
+          s32 y = i * OCEAN_FIST_COLUMN_HEIGHT - phase;
+          s32 height = OCEAN_FIST_COLUMN_FOOT_Y - y;
 
-          if (height > 64) {
-            height = 64;
+          if (height > OCEAN_FIST_COLUMN_HEIGHT) {
+            height = OCEAN_FIST_COLUMN_HEIGHT;
           }
-          if (height > 0 && y >= top - 64) {
+          if (height > 0 && y >= top - OCEAN_FIST_COLUMN_HEIGHT) {
             if (y < top) {
               height -= top - y;
               y = top;
@@ -124,14 +158,16 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
         }
       }
 
-      // The spray at the column's foot.
+      // The spray at the column's foot: spray i sets out at frame i + 3 and
+      // rises as it burns out.
       if (frame == 0) {
-        for (i = 0; i != 32; i++) {
+        for (i = 0; i != OCEAN_FIST_SPRAY_SLOTS; i++) {
           work->particles[i].variant = -i - 4;
         }
       }
-      for (i = 0, spray = work->particles; i != 24; i++, spray++) {
-        if ((u32)spray->variant <= 17) {
+      for (i = 0, spray = work->particles; i != OCEAN_FIST_SPRAYS;
+           i++, spray++) {
+        if ((u32)spray->variant < OCEAN_FIST_SPRAY_FRAMES) {
           blitters[0](canvas,
                       (u8 *)((spray->variant / 3) * PICTURE_BYTES(FLASH_BURST) +
                              (s32)sheet),
@@ -148,11 +184,13 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
         }
       }
 
-      // The drops: a fountain at frame 28, sixteen more a frame until 31.
-      if (frame == 28) {
+      // The fountain: free drops set out in an oval about canvas (32, 96)
+      // and fly up and out.
+      if (frame == OCEAN_FIST_FOUNTAIN_FRAME) {
         struct Particle *fountain;
 
-        for (i = 0, fountain = drops; i != 256; i++, fountain++) {
+        for (i = 0, fountain = drops; i != OCEAN_FIST_FOUNTAIN_DROPS;
+             i++, fountain++) {
           if (fountain->variant == -1) {
             s32 radius = Random16() & 63;
             s32 angle = Random16() & TRIG_ANGLE_MASK;
@@ -165,51 +203,61 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
           }
         }
       }
-      if (frame >= 0 && frame <= 31) {
+
+      // Until the strike, drops leave the column's foot and are pulled up,
+      // each by one of gOceanFist_DropGravity's four; then they fall.
+      if (frame >= 0 && frame < OCEAN_FIST_STRIKE_FRAME) {
         s32 spawned = 0;
 
-        for (i = 0, drop = drops; i != OCEAN_DROPS; i++, drop++) {
+        for (i = 0, drop = drops; i != OCEAN_FIST_DROPS; i++, drop++) {
           if (drop->variant == -1) {
             drop->x = INTtoFIXED((Random16() & 31) + target.x / 2 - 16);
-            drop->y = toFIXED(108);
+            drop->y = toFIXED(OCEAN_FIST_COLUMN_FOOT_Y);
             drop->velocityX = ((Random16() & 63) - 32) << 14;
             drop->velocityY = (-(Random16() & 63) - 8) << 13;
             drop->variant = 0;
-            if (++spawned == 16) {
+            if (++spawned == OCEAN_FIST_DROPS_A_FRAME) {
               break;
             }
           }
         }
       }
-      for (i = 0, drop = drops; i != OCEAN_DROPS; i++, drop++) {
+      for (i = 0, drop = drops; i != OCEAN_FIST_DROPS; i++, drop++) {
         if (drop->variant >= 0) {
           s32 size = i % 3 + 3;
 
-          blitters[i & 1](canvas,
-                          sprites + gBattleEffect_MotePictures[size - 1],
-                          FIXED_INTEGER_PART(drop->x) - size / 2,
-                          FIXED_INTEGER_PART(drop->y) - size, size, size * 2);
-          if (frame > 31) {
+          EFFECT_DRAW_MOTE(blitters[i & 1], canvas, sprites,
+                           FIXED_INTEGER_PART(drop->x),
+                           FIXED_INTEGER_PART(drop->y), size);
+          if (frame >= OCEAN_FIST_STRIKE_FRAME) {
             Particle_AdvanceWithGravity2D(drop, 62, toFIXED(1) / 4);
           } else {
             Particle_AdvanceWithGravity2D(drop, 62,
                                           gOceanFist_DropGravity[i & 3]);
           }
           drop->variant++;
-          if (drop->velocityY > 0 && (FIXEDtoINT(drop->y)) > 104) {
+          if (drop->velocityY > 0 &&
+              FIXEDtoINT(drop->y) > OCEAN_FIST_DROP_FLOOR) {
             drop->variant = -1;
           }
+          // BUG: the drop's 16.16 y is compared with its size in whole
+          // pixels, so a rising drop goes as it crosses the canvas's top line
+          // rather than once it is past it.
+#ifdef BUGFIX
+          if (drop->y < toFIXED(-size)) {
+#else
           if (drop->y < -size) {
+#endif
             drop->variant = -1;
           }
         }
       }
-      if (frame <= 37) {
+      if (frame < OCEAN_FIST_DAMAGE_FRAME) {
         work->shakeFrames = 16;
       }
       if (frame <= 7) {
         BattleCamera_Shake(8, 8);
-      } else if (frame <= 37) {
+      } else if (frame < OCEAN_FIST_DAMAGE_FRAME) {
         BattleCamera_Shake(4, 4);
       } else {
         BattleCamera_Shake(8, 8);
@@ -219,9 +267,23 @@ void BattleEffect_RunOceanFist(struct BattleEffectParams *args) {
   }
   EFFECT_FINISH_CANVAS();
 }
-#undef BLITTER
 #undef OCEAN_FIST_FRAMES
-#undef OCEAN_DROPS
+#undef OCEAN_FIST_STRIKE_FRAME
+#undef OCEAN_FIST_FADE_FRAMES
+#undef OCEAN_FIST_DAMAGE_FRAME
 #undef OCEAN_FIST_COLUMN_WIDTH
 #undef OCEAN_FIST_COLUMN_HEIGHT
-#undef OCEAN_FIST_SPRAY
+#undef OCEAN_FIST_COLUMN_PICTURES
+#undef OCEAN_FIST_COLUMN_BANDS
+#undef OCEAN_FIST_COLUMN_FRAMES
+#undef OCEAN_FIST_COLUMN_RISE
+#undef OCEAN_FIST_COLUMN_FOOT_Y
+#undef OCEAN_FIST_DROP_FLOOR
+#undef OCEAN_FIST_SPRAY_SHEET
+#undef OCEAN_FIST_SPRAY_SLOTS
+#undef OCEAN_FIST_SPRAYS
+#undef OCEAN_FIST_SPRAY_FRAMES
+#undef OCEAN_FIST_DROPS
+#undef OCEAN_FIST_DROPS_A_FRAME
+#undef OCEAN_FIST_FOUNTAIN_DROPS
+#undef OCEAN_FIST_FOUNTAIN_FRAME

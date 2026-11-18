@@ -559,7 +559,9 @@ void Madra_AskAboutIceShaft(s32 actor) {
 // BUG: the boy's lines open beside ACTOR_FIRST_PLACED, the young man who talks
 // of the elder, wherever he stands, and not beside the boy:
 // FieldMessage_ShowAtActor places the window by its speaker's place on screen.
-// BUGFIX opens them beside the boy.
+// In a render of the talk the young man is off screen to the north-west and
+// every window stands at the screen's left edge; with BUGFIX's speaker, the
+// boy, they stand over his head.
 #ifdef BUGFIX
 #define BRIGGS_FAN_SPEAKER ACTOR_BRIGGS_FAN
 #else

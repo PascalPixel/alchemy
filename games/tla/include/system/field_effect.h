@@ -104,12 +104,17 @@ enum EffectSpawnFlags {
   /// script's repeat count.
   EFFECT_SCALE_TO_TARGET = 0x40000,
   EFFECT_USE_START_SCALE = 0x80000, ///< options.startScaleX and startScaleY
-  EFFECT_USE_TYPE = 0x100000,       ///< options.type, else the default type
+  EFFECT_USE_TYPE = 0x100000,       ///< options.type, else EFFECT_DEFAULT_TYPE
   EFFECT_USE_SCRIPT = 0x200000,     ///< options.script, run in mode 1
   EFFECT_USE_ROTATION = 0x400000,   ///< options.rotation, as the sprite's
   EFFECT_USE_SPIN = 0x800000,       ///< options.spin
   EFFECT_USE_UPDATE = 0x1000000     ///< options.update
 };
+/// The spawn flags that pick an option, above the script number.
+#define EFFECT_OPTION_MASK 0xffff0000
+/// The sprite an effect takes unless EFFECT_USE_TYPE gives another
+/// (sprite_ids.h).
+#define EFFECT_DEFAULT_TYPE SPRITE_DUST_CLOUD
 
 /// The scripts EFFECT_SCRIPT_MASK picks from gFieldEffect_DurationScripts: each
 /// holds the effect for a while, then releases it.
@@ -118,6 +123,9 @@ enum EffectDuration {
   EFFECT_SCRIPT_MEDIUM = 1, ///< held 46 frames
   EFFECT_SCRIPT_LONG = 2    ///< held 128 frames
 };
+/// The word of a duration script that holds its repeat count, the frames
+/// EFFECT_SCALE_TO_TARGET grows over.
+#define EFFECT_SCRIPT_REPEAT_COUNT 3
 
 /// Sixteen puffs of dust in a ring round the leader as he lands from above,
 /// the first thrown twice.

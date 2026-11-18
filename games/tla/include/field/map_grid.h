@@ -68,7 +68,13 @@ enum MapGridLayerIndex {
 /// Sand, the Cyclone and Hover read theirs on the overhead layer
 /// (event_commands_field_psynergy.c).
 enum CellBehavior {
-  CELL_BEHAVIOR_NORMAL = 0,  ///< open ground, where nothing happens
+  CELL_BEHAVIOR_NORMAL = 0, ///< open ground, where nothing happens
+  /// 1 to 230: the scene's own, each the step trigger it raises as the
+  /// leader walks onto it (Field_UpdateWalking), or as he climbs a wall drawn
+  /// over it on the overhead layer (GaiaRock_TriggerWallCell); those above are
+  /// the field's own.
+  CELL_BEHAVIOR_EVENT_FIRST = 1,
+  CELL_BEHAVIOR_EVENT_LAST = 230,
   CELL_BEHAVIOR_CLOAK = 231, ///< Cloak hides the leader there
   CELL_BEHAVIOR_SAND = 232,  ///< Sand lets the leader move there as sand
   /// A cell the Cyclone acts on (MapGrid_GetCycloneCellKind's kind 1).

@@ -31,6 +31,10 @@ extern const struct DebugWarpPreset gDebugWarp_Presets[];
 /// The abilities the debug shortcut grid offers, by column and row.
 extern const s16 gDebugShortcut_Abilities[4][9];
 
+/// The debug rooms' item choosers (IncreaseItemAndLevel_SelectItem,
+/// ShopTest_SelectItem): Right and Left move ten numbers.
+#define BROWSER_ROW_STEP 10
+
 void DebugWarp_Jupiter(void);
 void DebugWarp_Arafura2(void);
 void DebugWarp_EnergySample(void);

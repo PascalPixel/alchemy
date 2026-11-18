@@ -263,8 +263,21 @@ struct DiceCamera {
 /// Where the dice's shadow starts in OBJ VRAM, in 16-colour tiles (32 bytes,
 /// half a 256-colour tile): after the rolling die's eighteen 256-colour views.
 #define DICE_SHADOW_TILE 144
-/// A thrown die starts spinning at this rate, its roll angle a frame.
+/// A thrown die starts spinning at this rate, its roll angle a frame; each
+/// bounce takes DICE_BOUNCE_SPIN_LOSS off it.
 #define DICE_THROW_SPIN 300
+#define DICE_BOUNCE_SPIN_LOSS 20
+/// A die's roll angle (its particle's variant) crosses a face in
+/// DICE_TILES_PER_FACE tiles: the tile is angle / DICE_ROLL_PER_TILE and the
+/// face angle / DICE_ROLL_PER_FACE. It is the die's own unit, a whole roll
+/// DICE_ROLL_TURN, not a TRIG_TURN angle.
+#define DICE_TILES_PER_FACE 3
+#define DICE_ROLL_PER_TILE 1024
+#define DICE_ROLL_PER_FACE (DICE_TILES_PER_FACE * DICE_ROLL_PER_TILE)
+#define DICE_ROLL_TURN (DICE_FACE_COUNT * DICE_ROLL_PER_FACE) ///< six faces
+/// A die's or a shadow's affine scale at DICE_NEAREST_DEPTH, in 256ths: drawn
+/// at twice its size, and smaller the further past it.
+#define DICE_NEAREST_SCALE 128
 
 /// A party member's unit as the field reads it: its gauges and its HP and PP.
 struct FieldUnit {

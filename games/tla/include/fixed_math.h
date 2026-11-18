@@ -24,6 +24,8 @@ typedef s32 FIXED;
 #define FIXEDtoINT(value) ((value) >> 16)
 /// Twice a 16.16 value, as a whole number: FIXEDtoINT a shift short.
 #define FIXEDtoINT_TWICE(value) ((value) >> 15)
+/// Four times a 16.16 value, as a whole number: FIXEDtoINT two shifts short.
+#define FIXEDtoINT_FOUR_TIMES(value) ((value) >> 14)
 
 /// A whole or decimal number as 16.16, for the macros that take plain pixels
 /// and decimal speeds: toFIXED(0.8) is 52428. It multiplies where toFIXED()

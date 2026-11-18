@@ -14,26 +14,26 @@
 
 s32 PsynergyMenu_IsActionRestricted(s32 actionEntry);
 
-s32 PsynergyMenu_RunSteps(s32 *ownerOut, s32 *targetOut, s32 *itemOut);
+s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction);
 
-/// A second item picker an event script opens, built as ItemMenu_Run: opens
-/// the item menu over the field and runs its command loop; when that returns 1,
-/// looks up the chosen item's action (unused) and records owner << 10 | item in
-/// the event work at 0x166. Returns the loop's result.
+/// The field menu's Psynergy screen (FieldMenu_Run, FIELD_MENU_PSYNERGY), over
+/// the field, which stops meanwhile. A Psynergy chosen to use on the field goes
+/// to FieldWork.psynergy with the party member who uses it. Returns
+/// PsynergyMenu_RunSteps' result.
 s32 PsynergyMenu_Run(void) {
   // German, Spanish, French and Italian also suspend the field tasks and keep
-  // the tiles at 0x06004000 aside, filled with a pattern, while the picker is
+  // character block 1's tiles aside, filled with colour 3, while the menu is
   // open.
-  struct ItemMenuWork *screen;
+  struct ItemMenuWork *menu;
 #if TLA_PATCH_2
   void *savedTiles;
 #endif
-  s32 item;
-  s32 target;
-  s32 owner;
+  s32 psynergy;
+  s32 unused;
+  s32 member;
   s32 result;
 
-  screen = HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_WORK_SIZE);
+  menu = HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_WORK_SIZE);
 #if TLA_PATCH_2
   savedTiles = Heap_AllocEwram(MENU_SAVED_TILE_BYTES);
 #endif
@@ -48,25 +48,26 @@ s32 PsynergyMenu_Run(void) {
                   PIXELS_4BPP(3));
   Text_UseExtraTilesFar(1);
 #endif
-  screen->partyCount = Party_ListMembersFar(screen->memberIds);
+  menu->partyCount = Party_ListMembersFar(menu->memberIds);
   ItemMenu_Initialize(0, 3, 0, 7);
-  screen->questionWindow = Window_CreateFar(13, 0, 17, 3, WINDOW_FLAG_INSTANT);
+  menu->questionWindow = Window_CreateFar(13, 0, 17, 3, WINDOW_FLAG_INSTANT);
   Palette_LightenHighlight(HIGHLIGHT_PALETTE);
   Link_DrawPageArrowsFar(PAGE_ARROW_VRAM);
 
   Menu_StartWatchingStart();
-  result = PsynergyMenu_RunSteps(&owner, &target, &item);
+  result = PsynergyMenu_RunSteps(&member, &unused, &psynergy);
   Menu_StopWatchingStart();
   if (result == 1) {
-    struct FieldWork *event = Ram_HeapSlots->fieldWork;
+    struct FieldWork *target = Ram_HeapSlots->fieldWork;
     u16 request;
 
-    Ability_Get(PSYNERGY_ABILITY_MASK & screen->selectedItems[0]);
-    request = item | (owner << ACT_UNIT_SHIFT);
-    event->psynergy = request;
+    // DEAD: Ability_Get's result is not used; the ROM keeps the call.
+    Ability_Get(PSYNERGY_ABILITY_MASK & menu->selectedItems[0]);
+    request = psynergy | (member << ACT_UNIT_SHIFT);
+    target->psynergy = request;
   }
 
-  WindowSprite_ClearListFar(screen->statusWindow);
+  WindowSprite_ClearListFar(menu->statusWindow);
   ((struct WindowWork *)Ram_HeapSlots->windowWork)->holdTilemapUpload = 1;
   ItemMenu_Close();
   Window_DrawBorderFar(0, 0, 30, 20);
@@ -130,7 +131,7 @@ s32 PsynergyMenu_SelectPartySlot(s32 paneIndex);
 s32 PsynergyMenu_SelectTarget(s32 paneIndex);
 s32 PsynergyMenu_RunList(s32 paneIndex);
 
-/// Runs the Psynergy menu, The Broken Seal's PsynergyMenu_RunSteps: choose a
+/// Runs the Psynergy menu's steps: choose a
 /// party member and one of their Psynergy, then use it on a member (or the
 /// whole party), or, in the shortcut modes, set it as the L or R shortcut.
 /// Returns 1 with the member and Psynergy in the out parameters when the
@@ -776,8 +777,6 @@ void PsynergyMenu_DrawPsynergyIcons(u16 *psynergies) {
   Menu_HideEmptyEntryIcons(psynergies);
 }
 
-// Lists a unit's Psynergy for a menu.
-
 /// Lists a unit's Psynergy into actions (32 entries, cleared first) and returns
 /// how many: mode 1 those with a field effect, any other mode those first and
 /// then, unless mode is 2, the rest.
@@ -830,9 +829,7 @@ s32 PsynergyMenu_CollectActions(struct Unit *unit, u16 *actions, s32 mode) {
   return count;
 }
 
-// Psynergy menu workspace (known fields only).
-
-/// Split the selected slot owner's Psynergy into pages of five rows.
+/// Splits the selected slot owner's Psynergy into pages of five rows.
 s32 PsynergyMenu_BuildPagedList(struct PagedList *result, s32 index) {
   s32 ownerState;
   struct PsynergyMenuWork *menu = Ram_HeapSlots->menuWork;
@@ -865,9 +862,6 @@ s32 PsynergyMenu_BuildPagedList(struct PagedList *result, s32 index) {
   return 1;
 }
 
-// Psynergy menu workspace; only identified fields are declared here.
-
-// Shows the selected row's description and sets the five rows' backgrounds.
 /// Updates the Psynergy list for the row under the cursor: puts the Psynergy's
 /// description in the info window, unless a kept message is there, and
 /// highlights its row of the five. window and work are not used.
@@ -940,11 +934,8 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
 #define PSYNERGY_NAME_X 16
 #endif
 
-// The psynergy menu work block, as this function reads it.
-
-/// Draws one page of the Psynergy list (name, PP cost, greyed when the PP is
-/// short or the action restricted): The Broken Seal's
-/// PsynergyMenu_DrawActionPage with this game's work-block offsets.
+/// Draws one page of the Psynergy list: each name and PP cost, greyed when the
+/// PP is short or the action restricted.
 s32 PsynergyMenu_DrawActionPage(s32 window, s32 unused,
                                 const struct PagedList *state) {
   u32 firstEntry;

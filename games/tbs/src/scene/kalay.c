@@ -135,6 +135,7 @@
 #include "menu/menu.h"
 #include "scene/actor_orbit.h"
 #include "scene/catch_nut.h"
+#include "scene/kalay.h"
 #include "scene/orbit.h"
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
@@ -359,10 +360,6 @@ static s32 Kalay_UpdateWaitingTourist(struct Actor *actor) {
 }
 
 #include "shared/actor_heading.c"
-
-/// The party has heard in Lunpa that Hammet is held there, or he is already
-/// free. It changes what Layana says.
-#define FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA FLAG_AREA_TEMP_21
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 sceneId = gMainRoutineWork.next;

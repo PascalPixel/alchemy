@@ -8,8 +8,6 @@
 #include "resource_ids.h"
 #include "macros.h"
 
-#define Decompress_ByteLz ((void (*)(void *, void *))Decompress_ByteLz)
-
 /// A row of a command icon's 8x8 tiles, four across, as a sprite holds them.
 #define COMMAND_ICON_TILE_ROW_BYTES (4 * TILE_SIZE_8BPP)
 
@@ -554,7 +552,6 @@ UNUSED void Graphics_InstallBg1VCountHandler(void) {
   Irq_SetHandler(IRQ_VCOUNT, COMMAND_ROW_TOP * 8, CommandRow_PutBg1InFront);
 }
 
-#undef Decompress_ByteLz
 #undef COMMAND_ICON_TILE_ROW_BYTES
 #undef ROW_LAST_PIXEL_SHIFT
 #undef COMMAND_ICON_COLORS

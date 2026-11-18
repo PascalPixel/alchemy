@@ -1156,8 +1156,6 @@ s32 IconMenu_AnimateTo(s32 start, s32 goal) {
   return goal;
 }
 
-#define Decompress_ByteLz ((void (*)(void *, void *))Decompress_ByteLz)
-
 /// Decodes command icon `index` into the VRAM cache entry `slot`, through a
 /// block it allocates and frees.
 void CommandIcon_LoadIntoSlot(s32 slot, s32 index) {
@@ -1766,7 +1764,6 @@ s32 Menu_SelectCoinsOrMedals(s32 selection) {
 UNUSED void DebugSceneSelect_Schedule(void) {
   Task_Add(DebugSceneSelect_Run, TASK_PASS_FRAME);
 }
-#undef Decompress_ByteLz
 #undef LABEL_RIGHT
 #undef HELP_X
 #undef ENTRY_WIDTH

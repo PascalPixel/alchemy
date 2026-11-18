@@ -37,25 +37,16 @@
 /// with one row of gWorldMap_GraphicsResources.
 #define WORLD_MAP_REGION_GROUP 10
 
-/// BG1's picture of 256 colours: 32 by 24 tiles from char block 1 on, which
-/// the world picture scrolls through, wrapping (WorldMapPicture_DrawRow).
-#define PICTURE_FIRST_TILE (BG_CHAR_SIZE / TILE_SIZE_8BPP)
-#define PICTURE_TILE_ROWS 24
 /// The still picture on BG1 (WorldMap_StartStillPicture): 32 by 20 of the
-/// picture's tiles, from its fifth row on.
+/// world picture's tiles, from its fifth row on.
 #define STILL_PICTURE_TILES_ACROSS 32
 #define STILL_PICTURE_TILE_ROWS 20
 #define STILL_PICTURE_FIRST_TILE                                               \
-  (PICTURE_FIRST_TILE + 4 * STILL_PICTURE_TILES_ACROSS)
+  (WORLD_PICTURE_FIRST_TILE + 4 * STILL_PICTURE_TILES_ACROSS)
 /// While the still picture shows, the perspective's window lies below the
 /// screen, so no line is drawn in perspective.
 #define STILL_PICTURE_WINDOW_TOP 200
 #define STILL_PICTURE_WINDOW_BOTTOM 255
-
-/// Two screen entries in a word, tiles n and n + 1 side by side, for numbering
-/// a map's tiles two at a time; adding TILE_PAIR_STEP moves both on by two.
-#define TILE_PAIR(n) ((u32)((n) + 1) << 16 | (n))
-#define TILE_PAIR_STEP ((u32)2 << 16 | 2)
 
 /// Sets up the world map's perspective view: BG2 and BG3 in affine mode, the
 /// camera work, the projection, the per-scanline ground plane routine in RAM
@@ -340,14 +331,14 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
       tilePair += TILE_PAIR_STEP;
     }
   }
-  tilePair = TILE_PAIR(PICTURE_FIRST_TILE);
-  for (row = 0; row < PICTURE_TILE_ROWS; row++) {
+  tilePair = TILE_PAIR(WORLD_PICTURE_FIRST_TILE);
+  for (row = 0; row < WORLD_PICTURE_TILE_ROWS; row++) {
     for (column = 0; column < BG_SCREEN_WIDTH / 2; column++) {
       *screenTiles++ = tilePair;
       tilePair += TILE_PAIR_STEP;
     }
   }
-  tilePair = TILE_PAIR(PICTURE_FIRST_TILE);
+  tilePair = TILE_PAIR(WORLD_PICTURE_FIRST_TILE);
   for (row = 0; row < 4; row++) {
     for (column = 0; column < BG_SCREEN_WIDTH / 2; column++) {
       *screenTiles++ = tilePair;

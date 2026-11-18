@@ -235,7 +235,7 @@ s32 Leader_CanPushObjectAhead(void) {
 
   // The facing rounded to the nearest quarter turn, in sixteenths; the probe
   // starts at the leader's height rounded to the nearest 8 pixels.
-  angle = ((angle + 2) & 12) << FACING_STEP_SHIFT;
+  angle = ((angle + 2) & 0xc) << FACING_STEP_SHIFT;
   position[0] = owner->x.fixed;
   position[1] = (owner->y.fixed + toFIXED(4)) & ~(toFIXED(8) - 1);
   position[2] = owner->z.fixed;
@@ -284,7 +284,7 @@ void Leader_PushObjectAhead(void) {
   s32 acceleration;
   s32 angle = owner->facing / FACING_STEP;
 
-  angle = ((angle + 2) & 12) << FACING_STEP_SHIFT;
+  angle = ((angle + 2) & 0xc) << FACING_STEP_SHIFT;
   position[0] = owner->x.fixed;
   position[1] = (owner->y.fixed + toFIXED(4)) & ~(toFIXED(8) - 1);
   position[2] = owner->z.fixed;

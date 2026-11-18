@@ -95,10 +95,6 @@ enum LemuriaRoomsCellBehavior {
 /// beating its spread wings.
 enum { ANIM_WHITE_BIRD_PERCH = 1, ANIM_WHITE_BIRD_FLAP = 3 };
 
-/// A sliver of a turn off a heading: an actor turning round to face the
-/// opposite way turns by the side the nudge leans to.
-enum { FACING_NUDGE = 10 };
-
 /// How the rooms open: the Japanese edition opens them through a shape, the
 /// others from around the leader.
 #if !TLA_PATCH_1

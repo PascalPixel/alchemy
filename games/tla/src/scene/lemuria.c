@@ -787,10 +787,6 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// A sliver of a turn off a heading: an actor turning round to face the
-/// opposite way turns by the side the nudge leans to.
-enum { FACING_NUDGE = 10 };
-
 /// Kraden, stepping onto the path west or east of the avenue, looks round and
 /// runs up it to the palace.
 /// "Oh! Goodness! Felix! Look over here! This palace is magnificient!"

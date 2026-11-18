@@ -43,10 +43,6 @@ enum {
 /// Serpent's and Poseidon's.
 enum { ENCOUNTER_SLOT_AVIMANDER = 5 };
 
-/// A sliver of a turn off a heading: an actor turning round to face the
-/// opposite way turns by the side the nudge leans to.
-enum { FACING_NUDGE = 10 };
-
 /// The five colours of Obaba's forge pit, from colour 2 of a background
 /// palette: dark blue as the room shows them (palette 7), and the pale ones
 /// (palette 6) and the fiery yellow to orange ones (palette 13) the map keeps

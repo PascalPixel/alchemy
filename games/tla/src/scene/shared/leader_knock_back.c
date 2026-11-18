@@ -9,9 +9,6 @@
 /// thrown, KNOCK_BACK_SET_ANIMATION, KNOCK_BACK_CELL_ATTRIBUTE and
 /// KNOCK_BACK_CHECK_COLLISION.
 
-/// Ram_HeapSlots->actors, as field_internal.h counts them.
-#define ACTOR_COUNT 64
-
 // Typed as an event that returns a value, though it returns none.
 s32 KNOCK_BACK(void) {
   struct MainRoutineWork *main = &gMainRoutineWork;
@@ -130,5 +127,3 @@ s32 KNOCK_BACK(void) {
 #endif
     work->active = 0;
 }
-
-#undef ACTOR_COUNT

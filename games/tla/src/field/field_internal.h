@@ -254,7 +254,6 @@ enum AnimationCommand {
 /// The field's pool sizes, and a sprite animation's timer step at normal speed.
 enum {
   SPRITE_PICTURE_CACHE_COUNT = 8, ///< ActorSystemWork.pictureCaches
-  ACTOR_COUNT = 64,               ///< Ram_HeapSlots->actors
   ANIM_OBJECT_COUNT = 64,         ///< sprites and sprite animations
   ANIM_LAYER_COUNT = 4,           ///< Sprite.entries
   RUNNING_LIST_SLOTS = 14,        ///< the actor slots Actor_ListRunning reads

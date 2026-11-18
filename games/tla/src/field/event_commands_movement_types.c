@@ -12,9 +12,6 @@
 
 extern const u8 gActor_WaitScript[];
 
-/// The actors of Ram_HeapSlots->actors.
-#define ACTOR_COUNT 64
-
 /// The event command "actor set attached effect", by enum AttachedEffectFlag:
 /// removes the actor attached to an actor, attaches one
 /// (SPRITE_ATTACHED_EFFECT, animation 1) unless one already is, or shows a

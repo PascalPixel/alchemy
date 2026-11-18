@@ -32,6 +32,9 @@ enum ScreenTransitionStyle {
 /// The actor id that ends a list of actors, or of rows that start with one.
 #define ACTOR_LIST_END 0xffff
 
+/// The actors of Ram_HeapSlots->actors.
+#define ACTOR_COUNT 64
+
 /// A field object's sprite animation, which Actor.sprite points to
 /// when animationKind is 1.
 /// Sets an actor's position in one statement, as SET_POSITION does for a

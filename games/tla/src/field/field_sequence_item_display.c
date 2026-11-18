@@ -47,9 +47,6 @@
 #include "field/ground_mask.h"
 #include "resource_ids.h"
 
-/// The actors of Ram_HeapSlots->actors, as field_internal.h's ACTOR_COUNT.
-#define ACTOR_COUNT 64
-
 /// Unused: only the far-call table refers to it. Finds the first treasure spot
 /// actor within 16 pixels of the leader on both axes and puts the leader 20
 /// pixels from it, on the line from it to the leader, with no destination.
@@ -403,5 +400,3 @@ void FieldEffect_SpawnRevealMarkers(void) {
     }
   }
 }
-
-#undef ACTOR_COUNT

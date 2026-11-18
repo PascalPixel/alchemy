@@ -251,9 +251,6 @@ void FieldPsynergy_Blaze(void) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-/// The actors' slots (Ram_HeapSlots->actors), as field_internal.h counts them.
-#define ACTOR_COUNT 64
-
 /// Nonzero when the map blocks an actor at (x, z) on a layer at a height.
 s32 MapGrid_CheckCollisionAtFar(s32 x, s32 z, s32 layer, s32 height);
 
@@ -287,4 +284,3 @@ s32 Actor_CheckBlocked(struct Actor *actor) {
 #undef BEYOND_REACH
 #undef BLAZE_SPRAY_FRAMES
 #undef BLAZE_DROP_DEPTH
-#undef ACTOR_COUNT

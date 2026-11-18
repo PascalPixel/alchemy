@@ -328,6 +328,9 @@ void BattleEffect_RunAcheronsGrief(struct BattleEffectParams *args) {
 #define TITAN_BLADE_PILLAR_FRAME 32
 #define TITAN_BLADE_PILLAR_FRAMES 32
 #define TITAN_BLADE_DUST_PER_FRAME 16
+/// How far behind their climb the pillar's flames start, which sets the line
+/// of FirePillarSheetA's column they show first.
+#define TITAN_BLADE_PILLAR_PHASE 256
 
 /// The sword strikes: the crash, the damage and the canvas filled bright.
 #define TITAN_BLADE_STRIKE_FRAME 60
@@ -545,7 +548,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
       u8 *src = work->sheet;
       s32 x = centerX - FIRE_PILLAR_WIDTH / 2;
       DrawRectangle blit = draw[0];
-      s32 scroll = (rise - 256) % height;
+      s32 scroll = (rise - TITAN_BLADE_PILLAR_PHASE) % height;
 
       blit(canvas, src, x, SWORD_GROUND_Y - FIRE_PILLAR_HEIGHT - scroll,
            FIRE_PILLAR_WIDTH, height);
@@ -698,6 +701,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
 #undef TITAN_BLADE_PILLAR_FRAME
 #undef TITAN_BLADE_PILLAR_FRAMES
 #undef TITAN_BLADE_DUST_PER_FRAME
+#undef TITAN_BLADE_PILLAR_PHASE
 #undef TITAN_BLADE_STRIKE_FRAME
 #undef FLASH_LIFE
 #undef FLASH_BURN_FRAMES

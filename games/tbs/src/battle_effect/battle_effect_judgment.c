@@ -265,8 +265,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_SWIRL);
     }
 
-    // Unused: the sparks stage, never drawn, as frame starts at 0 and only
-    // grows; the ROM keeps its signed test against 0 and the whole stage.
+    // DEAD: the sparks stage never runs, as frame starts at 0 and only grows;
+    // the ROM keeps its signed test against 0 and the whole stage.
     if (frame < 0) {
       EFFECT_VIEW_FROM_CAMERA(camera);
       for (i = 0; i != JUDGMENT_SPARK_COUNT; i++) {

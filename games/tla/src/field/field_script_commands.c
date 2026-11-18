@@ -1,5 +1,10 @@
 /// @file
 /// Actor script commands: waits, jumps, flags, moves and work values.
+///
+/// Each `SC_` handler here is reached through gActorScript_CommandTable
+/// (map_grid_data.c), which Actor_UpdateAllThumb calls for each live actor;
+/// each returns 1 to run on and 0 to end the actor's frame (the protocol is
+/// in this folder's README).
 // Part of field.c.
 
 #include "field_internal.h"
@@ -15,14 +20,20 @@
 #include "system/input.h"
 #include "system/frame.h"
 #include "field/field_sequence_event.h"
+#include "game/owner_state.h"
 
 enum {
-  SCRIPT_WANDER_TRIES = 7, ///< random points a wander tries a frame
-  /// The wander probes' distance past the point, for ground.
+  SCRIPT_LABEL_SEARCH_WORDS = 1024, ///< script words a jump searches
+  SCRIPT_BLOCKED_MOVE_FRAMES = 60,  ///< refused frames SC_SYNC waits through
+  SCRIPT_WANDER_TRIES = 7,          ///< random points a wander tries a frame
+  /// The wander probes' distance, 8 pixels in 16.16: past the point for
+  /// ground, and along the heading for solid actors (SC_WANDER_HOME).
   SCRIPT_WANDER_PROBE_DISTANCE = toFIXED(8),
   SCRIPT_WANDER_DIAGONAL_ANGLE = DEGtoANG(45), ///< one eighth of a turn
   SCRIPT_WANDER_SIDE_ANGLE = DEGtoANG(90),     ///< one quarter of a turn
   SCRIPT_HALF_TURN = DEGtoANG(180),
+  /// Whole pixels SC_APPROACH_WATCHED stays short of its watched actor.
+  SCRIPT_APPROACH_DISTANCE = 16,
   /// Under 64 pixels (16.16) SC_CAMERA measures its distance in 16.16.
   CAMERA_FOLLOW_FINE_DISTANCE = toFIXED(64),
   /// Within a quarter pixel (16.16) SC_CAMERA lands on its point.
@@ -30,6 +41,9 @@ enum {
   /// Within half a pixel (16.16) SC_CAMERA takes the leader's height at once.
   CAMERA_FOLLOW_HEIGHT_SNAP = toFIXED(1) / 2
 };
+
+/// SC_LABEL and SC_TO differ only in bit 30; a jump searches for the label.
+#define SCRIPT_LABEL_KEY_MASK 0xbfffffff
 
 /// Advances the first 14 actors' motion by one frame, without running their
 /// scripts: steering towards a target or braking, gravity and bouncing,
@@ -57,12 +71,19 @@ void Actor_UpdateAllMotion(void) {
     x = actor->x.fixed;
     y = actor->y.fixed;
     z = actor->z.fixed;
+    // UB: a frozen actor otherwise reads an uninitialized arrival flag, or
+    // inherits the preceding actor's flag.
+#ifdef UBFIX
+    arrivedAtTarget = 0;
+#endif
     if (actor->frozen == 0) {
+#ifndef UBFIX
       arrivedAtTarget = 0;
+#endif
       // Steer in the XZ plane towards the target, or brake.
       if (actor->targetX != TARGET_UNSET) {
-        dx = (actor->targetX - x) / 65536;
-        dz = (actor->targetZ - z) / 65536;
+        dx = (actor->targetX - x) / FIXED_ONE;
+        dz = (actor->targetZ - z) / FIXED_ONE;
         distance = toFIXED(Iwram_Sqrt(dx * dx + dz * dz));
         // Under 256 pixels, measure again in 16.16: the root of a 16.16
         // square is 8.8, and << 8 makes it 16.16 again.
@@ -162,7 +183,7 @@ void Actor_UpdateAllMotion(void) {
     SET_ACTOR_POSITION(actor, x, y, z);
     // Turn to face the direction of travel, at most a sixteenth of a turn a
     // frame, the shorter way round.
-    if (actor->steeringFlags & 1) {
+    if (actor->steeringFlags & ACTOR_FACES_MOTION) {
       x = actor->velocityX;
       z = actor->velocityZ;
       if (x != 0 || z != 0) {
@@ -188,12 +209,12 @@ s32 ActorScript_Wait(struct Actor *interpreter) {
 }
 
 /// SC_SYNC: waits until the actor arrives at its target, or until a solid actor
-/// has blocked it for 60 frames (refused is the blocked count), when its target
-/// is cleared.
+/// has blocked it for 60 frames (refused is the blocked count, which
+/// Actor_UpdateAllThumb raises), when its target is cleared.
 s32 ActorScript_WaitForArrival(struct Actor *interpreter) {
   struct WaitingActor *actor = (struct WaitingActor *)interpreter;
 
-  if (actor->refused > 59) {
+  if (actor->refused > SCRIPT_BLOCKED_MOVE_FRAMES - 1) {
     actor->refused = 0;
     actor->targetX = TARGET_UNSET;
     actor->targetY = TARGET_UNSET;
@@ -226,26 +247,24 @@ s32 ActorScript_InvokeCallback(struct Actor *interpreter) {
 /// matched without the bit that tells them apart), searching its first 1024
 /// words, or 0 (the start) when key is 0 or not found, so a missing label
 /// restarts the script. Clears the wait.
-s32 ActorScript_FindLabel(struct Actor *interpreter, u32 key) {
-  u32 *entries;
-  s32 index;
-  s16 *field = &interpreter->wait;
-  s32 zero = 0;
+s32 ActorScript_FindLabel(struct Actor *interpreter, u32 labelKey) {
+  u32 *scriptWords;
+  s32 wordIndex;
 
-  *field = zero;
-  if (key == 0) {
+  interpreter->wait = 0;
+  if (labelKey == 0) {
     return 0;
   }
 
-  key &= 0xBFFFFFFF;
-  entries = (u32 *)interpreter->script;
-  index = 0;
+  labelKey &= SCRIPT_LABEL_KEY_MASK;
+  scriptWords = (u32 *)interpreter->script;
+  wordIndex = 0;
   do {
-    if (*entries++ == key) {
-      return index + 1;
+    if (*scriptWords++ == labelKey) {
+      return wordIndex + 1;
     }
-    index++;
-  } while (index <= 1024 - 1);
+    wordIndex++;
+  } while (wordIndex <= SCRIPT_LABEL_SEARCH_WORDS - 1);
   return 0;
 }
 
@@ -461,8 +480,9 @@ s32 ActorScript_SetPositionAndResetMotion(struct Actor *actor) {
   return 1;
 }
 
-/// Script command 0x03: puts the actor at x and z 0, keeping its height,
-/// with no destination or speed; with flag 1 it then follows the ground there.
+/// SC_POSITION_ORIGIN: puts the actor at x and z 0, keeping its height, with
+/// no destination or speed; one that follows the ground then takes the ground
+/// height there.
 s32 ActorScript_ResetToOrigin(struct Actor *actor) {
   FIXED height;
 
@@ -515,8 +535,8 @@ s32 ActorScript_ApplyRelativePosition(struct Actor *actor) {
   return 1;
 }
 
-/// SC_FACE_WATCHED: stores the angle from the actor to its watched actor in
-/// scriptValue, measured on the ground plane (x and z).
+/// SC_FACE_WATCHED: turns the actor to face its watched actor, on the ground
+/// plane (x and z).
 s32 ActorScript_StoreAngleToWatchedActor(struct Actor *actor) {
 
   struct Actor *target;
@@ -746,8 +766,8 @@ s32 FieldCamera_FollowWatchedInBounds(struct Actor *camera) {
 }
 
 /// SC_APPROACH_WATCHED: follows the watched actor at its speed. More than 16
-/// pixels away it walks to 16 pixels short of it (animation 2) and runs on;
-/// within 16 it stands (animation 1) and waits for the next frame.
+/// pixels away it walks to 16 pixels short of it and runs on; within 16 it
+/// stands and waits for the next frame.
 s32 Actor_ApproachWatchedActor(struct Actor *actor) {
   s32 distancePixels;
   FIXED moveZ;
@@ -768,8 +788,8 @@ s32 Actor_ApproachWatchedActor(struct Actor *actor) {
   deltaZPixels = FIXEDtoINT(dz);
   distancePixels =
       Iwram_Sqrt((deltaXPixels * deltaXPixels) + (deltaZPixels * deltaZPixels));
-  if (distancePixels > 16) {
-    remainingDistance = distancePixels - 16;
+  if (distancePixels > SCRIPT_APPROACH_DISTANCE) {
+    remainingDistance = distancePixels - SCRIPT_APPROACH_DISTANCE;
     moveX = dx * remainingDistance / distancePixels;
     moveZ = dz * remainingDistance / distancePixels;
     Actor_SetMoveTarget(actor, actor->x.fixed + moveX, actor->y.fixed,
@@ -782,13 +802,11 @@ s32 Actor_ApproachWatchedActor(struct Actor *actor) {
   return 0;
 }
 
-struct ScriptObjectEntry;
-
 /// SC_WANDER(base, range, limit): walks to a random point base to base +
-/// range away, within 90 degrees either side of its heading (scriptValue),
+/// range away, within 90 degrees either side of its facing,
 /// that no solid actor or wall blocks, with clear ground 8 pixels further at
 /// 45 degrees either side, and within limit pixels of home. After seven
-/// failed tries it turns around (turnedBack) and waits for the next frame.
+/// failed tries it turns around and waits for the next frame.
 s32 Actor_Wander(struct Actor *actor) {
   struct FieldPosition candidatePosition;
   struct FieldPosition probePosition;
@@ -816,8 +834,7 @@ s32 Actor_Wander(struct Actor *actor) {
       travelDistance = minimumDistance + Iwram_MulFX(Random16(), distanceRange);
       heading = actor->facing + (Random16() >> 2) - (Random16() >> 2);
       Vector_AddPolarOffset(travelDistance, heading, &candidatePosition);
-      if (ActorScript_CheckOverlap((struct ScriptObjectEntry *)actor,
-                                   (s32 *)&candidatePosition) != 0 ||
+      if (ActorScript_CheckOverlap(actor, (s32 *)&candidatePosition) != 0 ||
           MapGrid_CheckCollision(actor, &candidatePosition) != 0)
         continue;
       travelDistance += SCRIPT_WANDER_PROBE_DISTANCE;
@@ -865,16 +882,9 @@ s32 Actor_Wander(struct Actor *actor) {
   }
 }
 
-// The script command that wanders near home.
-
-struct ScriptObjectEntry;
-
-/// SC_WANDER_HOME: moves the actor to a random spot within its home radius: up
-/// to seven tries at a point a random distance away in a random turn of its
-/// heading, each refused if anything overlaps it or blocks the path or the
-/// cells beside it. An actor outside its home radius (or out of tries) heads
-/// back toward home instead. Operands: the minimum distance, the distance range
-/// and the home radius.
+/// SC_WANDER_HOME(base, range, limit): wanders as SC_WANDER does, testing more
+/// ground around the point, while it is within limit pixels of home; outside
+/// that, or when no point works, it heads back towards home.
 s32 ActorScript_WanderNearHome(struct Actor *actor) {
   struct FieldPosition candidatePosition;
   struct FieldPosition probePosition;
@@ -909,8 +919,7 @@ s32 ActorScript_WanderNearHome(struct Actor *actor) {
                      actor->z.fixed);
         Vector_AddPolarOffset(SCRIPT_WANDER_PROBE_DISTANCE, heading,
                               &candidatePosition);
-        if (ActorScript_CheckOverlap((struct ScriptObjectEntry *)actor,
-                                     (s32 *)&candidatePosition) != 0)
+        if (ActorScript_CheckOverlap(actor, (s32 *)&candidatePosition) != 0)
           continue;
         SET_POSITION(&candidatePosition, actor->x.fixed, actor->y.fixed,
                      actor->z.fixed);
@@ -954,7 +963,7 @@ s32 ActorScript_WanderNearHome(struct Actor *actor) {
         dz = candidatePosition.z / FIXED_ONE - actor->homeZ;
         if (dx * dx + dz * dz > homeRadiusSquared)
           continue;
-        actor->collisionFlags |= 2;
+        actor->collisionFlags |= ACTOR_PUSHABLE;
         Actor_SetMoveTarget(actor, candidatePosition.x, candidatePosition.y,
                             candidatePosition.z);
         goto done;
@@ -973,15 +982,14 @@ s32 ActorScript_WanderNearHome(struct Actor *actor) {
                    actor->z.fixed);
       Vector_AddPolarOffset(SCRIPT_WANDER_PROBE_DISTANCE, heading,
                             &candidatePosition);
-      if (ActorScript_CheckOverlap((struct ScriptObjectEntry *)actor,
-                                   (s32 *)&candidatePosition) != 0)
+      if (ActorScript_CheckOverlap(actor, (s32 *)&candidatePosition) != 0)
         continue;
       SET_POSITION(&candidatePosition, actor->x.fixed, actor->y.fixed,
                    actor->z.fixed);
       Vector_AddPolarOffset(travelDistance, heading, &candidatePosition);
       if (MapGrid_CheckCollision(actor, &candidatePosition) != 0)
         continue;
-      actor->collisionFlags &= ~2;
+      actor->collisionFlags &= ~ACTOR_PUSHABLE;
       Actor_SetMoveTarget(actor, candidatePosition.x, candidatePosition.y,
                           candidatePosition.z);
     }
@@ -1178,10 +1186,8 @@ UNUSED void Actor_SetUpdate(struct Actor *actor, void (*update)(void)) {
 // The heading of each direction-pad combination, -1 for none.
 extern const s16 gWorldMap_KeyHeadings[16];
 
-struct Unit *Unit_Get(u32 unitId);
-
-/// Script command 0x23 (control mode 10): the leader hovering (the Hover
-/// Psynergy), moved by the direction pad over what lies below.
+/// SC_HOVER: the leader hovering (the Hover Psynergy), moved by the direction
+/// pad over what lies below.
 s32 Actor_UpdateHoverControl(struct Actor *actor) {
   struct FieldPosition position;
   struct FieldPosition testPosition;
@@ -1373,3 +1379,4 @@ s32 Actor_UpdateHoverControl(struct Actor *actor) {
   return 1;
 }
 #undef DISTANCE
+#undef SCRIPT_LABEL_KEY_MASK

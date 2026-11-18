@@ -777,7 +777,7 @@ void AirsRock_WhirlwindClearsWall(void) {
   REG_DISPCNT |= DISPCNT_BG0_ON;
   MapGrid_SetShake(1, 1, 1);
   for (i = 0; i != 64; i++) {
-    REG_BLDALPHA = ((15 - (i >> 2)) << 8) | (i >> 2);
+    REG_BLDALPHA = ((BLEND_WEIGHT_MAX - 1 - (i >> 2)) << 8) | (i >> 2);
     Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->riseCounter = Random16() & 7;
     FieldEvent_Wait(1);
   }
@@ -808,7 +808,7 @@ void AirsRock_WhirlwindClearsWall(void) {
                           &options);
       }
       REG_BLDALPHA =
-          (((j >> 4) & 15) << 8) | (BLEND_WEIGHT_MAX - ((j >> 4) & 15));
+          (((j >> 4) & 0xf) << 8) | (BLEND_WEIGHT_MAX - ((j >> 4) & 0xf));
       Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->riseCounter = Random16() & 7;
       FieldEvent_Wait(1);
     } while (j != 255);
@@ -1080,7 +1080,7 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
     }
   }
   actors = &work->actors[ACTOR_FIRST_PLACED];
-  for (i = ACTOR_FIRST_PLACED; i != 64; i++) {
+  for (i = ACTOR_FIRST_PLACED; i != FIELD_TREASURE_ACTOR; i++) {
     other = *actors++;
     if (other->script != 0) {
       launcher = shot->watchedActor;
@@ -1466,9 +1466,12 @@ void AirsRock_LiftFog(void) {
   for (i = 0; i != DISPLAY_HEIGHT; i++) {
     spread = (DISPLAY_HEIGHT - i) >> 2;
     wave = Math_Sin((i + (u8)gFrameCount) << 8);
-    // Swayed by up to half the line's height above the foot, scattered at
-    // random, and kept within 64 pixels one way and 56 the other.
-    value = (Iwram_MulFX(wave, (WHIRLWIND_FOOT_LINE - i) << 10) >> 11) - 4;
+    // Swayed by up to half the line's height above the foot, less 4, and
+    // jittered by up to a quarter of the lines below; a line swung past 56
+    // pixels one way or 64 the other is pulled back by as much.
+    value = (Iwram_MulFX(wave, (WHIRLWIND_FOOT_LINE - i) * (FIXED_ONE / 64)) >>
+             11) -
+            4;
     line[0] = value;
     line[0] += Random16() % (spread * 2) - spread;
     if (line[0] > 56)

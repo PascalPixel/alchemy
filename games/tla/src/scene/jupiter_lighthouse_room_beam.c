@@ -92,6 +92,9 @@ enum JupiterLighthouseRoomBeamCellBehavior {
 #define ENTRANCE_NORTH_HALF_WEST 3
 /// The particles that circle the beam.
 #define BEAM_PARTICLES 22
+/// The steps the beam lifts a leader, 3 pixels every other frame, before the
+/// room of locked doors takes over.
+#define BEAM_RIDE_STEPS 110
 
 void Actor_Release(struct Actor *actor);
 
@@ -385,7 +388,7 @@ void JupiterLighthouse_RideTheBeam(void) {
     Actor_WalkTo(gMainRoutineWork.leaderActorId, 216, 680);
     Actor_SetAnimationSpeed(actor, ANIMATION_STEP_NORMAL * 4);
     actor->motionFlags = 0;
-    for (i = 0; i < 110; i++) {
+    for (i = 0; i < BEAM_RIDE_STEPS; i++) {
       actor->y.fixed += toFIXED(3);
       angle = actor->facing;
       angle += TRIG_TURN * 3 / 32;

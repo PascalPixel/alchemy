@@ -209,8 +209,9 @@ s32 ActorScript_Wait(struct Actor *interpreter) {
 }
 
 /// SC_SYNC: waits until the actor arrives at its target, or until a solid actor
-/// has blocked it for 60 frames (refused is the blocked count, which
-/// Actor_UpdateAllThumb raises), when its target is cleared.
+/// has blocked it for SCRIPT_BLOCKED_MOVE_FRAMES frames (refused is the
+/// blocked count, which Actor_UpdateAllThumb raises), when its target is
+/// cleared.
 s32 ActorScript_WaitForArrival(struct Actor *interpreter) {
   struct WaitingActor *actor = (struct WaitingActor *)interpreter;
 
@@ -244,9 +245,9 @@ s32 ActorScript_InvokeCallback(struct Actor *interpreter) {
 }
 
 /// Returns the cursor just past the script's label key (SC_LABEL or SC_TO,
-/// matched without the bit that tells them apart), searching its first 1024
-/// words, or 0 (the start) when key is 0 or not found, so a missing label
-/// restarts the script. Clears the wait.
+/// matched without the bit that tells them apart), searching its first
+/// SCRIPT_LABEL_SEARCH_WORDS words, or 0 (the start) when key is 0 or not
+/// found, so a missing label restarts the script. Clears the wait.
 s32 ActorScript_FindLabel(struct Actor *interpreter, u32 labelKey) {
   u32 *scriptWords;
   s32 wordIndex;
@@ -778,9 +779,9 @@ s32 FieldCamera_FollowWatchedInBounds(struct Actor *camera) {
   return 1;
 }
 
-/// SC_APPROACH_WATCHED: follows the watched actor at its speed. More than 16
-/// pixels away it walks to 16 pixels short of it and runs on; within 16 it
-/// stands and waits for the next frame.
+/// SC_APPROACH_WATCHED: follows the watched actor at its speed. Further than
+/// SCRIPT_APPROACH_DISTANCE away it walks to that distance short of it and runs
+/// on; nearer, it stands and waits for the next frame.
 s32 Actor_ApproachWatchedActor(struct Actor *actor) {
   s32 distancePixels;
   FIXED moveZ;
@@ -816,10 +817,11 @@ s32 Actor_ApproachWatchedActor(struct Actor *actor) {
 }
 
 /// SC_WANDER(base, range, limit): walks to a random point base to base +
-/// range away, within 90 degrees either side of its facing,
-/// that no solid actor or wall blocks, with clear ground 8 pixels further at
-/// 45 degrees either side, and within limit pixels of home. After seven
-/// failed tries it turns around and waits for the next frame.
+/// range away, within SCRIPT_WANDER_SIDE_ANGLE either side of its facing, that
+/// no solid actor or wall blocks, with clear ground
+/// SCRIPT_WANDER_PROBE_DISTANCE further at SCRIPT_WANDER_DIAGONAL_ANGLE either
+/// side, and within limit pixels of home. After SCRIPT_WANDER_TRIES failed
+/// tries it turns around and waits for the next frame.
 s32 Actor_Wander(struct Actor *actor) {
   struct FieldPosition candidatePosition;
   struct FieldPosition probePosition;
@@ -854,7 +856,8 @@ s32 Actor_Wander(struct Actor *actor) {
       SET_POSITION(&probePosition, actor->x.fixed, actor->y.fixed,
                    actor->z.fixed);
       // BUG: the probe straight ahead is placed but never tested, so only the
-      // two at 45 degrees need clear ground; SC_WANDER_HOME tests all three.
+      // two at SCRIPT_WANDER_DIAGONAL_ANGLE need clear ground; SC_WANDER_HOME
+      // tests all three.
       Vector_AddPolarOffset(travelDistance, heading, &probePosition);
       SET_POSITION(&probePosition, actor->x.fixed, actor->y.fixed,
                    actor->z.fixed);

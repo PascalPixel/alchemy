@@ -70,13 +70,13 @@ s32 CrackedTile_Find(u32 kind, s32 flag, s32 flagByte, s32 x, s32 z) {
     }
   }
   // The hole mask CrackedTile_Update draws into the OBJ window: a 16 by 32
-  // sprite whose every pixel is colour 1, eight to a word.
+  // sprite whose every pixel is colour 1.
   buffer = Heap_Alloc(HOLE_MASK_BYTES);
   {
     u32 *word = buffer;
 
     for (k = 0; k < HOLE_MASK_BYTES / 4; k++)
-      *word++ = 0x11111111;
+      *word++ = PIXELS_4BPP(1);
   }
   table->tile = VramCache_FindFreeEntry();
   Vram_Load(table->tile, HOLE_MASK_BYTES, buffer);

@@ -219,7 +219,6 @@ s32 StatusScreen_RunPages(void) {
   s32 step = STATUS_STEP_MEMBER;
   s32 finished = step;
   s32 result = 0;
-  u32 changed;
 
   while (!finished && !GameFlag_Get(FLAG_MENU_START_PRESSED)) {
     switch (step) {
@@ -238,10 +237,7 @@ s32 StatusScreen_RunPages(void) {
     case STATUS_STEP_STATUS:
       MenuIcon_SetActive(1);
       result = StatusScreen_SelectCommand();
-      // STATUS_STEP_MEMBER for -1, STATUS_STEP_PSYNERGY otherwise.
-      changed = ~result;
-      step = (-changed | changed) >> 31;
-      step <<= 1;
+      step = result == -1 ? STATUS_STEP_MEMBER : STATUS_STEP_PSYNERGY;
       break;
     case STATUS_STEP_PSYNERGY:
       MenuIcon_SetActive(0);
@@ -254,8 +250,7 @@ s32 StatusScreen_RunPages(void) {
       MenuIcon_SetActive(0);
       result = ItemMenu_SelectItem();
       // STATUS_STEP_MEMBER for -1, STATUS_STEP_STATUS otherwise.
-      changed = ~result;
-      step = (-changed | changed) >> 31;
+      step = NONZERO(~result);
       break;
     default:
       finished = 1;
@@ -828,7 +823,6 @@ s32 StatusScreen_SelectCommand(void) {
 void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
                                       s32 invert) {
   struct StatusScreenWork *menu = Ram_HeapSlots->menuWork;
-  u32 different;
   s32 count;
   s32 index;
   s32 x;
@@ -863,8 +857,7 @@ void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
   }
 
   // HIGHLIGHT_PALETTE when invert is 0, WINDOW_PALETTE when it is 1.
-  different = 1 ^ invert;
-  palette = WINDOW_PALETTE - (((0u - different) | different) >> 31);
+  palette = WINDOW_PALETTE - NONZERO(invert ^ 1);
   Render_SetTilemapFlagRect(menu->statusWindow, x, y, width, 1, palette);
 }
 

@@ -109,28 +109,25 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
           mote = &work->particles[i];
           if (mote->y < INTtoFIXED(FROST_MOTE_DEPTH - i / 2) &&
               mote->y > -toFIXED(FROST_MOTE_DEPTH)) {
-            struct ScreenPoint *position;
             u32 width;
             u32 height;
 
             SET_VECTOR(xyz, mote->z * Trig_Sin(mote->x), mote->y,
                        mote->z * Trig_Cos(mote->x));
-            /* FAKEMATCH(temporary): position holds &screen; the plain form
-               writes screen.x and screen.y. */
-            EffectPosition_ProjectPoint(xyz, position = &screen);
-            position->x = (FIXEDtoINT(position->x) >> 1) + 64;
-            position->y = FIXED_INTEGER_PART(position->y) + 60;
+            EffectPosition_ProjectPoint(xyz, &screen);
+            screen.x = (FIXEDtoINT(screen.x) >> 1) + 64;
+            screen.y = FIXEDtoINT(screen.y) + 60;
             // UB: width is assigned in one argument and read in another.
 #ifdef UBFIX
             width = gFrost_MoteWidths[picture];
             height = gFrost_MoteHeights[picture];
             draw[1](canvas, work->sheet + gFrost_MoteCells[picture],
-                    position->x - (width >> 1), position->y - (height >> 1),
-                    width, height);
+                    screen.x - (width >> 1), screen.y - (height >> 1), width,
+                    height);
 #else
             draw[1](canvas, work->sheet + gFrost_MoteCells[picture],
-                    position->x - ((width = gFrost_MoteWidths[picture]) >> 1),
-                    position->y - ((height = gFrost_MoteHeights[picture]) >> 1),
+                    screen.x - ((width = gFrost_MoteWidths[picture]) >> 1),
+                    screen.y - ((height = gFrost_MoteHeights[picture]) >> 1),
                     width, height);
 #endif
           }
@@ -223,7 +220,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
           s32 picture = i % 8;
 
           draw[1](canvas, work->sheet + gFrost_ChipCells[picture],
-                  FIXED_INTEGER_PART(chip->x), FIXED_INTEGER_PART(chip->y),
+                  FIXEDtoINT(chip->x), FIXEDtoINT(chip->y),
                   gFrost_ChipWidths[picture], gFrost_ChipHeights[picture]);
           chip->x += chip->velocityX;
           chip->y += chip->velocityY;
@@ -267,15 +264,15 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
 #ifdef UBFIX
           size = gBattleEffect_SparkleSizes[picture];
           draw[1](canvas, sparkleSheet + gBattleEffect_SparklePictures[picture],
-                  FIXED_INTEGER_PART(sparkle->velocityX) - (size >> 1),
-                  FIXED_INTEGER_PART(sparkle->velocityY) - (size >> 1) - rise,
-                  size, size);
+                  FIXEDtoINT(sparkle->velocityX) - (size >> 1),
+                  FIXEDtoINT(sparkle->velocityY) - (size >> 1) - rise, size,
+                  size);
 #else
           draw[1](canvas, sparkleSheet + gBattleEffect_SparklePictures[picture],
-                  FIXED_INTEGER_PART(sparkle->velocityX) -
+                  FIXEDtoINT(sparkle->velocityX) -
                       ((size = gBattleEffect_SparkleSizes[picture]) >> 1),
-                  FIXED_INTEGER_PART(sparkle->velocityY) - (size >> 1) - rise,
-                  size, size);
+                  FIXEDtoINT(sparkle->velocityY) - (size >> 1) - rise, size,
+                  size);
 #endif
         }
         sparkle->variant--;

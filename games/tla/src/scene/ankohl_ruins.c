@@ -63,6 +63,9 @@
 /// The sand rooms' switches pressed, the sand rising in each.
 #define FLAG_FIRST_SAND_SWITCH_PRESSED FLAG_SCENE_TEMP_02
 #define FLAG_SECOND_SAND_SWITCH_PRESSED FLAG_SCENE_TEMP_03
+/// Set while Reveal is shown: the sand's sprites are hidden, and the fifth
+/// room's gap lies open.
+#define FLAG_ANKOHL_RUINS_REVEAL_SHOWN FLAG_SCENE_TEMP_05
 
 /// The trigger codes the rooms' code raises or tests: the great face's cells
 /// that board it, the ledge the flowing sand carries the leader off, and the
@@ -433,7 +436,7 @@ void AnkohlRuins_RiseFromSand(void) {
 /// Before Move: opens the cells under the pillar about to move in the rooms
 /// that have one (the first, third, fourth and fifth); in the fifth, the half
 /// face for the gap also copies the rows the gap opens (from patch 1, only
-/// while FLAG_SCENE_TEMP_05 is set).
+/// while Reveal is shown).
 void AnkohlRuins_StartMovingPillar(s32 unused, s32 id) {
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_STONE_FACES) {
     if (id == ACTOR_FIRST_ROOM_PILLAR) {
@@ -466,7 +469,8 @@ void AnkohlRuins_StartMovingPillar(s32 unused, s32 id) {
 #if !TLA_PATCH_1
     if (id == ACTOR_FACE_HALF_FOR_THE_GAP)
 #else
-    if (id == ACTOR_FACE_HALF_FOR_THE_GAP && Event_GetFlag(FLAG_SCENE_TEMP_05))
+    if (id == ACTOR_FACE_HALF_FOR_THE_GAP &&
+        Event_GetFlag(FLAG_ANKOHL_RUINS_REVEAL_SHOWN))
 #endif
       MapGrid_CopyCells(35, 98, 3, 5, 25, 98);
   }
@@ -841,7 +845,7 @@ void AnkohlRuins_ScatterWeeds(s32 a, s32 id) {
     Event_SetFlag(FLAG_FOURTH_ROOM_WEEDS_SCATTERED(id));
 }
 
-/// Each frame, while Reveal is not shown (FLAG_SCENE_TEMP_05) and the sand is
+/// Each frame, while Reveal is not shown and the sand is
 /// less than 32 pixels deep, places the eight sprites of the sand's window,
 /// each moved by the level as its kind says, and raises map layer 1, the sand,
 /// by the level over its base.
@@ -861,7 +865,8 @@ void AnkohlRuins_DrawSand(void) {
   struct AnkohlRuinsSprite *sprite = work->sprites;
   s32 i;
 
-  if (Event_GetFlag(FLAG_SCENE_TEMP_05) == 0 && work->level < toFIXED(32)) {
+  if (Event_GetFlag(FLAG_ANKOHL_RUINS_REVEAL_SHOWN) == 0 &&
+      work->level < toFIXED(32)) {
     for (i = 0; i <= 7; i++) {
       u32 kind = sprite->kind;
       FIXED x = sprite->x;
@@ -1393,8 +1398,8 @@ void AnkohlRuins_PushStatueIntoGap(void) {
 
 /// Reveal shows the fifth room's gap.
 void AnkohlRuins_RevealGap(void) {
-#if TLA_PATCH_1 /* The Japanese edition does not touch FLAG_SCENE_TEMP_05. */
-  Event_SetFlag(FLAG_SCENE_TEMP_05);
+#if TLA_PATCH_1 /* The Japanese edition leaves the flag alone. */
+  Event_SetFlag(FLAG_ANKOHL_RUINS_REVEAL_SHOWN);
 #endif
   MapGrid_CopyCells(35, 34, 3, 5, 25, 34);
   MapGrid_CopyCells(35, 98, 3, 3, 25, 98);
@@ -1403,17 +1408,21 @@ void AnkohlRuins_RevealGap(void) {
 /// Reveal ends: the gap is hidden again.
 void AnkohlRuins_HideGap(void) {
 #if TLA_PATCH_1
-  Event_ClearFlag(FLAG_SCENE_TEMP_05);
+  Event_ClearFlag(FLAG_ANKOHL_RUINS_REVEAL_SHOWN);
 #endif
   MapGrid_CopyCells(40, 34, 3, 5, 25, 34);
   MapGrid_CopyCells(40, 98, 3, 3, 25, 98);
 }
 
-/// Reveal begins: FLAG_SCENE_TEMP_05 hides the sand's sprites.
-void AnkohlRuins_StartReveal(void) { GameFlag_Set(FLAG_SCENE_TEMP_05); }
+/// Reveal begins: the sand's sprites are hidden.
+void AnkohlRuins_StartReveal(void) {
+  GameFlag_Set(FLAG_ANKOHL_RUINS_REVEAL_SHOWN);
+}
 
 /// Reveal ends: the sand's sprites show again.
-void AnkohlRuins_EndReveal(void) { GameFlag_Clear(FLAG_SCENE_TEMP_05); }
+void AnkohlRuins_EndReveal(void) {
+  GameFlag_Clear(FLAG_ANKOHL_RUINS_REVEAL_SHOWN);
+}
 
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_STONE_FACES)

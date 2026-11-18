@@ -13,12 +13,13 @@
 #define GIFT_RECEIVED_MESSAGE (MsgColossoIsaacGotItem + 1)
 #endif
 
-// Japanese and English show it with window flags 3 (zoom, busy while it
-// shows); from patch 2 it shows with 1 (zoom only).
+// Japanese and English show it zooming open and waiting for the jingle; from
+// patch 2 it only zooms open.
 #if TBS_PATCH_2
-#define GIFT_RECEIVED_MESSAGE_MODE 1
+#define GIFT_RECEIVED_MESSAGE_MODE FIELD_MESSAGE_ZOOM
 #else
-#define GIFT_RECEIVED_MESSAGE_MODE 3
+#define GIFT_RECEIVED_MESSAGE_MODE                                             \
+  (FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_WAITING_FOR_SOUND)
 #endif
 
 /// Shows the message for an item the party has just received.
@@ -58,7 +59,7 @@ void Event_Wait(s32 frames) {
 
 /// Stops the leader where it stands: no horizontal velocity, the normal walking
 /// speed (1.0) and acceleration (0.5), no destination, and the standing pose,
-/// or the climbing pose (12) while the leader is on a climbable wall.
+/// or the clinging pose while the leader is on a climbable wall.
 void Leader_StopMoving(void) {
   struct Actor *actor;
 
@@ -98,8 +99,8 @@ void Event_Start(void) {
   runtime->unusedBeforeCamera[1] = -1;
   Task_Add(Event_UpdateDebugSkip, TASK_PASS_FRAME);
   // XXX (no evidence): what flag 0x132 means; every event start in both games
-  // clears it, and nothing in either game's source names it or reads it by its
-  // number.
+  // clears it, nothing in either game's source names it or reads it by its
+  // number, and no other code of tbs-en's build loads that number for a flag.
   GameFlag_ClearFar(0x132);
   runtime->speaker = gMainRoutineWork.leaderActorId;
   runtime->messageWindow = 0;
@@ -256,7 +257,7 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
   owner = PartyInventory_AddFar(item);
   if (owner == -1) {
     // Every bag is full: "But you can't carry any more items."
-    ItemGift_ShowGotItem(item, 1);
+    ItemGift_ShowGotItem(item, FIELD_MESSAGE_ZOOM);
     FieldMessage_ShowFar(MsgCannotCarryAnyMore, FIELD_MESSAGE_ZOOM);
   retry:
     FieldMessage_ShowFar(MsgWhatWillYouDrop, FIELD_MESSAGE_ZOOM);
@@ -308,7 +309,8 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
       owner = PartyInventory_AddFar(item);
       Sound_PlayFar(MUS_TREASURE_FOUND);
       if (owner == gMainRoutineWork.leaderActorId) {
-        ItemGift_ShowGotItem(item, 3);
+        ItemGift_ShowGotItem(item, FIELD_MESSAGE_ZOOM |
+                                       FIELD_MESSAGE_WAITING_FOR_SOUND);
       } else {
         MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
         MessageArgument_PushFar(owner, MESSAGE_ARGUMENT_ACTOR);
@@ -323,7 +325,8 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
     // There was room: "Isaac got <item>.", and "Isaac gave <item> to
     // <member>." when someone other than the leader carries it.
     Sound_PlayFar(MUS_TREASURE_FOUND);
-    ItemGift_ShowGotItem(item, 3);
+    ItemGift_ShowGotItem(item,
+                         FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_WAITING_FOR_SOUND);
     if (owner != gMainRoutineWork.leaderActorId) {
       MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
       MessageArgument_PushFar(owner, MESSAGE_ARGUMENT_ACTOR);
@@ -366,9 +369,13 @@ void Actor_WaitForAnimationEnd(s32 actorId, s32 animation) {
   }
 }
 
+/// The last tile row the message windows may reach with a yes-or-no question
+/// still asked below them.
+#define YES_NO_BELOW_LAST_ROW 15
+
 /// The event command "choose yes or no": once the message on screen has been
 /// read, asks yes or no below it, or above it when the message windows reach
-/// past row 15 or forceBottom is set.
+/// past YES_NO_BELOW_LAST_ROW, unless forceBottom is set.
 s32 Event_AskYesNoWithActorAnimation(s32 actorId, s32 forceBottom) {
   struct FieldWork *work = gFieldWork;
   s32 sprite = Scene_FindActorPlacement(work->speaker)->sprite;
@@ -386,8 +393,8 @@ s32 Event_AskYesNoWithActorAnimation(s32 actorId, s32 forceBottom) {
 
   wait(3);
 
-  // The question goes above the message windows when they reach past row 15,
-  // so it does not cover them.
+  // The question goes above the message windows when they reach too low, so it
+  // does not cover them.
   if (forceBottom == 0) {
     s32 bottom = window->y + window->height;
 
@@ -397,7 +404,7 @@ s32 Event_AskYesNoWithActorAnimation(s32 actorId, s32 forceBottom) {
         bottom = sideBottom;
     }
 
-    if (bottom > 15)
+    if (bottom > YES_NO_BELOW_LAST_ROW)
       useBottom = 0;
   }
 
@@ -474,8 +481,8 @@ void Event_SetRestartPoint(u16 sceneId, u16 entrance) {
   gMainRoutineWork.restartEntrance = entrance;
 }
 
-/// The event command "request exit": sets the field's exit request (999 leaves
-/// for gMainRoutineWork's next and entrance).
+/// The event command "request exit": sets the field's exit request
+/// (EXIT_KEEP_DESTINATION leaves for gMainRoutineWork's next and entrance).
 void Event_SetExitRequest(u16 request) {
   struct FieldWork *state = gFieldWork;
   state->exit = request;
@@ -483,3 +490,4 @@ void Event_SetExitRequest(u16 request) {
 
 #undef GIFT_RECEIVED_MESSAGE
 #undef GIFT_RECEIVED_MESSAGE_MODE
+#undef YES_NO_BELOW_LAST_ROW

@@ -87,8 +87,8 @@ void Event_Start(void) {
   state->unusedBeforeCamera[1] = -1;
   Task_Add((s32)Event_UpdateDebugSkip, TASK_PASS_FRAME);
   // XXX (no evidence): what flag 0x132 means; every event start in both games
-  // clears it, and nothing in either game's source sets or reads it by its
-  // number.
+  // clears it, and nothing in either game's code, tables or cleared ranges of
+  // flags sets or reads it.
   GameFlag_Clear(0x132);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;

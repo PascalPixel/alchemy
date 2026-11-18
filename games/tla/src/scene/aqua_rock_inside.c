@@ -1295,20 +1295,6 @@ extern s32 gAquaRockInside_SwirlingSparkScript[];
 extern s32 gAquaRockInside_TabletSettleScript[];
 extern s32 gAquaRockInside_PiersSettleScript[];
 
-/// The sparks that rise from the tablet as it lifts.
-enum { TABLET_RISING_SPARKS = 16 };
-
-/// The LEARN_SPARKS that circle the one who learns a Psynergy start
-/// LEARN_SPARK_INTERVAL frames apart, 122 pixels out, and close 8 pixels a
-/// frame (Orbiter_Spiral) to 2 pixels in LEARN_SPIRAL_FRAMES; each one's
-/// countdown ends with the last's.
-enum { LEARN_SPARKS = 16, LEARN_SPARK_INTERVAL = 8, LEARN_SPIRAL_FRAMES = 15 };
-
-/// Half a turn of an orbit's phase, 64 to the turn (Orbit_Update): the sparks
-/// round Piers take every other phase short of it, one each 2 pixels up a
-/// column round him, so their circles widen and narrow again up the column.
-enum { ORBIT_HALF_TURN = 32 };
-
 /// The tablet (`firstId`) rises and glows, sparks gather on Piers (`secondId`)
 /// and he learns Parch in a flash.
 void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {

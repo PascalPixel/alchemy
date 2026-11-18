@@ -230,15 +230,6 @@ enum { LAVA_ALREADY_UP = 212 };
 /// pillars' room starts at this word, the third corner, across from the first.
 enum { PLATFORM_PATH_THIRD_CORNER = 10 };
 
-/// The LEARN_SPARKS that circle the one who learns a Psynergy start
-/// LEARN_SPARK_INTERVAL frames apart, 122 pixels out, and close 8 pixels a
-/// frame to 2 pixels in LEARN_SPIRAL_FRAMES; each one's count of steps ends
-/// with the last's.
-enum { LEARN_SPARKS = 16, LEARN_SPARK_INTERVAL = 8, LEARN_SPIRAL_FRAMES = 15 };
-
-/// The sparks that shoot up from the Blaze tablet as it lifts, flashing.
-enum { TABLET_RISING_SPARKS = 16 };
-
 /// The Blaze tablet's room: the tablet, the pillar its torch lowers, the flame
 /// Blaze moves and the torch's flame.
 enum MagmaRockInsideBlazeTabletActorId {
@@ -2143,7 +2134,7 @@ void MagmaRockInside_LearnBlaze(s32 tabletId, s32 learnerId) {
     Actor_SetBlendMode(riser, 1);
     Actor_StartScript(riser, gMagmaRockInside_OrbitScript);
     i += 2;
-  } while (i != 32);
+  } while (i != ORBIT_HALF_TURN);
   Event_PlaySound(SE_SHIMMER);
   wait(50);
   PaletteFade_SetTarget(RGB_WHITE, 0);

@@ -144,6 +144,25 @@ struct Orbit {
   s16 speed; ///< its turn a frame, slowed by 128 a frame once grown
 };
 
+/// Half a turn of an Orbit's phase, 64 to the turn: the sparks that rise round
+/// one who learns a Psynergy take every other phase short of it, one each 2
+/// pixels up a column round him, so their circles widen and narrow again up
+/// the column.
+#define ORBIT_HALF_TURN 32
+
+/// The sparks that rise from a Psynergy's tablet as it lifts, flashing.
+#define TABLET_RISING_SPARKS 16
+
+/// The LEARN_SPARKS that circle the one who learns a Psynergy start
+/// LEARN_SPARK_INTERVAL frames apart, 122 pixels out, and close 8 pixels a
+/// frame (Orbiter_Spiral) to 2 pixels in LEARN_SPIRAL_FRAMES; each one's
+/// countdown ends with the last's.
+///@{
+#define LEARN_SPARKS 16
+#define LEARN_SPARK_INTERVAL 8
+#define LEARN_SPIRAL_FRAMES 15
+///@}
+
 /// A glow sprite queued for the OAM: the link at its depth, attributes 0 and 1
 /// as one word, and attribute 2's fields.
 struct LightOam {

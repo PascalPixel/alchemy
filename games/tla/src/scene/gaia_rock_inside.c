@@ -1132,20 +1132,6 @@ extern s32 gGaiaRockInside_FallingSparkScript[];
 extern s32 gGaiaRockInside_TabletSettleScript[];
 extern s32 gGaiaRockInside_FelixSettleScript[];
 
-/// The sparks that rise from the slate as it lifts.
-enum { SAND_RISING_SPARKS = 16 };
-
-/// The LEARN_SPARKS that circle the one who learns a Psynergy start
-/// LEARN_SPARK_INTERVAL frames apart, 122 pixels out, and close 8 pixels a
-/// frame (Orbiter_Spiral) to 2 pixels in LEARN_SPIRAL_FRAMES; each one's
-/// countdown ends with the last's.
-enum { LEARN_SPARKS = 16, LEARN_SPARK_INTERVAL = 8, LEARN_SPIRAL_FRAMES = 15 };
-
-/// Half a turn of an orbit's phase, 64 to the turn (Orbit_Update): the falling
-/// sparks take every other phase short of it, one each 2 pixels up a column
-/// round Felix, so their circles widen and narrow again up the column.
-enum { ORBIT_HALF_TURN = 32 };
-
 /// Felix touches the slate in the lair and learns Sand: he and the slate rise
 /// among circling sparks, then settle.
 void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
@@ -1177,7 +1163,7 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
   Actor_ConfigureSpriteColor(idA, SPRITE_COLOR_BLINK);
   REG_BLDALPHA = BLEND_ALPHA(8, 16);
   REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
-  for (i = 0; i != SAND_RISING_SPARKS; i++) {
+  for (i = 0; i != TABLET_RISING_SPARKS; i++) {
     struct Actor *spark =
         Import_ActorCreate(SPRITE_PARTICLE, a->x.fixed, a->y.fixed, a->z.fixed);
     Sound_Play(SE_GLITTER);

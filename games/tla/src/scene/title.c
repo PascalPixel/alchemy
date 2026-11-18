@@ -1,8 +1,9 @@
 /// @file
 /// The title: the Nintendo and Camelot logos, the intro, and the starts it
 /// leads to, the prologue with Jenna or the game with Felix; entrance 8 plays
-/// the credits, and entrance 10, which nothing reaches, keeps The Broken Seal's
-/// Golden Sun logo with "To Be Continued" revealed under it.
+/// the story crawl a new game opens with, over Vale in the rain, and entrance
+/// 10, which nothing reaches, keeps The Broken Seal's Golden Sun logo with "To
+/// Be Continued" revealed under it.
 #include "resource_ids.h"
 #include "scene_ids.h"
 #include "types.h"
@@ -96,6 +97,7 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.entrance == TITLE_CREDITS) {
     Event_PlaySound(MUS_ENDING);
+    // "Ages ago, or so the stories / tell, the power of Alchemy..."
     Credits_Run(1);
     Event_PlaySound(SOUND_FADE_OUT_BGM);
     ScreenFade_ToBlack(60);

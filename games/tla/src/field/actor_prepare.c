@@ -13,18 +13,18 @@
 #include "types.h"
 #include "field/field_event.h"
 
-/// Creates an actor of sprite type at (x, y, z) to stand as a silhouette: at
-/// drawing priority 0, still, skipped by target searches, with no outline or
-/// shadow, all black (SPRITE_COLOR_BLACK) and blended.
-struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 type) {
+/// Creates an actor of sprite type at a 16.16 position to stand as a
+/// silhouette: at drawing priority 0, still, skipped by target searches, with
+/// no outline or shadow, all black and translucent.
+struct Actor *OverlayObject_PrepareObject(FIXED x, FIXED y, FIXED z, s32 type) {
   struct Actor *actor = Import_ActorCreate(type, x, y, z);
 
   if (actor != NULL) {
     Scene_SetActorSpritePriority(actor, 0);
     actor->motionFlags = 0;
-    actor->collisionFlags = 8;
+    actor->collisionFlags = ACTOR_NOT_TARGETED;
     Actor_SetSpriteFlags(actor, 0);
-    Actor_SetSpriteColor(actor, 14);
+    Actor_SetSpriteColor(actor, SPRITE_COLOR_BLACK);
     Actor_SetBlendMode(actor, 1);
     return actor;
   }

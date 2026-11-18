@@ -5,8 +5,6 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-struct StripQuad;
-
 #define MEGIDDO_FRAMES 188
 
 /// Where the textures are decoded: FlameGradientTexture at the start of the
@@ -66,12 +64,18 @@ struct StripQuad;
 
 /// The rings of light, FireRingTexture flashing out from the caster as the
 /// effect starts and from the target as the sun strikes (gMegiddo_Flash*).
+/// Each shines for MEGIDDO_FLASH_SHINE_FRAMES, then fades 8 levels a frame.
 #define MEGIDDO_FLASHES 5
+#define MEGIDDO_FLASH_SHINE_FRAMES 8
 
 /// The rays that shoot from the caster's sword (gMegiddo_Ray*), the flame of
-/// FlameGradientTexture stretched long: one every two frames from frame 16,
-/// each for 64 frames.
+/// FlameGradientTexture stretched long: one every two frames from
+/// MEGIDDO_RAYS_START, each for MEGIDDO_RAY_FRAMES, shrinking away over the
+/// last MEGIDDO_RAY_SHRINK_FRAMES.
 #define MEGIDDO_RAYS 8
+#define MEGIDDO_RAYS_START 16
+#define MEGIDDO_RAY_FRAMES 64
+#define MEGIDDO_RAY_SHRINK_FRAMES 16
 
 /// Megiddo: the caster leaps and hangs in the air before a red haze, rings of
 /// light flashing round them, rays shooting from their sword and sparks
@@ -401,7 +405,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
     if (frame > 1) {
       u8 textureBytes[8];
       struct ModelTexture *t;
-      s32 tint;
+      s32 shade;
 
       model = Render_AllocateModelList(1);
       t = (struct ModelTexture *)textureBytes;
@@ -449,9 +453,9 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       t->pixels = work->sheet + MEGIDDO_DUST_BLOB;
       model->kind = MODEL_SHADED_ADDITIVE;
       model->mesh = flameMesh;
-      tint = -24;
+      shade = -24;
       model->flags = 3;
-      model->shade = tint;
+      model->shade = shade;
       model->scrollV = zero;
       if (frame > 142) {
         s32 n = frame - 143;
@@ -563,7 +567,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
 
       if (frame >= start && frame < start + 20) {
         s32 t = frame - start;
-        s32 shade = 64 - t * 8;
+        s32 shade = MEGIDDO_FLASH_SHINE_FRAMES * 8 - t * 8;
         s32 s;
 
         if (shade > 0) {
@@ -594,9 +598,10 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
     scratchTexture.pixels = work->sheet;
     model->mesh = gBattleEffect_TallMesh;
     for (i = 0; i != MEGIDDO_RAYS; i++) {
-      s32 start = 16 + i * 2;
+      s32 start = MEGIDDO_RAYS_START + i * 2;
 
-      if (frame >= start && frame < i * 2 + 80) {
+      if (frame >= start &&
+          frame < i * 2 + MEGIDDO_RAYS_START + MEGIDDO_RAY_FRAMES) {
         s32 t = frame - start;
         s32 shade = MODEL_SHADE_INVISIBLE + t * 8;
         s32 s = t * (FIXED_ONE / 32);
@@ -607,8 +612,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         if (s > FIXED_ONE) {
           s = FIXED_ONE;
         }
-        if (t >= 48) {
-          s = s - t * (FIXED_ONE / 16) + FIXED_ONE * 3;
+        if (t >= MEGIDDO_RAY_FRAMES - MEGIDDO_RAY_SHRINK_FRAMES) {
+          s = s - t * (FIXED_ONE / MEGIDDO_RAY_SHRINK_FRAMES) + FIXED_ONE * 3;
         }
         model->shade = shade;
         Matrix_Initialize();

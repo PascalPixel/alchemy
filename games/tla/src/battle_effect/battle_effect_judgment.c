@@ -43,9 +43,7 @@
 #define JUDGMENT_SHEET_TORNADO PICTURE_BYTES(JUDGMENT_BEAM)
 /// The glow, a shaded disc up to JUDGMENT_GLOW_SIZE pixels tall, drawn over the
 /// tornado sheet's strips after its six glints.
-#define JUDGMENT_SHEET_GLOW                                                    \
-  (JUDGMENT_SHEET_TORNADO + 19 * 31 + 23 * 31 + 23 * 31 + 19 * 21 + 16 * 21 +  \
-   17 * 24)
+#define JUDGMENT_SHEET_GLOW (JUDGMENT_SHEET_TORNADO + GLINT_SET_BYTES)
 #define JUDGMENT_GLOW_SIZE 80
 /// The explosion's four pictures, loaded over the flares on the sweep's
 /// frame 64.

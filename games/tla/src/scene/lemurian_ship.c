@@ -139,9 +139,8 @@ enum LemurianShipJelly {
   JELLY_COUNT
 };
 
-/// The encounter table row of the battles below deck: an Aqua Jelly, or the
-/// Aqua Hydra.
-#define ENCOUNTER_TABLE_AQUA_JELLIES 11
+/// The battles below deck by their slot of ENCOUNTER_TABLE_AQUA_JELLIES: an
+/// Aqua Jelly, or the Aqua Hydra.
 enum LemurianShipEncounter { ENCOUNTER_AQUA_JELLY, ENCOUNTER_AQUA_HYDRA };
 
 #define FLAG_JELLIES_BEATEN 0x930 ///< the first, by enum LemurianShipJelly
@@ -165,11 +164,60 @@ enum LemurianShipRaisedTrigger {
 #define FLAG_LIFT_LOWERED FLAG_SCENE_TEMP_07
 /// The first, by enum LemurianShipJelly: Frost froze the jelly's puddle.
 #define FLAG_PUDDLE_FROZEN FLAG_SCENE_TEMP_10
+/// The pillar room's puddles share the room of two jellies' puddle rows
+/// (gLemurianShip_TwoJellyRoomPuddles) and so its flags: Frost froze the
+/// puddle on the pillar.
+#define FLAG_RIGHT_PILLAR_PUDDLE_FROZEN                                        \
+  (FLAG_PUDDLE_FROZEN + JELLY_TWO_JELLY_ROOM_A)
+#define FLAG_LEFT_PILLAR_PUDDLE_FROZEN                                         \
+  (FLAG_PUDDLE_FROZEN + JELLY_TWO_JELLY_ROOM_B)
 /// The first, by enum LemurianShipJelly: the jelly was just beaten and melts on
 /// arrival.
 #define FLAG_JELLY_MELTING FLAG_SCENE_TEMP_20
 /// The first, by enum LemurianShipJelly: the battle with the jelly is on.
 #define FLAG_FIGHTING_JELLY FLAG_AREA_TEMP_00
+
+/// The cabins' entrances from within the scene, by the room each opens into and
+/// the room it leads from; scene_exits.h names those from the main deck and the
+/// lower deck. The main deck's door leads into the room of the captain's
+/// logbook, and four halls join the rooms: one off the room of two jellies, one
+/// off the stair room, and two off the room of six jellies' west and east
+/// doors.
+enum LemurianShipCabinsEntrance {
+  ENTRANCE_LOGBOOK_ROOM_FROM_TWO_JELLY_ROOM = 2,
+  ENTRANCE_TWO_JELLY_ROOM_FROM_LOGBOOK_ROOM,
+  ENTRANCE_TWO_JELLY_ROOM_FROM_STAIR_ROOM,
+  ENTRANCE_TWO_JELLY_ROOM_FROM_TWO_JELLY_ROOM_HALL,
+  ENTRANCE_STAIR_ROOM_FROM_TWO_JELLY_ROOM,
+  ENTRANCE_STAIR_ROOM_FROM_STAIR_ROOM_HALL,
+  ENTRANCE_SIX_JELLY_ROOM_WEST_HALL_FROM_SIX_JELLY_ROOM = 10,
+  ENTRANCE_SIX_JELLY_ROOM_EAST_HALL_FROM_SIX_JELLY_ROOM,
+  ENTRANCE_SIX_JELLY_ROOM_EAST_HALL_FROM_SEVEN_JELLY_ROOM,
+  ENTRANCE_TWO_JELLY_ROOM_HALL_FROM_TWO_JELLY_ROOM,
+  ENTRANCE_LEDGE_ROOM_FROM_SIX_JELLY_ROOM_WEST = 16,
+  ENTRANCE_LEDGE_ROOM_FROM_SIX_JELLY_ROOM_EAST,
+  ENTRANCE_LEDGE_ROOM_FROM_SEVEN_JELLY_ROOM,
+  ENTRANCE_SIX_JELLY_ROOM_FROM_WEST_HALL = 25,
+  ENTRANCE_SIX_JELLY_ROOM_FROM_EAST_HALL,
+  ENTRANCE_SIX_JELLY_ROOM_FROM_LEDGE_ROOM_WEST,
+  ENTRANCE_SIX_JELLY_ROOM_FROM_LEDGE_ROOM_EAST,
+  ENTRANCE_SEVEN_JELLY_ROOM_FROM_SIX_JELLY_ROOM_EAST_HALL,
+  ENTRANCE_SEVEN_JELLY_ROOM_FROM_LEDGE_ROOM
+};
+
+/// The lower deck's entrances from within the scene: the pillar room, the
+/// corridor beyond it and the engine room.
+enum LemurianShipLowerDeckEntrance {
+  ENTRANCE_PILLAR_ROOM_FROM_CORRIDOR = 6,
+  ENTRANCE_CORRIDOR_FROM_PILLAR_ROOM,
+  ENTRANCE_CORRIDOR_FROM_ENGINE_ROOM,
+  /// Until the engine runs; Piers sets the Black Crystal here.
+  ENTRANCE_ENGINE_ROOM_FROM_CORRIDOR,
+  /// Where the Aqua Hydra's battle returns the party, in the flooded hold.
+  ENTRANCE_HOLD_AFTER_AQUA_HYDRA_BATTLE = 15,
+  /// Once the engine runs: the engine room lit.
+  ENTRANCE_RUNNING_ENGINE_ROOM_FROM_CORRIDOR = 19
+};
 
 extern struct SceneEntrance gLemurianShip_AquaHydraEntrances[];
 
@@ -208,8 +256,6 @@ void Event_StartScreenTransition(void);
 
 void Actor_MoveToObject(s32 actor, s32 target);
 
-#define LEMURIAN_SHIP_TASK_ADD(func, priority) Task_Add((func), (priority))
-
 /// The cabin doors (gLemurianShip_Doors).
 #define CABIN_DOOR_COUNT 10
 /// The lower deck's doors (gLemurianShip_LowerDoors); the hold's two doors
@@ -247,22 +293,22 @@ extern struct ActorPlacement gLemurianShip_SevenJellyRoomPlacements[];
 struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_LEMURIAN_SHIP_CABINS) {
     switch (gMainRoutineWork.entrance) {
-    case 3:
-    case 4:
-    case 5:
+    case ENTRANCE_TWO_JELLY_ROOM_FROM_LOGBOOK_ROOM:
+    case ENTRANCE_TWO_JELLY_ROOM_FROM_STAIR_ROOM:
+    case ENTRANCE_TWO_JELLY_ROOM_FROM_TWO_JELLY_ROOM_HALL:
       return gLemurianShip_TwoJellyRoomPlacements;
-    case 25:
-    case 26:
-    case 27:
-    case 28:
+    case ENTRANCE_SIX_JELLY_ROOM_FROM_WEST_HALL:
+    case ENTRANCE_SIX_JELLY_ROOM_FROM_EAST_HALL:
+    case ENTRANCE_SIX_JELLY_ROOM_FROM_LEDGE_ROOM_WEST:
+    case ENTRANCE_SIX_JELLY_ROOM_FROM_LEDGE_ROOM_EAST:
       return gLemurianShip_SixJellyRoomPlacements;
     case LEMURIAN_SHIP_CABINS_FROM_LEMURIAN_SHIP_AQUA_HYDRA_NORTHEAST_A:
-    case 16:
-    case 17:
-    case 18:
+    case ENTRANCE_LEDGE_ROOM_FROM_SIX_JELLY_ROOM_WEST:
+    case ENTRANCE_LEDGE_ROOM_FROM_SIX_JELLY_ROOM_EAST:
+    case ENTRANCE_LEDGE_ROOM_FROM_SEVEN_JELLY_ROOM:
       return gLemurianShip_LedgeRoomPlacements;
-    case 29:
-    case 30:
+    case ENTRANCE_SEVEN_JELLY_ROOM_FROM_SIX_JELLY_ROOM_EAST_HALL:
+    case ENTRANCE_SEVEN_JELLY_ROOM_FROM_LEDGE_ROOM:
       return gLemurianShip_SevenJellyRoomPlacements;
     }
   } else if (gMainRoutineWork.next == SCENE_LEMURIAN_SHIP_AQUA_HYDRA) {
@@ -275,13 +321,13 @@ struct ActorPlacement *Scene_GetActorPlacements(void) {
     case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_SOUTH_A:
     case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_SOUTH_B:
     case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_SOUTH_C:
-    case 15:
+    case ENTRANCE_HOLD_AFTER_AQUA_HYDRA_BATTLE:
     case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_NORTHWEST_B:
     case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_NORTH_B:
     case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_WEST_B:
     case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_NORTHEAST_B:
       return gLemurianShip_HoldPlacements;
-    case 6:
+    case ENTRANCE_PILLAR_ROOM_FROM_CORRIDOR:
     case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_EAST:
       return gLemurianShip_PillarRoomPlacements;
     default:
@@ -379,7 +425,7 @@ void LemurianShip_WalkIntoPassage(void) {
     struct MainRoutineWork *party = &gMainRoutineWork;
     struct Actor *leader;
     FIXED x;
-    s32 pixel;
+    s32 pixelX;
 
     leader = ((struct Actor *)Actor_GetById(party->leaderActorId));
     Event_Start();
@@ -388,9 +434,9 @@ void LemurianShip_WalkIntoPassage(void) {
     Actor_SetAnimation(party->leaderActorId, ANIM_WALK);
     Actor_SetSpeed(party->leaderActorId, 0.5);
     x = leader->x.fixed;
-    pixel = FIXEDtoINT(x);
-    Actor_SetMoveTarget(leader, INTtoFIXED(8 - pixel % 16) + x, leader->y.fixed,
-                        leader->z.fixed);
+    pixelX = FIXEDtoINT(x);
+    Actor_SetMoveTarget(leader, INTtoFIXED(8 - pixelX % 16) + x,
+                        leader->y.fixed, leader->z.fixed);
     FieldActor_WaitForMove(leader);
     leader->facing = FACING_NORTH;
     Actor_SetScript(party->leaderActorId, gLemurianShip_IntoPassage);
@@ -409,22 +455,22 @@ extern struct Trigger gLemurianShip_PillarRoomTriggers[];
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == SCENE_LEMURIAN_SHIP_CABINS) {
     switch (gMainRoutineWork.entrance) {
-    case 3:
-    case 4:
-    case 5:
+    case ENTRANCE_TWO_JELLY_ROOM_FROM_LOGBOOK_ROOM:
+    case ENTRANCE_TWO_JELLY_ROOM_FROM_STAIR_ROOM:
+    case ENTRANCE_TWO_JELLY_ROOM_FROM_TWO_JELLY_ROOM_HALL:
       return gLemurianShip_TwoJellyRoomTriggers;
-    case 25:
-    case 26:
-    case 27:
-    case 28:
+    case ENTRANCE_SIX_JELLY_ROOM_FROM_WEST_HALL:
+    case ENTRANCE_SIX_JELLY_ROOM_FROM_EAST_HALL:
+    case ENTRANCE_SIX_JELLY_ROOM_FROM_LEDGE_ROOM_WEST:
+    case ENTRANCE_SIX_JELLY_ROOM_FROM_LEDGE_ROOM_EAST:
       return gLemurianShip_SixJellyRoomTriggers;
     case LEMURIAN_SHIP_CABINS_FROM_LEMURIAN_SHIP_AQUA_HYDRA_NORTHEAST_A:
-    case 16:
-    case 17:
-    case 18:
+    case ENTRANCE_LEDGE_ROOM_FROM_SIX_JELLY_ROOM_WEST:
+    case ENTRANCE_LEDGE_ROOM_FROM_SIX_JELLY_ROOM_EAST:
+    case ENTRANCE_LEDGE_ROOM_FROM_SEVEN_JELLY_ROOM:
       return gLemurianShip_LedgeRoomTriggers;
-    case 29:
-    case 30:
+    case ENTRANCE_SEVEN_JELLY_ROOM_FROM_SIX_JELLY_ROOM_EAST_HALL:
+    case ENTRANCE_SEVEN_JELLY_ROOM_FROM_LEDGE_ROOM:
       return gLemurianShip_SevenJellyRoomTriggers;
     default:
       return gLemurianShip_CabinTriggers;
@@ -439,13 +485,13 @@ const struct Trigger *Scene_GetTriggers(void) {
     case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_SOUTH_A:
     case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_SOUTH_B:
     case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_SOUTH_C:
-    case 15:
+    case ENTRANCE_HOLD_AFTER_AQUA_HYDRA_BATTLE:
     case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_NORTHWEST_B:
     case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_NORTH_B:
     case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_WEST_B:
     case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_NORTHEAST_B:
       return gLemurianShip_HoldTriggers;
-    case 6:
+    case ENTRANCE_PILLAR_ROOM_FROM_CORRIDOR:
     case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_EAST:
       return gLemurianShip_PillarRoomTriggers;
     default:
@@ -729,7 +775,8 @@ void LemurianShip_FightAquaHydra(void) {
   Actor_RunScriptAndWait(ACTOR_HOLD_JELLY_A, gLemurianShip_HydraForms);
 
   gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
-  Event_SetAfterBattleDestination(SCENE_LEMURIAN_SHIP_AQUA_HYDRA, 15);
+  Event_SetAfterBattleDestination(SCENE_LEMURIAN_SHIP_AQUA_HYDRA,
+                                  ENTRANCE_HOLD_AFTER_AQUA_HYDRA_BATTLE);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_AQUA_JELLIES,
                                         ENCOUNTER_AQUA_HYDRA);
   Event_SetFlag((FLAG_FIGHTING_JELLY + JELLY_AQUA_HYDRA));
@@ -1232,30 +1279,30 @@ s32 Scene_Initialize(void) {
     Event_SetFlag(FLAG_RETREAT_BLOCKED);
   if (gMainRoutineWork.next == SCENE_LEMURIAN_SHIP_CABINS) {
     switch (gMainRoutineWork.entrance) {
-    case 3:
-    case 4:
-    case 5:
+    case ENTRANCE_TWO_JELLY_ROOM_FROM_LOGBOOK_ROOM:
+    case ENTRANCE_TWO_JELLY_ROOM_FROM_STAIR_ROOM:
+    case ENTRANCE_TWO_JELLY_ROOM_FROM_TWO_JELLY_ROOM_HALL:
       LemurianShip_SetUpTwoJellyRoom();
       break;
-    case 6:
-    case 7:
-    case 8:
+    case ENTRANCE_STAIR_ROOM_FROM_TWO_JELLY_ROOM:
+    case ENTRANCE_STAIR_ROOM_FROM_STAIR_ROOM_HALL:
+    case LEMURIAN_SHIP_CABINS_FROM_LEMURIAN_SHIP_AQUA_HYDRA_NORTHWEST_A:
       LemurianShip_SetUpStairRoom();
       break;
-    case 25:
-    case 26:
-    case 27:
-    case 28:
+    case ENTRANCE_SIX_JELLY_ROOM_FROM_WEST_HALL:
+    case ENTRANCE_SIX_JELLY_ROOM_FROM_EAST_HALL:
+    case ENTRANCE_SIX_JELLY_ROOM_FROM_LEDGE_ROOM_WEST:
+    case ENTRANCE_SIX_JELLY_ROOM_FROM_LEDGE_ROOM_EAST:
       LemurianShip_SetUpSixJellyRoom();
       break;
     case LEMURIAN_SHIP_CABINS_FROM_LEMURIAN_SHIP_AQUA_HYDRA_NORTHEAST_A:
-    case 16:
-    case 17:
-    case 18:
+    case ENTRANCE_LEDGE_ROOM_FROM_SIX_JELLY_ROOM_WEST:
+    case ENTRANCE_LEDGE_ROOM_FROM_SIX_JELLY_ROOM_EAST:
+    case ENTRANCE_LEDGE_ROOM_FROM_SEVEN_JELLY_ROOM:
       LemurianShip_SetUpLedgeRoom();
       break;
-    case 29:
-    case 30:
+    case ENTRANCE_SEVEN_JELLY_ROOM_FROM_SIX_JELLY_ROOM_EAST_HALL:
+    case ENTRANCE_SEVEN_JELLY_ROOM_FROM_LEDGE_ROOM:
       LemurianShip_SetUpSevenJellyRoom();
       break;
     }
@@ -1269,18 +1316,18 @@ s32 Scene_Initialize(void) {
     case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_SOUTH_A:
     case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_SOUTH_B:
     case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_SOUTH_C:
-    case 15:
+    case ENTRANCE_HOLD_AFTER_AQUA_HYDRA_BATTLE:
     case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_NORTHWEST_B:
     case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_NORTH_B:
     case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_WEST_B:
     case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_NORTHEAST_B:
       LemurianShip_SetUpHold();
       break;
-    case 6:
+    case ENTRANCE_PILLAR_ROOM_FROM_CORRIDOR:
     case LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_EAST:
       LemurianShip_SetUpPillarRoom();
       break;
-    case 9:
+    case ENTRANCE_ENGINE_ROOM_FROM_CORRIDOR:
       LemurianShip_SetUpEngineRoom();
       break;
     }
@@ -1518,7 +1565,7 @@ void LemurianShip_SetUpSixJellyRoom(void) {
                                      ACTOR_SIX_JELLY_ROOM_PUDDLE_E);
     Event_ClearFlag((FLAG_JELLY_MELTING + JELLY_SIX_JELLY_ROOM_F));
   }
-  if (gMainRoutineWork.entrance == 26 &&
+  if (gMainRoutineWork.entrance == ENTRANCE_SIX_JELLY_ROOM_FROM_EAST_HALL &&
       !Event_GetFlag(FLAG_KEEP_PARTY_POSITION))
     LemurianShip_ScareJellyOnArrival();
 }
@@ -1534,13 +1581,13 @@ void LemurianShip_MatchCratePriority(void) {
 
 /// The room of the crate on the ledge.
 void LemurianShip_SetUpLedgeRoom(void) {
-  // XXX (no evidence): whether flag 8 is a slip for FLAG_CRATE_DROPPED, which
-  // the drop sets; no code of the game sets flag 8, and nothing in reach shows
-  // which flag was meant.
-  if (Event_GetFlag(8))
+  // XXX (no evidence): whether flag 0x8 is a slip for FLAG_CRATE_DROPPED, which
+  // the drop sets; no code of the game sets flag 0x8, and nothing in reach
+  // shows which flag was meant.
+  if (Event_GetFlag(0x8))
     MapGrid_CopyCellAttributes(14, 46, 1, 1, 16, 46);
   Actor_PlaceBlocks(gLemurianShip_Crate);
-  LEMURIAN_SHIP_TASK_ADD(LemurianShip_MatchCratePriority, TASK_PASS_FRAME);
+  Task_Add(LemurianShip_MatchCratePriority, TASK_PASS_FRAME);
 }
 
 /// Sets a jelly up on the floor.
@@ -1680,7 +1727,7 @@ void LemurianShip_SetUpHold(void) {
 
   ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId))
       ->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
-  LEMURIAN_SHIP_TASK_ADD(LemurianShip_RippleAroundLeader, TASK_PASS_FRAME);
+  Task_Add(LemurianShip_RippleAroundLeader, TASK_PASS_FRAME);
   if (Event_GetFlag(FLAG_AQUA_HYDRA_BEATEN)) {
     actor = ((struct Actor *)Actor_GetById(FIELD_TREASURE_ACTOR));
     actor->motionFlags = 0;
@@ -1772,15 +1819,15 @@ void LemurianShip_SetUpPillarRoom(void) {
   wait(1);
   FlagBlock_PlaceAll(gLemurianShip_TwoJellyRoomPuddles);
   FieldTask_AddFrame(LemurianShip_KeepPillarRoomPuddles, TASK_PASS_FRAME);
-  if (!Event_GetFlag(FLAG_PUDDLE_FROZEN))
+  if (!Event_GetFlag(FLAG_RIGHT_PILLAR_PUDDLE_FROZEN))
     FieldActor_SetSpriteColor(
         ((struct Actor *)Actor_GetById(ACTOR_RIGHT_PILLAR_PUDDLE)),
         SPRITE_COLOR_HIDDEN);
-  if (!Event_GetFlag((FLAG_PUDDLE_FROZEN + 1)))
+  if (!Event_GetFlag(FLAG_LEFT_PILLAR_PUDDLE_FROZEN))
     FieldActor_SetSpriteColor(
         ((struct Actor *)Actor_GetById(ACTOR_LEFT_PILLAR_PUDDLE)),
         SPRITE_COLOR_HIDDEN);
-  LEMURIAN_SHIP_TASK_ADD(LemurianShip_WatchPillarPuddles, TASK_PASS_FRAME);
+  Task_Add(LemurianShip_WatchPillarPuddles, TASK_PASS_FRAME);
 }
 
 /// The engine room: until the engine runs, Piers sets the Black Crystal as the
@@ -1870,13 +1917,13 @@ u32 gLemurianShip_KradenStepsUp[] = {
 
 /// The crate Move and a push take up, by actor id.
 s16 gLemurianShip_Crate[] = {
-    8, -1,
+    ACTOR_FIRST_PLACED, -1,
 };
 
 /// The room of two jellies' puddles, by actor id and flag.
 s16 gLemurianShip_TwoJellyRoomPuddles[] = {
-    ACTOR_TWO_JELLY_ROOM_PUDDLE_A, FLAG_PUDDLE_FROZEN,
-    ACTOR_TWO_JELLY_ROOM_PUDDLE_B, FLAG_PUDDLE_FROZEN + 1,
+    ACTOR_TWO_JELLY_ROOM_PUDDLE_A, FLAG_PUDDLE_FROZEN + JELLY_TWO_JELLY_ROOM_A,
+    ACTOR_TWO_JELLY_ROOM_PUDDLE_B, FLAG_PUDDLE_FROZEN + JELLY_TWO_JELLY_ROOM_B,
     -1,
 };
 
@@ -1933,27 +1980,27 @@ s32 gLemurianShip_Entrances[] = {
 
 /// The cabins' entrances.
 u32 gLemurianShip_CabinsEntrances[] = {
-    ENTRANCE_WORDS(9, 406, 0, 376, FACING_NORTH, 336, 264, 616, 424),
-    ENTRANCE_WORDS(10, 550, 0, 377, FACING_NORTH, 336, 264, 616, 424),
-    ENTRANCE_WORDS(11, 566, 0, 889, FACING_NORTH, 488, 776, 728, 936),
-    ENTRANCE_WORDS(12, 648, 0, 894, FACING_NORTH, 488, 776, 728, 936),
-    ENTRANCE_WORDS(13, 440, 0, 216, FACING_EAST, 384, 128, 624, 288),
-    ENTRANCE_WORDS(14, 567, 0, 215, FACING_SOUTH, 384, 128, 624, 288),
+    ENTRANCE_WORDS(LEMURIAN_SHIP_CABINS_FROM_LEMURIAN_SHIP_AQUA_HYDRA_NORTH_A, 406, 0, 376, FACING_NORTH, 336, 264, 616, 424),
+    ENTRANCE_WORDS(ENTRANCE_SIX_JELLY_ROOM_WEST_HALL_FROM_SIX_JELLY_ROOM, 550, 0, 377, FACING_NORTH, 336, 264, 616, 424),
+    ENTRANCE_WORDS(ENTRANCE_SIX_JELLY_ROOM_EAST_HALL_FROM_SIX_JELLY_ROOM, 566, 0, 889, FACING_NORTH, 488, 776, 728, 936),
+    ENTRANCE_WORDS(ENTRANCE_SIX_JELLY_ROOM_EAST_HALL_FROM_SEVEN_JELLY_ROOM, 648, 0, 894, FACING_NORTH, 488, 776, 728, 936),
+    ENTRANCE_WORDS(ENTRANCE_TWO_JELLY_ROOM_HALL_FROM_TWO_JELLY_ROOM, 440, 0, 216, FACING_EAST, 384, 128, 624, 288),
+    ENTRANCE_WORDS(LEMURIAN_SHIP_CABINS_FROM_LEMURIAN_SHIP_AQUA_HYDRA_WEST_A, 567, 0, 215, FACING_SOUTH, 384, 128, 624, 288),
     ENTRANCE_WORDS_END,
 };
 
 /// The lower deck's entrances.
 struct SceneEntrance gLemurianShip_AquaHydraEntrances[] = {
     {0, CONDITION_ALWAYS, 72, 0, 72, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {1, CONDITION_ALWAYS, 72, 0, 72, FACING_SOUTH, 0, 8, 16, 248, 256, 0},
-    {2, CONDITION_ALWAYS, 168, 0, 72, FACING_SOUTH, 0, 8, 16, 248, 256, 0},
-    {3, CONDITION_ALWAYS, 72, 0, 216, FACING_NORTH, 0, 8, 16, 248, 256, 0},
-    {4, CONDITION_ALWAYS, 184, 0, 216, FACING_NORTH, 0, 8, 16, 248, 256, 0},
-    {11, CONDITION_ALWAYS, 72, 0, 376, FACING_SOUTH, 0, 8, 320, 248, 560, 0},
-    {12, CONDITION_ALWAYS, 168, 0, 376, FACING_SOUTH, 0, 8, 320, 248, 560, 0},
-    {13, CONDITION_ALWAYS, 72, 0, 512, FACING_NORTH, 0, 8, 320, 248, 560, 0},
-    {14, CONDITION_ALWAYS, 184, 0, 512, FACING_NORTH, 0, 8, 320, 248, 560, 0},
-    {15, CONDITION_ALWAYS, 120, 0, 440, FACING_NORTH, 0, 8, 320, 248, 560, 0},
+    {LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_NORTHWEST_A, CONDITION_ALWAYS, 72, 0, 72, FACING_SOUTH, 0, 8, 16, 248, 256, 0},
+    {LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_NORTH_A, CONDITION_ALWAYS, 168, 0, 72, FACING_SOUTH, 0, 8, 16, 248, 256, 0},
+    {LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_WEST_A, CONDITION_ALWAYS, 72, 0, 216, FACING_NORTH, 0, 8, 16, 248, 256, 0},
+    {LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_NORTHEAST_A, CONDITION_ALWAYS, 184, 0, 216, FACING_NORTH, 0, 8, 16, 248, 256, 0},
+    {LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_SOUTHWEST, CONDITION_ALWAYS, 72, 0, 376, FACING_SOUTH, 0, 8, 320, 248, 560, 0},
+    {LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_SOUTH_A, CONDITION_ALWAYS, 168, 0, 376, FACING_SOUTH, 0, 8, 320, 248, 560, 0},
+    {LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_SOUTH_B, CONDITION_ALWAYS, 72, 0, 512, FACING_NORTH, 0, 8, 320, 248, 560, 0},
+    {LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_SOUTH_C, CONDITION_ALWAYS, 184, 0, 512, FACING_NORTH, 0, 8, 320, 248, 560, 0},
+    {ENTRANCE_HOLD_AFTER_AQUA_HYDRA_BATTLE, CONDITION_ALWAYS, 120, 0, 440, FACING_NORTH, 0, 8, 320, 248, 560, 0},
     {SCENE_TABLE_END},
 };
 
@@ -1976,11 +2023,11 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_MAIN_DECK, LemurianShipMainDeck, LEMURIAN_SHIP_MAIN_DECK_FROM_LEMURIAN_SHIP_CABINS, FLAG_LEMURIA_REACHED),
     SCENE_EXIT_UNLESS(LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_MAIN_DECK, LemuriaDock, LEMURIA_DOCK_FROM_LEMURIAN_SHIP_CABINS, FLAG_SHIP_AT_ATTEKA_INLET),
     SCENE_EXIT_UNLESS(LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_MAIN_DECK, AttekaInlet, ATTEKA_INLET_FROM_WORLD_MAP_WEST, EXIT_FLAG_NONE),
-    SCENE_EXIT(2, LemurianShipCabins, 3),
-    SCENE_EXIT(3, LemurianShipCabins, 2),
-    SCENE_EXIT(4, LemurianShipCabins, 6),
-    SCENE_EXIT(5, LemurianShipCabins, 13),
-    SCENE_EXIT(6, LemurianShipCabins, 4),
+    SCENE_EXIT(2, LemurianShipCabins, ENTRANCE_TWO_JELLY_ROOM_FROM_LOGBOOK_ROOM),
+    SCENE_EXIT(3, LemurianShipCabins, ENTRANCE_LOGBOOK_ROOM_FROM_TWO_JELLY_ROOM),
+    SCENE_EXIT(4, LemurianShipCabins, ENTRANCE_STAIR_ROOM_FROM_TWO_JELLY_ROOM),
+    SCENE_EXIT(5, LemurianShipCabins, ENTRANCE_TWO_JELLY_ROOM_HALL_FROM_TWO_JELLY_ROOM),
+    SCENE_EXIT(6, LemurianShipCabins, ENTRANCE_TWO_JELLY_ROOM_FROM_STAIR_ROOM),
     SCENE_EXIT(7, LemurianShipCabins, LEMURIAN_SHIP_CABINS_FROM_LEMURIAN_SHIP_AQUA_HYDRA_EAST_A),
     SCENE_EXIT_UNLESS(LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_AQUA_HYDRA_NORTHWEST_A, LemurianShipAquaHydra, LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_NORTHWEST_A, FLAG_AQUA_HYDRA_BEATEN),
     SCENE_EXIT_UNLESS(LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_AQUA_HYDRA_NORTHWEST_A, LemurianShipAquaHydra, LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_SOUTHWEST, FLAG_HOLD_PARCHED),
@@ -1988,37 +2035,37 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_AQUA_HYDRA_NORTH_A, LemurianShipAquaHydra, LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_NORTH_A, FLAG_AQUA_HYDRA_BEATEN),
     SCENE_EXIT_UNLESS(LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_AQUA_HYDRA_NORTH_A, LemurianShipAquaHydra, LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_SOUTH_A, FLAG_HOLD_PARCHED),
     SCENE_EXIT_UNLESS(LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_AQUA_HYDRA_NORTH_A, LemurianShipAquaHydra, LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_NORTH_B, EXIT_FLAG_NONE),
-    SCENE_EXIT(10, LemurianShipCabins, 25),
-    SCENE_EXIT(11, LemurianShipCabins, 26),
-    SCENE_EXIT(12, LemurianShipCabins, 29),
-    SCENE_EXIT(13, LemurianShipCabins, 5),
+    SCENE_EXIT(10, LemurianShipCabins, ENTRANCE_SIX_JELLY_ROOM_FROM_WEST_HALL),
+    SCENE_EXIT(11, LemurianShipCabins, ENTRANCE_SIX_JELLY_ROOM_FROM_EAST_HALL),
+    SCENE_EXIT(12, LemurianShipCabins, ENTRANCE_SEVEN_JELLY_ROOM_FROM_SIX_JELLY_ROOM_EAST_HALL),
+    SCENE_EXIT(13, LemurianShipCabins, ENTRANCE_TWO_JELLY_ROOM_FROM_TWO_JELLY_ROOM_HALL),
     SCENE_EXIT_UNLESS(LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_AQUA_HYDRA_WEST_A, LemurianShipAquaHydra, LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_WEST_A, FLAG_AQUA_HYDRA_BEATEN),
     SCENE_EXIT_UNLESS(LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_AQUA_HYDRA_WEST_A, LemurianShipAquaHydra, LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_SOUTH_B, FLAG_HOLD_PARCHED),
     SCENE_EXIT_UNLESS(LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_AQUA_HYDRA_WEST_A, LemurianShipAquaHydra, LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_WEST_B, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_AQUA_HYDRA_NORTHEAST_A, LemurianShipAquaHydra, LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_NORTHEAST_A, FLAG_AQUA_HYDRA_BEATEN),
     SCENE_EXIT_UNLESS(LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_AQUA_HYDRA_NORTHEAST_A, LemurianShipAquaHydra, LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_SOUTH_C, FLAG_HOLD_PARCHED),
     SCENE_EXIT_UNLESS(LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_AQUA_HYDRA_NORTHEAST_A, LemurianShipAquaHydra, LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_NORTHEAST_B, EXIT_FLAG_NONE),
-    SCENE_EXIT(16, LemurianShipCabins, 27),
-    SCENE_EXIT(17, LemurianShipCabins, 28),
-    SCENE_EXIT(18, LemurianShipCabins, 30),
+    SCENE_EXIT(16, LemurianShipCabins, ENTRANCE_SIX_JELLY_ROOM_FROM_LEDGE_ROOM_WEST),
+    SCENE_EXIT(17, LemurianShipCabins, ENTRANCE_SIX_JELLY_ROOM_FROM_LEDGE_ROOM_EAST),
+    SCENE_EXIT(18, LemurianShipCabins, ENTRANCE_SEVEN_JELLY_ROOM_FROM_LEDGE_ROOM),
     SCENE_EXIT(LEMURIAN_SHIP_CABINS_TO_LEMURIAN_SHIP_AQUA_HYDRA_EAST_A, LemurianShipAquaHydra, LEMURIAN_SHIP_AQUA_HYDRA_FROM_LEMURIAN_SHIP_CABINS_EAST),
-    SCENE_EXIT(20, LemurianShipCabins, 7),
-    SCENE_EXIT(25, LemurianShipCabins, 10),
-    SCENE_EXIT(26, LemurianShipCabins, 11),
-    SCENE_EXIT(27, LemurianShipCabins, 16),
-    SCENE_EXIT(28, LemurianShipCabins, 17),
-    SCENE_EXIT(29, LemurianShipCabins, 12),
-    SCENE_EXIT(30, LemurianShipCabins, 18),
+    SCENE_EXIT(20, LemurianShipCabins, ENTRANCE_STAIR_ROOM_FROM_STAIR_ROOM_HALL),
+    SCENE_EXIT(25, LemurianShipCabins, ENTRANCE_SIX_JELLY_ROOM_WEST_HALL_FROM_SIX_JELLY_ROOM),
+    SCENE_EXIT(26, LemurianShipCabins, ENTRANCE_SIX_JELLY_ROOM_EAST_HALL_FROM_SIX_JELLY_ROOM),
+    SCENE_EXIT(27, LemurianShipCabins, ENTRANCE_LEDGE_ROOM_FROM_SIX_JELLY_ROOM_WEST),
+    SCENE_EXIT(28, LemurianShipCabins, ENTRANCE_LEDGE_ROOM_FROM_SIX_JELLY_ROOM_EAST),
+    SCENE_EXIT(29, LemurianShipCabins, ENTRANCE_SIX_JELLY_ROOM_EAST_HALL_FROM_SEVEN_JELLY_ROOM),
+    SCENE_EXIT(30, LemurianShipCabins, ENTRANCE_LEDGE_ROOM_FROM_SEVEN_JELLY_ROOM),
     SCENE_EXITS(LemurianShipAquaHydra),
     SCENE_EXIT(LEMURIAN_SHIP_AQUA_HYDRA_TO_LEMURIAN_SHIP_CABINS_NORTHWEST_A, LemurianShipCabins, LEMURIAN_SHIP_CABINS_FROM_LEMURIAN_SHIP_AQUA_HYDRA_NORTHWEST_A),
     SCENE_EXIT(LEMURIAN_SHIP_AQUA_HYDRA_TO_LEMURIAN_SHIP_CABINS_NORTH_A, LemurianShipCabins, LEMURIAN_SHIP_CABINS_FROM_LEMURIAN_SHIP_AQUA_HYDRA_NORTH_A),
     SCENE_EXIT(LEMURIAN_SHIP_AQUA_HYDRA_TO_LEMURIAN_SHIP_CABINS_WEST_A, LemurianShipCabins, LEMURIAN_SHIP_CABINS_FROM_LEMURIAN_SHIP_AQUA_HYDRA_WEST_A),
     SCENE_EXIT(LEMURIAN_SHIP_AQUA_HYDRA_TO_LEMURIAN_SHIP_CABINS_NORTHEAST_A, LemurianShipCabins, LEMURIAN_SHIP_CABINS_FROM_LEMURIAN_SHIP_AQUA_HYDRA_NORTHEAST_A),
-    SCENE_EXIT(6, LemurianShipAquaHydra, 7),
-    SCENE_EXIT(7, LemurianShipAquaHydra, 6),
-    SCENE_EXIT_UNLESS(8, LemurianShipAquaHydra, 9, FLAG_SHIP_ENGINE_RUNNING),
-    SCENE_EXIT_UNLESS(8, LemurianShipAquaHydra, 19, EXIT_FLAG_NONE),
-    SCENE_EXIT(9, LemurianShipAquaHydra, 8),
+    SCENE_EXIT(6, LemurianShipAquaHydra, ENTRANCE_CORRIDOR_FROM_PILLAR_ROOM),
+    SCENE_EXIT(7, LemurianShipAquaHydra, ENTRANCE_PILLAR_ROOM_FROM_CORRIDOR),
+    SCENE_EXIT_UNLESS(8, LemurianShipAquaHydra, ENTRANCE_ENGINE_ROOM_FROM_CORRIDOR, FLAG_SHIP_ENGINE_RUNNING),
+    SCENE_EXIT_UNLESS(8, LemurianShipAquaHydra, ENTRANCE_RUNNING_ENGINE_ROOM_FROM_CORRIDOR, EXIT_FLAG_NONE),
+    SCENE_EXIT(9, LemurianShipAquaHydra, ENTRANCE_CORRIDOR_FROM_ENGINE_ROOM),
     SCENE_EXIT(LEMURIAN_SHIP_AQUA_HYDRA_TO_LEMURIAN_SHIP_CABINS_EAST, LemurianShipCabins, LEMURIAN_SHIP_CABINS_FROM_LEMURIAN_SHIP_AQUA_HYDRA_EAST_B),
     SCENE_EXIT(LEMURIAN_SHIP_AQUA_HYDRA_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_LEMURIAN_SHIP_AQUA_HYDRA),
     SCENE_EXITS_END,
@@ -2186,8 +2233,8 @@ struct Trigger gLemurianShip_TwoJellyRoomTriggers[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_TALK, ACTOR_TWO_JELLY_ROOM_JELLY_A, CONDITION_ALWAYS, EVENT(LemurianShip_FightTwoJellyRoomJelly)},
     {TRIGGER_TALK, ACTOR_TWO_JELLY_ROOM_JELLY_B, CONDITION_ALWAYS, EVENT(LemurianShip_FightTwoJellyRoomJelly)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_TWO_JELLY_ROOM_PUDDLE_A, FLAG_PUDDLE_FROZEN, EVENT(LemurianShip_FreezeTwoJellyRoomPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_TWO_JELLY_ROOM_PUDDLE_B, (FLAG_PUDDLE_FROZEN + 1), EVENT(LemurianShip_FreezeTwoJellyRoomPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_TWO_JELLY_ROOM_PUDDLE_A, FLAG_PUDDLE_FROZEN + JELLY_TWO_JELLY_ROOM_A, EVENT(LemurianShip_FreezeTwoJellyRoomPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_TWO_JELLY_ROOM_PUDDLE_B, FLAG_PUDDLE_FROZEN + JELLY_TWO_JELLY_ROOM_B, EVENT(LemurianShip_FreezeTwoJellyRoomPuddle)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2276,18 +2323,18 @@ struct Trigger gLemurianShip_HoldTriggers[] = {
 /// The pillar room's triggers.
 struct Trigger gLemurianShip_PillarRoomTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(LemurianShip_WalkIntoPassage)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8, FLAG_RIGHT_PILLAR_SUNK, EVENT(LemurianShip_LiftPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_RIGHT_PILLAR, FLAG_RIGHT_PILLAR_SUNK, EVENT(LemurianShip_LiftPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_RIGHT_PILLAR, FLAG_RIGHT_PILLAR_SUNK, EVENT(LemurianShip_SetDownPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 9, FLAG_LEFT_PILLAR_SUNK, EVENT(LemurianShip_LiftPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_LEFT_PILLAR, FLAG_LEFT_PILLAR_SUNK, EVENT(LemurianShip_LiftPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LEFT_PILLAR, FLAG_LEFT_PILLAR_SUNK, EVENT(LemurianShip_SetDownPillar)},
     {TRIGGER_PUSH, 0, FLAG_PILLAR_WAY_OPEN, EVENT(LemurianShip_LiftPillar)},
     {TRIGGER_PUSHED, 0, FLAG_PILLAR_WAY_OPEN, EVENT(LemurianShip_SetDownPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_RIGHT_PILLAR, FLAG_RIGHT_PILLAR_FULL, EVENT(LemurianShip_DouseRightPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_LEFT_PILLAR, FLAG_LEFT_PILLAR_FULL, EVENT(LemurianShip_DouseLeftPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_ACTS), 10, FLAG_PUDDLE_FROZEN, EVENT(LemurianShip_ShowRightPillarPuddle)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_ACTS), 11, (FLAG_PUDDLE_FROZEN + 1), EVENT(LemurianShip_ShowLeftPillarPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_RIGHT_PILLAR_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT(LemurianShip_FreezeTwoJellyRoomPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_LEFT_PILLAR_PUDDLE, (FLAG_PUDDLE_FROZEN + 1), EVENT(LemurianShip_FreezeTwoJellyRoomPuddle)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_ACTS), ACTOR_RIGHT_PILLAR_PUDDLE, FLAG_RIGHT_PILLAR_PUDDLE_FROZEN, EVENT(LemurianShip_ShowRightPillarPuddle)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_ACTS), ACTOR_LEFT_PILLAR_PUDDLE, FLAG_LEFT_PILLAR_PUDDLE_FROZEN, EVENT(LemurianShip_ShowLeftPillarPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_RIGHT_PILLAR_PUDDLE, FLAG_RIGHT_PILLAR_PUDDLE_FROZEN, EVENT(LemurianShip_FreezeTwoJellyRoomPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_LEFT_PILLAR_PUDDLE, FLAG_LEFT_PILLAR_PUDDLE_FROZEN, EVENT(LemurianShip_FreezeTwoJellyRoomPuddle)},
     {TRIGGER_RAISED, RAISED_RIGHT_PILLAR, CONDITION_ALWAYS, EVENT(LemurianShip_RaiseRightPillar)},
     {TRIGGER_RAISED, RAISED_LEFT_PILLAR, CONDITION_ALWAYS, EVENT(LemurianShip_RaiseLeftPillar)},
     {TRIGGER_TABLE_END},

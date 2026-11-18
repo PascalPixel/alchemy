@@ -460,16 +460,11 @@ struct Window *MenuCursor_Create(void *source) {
   cursor =
       (struct WindowSprite *)Icon_CreateWithResourceVariant(window, -8, 11);
   cursor->motion = ICON_HIDDEN;
-  menu->tabIndex[0] = 255;
+  menu->tabIndex[0] = -1;
   menu->tabIndex[1] = 0;
   menu->sideIcon[0] = cursor;
-  // depth is the depth slot an icon is drawn at: the hand at 254, with
-  // the glyphs.
-  depth = OAM_DEPTH_FRONT - 1;
-  cursor->depth = depth;
-  depth -= 255;
-  // sideIcon[1] gets slot 255.
-  menu->sideIcon[1]->depth = depth; // -1
+  cursor->depth = OAM_DEPTH_FRONT - 1;
+  menu->sideIcon[1]->depth = OAM_DEPTH_FRONT;
   return window;
 }
 
@@ -774,13 +769,16 @@ void ItemMenu_ShowMessage(s32 message, s32 x, s32 y) {
 #endif
 }
 
-/// Sorts a party member's 15 inventory slots by the list order of mode (enum
-/// ListSort): items are grouped by the order's item types and, within a type,
-/// run from the highest item id down.
+/// The most bytes a list order copies, its LIST_ORDER_END included.
+#define LIST_ORDER_MAX_LENGTH 32
+
+/// Sorts a party member's INVENTORY_SLOTS inventory slots by the list order of
+/// mode (enum ListSort): items are grouped by the order's item types and,
+/// within a type, run from the highest item id down.
 s32 ItemMenu_Sort(u16 *inventory, s32 mode) {
   u16 sorted[16];
   u16 items[16];
-  u8 order[32];
+  u8 order[LIST_ORDER_MAX_LENGTH];
   struct ItemDefinition *item;
   s32 pass;
   s32 i;
@@ -843,7 +841,7 @@ s32 ItemMenu_Sort(u16 *inventory, s32 mode) {
 
 /// Copies the list order of mode (enum ListSort; any other mode takes
 /// LIST_SORT_ITEMS_FIRST's) into order, up to and including its LIST_ORDER_END
-/// and at most 32 bytes.
+/// and at most LIST_ORDER_MAX_LENGTH bytes.
 void Menu_CopyListOrder(s32 mode, u8 *order) {
   u8 *src;
   s32 n;
@@ -860,7 +858,7 @@ void Menu_CopyListOrder(s32 mode, u8 *order) {
     src = gMenu_ListOrderEquipmentFirst;
     break;
   }
-  for (n = 0; n < 32; n++) {
+  for (n = 0; n < LIST_ORDER_MAX_LENGTH; n++) {
     if ((order[n] = src[n]) == LIST_ORDER_END)
       break;
   }
@@ -970,7 +968,7 @@ void Palette_LightenHighlight(s32 paletteNumber) {
   Dma_Set((const void *)&BG_PLTT_COLOR(WINDOW_PALETTE, 0), palette,
           DMA_COPY_WORDS(8), REG_DMA3);
   // BGR555: five bits a channel, 0 to 31, red lowest.
-  blue = palette[WINDOW_BACKGROUND_COLOR] >> 10;
+  blue = palette[WINDOW_BACKGROUND_COLOR] >> BLUE_SHIFT;
   green = RGB_GREEN(palette[WINDOW_BACKGROUND_COLOR]);
   red = RGB_RED(palette[WINDOW_BACKGROUND_COLOR]);
   blue += HIGHLIGHT_LIGHTEN_STEPS;
@@ -1059,7 +1057,7 @@ void Render_SetTilemapFlagRect(const struct Window *window, s32 x, s32 y,
       s32 remaining = width;
       while (remaining != 0) {
         u32 value = *entry;
-        value &= 0xFFFFEFFF;
+        value &= ~BG_TILE_PALETTE(WINDOW_PALETTE ^ HIGHLIGHT_PALETTE);
         value |= palette;
         remaining--;
         *entry = value;
@@ -1195,3 +1193,4 @@ void WindowPalette_SetLowHpTextColor(void) {
 #undef NUMBER_PIXELS_PER_DIGIT
 #undef CURSOR_BOB_STEP
 #undef PAGE_LABEL_FIRST
+#undef LIST_ORDER_MAX_LENGTH

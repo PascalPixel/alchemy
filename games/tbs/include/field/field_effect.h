@@ -100,9 +100,7 @@ union ActorOrEffect {
 /// which of struct EffectOptions' fields to use.
 enum EffectSpawnFlags {
   /// An EffectDuration, picking one of gFieldEffect_DurationScripts; the
-  /// actor's mode is
-  /// this
-  /// plus 1.
+  /// actor's mode is this plus 1.
   EFFECT_SCRIPT_MASK = 0x0f,
   EFFECT_USE_PALETTE = 0x10000,  ///< options.palette, as its group child value
   EFFECT_USE_PRIORITY = 0x20000, ///< options.priority, as the sprite's priority

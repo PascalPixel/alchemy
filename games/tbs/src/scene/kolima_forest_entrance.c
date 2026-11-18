@@ -110,6 +110,9 @@ static void KolimaForestEntrance_FlickerPsynergyFields(void);
 /// can cross.
 #define FLAG_KOLIMA_FOREST_ENTRANCE_LOG_IN_RIVER FLAG_SCENE_TEMP_00
 
+/// The column at the water's edge, where the river log pushed west tips in.
+#define RIVER_EDGE_COLUMN 20
+
 /// The end of a field's growing: if a sparkle has burst on a field, the field
 /// takes its next pose.
 static s32 KolimaForestEntrance_FlashHitPsynergyFields(struct Actor *actor) {
@@ -161,7 +164,7 @@ static void KolimaForestEntrance_PushLog(void) {
   if (PushedActor_FindClearPosition(&res)) {
     Actor_MoveAndRedraw(res);
     if (res.actorSlot == ACTOR_RIVER_LOG &&
-        (FIELD_CELL(res.position.x)) == 20) {
+        (FIELD_CELL(res.position.x)) == RIVER_EDGE_COLUMN) {
       Actor_SetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_ROLL_WEST);
       Actor_SetDestinationOffset(ACTOR_RIVER_LOG, -18, 6);
       Event_Wait(30);
@@ -496,7 +499,8 @@ static void KolimaForestEntrance_WitnessForestCurse(void) {
   Actor_SetPosition(ACTOR_TRET, 220, 494);
   Actor_SetPosition(ACTOR_LAUREL, 220, 494);
   wait(1);
-  if (Event_AskYesNoWithActorAnimation(11, 0) == 1) {
+  // Tret, unseen, takes the nod or the shake of the head.
+  if (Event_AskYesNoWithActorAnimation(ACTOR_TRET, 0) == 1) {
     gFieldWork->message += 1;
   }
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 1);

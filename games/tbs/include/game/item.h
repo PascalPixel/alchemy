@@ -21,7 +21,8 @@ enum InventoryEncoding {
   /// The quantity field holds the count less one; a stack (ITEM_STACKABLE)
   /// grows to INVENTORY_STACK_MAX (Inventory_AddItem).
   INVENTORY_QUANTITY_SHIFT = 11,
-  INVENTORY_QUANTITY_STEP = 0x800, ///< one more in the stack
+  /// One more in the stack.
+  INVENTORY_QUANTITY_STEP = 1 << INVENTORY_QUANTITY_SHIFT,
   INVENTORY_QUANTITY_MASK = 0xf800,
   INVENTORY_SLOTS = 15,    ///< Unit.inventory's entries
   INVENTORY_STACK_MAX = 30 ///< the most items a stack holds
@@ -47,7 +48,7 @@ enum ItemFlags {
   /// An important item: never dropped, worth nothing to a shop
   /// (Shop_SalePrice), and first among a battle's drops kept.
   ITEM_INDISPENSABLE = 8,
-  ITEM_STACKABLE = 0x10 ///< kept in one inventory entry with a quantity
+  ITEM_STACKABLE = 16 ///< kept in one inventory entry with a quantity
 };
 
 /// What using an item costs (struct ItemDefinition's useType).

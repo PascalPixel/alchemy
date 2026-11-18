@@ -2,7 +2,11 @@
 // Vale and its home, storm and Babi scenes, Sol Sanctum's eruption, the World
 // Map and Venus Lighthouse's aerie: the pair of rising particles that
 // WorldMap_CreateAttachedEffects attaches to a glowing actor, each an
-// update routine that lives 32 frames.
+// update routine that lives VERTICAL_EFFECT_FRAMES.
+
+/// How long each particle of the pair lives, in frames, growing and shrinking
+/// over half a sine wave.
+#define VERTICAL_EFFECT_FRAMES 32
 
 /// Rises beside the watched actor, expanding and shrinking over half a
 /// sine wave.
@@ -15,12 +19,12 @@ static void FieldEffect_AnimateVerticalPositive(struct Actor *actor) {
   actor->timer = actor->timer + 1;
   frame = actor->timer;
 
-  if (frame > 31) {
+  if (frame >= VERTICAL_EFFECT_FRAMES) {
     Actor_Release(actor);
     return;
   }
 
-  amplitude = Trig_Sin(frame << 10);
+  amplitude = Trig_Sin(frame * (DEGtoANG(180) / VERTICAL_EFFECT_FRAMES));
   actor->scaleX = amplitude;
   actor->scaleY = amplitude;
   actor->x.fixed = anchor->x.fixed;
@@ -39,12 +43,12 @@ static void FieldEffect_AnimateVerticalNegative(struct Actor *actor) {
   actor->timer = actor->timer + 1;
   frame = actor->timer;
 
-  if (frame > 31) {
+  if (frame >= VERTICAL_EFFECT_FRAMES) {
     Actor_Release(actor);
     return;
   }
 
-  amplitude = Trig_Sin(frame << 10);
+  amplitude = Trig_Sin(frame * (DEGtoANG(180) / VERTICAL_EFFECT_FRAMES));
   actor->scaleX = amplitude;
   actor->scaleY = -amplitude;
   actor->x.fixed = anchor->x.fixed;

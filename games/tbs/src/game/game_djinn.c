@@ -4,6 +4,12 @@
 
 #include "game_internal.h"
 
+/// The most Djinn of one element a party member holds or sets.
+#define DJINN_HELD_PER_ELEMENT_MAX 10
+/// Above any party member's count of Djinn: the fewest found so far before the
+/// search, and still when nobody has room.
+#define DJINN_COUNT_NONE 999
+
 /// Returns the definition of Djinni `index` of element `group`; anything out of
 /// range gives DJINNI_FLINT's.
 const struct DjinnDefinition *Djinn_GetDefinition(u32 group, u32 index) {
@@ -20,7 +26,7 @@ const struct DjinnDefinition *Djinn_GetDefinition(u32 group, u32 index) {
 s32 Djinn_GiveToParty(s32 element, s32 djinn) {
   s32 flag = djinn + element * DJINN_PER_ELEMENT + FLAG_DJINN_FIRST;
   s32 leastLoadedMember = 0;
-  s32 fewestDjinn = 999;
+  s32 fewestDjinn = DJINN_COUNT_NONE;
   s32 partySize;
   s32 partyIndex;
   s32 elementIndex;
@@ -32,7 +38,7 @@ s32 Djinn_GiveToParty(s32 element, s32 djinn) {
   for (partyIndex = 0; partyIndex < partySize; partyIndex++) {
     struct Unit *unit = Unit_Get(gMainRoutineWork.party[partyIndex]);
 
-    if (unit->djinnHeldCounts[element] <= 9) {
+    if (unit->djinnHeldCounts[element] < DJINN_HELD_PER_ELEMENT_MAX) {
       s32 ownedDjinn = 0;
 
       for (elementIndex = 0; elementIndex < ELEMENT_COUNT; elementIndex++)
@@ -44,7 +50,7 @@ s32 Djinn_GiveToParty(s32 element, s32 djinn) {
     }
   }
 
-  if (fewestDjinn == 999)
+  if (fewestDjinn == DJINN_COUNT_NONE)
     return -2;
 
   Djinn_Give(leastLoadedMember, element, djinn);
@@ -53,12 +59,12 @@ s32 Djinn_GiveToParty(s32 element, s32 djinn) {
   return leastLoadedMember;
 }
 
-/// Gives a Djinni to a unit. Returns -1 when the unit holds ten of the element
-/// or has it already.
+/// Gives a Djinni to a unit. Returns -1 when the unit holds
+/// DJINN_HELD_PER_ELEMENT_MAX of the element or has it already.
 s32 Djinn_Give(s32 unitId, s32 element, s32 djinnIndex) {
   struct Unit *unit = Unit_Get(unitId);
 
-  if (unit->djinnHeldCounts[element] > 9)
+  if (unit->djinnHeldCounts[element] >= DJINN_HELD_PER_ELEMENT_MAX)
     return -1;
   if ((unit->djinnHeld[element] & (1 << djinnIndex)) != 0)
     return -1;
@@ -77,8 +83,8 @@ s32 Djinn_CanSet(s32 unitId, s32 element, s32 djinnIndex) {
 
   if (unit->djinnHeldCounts[element] == 0)
     return 0;
-  if (unit->djinnSetCounts[element] > 9) {
-    unit->djinnSetCounts[element] = 10;
+  if (unit->djinnSetCounts[element] >= DJINN_HELD_PER_ELEMENT_MAX) {
+    unit->djinnSetCounts[element] = DJINN_HELD_PER_ELEMENT_MAX;
     return 0;
   }
   if ((unit->djinnHeld[element] & (1 << djinnIndex)) == 0)
@@ -206,7 +212,8 @@ s32 Djinn_Transfer(s32 source, s32 element, s32 djinnIndex, s32 target) {
 /// given.
 s32 DjinnRecovery_CountStandby(u8 *counts) {
   s32 standbyCount = 0;
-  struct DjinnRecoveryTable *recoveryTable = Djinn_GetRecoveryTable(0);
+  struct DjinnRecoveryTable *recoveryTable =
+      Djinn_GetRecoveryTable(DJINN_RECOVERY_PARTY);
   struct DjinnRecoveryEntry *entry = recoveryTable->list.entries;
   s32 entryIndex;
 
@@ -222,7 +229,7 @@ s32 DjinnRecovery_CountStandby(u8 *counts) {
     counts[0] = standbyCount;
   }
   for (entryIndex = 0; entryIndex != recoveryTable->list.count; entryIndex++) {
-    if (entry->turns == -1) {
+    if (entry->turns == DJINN_RECOVERY_AFTER_BATTLE) {
       if (counts != 0)
         counts[entry->element]++;
       standbyCount++;

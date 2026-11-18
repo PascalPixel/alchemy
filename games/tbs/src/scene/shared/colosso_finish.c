@@ -32,13 +32,17 @@ static void Colosso_WaitForOpponentToFinish(void) {
   }
 }
 
+/// The speed, in pixels a frame, below which the raised prize has settled.
+#define PRIZE_SETTLE_SPEED toFIXED(0.0039)
+
 /// The raised prize's hook (gColosso_PrizeScript): it settles once it has
 /// almost stopped rising, and on about one frame in ten a sparkle
 /// (gColosso_PrizeSparkleScript) appears somewhere within 16 pixels of it.
 static void Colosso_SparkleAroundPrize(struct Actor *prize) {
   s32 position[3];
 
-  if (prize->velocityY >= -255 && prize->velocityY <= 255) {
+  if (prize->velocityY >= -PRIZE_SETTLE_SPEED &&
+      prize->velocityY <= PRIZE_SETTLE_SPEED) {
     prize->motionFlags = 0;
   }
   if (Random_Below(100) < 10) {

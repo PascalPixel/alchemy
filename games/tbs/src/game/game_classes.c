@@ -4,14 +4,22 @@
 
 #include "game_internal.h"
 
+/// Element levels are counted in tenths: a Djinni set adds a whole level.
+#define ELEMENT_LEVEL_SCALE 10
+/// The highest whole element level, the last row of
+/// gElement_PowerResistByLevel.
+#define ELEMENT_LEVEL_MAX 15
+
 /// Returns the class series of a character whose strongest element is
-/// `primaryElement` and second `secondaryElement`, from the 4 by 4 table.
+/// `primaryElement` and second `secondaryElement`, from the ELEMENT_COUNT by
+/// ELEMENT_COUNT table.
 s32 Class_GetSeries(s32 primaryElement, s32 secondaryElement) {
-  return gClass_SeriesByElements[(primaryElement * 4) + secondaryElement];
+  return gClass_SeriesByElements[(primaryElement * ELEMENT_COUNT) +
+                                 secondaryElement];
 }
 
-/// Writes ten times each element level: an enemy's from its preset, a
-/// character's from the Djinn set on it plus its own bonus.
+/// Writes each element level in tenths (ELEMENT_LEVEL_SCALE): an enemy's from
+/// its preset, a character's from the Djinn set on it plus its own bonus.
 s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
   s32 i;
   s32 *cursor;
@@ -26,7 +34,8 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
     i = 0;
     cursor = output;
     for (; i < ELEMENT_COUNT; i++)
-      *cursor++ = gEnemy_ElementPresetTable[index].elementLevels[i] * 10;
+      *cursor++ = gEnemy_ElementPresetTable[index].elementLevels[i] *
+                  ELEMENT_LEVEL_SCALE;
   } else {
     cursor = output;
     // `source` points at the unit's Djinn bits; the counts of set Djinn by
@@ -36,7 +45,7 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
     for (i = 0; i < ELEMENT_COUNT; i++) {
       u32 count = *source++;
 
-      *cursor++ = count * 10;
+      *cursor++ = count * ELEMENT_LEVEL_SCALE;
     }
 
     if (record <= PIERS) {
@@ -54,12 +63,12 @@ s32 Unit_GetElementLevels(s32 record, const u8 *source, s32 output[4]) {
 /// (a tenth of what Unit_GetElementLevels counts), and 0 for `ELEMENT_NONE`.
 s32 Unit_GetElementLevel(s32 unitId, s32 element) {
   struct Unit *unit = Unit_Get(unitId);
-  s32 summonBoost[4];
+  s32 levels[ELEMENT_COUNT];
   s32 result = 0;
 
   if (element < ELEMENT_COUNT) {
-    Unit_GetElementLevels(unit->id, (u8 *)unit->djinnHeld, summonBoost);
-    result = summonBoost[element] / 10;
+    Unit_GetElementLevels(unit->id, (u8 *)unit->djinnHeld, levels);
+    result = levels[element] / ELEMENT_LEVEL_SCALE;
   }
   return result;
 }
@@ -99,11 +108,11 @@ Unit_CalculateBaseElements(s32 unitId, struct BattleElementStats *destination) {
   // tenths add to it.
   Unit_GetElementLevels(state->id, (u8 *)state->djinnHeld, levels);
   for (i = 0; i < ELEMENT_COUNT; i++) {
-    s32 tenths = levels[i] % 10;
-    s32 level = levels[i] / 10;
+    s32 tenths = levels[i] % ELEMENT_LEVEL_SCALE;
+    s32 level = levels[i] / ELEMENT_LEVEL_SCALE;
 
-    if (level > 15)
-      level = 15;
+    if (level > ELEMENT_LEVEL_MAX)
+      level = ELEMENT_LEVEL_MAX;
     if (level < 0)
       level = 0;
     // The pair is written as two halfwords in a row, power then resistance.
@@ -117,7 +126,7 @@ Unit_CalculateBaseElements(s32 unitId, struct BattleElementStats *destination) {
 /// Returns the class a character has with these Djinn: the series of its two
 /// strongest elements, and the last class of it whose requirements it meets.
 s32 Class_Determine(s32 character, const u8 *djinn) {
-  s32 levels[4];
+  s32 levels[ELEMENT_COUNT];
   s32 primary;
   s32 best;
   s32 series;
@@ -157,16 +166,18 @@ s32 Class_Determine(s32 character, const u8 *djinn) {
   }
   // A second element below level 1 does not count, and ties go to the lower
   // element.
-  series = Class_GetSeries(primary, levels[j] > 9 ? j : primary);
+  series =
+      Class_GetSeries(primary, levels[j] >= ELEMENT_LEVEL_SCALE ? j : primary);
   // The last class of the series that the element levels reach.
   for (i = CLASS_COUNT - 1; i >= 0; i--) {
     if (gClass_DefinitionTable[i].series != series)
       continue;
     for (j = 0; j < ELEMENT_COUNT; j++) {
-      if (levels[j] < gClass_DefinitionTable[i].required[j] * 10)
+      if (levels[j] <
+          gClass_DefinitionTable[i].required[j] * ELEMENT_LEVEL_SCALE)
         break;
     }
-    if (j == 4) {
+    if (j == ELEMENT_COUNT) {
       result = i;
       break;
     }
@@ -191,3 +202,6 @@ void Unit_UpdateClass(s32 unitId) {
   Unit_RefreshPsynergy(unitId);
   Unit_CalculateBaseElements(unitId, unit->baseElement);
 }
+
+#undef ELEMENT_LEVEL_SCALE
+#undef ELEMENT_LEVEL_MAX

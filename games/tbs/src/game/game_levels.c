@@ -183,7 +183,8 @@ s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
   s32 found = -1;
   s32 index;
 
-  for (index = 0; index <= 30; index++) {
+  // Learning never takes the list's last slot.
+  for (index = 0; index < PSYNERGY_SLOTS - 1; index++) {
     s32 masked = state->psynergy[index].encodedAction & PSYNERGY_ABILITY_MASK;
 
     if ((masked ^ key) == 0) {
@@ -194,7 +195,7 @@ s32 Unit_LearnPsynergy(s32 stateIndex, s32 value) {
   }
 
   if (found < 0) {
-    for (index = 0; index <= 30; index++) {
+    for (index = 0; index < PSYNERGY_SLOTS - 1; index++) {
       s32 action = state->psynergy[index].encodedAction;
 
       if (action == 0) {

@@ -322,7 +322,7 @@ void Projection_SetFieldOfView(u32 fieldOfView, FIXED nearDepth,
   FIXED sine;
   FIXED focal;
 
-  halfAngle = (s32)(fieldOfView + (fieldOfView >> 31)) >> 1;
+  halfAngle = (s32)fieldOfView / 2;
   sine = Trig_Sin(halfAngle);
   // Iwram_RatioMulQ14(d, v) is v * FIXED_ONE / d: here 80 * cos / sin
   focal = Iwram_RatioMulQ14(sine, Trig_Cos(halfAngle) * (DISPLAY_HEIGHT / 2));

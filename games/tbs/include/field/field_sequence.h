@@ -131,12 +131,12 @@ void FieldPsynergy_Carry(void);
 /// Bits 27..24 of a search result, set only in a routine's address: the result
 /// is then a function to call.
 #define FIND_FUNCTION_BITS 0x0f000000
-// XXX: what bits 19..16's other values mean; a chest table with another value
-// would settle it.
 /// Bits 19..16 of a chest's search result, which Field_ExamineCell compares
-/// only with FIND_CHEST_LOCKED.
+/// only with FIND_CHEST_LOCKED. No chest of the game sets them, so none is
+/// locked.
 #define FIND_CHEST_LOCK_MASK 0xf0000
-/// A chest that stays shut while a party member (up to ALLY_MAX) leads.
+/// A chest that stays shut while a party member (up to ALLY_MAX) leads: "can't
+/// open it..." (MsgCantOpenIt).
 #define FIND_CHEST_LOCKED 0x10000
 
 // A field Psynergy or item use, packed into one value, as FieldWork.psynergy
@@ -168,6 +168,15 @@ void FieldPsynergy_Carry(void);
 #define FIELD_CELL_ORIGIN(cell) ((cell) << FIELD_CELL_SHIFT)
 /// The 16.16 coordinate of the middle of a map grid cell.
 #define FIELD_CELL_CENTER(cell) (FIELD_CELL_ORIGIN(cell) + toFIXED(8))
+
+/// The frames the leader pushes against a step trigger, a ledge, a gap or a
+/// wall before it runs, jumps or climbs (FieldWork.blockedSteps).
+#define FIELD_PUSH_FRAMES 12
+
+/// Where a field Psynergy or item use (FieldWork.psynergy and FieldWork.item)
+/// keeps the party member who uses it: bits 13 to 10, above the Psynergy or
+/// item.
+#define ACT_UNIT_SHIFT 10
 
 //--------------------------------------------------------------------------
 // The map's treasure spots (chests and Psynergy Stones)

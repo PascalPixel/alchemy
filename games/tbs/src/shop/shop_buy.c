@@ -275,9 +275,8 @@ void Shop_DrawStock(struct Window *window, s32 selected) {
            priceX += 32, pageSlot++, stockCursor++, stockIndex++) {
         itemId = *stockCursor;
         item = Item_GetDirectFar(itemId);
-        // Depth slots: the items 252, the chosen one 253, the prices 251
-        icon =
-            WindowSprite_CreateLoadedFar(itemId, 1, window, pageSlot * 32, 0);
+        icon = WindowSprite_CreateLoadedFar(itemId, ICON_BASE, window,
+                                            pageSlot * 32, 0);
         icon->depth = OAM_DEPTH_FRONT - 3;
         if (stockIndex == selected) {
           icon->motion = WINDOW_SPRITE_MOTION_SWELL;
@@ -490,9 +489,11 @@ void Shop_DrawCarriedItem(struct Window *window, s32 unitId, s32 itemId) {
     itemIndex = 0;
     if (unit->inventory[itemIndex] != 0) {
       for (;;) {
-        icon = (u8 *)WindowSprite_CreateLoadedFar(unit->inventory[itemIndex],
-                                                  27, window, x, y);
-        icon[offsetof(struct WindowSprite, depth)] = 252;
+        icon = (u8 *)WindowSprite_CreateLoadedFar(
+            unit->inventory[itemIndex],
+            ICON_BASE | ICON_COUNT_ABOVE_ONE | ICON_BROKEN | ICON_EQUIPPED,
+            window, x, y);
+        icon[offsetof(struct WindowSprite, depth)] = OAM_DEPTH_FRONT - 3;
         x += 16;
         if (itemIndex == 4) {
           x = 8;
@@ -634,10 +635,13 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
                   DMA_COPY_WORDS(8 * TILE_SIZE_4BPP / 4), REG_DMA3);
           // Paint capacity, available stock, selection and carried items in
           // that order; each shorter prefix overwrites the previous colour.
-          QuantityBar_Fill(SHOP_STACK_LIMIT, 14, tileBuffer);
-          QuantityBar_Fill(minimum + maximum, 0, tileBuffer);
-          QuantityBar_Fill(minimum + quantityIndex + 1, 10, tileBuffer);
-          QuantityBar_Fill(minimum, 2, tileBuffer);
+          QuantityBar_Fill(SHOP_STACK_LIMIT, QUANTITY_BAR_OUT_OF_REACH,
+                           tileBuffer);
+          QuantityBar_Fill(minimum + maximum, QUANTITY_BAR_CHOOSABLE,
+                           tileBuffer);
+          QuantityBar_Fill(minimum + quantityIndex + 1, QUANTITY_BAR_CHOSEN,
+                           tileBuffer);
+          QuantityBar_Fill(minimum, QUANTITY_BAR_HELD, tileBuffer);
           VramCache_Load(resourceSlot, 8 * TILE_SIZE_4BPP, tileBuffer);
           selectedQuantity = quantityIndex + 1;
 #if LANGUAGE != LANGUAGE_JAPANESE
@@ -730,7 +734,7 @@ s32 Shop_ConfirmEquip(s32 unitId, s32 slot) {
   if (item->flags & ITEM_CURSED) {
     Sound_PlayFar(SE_CURSE);
     Message_CloseFinishedWindowsFar();
-    Message_OpenWindowFar(MsgBecameCursed, 8, 4, 2);
+    Message_OpenWindowFar(MsgBecameCursed, 8, 4, MESSAGE_WINDOW_UNREAD);
     while (Message_AllTypedFar() == 0) {
       wait(1);
     }

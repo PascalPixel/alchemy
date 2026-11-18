@@ -73,9 +73,11 @@ extern u8 gGameFlagBytes[];
 /// The party's equipment put aside while the Colosso takes it away: a
 /// sentinel, four 15-slot inventories, the two shortcuts and the party order.
 extern u16 gInventorySnapshot[];
-/// How many of each rare item the shops may still sell, 0 to 99, by counter
-/// number (gItem_ArtifactSlotTable; RareItemStock_Adjust).
-extern u8 gRareItemStock[128];
+/// The rare item counters, and the most each counts.
+enum { ITEM_COUNTER_COUNT = 128, ITEM_COUNTER_MAX = 99 };
+/// How many of each rare item the shops may still sell, 0 to ITEM_COUNTER_MAX,
+/// by counter number (gItem_ArtifactSlotTable; RareItemStock_Adjust).
+extern u8 gRareItemStock[ITEM_COUNTER_COUNT];
 /// The 64-byte save stamp, in the first half of the save buffer, that the
 /// Battle Arena writes into the current file alone.
 extern u8 gBattleArenaRecord[];
@@ -209,6 +211,10 @@ s32 Battle_CalculateAttackDamage(s32 attack, s32 defense, s32 addedPower,
                                  s32 elementDifference);
 s32 Battle_CalculatePsynergyPower(s32 power, s32 elementDifference,
                                   s32 powerMultiplier);
+/// The element power at which Battle_CalculateRecovery's healing is neither
+/// stronger nor weaker, and the multiplier that keeps an amount as it is.
+#define HEALING_BASE_POWER 100
+#define BATTLE_MULTIPLIER_ONE 256
 s32 Battle_CalculateRecovery(s32 power, s32 elementPower, s32 powerMultiplier);
 s32 Item_GetEquippedElement(s32 unitId);
 s32 Equipment_GetUnleashRateBonus(struct Unit *unit);

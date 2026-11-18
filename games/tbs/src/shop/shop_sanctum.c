@@ -4,21 +4,29 @@
 
 #include "shop_internal.h"
 
+/// The donations the sanctum asks, in coins: reviving and removing a curse ask
+/// so many for each of the party member's levels.
+enum SanctumDonation {
+  DONATION_REVIVE_PER_LEVEL = 20,
+  DONATION_CURE_POISON = 10,
+  DONATION_REPEL_EVIL = 50,
+  DONATION_REMOVE_CURSE_PER_LEVEL = 10
+};
+
 /// Returns the sanctum's fee, in coins, for `serviceKind` on party member
-/// `unitId`: 20 a level to revive, 10 to cure poison, 50 to exorcise and 10 a
-/// level to remove a curse.
+/// `unitId`.
 s32 Sanctum_ServicePrice(s32 unitId, s32 serviceKind) {
   u8 level = Unit_GetFar(unitId)->level;
   s32 donation = 0;
 
   if (serviceKind == SANCTUM_SERVICE_REVIVE) {
-    donation = level * 20;
+    donation = level * DONATION_REVIVE_PER_LEVEL;
   } else if (serviceKind == SANCTUM_SERVICE_CURE_POISON) {
-    donation = 10;
+    donation = DONATION_CURE_POISON;
   } else if (serviceKind == SANCTUM_SERVICE_REPEL_EVIL) {
-    donation = 50;
+    donation = DONATION_REPEL_EVIL;
   } else if (serviceKind == SANCTUM_SERVICE_REMOVE_CURSE) {
-    donation = level * 10;
+    donation = level * DONATION_REMOVE_CURSE_PER_LEVEL;
   }
   return donation;
 }
@@ -78,7 +86,8 @@ void Sanctum_ShowKeeperMessage(s32 messageId) {
   Message_CloseFinishedWindowsFar();
   messageId = Sanctum_GetServiceMessage(messageId);
   Message_OpenWindowFar(messageId, 5, 0,
-                        MESSAGE_WINDOW_VOICE(portraitResource) | 0x22);
+                        MESSAGE_WINDOW_VOICE(portraitResource) |
+                            MESSAGE_WINDOW_FIXED_X | MESSAGE_WINDOW_UNREAD);
   while (Message_AllTypedFar() == 0) {
     wait(1);
   }
@@ -95,7 +104,8 @@ void Sanctum_ShowKeeperMessageHidingCursor(s32 messageId) {
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   Message_CloseFinishedWindowsFar();
   Message_OpenWindowFar(messageId, 5, 0,
-                        MESSAGE_WINDOW_VOICE(portraitResource) | 0x22);
+                        MESSAGE_WINDOW_VOICE(portraitResource) |
+                            MESSAGE_WINDOW_FIXED_X | MESSAGE_WINDOW_UNREAD);
   while (Message_AllTypedFar() == 0)
     wait(1);
   wait(1);
@@ -410,7 +420,7 @@ void Sanctum_UpdateBurst(void) {
   s32 i;
   s8 burstMember;
 
-  for (i = 0; i < 24; i++)
+  for (i = 0; i < SANCTUM_PARTICLE_COUNT; i++)
     FieldParticle_UpdateFar(&shop->effects[i]);
   burstMember = shop->burstMember;
   if (burstMember != -1)
@@ -450,8 +460,8 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   position.x = toFIXED(shop->partyMemberX[member]);
   position.z = toFIXED(shop->partyMemberY[member]) - toFIXED(12);
 
-  // Spawn eighteen particles while the task continues updating all twenty-four.
-  for (effectIndex = 0; effectIndex <= 17; effectIndex++) {
+  // The task goes on moving every particle while the burst's fly in.
+  for (effectIndex = 0; effectIndex < SANCTUM_BURST_SPARKLES; effectIndex++) {
     effect = &shop->effects[effectIndex];
     FieldParticle_InitializeFar(effect, SPRITE_PARTICLE, position.x,
                                 position.z);
@@ -483,7 +493,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   {
     u8 *flagEntry = (u8 *)&shop->effects[0].active;
     struct FieldParticle *effectSlot = shop->effects;
-    for (effectIndex = 0; effectIndex < 24; effectIndex++) {
+    for (effectIndex = 0; effectIndex < SANCTUM_PARTICLE_COUNT; effectIndex++) {
       s32 flag = *flagEntry;
 
       flag <<= 24;
@@ -497,7 +507,8 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   }
 
   Task_Remove(Sanctum_UpdateBurst);
-  Sprite_SetAnimationSpeedFar(shop->partyMemberIcons[member], 16);
+  Sprite_SetAnimationSpeedFar(shop->partyMemberIcons[member],
+                              ANIMATION_STEP_NORMAL);
   Shop_RestoreFieldPalette();
   wait(30);
   shop->cursor.anchor->motion = savedCursorMode;

@@ -28,6 +28,7 @@ s32 GameFlag_Set(s32 flag) {
   return flag;
 }
 
+/// Clears `flag`.
 void GameFlag_Clear(s32 flag) {
   s32 bit = GAME_FLAG_BIT(flag);
   u8 *flags = gGameFlagBytes;
@@ -61,13 +62,16 @@ void GameFlag_SetByte(s32 flag, s32 value) {
   gGameFlagBytes[flag] = value;
 }
 
-/// Adds 1 to the byte `flag` is in, stopping at 255, and returns it. Only
-/// game.s's bare veneer reaches it; nothing calls it by name.
+/// The most a counter byte among the flags holds.
+#define GAME_FLAG_BYTE_MAX 255
+
+/// Adds 1 to the byte `flag` is in, stopping at GAME_FLAG_BYTE_MAX, and returns
+/// it. Only game.s's bare veneer reaches it; nothing calls it by name.
 u8 GameFlag_IncrementByte(s32 flag) {
   u8 *flags = gGameFlagBytes;
   flag = GAME_FLAG_BYTE(flag);
 
-  if (flags[flag] < 255)
+  if (flags[flag] < GAME_FLAG_BYTE_MAX)
     flags[flag]++;
   return flags[flag];
 }
@@ -83,10 +87,13 @@ u8 GameFlag_DecrementByte(s32 flag) {
   return flags[flag];
 }
 
+/// The bits of a nibble flag, low or high in its byte by its number's bit 2.
+#define GAME_FLAG_NIBBLE_MASK 0xf
+
 /// Returns the four bits a flag is in, 0 to 15.
 s32 GameFlag_GetNibble(u32 flag) {
   s32 shift = flag & 4;
-  s32 mask = 15 << shift;
+  s32 mask = GAME_FLAG_NIBBLE_MASK << shift;
   flag = GAME_FLAG_BYTE(flag);
 
   return (gGameFlagBytes[flag] & mask) >> shift;
@@ -95,7 +102,7 @@ s32 GameFlag_GetNibble(u32 flag) {
 /// Sets the four bits `flag` is in. Only game.s's bare veneer reaches it;
 /// nothing calls it by name.
 void GameFlag_SetNibble(s32 flag, s32 value) {
-  s32 nibble = 15;
+  s32 nibble = GAME_FLAG_NIBBLE_MASK;
   s32 shift = flag & 4;
   s32 mask = nibble << shift;
   u8 *flags = gGameFlagBytes;

@@ -232,8 +232,11 @@ enum DisplayControl {
 /// The start of the 32 KB of IWRAM, the CPU's fast internal work memory, as
 /// pret names it.
 #define IWRAM_START 0x03000000
-/// The end of the 256 KB of EWRAM from 0x02000000, as pret names it: the limit
-/// the EWRAM heap's allocators test.
+/// The start of the 256 KB of EWRAM, the slower external work memory, as pret
+/// names it.
+#define EWRAM_START 0x02000000
+/// The end of EWRAM, as pret names it: the limit the EWRAM heap's allocators
+/// test.
 #define EWRAM_END 0x02040000
 /// Video RAM, as pret names it: background tiles and maps, then sprite tiles.
 #define VRAM 0x06000000
@@ -298,7 +301,10 @@ enum DisplayControl {
 #define SIO_ID_SHIFT 4      ///< SIO_ID's lowest bit
 /// The multiplayer id (SIO_ID) in a SIOCNT value, taken out by shifts.
 #define SIO_ID_OF(control) (((control) << 26) >> 30)
-#define SIO_ERROR 0x0040       ///< multiplayer: the last transfer failed
+#define SIO_ERROR 0x0040 ///< multiplayer: the last transfer failed
+/// The SIO_ERROR bit of a SIOCNT value, taken out by shifts as SIO_ID_OF takes
+/// the id.
+#define SIO_ERROR_OF(control) (((control) << 25) >> 31)
 #define SIO_START 0x0080       ///< starts a transfer; set while one runs
 #define SIO_32BIT_MODE 0x1000  ///< normal mode, 32 bits a transfer
 #define SIO_MULTI_MODE 0x2000  ///< multiplayer mode

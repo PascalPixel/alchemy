@@ -119,6 +119,7 @@
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
 #include "system/heap_slots.h"
+#include "system/io_reg.h"
 #include "system/main_routine_work.h"
 #include "system/system.h"
 #include "system/task.h"
@@ -133,8 +134,8 @@ extern s32 gValePlaza_SecondTravelerLeapActions[];
 extern s32 gValePlaza_FirstTravelerLeapActions[];
 extern s32 gValePlaza_LeaderActions[];
 extern s32 gValePlaza_StormGaretLeapActions[];
-extern s32 gValePlaza_FirstTravelerBounceActions[];
-extern s32 gValePlaza_SecondTravelerBounceActions[];
+extern s32 gValePlaza_FirstTravelerLeapAwayActions[];
+extern s32 gValePlaza_SecondTravelerLeapAwayActions[];
 extern s32 gValePlaza_FaceTargetActions[];
 extern s32 gValePlaza_FarewellDogActions[];
 extern s32 gValePlaza_FarewellChaseActions[];
@@ -401,12 +402,16 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gValePlaza_ActorPlacements;
 }
 
+/// The PP a Psynergy Stone gives each party member, as the field's own stones
+/// give it (field_sequence_triggers.c).
+#define PP_RESTORED_BY_STONE 999
+
 /// In Vale, searching the Psynergy Stone restores the party's PP.
 static void ValePlaza_UsePsynergyStone(void) {
   Event_Start();
   FieldMessage_Show(MsgValeCheckedThePsynergyStone, 1);
   Sound_Play(SE_RECOVERY);
-  Party_AddPp(999, 0);
+  Party_AddPp(PP_RESTORED_BY_STONE, 0);
   Event_Wait(10);
   FieldMessage_Show(MsgValePartyPpRestored, 1);
   Message_CloseFinishedWindows();
@@ -470,10 +475,14 @@ static void ValePlaza_AskAboutTheTravelers(void) {
   Event_End();
 }
 
+/// The strongman's tremor shifts the view a pixel, each way in turn, every
+/// this many frames.
+#define TREMOR_STEP_FRAMES 10
+
 /// In Vale before the party sets out, a strongman shows Isaac his Psynergy and
 /// shakes the ground.
 static void ValePlaza_DemonstratePsynergy(void) {
-  u32 i;
+  u32 frame;
   s32 message;
   s32 shakes;
   s32 *origin;
@@ -511,15 +520,15 @@ static void ValePlaza_DemonstratePsynergy(void) {
     Event_Wait(15);
     Scene_StartEventPsynergy();
     shakes = 0;
-    for (i = 0; i < 40; i++) {
+    for (frame = 0; frame < 40; frame++) {
       ValePlaza_FlashPsynergyPalette(
           Actor_Get(ACTOR_STRONGMAN_SHOWING_PSYNERGY));
       wait(1);
     }
     Task_AddFrame(ValePlaza_UpdateShowingStrongmanPsynergy, TASK_PASS_FRAME);
     Sound_Play(SE_TREMOR);
-    for (i = 0; i != 180; i++) {
-      if (Math_RemainderUnsigned(i, 10) == 0) {
+    for (frame = 0; frame != 180; frame++) {
+      if (Math_RemainderUnsigned(frame, TREMOR_STEP_FRAMES) == 0) {
         if ((1 & shakes) != 0) {
           *origin -= toFIXED(1);
         } else {
@@ -602,7 +611,7 @@ static void ValePlaza_TalkAboutFallenStone(void) {
 /// In Vale on the stormy night, a small boy with some Psynergy left lifts
 /// a small rock (ACTOR_STORM_SMALL_ROCK) into the air.
 static void ValePlaza_BoyLiftsSmallRock(void) {
-  u32 i;
+  u32 frame;
   s32 savedMotionFlags;
   struct Actor *rock;
 
@@ -618,7 +627,7 @@ static void ValePlaza_BoyLiftsSmallRock(void) {
   Event_Wait(20);
   // Charge the caster's display, then start both palette updates.
   Scene_StartEventPsynergy();
-  for (i = 0; i < 40; i++) {
+  for (frame = 0; frame < 40; frame++) {
     ValePlaza_FlashPsynergyPalette(Actor_Get(ACTOR_STORM_ROCK_LIFTING_BOY));
     wait(1);
   }
@@ -630,7 +639,7 @@ static void ValePlaza_BoyLiftsSmallRock(void) {
   rock = Actor_Get(ACTOR_STORM_SMALL_ROCK);
   savedMotionFlags = rock->motionFlags;
   rock->motionFlags = 0;
-  for (i = 0; i < 40; i++) {
+  for (frame = 0; frame < 40; frame++) {
     rock->y.fixed += toFIXED(3) / 32;
     wait(1);
   }
@@ -745,14 +754,14 @@ static void ValePlaza_OpenNortheastDoor(void) {
 
 /// In Vale, enters through the western door of the middle row of houses
 /// (SceneId_CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH).
-static void ValePlaza_OpenCentralWestDoor(void) {
+static void ValePlaza_OpenMiddleWestDoor(void) {
   ValePlaza_OpenDoorAndWalkThrough(43, 15, 230, 407);
   Vale_RequestBackdropExit(VALE_PLAZA_TO_COTTAGE_ROOMS_A_NORTH);
 }
 
 /// In Vale, enters through the eastern door of the middle row of houses
 /// (SceneId_CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH).
-static void ValePlaza_OpenCentralEastDoor(void) {
+static void ValePlaza_OpenMiddleEastDoor(void) {
   ValePlaza_OpenDoorAndWalkThrough(52, 18, 374, 419);
   Vale_RequestBackdropExit(VALE_PLAZA_TO_COTTAGE_ROOMS_A_SOUTH);
 }
@@ -1303,14 +1312,15 @@ static void ValePlaza_TravelersLeaveAfterBattle(void) {
   actor = Actor_Get(ACTOR_FIRST_TRAVELER);
   actor->bounce = FIXED_ONE / 100;
   actor->gravity = toFIXED(1) / 2;
-  Actor_SetScript(ACTOR_FIRST_TRAVELER, gValePlaza_FirstTravelerBounceActions);
+  Actor_SetScript(ACTOR_FIRST_TRAVELER,
+                  gValePlaza_FirstTravelerLeapAwayActions);
   Event_Wait(24);
   Actor_SetSpeed(ACTOR_SECOND_TRAVELER, 2.4);
   actor = Actor_Get(ACTOR_SECOND_TRAVELER);
   actor->bounce = FIXED_ONE / 100;
   actor->gravity = toFIXED(1) / 2;
   Actor_RunScriptAndWait(ACTOR_SECOND_TRAVELER,
-                         gValePlaza_SecondTravelerBounceActions);
+                         gValePlaza_SecondTravelerLeapAwayActions);
   Event_Wait(40);
   // Three last flashes of lightning, then the storm ends and the screen
   // fades slowly out.
@@ -1796,7 +1806,7 @@ static void ValePlaza_SpawnEffectPair(struct Actor *parent) {
         sprite->slot = effectWork->tileSlot;
         sprite->retainCacheEntry = 1;
         sprite->image.tile =
-            (gVramCacheEntries[sprite->slot].offset >> 5) & 0x3ff;
+            (gVramCacheEntries[sprite->slot].offset >> 5) & OBJ_TILE_MASK;
         sprite->image.fullColor = 0;
         sprite->image.shape = 1;
         sprite->image.size = 2;
@@ -1975,7 +1985,7 @@ s32 gValePlaza_StormGaretLeapActions[] = {
     SC_END,
 };
 
-s32 gValePlaza_FirstTravelerBounceActions[] = {
+s32 gValePlaza_FirstTravelerLeapAwayActions[] = {
     SC_ANIMATION(5),
     SC_WAIT(10),
     SC_ANIMATION(6),
@@ -2003,7 +2013,7 @@ s32 gValePlaza_FirstTravelerBounceActions[] = {
     SC_END,
 };
 
-s32 gValePlaza_SecondTravelerBounceActions[] = {
+s32 gValePlaza_SecondTravelerLeapAwayActions[] = {
     SC_ANIMATION(5),
     SC_WAIT(10),
     SC_ANIMATION(6),
@@ -2405,8 +2415,8 @@ struct Trigger gValePlaza_Triggers[] = {
     { TRIGGER_TALK, ACTOR_STRONGMAN_WALK_TO_RECOVER, CONDITION_ALWAYS, MSGNO(MsgValeWalkToRecoverPsynergy) },
     { TRIGGER_TALK, ACTOR_HUT_OWNER, CONDITION_ALWAYS, MSGNO(MsgValeFoodStoredForWinter) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(ValePlaza_OpenNorthwestDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(ValePlaza_OpenCentralWestDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(ValePlaza_OpenCentralEastDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(ValePlaza_OpenMiddleWestDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(ValePlaza_OpenMiddleEastDoor) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT(ValePlaza_OpenSouthwestDoor) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(ValePlaza_OpenWestEdgeDoor) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(ValePlaza_OpenSoutheastDoor) },
@@ -2429,8 +2439,8 @@ struct Trigger gValePlaza_StormTriggers[] = {
     { TRIGGER_TALK, ACTOR_STORM_GIRL_WHO_SAW_JENNA, CONDITION_ALWAYS, EVENT(ValePlaza_TalkAboutHelping) },
     { TRIGGER_TALK, ACTOR_STORM_GARETS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeRaceAgainstTime) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(ValePlaza_OpenNorthwestDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(ValePlaza_OpenCentralWestDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(ValePlaza_OpenCentralEastDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(ValePlaza_OpenMiddleWestDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(ValePlaza_OpenMiddleEastDoor) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT(ValePlaza_OpenSouthwestDoor) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(ValePlaza_OpenWestEdgeDoor) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(ValePlaza_OpenSoutheastDoor) },
@@ -2468,8 +2478,8 @@ struct Trigger gValePlaza_TriggersAfterLeaving[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_WALK_TO_RECOVER, CONDITION_ALWAYS, MSGNO(MsgValeRecoverPsynergyByWalking) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HUT_OWNER, CONDITION_ALWAYS, MSGNO(MsgValeStonesReplenishPsynergy) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(ValePlaza_OpenNorthwestDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(ValePlaza_OpenCentralWestDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(ValePlaza_OpenCentralEastDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(ValePlaza_OpenMiddleWestDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(ValePlaza_OpenMiddleEastDoor) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT(ValePlaza_OpenSouthwestDoor) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(ValePlaza_OpenWestEdgeDoor) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(ValePlaza_OpenSoutheastDoor) },
@@ -2509,8 +2519,8 @@ struct Trigger gValePlaza_TriggersAfterKalay[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_AFTER_KALAY_HUT_OWNER, CONDITION_ALWAYS, MSGNO(MsgValeEruptionTooMuchForPeople) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(ValePlaza_OpenNorthwestDoor) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(ValePlaza_OpenNortheastDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(ValePlaza_OpenCentralWestDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(ValePlaza_OpenCentralEastDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(ValePlaza_OpenMiddleWestDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(ValePlaza_OpenMiddleEastDoor) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT(ValePlaza_OpenSouthwestDoor) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(ValePlaza_OpenWestEdgeDoor) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(ValePlaza_OpenSoutheastDoor) },

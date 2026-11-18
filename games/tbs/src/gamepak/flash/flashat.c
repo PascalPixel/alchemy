@@ -6,14 +6,15 @@
 #include "gamepak/flash.h"
 #include "gamepak/flash_data.h"
 
-/// The Atmel chip's waits by timing: milliseconds, the timer's reload value
-/// and its control.
+/// The Atmel chip's waits by FlashPhase: milliseconds, the timer's reload value
+/// and its control. It erases a sector by programming it, so the sector-erase
+/// row is empty.
 // clang-format off
 const u16 Flash_MaxTimeAtmel[] = {
-    10, 0xffbd, 0xc2,
-    40, 0xffbd, 0xc2,
-    0, 0,      0,
-    40, 0xffbd, 0xc2,
+    10, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
+    40, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
+    0, 0, 0,
+    40, FLASH_TIMER_RELOAD, FLASH_TIMER_CONTROL,
 };
 // clang-format on
 

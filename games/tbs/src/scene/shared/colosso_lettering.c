@@ -4,6 +4,12 @@
 /// turns, and for the race `The 1st Match` (or 2nd or 3rd), 3, 2, 1 and `GO`;
 /// and `WIN` or `LOSE` once the match's battle is over.
 
+/// The wait in gColosso_LetteringTitle while the title stands still in the
+/// middle, and the first in gColosso_LetteringWin and gColosso_LetteringLose,
+/// while `WIN` or `LOSE` stands: the script entries each match rewrites.
+#define LETTERING_TITLE_HOLD 15
+#define LETTERING_RESULT_HOLD 13
+
 /// Starts the lettering task on the picture last loaded, laid out in shape
 /// (enum ColossoLetteringShape) and moved by that shape's script;
 /// secondHalf picks the second half of the picture: 2 rather than 3, or
@@ -59,8 +65,7 @@ static void Colosso_ShowOpeningLettering(s32 match) {
   Event_Start();
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  // The wait while the title stands still in the middle.
-  gColosso_LetteringTitle[15] = match * 60;
+  gColosso_LetteringTitle[LETTERING_TITLE_HOLD] = match * FRAMES_PER_SECOND;
   Event_Wait(30);
   // The 1st to 3rd Match play MUS_JINGLE_SMALL, MUS_JINGLE_MEDIUM and
   // MUS_JINGLE_LARGE.
@@ -108,15 +113,15 @@ static void Colosso_ShowMatchResult(s32 result) {
   Sound_Play(SE_COLOSSO_LETTERING);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  gColosso_LetteringWin[13] = result * 60;
-  STORE_CONST(gColosso_LetteringLose[13]) =
-      (result < 0 ? -result : result) * 60;
+  gColosso_LetteringWin[LETTERING_RESULT_HOLD] = result * FRAMES_PER_SECOND;
+  STORE_CONST(gColosso_LetteringLose[LETTERING_RESULT_HOLD]) =
+      (result < 0 ? -result : result) * FRAMES_PER_SECOND;
   if (result < 0) {
     Event_Wait(30);
     Sound_Play(MUS_INN);
     Colosso_LoadLettering(COLOSSO_PICTURE_WIN_LOSE_FOR_LOSS);
     COLOSSO_START_LETTERING(COLOSSO_SHAPE_RESULT, 1);
-    Event_Wait(-result * 60 + 60);
+    Event_Wait(-result * FRAMES_PER_SECOND + FRAMES_PER_SECOND);
     loser = ACTOR_PARTY_LEADER;
   } else {
     Event_Wait(30);
@@ -125,7 +130,7 @@ static void Colosso_ShowMatchResult(s32 result) {
     Sound_Play(result + (MUS_JINGLE_SMALL - 1));
     Colosso_LoadLettering(COLOSSO_PICTURE_WIN_LOSE);
     COLOSSO_START_LETTERING(COLOSSO_SHAPE_RESULT, 0);
-    Event_Wait(result * 60 + 60);
+    Event_Wait(result * FRAMES_PER_SECOND + FRAMES_PER_SECOND);
     loser = ACTOR_OPPONENT;
   }
   Actor_ShowEmote(loser, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
@@ -138,3 +143,6 @@ static void Colosso_ShowMatchResult(s32 result) {
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
 }
+
+#undef LETTERING_TITLE_HOLD
+#undef LETTERING_RESULT_HOLD

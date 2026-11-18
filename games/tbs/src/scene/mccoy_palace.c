@@ -67,6 +67,10 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
+/// Unused: the soldier who keeps the treasure would offer the party a pick of
+/// the four treasures; nothing in the game sets it.
+#define FLAG_MCCOY_PALACE_UNUSED_PICK_OFFERED 0x84d
+
 extern s32 gPalace_FacingActions[];
 extern s32 gPalace_PacingActions[];
 extern struct SceneEntrance gMcCoyPalaceEntrances[];
@@ -262,8 +266,8 @@ static void McCoyPalace_TalkToSoldierWatchingKolima(void) {
 
 /// McCoy's Palace, the treasure room: the soldier who keeps the treasure.
 ///
-/// Unused: with flag 0x84d set he would say `Pick any one of the four
-/// treasures.` instead, but nothing in the game names or sets that flag.
+/// Unused: with FLAG_MCCOY_PALACE_UNUSED_PICK_OFFERED set he would go on to
+/// say `Pick any one of the four treasures.`
 static void McCoyPalace_TalkToSoldierShowingTheReward(void) {
   Event_Start();
 
@@ -273,7 +277,9 @@ static void McCoyPalace_TalkToSoldierShowingTheReward(void) {
     Event_SetMessageId(MsgBilibinRewardReceivedWasIndeedGreatest);
   } else {
     Event_SetMessageId(MsgBilibinDoThinkTheseBilibinsGreat);
-    if (GameFlag_Get(0x84d) != 0) {
+    // "What do you think? These are Bilibin's great treasures."
+    if (GameFlag_Get(FLAG_MCCOY_PALACE_UNUSED_PICK_OFFERED) != 0) {
+      // "Pick any one of the four treasures."
       gFieldWork->message++;
     }
   }

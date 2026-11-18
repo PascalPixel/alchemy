@@ -6,6 +6,9 @@
 #include "gamepak/flash_data.h"
 #include "system/io_reg.h"
 
+/// The erases a sector is given before it reads blank.
+#define FLASH_ERASE_ATTEMPTS 81
+
 /// Issues the chip-erase command and waits for an erased byte.
 u16 EraseFlashChip(void) {
   u8 savedCode[64];
@@ -107,7 +110,7 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source) {
       }
     }
     attempt = attempt + 1;
-    if (attempt == 81) {
+    if (attempt == FLASH_ERASE_ATTEMPTS) {
       return status;
     }
   }

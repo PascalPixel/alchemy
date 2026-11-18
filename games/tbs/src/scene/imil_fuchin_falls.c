@@ -241,7 +241,7 @@ STATIC_ASSERT(offsetof(struct CaveDustOptions, targetScaleY) ==
               offsetof(struct EffectOptions, targetScaleY));
 
 /// Talking to Fever, a Mars Djinni, in Imil Falls Cave adds it to the party.
-static void Imil_RecruitFever(void) {
+static void Imil_FeverJoins(void) {
   Djinn_JoinParty(ACTOR_FEVER, ELEMENT_MARS, DJINNI_INDEX(DJINNI_FEVER));
 }
 
@@ -1499,7 +1499,7 @@ static void ImilFuchinFalls_PlaceDragonsEye(void) {
 /// Searching where the Dragon's Eye lies, in Fuchin Falls Cave's third room
 /// (examine trigger 30), gives it to the party
 /// (FLAG_FUCHIN_FALLS_DRAGONS_EYE_FOUND).
-static void FuchinFallsCave_CollectDragonsEye(void) {
+static void FuchinFallsCave_FindDragonsEye(void) {
   Event_Start();
 
   if (gImilFuchinFalls_DragonsEye != NULL) {
@@ -1734,7 +1734,7 @@ static void FuchinFallsCave_EndRevealLighting(void) {
 
 /// Turns the actor sliding on Imil Falls Cave's ice gradually toward the
 /// held direction.
-static void Imil_TurnSkaterTowardHeldDirection(struct Actor *actor) {
+static void Imil_TurnOnIceTowardHeldDirection(struct Actor *actor) {
   s32 timer;
   s32 direction;
   u16 facing;
@@ -1809,7 +1809,7 @@ static void Imil_SlideActorAcrossIce(void) {
     Actor_SelectAnimation(actor, ANIM_WALK);
     Actor_SetAnimationSpeed(actor, IMIL_SLIDE_ANIMATION_STEP);
     Actor_WaitForMove(actor);
-    actor->update = Imil_TurnSkaterTowardHeldDirection;
+    actor->update = Imil_TurnOnIceTowardHeldDirection;
 
     for (;;) {
       FieldVector_AddPolarOffset(16, heading, &probe);
@@ -2053,7 +2053,7 @@ struct Trigger gImilFuchinFalls_NoTriggers[] = {
 struct Trigger gImilFuchinFalls_ImilFallsCaveTriggers[] = {
     { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Imil_LeaveFallsCave) },
     { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Imil_MoveAcrossIce) },
-    { TRIGGER_TALK, ACTOR_FEVER, CONDITION_ALWAYS, EVENT(Imil_RecruitFever) },
+    { TRIGGER_TALK, ACTOR_FEVER, CONDITION_ALWAYS, EVENT(Imil_FeverJoins) },
     { TRIGGER_TABLE_END },
 };
 
@@ -2154,7 +2154,7 @@ struct Trigger gImilFuchinFalls_DragonsEyeRoomTriggers[] = {
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, FUCHIN_FALLS_CAVE_DRAGONS_EYE_LOGS_TO_CHAMBER },
     { TRIGGER_EXIT, 4, CONDITION_ALWAYS, FUCHIN_FALLS_CAVE_DRAGONS_EYE_TO_FUCHIN_FALLS_CAVE_ENTRANCE },
     { TRIGGER_EXIT, 5, CONDITION_ALWAYS, FUCHIN_FALLS_CAVE_DRAGONS_EYE_TO_FUCHIN_FALLS_CAVE_ZEPHYR },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 30, FLAG_FUCHIN_FALLS_DRAGONS_EYE_FOUND, EVENT(FuchinFallsCave_CollectDragonsEye) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), 30, FLAG_FUCHIN_FALLS_DRAGONS_EYE_FOUND, EVENT(FuchinFallsCave_FindDragonsEye) },
     { TRIGGER_TABLE_END },
 };
 // clang-format on

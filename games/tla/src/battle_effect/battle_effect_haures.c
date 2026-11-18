@@ -14,14 +14,11 @@ struct MoundVertex {
 };
 
 /// The map cell buffer past its first 16 KB: the rune's picture in the coming,
-/// then the charge's sparks.
+/// then the charge's sparks, which are EXTRA_PARTICLES.
 #define SCRATCH (Ram_MapCellBuffer + 16384)
 /// The mound strip's corners, rebuilt each frame from the morphing shapes.
 extern struct MoundVertex gHaures_WingCorners[];
 extern const u16 gHaures_BodyPiecePoints[][2];
-
-/// The charge's sparks, HAURES_SPARK_COUNT of them.
-#define HAURES_SPARKS ((struct Particle *)SCRATCH)
 
 #define HAURES_COMING_FRAMES 440 ///< frames of Haures's coming, unless skipped
 #define HAURES_FRAMES 92         ///< frames of the charge that follows
@@ -968,7 +965,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       velocity.x = -toFIXED(12);
       velocity.y = toFIXED(6);
       {
-        s32 *variant = &HAURES_SPARKS->variant;
+        s32 *variant = &EXTRA_PARTICLES->variant;
 
         for (i = 0; i != HAURES_SPARK_COUNT; i++, variant += 7) {
           *variant = -1;
@@ -989,7 +986,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     }
     {
       for (i = 0; i != HAURES_SPARK_COUNT; i++) {
-        struct Particle *p = &HAURES_SPARKS[i];
+        struct Particle *p = &EXTRA_PARTICLES[i];
         if (p->variant >= 0) {
           s32 n = (p->variant >> 3) + 1;
 
@@ -1006,7 +1003,8 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
 
       // This frame's sparks start at spark frame * HAURES_SPARKS_PER_FRAME,
       // three rows of four on.
-      for (i = 0, p = ((struct Particle(*)[4])SCRATCH)[frame * 2 + frame];
+      for (i = 0,
+          p = ((struct Particle(*)[4])EXTRA_PARTICLES)[frame * 2 + frame];
            i != HAURES_SPARKS_PER_FRAME; i++, p++) {
         s32 angle;
         s32 speed;
@@ -1262,9 +1260,7 @@ void Mesh_BuildCylinderBand(struct MeshVertex *vertices,
   triangles[segments * 2].vertex[1] = 0;
   triangles[segments * 2].vertex[2] = 0;
 }
-#undef BLITTER
 #undef SCRATCH
-#undef HAURES_SPARKS
 #undef SHARD_FACE
 #undef FIRST_RING_Y
 #undef RING_SPACING

@@ -204,8 +204,7 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 
 #define DECODE_BUFFER Ram_MapCellBuffer
 /// The particles the sky scene, the fall and the second strike's sparks keep in
-/// the map cell buffer, after its first 16384 bytes.
-#define DAEDALUS_PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 16384))
+/// EXTRA_PARTICLES.
 #define DAEDALUS_PARTICLE_COUNT (DAEDALUS_MISSILE_COUNT * DAEDALUS_TRAIL_LENGTH)
 
 /// The opening's mote copies: DAEDALUS_MOTE_COPIES copies of
@@ -347,7 +346,7 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 /// The sky scene's frames, unless A or B ends it sooner.
 #define DAEDALUS_SKY_FRAMES 800
 
-/// The fall's frames, and its runs of DAEDALUS_PARTICLES: each missile's
+/// The fall's frames, and its runs of EXTRA_PARTICLES: each missile's
 /// FALL_BURST_SLOTS, of which its two bursts use the first, and from
 /// FALL_TRAILS each missile's trail of FALL_TRAIL_LENGTH flames.
 #define DAEDALUS_FALL_FRAMES 109
@@ -383,7 +382,7 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 #define DAEDALUS_MISSILE_COUNT (DAEDALUS_MISSILE_COPIES + 1)
 #define DAEDALUS_MISSILE_PALETTE 14
 
-/// Runs of DAEDALUS_PARTICLES in the sky scene: each missile's trail of
+/// Runs of EXTRA_PARTICLES in the sky scene: each missile's trail of
 /// DAEDALUS_TRAIL_LENGTH, the flames of the rocket's launch, its exhaust, the
 /// bursts that rise from the foot of the view as it climbs, and the birds that
 /// drift across. The later runs share the last missiles' trails.
@@ -726,7 +725,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
         break;
     }
     for (i = 0; i != DAEDALUS_PARTICLE_COUNT; i++)
-      DAEDALUS_PARTICLES[i].variant = -1;
+      EXTRA_PARTICLES[i].variant = -1;
 
     frame = 0;
     if (!(gInput.held & KEY_B) && !(gInput.repeat & KEY_A)) {
@@ -849,7 +848,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
         for (i = 0; i != DAEDALUS_BIRD_COUNT; i++) {
           struct Particle *p;
 
-          p = &DAEDALUS_PARTICLES[DAEDALUS_BIRDS + i];
+          p = &EXTRA_PARTICLES[DAEDALUS_BIRDS + i];
           p->x = INTtoFIXED(gDaedalus_BirdStarts[i][0]);
           p->y = INTtoFIXED(gDaedalus_BirdStarts[i][1]);
           p->velocityX = gDaedalus_BirdSpeeds[i][0];
@@ -860,7 +859,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       for (i = 0; i != DAEDALUS_BIRD_COUNT; i++) {
         struct Particle *p;
 
-        p = &DAEDALUS_PARTICLES[DAEDALUS_BIRDS + i];
+        p = &EXTRA_PARTICLES[DAEDALUS_BIRDS + i];
         if (frame >= gDaedalus_BirdFrames[i]) {
           ((BlitFunc)blit[0])(
               dest,
@@ -947,8 +946,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           }
           if (p->velocityX > -toFIXED(8))
             p->velocityX -= toFIXED(1) / 2;
-          q = &DAEDALUS_PARTICLES[i * DAEDALUS_TRAIL_LENGTH +
-                                  (p->variant & (DAEDALUS_TRAIL_LENGTH - 1))];
+          q = &EXTRA_PARTICLES[i * DAEDALUS_TRAIL_LENGTH +
+                               (p->variant & (DAEDALUS_TRAIL_LENGTH - 1))];
           q->variant = 0;
           q->x = p->x / 2;
           q->y = p->y - toFIXED(20);
@@ -1056,7 +1055,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           for (i = 0; i != DAEDALUS_LAUNCH_FLAME_COUNT; i++) {
             struct Particle *q;
 
-            q = &DAEDALUS_PARTICLES[DAEDALUS_LAUNCH_FLAMES + i];
+            q = &EXTRA_PARTICLES[DAEDALUS_LAUNCH_FLAMES + i];
             q->x = INTtoFIXED((Random16() & 15) + 56);
             q->y = INTtoFIXED((Random16() & 31) + 64);
             q->velocityX = -((Random16() & 31) + 8) << 12;
@@ -1064,9 +1063,9 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
             q->variant = 0;
           }
           for (i = 0; i != DAEDALUS_EXHAUST_FLAMES; i++)
-            DAEDALUS_PARTICLES[DAEDALUS_EXHAUST + i].variant = -1;
+            EXTRA_PARTICLES[DAEDALUS_EXHAUST + i].variant = -1;
           for (i = 0; i != DAEDALUS_BURST_COUNT; i++)
-            DAEDALUS_PARTICLES[DAEDALUS_BURSTS + i].variant = -1;
+            EXTRA_PARTICLES[DAEDALUS_BURSTS + i].variant = -1;
         }
         // The rocket's flight, its particle's variant counting its frames:
         // exhaust from its tenth frame, bursts every fourth frame of two
@@ -1075,9 +1074,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           if (p->variant > 9) {
             struct Particle *q;
 
-            q = &DAEDALUS_PARTICLES[DAEDALUS_EXHAUST +
-                                    (p->variant &
-                                     (DAEDALUS_EXHAUST_FLAMES - 1))];
+            q = &EXTRA_PARTICLES[DAEDALUS_EXHAUST +
+                                 (p->variant & (DAEDALUS_EXHAUST_FLAMES - 1))];
             q->variant = 0;
             q->velocityX =
                 -(Trig_Sin(DAEDALUS_SPRITE(DAEDALUS_ROCKET)->rotation) * 2);
@@ -1099,8 +1097,8 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
               (p->variant & 3) == 0) {
             struct Particle *q;
 
-            q = &DAEDALUS_PARTICLES[DAEDALUS_BURSTS +
-                                    (p->variant & (DAEDALUS_BURST_COUNT - 1))];
+            q = &EXTRA_PARTICLES[DAEDALUS_BURSTS +
+                                 (p->variant & (DAEDALUS_BURST_COUNT - 1))];
             q->variant = 0;
             q->velocityX = ((Random16() & 31) + 16) << 12;
             q->velocityY = (-Random16() | ~15) << 14;
@@ -1160,7 +1158,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           for (i = 0; i != DAEDALUS_EXHAUST_FLAMES; i++) {
             struct Particle *q;
 
-            q = &DAEDALUS_PARTICLES[DAEDALUS_EXHAUST + i];
+            q = &EXTRA_PARTICLES[DAEDALUS_EXHAUST + i];
             if ((u32)q->variant < ROCKET_FLAME_COUNT) {
               ((BlitFunc)blits[1])(
                   dest, &work->sheet[q->variant * PICTURE_BYTES(ROCKET_FLAME)],
@@ -1174,7 +1172,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           for (i = 0; i != DAEDALUS_BURST_COUNT; i++) {
             struct Particle *q;
 
-            q = &DAEDALUS_PARTICLES[DAEDALUS_BURSTS + i];
+            q = &EXTRA_PARTICLES[DAEDALUS_BURSTS + i];
             if ((u32)q->variant < FLASH_BURST_PICTURE_COUNT * 4) {
               ((BlitFunc)blits[1])(
                   dest,
@@ -1439,7 +1437,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
         for (j = 0; j != DAEDALUS_TRAIL_LENGTH; j++) {
           struct Particle *q;
 
-          q = &DAEDALUS_PARTICLES[i * DAEDALUS_TRAIL_LENGTH + j];
+          q = &EXTRA_PARTICLES[i * DAEDALUS_TRAIL_LENGTH + j];
           if ((u32)q->variant < ROCKET_FLAME_COUNT) {
             ((BlitFunc)blit[0])(
                 dest, &work->sheet[q->variant * PICTURE_BYTES(ROCKET_FLAME)],
@@ -1547,7 +1545,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           DAEDALUS_SPRITE(i)->offsetY = 8;
         }
         for (i = 0; i != DAEDALUS_PARTICLE_COUNT; i++)
-          DAEDALUS_PARTICLES[i].variant = -1;
+          EXTRA_PARTICLES[i].variant = -1;
       }
       missileScale = gDaedalus_MissileScale;
       missilePlace.groundHeight = 0;
@@ -1571,7 +1569,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
               s32 angle;
               struct Particle *q;
 
-              q = &DAEDALUS_PARTICLES[i * FALL_BURST_SLOTS + j];
+              q = &EXTRA_PARTICLES[i * FALL_BURST_SLOTS + j];
               speed = (Random16() & 31) + 32;
               angle = (Random16() & 0x7fff) + DEGtoANG(90);
               q->x = p->x / 2;
@@ -1593,7 +1591,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
 
             {
               s32 m = (frame - gDaedalus_DiveStarts[i]) % FALL_TRAIL_LENGTH;
-              q = &DAEDALUS_PARTICLES[i * FALL_TRAIL_LENGTH + m + FALL_TRAILS];
+              q = &EXTRA_PARTICLES[i * FALL_TRAIL_LENGTH + m + FALL_TRAILS];
             }
             q->x = p->x / 2;
             q->y = p->y - toFIXED(16);
@@ -1612,7 +1610,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       for (i = 0; i != DAEDALUS_MISSILE_COUNT * FALL_TRAIL_LENGTH; i++) {
         struct Particle *q;
 
-        q = &DAEDALUS_PARTICLES[FALL_TRAILS + i];
+        q = &EXTRA_PARTICLES[FALL_TRAILS + i];
         if ((u32)q->variant < ROCKET_FLAME_COUNT + 2) {
           s32 v;
 
@@ -1631,7 +1629,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
       for (i = 0; i != DAEDALUS_MISSILE_COUNT * FALL_BURST_SLOTS; i++) {
         struct Particle *q;
 
-        q = &DAEDALUS_PARTICLES[i];
+        q = &EXTRA_PARTICLES[i];
         if ((u32)q->variant < FLASH_BURST_PICTURE_COUNT * 3) {
           s32 v;
 
@@ -1774,7 +1772,7 @@ void BattleEffect_RunDaedalusStrike(struct BattleEffectParams *args) {
       if (frame == DAEDALUS_STRIKE_SPARK_FRAME) {
         // UB: the lives are cleared through one s32 pointer stepped a whole
         // step at a time, past the step's scalar members.
-        s32 *life = &DAEDALUS_PARTICLES[0].variant;
+        s32 *life = &EXTRA_PARTICLES[0].variant;
 
         for (i = 0; i != DAEDALUS_STRIKE_SPARKS; i++) {
           *life = -1;
@@ -1784,7 +1782,7 @@ void BattleEffect_RunDaedalusStrike(struct BattleEffectParams *args) {
         Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
                              CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       }
-      sparks = DAEDALUS_PARTICLES;
+      sparks = EXTRA_PARTICLES;
       if ((u32)(frame - DAEDALUS_STRIKE_SPARK_FRAME) < DAEDALUS_STRIKE_BURSTS) {
         centerX = INTtoFIXED((Random16() & 63) + 28);
         centerY = INTtoFIXED((Random16() & 31) + 80);

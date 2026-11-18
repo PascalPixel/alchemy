@@ -12,10 +12,9 @@
 /// The canvas line each bite closes on, this far above the target's place.
 #define TRIPLE_CHOMP_BITE_HEIGHT 24
 
-/// The sparks, in the map cell buffer's second 16 KB: each bite throws
+/// The sparks, TRIPLE_CHOMP_SPARK_COUNT of EXTRA_PARTICLES: each bite throws
 /// TRIPLE_CHOMP_BITE_SPARKS from the start of its own run of
 /// TRIPLE_CHOMP_BITE_SPARK_SLOTS.
-#define TRIPLE_CHOMP_SPARKS ((struct Particle *)(Ram_MapCellBuffer + 16384))
 #define TRIPLE_CHOMP_SPARK_COUNT 512
 #define TRIPLE_CHOMP_BITE_SPARKS 32
 #define TRIPLE_CHOMP_BITE_SPARK_SLOTS 128
@@ -78,7 +77,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
   for (frame = 0; frame != TRIPLE_CHOMP_FRAMES; frame++) {
     if (frame == 0) {
       for (i = 0; i != TRIPLE_CHOMP_SPARK_COUNT; i++)
-        TRIPLE_CHOMP_SPARKS[i].variant = -1;
+        EXTRA_PARTICLES[i].variant = -1;
     }
 
     // This frame's ring: one model drawing the square with the 128x128
@@ -100,7 +99,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
       if (frame == gTripleChomp_BiteFrames[i]) {
         for (j = 0; j != TRIPLE_CHOMP_BITE_SPARKS; j++) {
           struct Particle *spark =
-              &TRIPLE_CHOMP_SPARKS[i * TRIPLE_CHOMP_BITE_SPARK_SLOTS + j];
+              &EXTRA_PARTICLES[i * TRIPLE_CHOMP_BITE_SPARK_SLOTS + j];
           s32 angle;
           s32 force;
 
@@ -156,7 +155,7 @@ void BattleEffect_RunTripleChomp(struct BattleEffectParams *args) {
     }
 
     // Each spark is drawn and moved twice a frame, shrinking as it dies.
-    drawn = TRIPLE_CHOMP_SPARKS;
+    drawn = EXTRA_PARTICLES;
     for (i = 0; i != TRIPLE_CHOMP_SPARK_COUNT; i++) {
       s32 left = drawn->variant;
 
@@ -224,7 +223,6 @@ void BattleEffect_RunBlastBreath(struct BattleEffectParams *args) {
 #undef TRIPLE_CHOMP_FRAMES
 #undef TRIPLE_CHOMP_BITES
 #undef TRIPLE_CHOMP_BITE_HEIGHT
-#undef TRIPLE_CHOMP_SPARKS
 #undef TRIPLE_CHOMP_SPARK_COUNT
 #undef TRIPLE_CHOMP_BITE_SPARKS
 #undef TRIPLE_CHOMP_BITE_SPARK_SLOTS

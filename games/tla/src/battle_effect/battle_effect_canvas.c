@@ -88,12 +88,12 @@
 /// The square ramp drawn as the blast begins, brightening from left to right.
 #define ECLIPSE_RAMP_SIZE 120
 /// The landing's buffers in the map cell buffer: the dome's vertices and its
-/// grid mesh, the band's vertices and mesh, and the motes.
+/// grid mesh, and the band's vertices and mesh; its motes are
+/// ECLIPSE_MOTE_COUNT of EXTRA_PARTICLES.
 #define ECLIPSE_DOME_VERTICES (Ram_MapCellBuffer + 2048)
 #define ECLIPSE_DOME_MESH (Ram_MapCellBuffer + 4096)
 #define ECLIPSE_BAND_VERTICES (Ram_MapCellBuffer + 8192)
 #define ECLIPSE_BAND_MESH (Ram_MapCellBuffer + 10240)
-#define ECLIPSE_MOTES ((struct Particle *)(Ram_MapCellBuffer + 16384))
 #define ECLIPSE_MOTE_COUNT 512
 /// The landing's frames, and the motes it throws up each frame.
 #define ECLIPSE_LANDING_FRAMES 26
@@ -658,7 +658,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
                              work->sheet + ECLIPSE_GLOW_BAND_B, 0, 0);
   // Every mote starts free.
   {
-    s32 *v = &ECLIPSE_MOTES[0].variant;
+    s32 *v = &EXTRA_PARTICLES[0].variant;
     s32 c = -1;
 
     for (i = 0; i != ECLIPSE_MOTE_COUNT; i++) {
@@ -703,7 +703,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       // Motes spring up about where the blast landed, farther out each frame.
       for (i = 0; i != ECLIPSE_MOTES_A_FRAME; i++) {
         struct Particle *q =
-            ECLIPSE_MOTES +
+            EXTRA_PARTICLES +
             ((frame * ECLIPSE_MOTES_A_FRAME + i) & (ECLIPSE_MOTE_COUNT - 1));
         // Default: set for real below.
         s32 a = 0;
@@ -718,7 +718,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         q->variant = (Random16() & 15) + 16;
       }
       for (i = 0; i != ECLIPSE_MOTE_COUNT; i++) {
-        p = ECLIPSE_MOTES + i;
+        p = EXTRA_PARTICLES + i;
         if (p->variant >= 0) {
           s32 n = (p->variant >> 3) + 1;
 

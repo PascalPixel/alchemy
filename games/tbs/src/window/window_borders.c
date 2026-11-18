@@ -11,21 +11,6 @@
 /// each window sprite.
 #define GLYPH_SHEET_SIZE (WINDOW_SPRITE_COUNT * 4 * TILE_SIZE_4BPP)
 
-/// Message_SetDecodeFlags' flags.
-#define MESSAGE_DECODE_HALTING_SPEECH 1 ///< a pause before each character
-#define MESSAGE_DECODE_SPACING_AFTER 2  ///< a wide gap after some characters
-
-/// Message_OpenWindow's window options, in packed's low bits.
-#define MESSAGE_WINDOW_ZOOM 1        ///< zoom open rather than appear at once
-#define MESSAGE_WINDOW_TEXT_CANVAS 8 ///< WINDOW_FLAG_TEXT_CANVAS
-#define MESSAGE_WINDOW_ANCHOR_BOTTOM 16 ///< WINDOW_FLAG_ANCHOR_BOTTOM
-#define MESSAGE_WINDOW_FIXED_X 32       ///< WINDOW_FLAG_FIXED_X
-/// The window options of Message_OpenWindow's packed argument: the bits below
-/// the speaker's voice.
-#define MESSAGE_WINDOW_OPTIONS_MASK (MESSAGE_WINDOW_VOICE(1) - 1)
-/// The speaker's voice sound in bits 16 to 27 of packed.
-#define MESSAGE_WINDOW_VOICE_OF(packed) (((u32)(packed) << 4) >> 20)
-
 /// The tile rows a field message is centred in, from the top of the screen.
 #define FIELD_MESSAGE_TOP_ROWS 12
 

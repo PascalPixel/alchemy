@@ -27,9 +27,6 @@
 #define ICON_BROWSER_PAGES 8
 #define ICON_BROWSER_PAGE_ICONS 32
 #define ICON_BROWSER_COLUMNS 8
-/// The portrait number of gPortrait_SpriteMap's first speaker: the speakers
-/// that are no playable character are numbered from it.
-#define PORTRAIT_SPRITE_MAP_FIRST 128
 
 /// What the icon browser shows, which L and R change.
 enum IconBrowserMode {

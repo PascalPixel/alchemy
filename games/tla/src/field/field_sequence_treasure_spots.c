@@ -56,6 +56,19 @@ s32 SceneItem_FindPosition(s32 value, s32 *out) {
 
 void Actor_ShowItemIconById(s32 id, s32 item);
 
+/// The most treasure spots a scene places, each an actor from
+/// FIELD_TREASURE_ACTOR on.
+#define TREASURE_SPOT_MAX 16
+
+/// The chest sprite's animations.
+enum {
+  TREASURE_SPOT_CHEST_OPEN = 2, ///< standing open
+  TREASURE_SPOT_CHEST_OPENING = 4,
+  TREASURE_SPOT_CHEST_CLOSING = 5, ///< closing again on what nobody could carry
+  TREASURE_SPOT_CHEST_OPENING_EMPTY = 6, ///< its lid lifting on nothing inside
+  TREASURE_SPOT_CHEST_MIMIC = 7          ///< jumping up as a mimic
+};
+
 /// Places an actor at each of the map's treasure spots (ids 100 to 239) that
 /// the scene has an event for, up to sixteen: a chest for a chest event, shown
 /// open once its flag is set and gone once its mimic was beaten, and a Psynergy
@@ -128,13 +141,13 @@ void Field_PlaceTreasureSpots(void) {
             cells += x + z * MAPGRID_SIZE;
             if ((u32)(cells->collisionCode - CELL_BEHAVIOR_JAR) <=
                 CELL_BEHAVIOR_WELL - CELL_BEHAVIOR_JAR)
-              cells->collisionCode = 0;
+              cells->collisionCode = CELL_BEHAVIOR_NORMAL;
           }
         }
         Actor_SelectAnimationFar(actor, 1);
         Actor_SetSpriteFlagsFar(actor, 0);
         if (GameFlag_Get(flag))
-          Actor_SelectAnimationFar(actor, 2);
+          Actor_SelectAnimationFar(actor, TREASURE_SPOT_CHEST_OPEN);
         Actor_StartIdleFar(actor);
         actor->homeX = actor->x.fixed / FIXED_ONE;
         actor->homeZ = actor->z.fixed / FIXED_ONE;
@@ -148,7 +161,7 @@ void Field_PlaceTreasureSpots(void) {
       }
     }
     i++;
-    if (i > 15)
+    if (i >= TREASURE_SPOT_MAX)
       break;
     type = *rows++;
     if (type == 0)
@@ -233,7 +246,7 @@ void Actor_ReturnHome(s32 mode, u32 objectId, s32 flag) {
 }
 
 /// Shakes the actor's facing at random for 16 frames, then turns it back.
-void Actor_ShakeAngle(u32 objectId) {
+UNUSED void Actor_ShakeAngle(u32 objectId) {
   struct Actor *actor;
   s32 angle;
   s32 i;
@@ -259,42 +272,43 @@ void Actor_ShakeAngle(u32 objectId) {
 /// Closes the chest of the actor again (its item could not be carried), with
 /// SE_CHEST_CLOSE, and waits 12 frames.
 void TreasureSpot_CloseChest(u32 objectId) {
-  Actor_SelectAnimationFar(Actor_Lookup(objectId), 5);
+  Actor_SelectAnimationFar(Actor_Lookup(objectId), TREASURE_SPOT_CHEST_CLOSING);
   Sound_PlayFar(SE_CHEST_CLOSE);
   wait(12);
 }
 
 /// Makes the chest of the actor jump up as a mimic: after 18 frames it takes
-/// animation 7, plays SE_ENEMY_CRY and gets an upward velocity of 8 pixels a
-/// frame, its shadow shown.
+/// TREASURE_SPOT_CHEST_MIMIC, plays SE_ENEMY_CRY and gets an upward velocity of
+/// 8 pixels a frame, its shadow shown.
 void TreasureSpot_LaunchMimic(u32 objectId) {
   struct Actor *actor;
 
   actor = Actor_Lookup(objectId);
   wait(18);
-  Actor_SelectAnimationFar(actor, 7);
+  Actor_SelectAnimationFar(actor, TREASURE_SPOT_CHEST_MIMIC);
   Sound_PlayFar(SE_ENEMY_CRY);
   if (actor != 0) {
     actor->velocityY = toFIXED(8);
-    Actor_SetSpriteFlagsFar(actor, 1);
+    Actor_SetSpriteFlagsFar(actor, SPRITE_FLAG_SHADOW);
   }
 }
 
 /// Opens the chest of the actor with SE_CHEST_OPEN, and waits 12 frames.
 void TreasureSpot_OpenChest(u32 objectId) {
-  Actor_SelectAnimationFar(Actor_Lookup(objectId), 4);
+  Actor_SelectAnimationFar(Actor_Lookup(objectId), TREASURE_SPOT_CHEST_OPENING);
   Sound_PlayFar(SE_CHEST_OPEN);
   wait(12);
 }
 
 /// Shows the chest of the actor open, with no sound.
 void TreasureSpot_ShowOpened(u32 objectId) {
-  Actor_SelectAnimationFar(Actor_Lookup(objectId), 2);
+  Actor_SelectAnimationFar(Actor_Lookup(objectId), TREASURE_SPOT_CHEST_OPEN);
 }
 
-/// Gives the actor animation 6 with SE_CHEST_OPEN, and waits 12 frames.
+/// Opens the empty chest of the actor with SE_CHEST_OPEN, and waits 12 frames.
 void ObjectEvent_SetMode6WithCue(u32 objectId) {
-  Actor_SelectAnimationFar(Actor_Lookup(objectId), 6);
+  Actor_SelectAnimationFar(Actor_Lookup(objectId),
+                           TREASURE_SPOT_CHEST_OPENING_EMPTY);
   Sound_PlayFar(SE_CHEST_OPEN);
   wait(12);
 }

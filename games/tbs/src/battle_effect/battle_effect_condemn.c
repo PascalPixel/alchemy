@@ -5,8 +5,19 @@
 #include "battle_effect_internal.h"
 
 #define CONDEMN_FRAMES 132
+/// The reaper's first two passes, in frames; it fades out, rippling harder,
+/// over the last CONDEMN_FADE_FRAMES of each.
+#define CONDEMN_PASS_FRAMES 32
+#define CONDEMN_FADE_FRAMES 16
 #define CONDEMN_SWING_FRAME 88   ///< the reaper swings, in a white flash
 #define CONDEMN_BOUNCE_FRAME 120 ///< the falling target bounces
+/// How far the reaper sways across and up and down as it circles, in pixels.
+#define CONDEMN_SWAY_X 16
+#define CONDEMN_SWAY_Y 4
+/// A line's 16.16 sideways sway as its BG2X value in work->bg2xLines.
+#define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
+/// The level a canvas darkens the battle background to, a level a frame.
+#define BACKGROUND_DARKENED_LEVEL BACKGROUND_DARKEN_FRAMES
 
 /// Where `picture`, one of the reaper's seven pictures, is drawn
 /// (REAPER_PICTURE_X), by the casting side's `column` and `row`.
@@ -87,13 +98,15 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     s32 *scanline;
 
     spin = frame * (TRIG_TURN / 128);
-    screenX = FIXEDtoINT(swayCenter[0]) + FIXEDtoINT(Trig_Sin(spin) * 16) + 48;
-    screenY = FIXEDtoINT(swayCenter[1]) + FIXEDtoINT(Trig_Cos(spin) * 4) + 16;
+    screenX = FIXEDtoINT(swayCenter[0]) +
+              FIXEDtoINT(Trig_Sin(spin) * CONDEMN_SWAY_X) + 48;
+    screenY = FIXEDtoINT(swayCenter[1]) +
+              FIXEDtoINT(Trig_Cos(spin) * CONDEMN_SWAY_Y) + 16;
     if (frame == CONDEMN_SWING_FRAME) {
       Sound_PlayFar(SE_HEAVY_IMPACT);
     }
     // The second pass, lower and further across.
-    if (frame == 32) {
+    if (frame == CONDEMN_PASS_FRAMES) {
       if (work->args->side == EFFECT_SIDE_PARTY) {
         swayCenter[0] = -toFIXED(32);
       } else {
@@ -102,12 +115,12 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       swayCenter[1] = toFIXED(24);
       drawReaper = 0;
     }
-    if (frame == 33) {
+    if (frame == CONDEMN_PASS_FRAMES + 1) {
       REG_BLDALPHA = EFFECT_BLEND_ADD;
       drawReaper = 1;
     }
     // The last pass, on the first target.
-    if (frame == 64) {
+    if (frame == 2 * CONDEMN_PASS_FRAMES) {
       Projection_ScaledUnit(work->args->targets[0], position);
       if (work->args->side == EFFECT_SIDE_PARTY) {
         swayCenter[0] = INTtoFIXED(position[0].x - 128);
@@ -117,22 +130,22 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       swayCenter[1] = 0;
       drawReaper = 0;
     }
-    if (frame == 65) {
+    if (frame == 2 * CONDEMN_PASS_FRAMES + 1) {
       REG_BLDALPHA = EFFECT_BLEND_ADD;
       drawReaper = 1;
     }
     // Each of the first two passes ripples harder as the reaper fades out.
     scanline = work->bg2xLines;
     ripple = 0;
-    if (frame <= 31) {
-      if (frame > 15) {
-        ripple = (frame * 2) - 32;
-        REG_BLDALPHA = EFFECT_BLEND_CANVAS(31 - frame);
+    if (frame < CONDEMN_PASS_FRAMES) {
+      if (frame >= CONDEMN_PASS_FRAMES - CONDEMN_FADE_FRAMES) {
+        ripple = (frame - (CONDEMN_PASS_FRAMES - CONDEMN_FADE_FRAMES)) * 2;
+        REG_BLDALPHA = EFFECT_BLEND_CANVAS(CONDEMN_PASS_FRAMES - 1 - frame);
       }
-    } else if (frame <= 63) {
-      if (frame > 47) {
-        ripple = (frame * 2) - 96;
-        REG_BLDALPHA = EFFECT_BLEND_CANVAS(63 - frame);
+    } else if (frame < 2 * CONDEMN_PASS_FRAMES) {
+      if (frame >= 2 * CONDEMN_PASS_FRAMES - CONDEMN_FADE_FRAMES) {
+        ripple = (frame - (2 * CONDEMN_PASS_FRAMES - CONDEMN_FADE_FRAMES)) * 2;
+        REG_BLDALPHA = EFFECT_BLEND_CANVAS(2 * CONDEMN_PASS_FRAMES - 1 - frame);
       }
     }
     if (ripple < 0) {
@@ -145,7 +158,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     lineOffset = (6 - screenX) << 8;
     angle = frame * (TRIG_TURN / 32);
     for (; i != DISPLAY_HEIGHT; i++) {
-      *scanline++ = lineOffset - ((Trig_Sin(angle) * ripple) >> 10);
+      *scanline++ = lineOffset - CANVAS_WAVE_BG2X(Trig_Sin(angle) * ripple);
       angle += TRIG_TURN / 32;
     }
     if (drawReaper != 0) {
@@ -157,7 +170,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
         /* FAKEMATCH(dead): i is 160 here. */
         pictureRow = i >> 31;
       }
-      if (frame <= 87) {
+      if (frame < CONDEMN_SWING_FRAME) {
         draw[work->args->side](
             canvas, work->sheet, CONDEMN_PICTURE_X(pictureColumn, 0),
             CONDEMN_PICTURE_Y(pictureRow, 0) + screenY,
@@ -228,20 +241,26 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     }
     EFFECT_PRESENT_CANVAS(work);
   }
-  // Finish: the tasks, then the battle background reloaded, which repairs
-  // nothing this effect changed.
+  // Finish: the tasks, then the battle background reloaded, darkened as a
+  // canvas leaves it, which repairs nothing this effect changed.
   // XXX (no evidence): why Condemn reloads the background; the reload puts
   // back the picture already there, so nothing the game shows says why.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, gBattleWork->background,
-                           24);
+                           BACKGROUND_DARKENED_LEVEL);
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();
 }
 
 #undef CONDEMN_FRAMES
+#undef CONDEMN_PASS_FRAMES
+#undef CONDEMN_FADE_FRAMES
 #undef CONDEMN_SWING_FRAME
 #undef CONDEMN_BOUNCE_FRAME
+#undef CONDEMN_SWAY_X
+#undef CONDEMN_SWAY_Y
+#undef CANVAS_WAVE_BG2X
+#undef BACKGROUND_DARKENED_LEVEL
 #undef CONDEMN_PICTURE_X
 #undef CONDEMN_PICTURE_Y

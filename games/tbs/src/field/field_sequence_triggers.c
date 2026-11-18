@@ -9,6 +9,15 @@
 /// wall before it runs, jumps or climbs.
 #define FIELD_PUSH_FRAMES 12
 
+/// What an examine trigger is on (enum ExamineTarget), the control bits 8..4
+/// EXAMINE_TRIGGER() packs it into.
+#define EXAMINE_TARGET(kind) (((kind) >> 4) & 0x1f)
+/// The item a FIND_ITEM search result holds.
+#define FIND_ITEM_MASK 0xfff
+/// The PP a Psynergy Stone gives each party member, enough to fill it: "The
+/// party's PP is fully restored!"
+#define PSYNERGY_STONE_PP 999
+
 /// Returns the actor placement of actor id in the scene's
 /// actor placement tables, or NULL: for a party character (0 to 7) the row with
 /// its sprite, and for a placed actor (8 on) the row it was created
@@ -22,7 +31,7 @@ struct ActorPlacement *Scene_FindActorPlacement(s32 id) {
     placement = gFieldWork->tables[tableIndex];
     if (placement == NULL)
       continue;
-    if (id <= 7) {
+    if (id < ACTOR_FIRST_PLACED) {
       for (; (s16)placement->sprite != -1; placement++) {
         if ((s16)placement->sprite == id) {
 #ifdef UBFIX
@@ -34,7 +43,7 @@ struct ActorPlacement *Scene_FindActorPlacement(s32 id) {
       }
     } else {
       for (; (s16)placement->sprite != -1; placement++) {
-        if ((s16)placement->sprite > 7) {
+        if ((s16)placement->sprite >= ACTOR_FIRST_PLACED) {
           if (placedActorId == id) {
 #ifdef UBFIX
             return placement;
@@ -423,7 +432,7 @@ s32 Field_ExamineCell(s32 tile) {
       // event leaves FLAG_NOTHING_HAPPENS set, the matching result line follows
       // ("but the chest was empty.").
       condition = trigger->condition;
-      messageOffset = (flags >> 4) & 31;
+      messageOffset = EXAMINE_TARGET(flags);
       if ((trigger->subject & TRIGGER_SUBJECT_OWN_EFFECT) == 0 &&
           messageOffset != 0) {
         Leader_StopMoving();
@@ -485,7 +494,7 @@ s32 Field_ExamineCell(s32 tile) {
               FieldMessage_ShowFar(MsgGotPsynergyStone,
                                    FIELD_MESSAGE_ZOOM |
                                        FIELD_MESSAGE_WAITING_FOR_SOUND);
-              Party_AddPp(999, 0);
+              Party_AddPp(PSYNERGY_STONE_PP, 0);
               PartyStatus_CreateWindowFar(PARTY_STATUS_SHOW_PP);
               Sound_PlayFar(SE_RECOVERY);
               FieldMessage_ShowFar(MsgGotPsynergyStone + 1, FIELD_MESSAGE_ZOOM);
@@ -547,14 +556,15 @@ s32 Field_ExamineCell(s32 tile) {
               void *object;
               s32 recipient;
 
-              object = ItemDisplay_ShowItemInFront(
-                  gMainRoutineWork.leaderActorId, trigger->value & 0xfff);
+              object =
+                  ItemDisplay_ShowItemInFront(gMainRoutineWork.leaderActorId,
+                                              trigger->value & FIND_ITEM_MASK);
               wait(30);
               recipient = PartyInventory_AddFar((u16)trigger->value);
               // messageOffset is reused here as the item id's 0xffff mask.
               messageOffset = 0xffff;
               if (recipient == -1) {
-                MessageArgument_PushFar(trigger->value & 0xfff,
+                MessageArgument_PushFar(trigger->value & FIND_ITEM_MASK,
                                         MESSAGE_ARGUMENT_ITEM);
                 FieldMessage_ShowFar(MsgFoundItem, FIELD_MESSAGE_ZOOM);
                 FieldMessage_ShowFar(MsgFoundItem + 4, FIELD_MESSAGE_ZOOM);
@@ -606,3 +616,6 @@ s32 Field_ExamineCell(s32 tile) {
 }
 
 #undef FIELD_PUSH_FRAMES
+#undef EXAMINE_TARGET
+#undef FIND_ITEM_MASK
+#undef PSYNERGY_STONE_PP

@@ -84,6 +84,9 @@ s32 LinkBattle_ReceiveParty(void) {
   return memberCount;
 }
 
+/// BattleWork.opponentSlots for a party unit the opponent was not sent.
+#define OPPONENT_SLOT_NONE 255
+
 /// Unused: sends the party, then the Djinn recovery list, each unit under the
 /// id the opponent knows it by.
 UNREAD_RESULT LinkBattle_SendParty(void) {
@@ -99,10 +102,10 @@ UNREAD_RESULT LinkBattle_SendParty(void) {
   size = LINK_PARTY_UNIT_BYTES;
   buffer = Heap_AllocEwram(size);
   {
-    s32 noSlot = 255;
+    s32 noSlot = OPPONENT_SLOT_NONE;
 
     battle = gBattleWork;
-    for (i = 0; i < 8; i++)
+    for (i = 0; i < PARTY_UNIT_COUNT; i++)
       battle->opponentSlots[i] = noSlot;
 
     // The party members, each marked as the opponent's.
@@ -348,3 +351,5 @@ UNREAD_RESULT BattleParty_AssignOpponentSlots(void) {
 s32 Battle_ClearSerialTransferPayload(void) {
   return Iwram_ClearWords(gSerialTransfer.payload, 16);
 }
+
+#undef OPPONENT_SLOT_NONE

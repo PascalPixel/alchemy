@@ -70,10 +70,11 @@ void BattleEffect_RunPlasma(struct BattleEffectParams *args) {
       struct BattleCamera *camera = gBattleCamera;
       s32 speed;
 
+      // A 256th of a turn a frame, slowing from frame 56.
       if (frame <= 55)
-        speed = 256;
+        speed = TRIG_TURN / 256;
       else
-        speed = 704 - frame * 8;
+        speed = TRIG_TURN / 256 - (frame - 56) * 8;
       if (work->args->side == EFFECT_SIDE_PARTY)
         camera->yaw -= speed;
       else
@@ -182,6 +183,8 @@ void BattleEffect_RunDynamite(struct BattleEffectParams *args) {
 #define SPARK_GROUPS_SPACING 8      ///< frames between bursts
 #define SPARK_GROUPS_RING 12        ///< of which drawn as the ring
 #define SPARK_GROUPS_FLASH_DRAWN 18 ///< a flash is drawn for its last 18 frames
+/// A ring flash's frames, a frame more for every second flash out.
+#define SPARK_GROUPS_FLASH_LIFE 25
 
 /// One to three bursts go off: each flashes, rings itself with smaller flashes
 /// that fade, and throws out sparks that bounce on the ground, knocking the
@@ -250,7 +253,7 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
       angle = Random16() & TRIG_ANGLE_MASK;
       point->x = Trig_Sin(angle) * radius;
       point->y = -(Trig_Cos(angle) * radius);
-      point->variant = j / 2 + 25;
+      point->variant = j / 2 + SPARK_GROUPS_FLASH_LIFE;
     }
     for (j = 0; j != gPlasma_Shapes[work->args->variant][SPARK_GROUPS_SPARKS];
          j++) {
@@ -289,9 +292,9 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
     // The strongest variant turns the camera.
     if (work->args->variant == EFFECT_VARIANT_STRONGEST && frame <= 51) {
       if (work->args->side == EFFECT_SIDE_ENEMIES)
-        camera->yaw += 256;
+        camera->yaw += TRIG_TURN / 256;
       else
-        camera->yaw -= 256;
+        camera->yaw -= TRIG_TURN / 256;
     }
     // Severe Blow's flash.
     if (work->args->variant == SPARK_GROUPS_SEVERE_BLOW && frame == 4)
@@ -348,8 +351,8 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
                 28;
           if (point->variant >= 0 && point->variant < SPARK_GROUPS_FLASH_DRAWN)
             draw[0](canvas,
-                    work->sheet +
-                        (gPlasma_FlashPictures[point->variant / 3] << 11),
+                    work->sheet + gPlasma_FlashPictures[point->variant / 3] *
+                                      PICTURE_BYTES(FLASH_BURST),
                     x - FLASH_BURST_WIDTH / 2, y - FLASH_BURST_HEIGHT / 2,
                     FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           if (point->variant > 0)
@@ -412,3 +415,4 @@ void BattleEffect_RunSparkGroups(struct BattleEffectParams *args, s32 mode) {
 #undef SPARK_GROUPS_SPACING
 #undef SPARK_GROUPS_RING
 #undef SPARK_GROUPS_FLASH_DRAWN
+#undef SPARK_GROUPS_FLASH_LIFE

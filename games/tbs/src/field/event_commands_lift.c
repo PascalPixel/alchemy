@@ -34,7 +34,7 @@ void FieldPsynergy_LiftOnTarget(s32 unused) {
 
   x = effectWork->x;
   pos[0] = x;
-  y = effectWork->y + toFIXED(16); // 16 pixels up
+  y = effectWork->y + toFIXED(16);
   pos[1] = y;
   z = effectWork->z;
   pos[2] = z;
@@ -88,8 +88,7 @@ struct Actor *FieldEffect_SpawnLiftHand(s32 x, s32 y, s32 z, s32 angle) {
   fragment = Actor_Spawn(SPRITE_MOVE_HAND, x, y, z);
   if (fragment != NULL) {
     fragment->scaleX = fragment->scaleY = FIXED_ONE / 4;
-    fragment->acceleration = fragment->speedLimit =
-        toFIXED(3); // 3 pixels a frame
+    fragment->acceleration = fragment->speedLimit = toFIXED(3);
     ((struct Sprite *)fragment->sprite)->image.priority = 0;
     Actor_SelectAnimationFar(fragment, MOVE_HAND_ANIMATION_GRIP);
     scale = fragment->scaleX;
@@ -167,8 +166,10 @@ again:
     FieldEffect_ClearOwnedSlot(effect);
 }
 
-/// A heavy impact: places an actor of sprite 283 32 pixels below the source for
-/// 20 frames and scatters 12 shards from it.
+#define HEAVY_IMPACT_SHARDS 12
+
+/// A heavy impact: places a star burst (SPRITE_STAR_BURST) 32 pixels below the
+/// source for 20 frames and scatters HEAVY_IMPACT_SHARDS shards from it.
 s32 SpawnHeavyImpactEffect(struct Actor *source) {
   struct Vector3 pos;
   struct Actor *impact;
@@ -187,7 +188,8 @@ s32 SpawnHeavyImpactEffect(struct Actor *source) {
   }
 
   // Shards: 1 to 2 pixels a frame, 8 to 32 pixels in a random direction.
-  for (fragmentIndex = 0; fragmentIndex < 12; fragmentIndex++) {
+  for (fragmentIndex = 0; fragmentIndex < HEAVY_IMPACT_SHARDS;
+       fragmentIndex++) {
     fragment = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
     if (fragment != NULL) {
       Actor_StartScriptFar(fragment, gFieldEffect_FragmentScript);
@@ -200,3 +202,5 @@ s32 SpawnHeavyImpactEffect(struct Actor *source) {
   }
   return 0;
 }
+
+#undef HEAVY_IMPACT_SHARDS

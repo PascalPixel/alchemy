@@ -148,7 +148,13 @@ void BattleEffect_SelectLivingTargets(struct BattleEffectParams *args) {
   BattleObject_SpawnObjectsForListFar(list, 0);
 }
 
-/// Shows the battle background behind a cleared canvas.
+/// The level a canvas darkens the battle background to, a level a frame.
+#define BACKGROUND_DARKENED_LEVEL BACKGROUND_DARKEN_FRAMES
+/// The canvas's usual weight over the battle, in sixteenths.
+#define CANVAS_BLEND_LEVEL 14
+
+/// Shows the battle background, darkened as a canvas leaves it, behind a
+/// cleared canvas.
 void BattleEffect_SetupBlendedDisplay(void) {
   void **slots = &gHeapSlots[HEAP_SLOT_BATTLE];
   u8 *canvas = HEAP_SLOT_FROM(slots, HEAP_SLOT_BATTLE, HEAP_SLOT_BATTLE_CANVAS);
@@ -157,16 +163,20 @@ void BattleEffect_SetupBlendedDisplay(void) {
 
   REG_DISPCNT = DISPCNT_MODE_1;
   gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background, 24);
+  BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background,
+                           BACKGROUND_DARKENED_LEVEL);
   Dma_Fill32Cell(fill, 0, canvas, CANVAS_BYTES);
   Dma_Fill32Cell(fill, 0, BG_CHAR_BLOCK(1), CANVAS_BYTES);
   wait(1);
-  REG_BLDALPHA = EFFECT_BLEND_CANVAS(14);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(CANVAS_BLEND_LEVEL);
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_DISPCNT = EFFECT_DISPCNT;
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
 }
+
+#undef BACKGROUND_DARKENED_LEVEL
+#undef CANVAS_BLEND_LEVEL
 
 /// Updates every effect group of one unit's battle object.
 void BattleEffect_TintBattler(s32 unitId, s32 palette, s32 animation,

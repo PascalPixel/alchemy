@@ -4,11 +4,16 @@
 
 #include "event_commands_internal.h"
 
-// The map's cells (128 to a row), and the same cells seen one row south and
-// one row north: TILE_CELLS_SOUTH[i] is the cell below TILE_CELLS[i].
+// The map's cells, and the same cells seen one row south and one row north:
+// TILE_CELLS_SOUTH[i] is the cell below TILE_CELLS[i].
 #define TILE_CELLS ((struct MapGridCell *)Ram_MapGridCellBuffer)
-#define TILE_CELLS_SOUTH (TILE_CELLS + 128)
-#define TILE_CELLS_NORTH (TILE_CELLS - 128)
+#define TILE_CELLS_SOUTH (TILE_CELLS + MAPGRID_SIZE)
+#define TILE_CELLS_NORTH (TILE_CELLS - MAPGRID_SIZE)
+/// A whole pixel coordinate's map cell, in pixels.
+#define MAPGRID_CELL_PIXEL_MASK 0xfff0
+/// The middle pixel of the map cell a whole pixel lies in.
+#define CELL_MIDDLE(pixels)                                                    \
+  (MAPGRID_CELL_PIXELS / 2 + ((pixels) & MAPGRID_CELL_PIXEL_MASK))
 
 /// Makes the leader jump two cells forward, over the cell in front, when the
 /// map allows it (MapGrid_CheckCollision).
@@ -20,7 +25,7 @@ s32 Field_TryJumpForward(void) {
   s32 angle = FACING_NEAREST_CARDINAL(leader->facing);
   u8 saved = leader->motionFlags;
   struct FieldWork *work = gFieldWork;
-  s32 spriteFlags = 1;
+  s32 spriteFlags = SPRITE_FLAG_SHADOW;
   struct FieldPosition positionStorage;
   struct FieldPosition *position;
   struct Actor *platform;
@@ -41,8 +46,8 @@ again:
                (leader->z.fixed & FIELD_CELL_MASK) + toFIXED(8));
   Vector_AddPolarOffset(toFIXED(32), angle, position);
   if (MapGrid_CheckCollisionFar(leader, position) == COLLISION_NONE) {
-    // Suspend ground following and the shadow (sprite flag bit 0) while
-    // airborne: 4 pixels a frame up, 3 a frame across.
+    // Suspend ground following and the shadow while airborne: 4 pixels a
+    // frame up, 3 a frame across.
     if (leader->spriteStorageKind == ACTOR_SPRITE_ONE)
       spriteFlags = leader->sprite->flags;
     Event_Start();
@@ -54,7 +59,7 @@ again:
     leader->acceleration = toFIXED(2);
     leader->velocityY = toFIXED(4);
     leader->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
-    Actor_SetSpriteFlagsFar(leader, spriteFlags & 0xfe);
+    Actor_SetSpriteFlagsFar(leader, spriteFlags & (u8)~SPRITE_FLAG_SHADOW);
     Actor_MoveToAndWaitById(
         gMainRoutineWork.leaderActorId,
         ((struct FieldCoordinate *)&position->x)->part[0].integer,
@@ -102,8 +107,8 @@ again:
 /// Climbing down (the player presses down at a climbable wall).
 s32 Field_ClimbDown(void) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
-  s32 gridX = 8 + ((actor->x.part[0].integer) & 0xfff0);
-  s32 gridZ = 8 + ((actor->z.part[0].integer) & 0xfff0);
+  s32 gridX = CELL_MIDDLE(actor->x.part[0].integer);
+  s32 gridZ = CELL_MIDDLE(actor->z.part[0].integer);
   s32 result;
 
   Event_Start();
@@ -171,9 +176,9 @@ failure:
 /// Climbing up (the player presses up at a climbable wall).
 s32 Field_ClimbUp(void) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
-  s16 spriteFlags = 1;
-  s32 gridX = 8 + ((actor->x.part[0].integer) & 0xfff0);
-  s32 gridZ = 8 + ((actor->z.part[0].integer) & 0xfff0);
+  s16 spriteFlags = SPRITE_FLAG_SHADOW;
+  s32 gridX = CELL_MIDDLE(actor->x.part[0].integer);
+  s32 gridZ = CELL_MIDDLE(actor->z.part[0].integer);
   s32 result;
 
   Event_Start();
@@ -207,7 +212,7 @@ s32 Field_ClimbUp(void) {
       actor->velocityY = toFIXED(4);
       wait(4);
       actor->motionFlags = 0;
-      spriteFlags &= 0xfe;
+      spriteFlags &= (u8)~SPRITE_FLAG_SHADOW;
       Actor_SetSpriteFlagsFar(actor, spriteFlags);
       actor->speedLimit = FIXED_ONE;
       actor->velocityY = 0;
@@ -227,7 +232,7 @@ s32 Field_ClimbUp(void) {
                            toFIXED(gridZ) - toFIXED(16));
     Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-    spriteFlags |= 1;
+    spriteFlags |= SPRITE_FLAG_SHADOW;
     actor->groundHeight = actor->y.fixed;
     Actor_SetSpriteFlagsFar(actor, spriteFlags);
     Event_Wait(4);
@@ -246,3 +251,5 @@ failure:
 #undef TILE_CELLS
 #undef TILE_CELLS_SOUTH
 #undef TILE_CELLS_NORTH
+#undef MAPGRID_CELL_PIXEL_MASK
+#undef CELL_MIDDLE

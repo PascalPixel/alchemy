@@ -765,7 +765,7 @@ s32 TitleIntro_ShowLighthouse(void) {
   u8 *source;
   u16 *map;
   s16 tile;
-  s32 nextTile = 1 << 16;
+  s32 tileStep = 1 << 16;
   s32 number;
   s32 row;
   s32 i;
@@ -797,7 +797,7 @@ s32 TitleIntro_ShowLighthouse(void) {
       /* FAKEMATCH(temporary): the old tile kept in number, the step spelt on
        * the high halfword. */
       number = tile;
-      tile = ((tile << 16) + nextTile) >> 16;
+      tile = ((tile << 16) + tileStep) >> 16;
       *map++ = number;
     }
     *map++ = OFFSCREEN_TILE;
@@ -839,7 +839,7 @@ s32 TitleIntro_ShowLighthouse(void) {
     goto stopped;
   scroll.limit = 216;
   scroll.step = 2;
-  /* FAKEMATCH(temporary): the result kept in map. */
+  /* FAKEMATCH(signature): the result kept in the tile pointer map. */
   map = (u16 *)TitleIntro_ScrollLighthouse(&scroll);
   if (map)
     goto stopped;
@@ -1319,8 +1319,10 @@ void TitlePaletteFade_Update(void) {
   i = PLTT_COLORS;
   current = work->current;
   for (; i != 0; i--) {
-    *packed++ = (current[0] & blueMask) | (((s16)current[1] >> 5) & 0x3e0) |
-                (((s16)current[2] >> COMPONENT_SHIFT) & 0x1f);
+    *packed++ =
+        (current[0] & blueMask) |
+        (((s16)current[1] >> (COMPONENT_SHIFT - RGB_GREEN_SHIFT)) & 0x3e0) |
+        (((s16)current[2] >> COMPONENT_SHIFT) & 0x1f);
     current += 3;
   }
   work->page ^= 1;
@@ -1360,7 +1362,7 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
 
   if (mode < PALETTE_TINT_FROM_SOURCE) {
     *destination++ = mode & 0x7c00;
-    *destination++ = (mode & 0x03e0) << 5;
+    *destination++ = (mode & 0x03e0) << (COMPONENT_SHIFT - RGB_GREEN_SHIFT);
     *destination++ = (mode & 0x001f) << COMPONENT_SHIFT;
     Dma_Set(destination - 3, destination,
             DMA_COPY_HALFWORDS(((colorCount - 1) * 6) >> 1), REG_DMA3);
@@ -1514,7 +1516,8 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
       for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
         colorWork = *source++;
         destination[colorIndex * 3 + 0] = colorWork & 0x7c00;
-        destination[colorIndex * 3 + 1] = (colorWork & 0x03e0) << 5;
+        destination[colorIndex * 3 + 1] =
+            (colorWork & 0x03e0) << (COMPONENT_SHIFT - RGB_GREEN_SHIFT);
         destination[colorIndex * 3 + 2] = (colorWork & 0x001f)
                                           << COMPONENT_SHIFT;
       }
@@ -1584,7 +1587,8 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
     for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
       colorWork = *source++;
       destination[colorIndex * 3 + 0] = colorWork & 0x7c00;
-      destination[colorIndex * 3 + 1] = (colorWork & 0x03e0) << 5;
+      destination[colorIndex * 3 + 1] = (colorWork & 0x03e0)
+                                        << (COMPONENT_SHIFT - RGB_GREEN_SHIFT);
       destination[colorIndex * 3 + 2] = (colorWork & 0x001f) << COMPONENT_SHIFT;
     }
   } else {

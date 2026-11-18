@@ -16,6 +16,10 @@
 #define DIRECTION_STEP_X(step) ((s32)(step) >> 16)
 /// A DIRECTION_STEP's Z, in pixels.
 #define DIRECTION_STEP_Z(step) ((s16)(step))
+/// A DIRECTION_STEP's X as a 16.16 offset: its upper halfword, kept in place.
+#define DIRECTION_STEP_X_FIXED(step) ((step) & 0xffff0000)
+/// A DIRECTION_STEP's Z as a 16.16 offset: its lower halfword, shifted up.
+#define DIRECTION_STEP_Z_FIXED(step) INTtoFIXED(step)
 
 /// Where a pushed actor ahead of the leader would roll to: its footprint, its
 /// actor, that position, and a routine run during the leader's

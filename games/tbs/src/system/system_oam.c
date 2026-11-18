@@ -6,21 +6,21 @@
 
 extern u8 IwramClearWords[];
 
-/// Starts a new frame of sprites: frees the affine matrices and empties the 256
-/// depth slots sprites are linked into.
-void Oam_ResetFrame(void) {
-  gOamMatrixCount = 0;
-  // IwramClearWords(destination, bytes): 1024 bytes are the 256 slot heads.
-  _call_via_r3(((u32)&gOamDepthLists), 1024, ((u32)&gOamMatrixCount),
-               (u32)IwramClearWords);
-}
-
-typedef void (*OamBuildRoutine)(void *work);
-
 enum {
   OBJ_AFFINE_MATRIX_COUNT = 32, ///< the OAM's rotation-scaling matrices
   RENDER_DEPTH_SLOT_COUNT = 256 ///< depth slots a sprite is linked into
 };
+
+/// Starts a new frame of sprites: frees the affine matrices and empties the
+/// RENDER_DEPTH_SLOT_COUNT depth slots sprites are linked into.
+void Oam_ResetFrame(void) {
+  gOamMatrixCount = 0;
+  // IwramClearWords(destination, bytes) clears the slot heads.
+  _call_via_r3(((u32)&gOamDepthLists), RENDER_DEPTH_SLOT_COUNT * sizeof(void *),
+               ((u32)&gOamMatrixCount), (u32)IwramClearWords);
+}
+
+typedef void (*OamBuildRoutine)(void *work);
 
 /// Hands out the next OAM affine matrix for a sprite drawn with `source`'s
 /// scale and rotation and fills it in. Returns the matrix number, 0 to 31.
@@ -42,9 +42,10 @@ s32 OamMatrix_AllocFromTransform(struct AffineTransform *source) {
   matrix = &gOamMatrices[index];
   coefficient = matrix->coefficients;
   if ((xScale == yScale || -xScale == yScale) && angle == 0) {
-    // Unrotated and evenly scaled (or mirrored): only the diagonal is set.
+    // Unrotated and evenly scaled (or mirrored): pa and pd are the scale's
+    // reciprocals (FIXED_ONE / scale, the 8.8 inverse of an 8.8 scale), pb and
+    // pc 0, two halfwords to a row.
     s32 reciprocal;
-    // FIXED_ONE / scale is the 8.8 inverse of an 8.8 scale.
     s32 xReciprocal;
 
     reciprocal = Iwram_SignedDivide(FIXED_ONE, yScale);
@@ -56,7 +57,7 @@ s32 OamMatrix_AllocFromTransform(struct AffineTransform *source) {
     matrix->rows[1] = (u32)reciprocal << 16;
   } else {
     // The inverse of rotate-then-scale: a 16.16 sine over an 8.8 scale is
-    // an 8.8 coefficient
+    // an 8.8 coefficient.
     FIXED sine;
     FIXED cosine;
 
@@ -75,8 +76,8 @@ s32 OamMatrix_AllocFromTransform(struct AffineTransform *source) {
   return index;
 }
 
-/// Links a sprite entry into depth slot `slot` (clamped to 0..255) for this
-/// frame.
+/// Links a sprite entry into depth slot `slot` (clamped to the
+/// RENDER_DEPTH_SLOT_COUNT slots) for this frame.
 void Oam_AddSpriteAtDepth(void *slotEntry, s32 slot) {
   void **head;
   void *previousHead;

@@ -265,14 +265,14 @@ PushedActor_FindClearPosition(struct PushedActorProbe *probe) {
     }
     width = (nearEdge + farEdge) >> 4;
   }
-  position.x =
-      actor->x.fixed + (gPushedActor_DirectionSteps[direction] & 0xffff0000);
+  position.x = actor->x.fixed +
+               DIRECTION_STEP_X_FIXED(gPushedActor_DirectionSteps[direction]);
   {
     FIXED y = actor->y.fixed;
 
     position.y = y;
-    position.z =
-        actor->z.fixed + INTtoFIXED(gPushedActor_DirectionSteps[direction]);
+    position.z = actor->z.fixed +
+                 DIRECTION_STEP_Z_FIXED(gPushedActor_DirectionSteps[direction]);
     probe->position.y = y;
   }
   for (;;) {
@@ -292,8 +292,10 @@ PushedActor_FindClearPosition(struct PushedActorProbe *probe) {
       probe->position.z += toFIXED(16);
     }
     steps++;
-    position.x += gPushedActor_DirectionSteps[direction] & 0xffff0000;
-    position.z += INTtoFIXED(gPushedActor_DirectionSteps[direction]);
+    position.x +=
+        DIRECTION_STEP_X_FIXED(gPushedActor_DirectionSteps[direction]);
+    position.z +=
+        DIRECTION_STEP_Z_FIXED(gPushedActor_DirectionSteps[direction]);
   }
 found:
   *mode = 0;
@@ -302,20 +304,20 @@ found:
   }
   probe->position.x =
       actor->x.fixed +
-      (gPushedActor_DirectionSteps[direction] & 0xffff0000) * steps;
+      DIRECTION_STEP_X_FIXED(gPushedActor_DirectionSteps[direction]) * steps;
   probe->position.y = actor->y.fixed;
   probe->position.z =
       actor->z.fixed +
-      INTtoFIXED(gPushedActor_DirectionSteps[direction]) * steps;
+      DIRECTION_STEP_Z_FIXED(gPushedActor_DirectionSteps[direction]) * steps;
   return 1;
 }
 
 /// Rolls the large thing to the position probe found: the leader pushes
 /// (animation 8), the thing rolls (animation 3 or 2 by the direction) with
 /// SE_HEAVY_MOVE while the leader follows half a cell, and it stops with
-/// SE_STOP_ACTION_SE and SE_HEAVY_STOP. Its cells are blocked (cell
-/// behavior 255) at its new place, through the map grid's layer 1 offset, and
-/// its old place is given back what was under it.
+/// SE_STOP_ACTION_SE and SE_HEAVY_STOP. Its cells are blocked
+/// (CELL_BEHAVIOR_WALL) at its new place, through the map grid's layer 1
+/// offset, and its old place is given back what was under it.
 UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
   struct MapGridScrollWork *workspace;
   struct Actor *actor;
@@ -373,15 +375,11 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
   Event_Wait(15);
 
   {
-    s32 horizontalDelta = probe.position.x - originalPosition.x;
-    if (horizontalDelta < 0)
-      horizontalDelta += toFIXED(2) - 1;
-    horizontalDelta >>= 17;
+    // Half the thing's roll, in whole pixels.
+    s32 horizontalDelta = (probe.position.x - originalPosition.x) / toFIXED(2);
     {
-      s32 verticalDelta = probe.position.z - originalPosition.z;
-      if (verticalDelta < 0)
-        verticalDelta += toFIXED(2) - 1;
-      verticalDelta >>= 17;
+      s32 verticalDelta = (probe.position.z - originalPosition.z) / toFIXED(2);
+
       Actor_SetDestinationOffsetById(ACTOR_PARTY_LEADER, horizontalDelta,
                                      verticalDelta);
     }
@@ -390,7 +388,8 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
   Actor_GetById(ACTOR_PARTY_LEADER)->update =
       (void (*)(struct Actor *))PushedActor_StopBlockedMotion;
   Event_Wait(4);
-  if (direction >= 6 && direction <= 13)
+  if (direction >= FACING_INDEX(FACING_SOUTHWEST) &&
+      direction <= FACING_INDEX(FACING_NORTH_NORTHEAST))
     Actor_SelectAnimation(actor, 3);
   else
     Actor_SelectAnimation(actor, 2);
@@ -404,8 +403,9 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
 
   {
     s32 packedOrientation = gPushedActor_DirectionSteps[direction];
-    Actor_SetDestinationOffsetById(0, ((s16)(packedOrientation >> 16)) / 2,
-                                   ((s16)packedOrientation) / 2);
+    Actor_SetDestinationOffsetById(ACTOR_PARTY_LEADER,
+                                   (s16)DIRECTION_STEP_X(packedOrientation) / 2,
+                                   DIRECTION_STEP_Z(packedOrientation) / 2);
   }
   if (probe.callback != 0)
     probe.callback();
@@ -469,7 +469,7 @@ UNUSED static void Actor_MoveAndRedraw(struct PushedActorProbe probe) {
   Scene_PlayQueuedMusic();
 }
 
-/// Block large thing id's cells (cell behavior 255) where it stands,
+/// Blocks large thing id's cells (CELL_BEHAVIOR_WALL) where it stands,
 /// through the map grid's layer 1 offset; returns 0 when its sprite is no large
 /// thing.
 UNUSED static s32 Scene_RedrawActorFootprint(s32 id) {

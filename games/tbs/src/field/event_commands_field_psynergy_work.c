@@ -4,7 +4,26 @@
 
 #include "event_commands_internal.h"
 
-/// Task: updates the 24 field effect sprites.
+/// The field Psynergy sprites a field Psynergy's work holds
+/// (FieldEffectWork.particles).
+#define FIELD_EFFECT_PARTICLES 24
+/// The actors in gActors, as field_internal.h counts them.
+#define ACTOR_COUNT 64
+/// The frames FieldPsynergy_End waits at most for the swelling arcs to end.
+#define END_ARC_WAIT_FRAMES 30
+
+/// The caster's casting animations on the party's sheets: ANIM_CAST_PSYNERGY's
+/// first two pictures, held on the second, and from the second to its last,
+/// held on the last.
+#define ANIM_CAST_PSYNERGY_BEGIN 20
+#define ANIM_CAST_PSYNERGY_END 21
+
+/// A PaletteFade half's colours, the BG's and then the sprites', three
+/// channels each.
+#define FADE_HALF_COLORS 224
+#define FADE_HALF_CHANNELS (FADE_HALF_COLORS * 3)
+
+/// Task: updates the field Psynergy sprites.
 void FieldEffect_UpdateAllEffectSlots(void) { FieldEffect_UpdateEffectSlots(); }
 
 /// Prepares the work of the field Psynergy for ability (HEAP_SLOT_FIELD_EFFECT)
@@ -27,7 +46,7 @@ void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
   running = ev->psynergyActing;
   if (running != 0)
     return;
-  effectWork->freeBlocks = 512 - VramCache_CountFreeBlocks();
+  effectWork->freeBlocks = VRAM_BLOCK_COUNT - VramCache_CountFreeBlocks();
   effectWork->mode = mode;
   effectWork->visible = 1;
   effectWork->enabled = 1;
@@ -102,8 +121,8 @@ void FieldPsynergy_StopCasterUpdate(void) {
 #define SETUP_OBJECT_SLOTS (gActors)
 
 /// Ends a field Psynergy: frees the field effect sprites still in use and,
-/// unless another is being resolved, waits (at most 30 frames) for the
-/// swelling arcs to end, stops the slot task, releases its tiles,
+/// unless another is being resolved, waits (at most END_ARC_WAIT_FRAMES) for
+/// the swelling arcs to end, stops the slot task, releases its tiles,
 /// restores the map's shake, plays the queued sound and releases its
 /// work.
 void FieldPsynergy_End(void) {
@@ -116,7 +135,7 @@ void FieldPsynergy_End(void) {
   effectWork = gFieldEffectWork;
   runtime = gFieldWork;
   grid = gMapGridWork[0];
-  for (i = 0; i < 24; i++) {
+  for (i = 0; i < FIELD_EFFECT_PARTICLES; i++) {
     effectSlot = &effectWork->particles[i];
     if (effectSlot->active != 0)
       FieldEffect_ClearOwnedSlot(effectSlot);
@@ -137,7 +156,7 @@ void FieldPsynergy_End(void) {
 
       active = 0;
       i = 0;
-      while (i <= 63) {
+      while (i < ACTOR_COUNT) {
         void (*update)(struct Actor *) = slot->update;
 
         if (update == firstActiveUpdate || update == secondActiveUpdate) {
@@ -152,7 +171,7 @@ void FieldPsynergy_End(void) {
         waited++;
         wait(1);
       }
-    } while (active != 0 && waited <= 29);
+    } while (active != 0 && waited < END_ARC_WAIT_FRAMES);
 
     runtime->castStarted = 0;
     Task_Remove(FieldEffect_UpdateAllEffectSlots);
@@ -167,7 +186,8 @@ void FieldPsynergy_End(void) {
   }
 }
 
-/// Starts casting: the caster takes its casting pose (animation 20) and stops.
+/// Starts casting: the caster raises its hand (ANIM_CAST_PSYNERGY_BEGIN) and
+/// stops; with FLAG_PLAY_PSYNERGY_CAST it goes on to ANIM_CAST_PSYNERGY_END.
 void FieldPsynergy_StartCast(void) {
   s32 ability;
   struct Actor *caster;
@@ -178,7 +198,7 @@ void FieldPsynergy_StartCast(void) {
   renderState = *(void **)Ram_FieldWork;
   caster = effectWork->mainActor;
   ability = (s16)effectWork->action;
-  Actor_SelectAnimationFar(caster, 20);
+  Actor_SelectAnimationFar(caster, ANIM_CAST_PSYNERGY_BEGIN);
   caster->targetX = caster->x.fixed;
   caster->targetY = caster->y.fixed;
   caster->targetZ = caster->z.fixed;
@@ -196,13 +216,13 @@ void FieldPsynergy_StartCast(void) {
     } else {
       FieldMessage_ShowFar(MsgAbilityAnnounce, effectWork->messageMode);
     }
-    Actor_SetOthersPaused(caster, 0, 16);
+    Actor_SetOthersPaused(caster, 0, ANIMATION_STEP_NORMAL);
   }
   if (GameFlag_GetFar(FLAG_PLAY_PSYNERGY_CAST) != 0) {
     if (effectWork->visible != 0) {
       caster->update = FieldEffect_CycleActorAndSpawnArcs;
     }
-    Actor_SelectAnimationFar(caster, 21);
+    Actor_SelectAnimationFar(caster, ANIM_CAST_PSYNERGY_END);
   } else {
     FieldPsynergy_StopCasterUpdate();
   }
@@ -217,16 +237,16 @@ void FieldPsynergy_FadeToCastColor(void) {
   struct PaletteFade *work;
   s32 no;
 
-  // Save the colours the buffer moves toward into the field work, 224 colours
-  // of three channels a half: the sprite half and, unless Reveal is active, the
-  // BG half.
+  // Save the colours the buffer moves toward into the field work: the sprite
+  // half and, unless Reveal is active, the BG half.
   field = gFieldWork;
   work = gPaletteFadeWork;
-  Dma_Set(&work->target[672], &field->savedFadeTarget[672], DMA_COPY_WORDS(336),
-          REG_DMA3);
+  Dma_Set(&work->target[FADE_HALF_CHANNELS],
+          &field->savedFadeTarget[FADE_HALF_CHANNELS],
+          DMA_COPY_WORDS(FADE_HALF_CHANNELS / 2), REG_DMA3);
   if (field->revealActive == 0)
-    Dma_Set(work->target, field->savedFadeTarget, DMA_COPY_WORDS(336),
-            REG_DMA3);
+    Dma_Set(work->target, field->savedFadeTarget,
+            DMA_COPY_WORDS(FADE_HALF_CHANNELS / 2), REG_DMA3);
   Dma_Set(work->target, work->current, DMA_COPY_WORDS(sizeof work->current / 4),
           REG_DMA3);
 
@@ -290,9 +310,12 @@ void Camera_WorldToScreen(struct Vector3 *position) {
 #ifdef UBFIX
     struct MapGridScrollWork *state = gMapGridWork[0];
 #else
-    // The named map slot avoids stepping outside gFieldWork.
+    // UB: gMapGridWork's heap slot, reached by stepping back from
+    // gFieldWork's.
     struct MapGridScrollWork *state =
-        *(struct MapGridScrollWork **)((u8 *)eventCell - 76);
+        *(struct MapGridScrollWork **)((u8 *)eventCell -
+                                       (HEAP_SLOT_FIELD - HEAP_SLOT_MAP_GRID) *
+                                           sizeof(void *));
 #endif
     s32 x = state->view[0] & FIELD_PIXEL_MASK;
     s32 z = state->view[1] & FIELD_PIXEL_MASK;
@@ -309,3 +332,10 @@ void Camera_WorldToScreen(struct Vector3 *position) {
 // From here on positions are passed in each function's own structures.
 
 #undef SETUP_OBJECT_SLOTS
+#undef FIELD_EFFECT_PARTICLES
+#undef ACTOR_COUNT
+#undef END_ARC_WAIT_FRAMES
+#undef ANIM_CAST_PSYNERGY_BEGIN
+#undef ANIM_CAST_PSYNERGY_END
+#undef FADE_HALF_COLORS
+#undef FADE_HALF_CHANNELS

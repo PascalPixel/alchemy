@@ -11,24 +11,28 @@
 #include "resource_ids.h"
 
 #define LIQUIFIER_FRAMES 111
-/// The work's particles: the sparks, then the shards.
+/// The work's particles: the sparks, then the beams.
 #define LIQUIFIER_SPARKS 32
-#define LIQUIFIER_FIRST_SHARD LIQUIFIER_SPARKS
-#define LIQUIFIER_SHARDS 16
+#define LIQUIFIER_FIRST_BEAM LIQUIFIER_SPARKS
+#define LIQUIFIER_BEAMS 16
+/// The frame of the first beam and the first of the eight strikes.
+#define LIQUIFIER_STRIKE_FRAME 54
+/// The sparks' speeds: a sine times 512 to 1023, shifted down by this as they
+/// burst out, one less upward, and two more as they gather.
+#define LIQUIFIER_BURST_SHIFT 8
 
-#define EFFECT_PICTURES (Ram_MapCellBuffer + 16384)
+/// Where FlashBurstSheet is decoded: gEffectScratch's address.
+#define LIQUIFIER_FLASH_BURST_PICTURES (Ram_MapCellBuffer + 16384)
 
 /// Where GlowBandTextureA is decoded in the effect's pictures.
 #define LIQUIFIER_GLOW_BAND 4096
 
-/// 111 frames. Sparks gather at the caster (frames 0-15)
-/// and burst from it toward the target (16-110); eight flat flashes turn about
-/// the caster; sixteen textured shards fly from the target (54-101), each
-/// leaving a fading splash; two rings swell at the caster (0-15); every four
-/// frames from 54 the target is struck, and the last strike ends the phase.
-///
-/// The work's particles 0-31 are the sparks, 32-47 the shards (z holds each
-/// shard's roll); the map cell buffer is cleared but not drawn.
+/// Sparks fall into the user as two rings of fire swell about it (frames 0 to
+/// 15); then the sparks burst from it and eight flames fan out above it and
+/// sink back. From frame 54 sixteen beams of light stab down about the target,
+/// one every two frames, each narrowing away over a ring of fire that spreads
+/// on the ground, and the target is struck every four frames; the eighth
+/// strike shows the damage.
 ///
 /// Abilities: Liquifier.
 void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
@@ -48,7 +52,10 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   BattleEffect_FetchRectangleBlitters(0, draw);
-  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, EFFECT_PICTURES, 1, 0);
+  // DEAD: FlashBurstSheet, which FireRingTexture, decoded at the same place
+  // below, replaces; the ROM keeps the call.
+  Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
+                             LIQUIFIER_FLASH_BURST_PICTURES, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_FLAME_WALL_TEXTURE, work->sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_GLOW_BAND_TEXTURE_A,
                              work->sheet + LIQUIFIER_GLOW_BAND, 0, 0);
@@ -61,15 +68,16 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
 
   for (frame = 0; frame != LIQUIFIER_FRAMES; frame++) {
     if (frame == 0) {
-      struct Particle *shard;
+      struct Particle *beam;
 
-      for (i = 0; i != 512; i++)
-        ((struct Particle *)Ram_MapCellBuffer)[i].variant = -1;
+      // DEAD: the map cell buffer's particles marked free, which Liquifier
+      // never draws; the ROM keeps the loop.
+      EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT / 2);
 
-      // The shards start about the target, each with its own roll.
-      for (i = 0, shard = &work->particles[LIQUIFIER_FIRST_SHARD];
-           i != LIQUIFIER_SHARDS; i++, shard++) {
-        SET_POSITION(shard, INTtoFIXED(to.x + (Random16() & 127) - 64),
+      // The beams stand about the target, each at its own slant, its z.
+      for (i = 0, beam = &work->particles[LIQUIFIER_FIRST_BEAM];
+           i != LIQUIFIER_BEAMS; i++, beam++) {
+        SET_POSITION(beam, INTtoFIXED(to.x + (Random16() & 127) - 64),
                      INTtoFIXED(to.y), (Random16() & 0x1fff) + toFIXED(7) / 16);
       }
     }
@@ -79,7 +87,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
     if (frame == 12) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
     }
-    if (frame == 54) {
+    if (frame == LIQUIFIER_STRIKE_FRAME) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
     if (frame == 0)
@@ -88,16 +96,17 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_HEAVY_IMPACT);
 
     if (frame > 15) {
-      // The burst: sparks fly out of the caster, upward and forward.
+      // The burst: sparks fly out of the user, upward and forward.
       if (frame == 16) {
         struct Particle *step = work->particles;
 
         for (i = 0; i != LIQUIFIER_SPARKS; i++) {
-          u32 angle = Random16() % (DEGtoANG(135) - 1) + 20480;
+          u32 angle = Random16() % (DEGtoANG(135) - 1) + TRIG_TURN * 5 / 16;
           s32 speed = (Random16() & 0x1ff) + 512;
 
-          step->velocityX = (Trig_Sin(angle) * speed) >> 8;
-          step->velocityY = (Trig_Cos(angle) * speed) >> 7;
+          step->velocityX = (Trig_Sin(angle) * speed) >> LIQUIFIER_BURST_SHIFT;
+          step->velocityY =
+              (Trig_Cos(angle) * speed) >> (LIQUIFIER_BURST_SHIFT - 1);
           step->x = INTtoFIXED(from.x / 2);
           step->y = INTtoFIXED(from.y - (Random16() & 15) - 8);
           step->variant = 0;
@@ -137,7 +146,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
     } else {
       struct Particle *step;
 
-      // The gathering: sparks start 64 steps out and fall into the caster.
+      // The gathering: sparks start 64 steps out and fall into the user.
       if (frame == 0) {
         struct Particle *step = work->particles;
 
@@ -146,8 +155,10 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
           s32 speed = (Random16() & 0x1ff) + 512;
           s32 y;
 
-          step->velocityX = (Trig_Sin(angle) * speed) >> 10;
-          step->velocityY = (Trig_Cos(angle) * speed) >> 9;
+          step->velocityX =
+              (Trig_Sin(angle) * speed) >> (LIQUIFIER_BURST_SHIFT + 2);
+          step->velocityY =
+              (Trig_Cos(angle) * speed) >> (LIQUIFIER_BURST_SHIFT + 1);
           step->x = INTtoFIXED(from.x / 2);
           y = from.y - (Random16() & 15) - 8;
           step->x -= step->velocityX << 6;
@@ -189,10 +200,10 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
     {
       void *projected = Heap_AllocEwram(32);
       struct RenderModel *model = Render_AllocateModelList(1);
-      void *splash = gEffectScratch;
+      void *fireRing = gEffectScratch;
 
-      // Eight flashes turn about the caster, each for 16 frames from its
-      // start, swinging wider and back with a sine.
+      // Eight flames fan out above the user, each for 16 frames from its
+      // start, rising and sinking back on a sine.
       model->kind = MODEL_SHADED_MAX;
       model->texture = &texture;
       model->vertices = projected;
@@ -212,31 +223,32 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
           Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
           Matrix_Translate(INTtoFIXED(from.x - 128), INTtoFIXED(from.y - 74),
                            0);
-          Matrix_RotateZ((i << 12) - 14336);
+          Matrix_RotateZ(i * (TRIG_TURN / 16) - TRIG_TURN * 7 / 32);
           Matrix_Scale(FIXED_ONE / 3,
-                       Trig_Sin(age << 11) * gLiquifier_SplashHeights[i] / 64 *
-                           2,
+                       Trig_Sin(age * (TRIG_TURN / 32)) *
+                           gLiquifier_SplashHeights[i] / 64 * 2,
                        DEGtoANG(180));
           Render_TransformVertices(gLiquifier_SplashCorners, projected, 4);
           Render_DrawModelList(model);
         }
       }
 
-      // The shards: each from frame 54 + 2i for 16 frames, shrinking.
+      // The beams: each from two frames after the last, narrowing away over
+      // 16 frames.
       texture.logWidth = 5;
       texture.logHeight = 2;
       texture.pixels = work->sheet + LIQUIFIER_GLOW_BAND;
       model->mesh = gBattleEffect_SmallSquareMesh;
       model->kind = MODEL_SHADED_ADDITIVE;
-      for (i = 0; i != LIQUIFIER_SHARDS; i++) {
+      for (i = 0; i != LIQUIFIER_BEAMS; i++) {
         s32 zero = 0;
-        struct Particle *step = &work->particles[LIQUIFIER_FIRST_SHARD + i];
-        s32 start = i * 2 + 54;
+        struct Particle *step = &work->particles[LIQUIFIER_FIRST_BEAM + i];
+        s32 start = i * 2 + LIQUIFIER_STRIKE_FRAME;
 
-        if (frame >= start && frame < i * 2 + 70) {
+        if (frame >= start && frame < i * 2 + LIQUIFIER_STRIKE_FRAME + 16) {
           s32 scale;
 
-          scale = FIXED_ONE * 2 - ((frame - start) << 13);
+          scale = FIXED_ONE * 2 - (frame - start) * (FIXED_ONE / 8);
           model->shade = zero;
           Matrix_Initialize();
           Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
@@ -248,20 +260,22 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
         }
       }
 
-      // Their splashes: growing and darkening, faster after eight frames.
+      // Their rings of fire spread on the ground, darkening, faster after
+      // eight frames.
       texture.logWidth = 7;
       texture.logHeight = 7;
-      texture.pixels = splash;
+      texture.pixels = fireRing;
       model->mesh = gBattleEffect_LargeSquareMesh;
       model->kind = MODEL_SHADED_ADDITIVE;
-      for (i = 0; i != LIQUIFIER_SHARDS; i++) {
-        struct Particle *step = &work->particles[i + LIQUIFIER_FIRST_SHARD];
-        s32 age = frame - 54 - i * 2;
+      for (i = 0; i != LIQUIFIER_BEAMS; i++) {
+        struct Particle *step = &work->particles[i + LIQUIFIER_FIRST_BEAM];
+        s32 age = frame - LIQUIFIER_STRIKE_FRAME - i * 2;
         s32 back = -age;
 
-        if (frame >= i * 2 + 54 && frame < i * 2 + 70) {
+        if (frame >= i * 2 + LIQUIFIER_STRIKE_FRAME &&
+            frame < i * 2 + LIQUIFIER_STRIKE_FRAME + 16) {
           s32 shade = back * 4;
-          s32 scale = age << 14;
+          s32 scale = age * (FIXED_ONE / 4);
 
           if (age > 7) {
             shade -= age * 8;
@@ -278,12 +292,13 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
         }
       }
 
-      // Two rings at the caster, from frames 0 and 4 for 12 frames each.
+      // Two rings of fire about the user, from frames 0 and 4 for 12 frames
+      // each, fading in as they close.
       for (i = 0; i != 2; i++) {
         if (frame >= i * 4 && frame < i * 4 + 12) {
           s32 age = frame - i * 4;
-          s32 shade = age * 8 - 64;
-          s32 scale = FIXED_ONE * 3 / 2 - (age << 13);
+          s32 shade = age * 8 + MODEL_SHADE_INVISIBLE;
+          s32 scale = FIXED_ONE * 3 / 2 - age * (FIXED_ONE / 8);
 
           if (shade > 0)
             shade = 0;
@@ -293,7 +308,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
           Matrix_Translate(INTtoFIXED(from.x - 128), INTtoFIXED(from.y - 80),
                            0);
           Matrix_Scale(scale * 2, scale * 2, scale);
-          Matrix_RotateZ(TRIG_TURN * 3 / 8 - (i << 14));
+          Matrix_RotateZ(TRIG_TURN * 3 / 8 - i * (TRIG_TURN / 4));
           Matrix_RotateX(-TRIG_TURN / 16);
           Render_TransformVertices(gBattleEffect_GroundSquareCorners, projected,
                                    4);
@@ -301,9 +316,9 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
         }
       }
 
-      // A strike every four frames from 54; the last one ends the phase.
+      // A strike every four frames; the last shows the damage.
       for (i = 0; i != 8; i++) {
-        if (frame == i * 4 + 54) {
+        if (frame == i * 4 + LIQUIFIER_STRIKE_FRAME) {
           if (i == 7)
             EFFECT_SHOW_DAMAGE(SE_CLATTER);
           else
@@ -328,39 +343,50 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
 #define Actor_SetAnimationSpeedFar                                             \
   ((s32 (*)(struct Actor *, s32))Actor_SetAnimationSpeedFar)
 
-/// Plays the canvas burst with a small ball for kinds below 200 and a large one
-/// from 200 on.
+/// The canvas burst's modes (BattleEffect_RunCanvasBurst).
+enum CanvasBurstMode {
+  CANVAS_BURST_SHRED,      ///< a glow grows on the target as rays close on it
+  CANVAS_BURST_SMALL_BALL, ///< an enemy's attack: a small ball, no flames
+  CANVAS_BURST_LARGE_BALL, ///< the same attack's critical hit: a large ball
+  CANVAS_BURST_MINE_BALL   ///< a large ball to the targets' midpoint
+};
+
+/// An enemy class's plain attack that throws a glowing ball
+/// (ATTACK_EFFECT_BURST): a small ball, or a large one for its critical hit.
 void BattleEffect_RunCanvasModeByCount(struct BattleEffectParams *args) {
-  if (args->kind > 199)
-    BattleEffect_RunCanvasBurst(args, 2);
+  if (args->kind >= EFFECT_ID_CRITICAL_OFFSET)
+    BattleEffect_RunCanvasBurst(args, CANVAS_BURST_LARGE_BALL);
   else
-    BattleEffect_RunCanvasBurst(args, 1);
+    BattleEffect_RunCanvasBurst(args, CANVAS_BURST_SMALL_BALL);
 }
 
-/// Abilities: Fog, Shred.
+/// A glow grows on the first target as sixteen rays of motes close on it, and
+/// it bursts into flames and sparks; Impair follows.
+///
+/// Abilities: Shred.
 void BattleEffect_RunShred(struct BattleEffectParams *args) {
-  BattleEffect_RunCanvasBurst(args, 0);
+  BattleEffect_RunCanvasBurst(args, CANVAS_BURST_SHRED);
 }
 
-/// From the user's action pose, a glowing ball flies to the targets' midpoint
-/// and bursts.
+/// From the user's leap pose, a glowing ball in BlueFlameSheet's colours flies
+/// to the targets' midpoint and bursts into flames and sparks.
 ///
 /// Abilities: Mine Ball.
 void BattleEffect_RunMineBall(struct BattleEffectParams *args) {
   struct Actor *actor;
 
   actor = (struct Actor *)BattleObject_GetFar(args->user)->object;
-  Actor_SelectAnimationFar(actor, 2);
+  Actor_SelectAnimationFar(actor, POSE_LEAP);
   Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL * 7 / 4);
-  BattleEffect_RunCanvasBurst(args, 3);
+  BattleEffect_RunCanvasBurst(args, CANVAS_BURST_MINE_BALL);
   Actor_SetAnimationSpeedFar(actor, ANIMATION_STEP_NORMAL);
 }
 
-#define ball (&work->particles[63])
+/// The ball: the work's last particle.
+#define CANVAS_BURST_BALL (&work->particles[63])
 
-/// Draws a disc of the given size from the disc sheet in the map cell buffer
-/// as four quarter blits about (x, y), with the second blitter loaded for
-/// each quarter's flip (flags 3, 7, 11 and 15 of the maximum mode).
+/// Draws a disc of the given size from the discs in the map cell buffer as its
+/// four quarters about (x, y), the same quarter mirrored each way.
 static inline void DrawDisc(void *canvas, s16 *discs, s32 cells, s32 x, s32 y,
                             s32 size, s32 index) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
@@ -395,29 +421,41 @@ static inline void DrawDisc(void *canvas, s16 *discs, s32 cells, s32 x, s32 y,
 #define CANVAS_BURST_FLAMES 16
 #define CANVAS_BURST_FIRST_SPARK CANVAS_BURST_FLAMES
 #define CANVAS_BURST_SPARKS 47
+/// A flame's or spark's frames to live at the hit, one more for every third;
+/// a flame shows its six pictures over its last 18.
+#define CANVAS_BURST_LIFE 17
+/// The shaded discs drawn into the map cell buffer, 2 to 64 pixels across.
+#define CANVAS_BURST_DISCS 32
+/// Shred's glow grows to the largest disc; the balls grow to these.
+#define CANVAS_BURST_GLOW_SIZE 64
+#define CANVAS_BURST_SMALL_BALL_SIZE 24
+#define CANVAS_BURST_LARGE_BALL_SIZE 40
+/// The motes of each of Shred's rays. A ray counts down from its own delay
+/// and shows from CANVAS_BURST_RAY_FIRST to CANVAS_BURST_RAY_LAST; its motes,
+/// 2 * (2 * count + j) pixels out, have all closed in on the target by -8.
+#define CANVAS_BURST_RAY_MOTES 16
+#define CANVAS_BURST_RAY_FIRST 15
+#define CANVAS_BURST_RAY_LAST (-32)
+/// The ball steps a 64th of the screen's distance a frame (1 << 10 in 16.16).
+#define CANVAS_BURST_BALL_STEP_SHIFT 10
 
-/// The canvas burst family (its wrappers are above). A glowing ball (or
-/// in mode 0 a growing glow at the target, with sixteen rays that close on
-/// it) hits the target; at the hit the targets flash and recoil, sixteen
-/// flames rise and 47 sparks scatter. Modes:
-///   0  (BattleEffect_RunShred): 78 frames, the glow at the target; the
-///      hit at frame 54, then the canvas is cleared and
-///      BattleEffect_RunImpair runs on;
-///   1  (by count, kinds up to 199): 66 frames, a small ball (24 pixels),
-///      half-speed sparks, hit at 32, no flames;
-///   2  (by count, kinds 200 and up): 66 frames, a large ball (40), hit at
-///      32;
-///   3  (BattleEffect_RunMineBall): 58 frames, the ball flies to
-///   the
-///      midpoint of the targets, its own palette, hit at 24.
-/// Modes 1 and 2 close by restoring the battle display themselves.
+/// A glowing ball, or Shred's glow growing on the target as sixteen rays close
+/// on it, hits the target; at the hit the targets flash and recoil, sixteen
+/// flames rise and 47 sparks scatter. Shred plays 78 frames, hits at 54 and
+/// runs BattleEffect_RunImpair after; the small ball plays 66, hits at 32,
+/// nudges the targets and throws its sparks at half speed, without flames;
+/// the large ball plays 66 and hits at 32; Mine Ball's flies to the targets'
+/// midpoint in its own colours, plays 58 and hits at 24. The balls of an
+/// enemy's attack close by restoring the battle display themselves.
 void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
   struct ScreenPoint from;
   struct ScreenPoint to;
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
-  DrawRectangle draw[2]; // Unused: draw[1] gives the stack frame its 4 bytes.
+  /* LEFTOVER(frame): draw[1], the pair's idle second blitter, which the ROM's
+   * frame reserves and never touches; as one DrawRectangle. */
+  DrawRectangle draw[2];
   u8 *graphics;
   s16 *discs;
   s32 frames;
@@ -430,7 +468,7 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   graphics = Ram_HeapSlots->battleSheet;
-  if (mode <= 1)
+  if (mode <= CANVAS_BURST_SMALL_BALL)
     BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
   else
     BattleEffect_StartCanvasLayer(0);
@@ -438,9 +476,9 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   discs = (s16 *)work->sheet;
-  if (mode == 0)
+  if (mode == CANVAS_BURST_SHRED)
     frames = 78;
-  else if (mode == 3)
+  else if (mode == CANVAS_BURST_MINE_BALL)
     frames = 58;
   else
     frames = 66;
@@ -450,14 +488,15 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
   // Discs of sizes 2 to 64 one after another in the map cell buffer, with
   // their offsets at the start of the sheet.
   offset = 0;
-  for (i = 0; i != 32; i++) {
+  for (i = 0; i != CANVAS_BURST_DISCS; i++) {
     s32 size = i * 2 + 2;
 
-    BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, 85536);
+    BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size,
+                                   toFIXED(1.30518));
     discs[i] = offset;
     offset += (i * 2 + 3) * size / 2;
   }
-  if (mode == 3)
+  if (mode == CANVAS_BURST_MINE_BALL)
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry(RESOURCE_BLUE_FLAME_SHEET),
                     SHEET_PALETTE_BYTES);
@@ -471,15 +510,15 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
 
   for (frame = 0; frame != frames; frame++) {
     EffectPosition_ProjectBattler(args->user, &from);
-    if (mode == 3)
+    if (mode == CANVAS_BURST_MINE_BALL)
       BattleEffect_GetTargetsMidpoint(&to);
     else
       EffectPosition_ProjectBattler(args->targets[0], &to);
-    if (mode == 0 && frame == 0)
+    if (mode == CANVAS_BURST_SHRED && frame == 0)
       Sound_PlayFar(SE_SPIN);
 
     if (frame == 0) {
-      if (mode == 0) {
+      if (mode == CANVAS_BURST_SHRED) {
         struct Particle *step;
 
         // The rays: one every 1/16 turn, each starting after its own delay.
@@ -489,60 +528,64 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
           step->variant = (Random16() & 31) + 16;
         }
       } else {
-        // The ball leaves the caster's chest, aimed to arrive in 128
-        // frames' worth of steps, already seven steps along.
-        ball->x = INTtoFIXED(from.x / 2);
-        ball->y = INTtoFIXED(from.y - 36);
-        ball->velocityX = (to.x - from.x) << 10;
-        ball->velocityY = (to.y - from.y) << 10;
-        ball->x += ball->velocityX * 7;
-        ball->y += ball->velocityY * 7;
+        // The ball leaves the user's chest already seven steps along.
+        CANVAS_BURST_BALL->x = INTtoFIXED(from.x / 2);
+        CANVAS_BURST_BALL->y = INTtoFIXED(from.y - 36);
+        CANVAS_BURST_BALL->velocityX = (to.x - from.x)
+                                       << CANVAS_BURST_BALL_STEP_SHIFT;
+        CANVAS_BURST_BALL->velocityY = (to.y - from.y)
+                                       << CANVAS_BURST_BALL_STEP_SHIFT;
+        CANVAS_BURST_BALL->x += CANVAS_BURST_BALL->velocityX * 7;
+        CANVAS_BURST_BALL->y += CANVAS_BURST_BALL->velocityY * 7;
       }
     }
 
-    if (mode == 0) {
-      // Frames 18-54: the glow grows at the target, up to 64 pixels.
+    if (mode == CANVAS_BURST_SHRED) {
+      // Frames 18-54: the glow grows at the target.
       if ((u32)(frame - 18) <= 36) {
         s32 size = frame * 2 - 32;
         s32 x;
         s32 y;
 
-        if (size > 64)
-          size = 64;
+        if (size > CANVAS_BURST_GLOW_SIZE)
+          size = CANVAS_BURST_GLOW_SIZE;
         x = to.x / 2;
         y = to.y - 32;
         DrawDisc(canvas, discs, cells, x, y, size, (size - 2) >> 1);
       }
     } else if ((u32)(frame - 2) <= 30) {
-      // Frames 2-32: the ball flies, growing to 24 (mode 1) or 40 pixels.
+      // Frames 2-32: the ball flies, growing.
       s32 size = frame / 4 * 2 + 16;
       s32 index;
       s32 x;
       s32 y;
 
-      if (mode == 1) {
-        if (size > 24)
-          size = 24;
-      } else if (size > 40) {
-        size = 40;
+      if (mode == CANVAS_BURST_SMALL_BALL) {
+        if (size > CANVAS_BURST_SMALL_BALL_SIZE)
+          size = CANVAS_BURST_SMALL_BALL_SIZE;
+      } else if (size > CANVAS_BURST_LARGE_BALL_SIZE) {
+        size = CANVAS_BURST_LARGE_BALL_SIZE;
       }
       index = (size - 2) >> 1;
-      x = FIXEDtoINT(ball->x);
-      y = FIXEDtoINT(ball->y);
-      ball->x += ball->velocityX;
-      ball->y += ball->velocityY;
+      x = FIXEDtoINT(CANVAS_BURST_BALL->x);
+      y = FIXEDtoINT(CANVAS_BURST_BALL->y);
+      CANVAS_BURST_BALL->x += CANVAS_BURST_BALL->velocityX;
+      CANVAS_BURST_BALL->y += CANVAS_BURST_BALL->velocityY;
       DrawDisc(canvas, discs, cells, x, y, size, index);
     }
 
-    // Mode 0, frames 0-53: sixteen rays of motes close on the target.
-    if (mode == 0 && frame <= 53) {
+    // Shred, frames 0-53: sixteen rays of motes close on the target, each
+    // from its own delay.
+    if (mode == CANVAS_BURST_SHRED && frame <= 53) {
       struct Particle *step = work->particles;
 
       for (i = 0; i != CANVAS_BURST_RAYS; i++) {
-        if ((u32)(--step->variant + 32) <= 47) {
+        step->variant--;
+        if (step->variant >= CANVAS_BURST_RAY_LAST &&
+            step->variant <= CANVAS_BURST_RAY_FIRST) {
           s32 size = 4;
 
-          for (j = 0; j != 16; j++) {
+          for (j = 0; j != CANVAS_BURST_RAY_MOTES; j++) {
             s32 radius = (step->variant * 2 + j) * 2;
 
             if (radius >= 0) {
@@ -561,9 +604,9 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
       }
     }
 
-    if (mode == 0)
+    if (mode == CANVAS_BURST_SHRED)
       hitFrame = 54;
-    else if (mode == 3)
+    else if (mode == CANVAS_BURST_MINE_BALL)
       hitFrame = 24;
     else
       hitFrame = 32;
@@ -574,8 +617,10 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
       struct Particle *spark;
 
       if (frame == hitFrame) {
-        // The hit: the targets recoil (mode 1 keeps them still) and flash.
-        if (mode == 0 || mode == 2 || mode == 3) {
+        // The hit: the targets are hurled (the small ball nudges them) and
+        // flash.
+        if (mode == CANVAS_BURST_SHRED || mode == CANVAS_BURST_LARGE_BALL ||
+            mode == CANVAS_BURST_MINE_BALL) {
           EFFECT_SHOW_DAMAGE(SE_CRASH);
           for (i = 0; i != args->targetCount; i++)
             BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HURL);
@@ -600,10 +645,10 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
           newFlame->y = INTtoFIXED(to.y - 32);
           newFlame->velocityX = (speed * Trig_Sin(angle)) >> 3;
           newFlame->velocityY = -(speed * Trig_Cos(angle)) >> 3;
-          newFlame->variant = i / 3 + 17;
+          newFlame->variant = i / 3 + CANVAS_BURST_LIFE;
         }
 
-        // 47 sparks, at half speed in mode 1.
+        // The sparks, at half speed from the small ball.
         for (i = 0; i != CANVAS_BURST_SPARKS; i++) {
           s32 speed = (Random16() & 255) + 128;
           s32 angle = Random16() & TRIG_ANGLE_MASK;
@@ -614,28 +659,30 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
           newSpark->y = INTtoFIXED(to.y - 32);
           newSpark->velocityX = (Trig_Sin(angle) * speed) >> 6;
           newSpark->velocityY = -(Trig_Cos(angle) * speed) >> 5;
-          if (mode == 1) {
+          if (mode == CANVAS_BURST_SMALL_BALL) {
             newSpark->velocityX /= 2;
             newSpark->velocityY /= 2;
           }
-          newSpark->variant = i / 3 + 17;
+          newSpark->variant = i / 3 + CANVAS_BURST_LIFE;
         }
       }
 
-      // The flames: six frames of the burst sheet, three frames each.
-      if (mode == 0 || mode == 2 || mode == 3) {
+      // The flames: FlashBurstSheet's six pictures, three frames each.
+      if (mode == CANVAS_BURST_SHRED || mode == CANVAS_BURST_LARGE_BALL ||
+          mode == CANVAS_BURST_MINE_BALL) {
         flame = work->particles;
         for (i = 0; i != CANVAS_BURST_FLAMES; i++) {
           s32 x = FIXED_INTEGER_PART(flame->x);
           s32 y = FIXED_INTEGER_PART(flame->y);
 
           Particle_AdvanceWithGravity2D(flame, 60, 0);
-          if ((u32)flame->variant <= 17)
+          if ((u32)flame->variant <= CANVAS_BURST_LIFE)
             draw[0](canvas,
                     work->sheet + CANVAS_BURST_FLASH_BURST_PICTURES +
                         gCanvasBurst_FlamePictures[flame->variant / 3] *
                             PICTURE_BYTES(FLASH_BURST),
-                    x - 16, y - 32, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
+                    x - FLASH_BURST_WIDTH / 2, y - FLASH_BURST_HEIGHT / 2,
+                    FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
           if (flame->variant > 0)
             flame->variant = flame->variant - 1;
           else
@@ -650,9 +697,9 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
         if (spark->variant >= 0) {
           s32 size = (spark->variant >> 2) + 1;
 
-          draw[0](canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                  FIXED_INTEGER_PART(spark->x) - size / 2,
-                  FIXED_INTEGER_PART(spark->y) - size, size, size * 2);
+          EFFECT_DRAW_MOTE(draw[0], canvas, graphics,
+                           FIXED_INTEGER_PART(spark->x),
+                           FIXED_INTEGER_PART(spark->y), size);
           Particle_AdvanceWithGravity2D(spark, 60, 0);
           spark->variant--;
         }
@@ -665,12 +712,12 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
 
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  if (mode == 0) {
+  if (mode == CANVAS_BURST_SHRED) {
     Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
     Iwram_ClearWords(canvas, CANVAS_VIEW_BYTES);
     Task_Remove(Palette_StepFadeTransfer);
     BattleEffect_RunImpair(args);
-  } else if (mode == 3) {
+  } else if (mode == CANVAS_BURST_MINE_BALL) {
     BattleEffect_EndCanvasLayer();
   } else {
     // Back to the battle display: BG1's scroll, BG2 as before, the palette
@@ -702,3 +749,4 @@ void BattleEffect_RunCanvasBurst(struct BattleEffectParams *args, u32 mode) {
   }
 }
 #undef Actor_SetAnimationSpeedFar
+#undef CANVAS_BURST_BALL

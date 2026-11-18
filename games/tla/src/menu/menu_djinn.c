@@ -1057,9 +1057,10 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       if (!(columnFlags[memberColumn] & DJINN_COLUMN_ON_HEADER))
         selectedRow = djinnRow;
       if (columnFlags[memberColumn] & DJINN_COLUMN_ON_HEADER)
-        MenuCursor_Position(memberColumn % 4 * 56 - 8, 52);
+        MenuCursor_Position(memberColumn % 4 * DJINN_COLUMN_WIDTH - 8, 52);
       else
-        MenuCursor_Position(memberColumn % 4 * 56 - 8, djinnRow * 8 + 60);
+        MenuCursor_Position(memberColumn % 4 * DJINN_COLUMN_WIDTH - 8,
+                            djinnRow * 8 + 60);
       if (redraw >> 2) {
         s32 page = memberColumn / 4 * 4;
 
@@ -1135,7 +1136,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           facing = FACING_WEST;
           break;
         }
-        DjinnFigures_SetSlotPosition(mode, memberColumn % 4 * 56 + 48,
+        DjinnFigures_SetSlotPosition(mode, DJINN_FIGURE_X(memberColumn % 4),
                                      mode == DJINN_SELECT_DJINNI
                                          ? DJINN_FIGURE_CHOOSING_Y
                                          : DJINN_FIGURE_Y);

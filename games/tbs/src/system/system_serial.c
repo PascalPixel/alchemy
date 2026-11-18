@@ -14,9 +14,9 @@ enum {
   /// About 10,000 seconds, nearly three hours.
   SERIAL_TRANSFER_TIMEOUT_FRAMES = 600000,
   SERIAL_IDLE_HALFWORD = 0xfefe, ///< sent and seen between packets
-  /// Timer 3's reload: 13981 cycles from one halfword transfer to the next,
-  /// about 20 a frame.
-  SERIAL_TIMER_RELOAD = 0xc963
+  /// Timer 3's reload: it overflows 13981 cycles on, from one halfword
+  /// transfer to the next, about 20 a frame.
+  SERIAL_TIMER_RELOAD = 65536 - 13981
 };
 
 /// Resets the serial port into multiplayer mode, installs the serial and timer
@@ -355,9 +355,9 @@ void Serial_HandleTransferInterrupt(void) {
   *(u64 *)recv = *(volatile u64 *)REG_SIODATA32;
 #endif
   sioControl = &REG_SIOCNT;
-  // SIOCNT's error bit (SIO_ERROR): a packet heard while it is set is refused
-  // (SERIAL_CHANNEL_ERROR, below)
-  gSerialWork.transferError = (*sioControl << 25) >> 31;
+  // A packet heard while SIO_ERROR is set is refused (SERIAL_CHANNEL_ERROR,
+  // below).
+  gSerialWork.transferError = SIO_ERROR_OF(*sioControl);
 
   if (gSerialWork.sendIndex == -1) {
     u32 idleWord = SERIAL_IDLE_HALFWORD;
@@ -636,6 +636,14 @@ void Serial_StepBlockTransfer(void) {
 /// An empty routine the link test calls to waste time.
 void SerialTest_Delay(void) {}
 
+/// The link test's block: LINK_TEST_TILES tiles' worth of bytes, shown from
+/// tile LINK_TEST_TILE of character block 0.
+#define LINK_TEST_BYTES 640
+#define LINK_TEST_TILES (LINK_TEST_BYTES / TILE_SIZE_4BPP)
+#define LINK_TEST_TILE (2 * BG_SCREEN_SIZE / TILE_SIZE_4BPP)
+/// What B sends: the cartridge's bytes from 4 KB in, where A sends its first.
+#define LINK_TEST_SECOND_SOURCE (Rom_Start + 4096)
+
 /// A link cable test left in the game: it shows a row of tiles, receives blocks
 /// into the map grid cell buffer and shows them as tiles, and sends a part of
 /// the ROM when A or B is held.
@@ -647,11 +655,11 @@ void SerialTest_Run(void) {
 
   Sound_PlayFar(MUS_PALACE);
   Serial_Initialize();
-  // Row 16, columns 0 to 19: tiles 128 to 128 + 19 of BG_CHAR_BLOCK(0) in
-  // WINDOW_PALETTE, where the received 640 bytes are copied
-  n = 19;
-  tile = (u16 *)BG_SCREEN_BLOCK(4) + 16 * 32 + 19;
-  value = (s16)(BG_TILE_PALETTE(WINDOW_PALETTE) | (128 + 19));
+  // Row 16, columns 0 to 19: the received tiles in WINDOW_PALETTE.
+  n = LINK_TEST_TILES - 1;
+  tile = (u16 *)BG_SCREEN_BLOCK(4) + 16 * BG_SCREEN_WIDTH + LINK_TEST_TILES - 1;
+  value = (s16)(BG_TILE_PALETTE(WINDOW_PALETTE) |
+                (LINK_TEST_TILE + LINK_TEST_TILES - 1));
   do {
     n--;
     *tile = value;
@@ -663,19 +671,19 @@ void SerialTest_Run(void) {
 restart:
   Serial_StartReceive(gMapGridCellBuffer);
   for (;;) {
-    // 640 bytes: 32 blocks, 20 tiles
     if (gKeysHeld & KEY_A)
-      Serial_StartSend((void *)Cart_Start, 640);
+      Serial_StartSend((void *)Cart_Start, LINK_TEST_BYTES);
     if (gKeysHeld & KEY_B)
-      Serial_StartSend((void *)(Rom_Start + 0x1000), 640);
+      Serial_StartSend((void *)LINK_TEST_SECOND_SOURCE, LINK_TEST_BYTES);
     if (gKeysHeld & KEY_START) {
       for (delay = 0; delay < 10000; delay++) {
         SerialTest_Delay();
       }
     }
     if (gSerialReceiveDestination == 0) {
-      Dma_Set(gMapGridCellBuffer, BG_CHAR_BLOCK(0) + 128 * TILE_SIZE_4BPP,
-              DMA_COPY_WORDS(160), REG_DMA3);
+      Dma_Set(gMapGridCellBuffer,
+              BG_CHAR_BLOCK(0) + LINK_TEST_TILE * TILE_SIZE_4BPP,
+              DMA_COPY_WORDS(LINK_TEST_BYTES / 4), REG_DMA3);
       goto restart;
     }
     wait(1);
@@ -683,3 +691,7 @@ restart:
 }
 
 #undef SERIAL_DEFINE_WAIT
+#undef LINK_TEST_BYTES
+#undef LINK_TEST_TILES
+#undef LINK_TEST_TILE
+#undef LINK_TEST_SECOND_SOURCE

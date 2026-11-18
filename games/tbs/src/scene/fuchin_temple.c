@@ -585,7 +585,7 @@ static void FuchinTemple_StudentAsksAboutFeh(void) {
 }
 
 /// Rotates the training tree through its westward arc and scatters particles.
-static void FuchinTemple_ToppleTreeWest(void) {
+static void FuchinTemple_KnockTreeDownWest(void) {
   struct Actor *tree = Actor_Get(ACTOR_TRAINING_TREE);
   u32 turnStep;
   s32 angle;
@@ -615,7 +615,7 @@ static void FuchinTemple_ToppleTreeWest(void) {
 
 /// Rotates the training tree through the opposite arc and reverses its
 /// horizontal scale.
-static void FuchinTemple_ToppleTreeEast(void) {
+static void FuchinTemple_KnockTreeDownEast(void) {
   struct Actor *tree;
   u32 turnStep;
   s32 angle;
@@ -643,7 +643,7 @@ static void FuchinTemple_ToppleTreeEast(void) {
 }
 
 /// Slides the training tree north in four steps, then scatters particles.
-static void FuchinTemple_ToppleTreeNorth(void) {
+static void FuchinTemple_KnockTreeDownNorth(void) {
   struct Actor *tree = Actor_Get(ACTOR_TRAINING_TREE);
   u32 stepIndex = 0;
   s32 delay = 8;
@@ -673,7 +673,7 @@ static void FuchinTemple_ToppleTreeNorth(void) {
 }
 
 /// Slides the training tree south in four steps before the final displacement.
-static void FuchinTemple_ToppleTreeSouth(void) {
+static void FuchinTemple_KnockTreeDownSouth(void) {
   struct Actor *tree;
   u32 stepIndex;
   FIXED particleSpeed;
@@ -850,9 +850,9 @@ static void FuchinTemple_MoveTree(void) {
 
   if (Actor_Get(ACTOR_PARTY_LEADER)->facing > FACING_SOUTH &&
       Actor_Get(ACTOR_PARTY_LEADER)->facing < FACING_NORTH) {
-    FuchinTemple_ToppleTreeWest();
+    FuchinTemple_KnockTreeDownWest();
   } else {
-    FuchinTemple_ToppleTreeEast();
+    FuchinTemple_KnockTreeDownEast();
   }
 
   if (GameFlag_Get(FLAG_FEH_WAITS_TO_SEE_CHI) != 0) {
@@ -877,13 +877,13 @@ static void FuchinTemple_PushTreeByHand(void) {
   facing = leader->facing;
 
   if (facing >= FACING_SOUTHEAST && facing < FACING_SOUTHWEST) {
-    FuchinTemple_ToppleTreeSouth();
+    FuchinTemple_KnockTreeDownSouth();
   } else if (facing >= FACING_SOUTHWEST && facing < FACING_NORTHWEST) {
-    FuchinTemple_ToppleTreeWest();
+    FuchinTemple_KnockTreeDownWest();
   } else if (facing >= FACING_NORTHWEST && facing < FACING_NORTHEAST) {
-    FuchinTemple_ToppleTreeNorth();
+    FuchinTemple_KnockTreeDownNorth();
   } else {
-    FuchinTemple_ToppleTreeEast();
+    FuchinTemple_KnockTreeDownEast();
   }
 
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
@@ -900,13 +900,13 @@ static void FuchinTemple_ForceTree(void) {
 
   facing = leader->facing;
   if (facing >= FACING_SOUTHEAST && facing < FACING_SOUTHWEST) {
-    FuchinTemple_ToppleTreeSouth();
+    FuchinTemple_KnockTreeDownSouth();
   } else if (facing >= FACING_SOUTHWEST && facing < FACING_NORTHWEST) {
-    FuchinTemple_ToppleTreeWest();
+    FuchinTemple_KnockTreeDownWest();
   } else if (facing >= FACING_NORTHWEST && facing < FACING_NORTHEAST) {
-    FuchinTemple_ToppleTreeNorth();
+    FuchinTemple_KnockTreeDownNorth();
   } else {
-    FuchinTemple_ToppleTreeEast();
+    FuchinTemple_KnockTreeDownEast();
   }
 
   FieldCamera_SetSpeed(1);
@@ -1562,10 +1562,10 @@ static void FuchinTemple_SpawnGrottoEntryParticle(void) {
   options.startScaleX = 7 * FIXED_ONE / 10;
   options.startScaleY = 4 * FIXED_ONE / 5;
 
-  fallSpeed = (Random_Below(8)) * 13107;
+  fallSpeed = Random_Below(8) * (toFIXED(1) / 5);
 
   FieldEffect_Spawn(leader->x.fixed + toFIXED(8 - (gFrameCount & 15)),
-                    leader->y.fixed + (192 << 13), leader->z.fixed, 0,
+                    leader->y.fixed + toFIXED(24), leader->z.fixed, 0,
                     -fallSpeed, 0, EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE,
                     &options);
 
@@ -2543,8 +2543,8 @@ static void FuchinTemple_SpawnNyunpasParticles(void) {
   options.priority = 1;
   options.type = SPRITE_CRESCENT;
   options.script = gFuchinTemple_ShotScript;
-  options.targetScaleX = 224 << 10;
-  options.targetScaleY = 192 << 9;
+  options.targetScaleX = FIXED_ONE * 7 / 2;
+  options.targetScaleY = FIXED_ONE * 3 / 2;
   for (shotIndex = 0; shotIndex < 8; shotIndex++) {
     Event_Wait(10);
     if (shotIndex & 1) {
@@ -2562,13 +2562,17 @@ static void FuchinTemple_SpawnNyunpasParticles(void) {
 
 /// Hama's and Ivan's update routine during the Reveal lesson: they glow, drawn
 /// red and blue in turn every two frames.
-static void FuchinTemple_AlternateLessonChildEffect(struct Actor *updated) {
+static void FuchinTemple_GlowRedAndBlue(struct Actor *updated) {
   if ((gFrameCount >> 1) & 1) {
     Actor_SetSpriteColor(updated, SPRITE_COLOR_RED_TINT);
   } else {
     Actor_SetSpriteColor(updated, SPRITE_COLOR_BLUE_TINT);
   }
 }
+
+/// The sparkles that rise from Hama, two frames apart, as the Reveal lesson
+/// ends.
+#define REVEAL_LESSON_SPARKLES 64
 
 /// Animates Hama and Ivan's lesson effects, fades the palette and clears the
 /// update routines.
@@ -2581,26 +2585,27 @@ static void FuchinTemple_AnimateRevealLesson(void) {
   s32 riseSpeed;
 
   Sound_Play(SE_PSYNERGY_SPARKLE);
-  Actor_Get(ACTOR_HAMA)->update = FuchinTemple_AlternateLessonChildEffect;
+  Actor_Get(ACTOR_HAMA)->update = FuchinTemple_GlowRedAndBlue;
   Event_Wait(40);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(20, 2, 23), PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   Event_Wait(40);
   Sound_Play(SE_PSYNERGY_SPARKLE);
-  Actor_Get(ACTOR_IVAN)->update = FuchinTemple_AlternateLessonChildEffect;
+  Actor_Get(ACTOR_IVAN)->update = FuchinTemple_GlowRedAndBlue;
   Event_Wait(120);
   hama = Actor_Get(ACTOR_HAMA);
   options.priority = 1;
   options.palette = SPRITE_COLOR_RBG;
   options.type = SPRITE_SPARKLE;
-  for (particleIndex = 0; particleIndex < 64; particleIndex++) {
+  for (particleIndex = 0; particleIndex < REVEAL_LESSON_SPARKLES;
+       particleIndex++) {
     if ((particleIndex & 3) == 0) {
       Sound_Play(SE_GLITTER);
     }
     particleX = hama->x.fixed + toFIXED(Random_Below(48)) - toFIXED(12);
     particleY = hama->y.fixed + toFIXED(Random_Below(32)) - toFIXED(16);
-    riseSpeed = ((Random_Below(4)) << 15) + (128 << 8);
+    riseSpeed = Random_Below(4) * (toFIXED(1) / 2) + toFIXED(1) / 2;
     FieldEffect_Spawn(
         particleX, particleY, hama->z.fixed, 0, riseSpeed, 0,
         EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE, &options);

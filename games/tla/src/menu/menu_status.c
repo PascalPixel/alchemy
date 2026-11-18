@@ -392,6 +392,7 @@ s32 PartyMemberChooser_RunRearrange(void) {
   redraw = 2;
   result = 0;
   page = menu->page;
+  // DEAD: Unit_Get's result is not used; the ROM keeps the call.
   Unit_Get(menu->memberIds[ownerIndex]);
   for (rowIndex = 0; rowIndex < 4; rowIndex++) {
     menu->rowX[rowIndex] = STATUS_FIGURE_X(rowIndex);
@@ -419,6 +420,7 @@ s32 PartyMemberChooser_RunRearrange(void) {
       Text_DrawMessageAsTilesFar(MsgRearrangeHelp - 3, menu->selectorWindow, 0,
                                  8);
       ownerIndex = (ownerIndex + ownerCount) % ownerCount;
+      // DEAD: Unit_Get's result is not used; the ROM keeps the call.
       Unit_Get(menu->memberIds[ownerIndex]);
       page = (page + 3) % 3;
       StatusScreen_ShowMemberStatus(menu->memberIds[ownerIndex], page);
@@ -493,6 +495,7 @@ s32 PsynergyMenu_ChooseMember(void) {
   s32 page = menu->page;
   s32 result;
 
+  // DEAD: Unit_Get's result is not used; the ROM keeps the call.
   Unit_Get(menu->memberIds[selection]);
   WindowSprite_RedrawSavedRectFar(menu->selectorWindow);
   Text_DrawMessageAsTilesFar((s32)MsgChooseCharacter, menu->selectorWindow, 0,
@@ -503,6 +506,7 @@ s32 PsynergyMenu_ChooseMember(void) {
     // PERM
     if (pending) {
       selection = (selection + count) % count;
+      // DEAD: Unit_Get's result is not used; the ROM keeps the call.
       Unit_Get(menu->memberIds[selection]);
       page = (page + 3) % 3;
       StatusScreen_ShowMemberStatus(menu->memberIds[selection], page);
@@ -696,6 +700,7 @@ s32 StatusScreen_SelectCommand(void) {
   MenuCursor_Slide(-10, 88);
 
   while (done == 0 && !GameFlag_Get(FLAG_MENU_START_PRESSED)) {
+    // DEAD: Unit_Get's result is not used; the ROM keeps the call.
     Unit_Get(menu->selectedIds[0]);
     StatusScreen_DrawStatusAilments(window, menu->selectedIds[0], 1);
     count = StatusScreen_BuildAvailability(entries, 1, menu->selectedIds[0]);

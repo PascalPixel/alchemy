@@ -377,14 +377,14 @@ s32 WorldMap_SetIslandTile(struct Actor *actor) {
   return 1;
 }
 
-/// Shows the tidal wave's sprite.
+/// Takes the tidal wave's shadow away (its sprite flags cleared).
 s32 WorldMap_SetUpWave(struct Actor *actor) {
   Actor_SetSpriteFlags(actor, 0);
   return 0;
 }
 
-/// Once the scene's first temporary flag is set, the tidal wave shows and
-/// rolls slowly 30 pixels west and 8 south.
+/// Once the scene's first temporary flag is set, the tidal wave loses its
+/// shadow and rolls slowly 30 pixels west and 8 south.
 s32 WorldMap_SendWaveIn(struct Actor *actor) {
   FIXED x, z;
 
@@ -592,6 +592,8 @@ void WorldMap_LeaveShip(void) {
   if (cell > WORLD_MAP_COLLISION_WALKABLE_LAST) {
     blocked = 1;
   } else {
+    // Collisions 1 to 3, the open sea (BATTLE_ENVIRONMENT_SEA's), short of
+    // WORLD_MAP_COLLISION_SEA_LAST.
     if ((u32)(cell - WORLD_MAP_COLLISION_SEA_FIRST) <= 2)
       shore = 1;
     if ((block->unusedAfterPlace & WORLD_MAP_BLOCK_LANDING) == 0 &&

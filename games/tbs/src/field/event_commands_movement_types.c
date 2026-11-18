@@ -4,15 +4,31 @@
 
 #include "event_commands_internal.h"
 
-/// The SC_CALL routine of movement type 7: clears an actor's sprite flags and
-/// its collision flags, so nothing collides with it.
+/// The actors in gActors, as field_internal.h counts them.
+#define ACTOR_COUNT 64
+/// A following actor (MOVEMENT_TYPE_FOLLOW_WATCHED) stays its timer's
+/// distance in pixels from the watched actor: from as far as that it walks
+/// toward a point this many pixels along the way for each timer's distance it
+/// is off, and nearer it stands.
+#define FOLLOW_STRIDE 16
+/// Actor_FindNearestFacingTarget's reach in pixels, across and in height, and
+/// the distance beyond which an actor must be within FACING_TARGET_ANGLE of
+/// where it faces.
+#define FACING_TARGET_REACH 40
+#define FACING_TARGET_HEIGHT 48
+#define FACING_TARGET_NEAR 23
+#define FACING_TARGET_ANGLE (TRIG_TURN * 3 / 16)
+
+/// The SC_CALL routine of MOVEMENT_TYPE_RESET_ACTION: clears an actor's sprite
+/// flags and its collision flags, so nothing collides with it.
 s32 Actor_ClearChildAndCollisionFlags(void *obj) {
   Actor_SetSpriteFlagsFar(obj, 0);
   ((struct Actor *)obj)->collisionFlags = 0;
   return 0;
 }
 
-/// The SC_CALL routine of movement type 5: follows the watched actor.
+/// The SC_CALL routine of MOVEMENT_TYPE_FOLLOW_WATCHED: follows the watched
+/// actor.
 s32 Actor_MoveTowardTarget(struct Actor *actor) {
   s32 step;
   struct Actor *target;
@@ -25,7 +41,7 @@ s32 Actor_MoveTowardTarget(struct Actor *actor) {
   s32 distance;
 
   target = actor->watchedActor;
-  if (target != 0) {
+  if (target != NULL) {
     // Whole pixels, rounded toward zero as a division by FIXED_ONE would.
     deltaX = target->x.fixed - actor->x.fixed;
     if (deltaX < 0)
@@ -38,9 +54,10 @@ s32 Actor_MoveTowardTarget(struct Actor *actor) {
     distance = Iwram_Sqrt(pixelsX * pixelsX + pixelsZ * pixelsZ);
     step = actor->timer;
     if (distance >= step) {
-      // << 20 is 16 pixels in 16.16 per pixel of distance.
-      newX = actor->x.fixed + (s32)((u32)pixelsX << 20) / step;
-      newZ = actor->z.fixed + (s32)((u32)pixelsZ << 20) / step;
+      newX =
+          actor->x.fixed + (s32)((u32)pixelsX * toFIXED(FOLLOW_STRIDE)) / step;
+      newZ =
+          actor->z.fixed + (s32)((u32)pixelsZ * toFIXED(FOLLOW_STRIDE)) / step;
       Actor_SetMoveTargetFar(actor, newX, actor->y.fixed, newZ);
       Actor_SelectAnimationFar(actor, ANIM_WALK);
     } else {
@@ -50,8 +67,8 @@ s32 Actor_MoveTowardTarget(struct Actor *actor) {
   return 1;
 }
 
-/// The SC_CALL routine of movement type 6: turns the actor toward its watched
-/// actor, at most 1/16 turn a frame.
+/// The SC_CALL routine of MOVEMENT_TYPE_FACE_LEADER: turns the actor toward
+/// its watched actor, at most FACING_STEP a frame.
 s32 Actor_TurnTowardWatchedActor(struct Actor *actor) {
   s16 turnStep;
   u16 currentAngle;
@@ -109,9 +126,11 @@ void Actor_SetMovementType(struct Actor *actor, s32 action) {
   Actor_StartScriptFar(actor, (const s32 *)action);
 }
 
-/// Finds the nearest animated actor to self within 40 pixels and 48 pixels of
-/// height, ignoring actors more than 3/16 turn to either side once they are
-/// over 23 pixels away.
+/// Finds the nearest animated actor to self within FACING_TARGET_REACH pixels
+/// and under FACING_TARGET_HEIGHT of height, ignoring actors more than
+/// FACING_TARGET_ANGLE to either side once they are over FACING_TARGET_NEAR
+/// pixels away; returns it if its sprite is `sprite` (an enum SpriteId), else
+/// NULL.
 struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 sprite) {
   struct Actor *entry;
   struct Actor *found;
@@ -125,22 +144,21 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 sprite) {
   s32 angleDifference;
 
   found = NULL;
-  nearestDistance = 40;
+  nearestDistance = FACING_TARGET_REACH;
   entry = gActors;
-  for (slotIndex = 0; slotIndex < 64; slotIndex++, entry++) {
+  for (slotIndex = 0; slotIndex < ACTOR_COUNT; slotIndex++, entry++) {
     if (entry->script == NULL)
       continue;
     if (entry == self)
       continue;
     if (entry->spriteStorageKind != ACTOR_SPRITE_ONE)
       continue;
-    // Under 48 pixels apart in height, either way.
     heightDifference = entry->y.fixed - self->y.fixed;
     if (heightDifference >= 0) {
-      if (heightDifference > toFIXED(48) - 1)
+      if (heightDifference > toFIXED(FACING_TARGET_HEIGHT) - 1)
         continue;
     } else {
-      if (self->y.fixed - entry->y.fixed > toFIXED(48) - 1)
+      if (self->y.fixed - entry->y.fixed > toFIXED(FACING_TARGET_HEIGHT) - 1)
         continue;
     }
     pixelX = (entry->x.fixed - self->x.fixed) / FIXED_ONE;
@@ -150,11 +168,11 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 sprite) {
       continue;
     angle = (u16)Trig_Atan(entry->z.fixed - self->z.fixed,
                            entry->x.fixed - self->x.fixed);
-    if (distance > 23) {
+    if (distance > FACING_TARGET_NEAR) {
       angleDifference = (s16)(angle - self->facing);
-      if (angleDifference < -(TRIG_TURN * 3 / 16 - 1))
+      if (angleDifference < -(FACING_TARGET_ANGLE - 1))
         continue;
-      if (angleDifference > TRIG_TURN * 3 / 16 - 1)
+      if (angleDifference > FACING_TARGET_ANGLE - 1)
         continue;
     }
     found = entry;
@@ -166,3 +184,10 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 sprite) {
     return NULL;
   return found;
 }
+
+#undef ACTOR_COUNT
+#undef FOLLOW_STRIDE
+#undef FACING_TARGET_REACH
+#undef FACING_TARGET_HEIGHT
+#undef FACING_TARGET_NEAR
+#undef FACING_TARGET_ANGLE

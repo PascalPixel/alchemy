@@ -5,8 +5,9 @@
 #include "event_commands_internal.h"
 
 /// A Jupiter Djinni joins the party: it bounces three times, spins, leaps out
-/// of sight and bursts into 24 light particles that circle and close in on the
-/// leader, who turns to the camera and plays ANIM_LEADER_ARMS_RAISED.
+/// of sight and bursts into a light particle for each of the effect work's,
+/// which circle and close in on the leader, who turns to the camera and raises
+/// its arms (ANIM_LEADER_ARMS_RAISED).
 void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   struct Vector3 position;
   struct Actor *djinni;
@@ -37,7 +38,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   Sound_PlayFar(SE_HIGH_JUMP);
   Actor_Jump(djinniId, 12, 22);
 
-  // 24 light particles from where the Djinni is on screen.
+  // The light particles, from where the Djinni is on screen.
   position.x = djinni->x.fixed;
   position.y = djinni->y.fixed;
   position.z = djinni->z.fixed;
@@ -45,13 +46,15 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   Actor_ReleaseFar(djinni);
   Sound_PlayFar(SE_SCATTER);
   effect = effectWork->particles;
-  remainingParticles = 23;
-  // One a frame, each with a random sprite param of 0 to 6.
+  remainingParticles = ARRAY_COUNT(effectWork->particles) - 1;
+  // One a frame, each in a random colour mode from SPRITE_COLOR_NORMAL to
+  // SPRITE_COLOR_GREY.
   do {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_RunAngledApproachPhases);
     FieldParticle_SetActorMode(effect, 7);
-    Sprite_SetAnimationColorModesFar(effect->actor, (Random16() * 7) >> 16);
+    Sprite_SetAnimationColorModesFar(
+        effect->actor, (Random16() * (SPRITE_COLOR_GREY + 1)) >> 16);
     scale = Random16() / 3 + FIXED_ONE; // 1.0 to 1.33
     effect->scaleY = scale;
     effect->scaleX = scale;
@@ -94,9 +97,11 @@ void FieldEffect_AdvanceAngleWithRamp(struct Actor *actor) {
   }
 }
 
-/// Spins and shrinks an actor by 448 a frame, then releases it: 119 frames
-/// from full size. The Mars Djinni's joining shrinks the Djinni away with it.
-DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkActorAndDestroySlow, -448)
+/// Spins an actor an eighth of a turn and shrinks it by 7/1024 of its size a
+/// frame, then releases it: 119 frames from full size. The Mars Djinni's
+/// joining shrinks the Djinni away with it.
+DEFINE_SHRINK_AND_DESTROY(FieldEffect_ShrinkActorAndDestroySlow,
+                          -(FIXED_ONE * 7 / 1024))
 
 /// Field effect sprite callback of a Mars Djinni's sparks (enum
 /// MarsSparkState): the spark flies 120 pixels up the screen (give or take 3/32
@@ -128,11 +133,9 @@ void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
     effect->state++;
 
     // At the leader's sprite priority, until MARS_SPARK_RISING brings it in
-    // front
-    // (priority 0, z lifting the sprite) after 3 frames.
+    // front (priority 0, z lifting the sprite) after 3 frames.
     ((struct Sprite *)effect->actor)->image.priority =
-        // Through the sprite union this load moves.
-        (*(struct Sprite **)&owner->sprite)->image.priority;
+        owner->sprite->image.priority;
     effect->flags = 0;
     effect->age = 0;
     if ((gVBlankCount & 1) != 0)

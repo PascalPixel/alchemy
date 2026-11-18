@@ -2,7 +2,7 @@
 /// The Kibombo Mountains, the pass the Kibombo warriors guard on the way to
 /// their village, in the rooms of this overlay: crates the party pushes and
 /// vines it climbs while it keeps out of the guards' sight, a guard who sees
-/// it sending it back, a guard dog and its bone, the weeds Whirlwind scatters
+/// it sending it back, a guard dog and its bone, the bush Whirlwind blows away
 /// from a small cavern's way in, and the Jupiter Djinni Waft
 /// (KibomboMountains_FightWaft).
 
@@ -39,7 +39,7 @@
 /// the guards and the dog are gone.
 #define FLAG_KIBOMBO_LETS_PARTY_PASS FLAG_GABOMBA_MESSAGE_CARRIED
 #define FLAG_KIBOMBO_GUARDS_REPORTED 0x880
-#define FLAG_KIBOMBO_WEEDS_SCATTERED 0x882
+#define FLAG_KIBOMBO_BUSH_BLOWN_AWAY 0x882
 /// Set once the party has lashed the rope between the posts.
 #define FLAG_KIBOMBO_ROPE_TIED 0x9e8
 #define FLAG_KIBOMBO_FIRST_PILLAR_DROPPED 0x8e7
@@ -85,8 +85,8 @@ enum KibomboMountainsWaftActorId {
   ACTOR_PUDDLE,
   /// The sprout Growth turns into a vine up to Waft's ledge.
   ACTOR_SPROUT,
-  /// The weeds Whirlwind scatters from the small cavern's way in.
-  ACTOR_WEEDS,
+  /// The bush Whirlwind blows away from the small cavern's way in.
+  ACTOR_CAVERN_BUSH,
   /// The pillar pushed off the ledge to shut the dog in.
   ACTOR_DOG_PILLAR,
   /// The crate pushed off the ledge onto the lower guard.
@@ -104,8 +104,8 @@ enum KibomboMountainsWaftActorId {
 /// The room of the Disk Axe chest, by the rows of
 /// gKibomboMountains_DiskAxeChestPlacements.
 enum KibomboMountainsDiskAxeChestActorId {
-  ACTOR_ROPE_WEST_POST = ACTOR_FIRST_PLACED,
-  ACTOR_ROPE_EAST_POST,
+  ACTOR_WEST_ROPE_POST = ACTOR_FIRST_PLACED,
+  ACTOR_EAST_ROPE_POST,
   ACTOR_FIRST_GUARD,
   ACTOR_SECOND_GUARD,
   ACTOR_THIRD_GUARD,
@@ -256,7 +256,7 @@ void Actor_StartIdle(struct Actor *actor);
 /// A pillar or crate pushed off its ledge: the pillar dropped across the
 /// dog's run shuts the dog in on one side, and the crate dropped on the lower
 /// guard knocks him out, while missing him only puzzles him.
-void KibomboMountains_DropCrate(s32 unused, s32 id) {
+void KibomboMountains_DropOffLedge(s32 unused, s32 id) {
   struct Actor saved;
 
   if (id == ACTOR_DOG_PILLAR) {
@@ -357,9 +357,9 @@ void KibomboMountains_TremorDropsBone(void) {
   Event_End();
 }
 
-/// Whirlwind scatters the weeds over the small cavern's way in.
-void KibomboMountains_WhirlwindScattersWeeds(void) {
-  GameFlag_Set(FLAG_KIBOMBO_WEEDS_SCATTERED);
+/// Whirlwind blows away the bush over the small cavern's way in.
+void KibomboMountains_BlowAwayBush(void) {
+  GameFlag_Set(FLAG_KIBOMBO_BUSH_BLOWN_AWAY);
 }
 
 /// The leader jumps the gap ahead.
@@ -469,7 +469,7 @@ void Rope_Initialize(void);
 
 /// Sets up the room the party enters: in Waft's room the puddle, vine,
 /// pillar and crate as this visit left them, the bone on its crate or in the
-/// dog's mouth, and the weeds unless scattered; in the chest room the rope,
+/// dog's mouth, and the bush unless blown away; in the chest room the rope,
 /// the puddles, the dropped pillars and the crates' cells, and the warriors
 /// marching the party back if it was caught. Returns 0.
 s32 Scene_Initialize(void) {
@@ -517,16 +517,16 @@ s32 Scene_Initialize(void) {
                                                    ATTACHED_EFFECT_ATTACH);
     }
     Actor_ShowItemIconById(ACTOR_BONE, ITEM_BONE);
-    if (GameFlag_Get(FLAG_KIBOMBO_WEEDS_SCATTERED))
-      Actor_SetPosition(ACTOR_WEEDS, 0, 0);
+    if (GameFlag_Get(FLAG_KIBOMBO_BUSH_BLOWN_AWAY))
+      Actor_SetPosition(ACTOR_CAVERN_BUSH, 0, 0);
     else
-      Actor_GetById(ACTOR_WEEDS)->scaleY = FIXED_ONE * 5 / 4;
+      Actor_GetById(ACTOR_CAVERN_BUSH)->scaleY = FIXED_ONE * 5 / 4;
   } else if (scene == SCENE_KIBOMBO_MOUNTAINS_DISK_AXE_CHEST) {
-    Actor_SetSpritePriority(ACTOR_ROPE_WEST_POST, 1);
-    Actor_SetSpritePriority(ACTOR_ROPE_EAST_POST, 1);
+    Actor_SetSpritePriority(ACTOR_WEST_ROPE_POST, 1);
+    Actor_SetSpritePriority(ACTOR_EAST_ROPE_POST, 1);
     Rope_Initialize();
-    FieldRope_Place(0, FLAG_KIBOMBO_ROPE_TIED, ACTOR_ROPE_WEST_POST,
-                    ACTOR_ROPE_EAST_POST);
+    FieldRope_Place(0, FLAG_KIBOMBO_ROPE_TIED, ACTOR_WEST_ROPE_POST,
+                    ACTOR_EAST_ROPE_POST);
     if (GameFlag_Get(FLAG_FIRST_PUDDLE_FROZEN))
       MapGrid_CopyCellAttributes(6, 16, 1, 1, 4, 16);
     if (GameFlag_Get(FLAG_SECOND_PUDDLE_FROZEN))
@@ -858,7 +858,7 @@ void KibomboMountains_StepSouthOfDog(void) {
 void KibomboMountains_FightWaft(void);
 void KibomboMountains_FreezePuddle(void);
 void KibomboMountains_GrowVine(void);
-void KibomboMountains_WhirlwindScattersWeeds(void);
+void KibomboMountains_BlowAwayBush(void);
 void KibomboMountains_StepNorthOfDog(void);
 
 extern s32 gKibomboMountains_FirstGuardPaceScript[];
@@ -1120,7 +1120,7 @@ struct Trigger gKibomboMountains_WaftTriggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, KIBOMBO_MOUNTAINS_WAFT_TO_KIBOMBO_MOUNTAINS_DISK_AXE_CHEST_EAST_B},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, KIBOMBO_MOUNTAINS_WAFT_TO_KIBOMBO_MOUNTAINS_DISK_AXE_CHEST_WEST},
     {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 5, CONDITION_ALWAYS, KIBOMBO_MOUNTAINS_WAFT_TO_KIBOMBO_MOUNTAINS_CAVERN_NORTH},
-    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 6, IF_FLAG_SET(FLAG_KIBOMBO_WEEDS_SCATTERED), KIBOMBO_MOUNTAINS_WAFT_TO_KIBOMBO_MOUNTAINS_CAVERN_SOUTH_A},
+    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 6, IF_FLAG_SET(FLAG_KIBOMBO_BUSH_BLOWN_AWAY), KIBOMBO_MOUNTAINS_WAFT_TO_KIBOMBO_MOUNTAINS_CAVERN_SOUTH_A},
     {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 7, CONDITION_ALWAYS, KIBOMBO_MOUNTAINS_WAFT_TO_KIBOMBO_MOUNTAINS_CAVERN_SOUTH_B},
     {TRIGGER_STEP, 20, FLAG_KIBOMBO_LETS_PARTY_PASS, EVENT(KibomboMountains_StepBeforeUpperGuard)},
     {TRIGGER_STEP, 21, FLAG_KIBOMBO_LETS_PARTY_PASS, EVENT(KibomboMountains_StepBeforeUpperGuardAgain)},
@@ -1130,7 +1130,7 @@ struct Trigger gKibomboMountains_WaftTriggers[] = {
     {TRIGGER_STEP, 25, FLAG_KIBOMBO_LETS_PARTY_PASS, EVENT(KibomboMountains_StepSouthOfDog)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 33, CONDITION_ALWAYS, EVENT(KibomboMountains_JumpForward)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(KibomboMountains_StartPushingCrate)},
-    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(KibomboMountains_DropCrate)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(KibomboMountains_DropOffLedge)},
     {TRIGGER_TALK, ACTOR_GUARD_DOG, IF_FLAG_SET(FLAG_DOG_EATING_BONE), MSGNO(MsgKibomboMountainsSniffSniffLickLickLick)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUARD_DOG, IF_FLAG_SET(FLAG_DOG_EATING_BONE), MSGNO(MsgKibomboMountainsBoneThatsMyFavruffLick)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUARD_DOG, CONDITION_ALWAYS, MSGNO(MsgKibomboMountainsThisRock)},
@@ -1139,10 +1139,10 @@ struct Trigger gKibomboMountains_WaftTriggers[] = {
     {TRIGGER_TALK, ACTOR_WAFT, CONDITION_ALWAYS, EVENT(KibomboMountains_FightWaft)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_PUDDLE_FROZEN, EVENT(KibomboMountains_FreezePuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_SPROUT_GROWN, EVENT(KibomboMountains_GrowVine)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WEEDS, CONDITION_ALWAYS, EVENT(KibomboMountains_WhirlwindScattersWeeds)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_DOG_PILLAR, CONDITION_ALWAYS, EVENT(KibomboMountains_DropCrate)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_CAVERN_BUSH, CONDITION_ALWAYS, EVENT(KibomboMountains_BlowAwayBush)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_DOG_PILLAR, CONDITION_ALWAYS, EVENT(KibomboMountains_DropOffLedge)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_GUARD_CRATE, FLAG_GUARD_KNOCKED_OUT, EVENT(KibomboMountains_StartPushingCrate)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_GUARD_CRATE, FLAG_GUARD_KNOCKED_OUT, EVENT(KibomboMountains_DropCrate)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_GUARD_CRATE, FLAG_GUARD_KNOCKED_OUT, EVENT(KibomboMountains_DropOffLedge)},
     {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), FACING_SUBJECT(FACING_NORTH, ACTOR_BONE_CRATE), FLAG_DOG_EATING_BONE, EVENT(KibomboMountains_TremorDropsBone)},
     {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), FACING_SUBJECT(FACING_EAST, ACTOR_BONE_CRATE), FLAG_DOG_EATING_BONE, EVENT(KibomboMountains_TremorDropsBone)},
     {TRIGGER_TABLE_END},
@@ -1163,7 +1163,7 @@ struct Trigger gKibomboMountains_DiskAxeChestTriggers[] = {
     {TRIGGER_STEP, 36, FLAG_KIBOMBO_LETS_PARTY_PASS, EVENT(KibomboMountains_StepBeforeThirdGuardAgain)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(KibomboMountains_StartPushingChestRoomCrate)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(KibomboMountains_FinishPushingChestRoomCrate)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_WEST_POST, FLAG_KIBOMBO_ROPE_TIED, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_WEST_ROPE_POST, FLAG_KIBOMBO_ROPE_TIED, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE, FLAG_FIRST_PUDDLE_FROZEN, EVENT(KibomboMountains_FreezeFirstPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SECOND_PUDDLE, FLAG_SECOND_PUDDLE_FROZEN, EVENT(KibomboMountains_FreezeSecondPuddle)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_WEST_TORCH, CONDITION_ALWAYS, 0},

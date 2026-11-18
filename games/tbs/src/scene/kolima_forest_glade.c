@@ -56,6 +56,10 @@ enum KolimaForestGladeActorId {
   ACTOR_NUT = ACTOR_FIRST_LOG + 3
 };
 
+/// How far the curse tints the glade until it is lifted: green and blue lose
+/// an eleventh of themselves (KolimaPalette_Curse).
+#define CURSE_STRENGTH 11
+
 #include "shared/staged_actor.c"
 
 /// Where the party enters, from SceneId_KolimaForestEntrance and
@@ -107,7 +111,7 @@ s32 Scene_Initialize(void) {
   Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 1);
   Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 2);
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-    KolimaPalette_Curse(11);
+    KolimaPalette_Curse(CURSE_STRENGTH);
   }
   return 0;
 }

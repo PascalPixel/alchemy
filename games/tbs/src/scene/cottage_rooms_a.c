@@ -163,10 +163,14 @@ static void CottageRoomsA_SpawnSleepZ(void);
 
 #include "shared/actor_facing.c"
 
+/// A pixel a frame in a drifting Z's two steps, timer east and userValue up,
+/// which count 256ths of a pixel.
+#define SLEEP_Z_STEP_PIXEL 256
+
 /// Moves and grows a Z drifting up from Garet's sleeping grandfather.
 static s32 CottageRoomsA_AdvanceSleepZ(struct Actor *actor) {
-  actor->x.fixed += (s16)actor->timer * 256;
-  actor->y.fixed += (s16)actor->userValue * 256;
+  actor->x.fixed += (s16)actor->timer * (FIXED_ONE / SLEEP_Z_STEP_PIXEL);
+  actor->y.fixed += (s16)actor->userValue * (FIXED_ONE / SLEEP_Z_STEP_PIXEL);
   actor->scaleX += FIXED_ONE / 40;
   actor->scaleY += FIXED_ONE / 40;
   actor->timer += 5;
@@ -849,7 +853,8 @@ static void CottageRoomsA_SpawnSleepZ(void) {
   if (origin != NULL) {
     Actor_SetPositionFX(actorId, origin->x.fixed, origin->z.fixed);
   }
-  // Restart this sprite above the origin with a small scale and 8.8 motion.
+  // The Z starts again above his head at two fifths of full size, drifting
+  // east and up.
   actor->scaleX = 2 * FIXED_ONE / 5;
   actor->scaleY = 2 * FIXED_ONE / 5;
   {
@@ -857,9 +862,8 @@ static void CottageRoomsA_SpawnSleepZ(void) {
 
     actor->y.fixed = height;
     actor->targetY = height;
-    // The drifting script consumes these two work fields as signed 8.8 steps.
-    actor->timer = 25;      // 25/256 pixel per frame.
-    actor->userValue = 128; // 1/2 pixel per frame.
+    actor->timer = 25;
+    actor->userValue = SLEEP_Z_STEP_PIXEL / 2;
   }
   Actor_SetScript(actorId, gCottageRoomsA_SleepZScript);
 }

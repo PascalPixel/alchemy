@@ -4,6 +4,12 @@
 
 #include "shop_internal.h"
 
+/// The bytes of one pixel row of a 16-colour tile.
+#define TILE_ROW_SIZE_4BPP (TILE_SIZE_4BPP / 8)
+
+/// The frames the field's colours take to fade to a shop's tint and back.
+#define SHOP_TINT_FRAMES 16
+
 /// Where each of the quantity bar's 30 segments starts in its tile buffer: a
 /// byte column of a 4-bit tile, so four segments to a tile and the next tile
 /// 32 bytes on, eight tiles in all.
@@ -28,15 +34,15 @@ void QuantityBar_Fill(s32 itemCount, s32 paletteSelector, u8 *tileBuffer) {
   // One byte holds two 4-bit pixels, the left one in the low nibble.
   paletteSelector = (paletteSelector << 4) + 1;
   for (segment = 0; segment < itemCount; segment++) {
-    // A tile row is 4 bytes; the segment's byte in rows 1 to 6.
+    // The segment's byte in rows 1 to 6.
     u8 *column = tileBuffer + sSelectorTileOffsets[segment];
 
-    column[4] = paletteSelector;
-    column[8] = paletteSelector;
-    column[12] = paletteSelector;
-    column[16] = paletteSelector;
-    column[20] = paletteSelector;
-    column[24] = paletteSelector;
+    column[1 * TILE_ROW_SIZE_4BPP] = paletteSelector;
+    column[2 * TILE_ROW_SIZE_4BPP] = paletteSelector;
+    column[3 * TILE_ROW_SIZE_4BPP] = paletteSelector;
+    column[4 * TILE_ROW_SIZE_4BPP] = paletteSelector;
+    column[5 * TILE_ROW_SIZE_4BPP] = paletteSelector;
+    column[6 * TILE_ROW_SIZE_4BPP] = paletteSelector;
   }
 }
 
@@ -48,7 +54,8 @@ static const u16 sPriceDigitTileOffsets[5] = {
 // clang-format on
 
 /// Copies decimal glyph `digit` into its price-tile position, stopping at zero
-/// source bytes.
+/// source bytes: two bytes of each of its four rows in the digit's tile, and
+/// two more in the same row of the next.
 void Shop_CopyGlyphs(s32 digit, u8 *tileBuffer, u32 digitPosition) {
   u8 *src = gShop_GlyphBytes + (digit << 5);
   u8 *dst = tileBuffer + sPriceDigitTileOffsets[digitPosition] + 2;
@@ -60,13 +67,13 @@ void Shop_CopyGlyphs(s32 digit, u8 *tileBuffer, u32 digitPosition) {
       if (*src != 0) {
         dst[1] = *src++;
         if (*src != 0) {
-          dst[30] = *src++;
+          dst[TILE_SIZE_4BPP - 2] = *src++;
           if (*src != 0)
-            dst[31] = *src++;
+            dst[TILE_SIZE_4BPP - 1] = *src++;
         }
       }
     }
-    dst += 4;
+    dst += TILE_ROW_SIZE_4BPP;
   }
 }
 
@@ -111,8 +118,8 @@ struct WindowSprite *Shop_CreatePriceSprite(s32 value, struct Window *window,
   return priceSprite;
 }
 
-/// Saves the field colours in the field work and fades to `layer` over 16
-/// frames.
+/// Saves the field's background colours in the field work and fades to `layer`
+/// over SHOP_TINT_FRAMES frames.
 void Shop_SaveAndTintFieldPalette(s32 layer) {
   // UB: slot 32 lies past scalar gFieldWork.
 #ifdef UBFIX
@@ -126,21 +133,21 @@ void Shop_SaveAndTintFieldPalette(s32 layer) {
 #endif
   u16 *savedPalette = paletteBuffers->target;
 
-  Dma_Set(savedPalette,
-          eventBytes + offsetof(struct FieldWork, savedFadeTarget),
-          DMA_COPY_WORDS(336), REG_DMA3);
+  Dma_Set(
+      savedPalette, eventBytes + offsetof(struct FieldWork, savedFadeTarget),
+      DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS * 3 * sizeof(u16) / 4), REG_DMA3);
   Dma_Set(savedPalette, paletteBuffers->current,
           DMA_COPY_WORDS(sizeof(paletteBuffers->current) / 4), REG_DMA3);
   PaletteFade_SetTargetFar(layer, 1);
-  PaletteFade_StartInterpolationFar(16);
+  PaletteFade_StartInterpolationFar(SHOP_TINT_FRAMES);
 }
 
-/// Fades back to the colours Shop_SaveAndTintFieldPalette saved, over 16
-/// frames.
+/// Fades back to the colours Shop_SaveAndTintFieldPalette saved, over
+/// SHOP_TINT_FRAMES frames.
 void Shop_RestoreFieldPalette(void) {
   PaletteFade_SetTargetFar(
       (s32)gFieldWork + offsetof(struct FieldWork, savedFadeTarget), 1);
-  PaletteFade_StartInterpolationFar(16);
+  PaletteFade_StartInterpolationFar(SHOP_TINT_FRAMES);
 }
 
 /// Moves the cursor a frame along its straight line toward its target.
@@ -220,7 +227,7 @@ void MenuCursor_MoveTowardTarget(struct MenuCursor *cursor) {
 }
 
 /// Starts a glide of the cursor from where it is to (targetX, targetY) over
-/// `kind` frames, for MenuCursor_Advance to run.
+/// `frames` frames, for MenuCursor_Advance to run.
 void MenuCursor_Set(struct MenuCursor *cursor, s32 targetX, s32 targetY,
                     s32 frames) {
   struct WindowSprite *anchor = cursor->anchor;
@@ -274,3 +281,6 @@ void MenuCursor_Place(struct Window *window, s32 x, s32 y) {
   }
   MenuCursor_Set(&shop->cursor, cursorX, cursorY, (s8)shop->cursorFrames);
 }
+
+#undef TILE_ROW_SIZE_4BPP
+#undef SHOP_TINT_FRAMES

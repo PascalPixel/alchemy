@@ -1,13 +1,22 @@
 /// @file
-/// The swelling arcs over the caster.
+/// The golden rings that swell around a caster and rise up its body: each ring
+/// is two arcs of SPRITE_GOLDEN_RINGS, its back half behind the caster and its
+/// front half, the same arc upside down, in front.
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
 
-/// Per-frame update of arc A: over 32 frames it swells and shrinks again
-/// (scale sin(frame / 64 turn)) while it rises a pixel a frame on the actor
-/// it follows, 9 pixels in front of it and up to 5 pixels further while
-/// small.
+/// A ring's life in frames, over which its scale runs through half a sine
+/// wave: it swells from nothing and shrinks again.
+#define CAST_RING_FRAMES 32
+#define CAST_RING_SCALE(frame)                                                 \
+  Trig_Sin((frame) * (TRIG_TURN / 2 / CAST_RING_FRAMES))
+/// The ring is set off every this many frames while the caster flashes.
+#define CAST_RING_INTERVAL 16
+
+/// Per-frame update of a ring's back half (arc A): over CAST_RING_FRAMES it
+/// swells and shrinks again while it rises a pixel a frame on the actor it
+/// follows, 9 pixels in front of it and up to 5 pixels further while small.
 void FieldEffect_UpdateScaledArcActorA(struct Actor *arc) {
   struct Actor *anchor;
   s32 frame;
@@ -15,11 +24,11 @@ void FieldEffect_UpdateScaledArcActorA(struct Actor *arc) {
 
   anchor = arc->watchedActor;
   frame = ++arc->timer;
-  if (frame > 31) {
+  if (frame >= CAST_RING_FRAMES) {
     Actor_StartScriptFar(arc, gFieldEffect_SharedParticleScript);
     return;
   }
-  scale = Trig_Sin(frame << 10);
+  scale = CAST_RING_SCALE(frame);
   arc->scaleX = scale;
   arc->scaleY = scale;
   arc->x.fixed = anchor->x.fixed;
@@ -27,8 +36,9 @@ void FieldEffect_UpdateScaledArcActorA(struct Actor *arc) {
   arc->z.fixed = anchor->z.fixed + (FIXED_ONE - scale) * 5 + toFIXED(9);
 }
 
-/// Per-frame update of arc B: arc A upside down, 16 pixels in front of the
-/// actor and up to 5 pixels nearer while small.
+/// Per-frame update of a ring's front half (arc B): the back half's arc upside
+/// down, 16 pixels in front of the actor and up to 5 pixels nearer while
+/// small.
 void FieldEffect_UpdateScaledArcActorB(struct Actor *arc) {
   struct Actor *anchor;
   s32 frame;
@@ -36,11 +46,11 @@ void FieldEffect_UpdateScaledArcActorB(struct Actor *arc) {
 
   anchor = arc->watchedActor;
   frame = ++arc->timer;
-  if (frame > 31) {
+  if (frame >= CAST_RING_FRAMES) {
     Actor_StartScriptFar(arc, gFieldEffect_SharedParticleScript);
     return;
   }
-  scale = Trig_Sin(frame << 10);
+  scale = CAST_RING_SCALE(frame);
   arc->scaleX = scale;
   arc->scaleY = -scale;
   arc->x.fixed = anchor->x.fixed;
@@ -48,54 +58,15 @@ void FieldEffect_UpdateScaledArcActorB(struct Actor *arc) {
   arc->z.fixed = anchor->z.fixed - (FIXED_ONE - scale) * 5 + toFIXED(16);
 }
 
-/// A sprite (struct Sprite) as the arcs set it up: its image's three
-/// OAM attributes and its bookkeeping; the notes give the Sprite
-/// fields at the same offsets.
-struct SpriteArcOamView {
-  struct Sprite *link;
-  u16 y : 8; ///< screen pixels
-  u16 affine : 1;
-  u16 doubleSize : 1;
-  u16 mode : 2;
-  u16 mosaic : 1;
-  u16 color : 1; ///< 1 = 256 colours
-  u16 shape : 2; ///< 1 wide
-  u16 x : 9;     ///< screen pixels
-  u16 unused : 3;
-  u16 hflip : 1;
-  u16 vflip : 1;
-  u16 size : 2;
-  u16 tile : 10; ///< first sprite tile in VRAM
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 attr3[2];
-  struct AnimationSpritePart shadow;
-  s32 scale;
-  u8 slot; ///< VRAM cache entry holding its tiles
-  /// retainCacheEntry: set, releasing the arc leaves the Psynergy's spark tiles
-  /// (effectWork->tileSlot), which it borrows, loaded.
-  u8 active : 1;
-  u8 displayFlags : 7;
-  u16 rotation;
-  u8 width;
-  u8 height;
-  s8 offsetX;
-  s8 offsetY;
-  u8 lastNo;
-  u8 dirty;
-  u8 flags; ///< bit 0 draws its shadow; the arcs clear it
-  u8 count;
-  struct SpriteAnimation *child; ///< entries[0], its first layer
-};
-
-/// Spawns the two swelling arcs (SPRITE_GOLDEN_RINGS) on an actor, A and B (B
-/// upside down); they follow it for 32 frames, then release themselves.
+/// Spawns a ring on an actor, its two halves (arcs A and B of
+/// SPRITE_GOLDEN_RINGS, B upside down); they follow it for CAST_RING_FRAMES,
+/// then release themselves.
 void FieldEffect_SpawnScaledArcActors(struct Actor *watched) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *source = effectWork->mainActor;
   struct Actor *arcs[2];
   struct Actor *arc;
-  struct SpriteArcOamView *sprite;
+  struct Sprite *sprite;
   s32 arcIndex;
 
   for (arcIndex = 0; arcIndex <= 1; arcIndex++) {
@@ -105,7 +76,7 @@ void FieldEffect_SpawnScaledArcActors(struct Actor *watched) {
     if (arc == 0)
       continue;
     arc->groundHeight = watched->groundHeight;
-    sprite = (struct SpriteArcOamView *)arc->sprite;
+    sprite = arc->sprite;
     arc->motionFlags = 0;
     arc->timer = 0;
     arc->watchedActor = watched;
@@ -113,18 +84,20 @@ void FieldEffect_SpawnScaledArcActors(struct Actor *watched) {
     if (sprite == 0)
       continue;
     // A wide 16-colour sprite drawn from the Psynergy's tiles.
-    Sprite_StartAnimationFar((struct Sprite *)sprite, 0);
+    Sprite_StartAnimationFar(sprite, 0);
     sprite->flags = 0;
     VramCache_FreeEntry(sprite->slot);
     sprite->slot = effectWork->tileSlot;
-    sprite->active = 1;
-    sprite->tile = (gVramCacheEntries[sprite->slot].offset >> 5) & 0x3ff;
-    sprite->color = 0;
-    sprite->shape = 1;
-    sprite->size = 2;
-    sprite->child->picture = 0;
+    sprite->retainCacheEntry = 1;
+    sprite->image.tile =
+        (gVramCacheEntries[sprite->slot].offset / TILE_SIZE_4BPP) &
+        OBJ_TILE_MASK;
+    sprite->image.fullColor = 0;
+    sprite->image.shape = 1;
+    sprite->image.size = 2;
+    sprite->entries[0]->picture = 0;
   }
-  // Arc B in front of everything, arc A at the caster's priority.
+  // The front half in front of everything, the back half under the caster.
   // BUG: allocation failures above leave a missing arc or sprite here.
   arcs[0]->update = FieldEffect_UpdateScaledArcActorB;
   arcs[0]->sprite->image.priority = 0;
@@ -133,28 +106,33 @@ void FieldEffect_SpawnScaledArcActors(struct Actor *watched) {
   arcs[1]->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 }
 
-/// Per-frame update: flashes an actor between sprite param 7 and 0 every 2
-/// frames and spawns the swelling arcs on it every 16.
+/// Per-frame update: flashes an actor white two frames in four and sets off a
+/// ring around it every CAST_RING_INTERVAL frames.
 void FieldEffect_FlickerActorAndSpawnArcs(struct Actor *actor) {
   if ((gFrameCount & 2) != 0) {
     Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_WHITE);
   } else {
     Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_NORMAL);
   }
-  if ((gFrameCount & 15) == 0) {
+  if ((gFrameCount & (CAST_RING_INTERVAL - 1)) == 0) {
     FieldEffect_SpawnScaledArcActors(actor);
   }
 }
 
-/// Per-frame update: cycles an actor through sprite params 0 to 5, one step
-/// every 2 frames, and spawns the swelling arcs on it every 16.
+/// Per-frame update: cycles an actor through its own colours and the five
+/// with channels swapped, a new one every two frames, and sets off a ring
+/// around it every CAST_RING_INTERVAL frames.
 void FieldEffect_CycleActorAndSpawnArcs(struct Actor *actor) {
   if ((gFrameCount & 1) != 0) {
-    s32 colorIndex = (gFrameCount >> 1) % 6;
+    s32 colorIndex = (gFrameCount >> 1) % (SPRITE_COLOR_BRG + 1);
 
     Actor_SetSpriteColorModeFar(actor, colorIndex);
   }
-  if ((gFrameCount & 15) == 0) {
+  if ((gFrameCount & (CAST_RING_INTERVAL - 1)) == 0) {
     FieldEffect_SpawnScaledArcActors(actor);
   }
 }
+
+#undef CAST_RING_FRAMES
+#undef CAST_RING_SCALE
+#undef CAST_RING_INTERVAL

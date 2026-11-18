@@ -320,6 +320,10 @@ static void BilibinCave_FreezeThirdPuddle(void) {
   BilibinCave_MeltFrostBack(ACTOR_THIRD_PUDDLE);
 }
 
+/// The cell beside the third puddle's ice pillar where a torch melts it.
+#define TORCH_BY_PILLAR_COLUMN 35
+#define TORCH_BY_PILLAR_ROW 23
+
 /// A movable torch melts the ice pillar beside it.
 static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
   struct Actor *firstActor;
@@ -328,14 +332,14 @@ static void BilibinCave_UpdateThirdPuddleFromTorches(void) {
 
   firstActor = Actor_Get(ACTOR_THIRD_TORCH);
   secondActor = Actor_Get(ACTOR_FOURTH_TORCH);
-  if (FIELD_CELL(firstActor->x.fixed) == 35 &&
-      (FIELD_CELL(firstActor->z.fixed)) == 23) {
+  if (FIELD_CELL(firstActor->x.fixed) == TORCH_BY_PILLAR_COLUMN &&
+      (FIELD_CELL(firstActor->z.fixed)) == TORCH_BY_PILLAR_ROW) {
     GameFlag_Set(FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR);
   } else {
     GameFlag_Clear(FLAG_BILIBIN_CAVE_THIRD_TORCH_BY_PILLAR);
   }
-  if (FIELD_CELL(secondActor->x.fixed) == 35 &&
-      (FIELD_CELL(secondActor->z.fixed)) == 23) {
+  if (FIELD_CELL(secondActor->x.fixed) == TORCH_BY_PILLAR_COLUMN &&
+      (FIELD_CELL(secondActor->z.fixed)) == TORCH_BY_PILLAR_ROW) {
     GameFlag_Set(FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR);
   } else {
     GameFlag_Clear(FLAG_BILIBIN_CAVE_FOURTH_TORCH_BY_PILLAR);

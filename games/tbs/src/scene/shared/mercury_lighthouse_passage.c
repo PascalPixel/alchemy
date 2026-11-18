@@ -38,6 +38,7 @@ static void UNUSED MercuryLighthouse_DropLeaderToColumn(s32 column) {
   Actor_SetDestinationOffsetById(ACTOR_PARTY_LEADER, 0, -8);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Event_Wait(8);
-  Actor_SetPositionFX(ACTOR_PARTY_LEADER, ((column << 19) + toFIXED(8)), 0);
+  Actor_SetPositionFX(ACTOR_PARTY_LEADER,
+                      FIELD_HALF_CELL_ORIGIN(column) + toFIXED(8), 0);
   Event_Wait(30);
 }

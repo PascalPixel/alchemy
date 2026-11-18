@@ -4,12 +4,43 @@
 
 #include "window_internal.h"
 
+/// The pixels between sprite glyphs at a message's start.
+#define TEXT_DEFAULT_LETTER_SPACING 9
+
+/// The glyph sheet's size in sprite VRAM: the four tiles of a 16x16 glyph for
+/// each window sprite.
+#define GLYPH_SHEET_SIZE (WINDOW_SPRITE_COUNT * 4 * TILE_SIZE_4BPP)
+
+/// Message_SetDecodeFlags' flags.
+#define MESSAGE_DECODE_HALTING_SPEECH 1 ///< a pause before each character
+#define MESSAGE_DECODE_SPACING_AFTER 2  ///< a wide gap after some characters
+
+/// Message_OpenWindow's window options, in packed's low bits.
+#define MESSAGE_WINDOW_ZOOM 1        ///< zoom open rather than appear at once
+#define MESSAGE_WINDOW_TEXT_CANVAS 8 ///< WINDOW_FLAG_TEXT_CANVAS
+#define MESSAGE_WINDOW_ANCHOR_BOTTOM 16 ///< WINDOW_FLAG_ANCHOR_BOTTOM
+#define MESSAGE_WINDOW_FIXED_X 32       ///< WINDOW_FLAG_FIXED_X
+/// The window options of Message_OpenWindow's packed argument: the bits below
+/// the speaker's voice.
+#define MESSAGE_WINDOW_OPTIONS_MASK (MESSAGE_WINDOW_VOICE(1) - 1)
+/// The speaker's voice sound in bits 16 to 27 of packed.
+#define MESSAGE_WINDOW_VOICE_OF(packed) (((u32)(packed) << 4) >> 20)
+
+/// The tile rows a field message is centred in, from the top of the screen.
+#define FIELD_MESSAGE_TOP_ROWS 12
+
+/// Twice a 16.16 value, as a whole number: FIXEDtoINT a shift short.
+#define FIXEDtoINT_TWICE(value) ((value) >> 15)
+
+/// A tilemap entry's tile number and flip bits, below its palette.
+#define TILE_NUMBER_AND_FLIPS (TILE_NUMBER_MASK | TILE_HFLIP | TILE_VFLIP)
+
 /// Scratch values for a stage of a window's zoom: the scaled part of a side,
 /// the scaled duration and their ratio. A local of Window_DrawZoomBorder.
 struct WindowZoomScratch {
-  s32 scaledPart; ///< zoom stage (or stages left) times a side in tiles, << 16
-  s32 scaledDuration; ///< the zoom's duration << 17
-  s32 result; ///< scaledPart / scaledDuration, 16.16 fixed point (in tiles)
+  FIXED scaledPart;     ///< zoom stage (or stages left) times a side in tiles
+  FIXED scaledDuration; ///< twice the zoom's duration
+  FIXED result;         ///< scaledPart / scaledDuration, in tiles
 };
 
 /// The per-frame window update: advances each window's zoom while it opens or
@@ -88,28 +119,31 @@ void Window_DrawZoomBorder(void *windowArg, s32 savePosition) {
   stage = window->zoomStage;
   duration = window->duration;
   remaining = duration - stage;
-  // Iwram_RatioMulQ14(d, v) is v / d in 16.16 fixed point.
-  scratch.scaledPart = (stage * window->width) << 16;
-  scratch.scaledDuration = duration << 17;
+  // Iwram_RatioMulQ14(d, v) is v / d in 16.16 fixed point: the left edge
+  // moves in by stage / duration of half the width, and the width is
+  // (duration - stage) / duration of the whole, twice that half; the same for
+  // the top and the height.
+  scratch.scaledPart = toFIXED(stage * window->width);
+  scratch.scaledDuration = toFIXED(2 * duration);
   scratch.result =
       Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
-  x = (scratch.result >> 16) + window->x;
+  x = FIXEDtoINT(scratch.result) + window->x;
 
-  scratch.scaledPart = (remaining * window->width) << 16;
+  scratch.scaledPart = toFIXED(remaining * window->width);
   scratch.result =
       Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
-  width = scratch.result >> 15;
+  width = FIXEDtoINT_TWICE(scratch.result);
 
-  scratch.scaledPart = (stage * window->height) << 16;
-  scratch.scaledDuration = window->duration << 17;
+  scratch.scaledPart = toFIXED(stage * window->height);
+  scratch.scaledDuration = toFIXED(2 * window->duration);
   scratch.result =
       Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
-  y = (scratch.result >> 16) + window->y;
+  y = FIXEDtoINT(scratch.result) + window->y;
 
-  scratch.scaledPart = (remaining * window->height) << 16;
+  scratch.scaledPart = toFIXED(remaining * window->height);
   scratch.result =
       Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
-  height = scratch.result >> 15;
+  height = FIXEDtoINT_TWICE(scratch.result);
 
   Window_DrawBorder(x, y, width, height);
   if (savePosition != 0) {
@@ -198,7 +232,7 @@ void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
       for (col = 1; col < width - 1; col++)
         *cursor++ = WINDOW_TILE(
             (TEXT_CANVAS_FIRST_TILE - 1 + row + (col - 1) * (height - 2)) &
-            0xfff);
+            TILE_NUMBER_AND_FLIPS);
       cursor++;
       cursor += BG_SCREEN_WIDTH - width;
     }
@@ -206,7 +240,8 @@ void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
     for (row = 1; row < height - 1; row++) {
       for (col = 0; col < width; col++)
         *cursor++ = WINDOW_TILE(
-            (TEXT_CANVAS_FIRST_TILE - 1 + row + col * (height - 2)) & 0xfff);
+            (TEXT_CANVAS_FIRST_TILE - 1 + row + col * (height - 2)) &
+            TILE_NUMBER_AND_FLIPS);
       cursor += BG_SCREEN_WIDTH - width;
     }
   }
@@ -220,7 +255,7 @@ s32 Message_AllTyped(void) {
   s32 i;
 
   message = WINDOW_WORK->messages;
-  for (i = 0; i != 3; i++, message++) {
+  for (i = 0; i != MESSAGE_COUNT; i++, message++) {
     if (message->window != NULL && message->window->state == 0)
       return 0;
   }
@@ -248,7 +283,7 @@ void Text_ResetStyle(void) {
 
   state->colour = TEXT_DEFAULT_COLOR;
   state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
-  state->letterSpacing = 9;
+  state->letterSpacing = TEXT_DEFAULT_LETTER_SPACING;
   state->outline = TEXT_STYLE_PLAIN;
   state->unusedAfterLineSpacing = 1;
 }
@@ -259,10 +294,10 @@ void Text_ResetStyle(void) {
 void WindowSystem_StartFieldUpdate(void) {
   struct WindowWork *state = WINDOW_WORK;
 
-  // The glyph sheet, loaded with no source: 128 << 6 is 8192 bytes, 256 sprite
-  // tiles, the four of a 16x16 glyph for each of the 64 window sprites.
-  state->glyphTiles = VramCache_Load(VRAM_CACHE_ENTRY_GLYPH_SHEET, 128 << 6, 0);
-  state->letterSpacing = 9;
+  // The glyph sheet, reserved with no picture to load.
+  state->glyphTiles =
+      VramCache_Load(VRAM_CACHE_ENTRY_GLYPH_SHEET, GLYPH_SHEET_SIZE, 0);
+  state->letterSpacing = TEXT_DEFAULT_LETTER_SPACING;
   state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   state->outline = TEXT_STYLE_PLAIN;
   state->colour = TEXT_DEFAULT_COLOR;
@@ -276,11 +311,10 @@ void WindowSystem_StartFieldUpdate(void) {
 void WindowSystem_StartBattleUpdate(s32 loadGlyphTiles) {
   struct WindowWork *state = WINDOW_WORK;
 
-  // As in the field's setup above.
   if (loadGlyphTiles != 0)
     state->glyphTiles =
-        VramCache_Load(VRAM_CACHE_ENTRY_GLYPH_SHEET, 128 << 6, 0);
-  state->letterSpacing = 9;
+        VramCache_Load(VRAM_CACHE_ENTRY_GLYPH_SHEET, GLYPH_SHEET_SIZE, 0);
+  state->letterSpacing = TEXT_DEFAULT_LETTER_SPACING;
   state->lineSpacing = TEXT_DEFAULT_LINE_SPACING;
   state->outline = TEXT_STYLE_PLAIN;
   state->colour = TEXT_DEFAULT_COLOR;
@@ -313,8 +347,7 @@ void BattleMessage_Open(s32 argument) {
 
   state = WINDOW_WORK;
   control = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_MESSAGE);
-  // message starts as NULL, though it is assigned again before it is read; the
-  // same zero clears marked below
+  // Default: no message; the same zero clears marked below.
   message = NULL;
   state->battleMode = WINDOW_BATTLE_MESSAGE;
   entryIndex = Message_Decode(argument, 1);
@@ -371,7 +404,7 @@ s32 Message_OpenDecoded(struct Window *window, s32 message) {
   entry = Message_Decode(message, 1);
   if (work->textBuffer[entry] == 0)
     return 0;
-  if (window == 0)
+  if (window == NULL)
     return 0;
   typing = (s32)Message_Start(window, entry, 0, 0, 0, 1);
   if (typing == 0)
@@ -380,29 +413,28 @@ s32 Message_OpenDecoded(struct Window *window, s32 message) {
 }
 
 /// Sets the decode flags the next message is decoded with (Message_Decode):
-/// flags bit 0 (haltingSpeech) makes it halting speech, a short pause before
-/// each character, broken off with an ellipsis after the first word; bit 1
-/// (spacingAfter) puts code 222 after certain characters in English and
-/// Japanese.
+/// MESSAGE_DECODE_HALTING_SPEECH makes it halting speech, a short pause before
+/// each character, broken off with an ellipsis after the first word;
+/// MESSAGE_DECODE_SPACING_AFTER puts a wide gap (ENTRY_WIDE_GAP) after certain
+/// characters in English and Japanese.
 void Message_SetDecodeFlags(s32 flags) {
   struct WindowWork *work;
 
   work = WINDOW_WORK;
   if (work != NULL) {
-    if (flags & 1) {
+    if (flags & MESSAGE_DECODE_HALTING_SPEECH) {
       work->haltingSpeech = 1;
     }
-    if (2 & flags) {
+    if (MESSAGE_DECODE_SPACING_AFTER & flags) {
       work->spacingAfter = 1;
     }
   }
 }
 
 /// Opens a window sized to a message near tile (x, y) and starts typing the
-/// message into it. packed holds the window options in its low bits (bit 0:
-/// zoom open rather than appear at once; bit 3: a text canvas; bit 4: keep the
-/// bottom edge; bit 5: keep the left edge) and the speaker's voice sound in
-/// bits 16 to 27.
+/// message into it. packed holds the window options (MESSAGE_WINDOW_ZOOM and
+/// the rest) in its low bits and the speaker's voice sound in bits 16 to 27
+/// (MESSAGE_WINDOW_VOICE).
 struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed) {
   s32 entry;
   u32 height;
@@ -414,12 +446,11 @@ struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed) {
   struct WindowWork *work;
 
   work = WINDOW_WORK;
-  work->voiceSound = (packed << 4) >> 20;
-  // the window starts as NULL, though it is assigned before it is read; the
-  // same zero serves the zeros below
+  work->voiceSound = MESSAGE_WINDOW_VOICE_OF(packed);
+  // Default: no window.
   window = NULL;
   work->voiceCountdown = 0;
-  packed &= 0xffff;
+  packed &= MESSAGE_WINDOW_OPTIONS_MASK;
   flags = 0;
   entry = Message_Decode(message, 1);
   if (work->textBuffer[entry] == 0)
@@ -429,13 +460,13 @@ struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed) {
   Window_FitOnScreen(entry, &x, &y, &width, &height, (out = bounds), 0);
   if (width == 0 && height == 0)
     return NULL;
-  if (!(packed & 1))
+  if (!(packed & MESSAGE_WINDOW_ZOOM))
     flags |= WINDOW_FLAG_INSTANT;
-  if (packed & 8)
+  if (packed & MESSAGE_WINDOW_TEXT_CANVAS)
     flags |= WINDOW_FLAG_TEXT_CANVAS;
-  if (packed & 16)
+  if (packed & MESSAGE_WINDOW_ANCHOR_BOTTOM)
     flags |= WINDOW_FLAG_ANCHOR_BOTTOM;
-  if (packed & 32)
+  if (packed & MESSAGE_WINDOW_FIXED_X)
     flags |= WINDOW_FLAG_FIXED_X;
   window = Window_Create(x, y, width, height, flags);
   if (window == NULL)
@@ -470,9 +501,9 @@ void FieldMessage_Show(s32 message, s32 flags) {
 
   Text_GetMessageSize(message, &x, &y, (u32 *)&width, (u32 *)&height);
 
-  // Centre the window across the screen, and in the top 12 rows.
+  // Centre the window across the screen, and in the top rows.
   x = (DISPLAY_TILE_WIDTH - width) >> 1;
-  y = (12 - height) >> 1;
+  y = (FIELD_MESSAGE_TOP_ROWS - height) >> 1;
 
   if (flags & FIELD_MESSAGE_LOWER) {
     y += 4;

@@ -181,6 +181,10 @@ static void Sanctum_SpawnOrbitingEffect(s32 actorId, s32 angleStep);
 
 /// How far each sparkle circling the healer goes around him in a frame.
 #define SANCTUM_SPARKLE_ORBIT_STEP (TRIG_TURN * 9 / 128)
+
+/// The sparks the Wise One gives off as he shrinks away, one each four frames,
+/// after accepting Isaac and Garet.
+#define WISE_ONE_VANISH_SPARKS 32
 static s32 Sanctum_ChooseRestartOption(void);
 static void Sanctum_ReenactSolSanctum(void);
 static void Sanctum_RaiseItemIcon(s32 item, FIXED fixedX, FIXED fixedY,
@@ -489,11 +493,11 @@ static void Sanctum_LeaveAfterRefusing(void) {
   PaletteFade_StartInterpolation(120);
   Event_Wait(180);
   paletteWork = gPaletteFadeWork;
-  // Colour 15 of the BG palette fades to white rather than sepia: its blue,
-  // green and red channels, target[3 * 15] to target[3 * 15 + 2], at 31.
-  paletteWork->target[45] = RGB_LEVEL_MAX << 10;
-  paletteWork->target[46] = RGB_LEVEL_MAX << 10;
-  paletteWork->target[47] = RGB_LEVEL_MAX << 10;
+  // Colour 15 of the first BG palette fades to white rather than sepia: its
+  // blue, green and red channels, each held in blue's place.
+  paletteWork->target[3 * 15] = RGB_LEVEL_MAX << BLUE_SHIFT;
+  paletteWork->target[3 * 15 + 1] = RGB_LEVEL_MAX << BLUE_SHIFT;
+  paletteWork->target[3 * 15 + 2] = RGB_LEVEL_MAX << BLUE_SHIFT;
   paletteWork->page = 0;
   paletteWork->duration = 1;
   paletteWork->step = 1;
@@ -1224,7 +1228,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Actor_SetSpriteColorById(ACTOR_WISE_ONE, SPRITE_COLOR_BLINK);
   Sound_Play(SOUND_FADE_OUT_BGM);
   Sound_Play(SE_MATERIALIZE);
-  for (sparkIndex = 0; sparkIndex < 32; sparkIndex++) {
+  for (sparkIndex = 0; sparkIndex < WISE_ONE_VANISH_SPARKS; sparkIndex++) {
     Sanctum_SpawnActorSpark(ACTOR_WISE_ONE);
     Event_Wait(4);
     Actor_Get(ACTOR_WISE_ONE)->scaleX -= FIXED_ONE / 100;
@@ -1910,7 +1914,8 @@ static void Sanctum_RaiseItemIcon(s32 item, FIXED fixedX, FIXED fixedY,
       VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
       HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
       for (frame = 0; frame < 60; frame++) {
-        if (icon->velocityY >= -255 && icon->velocityY <= 255)
+        if (icon->velocityY > -toFIXED(1) / 256 &&
+            icon->velocityY < toFIXED(1) / 256)
           icon->motionFlags = 0;
         wait(1);
       }
@@ -1924,8 +1929,8 @@ static void Sanctum_UpdateRisingSpark(struct Actor *spark) {
   FIXED scale;
   s32 framesLeft;
 
-  // The timer stores the upward step in sixteenths of a pixel.
-  spark->y.fixed += spark->timer << 12;
+  // The timer holds the upward step in sixteenths of a pixel.
+  spark->y.fixed += spark->timer * (toFIXED(1) / 16);
   spark->targetY = spark->y.fixed;
   scale = 0;
   switch (((s16)spark->userValue >> 2) & 3) {

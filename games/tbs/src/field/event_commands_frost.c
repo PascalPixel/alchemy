@@ -5,6 +5,10 @@
 #include "event_commands_internal.h"
 #include "scene/frost_glint.h"
 
+#define FROST_SNOWFLAKES 16    ///< spiralling in on the Psynergy's position
+#define FROST_SPIRAL_FRAMES 60 ///< each snowflake's spiral
+#define FROST_FLASHES 16       ///< the target's white flashes
+
 /// Frost's glint on its target.
 DEFINE_FROST_GLINT(, Actor_SetSpriteColorModeFar)
 
@@ -22,7 +26,7 @@ void FieldEffect_UpdateOrbitingParticleFade(struct Actor *particle) {
 }
 
 /// Both winding directions share the countdown and position update. timer
-/// starts at 60 (FieldPsynergy_Frost).
+/// starts at FROST_SPIRAL_FRAMES (FieldPsynergy_Frost).
 static inline void FieldEffect_UpdateSpiralParticle(struct Actor *actor,
                                                     s32 clockwise) {
   struct Actor *particle = (struct Actor *)actor;
@@ -40,9 +44,10 @@ static inline void FieldEffect_UpdateSpiralParticle(struct Actor *actor,
       position.y = particle->targetY;
       position.z = particle->targetZ;
       Vector_AddPolarOffset(
-          remainingFrames << 17,
-          clockwise ? (s16)particle->userValue - (remainingFrames << 11)
-                    : (s16)particle->userValue + (remainingFrames << 11),
+          remainingFrames * toFIXED(2),
+          clockwise
+              ? (s16)particle->userValue - remainingFrames * (TRIG_TURN / 32)
+              : (s16)particle->userValue + remainingFrames * (TRIG_TURN / 32),
           &position);
       particle->x.fixed = position.x;
       particle->y.fixed = position.y;
@@ -53,7 +58,8 @@ static inline void FieldEffect_UpdateSpiralParticle(struct Actor *actor,
   }
 }
 
-/// Spirals anticlockwise at twice the frames left in pixels, then fades.
+/// Spirals anticlockwise at twice the frames left in pixels, a 32nd of a turn
+/// further round for each, then fades.
 void FieldEffect_UpdateOrbitingParticleLeft(struct Actor *actor) {
   FieldEffect_UpdateSpiralParticle(actor, 0);
 }
@@ -78,8 +84,9 @@ void FieldPsynergy_FrostOnTarget(s32 unused) {
   }
 }
 
-/// 16 particles spiral in on the Psynergy's position and make the target flash
-/// 16 times; without childOption the target takes animation 2.
+/// FROST_SNOWFLAKES snowflakes spiral in on the Psynergy's position and make
+/// the target flash FROST_FLASHES times; without childOption the target
+/// freezes.
 void FieldPsynergy_Frost(void) {
   s32 eventTarget;
   struct Vector3 pos;
@@ -96,7 +103,7 @@ void FieldPsynergy_Frost(void) {
 
   // A particle every 3 frames, 0.5 to 1 size, turning either way at random,
   // centred 2 to 6 pixels from the Psynergy's position.
-  for (i = 0; i < 16; i++) {
+  for (i = 0; i < FROST_SNOWFLAKES; i++) {
     particle = Actor_Spawn(SPRITE_SNOWFLAKE, 0, 0, 0);
     if (particle != NULL) {
       u32 scale;
@@ -111,7 +118,7 @@ void FieldPsynergy_Frost(void) {
         particle->update = FieldEffect_UpdateOrbitingParticleRight;
 
       particle->facing = Random16();
-      particle->timer = 60;
+      particle->timer = FROST_SPIRAL_FRAMES;
       particle->userValue = Random16();
       Actor_SetSpriteColorModeFar(particle, SPRITE_COLOR_BLUE_TINT);
 
@@ -134,7 +141,7 @@ void FieldPsynergy_Frost(void) {
     Sound_PlayFar(SE_POWER_UP);
 
     // Flash for 1 frame in every 5.
-    for (i = 0; i < 16; i++) {
+    for (i = 0; i < FROST_FLASHES; i++) {
       Actor_SetSpriteColorModeFar(target, SPRITE_COLOR_WHITE);
       wait(1);
       Actor_SetSpriteColorModeFar(target, SPRITE_COLOR_NORMAL);
@@ -158,3 +165,7 @@ void FieldPsynergy_Frost(void) {
 
   FieldPsynergy_FadeFromCastColor();
 }
+
+#undef FROST_SNOWFLAKES
+#undef FROST_SPIRAL_FRAMES
+#undef FROST_FLASHES

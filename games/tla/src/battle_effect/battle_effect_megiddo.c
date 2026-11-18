@@ -1,28 +1,86 @@
 /// @file
-/// The Megiddo summon.
+/// Megiddo, the Sol Blade's unleash.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-struct StripQuad;
-
-/// Where DustBlobSheet is decoded in the effect's pictures.
-#define MEGIDDO_DUST_BLOB_PICTURES 9216
-
 #define MEGIDDO_FRAMES 188
 
-/// Where FireRingTexture is decoded in the map cell buffer.
+/// Where the textures are decoded: FlameGradientTexture at the start of the
+/// effect's pictures, then GlowBandTextureA, FireStripesTexture's five 64x16
+/// pictures of the corona's flames and DustBlobSheet's 32x32 cloud;
+/// FireRingTexture in the map cell buffer.
+#define MEGIDDO_GLOW_BAND 2048
+#define MEGIDDO_FIRE_STRIPES 4096
+#define MEGIDDO_FIRE_STRIPES_WIDTH 64
+#define MEGIDDO_FIRE_STRIPES_HEIGHT 16
+#define MEGIDDO_FIRE_STRIPES_PICTURES 5
+#define MEGIDDO_DUST_BLOB 9216
+#define MEGIDDO_DUST_BLOB_SIZE 32
 #define MEGIDDO_FIRE_RING 16384
 
-/// Where GlowBandTextureA is decoded in the effect's pictures.
-#define MEGIDDO_GLOW_BAND 2048
+/// The turned corners of the corona and of the flames, and the corona's strip,
+/// in the map cell buffer; the flames' corners and their strip in the effect's
+/// pictures.
+#define MEGIDDO_TRANSFORMED (Ram_MapCellBuffer + 4096)
+#define MEGIDDO_CORONA_MESH (Ram_MapCellBuffer + 8192)
+#define MEGIDDO_FLAME_CORNERS 24384
+#define MEGIDDO_FLAME_MESH 25408
 
-/// Where FireStripesTexture is decoded in the effect's pictures.
-#define MEGIDDO_FIRE_STRIPES 4096
+/// The sun's corona: a ring of MEGIDDO_CORONA_QUADS quads of the fire stripes
+/// round the sun, from MEGIDDO_CORONA_INNER_RADIUS out to a flickering
+/// MEGIDDO_CORONA_OUTER_RADIUS, scaled by MEGIDDO_CORONA_SCALE with the sun.
+#define MEGIDDO_CORONA_QUADS 32
+#define MEGIDDO_CORONA_VERTICES ((MEGIDDO_CORONA_QUADS + 1) * 2)
+#define MEGIDDO_CORONA_INNER_RADIUS 80
+#define MEGIDDO_CORONA_OUTER_RADIUS 120
+#define MEGIDDO_CORONA_SCALE 46536
 
-/// Megiddo: the caster rises in a column of light, a winged figure gathers
-/// above and dives in a storm of feathers and rings onto the target.
+/// The flames that wrap the falling sun: MEGIDDO_FLAMES bands of the cloud
+/// turned 3/32 of a turn apart about it, each a quarter circle of
+/// MEGIDDO_FLAME_ROWS rows from its point to its rim, MEGIDDO_FLAME_RADIUS
+/// round and an eighth of a turn wide. Each band's cloud is scrolled
+/// MEGIDDO_FLAME_SCROLL_STEP texels on from the one before.
+#define MEGIDDO_FLAMES 10
+#define MEGIDDO_FLAME_ROWS 16
+#define MEGIDDO_FLAME_VERTICES (MEGIDDO_FLAME_ROWS * 2)
+#define MEGIDDO_FLAME_RADIUS 48
+#define MEGIDDO_FLAME_SCROLL_STEP 20
+#define MEGIDDO_FLAME_SCROLL_MASK 0x7f
+
+/// As the sun falls, its flames and the sparks about it start turned by
+/// MEGIDDO_FALL_TILT about the screen's horizontal and turn back over
+/// MEGIDDO_FALL_TILT_FRAMES.
+#define MEGIDDO_FALL_TILT (TRIG_TURN * 3 / 16)
+#define MEGIDDO_FALL_TILT_FRAMES 32
+
+/// How much the falling sun's scale grows a frame, from a quarter to three
+/// quarters.
+#define MEGIDDO_SUN_GROWTH 1236
+
+/// How many lines a frame the red haze scrolls at its fastest.
+#define MEGIDDO_HAZE_SPEED 16
+
+/// The rings of light, FireRingTexture flashing out from the caster as the
+/// effect starts and from the target as the sun strikes (gMegiddo_Flash*).
+/// Each shines for MEGIDDO_FLASH_SHINE_FRAMES, then fades 8 levels a frame.
+#define MEGIDDO_FLASHES 5
+#define MEGIDDO_FLASH_SHINE_FRAMES 8
+
+/// The rays that shoot from the caster's sword (gMegiddo_Ray*), the flame of
+/// FlameGradientTexture stretched long: one every two frames from
+/// MEGIDDO_RAYS_START, each for MEGIDDO_RAY_FRAMES, shrinking away over the
+/// last MEGIDDO_RAY_SHRINK_FRAMES.
+#define MEGIDDO_RAYS 8
+#define MEGIDDO_RAYS_START 16
+#define MEGIDDO_RAY_FRAMES 64
+#define MEGIDDO_RAY_SHRINK_FRAMES 16
+
+/// Megiddo: the caster leaps and hangs in the air before a red haze, rings of
+/// light flashing round them, rays shooting from their sword and sparks
+/// rising; a burning sun sweeps down across the sky, then falls onto the
+/// target wrapped in flames and bursts in rings of light.
 ///
 /// Abilities: Megiddo.
 void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
@@ -32,21 +90,21 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   s32 doubled;
   s32 k;
   s32 zero;
-  u8 *ring;
+  u8 *coronaCorners;
   DrawRectangle blit[2];
   u8 *sprites;
-  s32 *transition;
+  struct BattleBackgroundWork *background;
   struct BattleCamera *camera;
   s16 savedYaw;
-  u8 *meshA;
-  u8 *meshB;
-  s32 casterValue;
+  u8 *flameCorners;
+  u8 *flameMesh;
+  s32 casterVerticalMotion;
   struct MotionObject *caster;
   FIXED x;
   FIXED z;
   FIXED scale;
   u8 *transformed;
-  u8 *strip;
+  u8 *coronaMesh;
   u8 *fireRing;
   s32 i;
   s32 j;
@@ -56,7 +114,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   struct Particle *p;
   struct ScreenPoint pos;
   s16 list[UNIT_MAX];
-  s16 targetList[14];
+  s16 targetList[UNIT_MAX];
   FIXED place[4];
   s32 screen[3];
   u8 req[8];
@@ -65,14 +123,15 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sprites = Ram_HeapSlots->battleSheet;
-  transition = Ram_HeapSlots->battleBackground;
+  background = Ram_HeapSlots->battleBackground;
   camera = Ram_HeapSlots->cameraWork;
   savedYaw = 0;
   zero = 0;
-  ring = gMapGridCellBuffer;
-  transformed = Ram_MapCellBuffer + 4096;
-  strip = Ram_MapCellBuffer + 8192;
+  coronaCorners = gMapGridCellBuffer;
+  transformed = MEGIDDO_TRANSFORMED;
+  coronaMesh = MEGIDDO_CORONA_MESH;
   fireRing = Ram_MapCellBuffer + MEGIDDO_FIRE_RING;
+  // The caster leaps on the spot.
   BattleMotion_ApproachTargetFar(args->user, args->user, 150, toFIXED(5));
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
@@ -80,28 +139,32 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  meshA = work->sheet + 24384;
-  meshB = work->sheet + 25408;
+  flameCorners = work->sheet + MEGIDDO_FLAME_CORNERS;
+  flameMesh = work->sheet + MEGIDDO_FLAME_MESH;
   caster = BattleObject_GetFar(args->user)->object;
   x = 0;
   z = 0;
   scale = FIXED_ONE;
-  Render_BuildQuadStrip(strip, 8, 16, 32);
-  Render_BuildQuadStrip(meshB, 2, 32, 15);
-  for (j = 0; j != 16; j++) {
-    FIXED c = -Trig_Cos(j * 1092) * 3;
-    s32 s = Trig_Sin(j * 1092);
-    s32 y = FIXEDtoINT(c * 16);
-    s32 r = FIXEDtoINT(s * 48);
+  Render_BuildQuadStrip(coronaMesh, 8, MEGIDDO_FIRE_STRIPES_HEIGHT,
+                        MEGIDDO_CORONA_QUADS);
+  Render_BuildQuadStrip(flameMesh, 2, MEGIDDO_DUST_BLOB_SIZE,
+                        MEGIDDO_FLAME_ROWS - 1);
+  for (j = 0; j != MEGIDDO_FLAME_ROWS; j++) {
+    s32 angle = j * (DEGtoANG(90) / (MEGIDDO_FLAME_ROWS - 1));
+    s32 y = FIXEDtoINT(-Trig_Cos(angle) * MEGIDDO_FLAME_RADIUS);
+    s32 r = FIXEDtoINT(Trig_Sin(angle) * MEGIDDO_FLAME_RADIUS);
 
     for (m = 0; m != 2; m++) {
-      struct ModelVertex *v = (struct ModelVertex *)(meshA + j * 8 + m * 4);
+      struct ModelVertex *v =
+          (struct ModelVertex *)(flameCorners + j * 8 + m * 4);
 
-      SET_POSITION(v, FIXEDtoINT(Trig_Sin(m << 13) * r), y + 24,
-                   FIXEDtoINT(Trig_Cos(m << 13) * r));
+      SET_POSITION(v, FIXEDtoINT(Trig_Sin(m * (TRIG_TURN / 8)) * r),
+                   y + MEGIDDO_FLAME_RADIUS / 2,
+                   FIXEDtoINT(Trig_Cos(m * (TRIG_TURN / 8)) * r));
     }
   }
-  casterValue = caster->verticalMotionStrength;
+  // The caster hangs in the air, still.
+  casterVerticalMotion = caster->verticalMotionStrength;
   Actor_SetAnimationSpeedFar(caster, 0);
   caster->velocityX = 0;
   caster->velocityY = 0;
@@ -125,6 +188,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
     if (frame == 171) {
       Sound_PlayFar(SE_CRASH);
     }
+    // A or B skips to the sun's fall.
     if ((gInput.repeat & (KEY_A | KEY_B)) && frame > 3 && frame <= 142) {
       frame = 143;
     }
@@ -135,13 +199,13 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
                                  Ram_MapCellBuffer + MEGIDDO_FIRE_RING, 0, 0);
       Resource_LoadAndDecompress(RESOURCE_FLAME_GRADIENT_TEXTURE, work->sheet,
                                  0, 0);
+      // DEAD: GlowBandTextureA, which nothing draws; the ROM keeps its decode.
       Resource_LoadAndDecompress(RESOURCE_GLOW_BAND_TEXTURE_A,
                                  work->sheet + MEGIDDO_GLOW_BAND, 0, 0);
       Resource_LoadAndDecompress(RESOURCE_FIRE_STRIPES_TEXTURE,
                                  work->sheet + MEGIDDO_FIRE_STRIPES, 1, 1);
       Resource_LoadAndDecompress(RESOURCE_DUST_BLOB_SHEET,
-                                 work->sheet + MEGIDDO_DUST_BLOB_PICTURES, 1,
-                                 0);
+                                 work->sheet + MEGIDDO_DUST_BLOB, 1, 0);
       Graphics_LoadGreyRamp();
       REG_BLDALPHA = EFFECT_BLEND_ADD;
       if (!args->side) {
@@ -155,10 +219,11 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
                               BGCNT_SCREEN_BASE(7),
                           IO_WRITE_HALFWORD);
     }
+    // The caster alone before the red haze, and the sun's sprite.
     if (frame == 1) {
-      transition[4] = 1;
+      background->busy = 1;
       list[0] = args->user;
-      list[1] = 255;
+      list[1] = BATTLE_UNIT_LIST_END;
       BattleActor_SpawnObjectsForListFar(list, 0);
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                                RESOURCE_RED_HAZE_BACKDROP, 0);
@@ -172,60 +237,69 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
     }
     if ((u32)(frame - 16) <= 61) {
       if (!args->side) {
-        camera->yaw -= 256;
+        camera->yaw -= TRIG_TURN / 256;
       } else {
-        camera->yaw += 256;
+        camera->yaw += TRIG_TURN / 256;
       }
     }
 
-    for (k = 0; k != 33; k++) {
+    // The corona's rim flickers a row at a time.
+    for (k = 0; k != MEGIDDO_CORONA_QUADS + 1; k++) {
       for (i = 0; i != 2; i++) {
-        struct ModelVertex *v = (struct ModelVertex *)(ring + k * 8 + i * 4);
-        s32 r = 80;
+        struct ModelVertex *v =
+            (struct ModelVertex *)(coronaCorners + k * 8 + i * 4);
+        s32 r = MEGIDDO_CORONA_INNER_RADIUS;
 
         if (i != 1) {
-          r = (FIXEDtoINT(Trig_Sin((frame + k * 4) << 12) * 2)) + 120;
+          r = (FIXEDtoINT(Trig_Sin((frame + k * 4) * (TRIG_TURN / 16)) * 2)) +
+              MEGIDDO_CORONA_OUTER_RADIUS;
         }
-        SET_POSITION(v, FIXEDtoINT(Trig_Sin(k << 11) * r),
-                     FIXEDtoINT(Trig_Cos(k << 11) * r), zero);
+        SET_POSITION(
+            v, FIXEDtoINT(Trig_Sin(k * (TRIG_TURN / MEGIDDO_CORONA_QUADS)) * r),
+            FIXEDtoINT(Trig_Cos(k * (TRIG_TURN / MEGIDDO_CORONA_QUADS)) * r),
+            zero);
       }
     }
 
+    // The red haze scrolls fast, comes to rest from frame 72, and scrolls the
+    // other way, the view with it, as the sun comes down.
     {
       s32 y = gBgScroll[1].y;
       s32 d;
 
-      if (y > 104) {
-        y -= toFIXED(1);
+      // A scroll above the haze's range is a negative one, read back from its
+      // halfword.
+      if (y > BATTLE_BACKGROUND_HEIGHT - BATTLE_VIEW_TOP) {
+        y -= 1 << 16;
       }
       if (frame <= 63) {
-        d = -16;
+        d = -MEGIDDO_HAZE_SPEED;
       } else if ((u32)(frame - 64) <= 7) {
         s32 twice = frame * 2;
 
         /* FAKEMATCH(barrier): an empty asm on twice. */
         asm("" : "+l"(twice) : : "r3");
-        d = twice - 144;
+        d = twice - 2 * 72;
       } else if ((u32)(frame - 72) <= 11) {
         d = 0;
       } else if (frame > 154) {
-        d = 16 - (frame - 155) / 2;
+        d = MEGIDDO_HAZE_SPEED - (frame - 155) / 2;
         if (d < 0) {
           d = 0;
         }
       } else {
         d = frame - 84;
-        if (d > 16) {
-          d = 16;
+        if (d > MEGIDDO_HAZE_SPEED) {
+          d = MEGIDDO_HAZE_SPEED;
         }
         gProjection.centerY -= d;
       }
       y += d;
-      if (y < -16) {
-        y += 120;
+      if (y < -BATTLE_VIEW_TOP) {
+        y += BATTLE_BACKGROUND_HEIGHT;
       }
-      if (y > 104) {
-        y -= 120;
+      if (y > BATTLE_BACKGROUND_HEIGHT - BATTLE_VIEW_TOP) {
+        y -= BATTLE_BACKGROUND_HEIGHT;
       }
       gBgScroll[1].y = y;
     }
@@ -233,6 +307,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       z += toFIXED(2);
       BattleEffect_StepPaletteToResource(RESOURCE_ORANGE_PALETTE_B);
     }
+    // The sun sweeps down across the sky.
     if ((u32)(frame - 84) <= 58) {
       if (!args->side) {
         x -= toFIXED(2);
@@ -241,6 +316,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       }
       z += toFIXED(4);
     }
+    // The fall: the camera comes back, and the sun falls on the target, alone
+    // at the middle of the field.
     if (frame == 143) {
       struct MotionObject *target;
 
@@ -249,7 +326,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       x = toFIXED(120);
       z = toFIXED(48);
       targetList[0] = args->targets[0];
-      targetList[1] = 255;
+      targetList[1] = BATTLE_UNIT_LIST_END;
       BattleActor_SpawnObjectsForListFar(targetList, 0);
       gProjection.centerY = 556;
       target = BattleObject_GetFar(args->targets[0])->object;
@@ -259,7 +336,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
     }
     if (frame > 154) {
-      s32 d = 16 - (frame - 155) / 2;
+      s32 d = MEGIDDO_HAZE_SPEED - (frame - 155) / 2;
 
       if (d < 0) {
         d = 0;
@@ -271,11 +348,12 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
                           BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(1) |
                               BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7),
                           IO_WRITE_HALFWORD);
-      Actor_SetAnimationSpeedFar(caster, 128);
+      Actor_SetAnimationSpeedFar(caster, ANIMATION_STEP_NORMAL * 8);
       Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(6));
     }
+    // The sun strikes.
     if (frame == 171) {
       work->shakeFrames = 8;
       Sound_PlayFar(SE_CRASH);
@@ -290,6 +368,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       Palette_BrightenBgEntries(2, 2, 2);
     }
 
+    // The sun's sprite, at twice its scale, while it is on screen.
     if (frame > 1) {
       struct Sprite *obj;
       s32 *pair;
@@ -298,7 +377,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       if (frame > 142) {
         s32 n = frame - 143;
 
-        scale = n * 1236 + FIXED_ONE / 4;
+        scale = n * MEGIDDO_SUN_GROWTH + FIXED_ONE / 4;
         if (scale > FIXED_ONE * 3 / 4) {
           scale = FIXED_ONE * 3 / 4;
         }
@@ -326,12 +405,13 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
     if (frame > 1) {
       u8 textureBytes[8];
       struct ModelTexture *t;
-      s32 tint;
+      s32 shade;
 
       model = Render_AllocateModelList(1);
       t = (struct ModelTexture *)textureBytes;
+      // The corona: a 64x16 picture of the fire stripes, its sizes as powers
+      // of two.
       model->kind = MODEL_SHADED_MAX;
-      // The texture's sizes go in as bytes (char stores), its pixels as a word.
       textureBytes[0] = 6;
       model->vertices = transformed;
       textureBytes[1] = 4;
@@ -347,10 +427,11 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       /* FAKEMATCH(dead): the pixels' store alone in a once-only block; as the
        * plain store. */
       do {
-        t->pixels =
-            work->sheet + MEGIDDO_FIRE_STRIPES + ((frame / 2) % 5) * 1024;
+        t->pixels = work->sheet + MEGIDDO_FIRE_STRIPES +
+                    ((frame / 2) % MEGIDDO_FIRE_STRIPES_PICTURES) *
+                        PICTURE_BYTES(MEGIDDO_FIRE_STRIPES);
       } while (0);
-      model->mesh = strip;
+      model->mesh = coronaMesh;
       {
         FIXED half = FIXED_ONE / 2;
 
@@ -360,19 +441,21 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         Matrix_Scale(half, FIXED_ONE, half);
       }
       Matrix_Translate(x - toFIXED(126), z - toFIXED(76), 0);
-      Matrix_ScaleUniform(46536);
+      Matrix_ScaleUniform(MEGIDDO_CORONA_SCALE);
       Matrix_ScaleUniform(scale);
-      Render_TransformVertices(ring, transformed, 66);
+      Render_TransformVertices(coronaCorners, transformed,
+                               MEGIDDO_CORONA_VERTICES);
       Render_DrawModelList(model);
 
+      // The flames that wrap the sun as it falls.
       t->logWidth = 5;
       t->logHeight = 5;
-      t->pixels = work->sheet + MEGIDDO_DUST_BLOB_PICTURES;
+      t->pixels = work->sheet + MEGIDDO_DUST_BLOB;
       model->kind = MODEL_SHADED_ADDITIVE;
-      model->mesh = meshB;
-      tint = -24;
+      model->mesh = flameMesh;
+      shade = -24;
       model->flags = 3;
-      model->shade = tint;
+      model->shade = shade;
       model->scrollV = zero;
       if (frame > 142) {
         s32 n = frame - 143;
@@ -382,26 +465,27 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         s32 tilt = 0;
         s32 twice;
 
-        if (n > 32) {
-          n = 32;
+        if (n > MEGIDDO_FALL_TILT_FRAMES) {
+          n = MEGIDDO_FALL_TILT_FRAMES;
         }
         i = 0;
         /* FAKEMATCH(temporary): twice, frame * 2 kept apart. */
         twice = frame * 2;
         angle = -DEGtoANG(90);
-        tilt = n * 384;
+        tilt = n * (MEGIDDO_FALL_TILT / MEGIDDO_FALL_TILT_FRAMES);
         scroll = twice + frame;
-        for (; i != 10; i++) {
-          model->scrollU = ~scroll & 127;
+        for (; i != MEGIDDO_FLAMES; i++) {
+          model->scrollU = ~scroll & MEGIDDO_FLAME_SCROLL_MASK;
           Matrix_Initialize();
           Matrix_Translate(-toFIXED(2), -toFIXED(32), 0);
           Matrix_Scale(82000, 217608, FIXED_ONE);
           Matrix_ScaleUniform(scale);
           Matrix_RotateZ(DEGtoANG(180));
-          scroll += 20;
-          Matrix_RotateX(tilt - TRIG_TURN * 3 / 16);
+          scroll += MEGIDDO_FLAME_SCROLL_STEP;
+          Matrix_RotateX(tilt - MEGIDDO_FALL_TILT);
           Matrix_RotateY(angle);
-          Render_TransformVertices(meshA, transformed, 32);
+          Render_TransformVertices(flameCorners, transformed,
+                                   MEGIDDO_FLAME_VERTICES);
           Render_DrawModelList(model);
           angle += TRIG_TURN * 3 / 32;
         }
@@ -409,6 +493,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       Heap_Release(model);
     }
 
+    // Sparks rise over the canvas while the rays shoot.
     if (frame == 8) {
       Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
@@ -439,11 +524,12 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         }
       }
     }
+    // Sparks rise about the falling sun.
     if (frame > 142) {
       s32 n = frame - 143;
 
-      if (n > 32) {
-        n = 32;
+      if (n > MEGIDDO_FALL_TILT_FRAMES) {
+        n = MEGIDDO_FALL_TILT_FRAMES;
       }
       if (frame == 143) {
         p = work->particles;
@@ -453,7 +539,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         }
       }
       Matrix_Initialize();
-      Matrix_RotateX(n * 384 - TRIG_TURN * 3 / 16);
+      Matrix_RotateX(n * (MEGIDDO_FALL_TILT / MEGIDDO_FALL_TILT_FRAMES) -
+                     MEGIDDO_FALL_TILT);
       p = work->particles;
       for (i = 0; i != ARRAY_COUNT(work->particles); i++, p++) {
         s32 size = 1;
@@ -465,6 +552,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       }
     }
 
+    // The rings of light.
     verts = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
     scratchTexture.logWidth = 7;
@@ -474,19 +562,19 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
     model->mesh = gBattleEffect_LargeSquareMesh;
     model->texture = &scratchTexture;
     model->vertices = verts;
-    for (i = 0; i != 5; i++) {
+    for (i = 0; i != MEGIDDO_FLASHES; i++) {
       s32 start = gMegiddo_FlashStarts[i];
 
       if (frame >= start && frame < start + 20) {
         s32 t = frame - start;
-        s32 shade = 64 - t * 8;
+        s32 shade = MEGIDDO_FLASH_SHINE_FRAMES * 8 - t * 8;
         s32 s;
 
         if (shade > 0) {
           shade = 0;
         }
         if (shade > MODEL_SHADE_INVISIBLE) {
-          s = (t << 14) + FIXED_ONE / 4;
+          s = t * (FIXED_ONE / 4) + FIXED_ONE / 4;
           model->shade = shade;
           Matrix_Initialize();
           if (i <= 1) {
@@ -503,18 +591,20 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         }
       }
     }
+    // The rays.
     model->kind = MODEL_SHADED_ADDITIVE;
     scratchTexture.logWidth = 5;
     scratchTexture.logHeight = 6;
     scratchTexture.pixels = work->sheet;
     model->mesh = gBattleEffect_TallMesh;
-    for (i = 0; i != 8; i++) {
-      s32 start = 16 + i * 2;
+    for (i = 0; i != MEGIDDO_RAYS; i++) {
+      s32 start = MEGIDDO_RAYS_START + i * 2;
 
-      if (frame >= start && frame < i * 2 + 80) {
+      if (frame >= start &&
+          frame < i * 2 + MEGIDDO_RAYS_START + MEGIDDO_RAY_FRAMES) {
         s32 t = frame - start;
-        s32 shade = t * 8 - 64;
-        s32 s = t << 11;
+        s32 shade = MODEL_SHADE_INVISIBLE + t * 8;
+        s32 s = t * (FIXED_ONE / 32);
 
         if (shade > 0) {
           shade = 0;
@@ -522,8 +612,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         if (s > FIXED_ONE) {
           s = FIXED_ONE;
         }
-        if (t > 47) {
-          s = s - (t << 12) + FIXED_ONE * 3;
+        if (t >= MEGIDDO_RAY_FRAMES - MEGIDDO_RAY_SHRINK_FRAMES) {
+          s = s - t * (FIXED_ONE / MEGIDDO_RAY_SHRINK_FRAMES) + FIXED_ONE * 3;
         }
         model->shade = shade;
         Matrix_Initialize();
@@ -557,11 +647,12 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   }
 
   Sprite_DestroyFar(work->sprites[0]);
-  caster->verticalMotionStrength = casterValue;
+  caster->verticalMotionStrength = casterVerticalMotion;
   BattleObject_PutFar();
-  transition[4] = 0;
+  background->busy = 0;
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
-                           Ram_HeapSlots->battleWork->background, 24);
+                           Ram_HeapSlots->battleWork->background,
+                           BACKGROUND_DARKEN_FRAMES);
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 #undef BLITTER

@@ -119,10 +119,13 @@ void LemurianShipDeck_TryHeldDoor(void) {
   Event_End();
 }
 
-/// The background palette the deck's two colour cycles turn: its colours 12 to
-/// 15 (LemurianShipDeck_RotateHighColors) and 4 to 9 (..._RotateLowColors),
-/// every eighth frame.
+/// The background palette the deck's two colour cycles turn every eighth
+/// frame: the blues of the band along the hull and the surf.
 #define DECK_PALETTE ((volatile u16 *)&BG_PLTT_COLOR(11, 0))
+#define HULL_BAND_FIRST_COLOR 4
+#define HULL_BAND_LAST_COLOR 9
+#define SURF_FIRST_COLOR 12
+#define SURF_LAST_COLOR 15
 
 /// Defines a task that moves colours last-1 .. first of DECK_PALETTE one place
 /// up and the last round to first, every eighth frame.
@@ -138,27 +141,34 @@ void LemurianShipDeck_TryHeldDoor(void) {
     }                                                                          \
   }
 
-/// A task: turns colours 12 to 15 of DECK_PALETTE round by one.
-DEFINE_ROTATE_PALETTE_COLORS(LemurianShipDeck_RotateHighColors, 15, 12)
+/// A task: turns the surf's colours round by one.
+DEFINE_ROTATE_PALETTE_COLORS(LemurianShipDeck_RotateSurfColors, SURF_LAST_COLOR,
+                             SURF_FIRST_COLOR)
 
-/// A task: turns colours 4 to 9 of DECK_PALETTE round by one.
-DEFINE_ROTATE_PALETTE_COLORS(LemurianShipDeck_RotateLowColors, 9, 4)
+/// A task: turns the blues of the band along the hull round by one.
+DEFINE_ROTATE_PALETTE_COLORS(LemurianShipDeck_RotateHullBandColors,
+                             HULL_BAND_LAST_COLOR, HULL_BAND_FIRST_COLOR)
 
-void TilesetAnim_Resume(s32 a);
+void TilesetAnim_Resume(s32 channelIndex);
 
-/// Arriving by entrance 99: the screen opens and two of the map's layer entries
-/// are cleared in turn.
+/// The entrance whose arrival lights the band along the hull, and the map's two
+/// tile animations, held until then, that light it one after the other.
+#define MAIN_DECK_ARRIVAL_ENTRANCE 99
+enum { HULL_BAND_FIRST_ANIMATION = 13, HULL_BAND_SECOND_ANIMATION };
+
+/// Arriving by MAIN_DECK_ARRIVAL_ENTRANCE: the screen opens and the band along
+/// the hull lights in two steps.
 void LemurianShipDeck_ShowArrival(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_StartScreenTransition();
-  FieldTask_AddFrame(LemurianShipDeck_RotateLowColors, TASK_PASS_FRAME);
+  FieldTask_AddFrame(LemurianShipDeck_RotateHullBandColors, TASK_PASS_FRAME);
   Event_WaitTransitionFrames();
   FieldEvent_Wait(60);
-  TilesetAnim_Resume(13);
+  TilesetAnim_Resume(HULL_BAND_FIRST_ANIMATION);
   FieldEvent_Wait(60);
   FieldEvent_Wait(60);
-  TilesetAnim_Resume(14);
+  TilesetAnim_Resume(HULL_BAND_SECOND_ANIMATION);
   Event_End();
 }
 
@@ -194,7 +204,7 @@ extern s32 gLemurianShipDeck_SecondCrewLooksAround[];
 
 extern s32 gLemurianShipDeck_ThirdCrewLooksAround[];
 
-void LemurianShipDeck_RotateHighColors(void);
+void LemurianShipDeck_RotateSurfColors(void);
 
 void LemurianShipDeck_ScrollWaves(void);
 
@@ -218,13 +228,13 @@ extern s32 gLemurianShipDeck_ReturnToShipScript[];
 void Actor_Release(struct Actor *actor);
 
 extern s32 gLemurianShipDeck_ReachPiersShipScript[];
-extern u32 gLemurianShipDeck_SmokePuff[];
+extern u32 gLemurianShipDeck_SplashFades[];
 
 void LemurianShipDeck_EnterCabin(void);
 
 void LemurianShipDeck_TryHeldDoor(void);
 
-void LemurianShipDeck_RotateLowColors(void);
+void LemurianShipDeck_RotateHullBandColors(void);
 void LemurianShipDeck_HoldOnToTiller(void);
 
 /// Places an actor facing an angle, the angle taken as the u16 an actor's
@@ -370,7 +380,7 @@ void LemurianShipDeck_TakeTheTiller(void) {
   gMainRoutineWork.movementMode = LEADER_MOVEMENT_SHIP;
   gMainRoutineWork.ownerOverride = 1;
   Event_SetFlag(FLAG_SHIP_SAILABLE);
-  FieldEvent_SetExitRequest(10);
+  FieldEvent_SetExitRequest(LEMURIAN_SHIP_TILLER_TO_WORLD_MAP_C);
 }
 
 /// Sends actor id at a run to where Felix stands, and off the deck.
@@ -522,11 +532,12 @@ void LemurianShipDeck_HoldOnToTiller(void) {
 void LemurianShipDeck_SetUpTillerDeck(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
-  FieldTask_AddFrame(LemurianShipDeck_RotateHighColors, TASK_PASS_FRAME);
-  FieldTask_AddFrame(LemurianShipDeck_RotateLowColors, TASK_PASS_FRAME);
-  if (gMainRoutineWork.entrance == 10)
+  FieldTask_AddFrame(LemurianShipDeck_RotateSurfColors, TASK_PASS_FRAME);
+  FieldTask_AddFrame(LemurianShipDeck_RotateHullBandColors, TASK_PASS_FRAME);
+  if (gMainRoutineWork.entrance == LEMURIAN_SHIP_TILLER_FROM_WORLD_MAP_C)
     LemurianShipDeck_TakeTheTiller();
-  if (gMainRoutineWork.entrance == 20)
+  if (gMainRoutineWork.entrance ==
+      LEMURIAN_SHIP_TILLER_FROM_SEA_OF_TIME_WHIRLPOOL)
     LemurianShipDeck_HoldOnToTiller();
 }
 
@@ -542,11 +553,12 @@ s32 Scene_Initialize(void) {
         ACTOR_PRIORITY_IGNORES_RISES;
     Actor_SetAnimation(ACTOR_PUDDLE, 1);
     FlagBlock_PlaceAll(gLemurianShipDeck_Puddles);
-    FieldTask_AddFrame(LemurianShipDeck_RotateHighColors, TASK_PASS_FRAME);
-    if (gMainRoutineWork.entrance == 99)
+    FieldTask_AddFrame(LemurianShipDeck_RotateSurfColors, TASK_PASS_FRAME);
+    if (gMainRoutineWork.entrance == MAIN_DECK_ARRIVAL_ENTRANCE)
       LemurianShipDeck_ShowArrival();
     else
-      FieldTask_AddFrame(LemurianShipDeck_RotateLowColors, TASK_PASS_FRAME);
+      FieldTask_AddFrame(LemurianShipDeck_RotateHullBandColors,
+                         TASK_PASS_FRAME);
   }
   return 0;
 }
@@ -1128,17 +1140,17 @@ void LemurianShipDeck_ReachPiersShip(void) {
   Event_End();
 }
 
-/// Smoke rises from an actor every eighth frame.
-void Actor_EmitSmoke(struct Actor *actor) {
+/// A wading splash rises at an actor's feet every eighth frame while it walks.
+void LemurianShipDeck_EmitSplash(struct Actor *actor) {
   struct Actor *spawned;
 
   if ((gFrameCount & 7) == 0) {
-    spawned =
-        FieldActor_Create(14, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+    spawned = FieldActor_Create(SPRITE_WADING_SPLASH, actor->x.fixed,
+                                actor->y.fixed, actor->z.fixed);
     if (spawned != 0) {
       Actor_SetSpriteFlags(spawned, 0);
       Actor_SelectAnimation(spawned, 1);
-      Actor_StartScript(spawned, gLemurianShipDeck_SmokePuff);
+      Actor_StartScript(spawned, gLemurianShipDeck_SplashFades);
     }
   }
 }
@@ -1152,7 +1164,8 @@ void LemurianShipDeck_SetOutForMadra(void) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Actor_SetSpeed(ACTOR_FELIX, 0.8);
-    Actor_Get(ACTOR_PIERS)->update = (void (*)(void))Actor_EmitSmoke;
+    Actor_Get(ACTOR_PIERS)->update =
+        (void (*)(void))LemurianShipDeck_EmitSplash;
     FieldActor_LaunchFromLeader(ACTOR_PIERS, 16, 0, FACING_WEST);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_PIERS), 0);
     Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
@@ -1163,10 +1176,11 @@ void LemurianShipDeck_SetOutForMadra(void) {
     Event_ShowMessage(ACTOR_PIERS, 0);
     Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
     Actor_Get(gMainRoutineWork.leaderActorId)->update =
-        (void (*)(void))Actor_EmitSmoke;
+        (void (*)(void))LemurianShipDeck_EmitSplash;
     Actor_WalkByAndWait(ACTOR_FELIX, 0, 16);
     Actor_Get(gMainRoutineWork.leaderActorId)->update = NULL;
-    Actor_Get(ACTOR_PIERS)->update = (void (*)(void))Actor_EmitSmoke;
+    Actor_Get(ACTOR_PIERS)->update =
+        (void (*)(void))LemurianShipDeck_EmitSplash;
     Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
     actor = Actor_Get(ACTOR_FELIX);
     if (actor != 0)
@@ -1305,8 +1319,8 @@ u32 gLemurianShipDeck_SparkleFades[] = {
     38,
 };
 
-/// A puff of smoke rising and fading.
-u32 gLemurianShipDeck_SmokePuff[] = {
+/// A splash rising and fading.
+u32 gLemurianShipDeck_SplashFades[] = {
     0, 15, 3, 0, 1, 38,
 };
 // clang-format on

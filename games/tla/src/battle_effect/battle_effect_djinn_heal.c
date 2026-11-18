@@ -1,6 +1,6 @@
 /// @file
-/// Sixteen tumbling textured quads, the Zagan summon, and the camera turned by
-/// phases.
+/// The comets and feathers of Balm, Tinder and Phoenix, the Zagan summon, and
+/// the camera turn Fire and Froth share.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
@@ -10,17 +10,37 @@
 #include "gamepak/far_call/field.h"
 #include "resource_ids.h"
 
-#define QUAD_FRAMES 64
-#define QUAD_COUNT 16
+#define TUMBLING_QUADS_FRAMES 64
+/// The quads given a place at frame 0, of which the first TUMBLING_QUADS are
+/// drawn, each TUMBLING_QUADS_DELAY frames after the one before.
+#define TUMBLING_QUADS_PLACED 32
+#define TUMBLING_QUADS 16
+#define TUMBLING_QUADS_DELAY 3
+/// The frame every target flashes and the quads start to fade, 8 levels a
+/// frame.
+#define TUMBLING_QUADS_FLASH_FRAME 56
+/// The quads' circle is seen from a little above, tilted by this angle.
+#define TUMBLING_QUADS_TILT 3000
 
-/// Where the quads' texture and the Djinn sit in the sheet.
-#define SHEET_TEXTURE 10000
-#define SHEET_DJINN 26048
+/// Where the quads' texture (CometTexture, or FeatherSheet's feather) and the
+/// Djinni sit in the sheet; the light line is at its start.
+#define TUMBLING_QUADS_TEXTURE 10000
+#define TUMBLING_QUADS_DJINNI 26048
+/// How far the Djinni sways to either side, in screen pixels.
+#define TUMBLING_QUADS_DJINNI_SWAY 20
+/// The ring of light lines: TUMBLING_QUADS_LINES lines a pixel wide and
+/// TUMBLING_QUADS_LINE_HEIGHT tall, at level TUMBLING_QUADS_LINE_LEVEL, one
+/// level dimmer every two frames.
+#define TUMBLING_QUADS_LINES 16
+#define TUMBLING_QUADS_LINE_HEIGHT 128
+#define TUMBLING_QUADS_LINE_LEVEL 40
 
-/// Sixteen textured quads tumble down over the targets (or, from the first
-/// target, rise), three frames apart, for 64 frames; with a prelude a Djinn
-/// circles over the canvas and a fan of light lines spreads from it. At
-/// frame 56 every target flashes.
+/// The revival of Balm, Tinder and Phoenix: sixteen comets or feathers, each a
+/// textured quad, tumble down round the targets in a widening circle, or for
+/// Phoenix rise from them, three frames apart; with a prelude the Djinni
+/// circles above, then climbs away, and a ring of light lines spreads out. At
+/// frame 56 every target flashes and the quads fade.
+///
 /// Balm, Tinder and Phoenix run it in their modes.
 void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
   s32 anchor[3];
@@ -35,7 +55,8 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
   struct RenderModel *model;
   void *vertices;
   void *canvas;
-  // Unused: draws[1] gives the stack frame its 4 bytes.
+  /* LEFTOVER(frame): draws[1], an idle second blitter, which the ROM's frame
+   * reserves and never touches; as one DrawRectangle. */
   DrawRectangle draws[2];
   s32 i;
   FIXED height;
@@ -53,9 +74,9 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
                                                    DJINNI_ANCHOR_TARGET_X),
                                    anchor, size);
     Resource_LoadAndDecompress(RESOURCE_COMET_TEXTURE,
-                               work->sheet + SHEET_TEXTURE, 0, 0);
+                               work->sheet + TUMBLING_QUADS_TEXTURE, 0, 0);
     Resource_LoadAndDecompress(RESOURCE_MERCURY_DJINN_SHEET,
-                               work->sheet + SHEET_DJINN, 1, 0);
+                               work->sheet + TUMBLING_QUADS_DJINNI, 1, 0);
     Iwram_CopyWords((void *)BG_PLTT,
                     Resource_GetTableEntry(RESOURCE_BLUE_FLAME_SHEET),
                     SHEET_PALETTE_BYTES);
@@ -65,20 +86,20 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
                                                    DJINNI_ANCHOR_OVER_TARGET),
                                    anchor, size);
     Resource_LoadAndDecompress(RESOURCE_MARS_DJINN_SHEET,
-                               work->sheet + SHEET_DJINN, 1, 1);
+                               work->sheet + TUMBLING_QUADS_DJINNI, 1, 1);
     Resource_LoadAndDecompress(RESOURCE_FEATHER_SHEET,
-                               work->sheet + SHEET_TEXTURE, 1, 1);
+                               work->sheet + TUMBLING_QUADS_TEXTURE, 1, 1);
   } else {
     EffectPosition_ProjectBattler(args->targets[0], &pos);
     anchor[0] = pos.x;
     Resource_LoadAndDecompress(RESOURCE_FEATHER_SHEET,
-                               work->sheet + SHEET_TEXTURE, 1, 1);
+                               work->sheet + TUMBLING_QUADS_TEXTURE, 1, 1);
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   // Centre the canvas on the anchor; the blitter mirrors for side 0.
   REG_BG2PA = Q_8_8(1);
-  REG_BG2X = (64 - anchor[0]) << 8;
+  REG_BG2X = (CANVAS_SIZE / 2 - anchor[0]) << 8;
   if (args->side == EFFECT_SIDE_ENEMIES)
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                         EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
@@ -88,15 +109,15 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
                         BLITTER_ADDITIVE);
   draws[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
 
-  for (frame = 0; frame != QUAD_FRAMES; frame++) {
+  for (frame = 0; frame != TUMBLING_QUADS_FRAMES; frame++) {
     if (frame == 8)
       Sound_PlayFar(SE_GLITTER);
 
-    // The quads start above the screen (or at the target for mode 2), each
-    // with its own heading, spin and size.
+    // The quads start above the screen, each higher than the last (or, for
+    // Phoenix, low by the targets), each with its own heading, spin and size.
     if (frame == 0) {
       height = -toFIXED(32);
-      for (i = 0; i != 32; i++) {
+      for (i = 0; i != TUMBLING_QUADS_PLACED; i++) {
         quad = &work->particles[i];
         quad->x = Random16() & TRIG_ANGLE_MASK;
         Random16();
@@ -108,13 +129,13 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
         quad->velocityY = ((Random16() & TRIG_ANGLE_MASK) << 1) + toFIXED(1);
         quad->velocityX = Random16() & TRIG_ANGLE_MASK;
         quad->velocityZ = Random16() & TRIG_ANGLE_MASK;
-        quad->variant = (Random16() & 0x3fff) + 8192;
+        quad->variant = (Random16() & 0x3fff) + FIXED_ONE / 8;
         height += -toFIXED(4);
       }
     }
 
-    // Frame 56: the next phase, and every target flashes.
-    if (frame == 56) {
+    // The heal shows, and every target flashes.
+    if (frame == TUMBLING_QUADS_FLASH_FRAME) {
       Sound_PlayFar(SE_POWER_UP);
       EFFECT_SHOW_DAMAGE(-1);
       for (i = 0; i != args->targetCount; i++)
@@ -122,35 +143,38 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
                                  TINT_KEEP, i, 8);
     }
 
-    // With a prelude the Djinn circles over the anchor and climbs away
-    // after frame 32, and a fan of light lines spreads from the canvas's
-    // middle while the canvas fades.
+    // With a prelude the Djinni circles over the anchor and climbs away
+    // after frame 32, and a ring of light lines spreads out from the canvas's
+    // middle.
     if (args->prelude == 1) {
-      x = (FIXEDtoINT(-Trig_Sin(frame << 11) * 20)) + 44;
-      y = (FIXEDtoINT(Trig_Cos(frame << 11) * 4)) + anchor[1] - 24;
+      x = (FIXEDtoINT(-Trig_Sin(frame * (TRIG_TURN / 32)) *
+                      TUMBLING_QUADS_DJINNI_SWAY)) +
+          CANVAS_SIZE / 2 - DJINNI_WIDTH / 2;
+      y = (FIXEDtoINT(Trig_Cos(frame * (TRIG_TURN / 32)) * 4)) + anchor[1] - 24;
       if (frame > 32)
         y = y - frame * 4 + 128;
-      draws[0](canvas, work->sheet + SHEET_DJINN, x, y, DJINNI_WIDTH,
+      draws[0](canvas, work->sheet + TUMBLING_QUADS_DJINNI, x, y, DJINNI_WIDTH,
                DJINNI_HEIGHT);
       if (frame <= 3)
-        draws[0](canvas, work->sheet + SHEET_DJINN, x, y, DJINNI_WIDTH,
-                 DJINNI_HEIGHT);
+        draws[0](canvas, work->sheet + TUMBLING_QUADS_DJINNI, x, y,
+                 DJINNI_WIDTH, DJINNI_HEIGHT);
       // DEAD: frame never passes 63 here; the ROM keeps the compare and branch.
       if (frame <= 79) {
         s32 angle;
         s32 lineX;
         s32 lineY;
 
-        Iwram_FillWordsEntry(work->sheet, 128,
-                             CANVAS_FILL_WORD(40) -
+        Iwram_FillWordsEntry(work->sheet, TUMBLING_QUADS_LINE_HEIGHT,
+                             CANVAS_FILL_WORD(TUMBLING_QUADS_LINE_LEVEL) -
                                  frame / 2 * CANVAS_FILL_WORD(1));
         i = 0;
-        angle = frame << 9;
-        for (; i != 16; i++) {
-          lineX = (FIXEDtoINT(Trig_Sin(angle) * frame)) + 64;
+        angle = frame * (TRIG_TURN / 128);
+        for (; i != TUMBLING_QUADS_LINES; i++) {
+          lineX = (FIXEDtoINT(Trig_Sin(angle) * frame)) + CANVAS_SIZE / 2;
           lineY = (FIXEDtoINT((Trig_Cos(angle) * frame) / 8)) - 16;
-          draws[0](canvas, work->sheet, lineX, lineY, 1, 128);
-          angle += TRIG_TURN / 16;
+          draws[0](canvas, work->sheet, lineX, lineY, 1,
+                   TUMBLING_QUADS_LINE_HEIGHT);
+          angle += TRIG_TURN / TUMBLING_QUADS_LINES;
         }
       }
     }
@@ -164,23 +188,23 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
       vertices = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
       fade = 0;
-      if (frame > 55)
-        fade = (56 - frame) * 8;
+      if (frame >= TUMBLING_QUADS_FLASH_FRAME)
+        fade = (TUMBLING_QUADS_FLASH_FRAME - frame) * 8;
       model->shade = fade;
       texture.logWidth = 6;
       texture.logHeight = 6;
-      texture.pixels = work->sheet + SHEET_TEXTURE;
+      texture.pixels = work->sheet + TUMBLING_QUADS_TEXTURE;
       model->kind = MODEL_SHADED_MAX;
       model->texture = &texture;
       model->mesh = gBattleEffect_SquareMesh;
       model->vertices = vertices;
 
-      for (i = 0; i != QUAD_COUNT; i++) {
+      for (i = 0; i != TUMBLING_QUADS; i++) {
         FIXED scale;
         s32 delay;
 
         quad = &work->particles[i];
-        delay = i * 3;
+        delay = i * TUMBLING_QUADS_DELAY;
         scale = quad->variant;
 
         if (frame >= delay) {
@@ -188,7 +212,7 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
           FIXED deep;
 
           Matrix_Initialize();
-          Matrix_RotateX(3000);
+          Matrix_RotateX(TUMBLING_QUADS_TILT);
           if (mode == TUMBLING_QUADS_PHOENIX)
             quad->y -= quad->velocityY;
           else
@@ -225,21 +249,50 @@ void BattleEffect_RunTumblingQuads(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
+/// Zagan is drawn by ZAGAN_PARTS sprites, each showing its own picture of
+/// zagan.png: part i shows ZAGAN_GALLOP_PICTURES + i as Zagan gallops and,
+/// but for the last part, ZAGAN_SWING_PICTURES + i as it swings its axe.
 #define ZAGAN_PARTS 12
+#define ZAGAN_GALLOP_PICTURES 12
+#define ZAGAN_SWING_PICTURES 24
 
-#define ZAGAN_FRAMES 200 ///< frames of the gallop, the swing and the dust
-/// PetalSheet's four 60x100 pictures, drawn at Zagan's position as it gallops.
-#define ZAGAN_PETALS_WIDTH 60
-#define ZAGAN_PETALS_HEIGHT 100
-/// Three rows of a 32-shade ramp after PetalSheet's pictures, drawn as the
-/// streaks that blow across the field.
-#define ZAGAN_BAND (4 * PICTURE_BYTES(ZAGAN_PETALS))
+#define ZAGAN_FRAMES 200 ///< frames of the gallop, the swing and the rings
+/// The frame Zagan's axe falls: the screen flashes white the frame before, and
+/// the targets are struck four times, ZAGAN_STRIKE_INTERVAL frames apart.
+#define ZAGAN_BLOW_FRAME 157
+#define ZAGAN_STRIKE_INTERVAL 4
+/// Zagan and its rings of fire are seen from a little above, tilted by this
+/// angle.
+#define ZAGAN_RING_TILT 3000
+/// Where FlameBandTexture, the rings' texture, is decoded in the map cell
+/// buffer.
+#define ZAGAN_FLAME_BAND 16384
 
-/// The screen slides over to a white field and petals blow across it; Zagan
-/// (twelve objects) gallops in from the right as the backdrop darkens, rears,
-/// and at frame 157 swings its axe across the targets, striking four times
-/// while the screen shakes and rings of dust spread. Holding A or B draws
-/// only every other frame.
+/// PetalSheet's four 60x100 pictures, a glowing half sphere, drawn in the
+/// orange palette as the blaze before Zagan as it gallops.
+#define ZAGAN_BLAZE_WIDTH 60
+#define ZAGAN_BLAZE_HEIGHT 100
+/// The streaks that blow across the field, ZAGAN_STREAKS of them: three rows
+/// of a ramp ZAGAN_STREAK_WIDTH long from level ZAGAN_STREAK_LEVEL, after
+/// the blaze's pictures.
+#define ZAGAN_STREAK (4 * PICTURE_BYTES(ZAGAN_BLAZE))
+#define ZAGAN_STREAKS 20
+#define ZAGAN_STREAK_WIDTH 32
+#define ZAGAN_STREAK_LEVEL 16
+/// The mote copies made in the battle sheet, each 7 levels fainter.
+#define ZAGAN_FAINT_MOTES 10
+/// As the field darkens, each of its colours steps toward the battle
+/// background's own, less these levels of red, green and blue.
+#define ZAGAN_DARKEN_RED 6
+#define ZAGAN_DARKEN_GREEN 10
+#define ZAGAN_DARKEN_BLUE 2
+
+/// "Earth's might enflamed." The battle flashes away to a white field and
+/// streaks blow across it; Zagan gallops in from the right in an orange blaze
+/// as the field darkens to the battle's own backdrop, and rears. At frame 157
+/// the screen flashes white, a crescent of light sweeps the targets and Zagan's
+/// axe falls, striking them four times while the screen shakes and rings of
+/// fire spread. Holding A or B draws only every other frame.
 void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   struct BattleWork *battle;
   void *canvas;
@@ -267,8 +320,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   s32 j;
 
   none = 0;
-  ringPixels =
-      Ram_MapCellBuffer + 16384; // the rings' texture, for the whole function
+  ringPixels = Ram_MapCellBuffer + ZAGAN_FLAME_BAND;
   battle = Ram_HeapSlots->battleWork;
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;
@@ -281,19 +333,21 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   work->transferMode = none;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
-  // The screen slides over to the field.
-  for (scroll = -80, frame = 0; frame != 28; frame++) {
-    if (frame == 27) {
+  // The battle flashes away as the summons' openings do, stopping while the
+  // white covers the screen.
+  for (scroll = -80, frame = 0; frame != SUMMON_OPENING_LOAD_FRAME + 1;
+       frame++) {
+    if (frame == SUMMON_OPENING_LOAD_FRAME) {
       gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
       BattleEffect_SelectLivingTargets(work->args);
       work->scrollStepX = -8;
       backdrop->busy = 1;
-      Iwram_FillWordsEntry((void *)&BG_PLTT_COLOR(6, 0), 256,
-                           COLOR_PAIR(RGB_WHITE));
+      Iwram_FillWordsEntry((void *)&BG_PLTT_COLOR(6, 0),
+                           BATTLE_BACKGROUND_COLORS * 2, COLOR_PAIR(RGB_WHITE));
       Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, work->sheet, 0,
                                  0);
-      // Ten ever-fainter copies of one mote.
-      for (j = 0; j != 10; j++) {
+      // Ever-fainter copies of one mote, which Zagan never draws.
+      for (j = 0; j != ZAGAN_FAINT_MOTES; j++) {
         size = 4;
         for (i = 0; i != size * size * 2; i++) {
           s32 offset = gBattleEffect_MotePictures[size - 1] + i;
@@ -309,10 +363,12 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
         }
       }
       Resource_LoadAndDecompress(RESOURCE_PETAL_SHEET, work->sheet, 1, 1);
-      for (i = 0; i != 32; i++) {
-        work->sheet[ZAGAN_BAND + i] = i + 16;
-        work->sheet[ZAGAN_BAND + 32 + i] = i + 16;
-        work->sheet[ZAGAN_BAND + 64 + i] = i + 16;
+      for (i = 0; i != ZAGAN_STREAK_WIDTH; i++) {
+        work->sheet[ZAGAN_STREAK + i] = i + ZAGAN_STREAK_LEVEL;
+        work->sheet[ZAGAN_STREAK + ZAGAN_STREAK_WIDTH + i] =
+            i + ZAGAN_STREAK_LEVEL;
+        work->sheet[ZAGAN_STREAK + ZAGAN_STREAK_WIDTH * 2 + i] =
+            i + ZAGAN_STREAK_LEVEL;
       }
     }
     scroll += 4;
@@ -348,9 +404,12 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
     if (frame == 140) {
       REG_BLDALPHA = EFFECT_BLEND_ADD;
     }
-    if (frame == 157)
+    if (frame == ZAGAN_BLOW_FRAME)
       EFFECT_SHOW_DAMAGE(SE_CRASH);
-    if (frame == 157 || frame == 161 || frame == 165 || frame == 169) {
+    if (frame == ZAGAN_BLOW_FRAME ||
+        frame == ZAGAN_BLOW_FRAME + ZAGAN_STRIKE_INTERVAL ||
+        frame == ZAGAN_BLOW_FRAME + ZAGAN_STRIKE_INTERVAL * 2 ||
+        frame == ZAGAN_BLOW_FRAME + ZAGAN_STRIKE_INTERVAL * 3) {
       for (i = 0; i != args->targetCount; i++) {
         BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HURL);
         BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_WHITE,
@@ -364,11 +423,11 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       velocity.x = -toFIXED(20);
       velocity.y = 0;
       for (i = 0; i != ZAGAN_PARTS; i++) {
-        Sprite_StartAnimationFar(work->sprites[i], i + 12);
+        Sprite_StartAnimationFar(work->sprites[i], i + ZAGAN_GALLOP_PICTURES);
       }
       REG_BLDALPHA = EFFECT_BLEND_ADD;
-      Iwram_FillWordsEntry((void *)&BG_PLTT_COLOR(6, 0), 256,
-                           COLOR_PAIR(RGB_WHITE));
+      Iwram_FillWordsEntry((void *)&BG_PLTT_COLOR(6, 0),
+                           BATTLE_BACKGROUND_COLORS * 2, COLOR_PAIR(RGB_WHITE));
       work->scrollStepX = -8;
       gProjection.centerX = -968;
       gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
@@ -382,7 +441,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
     gProjection.centerX -= work->scrollStepX;
     gBgScroll[1].x += work->scrollStepX;
 
-    // The backdrop darkens toward the battle's palette.
+    // The field darkens toward the battle background's colours.
     if (!(frame & 1) && (u32)(frame - 32) <= 111) {
       u16 *from = Resource_GetTableEntry(battle->background);
       u16 *to = (u16 *)&BG_PLTT_COLOR(6, 0);
@@ -391,9 +450,9 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
         s32 b = RGB_BLUE(*to);
         s32 g = RGB_GREEN(*to);
         s32 r = RGB_RED(*to);
-        s32 blue = RGB_BLUE(*from) - 2;
-        s32 green = RGB_GREEN(*from) - 10;
-        s32 red = RGB_RED(*from) - 6;
+        s32 blue = RGB_BLUE(*from) - ZAGAN_DARKEN_BLUE;
+        s32 green = RGB_GREEN(*from) - ZAGAN_DARKEN_GREEN;
+        s32 red = RGB_RED(*from) - ZAGAN_DARKEN_RED;
 
         if (blue < 0) {
           blue = 0;
@@ -424,26 +483,27 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       velocity.x += -toFIXED(2);
       velocity.y += -toFIXED(1);
     } else if (frame > 139) {
-      velocity.x += -40000;
+      velocity.x += -toFIXED(0.61036);
       velocity.y += toFIXED(1) / 8;
     } else if (frame > 99) {
       velocity.x += -toFIXED(1) / 8;
       velocity.y += toFIXED(1) / 32;
     }
-    if (frame == 156) {
+    if (frame == ZAGAN_BLOW_FRAME - 1) {
       Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
-    if (frame == 157) {
+    if (frame == ZAGAN_BLOW_FRAME) {
       Resource_LoadAndDecompress(RESOURCE_CRESCENT_ROW_SHEET, work->sheet, 1,
                                  0);
       work->shakeFrames = 16;
       for (i = 0; i != ZAGAN_PARTS - 1; i++) {
-        Sprite_StartAnimationFar(work->sprites[i], i + 24);
+        Sprite_StartAnimationFar(work->sprites[i], i + ZAGAN_SWING_PICTURES);
       }
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
     }
-    if ((u32)(frame - 156) <= 7) {
+    // The crescent of light, for eight frames from the flash.
+    if ((u32)(frame - (ZAGAN_BLOW_FRAME - 1)) <= 7) {
       blitters[0](canvas, work->sheet, 12, 0, 58, 120);
     }
     for (i = 0; i != 8; i++) {
@@ -461,11 +521,12 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       gBgScroll[1].x += -10;
     }
 
-    // Petals on the wind.
+    // The streaks, a row of the field apart, each one or two lines thick.
     if (frame == 0) {
       s32 row;
 
-      for (i = 0, row = 3, p = work->particles; i != 20; i++, p++, row += 6) {
+      for (i = 0, row = 3, p = work->particles; i != ZAGAN_STREAKS;
+           i++, p++, row += 6) {
         p->x = (Random16() & 127) - 160;
         p->y = row;
         p->variant = Random16() & 1;
@@ -475,13 +536,14 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
     if ((u32)frame <= 119) {
       s32 odd;
 
-      for (i = 0, odd = frame & 1, p = work->particles; i != 20; i++, p++) {
+      for (i = 0, odd = frame & 1, p = work->particles; i != ZAGAN_STREAKS;
+           i++, p++) {
         if (!odd || !skip) {
-          blitters[0](canvas, work->sheet + ZAGAN_BAND, p->x, p->y, 32,
-                      p->variant + 1);
+          blitters[0](canvas, work->sheet + ZAGAN_STREAK, p->x, p->y,
+                      ZAGAN_STREAK_WIDTH, p->variant + 1);
         }
         p->x += p->velocityX;
-        if (p->x > 128) {
+        if (p->x > CANVAS_SIZE) {
           p->x -= 160;
         }
       }
@@ -492,7 +554,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
       placement[3] = 0;
       placement[1] = 0;
       if (!(frame & 1) || !skip) {
-        if (frame > 156) {
+        if (frame >= ZAGAN_BLOW_FRAME) {
           for (i = 0; i != ZAGAN_PARTS - 1; i++) {
             placement[0] = INTtoFIXED(gZagan_ChargePoints[i][0]) + position.x -
                            toFIXED(32);
@@ -534,20 +596,21 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
         velocity.x = velocity.x * 58 / DAMPING_SCALE;
         velocity.y = velocity.y * 61 / DAMPING_SCALE;
       }
+      // The blaze, a new picture every three frames.
       if ((!(frame & 1) || !skip) && frame <= 119) {
         blit[1](canvas,
-                work->sheet + ((frame / 3) & 3) * PICTURE_BYTES(ZAGAN_PETALS),
+                work->sheet + ((frame / 3) & 3) * PICTURE_BYTES(ZAGAN_BLAZE),
                 (FIXEDtoINT(position.x / 2)) - 12,
-                (FIXEDtoINT(position.y)) - 58, ZAGAN_PETALS_WIDTH,
-                ZAGAN_PETALS_HEIGHT);
+                (FIXEDtoINT(position.y)) - 58, ZAGAN_BLAZE_WIDTH,
+                ZAGAN_BLAZE_HEIGHT);
       }
-      if (frame == 157) {
+      if (frame == ZAGAN_BLOW_FRAME) {
         Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE, ringPixels, 0,
                                    0);
       }
       if (!(frame & 1) || !skip) {
-        // Rings of dust from the blow.
-        if (frame > 156) {
+        // Rings of fire from the blow.
+        if (frame >= ZAGAN_BLOW_FRAME) {
           s32 k;
 
           vertices = Heap_AllocEwram(1024);
@@ -562,7 +625,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
           model->scrollU = 0;
           model->scrollV = 0;
           for (k = 0; k != 4; k++) {
-            s32 start = gZagan_RingStarts[k] + 157;
+            s32 start = gZagan_RingStarts[k] + ZAGAN_BLOW_FRAME;
             FIXED scale;
             s32 shade;
 
@@ -583,7 +646,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
             Matrix_Translate(-toFIXED(16), INTtoFIXED(gZagan_RingHeights[k]),
                              0);
             Matrix_Scale(scale, scale * 4 / 3, scale);
-            Matrix_RotateX(3000);
+            Matrix_RotateX(ZAGAN_RING_TILT);
             model->scrollU = ((frame + k * 5) & 7) * 16;
             Render_TransformVertices(gBattleEffect_CylinderCorners, vertices,
                                      32);
@@ -594,7 +657,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
         }
       }
     }
-    if (frame > 156) {
+    if (frame >= ZAGAN_BLOW_FRAME) {
       if (work->shakeFrames > 0) {
         s32 offsetX = (Random16() & 3) - 8;
         s32 randomY = Random16() & 15;
@@ -624,20 +687,51 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-/// A task: turns the camera by the effect's delta, the whole
-/// delta on phase 1 and half of it on the frames in between.
+// Every VBlank turns the camera at least half the delta, so it keeps turning on
+// VBlanks that end no frame of the effect.
+/// Turns the battle camera's yaw by the effect's delta.
 void BattleCamera_ApplyPhasedDelta(void) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
 
-  if (work->cameraPhase == 1) {
+  if (work->cameraPhase == CAMERA_PHASE_FRAME_DONE) {
     camera->yaw += work->cameraDelta;
-    work->cameraPhase = 0;
+    work->cameraPhase = CAMERA_PHASE_IDLE;
   } else {
     camera->yaw += work->cameraDelta / 2;
-    if (work->cameraPhase == 2)
-      work->cameraPhase = 0;
+    if (work->cameraPhase == CAMERA_PHASE_HALF_TURNED)
+      work->cameraPhase = CAMERA_PHASE_IDLE;
     else
-      work->cameraPhase = 2;
+      work->cameraPhase = CAMERA_PHASE_HALF_TURNED;
   }
 }
+#undef TUMBLING_QUADS_FRAMES
+#undef TUMBLING_QUADS_PLACED
+#undef TUMBLING_QUADS
+#undef TUMBLING_QUADS_DELAY
+#undef TUMBLING_QUADS_FLASH_FRAME
+#undef TUMBLING_QUADS_TILT
+#undef TUMBLING_QUADS_TEXTURE
+#undef TUMBLING_QUADS_DJINNI
+#undef TUMBLING_QUADS_DJINNI_SWAY
+#undef TUMBLING_QUADS_LINES
+#undef TUMBLING_QUADS_LINE_HEIGHT
+#undef TUMBLING_QUADS_LINE_LEVEL
+#undef ZAGAN_PARTS
+#undef ZAGAN_GALLOP_PICTURES
+#undef ZAGAN_SWING_PICTURES
+#undef ZAGAN_FRAMES
+#undef ZAGAN_BLOW_FRAME
+#undef ZAGAN_STRIKE_INTERVAL
+#undef ZAGAN_RING_TILT
+#undef ZAGAN_FLAME_BAND
+#undef ZAGAN_BLAZE_WIDTH
+#undef ZAGAN_BLAZE_HEIGHT
+#undef ZAGAN_STREAK
+#undef ZAGAN_STREAKS
+#undef ZAGAN_STREAK_WIDTH
+#undef ZAGAN_STREAK_LEVEL
+#undef ZAGAN_FAINT_MOTES
+#undef ZAGAN_DARKEN_RED
+#undef ZAGAN_DARKEN_GREEN
+#undef ZAGAN_DARKEN_BLUE

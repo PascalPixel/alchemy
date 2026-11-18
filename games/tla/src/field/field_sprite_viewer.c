@@ -21,10 +21,6 @@ enum {
   UI_SPRITE_VIEWER_FAST_STEP = 10
 };
 
-/// A sprite id with the sprite picture cache its pictures load into, as a
-/// SpritePictureCache's tag holds them.
-#define SPRITE_PICTURE_TAG(slot, id)                                           \
-  ((id) + ((slot) << PICTURE_CACHE_TAG_SLOT_SHIFT))
 /// An angle's bits: shifted up and back down, a value keeps only them.
 #define ANGLE_BITS 16
 

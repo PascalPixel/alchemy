@@ -91,9 +91,9 @@ static void SolSanctum_UpdateRing(void) {
       rx = Random_Below(gSolSanctum_RingDrift[i][0]);
       ry = Random_Below(gSolSanctum_RingDrift[i][1]);
       rz = Random_Below(gSolSanctum_RingDrift[i][2]);
-      rx = rx != 0 ? (rx << 16) / 1000 : 0;
-      ry = ry != 0 ? (ry << 16) / 1000 : 0;
-      rz = rz != 0 ? (rz << 16) / 1000 : 0;
+      rx = rx != 0 ? INTtoFIXED(rx) / 1000 : 0;
+      ry = ry != 0 ? INTtoFIXED(ry) / 1000 : 0;
+      rz = rz != 0 ? INTtoFIXED(rz) / 1000 : 0;
       if (gSolSanctum_RingDirection[i][0] == 1)
         speedX += rx;
       else if (gSolSanctum_RingDirection[i][0] == -1)

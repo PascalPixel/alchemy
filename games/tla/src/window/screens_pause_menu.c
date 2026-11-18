@@ -96,10 +96,6 @@ UNUSED void Window_SetTextTileBitRect(const struct Window *window, s32 x, s32 y,
 #define ICON_BROWSER_PAGE_ICONS 32
 #define ICON_BROWSER_ROW_ICONS 8
 
-/// A sprite speaker's portrait is numbered PORTRAIT_FIRST_SPRITE_PORTRAIT more
-/// than its entry in gPortrait_SpriteMap, as window.c numbers it.
-#define PORTRAIT_FIRST_SPRITE_PORTRAIT 128
-
 /// Browses pages of item, Psynergy and status-pattern icons, suspending the
 /// field's actor system while the browser owns its window and cache entries.
 /// L and R switch the kind, Left and Right turn its pages (item and Psynergy
@@ -193,8 +189,8 @@ s32 DebugBrowser_Icons(void) {
 
 /// A debug browser of the portraits: left and right step through
 /// gPortrait_CharacterMap and then gPortrait_SpriteMap, L and R by
-/// DEBUG_LARGE_STEP, each
-/// drawn with its number and its name from MsgTestName; A or B leaves.
+/// DEBUG_LARGE_STEP, each drawn with its number and its name from MsgTestName;
+/// A or B leaves.
 s32 DebugBrowser_Portraits(void) {
   struct WindowWork *work;
   struct Window *portrait;

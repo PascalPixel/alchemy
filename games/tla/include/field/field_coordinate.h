@@ -33,6 +33,11 @@ STATIC_ASSERT(offsetof(struct FieldCoordinate, part[0].integer) == 2);
 /// The map grid cell a 16.16 coordinate lies in, counted from 0 along its
 /// axis.
 #define FIELD_CELL(coordinate) ((coordinate) >> FIELD_CELL_SHIFT)
+/// The half cell, 8 pixels, a 16.16 coordinate lies in, counted from 0 along
+/// its axis.
+#define FIELD_HALF_CELL(coordinate) ((coordinate) >> 19)
+/// The 16.16 coordinate of a half cell's first pixel, FIELD_HALF_CELL undone.
+#define FIELD_HALF_CELL_ORIGIN(halfCell) ((halfCell) << 19)
 /// A 16.16 coordinate's whole pixels, its fraction cleared.
 #define FIELD_PIXEL_MASK 0xffff0000
 /// The 16.16 coordinate of a map grid cell's first pixel, FIELD_CELL undone.

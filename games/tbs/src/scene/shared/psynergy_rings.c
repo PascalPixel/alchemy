@@ -32,7 +32,7 @@ static void Scene_SpawnPsynergyRings(struct Actor *parent) {
         sprite->slot = effectWork->tileSlot;
         sprite->retainCacheEntry = 1;
         sprite->image.tile =
-            (gVramCacheEntries[sprite->slot].offset >> 5) & 0x3ff;
+            (gVramCacheEntries[sprite->slot].offset >> 5) & OBJ_TILE_MASK;
         sprite->image.fullColor = 0;
         sprite->image.shape = 1;
         sprite->image.size = 2;

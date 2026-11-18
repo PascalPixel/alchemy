@@ -24,6 +24,24 @@
 #define FLAG_COW_TRADED 0xaa3
 #define FLAG_BIRD_TRADED 0xaa4
 #define FLAG_GEORGE_HAS_THE_TURTLE 0xaa5
+/// For this visit, each islet's own: Pengus and Pengulina hop together since
+/// the Pretty Stone; the cow's trade or Lonesome George's turtle turned down,
+/// so each asks again at once; the crates dropped into the pier's water, and
+/// both of them filling it; the pier's puddle frozen; the treasure hunters'
+/// slip; the bird back on its nest; the dog's trade just made; the party at
+/// the Sea of Time's secret spot; and Reveal shown, holding the icebergs.
+#define FLAG_PENGUINS_HOPPING FLAG_SCENE_TEMP_00
+#define FLAG_RED_CLOTH_REFUSED FLAG_SCENE_TEMP_01
+#define FLAG_TURTLE_REFUSED FLAG_SCENE_TEMP_01
+#define FLAG_CRATE_A_DROPPED FLAG_SCENE_TEMP_10
+#define FLAG_CRATE_B_DROPPED FLAG_SCENE_TEMP_11
+#define FLAG_CRATES_FILL_WATER FLAG_SCENE_TEMP_12
+#define FLAG_PUDDLE_FROZEN FLAG_SCENE_TEMP_13
+#define FLAG_TREASURE_HUNTERS_LET_SLIP FLAG_SCENE_TEMP_14
+#define FLAG_BIRD_ON_NEST FLAG_SCENE_TEMP_15
+#define FLAG_DOG_JUST_TRADED FLAG_SCENE_TEMP_16
+#define FLAG_AT_SECRET_SPOT FLAG_SCENE_TEMP_17
+#define FLAG_REVEAL_SHOWN FLAG_SCENE_TEMP_18
 #include "battle/battle.h"
 #include "field/field.h"
 #include "field/field_sequence.h"
@@ -177,8 +195,8 @@ enum {
   ACTOR_TREASURE_HUNTER = 8,
   ACTOR_TREASURE_HUNTERS_PARTNER = 9,
   ACTOR_BIRD = 10,
-  /// An unseen marker the setup puts out of play.
-  ACTOR_UNUSED_MARKER = 11,
+  /// An unseen marker the setup parks at the map's corner (0, 0).
+  ACTOR_PARKED_MARKER = 11,
   ACTOR_CRATE_A = 12,
   ACTOR_CRATE_B = 13,
   ACTOR_PUDDLE ///< frozen into an ice pillar by Frost (Islets_FreezePuddle)
@@ -348,7 +366,7 @@ void Islets_TalkToPengus(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (Event_GetFlag(FLAG_PENGUS_GAVE_PRETTY_STONE)) {
-    if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
+    if (Event_GetFlag(FLAG_PENGUINS_HOPPING)) {
       Actor_FaceActor(ACTOR_PENGUS, gMainRoutineWork.leaderActorId, 0);
       FieldEvent_SetMessageId((s32)MsgPenPenPen);
     } else {
@@ -375,7 +393,7 @@ void Islets_MindReadPengus(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (Event_GetFlag(FLAG_PENGUS_GAVE_PRETTY_STONE)) {
-    if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
+    if (Event_GetFlag(FLAG_PENGUINS_HOPPING)) {
       FieldEvent_SetMessageId((s32)MsgThereIsNothing);
     } else {
       FieldEvent_SetMessageId((s32)MsgIMSoHappy);
@@ -397,7 +415,7 @@ void Islets_TalkToPengulina(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (Event_GetFlag(FLAG_PENGUS_GAVE_PRETTY_STONE)) {
-    if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
+    if (Event_GetFlag(FLAG_PENGUINS_HOPPING)) {
       Actor_FaceActor(ACTOR_PENGULINA, gMainRoutineWork.leaderActorId, 0);
       FieldEvent_SetMessageId((s32)MsgPenPenPehnnnn);
     } else {
@@ -420,7 +438,7 @@ void Islets_MindReadPengulina(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (Event_GetFlag(FLAG_PENGUS_GAVE_PRETTY_STONE)) {
-    if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
+    if (Event_GetFlag(FLAG_PENGUINS_HOPPING)) {
       FieldEvent_SetMessageId((s32)MsgPengusIsPretty);
     } else {
       FieldEvent_SetMessageId((s32)MsgIMSoGlad);
@@ -453,13 +471,13 @@ void Islets_TalkToHealer(void) {
   return;
 }
 
-/// The treasure hunter on the pier lets slip why they are there, the sailor
-/// beside him covers it up the first time, then they are busy.
+/// The treasure hunter on the pier lets slip why they are there, his partner
+/// covers it up the first time, then they are busy.
 void Islets_TalkToTreasureHunters(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (!Event_GetFlag(FLAG_SCENE_TEMP_14)) {
+  if (!Event_GetFlag(FLAG_TREASURE_HUNTERS_LET_SLIP)) {
     FieldEvent_SetMessageId((s32)MsgWeLikeThis);
     // "We like this island. A lot... That's why we're here... Because we..."
     Event_ShowMessage(ACTOR_TREASURE_HUNTER, 0);
@@ -475,7 +493,7 @@ void Islets_TalkToTreasureHunters(void) {
     Actor_SetAttachedEffect(ACTOR_TREASURE_HUNTERS_PARTNER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     FieldEvent_Wait(20);
-    Event_SetFlag(FLAG_SCENE_TEMP_14);
+    Event_SetFlag(FLAG_TREASURE_HUNTERS_LET_SLIP);
   }
   Actor_FaceActor(ACTOR_TREASURE_HUNTER, gMainRoutineWork.leaderActorId, 0);
   FieldEvent_SetMessageId((s32)MsgLookWeRe);
@@ -487,7 +505,7 @@ void Islets_TalkToTreasureHunters(void) {
   return;
 }
 
-/// The sailor on the pier talks of the Eastern Sea.
+/// The treasure hunter's partner on the pier talks of the Eastern Sea.
 void Islets_TalkToTreasureHuntersPartner(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -622,7 +640,7 @@ void Islets_TradeWithCow(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if (FieldPartyInventory_FindMember(ITEM_RED_CLOTH) != -1) {
-    if (Event_GetFlag(FLAG_SCENE_TEMP_01)) {
+    if (Event_GetFlag(FLAG_RED_CLOTH_REFUSED)) {
       FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
       FieldCamera_SetSpeed(0.8);
       FieldCamera_MoveTo(140, CAMERA_KEEP, 190, 1);
@@ -732,7 +750,7 @@ void Islets_TradeWithCow(void) {
           Actor_Release(item);
         Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId,
                                    FACING_SOUTH);
-        Event_SetFlag(FLAG_SCENE_TEMP_01);
+        Event_SetFlag(FLAG_RED_CLOTH_REFUSED);
       }
     }
   } else {
@@ -888,11 +906,11 @@ void Islets_TradeWithDog(void) {
     }
     Actor_FaceDirectionAndWait(ACTOR_DOG, FACING_NORTH);
     Event_SetFlag(FLAG_DOG_TRADED);
-    Event_SetFlag(FLAG_SCENE_TEMP_16);
+    Event_SetFlag(FLAG_DOG_JUST_TRADED);
   } else {
     if (Event_GetFlag(FLAG_DOG_TRADED)) {
       FieldActor_WatchAndSetScript(ACTOR_DOG, gMainRoutineWork.leaderActorId);
-      if (Event_GetFlag(FLAG_SCENE_TEMP_16))
+      if (Event_GetFlag(FLAG_DOG_JUST_TRADED))
         Event_SetMessageId(MsgIDonTLike);
       else
         Event_SetMessageId(MsgIDonTWantTo);
@@ -1023,7 +1041,7 @@ void Islets_GiveTurtle(void) {
   FieldEvent_ResolvePendingActions(0);
   if (PartyInventory_FindMember(ITEM_LIL_TURTLE) != -1) {
     leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-    if (GameFlag_Get(FLAG_SCENE_TEMP_01) != 0) {
+    if (GameFlag_Get(FLAG_TURTLE_REFUSED) != 0) {
       Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
       /* FAKEMATCH(temporary): the splash update kept in an actor pointer. */
       a = (struct Actor *)Actor_EmitWadingSplashes;
@@ -1064,7 +1082,7 @@ void Islets_GiveTurtle(void) {
                           EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 20);
       Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
       leader->update = Actor_EmitWadingSplashes;
-      // Default: a is set for real when object 163 is made.
+      // Default: SPAWN sets a to the small turtle it creates.
       a = 0;
       Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 318, 424);
       leader->update = 0;
@@ -1105,7 +1123,7 @@ void Islets_GiveTurtle(void) {
         leader->update = 0;
         if (a != 0)
           Actor_Release(a);
-        Event_SetFlag(FLAG_SCENE_TEMP_01);
+        Event_SetFlag(FLAG_TURTLE_REFUSED);
       }
     }
   } else if (GameFlag_Get(FLAG_GEORGE_HAS_THE_TURTLE)) {
@@ -1410,7 +1428,7 @@ void Islets_BirdReturnsToNest(void) {
   Actor_SetAnimation(ACTOR_BIRD, 5);
   actor->motionFlags = 0;
   Actor_FaceDirectionAndWait(ACTOR_BIRD, FACING_EAST);
-  Event_SetFlag(FLAG_SCENE_TEMP_15);
+  Event_SetFlag(FLAG_BIRD_ON_NEST);
   System_Wait(1);
   Event_End();
 }
@@ -1518,7 +1536,7 @@ void Islets_FinishPushingCrate(void) {
                           CELL_BEHAVIOR_WALL);
   Islets_SetCellCollision(second->x.fixed, second->z.fixed, 3,
                           CELL_BEHAVIOR_WALL);
-  if (!Event_GetFlag(FLAG_SCENE_TEMP_10) && firstX == 12 && firstZ == 26) {
+  if (!Event_GetFlag(FLAG_CRATE_A_DROPPED) && firstX == 12 && firstZ == 26) {
     both = 0;
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -1531,18 +1549,18 @@ void Islets_FinishPushingCrate(void) {
     Event_PlaySound(SE_RATTLE);
     System_Wait(10);
     first->motionFlags = 0;
-    Event_SetFlag(FLAG_SCENE_TEMP_10);
+    Event_SetFlag(FLAG_CRATE_A_DROPPED);
     if (both) {
       Islets_SetCellCollision(first->x.fixed, first->z.fixed, 3, 0);
       Islets_SetCellCollision(second->x.fixed, second->z.fixed, 3, 0);
       MapGrid_CopyCellAttributes(7, 3, 1, 1, 12, 26);
-      Event_SetFlag(FLAG_SCENE_TEMP_12);
+      Event_SetFlag(FLAG_CRATES_FILL_WATER);
       first->riseCounter = 1;
       second->riseCounter = 1;
     }
     Event_End();
   }
-  if (!Event_GetFlag(FLAG_SCENE_TEMP_11) && secondX == 7 && secondZ == 29) {
+  if (!Event_GetFlag(FLAG_CRATE_B_DROPPED) && secondX == 7 && secondZ == 29) {
     both = 0;
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -1555,12 +1573,12 @@ void Islets_FinishPushingCrate(void) {
     Event_PlaySound(SE_RATTLE);
     System_Wait(10);
     second->motionFlags = 0;
-    Event_SetFlag(FLAG_SCENE_TEMP_11);
+    Event_SetFlag(FLAG_CRATE_B_DROPPED);
     if (both) {
       Islets_SetCellCollision(first->x.fixed, first->z.fixed, 3, 0);
       Islets_SetCellCollision(second->x.fixed, second->z.fixed, 3, 0);
       MapGrid_CopyCellAttributes(7, 3, 1, 1, 7, 29);
-      Event_SetFlag(FLAG_SCENE_TEMP_12);
+      Event_SetFlag(FLAG_CRATES_FILL_WATER);
       first->riseCounter = 1;
       second->riseCounter = 1;
     }
@@ -1595,7 +1613,7 @@ void Islets_SaveCratePositions(void) {
 /// Frost on the pier's puddle: the cells become an ice pillar.
 void Islets_FreezePuddle(void) {
   MapGrid_CopyCellAttributes(5, 2, 1, 2, 5, 28);
-  Event_SetFlag(FLAG_SCENE_TEMP_13);
+  Event_SetFlag(FLAG_PUDDLE_FROZEN);
 }
 
 /// Holding up at the iceberg's edge, the leader steps up onto it.
@@ -1635,13 +1653,13 @@ void Islets_StepDownFromIceberg(void) {
 
 /// Reveal begins: the icebergs stop drifting.
 void Islets_StartReveal(void) {
-  Event_SetFlag(FLAG_SCENE_TEMP_18);
+  Event_SetFlag(FLAG_REVEAL_SHOWN);
   return;
 }
 
 /// Reveal ends: the icebergs drift again.
 void Islets_EndReveal(void) {
-  Event_ClearFlag(FLAG_SCENE_TEMP_18);
+  Event_ClearFlag(FLAG_REVEAL_SHOWN);
   return;
 }
 
@@ -1893,7 +1911,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// A task: the sailor's son and the pacing sailor are skipped by talk and
+/// A task: the sailor's two sons are skipped by talk and
 /// Psynergy while the leader is down on the dock.
 void Islets_SetSonsTargetableByHeight(void) {
   if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed > toFIXED(8)) {
@@ -1905,8 +1923,8 @@ void Islets_SetSonsTargetableByHeight(void) {
   }
 }
 
-/// Sets up West Indra Islet: the wading kind, the dog and the pacing sailor,
-/// and the Milk's icon once the dog has traded.
+/// Sets up West Indra Islet: the wading kind, the dog and the sailor's other
+/// son, who paces, and the Milk's icon once the dog has traded.
 void Islets_InitializeWestIndra(void) {
   struct MapWorkGroundEffects *map =
       (struct MapWorkGroundEffects *)Ram_HeapSlots->mapGrid;
@@ -1958,7 +1976,7 @@ void Islets_MoveIceberg(s32 id, s32 column, s32 row) {
 }
 
 /// A task: E Tundaria Islet's icebergs drift. While Psynergy is cast or
-/// Reveal shows (FLAG_SCENE_TEMP_18) they hold still; once the leader has
+/// Reveal shows (FLAG_REVEAL_SHOWN) they hold still; once the leader has
 /// dropped into the water they hold still and the raised trigger
 /// TRIGGER_DROP_THROUGH_HOLE runs; otherwise, for each frame owed, a 260-frame
 /// cycle sends them two cells on at frame 0 (Islets_MoveIceberg), stops them at
@@ -1970,7 +1988,7 @@ void Islets_DriftIcebergs(void) {
   s32 i;
   s32 count;
 
-  if (work->psynergy != 0 || GameFlag_Get(FLAG_SCENE_TEMP_18)) {
+  if (work->psynergy != 0 || GameFlag_Get(FLAG_REVEAL_SHOWN)) {
     for (i = ACTOR_FIRST_ICEBERG; i <= ACTOR_LAST_ICEBERG; i++)
       Actor_GetById(i)->paused = 1;
     return;
@@ -2082,7 +2100,7 @@ void Islets_InitializeEastTundaria(void) {
     Actor_SetSpeed(ACTOR_PENGULINA, 1.6);
     Actor_SetScript(ACTOR_PENGUS, gIslets_PengusAndPengulinaHopScript);
     Actor_SetScript(ACTOR_PENGULINA, gIslets_PengusAndPengulinaHopScript);
-    Event_SetFlag(FLAG_SCENE_TEMP_00);
+    Event_SetFlag(FLAG_PENGUINS_HOPPING);
   }
 }
 
@@ -2127,10 +2145,10 @@ void Islets_InitializeSoutheastAngara(void) {
     actor->motionFlags = 0;
     FieldActor_SetSpritePriority(ACTOR_BIRD, 1);
   }
-  Actor_SetPosition(ACTOR_UNUSED_MARKER, 0, 0);
+  Actor_SetPosition(ACTOR_PARKED_MARKER, 0, 0);
   Actor_DisableById(ACTOR_CRATE_A);
   Actor_DisableById(ACTOR_CRATE_B);
-  set = Event_GetFlag(FLAG_SCENE_TEMP_12);
+  set = Event_GetFlag(FLAG_CRATES_FILL_WATER);
   if (set) {
     struct Actor *first = Actor_Get(ACTOR_CRATE_A);
     struct Actor *second = Actor_Get(ACTOR_CRATE_B);
@@ -2156,7 +2174,7 @@ void Islets_InitializeSoutheastAngara(void) {
   last->riseCounter = 1;
   last->motionFlags = 0;
   Islets_SetCellCollision(last->x.fixed, last->z.fixed, 1, CELL_BEHAVIOR_WALL);
-  if (Event_GetFlag(FLAG_SCENE_TEMP_13))
+  if (Event_GetFlag(FLAG_PUDDLE_FROZEN))
     MapGrid_CopyCellAttributes(5, 2, 1, 2, 5, 28);
 }
 
@@ -2193,7 +2211,7 @@ void Islets_InitializeSeaOfTime(void) {
   FieldTask_AddFrame(Islets_SetDeckBlocksByHeight, TASK_PASS_FRAME);
   // At the secret spot, by the ride or from the Islet Cave.
   if ((u16)(gMainRoutineWork.entrance - ENTRANCE_AT_SECRET_SPOT) <= 1) {
-    Event_SetFlag(FLAG_SCENE_TEMP_17);
+    Event_SetFlag(FLAG_AT_SECRET_SPOT);
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
       {
         Actor_SetPositionAndFacing(ACTOR_LONESOME_GEORGE, toFIXED(152),
@@ -2733,11 +2751,15 @@ u32 gIslets_PacingSonScript[] = {
     SC_MOVE(184, 0, 936),
     SC_SYNC,
     SC_ANIMATION(1),
-    // SC_SYNC and a bare 80 stand where the west end has SC_WAIT(80); the
-    // walker skips a word above 63 (field_actor_motion.c), so the boy turns
-    // back at once here.
+#ifdef BUGFIX
+    SC_WAIT(80),
+#else
+    // BUG: SC_SYNC where the west end's SC_WAIT(80) was meant; the walker
+    // skips the bare 80, a word above 63 (field_actor_motion.c), so the boy
+    // turns back at once here.
     SC_SYNC,
     80,
+#endif
     SC_ANIMATION(2),
     SC_MOVE(88, 0, 936),
     SC_SYNC,
@@ -2953,18 +2975,19 @@ struct Trigger gIslets_SoutheastAngaraTriggers[] = {
          TRIGGER_FLAG_FACING | FACING_NORTH,
      11, CONDITION_ALWAYS, 11},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), STEP_TRIGGER_PUSH_CRATE_ON,
-     FLAG_SCENE_TEMP_12, EVENT(Islets_SaveCratePositions)},
-    {TRIGGER_PUSH, 0, FLAG_SCENE_TEMP_12, EVENT(Islets_StartPushingCrate)},
+     FLAG_CRATES_FILL_WATER, EVENT(Islets_SaveCratePositions)},
+    {TRIGGER_PUSH, 0, FLAG_CRATES_FILL_WATER, EVENT(Islets_StartPushingCrate)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
-     ACTOR_CRATE_A, FLAG_SCENE_TEMP_12, EVENT(Islets_StartPushingCrate)},
+     ACTOR_CRATE_A, FLAG_CRATES_FILL_WATER, EVENT(Islets_StartPushingCrate)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
-     ACTOR_CRATE_B, FLAG_SCENE_TEMP_12, EVENT(Islets_StartPushingCrate)},
-    {TRIGGER_PUSHED, 0, FLAG_SCENE_TEMP_12, EVENT(Islets_FinishPushingCrate)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CRATE_A, FLAG_SCENE_TEMP_12,
+     ACTOR_CRATE_B, FLAG_CRATES_FILL_WATER, EVENT(Islets_StartPushingCrate)},
+    {TRIGGER_PUSHED, 0, FLAG_CRATES_FILL_WATER,
      EVENT(Islets_FinishPushingCrate)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CRATE_B, FLAG_SCENE_TEMP_12,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CRATE_A, FLAG_CRATES_FILL_WATER,
      EVENT(Islets_FinishPushingCrate)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_SCENE_TEMP_13,
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CRATE_B, FLAG_CRATES_FILL_WATER,
+     EVENT(Islets_FinishPushingCrate)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_PUDDLE_FROZEN,
      EVENT(Islets_FreezePuddle)},
     {TRIGGER_TALK, ACTOR_TREASURE_HUNTER, CONDITION_ALWAYS,
      EVENT(Islets_TalkToTreasureHunters)},
@@ -2977,7 +3000,7 @@ struct Trigger gIslets_SoutheastAngaraTriggers[] = {
      CONDITION_ALWAYS, MSGNO(MsgSureThereAre)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BIRD, CONDITION_ALWAYS,
      EVENT(Islets_TradeWithBird)},
-    {TRIGGER_STEP, 20, FLAG_SCENE_TEMP_15, EVENT(Islets_BirdReturnsToNest)},
+    {TRIGGER_STEP, 20, FLAG_BIRD_ON_NEST, EVENT(Islets_BirdReturnsToNest)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2992,7 +3015,7 @@ struct Trigger gIslets_SeaOfTimeTriggers[] = {
      MSGNO(MsgGeorgeSilence)},
     {TRIGGER_TALK, ACTOR_LONESOME_GEORGE, CONDITION_ALWAYS, MSGNO(MsgYup)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LONESOME_GEORGE,
-     FLAG_SCENE_TEMP_17, EVENT(Islets_GiveTurtle)},
+     FLAG_AT_SECRET_SPOT, EVENT(Islets_GiveTurtle)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LONESOME_GEORGE,
      CONDITION_ALWAYS, EVENT(Islets_RideBackToIsland)},
     {TRIGGER_TALK, ACTOR_DECK_BLOCK_A, CONDITION_ALWAYS,

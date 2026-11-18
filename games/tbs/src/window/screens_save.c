@@ -21,6 +21,22 @@
 /// The play time shown stops at PLAY_TIME_HOURS_MAX hours and 59 minutes.
 #define PLAY_TIME_HOURS_MAX 999
 #define MINUTES_PER_HOUR 60
+#define SECONDS_PER_MINUTE 60
+
+/// A two-digit field for String_FormatNumber: with 100 added, its last two
+/// digits keep their leading zero.
+#define WITH_LEADING_ZERO(n) ((n) + 100)
+
+/// The word of gSceneLocalState that holds the second copy of the play time.
+#define SECOND_PART_PLAY_TIME_WORD 64
+/// The words from gGameFlagBytes that a file's checksum sums.
+#define SAVE_CHECKSUM_WORDS 968
+
+/// The file list's glow: the middle colour that HIGHLIGHT_PALETTE's colours 8
+/// to 11 sway round, red twice as far as green and blue.
+#define FILE_LIST_GLOW_RED 22
+#define FILE_LIST_GLOW_GREEN 16
+#define FILE_LIST_GLOW_BLUE 20
 
 /// Writes the play time `frames` (at 60 frames a second) into `out` as hours
 /// and minutes, "hhh:mm" with the hours right-aligned in three characters, and
@@ -33,7 +49,7 @@ void *String_FormatPlayTime(s32 frames, u8 *out) {
   u8 *digitsCursor;
   u8 *textCursor;
 
-  totalMinutes = (u32)frames / (60 * 60);
+  totalMinutes = (u32)frames / (FRAMES_PER_SECOND * SECONDS_PER_MINUTE);
   if (totalMinutes >
       PLAY_TIME_HOURS_MAX * MINUTES_PER_HOUR + MINUTES_PER_HOUR - 1)
     totalMinutes =
@@ -49,8 +65,7 @@ void *String_FormatPlayTime(s32 frames, u8 *out) {
   *textCursor = *digitsCursor;
   textCursor++;
   *textCursor = digitsCursor[1];
-  // Adding 100 gives the minutes a leading zero in their last two digits.
-  minutes += 100;
+  minutes = WITH_LEADING_ZERO(minutes);
   textCursor++;
   *textCursor = ':';
 
@@ -158,27 +173,26 @@ u32 Save_BuildFileSummary(void) {
   s32 i;
   u32 sum = 0;
 
-  // The summary's 16-byte header comes before the save buffer.
-  summary = (struct SaveFileSummary *)((u32)gSaveBuffer - 16);
+  // The summary's header comes before the save buffer.
+  summary = (struct SaveFileSummary *)((u32)gSaveBuffer -
+                                       offsetof(struct SaveFileSummary, name));
   gMainRoutineWork.buildStamp = BuildStamp_GetTimeFar(0);
   gMainRoutineWork.playTime = gPlayTimeFrames;
-  // A second copy of the play time, 256 bytes from gSceneLocalState: past its
-  // 120 bytes, in gInventorySnapshot's last word. gSceneLocalState opens the
-  // save buffer's second half, so this lands at offset 0x110 of the file's
-  // second part (after its 16-byte header), which
-  // Save_LoadFileSummaries reads back into
-  // SaveFileSummary.secondPartPlayTime: the file list lists a file whose two
-  // play times differ as corrupted.
+  // A second copy of the play time, past gSceneLocalState's own bytes in
+  // gInventorySnapshot's last word. gSceneLocalState opens the save buffer's
+  // second half, so the copy lands in the file's second part, which
+  // Save_LoadFileSummaries reads back into SaveFileSummary.secondPartPlayTime:
+  // the file list lists a file whose two play times differ as corrupted.
   {
     u32 *copy = (u32 *)gSceneLocalState;
-    copy[64] = gPlayTimeFrames;
+    copy[SECOND_PART_PLAY_TIME_WORD] = gPlayTimeFrames;
   }
   gMainRoutineWork.idleSleepEnabled = gIdleSleepEnabled;
 
   leader = Unit_GetFar(gMainRoutineWork.leaderActorId);
   destination = summary->name;
   source = leader->name;
-  for (i = 0; i < 12; i++)
+  for (i = 0; i < (s32)sizeof(summary->name); i++)
     *destination++ = *source++;
   summary->level = leader->level;
   summary->playTime = gMainRoutineWork.playTime;
@@ -192,14 +206,15 @@ u32 Save_BuildFileSummary(void) {
   summary->djinn[3] = Party_SumDjinnCountsFar(3);
   // Up to four party members, ended by -1.
   Party_ListMembersFar(members);
-  for (i = 0; i <= 3 && members[i] != 255; i++)
+  for (i = 0; i <= 3 && members[i] != BATTLE_UNIT_LIST_END; i++)
     summary->party[i] = members[i];
   summary->party[i] = -1;
   summary->windowHue = gMainRoutineWork.windowHue;
   summary->windowBrightness = gMainRoutineWork.windowBrightness;
   summary->sendFlag = gMainRoutineWork.sendFlag;
   summary->flagCount = 0;
-  for (i = 48; i <= 127; i++) {
+  for (i = FLAG_DJINN_FIRST; i < FLAG_DJINNI(ELEMENT_COUNT * DJINN_PER_ELEMENT);
+       i++) {
     if (GameFlag_GetFar(i))
       summary->flagCount++;
   }
@@ -209,15 +224,15 @@ u32 Save_BuildFileSummary(void) {
     u32 *frame = &gMainRoutineWork.buildStamp;
     u32 frames;
 
-    // The checksum covers 242 * 4 = 968 words (3872 bytes) from the flags.
-    n = 242;
+    // The checksum's words, counted in fours and multiplied back below.
+    n = SAVE_CHECKSUM_WORDS / 4;
     /* FAKEMATCH(dead): a never-taken null arm, whose updates cancel, and an
      * else arm whose read of frame is repeated below. */
     if (!frame) {
       n++;
       n--;
     } else {
-      n = 242;
+      n = SAVE_CHECKSUM_WORDS / 4;
       frames = *frame;
     }
     frames = *frame;
@@ -476,11 +491,11 @@ void FileList_UpdatePulse(void) {
 #ifdef UBFIX
     // Wrap the frame phase before Trig_Sin takes its low sixteen bits.
     sine = Trig_Sin((((u32)*vblankCount + i * 8U) * (TRIG_TURN * 3 / 256U)) &
-                    0xffffU);
+                    TRIG_ANGLE_MASK);
 #else
     sine = Trig_Sin((*vblankCount + i * 8) * (TRIG_TURN * 3 / 256));
 #endif
-    colour = sine / 16384;
+    colour = sine / (FIXED_ONE / 4);
     {
 #ifdef UBFIX
       // A negative sine must be shifted as unsigned bits.
@@ -490,9 +505,9 @@ void FileList_UpdatePulse(void) {
 #endif
       u32 green = colour;
 
-      red += 22;
-      green += 16;
-      colour += 20;
+      red += FILE_LIST_GLOW_RED;
+      green += FILE_LIST_GLOW_GREEN;
+      colour += FILE_LIST_GLOW_BLUE;
       Io_Write16(RGB(red, green, colour), palette++);
     }
   } while (++i <= 3);
@@ -534,12 +549,14 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
     height += y;
     y = 0;
   }
-  if (y + height > 29)
+  // The bottom is tested against the screen's width, as the right edge is, so
+  // a rectangle may reach into the map's rows below the screen.
+  if (y + height > DISPLAY_TILE_WIDTH - 1)
     height = DISPLAY_TILE_HEIGHT - y;
 
   if (width > 0 && height > 0) {
-    // Byte offsets: 32 entries of 2 bytes a row.
-    s32 yOffset = y << 6;
+    // Byte offsets: BG_SCREEN_WIDTH entries of 2 bytes a row.
+    s32 yOffset = y * (BG_SCREEN_WIDTH * 2);
     s32 xOffset = x << 1;
     s32 offset = yOffset + xOffset;
     do {
@@ -548,7 +565,7 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
       for (; remaining != 0; remaining--)
         *cell++ = BG_TILE_PALETTE(HIGHLIGHT_PALETTE) | 6;
       height--;
-      offset += 64;
+      offset += BG_SCREEN_WIDTH * 2;
     } while (height != 0);
     ((struct WindowWork *)tilemap)->dirty = 1;
   }

@@ -35,6 +35,21 @@ enum {
 /// The mote pictures in the sheet: two sets, MOTE_SET_BYTES apart.
 #define ERUPTION_FIELD_MOTE_PICTURES 12800
 
+/// The puffs of smoke given a start; the variant's ERUPTION_FIELD_PUFFS of
+/// them are thrown.
+#define ERUPTION_PUFFS 32
+/// A puff shows each of its seven pictures (gEruption_PuffPictures) for three
+/// frames, then is gone.
+#define ERUPTION_PUFF_FRAMES 21
+/// A mote is drawn ERUPTION_MOTE_LARGEST pixels wide (and twice as tall) at
+/// the nearest depth, a pixel narrower for every ERUPTION_MOTE_DEPTH_STEP
+/// farther, its depth clamped from ERUPTION_MOTE_DEPTH_NEAR to
+/// ERUPTION_MOTE_DEPTH_FAR.
+#define ERUPTION_MOTE_LARGEST 9
+#define ERUPTION_MOTE_DEPTH_NEAR 160
+#define ERUPTION_MOTE_DEPTH_FAR 799
+#define ERUPTION_MOTE_DEPTH_STEP 64
+
 /// A fountain of motes and puffs of smoke bursts up beside the targets and
 /// falls back, hitting the targets one after another.
 void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
@@ -54,7 +69,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress(RESOURCE_BLAST_SHEET, work->sheet, 1, 0);
   // Smoke Bomb's colours are a ramp of greys; Blast takes the fire streak's.
   if (mode == ERUPTION_SMOKE_BOMB) {
-    for (i = 0; i != 64; i++) {
+    for (i = 0; i != SHEET_PALETTE_COLORS; i++) {
       s32 level = i / 2;
 
       BG_PLTT[i] = RGB(level, level, level);
@@ -67,7 +82,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
   }
 
   // The puffs and motes burst up from beside the targets.
-  for (i = 0; i != 32; i++) {
+  for (i = 0; i != ERUPTION_PUFFS; i++) {
     struct Particle *puff = &work->particles[i];
 
     if (work->args->side == EFFECT_SIDE_PARTY)
@@ -120,8 +135,10 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
         Projection_Point(mote, &screen);
         screen.x >>= 1;
         screen.x += work->args->side * 32 - 16;
-        CLAMP(screen.depth, 160, 799);
-        size = 9 - (screen.depth - 160) / 64;
+        CLAMP(screen.depth, ERUPTION_MOTE_DEPTH_NEAR, ERUPTION_MOTE_DEPTH_FAR);
+        size =
+            ERUPTION_MOTE_LARGEST - (screen.depth - ERUPTION_MOTE_DEPTH_NEAR) /
+                                        ERUPTION_MOTE_DEPTH_STEP;
         draw[0](canvas,
                 work->sheet +
                     (gBattleEffect_MotePictures[size - 1] +
@@ -142,7 +159,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
           Projection_Point(puff, &screen);
           screen.x >>= 1;
           screen.x += work->args->side * 32 - 16;
-          if (puff->variant >= 0 && puff->variant <= 20) {
+          if (puff->variant >= 0 && puff->variant < ERUPTION_PUFF_FRAMES) {
             s32 picture = puff->variant / 3;
             u32 width;
 
@@ -158,7 +175,7 @@ void BattleEffect_RunEruption(struct BattleEffectParams *args, s32 mode) {
                     screen.y - (width >> 1), width, width);
 #endif
           }
-          if (puff->variant <= 20)
+          if (puff->variant < ERUPTION_PUFF_FRAMES)
             puff->variant++;
           Particle_AdvanceWithGravity3D(puff, PARTICLE_DAMPING_NONE,
                                         -toFIXED(1) / 8);
@@ -217,3 +234,9 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 source, u32 priority) {
 void BattleEffect_DoNothing(void) {}
 
 #undef ERUPTION_FIELD_MOTE_PICTURES
+#undef ERUPTION_PUFFS
+#undef ERUPTION_PUFF_FRAMES
+#undef ERUPTION_MOTE_LARGEST
+#undef ERUPTION_MOTE_DEPTH_NEAR
+#undef ERUPTION_MOTE_DEPTH_FAR
+#undef ERUPTION_MOTE_DEPTH_STEP

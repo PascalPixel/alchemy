@@ -31,7 +31,7 @@
 ///   test).
 /// - Getting about. Six platforms dip under the leader, who jumps two cells
 ///   from one to the next (cell behaviors 10 and 11;
-///   places/mercury-lighthouse-aerie/events/MercuryLighthouseAerie_StepOntoPlatform.gif).
+///   places/mercury-lighthouse-aerie/events/MercuryLighthouseAerie_LandOnPlatform.gif).
 ///   The lift leads down to Mercury Lighthouse's
 ///   SceneId_MercuryLighthouseExterior (mercury_lighthouse.c), arriving at
 ///   MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE by the Fountain
@@ -93,7 +93,7 @@ extern struct SceneEntrance gMercuryLighthouseAerieEntrances[];
 extern u32 gMercuryLighthouseAerieExits[];
 extern struct ActorPlacement gMercuryLighthouseAerieActorPlacements[];
 extern struct Trigger gMercuryLighthouseAerieTriggers[];
-extern s32 gMercuryLighthouseAerie_PlatformUnderfoot;
+extern s32 gMercuryLighthouseAerie_LandedPlatform;
 extern s32 gMercuryLighthouseAerie_SparkScript[];
 
 /// The aerie's actors.
@@ -146,7 +146,7 @@ enum {
 enum { FLAG_PSYNERGY_STONE = FLAG_AREA_TEMP_50 };
 
 static void MercuryLighthouseAerie_PartyArrives(void);
-static void MercuryLighthouseAerie_SettlePlatforms(void);
+static void MercuryLighthouseAerie_FloatPlatforms(void);
 static void MercuryLighthouseAerie_AlexAppears(void);
 static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void);
 static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void);
@@ -360,8 +360,9 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
 #include "shared/actor_distance.c"
 #include "shared/actor_nearest.c"
 
-/// Lighthouse Aerie: walking into cell behavior 10 or 11.
-static void MercuryLighthouseAerie_JumpToPlatform(void) {
+/// Walking off the edge of a platform (cell behavior 10 or 11) makes the
+/// leader jump across, if the ground two cells ahead is clear.
+static void MercuryLighthouseAerie_JumpToNextPlatform(void) {
   struct Actor *actor;
   struct FieldPosition position;
   s32 angle;
@@ -375,7 +376,7 @@ static void MercuryLighthouseAerie_JumpToPlatform(void) {
   Vector_AddPolarOffset(toFIXED(32), angle, &position);
   if (FieldActor_CheckMovementCollision(actor, &position) == 0) {
     GameFlag_Clear(FLAG_ON_PLATFORM);
-    MercuryLighthouseAerie_SettlePlatforms();
+    MercuryLighthouseAerie_FloatPlatforms();
     Actor_SelectAnimation(actor, ANIM_LEADER_SPRING);
     wait(6);
     Sound_Play(SE_JUMP);
@@ -393,46 +394,48 @@ static void MercuryLighthouseAerie_JumpToPlatform(void) {
   }
 }
 
-/// Lighthouse Aerie: touching cell behavior 10 when not already on a platform.
-static void MercuryLighthouseAerie_StepOntoPlatform(void) {
+/// Landing on a platform (cell behavior 10, while not on one) makes it dip
+/// under the leader and spring back up.
+static void MercuryLighthouseAerie_LandOnPlatform(void) {
   struct Actor *leader;
-  struct Actor *actor;
-  s32 id;
+  struct Actor *platform;
+  s32 platformId;
 
   leader = Actor_Get(ACTOR_PARTY_LEADER);
   Event_Start();
-  id = Actor_FindNearestFloatingPlatform();
-  gMercuryLighthouseAerie_PlatformUnderfoot = id;
-  if (id != 0) {
+  platformId = Actor_FindNearestFloatingPlatform();
+  gMercuryLighthouseAerie_LandedPlatform = platformId;
+  if (platformId != 0) {
     GameFlag_Set(FLAG_ON_PLATFORM);
-    actor = Actor_Get(gMercuryLighthouseAerie_PlatformUnderfoot);
-    actor->motionFlags = 0;
+    platform = Actor_Get(gMercuryLighthouseAerie_LandedPlatform);
+    platform->motionFlags = 0;
     leader->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
-    actor->y.fixed -= toFIXED(3);
+    platform->y.fixed -= toFIXED(3);
     leader->y.fixed -= toFIXED(3);
     leader->groundHeight -= toFIXED(3);
     wait(2);
-    actor->y.fixed -= toFIXED(2);
+    platform->y.fixed -= toFIXED(2);
     leader->y.fixed -= toFIXED(2);
     leader->groundHeight -= toFIXED(2);
     wait(10);
-    actor->y.fixed += toFIXED(2);
+    platform->y.fixed += toFIXED(2);
     leader->y.fixed += toFIXED(2);
     leader->groundHeight += toFIXED(2);
     wait(4);
-    actor->y.fixed += toFIXED(2);
+    platform->y.fixed += toFIXED(2);
     leader->y.fixed += toFIXED(2);
     leader->groundHeight += toFIXED(2);
     wait(4);
-    actor->y.fixed += toFIXED(1);
+    platform->y.fixed += toFIXED(1);
     leader->y.fixed += toFIXED(1);
     leader->groundHeight += toFIXED(1);
   }
   Event_End();
 }
 
-/// Lighthouse Aerie: touching cell behavior 11, off the platforms.
-static void MercuryLighthouseAerie_SettlePlatforms(void) {
+/// Stepping back onto the floor (cell behavior 11), and before each jump, sets
+/// the platforms floating again.
+static void MercuryLighthouseAerie_FloatPlatforms(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   Actor_Get(ACTOR_FIRST_PLATFORM)->motionFlags = ACTOR_FLOATS;
@@ -443,7 +446,8 @@ static void MercuryLighthouseAerie_SettlePlatforms(void) {
   Actor_Get(ACTOR_FIRST_PLATFORM + 5)->motionFlags = ACTOR_FLOATS;
 }
 
-/// Lighthouse Aerie: touching cell behavior 5 before the confrontation.
+/// Lighthouse Aerie: touching cell behavior 5 by the beacon. The party finds it
+/// lit, and Saturos fights them alone.
 static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   struct Actor *actor;
 
@@ -911,7 +915,9 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Event_Wait(20);
   Event_ShowMessageThenWait(ACTOR_SATUROS, 0, 20);
   Actor_WalkToAndWait(ACTOR_SATUROS, 336, 216);
-  Event_SetAfterBattleDestination(SCENE_MERCURY_LIGHTHOUSE_AERIE, 2);
+  Event_SetAfterBattleDestination(
+      SCENE_MERCURY_LIGHTHOUSE_AERIE,
+      MERCURY_LIGHTHOUSE_AERIE_AFTER_SATUROS_BATTLE);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   // Saturos: ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, slot 2.
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY,
@@ -1553,12 +1559,19 @@ static void MercuryLighthouseAerie_RideLiftDown(void) {
   Event_End();
 }
 
+/// Sparkles rise about each of Saturos and Alex in turn, a frame each, before
+/// they vanish or once they have appeared.
+#define WARP_FRAMES 32
+
+/// The frame of their warp in from which Saturos and Alex blink into sight.
+#define WARP_IN_BLINK_FRAME 20
+
 /// Saturos and Alex exit out in a column of sparkles and vanish.
 static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
   struct EffectOptions options;
   struct Actor *left;
   struct Actor *right;
-  u32 i;
+  u32 frame;
   FIXED x;
   FIXED r;
 
@@ -1574,9 +1587,9 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
   options.type = SPRITE_PARTICLE;
   options.startScaleX = 2 * FIXED_ONE / 5;
   options.startScaleY = 3 * FIXED_ONE;
-  for (i = 0; i <= 31; i++) {
+  for (frame = 0; frame < WARP_FRAMES; frame++) {
     Event_Wait(1);
-    if (i & 1) {
+    if (frame & 1) {
       r = toFIXED(Random_Below(24));
       x = left->x.fixed;
       x += r;
@@ -1609,7 +1622,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
   struct EffectOptions options;
   struct Actor *left;
   struct Actor *right;
-  u32 i;
+  u32 frame;
   FIXED x;
   FIXED r;
 
@@ -1623,9 +1636,9 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
   options.type = SPRITE_PARTICLE;
   options.startScaleX = 2 * FIXED_ONE / 5;
   options.startScaleY = 3 * FIXED_ONE;
-  for (i = 0; i <= 31; i++) {
+  for (frame = 0; frame < WARP_FRAMES; frame++) {
     Event_Wait(1);
-    if (i & 1) {
+    if (frame & 1) {
       r = toFIXED(Random_Below(24));
       x = left->x.fixed;
       x += r;
@@ -1648,7 +1661,7 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
               EFFECT_USE_PALETTE,
           &options);
     }
-    if (i == 20) {
+    if (frame == WARP_IN_BLINK_FRAME) {
       Actor_SetSpriteColorById(ACTOR_SATUROS, SPRITE_COLOR_BLINK);
       Actor_SetSpriteColorById(ACTOR_ALEX, SPRITE_COLOR_BLINK);
     }
@@ -1659,9 +1672,9 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_ALEX), SPRITE_FLAG_SHADOW);
 }
 
-/// MercuryLighthouseAerie_LowerLift passes its lift as a third
-/// argument, which this function does not take.
-static void MercuryLighthouseAerie_FindLiftRiders(s32 *out, s32 y) {
+/// Lists in out the actors standing on the lift, whose layer is scrolled to
+/// y.
+static void MercuryLighthouseAerie_FindActorsOnLift(s32 *out, s32 y) {
   struct FieldWork *work;
   u32 slot;
 
@@ -1681,6 +1694,14 @@ static void MercuryLighthouseAerie_FindLiftRiders(s32 *out, s32 y) {
   }
 }
 
+/// How long the lift takes to sink, speeding up every fourth frame.
+#define LIFT_DOWN_FRAMES 228
+
+/// How long the lift takes to rise, and the last frames of it in which it
+/// slows every fourth frame.
+#define LIFT_UP_FRAMES 86
+#define LIFT_SLOWING_FRAMES 10
+
 /// The lift sinks with everything standing on it, speeding up.
 static void MercuryLighthouseAerie_LowerLift(void) {
   s32 ids[5];
@@ -1695,7 +1716,7 @@ static void MercuryLighthouseAerie_LowerLift(void) {
   n = 0;
   for (i = 0; i <= 4; i++)
     ids[i] = ACTOR_ID_COUNT;
-  MercuryLighthouseAerie_FindLiftRiders(ids, lift->offsetY);
+  MercuryLighthouseAerie_FindActorsOnLift(ids, lift->offsetY);
   for (i = 0; i <= 4; i++) {
     if (ids[i] == ACTOR_ID_COUNT)
       break;
@@ -1703,7 +1724,7 @@ static void MercuryLighthouseAerie_LowerLift(void) {
     n++;
   }
   Sound_Play(SE_LIFT);
-  for (i = 0; i <= 227; i++) {
+  for (i = 0; i < LIFT_DOWN_FRAMES; i++) {
     lift->offsetY -= speed;
     for (j = 0; j < n; j++) {
       Actor_Get(ids[j])->z.fixed += speed;
@@ -1733,7 +1754,7 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
   n = 0;
   for (i = 0; i <= 4; i++)
     ids[i] = ACTOR_ID_COUNT;
-  MercuryLighthouseAerie_FindLiftRiders(ids, lift->offsetY);
+  MercuryLighthouseAerie_FindActorsOnLift(ids, lift->offsetY);
   for (i = 0; i <= 4; i++) {
     if (ids[i] == ACTOR_ID_COUNT)
       break;
@@ -1741,13 +1762,13 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
     n++;
   }
   Sound_Play(SE_LIFT);
-  for (i = 0; i <= 85; i++) {
+  for (i = 0; i < LIFT_UP_FRAMES; i++) {
     lift->offsetY += speed;
     for (j = 0; j < n; j++) {
       Actor_Get(ids[j])->z.fixed -= speed;
       Actor_Get(ids[j])->targetZ = Actor_Get(ids[j])->z.fixed;
     }
-    if ((i & 3) == 3 && i > 75)
+    if ((i & 3) == 3 && i >= LIFT_UP_FRAMES - LIFT_SLOWING_FRAMES)
       speed -= toFIXED(1) / 5;
     if (speed < toFIXED(1) / 20)
       speed = toFIXED(1) / 20;
@@ -1772,6 +1793,16 @@ UNUSED static void MercuryLighthouseAerie_UnusedAlexCastsPly(void) {
   FieldPsynergy_End();
 }
 
+/// A beacon spark circles the beacon this many pixels out, and up to
+/// SPARK_ORBIT_BULGE more the nearer it rose from the middle of the beacon's
+/// height, so the sparks outline a ball.
+#define SPARK_ORBIT_RADIUS 28
+#define SPARK_ORBIT_BULGE 24
+
+/// The beacon is in sight, and drawn, while the view's top is at most this
+/// far down the map.
+#define BEACON_SHOWN_VIEW_TOP 129
+
 /// A beacon spark's update, which swings it round the beacon it watches.
 static void MercuryLighthouseAerie_UpdateBeaconSpark(struct Actor *spark) {
   struct Actor *beacon;
@@ -1779,7 +1810,8 @@ static void MercuryLighthouseAerie_UpdateBeaconSpark(struct Actor *spark) {
 
   beacon = spark->watchedActor;
   angle = spark->timer;
-  spark->x.fixed = beacon->x.fixed + Trig_Cos(angle) * (spark->speedLimit + 28);
+  spark->x.fixed = beacon->x.fixed +
+                   Trig_Cos(angle) * (spark->speedLimit + SPARK_ORBIT_RADIUS);
   spark->z.fixed = (Trig_Sin(angle) << 4) + toFIXED(144);
   spark->targetX = spark->x.fixed;
   spark->targetZ = spark->z.fixed;
@@ -1800,7 +1832,8 @@ static void MercuryLighthouseAerie_FlickerBeacon(void) {
   beacon = Actor_Get(ACTOR_BEACON);
   grid = gMapGridWork[0];
   height = toFIXED(Random_Below(48));
-  if (((struct FieldCoordinate *)&grid->view[1])->part[0].integer <= 129) {
+  if (((struct FieldCoordinate *)&grid->view[1])->part[0].integer <=
+      BEACON_SHOWN_VIEW_TOP) {
     if (gFrameCount & 1) {
       Import_ActorSetPosition(ACTOR_BEACON, toFIXED(304), toFIXED(144));
       scale = FIXED_ONE;
@@ -1838,7 +1871,8 @@ static void MercuryLighthouseAerie_FlickerBeacon(void) {
   spark->userValue = cycleFrame;
   spark->watchedActor = beacon;
   spark->update = MercuryLighthouseAerie_UpdateBeaconSpark;
-  spark->speedLimit = (Trig_Sin((height & 0xfffff) >> 4) * 24) >> 16;
+  spark->speedLimit =
+      FIXEDtoINT(Trig_Sin((height & 0xfffff) >> 4) * SPARK_ORBIT_BULGE);
   sprite->flags = 0;
   sprite->image.priority = beacon->sprite->image.priority;
 }
@@ -1925,13 +1959,13 @@ struct Trigger gMercuryLighthouseAerieTriggers[] = {
      EVENT(MercuryLighthouseAerie_ConfrontSaturos)},
     {TRIGGER_STEP, 6, FLAG_LIFT_UP, EVENT(MercuryLighthouseAerie_CallLift)},
     {STEP_TRIGGER_WALKING, 11, CONDITION_ALWAYS,
-     EVENT(MercuryLighthouseAerie_JumpToPlatform)},
+     EVENT(MercuryLighthouseAerie_JumpToNextPlatform)},
     {TRIGGER_STEP, 11, CONDITION_ALWAYS,
-     EVENT(MercuryLighthouseAerie_SettlePlatforms)},
+     EVENT(MercuryLighthouseAerie_FloatPlatforms)},
     {STEP_TRIGGER_WALKING, 10, CONDITION_ALWAYS,
-     EVENT(MercuryLighthouseAerie_JumpToPlatform)},
+     EVENT(MercuryLighthouseAerie_JumpToNextPlatform)},
     {TRIGGER_STEP, 10, FLAG_ON_PLATFORM,
-     EVENT(MercuryLighthouseAerie_StepOntoPlatform)},
+     EVENT(MercuryLighthouseAerie_LandOnPlatform)},
     {EXAMINE_TRIGGER(EXAMINE_SILENT), 100, FLAG_PSYNERGY_STONE,
      FIND_PSYNERGY_STONE},
     {TRIGGER_STEP, 12, CONDITION_ALWAYS,
@@ -1939,7 +1973,7 @@ struct Trigger gMercuryLighthouseAerieTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-s32 gMercuryLighthouseAerie_PlatformUnderfoot = 0;
+s32 gMercuryLighthouseAerie_LandedPlatform = 0;
 
 s32 gMercuryLighthouseAerie_SparkScript[] = {
     SC_SET(SW_SCALE_Y, 7 * FIXED_ONE / 5),

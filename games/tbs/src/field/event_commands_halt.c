@@ -4,10 +4,13 @@
 
 #include "event_commands_internal.h"
 
-/// Field effect sprite callback (enum OutAndBackState): the particle heads for
-/// a point 40 to 70 pixels from where it appeared, then for a point 4 pixels
-/// round 8 pixels above the Psynergy's position on screen, and is freed on
-/// arrival.
+/// The sparkles the stopwatch bursts into.
+#define HALT_SPARKLES 16
+
+/// Field effect sprite callback of a Halt sparkle (enum OutAndBackState): it
+/// heads for a point 40 to 70 pixels from where it appeared, then for a point 4
+/// pixels round 8 pixels above the Psynergy's position on screen, and is freed
+/// on arrival.
 void FieldEffect_UpdateHaltParticle(struct FieldParticle *effect) {
   struct FieldEffectWork *effectWork;
   struct Vector3 pos;
@@ -62,12 +65,13 @@ void FieldPsynergy_HaltOnTarget(s32 unused) {
   FieldPsynergy_Halt();
 }
 
-/// Throws an actor from the caster to the Psynergy's position over 10 frames
-/// and scatters it into 16 particles.
+/// A stopwatch (SPRITE_STOPWATCH) flies from over the caster to the Psynergy's
+/// position over GROW_STEPS frames, growing, sounds three low tones and a high
+/// one, and bursts into HALT_SPARKLES sparkles that fly out and back.
 void FieldPsynergy_Halt(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *caster = effectWork->mainActor;
-  struct Actor *orb;
+  struct Actor *stopwatch;
   struct FieldParticle *effect;
   struct Vector3 pos;
   struct Vector3 from;
@@ -76,10 +80,10 @@ void FieldPsynergy_Halt(void) {
   s32 i;
 
   effectWork->y = caster->y.fixed;
-  orb = Actor_Spawn(SPRITE_STOPWATCH, 0, 0, 0);
+  stopwatch = Actor_Spawn(SPRITE_STOPWATCH, 0, 0, 0);
   step = 0;
-  Actor_SelectAnimationFar(orb, 0);
-  if (orb == 0)
+  Actor_SelectAnimationFar(stopwatch, 0);
+  if (stopwatch == NULL)
     return;
 
   // From 16 pixels above the caster to 8 pixels above the Psynergy's position.
@@ -90,28 +94,27 @@ void FieldPsynergy_Halt(void) {
   to.x = effectWork->x;
   to.y = effectWork->y + toFIXED(8);
   to.z = effectWork->z;
-  // Steps 0 to 10: the orb arrives on the 11th frame, grown to full size.
+  // It arrives on the last step, grown from a quarter to full size.
   for (;;) {
-    s32 steps = 11;
+    s32 steps = GROW_STEPS + 1;
     s32 scale;
 
-    SET_ACTOR_POSITION(orb, from.x + (to.x - from.x) * step / 10,
-                       from.y + (to.y - from.y) * step / 10,
-                       from.z + (to.z - from.z) * step / 10);
-    scale = FieldEffect_Interpolate(FIXED_ONE, FIXED_ONE / 4,
-                                    step); // from 0.25 to full
-    orb->scaleX = scale;
-    orb->scaleY = scale;
+    SET_ACTOR_POSITION(stopwatch, from.x + (to.x - from.x) * step / GROW_STEPS,
+                       from.y + (to.y - from.y) * step / GROW_STEPS,
+                       from.z + (to.z - from.z) * step / GROW_STEPS);
+    scale = FieldEffect_Interpolate(FIXED_ONE, FIXED_ONE / 4, step);
+    stopwatch->scaleX = scale;
+    stopwatch->scaleY = scale;
     wait(1);
     step++;
     if (step >= steps)
       break;
   }
 
-  // Three low tones and a high one, 10 frames apart, as the orb changes to
-  // its second animation.
+  // Three low tones and a high one, 10 frames apart, as the stopwatch changes
+  // to its second animation.
   wait(5);
-  Actor_SelectAnimationFar(orb, 1);
+  Actor_SelectAnimationFar(stopwatch, 1);
   Sound_PlayFar(SE_TRIPLE_TONE_LOW);
   wait(10);
   Sound_PlayFar(SE_TRIPLE_TONE_LOW);
@@ -120,13 +123,13 @@ void FieldPsynergy_Halt(void) {
   wait(10);
   Sound_PlayFar(SE_TRIPLE_TONE_HIGH);
 
-  // Particles 4 pixels round it fly out, then come back to the Psynergy's
+  // Sparkles 4 pixels round it fly out, then come back to the Psynergy's
   // position.
   effect = &effectWork->particles[0];
-  for (i = 0; i < 16; i++) {
-    pos.x = orb->x.fixed;
-    pos.y = orb->y.fixed + toFIXED(8);
-    pos.z = orb->z.fixed;
+  for (i = 0; i < HALT_SPARKLES; i++) {
+    pos.x = stopwatch->x.fixed;
+    pos.y = stopwatch->y.fixed + toFIXED(8);
+    pos.z = stopwatch->z.fixed;
     Camera_WorldToScreen((struct Vector3 *)&pos.x);
     Vector_AddPolarOffset(toFIXED(4), Random16(), &pos.x);
     FieldParticle_Initialize(effect, SPRITE_SPARKLE, pos.x, pos.z);
@@ -135,11 +138,11 @@ void FieldPsynergy_Halt(void) {
     effect++;
   }
 
-  pos.x = orb->x.fixed;
-  pos.y = orb->y.fixed + toFIXED(8);
-  pos.z = orb->z.fixed;
+  pos.x = stopwatch->x.fixed;
+  pos.y = stopwatch->y.fixed + toFIXED(8);
+  pos.z = stopwatch->z.fixed;
   wait(8);
-  Actor_ReleaseFar(orb);
+  Actor_ReleaseFar(stopwatch);
   wait(4);
   wait(30);
   FieldPsynergy_FadeFromCastColor();
@@ -164,7 +167,7 @@ void FieldPsynergy_HaltActor(s32 actorId) {
   if (actor != NULL) {
     gMainRoutineWork.pausedUpdate = (u32)actor->update;
     gMainRoutineWork.pausedPose = 0;
-    if (actor->spriteStorageKind == 1) {
+    if (actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
       entry = actor->sprite->entries[0];
       if (entry != NULL) {
         gMainRoutineWork.pausedPose = entry->colorMode;
@@ -179,7 +182,7 @@ void FieldPsynergy_HaltActor(s32 actorId) {
 /// Resumes actor id with the update and param kept by FieldPsynergy_HaltActor.
 void FieldPsynergy_ResumeHaltedActor(s32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
-  if (actor != 0) {
+  if (actor != NULL) {
     if (actor->update == FieldPsynergy_UpdateHaltedActor) {
       struct MainRoutineWork *state = &gMainRoutineWork;
       actor->update = (void (*)(struct Actor *))state->pausedUpdate;
@@ -199,3 +202,5 @@ s32 FieldPsynergy_FilterHaltTarget(s32 id) {
     return -1;
   return id;
 }
+
+#undef HALT_SPARKLES

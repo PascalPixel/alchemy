@@ -8,6 +8,7 @@
 #include "types.h"
 #include "battle/battle_effect_params.h"
 #include "field/particle.h"
+#include "system/io_reg.h"
 
 struct Sprite;
 
@@ -52,7 +53,7 @@ enum CanvasFadeShare { CANVAS_FADE_HALF = 50, CANVAS_FADE_THREE_QUARTERS = 75 };
 /// A canvas word holding `level` in each of its four bytes: a fill for
 /// CANVAS_COPY_AND_CLEAR or a step for CANVAS_COPY_AND_DARKEN, one byte per
 /// pixel.
-#define CANVAS_FILL_WORD(level) ((level) * 0x01010101)
+#define CANVAS_FILL_WORD(level) PIXELS_8BPP(level)
 
 /// The brightest canvas level: the additive blitters and
 /// CANVAS_COPY_AND_BRIGHTEN stop at it.
@@ -181,8 +182,8 @@ extern const u32 BattleEffect_ColorForward[];
 extern const u32 BattleEffect_AdditiveReverse[];
 /// Additive, one pixel, left to right.
 extern const u32 BattleEffect_AdditiveForward[];
-/// Sets 0x40 in every byte of sl, which caps an additive word's pixels at
-/// CANVAS_LEVEL_BRIGHTEST.
+/// Builds the mask word, 64 in every byte, with which an additive word's
+/// pixels are capped at CANVAS_LEVEL_BRIGHTEST.
 extern const u32 BattleEffect_Mask[];
 /// Transparent, a full cell's eight pixels, right to left.
 extern const u32 BattleEffect_Transparent8Reverse[];

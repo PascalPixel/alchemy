@@ -5,6 +5,22 @@
 
 #include "field_sequence_internal.h"
 
+/// The hazard count's limit each scene starts with, in steps on hazard cells:
+/// the hazard deals its damage each time the count reaches it.
+#define HAZARD_LIMIT_DEFAULT 16
+/// FieldWork.talk's request bit, set above the actor id so that a talk to
+/// actor 0 is still a request (The Lost Age sets bit 14).
+#define FIELD_TALK_REQUEST (1 << 12)
+/// Isaac's pose when the whole party has fallen: lying flat, the picture
+/// ANIM_LEADER_FALL ends on (isaac.tsv); any other leader plays ANIM_COLLAPSE.
+#define ANIM_LEADER_LIE_FLAT 37
+/// Isaac's pose for the same as a child (FLAG_CHILDHOOD): standing feet apart,
+/// the picture isaac_child.tsv's ANIM_LEADER_STRIDE holds.
+#define ISAAC_CHILD_ANIMATION_STAND_BRACED 21
+/// The sprite VRAM blocks the Pause menu needs free, or the field's sprites
+/// stop drawing while it runs.
+#define PAUSE_MENU_VRAM_BLOCKS 136
+
 /// The field sequence: runs the current scene, which the party entered by
 /// entrance, until it leaves; returns the exit kind it left by, for
 /// Scene_TakeExit, or EXIT_KEEP_DESTINATION when the next scene is already in
@@ -75,10 +91,11 @@ s32 FieldSequence_Run(s32 entrance) {
   }
   work->previousCell = (struct MapGridCell *)Ram_MapGridCellBuffer;
   // A fresh entry (not a return from battle) resets the hazard count to its
-  // defaults (damage 1 every 16 steps), the stopped actor and Cloak.
+  // defaults (damage 1 every HAZARD_LIMIT_DEFAULT steps), the stopped actor and
+  // Cloak.
   if (GameFlag_GetFar(FLAG_KEEP_PARTY_POSITION) == 0) {
     Scene_SetRestartPoint();
-    gMainRoutineWork.hazardLimit = 16;
+    gMainRoutineWork.hazardLimit = HAZARD_LIMIT_DEFAULT;
     gMainRoutineWork.hazardMode = HAZARD_COUNT_ON_CELLS;
     gMainRoutineWork.hazardDamage = 1;
     gMainRoutineWork.haltedActor = -1;
@@ -165,9 +182,10 @@ s32 FieldSequence_Run(s32 entrance) {
 
               if (gMainRoutineWork.leaderActorId == 0) {
                 if (GameFlag_GetFar(FLAG_CHILDHOOD) != 0)
-                  Actor_SelectAnimationFar(actor, 21);
+                  Actor_SelectAnimationFar(actor,
+                                           ISAAC_CHILD_ANIMATION_STAND_BRACED);
                 else
-                  Actor_SelectAnimationFar(actor, 37);
+                  Actor_SelectAnimationFar(actor, ANIM_LEADER_LIE_FLAT);
               } else {
                 Actor_SelectAnimationFar(actor, ANIM_COLLAPSE);
               }
@@ -229,9 +247,7 @@ s32 FieldSequence_Run(s32 entrance) {
             mode = Scene_FindActorTalkTrigger(object) != 0;
           }
           if (mode != 0) {
-            // 0x1000 keeps actor 0's request non-zero; the handler
-            // masks it.
-            work->talk = object | 0x1000;
+            work->talk = object | FIELD_TALK_REQUEST;
             work->fieldMenu = 0;
           } else {
             mode = Actor_GetTriggerCellAheadOfCurrent();
@@ -266,7 +282,7 @@ s32 FieldSequence_Run(s32 entrance) {
           work->fieldMenu = 0;
         } else if ((s16)work->talk != 0) {
           WorldMap_Freeze();
-          Scene_TalkToActor(work->talk & 0xfff);
+          Scene_TalkToActor(work->talk & (FIELD_TALK_REQUEST - 1));
           WorldMap_Unfreeze();
           work->talk = 0;
         } else if (work->examineCell != 0) {
@@ -304,8 +320,8 @@ s32 FieldSequence_Run(s32 entrance) {
             AreaNameWindow_HideFar();
             gMainRoutineWork.returnMusic = Sound_GetCurrentBgmFar();
             if (GameFlag_GetFar(FLAG_IN_BATTLE_ARENA) == 0) {
-              // With fewer than 136 of the 512 sprite VRAM blocks (64 bytes
-              // each) free, sprite drawing stays suspended while the menu
+              // With fewer than PAUSE_MENU_VRAM_BLOCKS of the sprite VRAM
+              // blocks free, sprite drawing stays suspended while the menu
               // runs, and a frame passes so that the field's sprites give
               // their VRAM back before it opens.
               struct ActorSystemWork *actorSystem = gActorSystemWork;
@@ -313,11 +329,11 @@ s32 FieldSequence_Run(s32 entrance) {
               s32 free = 0;
               s32 n;
 
-              for (n = 0; n < 512; n++) {
+              for (n = 0; n < VRAM_BLOCK_COUNT; n++) {
                 if (*owner++ == VRAM_BLOCK_OWNER_FREE)
                   free++;
               }
-              if (free - 136 < 0) {
+              if (free - PAUSE_MENU_VRAM_BLOCKS < 0) {
                 actorSystem->suspended = 1;
                 wait(1);
               }
@@ -469,3 +485,9 @@ void Scene_ApplyEntrance(void) {
   if (grid->minY + toFIXED(DISPLAY_HEIGHT) > grid->maxY)
     grid->minY = grid->maxY - toFIXED(DISPLAY_HEIGHT);
 }
+
+#undef HAZARD_LIMIT_DEFAULT
+#undef FIELD_TALK_REQUEST
+#undef ANIM_LEADER_LIE_FLAT
+#undef ISAAC_CHILD_ANIMATION_STAND_BRACED
+#undef PAUSE_MENU_VRAM_BLOCKS

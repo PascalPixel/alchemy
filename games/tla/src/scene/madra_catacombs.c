@@ -36,6 +36,12 @@
 /// the party leaves.
 #define FLAG_TUNNEL_ROPE_TIED FLAG_SCENE_TEMP_00
 #define FLAG_VILLAGE_ROPE_TIED FLAG_SCENE_TEMP_01
+/// Frost on the village's puddle, which stays a pillar of ice until the party
+/// leaves.
+#define FLAG_VILLAGE_PUDDLE_FROZEN FLAG_SCENE_TEMP_02
+/// Set while the bookshelf leans as Tremor shakes it, so that the chest on it
+/// is nudged once each time it comes upright.
+#define FLAG_BOOKSHELF_LEANING FLAG_SCENE_TEMP_04
 
 /// Set once the pillar Move pushed onto cell (40, 13) has dropped into the
 /// deserted village's hole and filled it.
@@ -45,19 +51,19 @@
 #define FLAG_MADRA_CATACOMBS_TABLET_DOOR_OPEN 0x8c9
 /// Set once Move has left the village's second pillar on cell (44, 26).
 #define FLAG_MADRA_CATACOMBS_PILLAR_PLACED 0x8ca
-/// Set once the button Reveal shows has opened the doorway into the village.
-#define FLAG_MADRA_CATACOMBS_DOORWAY_OPEN 0x8cb
+/// Set once the button Reveal shows has opened the village's golden door.
+#define FLAG_MADRA_CATACOMBS_VILLAGE_DOOR_OPEN 0x8cb
 /// Set once Tremor has shaken the chest off the bookshelf into the room below.
 #define FLAG_MADRA_CATACOMBS_CHEST_FELL 0x8cc
-/// Set once Move has left the climbable pillar on cell (35, 17).
-#define FLAG_MADRA_CATACOMBS_CLIMBABLE_PILLAR_PLACED 0x9ef
-/// Set while Reveal shows the push button by the closed doorway.
+/// Set once Move has left the vine-covered pillar on cell (35, 17).
+#define FLAG_MADRA_CATACOMBS_VINE_PILLAR_PLACED 0x9ef
+/// Set while Reveal shows the push button by the closed golden door.
 #define FLAG_MADRA_CATACOMBS_BUTTON_REVEALED FLAG_SCENE_TEMP_03
 
 /// The deserted village's actors that its events move.
 enum MadraCatacombsVillageActorId {
-  /// The pillar Move carries onto the upper level to climb by.
-  ACTOR_CLIMBABLE_PILLAR = ACTOR_FIRST_PLACED,
+  /// The vine-covered pillar Move carries onto the upper level to climb by.
+  ACTOR_VINE_PILLAR = ACTOR_FIRST_PLACED,
   /// The posts at the two ends of the rope Lash makes taut.
   ACTOR_VILLAGE_ROPE_LOW_POST,
   ACTOR_VILLAGE_ROPE_HIGH_POST,
@@ -77,27 +83,30 @@ enum MadraCatacombsTunnelActorId {
   /// The posts at the two ends of the tunnel's rope.
   ACTOR_TUNNEL_ROPE_EAST_POST = ACTOR_FIRST_PLACED,
   ACTOR_TUNNEL_ROPE_WEST_POST,
-  /// A Madran exploring the tunnel until Briggs is caught: "I can't believe
-  /// the Champa just stumbled onto this cave accidentally..."
-  ACTOR_TUNNEL_EXPLORER
+  /// A man in the tunnel until Briggs is caught: "I can't believe the Champa
+  /// just stumbled onto this cave accidentally..."
+  ACTOR_MAN_ON_THE_CHAMPAS_CAVE
 };
 
-/// The tablet room's actors: the two halves of the red double door, the five
+/// The flames that flare up down each side of the tablet room.
+#define FLARES_PER_SIDE 5
+
+/// The tablet room's actors: the two halves of the red double door, the
 /// flames that flare up down each side as it opens, nearest the door last, and
-/// the ten flames that burn on where they flared.
+/// an unseen marker that stands on each flame once they burn.
 enum MadraCatacombsTabletRoomActorId {
   ACTOR_LEFT_DOOR = ACTOR_FIRST_PLACED,
   ACTOR_RIGHT_DOOR,
   ACTOR_FIRST_WEST_FLARE,
-  ACTOR_FIRST_EAST_FLARE = ACTOR_FIRST_WEST_FLARE + 5,
-  ACTOR_FIRST_FLAME = ACTOR_FIRST_EAST_FLARE + 5
+  ACTOR_FIRST_EAST_FLARE = ACTOR_FIRST_WEST_FLARE + FLARES_PER_SIDE,
+  ACTOR_FIRST_FLAME_MARKER = ACTOR_FIRST_EAST_FLARE + FLARES_PER_SIDE
 };
 
 /// The bookshelf room's bookshelf, and the chest on it that Tremor shakes off;
 /// the room below places the fallen chest.
 enum MadraCatacombsBookshelfActorId {
   ACTOR_BOOKSHELF = ACTOR_FIRST_PLACED,
-  ACTOR_SHAKEN_CHEST = 64,
+  ACTOR_SHELF_CHEST = 64,
   ACTOR_FALLEN_CHEST = 65
 };
 
@@ -141,8 +150,8 @@ extern s16 gMadraCatacombs_Puddles[];
 extern s32 gMadraCatacombs_FlameFlaresUp[];
 
 extern s32 gMadraCatacombs_GreatFlameFlaresUp[];
-extern s16 gMadraCatacombs_ClimbablePillar[];
-extern s32 gMadraCatacombs_WalkIntoDoorway[];
+extern s16 gMadraCatacombs_VinePillar[];
+extern s32 gMadraCatacombs_WalkThroughDoor[];
 
 void Actor_DisableById(s32 id);
 
@@ -176,7 +185,7 @@ s32 Actor_GetCellIndex(struct Actor *actor);
 
 extern struct Trigger gMadraCatacombs_Triggers[];
 
-void MadraCatacombs_SetUpRoomBelowBookshelf(void);
+void MadraCatacombs_SetUpStoneDoorRoom(void);
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
   if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_STONE_DOOR)
@@ -242,7 +251,7 @@ void MadraCatacombs_TryLockedDoor(void) {
 #include "shared/actor_drop_and_wait.h"
 
 /// The pillar Move pushes onto cell (40, 13) drops into the hole there, which
-/// it fills for good .
+/// it fills for good.
 void MadraCatacombs_DropPillarIntoHole(void) {
   struct Actor *actor = Actor_GetById(ACTOR_HOLE_PILLAR);
   s32 z;
@@ -265,7 +274,7 @@ void MadraCatacombs_StartMovingPushedPillar(void) {
   Actor_LiftTargetBlock(gMadraCatacombs_PushedPillar);
 }
 
-/// The second pillar, moved onto cell (44, 26), stays there .
+/// The second pillar, moved onto cell (44, 26), stays there.
 void MadraCatacombs_FinishMovingPushedPillar(void) {
   struct Actor *actor = Actor_GetById(ACTOR_PUSHED_PILLAR);
 
@@ -343,17 +352,17 @@ void Actor_MoveToObject(s32 id, s32 value);
 void Rope_Initialize(void);
 void FlagBlock_PlaceAll(const void *data);
 void Actor_PlaceBlocks(const void *data);
-/// The climbable pillar settles where Move left it, its cells raised; on cell
-/// (35, 17) it stays there .
-void MadraCatacombs_SettleClimbablePillar(struct Actor *actor);
+/// The vine-covered pillar settles where Move left it, its cells raised; on
+/// cell (35, 17) it stays there.
+void MadraCatacombs_SettleVinePillar(struct Actor *actor);
 /// Arriving in the Champa tunnel by a way the Champa have since blocked: the
 /// leader leaves again.
 void MadraCatacombs_LeaveBlockedTunnel(void);
 
-/// Reveal shows the push button by the closed doorway, pressed in once the door
+/// Reveal shows the push button by the golden door, pressed in once the door
 /// has opened.
 void MadraCatacombs_RevealButton(void) {
-  if (Event_GetFlag(FLAG_MADRA_CATACOMBS_DOORWAY_OPEN) != 0)
+  if (Event_GetFlag(FLAG_MADRA_CATACOMBS_VILLAGE_DOOR_OPEN) != 0)
     MapGrid_CopyCellsTo(72, 63, 36, 38, 1, 2);
   else
     MapGrid_CopyCellsTo(71, 63, 36, 38, 1, 2);
@@ -366,12 +375,12 @@ void MadraCatacombs_HideButton(void) {
   Event_ClearFlag(FLAG_MADRA_CATACOMBS_BUTTON_REVEALED);
 }
 
-/// Examining the wall by the doorway: once Reveal shows the push button there,
-/// the button is pressed and the doorway opens; otherwise the inscription reads
-/// "Look upon me with eyes of truth... Then the door will open..."
+/// Examining the wall by the golden door: once Reveal shows the push button
+/// there, the button is pressed and the door opens; otherwise the inscription
+/// reads "Look upon me with eyes of truth... Then the door will open..."
 void MadraCatacombs_HearEyesOfTruth(void) {
   if (Event_GetFlag(FLAG_MADRA_CATACOMBS_BUTTON_REVEALED) != 0 &&
-      Event_GetFlag(FLAG_MADRA_CATACOMBS_DOORWAY_OPEN) == 0) {
+      Event_GetFlag(FLAG_MADRA_CATACOMBS_VILLAGE_DOOR_OPEN) == 0) {
     Event_Start();
     Event_ResolvePendingActions(1);
     Event_PlaySound(SE_RATTLE);
@@ -385,7 +394,7 @@ void MadraCatacombs_HearEyesOfTruth(void) {
     MapGrid_CopyCellsTo(75, 66, 97, 39, 2, 2);
     MapGrid_CopyCellAttributes(33, 37, 2, 2, 33, 39);
     wait(1);
-    Event_SetFlag(FLAG_MADRA_CATACOMBS_DOORWAY_OPEN);
+    Event_SetFlag(FLAG_MADRA_CATACOMBS_VILLAGE_DOOR_OPEN);
     Event_End();
   } else {
     Event_Start();
@@ -403,7 +412,7 @@ void MadraCatacombs_ShakeBookshelf(void) {
   FIXED x;
 
   if (Event_GetFlag(FLAG_MADRA_CATACOMBS_CHEST_FELL) == 0) {
-    actor = Actor_GetById(ACTOR_SHAKEN_CHEST);
+    actor = Actor_GetById(ACTOR_SHELF_CHEST);
     x = actor->x.fixed;
     if (x < (toFIXED(186))) {
       Event_Start();
@@ -411,57 +420,57 @@ void MadraCatacombs_ShakeBookshelf(void) {
       Event_PlaySound(SE_DUST_PUFF);
       actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       wait(10);
-      Actor_SetPosition(ACTOR_SHAKEN_CHEST, 0, 0);
+      Actor_SetPosition(ACTOR_SHELF_CHEST, 0, 0);
       Event_SetFlag(FLAG_MADRA_CATACOMBS_CHEST_FELL);
       Event_End();
     }
   }
 }
 
-void MadraCatacombs_SettleClimbablePillar(struct Actor *actor) {
+void MadraCatacombs_SettleVinePillar(struct Actor *actor) {
   HeldActor_RaiseCell();
   if (FIELD_CELL(actor->x.fixed) == 35 && FIELD_CELL(actor->z.fixed) == 17)
-    Event_SetFlag(FLAG_MADRA_CATACOMBS_CLIMBABLE_PILLAR_PLACED);
+    Event_SetFlag(FLAG_MADRA_CATACOMBS_VINE_PILLAR_PLACED);
 }
 
-/// Walking into the climbable pillar while holding it with Move pushes it a
+/// Walking into the vine-covered pillar while holding it with Move pushes it a
 /// cell on.
-void MadraCatacombs_PushClimbablePillar(void) {
+void MadraCatacombs_PushVinePillar(void) {
   struct Actor *actor;
 
   if (Leader_CanPushObjectAhead() != 0) {
     actor = Actor_GetById(
         Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId));
-    Pillar_LowerHeldCells(gMadraCatacombs_ClimbablePillar);
+    Pillar_LowerHeldCells(gMadraCatacombs_VinePillar);
     Leader_PushObjectAhead();
-    MadraCatacombs_SettleClimbablePillar(actor);
+    MadraCatacombs_SettleVinePillar(actor);
   }
 }
 
-/// When Move takes hold of the climbable pillar: its raised cells are lowered.
-void MadraCatacombs_StartMovingClimbablePillar(void) {
-  Pillar_LowerHeldCells(gMadraCatacombs_ClimbablePillar);
+/// When Move takes hold of the vine-covered pillar: its raised cells are
+/// lowered.
+void MadraCatacombs_StartMovingVinePillar(void) {
+  Pillar_LowerHeldCells(gMadraCatacombs_VinePillar);
 }
 
-/// A door opens, sliding stone (mode 2) or swinging (mode 1), and the leader
-/// walks through it as MadraCatacombs_EnterDoorway does.
-void MadraCatacombs_OpenDoorAndEnter(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
+void MadraCatacombs_OpenDoorAndEnter(s32 sourceX, s32 sourceZ, s32 x, s32 z,
+                                     s32 width, s32 height);
 
-/// When the climbable pillar comes to rest after Move: settles it where it
-/// stopped (MadraCatacombs_SettleClimbablePillar).
-void MadraCatacombs_FinishMovingClimbablePillar(void) {
+/// When the vine-covered pillar comes to rest after Move: settles it where it
+/// stopped (MadraCatacombs_SettleVinePillar).
+void MadraCatacombs_FinishMovingVinePillar(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   if (work->movedBlock != 0)
-    MadraCatacombs_SettleClimbablePillar(work->movedBlock);
+    MadraCatacombs_SettleVinePillar(work->movedBlock);
 }
 
-/// The tablet room's flames, lit: actors 10 to 19 stand in two columns and
-/// actors 20 to 29 each go to one of them.
+/// The tablet room's flames, lit: the flares stand in their two rows and a
+/// marker goes to stand on each.
 void MadraCatacombs_LightFlames(void) {
   u32 i;
   s32 target = ACTOR_FIRST_WEST_FLARE;
-  s32 actor = ACTOR_FIRST_FLAME;
+  s32 actor = ACTOR_FIRST_FLAME_MARKER;
 
   Actor_SetPosition(ACTOR_FIRST_WEST_FLARE + 4, 136, 258);
   Actor_SetPosition(ACTOR_FIRST_EAST_FLARE + 4, 184, 258);
@@ -473,7 +482,7 @@ void MadraCatacombs_LightFlames(void) {
   Actor_SetPosition(ACTOR_FIRST_EAST_FLARE + 1, 184, 162);
   Actor_SetPosition(ACTOR_FIRST_WEST_FLARE, 136, 138);
   Actor_SetPosition(ACTOR_FIRST_EAST_FLARE, 184, 138);
-  for (i = 0; i < 10; i++) {
+  for (i = 0; i < FLARES_PER_SIDE * 2; i++) {
     Actor_SetAnimation(actor, 0);
     Actor_MoveToObject(actor, target);
     target++;
@@ -488,23 +497,23 @@ void MadraCatacombs_LightFlames(void) {
 /// hop.
 void MadraCatacombs_RockChestWithBookshelf(void) {
   struct Actor *bookshelf = Actor_GetById(ACTOR_BOOKSHELF);
-  struct Actor *chest = Actor_GetById(ACTOR_SHAKEN_CHEST);
+  struct Actor *chest = Actor_GetById(ACTOR_SHELF_CHEST);
   struct Sprite *sprite = chest->sprite;
 
   sprite->rotation = ((struct Sprite *)bookshelf->sprite)->rotation;
-  if (Event_GetFlag(FLAG_SCENE_TEMP_04) != 0 && sprite->rotation == 0) {
+  if (Event_GetFlag(FLAG_BOOKSHELF_LEANING) != 0 && sprite->rotation == 0) {
     Event_PlaySound(SE_BOOKSHELF_SLIDE);
     chest->x.fixed += toFIXED(-2);
     chest->velocityY = toFIXED(2);
-    Event_ClearFlag(FLAG_SCENE_TEMP_04);
+    Event_ClearFlag(FLAG_BOOKSHELF_LEANING);
   }
   if (sprite->rotation != 0)
-    Event_SetFlag(FLAG_SCENE_TEMP_04);
+    Event_SetFlag(FLAG_BOOKSHELF_LEANING);
 }
 
-/// The leader steps to the middle of a doorway, walks in and leaves by the exit
-/// the event work names.
-void MadraCatacombs_EnterDoorway(void) {
+/// The leader steps to the middle of a door, walks in and leaves by the exit
+/// the step trigger names.
+void MadraCatacombs_EnterDoor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
   struct Actor *actor;
@@ -522,7 +531,7 @@ void MadraCatacombs_EnterDoorway(void) {
                       actor->y.fixed, actor->z.fixed);
   FieldActor_WaitForMove(actor);
   actor->facing = FACING_NORTH;
-  Actor_SetScript(party->leaderActorId, gMadraCatacombs_WalkIntoDoorway);
+  Actor_SetScript(party->leaderActorId, gMadraCatacombs_WalkThroughDoor);
   wait(12);
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
@@ -558,7 +567,7 @@ void MadraCatacombs_OpenDoorAndEnter(s32 sourceX, s32 sourceZ, s32 x, s32 z,
     actor->facing = FACING_NORTH;
   }
   Actor_SetScript(gMainRoutineWork.leaderActorId,
-                  gMadraCatacombs_WalkIntoDoorway);
+                  gMadraCatacombs_WalkThroughDoor);
   wait(12);
   Event_PlaySound(SE_MAP_EXIT);
   Event_FinishScreenTransition();
@@ -567,7 +576,7 @@ void MadraCatacombs_OpenDoorAndEnter(s32 sourceX, s32 sourceZ, s32 x, s32 z,
 }
 
 /// The stone door, two cells wide, slides open and the leader goes through.
-void MadraCatacombs_SlideOpenStoneDoor(void) {
+void MadraCatacombs_OpenStoneDoor(void) {
   MadraCatacombs_OpenDoorAndEnter(78, 29, 78, 31, 2, 2);
 }
 
@@ -587,8 +596,8 @@ void MadraCatacombs_OpenTabletRoomDoor(void) {
 }
 
 /// Arriving by a way the Champa have since blocked, the leader fades out and
-/// leaves by exit n1.
-#define DEFINE_LEAVE_BLOCKED_WAY(name, n1)                                     \
+/// leaves by `exit`.
+#define DEFINE_LEAVE_BLOCKED_WAY(name, exit)                                   \
   void name(void) {                                                            \
     Event_Start();                                                             \
     Event_ResolvePendingActions(0);                                            \
@@ -600,10 +609,12 @@ void MadraCatacombs_OpenTabletRoomDoor(void) {
     Event_StartScreenTransition();                                             \
     Event_WaitTransitionFrames();                                              \
     Event_Wait(40);                                                            \
-    Import_EventSetExitRequest(n1);                                            \
+    Import_EventSetExitRequest(exit);                                          \
   }
 
-DEFINE_LEAVE_BLOCKED_WAY(MadraCatacombs_LeaveBlockedVillage, 3)
+DEFINE_LEAVE_BLOCKED_WAY(
+    MadraCatacombs_LeaveBlockedVillage,
+    MADRA_CATACOMBS_ENTRANCE_TO_MADRA_CATACOMBS_CHAMPA_TUNNEL_WEST)
 
 DEFINE_LEAVE_BLOCKED_WAY(MadraCatacombs_LeaveBlockedTunnel, 8)
 
@@ -614,7 +625,7 @@ s32 Scene_Initialize(void) {
   else if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_CHAMPA_TUNNEL)
     MadraCatacombs_SetUpChampaTunnel();
   else if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_STONE_DOOR)
-    MadraCatacombs_SetUpRoomBelowBookshelf();
+    MadraCatacombs_SetUpStoneDoorRoom();
   else if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_BOOKSHELF)
     MadraCatacombs_SetUpBookshelfRoom();
   else if (gMainRoutineWork.next == SCENE_MADRA_CATACOMBS_TABLET)
@@ -625,8 +636,8 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 /// Sets up the catacombs' village: its rope, the pillars Move has placed, the
-/// frozen puddles, the opened doorway and, once Briggs is caught, its blocked
-/// way.
+/// frozen puddle, the opened golden door and, once Briggs is caught, its
+/// blocked way.
 void MadraCatacombs_SetUpVillage(void) {
   Event_ClearFlag(FLAG_MADRA_CATACOMBS_BUTTON_REVEALED);
   Actor_SetSpritePriority(ACTOR_VILLAGE_CHEST, 3);
@@ -642,13 +653,12 @@ void MadraCatacombs_SetUpVillage(void) {
   if (Event_GetFlag(FLAG_MADRA_CATACOMBS_PILLAR_PLACED) != 0)
     Actor_SetPosition(ACTOR_PUSHED_PILLAR, 712, 424);
   Actor_PlaceBlocks(gMadraCatacombs_PushedPillar);
-  if (Event_GetFlag(FLAG_MADRA_CATACOMBS_CLIMBABLE_PILLAR_PLACED) != 0)
-    Actor_SetPosition(ACTOR_CLIMBABLE_PILLAR, 568, 280);
-  Actor_GetById(ACTOR_CLIMBABLE_PILLAR)->priorityFlags &=
-      ~ACTOR_PRIORITY_AUTOMATIC;
-  Pillar_Raise(gMadraCatacombs_ClimbablePillar);
+  if (Event_GetFlag(FLAG_MADRA_CATACOMBS_VINE_PILLAR_PLACED) != 0)
+    Actor_SetPosition(ACTOR_VINE_PILLAR, 568, 280);
+  Actor_GetById(ACTOR_VINE_PILLAR)->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
+  Pillar_Raise(gMadraCatacombs_VinePillar);
   FlagBlock_PlaceAll(gMadraCatacombs_Puddles);
-  if (Event_GetFlag(FLAG_MADRA_CATACOMBS_DOORWAY_OPEN) != 0) {
+  if (Event_GetFlag(FLAG_MADRA_CATACOMBS_VILLAGE_DOOR_OPEN) != 0) {
     MapGrid_CopyCellsTo(75, 66, 97, 39, 2, 2);
     MapGrid_CopyCellAttributes(33, 37, 2, 2, 33, 39);
     wait(1);
@@ -656,7 +666,8 @@ void MadraCatacombs_SetUpVillage(void) {
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT) != 0) {
     MapGrid_CopyCellsTo(82, 74, 116, 16, 5, 3);
     MapGrid_CopyCellAttributes(52, 11, 5, 1, 52, 18);
-    if (gMainRoutineWork.entrance == 3)
+    if (gMainRoutineWork.entrance ==
+        MADRA_CATACOMBS_ENTRANCE_FROM_MADRA_CATACOMBS_CHAMPA_TUNNEL_WEST)
       MadraCatacombs_LeaveBlockedVillage();
     else
       wait(10);
@@ -670,7 +681,7 @@ void MadraCatacombs_SetUpChampaTunnel(void) {
   FieldRope_Place(0, FLAG_TUNNEL_ROPE_TIED, ACTOR_TUNNEL_ROPE_EAST_POST,
                   ACTOR_TUNNEL_ROPE_WEST_POST);
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT) != 0) {
-    Actor_SetPosition(ACTOR_TUNNEL_EXPLORER, 0, 0);
+    Actor_SetPosition(ACTOR_MAN_ON_THE_CHAMPAS_CAVE, 0, 0);
     MapGrid_CopyCellsTo(68, 70, 113, 11, 5, 3);
     MapGrid_CopyCellsTo(50, 74, 50, 75, 2, 1);
     MapGrid_CopyCellAttributes(49, 9, 5, 1, 49, 13);
@@ -681,9 +692,9 @@ void MadraCatacombs_SetUpChampaTunnel(void) {
   }
 }
 
-/// Sets up the room below the bookshelf: the fallen chest is there only once it
-/// has fallen.
-void MadraCatacombs_SetUpRoomBelowBookshelf(void) {
+/// Sets up the stone door's room, below the bookshelf: the fallen chest is
+/// there only once it has fallen.
+void MadraCatacombs_SetUpStoneDoorRoom(void) {
   if (Event_GetFlag(FLAG_MADRA_CATACOMBS_CHEST_FELL) == 0)
     Actor_SetPosition(ACTOR_FALLEN_CHEST, 0, 0);
 }
@@ -694,9 +705,9 @@ void MadraCatacombs_SetUpBookshelfRoom(void) {
   struct Actor *actor;
 
   if (Event_GetFlag(FLAG_MADRA_CATACOMBS_CHEST_FELL) != 0) {
-    Actor_SetPosition(ACTOR_SHAKEN_CHEST, 0, 0);
+    Actor_SetPosition(ACTOR_SHELF_CHEST, 0, 0);
   } else {
-    actor = Actor_GetById(ACTOR_SHAKEN_CHEST);
+    actor = Actor_GetById(ACTOR_SHELF_CHEST);
     actor->collisionFlags = ACTOR_NOT_TARGETED;
     actor->motionFlags = ACTOR_FALLS;
     actor->y.fixed = toFIXED(32);
@@ -729,8 +740,9 @@ void MadraCatacombs_SetUpTabletRoom(void) {
 }
 
 // clang-format off
-/// The leader's actor script for walking north through an opened door.
-s32 gMadraCatacombs_WalkIntoDoorway[] = {                                                               
+/// The leader's actor script for walking north through an opened door, growing
+/// smaller as he goes.
+s32 gMadraCatacombs_WalkThroughDoor[] = {                                                               
       SC_SET(SW_MOTION, 0),                                                    
       SC_ADD(SW_Z, -toFIXED(1) / 2),                                                   
       SC_ADD(SW_SCALE_X, -FIXED_ONE / 64),                                               
@@ -786,17 +798,17 @@ s32 gMadraCatacombs_GreatFlameFlaresUp[] = {
 
 /// The second pillar Move pushes, ended by -1.
 s16 gMadraCatacombs_PushedPillar[] = {
-    12, -1,
+    ACTOR_PUSHED_PILLAR, -1,
 };
 
 /// The puddles Frost freezes into pillars, each with its flag.
 s16 gMadraCatacombs_Puddles[] = {
-    13, 514, -1,
+    ACTOR_VILLAGE_PUDDLE, FLAG_VILLAGE_PUDDLE_FROZEN, -1,
 };
 
-/// The climbable pillar Move pushes, ended by -1.
-s16 gMadraCatacombs_ClimbablePillar[] = {
-    8, -1, 0,
+/// The vine-covered pillar Move pushes, ended by -1.
+s16 gMadraCatacombs_VinePillar[] = {
+    ACTOR_VINE_PILLAR, -1, 0,
 };
 
 /// The entrances of the catacombs' rooms with no table of their own.
@@ -886,7 +898,7 @@ struct ActorPlacement gMadraCatacombs_Placements[] = {
 
 /// The actors placed in the catacombs' entrance.
 struct ActorPlacement gMadraCatacombs_EntrancePlacements[] = {
-    ACTOR_PLACEMENT(250, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_VINE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 280, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 584, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 424, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 632, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -899,40 +911,40 @@ struct ActorPlacement gMadraCatacombs_EntrancePlacements[] = {
 struct ActorPlacement gMadraCatacombs_ChampaTunnelPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 776, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 696, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 794, 0, 236, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_IN_GREEN_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 794, 0, 236, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
 /// The actors placed in the bookshelf room.
 struct ActorPlacement gMadraCatacombs_BookshelfPlacements[] = {
-    ACTOR_PLACEMENT(679, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 202, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BOOKSHELF, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 202, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 /// The actors placed in the tablet room.
 struct ActorPlacement gMadraCatacombs_TabletPlacements[] = {
-    ACTOR_PLACEMENT(SPRITE_STONE_DOOR_HALF, CONDITION_ALWAYS, 7, 150, 0, 366, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_STONE_DOOR_HALF, CONDITION_ALWAYS, 7, 170, 0, 366, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(410, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(410, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(410, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(410, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(410, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(410, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(410, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(410, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(410, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(410, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_DOOR_HALF, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 150, 0, 366, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_DOOR_HALF, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 170, 0, 366, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_EXCLAMATION_BUBBLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_EXCLAMATION_BUBBLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_EXCLAMATION_BUBBLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_EXCLAMATION_BUBBLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_EXCLAMATION_BUBBLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_EXCLAMATION_BUBBLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_EXCLAMATION_BUBBLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_EXCLAMATION_BUBBLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_EXCLAMATION_BUBBLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_EXCLAMATION_BUBBLE, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -943,20 +955,20 @@ struct Trigger gMadraCatacombs_Triggers[] = {
 
 /// The triggers of the catacombs' entrance.
 struct Trigger gMadraCatacombs_EntranceTriggers[] = {
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(MadraCatacombs_EnterDoorway)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(MadraCatacombs_EnterDoorway)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(MadraCatacombs_EnterDoorway)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(MadraCatacombs_EnterDoorway)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(MadraCatacombs_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(MadraCatacombs_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(MadraCatacombs_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(MadraCatacombs_EnterDoor)},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_VILLAGE_ROPE_LOW_POST, 0x201, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_VILLAGE_ROPE_LOW_POST, FLAG_VILLAGE_ROPE_TIED, 0},
     {TRIGGER_PUSHED, 10, FLAG_MADRA_CATACOMBS_HOLE_FILLED, EVENT(MadraCatacombs_DropPillarIntoHole)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_HOLE_PILLAR, FLAG_MADRA_CATACOMBS_HOLE_FILLED, EVENT(MadraCatacombs_DropPillarIntoHole)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PUSHED_PILLAR, FLAG_MADRA_CATACOMBS_PILLAR_PLACED, EVENT(MadraCatacombs_StartMovingPushedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PUSHED_PILLAR, FLAG_MADRA_CATACOMBS_PILLAR_PLACED, EVENT(MadraCatacombs_FinishMovingPushedPillar)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 11, FLAG_MADRA_CATACOMBS_CLIMBABLE_PILLAR_PLACED, EVENT(MadraCatacombs_PushClimbablePillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_CLIMBABLE_PILLAR, FLAG_MADRA_CATACOMBS_CLIMBABLE_PILLAR_PLACED, EVENT(MadraCatacombs_StartMovingClimbablePillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CLIMBABLE_PILLAR, FLAG_MADRA_CATACOMBS_CLIMBABLE_PILLAR_PLACED, EVENT(MadraCatacombs_FinishMovingClimbablePillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_VILLAGE_PUDDLE, 0x202, EVENT(MadraCatacombs_FreezePuddle)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 11, FLAG_MADRA_CATACOMBS_VINE_PILLAR_PLACED, EVENT(MadraCatacombs_PushVinePillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_VINE_PILLAR, FLAG_MADRA_CATACOMBS_VINE_PILLAR_PLACED, EVENT(MadraCatacombs_StartMovingVinePillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_VINE_PILLAR, FLAG_MADRA_CATACOMBS_VINE_PILLAR_PLACED, EVENT(MadraCatacombs_FinishMovingVinePillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_VILLAGE_PUDDLE, FLAG_VILLAGE_PUDDLE_FROZEN, EVENT(MadraCatacombs_FreezePuddle)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(MadraCatacombs_RevealButton)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(MadraCatacombs_HideButton)},
     {EXAMINE_TRIGGER_FACING(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(MadraCatacombs_HearEyesOfTruth)},
@@ -981,10 +993,11 @@ struct Trigger gMadraCatacombs_ChampaTunnelTriggers[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_TUNNEL_ROPE_EAST_POST, 0x200, 0},
-    {TRIGGER_TALK, ACTOR_TUNNEL_EXPLORER, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_TUNNEL_ROPE_EAST_POST,
+     FLAG_TUNNEL_ROPE_TIED, 0},
+    {TRIGGER_TALK, ACTOR_MAN_ON_THE_CHAMPAS_CAVE, CONDITION_ALWAYS,
      MSGNO(MsgFieldCaveFoundByChampa)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TUNNEL_EXPLORER,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_CHAMPAS_CAVE,
      CONDITION_ALWAYS, MSGNO(MsgFieldWhoDugCave)},
     {TRIGGER_TABLE_END},
 };
@@ -1000,7 +1013,7 @@ struct Trigger gMadraCatacombs_StoneDoorTriggers[] = {
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS,
-     EVENT(MadraCatacombs_SlideOpenStoneDoor)},
+     EVENT(MadraCatacombs_OpenStoneDoor)},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
@@ -1020,7 +1033,7 @@ struct Trigger gMadraCatacombs_BookshelfTriggers[] = {
      EVENT(MadraCatacombs_OpenBookshelfRoomEastDoor)},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 8, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), ACTOR_BOOKSHELF, CONDITION_ALWAYS,
      EVENT(MadraCatacombs_ShakeBookshelf)},
     {TRIGGER_TABLE_END},
 };

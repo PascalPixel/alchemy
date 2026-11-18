@@ -4,6 +4,7 @@
 // Part of menu.c.
 
 #include "menu_internal.h"
+#include "shop/shop.h"
 
 // Where the edition's text goes. The international editions have longer
 // words, and some languages move a message to fit its own.
@@ -74,6 +75,17 @@
 #define ITEM_LIST_PAGE_ICONS_X 120
 #define ITEM_LIST_NAME_X 32
 #endif
+/// The page numbers end, with their right arrow, at tile 15 of the item list
+/// window's top border.
+#define PAGE_NUMBERS_RIGHT 15
+
+/// The bytes of window tiles (BG character block 1) the menu draws over, which
+/// it saves while it is open and puts back as it closes.
+#define SAVED_WINDOW_TILE_BYTES 8192
+
+/// Menu_SpawnIconEntries makes the icons a row of the eight-wide icon grid at
+/// a time (columnCount), as the Psynergy screen places its own.
+#define ICON_GRID_ROW 8
 
 /// The field menu's Item screen (FieldMenu_Run, FIELD_MENU_ITEM): choose a
 /// party member, one of their items and a command.
@@ -87,7 +99,7 @@ s32 ItemMenu_Run(void) {
   s32 member;
   s32 result;
 #if TBS_PATCH_1
-  s32 size = 8192;
+  s32 size = SAVED_WINDOW_TILE_BYTES;
 #endif
 
   // Open the menu over the field, which stops moving.
@@ -120,7 +132,8 @@ s32 ItemMenu_Run(void) {
   if (result == 1) {
     struct FieldWork *selection = gFieldWork;
 
-    selection->item = (member << 10) | (item & INVENTORY_ITEM_ID_MASK);
+    selection->item =
+        (member << ACT_UNIT_SHIFT) | (item & INVENTORY_ITEM_ID_MASK);
     selection->itemSlot = screen->selectedSlots[0];
   }
 
@@ -147,9 +160,6 @@ s32 ItemMenu_Run(void) {
   Party_ClearUnusableShortcutsFar();
   return result;
 }
-
-/// The most items of one kind a stack holds.
-#define ITEM_STACK_MAX 30
 
 /// The resident IWRAM word copy, called through its address.
 typedef s32 (*ItemWordCopyFn)(void *dst, const void *src, s32 size);
@@ -481,7 +491,7 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
         heldCount = ItemMenu_GetItemQuantity(menu->sideMember[1],
                                              menu->selectedItems[0] &
                                                  INVENTORY_ITEM_ID_MASK);
-        if (heldCount == ITEM_STACK_MAX) {
+        if (heldCount == INVENTORY_STACK_MAX) {
           transferFailed = 1;
         }
         if (ItemMenu_CountItems(menu->sideMember[1]) == INVENTORY_SLOTS &&
@@ -491,8 +501,8 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
         }
         stackSize = (menu->selectedItems[0] >> INVENTORY_QUANTITY_SHIFT) + 1;
         if (transferFailed == 0) {
-          if (heldCount + stackSize > ITEM_STACK_MAX) {
-            amount = ITEM_STACK_MAX - heldCount;
+          if (heldCount + stackSize > INVENTORY_STACK_MAX) {
+            amount = INVENTORY_STACK_MAX - heldCount;
           } else {
             amount = stackSize;
           }
@@ -887,26 +897,26 @@ void Menu_SpawnIconEntries(struct ItemMenuWork *menu, struct Window *window) {
       *firstIcons++ = WindowSprite_CreateFromResourceFar(
           ICON_KIND_ITEM, firstSlot, window, MENU_ICON_HIDDEN_X, y);
       firstSlot++;
-    } while (firstSlot <= 7);
+    } while (firstSlot < ICON_GRID_ROW);
   }
 
-  secondSlot = 8;
+  secondSlot = ICON_GRID_ROW;
   {
     s32 y = MENU_ICON_HIDDEN_Y;
 
-    secondIcons = &menu->entryIcons[8];
+    secondIcons = &menu->entryIcons[ICON_GRID_ROW];
     do {
       *secondIcons++ = WindowSprite_CreateFromResourceFar(
           ICON_KIND_ITEM, secondSlot, window, 256, y);
       secondSlot++;
-    } while (secondSlot <= 15);
+    } while (secondSlot < 2 * ICON_GRID_ROW);
   }
 
-  remainingSlot = 16;
+  remainingSlot = 2 * ICON_GRID_ROW;
   {
     s32 y = MENU_ICON_HIDDEN_Y;
 
-    remainingIcons = &menu->entryIcons[16];
+    remainingIcons = &menu->entryIcons[2 * ICON_GRID_ROW];
     do {
       *remainingIcons++ = WindowSprite_CreateFromResourceFar(
           ICON_KIND_ITEM, remainingSlot, window, 256, y);
@@ -1229,8 +1239,7 @@ s32 ItemMenu_SelectTarget(s32 mode) {
     }
     if (gKeysPressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
-      // The u8 255 is returned through (s8) as -1.
-      result = 255;
+      result = -1;
       break;
     }
     if (gKeysRepeat & KEY_LEFT) {
@@ -1640,7 +1649,7 @@ s32 ItemMenu_ChooseCommand(void) {
   menu->flags = 0;
 
   // Start on the command chosen last, or on the first one available. listMode
-  // 0xff (none yet) reads as -1; the later tests win, so the order of
+  // is -1 until a command is chosen; the later tests win, so the order of
   // preference is Use, Remove, Equip, Give, then Details.
   lastCommand = (s8)menu->listMode;
   if (lastCommand == -1) {
@@ -2149,20 +2158,22 @@ void ItemMenu_DrawItemDetails(struct Window *window, s32 inventoryEntry) {
                                  window, 0, row * 8);
 #if LANGUAGE != LANGUAGE_JAPANESE
       Text_DrawStringInWindowFar(gMenu_TimesString, window, 64, row * 8);
-      if (amount > 9) {
+      if (amount >= STAT_SCALE_ONE) {
         Text_DrawNumberInWindowFar(1, 1, window, 72, row * 8);
         Text_DrawStringInWindowFar(gMenu_PointString, window, 80, row * 8);
-        Text_DrawNumberInWindowFar(amount - 10, 1, window, 88, row * 8);
+        Text_DrawNumberInWindowFar(amount - STAT_SCALE_ONE, 1, window, 88,
+                                   row * 8);
       } else {
         Text_DrawNumberInWindowFar(0, 1, window, 72, row * 8);
         Text_DrawStringInWindowFar(gMenu_PointString, window, 80, row * 8);
         Text_DrawNumberInWindowFar(amount, 1, window, 88, row * 8);
       }
 #else
-      if (amount > 9) {
+      if (amount >= STAT_SCALE_ONE) {
         Text_DrawNumberInWindowFar(1, 1, window, 48, row * 8);
         Text_DrawStringInWindowFar(gMenu_PointString, window, 56, row * 8);
-        Text_DrawNumberInWindowFar(amount - 10, 1, window, 64, row * 8);
+        Text_DrawNumberInWindowFar(amount - STAT_SCALE_ONE, 1, window, 64,
+                                   row * 8);
       } else {
         Text_DrawNumberInWindowFar(0, 1, window, 48, row * 8);
         Text_DrawStringInWindowFar(gMenu_PointString, window, 56, row * 8);
@@ -2392,10 +2403,13 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
         Text_DrawMessageAsTilesFar(MsgGiveHowMany, window, ITEM_GIVE_ASK_X,
                                    ITEM_GIVE_ASK_Y);
         Dma_Set(gMenu_QuantityTiles, tiles, DMA_COPY_WORDS(64), REG_DMA3);
-        QuantityBar_FillFar(INVENTORY_STACK_MAX, 14, tiles);
-        QuantityBar_FillFar(quantityRange + baseQuantity, 0, tiles);
-        QuantityBar_FillFar(baseQuantity + quantity + 1, 10, tiles);
-        QuantityBar_FillFar(baseQuantity, 2, tiles);
+        QuantityBar_FillFar(INVENTORY_STACK_MAX, QUANTITY_BAR_OUT_OF_REACH,
+                            tiles);
+        QuantityBar_FillFar(quantityRange + baseQuantity,
+                            QUANTITY_BAR_CHOOSABLE, tiles);
+        QuantityBar_FillFar(baseQuantity + quantity + 1, QUANTITY_BAR_CHOSEN,
+                            tiles);
+        QuantityBar_FillFar(baseQuantity, QUANTITY_BAR_HELD, tiles);
         VramCache_Load(block, 256, tiles);
         Text_DrawNumberInWindowFar(quantity + 1, 2, window, 32, 32);
         Text_DrawMessageAsTilesFar(
@@ -2732,7 +2746,7 @@ s32 ItemMenu_DrawNamePage(struct Window *window, s32 unused,
   Menu_SetPageIcons(LIST_PAGE_SIZE, firstEntry, window, ITEM_LIST_PAGE_ICONS_X,
                     34);
   PagedList_DrawPageNumbers(window, pageState->entryCount, LIST_PAGE_SIZE,
-                            pageState->page, 15);
+                            pageState->page, PAGE_NUMBERS_RIGHT);
 
   row = 0;
   if (visibleCount > row) {
@@ -2925,7 +2939,9 @@ s32 ItemMenu_RunList(s32 sideIndex) {
 #undef ITEM_DROP_QUESTION_X
 #undef ITEM_LIST_PAGE_ICONS_X
 #undef ITEM_LIST_NAME_X
-#undef ITEM_STACK_MAX
+#undef PAGE_NUMBERS_RIGHT
+#undef SAVED_WINDOW_TILE_BYTES
+#undef ICON_GRID_ROW
 #undef ITEM_IWRAM_COPY_WORDS
 #undef ITEM_COMMAND_STATE_DISABLED
 #undef ITEM_COMMAND_STATE_AVAILABLE

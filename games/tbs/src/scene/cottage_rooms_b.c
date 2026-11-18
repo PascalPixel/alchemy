@@ -264,6 +264,17 @@ enum CottageRoomsBAreaFlag {
 
 // FLAG_VALE_DORA_OUT_OF_BED: Dora got out of her sickbed on this visit.
 
+/// The map's paused tileset animations that redraw the beds in Isaac's house:
+/// his own as he sleeps, gets up and has left it, on the stormy night, and
+/// Dora's sickbed with her in it and once she has got up, back from Kalay.
+enum CottageRoomsBBedAnimation {
+  ISAACS_BED_ASLEEP_ANIMATION = 7,
+  ISAACS_BED_GETTING_UP_ANIMATION = 8,
+  ISAACS_BED_EMPTY_ANIMATION = 9,
+  DORAS_SICKBED_IN_BED_ANIMATION = 11,
+  DORAS_SICKBED_EMPTY_ANIMATION = 12
+};
+
 /// Returns the entrances, among them the events played on arrival.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gCottageRoomsB_Entrances;
@@ -491,10 +502,10 @@ s32 Scene_Initialize(void) {
               COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS) {
         if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
           if (GameFlag_Get(FLAG_VALE_DORA_OUT_OF_BED) != 0) {
-            TilesetAnim_Resume(12);
+            TilesetAnim_Resume(DORAS_SICKBED_EMPTY_ANIMATION);
           }
         } else {
-          TilesetAnim_Resume(11);
+          TilesetAnim_Resume(DORAS_SICKBED_IN_BED_ANIMATION);
           Actor_SetSpriteFlags(Actor_Get(ACTOR_DORA), 0);
           Actor_SetAnimation(ACTOR_DORA, DORA_ANIMATION_IN_BED);
         }
@@ -558,11 +569,11 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
   // Isaac lies asleep in bed; his tunic is set beside him.
   Actor_SetSpriteFlags(Actor_Get(ACTOR_PARTY_LEADER), 0);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ISAAC_CHILD_ANIMATION_ASLEEP);
-  sprite->rotation = 1365;
+  sprite->rotation = TRIG_TURN / 48;
   Actor_Get(ACTOR_TUNIC)->motionFlags = 0;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_TUNIC), 0);
   Actor_SetPosition(ACTOR_TUNIC, 576, 650);
-  TilesetAnim_Resume(7);
+  TilesetAnim_Resume(ISAACS_BED_ASLEEP_ANIMATION);
   Actor_SetPosition(ACTOR_DORA, 534, 688);
   ActorSystem_SuspendProjectionAndShowSprites();
   // On a dark screen, Dora's voice: "Isaac, wake up!" "Please, dear, wake up!"
@@ -611,14 +622,14 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
       SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT | ACTOR_DORA, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   // Isaac gets out of bed and jumps down beside Dora.
-  TilesetAnim_Pause(7);
+  TilesetAnim_Pause(ISAACS_BED_ASLEEP_ANIMATION);
   Event_Wait(20);
-  TilesetAnim_Resume(8);
+  TilesetAnim_Resume(ISAACS_BED_GETTING_UP_ANIMATION);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ISAAC_CHILD_ANIMATION_GET_UP);
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 557, 679);
-  TilesetAnim_Pause(8);
-  TilesetAnim_Resume(9);
+  TilesetAnim_Pause(ISAACS_BED_GETTING_UP_ANIMATION);
+  TilesetAnim_Resume(ISAACS_BED_EMPTY_ANIMATION);
   Actor_MoveToAndWait(ACTOR_PARTY_LEADER, 555, 680);
   Event_Wait(30);
   Actor_FaceDirection(ACTOR_DORA, FACING_NORTH_NORTHEAST, 0);
@@ -792,7 +803,7 @@ ramp:
     goto ramp;
   Sound_Play(SE_FLAME_FLARE);
   wait(10);
-  for (i = 0; i <= 15; i++) {
+  for (i = 0; i < BLEND_WEIGHT_MAX; i++) {
     SetBlendAlpha(BLEND_ALPHA(15, 16) - i);
     wait(1);
   }
@@ -915,8 +926,8 @@ static void CottageRoomsB_VisitSickDora(void) {
   Event_Wait(80);
   Actor_SetSpeed(ACTOR_DORA, 0.8);
   Actor_SetDestination(ACTOR_DORA, 584, 406);
-  TilesetAnim_Pause(11);
-  TilesetAnim_Resume(12);
+  TilesetAnim_Pause(DORAS_SICKBED_IN_BED_ANIMATION);
+  TilesetAnim_Resume(DORAS_SICKBED_EMPTY_ANIMATION);
   Actor_SetAnimation(ACTOR_DORA, DORA_ANIMATION_HEAD_BOWED);
   Event_Wait(80);
   Actor_RunRepeatedMotion(ACTOR_DORA, 2);
@@ -1151,7 +1162,7 @@ static void CottageRoomsB_SpawnEffectPair(struct Actor *parent) {
         sprite->slot = effectWork->tileSlot;
         sprite->retainCacheEntry = 1;
         sprite->image.tile =
-            (gVramCacheEntries[sprite->slot].offset >> 5) & 0x3ff;
+            (gVramCacheEntries[sprite->slot].offset >> 5) & OBJ_TILE_MASK;
         sprite->image.fullColor = 0;
         sprite->image.shape = 1;
         part->image.size = 2;

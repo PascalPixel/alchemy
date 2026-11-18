@@ -56,7 +56,7 @@ void AreaNameWindow_Update(void) {
   notice = (struct TimedNoticeWork *)gFieldWork;
   // Adding (u16)-1 takes one off in 16 bits.
   notice->countdown = (framesLeft = notice->countdown + (u16)-1);
-  if ((framesLeft << 16) == 0) {
+  if (framesLeft == 0) {
     Window_Close(notice->window, 2);
     Task_Remove(AreaNameWindow_Update);
   }
@@ -73,7 +73,7 @@ void AreaNameWindow_Hide(void) {
   }
 }
 
-/// Removes itemId from the party's inventory and returns 0.S).
+/// Removes itemId from the party's inventory and returns 0.
 s32 Item_RemoveFromInventory(s32 unused, s32 itemId) {
   PartyInventory_RemoveFar(itemId);
   return 0;
@@ -147,7 +147,10 @@ void Debug_SelectShortcuts(void) {
       VramCache_Load(slot, 128, gPointingHandTiles);
       cursor = WindowSprite_Create(slot, OUTPUT_SIZE_16X16, win, 0, 0);
     }
-    // slot, done with the cursor's VRAM entry, carries the title's message.
+    // The picker borrows the status panel's labels: "HP/Max" over it,
+    // "Status" over the picks, "Attack" and "Defense" (the two messages before
+    // "Status") before them. slot, done with the cursor's VRAM entry, carries
+    // the first.
     slot = MsgPanelHpMaxLabel;
     Text_DrawMessageAsTiles(slot, title, 16, 0);
     // Redraw both shortcut rows and the selected ability's detail side.

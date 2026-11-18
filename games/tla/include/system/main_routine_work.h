@@ -13,8 +13,8 @@ enum SceneType {
   SCENE_TYPE_TOWN = 2
 };
 
-/// gMainRoutineWork.battleType: how the next battle starts, as ☀️'s; it is
-/// set back to BATTLE_TYPE_NORMAL as the battle ends.
+/// gMainRoutineWork.battleType: how the next battle starts; it is set back to
+/// BATTLE_TYPE_NORMAL as the battle ends.
 enum BattleType {
   BATTLE_TYPE_NORMAL = 0,
   /// A battle the party cannot run from: a Mimic's, a hidden Mad Plant's and
@@ -26,6 +26,11 @@ enum BattleType {
   /// hit downs its target, as when Karst and Agatio fight Isaac and Ivan.
   BATTLE_TYPE_LOST = 6
 };
+
+/// Battle_Run's results in gMainRoutineWork.sequenceResult besides the number
+/// of enemies defeated.
+#define BATTLE_OUTCOME_LOST -1
+#define BATTLE_OUTCOME_FLED 999
 
 /// The most coins the party carries, and the most shop credit.
 #define COINS_MAX 999999
@@ -51,9 +56,8 @@ enum HazardMode {
 /// Djinni's number (Field_RequestDjinnBattle).
 #define DJINNI_BATTLE_EVENT_FIRST 300
 
-/// gMainRoutineWork, the state a save file keeps (☀️'s struct MainRoutineWork,
-/// 0x20 bytes further on from the shop credit): play time, coins, the scene and
-/// the leader's position, the active party and the options.
+/// gMainRoutineWork, the state a save file keeps: play time, coins, the scene
+/// and the leader's position, the active party and the options.
 struct MainRoutineWork {
   /// BuildStamp_GetTime's value when the game was last saved; 0 on a new
   /// game.
@@ -70,7 +74,7 @@ struct MainRoutineWork {
   u8 djinnRecovery[292];
   s32 shopCredit; ///< shop credit, at most COINS_MAX (Party_AdjustShopCredit)
   s8 shopGifts;   ///< shop gifts, 0 to SHOP_GIFTS_MAX (Party_AdjustShopGifts)
-  /// The weights of the spring game's 15 prizes, as ☀️'s prizeWeights: three
+  /// The weights of the spring game's 15 prizes: three
   /// each of 4, 8, 16, 32 and 64 on a new game; Lemuria's spring halves a
   /// prize's weight each time it is won.
   u8 prizeWeights[15];
@@ -103,19 +107,19 @@ struct MainRoutineWork {
                         ///< terrain
   u8 unusedAfterBackground[2];
   s16 mapId;
-  s32 x; ///< the party's position on entering, as ☀️'s gMainRoutineWork
+  s32 x; ///< the party's position on entering
   s32 y;
   s32 z;
   s32 heading;
-  u16 layer;       ///< 0 on taking an entrance, as ☀️'s layer
+  u16 layer;       ///< 0 on taking an entrance
   s16 battleMusic; ///< the battle music chosen for the encounter
   s16 sceneMusic;  ///< the current scene's field music
   /// The leader's movement: 0 on foot, 2 climbing, 3 or 4 holding a
   /// workspace item or node; 7, 8 and 10 set by the world map and others.
   u8 movementMode;
-  s32 leaderActorId;      ///< the leader, as ☀️'s selectedActor
+  s32 leaderActorId;      ///< the leader
   u8 party[8];            ///< the party in order
-  u8 unusedAfterParty[5]; ///< not named by ⚓️ code
+  u8 unusedAfterParty[5]; ///< no code names it
   u8 windowHue;           ///< the "Window color" setting (option 0)
   u8 windowBrightness;    ///< the "Window brightness" setting (option 1)
   u8 unusedAfterBrightness[3];
@@ -163,10 +167,11 @@ struct MainRoutineWork {
   /// flags in bits 15 to 11), or a Mimic's flag with CONDITION_FLAG_SET,
   /// resolved on returning to the field.
   s16 pendingDjinni;
-  s16 sequenceResult; ///< the last battle's result, as ☀️'s; -1 for a defeat
+  /// The last battle's result: the enemies defeated, BATTLE_OUTCOME_FLED or
+  /// BATTLE_OUTCOME_LOST.
+  s16 sequenceResult;
   s32 encounterSteps; ///< reset on entering a new scene group
-  /// Cleared with the battle's spoils, as ☀️'s pendingItem; not read by name
-  /// in ⚓️.
+  /// Cleared with the battle's spoils; no code reads it by name.
   u16 pendingItem;
   s16 sceneType;       ///< the current scene's variant from its record
   s16 retreatScene;    ///< where Retreat goes; the group's first entrance
@@ -176,7 +181,7 @@ struct MainRoutineWork {
   u8 pausedPose;       ///< the paused object's first animation param
   s16 haltedActor;     ///< the object field Psynergy has stopped, -1 for none
   /// Nonzero runs packed action 0x208b with the pending actions, and idles
-  /// the field's push and button handler; not written by name in ⚓️.
+  /// the field's push and button handler; no code writes it by name.
   s8 pendingThird;
   s8 cloaked; ///< Cloak: the leader is hidden
   u8 unusedAfterCloaked[2];
@@ -219,7 +224,7 @@ struct MainRoutineWork {
   /// Set while the leader stands on the upper level of the Alhafran Cave,
   /// where Sand ends; cleared on entering a scene.
   s8 onUpperLevel;
-  /// The link lobby's tallies, as ☀️'s: 3 cleared on choosing a monster
+  /// The link lobby's tallies: 3 cleared on choosing a monster
   /// battle, 0 and 3 counted up together, 6 read by the lobby.
   u16 linkTallies[8];
   u8 unusedAfterTallies[4];

@@ -113,7 +113,10 @@ enum VaultRevisitActorId {
   ACTOR_SAP = ACTOR_FIRST_PLACED + 13
 };
 
-enum { VAULT_PROXIMITY_REACTION_PAUSED = 2 };
+/// The bit of a child round the well's timer that is set while the party
+/// talks to it, so that it stops whichever way it faces
+/// (Vault_UpdateWalkingVillager).
+enum { VILLAGER_TALKED_TO = 2 };
 
 /// Area flags for what the townspeople have already said, kept while the
 /// party stays in Vault's scenes. A Mind Read before someone has spoken plays
@@ -126,7 +129,6 @@ enum {
   FLAG_VAULT_REVISIT_ASKED_ABOUT_JAIL = FLAG_AREA_TEMP_08
 };
 
-// Shared effect and proximity routines precede the scene's entry points.
 #include "shared/field_effect_create.c"
 #include "shared/field_effect_spawn.c"
 #include "shared/actor_distance.c"
@@ -156,7 +158,7 @@ static void VaultRevisit_ShowStandingActorMessage(s32 actorId) {
 
 /// The party is recognized. "You're the warriors who captured the thieves a
 /// while back, aren't you? You've returned to Vault!"
-static void VaultRevisit_RecognizeThiefCatchers(void) {
+static void VaultRevisit_RecognizeWarriors(void) {
   Event_Start();
   Actor_FaceActor(ACTOR_WELCOMING_YOUNG_MAN, ACTOR_PARTY_LEADER, 2);
   GameFlag_Set(FLAG_VAULT_REVISIT_YOUNG_MAN_RECOGNIZED_PARTY);
@@ -201,7 +203,7 @@ static void VaultRevisit_GreetWarriorGuy(void) {
   struct Actor *actor = Actor_Get(ACTOR_BOY_ROUND_THE_WELL);
   u16 facing = actor->facing;
 
-  actor->timer |= VAULT_PROXIMITY_REACTION_PAUSED;
+  actor->timer |= VILLAGER_TALKED_TO;
   Event_Start();
   Event_SetMessageId(MsgVaultWarriorGuy);
   Actor_SetAnimation(ACTOR_BOY_ROUND_THE_WELL, ANIM_STILL);
@@ -232,7 +234,7 @@ static void VaultRevisit_WishEldersWereBrave(void) {
 
   actor = Actor_Get(ACTOR_GIRL_ROUND_THE_WELL);
   originalFacing = actor->facing;
-  actor->timer |= VAULT_PROXIMITY_REACTION_PAUSED;
+  actor->timer |= VILLAGER_TALKED_TO;
   Event_Start();
   Event_SetMessageId(MsgVaultWishVaultsElders);
   Actor_SetAnimation(ACTOR_GIRL_ROUND_THE_WELL, ANIM_STILL);
@@ -247,7 +249,7 @@ static void VaultRevisit_WishEldersWereBrave(void) {
 
 /// The strongman on watch asks about the jail. "Did you guys check out the
 /// jail?"
-static void VaultRevisit_AskAboutJailbreak(void) {
+static void VaultRevisit_AskAboutJail(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultGuysCheckJail);
   Actor_TurnToFaceEachOther(ACTOR_STRONGMAN_ON_WATCH, ACTOR_PARTY_LEADER, 2);
@@ -263,7 +265,7 @@ static void VaultRevisit_AskAboutJailbreak(void) {
 
 /// Mind Read on the welcoming young man before he has spoken. He turns and
 /// recognizes the party.
-static void VaultRevisit_ReadMindAndRecognizeThiefCatchers(void) {
+static void VaultRevisit_ReadMindAndRecognizeWarriors(void) {
   Event_Start();
   Actor_RunRepeatedMotion(ACTOR_WELCOMING_YOUNG_MAN, 1);
   Event_Wait(20);
@@ -309,7 +311,7 @@ static void VaultRevisit_ReadMindOnWinter(void) {
 /// Mind Read on the boy round the well. Watching the party makes one feel
 /// brave. Before the boy has spoken, it plays the greeting.
 static void VaultRevisit_ReadMindOnFeelingBrave(void) {
-  Actor_Get(ACTOR_BOY_ROUND_THE_WELL)->timer |= VAULT_PROXIMITY_REACTION_PAUSED;
+  Actor_Get(ACTOR_BOY_ROUND_THE_WELL)->timer |= VILLAGER_TALKED_TO;
   Event_Start();
   if (Event_GetFlag(FLAG_VAULT_REVISIT_BOY_ROUND_THE_WELL_SPOKE) != 0) {
     Event_SetMessageId(MsgVaultWatchingGuysMakes);
@@ -324,8 +326,7 @@ static void VaultRevisit_ReadMindOnFeelingBrave(void) {
 
 /// Mind Read on the girl round the well. Grown-ups always get so scared.
 static void VaultRevisit_ReadMindOnScaredGrownUps(void) {
-  Actor_Get(ACTOR_GIRL_ROUND_THE_WELL)->timer |=
-      VAULT_PROXIMITY_REACTION_PAUSED;
+  Actor_Get(ACTOR_GIRL_ROUND_THE_WELL)->timer |= VILLAGER_TALKED_TO;
   Event_Start();
   Event_SetMessageId(MsgVaultGrownUpsAlways);
   VaultRevisit_ShowStandingActorMessage(ACTOR_GIRL_ROUND_THE_WELL);
@@ -353,7 +354,7 @@ static void VaultRevisit_ReadMindOnJailKey(void) {
     }
     Event_ShowMessage(ACTOR_STRONGMAN_ON_WATCH, 0);
     Actor_Get(ACTOR_STRONGMAN_ON_WATCH)->paused = 0;
-    Actor_SetMovementTypeById(ACTOR_STRONGMAN_ON_WATCH, 2);
+    Actor_SetMovementTypeById(ACTOR_STRONGMAN_ON_WATCH, MOVEMENT_TYPE_WANDER);
     Event_End();
     GameFlag_Set(FLAG_VAULT_REVISIT_ASKED_ABOUT_JAIL);
   } else {
@@ -364,12 +365,12 @@ static void VaultRevisit_ReadMindOnJailKey(void) {
   }
 }
 
-/// Gives the actor vertical velocity, moves it, and waits briefly for it
-/// to settle.
-static void VaultRevisit_JumpActorToAndWait(int actorId, int x, int z,
-                                            int velocityY) {
+/// Jumps the actor to (x, z), launched upward at `velocityY`, and waits there
+/// until it lands, a second at most.
+static void VaultRevisit_JumpActorToAndWait(s32 actorId, s32 x, s32 z,
+                                            FIXED velocityY) {
   struct Actor *jumpingActor = Actor_Get(actorId);
-  int frames;
+  s32 frames;
   Actor_SetSpeed(actorId, 3);
   jumpingActor->gravity = toFIXED(1) / 2;
   jumpingActor->bounce = 0;
@@ -377,7 +378,7 @@ static void VaultRevisit_JumpActorToAndWait(int actorId, int x, int z,
   Actor_SetSpriteFlags(jumpingActor, 0);
   Actor_MoveToAndWait(actorId, x, z);
   Actor_SetPosition(actorId, x, z);
-  for (frames = 60; frames != 0; --frames) {
+  for (frames = FRAMES_PER_SECOND; frames != 0; --frames) {
     wait(1);
     if ((FIXEDtoINT(jumpingActor->velocityY)) == 0)
       break;
@@ -407,7 +408,8 @@ static void VaultRevisit_RingBell(void) {
   Event_End();
 }
 
-/// Walks the leader into a doorway during the sixteen-frame exit delay.
+/// Walks the leader into a doorway while the exit waits its
+/// MAP_TRANSITION_FRAMES.
 static void Vault_WalkThroughExit(s32 x, s32 z, s32 exitNumber) {
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
   Actor_WalkTo(ACTOR_PARTY_LEADER, x, z);
@@ -486,7 +488,6 @@ static void VaultRevisit_EnterJail(void) {
   Vault_WalkThroughExit(72, 160, VAULT_REVISIT_TO_STONE_ROOMS);
 }
 
-// Shared entrance toggles precede the Djinni and dog events.
 #include "shared/vault_toggle.c"
 
 /// Talking to Sap, a Venus Djinni, makes it join the party.
@@ -577,9 +578,9 @@ static inline s32 VaultRevisit_ShouldKeepBellDjinniPosition(void) {
 s32 Scene_Initialize(void) {
   if (GameFlag_Get(FLAG_VAULT_ON_BRIDGE))
     MapGrid_CopyCellAttributes(55, 26, 4, 2, 23, 26);
-  // A still actor on the well that shows nothing. XXX (no evidence): what it
-  // was meant to show; its tiles in video memory are blank and nothing refers
-  // to it.
+  // A crate on the well, drawn hidden (SPRITE_COLOR_HIDDEN) and never a talk or
+  // Psynergy target, as vault.c makes it. XXX (no evidence): what it is for;
+  // nothing refers to it again, and every pixel of it is transparent.
   Actor_CreateConfigured(128, 0, 420, SPRITE_CRATE);
   MapGrid_CopyCellsTo(45, 41, 8, 45, 3, 3);
   wait(1);
@@ -701,7 +702,7 @@ struct ActorPlacement gVaultRevisit_ActorPlacements[] = {
         152, 0, 296, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_VENUS_DJINNI, 0x34, MOVEMENT_TYPE_STAND,
+    ACTOR_PLACEMENT(SPRITE_VENUS_DJINNI, FLAG_DJINNI(DJINNI_SAP), MOVEMENT_TYPE_STAND,
         344, 0, 96, FACING_SOUTH, TALK_FACING_PARTY, 0),
     { SCENE_TABLE_END },
 };
@@ -749,7 +750,7 @@ struct Trigger gVaultRevisit_Triggers[] = {
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VAULT_MAYORS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(VaultRevisit_EnterMayorsHouse) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VAULT_SANCTUM_DOORWAY, CONDITION_ALWAYS, EVENT(Vault_OpenDoorwayAndEnter) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VAULT_DOOR_TO_JAIL, CONDITION_ALWAYS, EVENT(VaultRevisit_EnterJail) },
-    { TRIGGER_TALK, ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, EVENT(VaultRevisit_RecognizeThiefCatchers) },
+    { TRIGGER_TALK, ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, EVENT(VaultRevisit_RecognizeWarriors) },
     { TRIGGER_TALK, ACTOR_WOMAN_ON_THE_FIXED_BRIDGE, CONDITION_ALWAYS, MSGNO(MsgVaultYouveProbablyAlreadyHeardButThe) },
     { TRIGGER_TALK, ACTOR_VILLAGER_WONDERING_ABOUT_HAMMET, CONDITION_ALWAYS, MSGNO(MsgVaultIWonderWhatHappenedToHammet) },
     { TRIGGER_TALK, ACTOR_WOMAN_ON_LUNPAS_THIEVES, CONDITION_ALWAYS, EVENT(VaultRevisit_TalkOfLunpaThieves) },
@@ -757,13 +758,13 @@ struct Trigger gVaultRevisit_Triggers[] = {
     { TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_THE_VOLCANO, CONDITION_ALWAYS, EVENT(VaultRevisit_HopeVolcanoStaysCalm) },
     { TRIGGER_TALK, ACTOR_BOY_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT(VaultRevisit_GreetWarriorGuy) },
     { TRIGGER_TALK, ACTOR_GIRL_ROUND_THE_WELL, CONDITION_ALWAYS, EVENT(VaultRevisit_WishEldersWereBrave) },
-    { TRIGGER_TALK, ACTOR_STRONGMAN_ON_WATCH, CONDITION_ALWAYS, EVENT(VaultRevisit_AskAboutJailbreak) },
+    { TRIGGER_TALK, ACTOR_STRONGMAN_ON_WATCH, CONDITION_ALWAYS, EVENT(VaultRevisit_AskAboutJail) },
     { TRIGGER_TALK, ACTOR_VILLAGER_DIVINE_PLAN, CONDITION_ALWAYS, MSGNO(MsgVaultTheThievesEscapedButIThink) },
     { TRIGGER_TALK, ACTOR_VAULT_DOG, CONDITION_ALWAYS, EVENT(VaultRevisit_TalkToDog) },
     { TRIGGER_TALK, ACTOR_YOUNG_MAN_FIXING_THE_ROOF, CONDITION_ALWAYS, MSGNO(MsgVaultThereYouSeeTheRoofRepairs) },
     { TRIGGER_TALK, ACTOR_SAP, CONDITION_ALWAYS, EVENT(VaultRevisit_SapJoins) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VAULT_BELL, CONDITION_ALWAYS, EVENT(VaultRevisit_RingBell) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_WELCOMING_YOUNG_MAN, FLAG_VAULT_REVISIT_YOUNG_MAN_RECOGNIZED_PARTY, EVENT(VaultRevisit_ReadMindAndRecognizeThiefCatchers) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_WELCOMING_YOUNG_MAN, FLAG_VAULT_REVISIT_YOUNG_MAN_RECOGNIZED_PARTY, EVENT(VaultRevisit_ReadMindAndRecognizeWarriors) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgVaultICantBelieveTheyreHereWhat) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_FIXED_BRIDGE, CONDITION_ALWAYS, MSGNO(MsgVaultWhenThoseGuysFromKalayCame) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WONDERING_ABOUT_HAMMET, CONDITION_ALWAYS, MSGNO(MsgVaultYeahSomeWarriorsFromKalayCame) },

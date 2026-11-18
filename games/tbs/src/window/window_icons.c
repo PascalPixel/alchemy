@@ -82,7 +82,8 @@ void Icon_BuildItemIconTiles(u32 glyph, s32 withBase, s32 *cacheSlot,
 
 /// Draws an item's icon into the glyph work buffer from its inventory code
 /// (enum InventoryEncoding) with the layers asked for (ICON_ flags): the frame,
-/// the equipped, broken and artifact marks, and the count.
+/// the equipped, broken and artifact marks, and the count. Returns -1 with no
+/// glyph work buffer and 256 otherwise; no caller reads the result.
 s32 ItemIcon_Compose(u32 code, u32 layers) {
   s32 overlay;
   struct ItemDefinition *item;
@@ -135,9 +136,9 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
     count = (code & INVENTORY_QUANTITY_MASK) >> INVENTORY_QUANTITY_SHIFT;
     count++;
   }
-  // Counts up to 30 show: the ones digit from digits 0 to 9, the tens from a
-  // second set at 10 to 12.
-  if (count != 0 && count <= 30) {
+  // Counts up to a full stack show: the ones digit from digits 0 to 9, the
+  // tens from a second set at 10 to 12.
+  if (count != 0 && count <= INVENTORY_STACK_MAX) {
     s32 ones = count % 10;
 
     work->encoded = gIcon_DigitPointers[ones];
@@ -273,6 +274,10 @@ void Icon_DrawMisc(u32 iconIndex) {
   Icon_Decode(glyph, 0);
 }
 
+/// The portrait number of gPortrait_SpriteMap's first speaker: the speakers
+/// that are no playable character are numbered from it.
+#define PORTRAIT_SPRITE_MAP_FIRST 128
+
 /// Loads a 32x32 icon from the icon resource into sprite tile slot *slot (a
 /// free slot unless reuse is set) and its colours into the sprite palette named
 /// by palette.
@@ -285,14 +290,16 @@ void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
 
   work = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   offsets = Resource_GetTableEntry(RESOURCE_ICONS);
-  // A number below 128 is the entry itself; the other speakers' portraits,
-  // numbered from 128 (Portrait_GetForSpeaker), are entries 16 on.
-  if (icon <= 127)
+  // A number below PORTRAIT_SPRITE_MAP_FIRST is the entry itself; the other
+  // speakers' portraits, numbered from it (Portrait_GetForSpeaker), are the
+  // entries from PORTRAIT_JUPITER_DJINNI on. Each entry's colours come before
+  // its encoded tiles.
+  if (icon < PORTRAIT_SPRITE_MAP_FIRST)
     index = icon;
   else
-    index = icon - 112;
+    index = icon - PORTRAIT_SPRITE_MAP_FIRST + PORTRAIT_JUPITER_DJINNI;
   encodedEntry = (u8 *)offsets + offsets[index];
-  work->encoded = encodedEntry + 32;
+  work->encoded = encodedEntry + PALETTE_COLORS * sizeof(u16);
   work->width = 4;
   work->height = 4;
   Icon_Decode(work, 0);
@@ -301,7 +308,7 @@ void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
   *tile = VramCache_Load(*slot, 4 * 4 * TILE_SIZE_4BPP, work->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   Dma_Set(encodedEntry, (void *)&OBJ_PLTT_COLOR(palette, 0),
-          DMA_COPY_HALFWORDS(16), REG_DMA3);
+          DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
 }
 
 /// An empty function.
@@ -326,3 +333,5 @@ void Icon_Decode(GlyphTransfer *glyph, s32 outlined) {
       glyph->input, glyph->tiles, (u16)glyph->width, (u16)glyph->height);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_TEMP);
 }
+
+#undef PORTRAIT_SPRITE_MAP_FIRST

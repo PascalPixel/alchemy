@@ -1,8 +1,22 @@
 /// @file
-/// Naribwe's houses, among them the fortune teller's hut, where for 20 coins
-/// he reads an item the party sets on his table: a weapon for the foe ahead,
-/// armor for an unfound Djinni, a prong for the foe it masters, and other items
-/// for the path to follow.
+/// Naribwe's rooms (SceneId_NaribweRooms), the houses behind the village's
+/// five doors, each a room of one sheet:
+///
+/// - the northwest house (NARIBWE_ROOMS_TO_NARIBWE_NORTHWEST), whose back door
+///   leads into the west house (NARIBWE_ROOMS_TO_NARIBWE_WEST) by exits 6 and
+///   7;
+/// - the shop (NARIBWE_ROOMS_TO_NARIBWE_SOUTHWEST), its weapon and armor
+///   merchants side by side behind one mat;
+/// - the inn (NARIBWE_ROOMS_TO_NARIBWE_SOUTHEAST);
+/// - the fortune-teller's house (NARIBWE_ROOMS_TO_NARIBWE_NORTHEAST), where
+///   for 20 coins he reads an item the party sets on his table: a weapon for
+///   the foe ahead, a piece of armor for a Djinni still to be found, a prong
+///   of the Trident for the prong still missing, the Trident for the beast it
+///   was forged against, a Psynergy item for the next power to gain, and
+///   anything else for the path to follow.
+///
+/// Once Gabomba's message is carried (FLAG_GABOMBA_MESSAGE_CARRIED) the
+/// villagers have other things to say (gNaribweRooms_TriggersOnReturn).
 
 #include "flags.h"
 #include "ability_ids.h"
@@ -22,6 +36,7 @@
 #include "system/system.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "field/field_sequence.h"
 #include "field/field_sequence_event.h"
 #include "scene/scene.h"
 #include "field/event_inline.h"
@@ -33,29 +48,41 @@
 #include "item_ids.h"
 #include "text/msg_ids.h"
 
-/// Naribwe's houses, by the rows of gActorPlacements.
+/// The placed actors, numbering the rows of gActorPlacements from
+/// ACTOR_FIRST_PLACED.
 enum NaribweRoomsActorId {
   /// "The fortune-teller lives at the highest house in Naribwe..."
   ACTOR_MAN_DIRECTING_TO_THE_FORTUNE_TELLER = ACTOR_FIRST_PLACED,
   /// "We're a small village, but if we all cooperate..."
   ACTOR_WOMAN_ON_COOPERATION,
+  /// "I am a teller of fortunes. Would you have a reading?"
   ACTOR_FORTUNE_TELLER,
   /// "My father is a fortune-teller, not a witch doctor."
   ACTOR_FORTUNE_TELLERS_CHILD,
   /// "By painting our bodies, we bring about good luck."
   ACTOR_VILLAGER_ON_BODY_PAINT,
-  ACTOR_WEAPON_SHOPKEEPER,
-  ACTOR_ARMOR_SHOPKEEPER,
+  /// Behind the swords on the shop's mat; across it, the weapon shop.
+  ACTOR_WEAPON_MERCHANT,
+  /// Behind the helms and shields beside them; across the mat, the armor shop.
+  ACTOR_ARMOR_MERCHANT,
   /// "If you like adventure, you should head out west across the river..."
   ACTOR_VILLAGER_ON_ADVENTURE,
+  /// A woman behind the inn's counter; across it, the inn.
   ACTOR_INNKEEPER,
-  /// The spot across the fortune-teller's table that talking to him
-  /// answers, and the marker of his reading, its flame and its smoke.
+  /// An unseen actor on the fortune-teller's table, which talking to him
+  /// across it reaches: "If you desire a reading, stand before the table..."
   ACTOR_FORTUNE_TABLE,
-  ACTOR_FORTUNE_MARKER,
-  ACTOR_FORTUNE_FLAME,
-  ACTOR_FORTUNE_SMOKE
+  /// The icon of the item the party sets on the table.
+  ACTOR_PLACED_ITEM,
+  /// Thin wisps of smoke that rise from the table after the cloud.
+  ACTOR_RISING_SMOKE,
+  /// A lilac cloud of smoke that bursts on the table as the dance ends.
+  ACTOR_SMOKE_CLOUD
 };
+
+/// SPRITE_FORTUNE_TELLER's dance: arms spread with his staff, the staff raised
+/// high, then a crouch, over and over.
+#define ANIM_FORTUNE_TELLER_DANCE 5
 
 extern struct Trigger gNaribweRooms_Triggers[];
 extern struct Trigger gNaribweRooms_TriggersOnReturn[];
@@ -69,6 +96,8 @@ void NaribweRooms_ReadProng(void);
 void NaribweRooms_ReadWeapon(void);
 
 void NaribweRooms_ReadArmor(void);
+
+void NaribweRooms_ReadOtherItem(void);
 
 /// "It costs 20 coins to hear what your future holds. Will you pay?"
 #define FORTUNE_PRICE 20
@@ -118,112 +147,114 @@ enum { SHOP_NARIBWE_WEAPONS = 14, SHOP_NARIBWE_ARMOR = 15 };
 /// Naribwe's inn, as Inn_CheckIn numbers the inns.
 enum { NARIBWE_INN = 5 };
 
-/// The weapon shopkeeper: across the counter, the shop; from anywhere else,
-/// advice to take a weapon to the fortune-teller.
-void NaribweRooms_RecommendFortuneTeller(s32 actor) {
+/// The weapon merchant sells across the counter; from anywhere else he advises
+/// taking a weapon to the fortune-teller.
+void NaribweRooms_TalkToWeaponMerchant(s32 speaker) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Shop_Run(SHOP_NARIBWE_WEAPONS, actor);
+    Shop_Run(SHOP_NARIBWE_WEAPONS, speaker);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgNaribweInteriorsIfYouAreBurdened);
     // "If you are burdened with many concerns, take a weapon to the..."
-    Event_ShowMessage(actor, 0);
+    Event_ShowMessage(speaker, 0);
     Event_End();
   }
 }
 
-/// The weapon shopkeeper once Gabomba's message is carried: across the
-/// counter, the shop; from anywhere else, how out-of-town customers are always
-/// sent to the fortune-teller.
-void NaribweRooms_RecommendFortuneTellerOnReturn(s32 actor) {
+/// The weapon merchant once Gabomba's message is carried: across the counter he
+/// sells; from anywhere else he sends out-of-town customers to the
+/// fortune-teller.
+void NaribweRooms_TalkToWeaponMerchantOnReturn(s32 speaker) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Shop_Run(SHOP_NARIBWE_WEAPONS, actor);
+    Shop_Run(SHOP_NARIBWE_WEAPONS, speaker);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgNaribweInteriorsWheneverIGetCustomers);
     // "Whenever I get customers from out of town, I always tell them the..."
-    Event_ShowMessage(actor, 0);
+    Event_ShowMessage(speaker, 0);
     Event_End();
   }
 }
 
-/// The armor shopkeeper: across the counter, the shop; from anywhere else,
-/// advice to visit the fortune-teller while in the village.
-void NaribweRooms_SendToFortuneTeller(s32 actor) {
+/// The armor merchant sells across the counter; from anywhere else he advises
+/// visiting the fortune-teller while in the village.
+void NaribweRooms_TalkToArmorMerchant(s32 speaker) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Shop_Run(SHOP_NARIBWE_ARMOR, actor);
+    Shop_Run(SHOP_NARIBWE_ARMOR, speaker);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId(
         (s32)MsgNaribweInteriorsYouShouldVisitFortuneTeller);
     // "You should visit the fortune- teller while you are in our village...."
-    Event_ShowMessage(actor, 0);
+    Event_ShowMessage(speaker, 0);
     Event_End();
   }
 }
 
-/// The armor shopkeeper once Gabomba's message is carried: across the counter,
-/// the shop; from anywhere else, the fortune-teller for anything one wishes to
-/// know.
-void NaribweRooms_SendToFortuneTellerOnReturn(s32 actor) {
+/// The armor merchant once Gabomba's message is carried: across the counter he
+/// sells; from anywhere else he sends the party to the fortune-teller for
+/// anything it wishes to know.
+void NaribweRooms_TalkToArmorMerchantOnReturn(s32 speaker) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Shop_Run(SHOP_NARIBWE_ARMOR, actor);
+    Shop_Run(SHOP_NARIBWE_ARMOR, speaker);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgNaribweInteriorsIfYouWishToKnow);
     // "If you wish to know anything, go to the fortune-teller. He's fast..."
-    Event_ShowMessage(actor, 0);
+    Event_ShowMessage(speaker, 0);
     Event_End();
   }
 }
 
-/// "Our cooking is famous all across Gondowan."
-void NaribweRooms_TalkAboutCooking(s32 actor) {
+/// The innkeeper opens the inn across the counter; from anywhere else she talks
+/// of the village's cooking.
+void NaribweRooms_TalkToInnkeeper(s32 speaker) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Inn_CheckIn(NARIBWE_INN, actor);
+    Inn_CheckIn(NARIBWE_INN, speaker);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgNaribweInteriorsOurCookingIsFamousAll);
     // "Our cooking is famous all across Gondowan. If you find you like it..."
-    Event_ShowMessage(actor, 0);
+    Event_ShowMessage(speaker, 0);
     Event_End();
   }
 }
 
-/// The innkeeper once Gabomba's message is carried: across the counter, the
-/// inn; from anywhere else, too many travelers to remember Piers among them.
-void NaribweRooms_TalkAboutTravelers(s32 actor) {
+/// The innkeeper once Gabomba's message is carried: across the counter she
+/// opens the inn; from anywhere else she sees too many travelers to remember
+/// Piers.
+void NaribweRooms_TalkToInnkeeperOnReturn(s32 speaker) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
   if (FACING_NEAREST_CARDINAL(facing) == FACING_NORTH) {
-    Inn_CheckIn(NARIBWE_INN, actor);
+    Inn_CheckIn(NARIBWE_INN, speaker);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgNaribweInteriorsISeeSoManyTravelers);
     // "I see so many travelers... How am I supposed to remember who Piers..."
-    Event_ShowMessage(actor, 0);
+    Event_ShowMessage(speaker, 0);
     Event_End();
   }
 }
 
-/// The fortune-teller offers a reading for 20 coins.
-/// "I am a teller of fortunes. Would you have a reading?"
+/// The fortune-teller, talked to across his table, offers a reading for 20
+/// coins; a No to either question sends the party back.
 void NaribweRooms_TalkToFortuneTeller(void) {
   u8 *message;
 
@@ -231,10 +262,12 @@ void NaribweRooms_TalkToFortuneTeller(void) {
   FieldEvent_ResolvePendingActions(0);
   message = MsgNaribweInteriorsIAmTellerOfFortunes;
   FieldEvent_SetMessageId((s32)message);
+  // "I am a teller of fortunes. Would you have a reading?"
   Event_OpenMessage(ACTOR_FORTUNE_TELLER, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
       0) {
     FieldEvent_SetMessageId((s32)(message + 2));
+    // "It costs 20 coins to hear what your future holds. Will you pay?"
     Event_OpenMessage(ACTOR_FORTUNE_TELLER, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
         0) {
@@ -243,6 +276,7 @@ void NaribweRooms_TalkToFortuneTeller(void) {
         Event_End();
       } else {
         FieldEvent_SetMessageId((s32)(message + 4));
+        // "Many want things they cannot afford. If you do not have the..."
         Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
         Event_End();
       }
@@ -258,26 +292,29 @@ void NaribweRooms_TalkToFortuneTeller(void) {
 struct Unit *Unit_Get(u32 unitId);
 void NaribweRooms_ReadShiningItem(void);
 
-/// Object 10 steps to (x, 96) without turning, then dances (mode 5).
+/// The fortune-teller steps sideways behind his table to x, still facing the
+/// party, and dances on.
 #define DANCE_TO(x)                                                            \
-  (Actor_Get(ACTOR_FORTUNE_TELLER)->steeringFlags &= ~1,                       \
+  (Actor_Get(ACTOR_FORTUNE_TELLER)->steeringFlags &= ~ACTOR_FACES_MOTION,      \
    Actor_WalkTo(ACTOR_FORTUNE_TELLER, x, 96),                                  \
-   Actor_SetAnimation(ACTOR_FORTUNE_TELLER, 5))
+   Actor_SetAnimation(ACTOR_FORTUNE_TELLER, ANIM_FORTUNE_TELLER_DANCE))
 
-/// The reading: the party sets one of a member's items on the table and the
-/// fortune-teller reads it by its kind, a prong of the Trident and the Trident
-/// itself on their own, then takes his 20 coins.
+/// The reading: the party sets one of a member's items on the table, the room
+/// turns red while the fortune-teller dances, and he reads the item by its
+/// type, a prong of the Trident and the Trident itself on their own, then
+/// takes his 20 coins.
 void NaribweRooms_ReadFortune(void) {
   s32 slot, unit;
   struct Unit *unitData;
-  const u8 *message, *refuse, *info;
+  const u8 *message, *refuse;
+  const struct ItemDefinition *info;
 #if !TLA_PATCH_1
   s32 item;
 #else
   u32 item;
 #endif
-  u8 kind;
-  s32 rawKind;
+  u8 type;
+  s32 rawType;
 
   FieldEvent_SetMessageId(MsgNaribweInteriorsVeryWellShowMeOne);
   // "Very well. Show me one of your items."
@@ -295,42 +332,49 @@ void NaribweRooms_ReadFortune(void) {
 #endif
       refuse = MsgNaribweInteriorsShallIGiveYouAnother;
       FieldEvent_SetMessageId(refuse);
+      // "Shall I give you another reading for a different item?"
       Event_OpenMessage(ACTOR_FORTUNE_TELLER, 0);
       if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(),
                                                 0) != 1)
         continue;
       FieldEvent_SetMessageId(refuse + 1);
+      // "Then away with you."
       Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
       return;
     }
     unitData = Unit_Get(unit);
     Item_GetDirect(unitData->inventory[slot]);
-    Actor_SetItemIcon(Actor_Get(ACTOR_FORTUNE_MARKER),
-                      unitData->inventory[slot]);
-    Actor_SetPosition(ACTOR_FORTUNE_MARKER, 672, 104);
+    Actor_SetItemIcon(Actor_Get(ACTOR_PLACED_ITEM), unitData->inventory[slot]);
+    Actor_SetPosition(ACTOR_PLACED_ITEM, 672, 104);
     FieldEvent_Wait(60);
     MessageArgument_Push(unitData->inventory[slot], MESSAGE_ARGUMENT_ITEM);
+    // "... placed on the table."
     Message_ShowCentered(MsgPlacedOnThe, 1);
     message = MsgNaribweInteriorsAreYouPrepared;
     FieldEvent_SetMessageId(message);
+    // "Are you prepared?"
     Event_OpenMessage(ACTOR_FORTUNE_TELLER, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
         1) {
-      Actor_SetPosition(ACTOR_FORTUNE_MARKER, 0, 0);
+      Actor_SetPosition(ACTOR_PLACED_ITEM, 0, 0);
       MessageArgument_Push(unitData->inventory[slot], MESSAGE_ARGUMENT_ITEM);
+      // "... changed his mind and took back the item."
       Message_ShowCentered(message + 1, 1);
       FieldEvent_SetMessageId(message + 2);
+      // "Shall I give you another reading for a different item?"
       Event_OpenMessage(ACTOR_FORTUNE_TELLER, 0);
       if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(),
                                                 0) != 1)
         continue;
       FieldEvent_SetMessageId(message + 3);
+      // "Then away with you."
       Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
       return;
     }
     break;
   }
   FieldEvent_SetMessageId(message + 4);
+  // "I shall begin my reading..."
   Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
   FieldEvent_Wait(30);
@@ -338,7 +382,7 @@ void NaribweRooms_ReadFortune(void) {
   PaletteFade_Interpolate(30);
   FieldEvent_Wait(120);
   Event_PlaySound(MUS_KIBOMBO);
-  Actor_SetAnimation(ACTOR_FORTUNE_TELLER, 5);
+  Actor_SetAnimation(ACTOR_FORTUNE_TELLER, ANIM_FORTUNE_TELLER_DANCE);
   Actor_WaitForAnimationChange(ACTOR_FORTUNE_TELLER);
   DANCE_TO(664);
   FieldEvent_Wait(30);
@@ -351,28 +395,29 @@ void NaribweRooms_ReadFortune(void) {
   DANCE_TO(672);
   FieldActor_Jump(ACTOR_FORTUNE_TELLER, 4, 30);
   FieldActor_Jump(ACTOR_FORTUNE_TELLER, 4, 30);
-  Actor_SetAnimation(ACTOR_FORTUNE_TELLER, 5);
-  Actor_SetAnimation(ACTOR_FORTUNE_TELLER, 0);
+  Actor_SetAnimation(ACTOR_FORTUNE_TELLER, ANIM_FORTUNE_TELLER_DANCE);
+  Actor_SetAnimation(ACTOR_FORTUNE_TELLER, ANIM_STILL);
   Event_PlaySound(MUS_KIBOMBO);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_Interpolate(30);
-  Actor_SetPosition(ACTOR_FORTUNE_SMOKE, 672, 104);
+  Actor_SetPosition(ACTOR_SMOKE_CLOUD, 672, 104);
   Event_PlaySound(SE_CLATTER);
-  Actor_SetAnimation(ACTOR_FORTUNE_SMOKE, 2);
-  Actor_WaitForAnimationChange(ACTOR_FORTUNE_SMOKE);
-  Actor_SetPosition(ACTOR_FORTUNE_SMOKE, 0, 0);
+  Actor_SetAnimation(ACTOR_SMOKE_CLOUD, 2);
+  Actor_WaitForAnimationChange(ACTOR_SMOKE_CLOUD);
+  Actor_SetPosition(ACTOR_SMOKE_CLOUD, 0, 0);
   FieldEvent_Wait(4);
-  Actor_SetPosition(ACTOR_FORTUNE_FLAME, 672, 104);
-  Actor_SetAnimation(ACTOR_FORTUNE_FLAME, 4);
-  Actor_WaitForAnimationChange(ACTOR_FORTUNE_FLAME);
+  Actor_SetPosition(ACTOR_RISING_SMOKE, 672, 104);
+  Actor_SetAnimation(ACTOR_RISING_SMOKE, 4);
+  Actor_WaitForAnimationChange(ACTOR_RISING_SMOKE);
   FieldEvent_Wait(15);
-  Actor_SetPosition(ACTOR_FORTUNE_FLAME, 0, 0);
+  Actor_SetPosition(ACTOR_RISING_SMOKE, 0, 0);
   FieldEvent_Wait(30);
   Actor_ShowEmote(gMainRoutineWork.leaderActorId, EMOTE_IN_FRONT | EMOTE_WINCE,
                   0);
   FieldEvent_Wait(60);
   Event_PlaySound(MUS_NARIBWE);
   Actor_ShowEmote(ACTOR_FORTUNE_TELLER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
+  // "I see..."
   Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
   unitData = Unit_Get(unit);
   info = Item_GetDirect(unitData->inventory[slot]);
@@ -397,28 +442,30 @@ void NaribweRooms_ReadFortune(void) {
       Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     }
   } else {
-    rawKind = info[2];
-    kind = rawKind;
-    if (kind == ITEM_TYPE_PSYNERGY)
+    rawType = info->type;
+    type = rawType;
+    if (type == ITEM_TYPE_PSYNERGY)
       NaribweRooms_ReadShiningItem();
-    else if (kind == ITEM_TYPE_WEAPON)
+    else if (type == ITEM_TYPE_WEAPON)
       NaribweRooms_ReadWeapon();
-    else if ((u8)((u8)rawKind - ITEM_TYPE_ARMOR) <=
+    else if ((u8)((u8)rawType - ITEM_TYPE_ARMOR) <=
              ITEM_TYPE_BOOTS - ITEM_TYPE_ARMOR)
       NaribweRooms_ReadArmor();
     else
       NaribweRooms_ReadOtherItem();
   }
-  Actor_SetPosition(ACTOR_FORTUNE_MARKER, 0, 0);
+  Actor_SetPosition(ACTOR_PLACED_ITEM, 0, 0);
   Party_AdjustCoins(-FORTUNE_PRICE);
 }
 
-/// The fortune teller's readings, one numbering for all four kinds: the foe a
-/// weapon shows, the power a shining item shows, the path any other item shows
+/// The fortune-teller's readings, one numbering for all four kinds: the foe a
+/// weapon shows, the power a Psynergy item shows, the path any other item shows
 /// and the prong a prong of the Trident shows.
 enum FortuneReading {
-  /// Before Gabomba's message is carried: "I see you inside a sacred icon."
-  READING_SACRED_ICON = 0,
+  /// Before Gabomba's message is carried, for a weapon "Many enemies await
+  /// you, far beyond the mountains.", for any other item "I see you inside a
+  /// sacred icon."
+  READING_BEFORE_GABOMBAS_MESSAGE = 0,
   READING_FOE_IN_MISTY_SEA = 1, ///< "In a misty sea, a mighty foe..."
   READING_EAST_CONQUERED = 2,   ///< "None in the eastern world can stand..."
   /// The first power still lacking: Reveal, Sand, Parch, the Burst Brooch, the
@@ -454,34 +501,38 @@ s32 NaribweRooms_ProngsHeld(void);
 u8 *NaribweRooms_GetDjinniHint(void);
 
 /// A weapon: the foe that lies beyond it.
-/// "Beyond the weapon you set down lies a terrible foe."
 void NaribweRooms_ReadWeapon(void) {
   u8 *message = MsgNaribweInteriorsBeyondWeaponYouSetDown;
 
   FieldEvent_SetMessageId((s32)message);
+  // "Beyond the weapon you set down lies a terrible foe."
   Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
   switch (NaribweRooms_FoeAhead()) {
-  case READING_SACRED_ICON:
+  case READING_BEFORE_GABOMBAS_MESSAGE:
     FieldEvent_SetMessageId((s32)(message + 1));
+    // "Many enemies await you, far beyond the mountains. If you move to..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
   case READING_FOE_IN_MISTY_SEA:
     FieldEvent_SetMessageId((s32)(message + 2));
+    // "In a misty sea, a mighty foe... A fiersome battle awaits you..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
   case READING_EAST_CONQUERED:
     FieldEvent_SetMessageId((s32)(message + 3));
+    // "None in the eastern world can stand against the power you possess."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
   }
 }
 
-/// An item of kind 6: a power shining beyond it, and where the story goes next.
-/// "I feel a shining power glowing beyond the item before me."
+/// A Psynergy item: a power shining beyond it, and where the next power to gain
+/// waits.
 void NaribweRooms_ReadShiningItem(void) {
   u8 *message = MsgNaribweInteriorsIFeelShiningPowerGlowing;
 
   FieldEvent_SetMessageId((s32)message);
+  // "I feel a shining power glowing beyond the item before me."
   Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
   switch (NaribweRooms_NextPowerToGain()) {
   case READING_SEEK_REVEAL:
@@ -512,22 +563,24 @@ void NaribweRooms_ReadShiningItem(void) {
     break;
   default:
     FieldEvent_SetMessageId((s32)(message + 6));
+    // "The eastern lands hold little for you now. You will not remain..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
   }
 }
 
-/// A piece of armor, kinds 2 to 5: no future, and where an unfound Djinni
-/// waits.
-/// "In the item you have placed before me, I can see nothing of the future..."
+/// Armor, a shield, a helm or boots: where a Djinni still to be found waits, or
+/// nothing of the future once none is left.
 void NaribweRooms_ReadArmor(void) {
   s32 message = NaribweRooms_GetDjinniHint();
 
   if (message == (s32)MsgNaribweInteriorsInItemYouHavePlaced) {
     FieldEvent_SetMessageId(message);
+    // "In the item you have placed before me, I can see nothing of the..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
   } else {
     FieldEvent_SetMessageId((s32)MsgNaribweInteriorsInItemYouHavePlaced - 42);
+    // "From the garb you have placed before me, I sense the presence of the..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     FieldEvent_SetMessageId(message);
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
@@ -535,13 +588,12 @@ void NaribweRooms_ReadArmor(void) {
 }
 
 /// Any other item: the path the party should follow.
-/// "Beyond the item before me, I see a path for you to follow."
 void NaribweRooms_ReadOtherItem(void) {
   FieldEvent_SetMessageId((s32)MsgNaribweInteriorsBeyondItemBeforeMe);
   // "Beyond the item before me, I see a path for you to follow."
   Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
   switch (NaribweRooms_NextPath()) {
-  case READING_SACRED_ICON:
+  case READING_BEFORE_GABOMBAS_MESSAGE:
     FieldEvent_SetMessageId((s32)MsgNaribweInteriorsISeeYouInsideSacred);
     // "I see you inside a sacred icon. By listening to the voices, you will..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
@@ -574,29 +626,33 @@ void NaribweRooms_ReadOtherItem(void) {
   }
 }
 
-/// A prong of the Trident: the foe it holds power over.
-/// "The object you have placed before me wields a mighty power over a terrible
-/// foe."
+/// A prong of the Trident: the power it holds over a foe, and where a prong
+/// still missing lies.
 void NaribweRooms_ReadProng(void) {
   u8 *message = MsgNaribweInteriorsObjectYouHavePlacedBefore;
 
   FieldEvent_SetMessageId((s32)message);
+  // "The object you have placed before me wields a mighty power over a..."
   Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
   switch (NaribweRooms_ProngsHeld()) {
   case READING_PRONG_BY_BEACH:
     FieldEvent_SetMessageId((s32)(message + 1));
+    // "Near the beach where you washed ashore lie ancient ruins. Seek them..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
   case READING_PRONG_IN_MOSSY_RUINS:
     FieldEvent_SetMessageId((s32)(message + 2));
+    // "In the northern reaches of the Eastern Sea lie moss-covered,..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
   case READING_PRONG_IN_TOWER:
     FieldEvent_SetMessageId((s32)(message + 3));
+    // "In the distant south lies an icy cape. Above the rocky shore stands..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
   case READING_ALL_PRONGS:
     FieldEvent_SetMessageId((s32)(message + 4));
+    // "You have the weapon you need in many fragments.. Bring them to the..."
     Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
     break;
   }
@@ -606,15 +662,14 @@ void NaribweRooms_ReadProng(void) {
 /// carried, then the foe in the misty sea, and none once Poseidon is beaten.
 s32 NaribweRooms_FoeAhead(void) {
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED) == 0)
-    return READING_SACRED_ICON;
+    return READING_BEFORE_GABOMBAS_MESSAGE;
   return (Event_GetFlag(FLAG_SEA_OF_TIME_OPENED) != 0) +
          READING_FOE_IN_MISTY_SEA;
 }
 
-/// The first power the party still lacks, for a shining item's reading: three
+/// The first power the party still lacks, for a Psynergy item's reading: three
 /// Psynergy (Reveal, Sand and Parch) and two items (the Burst Brooch and the
-/// Grindstone); 8 when it
-/// has them all.
+/// Grindstone), or READING_ALL_POWERS once it has them all.
 s32 NaribweRooms_NextPowerToGain(void) {
   if (Party_FindOwnerWithAction(ABILITY_REVEAL) == -1)
     return READING_SEEK_REVEAL;
@@ -629,11 +684,11 @@ s32 NaribweRooms_NextPowerToGain(void) {
   return READING_ALL_POWERS;
 }
 
-/// The path an ordinary item's reading points along, by the story's flags and
-/// the Trident's prongs (items 439 to 441) and the Trident (item 326).
+/// The path an ordinary item's reading points along, by the story's flags, the
+/// Trident's prongs and the Trident.
 s32 NaribweRooms_NextPath(void) {
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED) == 0)
-    return READING_SACRED_ICON;
+    return READING_BEFORE_GABOMBAS_MESSAGE;
   if (FieldPartyInventory_FindMember(ITEM_TRIDENT) == -1) {
     if (Event_GetFlag(FLAG_SEA_OF_TIME_OPENED) == 0) {
       if (FieldPartyInventory_FindMember(ITEM_RIGHT_PRONG) == -1 ||
@@ -650,8 +705,10 @@ s32 NaribweRooms_NextPath(void) {
   return READING_WEST;
 }
 
-/// Which of the three prongs the party carries, as the prong's reading tells
-/// it.
+/// Where a prong's reading sends the party: to the ruins by the beach while the
+/// Right Prong is missing, the moss-covered ruins while the Left Prong is, the
+/// icy cape's tower while only the Center Prong is, and on once it holds all
+/// three.
 s32 NaribweRooms_ProngsHeld(void) {
   if (FieldPartyInventory_FindMember(ITEM_RIGHT_PRONG) == -1 &&
       (FieldPartyInventory_FindMember(ITEM_CENTER_PRONG) != -1 ||
@@ -675,19 +732,19 @@ s32 NaribweRooms_ProngsHeld(void) {
     return READING_ALL_PRONGS;
 }
 
-/// One past the last Djinni of an element group found, skipping the ones never
-/// hinted at, or -1 when none is.
+/// One past the last Djinni of an element the party has found, of those this
+/// game hides and the fortune-teller hints at, or -1 when it has found none.
 s32 NaribweRooms_DjinniHintLimit(s32 group) {
   s32 i = DJINNI_INDEX(DJINNI_CRYSTAL);
 
   do {
     s32 flag = FLAG_DJINNI(group * DJINN_PER_ELEMENT + i);
 
-    if (group == 0) {
+    if (group == ELEMENT_VENUS) {
       if (i == DJINNI_INDEX(DJINNI_ECHO))
         continue;
     }
-    if (group == 1) {
+    if (group == ELEMENT_MERCURY) {
       if (i == DJINNI_INDEX(DJINNI_SPRING))
         continue;
       if (i == DJINNI_INDEX(DJINNI_SHADE))
@@ -699,10 +756,11 @@ s32 NaribweRooms_DjinniHintLimit(s32 group) {
   return -1;
 }
 
-/// Lists the Djinn flags of an element still unset, from the first Djinni not
-/// carried over from Isaac's party up to the limit and skipping Echo, Spring
-/// and Shade, which the fortune teller never hints at; returns how many.
-s32 NaribweRooms_ListUnfoundDjinn(s32 limit, s32 group, s32 *out) {
+/// Lists the flags of an element's Djinn still to be found, from the first
+/// Djinni not carried over from Isaac's party up to the limit and skipping
+/// Echo, Spring and Shade, which the fortune-teller never hints at; returns
+/// how many.
+s32 NaribweRooms_ListMissingDjinn(s32 limit, s32 group, s32 *out) {
   s32 count = 0;
   s32 i = TRANSFERRED_DJINN_PER_ELEMENT;
 
@@ -712,9 +770,9 @@ s32 NaribweRooms_ListUnfoundDjinn(s32 limit, s32 group, s32 *out) {
     do {
       s32 flag;
 
-      if (group == 0 && i == DJINNI_INDEX(DJINNI_ECHO))
+      if (group == ELEMENT_VENUS && i == DJINNI_INDEX(DJINNI_ECHO))
         continue;
-      if (group == 1) {
+      if (group == ELEMENT_MERCURY) {
         if (i == DJINNI_INDEX(DJINNI_SPRING))
           continue;
         if (i == DJINNI_INDEX(DJINNI_SHADE))
@@ -730,39 +788,48 @@ s32 NaribweRooms_ListUnfoundDjinn(s32 limit, s32 group, s32 *out) {
   return count;
 }
 
-/// The message telling where an unfound Djinni waits, or
+/// Higher than any element's hint limit, so that the first one is lower.
+#define HINT_LIMIT_ABOVE_ALL 9999
+
+/// The message telling where a Djinni still to be found waits, or
 /// MsgNaribweInteriorsInItemYouHavePlaced when none is left to find.
+///
+/// A Djinni the party has passed by, one before the last of its element it has
+/// found, is picked at random; when it has passed none by, the first still to
+/// be found of the element it has found the fewest of.
 u8 *NaribweRooms_GetDjinniHint(void) {
-  s32 *hints = (s32 *)Value2((s32 (*)())HeapSlot_AllocEwram,
-                             HEAP_SLOT_DJINNI_HINTS, 320);
-  s32 limits[4];
+  s32 *hints =
+      (s32 *)Value2((s32 (*)())HeapSlot_AllocEwram, HEAP_SLOT_DJINNI_HINTS,
+                    ELEMENT_COUNT * DJINN_PER_ELEMENT * sizeof(s32));
+  s32 limits[ELEMENT_COUNT];
   s32 count = 0;
-  s32 lowest = 9999;
+  s32 lowest = HINT_LIMIT_ABOVE_ALL;
   s32 lowestGroup = 0;
   u32 group;
   s32 index;
   u8 *message;
 
-  for (group = 0; group <= 3; group++) {
+  for (group = 0; group < ELEMENT_COUNT; group++) {
     s32 limit = NaribweRooms_DjinniHintLimit(group);
 
+    // DEAD: each element's limit, which nothing reads; the ROM keeps its store.
     limits[group] = limit;
     if (lowest > limit) {
       lowest = limit;
       lowestGroup = group;
     }
     if (limit != -1)
-      count += NaribweRooms_ListUnfoundDjinn(limit, group, hints + count);
+      count += NaribweRooms_ListMissingDjinn(limit, group, hints + count);
   }
   if (count == 0) {
-    for (group = 0; group <= 3; group++)
-      count += NaribweRooms_ListUnfoundDjinn(DJINNI_INDEX(DJINNI_CRYSTAL) + 1,
+    for (group = 0; group < ELEMENT_COUNT; group++)
+      count += NaribweRooms_ListMissingDjinn(DJINNI_INDEX(DJINNI_CRYSTAL) + 1,
                                              group, hints + count);
     if (count == 0) {
       HeapSlot_Release(HEAP_SLOT_DJINNI_HINTS);
       return MsgNaribweInteriorsInItemYouHavePlaced;
     }
-    NaribweRooms_ListUnfoundDjinn(DJINNI_INDEX(DJINNI_CRYSTAL) + 1, lowestGroup,
+    NaribweRooms_ListMissingDjinn(DJINNI_INDEX(DJINNI_CRYSTAL) + 1, lowestGroup,
                                   hints);
     index = 0;
   } else {
@@ -902,47 +969,49 @@ u8 *NaribweRooms_GetDjinniHint(void) {
 
 void Actor_DisableById(s32 id);
 
+/// Opens the houses through the window transition, and keeps the reading's
+/// item, smoke and cloud out of sight until a reading needs them.
 s32 Scene_Initialize(void) {
   struct Actor *actor;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
   Actor_DisableById(ACTOR_FORTUNE_TABLE);
-  Actor_DisableById(ACTOR_FORTUNE_MARKER);
+  Actor_DisableById(ACTOR_PLACED_ITEM);
   FieldActor_SetSpritePriority(ACTOR_FORTUNE_TELLER, 2);
   Actor_Get(ACTOR_VILLAGER_ON_BODY_PAINT)->collisionFlags |= ACTOR_NEAR_TALK;
   FieldActor_SetSpritePriority(ACTOR_INNKEEPER, 2);
   Actor_Get(ACTOR_INNKEEPER)->collisionFlags |= ACTOR_NEAR_TALK;
 
-  actor = Actor_Get(ACTOR_FORTUNE_MARKER);
+  actor = Actor_Get(ACTOR_PLACED_ITEM);
   actor->motionFlags = 0;
   actor->y.fixed = -toFIXED(4);
   actor->groundHeight = -toFIXED(4);
-  Actor_Get(ACTOR_FORTUNE_MARKER)->priorityFlags |=
-      ACTOR_PRIORITY_IGNORES_RISES;
-  FieldActor_SetSpritePriority(ACTOR_FORTUNE_MARKER, 1);
-  Actor_SetPosition(ACTOR_FORTUNE_MARKER, 0, 0);
+  Actor_Get(ACTOR_PLACED_ITEM)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+  FieldActor_SetSpritePriority(ACTOR_PLACED_ITEM, 1);
+  Actor_SetPosition(ACTOR_PLACED_ITEM, 0, 0);
 
-  actor = Actor_Get(ACTOR_FORTUNE_FLAME);
+  actor = Actor_Get(ACTOR_RISING_SMOKE);
   actor->motionFlags = 0;
   actor->y.fixed = toFIXED(12);
   actor->groundHeight = toFIXED(12);
-  Actor_Get(ACTOR_FORTUNE_FLAME)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
-  FieldActor_SetSpritePriority(ACTOR_FORTUNE_FLAME, 1);
-  Actor_SetPosition(ACTOR_FORTUNE_FLAME, 0, 0);
+  Actor_Get(ACTOR_RISING_SMOKE)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+  FieldActor_SetSpritePriority(ACTOR_RISING_SMOKE, 1);
+  Actor_SetPosition(ACTOR_RISING_SMOKE, 0, 0);
 
-  actor = Actor_Get(ACTOR_FORTUNE_SMOKE);
+  actor = Actor_Get(ACTOR_SMOKE_CLOUD);
   actor->motionFlags = 0;
   actor->y.fixed = toFIXED(12);
   actor->groundHeight = toFIXED(12);
-  Actor_Get(ACTOR_FORTUNE_SMOKE)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
-  FieldActor_SetSpritePriority(ACTOR_FORTUNE_SMOKE, 1);
-  Actor_SetPosition(ACTOR_FORTUNE_SMOKE, 0, 0);
+  Actor_Get(ACTOR_SMOKE_CLOUD)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+  FieldActor_SetSpritePriority(ACTOR_SMOKE_CLOUD, 1);
+  Actor_SetPosition(ACTOR_SMOKE_CLOUD, 0, 0);
 
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_FORTUNE_FLAME), 0);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_FORTUNE_SMOKE), 0);
-  FieldActor_SetSpriteColor(Actor_Get(ACTOR_FORTUNE_SMOKE), SPRITE_COLOR_GBR);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_RISING_SMOKE), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_SMOKE_CLOUD), 0);
+  FieldActor_SetSpriteColor(Actor_Get(ACTOR_SMOKE_CLOUD), SPRITE_COLOR_GBR);
   return 0;
 }
 
@@ -952,11 +1021,16 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 u32 gSceneExits[] = {
     SCENE_EXITS(NaribweRooms),
-    SCENE_EXIT_UNLESS(1, Naribwe, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, Naribwe, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, Naribwe, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, Naribwe, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, Naribwe, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(NARIBWE_ROOMS_TO_NARIBWE_NORTHWEST, Naribwe,
+                      NARIBWE_FROM_NARIBWE_ROOMS_NORTHWEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(NARIBWE_ROOMS_TO_NARIBWE_WEST, Naribwe,
+                      NARIBWE_FROM_NARIBWE_ROOMS_WEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(NARIBWE_ROOMS_TO_NARIBWE_SOUTHWEST, Naribwe,
+                      NARIBWE_FROM_NARIBWE_ROOMS_SOUTHWEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(NARIBWE_ROOMS_TO_NARIBWE_SOUTHEAST, Naribwe,
+                      NARIBWE_FROM_NARIBWE_ROOMS_SOUTHEAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(NARIBWE_ROOMS_TO_NARIBWE_NORTHEAST, Naribwe,
+                      NARIBWE_FROM_NARIBWE_ROOMS_NORTHEAST, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, NaribweRooms, 7, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, NaribweRooms, 6, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
@@ -1001,12 +1075,19 @@ struct ActorPlacement gActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
+/// The ways out, the villagers talked to and read, and the fortune-teller's
+/// table, until Gabomba's message is carried.
 struct Trigger gNaribweRooms_Triggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, NARIBWE_ROOMS_TO_NARIBWE_NORTHWEST, CONDITION_ALWAYS,
+     NARIBWE_ROOMS_TO_NARIBWE_NORTHWEST},
+    {TRIGGER_EXIT, NARIBWE_ROOMS_TO_NARIBWE_WEST, CONDITION_ALWAYS,
+     NARIBWE_ROOMS_TO_NARIBWE_WEST},
+    {TRIGGER_EXIT, NARIBWE_ROOMS_TO_NARIBWE_SOUTHWEST, CONDITION_ALWAYS,
+     NARIBWE_ROOMS_TO_NARIBWE_SOUTHWEST},
+    {TRIGGER_EXIT, NARIBWE_ROOMS_TO_NARIBWE_SOUTHEAST, CONDITION_ALWAYS,
+     NARIBWE_ROOMS_TO_NARIBWE_SOUTHEAST},
+    {TRIGGER_EXIT, NARIBWE_ROOMS_TO_NARIBWE_NORTHEAST, CONDITION_ALWAYS,
+     NARIBWE_ROOMS_TO_NARIBWE_NORTHEAST},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_TALK, ACTOR_MAN_DIRECTING_TO_THE_FORTUNE_TELLER, CONDITION_ALWAYS,
@@ -1019,14 +1100,14 @@ struct Trigger gNaribweRooms_Triggers[] = {
      MSGNO(MsgNaribweInteriorsMyFatherIsFortuneTeller)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_BODY_PAINT, CONDITION_ALWAYS,
      MSGNO(MsgNaribweInteriorsByPaintingOurBodies)},
-    {TRIGGER_TALK, ACTOR_WEAPON_SHOPKEEPER, CONDITION_ALWAYS,
-     EVENT(NaribweRooms_RecommendFortuneTeller)},
-    {TRIGGER_TALK, ACTOR_ARMOR_SHOPKEEPER, CONDITION_ALWAYS,
-     EVENT(NaribweRooms_SendToFortuneTeller)},
+    {TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS,
+     EVENT(NaribweRooms_TalkToWeaponMerchant)},
+    {TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS,
+     EVENT(NaribweRooms_TalkToArmorMerchant)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_ADVENTURE, CONDITION_ALWAYS,
      MSGNO(MsgNaribweInteriorsIfYouLikeAdventure)},
     {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS,
-     EVENT(NaribweRooms_TalkAboutCooking)},
+     EVENT(NaribweRooms_TalkToInnkeeper)},
     {TRIGGER_TALK, ACTOR_FORTUNE_TABLE, CONDITION_ALWAYS,
      EVENT(NaribweRooms_TalkToFortuneTeller)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
@@ -1040,9 +1121,9 @@ struct Trigger gNaribweRooms_Triggers[] = {
      CONDITION_ALWAYS, MSGNO(MsgNaribweInteriorsMyFatherMayNot)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_BODY_PAINT,
      CONDITION_ALWAYS, MSGNO(MsgNaribweInteriorsBodyPaintingAlsoProtectsUs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_SHOPKEEPER,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT,
      CONDITION_ALWAYS, MSGNO(MsgNaribweInteriorsICanLookAtAny)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_SHOPKEEPER,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT,
      CONDITION_ALWAYS, MSGNO(MsgNaribweInteriorsWheneverIGetMyFortune)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_ADVENTURE,
      CONDITION_ALWAYS, MSGNO(MsgNaribweInteriorsRiverIsProbablyVeryDangerous)},
@@ -1053,12 +1134,18 @@ struct Trigger gNaribweRooms_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
+/// The same, once Gabomba's message is carried.
 struct Trigger gNaribweRooms_TriggersOnReturn[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, NARIBWE_ROOMS_TO_NARIBWE_NORTHWEST, CONDITION_ALWAYS,
+     NARIBWE_ROOMS_TO_NARIBWE_NORTHWEST},
+    {TRIGGER_EXIT, NARIBWE_ROOMS_TO_NARIBWE_WEST, CONDITION_ALWAYS,
+     NARIBWE_ROOMS_TO_NARIBWE_WEST},
+    {TRIGGER_EXIT, NARIBWE_ROOMS_TO_NARIBWE_SOUTHWEST, CONDITION_ALWAYS,
+     NARIBWE_ROOMS_TO_NARIBWE_SOUTHWEST},
+    {TRIGGER_EXIT, NARIBWE_ROOMS_TO_NARIBWE_SOUTHEAST, CONDITION_ALWAYS,
+     NARIBWE_ROOMS_TO_NARIBWE_SOUTHEAST},
+    {TRIGGER_EXIT, NARIBWE_ROOMS_TO_NARIBWE_NORTHEAST, CONDITION_ALWAYS,
+     NARIBWE_ROOMS_TO_NARIBWE_NORTHEAST},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_TALK, ACTOR_MAN_DIRECTING_TO_THE_FORTUNE_TELLER, CONDITION_ALWAYS,
@@ -1071,14 +1158,14 @@ struct Trigger gNaribweRooms_TriggersOnReturn[] = {
      MSGNO(MsgNaribweInteriorsIfTroubleResides)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_BODY_PAINT, CONDITION_ALWAYS,
      MSGNO(MsgNaribweInteriorsReadingFortunesInPeoplesItems)},
-    {TRIGGER_TALK, ACTOR_WEAPON_SHOPKEEPER, CONDITION_ALWAYS,
-     EVENT(NaribweRooms_RecommendFortuneTellerOnReturn)},
-    {TRIGGER_TALK, ACTOR_ARMOR_SHOPKEEPER, CONDITION_ALWAYS,
-     EVENT(NaribweRooms_SendToFortuneTellerOnReturn)},
+    {TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS,
+     EVENT(NaribweRooms_TalkToWeaponMerchantOnReturn)},
+    {TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS,
+     EVENT(NaribweRooms_TalkToArmorMerchantOnReturn)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_ADVENTURE, CONDITION_ALWAYS,
      MSGNO(MsgIfIsTraveling)},
     {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS,
-     EVENT(NaribweRooms_TalkAboutTravelers)},
+     EVENT(NaribweRooms_TalkToInnkeeperOnReturn)},
     {TRIGGER_TALK, ACTOR_FORTUNE_TABLE, CONDITION_ALWAYS,
      EVENT(NaribweRooms_TalkToFortuneTeller)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
@@ -1092,9 +1179,9 @@ struct Trigger gNaribweRooms_TriggersOnReturn[] = {
      CONDITION_ALWAYS, MSGNO(MsgNaribweInteriorsFatherShouldChargeMore)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_BODY_PAINT,
      CONDITION_ALWAYS, MSGNO(MsgNaribweInteriorsAfterFathersBeenReadingAll)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_SHOPKEEPER,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT,
      CONDITION_ALWAYS, MSGNO(MsgNaribweInteriorsWhenILookAtWeapons)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_SHOPKEEPER,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT,
      CONDITION_ALWAYS, MSGNO(MsgNaribweInteriorsILikeOfferingArmor)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_ADVENTURE,
      CONDITION_ALWAYS, MSGNO(MsgNaribweInteriorsHePaidMeLot)},

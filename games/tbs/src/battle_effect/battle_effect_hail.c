@@ -77,10 +77,11 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
       s32 x;
       s32 y;
 
-      orbit = frame << 11;
+      orbit = frame * (TRIG_TURN / 32);
       x = FIXEDtoINT(-Trig_Sin(orbit) * 4) + screenX / 2 - 10;
       y = FIXEDtoINT(Trig_Cos(orbit) * 2) + screenY - 22;
-      // Never true: the loop ends at frame 63.
+      // DEAD: frame never passes 69, the loop ending at frame 63; the ROM
+      // keeps the compare and the rise.
       if (frame > 69)
         y = (y - frame * 2) + 138;
       draw[1](canvas, work->sheet + HAIL_DJINNI_PICTURE, x, y,
@@ -150,6 +151,11 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
 
 /// The small Venus Djinni in the portal sheet.
 #define GROUND_DJINNI_PICTURE 26048
+/// The crackles round the portals, four a portal, in work->particles from
+/// GROUND_FIRST_CRACKLE.
+#define GROUND_FIRST_CRACKLE 32
+#define GROUND_CRACKLES 32
+#define GROUND_CRACKLES_PER_PORTAL 4
 
 /// After a Venus Djinni enters, six glowing portals leave the user, swirl and
 /// close in on the first target, each striking it as it arrives.
@@ -208,7 +214,7 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
       BattleEffect_StepPaletteToResource(RESOURCE_PORTAL_SHEET);
     // The Djinni circles above the user, then rises away.
     if (work->args->prelude == 1) {
-      s32 angle = frame << 11;
+      s32 angle = frame * (TRIG_TURN / 32);
       s32 x = FIXEDtoINT(-Trig_Sin(angle) * 4) + screenX / 2 - 10;
       s32 y = FIXEDtoINT(Trig_Cos(angle) * 2) + screenY - 22;
 
@@ -231,8 +237,8 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
     }
     // Crackles flicker round each portal.
     if ((frame & 1) == 0) {
-      for (i = 0; i != 32; i++) {
-        struct Particle *crackle = &work->particles[32 + i];
+      for (i = 0; i != GROUND_CRACKLES; i++) {
+        struct Particle *crackle = &work->particles[GROUND_FIRST_CRACKLE + i];
 
         crackle->velocityX = Random16() % 6 + 3;
         crackle->velocityY = gHail_CrackleFlips[Random16() & 3];
@@ -260,8 +266,10 @@ void BattleEffect_RunGround(struct BattleEffectParams *args) {
             draw[0](canvas, work->sheet + gHail_PortalPictures[2],
                     x + gHail_PortalX[2], y + gHail_PortalY[2],
                     gHail_PortalWidths[2], gHail_PortalHeights[2]);
-          for (j = 0; j != 4; j++) {
-            struct Particle *crackle = &work->particles[32 + i * 4 + j];
+          for (j = 0; j != GROUND_CRACKLES_PER_PORTAL; j++) {
+            struct Particle *crackle =
+                &work->particles[GROUND_FIRST_CRACKLE +
+                                 i * GROUND_CRACKLES_PER_PORTAL + j];
             s32 crackleX;
             s32 crackleY;
 
@@ -339,3 +347,6 @@ void BattleCamera_Shake(s32 rangeX, u32 rangeY) {
 #undef HAIL_CHIP_PICTURES
 #undef HAIL_DJINNI_PICTURE
 #undef GROUND_DJINNI_PICTURE
+#undef GROUND_FIRST_CRACKLE
+#undef GROUND_CRACKLES
+#undef GROUND_CRACKLES_PER_PORTAL

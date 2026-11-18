@@ -1,16 +1,17 @@
 /// @file
-/// A hall of Jupiter Lighthouse just below its aerie. Its stairs lead up to
-/// the aerie (later to the beacon's floor) and down to rooms 5 and 8. Standing
-/// on the button by its door holds the door open; the pillar pushed onto it
-/// (JupiterLighthouse_CheckBlockOnCell) keeps it open, a shortcut through the
-/// tower. Cracked tiles on the floor and on the upper ledge give way under a
-/// second step (JupiterLighthouse_StepOnLowerCrackedTile,
-/// JupiterLighthouse_StepOnUpperCrackedTile), dropping the party to the floor
-/// below or to room 8.
+/// Rooms of Jupiter Lighthouse just below its aerie, on one map. Their stairs
+/// lead up to the aerie (later to the beacon's floor) and down to the rooms of
+/// the blue key and the red key. Standing on the button in the room of cracked
+/// tiles holds a stone door open; the pillar beside it, moved onto it
+/// (JupiterLighthouse_CheckBlockOnCell), keeps it open, a shortcut through the
+/// tower. The room's cracked tiles give way under a second step
+/// (JupiterLighthouse_StepOnCrackedTile), dropping the party into the hall of
+/// the four winged statues below, where a single cracked tile in a ring of
+/// studs (JupiterLighthouse_StepOnSingleCrackedTile) drops it into the room of
+/// the blue key.
 ///
-/// The cracked tiles' code is in
-/// jupiter_lighthouse_room_cracked_floor/, in two parts the shared field effect
-/// objects link between.
+/// After the scene's own code come the shared field effect spawner and the
+/// cracked tiles' routines, which it links between.
 
 #include "shared/tables.h"
 #include "flags.h"
@@ -56,8 +57,33 @@
 #define FLAG_DOOR_BUTTON_HELD FLAG_SCENE_TEMP_00
 
 /// The pillar the party pushes onto the button by the door, after the four
-/// angel statues in gActorPlacements.
+/// winged statues in gActorPlacements.
 enum { ACTOR_SHORTCUT_PILLAR = ACTOR_FIRST_PLACED + 4 };
+
+/// The button's cell, which the pillar is moved onto.
+enum { DOOR_BUTTON_CELL_X = 4, DOOR_BUTTON_CELL_Z = 37 };
+
+/// The step triggers of the button: its cell, and the three cells round it
+/// that the leader steps off it onto.
+enum { TRIGGER_DOOR_BUTTON = 20, TRIGGER_OFF_DOOR_BUTTON = 21 };
+
+/// The cell behaviors of the room's cracked tiles, and of the single one in the
+/// hall below; each takes the next one up as it cracks.
+enum {
+  CELL_BEHAVIOR_CRACKED_TILE = 33,
+  CELL_BEHAVIOR_SINGLE_CRACKED_TILE = 43
+};
+
+/// Through a cracked tile to the hall below, on the same map: the exit and the
+/// entrance it lands at share the number.
+enum { THROUGH_CRACKED_TILE = 13 };
+
+/// The entrances to the room of cracked tiles: up the stairs from the hall
+/// below, and down the stairs from the room above.
+enum {
+  ENTRANCE_CRACKED_TILES_FROM_BELOW = 5,
+  ENTRANCE_CRACKED_TILES_FROM_ABOVE
+};
 
 void JupiterLighthouse_OpenDoor(s32 value);
 void JupiterLighthouse_CheckBlockOnCell(void);
@@ -96,20 +122,21 @@ extern s32 gPaletteCyclePausesInEvents;
 void JupiterLighthouse_CloseDoor(void);
 void JupiterLighthouse_LoadPalettes(s32 value);
 
-/// A cracked tile of the lower floor under a grounded leader: as it gives way
-/// the party falls to the room below (exit 13).
-void JupiterLighthouse_StepOnLowerCrackedTile(s32 value) {
+/// A cracked tile of the room under a grounded leader: as it gives way the
+/// party falls to the hall below.
+void JupiterLighthouse_StepOnCrackedTile(s32 value) {
   if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed == 0 &&
       CrackedTile_Step(value))
-    FieldEvent_SetExitRequest(13);
+    FieldEvent_SetExitRequest(THROUGH_CRACKED_TILE);
 }
 
-/// A cracked tile of the upper floor under a grounded leader: as it gives way
-/// the party falls to the room below (exit 14).
-void JupiterLighthouse_StepOnUpperCrackedTile(s32 value) {
+/// The single cracked tile of the hall below under a grounded leader: as it
+/// gives way the party falls into the room of the blue key.
+void JupiterLighthouse_StepOnSingleCrackedTile(s32 value) {
   if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed == 0 &&
       CrackedTile_Step(value))
-    FieldEvent_SetExitRequest(14);
+    FieldEvent_SetExitRequest(
+        JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_TO_JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_NORTH);
 }
 
 /// Opens the door, with its sound and a step of its frames in mode 1.
@@ -132,12 +159,13 @@ void JupiterLighthouse_CloseDoor(void) {
   MapGrid_CopyCellAttributes(20, 44, 2, 1, 14, 42);
 }
 
-/// The shortcut pillar moved onto cell (4, 37) holds the door open for good.
+/// The shortcut pillar moved onto the button holds the door open for good.
 void JupiterLighthouse_CheckBlockOnCell(void) {
   struct Actor *actor = Actor_Get(ACTOR_SHORTCUT_PILLAR);
 
   if (!Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_SHORTCUT_PILLAR_PLACED) &&
-      FIELD_CELL(actor->x.fixed) == 4 && FIELD_CELL(actor->z.fixed) == 37) {
+      FIELD_CELL(actor->x.fixed) == DOOR_BUTTON_CELL_X &&
+      FIELD_CELL(actor->z.fixed) == DOOR_BUTTON_CELL_Z) {
     Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_SHORTCUT_PILLAR_PLACED);
     JupiterLighthouse_OpenDoor(1);
   }
@@ -174,9 +202,10 @@ static inline void PaletteCycle_SetFrame(s32 value) {
 
 s32 __modsi3();
 
-/// Sets up the room as the party enters: the window in, the door as the pillar
-/// or the button leaves it, and the cracked tiles of the floor entered, with
-/// the landing of a fall from above. Returns 0.
+/// Sets up the rooms as the party enters: the window in, the door as the
+/// pillar or the button leaves it, and the cracked tiles of the room entered:
+/// the room of cracked tiles by its stairs, or else the hall below, with the
+/// landing of a fall from above. Returns 0.
 s32 Scene_Initialize(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -188,10 +217,13 @@ s32 Scene_Initialize(void) {
   }
   if (Event_GetFlag(FLAG_DOOR_BUTTON_HELD))
     JupiterLighthouse_OpenDoor(0);
-  if ((u16)(gMainRoutineWork.entrance - 5) <= 1) {
-    CrackedTile_Find(33, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 20, 31);
+  if ((u16)(gMainRoutineWork.entrance - ENTRANCE_CRACKED_TILES_FROM_BELOW) <=
+      ENTRANCE_CRACKED_TILES_FROM_ABOVE - ENTRANCE_CRACKED_TILES_FROM_BELOW) {
+    CrackedTile_Find(CELL_BEHAVIOR_CRACKED_TILE, FLAG_SCENE_TEMP_80,
+                     FLAG_AREA_TEMP_80, 20, 31);
   } else {
-    CrackedTile_Find(43, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 21, 31);
+    CrackedTile_Find(CELL_BEHAVIOR_SINGLE_CRACKED_TILE, FLAG_SCENE_TEMP_80,
+                     FLAG_AREA_TEMP_80, 21, 31);
     CrackedTile_PlaceLanding(
         21, -3,
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
@@ -220,7 +252,8 @@ void MapGrid_CenterOnFollowedPoint(void);
 
 #include "shared/jupiter_lighthouse_load_palettes.h"
 
-/// Unused: holds an actor 32 pixels above its ground, without gravity.
+/// Unused: holds an actor 32 pixels above its ground, without gravity, its cell
+/// raised 6 steps over the terrain and made a gap to jump.
 UNUSED void JupiterLighthouse_FloatAboveGround(s32 id) {
   struct Actor *actor;
   s32 height;
@@ -232,8 +265,9 @@ UNUSED void JupiterLighthouse_FloatAboveGround(s32 id) {
   actor->y.fixed = height + toFIXED(32);
   actor->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
   height = Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
-  MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, (height >> 19) + 6);
-  MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, 128);
+  MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0,
+                        CELL_HEIGHT_STEPS(height) + 6);
+  MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, MAP_CELL_JUMP);
 }
 
 #include "shared/whirlwind_carry_leader.h"
@@ -298,7 +332,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_TO_JUPITER_LIGHTHOUSE_ROOM_RED_KEY_EAST, JupiterLighthouseRoomRedKey, JUPITER_LIGHTHOUSE_ROOM_RED_KEY_FROM_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_EAST),
     SCENE_EXIT(11, JupiterLighthouseRoomCrackedFloor, 12),
     SCENE_EXIT(12, JupiterLighthouseRoomCrackedFloor, 11),
-    SCENE_EXIT(13, JupiterLighthouseRoomCrackedFloor, 13),
+    SCENE_EXIT(THROUGH_CRACKED_TILE, JupiterLighthouseRoomCrackedFloor, THROUGH_CRACKED_TILE),
     SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_TO_JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_NORTH, JupiterLighthouseRoomBlueKey, JUPITER_LIGHTHOUSE_ROOM_BLUE_KEY_FROM_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_NORTH),
     SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_TO_JUPITER_LIGHTHOUSE_AERIE_BEACON_A, JupiterLighthouseAerieBeacon, JUPITER_LIGHTHOUSE_AERIE_BEACON_FROM_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_A),
     SCENE_EXIT(JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_TO_JUPITER_LIGHTHOUSE_AERIE_BEACON_B, JupiterLighthouseAerieBeacon, JUPITER_LIGHTHOUSE_AERIE_BEACON_FROM_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_B),
@@ -334,14 +368,14 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {TRIGGER_STEP, 20, FLAG_JUPITER_LIGHTHOUSE_SHORTCUT_PILLAR_PLACED, EVENT(JupiterLighthouse_StepOnButton)},
-    {TRIGGER_STEP, 21, FLAG_JUPITER_LIGHTHOUSE_SHORTCUT_PILLAR_PLACED, EVENT(JupiterLighthouse_StepOffButton)},
-    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnLowerCrackedTile)},
-    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnLowerCrackedTile)},
-    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnLowerCrackedTile)},
-    {TRIGGER_STEP, 43, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnUpperCrackedTile)},
-    {TRIGGER_STEP, 44, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnUpperCrackedTile)},
-    {TRIGGER_STEP, 45, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnUpperCrackedTile)},
+    {TRIGGER_STEP, TRIGGER_DOOR_BUTTON, FLAG_JUPITER_LIGHTHOUSE_SHORTCUT_PILLAR_PLACED, EVENT(JupiterLighthouse_StepOnButton)},
+    {TRIGGER_STEP, TRIGGER_OFF_DOOR_BUTTON, FLAG_JUPITER_LIGHTHOUSE_SHORTCUT_PILLAR_PLACED, EVENT(JupiterLighthouse_StepOffButton)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CRACKED_TILE, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnCrackedTile)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CRACKED_TILE + 1, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnCrackedTile)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CRACKED_TILE + 2, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnCrackedTile)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_SINGLE_CRACKED_TILE, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnSingleCrackedTile)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_SINGLE_CRACKED_TILE + 1, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnSingleCrackedTile)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_SINGLE_CRACKED_TILE + 2, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnSingleCrackedTile)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SHORTCUT_PILLAR, FLAG_JUPITER_LIGHTHOUSE_SHORTCUT_PILLAR_PLACED, EVENT(JupiterLighthouse_FinishMovingBlock)},
     {TRIGGER_TABLE_END},
 };
@@ -366,8 +400,8 @@ const s32 *gFieldEffect_DurationScripts[] = {
 #include "../field/field_effect_move.c"
 
 #undef FLAG_DOOR_BUTTON_HELD
-// The hall below Jupiter Lighthouse's aerie: its copy of the effect spawner,
-// and the cracked tiles, found, cracked and fallen through.
+// The rooms' copy of the effect spawner, and the cracked tiles, found, cracked
+// and fallen through.
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
@@ -378,8 +412,6 @@ extern const s32 *gFieldEffect_DurationScripts[];
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
 
-/// The cells CrackedTile_Step watches, and the cell it copies over the one the
-/// leader steps on.
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
 
@@ -387,10 +419,6 @@ extern const s32 *gFieldEffect_DurationScripts[];
 
 #include "shared/leader_center_in_cell.h"
 
-// Centers the leader on its cell, plays sound 161 and copies the cell below
-// the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
-// one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
 struct CellTargetEntry;
@@ -400,8 +428,7 @@ struct CellTargetEntry;
 #include "../field/field_effect_advance_motion.c"
 
 #undef CELL_PUSH_SLOT_ENTRY
-// The hall below Jupiter Lighthouse's aerie: the cracked tiles' steps and
-// landings.
+// The cracked tiles' steps and landings.
 
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
 void JupiterLighthouse_StepOffButton(void);

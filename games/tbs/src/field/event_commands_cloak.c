@@ -8,9 +8,13 @@
 /// cell (MapGridCell.behavior), or of a 4-byte gCellPictures entry on the
 /// World Map.
 #define CLOAK_TILE 251
-/// The Psynergy request that ends Cloak: ACT_PACKED (no PP) |
-/// ABILITY_CLOAK.
-#define CLOAK_END (0x2000 | ABILITY_CLOAK)
+/// The Psynergy request that ends Cloak, without paying PP.
+#define CLOAK_END (ACT_PACKED | ABILITY_CLOAK)
+/// The World Map's cells are 32 pixels square, and its cell buffer
+/// (gCellPictures) holds 32 by 32 of them, wrapping round.
+#define WORLD_MAP_CELL_PIXELS 32
+#define WORLD_MAP_CELL(coordinate) ((coordinate) >> 21)
+#define WORLD_MAP_BUFFER_CELLS 32
 
 /// Task of Cloak: when the cell under the leader is not CLOAK_TILE, requests
 /// CLOAK_END.
@@ -32,15 +36,15 @@ void FieldPsynergy_CheckCloakTile(void) {
 
     x = leader->x.fixed;
     if (x < 0)
-      x += toFIXED(32) - 1;
-    tx = (x >> 21) & 31;
+      x += toFIXED(WORLD_MAP_CELL_PIXELS) - 1;
+    tx = WORLD_MAP_CELL(x) & (WORLD_MAP_BUFFER_CELLS - 1);
 
     y = leader->z.fixed;
     if (y < 0)
-      y += toFIXED(32) - 1;
-    ty = (y >> 21) & 31;
+      y += toFIXED(WORLD_MAP_CELL_PIXELS) - 1;
+    ty = WORLD_MAP_CELL(y) & (WORLD_MAP_BUFFER_CELLS - 1);
 
-    tile = (u8 *)gCellPictures + ((tx + (ty << 5)) << 2);
+    tile = (u8 *)&gCellPictures[tx + ty * WORLD_MAP_BUFFER_CELLS];
   } else {
     if (leader->layer <= 2) {
       tile =
@@ -155,3 +159,6 @@ void FieldPsynergy_StartCloak(void) {
 
 #undef CLOAK_TILE
 #undef CLOAK_END
+#undef WORLD_MAP_CELL_PIXELS
+#undef WORLD_MAP_CELL
+#undef WORLD_MAP_BUFFER_CELLS

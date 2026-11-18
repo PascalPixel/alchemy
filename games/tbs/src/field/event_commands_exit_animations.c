@@ -1,9 +1,13 @@
 /// @file
-/// An actor's screen position, the encounter transition, context
-/// effects.
+/// An actor's screen position, the encounter transition, and the leader
+/// leaving through an exit and arriving.
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
+
+/// The window palette's black, the colour the World Map's encounter flash
+/// turns white and fades (as event_commands_mind_read.c names it).
+#define WINDOW_BLACK_COLOR 3
 
 /// Finds where an actor is on screen: position[0] and position[1] receive its x
 /// and y in pixels, y at the top of its sprite.
@@ -47,17 +51,20 @@ UNREAD_RESULT Field_StartEncounterTransition(s32 unused) {
   Sound_PlayFar(SE_STOP_ACTION_SE);
   Sound_PlayFar(SE_BEAST_CRY);
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    // On the World Map the flash colours BG palette colour 243 instead, and the
-    // screen closes on the flickering centre line (style 4, variant 1); a field
-    // scene closes with WINDOW_TRANSITION_LEADER_INVERSE.
-    Io_Write16(RGB_WHITE, (u16 *)&BG_PLTT_COLOR(15, 3));
-    ScreenTransition_Finish(SCENE_TRANSITION(4, 1), 16);
+    // On the World Map the flash colours the window palette's black instead,
+    // and the screen closes toward the centre line from its middle
+    // (ScreenTransition_UpdateFromCenter); a field scene closes with
+    // WINDOW_TRANSITION_LEADER_INVERSE.
+    Io_Write16(RGB_WHITE,
+               (u16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BLACK_COLOR));
+    ScreenTransition_Finish(SCENE_TRANSITION(TRANSITION_CENTER_LINE, 1), 16);
     work->transitionActive = 0;
     wait(16);
     // Step the white down by 2 a frame: 30 to 0 in 16 frames.
     for (i = 0; i < 16; i++) {
       level = 30 - i * 2;
-      Io_Write16(RGB(level, level, level), (u16 *)&BG_PLTT_COLOR(15, 3));
+      Io_Write16(RGB(level, level, level),
+                 (u16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BLACK_COLOR));
       wait(1);
     }
   } else {
@@ -200,3 +207,5 @@ s32 Entrance_PlayArrival(void) {
   }
   return result;
 }
+
+#undef WINDOW_BLACK_COLOR

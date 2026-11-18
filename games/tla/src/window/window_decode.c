@@ -100,8 +100,9 @@ enum {
 /// of codes WIDE_GAP_FIRST to WIDE_GAP_LAST, other than the kana marks and the
 /// Japanese full stop, comma and middle dot.
 #define ENTRY_WIDE_GAP TEXT_MARK_VOICED
-/// The codes a wide gap follows: the Japanese font's kana, from 128, to 256,
-/// its first kanji (神, charmap_tla_ja.tsv).
+/// The codes a wide gap follows: the Japanese font's upper half, codes 128 to
+/// 255, its kana (from を, code 0x86), to 256, its first kanji (神,
+/// charmap_tla_ja.tsv).
 #define WIDE_GAP_FIRST 128
 #define WIDE_GAP_LAST 256
 /// Halting speech breaks off with three dots at a space, or after this many

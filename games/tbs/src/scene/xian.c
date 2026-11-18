@@ -147,6 +147,14 @@ enum XianRaisedTrigger { RAISED_CARRIER_BLOCKED = 200 };
 
 enum { XIAN_CARRIER_BLOCKED_FRAMES = 120 };
 
+/// The water carrier's round (gXian_WaterCarrierRoute) runs along map row 14
+/// between columns 17 and 26, where she turns north and back.
+enum {
+  CARRIER_ROUTE_ROW = 14,
+  CARRIER_ROUTE_WEST_COLUMN = 17,
+  CARRIER_ROUTE_EAST_COLUMN = 26
+};
+
 /// Talking to Mist in Xian: Mist, a Mercury Djinni, joins the party.
 static void Xian_MistJoins(void) {
   Djinn_JoinParty(ACTOR_MIST, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_MIST));
@@ -250,8 +258,10 @@ static UNREAD_RESULT Xian_WatchWaterCarrierPath(struct Actor *updated) {
       updated->targetZ == ACTOR_NO_TARGET)
     RETURN_UNREAD(0);
   leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (FIELD_CELL(leader->x.fixed) >= 17 && FIELD_CELL(leader->x.fixed) <= 18 &&
-      FIELD_CELL(leader->z.fixed) == 14 && FIELD_CELL(updated->x.fixed) <= 19 &&
+  if (FIELD_CELL(leader->x.fixed) >= CARRIER_ROUTE_WEST_COLUMN &&
+      FIELD_CELL(leader->x.fixed) <= CARRIER_ROUTE_WEST_COLUMN + 1 &&
+      FIELD_CELL(leader->z.fixed) == CARRIER_ROUTE_ROW &&
+      FIELD_CELL(updated->x.fixed) <= CARRIER_ROUTE_WEST_COLUMN + 2 &&
       updated->velocityX <= 0) {
     if (leader->x.fixed <= updated->x.fixed) {
       updated->riseCounter++;
@@ -319,7 +329,8 @@ static void Xian_TalkToWaterCarrier(void) {
   leaderMustStepAside = 0;
   Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->update = NULL;
   if (Event_GetFlag(FLAG_XIAN_WATER_SPILLED) != 0 ||
-      (FIELD_CELL(Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->x.fixed)) <= 19) {
+      (FIELD_CELL(Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->x.fixed)) <=
+          CARRIER_ROUTE_WEST_COLUMN + 2) {
     savedFacing = Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->facing;
     Actor_FaceActor(ACTOR_WOMAN_CARRYING_WATER, ACTOR_PARTY_LEADER, 0);
     Event_Wait(10);
@@ -339,9 +350,12 @@ static void Xian_TalkToWaterCarrier(void) {
     Event_End();
     return;
   }
-  if ((Actor_Get(ACTOR_PARTY_LEADER)->z.fixed >> 19) > 27 &&
-      (Actor_Get(ACTOR_PARTY_LEADER)->z.fixed >> 19) <= 29 &&
-      (FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->x.fixed)) != 26) {
+  if (FIELD_HALF_CELL(Actor_Get(ACTOR_PARTY_LEADER)->z.fixed) >=
+          2 * CARRIER_ROUTE_ROW &&
+      FIELD_HALF_CELL(Actor_Get(ACTOR_PARTY_LEADER)->z.fixed) <=
+          2 * CARRIER_ROUTE_ROW + 1 &&
+      (FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->x.fixed)) !=
+          CARRIER_ROUTE_EAST_COLUMN) {
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
     Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_WOMAN_CARRYING_WATER, 0);
     Event_Wait(5);
@@ -404,8 +418,10 @@ static void Xian_TalkToWaterCarrier(void) {
   // "What are you doing! You made me spill my water!"
   Event_ShowMessageThenWait(ACTOR_WOMAN_CARRYING_WATER, 0, 20);
   Scene_PlayQueuedMusic();
-  if (FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->x.fixed) == 26 &&
-      (FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->z.fixed)) > 13) {
+  if (FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->x.fixed) ==
+          CARRIER_ROUTE_EAST_COLUMN &&
+      (FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->z.fixed)) >=
+          CARRIER_ROUTE_ROW) {
     leaderMustStepAside = 1;
   }
   if (leaderMustStepAside != 0) {
@@ -418,7 +434,8 @@ static void Xian_TalkToWaterCarrier(void) {
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   }
   Actor_SetSpeed(ACTOR_WOMAN_CARRYING_WATER, 0.8);
-  if (FIELD_CELL(Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->z.fixed) != 14) {
+  if (FIELD_CELL(Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->z.fixed) !=
+      CARRIER_ROUTE_ROW) {
     Actor_WalkToAndWait(
         ACTOR_WOMAN_CARRYING_WATER,
         Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->x.part[0].integer, 232);
@@ -433,7 +450,7 @@ static void Xian_TalkToWaterCarrier(void) {
 /// front while the leader stands north of it.
 static void Xian_UpdatePuddlePriority(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
-  if (FIELD_CELL(leader->z.fixed) <= 13)
+  if (FIELD_CELL(leader->z.fixed) < CARRIER_ROUTE_ROW)
     Actor_SetSpritePriority(ACTOR_SPILLED_WATER, 1);
 }
 
@@ -586,7 +603,7 @@ static void Xian_JumpOverSpilledWater(void) {
       leader->speedLimit = toFIXED(3);
       leader->acceleration = toFIXED(2);
       leader->velocityY = toFIXED(4);
-      leader->motionFlags &= 126;
+      leader->motionFlags &= ACTOR_JUMP_KEEPS_MOTION;
       Actor_SetSpriteFlags(leader, 0);
       Actor_MoveToAndWait(ACTOR_PARTY_LEADER, FIXEDtoINT(landingPosition.x),
                           FIXEDtoINT(landingPosition.z));
@@ -770,9 +787,9 @@ s32 Scene_Initialize(void) {
     {
       FIXED puddleX = Actor_Get(ACTOR_SPILLED_WATER)->x.fixed;
 
-      MapGrid_CopyCellAttributeRect(3, 17, 1, 1, FIELD_CELL(puddleX),
-                                    Actor_Get(ACTOR_SPILLED_WATER)->z.fixed >>
-                                        20);
+      MapGrid_CopyCellAttributeRect(
+          3, 17, 1, 1, FIELD_CELL(puddleX),
+          FIELD_CELL(Actor_Get(ACTOR_SPILLED_WATER)->z.fixed));
     }
     Task_AddFrame(Xian_UpdateFrozenPuddleLayer, TASK_PASS_FRAME);
   }

@@ -312,8 +312,8 @@ void Actor_SetPositionWithTerrain(u32 actorId, FIXED x, FIXED y, FIXED z) {
   }
 }
 
-/// The event command "set actor animation" (1 stands, 2 walks, 3 nods, 4 shakes
-/// the head and so on).
+/// The event command "set actor animation" (an enum ActorAnimation: ANIM_STAND,
+/// ANIM_WALK, ANIM_NOD, ANIM_SHAKE_HEAD and so on).
 void Actor_SetAnimationById(u32 actorId, s32 animation) {
   struct Actor *actor = Actor_Lookup(actorId);
 
@@ -344,7 +344,7 @@ void Actor_WaitForAnimationChange(u32 actorId) {
   if (actor != NULL && actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
     sprite = actor->sprite;
     saved = sprite->lastNo;
-    for (elapsedFrames = 0; elapsedFrames <= 89; elapsedFrames++) {
+    for (elapsedFrames = 0; elapsedFrames < 90; elapsedFrames++) {
       wait(1);
       if (saved != sprite->lastNo) {
         break;
@@ -406,16 +406,21 @@ void Actor_RunRepeatedMotion(u32 actorId, s32 count) {
   Actor_WaitForScriptEndById(actorId);
 }
 
+/// The share of a dust puff's x and z velocity that drag takes each frame, as
+/// one part in this many.
+#define DUST_PUFF_DRAG_X 18
+#define DUST_PUFF_DRAG_Z 16
+
 /// Moves a dust puff of FieldEffect_SpawnDustPuff: it drifts with its x and z
-/// velocity (kept in speed and acceleration), which drag slows by 1/18 and 1/16
-/// each frame, and rises 1/64 pixel a frame.
+/// velocity (kept in speed and acceleration), which drag slows each frame, and
+/// rises 1/64 pixel a frame.
 void FieldEffect_UpdateDustPuff(struct Actor *particle) {
   s32 velocityX;
   FIXED x;
   s32 velocityZ;
   FIXED z;
   FIXED y;
-  s32 roundedZ;
+
   velocityX = particle->speedLimit;
   x = particle->x.fixed + velocityX;
   particle->x.fixed = x;
@@ -427,13 +432,8 @@ void FieldEffect_UpdateDustPuff(struct Actor *particle) {
   y = particle->y.fixed + toFIXED(1) / 64;
   particle->y.fixed = y;
   particle->targetY = y;
-  particle->speedLimit = (velocityX - velocityX / 18);
-
-  roundedZ = velocityZ;
-  if (velocityZ < 0) {
-    roundedZ += 15;
-  }
-  particle->acceleration = (velocityZ - (roundedZ >> 4));
+  particle->speedLimit = velocityX - velocityX / DUST_PUFF_DRAG_X;
+  particle->acceleration = velocityZ - velocityZ / DUST_PUFF_DRAG_Z;
 }
 
 /// Kicks up a dust puff (SPRITE_DUST_PUFF) where source stands: it flies off
@@ -522,7 +522,7 @@ void Actor_JumpDownLedge(s32 actorId, u32 pose, s32 param) {
         FieldEffect_SpawnDustPuff(actor, param);
       }
       pose++;
-    } while (pose <= 13);
+    } while (pose < 14);
 
     // Jump 16 pixels forward and wait (at most 180 frames) to land, following
     // the ground and falling again.
@@ -531,8 +531,7 @@ void Actor_JumpDownLedge(s32 actorId, u32 pose, s32 param) {
     Actor_SetMoveTargetFar(actor, actor->x.fixed, actor->y.fixed,
                            startZ + toFIXED(16));
     Actor_WaitForMoveFar(actor);
-    for (pose = 0; pose <= 179 && actor->y.fixed > actor->groundHeight;
-         pose++) {
+    for (pose = 0; pose < 180 && actor->y.fixed > actor->groundHeight; pose++) {
       wait(1);
     }
     wait(2);
@@ -657,11 +656,12 @@ void Actor_ConfigureSpriteColor(s32 actorId, s32 param) {
   }
 }
 
-/// Per-frame update routine of a blinking actor: sets its sprite parts' param
-/// from gActor_BlinkSpriteColors (7 for two frames out of eight, otherwise 0).
+/// Per-frame update routine of a blinking actor: sets its sprite parts' colour
+/// mode from gActor_BlinkSpriteColors (SPRITE_COLOR_WHITE for two frames out of
+/// eight, otherwise SPRITE_COLOR_NORMAL).
 void Actor_UpdateBlink(struct Actor *actor) {
 
-  if ((actor->spriteStorageKind & 0xf) == ACTOR_SPRITE_ONE) {
+  if ((actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE) {
     u8 param;
     struct Sprite *container;
     u8 partCount;
@@ -685,11 +685,12 @@ void Actor_UpdateBlink(struct Actor *actor) {
   }
 }
 
-/// Sets the param byte of every animated part of an actor's sprite. Events set
-/// 0 or 15, and alternate the two to make an actor flash.
+/// Sets the colour mode of every animated part of an actor's sprite. Events set
+/// SPRITE_COLOR_NORMAL or SPRITE_COLOR_HIDDEN, and alternate the two to make an
+/// actor flash.
 void Actor_SetSpriteColor(struct Actor *actor, s32 param) {
 
-  if ((actor->spriteStorageKind & 0xf) == ACTOR_SPRITE_ONE) {
+  if ((actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE) {
     struct Sprite *container = actor->sprite;
     u8 partCount = container->count;
 
@@ -708,11 +709,15 @@ void Actor_SetSpriteColor(struct Actor *actor, s32 param) {
   }
 }
 
-/// Makes an actor watch the actor in the low 8 bits of targetId and starts
-/// script on it.
+/// The actor in Actor_WatchAndStartScript's targetId, below its enum
+/// ActorWatchFlag bits.
+#define ACTOR_WATCH_ACTOR_MASK 0xff
+
+/// Makes an actor watch the actor in targetId's ACTOR_WATCH_ACTOR_MASK bits and
+/// starts script on it.
 void Actor_WatchAndStartScript(u32 actorId, s32 targetId, const void *script) {
   struct Actor *follower = Actor_Lookup(actorId);
-  struct Actor *target = Actor_Lookup(targetId & 0xff);
+  struct Actor *target = Actor_Lookup(targetId & ACTOR_WATCH_ACTOR_MASK);
 
   if (follower != NULL && target != NULL) {
     follower->watchedActor = target;
@@ -736,10 +741,10 @@ s32 Actor_StepAngle(struct Actor *actor) {
     s32 currentAngle = actor->facing;
     delta = (s16)(targetAngle - currentAngle);
     if (delta != 0) {
-      if (delta > 4096)
-        delta = 2048;
-      if (delta < -4096)
-        delta = -2048;
+      if (delta > TRIG_TURN / 16)
+        delta = TRIG_TURN / 32;
+      if (delta < -(TRIG_TURN / 16))
+        delta = -(TRIG_TURN / 32);
       actor->facing = currentAngle + delta;
     }
   }
@@ -856,3 +861,7 @@ s32 Actor_FindBySprite(s32 sprite) {
   }
   return result;
 }
+
+#undef DUST_PUFF_DRAG_X
+#undef DUST_PUFF_DRAG_Z
+#undef ACTOR_WATCH_ACTOR_MASK

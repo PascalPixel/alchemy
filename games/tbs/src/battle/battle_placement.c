@@ -4,6 +4,12 @@
 
 #include "battle_internal.h"
 
+/// An Actor_Create id of enum ActorCreateKind `kind`, above its sprite.
+#define ACTOR_CREATE_KIND(kind) ((kind) << 12)
+/// The Actor_Create kind a battle object's actor is made with: one that makes
+/// no sprite, its battle sprites being attached afterwards.
+#define BATTLE_OBJECT_ACTOR_KIND 15
+
 /// Creates the battle object of a unit at (x, y) on the battlefield: its
 /// sprite, palette, size and weapon, turned to face the centre.
 void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
@@ -21,8 +27,8 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   // Positions are 16.16 fixed point; y is the battlefield's depth.
   fixedX = toFIXED(x);
   fixedZ = toFIXED(y);
-  // The actor has no sprite of its own; its battle sprites are attached later.
-  object = Actor_CreateFar(0xf000, fixedX, 0, fixedZ);
+  object = Actor_CreateFar(ACTOR_CREATE_KIND(BATTLE_OBJECT_ACTOR_KIND), fixedX,
+                           0, fixedZ);
   unit = Unit_GetFar(unitId);
   palette = 0;
   registeredSprite = EnemySprite_LoadIntoSlots(unitId);
@@ -233,7 +239,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   // size.
   facingAngle = Trig_Atan(y / 8, x) + DEGtoANG(180);
   object->facing = facingAngle;
-  object->collisionFlags = 3;
+  object->collisionFlags = ACTOR_SOLID | ACTOR_PUSHABLE;
   object->motionFlags = ACTOR_FALLS;
   if (unit->classId == CLASS_NONE) {
     object->scaleX = FIXED_ONE * 13 / 10;
@@ -264,12 +270,15 @@ void BattlePlacement_GetStepPair(s32 partyPlace, s32 *x, s32 *y) {
 #define ENEMY_SPACING_LARGE 38
 #define ENEMY_SPACING_SMALL 27
 #define ENEMY_SPACING_EMPTY 25
+/// The spacing the column's length is first estimated from for up to four
+/// enemies; five or six are estimated at a small enemy's.
+#define ESTIMATED_ENEMY_SPACING 30
 
 /// Lays out count enemies in a column left of the centre, spaced by their size,
 /// from a rough estimate of the column's length.
 void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
                                    s32 *zPositions) {
-  s32 totalSpacing = count <= 4 ? 30 : 27;
+  s32 totalSpacing = count <= 4 ? ESTIMATED_ENEMY_SPACING : ENEMY_SPACING_SMALL;
   s32 z = ((count - 1) * totalSpacing) / 2;
   s32 index;
 

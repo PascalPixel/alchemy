@@ -14,7 +14,12 @@
 enum {
   /// Bytes in a struct Unit, which the code clears and copies whole.
   BATTLE_UNIT_SIZE = 332,
-  PSYNERGY_ABILITY_MASK = 0x3fff ///< PsynergyEntry.encodedAction's action id
+  PSYNERGY_ABILITY_MASK = 0x3fff, ///< PsynergyEntry.encodedAction's action id
+  /// PsynergyEntry.encodedAction's marks: the action comes from an equipped
+  /// item, or from the class (its top bit, PSYNERGY_FROM_CLASS_SHIFT).
+  PSYNERGY_FROM_ITEM = 0x4000,
+  PSYNERGY_FROM_CLASS = 0x8000,
+  PSYNERGY_FROM_CLASS_SHIFT = 15
 };
 
 /// An entry in a unit's action list: the action's id (PSYNERGY_ABILITY_MASK)
@@ -271,6 +276,9 @@ enum CurseFlag {
 
 /// Unit ids from 128 are the enemies'.
 #define FIRST_ENEMY_UNIT 128
+/// The bit set in every enemy's unit id (FIRST_ENEMY_UNIT and up), and so the
+/// side a unit fights on.
+#define UNIT_ID_ENEMY_BIT FIRST_ENEMY_UNIT
 
 /// How many actions a unit's list holds (Unit.psynergy).
 #define PSYNERGY_SLOTS 32
@@ -289,6 +297,9 @@ struct BattleAIState {
 /// Unit_ClampGauge puts on hp / hpMax shifted up UNIT_GAUGE_SHIFT bits.
 #define UNIT_GAUGE_SHIFT 14
 #define UNIT_GAUGE_FULL (1 << UNIT_GAUGE_SHIFT)
+
+/// The bits of Unit.baseActionCount that count the unit's actions a turn.
+#define UNIT_ACTION_COUNT_MASK 0xf
 
 /// A unit's name buffer: 14 characters and the 0 that ends them.
 #define UNIT_NAME_SIZE 15
@@ -396,7 +407,8 @@ struct Unit {
   u8 grimReaper; ///< the Grim Reaper's countdown, 7 when cursed
   /// The totals of equipment effects 23 (unleash chance) and 24 that
   /// Unit_Calculate sums.
-  // TBS never reads them back.
+  // Nothing reads them back but ScriptedBattle_SaveUnits and
+  // ScriptedBattle_RestoreUnits, which copy them out and back.
   u8 equipBonus[2];
   /// The extra action: 2 when cast, down one at each turn's end.
   u8 ready;

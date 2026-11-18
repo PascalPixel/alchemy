@@ -30,6 +30,7 @@
 #include "system/ram_buffer.h"
 #include "field/field_sequence_event.h"
 #include "field/field_sequence.h"
+#include "field/field_coordinate.h"
 #include "field/actor.h"
 #include "version.h"
 #include "battle/battle.h"
@@ -195,10 +196,6 @@ enum ProxCaveHomesActorId {
 /// The caves: one old man, who fears for Weyard (Prox_FearForWeyard).
 enum ProxCavesActorId { ACTOR_OLD_MAN_FEARING_FOR_WEYARD = ACTOR_FIRST_PLACED };
 
-#define FLAG_HEARD_OF_PARENTS 0x9c0 ///< overheard the talk of freeing them
-#define FLAG_CLAN_SPOKE_OF_LIGHTHOUSE 0x9c1
-#define FLAG_MET_PUELLE 0x9c2
-#define FLAG_THANKED_FOR_BEACON 0x9c5 ///< after the ending, in the house
 #define FLAG_SAID_FAREWELL 0x9cc
 #define FLAG_MOLD_HID_IN_SNOW 0xa2d
 /// The door the mayor's men came out of stays open.
@@ -337,7 +334,7 @@ void Prox_SmokeFromChimneys(void);
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
 
 /// The sixteenth of a turn a heading points into, as a mask.
-#define HEADING_SECTOR_MASK (TRIG_TURN - TRIG_TURN / 16)
+#define HEADING_SECTOR_MASK (TRIG_TURN - FACING_STEP)
 /// The frames the leader must have pushed against a chasing child before it
 /// gives way.
 #define CHASE_GIVE_WAY_FRAMES 120
@@ -366,8 +363,8 @@ s32 Prox_ChaseTarget(struct Actor *actor, struct Actor *target, s32 range,
       force != 0) {
     u32 angle = (u16)Trig_Atan(target->z.fixed - actor->z.fixed,
                                *targetPos - *objectPos);
-    u32 left = (angle - TRIG_TURN / 16) & HEADING_SECTOR_MASK;
-    u32 right = (angle + TRIG_TURN / 16) & HEADING_SECTOR_MASK;
+    u32 left = (angle - FACING_STEP) & HEADING_SECTOR_MASK;
+    u32 right = (angle + FACING_STEP) & HEADING_SECTOR_MASK;
     u32 ahead = angle & HEADING_SECTOR_MASK;
     u32 facing = actor->facing & HEADING_SECTOR_MASK;
 
@@ -1246,9 +1243,6 @@ void Prox_SmokeFromChimneys(void) {
 /// Goes in at a door: opens it (a double door thumps) unless it was left open,
 /// steps the leader to the middle of a single door, walks in and takes the
 /// exit.
-/// A map cell's width in pixels.
-#define CELL_PIXELS 16
-
 void Prox_EnterDoor(s32 sourceX, s32 sourceY, s32 x, s32 y, s32 width,
                     s32 height) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -1270,7 +1264,9 @@ void Prox_EnterDoor(s32 sourceX, s32 sourceY, s32 x, s32 y, s32 width,
     actor = Actor_Get(gMainRoutineWork.leaderActorId);
     cell = FIXEDtoINT(actor->x.fixed);
     FieldActor_SetMoveTargetFX(
-        actor, toFIXED(CELL_PIXELS / 2 - cell % CELL_PIXELS) + actor->x.fixed,
+        actor,
+        toFIXED(MAPGRID_CELL_PIXELS / 2 - cell % MAPGRID_CELL_PIXELS) +
+            actor->x.fixed,
         actor->y.fixed, actor->z.fixed);
     FieldActor_WaitForMove(actor);
     actor->facing = FACING_NORTH;
@@ -1318,7 +1314,9 @@ void Prox_ClimbStairs(void) {
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   cell = FIXEDtoINT(actor->x.fixed);
   FieldActor_SetMoveTargetFX(
-      actor, toFIXED(CELL_PIXELS / 2 - cell % CELL_PIXELS) + actor->x.fixed,
+      actor,
+      toFIXED(MAPGRID_CELL_PIXELS / 2 - cell % MAPGRID_CELL_PIXELS) +
+          actor->x.fixed,
       actor->y.fixed, actor->z.fixed - toFIXED(4));
   FieldActor_WaitForMove(actor);
   actor->facing = FACING_NORTH;

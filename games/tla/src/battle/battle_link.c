@@ -6,61 +6,71 @@
 #include "system/heap_slots.h"
 #include "battle/battle.h"
 
-#define LINK_PARTY_UNIT_BYTES 340
-#define LINK_PARTY_OFFER_BYTES 340
+/// What a link battle sends of each party member, and of the Djinn recovery
+/// list, in bytes.
+enum LinkPartyPacketSize {
+  /// A struct Unit (BATTLE_UNIT_SIZE, 332 bytes) and the 8 after it.
+  LINK_PARTY_UNIT_BYTES = 340,
+  /// A struct DjinnRecoveryTable and what follows it.
+  LINK_PARTY_OFFER_BYTES = 340
+};
+
+/// The eight halfwords of a link signature, at the transfer payload's start.
+#define LINK_SIGNATURE_BYTES (8 * sizeof(u16))
 
 /// Unused: receives the opponent's party into the enemy units, "Enemy" before
 /// each name, then its Djinn recovery list. Returns how many party members
 /// came.
 s32 LinkBattle_ReceiveParty(void) {
-  u16 name_text[16];
+  u16 label[16];
   void *buffer;
-  u8 *name_entry;
-  s32 named_count;
-  s32 index;
-  s32 len;
+  struct Unit *opponent;
+  s32 memberCount;
+  s32 partySlot;
+  s32 labelLength;
   s32 i;
 
+  // XXX (no evidence): what the block is for; each party member is received
+  // straight into its enemy unit, and the block is only freed.
   buffer = Heap_AllocEwram(LINK_PARTY_UNIT_BYTES);
-  named_count = 0;
-  index = 0;
-  while (index <= 2) {
-    name_entry = Unit_Get(index + FIRST_ENEMY_UNIT);
-    if (Serial_StartReceive(name_entry) == -1) {
+  memberCount = 0;
+  for (partySlot = 0; partySlot < LINK_PARTY_SIZE; partySlot++) {
+    opponent = Unit_Get(partySlot + FIRST_ENEMY_UNIT);
+    if (Serial_StartReceive(opponent) == -1) {
       break;
     }
     Serial_WaitForReceive();
-    if (name_entry[298] != 0) {
-      named_count += 1;
+    if (opponent->side != 0) {
+      memberCount += 1;
     }
     wait(2);
-    Message_DecodeRawUnboundedFar((s32)MsgEnemyLabel, name_text);
-    i = 0;
-    if (name_text[i] != 0) {
-      do {
-        i += 1;
-        if (i > LOBBY_PREFIX_LIMIT) {
-          break;
-        }
-      } while (name_text[i] != 0);
+
+    // Measure the label (at most LOBBY_PREFIX_LIMIT + 1 characters), shift
+    // the name right to make room for it, then write it in; the name's end is
+    // cut.
+    Message_DecodeRawUnboundedFar((s32)MsgEnemyLabel, label);
+    for (i = 0; i <= LOBBY_PREFIX_LIMIT; i++) {
+      if (label[i] == 0)
+        break;
     }
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_SPANISH) ||         \
     (LANGUAGE == LANGUAGE_FRENCH) || (LANGUAGE == LANGUAGE_ITALIAN)
-    name_text[i] = ' ';
-    len = i + 1;
+    label[i] = ' ';
+    labelLength = i + 1;
 #else
-    len = i;
+    labelLength = i;
 #endif
-    for (i = UNIT_NAME_LENGTH; i >= len; i--) {
-      name_entry[i] = name_entry[i - len];
+    for (i = UNIT_NAME_LENGTH; i >= labelLength; i--) {
+      opponent->name[i] = opponent->name[i - labelLength];
     }
-    for (i = 0; i < len; i++) {
-      name_entry[i] = name_text[i];
+    for (i = 0; i < labelLength; i++) {
+      opponent->name[i] = label[i];
     }
-    name_entry[UNIT_NAME_LENGTH] = 0;
-    index += 1;
+    opponent->name[UNIT_NAME_LENGTH] = 0;
   }
   Heap_Release(buffer);
+
+  // The recovery packet follows all three party places.
   buffer = Heap_AllocEwram(LINK_PARTY_OFFER_BYTES);
   if (Serial_StartReceive(Djinn_GetRecoveryTableFar(DJINN_RECOVERY_OPPONENT)) !=
       -1) {
@@ -68,55 +78,59 @@ s32 LinkBattle_ReceiveParty(void) {
     wait(2);
   }
   Heap_Release(buffer);
-  return named_count;
+  return memberCount;
 }
 
 /// Unused: sends the party, then the Djinn recovery list, each unit under the
 /// id the opponent knows it by.
 s32 LinkBattle_SendParty(void) {
   u8 *buffer;
-  struct BattleWork *work;
+  struct BattleWork *battle;
   s32 j;
   struct DjinnRecoveryList *list;
   s32 size;
   s32 count;
   s32 i;
-  s32 mark;
-  u16 owners[8];
+  s32 noSlot;
+  u16 unitIds[8];
 
   size = LINK_PARTY_UNIT_BYTES;
   buffer = (u8 *)Heap_AllocEwram(size);
-  mark = OPPONENT_SLOT_NONE;
-  work = Ram_HeapSlots->battleWork;
-  for (i = 7; i >= 0; i--)
-    work->opponentSlots[i] = mark;
-  count = BattleParty_PrepareMembers(owners);
+  noSlot = OPPONENT_SLOT_NONE;
+  battle = Ram_HeapSlots->battleWork;
+  for (i = ARRAY_COUNT(battle->opponentSlots) - 1; i >= 0; i--)
+    battle->opponentSlots[i] = noSlot;
+
+  // The party members, each marked as the opponent's.
+  count = BattleParty_PrepareMembers(unitIds);
   for (i = 0; i < count; i++) {
-    Iwram_CopyWordsEntry(buffer, Unit_Get(owners[i]), size);
+    Iwram_CopyWordsEntry(buffer, Unit_Get(unitIds[i]), size);
     ((struct Unit *)buffer)->side = BATTLE_SIDE_PARTY;
-    work->opponentSlots[owners[i]] = i - FIRST_ENEMY_UNIT;
+    // FIRST_ENEMY_UNIT + i, in a byte.
+    battle->opponentSlots[unitIds[i]] = i - FIRST_ENEMY_UNIT;
     if (Serial_StartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
       break;
     Serial_WaitForSend();
     wait(2);
   }
-  for (; i <= 2; i++) {
+  // Empty places up to three.
+  for (; i < LINK_PARTY_SIZE; i++) {
     ((struct Unit *)buffer)->side = BATTLE_SIDE_NONE;
     if (Serial_StartSend(buffer, LINK_PARTY_UNIT_BYTES) == -1)
       break;
     Serial_WaitForSend();
     wait(2);
   }
+
+  // The Djinn recovery list, its units renumbered for the opponent.
   size = LINK_PARTY_OFFER_BYTES;
   Heap_Release(buffer);
   buffer = (u8 *)Heap_AllocEwram(size);
   IWRAM_COPY_WORDS(buffer, Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY),
                    size);
   list = &((struct DjinnRecoveryTable *)buffer)->list;
-  for (j = 0; j < list->count;) {
-    list->entries[j].unitId = work->opponentSlots[list->entries[j].unitId];
-    j++;
-  }
+  for (j = 0; j < list->count; j++)
+    list->entries[j].unitId = battle->opponentSlots[list->entries[j].unitId];
   if (Serial_StartSend(buffer, LINK_PARTY_OFFER_BYTES) != -1) {
     Serial_WaitForSend();
     wait(1);
@@ -156,9 +170,8 @@ u8 *Text_CopyFiveCharsPaddingUnderscore(u32 unusedA, u32 unusedB, u16 *source) {
   return dst;
 }
 
-/// In a link battle, exchanges the "EXEC" signal with the other console.
-/// Returns zero if both agree within 30 frames, or -1 on timeout or disconnect.
-/// Returns zero immediately outside a link battle.
+/// In a link battle, shows the "EXEC" signature and waits up to 30 frames for
+/// the other console to show it too. Returns -1 when the link fails, else 0.
 s32 LinkBattle_WaitSync(void) {
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   u16 *peer;
@@ -198,12 +211,10 @@ s32 LinkBattle_WaitSync(void) {
   return 0;
 }
 
-/// In a link battle, synchronizes successive signals after each action and
-/// after the end-of-turn processing.
-/// "ex" "TU" → "rn" → "EXEC" → "tu" → "RN"
-/// Returns -1 if disconnected, if an earlier signal disagrees with the peer,
-/// or after 25 consecutive frames without a connection. Returns zero on
-/// agreement, or outside a link battle.
+/// In a link battle, after each action and each turn, steps both consoles
+/// through the same handshake of signatures: "ex" and "TU", "rn", "EXEC", "tu",
+/// "RN". Returns -1 when the link fails, the steps disagree or no link is heard
+/// for more than LINK_MAX_MISSED_FRAMES, else 0.
 s32 LinkBattle_SyncTurn(void) {
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   u16 *peer;
@@ -327,7 +338,8 @@ s32 BattleParty_AssignOpponentSlots(void) {
   }
 }
 
-/// Clears the first 16 words of the link transfer's payload.
+/// Clears the first LINK_SIGNATURE_BYTES of the link transfer's payload, the
+/// signature halfwords LinkBattle_WaitSync and LinkBattle_SyncTurn write.
 void Battle_ClearSerialTransferPayload(void) {
-  Iwram_ClearWordsEntry(gSerialTransfer.payload, 16);
+  Iwram_ClearWordsEntry(gSerialTransfer.payload, LINK_SIGNATURE_BYTES);
 }

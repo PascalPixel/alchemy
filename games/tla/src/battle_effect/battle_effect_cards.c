@@ -5,30 +5,70 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
+/// The card's picture, 32 pixels wide and 64 tall, in the map cell buffer;
+/// SheepCardSheet's four 32x32 sheep follow it.
 #define CARD (gMapGridCellBuffer + 24638)
-#define CARD_NOISE (CARD + 2048)
-
-/// Where PaletteRampImage is decoded in the effect's pictures.
-#define CARDS_PALETTE_RAMP_PICTURES 9600
-/// PaletteRampImage's bytes, which the Sword Card copies seven times, darker
-/// each time, after it.
-#define CARDS_PALETTE_RAMP_BYTES 696
-/// The card's picture, 32 pixels wide and 64 tall.
 #define CARD_WIDTH 32
 #define CARD_HEIGHT 64
-/// SheepCardSheet's four jumping sheep, each 32x32, after the card's picture.
 #define CARD_SHEEP (Ram_MapCellBuffer + 24638 + CARD_WIDTH * CARD_HEIGHT)
 #define SHEEP_WIDTH 32
 #define SHEEP_HEIGHT 32
+/// After the Death and Sword cards' pictures: the step of the dissolve, 0 to
+/// 15, at which each pixel clears, for eight rows repeated down the card.
+#define CARD_DISSOLVE_STEPS (CARD + CARD_WIDTH * CARD_HEIGHT)
+
+/// The card flies to the targets for CARD_FLIGHT_FRAMES, turning back a
+/// CARD_SPIN a frame about its face and its width; it would stand square at
+/// CARD_SQUARE_FRAME, and arrives a sixteenth of a turn short of it.
+#define CARD_FLIGHT_FRAMES 48
+#define CARD_SQUARE_FRAME 52
+#define CARD_SPIN (TRIG_TURN / 64)
+/// The card's turn about its upright axis, about 33 degrees.
+#define CARD_SLANT 6000
+/// The frames the card is drawn: the Sleep Card's past the effect's end, the
+/// Sword Card's until its dagger strikes.
+#define CARD_SHOWN_FRAMES 80
+#define SLEEP_CARD_SHOWN_FRAMES 120
+/// The Death and Sword cards dissolve a step a frame from CARD_FLIGHT_FRAMES.
+#define CARD_DISSOLVE_FRAMES 16
+
+/// Each puff of the Baffle Card's mist lives BAFFLE_PUFF_FRAMES, through
+/// BlueCloudPuffSheet's four pictures.
+#define BAFFLE_PUFF_FRAMES 16
+/// Each sheep tumbles out of the Sleep Card for SHEEP_FRAMES, through its four
+/// pictures every 16 frames.
+#define SHEEP_FRAMES 64
+
+/// The Sword Card's dagger glints over the target for SWORD_CARD_DAGGER_FRAMES,
+/// then strikes and SWORD_CARD_PARTICLES fly, of which SWORD_CARD_SHARDS are
+/// drawn as shards for SWORD_CARD_SHARD_FRAMES, a copy darker every four frames
+/// after the first four. The shards start one a line from SWORD_CARD_SHARD_TOP,
+/// down the dagger, and the slowest flies SWORD_CARD_SHARD_SPEED, a pixel a
+/// frame in 64ths.
+#define SWORD_CARD_DAGGER_FRAMES 24
+#define SWORD_CARD_PARTICLES 64
+#define SWORD_CARD_SHARDS 32
+#define SWORD_CARD_SHARD_FRAMES 36
+#define SWORD_CARD_SHARD_TOP 48
+#define SWORD_CARD_SHARD_SPEED 64
+/// The shard pictures (PaletteRampImage) in the sheet, followed by seven
+/// copies of them, each SWORD_CARD_SHARD_DIMMING levels darker than the one
+/// before but never blank.
+#define SWORD_CARD_SHARD_PICTURES 9600
+#define SWORD_CARD_SHARD_BYTES 696 ///< bytes in each copy
+#define SWORD_CARD_SHARD_COPIES 8  ///< the pictures and their darker copies
+#define SWORD_CARD_SHARD_DIMMING 6
+/// A line's 16.16 sideways sway as its BG2X value in work->bg2xLines.
+#define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
 
 /// The four cards (Sleep, Baffle, Death and Sword Card): a card flies from
-/// the user to above the targets' middle for 48 frames, spinning upright and
-/// growing, the background scrolling with it as far as it can. Then it shows
-/// its picture: sheep jump out for the Sleep Card, butterflies flutter and
-/// the screen waves for the Baffle Card, and for the Death and Sword cards the
-/// card dissolves into the background's colours while a skeleton reaps the
-/// target or a dagger strikes it and breaks into shards. The screen fades in
-/// the last eight frames.
+/// the user to above the targets' middle, spinning upright and growing, and
+/// the background scrolls with it as far as it can. Then its picture comes to
+/// life: sheep tumble out of the Sleep Card; a mist pours from the Baffle Card
+/// and spreads over the ground while the screen waves; the Death and Sword
+/// cards dissolve, and the Reaper rises and swings his scythe in a red
+/// crescent, or a dagger glints, strikes and breaks into shards. The screen
+/// fades in the last eight frames.
 void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -83,8 +123,8 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
   scroll = 0;
   overflow = 0;
 
-  // Load the card and its picture; the Sword Card makes seven darker copies
-  // of its shards for their fade.
+  // Load the card and what comes out of it; the Sword Card makes seven
+  // darker copies of its shards for their fade.
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, graphics, 0, 0);
   if (mode == CARD_SLEEP) {
     Resource_LoadAndDecompress(RESOURCE_SHEEP_CARD_SHEET, CARD, 1, 1);
@@ -100,17 +140,17 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
     Resource_LoadAndDecompress(RESOURCE_SWORD_CARD_SHEET, CARD, 1, 1);
     Resource_LoadAndDecompress(RESOURCE_DAGGER_SHEET, work->sheet, 1, 0);
     Resource_LoadAndDecompress(RESOURCE_PALETTE_RAMP_IMAGE,
-                               work->sheet + CARDS_PALETTE_RAMP_PICTURES, 0, 0);
-    for (i = 1; i != 8; i++) {
-      for (j = 0; j != CARDS_PALETTE_RAMP_BYTES; j++) {
-        s32 shade = work->sheet[CARDS_PALETTE_RAMP_PICTURES + j];
+                               work->sheet + SWORD_CARD_SHARD_PICTURES, 0, 0);
+    for (i = 1; i != SWORD_CARD_SHARD_COPIES; i++) {
+      for (j = 0; j != SWORD_CARD_SHARD_BYTES; j++) {
+        s32 shade = work->sheet[SWORD_CARD_SHARD_PICTURES + j];
 
         if (shade > 0) {
-          shade -= i * 6;
+          shade -= i * SWORD_CARD_SHARD_DIMMING;
           if (shade <= 0)
             shade = 1;
         }
-        work->sheet[CARDS_PALETTE_RAMP_PICTURES + i * CARDS_PALETTE_RAMP_BYTES +
+        work->sheet[SWORD_CARD_SHARD_PICTURES + i * SWORD_CARD_SHARD_BYTES +
                     j] = shade;
       }
     }
@@ -153,33 +193,33 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
 
       REG_BLDALPHA = ((fade + 8) << 8) | (16 - fade * 2);
     }
-    if (frame == 48 && mode == CARD_BAFFLE)
+    if (frame == CARD_FLIGHT_FRAMES && mode == CARD_BAFFLE)
       Sound_PlayFar(SE_ITEM_BREAK);
 
-    // Frames 0-47: the card flies to the middle, rising and growing; the
-    // background follows it as far as it can scroll.
-    if (frame <= 47) {
+    // The card flies to the middle, rising and growing; the background
+    // follows it as far as it can scroll.
+    if (frame < CARD_FLIGHT_FRAMES) {
       s32 t = frame * (middle.x - card.x);
       s32 q;
       s32 x;
 
       first = card.x;
-      q = t / 48;
-      first -= 64;
+      q = t / CARD_FLIGHT_FRAMES;
+      first -= CANVAS_SIZE / 2;
       x = first + q;
 
       if (x < 0) {
         overflow = x;
         x = 0;
-      } else if (x > 112) {
-        overflow = x - 112;
-        x = 112;
+      } else if (x > DISPLAY_WIDTH - CANVAS_SIZE) {
+        overflow = x - (DISPLAY_WIDTH - CANVAS_SIZE);
+        x = DISPLAY_WIDTH - CANVAS_SIZE;
       }
       x <<= 8;
       REG_BG2X = -x;
       scroll = -x;
       card.y--;
-      scale += toFIXED(1) / 64;
+      scale += FIXED_ONE / 64;
       if (scale > FIXED_ONE / 2)
         scale = FIXED_ONE / 2;
     }
@@ -191,15 +231,16 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
 
         for (i = 0; i != DISPLAY_HEIGHT; i++)
           *line++ =
-              scroll -
-              ((Trig_Sin((frame << 12) + i * (TRIG_TURN / 16)) << 2) >> 10);
+              scroll - CANVAS_WAVE_BG2X(Trig_Sin(frame * (TRIG_TURN / 16) +
+                                                 i * (TRIG_TURN / 16)) *
+                                        4);
       } else {
-        // The background steps to the smoke's colours, then the picture's;
-        // from frame 48 the card dissolves in 16 random steps.
-        u8 *noise = CARD_NOISE;
+        // The canvas's colours step to the smoke's, then to the Reaper's or
+        // the dagger's; the card dissolves in 16 random steps.
+        u8 *steps = CARD_DISSOLVE_STEPS;
 
         if ((mode == CARD_DEATH || mode == CARD_SWORD) &&
-            (frame >= 40 && frame <= 47))
+            (frame >= CARD_FLIGHT_FRAMES - 8 && frame < CARD_FLIGHT_FRAMES))
           BattleEffect_StepPaletteToResource(RESOURCE_SMOKE_SHEET);
         if (frame > 51) {
           if (mode == CARD_DEATH)
@@ -207,20 +248,21 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
           else
             BattleEffect_StepPaletteToResource(RESOURCE_DAGGER_SHEET);
         }
-        if (frame == 48) {
+        if (frame == CARD_FLIGHT_FRAMES) {
           for (i = 0; i != 8 * CARD_WIDTH; i++)
-            noise[i] = Random16() & 15;
+            steps[i] = Random16() & (CARD_DISSOLVE_FRAMES - 1);
         }
-        if (frame >= 48 && frame <= 63) {
+        if (frame >= CARD_FLIGHT_FRAMES &&
+            frame < CARD_FLIGHT_FRAMES + CARD_DISSOLVE_FRAMES) {
           u8 *card = CARD;
 
           for (i = 0; i != CARD_HEIGHT; i++) {
-            // first, free here, holds the cleared pixel: a second lifetime
-            // keeps the flight's copy of card.x (see the header).
+            // first, unused after the flight, holds the cleared pixel.
             for (j = 0; j != CARD_WIDTH; j++) {
-              /* FAKEMATCH(dead): first cleared inside the test, or'd into frame
-               * - 48. */
-              if (noise[(i & 7) * CARD_WIDTH + j] == (frame - 48 | (first = 0)))
+              /* FAKEMATCH(dead): first cleared inside the test, or'd into the
+               * step. */
+              if (steps[(i & 7) * CARD_WIDTH + j] ==
+                  ((frame - CARD_FLIGHT_FRAMES) | (first = 0)))
                 card[i * CARD_WIDTH + j] = first;
             }
           }
@@ -230,9 +272,11 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
 
     // The card, until its picture takes over.
     if (mode == CARD_SLEEP)
-      cardFrames = 120;
+      cardFrames = SLEEP_CARD_SHOWN_FRAMES;
     else
-      cardFrames = mode == CARD_SWORD ? 72 : 80;
+      cardFrames = mode == CARD_SWORD
+                       ? CARD_FLIGHT_FRAMES + SWORD_CARD_DAGGER_FRAMES
+                       : CARD_SHOWN_FRAMES;
     if (frame < cardFrames) {
       vertices = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
@@ -247,12 +291,12 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
       Matrix_Scale(FIXED_ONE, FIXED_ONE, FIXED_ONE);
       Matrix_Translate(INTtoFIXED(overflow), INTtoFIXED(card.y) - toFIXED(64),
                        0);
-      if (frame <= 47) {
+      if (frame < CARD_FLIGHT_FRAMES) {
         if (args->side == EFFECT_SIDE_ENEMIES)
-          Matrix_RotateZ((frame << 10) - 53248);
+          Matrix_RotateZ((frame - CARD_SQUARE_FRAME) * CARD_SPIN);
         else
-          Matrix_RotateZ((52 - frame) << 10);
-        Matrix_RotateX((52 - frame) << 10);
+          Matrix_RotateZ((CARD_SQUARE_FRAME - frame) * CARD_SPIN);
+        Matrix_RotateX((CARD_SQUARE_FRAME - frame) * CARD_SPIN);
       } else {
         if (args->side == EFFECT_SIDE_ENEMIES)
           Matrix_RotateZ(-TRIG_TURN / 16);
@@ -260,7 +304,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
           Matrix_RotateZ(TRIG_TURN / 16);
         Matrix_RotateX(TRIG_TURN / 16);
       }
-      Matrix_RotateY(6000);
+      Matrix_RotateY(CARD_SLANT);
       Matrix_ScaleUniform(scale);
       Matrix_Scale(FIXED_ONE, FIXED_ONE * 2, FIXED_ONE);
       Render_TransformVertices(gBattleEffect_SquareCorners, vertices, 4);
@@ -270,15 +314,15 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
     }
 
     if (mode == CARD_BAFFLE) {
-      // Frame 48: the butterflies take flight, two a frame for 32 frames;
-      // each flutters to the ground and skims along it.
-      if (frame == 48) {
+      // The mist pours out, two puffs a frame for 32 frames; each falls to
+      // the ground and spreads along it.
+      if (frame == CARD_FLIGHT_FRAMES) {
         EFFECT_SHOW_DAMAGE(SE_WHOOSH);
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
         REG_BLDALPHA = EFFECT_BLEND_ADD;
       }
-      if (frame >= 48 && frame <= 79) {
-        s32 time = frame - 48;
+      if (frame >= CARD_FLIGHT_FRAMES && frame < CARD_FLIGHT_FRAMES + 32) {
+        s32 time = frame - CARD_FLIGHT_FRAMES;
 
         slot = time * 2;
         for (i = 0; i != 2; i++) {
@@ -292,8 +336,9 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
       }
       for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         step = &work->particles[i];
-        if (step->variant >= 0 && step->variant <= 15) {
-          draw[0](canvas, work->sheet + (step->variant / 4 << 10),
+        if (step->variant >= 0 && step->variant < BAFFLE_PUFF_FRAMES) {
+          draw[0](canvas,
+                  work->sheet + step->variant / 4 * PICTURE_BYTES(CLOUD_PUFF),
                   overflow + FIXED_INTEGER_PART(step->x) - CLOUD_PUFF_WIDTH / 2,
                   FIXED_INTEGER_PART(step->y) - CLOUD_PUFF_HEIGHT / 2,
                   CLOUD_PUFF_WIDTH, CLOUD_PUFF_HEIGHT);
@@ -309,16 +354,16 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
     }
 
     if (mode == CARD_SLEEP) {
-      // Frame 48: a sheep a frame for 32 frames jumps from the card.
-      if (frame == 48)
+      // A sheep a frame for 32 frames tumbles out of the card.
+      if (frame == CARD_FLIGHT_FRAMES)
         Sound_PlayFar(SE_POWER_UP);
       if (frame == 64)
         EFFECT_SHOW_DAMAGE(-1);
-      if (frame >= 48 && frame <= 79) {
+      if (frame >= CARD_FLIGHT_FRAMES && frame < CARD_FLIGHT_FRAMES + 32) {
         struct Particle *sheep;
-        u32 mask = 127; // Holds one constant for its whole life.
+        u32 mask = 127;
 
-        slot = frame - 48;
+        slot = frame - CARD_FLIGHT_FRAMES;
         sheep = &work->particles[slot];
         sheep->x = toFIXED(64);
         sheep->y = toFIXED(48);
@@ -328,8 +373,9 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
       }
       for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         step = &work->particles[i];
-        if (step->variant >= 0 && step->variant <= 63) {
-          draw[0](canvas, CARD_SHEEP + ((step->variant / 4 & 3) << 10),
+        if (step->variant >= 0 && step->variant < SHEEP_FRAMES) {
+          draw[0](canvas,
+                  CARD_SHEEP + (step->variant / 4 & 3) * PICTURE_BYTES(SHEEP),
                   overflow + FIXED_INTEGER_PART(step->x) - SHEEP_WIDTH / 2,
                   FIXED_INTEGER_PART(step->y) - SHEEP_HEIGHT / 2, SHEEP_WIDTH,
                   SHEEP_HEIGHT);
@@ -339,16 +385,16 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
       }
     }
 
-    if (mode == CARD_SWORD && frame > 47) {
-      s32 time = frame - 48;
+    if (mode == CARD_SWORD && frame >= CARD_FLIGHT_FRAMES) {
+      s32 time = frame - CARD_FLIGHT_FRAMES;
 
-      // The dagger swings for 24 frames.
-      if (time <= 23)
+      // The dagger glints.
+      if (time < SWORD_CARD_DAGGER_FRAMES)
         draw[0](canvas, work->sheet + time / 4 % 6 * PICTURE_BYTES(DAGGER),
                 overflow + 52, 44, DAGGER_WIDTH, DAGGER_HEIGHT);
 
-      // Frame 72: it strikes; the screen flashes and 64 shards burst.
-      if (time == 24) {
+      // It strikes: the screen flashes and the shards burst.
+      if (time == SWORD_CARD_DAGGER_FRAMES) {
         Sound_PlayFar(SE_POWER_UP);
         EFFECT_SHOW_DAMAGE(-1);
         work->shakeFrames = 4;
@@ -356,52 +402,58 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
                              CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
         BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                  TINT_KEEP, 0, 16);
-        for (i = 0; i != 64; i++) {
+        for (i = 0; i != SWORD_CARD_PARTICLES; i++) {
           s32 angle = Random16() & TRIG_ANGLE_MASK;
-          s32 force = 127; // The AND lands in the register holding 127.
+          s32 force = 127;
 
           force &= Random16();
 
           step = &work->particles[i];
           step->x = toFIXED(64);
-          step->y = INTtoFIXED(i + 48);
-          step->velocityX = (Trig_Cos(angle) * (force + 64)) >> 6;
-          step->velocityY = (Trig_Sin(angle) * (force + 64)) >> 6;
+          step->y = INTtoFIXED(i + SWORD_CARD_SHARD_TOP);
+          step->velocityX =
+              (Trig_Cos(angle) * (force + SWORD_CARD_SHARD_SPEED)) >> 6;
+          step->velocityY =
+              (Trig_Sin(angle) * (force + SWORD_CARD_SHARD_SPEED)) >> 6;
           step->variant = Random16() & 255;
         }
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
         REG_BLDALPHA = EFFECT_BLEND_ADD;
       }
 
-      // The shards tumble through three cells and darken.
-      if (time >= 24 && time <= 60) {
+      // The shards tumble through three pictures each and darken.
+      if (time >= SWORD_CARD_DAGGER_FRAMES &&
+          time <= SWORD_CARD_DAGGER_FRAMES + SWORD_CARD_SHARD_FRAMES) {
         s32 fade = 0;
 
-        if (time > 28) {
-          fade = (time - 24) / 4;
-          if (fade > 7)
-            fade = 7;
+        if (time > SWORD_CARD_DAGGER_FRAMES + 4) {
+          fade = (time - SWORD_CARD_DAGGER_FRAMES) / 4;
+          if (fade > SWORD_CARD_SHARD_COPIES - 1)
+            fade = SWORD_CARD_SHARD_COPIES - 1;
         }
-        for (i = 0; i != 32; i++) {
-          s32 cell;
+        for (i = 0; i != SWORD_CARD_SHARDS; i++) {
+          s32 picture;
 
           step = &work->particles[i];
-          cell = i % 4 * 3 + (step->variant + time) / 8 % 3;
-          draw[0](
-              canvas,
-              work->sheet + CARDS_PALETTE_RAMP_PICTURES +
-                  (fade * 696 + gStatChange_ShardPictures[cell]),
-              overflow + FIXED_INTEGER_PART(step->x) -
-                  gStatChange_ShardWidths[cell] / 2,
-              FIXED_INTEGER_PART(step->y) - gStatChange_ShardHeights[cell] / 2,
-              gStatChange_ShardWidths[cell], gStatChange_ShardHeights[cell]);
+          picture = i % 4 * 3 + (step->variant + time) / 8 % 3;
+          draw[0](canvas,
+                  work->sheet + SWORD_CARD_SHARD_PICTURES +
+                      (fade * SWORD_CARD_SHARD_BYTES +
+                       gStatChange_ShardPictures[picture]),
+                  overflow + FIXED_INTEGER_PART(step->x) -
+                      gStatChange_ShardWidths[picture] / 2,
+                  FIXED_INTEGER_PART(step->y) -
+                      gStatChange_ShardHeights[picture] / 2,
+                  gStatChange_ShardWidths[picture],
+                  gStatChange_ShardHeights[picture]);
           Particle_AdvanceWithGravity2D(step, 60, 0);
         }
       }
     }
 
     if (mode == CARD_DEATH) {
-      // The reaper rises in seven panels and swings at frame 64.
+      // The Reaper rises, and swings at frame 64: his scythe cuts a red
+      // crescent that fades in four pictures.
       if (frame == 60)
         Sound_PlayFar(SE_POWER_UP);
       if (frame == 64) {
@@ -468,6 +520,30 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
     Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
-#undef BLITTER
 #undef CARD
-#undef CARD_NOISE
+#undef CARD_WIDTH
+#undef CARD_HEIGHT
+#undef CARD_SHEEP
+#undef SHEEP_WIDTH
+#undef SHEEP_HEIGHT
+#undef CARD_DISSOLVE_STEPS
+#undef CARD_FLIGHT_FRAMES
+#undef CARD_SQUARE_FRAME
+#undef CARD_SPIN
+#undef CARD_SLANT
+#undef CARD_SHOWN_FRAMES
+#undef SLEEP_CARD_SHOWN_FRAMES
+#undef CARD_DISSOLVE_FRAMES
+#undef BAFFLE_PUFF_FRAMES
+#undef SHEEP_FRAMES
+#undef SWORD_CARD_DAGGER_FRAMES
+#undef SWORD_CARD_PARTICLES
+#undef SWORD_CARD_SHARDS
+#undef SWORD_CARD_SHARD_FRAMES
+#undef SWORD_CARD_SHARD_TOP
+#undef SWORD_CARD_SHARD_SPEED
+#undef SWORD_CARD_SHARD_PICTURES
+#undef SWORD_CARD_SHARD_BYTES
+#undef SWORD_CARD_SHARD_COPIES
+#undef SWORD_CARD_SHARD_DIMMING
+#undef CANVAS_WAVE_BG2X

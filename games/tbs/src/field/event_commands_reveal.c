@@ -4,11 +4,15 @@
 
 #include "event_commands_internal.h"
 
-/// Gives every live actor of the 64 whose first sprite layer shows sprite 200
-/// the sprite param value, and marks it to be redrawn.
+#define ACTOR_COUNT 64 ///< gActors
+
+/// Draws every live actor whose sprite shows a rock (SPRITE_ROCK) in the colour
+/// mode value: Reveal greys the rocks with the backgrounds as it starts
+/// (SPRITE_COLOR_GREY) and gives them back their colours as it ends
+/// (SPRITE_COLOR_NORMAL).
 void Actor_SetRevealSpriteColor(s32 value) {
   struct Actor *actor = gActors;
-  s32 remainingActors = 63;
+  s32 remainingActors = ACTOR_COUNT - 1;
 
   do {
     if (actor->script != NULL) {
@@ -29,8 +33,16 @@ void Actor_SetRevealSpriteColor(s32 value) {
   } while (remainingActors >= 0);
 }
 
+/// How far the leader may walk from where Reveal was cast, in screen pixels up
+/// and down; sideways x counts at about 0.82 of itself, so the edge is an
+/// ellipse about 73 pixels to either side.
+#define REVEAL_RADIUS 60
+
+/// How long Reveal lasts: 10 seconds.
+#define REVEAL_FRAMES 600
+
 /// Task of the timed Psynergy (FIELD_PSYNERGY_REVEAL): asks for it to end once
-/// the leader is 60 pixels from its centre or its time has run out.
+/// the leader is REVEAL_RADIUS from its centre or its time has run out.
 void FieldPsynergy_WatchLeaderDistance(void) {
   struct FieldWork *work;
   struct Actor *actor;
@@ -44,26 +56,27 @@ void FieldPsynergy_WatchLeaderDistance(void) {
       work->revealFrames--;
   }
 
-  // On screen pixels (y is z less the height). x is scaled by 0.81649 (about
-  // the square root of 2/3) for the comparison, so the edge is an ellipse 60
-  // pixels up and down from the centre and about 73 to either side.
+  // In screen pixels: y is z less the height. x is scaled by 0.81649, about
+  // the square root of 2/3.
   distanceX = Iwram_MulFX(work->revealCenterX - actor->x.fixed / FIXED_ONE,
                           toFIXED(0.81649));
   distanceZ =
       work->revealCenterY - (actor->z.fixed - actor->y.fixed) / FIXED_ONE;
-  if (distanceX * distanceX + distanceZ * distanceZ >= 3600 ||
+  if (distanceX * distanceX + distanceZ * distanceZ >=
+          REVEAL_RADIUS * REVEAL_RADIUS ||
       work->revealFrames == 0) {
-    // Raise Reveal as a Psynergy request that pays no PP (ACT_PACKED
-    // | ABILITY_REVEAL), which runs its ending events.
+    // Raise Reveal as a Psynergy request that pays no PP, which runs its
+    // ending events.
     u16 *slot = (u16 *)&work->psynergy;
-    u32 request = 0x2000 | ABILITY_REVEAL;
+    u32 request = ACT_PACKED | ABILITY_REVEAL;
 
     *slot = request;
   }
 }
 
-/// Starts a screen transition centred on the leader, runs the matching event if
-/// there is one, and puts markers round the leader.
+/// Reveal: the backgrounds turn grey and show only within a rippling ellipse
+/// round the leader; runs the scene's Reveal event if there is one, puts
+/// markers round the leader and watches how far the leader walks.
 void FieldPsynergy_Reveal(void) {
   struct FieldWork *work;
   struct ScreenTransitionState *state;
@@ -73,16 +86,15 @@ void FieldPsynergy_Reveal(void) {
   s32 frame;
 
   work = gFieldWork;
-  Actor_SetRevealSpriteColor(6);
-  ScreenTransition_StartHeldWindow(8);
+  Actor_SetRevealSpriteColor(SPRITE_COLOR_GREY);
+  ScreenTransition_StartHeldWindow(WINDOW_TRANSITION_RIPPLE);
   state = HEAP_SLOT_BLOCK(HEAP_SLOT_SCREEN_TRANSITION);
   target = Actor_Lookup(gMainRoutineWork.leaderActorId);
   state->centreX = target->x.fixed;
   state->centreY = target->z.fixed - target->y.fixed;
-  // From the plain colours (PALETTE_TINT_NONE) the BG palettes
-  // turn grey (PALETTE_TINT_GRAYSCALE) in one frame.
-  PaletteFade_SetSource(PALETTE_TINT_NONE, 0);
-  PaletteFade_SetTarget(PALETTE_TINT_GRAYSCALE, 1);
+  // The BG palettes turn grey in one frame.
+  PaletteFade_SetSource(PALETTE_TINT_NONE, PALETTES_ALL);
+  PaletteFade_SetTarget(PALETTE_TINT_GRAYSCALE, PALETTES_BG);
   PaletteFade_StartInterpolation(1);
   // Not in the English release.
 #if !(TBS_PATCH_1 && !TBS_PATCH_2)
@@ -100,7 +112,7 @@ void FieldPsynergy_Reveal(void) {
   work->revealActive = 1;
   work->revealCenterX = state->centreX / FIXED_ONE;
   work->revealCenterY = state->centreY / FIXED_ONE;
-  work->revealFrames = 600;
+  work->revealFrames = REVEAL_FRAMES;
   work->effectTimerRunning = 1;
   FieldEffect_SpawnRevealMarkers();
   for (frame = 0; frame <= 18; frame++) {
@@ -125,12 +137,12 @@ void FieldPsynergy_EndReveal(void) {
 
     state->revealActive = 0;
     state->revealFrames = 0;
-    Actor_SetRevealSpriteColor(0);
+    Actor_SetRevealSpriteColor(SPRITE_COLOR_NORMAL);
 
-    PaletteFade_SetTarget(PALETTE_TINT_NONE, 1);
+    PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_BG);
     PaletteFade_StartInterpolation(1);
-    PaletteFade_SetSource(0, 0);
-    PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
+    PaletteFade_SetSource(RGB(0, 0, 0), PALETTES_ALL);
+    PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
     PaletteFade_StartInterpolation(30);
     wait(1);
 
@@ -148,3 +160,5 @@ void FieldPsynergy_EndReveal(void) {
     }
   }
 }
+
+#undef ACTOR_COUNT

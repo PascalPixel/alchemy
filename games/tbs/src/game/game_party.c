@@ -23,7 +23,7 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   u16 name[UNIT_NAME_SIZE];
   s32 i;
   u32 index;
-  s32 q;
+  s32 copy;
   s32 count;
 
   index = enemyId - ENEMY_ID_FIRST;
@@ -56,7 +56,7 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   unit->baseActionCount = enemy->actionCount;
   unit->baseHpRegen = enemy->hpRegen;
   unit->basePpRegen = enemy->ppRegen;
-  Message_DecodeRawFar(index + MsgEnemyName, name, 15);
+  Message_DecodeRawFar(index + MsgEnemyName, name, UNIT_NAME_SIZE);
   for (i = 0; i < UNIT_NAME_SIZE - 1 && name[i] != 0; i++)
     unit->name[i] = name[i];
   // Enemies of one kind are told apart by a letter after the name; past the
@@ -70,7 +70,7 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   count = 0;
   for (i = 0; i < 4; i++) {
     if (enemy->items[i] != 0) {
-      for (q = 0; q < enemy->counts[i]; q++) {
+      for (copy = 0; copy < enemy->counts[i]; copy++) {
         if (count < INVENTORY_SLOTS)
           unit->inventory[count++] = enemy->items[i];
       }
@@ -167,8 +167,8 @@ s32 Party_ListMembers(s16 *unitIds) {
   return count;
 }
 
-/// Adds `amount` to the party's coins, kept between 0 and 999999, and returns
-/// the new total.
+/// Adds `amount` to the party's coins, kept between 0 and COINS_MAX, and
+/// returns the new total.
 s32 Party_AdjustCoins(s32 amount) {
   s32 value;
   struct MainRoutineWork *work;
@@ -176,8 +176,8 @@ s32 Party_AdjustCoins(s32 amount) {
   work = &gMainRoutineWork;
   value = work->holdings.coins;
   value += amount;
-  if (value > 999999) {
-    value = 999999;
+  if (value > COINS_MAX) {
+    value = COINS_MAX;
   }
   if (value < 0) {
     value = 0;
@@ -203,14 +203,14 @@ s32 Party_AdjustCoins(s32 amount) {
     return value;                                                              \
   }
 
-PARTY_DEFINE_ADJUST(Party_AdjustShopCredit, holdings.shopCredit, 999999)
-PARTY_DEFINE_ADJUST(Party_AdjustShopGifts, holdings.shopGifts, 28)
+PARTY_DEFINE_ADJUST(Party_AdjustShopCredit, holdings.shopCredit, COINS_MAX)
+PARTY_DEFINE_ADJUST(Party_AdjustShopGifts, holdings.shopGifts, SHOP_GIFTS_MAX)
 
 /// Writes the summons the party can call to output, in menu order, ending with
 /// SUMMON_END, and returns how many.
 s32 Summon_ListLearned(u8 *output) {
   const u8 *summon = gSummon_OrderList;
-  const u8 *last = &gSummon_OrderList[15];
+  const u8 *last = &gSummon_OrderList[ARRAY_COUNT(gSummon_OrderList) - 1];
   s32 count = 0;
 
   do {
@@ -226,9 +226,9 @@ s32 Summon_ListLearned(u8 *output) {
   return count;
 }
 
-/// Returns summon `summonId`'s definition, or NULL past the sixteenth.
+/// Returns summon `summonId`'s definition, or NULL past the last.
 const struct SummonDefinition *SummonDefinition_GetNear(u32 summonId) {
-  if (summonId > 15)
+  if (summonId >= ARRAY_COUNT(gSummon_OrderList))
     return NULL;
   return &gSummon_DefinitionTable[summonId];
 }

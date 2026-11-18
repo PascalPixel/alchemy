@@ -472,8 +472,8 @@ void ItemIconGrid_SetVisible(s32 visible) {
 }
 
 /// Releases the item icons' VRAM entries, then loads the icons of up to count
-/// items (an empty item keeps its old entry) and gives each its sprite
-/// attributes and tile.
+/// items with the ICON_ layers in `mode` (an empty item keeps its old entry)
+/// and gives each its sprite attributes and tile.
 void ItemIconGrid_LoadItems(u16 *items, s32 count, s32 mode) {
   struct ShopWork *shop = Ram_HeapSlots->menuWork;
   struct IconSprite *sprite;
@@ -504,8 +504,8 @@ void ItemIconGrid_LoadItems(u16 *items, s32 count, s32 mode) {
   }
 }
 
-/// Shows a party member's 15 inventory icons at (x, y) pixels inside `window`,
-/// five to a row, 16 pixels apart.
+/// Shows a party member's INVENTORY_SLOTS inventory icons at (x, y) pixels
+/// inside `window`, SHOP_INVENTORY_COLUMNS to a row, 16 pixels apart.
 void ItemIconGrid_ShowInventory(struct Window *window, s32 x, s32 y,
                                 s32 unitId) {
   struct Unit *unit = Unit_Get(unitId);
@@ -513,7 +513,9 @@ void ItemIconGrid_ShowInventory(struct Window *window, s32 x, s32 y,
   s32 top = (s16)window->y * 8 + y + 8;
   s32 i;
 
-  ItemIconGrid_LoadItems(unit->inventory, INVENTORY_SLOTS, 27);
+  ItemIconGrid_LoadItems(unit->inventory, INVENTORY_SLOTS,
+                         ICON_BASE | ICON_COUNT_ABOVE_ONE | ICON_BROKEN |
+                             ICON_EQUIPPED);
   for (i = 0; i < INVENTORY_SLOTS; i++)
     ItemIconGrid_SetPosition(i, left + i % SHOP_INVENTORY_COLUMNS * 16,
                              top + i / SHOP_INVENTORY_COLUMNS * 16);

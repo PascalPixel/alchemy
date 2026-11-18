@@ -4,6 +4,20 @@
 
 #include "field_internal.h"
 
+/// A dissolve clears one pixel of each 8-bit tile a step, in
+/// gSpriteDissolve_PixelOrder's order, so a tile is gone after this many.
+#define DISSOLVE_TILE_PIXELS 64
+/// The step the first tile starts to dissolve at; each tile after it starts a
+/// step sooner.
+#define DISSOLVE_FIRST_STEP 64
+/// The steps a dissolve takes, four a frame.
+#define DISSOLVE_STEPS (DISSOLVE_FIRST_STEP + DISSOLVE_TILE_PIXELS)
+/// How much further along the pixel order each tile reads than the tile
+/// before, besides the step it is ahead.
+#define DISSOLVE_ORDER_STRIDE 16
+/// Keeps a pixel pair's odd pixel, its high byte, clearing the even one.
+#define PIXEL_PAIR_ODD_MASK 0xff00
+
 /// One step of dissolving a sprite pixel by pixel.
 void SpriteDissolve_Step(u8 *obj, u32 pos) {
   u16 *tile;
@@ -14,26 +28,27 @@ void SpriteDissolve_Step(u8 *obj, u32 pos) {
   struct Sprite *sprite = (struct Sprite *)obj;
 
   tile = (u16 *)(OBJ_VRAM0 + gVramCacheEntries[sprite->slot].offset);
-  tileCount = (sprite->width * sprite->height) / 64;
+  tileCount = (sprite->width * sprite->height) / DISSOLVE_TILE_PIXELS;
   i = 0;
 
   if (i < tileCount) {
     order = gSpriteDissolve_PixelOrder;
     {
-      u32 highMask = 0xff00;
-      u32 indexMask = 0x3f;
+      u32 highMask = PIXEL_PAIR_ODD_MASK;
+      u32 indexMask = DISSOLVE_TILE_PIXELS - 1;
 
-      // A tile is 64 bytes (32 halfwords) at 8 bits a pixel.
-      for (; i < tileCount; i++, tile += 32, pos++) {
-        if ((pos - 64) <= 63) {
+      for (; i < tileCount; i++, tile += TILE_SIZE_8BPP / 2, pos++) {
+        if ((pos - DISSOLVE_FIRST_STEP) <= DISSOLVE_TILE_PIXELS - 1) {
           u8 pixel;
           u16 *pixelPair;
           u32 isOdd;
 
           // Each tile reads the order 17 entries on from the tile before, so
           // neighbouring tiles lose different pixels at the same step.
-          pixel = order[(pos + i * 16) & indexMask];
-          pixelPair = (u16 *)((u8 *)tile + (pixel & 0x3e));
+          pixel = order[(pos + i * DISSOLVE_ORDER_STRIDE) & indexMask];
+          // The halfword holding the pixel: its offset rounded down to even.
+          pixelPair =
+              (u16 *)((u8 *)tile + (pixel & (DISSOLVE_TILE_PIXELS - 2)));
           isOdd = 1;
           isOdd &= pixel;
           if (isOdd != 0)
@@ -59,7 +74,7 @@ void SpriteDissolve_Run(u8 *sprite) {
     SpriteDissolve_Step(sprite, step + 3);
     step += 4;
     wait(1);
-  } while (step <= 127);
+  } while (step <= DISSOLVE_STEPS - 1);
 }
 
 /// Dissolves count sprites together, pixel by pixel, over 32 frames.
@@ -91,7 +106,7 @@ void SpriteDissolve_RunMany(u8 **sprites, s32 count) {
     }
     wait(1U);
     step += 4;
-  } while (step <= 127U);
+  } while (step <= DISSOLVE_STEPS - 1U);
 }
 
 /// Writes the actor's screen position, in pixels, to screenPosition[0..1] and
@@ -126,6 +141,11 @@ s32 MapGrid_GetScreenRelativePosition(struct Actor *actor,
   return -1;
 }
 
+/// The colour an outlined sprite's edge is drawn in (Sprite_ComposePicture,
+/// SPRITE_FLAG_OUTLINED): the sprite palette's white, colour 15, which
+/// SPRITE_COLOR_WHITE paints with too.
+#define OUTLINE_EDGE_COLOR 15
+
 /// Sets up the actor system: allocates and zeroes the 64 actors and registers
 /// the per-frame updates.
 void ActorSystem_Initialize(s32 controlMode) {
@@ -152,7 +172,7 @@ void ActorSystem_Initialize(s32 controlMode) {
     gCamera_UnreadWordB = 0;
     gCamera_UnreadWordA = 0;
   }
-  system->edge = 15;
+  system->edge = OUTLINE_EDGE_COLOR;
   system->fill = 0;
 }
 

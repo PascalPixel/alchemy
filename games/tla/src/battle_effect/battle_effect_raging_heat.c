@@ -7,27 +7,48 @@
 
 struct StripQuad;
 
-#define TEXTURE_PIXELS (Ram_MapCellBuffer + 4096)
-#define EMBERS ((struct Particle *)(Ram_MapCellBuffer + 20480))
+/// The ring of fire's texture, 128x128, after the quarter of the circle of
+/// runes (64x64) that the pillar's picture then replaces.
+#define FIRE_RING_PIXELS (Ram_MapCellBuffer + 64 * 64)
+/// The embers, after the ring of fire's texture.
+#define EMBERS ((struct Particle *)(FIRE_RING_PIXELS + 128 * 128))
+#define RAGING_HEAT_EMBER_COUNT 256
 
 #define RAGING_HEAT_FRAMES 96
+/// The pillar starts to fall and the ring of fire to spread.
+#define RAGING_HEAT_PILLAR_FRAME 56
+/// FlashBurstSheet's pictures, after the circle of runes (128x128) in the
+/// effect's sheet.
+#define RAGING_HEAT_FLASH_BURST_PICTURES (128 * 128)
+/// The bursts the pillar sets out where it lands; the variant draws the first
+/// RAGING_HEAT_BURSTS of them.
+#define RAGING_HEAT_BURSTS_SET_OUT 32
+/// A burst shows each of FlashBurstSheet's six pictures for four frames.
+#define RAGING_HEAT_BURST_FRAMES 24
+/// The rings' tilt toward the viewer.
+#define RAGING_HEAT_TILT 2000
+/// Until this frame the circle of runes is tipped further and rights itself.
+#define RUNE_CIRCLE_RIGHTED_FRAME 48
 
-// Abilities: Raging Heat.
-//
-// A ring of heat spins over the targets' middle and swells; from frame 56 a
-// pillar of flame (two mirrored halves) falls onto them, bursting into
-// sparks and embers when it lands, under a second, fading ring.
-/// Where FlashBurstSheet is decoded in the effect's pictures.
-#define RAGING_HEAT_FLASH_BURST_PICTURES 16384
+// gRagingHeat_Styles[variant]: four bytes for each strength.
+enum {
+  RAGING_HEAT_BURSTS,    ///< bursts of fire drawn where the pillar lands
+  RAGING_HEAT_SPREAD,    ///< how far apart they fly
+  RAGING_HEAT_RING_SIZE, ///< the rings' size, in 64ths of their textures'
+  RAGING_HEAT_EMBERS     ///< embers that fly from the landing
+};
 
-/// Raging Heat: a spinning ring of heat over the targets, and a pillar of
-/// flame that falls onto them and bursts into sparks and embers.
+/// A circle of runes spins over the targets' middle and swells; from frame 56
+/// a pillar of flame (two mirrored halves) falls from it onto them and bursts
+/// into fire and embers where it lands, under a ring of fire that spreads and
+/// fades.
+///
+/// Abilities: Raging Heat.
 void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
-  // The plain and the flipped blitter, as one pair.
-  DrawRectangle draw[2];
+  BlitterPair draw;
   u8 *sprites;
   struct ScreenPoint targets[8];
   struct ModelTexture texture;
@@ -35,7 +56,7 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
   s32 centerX;
   s32 baseY;
   struct RenderModel *model;
-  struct Particle *spark;
+  struct Particle *burst;
   struct Particle *particle;
   s32 i;
 
@@ -63,44 +84,46 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
                              work->sheet + RAGING_HEAT_FLASH_BURST_PICTURES, 1,
                              0);
   Resource_LoadAndDecompress(RESOURCE_PINK_BURST_SHEET, buffer, 1, 0);
-  Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, TEXTURE_PIXELS, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, FIRE_RING_PIXELS, 0,
+                             0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != RAGING_HEAT_FRAMES; frame++) {
     if (frame == 0) {
       for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
-        work->particles[i].variant = 24;
+        work->particles[i].variant = RAGING_HEAT_BURST_FRAMES;
       }
-      for (i = 0; i != 256; i++) {
-        EMBERS[i].variant = -1;
-      }
+      EFFECT_FREE_PARTICLES(i, EMBERS, RAGING_HEAT_EMBER_COUNT);
       Sound_PlayFar(SE_SPIN);
     }
-    if ((u32)(frame - 40) <= 15) {
+    // The colours turn to the orange ramp over the 16 frames before the fall.
+    if ((u32)(frame - (RAGING_HEAT_PILLAR_FRAME - 16)) < 16) {
       BattleEffect_StepPaletteToResource(RESOURCE_ORANGE_PALETTE_B);
     }
-    if (frame == 56) {
+    if (frame == RAGING_HEAT_PILLAR_FRAME) {
       Sound_PlayFar(SE_CLATTER);
     }
 
     // The pillar falls eight lines a frame and bursts where it lands.
-    if (frame > 55) {
+    if (frame >= RAGING_HEAT_PILLAR_FRAME) {
       s32 y = baseY + frame * 8 - 480;
 
       if ((u32)(y - 52) <= 7) {
-        for (i = 0, spark = work->particles; i != 32; i++, spark++) {
+        for (i = 0, burst = work->particles; i != RAGING_HEAT_BURSTS_SET_OUT;
+             i++, burst++) {
           u32 random;
           u32 spread;
 
-          spark->variant = -i / 4 + 2;
-          spark->x = INTtoFIXED(centerX / 2);
-          spark->y = INTtoFIXED((Random16() & 15) + y + 16);
+          burst->variant = -i / 4 + 2;
+          burst->x = INTtoFIXED(centerX / 2);
+          burst->y = INTtoFIXED((Random16() & 15) + y + 16);
           random = Random16();
-          spread = gRagingHeat_Styles[args->variant][1];
-          spark->velocityX = ((random % spread) - (spread >> 1)) << 12;
-          spark->velocityY = (192 - (Random16() & 255)) << 10;
+          spread = gRagingHeat_Styles[args->variant][RAGING_HEAT_SPREAD];
+          burst->velocityX = ((random % spread) - (spread >> 1)) << 12;
+          burst->velocityY = (192 - (Random16() & 255)) << 10;
         }
-        for (i = 0; i != gRagingHeat_Styles[args->variant][3]; i++) {
+        for (i = 0; i != gRagingHeat_Styles[args->variant][RAGING_HEAT_EMBERS];
+             i++) {
           s32 angle;
           s32 speed;
 
@@ -126,10 +149,11 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
       }
       i = 0;
       /* FAKEMATCH(dead): the test repeats the loop's own. */
-      if (i != gRagingHeat_Styles[args->variant][0]) {
+      if (i != gRagingHeat_Styles[args->variant][RAGING_HEAT_BURSTS]) {
         for (particle = work->particles;
-             i != gRagingHeat_Styles[args->variant][0]; i++, particle++) {
-          if ((u32)particle->variant <= 23) {
+             i != gRagingHeat_Styles[args->variant][RAGING_HEAT_BURSTS];
+             i++, particle++) {
+          if ((u32)particle->variant < RAGING_HEAT_BURST_FRAMES) {
             if (particle->variant > 1) {
               draw[0](canvas,
                       work->sheet + RAGING_HEAT_FLASH_BURST_PICTURES +
@@ -144,30 +168,30 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
         }
       }
       i = 0;
-      if (i != gRagingHeat_Styles[args->variant][3]) {
+      if (i != gRagingHeat_Styles[args->variant][RAGING_HEAT_EMBERS]) {
         particle = EMBERS;
         do {
           if (particle->variant >= 0) {
             s32 size = (particle->variant >> 3) + 1;
 
-            draw[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
-                    FIXED_INTEGER_PART(particle->x) - size / 2,
-                    FIXED_INTEGER_PART(particle->y) - size, size, size * 2);
+            EFFECT_DRAW_MOTE(draw[0], canvas, sprites,
+                             FIXED_INTEGER_PART(particle->x),
+                             FIXED_INTEGER_PART(particle->y), size);
             Particle_AdvanceWithGravity2D(particle, 60, toFIXED(1) / 16);
             particle->variant--;
           }
           i++;
           particle++;
-        } while (i != gRagingHeat_Styles[args->variant][3]);
+        } while (i != gRagingHeat_Styles[args->variant][RAGING_HEAT_EMBERS]);
       }
     }
 
-    // The rings: the spinning one, and from frame 56 the fading one.
+    // The circle of runes, and from the pillar's fall the ring of fire.
     {
       void *vertices;
       s32 shade;
 
-      vertices = Heap_AllocEwram(32);
+      vertices = Heap_AllocEwram(4 * sizeof(struct ProjectedVertex));
       model = Render_AllocateModelList(1);
       shade = 0;
       model->kind = MODEL_SHADED_ADDITIVE;
@@ -178,8 +202,8 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
       texture.logWidth = 7;
       texture.logHeight = 7;
       for (i = 0; i != 2; i++) {
-        s32 size = gRagingHeat_Styles[args->variant][2];
-        s32 largest = size << 10;
+        s32 size = gRagingHeat_Styles[args->variant][RAGING_HEAT_RING_SIZE];
+        s32 largest = size * (FIXED_ONE / 64);
         s32 step = size << 5;
         s32 scale;
 
@@ -192,9 +216,9 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
           Matrix_Translate(INTtoFIXED(centerX) - toFIXED(128),
                            INTtoFIXED(baseY + 8) - toFIXED(64), 0);
         }
-        Matrix_RotateX(2000);
-        if (frame <= 47) {
-          Matrix_RotateX((48 - frame) << 9);
+        Matrix_RotateX(RAGING_HEAT_TILT);
+        if (frame < RUNE_CIRCLE_RIGHTED_FRAME) {
+          Matrix_RotateX((RUNE_CIRCLE_RIGHTED_FRAME - frame) << 9);
         }
         if (i == 0) {
           scale = (frame - 16) * step;
@@ -207,14 +231,14 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
           texture.pixels = work->sheet;
           Matrix_RotateY(-frame * 3 << 8);
         } else {
-          scale = (frame * 4 - 224) * step;
+          scale = (frame - RAGING_HEAT_PILLAR_FRAME) * 4 * step;
           if (scale < 0) {
             continue;
           }
           scale += FIXED_ONE / 4;
           shade = 512 - frame * 8;
           model->shade = shade;
-          texture.pixels = TEXTURE_PIXELS;
+          texture.pixels = FIRE_RING_PIXELS;
         }
         if (scale > 0 && shade > MODEL_SHADE_INVISIBLE) {
           Matrix_ScaleUniform(scale);
@@ -232,27 +256,34 @@ void BattleEffect_RunRagingHeat(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
+#undef RAGING_HEAT_EMBER_COUNT
+#undef RAGING_HEAT_PILLAR_FRAME
+#undef RAGING_HEAT_FLASH_BURST_PICTURES
+#undef RAGING_HEAT_BURSTS_SET_OUT
+#undef RAGING_HEAT_BURST_FRAMES
+#undef RAGING_HEAT_TILT
+#undef RUNE_CIRCLE_RIGHTED_FRAME
+
 #define RING_FRAMES 122
 #define RING_CUE_FRAME 16
 #define RING_RISE_FRAME 8   ///< the ring starts to rise over the caster
 #define RING_THROW_FRAME 64 ///< it flies at the targets
 #define RING_HIT_FRAME 88
+#define JUGGLE_SPARKS_PER_TARGET 128
 #define SPARK_COUNT 768
+/// The ring's tilt toward the viewer, beside its turn.
+#define JUGGLE_TILT 500
 
 // gJuggle_Styles[variant]: seven bytes for each strength.
 enum {
-  RING_LIFT_STEP, // pixels the ring rises each frame
-  RING_LIFT_MAX,  // and its highest
-  RING_FLAMES,    // flames in the ring
-  RING_SPACING,   // their spacing round it
-  RING_SPARKS,    // sparks at each target
-  RING_SHAKE,     // frames the screen shakes at the hit
-  RING_BLITTER    // which of the pair draws the flames
+  RING_LIFT_STEP, ///< pixels the ring rises each frame
+  RING_LIFT_MAX,  ///< and its highest
+  RING_FLAMES,    ///< flames in the ring
+  RING_SPACING,   ///< their spacing round it
+  RING_SPARKS,    ///< sparks at each target
+  RING_SHAKE,     ///< frames the screen shakes at the hit
+  RING_BLITTER    ///< which of the pair draws the flames
 };
-
-/// The transform entry, typed as its callers use it.
-#define TransformVector                                                        \
-  ((s32 (*)(const void *, s32 *))Iwram_TransformVectorEntry)
 
 /// A ring of small flames. The flames circle the caster in a ring that rises
 /// over its head from frame 8, each turning its own way through four cels.
@@ -345,8 +376,8 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
 
       Matrix_Initialize();
       Matrix_Translate(ring->x - toFIXED(128), ring->y - toFIXED(64), 0);
-      Matrix_RotateZ(frame * 256);
-      Matrix_RotateX(frame * 256 + 500);
+      Matrix_RotateZ(frame * (TRIG_TURN / 256));
+      Matrix_RotateX(frame * (TRIG_TURN / 256) + JUGGLE_TILT);
       if (i > 7)
         Matrix_RotateX(DEGtoANG(90));
       Matrix_RotateY(
@@ -355,10 +386,12 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
       place[0] = 0;
       place[1] = 0;
       place[2] = INTtoFIXED(lift);
-      TransformVector(place, place);
-      x = place[0] >> 17;
+      Iwram_TransformVector(place, place);
+      // DEAD: place keeps the flame's place on the canvas, never read; the
+      // ROM keeps the two stores.
+      x = FIXEDtoINT(place[0]) >> 1;
       place[0] = x + 64;
-      y = ((s16 *)place)[3];
+      y = FIXED_INTEGER_PART(place[1]);
       place[1] = y + 64;
       blitters[gJuggle_Styles[args->variant][RING_BLITTER]](
           canvas, work->sheet + cel * (16 * 64), x + 56, y + 16, 16, 64);
@@ -374,7 +407,8 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
                                  POSE_DAMAGE, i, 16);
         for (j = 0; j != gJuggle_Styles[args->variant][RING_SPARKS]; j++) {
           struct Particle *spark =
-              &((struct Particle *)Ram_MapCellBuffer)[i * 128 + j];
+              &((struct Particle *)
+                    Ram_MapCellBuffer)[i * JUGGLE_SPARKS_PER_TARGET + j];
           s32 angle;
           s32 speed;
 
@@ -415,35 +449,41 @@ void BattleEffect_RunJuggle(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-/// Loads the grey ramp and fills the 128x128 canvas with a vertical gradient
-/// that rises over the top 32 rows and falls over the bottom 32.
+/// BG2PA for the white band: the canvas's 128 columns stretched across about
+/// 420 screen pixels.
+#define WHITE_BAND_STRETCH Q_8_8(78.0 / 256)
+
+/// Loads the grey ramp and fills the canvas with a white band, its left and
+/// right 32 columns fading out, stretched across the screen on BG2: the
+/// summons sweep it in from the right to white the battle out.
 void RagingHeat_FillGradientCanvas(void) {
   u8 *canvas = Ram_HeapSlots->battleCanvas;
-  s32 y;
   s32 x;
+  s32 y;
 
   Graphics_LoadGreyRamp();
   REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
   PLTT_BACKDROP = 0;
-  REG_BG2PA = 0x4e;
+  REG_BG2PA = WHITE_BAND_STRETCH;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  for (y = 0; y != CANVAS_SIZE; y++) {
-    for (x = 0; x != CANVAS_SIZE; x++) {
+  for (x = 0; x != CANVAS_SIZE; x++) {
+    for (y = 0; y != CANVAS_SIZE; y++) {
       s32 level;
 
-      if (y < 32)
-        level = y * 2;
-      else if (y > 95)
-        level = 255 - y * 2;
+      if (x < 32)
+        level = x * 2;
+      else if (x > 95)
+        level = 255 - x * 2;
       else
-        level = 63;
-      canvas[(((x / 8) * 16 + y / 8) * 8 + (x & 7)) * 8 + (y & 7)] = level;
+        level = CANVAS_LEVEL_BRIGHTEST;
+      canvas[CANVAS_PIXEL_OFFSET(x, y)] = level;
     }
   }
 }
-#undef BLITTER
-#undef TEXTURE_PIXELS
+
+#undef WHITE_BAND_STRETCH
+#undef FIRE_RING_PIXELS
 #undef EMBERS
 #undef RAGING_HEAT_FRAMES
 #undef RING_FRAMES
@@ -451,5 +491,6 @@ void RagingHeat_FillGradientCanvas(void) {
 #undef RING_RISE_FRAME
 #undef RING_THROW_FRAME
 #undef RING_HIT_FRAME
+#undef JUGGLE_SPARKS_PER_TARGET
 #undef SPARK_COUNT
-#undef TransformVector
+#undef JUGGLE_TILT

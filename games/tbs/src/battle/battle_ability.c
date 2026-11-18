@@ -50,6 +50,12 @@ s32 Ability_EffectAppliesToDowned(s32 effect) {
 /// The element power an item, or an ability with no element, acts with.
 #define ITEM_ELEMENT_POWER 100
 
+/// An unleashed Djinni gives the Djinn bonus (more coins and experience, and a
+/// likelier item, from the enemies that fall) against a target weakest to its
+/// element, with a chance in percent of the user's power less the target's
+/// resistance, plus this many.
+#define DJINN_BONUS_CHANCE 30
+
 /// A message operand that shows nothing: the event only waits for the player.
 #define MESSAGE_NONE -1
 
@@ -170,7 +176,8 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
       affinity = 1;
   }
 
-  // The user's power in the ability's element; items always use 100.
+  // The user's power in the ability's element; items always use
+  // ITEM_ELEMENT_POWER.
   if (plan->element >= ELEMENT_VENUS && plan->element <= ELEMENT_JUPITER &&
       plan->command != COMMAND_ITEM)
     elementPower = actor->element[plan->element].power;
@@ -184,7 +191,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
     s32 chance;
 
     chance = elementPower - target->element[plan->element].resistance;
-    chance += 30;
+    chance += DJINN_BONUS_CHANCE;
     // Percent to a fraction of the 16-bit random range.
     chance *= FIXED_ONE / 100;
     if (chance > (Battle_RandomFar() & 0xffff))
@@ -442,7 +449,7 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
         break;
       newHp = target->hp;
 
-      // An ability with no element (an item) heals as if at power 100.
+      // An ability with no element (an item) heals at ITEM_ELEMENT_POWER.
       power = ability->power;
       amount = Battle_CalculateRecoveryFar(
           power, element == ELEMENT_NONE ? ITEM_ELEMENT_POWER : elementPower,
@@ -553,8 +560,8 @@ UNREAD_RESULT BattleAbility_ApplyToTarget(struct BattleActionRun *plan,
         amount =
             Battle_CalculatePsynergyPowerFar(power, elementBonus, FULL_RATE);
         amount *= multiplier;
-        // The fall-off by distance. (The ability kind is masked again, as the
-        // bytes need.)
+        // The fall-off by distance.
+        /* FAKEMATCH(dead): the ability kind masked again. */
         switch (kind & ABILITY_FORMULA_MASK) {
         case ABILITY_FORMULA_DAMAGE:
           amount = amount * gRangeFalloff_PsynergyDamage[distance] / 100;

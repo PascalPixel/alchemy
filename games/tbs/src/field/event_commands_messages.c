@@ -4,6 +4,16 @@
 
 #include "event_commands_internal.h"
 
+/// Message_OpenWindow's window options, in packed's low bits (as
+/// window_borders.c names them).
+#define MESSAGE_WINDOW_ZOOM 1 ///< zoom open rather than appear at once
+/// Set by the mind-read windows; Message_OpenWindow never reads it.
+#define MESSAGE_WINDOW_UNREAD 2
+#define MESSAGE_WINDOW_ANCHOR_BOTTOM 16 ///< WINDOW_FLAG_ANCHOR_BOTTOM
+
+/// Message_SetVoiceFromActor's actor id for no voice: it clears the voice.
+#define MESSAGE_VOICE_NONE 0x80000000
+
 /// The event command "open message": opens the event's current message in a
 /// speech window next to the speaking actor, with the speaker's portrait beside
 /// it when it has one, and moves on to the next message.
@@ -65,7 +75,7 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
         x = pos[0] >> 3;
         y = pos[1] >> 3;
       }
-    } else if (actorId <= 7) {
+    } else if (actorId < ACTOR_FIRST_PLACED) {
       sprite = actorId;
       actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
       if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
@@ -191,18 +201,24 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
     if (win->mindRead != 0) {
       wait(8);
       if (extra != 0)
-        handle = Message_OpenWindowFar(message, left, top + extra - 1, 18);
+        handle = Message_OpenWindowFar(message, left, top + extra - 1,
+                                       MESSAGE_WINDOW_ANCHOR_BOTTOM |
+                                           MESSAGE_WINDOW_UNREAD);
       else
-        handle = Message_OpenWindowFar(message, left, top, 2);
+        handle =
+            Message_OpenWindowFar(message, left, top, MESSAGE_WINDOW_UNREAD);
     } else {
       s32 voice = Speaker_GetVoice(sprite);
 
       if (extra != 0)
         handle = Message_OpenWindowFar(message, left, top + extra - 1,
-                                       MESSAGE_WINDOW_VOICE(voice) | 17);
+                                       MESSAGE_WINDOW_VOICE(voice) |
+                                           MESSAGE_WINDOW_ANCHOR_BOTTOM |
+                                           MESSAGE_WINDOW_ZOOM);
       else
         handle = Message_OpenWindowFar(message, left, top,
-                                       MESSAGE_WINDOW_VOICE(voice) | 1);
+                                       MESSAGE_WINDOW_VOICE(voice) |
+                                           MESSAGE_WINDOW_ZOOM);
     }
     // DEAD: both arms open the same portrait behind a test of win->mindRead;
     // the ROM keeps the test's load of mindRead.
@@ -234,7 +250,7 @@ void Event_ShowMessageAndWait(s32 actorId, s32 flags) {
   // A party member the scene does not place has its portrait under its
   // character id, as FieldMessage_ShowAtActor opened it.
   sprite = Actor_GetSpriteById(actorId);
-  if (actorId <= 7) {
+  if (actorId < ACTOR_FIRST_PLACED) {
     member = actorId & SPEAKER_ACTOR_MASK;
 
     if (Scene_FindActorPlacement(member) == 0) {
@@ -355,7 +371,8 @@ void Event_ShowSpeakerMessage(s32 speaker) {
       windowY = windowY < 20 ? 20 : windowY;
       if (windowY > 220)
         windowY = 220;
-      win = (s32)Message_OpenWindowFar(state->message, windowX, windowY, 1);
+      win = (s32)Message_OpenWindowFar(state->message, windowX, windowY,
+                                       MESSAGE_WINDOW_ZOOM);
       state->messageWindow = win;
       while (Window_IsClosedFar((struct Window *)win) == 0)
         wait(1);
@@ -395,7 +412,8 @@ void Event_ShowMessageAtPosition(s32 unusedA, s32 unusedB, s32 x, s32 y) {
     windowX = 312;
   CLAMP(windowY, minY, 220);
 
-  window = (s32)Message_OpenWindowFar(state->message, windowX, windowY, 1);
+  window = (s32)Message_OpenWindowFar(state->message, windowX, windowY,
+                                      MESSAGE_WINDOW_ZOOM);
   while (Window_IsClosedFar((struct Window *)window) == 0)
     wait(1);
   state->message++;
@@ -423,12 +441,14 @@ void Event_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
   s32 firstWindow;
   s32 secondWindow;
 
-  firstWindow = (s32)Message_OpenWindowFar(work->message++, firstX, firstY,
-                                           Speaker_GetVoice(firstSprite) << 16);
+  firstWindow = (s32)Message_OpenWindowFar(
+      work->message++, firstX, firstY,
+      MESSAGE_WINDOW_VOICE(Speaker_GetVoice(firstSprite)));
   Portrait_OpenWindowFar(firstSprite, 0, firstPortraitX, firstPortraitY);
 
   secondWindow = (s32)Message_OpenWindowFar(
-      work->message++, secondX, secondY, Speaker_GetVoice(secondSprite) << 16);
+      work->message++, secondX, secondY,
+      MESSAGE_WINDOW_VOICE(Speaker_GetVoice(secondSprite)));
   Portrait_OpenWindowFar(secondSprite, 0, secondPortraitX, secondPortraitY);
 
   while (Message_AllTypedFar() == 0)
@@ -453,13 +473,14 @@ void Event_ShowTwoMessagesAndWait(s32 first, s32 firstX, s32 firstY,
 }
 
 /// Sets the voice of the messages that follow to that of actorId's sprite, at
-/// the rate the message speed option picks (gMessageSpeed_VoiceRates).
+/// the rate the message speed option picks (gMessageSpeed_VoiceRates);
+/// MESSAGE_VOICE_NONE clears it.
 void Message_SetVoiceFromActor(s32 actorId) {
   struct WindowWork *state = WINDOW_WORK;
   u8 rate;
   s32 voice;
 
-  if (actorId == 0x80000000) {
+  if (actorId == MESSAGE_VOICE_NONE) {
     state->voiceSound = 0;
     state->voiceCountdown = 0;
   } else {
@@ -472,3 +493,7 @@ void Message_SetVoiceFromActor(s32 actorId) {
 
 #undef DISPLAY_TILE_WIDTH
 #undef DISPLAY_TILE_HEIGHT
+#undef MESSAGE_WINDOW_ZOOM
+#undef MESSAGE_WINDOW_UNREAD
+#undef MESSAGE_WINDOW_ANCHOR_BOTTOM
+#undef MESSAGE_VOICE_NONE

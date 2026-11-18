@@ -1,6 +1,6 @@
 /// @file
 /// The way into Lemuria from its dock: a rock Grind breaks up, two ways on to
-/// the city, and the ship's harbour, where Sheba asks Piers his age as they
+/// the city, and the ship's harbor, where Sheba asks Piers his age as they
 /// sail out.
 
 #include "flags.h"
@@ -32,11 +32,11 @@
 extern s32 gLemuriaEntrance_ShipSailsOut[];
 /// The way in's actors, by the rows of gActorPlacements.
 enum {
-  /// The party's ship, placed blank; it sails out of the harbour
+  /// The party's ship, placed blank; it sails out of the harbor
   /// (gLemuriaEntrance_ShipSailsOut).
   ACTOR_SHIP = ACTOR_FIRST_PLACED,
-  /// Boats moored in the harbour: four on sprite 342, six on the ship's own
-  /// boat sheet (sprite 11).
+  /// Boats moored in the harbor: four SPRITE_MOORED_BOAT and six on the
+  /// winged ship's sheet (SPRITE_WINGED_SHIP).
   ACTOR_MOORED_BOAT_A,
   ACTOR_MOORED_BOAT_B,
   ACTOR_MOORED_BOAT_C,
@@ -47,7 +47,7 @@ enum {
   ACTOR_MOORED_SHIP_D,
   ACTOR_MOORED_SHIP_E,
   ACTOR_MOORED_SHIP_F,
-  ACTOR_ROCK ///< sprite 424, which Grind breaks up
+  ACTOR_ROCK ///< the tall rock in the way, which Grind breaks up
 };
 
 /// Who speaks a line of LemuriaEntrance_ShebaAsksPiersAge: the party by
@@ -58,7 +58,7 @@ enum { SPEAKER_KRADEN = 8 };
 /// by entrance 1.
 enum { ENTRANCE_ABOARD_SHIP = 90 };
 
-void LemuriaEntrance_ShowPortraitLine(s32 speaker, s32 frames);
+void LemuriaEntrance_ShowLineWithPortrait(s32 speaker, s32 frames);
 
 void LemuriaEntrance_ShebaAsksPiersAge(void);
 
@@ -87,7 +87,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-/// The party leaves the harbour for Lemuria by its first way in, clearing
+/// The party leaves the harbor for Lemuria by its first way in, clearing
 /// FLAG_LEMURIA_OTHER_WAY_IN.
 void LemuriaEntrance_LeaveByExit3(s32 exit) {
   struct MainRoutineWork *party = &gMainRoutineWork;
@@ -125,11 +125,11 @@ void LemuriaEntrance_GrindRock(void) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-/// Unused: once flag 0x800 is set, the party boards the ship and
-/// sails it (render mode 6); otherwise the leader takes control again. Nothing
-/// calls it.
+/// Unused: once FLAG_TRANSFERRED_DJINN_FIRST is set, the party boards the ship
+/// and sails it (render mode 6); otherwise the leader takes control again.
+/// Nothing calls it.
 UNUSED void LemuriaEntrance_BoardShip(void) {
-  if (Event_GetFlag(0x800) != 0) {
+  if (Event_GetFlag(FLAG_TRANSFERRED_DJINN_FIRST) != 0) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Event_StartScreenTransition();
@@ -199,13 +199,13 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 /// Shows the next line of a conversation in a window beside its speaker's
 /// portrait (Kraden's for SPEAKER_KRADEN) and closes it after the frames.
-void LemuriaEntrance_ShowPortraitLine(s32 speaker, s32 frames) {
+void LemuriaEntrance_ShowLineWithPortrait(s32 speaker, s32 frames) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 b;
   s32 a;
   s32 height;
   s32 width;
-  s32 resource;
+  s32 voice;
   s32 id;
   s32 x;
 
@@ -214,7 +214,7 @@ void LemuriaEntrance_ShowPortraitLine(s32 speaker, s32 frames) {
   id = SPRITE_KRADEN;
   if (speaker != SPEAKER_KRADEN)
     id = speaker;
-  resource = Speaker_GetVoice(id);
+  voice = Speaker_GetVoice(id);
   if (speaker == ACTOR_PIERS) {
     width = 10;
     height = 10;
@@ -226,7 +226,7 @@ void LemuriaEntrance_ShowPortraitLine(s32 speaker, s32 frames) {
     x = 5;
   }
   Call4((void (*)())Message_OpenWindow, work->message++, width, height,
-        (resource << 16) | 2);
+        MESSAGE_WINDOW_VOICE(voice) | 2);
   x = Portrait_OpenWindow(id, 0, x, 5);
   while (Message_AllTyped() == 0)
     System_Wait(1);
@@ -235,7 +235,7 @@ void LemuriaEntrance_ShowPortraitLine(s32 speaker, s32 frames) {
   Message_CloseFinishedWindows();
 }
 
-/// As the ship sails out of the harbour, Sheba asks Piers how old he really is.
+/// As the ship sails out of the harbor, Sheba asks Piers how old he really is.
 /// "Umm... Piers?"
 void LemuriaEntrance_ShebaAsksPiersAge(void) {
   struct FieldWork *work;
@@ -249,27 +249,27 @@ void LemuriaEntrance_ShebaAsksPiersAge(void) {
   Actor_SetScript(ACTOR_SHIP, gLemuriaEntrance_ShipSailsOut);
   FieldEvent_Wait(80);
   FieldEvent_SetMessageId((s32)&MsgFieldAddressCompanion);
-  LemuriaEntrance_ShowPortraitLine(ACTOR_SHEBA, 90);
-  LemuriaEntrance_ShowPortraitLine(ACTOR_PIERS, 90);
-  LemuriaEntrance_ShowPortraitLine(ACTOR_SHEBA, 180);
-  LemuriaEntrance_ShowPortraitLine(ACTOR_PIERS, 90);
-  LemuriaEntrance_ShowPortraitLine(ACTOR_SHEBA, 250);
-  LemuriaEntrance_ShowPortraitLine(ACTOR_PIERS, 180);
-  LemuriaEntrance_ShowPortraitLine(ACTOR_JENNA, 250);
-  LemuriaEntrance_ShowPortraitLine(SPEAKER_KRADEN, 90);
-  LemuriaEntrance_ShowPortraitLine(ACTOR_PIERS, 180);
-  LemuriaEntrance_ShowPortraitLine(SPEAKER_KRADEN, 180);
-  LemuriaEntrance_ShowPortraitLine(ACTOR_PIERS, 180);
-  LemuriaEntrance_ShowPortraitLine(ACTOR_SHEBA, 90);
-  LemuriaEntrance_ShowPortraitLine(ACTOR_PIERS, 250);
-  LemuriaEntrance_ShowPortraitLine(ACTOR_JENNA, 250);
-  LemuriaEntrance_ShowPortraitLine(ACTOR_PIERS, 250);
-  LemuriaEntrance_ShowPortraitLine(ACTOR_SHEBA, 90);
-  LemuriaEntrance_ShowPortraitLine(ACTOR_JENNA, 90);
-  LemuriaEntrance_ShowPortraitLine(SPEAKER_KRADEN, 90);
-  LemuriaEntrance_ShowPortraitLine(ACTOR_PIERS, 250);
-  LemuriaEntrance_ShowPortraitLine(ACTOR_FELIX, 90);
-  LemuriaEntrance_ShowPortraitLine(ACTOR_PIERS, 250);
+  LemuriaEntrance_ShowLineWithPortrait(ACTOR_SHEBA, 90);
+  LemuriaEntrance_ShowLineWithPortrait(ACTOR_PIERS, 90);
+  LemuriaEntrance_ShowLineWithPortrait(ACTOR_SHEBA, 180);
+  LemuriaEntrance_ShowLineWithPortrait(ACTOR_PIERS, 90);
+  LemuriaEntrance_ShowLineWithPortrait(ACTOR_SHEBA, 250);
+  LemuriaEntrance_ShowLineWithPortrait(ACTOR_PIERS, 180);
+  LemuriaEntrance_ShowLineWithPortrait(ACTOR_JENNA, 250);
+  LemuriaEntrance_ShowLineWithPortrait(SPEAKER_KRADEN, 90);
+  LemuriaEntrance_ShowLineWithPortrait(ACTOR_PIERS, 180);
+  LemuriaEntrance_ShowLineWithPortrait(SPEAKER_KRADEN, 180);
+  LemuriaEntrance_ShowLineWithPortrait(ACTOR_PIERS, 180);
+  LemuriaEntrance_ShowLineWithPortrait(ACTOR_SHEBA, 90);
+  LemuriaEntrance_ShowLineWithPortrait(ACTOR_PIERS, 250);
+  LemuriaEntrance_ShowLineWithPortrait(ACTOR_JENNA, 250);
+  LemuriaEntrance_ShowLineWithPortrait(ACTOR_PIERS, 250);
+  LemuriaEntrance_ShowLineWithPortrait(ACTOR_SHEBA, 90);
+  LemuriaEntrance_ShowLineWithPortrait(ACTOR_JENNA, 90);
+  LemuriaEntrance_ShowLineWithPortrait(SPEAKER_KRADEN, 90);
+  LemuriaEntrance_ShowLineWithPortrait(ACTOR_PIERS, 250);
+  LemuriaEntrance_ShowLineWithPortrait(ACTOR_FELIX, 90);
+  LemuriaEntrance_ShowLineWithPortrait(ACTOR_PIERS, 250);
   FieldActor_WaitForScriptEndById(ACTOR_SHIP);
   FieldEvent_Wait(10);
   work = Ram_HeapSlots->fieldWork;
@@ -283,7 +283,7 @@ void LemuriaEntrance_ShebaAsksPiersAge(void) {
 }
 
 // clang-format off
-/// The ship's course out of the harbour.
+/// The ship's course out of the harbor.
 s32 gLemuriaEntrance_ShipSailsOut[] = {
     SC_MOVE(728, 0, 160),
     SC_SYNC,
@@ -321,7 +321,7 @@ s32 gLemuriaEntrance_ShipSailsOut[] = {
 };
 // clang-format on
 
-/// The ship's animation as it rests in the harbour.
+/// The ship's animation as it rests in the harbor.
 s32 gLemuriaEntrance_ShipAtRest[] = {
     SC_CALL(LemuriaEntrance_ResetAnimationFrame),
     SC_ANIMATION(7),

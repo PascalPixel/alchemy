@@ -5,8 +5,8 @@
 
 #include "battle_internal.h"
 
-/// Picks a random living target on one side: the party (target codes 0x100 +
-/// slot) when party is set, otherwise the enemies (0x180 + slot); 0 when none
+/// Picks a random living target on one side: the party (PLACE_PARTY | slot)
+/// when party is set, otherwise the enemies (PLACE_ENEMY | slot); 0 when none
 /// lives.
 s32 BattleAI_ChooseRandomTarget(s32 party) {
   struct BattleWork *work;
@@ -21,7 +21,7 @@ s32 BattleAI_ChooseRandomTarget(s32 party) {
     for (i = 0; work->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
       if (work->partyUnits[i] != BATTLE_UNIT_REMOVED &&
           Unit_Get(work->partyUnits[i])->hp != 0)
-        targets[count++] = i | 0x100;
+        targets[count++] = i | PLACE_PARTY;
     }
   } else {
     for (i = 0; work->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
@@ -36,8 +36,8 @@ s32 BattleAI_ChooseRandomTarget(s32 party) {
 }
 
 /// Finds the living unit with the highest Attack on unitId's side (the party
-/// for ids 0 to 7, else the enemies), other than unitId itself; unitId when no
-/// other lives.
+/// for ids up to ALLY_MAX, else the enemies), other than unitId itself; unitId
+/// when no other lives.
 s32 BattleUnit_FindStrongestAlly(u32 unitId) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
   u32 best = unitId;

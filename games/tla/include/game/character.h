@@ -112,7 +112,8 @@ struct EnemyDefinition {
   u8 elementPreset;  ///< row of gEnemy_ElementPresetTable
   s8 targetStrategy; ///< whom a single-target attack favours
   s8 actionStrategy; ///< how the action is chosen from abilities
-  u8 itemActions;    ///< one bit per place in abilities: use an item instead
+  /// One bit per place in `abilities` (ITEM_ACTION): use an item held instead.
+  u8 itemActions;
   u16 abilities[8];  ///< the abilities the enemy chooses from
   u8 weakEffects[4]; ///< the ability effects the enemy is weak to
   u16 coins;         ///< coins won
@@ -127,6 +128,8 @@ STATIC_ASSERT(offsetof(struct EnemyDefinition, items) == 30);
 STATIC_ASSERT(offsetof(struct EnemyDefinition, abilities) == 46);
 STATIC_ASSERT(offsetof(struct EnemyDefinition, coins) == 66);
 STATIC_ASSERT(offsetof(struct EnemyDefinition, experience) == 72);
+/// EnemyDefinition.itemActions' bit for `place` in its abilities.
+#define ITEM_ACTION(place) (1 << (place))
 
 /// An enemy's element preset in gEnemy_ElementPresetTable: the element it
 /// attacks with, its level in each element, and its base power and resistance

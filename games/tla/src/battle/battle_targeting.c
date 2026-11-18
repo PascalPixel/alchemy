@@ -24,9 +24,6 @@
 #define STAT_STAGE_MAX 4
 /// Zephyr's Agility stage, beyond the usual highest: twice the Agility.
 #define AGILITY_STAGE_DOUBLED 8
-/// A Resistance stage adds 20 to the resistance to every element
-/// (Unit_Calculate).
-#define RESISTANCE_PER_STAGE 20
 
 // The turns a stat change or a status lasts; a status or a lowered stat may end
 // sooner.
@@ -2325,10 +2322,6 @@ u32 Ability_IsPsynergy(s32 abilityId) {
 }
 
 #define AI_BATTLE ((struct BattleWork *)Ram_HeapSlots->battleWork)
-
-/// The priority an enemy's Counter or Guard Aura stance gains as the turn is
-/// built: more than any agility, so it is taken before every other action.
-#define PRIORITY_FIRST_IN_TURN 10000
 
 /// The choices an enemy may fail to carry out before it defends instead.
 #define AI_MAX_FAILED_CHOICES 16

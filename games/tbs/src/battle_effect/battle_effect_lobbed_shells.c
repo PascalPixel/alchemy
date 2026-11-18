@@ -76,6 +76,15 @@ void BattleEffect_RunRottenBlood(struct BattleEffectParams *args) {
 /// GoldShellSheet's shell as it tumbles, upright and then turned on its side.
 #define LOBBED_SHELL_WIDTH 24
 #define LOBBED_SHELL_HEIGHT 32
+/// The shell's tumbling pictures, and the shards' pictures after them.
+#define LOBBED_SHELL_PICTURES 10
+#define LOBBED_SHELLS_SHARD_PICTURES                                           \
+  (LOBBED_SHELL_PICTURES * PICTURE_BYTES(LOBBED_SHELL))
+/// The pieces a shell bursts into: puffs of smoke, or shards.
+#define LOBBED_SHELLS_SMOKE_PUFFS 4
+#define LOBBED_SHELLS_SHARDS 16
+/// The frames a burst's piece is drawn for.
+#define LOBBED_SHELLS_BURST_FRAMES 45
 
 /// Nonzero when the style's shells burst into shards instead of smoke.
 #define LOBBED_SHELLS_SHATTER(mode) gLobbedShells_Styles[(mode) * 2]
@@ -206,8 +215,8 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
             } while (0);
             // The shell tumbles as it flies.
             step = (frame - k * 8) / 3;
-            if (step > 9)
-              step = 9;
+            if (step > LOBBED_SHELL_PICTURES - 1)
+              step = LOBBED_SHELL_PICTURES - 1;
             Projection_Point(&PARTICLES[k * LOBBED_SHELLS_SLOTS], &position);
             position.x >>= 1;
             if (step > 4)
@@ -233,9 +242,9 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
               shot->variant = 1;
               row = mode * 2;
               if (records[row] == 0)
-                count = 4;
+                count = LOBBED_SHELLS_SMOKE_PUFFS;
               else
-                count = 16;
+                count = LOBBED_SHELLS_SHARDS;
               for (i = 0; i != count; i++) {
                 struct Particle *burst;
                 s32 group = k * 4;
@@ -261,7 +270,8 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
     // The bursts.
     for (i = 0; i != LOBBED_SHELLS_BURST_SLOTS; i++) {
       burst = &LOBBED_SHELLS_BURSTS[i];
-      if (burst->variant >= 0 && burst->variant <= 44 && burst->y >= 0) {
+      if (burst->variant >= 0 && burst->variant < LOBBED_SHELLS_BURST_FRAMES &&
+          burst->y >= 0) {
         Projection_Point(burst, &position);
         position.x >>= 1;
         if (LOBBED_SHELLS_SHATTER(mode) == LOBBED_SHELLS_BONE_CHILLER) {
@@ -280,7 +290,8 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
           flip = args->side;
           draw[burst->velocityX > 0 ? flip ^ 1 : flip](
               canvas,
-              work->sheet + gLobbedShells_ShardPictures[picture] + 10 * 768,
+              work->sheet + gLobbedShells_ShardPictures[picture] +
+                  LOBBED_SHELLS_SHARD_PICTURES,
               position.x - gLobbedShells_ShardWidths[picture] / 2,
               position.y - gLobbedShells_ShardHeights[picture] / 2,
               gLobbedShells_ShardWidths[picture],
@@ -306,3 +317,10 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
 #undef LOBBED_SHELLS_BURST_SLOTS
 #undef LOBBED_SHELLS_SMOKE_PICTURES
 #undef LOBBED_SHELLS_SHATTER
+#undef LOBBED_SHELL_WIDTH
+#undef LOBBED_SHELL_HEIGHT
+#undef LOBBED_SHELL_PICTURES
+#undef LOBBED_SHELLS_SHARD_PICTURES
+#undef LOBBED_SHELLS_SMOKE_PUFFS
+#undef LOBBED_SHELLS_SHARDS
+#undef LOBBED_SHELLS_BURST_FRAMES

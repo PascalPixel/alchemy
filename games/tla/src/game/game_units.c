@@ -83,10 +83,6 @@ void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
 /// A scaling effect's number among the eight, from EQUIP_EFFECT_SCALE_HP.
 #define SCALE_EFFECT(kind) ((kind) - EQUIP_EFFECT_SCALE_HP)
 
-/// The Resistance each of a unit's battle Resistance stages adds to every
-/// element's.
-#define RESISTANCE_PER_STAGE 20
-
 /// Works out a unit's stats from its base stats, equipment, set Djinn, class
 /// and battle stat levels; its HP and PP keep their share of a new maximum.
 void Unit_Calculate(s32 unitId) {
@@ -1163,7 +1159,6 @@ UNIT_DEFINE_ADD(s16, Unit_AddPp, pp, ppMax)
 #undef SCALE_EFFECT
 #undef DMA3
 #undef DMA3_BUSY
-#undef RESISTANCE_PER_STAGE
 #undef SCENE_STATE_WORDS
 #undef NEW_GAME_COINS
 #undef SCENE_STATE_RANDOM_ROWS

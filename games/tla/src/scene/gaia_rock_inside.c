@@ -65,14 +65,14 @@
 
 #undef EFFECT_SPAWN
 
-/// The four streams of Dragonsbane that reach the Serpent's cups: a carved face
+/// The four beams of sunlight that reach the Serpent's lair: a carved face
 /// slides aside when the doll dances on its altar, and Cyclone clears the
 /// bushes in the twin altars' room (GaiaRockInside_OpenHallPassages).
 #define FLAG_ALTAR_ROOM_SUNBEAM 0x9bc
 #define FLAG_WEST_ALTAR_SUNBEAM 0x9bd
 #define FLAG_EAST_ALTAR_SUNBEAM 0x9be
 #define FLAG_BUSHES_SUNBEAM 0x9bf
-/// A stream opened before the Serpent is slain, shown pouring into the lair
+/// A beam opened before the Serpent is slain, shown shining into the lair
 /// (Scene_Initialize, entrance 20) before its flag above is set.
 #define FLAG_ALTAR_ROOM_SUNBEAM_TO_SHOW FLAG_AREA_TEMP_07
 #define FLAG_WEST_ALTAR_SUNBEAM_TO_SHOW FLAG_AREA_TEMP_08
@@ -86,7 +86,6 @@
 #define FLAG_ALTAR_FELL 0x9c4         ///< Cyclone tore the cobweb holding it
 #define FLAG_FIRST_ALTAR_FACES_MOVED 0xa62
 #define FLAG_PLATFORMS_SWAYING 0xa63
-#define FLAG_CLOUD_BRAND_FOUND 0xe41
 /// The statues that rise where the leader steps in the altar room.
 #define FLAG_STATUE_A_RISEN FLAG_AREA_TEMP_03
 #define FLAG_STATUE_B_RISEN FLAG_AREA_TEMP_04
@@ -111,7 +110,7 @@ enum {
 
 /// The lair's entrances: its way in, and where the battle with the Serpent
 /// returns the party: won, lost without the Dancing Idol, and lost holding it
-/// before any stream of Dragonsbane is open (GaiaRockInside_ChallengeSerpent).
+/// before any beam of sunlight reaches it (GaiaRockInside_ChallengeSerpent).
 enum {
   ENTRANCE_LAIR = 9,
   ENTRANCE_SERPENT_BEATEN = 10,
@@ -228,11 +227,6 @@ typedef struct {
 /// does nothing more.
 #define FLAG_PLANT_POINTING FLAG_SCENE_TEMP_00
 
-/// The 8-pixel tile a 16.16 coordinate lies in, half a map grid cell, and the
-/// 16.16 coordinate of a tile's first pixel.
-#define FIELD_TILE(coordinate) ((coordinate) >> 19)
-#define FIELD_TILE_ORIGIN(tile) ((tile) << 19)
-
 /// A map grid cell, its column and row.
 struct CellPoint {
   s16 position[2];
@@ -285,15 +279,6 @@ void GaiaRockInside_SetPlatformMode(u32 id, s8 mode);
 void GaiaRockInside_SwayPlatforms(void);
 
 void GaiaRockInside_SetMazeLayer(s32 layer, s32 keep);
-
-/// Where the map keeps its blend script, after its cell shapes and tile
-/// animations (as field_internal.h's).
-#define MAPGRID_BLEND_SCRIPT (Ram_MapCollision + 7680)
-
-/// The blend script's commands this scene writes: go back to a halfword of the
-/// script, and the end.
-#define BLEND_SCRIPT_JUMP 0xfe00
-#define BLEND_SCRIPT_LOOP 0xffff
 
 extern u16 gGaiaRockInside_LairBlendScript[12];
 
@@ -447,7 +432,8 @@ void GaiaRockInside_RaiseDust(void) {
   actor->bounce = FIXED_ONE / 4;
   FieldEvent_Wait(10);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Event_End();
 }
 #endif
@@ -758,9 +744,8 @@ static __inline__ void GaiaRockInside_CopyTouchedCells(s32 x, s32 z,
 }
 
 /// Cyclone on the bushes of the twin altars' room blows them away; once the
-/// cell they hid is clear its stream of Dragonsbane opens (a leader standing
-/// there hops aside), shown pouring into the lair first while the Serpent
-/// lives.
+/// cell they hid is clear its beam of sunlight opens (a leader standing there
+/// hops aside), shown shining into the lair first while the Serpent lives.
 void GaiaRockInside_CycloneClearsTwinAltarsBushes(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
@@ -1016,8 +1001,9 @@ void GaiaRockInside_MeetSusa(void) {
 }
 
 /// Talking to Susa while he stands: once he has attacked the Serpent he says
-/// it is still too strong, in other words once any stream of Dragonsbane is
-/// open; before that he stops, turns to the leader and sends the party aside.
+/// it is still too strong, in other words once any beam of sunlight reaches
+/// the lair; before that he stops, turns to the leader and sends the party
+/// aside.
 void GaiaRockInside_TalkToSusa(void) {
   if (Actor_Get(ACTOR_SUSA)->refused > 2)
     return;
@@ -1152,13 +1138,14 @@ extern s32 gGaiaRockInside_FallingSparkScript[];
 extern s32 gGaiaRockInside_TabletSettleScript[];
 extern s32 gGaiaRockInside_FelixSettleScript[];
 
-/// The sparks that rise from the slate as it lifts, and that circle Felix.
-enum { SAND_RISING_SPARKS = 16, SAND_CIRCLING_SPARKS = 16 };
+/// The sparks that rise from the slate as it lifts.
+enum { SAND_RISING_SPARKS = 16 };
 
-/// The circling sparks start SAND_SPARK_INTERVAL frames apart, 122 pixels out
-/// from Felix, and close 8 pixels a frame (Orbiter_Spiral) to 2 pixels in
-/// SAND_SPIRAL_FRAMES; each one's countdown ends with the last's.
-enum { SAND_SPARK_INTERVAL = 8, SAND_SPIRAL_FRAMES = 15 };
+/// The LEARN_SPARKS that circle the one who learns a Psynergy start
+/// LEARN_SPARK_INTERVAL frames apart, 122 pixels out, and close 8 pixels a
+/// frame (Orbiter_Spiral) to 2 pixels in LEARN_SPIRAL_FRAMES; each one's
+/// countdown ends with the last's.
+enum { LEARN_SPARKS = 16, LEARN_SPARK_INTERVAL = 8, LEARN_SPIRAL_FRAMES = 15 };
 
 /// Felix touches the slate in the lair and learns Sand: he and the slate rise
 /// among circling sparks, then settle.
@@ -1217,7 +1204,7 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
   }
   REG_BLDALPHA = BLEND_ALPHA(8, 16);
   wait(30);
-  for (i = 0; i != SAND_CIRCLING_SPARKS; i++) {
+  for (i = 0; i != LEARN_SPARKS; i++) {
     struct Actor *spark =
         FieldActor_Create(SPRITE_PARTICLE, b->x.fixed, b->y.fixed, b->z.fixed);
     Sound_Play(SE_SPARKS);
@@ -1228,7 +1215,7 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
     spark->riseBaseY = toFIXED(122);
     spark->watchedActor = b;
     spark->riseCounter =
-        (SAND_CIRCLING_SPARKS - i) * SAND_SPARK_INTERVAL + SAND_SPIRAL_FRAMES;
+        (LEARN_SPARKS - i) * LEARN_SPARK_INTERVAL + LEARN_SPIRAL_FRAMES;
     Actor_SetSpriteColor(spark, 2);
     Scene_SetActorSpritePriority(spark, 1);
     Actor_SelectAnimation(spark, 7);
@@ -1243,7 +1230,7 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
       b->speedLimit = toFIXED(1) / 5;
       Actor_SetMovementTypeById(idB, gGaiaRockInside_FelixRiseScript);
     }
-    wait(SAND_SPARK_INTERVAL);
+    wait(LEARN_SPARK_INTERVAL);
   }
   Sound_Play(SE_SHIMMER);
   wait(16);
@@ -1490,9 +1477,9 @@ void GaiaRockInside_RaiseSandTablet(void) {
 #include "text/msg_ids.h"
 
 /// Examining the Serpent: once it is slain, it only looks almost alive;
-/// otherwise the battle starts, as hard as the streams of Dragonsbane still
-/// closed make it. Winning comes back by entrance 10; losing by entrance 11, or
-/// by 12 when the party carries the doll and opened no stream.
+/// otherwise the battle starts, as hard as the beams of sunlight still shut out
+/// make it. Winning comes back by entrance 10; losing by entrance 11, or by 12
+/// when the party carries the doll and opened no beam.
 void GaiaRockInside_ChallengeSerpent(void) {
   s32 count;
 
@@ -1661,9 +1648,9 @@ void GaiaRockInside_PlaceDollOnFirstAltar(void) {
 
 /// The doll placed on an altar under a face (this one, the east altar's and
 /// the altar room's are alike): the doll hops onto the altar and dances, the
-/// face shakes, and the first time it slides aside and opens its stream of
-/// Dragonsbane; the doll hops back to the leader. Before the Serpent is slain
-/// the party is taken to the lair to see the stream pour (entrance 20).
+/// face shakes, and the first time it slides aside and lets in its beam of
+/// sunlight; the doll hops back to the leader. Before the Serpent is slain the
+/// party is taken to the lair to see the beam shine in (entrance 20).
 void GaiaRockInside_PlaceDollOnWestAltar(void) {
   struct Actor *actor;
   struct Actor *partner;
@@ -2247,7 +2234,8 @@ s32 Scene_Initialize(void) {
   s16 *early;
 
   work = &gMainRoutineWork;
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (work->next == SCENE_GAIA_ROCK_INSIDE_MAZE) {
     early = &work->entrance;
     if (work->entrance > 8) {
@@ -2267,9 +2255,9 @@ s32 Scene_Initialize(void) {
       Event_WaitTransitionFrames();
       Event_Wait(60);
       {
-        // The door the party came in by, which the lair cannot be left by: one
-        // stream is always waiting to be shown.
-        s32 ending = GAIA_ROCK_INSIDE_MAZE_FROM_GAIA_ROCK_INSIDE_TWIN_ALTARS_A;
+        // The maze has no exit 20, and none is taken by it: one beam is
+        // always waiting to be shown.
+        s32 ending = 20;
         if (Test(FLAG_ALTAR_ROOM_SUNBEAM_TO_SHOW)) {
           GameFlag_Clear(FLAG_ALTAR_ROOM_SUNBEAM_TO_SHOW);
           GameFlag_Set(FLAG_ALTAR_ROOM_SUNBEAM);

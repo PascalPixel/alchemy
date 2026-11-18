@@ -26,6 +26,17 @@ void Text_ScrollCanvasUp(s32 step) {
   }
 }
 
+#if LANGUAGE != LANGUAGE_JAPANESE
+/// Two narrow characters whose glyphs come to this many pixels at most are
+/// drawn together in one 16-pixel cell.
+#define GLYPH_PAIR_WIDTH_MAX 15
+#endif
+#if LANGUAGE == LANGUAGE_SPANISH
+/// As GLYPH_PAIR_WIDTH_MAX, in the outlined style, which widens each glyph by
+/// one.
+#define GLYPH_PAIR_OUTLINED_WIDTH_MAX 14
+#endif
+
 /// What Message_Type reports.
 enum {
   CHANNEL_STEP_RUNNING = 0, ///< the text goes on next frame
@@ -342,10 +353,8 @@ s32 Message_Type(struct Message *message) {
       }
 #endif
 #if LANGUAGE != LANGUAGE_JAPANESE
-      // Two narrow characters that fit in one 16-pixel cell together are drawn
-      // as one pair, the second in the code's high byte: 15 pixels of glyph
-      // widths at most, and in Spanish 14 with an outline (style 1), which
-      // widens each glyph by one.
+      // Two narrow characters that fit in one cell together are drawn as one
+      // pair, the second in the code's high byte.
 #if LANGUAGE == LANGUAGE_SPANISH
       if (!(message->window->flags & WINDOW_FLAG_TEXT_CANVAS) &&
           code > TEXT_SPACE && nextCode > TEXT_SPACE) {
@@ -353,11 +362,11 @@ s32 Message_Type(struct Message *message) {
                    gFont_Glyphs[nextCode - TEXT_SPACE].width;
 
         if (work->outline == TEXT_STYLE_OUTLINED) {
-          if ((u16)pair <= 14) {
+          if ((u16)pair <= GLYPH_PAIR_OUTLINED_WIDTH_MAX) {
             code |= nextCode << 8;
             message->textIndex = (message->textIndex + 1) & TEXT_BUFFER_MASK;
           }
-        } else if ((u16)pair <= 15) {
+        } else if ((u16)pair <= GLYPH_PAIR_WIDTH_MAX) {
           code |= nextCode << 8;
           message->textIndex = (message->textIndex + 1) & TEXT_BUFFER_MASK;
         }
@@ -366,7 +375,8 @@ s32 Message_Type(struct Message *message) {
       if (!(message->window->flags & WINDOW_FLAG_TEXT_CANVAS) &&
           code > TEXT_SPACE && nextCode > TEXT_SPACE &&
           (u16)(gFont_Glyphs[code - TEXT_SPACE].width +
-                gFont_Glyphs[nextCode - TEXT_SPACE].width) <= 15) {
+                gFont_Glyphs[nextCode - TEXT_SPACE].width) <=
+              GLYPH_PAIR_WIDTH_MAX) {
         code |= nextCode << 8;
         message->textIndex = (message->textIndex + 1) & TEXT_BUFFER_MASK;
       }
@@ -421,3 +431,9 @@ s32 Message_Type(struct Message *message) {
 
   return CHANNEL_STEP_RUNNING;
 }
+
+#undef CANVAS_COLUMNS
+#undef CANVAS_COLUMN_WORDS
+#undef CANVAS_KEPT_ROWS
+#undef GLYPH_PAIR_WIDTH_MAX
+#undef GLYPH_PAIR_OUTLINED_WIDTH_MAX

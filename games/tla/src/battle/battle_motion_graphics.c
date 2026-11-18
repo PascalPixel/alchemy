@@ -393,6 +393,7 @@ s32 BattleStaging_RunAttack(struct BattlePlan *plan, s32 mode) {
                         ~PARTY_STATUS_SHOW_PP);
   saved = BattleMotion_CallBeast(plan, &work);
   unit = Unit_Get(work.actor);
+  // DEAD: Unit_Get's result is not used; the ROM keeps the call.
   Unit_Get(work.actors[0]);
   critical = plan->targetCritical[0];
   missed = plan->targetMultiplier[0] == 0;
@@ -648,7 +649,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
 /// others, hiding every child's frame.
 void BattleObject_SetColorMode(struct MotionObject *object, s32 value) {
   s32 index = 0;
-  s32 child_index;
+  s32 childIndex;
   s32 count;
   struct Sprite *record;
   struct SpriteAnimation *child;
@@ -662,8 +663,11 @@ void BattleObject_SetColorMode(struct MotionObject *object, s32 value) {
     frame = child->picture;
     count = record->count;
     child->colorMode = value;
+    // DEAD: each picture is read and ORed with SPRITE_PICTURE_NONE, which
+    // stores SPRITE_PICTURE_NONE whatever it was; the ROM keeps the loads and
+    // the ORs.
     child->picture = frame | mask;
-    for (child_index = 1; child_index < count; child_index++) {
+    for (childIndex = 1; childIndex < count; childIndex++) {
       child = *children++;
       child->colorMode = 0;
       child->picture |= SPRITE_PICTURE_NONE;
@@ -798,6 +802,7 @@ void BattleMotion_FlashHit(s32 id, s32 unusedA, s32 unusedB) {
   s32 target;
   s32 remaining;
 
+  // DEAD: Unit_Get's result is not used; the ROM keeps the call.
   Unit_Get(id);
   Actor_SelectAnimationFar(BattleObject_Get(id)->object, POSE_DAMAGE);
   for (remaining = 0; remaining < 2; remaining++) {

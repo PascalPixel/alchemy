@@ -10,6 +10,15 @@
 
 #define RAY_PICTURES 1550 ///< the bolt pictures in the sheet
 #define RAY_COUNT 4       ///< bolts
+/// The bolts turn a 32nd of a turn a frame, each a quarter turn more than the
+/// one before.
+#define RAY_BOLT_TURN (TRIG_TURN / 32)
+/// The strongest variant shows the canvas twice as wide, scrolled this many
+/// canvas pixels toward the targets' side.
+#define RAY_WIDE_CANVAS_SHIFT 16
+/// Where the canvas is shown over targets on the party's side: from screen x
+/// 128.
+#define RAY_PARTY_CANVAS_X 128
 
 /// Four bolts close in, turning towards the centre and scattering sparks from
 /// their roots.
@@ -46,12 +55,12 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   if (work->args->variant == EFFECT_VARIANT_STRONGEST) {
     if (work->args->side == EFFECT_SIDE_PARTY)
-      REG_BG2X = -(16 << 8);
+      REG_BG2X = -(RAY_WIDE_CANVAS_SHIFT << 8);
     else
-      REG_BG2X = 16 << 8;
+      REG_BG2X = RAY_WIDE_CANVAS_SHIFT << 8;
   } else {
     if (work->args->side == EFFECT_SIDE_PARTY)
-      REG_BG2X = -(128 << 8);
+      REG_BG2X = -(RAY_PARTY_CANVAS_X << 8);
   }
 
   for (i = 0; i != RAY_SPARK_COUNT; i++) {
@@ -82,7 +91,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
         s32 y;
 
         thrown = 0;
-        angle = ((frame << 11) + DEGtoANG(90)) * bolt;
+        angle = (frame * RAY_BOLT_TURN + DEGtoANG(90)) * bolt;
         x = FIXEDtoINT((32 - frame) * Trig_Sin(angle)) + 64;
         y = -FIXEDtoINT(Trig_Cos(angle) * 8) - 8;
         if (work->args->variant == EFFECT_VARIANT_BASIC)
@@ -161,3 +170,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
 #undef RAY_SPARK_COUNT
 #undef RAY_PICTURES
 #undef RAY_COUNT
+#undef RAY_BOLT_TURN
+#undef RAY_WIDE_CANVAS_SHIFT
+#undef RAY_PARTY_CANVAS_X
+#undef RAY_FRAMES

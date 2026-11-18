@@ -97,7 +97,7 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
   unit = Unit_GetFar(member);
 
   // Pack Djinn state and recovery turns before paging the selection list.
-  for (element = 0; element <= 3; element++) {
+  for (element = 0; element < ELEMENT_COUNT; element++) {
     for (djinnIndex = 0,
         entryCursor = (u32 *)((djinnCount << 2) + (u32)djinnEntries);
          djinnIndex < DJINN_PER_ELEMENT; djinnIndex++) {
@@ -108,10 +108,10 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
       } else if (unit->djinnHeld[element] & (u32)(1 << djinnIndex)) {
         u32 v;
         s32 k;
-        // Owned but not set: look for its recovery in its side's list (units
-        // above 7 are enemies).
+        // Owned but not set: look for its recovery in its side's list.
         list = &((struct DjinnRecoveryTable *)Djinn_GetRecoveryTableFar(
-                     (u32)member > 7 ? 1 : 0))
+                     (u32)member > ALLY_MAX ? DJINN_RECOVERY_OPPONENT
+                                            : DJINN_RECOVERY_PARTY))
                     ->list;
         for (k = 0; k < list->count; k++) {
           if (list->entries[k].unitId == member &&
@@ -497,11 +497,11 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
     partyStatus = CURSOR_OWNER;
     blinkPhase = gFrameCount & 4;
     iconWindow = partyStatus->window;
-    if (partyStatus->flags & 2) {
-      for (i = 0; i <= 3; i++) {
-        palette = 15 - (blinkPhase != 0);
+    if (partyStatus->flags & PARTY_STATUS_SHOW_DJINN) {
+      for (i = 0; i < ELEMENT_COUNT; i++) {
+        palette = blinkPhase != 0 ? HIGHLIGHT_PALETTE : WINDOW_PALETTE;
         if (((1 << i) & standbyElements) == 0) {
-          palette = 15;
+          palette = WINDOW_PALETTE;
         }
         Window_HighlightRect(iconWindow->x + gDjinnMenu_ElementXOffsets[i] + 1,
                              iconWindow->y + gDjinnMenu_ElementYOffsets[i] + 1,
@@ -509,20 +509,21 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
       }
     }
     if (gFrameCount & 4) {
-      Iwram_CopyWords((void *)DJINN_MENU_ARROW_VRAM, gDjinnMenu_BlinkTile, 32);
+      Iwram_CopyWords((void *)DJINN_MENU_ARROW_VRAM, gDjinnMenu_BlinkTile,
+                      TILE_SIZE_4BPP);
       Iwram_CopyWords((void *)(DJINN_MENU_ARROW_VRAM + TILE_SIZE_4BPP),
-                      gDjinnMenu_BlinkTile, 32);
+                      gDjinnMenu_BlinkTile, TILE_SIZE_4BPP);
     } else {
-      Iwram_FillWords((void *)DJINN_MENU_ARROW_VRAM, 32,
+      Iwram_FillWords((void *)DJINN_MENU_ARROW_VRAM, TILE_SIZE_4BPP,
                       TEXT_CANVAS_BACKGROUND_WORD);
       Iwram_CopyWords((void *)(DJINN_MENU_ARROW_VRAM + TILE_SIZE_4BPP),
-                      gDjinnMenu_BlinkTile, 32);
+                      gDjinnMenu_BlinkTile, TILE_SIZE_4BPP);
     }
     wait(1);
   }
 
   // Leave the Djinn column in WINDOW_PALETTE.
-  if (CURSOR_OWNER->flags & 2) {
+  if (CURSOR_OWNER->flags & PARTY_STATUS_SHOW_DJINN) {
     Window_HighlightRect(CURSOR_OWNER->window->x + 1,
                          CURSOR_OWNER->window->y + 1, 4, 4, WINDOW_PALETTE);
   }

@@ -46,7 +46,7 @@ void Whirlwind_Update(struct Actor *self) {
             leader->watchedActor = self;
             leader->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
             {
-              s32 trigger = RAISED_TRIGGER_WHIRLWIND;
+              s32 trigger = RAISED_RIDE_WHIRLWIND;
               work->raisedTrigger = trigger;
             }
             gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;

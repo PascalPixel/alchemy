@@ -43,7 +43,7 @@ enum PostAnimation {
 // from post to post and is wound round both. Probes of the Shrine of the Sea
 // God's rope room (render probe --only scene --scene ShrineOfTheSeaGodRope
 // --edition tla-en) show rope 0 coiled round the foot of its first post from
-// --entrance 2, and with the shrine's FLAG_ROPE_TIED set (--set 0x203) wound
+// --entrance 2, and with FLAG_SHRINE_ROPE_TIED set (--set 0x203) wound
 // round that post from --entrance 2 and round the far post from --entrance 0.
 // A tied rope can be crossed hand over hand (LEADER_MOVEMENT_ROPE). Pushing at
 // a rope's post for more than ROPE_PUSH_STEPS frames raises
@@ -1718,12 +1718,6 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
 #define VINE_SWING_STEP (TRIG_TURN / 1024)
 #define VINE_SWING_HELD (TRIG_TURN * 3 / 128)
 #define VINE_SWING_CARRYING (TRIG_TURN / 32)
-
-/// The leader's animations on a vine, as Felix's sheet draws them: hanging on,
-/// seen from behind with an arm raised; and carried across, the leap's
-/// picture, then flying at full stretch.
-#define ANIM_LEADER_HANG 32
-#define ANIM_LEADER_SWING 16
 
 /// Whirlwind on the vine hanging from actor id: the vine swings out to the
 /// leader's side and the leader takes hold. While the leader hangs on, B, Down

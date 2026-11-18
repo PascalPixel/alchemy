@@ -7,9 +7,8 @@
 
 #include "sprite_ids.h"
 
-/// Thunder Mine's sparks, in the map cell buffer from its second 16 KB on.
-#define BALL_LIGHTNING_SPARKS ((struct Particle *)(Ram_MapCellBuffer + 16384))
-/// The sparks cleared, and of them those that burst out as the ball arrives.
+/// Thunder Mine's sparks, in EXTRA_PARTICLES: those cleared, and of them those
+/// that burst out as the ball arrives.
 #define BALL_LIGHTNING_SPARKS_CLEARED 512
 #define BALL_LIGHTNING_SPARK_COUNT 128
 /// The canvas row Thunder Mine's sparks bounce at.
@@ -159,10 +158,10 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
       // step at a time, past the step's scalar members.
 #ifdef UBFIX
       for (i = 0; i != BALL_LIGHTNING_SPARKS_CLEARED; i++)
-        BALL_LIGHTNING_SPARKS[i].variant = -1;
+        EXTRA_PARTICLES[i].variant = -1;
 #else
       {
-        s32 *variant = &BALL_LIGHTNING_SPARKS[0].variant;
+        s32 *variant = &EXTRA_PARTICLES[0].variant;
 
         for (i = 0; i != BALL_LIGHTNING_SPARKS_CLEARED; i++) {
           *variant = -1;
@@ -175,8 +174,8 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
     if (frame == frames) {
       s32 n;
 
-      for (n = 0, spark = BALL_LIGHTNING_SPARKS;
-           n != BALL_LIGHTNING_SPARK_COUNT; n++, spark++) {
+      for (n = 0, spark = EXTRA_PARTICLES; n != BALL_LIGHTNING_SPARK_COUNT;
+           n++, spark++) {
         s32 angle;
         s32 speed;
 
@@ -257,8 +256,8 @@ void BattleEffect_RunBoltTrail(struct BattleEffectParams *args, s32 mode) {
     // Thunder Mine's sparks bounce, each drawn at eight steps of its flight a
     // frame, so that it streaks.
     if (mode == BOLT_TRAIL_THUNDER_MINE && frame >= frames) {
-      for (i = 0, dot = BALL_LIGHTNING_SPARKS;
-           i != BALL_LIGHTNING_SPARKS_CLEARED; i++, dot++) {
+      for (i = 0, dot = EXTRA_PARTICLES; i != BALL_LIGHTNING_SPARKS_CLEARED;
+           i++, dot++) {
         if (dot->variant >= 0) {
           s32 size = (dot->variant >> 3) + 2;
           s32 step;

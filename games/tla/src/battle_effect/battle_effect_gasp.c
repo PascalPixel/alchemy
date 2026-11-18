@@ -7,9 +7,6 @@
 
 struct StripQuad;
 
-/// A second, larger particle table, always reached at its fixed address.
-#define EXTRA_PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 16384))
-
 /// Where the small Djinni sheet is decoded in the effect's pictures, as
 /// The Broken Seal places it.
 #define GASP_DJINNI_PICTURE 26048
@@ -1482,6 +1479,5 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
-#undef EXTRA_PARTICLES
 #undef FIGURE
 #undef PLACE_PARTICLE

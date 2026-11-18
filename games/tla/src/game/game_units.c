@@ -530,8 +530,6 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
 /// Where gSceneLocalState holds the actor snapshot's slot ids,
 /// ACTOR_SNAPSHOT_CAPACITY bytes before gSnapshotObjects.
 #define SCENE_STATE_SNAPSHOT_SLOTS 4
-/// An empty slot of the actor snapshot, which ends its list.
-#define ACTOR_SNAPSHOT_EMPTY 255
 /// The two tables a new game fills just after gRareItemStock's
 /// ITEM_COUNTER_COUNT counters, as places in gSceneLocalState: 32 rows of eight
 /// random numbers 0 to 4, SCENE_STATE_RANDOM_ROW_BYTES apart, then a copy of
@@ -1181,7 +1179,6 @@ UNIT_DEFINE_ADD(s16, Unit_AddPp, pp, ppMax)
 #undef SCENE_STATE_WORDS
 #undef NEW_GAME_COINS
 #undef SCENE_STATE_SNAPSHOT_SLOTS
-#undef ACTOR_SNAPSHOT_EMPTY
 #undef SCENE_STATE_RANDOM_ROWS
 #undef SCENE_STATE_RANDOM_ROW_COUNT
 #undef SCENE_STATE_RANDOM_ROW_BYTES

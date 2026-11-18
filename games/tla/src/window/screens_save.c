@@ -10,8 +10,7 @@
 #include "system/system.h"
 #include "window/screens.h"
 
-// The three save files.
-#define SAVE_FILE_COUNT 3
+/// What Save_FindFreeFile returns when all SAVE_FILE_COUNT files are in use.
 #define SAVE_NO_FREE_FILE 999
 
 // What the save functions return when they fail, after showing the message.
@@ -1222,5 +1221,4 @@ done:
 #undef SUMMARY_COINS_X
 #undef FILE_LIST_LEADER_X
 #undef FILE_LIST_AREA_X
-#undef SAVE_FILE_COUNT
 #undef SAVE_MENU_NO_FILE

@@ -171,6 +171,14 @@ enum SoundModulationTarget {
   SOUND_MODULATION_PAN
 };
 
+/// A semitone in a track's pitch, kept in 1/256 semitone, and in its tune and
+/// bend, in 1/64, and its pitch modulation, in 1/16.
+enum {
+  SOUND_PITCH_SEMITONE = 256,
+  SOUND_TUNE_SEMITONE = 64,
+  SOUND_MODULATION_SEMITONE = 16
+};
+
 enum MusicPlayerFadeFlag { TEMPORARY_FADE = 1, FADE_IN = 2 };
 
 #define SOUND_FADE_FULL_VOLUME 256

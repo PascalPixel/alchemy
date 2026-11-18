@@ -80,10 +80,6 @@ enum {
 #define FLAG_FIRST_PILLAR_DROPPED 0x920
 #define FLAG_SECOND_PILLAR_DROPPED 0x921
 
-/// The leader's sheet animation that holds ANIM_STILL's picture again, which
-/// sprite.h does not name yet.
-enum { ANIM_LEADER_STILL = 38 };
-
 /// The whirlwind's circling leaves, and the rocks a rising statue throws out.
 enum { WHIRLWIND_LEAVES = 16, STATUE_DEBRIS = 16 };
 

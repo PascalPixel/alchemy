@@ -48,10 +48,6 @@
 #define FLAG_AIRS_ROCK_FOG_CLEARED 0x87a
 #define FLAG_AIRS_ROCK_TOP_OPENED 0x87b
 
-/// The raised trigger a statue's whirlwind sets as it picks up the leader
-/// (AirsRock_RideWhirlwind).
-#define RAISED_RIDE_WHIRLWIND 200
-
 /// What these rooms mark as the collision code (CELL_CODE) of a cell on the
 /// second layer.
 enum AirsRockCellMark {

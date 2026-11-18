@@ -98,6 +98,14 @@ enum ActorSteeringFlag {
   ACTOR_FACES_MOTION = 0x01 ///< turns toward its velocity, 1/16 turn a frame
 };
 
+/// The actor snapshot (gSnapshotObjects), as The Broken Seal's ActorSnapshot:
+/// how many actors it keeps, and the slot id that marks an empty place and
+/// ends its list.
+enum {
+  ACTOR_SNAPSHOT_CAPACITY = 32, ///< actors a snapshot keeps
+  ACTOR_SNAPSHOT_EMPTY = 255    ///< an empty slot, and the end of the list
+};
+
 /// The axis a moving actor watches to know it has arrived at its target: the
 /// one along which it has the furthest to go.
 enum ArrivalAxis {

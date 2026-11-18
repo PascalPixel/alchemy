@@ -16,9 +16,6 @@
 #include "field/object.h"
 #include "system/ram_buffer.h"
 
-/// The leader going hand over hand along a rope (felix.tsv's pictures 32 to
-/// 34, the rope held over his head).
-#define ANIM_LEADER_CROSS_ROPE 29
 /// Whether the actor can step 8 pixels toward angle: probe is set to the
 /// step's place and tested against the map.
 #define STEP_IS_CLEAR(actor, probe, angle)                                     \
@@ -874,7 +871,6 @@ update_object:
   return 1;
 }
 
-#undef ANIM_LEADER_CROSS_ROPE
 #undef STEP_IS_CLEAR
 #undef SET_CLIMB_STEP
 #undef CLIMB_STEP_IS_CLEAR

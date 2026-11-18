@@ -174,6 +174,9 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 
 /// The particles an effect keeps in the map cell buffer, from its start.
 #define PARTICLES ((struct Particle *)Ram_MapCellBuffer)
+/// The particles an effect keeps in the map cell buffer from its second 16 KB
+/// on, past PARTICLES or the pictures and meshes it keeps in the first.
+#define EXTRA_PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 16384))
 
 /// The VRAM address of a sprite's tiles, from its VRAM cache entry.
 #define OBJ_TILES(sprite)                                                      \

@@ -9,10 +9,9 @@
 #define RUSHING_STRIKE_FRAME 8 ///< the user strikes; the ring and sparks start
 #define RUSHING_STRIKE_BURST_FRAMES 15 ///< the burst hides the user rushing in
 #define RUSHING_STRIKE_RING_FRAMES 12  ///< the ring where it hits swells
-#define RUSHING_STRIKE_SPARK_COUNT 64
+#define RUSHING_STRIKE_SPARK_COUNT 64  ///< in EXTRA_PARTICLES
 /// The first two sparks' frames to live; each pair after lives one more.
 #define RUSHING_STRIKE_SPARK_LIFE 16
-#define RUSHING_STRIKE_SPARKS ((struct Particle *)(Ram_MapCellBuffer + 16384))
 #define RUSHING_STRIKE_EXPLOSIONS 16 ///< Living Armor's
 /// The explosions set up at the hit, of which RUSHING_STRIKE_EXPLOSIONS are
 /// drawn.
@@ -107,7 +106,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
     // The first frame readies the sparks and Living Armor's explosions at the
     // target, 8 pixels out from it, flying back the way the user came.
     if (frame == 0) {
-      struct Particle *spark = RUSHING_STRIKE_SPARKS;
+      struct Particle *spark = EXTRA_PARTICLES;
 
       for (i = 0; i != RUSHING_STRIKE_SPARK_COUNT; i++, spark++) {
         spark->x = targetObject->x;
@@ -220,7 +219,7 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
 
       Matrix_Initialize();
       Matrix_SetLookAt(camera->eye, camera->focus);
-      spark = RUSHING_STRIKE_SPARKS;
+      spark = EXTRA_PARTICLES;
       for (i = 0; i != RUSHING_STRIKE_SPARK_COUNT; i++, spark++) {
         s32 life = spark->variant;
 
@@ -297,7 +296,6 @@ void BattleEffect_RunSack(struct BattleEffectParams *args) {
 #undef RUSHING_STRIKE_RING_FRAMES
 #undef RUSHING_STRIKE_SPARK_COUNT
 #undef RUSHING_STRIKE_SPARK_LIFE
-#undef RUSHING_STRIKE_SPARKS
 #undef RUSHING_STRIKE_EXPLOSIONS
 #undef RUSHING_STRIKE_EXPLOSION_SLOTS
 #undef RUSHING_STRIKE_EXPLOSION_PICTURE_FRAMES

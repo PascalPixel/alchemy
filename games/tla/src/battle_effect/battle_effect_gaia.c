@@ -487,12 +487,7 @@ void *EffectSprite_CreateWithTiles(s32 width, s32 height, s32 attributes,
   sprite->oam.bits.tile = entries[sprite->slot].offset >> 5;
   return found;
 }
-#undef Actor_SetAnimationSpeedFar
-#undef BLITTER
-#undef SPARKS
-#undef PUFF_COUNT
 #undef GAIA_ROCKS
-#undef MOTES
 #undef GAIA_FIRST_ROCK
 #undef GAIA_EARLY_ROCKS
 #undef GAIA_LATE_ROCK_COLUMNS

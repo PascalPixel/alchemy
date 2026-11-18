@@ -23,6 +23,7 @@
 #include "field/event_inline.h"
 #include "scene/scene.h"
 #include "field/actor_script.h"
+#include "field/field_sequence.h"
 #include "text/msg_ids.h"
 
 /// Set once Galahad has met the party and warned it of Isaac's enemies.
@@ -36,17 +37,20 @@
 /// Mikasalla's houses and inn (MikasallaRoomsHouses), by the rows of
 /// gMikasallaRooms_InnPlacements.
 enum MikasallaRoomsActorId {
-  /// The family of the late explorer: his son, his widow, and the grandson who
-  /// asks whether the leader is an explorer too.
+  /// The family of the explorer who founded the village: his son, the son's
+  /// wife, and the grandson who asks whether the leader is an explorer too.
   ACTOR_EXPLORERS_SON = ACTOR_FIRST_PLACED,
-  ACTOR_EXPLORERS_WIDOW,
+  ACTOR_EXPLORERS_DAUGHTER_IN_LAW,
   ACTOR_EXPLORERS_GRANDSON,
-  /// The old man who has tried to climb Air's Rock, and his wife.
-  ACTOR_AIRS_ROCK_CLIMBER,
-  ACTOR_CLIMBERS_WIFE,
-  ACTOR_MERCHANT,
+  /// An old man who keeps trying to climb Air's Rock, and his wife, worried
+  /// that he will be hurt.
+  ACTOR_OLD_MAN_ON_AIRS_ROCK,
+  ACTOR_WORRIED_WIFE,
+  /// The keeper of the general store: "We only have a small shop here."
+  ACTOR_GENERAL_STOREKEEPER,
   /// A man at the inn: "There aren't any towns between here and Garoh."
   ACTOR_MAN_ON_THE_ROAD_TO_GAROH,
+  /// A woman in a pink apron behind the inn's counter.
   ACTOR_INNKEEPER,
   /// An old couple by the fire, who talk of Tundaria.
   ACTOR_OLD_MAN_ON_TUNDARIA,
@@ -59,14 +63,16 @@ enum MikasallaRoomsActorId {
 /// those of the Apojii Islands, by entrance 5, and Yallam, by entrance 4, which
 /// this scene also holds; by the rows of gMikasallaRooms_SanctumPlacements.
 enum MikasallaRoomsSanctumActorId {
-  ACTOR_MIKASALLA_HEALER = ACTOR_FIRST_PLACED,
-  ACTOR_APOJII_HEALER,
+  /// The priests of Mikasalla's and the Apojii Islands' sanctums.
+  ACTOR_MIKASALLA_PRIEST = ACTOR_FIRST_PLACED,
+  ACTOR_APOJII_PRIEST,
   /// Two Apojii islanders tired of their island paradise.
   ACTOR_ISLANDER_SICK_OF_PARADISE,
   ACTOR_ISLANDER_LONGING_FOR_LAND,
-  ACTOR_YALLAM_HEALER,
+  /// The priest of Yallam's sanctum.
+  ACTOR_YALLAM_PRIEST,
   /// Blank actors on the counters of Mikasalla's and the Apojii sanctums, so
-  /// the healers answer from across them.
+  /// the priests answer from across them.
   ACTOR_MIKASALLA_COUNTER,
   ACTOR_APOJII_COUNTER
 };
@@ -83,8 +89,8 @@ void Shop_Run();
 
 void Scene_FadeInAndClearFlag(void);
 
-extern s32 gMikasallaRooms_ExplorersWidowPaces[];
-extern s32 gMikasallaRooms_ClimbersWifePaces[];
+extern s32 gMikasallaRooms_DaughterInLawPaces[];
+extern s32 gMikasallaRooms_WorriedWifePaces[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -98,30 +104,27 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gMikasallaRooms_InnPlacements;
 }
 
-void Event_Start();
-void Event_End();
-
-/// Mind Read on Mikasalla's sanctum counter: the healer wonders about
+/// Mind Read on Mikasalla's sanctum counter: the priest wonders about
 /// werewolves beyond Garoh.
-s32 MikasallaRooms_ReadHealersMind(void) {
+s32 MikasallaRooms_ReadPriestsMind(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgMikasallaInteriorsIWonderIfThere);
   // "I wonder if there are werewolves beyond those in Garoh... I also..."
-  Event_ShowMessage(ACTOR_MIKASALLA_HEALER, 0);
+  Event_ShowMessage(ACTOR_MIKASALLA_PRIEST, 0);
   Event_End();
   return 0;
 }
 
-/// Mind Read on the Apojii sanctum's counter: the healer thinks of the
+/// Mind Read on the Apojii sanctum's counter: the priest thinks of the
 /// islanders' complaints.
-s32 MikasallaRooms_ReadApojiiHealersMind(void) {
+s32 MikasallaRooms_ReadApojiiPriestsMind(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId(
       (s32)MsgMikasallaInteriorsWheneverVisitorsComeOutIslanders);
   // "Whenever visitors come out, the islanders start to complain about..."
-  Event_ShowMessage(ACTOR_APOJII_HEALER, 0);
+  Event_ShowMessage(ACTOR_APOJII_PRIEST, 0);
   Event_End();
   return 0;
 }
@@ -155,58 +158,56 @@ void MikasallaRooms_AskAreYouExplorer(void) {
   Event_End();
 }
 
-/// Mikasalla's merchant sells across the counter (stock row 13), and otherwise
-/// says the shop now sells armor too.
-void MikasallaRooms_TalkToMerchant(s32 actor) {
+/// Mikasalla's general storekeeper sells across the counter, and otherwise says
+/// the shop now sells armor and weapons too.
+void MikasallaRooms_TalkToGeneralStorekeeper(s32 speaker) {
   u16 facing;
 
   facing = FACING_NEAREST_CARDINAL(
       Actor_Get(gMainRoutineWork.leaderActorId)->facing);
   if (facing == FACING_NORTH) {
-    Shop_Run(SHOP_MIKASALLA, actor);
+    Shop_Run(SHOP_MIKASALLA, speaker);
   } else {
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriorsWeOnlyHaveSmallShop);
     // "We only have a small shop here. I used to specialize in items... But..."
-    Event_ShowMessage(actor, 0);
+    Event_ShowMessage(speaker, 0);
   }
 }
 
-/// Mikasalla's innkeeper takes the party in across the counter (inn 4), and
-/// otherwise bids it rest.
-/// "You've come a long way, friends. Stay a while, and rest your feet."
-void MikasallaRooms_TalkToInnkeeper(s32 actor) {
+/// Mikasalla's innkeeper takes the party in across the counter, and otherwise
+/// bids it rest.
+void MikasallaRooms_TalkToInnkeeper(s32 speaker) {
   u16 facing;
 
   facing = FACING_NEAREST_CARDINAL(
       Actor_Get(gMainRoutineWork.leaderActorId)->facing);
   if (facing == FACING_NORTH) {
-    Inn_CheckIn(MIKASALLA_INN, actor);
+    Inn_CheckIn(MIKASALLA_INN, speaker);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriorsYouveComeLongWayFriends);
     // "You've come a long way, friends. Stay a while, and rest your feet."
-    Event_ShowMessage(actor, 0);
+    Event_ShowMessage(speaker, 0);
     Event_End();
   }
 }
 
-/// Mikasalla's healer heals across the counter, and otherwise asks whether the
+/// Mikasalla's priest heals across the counter, and otherwise asks whether the
 /// party has been to Garoh.
-/// "Have you been to Garoh?"
-void MikasallaRooms_TalkToHealer(s32 actor) {
+void MikasallaRooms_TalkToPriest(s32 speaker) {
   u16 facing;
 
   facing = FACING_NEAREST_CARDINAL(
       Actor_Get(gMainRoutineWork.leaderActorId)->facing);
   if (facing == FACING_NORTH) {
-    Sanctum_Run(actor);
+    Sanctum_Run(speaker);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriorsHaveYouBeenToGaroh);
     // "Have you been to Garoh?"
-    Event_OpenMessage(actor, 0);
+    Event_OpenMessage(speaker, 0);
     if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
         0) {
       FieldEvent_Wait(10);
@@ -215,51 +216,58 @@ void MikasallaRooms_TalkToHealer(s32 actor) {
       FieldEvent_Wait(20);
       FieldEvent_SetMessageId((s32)MsgMikasallaInteriorsHaveYouBeenToGaroh + 2);
     }
-    Event_ShowMessage(actor, 0);
+    Event_ShowMessage(speaker, 0);
     Event_End();
   }
 }
 
-/// The Apojii Islands' healer heals across the counter, and otherwise talks of
+/// The Apojii Islands' priest heals across the counter, and otherwise talks of
 /// the little island.
-void MikasallaRooms_TalkToApojiiHealer(s32 actor) {
+void MikasallaRooms_TalkToApojiiPriest(s32 speaker) {
   u16 facing;
 
   facing = FACING_NEAREST_CARDINAL(
       Actor_Get(gMainRoutineWork.leaderActorId)->facing);
   if (facing == FACING_NORTH) {
-    Sanctum_Run(actor);
+    Sanctum_Run(speaker);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgMikasallaInteriorsThisLittleIslandMustSeem);
     // "This little island must seem quite boring to you sophisticated..."
-    Event_ShowMessage(actor, 0);
+    Event_ShowMessage(speaker, 0);
     Event_End();
   }
 }
 
-/// Yallam's healer heals across the counter, and otherwise talks of the
+/// Yallam's priest heals across the counter, and otherwise talks of the
 /// far-off shores.
-void MikasallaRooms_TalkToYallamHealer(s32 actor) {
+void MikasallaRooms_TalkToYallamPriest(s32 speaker) {
   u16 facing;
 
   facing = FACING_NEAREST_CARDINAL(
       Actor_Get(gMainRoutineWork.leaderActorId)->facing);
   if (facing == FACING_NORTH) {
-    Sanctum_Run(actor);
+    Sanctum_Run(speaker);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     FieldEvent_SetMessageId((s32)MsgEvenOutInFarOffShores);
     // "Even out in these far-off shores, people need the services and hope..."
-    Event_ShowMessage(actor, 0);
+    Event_ShowMessage(speaker, 0);
     Event_End();
   }
 }
 
+/// Opens the rooms around the leader. In the houses, Galahad stands in the inn
+/// in a game linked to one where Isaac won at Colosso, from his meeting with
+/// the party until it leaves the area, and before the party is reunited. In
+/// the sanctums, the priests of Mikasalla and the Apojii Islands answer from
+/// across their counters, and the Apojii and Yallam sanctums, which this
+/// scene holds, show no area name.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
   if (gMainRoutineWork.next == SCENE_MIKASALLA_ROOMS_HOUSES) {
@@ -278,14 +286,14 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.next == SCENE_MIKASALLA_ROOMS_SANCTUM) {
     s32 entrance = gMainRoutineWork.entrance;
 
-    if (entrance == 1) {
-      Actor_Get(ACTOR_MIKASALLA_HEALER)->collisionFlags |= ACTOR_NEAR_TALK;
-      FieldActor_SetSpritePriority(ACTOR_MIKASALLA_HEALER, 2);
-    } else if (entrance == 5) {
+    if (entrance == MIKASALLA_ROOMS_SANCTUM_FROM_MIKASALLA) {
+      Actor_Get(ACTOR_MIKASALLA_PRIEST)->collisionFlags |= ACTOR_NEAR_TALK;
+      FieldActor_SetSpritePriority(ACTOR_MIKASALLA_PRIEST, 2);
+    } else if (entrance == MIKASALLA_ROOMS_SANCTUM_FROM_APOJII_ISLANDS) {
       Event_ClearFlag(FLAG_SHOW_AREA_NAME);
-      Actor_Get(ACTOR_APOJII_HEALER)->collisionFlags |= ACTOR_NEAR_TALK;
-      FieldActor_SetSpritePriority(ACTOR_APOJII_HEALER, 2);
-    } else if (entrance == 4) {
+      Actor_Get(ACTOR_APOJII_PRIEST)->collisionFlags |= ACTOR_NEAR_TALK;
+      FieldActor_SetSpritePriority(ACTOR_APOJII_PRIEST, 2);
+    } else if (entrance == MIKASALLA_ROOMS_SANCTUM_FROM_YALLAM) {
       Event_ClearFlag(FLAG_SHOW_AREA_NAME);
     }
   }
@@ -294,8 +302,8 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// Arriving by the inn's entrance 5, the screen fades in and flag 0x12f is
-/// cleared.
+// Arriving from the East Tundaria Islet, the rooms open around the leader and
+// show no area name.
 #include "shared/scene_fade_in_and_clear_flag.h"
 
 void MikasallaRooms_MeetGalahad(void);
@@ -338,7 +346,7 @@ void MikasallaRooms_MeetGalahad(void) {
   Event_ShowMessage(ACTOR_GALAHAD, 0);
   Actor_ShowEmote(gMainRoutineWork.leaderActorId,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  Actor_SetAnimation(ACTOR_GALAHAD, 4);
+  Actor_SetAnimation(ACTOR_GALAHAD, ANIM_SHAKE_HEAD);
   FieldEvent_Wait(15);
   // "No, please... Do not fear me."
   Event_ShowMessage(ACTOR_GALAHAD, 0);
@@ -361,78 +369,92 @@ void MikasallaRooms_MeetGalahad(void) {
 }
 
 // clang-format off
-/// Two women pace the inn: the explorer's widow, whose father-in-law and husband
-/// explored, and the wife of the man who keeps trying to climb Air's Rock.
-s32 gMikasallaRooms_ExplorersWidowPaces[] = {                                                               
-      SC_SET(SW_COLLISION, 129),                                               
-      SC_ACCELERATION(0.1),                                                
-      SC_SPEED(0.3),                                                
-      SC_LABEL(1),                                                             
-      SC_ANIMATION(2),                                                               
-      SC_MOVE(600, 0, 88),                                      
-      SC_SYNC,                                                                 
-      SC_WAIT(20),                                                             
-      SC_ANIMATION(1),                                                               
-      SC_SET(SW_FACING, FACING_EAST),                                          
-      SC_WAIT(20),                                                             
-      SC_ANIMATION(2),                                                               
-      SC_MOVE(616, 0, 104),                                     
-      SC_SYNC,                                                                 
-      SC_WAIT(20),                                                             
-      SC_ANIMATION(1),                                                               
-      SC_SET(SW_FACING, FACING_EAST),                                          
-      SC_WAIT(20),                                                             
-      SC_LOOP(SC_FOREVER, SC_TO(1)),                                           
-      SC_END,                                                                  
-  };
+/// The explorer's son's wife paces her house, stopping to look east.
+s32 gMikasallaRooms_DaughterInLawPaces[] = {
+    SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
+    SC_ACCELERATION(0.1),
+    SC_SPEED(0.3),
+    SC_LABEL(1),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(600, 0, 88),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_ANIMATION(ANIM_STAND),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(20),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(616, 0, 104),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_ANIMATION(ANIM_STAND),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(20),
+    SC_LOOP(SC_FOREVER, SC_TO(1)),
+    SC_END,
+};
 
-/// The climber's wife's script: she paces her house.
-s32 gMikasallaRooms_ClimbersWifePaces[] = {                                                               
-      SC_SET(SW_COLLISION, 129),                                               
-      SC_ACCELERATION(0.1),                                                
-      SC_SPEED(0.3),                                                
-      SC_LABEL(1),                                                             
-      SC_ANIMATION(2),                                                               
-      SC_MOVE(360, 0, 88),                                      
-      SC_SYNC,                                                                 
-      SC_WAIT(20),                                                             
-      SC_ANIMATION(1),                                                               
-      SC_SET(SW_FACING, FACING_EAST),                                          
-      SC_WAIT(20),                                                             
-      SC_ANIMATION(2),                                                               
-      SC_MOVE(376, 0, 104),                                     
-      SC_SYNC,                                                                 
-      SC_WAIT(20),                                                             
-      SC_ANIMATION(1),                                                               
-      SC_SET(SW_FACING, FACING_EAST),                                          
-      SC_WAIT(20),                                                             
-      SC_LOOP(SC_FOREVER, SC_TO(1)),                                           
-      SC_END,                                                                  
-  };
+/// The worried wife paces her house, stopping to look east.
+s32 gMikasallaRooms_WorriedWifePaces[] = {
+    SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
+    SC_ACCELERATION(0.1),
+    SC_SPEED(0.3),
+    SC_LABEL(1),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(360, 0, 88),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_ANIMATION(ANIM_STAND),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(20),
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(376, 0, 104),
+    SC_SYNC,
+    SC_WAIT(20),
+    SC_ANIMATION(ANIM_STAND),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_WAIT(20),
+    SC_LOOP(SC_FOREVER, SC_TO(1)),
+    SC_END,
+};
 
 #include "shared/scene_entrances_default.c"
 
 u32 gSceneExits[] = {
     SCENE_EXITS(MikasallaRoomsHouses),
-    SCENE_EXIT_UNLESS(1, Mikasalla, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, Mikasalla, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, Mikasalla, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, Mikasalla, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, EastTundariaIslet, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MIKASALLA_ROOMS_HOUSES_TO_MIKASALLA_NORTHEAST, Mikasalla,
+                      MIKASALLA_FROM_MIKASALLA_ROOMS_HOUSES_NORTHEAST,
+                      EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MIKASALLA_ROOMS_HOUSES_TO_MIKASALLA_NORTHWEST, Mikasalla,
+                      MIKASALLA_FROM_MIKASALLA_ROOMS_HOUSES_NORTHWEST,
+                      EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MIKASALLA_ROOMS_HOUSES_TO_MIKASALLA_EAST, Mikasalla,
+                      MIKASALLA_FROM_MIKASALLA_ROOMS_HOUSES_EAST,
+                      EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MIKASALLA_ROOMS_HOUSES_TO_MIKASALLA_SOUTHWEST, Mikasalla,
+                      MIKASALLA_FROM_MIKASALLA_ROOMS_HOUSES_SOUTHWEST,
+                      EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MIKASALLA_ROOMS_HOUSES_TO_EAST_TUNDARIA_ISLET,
+                      EastTundariaIslet,
+                      EAST_TUNDARIA_ISLET_FROM_MIKASALLA_ROOMS_HOUSES,
+                      EXIT_FLAG_NONE),
     SCENE_EXITS(MikasallaRoomsSanctum),
-    SCENE_EXIT_UNLESS(1, Mikasalla, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, ApojiiIslands, 9, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, Yallam, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MIKASALLA_ROOMS_SANCTUM_TO_MIKASALLA, Mikasalla,
+                      MIKASALLA_FROM_MIKASALLA_ROOMS_SANCTUM, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MIKASALLA_ROOMS_SANCTUM_TO_APOJII_ISLANDS, ApojiiIslands,
+                      APOJII_ISLANDS_FROM_MIKASALLA_ROOMS_SANCTUM,
+                      EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MIKASALLA_ROOMS_SANCTUM_TO_YALLAM, Yallam,
+                      YALLAM_FROM_MIKASALLA_ROOMS_SANCTUM, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
 /// Mikasalla's houses and inn (enum MikasallaRoomsActorId).
 struct ActorPlacement gMikasallaRooms_InnPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_MAN_IN_GREEN_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 152, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_WHITE_DRESS, CONDITION_ALWAYS, gMikasallaRooms_ExplorersWidowPaces, 616, 0, 104, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_WHITE_DRESS, CONDITION_ALWAYS, gMikasallaRooms_DaughterInLawPaces, 616, 0, 104, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_IN_BLUE_SHIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 632, 0, 136, FACING_NORTH, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_BLUE_COAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 120, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_IN_GREEN_SHAWL, CONDITION_ALWAYS, gMikasallaRooms_ClimbersWifePaces, 360, 0, 88, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_IN_GREEN_SHAWL, CONDITION_ALWAYS, gMikasallaRooms_WorriedWifePaces, 360, 0, 88, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_ORANGE_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 120, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_WITH_DARK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 392, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PINK_APRON, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 424, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -458,29 +480,29 @@ struct ActorPlacement gMikasallaRooms_SanctumPlacements[] = {
 // clang-format off
 /// The houses' and inn's talk and Mind Read, Galahad, and what is cooking.
 struct Trigger gMikasallaRooms_InnTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, MIKASALLA_ROOMS_HOUSES_TO_MIKASALLA_NORTHEAST, CONDITION_ALWAYS, MIKASALLA_ROOMS_HOUSES_TO_MIKASALLA_NORTHEAST},
+    {TRIGGER_EXIT, MIKASALLA_ROOMS_HOUSES_TO_MIKASALLA_NORTHWEST, CONDITION_ALWAYS, MIKASALLA_ROOMS_HOUSES_TO_MIKASALLA_NORTHWEST},
+    {TRIGGER_EXIT, MIKASALLA_ROOMS_HOUSES_TO_MIKASALLA_EAST, CONDITION_ALWAYS, MIKASALLA_ROOMS_HOUSES_TO_MIKASALLA_EAST},
+    {TRIGGER_EXIT, MIKASALLA_ROOMS_HOUSES_TO_MIKASALLA_SOUTHWEST, CONDITION_ALWAYS, MIKASALLA_ROOMS_HOUSES_TO_MIKASALLA_SOUTHWEST},
+    {TRIGGER_EXIT, MIKASALLA_ROOMS_HOUSES_TO_EAST_TUNDARIA_ISLET, CONDITION_ALWAYS, MIKASALLA_ROOMS_HOUSES_TO_EAST_TUNDARIA_ISLET},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_TALK, ACTOR_EXPLORERS_SON, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsIHeardSomeoneSayTheres)},
-    {TRIGGER_TALK, ACTOR_EXPLORERS_WIDOW, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsMyFatherInLaw)},
+    {TRIGGER_TALK, ACTOR_EXPLORERS_DAUGHTER_IN_LAW, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsMyFatherInLaw)},
     {TRIGGER_TALK, ACTOR_EXPLORERS_GRANDSON, CONDITION_ALWAYS, EVENT(MikasallaRooms_AskAreYouExplorer)},
-    {TRIGGER_TALK, ACTOR_AIRS_ROCK_CLIMBER, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsThoseWhoHaveClimbedAirs)},
-    {TRIGGER_TALK, ACTOR_CLIMBERS_WIFE, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsMyHusbandHasTried)},
-    {TRIGGER_TALK, ACTOR_MERCHANT, CONDITION_ALWAYS, EVENT(MikasallaRooms_TalkToMerchant)},
+    {TRIGGER_TALK, ACTOR_OLD_MAN_ON_AIRS_ROCK, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsThoseWhoHaveClimbedAirs)},
+    {TRIGGER_TALK, ACTOR_WORRIED_WIFE, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsMyHusbandHasTried)},
+    {TRIGGER_TALK, ACTOR_GENERAL_STOREKEEPER, CONDITION_ALWAYS, EVENT(MikasallaRooms_TalkToGeneralStorekeeper)},
     {TRIGGER_TALK, ACTOR_MAN_ON_THE_ROAD_TO_GAROH, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsThereArentAnyTownsBetween)},
     {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(MikasallaRooms_TalkToInnkeeper)},
     {TRIGGER_TALK, ACTOR_OLD_MAN_ON_TUNDARIA, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsUsedToBeYouCould)},
     {TRIGGER_TALK, ACTOR_OLD_WOMAN_BY_THE_FIRE, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsYouMustBeColdDressed)},
     {TRIGGER_TALK, ACTOR_GALAHAD, CONDITION_ALWAYS, EVENT(MikasallaRooms_TalkToGalahad)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EXPLORERS_SON, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsItMustBeNice)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EXPLORERS_WIDOW, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsThatBoySureAdmiresHis)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EXPLORERS_DAUGHTER_IN_LAW, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsThatBoySureAdmiresHis)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EXPLORERS_GRANDSON, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsILoveExploringOutBehind)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_AIRS_ROCK_CLIMBER, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsWhatDoesUnseeableEvenLook)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CLIMBERS_WIFE, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsICantLetHimTry)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsIDontKnowMuchAbout)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_AIRS_ROCK, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsWhatDoesUnseeableEvenLook)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WORRIED_WIFE, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsICantLetHimTry)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GENERAL_STOREKEEPER, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsIDontKnowMuchAbout)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_ROAD_TO_GAROH, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsTheresNoReasonToGo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsWhyAreTravelersAlways)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_TUNDARIA, CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsTundariaIsSouthernmostContinent)},
@@ -494,40 +516,43 @@ struct Trigger gMikasallaRooms_InnTriggers[] = {
 };
 // clang-format on
 
-/// The three sanctums' healers, the islanders and the counters' Mind Read.
+/// The three sanctums' priests, the islanders and the counters' Mind Read.
 struct Trigger gMikasallaRooms_SanctumTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, MIKASALLA_ROOMS_SANCTUM_TO_MIKASALLA, CONDITION_ALWAYS,
+     MIKASALLA_ROOMS_SANCTUM_TO_MIKASALLA},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, MIKASALLA_ROOMS_SANCTUM_TO_YALLAM, CONDITION_ALWAYS,
+     MIKASALLA_ROOMS_SANCTUM_TO_YALLAM},
+    {TRIGGER_EXIT, MIKASALLA_ROOMS_SANCTUM_TO_APOJII_ISLANDS, CONDITION_ALWAYS,
+     MIKASALLA_ROOMS_SANCTUM_TO_APOJII_ISLANDS},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_TALK, ACTOR_MIKASALLA_HEALER, CONDITION_ALWAYS,
-     EVENT(MikasallaRooms_TalkToHealer)},
-    {TRIGGER_TALK, ACTOR_APOJII_HEALER, CONDITION_ALWAYS,
-     EVENT(MikasallaRooms_TalkToApojiiHealer)},
+    {TRIGGER_TALK, ACTOR_MIKASALLA_PRIEST, CONDITION_ALWAYS,
+     EVENT(MikasallaRooms_TalkToPriest)},
+    {TRIGGER_TALK, ACTOR_APOJII_PRIEST, CONDITION_ALWAYS,
+     EVENT(MikasallaRooms_TalkToApojiiPriest)},
     {TRIGGER_TALK, ACTOR_ISLANDER_SICK_OF_PARADISE, CONDITION_ALWAYS,
      MSGNO(MsgMikasallaInteriorsImSickOfLiving)},
     {TRIGGER_TALK, ACTOR_ISLANDER_LONGING_FOR_LAND, CONDITION_ALWAYS,
      MSGNO(MsgMikasallaInteriorsIdLoveToGo)},
-    {TRIGGER_TALK, ACTOR_YALLAM_HEALER, CONDITION_ALWAYS,
-     EVENT(MikasallaRooms_TalkToYallamHealer)},
+    {TRIGGER_TALK, ACTOR_YALLAM_PRIEST, CONDITION_ALWAYS,
+     EVENT(MikasallaRooms_TalkToYallamPriest)},
     {TRIGGER_TALK, ACTOR_MIKASALLA_COUNTER, CONDITION_ALWAYS,
-     EVENT(MikasallaRooms_TalkToHealer)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MIKASALLA_HEALER,
+     EVENT(MikasallaRooms_TalkToPriest)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MIKASALLA_PRIEST,
      CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsIWonderIfThere)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_APOJII_HEALER,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_APOJII_PRIEST,
      CONDITION_ALWAYS,
      MSGNO(MsgMikasallaInteriorsWheneverVisitorsComeOutIslanders)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ISLANDER_SICK_OF_PARADISE,
      CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsMaybeTheyllTakeMe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ISLANDER_LONGING_FOR_LAND,
      CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsIWonderWhatItsLike)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YALLAM_HEALER,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YALLAM_PRIEST,
      CONDITION_ALWAYS, MSGNO(MsgMikasallaInteriorsOnceThisWasThrivingVillage)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MIKASALLA_COUNTER,
-     CONDITION_ALWAYS, EVENT(MikasallaRooms_ReadHealersMind)},
+     CONDITION_ALWAYS, EVENT(MikasallaRooms_ReadPriestsMind)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_APOJII_COUNTER,
-     CONDITION_ALWAYS, EVENT(MikasallaRooms_ReadApojiiHealersMind)},
+     CONDITION_ALWAYS, EVENT(MikasallaRooms_ReadApojiiPriestsMind)},
     {TRIGGER_TABLE_END},
 };

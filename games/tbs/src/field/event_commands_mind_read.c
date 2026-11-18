@@ -19,13 +19,6 @@
 /// The tint's channels run from this level, a quarter of the hue's own on top.
 #define MIND_READ_TINT_LEVEL_MIN 4
 
-/// The window palette's colours that Mind Read greys and restores: the white
-/// and black of the text and border, and the border's two greys.
-#define WINDOW_WHITE_COLOR 1
-#define WINDOW_BLACK_COLOR 3
-#define WINDOW_BORDER_DARK_COLOR 11
-#define WINDOW_BORDER_LIGHT_COLOR 12
-
 /// The HEAP_SLOT_MIND_READ heap slot (gMindReadWork), 664 bytes.
 struct MindReadWork {
   /// Each scanline's BG0 horizontal scroll in pixels, two pages written in
@@ -316,10 +309,6 @@ void FieldPsynergy_RestoreMindReadPalette(void) {
 #undef MIND_READ_CYCLE_LAST
 #undef MIND_READ_PARTICLE_GAP
 #undef MIND_READ_TINT_LEVEL_MIN
-#undef WINDOW_WHITE_COLOR
-#undef WINDOW_BLACK_COLOR
-#undef WINDOW_BORDER_DARK_COLOR
-#undef WINDOW_BORDER_LIGHT_COLOR
 
 #undef HUE_DEGREES
 #undef HUE_CIRCLE

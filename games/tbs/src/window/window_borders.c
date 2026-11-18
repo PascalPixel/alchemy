@@ -29,9 +29,6 @@
 /// The tile rows a field message is centred in, from the top of the screen.
 #define FIELD_MESSAGE_TOP_ROWS 12
 
-/// Twice a 16.16 value, as a whole number: FIXEDtoINT a shift short.
-#define FIXEDtoINT_TWICE(value) ((value) >> 15)
-
 /// A tilemap entry's tile number and flip bits, below its palette.
 #define TILE_NUMBER_AND_FLIPS (TILE_NUMBER_MASK | TILE_HFLIP | TILE_VFLIP)
 

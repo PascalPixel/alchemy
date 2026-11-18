@@ -25,6 +25,8 @@
 #define PRISM_SHARD_PICTURES                                                   \
   PICTURE_BYTES(CRYSTAL) ///< the shards, after the crystal
 #define SHATTERED 1      ///< a crystal's z once it has hit the ground
+/// The shard pictures gPrism_ShardPictures, _Widths and _Heights hold.
+#define PRISM_SHARD_PICTURE_COUNT 12
 
 /// Crystals drop out of the sky onto the targets' side and shatter on the
 /// ground into spinning shards, flashing the targets and shaking the screen.
@@ -95,7 +97,6 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
     }
     if (frame == PRISM_COUNT(args->variant, PRISM_DAMAGE_FRAME))
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-    // Darken over the last eight frames.
     if (frame == PRISM_COUNT(args->variant, PRISM_FRAMES) - 8) {
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(6));
     }
@@ -103,21 +104,28 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
       for (i = 0; i != PRISM_COUNT(args->variant, PRISM_CRYSTAL_COUNT); i++) {
         crystal = &work->particles[i];
         if (crystal->z == SHATTERED) {
-          // A shattered crystal's shards fly and spin, slowing down; kind 4
-          // asks for pictures past the twelve the tables hold, whose heights
-          // are zero, so those three shards of every crystal never show.
+          // A shattered crystal's shards fly and spin, slowing down.
           for (j = 0; j != SHARDS_PER_CRYSTAL; j++) {
             picture =
                 (j % 5) * 3 +
                 (shards[i * SHARDS_PER_CRYSTAL + j].variant / SHARD_TURN) % 3;
             shard = &shards[i * SHARDS_PER_CRYSTAL + j];
-            draw[j <= 2](
-                canvas,
-                work->sheet + gPrism_ShardPictures[picture] +
-                    PRISM_SHARD_PICTURES,
-                FIXED_INTEGER_PART(shard->x) - gPrism_ShardWidths[picture] / 2,
-                FIXED_INTEGER_PART(shard->y) - gPrism_ShardHeights[picture] / 2,
-                gPrism_ShardWidths[picture], gPrism_ShardHeights[picture]);
+            // UB: kind 4 (j % 5 == 4) asks for pictures 12 to 14, past the
+            // ends of gPrism_ShardWidths and gPrism_ShardPictures, and picture
+            // 14 past gPrism_ShardHeights'; the heights it finds are 0, so
+            // those three shards of every crystal never show.
+#ifdef UBFIX
+            if (picture < PRISM_SHARD_PICTURE_COUNT)
+#endif
+              draw[j <= 2](canvas,
+                           work->sheet + gPrism_ShardPictures[picture] +
+                               PRISM_SHARD_PICTURES,
+                           FIXED_INTEGER_PART(shard->x) -
+                               gPrism_ShardWidths[picture] / 2,
+                           FIXED_INTEGER_PART(shard->y) -
+                               gPrism_ShardHeights[picture] / 2,
+                           gPrism_ShardWidths[picture],
+                           gPrism_ShardHeights[picture]);
             Particle_AdvanceWithGravity2D(shard, PARTICLE_DAMPING_NONE,
                                           toFIXED(1) / 8);
             shard->variant += shard->z;
@@ -125,7 +133,6 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
               shard->z--;
           }
         } else if (frame >= crystal->variant) {
-          // A falling crystal.
           draw[i & 1](canvas, work->sheet,
                       FIXED_INTEGER_PART(crystal->x) - CRYSTAL_WIDTH / 2,
                       FIXED_INTEGER_PART(crystal->y), CRYSTAL_WIDTH,
@@ -133,7 +140,6 @@ void BattleEffect_RunPrism(struct BattleEffectParams *args) {
           Particle_AdvanceWithGravity2D(crystal, PARTICLE_DAMPING_NONE,
                                         FIXED_ONE);
           if (crystal->y > PRISM_GROUND_Y) {
-            // Shatter it on reaching the ground.
             crystal->z = SHATTERED;
             crystal->y = PRISM_GROUND_Y;
             for (j = 0; j != SHARDS_PER_CRYSTAL; j++) {
@@ -224,3 +230,4 @@ void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
 
 #undef PHASE_RAMP_COLORS
 #undef PHASE_PEAK
+#undef PRISM_SHARD_PICTURE_COUNT

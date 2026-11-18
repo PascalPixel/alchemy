@@ -96,8 +96,9 @@ s32 Party_SumDjinnCountsFar(s32 index);
 /// Adds `amount` to the shop credit purchases build up and Game Tickets spend,
 /// kept between 0 and COINS_MAX, and returns the new credit.
 s32 Party_AdjustShopCreditFar(s32 amount);
-/// Adds `amount` to the count of Game Tickets given, which stops at 28 and
-/// picks the next ticket's credit cost, and returns the new count.
+/// Adds `amount` to the count of Game Tickets given, which stops at
+/// SHOP_GIFTS_MAX and picks the next ticket's credit cost, and returns the new
+/// count.
 s32 Party_AdjustShopGiftsFar(s32 amount);
 s32 Inventory_CheckDiscardFar(s32 owner, s32 slot);
 s32 Inventory_DiscardFar(s32 owner, s32 slot);

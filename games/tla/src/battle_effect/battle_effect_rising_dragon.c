@@ -26,7 +26,7 @@ struct StripQuad;
 #define DRAGON_ARC_SPEED 44
 /// The strips' widths, as a fraction of their rows' widths, and the heads'
 /// scale.
-#define DRAGON_SCALE 20768
+#define DRAGON_SCALE toFIXED(0.3169)
 /// How far the second dragon's arc is turned from the first's.
 #define DRAGON_SECOND_TURN 14192
 /// A head's turn at the start of its arc, less 32 for each unit of the arc.
@@ -53,7 +53,7 @@ struct StripVertex {
 /// segments, widening to its head, a dragon's head of flame. Each strikes ten
 /// frames after the last, scattering DRAGON_SPARKS sparks.
 ///
-/// Abilities: Rising Dragon (Light Blade's unleash).
+/// Abilities: Rising Dragon (the Masamune's unleash).
 void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -70,7 +70,6 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
   struct RenderModel *model;
   void *vertices;
   struct Particle *spark;
-  struct Particle *mote;
   s32 i;
   s32 j;
 
@@ -159,15 +158,15 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
                                  POSE_DAMAGE, 0, 8);
       }
       for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
-        mote = &work->particles[i];
-        if (mote->variant >= 0) {
-          s32 size = (mote->variant >> 3) + 2;
+        spark = &work->particles[i];
+        if (spark->variant >= 0) {
+          s32 size = (spark->variant >> 3) + 2;
 
           blit[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
-                  FIXED_INTEGER_PART(mote->x) - size / 2,
-                  FIXED_INTEGER_PART(mote->y) - size, size, size * 2);
-          Particle_AdvanceWithGravity2D(mote, 60, toFIXED(1) / 16);
-          mote->variant--;
+                  FIXED_INTEGER_PART(spark->x) - size / 2,
+                  FIXED_INTEGER_PART(spark->y) - size, size, size * 2);
+          Particle_AdvanceWithGravity2D(spark, 60, toFIXED(1) / 16);
+          spark->variant--;
         }
       }
 
@@ -330,22 +329,23 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
 }
 
 #define FIGURE_FRAMES 108
-#define FIGURE_FLARE_FRAME 30 ///< the flare at its hand flashes the screen
-#define FIGURE_HIT_FRAME 80   ///< the blow, which starts the result phase
+#define FIGURE_SPARK_BURST_FRAME                                               \
+  30                        ///< the burst at its hand flashes the screen
+#define FIGURE_HIT_FRAME 80 ///< the blow, which starts the result phase
 
 // The parts of the figure in BattleEffect_HeartbreakSheet, unpacked into the
 // map cells.
 #define FIGURE_BODY 0
 #define FIGURE_BODY_WIDTH 96
 #define FIGURE_BODY_HEIGHT 83
-#define FIGURE_ARM_LOWERED 7968
-#define FIGURE_ARM_LOWERED_WIDTH 42
-#define FIGURE_ARM_LOWERED_HEIGHT 35
-#define FIGURE_ARM_RAISED 9438
-#define FIGURE_ARM_RAISED_WIDTH 48
-#define FIGURE_ARM_RAISED_HEIGHT 51
-/// A burst of sparks flaring, four pictures (gHeartbreak_SwingPictures).
-#define FIGURE_FLARE 11886
+#define FIGURE_ARM_CLENCHED 7968
+#define FIGURE_ARM_CLENCHED_WIDTH 42
+#define FIGURE_ARM_CLENCHED_HEIGHT 35
+#define FIGURE_ARM_REACHING 9438
+#define FIGURE_ARM_REACHING_WIDTH 48
+#define FIGURE_ARM_REACHING_HEIGHT 51
+/// A burst of sparks growing, four pictures (gHeartbreak_SwingPictures).
+#define FIGURE_SPARK_BURST 11886
 /// A heart, then seven pictures of green flame burning it away
 /// (gHeartbreak_FistPictures); the first is also the heart held up.
 #define FIGURE_HEART 20125
@@ -356,14 +356,15 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
 
 /// A great cloaked figure with a horned skull for a head sweeps down on the
 /// target from above the far side, swaying and fading in through the blend,
-/// its arm raised. From frame 28 a burst of sparks flares at its hand and the
-/// screen flashes white; from frame 40 a heart is held up, the arm lowers at
-/// 48, and from frame 62 green flame burns the heart away. At frame 80 the
+/// its clawed hand reaching out. From frame 28 a burst of sparks grows at its
+/// hand and the screen flashes white; from frame 40 a heart is held up, from
+/// frame 48 the hand closes into a fist, and from frame 62 green flame burns
+/// the heart away. At frame 80 the
 /// blow lands and the result phase starts; from frame 92 the figure fades out
 /// and rises away, and the battle background is reloaded at the end. On the
 /// far side the whole figure is drawn mirrored.
 ///
-/// Abilities: Heartbreak (the Mace's unleash).
+/// Abilities: Heartbreak (the Thanatos Mace's unleash).
 void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
   struct HeapSlots *heap;
   struct BattleEffectWork *work;
@@ -431,50 +432,52 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
         (FIXEDtoINT(Trig_Cos(frame * (TRIG_TURN / 256)) * FIGURE_SWAY));
     REG_BG2X = -x << 8;
 
-    // The body, and the arm raised until frame 48.
+    // The body, and the arm reaching until frame 48, then clenched.
     if (args->side == EFFECT_SIDE_ENEMIES) {
       draw[args->side](canvas, Ram_MapCellBuffer + FIGURE_BODY, 25, y + 2,
                        FIGURE_BODY_WIDTH, FIGURE_BODY_HEIGHT);
       if ((u32)frame < 48)
-        draw[args->side](canvas, Ram_MapCellBuffer + FIGURE_ARM_RAISED, 31,
-                         y + 22, FIGURE_ARM_RAISED_WIDTH,
-                         FIGURE_ARM_RAISED_HEIGHT);
+        draw[args->side](canvas, Ram_MapCellBuffer + FIGURE_ARM_REACHING, 31,
+                         y + 22, FIGURE_ARM_REACHING_WIDTH,
+                         FIGURE_ARM_REACHING_HEIGHT);
       else
-        draw[args->side](canvas, Ram_MapCellBuffer + FIGURE_ARM_LOWERED, 64,
-                         y + 16, FIGURE_ARM_LOWERED_WIDTH,
-                         FIGURE_ARM_LOWERED_HEIGHT);
+        draw[args->side](canvas, Ram_MapCellBuffer + FIGURE_ARM_CLENCHED, 64,
+                         y + 16, FIGURE_ARM_CLENCHED_WIDTH,
+                         FIGURE_ARM_CLENCHED_HEIGHT);
     } else {
       draw[args->side](canvas, Ram_MapCellBuffer + FIGURE_BODY, 7, y + 2,
                        FIGURE_BODY_WIDTH, FIGURE_BODY_HEIGHT);
       if ((u32)frame < 48)
-        draw[args->side](canvas, Ram_MapCellBuffer + FIGURE_ARM_RAISED, 49,
-                         y + 22, FIGURE_ARM_RAISED_WIDTH,
-                         FIGURE_ARM_RAISED_HEIGHT);
+        draw[args->side](canvas, Ram_MapCellBuffer + FIGURE_ARM_REACHING, 49,
+                         y + 22, FIGURE_ARM_REACHING_WIDTH,
+                         FIGURE_ARM_REACHING_HEIGHT);
       else
-        draw[args->side](canvas, Ram_MapCellBuffer + FIGURE_ARM_LOWERED, 22,
-                         y + 16, FIGURE_ARM_LOWERED_WIDTH,
-                         FIGURE_ARM_LOWERED_HEIGHT);
+        draw[args->side](canvas, Ram_MapCellBuffer + FIGURE_ARM_CLENCHED, 22,
+                         y + 16, FIGURE_ARM_CLENCHED_WIDTH,
+                         FIGURE_ARM_CLENCHED_HEIGHT);
     }
 
-    // The flare, three frames a picture from frame 28.
+    // The burst of sparks, three frames a picture from frame 28.
     if (frame >= 28 && frame < 40) {
       s32 cel = (frame - 28) / 3;
 
       if (args->side == EFFECT_SIDE_ENEMIES) {
-        draw[args->side](
-            canvas,
-            Ram_MapCellBuffer + FIGURE_FLARE + gHeartbreak_SwingPictures[cel],
-            46 - gHeartbreak_SwingWidths[cel] / 2,
-            y - gHeartbreak_SwingHeights[cel] / 2 + 61,
-            gHeartbreak_SwingWidths[cel], gHeartbreak_SwingHeights[cel]);
+        draw[args->side](canvas,
+                         Ram_MapCellBuffer + FIGURE_SPARK_BURST +
+                             gHeartbreak_SwingPictures[cel],
+                         46 - gHeartbreak_SwingWidths[cel] / 2,
+                         y - gHeartbreak_SwingHeights[cel] / 2 + 61,
+                         gHeartbreak_SwingWidths[cel],
+                         gHeartbreak_SwingHeights[cel]);
       } else {
-        draw[args->side](
-            canvas,
-            Ram_MapCellBuffer + FIGURE_FLARE + gHeartbreak_SwingPictures[cel],
-            gHeartbreak_SwingWidths[cel] / 2 - gHeartbreak_SwingWidths[cel] +
-                82,
-            y - gHeartbreak_SwingHeights[cel] / 2 + 61,
-            gHeartbreak_SwingWidths[cel], gHeartbreak_SwingHeights[cel]);
+        draw[args->side](canvas,
+                         Ram_MapCellBuffer + FIGURE_SPARK_BURST +
+                             gHeartbreak_SwingPictures[cel],
+                         gHeartbreak_SwingWidths[cel] / 2 -
+                             gHeartbreak_SwingWidths[cel] + 82,
+                         y - gHeartbreak_SwingHeights[cel] / 2 + 61,
+                         gHeartbreak_SwingWidths[cel],
+                         gHeartbreak_SwingHeights[cel]);
       }
     }
 
@@ -516,7 +519,7 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 16);
     }
-    if (frame == FIGURE_FLARE_FRAME) {
+    if (frame == FIGURE_SPARK_BURST_FRAME) {
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       work->shakeFrames = 3;
@@ -540,19 +543,19 @@ void BattleEffect_RunHeartbreak(struct BattleEffectParams *args) {
 #undef BLITTER
 #undef DRAGON_SEGMENTS
 #undef FIGURE_FRAMES
-#undef FIGURE_FLARE_FRAME
+#undef FIGURE_SPARK_BURST_FRAME
 #undef FIGURE_HIT_FRAME
 #undef FIGURE_BODY
-#undef FIGURE_ARM_LOWERED
-#undef FIGURE_ARM_RAISED
-#undef FIGURE_FLARE
+#undef FIGURE_ARM_CLENCHED
+#undef FIGURE_ARM_REACHING
+#undef FIGURE_SPARK_BURST
 #undef FIGURE_HEART
 #undef FIGURE_BODY_WIDTH
 #undef FIGURE_BODY_HEIGHT
-#undef FIGURE_ARM_LOWERED_WIDTH
-#undef FIGURE_ARM_LOWERED_HEIGHT
-#undef FIGURE_ARM_RAISED_WIDTH
-#undef FIGURE_ARM_RAISED_HEIGHT
+#undef FIGURE_ARM_CLENCHED_WIDTH
+#undef FIGURE_ARM_CLENCHED_HEIGHT
+#undef FIGURE_ARM_REACHING_WIDTH
+#undef FIGURE_ARM_REACHING_HEIGHT
 #undef FIGURE_HEART_WIDTH
 #undef FIGURE_HEART_HEIGHT
 #undef FIGURE_SWAY

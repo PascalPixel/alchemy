@@ -1,11 +1,11 @@
 /// @file
-/// Ice and Douse: shards and bolts falling on the targets' side.
+/// Ice and Douse: shards and drops of water falling on the targets' side.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
 
 /// Fills window 0's per-line edges: from line 8 to line last, slant, the band
-/// the shards and bolts fall down, which moves along as the lines go down until
+/// the shards and drops fall down, which moves along as the lines go down until
 /// the line before it reaches span, the targets' side; span on the other lines
 /// to the battle view's bottom; nothing below it.
 #define FALLING_BUILD_SLANTED_WINDOW(line, i, last, slant, span)               \
@@ -20,20 +20,21 @@
 /// The band from left, as wide as the canvas.
 #define FALLING_BAND(left) WIN_RANGE(left, (left) + CANVAS_SIZE)
 
-// The falling shards (Ice) and bolts (Douse) rain diagonally onto the targets'
-// side, seen only through a slanted band of window 0 whose edges an HBlank DMA
-// feeds line by line; each lands just above line 80, shards shattering into
-// sparkle and bolts throwing sparks.
+// The falling shards (Ice) and drops of water (Douse) rain diagonally onto the
+// targets' side, seen only through a slanted band of window 0 whose edges an
+// HBlank DMA feeds line by line; each lands just above line 80, shards
+// shattering into sparkle and drops bursting in a splash that throws up
+// droplets.
 
 enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 
-/// A falling shard or bolt keeps falling while its y, in eighths of a pixel, is
+/// A falling shard or drop keeps falling while its y, in eighths of a pixel, is
 /// at most this.
 #define FALLING_LAND_Y (80 * 8 - 1)
 /// IceShardSheet: the shard, then its shatter, each picture 32x32.
 #define ICE_SHARD_WIDTH 32
 #define ICE_SHARD_HEIGHT 32
-/// A landed shard or bolt counts its frames since landing up to one past this.
+/// A landed shard or drop counts its frames since landing up to one past this.
 #define FALLING_LANDED_LAST_FRAME 14
 /// A landed shard shows its shatter's pictures from its first frame to
 /// FALLING_LANDED_LAST_FRAME, ICE_SHATTER_PICTURE_FRAMES each, and kicks up a
@@ -73,6 +74,8 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
 
+  // Line the shards up above the screen, each 8 pixels higher and further
+  // out than the one before, with a little scatter.
   {
     s32 y;
     s32 slant;
@@ -95,6 +98,8 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
   for (i = 0; i != FALLING_SHARD_PUFF_COUNT; i++)
     work->particles[FALLING_SHARD_COUNT + i].variant = -1; // puff slot free
 
+  // Falling shards draw at their maximum; the puffs add their light. Both
+  // mirror for the other side.
   if (work->args->side == EFFECT_SIDE_ENEMIES) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, BLITTER_CLIP_Y, COMPOSITE_LIGHTEN);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, BLITTER_CLIP_Y,
@@ -218,20 +223,19 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
   BattleEffect_ConfigureEffectDisplay();
 }
 
-enum { FALLING_BOLT_COUNT = 64, FALLING_BOLT_SPARK_COUNT = 512 };
-
-/// Ram_MapGridCellBuffer as the falling bolts use it: window 0's table, then
-/// the bolts' sparks.
-struct BoltSparkBuffer {
+/// Ram_MapGridCellBuffer as Douse uses it: window 0's table, then the drops'
+/// droplets.
+struct DropSplashBuffer {
   u16 lines[DISPLAY_HEIGHT]; ///< WIN0H for each line, read by the HBlank DMA
-  struct Particle sparks[FALLING_BOLT_SPARK_COUNT]; ///< free while -1
+  struct Particle droplets[512]; ///< free while -1
 };
 
-/// Ram_MapGridCellBuffer seen as Douse's struct BoltSparkBuffer.
-#define FALLING_BOLT_SPARKS ((struct BoltSparkBuffer *)Ram_MapGridCellBuffer)
+/// Ram_MapGridCellBuffer seen as Douse's struct DropSplashBuffer.
+#define DOUSE_SPLASH_BUFFER ((struct DropSplashBuffer *)Ram_MapGridCellBuffer)
 
-/// BlueBeamSheet after the motes: the falling drop and its flash, then the
-/// burst.
+/// BlueBeamSheet, after ParticleSpritesD's ten flare pictures (as many bytes as
+/// two sets of motes): the falling drop, a blue bubble; the small splash it
+/// lands in; then the large splash.
 #define DOUSE_DROP_WIDTH 24
 #define DOUSE_DROP_HEIGHT 24
 #define DOUSE_BURST_PICTURE_WIDTH 42
@@ -240,19 +244,19 @@ struct BoltSparkBuffer {
 #define DOUSE_FLASH_PICTURE (DOUSE_FALLING_PICTURE + PICTURE_BYTES(DOUSE_DROP))
 #define DOUSE_BURST_PICTURE (DOUSE_FLASH_PICTURE + PICTURE_BYTES(DOUSE_DROP))
 
-/// Blue bolts streak down diagonally onto the targets' side of the field, each
-/// bursting into a fountain of falling sparks where it lands, while the targets
-/// flash.
+/// Drops of water fall diagonally onto the targets' side of the field, 8 pixels
+/// down and 4 across a frame, each bursting in a splash that throws up droplets
+/// where it lands, while the targets flash; Deluge throws them higher.
 ///
 /// Abilities: Douse, Drench, Deluge.
 void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
-  DrawRectangle drawSpark;
-  DrawRectangle drawBolt;
-  struct Particle *bolt;
-  struct Particle *spark;
+  DrawRectangle drawDroplet;
+  DrawRectangle drawDrop;
+  struct Particle *drop;
+  struct Particle *droplet;
   u16 *line;
   s32 i;
   s32 k;
@@ -269,29 +273,32 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
               WININ_WIN1_OBJ | WININ_WIN1_CLR;
 
+  // Drops draw at their maximum; droplets add their light.
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, BLITTER_CLIP_Y, COMPOSITE_LIGHTEN);
-  drawBolt = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
+  drawDrop = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, BLITTER_CLIP_Y,
                       COMPOSITE_ADDITIVE);
-  drawSpark = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_PAIRED);
+  drawDroplet = HEAP_SLOT_BLOCK(HEAP_SLOT_RAM_CODE_PAIRED);
 
-  EFFECT_FREE_PARTICLES(i, FALLING_BOLT_SPARKS->sparks,
-                        FALLING_BOLT_SPARK_COUNT);
+  EFFECT_FREE_PARTICLES(i, DOUSE_SPLASH_BUFFER->droplets,
+                        ARRAY_COUNT(DOUSE_SPLASH_BUFFER->droplets));
 
-  for (i = 0; i != FALLING_BOLT_COUNT; i++) {
+  // Line the drops up above the screen along the slant, each the variant's
+  // spacing higher than the one before.
+  for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
     s32 x;
     s32 y;
 
-    bolt = &work->particles[i];
+    drop = &work->particles[i];
     x = Random16() & 63;
     y = -(i * gFalling_Counts[work->args->variant][FALLING_BOLT_SPACING] + 16);
     if (work->args->side == EFFECT_SIDE_PARTY)
       x = x + y / 2 - 48;
     else
       x = x - y / 2 + 72;
-    bolt->x = x << 3;
-    bolt->y = y << 3;
-    bolt->variant = -1; // still falling
+    drop->x = x << 3;
+    drop->y = y << 3;
+    drop->variant = -1; // still falling
   }
 
   if (work->args->side == EFFECT_SIDE_ENEMIES) {
@@ -304,6 +311,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
                                  FALLING_BAND(112));
   }
 
+  // Douse copies the canvas plainly; Drench and Deluge blend it in.
   Task_Add(BattleEffect_ArmWin0HBlankDma, TASK_PASS_VBLANK);
   if (work->args->variant == EFFECT_VARIANT_BASIC) {
     EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
@@ -321,45 +329,45 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
         gFalling_Counts[work->args->variant][FALLING_BOLT_DURATION] - 64)
       EFFECT_SHOW_DAMAGE(SE_WATER);
 
-    // Bolts fall down the slant, then flash and burst.
+    // Drops fall down the slant, then splash.
     for (i = 0;
          i != gFalling_Counts[work->args->variant][FALLING_BOLT_WAVE_COUNT];
          i++) {
       s32 x;
       s32 y;
 
-      bolt = &work->particles[i];
-      x = bolt->x / 8;
-      y = bolt->y / 8;
-      if (bolt->variant == -1) {
-        drawBolt(canvas, work->sheet + DOUSE_FALLING_PICTURE, x, y,
+      drop = &work->particles[i];
+      x = drop->x / 8;
+      y = drop->y / 8;
+      if (drop->variant == -1) {
+        drawDrop(canvas, work->sheet + DOUSE_FALLING_PICTURE, x, y,
                  DOUSE_DROP_WIDTH, DOUSE_DROP_HEIGHT);
-        if (bolt->y <= FALLING_LAND_Y) {
+        if (drop->y <= FALLING_LAND_Y) {
           if (work->args->side == EFFECT_SIDE_ENEMIES)
-            bolt->x -= 32;
+            drop->x -= 32;
           else
-            bolt->x += 32;
-          bolt->y += 64;
+            drop->x += 32;
+          drop->y += 64;
         } else {
-          // Sparks fly up from the landed bolt.
-          bolt->variant = 0;
+          // Droplets fly up from the middle of the landed drop.
+          drop->variant = 0;
           for (k = 0; k != gFalling_Counts[work->args->variant]
                                           [FALLING_BOLT_SPARKS_PER_BOLT];
                k++) {
-            spark = &FALLING_BOLT_SPARKS->sparks
-                         [i * gFalling_Counts[work->args->variant]
-                                             [FALLING_BOLT_SPARKS_PER_BOLT] +
-                          k];
-            spark->x = INTtoFIXED(x + 12);
-            spark->y = INTtoFIXED(y);
-            spark->velocityX = ((Random16() & 255) - 128) << 9;
+            droplet = &DOUSE_SPLASH_BUFFER->droplets
+                           [i * gFalling_Counts[work->args->variant]
+                                               [FALLING_BOLT_SPARKS_PER_BOLT] +
+                            k];
+            droplet->x = INTtoFIXED(x + DOUSE_DROP_WIDTH / 2);
+            droplet->y = INTtoFIXED(y);
+            droplet->velocityX = ((Random16() & 255) - 128) << 9;
             if (work->args->variant == EFFECT_VARIANT_STRONGEST)
-              spark->velocityY = ((Random16() & 0x1ff) - 384) << 10;
+              droplet->velocityY = ((Random16() & 0x1ff) - 384) << 10;
             else
-              spark->velocityY = ((Random16() & 255) - 255) << 10;
-            spark->variant = (Random16() & 15) + 16;
+              droplet->velocityY = ((Random16() & 255) - 255) << 10;
+            droplet->variant = (Random16() & 15) + 16;
           }
-          // Every target flashes white as the bolts land.
+          // Every target flashes white as the drops land.
           if ((i & 3) == 0)
             Sound_PlayFar(SE_WATER);
           EFFECT_FOR_EACH_TARGET(k, work->args)
@@ -367,28 +375,31 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
                                      POSE_DAMAGE, k, 2);
         }
       } else {
-        if (bolt->variant >= 0 && bolt->variant <= 3)
-          drawBolt(canvas, work->sheet + DOUSE_FLASH_PICTURE, x, y,
+        // Four frames of the small splash, four of the large one.
+        if (drop->variant >= 0 && drop->variant <= 3)
+          drawDrop(canvas, work->sheet + DOUSE_FLASH_PICTURE, x, y,
                    DOUSE_DROP_WIDTH, DOUSE_DROP_HEIGHT);
-        else if (bolt->variant <= 7)
-          drawBolt(canvas, work->sheet + DOUSE_BURST_PICTURE, x - 9, y - 9,
+        else if (drop->variant <= 7)
+          drawDrop(canvas, work->sheet + DOUSE_BURST_PICTURE,
+                   x - (DOUSE_BURST_PICTURE_WIDTH - DOUSE_DROP_WIDTH) / 2,
+                   y - (DOUSE_BURST_PICTURE_HEIGHT - DOUSE_DROP_HEIGHT) / 2,
                    DOUSE_BURST_PICTURE_WIDTH, DOUSE_BURST_PICTURE_HEIGHT);
-        if (bolt->variant <= FALLING_LANDED_LAST_FRAME)
-          bolt->variant++;
+        if (drop->variant <= FALLING_LANDED_LAST_FRAME)
+          drop->variant++;
       }
     }
-    // Sparks fall and shrink as they die.
-    for (i = 0; i != FALLING_BOLT_SPARK_COUNT; i++) {
-      spark = &FALLING_BOLT_SPARKS->sparks[i];
-      if (spark->variant != -1) {
-        s32 size = spark->variant + 1;
+    // Droplets fall and shrink as they die.
+    for (i = 0; i != ARRAY_COUNT(DOUSE_SPLASH_BUFFER->droplets); i++) {
+      droplet = &DOUSE_SPLASH_BUFFER->droplets[i];
+      if (droplet->variant != -1) {
+        s32 size = droplet->variant + 1;
 
         if (size > 6)
           size = 6;
-        EFFECT_DRAW_FLARE(drawSpark, canvas, work->sheet, FIXEDtoINT(spark->x),
-                          FIXEDtoINT(spark->y), size);
-        Particle_AdvanceWithGravity2D(spark, 60, toFIXED(1) / 8);
-        spark->variant--;
+        EFFECT_DRAW_FLARE(drawDroplet, canvas, work->sheet,
+                          FIXEDtoINT(droplet->x), FIXEDtoINT(droplet->y), size);
+        Particle_AdvanceWithGravity2D(droplet, 60, toFIXED(1) / 8);
+        droplet->variant--;
       }
     }
     EFFECT_END_FRAME(work);
@@ -407,7 +418,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
 #undef ICE_PUFF_LAST_FRAME
 #undef ICE_PUFF_FRAMES
 #undef FALLING_LAND_Y
-#undef FALLING_BOLT_SPARKS
+#undef DOUSE_SPLASH_BUFFER
 #undef DOUSE_FALLING_PICTURE
 #undef DOUSE_FLASH_PICTURE
 #undef DOUSE_BURST_PICTURE

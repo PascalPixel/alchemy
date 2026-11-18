@@ -21,12 +21,12 @@
 #define STATUS_SAVED_TILE_BYTES 2048
 #endif
 
-// The page modes of StatusScreen_DrawStatusAilments and
-// ItemMenu_DrawMemberStatus, in the mode's low byte: the party row's summary,
-// or the full status page, with the elemental levels, Power and Resist.
+/// The page modes of StatusScreen_DrawStatusAilments and
+/// ItemMenu_DrawMemberStatus, in the mode's low byte: the party row's summary,
+/// or the full status page, with the elemental levels, Power and Resist.
 enum { STATUS_PAGE_SUMMARY = 0, STATUS_PAGE_FULL = 1 };
-// A bit over the page mode: draw without clearing the window first, as for a
-// window just opened.
+/// A bit over the page mode: draw without clearing the window first, as for a
+/// window just opened.
 #define STATUS_PAGE_NO_CLEAR (1 << 8)
 #define STATUS_PAGE_MODE_MASK (STATUS_PAGE_NO_CLEAR - 1)
 
@@ -106,7 +106,7 @@ enum { STATUS_PAGE_SUMMARY = 0, STATUS_PAGE_FULL = 1 };
 #define STATUS_FIGURE_X(index) (130 + (index) * 32)
 #define STATUS_FIGURE_ROW_Y 128
 #define STATUS_FIGURE_FULL_PAGE_ROW_Y 104
-#define STATUS_FIGURE_HIDDEN_Y -16
+#define STATUS_FIGURE_ABOVE_SCREEN_Y -16
 
 /// The Djinn list (DjinnMenu_ShowCurrentList): a column for each element, its
 /// Djinni figure standing over it.
@@ -136,7 +136,7 @@ s32 PartyMemberChooser_Open(void) {
   s32 index;
 
   gActorSystemWork->suspended = 1;
-  Window_DrawBorderFar(0, 0, 30, 20);
+  Window_DrawBorderFar(0, 0, DISPLAY_TILE_WIDTH, DISPLAY_TILE_HEIGHT);
   wait(1);
   Window_InitializeWork(0);
 
@@ -191,7 +191,7 @@ s32 StatusScreen_Run(void) {
   s32 index;
 
   gActorSystemWork->suspended = 1;
-  Window_DrawBorderFar(0, 0, 30, 20);
+  Window_DrawBorderFar(0, 0, DISPLAY_TILE_WIDTH, DISPLAY_TILE_HEIGHT);
   wait(1);
   Menu_SuspendFieldTasks();
   Window_InitializeWork(0);
@@ -243,7 +243,7 @@ s32 StatusScreen_Run(void) {
   WindowSprite_ClearListFar(menu->statusWindow);
   DjinnFigures_ReleaseTopRow();
   Menu_ResumeFieldTasks();
-  Window_DrawBorderFar(0, 0, 30, 20);
+  Window_DrawBorderFar(0, 0, DISPLAY_TILE_WIDTH, DISPLAY_TILE_HEIGHT);
   wait(1);
 #if TBS_PATCH_1
   Window_MarkVisibleTextTilesFar();
@@ -256,7 +256,7 @@ s32 StatusScreen_Run(void) {
   Heap_Release(palette);
   WINDOW_WORK->holdTilemapUpload = 1;
   ItemMenu_Close();
-  Window_DrawBorderFar(0, 0, 30, 20);
+  Window_DrawBorderFar(0, 0, DISPLAY_TILE_WIDTH, DISPLAY_TILE_HEIGHT);
   HeapSlot_Release(HEAP_SLOT_MENU);
   gActorSystemWork->suspended = 0;
   wait(1);
@@ -282,7 +282,6 @@ s32 StatusScreen_RunPages(void) {
   s32 step = STATUS_STEP_MEMBER;
   s32 finished = step;
   s32 result = 0;
-  u32 changed;
 
   while (!finished && !GameFlag_GetFar(FLAG_MENU_START_PRESSED)) {
     switch (step) {
@@ -310,8 +309,7 @@ s32 StatusScreen_RunPages(void) {
       menu->memberCursors[0]->motion = ICON_HIDDEN;
       result = ItemMenu_SelectItem();
       // STATUS_STEP_MEMBER for -1, STATUS_STEP_STATUS otherwise.
-      changed = ~result;
-      step = (-changed | changed) >> 31;
+      step = NONZERO(~result);
       break;
     default:
       finished = 1;
@@ -905,7 +903,6 @@ s32 StatusScreen_SelectCommand(void) {
 void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
                                       s32 invert) {
   struct StatusScreenWork *menu = gMenuWork;
-  u32 different;
   s32 count;
   s32 index;
   s32 x;
@@ -940,8 +937,7 @@ void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
   }
 
   // HIGHLIGHT_PALETTE when invert is 0, WINDOW_PALETTE when it is 1.
-  different = 1 ^ invert;
-  palette = WINDOW_PALETTE - (((0u - different) | different) >> 31);
+  palette = WINDOW_PALETTE - NONZERO(invert ^ 1);
   Render_SetTilemapFlagRect(menu->statusWindow, x, y, width, 1, palette);
 }
 
@@ -1015,8 +1011,8 @@ void StatusScreen_ShowMemberProgressMessage(struct Window *destination,
 
 /// Draws party member memberId's status page into window: the top rows
 /// (ItemMenu_DrawMemberStatus), the status list or "Normal", and except on the
-/// chooser page the Djinn counts by element and, in mode 1, the elemental
-/// levels, Power and Resist.
+/// chooser page the Djinn counts by element and, on STATUS_PAGE_FULL, the
+/// elemental levels, Power and Resist.
 void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
                                      s32 mode) {
   struct StatusScreenWork *menu = gMenuWork;
@@ -1032,7 +1028,7 @@ void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
   else
     hasDjinn = 0;
   unit = Unit_GetFar(memberId);
-  // The Djinn row, in tiles: higher on the full page (mode 1), which has the
+  // The Djinn row, in tiles: higher on STATUS_PAGE_FULL, which has the
   // elemental rows below it.
   if ((mode & STATUS_PAGE_MODE_MASK) == STATUS_PAGE_FULL)
     djinnRow = 7;
@@ -1077,8 +1073,8 @@ void StatusScreen_DrawStatusAilments(struct Window *window, s32 memberId,
     wait(1);
     Window_ClearInteriorTilesFar(window, 64, 56, 224, 96);
   }
-  // The four element icons, then the Djinn counts and, in mode 1, the
-  // elemental levels, Power and Resist.
+  // The four element icons, then the Djinn counts and, on STATUS_PAGE_FULL,
+  // the elemental levels, Power and Resist.
   Text_SetColorFar(TEXT_COLOR_NORMAL);
   if (mode == STATUS_PAGE_FULL || hasDjinn == 1) {
     Window_SetTilemapEntryFar(window, 1, 15, djinnRow, TILEMAP_ENTRY_ICON);
@@ -1130,6 +1126,11 @@ void Menu_BusyWait(void) {
 
 #endif
 
+/// Stat label `n` of "Attack", "Defense", "Agility" and "Luck" (MsgStatLabel +
+/// n), counted back from "Exp" (MsgExpLabel), which the status page also shows.
+#define STAT_LABEL(n)                                                          \
+  (MsgExpLabel - (MSGNO(MsgExpLabel) - MSGNO(MsgStatLabel)) + (n))
+
 /// Draws the top rows of party member memberId's status page into window: name,
 /// class, level, experience, HP and PP on the left, Attack, Defense, Agility
 /// and Luck on the right.
@@ -1163,12 +1164,11 @@ void ItemMenu_DrawMemberStatus(struct Window *window, s32 memberId, s32 flags) {
     wait(1);
     Window_ClearInteriorTilesFar(window, 144, 0, 224, 40);
   }
-  // The labels "Attack", "Defense", "Agility" and "Luck", 23 to 20 messages
-  // before "Exp".
-  Text_DrawMessageAsTilesFar(MsgExpLabel - 23, window, 152, 0);
-  Text_DrawMessageAsTilesFar(MsgExpLabel - 22, window, 152, 8);
-  Text_DrawMessageAsTilesFar(MsgExpLabel - 21, window, 152, 16);
-  Text_DrawMessageAsTilesFar(MsgExpLabel - 20, window, 152, 24);
+  // "Attack", "Defense", "Agility" and "Luck".
+  Text_DrawMessageAsTilesFar(STAT_LABEL(0), window, 152, 0);
+  Text_DrawMessageAsTilesFar(STAT_LABEL(1), window, 152, 8);
+  Text_DrawMessageAsTilesFar(STAT_LABEL(2), window, 152, 16);
+  Text_DrawMessageAsTilesFar(STAT_LABEL(3), window, 152, 24);
   Text_DrawNumberInWindowFar(unit->atk, STATUS_STAT_DIGITS, window,
                              STATUS_STAT_X, 0);
   Text_DrawNumberInWindowFar(unit->def, STATUS_STAT_DIGITS, window,
@@ -1515,10 +1515,10 @@ s32 PsynergyMenu_SelectAction(void) {
   WindowSprite_RedrawSavedRectFar(menu->messageWindow);
   Window_UpdateOrCreate(&menu->infoWindow, 0, 0, 30, 5, 2);
   // slotY is StatusScreenWork's rowY: the four Djinn figures go above the
-  // screen (y -16) while this page is up, until the party member row or the
-  // status page puts them back.
+  // screen while this page is up, until the party member row or the status
+  // page puts them back.
   for (iconIndex = 0; iconIndex < 4; iconIndex++)
-    menu->slotY[iconIndex] = STATUS_FIGURE_HIDDEN_Y;
+    menu->slotY[iconIndex] = STATUS_FIGURE_ABOVE_SCREEN_Y;
   {
     s32 depth = OAM_DEPTH_WINDOW + 5;
     struct WindowSprite **icons = menu->entryIcons;
@@ -2269,3 +2269,4 @@ s32 StatusScreen_UpdateSelectionIcons(const u8 *enabled) {
 #undef EQUIPPED_ICON_X
 #undef EQUIPPED_ICON_Y
 #undef EQUIPPED_ROW_Y
+#undef STAT_LABEL

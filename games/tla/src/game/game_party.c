@@ -7,26 +7,26 @@
 #include "game/game.h"
 #include "text/msg_ids.h"
 
-// A unit whose name letter is below NAME_LETTER_COUNT gets one more character
-// after its name, NAME_LETTER_BASE plus the letter: the digits 1 to 9 outside
-// Japan, and the codes 65 to 90 in the Japanese release (String_FindFirstDigit
+// A unit whose name suffix is below NAME_SUFFIX_COUNT gets one more character
+// after its name, NAME_SUFFIX_BASE plus the suffix: the digits 1 to 9 outside
+// Japan, and the letters A to Z in the Japanese release (String_FindFirstDigit
 // reads it back).
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define NAME_LETTER_BASE 65
-#define NAME_LETTER_COUNT 26
+#define NAME_SUFFIX_BASE 'A'
+#define NAME_SUFFIX_COUNT 26
 #else
-#define NAME_LETTER_BASE '1'
-#define NAME_LETTER_COUNT 9
+#define NAME_SUFFIX_BASE '1'
+#define NAME_SUFFIX_COUNT 9
 #endif
 
 /// The highest enemy id a battle unit takes; an id past the table's rows takes
 /// its first row.
 #define ENEMY_ID_MAX 1000
 
-/// Fills a battle unit with an enemy: its stats, its name with its letter, its
+/// Fills a battle unit with an enemy: its stats, its name with its suffix, its
 /// items, rewards and elements. A Djinni fought is put on the party's side
 /// (README.md, "The unit"). Returns 0 for an id out of range.
-s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 letter) {
+s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 suffix) {
   struct Unit *unit;
   const struct EnemyDefinition *enemy;
   u16 name[UNIT_NAME_SIZE];
@@ -72,8 +72,8 @@ s32 BattleUnit_Set(s32 unitId, s32 enemyId, s32 letter) {
   Message_DecodeRawFar(index + (s32)MsgEnemyName, name, UNIT_NAME_SIZE);
   for (i = 0; i < UNIT_NAME_SIZE - 1 && name[i] != 0; i++)
     unit->name[i] = name[i];
-  if (letter <= NAME_LETTER_COUNT - 1) {
-    unit->name[i] = NAME_LETTER_BASE + letter;
+  if (suffix <= NAME_SUFFIX_COUNT - 1) {
+    unit->name[i] = NAME_SUFFIX_BASE + suffix;
     i++;
   }
   unit->name[i] = 0;
@@ -237,5 +237,5 @@ void Summon_Learn(s32 summonId) {
   Djinn_GetRecoveryTable(DJINN_RECOVERY_PARTY)->summonMask |= 1 << summonId;
 }
 
-#undef NAME_LETTER_BASE
-#undef NAME_LETTER_COUNT
+#undef NAME_SUFFIX_BASE
+#undef NAME_SUFFIX_COUNT

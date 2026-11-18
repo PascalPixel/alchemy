@@ -126,8 +126,9 @@ void BattleEffect_RunPlanetDiver(struct BattleEffectParams *args) {
         // where the chips start; the next frame projects the user afresh.
         // On EFFECT_SIDE_PARTY the nudge moves y, so the chips start 8 pixels
         // lower rather than 8 pixels across.
-        // XXX (no evidence): whether screenPosition.x += 8 was meant, as side
-        // 0 moves x; only the author's intent would say.
+        // XXX (no evidence): whether the party side's nudge was meant to move
+        // x, as the enemies' side does; The Lost Age's Planet Diver was
+        // rewritten without it, and nothing else shows the intent.
         if (work->args->side == EFFECT_SIDE_ENEMIES) {
           draw[0](canvas, work->sheet, screenPosition.x - FLAMEBALL_WIDTH / 2,
                   screenPosition.y - 52, FLAMEBALL_WIDTH, FLAMEBALL_HEIGHT);
@@ -245,11 +246,11 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
     row = work->bg2xLines;
     if (work->args->side == EFFECT_SIDE_ENEMIES) {
       for (i = 0; i != DISPLAY_HEIGHT; i++)
-        *row++ =
-            (toFIXED(6) - Trig_Sin((frame + i) * (TRIG_TURN / 32)) * 6) >> 10;
+        *row++ = CANVAS_WAVE_BG2X(toFIXED(6) -
+                                  Trig_Sin((frame + i) * (TRIG_TURN / 32)) * 6);
     } else {
       for (i = 0; i != DISPLAY_HEIGHT; i++)
-        *row++ = Trig_Sin((frame + i) * (TRIG_TURN / 32)) * 6 >> 10;
+        *row++ = CANVAS_WAVE_BG2X(Trig_Sin((frame + i) * (TRIG_TURN / 32)) * 6);
     }
 
     EFFECT_FOR_EACH_TARGET(k, work->args) {
@@ -308,13 +309,15 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
 #define ORBITING_SPIRALS_RADIUS 16
 #define ORBITING_SPIRALS_INTERVAL 16
 #define ORBITING_SPIRALS_LIFE 60
+/// The canvas's scroll on the party side until the first frame's wave rows
+/// replace it, 8 pixels short of NARROW_CANVAS_PARTY_X.
+#define ORBITING_SPIRALS_PARTY_START_X (NARROW_CANVAS_PARTY_X - 8)
 
 /// Unused: no row of gAbilityBattleEffects in either game names its kind, and
 /// the handler table is reached with no other kind (BattleEffect_RunFromTable),
-/// so the player never sees it. Its code draws four spirals on a circle of
-/// radius 16 about the point 40 pixels above each target, one target after
-/// another, 16 frames apart and for 59 frames each, turning a 128th of a turn
-/// a frame; each target takes its damage pose 32 frames into its turn.
+/// so the player never sees it. Its code draws the spirals about the point 40
+/// pixels above each target in turn, turning a 128th of a turn a frame; each
+/// target takes its damage pose 32 frames into its turn.
 void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -342,7 +345,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   if (work->args->side == EFFECT_SIDE_PARTY) {
-    REG_BG2X = -(104 << 8);
+    REG_BG2X = -(ORBITING_SPIRALS_PARTY_START_X << 8);
     offsetX = -NARROW_CANVAS_PARTY_X;
   } else {
     offsetX = 0;
@@ -357,12 +360,13 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
     row = work->bg2xLines;
     if (work->args->side == EFFECT_SIDE_ENEMIES) {
       for (i = 0; i != DISPLAY_HEIGHT; i++)
-        *row++ =
-            (toFIXED(8) - Trig_Sin((frame + i) * (TRIG_TURN / 64)) * 8) >> 10;
+        *row++ = CANVAS_WAVE_BG2X(toFIXED(8) -
+                                  Trig_Sin((frame + i) * (TRIG_TURN / 64)) * 8);
     } else {
       for (i = 0; i != DISPLAY_HEIGHT; i++)
-        *row++ = (Trig_Sin((frame + i) * (TRIG_TURN / 64)) * 8 >> 10) -
-                 (NARROW_CANVAS_PARTY_X << 8);
+        *row++ =
+            CANVAS_WAVE_BG2X(Trig_Sin((frame + i) * (TRIG_TURN / 64)) * 8) -
+            (NARROW_CANVAS_PARTY_X << 8);
     }
     EFFECT_VIEW_FROM_CAMERA(camera);
     EFFECT_FOR_EACH_TARGET(member, work->args) {
@@ -421,3 +425,4 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
 #undef ORBITING_SPIRALS_RADIUS
 #undef ORBITING_SPIRALS_INTERVAL
 #undef ORBITING_SPIRALS_LIFE
+#undef ORBITING_SPIRALS_PARTY_START_X

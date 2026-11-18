@@ -182,6 +182,13 @@ struct Geyser {
 #define GEYSER_SPRITES 80
 /// The geysers a room can have.
 #define GEYSER_ENTRIES 16
+/// A geyser's six-second round, and the frames of it at which it starts to rise
+/// and to fall.
+#define GEYSER_PERIOD_FRAMES 360
+#define GEYSER_RISE_FRAME 60
+#define GEYSER_FALL_FRAME 240
+/// The pixels the cliffs' geyser rises to.
+#define GEYSER_MAX_HEIGHT 64
 /// The terrain id and collision slot of the first geyser: the geysers take the
 /// last GEYSER_ENTRIES of the 256 terrain ids.
 #define GEYSER_FIRST_TERRAIN (256 - GEYSER_ENTRIES)
@@ -216,7 +223,7 @@ void GondowanCliffs_SpinStump(struct Actor *actor) {
 
 /// Waits until the actor has come down to height (16.16), a second at most.
 void GondowanCliffs_WaitToLand(struct Actor *actor, s32 height) {
-  s32 count = 60;
+  s32 count = FRAMES_PER_SECOND;
 
   while (count != 0) {
     System_Wait(1);
@@ -478,7 +485,8 @@ s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 height;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   if (gMainRoutineWork.next == SCENE_GONDOWAN_CLIFFS_PASS) {
     GondowanCliffs_SetUpPass();
     return 0;
@@ -506,7 +514,7 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_SECOND_PUDDLE_FROZEN))
       MapGrid_CopyCellAttributes(115, 35, 1, 1, 117, 35);
     Geyser_Start(0, GEYSER_FIRST_TERRAIN);
-    Geyser_Add(0, ACTOR_GEYSER, 0, 0, 64);
+    Geyser_Add(0, ACTOR_GEYSER, 0, 0, GEYSER_MAX_HEIGHT);
     if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_GEYSER_DUG)) {
       actor = Actor_GetById(ACTOR_GEYSER);
       MapGrid_CopyCellsLayered(124, 1, 1, 1, 119, 43);
@@ -634,7 +642,7 @@ void Geyser_Draw(void) {
   s32 *view = &map->viewX;
   s32 viewX, viewZ, originY;
   struct Actor *actor;
-  s32 h, x;
+  s32 pieceY, x;
   FIXED y;
   s32 screenY;
   FIXED z;
@@ -650,20 +658,20 @@ void Geyser_Draw(void) {
       continue;
     actor = Actor_GetById(entry->id);
     frame = (gFrameCount % 12) / 3 * 8 + 32;
-    for (h = 0; h < entry->height; h += 16) {
+    for (pieceY = 0; pieceY < entry->height; pieceY += 16) {
       if (count >= GEYSER_SPRITES)
         continue;
       x = actor->x.fixed - viewX;
-      y = actor->y.fixed + toFIXED(h) - originY;
+      y = actor->y.fixed + toFIXED(pieceY) - originY;
       z = actor->z.fixed - viewZ - originY;
       x = FIXEDtoINT(x) - 8;
       screenY = z - y;
       screenY = FIXEDtoINT(screenY) - 16;
-      depth = FIXEDtoINT(y + z) + 58;
+      depth = FIXEDtoINT(y + z) + SCENE_SPRITE_DEPTH;
       if ((u32)(x + 15) > 334 || screenY <= -16 || screenY > 239)
         continue;
-      x &= 0x1ff;
-      screenY &= 0xff;
+      x &= OBJ_X_MASK;
+      screenY &= OBJ_Y_MASK;
       p = oam;
       *p++ = 0;
       *p++ = screenY | OBJ_X(x) | (OBJ_SIZE_16X16 | OBJ_256_COLORS);
@@ -683,11 +691,11 @@ void Geyser_Draw(void) {
         FIXEDtoINT(screenY + Math_MulFX(-toFIXED(2), Trig_Sin(entry->phase)) +
                    -toFIXED(2)) -
         4;
-    depth = FIXEDtoINT(y + z) + 58;
+    depth = FIXEDtoINT(y + z) + SCENE_SPRITE_DEPTH;
     if ((u32)(x + 15) > 334 || screenY <= -16 || screenY > 239)
       continue;
-    x &= 0x1ff;
-    screenY &= 0xff;
+    x &= OBJ_X_MASK;
+    screenY &= OBJ_Y_MASK;
     p = oam;
     *p++ = 0;
     *p++ = screenY | OBJ_X(x) | (OBJ_SIZE_16X16 | OBJ_256_COLORS);
@@ -739,10 +747,10 @@ struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high) {
     entry->id = id;
     entry->height = 0;
     entry->timer = timer;
-    entry->period = 360;
+    entry->period = GEYSER_PERIOD_FRAMES;
     entry->max = high;
-    entry->riseAt = 60;
-    entry->fallAt = 240;
+    entry->riseAt = GEYSER_RISE_FRAME;
+    entry->fallAt = GEYSER_FALL_FRAME;
     entry->min = low;
     entry->unreadSetToOne = 1;
     actor->motionFlags = 0;
@@ -752,8 +760,8 @@ struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high) {
     entry->unreadCleared = 0;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   }
-  rider = (FieldActor_Create(ACTOR_CREATE_NO_SPRITE << 12, actor->x.fixed,
-                             actor->y.fixed, actor->z.fixed));
+  rider = (FieldActor_Create(ACTOR_CREATE_KIND(ACTOR_CREATE_NO_SPRITE),
+                             actor->x.fixed, actor->y.fixed, actor->z.fixed));
   rider->collisionFlags = 0;
   rider->motionFlags = 0;
   rider->priorityFlags |= ACTOR_PRIORITY_PLATFORM;

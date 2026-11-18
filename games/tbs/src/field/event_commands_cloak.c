@@ -10,11 +10,12 @@
 #define CLOAK_TILE 251
 /// The Psynergy request that ends Cloak, without paying PP.
 #define CLOAK_END (ACT_PACKED | ABILITY_CLOAK)
-/// The World Map's cells are 32 pixels square, and its cell buffer
-/// (gCellPictures) holds 32 by 32 of them, wrapping round.
-#define WORLD_MAP_CELL_PIXELS 32
-#define WORLD_MAP_CELL(coordinate) ((coordinate) >> 21)
-#define WORLD_MAP_BUFFER_CELLS 32
+/// The World Map's 32-pixel blocks, 32 to a row of gCellPictures, wrapping
+/// round, as field_terrain.c names them: the block of a 16.16 coordinate.
+#define WORLD_MAP_BLOCK_SHIFT 21
+#define WORLD_MAP_BLOCK_PIXELS 32
+#define WORLD_MAP_BLOCKS_ACROSS 32
+#define WORLD_MAP_BLOCK(coordinate) ((coordinate) >> WORLD_MAP_BLOCK_SHIFT)
 
 /// Task of Cloak: when the cell under the leader is not CLOAK_TILE, requests
 /// CLOAK_END.
@@ -29,22 +30,22 @@ void FieldPsynergy_CheckCloakTile(void) {
   leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
   tile = gMapGridWork[0];
 
-  // Whole cell pictures or cells, rounded toward zero as a division would be.
+  // Whole blocks or cells, rounded toward zero as a division would be.
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
     u32 tx;
     u32 ty;
 
     x = leader->x.fixed;
     if (x < 0)
-      x += toFIXED(WORLD_MAP_CELL_PIXELS) - 1;
-    tx = WORLD_MAP_CELL(x) & (WORLD_MAP_BUFFER_CELLS - 1);
+      x += toFIXED(WORLD_MAP_BLOCK_PIXELS) - 1;
+    tx = WORLD_MAP_BLOCK(x) & (WORLD_MAP_BLOCKS_ACROSS - 1);
 
     y = leader->z.fixed;
     if (y < 0)
-      y += toFIXED(WORLD_MAP_CELL_PIXELS) - 1;
-    ty = WORLD_MAP_CELL(y) & (WORLD_MAP_BUFFER_CELLS - 1);
+      y += toFIXED(WORLD_MAP_BLOCK_PIXELS) - 1;
+    ty = WORLD_MAP_BLOCK(y) & (WORLD_MAP_BLOCKS_ACROSS - 1);
 
-    tile = (u8 *)&gCellPictures[tx + ty * WORLD_MAP_BUFFER_CELLS];
+    tile = (u8 *)&gCellPictures[tx + ty * WORLD_MAP_BLOCKS_ACROSS];
   } else {
     if (leader->layer <= 2) {
       tile =
@@ -159,6 +160,7 @@ void FieldPsynergy_StartCloak(void) {
 
 #undef CLOAK_TILE
 #undef CLOAK_END
-#undef WORLD_MAP_CELL_PIXELS
-#undef WORLD_MAP_CELL
-#undef WORLD_MAP_BUFFER_CELLS
+#undef WORLD_MAP_BLOCK_SHIFT
+#undef WORLD_MAP_BLOCK_PIXELS
+#undef WORLD_MAP_BLOCKS_ACROSS
+#undef WORLD_MAP_BLOCK

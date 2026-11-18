@@ -251,12 +251,16 @@ enum DisplayControl {
 /// A screen block entry's 16-colour palette, in its top four bits (its flip
 /// bits are window.h's TILE_HFLIP and TILE_VFLIP).
 #define BG_TILE_PALETTE(n) ((n) << 12)
+/// The palette a map entry draws its tile with, 0 to 15.
+#define BG_TILE_PALETTE_OF(entry) (((entry) >> 12) & 0xf)
 
 /// Background tile memory's 16 KB character block `n`, 0 to 3.
 #define BG_CHAR_BLOCK(n) ((u8 *)VRAM + (n) * BG_CHAR_SIZE)
 /// The 2 KB screen block `n` of VRAM, 0 to 31, that holds a map.
 #define BG_SCREEN_BLOCK(n) ((u8 *)VRAM + (n) * BG_SCREEN_SIZE)
 #define TILE_SIZE_4BPP 32 ///< bytes in an 8x8 tile of 16 colours
+/// The bytes of one pixel row of a 16-colour tile.
+#define TILE_ROW_SIZE_4BPP (TILE_SIZE_4BPP / 8)
 #define TILE_SIZE_8BPP 64 ///< bytes in an 8x8 tile of 256 colours
 /// The tiles of a picture that fills the screen in 256 colours.
 #define SCREEN_TILE_BYTES                                                      \

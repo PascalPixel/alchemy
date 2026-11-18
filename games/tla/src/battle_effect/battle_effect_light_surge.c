@@ -69,9 +69,10 @@
 /// Where GlowBandTextureA is decoded in the effect's pictures.
 #define LIGHT_SURGE_GLOW_BAND 16384
 
-/// The camera swings around the target while 14 bolts of light rain onto it,
-/// four frames apart; each lands with a flash and leaves a glow, and four rings
-/// of light swell about the target and sway.
+/// The camera swings around the target while SURGE_BOLTS bolts of light rain
+/// onto it, SURGE_BOLT_INTERVAL frames apart; each lands with a flash and
+/// leaves a glow, and SURGE_RINGS rings of light swell about the target and
+/// sway.
 ///
 /// Abilities: Light Surge.
 void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
@@ -175,6 +176,8 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
         radius = (Random16() & 31) + 4;
         fall->velocityX = target->x + Trig_Sin(angle) * radius;
         z = target->z + Trig_Cos(angle) * radius;
+        // DEAD: the z and y speeds are overwritten below before any read; the
+        // ROM keeps the stores.
         fall->velocityZ = z;
         fall->velocityY = -toFIXED(8);
         fall->velocityX = (fall->velocityX - fall->x) / SURGE_BOLT_FALL;
@@ -206,7 +209,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
     // The flashes and glows, each a shaded disc of four quarters: a flash shows
     // only its upper half.
     for (i = 0, disc = work->particles; i != SURGE_DISCS; disc++, i++) {
-      void *cel;
+      void *picture;
       s32 half;
       s32 index;
       s16 *entry;
@@ -236,12 +239,12 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
       index <<= 1;
       index += (s32)circles;
       half = size >> 1;
-      cel = (void *)(*(s16 *)index + cells);
+      picture = (void *)(*(s16 *)index + cells);
       entry = (s16 *)index;
       left = x - half;
       index = y - size;
-      ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(canvas, cel, left, index,
-                                                    half, size);
+      ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(canvas, picture, left,
+                                                    index, half, size);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);

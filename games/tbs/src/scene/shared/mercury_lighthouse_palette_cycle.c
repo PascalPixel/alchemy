@@ -1,6 +1,6 @@
-
-// Mercury Lighthouse and its entrance: the shimmer of the pool once it is
-// woken (FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED).
+/// @file
+/// Mercury Lighthouse and its entrance: the shimmer of the pool once it is
+/// woken (FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED).
 
 /// The background palette, and its colours, the shimmer runs through.
 #define SHIMMER_PALETTE 6
@@ -15,8 +15,7 @@
 /// ramp; green and blue stay those of gPaletteCycleGreen and
 /// gPaletteCycleBlue.
 static void MercuryLighthouse_CyclePalette(void) {
-  // The red level below is stored through its address, so it stays in the
-  // frame and is read back from it.
+  // below is written through its address.
   u16 below;
   u32 i;
   s32 red;

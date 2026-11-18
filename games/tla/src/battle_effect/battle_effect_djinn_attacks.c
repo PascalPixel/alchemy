@@ -119,7 +119,9 @@ void BattleEffect_RunMercury(struct BattleEffectParams *args) {
       }
     }
 
-    if (frame <= 95) {
+    // DEAD: always true, as the loop ends at MERCURY_FRAMES; the ROM keeps the
+    // compare.
+    if (frame <= MERCURY_FRAMES - 1) {
       s32 x =
           (FIXEDtoINT(Trig_Sin(frame * (TRIG_TURN / 32)) * (64 - frame * 2)) >>
            1) +
@@ -224,7 +226,9 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
     if (frame == DJINN_ATTACK_DAMAGE_FRAME)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
-    if (frame <= 95) {
+    // DEAD: always true, as the loop ends at JUPITER_FRAMES; the ROM keeps the
+    // compare.
+    if (frame <= JUPITER_FRAMES - 1) {
       s32 x = FIXEDtoINT(Trig_Sin(angle) * (64 - frame * 2)) >> 1;
       s32 y = FIXEDtoINT(Trig_Cos(angle) * (64 - frame * 2));
 

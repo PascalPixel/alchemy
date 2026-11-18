@@ -15,8 +15,8 @@
 /// The Road to Babi Lighthouse has four workers and a carved stone pillar. Move
 /// or Carry can set the pillar into its cell at (20, 12), where it rests 48
 /// pixels up (BabiLighthouse_UpdateMovedPillar). Carry then drops it in a ring
-/// of particles (BabiLighthouse_LandCarriedPillarInRing). A chest holds Lucky
-/// Pepper.
+/// of puffs of dust (BabiLighthouse_LandCarriedPillarInPuffs). A chest holds
+/// Lucky Pepper.
 ///
 /// At the Babi Lighthouse Entry two pillars stand on ledges and are pushed or
 /// moved with Move. A leader left on a pillar's ledge cell jumps off
@@ -1127,9 +1127,8 @@ static inline void BabiLighthouse_FindCellAhead(struct FieldPosition *ahead,
                                                 struct Actor *actor) {
   s32 step = gPushedActor_DirectionSteps[FACING_INDEX(actor->facing)];
 
-  // A step holds its x pixels in the high halfword and its z in the low.
-  ahead->x = actor->x.fixed + (step & 0xffff0000);
-  ahead->z = actor->z.fixed + INTtoFIXED(step);
+  ahead->x = actor->x.fixed + DIRECTION_STEP_X_FIXED(step);
+  ahead->z = actor->z.fixed + DIRECTION_STEP_Z_FIXED(step);
   ahead->y = MapGrid_GetTerrainHeight(actor->layer, ahead->x, ahead->z);
 }
 
@@ -1143,9 +1142,9 @@ static struct Actor *BabiLighthouse_FindActorAhead(struct Actor *actor) {
 }
 
 /// Before Carry is cast on the Road to Babi Lighthouse's pillar: Carry then
-/// waits for the dropped pillar to land, and throws a ring of particles round
-/// it (childOption).
-static void BabiLighthouse_LandCarriedPillarInRing(void) {
+/// waits for the dropped pillar to land, and throws a ring of puffs of dust
+/// round it (childOption).
+static void BabiLighthouse_LandCarriedPillarInPuffs(void) {
   ((struct FieldEffectWork *)gFieldEffectWork)->childOption = 1;
 }
 
@@ -1861,7 +1860,7 @@ struct Trigger gBabiLighthouse_RoadTriggers[] = {
      EVENT(BabiLighthouse_UpdateMovedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_CARRY, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_ROAD_PILLAR, CONDITION_ALWAYS,
-     EVENT(BabiLighthouse_LandCarriedPillarInRing)},
+     EVENT(BabiLighthouse_LandCarriedPillarInPuffs)},
     {PSYNERGY_ON_ACTOR(ABILITY_CARRY), ACTOR_ROAD_PILLAR, CONDITION_ALWAYS,
      EVENT(BabiLighthouse_UpdateMovedPillar)},
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, ROAD_TO_BABI_LIGHTHOUSE_TO_WORLD_MAP},

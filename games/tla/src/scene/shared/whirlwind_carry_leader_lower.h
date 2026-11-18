@@ -1,4 +1,6 @@
-/// Whirlwind_CarryLeader as the lower floors' copies compile it.
+/// The leader spins in the whirlwind that caught it, then drops beside it and
+/// the camera follows again: the lighthouse's lower rooms' copy of
+/// Whirlwind_CarryLeader.
 void Whirlwind_CarryLeaderLower(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
@@ -19,16 +21,19 @@ void Whirlwind_CarryLeaderLower(void) {
     actor->z.fixed = linked->z.fixed;
     if (i <= toFIXED(4) - 1)
       i += toFIXED(0.1);
-    actor->facing = (u8)gFrameCount << 12;
+    actor->facing = (u8)gFrameCount * FACING_STEP;
     actor->priorityFlags ^= 2 << (gFrameCount & 1);
     System_Wait(1);
   }
   work->glow = 1;
   work->glowHeld = 1;
   facing = linked->facing;
-  actor->x.fixed = (((linked->x.fixed >> 19) & ~1) + (facing >> 13) - 1) << 19;
-  actor->z.fixed = (((linked->z.fixed >> 19) & ~1) - ((facing >> 13) & 2) + 1)
-                   << 19;
+  actor->x.fixed =
+      FIELD_HALF_CELL_ORIGIN((FIELD_HALF_CELL(linked->x.fixed) & ~1) +
+                             FACING_EIGHTH_INDEX(facing) - 1);
+  actor->z.fixed =
+      FIELD_HALF_CELL_ORIGIN((FIELD_HALF_CELL(linked->z.fixed) & ~1) -
+                             (FACING_EIGHTH_INDEX(facing) & 2) + 1);
   actor->velocityY = toFIXED(6);
   actor->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;

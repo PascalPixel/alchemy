@@ -441,6 +441,10 @@ static void KolimaForestFloodgate_PushShortLogEast(void) {
   Event_End();
 }
 
+/// How far the curse tints the floodgate until it is lifted: green and blue
+/// lose 1 / CURSE_DIVISOR of themselves (KolimaPalette_Curse).
+#define CURSE_DIVISOR 4
+
 /// Sets up the logs and the river's level on entry.
 s32 Scene_Initialize(void) {
   struct Actor *actor;
@@ -472,7 +476,7 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0)
-    KolimaPalette_Curse(4);
+    KolimaPalette_Curse(CURSE_DIVISOR);
   return 0;
 }
 
@@ -559,7 +563,7 @@ static s32 KolimaForestFloodgate_CheckLogFits(s32 x, s32 z, s32 mode) {
 
   for (i = 0; i <= 3; i++) {
     struct MapGridCell *cell =
-        &((struct MapGridCell *)gMapGridCellBuffer)[x + (z << 7)];
+        &((struct MapGridCell *)gMapGridCellBuffer)[x + z * MAPGRID_SIZE];
 
     if (cell->behavior == CELL_BEHAVIOR_WALL ||
         *(cell->shape * 4 + gMapGridShapes) != 0) {
@@ -575,7 +579,8 @@ static s32 KolimaForestFloodgate_CheckLogFits(s32 x, s32 z, s32 mode) {
 }
 
 /// Finds the log ahead of the leader and rolls it on, a cell at a time, up to
-/// eleven cells or until a cell is not free. The leader follows its shove.
+/// LOG_ROLL_MAX_CELLS cells or until a cell is not free. The leader follows its
+/// shove.
 static void KolimaForestFloodgate_RollLog(struct FloodgateLog *runs) {
   struct Actor *actor;
   struct FieldWork *work;

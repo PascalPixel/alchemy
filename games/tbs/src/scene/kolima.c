@@ -574,7 +574,6 @@ static inline void Kolima_NodTogether(void) {
 static void Kolima_WitnessForestCurse(void) {
   struct Actor *actor;
   s32 *partyLayout;
-  // One staging word is reused for facing bytes, jump values and flags.
   const s32 *squashActions;
   const s32 *restoreScaleActions;
   s32 *miaInParty;
@@ -1722,7 +1721,7 @@ struct ActorPlacement gKolimaActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         344, 0, 280, FACING_EAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_OLD_MAN_WITH_CANE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        248, 0, 392, FACING_SOUTH, 3, 0),
+        248, 0, 392, FACING_SOUTH, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(SPRITE_OLD_WOMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER,
         248, 0, 184, FACING_WEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
@@ -1777,7 +1776,7 @@ struct ActorPlacement gKolima_EntryScript[] = {
 /// Kolima_RestoreBridgeState puts one of them out of sight.
 struct ActorPlacement gKolimaBridgeActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
-        234, 0, 200, FACING_SOUTH_SOUTHWEST, 3, 0),
+        234, 0, 200, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(SPRITE_TREE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         234, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 0),
     { SCENE_TABLE_END },

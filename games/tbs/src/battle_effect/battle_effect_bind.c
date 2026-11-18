@@ -19,10 +19,11 @@
 /// The frames Triangle Strike's user takes to leap at the target.
 #define TRIANGLE_STRIKE_LEAP_FRAMES 16
 
-/// The blue ramp: one colour for each blue level, in BG palette
-/// BLUE_RAMP_PALETTE and then BLUE_RAMP_SECOND_PALETTE, each the next's
-/// red and green at half its blue. A pixel takes the ramp's colour for its
-/// brightest channel, darkest at the top.
+/// The blue ramp: one colour for each blue level from BG palette
+/// BLUE_RAMP_PALETTE (later from BLUE_RAMP_SECOND_PALETTE), each colour's red
+/// and green half its blue. A pixel takes the colour for RGB_LEVEL_MAX less its
+/// brightest channel, so the background turns blue with its light and dark
+/// swapped.
 #define BLUE_RAMP_PALETTE 2
 #define BLUE_RAMP_SECOND_PALETTE 6
 #define BLUE_RAMP_COLORS (RGB_LEVEL_MAX + 1)
@@ -32,8 +33,6 @@
 #define BLUE_RAMP_START_SPEED 16
 #define BLUE_RAMP_FRAMES 27
 #define BLUE_RAMP_LAST_ROW 248
-/// A row of the picture's 32 tiles of 256 colours, as a shift: 2048 bytes.
-#define BLUE_RAMP_TILE_ROW_SHIFT 11
 
 // Bind and Luff spin a shrinking triangle onto the first target and stand a
 // rune there. The triangle's corners are projected onto the canvas and each
@@ -69,10 +68,7 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
         y = row - delays[x];
         if (y >= 0) {
           if (y < BATTLE_BACKGROUND_HEIGHT) {
-            // The picture's 8x8 tiles of 256 colours, 64 bytes each.
-            pixel =
-                BLUE_RAMP_PIXELS + ((x & 7) + ((x / 8) << 6) + ((y & 7) << 3) +
-                                    ((y / 8) << BLUE_RAMP_TILE_ROW_SHIFT));
+            pixel = BLUE_RAMP_PIXELS + BACKGROUND_PIXEL_OFFSET(x, y);
             color = ((s16 *)BG_PLTT)[*pixel];
             red = RGB_RED(color);
             green = RGB_GREEN(color);
@@ -404,4 +400,3 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
 #undef BLUE_RAMP_START_SPEED
 #undef BLUE_RAMP_FRAMES
 #undef BLUE_RAMP_LAST_ROW
-#undef BLUE_RAMP_TILE_ROW_SHIFT

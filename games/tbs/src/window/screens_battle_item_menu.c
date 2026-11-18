@@ -96,10 +96,9 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
     sprites[i].oam.f.tile = VramCache_Reload(iconSlots[i], -1);
   }
 
-  // XXX (no evidence): what shows tiles 0, 1, 16 and 17 of the second text
-  // range (TEXT_EXTRA_TILE_FIRST), which take the top and bottom tees here; no
-  // window code names an entry of them, and the battle recordings in reach
-  // (render guide fight-item) never open a list.
+  // XXX: what shows tiles 0, 1, 16 and 17 of the second text range
+  // (TEXT_EXTRA_TILE_FIRST), which take the top and bottom tees here; a render
+  // with a battle Item list open would settle it.
   Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, TEXT_EXTRA_TILE_FIRST);
   Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, TEXT_EXTRA_TILE_FIRST + 1);
   Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, TEXT_EXTRA_TILE_FIRST + 16);

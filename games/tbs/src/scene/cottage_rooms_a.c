@@ -163,14 +163,15 @@ static void CottageRoomsA_SpawnSleepZ(void);
 
 #include "shared/actor_facing.c"
 
-/// A pixel a frame in a drifting Z's two steps, timer east and userValue up,
-/// which count 256ths of a pixel.
-#define SLEEP_Z_STEP_PIXEL 256
+/// A drifting Z's two steps, timer (east) and userValue (up), are steps of a
+/// 256th of a pixel a frame.
+#define SLEEP_Z_STEPS_PER_PIXEL 256
 
 /// Moves and grows a Z drifting up from Garet's sleeping grandfather.
 static s32 CottageRoomsA_AdvanceSleepZ(struct Actor *actor) {
-  actor->x.fixed += (s16)actor->timer * (FIXED_ONE / SLEEP_Z_STEP_PIXEL);
-  actor->y.fixed += (s16)actor->userValue * (FIXED_ONE / SLEEP_Z_STEP_PIXEL);
+  actor->x.fixed += (s16)actor->timer * (toFIXED(1) / SLEEP_Z_STEPS_PER_PIXEL);
+  actor->y.fixed +=
+      (s16)actor->userValue * (toFIXED(1) / SLEEP_Z_STEPS_PER_PIXEL);
   actor->scaleX += FIXED_ONE / 40;
   actor->scaleY += FIXED_ONE / 40;
   actor->timer += 5;
@@ -863,7 +864,7 @@ static void CottageRoomsA_SpawnSleepZ(void) {
     actor->y.fixed = height;
     actor->targetY = height;
     actor->timer = 25;
-    actor->userValue = SLEEP_Z_STEP_PIXEL / 2;
+    actor->userValue = SLEEP_Z_STEPS_PER_PIXEL / 2;
   }
   Actor_SetScript(actorId, gCottageRoomsA_SleepZScript);
 }
@@ -1017,7 +1018,7 @@ struct ActorPlacement gCottageRoomsA_ActorPlacements[] = {
 
 struct ActorPlacement gCottageRoomsA_ActorPlacementsAfterLeaving[] = {
     ACTOR_PLACEMENT(SPRITE_OLD_MAN_WITH_WHITE_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        697, 0, 468, FACING_SOUTH_SOUTHEAST, 3, 0),
+        697, 0, 468, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(SPRITE_OLD_WOMAN, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         726, 0, 486, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_IN_TEAL_SHIRT, CONDITION_IN_VIEW, MOVEMENT_TYPE_WANDER,
@@ -1041,7 +1042,7 @@ struct ActorPlacement gCottageRoomsA_ActorPlacementsAfterLeaving[] = {
     ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         392, 0, 697, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_PONYTAIL, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
-        72, 0, 424, FACING_SOUTH, 3, 0),
+        72, 0, 424, FACING_SOUTH, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(SPRITE_BALD_MAN_IN_RED, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         232, 0, 440, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_IN_GREEN, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,

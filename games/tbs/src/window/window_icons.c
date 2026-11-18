@@ -274,10 +274,6 @@ void Icon_DrawMisc(u32 iconIndex) {
   Icon_Decode(glyph, 0);
 }
 
-/// The portrait number of gPortrait_SpriteMap's first speaker: the speakers
-/// that are no playable character are numbered from it.
-#define PORTRAIT_SPRITE_MAP_FIRST 128
-
 /// Loads a 32x32 icon from the icon resource into sprite tile slot *slot (a
 /// free slot unless reuse is set) and its colours into the sprite palette named
 /// by palette.
@@ -333,5 +329,3 @@ void Icon_Decode(GlyphTransfer *glyph, s32 outlined) {
       glyph->input, glyph->tiles, (u16)glyph->width, (u16)glyph->height);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_TEMP);
 }
-
-#undef PORTRAIT_SPRITE_MAP_FIRST

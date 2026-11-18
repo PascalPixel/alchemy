@@ -176,20 +176,18 @@ static s32 GomaCavePillar_FinishFragment(struct Actor *actor) {
   return 0;
 }
 
-/// A fragment's style: its script (and its animation, the next number) in the
-/// low bits, and its sprite colour from bit 16.
-#define FRAGMENT_SCRIPT(style) ((style) & 0xf)
+/// A fragment's style: its kind in the low bits, which picks its script (and
+/// its animation, the next number), and its sprite colour from bit 16.
+#define FRAGMENT_KIND(style) ((style) & 0xf)
 #define FRAGMENT_COLOR(style) (((u32)(style) >> 16) & 0xf)
 /// A fragment's place: its map plane in the low half, and its sprite priority
 /// (0 for the leader's) in the high half.
 #define FRAGMENT_PRIORITY(place) ((u32)(place) >> 16)
 
-/// Creates a fragment with two axis rates, a style (FRAGMENT_SCRIPT,
+/// Creates a fragment with two axis rates, a style (FRAGMENT_KIND,
 /// FRAGMENT_COLOR) and a place (its plane and FRAGMENT_PRIORITY).
 static void GomaCavePillar_SpawnFragment(s32 x, s32 y, s32 z, s32 firstRate,
-                                         s32 secondRate,
-                                         s32 scriptAndChildValue,
-                                         s32 planeAndPriority) {
+                                         s32 secondRate, s32 style, s32 place) {
   struct EffectDurationScripts table;
   struct Actor *leader;
   struct Actor *fragment;
@@ -202,17 +200,16 @@ static void GomaCavePillar_SpawnFragment(s32 x, s32 y, s32 z, s32 firstRate,
   if (fragment == NULL)
     return;
   sprite = fragment->sprite;
-  Actor_SelectAnimation(fragment, FRAGMENT_SCRIPT(scriptAndChildValue + 1));
-  Actor_StartScript(fragment,
-                    table.script[FRAGMENT_SCRIPT(scriptAndChildValue)]);
-  Actor_SetSpriteColor(fragment, FRAGMENT_COLOR(scriptAndChildValue));
+  Actor_SelectAnimation(fragment, FRAGMENT_KIND(style + 1));
+  Actor_StartScript(fragment, table.script[FRAGMENT_KIND(style)]);
+  Actor_SetSpriteColor(fragment, FRAGMENT_COLOR(style));
   fragment->motionFlags = 0;
   sprite->flags = 0;
   fragment->update = GomaCavePillar_UpdateFragment;
   fragment->speedLimit = firstRate;
   fragment->acceleration = secondRate;
-  fragment->userValue = (u16)planeAndPriority;
-  priority = FRAGMENT_PRIORITY(planeAndPriority);
+  fragment->userValue = (u16)place;
+  priority = FRAGMENT_PRIORITY(place);
   switch (priority) {
   case 0:
     sprite->image.priority = leader->sprite->image.priority;

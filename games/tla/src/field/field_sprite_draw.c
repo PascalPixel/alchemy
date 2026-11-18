@@ -12,11 +12,6 @@
 #include "system/system.h"
 #include "system/task.h"
 
-/// Sprite.flags: the sprite keeps the picture last drawn and only turns to
-/// mirror it, set once a battle's motion releases the buffer its layer drew
-/// from (BattleMotion_ReleaseBuffer).
-#define SPRITE_FLAG_KEEP_PICTURE (1 << 5)
-
 /// SpriteAnimation.mode: how a layer's pictures are packed, each with its
 /// decoder.
 enum SpritePictureCodec {
@@ -172,6 +167,7 @@ s32 Sprite_ComposePicture(struct Sprite *obj, u32 dir) {
   select_direction:
     switch (layer->kind) {
     case ANIM_FACING_ONE_PICTURE:
+      // Only the first eight of its entries are read.
       facing = gAnimationFacing_OnePicture[FACING_SECTOR(dir, 8)];
       break;
     case ANIM_FACING_FRONT_BACK:
@@ -671,7 +667,7 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
       else {
         // A plain sprite has no matrix: 8 in the matrix field is OAM's
         // horizontal flip bit, set while scaleX is negative.
-        matrix = (u32)scaleX >> 31;
+        matrix = scaleX < 0;
         matrix <<= 3;
       }
       if (scaleX != 0 && scaleY != 0) {
@@ -679,7 +675,8 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
         ((u32 *)&sprite->image)[1] =
             (((u32 *)&sprite->image)[1] & OAM_ATTR01_KEPT_BITS) |
             (affine << 8) | OBJ_AFFINE_MATRIX(matrix) |
-            // x's 9 bits into attribute 1, y's 8 into attribute 0.
+            // OBJ_POSITION as shifts: x's 9 bits into attribute 1, y's 8 into
+            // attribute 0.
             ((u32)(screen[0] - halfWidth + offsetX) << 23 >> 7) |
             (u8)(screen[1] - halfHeight + offsetY);
         if (depth == 0) {

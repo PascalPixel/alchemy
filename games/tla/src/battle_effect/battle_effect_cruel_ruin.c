@@ -384,6 +384,9 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
 #define ELEMENT_BURST_BURST_WIDTH 48
 #define ELEMENT_BURST_BURST_HEIGHT 48
 #define ELEMENT_BURST_BURST (5 * PICTURE_BYTES(ELEMENT_BURST_SPARK))
+/// A burst mote's shortest life in frames; by its index a mote lives up to
+/// twice as long, less one.
+#define ELEMENT_BURST_MOTE_LIFE 16
 
 /// Sparks in an element's colours flare at four corners around a unit and motes
 /// spiral in, then a burst of light plays over it. The battle's element glow
@@ -442,7 +445,8 @@ void BattleEffect_RunElementBurst(struct BattleEffectParams *args) {
   for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
     work->particles[i].x = Random16() & TRIG_ANGLE_MASK;
     work->particles[i].y = (Random16() & 31) + 16;
-    work->particles[i].variant = (i & 15) + 16;
+    work->particles[i].variant =
+        (i & (ELEMENT_BURST_MOTE_LIFE - 1)) + ELEMENT_BURST_MOTE_LIFE;
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
@@ -752,7 +756,7 @@ void BattleEffect_EndElementStreaks(void) {
 /// The ribbons' strip mesh, in the map cell buffer.
 #define CRUEL_RUIN_STRIP_MESH (Ram_MapCellBuffer + 8192)
 /// The particles of the first act: rays of light from the orb, the motes that
-/// rise below it, and the ball of light that falls, once in the sky and again
+/// swell below it, and the ball of light that falls, once in the sky and again
 /// on the foes.
 #define CRUEL_RUIN_RAYS 24
 #define CRUEL_RUIN_FIRST_MOTE 32
@@ -764,16 +768,26 @@ void BattleEffect_EndElementStreaks(void) {
 /// The shaded circles built for the motes and blasts: CRUEL_RUIN_CIRCLE_SIZES
 /// of them, 2 to 20 wide.
 #define CRUEL_RUIN_CIRCLE_SIZES 10
-/// The glow in the sky starts this large and shrinks into the orb.
+/// The glow in the sky starts this large and shrinks into the orb. Its foot
+/// starts at y CRUEL_RUIN_SKY_GLOW_Y, and from frame 20 it rises along a
+/// quarter of a cosine towards CRUEL_RUIN_SKY_GLOW_RISE pixels higher, to hold
+/// at y 20 from frame 36.
 #define CRUEL_RUIN_SKY_GLOW_SIZE 140
-/// Each mote rises and fades over CRUEL_RUIN_MOTE_FRAMES.
+#define CRUEL_RUIN_SKY_GLOW_Y 58
+#define CRUEL_RUIN_SKY_GLOW_RISE 44
+/// Each mote swells in place over CRUEL_RUIN_MOTE_FRAMES, then is gone.
 #define CRUEL_RUIN_MOTE_FRAMES 16
 /// The rings of fire (FireRingTexture): four fly out from the orb, one every
 /// CRUEL_RUIN_RING_INTERVAL frames, each for CRUEL_RUIN_RING_FRAMES, and a
-/// fifth swells as the rays burst.
+/// fifth swells as the rays burst, shining for CRUEL_RUIN_RING_SHINE_FRAMES
+/// before it fades 8 levels a frame.
 #define CRUEL_RUIN_RINGS 4
 #define CRUEL_RUIN_RING_INTERVAL 10
 #define CRUEL_RUIN_RING_FRAMES 16
+#define CRUEL_RUIN_RING_SHINE_FRAMES 8
+/// The circle of runes turns round the orb from frame 24 for
+/// CRUEL_RUIN_RUNE_FRAMES, until the flash.
+#define CRUEL_RUIN_RUNE_FRAMES 100
 /// The rays' length grows to CRUEL_RUIN_RAY_LENGTH_MAX.
 #define CRUEL_RUIN_RAY_LENGTH_MAX (FIXED_ONE * 625 / 512)
 /// The ball of light that falls grows to this size; its streak's width scales
@@ -793,6 +807,11 @@ void BattleEffect_EndElementStreaks(void) {
 #define CRUEL_RUIN_RIBBON_SWAY_STEP 2348
 #define CRUEL_RUIN_RIBBON_FRAMES 46
 #define CRUEL_RUIN_FIRST_RIBBON_ROLL 3048
+/// A texture's scroll wraps within 128 texels.
+#define TEXTURE_SCROLL_MASK 0x7f
+/// The ribbons' texture scrolls back from ~CRUEL_RUIN_RIBBON_SCROLL, 2 texels a
+/// frame on the first and 4 on the second.
+#define CRUEL_RUIN_RIBBON_SCROLL 63
 /// The forest rushing by below (ForestCanopyTiles, in its own sprite palette):
 /// two rows of CRUEL_RUIN_CANOPY_COLUMNS sprites, the last of each row sharing
 /// the first's tiles, their pictures cycling through
@@ -802,9 +821,17 @@ void BattleEffect_EndElementStreaks(void) {
 #define CRUEL_RUIN_CANOPY_SPRITES (2 * CRUEL_RUIN_CANOPY_COLUMNS)
 #define CRUEL_RUIN_CANOPY_SIZE 32
 #define CRUEL_RUIN_CANOPY_PICTURE_COUNT 8
+/// Whole cycles of the pictures added to a sprite's picture number before it
+/// is taken modulo CRUEL_RUIN_CANOPY_PICTURE_COUNT.
+#define CRUEL_RUIN_CANOPY_CYCLE_BIAS (8 * CRUEL_RUIN_CANOPY_PICTURE_COUNT)
 /// The falling streaks' particles, after the canopy's pictures.
 #define CRUEL_RUIN_FIRST_STREAK CRUEL_RUIN_CANOPY_SPRITES
 #define CRUEL_RUIN_STREAKS 4
+/// The forest act lasts CRUEL_RUIN_FOREST_FRAMES, its canvas brightening to
+/// white over the last CRUEL_RUIN_FOREST_BRIGHTEN_FRAMES; A or B before then
+/// starts the brightening at once.
+#define CRUEL_RUIN_FOREST_FRAMES 102
+#define CRUEL_RUIN_FOREST_BRIGHTEN_FRAMES 17
 /// The six blasts, each swelling and shrinking over CRUEL_RUIN_BLAST_FRAMES.
 #define CRUEL_RUIN_BLASTS 6
 #define CRUEL_RUIN_BLAST_FRAMES 16
@@ -816,11 +843,12 @@ void BattleEffect_EndElementStreaks(void) {
 #define CRUEL_RUIN_SPRITE_COLORS (14 * PALETTE_COLORS)
 
 /// Cruel Ruin: light swells at the caster's feet as the caster rises out of
-/// sight; under a sky of sunbeams a glow gathers into an orb beneath a turning
-/// rune, rings of fire fly out from it, rays burst and a ball of light falls;
-/// then in a violet sky over a forest rushing by, six blasts go off, streaks
-/// rain and two ribbons of light sway past; last the ball falls on the
-/// foes, who darken to silhouettes, and a wall of light sweeps over them.
+/// sight; under a sky of sunbeams a glow gathers into an orb amid a turning
+/// circle of runes, rings of fire fly out from it, rays burst and a ball of
+/// light falls; then in a sky clearing to gold over a forest rushing by, six
+/// blasts go off, streaks rain and two ribbons of light sway past; last the
+/// ball falls on the foes, who darken to silhouettes, and a wall of light
+/// sweeps over them.
 void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   struct ScreenPoint pos;
   FIXED place[4];
@@ -849,7 +877,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   FIXED redStep;
   FIXED greenStep;
   FIXED blueStep;
-  s32 steps;
+  s32 fadeFrames;
   s32 u;
   struct RuinObject *obj;
 
@@ -933,7 +961,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
   redStep = 0;
   greenStep = 0;
   blueStep = 0;
-  steps = 0;
+  fadeFrames = 0;
   for (i = 0; i != CRUEL_RUIN_RAYS; i++) {
     struct Particle *p = &work->particles[i];
     p->z = i * 2730 + (Random16() & 0xfff);
@@ -949,9 +977,9 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
     {
       u8 *pixels = gMapGridCellBuffer;
 
-      // The sky: the glow gathers into the orb and rises, the rune turns under
-      // it, rings of fire fly out, rays burst and the ball falls; A or B skips
-      // to its landing.
+      // The sky: the glow gathers into the orb and rises, the circle of runes
+      // turns round it, rings of fire fly out, rays burst and the ball falls;
+      // A or B skips to its landing.
       for (frame = 0; frame != 180; frame++) {
         struct RenderModel *model;
         void *verts;
@@ -1000,7 +1028,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           redStep = -toFIXED(4) / 28;
           greenStep = -toFIXED(12) / 28;
           blueStep = -toFIXED(4) / 28;
-          steps = 28;
+          fadeFrames = 28;
         }
         if (frame == 124) {
           fadeRed = toFIXED(RGB_LEVEL_MAX);
@@ -1009,28 +1037,28 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           redStep = 0;
           greenStep = 0;
           blueStep = 0;
-          steps = 1;
+          fadeFrames = 1;
         }
         if (frame == 128) {
           redStep = (-toFIXED(1) - fadeRed) / 16;
           greenStep = (toFIXED(6) - fadeGreen) / 16;
           blueStep = -fadeBlue / 16;
-          steps = 16;
+          fadeFrames = 16;
         }
         if (frame == 144) {
           redStep = (-toFIXED(9) - fadeRed) / 8;
           greenStep = (toFIXED(13) - fadeGreen) / 8;
           blueStep = (-toFIXED(5) - fadeBlue) / 8;
-          steps = 8;
+          fadeFrames = 8;
         }
         if (frame == 156) {
           redStep = (toFIXED(RGB_LEVEL_MAX) - fadeRed) / 16;
           greenStep = (toFIXED(8) - fadeGreen) / 16;
           blueStep = (-toFIXED(4) - fadeBlue) / 16;
-          steps = 16;
+          fadeFrames = 16;
         }
-        if (steps > 0) {
-          steps--;
+        if (fadeFrames > 0) {
+          fadeFrames--;
           fadeRed += redStep;
           fadeGreen += greenStep;
           fadeBlue += blueStep;
@@ -1043,7 +1071,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
         }
         if (frame <= 123) {
           s32 size = CRUEL_RUIN_SKY_GLOW_SIZE;
-          s32 y = 58;
+          s32 y = CRUEL_RUIN_SKY_GLOW_Y;
           s32 scale = FIXED_ONE * 2;
 
           if (frame <= 29) {
@@ -1062,8 +1090,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           } else if (frame > 19) {
             y = (FIXEDtoINT(
                     Trig_Cos(frame * (TRIG_TURN / 64) - TRIG_TURN * 5 / 16) *
-                    44)) +
-                14;
+                    CRUEL_RUIN_SKY_GLOW_RISE)) +
+                (CRUEL_RUIN_SKY_GLOW_Y - CRUEL_RUIN_SKY_GLOW_RISE);
           }
           if (size <= 7) {
             size = 8;
@@ -1126,7 +1154,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
         if ((u32)u < CRUEL_RUIN_RING_FRAMES) {
           s32 sc = u * (FIXED_ONE / 2);
 
-          shade = 64 - u * 8;
+          shade = CRUEL_RUIN_RING_SHINE_FRAMES * 8 - u * 8;
           if (shade > 0) {
             shade = 0;
           }
@@ -1140,7 +1168,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
         {
           s32 t = frame - 24;
 
-          if ((u32)t <= 99) {
+          if ((u32)t < CRUEL_RUIN_RUNE_FRAMES) {
             s32 sc = toFIXED(3) - t * (FIXED_ONE / 32);
 
             if (sc < FIXED_ONE) {
@@ -1265,7 +1293,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
     }
   }
   {
-    s32 count = -1;
+    s32 skipFrames = -1;
     s32 fadeStep = 2;
     u8 *strip = CRUEL_RUIN_STRIP_MESH;
     void *verts;
@@ -1360,34 +1388,38 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
       }
     }
     wait(1);
-    // The violet sky over the forest: the blasts, the falling streaks and the
-    // two ribbons; A or B ends it early.
+    // The sky, clearing from white through violet to gold, over the forest:
+    // the blasts, the falling streaks and the two ribbons; A or B ends it
+    // early.
     frame = 0;
     while (1) {
       struct RenderModel *model;
 
-      if ((gInput.repeat & (KEY_A | KEY_B)) && frame <= 84 && count == -1) {
+      if ((gInput.repeat & (KEY_A | KEY_B)) &&
+          frame <
+              CRUEL_RUIN_FOREST_FRAMES - CRUEL_RUIN_FOREST_BRIGHTEN_FRAMES &&
+          skipFrames == -1) {
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_BRIGHTEN,
                             CANVAS_FILL_WORD(4));
-        count = 17;
+        skipFrames = CRUEL_RUIN_FOREST_BRIGHTEN_FRAMES;
         REG_BG2CNT =
             BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
       }
       if (frame <= 17) {
-        s32 g = 31 - frame * fadeStep;
-        s32 r = g;
-        s32 b = 31 - (frame * fadeStep + frame);
+        s32 green = RGB_LEVEL_MAX - frame * fadeStep;
+        s32 red = green;
+        s32 blue = RGB_LEVEL_MAX - (frame * fadeStep + frame);
 
-        if (g < 0) {
-          r = 0;
+        if (green < 0) {
+          red = 0;
         }
-        if (g <= 5) {
-          g = 6;
+        if (green <= 5) {
+          green = 6;
         }
-        if (b < -18) {
-          b = -18;
+        if (blue < -18) {
+          blue = -18;
         }
-        Palette_BrightenSavedBattleBg(r, g, b);
+        Palette_BrightenSavedBattleBg(red, green, blue);
         if (frame <= 16) {
           u16 *e = Resource_GetTableEntry(RESOURCE_FOREST_CANOPY_TILES);
           u16 *dst = (u16 *)&OBJ_PLTT_COLOR(CRUEL_RUIN_CANOPY_PALETTE, 0);
@@ -1421,7 +1453,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
         REG_BG2CNT =
             BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
       }
-      if (frame == 85) {
+      if (frame ==
+          CRUEL_RUIN_FOREST_FRAMES - CRUEL_RUIN_FOREST_BRIGHTEN_FRAMES) {
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_BRIGHTEN,
                             CANVAS_FILL_WORD(4));
       }
@@ -1525,13 +1558,13 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
         Render_BuildQuadStrip(strip, 2, 32, CRUEL_RUIN_RIBBON_QUADS);
         model->mesh = strip;
         model->kind = six;
-        model->scrollU = 64;
+        model->scrollU = ~CRUEL_RUIN_RIBBON_SCROLL & TEXTURE_SCROLL_MASK;
       }
       {
         u8 *cells = gMapGridCellBuffer;
         s32 mask;
 
-        for (i = 0, mask = 0x7f; i != 2;
+        for (i = 0, mask = TEXTURE_SCROLL_MASK; i != 2;
              cells += CRUEL_RUIN_RIBBON_POINTS * CRUEL_RUIN_RIBBON_POINT_BYTES,
             i++) {
           s32 t = frame - i * CRUEL_RUIN_RIBBON_FRAMES - 12;
@@ -1543,7 +1576,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
             s32 v;
 
             if (i == 0) {
-              v = t * 2 + 63;
+              v = t * 2 + CRUEL_RUIN_RIBBON_SCROLL;
               v = mask & ~v;
               model->scrollU = v;
               if (t <= CRUEL_RUIN_RIBBON_QUADS) {
@@ -1553,7 +1586,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
                 m[2] = i;
               }
             } else {
-              v = t * 4 + 63;
+              v = t * 4 + CRUEL_RUIN_RIBBON_SCROLL;
               v = mask & ~v;
               model->scrollU = v;
               {
@@ -1610,8 +1643,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
         void **last = &work->sprites[row + CRUEL_RUIN_CANOPY_COLUMNS - 1];
 
         for (i = 0; i != CRUEL_RUIN_CANOPY_COLUMNS; i++) {
-          s32 mask = ~0x3ff;
-          s32 offset = 64;
+          s32 mask = ~OBJ_TILE_MASK;
+          s32 offset = CRUEL_RUIN_CANOPY_CYCLE_BIAS;
           s32 tile = i + offset + phase;
           place[0] = INTtoFIXED(i * CRUEL_RUIN_CANOPY_SIZE) + scrollX;
           place[2] = toFIXED(121) + INTtoFIXED(j * CRUEL_RUIN_CANOPY_SIZE);
@@ -1623,10 +1656,11 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           if (i == CRUEL_RUIN_CANOPY_COLUMNS - 1) {
             obj = *last;
             {
-              s32 cycle = phase + 71;
+              s32 cycle = phase + (CRUEL_RUIN_CANOPY_CYCLE_BIAS +
+                                   CRUEL_RUIN_CANOPY_PICTURE_COUNT - 1);
               s32 cycleStart = cycle;
               if (cycle < 0)
-                cycleStart = phase + 78;
+                cycleStart = cycle + (CRUEL_RUIN_CANOPY_PICTURE_COUNT - 1);
               cycleStart >>= 3;
               cycleStart <<= 3;
               u = cycle - cycleStart;
@@ -1639,18 +1673,20 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
               m += i;
               obj = work->sprites[m];
             }
+            /* FAKEMATCH(temporary): phase + i, held for the negative case. */
             {
               s32 next = phase + i;
               s32 cycleStart = tile;
               if (tile < 0)
-                cycleStart = next + 71;
+                cycleStart = next + (CRUEL_RUIN_CANOPY_CYCLE_BIAS +
+                                     CRUEL_RUIN_CANOPY_PICTURE_COUNT - 1);
               cycleStart >>= 3;
               cycleStart <<= 3;
               u = tile - cycleStart;
             }
           }
           {
-            s32 v = work->particles[row + u].variant & 0x3ff;
+            s32 v = work->particles[row + u].variant & OBJ_TILE_MASK;
             s32 x = obj->attr.all & mask;
             obj->attr.all = x | v;
           }
@@ -1675,10 +1711,10 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
       }
       EFFECT_PRESENT_CANVAS(work);
       frame++;
-      if (frame == 102) {
+      if (frame == CRUEL_RUIN_FOREST_FRAMES) {
         break;
       }
-      if (count > 0 && --count == 0) {
+      if (skipFrames > 0 && --skipFrames == 0) {
         break;
       }
     }
@@ -1859,3 +1895,4 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
 #undef STREAK_LENGTH
 #undef ALT_BLITTER
 #undef WAIT_TRANSFER
+#undef TEXTURE_SCROLL_MASK

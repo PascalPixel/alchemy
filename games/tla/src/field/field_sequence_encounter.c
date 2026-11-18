@@ -77,14 +77,21 @@ void Encounter_SelectMapZones(s32 search) {
   BattleBackground_SelectForMap();
 }
 
-/// Returns the world map encounter zone for the terrain at position (0 for
-/// none) and chooses the battle backdrop for that terrain. There are no
-/// encounters in render mode 8, render mode 7 reads the second rule table,
-/// and a rule's flag must be set for it to apply.
+/// The World Map's encounter regions: a block's region number past them takes
+/// the encounters of its number modulo WORLD_MAP_ENCOUNTER_REGIONS (Prox's
+/// blizzard, 36, those of 16), the higher numbers choosing only the ground's
+/// battle environment (WorldMap_GetBattleEnvironment).
+#define WORLD_MAP_ENCOUNTER_REGIONS 20
+
+/// Returns the World Map encounter zone for the ground at position (0 for
+/// none), and chooses the battle background for its battle environment
+/// (gMainRoutineWork.battleBackground). Flying, there are none; aboard the
+/// ship, the zones are gWorldMap_ShipEncounterRules'; a rule's flag must be set
+/// for it to apply.
 s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position) {
   struct TerrainRule *rule = gWorldMap_EncounterRules;
-  s32 behavior;
-  u32 kind;
+  s32 environment;
+  u32 region;
   s32 zone;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
@@ -92,24 +99,22 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *position) {
     return 0;
   if (party->movementMode == LEADER_MOVEMENT_SHIP)
     rule = gWorldMap_ShipEncounterRules;
-  behavior = WorldMap_GetBattleEnvironmentFar(position, (s32 *)&kind);
-  kind %= 20;
+  environment = WorldMap_GetBattleEnvironmentFar(position, (s32 *)&region);
+  region %= WORLD_MAP_ENCOUNTER_REGIONS;
   zone = 0;
   for (; rule->kind != -1; rule++) {
-    if (rule->kind != kind)
+    if (rule->kind != region)
       continue;
-    if (rule->behavior != -1 && rule->behavior != behavior)
+    if (rule->behavior != -1 && rule->behavior != environment)
       continue;
     if (rule->flag != -1 && GameFlag_Get(rule->flag) == 0)
       continue;
     zone = rule->zone;
     break;
   }
-  BattleBackground_SelectForEnvironment(behavior);
+  BattleBackground_SelectForEnvironment(environment);
   return zone;
 }
-
-#define ENCOUNTER_STEPS (gMainRoutineWork.encounterSteps)
 
 /// Advances the encounter counter for zone and returns the formation to fight,
 /// or 0 for no battle. steps (16.16) scales how far the counter moves; a
@@ -146,6 +151,8 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, FIXED steps) {
     if (rate == 0)
       return 0;
 
+    // Each level (up to five) the party's average is above the zone's raises
+    // the rate by 5; with Avoid active such a zone has no encounters at all.
     level = Party_GetAverageLevelFar() - entry->level;
     if (level < 0)
       level = 0;
@@ -166,8 +173,13 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, FIXED steps) {
       bias = (a - b + c - (s32)Random16()) / 2;
       work->encounterBias = bias;
     }
-    step = Iwram_RatioMulQ14((rate << 20) + ((rate << 4) - 16) * bias, 1 << 20);
-    total = ENCOUNTER_STEPS += Iwram_MulFX(step, steps);
+    // The rate and the bias divide the step, so a higher rate (a party above
+    // the zone's level) means smaller steps and fewer battles: a step is
+    // 16 / (16 * rate + 16 * (rate - 1) * bias), that is
+    // 1 / (rate + (rate - 1) * bias) with bias a 16.16 fraction from -1 to 1.
+    step = Iwram_RatioMulQ14(rate * toFIXED(16) + (rate - 1) * 16 * bias,
+                             toFIXED(16));
+    total = gMainRoutineWork.encounterSteps += Iwram_MulFX(step, steps);
     if (total < work->encounterThreshold)
       return 0;
   }
@@ -205,12 +217,13 @@ s32 Encounter_RollWorldMap(s32 pos, FIXED steps) {
       Encounter_ResolveWorldMapZoneAndBackdrop((void *)pos), steps);
 }
 
-/// Returns the selected group from a fourteen-halfword encounter row.
+/// Returns the formation in slot (0 to 7) of zone.
 u16 Encounter_GetFormationAtSlot(s32 zone, s32 slot) {
   return gEncounter_EnemyGroupTable[zone].formations[slot];
 }
 
-/// Resolves the Djinni table's zone and slot pair to its enemy group.
+/// Returns the formation of Djinni battle djinni, which the table gives as a
+/// zone and slot.
 u16 Encounter_GetDjinnFormation(s32 djinni) {
   u16 *zoneAndSlot = (u16 *)(gEncounter_AreaEntryTable + djinni * 4);
 
@@ -361,62 +374,72 @@ s16 BattleBackground_GetSelected(void) {
   return gMainRoutineWork.battleBackground;
 }
 
-/// As The Broken Seal's, with this game's dragon hall check after the loop:
-/// looks the scene up in gScene_BattleBackgroundRules and keeps the last marked
-/// backdrop before it; once the Mars Lighthouse has thawed, the second dragon
-/// hall backdrop becomes the first.
+/// A battle background rule's word (scene_rules.c's BATTLE_BACKGROUND): bit 31
+/// marks a battle background, its resource id below; any other word is a
+/// scene.
+#define BATTLE_BACKGROUND_RULE 0x80000000
+#define BATTLE_BACKGROUND_RULE_RESOURCE 0xffff
+
+/// Chooses the battle background for the current scene.
+/// gScene_BattleBackgroundRules lists each battle background (a word with bit
+/// 31 set) followed by the scenes that use it, ended by 0; a scene takes the
+/// one listed last before it, and a scene not listed takes the last one. Once
+/// the Mars Lighthouse has thawed, the second dragon hall backdrop becomes the
+/// first.
 void BattleBackground_SelectForMap(void) {
   s32 target = gMainRoutineWork.next;
   const s32 *table = gScene_BattleBackgroundRules;
   s32 entry = *table++;
-  s32 result; // not initialised: with no marked row before the scene it keeps
-              // whatever it held
+  // The first scene_rules.c word names a battle background.
+  s32 backdrop;
 
   if (entry != 0 && entry != target) {
     do {
-      if (entry & 0x80000000) {
-        result = entry & 0xffff;
+      if (entry & BATTLE_BACKGROUND_RULE) {
+        backdrop = entry & BATTLE_BACKGROUND_RULE_RESOURCE;
       }
       entry = *table++;
     } while (entry != 0 && entry != target);
   }
-  if (result == RESOURCE_DRAGON_HALL_B_BACKDROP &&
+  if (backdrop == RESOURCE_DRAGON_HALL_B_BACKDROP &&
       GameFlag_Get(FLAG_MARS_LIGHTHOUSE_THAWED))
-    result = RESOURCE_DRAGON_HALL_A_BACKDROP;
-  gMainRoutineWork.battleBackground = result;
+    backdrop = RESOURCE_DRAGON_HALL_A_BACKDROP;
+  gMainRoutineWork.battleBackground = backdrop;
 }
 
-/// Chooses the battle backdrop for a terrain; the ship deck's is the default.
+/// Chooses the battle background for a World Map battle environment (enum
+/// BattleEnvironment; any other gives the ship deck's) and sets
+/// gMainRoutineWork.battleBackground.
 void BattleBackground_SelectForEnvironment(s32 behavior) {
-  u16 value;
+  u16 backdrop;
 
   switch (behavior - 1) {
-  case 0:
-    value = RESOURCE_GRASSLAND_B_BACKDROP;
+  case BATTLE_ENVIRONMENT_GRASSLAND - 1:
+    backdrop = RESOURCE_GRASSLAND_B_BACKDROP;
     break;
-  case 1:
-    value = RESOURCE_DENSE_FOREST_BACKDROP;
+  case BATTLE_ENVIRONMENT_FOREST - 1:
+    backdrop = RESOURCE_DENSE_FOREST_BACKDROP;
     break;
-  case 2:
-    value = RESOURCE_DESERT_BACKDROP;
+  case BATTLE_ENVIRONMENT_DESERT - 1:
+    backdrop = RESOURCE_DESERT_BACKDROP;
     break;
-  case 3:
-  case 6:
-    value = RESOURCE_ROCKY_BEACH_BACKDROP;
+  case BATTLE_ENVIRONMENT_BEACH - 1:
+  case BATTLE_ENVIRONMENT_SHALLOWS - 1:
+    backdrop = RESOURCE_ROCKY_BEACH_BACKDROP;
     break;
-  case 4:
-  case 5:
-    value = RESOURCE_SNOWFIELD_B_BACKDROP;
+  case BATTLE_ENVIRONMENT_SNOWFIELD - 1:
+  case BATTLE_ENVIRONMENT_SNOW_FOREST - 1:
+    backdrop = RESOURCE_SNOWFIELD_B_BACKDROP;
     break;
-  case 10:
-  case 11:
-    value = RESOURCE_BLIZZARD_BACKDROP;
+  case BATTLE_ENVIRONMENT_BLIZZARD - 1:
+  case BATTLE_ENVIRONMENT_BLIZZARD_FOREST - 1:
+    backdrop = RESOURCE_BLIZZARD_BACKDROP;
     break;
   default:
-    value = RESOURCE_SHIP_DECK_BACKDROP;
+    backdrop = RESOURCE_SHIP_DECK_BACKDROP;
     break;
   }
-  gMainRoutineWork.battleBackground = value;
+  gMainRoutineWork.battleBackground = backdrop;
 }
 
 /// Whether the character is one of the first four party members, the ones in
@@ -473,3 +496,7 @@ void BattleEffect_SelectBattleCue(s32 zone, s32 slot) {
   }
   gMainRoutineWork.battleMusic = music;
 }
+
+#undef WORLD_MAP_ENCOUNTER_REGIONS
+#undef BATTLE_BACKGROUND_RULE
+#undef BATTLE_BACKGROUND_RULE_RESOURCE

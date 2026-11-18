@@ -17,7 +17,7 @@
 #define TILESET_ANIM_WIDE_TILE_BYTES (TILE_SIZE_4BPP * 2)
 #define TILESET_ANIM_MARKER 0xfd00 ///< low four bits: the animation it starts
 #define TILESET_ANIM_MARKER_PAUSED 0x80 ///< a marker's bit: start it paused
-#define TILESET_ANIM_MARKER_CHANNEL_MASK 0xf ///< a marker's animation
+#define TILESET_ANIM_MARKER_ANIMATION_MASK 0xf ///< a marker's animation
 // The first source tile read from gMapGridAnimTiles rather than VRAM, for
 // 32-byte and for 64-byte (wide) tiles: both bases put it at its start.
 #define TILESET_ANIM_RAM_TILE 1536
@@ -152,7 +152,7 @@ void TilesetAnim_StartAll(const u16 *script) {
   while (marker != TILESET_ANIM_LOOP) {
     if ((marker & TILESET_ANIM_OPCODE_MASK) == TILESET_ANIM_MARKER) {
       struct TilesetAnim *channel;
-      u32 channelIndex = marker & TILESET_ANIM_MARKER_CHANNEL_MASK;
+      u32 channelIndex = marker & TILESET_ANIM_MARKER_ANIMATION_MASK;
       u32 paused = 0;
       if (marker & TILESET_ANIM_MARKER_PAUSED)
         paused = 1;
@@ -286,8 +286,8 @@ UNUSED void PaletteCycle_Initialize(void) {
   paletteCycles = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_CYCLES,
                                       sizeof(struct PaletteCycleWork));
   cycle = paletteCycles->entries;
-  // Four cycles of up to 16 saved colours each.
-  for (cycleIndex = 0; cycleIndex != 4; cycleIndex++) {
+  for (cycleIndex = 0; cycleIndex != ARRAY_COUNT(paletteCycles->entries);
+       cycleIndex++) {
     cycle->source = 0;
     cycle->position = 0;
     cycle->timer = 0;
@@ -316,13 +316,12 @@ UNUSED s32 PaletteCycle_Add(s16 paletteNumber, s16 firstColor, s16 delay,
 
   paletteQueue = gPaletteCycleWork;
   cycleIndex = paletteQueue->count;
-  if (cycleIndex > 3)
+  if (cycleIndex >= ARRAY_COUNT(paletteQueue->entries))
     return -1;
-  // 16 colours to a palette; the cycle saves the colours as they are
-  // now, one halfword each.
+  // The cycle saves the colours as they are now.
   cycle = &paletteQueue->entries[cycleIndex];
-  paletteColors =
-      (u16 *)BG_PLTT + (((u16)paletteNumber << 4) + (u16)firstColor);
+  paletteColors = (u16 *)BG_PLTT +
+                  (((u16)paletteNumber * PALETTE_COLORS) + (u16)firstColor);
   colorCount16 = colorCount;
   cycle->position = 0;
   cycle->timer = 0;
@@ -354,7 +353,7 @@ void PaletteCycle_Step(void) {
   u8 cycleIndex;
   // BUG: four queued cycles become zero here, so none advance.
   u16 activeCycles = paletteQueue->count & 3;
-  u16 rotatedColors[16];
+  u16 rotatedColors[PALETTE_COLORS];
 
   for (cycleIndex = 0; cycleIndex < activeCycles; cycleIndex++) {
     struct PaletteCycle *cycle = &paletteQueue->entries[cycleIndex];
@@ -395,7 +394,7 @@ void PaletteCycle_Step(void) {
 #undef TILESET_ANIM_ARGUMENT_MASK
 #undef TILESET_ANIM_MARKER
 #undef TILESET_ANIM_MARKER_PAUSED
-#undef TILESET_ANIM_MARKER_CHANNEL_MASK
+#undef TILESET_ANIM_MARKER_ANIMATION_MASK
 #undef TILESET_ANIM_RAM_TILE
 #undef TILESET_ANIM_RAM_WIDE_TILE
 #undef BLEND_SCRIPT_LOOP

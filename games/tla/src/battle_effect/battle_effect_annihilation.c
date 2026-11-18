@@ -6,15 +6,17 @@
 #include "sounds.h"
 
 #define SHARD_COUNT 64
-#define STREAK_PICTURE_BYTES PICTURE_BYTES(FIRE_STREAK)
-#define BURST_PICTURE_BYTES PICTURE_BYTES(FIRE_BURST)
-#define BURST_STRIP_BYTES (3 * BURST_PICTURE_BYTES) ///< the stronger variant's
+/// The frames the first four shards live; each four after live two longer.
+#define SHARD_LIFE 16
+/// The stronger variant's three burst pictures, after the basic one's.
+#define BURST_STRIP_BYTES (3 * PICTURE_BYTES(FIRE_BURST))
 
 #define ANNIHILATION_FRAMES 64
 #define STREAK_FRAME 6 ///< the user's fire streak, six frames
 #define HIT_FRAME 8
 #define FLASH_FRAME 14
-#define BURST_FRAME 16 ///< the burst on the target, until frame 47
+#define BURST_FRAME 16 ///< the burst on the target, until BURST_LAST_FRAME
+#define BURST_LAST_FRAME 47
 
 /// The user closes on the first target and fire bursts from it in a shower of
 /// shards.
@@ -24,48 +26,43 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
-  u8 *cells;
-  struct BattleCamera *view;
-  struct MotionObject *target;
+  u8 *particleSheet;
+  struct BattleCamera *camera;
+  struct MotionObject *targetActor;
   struct Particle *shard;
-  struct ScreenPoint user;
+  struct ScreenPoint position;
   struct ScreenPoint origin;
-  struct ScreenPoint screen;
-  DrawRectangle draw[2];
+  struct ScreenPoint out;
+  DrawRectangle blitters[2];
   s32 i;
   s32 size;
-  u8 *burst;
+  u8 *burstPixels;
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  cells = Ram_HeapSlots->battleSheet;
-  view = Ram_HeapSlots->cameraWork;
-  burst = Ram_MapCellBuffer;
-
-  // Open the canvas, load the pictures, and dash at the target.
+  particleSheet = Ram_HeapSlots->battleSheet;
+  camera = Ram_HeapSlots->cameraWork;
+  burstPixels = Ram_MapCellBuffer;
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress(RESOURCE_FIRE_STREAK_SHEET, work->sheet, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_FIRE_BURST_SHEET, burst, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, cells, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FIRE_BURST_SHEET, burstPixels, 1, 1);
+  Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, particleSheet, 0, 0);
   BattleMotion_ApproachTargetFar(args->user, args->targets[0], 4, 0);
   wait(1);
-  target = BattleObject_GetFar(args->targets[0])->object;
+  targetActor = BattleObject_GetFar(args->targets[0])->object;
 
-  // The shards start inside the target; each group of four lives two frames
-  // longer than the one before.
-  i = 0;
-  do {
+  // Shards burst from the target.
+  for (i = 0; i != SHARD_COUNT; i++) {
     struct Particle *seed = &work->particles[i];
 
-    SET_POSITION(seed, target->x, target->y, target->z);
+    SET_POSITION(seed, targetActor->x, targetActor->y, targetActor->z);
     seed->velocityX = (Random16() & 255) << 11;
     seed->velocityY = ((Random16() & 255) - 127) << 12;
     seed->velocityZ = ((Random16() & 255) - 127) << 12;
     if (seed->x > 0)
       seed->velocityX = -seed->velocityX;
-    seed->variant = i / 4 * 2 + 16;
-    i++;
-  } while (i != SHARD_COUNT);
+    seed->variant = i / 4 * 2 + SHARD_LIFE;
+  }
 
   EffectPosition_ProjectScaledBattler(args->targets[0], &origin);
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
@@ -76,9 +73,8 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     if (args->variant != EFFECT_VARIANT_BASIC && frame == HIT_FRAME)
       Sound_PlayFar(SE_POWER_UP);
-
-    // The streak, drawn from the user toward the target.
-    EffectPosition_ProjectScaledBattler(args->user, &user);
+    EffectPosition_ProjectScaledBattler(args->user, &position);
+    // The fire streak in front of the user.
     if (frame >= STREAK_FRAME && frame <= STREAK_FRAME + 5) {
       if (args->side == EFFECT_SIDE_ENEMIES)
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -87,68 +83,71 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                             BLITTER_ADDITIVE);
-      draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+      blitters[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
       if (args->side == EFFECT_SIDE_ENEMIES)
-        draw[0](canvas,
-                work->sheet + (frame - STREAK_FRAME) * STREAK_PICTURE_BYTES,
-                user.x / 2 - 24, user.y - 24, FIRE_STREAK_WIDTH,
-                FIRE_STREAK_HEIGHT);
+        blitters[0](canvas,
+                    work->sheet +
+                        (frame - STREAK_FRAME) * PICTURE_BYTES(FIRE_STREAK),
+                    position.x / 2 - FIRE_STREAK_WIDTH / 2, position.y - 24,
+                    FIRE_STREAK_WIDTH, FIRE_STREAK_HEIGHT);
       else
-        draw[0](canvas,
-                work->sheet + (frame - STREAK_FRAME) * STREAK_PICTURE_BYTES,
-                user.x / 2, user.y - 24, FIRE_STREAK_WIDTH, FIRE_STREAK_HEIGHT);
+        blitters[0](canvas,
+                    work->sheet +
+                        (frame - STREAK_FRAME) * PICTURE_BYTES(FIRE_STREAK),
+                    position.x / 2, position.y - 24, FIRE_STREAK_WIDTH,
+                    FIRE_STREAK_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     }
-
-    // The burst on the target; the stronger variant has its own pictures.
-    if (frame >= BURST_FRAME && frame <= 47) {
+    // The fire burst over the target grows.
+    if (frame >= BURST_FRAME && frame <= BURST_LAST_FRAME) {
       s32 step = (frame - BURST_FRAME) / 2;
       s32 strip;
 
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
-      draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+      blitters[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
       if (step > 2)
         step = 2;
       if (args->variant == EFFECT_VARIANT_BASIC)
         strip = 0;
       else
         strip = BURST_STRIP_BYTES;
-      draw[0](canvas, Ram_MapCellBuffer + strip + step * BURST_PICTURE_BYTES,
-              origin.x / 2 - 20, origin.y - 48, FIRE_BURST_WIDTH,
-              FIRE_BURST_HEIGHT);
+      blitters[0](canvas,
+                  Ram_MapCellBuffer + strip + step * PICTURE_BYTES(FIRE_BURST),
+                  origin.x / 2 - FIRE_BURST_WIDTH / 2, origin.y - 48,
+                  FIRE_BURST_WIDTH, FIRE_BURST_HEIGHT);
+      // A busy delay before the blitter is freed.
+      // XXX (no evidence): why it waits; the delay changes nothing the game
+      // draws or computes, so only the author's intent would say.
       BattleEffect_CallDoNothing(10000);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     }
+    // The strike flashes the canvas.
     if (frame == HIT_FRAME)
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-
-    // The shards, projected from the battle camera.
-    Matrix_Initialize();
-    Matrix_SetLookAt(view->eye, view->focus);
+    EFFECT_VIEW_FROM_CAMERA(camera);
+    // Shards shrink and fall.
     if (frame > 3) {
-      BattleEffect_FetchRectangleBlitters(args->side, draw);
+      BattleEffect_FetchRectangleBlitters(args->side, blitters);
       for (i = 0; i != SHARD_COUNT; i++) {
         s32 life;
 
         shard = &work->particles[i];
         life = shard->variant;
         if (life > 0) {
-          EffectPosition_ProjectPoint((s32 *)shard, &screen);
-          screen.x >>= 1;
-          screen.y = screen.y + origin.y - 112;
+          EffectPosition_ProjectPoint(shard, &out);
+          out.x >>= 1;
+          out.y = out.y + origin.y - 112;
           size = (life >> 3) + 2;
-          draw[(i / 2) & 1](
-              canvas, cells + gBattleEffect_MotePictures[size - 1],
-              screen.x - size / 2, screen.y - size, size, size * 2);
+          EFFECT_DRAW_MOTE(blitters[(i / 2) & 1], canvas, particleSheet, out.x,
+                           out.y, size);
           Particle_AdvanceWithGravity3D(shard, 60, -toFIXED(1) / 64);
           shard->variant--;
         }
       }
       EFFECT_RELEASE_BLITTERS();
     }
-
-    // The hit's knock-back, and the target's flashes.
+    // The strike throws the target back.
     if (frame == HIT_FRAME) {
       BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
       work->shakeFrames = 4;
@@ -167,4 +166,12 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
+#undef SHARD_COUNT
+#undef SHARD_LIFE
+#undef BURST_STRIP_BYTES
+#undef ANNIHILATION_FRAMES
+#undef STREAK_FRAME
 #undef HIT_FRAME
+#undef FLASH_FRAME
+#undef BURST_FRAME
+#undef BURST_LAST_FRAME

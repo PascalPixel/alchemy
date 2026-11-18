@@ -125,6 +125,11 @@ DEFINE_COUNT_DOWN_STATUS(BattleUnit_CountDownStun, stun, EARLY_END_STUN)
 /// `MsgWakes` when it returns 1.
 DEFINE_COUNT_DOWN_STATUS(BattleUnit_CountDownSleep, sleep, EARLY_END_SLEEP)
 
+/// Unit.psySeal's low three bits, Bind's turns left; Luff's seal above them
+/// loses PSY_SEAL_LUFF_TURN a turn.
+#define PSY_SEAL_BIND_MASK 7
+#define PSY_SEAL_LUFF_TURN 8
+
 /// Counts down both seals in Unit.psySeal and returns 1 when the last ends;
 /// only Bind's, once Luff's is gone, may end early.
 s32 BattleUnit_CountDownPsynergySeal(s32 unitId) {
@@ -139,13 +144,13 @@ s32 BattleUnit_CountDownPsynergySeal(s32 unitId) {
   /* FAKEMATCH(dead): the seal byte masked again. */
   turns = sealCounter & 0xFF;
   if (turns != 0) {
-    // In the byte, adding (u8)-8 takes 8 off and adding (u8)-1 takes 1 off.
-    if (turns > 7U) {
-      turns += (u8)-8;
+    // In the byte, adding (u8)-n takes n off.
+    if (turns > (u32)PSY_SEAL_BIND_MASK) {
+      turns += (u8)-PSY_SEAL_LUFF_TURN;
       unit->psySeal = turns;
       sealCounter = turns;
     }
-    if (sealCounter & 7) {
+    if (sealCounter & PSY_SEAL_BIND_MASK) {
       decremented = sealCounter + (u8)-1;
       unit->psySeal = decremented;
       sealCounter = decremented;
@@ -153,8 +158,9 @@ s32 BattleUnit_CountDownPsynergySeal(s32 unitId) {
     remaining = sealCounter;
     if (remaining == 0)
       return 1;
-    if (remaining <= 7U && BattleUnit_RollCounterEarlyEnd(
-                               unitId, unit->psySeal, EARLY_END_BIND) != 0) {
+    if (remaining <= PSY_SEAL_BIND_MASK &&
+        BattleUnit_RollCounterEarlyEnd(unitId, unit->psySeal, EARLY_END_BIND) !=
+            0) {
       unit->psySeal = 0U;
       return 1;
     }
@@ -628,7 +634,7 @@ UNREAD_RESULT BattleUnit_ProcessActionEnd(struct BattleActionRun *plan) {
     }
     BattlePlayback_RunAll();
     BattlePlayback_Reset();
-    // At 0 the Reaper calls.
+    // At 0, "The Grim Reaper calls out to ...!" and the unit falls.
     if (unit->grimReaper != 0) {
       if (--unit->grimReaper == 0 &&
           Unit_AddHpFar(unitId, DEFEAT_HP_CHANGE) == 0) {
@@ -637,6 +643,8 @@ UNREAD_RESULT BattleUnit_ProcessActionEnd(struct BattleActionRun *plan) {
         BattlePlayback_Push(PLAYBACK_HIT, unitId);
         BattlePlayback_Push(PLAYBACK_DEFEAT, unitId);
         BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
+        // MsgGoesDown, "... goes down...", or MsgStrengthExhausted, "...'s
+        // strength is exhausted...", counted from MsgReaperCalls.
         if (unitId >= 0 && unitId <= ALLY_MAX) {
           PUSH_MESSAGE(MsgReaperCalls - 3);
         } else {

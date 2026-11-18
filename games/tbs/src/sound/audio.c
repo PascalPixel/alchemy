@@ -9,8 +9,17 @@
 #include "system/io_reg.h"
 #include "system/ram_buffer.h"
 
+/// The keys gScaleTable codes, 0 to SCALE_TABLE_KEYS - 1, and the largest
+/// pitch, in 1/256 of a semitone. MidiKeyToFreq moves a pitch to a word's top
+/// byte (PITCH_FRACTION_SHIFT), the fraction of the way to the next key that
+/// umul3232H32 takes.
+#define SCALE_TABLE_KEYS 180
+#define PITCH_MAX 255
+#define PITCH_FRACTION_SHIFT 24
+
 /// Interpolates adjacent key frequencies and scales them by the wave sample
-/// frequency.
+/// frequency. A key past the table's second-to-last plays as nearly its last,
+/// the second-to-last raised by PITCH_MAX.
 s32 MidiKeyToFreq(struct WaveData *wave, u8 key, u8 pitch) {
   u32 keyIndex;
   u32 pitchScale;
@@ -18,10 +27,10 @@ s32 MidiKeyToFreq(struct WaveData *wave, u8 key, u8 pitch) {
   u32 upperFrequency;
 
   keyIndex = key;
-  pitchScale = (u32)pitch << 24;
-  if (keyIndex > 178) {
-    keyIndex = 178;
-    pitchScale = 255U << 24;
+  pitchScale = (u32)pitch << PITCH_FRACTION_SHIFT;
+  if (keyIndex > SCALE_TABLE_KEYS - 2) {
+    keyIndex = SCALE_TABLE_KEYS - 2;
+    pitchScale = (u32)PITCH_MAX << PITCH_FRACTION_SHIFT;
   }
 
   // A key's code: the low four bits pick the semitone's step (2^31 times
@@ -207,8 +216,14 @@ UNUSED void m4aMPlayFadeIn(struct MusicPlayerInfo *player, u16 speed) {
   MPlayStartFade(player, speed, FADE_IN);
 }
 
+/// The bend range and LFO speed a track starts with, as MPlayMain gives a track
+/// at its start: a full bend reaches two semitones, and the LFO's phase steps
+/// 22 a tick.
+enum { TRACK_START_BEND_RANGE = 2, TRACK_START_LFO_SPEED = 22 };
+
 /// Unused: initializes active tracks still carrying their reset flag: clears
-/// their settings and gives them the default bend range, volume and LFO speed.
+/// their settings and gives them the bend range, full volume, LFO speed and
+/// voice kind a track starts with.
 UNUSED void m4aMPlayImmInit(struct MusicPlayerInfo *player) {
   s32 count = player->trackCount;
   struct MusicPlayerTrack *track = player->tracks;
@@ -219,10 +234,10 @@ UNUSED void m4aMPlayImmInit(struct MusicPlayerInfo *player) {
         // Clear the 64-byte settings prefix, retaining the sequence cursor.
         Clear64byte(track);
         track->flags = MPT_FLG_EXIST;
-        track->bendRange = 2;
-        track->volumeScale = 64;
-        track->lfoSpeed = 22;
-        track->voice.kind = 1;
+        track->bendRange = TRACK_START_BEND_RANGE;
+        track->volumeScale = SOUND_FADE_FULL_VOLUME / 4;
+        track->lfoSpeed = TRACK_START_LFO_SPEED;
+        track->voice.kind = CGB_CHANNEL_SWEEP_SQUARE;
       }
     }
     count--;
@@ -280,16 +295,16 @@ void MPlayExtender(struct CgbChannel *notes) {
 
     Bios_CpuSet((void *)&zero, notes,
                 CPU_SET_SRC_FIXED | CPU_SET_32BIT |
-                    (sizeof(struct CgbChannel) * 4 / 4));
+                    (sizeof(struct CgbChannel) * SOUND_CGB_CHANNEL_COUNT / 4));
   }
-  notes[0].kind = 1;
-  notes[0].channelBits = NR51_CHANNEL_BOTH(1);
-  notes[1].kind = 2;
-  notes[1].channelBits = NR51_CHANNEL_BOTH(2);
-  notes[2].kind = 3;
-  notes[2].channelBits = NR51_CHANNEL_BOTH(3);
-  notes[3].kind = 4;
-  notes[3].channelBits = NR51_CHANNEL_BOTH(4);
+  notes[0].kind = CGB_CHANNEL_SWEEP_SQUARE;
+  notes[0].channelBits = NR51_CHANNEL_BOTH(CGB_CHANNEL_SWEEP_SQUARE);
+  notes[1].kind = CGB_CHANNEL_SQUARE;
+  notes[1].channelBits = NR51_CHANNEL_BOTH(CGB_CHANNEL_SQUARE);
+  notes[2].kind = CGB_CHANNEL_WAVE;
+  notes[2].channelBits = NR51_CHANNEL_BOTH(CGB_CHANNEL_WAVE);
+  notes[3].kind = CGB_CHANNEL_NOISE;
+  notes[3].channelBits = NR51_CHANNEL_BOTH(CGB_CHANNEL_NOISE);
 
   work->ident = ident;
 }

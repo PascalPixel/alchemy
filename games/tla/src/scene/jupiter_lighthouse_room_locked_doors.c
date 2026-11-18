@@ -76,6 +76,18 @@ enum JupiterLighthouseBlockId {
   ACTOR_BEAM_TOP_BLOCK = ACTOR_LAST_BLOCKS + 3
 };
 
+/// The beam of light from the room below: where it stands, and how far below
+/// the floor its lights, and the party it carries up, start rising.
+enum { BEAM_X = 232, BEAM_Z = 520, BEAM_DEPTH = 120 };
+/// The most steps the beam lifts the party, 3 pixels each; the floor stops it
+/// first.
+#define BEAM_RISE_MAX_STEPS 90
+/// SPRITE_PARTICLE's animations a beam light takes: its full glow twinkling,
+/// and the glow shrinking to a speck and gone.
+enum { ANIM_PARTICLE_FADE = 2, ANIM_PARTICLE_TWINKLE = 7 };
+/// The step at which a beam light starts to fade, 6 pixels below the floor.
+#define BEAM_LIGHT_FADE_STEP 38
+
 void Actor_RaiseFromCell(s32 id);
 s32 gWhirlwindRiding BSS_DATA;
 u16 gPaletteCycleColors[16] BSS_DATA;
@@ -86,7 +98,7 @@ u16 gPaletteCycleUnlitColors[14] BSS_DATA;
 s16 gLightSpriteTile BSS_DATA;
 s16 gLightSpriteCount BSS_DATA;
 struct Actor *gLightSpriteActors[16] BSS_DATA;
-struct LightOam gLightSpriteOam[16] BSS_DATA;
+struct LightOam gLightSpriteOams[16] BSS_DATA;
 s16 gLightSpritesLarge BSS_DATA;
 s16 gLightSpritePriority BSS_DATA;
 struct CellTarget gCrackedTiles BSS_DATA;
@@ -120,8 +132,8 @@ void JupiterLighthouse_RevealThePassage(void) {
   Actor_SetPosition(ACTOR_HIDDEN_BLOCK, 504, 168);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED)) {
     Actor_RaiseFromCell(ACTOR_HIDDEN_BLOCK);
-    ((u8)FieldMapGrid_SetCellBehavior(toFIXED(496), toFIXED(160), 0,
-                                      CELL_BEHAVIOR_JUMP_FORWARD));
+    FieldMapGrid_SetCellBehavior(toFIXED(496), toFIXED(160), 0,
+                                 CELL_BEHAVIOR_JUMP_FORWARD);
   }
 }
 
@@ -211,21 +223,20 @@ void JupiterLighthouse_TryLockedDoor(void) {
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 /// A light's step up the beam: it circles the beam at its angle (timer) and
-/// radius and rises with its phase (userValue) from 120 pixels below, taking
-/// its sheet's animation 7 at phase 1 and 2 at phase 38 and starting over once
-/// above the floor; drawn in front of the beam while the sine is negative and
-/// behind it otherwise.
+/// radius and rises 3 pixels with each step (userValue), twinkling from its
+/// first step and fading near the floor, and starts over once above it; drawn
+/// in front of the beam while the sine is negative and behind it otherwise.
 void JupiterLighthouse_CircleUpTheBeam(struct Actor *actor) {
   s16 angle = actor->timer;
   s16 height = actor->userValue;
 
   SET_ACTOR_POSITION(
-      actor, Iwram_MulFX(Trig_Cos(angle), actor->speedLimit) + toFIXED(232),
-      (height * toFIXED(3)) - toFIXED(120), toFIXED(520));
+      actor, Iwram_MulFX(Trig_Cos(angle), actor->speedLimit) + toFIXED(BEAM_X),
+      (height * toFIXED(3)) - toFIXED(BEAM_DEPTH), toFIXED(BEAM_Z));
   if ((s16)actor->userValue == 1)
-    Actor_SelectAnimation(actor, 7);
-  if ((s16)actor->userValue == 38)
-    Actor_SelectAnimation(actor, 2);
+    Actor_SelectAnimation(actor, ANIM_PARTICLE_TWINKLE);
+  if ((s16)actor->userValue == BEAM_LIGHT_FADE_STEP)
+    Actor_SelectAnimation(actor, ANIM_PARTICLE_FADE);
   if (actor->y.fixed > 0)
     actor->userValue = -1;
   if (Math_Sin(angle) < 0)
@@ -285,10 +296,10 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
     Actor_SetAnimationSpeed(leader, ANIMATION_STEP_NORMAL * 4);
     leader->motionFlags = flag;
-    leader->y.fixed = leader->groundHeight = -toFIXED(120);
+    leader->y.fixed = leader->groundHeight = -toFIXED(BEAM_DEPTH);
     Event_StartScreenTransition();
     FieldEvent_Wait(10);
-    for (i = 0; i <= 89 && leader->y.fixed < 0; i++) {
+    for (i = 0; i < BEAM_RISE_MAX_STEPS && leader->y.fixed < 0; i++) {
       leader->groundHeight = leader->y.fixed = leader->y.fixed + toFIXED(3);
       leader->facing += TRIG_TURN * 3 / 32;
       System_Wait(2);
@@ -380,180 +391,17 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/whirlwind_spawn.h"
 
-/// Unused: every eighth frame, sends a spark up from a random spot about the
-/// actor.
-UNUSED s32 Actor_EmitRisingSparks(struct Actor *actor) {
-  struct EffectOptions options;
-  FIXED x;
-  FIXED y;
-  FIXED velocityY;
-
-  if ((gFrameCount & 7) == 0) {
-    options.priority = 3;
-    options.startScaleX = FIXED_ONE * 7 / 10;
-    options.startScaleY = FIXED_ONE * 7 / 10;
-    options.palette = 14;
-    x = actor->x.fixed + toFIXED((Random_Below(9)) - 4);
-    y = actor->y.fixed + toFIXED(32 - (Random_Below(20)));
-    velocityY = (s32)((toFIXED(Random_Below(5)) + toFIXED(5))) / 10;
-    FieldEffect_Spawn(x, y, actor->z.fixed, 0, velocityY, 0,
-                      EFFECT_USE_PALETTE | EFFECT_USE_PRIORITY |
-                          EFFECT_USE_START_SCALE,
-                      &options);
-  }
-  return 0;
-}
+// Unused here: nothing in the room sets it as an actor's update.
+#include "shared/actor_emit_rising_sparks.h"
 
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 
-/// The aerie beacon's actors, which the unused copy below of
-/// jupiter_lighthouse_aerie_beacon.c's JupiterLighthouse_PlaceAngelsAndLid
-/// places, and the frames jupiter_lighthouse_aerie.c's
-/// JupiterLighthouse_EnergizeAngels raises an angel and tilts the lid
-/// (ANGEL_RISE_FRAMES), then lifts all three once both angels are energized
-/// (LID_LIFT_FRAMES).
-enum {
-  ACTOR_LEFT_ANGEL = 9,
-  ACTOR_RIGHT_ANGEL,
-  ACTOR_LEFT_ARCHER,
-  ACTOR_RIGHT_ARCHER,
-  ACTOR_LID_A = 23,
-  ACTOR_LID_B
-};
-#define ANGEL_RISE_FRAMES 64
-#define LID_LIFT_FRAMES 256
-
-/// Unused here: places the aerie's two angels and the lid between them, each
-/// angel the archers have energized raised with its half of the lid, and all
-/// three lifted clear once both are. The aerie's beacon floor keeps the same
-/// routine.
-UNUSED void JupiterLighthouse_PlaceAngelsAndLid(void) {
-  struct Actor *left = Actor_Get(ACTOR_LEFT_ANGEL);
-  struct Actor *right = Actor_Get(ACTOR_RIGHT_ANGEL);
-  struct Actor *lid = Actor_Get(ACTOR_LID_A);
-  struct FieldSprite *sprite = lid->sprite;
-
-  Actor_SetPosition(ACTOR_LID_B, 512, 248);
-  Actor_SetPosition(ACTOR_LID_A, 512, 248);
-  Actor_SetPosition(ACTOR_LEFT_ANGEL, 472, 256);
-  Actor_SetPosition(ACTOR_RIGHT_ANGEL, 552, 256);
-  Actor_Get(ACTOR_LID_B)->scaleX = 0;
-  lid->motionFlags = 0;
-  lid->y.fixed = lid->groundHeight;
-  left->motionFlags = 0;
-  left->y.fixed = left->groundHeight;
-  right->motionFlags = 0;
-  right->y.fixed = right->groundHeight;
-  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED)) {
-    left->y.fixed += ANGEL_RISE_FRAMES * (toFIXED(1) / 10);
-    lid->y.fixed += ANGEL_RISE_FRAMES * (toFIXED(3) / 100);
-    lid->x.fixed -= ANGEL_RISE_FRAMES * (toFIXED(1) / 25);
-    sprite->rotation += TRIG_TURN / 32;
-    Actor_SetSpriteColorMode(Actor_Get(ACTOR_LEFT_ANGEL), SPRITE_COLOR_GBR);
-    Actor_SetSpriteColorMode(Actor_Get(ACTOR_LEFT_ARCHER), SPRITE_COLOR_GBR);
-  }
-  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
-    right->y.fixed += ANGEL_RISE_FRAMES * (toFIXED(1) / 10);
-    lid->y.fixed += ANGEL_RISE_FRAMES * (toFIXED(3) / 100);
-    lid->x.fixed += ANGEL_RISE_FRAMES * (toFIXED(1) / 25);
-    sprite->rotation -= TRIG_TURN / 32;
-    Actor_SetSpriteColorMode(Actor_Get(ACTOR_RIGHT_ANGEL), SPRITE_COLOR_GBR);
-    Actor_SetSpriteColorMode(Actor_Get(ACTOR_RIGHT_ARCHER), SPRITE_COLOR_GBR);
-  }
-  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED) &&
-      Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
-    left->y.fixed += LID_LIFT_FRAMES * (toFIXED(1) / 10);
-    right->y.fixed += LID_LIFT_FRAMES * (toFIXED(1) / 10);
-    lid->y.fixed += LID_LIFT_FRAMES * (toFIXED(1) / 10) +
-                    ANGEL_RISE_FRAMES * (toFIXED(3) / 100);
-    left->motionFlags = ACTOR_FLOATS;
-    right->motionFlags = ACTOR_FLOATS;
-    lid->motionFlags = ACTOR_FLOATS;
-  }
-}
+// Unused here: the aerie's angels and lid are not in this room.
+#include "shared/jupiter_lighthouse_place_raised_actors.h"
 
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 
-/// A light sprite's depth past its screen row: just behind an actor at the same
-/// spot, whose sprite sorts at + 62 and its shadow at + 60.
-#define LIGHT_SPRITE_DEPTH 58
-
-/// Queues the lit actors' sprites: for each listed actor with a position,
-/// projects it from the map's view, skips it off screen, and writes a 16 by 16
-/// sprite, or a 32 by 64 one when the big switch is set, at its animation
-/// picture and depth.
-void LightSprites_Draw(void) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  s32 *view = &map->viewX;
-  s32 viewX, viewZ, tile, viewY;
-  struct LightOam *oam;
-  s32 i;
-  viewX = view[0] & FIELD_PIXEL_MASK;
-  viewZ = view[1] & FIELD_PIXEL_MASK;
-  tile = gVramCacheEntries[gLightSpriteTile].offset >> 5;
-  viewY = map->origin[1];
-  oam = gLightSpriteOam;
-
-  for (i = 0; i < gLightSpriteCount; i++) {
-    struct Actor *actor = gLightSpriteActors[i];
-    if (actor != 0 && actor->x.fixed != 0) {
-      s32 big, ox;
-      FIXED y, z;
-      s32 oy, depth;
-      s32 frame;
-      u32 *word;
-      ox = actor->x.fixed - viewX;
-      y = actor->y.fixed - viewY + toFIXED(8);
-      z = actor->z.fixed - viewZ - viewY;
-      oy = z - y;
-      depth = FIXEDtoINT(y + z) + LIGHT_SPRITE_DEPTH;
-      big = gLightSpritesLarge;
-      if (big == 0) {
-        s32 x, sy;
-        frame = actor->timer;
-        x = FIXEDtoINT(ox);
-        sy = FIXEDtoINT(oy);
-        ox = x - 8;
-        oy = sy - 16;
-        if ((u32)(x + 7) > 334 || oy <= -16 || oy > 239)
-          continue;
-        ox &= 0x1ff;
-        oy &= 0xff;
-        word = (u32 *)oam;
-        *word++ = 0;
-        *word++ = oy | (ox << 16) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
-        *word = (tile + frame * 8) | OBJ_PRIORITY(2);
-        if (gLightSpritePriority == -1)
-          oam->priority = BattleEffect_GetObjectPriority(actor);
-        else
-          oam->priority = gLightSpritePriority;
-        Oam_AddSpriteAtDepthClamped(oam, depth);
-        oam++;
-      } else {
-        s32 x, sy;
-        frame = actor->timer;
-        x = FIXEDtoINT(ox);
-        sy = FIXEDtoINT(oy);
-        ox = x - 8;
-        oy = sy - 64;
-        if ((u32)(x + 23) > 350 || oy <= -64 || oy > 175)
-          continue;
-        ox &= 0x1ff;
-        oy &= 0xff;
-        word = (u32 *)oam;
-        *word++ = 0;
-        *word++ = oy | (ox << 16) | OBJ_SIZE_32X64 | OBJ_256_COLORS;
-        *word = (tile + frame * 8) | OBJ_PRIORITY(2);
-        if (gLightSpritePriority == -1)
-          oam->priority = BattleEffect_GetObjectPriority(actor);
-        else
-          oam->priority = gLightSpritePriority;
-        Oam_AddSpriteAtDepthClamped(oam, depth);
-        oam++;
-      }
-    }
-  }
-}
+#include "shared/light_sprites_draw.h"
 
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
@@ -602,12 +450,12 @@ struct ActorPlacement gActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 168, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 200, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 520, 0, 200, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    {SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, 1, toFIXED(-8), 0, toFIXED(-8), FACING_EAST, 2, 1},
+    ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -8, 0, -8, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 520, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 520, FACING_SOUTHEAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 520, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_BALANCE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 520, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 520, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, BEAM_X, 0, BEAM_Z, FACING_EAST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 

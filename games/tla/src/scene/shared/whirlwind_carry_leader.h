@@ -7,33 +7,36 @@ void Whirlwind_CarryLeader(void) {
   struct Actor *shadow;
   u8 *p;
   s32 angle;
-  s32 i;
+  s32 rise;
+  s32 frame;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  i = 0;
-  work->glowHeld = i;
+  rise = 0;
+  work->glowHeld = rise;
 
   actor->motionFlags = ACTOR_FLOATS;
   Actor_SetSpriteFlags(actor, 0);
 
   while (*(u8 *)&linked->riseEnabled != 0) {
     actor->x.fixed = linked->x.fixed;
-    actor->y.fixed = linked->y.fixed + i;
+    actor->y.fixed = linked->y.fixed + rise;
     actor->z.fixed = linked->z.fixed;
-    if (i <= toFIXED(4) - 1)
-      i += toFIXED(0.1);
-    actor->facing = (u8)gFrameCount << 12;
+    if (rise < toFIXED(4))
+      rise += toFIXED(0.1);
+    actor->facing = (u8)gFrameCount * FACING_STEP;
     p = &actor->priorityFlags;
     *p ^= 2 << (gFrameCount & 1);
-    System_Wait(1);
+    wait(1);
   }
   work->glow = 1;
   work->glowHeld = 1;
   angle = linked->facing;
-  actor->x.fixed = (((linked->x.fixed >> 19) & ~1) + (angle >> 13) - 1) << 19;
-  actor->z.fixed = (((linked->z.fixed >> 19) & ~1) - ((angle >> 13) & 2) + 1)
-                   << 19;
+  actor->x.fixed = FIELD_HALF_CELL_ORIGIN(
+      (FIELD_HALF_CELL(linked->x.fixed) & ~1) + FACING_EIGHTH_INDEX(angle) - 1);
+  actor->z.fixed =
+      FIELD_HALF_CELL_ORIGIN((FIELD_HALF_CELL(linked->z.fixed) & ~1) -
+                             (FACING_EIGHTH_INDEX(angle) & 2) + 1);
   actor->velocityY = toFIXED(6);
   actor->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
   actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -46,22 +49,22 @@ void Whirlwind_CarryLeader(void) {
   FieldActor_SetMoveTargetFX(
       shadow, actor->x.fixed,
       Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed), actor->z.fixed);
-  i = 0;
+  frame = 0;
   if (actor->y.fixed > actor->groundHeight + toFIXED(16)) {
     do {
-      System_Wait(1);
-      i++;
-      if (i > 59)
+      wait(1);
+      frame++;
+      if (frame >= 60)
         break;
     } while (actor->y.fixed > actor->groundHeight + toFIXED(16));
   }
   Event_PlaySound(SE_LANDING_THUD);
-  i = 0;
+  frame = 0;
   if (actor->velocityY != 0) {
     do {
-      System_Wait(1);
-      i++;
-      if (i > 59)
+      wait(1);
+      frame++;
+      if (frame >= 60)
         break;
     } while (actor->velocityY != 0);
   }

@@ -49,18 +49,17 @@
 /// Field_RequestShortcut); Vault's inn sets it while the party corners the
 /// suspects.
 #define FLAG_MENUS_RAISE_TRIGGER 0x107
-// Lit lighthouses. Inside a lit lighthouse, the Adepts of its element regain
-// PP faster (game_units.c). Each lighthouse's scenes set its flag on every
+// The party is inside a lighthouse, where the Adepts of its element regain PP
+// faster (game_units.c). Each lighthouse's scenes set its flag on every
 // arrival, and Scene_Arrive clears all four when the party enters another area,
 // so a flag is set only while the party is inside.
-/// The party is inside Venus Lighthouse, which is lit.
+/// The party is inside Venus Lighthouse.
 #define FLAG_VENUS_LIGHTHOUSE_LIT 0x110
-/// The party is inside Mercury Lighthouse, which is already lit when the
-/// party reaches its aerie.
+/// The party is inside Mercury Lighthouse.
 #define FLAG_MERCURY_LIGHTHOUSE_LIT 0x111
-/// Mars Lighthouse is lit; no scene in The Broken Seal sets it.
+/// The party is inside Mars Lighthouse; no scene in The Broken Seal sets it.
 #define FLAG_MARS_LIGHTHOUSE_LIT 0x112
-/// Jupiter Lighthouse is lit; no scene in The Broken Seal sets it.
+/// The party is inside Jupiter Lighthouse; no scene in The Broken Seal sets it.
 #define FLAG_JUPITER_LIGHTHOUSE_LIT 0x113
 /// The next scene keeps the music that is playing; main_routine.c clears
 /// FLAG_KEEP_MUSIC_ONCE as it does, and leaves FLAG_KEEP_MUSIC_HELD set.
@@ -259,6 +258,9 @@
 /// them as the ones who resisted Tret's glamour and warning them to leave;
 /// afterwards she only repeats the warning until the curse is lifted.
 #define FLAG_MET_LAUREL 0x84c
+/// Unused: the soldier who keeps McCoy's treasure would offer the party a pick
+/// of the four treasures; nothing in the game sets it.
+#define FLAG_MCCOY_PALACE_UNUSED_PICK_OFFERED 0x84d
 /// The party has taken its reward from McCoy's treasure chests.
 #define FLAG_MCCOY_PALACE_REWARD_TAKEN 0x84e
 /// The party has beaten the three thieves in the loft of Vault's inn and the
@@ -365,7 +367,8 @@
 /// near and hopped away into the flood for good; Altin's setup then removes
 /// it.
 #define FLAG_ALTIN_WATER_BEAST_LEFT 0x8ff
-/// Altin's stone statue stands in column 22, where Move pushes it. Checked
+/// Altin's stone statue stands where Move pushes it (altin.c's
+/// STONE_STATUE_MOVED_COLUMN). Checked
 /// after every Move (Altin_CheckStatueMoved), which clears it if the statue
 /// is anywhere else; the setup puts the statue back there while it is set.
 #define FLAG_ALTIN_STATUE_MOVED 0x906

@@ -5,11 +5,19 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-#define EMBERS ((struct Particle *)Ram_MapCellBuffer)
-#define IN_FLIGHT -1 ///< an ember's variant; 0 and up count its flare's frames
-
 /// The embers set up in PARTICLES: no row of gFire_Counts may ask for more.
 #define FIRE_EMBERS 64
+/// An ember's variant while it flies; from its hit on, it counts the frames of
+/// its impact flare.
+#define FIRE_EMBER_IN_FLIGHT (-1)
+/// An ember in flight is drawn at its largest mote (MOTE_PICTURES) at depth
+/// FIRE_EMBER_DEPTH_NEAR or nearer, one size smaller every
+/// FIRE_EMBER_DEPTH_STEP farther, and no smaller than at FIRE_EMBER_DEPTH_FAR.
+#define FIRE_EMBER_DEPTH_NEAR 160
+#define FIRE_EMBER_DEPTH_STEP 64
+#define FIRE_EMBER_DEPTH_FAR 799
+/// The frames of an impact flare: its six pictures, two frames each.
+#define FIRE_FLARE_FRAMES 12
 
 /// Embers burst from the top of the user and home in on the targets, and each
 /// that lands shows an impact flare as its target flinches.
@@ -21,7 +29,7 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
   s32 frame;
   struct BattleCamera *camera;
   u8 *sheet;
-  s32 top;
+  FIXED bodyTop;
   struct ScreenPoint screen;
   DrawRectangle draw[2];
   struct MotionObject *user;
@@ -44,33 +52,30 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
 
-  // The embers leave the top of the user's body: a random heading and
-  // speed across, -16 to 111 sixty-fourths of a pixel up.
+  // The embers leave the top of the user in a random direction.
   user = BattleObject_GetFar(args->user)->object;
-  top = user->y + BattleUnit_GetEffectHeightFar(args->user);
+  bodyTop = user->y + BattleUnit_GetEffectHeightFar(args->user);
   for (i = 0; i != FIRE_EMBERS; i++) {
-    struct Particle *ember = &EMBERS[i];
+    struct Particle *ember = &PARTICLES[i];
     s32 angle;
     s32 speed;
 
     angle = Random16();
     speed = (Random16() & 127) + 127;
-    ember->velocityX = (Trig_Sin(angle) * speed) >> 6;
-    ember->velocityY = (s32)INTtoFIXED((Random16() & 127) - 16) >> 6;
-    ember->velocityZ = (Trig_Cos(angle) * speed) >> 6;
-    SET_POSITION(ember, user->x, top, user->z);
-    ember->variant = IN_FLIGHT;
+    SET_VELOCITY(ember, (Trig_Sin(angle) * speed) >> 6,
+                 (s32)INTtoFIXED((Random16() & 127) - 16) >> 6,
+                 (Trig_Cos(angle) * speed) >> 6);
+    SET_POSITION(ember, user->x, bodyTop, user->z);
+    ember->variant = FIRE_EMBER_IN_FLIGHT;
   }
 
   work->cameraDelta = 0;
-  work->cameraPhase = 0;
+  work->cameraPhase = CAMERA_PHASE_IDLE;
   Task_Add(BattleCamera_ApplyPhasedDelta, TASK_PASS_VBLANK);
-  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE,
-                      CANVAS_FADE_THREE_QUARTERS); // each transfer fades the
-                                                   // canvas to 3/4: a trail
-  Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
+  EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != (gFire_Counts[args->variant] >> 1) + 132; frame++) {
+    // The camera turns while the embers fly.
     if (frame > 16 && frame < 80)
       work->cameraDelta = TRIG_TURN / 256;
     else
@@ -78,37 +83,31 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
     if (frame == (gFire_Counts[args->variant] >> 1) + 108)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
     BattleCamera_SetViewFar(0, 0, 0, BATTLE_ZOOM_NORMAL);
-    Matrix_Initialize();
-    Matrix_SetLookAt(camera->eye, camera->focus);
+    EFFECT_VIEW_FROM_CAMERA(camera);
 
     // The embers in flight, two more each frame.
     for (i = 0; i != gFire_Counts[args->variant]; i++) {
-      struct Particle *ember = &EMBERS[i];
-      s32 start;
+      struct Particle *ember = &PARTICLES[i];
+      s32 launchFrame;
 
-      start = i / 2;
-      if (frame > start && ember->variant == IN_FLIGHT) {
+      launchFrame = i / 2;
+      if (frame > launchFrame && ember->variant == FIRE_EMBER_IN_FLIGHT) {
         s32 size;
 
-        // Depth 160-799 gives sizes 10 down to 1.
-        EffectPosition_ProjectPoint((s32 *)ember, &screen);
+        EffectPosition_ProjectPoint(ember, &screen);
         screen.x >>= 1;
-        if (screen.depth < 160)
-          screen.depth = 160;
-        if (screen.depth > 799)
-          screen.depth = 799;
-        size = 10 - (screen.depth - 160) / 64;
-        draw[frame < start + 48 ? 1 : 0](
-            canvas, sheet + gBattleEffect_MotePictures[size - 1],
-            screen.x - size / 2, screen.y - size, size, size * 2);
+        CLAMP(screen.depth, FIRE_EMBER_DEPTH_NEAR, FIRE_EMBER_DEPTH_FAR);
+        size = MOTE_PICTURES -
+               (screen.depth - FIRE_EMBER_DEPTH_NEAR) / FIRE_EMBER_DEPTH_STEP;
+        EFFECT_DRAW_MOTE(draw[frame < launchFrame + 48 ? 1 : 0], canvas, sheet,
+                         screen.x, screen.y, size);
         ember->x += ember->velocityX;
         ember->y += ember->velocityY;
         ember->z += ember->velocityZ;
       }
 
-      // After 48 frames it steers toward its target by 1/512 of the
-      // distance a frame.
-      if (frame > start + 48 && ember->variant == IN_FLIGHT) {
+      // An ember homes in on its target.
+      if (frame > launchFrame + 48 && ember->variant == FIRE_EMBER_IN_FLIGHT) {
         struct MotionObject *target;
         s32 vx;
         s32 vy;
@@ -119,14 +118,13 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
         vx = ember->velocityX += (target->x - ember->x) >> 9;
         vy = ember->velocityY += (target->y - ember->y) >> 9;
         vz = ember->velocityZ += (target->z - ember->z) >> 9;
-        if (frame < start + 85) {
-          ember->velocityX = vx * 60 / DAMPING_SCALE;
-          ember->velocityY = vy * 60 / DAMPING_SCALE;
-          ember->velocityZ = vz * 60 / DAMPING_SCALE;
+        if (frame < launchFrame + 85) {
+          SET_VELOCITY(ember, vx * 60 / DAMPING_SCALE, vy * 60 / DAMPING_SCALE,
+                       vz * 60 / DAMPING_SCALE);
         }
 
-        // Below the ground it lands: it keeps its screen position for the
-        // flare, its target flashes in palette 10 and the screen shakes.
+        // Below the ground it hits, and its flare shows where it was on
+        // screen.
         if (ember->y < 0) {
           ember->variant = 0;
           ember->x = screen.x;
@@ -143,25 +141,34 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
       }
     }
 
-    // The landing flares: a picture every two frames, six in all.
+    // The impact flares.
     for (i = 0; i != gFire_Counts[args->variant]; i++) {
-      struct Particle *ember = &EMBERS[i];
+      struct Particle *ember = &PARTICLES[i];
 
-      if (ember->variant >= 0 && ember->variant < 12) {
-        s32 cel;
+      if (ember->variant >= 0 && ember->variant < FIRE_FLARE_FRAMES) {
+        s32 picture;
         u32 width;
 
-        cel = ember->variant / 2;
-        draw[1](canvas, work->sheet + gFire_FlarePictures[cel],
-                ember->x - ((width = gFire_FlareWidths[cel]) >> 1),
-                ember->y + gFire_FlareBiasY[cel] - 56, width,
-                gFire_FlareHeights[cel]);
+        picture = ember->variant / 2;
+        // UB: width is assigned in one argument and read in another.
+#ifdef UBFIX
+        width = gFire_FlareWidths[picture];
+        draw[1](canvas, work->sheet + gFire_FlarePictures[picture],
+                ember->x - (width >> 1),
+                ember->y + gFire_FlareBiasY[picture] - 56, width,
+                gFire_FlareHeights[picture]);
+#else
+        draw[1](canvas, work->sheet + gFire_FlarePictures[picture],
+                ember->x - ((width = gFire_FlareWidths[picture]) >> 1),
+                ember->y + gFire_FlareBiasY[picture] - 56, width,
+                gFire_FlareHeights[picture]);
+#endif
         ember->variant++;
       }
     }
 
-    if (work->cameraPhase == 0)
-      work->cameraPhase = 1;
+    if (work->cameraPhase == CAMERA_PHASE_IDLE)
+      work->cameraPhase = CAMERA_PHASE_FRAME_DONE;
     BattleCamera_Shake(8, 8);
     EFFECT_END_FRAME(work);
   }
@@ -171,4 +178,10 @@ void BattleEffect_RunFire(struct BattleEffectParams *args) {
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();
 }
-#undef EMBERS
+
+#undef FIRE_EMBERS
+#undef FIRE_EMBER_IN_FLIGHT
+#undef FIRE_EMBER_DEPTH_NEAR
+#undef FIRE_EMBER_DEPTH_STEP
+#undef FIRE_EMBER_DEPTH_FAR
+#undef FIRE_FLARE_FRAMES

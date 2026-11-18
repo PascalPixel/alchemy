@@ -48,27 +48,32 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
   return 0;
 }
 
-/// The Broken Seal's Scene_FadeColorFromWhite, playing cue 298 where that
-/// plays 288: turns the backdrop (on the world map, a colour of palette 15)
-/// white, finishes the screen transition and fades that colour to black
-/// over 16 frames.
+/// Starts the transition into a random battle: plays the scene's battle music
+/// and the encounter sounds, closes the screen and flashes the backdrop white,
+/// fading it to black over 16 frames.
 void Field_StartEncounterTransition(s32 unused) {
   struct FieldWork *work;
   s32 i;
-  s32 c;
+  s32 level;
 
   work = Ram_HeapSlots->fieldWork;
   Sound_PlayFar(gMainRoutineWork.battleMusic);
   Sound_PlayFar(SE_STOP_EXIT_SE);
   Sound_PlayFar(SE_BEAST_CRY);
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    Io_Write16(RGB_WHITE, (u16 *)&BG_PLTT_COLOR(15, 3));
+    // On the World Map the flash colours the window palette's black instead,
+    // and the screen closes toward the centre line from its middle; a field
+    // scene closes with WINDOW_TRANSITION_LEADER_INVERSE.
+    Io_Write16(RGB_WHITE,
+               (u16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_COLOR_BLACK));
     ScreenTransition_Finish(SCENE_TRANSITION(TRANSITION_CENTRE_LINE, 1), 16);
     work->transitionActive = 0;
     wait(16);
+    // Step the white down by 2 a frame: 30 to 0 in 16 frames.
     for (i = 0; i < 16; i++) {
-      c = 30 - i * 2;
-      Io_Write16(RGB(c, c, c), (u16 *)&BG_PLTT_COLOR(15, 3));
+      level = 30 - i * 2;
+      Io_Write16(RGB(level, level, level),
+                 (u16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_COLOR_BLACK));
       wait(1);
     }
   } else {
@@ -79,8 +84,8 @@ void Field_StartEncounterTransition(s32 unused) {
     work->transitionActive = 0;
     wait(16);
     for (i = 0; i < 16; i++) {
-      c = 30 - i * 2;
-      Io_Write16(RGB(c, c, c), &PLTT_BACKDROP);
+      level = 30 - i * 2;
+      Io_Write16(RGB(level, level, level), &PLTT_BACKDROP);
       wait(1);
     }
   }
@@ -91,7 +96,7 @@ void *Sprite_AddAnimationFar(void *, s32);
 /// The Broken Seal's Exit_PrepareAnimation for any actor: centres actor id on
 /// its cell at the cell's south edge, stops it, hides its shadow and plays
 /// ANIM_LEADER_LEAVE_ALTERNATE (side 1) or ANIM_LEADER_LEAVE over 18 frames,
-/// its sprite gaining the doorway part (metadata 267).
+/// its sprite gaining the doorway (SPRITE_DOORWAY) as a second part.
 void Exit_PrepareActorAnimation(s32 id, s32 side) {
   struct Actor *actor;
   struct Sprite *sprite;
@@ -121,10 +126,9 @@ void Exit_PrepareActorAnimation(s32 id, s32 side) {
   }
 }
 
-/// Starts the leader's animation for leaving through an exit: centres it on
-/// its tile, at the tile's south edge, stops it and gives it the animation's
-/// mode, then waits 18 frames. The leader's sprite gains a second part
-/// (metadata 267) for it.
+/// Starts the leader's animation for leaving through an exit: centres it on its
+/// cell, at the cell's south edge, stops it and plays animation over 18 frames,
+/// its sprite gaining the doorway (SPRITE_DOORWAY) as a second part.
 void Exit_PrepareAnimation(s32 animation) {
   struct Actor *actor;
   struct Sprite *sprite;
@@ -143,7 +147,6 @@ void Exit_PrepareAnimation(s32 animation) {
     doorway->colorMode = hidden;
     // Keep the cell and put the leader at its middle in x and its south edge in
     // z.
-    // Each coordinate read and written as the word it is.
     actor->x.fixed = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
     actor->z.fixed = (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(16);
     actor->velocityX = cleared;
@@ -171,7 +174,7 @@ void Exit_StartStairsDown(void) {
 
 /// Plays the leader's arrival animation through an exit: centred on its cell at
 /// the cell's north edge, the leader plays animation for 30 frames, loses the
-/// extra sprite animation (sprite 267) and walks 8 pixels south.
+/// doorway (SPRITE_DOORWAY) and walks 8 pixels south.
 void Entrance_EndArrivalAnimation(s32 animation) {
   struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
   struct Sprite *spriteAnimation = leader->sprite;
@@ -242,8 +245,9 @@ s32 Entrance_PlayArrival(void) {
   return result;
 }
 
-/// The exit of kind 0x50: gives the leader's sprite a layer of sprite 268,
-/// drawn transparent (SPRITE_COLOR_HIDDEN).
+/// An EXIT_STYLE_HIDDEN_LAYER exit: gives the leader's sprite a second part,
+/// sprite 268, a band over the top 8 rows of its 32 by 32 picture, drawn in
+/// SPRITE_COLOR_HIDDEN.
 void Exit_AddHiddenLeaderLayer(void) {
   struct Actor *actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
   struct SpriteAnimation *layer = Sprite_AddAnimationFar(actor->sprite, 268);

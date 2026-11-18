@@ -712,6 +712,9 @@ extern s16 gShrineOfTheSeaGod_PushedActors[];
 /// How far the water carries the leader between the island and the statue
 /// room, in pixels, half a pixel every two frames.
 #define STATUE_ROOM_RISE 50
+/// Sinking back to the island, the steps of half a pixel left when the screen
+/// starts to close.
+#define STATUE_ROOM_CLOSE_STEPS 10
 
 /// Arriving from the island on the water: the leader and the ground layer start
 /// STATUE_ROOM_RISE pixels down and rise into place as the screen opens.
@@ -787,7 +790,7 @@ void ShrineOfTheSeaGod_SinkWithWater(void) {
     actor->groundHeight -= toFIXED(1) / 2;
     layer->offsetY -= toFIXED(1) / 2;
     wait(2);
-    if (i == STATUE_ROOM_RISE * 2 - 10) {
+    if (i == STATUE_ROOM_RISE * 2 - STATUE_ROOM_CLOSE_STEPS) {
       gFieldWork->transition =
           SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_CIRCLE);
       Event_FinishScreenTransition();
@@ -2014,7 +2017,7 @@ void ShrineOfTheSeaGod_PlaceFootprints(void) {
     Actor_SetAnimationById(id, 0);
     Actor_SetSpritePriority(id, 3);
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    Actor_SetSpriteColor(Actor_GetById(id), 12);
+    Actor_SetSpriteColor(Actor_GetById(id), SPRITE_COLOR_DARK);
     sprite = actor->sprite;
     actor->x.fixed = spot->x;
     actor->z.fixed = spot->z;

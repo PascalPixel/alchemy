@@ -134,7 +134,7 @@ FIXED gColosso_WarriorStartX BSS_DATA;
 
 s32 Scene_Initialize(void);
 extern const s32 gColosseumNavampaMatch_SidewalkLogOffBelt[];
-extern const s8 gColosseumNavampaMatch_WallWedgePattern[][6];
+extern const s8 gColosseumNavampaMatch_WallWedgeCycle[][6];
 extern const u16 gColosseumNavampaMatch_FacingAngles[];
 extern const s32 gColosseumNavampaMatch_SidewalkLogScript[];
 extern const u8 gColosso_LetteringPaletteOffsets[];
@@ -145,7 +145,7 @@ extern s32 gColosso_PrizeScript[];
 extern struct SceneEntrance gColosseumNavampaMatchEntrances[];
 extern u32 gColosseumNavampaMatchExits[];
 extern struct ActorPlacement gColosseumNavampaMatchActorPlacements[];
-extern s32 gColosseumNavampaMatch_WallWedgePatternIndex;
+extern s32 gColosseumNavampaMatch_WallWedgeStep;
 extern u32 gColosseumNavampaMatch_WallWedgeTimer;
 extern struct Trigger gColosseumNavampaMatchTriggers[];
 extern s32 gColosseumNavampaMatch_OpponentAfterBattle[];
@@ -310,7 +310,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gColosseumNavampaMatchActorPlacements;
 }
 
-/// The Wall Wedge's task cycles its pistons through their four patterns.
+/// The Wall Wedge's task steps its pistons through their cycle, a step every 18
+/// frames.
 static void ColosseumNavampaMatch_UpdateWallWedge(void) {
   struct FieldWork *work = gFieldWork;
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
@@ -319,12 +320,11 @@ static void ColosseumNavampaMatch_UpdateWallWedge(void) {
   s32 kind;
 
   if (gColosseumNavampaMatch_WallWedgeTimer == 0) {
-    gColosseumNavampaMatch_WallWedgePatternIndex =
-        (gColosseumNavampaMatch_WallWedgePatternIndex + 1) & 3;
+    gColosseumNavampaMatch_WallWedgeStep =
+        (gColosseumNavampaMatch_WallWedgeStep + 1) & 3;
     for (i = ACTOR_FIRST_PISTON; i <= ACTOR_LAST_PISTON; i++) {
-      kind = gColosseumNavampaMatch_WallWedgePattern
-          [gColosseumNavampaMatch_WallWedgePatternIndex]
-          [i - ACTOR_FIRST_PISTON];
+      kind = gColosseumNavampaMatch_WallWedgeCycle
+          [gColosseumNavampaMatch_WallWedgeStep][i - ACTOR_FIRST_PISTON];
       Actor_SetAnimation(i, kind);
       Actor_SetAnimation(i + PISTON_COUNT, kind + PISTON_TIP_ANIMATIONS);
       MapGrid_CopyCellAttributeRect(32, 11, 1, 2,
@@ -336,13 +336,12 @@ static void ColosseumNavampaMatch_UpdateWallWedge(void) {
     }
     Actor_SetAnimation(
         ACTOR_WALL_OPERATOR,
-        gColosseumNavampaMatch_WallWedgePattern
-            [gColosseumNavampaMatch_WallWedgePatternIndex][PISTON_COUNT]);
+        gColosseumNavampaMatch_WallWedgeCycle
+            [gColosseumNavampaMatch_WallWedgeStep][PISTON_COUNT]);
   } else {
     for (i = ACTOR_FIRST_PISTON; i <= ACTOR_LAST_PISTON; i++) {
-      kind = gColosseumNavampaMatch_WallWedgePattern
-          [gColosseumNavampaMatch_WallWedgePatternIndex]
-          [i - ACTOR_FIRST_PISTON];
+      kind = gColosseumNavampaMatch_WallWedgeCycle
+          [gColosseumNavampaMatch_WallWedgeStep][i - ACTOR_FIRST_PISTON];
       // The leader stands in the piston's column, which starts 48 pixels
       // west of i * PISTON_SPACING.
       if ((actor->x.fixed - toFIXED(i * PISTON_SPACING) > -toFIXED(50) &&
@@ -359,13 +358,13 @@ static void ColosseumNavampaMatch_UpdateWallWedge(void) {
   }
 }
 
-/// Resets the Wall Wedge's pistons to their first pattern.
+/// Resets the Wall Wedge's pistons to the first step of their cycle.
 static void ColosseumNavampaMatch_ResetWallWedge(void) {
   MapTaskEntry entry;
 
   gColosseumNavampaMatch_WallWedgeTimer = 0;
   entry = ColosseumNavampaMatch_UpdateWallWedge;
-  gColosseumNavampaMatch_WallWedgePatternIndex = 0;
+  gColosseumNavampaMatch_WallWedgeStep = 0;
   Task_Remove(entry);
   entry();
 }
@@ -375,15 +374,15 @@ static void ColosseumNavampaMatch_StartWallWedge(void) {
   Task_AddFrame(ColosseumNavampaMatch_UpdateWallWedge, TASK_PASS_FRAME);
 }
 
-/// Waits, at most two seconds, for the Wall Wedge pattern its attendant's
-/// demonstration passes through.
+/// Waits, at most two seconds, for the step of the Wall Wedge's cycle that its
+/// attendant's demonstration passes through.
 static void ColosseumNavampaMatch_WaitForWallWedgeOpening(void) {
   s32 frames;
 
   wait(10);
 
   frames = 0;
-  while (gColosseumNavampaMatch_WallWedgePatternIndex != 3 ||
+  while (gColosseumNavampaMatch_WallWedgeStep != 3 ||
          gColosseumNavampaMatch_WallWedgeTimer != 1) {
     wait(1);
     frames++;
@@ -649,7 +648,7 @@ static void ColosseumNavampaMatch_RollLongLog(void) {
   FIXED nextX;
   s32 column;
   FIXED acceleration;
-  s32 mode;
+  s32 rollAnimation;
   s32 step;
   s32 ahead[3];
 
@@ -671,7 +670,7 @@ static void ColosseumNavampaMatch_RollLongLog(void) {
     goto far;
   }
   if (gKeysHeld & KEY_LEFT) {
-    mode = 2;
+    rollAnimation = 2;
     step = -8;
     for (;;) {
       nextX = x - toFIXED(16);
@@ -686,7 +685,7 @@ static void ColosseumNavampaMatch_RollLongLog(void) {
     if (!(gKeysHeld & KEY_RIGHT)) {
       return;
     }
-    mode = 3;
+    rollAnimation = 3;
     step = 8;
     for (;;) {
       nextX = x + toFIXED(16);
@@ -709,7 +708,7 @@ static void ColosseumNavampaMatch_RollLongLog(void) {
   log->speedLimit = toFIXED(1) / 2;
   acceleration = toFIXED(1) / 5;
   log->acceleration = acceleration;
-  Actor_SelectAnimation(log, mode);
+  Actor_SelectAnimation(log, rollAnimation);
   FieldActor_SetMoveTargetFX(log, x, 0, z);
   Event_Wait(6);
   Actor_SetAnimation(actorId, ANIM_WALK);
@@ -778,14 +777,14 @@ static void ColosseumNavampaMatch_ForceSidewalkLog(void) {
   GameFlag_Set(FLAG_SIDEWALK_LOG_KNOCKED_OFF);
 }
 
-/// Halt on the Wall Wedge's operator stops the pistons at their next open
-/// pattern (FLAG_WALL_WEDGE_HALTED).
+/// Halt on the Wall Wedge's operator stops the pistons at their next open step
+/// (FLAG_WALL_WEDGE_HALTED).
 static void ColosseumNavampaMatch_HaltWall(void) {
   FieldPsynergy_HaltActor(ACTOR_WALL_OPERATOR);
   GameFlag_Set(FLAG_WALL_WEDGE_HALTED);
   wait(10);
-  while (gColosseumNavampaMatch_WallWedgePatternIndex != 1 &&
-         gColosseumNavampaMatch_WallWedgePatternIndex != 3)
+  while (gColosseumNavampaMatch_WallWedgeStep != 1 &&
+         gColosseumNavampaMatch_WallWedgeStep != 3)
     wait(1);
   wait(1);
   Task_Remove(ColosseumNavampaMatch_UpdateWallWedge);
@@ -1027,7 +1026,7 @@ s32 Scene_Initialize(void) {
     }
   }
 
-  // Halt preserves a stationary wall; otherwise restart its pattern cycle.
+  // Halt preserves a stationary wall; otherwise restart its cycle.
   if (GameFlag_Get(FLAG_WALL_WEDGE_HALTED) != 0) {
     for (i = ACTOR_FIRST_PISTON; i <= ACTOR_LAST_PISTON; i++) {
       actor = Actor_Get(i);
@@ -1100,8 +1099,8 @@ s32 Scene_Initialize(void) {
   Colosso_ShowItemIcon(ACTOR_PRIZE_B, ITEM_HUNTERS_SWORD);
   Actor_SetSpriteColorById(ACTOR_OPPONENT, SPRITE_COLOR_RBG);
 
-  // Entrances: the race (1), the friends' turns, the tour, and the end
-  // of Colosso after a win (4) or a loss (5).
+  // Entrances: the race, the friends' turns, the tour, and the end of Colosso
+  // after a win or a loss.
   switch (gMainRoutineWork.entrance) {
   case COLOSSEUM_NAVAMPA_MATCH_RACE_FROM_LEND_A_HAND:
     Colosso_StartRaceGauge(ACTOR_PARTY_LEADER, ACTOR_OPPONENT, 6, toFIXED(1512),
@@ -1163,11 +1162,16 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
+/// A drifting Z's two steps, timer (east) and userValue (up), are steps of a
+/// 256th of a pixel a frame.
+#define SLEEP_Z_STEPS_PER_PIXEL 256
+
 /// Advances one of the particles that rise from the sleeping Isaac after the
 /// last match.
 static s32 ColosseumNavampaMatch_AdvanceSleepZ(struct Actor *particle) {
-  particle->x.fixed += particle->timer * 256;
-  particle->y.fixed += (s16)particle->userValue * 256;
+  particle->x.fixed += particle->timer * (toFIXED(1) / SLEEP_Z_STEPS_PER_PIXEL);
+  particle->y.fixed +=
+      (s16)particle->userValue * (toFIXED(1) / SLEEP_Z_STEPS_PER_PIXEL);
   particle->scaleX += FIXED_ONE / 40;
   particle->scaleY += FIXED_ONE / 40;
   particle->timer += 5;
@@ -1222,11 +1226,10 @@ static void ColosseumNavampaMatch_SpawnSleepZ(void) {
     particle->y.fixed = height;
     particle->targetY = height;
   }
-  // Its drift east and rise in 1/256 pixels a frame (as 8.8 steps,
-  // ColosseumNavampaMatch_AdvanceSleepZ): it drifts ever faster and rises
-  // ever slower.
+  // It drifts east ever faster and rises ever slower, from half a pixel a
+  // frame.
   particle->timer = 25;
-  particle->userValue = 128;
+  particle->userValue = SLEEP_Z_STEPS_PER_PIXEL / 2;
   Actor_SetScript(actorId, gColosseumNavampaMatch_SleepZScript);
 }
 
@@ -1644,7 +1647,7 @@ static void ColosseumNavampaMatch_TalkToWallWedgeAttendant(s32 guideId) {
       ColosseumNavampaMatch_WaitForWallWedgeOpening();
       Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.5);
       Colosso_WalkActorTo(ACTOR_PARTY_LEADER, 680, 200);
-      for (promptResult = 0; promptResult < 240 &&
+      for (promptResult = 0; promptResult < 4 * FRAMES_PER_SECOND &&
                              work->raisedTrigger != PISTON_ANIMATION_PUSH_OUT;
            promptResult++)
         wait(1);
@@ -1910,10 +1913,10 @@ const s32 gColosseumNavampaMatch_SidewalkLogOffBelt[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// The Wall Wedge's four patterns.
+/// The Wall Wedge's cycle of four steps.
 ///
 /// Each holds each piston's animation, west to east, then the operator's.
-const s8 gColosseumNavampaMatch_WallWedgePattern[][6] = {
+const s8 gColosseumNavampaMatch_WallWedgeCycle[][6] = {
     {PISTON_ANIMATION_PULL_IN, PISTON_ANIMATION_PUSH_OUT,
      PISTON_ANIMATION_PULL_IN, PISTON_ANIMATION_PUSH_OUT,
      PISTON_ANIMATION_PULL_IN, 11},
@@ -2003,9 +2006,9 @@ struct ActorPlacement gColosseumNavampaMatchActorPlacements[] = {
         0, 0, 0, FACING_WEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         216, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_WHITE_PLATFORM, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_WHITE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         152, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_WHITE_PLATFORM, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_WHITE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         216, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         88, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2019,33 +2022,33 @@ struct ActorPlacement gColosseumNavampaMatchActorPlacements[] = {
         1272, 0, 168, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         1304, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_PISTON, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_PISTON, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         536, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_PISTON, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_PISTON, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         568, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_PISTON, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_PISTON, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         600, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_PISTON, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_PISTON, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         632, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_PISTON, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_PISTON, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         664, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_PISTON, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_PISTON, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         536, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_PISTON, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_PISTON, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         568, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_PISTON, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_PISTON, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         600, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_PISTON, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_PISTON, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         632, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_PISTON, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_PISTON, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         664, 0, 216, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         720, 0, 216, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         792, 0, 194, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_STANDING_LOG, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_STANDING_LOG, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         1080, 0, 200, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7,
+    ACTOR_PLACEMENT(SPRITE_LOG_NORTH_SOUTH, CONDITION_ALWAYS, MOVEMENT_TYPE_RESET_ACTION,
         1208, 0, 176, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SOLDIER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
         136, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -2074,7 +2077,7 @@ struct ActorPlacement gColosseumNavampaMatchActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-s32 gColosseumNavampaMatch_WallWedgePatternIndex = 0;
+s32 gColosseumNavampaMatch_WallWedgeStep = 0;
 
 u32 gColosseumNavampaMatch_WallWedgeTimer = 0;
 
@@ -2117,7 +2120,8 @@ struct Trigger gColosseumNavampaMatchTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FREE_CLIMB_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogStandingForLongPeriodsOfTime) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MOVING_SIDEWALK_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogIWasUpAllNightTrying) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LOG_ROLLING_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColossoLogSomeTouristToldMeILook) },
-    { TRIGGER_RAISED, 99, CONDITION_ALWAYS, EVENT(Colosso_TakePlaceForMatch) },
+    { TRIGGER_RAISED, COLOSSO_TAKE_PLACE_TRIGGER, CONDITION_ALWAYS,
+      EVENT(Colosso_TakePlaceForMatch) },
     { TRIGGER_TABLE_END },
 };
 

@@ -40,10 +40,10 @@ struct MeshVertex {
 #define CATASTROPHE_BOLT_TEXTURE_COUNT 4
 
 /// Catastrophe's sprites, all 32x32: the chained demon (ChainedDemonTiles),
-/// its mirrored copy's six, the golden scales, and the eleven of the armour
-/// (the purple armour's five, then the white spikes' six). The demon's lowest
-/// four are copies of its top row, sharing their tiles: those show the sheet's
-/// last four pictures, and the top row's own from frame 339 to 450.
+/// its mirrored copy's six, the golden shield, and the eleven of the sword (its
+/// hilt's five, then its white blade's six). The demon's lowest four are copies
+/// of its top row, sharing their tiles: those show the sheet's last four
+/// pictures, and the top row's own from frame 339 to 450.
 #define CATASTROPHE_DEMON 0
 #define CATASTROPHE_DEMON_TILED 24
 #define CATASTROPHE_DEMON_SWAPPED 24
@@ -51,14 +51,14 @@ struct MeshVertex {
 #define CATASTROPHE_DEMON_COUNT 28
 #define CATASTROPHE_MIRRORED_DEMON 28
 #define CATASTROPHE_MIRRORED_DEMON_COUNT 6
-#define CATASTROPHE_SCALES 34
-#define CATASTROPHE_SCALES_COUNT 5
-#define CATASTROPHE_ARMOUR 39
-#define CATASTROPHE_PURPLE_ARMOUR_COUNT 5
-#define CATASTROPHE_SPIKES 44
-#define CATASTROPHE_SPIKES_COUNT 6
-#define CATASTROPHE_ARMOUR_COUNT                                               \
-  (CATASTROPHE_PURPLE_ARMOUR_COUNT + CATASTROPHE_SPIKES_COUNT)
+#define CATASTROPHE_SHIELD 34
+#define CATASTROPHE_SHIELD_COUNT 5
+#define CATASTROPHE_SWORD 39
+#define CATASTROPHE_HILT_COUNT 5
+#define CATASTROPHE_BLADE 44
+#define CATASTROPHE_BLADE_COUNT 6
+#define CATASTROPHE_SWORD_COUNT                                                \
+  (CATASTROPHE_HILT_COUNT + CATASTROPHE_BLADE_COUNT)
 #define CATASTROPHE_SPRITES 50
 /// ChainedDemonTiles' colours, OBJ palette 0 to 191.
 #define CATASTROPHE_DEMON_COLORS 192
@@ -68,12 +68,20 @@ struct MeshVertex {
   (CATASTROPHE_DEMON_TILED * OBJ_32X32_8BPP_BYTES)
 #define CATASTROPHE_DEMON_KEPT_PICTURES                                        \
   (CATASTROPHE_DEMON_SWAPPED_COUNT * OBJ_32X32_8BPP_BYTES)
-/// The OBJ palettes of the scales, the purple armour and the white spikes.
-#define CATASTROPHE_SCALES_PALETTE 12
-#define CATASTROPHE_PURPLE_ARMOUR_PALETTE 13
-#define CATASTROPHE_SPIKES_PALETTE 14
+/// The OBJ palettes of the shield, the sword's hilt and its blade.
+#define CATASTROPHE_SHIELD_PALETTE 12
+#define CATASTROPHE_HILT_PALETTE 13
+#define CATASTROPHE_BLADE_PALETTE 14
 /// The frames of act one, unless A or B skips it.
 #define CATASTROPHE_ACT_ONE_FRAMES 637
+/// As the demon swings its sword (frames 472 to 485), the shield moves right
+/// and the sword left by CATASTROPHE_SWING_DRIFT a frame, less a sixteenth of a
+/// pixel more each frame, and both sink CATASTROPHE_SWING_SINK a frame.
+#define CATASTROPHE_SWING_DRIFT 120000
+#define CATASTROPHE_SWING_SINK 75536
+/// From frame 506 the view dives after the sword's blade, the demon rising out
+/// of sight, at a speed that grows to twice this a frame.
+#define CATASTROPHE_DIVE_SPEED_MAX 120000
 /// Where the objects' first 240 colours are kept in the effect's pictures,
 /// which the objects fade from.
 #define CATASTROPHE_SAVED_OBJ_PALETTE 20480
@@ -82,6 +90,9 @@ struct MeshVertex {
 /// after 242 on which the canvas flashes white.
 #define CATASTROPHE_FLASHES 18
 #define CATASTROPHE_CANVAS_FLASHES 17
+/// The level the canvas flashes to: on those frames, every other frame from 537
+/// to 592, and at 630 and 634.
+#define CATASTROPHE_FLASH_LEVEL 31
 /// Act one's three strikes, each of up to CATASTROPHE_STRIKE_STEPS steps (their
 /// frames' rows one longer, for the 65535 that ends them), and the sparks each
 /// step throws.
@@ -100,11 +111,20 @@ struct MeshVertex {
 #define CATASTROPHE_SEAL_TILT 18768
 #define CATASTROPHE_SEAL_SIDE_TILT 19712
 #define CATASTROPHE_SEAL_SCALE_MAX 140600
+/// The swirl over the seal rises this much a frame for its first
+/// CATASTROPHE_SWIRL_RISE_FRAMES frames.
+#define CATASTROPHE_SWIRL_RISE 120000
+#define CATASTROPHE_SWIRL_RISE_FRAMES 7
+/// The seal's scale as act two opens, under the orb, before it swells.
+#define CATASTROPHE_AERIAL_SEAL_SCALE 85536
 /// How fast the rings of fire grow, a frame.
 #define CATASTROPHE_RING_GROWTH 12192
 /// Act two's bolts, and the sparks after them in work->particles.
 #define CATASTROPHE_BOLTS 16
 #define CATASTROPHE_SPARKS 48
+/// Late in act two the canvas is cleared each frame to this pale level, the
+/// land washing out, and then to the brightest, white.
+#define CATASTROPHE_WASH_LEVEL 16
 /// Act three's buffers in the map cell buffer: the smoke band's corners at its
 /// start, their transformed vertices, its strip mesh, LightningBoltSheet's four
 /// bolts, and the particles: the flash bursts thrown off the band, then the
@@ -125,14 +145,18 @@ struct MeshVertex {
 /// The smoke band's rows of two corners, and its wave's phase a frame.
 #define CATASTROPHE_SWEEP_ROWS 12
 #define CATASTROPHE_SWEEP_WAVE 6096
+/// The sweep's scale, the smoke band's and the slash's, and the band's own
+/// further scale, turned upright.
+#define CATASTROPHE_SWEEP_SCALE 55536
+#define CATASTROPHE_BAND_SCALE 274144
 /// Act three opens CATASTROPHE_PAN pixels right of the battle and pans back at
 /// CATASTROPHE_PAN_SPEED pixels a frame, slowing to a stop from frame 62.
 #define CATASTROPHE_PAN 1088
 #define CATASTROPHE_PAN_SPEED 16
 
-/// Catastrophe: over a red sky the chained demon in golden armour spreads its
-/// wings and drives down a sword of light; the blade's orb falls on the land
-/// far below and bursts in a ring and a white flash; then violet lightning
+/// Catastrophe: over a red sky the chained demon with its golden shield spreads
+/// its wings and drives down a sword of light; the blade's orb falls on the
+/// land far below and bursts in a ring and a white flash; then violet lightning
 /// and smoke sweep in from the right over the foes. Holding A or B shortens
 /// each act.
 ///
@@ -212,7 +236,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   // twice across: its upper 15 rows are the battle background's left half
   // (from tile 512, at BG character block 2), its lower 15 the right half.
   {
-    u16 *map = (u16 *)BG_SCREEN_BLOCK(31);
+    u16 *map = (u16 *)BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN);
 
     {
       s32 row;
@@ -279,17 +303,17 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     u8 *cells;
 
     resource = Resource_GetTableEntry(RESOURCE_GOLDEN_SCALES_TILES);
-    Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(CATASTROPHE_SCALES_PALETTE, 0),
+    Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(CATASTROPHE_SHIELD_PALETTE, 0),
                     resource, PALETTE_BANK_BYTES);
     resource += PALETTE_BANK_BYTES;
     Decompress_TaggedLz(resource, work->sheet);
     cells = work->sheet;
-    for (i = 0; i != CATASTROPHE_SCALES_COUNT;
+    for (i = 0; i != CATASTROPHE_SHIELD_COUNT;
          cells += OBJ_32X32_4BPP_BYTES, i++) {
       obj = EffectSprite_CreateWithTiles(
-          32, 32, OBJ_SIZE_32X32, OBJ_PALETTE(CATASTROPHE_SCALES_PALETTE));
+          32, 32, OBJ_SIZE_32X32, OBJ_PALETTE(CATASTROPHE_SHIELD_PALETTE));
       obj->image.priority = 1;
-      work->sprites[CATASTROPHE_SCALES + i] = obj;
+      work->sprites[CATASTROPHE_SHIELD + i] = obj;
       Iwram_CopyWords((void *)OBJ_TILES(obj), cells, OBJ_32X32_4BPP_BYTES);
     }
   }
@@ -297,19 +321,17 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     u8 *cells;
 
     resource = Resource_GetTableEntry(RESOURCE_PURPLE_ARMOUR_TILES);
-    Iwram_CopyWords(
-        (void *)&OBJ_PLTT_COLOR(CATASTROPHE_PURPLE_ARMOUR_PALETTE, 0), resource,
-        PALETTE_BANK_BYTES);
+    Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(CATASTROPHE_HILT_PALETTE, 0),
+                    resource, PALETTE_BANK_BYTES);
     resource += PALETTE_BANK_BYTES;
     Decompress_TaggedLz(resource, work->sheet);
     cells = work->sheet;
-    for (i = 0; i != CATASTROPHE_PURPLE_ARMOUR_COUNT;
+    for (i = 0; i != CATASTROPHE_HILT_COUNT;
          cells += OBJ_32X32_4BPP_BYTES, i++) {
-      obj = EffectSprite_CreateWithTiles(
-          32, 32, OBJ_SIZE_32X32,
-          OBJ_PALETTE(CATASTROPHE_PURPLE_ARMOUR_PALETTE));
+      obj = EffectSprite_CreateWithTiles(32, 32, OBJ_SIZE_32X32,
+                                         OBJ_PALETTE(CATASTROPHE_HILT_PALETTE));
       obj->image.priority = 1;
-      work->sprites[CATASTROPHE_ARMOUR + i] = obj;
+      work->sprites[CATASTROPHE_SWORD + i] = obj;
       Iwram_CopyWords((void *)OBJ_TILES(obj), cells, OBJ_32X32_4BPP_BYTES);
     }
   }
@@ -317,17 +339,17 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     u8 *cells;
 
     resource = Resource_GetTableEntry(RESOURCE_WHITE_SPIKES_TILES);
-    Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(CATASTROPHE_SPIKES_PALETTE, 0),
+    Iwram_CopyWords((void *)&OBJ_PLTT_COLOR(CATASTROPHE_BLADE_PALETTE, 0),
                     resource, PALETTE_BANK_BYTES);
     resource += PALETTE_BANK_BYTES;
     Decompress_TaggedLz(resource, work->sheet);
     cells = work->sheet;
-    for (i = 0; i != CATASTROPHE_SPIKES_COUNT;
+    for (i = 0; i != CATASTROPHE_BLADE_COUNT;
          cells += OBJ_32X32_4BPP_BYTES, i++) {
       obj = EffectSprite_CreateWithTiles(
-          32, 32, OBJ_SIZE_32X32, OBJ_PALETTE(CATASTROPHE_SPIKES_PALETTE));
+          32, 32, OBJ_SIZE_32X32, OBJ_PALETTE(CATASTROPHE_BLADE_PALETTE));
       obj->image.priority = 1;
-      work->sprites[CATASTROPHE_SPIKES + i] = obj;
+      work->sprites[CATASTROPHE_BLADE + i] = obj;
       Iwram_CopyWords((void *)OBJ_TILES(obj), cells, OBJ_32X32_4BPP_BYTES);
     }
   }
@@ -388,8 +410,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     } else if ((u32)(frame - 506) <= 47) {
       s32 v = (frame - 506) * 7296 + 50768;
 
-      if (v > 120000) {
-        v = 120000;
+      if (v > CATASTROPHE_DIVE_SPEED_MAX) {
+        v = CATASTROPHE_DIVE_SPEED_MAX;
       }
       camZ -= v << 1;
     }
@@ -413,8 +435,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
       drift = (420 - frame) * (toFIXED(1) / 16);
       sway += -toFIXED(1) / 4;
     } else if ((u32)(frame - 472) <= 13) {
-      drift = drift - ((frame - 472) << 12) + 120000;
-      sway += 75536;
+      drift = drift - ((frame - 472) << 12) + CATASTROPHE_SWING_DRIFT;
+      sway += CATASTROPHE_SWING_SINK;
     } else if ((u32)(frame - 486) <= 8) {
       drift += toFIXED(0.125);
       sway -= Trig_Sin((frame - 486) * (TRIG_TURN / 512));
@@ -637,7 +659,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           }
         }
       }
-      for (i = 0; i != CATASTROPHE_SCALES_COUNT; i++) {
+      for (i = 0; i != CATASTROPHE_SHIELD_COUNT; i++) {
         s32 row = i / 2;
 
         place[0] = INTtoFIXED((i - row * 2) * 32) + drift + toFIXED(72);
@@ -645,19 +667,19 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         if (place[2] > toFIXED(16) - 1) {
           if (place[2] <= toFIXED(168)) {
             Render_ApplyProjectedPlacementFar(
-                work->sprites[CATASTROPHE_SCALES + i], place,
+                work->sprites[CATASTROPHE_SHIELD + i], place,
                 (s32 *)&spriteScale, 0);
           }
         }
       }
-      for (i = 0; i != CATASTROPHE_ARMOUR_COUNT; i++) {
+      for (i = 0; i != CATASTROPHE_SWORD_COUNT; i++) {
         place[0] = INTtoFIXED(gCatastrophe_ArmourX[i]) - drift + toFIXED(132);
         place[2] =
             INTtoFIXED(gCatastrophe_ArmourZ[i]) + camZ + sway + toFIXED(29);
         if (place[2] > toFIXED(16) - 1) {
           if (place[2] <= toFIXED(168)) {
             Render_ApplyProjectedPlacementFar(
-                work->sprites[CATASTROPHE_ARMOUR + i], place,
+                work->sprites[CATASTROPHE_SWORD + i], place,
                 (s32 *)&spriteScale, 0);
           }
         }
@@ -726,7 +748,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
 
         if (frame == t + 242) {
           EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR,
-                              CANVAS_FILL_WORD(31));
+                              CANVAS_FILL_WORD(CATASTROPHE_FLASH_LEVEL));
         }
         if (frame == t + 243) {
           EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
@@ -735,7 +757,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
     }
     if ((u32)(frame - 537) <= 55) {
       if (frame & 1) {
-        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(31));
+        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR,
+                            CANVAS_FILL_WORD(CATASTROPHE_FLASH_LEVEL));
       } else {
         EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
       }
@@ -874,10 +897,12 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     }
     if (frame == 630) {
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(31));
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(CATASTROPHE_FLASH_LEVEL));
     }
     if (frame == 634) {
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(31));
+      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                           CANVAS_FILL_WORD(CATASTROPHE_FLASH_LEVEL));
     }
     if ((u32)(frame - 552) <= 43) {
       p = work->particles;
@@ -1020,10 +1045,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
             texture.pixels = Ram_MapCellBuffer + CATASTROPHE_RING;
             Matrix_Initialize();
             if (frame > 553) {
-              s32 v = (554 - frame) * 120000;
+              s32 v = (554 - frame) * CATASTROPHE_SWIRL_RISE;
 
-              if (v < -7 * 120000) {
-                v = -7 * 120000;
+              if (v < -CATASTROPHE_SWIRL_RISE_FRAMES * CATASTROPHE_SWIRL_RISE) {
+                v = -CATASTROPHE_SWIRL_RISE_FRAMES * CATASTROPHE_SWIRL_RISE;
               }
               Matrix_Translate(0, v, 0);
             }
@@ -1181,7 +1206,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
           if (frame > 153) {
             work->transferValue = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
           } else {
-            work->transferValue = CANVAS_FILL_WORD(16);
+            work->transferValue = CANVAS_FILL_WORD(CATASTROPHE_WASH_LEVEL);
           }
           Palette_BrightenBgEntries(1, 1, 1);
         }
@@ -1265,11 +1290,11 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         // Until frame 127 the seal turns under the orb, swelling from frame 72,
         // its triangles folding down from frame 64.
         if (frame <= 127) {
-          s32 s = 85536;
+          s32 s = CATASTROPHE_AERIAL_SEAL_SCALE;
           s32 a;
 
           if (frame > 71) {
-            s = (frame - 72) * (FIXED_ONE / 32) + 85536;
+            s = (frame - 72) * (FIXED_ONE / 32) + CATASTROPHE_AERIAL_SEAL_SCALE;
           }
           aerialShade = -16;
           if (frame > 119) {
@@ -1481,7 +1506,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
                     CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
     EFFECT_PRESENT_CANVAS(work);
     gBgScroll[1].x = savedScroll;
-    BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background, 24);
+    BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, battle->background,
+                             BACKGROUND_DARKENED_LEVEL);
     Palette_BrightenSavedBattleBg(-16, -16, -4);
     Resource_LoadAndDecompress(RESOURCE_SMOKE_BAND_SHEET, work->sheet, 1, 1);
     Resource_LoadAndDecompress(RESOURCE_CLAW_SLASH_SHEET,
@@ -1663,10 +1689,10 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         b = frame * (TRIG_TURN / 8);
         c = Trig_Sin(a);
         Matrix_Translate(slide, (c << 5) + Trig_Cos(b) * 24, 0);
-        Matrix_ScaleUniform(55536);
+        Matrix_ScaleUniform(CATASTROPHE_SWEEP_SCALE);
         Matrix_Push();
         Matrix_RotateZ(DEGtoANG(90));
-        Matrix_ScaleUniform(274144);
+        Matrix_ScaleUniform(CATASTROPHE_BAND_SCALE);
         Render_TransformVertices(cellBuffer, quads, 24);
         Render_DrawModelList(sweepModel);
         Matrix_Pop();

@@ -75,10 +75,12 @@
 #define UNIT_NONE 15
 /// What Scene_SelectPsynergyTarget chooses: a cell behavior as it is, an
 /// actor's id with PSYNERGY_TARGET_ACTOR, or PSYNERGY_TARGET_ANYWHERE.
-#define PSYNERGY_TARGET_ACTOR 0x100
-#define PSYNERGY_TARGET_ANYWHERE 0x200
-#define PSYNERGY_TARGET_KIND 0xff00 ///< which of the three
-#define PSYNERGY_TARGET_ID 0xff     ///< the cell behavior or actor
+enum PsynergyTarget {
+  PSYNERGY_TARGET_ACTOR = 0x100,
+  PSYNERGY_TARGET_ANYWHERE = 0x200,
+  PSYNERGY_TARGET_KIND = 0xff00, ///< which of the three
+  PSYNERGY_TARGET_ID = 0xff      ///< the cell behavior or actor
+};
 
 /// The running scene's entry table, at the start of gOverlayArea.
 #define SCENE_ENTRIES ((struct SceneEntries *)gOverlayArea)
@@ -159,7 +161,7 @@ struct ContainerRow {
 };
 /// ContainerRow.contents and FieldWork.scoopedItem: coins rather than an item,
 /// their count in the bits under it.
-#define CONTAINER_COINS 0x8000
+#define CONTAINER_COINS (1 << 15)
 /// The most treasure spots a scene places, each an actor from
 /// FIELD_TREASURE_ACTOR on.
 #define TREASURE_SPOT_MAX 16
@@ -168,7 +170,7 @@ struct ContainerRow {
 #define TREASURE_SPOT_ON_CELL 0x31415927
 /// gSceneItems: bit 14 marks a scene's header (SCENE_ITEMS), its scene number
 /// in the bits under it.
-#define SCENE_ITEMS_HEADER 0x4000
+#define SCENE_ITEMS_HEADER (1 << 14)
 
 /// A box of the map in whole cells (16.16 when compared) and the value it
 /// selects while its condition holds; a row with minX -1 ends the list.

@@ -339,29 +339,29 @@ void BattleBackground_SelectForMap(void) {
 /// Chooses the battle background for a World Map battle environment (enum
 /// BattleEnvironment; any other gives Sol Sanctum's) and sets
 /// gMainRoutineWork.battleBackground.
-void BattleBackground_SelectForEnvironment(s32 behavior) {
+void BattleBackground_SelectForEnvironment(s32 environment) {
   u16 backdrop;
 
-  switch (behavior - 1) {
-  case BATTLE_ENVIRONMENT_GRASSLAND - 1:
-    backdrop = (u32)RESOURCE_GRASSLAND_BACKDROP;
+  switch (environment) {
+  case BATTLE_ENVIRONMENT_GRASSLAND:
+    backdrop = RESOURCE_GRASSLAND_BACKDROP;
     break;
-  case BATTLE_ENVIRONMENT_FOREST - 1:
-    backdrop = (u32)RESOURCE_FOREST_BACKDROP;
+  case BATTLE_ENVIRONMENT_FOREST:
+    backdrop = RESOURCE_FOREST_BACKDROP;
     break;
-  case BATTLE_ENVIRONMENT_DESERT - 1:
-    backdrop = (u32)RESOURCE_DESERT_BACKDROP;
+  case BATTLE_ENVIRONMENT_DESERT:
+    backdrop = RESOURCE_DESERT_BACKDROP;
     break;
-  case BATTLE_ENVIRONMENT_BEACH - 1:
-  case BATTLE_ENVIRONMENT_SHALLOWS - 1:
-    backdrop = (u32)RESOURCE_BEACH_BACKDROP;
+  case BATTLE_ENVIRONMENT_BEACH:
+  case BATTLE_ENVIRONMENT_SHALLOWS:
+    backdrop = RESOURCE_BEACH_BACKDROP;
     break;
-  case BATTLE_ENVIRONMENT_SNOWFIELD - 1:
-  case BATTLE_ENVIRONMENT_SNOW_FOREST - 1:
-    backdrop = (u32)RESOURCE_SNOWFIELD_BACKDROP;
+  case BATTLE_ENVIRONMENT_SNOWFIELD:
+  case BATTLE_ENVIRONMENT_SNOW_FOREST:
+    backdrop = RESOURCE_SNOWFIELD_BACKDROP;
     break;
   default:
-    backdrop = (u32)RESOURCE_SOL_SANCTUM_BACKDROP;
+    backdrop = RESOURCE_SOL_SANCTUM_BACKDROP;
     break;
   }
   gMainRoutineWork.battleBackground = backdrop;

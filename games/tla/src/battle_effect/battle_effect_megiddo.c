@@ -59,8 +59,19 @@
 /// quarters.
 #define MEGIDDO_SUN_GROWTH toFIXED(0.01886)
 
-/// How many lines a frame the red haze scrolls at its fastest.
+/// How many lines a frame the red haze scrolls at its fastest; it slows to a
+/// stop at MEGIDDO_HAZE_REST_FRAME.
 #define MEGIDDO_HAZE_SPEED 16
+#define MEGIDDO_HAZE_REST_FRAME 72
+/// The red haze's colours: raised as it loads, its red by MEGIDDO_HAZE_FADE_RED
+/// and its green and blue by MEGIDDO_HAZE_FADE; lowered again as the sun
+/// falls, the red by MEGIDDO_HAZE_FALL_FADE_RED, below where it loaded.
+#define MEGIDDO_HAZE_FADE_RED 8
+#define MEGIDDO_HAZE_FADE 2
+#define MEGIDDO_HAZE_FALL_FADE_RED 12
+
+/// Once the sun strikes, the canvas is filled at this level after each copy.
+#define MEGIDDO_STRIKE_FILL_LEVEL 16
 
 /// The rings of light, FireRingTexture flashing out from the caster as the
 /// effect starts and from the target as the sun strikes (gMegiddo_Flash*).
@@ -229,7 +240,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                                RESOURCE_RED_HAZE_BACKDROP, 0);
       BattleEffect_BuildRepeatingTilemap();
-      Palette_BrightenBattleBg(8, 2, 2);
+      Palette_BrightenBattleBg(MEGIDDO_HAZE_FADE_RED, MEGIDDO_HAZE_FADE,
+                               MEGIDDO_HAZE_FADE);
       BattleEffect_SpawnObjects(1, SPRITE_SUN, 2);
     }
     EffectPosition_ProjectScaledBattler(args->user, &pos);
@@ -262,8 +274,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       }
     }
 
-    // The red haze scrolls fast, comes to rest from frame 72, and scrolls the
-    // other way, the view with it, as the sun comes down.
+    // The red haze scrolls fast, comes to rest at MEGIDDO_HAZE_REST_FRAME, and
+    // scrolls the other way, the view with it, as the sun comes down.
     {
       s32 y = gBgScroll[1].y;
       s32 d;
@@ -271,7 +283,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       // A scroll above the haze's range is a negative one, read back from its
       // halfword.
       if (y > BATTLE_BACKGROUND_HEIGHT - BATTLE_VIEW_TOP) {
-        y -= 1 << 16;
+        y -= BG_SCROLL_WRAP;
       }
       if (frame <= 63) {
         d = -MEGIDDO_HAZE_SPEED;
@@ -280,8 +292,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
 
         /* FAKEMATCH(barrier): an empty asm on twice. */
         asm("" : "+l"(twice) : : "r3");
-        d = twice - 2 * 72;
-      } else if ((u32)(frame - 72) <= 11) {
+        d = twice - 2 * MEGIDDO_HAZE_REST_FRAME;
+      } else if ((u32)(frame - MEGIDDO_HAZE_REST_FRAME) <= 11) {
         d = 0;
       } else if (frame > 154) {
         d = MEGIDDO_HAZE_SPEED - (frame - 155) / 2;
@@ -322,7 +334,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
     if (frame == 143) {
       struct MotionObject *target;
 
-      Palette_BrightenBattleBg(-12, -2, -2);
+      Palette_BrightenBattleBg(-MEGIDDO_HAZE_FALL_FADE_RED, -MEGIDDO_HAZE_FADE,
+                               -MEGIDDO_HAZE_FADE);
       camera->yaw = savedYaw;
       x = toFIXED(120);
       z = toFIXED(48);
@@ -363,7 +376,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
       BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
                                POSE_DAMAGE, 0, 16);
-      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(16));
+      EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR,
+                          CANVAS_FILL_WORD(MEGIDDO_STRIKE_FILL_LEVEL));
     }
     if (frame > 174) {
       Palette_BrightenBgEntries(2, 2, 2);

@@ -349,13 +349,6 @@ void FieldPsynergy_StopMindReadWave(void) {
 
 #define MIND_READ_GREY RGB(28, 28, 28)
 
-/// WINDOW_PALETTE's white, black and two greys, which Mind Read turns grey
-/// while it shows thoughts.
-#define WINDOW_COLOR_WHITE 1
-#define WINDOW_COLOR_BLACK 3
-#define WINDOW_COLOR_DARK_GREY 11
-#define WINDOW_COLOR_LIGHT_GREY 12
-
 /// Turns WINDOW_COLOR_WHITE and WINDOW_PALETTE's colours from
 /// WINDOW_COLOR_BLACK to WINDOW_COLOR_LIGHT_GREY grey (all but colour 2), so
 /// messages show as thoughts, and starts the BG0 line scroll

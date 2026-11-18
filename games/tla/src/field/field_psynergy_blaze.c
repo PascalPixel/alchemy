@@ -22,9 +22,6 @@ void Field_StartColorTransition(s32 frames, s32 color);
 #define ACTOR_FIRST_LAYER(actor)                                               \
   (((struct Sprite *)(actor)->sprite)->entries[0])
 
-/// A distance beyond any field Psynergy's reach, as field_sequence_targets.c
-/// writes it.
-#define BEYOND_REACH 9999
 /// The jet's longest spray, in frames; B ends it sooner.
 #define BLAZE_SPRAY_FRAMES 80
 /// How far in front of the caster the jet's drops are drawn.
@@ -251,9 +248,6 @@ void FieldPsynergy_Blaze(void) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-/// The actors' slots (Ram_HeapSlots->actors), as field_internal.h counts them.
-#define ACTOR_COUNT 64
-
 /// Nonzero when the map blocks an actor at (x, z) on a layer at a height.
 s32 MapGrid_CheckCollisionAtFar(s32 x, s32 z, s32 layer, s32 height);
 
@@ -284,7 +278,5 @@ s32 Actor_CheckBlocked(struct Actor *actor) {
   return result;
 }
 
-#undef BEYOND_REACH
 #undef BLAZE_SPRAY_FRAMES
 #undef BLAZE_DROP_DEPTH
-#undef ACTOR_COUNT

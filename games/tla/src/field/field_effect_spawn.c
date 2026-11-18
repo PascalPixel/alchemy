@@ -1,25 +1,19 @@
 /// @file
 /// The effect spawner each field overlay keeps its own copy of, the twin of The
-/// Broken Seal's EFFECT_SPAWN (scene/shared/field_effect_spawn.c). The
-/// including file names its overlay's copy and the imports it calls:
-/// EFFECT_SPAWN, EFFECT_CREATE, EFFECT_SET_MODE, EFFECT_SET_SCRIPT and
-/// EFFECT_SCRIPTS. A file that also defines EFFECT_SPRITE_PRIORITY creates the
-/// actor as an event does (FieldActor_Create) and gives the sprite the
-/// requested priority itself before Scene_SetActorSpritePriority.
+/// Broken Seal's EFFECT_SPAWN (scene/shared/field_effect_spawn.c).
+/// system/field_effect.h names the copy, the import that creates its actor and
+/// the duration scripts it picks from: EFFECT_SPAWN, EFFECT_CREATE and
+/// EFFECT_SCRIPTS. The including scene gives only EFFECT_SET_MODE and
+/// EFFECT_SET_SCRIPT, the routines it calls to choose the effect's animation
+/// and start its script. A file that also defines EFFECT_SPRITE_PRIORITY
+/// creates the actor as an event does (FieldActor_Create) and gives the sprite
+/// the requested priority itself before Scene_SetActorSpritePriority.
 #include "types.h"
 #include "system/main_routine_work.h"
 #include "field/field_sprite.h"
 #include "system/field_effect.h"
 #include "fixed_math.h"
 #include "sprite_ids.h"
-
-/// The sprite an effect takes unless EFFECT_USE_TYPE gives another.
-#define EFFECT_DEFAULT_TYPE SPRITE_DUST_CLOUD
-/// The spawn flags that pick an option, above the script number.
-#define EFFECT_OPTION_MASK 0xffff0000
-/// Where a duration script holds its repeat count, the frames
-/// EFFECT_SCALE_TO_TARGET grows over.
-#define EFFECT_SCRIPT_REPEAT_COUNT 3
 
 extern struct Actor *EFFECT_CREATE(s32 type, s32 x, s32 y, s32 z);
 extern const s32 *EFFECT_SCRIPTS[];
@@ -111,7 +105,3 @@ void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_UPDATE) != 0)
     effect->update = options->update;
 }
-
-#undef EFFECT_DEFAULT_TYPE
-#undef EFFECT_OPTION_MASK
-#undef EFFECT_SCRIPT_REPEAT_COUNT

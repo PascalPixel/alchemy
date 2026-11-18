@@ -15,14 +15,6 @@
 #include "gamepak/far_call/field.h"
 #include "field/sprite.h"
 
-/// The sprite an effect takes unless EFFECT_USE_TYPE gives another.
-#define EFFECT_DEFAULT_TYPE SPRITE_DUST_CLOUD
-/// The spawn flags that pick an option, above the script number.
-#define EFFECT_OPTION_MASK 0xffff0000
-/// Where a duration script holds its repeat count, the frames
-/// EFFECT_SCALE_TO_TARGET grows over.
-#define EFFECT_SCRIPT_REPEAT_COUNT 3
-
 extern const s32 *gFieldEffect_DurationScripts[];
 
 struct Actor *Actor_GetById(u32 objectId);

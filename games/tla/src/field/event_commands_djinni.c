@@ -16,8 +16,6 @@
 #include "macros.h"
 
 #define DJINNI_CLONE_MAX 8 ///< afterimages of the leaping Djinni
-/// sequenceResult after a battle the party fled (battle_run.c).
-#define BATTLE_OUTCOME_FLED 999
 /// The states of a Jupiter Djinni's light particle, in order.
 enum DjinniLightState {
   DJINNI_LIGHT_WIDENING = 0, ///< circles as its radius grows
@@ -434,4 +432,3 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
 }
 
 #undef DJINNI_CLONE_MAX
-#undef BATTLE_OUTCOME_FLED

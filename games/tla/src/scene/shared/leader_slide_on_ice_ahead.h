@@ -1,6 +1,3 @@
-/// Ram_HeapSlots->actors, as field_internal.h counts them.
-#define ACTOR_COUNT 64
-
 /// The leader slides cell by cell over ice the way they face, turned to the
 /// nearest cardinal, until a wall, ground more than 8 pixels up, a solid actor
 /// or the end of the ice stops them.
@@ -116,5 +113,3 @@ done:
   actor->acceleration = toFIXED(1) / 4;
   Actor_SelectAnimation(actor, ANIM_STAND);
 }
-
-#undef ACTOR_COUNT

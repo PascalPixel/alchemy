@@ -7,11 +7,6 @@
 #include "field/event.h"
 #include "field/sprite.h"
 
-/// A drifting effect loses a FIELD_EFFECT_DRAG_X-th of its x speed and a
-/// FIELD_EFFECT_DRAG_Z-th of its z speed each frame.
-#define FIELD_EFFECT_DRAG_X 18
-#define FIELD_EFFECT_DRAG_Z 16
-
 /// FieldEffect_AdvanceMotion, then gives the effect's sprite the leader's
 /// sprite priority, so the effect is drawn at the leader's depth.
 void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object) {
@@ -42,6 +37,3 @@ void Effect_AdvanceMotionAtLeaderPriority(union FieldObject *object) {
   from = (struct PlacedSprite *)leader->sprite;
   to->priority = from->priority;
 }
-
-#undef FIELD_EFFECT_DRAG_X
-#undef FIELD_EFFECT_DRAG_Z

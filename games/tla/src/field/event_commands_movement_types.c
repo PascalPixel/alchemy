@@ -12,9 +12,6 @@
 
 extern const u8 gActor_WaitScript[];
 
-/// The actors of Ram_HeapSlots->actors.
-#define ACTOR_COUNT 64
-
 /// The event command "actor set attached effect", by enum AttachedEffectFlag:
 /// removes the actor attached to an actor, attaches one
 /// (SPRITE_ATTACHED_EFFECT, animation 1) unless one already is, or shows a
@@ -336,8 +333,6 @@ s32 MapGrid_BlocksJump(struct Actor *actor, s32 *position) {
 
 extern struct MapCell gMapGridCellBuffer[];
 
-/// A whole pixel coordinate's map cell, in pixels.
-#define MAPGRID_CELL_PIXEL_MASK 0xfff0
 /// The middle pixel of the map cell a whole pixel lies in.
 #define CELL_MIDDLE(pixels)                                                    \
   (MAPGRID_CELL_PIXELS / 2 + ((pixels) & MAPGRID_CELL_PIXEL_MASK))
@@ -740,9 +735,6 @@ failure:
 /// How near a rope or tightrope node must be for the leader to hop onto it,
 /// in pixels.
 #define ROPE_NODE_REACH 32
-/// A squared distance in pixels beyond any rope node, to start a search for
-/// the nearest.
-#define ROPE_NODE_DISTANCE_NONE (1 << 28)
 
 /// Returns the nearest tied rope node within reach of position, or NULL.
 struct RopeNode *Rope_FindNodeNear(s32 *position) {

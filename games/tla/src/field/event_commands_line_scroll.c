@@ -8,10 +8,6 @@
 #include "sounds.h"
 #include "field/field.h"
 
-/// Where a DMA channel's control halfword (the DMA_ flags) sits in its 32-bit
-/// count word.
-#define DMA_CONTROL_SHIFT 16
-
 /// LineScrollWork.mode: 0 waves BG1, BG2 and BG3 alike; any other mode waves
 /// BG3 alone (Mars Lighthouse's rain ledges).
 #define LINE_SCROLL_ALL_LAYERS 0
@@ -228,7 +224,6 @@ void LineScroll_Stop(void) {
   (void)dma0[5];
 }
 
-#undef DMA_CONTROL_SHIFT
 #undef LINE_SCROLL_ALL_LAYERS
 #undef LINE_SCROLL_WAVE_ENTRIES
 #undef LINE_SCROLL_WAVE_UNITS

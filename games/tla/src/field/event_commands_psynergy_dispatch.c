@@ -319,9 +319,6 @@ s32 BattleEffect_GetObjectPriority(struct Actor *actor) {
 /// sorts a projected sprite.
 #define WORLD_MAP_GROUND_DEPTH 512
 #define WORLD_MAP_GROUND_SLOT 128
-/// On a scrolling map an actor's sprite takes its screen row on from this slot,
-/// as Render_ApplyProjectedPlacement places it.
-#define PLACEMENT_IMAGE_DEPTH 62
 
 /// Returns the depth slot the actor's sprite takes, so that a sprite drawn
 /// with it sorts with it: from its projected depth on the world map, otherwise
@@ -398,5 +395,4 @@ void FieldPsynergy_StartSceneSprite(void) {
 }
 #undef WORLD_MAP_GROUND_DEPTH
 #undef WORLD_MAP_GROUND_SLOT
-#undef PLACEMENT_IMAGE_DEPTH
 #undef SIDE_TURN

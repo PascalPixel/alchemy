@@ -36,8 +36,8 @@
 #include "system/matrix.h"
 
 // Where SuperLuckyDice_Run puts each picture in OBJ VRAM, as 16-colour tiles
-// (the dice, 256-colour, fill the first DICE_SHADOW_TILE + 8).
-#define DICE_SHADOW_TILE 144      ///< the nineteenth dice frame, the shadow
+// (the dice, 256-colour, then their shadow at DICE_SHADOW_TILE, fill the first
+// DICE_SHADOW_TILE + 8).
 #define SMALL_DOUBLE_UP_TILES 152 ///< "Double Up", for the rounds won
 #define FINAL_GAME_TILES 168      ///< "Final Game", in 16 by 16 cells
 /// Its "Game" alone, the sixth cell on.
@@ -101,7 +101,6 @@ enum SuperLuckyDiceResult {
 /// times and all four alike eight times; then up to five hi-lo games, each won
 /// doubling the winnings.
 #define SUPER_LUCKY_DICE_COUNT 4
-#define DICE_FACE_COUNT 6
 #define SUPER_LUCKY_DICE_ONE_PAIR_PAYOUT 1
 #define SUPER_LUCKY_DICE_TRIPLE_PAYOUT 2
 #define SUPER_LUCKY_DICE_TWO_PAIR_PAYOUT 3
@@ -471,38 +470,13 @@ enum SuperLuckyDiceState {
   SUPER_LUCKY_DICE_DOUBLE_UP ///< a win: double up or cash out
 };
 
-/// A throw costs ten coins for each level of the party's average.
-#define DICE_BET_PER_LEVEL 10
-/// The coins are drawn with six digits.
-#define DICE_COIN_DIGITS 6
-/// The dome fades in and out over 16 frames, a sixteenth of full brightness a
-/// frame.
-#define DICE_FADE_FRAMES 16
 /// The dice wait on a circle this far about the dome's centre, a quarter turn
 /// apart, before the first throw.
 #define DICE_START_RADIUS 100
-/// A thrown die starts spinning at this rate, its roll angle a frame; each
-/// bounce takes DICE_BOUNCE_SPIN_LOSS off it, as in Lucky Dice.
-#define DICE_THROW_SPIN 300
-#define DICE_BOUNCE_SPIN_LOSS 20
 /// Two dice whose centres come closer than this push each other apart.
 #define SUPER_LUCKY_DICE_TOUCH_DISTANCE 70
 /// The round dome's radius: a die beyond it is turned back inward.
 #define DICE_DOME_RADIUS 200
-/// The depths from the camera a die is drawn between: nearer or further is
-/// drawn as at the limit, and the nearer, the larger.
-#define DICE_NEAREST_DEPTH 350
-#define DICE_FARTHEST_DEPTH 650
-/// A die's or a shadow's affine scale at DICE_NEAREST_DEPTH, in 256ths: drawn
-/// at twice its size, and smaller by a quarter of its depth past it.
-#define DICE_NEAREST_SCALE 128
-/// A die's roll angle (its particle's variant) crosses a face in
-/// DICE_TILES_PER_FACE tiles, as Lucky Dice's: the tile is angle /
-/// DICE_ROLL_PER_TILE and the face angle / DICE_ROLL_PER_FACE.
-#define DICE_ROLL_PER_TILE 1024
-#define DICE_TILES_PER_FACE 3
-#define DICE_ROLL_PER_FACE (DICE_TILES_PER_FACE * DICE_ROLL_PER_TILE)
-#define DICE_ROLL_TURN (DICE_FACE_COUNT * DICE_ROLL_PER_FACE) ///< six faces
 
 /// Throws the four dice from a row left of the centre, 24 pixels apart and 96
 /// up, each with a random push up and into the dome and a random roll; it

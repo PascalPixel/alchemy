@@ -1807,11 +1807,11 @@ void GabombaStatue_LandFromFall(void) {
                           EFFECT_USE_PALETTE | 1,
                       &options);
     i++;
-  } while (i <= 16);
+  } while (i <= DUST_RING_PUFFS);
   Event_PlaySound(SE_THUMP);
   Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 49);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_SIT);
   MapGrid_SetShake(5, 5, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   FieldMapGrid_WaitForShakeToSettle();
@@ -2209,7 +2209,7 @@ void GabombaStatue_SawEnergyFlow(void) {
   GabombaStatue_FindBrokenCell(&x, &z);
   x = FIELD_CELL_ORIGIN(x) + FIELD_CELL_CENTER(CHANNEL_ORIGIN_COLUMN);
   z = FIELD_CELL_ORIGIN(z) + FIELD_CELL_CENTER(CHANNEL_ORIGIN_ROW);
-  hand = FieldActor_Create(434, x, 0, z);
+  hand = FieldActor_Create(SPRITE_POINTING_HAND, x, 0, z);
   hand->motionFlags |= ACTOR_FLOATS;
   Actor_SetSpriteFlags(hand, 0);
   Actor_SelectAnimation(hand, 1);
@@ -2784,6 +2784,9 @@ retry:
 /// How long GabombaStatue_LayPath searches: the steps it takes in all before
 /// it gives up, and the random headings it tries from a cell before backing up.
 enum { PATH_ATTEMPTS_MAX = 1280, PATH_TRIES_PER_STEP = 63 };
+/// The chance, out of Random16's 65,536, that a try keeps the path's heading;
+/// the other half of the time it tries a random one.
+#define PATH_KEEP_HEADING_CHANCE 32768
 
 /// GabombaStatue_LayPath's steps so far: each step's heading, cell, piece,
 /// headings tried and the paths through its cell before it was joined.
@@ -2856,7 +2859,7 @@ s32 GabombaStatue_LayPath(s32 x0, s32 z0, s32 endX, s32 endZ, s32 length,
       if (++tries <= PATH_TRIES_PER_STEP) {
         value = Random16();
         dir = direction;
-        if (value >= 32768)
+        if (value >= PATH_KEEP_HEADING_CHANCE)
           dir = Random_Below(4);
         tried = gGabombaStatue_PathTried[step];
         if ((tried >> dir) & one)
@@ -3198,8 +3201,8 @@ void GabombaStatue_DrawRaisedBlocks(void) {
       s32 cellZ = FIELD_CELL(pz) - state->originZ;
       s32 kind = state->cells[cellZ][cellX].kind;
       u32 *p;
-      x = (FIXEDtoINT(x) - 8) & 0x1ff;
-      sy = (FIXEDtoINT(sy) - 8) & 0xff;
+      x = (FIXEDtoINT(x) - 8) & OBJ_X_MASK;
+      sy = (FIXEDtoINT(sy) - 8) & OBJ_Y_MASK;
       p = (u32 *)oam;
       *p++ = 0;
       *p++ = sy | OBJ_X(x) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
@@ -4191,10 +4194,10 @@ LATE_DATA struct ActorPlacement gGabombaStatue_ArrowsActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_CARVED_FACE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_ORB_PEDESTAL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_ORB_PEDESTAL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 296, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(349, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(349, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(349, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(349, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ENERGY_CHARGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ENERGY_CHARGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ENERGY_CHARGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ENERGY_CHARGE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(411, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 8, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(411, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 8, 0, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),

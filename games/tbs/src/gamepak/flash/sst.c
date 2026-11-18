@@ -99,7 +99,8 @@ u16 ProgramFlashSectorWithEraseRetry(u16 sector, u8 *source) {
     remaining = remaining - 2;
   }
 
-  // Retry until erase verification succeeds or all 81 attempts fail.
+  // Retry until erase verification succeeds or all FLASH_ERASE_ATTEMPTS
+  // attempts fail.
   attempt = 0;
   for (;;) {
     status = EraseFlashSector(sector);

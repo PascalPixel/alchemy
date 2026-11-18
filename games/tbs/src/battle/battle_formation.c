@@ -297,13 +297,17 @@ UNREAD_RESULT BattleEnemy_ReleaseNameLetter(s32 unitId) {
       break;
   }
 
-  // An empty name uses a shift of NAME_LETTER_MASK_BITS, which emits zero on
-  // ARM. A name with
-  // no suffix instead uses its last character as a suffix.
+  // The name's last character is taken as its letter, even in a name with
+  // none, and that letter is freed.
+  // UB: an empty name shifts 1 by NAME_LETTER_MASK_BITS, past the mask, which
+  // the hardware gives as 0, so no letter is freed; UBFIX skips the clear.
   suffixIndex = NAME_LETTER_MASK_BITS;
   if (nameLength > 0)
     suffixIndex = unit->name[nameLength - 1] - LIST_MARKER_CHAR;
-  battle->nameLetterMasks[index] &= ~(1 << suffixIndex);
+#ifdef UBFIX
+  if (suffixIndex < NAME_LETTER_MASK_BITS)
+#endif
+    battle->nameLetterMasks[index] &= ~(1 << suffixIndex);
 }
 
 /// Gives the first enemy of the class on the field the first letter (0),

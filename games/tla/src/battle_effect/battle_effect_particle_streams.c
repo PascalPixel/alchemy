@@ -185,15 +185,15 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
       // The columns of water scroll up.
       if (frame >= NEREID_COLUMNS_FRAME && frame < NEREID_COLUMNS_END_FRAME) {
         for (k = 0; k != NEREID_COLUMNS; k++) {
-          s32 span = (frame * 16 - 256 + k * 25) % NEREID_COLUMN_HEIGHT;
+          s32 span = (frame * 16 - 256 + k * 25) % FIRE_PILLAR_HEIGHT;
 
           draw[0](canvas, work->sheet + NEREID_COLUMN_PICTURE,
-                  gNereidCopy_Columns[k * 2] - NEREID_COLUMN_WIDTH / 2,
-                  gNereidCopy_Columns[k * 2 + 1] - span - NEREID_COLUMN_HEIGHT,
-                  NEREID_COLUMN_WIDTH, NEREID_COLUMN_HEIGHT);
+                  gNereidCopy_Columns[k * 2] - FIRE_PILLAR_WIDTH / 2,
+                  gNereidCopy_Columns[k * 2 + 1] - span - FIRE_PILLAR_HEIGHT,
+                  FIRE_PILLAR_WIDTH, FIRE_PILLAR_HEIGHT);
           draw[0](canvas, work->sheet + NEREID_COLUMN_PICTURE,
-                  gNereidCopy_Columns[k * 2] - NEREID_COLUMN_WIDTH / 2,
-                  gNereidCopy_Columns[k * 2 + 1] - span, NEREID_COLUMN_WIDTH,
+                  gNereidCopy_Columns[k * 2] - FIRE_PILLAR_WIDTH / 2,
+                  gNereidCopy_Columns[k * 2 + 1] - span, FIRE_PILLAR_WIDTH,
                   span);
         }
       }

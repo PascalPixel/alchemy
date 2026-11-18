@@ -1,7 +1,7 @@
-
-// The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
-// the opponent who races Isaac by running a recorded path, and the race gauge
-// that shows how near each of them is to the finish.
+/// @file
+/// The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
+/// the opponent who races Isaac by running a recorded path, and the race gauge
+/// that shows how near each of them is to the finish.
 
 /// The halfwords of the opponent's path: x and z for 7,200 frames, the last
 /// pair the (0, 0) that ends it, as Colosso_UpdatePathOpponent records it.

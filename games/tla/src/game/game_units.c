@@ -51,12 +51,13 @@ const struct EnemyDefinition *Enemy_GetDefinition(s32 enemyId) {
   u32 recordIndex;
 
   recordIndex = enemyId - ENEMY_ID_FIRST;
-  // BUG: the table has ENEMY_COUNT rows, but only rows past 999 are refused, so
-  // the rows from ENEMY_COUNT read the tables after it.
+  // BUG: the table has ENEMY_COUNT rows, but only rows from ENEMY_ID_MAX on are
+  // refused, so those from ENEMY_COUNT read the tables after it. BattleUnit_Set
+  // takes the first row for them itself.
 #ifdef BUGFIX
   if (recordIndex > ENEMY_COUNT - 1U)
 #else
-  if (recordIndex > 999U)
+  if (recordIndex > ENEMY_ID_MAX - 1U)
 #endif
     recordIndex = 0;
   return &gEnemy_Definitions[recordIndex];
@@ -106,7 +107,7 @@ void Unit_Calculate(s32 unitId) {
   stats->def = unit->baseDefense;
   stats->agi = unit->baseAgility;
   stats->luck = unit->baseLuck;
-  stats->actionCount = unit->baseActionCount & 15;
+  stats->actionCount = unit->baseActionCount & UNIT_ACTION_COUNT_MASK;
   stats->hpRegen = unit->baseHpRegen;
   stats->ppRegen = unit->basePpRegen;
   for (index = 0; index < ELEMENT_COUNT; index++) {
@@ -477,6 +478,15 @@ void Party_DrainPp(s32 count) {
   Party_GetPpRatio();
 }
 
+/// Set in every build stamp's time; and set on top in a debug build's
+/// (gDebugMode), whose stamp is then above every release's.
+#define BUILD_STAMP_MARK 0x1000
+#define BUILD_STAMP_DEBUG ((s16)0x8000)
+/// A build stamp's time counts 64 seconds to a minute and 16 minutes to an
+/// hour, so the minutes past 15 reach into the hours.
+#define BUILD_STAMP_SECONDS_PER_MINUTE 64
+#define BUILD_STAMP_MINUTES_PER_HOUR 16
+
 /// Encodes the build stamp's time, which a new game takes as its start stamp
 /// and the file list compares saves with.
 u32 BuildStamp_GetTime(void) {
@@ -494,24 +504,20 @@ u32 BuildStamp_GetTime(void) {
   minutes += *digits++ - '0';
   seconds = (digits[0] - '0') * 10;
   seconds += digits[1] - '0';
-  time = (hours * 16 + minutes) * 64 + seconds;
-  time |= 0x1000;
+  time = (hours * BUILD_STAMP_MINUTES_PER_HOUR + minutes) *
+             BUILD_STAMP_SECONDS_PER_MINUTE +
+         seconds;
+  time |= BUILD_STAMP_MARK;
   stamp = time;
 
   if (gDebugMode != 0)
-    stamp |= 0xFFFF8000;
+    stamp |= BUILD_STAMP_DEBUG;
   return (u16)stamp;
 }
 
-/// DMA3, the channel the game copies with, as its three registers.
-#define DMA3 ((volatile struct DmaRegisters *)&REG_DMA3SAD)
-/// DMA 3's enable bit in its count and control word, which the hardware
-/// clears when the transfer is done.
-#define DMA3_BUSY (DMA_ENABLE << 16)
-
 /// Waits until the DMA channel's transfer is done.
 static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
-  while ((channel->control & DMA3_BUSY) != 0) {
+  while ((channel->control & DMA_BUSY) != 0) {
   }
 }
 
@@ -521,6 +527,11 @@ static __inline__ void WaitDma(struct DmaRegisters volatile *channel) {
 #define SCENE_STATE_WORDS 1992
 /// The coins a new game starts with.
 #define NEW_GAME_COINS 200
+/// Where gSceneLocalState holds the actor snapshot's slot ids,
+/// ACTOR_SNAPSHOT_CAPACITY bytes before gSnapshotObjects.
+#define SCENE_STATE_SNAPSHOT_SLOTS 4
+/// An empty slot of the actor snapshot, which ends its list.
+#define ACTOR_SNAPSHOT_EMPTY 255
 /// The two tables a new game fills just after gRareItemStock's
 /// ITEM_COUNTER_COUNT counters, as places in gSceneLocalState: 32 rows of eight
 /// random numbers 0 to 4, SCENE_STATE_RANDOM_ROW_BYTES apart, then a copy of
@@ -558,13 +569,14 @@ void MainRoutineWork_InitializeDefaults(void) {
     Dma_Set((const void *)&zero, gSceneLocalState,
             DMA_FILL_WORDS(SCENE_STATE_WORDS), (volatile u32 *)held);
     channel = (struct DmaRegisters volatile *)held;
-    held = DMA3_BUSY;
+    held = DMA_BUSY;
     while ((channel->control & held) != 0) {
     }
   }
 #endif
   Dma_Fill32Cell(zero, 0, gGameFlagBytes, 128 * 4);
-  gSceneLocalState[4] = 0xff;
+  // A new game holds no saved actors.
+  gSceneLocalState[SCENE_STATE_SNAPSHOT_SLOTS] = ACTOR_SNAPSHOT_EMPTY;
   Dma_Fill32Cell(zero, 0, gCharacterUnits, (PIERS + 1) * sizeof(struct Unit));
   Party_InitializeCharacters();
   gMainRoutineWork.aKeys = KEY_A;
@@ -606,7 +618,8 @@ void MainRoutineWork_InitializeDefaults(void) {
   gIdleFrames = 0;
   gSaveSlot = -1;
   gMainRoutineWork.clearedFileAtStart = gAnyFileCleared;
-  // Three prizes share each weight, and each three weigh twice the last.
+  // Lemuria's spring's medal prizes (gLemuriaSpring_MedalPrizes): three share
+  // each weight, and each three weigh twice the last.
   gMainRoutineWork.prizeWeights[0] = 4;
   gMainRoutineWork.prizeWeights[1] = 4;
   gMainRoutineWork.prizeWeights[2] = 4;
@@ -755,6 +768,10 @@ s32 Unit_FindLastDjinn(s32 unit, s32 *elementOut, s32 *indexOut) {
   return 0;
 }
 
+/// More Djinn than a party member can hold: where the search for the fewest
+/// starts.
+#define DJINN_COUNT_ABOVE_ANY 999
+
 /// Until the Djinn counts of the active owners are within one, moves the last
 /// Djinni of the owner holding most to the one holding least.
 void Party_BalanceDjinn(void) {
@@ -763,7 +780,7 @@ void Party_BalanceDjinn(void) {
   for (;;) {
     s32 lowNo = 0;
     s32 high = 0;
-    s32 low = 999;
+    s32 low = DJINN_COUNT_ABOVE_ANY;
     s32 highNo = 0;
     s32 i;
     s32 sum;
@@ -778,7 +795,7 @@ void Party_BalanceDjinn(void) {
 
       sum = 0;
       counts = unit->djinnHeldCounts;
-      for (j = 0; j < 4; j++) {
+      for (j = 0; j < ELEMENT_COUNT; j++) {
         u8 value = *counts;
         counts++;
         sum += value;
@@ -1157,12 +1174,17 @@ UNIT_DEFINE_ADD(s16, Unit_AddPp, pp, ppMax)
 
 #undef UNIT_STAT_DIFF
 #undef SCALE_EFFECT
-#undef DMA3
-#undef DMA3_BUSY
+#undef BUILD_STAMP_MARK
+#undef BUILD_STAMP_DEBUG
+#undef BUILD_STAMP_SECONDS_PER_MINUTE
+#undef BUILD_STAMP_MINUTES_PER_HOUR
 #undef SCENE_STATE_WORDS
 #undef NEW_GAME_COINS
+#undef SCENE_STATE_SNAPSHOT_SLOTS
+#undef ACTOR_SNAPSHOT_EMPTY
 #undef SCENE_STATE_RANDOM_ROWS
 #undef SCENE_STATE_RANDOM_ROW_COUNT
 #undef SCENE_STATE_RANDOM_ROW_BYTES
 #undef SCENE_STATE_TABLE_COPY
+#undef DJINN_COUNT_ABOVE_ANY
 #undef DEFAULT_TRANSFER_DJINN

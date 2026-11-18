@@ -170,7 +170,8 @@ enum LuckyDiceResult {
 /// Unused: a table of signs.
 const s32 gLuckyDice_UnusedSigns[] = {-1, 1, -1, 1, -1, -1, 1, 1};
 
-/// How many sprites each result's lettering takes, 32 pixels each.
+/// How many sprites each result's lettering takes, DICE_LABEL_SPRITE_WIDTH
+/// pixels each.
 const u8 gLuckyDice_LabelCounts[] = {
     [DICE_RESULT_PERFECT] = 5,
     [DICE_RESULT_TRIPLE] = 4,
@@ -206,6 +207,9 @@ const s16 gLuckyDice_FaceHeights[] = {147, 80, 15, -42, -95, -32767};
 #define DICE_COUNT 2
 #define DICE_FACE_COUNT 6
 #define DICE_RESULT_COUNT 4
+/// The result's lettering is a row of 32 by 32 sprites centred on
+/// DICE_RESULT_LABEL_CENTER_X.
+#define DICE_LABEL_SPRITE_WIDTH 32
 #define DICE_BET_PER_LEVEL 10
 /// The result: one number every 5 frames, then 20 frames in the lettering,
 /// the winnings, and A to go on; the payout closes 15 frames after it starts.
@@ -270,14 +274,6 @@ const s16 gLuckyDice_FaceHeights[] = {147, 80, 15, -42, -95, -32767};
 /// another so in OBJ VRAM.
 #define SPRITE_TILES(width, height) ((width) / 8 * ((height) / 8))
 #define SPRITE_TILES_8BPP(width, height) (2 * SPRITE_TILES(width, height))
-/// A sprite's place in its attr01 word: x in attribute 1's nine bits and y in
-/// attribute 0's eight, each wrapped as the screen wraps them.
-#define OBJ_POSITION(x, y) (OBJ_X((x) & OBJ_X_MASK) | ((y) & 0xff))
-/// An affine sprite's matrix, of the 32, in its attr01 word.
-#define OBJ_AFFINE_MATRIX(n) ((n) << 25)
-/// An affine parameter in an OamWords entry's attr2 word, its high half: the
-/// entries 4n to 4n + 3 hold affine matrix n's four.
-#define OBJ_AFFINE_PARAMETER(value) ((value) << 16)
 
 /// A die's or a shadow's affine scale at DICE_NEAREST_DEPTH, in 256ths: drawn
 /// at twice its size, and smaller by half of its depth past it.
@@ -577,7 +573,9 @@ void LuckyDice_Run(void) {
           s32 labelY = 96;
 
           labelX = DICE_RESULT_LABEL_CENTER_X -
-                   gLuckyDice_LabelCounts[resultKind] * 16 + index * 32;
+                   gLuckyDice_LabelCounts[resultKind] *
+                       (DICE_LABEL_SPRITE_WIDTH / 2) +
+                   index * DICE_LABEL_SPRITE_WIDTH;
           sprites->oam[spriteCount].attr01 =
               OBJ_POSITION(labelX, labelY) | OBJ_SIZE_32X32 | OBJ_256_COLORS;
           sprites->oam[spriteCount].attr2 =
@@ -782,8 +780,8 @@ void LuckyDice_Run(void) {
       // wrap in OAM's 9- and 8-bit fields to 120 across and 96 down.
       if (dieY + 96 > -16) {
         sprites->oam[spriteCount].attr01 =
-            (OBJ_AFFINE_MATRIX(drawOrder[index]) |
-             OBJ_X((dieX + 632) & OBJ_X_MASK) | ((dieY + 352) & 255)) |
+            (OBJ_MATRIX(drawOrder[index]) | OBJ_X((dieX + 632) & OBJ_X_MASK) |
+             ((dieY + 352) & 255)) |
             OBJ_SIZE_16X16 | OBJ_256_COLORS | OBJ_DOUBLE_SIZE | OBJ_AFFINE;
         sprites->oam[spriteCount].attr2 =
             (gLuckyDice_FaceTiles[rollingDie->variant / DICE_ROLL_PER_TILE]
@@ -835,8 +833,7 @@ void LuckyDice_Run(void) {
       shadowY = screen[1];
       if (shadowY + 88 > -16) {
         sprites->oam[spriteCount].attr01 =
-            (OBJ_AFFINE_MATRIX(index + 2) |
-             OBJ_X((shadowX + 624) & OBJ_X_MASK)) |
+            (OBJ_MATRIX(index + 2) | OBJ_X((shadowX + 624) & OBJ_X_MASK)) |
             ((shadowY + 344) & 255) | OBJ_SIZE_16X16 | OBJ_256_COLORS |
             OBJ_DOUBLE_SIZE | OBJ_AFFINE;
         sprites->oam[spriteCount].attr2 = OBJ_PRIORITY(2) | DICE_SHADOW_TILE;

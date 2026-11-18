@@ -39,6 +39,12 @@ struct DjinnMenuBackdrop {
   long tutorialStep;
 };
 
+/// DjinnMenuWork.pending's bits: what the chosen pair still waits for.
+enum DjinnPending {
+  DJINN_PENDING_SECOND = 1, ///< a second Djinni is to be chosen
+  DJINN_PENDING_CONFIRM = 2 ///< a give or trade awaits its confirmation
+};
+
 /// The Djinn menu's work, in the HEAP_SLOT_MENU heap slot from the menu's
 /// opening to its closing.
 struct DjinnMenuWork {
@@ -90,9 +96,7 @@ struct DjinnMenuWork {
   u8 shownMember[2]; ///< the party member giving and the one receiving
   /// ItemMenuWork's selectedItemIcon; not named here.
   struct WindowSprite *selectedIcon;
-  /// bits: 1 a give or trade awaits its confirmation | 0 a second Djinni is
-  /// to be chosen
-  u16 pending;
+  u16 pending;        ///< DjinnPending bits
   s16 completionFlag; ///< ItemMenuWork's; not named here
   /// ItemMenuFiguresView's animations, the figures the Djinn screen
   /// moves through that view.

@@ -302,11 +302,10 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     if (tile - TEXT_MARK_VOICED <= 1) {
       // A kana mark goes in the tile above the character before it. Over the
       // frame's top edge or a divider it takes another tile.
-      // XXX (no evidence): whether a mark ever lands on a top edge or a
-      // divider, where this puts tiles 30 and 31 (in window_tiles_ja.png parts
-      // of the HP and PP labels) or 14 and 15 (the dividers themselves); the
-      // render probe stages scenes only, and cannot open a tbs-ja window drawn
-      // in tiles with a voiced kana on its top line.
+      // XXX (no evidence): whether a voiced kana ever lands on a window's top
+      // edge or a divider, where it takes MARK_OVER_BORDER_TILE (parts of the
+      // Japanese HP and PP labels) or MARK_OVER_DIVIDER_TILE (the dividers);
+      // no scene staged so far opens such a window.
       u32 line;
 
       line = (win->y + y) * BG_SCREEN_WIDTH;

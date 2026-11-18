@@ -259,8 +259,6 @@ enum CastingImpact {
 #define BOULDER_PICTURE_SIZE 64
 /// The shards Mother Earth's boulder breaks into.
 #define MOTHER_EARTH_SHARDS 32
-/// The spin a shard turns through for each of its three pictures.
-#define CASTING_IMPACT_SHARD_TURN 96
 /// Stun Jip's flame band, after the 128x128 fire ring.
 #define CASTING_IMPACT_FLAME_BAND (128 * 128)
 
@@ -2194,7 +2192,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             {
               s32 shape;
               shape = i % 5 * 3;
-              m = shape + particle->variant / CASTING_IMPACT_SHARD_TURN % 3;
+              m = shape + particle->variant / SHARD_TURN % 3;
             }
             blitters[i > 2 ? 0 : 1](
                 canvas,
@@ -2261,14 +2259,14 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             s32 left;
             s32 top;
             m = i % 5 * 3;
-            m += particle->z / CASTING_IMPACT_SHARD_TURN % 3;
+            m += particle->z / SHARD_TURN % 3;
             w = gSpire_ShardWidths[m];
             left = (FIXEDtoINT(particle->x)) - w / 2;
             top = FIXEDtoINT(particle->y);
             h = gSpire_ShardHeights[m];
             top -= h / 2;
             blitters[0](canvas,
-                        pictures + SPIRE_SHARD_PICTURES +
+                        pictures + BOULDER_SHARD_PICTURES +
                             gSpire_ShardPictures[m],
                         left, top, w, h);
             Particle_AdvanceWithGravity2D(particle, 63, toFIXED(1) / 2);

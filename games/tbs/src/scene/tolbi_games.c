@@ -226,9 +226,10 @@ enum { SPRING_MEDAL_PRIZES = 15, SPRING_MEDAL_PRIZES_PER_RING = 3 };
 /// The second crab rests this many frames at each end of its run.
 enum { SPRING_CRAB_REST_FRAMES = 30 };
 
-/// The token's velocity keeps SPRING_TOKEN_PULLED_DAMPING / 256 of itself each
-/// frame while the rings pull it, and SPRING_TOKEN_SETTLING_DAMPING / 256 once
-/// they let go.
+/// The token's velocity keeps SPRING_TOKEN_PULLED_DAMPING /
+/// SPRING_TOKEN_DAMPING_SCALE of itself each frame while the rings pull it,
+/// and SPRING_TOKEN_SETTLING_DAMPING / SPRING_TOKEN_DAMPING_SCALE once they let
+/// go.
 enum {
   SPRING_TOKEN_PULLED_DAMPING = 253,
   SPRING_TOKEN_SETTLING_DAMPING = 220,

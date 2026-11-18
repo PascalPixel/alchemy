@@ -43,8 +43,9 @@ void SpriteDissolve_Step(u8 *obj, u32 pos) {
           u16 *pixelPair;
           u32 isOdd;
 
-          // Each tile reads the order 17 entries on from the tile before, so
-          // neighbouring tiles lose different pixels at the same step.
+          // Each tile reads the order DISSOLVE_ORDER_STRIDE entries and a step
+          // on from the tile before, so neighbouring tiles lose different
+          // pixels at the same step.
           pixel = order[(pos + i * DISSOLVE_ORDER_STRIDE) & indexMask];
           // The halfword holding the pixel: its offset rounded down to even.
           pixelPair =

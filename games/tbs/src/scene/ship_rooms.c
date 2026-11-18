@@ -144,7 +144,7 @@ extern s32 gShipRooms_MonsterFloat[];
 extern s32 gShipRooms_GoUpstairs[];
 extern s32 gShipRooms_StepOutFromSeat[];
 extern s32 gShipRooms_LookAroundScript[];
-extern struct Actor *gShipRooms_AnchorObject;
+extern struct Actor *gShipRooms_AnchorCharm;
 extern struct SceneEntrance gShipRooms_EntrancesOther[];
 extern struct SceneEntrance gShipRooms_Entrances[];
 extern u32 gShipRooms_Exits[];
@@ -236,7 +236,8 @@ enum TolbiShipPassenger {
   /// A woman with fair hair (SPRITE_WOMAN_WITH_FAIR_HAIR).
   PASSENGER_MUSCLE_ADMIRER,
   /// An old man with a cane (SPRITE_OLD_MAN_WITH_CANE).
-  PASSENGER_OLD_MAN
+  PASSENGER_OLD_MAN,
+  PASSENGER_COUNT
 };
 
 /// The captain's quarters, numbering the rows of
@@ -314,6 +315,9 @@ enum TolbiShipSeaHoldActorId {
   ACTOR_SEA_HOLD_KAJA
 };
 
+/// The seats on the rowing deck, an oarsman and an oar to each.
+#define ROWING_DECK_SEATS 8
+
 /// The rowing deck, numbering the rows of gShipRooms_RowingDeckActorPlacements
 /// from ACTOR_FIRST_PLACED.
 ///
@@ -332,7 +336,7 @@ enum TolbiShipRowingDeckActorId {
   /// passengers chosen take the first four seats.
   ACTOR_ROWING_FIRST_OARSMAN,
   /// The nine passengers in the order of enum TolbiShipPassenger.
-  ACTOR_ROWING_FIRST_PASSENGER = ACTOR_ROWING_FIRST_OARSMAN + 8,
+  ACTOR_ROWING_FIRST_PASSENGER = ACTOR_ROWING_FIRST_OARSMAN + ROWING_DECK_SEATS,
   ACTOR_ROWING_HEAD_GUIDE = ACTOR_ROWING_FIRST_PASSENGER + PASSENGER_HEAD_GUIDE,
   ACTOR_ROWING_SECOND_GUIDE = ACTOR_ROWING_FIRST_PASSENGER +
       PASSENGER_SECOND_GUIDE,
@@ -354,7 +358,7 @@ enum TolbiShipRowingDeckActorId {
   ACTOR_ROWING_FIRST_OAR,
   /// The monsters of each attack (gShipRooms_FirstAttackMonsters and
   /// the two after it).
-  ACTOR_ROWING_FIRST_MONSTER = ACTOR_ROWING_FIRST_OAR + 8
+  ACTOR_ROWING_FIRST_MONSTER = ACTOR_ROWING_FIRST_OAR + ROWING_DECK_SEATS
 };
 
 /// Animations of the rowing deck's sprites beyond enum ActorAnimation, as
@@ -465,7 +469,7 @@ static void ShipRooms_MoveCameraAndWaitFX(FIXED x, FIXED y, FIXED z, u32 flags);
   ShipRooms_MoveCameraAndWaitFX(EVENT_CAMERA_FIXED(x), EVENT_CAMERA_FIXED(y),  \
                                 EVENT_CAMERA_FIXED(z), flags)
 static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt);
-static s32 ShipRooms_FindFirstSetFlag(u32 seat, s32 alternate);
+static s32 ShipRooms_FindFirstSetFlag(u32 seat, s32 inHold);
 static void ShipRooms_HideSelectedPassengers(void);
 static void ShipRooms_HideSelectedPassenger(s32 actorId, s32 firstFlag);
 static void ShipRooms_StartSecondAttack(void);
@@ -678,6 +682,10 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gShipRooms_Exits; }
 
+/// The talk facing of an actor's row in a room's actor placements.
+#define TALK_FACING_OF(placements, actorId)                                    \
+  ((placements)[(actorId) - ACTOR_FIRST_PLACED].talkFacing)
+
 /// Picks the actor placements for the room entered and the voyage's stage.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   switch (gMainRoutineWork.entrance) {
@@ -689,23 +697,35 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     } else if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
       if (GameFlag_Get(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
         // At the island the passengers no longer turn to the party.
-        gShipRooms_HoldActorPlacementsAtSea[0].talkFacing = TALK_FACING_KEEP;
-        gShipRooms_HoldActorPlacementsAtSea[2].talkFacing = TALK_FACING_KEEP;
-        gShipRooms_HoldActorPlacementsAtSea[4].talkFacing = TALK_FACING_KEEP;
-        gShipRooms_HoldActorPlacementsAtSea[5].talkFacing = TALK_FACING_KEEP;
-        gShipRooms_HoldActorPlacementsAtSea[8].talkFacing = TALK_FACING_KEEP;
-        gShipRooms_HoldActorPlacementsAtSea[7].talkFacing = TALK_FACING_KEEP;
-        gShipRooms_HoldActorPlacementsAtSea[6].talkFacing =
+        TALK_FACING_OF(gShipRooms_HoldActorPlacementsAtSea,
+                       ACTOR_SEA_HOLD_HEAD_GUIDE) = TALK_FACING_KEEP;
+        TALK_FACING_OF(gShipRooms_HoldActorPlacementsAtSea,
+                       ACTOR_SEA_HOLD_SWEATING_PASSENGER) = TALK_FACING_KEEP;
+        TALK_FACING_OF(gShipRooms_HoldActorPlacementsAtSea,
+                       ACTOR_SEA_HOLD_STARED_AT_PASSENGER) = TALK_FACING_KEEP;
+        TALK_FACING_OF(gShipRooms_HoldActorPlacementsAtSea,
+                       ACTOR_SEA_HOLD_WARRIOR) = TALK_FACING_KEEP;
+        TALK_FACING_OF(gShipRooms_HoldActorPlacementsAtSea,
+                       ACTOR_SEA_HOLD_OLD_MAN) = TALK_FACING_KEEP;
+        TALK_FACING_OF(gShipRooms_HoldActorPlacementsAtSea,
+                       ACTOR_SEA_HOLD_MUSCLE_ADMIRER) = TALK_FACING_KEEP;
+        TALK_FACING_OF(gShipRooms_HoldActorPlacementsAtSea,
+                       ACTOR_SEA_HOLD_TICKET_GRUMBLER) =
             TALK_FACING_PARTY_AND_BACK;
-        gShipRooms_HoldActorPlacementsAtSea[3].talkFacing = TALK_FACING_KEEP;
+        TALK_FACING_OF(gShipRooms_HoldActorPlacementsAtSea,
+                       ACTOR_SEA_HOLD_LADY) = TALK_FACING_KEEP;
       }
       return gShipRooms_HoldActorPlacementsAtSea;
     } else if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
       if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
-        gShipRooms_HoldActorPlacements[0].talkFacing = TALK_FACING_KEEP;
-        gShipRooms_HoldActorPlacements[4].talkFacing = TALK_FACING_KEEP;
-        gShipRooms_HoldActorPlacements[1].talkFacing = TALK_FACING_KEEP;
-        gShipRooms_HoldActorPlacements[3].talkFacing = TALK_FACING_KEEP;
+        TALK_FACING_OF(gShipRooms_HoldActorPlacements, ACTOR_HOLD_WARRIOR) =
+            TALK_FACING_KEEP;
+        TALK_FACING_OF(gShipRooms_HoldActorPlacements,
+                       ACTOR_HOLD_SECOND_GUIDE) = TALK_FACING_KEEP;
+        TALK_FACING_OF(gShipRooms_HoldActorPlacements,
+                       ACTOR_HOLD_TICKET_GRUMBLER) = TALK_FACING_KEEP;
+        TALK_FACING_OF(gShipRooms_HoldActorPlacements, ACTOR_HOLD_OLD_MAN) =
+            TALK_FACING_KEEP;
       }
       return gShipRooms_HoldActorPlacements;
     } else {
@@ -725,17 +745,24 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   case SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_FIRST_ATTACK:
   case SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SECOND_ATTACK:
   case SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_THIRD_ATTACK:
-    gShipRooms_RowingDeckActorPlacements[0].talkFacing = TALK_FACING_KEEP;
-    gShipRooms_RowingDeckActorPlacements[1].talkFacing = TALK_FACING_KEEP;
-    gShipRooms_RowingDeckActorPlacements[3].talkFacing =
-        TALK_FACING_PARTY_AND_BACK;
-    gShipRooms_RowingDeckActorPlacements[4].talkFacing = TALK_FACING_KEEP;
-    gShipRooms_RowingDeckActorPlacements[5].talkFacing = TALK_FACING_KEEP;
-    gShipRooms_RowingDeckActorPlacements[6].talkFacing = TALK_FACING_KEEP;
-    gShipRooms_RowingDeckActorPlacements[7].talkFacing = TALK_FACING_KEEP;
-    gShipRooms_RowingDeckActorPlacements[8].talkFacing =
-        TALK_FACING_PARTY_AND_BACK;
-    gShipRooms_RowingDeckActorPlacements[9].talkFacing = TALK_FACING_KEEP;
+    TALK_FACING_OF(gShipRooms_RowingDeckActorPlacements, ACTOR_ROWING_CREWMAN) =
+        TALK_FACING_KEEP;
+    TALK_FACING_OF(gShipRooms_RowingDeckActorPlacements, ACTOR_ROWING_DRUMMER) =
+        TALK_FACING_KEEP;
+    TALK_FACING_OF(gShipRooms_RowingDeckActorPlacements,
+                   ACTOR_ROWING_FIRST_OARSMAN + 1) = TALK_FACING_PARTY_AND_BACK;
+    TALK_FACING_OF(gShipRooms_RowingDeckActorPlacements,
+                   ACTOR_ROWING_FIRST_OARSMAN + 2) = TALK_FACING_KEEP;
+    TALK_FACING_OF(gShipRooms_RowingDeckActorPlacements,
+                   ACTOR_ROWING_FIRST_OARSMAN + 3) = TALK_FACING_KEEP;
+    TALK_FACING_OF(gShipRooms_RowingDeckActorPlacements,
+                   ACTOR_ROWING_FIRST_OARSMAN + 4) = TALK_FACING_KEEP;
+    TALK_FACING_OF(gShipRooms_RowingDeckActorPlacements,
+                   ACTOR_ROWING_FIRST_OARSMAN + 5) = TALK_FACING_KEEP;
+    TALK_FACING_OF(gShipRooms_RowingDeckActorPlacements,
+                   ACTOR_ROWING_FIRST_OARSMAN + 6) = TALK_FACING_PARTY_AND_BACK;
+    TALK_FACING_OF(gShipRooms_RowingDeckActorPlacements,
+                   ACTOR_ROWING_FIRST_OARSMAN + 7) = TALK_FACING_KEEP;
     return gShipRooms_RowingDeckActorPlacements;
   case SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK:
     if (GameFlag_Get(FLAG_TOLBI_SHIP_REACHED_TOLBI) != 0) {
@@ -743,13 +770,13 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     } else if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
       if (GameFlag_Get(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) != 0) {
         if (Event_GetFlag(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
-          gShipRooms_CaptainsQuartersActorPlacementsWarriors[1].talkFacing =
-              TALK_FACING_PARTY_AND_BACK;
+          TALK_FACING_OF(gShipRooms_CaptainsQuartersActorPlacementsWarriors,
+                         ACTOR_QUARTERS_KAJA) = TALK_FACING_PARTY_AND_BACK;
         }
         if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
           if (GameFlag_Get(FLAG_TOLBI_SHIP_AT_ISLAND) == 0) {
-            gShipRooms_CaptainsQuartersActorPlacementsWarriors[0].talkFacing =
-                TALK_FACING_PARTY;
+            TALK_FACING_OF(gShipRooms_CaptainsQuartersActorPlacementsWarriors,
+                           ACTOR_QUARTERS_CAPTAIN) = TALK_FACING_PARTY;
           }
         }
         return gShipRooms_CaptainsQuartersActorPlacementsWarriors;
@@ -826,7 +853,7 @@ static void ShipRooms_TalkToCaptainsQuartersCrewman(void) {
       Event_SetMessageId(MsgTolbiShipNowWantSeeCaptainToo);
       // "Now what? You want to see the captain too?"
       Event_OpenMessage(ACTOR_QUARTERS_CREWMAN, 0);
-      if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+      if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == YES) {
         ShipRooms_DiscussLaunchingWithoutAnchor();
       } else {
         Actor_StartRepeatedMotion(ACTOR_QUARTERS_CREWMAN, 2);
@@ -894,7 +921,7 @@ static void ShipRooms_TalkToWaitingWarrior(void) {
     ShipRooms_Say(ACTOR_HOLD_WARRIOR);
     Actor_FaceActor(ACTOR_HOLD_WARRIOR, ACTOR_PARTY_LEADER, 10);
     Event_OpenMessage(ACTOR_HOLD_WARRIOR, 0);
-    if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == YES) {
       Event_Wait(40);
       ShipRooms_Say(ACTOR_HOLD_WARRIOR);
       ShipRooms_Turn(ACTOR_HOLD_WARRIOR, FACING_SOUTH_SOUTHEAST);
@@ -932,8 +959,8 @@ static void ShipRooms_TalkToWaitingMuscleAdmirer(void) {
 
 /// A passenger in the hold under sail, when an oar needs a rower.
 ///
-/// If someone has already been chosen this round, the chosen passenger steps
-/// beside the leader and follows them out while this one says chosenMessage.
+/// If someone has already been chosen for the open seat, they step beside the
+/// leader and follow them out while this one says chosenMessage.
 /// Otherwise the party may ask this one to row (question) at the seat the
 /// attacks fought off number.
 ///
@@ -1013,7 +1040,7 @@ static void ShipRooms_AskStaredAtPassengerToRow(void) {
     Event_SetMessageId(MsgTolbiShipOhhhhNooooGoingMakeMe);
     // "What? Ohhhh, noooo... Are you going to make me row?"
     Event_OpenMessage(ACTOR_SEA_HOLD_STARED_AT_PASSENGER, 0);
-    if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == YES) {
       ShipRooms_Say(ACTOR_SEA_HOLD_STARED_AT_PASSENGER);
       Scene_WalkIntoLeader(ACTOR_SEA_HOLD_STARED_AT_PASSENGER);
       GameFlag_Set(FLAG_TOLBI_SHIP_ROWER_CHOSEN);
@@ -1052,7 +1079,7 @@ static void ShipRooms_AskSecondGuideToRow(void) {
     Actor_RunRepeatedMotion(ACTOR_SEA_HOLD_SECOND_GUIDE, 1);
     // "What? Me? You must be joking! Really?"
     Event_OpenMessage(ACTOR_SEA_HOLD_SECOND_GUIDE, 0);
-    if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+    if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == YES) {
       ShipRooms_Say(ACTOR_SEA_HOLD_SECOND_GUIDE);
       Scene_WalkIntoLeader(ACTOR_SEA_HOLD_SECOND_GUIDE);
       GameFlag_Set(FLAG_TOLBI_SHIP_ROWER_CHOSEN);
@@ -1236,14 +1263,14 @@ static s32 ShipRooms_GetChosenOarsman(void) {
   return ShipRooms_FindFirstSetFlag(seat, 1);
 }
 
-/// What a passenger at the oars says, or thinks under Mind Read, by the round
-/// they were chosen in.
+/// What a passenger at the oars says, or thinks under Mind Read, by the seat
+/// they were chosen for.
 ///
-/// That is the first round's line, the second's, or a later one's. The
+/// That is the first seat's line, the second's, or a later one's. The
 /// TalkTo...AtOars and Read...MindAtOars functions are this, or
 /// TOLBI_SHIP_ROWER_LINE_FIRST_OR_LATER, with each passenger's lines.
-#define TOLBI_SHIP_ROWER_LINE_BY_ROUND(passenger, actorId, first, second,      \
-                                       later)                                  \
+#define TOLBI_SHIP_ROWER_LINE_BY_SEAT(passenger, actorId, first, second,       \
+                                      later)                                   \
   Event_Start();                                                               \
   if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + (passenger)))           \
     Event_SetMessageId(first);                                                 \
@@ -1254,7 +1281,7 @@ static s32 ShipRooms_GetChosenOarsman(void) {
   Event_ShowMessage(actorId, 0);                                               \
   Event_End()
 
-/// The same with one line for the first round and one for any later.
+/// The same with one line for the first seat and one for any later.
 #define TOLBI_SHIP_ROWER_LINE_FIRST_OR_LATER(passenger, actorId, first, later) \
   Event_Start();                                                               \
   if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + (passenger)))           \
@@ -1267,28 +1294,28 @@ static s32 ShipRooms_GetChosenOarsman(void) {
 /// The head guide at the oars, who says Kaja's men are worried, monsters are
 /// everywhere, or the ship is starting to list.
 static void ShipRooms_TalkToHeadGuideAtOars(void) {
-  TOLBI_SHIP_ROWER_LINE_BY_ROUND(PASSENGER_HEAD_GUIDE, ACTOR_ROWING_HEAD_GUIDE,
-                                 MsgTolbiShipThingHasKajaHisMen,
-                                 MsgTolbiShipMonstersEverywhereImStuckRowing,
-                                 MsgTolbiShipShipStartingListIfWe);
+  TOLBI_SHIP_ROWER_LINE_BY_SEAT(PASSENGER_HEAD_GUIDE, ACTOR_ROWING_HEAD_GUIDE,
+                                MsgTolbiShipThingHasKajaHisMen,
+                                MsgTolbiShipMonstersEverywhereImStuckRowing,
+                                MsgTolbiShipShipStartingListIfWe);
 }
 
 /// The second guide at the oars, as the head guide.
 static void ShipRooms_TalkToSecondGuideAtOars(void) {
-  TOLBI_SHIP_ROWER_LINE_BY_ROUND(PASSENGER_SECOND_GUIDE,
-                                 ACTOR_ROWING_SECOND_GUIDE,
-                                 MsgTolbiShipThingHasKajaHisMen,
-                                 MsgTolbiShipMonstersEverywhereImStuckRowing,
-                                 MsgTolbiShipShipStartingListIfWe);
+  TOLBI_SHIP_ROWER_LINE_BY_SEAT(PASSENGER_SECOND_GUIDE,
+                                ACTOR_ROWING_SECOND_GUIDE,
+                                MsgTolbiShipThingHasKajaHisMen,
+                                MsgTolbiShipMonstersEverywhereImStuckRowing,
+                                MsgTolbiShipShipStartingListIfWe);
 }
 
 /// The sweating passenger at the oars, as the head guide.
 static void ShipRooms_TalkToSweatingPassengerAtOars(void) {
-  TOLBI_SHIP_ROWER_LINE_BY_ROUND(PASSENGER_SWEATING,
-                                 ACTOR_ROWING_SWEATING_PASSENGER,
-                                 MsgTolbiShipThingHasKajaHisMen,
-                                 MsgTolbiShipMonstersEverywhereImStuckRowing,
-                                 MsgTolbiShipShipStartingListIfWe);
+  TOLBI_SHIP_ROWER_LINE_BY_SEAT(PASSENGER_SWEATING,
+                                ACTOR_ROWING_SWEATING_PASSENGER,
+                                MsgTolbiShipThingHasKajaHisMen,
+                                MsgTolbiShipMonstersEverywhereImStuckRowing,
+                                MsgTolbiShipShipStartingListIfWe);
 }
 
 /// The lady at the oars asks how many monsters are out there.
@@ -1300,28 +1327,28 @@ static void ShipRooms_TalkToLadyAtOars(void) {
 
 /// The stared-at passenger at the oars, as the head guide.
 static void ShipRooms_TalkToStaredAtPassengerAtOars(void) {
-  TOLBI_SHIP_ROWER_LINE_BY_ROUND(PASSENGER_STARED_AT,
-                                 ACTOR_ROWING_STARED_AT_PASSENGER,
-                                 MsgTolbiShipThingHasKajaHisMen,
-                                 MsgTolbiShipMonstersEverywhereImStuckRowing,
-                                 MsgTolbiShipShipStartingListIfWe);
+  TOLBI_SHIP_ROWER_LINE_BY_SEAT(PASSENGER_STARED_AT,
+                                ACTOR_ROWING_STARED_AT_PASSENGER,
+                                MsgTolbiShipThingHasKajaHisMen,
+                                MsgTolbiShipMonstersEverywhereImStuckRowing,
+                                MsgTolbiShipShipStartingListIfWe);
 }
 
 /// The warrior at the oars, as the head guide.
 static void ShipRooms_TalkToWarriorAtOars(void) {
-  TOLBI_SHIP_ROWER_LINE_BY_ROUND(PASSENGER_WARRIOR, ACTOR_ROWING_WARRIOR,
-                                 MsgTolbiShipThingHasKajaHisMen,
-                                 MsgTolbiShipMonstersEverywhereImStuckRowing,
-                                 MsgTolbiShipShipStartingListIfWe);
+  TOLBI_SHIP_ROWER_LINE_BY_SEAT(PASSENGER_WARRIOR, ACTOR_ROWING_WARRIOR,
+                                MsgTolbiShipThingHasKajaHisMen,
+                                MsgTolbiShipMonstersEverywhereImStuckRowing,
+                                MsgTolbiShipShipStartingListIfWe);
 }
 
 /// The ticket grumbler at the oars, as the head guide.
 static void ShipRooms_TalkToTicketGrumblerAtOars(void) {
-  TOLBI_SHIP_ROWER_LINE_BY_ROUND(PASSENGER_TICKET_GRUMBLER,
-                                 ACTOR_ROWING_TICKET_GRUMBLER,
-                                 MsgTolbiShipThingHasKajaHisMen,
-                                 MsgTolbiShipMonstersEverywhereImStuckRowing,
-                                 MsgTolbiShipShipStartingListIfWe);
+  TOLBI_SHIP_ROWER_LINE_BY_SEAT(PASSENGER_TICKET_GRUMBLER,
+                                ACTOR_ROWING_TICKET_GRUMBLER,
+                                MsgTolbiShipThingHasKajaHisMen,
+                                MsgTolbiShipMonstersEverywhereImStuckRowing,
+                                MsgTolbiShipShipStartingListIfWe);
 }
 
 /// The muscle admirer at the oars, as the lady.
@@ -1334,15 +1361,15 @@ static void ShipRooms_TalkToMuscleAdmirerAtOars(void) {
 
 /// Mind Read on the head guide at the oars.
 static void ShipRooms_ReadHeadGuideMindAtOars(void) {
-  TOLBI_SHIP_ROWER_LINE_BY_ROUND(PASSENGER_HEAD_GUIDE, ACTOR_ROWING_HEAD_GUIDE,
-                                 MsgTolbiShipDontCareTakesJustHurry,
-                                 MsgTolbiShipIfThoseMonstersComeBack,
-                                 MsgTolbiShipBoatsRockingMuchImCertain);
+  TOLBI_SHIP_ROWER_LINE_BY_SEAT(PASSENGER_HEAD_GUIDE, ACTOR_ROWING_HEAD_GUIDE,
+                                MsgTolbiShipDontCareTakesJustHurry,
+                                MsgTolbiShipIfThoseMonstersComeBack,
+                                MsgTolbiShipBoatsRockingMuchImCertain);
 }
 
 /// Mind Read on the second guide at the oars, as on the head guide.
 static void ShipRooms_ReadSecondGuideMindAtOars(void) {
-  TOLBI_SHIP_ROWER_LINE_BY_ROUND(
+  TOLBI_SHIP_ROWER_LINE_BY_SEAT(
       PASSENGER_SECOND_GUIDE, ACTOR_ROWING_SECOND_GUIDE,
       MsgTolbiShipDontCareTakesJustHurry, MsgTolbiShipIfThoseMonstersComeBack,
       MsgTolbiShipBoatsRockingMuchImCertain);
@@ -1350,7 +1377,7 @@ static void ShipRooms_ReadSecondGuideMindAtOars(void) {
 
 /// Mind Read on the sweating passenger at the oars, as on the head guide.
 static void ShipRooms_ReadSweatingPassengerMindAtOars(void) {
-  TOLBI_SHIP_ROWER_LINE_BY_ROUND(
+  TOLBI_SHIP_ROWER_LINE_BY_SEAT(
       PASSENGER_SWEATING, ACTOR_ROWING_SWEATING_PASSENGER,
       MsgTolbiShipDontCareTakesJustHurry, MsgTolbiShipIfThoseMonstersComeBack,
       MsgTolbiShipBoatsRockingMuchImCertain);
@@ -1366,7 +1393,7 @@ static void ShipRooms_ReadLadyMindAtOars(void) {
 
 /// Mind Read on the stared-at passenger at the oars, as on the head guide.
 static void ShipRooms_ReadStaredAtPassengerMindAtOars(void) {
-  TOLBI_SHIP_ROWER_LINE_BY_ROUND(
+  TOLBI_SHIP_ROWER_LINE_BY_SEAT(
       PASSENGER_STARED_AT, ACTOR_ROWING_STARED_AT_PASSENGER,
       MsgTolbiShipDontCareTakesJustHurry, MsgTolbiShipIfThoseMonstersComeBack,
       MsgTolbiShipBoatsRockingMuchImCertain);
@@ -1374,15 +1401,15 @@ static void ShipRooms_ReadStaredAtPassengerMindAtOars(void) {
 
 /// Mind Read on the warrior at the oars, as on the head guide.
 static void ShipRooms_ReadWarriorMindAtOars(void) {
-  TOLBI_SHIP_ROWER_LINE_BY_ROUND(PASSENGER_WARRIOR, ACTOR_ROWING_WARRIOR,
-                                 MsgTolbiShipDontCareTakesJustHurry,
-                                 MsgTolbiShipIfThoseMonstersComeBack,
-                                 MsgTolbiShipBoatsRockingMuchImCertain);
+  TOLBI_SHIP_ROWER_LINE_BY_SEAT(PASSENGER_WARRIOR, ACTOR_ROWING_WARRIOR,
+                                MsgTolbiShipDontCareTakesJustHurry,
+                                MsgTolbiShipIfThoseMonstersComeBack,
+                                MsgTolbiShipBoatsRockingMuchImCertain);
 }
 
 /// Mind Read on the ticket grumbler at the oars, as on the head guide.
 static void ShipRooms_ReadTicketGrumblerMindAtOars(void) {
-  TOLBI_SHIP_ROWER_LINE_BY_ROUND(
+  TOLBI_SHIP_ROWER_LINE_BY_SEAT(
       PASSENGER_TICKET_GRUMBLER, ACTOR_ROWING_TICKET_GRUMBLER,
       MsgTolbiShipDontCareTakesJustHurry, MsgTolbiShipIfThoseMonstersComeBack,
       MsgTolbiShipBoatsRockingMuchImCertain);
@@ -1396,7 +1423,7 @@ static void ShipRooms_ReadMuscleAdmirerMindAtOars(void) {
       MsgTolbiShipWereSurroundedByMonstersStill);
 }
 
-#undef TOLBI_SHIP_ROWER_LINE_BY_ROUND
+#undef TOLBI_SHIP_ROWER_LINE_BY_SEAT
 #undef TOLBI_SHIP_ROWER_LINE_FIRST_OR_LATER
 
 /// Asks a passenger to row.
@@ -1404,7 +1431,7 @@ static void ShipRooms_AskToRow(s32 speaker, s32 question, s32 seatFlag) {
   Event_Start();
   Event_SetMessageId(question);
   Event_OpenMessage(speaker, 0);
-  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == YES) {
     ShipRooms_Say(speaker);
     Scene_WalkIntoLeader(speaker);
     GameFlag_Set(FLAG_TOLBI_SHIP_ROWER_CHOSEN);
@@ -1484,7 +1511,8 @@ static void ShipRooms_CallLeaderBackToBeasts(void) {
   if (GameFlag_Get(FLAG_TOLBI_SHIP_MONSTERS_BELOWDECKS) != 0) {
     Event_Start();
     Message_SetVoiceFromActor(ACTOR_ROWING_CREWMAN);
-    FieldMessage_ShowCentered(MsgTolbiShipWhereGoingSlay, 1, 8);
+    FieldMessage_ShowCentered(MsgTolbiShipWhereGoingSlay,
+                              CENTERED_MESSAGE_WINDOW, 8);
     Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.6);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 408, 134);
     ShipRooms_Turn(ACTOR_PARTY_LEADER, FACING_SOUTH);
@@ -1542,6 +1570,8 @@ static void ShipRooms_WatchWarriorsStormOff(void) {
   Event_Start();
   Field_EndBusyAndReveal();
   FieldCamera_SetSpeed(2.4);
+  // The hold's camera box is one screen wide, so the camera stays at x 150
+  // whatever x is asked for.
   ShipRooms_MoveCameraAndWait(1463, CAMERA_KEEP, 464,
                               SHIP_CAMERA_WAIT_FOR_ARRIVAL | 20);
   Actor_RunRepeatedMotion(ACTOR_HOLD_OURANOS, 1);
@@ -1556,7 +1586,7 @@ static void ShipRooms_WatchWarriorsStormOff(void) {
   FieldEvent_ShowMessageThenWait(
       SPEAKER(ACTOR_HOLD_SEAN, SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT),
       0, 20);
-  ShipRooms_Turn(ACTOR_HOLD_SECOND_GUIDE, 0);
+  ShipRooms_Turn(ACTOR_HOLD_SECOND_GUIDE, FACING_EAST);
   seanSpeaker =
       SPEAKER(ACTOR_HOLD_SEAN, SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_RIGHT);
   Actor_ShowEmote(ACTOR_HOLD_SECOND_GUIDE, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
@@ -1878,7 +1908,7 @@ static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
   ShipRooms_Turn(ACTOR_QUARTERS_KAJA, FACING_SOUTH_SOUTHEAST);
   Actor_SetAnimationAndWait(ACTOR_QUARTERS_KAJA, ANIM_SHAKE_HEAD);
   ShipRooms_Say(SPEAKER(ACTOR_QUARTERS_KAJA, SPEAKER_PORTRAIT_LEFT));
-  ShipRooms_Turn(ACTOR_QUARTERS_SEAN, 0);
+  ShipRooms_Turn(ACTOR_QUARTERS_SEAN, FACING_EAST);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_CAPTAIN, 1);
   ShipRooms_Say(ACTOR_QUARTERS_CAPTAIN);
   Actor_FaceDirection(ACTOR_QUARTERS_OURANOS, FACING_EAST, 0);
@@ -1888,7 +1918,7 @@ static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
   ShipRooms_MoveCameraAndWait(464, CAMERA_KEEP, 680,
                               SHIP_CAMERA_WAIT_FOR_ARRIVAL);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_CREWMAN, 1);
-  ShipRooms_Turn(ACTOR_QUARTERS_CREWMAN, 0);
+  ShipRooms_Turn(ACTOR_QUARTERS_CREWMAN, FACING_EAST);
   ShipRooms_Say(ACTOR_QUARTERS_CREWMAN);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 0);
   Actor_ShowEmote(ACTOR_QUARTERS_CREWMAN, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
@@ -1947,7 +1977,7 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   Actor_FaceDirection(ACTOR_QUARTERS_CREWMAN, FACING_NORTH_NORTHWEST, 20);
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_CAPTAIN, 1);
   Event_OpenMessage(captainSpeech, 0);
-  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == YES) {
     Actor_RunRepeatedMotion(ACTOR_QUARTERS_KAJA, 2);
     ShipRooms_Say(SPEAKER(ACTOR_QUARTERS_KAJA,
                           SPEAKER_WINDOW_BELOW | SPEAKER_PORTRAIT_LEFT));
@@ -2008,7 +2038,7 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   Actor_RunRepeatedMotion(ACTOR_QUARTERS_OURANOS, 2);
   ShipRooms_Turn(ACTOR_QUARTERS_OURANOS, FACING_NORTH_NORTHWEST);
   ShipRooms_Say(ACTOR_QUARTERS_OURANOS);
-  ShipRooms_Turn(ACTOR_QUARTERS_SEAN, 0);
+  ShipRooms_Turn(ACTOR_QUARTERS_SEAN, FACING_EAST);
   ShipRooms_Say(seanSpeech);
   Actor_FaceDirection(ACTOR_QUARTERS_CAPTAIN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_QUARTERS_KAJA, FACING_EAST, 0);
@@ -2047,7 +2077,7 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   ShipRooms_Say(ACTOR_QUARTERS_CAPTAIN);
   ShipRooms_Turn(ACTOR_QUARTERS_CAPTAIN, FACING_SOUTH_SOUTHEAST);
   Event_OpenMessage(ACTOR_QUARTERS_CAPTAIN, 0);
-  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 1) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == NO) {
     Actor_StartRepeatedMotion(ACTOR_QUARTERS_CAPTAIN, 2);
     ShipRooms_Say(ACTOR_QUARTERS_CAPTAIN);
     Actor_SetAnimationAndWait(ACTOR_QUARTERS_SEAN, ANIM_NOD);
@@ -2103,7 +2133,7 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   ShipRooms_Turn(ACTOR_QUARTERS_KAJA, FACING_SOUTH_SOUTHEAST);
   Actor_StartRepeatedMotion(ACTOR_QUARTERS_KAJA, 2);
   ShipRooms_Say(SPEAKER(ACTOR_QUARTERS_KAJA, SPEAKER_PORTRAIT_LEFT));
-  ShipRooms_Turn(ACTOR_QUARTERS_SEAN, 0);
+  ShipRooms_Turn(ACTOR_QUARTERS_SEAN, FACING_EAST);
   Actor_FaceDirection(ACTOR_QUARTERS_CAPTAIN, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_QUARTERS_KAJA, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_QUARTERS_OURANOS, FACING_NORTH_NORTHWEST, 0);
@@ -2114,7 +2144,7 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   Actor_ShowEmote(ACTOR_QUARTERS_CAPTAIN, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   ShipRooms_Turn(ACTOR_QUARTERS_CAPTAIN, FACING_NORTH_NORTHEAST);
   Event_OpenMessage(SPEAKER_PORTRAIT_LEFT | ACTOR_QUARTERS_CAPTAIN, 0);
-  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == YES) {
     Actor_SetAnimationAndWait(ACTOR_QUARTERS_CAPTAIN, ANIM_NOD);
     ShipRooms_Say(SPEAKER(ACTOR_QUARTERS_CAPTAIN, SPEAKER_PORTRAIT_LEFT));
     gFieldWork->message += 1;
@@ -2161,7 +2191,7 @@ static void ShipRooms_ReturnLuckyAnchor(void) {
   Scene_WalkIntoLeader(ACTOR_GARET);
   Actor_SetScript(ACTOR_QUARTERS_SECOND_GUIDE, action);
   Actor_WalkToAndWait(ACTOR_QUARTERS_CAPTAIN, 456, 648);
-  ShipRooms_Turn(ACTOR_QUARTERS_CAPTAIN, 0);
+  ShipRooms_Turn(ACTOR_QUARTERS_CAPTAIN, FACING_EAST);
   PartyInventory_Discard(ITEM_ANCHOR_CHARM);
   GameFlag_Set(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED);
   Event_End();
@@ -2350,8 +2380,8 @@ static void ShipRooms_SetUpCaptainsQuarters(void) {
     ShipRooms_PlaceActor(ACTOR_QUARTERS_CAPTAIN, 456, 652, FACING_EAST);
     ShipRooms_PlaceActor(ACTOR_QUARTERS_KAJA, 480, 600, FACING_NORTH_NORTHWEST);
     Actor_SetSpeed(ACTOR_QUARTERS_KAJA, 0.8);
-    actor->userValue = done;
-    actor->riseEnabled = 0;
+    actor->userValue = KAJA_PACE_FACE_NORTH_NORTHWEST;
+    actor->riseEnabled = KAJA_CUE_NONE;
     actor->collisionFlags |= ACTOR_BLOCKED_BY_SOLID;
     actor->update = ShipRooms_PaceCaptainsQuarters;
     other = Actor_Get(ACTOR_QUARTERS_CAPTAIN);
@@ -2480,8 +2510,8 @@ static void ShipRooms_SetUpRowingDeck(void) {
 static void ShipRooms_SetOarCollision(void) {
   u32 actorId;
 
-  for (actorId = ACTOR_ROWING_FIRST_OAR; actorId <= ACTOR_ROWING_FIRST_OAR + 7;
-       actorId++) {
+  for (actorId = ACTOR_ROWING_FIRST_OAR;
+       actorId < ACTOR_ROWING_FIRST_OAR + ROWING_DECK_SEATS; actorId++) {
     struct Actor *actor = Actor_Get(actorId);
     u32 flags = actor->collisionFlags;
     actor->collisionFlags = flags | ACTOR_NOT_TARGETED;
@@ -2980,7 +3010,7 @@ static struct Actor *ShipRooms_PlaceAnchorCharm(void) {
   GlyphTransfer *glyph;
 
   if (set != 0) {
-    return gShipRooms_AnchorObject;
+    return gShipRooms_AnchorCharm;
   }
   actor =
       FieldActor_Create(SPRITE_BLANK, toFIXED(455), toFIXED(4), toFIXED(544));
@@ -2995,7 +3025,7 @@ static struct Actor *ShipRooms_PlaceAnchorCharm(void) {
   VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   GameFlag_Set(FLAG_TOLBI_SHIP_ANCHOR_CHARM_DRAWN);
-  gShipRooms_AnchorObject = actor;
+  gShipRooms_AnchorCharm = actor;
   return actor;
 }
 
@@ -3163,7 +3193,7 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
     Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
     Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
     if (arg != 0) {
-      Actor_WaitForAnimationChange(3);
+      Actor_WaitForAnimationChange(ACTOR_MIA);
     }
     if (opt == 0) {
       break;
@@ -3171,6 +3201,7 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
     Event_Wait(opt);
     break;
   case SHIP_SHOW_PARTY_EMOTE:
+    // arg is not read.
     Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Actor_SetAttachedEffect(ACTOR_GARET,
@@ -3223,6 +3254,7 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
     if (arg != 0) {
       Event_WaitTransitionFrames();
     }
+    // opt is not read: the 20 frames some callers pass are not waited.
     Event_Wait(0);
     break;
   case SHIP_CLOSE_SCREEN:
@@ -3342,7 +3374,7 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
     Actor_SetPosition(ACTOR_ROWING_KAJA, 438, 152);
     break;
   case SHIP_HIDE_OARS:
-    for (slot = 0; slot <= 7; slot++) {
+    for (slot = 0; slot < ROWING_DECK_SEATS; slot++) {
       Actor_SetPosition(slot + ACTOR_ROWING_FIRST_OAR, 0, 0);
     }
     break;
@@ -3381,15 +3413,15 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
     }
     break;
   case SHIP_CLEAR_ROWING_SELECTIONS:
-    ShipRooms_RunEventCommand(SHIP_CLEAR_FLAG_RANGE,
-                              FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS,
-                              FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS + 8);
-    ShipRooms_RunEventCommand(SHIP_CLEAR_FLAG_RANGE,
-                              FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS,
-                              FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS + 8);
-    ShipRooms_RunEventCommand(SHIP_CLEAR_FLAG_RANGE,
-                              FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS,
-                              FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS + 8);
+    ShipRooms_RunEventCommand(
+        SHIP_CLEAR_FLAG_RANGE, FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS,
+        FLAG_TOLBI_SHIP_SECOND_SEAT_ROWERS + PASSENGER_COUNT - 1);
+    ShipRooms_RunEventCommand(
+        SHIP_CLEAR_FLAG_RANGE, FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS,
+        FLAG_TOLBI_SHIP_THIRD_SEAT_ROWERS + PASSENGER_COUNT - 1);
+    ShipRooms_RunEventCommand(
+        SHIP_CLEAR_FLAG_RANGE, FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS,
+        FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS + PASSENGER_COUNT - 1);
     GameFlag_Clear(FLAG_TOLBI_SHIP_ROWER_CHOSEN);
     GameFlag_Clear(FLAG_TOLBI_SHIP_MONSTERS_BELOWDECKS);
     GameFlag_Clear(FLAG_TOLBI_SHIP_KRAKEN_ON_DECK);
@@ -3428,14 +3460,14 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
   }
 }
 
-/// Finds the selected passenger or rowing-deck actor for a seat's flag
-/// group.
-static s32 ShipRooms_FindFirstSetFlag(u32 seat, s32 alternate) {
+/// The passenger chosen for a seat (0 to 3): their actor in the hold at sea if
+/// inHold, else on the rowing deck; 0 if no one has been chosen.
+static s32 ShipRooms_FindFirstSetFlag(u32 seat, s32 inHold) {
   s32 flag = 0;
   s32 id = ACTOR_SEA_HOLD_FIRST_PASSENGER;
   u32 i;
 
-  if (alternate == 0) {
+  if (inHold == 0) {
     id = ACTOR_ROWING_FIRST_PASSENGER;
   }
   switch (seat) {
@@ -3452,7 +3484,7 @@ static s32 ShipRooms_FindFirstSetFlag(u32 seat, s32 alternate) {
     flag = FLAG_TOLBI_SHIP_FOURTH_SEAT_ROWERS;
     break;
   }
-  for (i = 0; i <= 8; i++, flag++, id++) {
+  for (i = 0; i < PASSENGER_COUNT; i++, flag++, id++) {
     if (GameFlag_Get(flag) != 0) {
       return id;
     }
@@ -3484,7 +3516,7 @@ static void ShipRooms_HideSelectedPassenger(s32 actorId, s32 firstFlag) {
     i++;
     actorId++;
     firstFlag++;
-  } while (i <= 8);
+  } while (i < PASSENGER_COUNT);
 }
 
 /// Stages the next monster encounter with one replacement rower.
@@ -3554,7 +3586,7 @@ static void ShipRooms_ReportMonstersBelowdecks(void) {
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 40);
   Message_SetVoiceFromActor(ACTOR_ROWING_FIRST_OARSMAN);
   message = MsgTolbiShipMonstersBelowdecks;
-  FieldMessage_ShowCentered(message, 1, 10);
+  FieldMessage_ShowCentered(message, CENTERED_MESSAGE_WINDOW, 10);
   Event_Wait(10);
   ShipRooms_RunEventCommand(SHIP_FACE_PARTY_EAST_AND_WEST, 0, 40);
   ShipRooms_RunEventCommand(SHIP_FACE_PARTY, FACING_SOUTH, 20);
@@ -3641,7 +3673,7 @@ static void ShipRooms_FindOarsmanMissing(void) {
   Event_Wait(10);
   ShipRooms_Turn(ACTOR_ROWING_KAJA, FACING_SOUTH_SOUTHWEST);
   Event_OpenMessage(ACTOR_ROWING_KAJA, 0);
-  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == YES) {
     Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, ANIM_NOD);
     ShipRooms_Say(ACTOR_ROWING_KAJA);
   } else {
@@ -3674,13 +3706,13 @@ static void ShipRooms_FindOarsmanMissing(void) {
 
 /// Restores one replacement rower after the next monster attack.
 static void ShipRooms_EndSecondAttack(void) {
-  s32 handle = ShipRooms_FindFirstSetFlag(0, 0);
+  s32 firstRower = ShipRooms_FindFirstSetFlag(0, 0);
 
   Event_Start();
   ShipRooms_RunEventCommand(SHIP_RESET_CAMERA, 1, 0);
   ShipRooms_RunEventCommand(SHIP_PLACE_COMPANIONS_AND_MONSTERS, 0, 0);
   ShipRooms_PlaceFoundActors(0);
-  ShipRooms_RunEventCommand(SHIP_SETUP_MONSTER_ENCOUNTER, handle,
+  ShipRooms_RunEventCommand(SHIP_SETUP_MONSTER_ENCOUNTER, firstRower,
                             ACTOR_ROWING_FIRST_OARSMAN + 2);
   Actor_SetPosition(ACTOR_ROWING_FIRST_OARSMAN + 1, 0, 0);
   ShipRooms_FindOarsmanMissing();
@@ -3720,14 +3752,15 @@ static void ShipRooms_StartThirdAttack(void) {
 
 /// Restores two replacement rowers after the next monster attack.
 static void ShipRooms_EndThirdAttack(void) {
-  s32 handle = ShipRooms_FindFirstSetFlag(0, 0);
-  s32 other = ShipRooms_FindFirstSetFlag(1, 0);
+  s32 firstRower = ShipRooms_FindFirstSetFlag(0, 0);
+  s32 secondRower = ShipRooms_FindFirstSetFlag(1, 0);
 
   Event_Start();
   ShipRooms_RunEventCommand(SHIP_RESET_CAMERA, 1, 0);
   ShipRooms_RunEventCommand(SHIP_PLACE_COMPANIONS_AND_MONSTERS, 0, 0);
   ShipRooms_PlaceFoundActors(0);
-  ShipRooms_RunEventCommand(SHIP_SETUP_MONSTER_ENCOUNTER, handle, other);
+  ShipRooms_RunEventCommand(SHIP_SETUP_MONSTER_ENCOUNTER, firstRower,
+                            secondRower);
   Actor_SetPosition(ACTOR_ROWING_FIRST_OARSMAN + 1, 0, 0);
   Actor_SetPosition(ACTOR_ROWING_FIRST_OARSMAN + 2, 0, 0);
   ShipRooms_FindOarsmanMissing();
@@ -3894,6 +3927,17 @@ static void ShipRooms_ShowCaptainsQuartersBeforeIsland(void) {
   ShipRooms_RunEventCommand(SHIP_CLOSE_SCREEN, SHIP_ROOMS_TO_WORLD_MAP, 0);
 }
 
+/// How the passenger at the first seat answers Kaja at the island
+/// (ShipRooms_ReachIsland), each with lines of their own.
+enum IslandReaction {
+  ISLAND_REACTION_OTHERS,
+  /// The lady or the muscle admirer.
+  ISLAND_REACTION_LADY_OR_ADMIRER,
+  ISLAND_REACTION_OLD_MAN,
+  /// A guide, who says the same as the others at first.
+  ISLAND_REACTION_GUIDE
+};
+
 /// SHIP_ROOMS_ROWING_DECK_FROM_WORLD_MAP_ISLAND, on the rowing deck at the
 /// island.
 static void ShipRooms_ReachIsland(void) {
@@ -3901,10 +3945,10 @@ static void ShipRooms_ReachIsland(void) {
   s32 secondRower;
   s32 thirdRower;
   s32 firstRower;
-  s32 reaction = 0;
-  const s32 *progressB;
-  const s32 *progressC;
-  const s32 *progressA;
+  s32 reaction = ISLAND_REACTION_OTHERS;
+  const s32 *goUpstairs;
+  const s32 *stepOut;
+  const s32 *joinLeader;
 
   firstRower = ShipRooms_FindFirstSetFlag(0, 0);
   secondRower = ShipRooms_FindFirstSetFlag(1, 0);
@@ -3942,21 +3986,23 @@ static void ShipRooms_ReachIsland(void) {
   Actor_FaceDirection(secondRower, FACING_NORTH_NORTHWEST, 0);
   Actor_FaceDirection(thirdRower, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(fourthRower, FACING_NORTH_NORTHWEST, 60);
-  // The first rower's identity selects the response to the unexpected stop.
   if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + PASSENGER_OLD_MAN)) {
-    reaction = 2;
+    reaction = ISLAND_REACTION_OLD_MAN;
   } else if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS +
                           PASSENGER_MUSCLE_ADMIRER) ||
              GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + PASSENGER_LADY)) {
-    reaction = 1;
+    reaction = ISLAND_REACTION_LADY_OR_ADMIRER;
   }
   Actor_RunRepeatedMotion(firstRower, 1);
-  if (reaction == 1) {
+  if (reaction == ISLAND_REACTION_LADY_OR_ADMIRER) {
     gFieldWork->message += 1;
-  } else if (reaction == 2) {
+  } else if (reaction == ISLAND_REACTION_OLD_MAN) {
     gFieldWork->message += 2;
   }
   Actor_StartRepeatedMotion(firstRower, 2);
+  // "Island? Isn't this Tolbi?", the lady's or the muscle admirer's "What do
+  // you mean, island? Aren't we in Tolbi?", or the old man's "Uh... Tolbi's
+  // not an island, is it?"
   ShipRooms_Say(firstRower);
   Event_SetMessageId(MsgTolbiShipShipWentOff);
   Actor_SetAnimationAndWait(ACTOR_ROWING_KAJA, ANIM_SHAKE_HEAD);
@@ -3970,24 +4016,28 @@ static void ShipRooms_ReachIsland(void) {
   Actor_WalkToAndWait(ACTOR_ROWING_KAJA, 444, 132);
   Actor_ReleaseById(ACTOR_ROWING_KAJA);
   Event_Wait(40);
-  if (reaction == 0 &&
+  if (reaction == ISLAND_REACTION_OTHERS &&
       (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + PASSENGER_HEAD_GUIDE) ||
        GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS +
                     PASSENGER_SECOND_GUIDE))) {
-    reaction = 3;
+    reaction = ISLAND_REACTION_GUIDE;
   }
-  if (reaction == 0) {
+  if (reaction == ISLAND_REACTION_OTHERS) {
     gFieldWork->message += 1;
-  } else if (reaction == 1) {
+  } else if (reaction == ISLAND_REACTION_LADY_OR_ADMIRER) {
     gFieldWork->message += 2;
-  } else if (reaction == 2) {
+  } else if (reaction == ISLAND_REACTION_OLD_MAN) {
     gFieldWork->message += 3;
   }
-  ShipRooms_Turn(firstRower, 0);
+  ShipRooms_Turn(firstRower, FACING_EAST);
+  // A guide's "I'm going to check on the other passengers.", or the others'
+  // "If the ship isn't going anywhere, I'm not waiting down here.", the lady's
+  // or the muscle admirer's "If I'm not rowing, I ain't staying here." or the
+  // old man's "As long as we're stopping, I don't have to stay in here."
   ShipRooms_Say(firstRower);
   Actor_SetSpeed(firstRower, 1);
-  progressB = gShipRooms_GoUpstairs;
-  Actor_RunScriptAndWait(firstRower, progressB);
+  goUpstairs = gShipRooms_GoUpstairs;
+  Actor_RunScriptAndWait(firstRower, goUpstairs);
   Actor_FaceDirection(secondRower, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(thirdRower, FACING_EAST, 0);
   Actor_FaceDirection(fourthRower, FACING_WEST, 40);
@@ -3997,20 +4047,20 @@ static void ShipRooms_ReachIsland(void) {
   Actor_SetSpeed(secondRower, 1);
   Actor_SetSpeed(thirdRower, 1);
   Actor_SetSpeed(fourthRower, 1);
-  Actor_SetScript(thirdRower, progressB);
+  Actor_SetScript(thirdRower, goUpstairs);
   Event_Wait(40);
-  progressC = gShipRooms_StepOutFromSeat;
-  Actor_RunScriptAndWait(secondRower, progressC);
-  Actor_SetScript(secondRower, progressB);
-  Actor_RunScriptAndWait(fourthRower, progressC);
-  Actor_RunScriptAndWait(fourthRower, progressB);
+  stepOut = gShipRooms_StepOutFromSeat;
+  Actor_RunScriptAndWait(secondRower, stepOut);
+  Actor_SetScript(secondRower, goUpstairs);
+  Actor_RunScriptAndWait(fourthRower, stepOut);
+  Actor_RunScriptAndWait(fourthRower, goUpstairs);
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_SetSpeed(ACTOR_IVAN, 1);
   Actor_SetSpeed(ACTOR_MIA, 1);
-  progressA = gShipRooms_CompanionsJoinLeaderAtFront;
-  Actor_SetScript(ACTOR_GARET, progressA);
-  Actor_SetScript(ACTOR_IVAN, progressA);
-  Actor_RunScriptAndWait(ACTOR_MIA, progressA);
+  joinLeader = gShipRooms_CompanionsJoinLeaderAtFront;
+  Actor_SetScript(ACTOR_GARET, joinLeader);
+  Actor_SetScript(ACTOR_IVAN, joinLeader);
+  Actor_RunScriptAndWait(ACTOR_MIA, joinLeader);
   ShipRooms_RunEventCommand(SHIP_RELEASE_COMPANIONS, 0, 0);
   GameFlag_Clear(FLAG_TOLBI_SHIP_ROWING);
   GameFlag_Set(FLAG_TOLBI_SHIP_AT_ISLAND);
@@ -4105,7 +4155,7 @@ static void ShipRooms_SwapRowerSelections(s32 firstSeatFlags,
   s32 secondPassenger = 0;
   u32 i;
 
-  for (i = 0; i <= 8; i++) {
+  for (i = 0; i < PASSENGER_COUNT; i++) {
     s32 flag = firstSeatFlags + i;
     if (GameFlag_Get(flag) != 0) {
       GameFlag_Clear(flag);
@@ -4114,7 +4164,7 @@ static void ShipRooms_SwapRowerSelections(s32 firstSeatFlags,
     firstPassenger++;
   }
 
-  for (i = 0; i <= 8; i++) {
+  for (i = 0; i < PASSENGER_COUNT; i++) {
     s32 flag = secondSeatFlags + i;
     if (GameFlag_Get(flag) != 0) {
       GameFlag_Clear(flag);
@@ -4265,7 +4315,7 @@ s32 gShipRooms_HideScript[] = {
 };
 
 /// The Anchor Charm's actor, once placed this visit.
-struct Actor *gShipRooms_AnchorObject = 0;
+struct Actor *gShipRooms_AnchorCharm = 0;
 
 /// The other scenes have no entrances.
 struct SceneEntrance gShipRooms_EntrancesOther[] = {

@@ -4,10 +4,6 @@
 
 #include "battle_internal.h"
 
-/// The formation the Fusion Dragon leads, fought on the Venus Lighthouse aerie:
-/// it opens with the storm instead of the curtain.
-#define TRANSITION_STORM_FORMATION 347
-
 /// The curtain's first tile, CURTAIN_TILE(0), as BG1 numbers it from
 /// character block 1.
 #define TRANSITION_CURTAIN_FIRST_TILE 128
@@ -38,14 +34,13 @@
 
 /// REG_MOSAIC's largest block size, 16 pixels: each of its sizes is a four-bit
 /// field holding the size less one.
-#define MOSAIC_SIZE_MAX 0xf
+#define MOSAIC_SIZE_MAX 15
 
-/// The bytes of a row of a background map, and the words that hold its 32
-/// entries two at a time.
-#define MAP_ROW_BYTES (BG_SCREEN_WIDTH * 2)
+/// The words that hold a background map row's 32 entries two at a time.
 #define MAP_ROW_WORDS (MAP_ROW_BYTES / 4)
-/// Two background map entries side by side, written a word at a time.
-#define MAP_ENTRY_PAIR(left, right) ((right) << 16 | (left))
+/// Four affine map entries side by side, a byte each, written a word at a time.
+#define AFFINE_MAP_ENTRIES(first, second, third, fourth)                       \
+  ((fourth) << 24 | (third) << 16 | (second) << 8 | (first))
 /// The battle background's picture: 32 by 15 tiles of 256 colours, 256 by 120
 /// pixels. The first 256 tiles fill character block 2 and the rest block 3.
 #define BACKGROUND_TILE_ROWS 15
@@ -59,6 +54,9 @@
 #define BACKGROUND_BG1_FIRST_TILE (2 * BG_CHAR_SIZE / TILE_SIZE_8BPP)
 /// The last tile, which BG1's flat map shows in the rows around the picture.
 #define BG1_EDGE_TILE TILE_NUMBER_MASK
+/// BG1's horizontal scroll at rest, which centres the 256-pixel picture on the
+/// screen (battle_background.c's BACKGROUND_PAN_X, in whole pixels).
+#define BACKGROUND_SCROLL_X ((BG_SCREEN_WIDTH * 8 - DISPLAY_WIDTH) / 2)
 
 /// Fades the screen to black over sixteen frames as every background's mosaic
 /// blocks grow wider, then shows no layer.
@@ -113,16 +111,15 @@ void Graphics_BuildSequentialTileTable(void *tilemap) {
   u32 tiles;
   u32 i;
 
-  // Each word is four consecutive tile numbers, a byte each.
-  tiles = 0x03020100;
+  tiles = AFFINE_MAP_ENTRIES(0, 1, 2, 3);
   for (i = 0; i < BACKGROUND_UPPER_TILES / 4; i++) {
     *words++ = tiles;
-    tiles += 0x04040404;
+    tiles += AFFINE_MAP_ENTRIES(4, 4, 4, 4);
   }
-  tiles = 0x03020100;
+  tiles = AFFINE_MAP_ENTRIES(0, 1, 2, 3);
   for (i = 0; i < BACKGROUND_LOWER_TILES / 4; i++) {
     *words++ = tiles;
-    tiles += 0x04040404;
+    tiles += AFFINE_MAP_ENTRIES(4, 4, 4, 4);
   }
   Iwram_FillWords(words, BACKGROUND_AFFINE_MAP_BYTES - BACKGROUND_TILES, -1);
 }
@@ -168,7 +165,8 @@ void BattleBackground_ShowZoomedPage(void) {
 
 /// Unused: steps the curtain's solid tile through eight variants, a new one
 /// every four frames.
-// XXX (no evidence): which transition used it; nothing refers to it.
+// XXX (no evidence): which transition used it; nothing in either game calls
+// it, and The Lost Age keeps an unused copy too.
 void BattleTransition_UploadTileVariant(void) {
   u32 frame = *gBattleEntryTimer - 1;
   if (frame < TRANSITION_CURTAIN_VARIANTS * TRANSITION_VARIANT_FRAMES)
@@ -256,8 +254,8 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
   s32 visibleCount;
 
   view = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
-  timer = HeapSlot_Alloc(HEAP_SLOT_BATTLE_ENTRY_TIMER, 4);
-  if (encounterId != TRANSITION_STORM_FORMATION) {
+  timer = HeapSlot_Alloc(HEAP_SLOT_BATTLE_ENTRY_TIMER, sizeof(*timer));
+  if (encounterId != FORMATION_FUSION_DRAGON) {
     // The curtain's seven edge tiles.
     Dma_Set(gBattleTransition_CurtainTiles, CURTAIN_TILE(1), DMA_COPY_WORDS(8),
             REG_DMA3);
@@ -301,7 +299,7 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
 
       gBgScroll[0].y = TRANSITION_BG0_BAND;
       gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;
-      gBgScroll[1].x = 8;
+      gBgScroll[1].x = BACKGROUND_SCROLL_X;
       wait(1);
       REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
       REG_WIN0V = WIN_RANGE(0, 136);
@@ -403,13 +401,12 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
   wait(1);
   REG_BG1CNT = BATTLE_BG1CNT;
   REG_BG0CNT &= ~BGCNT_PRIORITY(2);
-  gBgScroll[1].x = 8;
+  gBgScroll[1].x = BACKGROUND_SCROLL_X;
   REG_DISPCNT = DISPCNT_MODE_1 | DISPCNT_OBJ_1D_MAP | DISPCNT_BG0_ON |
                 DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
   HeapSlot_Release(HEAP_SLOT_BATTLE_ENTRY_TIMER);
 }
 
-#undef TRANSITION_STORM_FORMATION
 #undef TRANSITION_CURTAIN_FIRST_TILE
 #undef TRANSITION_CURTAIN_ENTRY
 #undef TRANSITION_CURTAIN_COLOR
@@ -423,9 +420,8 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
 #undef TRANSITION_TURN_SPEED
 #undef TRANSITION_START_YAW
 #undef MOSAIC_SIZE_MAX
-#undef MAP_ROW_BYTES
 #undef MAP_ROW_WORDS
-#undef MAP_ENTRY_PAIR
+#undef AFFINE_MAP_ENTRIES
 #undef BACKGROUND_TILE_ROWS
 #undef BACKGROUND_TILES
 #undef BACKGROUND_UPPER_TILES
@@ -433,3 +429,4 @@ void BattleTransition_Run(s32 enemyCount, s32 encounterId) {
 #undef BACKGROUND_AFFINE_MAP_BYTES
 #undef BACKGROUND_BG1_FIRST_TILE
 #undef BG1_EDGE_TILE
+#undef BACKGROUND_SCROLL_X

@@ -20,7 +20,7 @@ enum SettingsMenuRow {
 
 /// The window colours the window colour settings set: WINDOW_PALETTE's colours
 /// from its background (shade 0, WINDOW_BACKGROUND_COLOR) to shade 6.
-#define WINDOW_COLOR_SHADE(n)                                                  \
+#define WINDOW_SHADE(n)                                                        \
   BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR + (n))
 
 /// Unused: three that do nothing.
@@ -63,7 +63,7 @@ UNUSED void SettingsMenu_ResetEntries(struct OptionMenuWork *work) {
 }
 
 /// Works out the window tint (red, green and blue, 0 to 31) from the window
-/// colour settings: the hue picks a point on the colour wheel and the
+/// colour settings: the window color picks a point on the colour wheel and the
 /// brightness shifts all three channels.
 UNUSED void WindowColor_CalculateTint(struct OptionMenuWork *work) {
   s16 phase;
@@ -100,22 +100,22 @@ UNUSED void WindowColor_CalculateTint(struct OptionMenuWork *work) {
   work->tint[2] = blue;
 }
 
-/// Writes the window colours (shades 0 to 6 of WINDOW_COLOR_SHADE), each a
+/// Writes the window colours (shades 0 to 6 of WINDOW_SHADE), each a
 /// fixed scale of the window tint.
 UNUSED void WindowColor_WritePalette(struct OptionMenuWork *work) {
-  *(s16 *)&WINDOW_COLOR_SHADE(0) = WindowColor_ScaleTint(
+  *(s16 *)&WINDOW_SHADE(0) = WindowColor_ScaleTint(
       work, FIXED_ONE * 14 / 15, FIXED_ONE * 4 / 5, toFIXED(1.06666));
-  *(s16 *)&WINDOW_COLOR_SHADE(1) = WindowColor_ScaleTint(
+  *(s16 *)&WINDOW_SHADE(1) = WindowColor_ScaleTint(
       work, FIXED_ONE * 5 / 6, FIXED_ONE * 11 / 15, FIXED_ONE * 14 / 15);
-  *(s16 *)&WINDOW_COLOR_SHADE(2) = WindowColor_ScaleTint(
+  *(s16 *)&WINDOW_SHADE(2) = WindowColor_ScaleTint(
       work, FIXED_ONE * 11 / 15, FIXED_ONE * 2 / 3, FIXED_ONE * 4 / 5);
-  *(s16 *)&WINDOW_COLOR_SHADE(3) = WindowColor_ScaleTint(
+  *(s16 *)&WINDOW_SHADE(3) = WindowColor_ScaleTint(
       work, toFIXED(0.63333), FIXED_ONE * 3 / 5, FIXED_ONE * 2 / 3);
-  *(s16 *)&WINDOW_COLOR_SHADE(4) = WindowColor_ScaleTint(
+  *(s16 *)&WINDOW_SHADE(4) = WindowColor_ScaleTint(
       work, FIXED_ONE * 31 / 30, FIXED_ONE * 13 / 15, FIXED_ONE * 6 / 5);
-  *(s16 *)&WINDOW_COLOR_SHADE(5) = WindowColor_ScaleTint(
+  *(s16 *)&WINDOW_SHADE(5) = WindowColor_ScaleTint(
       work, toFIXED(1.13333), FIXED_ONE * 14 / 15, FIXED_ONE * 4 / 3);
-  *(s16 *)&WINDOW_COLOR_SHADE(6) = WindowColor_ScaleTint(
+  *(s16 *)&WINDOW_SHADE(6) = WindowColor_ScaleTint(
       work, FIXED_ONE * 37 / 30, FIXED_ONE, FIXED_ONE * 22 / 15);
 }
 
@@ -163,7 +163,7 @@ u16 Color_ScaleComponents(s16 *rgb, FIXED redScale, FIXED greenScale,
   return red + ((blue << 10) + (green << 5));
 }
 
-/// Sets the window colours (WINDOW_COLOR_SHADE) for a window hue (0 to 23) and
+/// Sets the window colours (WINDOW_SHADE) for a window color (0 to 23) and
 /// brightness (0 to 14, 7 neutral).
 void WindowColor_Apply(s32 phase, s32 brightness) {
   s16 rgb[3];
@@ -173,7 +173,8 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
   s16 blue;
   s16 offset;
 
-  // The 24 hues are every fourth step of the 96-step wheel, hue 0 at step 48.
+  // The 24 window colors are every fourth step of the 96-step wheel, color 0 at
+  // step 48.
   step = ((phase + WINDOW_COLOR_COUNT / 2) % WINDOW_COLOR_COUNT) * 4;
   offset = brightness - WINDOW_BRIGHTNESS_NEUTRAL;
   red = gWindowColor_WaveTable[(step % WINDOW_COLOR_WHEEL_STEPS)] + offset;
@@ -192,20 +193,20 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
   // Each shade scales the tint by channel, in 16.16 (FIXED_ONE is 1): shades
   // 0 to 3 grow darker, from about 0.93, 0.8 and 1.07 to 0.63, 0.6 and 0.67,
   // and 4 to 6 lighter, up to about 1.23, 1 and 1.47.
-  WINDOW_COLOR_SHADE(0) = Color_ScaleComponents(
-      rgb, FIXED_ONE * 14 / 15, FIXED_ONE * 4 / 5, toFIXED(1.06666));
-  WINDOW_COLOR_SHADE(1) = Color_ScaleComponents(
+  WINDOW_SHADE(0) = Color_ScaleComponents(rgb, FIXED_ONE * 14 / 15,
+                                          FIXED_ONE * 4 / 5, toFIXED(1.06666));
+  WINDOW_SHADE(1) = Color_ScaleComponents(
       rgb, FIXED_ONE * 5 / 6, FIXED_ONE * 11 / 15, FIXED_ONE * 14 / 15);
-  WINDOW_COLOR_SHADE(2) = Color_ScaleComponents(
-      rgb, FIXED_ONE * 11 / 15, FIXED_ONE * 2 / 3, FIXED_ONE * 4 / 5);
-  WINDOW_COLOR_SHADE(3) = Color_ScaleComponents(
-      rgb, toFIXED(0.63333), FIXED_ONE * 3 / 5, FIXED_ONE * 2 / 3);
-  WINDOW_COLOR_SHADE(4) = Color_ScaleComponents(
+  WINDOW_SHADE(2) = Color_ScaleComponents(rgb, FIXED_ONE * 11 / 15,
+                                          FIXED_ONE * 2 / 3, FIXED_ONE * 4 / 5);
+  WINDOW_SHADE(3) = Color_ScaleComponents(rgb, toFIXED(0.63333),
+                                          FIXED_ONE * 3 / 5, FIXED_ONE * 2 / 3);
+  WINDOW_SHADE(4) = Color_ScaleComponents(
       rgb, FIXED_ONE * 31 / 30, FIXED_ONE * 13 / 15, FIXED_ONE * 6 / 5);
-  WINDOW_COLOR_SHADE(5) = Color_ScaleComponents(
+  WINDOW_SHADE(5) = Color_ScaleComponents(
       rgb, toFIXED(1.13333), FIXED_ONE * 14 / 15, FIXED_ONE * 4 / 3);
-  WINDOW_COLOR_SHADE(6) = Color_ScaleComponents(rgb, FIXED_ONE * 37 / 30,
-                                                FIXED_ONE, FIXED_ONE * 22 / 15);
+  WINDOW_SHADE(6) = Color_ScaleComponents(rgb, FIXED_ONE * 37 / 30, FIXED_ONE,
+                                          FIXED_ONE * 22 / 15);
 }
 
 /// The rows of the unused three-row settings cursor (OptionMenuWork.page).
@@ -471,7 +472,7 @@ s32 SettingsMenu_Run(void) {
   struct Window *settingsWindow;
   struct Window *helpWindow;
   struct WindowSprite *pair;
-  s8 *hue;
+  s8 *windowColor;
   s8 *brightness;
   s32 redraw;
   s32 selectedOption;
@@ -493,7 +494,7 @@ s32 SettingsMenu_Run(void) {
   // Picture 7 of gMenuTitlePictures, the Setup heading.
   pair = MenuTitle_Create(7, settingsWindow, 64, -48);
   wait(1);
-  hue = &work->option[SETTINGS_ROW_WINDOW_COLOR];
+  windowColor = &work->option[SETTINGS_ROW_WINDOW_COLOR];
   brightness = &work->option[SETTINGS_ROW_WINDOW_BRIGHTNESS];
 
   for (;;) {
@@ -542,7 +543,7 @@ s32 SettingsMenu_Run(void) {
       }
 
       x = settingsWindow->x * 8 + OPTION_SLIDER_X;
-      x += (*hue * OPTION_SLIDER_WIDTH) /
+      x += (*windowColor * OPTION_SLIDER_WIDTH) /
            work->optionCount[SETTINGS_ROW_WINDOW_COLOR];
       y = settingsWindow->y * 8 + 4;
       MenuCursor_SetFar(&work->marker[0].cursor, x, y, 1);
@@ -565,7 +566,7 @@ s32 SettingsMenu_Run(void) {
                                 OPTION_SETTING_END, 96);
       Text_DrawMessageAsTiles(x, settingsWindow, OPTION_SETTING_X, 88);
       // The windows show the edited colours at once.
-      WindowColor_Apply(*hue, *brightness);
+      WindowColor_Apply(*windowColor, *brightness);
 
       // The cursor goes 3 tiles a row down the window's left edge, the first
       // row's a tile lower; the help window says what the row sets
@@ -588,7 +589,7 @@ s32 SettingsMenu_Run(void) {
       redraw = 1;
       if (work->preset > ARRAY_COUNT(gSettingsMenu_HuePresets) - 1)
         work->preset = 0;
-      *hue = gSettingsMenu_HuePresets[work->preset];
+      *windowColor = gSettingsMenu_HuePresets[work->preset];
       *brightness = gSettingsMenu_BrightnessPresets[work->preset];
       continue;
     }
@@ -862,7 +863,7 @@ s32 PauseMenu_Choose(void) {
 }
 
 #undef OPTION_SLIDER_WIDTH
-#undef WINDOW_COLOR_SHADE
+#undef WINDOW_SHADE
 #undef WINDOW_COLOR_SLIDER_PALETTE
 #undef WINDOW_BRIGHTNESS_SLIDER_PALETTE
 #undef PAUSE_MENU_ROWS

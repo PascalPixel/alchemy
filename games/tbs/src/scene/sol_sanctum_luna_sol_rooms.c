@@ -135,20 +135,23 @@ enum SolSanctumLunaSolRoomsActorId {
 #define CLEAR_LIGHT_PATH(staging, column, row)                                 \
   MapGrid_CopyCellsTo(staging, 49, column, row, 1, 10)
 
+/// The first of the two layout rows holding the Luna room's picture with its
+/// quarters lit, the picture of Sol, which MapGrid_CopyCellsTo draws into the
+/// room.
+#define STATUE_LIGHTS_LIT_ROW 28
+/// The first of the two layout rows holding the same picture unlit, the
+/// picture of Luna.
+#define STATUE_LIGHTS_DARK_ROW 30
+
+/// The first of the map's two tileset animations that stay paused until the
+/// floor opens the way up to the Elemental Star Room.
+#define WAY_UP_ANIMATION_A 9
+/// The second of them.
+#define WAY_UP_ANIMATION_B 10
+
 /// The cell behaviors of the floor cells the events answer.
 ///
 /// Behaviors 1 and 2 are the exits.
-/// The layout rows holding the Luna room's picture with its quarters lit (two
-/// rows, the picture of Sol) and unlit (the picture of Luna), which
-/// MapGrid_CopyCellsTo draws into the room.
-#define STATUE_LIGHTS_LIT_ROW 28
-#define STATUE_LIGHTS_DARK_ROW 30
-
-/// The map's two tileset animations that stay paused until the floor opens the
-/// way up to the Elemental Star Room.
-#define WAY_UP_ANIMATION_A 9
-#define WAY_UP_ANIMATION_B 10
-
 enum SolSanctumLunaSolRoomsCellBehavior {
   CELL_BEHAVIOR_SOL_SANCTUM_LUNA_SOL_ROOMS_BEFORE_KRADEN = 8,
   /// The way back out to SceneId_SolSanctumReliefs.

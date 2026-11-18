@@ -4,17 +4,12 @@
 
 #include "game_internal.h"
 
-/// A view of EWRAM from gSceneLocalState on, which
-/// MainRoutineWork_InitializeDefaults writes one byte through.
-struct MapLocalStateSnapshotView {
-  u8 mapAndInventory[256]; ///< gSceneLocalState, then most of
-                           ///< gInventorySnapshot
-  /// gInventorySnapshot's last word, past the 65 halfwords the snapshot
-  /// uses; nothing reads or writes it through this view.
-  u32 playTime;
-  /// gActorSnapshot.slots[0]: set to ACTOR_SNAPSHOT_EMPTY,
-  /// so a new game holds no saved actors.
-  u8 firstSnapshotSlot;
+/// EWRAM from gSceneLocalState on, as a new game clears it: the scene's state,
+/// the equipment put aside for the Colosso and the actors kept across a battle.
+struct SceneStateView {
+  u8 sceneState[120];                 ///< gSceneLocalState
+  u16 inventorySnapshot[70];          ///< gInventorySnapshot
+  struct ActorSnapshot actorSnapshot; ///< gActorSnapshot
 };
 
 /// The running totals Unit_Calculate builds a unit's stats in.
@@ -95,7 +90,7 @@ struct Unit *Unit_Get(u32 unitId) {
     unit = &states[unitId];
     return unit;
   }
-  if (unitId - FIRST_ENEMY_UNIT < 6 && gEnemyUnits != NULL) {
+  if (unitId - FIRST_ENEMY_UNIT < ENEMY_BATTLE_SIZE && gEnemyUnits != NULL) {
     unit = &((struct Unit *)gEnemyUnits)[unitId - FIRST_ENEMY_UNIT];
     return unit;
   }
@@ -136,6 +131,9 @@ void Memory_CopyBytesDirectional(u8 *first, u8 *second, s32 count,
 
 /// A scaling effect's number among the eight, from EQUIP_EFFECT_SCALE_HP.
 #define SCALE_EFFECT(kind) ((kind) - EQUIP_EFFECT_SCALE_HP)
+/// The PP an Adept regains at the end of each battle turn, on top of its own,
+/// inside the lighthouse of its element.
+#define LIGHTHOUSE_PP_REGEN 4
 
 /// Works out a unit's stats from its base stats, equipment, set Djinn, class
 /// and battle stat levels; its HP and PP keep their share of a new maximum.
@@ -144,7 +142,7 @@ void Unit_Calculate(s32 unitId) {
   struct Unit *unit;
   s32 index, effectIndex, elementIndex;
   s32 value;
-  s32 lighthouseLit;
+  s32 inOwnLighthouse;
   s32 effectKind;
   s32 effectAmount;
   s32 statLimit;
@@ -290,7 +288,7 @@ void Unit_Calculate(s32 unitId) {
       }
     }
 
-    // The class's multipliers are in tenths (STAT_SCALE_ONE keeps a stat)
+    // The class's multipliers are in tenths (STAT_SCALE_ONE keeps a stat).
     {
       struct ClassDefinition *classDefinition =
           Class_GetDefinition(unit->classId);
@@ -304,7 +302,7 @@ void Unit_Calculate(s32 unitId) {
     }
 
     // Then the equipment's multiplying effects, EQUIP_EFFECT_SCALE_HP to
-    // EQUIP_EFFECT_SCALE_LUCK, also in tenths, applied after the class
+    // EQUIP_EFFECT_SCALE_LUCK, also in tenths.
     for (index = 0; index < INVENTORY_SLOTS; index++) {
       if (!(unit->inventory[index] & INVENTORY_EQUIPPED))
         continue;
@@ -360,27 +358,27 @@ void Unit_Calculate(s32 unitId) {
         unit->resistanceStage * RESISTANCE_PER_STAGE;
 
   if (unit->classId != CLASS_NONE) {
-    lighthouseLit = 0;
-    // Faster PP recovery once the character's own element's lighthouse is lit
+    inOwnLighthouse = 0;
+    // Faster PP recovery inside the lighthouse of the character's own element.
     switch (unit->id) {
     case ISAAC:
-      lighthouseLit = GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_LIT);
+      inOwnLighthouse = GameFlag_Get(FLAG_VENUS_LIGHTHOUSE_LIT);
       break;
     case GARET:
-      lighthouseLit = GameFlag_Get(FLAG_MARS_LIGHTHOUSE_LIT);
+      inOwnLighthouse = GameFlag_Get(FLAG_MARS_LIGHTHOUSE_LIT);
       break;
     case IVAN:
-      lighthouseLit = GameFlag_Get(FLAG_JUPITER_LIGHTHOUSE_LIT);
+      inOwnLighthouse = GameFlag_Get(FLAG_JUPITER_LIGHTHOUSE_LIT);
       break;
     case MIA:
-      lighthouseLit = GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_LIT);
+      inOwnLighthouse = GameFlag_Get(FLAG_MERCURY_LIGHTHOUSE_LIT);
       break;
     case JENNA:
-      lighthouseLit = GameFlag_Get(FLAG_MARS_LIGHTHOUSE_LIT);
+      inOwnLighthouse = GameFlag_Get(FLAG_MARS_LIGHTHOUSE_LIT);
       break;
     }
-    if (lighthouseLit)
-      stats->ppRegen += 4;
+    if (inOwnLighthouse)
+      stats->ppRegen += LIGHTHOUSE_PP_REGEN;
   }
 
   CLAMP(stats->atk, 0, UNIT_STAT_MAX);
@@ -463,10 +461,12 @@ void GameFlag_RefreshLureCap(void) {
   }
 }
 
-/// Set in every build stamp's time; and set on top in a debug build's
-/// (gDebugMode), whose saves then list after every release's.
+/// Set in every build stamp's time.
 #define BUILD_STAMP_MARK 0x1000
-#define BUILD_STAMP_DEBUG ((s16)0x8000)
+/// Set on top of the time in a debug build's stamp (gDebugMode): bit 15,
+/// sign-extended, so that its stamp is above every release build's. A release's
+/// saves show there as from an older build, and its own never do in a release.
+#define BUILD_STAMP_DEBUG 0xffff8000
 
 /// Encodes the build stamp's time, which a new game takes as its start stamp
 /// and the file list compares saves with.
@@ -503,13 +503,12 @@ void MainRoutineWork_InitializeDefaults(void) {
   // Clear the state up to the characters, the scene state with its snapshots,
   // and the flags.
   Dma_Fill32Cell(zero, 0, &gMainRoutineWork, sizeof(gMainRoutineWork));
-  Dma_Fill32Cell(zero, 0, gSceneLocalState, 993 * 4);
+  Dma_Fill32Cell(zero, 0, gSceneLocalState, sizeof(struct SceneStateView));
   WAIT_DMA();
   Dma_Fill32Cell(zero, 0, gGameFlagBytes, 128 * 4);
-  ((struct MapLocalStateSnapshotView *)gSceneLocalState)->firstSnapshotSlot =
+  ((struct SceneStateView *)gSceneLocalState)->actorSnapshot.slots[0] =
       ACTOR_SNAPSHOT_EMPTY;
   Dma_Fill32Cell(zero, 0, gCharacterUnits, sizeof(gCharacterUnits));
-  // Build the characters, then install input and message defaults.
   Party_InitializeCharacters();
   gMainRoutineWork.aKeys = KEY_A;
   gMainRoutineWork.bKeys = KEY_B;
@@ -520,7 +519,7 @@ void MainRoutineWork_InitializeDefaults(void) {
   gMainRoutineWork.dashKeys = KEY_B;
   gMainRoutineWork.firstShortcut = 0;
   gMainRoutineWork.secondShortcut = 0;
-  gMainRoutineWork.leaderActorId = 0;
+  gMainRoutineWork.leaderActorId = ISAAC;
   Party_AddMember(ISAAC);
   gMainRoutineWork.holdings.coins = 0;
   gMainRoutineWork.messageSpeed = 1;
@@ -584,7 +583,7 @@ void Party_EndChildhood(void) {
   GameFlag_Clear(FLAG_KEEP_MUSIC_HELD);
   GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
 
-  for (unitId = 0; unitId <= 1; unitId++) {
+  for (unitId = ISAAC; unitId <= GARET; unitId++) {
     struct Unit *unit = Unit_Get(unitId);
     s32 slot;
 
@@ -634,8 +633,9 @@ void Party_RestoreHpPp(s32 cureConditions) {
   }
 }
 
-/// Restores the PP of each party member whose element group has a lit
-/// lighthouse: Venus or Mars for group 0, Mercury or Jupiter for the others.
+/// Restores the PP of each party member whose element group's lighthouse the
+/// party is inside: Venus or Mars for group 0, Mercury or Jupiter for the
+/// others.
 void Party_RestorePpOfLitElements(void) {
   s32 partySize;
   s32 partyIndex;
@@ -709,7 +709,8 @@ static inline s32 Unit_ClampGaugeValue(s32 value, s32 maximum) {
   }
 
 UNIT_DEFINE_SET(Unit_SetHp, hp, hpMax)
-/// Only game.s's bare veneer reaches it; nothing calls it by name.
+/// Unused: only its unnamed entry in the game bank's far-call table refers to
+/// it.
 UNIT_DEFINE_SET(Unit_SetPp, pp, ppMax)
 
 /// Each adds delta to the HP or PP of unit unitId, clamped to 0 and its
@@ -738,6 +739,7 @@ UNIT_DEFINE_ADD(s16, Unit_AddPp, pp, ppMax)
 #undef UNIT_STAT_DIFF
 
 #undef SCALE_EFFECT
+#undef LIGHTHOUSE_PP_REGEN
 #undef BUILD_STAMP_MARK
 #undef BUILD_STAMP_DEBUG
 #undef PROLOGUE_COINS

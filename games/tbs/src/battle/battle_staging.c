@@ -48,7 +48,7 @@ s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay) {
   Matrix_SetLookAt(camera->eye, camera->focus);
   Projection_Set(BATTLE_CAMERA_DISTANCE,
                  Iwram_RatioMulQ14(BATTLE_CAMERA_DISTANCE, FIXED_ONE * 3 / 4),
-                 toFIXED(32767));
+                 PROJECTION_FAR_DEPTH_MAX);
   if (delay != 0) {
     view->targetYaw = YAW_PARTY_ACTION;
     wait(delay);

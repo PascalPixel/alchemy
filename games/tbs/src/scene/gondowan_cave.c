@@ -27,7 +27,7 @@
 /// out of sight.
 ///
 /// Talking to him or walking up to him while he waits (step trigger 11) makes
-/// him come along (GondowanCave_IodemJoinsParty). Until he has reached Babi
+/// him come along (GondowanCave_IodemComesAlong). Until he has reached Babi
 /// Lighthouse (FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED), turning back
 /// (step trigger 10) brings him out to ask why
 /// (GondowanCave_IodemAsksWhyTurningBack). If he stays to wait, the saved place
@@ -52,10 +52,10 @@
 /// drop makes that copy, and so does every arrival by
 /// GONDOWAN_CAVE_FROM_WORLD_MAP_EAST, solved or not.
 ///
-/// Nothing the player sees depends on it. In tbs-en the screen is the same
-/// either way. The leader jumps the crevice at row 17 (step triggers 10 and
-/// 11) from either side either way, and the pillar settles at the same height
-/// in each of columns 41 to 44 either way.
+/// Nothing the player sees depends on it: the screen is the same, the leader
+/// jumps the crevice at row 17 (step triggers 10 and 11) from either side, and
+/// the pillar settles at the same height in each of columns 41 to 44, with the
+/// copy made or not.
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -277,8 +277,8 @@ static void GondowanCave_IodemAsksWhyTurningBack(void) {
   }
 }
 
-/// Iodem, waiting in Gondowan Passage, joins the party.
-static void GondowanCave_IodemJoinsParty(void) {
+/// Iodem, waiting in Gondowan Passage, comes along with the party.
+static void GondowanCave_IodemComesAlong(void) {
   Event_Start();
   Actor_FaceActor(ACTOR_IODEM, ACTOR_PARTY_LEADER, 0);
   Actor_FaceActor(ACTOR_PARTY_LEADER, ACTOR_IODEM, 0);
@@ -345,8 +345,10 @@ static void GondowanCave_LeaveToWorldMapEast(void) {
 
   work = gFieldWork;
   Event_Start();
-  // XXX (no evidence): what flags 0x9a3, 0x9a4 and 0x9a6 hold; only this
-  // block, which nothing reaches, touches them.
+  // XXX (no evidence): what story flags 0x9a3, 0x9a4 and 0x9a6 hold, among
+  // FLAG_GONDOWAN_CAVE_STUMP_MOVED and FLAG_GONDOWAN_CAVE_PILLAR_DROPPED; only
+  // this block touches them, nothing in either game reads them, and nothing
+  // sets FLAG_SCENE_TEMP_04, so no play or render shows them.
   if (GameFlag_Get(FLAG_SCENE_TEMP_04) != 0) {
     GameFlag_Clear(0x9a3);
     Event_ClearFlag(FLAG_GONDOWAN_CAVE_PILLAR_DROPPED);
@@ -654,11 +656,11 @@ struct Trigger gGondowanPassageTriggersWithIodem[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, GONDOWAN_PASSAGE_TO_WORLD_MAP_NORTH },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, GONDOWAN_PASSAGE_TO_WORLD_MAP_SOUTH },
     { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(GondowanCave_IodemAsksWhyTurningBack) },
-    { TRIGGER_STEP, 11, FLAG_IODEM_FOLLOWING_PARTY, EVENT(GondowanCave_IodemJoinsParty) },
+    { TRIGGER_STEP, 11, FLAG_IODEM_FOLLOWING_PARTY, EVENT(GondowanCave_IodemComesAlong) },
     { TRIGGER_TALK, ACTOR_FIRST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWhyWouldIodemChooseToWait) },
     { TRIGGER_TALK, ACTOR_SECOND_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveWeHaventSeenAnybodyUnusualCrossing) },
     { TRIGGER_TALK, ACTOR_THIRD_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEvenIfYouGoEastFrom) },
-    { TRIGGER_TALK, ACTOR_IODEM, CONDITION_ALWAYS, EVENT(GondowanCave_IodemJoinsParty) },
+    { TRIGGER_TALK, ACTOR_IODEM, CONDITION_ALWAYS, EVENT(GondowanCave_IodemComesAlong) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveIodemIsGoingToBabiLighthouse) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveItsALotOfStressBut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_THIRD_SOLDIER, CONDITION_ALWAYS, MSGNO(MsgGondowanCaveEveryoneComesDownThisWayWhen) },
@@ -679,7 +681,8 @@ struct Trigger gGondowanCaveRiverTriggers[] = {
     { TRIGGER_TABLE_END },
 };
 
-/// FLAG_SCENE_TEMP_05 ends Move on the pillar.
+/// Move on the pillar would end on FLAG_SCENE_TEMP_05, which nothing sets; once
+/// the pillar has dropped, it stands at (0, 0), out of reach.
 struct Trigger gGondowanCaveTriggers[] = {
     { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(GondowanCave_LeaveToWorldMapEast) },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, GONDOWAN_CAVE_TO_GONDOWAN_CAVE_RIVER_NORTH },

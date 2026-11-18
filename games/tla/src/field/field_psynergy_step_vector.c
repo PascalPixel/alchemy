@@ -204,8 +204,7 @@ void ColorBuffer_DarkenFourLevels(u8 *buffer, s32 count) {
 
 /// The canvas's frame callback: counts the frame and carries out the command
 /// the effect left for it, copying the canvas into the sprite's tiles (or to
-/// the start of BG VRAM), and clearing or fading it after the copy. Case 2
-/// comes before case 1: its body comes first in the ROM.
+/// the start of BG VRAM), and clearing or fading it after the copy.
 void BattleEffect_UploadCanvas(void) {
   struct CanvasSpriteWork *work = Ram_HeapSlots->canvasSprite;
   u8 *canvas = Ram_HeapSlots->battleCanvas;
@@ -597,8 +596,8 @@ void FieldParticle_UpdateMotion(struct FieldParticle *effect) {
 
 /// Reports an unfinished target only for effects that stop on arrival.
 u32 FieldParticle_HasPendingTarget(struct FieldParticle *effect) {
-  /* FAKEMATCH(temporary): the target and EFFECT_NO_TARGET compared by the
-   * sign of their difference's bits, held in a local; as
+  /* FAKEMATCH(temporary): the target's bits that differ from
+   * EFFECT_NO_TARGET, held in a local for NONZERO; as
    * effect->targetX != EFFECT_NO_TARGET. */
   u32 value;
 
@@ -606,7 +605,7 @@ u32 FieldParticle_HasPendingTarget(struct FieldParticle *effect) {
     return 0;
   }
   value = (u32)effect->targetX ^ (u32)EFFECT_NO_TARGET;
-  return ((0u - value) | value) >> 31;
+  return NONZERO(value);
 }
 
 /// Places a field effect sprite at (x, z), at rest with no target.

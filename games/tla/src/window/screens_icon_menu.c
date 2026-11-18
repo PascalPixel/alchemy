@@ -120,7 +120,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     BattleHighlight_SetModesFar(data, HIGHLIGHT_SELECTED);
   }
 
-  target = 256;
+  target = PLACE_PARTY;
   // Default: set for real at the top of each round.
   commandsOut = NULL;
   // Default: each is set for real by the row it reaches.
@@ -176,7 +176,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           break;
         }
         if ((gLinkStatus & LINK_STATUS_HEARD_BOTH) != LINK_STATUS_HEARD_BOTH) {
-          if (++missedLinkFrames > 24) {
+          if (++missedLinkFrames > LINK_MAX_MISSED_FRAMES) {
             commandCount = -1;
             state->linkTimer = 0;
             break;
@@ -296,7 +296,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       command->priority = FLEE_PRIORITY;
       command->command = COMMAND_FLEE;
       command->parameter = refused;
-      command->target = 256;
+      command->target = PLACE_PARTY;
       break;
     }
     if (mode != COMMAND_ICON_FIGHT)
@@ -804,6 +804,10 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       Text_DrawWideStringAtOffset(text, state->timerWindow, 0, 4);
     }
 
+    // The wait message shows only when the countdown never opened its
+    // window, that is while the partner is still choosing; a timer window
+    // was closed above and is only forgotten here. mode counts the frames
+    // without the link, and past LINK_MAX_MISSED_FRAMES gives up (-1).
     link = Ram_HeapSlots->battleWork;
     mode = 0;
     if (state->timerWindow == NULL && link->linkPaused == 0) {
@@ -825,7 +829,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       }
       if ((gLinkStatus & LINK_STATUS_HEARD_BOTH) != LINK_STATUS_HEARD_BOTH) {
         mode++;
-        if (mode > 24) {
+        if (mode > LINK_MAX_MISSED_FRAMES) {
           commandCount = -1;
           break;
         }
@@ -914,7 +918,7 @@ void IconMenu_DrawIcons(void) {
       if (entry->y != 0)
         spriteY = entry->y + pulseScale * 3 / 256 - 20;
       else
-        spriteY = (pulseScale * 15 / 256 - 30) & 255;
+        spriteY = (pulseScale * 15 / 256 - 30) & OBJ_Y_MASK;
       word = &entry->link;
       *word++ = 0;
       *word++ = OBJ_AFFINE_MATRIX(affineIndex) | spriteY | OBJ_X(left) |
@@ -986,6 +990,7 @@ void IconMenu_DrawIcons(void) {
     span <<= 8;
     edge = &page->lines[ICON_MENU_BOTTOM_ROW * 8].span;
     for (index = ICON_MENU_BOTTOM_ROW * 8; index < DISPLAY_HEIGHT; index++) {
+      // firstLine, done with, carries the mask that keeps the right edge.
       firstLine = 0xff;
       *edge = (*edge & firstLine) | span;
       edge += 2;

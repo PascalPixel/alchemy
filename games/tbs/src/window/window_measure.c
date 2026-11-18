@@ -4,20 +4,29 @@
 
 #include "window_internal.h"
 
-#if TBS_PATCH_2
+/// The pixels of a window's two border tiles, left and right.
+#define WINDOW_BORDER_WIDTH 16
+/// The widest gap between characters that spreads a line across its window,
+/// in pixels, outside Japanese.
+#define LINE_GAP_MAX 12
 
-#define FIT_FIXED_LIMIT 1
-#endif
+/// What a window adds to its text's size in pixels before it is cut to tiles:
+/// across, its border and 3, so a width rounds up to the next tile only past 4
+/// pixels into it; down, 15, so a height rounds up and takes one tile more.
+#define WINDOW_PAD_X (WINDOW_BORDER_WIDTH + 3)
+#define WINDOW_PAD_Y 15
 
 /// Sizes a window for decoded text no and moves (*windowX, *windowY) so the
 /// window fits on the screen. flags: bit 0 measures every page
 /// (Text_MeasureAllPages) rather than the first; bit 1 takes the size in
 /// *windowWidth and *windowHeight as given, in tiles, instead of measuring.
+/// In the Japanese and English releases, while a mind-read window is open, a
+/// measured window is 2 tiles wider and kept off the screen's last column.
 void Window_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
                         u32 *windowWidth, u32 *windowHeight, u16 *spacing,
                         u32 flags) {
-#if !defined(FIT_FIXED_LIMIT)
-  u8 *base;
+#if !TBS_PATCH_2
+  struct WindowWork *work;
 #endif
   s32 x;
   s32 y;
@@ -27,8 +36,8 @@ void Window_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
   s32 overflow;
   s32 fittedPosition;
 
-#if !defined(FIT_FIXED_LIMIT)
-  base = gWindowWork[0];
+#if !TBS_PATCH_2
+  work = WINDOW_WORK;
 #endif
   x = *windowX;
   y = *windowY;
@@ -44,14 +53,12 @@ void Window_FitOnScreen(s32 entryIndex, s32 *windowX, s32 *windowY,
   if (*windowWidth == 0 && *windowHeight == 0)
     return;
 
-  // Pixels to tiles, with room for the border and a margin: + 19 is the two
-  // border tiles (16) and 3, so a width rounds up to the next tile only past 4
-  // pixels into it.
+  // Pixels to tiles, with room for the border and a margin.
   if (!(flags & 2)) {
-    *windowWidth = (*windowWidth + 19) >> 3;
-    *windowHeight = (*windowHeight + 15) >> 3;
-#if !defined(FIT_FIXED_LIMIT)
-    if (((struct WindowWork *)base)->mindRead != 0) {
+    *windowWidth = (*windowWidth + WINDOW_PAD_X) >> 3;
+    *windowHeight = (*windowHeight + WINDOW_PAD_Y) >> 3;
+#if !TBS_PATCH_2
+    if (work->mindRead != 0) {
       *windowWidth += 2;
       rightLimit = DISPLAY_TILE_WIDTH - 1;
     }
@@ -205,7 +212,7 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
       goto done;
 #endif
     case 14:
-    case 28:
+    case TEXT_ACTOR_NAME_START:
       entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       // Skip the second operand too.
       // Fall through.
@@ -241,8 +248,8 @@ done:
   // across the window's inner width: the window's width in tiles, as
   // Window_FitOnScreen makes it, less the frame, in pixels, and 4 pixels of
   // margin.
-  width = (width + 19) >> 3;
-  width = (width << 3) - 16;
+  width = (width + WINDOW_PAD_X) >> 3;
+  width = (width << 3) - WINDOW_BORDER_WIDTH;
   if (spacing != NULL) {
     lineIndex = 0;
     while (lineIndex <= lines) {
@@ -253,9 +260,11 @@ done:
         gap -= 4;
         if (gap < 0)
           gap = 0;
+        // Outside Japanese a gap over LINE_GAP_MAX pixels falls back to 2; in
+        // Japanese one over 8 is dropped and the rest held to at most 1.
         gap = ((gap << 8) / (lineSpacingCounts[lineIndex] - 1));
 #if LANGUAGE != LANGUAGE_JAPANESE
-        if (gap < 0 || gap > Q_8_8(12))
+        if (gap < 0 || gap > Q_8_8(LINE_GAP_MAX))
           gap = Q_8_8(2);
 #else
         if (gap < 0 || gap > Q_8_8(8))
@@ -404,7 +413,7 @@ void Text_MeasureAllPages(s32 entryIndex, u32 *outWidth, u32 *outHeight,
       page++;
       break;
     case 14:
-    case 28:
+    case TEXT_ACTOR_NAME_START:
       entryIndex = (entryIndex + 1) & TEXT_BUFFER_MASK;
       // Skip the second operand too.
       // Fall through.
@@ -438,7 +447,7 @@ done:
       *outHeight = pageHeights[pageIndex];
   }
   *outWidth = maxWidth;
-  maxWidth = (((maxWidth + 19) >> 3) << 3) - 16;
+  maxWidth = (((maxWidth + WINDOW_PAD_X) >> 3) << 3) - WINDOW_BORDER_WIDTH;
   if (spacing != NULL) {
     for (lineIndex = 0; lineIndex <= line; lineIndex++) {
       if (lineSpacingCounts[lineIndex] <= 1) {
@@ -460,3 +469,8 @@ done:
     }
   }
 }
+
+#undef WINDOW_BORDER_WIDTH
+#undef LINE_GAP_MAX
+#undef WINDOW_PAD_X
+#undef WINDOW_PAD_Y

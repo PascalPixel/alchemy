@@ -6,6 +6,18 @@
 #include "field/event_commands.h"
 #include "field/field.h"
 #include "field/object.h"
+#include "field/ground_mask.h"
+
+/// The frames of a ground particle's splash (gFieldEffect_GroundParticleFrames,
+/// five halfwords each), played from the last down to the first.
+#define GROUND_PARTICLE_FRAMES 16
+
+/// mote.png's 16 by 16 pictures, four tiles each: two of each size, the
+/// motes shrinking as they rise and flickering between the two.
+#define MOTE_PICTURE_TILES 4
+#define MOTE_LARGE 0
+#define MOTE_MEDIUM 2
+#define MOTE_SMALL 4
 
 /// Unused: nothing calls GroundParticles_StartFar. The Broken Seal's
 /// Weather_StartRain, kept whole: 64 sprites placed at the leader's position on
@@ -19,33 +31,32 @@ void GroundParticles_Start(void) {
   // words is the decode buffer, then each particle's attribute cursor.
   u32 *words;
   u32 i;
-  // The fill's value; as a literal 0 the fill differs.
-  u32 zero = 0;
+  u32 fill = 0;
 
   work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct WeatherWork));
   leader = Ram_HeapSlots->mapGrid->origin;
   Scene_QueueMusic(SE_AMBIENT_WATER);
   particle = work->particles;
-  Dma_Fill32(zero, work, sizeof(struct WeatherWork));
+  Dma_Fill32(fill, work, sizeof(struct WeatherWork));
   words = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gFieldEffect_GroundParticleTiles, words);
   work->entry = VramCache_FindFreeEntry();
   work->tileBase = VramCache_Load(work->entry, 768, words);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
-  for (i = 0; i < 64; i++) {
+  for (i = 0; i < WEATHER_PARTICLE_COUNT; i++) {
     s32 x;
     s32 z;
 
     words = (u32 *)particle;
     *words++ = 0;
-    *words++ = OBJ_SIZE_16X16 | OBJ_MODE(1);
+    *words++ = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
     *words = OBJ_PRIORITY(1) | OBJ_PALETTE(13);
     x = leader[0];
     z = leader[2];
     particle->posX = x;
     particle->posZ = z;
     particle->posY = MapGrid_GetTerrainHeightFar(0, x, z);
-    particle->timer = (i & 15) + 1;
+    particle->timer = (i & (GROUND_PARTICLE_FRAMES - 1)) + 1;
     particle++;
   }
   Io_Write16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
@@ -67,7 +78,7 @@ void RisingParticles_Update(void) {
   s32 x;
   s32 y;
 
-  for (i = 0; i < 64; i++, particle++) {
+  for (i = 0; i < ARRAY_COUNT(work->particles); i++, particle++) {
     if (particle->timer == 0) {
       x = Random16() * 200 + FIXED_ONE * 288;
       y = FIXED_ONE * 80 - Random16() * 20;
@@ -86,20 +97,24 @@ void RisingParticles_Update(void) {
     particle->drift += Random16() + FIXED_ONE / 2;
     if (x >= -16 && x < DISPLAY_WIDTH && y >= -32 && y < DISPLAY_HEIGHT) {
       if (particle->timer < 60)
-        particle->sprite.attributes.tile = work->tile + 16;
+        particle->sprite.attributes.tile =
+            work->tile + MOTE_SMALL * MOTE_PICTURE_TILES;
       else if (particle->timer < 90)
-        particle->sprite.attributes.tile = work->tile + 8;
+        particle->sprite.attributes.tile =
+            work->tile + MOTE_MEDIUM * MOTE_PICTURE_TILES;
       else
-        particle->sprite.attributes.tile = work->tile;
+        particle->sprite.attributes.tile =
+            work->tile + MOTE_LARGE * MOTE_PICTURE_TILES;
       particle->sprite.attributes.tile =
-          ((gFrameCount >> 3) & 1) * 4 + particle->sprite.attributes.tile;
+          ((gFrameCount >> 3) & 1) * MOTE_PICTURE_TILES +
+          particle->sprite.attributes.tile;
       particle->sprite.attributes.x = x;
       particle->sprite.attributes.shape = 0;
       particle->sprite.attributes.size = 1;
       particle->sprite.attributes.priority = 3;
-      particle->sprite.attributes.blendMode = 1;
+      particle->sprite.attributes.blendMode = OBJ_MODE_SEMI_TRANSPARENT;
       particle->sprite.attributes.y = y;
-      Oam_AddSpriteAtDepthClamped(particle, 240);
+      Oam_AddSpriteAtDepthClamped(particle, OAM_DEPTH_WINDOW);
     }
     particle->timer--;
   }
@@ -112,7 +127,7 @@ void RisingParticles_Update(void) {
 /// frames, and schedules the update.
 void RisingParticles_Start(void) {
   struct RisingParticleWork *work =
-      HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, 2068);
+      HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct WeatherWork));
   struct RisingParticle *particle = work->particles;
   volatile u32 fill;
   /* FAKEMATCH(pin): the fill's zero fixed to a register. */
@@ -122,19 +137,19 @@ void RisingParticles_Start(void) {
   u32 i;
 
   zero = 0;
-  Dma_Fill32Cell(fill, zero, work, 2068);
+  Dma_Fill32Cell(fill, zero, work, sizeof(struct WeatherWork));
   tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gFieldEffect_MoteTiles, tiles);
   work->vramEntry = VramCache_FindFreeEntry();
   work->tile = VramCache_Load(work->vramEntry, 768, tiles);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
-  for (i = 0; i < 64; i++, particle++) {
+  for (i = 0; i < ARRAY_COUNT(work->particles); i++, particle++) {
     u32 *sprite = particle->sprite.words;
     s32 x;
     FIXED z;
 
     *sprite++ = 0;
-    *sprite++ = OBJ_SIZE_16X16 | OBJ_MODE(1);
+    *sprite++ = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
     *sprite = OBJ_PRIORITY(1) | OBJ_PALETTE(13);
     x = Random16() * 200 + toFIXED(288);
     z = toFIXED(80) - Random16() * 20;
@@ -157,11 +172,11 @@ void FieldMotes_Update(void) {
   u32 i;
   struct GroundParticle *mote;
 
-  for (i = 0, mote = work->particles; i < 64; i++, mote++) {
+  for (i = 0, mote = work->particles; i < WEATHER_PARTICLE_COUNT; i++, mote++) {
     s32 x;
     s32 y;
 
-    if (--mote->timer != (u16)-1) {
+    if (--mote->timer != GROUND_PARTICLE_FREED) {
       s32 *camera = &map->viewX;
       s32 cameraX = camera[0];
       s32 cameraZ = camera[1];
@@ -173,6 +188,9 @@ void FieldMotes_Update(void) {
         mote->timer++;
         mote->delay--;
       }
+      // x jitters by -1 or 0, and y is the frames left in pixels above the
+      // spot; a quarter of the delay, which builds up as it ages, lifts it
+      // further.
       firstJitterDraw = Random16();
       secondJitterDraw = Random16();
       x = FIXEDtoINT(mote->posX - cameraX) +
@@ -180,21 +198,21 @@ void FieldMotes_Update(void) {
       y = FIXEDtoINT(mote->posZ - mote->posY - cameraZ) - (u16)age;
       if (x >= -16 && x < DISPLAY_WIDTH && y >= -32 && y < DISPLAY_HEIGHT) {
         if (mote->timer < 60) {
-          mote->tile = work->tileBase + 16;
+          mote->tile = work->tileBase + MOTE_SMALL * MOTE_PICTURE_TILES;
           mote->delay += 3;
         } else if (mote->timer < 90) {
-          mote->tile = work->tileBase + 8;
+          mote->tile = work->tileBase + MOTE_MEDIUM * MOTE_PICTURE_TILES;
           mote->delay++;
         } else {
-          mote->tile = work->tileBase;
+          mote->tile = work->tileBase + MOTE_LARGE * MOTE_PICTURE_TILES;
         }
         if ((gFrameCount >> 3) & 1)
-          mote->tile += 4;
+          mote->tile += MOTE_PICTURE_TILES;
         mote->x = x;
         mote->y = y - (mote->delay >> 2);
         mote->shape = 0;
         mote->size = 1;
-        Oam_AddSpriteAtDepthClamped(mote, 240);
+        Oam_AddSpriteAtDepthClamped(mote, OAM_DEPTH_WINDOW);
       } else {
         mote->timer = 0;
       }
@@ -213,3 +231,9 @@ void FieldMotes_Update(void) {
     }
   }
 }
+
+#undef GROUND_PARTICLE_FRAMES
+#undef MOTE_PICTURE_TILES
+#undef MOTE_LARGE
+#undef MOTE_MEDIUM
+#undef MOTE_SMALL

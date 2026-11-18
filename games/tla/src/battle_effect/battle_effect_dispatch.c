@@ -5,18 +5,12 @@
 #include "battle_effect_internal.h"
 #include "gamepak/far_call/battle.h"
 
-/// Calls the empty BattleEffect_DoNothing cnt times without waiting for frames.
-/// cnt: call count.
-void BattleEffect_CallDoNothing(s32 cnt) {
-  s32 n;
+/// Calls the empty BattleEffect_DoNothing count times: a busy delay.
+void BattleEffect_CallDoNothing(s32 count) {
+  s32 i;
 
-  n = 0;
-  if (cnt != 0) {
-    do {
-      n += 1;
-      BattleEffect_DoNothing();
-    } while (n != cnt);
-  }
+  for (i = 0; i != count; i++)
+    BattleEffect_DoNothing();
 }
 
 /// Runs one of the large battle effects, the summons and the scenes of a few
@@ -149,46 +143,45 @@ void BattleEffect_RunFromTable(struct BattleEffectParams *args) {
 /// Builds window 0's right edge for every line and restarts the DMA that writes
 /// it.
 void BattleEffect_BuildWindowEdgeTable(void) {
-  u16 *edge;
-  u16 *line;
-  u8 *inset;
-  s32 i;
-  s32 right;
+  u16 *baseRightEdge;
+  u16 *scanlineEdges;
+  u8 *edgeOffsets;
+  s32 scanline;
+  s32 rightEdge;
 
-  edge = WINDOW_EDGE_RIGHT;
-  line = (u16 *)WINDOW_EDGE_LINES;
-  inset = WINDOW_EDGE_INSETS;
-  for (i = 0; i != DISPLAY_HEIGHT; i++) {
-    if ((u32)(i - 8) <= 127) {
-      right = *edge - inset[i - 8];
-      CLAMP(right, 0, DISPLAY_WIDTH);
-      line[i] = right;
+  baseRightEdge = WINDOW_EDGE_RIGHT;
+  scanlineEdges = (u16 *)WINDOW_EDGE_LINES;
+  edgeOffsets = WINDOW_EDGE_INSETS;
+  for (scanline = 0; scanline != DISPLAY_HEIGHT; scanline++) {
+    if (scanline >= 8 && scanline < 8 + WINDOW_EDGE_INSET_LINES) {
+      rightEdge = *baseRightEdge - edgeOffsets[scanline - 8];
+      CLAMP(rightEdge, 0, DISPLAY_WIDTH);
+      scanlineEdges[scanline] = rightEdge;
     } else {
-      line[i] = WIN_RANGE(255, 241);
+      scanlineEdges[scanline] = WIN_RANGE(255, 241);
     }
   }
   {
     volatile u16 *channel = REG_DMA0;
-    u16 control;
 
-    control = channel[DMA_CONTROL_HALF];
-    channel[DMA_CONTROL_HALF] = control & (u16)~DMA_START_TIMING_DRQ_REPEAT;
+    channel[DMA_CONTROL_HALF] &= (u16)~DMA_START_TIMING_DRQ_REPEAT;
     channel[DMA_CONTROL_HALF] &= (u16)~DMA_ENABLE;
     (void)channel[DMA_CONTROL_HALF];
-    Dma_Set(gMapGridCellBuffer + 130, (void *)&REG_WIN0H,
-            DMA_HBLANK_HALFWORD_PER_LINE, (volatile u32 *)channel);
+    Dma_Set(WINDOW_EDGE_LINES, (void *)&REG_WIN0H, DMA_HBLANK_HALFWORD_PER_LINE,
+            (volatile u32 *)channel);
   }
 }
 
-/// Spawns the battle objects of each unit in the list that has HP left.
-void BattleEffect_SelectLivingTargets(struct BattleEffectParams *party) {
+/// Shows the battle objects of every target with HP left.
+void BattleEffect_SelectLivingTargets(struct BattleEffectParams *args) {
   s16 list[UNIT_MAX];
-  s32 count = 0;
+  s32 count;
   s32 i;
 
-  for (i = 0; i != party->targetCount; i++) {
-    if (Unit_Get(party->targets[i])->hp > 0)
-      list[count++] = party->targets[i];
+  count = 0;
+  for (i = 0; i != args->targetCount; i++) {
+    if (Unit_Get(args->targets[i])->hp > 0)
+      list[count++] = args->targets[i];
   }
   list[count] = BATTLE_UNIT_LIST_END;
   BattleActor_SpawnObjectsForListFar(list, 0);

@@ -9,6 +9,14 @@
 /// and its last entrance.
 #define DEBUG_SCENE_LAST 200
 #define DEBUG_ENTRANCE_LAST 99
+// BUG: an entrance moved past either end by DEBUG_MENU_JUMP wraps by
+// DEBUG_ENTRANCE_LAST rather than by the DEBUG_ENTRANCE_LAST + 1 entrances, so
+// 95 + 10 gives 6.
+#ifdef BUGFIX
+#define DEBUG_ENTRANCE_WRAP (DEBUG_ENTRANCE_LAST + 1)
+#else
+#define DEBUG_ENTRANCE_WRAP DEBUG_ENTRANCE_LAST
+#endif
 /// How far L and R move in the debug menus, where Left and Right move by one.
 #define DEBUG_MENU_JUMP 10
 /// The flag editor shows a flag number's three hex digits as its page, row and
@@ -104,8 +112,7 @@ s16 DebugSceneSelect_Run(void) {
 
 /// Edits the debug scene or entrance, returning -1 to exit and -2 to cancel.
 /// L and R move a scene by DEBUG_MENU_JUMP and set its entrance to 0; an
-/// entrance moved past either end wraps by DEBUG_ENTRANCE_LAST (95 + 10 gives
-/// 6).
+/// entrance moved past either end wraps by DEBUG_ENTRANCE_WRAP.
 s32 DebugSceneSelect_HandleRowInput(struct Window *window, s16 sceneId,
                                     s16 *entrance, s16 *selectedField) {
   if (gKeysRepeat & KEY_A)
@@ -145,7 +152,7 @@ s32 DebugSceneSelect_HandleRowInput(struct Window *window, s16 sceneId,
     } else {
       *entrance += DEBUG_MENU_JUMP;
       if (*entrance > DEBUG_ENTRANCE_LAST)
-        *entrance -= DEBUG_ENTRANCE_LAST;
+        *entrance -= DEBUG_ENTRANCE_WRAP;
     }
     if (sceneId > DEBUG_SCENE_LAST)
       sceneId = 0;
@@ -157,7 +164,7 @@ s32 DebugSceneSelect_HandleRowInput(struct Window *window, s16 sceneId,
     } else {
       *entrance -= DEBUG_MENU_JUMP;
       if (*entrance < 0)
-        *entrance += DEBUG_ENTRANCE_LAST;
+        *entrance += DEBUG_ENTRANCE_WRAP;
     }
     if (sceneId < 0)
       sceneId = DEBUG_SCENE_LAST;

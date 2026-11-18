@@ -37,9 +37,10 @@
 void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *actor,
                                                s32 magnitude, s32 angle);
 
-/// The field effect sprites of a field Psynergy
-/// (gFieldEffectWork->sprites).
+/// The field effect sprites of a field Psynergy (FieldEffectWork.particles).
 #define PSYNERGY_EFFECT_SLOT_COUNT 24
+/// The actors in gActors, as field_internal.h's enum counts them.
+#define ACTOR_COUNT 64
 
 /// gMainRoutineWork.pendingDjinni of DJINNI_FLINT (event_commands_requests.c,
 /// event_commands_djinni.c): a Djinni battle's event is this plus the Djinni's

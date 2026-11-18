@@ -1,8 +1,8 @@
-
-// Vale and its home, storm and Babi scenes, Sol Sanctum's eruption, the World
-// Map and Venus Lighthouse's aerie: the pair of rising particles that
-// WorldMap_CreateAttachedEffects attaches to a glowing actor, each an
-// update routine that lives VERTICAL_EFFECT_FRAMES.
+/// @file
+/// Vale and its home, storm and Babi scenes, Sol Sanctum's eruption, the World
+/// Map and Venus Lighthouse's aerie: the pair of rising particles that
+/// WorldMap_CreateAttachedEffects attaches to a glowing actor, each an
+/// update routine that lives VERTICAL_EFFECT_FRAMES.
 
 /// How long each particle of the pair lives, in frames, growing and shrinking
 /// over half a sine wave.

@@ -185,7 +185,7 @@ struct EnemyDefinition {
   u8 elementPreset;           ///< row of gEnemy_ElementPresetTable, 0 to 43
   /// Whom a single-target attack favours: an enum EnemyTargetStrategy.
   s8 targetStrategy;
-  /// How the action is chosen from `actions` (BattleAI_ChooseAction):
+  /// How the action is chosen from `abilities` (BattleAI_ChooseAction):
   /// an enum EnemyActionStrategy.
   s8 actionStrategy;
   /// One bit per place in `abilities` (ITEM_ACTION): use an item held instead.

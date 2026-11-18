@@ -69,7 +69,7 @@
 /// The shimmering colours (MercuryLighthouse_CyclePalette) run once Ply has
 /// worked. In the goddess's room they always run
 /// (MERCURY_LIGHTHOUSE_ENTRANCE_GODDESS_FROM_SIX_STATUES and the two from the
-/// twin pools, and
+/// twin fountains, and
 /// MERCURY_LIGHTHOUSE_ENTRANCE_FROM_MERCURY_LIGHTHOUSE_LOWER_HOLE). Elsewhere
 /// they are black until then.
 ///
@@ -242,9 +242,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gMercuryLighthouseEntrance_ActorPlacements;
 }
 
-/// Mercury Lighthouse: searching the words by the pool (cell behavior 1), "He
-/// who honors the heart of the goddess shall stand at the center of all".
-static void MercuryLighthouseEntrance_ReadHeartWords(void) {
+/// Mercury Lighthouse: searching the inscription by the pool (cell behavior 1),
+/// "He who honors the heart of the goddess shall stand at the center of all".
+static void MercuryLighthouseEntrance_ReadHeartInscription(void) {
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   FieldMessage_Show(MsgMercuryWhoHonorsHeart, 1);
@@ -343,7 +343,7 @@ static void MercuryLighthouseEntrance_ActivateWithPly(void) {
 /// Mercury Lighthouse, the doorway: touching cell behavior 10 starts the
 /// scene again at MERCURY_LIGHTHOUSE_ENTRANCE_SIX_STATUES_AFTER_LIZARD_MAN,
 /// where Mia goes in if she has not yet.
-static void MercuryLighthouseEntrance_ReturnToDoor(void) {
+static void MercuryLighthouseEntrance_ReturnToDoorway(void) {
   Import_EventSetExitRequest(
       MERCURY_LIGHTHOUSE_ENTRANCE_TO_SIX_STATUES_AFTER_LIZARD_MAN);
 }
@@ -871,7 +871,7 @@ struct Trigger gMercuryLighthouseEntrance_Triggers[] = {
     { TRIGGER_STEP, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_WATER, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_RippleAroundLeader) },
     { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_HopAcrossPool) },
     { TRIGGER_STEP, CELL_BEHAVIOR_MERCURY_LIGHTHOUSE_POOL_HEART, IF_FLAG_SET(FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED), EVENT(MercuryLighthouseEntrance_ChargeLights) },
-    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(MercuryLighthouseEntrance_ReturnToDoor) },
+    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(MercuryLighthouseEntrance_ReturnToDoorway) },
     { TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_LIZARD_MAN_STEPPED_ASIDE), EVENT(MercuryLighthouseEntrance_LizardManReturnsToCenter) },
     { TRIGGER_STEP, 42, IF_FLAG_SET(FLAG_LIZARD_MAN_STEPPED_ASIDE), EVENT(MercuryLighthouseEntrance_LizardManReturnsToCenter) },
     { TRIGGER_STEP, 41, FLAG_LIZARD_MAN_STEPPED_ASIDE, EVENT(MercuryLighthouseEntrance_LizardManBlocksLeader) },
@@ -900,7 +900,7 @@ struct Trigger gMercuryLighthouseEntrance_Triggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MIA, CONDITION_ALWAYS, MSGNO(MsgMercuryLetMePass) },
     { TRIGGER_TALK, ACTOR_LIZARD_MAN, CONDITION_ALWAYS, EVENT(MercuryLighthouseEntrance_FightLizardMan) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LIZARD_MAN, CONDITION_ALWAYS, EVENT(MercuryLighthouseEntrance_FightLizardMan) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 1, CONDITION_ALWAYS, EVENT(MercuryLighthouseEntrance_ReadHeartWords) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), 1, CONDITION_ALWAYS, EVENT(MercuryLighthouseEntrance_ReadHeartInscription) },
     { PSYNERGY_ON_ACTOR(ABILITY_PLY), ACTOR_PLY_TARGET, FLAG_MERCURY_LIGHTHOUSE_HEART_HONORED, EVENT(MercuryLighthouseEntrance_ActivateWithPly) },
     { PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT(MercuryLighthouse_RemoveColumnOnRetreat) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_MERCURY_LIGHTHOUSE_PSYNERGY_ARMOR, FIND_ITEM(ITEM_PSYNERGY_ARMOR) },

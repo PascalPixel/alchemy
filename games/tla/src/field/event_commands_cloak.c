@@ -32,14 +32,29 @@
 #include "battle/battle_effect.h"
 #include "system/frame.h"
 
-/// The end of Cloak, and Douse.
-
-// What the ground check (FieldEffect_CheckCloakTile) requests when the caster
-// does not stand on a tile it can hide on.
+/// The Psynergy request that ends Cloak, without paying PP: what the ground
+/// check (FieldEffect_CheckCloakTile) makes when the caster does not stand on a
+/// tile it can hide on.
 #define CLOAK_END (ABILITY_CLOAK | ACT_PACKED)
+/// The times the caster blinks as Cloak hides it.
+#define CLOAK_BLINKS 10
 
-/// Cloak the caster: flicker it ten times, leave it half transparent, then
-/// check the ground under it every frame. When it cannot hide where it
+/// The steps, one a frame, in which the rain cloud grows out of the caster on
+/// its way to the target or shrinks back into it: FieldEffect_Interpolate's
+/// tenths.
+#define GROW_STEPS 10
+/// The drops Douse rains: cast at nothing, cast on a target, and cast on a
+/// target where they sway down (FieldEffectWork.lit).
+#define DOUSE_DROPS 10
+#define DOUSE_DROPS_ON_TARGET 24
+#define DOUSE_SWAYING_DROPS_ON_TARGET 30
+/// The drop after which the target's Douse trigger runs.
+#define DOUSE_TARGET_DROP 12
+/// The sparkles Carry throws out as it drops its target.
+#define CARRY_SHARDS 20
+
+/// Cloak the caster: flicker it CLOAK_BLINKS times, leave it half transparent,
+/// then check the ground under it every frame. When it cannot hide where it
 /// stands, show it again at once.
 void FieldPsynergy_StartCloak(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
@@ -55,7 +70,7 @@ void FieldPsynergy_StartCloak(void) {
   Actor_SelectAnimationFar(caster, ANIM_STILL);
   caster->update = 0;
 
-  for (n = 0; n < 10; n++) {
+  for (n = 0; n < CLOAK_BLINKS; n++) {
     entry->colorMode = SPRITE_COLOR_WHITE;
     sprite->dirty = 1;
     sprite->flags = SPRITE_FLAG_OUTLINED;
@@ -105,48 +120,45 @@ void FieldEffect_UpdateDriftingFallActor(struct Actor *particle) {
 /// Runs Douse cast on a target, through FieldPsynergy_Douse.
 void FieldPsynergy_DouseOnTarget(s32 unused) { FieldPsynergy_Douse(); }
 
-/// The value step tenths of the way from start to end.
-static __inline__ s32 InterpolateTenths(s32 start, s32 end, s32 step) {
-  return start + step * (end - start) / 10;
-}
-
-/// Runs Douse cast on a target, through FieldPsynergy_Douse.
+/// A rain cloud rises from 16 pixels above the caster to 32 pixels above the
+/// destination (80 with childOption, 32 more over a Moai) over GROW_STEPS
+/// frames, growing as it goes, rains drops, and returns.
 void FieldPsynergy_Douse(void) {
   struct Vector3 pos;
   struct Vector3 start;
   struct Vector3 end;
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
-  struct Actor *anchor = work->child;
-  struct Actor *target = work->mainActor;
+  struct Actor *target = work->child;
+  struct Actor *caster = work->mainActor;
   s32 count;
-  struct Actor *orb;
+  struct Actor *cloud;
   s32 raised;
   s32 i;
-  s32 steps = 11;
+  s32 steps = GROW_STEPS + 1;
   s32 y;
   s32 n;
-  struct Actor *mote;
+  struct Actor *particle;
   struct PendingEvent *ev;
 
-  orb = Actor_Spawn(SPRITE_RAIN_CLOUD, i = raised = 0, 0, 0);
-  if (orb == 0)
+  cloud = Actor_Spawn(SPRITE_RAIN_CLOUD, i = raised = 0, 0, 0);
+  if (cloud == 0)
     return;
   FieldPsynergy_FadeToCastColor();
   Sound_PlayFar(SE_ITEM_BREAK);
   if (work->child == 0) {
-    work->x = target->x.fixed;
-    work->z = target->z.fixed;
+    work->x = caster->x.fixed;
+    work->z = caster->z.fixed;
     Vector_AddPolarOffset(toFIXED(16), work->angle, (struct Vector3 *)&work->x);
   }
-  SET_POSITION(&start, target->x.fixed, target->y.fixed + toFIXED(16),
-               target->z.fixed);
+  SET_POSITION(&start, caster->x.fixed, caster->y.fixed + toFIXED(16),
+               caster->z.fixed);
   end.x = work->x;
   y = work->y;
   end.y = y + toFIXED(32);
   end.z = work->z;
   if ((s8)work->childOption != 0)
     end.y = y + toFIXED(80);
-  if (Actor_GetSpriteIdFar(anchor) == SPRITE_MOAI) {
+  if (Actor_GetSpriteIdFar(target) == SPRITE_MOAI) {
     end.y += toFIXED(32);
     raised = 1;
   }
@@ -154,63 +166,49 @@ void FieldPsynergy_Douse(void) {
   for (; i < steps; i++) {
     s32 scale;
 
-    {
-      struct Vector3 *a = &start;
-      struct Vector3 *b = &end;
-      s32 e, t;
-
-      e = b->x;
-      t = a->x;
-      t += (e - t) * i / 10;
-      orb->x.fixed = t;
-      e = b->y;
-      t = a->y;
-      t += (e - t) * i / 10;
-      orb->y.fixed = t;
-      e = b->z;
-      t = a->z;
-      t += (e - t) * i / 10;
-      orb->z.fixed = t;
-    }
-    scale = InterpolateTenths(FIXED_ONE / 4, FIXED_ONE, i);
-    orb->scaleX = scale;
-    orb->scaleY = scale;
+    SET_ACTOR_POSITION(cloud, start.x + (end.x - start.x) * i / GROW_STEPS,
+                       start.y + (end.y - start.y) * i / GROW_STEPS,
+                       start.z + (end.z - start.z) * i / GROW_STEPS);
+    scale = FieldEffect_Interpolate(FIXED_ONE, FIXED_ONE / 4, i);
+    cloud->scaleX = scale;
+    cloud->scaleY = scale;
     wait(1);
   }
   wait(10);
 
   if ((s8)work->lit == 0) {
-    count = 10;
+    count = DOUSE_DROPS;
     if ((s8)work->enabled == 0)
-      count = 24;
+      count = DOUSE_DROPS_ON_TARGET;
     for (n = 0; n < count; n++) {
-      SET_POSITION(&pos, orb->x.fixed, orb->y.fixed, orb->z.fixed);
+      SET_POSITION(&pos, cloud->x.fixed, cloud->y.fixed, cloud->z.fixed);
       Vector_AddPolarOffset(Random16() * 5 + toFIXED(3), Random16(), &pos);
       if (n == count - 1) {
         wait(20);
-        SET_POSITION(&pos, orb->x.fixed, orb->y.fixed, orb->z.fixed);
+        SET_POSITION(&pos, cloud->x.fixed, cloud->y.fixed, cloud->z.fixed);
       }
-      mote = Actor_Spawn(SPRITE_DROPLET, pos.x, pos.y, pos.z);
-      if (mote != 0) {
+      particle = Actor_Spawn(SPRITE_DROPLET, pos.x, pos.y, pos.z);
+      if (particle != 0) {
         struct Actor *ground = work->child;
 
         if (ground != 0) {
-          mote->groundHeight = ground->y.fixed;
+          particle->groundHeight = ground->y.fixed;
           if (raised == 1)
-            mote->groundHeight = ground->y.fixed + toFIXED(32);
+            particle->groundHeight = ground->y.fixed + toFIXED(32);
         } else {
-          mote->groundHeight = pos.y - toFIXED(32);
+          particle->groundHeight = pos.y - toFIXED(32);
         }
-        mote->update = (void (*)(void))BattleEffect_LandFallingObject;
-        mote->motionFlags = ACTOR_FALLS;
-        mote->priorityFlags =
+        particle->update = (void (*)(void))BattleEffect_LandFallingObject;
+        particle->motionFlags = ACTOR_FALLS;
+        particle->priorityFlags =
             ACTOR_PRIORITY_AUTOMATIC | ACTOR_PRIORITY_OVERHEAD;
       }
       Sound_PlayFar(SE_WATER);
       wait(6);
-      if (n == 12) {
-        ev = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), 5,
-                                       Scene_SelectPsynergyTarget(5));
+      if (n == DOUSE_TARGET_DROP) {
+        ev = Scene_FindPsynergyTrigger(
+            PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), FIELD_PSYNERGY_DOUSE,
+            Scene_SelectPsynergyTarget(FIELD_PSYNERGY_DOUSE));
         if (ev != 0)
           Field_RunPsynergyEvent(ev, work->firstActorId, work->secondActorId);
       }
@@ -218,19 +216,20 @@ void FieldPsynergy_Douse(void) {
     wait(10);
   } else {
     if ((s8)work->enabled != 0)
-      count = 10;
+      count = DOUSE_DROPS;
     else
-      count = 30;
+      count = DOUSE_SWAYING_DROPS_ON_TARGET;
     for (n = 0; n < count; n++) {
-      SET_POSITION(&pos, orb->x.fixed, orb->y.fixed, orb->z.fixed);
+      SET_POSITION(&pos, cloud->x.fixed, cloud->y.fixed, cloud->z.fixed);
       Vector_AddPolarOffset(Random16() * 5 + toFIXED(3), Random16(), &pos);
-      mote = Actor_Spawn(SPRITE_PARTICLE, pos.x, pos.y, pos.z);
-      if (mote != 0) {
-        mote->update = (void (*)(void))FieldEffect_UpdateDriftingFallActor;
-        mote->motionFlags = 0;
-        ((struct Sprite *)mote->sprite)->image.priority = 2;
-        Actor_SelectAnimationFar(mote, 8);
-        Actor_SetSpriteColorModeFar((struct Actor *)mote, SPRITE_COLOR_WHITE);
+      particle = Actor_Spawn(SPRITE_PARTICLE, pos.x, pos.y, pos.z);
+      if (particle != 0) {
+        particle->update = (void (*)(void))FieldEffect_UpdateDriftingFallActor;
+        particle->motionFlags = 0;
+        ((struct Sprite *)particle->sprite)->image.priority = 2;
+        Actor_SelectAnimationFar(particle, 8);
+        Actor_SetSpriteColorModeFar((struct Actor *)particle,
+                                    SPRITE_COLOR_WHITE);
       }
       wait(6);
     }
@@ -241,32 +240,16 @@ void FieldPsynergy_Douse(void) {
   do {
     s32 scale;
 
-    {
-      struct Vector3 *a = &end;
-      struct Vector3 *b = &start;
-      s32 e;
-      FIXED t;
-
-      e = b->x;
-      t = a->x;
-      t += (e - t) * i / 10;
-      orb->x.fixed = t;
-      e = b->y;
-      t = a->y;
-      t += (e - t) * i / 10;
-      orb->y.fixed = t;
-      e = b->z;
-      t = a->z;
-      t += (e - t) * i / 10;
-      orb->z.fixed = t;
-    }
-    scale = InterpolateTenths(FIXED_ONE, FIXED_ONE / 4, i);
-    orb->scaleX = scale;
-    orb->scaleY = scale;
+    SET_ACTOR_POSITION(cloud, end.x + (start.x - end.x) * i / GROW_STEPS,
+                       end.y + (start.y - end.y) * i / GROW_STEPS,
+                       end.z + (start.z - end.z) * i / GROW_STEPS);
+    scale = FieldEffect_Interpolate(FIXED_ONE / 4, FIXED_ONE, i);
+    cloud->scaleX = scale;
+    cloud->scaleY = scale;
     wait(1);
     i++;
   } while (i < steps);
-  Actor_ReleaseFar((struct Actor *)orb);
+  Actor_ReleaseFar((struct Actor *)cloud);
   FieldPsynergy_FadeFromCastColor();
 }
 
@@ -312,7 +295,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   struct FieldEffectWork *work;
   struct Actor *source;
   struct Actor *target;
-  struct Actor *shards[20];
+  struct Actor *shards[CARRY_SHARDS];
   struct Vector3 position;
   struct Actor *anchors[2];
   struct Actor *actor;
@@ -457,7 +440,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
   wait(15);
   SET_POSITION(&position, target->x.fixed, target->y.fixed + toFIXED(16),
                target->z.fixed);
-  for (i = 0; i < 20; i++) {
+  for (i = 0; i < CARRY_SHARDS; i++) {
     actor = Actor_Spawn(SPRITE_SPARKLE, position.x, position.y, position.z);
     // DEAD: nothing reads the shards back; the ROM keeps the stores.
     shards[i] = actor;
@@ -495,3 +478,12 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
     FieldPsynergy_FadeFromCastColor();
   }
 }
+
+#undef CLOAK_END
+#undef CLOAK_BLINKS
+#undef GROW_STEPS
+#undef DOUSE_DROPS
+#undef DOUSE_DROPS_ON_TARGET
+#undef DOUSE_SWAYING_DROPS_ON_TARGET
+#undef DOUSE_TARGET_DROP
+#undef CARRY_SHARDS

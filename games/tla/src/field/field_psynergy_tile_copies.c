@@ -1,6 +1,6 @@
 /// @file
 /// The Cyclone's helpers: copying the cells it touched, its arcs and its
-/// burst, and an object jumping to the leader.
+/// burst, and a Mad Plant leaping at the leader.
 // Part of field_psynergy.c.
 
 #include "field_psynergy_internal.h"
@@ -12,6 +12,14 @@
 #include "gamepak/far_call/field.h"
 #include "field/field.h"
 #include "field/emote.h"
+#include "field/canvas_sprite.h"
+
+/// The frames of a Mad Plant's leap at the leader.
+#define MAD_PLANT_LEAP_FRAMES 20
+/// The pixels of one of the Cyclone's arcs, and the angle from one to the
+/// next, about two degrees.
+#define CYCLONE_ARC_PIXELS 30
+#define CYCLONE_ARC_PIXEL_STEP 368
 
 /// For each cell the Cyclone touched (the event work's point list from
 /// FieldPsynergy_GatherNearbyCells) inside the width by height rectangle at
@@ -121,31 +129,33 @@ void MadPlant_LeapAtLeader(s32 sprite, s32 x, s32 z) {
   to[0] = owner->x.fixed;
   to[1] = owner->y.fixed;
   to[2] = owner->z.fixed;
-  steps = 20;
+  // A straight line, lifted by half a sine wave 40 pixels high.
+  steps = MAD_PLANT_LEAP_FRAMES;
   for (i = 0; i < steps; i++) {
-    actor->x.fixed = from[0] + i * (to[0] - from[0]) / 20;
-    actor->y.fixed =
-        from[1] + i * (to[1] - from[1]) / 20 + Trig_Sin((i << 15) / 20) * 40;
-    actor->z.fixed = from[2] + i * (to[2] - from[2]) / 20;
+    actor->x.fixed = from[0] + i * (to[0] - from[0]) / MAD_PLANT_LEAP_FRAMES;
+    actor->y.fixed = from[1] + i * (to[1] - from[1]) / MAD_PLANT_LEAP_FRAMES +
+                     Trig_Sin(i * (TRIG_TURN / 2) / MAD_PLANT_LEAP_FRAMES) * 40;
+    actor->z.fixed = from[2] + i * (to[2] - from[2]) / MAD_PLANT_LEAP_FRAMES;
     wait(1);
   }
 }
 
-/// Plots 30 pixels of an arc at radius (at most 31) from the middle of a 64 by
-/// 64 picture, from angle on, shading from colour 225 to 239; offsets maps
-/// each point to its byte. The Cyclone draws its swirl with it.
+/// Plots an arc of CYCLONE_ARC_PIXELS pixels at radius (at most 31) from the
+/// middle of the canvas, from angle on, shading through the canvas palette's
+/// colours 1 to 15; offsets maps each point to its byte. The Cyclone draws its
+/// swirl with it.
 void Cyclone_PlotArc(s32 radius, s32 angle, u16 *offsets, u8 *pixels) {
   s32 i;
 
-  if (radius > RGB_LEVEL_MAX)
-    radius = RGB_LEVEL_MAX;
-  for (i = 0; i <= 29; i++) {
-    s32 x = ((radius * Trig_Cos(angle)) >> 16) + 32;
-    s32 y = ((radius * Trig_Sin(angle)) >> 16) + 32;
-    s32 value = i / 2 + 225;
+  if (radius > CANVAS_WIDTH / 2 - 1)
+    radius = CANVAS_WIDTH / 2 - 1;
+  for (i = 0; i < CYCLONE_ARC_PIXELS; i++) {
+    s32 x = FIXEDtoINT(radius * Trig_Cos(angle)) + CANVAS_WIDTH / 2;
+    s32 y = FIXEDtoINT(radius * Trig_Sin(angle)) + CANVAS_WIDTH / 2;
+    s32 value = i / 2 + CANVAS_PALETTE * PALETTE_COLORS + 1;
 
-    pixels[offsets[y * 64 + x]] = value;
-    angle += 368;
+    pixels[offsets[y * CANVAS_WIDTH + x]] = value;
+    angle += CYCLONE_ARC_PIXEL_STEP;
   }
 }
 
@@ -180,7 +190,7 @@ void ParticleBurst_Start(void) {
        i++, particle++) {
     sprite = &work->sprites[i];
     EffectSprite_Init(sprite, 4, 4, 0, vram);
-    sprite->depth = 250;
+    sprite->depth = EFFECT_SPRITE_FRONT_DEPTH;
     sprite->oam.priority = 0;
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
@@ -197,3 +207,7 @@ void ParticleBurst_Start(void) {
   Sound_PlayFar(SE_SHIMMER);
   Task_Add(ParticleBurst_Update, TASK_PASS_FRAME);
 }
+
+#undef MAD_PLANT_LEAP_FRAMES
+#undef CYCLONE_ARC_PIXELS
+#undef CYCLONE_ARC_PIXEL_STEP

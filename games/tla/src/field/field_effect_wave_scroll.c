@@ -1,8 +1,8 @@
 /// @file
 /// Fills BG0's line scroll table with a jittered sine wave and streams it
 /// to BG0HOFS by HBlank DMA 0. Each overlay that has it includes this body
-/// after naming the function (WAVE_SCROLL) and its 160-line table
-/// (WAVE_SCROLL_LINES).
+/// after naming the function (WAVE_SCROLL) and its table of a scroll for each
+/// screen line (WAVE_SCROLL_LINES).
 #include "types.h"
 #include "system/system.h"
 #include "system/ram_buffer.h"
@@ -13,6 +13,13 @@
 
 extern s16 WAVE_SCROLL_LINES[];
 
+/// A line's swing on the sine wave falls by half a pixel a line down the
+/// screen, to nothing at WAVE_SCROLL_CALM_LINE.
+#define WAVE_SCROLL_CALM_LINE 144
+/// A line scrolled past these is pulled back by as much.
+#define WAVE_SCROLL_MAX 56
+#define WAVE_SCROLL_MIN (-64)
+
 void WAVE_SCROLL(void) {
   s16 *line = WAVE_SCROLL_LINES;
   s32 i;
@@ -20,27 +27,33 @@ void WAVE_SCROLL(void) {
   volatile u16 *scroll;
   volatile u16 *dma;
 
-  for (i = 0; i != 160; i++, line++) {
-    s32 range = (160 - i) >> 2;
+  for (i = 0; i != DISPLAY_HEIGHT; i++, line++) {
+    s32 range = (DISPLAY_HEIGHT - i) >> 2;
 
-    *line = (Iwram_MulFX(Trig_Sin((i + *(u8 *)&gFrameCount) << 8), (144 - i)
-                                                                       << 10) >>
+    // A sine of the line and the frame, (WAVE_SCROLL_CALM_LINE - i) / 2 pixels
+    // either way, less 4, jittered by up to a quarter of the lines below.
+    *line = (Iwram_MulFX(Trig_Sin((i + (u8)gFrameCount) * (TRIG_TURN / 256)),
+                         (WAVE_SCROLL_CALM_LINE - i) * (FIXED_ONE / 64)) >>
              11) -
             4;
     *line += Random16() % (range * 2) - range;
-    if (*line > 56)
-      *line -= 56;
-    else if (*line < -64)
-      *line += 64;
+    if (*line > WAVE_SCROLL_MAX)
+      *line -= WAVE_SCROLL_MAX;
+    else if (*line < WAVE_SCROLL_MIN)
+      *line -= WAVE_SCROLL_MIN;
   }
   line = WAVE_SCROLL_LINES;
-  scroll = (volatile u16 *)0x04000010;
+  scroll = (volatile u16 *)REG_BG0HOFS;
   *scroll = *line;
   dma = REG_DMA0;
-  dma[5] &= 0xc5ff; // stop the start timing and the repeat
+  dma[5] &= ~DMA_START_TIMING_DRQ_REPEAT;
   dma[5] &= ~DMA_ENABLE;
   source = line + 1;
   (void)dma[5];
   Dma_Set(source, (void *)scroll, DMA_HBLANK_HALFWORD_PER_LINE,
           (volatile u32 *)dma);
 }
+
+#undef WAVE_SCROLL_CALM_LINE
+#undef WAVE_SCROLL_MAX
+#undef WAVE_SCROLL_MIN

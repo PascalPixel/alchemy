@@ -39,10 +39,12 @@
 /// (CELL_BEHAVIOR_LAMAKAN_DESERT_SLOPE) carry the leader south
 /// (LamakanDesert_SlipDownSand).
 ///
-/// In LamakanDesertManticore, until it is beaten
-/// (FLAG_LAMAKAN_MANTICORE_BEATEN), the Manticore rises out of the sand as the
-/// leader comes near (step trigger 40, LamakanDesert_MeetManticore). Talking to
-/// it starts its battle, which ends at LamakanDesertManticore's
+/// In LamakanDesertManticore, Reveal also parts the sandfalls over two passages
+/// into LamakanDesertCave (LAMAKAN_DESERT_MANTICORE_TO_LAMAKAN_DESERT_CAVE_EAST
+/// and _WEST). Until it is beaten (FLAG_LAMAKAN_MANTICORE_BEATEN), the
+/// Manticore guards the west one: it rises out of the sand as the leader comes
+/// near (CELL_BEHAVIOR_LAMAKAN_DESERT_MANTICORE, LamakanDesert_MeetManticore).
+/// Talking to it starts its battle, which ends at LamakanDesertManticore's
 /// LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE, and arriving there marks it
 /// beaten.
 ///
@@ -50,10 +52,11 @@
 /// LAMAKAN_DESERT_CAVE_TO_WORLD_MAP lead out onto the World Map.
 /// LamakanDesertCave, a cave, has no heat gauge.
 ///
-/// Step trigger 9 takes LAMAKAN_DESERT_CAVE_TO_WORLD_MAP. Leaving that way
-/// while Hsu is still trapped (FLAG_HSU_RESCUED clear) sets FLAG_HSU_RESCUED
-/// and FLAG_HSU_RESCUED_WITHOUT_PARTY, which lacquer_rooms_b.c reads to have
-/// Feizhi thank Master Hama alone.
+/// CELL_BEHAVIOR_LAMAKAN_DESERT_TO_WORLD_MAP takes
+/// LAMAKAN_DESERT_CAVE_TO_WORLD_MAP. Leaving that way while Hsu is still
+/// trapped (FLAG_HSU_RESCUED clear) sets FLAG_HSU_RESCUED and
+/// FLAG_HSU_RESCUED_WITHOUT_PARTY, which lacquer_rooms_b.c reads to have Feizhi
+/// thank Master Hama alone.
 
 #include "ability_ids.h"
 #include "djinn_ids.h"
@@ -173,15 +176,19 @@ enum LamakanDesertRaisedTrigger {
 
 /// The cell behaviors of the desert's ground.
 enum LamakanDesertCellBehavior {
-  /// An oasis's water, in the patches Reveal shows (renders of the maps with
-  /// the patches shown: the pool at (384, 128) in LamakanDesertEast).
+  /// An oasis's water, in the patches Reveal shows.
   CELL_BEHAVIOR_LAMAKAN_DESERT_OASIS = 20,
   CELL_BEHAVIOR_LAMAKAN_DESERT_SAND =
       21, ///< sand, where each moving frame adds heat
   CELL_BEHAVIOR_LAMAKAN_DESERT_PIT =
       22, ///< by an Ant Lion's pit, under Reveal too
   CELL_BEHAVIOR_LAMAKAN_DESERT_SLOPE =
-      30 ///< sand that carries the leader south
+      30, ///< sand that carries the leader south
+  /// The cave's way out onto the World Map, at its west entrance.
+  CELL_BEHAVIOR_LAMAKAN_DESERT_TO_WORLD_MAP = 9,
+  /// LamakanDesertManticore's ground before the passage the Manticore guards,
+  /// once Reveal has parted the sandfall over it.
+  CELL_BEHAVIOR_LAMAKAN_DESERT_MANTICORE = 40
 };
 
 enum {
@@ -229,32 +236,64 @@ enum {
 #define SECRET_WIDTH 4
 #define SECRET_HEIGHT 2
 #define SECRET_SPARE_FIRST_COLUMN 64
-#define SECRET_SPARE_COLUMN(number)                                            \
-  (SECRET_SPARE_FIRST_COLUMN + SECRET_WIDTH * (number))
+#define SECRET_SPARE_COLUMN(secret)                                            \
+  (SECRET_SPARE_FIRST_COLUMN + SECRET_WIDTH * (secret))
 #define SECRET_SPARE_ROW 126
 #define PLAIN_SAND_COLUMN 70
 #define PLAIN_SAND_ROW 68
 /// Saves the secret whose top-left cell is (column, row) to its spare patch.
-#define SAVE_SECRET(number, column, row)                                       \
+#define SAVE_SECRET(secret, column, row)                                       \
   MapGrid_CopyCells(column, row, SECRET_WIDTH, SECRET_HEIGHT,                  \
-                    SECRET_SPARE_COLUMN(number), SECRET_SPARE_ROW)
+                    SECRET_SPARE_COLUMN(secret), SECRET_SPARE_ROW)
 /// Draws plain sand over a secret.
 #define HIDE_SECRET(column, row)                                               \
   MapGrid_CopyCells(PLAIN_SAND_COLUMN, PLAIN_SAND_ROW, SECRET_WIDTH,           \
                     SECRET_HEIGHT, column, row)
 /// Copies a secret back from its spare patch.
-#define SHOW_SECRET(number, column, row)                                       \
-  MapGrid_CopyCells(SECRET_SPARE_COLUMN(number), SECRET_SPARE_ROW,             \
+#define SHOW_SECRET(secret, column, row)                                       \
+  MapGrid_CopyCells(SECRET_SPARE_COLUMN(secret), SECRET_SPARE_ROW,             \
                     SECRET_WIDTH, SECRET_HEIGHT, column, row)
-// Five secrets also change the ground a row further south: hidden, the row
+// A pit's secret also changes the ground a row further south: hidden, the row
 // two below the patch's top takes the sand's ground; shown, the two rows from
 // one below its top take the ground of the saved patch's two rows.
 #define HIDE_SECRET_SOUTH_ROW(column, row)                                     \
   MapGrid_CopyCellAttributes(PLAIN_SAND_COLUMN, PLAIN_SAND_ROW, SECRET_WIDTH,  \
                              1, column, (row) + 2)
-#define SHOW_SECRET_SOUTH_ROWS(number, column, row)                            \
-  MapGrid_CopyCellAttributes(SECRET_SPARE_COLUMN(number), SECRET_SPARE_ROW,    \
+#define SHOW_SECRET_SOUTH_ROWS(secret, column, row)                            \
+  MapGrid_CopyCellAttributes(SECRET_SPARE_COLUMN(secret), SECRET_SPARE_ROW,    \
                              SECRET_WIDTH, 2, column, (row) + 1)
+
+/// LamakanDesertEast's secrets, numbered as their spare patches are, each
+/// named for what Reveal uncovers in it: an oasis's pool (around its middle in
+/// gLamakanDesertEast_Oases), a pit, or a treasure spot.
+enum LamakanDesertEastSecret {
+  EAST_SECRET_OASIS_NORTH,
+  EAST_SECRET_VULCAN_AXE,
+  EAST_SECRET_PIT,
+  EAST_SECRET_OASIS_SOUTHWEST,
+  EAST_SECRET_OASIS_SOUTHEAST,
+  EAST_SECRET_FIRST_PSYNERGY_STONE
+};
+
+/// LamakanDesertSmog's secrets, the same way: five oases, the four pits of
+/// ACTOR_FIRST_PIT to ACTOR_LAST_PIT, Smog on TREASURE_SPOT_UNDER_SMOG, and the
+/// chests and Psynergy Stone.
+enum LamakanDesertSmogSecret {
+  SMOG_SECRET_OASIS_NORTHEAST,
+  SMOG_SECRET_PIT_NORTH,
+  SMOG_SECRET_LUCKY_PEPPER,
+  SMOG_SECRET_SECOND_PSYNERGY_STONE,
+  SMOG_SECRET_PIT_WEST,
+  SMOG_SECRET_PIT_EAST,
+  SMOG_SECRET_SMOG,
+  SMOG_SECRET_OASIS_MIDDLE,
+  SMOG_SECRET_777_COINS,
+  SMOG_SECRET_OASIS_EAST,
+  SMOG_SECRET_PIT_SOUTH,
+  SMOG_SECRET_OASIS_SOUTHWEST,
+  SMOG_SECRET_OASIS_SOUTH,
+  SMOG_SECRET_POTION
+};
 
 /// The desert's treasure spots, whose cells Reveal uncovers with their
 /// secrets: the chests and Psynergy Stones their examine triggers find, and
@@ -357,7 +396,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gLamakanDesertActorPlacementsOther;
 }
 
-/// In Lamakan Desert, step trigger 9 takes LAMAKAN_DESERT_CAVE_TO_WORLD_MAP.
+/// In LamakanDesertCave, the way out onto the World Map
+/// (CELL_BEHAVIOR_LAMAKAN_DESERT_TO_WORLD_MAP) takes
+/// LAMAKAN_DESERT_CAVE_TO_WORLD_MAP.
 static void LamakanDesert_LeaveForTheWorldMap(void) {
   Event_Start();
   if (Event_GetFlag(FLAG_HSU_RESCUED) == 0) {
@@ -407,6 +448,11 @@ static UNREAD_RESULT Reveal_HideSecrets(void) {
     HIDE_SECRET(27, 55);
     HIDE_SECRET(43, 56);
   } else if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_MANTICORE) {
+    // Sand fills the three secrets in the west, north to south the Mint's
+    // treasure spot, the pit and the oasis. Sandfalls close over the two
+    // passages at the head of the slopes of sand, whose cells there are plain
+    // slope again, and the ground before the west one no longer raises the
+    // Manticore.
     MapGrid_CopyCellsLayered(69, 99, 4, 2, 8, 16);
     MapGrid_CopyCellsLayered(69, 99, 4, 2, 6, 20);
     MapGrid_CopyCellsLayered(69, 99, 4, 2, 10, 23);
@@ -443,39 +489,43 @@ static UNREAD_RESULT Reveal_ShowSecrets(void) {
   GameFlag_Clear(FLAG_DESERT_EVENT_RUNNING);
   GameFlag_Set(FLAG_SECRETS_REVEALED);
   if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_EAST) {
-    SHOW_SECRET(0, 22, 7);
-    SHOW_SECRET(1, 8, 10);
-    SHOW_SECRET(2, 23, 21);
-    SHOW_SECRET_SOUTH_ROWS(2, 23, 21);
-    SHOW_SECRET(3, 16, 42);
-    SHOW_SECRET(4, 36, 44);
-    SHOW_SECRET(5, 14, 55);
+    SHOW_SECRET(EAST_SECRET_OASIS_NORTH, 22, 7);
+    SHOW_SECRET(EAST_SECRET_VULCAN_AXE, 8, 10);
+    SHOW_SECRET(EAST_SECRET_PIT, 23, 21);
+    SHOW_SECRET_SOUTH_ROWS(EAST_SECRET_PIT, 23, 21);
+    SHOW_SECRET(EAST_SECRET_OASIS_SOUTHWEST, 16, 42);
+    SHOW_SECRET(EAST_SECRET_OASIS_SOUTHEAST, 36, 44);
+    SHOW_SECRET(EAST_SECRET_FIRST_PSYNERGY_STONE, 14, 55);
     Actor_SetPosition(ACTOR_FIRST_PIT, 400, 364);
   } else if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_SMOG) {
-    SHOW_SECRET(0, 42, 5);
-    SHOW_SECRET(1, 20, 11);
-    SHOW_SECRET_SOUTH_ROWS(1, 20, 11);
-    SHOW_SECRET(2, 14, 12);
-    SHOW_SECRET(3, 56, 18);
-    SHOW_SECRET(4, 7, 22);
-    SHOW_SECRET_SOUTH_ROWS(4, 7, 22);
-    SHOW_SECRET(5, 44, 23);
-    SHOW_SECRET_SOUTH_ROWS(5, 44, 23);
-    SHOW_SECRET(6, 38, 24);
-    SHOW_SECRET(7, 26, 28);
-    SHOW_SECRET(8, 17, 35);
-    SHOW_SECRET(9, 50, 36);
-    SHOW_SECRET(10, 34, 43);
-    SHOW_SECRET_SOUTH_ROWS(10, 34, 43);
-    SHOW_SECRET(11, 6, 46);
-    SHOW_SECRET(12, 27, 55);
-    SHOW_SECRET(13, 43, 56);
+    SHOW_SECRET(SMOG_SECRET_OASIS_NORTHEAST, 42, 5);
+    SHOW_SECRET(SMOG_SECRET_PIT_NORTH, 20, 11);
+    SHOW_SECRET_SOUTH_ROWS(SMOG_SECRET_PIT_NORTH, 20, 11);
+    SHOW_SECRET(SMOG_SECRET_LUCKY_PEPPER, 14, 12);
+    SHOW_SECRET(SMOG_SECRET_SECOND_PSYNERGY_STONE, 56, 18);
+    SHOW_SECRET(SMOG_SECRET_PIT_WEST, 7, 22);
+    SHOW_SECRET_SOUTH_ROWS(SMOG_SECRET_PIT_WEST, 7, 22);
+    SHOW_SECRET(SMOG_SECRET_PIT_EAST, 44, 23);
+    SHOW_SECRET_SOUTH_ROWS(SMOG_SECRET_PIT_EAST, 44, 23);
+    SHOW_SECRET(SMOG_SECRET_SMOG, 38, 24);
+    SHOW_SECRET(SMOG_SECRET_OASIS_MIDDLE, 26, 28);
+    SHOW_SECRET(SMOG_SECRET_777_COINS, 17, 35);
+    SHOW_SECRET(SMOG_SECRET_OASIS_EAST, 50, 36);
+    SHOW_SECRET(SMOG_SECRET_PIT_SOUTH, 34, 43);
+    SHOW_SECRET_SOUTH_ROWS(SMOG_SECRET_PIT_SOUTH, 34, 43);
+    SHOW_SECRET(SMOG_SECRET_OASIS_SOUTHWEST, 6, 46);
+    SHOW_SECRET(SMOG_SECRET_OASIS_SOUTH, 27, 55);
+    SHOW_SECRET(SMOG_SECRET_POTION, 43, 56);
     Actor_SetPosition(ACTOR_FIRST_PIT, 352, 204);
     Actor_SetPosition(ACTOR_FIRST_PIT + 1, 736, 396);
     Actor_SetPosition(ACTOR_FIRST_PIT + 2, 144, 380);
     Actor_SetPosition(ACTOR_LAST_PIT, 576, 716);
     Actor_SetPosition(ACTOR_SMOG, 648, 408);
   } else if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_MANTICORE) {
+    // The three secrets come back from their spare patches. The sandfalls
+    // part and the slopes lead into the passages; before the west one the
+    // Manticore rises (CELL_BEHAVIOR_LAMAKAN_DESERT_MANTICORE), and a wall
+    // closes it until the Manticore is beaten.
     MapGrid_CopyCells(64, 124, 4, 4, 8, 14);
     MapGrid_CopyCells(68, 124, 4, 4, 6, 18);
     MapGrid_CopyCellAttributes(68, 124, 4, 1, 6, 20);
@@ -528,12 +578,13 @@ static void LamakanDesert_ComplainAboutHeat(s32 mark) {
     }
   }
   Event_Start();
-  // Three lines a mark, one for each party member. They come right after Alpine
-  // Crossing's signpost (`North: Altin Mine West: Lama Temple`) and have no
-  // names of their own, so they count from a Fuchin Temple message two before
-  // it.
-  Event_SetMessageId(mark * 3 + member +
-                     MSGNO(MsgFuchinTempleIDoNotThinkMasterHama));
+  // The lines follow Alpine Crossing's signpost (`North: Altin Mine West: Lama
+  // Temple`), three a mark, Garet's, Ivan's and Mia's; at the last mark "Aghh!
+  // I can't stand it! My feet are burning!", "I can't stand another minute of
+  // this! Where's an oasis?" and "If we don't find an oasis soon, I'm gonna
+  // shrivel up and blow away!"
+  Event_SetMessageId((mark - LAMAKAN_DESERT_RAISED_HEAT_QUARTER) * 3 + member +
+                     MSGNO(MsgMountainNorthAltinMineWestLama) + 1);
   Event_ShowMessage(member + 1, 0);
   Event_End();
 }
@@ -775,7 +826,7 @@ static void HeatGauge_CountStep(void) {
     if (phase != 0) {
       return;
     }
-    // Reads the frame counter again and drops the value.
+    // DEAD: a read of gFrameCount nothing uses; the ROM keeps its load.
     gFrameCount;
     params.startScaleX = 4 * FIXED_ONE / 5;
     params.startScaleY = 4 * FIXED_ONE / 5;
@@ -792,9 +843,9 @@ static void HeatGauge_CountStep(void) {
 /// pit starts from, farther than any pit can be.
 #define PIT_SEARCH_DISTANCE (1 << 20)
 
-/// In Lamakan Desert, stepping near a hidden pit (step trigger 22), the leader
-/// looks at the nearest pit and is pulled backwards into it, and a battle with
-/// an Ant Lion begins.
+/// In Lamakan Desert, stepping near a hidden pit
+/// (CELL_BEHAVIOR_LAMAKAN_DESERT_PIT), the leader looks at the nearest pit and
+/// is pulled backwards into it, and a battle with an Ant Lion begins.
 static void LamakanDesert_FallIntoPit(void) {
   struct Actor *leader;
   struct Actor *pit;
@@ -937,8 +988,8 @@ static void LamakanDesert_SlipDownSand(void) {
   actor->z.fixed += toFIXED(3) / 2;
 }
 
-/// In Lamakan Desert, at step trigger 40 in LamakanDesertManticore, the leader
-/// stops and backs away as the Manticore rises out of the sand.
+/// In LamakanDesertManticore, on CELL_BEHAVIOR_LAMAKAN_DESERT_MANTICORE, the
+/// leader stops and backs away as the Manticore rises out of the sand.
 static void LamakanDesert_MeetManticore(void) {
   struct FieldWork *work = gFieldWork;
   struct FieldPosition backward;
@@ -1005,29 +1056,31 @@ s32 Scene_Initialize(void) {
     HeatGauge_Start();
     Task_AddFrame(HeatGauge_RaiseQuarterTriggers, TASK_PASS_FRAME);
     if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_EAST) {
-      SAVE_SECRET(0, 22, 7);
-      SAVE_SECRET(1, 8, 10);
-      SAVE_SECRET(2, 23, 21);
-      SAVE_SECRET(3, 16, 42);
-      SAVE_SECRET(4, 36, 44);
-      SAVE_SECRET(5, 14, 55);
+      SAVE_SECRET(EAST_SECRET_OASIS_NORTH, 22, 7);
+      SAVE_SECRET(EAST_SECRET_VULCAN_AXE, 8, 10);
+      SAVE_SECRET(EAST_SECRET_PIT, 23, 21);
+      SAVE_SECRET(EAST_SECRET_OASIS_SOUTHWEST, 16, 42);
+      SAVE_SECRET(EAST_SECRET_OASIS_SOUTHEAST, 36, 44);
+      SAVE_SECRET(EAST_SECRET_FIRST_PSYNERGY_STONE, 14, 55);
     } else if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_SMOG) {
-      SAVE_SECRET(0, 42, 5);
-      SAVE_SECRET(1, 20, 11);
-      SAVE_SECRET(2, 14, 12);
-      SAVE_SECRET(3, 56, 18);
-      SAVE_SECRET(4, 7, 22);
-      SAVE_SECRET(5, 44, 23);
-      SAVE_SECRET(6, 38, 24);
-      SAVE_SECRET(7, 26, 28);
-      SAVE_SECRET(8, 17, 35);
-      SAVE_SECRET(9, 50, 36);
-      SAVE_SECRET(10, 34, 43);
-      SAVE_SECRET(11, 6, 46);
-      SAVE_SECRET(12, 27, 55);
-      SAVE_SECRET(13, 43, 56);
+      SAVE_SECRET(SMOG_SECRET_OASIS_NORTHEAST, 42, 5);
+      SAVE_SECRET(SMOG_SECRET_PIT_NORTH, 20, 11);
+      SAVE_SECRET(SMOG_SECRET_LUCKY_PEPPER, 14, 12);
+      SAVE_SECRET(SMOG_SECRET_SECOND_PSYNERGY_STONE, 56, 18);
+      SAVE_SECRET(SMOG_SECRET_PIT_WEST, 7, 22);
+      SAVE_SECRET(SMOG_SECRET_PIT_EAST, 44, 23);
+      SAVE_SECRET(SMOG_SECRET_SMOG, 38, 24);
+      SAVE_SECRET(SMOG_SECRET_OASIS_MIDDLE, 26, 28);
+      SAVE_SECRET(SMOG_SECRET_777_COINS, 17, 35);
+      SAVE_SECRET(SMOG_SECRET_OASIS_EAST, 50, 36);
+      SAVE_SECRET(SMOG_SECRET_PIT_SOUTH, 34, 43);
+      SAVE_SECRET(SMOG_SECRET_OASIS_SOUTHWEST, 6, 46);
+      SAVE_SECRET(SMOG_SECRET_OASIS_SOUTH, 27, 55);
+      SAVE_SECRET(SMOG_SECRET_POTION, 43, 56);
     } else if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_MANTICORE) {
       Scene_QueueMusic(SE_AMBIENT_WIND);
+      // The three secrets in the west, saved 4 by 4 to spare patches on row
+      // 124.
       MapGrid_CopyCells(8, 14, 4, 4, 64, 124);
       MapGrid_CopyCells(6, 18, 4, 4, 68, 124);
       MapGrid_CopyCells(10, 21, 4, 4, 72, 124);
@@ -1116,6 +1169,8 @@ static void HeatGauge_Draw(void) {
 
     red = RGB_RED(value);
     green = RGB_GREEN(value);
+    // DEAD: the 20 taken from blue here and added back below cancel; the ROM
+    // keeps the subtraction and the addition.
     blue = RGB_BLUE(value) - 20;
     level = gHeatGauge_Level;
     red += level / 3;
@@ -1363,12 +1418,12 @@ struct Trigger gLamakanDesertTriggers[] = {
     { TRIGGER_EXIT, 6, CONDITION_ALWAYS, 2 },
     { TRIGGER_EXIT, 7, CONDITION_ALWAYS, 3 },
     { TRIGGER_EXIT, 8, CONDITION_ALWAYS, 4 },
-    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(LamakanDesert_LeaveForTheWorldMap) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_LAMAKAN_DESERT_TO_WORLD_MAP, CONDITION_ALWAYS, EVENT(LamakanDesert_LeaveForTheWorldMap) },
     { TRIGGER_STEP, CELL_BEHAVIOR_LAMAKAN_DESERT_OASIS, FLAG_DESERT_EVENT_RUNNING, EVENT(LamakanDesert_BatheInOasis) },
     { TRIGGER_STEP, CELL_BEHAVIOR_LAMAKAN_DESERT_SAND, CONDITION_ALWAYS, EVENT(HeatGauge_CountStep) },
     { TRIGGER_STEP, CELL_BEHAVIOR_LAMAKAN_DESERT_PIT, FLAG_DESERT_EVENT_RUNNING, EVENT(LamakanDesert_FallIntoPit) },
     { TRIGGER_STEP, CELL_BEHAVIOR_LAMAKAN_DESERT_SLOPE, CONDITION_ALWAYS, EVENT(LamakanDesert_SlipDownSand) },
-    { TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(LamakanDesert_MeetManticore) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_LAMAKAN_DESERT_MANTICORE, CONDITION_ALWAYS, EVENT(LamakanDesert_MeetManticore) },
     { TRIGGER_TALK, ACTOR_MANTICORE, FLAG_LAMAKAN_MANTICORE_BEATEN, EVENT(LamakanDesert_FightManticore) },
     { TRIGGER_TALK, ACTOR_SMOG, CONDITION_ALWAYS, EVENT(LamakanDesert_TalkToSmog) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), TREASURE_SPOT_VULCAN_AXE, FLAG_LAMAKAN_DESERT_VULCAN_AXE, FIND_ITEM(ITEM_VULCAN_AXE) },

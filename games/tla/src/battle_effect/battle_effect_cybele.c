@@ -23,22 +23,22 @@ static __inline__ void Cybele_RunImpactBurst(s32 formation, s32 x, s32 y) {
   BattleEffect_RunImpactBurst(formation, x, y);
 }
 
-#define CYBELE_FRAMES 366 ///< frames of Cybele's whole run
+#define CYBELE_FRAMES 366
 /// The first target lands on its spreading ring, sixteen frames after it is
 /// dropped; the others follow.
 #define CYBELE_LANDING_FRAME 302
 
 /// Where the blast pictures start in work->sheet, after the yellow ring's.
 #define CYBELE_BLAST_PICTURES 5760
-#define CYBELE_VINES 16       ///< vines, from work->particles[0]
-#define CYBELE_SPARKS 16      ///< sparks, from CYBELE_FIRST_SPARK
-#define CYBELE_THORNS 16      ///< thorns, from CYBELE_FIRST_THORN
-#define CYBELE_CHIPS 48       ///< chips, from CYBELE_FIRST_CHIP
+#define CYBELE_VINES 16 ///< vines, from work->particles[0]
+#define CYBELE_SPARKS 16
+#define CYBELE_THORNS 16
+#define CYBELE_CHIPS 48
 #define CYBELE_FIRST_SPARK 16 ///< the first spark in work->particles
 #define CYBELE_FIRST_THORN 32 ///< the first thorn in work->particles
 #define CYBELE_FIRST_CHIP 16  ///< the first chip in work->particles
 #define CYBELE_DUST_PICTURE 6 ///< the dust cloud in gCybele_BlastPictures
-#define CYBELE_SPRITES 8      ///< the sprites Cybele is drawn from
+#define CYBELE_SPRITES 8
 /// How far right of the screen's left edge the canvas shows until the chips
 /// fly, in pixels.
 #define CYBELE_CANVAS_X 32
@@ -590,7 +590,3 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
 #undef CYBELE_VINE_STEM_HEIGHT
 #undef CYBELE_RING_HALF_WIDTH
 #undef CYBELE_RING_HALF_HEIGHT
-
-/// Boreas's spray sparkles (battle_effect_boreas.c's BOREAS_SPRAY_SPARKLES):
-/// the particles after its 128 drops of spray in the map cell buffer.
-#define TRAILS (PARTICLES + 128)

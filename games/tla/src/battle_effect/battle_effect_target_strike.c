@@ -184,16 +184,15 @@ void BattleEffect_RunMadZephyr(struct BattleEffectParams *args) {
 /// The motes a bite's hit sends out; the first 64 are drawn.
 #define TARGET_STRIKE_BITE_MOTES 16
 #define TARGET_STRIKE_DRAWN_MOTES 64
-/// A wisp of smoke or a flash lives 24 frames, four on each of its six
-/// pictures.
-#define TARGET_STRIKE_WISP_FRAMES 24
-/// The star's sine steps a 32nd of a turn a frame (1 << 11), and its scale
-/// rises to TARGET_STRIKE_STAR_SCALE 256ths, about 2.4 times.
+/// A flash lives through FlashBurstSheet's six pictures, four frames each.
+#define TARGET_STRIKE_FLASH_FRAMES (FLASH_BURST_PICTURE_COUNT * 4)
+/// The star's sine steps a 32nd of a turn a frame, and its scale rises to
+/// TARGET_STRIKE_STAR_SCALE 256ths, about 2.4 times.
 #define TARGET_STRIKE_STAR_STEP_SHIFT 11
 #define TARGET_STRIKE_STAR_SCALE 612
-/// The wisps' pictures in the sheet: SmokeSheet's six 24x48 puffs,
+/// The hit's pictures in the sheet, by style: SmokeSheet's six 24x48 puffs,
 /// FlashBurstSheet's six 32x64 bursts, or StarCrossSheet's star.
-#define TARGET_STRIKE_SMOKE_PICTURES 12800
+#define TARGET_STRIKE_HIT_PICTURES 12800
 /// The bite's stages after the tornado sheet: BeamImage for a slash,
 /// TwelveModeImage otherwise.
 #define TARGET_STRIKE_BITE_PICTURES 3200
@@ -239,7 +238,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
   }
 
   // The sheets: motes, the tornado, the slashes or fangs, the style's
-  // colours and the wisps (smoke, flash or star).
+  // colours and the hit's pictures (smoke, flashes or the star).
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, work->sheet, 1, 0);
   if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_KIND) == STRIKE_KIND_SLASH)
@@ -276,20 +275,19 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                        SHEET_PALETTE_BYTES);
   if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_FLASH)
     Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
-                               work->sheet + TARGET_STRIKE_SMOKE_PICTURES, 1,
-                               0);
+                               work->sheet + TARGET_STRIKE_HIT_PICTURES, 1, 0);
   else if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_STAR)
     Resource_LoadAndDecompress(RESOURCE_STAR_CROSS_SHEET,
-                               work->sheet + TARGET_STRIKE_SMOKE_PICTURES, 1,
-                               0);
+                               work->sheet + TARGET_STRIKE_HIT_PICTURES, 1, 0);
   else
-    Resource_LoadAndDecompress(
-        RESOURCE_SMOKE_SHEET, work->sheet + TARGET_STRIKE_SMOKE_PICTURES, 1, 0);
+    Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET,
+                               work->sheet + TARGET_STRIKE_HIT_PICTURES, 1, 0);
 
   /* LEFTOVER(template): a per-target loop whose count is 1, the first target
    * only. */
   for (k = 0; k != 1; k++) {
-    // The wisps start at the target's feet, waiting (-1) until a hit.
+    // The smoke or flashes start at the target's feet, waiting (-1) until a
+    // hit.
     target = BattleObject_GetFar(args->targets[k])->object;
     EffectPosition_ProjectBattler(args->targets[k], &ground);
     for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
@@ -648,17 +646,17 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     for (k = 0; k != 1; k++) {
       source = BattleObject_GetFar(args->user)->object;
 
-      // Wisps of smoke rise and spread for 24 frames.
+      // Wisps of smoke rise and spread for SMOKE_PUFF_FRAMES.
       if (TARGET_STRIKE_VALUE(mode, TARGET_STRIKE_FLAGS) & STRIKE_SMOKE) {
         for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
           struct Particle *step = &work->particles[i];
 
-          if (step->variant >= 0 && step->variant < TARGET_STRIKE_WISP_FRAMES) {
+          if (step->variant >= 0 && step->variant < SMOKE_PUFF_FRAMES) {
             s32 picture = step->variant / 4;
 
             draw[i & 1](canvas,
                         work->sheet + picture * PICTURE_BYTES(SMOKE_PUFF) +
-                            TARGET_STRIKE_SMOKE_PICTURES,
+                            TARGET_STRIKE_HIT_PICTURES,
                         FIXED_INTEGER_PART(step->x) - SMOKE_PUFF_WIDTH / 2,
                         FIXED_INTEGER_PART(step->y) - SMOKE_PUFF_HEIGHT / 2,
                         SMOKE_PUFF_WIDTH, SMOKE_PUFF_HEIGHT);
@@ -673,11 +671,12 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
         for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
           struct Particle *step = &work->particles[i];
 
-          if (step->variant >= 0 && step->variant < TARGET_STRIKE_WISP_FRAMES) {
+          if (step->variant >= 0 &&
+              step->variant < TARGET_STRIKE_FLASH_FRAMES) {
             draw[0](canvas,
                     work->sheet +
                         step->variant / 4 * PICTURE_BYTES(FLASH_BURST) +
-                        TARGET_STRIKE_SMOKE_PICTURES,
+                        TARGET_STRIKE_HIT_PICTURES,
                     FIXED_INTEGER_PART(step->x) - FLASH_BURST_WIDTH / 2,
                     FIXED_INTEGER_PART(step->y) - FLASH_BURST_HEIGHT / 2,
                     FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
@@ -756,7 +755,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       model->shade = 0;
       texture.logWidth = 6;
       texture.logHeight = 6;
-      texture.pixels = work->sheet + TARGET_STRIKE_SMOKE_PICTURES;
+      texture.pixels = work->sheet + TARGET_STRIKE_HIT_PICTURES;
       model->kind = MODEL_SHADED_MAX;
       model->mesh = gBattleEffect_SquareMesh;
       model->texture = &texture;
@@ -936,12 +935,9 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
 #define ELEMENT_PILLAR_GLOW_WIDTH 24
 #define ELEMENT_PILLAR_GLOW_HEIGHT 43
 #define ELEMENT_PILLAR_GLOW (4 * PICTURE_BYTES(ELEMENT_PILLAR_HALF))
-/// The element pillar's canvas weight over the battle, in sixteenths.
-#define ELEMENT_BLEND_LEVEL 12
-/// The motes set up in PARTICLES; the pillar spirals the first
-/// ELEMENT_PILLAR_MOTES up around it, each circling once in
+/// The pillar spirals the first ELEMENT_PILLAR_MOTES of its
+/// ELEMENT_SPIRAL_MOTES up around it, each circling once in
 /// ELEMENT_PILLAR_TURN_FRAMES.
-#define ELEMENT_SPIRAL_MOTES 128
 #define ELEMENT_PILLAR_MOTES 32
 #define ELEMENT_PILLAR_TURN_FRAMES 64
 
@@ -1213,9 +1209,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
 #undef TARGET_STRIKE_BITE_SPARKS
 #undef TARGET_STRIKE_BITE_MOTES
 #undef TARGET_STRIKE_DRAWN_MOTES
-#undef TARGET_STRIKE_WISP_FRAMES
+#undef TARGET_STRIKE_FLASH_FRAMES
 #undef TARGET_STRIKE_STAR_STEP_SHIFT
 #undef TARGET_STRIKE_STAR_SCALE
 #undef TARGET_STRIKE_SPARKS
-#undef ELEMENT_BLEND_LEVEL
-#undef ELEMENT_SPIRAL_MOTES

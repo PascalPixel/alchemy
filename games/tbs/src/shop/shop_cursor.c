@@ -4,15 +4,12 @@
 
 #include "shop_internal.h"
 
-/// The bytes of one pixel row of a 16-colour tile.
-#define TILE_ROW_SIZE_4BPP (TILE_SIZE_4BPP / 8)
-
 /// The frames the field's colours take to fade to a shop's tint and back.
 #define SHOP_TINT_FRAMES 16
 
 /// Where each of the quantity bar's 30 segments starts in its tile buffer: a
 /// byte column of a 4-bit tile, so four segments to a tile and the next tile
-/// 32 bytes on, eight tiles in all.
+/// TILE_SIZE_4BPP bytes on, eight tiles in all.
 // clang-format off
 static const u16 sSelectorTileOffsets[30] = {
     0, 1, 2, 3,
@@ -57,7 +54,7 @@ static const u16 sPriceDigitTileOffsets[5] = {
 /// source bytes: two bytes of each of its four rows in the digit's tile, and
 /// two more in the same row of the next.
 void Shop_CopyGlyphs(s32 digit, u8 *tileBuffer, u32 digitPosition) {
-  u8 *src = gShop_GlyphBytes + (digit << 5);
+  u8 *src = gShop_GlyphBytes + digit * TILE_SIZE_4BPP;
   u8 *dst = tileBuffer + sPriceDigitTileOffsets[digitPosition] + 2;
   s32 count;
 
@@ -282,5 +279,4 @@ void MenuCursor_Place(struct Window *window, s32 x, s32 y) {
   MenuCursor_Set(&shop->cursor, cursorX, cursorY, (s8)shop->cursorFrames);
 }
 
-#undef TILE_ROW_SIZE_4BPP
 #undef SHOP_TINT_FRAMES

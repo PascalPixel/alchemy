@@ -235,7 +235,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 
 /// Ram_MapCellBuffer as Douse uses it: window 0's table, then the drops'
 /// droplets, each free while its variant is -1.
-#define DOUSE_SPLASH_BUFFER ((struct DropSplashBuffer *)Ram_MapCellBuffer)
+#define DOUSE_DROPLET_BUFFER ((struct DropletBuffer *)Ram_MapCellBuffer)
 
 /// Each Douse variant: the drops that fall, of the 64 set out, the droplets
 /// each throws up, the pixels between drops along the slant, and its frames;
@@ -245,16 +245,13 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 #define DOUSE_DROP_SPACING(variant) gFalling_Counts[(variant) * 4 + 2]
 #define DOUSE_FRAMES(variant) gFalling_Counts[(variant) * 4 + 3]
 
-/// BlueBeamSheet, after ParticleSpritesD's ten flare pictures (as many bytes as
-/// two sets of motes): the falling drop, a blue bubble; the small splash it
-/// lands in; then the large splash.
-#define DOUSE_DROP_WIDTH 24
-#define DOUSE_DROP_HEIGHT 24
-#define DOUSE_BURST_PICTURE_WIDTH 42
-#define DOUSE_BURST_PICTURE_HEIGHT 42
-#define DOUSE_FALLING_PICTURE (2 * MOTE_SET_BYTES)
-#define DOUSE_FLASH_PICTURE (DOUSE_FALLING_PICTURE + PICTURE_BYTES(DOUSE_DROP))
-#define DOUSE_BURST_PICTURE (DOUSE_FLASH_PICTURE + PICTURE_BYTES(DOUSE_DROP))
+/// BlueBeamSheet, after ParticleSpritesD's ten flare pictures: the falling
+/// drop, a blue bubble; the small splash it lands in; then the large splash.
+#define DOUSE_FALLING_PICTURE FLARE_SET_BYTES
+#define DOUSE_SMALL_SPLASH_PICTURE                                             \
+  (DOUSE_FALLING_PICTURE + PICTURE_BYTES(BLUE_BUBBLE))
+#define DOUSE_LARGE_SPLASH_PICTURE                                             \
+  (DOUSE_SMALL_SPLASH_PICTURE + PICTURE_BYTES(BLUE_BUBBLE))
 
 /// Drops of water fall diagonally onto the targets' side of the field, 8 pixels
 /// down and 4 across a frame, each bursting in a splash that throws up droplets
@@ -267,7 +264,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   s32 frame;
   DrawRectangle draw[2];
   struct Particle *drop;
-  struct Particle *splash;
+  struct Particle *droplet;
   u16 *line;
   s32 i;
   s32 k;
@@ -291,8 +288,8 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
                       BLITTER_ADDITIVE);
   draw[1] = Ram_HeapSlots->ramCodePaired;
 
-  EFFECT_FREE_PARTICLES(i, DOUSE_SPLASH_BUFFER->splashes,
-                        ARRAY_COUNT(DOUSE_SPLASH_BUFFER->splashes));
+  EFFECT_FREE_PARTICLES(i, DOUSE_DROPLET_BUFFER->droplets,
+                        ARRAY_COUNT(DOUSE_DROPLET_BUFFER->droplets));
 
   // Line the drops up above the screen along the slant, each the variant's
   // spacing higher than the one before.
@@ -347,7 +344,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
       y = drop->y / 8;
       if (drop->variant == -1) {
         draw[0](canvas, work->sheet + DOUSE_FALLING_PICTURE, x, y,
-                DOUSE_DROP_WIDTH, DOUSE_DROP_HEIGHT);
+                BLUE_BUBBLE_WIDTH, BLUE_BUBBLE_HEIGHT);
         if (drop->y <= FALLING_LAND_Y) {
           if (args->side == EFFECT_SIDE_ENEMIES)
             drop->x -= 32;
@@ -358,17 +355,17 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
           // Droplets fly up from the middle of the landed drop.
           drop->variant = 0;
           for (k = 0; k != DOUSE_DROPLETS_PER_DROP(args->variant); k++) {
-            splash =
-                &DOUSE_SPLASH_BUFFER
-                     ->splashes[i * DOUSE_DROPLETS_PER_DROP(args->variant) + k];
-            splash->x = INTtoFIXED(x + DOUSE_DROP_WIDTH / 2);
-            splash->y = INTtoFIXED(y);
-            splash->velocityX = ((Random16() & 255) - 128) << 9;
+            droplet =
+                &DOUSE_DROPLET_BUFFER
+                     ->droplets[i * DOUSE_DROPLETS_PER_DROP(args->variant) + k];
+            droplet->x = INTtoFIXED(x + BLUE_BUBBLE_WIDTH / 2);
+            droplet->y = INTtoFIXED(y);
+            droplet->velocityX = ((Random16() & 255) - 128) << 9;
             if (args->variant == EFFECT_VARIANT_STRONGEST)
-              splash->velocityY = ((Random16() & 0x1ff) - 384) << 10;
+              droplet->velocityY = ((Random16() & 0x1ff) - 384) << 10;
             else
-              splash->velocityY = ((Random16() & 255) - 255) << 10;
-            splash->variant = (Random16() & 15) + 16;
+              droplet->velocityY = ((Random16() & 255) - 255) << 10;
+            droplet->variant = (Random16() & 15) + 16;
           }
           // Every target flashes white as the drops land.
           if ((i & 3) == 0)
@@ -380,31 +377,31 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
       } else {
         // Four frames of the small splash, four of the large one.
         if (drop->variant >= 0 && drop->variant <= 3)
-          draw[0](canvas, work->sheet + DOUSE_FLASH_PICTURE, x, y,
-                  DOUSE_DROP_WIDTH, DOUSE_DROP_HEIGHT);
+          draw[0](canvas, work->sheet + DOUSE_SMALL_SPLASH_PICTURE, x, y,
+                  BLUE_BUBBLE_WIDTH, BLUE_BUBBLE_HEIGHT);
         else if (drop->variant <= 7)
-          draw[0](canvas, work->sheet + DOUSE_BURST_PICTURE,
-                  x - (DOUSE_BURST_PICTURE_WIDTH - DOUSE_DROP_WIDTH) / 2,
-                  y - (DOUSE_BURST_PICTURE_HEIGHT - DOUSE_DROP_HEIGHT) / 2,
-                  DOUSE_BURST_PICTURE_WIDTH, DOUSE_BURST_PICTURE_HEIGHT);
+          draw[0](canvas, work->sheet + DOUSE_LARGE_SPLASH_PICTURE,
+                  x - (BLUE_LARGE_SPLASH_WIDTH - BLUE_BUBBLE_WIDTH) / 2,
+                  y - (BLUE_LARGE_SPLASH_HEIGHT - BLUE_BUBBLE_HEIGHT) / 2,
+                  BLUE_LARGE_SPLASH_WIDTH, BLUE_LARGE_SPLASH_HEIGHT);
         if (drop->variant <= FALLING_LANDED_LAST_FRAME)
           drop->variant++;
       }
     }
 
     // Droplets fall and shrink as they die.
-    for (i = 0; i != ARRAY_COUNT(DOUSE_SPLASH_BUFFER->splashes); i++) {
-      splash = &DOUSE_SPLASH_BUFFER->splashes[i];
-      if (splash->variant != -1) {
-        s32 size = splash->variant + 1;
+    for (i = 0; i != ARRAY_COUNT(DOUSE_DROPLET_BUFFER->droplets); i++) {
+      droplet = &DOUSE_DROPLET_BUFFER->droplets[i];
+      if (droplet->variant != -1) {
+        s32 size = droplet->variant + 1;
 
         if (size > 6)
           size = 6;
         EFFECT_DRAW_FLARE(draw[1], canvas, work->sheet,
-                          FIXED_INTEGER_PART(splash->x),
-                          FIXED_INTEGER_PART(splash->y), size);
-        Particle_AdvanceWithGravity2D(splash, 60, toFIXED(1) / 8);
-        splash->variant--;
+                          FIXED_INTEGER_PART(droplet->x),
+                          FIXED_INTEGER_PART(droplet->y), size);
+        Particle_AdvanceWithGravity2D(droplet, 60, toFIXED(1) / 8);
+        droplet->variant--;
       }
     }
 
@@ -428,15 +425,11 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
 #undef ICE_PUFF_FIRST_FRAME
 #undef ICE_PUFF_LAST_FRAME
 #undef ICE_PUFF_FRAMES
-#undef DOUSE_SPLASH_BUFFER
+#undef DOUSE_DROPLET_BUFFER
 #undef DOUSE_DROPS
 #undef DOUSE_DROPLETS_PER_DROP
 #undef DOUSE_DROP_SPACING
 #undef DOUSE_FRAMES
-#undef DOUSE_DROP_WIDTH
-#undef DOUSE_DROP_HEIGHT
-#undef DOUSE_BURST_PICTURE_WIDTH
-#undef DOUSE_BURST_PICTURE_HEIGHT
 #undef DOUSE_FALLING_PICTURE
-#undef DOUSE_FLASH_PICTURE
-#undef DOUSE_BURST_PICTURE
+#undef DOUSE_SMALL_SPLASH_PICTURE
+#undef DOUSE_LARGE_SPLASH_PICTURE

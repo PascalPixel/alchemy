@@ -12,8 +12,12 @@
 #include "system/frame.h"
 #include "system/vector3.h"
 #include "system/projection.h"
+#include "system/io_reg.h"
 
-#define VISIBLE_SCANLINES 160
+/// A 16.16 value in the 8.8 fixed point of the affine registers, rounded
+/// toward zero, and an 8.8 value back in 16.16.
+#define FIXEDtoQ_8_8(value) ((value) / (FIXED_ONE / Q_8_8(1)))
+#define Q_8_8toFIXED(value) ((value) * (FIXED_ONE / Q_8_8(1)))
 
 /// An eight-byte entry of the System bank's far-call table holds the ldr/bx
 /// instructions and a target word.
@@ -71,8 +75,8 @@ extern u32 gScanlineAngle;
 s32 Matrix_CallInThumb(s32 x, s32 y);
 
 /// Builds the world map's per-scanline affine table for one frame: the ground
-/// plane seen from eye towards target. line points at the VISIBLE_SCANLINES
-/// scanlines' ground terms, whose rotation terms stay cached while the yaw
+/// plane seen from eye towards target. line points at the 160 scanlines' ground
+/// terms, whose rotation terms stay cached while the yaw
 /// (gScanlineAngle) is unchanged; affine receives each line's parameters twice,
 /// for BG2 and then BG3, as the HBlank DMA writes both.
 void Matrix_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
@@ -117,7 +121,7 @@ void Matrix_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
     sinYaw = table->sin.target(angle);
     cosYaw = table->cos.target(angle);
     negativeSinYaw = -sinYaw;
-    for (scanline = 0; scanline < VISIBLE_SCANLINES; scanline++) {
+    for (scanline = 0; scanline < DISPLAY_HEIGHT; scanline++) {
       FIXED widthScale = line->x;
       s32 centerX;
       s32 horizontalOffset;
@@ -126,21 +130,19 @@ void Matrix_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
       s32 affinePc;
 
       depth = line->z;
-      // The BG affine parameters are 8.8 fixed point: / 256 takes the 16.16
-      // products there.
-      affinePa = -(MulFX(widthScale, cosYaw) / 256);
+      affinePa = -FIXEDtoQ_8_8(MulFX(widthScale, cosYaw));
       horizontalOffset = (s16)affinePa;
       line->u = affinePa;
       affine->pa = affinePa;
-      affinePc = MulFX(widthScale, sinYaw) / 256;
+      affinePc = FIXEDtoQ_8_8(MulFX(widthScale, sinYaw));
       line->v = affinePc;
       affine->pc = affinePc;
       centerX = *&gProjection.centerX;
       // UB: affine coefficients can be negative, and shifting a negative
-      // value left is undefined; UBFIX multiplies by 256.
+      // value left is undefined; UBFIX multiplies.
 #ifdef UBFIX
-      horizontalOffset = (horizontalOffset * 256) * centerX;
-      depthOffset = ((s16)affinePc * 256) * -centerX;
+      horizontalOffset = Q_8_8toFIXED(horizontalOffset) * centerX;
+      depthOffset = Q_8_8toFIXED((s16)affinePc) * -centerX;
 #else
       horizontalOffset = (horizontalOffset << 8) * centerX;
       depthOffset = ((s16)affinePc << 8) * -centerX;
@@ -157,7 +159,7 @@ void Matrix_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
     }
   } else {
     // Same angle: the cached terms stand and only the position moves.
-    for (scanline = 0; scanline < VISIBLE_SCANLINES; scanline++) {
+    for (scanline = 0; scanline < DISPLAY_HEIGHT; scanline++) {
       if (gFrameCount & 1) {
         // On odd frames the sample point shifts by half a pixel step along
         // the line and a quarter step across it, so alternate frames sample
@@ -184,4 +186,5 @@ void Matrix_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
   }
 }
 
-#undef VISIBLE_SCANLINES
+#undef FIXEDtoQ_8_8
+#undef Q_8_8toFIXED

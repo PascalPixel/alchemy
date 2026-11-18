@@ -166,15 +166,16 @@ again:
     FieldEffect_ClearOwnedSlot(effect);
 }
 
-#define HEAVY_IMPACT_SHARDS 12
+#define HEAVY_IMPACT_SPARKLES 12
 
 /// A heavy impact: places a star burst (SPRITE_STAR_BURST) 32 pixels below the
-/// source for 20 frames and scatters HEAVY_IMPACT_SHARDS shards from it.
+/// source for 20 frames and scatters HEAVY_IMPACT_SPARKLES sparkles
+/// (SPRITE_SPARKLE) from it.
 s32 SpawnHeavyImpactEffect(struct Actor *source) {
   struct Vector3 pos;
   struct Actor *impact;
-  struct Actor *fragment;
-  s32 fragmentIndex;
+  struct Actor *sparkle;
+  s32 sparkleIndex;
 
   Sound_PlayFar(SE_HEAVY_IMPACT);
   pos.x = source->x.fixed;
@@ -187,20 +188,19 @@ s32 SpawnHeavyImpactEffect(struct Actor *source) {
     Actor_StartScriptFar(impact, gFieldEffect_SharedParticleScript);
   }
 
-  // Shards: 1 to 2 pixels a frame, 8 to 32 pixels in a random direction.
-  for (fragmentIndex = 0; fragmentIndex < HEAVY_IMPACT_SHARDS;
-       fragmentIndex++) {
-    fragment = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
-    if (fragment != NULL) {
-      Actor_StartScriptFar(fragment, gFieldEffect_FragmentScript);
-      fragment->speedLimit = Random16() + toFIXED(1);
-      fragment->acceleration = toFIXED(1);
-      fragment->motionFlags = 0;
+  // Sparkles: 1 to 2 pixels a frame, 8 to 32 pixels in a random direction.
+  for (sparkleIndex = 0; sparkleIndex < HEAVY_IMPACT_SPARKLES; sparkleIndex++) {
+    sparkle = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
+    if (sparkle != NULL) {
+      Actor_StartScriptFar(sparkle, gFieldEffect_FragmentScript);
+      sparkle->speedLimit = Random16() + toFIXED(1);
+      sparkle->acceleration = toFIXED(1);
+      sparkle->motionFlags = 0;
       Actor_SetTargetPositionFromMagnitudeAngle(
-          fragment, Random16() * 24 + toFIXED(8), Random16());
+          sparkle, Random16() * 24 + toFIXED(8), Random16());
     }
   }
   return 0;
 }
 
-#undef HEAVY_IMPACT_SHARDS
+#undef HEAVY_IMPACT_SPARKLES

@@ -63,9 +63,10 @@ void BattleCamera_Update(void) {
   eyeOffset.z = camera->distance;
   Iwram_TransformVector(&eyeOffset.x, (s32 *)camera);
 
-  // The view centred at (120, 120) in 16.16 pixels, at scale 1.
+  // The plane centred on the projection's centre, at a zoom of 1.
   if (view->flag == 0) {
-    BattleCamera_SetRange(toFIXED(120), toFIXED(120), 0, 0, FIXED_ONE);
+    BattleCamera_SetRange(toFIXED(BATTLE_PROJECTION_CENTER_X),
+                          toFIXED(BATTLE_PROJECTION_CENTER_Y), 0, 0, FIXED_ONE);
   }
 }
 
@@ -139,21 +140,20 @@ void BattleUnit_Collect(void) {
   battle->enemyIds[count] = BATTLE_UNIT_LIST_END;
 }
 
-// XXX (no evidence): what the bytes moved are, tiles of character block 0 or
-// entries of screen block 0; nothing calls this in either game.
 /// Unused: moves 16 bytes of VRAM down by 16 and clears the 20 from 12 bytes
 /// past where they land.
-s32 Battle_ShiftVramTiles(void) {
+UNUSED s32 Battle_ShiftVramTiles(void) {
+  // XXX (no evidence): what the bytes moved are, tiles of character block 0 or
+  // entries of screen block 0; nothing calls this in either game.
   Dma_Set((const void *)0x06000290, (void *)0x06000280, DMA_COPY_HALFWORDS(8),
           REG_DMA3);
   return Iwram_ClearWords((void *)0x0600028c, 20);
 }
 
-/// Nothing in the source calls it.
-void Battle_ClearBg0Vofs(void) { Io_Write16(0, &REG_BG0VOFS); }
+/// Unused: clears BG0's vertical scroll.
+UNUSED void Battle_ClearBg0Vofs(void) { Io_Write16(0, &REG_BG0VOFS); }
 
-/// Does nothing; Battle_Run calls it with 1 as the battle is set
-/// up.
+/// Does nothing; Battle_Run calls it with 1 as the battle is set up.
 void Party_BattleSetupNoOp(s32 unused) {}
 
 /// Clears the party's battle-only states, and works their stats out again, as a
@@ -169,7 +169,6 @@ UNREAD_RESULT BattleParty_ResetActiveRuntimeFields(void) {
     struct Unit *unit = Unit_GetFar(unitIds[i]);
     s32 element;
 
-    // The four element levels, cleared from the last.
     for (element = 0; element < ELEMENT_COUNT; element++)
       unit->summonBoost[element] = 0;
 
@@ -212,7 +211,8 @@ UNREAD_RESULT DjinnRecovery_Reconcile(void) {
 
   count = BattleParty_PrepareMembers(unitIds);
 
-  // Units 0 to 7 use the party's list, any other the opponent's.
+  // A party unit (0 to ALLY_MAX) uses the party's list, any other the
+  // opponent's.
   for (i = 0; i < count; i++) {
     unitId = unitIds[i];
     for (element = 0; element < ELEMENT_COUNT; element++) {
@@ -261,8 +261,9 @@ UNREAD_RESULT DjinnRecovery_Reconcile(void) {
   }
 }
 
-/// The summon ids the mask covers, one bit each.
-#define SUMMON_COUNT 32
+/// The summon mask's bits, one a summon id; SummonDefinition_Get gives NULL for
+/// the ids past the last summon.
+#define SUMMON_MASK_BITS 32
 
 /// Works out which summons the party can call, by the Djinn it holds of each
 /// element, set or not; whether enough are on standby is checked when one is
@@ -293,7 +294,7 @@ struct DjinnRecoveryTable *BattleSummon_UpdateAvailability(void) {
 
   // Then element counts the summons; the inner loop stops at the first element
   // whose requirement is not met.
-  for (element = 0; element < SUMMON_COUNT; element++) {
+  for (element = 0; element < SUMMON_MASK_BITS; element++) {
     const struct SummonDefinition *summon = SummonDefinition_Get(element);
     s32 elementsMet;
 
@@ -325,7 +326,8 @@ struct DjinnRecoveryTable *BattleSummon_UpdateAvailability(void) {
   }
 }
 
-/// Does nothing; nothing in the source calls it.
-void BattleSummon_ReservedNoOp(void) {}
+/// Unused: does nothing.
+UNUSED void BattleSummon_ReservedNoOp(void) {}
 
 #undef CAMERA_YAW_EASE
+#undef SUMMON_MASK_BITS

@@ -290,6 +290,9 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
     }
     draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+    /* FAKEMATCH(signature): the paired slot read through a padded view that
+     * types it as a drawing routine; as
+     * (DrawRectangle)Ram_HeapSlots->ramCodePaired. */
     draw[1] = ALTERNATE_BLITTER_SLOT;
     for (i = 0; i != strikes; i++) {
       s32 start = i * gFlurry_Styles[mode][FLURRY_INTERVAL];
@@ -363,6 +366,9 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                         BLITTER_MAX);
     draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+    /* FAKEMATCH(signature): the paired slot read through a padded view that
+     * types it as a drawing routine; as
+     * (DrawRectangle)Ram_HeapSlots->ramCodePaired. */
     draw[1] = ALTERNATE_BLITTER_SLOT;
     for (i = 0; i != FLURRY_MOTE_COUNT; i++) {
       struct Particle *mote = &PARTICLES[i];

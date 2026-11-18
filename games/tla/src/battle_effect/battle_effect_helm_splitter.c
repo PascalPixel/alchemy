@@ -13,7 +13,8 @@
 #define HELM_SPLITTER_SPARK_PICTURES HELM_SPLITTER_SWIRL_BYTES
 #define HELM_SPLITTER_SPARKS 16      ///< sparks the strike scatters, a variant
 #define HELM_SPLITTER_SPARK_SLOTS 64 ///< spark slots moved and drawn
-#define HELM_SPLITTER_STAR_SIZE 16   ///< PinkStarSheet's six stars
+/// The side of each of PinkStarSheet's six square stars.
+#define HELM_SPLITTER_STAR_SIZE 16
 
 /// The user leaps at the first target and strikes through a fire swirl; the
 /// target reels and sparks scatter, bouncing off the ground: stars for Helm

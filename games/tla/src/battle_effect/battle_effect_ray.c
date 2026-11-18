@@ -5,9 +5,14 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-#define RAY_FRAMES 64 ///< frames of the bolts' approach
+#define RAY_FRAMES 64 ///< frames of the effect
 
 #define RAY_SPARK_COUNT PARTICLE_POOL_COUNT ///< sparks in PARTICLES
+/// The columns of a gRay_Sparks row, one row a variant.
+enum {
+  RAY_SPARKS_UNREAD,   ///< Unused: nothing reads it
+  RAY_SPARKS_PER_BOLT, ///< sparks each bolt throws a frame
+};
 
 #define RAY_PICTURES 1550 ///< the bolt pictures in the sheet
 #define RAY_COUNT 4       ///< bolts
@@ -142,7 +147,7 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
             spark->velocityY = -(Trig_Cos(spread) * speed * 2) >> 7;
             spark->variant = (Random16() & 7) + 32;
             thrown++;
-            if (thrown == gRay_Sparks[args->variant][1])
+            if (thrown == gRay_Sparks[args->variant][RAY_SPARKS_PER_BOLT])
               break;
           }
         }
@@ -169,7 +174,6 @@ void BattleEffect_RunRay(struct BattleEffectParams *args) {
       }
     }
 
-    // The targets are hit 4 frames apart.
     if (frame >= 4 && frame < 96) {
       EFFECT_FOR_EACH_TARGET(i, args) {
         if (frame == i * 4 + 4)

@@ -158,6 +158,9 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       BLITTER_ADDITIVE);
   draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+  /* FAKEMATCH(signature): the paired slot read through a padded view that
+   * types it as a drawing routine; as
+   * (DrawRectangle)Ram_HeapSlots->ramCodePaired. */
   draw[1] = ALTERNATE_BLITTER_SLOT;
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
   wait(1);
@@ -387,7 +390,7 @@ void BattleEffect_RunAtalanta(struct BattleEffectParams *args) {
           shaft->variant++;
         } else {
           // Falling: the shaft sinks into the ground below y = 56.
-          s32 height = 24;
+          s32 height = ATALANTA_SHAFT_BOTTOM_HEIGHT;
 
           if (shaft->y > 56)
             height = height - shaft->y + 56;

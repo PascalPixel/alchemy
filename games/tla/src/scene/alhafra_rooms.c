@@ -151,20 +151,20 @@ void AlhafraRooms_MeetAlex(void) {
   Actor_SetAttachedEffect(ACTOR_FELIX,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(50);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   FieldEvent_Wait(10);
   // "I had suspected we might run into each other again, since we both..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_ALEX, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 4);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_SHAKE_HEAD);
   // "Unfortunately, the only boat this town possesses has already been sold."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_ALEX, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_ALEX, 2);
   FieldEvent_Wait(10);
   // "I will be resting here in Alhafra a bit longer. I have traveled long..."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_ALEX, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_ALEX, 3);
+  Actor_SetAnimationAndWait(ACTOR_ALEX, ANIM_NOD);
   FieldEvent_Wait(10);
   // "Perhaps we can get along at least until we both depart."
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_ALEX, 0, 10);
@@ -243,7 +243,7 @@ void AlhafraRooms_GuestsAskForTea(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_DEMANDING_GUEST, 0, 10);
   Actor_FaceDirection(ACTOR_DEMANDING_GUESTS_WIFE, FACING_WEST, 0);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_DEMANDING_GUESTS_WIFE, 3);
+  Actor_SetAnimationAndWait(ACTOR_DEMANDING_GUESTS_WIFE, ANIM_NOD);
   FieldEvent_Wait(10);
   // "Oh, you're right, dear. I am!"
   FieldEvent_ShowMessageThenWait(ACTOR_DEMANDING_GUESTS_WIFE, 0, 10);
@@ -275,8 +275,8 @@ void AlhafraRooms_GuestsAskForTea(void) {
   FieldEvent_Wait(10);
   Actor_WalkToAndWait(ACTOR_DEMANDING_GUEST, 152, 312);
   FieldEvent_Wait(10);
-  Actor_SetAnimation(ACTOR_DEMANDING_GUESTS_WIFE, 4);
-  Actor_SetAnimationAndWait(ACTOR_DEMANDING_GUEST, 4);
+  Actor_SetAnimation(ACTOR_DEMANDING_GUESTS_WIFE, ANIM_SHAKE_HEAD);
+  Actor_SetAnimationAndWait(ACTOR_DEMANDING_GUEST, ANIM_SHAKE_HEAD);
   FieldEvent_Wait(10);
   Actor_FaceDirection(ACTOR_DEMANDING_GUEST, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_DEMANDING_GUESTS_WIFE, FACING_SOUTH, 0);
@@ -362,8 +362,8 @@ s32 AlhafraRooms_DrawSecondGuestSprite(struct Actor *guest) {
   return 0;
 }
 
-// The Japanese edition sets no flag 0x200 by the leader's position and places
-// neither sailor of the Crossbone Isle tale.
+// The Japanese edition sets no FLAG_SCENE_TEMP_00 by the leader's position and
+// places neither sailor of the Crossbone Isle tale.
 #if TLA_PATCH_1
 void BattleEffect_FillOverlayTiles(s32 mode);
 
@@ -455,14 +455,14 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 extern u32 gAlhafraRooms_TravelersWalkOffScript[];
 
-/// Two guests of the inn tell that Isaac picked Crossbone Isle clean, once
-/// (FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE), while
+/// The two sailors in Alex's room tell that Isaac picked Crossbone Isle clean,
+/// then walk off, once (FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE), while
 /// FLAG_ISAAC_CLEARED_CROSSBONE_ISLE is set.
 void AlhafraRooms_OverhearCrossboneIsleTale(void) {
 
   if (Event_GetFlag(FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE)) {
   } else {
-#if TLA_PATCH_1 /* The Japanese edition does not check 0x200. */
+#if TLA_PATCH_1 /* The Japanese edition does not check FLAG_SCENE_TEMP_00. */
     if (!Event_GetFlag(FLAG_SCENE_TEMP_00)) {
     } else
 #endif
@@ -495,7 +495,8 @@ void AlhafraRooms_OverhearCrossboneIsleTale(void) {
                       30);
       // "What, he took all the treasure?"
       FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_EAGER_TO_JOIN, 0, 5);
-      Actor_SetAnimationAndWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 3);
+      Actor_SetAnimationAndWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE,
+                                ANIM_NOD);
       FieldEvent_Wait(10);
       // "Yeah. And apparently, he even defeated the ancient ghost pirate..."
       FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 0,
@@ -504,7 +505,8 @@ void AlhafraRooms_OverhearCrossboneIsleTale(void) {
       FieldActor_Jump(ACTOR_SAILOR_EAGER_TO_JOIN, 6, 23);
       // "What about the stories that if you beat the ghost pirate, you..."
       FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_EAGER_TO_JOIN, 0, 5);
-      Actor_SetAnimationAndWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 3);
+      Actor_SetAnimationAndWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE,
+                                ANIM_NOD);
       FieldEvent_Wait(10);
       // "Well, you see, that means that Isaac is our leader now."
       FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 0,
@@ -518,7 +520,7 @@ void AlhafraRooms_OverhearCrossboneIsleTale(void) {
       // "No doubt. But you know, he must be a reliable guy, too..."
       FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 0,
                                      5);
-      Actor_SetAnimationAndWait(ACTOR_SAILOR_EAGER_TO_JOIN, 3);
+      Actor_SetAnimationAndWait(ACTOR_SAILOR_EAGER_TO_JOIN, ANIM_NOD);
       FieldEvent_Wait(10);
       // "You think?"
       FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_EAGER_TO_JOIN, 0, 5);
@@ -528,16 +530,17 @@ void AlhafraRooms_OverhearCrossboneIsleTale(void) {
       // "You'd have to be to beat that ghost. That's why we're looking for..."
       FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 0,
                                      5);
-      Actor_SetAnimationAndWait(ACTOR_SAILOR_EAGER_TO_JOIN, 3);
+      Actor_SetAnimationAndWait(ACTOR_SAILOR_EAGER_TO_JOIN, ANIM_NOD);
       FieldEvent_Wait(10);
       // "If he's looking for a pirate crew, he can count me in!"
       FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_EAGER_TO_JOIN, 0, 5);
       Actor_FaceDirectionAndWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE,
                                  FACING_SOUTH_SOUTHEAST);
       FieldEvent_Wait(15);
-      Actor_SetAnimationAndWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 3);
+      Actor_SetAnimationAndWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE,
+                                ANIM_NOD);
       FieldEvent_Wait(20);
-      Actor_SetAnimationAndWait(ACTOR_SAILOR_EAGER_TO_JOIN, 3);
+      Actor_SetAnimationAndWait(ACTOR_SAILOR_EAGER_TO_JOIN, ANIM_NOD);
       FieldEvent_Wait(20);
       Actor_SetSpeed(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 1);
       Actor_SetSpeed(ACTOR_SAILOR_EAGER_TO_JOIN, 1);
@@ -556,20 +559,20 @@ void AlhafraRooms_OverhearCrossboneIsleTale(void) {
       FieldActor_WaitForMoveById(ACTOR_SAILOR_EAGER_TO_JOIN);
       Actor_WalkTo(ACTOR_SAILOR_EAGER_TO_JOIN, 486, 328);
       FieldActor_WaitForMoveById(ACTOR_SAILOR_EAGER_TO_JOIN);
-      Actor_SetAnimation(ACTOR_SAILOR_EAGER_TO_JOIN, 1);
+      Actor_SetAnimation(ACTOR_SAILOR_EAGER_TO_JOIN, ANIM_STAND);
       Actor_FaceDirectionAndWait(ACTOR_SAILOR_EAGER_TO_JOIN, FACING_EAST);
       FieldActor_WaitForMoveById(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE);
-      Actor_SetAnimation(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, 1);
+      Actor_SetAnimation(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE, ANIM_STAND);
       Actor_FaceDirectionAndWait(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE,
                                  FACING_EAST);
       Actor_WalkByAndWait(ACTOR_FELIX, 0, -16);
       Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTH);
       FieldEvent_Wait(10);
       Actor_SetScript(ACTOR_SAILOR_EAGER_TO_JOIN,
-                      (s32)gAlhafraRooms_TravelersWalkOffScript);
+                      gAlhafraRooms_TravelersWalkOffScript);
       FieldEvent_Wait(10);
       Actor_SetScript(ACTOR_SAILOR_TELLING_OF_CROSSBONE_ISLE,
-                      (s32)gAlhafraRooms_TravelersWalkOffScript);
+                      gAlhafraRooms_TravelersWalkOffScript);
       FieldEvent_Wait(10);
       FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_SAILOR_EAGER_TO_JOIN);
       FieldEvent_Wait(60);
@@ -591,7 +594,7 @@ void AlhafraRooms_OverhearCrossboneIsleTale(void) {
 
 // clang-format off
 u32 gAlhafraRooms_TravelersWalkOffScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(520, 0, 328),
     SC_SYNC,
     SC_MOVE(520, 0, 312),

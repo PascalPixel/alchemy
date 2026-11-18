@@ -104,14 +104,15 @@ s32 Scene_Initialize(void) {
 }
 
 /// The palette cycle: the eight colours of one background palette, and the
-/// four of another that show four of them in turn.
+/// four of another that show four of them in turn: the blues of the line where
+/// the sea meets the foot of the cliffs, and of glints on the sea.
 #define CYCLE_SOURCE_PALETTE 12
 #define CYCLE_SOURCE_COLORS 8
-#define CYCLE_PALETTE 6
+#define SHORELINE_PALETTE 6
 
 /// The palette cycle Scene_Initialize schedules: every 16 frames it copies four
 /// of CYCLE_SOURCE_PALETTE's eight colours, starting one further each time, to
-/// colours 1 to 4 of CYCLE_PALETTE.
+/// colours 1 to 4 of SHORELINE_PALETTE.
 void OseniaCliffs_CyclePalette(void) {
   if ((gFrameCount & 15) == 0) {
     volatile u16 *colors;
@@ -121,12 +122,12 @@ void OseniaCliffs_CyclePalette(void) {
       gOseniaCliffs_PaletteCycleStep[0] = 0;
     i = gOseniaCliffs_PaletteCycleStep[0]++;
     colors = (u16 *)&BG_PLTT_COLOR(CYCLE_SOURCE_PALETTE, 0);
-    BG_PLTT_COLOR(CYCLE_PALETTE, 1) = colors[i];
-    BG_PLTT_COLOR(CYCLE_PALETTE, 2) =
+    BG_PLTT_COLOR(SHORELINE_PALETTE, 1) = colors[i];
+    BG_PLTT_COLOR(SHORELINE_PALETTE, 2) =
         colors[(i + 1) & (CYCLE_SOURCE_COLORS - 1)];
-    BG_PLTT_COLOR(CYCLE_PALETTE, 3) =
+    BG_PLTT_COLOR(SHORELINE_PALETTE, 3) =
         colors[(i + 2) & (CYCLE_SOURCE_COLORS - 1)];
-    BG_PLTT_COLOR(CYCLE_PALETTE, 4) =
+    BG_PLTT_COLOR(SHORELINE_PALETTE, 4) =
         colors[(i + 3) & (CYCLE_SOURCE_COLORS - 1)];
   }
 }

@@ -175,15 +175,15 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 /// The particles an effect keeps in the map cell buffer, from its start.
 #define PARTICLES ((struct Particle *)Ram_MapCellBuffer)
 /// The particles an effect keeps in the map cell buffer from its second 16 KB
-/// on, past PARTICLES or the pictures and meshes it keeps in the first.
+/// on, past PARTICLES or the pictures and meshes it keeps in the first: a
+/// second, larger table, always reached at its fixed address, where the
+/// effects that throw more sparks, motes or trails than the work's 64
+/// particles keep them.
 #define EXTRA_PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 16384))
 
 /// The VRAM address of a sprite's tiles, from its VRAM cache entry.
 #define OBJ_TILES(sprite)                                                      \
   (OBJ_VRAM0 + gVramCacheEntries[((struct Sprite *)(sprite))->slot].offset)
-/// Sprite tile VRAM as bytes, for the sprites' tiles at their VRAM cache
-/// offsets.
-#define OBJ_VRAM ((u8 *)OBJ_VRAM0)
 
 /// Index of DMAxCNT_H, the control half, in a channel's 16-bit registers.
 #define DMA_CONTROL_HALF 5
@@ -313,9 +313,6 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
   (BATTLE_BACKGROUND_WIDTH * BATTLE_BACKGROUND_HEIGHT)
 /// The battle background's colours, BG palettes 6 to 13.
 #define BATTLE_BACKGROUND_COLORS (8 * PALETTE_COLORS)
-/// BG1's map while it shows the canvas or a picture of an effect's own (the
-/// rune circles of Ulysses): the battle's own BG1 map.
-#define CANVAS_BG1_SCREEN 31
 /// Two entries of a background map in one word: `left`, then the one to its
 /// right.
 #define MAP_ENTRY_PAIR(left, right) ((u32)(right) << 16 | (left))
@@ -668,26 +665,6 @@ enum TargetStrikeStyle {
   (__builtin_constant_p((flags) | (mode) << 4)                                 \
        ? BattleEffect_LoadBlitter(slot, (flags) | (mode) << 4)                 \
        : BattleEffect_BuildBlitter(slot, 7, 7, flags, mode))
-
-/// How the canvas transfer task treats the canvas after each copy
-/// (work->transferMode); work->transferValue is its argument.
-enum CanvasTransferMode {
-  CANVAS_COPY,             ///< copy as drawn
-  CANVAS_COPY_AND_CLEAR,   ///< copy, then fill the canvas with transferValue (0
-                           ///< clears it)
-  CANVAS_COPY_AND_FADE,    ///< copy, keeping half of each pixel's level for the
-                           ///< next frame when transferValue is
-                           ///< CANVAS_FADE_HALF, and three quarters for any
-                           ///< other value
-  CANVAS_COPY_AND_DARKEN,  ///< copy, then lower each level by a byte of
-                           ///< transferValue, stopping at 0
-  CANVAS_COPY_AND_BRIGHTEN ///< copy, then raise each level by a byte of
-                           ///< transferValue
-};
-
-/// CANVAS_COPY_AND_FADE's transferValue: the percentage of each pixel's level
-/// kept for the next frame.
-enum CanvasFadeShare { CANVAS_FADE_HALF = 50, CANVAS_FADE_THREE_QUARTERS = 75 };
 
 /// Sets what the canvas transfer leaves in the canvas after each copy.
 #define EFFECT_SET_TRANSFER(work, mode, value)                                 \

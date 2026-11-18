@@ -123,10 +123,6 @@ enum AttekaInletShoreActorId {
 /// he comes.
 #define ACTOR_HAMMETS_GIFT_CHEST 65
 
-/// BG palette 11, whose two runs of colours turn a step at a time: the blues of
-/// the band along the ship's hull and the surf on the shore.
-#define CYCLE_PALETTE 11
-
 /// Geode, the Venus Djinni uncovered on the shore, joins the party.
 void AttekaInlet_GeodeJoins(void) {
   Djinn_JoinParty(ACTOR_GEODE, DJINNI_GEODE / DJINN_PER_ELEMENT,
@@ -574,21 +570,21 @@ void AttekaInlet_RotateHullBandAndSurfColors(void) {
     s16 saved;
     s32 index;
 
-    saved = BG_PLTT_COLOR(CYCLE_PALETTE, HULL_BAND_LAST_COLOR);
+    saved = BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, HULL_BAND_LAST_COLOR);
     for (index = HULL_BAND_LAST_COLOR; index != HULL_BAND_FIRST_COLOR; index--)
-      BG_PLTT_COLOR(CYCLE_PALETTE, index) =
-          BG_PLTT_COLOR(CYCLE_PALETTE, index - 1);
-    BG_PLTT_COLOR(CYCLE_PALETTE, HULL_BAND_FIRST_COLOR) = saved;
+      BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, index) =
+          BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, index - 1);
+    BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, HULL_BAND_FIRST_COLOR) = saved;
   }
   if ((*Ram_FrameCount & 7) == 0) {
     s16 saved;
     s32 index;
 
-    saved = BG_PLTT_COLOR(CYCLE_PALETTE, SURF_LAST_COLOR);
+    saved = BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, SURF_LAST_COLOR);
     for (index = SURF_LAST_COLOR; index != SURF_FIRST_COLOR; index--)
-      BG_PLTT_COLOR(CYCLE_PALETTE, index) =
-          BG_PLTT_COLOR(CYCLE_PALETTE, index - 1);
-    BG_PLTT_COLOR(CYCLE_PALETTE, SURF_FIRST_COLOR) = saved;
+      BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, index) =
+          BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, index - 1);
+    BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, SURF_FIRST_COLOR) = saved;
   }
 }
 

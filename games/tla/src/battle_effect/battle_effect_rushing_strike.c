@@ -253,7 +253,7 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
 /// tiles by BACKDROP_ROWS, twice across and twice down, so that the backdrop
 /// scrolls on without end.
 void BattleEffect_BuildRepeatingTilemap(void) {
-  u16 *dst = (u16 *)BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN);
+  u16 *dst = (u16 *)BG_SCREEN_BLOCK(BATTLE_BG1_SCREEN_BLOCK);
   s32 y;
   s32 x;
 

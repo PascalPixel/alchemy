@@ -1361,14 +1361,14 @@ void BattleEffect_ProcessPendingBlock2Transfer(void) {
 
 /// Row `row` of BG1's map.
 #define BG1_MAP_ROW(row)                                                       \
-  (BG_SCREEN_BLOCK(CANVAS_BG1_SCREEN) + (row) * MAP_ROW_BYTES)
+  (BG_SCREEN_BLOCK(BATTLE_BG1_SCREEN_BLOCK) + (row) * MAP_ROW_BYTES)
 
 /// Writes BG1's map to show a picture CANVAS_SIZE wide from BG character block
 /// 2, as BattleTransition_BuildTilemap does for the battle background: four
 /// rows of blank entries, two of BG1_CLEAR_TILE, then the picture's tiles in
 /// order, CANVAS_TILES rows of them, each row closed with BG1_CLEAR_TILE.
 void BattleEffect_BuildCanvasTilemap(void) {
-  u32 *map = (u32 *)BG_SCREEN_BLOCK(CANVAS_BG1_SCREEN);
+  u32 *map = (u32 *)BG_SCREEN_BLOCK(BATTLE_BG1_SCREEN_BLOCK);
   u32 tiles;
   s32 row;
   s32 column;
@@ -1720,7 +1720,7 @@ void BattleEffect_HideBg1AndRestoreBackdrop(void) {
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, battle->background, 0);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT,
                       BGCNT_PRIORITY(3) | BGCNT_256_COLORS |
-                          BGCNT_SCREEN_BASE(CANVAS_BG1_SCREEN),
+                          BGCNT_SCREEN_BASE(BATTLE_BG1_SCREEN_BLOCK),
                       IO_WRITE_HALFWORD);
   wait(1);
 }
@@ -1769,7 +1769,7 @@ void BattleEffect_SetupCanvasTileMap(void) {
   }
   REG_DISPCNT = EFFECT_DISPCNT;
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS |
-               BGCNT_SCREEN_BASE(CANVAS_BG1_SCREEN);
+               BGCNT_SCREEN_BASE(BATTLE_BG1_SCREEN_BLOCK);
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   EFFECT_SET_BATTLE_WINDOWS();
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |

@@ -144,6 +144,10 @@ enum SpriteFlag {
 /// each sprite's part 1.
 #define VRAM_CACHE_ENTRY_ACTOR_SHADOW 93
 
+/// How many the actor system's pools hold: its sprites (HEAP_SLOT_SPRITES) and
+/// its sprite animations (HEAP_SLOT_SPRITE_ANIMATIONS).
+#define ANIM_OBJECT_COUNT 64
+
 /// An animated sprite: its image, scale, rotation, size, its shadow and up to
 /// four sprite animations.
 struct Sprite {

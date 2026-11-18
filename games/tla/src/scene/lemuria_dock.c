@@ -187,25 +187,24 @@ void LemuriaDock_EnterHouse(s32 door) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-/// The background palette the dock's colour cycle turns.
-#define DOCK_PALETTE ((volatile u16 *)&BG_PLTT_COLOR(11, 0))
-
-/// A palette task: every eighth frame it turns both runs of DOCK_PALETTE's
-/// colours round by one, as the Lemurian Ship's deck turns its own: the blues
-/// of the band along the ship's hull, and the surf.
+/// A palette task: every eighth frame it turns both runs of
+/// LEMURIAN_SHIP_PALETTE's colours round by one, as the Lemurian Ship's deck
+/// turns its own: the blues of the band along the ship's hull, and the surf.
 void LemuriaDock_CyclePalette(void) {
   if ((gFrameCount & 7) == 0) {
     s16 saved;
     s32 i;
 
-    saved = DOCK_PALETTE[HULL_BAND_LAST_COLOR];
+    saved = BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, HULL_BAND_LAST_COLOR);
     for (i = HULL_BAND_LAST_COLOR; i != HULL_BAND_FIRST_COLOR; i--)
-      DOCK_PALETTE[i] = DOCK_PALETTE[i - 1];
-    DOCK_PALETTE[HULL_BAND_FIRST_COLOR] = saved;
-    saved = DOCK_PALETTE[SURF_LAST_COLOR];
+      BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, i) =
+          BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, i - 1);
+    BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, HULL_BAND_FIRST_COLOR) = saved;
+    saved = BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, SURF_LAST_COLOR);
     for (i = SURF_LAST_COLOR; i != SURF_FIRST_COLOR; i--)
-      DOCK_PALETTE[i] = DOCK_PALETTE[i - 1];
-    DOCK_PALETTE[SURF_FIRST_COLOR] = saved;
+      BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, i) =
+          BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, i - 1);
+    BG_PLTT_COLOR(LEMURIAN_SHIP_PALETTE, SURF_FIRST_COLOR) = saved;
   }
 }
 

@@ -584,9 +584,13 @@ struct Window;
     FieldEvent_Wait(frames);                                                   \
   } while (0)
 
+/// The Lemurian Ship's background palette, the blues of the band along its hull
+/// and the surf, in the scenes that show the ship: Atteka Inlet, Lemuria's dock
+/// and the ship's deck.
+#define LEMURIAN_SHIP_PALETTE 11
 /// The runs of a background palette's colours the shore scenes turn a step at
-/// a time: 12 to 15, the surf, and on the Lemurian Ship's palette (BG palette
-/// 11) also 4 to 9, the blues of the band along its hull.
+/// a time: 12 to 15, the surf, and on LEMURIAN_SHIP_PALETTE also 4 to 9, the
+/// blues of the band along its hull.
 #define HULL_BAND_FIRST_COLOR 4
 #define HULL_BAND_LAST_COLOR 9
 #define SURF_FIRST_COLOR 12

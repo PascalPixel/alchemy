@@ -239,6 +239,8 @@ enum DisplayControl {
 #define SPRITE_TILES_8BPP(width, height) (2 * SPRITE_TILES(width, height))
 /// Sprite tile memory: the 32 KB from 0x06010000.
 #define OBJ_VRAM0 0x06010000
+/// Sprite tile memory as bytes, where a sprite's tile number counts from.
+#define OBJ_VRAM ((u8 *)OBJ_VRAM0)
 
 /// Timer 3's reload value and control as one word; it paces the serial
 /// transfers.

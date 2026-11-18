@@ -6,9 +6,6 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-/// The sprites of the actor system's pool (field_internal.h's).
-#define ANIM_OBJECT_COUNT 64
-
 /// Takes the first free sprite of the actor system's pool with a new animation
 /// entry. Its callers also pass the sprite's OAM shape and mode, which it
 /// leaves for the caller to set.
@@ -364,7 +361,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   // BG1 shows a canvas-sized picture from BG character block 2, as
   // BattleEffect_BuildCanvasTilemap writes it: the rune circles.
   {
-    u32 *map = (u32 *)BG_SCREEN_BLOCK(CANVAS_BG1_SCREEN);
+    u32 *map = (u32 *)BG_SCREEN_BLOCK(BATTLE_BG1_SCREEN_BLOCK);
     u32 v;
     s32 y;
     s32 x;
@@ -391,7 +388,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-  REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
+  REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_256_COLORS |
+               BGCNT_SCREEN_BASE(BATTLE_BG1_SCREEN_BLOCK);
   wait(1);
   blit = blits;
   BattleEffect_FetchRectangleBlitters(0, (void **)blit);
@@ -448,7 +446,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       REG_BLDALPHA = EFFECT_BLEND_ADD;
       REG_DISPCNT = EFFECT_DISPCNT;
       REG_BG2CNT = BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(7);
-      REG_BG1CNT = BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
+      REG_BG1CNT =
+          BGCNT_256_COLORS | BGCNT_SCREEN_BASE(BATTLE_BG1_SCREEN_BLOCK);
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE,
                           CANVAS_FADE_THREE_QUARTERS);
       Iwram_CopyWordsEntry((void *)BG_PLTT,
@@ -913,7 +912,8 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   }
 
   EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-  REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31);
+  REG_BG1CNT = BGCNT_PRIORITY(3) | BGCNT_256_COLORS |
+               BGCNT_SCREEN_BASE(BATTLE_BG1_SCREEN_BLOCK);
   wait(1);
   /* FAKEMATCH(dead): a once-only block. */
   {

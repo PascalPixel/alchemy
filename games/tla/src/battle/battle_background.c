@@ -21,7 +21,7 @@
   (BGCNT_SIZE(1) | BGCNT_SCREEN_BASE(7) | BGCNT_256_COLORS |                   \
    BGCNT_CHAR_BASE(3) | BGCNT_PRIORITY(2))
 #define BACKGROUND_PLANE_OFF                                                   \
-  (BGCNT_WRAP | BGCNT_SCREEN_BASE(BACKGROUND_PADDED_SCREEN) |                  \
+  (BGCNT_WRAP | BGCNT_SCREEN_BASE(BATTLE_BG1_SCREEN_BLOCK) |                   \
    BGCNT_256_COLORS | BGCNT_CHAR_BASE(3) | BGCNT_PRIORITY(2))
 /// The screen lines the plane covers, 0 to 135, above the status window.
 #define BACKGROUND_PLANE_LINES 136
@@ -121,7 +121,7 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
   }
   Graphics_BuildSequentialTileTable((void *)BG_SCREEN_BLOCK(7));
   BattleTransition_BuildTilemap(
-      (void *)BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN));
+      (void *)BG_SCREEN_BLOCK(BATTLE_BG1_SCREEN_BLOCK));
 }
 
 /// Allocates the zoomed background's scanline work.
@@ -168,9 +168,9 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
   }
   Graphics_BuildSequentialTileTable((void *)BG_SCREEN_BLOCK(7));
   BattleTransition_BuildTilemap(
-      (void *)BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN));
+      (void *)BG_SCREEN_BLOCK(BATTLE_BG1_SCREEN_BLOCK));
   // BG1's last row is left clear.
-  Iwram_ClearWordsEntry((void *)(BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN) +
+  Iwram_ClearWordsEntry((void *)(BG_SCREEN_BLOCK(BATTLE_BG1_SCREEN_BLOCK) +
                                  BG_SCREEN_SIZE - BG_SCREEN_WIDTH * 2),
                         BG_SCREEN_WIDTH * 2);
   if (view->mode == BATTLE_BACKGROUND_NONE)

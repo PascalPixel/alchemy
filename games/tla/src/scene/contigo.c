@@ -22,7 +22,7 @@
 #include "graphics/palette_buffers.h"
 #include "version.h"
 
-/// Force has freed Shine from the ground it was stuck in.
+/// Force has freed Shine from the tree stump it was stuck in.
 #define FLAG_SHINE_FREED 0x9e7
 /// Set as Shine, freed, joins the party; until then it waits where it landed.
 #define FLAG_SHINE_CAUGHT 0x9e6
@@ -497,7 +497,7 @@ void Contigo_SaltJoinsParty(void) {
                   DJINNI_INDEX(DJINNI_SALT));
 }
 
-/// Shine, freed from the ground by Force, joins the party.
+/// Shine, freed from the tree stump by Force, joins the party.
 void Contigo_FreedDjinniJoinsParty(void) {
   Djinn_JoinParty(ACTOR_SHINE, DJINNI_SHINE / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_SHINE));
@@ -1274,9 +1274,9 @@ void Contigo_HideMiddleDoor(void) {
   MapGrid_CopyCellAttributes(48, 0, 2, 1, 48, 19);
 }
 
-/// Force on the ground where Shine is stuck: the ground shakes, a ring of dust
-/// bursts out, and Shine leaps free, the leader hopping aside if it lands on
-/// him.
+/// Force on the tree stump where Shine is stuck: the ground shakes, a ring of
+/// dust bursts out, and Shine leaps free, the leader hopping aside if it lands
+/// on him.
 void Contigo_ForceFreesDjinni(void) {
   struct Actor *actor = Actor_GetById(ACTOR_SHINE);
   struct Actor *leader;

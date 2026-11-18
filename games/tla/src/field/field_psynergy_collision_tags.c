@@ -1,5 +1,5 @@
 /// @file
-/// The map collision's tags and the flag blocks: the puddles Frost freezes
+/// The map's shape entries and the flag blocks: the puddles Frost freezes
 /// into pillars of ice, each with the flag that says it is frozen.
 // Part of field_psynergy.c.
 
@@ -124,23 +124,24 @@ s32 Actor_GetCellIndex(struct Actor *actor) {
          (actor->z.fixed / toFIXED(16)) * MAPGRID_SIZE;
 }
 
-/// Finds the tag (key, value) in the 4-byte entries at gMapGridShapes, or adds
-/// it at the first free entry (key COLLISION_TAG_FREE), and returns its index.
-/// Actor_PlaceBlocks gives a raised cell's shape this index.
-s32 MapCollision_FindOrAddTag(s32 unused, s32 key, s32 value) {
+/// Returns the index of the shape table's entry (gMapGridShapes) of kind key
+/// whose first height is height, in 8-pixel steps, writing one at the first
+/// free entry (kind COLLISION_TAG_FREE) when there is none: the index a raised
+/// or lowered cell's shape takes. The layer goes unread.
+s32 MapCollision_FindOrAddTag(s32 layer, s32 key, s32 height) {
   u8 *entry = Ram_MapCollision;
-  s8 tagValue;
+  s8 entryHeight;
   s32 i = 0;
 
-  tagValue = value;
+  entryHeight = height;
   while (1) {
     if (entry[0] == key) {
-      if (*(s8 *)++entry == tagValue)
+      if (*(s8 *)++entry == entryHeight)
         return i;
       entry--;
     } else if (entry[0] == COLLISION_TAG_FREE) {
       entry[0] = key;
-      entry[1] = tagValue;
+      entry[1] = entryHeight;
       return i;
     }
     entry += 4;

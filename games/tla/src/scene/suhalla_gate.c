@@ -4,15 +4,13 @@
 /// share this overlay:
 ///
 /// - The road past the gate (SceneId_SuhallaGateHouse), where a Ruffian spots
-/// the
-///   two and fights them (SuhallaGate_RuffianSpotsParty).
+///   the two and fights them (SuhallaGate_RuffianSpotsParty).
 /// - The cliffs (SceneId_SuhallaGateAmbush), whose two vines lead down to the
 ///   crevice where three Ruffians wait in ambush
 ///   (SuhallaGate_RuffiansAmbushParty).
-/// - The Gateway Cave (SceneId_SuhallaGatePsynergyStone), where a Punch Ant
-/// hops out at the
-///   two before the Psynergy Stone (SuhallaGate_PunchAntHopsFromWest and
-///   SuhallaGate_PunchAntHopsFromEast), and whose far end leads to Idejima.
+/// - The cave beyond the crevice (SceneId_SuhallaGatePsynergyStone), where a
+///   Punch Ant hops out at the two before the Psynergy Stone
+///   (SuhallaGate_PunchAntHopsFromWest), and whose far end leads to Idejima.
 ///
 /// Every battle sends the party back to its room's ENTRANCE_AFTER_BATTLE, and
 /// a lost one to the Venus Lighthouse's entrance. Back from each, its flag set,
@@ -47,9 +45,9 @@
 /// Set as the party comes back from beating the three Ruffians at the crevice;
 /// they then lie beaten before it.
 #define FLAG_SUHALLA_GATE_AMBUSH_BEATEN 0x895
-/// Set once Kraden has talked over the Punch Ant's battle; the Gateway Cave's
-/// Punch Ant then stays away.
-#define FLAG_GATEWAY_CAVE_PUNCH_ANT_BEATEN 0x896
+/// Set once Kraden has talked over the Punch Ant's battle; the cave's Punch Ant
+/// then stays away.
+#define FLAG_SUHALLA_GATE_PUNCH_ANT_BEATEN 0x896
 /// Set once the chest in the cliffs room (cell behavior 100) has given its
 /// Mint.
 #define FLAG_SUHALLA_GATE_MINT 0xfb4
@@ -67,9 +65,8 @@ enum SuhallaGateRoadActorId {
 
 /// The cliffs' placed actors.
 enum SuhallaGateCliffsActorId {
-  /// The five sprouts on the cliffs (SPRITE_SPROUT), with no collision; each
-  /// is started on one of its two animations as the party enters, so that
-  /// they do not sway in step.
+  /// Five sprouts (SPRITE_SPROUT, the sprout Growth grows), with no collision,
+  /// each drawn half or fully grown as the party enters.
   ACTOR_FIRST_SPROUT = ACTOR_FIRST_PLACED,
   /// The three Ruffians of the ambush, west to east as they line up.
   ACTOR_WEST_RUFFIAN = ACTOR_FIRST_PLACED + 5,
@@ -79,16 +76,19 @@ enum SuhallaGateCliffsActorId {
   ACTOR_CLIFFS_KRADEN
 };
 
-/// The Gateway Cave's placed actors.
-enum GatewayCaveActorId {
+/// The cave's placed actors.
+enum SuhallaGateCaveActorId {
   ACTOR_PUNCH_ANT = ACTOR_FIRST_PLACED,
   ACTOR_CAVE_KRADEN
 };
 
+/// SPRITE_SPROUT's animations as the sprouts here stand, half grown or fully
+/// grown.
+enum { SPROUT_ANIMATION_HALF_GROWN = 3, SPROUT_ANIMATION_GROWN = 4 };
+
 void SuhallaGate_AfterPunchAntBattle(void);
-void Actor_FallOverById(s32 id, s32 a);
-void Actor_FallOverWithAnimationById(s32 id, s32 a, s32 b);
-/// The Punch Ant hops at the leader and its battle begins.
+void Actor_FallOverById(s32 id, u32 angle);
+void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 animation);
 void SuhallaGate_FightPunchAnt(void);
 
 extern struct SceneEntrance gSuhallaGate_RoadEntrances[];
@@ -147,8 +147,10 @@ void SuhallaGate_SetUpRoad(void) {
     Event_SetFlag(FLAG_SUHALLA_GATE_RUFFIAN_BEATEN);
   if (Event_GetFlag(FLAG_SUHALLA_GATE_RUFFIAN_BEATEN)) {
     Actor_SetPosition(ACTOR_ROAD_RUFFIAN, 456, 312);
-    Actor_FallOverWithAnimationById(ACTOR_ROAD_RUFFIAN, FACING_SOUTH, 0);
-    Actor_SetMovementType(Actor_GetById(ACTOR_ROAD_RUFFIAN), 8);
+    Actor_FallOverWithAnimationById(ACTOR_ROAD_RUFFIAN, FACING_SOUTH,
+                                    ANIM_STILL);
+    Actor_SetMovementType(Actor_GetById(ACTOR_ROAD_RUFFIAN),
+                          MOVEMENT_TYPE_SQUASH);
   }
 }
 
@@ -171,11 +173,11 @@ void SuhallaGate_SetUpCliffs(void) {
     Actor_GetById(ACTOR_MIDDLE_RUFFIAN)->collisionFlags = ACTOR_SOLID;
     Actor_GetById(ACTOR_EAST_RUFFIAN)->collisionFlags = ACTOR_SOLID;
   }
-  Actor_SetAnimation(ACTOR_FIRST_SPROUT, 4);
-  Actor_SetAnimation(ACTOR_FIRST_SPROUT + 1, 4);
-  Actor_SetAnimation(ACTOR_FIRST_SPROUT + 2, 3);
-  Actor_SetAnimation(ACTOR_FIRST_SPROUT + 3, 4);
-  Actor_SetAnimation(ACTOR_FIRST_SPROUT + 4, 3);
+  Actor_SetAnimation(ACTOR_FIRST_SPROUT, SPROUT_ANIMATION_GROWN);
+  Actor_SetAnimation(ACTOR_FIRST_SPROUT + 1, SPROUT_ANIMATION_GROWN);
+  Actor_SetAnimation(ACTOR_FIRST_SPROUT + 2, SPROUT_ANIMATION_HALF_GROWN);
+  Actor_SetAnimation(ACTOR_FIRST_SPROUT + 3, SPROUT_ANIMATION_GROWN);
+  Actor_SetAnimation(ACTOR_FIRST_SPROUT + 4, SPROUT_ANIMATION_HALF_GROWN);
 }
 
 /// Back from the Punch Ant's battle, Kraden talks it over.
@@ -288,7 +290,7 @@ void SuhallaGate_RuffiansAmbushParty(void) {
   owner = &work->leaderActorId;
   Actor_WalkByAndWait(*owner, 0, -4);
   FieldEvent_Wait(30);
-  Actor_GetById(*owner)->steeringFlags &= 254;
+  Actor_GetById(*owner)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkByAndWait(*owner, 0, 12);
   FieldEvent_Wait(10);
   Actor_WalkByAndWait(*owner, 0, 16);
@@ -367,8 +369,9 @@ void SuhallaGate_PunchAntHopsFromWest(void) {
   SuhallaGate_FightPunchAnt();
 }
 
-/// As SuhallaGate_PunchAntHopsFromWest, from the east, the leader stepping
-/// aside first.
+/// Unused: as SuhallaGate_PunchAntHopsFromWest, the leader stepping aside first
+/// and the ant hopping further east; its trigger answers cell behavior 23,
+/// which no cell of the cave's map has.
 void SuhallaGate_PunchAntHopsFromEast(void) {
   s32 emote, frames;
 
@@ -422,7 +425,7 @@ void SuhallaGate_AfterPunchAntBattle(void) {
   Event_ShowMessageThenWait(ACTOR_CAVE_KRADEN, 0, 10);
   Actor_SetAnimationAndWait(gMainRoutineWork.leaderActorId, ANIM_NOD);
   Event_Wait(30);
-  Event_SetFlag(FLAG_GATEWAY_CAVE_PUNCH_ANT_BEATEN);
+  Event_SetFlag(FLAG_SUHALLA_GATE_PUNCH_ANT_BEATEN);
   Actor_SetAnimation(ACTOR_CAVE_KRADEN, ANIM_WALK);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader)
@@ -434,8 +437,8 @@ void SuhallaGate_AfterPunchAntBattle(void) {
   Event_End();
 }
 
-/// Kraden jumps out from behind the leader to point the way down to the
-/// Gateway Cave, and the leader steps back.
+/// Kraden jumps out from behind the leader to point the way down to the cave,
+/// and the leader steps back.
 void SuhallaGate_PointToMeetingSpot(void) {
   struct Actor *leader;
 
@@ -462,7 +465,7 @@ void SuhallaGate_PointToMeetingSpot(void) {
 // clang-format off
 /// Unused: a script that squashes and stretches its actor over and over;
 /// nothing runs it.
-s32 gSuhallaGate_SquashLoop[] = {
+s32 gSuhallaGate_SquashScript[] = {
     SC_LABEL(1),
     SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
     SC_ADD(SW_SCALE_Y, FIXED_ONE / 8),
@@ -523,26 +526,26 @@ s32 gSuhallaGate_SquashLoop[] = {
 struct SceneEntrance gSuhallaGate_RoadEntrances[] = {
     {0, CONDITION_ALWAYS, 152, 0, 504, FACING_SOUTH, 0, 32, 32, 272, 544, 0},
     {1, CONDITION_ALWAYS, 152, 0, 520, FACING_NORTH, 0, 32, 32, 272, 544, 0},
-    {2, CONDITION_ALWAYS, 248, 0, 280, FACING_WEST, 0, 32, 32, 272, 544, 0},
+    {SUHALLA_GATE_HOUSE_FROM_SUHALLA_GATE_AMBUSH_A, CONDITION_ALWAYS, 248, 0, 280, FACING_WEST, 0, 32, 32, 272, 544, 0},
     {3, CONDITION_ALWAYS, 136, 0, 304, FACING_SOUTH, 0, 32, 32, 272, 544, 0},
-    {4, CONDITION_ALWAYS, 360, 0, 296, FACING_EAST, 0, 336, 32, 736, 496, 0},
-    {5, CONDITION_ALWAYS, 664, 0, 424, FACING_WEST, 0, 336, 32, 736, 496, 0},
+    {SUHALLA_GATE_HOUSE_FROM_SUHALLA_GATE_AMBUSH_B, CONDITION_ALWAYS, 360, 0, 296, FACING_EAST, 0, 336, 32, 736, 496, 0},
+    {SUHALLA_GATE_HOUSE_FROM_VENUS_LIGHTHOUSE_ENTRANCE_EAST, CONDITION_ALWAYS, 664, 0, 424, FACING_WEST, 0, 336, 32, 736, 496, 0},
     {ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 472, 0, 312, FACING_WEST, 0, 336, 32, 736, 496, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gSuhallaGate_CliffsEntrances[] = {
-    {1, CONDITION_ALWAYS, 40, 0, 304, FACING_EAST, 0, 16, 32, 416, 480, 0},
+    {SUHALLA_GATE_AMBUSH_FROM_SUHALLA_GATE_HOUSE_A, CONDITION_ALWAYS, 40, 0, 304, FACING_EAST, 0, 16, 32, 416, 480, 0},
     {2, CONDITION_ALWAYS, 392, 0, 368, FACING_WEST, 0, 16, 32, 416, 480, 0},
     {3, CONDITION_ALWAYS, 40, 0, 912, FACING_EAST, 0, 16, 608, 720, 1008, 0},
-    {4, CONDITION_ALWAYS, 680, 0, 904, FACING_WEST, 0, 16, 608, 720, 1008, 0},
-    {5, CONDITION_ALWAYS, 616, 0, 920, FACING_SOUTH, 0, 16, 608, 720, 1008, 0},
+    {SUHALLA_GATE_AMBUSH_FROM_SUHALLA_GATE_HOUSE_B, CONDITION_ALWAYS, 680, 0, 904, FACING_WEST, 0, 16, 608, 720, 1008, 0},
+    {SUHALLA_GATE_AMBUSH_FROM_SUHALLA_GATE_PSYNERGY_STONE, CONDITION_ALWAYS, 616, 0, 920, FACING_SOUTH, 0, 16, 608, 720, 1008, 0},
     {ENTRANCE_AFTER_BATTLE, CONDITION_ALWAYS, 616, 0, 920, FACING_SOUTH, 0, 16, 608, 720, 1008, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gSuhallaGate_CaveEntrances[] = {
-    {1, CONDITION_ALWAYS, 72, 0, 264, FACING_NORTH, 0, 24, 24, 280, 256, 0},
+    {SUHALLA_GATE_PSYNERGY_STONE_FROM_SUHALLA_GATE_AMBUSH, CONDITION_ALWAYS, 72, 0, 264, FACING_NORTH, 0, 24, 24, 280, 256, 0},
     {2, CONDITION_ALWAYS, 184, 0, 168, FACING_SOUTH, 0, 24, 24, 280, 256, 0},
     {3, CONDITION_ALWAYS, 280, 0, 344, FACING_SOUTH, 0, 208, 288, 704, 640, 0},
     {4, CONDITION_ALWAYS, 664, 0, 616, FACING_NORTH, 0, 208, 288, 704, 640, 0},
@@ -570,7 +573,7 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gSuhallaGate_CavePlacements[] = {
-    ACTOR_PLACEMENT(247, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_PUNCH_ANT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
@@ -581,28 +584,32 @@ struct ActorPlacement gSuhallaGate_CliffsPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 472, 0, 912, FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 536, 0, 912, FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SPROUT, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 552, 0, 880, FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(93, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 24, 0, 24, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(93, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 24, 0, 24, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(93, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 24, 0, 24, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_RUFFIAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 24, 0, 24, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_RUFFIAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 24, 0, 24, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_RUFFIAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 24, 0, 24, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gSuhallaGate_RoadPlacements[] = {
-    ACTOR_PLACEMENT(93, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 264, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_RUFFIAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 264, FACING_SOUTHEAST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 // clang-format on
 
 struct Trigger gSuhallaGate_RoadTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 2, CONDITION_ALWAYS,
+     SUHALLA_GATE_HOUSE_TO_SUHALLA_GATE_AMBUSH_A},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS,
+     SUHALLA_GATE_HOUSE_TO_SUHALLA_GATE_AMBUSH_B},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS,
+     SUHALLA_GATE_HOUSE_TO_VENUS_LIGHTHOUSE_ENTRANCE_EAST},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
      EVENT(SuhallaGate_EnterHouse)},
     {TRIGGER_STEP, 20, FLAG_SUHALLA_GATE_RUFFIAN_BEATEN,
      EVENT(SuhallaGate_RuffianSpotsParty)},
+    // Unused: no cell of the road's map has behavior 12.
     {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(SuhallaGate_PointToMeetingSpot)},
     {TRIGGER_TALK, ACTOR_ROAD_RUFFIAN, CONDITION_ALWAYS,
      MSGNO(MsgOoooogMaybeI)},
@@ -610,13 +617,17 @@ struct Trigger gSuhallaGate_RoadTriggers[] = {
 };
 
 struct Trigger gSuhallaGate_CliffsTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS,
+     SUHALLA_GATE_AMBUSH_TO_SUHALLA_GATE_HOUSE_A},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, 4, CONDITION_ALWAYS,
+     SUHALLA_GATE_AMBUSH_TO_SUHALLA_GATE_HOUSE_B},
+    // The way into the cave, until the ambush is beaten.
     {TRIGGER_STEP, 5, FLAG_SUHALLA_GATE_AMBUSH_BEATEN,
      EVENT(SuhallaGate_RuffiansAmbushParty)},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
+    {TRIGGER_EXIT, 5, CONDITION_ALWAYS,
+     SUHALLA_GATE_AMBUSH_TO_SUHALLA_GATE_PSYNERGY_STONE},
     {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(SuhallaGate_PointToMeetingSpot)},
     {TRIGGER_TALK, ACTOR_WEST_RUFFIAN, CONDITION_ALWAYS,
      MSGNO(MsgMaybeIShould)},
@@ -631,13 +642,14 @@ struct Trigger gSuhallaGate_CliffsTriggers[] = {
 };
 
 struct Trigger gSuhallaGate_CaveTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, 1, CONDITION_ALWAYS,
+     SUHALLA_GATE_PSYNERGY_STONE_TO_SUHALLA_GATE_AMBUSH},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(SuhallaGate_LeaveForIdejima)},
-    {TRIGGER_STEP, 22, FLAG_GATEWAY_CAVE_PUNCH_ANT_BEATEN,
+    {TRIGGER_STEP, 22, FLAG_SUHALLA_GATE_PUNCH_ANT_BEATEN,
      EVENT(SuhallaGate_PunchAntHopsFromWest)},
-    {TRIGGER_STEP, 23, FLAG_GATEWAY_CAVE_PUNCH_ANT_BEATEN,
+    {TRIGGER_STEP, 23, FLAG_SUHALLA_GATE_PUNCH_ANT_BEATEN,
      EVENT(SuhallaGate_PunchAntHopsFromEast)},
     {TRIGGER_TABLE_END},
 };

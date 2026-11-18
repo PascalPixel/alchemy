@@ -189,9 +189,9 @@ enum SpriteId {
   SPRITE_GIRL_IN_PINK,
   SPRITE_MUSCULAR_MAN_WITH_TOPKNOT,
   SPRITE_MAN_CARRYING_A_PACK,
-  /// Empty, yet the Vault's unused drift effect creates an actor of it.
-  SPRITE_172, ///< empty; only Vault's unused Vault_SpawnDriftingEffect makes an
-              ///< actor of it
+  /// A row sprites.tsv leaves empty, which only Vault's unused
+  /// Vault_SpawnDriftingEffect makes an actor of.
+  SPRITE_172,
   /// Toadonpa in Lunpa Fortress, before his battle.
   SPRITE_TOADONPA = 187,
   /// The Tolbi-bound Ship's oars and the sea monsters that attack it.

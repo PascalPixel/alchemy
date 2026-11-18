@@ -294,25 +294,27 @@ void DebugWarp_Champa2(void) {
   Event_SetDestinationFar(SCENE_CHAMPA, CHAMPA_FROM_WORLD_MAP);
 }
 
-/// Preset 5, "Kaoru Special4": four story flags set. To the Shaman Village.
+/// Preset 5, "Kaoru Special4": Moapa met in Shaman Village, his tests passed
+/// and beaten on the Trial Road. To the Shaman Village inn.
 void DebugWarp_KaoruSpecial4(void) {
-  GameFlag_Set(0x9fe);
-  GameFlag_Set(0x94c);
-  GameFlag_Set(0x9e1);
-  GameFlag_Set(0x94f);
+  GameFlag_Set(FLAG_MOAPA_BEATEN);
+  GameFlag_Set(FLAG_SHAMAN_VILLAGE_SAND_CLEARED);
+  GameFlag_Set(FLAG_SHAMAN_VILLAGE_SHAMANS_ROD_SHOWN);
+  GameFlag_Set(FLAG_SHAMAN_VILLAGE_MOAPA_MET);
   Event_SetDestinationFar(SCENE_SHAMAN_VILLAGE_INN,
                           SHAMAN_VILLAGE_INN_FROM_TRIAL_ROAD_SUMMIT_EAST_A);
 }
 
-/// Preset 6, "Kaoru Special3": seven story flags set, saving barred. To Prox.
+/// Preset 6, "Kaoru Special3": the Mars beacon lit and Prox's clan met and
+/// grateful, saving barred. To Prox.
 void DebugWarp_KaoruSpecial3(void) {
   GameFlag_Set(FLAG_TRANSFERRED_VISITED_SICK_DORA);
   GameFlag_Set(FLAG_CANNOT_SAVE_HERE);
-  GameFlag_Set(0x9c5);
+  GameFlag_Set(FLAG_THANKED_FOR_BEACON);
   GameFlag_Set(FLAG_MARS_BEACON_LIT);
-  GameFlag_Set(0x9c0);
-  GameFlag_Set(0x9c1);
-  GameFlag_Set(0x9c2);
+  GameFlag_Set(FLAG_HEARD_OF_PARENTS);
+  GameFlag_Set(FLAG_CLAN_SPOKE_OF_LIGHTHOUSE);
+  GameFlag_Set(FLAG_MET_PUELLE);
   Event_SetDestinationFar(SCENE_PROX, PROX_FROM_PROX_SOUTH_GATE);
 }
 
@@ -326,7 +328,8 @@ void DebugWarp_KaoruSpecial2(void) {
 /// Preset 8, "Kaoru Special1": to the Mars Lighthouse's star room, where the
 /// battle with the Flame Dragons returns the party.
 void DebugWarp_KaoruSpecial1(void) {
-  Event_SetDestinationFar(SCENE_MARS_LIGHTHOUSE_STAR_ROOM, 20);
+  Event_SetDestinationFar(SCENE_MARS_LIGHTHOUSE_STAR_ROOM,
+                          MARS_LIGHTHOUSE_STAR_ROOM_AFTER_FLAME_DRAGONS_BATTLE);
 }
 
 /// The debug warp menu's per-frame task: moves the cursor.

@@ -4914,6 +4914,8 @@ enum {
       10,
   MARS_LIGHTHOUSE_STAR_ROOM_FROM_MARS_LIGHTHOUSE_ENTRANCE_SOL_BLADE_CHEST_NORTHWEST_B =
       11,
+  /// Where the battle with the Flame Dragons returns the party.
+  MARS_LIGHTHOUSE_STAR_ROOM_AFTER_FLAME_DRAGONS_BATTLE = 20,
 };
 /// SceneId_MarsLighthouseStarRoom's exits.
 enum {

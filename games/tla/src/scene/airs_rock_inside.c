@@ -1934,7 +1934,7 @@ void AirsRockInside_WakeHallStatue(void) {
   }
   Heap_Release(buffer);
   Sound_Play(SE_GLITTER);
-  Actor_GetById(ACTOR_HALL_TWISTER_ROCK)->riseCounter = 9;
+  Actor_GetById(ACTOR_HALL_TWISTER_ROCK)->riseCounter = SPRITE_COLOR_BLUE_TINT;
   Actor_GetById(ACTOR_HALL_TWISTER_ROCK)->riseEnabled = 1;
   Actor_GetById(ACTOR_HALL_TWISTER_ROCK)->update = AirsRockInside_FlickerTarget;
   for (i = 0; i != 45; i++) {
@@ -2235,7 +2235,8 @@ void AirsRockInside_WakeVialChestStatue(void) {
   }
   Heap_Release(buffer);
   Sound_Play(SE_GLITTER);
-  Actor_GetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)->riseCounter = 9;
+  Actor_GetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)->riseCounter =
+      SPRITE_COLOR_BLUE_TINT;
   Actor_GetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)->riseEnabled = 1;
   Actor_GetById(ACTOR_VIAL_CHEST_TWISTER_ROCK)->update =
       AirsRockInside_FlickerTarget;
@@ -3201,7 +3202,8 @@ void AirsRockInside_LandInHall(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_REMOVE);
   leader->gravity = toFIXED(1);
   leader->bounce = FIXED_ONE / 4;
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Event_End();
 }
 
@@ -3211,7 +3213,8 @@ s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 i, z;
 
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
   GameFlag_Set(FLAG_TIGHTROPES_GUST_PATH_CLEARED);

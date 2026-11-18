@@ -738,7 +738,8 @@ void AirsRock_WhirlwindClearsWall(void) {
   }
   Heap_Release(buffer);
   Event_PlaySound(SE_GLITTER);
-  Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->riseCounter = 9;
+  Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->riseCounter =
+      SPRITE_COLOR_BLUE_TINT;
   Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->riseEnabled = 1;
   Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->update = AirsRock_FlickerTarget;
   for (i = 0; i != 45; i++) {
@@ -822,7 +823,7 @@ void AirsRock_WhirlwindClearsWall(void) {
   REG_BLDALPHA = BLEND_ALPHA(15, 0);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
-  Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->riseCounter = 6;
+  Actor_Get(ACTOR_TWISTER_ROCK_BY_THE_WALL)->riseCounter = SPRITE_COLOR_GREY;
   for (i = 0; i != 65; i++) {
     REG_BLDALPHA = ((i >> 2) << 8) | (BLEND_WEIGHT_MAX - (i >> 2));
     FieldEvent_Wait(1);
@@ -1300,7 +1301,8 @@ void AirsRock_WhirlwindOpensTheTop(void) {
   }
   Heap_Release(buffer);
   Event_PlaySound(SE_GLITTER);
-  Actor_Get(ACTOR_TWISTER_ROCK_AT_THE_TOP)->riseCounter = 9;
+  Actor_Get(ACTOR_TWISTER_ROCK_AT_THE_TOP)->riseCounter =
+      SPRITE_COLOR_BLUE_TINT;
   Actor_Get(ACTOR_TWISTER_ROCK_AT_THE_TOP)->riseEnabled = 1;
   Actor_Get(ACTOR_TWISTER_ROCK_AT_THE_TOP)->update = AirsRock_FlickerTarget;
   for (i = 0; i != 45; i++) {
@@ -1548,7 +1550,8 @@ void AirsRock_WhirlwindClearsFog(void) {
   }
   Heap_Release(buffer);
   Event_PlaySound(SE_GLITTER);
-  Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->riseCounter = 9;
+  Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->riseCounter =
+      SPRITE_COLOR_BLUE_TINT;
   Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->riseEnabled = 1;
   Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->update = AirsRock_FlickerTarget;
   for (i = 0; i != 45; i++) {
@@ -1620,7 +1623,7 @@ void AirsRock_WhirlwindClearsFog(void) {
   REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, 0);
   REG_BLDCNT = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->riseCounter = 6;
+  Actor_Get(ACTOR_TWISTER_ROCK_IN_THE_FOG)->riseCounter = SPRITE_COLOR_GREY;
   for (i = 0; i != 129; i++) {
     REG_BLDALPHA = ((i >> 3) << 8) | (BLEND_WEIGHT_MAX - (i >> 3));
     FieldEvent_Wait(1);

@@ -1359,8 +1359,6 @@ void BattleEffect_ProcessPendingBlock2Transfer(void) {
   }
 }
 
-/// The words of one row of a background map, 32 entries.
-#define MAP_ROW_WORDS (BG_SCREEN_WIDTH / 2)
 /// Row `row` of BG1's map.
 #define BG1_MAP_ROW(row)                                                       \
   (BG_SCREEN_BLOCK(CANVAS_BG1_SCREEN) + (row) * MAP_ROW_BYTES)
@@ -1874,7 +1872,6 @@ void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
 #undef LIGHT_RAY_FRAMES
 #undef BAND_SHADE_BRIGHTEST
 #undef FLASH_PICTURE_FRAMES
-#undef MAP_ROW_WORDS
 #undef BG1_MAP_ROW
 #undef AFFINE_TILE_PAIR
 #undef BACKGROUND_RESTORE_STEP

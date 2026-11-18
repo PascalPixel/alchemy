@@ -53,8 +53,6 @@
 /// row of its own screen block, which BattleBackground_Load leaves clear.
 #define BACKGROUND_FIRST_TILE 512
 #define BACKGROUND_CLEAR_TILE 1023
-/// The words that hold a row of a background map's 32 entries two at a time.
-#define MAP_ROW_WORDS (MAP_ROW_BYTES / 4)
 
 /// Fades the screen to black over sixteen frames as every background's
 /// mosaic grows, then shows no layer. Sets REG_BLDCNT to darken the

@@ -219,9 +219,6 @@ extern const struct Scale gUlysses_ShipScale;
 /// quarters of its size and shrinks a little.
 #define ULYSSES_CRESCENT_SCALE(t) ((Trig_Sin((t) << 10) * 48) / 64)
 
-/// The words of one row of a background map, 32 entries.
-#define MAP_ROW_WORDS (BG_SCREEN_WIDTH / 2)
-
 #define ULYSSES_FRAMES 326 ///< frames of the runes, the summoning and the fire
 /// The flame bursts and the rune circles open, the second
 /// ULYSSES_RUNE_CIRCLE_INTERVAL frames after the first; the mage's silhouette
@@ -1020,7 +1017,6 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
 #undef ULYSSES_CRESCENT_WIDTH
 #undef ULYSSES_CRESCENT_HEIGHT
 #undef ULYSSES_CRESCENT_SCALE
-#undef MAP_ROW_WORDS
 #undef ULYSSES_FRAMES
 #undef ULYSSES_RUNE_CIRCLES_FRAME
 #undef ULYSSES_RUNE_CIRCLE_INTERVAL

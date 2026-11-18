@@ -14,9 +14,9 @@ enum {
   /// About 10,000 seconds, nearly three hours.
   SERIAL_TRANSFER_TIMEOUT_FRAMES = 600000,
   SERIAL_IDLE_HALFWORD = 0xfefe, ///< sent and seen between packets
-  /// Timer 3's reload: 13981 cycles from one halfword transfer to the next,
-  /// about 20 a frame.
-  SERIAL_TIMER_RELOAD = 0xc963
+  /// Timer 3's reload: it overflows 13981 cycles on, from one halfword
+  /// transfer to the next, about 20 a frame.
+  SERIAL_TIMER_RELOAD = 65536 - 13981
 };
 
 /// Sets the routine the save calls between sector writes (0 for none) and
@@ -254,7 +254,9 @@ s32 Serial_ExchangePayloads(void *send, void *receive) {
   return result;
 }
 
-/// Builds the outgoing packet in sendBuffer[0], in the same format as above.
+/// Builds the packet to send in sendBuffer[0] (struct SerialPacket): the packet
+/// number, the consoles not yet heard from, the checksum and the 24-byte
+/// payload.
 void Serial_PrepareSendPacket(void *payload) {
   volatile struct SerialWork *work;
   u32 i;
@@ -299,6 +301,8 @@ void Serial_PrepareSendPacket(void *payload) {
     packet = (struct SerialPacket *)work->sendBuffer[0];
     packet->checksum = checksum;
   }
+
+  // Stop timer 3, rewind the send position and start the timer again
   if (work->mode != 0)
     REG_TM3CNT_H = 0;
   work->sendIndex = -1;
@@ -482,7 +486,8 @@ s32 Serial_StartReceive(void *destination) {
   return 0;
 }
 
-/// Waits a frame at a time until the queued send is done, or 600,000 frames.
+/// Waits a frame at a time until the queued send is done, giving up after
+/// SERIAL_TRANSFER_TIMEOUT_FRAMES frames.
 void Serial_WaitForSend(void) {
   u32 count = 0;
 
@@ -494,7 +499,8 @@ void Serial_WaitForSend(void) {
   }
 }
 
-/// Waits a frame at a time until the queued receive is done, or 600,000 frames.
+/// Waits a frame at a time until the queued receive is done, giving up after
+/// SERIAL_TRANSFER_TIMEOUT_FRAMES frames.
 void Serial_WaitForReceive(void) {
   u32 count = 0;
 
@@ -679,23 +685,22 @@ extern u8 gMapGridCellBuffer[];
 /// An empty routine the link test calls to waste time.
 void SerialTest_Delay(void) {}
 
-/// The link test's block: LINK_TEST_TILES tiles' worth of bytes, received into
-/// BG_SCREEN_BLOCK(2), which is tile LINK_TEST_TILE of character block 0.
+/// The link test's block: LINK_TEST_TILES tiles' worth of bytes, shown from
+/// tile LINK_TEST_TILE of character block 0.
 #define LINK_TEST_BYTES 640
 #define LINK_TEST_TILES (LINK_TEST_BYTES / TILE_SIZE_4BPP)
 #define LINK_TEST_TILE (2 * BG_SCREEN_SIZE / TILE_SIZE_4BPP)
 /// What B sends: the cartridge's bytes from 4 KB in, where A sends its first.
 #define LINK_TEST_SECOND_SOURCE (Rom_Start + 4096)
 
-/// The serial link test: sends the cartridge's first bytes or
-/// LINK_TEST_SECOND_SOURCE while A or B is held, and shows what it receives
-/// as tiles on row 16.
+/// A link cable test left in the game: it shows a row of tiles, receives blocks
+/// into the map grid cell buffer and shows them as tiles, and sends a part of
+/// the ROM when A or B is held.
 void SerialTest_Run(void) {
   u16 *tile;
   s32 value;
   s32 remaining;
   s32 delay;
-  volatile u32 *held;
 
   Sound_PlayFar(MUS_CHAMPA);
   Serial_Initialize();
@@ -714,24 +719,26 @@ void SerialTest_Run(void) {
   Serial_WaitForStatusMask(LINK_STATUS_HEARD_BOTH);
 restart:
   Serial_StartReceive(gMapGridCellBuffer);
-  held = &gInput.held;
   for (;;) {
-    if (*held & KEY_A)
+    if (gInput.held & KEY_A)
       Serial_StartSend((void *)Cart_Start, LINK_TEST_BYTES);
-    if (*held & KEY_B)
+    if (gInput.held & KEY_B)
       Serial_StartSend((void *)LINK_TEST_SECOND_SOURCE, LINK_TEST_BYTES);
-    if (*held & KEY_START) {
-      delay = 9999;
-      do {
-        delay--;
+    if (gInput.held & KEY_START) {
+      for (delay = 0; delay < 10000; delay++)
         SerialTest_Delay();
-      } while (delay >= 0);
     }
     if (gSerialReceiveDestination == 0) {
-      Dma_Set(gMapGridCellBuffer, (void *)BG_SCREEN_BLOCK(2),
+      Dma_Set(gMapGridCellBuffer,
+              BG_CHAR_BLOCK(0) + LINK_TEST_TILE * TILE_SIZE_4BPP,
               DMA_COPY_WORDS(LINK_TEST_BYTES / 4), REG_DMA3);
       goto restart;
     }
     wait(1);
   }
 }
+
+#undef LINK_TEST_BYTES
+#undef LINK_TEST_TILES
+#undef LINK_TEST_TILE
+#undef LINK_TEST_SECOND_SOURCE

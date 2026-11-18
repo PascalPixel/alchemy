@@ -72,7 +72,11 @@ enum JupiterLighthouseBlockId {
   /// The first of three more that rise once the lighthouse is activated.
   ACTOR_LAST_BLOCKS,
   /// The unseen block at the top of the beam of light, between the hovering
-  /// blocks: the party the beam carries up stands on it.
+  /// blocks: the party the beam carries up stands on it. A probe of the
+  /// activated room by the beam (render probe --scene
+  /// JupiterLighthouseRoomLockedDoors --entrance 11 --set 0xa00) finds it
+  /// raised at the beam's place, (232, 520), and the leader 16 pixels above it
+  /// at the beam's top among the hovering blocks, nothing drawn under him.
   ACTOR_BEAM_TOP_BLOCK = ACTOR_LAST_BLOCKS + 3
 };
 
@@ -260,7 +264,7 @@ void JupiterLighthouse_SendUpBeamLights(void) {
     actor->motionFlags = 0;
     actor->priorityFlags = 0;
     actor->speedLimit = (Random16() << 2) + toFIXED(6);
-    actor->acceleration = ((Random16() << 11) >> 16) + toFIXED(1) / 32;
+    actor->acceleration = ((Random16() << 11) >> 16) + DEGtoANG(45) / 4;
     actor->update = (void (*)(void))JupiterLighthouse_CircleUpTheBeam;
     actor->timer = Random16();
     actor->userValue = phase;

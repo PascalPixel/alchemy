@@ -194,7 +194,7 @@ enum KibomboFireColor {
 /// Set once the party has heard of the foreign ceremony.
 #define FLAG_HEARD_OF_THE_FOREIGN_CEREMONY 0x9df
 /// Set once Lash has tied the village's rope across.
-#define FLAG_KIBOMBO_ROPE_TIED 0x9e9
+#define FLAG_KIBOMBO_VILLAGE_ROPE_TIED 0x9e9
 /// Set once the party has been to the statue's grounds on the ceremony night.
 #define FLAG_SAW_THE_GROUNDS_CEREMONY 0x869
 /// Set as the party climbs down the ladder from Akafubu's home: he stands
@@ -3257,7 +3257,8 @@ void Kibombo_InitializeVillage(void) {
   FlagBlock_PlaceAll(gKibombo_FrozenPuddle);
   Actor_SetSpritePriority(ACTOR_PUDDLE, 3);
   Rope_Initialize();
-  Rope_Place(0, FLAG_KIBOMBO_ROPE_TIED, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
+  Rope_Place(0, FLAG_KIBOMBO_VILLAGE_ROPE_TIED, ACTOR_ROPE_POST_A,
+             ACTOR_ROPE_POST_B);
   Actor_GetById(ACTOR_GATE_GUARD_A)->collisionFlags |= ACTOR_BLOCKED_BY_SOLID;
   Actor_GetById(ACTOR_GATE_GUARD_B)->collisionFlags |= ACTOR_BLOCKED_BY_SOLID;
 }
@@ -4065,8 +4066,8 @@ struct Trigger gKibombo_VillageTriggers[] = {
     {TRIGGER_STEP, 15, CONDITION_ALWAYS, EVENT(Kibombo_OverlayStopsFollowing)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_KIBOMBO_PUDDLE_FROZEN,
      EVENT(Kibombo_FreezePuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, FLAG_KIBOMBO_ROPE_TIED,
-     0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A,
+     FLAG_KIBOMBO_VILLAGE_ROPE_TIED, 0},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 20, CONDITION_ALWAYS,
      EVENT(Kibombo_JumpForward)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 21, CONDITION_ALWAYS,
@@ -4134,8 +4135,8 @@ struct Trigger gKibombo_CeremonyTriggers[] = {
     {TRIGGER_STEP, 15, CONDITION_ALWAYS, EVENT(Kibombo_OverlayStopsFollowing)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_KIBOMBO_PUDDLE_FROZEN,
      EVENT(Kibombo_FreezePuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, FLAG_KIBOMBO_ROPE_TIED,
-     0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A,
+     FLAG_KIBOMBO_VILLAGE_ROPE_TIED, 0},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 20, CONDITION_ALWAYS,
      EVENT(Kibombo_JumpForward)},
     {TRIGGER_TALK, 20, FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgAkafubuSCeremony)},

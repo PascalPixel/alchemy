@@ -176,7 +176,8 @@ enum EnemyId {
   ENEMY_PYRODRA,
   /// Gaia Rock's Serpent: a row for each number of the four beams of sunlight
   /// let into its lair as it is fought, counted by
-  /// GaiaRockInside_ChallengeSerpent, this one for none.
+  /// GaiaRockInside_ChallengeSerpent, this one for none. Each beam lights a
+  /// band across the lair's floor to the Serpent.
   ENEMY_SERPENT,
   ENEMY_SERPENT_ONE_BEAM,
   ENEMY_SERPENT_TWO_BEAMS,

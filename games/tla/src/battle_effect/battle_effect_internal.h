@@ -149,6 +149,9 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define EFFECT_BLEND_ADD BLEND_ALPHA(BLEND_WEIGHT_MAX, BLEND_WEIGHT_MAX)
 /// The canvas at `level` sixteenths over the whole battle under it.
 #define EFFECT_BLEND_CANVAS(level) BLEND_ALPHA(level, BLEND_WEIGHT_MAX)
+/// The canvas's usual weight over the battle, in sixteenths: every canvas
+/// opens with it.
+#define CANVAS_BLEND_LEVEL 14
 /// The element pillar's and element burst's canvas weight over the battle.
 #define ELEMENT_BLEND_LEVEL 12
 /// The motes the element pillar and element burst set up in PARTICLES; the
@@ -175,6 +178,9 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 /// The VRAM address of a sprite's tiles, from its VRAM cache entry.
 #define OBJ_TILES(sprite)                                                      \
   (OBJ_VRAM0 + gVramCacheEntries[((struct Sprite *)(sprite))->slot].offset)
+/// Sprite tile VRAM as bytes, for the sprites' tiles at their VRAM cache
+/// offsets.
+#define OBJ_VRAM ((u8 *)OBJ_VRAM0)
 
 /// Index of DMAxCNT_H, the control half, in a channel's 16-bit registers.
 #define DMA_CONTROL_HALF 5
@@ -294,6 +300,17 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
   (BATTLE_BACKGROUND_WIDTH * BATTLE_BACKGROUND_HEIGHT)
 /// The battle background's colours, BG palettes 6 to 13.
 #define BATTLE_BACKGROUND_COLORS (8 * PALETTE_COLORS)
+/// BG1's map while it shows the canvas or a picture of an effect's own (the
+/// rune circles of Ulysses): the battle's own BG1 map.
+#define CANVAS_BG1_SCREEN 31
+/// Two entries of a background map in one word: `left`, then the one to its
+/// right.
+#define MAP_ENTRY_PAIR(left, right) ((u32)(right) << 16 | (left))
+/// The tile BG1 shows around a picture of its own, the last a map entry can
+/// name.
+#define BG1_CLEAR_TILE 1023
+/// BG character block 2's first tile, counted from BG1's character base.
+#define BG1_BLOCK2_FIRST_TILE (2 * BG_CHAR_SIZE / TILE_SIZE_8BPP)
 /// One step of the battle background's fade, a sixtieth of the full colour.
 #define CANVAS_FADE_STEP (FIXED_ONE / 60)
 /// The bytes of one 16-colour palette.
@@ -429,6 +446,12 @@ enum RedCrescentPicture {
 /// A shard turns through its three pictures, one each SHARD_TURN of its
 /// variant.
 #define SHARD_TURN 96
+/// PaletteRampImage's shard pictures (drawn through gStatChange_ShardPictures),
+/// where the stat reduction and the Sword Card decode them in the sheet,
+/// followed by seven copies of them, each darker than the one before.
+#define STAT_REDUCTION_SHARD_PICTURES 9600
+#define STAT_REDUCTION_SHARD_BYTES 696 ///< bytes in each copy
+#define STAT_REDUCTION_SHARD_COPIES 8  ///< the pictures and their darker copies
 
 /// LightningPillarSheet's pillar, in two pictures.
 #define LIGHTNING_PILLAR_WIDTH 48
@@ -441,6 +464,13 @@ enum RedCrescentPicture {
 /// SpiralSheet's pictures.
 #define SPIRAL_WIDTH 32
 #define SPIRAL_HEIGHT 32
+/// A card's picture, as the Sleep, Baffle, Death and Sword Cards and the
+/// Bramble, Frost, Flame and Thunder Cards draw it.
+#define CARD_WIDTH 32
+#define CARD_HEIGHT 64
+/// SheepCardSheet's sheep, four pictures of it tumbling after its card.
+#define SHEEP_WIDTH 32
+#define SHEEP_HEIGHT 32
 
 /// FlameballSheet and FireballSheet's pictures.
 #define FLAMEBALL_WIDTH 40
@@ -604,6 +634,9 @@ enum TargetStrikeStyle {
 
 #define EFFECT_CLIP_BOUNDS (COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y)
 
+/// The second blitter, the drawing routine in the paired heap slot.
+#define ALT_BLITTER ((DrawRectangle)Ram_HeapSlots->ramCodePaired)
+
 /// The second blitter slot read as what it holds, a drawing routine.
 #define ALTERNATE_BLITTER_SLOT                                                 \
   (((struct {                                                                  \
@@ -655,6 +688,12 @@ enum CanvasFadeShare { CANVAS_FADE_HALF = 50, CANVAS_FADE_THREE_QUARTERS = 75 };
 /// Presents the canvas and waits for the next frame.
 #define EFFECT_PRESENT_CANVAS(work) ((work)->transferPending = 1, wait(1))
 
+/// Waits until a VBlank has passed since the one that last copied the canvas.
+// DEAD: each test reads the count twice and drops the first read; the ROM
+// keeps both loads.
+#define WAIT_TRANSFER(work)                                                    \
+  while ((work)->vblanksSinceTransfer, (work)->vblanksSinceTransfer <= 1)
+
 /// The usual end of an effect's frame: counts down the targets' flash timers,
 /// then presents the canvas.
 #define EFFECT_END_FRAME(work)                                                 \
@@ -696,6 +735,12 @@ enum CanvasFadeShare { CANVAS_FADE_HALF = 50, CANVAS_FADE_THREE_QUARTERS = 75 };
   (REG_DISPCNT = EFFECT_DISPCNT, REG_BG2PA = Q_8_8(0.5),                       \
    REG_BLDALPHA = EFFECT_BLEND_CANVAS(top),                                    \
    REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL)
+
+/// A line's 16.16 sideways sway as its BG2X value in work->bg2xLines, which the
+/// wave HBlank DMA writes line by line. BG2X counts 256ths of a canvas pixel,
+/// so a sway of toFIXED(n) moves the line n / 4 canvas pixels: n / 2 screen
+/// pixels where the canvas is shown at twice its width.
+#define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
 
 /// Which way BattleEffect_WipeCanvas sweeps.
 enum CanvasWipeDirection {

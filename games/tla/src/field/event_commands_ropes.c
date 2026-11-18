@@ -1326,7 +1326,7 @@ extern const u8 gHangingVine_VineBottomPicture[],
     gHangingVine_ChainTopPicture[], gHangingVine_ChainMiddlePicture[];
 
 /// The bytes of a link's picture, 16 by 16 pixels of 256 colours.
-#define PICTURE_SIZE (16 * 16)
+#define VINE_LINK_PICTURE_SIZE (16 * 16)
 
 /// HangingVineLink.kind: a free link, the anchor (not drawn), then a link
 /// showing each of the four pictures, in their order in VRAM.
@@ -1367,26 +1367,27 @@ struct HangingVineWork *HangingVine_Initialize(s32 spriteId) {
 
   work = HeapSlot_AllocEwram(HEAP_SLOT_HANGING_VINE,
                              sizeof(struct HangingVineWork));
-  size = 4 * PICTURE_SIZE;
+  size = 4 * VINE_LINK_PICTURE_SIZE;
   pictures = Heap_Alloc(size);
   Dma_Fill32(0, work, sizeof(struct HangingVineWork));
   work->vramEntry = VramCache_FindFreeEntry();
   if (spriteId == SPRITE_SPROUTING_LEAVES) {
     Decompress_TaggedLz(gHangingVine_VineTopPicture, pictures);
-    Decompress_TaggedLz(gHangingVine_VineUpperPicture, pictures + PICTURE_SIZE);
+    Decompress_TaggedLz(gHangingVine_VineUpperPicture,
+                        pictures + VINE_LINK_PICTURE_SIZE);
     Decompress_TaggedLz(gHangingVine_VineLowerPicture,
-                        pictures + 2 * PICTURE_SIZE);
+                        pictures + 2 * VINE_LINK_PICTURE_SIZE);
     Decompress_TaggedLz(gHangingVine_VineBottomPicture,
-                        pictures + 3 * PICTURE_SIZE);
+                        pictures + 3 * VINE_LINK_PICTURE_SIZE);
     VramCache_Load(work->vramEntry, size, pictures);
   } else {
     Decompress_TaggedLz(gHangingVine_ChainTopPicture, pictures);
     Decompress_TaggedLz(gHangingVine_ChainMiddlePicture,
-                        pictures + PICTURE_SIZE);
+                        pictures + VINE_LINK_PICTURE_SIZE);
     Decompress_TaggedLz(gHangingVine_ChainMiddlePicture,
-                        pictures + 2 * PICTURE_SIZE);
+                        pictures + 2 * VINE_LINK_PICTURE_SIZE);
     Decompress_TaggedLz(gHangingVine_ChainBottomPicture,
-                        pictures + 3 * PICTURE_SIZE);
+                        pictures + 3 * VINE_LINK_PICTURE_SIZE);
     VramCache_Load(work->vramEntry, size, pictures);
   }
   Task_Add(HangingVine_Draw, TASK_PASS_FRAME);
@@ -1430,8 +1431,8 @@ void HangingVine_Draw(void) {
           angle = (u16)Trig_Atan(prevX - x, dy);
         else
           angle = (u16)Trig_Atan(prevX - x, dz);
-        tile = tiles +
-               (link->kind - VINE_LINK_TOP) * (PICTURE_SIZE / TILE_SIZE_4BPP);
+        tile = tiles + (link->kind - VINE_LINK_TOP) *
+                           (VINE_LINK_PICTURE_SIZE / TILE_SIZE_4BPP);
         screenX = (prevX + x) / 2 - viewX;
         prevY = (prevY + y) / 2 - height;
         prevZ = (prevZ + z) / 2 - viewZ - height;
@@ -1470,7 +1471,7 @@ void HangingVine_Draw(void) {
       link->angle = angle;
   }
 }
-#undef PICTURE_SIZE
+#undef VINE_LINK_PICTURE_SIZE
 
 /// The vines' task: sways each active vine's links below its anchor, the swing
 /// easing towards VINE_SWING_BESIDE while the leader stands beside the vine,

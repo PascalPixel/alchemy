@@ -90,6 +90,15 @@ enum RetreatParticleState {
 /// finished, which the cast waits for.
 #define FIELD_PSYNERGY_FINISHED 999
 
+/// The view's sway (ViewMove_Swing) as FieldPsynergy_Run casts Tremor and
+/// Grind at no object, in 16.16 pixels: it grows from SWAY_START to SWAY_PEAK
+/// by SWAY_RAMP a frame, holds for SWAY_HOLD_FRAMES, and shrinks back to
+/// SWAY_START. Tremor's stronger sway at an object starts and ends there too.
+#define SWAY_START toFIXED(2)
+#define SWAY_PEAK toFIXED(6)
+#define SWAY_RAMP (toFIXED(3) / 20) ///< 0.15 pixels a frame
+#define SWAY_HOLD_FRAMES 10
+
 /// Cyclone's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the particle burst
 /// (ParticleBurstWork) at its start, then the leader's ride on the whirlwind.
 struct CycloneWork {

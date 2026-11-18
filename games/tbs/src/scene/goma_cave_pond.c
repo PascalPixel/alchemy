@@ -32,6 +32,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
+#include "scene/goma_cave.h"
 #include "sound/sound.h"
 #include "system/heap_slots.h"
 #include "system/system.h"
@@ -40,13 +41,6 @@ extern struct SceneEntrance gGomaCavePondEntrances[];
 extern u32 gGomaCavePondExits[];
 extern struct ActorPlacement gGomaCavePondActorPlacements[];
 extern struct Trigger gGomaCavePondTriggers[];
-
-// Map-section temp flags: Scene_Arrive clears FLAG_AREA_TEMP_FIRST to
-// FLAG_AREA_TEMP_LAST when the party enters another area, and other areas use
-// the numbers for their own.
-
-/// The stump has been pushed over into the room below (goma_cave_pillar.c).
-#define FLAG_GOMA_CAVE_STUMP_FELL FLAG_AREA_TEMP_00
 
 /// The room's one placed actor.
 enum GomaCavePondActorId {

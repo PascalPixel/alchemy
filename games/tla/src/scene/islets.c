@@ -36,7 +36,7 @@
 #define FLAG_CRATE_A_DROPPED FLAG_SCENE_TEMP_10
 #define FLAG_CRATE_B_DROPPED FLAG_SCENE_TEMP_11
 #define FLAG_CRATES_IN_ONE_CELL FLAG_SCENE_TEMP_12
-#define FLAG_PUDDLE_FROZEN FLAG_SCENE_TEMP_13
+#define FLAG_SOUTHEAST_ANGARA_ISLET_PUDDLE_FROZEN FLAG_SCENE_TEMP_13
 #define FLAG_TREASURE_HUNTERS_LET_SLIP FLAG_SCENE_TEMP_14
 #define FLAG_BIRD_ON_NEST FLAG_SCENE_TEMP_15
 #define FLAG_DOG_JUST_TRADED FLAG_SCENE_TEMP_16
@@ -1614,7 +1614,7 @@ void Islets_SaveCratePositions(void) {
 /// Frost on the puddle: the cells become an ice pillar.
 void Islets_FreezePuddle(void) {
   MapGrid_CopyCellAttributes(5, 2, 1, 2, 5, 28);
-  Event_SetFlag(FLAG_PUDDLE_FROZEN);
+  Event_SetFlag(FLAG_SOUTHEAST_ANGARA_ISLET_PUDDLE_FROZEN);
 }
 
 /// Holding up at the iceberg's edge, the leader steps up onto it.
@@ -2181,17 +2181,17 @@ void Islets_InitializeSoutheastAngara(void) {
   last->riseCounter = 1;
   last->motionFlags = 0;
   Islets_SetCellCollision(last->x.fixed, last->z.fixed, 1, CELL_BEHAVIOR_WALL);
-  if (Event_GetFlag(FLAG_PUDDLE_FROZEN))
+  if (Event_GetFlag(FLAG_SOUTHEAST_ANGARA_ISLET_PUDDLE_FROZEN))
     MapGrid_CopyCellAttributes(5, 2, 1, 2, 5, 28);
 }
 
-/// The Sea of Time Islet's surf, two palette cycles of the same four colours:
-/// the foam along the shore in the shallows, and the surf round the islets and
-/// their rocks out at sea, each turned one place every sixth frame.
+/// The Sea of Time Islet's surf, two palette cycles of the same four colours
+/// from SURF_FIRST_COLOR: the foam along the shore in the shallows, and the
+/// surf round the islets and their rocks out at sea, each turned one place
+/// every sixth frame.
 enum {
   SHALLOWS_SURF_PALETTE = 3,
   SEA_SURF_PALETTE = 4,
-  SURF_FIRST_COLOR = 12,
   SURF_COLORS = 4,
   SURF_CYCLE_DELAY = 5
 };
@@ -3029,8 +3029,8 @@ struct Trigger gIslets_SoutheastAngaraTriggers[] = {
      EVENT(Islets_FinishPushingCrate)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CRATE_B, FLAG_CRATES_IN_ONE_CELL,
      EVENT(Islets_FinishPushingCrate)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_PUDDLE_FROZEN,
-     EVENT(Islets_FreezePuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE,
+     FLAG_SOUTHEAST_ANGARA_ISLET_PUDDLE_FROZEN, EVENT(Islets_FreezePuddle)},
     {TRIGGER_TALK, ACTOR_TREASURE_HUNTER, CONDITION_ALWAYS,
      EVENT(Islets_TalkToTreasureHunters)},
     {TRIGGER_TALK, ACTOR_TREASURE_HUNTERS_PARTNER, CONDITION_ALWAYS,

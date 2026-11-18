@@ -1359,23 +1359,11 @@ void BattleEffect_ProcessPendingBlock2Transfer(void) {
   }
 }
 
-/// BG1's map while it shows the canvas or a picture of an effect's: the
-/// battle's own BG1 map.
-#define CANVAS_BG1_SCREEN 31
-/// The bytes and the words of one row of a background map, 32 entries.
-#define MAP_ROW_BYTES (BG_SCREEN_WIDTH * 2)
+/// The words of one row of a background map, 32 entries.
 #define MAP_ROW_WORDS (BG_SCREEN_WIDTH / 2)
 /// Row `row` of BG1's map.
 #define BG1_MAP_ROW(row)                                                       \
   (BG_SCREEN_BLOCK(CANVAS_BG1_SCREEN) + (row) * MAP_ROW_BYTES)
-/// Two entries of a background map in one word: `left`, then the one to its
-/// right.
-#define MAP_ENTRY_PAIR(left, right) ((u32)(right) << 16 | (left))
-/// The tile BG1 shows around a picture of its own, the last a map entry can
-/// name.
-#define BG1_CLEAR_TILE 1023
-/// BG character block 2's first tile, counted from BG1's character base.
-#define BG1_BLOCK2_FIRST_TILE (2 * BG_CHAR_SIZE / TILE_SIZE_8BPP)
 
 /// Writes BG1's map to show a picture CANVAS_SIZE wide from BG character block
 /// 2, as BattleTransition_BuildTilemap does for the battle background: four
@@ -1485,10 +1473,6 @@ void BattleEffect_CountDownBattlerTints(void) {
     actorIndex += 1;
   } while (actorIndex != 8);
 }
-
-/// The canvas's usual weight over the battle, in sixteenths: every canvas
-/// opens with it.
-#define CANVAS_BLEND_LEVEL 14
 
 /// Shows the canvas on BG2 stretched to twice its width across the battle
 /// view, blended over the battle, with windows 0 and 1 over the battle view.
@@ -1890,14 +1874,8 @@ void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
 #undef LIGHT_RAY_FRAMES
 #undef BAND_SHADE_BRIGHTEST
 #undef FLASH_PICTURE_FRAMES
-#undef CANVAS_BG1_SCREEN
-#undef MAP_ROW_BYTES
 #undef MAP_ROW_WORDS
 #undef BG1_MAP_ROW
-#undef MAP_ENTRY_PAIR
-#undef BG1_CLEAR_TILE
-#undef BG1_BLOCK2_FIRST_TILE
-#undef CANVAS_BLEND_LEVEL
 #undef AFFINE_TILE_PAIR
 #undef BACKGROUND_RESTORE_STEP
 #undef CANVAS_BG1_BLANK_TILE

@@ -32,17 +32,10 @@ s32 FieldSequence_Run(s32 entrance);
 // scene's exits, one packed word each (and a flag word after it when
 // EXIT_HAS_FLAG is set). Scene id SCENE_EXITS_END ends the exits of a scene and
 // the whole table.
-#define EXIT_SCENE_MASK 0xfff
+
 /// The scene of a table's first exit word, the destination when no exit
 /// matches: nine bits, where EXIT_SCENE_MASK takes twelve.
 #define EXIT_DEFAULT_SCENE_MASK 0x1ff
-#define ENTRANCE(word) (((word) & 0xff000) >> 12)
-#define EXIT_ID(word) (((word) & 0x0ff00000) >> 20)
-#define EXIT_HAS_FLAG 0x10000000
-#define EXIT_ID_ANY 255
-/// FieldSequence_Run's result when the scene was not left: the destination
-/// stays as it is (The Broken Seal's EXIT_KEEP_DESTINATION).
-#define EXIT_KEEP_DESTINATION 999
 
 /// Chooses the scene and entrance to go to when the party leaves the current
 /// scene. exitId is the kind of exit FieldSequence_Run ended on; the scene's
@@ -388,11 +381,5 @@ void Scene_Arrive(s32 unused, s32 keep) {
 /// Starts the current scene's field music, chosen by Scene_ChooseMusic.
 void Scene_PlayMusic(void) { Sound_PlayFar(gMainRoutineWork.sceneMusic); }
 
-#undef EXIT_SCENE_MASK
-#undef ENTRANCE
-#undef EXIT_ID
-#undef EXIT_HAS_FLAG
-#undef EXIT_ID_ANY
-#undef EXIT_KEEP_DESTINATION
 #undef MAIN_ROUTINE_RUN_MINIGAME
 #undef MAP_HEADER

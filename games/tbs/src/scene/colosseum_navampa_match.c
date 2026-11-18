@@ -78,6 +78,7 @@
 #include "scene/colosso_setup.h"
 #include "scene/colosso_solo.h"
 #include "scene/import.h"
+#include "scene/sleep_z.h"
 #include "sound/sound.h"
 #include "sound/sound_driver_symbols.h"
 #include "system/input.h"
@@ -1162,10 +1163,6 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// A drifting Z's two steps, timer (east) and userValue (up), are steps of a
-/// 256th of a pixel a frame.
-#define SLEEP_Z_STEPS_PER_PIXEL 256
-
 /// Advances one of the particles that rise from the sleeping Isaac after the
 /// last match.
 static s32 ColosseumNavampaMatch_AdvanceSleepZ(struct Actor *particle) {
@@ -1875,9 +1872,6 @@ static void ColosseumNavampaMatch_TalkToLogRollingAttendant(s32 actorId) {
   Event_End();
 }
 
-// This scene's exits for colosso_solo.c.
-#define COLOSSO_SOLO_TO_RACE COLOSSEUM_NAVAMPA_MATCH_LEND_A_HAND_TO_RACE
-#define COLOSSO_SOLO_TO_COLOSSEUM COLOSSEUM_NAVAMPA_MATCH_TO_COLOSSEUM
 #include "shared/colosso_solo.c"
 #include "shared/item_equip.c"
 #include "shared/colosso_task.c"
@@ -1897,8 +1891,6 @@ static void ColosseumNavampaMatch_TalkToLogRollingAttendant(s32 actorId) {
 
 #include "shared/colosso_occupant.c"
 
-/// Closes the arena's step trigger. Nothing in the game sets it.
-#define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_SCENE_TEMP_10
 /// The chest holding a Smoke Bomb has been opened.
 #define FLAG_COLOSSEUM_NAVAMPA_MATCH_SMOKE_BOMB_CHEST_OPENED FLAG_AREA_TEMP_6A
 /// The chest holding a Nut has been opened.

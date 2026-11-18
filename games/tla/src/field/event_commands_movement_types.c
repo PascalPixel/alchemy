@@ -12,7 +12,7 @@
 
 extern const u8 gActor_WaitScript[];
 
-/// The actors of Ram_HeapSlots->actors, as field_internal.h's ACTOR_COUNT.
+/// The actors of Ram_HeapSlots->actors.
 #define ACTOR_COUNT 64
 
 /// The event command "actor set attached effect", by enum AttachedEffectFlag:
@@ -76,7 +76,7 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
     u8 attr = SPRITE_ATTR2_HIGH(visual);
 
     /* FAKEMATCH(temporary): the mask's complement built as -(mask + 1) in a
-     * local; as attr & ~ATTR2_HIGH_PRIORITY_MASK. */
+     * local. */
     mask = -mask;
     mask &= attr;
     mask |= OBJ_PRIORITY(1) >> 8;
@@ -90,7 +90,7 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
     priority &= src;
     dst = SPRITE_ATTR2_HIGH(visual);
     /* FAKEMATCH(temporary): the mask's complement built as -(mask + 1) in a
-     * local; as dst & ~ATTR2_HIGH_PRIORITY_MASK. */
+     * local. */
     mask = -mask;
     mask &= dst;
     mask |= priority;

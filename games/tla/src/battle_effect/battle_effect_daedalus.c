@@ -203,8 +203,8 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
   ((CopyFunc)(IwramIrqMain + Iwram_CopyWordsOffset))
 
 #define DECODE_BUFFER Ram_MapCellBuffer
-/// The particles the sky scene and the fall keep in the map cell buffer, after
-/// its first 16384 bytes.
+/// The particles the sky scene, the fall and the second strike's sparks keep in
+/// the map cell buffer, after its first 16384 bytes.
 #define DAEDALUS_PARTICLES ((struct Particle *)(Ram_MapCellBuffer + 16384))
 #define DAEDALUS_PARTICLE_COUNT (DAEDALUS_MISSILE_COUNT * DAEDALUS_TRAIL_LENGTH)
 
@@ -241,8 +241,6 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
 #define ROCKET_FLAME_WIDTH 12
 #define ROCKET_FLAME_HEIGHT 24
 #define ROCKET_FLAME_COUNT 6
-/// FlashBurstSheet's six bursts, a flash turning to a fireball that burns out.
-#define FLASH_BURST_COUNT 6
 /// BirdFlockSheet's 16x16 birds, and the twelve steps of a wing beat
 /// (gDaedalus_WingBeatPictures).
 #define BIRD_WIDTH 16
@@ -255,10 +253,11 @@ typedef void (*BlitFunc)(void *, const void *, s32, s32, s32, s32);
   (ROCKET_FLAME_COUNT * PICTURE_BYTES(ROCKET_FLAME))
 #define DAEDALUS_BIRD_FLOCK                                                    \
   (DAEDALUS_FLASH_BURST_PICTURES +                                             \
-   FLASH_BURST_COUNT * PICTURE_BYTES(FLASH_BURST))
+   FLASH_BURST_PICTURE_COUNT * PICTURE_BYTES(FLASH_BURST))
 
 /// The fall's pictures: the bursts, then the rocket's flames.
-#define DAEDALUS_ROCKET_FLAMES (FLASH_BURST_COUNT * PICTURE_BYTES(FLASH_BURST))
+#define DAEDALUS_ROCKET_FLAMES                                                 \
+  (FLASH_BURST_PICTURE_COUNT * PICTURE_BYTES(FLASH_BURST))
 
 /// The sky scene's sprites: the canopy's two rows; the twenty-one 32x32 pieces
 /// of the machine (BronzeAutomatonTiles), among them its missiles' cover, its
@@ -1176,7 +1175,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
             struct Particle *q;
 
             q = &DAEDALUS_PARTICLES[DAEDALUS_BURSTS + i];
-            if ((u32)q->variant < FLASH_BURST_COUNT * 4) {
+            if ((u32)q->variant < FLASH_BURST_PICTURE_COUNT * 4) {
               ((BlitFunc)blits[1])(
                   dest,
                   &work->sheet[q->variant / 4 * PICTURE_BYTES(FLASH_BURST) +
@@ -1633,7 +1632,7 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
         struct Particle *q;
 
         q = &DAEDALUS_PARTICLES[i];
-        if ((u32)q->variant < FLASH_BURST_COUNT * 3) {
+        if ((u32)q->variant < FLASH_BURST_PICTURE_COUNT * 3) {
           s32 v;
 
           v = q->variant / 3;
@@ -1655,14 +1654,9 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
   }
 }
 
-#undef BLITTER
-
 /// The rocket's scale in the second strike: twice its size.
 extern const struct Scale gDaedalusStrike_RocketScale;
-/// The strike's sparks, in the map cell buffer after its first 16384 bytes.
-#define STRIKE_SPARKS ((struct Particle *)(Ram_MapCellBuffer + 16384))
 
-#define BLITTER ((DrawRectangle)Ram_HeapSlots->ramCode)
 #define DAEDALUS_STRIKE_FRAMES 108
 /// The rocket dives in over the strike's first DAEDALUS_STRIKE_DIVE_FRAMES.
 #define DAEDALUS_STRIKE_DIVE_FRAMES 92
@@ -1736,7 +1730,7 @@ void BattleEffect_RunDaedalusStrike(struct BattleEffectParams *args) {
   BattleEffect_SpawnObjects(1, SPRITE_DAEDALUS_ROCKET, 3);
   BattleEffect_SelectLivingTargets(work->args);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_ADDITIVE);
-  draw[0] = BLITTER;
+  draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET, work->sheet, 1, 0);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
@@ -1780,7 +1774,7 @@ void BattleEffect_RunDaedalusStrike(struct BattleEffectParams *args) {
       if (frame == DAEDALUS_STRIKE_SPARK_FRAME) {
         // UB: the lives are cleared through one s32 pointer stepped a whole
         // step at a time, past the step's scalar members.
-        s32 *life = &STRIKE_SPARKS[0].variant;
+        s32 *life = &DAEDALUS_PARTICLES[0].variant;
 
         for (i = 0; i != DAEDALUS_STRIKE_SPARKS; i++) {
           *life = -1;
@@ -1790,7 +1784,7 @@ void BattleEffect_RunDaedalusStrike(struct BattleEffectParams *args) {
         Iwram_FillWordsEntry(canvas, CANVAS_VIEW_BYTES,
                              CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
       }
-      sparks = STRIKE_SPARKS;
+      sparks = DAEDALUS_PARTICLES;
       if ((u32)(frame - DAEDALUS_STRIKE_SPARK_FRAME) < DAEDALUS_STRIKE_BURSTS) {
         centerX = INTtoFIXED((Random16() & 63) + 28);
         centerY = INTtoFIXED((Random16() & 31) + 80);
@@ -1817,7 +1811,7 @@ void BattleEffect_RunDaedalusStrike(struct BattleEffectParams *args) {
         struct Particle *mote;
 
         for (i = 0, mote = sparks; i != DAEDALUS_STRIKE_SPARKS; i++, mote++) {
-          if ((u32)mote->variant < FLASH_BURST_COUNT * 3) {
+          if ((u32)mote->variant < FLASH_BURST_PICTURE_COUNT * 3) {
             draw[0](canvas,
                     work->sheet +
                         mote->variant / 3 * PICTURE_BYTES(FLASH_BURST),
@@ -1946,7 +1940,6 @@ void BattleEffect_RunDaedalusStrike(struct BattleEffectParams *args) {
   Sprite_DestroyFar(work->sprites[0]);
   BattleEffect_EndCanvasLayer();
 }
-#undef BLITTER
 #undef MIRRORED_WALL_FRAMES
 #undef MIRRORED_WALL_DRAW_FRAMES
 #undef CEL_SIZE
@@ -1997,7 +1990,6 @@ void BattleEffect_RunDaedalusStrike(struct BattleEffectParams *args) {
 #undef FLAME_RING_FRAMES
 #undef FLAME_RING_STEP
 #undef FLAME_RING_Y
-#undef FLASH_BURST_COUNT
 #undef ROCKET_FLAME_COUNT
 #undef ROCKET_FLAME_HEIGHT
 #undef ROCKET_FLAME_WIDTH
@@ -2018,4 +2010,3 @@ void BattleEffect_RunDaedalusStrike(struct BattleEffectParams *args) {
 #undef ROCKET_TURN_END
 #undef ROCKET_SOAR_START
 #undef ROCKET_BURSTS_END
-#undef STRIKE_SPARKS

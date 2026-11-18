@@ -55,13 +55,6 @@
 #include "shared/tables.h"
 #include "field/actor_script.h"
 
-/// Plays an actor's animation and lets frames pass before the event goes on.
-#define Actor_AnimateThenWait(id, animation, frames)                           \
-  do {                                                                         \
-    Actor_SetAnimation(id, animation);                                         \
-    FieldEvent_Wait(frames);                                                   \
-  } while (0)
-
 /// The placed actors this file moves by number. The party's rows take their
 /// characters' numbers; the rest count on from 8.
 enum {

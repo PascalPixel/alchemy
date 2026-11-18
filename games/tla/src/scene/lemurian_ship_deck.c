@@ -122,10 +122,6 @@ void LemurianShipDeck_TryHeldDoor(void) {
 /// The background palette the deck's two colour cycles turn every eighth
 /// frame: the blues of the band along the hull and the surf.
 #define DECK_PALETTE ((volatile u16 *)&BG_PLTT_COLOR(11, 0))
-#define HULL_BAND_FIRST_COLOR 4
-#define HULL_BAND_LAST_COLOR 9
-#define SURF_FIRST_COLOR 12
-#define SURF_LAST_COLOR 15
 
 /// Defines a task that moves colours last-1 .. first of DECK_PALETTE one place
 /// up and the last round to first, every eighth frame.

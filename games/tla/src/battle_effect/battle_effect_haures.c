@@ -20,7 +20,8 @@ struct MoundVertex {
 extern struct MoundVertex gHaures_WingCorners[];
 extern const u16 gHaures_BodyPiecePoints[][2];
 
-#define SPARKS ((struct Particle *)SCRATCH)
+/// The charge's sparks, HAURES_SPARK_COUNT of them.
+#define HAURES_SPARKS ((struct Particle *)SCRATCH)
 
 #define HAURES_COMING_FRAMES 440 ///< frames of Haures's coming, unless skipped
 #define HAURES_FRAMES 92         ///< frames of the charge that follows
@@ -113,9 +114,23 @@ extern const u16 gHaures_BodyPiecePoints[][2];
 /// Face `face` of shard j's mesh: its three corners, then a byte no face sets.
 #define SHARD_FACE(mesh, j, face)                                              \
   ((mesh) + (j) * HAURES_SHARD_MESH_BYTES + (face) * 4)
-/// The shards fly out from the middle of the view.
+/// The point the shards fly apart from: the right edge of the view, whose
+/// width the canvas halves, at its middle height. Each shard starts a
+/// sixteenth of a pixel a frame across (FIXED_ONE >>
+/// (16 - HAURES_SHATTER_SPREAD_X_SHIFT)) and a sixty-fourth up or down for each
+/// pixel it lies from it.
 #define HAURES_SHATTER_X 120
 #define HAURES_SHATTER_Y 60
+#define HAURES_SHATTER_SPREAD_X_SHIFT 12
+/// A shard is drawn while its middle is no more than HAURES_SHARD_REACH
+/// outside the view.
+#define HAURES_SHARD_REACH 16
+/// As Haures dives away up and to the left, each frame adds to his speed a
+/// quarter of a pixel a frame more than the one before (FIXED_ONE >>
+/// (16 - HAURES_DIVE_PULL_X_SHIFT)); the eighth more that would lift him goes
+/// unused.
+#define HAURES_DIVE_PULL_X_SHIFT 14
+#define HAURES_DIVE_PULL_Y_SHIFT 13
 /// The charge's sparks: HAURES_SPARKS_PER_FRAME start each frame of the first
 /// two passes, each living HAURES_SPARK_LIFE frames.
 #define HAURES_SPARK_COUNT 512
@@ -125,6 +140,10 @@ extern const u16 gHaures_BodyPiecePoints[][2];
 /// HAURES_CHARGE_PASS_FRAMES: from the right, from the left drawn mirrored,
 /// then from the right again.
 #define HAURES_CHARGE_PASS_FRAMES 20
+/// Each of the first two passes' streaks of fire lasts HAURES_STREAK_FRAMES
+/// from its gHaures_BandStarts frame, swelling and narrowing again over half a
+/// turn of a sine.
+#define HAURES_STREAK_FRAMES 16
 /// The second pass's streaks of fire slash at about 56 degrees, where the
 /// first's slash at -45.
 #define HAURES_SECOND_BAND_ROLL 10192
@@ -748,9 +767,10 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
               p->x = INTtoFIXED(x);
               p->y = INTtoFIXED(y);
               {
-                s32 velocityY = (HAURES_SHATTER_Y - y) << 10;
+                s32 velocityY = (HAURES_SHATTER_Y - y) * (toFIXED(1) / 64);
 
-                p->velocityX = (x - HAURES_SHATTER_X) << 12;
+                p->velocityX = (x - HAURES_SHATTER_X)
+                               << HAURES_SHATTER_SPREAD_X_SHIFT;
                 p->velocityY = velocityY;
               }
               p->z = 0;
@@ -770,9 +790,9 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         position.x = (Trig_Sin(frame << 9) << 3) + toFIXED(108);
         position.y = toFIXED(56) - (Trig_Cos(frame << 9) << 3);
         if (frame > 396) {
-          velocity.x -= (frame - 397) << 14;
+          velocity.x -= (frame - 397) << HAURES_DIVE_PULL_X_SHIFT;
           position.x += velocity.x;
-          velocity.y -= (frame - 397) << 13;
+          velocity.y -= (frame - 397) << HAURES_DIVE_PULL_Y_SHIFT;
           // BUG: the fall adds the horizontal speed; velocity.y is never used.
 #ifdef BUGFIX
           position.y += velocity.y;
@@ -843,8 +863,10 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
           for (i = 0; i != HAURES_SHARDS; i++) {
             struct Particle *p = &work->particles[i];
             model->mesh = mesh + i * HAURES_SHARD_MESH_BYTES;
-            if ((u32)(FIXED_INTEGER_PART(p->x) + 16) <= 152 &&
-                (FIXEDtoINT(p->y)) >= -16 && (FIXEDtoINT(p->y)) <= 136) {
+            if ((u32)(FIXED_INTEGER_PART(p->x) + HAURES_SHARD_REACH) <=
+                    DISPLAY_WIDTH / 2 + 2 * HAURES_SHARD_REACH &&
+                FIXEDtoINT(p->y) >= -HAURES_SHARD_REACH &&
+                FIXEDtoINT(p->y) <= BATTLE_VIEW_HEIGHT + HAURES_SHARD_REACH) {
               Matrix_Initialize();
               Matrix_Translate(p->x - toFIXED(64), p->y - toFIXED(64), 0);
               Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
@@ -946,7 +968,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
       velocity.x = -toFIXED(12);
       velocity.y = toFIXED(6);
       {
-        s32 *variant = &SPARKS->variant;
+        s32 *variant = &HAURES_SPARKS->variant;
 
         for (i = 0; i != HAURES_SPARK_COUNT; i++, variant += 7) {
           *variant = -1;
@@ -967,7 +989,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     }
     {
       for (i = 0; i != HAURES_SPARK_COUNT; i++) {
-        struct Particle *p = &((struct Particle *)SCRATCH)[i];
+        struct Particle *p = &HAURES_SPARKS[i];
         if (p->variant >= 0) {
           s32 n = (p->variant >> 3) + 1;
 
@@ -1092,8 +1114,10 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     for (i = 0; i != 2; i++) {
       s32 start = gHaures_BandStarts[i];
 
-      if (frame >= start && frame < start + 16) {
-        FIXED amp = Trig_Sin((frame - start) << 11) / 8;
+      if (frame >= start && frame < start + HAURES_STREAK_FRAMES) {
+        FIXED amp =
+            Trig_Sin((frame - start) * (DEGtoANG(180) / HAURES_STREAK_FRAMES)) /
+            8;
         s32 x;
         s32 m;
 
@@ -1240,7 +1264,7 @@ void Mesh_BuildCylinderBand(struct MeshVertex *vertices,
 }
 #undef BLITTER
 #undef SCRATCH
-#undef SPARKS
+#undef HAURES_SPARKS
 #undef SHARD_FACE
 #undef FIRST_RING_Y
 #undef RING_SPACING

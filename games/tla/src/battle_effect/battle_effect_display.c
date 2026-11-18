@@ -4,10 +4,6 @@
 
 #include "battle_effect_internal.h"
 
-/// The canvas's usual weight over the battle, in sixteenths: every canvas
-/// opens with it.
-#define CANVAS_BLEND_LEVEL 14
-
 /// Puts the battle screen back into the display state every effect starts from
 /// and ends with.
 void BattleEffect_ConfigureEffectDisplay(void) {
@@ -60,5 +56,3 @@ void BattleEffect_ArmWin0HBlankDma(void) {
   Dma_Set(Ram_MapCellBuffer, (void *)&REG_WIN0H, DMA_HBLANK_HALFWORD_PER_LINE,
           (volatile u32 *)channel);
 }
-
-#undef CANVAS_BLEND_LEVEL

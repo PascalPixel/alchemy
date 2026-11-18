@@ -79,10 +79,6 @@ enum {
 /// MAP_CELL_SECOND_ZONE.
 #define MAP_CELL_FLOWING_SAND MAP_CELL_SECOND_ZONE
 
-/// Actor_JumpDownLedge's flag to return once the jump ends, without waiting
-/// for the actor to land.
-#define LEDGE_JUMP_NO_LANDING_WAIT 0x1000
-
 /// The cell column each pillar Move pushes stands in at its track's end, where
 /// its flag is set and the set-up places it again.
 enum {
@@ -117,25 +113,9 @@ enum {
 #define SAND_RISE_MOVES 16
 #define SAND_ROWS_END 99
 
-/// A 16.16 height in the 8-pixel steps a map cell's height is set in
-/// (MapGrid_SetCellHeight).
-#define CELL_HEIGHT_STEPS(height) ((height) >> 19)
-
 /// The sprite the sand's edge masks the screen with: 16 by 16 pixels, four
 /// tiles of colour 1.
 #define SAND_MASK_BYTES (4 * TILE_SIZE_4BPP)
-
-/// The actor script's work value 11, which sets or tests the Y scale as
-/// SW_SCALE_Y does (gActorScript_OperandHandlerTable gives both one handler).
-#define SW_SCALE_Y_DUPLICATE 11
-
-/// Sixteen puffs of dust in a ring round the leader as he lands, the first
-/// thrown twice.
-#define DUST_RING_PUFFS 16
-
-/// The leader's animation sitting on the floor, legs out, arms flung up and
-/// then lowered.
-#define ANIM_LEADER_SIT 49
 
 /// The first room (gAnkohlRuins_StoneFacesPlacements).
 enum AnkohlRuinsFirstRoomActorId {
@@ -2232,7 +2212,10 @@ u32 gSceneExits[] = {
 };
 
 /// The weeds' script: each clump stands half as tall again, and is set up by
-/// AnkohlRuins_SetUpWeeds.
+/// AnkohlRuins_SetUpWeeds. Work value 11 sets the Y scale as SW_SCALE_Y does
+/// (gActorScript_OperandHandlerTable gives both one handler), and a probe of
+/// the first room (render probe --scene AnkohlRuinsStoneFaces) shows its
+/// fourteen clumps at a Y scale of 1.5 and an X scale of 1.
 s32 gAnkohlRuins_WeedsScript[] = {
     SC_SET(SW_SCALE_Y_DUPLICATE, FIXED_ONE * 3 / 2),
     SC_CALL(AnkohlRuins_SetUpWeeds),

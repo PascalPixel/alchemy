@@ -7,12 +7,6 @@
 #include "gamepak/far_call/battle.h"
 #include "gamepak/far_call/field.h"
 
-/// The canvas's usual weight over the battle, in sixteenths.
-#define CANVAS_BLEND_LEVEL 14
-/// The header's level the battle background comes back at, which
-/// battle_effect_canvas.c's #undef takes from the parts after it.
-#define BACKGROUND_DARKENED_LEVEL BACKGROUND_DARKEN_FRAMES
-
 /// Shows the battle background, as dark as the canvas's fade left it, behind a
 /// cleared canvas, and fades out the action's sound effects.
 void BattleEffect_SetupBlendedDisplay(void) {
@@ -81,4 +75,3 @@ void BattleEffect_TintBattler(s32 unitId, s32 palette, s32 animation,
     groupIndex++;
   }
 }
-#undef CANVAS_BLEND_LEVEL

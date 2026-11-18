@@ -194,22 +194,22 @@ s32 ItemPicker_Run(s32 *selectedUnit, s32 *selectedSlot, s32 itemMode) {
 
 // The price window and the item details window fit their edition's text.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define PRICE_WINDOW_X 16
-#define PRICE_WINDOW_WIDTH 14
+#define ITEM_PICKER_PRICE_WINDOW_X 16
+#define ITEM_PICKER_PRICE_WINDOW_WIDTH 14
 #elif LANGUAGE == LANGUAGE_GERMAN
-#define PRICE_WINDOW_X 13
-#define PRICE_WINDOW_WIDTH 17
+#define ITEM_PICKER_PRICE_WINDOW_X 13
+#define ITEM_PICKER_PRICE_WINDOW_WIDTH 17
 #else
-#define PRICE_WINDOW_X 14
-#define PRICE_WINDOW_WIDTH 16
+#define ITEM_PICKER_PRICE_WINDOW_X 14
+#define ITEM_PICKER_PRICE_WINDOW_WIDTH 16
 #endif
 
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define DETAILS_WINDOW_WIDTH 13
+#define ITEM_PICKER_DETAILS_WINDOW_WIDTH 13
 #elif LANGUAGE == LANGUAGE_ENGLISH || LANGUAGE == LANGUAGE_FRENCH
-#define DETAILS_WINDOW_WIDTH 16
+#define ITEM_PICKER_DETAILS_WINDOW_WIDTH 16
 #else
-#define DETAILS_WINDOW_WIDTH 18
+#define ITEM_PICKER_DETAILS_WINDOW_WIDTH 18
 #endif
 
 /// Lets the player choose one of the party member's items, refusing with a
@@ -235,8 +235,9 @@ s32 ItemPicker_SelectItem(s32 unitId) {
   unit = Unit_Get(unitId);
   inventoryCount = 1;
   redraw = 1;
-  priceWindow = Window_CreateFar(PRICE_WINDOW_X, 8, PRICE_WINDOW_WIDTH, 4,
-                                 WINDOW_FLAG_INSTANT);
+  priceWindow =
+      Window_CreateFar(ITEM_PICKER_PRICE_WINDOW_X, 8,
+                       ITEM_PICKER_PRICE_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
   nameWindow = Window_CreateFar(0, 5, 30, 3, WINDOW_FLAG_INSTANT);
 
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_HOP_DOWN_LEFT;
@@ -289,8 +290,8 @@ s32 ItemPicker_SelectItem(s32 unitId) {
       struct Window *detailsWindow;
 
       Sound_PlayFar(SE_RECOVERY);
-      detailsWindow =
-          Window_CreateFar(0, 9, DETAILS_WINDOW_WIDTH, 10, WINDOW_FLAG_INSTANT);
+      detailsWindow = Window_CreateFar(0, 9, ITEM_PICKER_DETAILS_WINDOW_WIDTH,
+                                       10, WINDOW_FLAG_INSTANT);
       ItemMenu_DrawItemDetailsFar(detailsWindow, inventoryEntry);
       shop->memberSpritesShown = 0;
       while (gInput.held & KEY_SELECT)
@@ -347,7 +348,9 @@ s32 ItemPicker_SelectItem(s32 unitId) {
   return result;
 }
 
-#undef DETAILS_WINDOW_WIDTH
+#undef ITEM_PICKER_PRICE_WINDOW_X
+#undef ITEM_PICKER_PRICE_WINDOW_WIDTH
+#undef ITEM_PICKER_DETAILS_WINDOW_WIDTH
 
 // The note sits under the item's name; the price line reads "Price", the
 // price, then "Coins". Japanese indents the note by 8 pixels; Japanese and
@@ -359,9 +362,9 @@ s32 ItemPicker_SelectItem(s32 unitId) {
 #define SHOP_PRICE_NOTE_X 0
 #endif
 #if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_FRENCH
-#define SHOP_PRICE_NUMBER_X 32
+#define ITEM_PICKER_PRICE_NUMBER_X 32
 #else
-#define SHOP_PRICE_NUMBER_X 40
+#define ITEM_PICKER_PRICE_NUMBER_X 40
 #endif
 #if LANGUAGE == LANGUAGE_JAPANESE || LANGUAGE == LANGUAGE_FRENCH
 #define SHOP_PRICE_COINS_X 72
@@ -402,14 +405,15 @@ void ItemPicker_DrawItem(struct Window *window, s32 unitId, s32 slot) {
     price = Shop_SalePrice(unit->inventory[slot]) * quantity;
     labelMessage = (s32)MsgPriceHeading;
     Text_DrawMessageAsTilesFar(labelMessage, window, 8, 8);
-    Text_DrawNumberInWindowFar(price, 5, (s32)window, SHOP_PRICE_NUMBER_X, 8);
+    Text_DrawNumberInWindowFar(price, 5, (s32)window,
+                               ITEM_PICKER_PRICE_NUMBER_X, 8);
     // Five messages before the price heading: MsgCoins.
     Text_DrawMessageAsTilesFar(labelMessage - 5, window, SHOP_PRICE_COINS_X, 8);
   }
 }
 
 #undef SHOP_PRICE_NOTE_X
-#undef SHOP_PRICE_NUMBER_X
+#undef ITEM_PICKER_PRICE_NUMBER_X
 #undef SHOP_PRICE_COINS_X
 
 /// Queues each loaded icon's sprite while the grid is visible. Runs every

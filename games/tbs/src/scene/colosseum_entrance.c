@@ -83,7 +83,7 @@
 
 extern s32 gColosseumEntrance_GatherIntoIsaacScript[];
 extern s32 gColosseumEntrance_GatherIntoGaretScript[];
-extern s32 gColosseumEntrance_RejoinPartyScript[];
+extern s32 gColosseumEntrance_GatherIntoIsaacInWaitingRoomScript[];
 extern s32 gColosseumEntrance_EnterGatesScript[];
 extern s32 gColosseumEntrance_ApproachFinalsGroupScript[];
 extern s32 gColosseumEntrance_JoinFinalsFromEastScript[];
@@ -120,10 +120,10 @@ static void ColosseumEntrance_ExplainPartySupport(void);
 static void ColosseumEntrance_EscortToEastExit(void);
 static void ColosseumEntrance_AnnounceFinals(void);
 static void ColosseumEntrance_WalkToEastExit(void);
-static void ColosseumEntrance_CelebrateAdvancement(void);
+static void ColosseumEntrance_PraiseFirstMatchWon(void);
 static void ColosseumEntrance_EscortToWestExit(void);
 static void ColosseumEntrance_WalkToWestExit(void);
-static void ColosseumEntrance_CelebrateBothWins(void);
+static void ColosseumEntrance_PraiseBothMatchesWon(void);
 static void ColosseumEntrance_InitializeContestants(void);
 
 /// The Colosseum Entrance's people, numbered by the rows of
@@ -324,9 +324,11 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     case COLOSSEUM_CLEARED_TRIAL_FROM_STANDS:
       table = gColosseumTrialGroundsActorPlacements;
       break;
-    // XXX (no evidence): what entrances 3 and 8 were made for; no exit
-    // or code enters by them, only the debug scene selector can, and 8 takes
-    // the soldiers' table, as the arrivals of the finals day do.
+    // XXX (no evidence): what entrances 3 and 8 were made for; no exit or code
+    // enters by them, only the debug scene selector can. 3 stands the party
+    // before the stone passage's locked door, 8 in the passage south of the
+    // waiting room, and 8 takes the soldiers' table, as the arrivals of the
+    // finals day do.
     case 8:
     case COLOSSEUM_FROM_COLOSSEUM_AZART_MATCH_EAST:
     case COLOSSEUM_FROM_COLOSSEUM_SATRAGE_MATCH_NORTH:
@@ -1308,7 +1310,7 @@ static void ColosseumEntrance_ApplyArrivalState(void) {
     Party_AddMember(IVAN);
     Party_AddMember(MIA);
     GameFlag_Set(FLAG_COLOSSO_FIRST_MATCH_WON);
-    ColosseumEntrance_CelebrateAdvancement();
+    ColosseumEntrance_PraiseFirstMatchWon();
     break;
   case COLOSSEUM_LONG_PASSAGE_FROM_WAITING_ROOM_WEST:
     ColosseumEntrance_EscortToWestExit();
@@ -1321,13 +1323,14 @@ static void ColosseumEntrance_ApplyArrivalState(void) {
     Party_AddMember(IVAN);
     Party_AddMember(MIA);
     GameFlag_Set(FLAG_COLOSSO_SECOND_MATCH_WON);
-    ColosseumEntrance_CelebrateBothWins();
+    ColosseumEntrance_PraiseBothMatchesWon();
     break;
   default:
     break;
   }
 }
 
+/// Shows the next message from a speaker, then pauses ten frames.
 static void ColosseumEntrance_ShowMessageAndPause(s32 speaker) {
   Event_ShowMessage(speaker, 0);
   Event_Wait(10);
@@ -1358,7 +1361,7 @@ static void ColosseumEntrance_UpdateEntranceCells(void) {
 }
 
 /// Places the three companions behind Isaac for the soldiers' briefing.
-static inline void ColosseumEntrance_PositionPartyForBriefing(void) {
+static inline void ColosseumEntrance_PlaceCompanionsBehindIsaac(void) {
   Actor_SetPosition(ACTOR_GARET, 792, 136);
   Actor_SetPosition(ACTOR_IVAN, 824, 136);
   Actor_SetPosition(ACTOR_MIA, 808, 152);
@@ -1370,7 +1373,7 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   s32 flag;
 
   Event_Start();
-  ColosseumEntrance_PositionPartyForBriefing();
+  ColosseumEntrance_PlaceCompanionsBehindIsaac();
   wait(1);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   PaletteFade_ApplySource(RGB(0, 0, 0), PALETTES_ALL);
@@ -1539,9 +1542,12 @@ static void ColosseumEntrance_ExplainPartySupport(void) {
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_SetSpeed(ACTOR_IVAN, 1);
   Actor_SetSpeed(ACTOR_MIA, 1);
-  Actor_SetScript(ACTOR_GARET, gColosseumEntrance_RejoinPartyScript);
-  Actor_SetScript(ACTOR_IVAN, gColosseumEntrance_RejoinPartyScript);
-  Actor_RunScriptAndWait(ACTOR_MIA, gColosseumEntrance_RejoinPartyScript);
+  Actor_SetScript(ACTOR_GARET,
+                  gColosseumEntrance_GatherIntoIsaacInWaitingRoomScript);
+  Actor_SetScript(ACTOR_IVAN,
+                  gColosseumEntrance_GatherIntoIsaacInWaitingRoomScript);
+  Actor_RunScriptAndWait(ACTOR_MIA,
+                         gColosseumEntrance_GatherIntoIsaacInWaitingRoomScript);
   Event_Wait(20);
   ColosseumEntrance_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -1656,17 +1662,18 @@ static void ColosseumEntrance_WalkToEastExit(void) {
 
 /// Back in the Colosseum after the first win, the soldiers congratulate Isaac
 /// and lead him on to Colosseum Final 2.
-static void ColosseumEntrance_CelebrateAdvancement(void) {
+static void ColosseumEntrance_PraiseFirstMatchWon(void) {
   const s32 *actions;
 
   Event_Start();
-  ColosseumEntrance_PositionPartyForBriefing();
+  ColosseumEntrance_PlaceCompanionsBehindIsaac();
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 1);
   Actor_SetAnimation(ACTOR_FIRST_SOLDIER, ANIM_NOD);
   Event_SetMessageId(MsgColosseumSeeYouveMadeThroughYour);
+  // "I see you've made it through your first match."
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER + 1, 1);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER + 1);
@@ -1680,7 +1687,7 @@ static void ColosseumEntrance_CelebrateAdvancement(void) {
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_SetSpeed(ACTOR_IVAN, 1);
   Actor_SetSpeed(ACTOR_MIA, 1);
-  actions = gColosseumEntrance_RejoinPartyScript;
+  actions = gColosseumEntrance_GatherIntoIsaacInWaitingRoomScript;
   Actor_SetScript(ACTOR_GARET, actions);
   Actor_SetScript(ACTOR_IVAN, actions);
   Actor_RunScriptAndWait(ACTOR_MIA, actions);
@@ -1750,17 +1757,18 @@ static void ColosseumEntrance_WalkToWestExit(void) {
 
 /// Back in the Colosseum after the second win, one more win and Isaac is the
 /// champion.
-static void ColosseumEntrance_CelebrateBothWins(void) {
+static void ColosseumEntrance_PraiseBothMatchesWon(void) {
   const s32 *actions;
 
   Event_Start();
-  ColosseumEntrance_PositionPartyForBriefing();
+  ColosseumEntrance_PlaceCompanionsBehindIsaac();
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER, 1);
   Actor_SetAnimation(ACTOR_FIRST_SOLDIER, ANIM_NOD);
   Event_SetMessageId(MsgColosseumWonBothMatches);
+  // "You've managed to win both of your matches."
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER);
   Actor_RunRepeatedMotion(ACTOR_FIRST_SOLDIER + 1, 1);
   ColosseumEntrance_ShowMessageAndPause(ACTOR_FIRST_SOLDIER + 1);
@@ -1774,7 +1782,7 @@ static void ColosseumEntrance_CelebrateBothWins(void) {
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_SetSpeed(ACTOR_IVAN, 1);
   Actor_SetSpeed(ACTOR_MIA, 1);
-  actions = gColosseumEntrance_RejoinPartyScript;
+  actions = gColosseumEntrance_GatherIntoIsaacInWaitingRoomScript;
   Actor_SetScript(ACTOR_GARET, actions);
   Actor_SetScript(ACTOR_IVAN, actions);
   Actor_RunScriptAndWait(ACTOR_MIA, actions);
@@ -1799,8 +1807,8 @@ static void ColosseumEntrance_CelebrateBothWins(void) {
   Import_EventSetExitRequest(COLOSSEUM_WAITING_ROOM_TO_LONG_PASSAGE_EAST);
 }
 
-/// The warriors' child values and their waiting animations in the Colosseum's
-/// waiting room.
+/// Tints each warrior in the Colosseum's waiting room his own colours and sets
+/// the pace of his waiting animation.
 static void ColosseumEntrance_InitializeContestants(void) {
   Actor_SetSpriteColorById(ACTOR_MORGAN, SPRITE_COLOR_BGR);
   Actor_SetSpriteColorById(ACTOR_AZART, SPRITE_COLOR_NORMAL);
@@ -1809,7 +1817,8 @@ static void ColosseumEntrance_InitializeContestants(void) {
   Actor_SetSpriteColorById(ACTOR_DEKKA, SPRITE_COLOR_BRG);
   Actor_SetSpriteColorById(ACTOR_NAVAMPA, SPRITE_COLOR_RBG);
   Actor_SetSpriteColorById(ACTOR_BUFORD, SPRITE_COLOR_GREY);
-  // Animation speeds, against ANIMATION_STEP_NORMAL's 16.
+  // Each warrior paces at his own speed, so that none move in step: 10 to 60
+  // against ANIMATION_STEP_NORMAL's 16, while Satrage stands still.
   Actor_SetAnimationSpeedById(ACTOR_AZART, 10);
   Actor_SetAnimationSpeedById(ACTOR_GALAHAD, 20);
   Actor_SetAnimation(ACTOR_SATRAGE, ANIM_STILL);
@@ -1828,7 +1837,7 @@ s32 gColosseumEntrance_GatherIntoGaretScript[] = {
     SC_ANIMATION(1), SC_POSITION(0, 0, 0), SC_END,
 };
 
-s32 gColosseumEntrance_RejoinPartyScript[] = {
+s32 gColosseumEntrance_GatherIntoIsaacInWaitingRoomScript[] = {
     SC_ANIMATION(2), SC_MOVE(808, 0, 120), SC_SYNC,
     SC_ANIMATION(1), SC_POSITION(0, 0, 0), SC_END,
 };

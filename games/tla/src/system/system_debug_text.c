@@ -14,8 +14,6 @@
 #define DECIMAL_DIGITS_MAX 10
 /// The most characters DebugText_Print writes of a string.
 #define DEBUG_TEXT_MAX_LENGTH 32
-/// 2^32 / 10, rounded up: the high word of a product by it divides by 10.
-#define RECIPROCAL_OF_10 (0xffffffffU / 10 + 1)
 
 /// Writes `value` as HEX_DIGITS hexadecimal digits to the number buffer.
 void String_FormatHex(u32 value) {
@@ -49,7 +47,7 @@ void String_FormatDecimal(s32 value) {
   }
   gNumberTextBuffer[DECIMAL_DIGITS_MAX + 1] = 0;
   for (i = DECIMAL_DIGITS_MAX; value != 0; i--) {
-    quotient = Math_UnsignedMulHigh(value, RECIPROCAL_OF_10);
+    quotient = Math_UnsignedMulHigh(value, RECIPROCAL_OF(10));
     value -= quotient * 10;
     gNumberTextBuffer[i] = value + '0';
     value = quotient;

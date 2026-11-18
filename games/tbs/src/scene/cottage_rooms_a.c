@@ -70,6 +70,7 @@
 #include "field/scene_tables.h"
 #include "field/script_operands.h"
 #include "scene/import.h"
+#include "scene/sleep_z.h"
 #include "system/main_routine_work.h"
 #include "text/msg_ids.h"
 
@@ -162,10 +163,6 @@ static void CottageRoomsA_GaretComesHome(void);
 static void CottageRoomsA_SpawnSleepZ(void);
 
 #include "shared/actor_facing.c"
-
-/// A drifting Z's two steps, timer (east) and userValue (up), are steps of a
-/// 256th of a pixel a frame.
-#define SLEEP_Z_STEPS_PER_PIXEL 256
 
 /// Moves and grows a Z drifting up from Garet's sleeping grandfather.
 static s32 CottageRoomsA_AdvanceSleepZ(struct Actor *actor) {

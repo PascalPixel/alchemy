@@ -17,6 +17,7 @@
 #include "system/system.h"
 #include "types.h"
 #include "field/scene_tables.h"
+#include "scene/scene.h"
 #include "system/ram_buffer.h"
 #include "system/main_routine_work.h"
 #include "field/actor.h"
@@ -189,16 +190,9 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 /// The background palette the dock's colour cycle turns.
 #define DOCK_PALETTE ((volatile u16 *)&BG_PLTT_COLOR(11, 0))
 
-/// The two runs of DOCK_PALETTE's colours that turn round, as the Lemurian
-/// Ship's deck turns its own: the blues of the band along the ship's hull, and
-/// the surf.
-#define HULL_BAND_FIRST_COLOR 4
-#define HULL_BAND_LAST_COLOR 9
-#define SURF_FIRST_COLOR 12
-#define SURF_LAST_COLOR 15
-
 /// A palette task: every eighth frame it turns both runs of DOCK_PALETTE's
-/// colours round by one.
+/// colours round by one, as the Lemurian Ship's deck turns its own: the blues
+/// of the band along the ship's hull, and the surf.
 void LemuriaDock_CyclePalette(void) {
   if ((gFrameCount & 7) == 0) {
     s16 saved;

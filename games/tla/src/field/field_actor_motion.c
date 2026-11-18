@@ -437,8 +437,6 @@ void Actor_UpdateAllThumb(void) {
   }
 }
 
-#define WORD_AT(base, offset) (*(s32 *)((u8 *)(base) + (offset)))
-
 /// Task: each actor riding another (priority flag 64, its carrier at offset
 /// 0x7c) moves with its carrier's last step (the carrier's words at 0x70,
 /// 0x74 and 0x78), and one standing on it is set on its top, 16 pixels up.
@@ -567,7 +565,6 @@ void Actor_ListRunning(struct Actor *actor, struct Actor **out) {
   } while (actor != end);
   *out = NULL;
 }
-#undef WORD_AT
 #undef SCRIPT_COMMAND_MAX
 #undef FLOAT_CYCLE_FRAMES
 #undef FLOAT_DIVISOR

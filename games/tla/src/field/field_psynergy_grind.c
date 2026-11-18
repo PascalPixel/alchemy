@@ -247,16 +247,6 @@ end:
 
 // FIELD_PSYNERGY_GRIND as FieldPsynergy_Run casts it: the view sways.
 
-/// The heap block the sway takes, Grind's work's size though it holds only the
-/// view move.
-#define VIEW_MOVE_WORK_SIZE sizeof(struct GrindWork)
-
-/// The sway's amplitude (16.16 pixels) and how it ramps.
-#define SWAY_START toFIXED(2)
-#define SWAY_PEAK toFIXED(6)
-#define SWAY_RAMP (toFIXED(3) / 20) ///< 0.15 pixels a frame
-#define SWAY_HOLD_FRAMES 10
-
 /// Sways the view up and down the screen: the swing grows from SWAY_START to
 /// SWAY_PEAK, holds for SWAY_HOLD_FRAMES, shrinks back and stops; then the
 /// map's view bounds come back.
@@ -267,7 +257,8 @@ void FieldPsynergy_Grind(void) {
   s32 state;
   s32 frames;
 
-  HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, VIEW_MOVE_WORK_SIZE);
+  // Grind's work's size, though the sway holds only the view move.
+  HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct GrindWork));
   scene = Ram_HeapSlots->fieldEffectWork;
   FieldPsynergy_FadeToCastColor();
   BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);

@@ -154,7 +154,7 @@ enum {
 
 /// For this visit: the room's unseen blocks drawn
 /// (DehkanPlateau_RestoreBlocks).
-#define FLAG_BLOCKS_SHOWN FLAG_SCENE_TEMP_00
+#define FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN FLAG_SCENE_TEMP_00
 /// The leader stands on the crack he has just opened; set until he steps off.
 #define FLAG_STANDING_ON_OPENED_CRACK FLAG_SCENE_TEMP_01
 /// Room 6's stake's cell holds the attributes
@@ -216,6 +216,15 @@ enum {
   THEMIS_AXE_CHEST_CRACKS = 8,
   TIGHTROPES_CRACKS = 6,
   POUND_CUBE_CRACKS = 16
+};
+
+/// The fifth room's two cracks that have another just south of them, the next
+/// in its list; once both are open, the hole drawn below is JOINED_HOLE of
+/// gDehkanPlateau_PoundCubeHolePictures in place of its own.
+enum {
+  POUND_CUBE_WEST_UPPER_CRACK = 0,
+  POUND_CUBE_EAST_UPPER_CRACK = 11,
+  JOINED_HOLE = 4
 };
 
 void Actor_DisableById(s32 id);
@@ -421,13 +430,13 @@ void DehkanPlateau_SetBlocksShown(s32 show) {
 /// Draws the room's unseen blocks again, and notes them shown.
 void DehkanPlateau_ShowBlocks(void) {
   DehkanPlateau_SetBlocksShown(1);
-  GameFlag_Set(FLAG_BLOCKS_SHOWN);
+  GameFlag_Set(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN);
 }
 
 /// Stops drawing the room's unseen blocks.
 void DehkanPlateau_HideBlocks(void) {
   DehkanPlateau_SetBlocksShown(0);
-  GameFlag_Clear(FLAG_BLOCKS_SHOWN);
+  GameFlag_Clear(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN);
 }
 
 #include "shared/actors_set_hidden.c"
@@ -768,11 +777,15 @@ void DehkanPlateau_StepOnCrack(void) {
                                              height);
         }
       } else if (scene == SCENE(DehkanPlateauPoundCube)) {
-        if ((n == 0 && GameFlag_Get(FLAG_CRACK_OPENED(1))) ||
-            (n == 11 && GameFlag_Get(FLAG_CRACK_OPENED(12)))) {
-          s32 srcX = gDehkanPlateau_PoundCubeHolePictures[8],
-              srcY = gDehkanPlateau_PoundCubeHolePictures[9], width = 1,
-              height = 2;
+        if ((n == POUND_CUBE_WEST_UPPER_CRACK &&
+             GameFlag_Get(
+                 FLAG_CRACK_OPENED(POUND_CUBE_WEST_UPPER_CRACK + 1))) ||
+            (n == POUND_CUBE_EAST_UPPER_CRACK &&
+             GameFlag_Get(
+                 FLAG_CRACK_OPENED(POUND_CUBE_EAST_UPPER_CRACK + 1)))) {
+          s32 srcX = gDehkanPlateau_PoundCubeHolePictures[2 * JOINED_HOLE],
+              srcY = gDehkanPlateau_PoundCubeHolePictures[2 * JOINED_HOLE + 1],
+              width = 1, height = 2;
           MapGrid_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width,
                                              height);
         } else {
@@ -877,10 +890,10 @@ void DehkanPlateau_ForgetCrackOnLeaving(void) {
 /// unless they were shown; otherwise notes them shown.
 void DehkanPlateau_RestoreBlocks(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) != 0) {
-    if (GameFlag_Get(FLAG_BLOCKS_SHOWN) == 0)
+    if (GameFlag_Get(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN) == 0)
       DehkanPlateau_HideBlocks();
   } else {
-    GameFlag_Set(FLAG_BLOCKS_SHOWN);
+    GameFlag_Set(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN);
   }
 }
 
@@ -1794,6 +1807,9 @@ void DehkanPlateau_InitializeMintChest(void) {
     MapGrid_CopyCellPictureIndicesRect(3, 69, 30, 93, 1, 4);
   }
   {
+    /* FAKEMATCH(temporary): the entrance read once as a halfword into a local
+     * and its sign extended by hand; plainly, gMainRoutineWork.entrance in the
+     * test and GameFlag_Set(FLAG_FELL_THROUGH(gMainRoutineWork.entrance)). */
     s32 entrance = *(u16 *)&gMainRoutineWork.entrance;
 
     if ((u16)(entrance - FIRST_LANDING_ENTRANCE) <=
@@ -2457,8 +2473,8 @@ struct Trigger gDehkanPlateau_FullMetalVestChestTriggers[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_FULL_METAL_VEST_CHEST_STAKE, FLAG_FULL_METAL_VEST_CHEST_STAKE_POUNDED, EVENT(DehkanPlateau_PoundFullMetalVestChestStake)},
     {TRIGGER_PUSHED, 0, FLAG_FULL_METAL_VEST_CHEST_PILLAR_IN_GAP, EVENT(DehkanPlateau_DropFullMetalVestChestPillarIntoGap)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FULL_METAL_VEST_CHEST_PILLAR, FLAG_FULL_METAL_VEST_CHEST_PILLAR_IN_GAP, EVENT(DehkanPlateau_DropFullMetalVestChestPillarIntoGap)},
-    {TRIGGER_STEP, 6, FLAG_BLOCKS_SHOWN, EVENT(DehkanPlateau_ShowBlocks)},
-    {TRIGGER_STEP, 7, IF_FLAG_SET(FLAG_BLOCKS_SHOWN), EVENT(DehkanPlateau_HideBlocks)},
+    {TRIGGER_STEP, 6, FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN, EVENT(DehkanPlateau_ShowBlocks)},
+    {TRIGGER_STEP, 7, IF_FLAG_SET(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN), EVENT(DehkanPlateau_HideBlocks)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(DehkanPlateau_StepOffCrack)},
     {TRIGGER_STEP, TRIGGER_FULL_METAL_VEST_CHEST_FIRST_CRACK, FLAG_STANDING_ON_OPENED_CRACK, EVENT(DehkanPlateau_StepOnCrack)},
     {TRIGGER_STEP, TRIGGER_FULL_METAL_VEST_CHEST_FIRST_CRACK + 1, FLAG_STANDING_ON_OPENED_CRACK, EVENT(DehkanPlateau_StepOnCrack)},
@@ -2493,8 +2509,8 @@ struct Trigger gDehkanPlateau_ThemisAxeChestTriggers[] = {
     {TRIGGER_PUSHED, 0, FLAG_THEMIS_AXE_CHEST_PILLAR_PLACED, EVENT(DehkanPlateau_PlaceThemisAxeChestPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_THEMIS_AXE_CHEST_PILLAR, FLAG_THEMIS_AXE_CHEST_PILLAR_PLACED, EVENT(DehkanPlateau_LiftThemisAxeChestPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_THEMIS_AXE_CHEST_PILLAR, FLAG_THEMIS_AXE_CHEST_PILLAR_PLACED, EVENT(DehkanPlateau_PlaceThemisAxeChestPillar)},
-    {TRIGGER_STEP, 6, FLAG_BLOCKS_SHOWN, EVENT(DehkanPlateau_ShowBlocks)},
-    {TRIGGER_STEP, 7, IF_FLAG_SET(FLAG_BLOCKS_SHOWN), EVENT(DehkanPlateau_HideBlocks)},
+    {TRIGGER_STEP, 6, FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN, EVENT(DehkanPlateau_ShowBlocks)},
+    {TRIGGER_STEP, 7, IF_FLAG_SET(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN), EVENT(DehkanPlateau_HideBlocks)},
     {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(DehkanPlateau_StepOffCrack)},
     {TRIGGER_STEP, TRIGGER_THEMIS_AXE_CHEST_FIRST_CRACK, FLAG_STANDING_ON_OPENED_CRACK, EVENT(DehkanPlateau_StepOnCrack)},
     {TRIGGER_STEP, TRIGGER_THEMIS_AXE_CHEST_FIRST_CRACK + 1, FLAG_STANDING_ON_OPENED_CRACK, EVENT(DehkanPlateau_StepOnCrack)},
@@ -2541,8 +2557,8 @@ struct Trigger gDehkanPlateau_TightropesTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), TRIGGER_TIGHTROPES_PILLARS_WEST, CONDITION_ALWAYS, EVENT(DehkanPlateau_StepOnTightropesPillars)},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 26, CONDITION_ALWAYS, EVENT(DehkanPlateau_StepOnTightropesPillars)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 27, CONDITION_ALWAYS, EVENT(DehkanPlateau_StepOnTightropesPillars)},
-    {TRIGGER_STEP, 7, FLAG_BLOCKS_SHOWN, EVENT(DehkanPlateau_ShowBlocks)},
-    {TRIGGER_STEP, 8, IF_FLAG_SET(FLAG_BLOCKS_SHOWN), EVENT(DehkanPlateau_HideBlocks)},
+    {TRIGGER_STEP, 7, FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN, EVENT(DehkanPlateau_ShowBlocks)},
+    {TRIGGER_STEP, 8, IF_FLAG_SET(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN), EVENT(DehkanPlateau_HideBlocks)},
     {TRIGGER_STEP, TRIGGER_TIGHTROPES_FIRST_CRACK, FLAG_STANDING_ON_OPENED_CRACK, EVENT(DehkanPlateau_StepOnCrack)},
     {TRIGGER_STEP, TRIGGER_TIGHTROPES_FIRST_CRACK + 1, FLAG_STANDING_ON_OPENED_CRACK, EVENT(DehkanPlateau_StepOnCrack)},
     {TRIGGER_STEP, TRIGGER_TIGHTROPES_FIRST_CRACK + 2, FLAG_STANDING_ON_OPENED_CRACK, EVENT(DehkanPlateau_StepOnCrack)},
@@ -2563,8 +2579,8 @@ struct Trigger gDehkanPlateau_MintChestTriggers[] = {
     {TRIGGER_EXIT, 41, CONDITION_ALWAYS, 41},
     {TRIGGER_EXIT, 42, CONDITION_ALWAYS, 42},
     {TRIGGER_EXIT, 43, CONDITION_ALWAYS, 43},
-    {TRIGGER_STEP, 8, FLAG_BLOCKS_SHOWN, EVENT(DehkanPlateau_ShowBlocks)},
-    {TRIGGER_STEP, 9, IF_FLAG_SET(FLAG_BLOCKS_SHOWN), EVENT(DehkanPlateau_HideBlocks)},
+    {TRIGGER_STEP, 8, FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN, EVENT(DehkanPlateau_ShowBlocks)},
+    {TRIGGER_STEP, 9, IF_FLAG_SET(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN), EVENT(DehkanPlateau_HideBlocks)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2613,8 +2629,8 @@ struct Trigger gDehkanPlateau_CannonTriggers[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_CANNON_ROOM_STAKE, FLAG_CANNON_ROOM_STAKE_POUNDED, EVENT(DehkanPlateau_PoundCannonStake)},
     {TRIGGER_STEP, 9, FLAG_STAKE_CELL_CHANGED, EVENT(DehkanPlateau_EnterLowerPath)},
     {TRIGGER_STEP, 10, IF_FLAG_SET(FLAG_STAKE_CELL_CHANGED), EVENT(DehkanPlateau_LeaveLowerPath)},
-    {TRIGGER_STEP, 5, FLAG_BLOCKS_SHOWN, EVENT(DehkanPlateau_ShowBlocks)},
-    {TRIGGER_STEP, 6, IF_FLAG_SET(FLAG_BLOCKS_SHOWN), EVENT(DehkanPlateau_HideBlocks)},
+    {TRIGGER_STEP, 5, FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN, EVENT(DehkanPlateau_ShowBlocks)},
+    {TRIGGER_STEP, 6, IF_FLAG_SET(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN), EVENT(DehkanPlateau_HideBlocks)},
     {TRIGGER_STEP, 11, FLAG_CANNON_MET, EVENT(DehkanPlateau_MeetCannon)},
     {TRIGGER_TALK, ACTOR_CANNON, CONDITION_ALWAYS, EVENT(DehkanPlateau_FightCannon)},
     {TRIGGER_TABLE_END},

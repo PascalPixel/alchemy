@@ -1280,7 +1280,8 @@ void HeatGauge_Start(void) {
 /// While held (1), the gauge stays on screen.
 static void HeatGauge_SetHeld(u16 value) { gHeatGauge_Held = value; }
 
-#define FIELD_EFFECT_DURATION_SCRIPT_QUALIFIER const
+// Lamakan Desert keeps its duration scripts with its read-only data.
+#define FIELD_EFFECT_DURATION_SCRIPTS_READ_ONLY
 #include "shared/field_effect_duration_scripts.c"
 
 // clang-format off

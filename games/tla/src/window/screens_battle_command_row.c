@@ -26,8 +26,6 @@ struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y) {
 #define WINDOW_X 23
 #endif
 
-#define WINDOW_WORK ((struct WindowWork *)Ram_HeapSlots->windowWork)
-
 /// BG1's tile number of the command row's first icon tile.
 #define COMMAND_ROW_ICON_TILE (BG_CHAR_SIZE / (8 * 8))
 
@@ -469,4 +467,3 @@ s32 PartyStatus_HighlightMembers(u16 *ids) {
 }
 
 #undef WINDOW_X
-#undef WINDOW_WORK

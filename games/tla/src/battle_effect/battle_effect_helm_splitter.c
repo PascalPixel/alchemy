@@ -203,8 +203,3 @@ void BattleEffect_RunHelmSplitter(struct BattleEffectParams *args) {
 #undef HELM_SPLITTER_SPARKS
 #undef HELM_SPLITTER_SPARK_SLOTS
 #undef HELM_SPLITTER_STAR_SIZE
-
-// Dragon Cloud's sparks, which the next part, dragon_cloud.c, reads: 128 at
-// the target, 128 thrown up at the start and 128 shed by the head.
-#define SPARKS ((struct Particle *)(Ram_MapCellBuffer + 16384))
-#define SPARK_COUNT 512

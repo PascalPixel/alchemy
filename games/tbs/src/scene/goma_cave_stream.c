@@ -52,6 +52,7 @@
 #include "graphics/graphics.h"
 #include "menu/menu.h"
 #include "scene/field_effect_spawn.h"
+#include "scene/goma_cave.h"
 #include "sound/sound.h"
 #include "system/main_routine_work.h"
 #include "system/system.h"
@@ -152,11 +153,6 @@ static void GomaCaveStream_SpinStump(struct Actor *actor) {
 }
 
 #include "shared/actor_wait_below_height.c"
-
-/// The frames the stump tips before it leaps, as in Goma Cave's entrance.
-#define STUMP_TIP_FRAMES 18
-/// The puffs of dust that burst round the stump as it lands.
-#define STUMP_LANDING_PUFFS 17
 
 /// The stump leaps out of the way and sinks in the water.
 static void GomaCaveStream_LeapStump(s32 stumpId) {

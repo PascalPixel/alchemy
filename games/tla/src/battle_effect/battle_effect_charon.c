@@ -78,7 +78,6 @@
 #define CHARON_BURST_FRAMES 24
 #define CHARON_SPARKS (CHARON_BURSTS + CHARON_BURST_COUNT)
 #define CHARON_SPARK_COUNT 128
-#define OBJ_VRAM ((u8 *)OBJ_VRAM0)
 /// The colours of the 256-colour sprites: the red dome's (RedDomeTiles) from
 /// CHARON_DOME_FIRST_COLOR, Charon's from the first, and the red orb's
 /// (RedOrbTiles) in the two palettes from CHARON_ORB_PALETTE.
@@ -1899,7 +1898,6 @@ void Render_BuildQuadStrip(struct StripQuad *quad, s32 width, s32 height,
 #undef OAM_BUFFER
 #undef REVEAL_BUFFER
 #undef ORB_BUFFER
-#undef OBJ_VRAM
 #undef CHARON_SEAL_TILES
 #undef DROPS
 #undef CURSES

@@ -173,7 +173,7 @@ enum GarohBlocksActorId {
 /// The way up: the pillars raised on their cells, and the rope Lashed.
 #define FLAG_FIRST_PILLAR_RAISED FLAG_SCENE_TEMP_01
 #define FLAG_SECOND_PILLAR_RAISED FLAG_SCENE_TEMP_02
-#define FLAG_ROPE_LASHED FLAG_SCENE_TEMP_03
+#define FLAG_GAROH_ROPE_LASHED FLAG_SCENE_TEMP_03
 #define FLAG_FOURTH_PILLAR_RAISED FLAG_SCENE_TEMP_04
 /// The edges of the way up's evening, where it begins and where the night or
 /// the day does, crossed since the party came in.
@@ -793,7 +793,7 @@ DEFINE_GAROH_TRIGGER_AT_CELL(Garoh_RaiseSecondPillarOnCell, ACTOR_SECOND_PILLAR,
 /// rope's flag and does nothing.
 void Garoh_CheckThirdPillar(void) {
   Actor_Get(ACTOR_THIRD_PILLAR);
-  Flag_IsSet(FLAG_ROPE_LASHED);
+  Flag_IsSet(FLAG_GAROH_ROPE_LASHED);
 }
 
 /// The fourth pillar rises once it stands on its cell.
@@ -986,7 +986,7 @@ extern u32 gGaroh_QuestionMarkScript[];
 /// Lash ties the rope between the third and fourth pillars.
 void Garoh_LashRope(void) {
   Rope_Lash(1, ACTOR_THIRD_PILLAR, ACTOR_FOURTH_PILLAR);
-  Flag_Set(FLAG_ROPE_LASHED);
+  Flag_Set(FLAG_GAROH_ROPE_LASHED);
 }
 
 /// Until the secret is shared, whether the party has met the werewolves.
@@ -1051,12 +1051,6 @@ DEFINE_GAROH_PLAY_EFFECT(Garoh_OpenCavePassage, 1, 44)
 /// Reveal's effect played on the cave's passage as it closes.
 DEFINE_GAROH_PLAY_EFFECT(Garoh_CloseCavePassage, 3, 39)
 
-/// Plays an animation, then waits the given frames.
-#define Actor_AnimateThenWait(id, animation, frames)                           \
-  do {                                                                         \
-    Actor_SetAnimation(id, animation);                                         \
-    FieldEvent_Wait(frames);                                                   \
-  } while (0)
 /// Sends an actor walking to where the leader stands, if there is a leader.
 static inline void Scene_WalkTowardLeader(s32 actorId) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
@@ -3059,9 +3053,9 @@ struct Trigger gGaroh_BlocksTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_PILLAR,
      FLAG_SECOND_PILLAR_RAISED, EVENT(Garoh_PlaceSecondPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
-     ACTOR_THIRD_PILLAR, FLAG_ROPE_LASHED, EVENT(Garoh_LiftPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_THIRD_PILLAR, FLAG_ROPE_LASHED,
-     EVENT(Garoh_PlaceThirdPillar)},
+     ACTOR_THIRD_PILLAR, FLAG_GAROH_ROPE_LASHED, EVENT(Garoh_LiftPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_THIRD_PILLAR,
+     FLAG_GAROH_ROPE_LASHED, EVENT(Garoh_PlaceThirdPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_FOURTH_PILLAR, FLAG_FOURTH_PILLAR_RAISED, EVENT(Garoh_LiftPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FOURTH_PILLAR,

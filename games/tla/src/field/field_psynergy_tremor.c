@@ -23,12 +23,12 @@
 /// STRONG_SHAKE_PIXELS_PER_TURN pixels the view sways past SWAY_SHAKE.
 #define STRONG_SHAKE_PIXELS_PER_TURN 128
 
-// The sway's amplitude (16.16 pixels) and how it ramps.
-#define SWAY_START toFIXED(2)
-#define SWAY_PEAK toFIXED(12)
-#define SWAY_RAMP (toFIXED(1) / 10) // 0.1 pixels a frame
-#define SWAY_SHAKE toFIXED(4)       // sprites shake only past this
-#define SWAY_HOLD_FRAMES 40
+// The stronger sway at an object (16.16 pixels): from SWAY_START up to
+// STRONG_SWAY_PEAK, ramping more slowly and holding longer.
+#define STRONG_SWAY_PEAK toFIXED(12)
+#define STRONG_SWAY_RAMP (toFIXED(1) / 10) // 0.1 pixels a frame
+#define SWAY_SHAKE toFIXED(4)              // sprites shake only past this
+#define STRONG_SWAY_HOLD_FRAMES 40
 
 enum {
   SWAY_GROW,
@@ -53,11 +53,11 @@ void Sprite_SetAnimationSpeedFar(void *sprite, s32 value);
 
 /// Tremor ("Shake objects left and right.") on the chosen object: sways the
 /// view from side to side, as FieldPsynergy_Tremor does with no object: the
-/// swing grows from SWAY_START to SWAY_PEAK, holds SWAY_HOLD_FRAMES, shrinks
-/// back and stops. Past SWAY_SHAKE the nearby objects' sprites shake with it.
-/// The work also takes the object's picture and SHAKE_SPRITE_COUNT sprites,
-/// which nothing here draws. An object whose picture is larger than
-/// PICTURE_MAX_PIXELS gets no sway.
+/// swing grows from SWAY_START to STRONG_SWAY_PEAK, holds
+/// STRONG_SWAY_HOLD_FRAMES, shrinks back and stops. Past SWAY_SHAKE the nearby
+/// objects' sprites shake with it. The work also takes the object's picture and
+/// SHAKE_SPRITE_COUNT sprites, which nothing here draws. An object whose
+/// picture is larger than PICTURE_MAX_PIXELS gets no sway.
 void FieldPsynergy_TremorOnTarget(void) {
   struct TremorWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*work));
@@ -140,14 +140,14 @@ void FieldPsynergy_TremorOnTarget(void) {
       case SWAY_GROW:
         if (frames == 40)
           showing = 1;
-        amplitude += SWAY_RAMP;
-        if (amplitude >= SWAY_PEAK) {
+        amplitude += STRONG_SWAY_RAMP;
+        if (amplitude >= STRONG_SWAY_PEAK) {
           state = SWAY_HOLD;
           frames = -1;
         }
         break;
       case SWAY_HOLD:
-        if (frames == SWAY_HOLD_FRAMES) {
+        if (frames == STRONG_SWAY_HOLD_FRAMES) {
           state = SWAY_SHRINK;
           frames = -1;
         }
@@ -155,7 +155,7 @@ void FieldPsynergy_TremorOnTarget(void) {
       case SWAY_SHRINK:
         if (frames == 50)
           showing = -1;
-        amplitude -= SWAY_RAMP;
+        amplitude -= STRONG_SWAY_RAMP;
         if (amplitude <= SWAY_START) {
           state = SWAY_SETTLE;
           frames = -1;
@@ -191,22 +191,16 @@ void FieldPsynergy_TremorOnTarget(void) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 
-#undef SWAY_PEAK
-#undef SWAY_RAMP
-#undef SWAY_HOLD_FRAMES
+#undef STRONG_SWAY_PEAK
+#undef STRONG_SWAY_RAMP
+#undef STRONG_SWAY_HOLD_FRAMES
 #undef STRONG_SHAKE_PIXELS_PER_TURN
 
 // Tremor as FieldPsynergy_Run casts it, at no object: the view sways.
 
-/// The heap block the sway takes, Tremor's work's size though it holds only the
-/// view move.
-#define VIEW_MOVE_WORK_SIZE sizeof(struct TremorWork)
-
-// The sway's amplitude (16.16 pixels) and how it ramps.
-#define SWAY_PEAK toFIXED(6)
-#define SWAY_RAMP (toFIXED(3) / 20) // 0.15 pixels a frame
-#define SWAY_HOLD_FRAMES 10
-#define SWAY_SHAKE_FRAMES 50 // the hold while objects shake
+/// The sway's hold while nearby objects shake with it, in place of
+/// SWAY_HOLD_FRAMES.
+#define SWAY_SHAKE_FRAMES 50
 /// The objects shake as far as a whole turn for every SHAKE_PIXELS_PER_TURN
 /// pixels the view sways.
 #define SHAKE_PIXELS_PER_TURN 384
@@ -217,8 +211,9 @@ void FieldPsynergy_TremorOnTarget(void) {
 /// are any, the hold lasts SWAY_SHAKE_FRAMES instead of SWAY_HOLD_FRAMES. Then
 /// the view bounds and the sprites come back.
 void FieldPsynergy_Tremor(void) {
+  // Tremor's work's size, though the sway holds only the view move.
   struct ViewMoveWork *work =
-      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, VIEW_MOVE_WORK_SIZE);
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct TremorWork));
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 frameCount;
@@ -320,12 +315,7 @@ void BattleEffect_ShiftRowsDown(u8 *base, s32 stride, s32 rows) {
 #undef SHAKE_SPRITE_PALETTE
 #undef PICTURE_SIZE
 #undef PICTURE_MAX_PIXELS
-#undef SWAY_START
-#undef SWAY_PEAK
-#undef SWAY_RAMP
 #undef SWAY_SHAKE
-#undef SWAY_HOLD_FRAMES
-#undef VIEW_MOVE_WORK_SIZE
 #undef SWAY_SHAKE_FRAMES
 #undef SHAKE_STEP
 #undef SHAKE_PIXELS_PER_TURN

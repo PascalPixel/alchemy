@@ -350,7 +350,7 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
   s32 resource;
   s32 frame;
   s32 i;
-  s32 group = 32; // motes that set out together, 8 frames apart
+  s32 group = MOTE_VISIBLE_COUNT / 4; // four groups set out, 8 frames apart
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;

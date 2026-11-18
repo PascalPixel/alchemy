@@ -1,7 +1,20 @@
 #ifndef ALCHEMY_COLOSSO_SOLO_H
 #define ALCHEMY_COLOSSO_SOLO_H
 
+#include "flags.h"
 #include "types.h"
+
+/// The exits shared/colosso_solo.c takes, numbered alike in the three Colosso
+/// match scenes (scene_exits.h): its way from lending a hand to the race (each
+/// scene's LEND_A_HAND_TO_RACE), and its way back out to the Colosseum.
+enum ColossoSoloExit {
+  COLOSSO_SOLO_TO_RACE = 10,
+  COLOSSO_SOLO_TO_COLOSSEUM = 11
+};
+
+/// Closes the step trigger at each match scene's arena. Nothing in the game
+/// sets it.
+#define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_SCENE_TEMP_10
 
 void Colosso_PlaceFriendsAtCheeringSpots(void);
 

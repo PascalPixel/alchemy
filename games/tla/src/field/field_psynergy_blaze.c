@@ -71,11 +71,11 @@ void FieldPsynergy_Blaze(void) {
   actor = scene->child;
   if (Actor_GetSpriteIdFar(actor) == SPRITE_MARS_TORCH_LIT) {
     kind = ACTOR_FIRST_LAYER(actor)->colorMode;
-    if (kind == 4)
+    if (kind == SPRITE_COLOR_GBR)
       look = 1;
-    if (kind == 1)
+    if (kind == SPRITE_COLOR_GRB)
       look = 2;
-    if (kind == 3)
+    if (kind == SPRITE_COLOR_BGR)
       look = 3;
   }
   Field_StartColorTransition(8, gBlaze_TintColors[look]);

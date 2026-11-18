@@ -1277,8 +1277,6 @@ void JupiterLighthouse_PlaceTheHurt(void) {
   Actor_SetScript(ACTOR_MIA, gJupiterLighthouse_MiaScript);
 }
 
-#define EVENT_WORK gFieldWork
-
 s32 Inventory_Equip();
 
 /// After the battle with Karst and Agatio: the two stand over the fallen Isaac
@@ -1451,10 +1449,10 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
     Actor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     // "Typical. And you're going to try to stop us from finishing them off..."
     FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 5);
-    EVENT_WORK->message++;
+    gFieldWork->message++;
   } else {
     Actor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-    EVENT_WORK->message++;
+    gFieldWork->message++;
     // "Don't lie... We can see it in your eyes. We can see what you truly..."
     FieldEvent_ShowMessageThenWait(ACTOR_KARST, 0, 5);
   }
@@ -1542,10 +1540,10 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
     Actor_AnimateThenWait(ACTOR_AGATIO, ANIM_SHAKE_HEAD, 33);
     // "I don't care if you want to help Garet or not! The lighthouse comes..."
     FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 5);
-    EVENT_WORK->message++;
+    gFieldWork->message++;
   } else {
     Actor_AnimateThenWait(ACTOR_AGATIO, ANIM_SHAKE_HEAD, 33);
-    EVENT_WORK->message++;
+    gFieldWork->message++;
     // "We do not have time to wait for you to save Garet!"
     FieldEvent_ShowMessageThenWait(ACTOR_AGATIO, 0, 5);
   }
@@ -1638,7 +1636,7 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   PartyInventory_Remove(ITEM_MYTHRIL_BAG_JUPITER_STAR);
   PartyInventory_Add(ITEM_MYTHRIL_BAG_B);
   // "Felix took the Mars Star."
-  Message_ShowCentered((s16)EVENT_WORK->message++, 5);
+  Message_ShowCentered((s16)gFieldWork->message++, 5);
   index = 0;
   for (index = 0; index <= INVENTORY_SLOTS - 1; index++) {
     if ((Unit_Get(FELIX)->inventory[index] & INVENTORY_ITEM_ID_MASK) ==
@@ -1881,16 +1879,12 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
 #undef WORD_AT
 #undef PLACE
-#undef EVENT_WORK
 extern const s32 *gFieldEffect_DurationScripts[];
 
 void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 
-#define EFFECT_SPAWN FieldEffect_Spawn
-#define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
-#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
 
 /// The cells CrackedTile_Step watches, and the cell it copies over the one the

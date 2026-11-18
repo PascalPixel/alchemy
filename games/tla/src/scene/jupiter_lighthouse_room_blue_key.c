@@ -43,6 +43,7 @@
 #include "system/io_write.h"
 #include "field/field_effect.h"
 #include "macros.h"
+#include "fixed_math.h"
 #include "field/actor_script.h"
 
 /// Set once Move has dropped the pillar into the gap in the floor; cleared as
@@ -272,8 +273,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 extern s8 gPushFootprints[][4];
 
-#define ABS(x) ((x) < 0 ? -(x) : (x))
-
 /// Makes the map cells under a pushable actor solid, its footprint chosen by
 /// its sprite. Returns 1, or 0 for a sprite that is not pushable.
 s32 PushTarget_FillFootprint(s32 id) {
@@ -321,17 +320,12 @@ s32 PushTarget_FillFootprint(s32 id) {
 
 extern s32 gPushLeaderSteps[];
 
-#define ABS(x) ((x) < 0 ? -(x) : (x))
-
 static inline s32 PushTarget_CheckCollision(struct Actor *actor,
                                             s32 *position) {
   return MapGrid_CheckCollision(actor, position);
 }
 
 #include "shared/push_target_find_slide.h"
-
-/// The whole-pixel half of a 16.16 coordinate.
-#define PIXEL_PART(v) (((s16 *)&(v))[1])
 
 #include "shared/push_target_find_ahead.h"
 
@@ -473,9 +467,6 @@ s8 gPushFootprints[][4] = {
 
 #include "../field/field_effect_move.c"
 
-#undef ABS
-#define ABS(v) ((v) < 0 ? -(v) : (v))
-#undef PIXEL_PART
 // The room's copy of the effect spawner, and the cracked tiles, found, cracked
 // and fallen through.
 
@@ -488,11 +479,8 @@ void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-#define EFFECT_SPAWN FieldEffect_Spawn
-#define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
-#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
 
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped

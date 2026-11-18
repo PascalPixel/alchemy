@@ -38,18 +38,17 @@
 #define PULSE_OVERHANG_LINES(scale)                                            \
   ((((scale) - Q_8_8(1)) * 32 + 255) / 512 + 1)
 
-/// One line's horizontal window edges: window 0's and window 1's, each
-/// (left << 8 | right).
+/// One line's horizontal window edges, each a WIN_RANGE value.
 struct WindowLine {
-  u16 left; ///< window 0's edges, for WIN0H
-  u16 span; ///< window 1's edges, for WIN1H
+  u16 window0; ///< for WIN0H
+  u16 window1; ///< for WIN1H
 };
 
 /// A page of the screen transition's window edges: WININ and WINOUT, then
-/// each of the 160 lines' edges.
+/// each line's edges.
 struct WindowBuffer {
   u8 winInOut[4]; ///< WININ and WINOUT, not touched here
-  struct WindowLine lines[160];
+  struct WindowLine lines[DISPLAY_HEIGHT];
 };
 
 /// Draws the icon menu's icons, a task of the icon menus (IconMenu_Open). Each
@@ -92,16 +91,18 @@ void IconMenu_DrawIcons(void) {
     if (index == work->selection) {
       s32 left = x + pulseScale * 7 / 512 - 20;
 
-      // On the top row the double-size box starts above the screen: its y
-      // wraps within OAM's 8 bits.
+      // The icon grows to 32 * scale / Q_8_8(1) pixels in the middle of its
+      // 64-pixel double-size box: on the top row its top edge stays at the
+      // screen's top, the box starting above it with its y wrapped within
+      // OAM's 8 bits; elsewhere it grows mostly upward from its row.
       if (entry->y != 0)
         spriteY = entry->y + pulseScale * 3 / 256 - 20;
       else
         spriteY = (pulseScale * 15 / 256 - 30) & 255;
       word = entry->sprite;
       *word++ = 0;
-      *word++ = (affineIndex << 25) | spriteY | OBJ_X(left) | OBJ_SIZE_32X32 |
-                OBJ_256_COLORS | OBJ_DOUBLE_SIZE | OBJ_AFFINE;
+      *word++ = OBJ_MATRIX(affineIndex) | spriteY | OBJ_X(left) |
+                OBJ_SIZE_32X32 | OBJ_256_COLORS | OBJ_DOUBLE_SIZE | OBJ_AFFINE;
       *word = gVramCacheEntries[entry->slot].offset >> 5;
       drawLayer = OAM_DEPTH_WINDOW + 6;
     } else {
@@ -135,14 +136,14 @@ void IconMenu_DrawIcons(void) {
     span = ((span - halfWidth) << 8) + (span + halfWidth) + 23;
     lastLine = work->entries[work->selection].y + ICON_ROW_LINES;
     lastLine += PULSE_OVERHANG_LINES(pulseScale);
-    edge = &page->lines[ICON_ROW_LINES].span;
+    edge = &page->lines[ICON_ROW_LINES].window1;
     for (index = ICON_ROW_LINES; index < lastLine; index++, edge += 2)
       *edge = (*edge & 0xff) | span;
     span = work->entries[0].x;
     if (work->selection == 0)
       span -= PULSE_OVERHANG_X(pulseScale);
     span <<= 8;
-    edge = &page->lines[0].span;
+    edge = &page->lines[0].window1;
     for (index = 0; index < ICON_ROW_LINES; index++, edge += 2)
       *edge = (*edge & 0xff) | span;
   } else {
@@ -159,7 +160,7 @@ void IconMenu_DrawIcons(void) {
     span = ((span - halfWidth) << 8) + (span + halfWidth) + 23;
     firstLine = work->entries[work->selection].y;
     firstLine -= PULSE_OVERHANG_LINES(pulseScale);
-    edge = &page->lines[firstLine].span;
+    edge = &page->lines[firstLine].window1;
     for (index = firstLine; index < ICON_MENU_BOTTOM_ROW * 8;
          index++, edge += 2)
       *edge = (*edge & 0xff) | span;
@@ -167,7 +168,7 @@ void IconMenu_DrawIcons(void) {
     if (work->selection == 0)
       span -= PULSE_OVERHANG_X(pulseScale);
     span <<= 8;
-    edge = &page->lines[ICON_MENU_BOTTOM_ROW * 8].span;
+    edge = &page->lines[ICON_MENU_BOTTOM_ROW * 8].window1;
     for (index = ICON_MENU_BOTTOM_ROW * 8; index < DISPLAY_HEIGHT;
          index++, edge += 2)
       *edge = (*edge & 0xff) | span;
@@ -365,7 +366,7 @@ void IconMenu_Center(s32 row, s32 width, s32 resourceBase) {
   work->labelBase = resourceBase;
   work->row = row;
   count = work->count;
-  x = 15 - (count * 3 + work->width * 2 / 3) / 2;
+  x = DISPLAY_TILE_WIDTH / 2 - (count * 3 + work->width * 2 / 3) / 2;
   for (i = 0; i < work->count; i++) {
     struct IconMenuEntry *entry = &work->entries[i];
 
@@ -724,11 +725,11 @@ s32 IconMenu_ChooseSendOption(s32 mode) {
   return result;
 }
 
-// Command icons arranged in a row to choose from, such as Yes and No. Icon
-// numbers refer to ResourceId_CommandIcons.
+// Command icons arranged in a row to choose from, such as Yes and No, each a
+// picture of RESOURCE_COMMAND_ICONS (enum CommandIcon).
 
-/// Selects a shop command (Buy, Sell, Artifacts, Repair), centered on row 17,
-/// starting on position `selection`.
+/// Selects a shop command (Buy, Sell, Artifacts, Repair), centred on the bottom
+/// row, starting on position `selection`.
 s32 Menu_SelectShopCommand(s32 selection) {
   s32 result;
 
@@ -744,7 +745,7 @@ s32 Menu_SelectShopCommand(s32 selection) {
 }
 
 /// Selects a Sanctum service (Revive, Cure Poison, Repel Evil, Remove Curse),
-/// centered on row 17, starting on position `selection`.
+/// centred on the bottom row, starting on position `selection`.
 s32 Menu_SelectSanctumService(s32 selection) {
   s32 result;
 
@@ -803,7 +804,8 @@ s32 YesNoMenu_RunAt(s32 x, s32 y, s32 selection) {
   return selection;
 }
 
-// Name window width for each edition
+// The width of the label window under Coins and Lucky Medals, fitted to each
+// language's text.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define PAIR_WIDTH 7
 #elif LANGUAGE == LANGUAGE_FRENCH || LANGUAGE == LANGUAGE_ITALIAN
@@ -812,8 +814,8 @@ s32 YesNoMenu_RunAt(s32 x, s32 y, s32 selection) {
 #define PAIR_WIDTH 9
 #endif
 
-/// Selects Coins or Lucky Medals, centered on row 17, starting on position
-/// `selection`. Returns the position chosen, or -1 when cancelled.
+/// Selects Coins or Lucky Medals, centred on the bottom row, starting on
+/// position `selection`. Returns the position chosen, or -1 when cancelled.
 s32 Menu_SelectCoinsOrMedals(s32 selection) {
   s32 result;
 

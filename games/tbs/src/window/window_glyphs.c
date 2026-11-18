@@ -24,6 +24,17 @@
 #define TEXT_PAST_FONT_CODE 64
 
 #if LANGUAGE != LANGUAGE_JAPANESE
+/// Two narrow characters whose glyphs come to this many pixels at most are
+/// drawn together in one 16-pixel cell, as Message_Type pairs them.
+#define GLYPH_PAIR_WIDTH_MAX 15
+#endif
+#if LANGUAGE == LANGUAGE_SPANISH
+/// As GLYPH_PAIR_WIDTH_MAX, in the outlined style, which widens each glyph by
+/// one.
+#define GLYPH_PAIR_OUTLINED_WIDTH_MAX 14
+#endif
+
+#if LANGUAGE != LANGUAGE_JAPANESE
 /// Draws a character, and a second one when the code carries it in bits 8 to
 /// 15, into a 16x16-pixel cell of four 4bpp tiles at out: in the text colour
 /// over a shadow, or with an outline when WindowWork.outline is 1.
@@ -289,9 +300,9 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
     if (code == 0)
       break;
 #endif
-    // Two entries are skipped after TEXT_WINDOW_STATE and codes 14 and 28, one
-    // after codes 11, 12, 17 and, outside Japanese, 29; what those codes do
-    // in decoded text is unknown.
+    // Colour, style, line spacing and new lines take effect; the other control
+    // codes are skipped with their operands, as are codes 11, 12 and 14, which
+    // no message uses.
     if (code <= TEXT_END_ALT) {
       switch (code) {
       case TEXT_COLOR:
@@ -315,7 +326,7 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
         break;
       case 14:
       case TEXT_WINDOW_STATE:
-      case 28:
+      case TEXT_ACTOR_NAME_START:
         text++;
         // Skip the second operand too.
         // Fall through.
@@ -340,11 +351,11 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
                       gFont_Glyphs[nextCode - TEXT_SPACE].width;
 
           if (work->outline == TEXT_STYLE_OUTLINED) {
-            if ((u16)width <= 14) {
+            if ((u16)width <= GLYPH_PAIR_OUTLINED_WIDTH_MAX) {
               code |= nextCode << 8;
               text++;
             }
-          } else if ((u16)width <= 15) {
+          } else if ((u16)width <= GLYPH_PAIR_WIDTH_MAX) {
             code |= nextCode << 8;
             text++;
           }
@@ -352,7 +363,8 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
 #else
         if (code > TEXT_SPACE && nextCode > TEXT_SPACE &&
             (u16)(gFont_Glyphs[code - TEXT_SPACE].width +
-                  gFont_Glyphs[nextCode - TEXT_SPACE].width) <= 15) {
+                  gFont_Glyphs[nextCode - TEXT_SPACE].width) <=
+                GLYPH_PAIR_WIDTH_MAX) {
           code |= nextCode << 8;
           text++;
         }
@@ -429,7 +441,7 @@ void Text_DrawWideStringInWindow(s16 *text, struct Window *window, s32 x,
           break;
         case 14:
         case TEXT_WINDOW_STATE:
-        case 28:
+        case TEXT_ACTOR_NAME_START:
           text++;
           // Skip the second operand too.
           // Fall through.
@@ -526,3 +538,6 @@ u8 *String_FormatNumber(u8 *buffer, s32 input, s32 width) {
     width = NUMBER_DIGITS;
   return buffer + NUMBER_DIGITS + 1 - width;
 }
+
+#undef GLYPH_PAIR_WIDTH_MAX
+#undef GLYPH_PAIR_OUTLINED_WIDTH_MAX

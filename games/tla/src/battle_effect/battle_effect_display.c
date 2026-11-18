@@ -4,24 +4,20 @@
 
 #include "battle_effect_internal.h"
 
-/// Puts the battle screen back into the display state the effects start
-/// from and end with: no blending, window 0 and window 1 both covering the
-/// battle view (lines 16 to 135), and the effect display mode queued.
-/// Writes BLDCNT, BLDALPHA, the window registers and WININ and WINOUT,
-/// queues DISPCNT for VBlank and waits one frame.
+/// The canvas's usual weight over the battle, in sixteenths: every canvas
+/// opens with it.
+#define CANVAS_BLEND_LEVEL 14
+
+/// Puts the battle screen back into the display state every effect starts from
+/// and ends with.
 void BattleEffect_ConfigureEffectDisplay(void) {
   REG_BLDCNT = 0;
-  REG_BLDALPHA = EFFECT_BLEND_CANVAS(14);
+  REG_BLDALPHA = EFFECT_BLEND_CANVAS(CANVAS_BLEND_LEVEL);
   EFFECT_SET_BATTLE_WINDOWS();
-  REG_WININ = WININ_WIN1_CLR | WININ_WIN1_OBJ | WININ_WIN1_BG2 |
-              WININ_WIN1_BG0 | WININ_WIN0_CLR | WININ_WIN0_OBJ |
-              WININ_WIN0_BG2 | WININ_WIN0_BG1 | WININ_WIN0_BG0;
-  REG_WINOUT = WINOUT_WINOBJ_ALL | WINOUT_WIN01_CLR | WINOUT_WIN01_BG0;
-  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
-                      DISPCNT_WIN1_ON | DISPCNT_WIN0_ON | DISPCNT_OBJ_ON |
-                          DISPCNT_BG2_ON | DISPCNT_BG1_ON | DISPCNT_BG0_ON |
-                          DISPCNT_OBJ_1D_MAP | DISPCNT_MODE_1,
-                      IO_WRITE_HALFWORD);
+  REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |
+              WININ_WIN1_OBJ | WININ_WIN1_CLR;
+  REG_WINOUT = EFFECT_WINOUT;
+  IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, EFFECT_DISPCNT, IO_WRITE_HALFWORD);
   wait(1);
 }
 
@@ -38,8 +34,7 @@ void BattleEffect_AdvanceScrollOnInterval(void) {
   }
 }
 
-/// A task: every scrollInterval frames, writes the BG2 reference point to the
-/// hardware, then moves it by (scrollStepX, scrollStepY).
+/// Slides the affine BG2 a step every few VBlanks.
 void BattleEffect_AdvanceBg2OnInterval(void) {
   struct BattleEffectWork *work;
 
@@ -54,15 +49,16 @@ void BattleEffect_AdvanceBg2OnInterval(void) {
   }
 }
 
-/// A task: restarts DMA0's HBlank copy of one WIN0H value per
-/// scanline from the map cell buffer.
+/// Restarts the DMA that feeds window 0's edges, one a line, from the table the
+/// effect keeps in the map cell buffer.
 void BattleEffect_ArmWin0HBlankDma(void) {
-  volatile u16 *dma = REG_DMA0;
-  u16 control = dma[DMA_CONTROL_HALF];
+  volatile u16 *channel = REG_DMA0;
 
-  dma[DMA_CONTROL_HALF] = control & (u16)~DMA_START_TIMING_DRQ_REPEAT;
-  dma[DMA_CONTROL_HALF] &= (u16)~DMA_ENABLE;
-  (void)dma[DMA_CONTROL_HALF];
+  channel[DMA_CONTROL_HALF] &= (u16)~DMA_START_TIMING_DRQ_REPEAT;
+  channel[DMA_CONTROL_HALF] &= (u16)~DMA_ENABLE;
+  (void)channel[DMA_CONTROL_HALF];
   Dma_Set(Ram_MapCellBuffer, (void *)&REG_WIN0H, DMA_HBLANK_HALFWORD_PER_LINE,
-          (volatile u32 *)dma);
+          (volatile u32 *)channel);
 }
+
+#undef CANVAS_BLEND_LEVEL

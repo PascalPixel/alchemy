@@ -4,7 +4,13 @@
 
 #include "battle_effect_internal.h"
 
-#define FLASHING_STRIKE_FRAMES 21 ///< frames of the flashing strike
+/// The flashing strike's frames, from the user's arrival: four pictures flash
+/// four frames each, then the canvas floods at its brightest for four frames,
+/// the damage shows and the target is hurled.
+#define FLASHING_STRIKE_FRAMES 21
+#define FLASHING_STRIKE_FLOOD_FRAME 16
+#define FLASHING_STRIKE_DAMAGE_FRAME 18
+#define FLASHING_STRIKE_HIT_FRAME 20
 
 /// One 120x120 picture of a flashing strike.
 #define FLASHING_STRIKE_PICTURE_BYTES (SLASH_PICTURE_SIZE * SLASH_PICTURE_SIZE)
@@ -86,6 +92,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
   }
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
 
+  // The user closes on the target in 16 frames, Quick Strike with a hop.
   if (mode == FLASHING_STRIKE_QUICK_STRIKE)
     BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16,
                                    toFIXED(8));
@@ -113,12 +120,14 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
     else if (frame <= 15)
       draw[0](canvas, Ram_MapGridCellBuffer + FLASHING_STRIKE_PICTURE_BYTES, 0,
               0, SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
-    if (frame >= 16 && frame <= 19)
+    // The flood: four frames of the canvas at its brightest.
+    if (frame >= FLASHING_STRIKE_FLOOD_FRAME &&
+        frame <= FLASHING_STRIKE_FLOOD_FRAME + 3)
       Iwram_FillWords(canvas, CANVAS_BYTES,
                       CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-    if (frame == 18)
+    if (frame == FLASHING_STRIKE_DAMAGE_FRAME)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-    if (frame == 20) {
+    if (frame == FLASHING_STRIKE_HIT_FRAME) {
       work->shakeFrames = 8;
       BattleMotion_ApplyKnockbackFar(work->args->targets[0], KNOCKBACK_HURL);
     }
@@ -130,4 +139,8 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_EndCanvasLayer();
 }
 
+#undef FLASHING_STRIKE_FRAMES
+#undef FLASHING_STRIKE_FLOOD_FRAME
+#undef FLASHING_STRIKE_DAMAGE_FRAME
+#undef FLASHING_STRIKE_HIT_FRAME
 #undef FLASHING_STRIKE_PICTURE_BYTES

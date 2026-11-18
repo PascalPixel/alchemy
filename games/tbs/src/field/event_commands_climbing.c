@@ -4,13 +4,10 @@
 
 #include "event_commands_internal.h"
 
-// The map's cells, and the same cells seen one row south and one row north:
-// TILE_CELLS_SOUTH[i] is the cell below TILE_CELLS[i].
-#define TILE_CELLS ((struct MapGridCell *)Ram_MapGridCellBuffer)
-#define TILE_CELLS_SOUTH (TILE_CELLS + MAPGRID_SIZE)
-#define TILE_CELLS_NORTH (TILE_CELLS - MAPGRID_SIZE)
-/// A whole pixel coordinate's map cell, in pixels.
-#define MAPGRID_CELL_PIXEL_MASK 0xfff0
+// The map grid's cells seen one row south and one row north:
+// MAPGRID_CELLS_SOUTH[i] is the cell below MAPGRID_CELLS[i].
+#define MAPGRID_CELLS_SOUTH (MAPGRID_CELLS + MAPGRID_SIZE)
+#define MAPGRID_CELLS_NORTH (MAPGRID_CELLS - MAPGRID_SIZE)
 /// The middle pixel of the map cell a whole pixel lies in.
 #define CELL_MIDDLE(pixels)                                                    \
   (MAPGRID_CELL_PIXELS / 2 + ((pixels) & MAPGRID_CELL_PIXEL_MASK))
@@ -118,7 +115,7 @@ s32 Field_ClimbDown(void) {
                 (gridZ / MAPGRID_CELL_PIXELS) * MAPGRID_SIZE;
 
     // A wall goes down only where the cell below is the same climbing code.
-    if (TILE_CELLS[index].behavior == TILE_CELLS_SOUTH[index].behavior) {
+    if (MAPGRID_CELLS[index].behavior == MAPGRID_CELLS_SOUTH[index].behavior) {
       // Six words, of which the position uses three; the rest give the stack
       // frame its 24 bytes.
       s32 vector[6];
@@ -190,7 +187,7 @@ s32 Field_ClimbUp(void) {
     s32 index = gridX / MAPGRID_CELL_PIXELS +
                 (gridZ / MAPGRID_CELL_PIXELS) * MAPGRID_SIZE;
 
-    if (TILE_CELLS[index].behavior == TILE_CELLS_NORTH[index].behavior) {
+    if (MAPGRID_CELLS[index].behavior == MAPGRID_CELLS_NORTH[index].behavior) {
       // Six words, of which the position uses three; the rest give the stack
       // frame its 24 bytes.
       s32 vector[6];
@@ -248,8 +245,6 @@ failure:
   return -1;
 }
 
-#undef TILE_CELLS
-#undef TILE_CELLS_SOUTH
-#undef TILE_CELLS_NORTH
-#undef MAPGRID_CELL_PIXEL_MASK
+#undef MAPGRID_CELLS_SOUTH
+#undef MAPGRID_CELLS_NORTH
 #undef CELL_MIDDLE

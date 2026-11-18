@@ -25,8 +25,6 @@
 #define TEXT_CANVAS_PIXEL_HEIGHT 32
 /// The fonts start at the space.
 #define FONT_FIRST_CODE ' '
-/// In Japanese, the codes after the font's are kanji (gFont_KanjiGlyphs).
-#define KANJI_FIRST_CODE (TEXT_LAST_FONT_CODE + 1)
 /// In English, the last code the main font has a glyph for.
 #define ENGLISH_FONT_LAST_CODE 143
 /// A main-font glyph's bytes, as struct FontGlyph lays one out: its width, then

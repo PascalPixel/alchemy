@@ -139,10 +139,6 @@ enum {
   ACTOR_WEST_FIREBALL = 20
 };
 
-/// The actor script's operand for Actor.watchedActor: a sparkle's way sets it
-/// to the routine its fireball calls when it crashes.
-#define SW_WATCHED_ACTOR 37
-
 /// The ride work seen from one flame thrower's entry: the work's header, then
 /// the entry, as the getters below index it.
 struct RideRow {
@@ -1508,12 +1504,6 @@ void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 
 #undef DEFINE_RIDE_SPAWN_BACKWARD
 #undef IWRAM
-#undef KNOCK_BACK
-#undef KNOCK_BACK_TAKE_DAMAGE
-#undef KNOCK_BACK_BLINK
-#undef KNOCK_BACK_SET_ANIMATION
-#undef KNOCK_BACK_CELL_ATTRIBUTE
-#undef KNOCK_BACK_CHECK_COLLISION
 #undef WORK
 #undef Position
 extern const s32 *gFieldEffect_DurationScripts[];

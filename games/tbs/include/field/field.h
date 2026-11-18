@@ -280,6 +280,9 @@ enum ActorCreateKind {
   ACTOR_CREATE_NO_SPRITE = 8
 };
 
+/// An Actor_Create id of enum ActorCreateKind `kind`, above its sprite.
+#define ACTOR_CREATE_KIND(kind) ((kind) << 12)
+
 /// The sprite id in Actor_Create's id, below its enum ActorCreateKind (id /
 /// 4096).
 #define ACTOR_CREATE_SPRITE_MASK 0xfff

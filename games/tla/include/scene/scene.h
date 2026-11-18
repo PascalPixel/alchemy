@@ -501,4 +501,39 @@ extern const u8 gWorldMapPackedTilesC[];
 struct Vector3;
 struct Window;
 
+/// The lightning bolt's picture (RESOURCE_LIGHTNING_TILES and
+/// RESOURCE_LIGHTNING_MAP), shown on BG0 for the strike: its tiles at the start
+/// of character block 0, and its map, LIGHTNING_MAP_ROWS rows of
+/// LIGHTNING_MAP_COLUMNS numbered from tile 512, on screen block
+/// LIGHTNING_SCREEN_BLOCK.
+#define LIGHTNING_TILES 64
+#define LIGHTNING_MAP_ROWS 16
+#define LIGHTNING_MAP_COLUMNS 4
+#define LIGHTNING_SCREEN_BLOCK 4
+
+/// Plays an actor's animation and lets frames pass before the event goes on.
+#define Actor_AnimateThenWait(id, animation, frames)                           \
+  do {                                                                         \
+    Actor_SetAnimation(id, animation);                                         \
+    FieldEvent_Wait(frames);                                                   \
+  } while (0)
+
+/// The runs of a background palette's colours the shore scenes turn a step at
+/// a time: 12 to 15, the surf, and on the Lemurian Ship's palette (BG palette
+/// 11) also 4 to 9, the blues of the band along its hull.
+#define HULL_BAND_FIRST_COLOR 4
+#define HULL_BAND_LAST_COLOR 9
+#define SURF_FIRST_COLOR 12
+#define SURF_LAST_COLOR 15
+
+/// The vents of Aqua Rock and Taopo Swamp (struct VentWork, shared/vent_*.h):
+/// the most vents a room has, and the most actors besides the leader their
+/// puffs land on.
+#define VENTS_MAX 16
+#define VENT_IDS_MAX 4
+/// How far apart a and b are, never negative, as a vent's thrown object tests
+/// whether it rests on another in x and z (field/actor_vent_bounce.c). Each is
+/// read twice.
+#define DIFF(a, b) ((a) - (b) >= 0 ? (a) - (b) : (b) - (a))
+
 #endif

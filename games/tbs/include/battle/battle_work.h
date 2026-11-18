@@ -88,6 +88,11 @@ enum { BATTLE_ACTION_CAPACITY = 20 };
 /// black.
 #define BACKGROUND_LEVEL_STEP (FIXED_ONE / 60)
 
+/// The frames a link battle tolerates without a connection before it gives
+/// up: a count above it pauses the battle (BattleWork.linkPaused) or fails
+/// the sync, transfer or wait for the partner's commands under way.
+#define LINK_MAX_MISSED_FRAMES 24
+
 /// The battle's own work: its enemies, units and their battle objects, the
 /// turn's actions, the spoils, the background palette, the action under way and
 /// the playback.

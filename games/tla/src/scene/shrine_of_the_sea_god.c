@@ -225,6 +225,8 @@ enum ShrineOfTheSeaGodPillarRoomActorId {
   ACTOR_FIRST_BRIDGE_OTHER_SPLASH,
   ACTOR_SECOND_BRIDGE_SPLASH,
   ACTOR_SECOND_BRIDGE_OTHER_SPLASH,
+  // In a render of the room with the leader on its ladder, under the chest,
+  // taking each marker away changes nothing on screen.
   /// Unseen markers behind the chest at the top of the room's ladder; talking
   /// to one opens the field menu, as talking to nothing does.
   ACTOR_CHEST_NORTHWEST_MARKER,
@@ -945,6 +947,9 @@ void ShrineOfTheSeaGod_KeepFlameOnTorch(void) {
   SET_ACTOR_POSITION(marker, torch->x.fixed, toFIXED(20), torch->z.fixed);
 }
 
+// field_actors.c's priority update answers what ACTOR_PRIORITY_IGNORES_RISES
+// does: with it, an actor takes only the priority of the cells under its feet,
+// and ground rising a cell or two in front of it never puts it further back.
 /// Unused: lets the leader be put behind rising ground again, undoing what the
 /// hole room sets on arrival (ACTOR_PRIORITY_IGNORES_RISES).
 UNUSED void ShrineOfTheSeaGod_ClearLeaderIgnoresRises(void) {
@@ -2045,6 +2050,9 @@ void ShrineOfTheSeaGod_InitializeRope(void) {
   }
 }
 
+// In renders of the room once Riki has given up on the rope, A pressed beside
+// him from the west opens the field menu, and from the east, behind him, he
+// says "Wah! You scared me!".
 /// The side room's task: Riki, looking west, can be talked to and read only
 /// from behind; while he stands east of the leader he is no target.
 void ShrineOfTheSeaGod_UpdateRikiTarget(void) {

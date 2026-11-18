@@ -7,6 +7,15 @@
 #include "types.h"
 #include "field/scene_tables.h"
 
+/// Set while the leader rides a statue's whirlwind (AirsRock_RideWhirlwind,
+/// AirsRockInside_RideWhirlwind): the statues breathe theirs without a flare.
+#define FLAG_RIDING_WHIRLWIND FLAG_SCENE_TEMP_50
+
+/// How near across the ground a statue's whirlwind comes to pick up the
+/// leader, in pixels; on Air's Rock's outside, also how near it comes to
+/// another actor to end on it.
+#define WHIRLWIND_REACH 8
+
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 y);
 
 extern struct SceneRegion gAirsRock_StormBrandChestRegions[];

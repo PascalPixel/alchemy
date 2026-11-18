@@ -24,12 +24,6 @@
 #define CENTER_LINE_HIDDEN_SECOND 250
 /// The colour the dissolve covers the screen in, the window palette's last.
 #define DISSOLVE_COVER_COLOR 15
-/// REG_DISPCNT's video mode bits.
-#define DISPCNT_MODE_MASK 0x0007
-/// The two bytes of a SCENE_TRANSITION: its enum ScreenTransitionStyle, and
-/// the variant that style reads.
-#define SCENE_TRANSITION_STYLE(transition) (((transition) >> 8) & 0xff)
-#define SCENE_TRANSITION_VARIANT(transition) ((transition) & 0xff)
 
 /// Each VBlank, before drawing: turns windows 0 and 1 on, writes the first four
 /// values of the shown page into WININ, WINOUT, WIN0H and WIN1H, and has DMA 0
@@ -960,6 +954,3 @@ void ScreenTransition_InitializeState(s32 mode) {
 #undef CENTER_LINE_HIDDEN_FIRST
 #undef CENTER_LINE_HIDDEN_SECOND
 #undef DISSOLVE_COVER_COLOR
-#undef DISPCNT_MODE_MASK
-#undef SCENE_TRANSITION_STYLE
-#undef SCENE_TRANSITION_VARIANT

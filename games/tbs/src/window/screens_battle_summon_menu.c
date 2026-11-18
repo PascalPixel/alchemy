@@ -12,9 +12,6 @@
 #define SUMMON_COST_X 10
 #endif
 
-/// Ends the summon lists, and marks a summon already moved to the front.
-#define SUMMON_END 32
-
 /// The battle summon list: the summons the party holds enough Djinn for
 /// (Summon_ListLearnedFar, DjinnRecoveryTable.summonMask), four to a page,
 /// those `standby` can pay for first, each with its Djinn cost by element, the

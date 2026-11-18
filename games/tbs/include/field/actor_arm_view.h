@@ -2,14 +2,22 @@
 #define ALCHEMY_ACTOR_ARM_VIEW_H
 
 /// @file
-/// The words of an actor's script as the motion loops index them, and
-/// ActorArmView, struct Actor as actor_update_arm.c reads it.
+/// The words of an actor's script as the motion loops index them, the target
+/// value that is no coordinate, and ActorArmView, struct Actor as
+/// actor_update_arm.c reads it.
 
 #include "fixed_math.h"
 #include "static_assert.h"
 #include "types.h"
 
 struct Actor;
+
+/// The values of Actor.targetX, targetY and targetZ (and ActorArmView's) that
+/// are not coordinates.
+enum ActorTarget {
+  /// A target coordinate that is not set: the actor has no target.
+  ACTOR_NO_TARGET = (s32)0x80000000
+};
 
 // UB: scripts have variable lengths, so a one-word member cannot describe them.
 #ifdef UBFIX

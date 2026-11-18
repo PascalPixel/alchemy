@@ -387,9 +387,6 @@ void DjinnMenu_ShowCurrentList(void) {
   Sound_PlayFar(SE_MENU_CANCEL);
 }
 
-// The pressed keys, read again at each test.
-#define KEYS_PRESSED (((struct InputState *)&gInput)->pressed)
-
 void StatusScreen_ShowMemberStatus(s32 resource, s32 frame);
 
 s32 PartyMemberChooser_MoveEntry(s32 selection, s32 direction);
@@ -455,12 +452,12 @@ s32 PartyMemberChooser_RunRearrange(void) {
     }
     MenuCursor_Position((ownerIndex % 4) * 24 - 10, 16);
     wait(1);
-    if (KEYS_PRESSED & KEY_A) {
+    if (gInput.pressed & KEY_A) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       result = 1;
       break;
     }
-    if (KEYS_PRESSED & KEY_B) {
+    if (gInput.pressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
@@ -485,7 +482,7 @@ s32 PartyMemberChooser_RunRearrange(void) {
         Sound_PlayFar(SE_MENU_ERROR);
       }
       wait(1);
-    } else if ((KEYS_PRESSED & KEY_SELECT) &&
+    } else if ((gInput.pressed & KEY_SELECT) &&
                GameFlag_Get(FLAG_DJINNI(DJINNI_ECHO))) {
       DjinnMenu_ShowCurrentList();
       redraw = 1;
@@ -500,8 +497,6 @@ s32 PartyMemberChooser_RunRearrange(void) {
   menu->pageArrows[1]->motion = ICON_HIDDEN;
   return result;
 }
-
-#undef KEYS_PRESSED
 
 void Menu_PlaceEntryActorsInGrid(s32 x, s32 y, s32 columns);
 
@@ -545,12 +540,12 @@ s32 PsynergyMenu_ChooseMember(void) {
     }
     MenuCursor_Position((selection % 4) * 24 - 10, 16);
     wait(1);
-    if (((struct InputState *)&gInput)->pressed & KEY_A) {
+    if (gInput.pressed & KEY_A) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       result = 1;
       break;
     }
-    if (((struct InputState *)&gInput)->pressed & KEY_B) {
+    if (gInput.pressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
@@ -668,9 +663,6 @@ void StatusScreen_ShowMemberStatus(s32 resource, s32 frame) {
   StatusScreen_DrawStatusAilments(handle, resource, STATUS_PAGE_SUMMARY);
 }
 
-// The pressed keys, read again at each test.
-#define KEYS_PRESSED (((struct InputState *)&gInput)->pressed)
-
 // The switch-characters help follows the A-button label on the help line:
 // Japanese starts it 64 pixels in, the other editions 80.
 #if LANGUAGE == LANGUAGE_JAPANESE
@@ -772,13 +764,13 @@ s32 StatusScreen_SelectCommand(void) {
       wait(1);
       if (gInput.repeat & KEYS_DPAD)
         StatusScreen_DrawSelectionCursor(pane, selected, entries, 1);
-      if (KEYS_PRESSED & KEY_A) {
+      if (gInput.pressed & KEY_A) {
         Sound_PlayFar(SE_MENU_CONFIRM);
         done = 1;
         result = 1;
         break;
       }
-      if (KEYS_PRESSED & KEY_B) {
+      if (gInput.pressed & KEY_B) {
         Sound_PlayFar(SE_MENU_CANCEL);
         done = 1;
         result = -1;
@@ -827,7 +819,6 @@ s32 StatusScreen_SelectCommand(void) {
   return result;
 }
 
-#undef KEYS_PRESSED
 #undef SWITCH_CHARACTER_HELP_X
 
 /// Highlights (invert 0) or unhighlights (invert 1) the selected entry of the
@@ -1168,22 +1159,19 @@ s32 PagedList_Build(struct PagedList *result, s32 index) {
 /// (menu_strings.s).
 extern const u32 gMenu_PatternRowMasks[][2];
 
-#define RANGE_PATTERN_SET_COUNT 2
-#define RANGE_PATTERN_COUNT 6
 #define RANGE_PATTERN_PAIR_WORDS 16
-/// The first of the range icons' BG tiles, which PsynergyMenu_DrawRange draws
-/// as tilemap entries.
-#define RANGE_ICON_FIRST_TILE 768
-/// The last range icon, which stands for ABILITY_RANGE_ALL.
-#define RANGE_ICON_ALL (RANGE_PATTERN_SET_COUNT * RANGE_PATTERN_COUNT - 1)
+/// The first of the Status menu's range icon BG tiles, which
+/// PsynergyMenu_DrawRange draws as tilemap entries; the battle menu builds its
+/// own elsewhere (Menu_BuildLocalizedPatternTiles).
+#define STATUS_RANGE_ICON_FIRST_TILE 768
 
 static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 
 /// Builds the twelve range icons PsynergyMenu_DrawRange draws, as the 24 BG
-/// tiles from RANGE_ICON_FIRST_TILE: icon n is a centre tile and an end tile,
-/// filled with WINDOW_BACKGROUND_COLOR, then marked row by row by XOR with
-/// gMenu_PatternRowMasks, the first set's marks growing row by row, the second
-/// set's leaving row 1 bare.
+/// tiles from STATUS_RANGE_ICON_FIRST_TILE: icon n is a centre tile and an end
+/// tile, filled with WINDOW_BACKGROUND_COLOR, then marked row by row by XOR
+/// with gMenu_PatternRowMasks, the first set's marks growing row by row, the
+/// second set's leaving row 1 bare.
 void Menu_BuildPatternTiles(void) {
   s32 patternSet;
   s32 patternIndex;
@@ -1191,7 +1179,8 @@ void Menu_BuildPatternTiles(void) {
   for (patternSet = 0; patternSet < RANGE_PATTERN_SET_COUNT; patternSet++) {
     for (patternIndex = 0; patternIndex < RANGE_PATTERN_COUNT; patternIndex++) {
       u32 *tile =
-          (u32 *)(BG_CHAR_BLOCK(0) + RANGE_ICON_FIRST_TILE * TILE_SIZE_4BPP) +
+          (u32 *)(BG_CHAR_BLOCK(0) +
+                  STATUS_RANGE_ICON_FIRST_TILE * TILE_SIZE_4BPP) +
           patternSet * (RANGE_PATTERN_COUNT * RANGE_PATTERN_PAIR_WORDS) +
           patternIndex * RANGE_PATTERN_PAIR_WORDS;
       s32 row;
@@ -1228,10 +1217,10 @@ void PsynergyMenu_DrawRange(s32 window, s32 x, s32 y, s32 range, s32 unused) {
   s32 tile;
 
   n = range * 2;
-  tile = n + WINDOW_TILE(RANGE_ICON_FIRST_TILE) + 1;
+  tile = n + WINDOW_TILE(STATUS_RANGE_ICON_FIRST_TILE) + 1;
   Window_SetTilemapEntryFar(window, TILE_HFLIP | tile, x, y, 0);
-  Window_SetTilemapEntryFar(window, n + WINDOW_TILE(RANGE_ICON_FIRST_TILE),
-                            x + 1, y, 0);
+  Window_SetTilemapEntryFar(
+      window, n + WINDOW_TILE(STATUS_RANGE_ICON_FIRST_TILE), x + 1, y, 0);
   Window_SetTilemapEntryFar(window, tile, x + 2, y, 0);
 }
 
@@ -1377,20 +1366,20 @@ s32 PsynergyMenu_DrawRangePage(s32 window, s32 unused,
 #define PAGE_ROWS 6
 #define PAGE_ICONS_X 86
 #define PAGE_ICONS_Y 53
-#define HEADING_X 144
+#define STATUS_PSYNERGY_PP_HEADING_X 144
 #define FIRST_ROW_Y 8
-#define NAME_X 96
-#define COST_X 168
+#define STATUS_PSYNERGY_NAME_X 96
+#define STATUS_PSYNERGY_COST_X 168
 #define FIRST_RANGE_ROW 1
 #define EMPTY_MESSAGE_Y 8
 #else
 #define PAGE_ROWS 5
 #define PAGE_ICONS_X 80
 #define PAGE_ICONS_Y 58
-#define HEADING_X 176
+#define STATUS_PSYNERGY_PP_HEADING_X 176
 #define FIRST_ROW_Y 16
-#define NAME_X 88
-#define COST_X 176
+#define STATUS_PSYNERGY_NAME_X 88
+#define STATUS_PSYNERGY_COST_X 176
 #define FIRST_RANGE_ROW 2
 #define EMPTY_MESSAGE_Y 17
 #endif
@@ -1422,7 +1411,7 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
   PagedList_DrawPageNumbers(window, res->entryCount, PAGE_ROWS, res->page, 28);
 
   Text_DrawMessageAsTilesFar((s32)MsgPsynergyChooseTarget + 2, window,
-                             HEADING_X, 0);
+                             STATUS_PSYNERGY_PP_HEADING_X, 0);
 
   row = 0;
   if (rows > row) {
@@ -1438,8 +1427,9 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
                   (s32)MsgAbilityName;
       y = row * 16 + FIRST_ROW_Y;
 
-      Text_DrawMessageAsTilesFar(messageId, window, NAME_X, y);
-      Text_DrawNumberAtOffsetFar(action->ppCost, 2, window, COST_X, y);
+      Text_DrawMessageAsTilesFar(messageId, window, STATUS_PSYNERGY_NAME_X, y);
+      Text_DrawNumberAtOffsetFar(action->ppCost, 2, window,
+                                 STATUS_PSYNERGY_COST_X, y);
 
       // ABILITY_RANGE_ALL takes the last range icon; range n takes n - 1.
       range = action->range;
@@ -1476,22 +1466,21 @@ s32 PsynergyMenu_DrawListPage(s32 window, s32 unused,
 
 #undef PAGE_ROWS
 #undef PAGE_ICONS_X
-#undef COST_X
+#undef STATUS_PSYNERGY_PP_HEADING_X
+#undef STATUS_PSYNERGY_NAME_X
+#undef STATUS_PSYNERGY_COST_X
 #undef FIRST_RANGE_ROW
 #undef EMPTY_MESSAGE_Y
-
-// The pressed keys, read again at each test.
-#define KEYS_PRESSED (((struct InputState *)&gInput)->pressed)
 
 // The rows of a page of the list and where the cursor points at its first row:
 // the Japanese page lists six abilities, a row higher.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define PAGE_ROWS 6
-#define CURSOR_X 58
+#define STATUS_PSYNERGY_CURSOR_X 58
 #define CURSOR_Y 52
 #else
 #define PAGE_ROWS 5
-#define CURSOR_X 55
+#define STATUS_PSYNERGY_CURSOR_X 55
 #define CURSOR_Y 60
 #endif
 
@@ -1545,7 +1534,7 @@ s32 PsynergyMenu_SelectAction(void) {
     wait(1);
     navigation = PagedList_HandleInput(0, state.entryCount, PAGE_ROWS,
                                        &state.row, &state.page);
-    MenuCursor_Position(CURSOR_X, state.row * 16 + CURSOR_Y);
+    MenuCursor_Position(STATUS_PSYNERGY_CURSOR_X, state.row * 16 + CURSOR_Y);
     if (navigation == 1) {
       refresh = 1;
       listNeedsRedraw = 1;
@@ -1554,12 +1543,12 @@ s32 PsynergyMenu_SelectAction(void) {
       refresh = 1;
     if (navigation == -1)
       refresh = 0;
-    if (KEYS_PRESSED & KEY_A) {
+    if (gInput.pressed & KEY_A) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       result = 1;
       break;
     }
-    if (KEYS_PRESSED & KEY_B) {
+    if (gInput.pressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
@@ -1587,9 +1576,8 @@ s32 PsynergyMenu_SelectAction(void) {
   return result;
 }
 
-#undef KEYS_PRESSED
 #undef PAGE_ROWS
-#undef CURSOR_X
+#undef STATUS_PSYNERGY_CURSOR_X
 #undef CURSOR_Y
 
 // The rows one page of the item list shows: Japanese fits six, the other
@@ -1785,9 +1773,6 @@ s32 ItemMenu_DrawItemPage(s32 window, s32 unused, struct PagedList *state) {
 #undef EMPTY_MESSAGE_X
 #undef STAT_X
 
-// The pressed keys, read again at each test.
-#define KEYS_PRESSED (((struct InputState *)&gInput)->pressed)
-
 // The equip window's width in tiles, narrower in Japanese.
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define EQUIP_WINDOW_WIDTH 13
@@ -1805,9 +1790,9 @@ s32 ItemMenu_DrawItemPage(s32 window, s32 unused, struct PagedList *state) {
 
 // The French list puts its cursor 4 pixels further right.
 #if LANGUAGE == LANGUAGE_FRENCH
-#define CURSOR_X 100
+#define STATUS_EQUIPMENT_CURSOR_X 100
 #else
-#define CURSOR_X 96
+#define STATUS_EQUIPMENT_CURSOR_X 96
 #endif
 
 /// The Status menu's equipment page: the party member's items, PAGE_ROWS to a
@@ -1865,7 +1850,7 @@ s32 ItemMenu_SelectItem(void) {
     wait(1);
     navigation = PagedList_HandleInput(0, state.entryCount, PAGE_ROWS,
                                        &state.row, &state.page);
-    MenuCursor_Position(CURSOR_X, state.row * 16 + 52);
+    MenuCursor_Position(STATUS_EQUIPMENT_CURSOR_X, state.row * 16 + 52);
     if (navigation == 1) {
       refresh = 1;
       listNeedsRedraw = 1;
@@ -1874,12 +1859,12 @@ s32 ItemMenu_SelectItem(void) {
       refresh = 1;
     if (navigation == -1)
       refresh = 0;
-    if (KEYS_PRESSED & KEY_A) {
+    if (gInput.pressed & KEY_A) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       result = 1;
       break;
     }
-    if (KEYS_PRESSED & KEY_B) {
+    if (gInput.pressed & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
       result = -1;
       break;
@@ -1910,7 +1895,7 @@ s32 ItemMenu_SelectItem(void) {
 }
 
 #undef PAGE_ROWS
-#undef CURSOR_X
+#undef STATUS_EQUIPMENT_CURSOR_X
 
 /// Writes the four equipment slot labels (Weapon, Head, Shield and Chest, one a
 /// 16-pixel row) and the names of the items worn in them into window; mode 0

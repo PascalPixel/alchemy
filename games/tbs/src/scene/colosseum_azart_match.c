@@ -1192,9 +1192,6 @@ static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
   Event_End();
 }
 
-// This scene's exits for colosso_solo.c.
-#define COLOSSO_SOLO_TO_RACE COLOSSEUM_AZART_MATCH_LEND_A_HAND_TO_RACE
-#define COLOSSO_SOLO_TO_COLOSSEUM COLOSSEUM_AZART_MATCH_TO_COLOSSEUM_WEST
 #include "shared/colosso_solo.c"
 #include "shared/item_equip.c"
 #include "shared/colosso_task.c"
@@ -1214,8 +1211,6 @@ static void ColosseumAzartMatch_TalkToLumberAttendant(s32 actorId) {
 
 #include "shared/colosso_occupant.c"
 
-/// Closes the arena's step trigger. Nothing in the game sets it.
-#define FLAG_COLOSSEUM_ARENA_CLOSED FLAG_SCENE_TEMP_10
 /// The chest holding an Oil Drop has been opened.
 #define FLAG_COLOSSEUM_AZART_MATCH_OIL_DROP_CHEST_OPENED FLAG_AREA_TEMP_09
 

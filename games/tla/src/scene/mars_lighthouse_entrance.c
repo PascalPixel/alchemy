@@ -114,14 +114,6 @@ enum {
   VALKYRIE_NORTH_FROM_MIDDLE_WEST = 11
 };
 
-/// MapCell_Get's halfword: the collision code over the second attribute byte
-/// (MapCell.attributeB), as airs_rock_inside.c reads it.
-#define CELL_CODE_BITS 0xff00
-#define CELL_ATTRIBUTE_BITS 0xff
-#define CELL_ATTRIBUTES(code, bits) (((code) << 8) | (bits))
-/// A 16.16 height in the 8-pixel steps a map cell's height is set in
-/// (MapGrid_SetCellHeight).
-#define CELL_HEIGHT_STEPS(height) ((height) >> 19)
 /// The attribute bit that makes a floor cell here a hole the leader drops
 /// through to the room below; the field reads it elsewhere as
 /// MAP_CELL_CLIMBABLE.
@@ -130,15 +122,8 @@ enum {
 /// The sprite that hides the leader as he sinks through a hole: 16 by 32
 /// pixels, eight tiles of colour 1.
 #define HOLE_MASK_BYTES (8 * TILE_SIZE_4BPP)
-/// The depth a sprite the scene draws itself takes past its screen row, just
-/// behind an actor's image (+62) and shadow (+60) at the same spot.
-#define SCENE_SPRITE_DEPTH 58
 /// The frames the leader takes to shrink and sink out of sight through a hole.
 #define SINK_FRAMES 40
-
-/// The leader's animation sitting on the floor, legs out, arms flung up and
-/// then lowered.
-#define ANIM_LEADER_SIT 49
 
 /// The cell columns where Move sets the dragon statue in the flames' way:
 /// under the Teleport Lapis room's eastern flame thrower, and under the
@@ -150,25 +135,13 @@ enum { LAPIS_STATUE_BLOCKING_COLUMN = 20, VALKYRIE_STATUE_BLOCKING_COLUMN = 5 };
 /// and pushed east from there, from where it slides back.
 enum { ICE_STATUE_PUSHED_WEST_COLUMN = 11, ICE_STATUE_PUSHED_EAST_COLUMN = 10 };
 
-/// A flame thrower's packed state (Ride_SetEntryState): the flame's reach in
-/// the low four bits, enum FlameThrowerFlags in the next four.
-#define FLAME_THROWER_REACH_BITS 0xf
-#define FLAME_THROWER_FLAG_BITS 0xf0
-
 /// The spawner's flags that ask for one of the options' fields
 /// (EFFECT_USE_PALETTE and up).
 #define EFFECT_OPTION_MASK 0xffff0000
 
-/// The actor script's work value of Actor.watchedActor: a fireball's path sets
-/// it to the routine the fireball calls when it crashes (Actor_RollAndCrumble).
-#define SW_WATCHED_ACTOR 37
-
-/// Sixteen puffs of dust in a ring round the leader as he lands, the first
-/// thrown twice.
-#define DUST_RING_PUFFS 16
-
-/// The first hall (Fugue's room): two ice cones, the shaft of ice Grind cracks
-/// (an unseen marker on it) and Fugue.
+/// The first hall (Fugue's room): two ice cones, the first placed out of sight
+/// at the map's corner, the shaft of ice Grind cracks (an unseen marker on it)
+/// and Fugue.
 enum MarsLighthouseEntranceFugueActorId {
   ACTOR_FUGUE_ICE_CONE_A = ACTOR_FIRST_PLACED,
   ACTOR_FUGUE_ICE_CONE_B,
@@ -178,8 +151,8 @@ enum MarsLighthouseEntranceFugueActorId {
 
 /// The Teleport Lapis room: the dragon statue Move pushes into the flames, four
 /// flame throwers, the torches (one lit in the same place as an unlit one, each
-/// shown by whether the lighthouse is thawed), two ice cones and the two ice
-/// sheets.
+/// shown by whether the lighthouse is thawed), two ice cones, the first placed
+/// out of sight at the map's corner, and the two ice sheets.
 enum MarsLighthouseEntranceTeleportLapisActorId {
   ACTOR_PUSHED_STATUE = ACTOR_FIRST_PLACED,
   ACTOR_LAPIS_FLAME_THROWER_A,
@@ -350,9 +323,9 @@ s32 MapCell_Swap(u32 layer, s32 x, s32 y, s32 value) {
 void MapGrid_SetCellHeight();
 void Teleport_PlayWhirl(void);
 void Teleport_PlaySparks(void);
-/// Set while a whirlwind carries the leader, as in the Jupiter Lighthouse rooms
-/// that keep it here and clear it in their set-up; nothing in this overlay
-/// rides one.
+/// Set while a whirlwind carries the leader, in the rooms that have one (the
+/// Jupiter Lighthouse rooms and Room F); this room has none, and its set-up's
+/// clear is all that touches it.
 s32 gWhirlwindRiding BSS_DATA;
 u16 gPaletteCycleBright BSS_DATA;
 u16 *gPaletteCycleSlots BSS_DATA;
@@ -878,8 +851,8 @@ void MarsLighthouseEntrance_DrawHoleMask(void) {
   depth = FIXEDtoINT(y + z) + SCENE_SPRITE_DEPTH;
   if ((u32)(screenX + 15) > 334 || screenY < -15 || screenY > 239)
     return;
-  screenX &= 0x1ff;
-  screenY &= 0xff;
+  screenX &= OBJ_X_MASK;
+  screenY &= OBJ_Y_MASK;
   word = gMarsLighthouseEntrance_HoleMaskSprite;
   *word++ = 0;
   *word++ =
@@ -1597,8 +1570,9 @@ int MarsLighthouseEntrance_RideFireball(void) {
 #ifdef UBFIX
   Party_TakeFallDamage();
 #else
-  // UB: the fall damage takes no arguments and returns nothing.
-  ((s32 (*)())Party_TakeFallDamage)(-10, 0);
+  // UB: the fall damage takes no arguments and returns nothing; it is passed
+  // the arguments it gives Party_AddHp.
+  ((s32 (*)())Party_TakeFallDamage)(-FALL_DAMAGE, 0);
 #endif
   FieldCamera_SetSpeed(7);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
@@ -1656,11 +1630,7 @@ extern u32 gEmbers_Script[];
 
 #include "shared/actor_hold_during_event.c"
 
-#define ABS(x) ((x) < 0 ? -(x) : (x))
-
 #include "shared/actor_roll_and_crumble.c"
-#undef WORK
-#undef ABS
 
 void Map_CopyPalette(s32 scene, s32 a1);
 
@@ -1723,19 +1693,7 @@ void Leader_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 
 #include "../field/field_effect_move.c"
 
-#undef RIDE_WORK
 #undef DEFINE_BURST_ICE_SHEET
-#undef SET_SPRITE_WINDOW_LAYERS
-#undef IWRAM
-#undef KNOCK_BACK
-#undef KNOCK_BACK_TAKE_DAMAGE
-#undef KNOCK_BACK_BLINK
-#undef KNOCK_BACK_SET_ANIMATION
-#undef KNOCK_BACK_CELL_ATTRIBUTE
-#undef KNOCK_BACK_CHECK_COLLISION
-#undef WORK
-#undef ABS
-#undef Position
 extern s32 gFieldEffect_DurationScripts[];
 
 void Actor_SetSpriteFlags(struct Actor *actor, u32 value);

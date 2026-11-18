@@ -48,6 +48,9 @@ enum Element {
 /// AbilityDefinition.range of an ability that reaches every unit on the side,
 /// each as if aimed at.
 #define ABILITY_RANGE_ALL 255
+/// The range icon the Psynergy lists draw for ABILITY_RANGE_ALL, the last of
+/// the twelve; range n takes icon n - 1.
+#define RANGE_ICON_ALL 11
 
 /// The low four bits of AbilityDefinition.flags: the ability kind (enum
 /// AbilityFormula).
@@ -264,7 +267,7 @@ enum AbilityUse {
 /// The bits of Unit.baseActionCount that count the unit's actions a turn.
 #define UNIT_ACTION_COUNT_MASK 0xf
 
-/// A Resistance stage adds 20 to the resistance to every element
+/// What a Resistance stage adds to the resistance to every element
 /// (Unit_Calculate).
 #define RESISTANCE_PER_STAGE 20
 

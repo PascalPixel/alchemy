@@ -1,6 +1,10 @@
 #ifndef ALCHEMY_STDDEF_H
 #define ALCHEMY_STDDEF_H
 
+/// @file
+/// size_t, ptrdiff_t, wchar_t, NULL and offsetof, as the C library defines
+/// them.
+
 typedef __SIZE_TYPE__ size_t;
 typedef __PTRDIFF_TYPE__ ptrdiff_t;
 typedef __WCHAR_TYPE__ wchar_t;

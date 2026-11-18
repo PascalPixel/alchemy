@@ -13,12 +13,8 @@
 #include "system/iwram_call.h"
 #include "system/mul_fx.h"
 
-#define ACTOR_SLOTS 8 ///< script-driven actors updated each frame
-/// The highest script word run as a command, an index of
-/// gActorScript_CommandTable; a larger one is stepped over.
-#define SCRIPT_COMMAND_MAX 63
-#define TARGET_UNSET ((s32)0x80000000) ///< no movement target
-#define TURN_MAX (TRIG_TURN / 16)      ///< the most an actor turns in one frame
+#define ACTOR_SLOTS 8             ///< script-driven actors updated each frame
+#define TURN_MAX (TRIG_TURN / 16) ///< the most an actor turns in one frame
 
 /// Calls a resident IWRAM routine at its absolute address, which this code
 /// still reaches when it runs from its copy in RAM.
@@ -97,7 +93,7 @@ void Actor_UpdateAll(void) {
 #endif
     if (actor->frozen == 0) {
       arrived = 0;
-      if (actor->targetX != TARGET_UNSET) {
+      if (actor->targetX != ACTOR_NO_TARGET) {
         // Accelerate towards the target.
         deltaX = (actor->targetX - x) / FIXED_ONE;
         deltaZ = (actor->targetZ - z) / FIXED_ONE;
@@ -206,9 +202,9 @@ void Actor_UpdateAll(void) {
           actor->velocityY = 0;
         }
       }
-      actor->targetX = TARGET_UNSET;
-      actor->targetY = TARGET_UNSET;
-      actor->targetZ = TARGET_UNSET;
+      actor->targetX = ACTOR_NO_TARGET;
+      actor->targetY = ACTOR_NO_TARGET;
+      actor->targetZ = ACTOR_NO_TARGET;
       actor->arrivalAxis = ARRIVAL_AXIS_NONE;
     }
     SET_POSITION(actor, x, y, z);

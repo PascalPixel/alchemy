@@ -9,6 +9,13 @@
 /// The opening's beam of light, and the storm's bolts.
 #define THOR_BEAM_FRAME 151
 #define THOR_BOLTS_FRAME 80
+/// The ring tips flat and sinks into the sky after THOR_SINK_FRAME.
+#define THOR_SINK_FRAME 128
+/// Thor appears over the targets at THOR_APPEAR_FRAME of the storm and is
+/// pushed back from THOR_PUSH_FRAME; the damage shows at THOR_DAMAGE_FRAME.
+#define THOR_APPEAR_FRAME 16
+#define THOR_PUSH_FRAME 32
+#define THOR_DAMAGE_FRAME 140
 
 /// The sparks, from the first word after the glint pictures that draw the
 /// crackles of lightning.
@@ -240,8 +247,8 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
                    Iwram_RatioMulQ14(BATTLE_CAMERA_DISTANCE, FIXED_ONE * 3 / 4),
                    toFIXED(32767));
     Matrix_Initialize();
-    if (frame > 128) {
-      s32 sinkFrame = frame - 128;
+    if (frame > THOR_SINK_FRAME) {
+      s32 sinkFrame = frame - THOR_SINK_FRAME;
       if (sinkFrame > 22) {
         sinkFrame = 20;
       }
@@ -445,7 +452,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       if (stormFrame >= 0 && stormFrame <= 59 && !(frame & 7)) {
         Sound_PlayFar(SE_HEAVY_IMPACT);
       }
-      if (frame == 140) {
+      if (frame == THOR_DAMAGE_FRAME) {
         EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       }
       // The pillar of lightning, throwing sparks up from its foot.
@@ -597,12 +604,12 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
 
       // Thor stands over the targets, then is pushed back.
-      if (frame > 15) {
-        if (frame == 32) {
+      if (frame >= THOR_APPEAR_FRAME) {
+        if (frame == THOR_PUSH_FRAME) {
           thorSpeedX = toFIXED(4);
           thorSpeedY = -toFIXED(1) / 4;
         }
-        if (frame > 31) {
+        if (frame >= THOR_PUSH_FRAME) {
           thorX += thorSpeedX;
           thorY += thorSpeedY;
           thorSpeedX = thorSpeedX * 60 / DAMPING_SCALE;
@@ -610,7 +617,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
         }
         BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_THOR, thorX, thorY);
       }
-      if (frame >= 16 && frame <= 143) {
+      if (frame >= THOR_APPEAR_FRAME && frame <= 143) {
         s32 thorScreenX;
         for (i = 0, thorScreenX = FIXEDtoINT(thorX) >> 1; i != 3; i++) {
           s32 glint = i & 3;
@@ -631,7 +638,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
           HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
         }
       }
-      if (frame <= 31) {
+      if (frame < THOR_PUSH_FRAME) {
         BattleCamera_Shake(8, 16);
       } else {
         BattleCamera_Shake(4, 4);
@@ -656,3 +663,7 @@ void BattleEffect_RunThor(struct BattleEffectParams *args) {
 #undef THOR_SPRITE_PICTURES
 #undef THOR_BEAM_FLASH_LEVEL
 #undef THOR_BOLT_FLASH_LEVEL
+#undef THOR_SINK_FRAME
+#undef THOR_APPEAR_FRAME
+#undef THOR_PUSH_FRAME
+#undef THOR_DAMAGE_FRAME

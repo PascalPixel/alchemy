@@ -28,10 +28,6 @@ enum WorldPictureMarkerTile {
 #define WORLD_PICTURE_HEIGHT 160 ///< the picture's height, the screen's
 /// The picture resource: its 14 palettes of BG colours, then its pixels.
 #define WORLD_PICTURE_PALETTE_BYTES (14 * PALETTE_COLORS * 2)
-/// The first tile, in BG1's character base, of the 30 by 20 tile picture that
-/// WorldMap_LoadGraphics numbers screen block 6 for: the still picture's, and
-/// the world picture's here.
-#define WORLD_MAP_STILL_FIRST_TILE 424
 /// The World Map's size in field pixels each way, which the picture shows at
 /// 240 by 160.
 #define WORLD_MAP_WORLD_SIZE 4096
@@ -579,7 +575,6 @@ void WorldMap_ZoomOutWhileLHeld(void) {
 #undef WORLD_PICTURE_MARKER_ROW
 #undef WORLD_PICTURE_AREA_MARKER_TILE
 #undef WORLD_PICTURE_PALETTE_BYTES
-#undef WORLD_MAP_STILL_FIRST_TILE
 #undef WORLD_PICTURE_CURSOR_DEPTH
 #undef WORLD_PICTURE_WIDTH
 #undef WORLD_PICTURE_HEIGHT

@@ -269,19 +269,9 @@ const s16 gLuckyDice_FaceHeights[] = {147, 80, 15, -42, -95, -32767};
 #define DICE_BOARD_PALETTE_COLORS 224
 #define DICE_SPRITES_PALETTE_COLORS 256
 
-/// The 16-colour tiles a sprite of width by height pixels takes, and the
-/// 256-colour ones, in OAM's 32-byte steps: a picture's sprites follow one
-/// another so in OBJ VRAM.
-#define SPRITE_TILES(width, height) ((width) / 8 * ((height) / 8))
-#define SPRITE_TILES_8BPP(width, height) (2 * SPRITE_TILES(width, height))
-
 /// A die's or a shadow's affine scale at DICE_NEAREST_DEPTH, in 256ths: drawn
 /// at twice its size, and smaller by half of its depth past it.
 #define DICE_NEAREST_SCALE (Q8_ONE / 2)
-/// A damping keeps this many 64ths of a speed: a bounce keeps 48 of a die's
-/// speed off a side or the floor and 56 of its speed along the floor, and
-/// every frame 63 of each.
-#define DAMPING_SCALE 64
 
 /// What the Lucky Dice screen is doing.
 enum LuckyDiceState {

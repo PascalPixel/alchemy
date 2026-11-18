@@ -5,6 +5,8 @@
 /// The integer types, TRUE, UNUSED, unread results and the fixed-address
 /// macros.
 
+#include "stddef.h"
+
 typedef signed char s8;
 typedef unsigned char u8;
 typedef signed short s16;
@@ -14,7 +16,6 @@ typedef unsigned int u32;
 typedef signed long long s64;
 typedef unsigned long long u64;
 
-#define NULL ((void *)0)
 #define UNUSED __attribute__((unused))
 #define FALSE 0
 #define TRUE 1

@@ -397,9 +397,9 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
                   Vector_AddPolarOffset(
                       toFIXED(1) / 4, direction,
                       (struct FieldPosition *)&pushedActor->x.fixed);
-                  pushedActor->targetX = TARGET_UNSET;
-                  pushedActor->targetY = TARGET_UNSET;
-                  pushedActor->targetZ = TARGET_UNSET;
+                  pushedActor->targetX = ACTOR_NO_TARGET;
+                  pushedActor->targetY = ACTOR_NO_TARGET;
+                  pushedActor->targetZ = ACTOR_NO_TARGET;
                   pushed |= 1;
                   continue;
                 }
@@ -441,9 +441,9 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
   // Blocked: stop and turn towards the pad, at most 22.5 degrees a frame; the
   // next footprint is the pair.
   if (collision != 0) {
-    actor->targetX = TARGET_UNSET;
-    actor->targetY = TARGET_UNSET;
-    actor->targetZ = TARGET_UNSET;
+    actor->targetX = ACTOR_NO_TARGET;
+    actor->targetY = ACTOR_NO_TARGET;
+    actor->targetZ = ACTOR_NO_TARGET;
     actor->velocityX = 0;
     actor->velocityZ = 0;
     if (collision & PLAYER_STEP_BLOCKED) {
@@ -735,9 +735,9 @@ update_actor:
     Actor_SelectAnimation(actor, movementAnimation);
 
   if (collision != 0) {
-    actor->targetX = TARGET_UNSET;
-    actor->targetY = TARGET_UNSET;
-    actor->targetZ = TARGET_UNSET;
+    actor->targetX = ACTOR_NO_TARGET;
+    actor->targetY = ACTOR_NO_TARGET;
+    actor->targetZ = ACTOR_NO_TARGET;
     actor->velocityX = 0;
     actor->velocityZ = 0;
     if ((collision & PLAYER_STEP_BLOCKED) != 0) {
@@ -917,9 +917,9 @@ s32 Actor_MoveByKeys(struct Actor *actor) {
   }
   Actor_SelectAnimation(actor, animation);
   if (collisionFlags != 0) {
-    actor->targetX = TARGET_UNSET;
-    actor->targetY = TARGET_UNSET;
-    actor->targetZ = TARGET_UNSET;
+    actor->targetX = ACTOR_NO_TARGET;
+    actor->targetY = ACTOR_NO_TARGET;
+    actor->targetZ = ACTOR_NO_TARGET;
     SET_VELOCITY(actor, 0, 0, 0);
   } else {
     Actor_SetMoveTarget(actor, position.x, position.y, position.z);

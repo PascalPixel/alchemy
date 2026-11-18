@@ -635,7 +635,7 @@ s32 DjinnMenu_GetEntryState(u32 entry) {
       Djinn_IsSetFar(owner, element, index)) {
     u32 set = entry & DJINN_ENTRY_IS_SET;
 
-    state = ((0u - set) | set) >> 31;
+    state = NONZERO(set);
   } else {
     state = DJINNI_STATE_RECOVERING;
   }
@@ -747,7 +747,7 @@ void Window_SetInteriorPaletteBitRect(struct Window *panel, s32 x, s32 y,
 /// in HIGHLIGHT_PALETTE when selected and WINDOW_PALETTE otherwise.
 void UiPanel_HighlightGridCell(struct Window *panel, s32 index, s32 row,
                                s32 selected) {
-  s32 palette = ((0u - selected) | selected) >> 31;
+  s32 palette = NONZERO(selected);
 
   palette = WINDOW_PALETTE - palette;
   Window_SetInteriorPaletteBitRect(panel, index % 4 * DJINN_COLUMN_TILES + 1,
@@ -1892,7 +1892,12 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
       if (originalUnit->classId != unit->classId) {
         Text_DrawMessageAsTilesFar((s32)MsgClassName + unit->classId, window,
                                    x * 8, y * 8 + 48);
-        Window_SetTilemapEntryFar(window, WINDOW_TILE(662), x + 2, 5, 0);
+        // The down arrow from the class to the next, a tile of BG
+        // character block 1, the block after the windows' own.
+        Window_SetTilemapEntryFar(window,
+                                  WINDOW_TILE(BG_CHAR_SIZE / TILE_SIZE_4BPP +
+                                              DJINN_BACKDROP_BORDER_TILE),
+                                  x + 2, 5, 0);
       }
       column = x;
       if (originalUnit->classId != unit->classId)

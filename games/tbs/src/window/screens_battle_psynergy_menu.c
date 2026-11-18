@@ -4,10 +4,6 @@
 
 #include "screens_internal.h"
 
-/// The last of the twelve range icons Window_DrawThreeTileColumn draws, which
-/// stands for ABILITY_RANGE_ALL; range n takes icon n - 1.
-#define RANGE_ICON_ALL 11
-
 /// The battle Psynergy list for unit `unitId`: `count` abilities of `actions`
 /// (ended by 0), five to a page, each with its icon, name, PP cost, element and
 /// range icon, in TEXT_COLOR_YELLOW when not usable in battle, TEXT_COLOR_RED
@@ -66,9 +62,11 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
     sprites[i].oam.f.tile = VramCache_Reload(iconSlots[i], -1);
   }
 
-  // XXX: what shows tiles 0, 1, 16 and 17 of the second text range
-  // (TEXT_EXTRA_TILE_FIRST), which take the top and bottom tees here; a render
-  // with a battle Psynergy list open would settle it.
+  // The border's tees go into tiles 0, 1, 16 and 17 of the second text range,
+  // which nothing shows here: in battle they are BG1's 8bpp tiles
+  // COMMAND_ROW_ICON_TILE and COMMAND_ROW_ICON_TILE + 8, the first command
+  // icon's top-left and bottom-left, and BG1 is off while a list is open. The
+  // command row draws its icons there again when it opens next.
   Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, TEXT_EXTRA_TILE_FIRST);
   Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, TEXT_EXTRA_TILE_FIRST + 1);
   Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, TEXT_EXTRA_TILE_FIRST + 16);
@@ -146,14 +144,17 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
       }
 
       if (count > BATTLE_LIST_ROWS) {
-        for (i = 0; i < (count + 4) / BATTLE_LIST_ROWS; i++) {
+        for (i = 0; i < (count + BATTLE_LIST_ROWS - 1) / BATTLE_LIST_ROWS;
+             i++) {
           iconTile = i + PAGE_NUMBER_TILE;
           if (i == firstEntry / BATTLE_LIST_ROWS) {
             iconTile = i + PAGE_NUMBER_LIT_TILE;
           }
           Window_SetTilemapEntry(
               window, iconTile,
-              window->width - (count + 4) / BATTLE_LIST_ROWS + i - 2, -1, 0);
+              window->width -
+                  (count + BATTLE_LIST_ROWS - 1) / BATTLE_LIST_ROWS + i - 2,
+              -1, 0);
         }
       }
 
@@ -166,7 +167,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
     // Each frame: the current page's number lit 12 frames in 16, and the
     // page arrows on the window's top edge (y -1).
     if (count > BATTLE_LIST_ROWS) {
-      for (i = 0; i < (count + 4) / BATTLE_LIST_ROWS; i++) {
+      for (i = 0; i < (count + BATTLE_LIST_ROWS - 1) / BATTLE_LIST_ROWS; i++) {
         iconTile = i + PAGE_NUMBER_TILE;
         if ((gFrameCount & 15) <= 11) {
           if (i == firstEntry / BATTLE_LIST_ROWS) {
@@ -175,11 +176,14 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
         }
         Window_SetTilemapEntry(
             window, iconTile,
-            window->width - (count + 4) / BATTLE_LIST_ROWS + i - 2, -1, 0);
+            window->width - (count + BATTLE_LIST_ROWS - 1) / BATTLE_LIST_ROWS +
+                i - 2,
+            -1, 0);
       }
-      Window_SetTilemapEntry(window, LIST_TILE_PAGES_LEFT,
-                             window->width - (count + 4) / BATTLE_LIST_ROWS - 3,
-                             -1, 0);
+      Window_SetTilemapEntry(
+          window, LIST_TILE_PAGES_LEFT,
+          window->width - (count + BATTLE_LIST_ROWS - 1) / BATTLE_LIST_ROWS - 3,
+          -1, 0);
       Window_SetTilemapEntry(window, LIST_TILE_PAGES_RIGHT, window->width - 2,
                              -1, 0);
       Window_MarkTilemapRow(work, window->y - 1);
@@ -289,5 +293,3 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   wait(1);
   return result;
 }
-
-#undef RANGE_ICON_ALL

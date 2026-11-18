@@ -113,6 +113,9 @@ struct SceneEntrance {
 #define EXIT_HAS_FLAG 0x10000000
 /// The exit kind that matches whatever exit the scene ended on.
 #define EXIT_ID_ANY 255
+/// The exit kind that leaves for the scene and entrance already chosen (a
+/// battle, Retreat, an event's destination): Scene_TakeExit keeps them.
+#define EXIT_KEEP_DESTINATION 999
 /// An exit with a flag word after it: the exit is taken unless `flag` is set,
 /// and when it is set the search goes on to the next exit.
 #define SCENE_EXIT_UNLESS(exit, scene, entrance, flag)                         \

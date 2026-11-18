@@ -4,9 +4,6 @@
 
 #include "battle_internal.h"
 
-/// Battle_Run's results besides the number of enemies defeated.
-#define BATTLE_OUTCOME_LOST -1
-#define BATTLE_OUTCOME_FLED 999
 /// A name letter past every edition's last (Z, the Japanese edition's 26th),
 /// which leaves an enemy's name bare, as The Lost Age names it.
 #define NAME_LETTER_PAST_ALL 26

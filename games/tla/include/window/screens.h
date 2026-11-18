@@ -38,6 +38,14 @@ struct BarPatternRow {
   u32 secondTile;
 };
 
+/// The twelve Psynergy range icons, built in two sets of six
+/// (Menu_BuildPatternTiles for the Status menu,
+/// Menu_BuildLocalizedPatternTiles for the battle menu): range n takes icon
+/// n - 1, and ABILITY_RANGE_ALL the last, RANGE_ICON_ALL.
+#define RANGE_PATTERN_SET_COUNT 2
+#define RANGE_PATTERN_COUNT 6
+#define RANGE_ICON_ALL (RANGE_PATTERN_SET_COUNT * RANGE_PATTERN_COUNT - 1)
+
 void PartyStatus_CreateWindow(s32 flags);
 s32 DebugBrowser_Icons(void);
 s32 DebugBrowser_Portraits(void);

@@ -11,8 +11,6 @@ void Actor_MoveHalfwayTowardTarget(struct Actor *actor) {
 }
 
 #define DJINNI_AFTERIMAGES 8 ///< afterimages of the leaping Djinni
-/// sequenceResult after a battle the party fled (battle_run.c).
-#define BATTLE_OUTCOME_FLED 999
 
 /// A Djinni's battle start: the Djinni (actor id) bounces twice, turns to face
 /// the leader, hops back 16 pixels three times, then leaps 64 pixels at the
@@ -218,7 +216,7 @@ void Djinn_RestoreActorAfterBattle(void) {
 
 /// Settles a pending Djinni battle as a scene loads, from the battle's result
 /// in sequenceResult (the enemies defeated, BATTLE_OUTCOME_FLED when the party
-/// fled, -1 when it lost).
+/// fled, BATTLE_OUTCOME_LOST when it lost).
 void Djinn_ResolvePending(s32 shown) {
   struct MainRoutineWork *st = &gMainRoutineWork;
   s32 kind = st->pendingDjinni & DJINN_PENDING_KIND_MASK;
@@ -375,7 +373,6 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
 }
 
 #undef DJINNI_AFTERIMAGES
-#undef BATTLE_OUTCOME_FLED
 #undef DJINNI_LIGHT_RADIUS_FRAMES
 #undef DJINNI_LIGHT_CIRCLING_FRAMES
 #undef DJINNI_LIGHT_DRIFTING_FRAMES

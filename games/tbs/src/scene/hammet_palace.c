@@ -63,6 +63,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
+#include "scene/kalay.h"
 #include "sound/sound.h"
 #include "system/main_routine_work.h"
 #include "system/system.h"
@@ -76,10 +77,6 @@ extern struct ActorPlacement gHammetPalaceActorPlacementsOther[];
 extern struct ActorPlacement gHammetPalaceActorPlacements[];
 extern struct Trigger gHammetPalaceTriggersOther[];
 extern struct Trigger gHammetPalaceTriggers[];
-
-/// The party has heard in Lunpa that Hammet is held there, or has freed him, so
-/// Layana waits elsewhere in her room.
-#define FLAG_KALAY_HEARD_HAMMET_HELD_IN_LUNPA FLAG_AREA_TEMP_21
 
 /// The palace's actors, numbered in the order of
 /// gHammetPalaceActorPlacements from ACTOR_FIRST_PLACED.

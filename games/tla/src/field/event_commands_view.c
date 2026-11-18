@@ -153,7 +153,7 @@ struct Actor *Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames) {
         u8 attr = SPRITE_ATTR2_HIGH(sprite);
 
         /* FAKEMATCH(temporary): the mask's complement built as -(mask + 1) in
-         * a local; as attr & ~ATTR2_HIGH_PRIORITY_MASK. */
+         * a local. */
         mask = -mask;
         mask &= attr;
         mask |= OBJ_PRIORITY(1) >> 8;
@@ -167,7 +167,7 @@ struct Actor *Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames) {
         priority &= src;
         dst = SPRITE_ATTR2_HIGH(sprite);
         /* FAKEMATCH(temporary): the mask's complement built as -(mask + 1) in
-         * a local; as dst & ~ATTR2_HIGH_PRIORITY_MASK. */
+         * a local. */
         mask = -mask;
         mask &= dst;
         mask |= priority;

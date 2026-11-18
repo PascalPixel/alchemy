@@ -19,11 +19,6 @@
 #define GLYPH_PIXELS_SIZE (GLYPH_BUFFER_WIDTH * 24)
 #endif
 
-#if (LANGUAGE == LANGUAGE_JAPANESE)
-/// The first kanji's code; the codes below it are the font's glyphs.
-#define KANJI_FIRST_CODE 256
-#endif
-
 /// Draws a character, and a second one when the code carries it in bits 8 to
 /// 15, into a 16x16-pixel cell of four 4bpp tiles at out: in the text colour
 /// over a shadow, or with an outline when WindowWork.outline is 1.

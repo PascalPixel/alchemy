@@ -603,6 +603,15 @@ enum ItemUseMode {
 /// tile 15 of the list window's top border.
 #define PAGE_NUMBERS_RIGHT 15
 
+/// The x of the item and Psynergy lists' help line, "L R: Change Char"
+/// (MsgChangeCharacterHelp), on the list window's bottom row: the Japanese
+/// line starts further in.
+#if LANGUAGE == LANGUAGE_JAPANESE
+#define CHANGE_HELP_X 16
+#else
+#define CHANGE_HELP_X 0
+#endif
+
 /// The statuses the Status screens show, as StatusScreen_BuildAvailability
 /// fills them: one byte each, nonzero while the party member has it.
 enum UnitStatus {

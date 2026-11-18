@@ -3485,7 +3485,7 @@ static void LunpaFortress_RestoreToadonpaDoors(void) {
 
 // Lunpa Fortress keeps its pushed-actor tables with its read-only data, though
 // the shared declarations in field.h and staged_actor.c are not const.
-#define PUSHED_ACTOR_TABLE_SECTION __attribute__((section(".rodata")))
+#define PUSHED_ACTOR_TABLES_READ_ONLY
 #include "shared/pushed_actor_tables.c"
 // clang-format off
 

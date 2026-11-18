@@ -92,7 +92,8 @@ extern s16 gCharacter_SpriteTable[];
 extern s16 gCharacter_ChildSpriteTable[];
 /// The summon ids in menu order (Summon_ListLearned).
 extern const u8 gSummon_OrderList[16];
-/// Ends a list of summon ids (Summon_ListLearned).
+/// Ends a list of summon ids (Summon_ListLearned); the battle summon list also
+/// writes it over each summon it has moved to the front.
 #define SUMMON_END 32
 
 struct AbilityDefinition;

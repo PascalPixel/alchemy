@@ -147,9 +147,6 @@ void Unit_UpdateClassFar(s32 owner);
 /// From this parameter set on, an even set is loaded together with the odd one
 /// after it.
 #define DEBUG_PAIRED_SETS_FIRST 70
-/// Each element's eighteen Djinn (to DJINNI_SPARE_FIRST); the first seven are
-/// The Broken Seal's, so a set's Djinn are given from the eighth.
-#define DJINN_OWN_FIRST 7
 
 /// Debug: replaces the party with parameter set number preset, each member at
 /// its level with its Djinn, abilities and equipped items. Returns 1 when the

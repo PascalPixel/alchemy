@@ -5,8 +5,8 @@
 #include "gamepak/flash.h"
 #include "gamepak/flash_data.h"
 
-/// The ids the chips answer with: the device id above the maker id.
-#define FLASH_ID_MACRONIX (0x1c << 8 | 0xc2)
+/// The id a Panasonic chip answers with (Flash_ChipPanasonic's): its device id
+/// 0x1b above the maker id 0x32.
 #define FLASH_ID_PANASONIC (0x1b << 8 | 0x32)
 
 // clang-format off

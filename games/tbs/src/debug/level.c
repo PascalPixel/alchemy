@@ -8,6 +8,7 @@
 #include "battle/battle.h"
 #include "battle/battle_action_run.h"
 #include "battle/playback_queue.h"
+#include "debug/debug.h"
 #include "field/event_inline.h"
 #include "field/field_psynergy_work.h"
 #include "field/field_work.h"
@@ -52,8 +53,6 @@ extern struct Trigger gIncreaseItemAndLevel_Triggers[];
 #define ITEM_DEBUG_DRAW_ITEM_NAME Text_DrawMessage
 #endif
 
-#define DEBUG_ITEM_COUNT                                                       \
-  270 ///< The browser's item numbers, 0 to 269, wrapping.
 #define DEBUG_ABILITY_COUNT 270 ///< The ability browser's numbers, 0 to 269.
 #define BROWSER_ROW_STEP 10     ///< Right and Left move ten numbers.
 #define BROWSER_PAGE_STEP 30    ///< R and L move thirty.

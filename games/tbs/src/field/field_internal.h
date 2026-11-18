@@ -89,14 +89,19 @@ enum CellPicturePacking {
   CELL_PICTURE_PACKING_DELTA = 2 ///< each value is XORed with the one before
 };
 
-/// A movement target coordinate that is not set.
-#define TARGET_UNSET ((s32)0x80000000)
+/// A movement target coordinate that is not set: actor_arm_view.h's
+/// ACTOR_NO_TARGET, by the name field_script_commands.c still writes.
+#define TARGET_UNSET ACTOR_NO_TARGET
 
 /// Where a layout's tileset animation and blend scripts are decoded, in the
 /// space after the shapes; the world map decodes its tileset animation there
 /// too.
 #define MAPGRID_ANIMATION_SCRIPT (Ram_MapGridShapes + 4096)
 #define MAPGRID_BLEND_SCRIPT (Ram_MapGridShapes + 7680)
+
+/// One of the world map area's four tile sets, half a character block; they
+/// are decoded one after another into gBgTileBuffer.
+#define WORLD_MAP_TILE_SET_BYTES 8192
 
 /// A row of gSpritePictureCache_Sources: the packed resource that holds an
 /// animation number's pictures, ending at number 0.

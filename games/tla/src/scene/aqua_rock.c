@@ -39,7 +39,7 @@ u8 *Sprite_AddAnimation(void *animation, s32 id);
 #include "scene_ids.h"
 
 /// The bubbles a stream carries along at once.
-#define BUBBLE_COUNT 64
+#define STREAM_BUBBLE_COUNT 64
 
 /// A bubble a stream carries: its place, its age in frames and its sprite's
 /// attributes.
@@ -60,7 +60,7 @@ struct AquaRockBubbles {
   u16 next;
   s16 direction;
   u8 unusedAfterDirection[2]; ///< no code names it
-  struct Bubble bubbles[BUBBLE_COUNT];
+  struct Bubble bubbles[STREAM_BUBBLE_COUNT];
 };
 
 void Actor_StartScript(struct Actor *actor, const void *data);
@@ -124,18 +124,6 @@ extern struct ActorPlacement gAquaRock_MistSabreChestPlacements[];
 /// The trigger StepIntoCurrent raises for a leader the current carries over
 /// the edge of the falls (AquaRock_DropDownFalls).
 #define TRIGGER_DROP_DOWN_FALLS 44
-
-/// The leader's animations: flailing his arms as he drops, tumbling head over
-/// heels in a burst of spray, and sitting on the ground, legs out, arms flung
-/// up and then lowered.
-#define ANIM_LEADER_FLAIL 40
-#define ANIM_LEADER_TUMBLE_IN_WATER 18
-#define ANIM_LEADER_SIT 49
-
-/// A moai's water, a sprite added to its own: the pool in the top of its head
-/// and the water pouring from its mouth. And the fish of the slopes' pools.
-#define SPRITE_MOAI_WATER 381
-#define SPRITE_FISH 401
 
 /// The slopes (gAquaRock_SlopesPlacements).
 enum AquaRockSlopesActorId {
@@ -1558,11 +1546,11 @@ void AquaRock_DrawRisingBubbles(void) {
     entry->y = source->y.fixed;
     entry->z = source->z.fixed;
     entry->age = 0;
-    if (++work->next > BUBBLE_COUNT - 1)
+    if (++work->next > STREAM_BUBBLE_COUNT - 1)
       work->next = 0;
   }
   entry = work->bubbles;
-  for (i = BUBBLE_COUNT - 1; i >= 0; i--, entry++) {
+  for (i = STREAM_BUBBLE_COUNT - 1; i >= 0; i--, entry++) {
     if (entry->x != 0) {
       // screenX holds the ground's height here, before its own value.
       screenX = Map_GetTerrainHeight(0, entry->x, entry->z);
@@ -1625,11 +1613,11 @@ void AquaRock_DrawFallingBubbles(void) {
     bubble->y = source->y.fixed;
     bubble->z = source->z.fixed;
     bubble->age = 0;
-    if (++work->next > BUBBLE_COUNT - 1)
+    if (++work->next > STREAM_BUBBLE_COUNT - 1)
       work->next = 0;
   }
   bubble = work->bubbles;
-  for (i = BUBBLE_COUNT - 1; i >= 0; i--, bubble++) {
+  for (i = STREAM_BUBBLE_COUNT - 1; i >= 0; i--, bubble++) {
     if (bubble->x != 0) {
       if (Map_GetTerrainHeight(0, bubble->x, bubble->z) < bubble->y)
         bubble->y -= toFIXED(2);

@@ -31,14 +31,6 @@
 /// Indra Cavern: set once Lash has tied the rope between its posts.
 #define FLAG_INDRA_ROPE_TIED FLAG_SCENE_TEMP_00
 
-/// A 16.16 height in the 8-pixel steps a map cell's height is set in
-/// (MapGrid_SetCellHeight).
-#define CELL_HEIGHT_STEPS(height) ((height) >> 19)
-
-/// Sixteen puffs of dust in a ring round a block as it lands, the first thrown
-/// twice.
-#define DUST_RING_PUFFS 16
-
 extern s16 gCaverns_AngaraBlocks[];
 extern s16 gCaverns_OseniaRegions[];
 extern struct ActorPlacement gCaverns_Placements[];

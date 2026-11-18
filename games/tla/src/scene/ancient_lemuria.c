@@ -39,9 +39,9 @@ void Field_TryJumpForward(void);
 /// of each that rotate every four frames, the colour of the first that shines
 /// in the colours of gAncientLemuria_ShiningWaterColors in turn, and how many
 /// there are.
-#define FIRST_WATER_PALETTE 7
-#define WATER_FIRST_COLOR 1
-#define WATER_LAST_COLOR 14
+#define FIRST_SHORE_WATER_PALETTE 7
+#define SHORE_WATER_FIRST_COLOR 1
+#define SHORE_WATER_LAST_COLOR 14
 #define WATER_SHINING_COLOR 15
 #define SHINING_WATER_COLORS 12
 
@@ -49,7 +49,7 @@ extern s16 gAncientLemuria_ShiningWaterColors[SHINING_WATER_COLORS];
 
 /// The frames the statue Rime hides in takes to rock from side to side and
 /// back, clicking as each rock starts.
-#define STATUE_ROCK_FRAMES 16
+#define RIMES_STATUE_ROCK_FRAMES 16
 
 /// Rime's story: brought out of the first weeds by Cyclone, hiding in the blue
 /// statue, which rocks, until Tremor shakes it out.
@@ -90,8 +90,8 @@ void AncientLemuria_RockTheStatue(struct Actor *actor) {
   s16 time = actor->timer++;
 
   sprite->rotation = Iwram_MulFX(
-      Trig_Sin(time * (TRIG_TURN / STATUE_ROCK_FRAMES)), TRIG_TURN / 256);
-  if ((time & (STATUE_ROCK_FRAMES - 1)) == 0)
+      Trig_Sin(time * (TRIG_TURN / RIMES_STATUE_ROCK_FRAMES)), TRIG_TURN / 256);
+  if ((time & (RIMES_STATUE_ROCK_FRAMES - 1)) == 0)
     Sound_Play(SE_SWITCH);
 }
 
@@ -319,22 +319,26 @@ s32 AncientLemuria_CycleWaterColors(void) {
     s16 saved;
     s32 index;
 
-    saved = BG_PLTT_COLOR(FIRST_WATER_PALETTE, WATER_LAST_COLOR);
-    for (index = WATER_LAST_COLOR; index != WATER_FIRST_COLOR; index--)
-      BG_PLTT_COLOR(FIRST_WATER_PALETTE, index) =
-          BG_PLTT_COLOR(FIRST_WATER_PALETTE, index - 1);
-    BG_PLTT_COLOR(FIRST_WATER_PALETTE, WATER_FIRST_COLOR) = saved;
-    saved = BG_PLTT_COLOR(FIRST_WATER_PALETTE + 1, WATER_LAST_COLOR);
-    for (index = WATER_LAST_COLOR; index != WATER_FIRST_COLOR; index--)
-      BG_PLTT_COLOR(FIRST_WATER_PALETTE + 1, index) =
-          BG_PLTT_COLOR(FIRST_WATER_PALETTE + 1, index - 1);
-    BG_PLTT_COLOR(FIRST_WATER_PALETTE + 1, WATER_FIRST_COLOR) = saved;
+    saved = BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE, SHORE_WATER_LAST_COLOR);
+    for (index = SHORE_WATER_LAST_COLOR; index != SHORE_WATER_FIRST_COLOR;
+         index--)
+      BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE, index) =
+          BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE, index - 1);
+    BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE, SHORE_WATER_FIRST_COLOR) = saved;
+    saved =
+        BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE + 1, SHORE_WATER_LAST_COLOR);
+    for (index = SHORE_WATER_LAST_COLOR; index != SHORE_WATER_FIRST_COLOR;
+         index--)
+      BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE + 1, index) =
+          BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE + 1, index - 1);
+    BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE + 1, SHORE_WATER_FIRST_COLOR) =
+        saved;
   }
   {
     s16 color = gAncientLemuria_ShiningWaterColors[(*Ram_FrameCount >> 2) %
                                                    SHINING_WATER_COLORS];
 
-    BG_PLTT_COLOR(FIRST_WATER_PALETTE, WATER_SHINING_COLOR) = color;
+    BG_PLTT_COLOR(FIRST_SHORE_WATER_PALETTE, WATER_SHINING_COLOR) = color;
     return color;
   }
 }

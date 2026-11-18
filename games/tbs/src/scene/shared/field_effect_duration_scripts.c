@@ -8,9 +8,11 @@
 /// a change of scale so the effect reaches its scale by the end of the repeats.
 ///
 /// An includer whose scripts are read-only defines
-/// FIELD_EFFECT_DURATION_SCRIPT_QUALIFIER as const first.
+/// FIELD_EFFECT_DURATION_SCRIPTS_READ_ONLY first.
 
-#ifndef FIELD_EFFECT_DURATION_SCRIPT_QUALIFIER
+#ifdef FIELD_EFFECT_DURATION_SCRIPTS_READ_ONLY
+#define FIELD_EFFECT_DURATION_SCRIPT_QUALIFIER const
+#else
 #define FIELD_EFFECT_DURATION_SCRIPT_QUALIFIER
 #endif
 

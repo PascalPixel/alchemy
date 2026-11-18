@@ -346,10 +346,10 @@ s32 PushTarget_FillFootprint(s32 id) {
 
   if ((u16)shape != gPushKinds[(u16)i]) {
     do {
-      /* FAKEMATCH(temporary): the step taken in the high halfword, as the push
-       * footprints' copies of this search have it; plainly, j = (u16)(i + 1).
-       */
-      j = (u16)((i + 1) * 65536 >> 16);
+      /* FAKEMATCH(temporary): the step taken through a 16.16 value, as the
+       * push footprints' copies of this search have it; plainly,
+       * j = (u16)(i + 1). */
+      j = (u16)FIXEDtoINT(toFIXED(i + 1));
       i = j;
     } while (j <= PUSH_KINDS - 1 && (u16)shape != gPushKinds[j]);
   }
@@ -411,7 +411,15 @@ void PushTarget_PushFill(struct PushTarget target) {
   s32 speed;
   s32 acceleration;
 
-  direction = leader->facing >> 16;
+  // BUG: the leader's facing is taken as a 16.16 number, whose whole part is
+  // always 0 for this 16-bit angle, where its sixteenth (FACING_INDEX) was
+  // meant: every push takes direction 0 (east), so the pushed thing rolls with
+  // animation 2 whichever way it goes and the leader's step after it is none.
+#ifdef BUGFIX
+  direction = FACING_INDEX(leader->facing);
+#else
+  direction = FIXEDtoINT(leader->facing);
+#endif
   footprint = target.footprint;
   speed = leader->speedLimit;
   acceleration = leader->acceleration;
@@ -438,7 +446,8 @@ void PushTarget_PushFill(struct PushTarget target) {
   }
   Actor_Get(gMainRoutineWork.leaderActorId)->update = Actor_StopAtPushTarget;
   System_Wait(4);
-  if ((u32)(direction - 6) <= 7)
+  if (direction >= FACING_INDEX(FACING_SOUTHWEST) &&
+      direction <= FACING_INDEX(FACING_NORTH_NORTHEAST))
     Actor_SelectAnimation(actor, 3);
   else
     Actor_SelectAnimation(actor, 2);
@@ -448,9 +457,21 @@ void PushTarget_PushFill(struct PushTarget target) {
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.1);
-  Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
-                             toFIXED(gPushLeaderSteps[direction]) >> 31,
-                             toFIXED(gPushLeaderSteps[direction]) >> 17);
+  // BUG: the leader's step after the push reads both halves from the step's
+  // z: x is its sign and z its half (half of PUSH_STEP_X and PUSH_STEP_Z was
+  // meant). With direction 0 both are 0.
+  {
+    s32 step = gPushLeaderSteps[direction];
+
+#ifdef BUGFIX
+    Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
+                               PUSH_STEP_X(step) / 2, PUSH_STEP_Z(step) / 2);
+#else
+    Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
+                               toFIXED(step) >> 31,
+                               FIXEDtoINT(toFIXED(step)) >> 1);
+#endif
+  }
   if (target.callback != 0)
     target.callback();
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);

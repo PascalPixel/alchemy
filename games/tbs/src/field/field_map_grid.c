@@ -4,17 +4,17 @@
 
 #include "field_internal.h"
 
-// A cell word: its cell picture number in the low 12 bits, the rest its
-// attributes.
-#define MAPGRID_CELL_PICTURE_ID_MASK 0x00000fff ///< the cell picture number
-#define MAPGRID_ATTRIBUTE_MASK 0xfffff000       ///< the cell's attributes
+/// A cell word's attributes, the bits above its cell picture number
+/// (MAPGRID_CELL_PICTURE_ID_MASK).
+#define MAPGRID_ATTRIBUTE_MASK 0xfffff000
 /// The shift that leaves a cell word's picture number on top, its attributes
 /// shifted out. Shifted back down by one less it is the number times 2, the
 /// picture's offset in words in gCellPictures (a word for each of its two rows
 /// of 2 tiles); by two less, times 4, its offset in halfwords.
 #define MAPGRID_CELL_PICTURE_SHIFT 20
-/// The map's 128 by 128 cell words.
-#define MAPGRID_CELLS ((u32 *)Ram_MapGridCellBuffer)
+/// The map's 128 by 128 cells, each read whole as its word (a struct
+/// MapGridCell's four bytes).
+#define MAPGRID_CELL_WORDS ((u32 *)Ram_MapGridCellBuffer)
 /// A layer's visible area in cells: the screen's 15 by 10, and the row and
 /// column partly scrolled in.
 #define MAPGRID_VISIBLE_WIDTH 16
@@ -396,7 +396,7 @@ void MapGrid_RenderCellPictureRow(u32 layer, s32 tileX, s32 tileY) {
   // even and wrap at 32; the grid wraps at 128 cells.
   for (cellPictureIndex = 0; cellPictureIndex < MAPGRID_SCREEN_CELLS;
        cellPictureIndex++) {
-    u32 *cell = MAPGRID_CELLS;
+    u32 *cell = MAPGRID_CELL_WORDS;
 
     cell += sourceRow + sourceColumn;
     MapGrid_CopyCellPictureToScreen(cell, screenMap, screenRowOffset,
@@ -420,7 +420,7 @@ void MapGrid_RenderCellPictureColumn(u32 layer, s32 tileX, s32 tileY) {
   // Both the cells and the BG map wrap.
   for (cellPictureIndex = 0; cellPictureIndex < MAPGRID_COLUMN_CELLS;
        cellPictureIndex++) {
-    u32 *cell = MAPGRID_CELLS;
+    u32 *cell = MAPGRID_CELL_WORDS;
 
     cell += sourceRow + sourceColumn;
     MapGrid_CopyCellPictureHalfColumn(cell, screenMap, screenRowOffset,
@@ -581,7 +581,7 @@ void MapGrid_SetCameraCenter(FIXED x, FIXED y) {
         screenColumnOffset = x & MAPGRID_SCREEN_TILE_MASK;
         for (cellPictureColumn = 0; cellPictureColumn < MAPGRID_SCREEN_CELLS;
              cellPictureColumn++) {
-          u32 *cell = MAPGRID_CELLS;
+          u32 *cell = MAPGRID_CELL_WORDS;
 
           cell += sourceRow + sourceColumn;
           MapGrid_CopyCellPictureToScreen(cell, screenMap, screenRowOffset,
@@ -617,8 +617,8 @@ struct MapGridTilePosition {
 void MapGrid_CopyCellPictureIndicesRect(s32 sourceX, s32 sourceY, u32 dstX,
                                         u32 dstY, u32 width, u32 height) {
   u32 y;
-  u32 *sourceCells = MAPGRID_CELLS + (sourceY * MAPGRID_SIZE + sourceX);
-  u32 *destinationCells = MAPGRID_CELLS + (dstY * MAPGRID_SIZE + dstX);
+  u32 *sourceCells = MAPGRID_CELL_WORDS + (sourceY * MAPGRID_SIZE + sourceX);
+  u32 *destinationCells = MAPGRID_CELL_WORDS + (dstY * MAPGRID_SIZE + dstX);
   struct MapGridLayerScroll *layer =
       ((struct MapGridScrollWork *)gMapGridWork[0])->layers;
   struct MapGridTilePosition visibleLayers[3];
@@ -746,8 +746,8 @@ void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
 void MapGrid_CopyCellPictureCellsRect(s32 sourceX, s32 sourceY, s32 width,
                                       s32 height, s32 dstX, s32 dstY) {
   s32 y;
-  u32 *sourceCells = MAPGRID_CELLS + (sourceY * MAPGRID_SIZE + sourceX);
-  u32 *destinationCells = MAPGRID_CELLS + (dstY * MAPGRID_SIZE + dstX);
+  u32 *sourceCells = MAPGRID_CELL_WORDS + (sourceY * MAPGRID_SIZE + sourceX);
+  u32 *destinationCells = MAPGRID_CELL_WORDS + (dstY * MAPGRID_SIZE + dstX);
   struct MapGridLayerScroll *layer =
       ((struct MapGridScrollWork *)gMapGridWork[0])->layers;
   struct MapGridTilePosition visibleLayers[3];
@@ -813,7 +813,7 @@ void MapGrid_CopyCellPictureCellsRect(s32 sourceX, s32 sourceY, s32 width,
 /// picture number.
 void MapGrid_CopyCellAttributeRect(s32 sourceX, s32 sourceY, s32 width,
                                    s32 height, s32 dstX, s32 dstY) {
-  u32 *destinationCells = MAPGRID_CELLS;
+  u32 *destinationCells = MAPGRID_CELL_WORDS;
   u32 *sourceCells = destinationCells;
   u16 row;
   u16 column;
@@ -839,8 +839,8 @@ void MapGrid_CopyCellAttributeRect(s32 sourceX, s32 sourceY, s32 width,
 void MapGrid_CopyCellIndexRect(s32 sourceX, s32 sourceY, s32 width, s32 height,
                                s32 dstX, s32 dstY) {
   s32 y;
-  u32 *sourceCells = MAPGRID_CELLS + (sourceY * MAPGRID_SIZE + sourceX);
-  u32 *destinationCells = MAPGRID_CELLS + (dstY * MAPGRID_SIZE + dstX);
+  u32 *sourceCells = MAPGRID_CELL_WORDS + (sourceY * MAPGRID_SIZE + sourceX);
+  u32 *destinationCells = MAPGRID_CELL_WORDS + (dstY * MAPGRID_SIZE + dstX);
   struct MapGridLayerScroll *layer =
       ((struct MapGridScrollWork *)gMapGridWork[0])->layers;
   struct MapGridTilePosition visibleLayers[3];
@@ -913,8 +913,7 @@ void MapGrid_SetShownLayers(u32 layerFlags) {
   grid->flags = flags;
 }
 
-#undef MAPGRID_CELLS
-#undef MAPGRID_CELL_PICTURE_ID_MASK
+#undef MAPGRID_CELL_WORDS
 #undef MAPGRID_ATTRIBUTE_MASK
 #undef MAPGRID_CELL_PICTURE_SHIFT
 #undef MAPGRID_VISIBLE_WIDTH

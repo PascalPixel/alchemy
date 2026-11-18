@@ -255,9 +255,6 @@ void Actor_WaitForMoveById(s32 actorId) {
   }
 }
 
-#define Actor_SetPositionAndResetMotionFar                                     \
-  ((s32 (*)(struct Actor *, s32, s32, s32))Actor_SetPositionAndResetMotionFar)
-
 /// The event command "set actor position": puts the actor at (x, z), 16.16
 /// pixels, at rest; an actor that follows the ground keeps its height above
 /// it.

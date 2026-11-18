@@ -696,7 +696,10 @@ void AquaRockInside_ShowAquariusStone(void) {
 
   FieldActor_ShowItemIconById(ACTOR_AQUARIUS_STONE, ITEM_AQUARIUS_STONE);
   // UB: this room has no actor 20, so Actor_Get returns NULL and the stores
-  // below go through it.
+  // below go through it. The room places three actors, 8 to 10, and a probe
+  // of it with the stone set (render probe --scene AquaRockInsideAquariusStone
+  // --set 0x95d) finds those, its treasure spots 64 and 65 and the leader, and
+  // no other.
   object = Actor_Get(20);
 #ifdef UBFIX
   if (object == NULL)

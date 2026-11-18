@@ -140,10 +140,6 @@ enum {
   TEXT_INVERTED_QUESTION_MARK = 191     ///< ¿, outside Japanese
 };
 
-/// The last code the main font draws (gFont_Glyphs, from TEXT_SPACE) and the
-/// window tiles cover; a code above it is a kanji (gFont_KanjiGlyphs).
-#define TEXT_LAST_FONT_CODE 255
-
 // The kana mark drawn with a character, in the top two bits of its code (the
 // index into gFont_MarkGlyphCodes).
 #define TEXT_CODE_MARK_SHIFT 14
@@ -166,6 +162,14 @@ enum TextStyle {
   TEXT_STYLE_POP = 4,      ///< WINDOW_SPRITE_MOTION_POP
   TEXT_STYLE_SPIN = 5      ///< WINDOW_SPRITE_MOTION_SPIN, a pixel wider too
 };
+
+/// Outside Japanese, two narrow characters whose glyphs come to this many
+/// pixels at most are drawn together in one 16-pixel cell (Message_Type,
+/// Text_DrawWideStringAtOffset).
+#define GLYPH_PAIR_WIDTH_MAX 15
+/// As GLYPH_PAIR_WIDTH_MAX, in Spanish, in the outlined style, which widens
+/// each glyph by one.
+#define GLYPH_PAIR_OUTLINED_WIDTH_MAX 14
 
 /// The window animation a message can start (TEXT_WINDOW_STATE): the window's
 /// frame grows by a tile and its text sprites pulse, for the message's

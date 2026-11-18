@@ -8,10 +8,6 @@
 #include "resource_ids.h"
 #include "macros.h"
 
-#define Decompress_ByteLz ((void (*)(void *, void *))Decompress_ByteLz)
-
-/// A command icon's pixels: 32x32 at a byte a pixel.
-#define COMMAND_ICON_BYTES (32 * 32)
 /// A row of a command icon's 8x8 tiles, four across, as a sprite holds them.
 #define COMMAND_ICON_TILE_ROW_BYTES (4 * TILE_SIZE_8BPP)
 
@@ -142,8 +138,6 @@ s32 Djinn_GetGiveTutorialMessage(void) {
 /// One word of a tile marked by XOR with `mask`.
 static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 
-#define RANGE_PATTERN_SET_COUNT 2
-#define RANGE_PATTERN_COUNT 6
 #define RANGE_PATTERN_PAIR_BYTES (2 * TILE_SIZE_4BPP)
 /// The first of the range icons' BG tiles, which Window_DrawThreeTileColumn
 /// draws as tilemap entries.
@@ -437,9 +431,6 @@ UNUSED void Icon_Decompress(GlyphTransfer *work) {
   Heap_Release(routine);
 }
 
-#define Text_DrawStringAtOffset                                                \
-  ((void (*)(u8 *, s32, s32, s32))Text_DrawStringAtOffset)
-
 /// Opens a 6x4 window at the upper left, draws its label and returns its
 /// handle.
 s32 Link_CreateCountdownLabelWindow(void) {
@@ -447,7 +438,7 @@ s32 Link_CreateCountdownLabelWindow(void) {
 
 #if (LANGUAGE == LANGUAGE_SPANISH) || (LANGUAGE == LANGUAGE_FRENCH) ||         \
     (LANGUAGE == LANGUAGE_ITALIAN)
-  Text_DrawStringAtOffset(gLink_TimeLabelString, win, 0, 0);
+  Text_DrawStringAtOffset(gLink_TimeLabelString, (struct Window *)win, 0, 0);
 #else
   Text_DrawStringInWindow(gLink_TimeLabelString, win, 0, 0);
 #endif
@@ -561,9 +552,6 @@ UNUSED void Graphics_InstallBg1VCountHandler(void) {
   Irq_SetHandler(IRQ_VCOUNT, COMMAND_ROW_TOP * 8, CommandRow_PutBg1InFront);
 }
 
-#undef Decompress_ByteLz
-#undef Text_DrawStringAtOffset
-#undef COMMAND_ICON_BYTES
 #undef COMMAND_ICON_TILE_ROW_BYTES
 #undef ROW_LAST_PIXEL_SHIFT
 #undef COMMAND_ICON_COLORS

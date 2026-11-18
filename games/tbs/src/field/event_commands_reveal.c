@@ -36,9 +36,6 @@ void Actor_SetRevealSpriteColor(s32 value) {
 /// ellipse about 73 pixels to either side.
 #define REVEAL_RADIUS 60
 
-/// How long Reveal lasts: 10 seconds.
-#define REVEAL_FRAMES 600
-
 /// Task of the timed Psynergy (FIELD_PSYNERGY_REVEAL): asks for it to end once
 /// the leader is REVEAL_RADIUS from its centre or its time has run out.
 void FieldPsynergy_WatchLeaderDistance(void) {

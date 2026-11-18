@@ -203,10 +203,6 @@ s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB) {
   return -1;
 }
 
-/// The steps, one a frame, in which an object grows out of the caster or
-/// shrinks back into it.
-#define GROW_STEPS 10
-
 /// Moves the object from 16 pixels above the effect's main object to (x, y,
 /// z), growing it from 0.25 to 1.
 void FieldPsynergy_GrowFromCaster(struct Actor *actor, s32 x, s32 y, s32 z) {
@@ -253,7 +249,6 @@ void FieldPsynergy_ShrinkToCaster(struct Actor *actor, s32 x, s32 y, s32 z) {
     i++;
   } while (i <= GROW_STEPS);
 }
-#undef GROW_STEPS
 
 /// Spawns a sparkle at x, y, z that hops off in a random
 /// direction 8 to 32 pixels away at 1 to 2 pixels a frame.

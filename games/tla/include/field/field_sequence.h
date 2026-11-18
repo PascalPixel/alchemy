@@ -54,9 +54,6 @@ enum WindowTransitionMode {
   WINDOW_TRANSITION_LEADER_LOW = 77
 };
 
-/// The exit request that leaves for the scene and entrance already chosen.
-#define EXIT_KEEP_DESTINATION 999
-
 /// A rule choosing a scene's field music, ended by id -1: a scene or an area
 /// (byScene), an entrance (-1 for any), a flag that must be set (-1 for none)
 /// and the song.
@@ -86,6 +83,10 @@ struct TriggerEvent {
   s16 condition;
   u32 value;
 };
+
+/// A distance beyond any field Psynergy's reach, where the search for its
+/// nearest target starts.
+#define BEYOND_REACH 9999
 
 /// A row of a scene's actor placement table as the field reads it: its
 /// sprite, condition, movement type, position, facing, the facing it takes

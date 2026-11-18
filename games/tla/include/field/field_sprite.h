@@ -54,8 +54,9 @@ struct FieldSprite {
 };
 
 /// The depth a sprite the scene draws itself takes past its screen row, just
-/// behind an actor's image (+ 62) and shadow (+ 60) at the same spot: light
-/// sprites, a hole's mask, map cell sprites, fountains and ropes.
+/// behind an actor's image (+ PLACEMENT_IMAGE_DEPTH, field/field.h) and shadow
+/// (two slots less) at the same spot: light sprites, a hole's mask, map cell
+/// sprites, fountains and ropes.
 #define SCENE_SPRITE_DEPTH 58
 
 #endif

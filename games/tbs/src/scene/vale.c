@@ -110,6 +110,7 @@
 #include "scene/catch_nut.h"
 #include "scene/event_psynergy.h"
 #include "scene/import.h"
+#include "scene/vale.h"
 #include "scene/walk_into_leader.h"
 #include "scene/world_map_attached_effects.h"
 #include "sound/sound.h"
@@ -344,13 +345,6 @@ enum ValeAnimation {
 /// The leader has climbed the ladder onto the roof of Isaac's house, whose
 /// cells are changed so it can be walked.
 #define FLAG_VALE_ON_ROOF FLAG_SCENE_TEMP_04
-/// The leader is on the rope bridge over the river.
-///
-/// While it is set, the bridge's cells take the deck's shapes and cell
-/// behaviors. Its two middle rows are walkable at the deck's height, and its
-/// rails are walls. Stepping off puts back the river's, walled water between
-/// open banks.
-#define FLAG_VALE_ON_BRIDGE FLAG_SCENE_TEMP_10
 /// The man guarding Mt. Aleph is paused while a menu is open.
 #define FLAG_VALE_MT_ALEPH_GUARD_PAUSED FLAG_SCENE_TEMP_41
 /// Back from Kalay, Garet has met his sister.

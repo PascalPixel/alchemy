@@ -19,9 +19,6 @@ enum {
 /// past them reads the field work's members after the slots.
 #define LOOKUP_ID_COUNT 192
 
-/// An Actor_Create id of enum ActorCreateKind `kind`, above its sprite.
-#define ACTOR_CREATE_KIND(kind) ((kind) << 12)
-
 /// Returns the sprite of character, which is the character itself except that
 /// FLAG_CHILDHOOD gives Isaac and Garet SPRITE_ISAAC_CHILD and
 /// SPRITE_GARET_CHILD, and FLAG_ISAAC_WEARS_TUNIC gives grown Isaac sprite
@@ -62,8 +59,6 @@ s32 Party_RemapCharacterIdIfEnabled(s32 character, s32 childhood) {
   }
   return sprite;
 }
-
-#define MAPGRID_CELLS ((struct MapGridCell *)Ram_MapGridCellBuffer)
 
 /// Creates the actors of a scene's actor placement table (ended by sprite -1),
 /// and records the table among the scene's tables.
@@ -576,11 +571,9 @@ void Actor_Restore(void) {
   }
 }
 
-#undef MAPGRID_CELLS
 #undef FLAG_IN_VIEW
 #undef FLAG_OUT_OF_VIEW
 #undef PLACED_MAX
 #undef PLACEMENT_SPRITE_MAX
 #undef LOOKUP_ID_COUNT
-#undef ACTOR_CREATE_KIND
 #undef SPRITE_CACHE_FLAGS

@@ -1,5 +1,5 @@
 /// @file
-/// Carry.
+/// Carry cast where there is nothing to carry, and the hands Carry spawns.
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
@@ -19,9 +19,11 @@
 #include "field/object.h"
 #include "fixed_math.h"
 
+#define CARRY_SPARKLES 24 ///< scattered as the hands meet
+
 /// Carry cast with no target: two hands appear 32 pixels to either side of
-/// the spot, close 24 pixels in and meet with a crash that scatters 24
-/// fragments, then vanish.
+/// the spot, close 24 pixels in and meet with a crash that scatters
+/// CARRY_SPARKLES sparkles, then vanish.
 void FieldPsynergy_Carry(void) {
   struct FieldEffectWork *work;
   struct Actor *obj;
@@ -35,8 +37,9 @@ void FieldPsynergy_Carry(void) {
   FieldPsynergy_FadeToCastColor();
   SET_POSITION(&pos, work->x, work->y + toFIXED(16), work->z);
   pair[0] = FieldEffect_SpawnCarryHand(pos.x + toFIXED(32), pos.y, pos.z,
-                                       DEGtoANG(180));
-  pair[1] = FieldEffect_SpawnCarryHand(pos.x - toFIXED(32), pos.y, pos.z, 0);
+                                       FACING_WEST);
+  pair[1] = FieldEffect_SpawnCarryHand(pos.x - toFIXED(32), pos.y, pos.z,
+                                       FACING_EAST);
 
   wait(15);
   walk = pair;
@@ -48,7 +51,7 @@ void FieldPsynergy_Carry(void) {
 
   Actor_WaitForMoveFar(pair[0]);
   Sound_PlayFar(SE_HEAVY_IMPACT);
-  for (n = 0; n < 24; n++) {
+  for (n = 0; n < CARRY_SPARKLES; n++) {
     SET_POSITION(&pos, work->x, work->y + toFIXED(16), work->z);
     obj = Actor_Spawn(SPRITE_SPARKLE, pos.x, pos.y, pos.z);
     if (obj != 0) {
@@ -66,8 +69,11 @@ void FieldPsynergy_Carry(void) {
   FieldPsynergy_FadeFromCastColor();
 }
 
-/// Spawns object 278 and grows it from a quarter to full size, an eighth of a
-/// turn a frame, then faces it to angle.
+#undef CARRY_SPARKLES
+
+/// Spawns a hand (SPRITE_MOVE_HAND) with the item break sound and grows it,
+/// spinning 1/8 turn a frame, from a quarter to full size over 24 frames; angle
+/// is the way it faces once grown.
 struct Actor *FieldEffect_SpawnCarryHand(s32 x, s32 y, s32 z, s32 angle) {
   struct Actor *actor;
   FIXED scale;

@@ -700,8 +700,8 @@ void AirsRock_SwirlDust(struct Actor *actor) {
 /// column 6.
 #define WHIRLWIND_MAP_ROW_OFFSET 15
 
-/// Whirlwind on the twister rock of the first slope: the mud is blown from the
-/// wall so it can be climbed.
+/// Whirlwind on the twister rock by the wall: a great whirlwind rises from it
+/// and blows the mud from the wall, so it can be climbed.
 void AirsRock_WhirlwindClearsWall(void) {
   struct MainRoutineWork *work;
   u16 *buffer = Heap_Alloc(2 * WHIRLWIND_TILE_ROW_SIZE);
@@ -1282,9 +1282,10 @@ void AirsRock_CrumbleRock(s32 x, s32 z) {
 #define LIGHTNING_MAP_COLUMNS 4
 #define LIGHTNING_SCREEN_BLOCK 4
 
-/// Whirlwind on the purple twister rock at the top: it glows, the rocks in the
-/// way crumble with a crash (AirsRock_CrumbleRock) and the way to the top
-/// opens; sets flag FLAG_AIRS_ROCK_TOP_OPENED.
+/// Whirlwind on the twister rock at the top: it glows, the light turns yellow,
+/// lightning strikes the pile of rocks below it twice and they crumble with a
+/// crash (AirsRock_CrumbleRock), opening the way on; sets
+/// FLAG_AIRS_ROCK_TOP_OPENED.
 void AirsRock_WhirlwindOpensTheTop(void) {
   u16 *buffer = Heap_Alloc(LIGHTNING_TILES * TILE_SIZE_4BPP);
   u16 *cell;

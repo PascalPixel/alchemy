@@ -18,11 +18,13 @@
 ///   snow, waiting for Mia, and a strongman counts out his exercises against
 ///   the cold.
 ///
-///   Six doors (step triggers 51 to 56) open into the houses, the shops, the
-///   inn and the Sanctum (SceneId_IceRooms). IMIL_TO_WORLD_MAP_SOUTH and
-///   IMIL_TO_WORLD_MAP_NORTH lead out to the World Map, and the way north
-///   (step trigger 4) leads into Imil Falls Cave. Coming back out of it
-///   (IMIL_FROM_IMIL_FALLS_CAVE) the leader walks down into the village.
+///   Six doors, whose cells are their exits past EXIT_CELL_BEHAVIOR_OFFSET,
+///   open into the houses, the shops, the inn and the Sanctum
+///   (SceneId_IceRooms). IMIL_TO_WORLD_MAP_SOUTH and IMIL_TO_WORLD_MAP_NORTH
+///   lead out to the World Map, and the path north
+///   (CELL_BEHAVIOR_IMIL_PATH_TO_FALLS_CAVE) leads into Imil Falls Cave.
+///   Coming back out of it (IMIL_FROM_IMIL_FALLS_CAVE) the leader walks down
+///   into the village.
 ///
 ///   Two tasks run while the party is here. One makes smoke rise from the
 ///   five houses' chimneys, staggered over each second. The other turns the
@@ -30,9 +32,9 @@
 ///   from the falls and on the raised ground under the big tree, and on
 ///   elsewhere.
 ///
-///   Stepping onto ice (cell behavior 90) slides the leader in the held
-///   direction, turning toward it as he goes, until a blocked cell or one too
-///   high stops him.
+///   Stepping onto the frozen river's ice (CELL_BEHAVIOR_IMIL_ICE) slides the
+///   leader in the held direction, turning toward it as he goes, until a
+///   blocked cell or one too high stops him.
 ///
 ///   Move pushes the snowman only when cast from the snow, not from the
 ///   river's ice or the raised ground. Once it lands at cell (15, 7) it stays
@@ -115,7 +117,7 @@
 #include "text/msg_ids.h"
 
 extern s16 gImil_KeyHeadings[];
-extern s16 gImil_SwayHeadings[];
+extern s16 gImil_SlideHeadings[];
 extern s32 gImil_ShiverScript[];
 extern s32 gImil_OldWomanHurryScript[];
 extern s32 gImil_LeaderStepAsideScript[];
@@ -137,8 +139,8 @@ extern u16 *gImil_DoorCellSteps[];
 extern s16 gImil_DoorCellPoints[][2];
 extern u16 gImil_CellStepsA[];
 extern u16 gImil_CellStepsB[];
-/// The position (x, y, z) the unused arc and sway effects move around.
-extern s32 gImil_ArcOrigin[];
+/// The point (x, y, z) the unused spiral and sway move around.
+extern s32 gImil_EffectCenter[];
 
 /// The village's actors (Imil), numbering gImil_TownActorPlacements' rows,
 /// and gImil_TownActorPlacementsCured's, from ACTOR_FIRST_PLACED.
@@ -214,6 +216,14 @@ enum { SHOP_IMIL_WEAPONS = 10, SHOP_IMIL_ARMOR = 11, SHOP_IMIL_ITEMS = 12 };
 /// Imil's inn, as Inn_CheckIn numbers the inns.
 enum { IMIL_INN = 4 };
 
+/// The cell behaviors the village's step triggers answer.
+enum ImilCellBehavior {
+  /// The path north out of the village (Imil_LeaveNorth).
+  CELL_BEHAVIOR_IMIL_PATH_TO_FALLS_CAVE = 4,
+  /// The frozen river's ice, slid across (Imil_SlideOnIce).
+  CELL_BEHAVIOR_IMIL_ICE = 90
+};
+
 /// The weapon and armor counters' cell behaviors in the houses. Searching
 /// one facing north reaches its seller.
 enum IceRoomsCellBehavior {
@@ -246,7 +256,7 @@ static void Imil_UpdateFootprints(void);
 static void Imil_PlaceMovedSnowman(void);
 static void Imil_ArriveFromFallsCave(void);
 static void Imil_MiaSaysFarewellToApprentices(void);
-static void Imil_RunIceSlide(void);
+static void Leader_SlideOnIce(void);
 
 /// A sick person shivers: a quick squash, then a pause.
 static s32 Imil_UpdateShiver(struct Actor *actor) {
@@ -314,8 +324,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gImil_TownActorPlacements;
 }
 
-/// Stepping onto the ice in Imil (cell behavior 90) starts a slide.
-static void Imil_StartIceSlide(void) { Imil_RunIceSlide(); }
+/// Stepping onto the frozen river's ice slides the leader.
+static void Imil_SlideOnIce(void) { Leader_SlideOnIce(); }
 
 /// The village's, or the houses' and the Sanctum's, conversations and
 /// Psynergy targets.
@@ -1050,9 +1060,10 @@ static void Imil_MeetMiaAtOldCouplesHouse(void) {
   Event_End();
 }
 
-/// Unused: an update routine that moves an effect around its stored origin
-/// until its timer runs out. No actor is given it.
-UNUSED static void Imil_UpdateCountdownArc(struct Actor *actor) {
+/// Unused: an update routine that spirals an actor in to a point 8 pixels
+/// above gImil_EffectCenter, a pixel nearer and a 32nd of a turn round each
+/// frame, and releases it there. No actor is given it.
+UNUSED static void Imil_UpdateSpiralIn(struct Actor *actor) {
   // XXX (no evidence): what this and Imil_SwayAndSpark were for; no
   // actor is given either, so nothing in the game shows them in use.
   s32 buf[3];
@@ -1064,9 +1075,9 @@ UNUSED static void Imil_UpdateCountdownArc(struct Actor *actor) {
     actor->timer = n;
     t = (s16)n;
     if (t != 0) {
-      buf[0] = gImil_ArcOrigin[0];
-      buf[1] = gImil_ArcOrigin[1] + toFIXED(8);
-      buf[2] = gImil_ArcOrigin[2];
+      buf[0] = gImil_EffectCenter[0];
+      buf[1] = gImil_EffectCenter[1] + toFIXED(8);
+      buf[2] = gImil_EffectCenter[2];
       Vector_AddPolarOffset(toFIXED(t),
                             t * (TRIG_TURN / 32) + (s16)actor->userValue, buf);
       actor->x.fixed = buf[0];
@@ -1078,15 +1089,16 @@ UNUSED static void Imil_UpdateCountdownArc(struct Actor *actor) {
   }
 }
 
-/// Unused: an update routine that sways an actor and now and then gives
-/// off a rising spark. No actor is given it.
+/// Unused: an update routine that sways an actor 6 pixels either side of
+/// gImil_EffectCenter every 64 frames and, every third frame, sheds a sparkle
+/// beside it (gImil_SparkScript). No actor is given it.
 UNUSED static void Imil_SwayAndSpark(struct Actor *actor) {
   s32 pos[3];
   struct Actor *spark;
   s32 radius;
 
   actor->x.fixed =
-      gImil_ArcOrigin[0] +
+      gImil_EffectCenter[0] +
       Iwram_MulFX(toFIXED(6), Trig_Sin(actor->timer * (TRIG_TURN / 64)));
   actor->timer++;
   actor->timer = (actor->timer + 64) % 64;
@@ -1129,13 +1141,14 @@ static void Imil_MiaCastsPlyOnOldMan(void) {
   FieldPsynergy_End();
 }
 
-/// Resets a rising effect's motion, sprite priority, and initial scale.
-static void Imil_InitializeRisingEffect(struct Actor *work) {
+/// Readies a chimney's smoke puff: no motion of its own, at sprite priority
+/// 1, tinted blue and half its size.
+static void Imil_InitializeSmoke(struct Actor *work) {
   struct Sprite *sprite;
 
   work->motionFlags = 0;
   work->timer = 0;
-  work->priorityFlags &= ~1;
+  work->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 
   sprite = work->sprite;
   sprite->image.priority = 1;
@@ -1147,9 +1160,9 @@ static void Imil_InitializeRisingEffect(struct Actor *work) {
   work->scaleY = FIXED_ONE / 2;
 }
 
-/// Moves and enlarges an ambient effect, then releases it when its timer
-/// expires.
-static void Imil_UpdateRisingEffect(struct Actor *actor) {
+/// A smoke puff's update: it drifts east ever faster, rises half a pixel a
+/// frame and grows, and is released when its second is up.
+static void Imil_DriftSmoke(struct Actor *actor) {
   struct FieldEffect *effect = (struct FieldEffect *)actor;
 
   effect->x += (s16)effect->spin << 8;
@@ -1162,12 +1175,12 @@ static void Imil_UpdateRisingEffect(struct Actor *actor) {
   }
 }
 
-/// Initializes a newly created ambient effect for its one-second rise.
-static inline void Imil_StartRisingEffect(struct Actor *actor) {
+/// Starts a newly created smoke puff on its one-second rise.
+static inline void Imil_StartSmoke(struct Actor *actor) {
   if (actor != NULL) {
-    Imil_InitializeRisingEffect(actor);
+    Imil_InitializeSmoke(actor);
     ((struct FieldEffect *)actor)->countdown = 60;
-    ((struct FieldEffect *)actor)->update = Imil_UpdateRisingEffect;
+    ((struct FieldEffect *)actor)->update = Imil_DriftSmoke;
     Actor_SelectAnimation(actor, 5);
   }
 }
@@ -1180,27 +1193,27 @@ static void Imil_SpawnChimneySmoke(void) {
   if (gFrameCount % 60 == 0) {
     actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, toFIXED(463), 0,
                                               toFIXED(292));
-    Imil_StartRisingEffect(actor);
+    Imil_StartSmoke(actor);
   }
   if ((gFrameCount + 30) % 60 == 0) {
     actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, toFIXED(320),
                                               toFIXED(32), toFIXED(356));
-    Imil_StartRisingEffect(actor);
+    Imil_StartSmoke(actor);
   }
   if ((gFrameCount + 10) % 60 == 0) {
     actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, toFIXED(118), 0,
                                               toFIXED(70));
-    Imil_StartRisingEffect(actor);
+    Imil_StartSmoke(actor);
   }
   if ((gFrameCount + 50) % 60 == 0) {
     actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, toFIXED(342), 0,
                                               toFIXED(124));
-    Imil_StartRisingEffect(actor);
+    Imil_StartSmoke(actor);
   }
   if ((gFrameCount + 80) % 60 == 0) {
     actor = (struct Actor *)FieldActor_Create(SPRITE_DUST_PUFF, toFIXED(431), 0,
                                               toFIXED(171));
-    Imil_StartRisingEffect(actor);
+    Imil_StartSmoke(actor);
   }
 }
 
@@ -1218,6 +1231,7 @@ static void Imil_UpdateFootprints(void) {
   actor = Actor_Get(ACTOR_PARTY_LEADER);
   x = actor->x.fixed;
   column = FIELD_HALF_CELL(x);
+  // On the frozen river.
   if ((column >= 24 && column <= 31) ||
       ((FIELD_HALF_CELL(actor->z.fixed) >= 36 &&
         FIELD_HALF_CELL(actor->z.fixed) <= 45) &&
@@ -1230,6 +1244,7 @@ static void Imil_UpdateFootprints(void) {
     GameFlag_Clear(otherZoneFlag);
     return;
   }
+  // On the raised ground under the big tree.
   if (x > toFIXED(232) && actor->y.fixed > toFIXED(30) &&
       actor->z.fixed > toFIXED(212)) {
     grid = gMapGridWork[0];
@@ -1274,8 +1289,8 @@ static void Imil_PlaceMovedSnowman(void) {
   MapGrid_CopyCellAttributes(15, 6, 1, 1, a, b);
 }
 
-/// Walking into the way north out of Imil (step trigger 4): the leader faces
-/// north and goes into Imil Falls Cave (IMIL_TO_IMIL_FALLS_CAVE).
+/// Walking onto the path north out of Imil: the leader faces north and goes
+/// into Imil Falls Cave (IMIL_TO_IMIL_FALLS_CAVE).
 static void Imil_LeaveNorth(void) {
   Event_Start();
   Actor_Get(ACTOR_PARTY_LEADER)->facing = FACING_NORTH;
@@ -1442,7 +1457,7 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
 }
 
 /// While sliding on Imil's ice, the leader turns toward the held direction.
-static void Imil_TurnSlidingActor(struct Actor *actor) {
+static void Actor_SteerByPad(struct Actor *actor) {
   s32 heading;
   u16 facing;
   s32 turn;
@@ -1452,7 +1467,7 @@ static void Imil_TurnSlidingActor(struct Actor *actor) {
     return;
   }
   actor->steeringFlags = 0;
-  heading = gImil_KeyHeadings[(gKeysHeld >> 4) & 0xF];
+  heading = gImil_KeyHeadings[DPAD_INDEX(gKeysHeld)];
   if (heading == -1) {
     Actor_SelectAnimation(actor, ANIM_LEADER_LOOK_AROUND);
     return;
@@ -1469,7 +1484,7 @@ static void Imil_TurnSlidingActor(struct Actor *actor) {
 }
 
 /// The leader slides along Imil's ice until something stops him.
-static void Imil_RunIceSlide(void) {
+static void Leader_SlideOnIce(void) {
   struct Actor *subject;
   struct FieldPosition probe;
   s32 heading;
@@ -1481,7 +1496,7 @@ static void Imil_RunIceSlide(void) {
   subject = Actor_Lookup(gMainRoutineWork.leaderActorId);
 
   for (;;) {
-    heading = gImil_SwayHeadings[DPAD_INDEX(gKeysHeld)];
+    heading = gImil_SlideHeadings[DPAD_INDEX(gKeysHeld)];
     if ((u16)heading == (u16)KEY_HEADING_NONE) {
       return;
     }
@@ -1514,7 +1529,7 @@ static void Imil_RunIceSlide(void) {
     Actor_SelectAnimation(subject, ANIM_WALK);
     Actor_SetAnimationSpeed(subject, ANIMATION_STEP_NORMAL * 3);
     Actor_WaitForMove(subject);
-    subject->update = Imil_TurnSlidingActor;
+    subject->update = Actor_SteerByPad;
 
     for (;;) {
       FieldVector_AddPolarOffset(16, heading, &probe);
@@ -1547,7 +1562,7 @@ static void Imil_RunIceSlide(void) {
 
 blocked:
   subject->update = NULL;
-  subject->steeringFlags |= 1;
+  subject->steeringFlags |= ACTOR_FACES_MOTION;
 
   subject->acceleration = toFIXED(1) / 4;
 
@@ -1564,7 +1579,7 @@ s16 gImil_KeyHeadings[] = {
     FACING_SOUTH, KEY_HEADING_NONE, KEY_HEADING_NONE, FACING_SOUTH, KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE,
 };
 
-s16 gImil_SwayHeadings[] = {
+s16 gImil_SlideHeadings[] = {
     KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE, FACING_NORTH, FACING_EAST, FACING_WEST, FACING_NORTH,
     FACING_SOUTH, FACING_EAST, FACING_WEST, FACING_SOUTH, KEY_HEADING_NONE, FACING_EAST, FACING_WEST, KEY_HEADING_NONE,
 };
@@ -1576,17 +1591,18 @@ s32 gImil_FreezingYoungManScript[] = {
     SC_ADD(SW_SCALE_Y, FIXED_ONE / 16),
     SC_WAIT(1),
     SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 32),
-    SC_ADD(SW_SCALE_Y, -2048),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 32),
     SC_WAIT(1),
     SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 64),
-    SC_ADD(SW_SCALE_Y, -1024),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),
     SC_WAIT(1),
     SC_ADD(SW_SCALE_X, 5 * FIXED_ONE / 64),
-    SC_ADD(SW_SCALE_Y, -1024),
+    SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),
     SC_WAIT(1),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// A sick person shivers (Imil_UpdateShiver) for as long as it runs.
 s32 gImil_ShiverScript[] = {
     SC_CALL(Imil_UpdateShiver),
     SC_LOOP(SC_FOREVER, SC_TOP),
@@ -1623,6 +1639,8 @@ s32 gImil_LeaderStepAsideScript[] = {
     SC_END,
 };
 
+/// Stretches an actor three eighths taller and lets it settle back, twice:
+/// the old man and the sick sellers bob up as they talk.
 s32 gImil_BobScript[] = {
     SC_ADD(SW_SCALE_Y, 3 * FIXED_ONE / 8),
     SC_WAIT(2),
@@ -1636,6 +1654,8 @@ s32 gImil_BobScript[] = {
     SC_END,
 };
 
+/// A sparkle Imil_SwayAndSpark sheds sinks two fifths of a pixel a frame for
+/// 72 frames, then is released.
 s32 gImil_SparkScript[] = {
     SC_ADD(SW_Y, -toFIXED(2) / 5),
     SC_WAIT(1),
@@ -1808,8 +1828,8 @@ struct Trigger gImil_TownTriggers[] = {
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), EXIT_CELL_BEHAVIOR_OFFSET + IMIL_TO_HOUSE_NORTHEAST, CONDITION_ALWAYS, EVENT(Imil_OpenDoorAndExit) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), EXIT_CELL_BEHAVIOR_OFFSET + IMIL_TO_ICE_ROOMS_EAST, CONDITION_ALWAYS, EVENT(Imil_OpenDoorAndExit) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), EXIT_CELL_BEHAVIOR_OFFSET + IMIL_TO_ICE_ROOMS_NORTHEAST, CONDITION_ALWAYS, EVENT(Imil_OpenDoorAndExit) },
-    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Imil_LeaveNorth) },
-    { TRIGGER_STEP, 90, CONDITION_ALWAYS, EVENT(Imil_StartIceSlide) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_IMIL_PATH_TO_FALLS_CAVE, CONDITION_ALWAYS, EVENT(Imil_LeaveNorth) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_IMIL_ICE, CONDITION_ALWAYS, EVENT(Imil_SlideOnIce) },
     { TRIGGER_TALK, ACTOR_FREEZING_YOUNG_MAN, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT(Imil_TalkToFreezingYoungMan) },
     { TRIGGER_TALK, ACTOR_FREEZING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgImilTheMercuryLighthouseIsShiningMia) },
     { TRIGGER_TALK, ACTOR_GREETING_BOY, FLAG_SATUROS_BEATEN_AT_MERCURY, EVENT(Imil_GreetVisitor) },
@@ -1954,4 +1974,4 @@ u16 gImil_CellStepsB[] = {
     MAPGRID_ANIMATION_STEPS_END,
 };
 
-s32 gImil_ArcOrigin[3];
+s32 gImil_EffectCenter[3];

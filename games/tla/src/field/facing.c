@@ -11,22 +11,28 @@
 #include "resource_ids.h"
 
 // clang-format off
-/// Facing tables: for each animation facing kind, the picture to draw for
-/// each sector of the facing angle, MIRRORED where the picture is drawn
-/// mirrored, as The Broken Seal's.
+// The facing tables: for each animation facing kind, the picture to draw for
+// each sector of the facing angle, MIRRORED where the picture is drawn
+// mirrored, as The Broken Seal's.
+
+/// ANIM_FACING_ONE_PICTURE's table: one picture, mirrored to the left.
 const u8 gAnimationFacing_OnePicture[16] = {
     0, 0, 0, MIRRORED(0), MIRRORED(0), MIRRORED(0), MIRRORED(0), 0,
     MIRRORED(0), MIRRORED(0), MIRRORED(0), 0, 0, 0, 0, MIRRORED(0),
 };
 
+/// ANIM_FACING_FRONT_BACK_SWAPPED's table: a front and a back picture, the
+/// front mirrored the other way.
 const u8 gAnimationFacing_FrontBackSwapped[8] = {
     MIRRORED(0), MIRRORED(0), 0, 0, 1, 1, MIRRORED(1), MIRRORED(1),
 };
 
+/// ANIM_FACING_FRONT_BACK's table: a front and a back picture.
 const u8 gAnimationFacing_FrontBack[8] = {
     0, 0, MIRRORED(0), MIRRORED(0), 1, 1, MIRRORED(1), MIRRORED(1),
 };
 
+/// ANIM_FACING_THREE_PICTURES's table: front, side and back.
 const u8 gAnimationFacing_ThreePictures[16] = {
     1, 1, 0, 0, MIRRORED(0), MIRRORED(0), MIRRORED(1), MIRRORED(1),
     MIRRORED(1), MIRRORED(1), MIRRORED(2), MIRRORED(2), 2, 2, 2, 1,
@@ -50,6 +56,7 @@ const u8 gAnimationFacing_SixPictures[64] = {
     2, 2, 2, 2, 1, 1, 1, 1,
 };
 
+/// ANIM_FACING_EIGHT_PICTURES's table: a picture for each compass direction.
 const u8 gAnimationFacing_EightPictures[8] = {
     2, 1, 0, 7, 6, 5, 4, 3,
 };

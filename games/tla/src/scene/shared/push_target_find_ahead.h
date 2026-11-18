@@ -12,7 +12,7 @@ struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind) {
   *direction = FACING_INDEX(leader->facing);
   for (i = ACTOR_FIRST_PLACED; i <= FIELD_TREASURE_ACTOR - 1; i++) {
     actor = work->actors[i];
-    for (k = 0; k <= 5; k++) {
+    for (k = 0; k <= PUSH_KINDS - 1; k++) {
       if (((struct Sprite *)actor->sprite)->entries[0]->animationId ==
           gPushKinds[k]) {
         x = (PIXEL_PART(leader->x.fixed) +

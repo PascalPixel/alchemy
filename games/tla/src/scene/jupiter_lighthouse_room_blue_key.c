@@ -74,9 +74,6 @@ enum { CELL_BEHAVIOR_CRACKED_TILE = 33 };
 /// entrance it lands at share the number.
 enum { THROUGH_CRACKED_TILE = 13 };
 
-/// The sprites that can be pushed, each with its footprint.
-enum { PUSH_KINDS = 6 };
-
 struct Actor;
 s32 CrackedTile_Step(void);
 void MapGrid_SetAttributeBAt(s32 x, s32 z, s32 a, s32 b);

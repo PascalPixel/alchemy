@@ -2293,10 +2293,7 @@ void PaletteCycle_Initialize(void) {
   paletteCycles->count = 0;
 }
 
-#define gPaletteWork ((struct PaletteCycleWork *)Ram_HeapSlots->paletteCycles)
-
 #include "../field/palqueue_add.c"
-#undef gPaletteWork
 
 #include "text/msg_ids.h"
 
@@ -2312,8 +2309,6 @@ void PaletteCycle_Stop(void) {
   FieldTask_Remove(PaletteCycle_Step);
   return;
 }
-
-#define gPaletteWork ((struct PaletteCycleWork *)Ram_HeapSlots->paletteCycles)
 
 /// The palette cycles' task: each queued cycle whose timer has run out rotates
 /// its run of colours one place further, unless Psynergy or a menu is open.
@@ -2440,12 +2435,7 @@ static __inline__ s32 PushTarget_CheckCollision(struct Actor *actor,
 
 #include "shared/push_target_find_slide.h"
 
-/// The whole-pixel half of a 16.16 coordinate.
-#define PIXEL_PART(v) (((s16 *)&(v))[1])
-
 #include "shared/push_target_find_ahead.h"
-
-#undef PIXEL_PART
 
 void Actor_StopAtPushTarget(struct Actor *actor);
 
@@ -2568,7 +2558,6 @@ void PushTarget_Push(struct PushTarget target) {
 #undef HAND_BACK
 #undef ISLETS_RIDE_TRANSITION
 #undef SPAWN
-#undef gPaletteWork
 #include "text/msg_ids.h"
 
 void Islets_TalkToPengulina(void);

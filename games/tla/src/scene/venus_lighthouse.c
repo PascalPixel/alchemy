@@ -168,10 +168,6 @@ VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 extern const s32 *gFieldEffect_DurationScripts[];
 
-/// The flags of FieldEffect_Spawn that ask for its options (EFFECT_USE_ and
-/// EFFECT_SCALE_TO_TARGET), above the script number.
-#define EFFECT_OPTION_MASK 0xffff0000
-
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options) {

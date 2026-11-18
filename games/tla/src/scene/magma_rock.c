@@ -81,9 +81,6 @@
 // first's is FLAG_CRACKED_PILLAR_A_BURST's too.
 #define FLAG_CRUMBLING_PILLAR_A_CRACKED FLAG_SCENE_TEMP_00
 #define FLAG_CRUMBLING_PILLAR_B_CRACKED FLAG_SCENE_TEMP_02
-// Set while a statue's fire bursts where it lands, so that Burst there does not
-// target the statue again.
-#define FLAG_FIRE_BURST_PLAYING FLAG_SCENE_TEMP_F0
 // Set once the cave door's cell has run (MagmaRock_EnterCave), so that it waits
 // until the leader steps onto it again by himself (MagmaRock_ReopenCaveDoor).
 #define FLAG_CAVE_DOOR_USED FLAG_SCENE_TEMP_F8
@@ -295,19 +292,14 @@ UNUSED struct Actor *MagmaRock_CreateEffectActor(s32 x, s32 y, s32 z,
 
 #include "../field/field_effect_move.c"
 
-#define EFFECT_SPAWN FieldEffect_Spawn
-#define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
-#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect_spawn.c"
 
 #include "shared/distance.c"
 
 #include "../field/actor_find_in_cell.c"
-
-#undef EFFECT_SPAWN
 
 extern s32 gPushLeaderSteps[];
 
@@ -1601,11 +1593,8 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 #undef DEFINE_MAGMA_ROCK_BURST_COLUMN
 #undef DEFINE_MAGMA_ROCK_BURST_STATUE_COLUMN
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
 #undef EFFECT_SPRITE_PRIORITY
 
 FIXED Trig_Cos(s32 angle);

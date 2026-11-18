@@ -509,14 +509,15 @@ s32 BattleDjinnMenu_Run(s32 member, s32 unused) {
       }
     }
     if (gFrameCount & 4) {
-      Iwram_CopyWords((void *)DJINN_MENU_ARROW_VRAM, gDjinnMenu_BlinkTile, 32);
+      Iwram_CopyWords((void *)DJINN_MENU_ARROW_VRAM, gDjinnMenu_BlinkTile,
+                      TILE_SIZE_4BPP);
       Iwram_CopyWords((void *)(DJINN_MENU_ARROW_VRAM + TILE_SIZE_4BPP),
-                      gDjinnMenu_BlinkTile, 32);
+                      gDjinnMenu_BlinkTile, TILE_SIZE_4BPP);
     } else {
-      Iwram_FillWords((void *)DJINN_MENU_ARROW_VRAM, 32,
+      Iwram_FillWords((void *)DJINN_MENU_ARROW_VRAM, TILE_SIZE_4BPP,
                       TEXT_CANVAS_BACKGROUND_WORD);
       Iwram_CopyWords((void *)(DJINN_MENU_ARROW_VRAM + TILE_SIZE_4BPP),
-                      gDjinnMenu_BlinkTile, 32);
+                      gDjinnMenu_BlinkTile, TILE_SIZE_4BPP);
     }
     wait(1);
   }

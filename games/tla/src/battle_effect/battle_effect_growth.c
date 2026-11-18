@@ -7,7 +7,7 @@
 #define GROWTH_FLARES 512 ///< impact flares in PARTICLES
 #define THORN_FLARES 64   ///< impact flares in PARTICLES for the thorns
 /// The frames an impact flare lasts: its seven pictures, two frames each.
-#define FLARE_FRAMES 14
+#define GROWTH_FLARE_FRAMES 14
 /// The columns set out, of which gGrowth_ColumnCounts picks how many grow.
 #define GROWING_COLUMNS 16
 /// The frames from one column's start to the next's.
@@ -235,7 +235,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
               flare->x, flare->y - (s8)gGrowth_PuffHeights[picture] / 2,
               gGrowth_PuffWidths[picture], (s8)gGrowth_PuffHeights[picture]);
           flare->variant++;
-          if (flare->variant == FLARE_FRAMES) {
+          if (flare->variant == GROWTH_FLARE_FRAMES) {
             flare->variant = -1;
           }
         }
@@ -504,7 +504,7 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
                  PARTICLES[i].y - (s8)gGrowth_ThornPuffHeights[picture] / 2,
                  gGrowth_ThornPuffWidths[picture],
                  (s8)gGrowth_ThornPuffHeights[picture]);
-        if (++PARTICLES[i].variant == FLARE_FRAMES) {
+        if (++PARTICLES[i].variant == GROWTH_FLARE_FRAMES) {
           PARTICLES[i].variant = -1;
         }
       }
@@ -518,7 +518,7 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
 
 #undef GROWTH_FLARES
 #undef THORN_FLARES
-#undef FLARE_FRAMES
+#undef GROWTH_FLARE_FRAMES
 #undef GROWING_COLUMNS
 #undef COLUMN_INTERVAL
 #undef GROWING_COLUMNS_VINE_FLARE_PICTURES

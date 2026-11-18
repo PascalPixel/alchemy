@@ -23,11 +23,7 @@
 #include "field/scene_tables.h"
 #include "sprite_ids.h"
 
-extern u8 gMapGridCellBuffer[];
-
 void Pound_SinkTarget(u16 *list, s32 mode, s32 count);
-s32 MapGrid_GetCellWord(u32 layer, s32 x, s32 y);
-s32 MapGrid_SetCellWord(u32 layer, s32 x, s32 y, s32 value);
 void IzumoRuins_ShowStakeState(struct Actor *actor);
 void Event_End(void);
 void Actor_DisableById(s32 id);
@@ -150,11 +146,6 @@ enum {
 #define FLAG_WEST_PUDDLE_FROZEN FLAG_SCENE_TEMP_03
 #define FLAG_EAST_PUDDLE_FROZEN FLAG_SCENE_TEMP_04
 
-/// A map cell's word as MapGrid_GetCellWord reads it: its collision code, the
-/// cell behavior, over its attribute bits (enum MapCellAttribute).
-#define CELL_WORD(behavior, attributes) ((behavior) << 8 | (attributes))
-#define CELL_WORD_ATTRIBUTES 0xff
-
 /// The cell between the ring's two south pillars, south of the stone tablet:
 /// kept a wall while Move carries a pillar, so that none is set down there.
 #define RING_SOUTH_GAP_COLUMN 50
@@ -164,42 +155,9 @@ enum {
 /// steps of 8 pixels.
 #define STAKE_HEIGHT_STEPS 4
 
-/// Reads a map cell's collision code and attribute bits as one word
-/// (CELL_WORD): of map layer 0 to 2, or of the spare cell buffer above that.
-/// Returns 0 with no map.
-s32 MapGrid_GetCellWord(u32 layer, s32 x, s32 y) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  u8 *cell;
+#include "../field/map_cell_get.c"
 
-  if (map == NULL)
-    return 0;
-  if (layer <= MAPGRID_LAYER_OVERHEAD)
-    cell = (u8 *)map->layers[layer].cells;
-  else
-    cell = gMapGridCellBuffer;
-  cell += (x + (y << 7)) << 2;
-  return (cell[2] << 8) | cell[3];
-}
-
-/// Writes bytes 2 and 3 of a map cell, as MapGrid_GetCellWord reads them.
-/// Returns what they held, or 0 with no map.
-s32 MapGrid_SetCellWord(u32 layer, s32 x, s32 y, s32 value) {
-  struct MapWork *map = Ram_HeapSlots->mapGrid;
-  u8 *cell;
-  s32 old;
-
-  if (map == NULL)
-    return 0;
-  if (layer <= MAPGRID_LAYER_OVERHEAD)
-    cell = (u8 *)map->layers[layer].cells;
-  else
-    cell = gMapGridCellBuffer;
-  cell += (x + (y << 7)) << 2;
-  old = (cell[2] << 8) | cell[3];
-  cell[2] = value >> 8;
-  cell[3] = value;
-  return old;
-}
+#include "shared/map_cell_set.c"
 
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height);
 
@@ -213,28 +171,28 @@ void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height);
 void IzumoRuins_ShowStakeState(struct Actor *actor) {
   s32 column = FIELD_CELL(actor->x.fixed);
   s32 row = FIELD_CELL(actor->z.fixed);
-  s32 lower = MapGrid_GetCellWord(MAPGRID_LAYER_GROUND, column, row);
-  s32 upper = MapGrid_GetCellWord(MAPGRID_LAYER_OVERHEAD, column, row);
+  s32 lower = MapCell_GetAttributes(MAPGRID_LAYER_GROUND, column, row);
+  s32 upper = MapCell_GetAttributes(MAPGRID_LAYER_OVERHEAD, column, row);
   s32 height = CELL_HEIGHT_STEPS(
       Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed));
 
   if (Event_GetFlag(actor->timer)) {
-    upper |= CELL_WORD(CELL_BEHAVIOR_WALL, 0);
+    upper |= CELL_ATTRIBUTES(CELL_BEHAVIOR_WALL, 0);
     lower &= ~MAP_CELL_JUMP;
     if (CELL_HEIGHT_STEPS(actor->groundHeight) != height)
       height -= STAKE_HEIGHT_STEPS;
     Scene_SetActorSpritePriority((struct Actor *)actor, 3);
   } else {
-    if (lower >> 8 != CELL_BEHAVIOR_SAND)
-      upper = CELL_WORD(CELL_BEHAVIOR_WALL, upper & CELL_WORD_ATTRIBUTES);
+    if (CELL_CODE(lower) != CELL_BEHAVIOR_SAND)
+      upper = CELL_ATTRIBUTES(CELL_BEHAVIOR_WALL, upper & CELL_ATTRIBUTE_BITS);
     else
-      upper = CELL_WORD(CELL_BEHAVIOR_SAND, upper & CELL_WORD_ATTRIBUTES);
+      upper = CELL_ATTRIBUTES(CELL_BEHAVIOR_SAND, upper & CELL_ATTRIBUTE_BITS);
     lower |= MAP_CELL_JUMP;
     height += STAKE_HEIGHT_STEPS;
     Scene_SetActorSpritePriority((struct Actor *)actor, 2);
   }
-  MapGrid_SetCellWord(MAPGRID_LAYER_GROUND, column, row, lower);
-  MapGrid_SetCellWord(MAPGRID_LAYER_OVERHEAD, column, row, upper);
+  MapCell_SetAttributes(MAPGRID_LAYER_GROUND, column, row, lower);
+  MapCell_SetAttributes(MAPGRID_LAYER_OVERHEAD, column, row, upper);
   MapGrid_SetCellHeight(FIELD_CELL_ORIGIN(column), FIELD_CELL_ORIGIN(row),
                         actor->layer, height);
 }
@@ -316,10 +274,11 @@ void IzumoRuins_FreezePuddle(void) {
 /// byte), the leader walks on the upper layer, in the sand.
 void IzumoRuins_SinkIntoSand(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 cell = MapGrid_GetCellWord(2, FIELD_CELL(leader->x.fixed),
-                                 FIELD_CELL(leader->z.fixed));
+  s32 cell =
+      MapCell_GetAttributes(MAPGRID_LAYER_OVERHEAD, FIELD_CELL(leader->x.fixed),
+                            FIELD_CELL(leader->z.fixed));
 
-  if (cell >> 8 == CELL_BEHAVIOR_SAND)
+  if (CELL_CODE(cell) == CELL_BEHAVIOR_SAND)
     leader->layer = 2;
 }
 
@@ -337,13 +296,13 @@ void IzumoRuins_StartMovingPillar(void) {
     Actor_LiftTargetBlock(gIzumoRuins_FirstRoomPillars);
   } else {
     /* FAKEMATCH(signature): the cell read through an s16 return type. */
-    MapGrid_SetCellWord(MAPGRID_LAYER_OVERHEAD, RING_SOUTH_GAP_COLUMN,
-                        RING_SOUTH_GAP_ROW,
-                        CELL_WORD(CELL_BEHAVIOR_WALL, 0) |
-                            (((s16 (*)(u32, s32, s32))MapGrid_GetCellWord)(
-                                 MAPGRID_LAYER_OVERHEAD, RING_SOUTH_GAP_COLUMN,
-                                 RING_SOUTH_GAP_ROW) &
-                             CELL_WORD_ATTRIBUTES));
+    MapCell_SetAttributes(MAPGRID_LAYER_OVERHEAD, RING_SOUTH_GAP_COLUMN,
+                          RING_SOUTH_GAP_ROW,
+                          CELL_ATTRIBUTES(CELL_BEHAVIOR_WALL, 0) |
+                              (((s16 (*)(u32, s32, s32))MapCell_GetAttributes)(
+                                   MAPGRID_LAYER_OVERHEAD,
+                                   RING_SOUTH_GAP_COLUMN, RING_SOUTH_GAP_ROW) &
+                               CELL_ATTRIBUTE_BITS));
     Actor_LiftTargetBlock(gIzumoRuins_SecondRoomPillars);
   }
 }
@@ -355,11 +314,11 @@ void IzumoRuins_FinishMovingPillar(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_PlaceMovedBlock();
   if (gMainRoutineWork.next == SCENE_IZUMO_RUINS_SECOND_ROOM)
-    MapGrid_SetCellWord(
+    MapCell_SetAttributes(
         MAPGRID_LAYER_OVERHEAD, RING_SOUTH_GAP_COLUMN, RING_SOUTH_GAP_ROW,
-        MapGrid_GetCellWord(MAPGRID_LAYER_OVERHEAD, RING_SOUTH_GAP_COLUMN,
-                            RING_SOUTH_GAP_ROW) &
-            CELL_WORD_ATTRIBUTES);
+        MapCell_GetAttributes(MAPGRID_LAYER_OVERHEAD, RING_SOUTH_GAP_COLUMN,
+                              RING_SOUTH_GAP_ROW) &
+            CELL_ATTRIBUTE_BITS);
   Event_End();
 }
 

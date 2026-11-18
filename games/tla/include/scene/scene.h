@@ -614,6 +614,12 @@ struct Window;
 /// AirsRockInside_RideWhirlwind.
 #define RAISED_RIDE_WHIRLWIND 200
 
+/// The cell behavior of a cracked tile in the Jupiter Lighthouse rooms with
+/// cracked floors (the blue key's, the cracked floor's and the Phaeton's Blade
+/// chest's), the kind CrackedTile_Find looks for; a tile takes the next one up
+/// as it cracks.
+enum { CELL_BEHAVIOR_CRACKED_TILE = 33 };
+
 /// How near, in pixels, the two walking children of Lemuria and of Contigo
 /// heed: the other child they face, the leader they face, and the leader come
 /// so near that they walk on (Lemuria_NoticeLeader, Contigo_PauseWhenFaced).

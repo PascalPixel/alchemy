@@ -64,12 +64,9 @@ enum { DOOR_BUTTON_CELL_X = 4, DOOR_BUTTON_CELL_Z = 37 };
 /// that the leader steps off it onto.
 enum { TRIGGER_DOOR_BUTTON = 20, TRIGGER_OFF_DOOR_BUTTON = 21 };
 
-/// The cell behaviors of the room's cracked tiles, and of the single one in the
-/// hall below; each takes the next one up as it cracks.
-enum {
-  CELL_BEHAVIOR_CRACKED_TILE = 33,
-  CELL_BEHAVIOR_SINGLE_CRACKED_TILE = 43
-};
+/// The cell behavior of the single cracked tile in the hall below, which takes
+/// the next one up as it cracks; the room's own are CELL_BEHAVIOR_CRACKED_TILE.
+enum { CELL_BEHAVIOR_SINGLE_CRACKED_TILE = 43 };
 
 /// Through a cracked tile to the hall below, on the same map: the exit and the
 /// entrance it lands at share the number.

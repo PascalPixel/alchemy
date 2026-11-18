@@ -69,9 +69,9 @@ enum {
   TRIGGER_UPPER_WHIRLWIND_NORTHEAST
 };
 
-/// A cracked tile's cell behavior on the floors, and up on the hover hall's
-/// ledges; each takes the next one up as it cracks.
-enum { CELL_BEHAVIOR_CRACKED_TILE = 33, CELL_BEHAVIOR_UPPER_CRACKED_TILE = 43 };
+/// A cracked tile's cell behavior up on the hover hall's ledges, which takes
+/// the next one up as it cracks; the floors' are CELL_BEHAVIOR_CRACKED_TILE.
+enum { CELL_BEHAVIOR_UPPER_CRACKED_TILE = 43 };
 
 /// Through a cracked tile to the room's own floor below: the exit and the
 /// entrance it lands at share the number.

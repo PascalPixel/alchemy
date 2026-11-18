@@ -1,7 +1,8 @@
 /// @file
-/// The title: the Nintendo and Camelot logos, the intro, the title screen with
-/// its row of sprites revealed under the logo, and the starts it leads to, the
-/// prologue with Jenna or the game with Felix; entrance 8 plays the credits.
+/// The title: the Nintendo and Camelot logos, the intro, and the starts it
+/// leads to, the prologue with Jenna or the game with Felix; entrance 8 plays
+/// the credits, and entrance 10, which nothing reaches, keeps The Broken Seal's
+/// Golden Sun logo with "To Be Continued" revealed under it.
 #include "resource_ids.h"
 #include "scene_ids.h"
 #include "types.h"
@@ -17,6 +18,7 @@
 #include "graphics/vram_tab.h"
 #include "menu/menu.h"
 #include "scene/scene.h"
+#include "scene/title.h"
 #include "sound/sound.h"
 #include "system/bg_scroll.h"
 #include "system/dma.h"
@@ -57,15 +59,10 @@ extern s16 gTitleRevealFrame;
 /// The lettering's 18 sprites, in the overlay's BSS (scene/title_bss.s).
 extern struct TitleSprite gTitleSprites[];
 
-// The logo the title shows: an 8-bit background on BG2, its map in screen
-// block 6 and its tiles from tile 416 of character block 0, as The Broken
-// Seal's.
-#define LOGO_BGCNT (BGCNT_PRIORITY(1) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(6))
-#define LOGO_MAP ((u16 *)BG_SCREEN_BLOCK(6))
-#define LOGO_FIRST_TILE 416
-#define LOGO_TILES (BG_CHAR_BLOCK(0) + LOGO_FIRST_TILE * 64)
-/// The map entry after each row's 30 visible tiles.
-#define LOGO_BLANK_TILE 511
+/// The REG_BLDY level that darkens a layer to black.
+#define BLEND_FADE_MAX 16
+/// Set in a DMA channel's control word while its copy runs.
+#define DMA_BUSY ((u32)DMA_ENABLE << 16)
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -83,26 +80,26 @@ s32 Save_ScanFileSummaries(void);
 void Title_ShowNintendoLogo(s32 value);
 void Title_ShowCamelotLogo(s32 value);
 
-/// The title's entrances, named by what each plays.
+/// The title's entrances, named by what each plays; TITLE_FROM_IDEJIMA, at the
+/// end of the prologue, plays the intro once more, then the game with Felix.
 enum {
   /// The Nintendo and Camelot logos and the intro, then the clear-data screen
   /// (power-on, and after saving the clear data).
   TITLE_START = 1,
   /// The intro without its prompt, then the prologue with Jenna.
   TITLE_PROLOGUE = 2,
-  /// The intro once more, then the game with Felix at Idejima.
-  TITLE_AFTER_PROLOGUE = 3,
   /// Credits_Run, then TITLE_PROLOGUE.
   TITLE_CREDITS = 8,
-  /// The logo revealed, held up to a minute, then TITLE_PROLOGUE.
-  TITLE_LOGO = 10,
+  /// Unused: nothing sends the party here. The Golden Sun logo with "To Be
+  /// Continued" under it, held up to a minute, then TITLE_PROLOGUE.
+  TITLE_TO_BE_CONTINUED = 10,
 };
 
 /// The overlay's initialize entry, which plays what the entrance asks for.
 s32 Scene_Initialize(void) {
   s32 frames;
 
-  if (gMainRoutineWork.entrance == TITLE_LOGO) {
+  if (gMainRoutineWork.entrance == TITLE_TO_BE_CONTINUED) {
     Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
     Event_PlaySound(MUS_TITLE_AFTER_PROLOGUE);
     Title_RevealScreen(0);
@@ -162,12 +159,13 @@ s32 Scene_Initialize(void) {
       // Venus Lighthouse's ENTRANCE_OPENING.
       Event_SetDestination(SCENE_VENUS_LIGHTHOUSE, 99);
     }
-    if (gMainRoutineWork.entrance == TITLE_AFTER_PROLOGUE) {
+    if (gMainRoutineWork.entrance == TITLE_FROM_IDEJIMA) {
       Event_PlaySound(MUS_TITLE_AFTER_PROLOGUE);
       Title_ShowIntro(0);
       FieldWindowColor_Apply(gMainRoutineWork.windowHue,
                              gMainRoutineWork.windowBrightness);
       Party_SetLeaderFelix();
+      // Idejima's ENTRANCE_RIDE_THE_TIDAL_WAVE.
       Event_SetDestination(SCENE_IDEJIMA, 13);
     }
   }
@@ -181,28 +179,33 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
+/// The lettering's sprite palette.
+enum { LETTERING_PALETTE = 15 };
+
 /// Loads the logo's lettering sprites and their palette.
 void Title_LoadSprites(s32 unused) {
   u8 *buffer;
   volatile s32 *dma;
 
-  // The decoded data opens with its 16-colour palette (8 words), then 40
-  // 4-bit tiles of lettering.
-  buffer = Heap_AllocEwram(32 + 40 * TILE_SIZE_4BPP);
+  // The decoded data opens with its 16-colour palette, then 40 4-bit tiles of
+  // lettering.
+  buffer = Heap_AllocEwram(PALETTE_COLORS * 2 + 40 * TILE_SIZE_4BPP);
   if (gTitleVramBlock == -1)
     gTitleVramBlock = VramCache_FindFreeEntry();
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_INTRO_TILES_B), buffer);
-  Dma_Set(buffer, (void *)&OBJ_PLTT_COLOR(15, 0), DMA_COPY_WORDS(8), REG_DMA3);
-  VramCache_Load(gTitleVramBlock, 40 * TILE_SIZE_4BPP, buffer + 32);
+  Dma_Set(buffer, (void *)&OBJ_PLTT_COLOR(LETTERING_PALETTE, 0),
+          DMA_COPY_WORDS(PALETTE_COLORS / 2), REG_DMA3);
+  VramCache_Load(gTitleVramBlock, 40 * TILE_SIZE_4BPP,
+                 buffer + PALETTE_COLORS * 2);
   dma = (volatile s32 *)REG_DMA3;
-  while (dma[2] < 0)
+  while (dma[2] & DMA_BUSY)
     ;
   Heap_Release(buffer);
 }
 
-/// Rebuilds the row of 18 sprites under the logo and pushes those the reveal
-/// has reached, hiding the two newest on odd frames, then counts the reveal
-/// on.
+/// The task that queues the logo's lettering sprites each frame, revealing
+/// them from the left: those the reveal has reached are queued, the two newest
+/// only on even frames.
 void Title_UpdateSpriteReveal(void) {
   u32 *attributes;
   struct TitleSprite *sprite;
@@ -211,8 +214,8 @@ void Title_UpdateSpriteReveal(void) {
   s32 revealAge;
   s32 screenX;
 
-  // One row of 18 sprites of 8 by 16 pixels at y 136 and x 88 to 224: 0x8400
-  // is the tall shape and semi-transparent, 0xf000 palette 15.
+  // One row of 18 semi-transparent sprites of 8 by 16 pixels at y 136 and x 88
+  // to 224.
   sprite = gTitleSprites;
   attributes = gTitleSprites[0].attr;
   tileIndex = gVramCacheEntries[gTitleVramBlock].offset >> 5;
@@ -222,8 +225,9 @@ void Title_UpdateSpriteReveal(void) {
 
     screenX = 232 - (18 - column) * 8;
     *attributes++ = 0;
-    *attributes++ = (screenX << 16) | screenY | 0x8400;
-    *attributes++ = 0xf000 | tileIndex;
+    *attributes++ = OBJ_X(screenX) | screenY | OBJ_SIZE_8X16 |
+                    OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
+    *attributes++ = OBJ_PALETTE(LETTERING_PALETTE) | tileIndex;
     revealAge = gTitleRevealFrame / 2 - column;
     if (revealAge < 0)
       revealAge = 0;
@@ -236,8 +240,8 @@ void Title_UpdateSpriteReveal(void) {
   gTitleRevealFrame++;
 }
 
-/// The title screen appears: the logo and its sprite row are loaded, the
-/// blend fades the logo in over 17 steps and the screen transition opens.
+/// Shows the Golden Sun logo for entrance 10: its "To Be Continued" lettering
+/// is revealed from the left while the logo brightens out of black.
 static void Title_RevealScreen(s32 unused) {
   s32 i;
 
@@ -246,6 +250,9 @@ static void Title_RevealScreen(s32 unused) {
   gTitleRevealFrame = 0;
   Title_LoadSprites(0);
   Task_Add(Title_UpdateSpriteReveal, TASK_PASS_FRAME);
+  // Show BG0, BG2 and the sprites. BG1 to BG3 start fully darkened, so the
+  // logo on BG2 is black; the semi-transparent lettering is blended onto the
+  // layers under it at full weight.
   IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT,
                       DISPCNT_OBJ_ON | DISPCNT_BG2_ON | DISPCNT_BG0_ON |
                           DISPCNT_OBJ_1D_MAP,
@@ -256,12 +263,13 @@ static void Title_RevealScreen(s32 unused) {
                           BLDCNT_TGT2_BG1 | BLDCNT_TGT2_BG2 | BLDCNT_TGT2_BG3 |
                           BLDCNT_TGT2_BD,
                       IO_WRITE_HALFWORD);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16, IO_WRITE_HALFWORD);
-  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(16, 16),
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, BLEND_FADE_MAX, IO_WRITE_HALFWORD);
+  IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
+                      BLEND_ALPHA(BLEND_WEIGHT_MAX, BLEND_WEIGHT_MAX),
                       IO_WRITE_HALFWORD);
   Event_Wait(120);
-  for (i = 0; i <= 16; i++) {
-    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 16 - i, IO_WRITE_HALFWORD);
+  for (i = 0; i <= BLEND_FADE_MAX; i++) {
+    IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, BLEND_FADE_MAX - i, IO_WRITE_HALFWORD);
     wait(3);
   }
   gFieldWork->transition = 0;
@@ -290,8 +298,9 @@ static void Title_LoadBackground(void) {
   gBgScroll[2].y = 0;
   blankTile = LOGO_BLANK_TILE;
   encodedGraphics = Resource_GetTableEntry(resourceId);
-  Dma_Set(encodedGraphics, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
-  encodedGraphics += 224 * 2;
+  Dma_Set(encodedGraphics, (void *)BG_PLTT,
+          DMA_COPY_WORDS(LOGO_PALETTE_COLORS / 2), REG_DMA3);
+  encodedGraphics += LOGO_PALETTE_COLORS * 2;
   FieldDecompress_TaggedLz(encodedGraphics, Ram_MapCellBuffer);
   Dma_Set((void *)Ram_MapCellBuffer, LOGO_TILES, DMA_COPY_WORDS(9600),
           REG_DMA3);

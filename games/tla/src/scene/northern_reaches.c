@@ -100,12 +100,12 @@ struct ExplosionSpark {
 /// The wall breaks into 54 shards, nine columns of six, and 96 sparks of the
 /// explosion fly about it.
 #define ICE_SHARD_COUNT 54
-#define SPARK_COUNT 96
+#define NORTHERN_REACHES_SPARK_COUNT 96
 /// How long a shard flies, in frames.
 #define ICE_SHARD_FRAMES 60
 /// A spark's life in frames: the explosion sheet's eight pictures, four frames
 /// each.
-#define SPARK_FRAMES 32
+#define NORTHERN_REACHES_SPARK_FRAMES 32
 /// The sprite palette the sparks' colours are loaded into
 /// (Field_ExplosionPalette).
 #define SPARK_PALETTE 15
@@ -425,7 +425,8 @@ void NorthernReaches_ShatterIceWall(s32 unused, FIXED *position,
     shard->age = 0;
     shard++;
   }
-  sparks = Heap_AllocEwram(SPARK_COUNT * sizeof(struct ExplosionSpark));
+  sparks = Heap_AllocEwram(NORTHERN_REACHES_SPARK_COUNT *
+                           sizeof(struct ExplosionSpark));
   /* FAKEMATCH(temporary): the size held in the local that then takes the
    * buffer. */
   sheet = (void *)SHEET_BUFFER_SIZE;
@@ -436,7 +437,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, FIXED *position,
   sparkTiles = VramCache_Load(sparkEntry, 1024, sheet);
   Heap_Release(sheet);
   timer = &sparks->age;
-  for (i = SPARK_COUNT - 1; i >= 0; i--) {
+  for (i = NORTHERN_REACHES_SPARK_COUNT - 1; i >= 0; i--) {
     *timer = -(Random16() << 5 >> 16);
     timer += 4;
   }
@@ -488,11 +489,11 @@ void NorthernReaches_ShatterIceWall(s32 unused, FIXED *position,
         Oam_AddSpriteAtDepthClamped(spark, SPARK_DEPTH);
       }
       spark->age++;
-      if (spark->age >= SPARK_FRAMES) {
+      if (spark->age >= NORTHERN_REACHES_SPARK_FRAMES) {
         spark->age = -(Random_Below(7));
       }
       spark++;
-    } while ((s32)spark <= (s32)&sparks[SPARK_COUNT - 1]);
+    } while ((s32)spark <= (s32)&sparks[NORTHERN_REACHES_SPARK_COUNT - 1]);
     wait(1);
   }
   VramCache_FreeEntry(sparkEntry);

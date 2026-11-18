@@ -124,12 +124,6 @@ enum {
 
 #define BG_SCREEN_ROW_BYTES (32 * 2)
 
-/// A map grid cell kept in one word, x in the high half and z in the low, as
-/// the cell stampers keep the leader's.
-#define CELL_KEY(x, z) (((x) << 16) + (z))
-#define CELL_KEY_X(key) ((key) >> 16)
-#define CELL_KEY_Z(key) ((key) & 0xffff)
-
 /// The collision codes this scene reads by name. On the overhead layer a
 /// whirlwind ends where it reaches WHIRLWIND_END; on the ground a raised
 /// stake's top is STAKE_TOP; in the hall the tower's door is TOWER_DOOR, and
@@ -452,11 +446,8 @@ void Pillar_Place(s16 *list) {
 
 #include "../field/field_effect_move.c"
 
-#define EFFECT_SPAWN FieldEffect_Spawn
-#define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
-#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect_spawn.c"
 
@@ -493,9 +484,6 @@ void AirsRockInside_ScatterMote(struct Actor *actor) {
   else
     Actor_SelectAnimation(actor, ANIM_PARTICLE_QUICK_SWELL);
 }
-
-/// Four times a 16.16 value, as a whole number: FIXEDtoINT two shifts short.
-#define FIXEDtoINT_FOUR_TIMES(value) ((value) >> 14)
 
 /// A mote's update: after its start delay it sways as it drifts upward, a
 /// sway every 64 pixels of depth and every 128 of height, scattering again
@@ -3152,11 +3140,8 @@ void AirsRockInside_SetLedgeCellsByLevel(void) {
 #undef DEFINE_AIRS_ROCK_INSIDE_SET_DOORS
 #undef DEFINE_AIRS_ROCK_INSIDE_READ_TABLET
 #undef DEFINE_AIRS_ROCK_INSIDE_TRACK_LEADER_CELL
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
 #undef EFFECT_SPRITE_PRIORITY
 #undef TARGET
 #undef PICK_UP

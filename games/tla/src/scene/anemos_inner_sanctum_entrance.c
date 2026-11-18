@@ -41,10 +41,6 @@ enum { CELL_BEHAVIOR_ANEMOS_INNER_SANCTUM_ENTRANCE_HOVER = 77 };
 /// actor's own sprite goes at + 62.
 enum { GLOW_DEPTH = 58 };
 
-/// The nine bits of a sprite's x and the eight of its y in OAM.
-#define OBJ_X_MASK 0x1ff
-#define OBJ_Y_MASK 0xff
-
 void AnemosInnerSanctumEntrance_PlaceBlocks(void);
 void AnemosInnerSanctumEntrance_SetLightPicture(u16 value);
 void Actor_MoveToObject(s32 id, s32 a);
@@ -63,6 +59,7 @@ void Field_TryJumpForward(void);
 #include "menu/menu.h"
 #include "sound/sound.h"
 #include "system/system.h"
+#include "system/io_reg.h"
 #include "version.h"
 #include "field/map_grid.h"
 #include "field/field_event.h"
@@ -99,11 +96,8 @@ enum AnemosInnerSanctumEntranceActorId {
   ACTOR_FIRST_DRAGON_STATUE
 };
 
-#define EFFECT_SPAWN FieldEffect_Spawn
-#define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
-#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect_spawn.c"
 
@@ -578,11 +572,8 @@ s8 gAnemosInnerSanctumEntrance_BlockOrder[] = {
     ACTOR_SYMBOL_BLOCK_C, ACTOR_SYMBOL_BLOCK_E, ACTOR_SYMBOL_BLOCK_B,
 };
 
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
 #undef EFFECT_SPRITE_PRIORITY
 
 LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {

@@ -706,12 +706,6 @@ static inline void CameraMove(FIXED x, FIXED y, FIXED z, s32 mode) {
 /// Shakes the camera diagonally by one pixel every three frames.
 #include "shared/camera_jitter.h"
 
-#define PUSH_PICTURE(frame)                                                    \
-  IO_WRITE_QUEUE_PUSH(                                                         \
-      PICTURE_MAP,                                                             \
-      (u32)(buffer + PICTURES_FIRST_FRAME + (frame) * PICTURES_FRAME_STRIDE),  \
-      DMA_COPY_WORDS(PICTURE_FRAME_SIZE / 4))
-
 /// Unused: the copy of the world map's WorldMap_PlayLighthouseTransition, the
 /// view of a lighthouse lit, which the credits never call.
 UNUSED void StaffCredit_PlayLighthouseTransition(s32 mode) {
@@ -928,8 +922,6 @@ u32 gStaffCredit_GlowColorModes[] = {
     SPRITE_COLOR_NORMAL, SPRITE_COLOR_BLUE_TINT, SPRITE_COLOR_NORMAL, SPRITE_COLOR_GREY,
 };
 // clang-format on
-
-#undef PUSH_PICTURE
 
 LATE_DATA struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 9850, 0, 9748, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

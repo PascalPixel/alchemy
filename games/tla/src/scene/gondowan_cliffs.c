@@ -127,28 +127,16 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 // the yellow sand: each rises and falls on its timer, carrying the leader up
 // its column of water (Geyser_Update, Geyser_Draw).
 
-#define EFFECT_SPAWN FieldEffect_Spawn
-#define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
-#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect_spawn.c"
 
 /// The rope Lash ties, for this visit.
-#define FLAG_ROPE_LASHED FLAG_SCENE_TEMP_00
+#define FLAG_GONDOWAN_CLIFFS_ROPE_LASHED FLAG_SCENE_TEMP_00
 /// Set as Frost freezes each puddle into a pillar of ice, for this visit.
-#define FLAG_FIRST_PUDDLE_FROZEN FLAG_SCENE_TEMP_01
-#define FLAG_SECOND_PUDDLE_FROZEN FLAG_SCENE_TEMP_02
-
-/// The water's four colours, the last of background palette 0, which turn in
-/// place (GondowanCliffs_CycleWaterColors).
-#define FIRST_WATER_COLOR 12
-#define WATER_COLORS 4
-
-/// The frame of Scoop's dig at which the ground is dug, its stage 1
-/// (FieldPsynergy_Scoop).
-#define SCOOP_DUG_FRAME 30
+#define FLAG_GONDOWAN_CLIFFS_FIRST_PUDDLE_FROZEN FLAG_SCENE_TEMP_01
+#define FLAG_GONDOWAN_CLIFFS_SECOND_PUDDLE_FROZEN FLAG_SCENE_TEMP_02
 
 struct Actor;
 struct EffectOptions;
@@ -178,20 +166,8 @@ struct Geyser {
   struct Actor *rider; ///< the platform at its top, which the leader rides
 };
 
-/// The most sprites Geyser_Draw queues in a frame.
-#define GEYSER_SPRITES 80
-/// The geysers a room can have.
-#define GEYSER_ENTRIES 16
-/// A geyser's six-second round, and the frames of it at which it starts to rise
-/// and to fall.
-#define GEYSER_PERIOD_FRAMES 360
-#define GEYSER_RISE_FRAME 60
-#define GEYSER_FALL_FRAME 240
 /// The pixels the cliffs' geyser rises to.
 #define GEYSER_MAX_HEIGHT 64
-/// The terrain id and collision slot of the first geyser: the geysers take the
-/// last GEYSER_ENTRIES of the 256 terrain ids.
-#define GEYSER_FIRST_TERRAIN (256 - GEYSER_ENTRIES)
 
 /// The geysers' work, kept in the inventory snapshot's spare room.
 struct GeyserWork {
@@ -201,9 +177,6 @@ struct GeyserWork {
   /// The OAM words Geyser_Draw queues: GEYSER_SPRITES sprites of three words.
   void *block;
 };
-
-#define GEYSER_WORK                                                            \
-  ((struct GeyserWork *)(gInventorySnapshot + INVENTORY_SNAPSHOT_SPARE))
 
 void GondowanCliffs_FreezeSecondPuddle(void);
 void GondowanCliffs_BlowAwayFoliage(void);
@@ -302,7 +275,7 @@ void GondowanCliffs_FreezeFirstPuddle(void) {
   actor->priorityFlags = 0;
   actor->motionFlags = 0;
   MapGrid_CopyCellAttributes(79, 28, 1, 1, 81, 28);
-  Event_SetFlag(FLAG_FIRST_PUDDLE_FROZEN);
+  Event_SetFlag(FLAG_GONDOWAN_CLIFFS_FIRST_PUDDLE_FROZEN);
 }
 
 /// Frost on the second puddle: its ice pillar stands 32 pixels tall and its
@@ -315,7 +288,7 @@ void GondowanCliffs_FreezeSecondPuddle(void) {
   actor->groundHeight = toFIXED(32);
   actor->y.fixed = toFIXED(32);
   MapGrid_CopyCellAttributes(115, 35, 1, 1, 117, 35);
-  Event_SetFlag(FLAG_SECOND_PUDDLE_FROZEN);
+  Event_SetFlag(FLAG_GONDOWAN_CLIFFS_SECOND_PUDDLE_FROZEN);
 }
 
 /// Whirlwind on the ivy blows it away for good.
@@ -501,7 +474,8 @@ s32 Scene_Initialize(void) {
       ACTOR_PRIORITY_IGNORES_RISES;
   if (gMainRoutineWork.next == SCENE_GONDOWAN_CLIFFS) {
     Rope_Initialize();
-    Rope_Place(0, FLAG_ROPE_LASHED, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
+    Rope_Place(0, FLAG_GONDOWAN_CLIFFS_ROPE_LASHED, ACTOR_ROPE_POST_A,
+               ACTOR_ROPE_POST_B);
     if (GameFlag_Get(FLAG_BRIGGS_CAUGHT)) {
       Tightrope_Initialize();
       Tightrope_Place(0, ACTOR_TIGHTROPE_POST_A, ACTOR_TIGHTROPE_POST_B);
@@ -510,9 +484,9 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_IVY, 0, 0);
     else
       Actor_GetById(ACTOR_IVY)->scaleY = FIXED_ONE * 5 / 4;
-    if (GameFlag_Get(FLAG_FIRST_PUDDLE_FROZEN))
+    if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_FIRST_PUDDLE_FROZEN))
       MapGrid_CopyCellAttributes(79, 28, 1, 1, 81, 28);
-    if (GameFlag_Get(FLAG_SECOND_PUDDLE_FROZEN))
+    if (GameFlag_Get(FLAG_GONDOWAN_CLIFFS_SECOND_PUDDLE_FROZEN))
       MapGrid_CopyCellAttributes(115, 35, 1, 1, 117, 35);
     Geyser_Start(0, GEYSER_FIRST_TERRAIN);
     Geyser_Add(0, ACTOR_GEYSER, 0, 0, GEYSER_MAX_HEIGHT);
@@ -770,11 +744,8 @@ struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high) {
   return entry;
 }
 
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
 #undef EFFECT_SPRITE_PRIORITY
 
 // The Gondowan Cliffs' tables, which the scene's getters return.
@@ -874,9 +845,9 @@ LATE_DATA struct Trigger gGondowanCliffs_Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_WARRIOR, CONDITION_ALWAYS, MSGNO(MsgIfTheOther)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_WARRIOR, CONDITION_ALWAYS, MSGNO(MsgILongTo)},
     {TRIGGER_TALK, ACTOR_KINDLE, CONDITION_ALWAYS, EVENT(GondowanCliffs_FightKindle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, FLAG_ROPE_LASHED, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE, FLAG_FIRST_PUDDLE_FROZEN, EVENT(GondowanCliffs_FreezeFirstPuddle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SECOND_PUDDLE, FLAG_SECOND_PUDDLE_FROZEN, EVENT(GondowanCliffs_FreezeSecondPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, FLAG_GONDOWAN_CLIFFS_ROPE_LASHED, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE, FLAG_GONDOWAN_CLIFFS_FIRST_PUDDLE_FROZEN, EVENT(GondowanCliffs_FreezeFirstPuddle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SECOND_PUDDLE, FLAG_GONDOWAN_CLIFFS_SECOND_PUDDLE_FROZEN, EVENT(GondowanCliffs_FreezeSecondPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_IVY, CONDITION_ALWAYS, EVENT(GondowanCliffs_BlowAwayFoliage)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STUMP, FLAG_GONDOWAN_CLIFFS_STUMP_IN_WATER, EVENT(GondowanCliffs_LeapStumpIntoWater)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 10, FLAG_GONDOWAN_CLIFFS_GEYSER_DUG, EVENT(GondowanCliffs_ScoopUpGeyser)},

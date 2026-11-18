@@ -136,7 +136,7 @@ extern u16 gLemuria_WideDoorOpening[];
 
 /// Set once Lash has tied the rope between the low post and the high one;
 /// Rope_Place keeps it tied.
-#define FLAG_ROPE_TIED 0x962
+#define FLAG_LEMURIA_ROPE_TIED 0x962
 
 /// An angle's heading: the sixteenth of a turn it lies in.
 #define HEADING(angle) ((angle) & (TRIG_TURN - FACING_STEP))
@@ -524,7 +524,7 @@ void Lemuria_KnockAtBrokenDoor(void) {
   FieldCamera_MoveTo(872, CAMERA_KEEP, 928, 1);
   FieldCamera_WaitForArrival();
   if (Party_FindOwnerWithAction(ABILITY_LASH) == -1 &&
-      !Event_GetFlag(FLAG_ROPE_TIED)) {
+      !Event_GetFlag(FLAG_LEMURIA_ROPE_TIED)) {
     FieldEvent_SetMessageId((s32)&MsgLemuriaWhatsMatterCantYouClimb);
     FieldEvent_Wait(20);
     Actor_WalkToAndWait(ACTOR_FELIX, 856, 952);
@@ -745,7 +745,8 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(ACTOR_PIERS, 9);
   }
   Rope_Initialize();
-  Rope_Place(0, FLAG_ROPE_TIED, ACTOR_ROPE_LOW_POST, ACTOR_ROPE_HIGH_POST);
+  Rope_Place(0, FLAG_LEMURIA_ROPE_TIED, ACTOR_ROPE_LOW_POST,
+             ACTOR_ROPE_HIGH_POST);
   Actor_Get(ACTOR_ROPE_LOW_POST)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   Actor_Get(ACTOR_ROPE_HIGH_POST)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
@@ -1480,7 +1481,8 @@ struct Trigger gSceneEvents[] = {
      EVENT(Lemuria_DrinkFromSpring)},
     {TRIGGER_EXAMINE, CELL_BEHAVIOR_LEMURIA_BROKEN_DOOR, CONDITION_ALWAYS,
      EVENT(Lemuria_KnockAtBrokenDoor)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_LOW_POST, FLAG_ROPE_TIED, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_LOW_POST,
+     FLAG_LEMURIA_ROPE_TIED, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_LEMURIA_VINE_GROWN,
      EVENT(Lemuria_GrowVine)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30,

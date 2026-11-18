@@ -62,11 +62,8 @@
 
 #include "../field/field_effect_move.c"
 
-#define EFFECT_SPAWN FieldEffect_Spawn
-#define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
-#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
 
 /// The Kandorean Temple's rooms: their tables' getters, the steam, vents and
@@ -2182,11 +2179,8 @@ void KandoreanTemple_StartVentRoom(void) {
 #include "../field/field_effect_advance_motion.c"
 
 #undef DEFINE_KANDOREAN_TEMPLE_VENT
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
 // The Kandorean Temple's events, from the vents' rides to Poi's test, and its
 // tables.
 
@@ -3105,8 +3099,6 @@ void KandoreanTemple_PoiWalksUp(void) {
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_POI, 0);
 }
 
-#define WORK gFieldWork
-
 /// Poi meets the party who came through the cave, and must give them the secret
 /// of Lash.
 void KandoreanTemple_MeetPoi(void) {
@@ -3127,7 +3119,7 @@ void KandoreanTemple_MeetPoi(void) {
     Actor_SetPositionAndFacing(ACTOR_POI, toFIXED(472), toFIXED(454),
                                FACING_NORTH_NORTHWEST);
   }
-  WORK->transition =
+  gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
   Event_StartScreenTransition();
   Actor_SetSpeed(ACTOR_POI, 1.2);
@@ -3163,9 +3155,9 @@ void KandoreanTemple_MeetPoi(void) {
     Actor_SetAnimationById(ACTOR_POI, ANIM_SHAKE_HEAD);
     // "I am not perturbed. Merely...surprised."
     Event_ShowMessageAndWait(ACTOR_POI, 0);
-    WORK->message++;
+    gFieldWork->message++;
   } else {
-    WORK->message++;
+    gFieldWork->message++;
     Actor_SetAnimationById(ACTOR_POI, ANIM_NOD);
     // "No one from outside the temple has ever passed the test. It's
     // amazing..."
@@ -3223,9 +3215,9 @@ void KandoreanTemple_MeetPoi(void) {
       0) {
     // "Psynergy, hm? We call it spiritual strength, but it seems the same."
     KandoreanTemple_PoiWalksUp();
-    WORK->message++;
+    gFieldWork->message++;
   } else {
-    WORK->message++;
+    gFieldWork->message++;
     // "I do not know of your Psynergy, but our power comes from within."
     KandoreanTemple_PoiWalksUp();
   }
@@ -3265,9 +3257,9 @@ void KandoreanTemple_MeetPoi(void) {
     Event_ShowMessageAndWait(SPEAKER_PORTRAIT_LEFT | SPEAKER_WINDOW_ABOVE |
                                  ACTOR_POIS_ROOM_KRADEN,
                              0);
-    WORK->message += 2;
+    gFieldWork->message += 2;
   } else {
-    WORK->message += 2;
+    gFieldWork->message += 2;
     Actor_SetAnimationById(ACTOR_POI, ANIM_SHAKE_HEAD);
     // "You are quite mistaken... You should listen to the old man. He speaks
     // wisely."
@@ -3356,7 +3348,7 @@ void KandoreanTemple_MeetPoi(void) {
   Actor_SetPosition(ACTOR_POIS_ROOM_KRADEN, 0, 0);
   GameFlag_Set(FLAG_MET_POI);
 #if TLA_PATCH_1
-  WORK->transition =
+  gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 #endif
   Event_End();

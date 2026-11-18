@@ -29,8 +29,6 @@ enum FallingSwordMode {
 #define RAGNAROK_BLADE_HOLD_TOP 16
 #define RAGNAROK_BLADE_FLOOR 104
 
-/// The sparks, in the map cell buffer.
-#define SPARKS ((struct Particle *)Ram_MapCellBuffer)
 #define RAGNAROK_COLUMNS 2  ///< columns that strike
 #define RAGNAROK_SEEDED 3   ///< columns given particles; the third is unused
 #define RAGNAROK_FLASHES 16 ///< flashes kept per column
@@ -101,7 +99,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
 
     i = 0;
     do {
-      struct Particle *spark = &SPARKS[col * RAGNAROK_SPARKS + i];
+      struct Particle *spark = &PARTICLES[col * RAGNAROK_SPARKS + i];
       s32 speed;
       s32 angle;
 
@@ -214,7 +212,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
       if (frame > start + 5) {
         i = 0;
         do {
-          struct Particle *spark = &SPARKS[col * RAGNAROK_SPARKS + i];
+          struct Particle *spark = &PARTICLES[col * RAGNAROK_SPARKS + i];
 
           if (spark->variant > 0) {
             s32 x;
@@ -275,7 +273,6 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
 #undef RAGNAROK_FLASH_PICTURES
 #undef RAGNAROK_BLADE_HOLD_TOP
 #undef RAGNAROK_BLADE_FLOOR
-#undef SPARKS
 #undef RAGNAROK_COLUMNS
 #undef RAGNAROK_SEEDED
 #undef RAGNAROK_FLASHES

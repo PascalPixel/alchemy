@@ -14,7 +14,9 @@
 /// The pixels across a tile, which the packing reads a row at a time.
 #define GLYPH_TILE_WIDTH 8
 
-/// The second character of a pair, in bits 8 to 23 of its code.
+/// The first character of a pair, in the low byte of its code, and the second,
+/// in bits 8 to 23.
+#define GLYPH_PAIR_FIRST(code) ((code) & 0xff)
 #define GLYPH_PAIR_SECOND(code) (((code) << 8) >> 16)
 
 /// The code a character past the font is measured as: '@' in the font's
@@ -45,7 +47,7 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
 
   work = WINDOW_WORK;
   secondIndex = GLYPH_PAIR_SECOND(code);
-  code &= TEXT_LAST_FONT_CODE;
+  code = GLYPH_PAIR_FIRST(code);
   Iwram_ClearWords(pixels, sizeof(pixels));
   // While WindowWork.mindRead is set, the text is colour 8 with no shadow.
   if (work->mindRead != 0) {

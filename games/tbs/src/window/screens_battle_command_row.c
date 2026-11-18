@@ -23,9 +23,6 @@ struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y) {
 #define WINDOW_X 23
 #endif
 
-/// The command window's top tile row: it runs along the bottom three rows.
-#define COMMAND_ROW_TOP 17
-
 /// The command icons stand 24 pixels apart on the row.
 #define COMMAND_ICON_SPACING 24
 

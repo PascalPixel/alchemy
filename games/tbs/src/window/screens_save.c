@@ -27,8 +27,11 @@
 /// digits keep their leading zero.
 #define WITH_LEADING_ZERO(n) ((n) + 100)
 
-/// The word of gSceneLocalState that holds the second copy of the play time.
+/// The word of the save buffer's second half, counted from gSceneLocalState,
+/// that holds the second copy of the play time: gInventorySnapshot's last
+/// word, past gSceneLocalState's SCENE_LOCAL_STATE_WORDS (system/ewram.s).
 #define SECOND_PART_PLAY_TIME_WORD 64
+#define SCENE_LOCAL_STATE_WORDS 30
 /// The words from gGameFlagBytes that a file's checksum sums.
 #define SAVE_CHECKSUM_WORDS 968
 
@@ -178,14 +181,20 @@ u32 Save_BuildFileSummary(void) {
                                        offsetof(struct SaveFileSummary, name));
   gMainRoutineWork.buildStamp = BuildStamp_GetTimeFar(0);
   gMainRoutineWork.playTime = gPlayTimeFrames;
-  // A second copy of the play time, past gSceneLocalState's own bytes in
-  // gInventorySnapshot's last word. gSceneLocalState opens the save buffer's
-  // second half, so the copy lands in the file's second part, which
+  // A second copy of the play time in the file's second part, which
   // Save_LoadFileSummaries reads back into SaveFileSummary.secondPartPlayTime:
   // the file list lists a file whose two play times differ as corrupted.
+  // UB: the copy is written through gSceneLocalState past its own bytes, into
+  // gInventorySnapshot's last word; UBFIX writes it through gInventorySnapshot.
   {
+#ifdef UBFIX
+    u32 *copy = (u32 *)gInventorySnapshot;
+    copy[SECOND_PART_PLAY_TIME_WORD - SCENE_LOCAL_STATE_WORDS] =
+        gPlayTimeFrames;
+#else
     u32 *copy = (u32 *)gSceneLocalState;
     copy[SECOND_PART_PLAY_TIME_WORD] = gPlayTimeFrames;
+#endif
   }
   gMainRoutineWork.idleSleepEnabled = gIdleSleepEnabled;
 
@@ -549,9 +558,14 @@ void Window_FillTilemapRect(struct Window *window, s32 x, s32 y, s32 width,
     height += y;
     y = 0;
   }
-  // The bottom is tested against the screen's width, as the right edge is, so
-  // a rectangle may reach into the map's rows below the screen.
+  // BUG: the bottom is tested against the screen's width, so a rectangle
+  // ending below row DISPLAY_TILE_HEIGHT writes past WindowWork.tilemap; the
+  // one caller, the file list's highlight, never does.
+#ifdef BUGFIX
+  if (y + height > DISPLAY_TILE_HEIGHT - 1)
+#else
   if (y + height > DISPLAY_TILE_WIDTH - 1)
+#endif
     height = DISPLAY_TILE_HEIGHT - y;
 
   if (width > 0 && height > 0) {

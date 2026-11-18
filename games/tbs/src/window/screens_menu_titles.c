@@ -4,8 +4,6 @@
 
 #include "screens_internal.h"
 
-/// A command icon's pixels: 32x32 at a byte a pixel.
-#define COMMAND_ICON_BYTES (32 * 32)
 /// A row of a command icon's 8x8 tiles, four across, as a sprite holds them.
 #define COMMAND_ICON_TILE_ROW_BYTES (4 * TILE_SIZE_8BPP)
 
@@ -502,10 +500,6 @@ void CommandRow_PutBg1Behind(void) {
   REG_BG1CNT = value;
 }
 
-/// The command window's top tile row: it runs along the bottom three rows (as
-/// screens_battle_command_row.c also defines it).
-#define COMMAND_ROW_TOP 17
-
 /// Brings BG1 to the front (priority 0): the command row's VCount handler,
 /// run at line COMMAND_ROW_TOP * 8, the top of its icon strip.
 void CommandRow_PutBg1InFront(void) {
@@ -523,9 +517,7 @@ UNUSED void Graphics_InstallBg1VCountHandler(void) {
   Irq_SetHandler(IRQ_VCOUNT, COMMAND_ROW_TOP * 8, CommandRow_PutBg1InFront);
 }
 
-#undef COMMAND_ICON_BYTES
 #undef COMMAND_ICON_TILE_ROW_BYTES
 #undef ROW_LAST_PIXEL_SHIFT
 #undef COMMAND_ICON_COLORS
 #undef COMMAND_ICON_BG_TILES
-#undef COMMAND_ROW_TOP

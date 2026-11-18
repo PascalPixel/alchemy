@@ -1,9 +1,8 @@
 #include "jupiter_lighthouse_aerie.h"
 
-// The aerie's actors, as jupiter_lighthouse_aerie.c numbers them; the scenes
-// that keep a copy of this routine number theirs otherwise.
-#define ACTOR_LEFT_ANGEL 9
-#define ACTOR_RIGHT_ANGEL 10
+// The aerie's actors besides its angels, as jupiter_lighthouse_aerie.c
+// numbers them; the scenes that keep a copy of this routine number theirs
+// otherwise.
 #define ACTOR_LEFT_ARCHER 11
 #define ACTOR_RIGHT_ARCHER 12
 #define ACTOR_LID 23
@@ -71,8 +70,6 @@ void JupiterLighthouse_PlaceRaisedActors(void) {
   }
 }
 
-#undef ACTOR_LEFT_ANGEL
-#undef ACTOR_RIGHT_ANGEL
 #undef ACTOR_LEFT_ARCHER
 #undef ACTOR_RIGHT_ARCHER
 #undef ACTOR_LID

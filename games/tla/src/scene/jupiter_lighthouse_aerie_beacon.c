@@ -58,11 +58,10 @@
 /// The placed actors this file moves by number. The party's rows take their
 /// characters' numbers; the rest count on from 8.
 enum {
-  /// The angels either side of the lid over the well, and the archer statues
-  /// that energize them.
-  ACTOR_LEFT_ANGEL = 9,
-  ACTOR_RIGHT_ANGEL,
-  ACTOR_LEFT_ARCHER,
+  /// The archer statues that energize the angels either side of the lid over
+  /// the well (ACTOR_LEFT_ANGEL and ACTOR_RIGHT_ANGEL,
+  /// shared/jupiter_lighthouse_aerie.h).
+  ACTOR_LEFT_ARCHER = 11,
   ACTOR_RIGHT_ARCHER,
   /// The round stone lid over the well, and a second actor wearing its picture
   /// at its place, drawn zero wide: unseen, it holds the party back at the

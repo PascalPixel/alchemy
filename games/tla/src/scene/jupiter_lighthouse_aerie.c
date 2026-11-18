@@ -52,12 +52,11 @@
 #include "field/actor_script.h"
 #include "fixed_math.h"
 
+/// The placed actors after the angels (ACTOR_LEFT_ANGEL and ACTOR_RIGHT_ANGEL,
+/// shared/jupiter_lighthouse_aerie.h).
 enum JupiterLighthouseAerieActorId {
-  /// The angels either side of the lid over the well, and the archer statues
-  /// that energize them.
-  ACTOR_LEFT_ANGEL = ACTOR_FIRST_PLACED + 1,
-  ACTOR_RIGHT_ANGEL,
-  ACTOR_LEFT_ARCHER,
+  /// The archer statues that energize the angels.
+  ACTOR_LEFT_ARCHER = ACTOR_RIGHT_ANGEL + 1,
   ACTOR_RIGHT_ARCHER,
   /// The blocks Move pushes into the gaps at the ends of the archers' paths.
   ACTOR_LEFT_PATH_BLOCK,

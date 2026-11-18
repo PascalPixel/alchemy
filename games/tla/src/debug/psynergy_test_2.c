@@ -1,7 +1,8 @@
 /// @file
 /// The second debug room of Psynergy tests: Douse and Pound take an actor away,
 /// Grind and Tremor are tried on another, which scatters rocks when talked to,
-/// Burst breaks a wall, a rope is coiled, and one step starts a battle.
+/// Burst breaks a wall and a rope is coiled. Its step into a battle answers a
+/// cell behavior no cell of the room's map holds.
 
 #include "battle/battle.h"
 #include "field/field_sequence.h"
@@ -35,7 +36,7 @@
 #include "system/task.h"
 #include "fixed_math.h"
 
-// The battle the step on cell 30 starts, once.
+// The battle the step on cell behavior 30 starts, once.
 #define FLAG_BATTLE_FOUGHT FLAG_SCENE_TEMP_20
 
 /// The room's actors, numbered in the order of gActorPlacements.
@@ -106,7 +107,8 @@ void PsynergyTest2_BurstWall(s32 mode) {
   }
 }
 
-/// Stepping onto cell 30 starts a battle, the first time only.
+/// Stepping onto cell behavior 30 starts a battle, the first time only; no cell
+/// of the room's map holds 30, so it never runs.
 void PsynergyTest2_StepIntoBattle(void) {
   if (!Event_GetFlag(FLAG_BATTLE_FOUGHT)) {
     Event_SetFlag(FLAG_BATTLE_FOUGHT);

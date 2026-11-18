@@ -17,16 +17,21 @@
 #define STRONG_HIT_FRAMES 64
 /// The sword stands over the user until HEAVY_DIVIDE_SWING_FRAME, swings down
 /// to strike at HEAVY_DIVIDE_STRIKE_FRAME (gHeavyBlow_StrikeFrames' first
-/// row), then rebounds.
+/// row), then rebounds up to HEAVY_DIVIDE_REBOUND, a sine's FIXED_ONE being a
+/// whole turn.
 #define HEAVY_DIVIDE_SWING_FRAME 16
 #define HEAVY_DIVIDE_STRIKE_FRAME 38
+#define HEAVY_DIVIDE_REBOUND (TRIG_TURN / 16)
 /// The axe takes STRONG_HIT_FLIGHT_FRAMES to cross to the target, turning a
 /// sixteenth of a turn each frame.
 #define STRONG_HIT_FLIGHT_FRAMES 32
 
 /// The chips set out in the map cell buffer; gHeavyBlow_ChipCounts says how
-/// many fly. A chip bounces when it falls below HEAVY_BLOW_GROUND_Y.
+/// many fly. Each flies out its own way at HEAVY_BLOW_CHIP_SPEED_MIN 64ths of a
+/// pixel a frame and up to 255 more, and bounces when it falls below
+/// HEAVY_BLOW_GROUND_Y.
 #define HEAVY_BLOW_CHIPS 256
+#define HEAVY_BLOW_CHIP_SPEED_MIN 128
 #define HEAVY_BLOW_GROUND_Y 104
 
 /// The body of Heavy Divide and Strong Hit. Heavy Divide: a great sword rises
@@ -68,10 +73,10 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
     frames = HEAVY_DIVIDE_FRAMES;
     Resource_LoadAndDecompress(RESOURCE_GREAT_SWORD_SHEET, work->sheet, 1, 1);
 
-    // The after-images, each a darker blue.
+    // The after-images, each a darker blue, four levels apart down to half.
     for (k = 1; k != HEAVY_DIVIDE_AFTER_IMAGES + 1; k++) {
       BG_PLTT[HEAVY_DIVIDE_FIRST_AFTER_IMAGE_COLOR - 1 + k] =
-          RGB(0, 0, (4 - k) * 4 + 15);
+          RGB(0, 0, (HEAVY_DIVIDE_AFTER_IMAGES - k) * 4 + RGB_LEVEL_MAX / 2);
       for (i = 0; i != PICTURE_BYTES(HEAVY_DIVIDE_SWORD); i++) {
         if (work->sheet[i] == 0) {
           work->sheet[k * PICTURE_BYTES(HEAVY_DIVIDE_SWORD) + i] = 0;
@@ -108,8 +113,10 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
         speed &= Random16();
         chip->x = INTtoFIXED(hit.x / 2);
         chip->y = INTtoFIXED(hit.y - 16);
-        chip->velocityX = (Trig_Sin(angle) * (speed + 128)) >> 6;
-        chip->velocityY = (Trig_Cos(angle) * (speed + 128)) >> 6;
+        chip->velocityX =
+            (Trig_Sin(angle) * (speed + HEAVY_BLOW_CHIP_SPEED_MIN)) >> 6;
+        chip->velocityY =
+            (Trig_Cos(angle) * (speed + HEAVY_BLOW_CHIP_SPEED_MIN)) >> 6;
         chip->variant = (Random16() & 15) + 16;
       }
     }
@@ -150,12 +157,12 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
       }
       if (size > 0) {
         // It swings down a little over a quarter turn by the strike, then
-        // rebounds up to a sixteenth of a turn.
+        // rebounds.
         if (frame > HEAVY_DIVIDE_STRIKE_FRAME) {
           angle = DEGtoANG(90) -
                   Trig_Sin((frame - (HEAVY_DIVIDE_STRIKE_FRAME + 1)) *
                            (TRIG_TURN / 128)) /
-                      16;
+                      (FIXED_ONE / HEAVY_DIVIDE_REBOUND);
         } else if (frame >= HEAVY_DIVIDE_SWING_FRAME) {
           angle = (TRIG_TURN - Trig_Cos((frame - HEAVY_DIVIDE_SWING_FRAME) *
                                         (TRIG_TURN / 128))) /

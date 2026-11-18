@@ -14,8 +14,6 @@
 #include "field/scene_call.h"
 #include "macros.h"
 
-#define MARS_SPARK_MAX 24 ///< sparks, one a field effect sprite
-
 /// A Mars Djinni joins the party: it turns to the camera, bounces three times,
 /// spins ever faster and shrinks away in a fountain of sparks
 /// (FieldEffect_UpdateMarsSpark). The leader turns to the camera and raises
@@ -69,7 +67,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
   // One spark a frame into each field effect sprite.
   effect = effectWork->particles;
-  remaining = MARS_SPARK_MAX - 1;
+  remaining = ARRAY_COUNT(effectWork->particles) - 1;
   do {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateMarsSpark);
@@ -115,8 +113,6 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   Shop_RestoreFieldPaletteFar();
   FieldEffect_ReleaseSlots();
 }
-
-#undef MARS_SPARK_MAX
 
 /// Spins an actor 1/8 turn and shrinks it by 1/64 a frame, releasing it once
 /// its scale falls below 3/16: 53 frames from full size.

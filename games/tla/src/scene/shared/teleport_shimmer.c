@@ -1,14 +1,10 @@
 /// @file
-/// The Teleport circles' palette cycle, which three Mars Lighthouse overlays
-/// keep a copy of: the circle's colours run round it as Teleport is cast, and
-/// the party arrives on a circle.
-
-/// The BG colours a palette fade keeps, palettes 0 to 13, before its OBJ
-/// colours.
-#define PALETTE_FADE_BG_COLORS (14 * PALETTE_COLORS)
+/// The Teleport circles' shimmer, which three Mars Lighthouse overlays keep a
+/// copy of: the circle's colours run round it, a palette cycle, as Teleport is
+/// cast and as the party arrives on a circle.
 
 /// Writes each listed background colour from its red, green and blue, keeps
-/// the lists for the palette cycle, and saves the palettes as the fade's
+/// the lists for the shimmer, and saves the palettes as the fade's
 /// source; arriving by Teleport, the party then arrives on the circle.
 void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *cycleColors,
                            u16 *cycleSlots) {
@@ -28,14 +24,16 @@ void Palette_SetColorsFade(u16 *slots, u16 *colours, u16 *cycleColors,
   }
   Dma_Set((const void *)BG_PLTT, fade->palette,
           DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS / 2), REG_DMA3);
-  Dma_Set((const void *)OBJ_PLTT, &fade->palette[PALETTE_FADE_BG_COLORS],
-          DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS / 2), REG_DMA3);
+  Dma_Set(
+      (const void *)OBJ_PLTT, &fade->palette[PALETTE_FADE_BG_COLORS],
+      DMA_COPY_WORDS((ARRAY_COUNT(fade->palette) - PALETTE_FADE_BG_COLORS) / 2),
+      REG_DMA3);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   if (gMainRoutineWork.teleportState == 2)
     Teleport_ArriveWhirling();
 }
 
-/// Starts the palette cycle at its slow pace, as Teleport is cast: the first
+/// Starts the shimmer at its slow pace, as Teleport is cast: the first
 /// step after 16 frames, each after a frame less, down to two.
 void Teleport_StartShimmer(void) {
   gPaletteCycleIndex = 0;
@@ -46,13 +44,13 @@ void Teleport_StartShimmer(void) {
   Task_AddFrame(PaletteCycle_Fade, TASK_PASS_FRAME);
 }
 
-/// Stops the palette cycle, leaving the next transition a backdrop fade.
+/// Stops the shimmer, leaving the next transition a backdrop fade.
 void Teleport_StopShimmer(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   FieldTask_Remove(PaletteCycle_Fade);
 }
 
-/// Starts the palette cycle at a step every two frames, as the party arrives.
+/// Starts the shimmer at a step every two frames, as the party arrives.
 void Teleport_StartFastShimmer(void) {
   gPaletteCycleIndex = 0;
   gPaletteCycleLength = List_CountEntries(gPaletteSlots);
@@ -67,7 +65,7 @@ void Teleport_StartFastShimmer(void) {
 #include "palette_cycle_fade.h"
 
 /// The party arrives by Teleport on the circle: the room fades in grey while
-/// the circle's colours run and the whirl plays, then its colours come back.
+/// the circle shimmers and the whirl plays, then its colours come back.
 void Teleport_ArriveWhirling(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 saved;

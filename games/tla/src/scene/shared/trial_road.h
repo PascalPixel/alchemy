@@ -45,10 +45,12 @@ void Import_MadPlantLeapAtLeader(s32 sprite, s32 x, s32 z);
 static __inline__ void Cyclone_CopyTouchedCells_(s32 x, s32 z, s32 layerIndex,
                                                  s32 width, s32 height, s32 toX,
                                                  s32 toZ) {
+  /* FAKEMATCH(wrapper): a layer that only forwards its arguments; as
+   * TrialRoad_CopyTouchedCells called directly. */
   TrialRoad_CopyTouchedCells(x, z, layerIndex, width, height, toX, toZ);
 }
 
-/// The store-flag form of a logical not.
+/// 1 when value is 0, else 0.
 static __inline__ s32 IsZero(s32 value) { return !value; }
 
 #endif

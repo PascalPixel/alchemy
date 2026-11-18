@@ -356,8 +356,8 @@ void FieldEffect_SpawnRevealMarkers(void) {
   found.headerWord = (*(s32 **)map)[1];
   if (entry == NULL)
     return;
-  for (i = 0; i <= SCOOPED_ITEM_ACTOR - FIELD_TREASURE_ACTOR &&
-              (type = *entry++) != 0 && !(type & SCENE_ITEMS_HEADER);
+  for (i = 0; i < TREASURE_SPOT_MAX && (type = *entry++) != 0 &&
+              !(type & SCENE_ITEMS_HEADER);
        i++) {
     id = entry[0];
     flag = entry[1];

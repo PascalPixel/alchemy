@@ -17,6 +17,16 @@
 #include "game/item.h"
 #include "field/field_sequence.h"
 
+// After a drop, "Felix gave <item> to <member>." shows zooming open alone in
+// German (patch 2), waiting for the jingle as well before it, and patch 3
+// drops the message.
+#if TLA_PATCH_2 && !TLA_PATCH_3
+#define GIFT_RECEIVED_MESSAGE_MODE FIELD_MESSAGE_ZOOM
+#else
+#define GIFT_RECEIVED_MESSAGE_MODE                                             \
+  (FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_WAITING_FOR_SOUND)
+#endif
+
 /// Debug only: while debug mode is on, R makes every event wait (Event_Wait)
 /// end at once and L restores normal waits.
 void Event_UpdateDebugSkip(void) {
@@ -214,16 +224,6 @@ s32 Party_CheckItemLimit(s32 item) {
   }
   return 0;
 }
-
-// After a drop, "Felix gave <item> to <member>." shows zooming open alone in
-// German (patch 2), waiting for the jingle as well before it, and patch 3
-// drops the message.
-#if TLA_PATCH_2 && !TLA_PATCH_3
-#define GIFT_RECEIVED_MESSAGE_MODE FIELD_MESSAGE_ZOOM
-#else
-#define GIFT_RECEIVED_MESSAGE_MODE                                             \
-  (FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_WAITING_FOR_SOUND)
-#endif
 
 /// The event command "give item": gives item to the first party member with
 /// room for it and says so; with no room, the player chooses what to drop.

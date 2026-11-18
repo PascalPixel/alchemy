@@ -1,6 +1,6 @@
 /// @file
 /// Lucky Wheels, Contigo's game of chance: the player trades game tickets for
-/// lines, pulls the lever up to five times and holds wheels to line up
+/// lines, pulls the lever up to five times and locks wheels to line up
 /// matching icons. It draws its own wheels and lines, and keeps an unused LZ
 /// packer.
 
@@ -101,8 +101,8 @@ void LuckyWheels_Run(void);
 /// Where each picture of icons.png starts in sprite tiles, in OAM's 32-byte
 /// steps (a 256-colour tile is two): the sheet is 32 pixels wide, so a picture
 /// starts at the tile numbered as its row. The six symbols are 16 apart from 0.
-#define LUCKY_WHEELS_LAMP_TILES 96       ///< a wheel's lamp, not held
-#define LUCKY_WHEELS_HELD_LAMP_TILES 128 ///< a held wheel's lamp
+#define LUCKY_WHEELS_LAMP_TILES 96         ///< a wheel's lamp, not locked
+#define LUCKY_WHEELS_LOCKED_LAMP_TILES 128 ///< a locked wheel's lamp
 #define LUCKY_WHEELS_CORNER_LIGHT_TILES 224
 #define LUCKY_WHEELS_FRAME_LIGHT_TILES 232
 #define LUCKY_WHEELS_LEVER_TILES 256
@@ -152,7 +152,7 @@ enum LuckyWheelsState {
   LUCKY_WHEELS_SHOWING_WIN = 3,    ///< the win is shown until A
   LUCKY_WHEELS_CHOOSING_LOCKS = 5, ///< choose wheels to lock, or pull the lever
   LUCKY_WHEELS_DONE = 10,          ///< the game ends
-  LUCKY_WHEELS_NO_WIN = 11,        ///< no payline won: A to choose holds
+  LUCKY_WHEELS_NO_WIN = 11,        ///< no payline won: A to choose locks
   LUCKY_WHEELS_OUT_OF_SPINS =
       20, ///< the fourth spin lost: a pause, then the end
 };
@@ -438,53 +438,54 @@ void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
   }
 }
 
-// The prompt windows (all held, start, hold, release, stop the reels, choose
-// the reels to hold) and the ticket count's digits, placed and sized for each
-// language's words. Japanese shows hold and release in one window.
+// The prompt windows (all locked, start, lock and spin a wheel, stop the
+// slots, choose the slots to lock) and the ticket count's digits, placed and
+// sized for each language's words. Lock reads "Stop", and Japanese shows it
+// and Spin in one window.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define LUCKY_WHEELS_ALL_HELD_X 12
-#define LUCKY_WHEELS_ALL_HELD_WIDTH 18
+#define LUCKY_WHEELS_ALL_LOCKED_X 12
+#define LUCKY_WHEELS_ALL_LOCKED_WIDTH 18
 #define LUCKY_WHEELS_START_X 18
 #define LUCKY_WHEELS_START_WIDTH 12
 #elif LANGUAGE == LANGUAGE_ITALIAN
-#define LUCKY_WHEELS_ALL_HELD_X 10
-#define LUCKY_WHEELS_ALL_HELD_WIDTH 20
+#define LUCKY_WHEELS_ALL_LOCKED_X 10
+#define LUCKY_WHEELS_ALL_LOCKED_WIDTH 20
 #define LUCKY_WHEELS_START_X 21
 #define LUCKY_WHEELS_START_WIDTH 9
 #elif LANGUAGE == LANGUAGE_SPANISH
-#define LUCKY_WHEELS_ALL_HELD_X 6
-#define LUCKY_WHEELS_ALL_HELD_WIDTH 24
+#define LUCKY_WHEELS_ALL_LOCKED_X 6
+#define LUCKY_WHEELS_ALL_LOCKED_WIDTH 24
 #define LUCKY_WHEELS_START_X 22
 #define LUCKY_WHEELS_START_WIDTH 8
 #else
-#define LUCKY_WHEELS_ALL_HELD_X 11
-#define LUCKY_WHEELS_ALL_HELD_WIDTH 19
+#define LUCKY_WHEELS_ALL_LOCKED_X 11
+#define LUCKY_WHEELS_ALL_LOCKED_WIDTH 19
 #define LUCKY_WHEELS_START_X 16
 #define LUCKY_WHEELS_START_WIDTH 14
 #endif
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define LUCKY_WHEELS_HOLD_X 18
-#define LUCKY_WHEELS_HOLD_WIDTH 12
+#define LUCKY_WHEELS_LOCK_X 18
+#define LUCKY_WHEELS_LOCK_WIDTH 12
 #elif LANGUAGE == LANGUAGE_GERMAN
-#define LUCKY_WHEELS_HOLD_X 22
-#define LUCKY_WHEELS_HOLD_WIDTH 8
-#define LUCKY_WHEELS_RELEASE_X 21
-#define LUCKY_WHEELS_RELEASE_WIDTH 9
+#define LUCKY_WHEELS_LOCK_X 22
+#define LUCKY_WHEELS_LOCK_WIDTH 8
+#define LUCKY_WHEELS_SPIN_X 21
+#define LUCKY_WHEELS_SPIN_WIDTH 9
 #elif LANGUAGE == LANGUAGE_ITALIAN
-#define LUCKY_WHEELS_HOLD_X 21
-#define LUCKY_WHEELS_HOLD_WIDTH 9
-#define LUCKY_WHEELS_RELEASE_X 21
-#define LUCKY_WHEELS_RELEASE_WIDTH 9
+#define LUCKY_WHEELS_LOCK_X 21
+#define LUCKY_WHEELS_LOCK_WIDTH 9
+#define LUCKY_WHEELS_SPIN_X 21
+#define LUCKY_WHEELS_SPIN_WIDTH 9
 #elif LANGUAGE == LANGUAGE_SPANISH
-#define LUCKY_WHEELS_HOLD_X 22
-#define LUCKY_WHEELS_HOLD_WIDTH 8
-#define LUCKY_WHEELS_RELEASE_X 22
-#define LUCKY_WHEELS_RELEASE_WIDTH 8
+#define LUCKY_WHEELS_LOCK_X 22
+#define LUCKY_WHEELS_LOCK_WIDTH 8
+#define LUCKY_WHEELS_SPIN_X 22
+#define LUCKY_WHEELS_SPIN_WIDTH 8
 #else
-#define LUCKY_WHEELS_HOLD_X 23
-#define LUCKY_WHEELS_HOLD_WIDTH 7
-#define LUCKY_WHEELS_RELEASE_X 23
-#define LUCKY_WHEELS_RELEASE_WIDTH 7
+#define LUCKY_WHEELS_LOCK_X 23
+#define LUCKY_WHEELS_LOCK_WIDTH 7
+#define LUCKY_WHEELS_SPIN_X 23
+#define LUCKY_WHEELS_SPIN_WIDTH 7
 #endif
 #if LANGUAGE == LANGUAGE_FRENCH
 #define LUCKY_WHEELS_COIN_DIGITS 3
@@ -504,11 +505,11 @@ void LuckyWheels_DrawCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1, s32 color) {
 #define LUCKY_WHEELS_STOP_WIDTH 12
 #endif
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define LUCKY_WHEELS_CHOOSE_HELD_X 7
-#define LUCKY_WHEELS_CHOOSE_HELD_WIDTH 16
+#define LUCKY_WHEELS_CHOOSE_LOCKED_X 7
+#define LUCKY_WHEELS_CHOOSE_LOCKED_WIDTH 16
 #else
-#define LUCKY_WHEELS_CHOOSE_HELD_X 3
-#define LUCKY_WHEELS_CHOOSE_HELD_WIDTH 24
+#define LUCKY_WHEELS_CHOOSE_LOCKED_X 3
+#define LUCKY_WHEELS_CHOOSE_LOCKED_WIDTH 24
 #endif
 // The Spanish title's first letter is its last letter's tile turned over both
 // ways, drawn 16 pixels left and 8 down.
@@ -561,8 +562,8 @@ extern char MsgSlotsCannotPull[]; ///< "you can't pull the lever!"
 
 /// Lucky Wheels' VBlank task: reads the keys, runs the game's state
 /// (betting, spinning and stopping the wheels, scoring the paylines, choosing
-/// wheels to hold, showing a win) and builds all 128 sprites: the cursor, the
-/// title letters of a win, the frame, the hold lamps, the spin counter, the
+/// wheels to lock, showing a win) and builds all 128 sprites: the cursor, the
+/// title letters of a win, the frame, the lock lamps, the spin counter, the
 /// paylines, the wheel symbols, the lever and the bottom bar.
 void LuckyWheels_Update(void) {
   struct ReelEffectWork *fx;
@@ -570,7 +571,7 @@ void LuckyWheels_Update(void) {
   u16 keys;
   u32 dpad;
   s32 tickets;
-  s32 allHeld;
+  s32 allLocked;
   s32 stoppedReels;
   s32 col;
   s32 v;
@@ -648,12 +649,12 @@ void LuckyWheels_Update(void) {
         }
       }
     } else if (work->state == LUCKY_WHEELS_CHOOSING_LOCKS) {
-      allHeld = 0;
+      allLocked = 0;
       work->timer++;
       for (k = 0; k != LUCKY_WHEELS_REEL_COUNT && work->reels[k].held != 0; k++)
         ;
       if (k == LUCKY_WHEELS_REEL_COUNT)
-        allHeld = 1;
+        allLocked = 1;
       if (work->pressed & KEY_A) {
         work->timer = 0;
         fx->frame = 0;
@@ -668,7 +669,7 @@ void LuckyWheels_Update(void) {
         } else if (work->cursor < LUCKY_WHEELS_LEVER) {
           Sound_PlayFar(SE_LUCKY_WHEELS_HOLD);
           work->reels[work->cursor].held ^= 1;
-        } else if (allHeld == 0) {
+        } else if (allLocked == 0) {
           Sound_PlayFar(SE_LUCKY_WHEELS_SPIN);
           work->state = LUCKY_WHEELS_SPINNING;
           work->cursor = 0;
@@ -693,12 +694,12 @@ void LuckyWheels_Update(void) {
       if (work->state == LUCKY_WHEELS_CHOOSING_LOCKS) {
 #if TLA_PATCH_1
         if (work->cursor == LUCKY_WHEELS_LEVER) {
-          if (allHeld != 0) {
+          if (allLocked != 0) {
             if (work->phase != 1 && work->phase != 2) {
               Window_CloseFar(work->window, 1);
               work->window =
-                  Window_CreateFar(LUCKY_WHEELS_ALL_HELD_X, 0,
-                                   LUCKY_WHEELS_ALL_HELD_WIDTH, 4, 6);
+                  Window_CreateFar(LUCKY_WHEELS_ALL_LOCKED_X, 0,
+                                   LUCKY_WHEELS_ALL_LOCKED_WIDTH, 4, 6);
               Text_DrawMessageAsTilesFar((s32)MsgSlotsAllHeld, work->window, 0,
                                          0);
               work->phase = 1;
@@ -720,16 +721,16 @@ void LuckyWheels_Update(void) {
         } else if (work->reels[work->cursor].held == 0) {
           if (work->phase != 4) {
             Window_CloseFar(work->window, 1);
-            work->window = Window_CreateFar(LUCKY_WHEELS_HOLD_X, 0,
-                                            LUCKY_WHEELS_HOLD_WIDTH, 3, 6);
+            work->window = Window_CreateFar(LUCKY_WHEELS_LOCK_X, 0,
+                                            LUCKY_WHEELS_LOCK_WIDTH, 3, 6);
             Text_DrawMessageAsTilesFar(MsgSlotsHold, work->window, 0, 0);
           }
           work->phase = 4;
         } else {
           if (work->phase != 5) {
             Window_CloseFar(work->window, 1);
-            work->window = Window_CreateFar(LUCKY_WHEELS_RELEASE_X, 0,
-                                            LUCKY_WHEELS_RELEASE_WIDTH, 3, 6);
+            work->window = Window_CreateFar(LUCKY_WHEELS_SPIN_X, 0,
+                                            LUCKY_WHEELS_SPIN_WIDTH, 3, 6);
             Text_DrawMessageAsTilesFar((s32)MsgSlotsRelease, work->window, 0,
                                        0);
           }
@@ -738,9 +739,10 @@ void LuckyWheels_Update(void) {
 #else
         Window_CloseFar(work->window, 1);
         if (work->cursor == LUCKY_WHEELS_LEVER) {
-          if (allHeld != 0) {
-            work->window = Window_CreateFar(LUCKY_WHEELS_ALL_HELD_X, 0,
-                                            LUCKY_WHEELS_ALL_HELD_WIDTH, 3, 6);
+          if (allLocked != 0) {
+            work->window =
+                Window_CreateFar(LUCKY_WHEELS_ALL_LOCKED_X, 0,
+                                 LUCKY_WHEELS_ALL_LOCKED_WIDTH, 3, 6);
             Text_DrawMessageAsTilesFar((s32)MsgSlotsAllHeld, work->window, 0,
                                        0);
           } else {
@@ -749,8 +751,8 @@ void LuckyWheels_Update(void) {
             Text_DrawMessageAsTilesFar((s32)MsgSlotsStart, work->window, 0, 0);
           }
         } else {
-          work->window = Window_CreateFar(LUCKY_WHEELS_HOLD_X, 0,
-                                          LUCKY_WHEELS_HOLD_WIDTH, 3, 6);
+          work->window = Window_CreateFar(LUCKY_WHEELS_LOCK_X, 0,
+                                          LUCKY_WHEELS_LOCK_WIDTH, 3, 6);
           if (work->reels[work->cursor].held == 0)
             Text_DrawMessageAsTilesFar(MsgSlotsHold, work->window, 0, 0);
           else
@@ -903,8 +905,8 @@ void LuckyWheels_Update(void) {
             s32 message;
 
             work->window =
-                Window_CreateFar(LUCKY_WHEELS_CHOOSE_HELD_X, 16,
-                                 LUCKY_WHEELS_CHOOSE_HELD_WIDTH, 4, 6);
+                Window_CreateFar(LUCKY_WHEELS_CHOOSE_LOCKED_X, 16,
+                                 LUCKY_WHEELS_CHOOSE_LOCKED_WIDTH, 4, 6);
             message = (s32)MsgSlotsChooseHeld;
             Text_DrawMessageAsTilesFar(message, work->window, 0, 0);
             Text_DrawMessageAsTilesFar(message + 1, work->window, 0, 8);
@@ -1047,7 +1049,7 @@ void LuckyWheels_Update(void) {
       work->oam[work->spriteCount].attr01 =
           objMode | OBJ_X(i * 36 + 32) | 124 | OBJ_SIZE_32X32 | OBJ_256_COLORS;
       work->oam[work->spriteCount].attr2 =
-          OBJ_PRIORITY(1) | LUCKY_WHEELS_HELD_LAMP_TILES;
+          OBJ_PRIORITY(1) | LUCKY_WHEELS_LOCKED_LAMP_TILES;
     }
     work->spriteCount++;
   }

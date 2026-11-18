@@ -25,11 +25,6 @@ enum SpritePictureCodec {
   SPRITE_PICTURE_LZ = 3         ///< LZ-compressed
 };
 
-/// A sprite's shadow, 16 by 8 pixels: its half width and half height, both
-/// doubled when the sprite is drawn double-size.
-#define SHADOW_HALF_WIDTH 8
-#define SHADOW_HALF_HEIGHT 4
-
 /// Runs each of the player's animation channels on to its next stop (an
 /// end, hold, jump or play command), taking the frames and
 /// settings on the way, and leaves the stop to run next; marks the player and
@@ -189,7 +184,7 @@ s32 Sprite_ComposePicture(struct Sprite *obj, u32 dir) {
     case ANIM_FACING_THREE_PICTURES:
       facing = gAnimationFacing_ThreePictures[FACING_SECTOR(dir, 16)];
       break;
-    case ANIM_FACING_SIX_PICTURES:
+    case ANIM_FACING_FIVE_PICTURES:
       facing = gAnimationFacing_SixPictures[FACING_SECTOR(dir, 64)];
       break;
     case ANIM_FACING_EIGHT_PICTURES:
@@ -454,7 +449,7 @@ void Render_ApplyProjectedPlacement(struct Sprite *object, s32 *pos, s32 *scale,
     halfHeight <<= 1;
   }
 
-  // The 16 by 8 shadow, centred on the ground below the object.
+  // The shadow, centred on the ground below the object.
   y = FIXEDtoINT(pz - pw) - SHADOW_HALF_HEIGHT;
   if ((object->flags & SPRITE_FLAG_SHADOW) && y < DISPLAY_HEIGHT) {
     part = &object->shadow;

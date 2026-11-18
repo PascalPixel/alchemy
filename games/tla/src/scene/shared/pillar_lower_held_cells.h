@@ -1,6 +1,6 @@
 /// Lowers the cell under the pillar ahead of the leader, or the one Move holds,
-/// when it is one of the listed pillars: Pillar_Raise undone, the cell four
-/// height steps down and neither it nor the cell south of it climbable; the
+/// when it is one of the listed pillars: Pillar_Raise undone, the cell 32
+/// pixels down and neither it nor the cell south of it climbable; the
 /// field work keeps the pillar as its moved block.
 void Pillar_LowerHeldCells(u16 *list) {
   struct Actor *held = Leader_FindActorAhead();
@@ -25,8 +25,9 @@ void Pillar_LowerHeldCells(u16 *list) {
       s32 height =
           Map_GetTerrainHeight(held->layer, held->x.fixed, held->z.fixed);
       s32 index = Actor_GetCellIndex(held);
-      s32 result = MapCollision_FindOrAddTag(held->layer, kind,
-                                             CELL_HEIGHT_STEPS(height) - 4);
+      s32 result = MapCollision_FindOrAddTag(
+          held->layer, kind,
+          CELL_HEIGHT_STEPS(height) - CELL_HEIGHT_STEPS(toFIXED(32)));
 
       slot += index;
       // The index goes on as the cell offset, four bytes a cell.

@@ -9,12 +9,6 @@
 #include "field/emote.h"
 #include "sprite_ids.h"
 
-/// The high byte of the first sprite part's OAM attribute 2, which holds its
-/// priority and palette.
-#define SPRITE_ATTR2_HIGH(sprite) (((u8 *)(sprite))[9])
-/// The priority's bits in that byte.
-#define ATTR2_HIGH_PRIORITY_MASK (OBJ_PRIORITY(3) >> 8)
-
 /// Actor_ShowEmoteById's emote: the bubble (enum Emote) in its low byte, of
 /// which the low four bits pick its animation, then flags (EMOTE_IN_FRONT).
 #define EMOTE_BUBBLE_MASK 0xff
@@ -153,12 +147,13 @@ struct Actor *Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames) {
       sprite = bubble->sprite;
       sprite->flags = 0;
 
-      // The bubble takes sprite priority 1, or the actor's: -(m + 1) is ~m,
-      // the bits besides the priority.
+      // The bubble takes sprite priority 1, or the actor's.
       if ((emote & EMOTE_IN_FRONT) != 0) {
         s32 mask = ATTR2_HIGH_PRIORITY_MASK + 1;
         u8 attr = SPRITE_ATTR2_HIGH(sprite);
 
+        /* FAKEMATCH(temporary): the mask's complement built as -(mask + 1) in
+         * a local; as attr & ~ATTR2_HIGH_PRIORITY_MASK. */
         mask = -mask;
         mask &= attr;
         mask |= OBJ_PRIORITY(1) >> 8;
@@ -171,6 +166,8 @@ struct Actor *Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames) {
 
         priority &= src;
         dst = SPRITE_ATTR2_HIGH(sprite);
+        /* FAKEMATCH(temporary): the mask's complement built as -(mask + 1) in
+         * a local; as dst & ~ATTR2_HIGH_PRIORITY_MASK. */
         mask = -mask;
         mask &= dst;
         mask |= priority;

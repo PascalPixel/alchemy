@@ -58,6 +58,16 @@
 #include "field/field_psynergy_work.h"
 #include "field/scene_tables.h"
 
+/// The high byte of the first sprite part's OAM attribute 2, which holds its
+/// priority and palette.
+#define SPRITE_ATTR2_HIGH(sprite) (((u8 *)(sprite))[9])
+/// The priority's bits in that byte.
+#define ATTR2_HIGH_PRIORITY_MASK (OBJ_PRIORITY(3) >> 8)
+
+/// The sparkles Lift's and Carry's hands scatter as they meet, as The Broken
+/// Seal names them.
+#define ITEM_BREAK_SHARD_MAX 24
+
 /// Move's hand and Carry shed the same short-lived falling particle: it falls
 /// under a gravity of 0.1 pixel a frame, each frame, and is freed after 12
 /// frames.

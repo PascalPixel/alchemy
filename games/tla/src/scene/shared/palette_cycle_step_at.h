@@ -1,9 +1,4 @@
-/// The cycle: BG palette CYCLE_PALETTE's colours from CYCLE_FIRST_COLOR take
-/// their places among CYCLE_PLACES one further every CYCLE_STEP_FRAMES frames.
-#define CYCLE_PALETTE 12
-#define CYCLE_FIRST_COLOR 2
-#define CYCLE_PLACES 5
-#define CYCLE_STEP_FRAMES 4
+#include "palette_cycle_places.h"
 
 /// The lower floors' copy of PaletteCycle_Step (palette_cycle_step.h), under
 /// the name their task list calls it by: steps the palette cycle, unless an
@@ -29,7 +24,7 @@ void PaletteCycle_StepAt(void) {
     colors[(phase + i) % CYCLE_PLACES] =
         gPaletteCycleColors[i + CYCLE_FIRST_COLOR];
   Dma_Set(colors, (void *)&BG_PLTT_COLOR(CYCLE_PALETTE, CYCLE_FIRST_COLOR),
-          DMA_COPY_WORDS(2), REG_DMA3);
+          DMA_COPY_WORDS((CYCLE_PLACES - 1) / 2), REG_DMA3);
   gPaletteCycleFrame++;
 }
 

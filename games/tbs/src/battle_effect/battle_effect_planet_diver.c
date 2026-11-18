@@ -315,9 +315,11 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
 
 /// Unused: no row of gAbilityBattleEffects in either game names its kind, and
 /// the handler table is reached with no other kind (BattleEffect_RunFromTable),
-/// so the player never sees it. Its code draws the spirals about the point 40
-/// pixels above each target in turn, turning a 128th of a turn a frame; each
-/// target takes its damage pose 32 frames into its turn.
+/// so the player never sees it. Staged by hand (Quake's row of
+/// gAbilityBattleEffects given its kind, cast by Isaac at Garet, Ivan and Mia),
+/// four spirals circle the point 40 pixels above Garet, then Ivan, then Mia,
+/// turning a 128th of a turn a frame; each target takes its damage pose 32
+/// frames into its turn.
 void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;

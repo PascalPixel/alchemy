@@ -30,9 +30,10 @@ struct JudgmentWork {
 
 #define JUDGMENT_GATHER_FRAMES 160 ///< frames of the gathering
 #define JUDGMENT_SWEEP_FRAMES 320
-/// The gathering's crash: the canvas fills, then the beams fall from the next
-/// frame.
+/// The gathering's crash: the canvas fills to JUDGMENT_CRASH_LEVEL the frame
+/// before, then the beams fall.
 #define JUDGMENT_BEAM_FRAME 144
+#define JUDGMENT_CRASH_LEVEL 42
 #define JUDGMENT_FORMATION_OBJECTS 16 ///< sprites in the formation, 4x4
 #define JUDGMENT_FORMATION_COLUMNS 4
 #define JUDGMENT_FORMATION_SPRITE_SIZE 32 ///< each sprite is 32 pixels square
@@ -48,14 +49,18 @@ struct JudgmentWork {
 #define JUDGMENT_BURST_Y 80
 /// How far from the burst's centre its shards flicker.
 #define JUDGMENT_SHARD_RADIUS 16
-/// The gathering motes' depths either side of the burst, which set the size
-/// each is drawn at.
+/// The gathering motes' depths either side of the burst; a mote is drawn a size
+/// larger for each JUDGMENT_MOTE_SIZE_DEPTH nearer, from size 2.
 #define JUDGMENT_MOTE_DEPTH 60
+#define JUDGMENT_MOTE_SIZE_DEPTH 20
 /// The unused sparks stage's depths, and the depth it starts its nearest
-/// from, above any a spark can have.
+/// from, above any a spark can have. The sparks start on a ring a quarter of
+/// JUDGMENT_SPARK_AMPLITUDE out, and at frame 64 burst outward by an eighth of
+/// it.
 #define JUDGMENT_SPARK_DEPTH_NEAR 100
 #define JUDGMENT_SPARK_DEPTH_FAR 900
 #define JUDGMENT_SPARK_DEPTH_NONE 65535
+#define JUDGMENT_SPARK_AMPLITUDE 255
 /// The pink burst's beam picture, at the sheet's start.
 #define JUDGMENT_BEAM_WIDTH 24
 #define JUDGMENT_BEAM_HEIGHT 64
@@ -108,8 +113,15 @@ struct JudgmentWork {
 /// centred.
 #define JUDGMENT_SWEEP_CANVAS_X ((DISPLAY_WIDTH - JUDGMENT_WAVE_SIZE) / 2)
 /// The column of the wave picture the flare falls down and the aerial view's
-/// rings spread from.
+/// rings spread from, at JUDGMENT_AERIAL_RINGS_Y; the beach's rings spread from
+/// further right and higher.
 #define JUDGMENT_FLARE_X (JUDGMENT_WAVE_SIZE / 2)
+#define JUDGMENT_AERIAL_RINGS_Y 44
+#define JUDGMENT_BEACH_RINGS_X 112
+#define JUDGMENT_BEACH_RINGS_Y 32
+/// Where the blast and its debris sweep back in from as the battle returns,
+/// beyond the screen's right edge.
+#define JUDGMENT_RETURN_BLAST_X (DISPLAY_WIDTH + 32)
 
 /// Sets a ring's four mirrored points (left or right, top or bottom) of the
 /// wave picture to JUDGMENT_RING_LEVEL.
@@ -225,7 +237,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 
   for (i = 0; i != JUDGMENT_SPARK_COUNT; i++) {
     s32 angle = Random16() & TRIG_ANGLE_MASK;
-    s32 amplitude = 255;
+    s32 amplitude = JUDGMENT_SPARK_AMPLITUDE;
     s32 speed = 0;
     JUDGMENT_SPARKS[i].x = (Trig_Sin(angle) * amplitude) >> 2;
     JUDGMENT_SPARKS[i].z = (Trig_Cos(angle) * amplitude) >> 2;
@@ -245,7 +257,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
        frame++) {
     blitters = EFFECT_BLITTERS;
     if (frame == JUDGMENT_BEAM_FRAME - 1) {
-      Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(42));
+      Iwram_FillWords(canvas, CANVAS_BYTES,
+                      CANVAS_FILL_WORD(JUDGMENT_CRASH_LEVEL));
       Sound_PlayFar(SE_CRASH);
     }
     if (frame == 80) {
@@ -280,9 +293,13 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                          projectedPosition.y, size);
         if (frame == 64) {
           JUDGMENT_SPARKS[i].velocityX +=
-              (Trig_Sin(JUDGMENT_SPARKS[i].variant) * 255) >> 3;
+              (Trig_Sin(JUDGMENT_SPARKS[i].variant) *
+               JUDGMENT_SPARK_AMPLITUDE) >>
+              3;
           JUDGMENT_SPARKS[i].velocityY +=
-              (Trig_Cos(JUDGMENT_SPARKS[i].variant) * 255) >> 3;
+              (Trig_Cos(JUDGMENT_SPARKS[i].variant) *
+               JUDGMENT_SPARK_AMPLITUDE) >>
+              3;
         }
       }
     }
@@ -313,7 +330,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         CLAMP(projectedPosition.depth, -JUDGMENT_MOTE_DEPTH,
               JUDGMENT_MOTE_DEPTH);
         projectedPosition.depth += JUDGMENT_MOTE_DEPTH;
-        size = projectedPosition.depth / 20 + 2;
+        size = projectedPosition.depth / JUDGMENT_MOTE_SIZE_DEPTH + 2;
         projectedPosition.x += JUDGMENT_BURST_X;
         projectedPosition.y += JUDGMENT_BURST_Y;
         EFFECT_DRAW_MOTE(draw[0], canvas, motes, projectedPosition.x,
@@ -504,7 +521,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
   Dma_Fill32Cell(fill, 0, canvas, CANVAS_BYTES);
 
   cx = JUDGMENT_FLARE_X;
-  cy = 44;
+  cy = JUDGMENT_AERIAL_RINGS_Y;
   squash = 6;
   shift = 0;
   ring = 0;
@@ -584,8 +601,8 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 
     // The beach: the rings restart, four a frame.
     if (frame == JUDGMENT_SWEEP_BEACH) {
-      cx = 112;
-      cy = 32;
+      cx = JUDGMENT_BEACH_RINGS_X;
+      cy = JUDGMENT_BEACH_RINGS_Y;
       ring = 0;
       rings = 4;
       squash = 8;
@@ -627,7 +644,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         particle->velocityY = ((Random16() & 15) + 16) << 15;
         particle->z = 0;
       }
-      shift = 272;
+      shift = JUDGMENT_RETURN_BLAST_X;
       EFFECT_SET_TRANSFER(work, CANVAS_COPY, 0);
     }
 
@@ -742,7 +759,7 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 
     if (frame >= 72 && frame < 76) {
       s32 radius = (frame - 71) * 16;
-      s32 size = 10;
+      s32 size = MOTE_SIZE_MAX;
       for (i = 0; i != JUDGMENT_FLASH_RING_MOTES; i++) {
         s32 angle = i * (TRIG_TURN / JUDGMENT_FLASH_RING_MOTES);
         s32 x = FIXEDtoINT(Trig_Sin(angle) * radius) - (size >> 1);
@@ -963,6 +980,13 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 
 #undef JUDGMENT_SHEET_BYTES
 #undef JUDGMENT_SPARKS
+#undef JUDGMENT_CRASH_LEVEL
+#undef JUDGMENT_MOTE_SIZE_DEPTH
+#undef JUDGMENT_SPARK_AMPLITUDE
+#undef JUDGMENT_AERIAL_RINGS_Y
+#undef JUDGMENT_BEACH_RINGS_X
+#undef JUDGMENT_BEACH_RINGS_Y
+#undef JUDGMENT_RETURN_BLAST_X
 #undef JUDGMENT_SHEET_TORNADO
 #undef JUDGMENT_GATHER_FRAMES
 #undef JUDGMENT_SWEEP_FRAMES

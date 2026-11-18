@@ -273,7 +273,7 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
               x, y + 80, TORNADO_STRIP_WIDTH, TORNADO_STRIP_HEIGHT);
 
       // Its four glints, the second of each pair mirrored; each restarts at
-      // a new place when its cels run out.
+      // a new place when its pictures run out.
       for (j = 0; j != 4; j++) {
         glint = &work->particles[i * 4 + j];
         if (glint->variant >= 0) {

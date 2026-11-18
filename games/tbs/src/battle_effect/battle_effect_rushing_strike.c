@@ -22,8 +22,11 @@ void BattleEffect_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 rowCount) {
 }
 
 #define RUSHING_STRIKE_SPARK_COUNT 64
-#define RUSHING_STRIKE_RING_BYTES                                              \
-  PICTURE_BYTES(YELLOW_ORB_PACKED) ///< one ring picture
+/// The first pair of sparks' frames of life; each pair after lives a frame
+/// longer.
+#define RUSHING_STRIKE_SPARK_FRAMES 16
+/// One ring picture.
+#define RUSHING_STRIKE_RING_BYTES PICTURE_BYTES(YELLOW_ORB_PACKED)
 
 /// The rushing strike's sparks' palettes (BattleEffect_RunRushingStrike), each
 /// named for the effect that plays it.
@@ -59,7 +62,10 @@ void BattleEffect_RunHeadbutt(struct BattleEffectParams *args) {
   BattleEffect_RunRushingStrike(args, RUSHING_STRIKE_HEADBUTT);
 }
 #define RUSHING_STRIKE_FRAMES 60
-#define RUSHING_STRIKE_FRAME 10 ///< the user strikes
+#define RUSHING_STRIKE_BURST_FRAMES 15 ///< the burst follows the user in
+#define RUSHING_STRIKE_RING_FRAME 8    ///< the ring flares at the target
+#define RUSHING_STRIKE_RING_FRAMES 12  ///< its pictures, two frames each
+#define RUSHING_STRIKE_FRAME 10        ///< the user strikes
 
 /// The user rushes at the first target; a ring flares where it hits and sparks
 /// scatter.
@@ -135,20 +141,20 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
   for (i = 0; i != RUSHING_STRIKE_SPARK_COUNT; i++) {
     newSpark = &work->particles[i];
     newSpark->x = target->x.fixed;
-    newSpark->y = target->y.fixed + toFIXED(10); // 10 pixels up
+    newSpark->y = target->y.fixed + toFIXED(10);
     newSpark->z = target->z.fixed;
     SET_VELOCITY(newSpark, (Random16() & 0x1ff) << 11,
                  ((Random16() & 255) - 64) << 11,
                  ((Random16() & 255) - 128) << 11);
     if (newSpark->x > 0)
       newSpark->velocityX = -newSpark->velocityX;
-    newSpark->variant = i / 2 + 16;
+    newSpark->variant = i / 2 + RUSHING_STRIKE_SPARK_FRAMES;
   }
   Projection_Unit(work->args->targets[0], &origin);
 
   for (frame = 0; frame != RUSHING_STRIKE_FRAMES; frame++) {
     // The burst at the user as it rushes in.
-    if (frame <= 14) {
+    if (frame < RUSHING_STRIKE_BURST_FRAMES) {
       Projection_Unit(work->args->user, &screen);
       draw[0](canvas, work->sheet, screen.x / 2 - 16, screen.y - 48, 40, 32);
       draw[1](canvas, work->sheet, screen.x / 2 - 16, screen.y - 16, 40, 32);
@@ -161,8 +167,8 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
       work->shakeFrames = 8;
     }
     // The ring where it hits.
-    ringFrame = frame - 8;
-    if (ringFrame >= 0 && ringFrame <= 11) {
+    ringFrame = frame - RUSHING_STRIKE_RING_FRAME;
+    if (ringFrame >= 0 && ringFrame < RUSHING_STRIKE_RING_FRAMES) {
       s32 ring = ringFrame / 2;
       draw[0](canvas, cells + ring * RUSHING_STRIKE_RING_BYTES,
               origin.x / 2 - 16, screen.y - 40, YELLOW_ORB_PACKED_WIDTH,
@@ -193,6 +199,10 @@ void BattleEffect_RunRushingStrike(struct BattleEffectParams *args, s32 mode) {
 }
 
 #undef RUSHING_STRIKE_SPARK_COUNT
+#undef RUSHING_STRIKE_SPARK_FRAMES
+#undef RUSHING_STRIKE_BURST_FRAMES
+#undef RUSHING_STRIKE_RING_FRAME
+#undef RUSHING_STRIKE_RING_FRAMES
 #undef RUSHING_STRIKE_RING_BYTES
 #undef RUSHING_STRIKE_FRAMES
 #undef RUSHING_STRIKE_FRAME

@@ -2,11 +2,6 @@
 /// Unit_Get and the game flags: bits, bytes and nibbles.
 // Part of system.c.
 
-// The game flags: 4096 bits in gGameFlagBytes. A flag number's low three bits
-// pick the bit and the next nine the byte; byte and nibble flags use the same
-// numbering. Bits above the twelfth are dropped (GAME_FLAG_BYTE), so a number
-// past 4095 wraps onto a flag below it rather than reaching other memory.
-
 #include "system_internal.h"
 #include "battle/battle_unit.h"
 #include "game/owner_state.h"
@@ -33,6 +28,11 @@ struct Unit *Unit_Get(u32 unitId) {
   return NULL;
 }
 
+// The game flags: 4096 bits in gGameFlagBytes. A flag number's low three bits
+// pick the bit and the next nine the byte; byte and nibble flags use the same
+// numbering. Bits above the twelfth are dropped (GAME_FLAG_BYTE), so a number
+// past 4095 wraps onto a flag below it rather than reaching other memory.
+
 /// Returns 1 when `flag` is set and 0 when it is clear.
 s32 GameFlag_Get(s32 flag) {
   s32 bit = flag & 7;
@@ -43,43 +43,31 @@ s32 GameFlag_Get(s32 flag) {
 
 /// Sets `flag` and returns its byte number.
 s32 GameFlag_Set(s32 flag) {
-  s32 bit;
-  s32 mask;
-  u8 *bytes;
-
-  bit = flag & 7;
-  bytes = gGameFlagBytes;
-  mask = 1 << bit;
+  s32 bit = GAME_FLAG_BIT(flag);
+  u8 *flags = gGameFlagBytes;
   flag = GAME_FLAG_BYTE(flag);
-  bytes[flag] |= mask;
+
+  flags[flag] |= bit;
   return flag;
 }
 
 /// Clears `flag`.
 void GameFlag_Clear(s32 flag) {
-  s32 bit;
-  s32 mask;
-  u8 *bytes;
-
-  bit = flag & 7;
-  bytes = gGameFlagBytes;
-  mask = 1 << bit;
+  s32 bit = GAME_FLAG_BIT(flag);
+  u8 *flags = gGameFlagBytes;
   flag = GAME_FLAG_BYTE(flag);
-  bytes[flag] &= ~mask;
+
+  flags[flag] &= ~bit;
 }
 
 /// Unused: flips `flag` and returns its new value.
 u32 GameFlag_Toggle(s32 flag) {
-  s32 mask;
-  u8 *bytes;
-  s32 value;
-
-  mask = 1 << (7 & flag);
-  bytes = gGameFlagBytes;
+  s32 bit = GAME_FLAG_BIT(flag);
+  u8 *flags = gGameFlagBytes;
   flag = GAME_FLAG_BYTE(flag);
-  bytes[flag] ^= mask;
-  value = bytes[flag] & mask;
-  return NONZERO(value);
+
+  flags[flag] ^= bit;
+  return NONZERO(flags[flag] & bit);
 }
 
 /// Returns the whole byte `flag` is in, a counter kept among the flags.
@@ -101,44 +89,43 @@ u32 GameFlag_SetByte(u32 flag, u8 value) {
 /// Unused: adds 1 to the byte `flag` is in, stopping at GAME_FLAG_BYTE_MAX, and
 /// returns it.
 u8 GameFlag_IncrementByte(s32 flag) {
-  u8 *bytes = gGameFlagBytes;
-
+  u8 *flags = gGameFlagBytes;
   flag = GAME_FLAG_BYTE(flag);
-  if (bytes[flag] < GAME_FLAG_BYTE_MAX)
-    bytes[flag]++;
-  return bytes[flag];
+
+  if (flags[flag] < GAME_FLAG_BYTE_MAX)
+    flags[flag]++;
+  return flags[flag];
 }
 
-/// Takes 1 from the byte `flag` is in, stopping at 0, and returns it. Nothing
-/// calls it or its far-call export.
+/// Unused: takes 1 from the byte `flag` is in, stopping at 0, and returns it.
 u8 GameFlag_DecrementByte(s32 flag) {
-  u8 *bytes = gGameFlagBytes;
-
+  u8 *flags = gGameFlagBytes;
   flag = GAME_FLAG_BYTE(flag);
-  if (bytes[flag] != 0)
-    bytes[flag]--;
-  return bytes[flag];
+
+  if (flags[flag] != 0)
+    flags[flag]--;
+  return flags[flag];
 }
 
 /// The bits of a nibble flag, low or high in its byte by its number's bit 2.
-#define GAME_FLAG_NIBBLE 0xf
+#define GAME_FLAG_NIBBLE_MASK 0xf
 
 /// Unused: returns the four bits a flag is in, 0 to 15.
 s32 GameFlag_GetNibble(u32 flag) {
   s32 shift = flag & 4;
-  s32 mask = GAME_FLAG_NIBBLE << shift;
-
+  s32 mask = GAME_FLAG_NIBBLE_MASK << shift;
   flag = GAME_FLAG_BYTE(flag);
+
   return (gGameFlagBytes[flag] & mask) >> shift;
 }
 
 /// Unused: sets the four bits `flag` is in.
 void GameFlag_SetNibble(s32 flag, s32 value) {
-  s32 fieldMask = GAME_FLAG_NIBBLE;
-  s32 shift = 4 & flag;
-  s32 mask = fieldMask << shift;
-  u8 *bytes = gGameFlagBytes;
-
+  s32 nibble = GAME_FLAG_NIBBLE_MASK;
+  s32 shift = flag & 4;
+  s32 mask = nibble << shift;
+  u8 *flags = gGameFlagBytes;
   flag = GAME_FLAG_BYTE(flag);
-  bytes[flag] = (bytes[flag] & ~mask) | ((value & fieldMask) << shift);
+
+  flags[flag] = (flags[flag] & ~mask) | ((value & nibble) << shift);
 }

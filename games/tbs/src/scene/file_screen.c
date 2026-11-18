@@ -1237,6 +1237,9 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     }
   }
 
+  // The first seven bytes: the four levels, seven bits each, low byte first,
+  // and the Djinn held, seven bits an element; byte 3 holds the levels' last
+  // four bits above the Djinn's first four.
   out[0] = levelBits;
   out[1] = levelBits >> 8;
   out[2] = levelBits >> 16;

@@ -602,10 +602,21 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
 
   bounds = Ram_HeapSlots->mapGrid;
   leader = camera->watchedActor;
-  minX = bounds->minX + toFIXED(120);
-  minZ = bounds->minZ + leader->y.fixed + toFIXED(96);
-  maxX = bounds->maxX - toFIXED(120);
-  maxZ = bounds->maxZ + leader->y.fixed - toFIXED(64);
+  // UB: the bounds read the leader's height before the null check below.
+#ifdef UBFIX
+  if (leader == NULL) {
+    camera->motionFlags = 0;
+    camera->scriptCursor++;
+    return 1;
+  }
+#endif
+  // A layered map draws a point at screen row z - y, so the z bounds move
+  // with the leader's height and the clamp keeps that row inside the map.
+  minX = bounds->minX + FIELD_VIEW_FOCUS_X;
+  minZ = bounds->minZ + leader->y.fixed + FIELD_VIEW_FOCUS_Y;
+  maxX = bounds->maxX - FIELD_VIEW_FOCUS_X;
+  maxZ =
+      bounds->maxZ + leader->y.fixed - (FIELD_VIEW_HEIGHT - FIELD_VIEW_FOCUS_Y);
   camera->motionFlags = 0;
   if (leader != NULL && leader->script != NULL) {
     x = leader->x.fixed;
@@ -625,10 +636,12 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
     if (bounds->cameraBoxes != NULL) {
       region = bounds->cameraBoxes;
       while (region[0] != -1) {
-        minX = toFIXED(region[0]) - toFIXED(120);
-        minZ = toFIXED(region[1]) + leader->y.fixed - toFIXED(64);
-        maxX = toFIXED(region[2]) + toFIXED(120);
-        maxZ = toFIXED(region[3]) + leader->y.fixed + toFIXED(96);
+        // The points from which the view would show some of the box.
+        minX = toFIXED(region[0]) - FIELD_VIEW_FOCUS_X;
+        minZ = toFIXED(region[1]) + leader->y.fixed -
+               (FIELD_VIEW_HEIGHT - FIELD_VIEW_FOCUS_Y);
+        maxX = toFIXED(region[2]) + FIELD_VIEW_FOCUS_X;
+        maxZ = toFIXED(region[3]) + leader->y.fixed + FIELD_VIEW_FOCUS_Y;
         if (x >= minX && z >= minZ && x <= maxX && z <= maxZ) {
           dx = minX;
           if (DISTANCE(minX, x) > DISTANCE(maxX, x))
@@ -706,10 +719,10 @@ s32 FieldCamera_FollowWatchedInBounds(struct Actor *camera) {
 
   bounds = Ram_HeapSlots->mapGrid;
   leader = camera->watchedActor;
-  minX = bounds->minX + toFIXED(120);
-  minZ = bounds->minZ + toFIXED(96);
-  maxX = bounds->maxX - toFIXED(120);
-  maxZ = bounds->maxZ - toFIXED(64);
+  minX = bounds->minX + FIELD_VIEW_FOCUS_X;
+  minZ = bounds->minZ + FIELD_VIEW_FOCUS_Y;
+  maxX = bounds->maxX - FIELD_VIEW_FOCUS_X;
+  maxZ = bounds->maxZ - (FIELD_VIEW_HEIGHT - FIELD_VIEW_FOCUS_Y);
   camera->motionFlags = 0;
   if (leader != NULL && leader->script != NULL) {
     x = leader->x.fixed;
@@ -1228,12 +1241,12 @@ s32 Actor_UpdateHoverControl(struct Actor *actor) {
       if (MapGrid_CheckCollisionAbove(actor, &position) == 0) {
         SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
                      actor->z.fixed);
-        Vector_AddPolarOffset(toFIXED(8), (u16)angle + TRIG_TURN / 16,
+        Vector_AddPolarOffset(toFIXED(8), (u16)angle + FIELD_PROBE_ANGLE,
                               &testPosition);
         if (MapGrid_CheckCollisionAbove(actor, &testPosition) == 0) {
           SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
                        actor->z.fixed);
-          Vector_AddPolarOffset(toFIXED(8), (u16)angle - TRIG_TURN / 16,
+          Vector_AddPolarOffset(toFIXED(8), (u16)angle - FIELD_PROBE_ANGLE,
                                 &testPosition);
           if (MapGrid_CheckCollisionAbove(actor, &testPosition) == 0) {
             SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
@@ -1255,12 +1268,12 @@ s32 Actor_UpdateHoverControl(struct Actor *actor) {
       }
       direction = angle;
       headingCount = 0;
-      angleOffsets[headingCount++] = direction + TRIG_TURN / 16;
-      angleOffsets[headingCount++] = direction - TRIG_TURN / 16;
+      angleOffsets[headingCount++] = direction + FIELD_PROBE_ANGLE;
+      angleOffsets[headingCount++] = direction - FIELD_PROBE_ANGLE;
       angleOffsets[headingCount++] = direction + DEGtoANG(45);
       angleOffsets[headingCount++] = direction - DEGtoANG(45);
-      angleOffsets[headingCount++] = direction + TRIG_TURN * 3 / 16;
-      angleOffsets[headingCount++] = direction - TRIG_TURN * 3 / 16;
+      angleOffsets[headingCount++] = direction + FIELD_PROBE_ANGLE * 3;
+      angleOffsets[headingCount++] = direction - FIELD_PROBE_ANGLE * 3;
       for (angleIndex = 0; angleIndex < headingCount; angleIndex++) {
         heading = angleOffsets[angleIndex];
         SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
@@ -1269,13 +1282,13 @@ s32 Actor_UpdateHoverControl(struct Actor *actor) {
           continue;
         SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
                      actor->z.fixed);
-        Vector_AddPolarOffset(toFIXED(8), (u16)heading + TRIG_TURN / 16,
+        Vector_AddPolarOffset(toFIXED(8), (u16)heading + FIELD_PROBE_ANGLE,
                               &testPosition);
         if (MapGrid_CheckCollisionAbove(actor, &testPosition) != 0)
           continue;
         SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
                      actor->z.fixed);
-        Vector_AddPolarOffset(toFIXED(8), (u16)heading - TRIG_TURN / 16,
+        Vector_AddPolarOffset(toFIXED(8), (u16)heading - FIELD_PROBE_ANGLE,
                               &testPosition);
         if (MapGrid_CheckCollisionAbove(actor, &testPosition) != 0)
           continue;

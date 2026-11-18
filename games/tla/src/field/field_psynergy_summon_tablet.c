@@ -195,7 +195,8 @@ void SummonTablet_UpdateRunes(void) {
       sprite->oam.index = *tile + (piece->timer / PEBBLE_PICTURE_FRAMES & 7) *
                                       PEBBLE_PICTURE_TILES;
       EffectSprite_DrawAtWorldPosition(sprite, piece->pebble.position);
-      Field_AdvanceWithGravity3D(piece->pebble.position, 63, -(toFIXED(1) / 2));
+      Field_AdvanceWithGravity3D(piece->pebble.position, DAMPING_SCALE - 1,
+                                 -(toFIXED(1) / 2));
       piece->timer++;
     }
   }

@@ -30,8 +30,7 @@ enum { ACTOR_SNAPSHOT_CAPACITY = 32, ACTOR_SNAPSHOT_EMPTY = 255 };
 /// names, takes the slot of the row before.
 #define PLACEMENT_SPRITE_MAX 9989
 
-/// The ids Actor_Lookup answers: more than the FIELD_ACTOR_COUNT slots, so one
-/// past them reads the field work's members after the slots.
+/// The ids Actor_Lookup answers: more than the FIELD_ACTOR_COUNT slots.
 #define LOOKUP_ID_COUNT 192
 
 /// Picks the sprite a scene placement's character id shows: character 8, the
@@ -383,6 +382,12 @@ struct Actor *Actor_Lookup(u32 actorId) {
 
   if (actorId > LOOKUP_ID_COUNT - 1)
     return NULL;
+  // UB: ids from FIELD_ACTOR_COUNT to LOOKUP_ID_COUNT - 1 read past actors[],
+  // into the field work's requests; UBFIX returns NULL for them.
+#ifdef UBFIX
+  if (actorId > FIELD_ACTOR_COUNT - 1)
+    return NULL;
+#endif
   return work->actors[actorId];
 }
 

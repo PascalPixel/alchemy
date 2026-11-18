@@ -369,9 +369,6 @@ void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
 
 void PaletteFade_SetTarget(s32 value, s32 mode);
 
-/// The BG colours a palette fade keeps, palettes 0 to 13, before its OBJ
-/// colours.
-#define PALETTE_FADE_BG_COLORS (14 * PALETTE_COLORS)
 /// The channels of those colours, three a colour, before the OBJ colours'.
 #define BG_CHANNELS (PALETTE_FADE_BG_COLORS * 3)
 
@@ -465,5 +462,4 @@ void FieldPsynergy_FadeToCastColor(void) {
   Field_StartColorTransition(8, gFieldEffect_TargetColors[tint]);
 }
 #undef Actor_SetAnimationSpeedFar
-#undef PALETTE_FADE_BG_COLORS
 #undef BG_CHANNELS

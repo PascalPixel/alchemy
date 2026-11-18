@@ -1081,8 +1081,8 @@ void Map_ApplyFlagEdits(s32 flag, s32 attributes) {
 void Map_GetHeaderSize(s32 map, s32 *bounds) {
   struct MapHeader *header;
 
-  /* FAKEMATCH(temporary): gMaps' row address summed by hand; as
-   * gMaps[map].header. */
+  /* FAKEMATCH(signature): gMaps' row address held and summed as an integer;
+   * as gMaps[map].header. */
   header = MAPGRID_RESOURCE(
       *(const u16 *)(map * sizeof(struct MapResources) + (u32)gMaps));
   bounds[0] = header->cameraBounds[0];

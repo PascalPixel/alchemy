@@ -95,8 +95,6 @@ const struct FieldPsynergyReach *Field_GetPsynergyReach(s32 id) {
   return entry;
 }
 
-#define ABS(x) ((x) < 0 ? -(x) : (x))
-
 /// Returns how far the ground at position lies above or below the actor's,
 /// made positive, when that is within the kind's reach in height, else -1.
 s32 Field_MeasurePsynergyHeight(s32 id, struct Actor *actor, s32 *position) {

@@ -142,13 +142,13 @@ void BattleEffect_DrawCanvasBlock(const u8 *src, s32 x, s32 y, s32 width,
   }
 }
 
-/// The canvas's ramp of colours, from 0xe0, which the darkening maps index by
-/// a colour's place in it.
+/// The canvas's ramp of colours, from colour 224 (palette 14 of the 256-colour
+/// canvas), which the darkening maps index by a colour's place in it.
 #define CANVAS_RAMP_COLORS 32
 
 /// Maps each drawn (nonzero) canvas pixel of buffer, count of them, through
 /// gColorBuffer_DarkenOneLevelMap, one level darker down the ramp of colours
-/// 0xe0 to 0xfe.
+/// 224 to 254.
 void ColorBuffer_DarkenOneLevel(u8 *buffer, s32 count) {
   if (count > 0) {
     const u8 *table = gColorBuffer_DarkenOneLevelMap;
@@ -398,9 +398,10 @@ void Actor_VanishInSparks(s32 objectId) {
   spark = work->sparks;
   for (; i < VANISH_SPARK_COUNT; i++, spark++) {
     sprite = &work->sprites[i];
-    // Set up as Teleport's orbs are; each draw picks its sparkle again.
+    // Set up as Teleport's sparks are; each draw picks its sparkle again.
     EffectSprite_Init(sprite, 4, 4, 0,
-                      tiles + (i & (ORB_PICTURES - 1)) * ORB_TILE);
+                      tiles +
+                          (i & (ORB_PICTURES - 1)) * OBJ_TILES_PER_8BPP_TILE);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->depth = BattleEffect_GetObjectDepth(actor);
@@ -457,8 +458,8 @@ void Actor_VanishInSparks(s32 objectId) {
           Camera_WorldToScreen(position);
           drawn->x = position[0];
           drawn->y = position[2];
-          drawn->oam.index =
-              tiles + (spark->age & (SPARKLE_PICTURES - 1)) * ORB_TILE;
+          drawn->oam.index = tiles + (spark->age & (SPARKLE_PICTURES - 1)) *
+                                         OBJ_TILES_PER_8BPP_TILE;
           EffectSprite_Draw(drawn);
           spark->angle += TRIG_TURN / 32;
           spark->radius -= toFIXED(1) / 5;

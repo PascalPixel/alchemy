@@ -142,7 +142,7 @@ enum ContainerKind {
   /// "There's something buried here!": the Scoop spot, actor 79.
   CONTAINER_GROUND = 131,
   CONTAINER_STONE_TABLET = 132, ///< a summon tablet
-  CONTAINER_POND = 133          ///< "There's something in the shallows!"
+  CONTAINER_POND = 133          ///< "...gazed into the pond..."
 };
 
 /// A row of the scene's container table (SceneItem_GetRows), numbered from
@@ -160,6 +160,9 @@ struct ContainerRow {
 /// ContainerRow.contents and FieldWork.scoopedItem: coins rather than an item,
 /// their count in the bits under it.
 #define CONTAINER_COINS 0x8000
+/// The most treasure spots a scene places, each an actor from
+/// FIELD_TREASURE_ACTOR on.
+#define TREASURE_SPOT_MAX 16
 /// Actor.riseBaseY of a treasure spot that stands for a map cell rather than an
 /// actor: its cell is in timer and userValue, and it stands at x and z 0.
 #define TREASURE_SPOT_ON_CELL 0x31415927

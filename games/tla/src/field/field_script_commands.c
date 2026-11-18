@@ -45,11 +45,12 @@ enum {
 /// SC_LABEL and SC_TO differ only in bit 30; a jump searches for the label.
 #define SCRIPT_LABEL_KEY_MASK 0xbfffffff
 
-/// Advances the first 14 actors' motion by one frame, without running their
-/// scripts: steering towards a target or braking, gravity and bouncing,
-/// arrival, and turning to face the direction of travel.
+/// Advances the motion of those of the first RUNNING_LIST_SLOTS actors whose
+/// script is running by one frame, without running their scripts: steering
+/// towards a target or braking, gravity and bouncing, arrival, and turning to
+/// face the direction of travel.
 void Actor_UpdateAllMotion(void) {
-  struct Actor *list[15];
+  struct Actor *list[RUNNING_LIST_SLOTS + 1];
   struct Actor **next;
   struct Actor *actor;
   FIXED y;
@@ -62,7 +63,7 @@ void Actor_UpdateAllMotion(void) {
   FIXED ratio;
   s32 facingStep;
 
-  // The fourteen actors whose script is running.
+  // Those of the first RUNNING_LIST_SLOTS actors whose script is running.
   actor = Ram_HeapSlots->actors;
   Actor_ListRunning(actor, list);
   actor = list[0];

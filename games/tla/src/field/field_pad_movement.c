@@ -171,8 +171,8 @@ update_object:
     }
     if (terrainCollision == WORLD_MAP_COLLISION_SHALLOW_WATER &&
         actor->timer == 0 && collision == 0) {
-      ripple = Actor_Create(WORLD_MAP_SPRITE_RIPPLE, actor->x.fixed,
-                            actor->y.fixed, actor->z.fixed);
+      ripple = Actor_Create(SPRITE_SPLASH_RING, actor->x.fixed, actor->y.fixed,
+                            actor->z.fixed);
       if (ripple != 0) {
         rippleSprite = ripple->sprite;
         Actor_StartScript(ripple, gActor_RippleScript);
@@ -706,8 +706,8 @@ update_object:
   if (kind == 1) {
     WorldMap_GetCollision((struct WorldPosition *)&actor->x.fixed);
     if (actor->timer == 0 && collision == 0) {
-      ripple = Actor_Create(WORLD_MAP_SPRITE_RIPPLE, actor->x.fixed,
-                            actor->y.fixed, actor->z.fixed);
+      ripple = Actor_Create(SPRITE_SPLASH_RING, actor->x.fixed, actor->y.fixed,
+                            actor->z.fixed);
       if (ripple != 0) {
         rippleSprite = ripple->sprite;
         Actor_StartScript(ripple, gActor_RippleScript);
@@ -927,8 +927,8 @@ s32 Actor_FlyOnWorldMap(struct Actor *actor) {
   if (kind == 1) {
     if (actor->y.fixed < toFIXED(4)) {
       if (actor->timer == 0 && collision == 0) {
-        ripple = Actor_Create(WORLD_MAP_SPRITE_RIPPLE, actor->x.fixed, 0,
-                              actor->z.fixed);
+        ripple =
+            Actor_Create(SPRITE_SPLASH_RING, actor->x.fixed, 0, actor->z.fixed);
         if (ripple != 0) {
           rippleSprite = ripple->sprite;
           Actor_StartScript(ripple, gActor_RippleScript);

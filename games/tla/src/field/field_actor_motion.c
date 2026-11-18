@@ -92,8 +92,6 @@ extern const s32 gActorScript_CycleTable[];
 #define FLOAT_CYCLE_FRAMES 64
 #define FLOAT_DIVISOR 64
 #define FLOAT_HIGH_DIVISOR 16
-/// The actor slots Actor_ListRunning looks through.
-#define RUNNING_LIST_SLOTS 14
 
 /// A whole-pixel distance squared.
 static __inline__ s32 Object_Square(s32 value) { return value * value; }
@@ -574,4 +572,3 @@ void Actor_ListRunning(struct Actor *actor, struct Actor **out) {
 #undef FLOAT_CYCLE_FRAMES
 #undef FLOAT_DIVISOR
 #undef FLOAT_HIGH_DIVISOR
-#undef RUNNING_LIST_SLOTS

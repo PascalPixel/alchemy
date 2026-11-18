@@ -12,13 +12,23 @@ enum {
   ANIM_SHADOW_TILE_BYTES = 16 * 8, ///< 16x8 pixels, 256 colours
   /// Priority 2, the field's for its sprites: in front of a map layer at 3, or
   /// at 2 since a sprite wins a tie, and behind one at 1.
-  ANIM_OAM_FIELD_PRIORITY = OBJ_PRIORITY(2)
+  ANIM_OAM_FIELD_PRIORITY = OBJ_PRIORITY(2),
+  /// A picture cache's tag holds its slot above the animation id's bits, as
+  /// SPRITE_PICTURE_TAG does.
+  PICTURE_CACHE_TAG_SLOT_SHIFT = 12,
+  /// Rows of gSpritePictureCache_Sources searched, at most.
+  PICTURE_CACHE_SOURCES_MAX = 256,
+  /// Picture offsets at the head of a decoded set, at most.
+  PICTURE_CACHE_PICTURES_MAX = 256,
+  /// The colours of palettes 0 to 13, which Palette_LoadBasicSpriteColors
+  /// loads; a variant remaps only these.
+  BASIC_SPRITE_COLORS = 14 * PALETTE_COLORS
 };
 
 /// Loads the pictures of animation id number into picture cache slot's buffer:
 /// the resource listed for it in gSpritePictureCache_Sources, decoded, its
 /// picture offsets turned into pointers, and for variant 1-5 its pixel colours
-/// (those up to 223, the basic sprite palettes 0 to 13) remapped through that
+/// of the basic sprite palettes (BASIC_SPRITE_COLORS) remapped through that
 /// variant's conversion table; a variant above 5 uses variant 1's.
 s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   struct AnimationMetadata *metadata;
@@ -40,12 +50,12 @@ s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
   system = gActorSystemWork;
   record = &system->pictureCaches[slot];
   metadata = Resource_GetMetadataRecordFar(number);
-  record->tag = (slot << 12) | number;
+  record->tag = (slot << PICTURE_CACHE_TAG_SLOT_SHIFT) | number;
   record->pictures = buffer;
 
   // Resolve the animation number to its packed resource.
   entry = gSpritePictureCache_Sources;
-  for (count = 0; count < 256; count++) {
+  for (count = 0; count < PICTURE_CACHE_SOURCES_MAX; count++) {
     s16 *numbers = &entry->number;
 
     resource = entry->resource;
@@ -60,7 +70,7 @@ s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
 
   // Turn the picture-offset directory into pointers before the pixel payload.
   offset = buffer;
-  for (count = 0; count < 256; count++) {
+  for (count = 0; count < PICTURE_CACHE_PICTURES_MAX; count++) {
     if (*offset == 0)
       break;
     *offset += (u32)buffer;
@@ -72,14 +82,12 @@ s32 SpritePictureCache_Load(u32 slot, u32 *buffer, s32 number, u32 variant) {
     end = (u8 *)buffer + size;
     if (index > 4)
       index = 0;
-    // Values above 223 (palettes 14 and 15, which
-    // Palette_LoadBasicSpriteColors does not load) are kept; only the basic
-    // palettes' colours change.
+    // Colours of palettes 14 and 15 are kept; only the basic palettes' change.
     colorMap = (u8 *)gSpriteColorTables[index];
     for (; pixels < end; pixels++) {
       u32 colorIndex = *pixels;
 
-      if (colorIndex <= 223) {
+      if (colorIndex < BASIC_SPRITE_COLORS) {
         colorIndex = colorMap[colorIndex];
         *pixels = colorIndex;
       }

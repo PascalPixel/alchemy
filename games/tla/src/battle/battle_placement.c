@@ -8,6 +8,10 @@
 #include "battle/battle.h"
 #include "system/system.h"
 
+/// The Actor_Create kind a battle object's actor is made with: one that makes
+/// no sprite, its battle sprites being attached afterwards.
+#define BATTLE_OBJECT_ACTOR_KIND 15
+
 /// Resets a battle object, making its actor when it has none: nine tenths
 /// size, the anchors cleared unless keep is set, no sprite, animation, shadow
 /// or status, turned half a turn, visible, then the empty script.
@@ -16,9 +20,9 @@ void BattleObject_Reset(struct BattleObject *actor, s32 keep) {
   s32 facingAngle;
   FIXED zero;
 
-  // Kind 15 in the id's top four bits: an actor with no sprite.
   if (actor->object == 0)
-    object = (struct MotionObject *)Actor_CreateFar(0xf000, 0, 0, 0);
+    object = (struct MotionObject *)Actor_CreateFar(
+        ACTOR_CREATE_KIND(BATTLE_OBJECT_ACTOR_KIND), 0, 0, 0);
   else
     object = actor->object;
   zero = 0;
@@ -64,7 +68,8 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
 
   fixedX = toFIXED(x);
   fixedZ = toFIXED(y);
-  object = Actor_CreateFar(0xf000, fixedX, 0, fixedZ);
+  object = Actor_CreateFar(ACTOR_CREATE_KIND(BATTLE_OBJECT_ACTOR_KIND), fixedX,
+                           0, fixedZ);
   unit = Unit_Get(unitId);
   palette = 0;
   registeredSprite = EnemySprite_LoadIntoSlots(unitId);
@@ -349,9 +354,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   case ENEMY_MOAPA:
   case ENEMY_MOAPA_B:
   case ENEMY_MOAPA_C:
-    // Sprite 685: a battle shadow whose three pictures lie right of centre,
-    // left of it and under the middle (spr_685.png).
-    actor->shadow = 685;
+    actor->shadow = SPRITE_MOAPA_SHADOW;
     actor->scale = FIXED_ONE * 23 / 20;
     break;
   case ENEMY_KNIGHT:
@@ -466,12 +469,15 @@ void BattlePlacement_GetStepPair(s32 partyPlace, s32 *x, s32 *y) {
 #define ENEMY_SPACING_LARGE 38
 #define ENEMY_SPACING_SMALL 27
 #define ENEMY_SPACING_EMPTY 25
+/// The spacing the column's length is first estimated from for up to four
+/// enemies; five or six are estimated at a small enemy's.
+#define ESTIMATED_ENEMY_SPACING 30
 
 /// Lays out count enemies in a column left of the centre, spaced by their size,
 /// from a rough estimate of the column's length.
 void BattlePlacement_LayoutEnemies(u16 *actorIds, s32 count, s32 *xPositions,
                                    s32 *zPositions) {
-  s32 totalSpacing = count <= 4 ? 30 : 27;
+  s32 totalSpacing = count <= 4 ? ESTIMATED_ENEMY_SPACING : ENEMY_SPACING_SMALL;
   s32 z = ((count - 1) * totalSpacing) / 2;
   s32 index;
 

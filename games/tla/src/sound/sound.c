@@ -9,6 +9,14 @@
 #include "system/io_reg.h"
 #include "system/ram_buffer.h"
 
+/// The PCM keys gScaleTable has a code for, 0 to 179.
+#define SCALE_KEY_COUNT 180
+/// A semitone in a pitch, kept in 1/256 semitone, as driver.c keeps it.
+enum { SOUND_PITCH_SEMITONE = 256 };
+/// Moves a pitch in 1/256 semitone to the top byte of a 32-bit fraction, the
+/// share of the step to the next key that umul3232H32 takes.
+#define PITCH_FRACTION_SHIFT 24
+
 /// Interpolates adjacent key frequencies and scales them by the wave sample
 /// frequency.
 s32 MidiKeyToFreq(struct WaveData *wave, u8 key, u8 pitch) {
@@ -17,19 +25,21 @@ s32 MidiKeyToFreq(struct WaveData *wave, u8 key, u8 pitch) {
   u32 lowerFrequency;
   u32 upperFrequency;
 
+  // The highest key plays as the one below it at the finest pitch under the
+  // next, so that a key above it is always in the table.
   keyIndex = key;
-  pitchScale = (u32)pitch << 24;
-  if (keyIndex > 178) {
-    keyIndex = 178;
-    pitchScale = 255U << 24;
+  pitchScale = (u32)pitch << PITCH_FRACTION_SHIFT;
+  if (keyIndex > SCALE_KEY_COUNT - 2) {
+    keyIndex = SCALE_KEY_COUNT - 2;
+    pitchScale = (SOUND_PITCH_SEMITONE - 1U) << PITCH_FRACTION_SHIFT;
   }
 
   // A key's code: the low four bits pick the semitone's step (2^31 times
   // 2^(n / 12)), the high four bits the octaves to shift it down, 9 for key 60.
   lowerFrequency = gScaleTable[keyIndex];
-  lowerFrequency = gFreqTable[lowerFrequency & 15] >> (lowerFrequency >> 4);
+  lowerFrequency = gFreqTable[lowerFrequency & 0xf] >> (lowerFrequency >> 4);
   upperFrequency = gScaleTable[keyIndex + 1];
-  upperFrequency = gFreqTable[upperFrequency & 15] >> (upperFrequency >> 4);
+  upperFrequency = gFreqTable[upperFrequency & 0xf] >> (upperFrequency >> 4);
 
   return umul3232H32(
       wave->freq, lowerFrequency +
@@ -207,6 +217,9 @@ UNUSED void m4aMPlayFadeIn(struct MusicPlayerInfo *player, u16 speed) {
   MPlayStartFade(player, speed, FADE_IN);
 }
 
+/// The LFO speed a track starts with: its phase steps 22 of 256 a tick.
+#define LFO_SPEED_RESET 22
+
 /// Unused: initializes active tracks still carrying their reset flag: clears
 /// their settings and gives them the default bend range, volume and LFO speed.
 UNUSED void m4aMPlayImmInit(struct MusicPlayerInfo *player) {
@@ -220,9 +233,9 @@ UNUSED void m4aMPlayImmInit(struct MusicPlayerInfo *player) {
         Clear64byte(track);
         track->flags = MPT_FLG_EXIST;
         track->bendRange = 2;
-        track->volumeScale = 64;
-        track->lfoSpeed = 22;
-        track->voice.kind = 1;
+        track->volumeScale = SOUND_FADE_FULL_VOLUME / 4;
+        track->lfoSpeed = LFO_SPEED_RESET;
+        track->voice.kind = CGB_CHANNEL_SWEEP_SQUARE;
       }
     }
     count--;
@@ -240,14 +253,14 @@ void MPlayExtender(struct CgbChannel *notes) {
   REG_SOUNDCNT_L = 0;
   // The square and noise channels silent with a rising envelope, restarted;
   // the wave channel off; the master volume full on both sides
-  REG_NR12 = 8;
-  REG_NR22 = 8;
-  REG_NR42 = 8;
-  REG_NR14 = 0x80;
-  REG_NR24 = 0x80;
-  REG_NR44 = 0x80;
+  REG_NR12 = NRX2_ENVELOPE_UP;
+  REG_NR22 = NRX2_ENVELOPE_UP;
+  REG_NR42 = NRX2_ENVELOPE_UP;
+  REG_NR14 = NRX4_RESTART;
+  REG_NR24 = NRX4_RESTART;
+  REG_NR44 = NRX4_RESTART;
   REG_NR30 = 0;
-  REG_NR50 = 0x77;
+  REG_NR50 = NR50_VOLUME_FULL;
 
   work = SOUND_INFO_PTR;
   ident = work->ident;
@@ -274,23 +287,22 @@ void MPlayExtender(struct CgbChannel *notes) {
   work->cgbFrequency = MidiKeyToCgbFreq;
   work->lineLimit = MAX_LINES;
 
-  // Clear note state, then assign the four hardware routing masks: channel
-  // n's NR51 bits, n - 1 for the right speaker and n + 3 for the left.
+  // Clear note state, then give each channel its NR51 bits.
   {
     u32 zero = 0;
 
     Bios_CpuSet((void *)&zero, notes,
                 CPU_SET_SRC_FIXED | CPU_SET_32BIT |
-                    (sizeof(struct CgbChannel) * 4 / 4));
+                    (sizeof(struct CgbChannel) * SOUND_CGB_CHANNEL_COUNT / 4));
   }
-  notes[0].kind = 1;
-  notes[0].channelBits = 0x11;
-  notes[1].kind = 2;
-  notes[1].channelBits = 0x22;
-  notes[2].kind = 3;
-  notes[2].channelBits = 0x44;
-  notes[3].kind = 4;
-  notes[3].channelBits = 0x88;
+  notes[0].kind = CGB_CHANNEL_SWEEP_SQUARE;
+  notes[0].channelBits = NR51_CHANNEL_BOTH(CGB_CHANNEL_SWEEP_SQUARE);
+  notes[1].kind = CGB_CHANNEL_SQUARE;
+  notes[1].channelBits = NR51_CHANNEL_BOTH(CGB_CHANNEL_SQUARE);
+  notes[2].kind = CGB_CHANNEL_WAVE;
+  notes[2].channelBits = NR51_CHANNEL_BOTH(CGB_CHANNEL_WAVE);
+  notes[3].kind = CGB_CHANNEL_NOISE;
+  notes[3].channelBits = NR51_CHANNEL_BOTH(CGB_CHANNEL_NOISE);
 
   work->ident = ident;
 }

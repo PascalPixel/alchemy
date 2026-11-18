@@ -32,9 +32,12 @@ enum ScreenTransitionStyle {
 
 #include "field/sprite.h"
 
+/// The actors of gActors (HEAP_SLOT_ACTORS).
+#define ACTOR_COUNT 64
+
 struct Actor;
 
-/// An actor: one of the 64 people and things on the field (gActors,
+/// An actor: one of the ACTOR_COUNT people and things on the field (gActors,
 /// HEAP_SLOT_ACTORS), with its actor script, position, motion toward a target,
 /// sprites and update routine.
 struct Actor {

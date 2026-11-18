@@ -65,6 +65,8 @@ extern const struct Scale gMeteorBlow_DoubleScale;
 #define METEOR_BLOW_CONE_PROJECTED 22336
 #define METEOR_BLOW_CONE_CORNERS 24384
 #define METEOR_BLOW_CONE_MESH 25408
+/// A texture's scroll wraps within 128 texels.
+#define TEXTURE_SCROLL_MASK 0x7f
 
 /// Where DustBlobSheet, BillowTexture and FlameBandTexture are decoded in the
 /// effect's pictures.
@@ -72,12 +74,21 @@ extern const struct Scale gMeteorBlow_DoubleScale;
 #define METEOR_BLOW_BILLOW 16384
 #define METEOR_BLOW_FLAME_BAND 20480
 
+/// The meteor's step on one axis each frame of its flight: its speed times the
+/// heading's sine or cosine, times 64.
+#define METEOR_BLOW_FLIGHT_STEP(trig, speed) (((trig) * (speed)) >> 10)
+
 /// The landing: the meteor comes down on the foes from METEOR_BLOW_LANDING_X,
-/// and METEOR_BLOW_SPARKS burst from it at METEOR_BLOW_BURST_FRAME.
+/// and METEOR_BLOW_SPARKS burst from it at METEOR_BLOW_BURST_FRAME. The battle
+/// background is tinted dark orange for it, its red raised by
+/// METEOR_BLOW_LANDING_TINT_RED levels and its green and blue lowered.
 #define METEOR_BLOW_FRAMES 50
 #define METEOR_BLOW_LANDING_X 144
 #define METEOR_BLOW_BURST_FRAME 16
 #define METEOR_BLOW_SPARKS 256
+#define METEOR_BLOW_LANDING_TINT_RED 5
+#define METEOR_BLOW_LANDING_TINT_GREEN (-4)
+#define METEOR_BLOW_LANDING_TINT_BLUE (-12)
 /// The billows lean back METEOR_BLOW_BILLOW_TILT and the rings of fire
 /// METEOR_BLOW_RING_TILT.
 #define METEOR_BLOW_BILLOW_TILT 1000
@@ -352,7 +363,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       angle = -DEGtoANG(90);
       scroll = frame * 2;
       for (; i != METEOR_BLOW_CONE_STRIPS; i++) {
-        model->scrollV = ~scroll & 127;
+        model->scrollV = ~scroll & TEXTURE_SCROLL_MASK;
         Matrix_Initialize();
         Matrix_Translate(-toFIXED(2), -toFIXED(64), 0);
         Matrix_Scale(FIXED_ONE * 2625 / 4096, FIXED_ONE * 9317 / 4096,
@@ -442,8 +453,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
           speed = 0;
         }
       }
-      x -= (Trig_Sin(a) * speed) >> 10;
-      z += (Trig_Cos(a) * speed) >> 10;
+      x -= METEOR_BLOW_FLIGHT_STEP(Trig_Sin(a), speed);
+      z += METEOR_BLOW_FLIGHT_STEP(Trig_Cos(a), speed);
       size += FIXED_ONE / 128;
     }
     if (frame > 127) {
@@ -496,7 +507,9 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
   for (i = 0; i != METEOR_BLOW_SPARKS; i++)
     PARTICLES[i].variant = 0;
-  Palette_BrightenBattleBg(5, -4, -12);
+  Palette_BrightenBattleBg(METEOR_BLOW_LANDING_TINT_RED,
+                           METEOR_BLOW_LANDING_TINT_GREEN,
+                           METEOR_BLOW_LANDING_TINT_BLUE);
 
   // The landing: rings of fire and billows spread, and sparks fly.
   for (frame = 0; frame != METEOR_BLOW_FRAMES; frame++) {

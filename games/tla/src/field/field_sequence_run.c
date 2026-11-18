@@ -40,9 +40,6 @@ s32 Leader_StepOffTightrope(void);
 /// reaches aboard the ship.
 #define PLACE_MARKER_ON_FOOT (1 << 4)
 #define PLACE_MARKER_ABOARD (2 << 4)
-/// Felix's own collapse when the whole party falls: he slumps and falls on his
-/// face; any other leader plays ANIM_COLLAPSE.
-#define ANIM_LEADER_FALL_ON_FACE 36
 /// The sprite VRAM blocks the pause menu needs free, or the field's sprites
 /// stop drawing while it runs.
 #define PAUSE_MENU_VRAM_BLOCKS 136
@@ -757,7 +754,6 @@ void BattleMap_ApplySceneEntranceView(void) {
 #undef HAZARD_LIMIT_DEFAULT
 #undef PLACE_MARKER_ON_FOOT
 #undef PLACE_MARKER_ABOARD
-#undef ANIM_LEADER_FALL_ON_FACE
 #undef PAUSE_MENU_VRAM_BLOCKS
 #undef SHIP_SEA_EXAMINE_CODE
 #undef MAP_ENTRANCE_FACING_MASK

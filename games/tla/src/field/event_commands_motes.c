@@ -9,8 +9,6 @@
 #include "field/object.h"
 #include "field/ground_mask.h"
 
-/// WeatherWork.particles, as The Broken Seal's, which has 32.
-#define WEATHER_PARTICLE_COUNT 64
 /// The frames the first motes and sparkles are spread over as they start.
 #define FIRST_SPAWN_FRAMES 16
 
@@ -355,5 +353,4 @@ void Weather_StartLightningFlash(s32 from, s32 to) {
   Task_Add(Weather_UpdateLightning, TASK_PASS_FRAME);
 }
 
-#undef WEATHER_PARTICLE_COUNT
 #undef FIRST_SPAWN_FRAMES

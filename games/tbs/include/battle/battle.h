@@ -235,6 +235,9 @@ s32 LinkBattle_WaitSync(void);
 s32 LinkBattle_SyncTurn(void);
 UNREAD_RESULT BattleParty_AssignOpponentSlots(void);
 s32 Battle_ClearSerialTransferPayload(void);
+/// Battle_Run's results besides the number of enemies defeated.
+#define BATTLE_OUTCOME_LOST -1
+#define BATTLE_OUTCOME_FLED 999
 s32 Battle_Run(s32 enemyGroup);
 void BattleCamera_AdjustByShoulderKeys(void);
 void BattleCamera_AdjustByShoulderKeysAlt(void);

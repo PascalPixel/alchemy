@@ -1,6 +1,6 @@
 /// @file
-/// Yallam, the village by Taopo Swamp: its children's song game, run in a
-/// circle round the village to the words of the songs of the moon, the stars
+/// Yallam, the village by Taopo Swamp: its children's song game, run round the
+/// rings of the playground to the words of Yepp's songs of the stars, the moon
 /// and the sun, the Cyclone spots that hide its treasure, and the log Force
 /// pushes down to reach the Masamune.
 #include "fixed_math.h"
@@ -28,6 +28,7 @@
 #include "system/ram_buffer.h"
 #include "system/system.h"
 #include "system/task.h"
+#include "window/window.h"
 #include "text/msg_ids.h"
 
 #include "shared/tables.h"
@@ -38,10 +39,12 @@
 
 /// Yallam's actors, numbering the rows of gYallam_Placements.
 enum YallamActorId {
-  /// The tree trunk on the ledge: its stump, the log Force pushes off
-  /// (Yallam_ForceLogDown), and a standing log its script hides at once.
+  /// The tree trunk on the ledge: its broken stump, which stays, and the log
+  /// standing on it, which Force pushes off (Yallam_ForceLogDown).
   ACTOR_LOG_STUMP = ACTOR_FIRST_PLACED,
   ACTOR_FALLING_LOG,
+  /// Unused: a standing log, placed at the map's corner out of sight, where
+  /// nothing moves it.
   ACTOR_STANDING_LOG,
   /// "Yallam doesn't get many visitors. Hasn't for a long time."
   ACTOR_VILLAGER_FEW_VISITORS,
@@ -82,10 +85,22 @@ enum YallamTreasureActorId {
   ACTOR_HIDDEN_ANTIDOTE
 };
 
-/// Within this many pixels of the leader a watching child walks on.
-#define WATCHER_LEADER_DISTANCE 11
-/// The pixels within which a watching child turns to whom it watches.
-#define WATCH_RANGE 24
+/// How near in front of it, in pixels, a running child stops for the other
+/// child or for the leader.
+#define STOP_RANGE 24
+/// From patch 1, a running child walks on while the leader is this near, in
+/// pixels.
+#define LEADER_WALK_ON_RANGE 11
+
+/// The running children keep these flags in Actor.timer.
+enum {
+  /// Set on the circles child, who runs after ACTOR_GAME_CHILD.
+  CHILD_CHASES_GAME_CHILD = 1,
+  /// Stops the child for the leader, whatever its heading, while a talk or
+  /// Mind Read is open; nothing here sets it, since a talk stops a child by its
+  /// riseEnabled.
+  CHILD_TALKING = 2
+};
 
 /// Where Cyclone uncovers each treasure spot, in pixels.
 #define ANTIDOTE_SPOT_X 424
@@ -102,7 +117,7 @@ enum YallamTreasureActorId {
 void Yallam_SingMoonSong(void);
 
 void Yallam_SingSunSong(void);
-void Yallam_StartWatchingSongGame(void);
+void Yallam_StartRunningChildren(void);
 
 void Yallam_ClearFirstSpot(void);
 
@@ -127,10 +142,10 @@ extern s32 gYallam_LogRaised[];
 extern s32 gYallam_StumpLowered[];
 extern u32 gYallam_CirclesChildRuns[];
 extern u32 gYallam_GameChildRuns[];
-extern s16 gYallam_DoorOpening[];
-extern s16 gYallam_SecondDoorOpening[];
-extern s16 gYallam_ThirdDoorOpening[];
-extern s16 gYallam_FourthDoorOpening[];
+extern u16 gYallam_DoorOpening[];
+extern u16 gYallam_SecondDoorOpening[];
+extern u16 gYallam_ThirdDoorOpening[];
+extern u16 gYallam_SanctumDoorOpening[];
 
 /// Unused: turns an actor's sprite half a turn, as an actor script's call.
 UNUSED s32 Yallam_TurnSpriteAround(struct Actor *actor) {
@@ -140,9 +155,9 @@ UNUSED s32 Yallam_TurnSpriteAround(struct Actor *actor) {
   return 0;
 }
 
-/// Hides an actor's sprite, as an actor script's call: the log's parts once
-/// they have moved.
-s32 Yallam_HideSprite(struct Actor *actor) {
+/// Takes the shadow off a log's part, as its actor script's call, once the
+/// script has set it in place.
+s32 Yallam_HideShadow(struct Actor *actor) {
   Actor_SetSpriteFlags(actor, 0);
   return 0;
 }
@@ -161,57 +176,71 @@ struct SongRunnerState {
   s32 riseEnabled;
 };
 
+/// The song leader's userValue in the song game: a command to every runner,
+/// which Yallam_UpdateSongGame passes on and clears.
+enum { SONG_GAME_GO = 1, SONG_GAME_HALT = 2, SONG_GAME_HALT_AND_STAND = 3 };
+
+/// A runner's riseCounter in the song game: where it stands on its path.
+enum {
+  RUNNER_GOING = 0,            ///< walks on along its path
+  RUNNER_HALTED = 1,           ///< waits where it stopped
+  RUNNER_HALTING = 2,          ///< stops where it is this frame
+  RUNNER_HALTING_TO_STAND = 3, ///< stops and stands this frame
+};
+
 /// The song game's five runners, kept while it is paused.
 struct SongRunnerState gYallam_SavedSongGame[5] BSS_DATA ALIGNED(16);
 extern struct MapGridCellAnimation gYallam_Doors[];
 
 s32 SceneActor_CalculateFixedPointDistance(s32 *a, s32 *b);
-s32 Yallam_FaceIfNear(struct Actor *actor, struct Actor *target, s32 range,
-                      s32 force);
+s32 Yallam_StopIfFacingNear(struct Actor *actor, struct Actor *target,
+                            s32 range, s32 force);
 void Yallam_UpdateSongGame(void);
 
-/// Stops an actor and turns it to the target when it is within range (or
-/// forced) and already faces near it; returns whether it did.
-s32 Yallam_FaceIfNear(struct Actor *actor, struct Actor *target, s32 range,
-                      s32 force) {
+/// Stops the actor (paused, standing) when the target is nearer than range
+/// pixels and lies ahead of it, within a sixteenth of a turn either side of its
+/// heading; force stops it regardless, and so does a talk with it (its
+/// riseEnabled set). Returns 1 when it stopped. A target out of range sets it
+/// walking again.
+s32 Yallam_StopIfFacingNear(struct Actor *actor, struct Actor *target,
+                            s32 range, s32 force) {
   s32 result = 0;
   s32 *targetPos;
-  s32 *objectPos;
+  s32 *actorPos;
 
   if (actor->riseEnabled != 0) {
     actor->paused = 1;
     return 1;
   }
   targetPos = &target->x.fixed;
-  objectPos = &actor->x.fixed;
-  if (SceneActor_CalculateFixedPointDistance(targetPos, objectPos) < range ||
+  actorPos = &actor->x.fixed;
+  if (SceneActor_CalculateFixedPointDistance(targetPos, actorPos) < range ||
       force != 0) {
     u32 angle = (u16)Trig_Atan(target->z.fixed - actor->z.fixed,
-                               *targetPos - *objectPos);
-    u32 left = (angle - FACING_STEP) & 0xf000;
-    u32 right = (angle + FACING_STEP) & 0xf000;
-    u32 ahead = angle & 0xf000;
-    u32 facing = actor->facing & 0xf000;
+                               *targetPos - *actorPos);
+    u32 left = FACING_SIXTEENTH(angle - FACING_STEP);
+    u32 right = FACING_SIXTEENTH(angle + FACING_STEP);
+    u32 ahead = FACING_SIXTEENTH(angle);
+    u32 facing = FACING_SIXTEENTH(actor->facing);
 
     if (ahead == facing || right == facing || left == facing || force != 0) {
       actor->paused = 1;
-      Actor_SelectAnimation(actor, 1);
+      Actor_SelectAnimation(actor, ANIM_STAND);
       result = 1;
     }
   } else {
     actor->paused = 0;
-    Actor_SelectAnimation(actor, 2);
+    Actor_SelectAnimation(actor, ANIM_WALK);
   }
   return result;
 }
 
-// Japanese has no stop beside the leader.
 #if TLA_PATCH_1
-/// A villager watching the song game: walks on while the leader is close by;
-/// otherwise turns to the child its timer word names (bit 0) and, failing that,
-/// to the leader, always while a talk or a window is open if bit 1 is set.
-s32 Yallam_WatchSongGame(struct Actor *actor) {
-  u8 *tiles = Ram_HeapSlots->windowWork;
+/// The update of the two children running their rings. Each stops when it runs
+/// up behind the other, and otherwise when the leader is in its way; from patch
+/// 1 it walks on while the leader is right beside it.
+s32 Yallam_UpdateRunningChild(struct Actor *actor) {
+  struct WindowWork *window = (struct WindowWork *)Ram_HeapSlots->windowWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *leader;
   struct Actor *target;
@@ -221,42 +250,42 @@ s32 Yallam_WatchSongGame(struct Actor *actor) {
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
   if (SceneActor_CalculateFixedPointDistance(
-          &leader->x.fixed, &actor->x.fixed) <= WATCHER_LEADER_DISTANCE) {
+          &leader->x.fixed, &actor->x.fixed) <= LEADER_WALK_ON_RANGE) {
     actor->paused = 0;
-    Actor_SelectAnimation(actor, 2);
+    Actor_SelectAnimation(actor, ANIM_WALK);
     return 0;
   }
   flags = (u16 *)&actor->timer;
-  if (*flags & 1)
+  if (*flags & CHILD_CHASES_GAME_CHILD)
     target = Actor_Get(ACTOR_GAME_CHILD);
   else
     target = Actor_Get(ACTOR_CIRCLES_CHILD);
-  if (Yallam_FaceIfNear(actor, target, WATCH_RANGE, 0) == 0) {
+  if (Yallam_StopIfFacingNear(actor, target, STOP_RANGE, 0) == 0) {
     leader = Actor_Get(gMainRoutineWork.leaderActorId);
-    if ((event->talk != 0 || tiles[4] != 0) && (*flags & 2))
+    if ((event->talk != 0 || window->mindRead != 0) && (*flags & CHILD_TALKING))
       force = 1;
-    Yallam_FaceIfNear(actor, leader, WATCH_RANGE, force);
+    Yallam_StopIfFacingNear(actor, leader, STOP_RANGE, force);
   }
   return 0;
 }
 #else
-s32 Yallam_WatchSongGame(struct Actor *actor) {
-  u8 *tiles = Ram_HeapSlots->windowWork;
+s32 Yallam_UpdateRunningChild(struct Actor *actor) {
+  struct WindowWork *window = (struct WindowWork *)Ram_HeapSlots->windowWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 force = 0;
   struct Actor *target;
   u16 *flags = (u16 *)&actor->timer;
 
-  if (*flags & 1)
+  if (*flags & CHILD_CHASES_GAME_CHILD)
     target = Actor_Get(ACTOR_GAME_CHILD);
   else
     target = Actor_Get(ACTOR_CIRCLES_CHILD);
-  if (Yallam_FaceIfNear(actor, target, WATCH_RANGE, 0) == 0) {
+  if (Yallam_StopIfFacingNear(actor, target, STOP_RANGE, 0) == 0) {
     struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
-    if ((event->talk != 0 || tiles[4] != 0) && (*flags & 2))
+    if ((event->talk != 0 || window->mindRead != 0) && (*flags & CHILD_TALKING))
       force = 1;
-    Yallam_FaceIfNear(actor, leader, WATCH_RANGE, force);
+    Yallam_StopIfFacingNear(actor, leader, STOP_RANGE, force);
   }
   return 0;
 }
@@ -268,9 +297,14 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/// The children's song game: entered by entrance 15, left by exit 15 back to
-/// where the party joined it.
-enum { YALLAM_SONG_GAME = 15, YALLAM_EXIT_SONG_GAME = 15 };
+/// The children's song game at the playground: the village's exit 12 leads to
+/// its entrance 15, and its exit 15 back to the village's entrance 12.
+enum {
+  YALLAM_TO_SONG_GAME = 12,
+  YALLAM_FROM_SONG_GAME = 12,
+  YALLAM_SONG_GAME = 15,
+  YALLAM_EXIT_SONG_GAME = 15
+};
 
 extern struct ActorPlacement gYallam_Placements[];
 extern struct ActorPlacement gYallam_CavePlacements[];
@@ -310,7 +344,8 @@ void Yallam_EnterDoor(void) {
   {
     s32 owner = gMainRoutineWork.leaderActorId;
 
-    if (index == 7)
+    // The sanctum's door is two cells wide: the leader walks straight in.
+    if (index == YALLAM_TO_MIKASALLA_ROOMS_SANCTUM - 1)
       Actor_SetDestinationOffset(owner, 0, -4);
     else
       Actor_CenterAndWalk(owner, 2, -4);
@@ -400,7 +435,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// The child at the playground, spoken to from any side, offers to show one of
 /// Yepp's songs and its game.
-/// "Do you want to hear one of the songs Yepp wrote?"
 void Yallam_OfferYeppSong(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -414,8 +448,8 @@ void Yallam_OfferYeppSong(void) {
   Event_End();
 }
 
-/// "Running around in circles here while singing one of Yepp's songs is pretty
-/// tough."
+/// The circles child stops running while it talks, turning to the leader and
+/// back again, or while Mind Read reads it.
 void Yallam_TalkAboutSongCircles(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_Get(ACTOR_CIRCLES_CHILD);
@@ -426,11 +460,14 @@ void Yallam_TalkAboutSongCircles(void) {
   actor->riseEnabled = 1;
   if (work->psynergy == 0) {
     Actor_FaceActor(ACTOR_CIRCLES_CHILD, gMainRoutineWork.leaderActorId, 0);
+    // "Running around in circles here while singing one of Yepp's songs is
+    // pretty tough."
     FieldEvent_SetMessageId(MsgRunningAroundIn);
   } else {
+    // "There's a lot of stuff to remember for each song. It's tough to play
+    // without making any mistakes."
     FieldEvent_SetMessageId(MsgThereSALot);
   }
-  // "There's a lot of stuff to remember for each song. It's tough to play..."
   Event_ShowMessage(ACTOR_CIRCLES_CHILD, 0);
   if (work->psynergy == 0)
     actor->facing = angle;
@@ -438,8 +475,8 @@ void Yallam_TalkAboutSongCircles(void) {
   Event_End();
 }
 
-/// "There's a game that goes along with the song, but it's tough. I want to
-/// play something else."
+/// The game child stops running while it talks, turning to the leader and
+/// back again, or while Mind Read reads it.
 void Yallam_TalkAboutSongGame(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_Get(ACTOR_GAME_CHILD);
@@ -450,11 +487,13 @@ void Yallam_TalkAboutSongGame(void) {
   actor->riseEnabled = 1;
   if (work->psynergy == 0) {
     Actor_FaceActor(ACTOR_GAME_CHILD, gMainRoutineWork.leaderActorId, 0);
+    // "There's a game that goes along with the song, but it's tough. I want to
+    // play something else."
     FieldEvent_SetMessageId(MsgThereSAGame);
   } else {
+    // "I once heard that children's songs and stories have hidden meanings."
     FieldEvent_SetMessageId(MsgIOnceHeard);
   }
-  // "I once heard that children's songs and stories have hidden meanings...."
   Event_ShowMessage(ACTOR_GAME_CHILD, 0);
   if (work->psynergy == 0)
     actor->facing = angle;
@@ -471,7 +510,7 @@ s32 Yallam_HasArrived(struct Actor *actor) {
   return 0;
 }
 
-/// One step of a runner's path round the village in the song game, by its
+/// One step of a runner's path round the playground in the song game, by its
 /// step counter, stopping or going on by the game's mode.
 void Yallam_RunSongPath(s32 actorId) {
   /* FAKEMATCH(pin): the actor fixed to a register. */
@@ -479,21 +518,21 @@ void Yallam_RunSongPath(s32 actorId) {
   u8 s = actor->riseCounter;
   s16 *timer;
 
-  if (s == 1)
+  if (s == RUNNER_HALTED)
     return;
   timer = &actor->timer;
   switch (s) {
-  case 0:
-    Actor_SelectAnimation(actor, 2);
+  case RUNNER_GOING:
+    Actor_SelectAnimation(actor, ANIM_WALK);
     break;
-  case 1:
+  case RUNNER_HALTED:
     break;
-  case 3:
-    Actor_SelectAnimation(actor, 1);
-  case 2:
+  case RUNNER_HALTING_TO_STAND:
+    Actor_SelectAnimation(actor, ANIM_STAND);
+  case RUNNER_HALTING:
     Actor_SetMoveTarget(actor, actor->x.fixed, actor->y.fixed, actor->z.fixed);
     *timer &= ~1;
-    actor->riseCounter = 1;
+    actor->riseCounter = RUNNER_HALTED;
     return;
   }
   switch (*timer) {
@@ -986,7 +1025,7 @@ void Yallam_RunSongPath(s32 actorId) {
       /* FAKEMATCH(pin): the timer's address fixed to a register. */
       register u8 *step asm("r2") = (u8 *)actor;
 
-      step += 100;
+      step += offsetof(struct Actor, timer);
       (*(s16 *)step)++;
     }
     return;
@@ -1336,26 +1375,26 @@ void Yallam_UpdateSongGame(void) {
   s32 value = (s16)a->userValue;
 
   switch (value) {
-  case 1:
-    a->riseCounter = 0;
-    b->riseCounter = 0;
-    c->riseCounter = 0;
-    d->riseCounter = 0;
-    leader->riseCounter = 0;
+  case SONG_GAME_GO:
+    a->riseCounter = RUNNER_GOING;
+    b->riseCounter = RUNNER_GOING;
+    c->riseCounter = RUNNER_GOING;
+    d->riseCounter = RUNNER_GOING;
+    leader->riseCounter = RUNNER_GOING;
     break;
-  case 2:
-    a->riseCounter = 2;
-    b->riseCounter = 2;
-    c->riseCounter = 2;
-    d->riseCounter = 2;
-    leader->riseCounter = 2;
+  case SONG_GAME_HALT:
+    a->riseCounter = RUNNER_HALTING;
+    b->riseCounter = RUNNER_HALTING;
+    c->riseCounter = RUNNER_HALTING;
+    d->riseCounter = RUNNER_HALTING;
+    leader->riseCounter = RUNNER_HALTING;
     break;
-  case 3:
-    a->riseCounter = 3;
-    b->riseCounter = 3;
-    c->riseCounter = 3;
-    d->riseCounter = 3;
-    leader->riseCounter = 3;
+  case SONG_GAME_HALT_AND_STAND:
+    a->riseCounter = RUNNER_HALTING_TO_STAND;
+    b->riseCounter = RUNNER_HALTING_TO_STAND;
+    c->riseCounter = RUNNER_HALTING_TO_STAND;
+    d->riseCounter = RUNNER_HALTING_TO_STAND;
+    leader->riseCounter = RUNNER_HALTING_TO_STAND;
     break;
   }
   a->userValue = 0;
@@ -1435,10 +1474,10 @@ void Yallam_StartRunner(s32 id) {
   struct Actor *actor = Actor_Get(id);
 
   Actor_SetSpeedAndAcceleration(id, 1.2, 1.2);
-  Actor_SetAnimation(id, 2);
+  Actor_SetAnimation(id, ANIM_WALK);
   actor->timer = 0;
   actor->userValue = 0;
-  actor->riseCounter = 1;
+  actor->riseCounter = RUNNER_HALTED;
   actor->riseEnabled = 0;
 }
 
@@ -1452,8 +1491,9 @@ extern u32 gYallam_SongLeaderStarts[];
 extern u32 gYallam_GameChildStarts[];
 extern u32 gYallam_CirclesChildStarts[];
 
-/// The child shows the party the song's game.
-/// "Here, let me show you!"
+/// The song leader shows the party the stars song's game: the children take
+/// their places and run its path with the leader, verse by verse; then he
+/// offers the second song.
 void Yallam_ShowSongGame(void) {
   struct Actor *actor = Actor_Get(ACTOR_SONG_LEADER);
   struct Actor *leader;
@@ -1480,7 +1520,7 @@ void Yallam_ShowSongGame(void) {
   Actor_FaceDirectionAndWait(ACTOR_SONG_LEADER, FACING_NORTH_NORTHEAST);
   FieldActor_Jump(ACTOR_SONG_LEADER, 2, 10);
   FieldActor_Jump(ACTOR_SONG_LEADER, 4, 10);
-  Actor_SetAnimationAndWait(ACTOR_SONG_LEADER, 3);
+  Actor_SetAnimationAndWait(ACTOR_SONG_LEADER, ANIM_NOD);
   Actor_SetSpeed(ACTOR_SONG_LEADER, 1.6);
   Actor_SetSpeed(ACTOR_STORY_CHILD, 1.6);
   Actor_SetScript(ACTOR_SONG_LEADER, gYallam_SongLeaderForms);
@@ -1523,28 +1563,34 @@ void Yallam_ShowSongGame(void) {
   Yallam_StartRunner(ACTOR_STORY_CHILD);
   Yallam_StartRunner(gMainRoutineWork.leaderActorId);
   Task_AddFrame(Yallam_UpdateSongGame, TASK_PASS_FRAME);
-  // "Go north past the twins, passing two swirls, run deasil twice 'round..."
+  // "Go north past the twins, passing two swirls, run deasil twice 'round the
+  // trunk."
   Event_ShowMessage(ACTOR_SONG_LEADER, 0);
-  actor->userValue = 1;
+  actor->userValue = SONG_GAME_GO;
   do
     System_Wait(1);
   while (actor->timer != 34);
-  actor->userValue = 2;
+  actor->userValue = SONG_GAME_HALT;
   System_Wait(1);
+  // "Haste without waste, and head to the east, past three to the north."
   Event_ShowMessage(ACTOR_SONG_LEADER, 0);
-  actor->userValue = 1;
+  actor->userValue = SONG_GAME_GO;
   do
     System_Wait(1);
   while (actor->timer != 42);
-  actor->userValue = 2;
+  actor->userValue = SONG_GAME_HALT;
   System_Wait(1);
+  // "There, run 'round thrice and wait for the waves. When they stop, run
+  // north and go to the stars."
   Event_ShowMessage(ACTOR_SONG_LEADER, 0);
-  actor->userValue = 1;
+  actor->userValue = SONG_GAME_GO;
   do
     System_Wait(1);
   while (actor->timer != 108);
-  actor->userValue = 3;
+  actor->userValue = SONG_GAME_HALT_AND_STAND;
   System_Wait(1);
+  // "If you race full of folly and take the wrong way, you'll find yourself a
+  // watery grave."
   Event_ShowMessage(ACTOR_SONG_LEADER, 0);
   Yallam_PauseSongGame();
   FieldActor_Jump(ACTOR_SONG_LEADER, 4, 0);
@@ -1556,11 +1602,13 @@ void Yallam_ShowSongGame(void) {
   Actor_FaceDirection(ACTOR_GAME_CHILD, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_CIRCLES_CHILD, FACING_WEST, 0);
   Actor_FaceDirectionAndWait(ACTOR_STORY_CHILD, FACING_WEST);
+  // "Do you wanna hear the second children's song Yepp wrote?"
   Event_OpenMessage(ACTOR_SONG_LEADER, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId,
                                             0) == 0) {
     Yallam_SingMoonSong();
   } else {
+    // "Well, that's just fine then. Give me a holler if you ever do."
     FieldEvent_ShowMessageThenWait(ACTOR_SONG_LEADER, 0, 20);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
@@ -1573,7 +1621,8 @@ void Yallam_ShowSongGame(void) {
 /// The moon song's words, sung verse by verse.
 extern u8 MsgIfYouWant[];
 
-/// "If you want to go to the moon, if you want to go to the moon."
+/// The moon song, its path run verse by verse; then the song leader offers the
+/// third song.
 void Yallam_SingMoonSong(void) {
   struct Actor *actor = Actor_Get(ACTOR_SONG_LEADER);
 
@@ -1586,33 +1635,40 @@ void Yallam_SingMoonSong(void) {
   // "If you want to go to the moon, if you want to go to the moon."
   Event_ShowMessage(ACTOR_SONG_LEADER, 0);
   Yallam_ResumeSongGame();
-  actor->userValue = 1;
+  actor->userValue = SONG_GAME_GO;
   do
     System_Wait(1);
   while (actor->timer != 114);
-  actor->userValue = 2;
+  actor->userValue = SONG_GAME_HALT;
   System_Wait(1);
+  // "Face west from the stars and run straight past three swirls, then circle
+  // 'round twice."
   Event_ShowMessage(ACTOR_SONG_LEADER, 0);
-  actor->userValue = 1;
+  actor->userValue = SONG_GAME_GO;
   do
     System_Wait(1);
   while (actor->timer != 150);
-  actor->userValue = 2;
+  actor->userValue = SONG_GAME_HALT;
   System_Wait(1);
+  // "Haste without waste, and head to the south, then one swirl west."
   Event_ShowMessage(ACTOR_SONG_LEADER, 0);
-  actor->userValue = 1;
+  actor->userValue = SONG_GAME_GO;
   do
     System_Wait(1);
   while (actor->timer != 154);
-  actor->userValue = 2;
+  actor->userValue = SONG_GAME_HALT;
   System_Wait(1);
+  // "There, run 'round thrice and wait for the waves. When they stop, run
+  // south and go for the moon."
   Event_ShowMessage(ACTOR_SONG_LEADER, 0);
-  actor->userValue = 1;
+  actor->userValue = SONG_GAME_GO;
   do
     System_Wait(1);
   while (actor->timer != 216);
-  actor->userValue = 3;
+  actor->userValue = SONG_GAME_HALT_AND_STAND;
   System_Wait(1);
+  // "If you race full of folly and take the wrong way, you'll find yourself a
+  // watery grave."
   Event_ShowMessage(ACTOR_SONG_LEADER, 0);
   Yallam_PauseSongGame();
   FieldActor_Jump(ACTOR_SONG_LEADER, 4, 0);
@@ -1624,11 +1680,13 @@ void Yallam_SingMoonSong(void) {
   Actor_FaceDirection(ACTOR_GAME_CHILD, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_CIRCLES_CHILD, FACING_NORTH_NORTHEAST, 0);
   Actor_FaceDirectionAndWait(ACTOR_STORY_CHILD, FACING_NORTH_NORTHEAST);
+  // "OK, so, now do you want to hear the third children's song?"
   Event_OpenMessage(ACTOR_SONG_LEADER, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId,
                                             0) == 0) {
     Yallam_SingSunSong();
   } else {
+    // "Well, that's just fine then. Give me a holler if you ever do."
     FieldEvent_ShowMessageThenWait(ACTOR_SONG_LEADER, 0, 20);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
@@ -1641,7 +1699,8 @@ void Yallam_SingMoonSong(void) {
 /// The sun song's words, sung verse by verse.
 extern u8 MsgIfYouWantTo[];
 
-/// "If you want to go to the sun, if you want to go to the sun."
+/// The sun song, its path run verse by verse; then each child leaps away and
+/// back in turn, and the song leader ends the games.
 void Yallam_SingSunSong(void) {
   struct Actor *actor = Actor_Get(ACTOR_SONG_LEADER);
   FIXED x, z;
@@ -1655,37 +1714,44 @@ void Yallam_SingSunSong(void) {
   // "If you want to go to the sun, if you want to go to the sun."
   Event_ShowMessage(ACTOR_SONG_LEADER, 0);
   Yallam_ResumeSongGame();
-  actor->userValue = 1;
+  actor->userValue = SONG_GAME_GO;
   do
     System_Wait(1);
   while (actor->timer != 218);
-  actor->userValue = 2;
+  actor->userValue = SONG_GAME_HALT;
   System_Wait(1);
+  // "Face south from the moon and run straight through two swirls, then
+  // circle 'round twice."
   Event_ShowMessage(ACTOR_SONG_LEADER, 0);
-  actor->userValue = 1;
+  actor->userValue = SONG_GAME_GO;
   do
     System_Wait(1);
   while (actor->timer != 254);
-  actor->userValue = 2;
+  actor->userValue = SONG_GAME_HALT;
   System_Wait(1);
+  // "Haste without waste, and head to the west, then six to the north."
   Event_ShowMessage(ACTOR_SONG_LEADER, 0);
-  actor->userValue = 1;
+  actor->userValue = SONG_GAME_GO;
   do
     System_Wait(1);
   while (actor->timer != 258);
-  actor->userValue = 2;
+  actor->userValue = SONG_GAME_HALT;
   System_Wait(1);
+  // "There, run 'round thrice and wait for the waves. When they stop, run
+  // north and go for the sun."
   Event_ShowMessage(ACTOR_SONG_LEADER, 0);
-  actor->userValue = 1;
+  actor->userValue = SONG_GAME_GO;
   do
     System_Wait(1);
   while (actor->timer != 324);
-  actor->userValue = 3;
+  actor->userValue = SONG_GAME_HALT_AND_STAND;
   System_Wait(1);
+  // "If you race full of folly and take the wrong way, you'll find yourself a
+  // watery grave."
   Event_ShowMessage(ACTOR_SONG_LEADER, 0);
   Yallam_PauseSongGame();
   Actor_FaceDirectionAndWait(ACTOR_SONG_LEADER, FACING_SOUTH_SOUTHWEST);
-  Actor_Get(ACTOR_SONG_LEADER)->steeringFlags &= ~1;
+  Actor_Get(ACTOR_SONG_LEADER)->steeringFlags &= ~ACTOR_FACES_MOTION;
   actor = Actor_Get(ACTOR_SONG_LEADER);
   z = actor->z.fixed;
   x = actor->x.fixed;
@@ -1696,7 +1762,7 @@ void Yallam_SingSunSong(void) {
   FieldActor_SetMoveTargetFX(actor, x, 0, z);
   FieldEvent_Wait(5);
   Actor_FaceDirectionAndWait(ACTOR_GAME_CHILD, FACING_SOUTH_SOUTHWEST);
-  Actor_Get(ACTOR_GAME_CHILD)->steeringFlags &= ~1;
+  Actor_Get(ACTOR_GAME_CHILD)->steeringFlags &= ~ACTOR_FACES_MOTION;
   actor = Actor_Get(ACTOR_GAME_CHILD);
   z = actor->z.fixed;
   x = actor->x.fixed;
@@ -1707,7 +1773,7 @@ void Yallam_SingSunSong(void) {
   FieldActor_SetMoveTargetFX(actor, x, 0, z);
   FieldEvent_Wait(5);
   Actor_FaceDirectionAndWait(ACTOR_CIRCLES_CHILD, FACING_WEST);
-  Actor_Get(ACTOR_CIRCLES_CHILD)->steeringFlags &= ~1;
+  Actor_Get(ACTOR_CIRCLES_CHILD)->steeringFlags &= ~ACTOR_FACES_MOTION;
   actor = Actor_Get(ACTOR_CIRCLES_CHILD);
   z = actor->z.fixed;
   x = actor->x.fixed;
@@ -1718,7 +1784,7 @@ void Yallam_SingSunSong(void) {
   FieldActor_SetMoveTargetFX(actor, x, 0, z);
   FieldEvent_Wait(10);
   Actor_FaceDirectionAndWait(ACTOR_STORY_CHILD, FACING_NORTH_NORTHWEST);
-  Actor_Get(ACTOR_STORY_CHILD)->steeringFlags &= ~1;
+  Actor_Get(ACTOR_STORY_CHILD)->steeringFlags &= ~ACTOR_FACES_MOTION;
   actor = Actor_Get(ACTOR_STORY_CHILD);
   z = actor->z.fixed;
   x = actor->x.fixed;
@@ -1732,14 +1798,16 @@ void Yallam_SingSunSong(void) {
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 184, 686);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 186, 674);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHEAST, 0);
-  Actor_Get(ACTOR_SONG_LEADER)->steeringFlags |= 1;
-  Actor_Get(ACTOR_GAME_CHILD)->steeringFlags |= 1;
-  Actor_Get(ACTOR_CIRCLES_CHILD)->steeringFlags |= 1;
-  Actor_Get(ACTOR_STORY_CHILD)->steeringFlags |= 1;
+  Actor_Get(ACTOR_SONG_LEADER)->steeringFlags |= ACTOR_FACES_MOTION;
+  Actor_Get(ACTOR_GAME_CHILD)->steeringFlags |= ACTOR_FACES_MOTION;
+  Actor_Get(ACTOR_CIRCLES_CHILD)->steeringFlags |= ACTOR_FACES_MOTION;
+  Actor_Get(ACTOR_STORY_CHILD)->steeringFlags |= ACTOR_FACES_MOTION;
   Actor_FaceDirection(ACTOR_SONG_LEADER, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GAME_CHILD, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_CIRCLES_CHILD, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_STORY_CHILD, FACING_WEST, 20);
+  // "That's it. That's all the games we have for the songs... If you want to
+  // play some more, just give me a holler."
   FieldEvent_ShowMessageThenWait(ACTOR_SONG_LEADER, 0, 20);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -1759,7 +1827,7 @@ void Yallam_PlaceFallenLog(void) {
 s32 Scene_Initialize(void) {
   if (gMainRoutineWork.next == SCENE_YALLAM) {
     if (gMainRoutineWork.entrance == YALLAM_SONG_GAME)
-      Yallam_StartWatchingSongGame();
+      Yallam_StartRunningChildren();
     else
       Yallam_PlaceFallenLog();
   }
@@ -1815,20 +1883,20 @@ void Yallam_ForceLogDown(void) {
   MapGrid_CopyCellAttributes(8, 12, 1, 1, 10, 12);
 }
 
-/// The circles child and the game child watch the song game
-/// (Yallam_WatchSongGame), the circles child watching the game child and the
-/// game child the circles child.
-void Yallam_StartWatchingSongGame(void) {
+/// The circles child and the game child run their rings by the playground
+/// (Yallam_UpdateRunningChild), the circles child after the game child and the
+/// game child after the circles child.
+void Yallam_StartRunningChildren(void) {
   struct Actor *actor = Actor_Get(ACTOR_CIRCLES_CHILD);
   struct Actor *other;
 
-  actor->timer = 1;
+  actor->timer = CHILD_CHASES_GAME_CHILD;
   actor->riseEnabled = 0;
-  actor->update = Yallam_WatchSongGame;
+  actor->update = Yallam_UpdateRunningChild;
   other = Actor_Get(ACTOR_GAME_CHILD);
   other->timer = 0;
   other->riseEnabled = 0;
-  other->update = Yallam_WatchSongGame;
+  other->update = Yallam_UpdateRunningChild;
 }
 
 void Yallam_EnterDoor(void);
@@ -1838,37 +1906,37 @@ void Yallam_TalkAboutSongCircles(void);
 
 extern s32 gYallam_StandingLogLowered[];
 
-/// The log standing on the ledge, raised above its stump.
+/// The log standing on the ledge, raised onto its stump.
 s32 gYallam_LogRaised[] = {
     SC_ANIMATION(3),
     SC_SET(SW_MOTION, 0),
     SC_ADD(SW_Y, toFIXED(2)),
-    SC_CALL((s32)Yallam_HideSprite),
+    SC_CALL((s32)Yallam_HideShadow),
     SC_END,
 };
 
-/// The fallen log, lowered to where it lies.
+/// The stump, sunk into the ledge below the log.
 s32 gYallam_StumpLowered[] = {
     SC_SET(SW_MOTION, 0),
     SC_ADD(SW_Y, -toFIXED(16)),
-    SC_CALL((s32)Yallam_HideSprite),
+    SC_CALL((s32)Yallam_HideShadow),
     SC_END,
 };
 
-/// The standing log's shadow, shrunk and lowered under it.
+/// The standing log, shrunk and sunk.
 s32 gYallam_StandingLogLowered[] = {
     SC_SET(SW_SCALE_X, FIXED_ONE * 3 / 5),
     SC_SET(SW_SCALE_Y, FIXED_ONE * 3 / 5),
     SC_SET(SW_MOTION, 0),
     SC_ADD(SW_Y, -toFIXED(16)),
-    SC_CALL((s32)Yallam_HideSprite),
+    SC_CALL((s32)Yallam_HideShadow),
     SC_END,
 };
 
 // clang-format off
 /// The circles child runs round a six-sided ring by the playground.
 u32 gYallam_CirclesChildRuns[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_SPEED(1),
     SC_ACCELERATION(0.4),
     SC_MOVE(328, 0, 752),
@@ -1888,7 +1956,7 @@ u32 gYallam_CirclesChildRuns[] = {
 
 /// As gYallam_CirclesChildRuns, for the game child, half a lap ahead of it.
 u32 gYallam_GameChildRuns[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_SPEED(1),
     SC_ACCELERATION(0.4),
     SC_MOVE(360, 0, 792),
@@ -1908,10 +1976,10 @@ u32 gYallam_GameChildRuns[] = {
 
 /// The children who were running gather by the song leader.
 u32 gYallam_CirclesChildGathers[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(336, 0, 792),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(1),
     SC_SET(SW_FACING, FACING_SOUTH_SOUTHWEST),
     SC_WAIT(10),
@@ -1920,10 +1988,10 @@ u32 gYallam_CirclesChildGathers[] = {
 
 /// As gYallam_CirclesChildGathers, for the game child.
 u32 gYallam_GameChildGathers[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(352, 0, 792),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(1),
     SC_SET(SW_FACING, FACING_SOUTH_SOUTHWEST),
     SC_WAIT(10),
@@ -1932,14 +2000,14 @@ u32 gYallam_GameChildGathers[] = {
 
 /// The children take their places in the ring for the game.
 u32 gYallam_SongLeaderForms[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(316, 0, 888),
     SC_SYNC,
     SC_MOVE(336, 0, 888),
     SC_SYNC,
     SC_MOVE(344, 0, 872),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(1),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(10),
@@ -1948,14 +2016,14 @@ u32 gYallam_SongLeaderForms[] = {
 
 /// As gYallam_SongLeaderForms, for the circles child.
 u32 gYallam_CirclesChildForms[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(362, 0, 792),
     SC_SYNC,
     SC_MOVE(384, 0, 848),
     SC_SYNC,
     SC_MOVE(382, 0, 888),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(1),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(10),
@@ -1964,14 +2032,14 @@ u32 gYallam_CirclesChildForms[] = {
 
 /// As gYallam_SongLeaderForms, for the game child.
 u32 gYallam_GameChildForms[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(364, 0, 808),
     SC_SYNC,
     SC_MOVE(374, 0, 878),
     SC_SYNC,
     SC_MOVE(360, 0, 888),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(1),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(10),
@@ -1980,12 +2048,12 @@ u32 gYallam_GameChildForms[] = {
 
 /// As gYallam_SongLeaderForms, for the story child.
 u32 gYallam_StoryChildForms[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(274, 0, 888),
     SC_SYNC,
     SC_MOVE(328, 0, 888),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(10),
     SC_END,
@@ -1993,33 +2061,33 @@ u32 gYallam_StoryChildForms[] = {
 
 /// The children step to where the song's run begins.
 u32 gYallam_SongLeaderStarts[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(344, 0, 840),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_END,
 };
 
 /// As gYallam_SongLeaderStarts, for the game child.
 u32 gYallam_GameChildStarts[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(344, 0, 888),
     SC_SYNC,
     SC_MOVE(344, 0, 856),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(1),
     SC_END,
 };
 
 /// As gYallam_SongLeaderStarts, for the circles child.
 u32 gYallam_CirclesChildStarts[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(344, 0, 888),
     SC_SYNC,
     SC_MOVE(344, 0, 874),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(1),
     SC_END,
 };
@@ -2039,9 +2107,9 @@ u32 gSceneExits[] = {
     SCENE_EXIT(YALLAM_TO_YALLAM_CAVE_EAST, YallamCave, YALLAM_CAVE_FROM_YALLAM_EAST),
     SCENE_EXIT(YALLAM_TO_WORLD_MAP_SOUTH, WorldMap, WORLD_MAP_FROM_YALLAM_SOUTH_B),
     SCENE_EXIT(YALLAM_TO_WORLD_MAP_NORTH, WorldMap, WORLD_MAP_FROM_YALLAM_SOUTH_A),
-    SCENE_EXIT(12, Yallam, YALLAM_SONG_GAME),
+    SCENE_EXIT(YALLAM_TO_SONG_GAME, Yallam, YALLAM_SONG_GAME),
     SCENE_EXIT(YALLAM_TO_YALLAM_CAVE_WEST, YallamCave, YALLAM_CAVE_FROM_YALLAM_WEST),
-    SCENE_EXIT(YALLAM_EXIT_SONG_GAME, Yallam, 12),
+    SCENE_EXIT(YALLAM_EXIT_SONG_GAME, Yallam, YALLAM_FROM_SONG_GAME),
     SCENE_EXITS(YallamCave),
     SCENE_EXIT(YALLAM_CAVE_TO_YALLAM_EAST, Yallam, YALLAM_FROM_YALLAM_CAVE_EAST),
     SCENE_EXIT(YALLAM_CAVE_TO_YALLAM_WEST, Yallam, YALLAM_FROM_YALLAM_CAVE_WEST),
@@ -2100,28 +2168,32 @@ struct ActorPlacement gYallam_SongGamePlacements[] = {
     {SCENE_TABLE_END},
 };
 
-/// The doors' cell animations as they open, one for each shape of door.
-s16 gYallam_DoorOpening[] = {
-    93, 28, 1, 2, 6, 92, 28, 1,
-    2, 6, -1,
+/// The huts' doors' cell animations as they open, one for each shape of door.
+u16 gYallam_DoorOpening[] = {
+    MAPGRID_ANIMATION_STEP(93, 28, 1, 2, 6),
+    MAPGRID_ANIMATION_STEP(92, 28, 1, 2, 6),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
-/// The second shape of door's opening, as gYallam_DoorOpening.
-s16 gYallam_SecondDoorOpening[] = {
-    95, 28, 1, 2, 6, 94, 28, 1,
-    2, 6, -1,
+/// The second shape of hut door's opening, as gYallam_DoorOpening.
+u16 gYallam_SecondDoorOpening[] = {
+    MAPGRID_ANIMATION_STEP(95, 28, 1, 2, 6),
+    MAPGRID_ANIMATION_STEP(94, 28, 1, 2, 6),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
-/// The third shape of door's opening, as gYallam_DoorOpening.
-s16 gYallam_ThirdDoorOpening[] = {
-    89, 28, 1, 2, 6, 90, 28, 1,
-    2, 6, -1,
+/// The third shape of hut door's opening, as gYallam_DoorOpening.
+u16 gYallam_ThirdDoorOpening[] = {
+    MAPGRID_ANIMATION_STEP(89, 28, 1, 2, 6),
+    MAPGRID_ANIMATION_STEP(90, 28, 1, 2, 6),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
-/// The fourth shape of door's opening, as gYallam_DoorOpening.
-s16 gYallam_FourthDoorOpening[] = {
-    92, 30, 2, 2, 6, 94, 30, 2,
-    2, 6, -1,
+/// The sanctum's door opening, two cells wide.
+u16 gYallam_SanctumDoorOpening[] = {
+    MAPGRID_ANIMATION_STEP(92, 30, 2, 2, 6),
+    MAPGRID_ANIMATION_STEP(94, 30, 2, 2, 6),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 /// Each door's opening and its cell, by its step trigger's number.
@@ -2133,7 +2205,7 @@ struct MapGridCellAnimation gYallam_Doors[] = {
     {gYallam_ThirdDoorOpening, 80, 16},
     {gYallam_ThirdDoorOpening, 77, 17},
     {gYallam_SecondDoorOpening, 99, 8},
-    {gYallam_FourthDoorOpening, 90, 6},
+    {gYallam_SanctumDoorOpening, 90, 6},
 };
 
 /// The village: its exits and doors, its people, the Cyclone spots and the log.

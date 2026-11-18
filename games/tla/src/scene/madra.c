@@ -52,10 +52,6 @@
 #define FLAG_MADRA_KARST_MET 0x98e
 /// Set once the party has heard Karst call for her sister, this visit.
 #define FLAG_MADRA_KARST_CALLED_FOR_MENARDI FLAG_SCENE_TEMP_0F
-/// The flag after the six DataTransfer_Apply copies from The Broken Seal's
-/// save: no code sets it, so Madra_MeetKarst's test of it never passes.
-#define FLAG_TRANSFERRED_NOT_COPIED                                            \
-  (FLAG_TRANSFERRED_DODONPA_LOCKED_UP + TRANSFERRED_FLAG_COUNT)
 
 /// The town's placed actors, by the rows of gMadra_Placements, the first
 /// visit's: Kraden follows the party as ACTOR_KRADEN, and the lady and her
@@ -1219,8 +1215,10 @@ void Madra_MeetKarst(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_StartScreenTransition();
+  // The second flag is the one after the six DataTransfer_Apply copies from
+  // The Broken Seal's save, which no code sets.
   if (GameFlag_Get(FLAG_TRANSFERRED_VAULT_WARNED_OF_ESCAPED_THIEVES) ||
-      GameFlag_Get(FLAG_TRANSFERRED_NOT_COPIED))
+      GameFlag_Get(FLAG_TRANSFERRED_DODONPA_LOCKED_UP + TRANSFERRED_FLAG_COUNT))
     GameFlag_Set(FLAG_BANDIT_ON_WORLD_MAP);
   Event_SetMessageId(MsgMadraFelixWait);
   // "Felix, wait!"
@@ -1753,14 +1751,19 @@ void Madra_SkipRaidQuestioning(void) {
   GameFlag_Set(FLAG_MADRA_RAID_QUESTIONING_DONE);
 }
 
+/// The last of the ladder tops' step triggers that lead down to the
+/// catacombs' east ladders; those above it lead to the west ones. No cell of
+/// Madra's map has one.
+enum { CELL_BEHAVIOR_MADRA_EAST_LADDERS_LAST = 34 };
+
 /// The leader, already beside a ladder top, turns north, steps onto the rungs
-/// and climbs down out of sight to the east ladders, or to the west ones from
-/// the cells numbered above 34. Only the unused routines below call it.
+/// and climbs down out of sight to the catacombs' east or west ladders, by the
+/// ladder top's step trigger. Only the unused routines below call it.
 void Madra_ClimbDownLadder(void) {
   s32 next;
 
   next = MADRA_TO_MADRA_CATACOMBS_LADDERS_EAST;
-  if (gFieldWork->stepTrigger > 34)
+  if (gFieldWork->stepTrigger > CELL_BEHAVIOR_MADRA_EAST_LADDERS_LAST)
     next = MADRA_TO_MADRA_CATACOMBS_LADDERS_WEST;
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(10);

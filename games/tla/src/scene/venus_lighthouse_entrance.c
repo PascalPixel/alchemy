@@ -62,10 +62,8 @@ void Actor_Release(struct Actor *actor);
 /// he then lies beaten by the road.
 #define FLAG_VENUS_LIGHTHOUSE_RUFFIAN_BEATEN 0x893
 
-/// The ways into the scene that its set-up answers.
+/// The ways into the scene that its set-up answers, besides scene_exits.h's.
 enum VenusLighthouseEntranceEntrance {
-  /// Out of the lighthouse's door; the birds land the first time.
-  ENTRANCE_FROM_LIGHTHOUSE = 9,
   /// Where the prologue hands the party to Jenna: Felix, Sheba and Piers leave
   /// it.
   ENTRANCE_JENNA_TAKES_OVER = 90,
@@ -227,7 +225,8 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(ACTOR_WORKMAN_BOSS, 0, 0);
     Actor_SetPosition(ACTOR_WORKMAN_SENT_TO_CAVES, 0, 0);
   }
-  if (gMainRoutineWork.entrance == ENTRANCE_FROM_LIGHTHOUSE) {
+  if (gMainRoutineWork.entrance ==
+      VENUS_LIGHTHOUSE_ENTRANCE_FROM_VENUS_LIGHTHOUSE_B) {
     if (!Event_GetFlag(FLAG_VENUS_LIGHTHOUSE_BIRDS_LANDED)) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
@@ -1537,8 +1536,8 @@ void VenusLighthouseEntrance_StopDust(void) {
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {ENTRANCE_FROM_LIGHTHOUSE, CONDITION_ALWAYS, 376, 0, 104, FACING_SOUTH, 0,
-     -1, -1, -1, -1, 0},
+    {VENUS_LIGHTHOUSE_ENTRANCE_FROM_VENUS_LIGHTHOUSE_B, CONDITION_ALWAYS, 376,
+     0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {10, CONDITION_ALWAYS, 376, 0, 232, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {11, CONDITION_ALWAYS, 384, 0, 392, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {12, CONDITION_ALWAYS, 112, 0, 272, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

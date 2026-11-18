@@ -100,7 +100,7 @@ enum ProxTownActorId {
   ACTOR_PLAYING_CHILD,
   ACTOR_CHILD_WHO_MISSES_RUNNING,
   ACTOR_TRAINING_CHILD,
-  /// The boulder Lift raises from the black dot Scoop digs.
+  /// The round boulder by the wooden bridge, which Lift raises.
   ACTOR_BOULDER,
   /// Unused: a crate drawn hidden on the roof of the north-east house; nothing
   /// but Prox_InitializeTown names it.
@@ -487,7 +487,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
    } *)(base))                                                                 \
        ->v)
 
-/// Scoop on the black dot under the boulder digs up its treasure.
+/// Scoop on the half-buried Dark Matter at (648, 344) digs it up.
 void Prox_ScoopUpDarkMatter(s32 mode) {
   Event_DigUpTreasure(mode, FIELD_TREASURE_ACTOR, FLAG_DIG_SPOT_SCOOPED);
 }
@@ -1170,8 +1170,8 @@ void Prox_ScoopUpMold(void) {
   }
 }
 
-/// Scoop on the black dot under the boulder: the ground there is dug out of the
-/// map's collision while it is cast.
+/// Scoop cast in the upper village: cell (25, 9)'s collision is opened while it
+/// is cast.
 void Prox_StartScoop(void) { MapGrid_CopyCellAttributes(25, 2, 1, 1, 25, 9); }
 
 /// After the Scoop, the dug ground's collision is filled back in.

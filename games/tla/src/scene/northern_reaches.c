@@ -200,6 +200,13 @@ void NorthernReaches_DiscussIceWall(void) {
     (actor)->scaleX = scale - (step);                                          \
   }
 
+/// The Magma Ball grows from half its size to full, a thirty-second a frame,
+/// over its first MAGMA_BALL_GROW_FRAMES frames of flight.
+#define MAGMA_BALL_GROW_FRAMES 16
+/// The ship's last shrink as it sails off: SHIP_SHRINK_STEPS steps of seven
+/// frames.
+#define SHIP_SHRINK_STEPS 20
+
 /// At a safe distance the crew asks Felix to fire the Magma Ball at the ice
 /// wall; if he is ready the ship backs off, fires, and the wall shatters (flag
 /// FLAG_ICE_WALL_SHATTERED).
@@ -273,7 +280,7 @@ void NorthernReaches_FireMagmaBall(void) {
     Actor_SetSpeed(ACTOR_MAGMA_BALL_SHOT, 2);
     Actor_SetPosition(ACTOR_MAGMA_BALL_SHOT, 464, 216);
     Actor_WalkTo(ACTOR_MAGMA_BALL_SHOT, 464, 144);
-    for (count = 15; count >= 0; count--) {
+    for (count = MAGMA_BALL_GROW_FRAMES - 1; count >= 0; count--) {
       ball->scaleX += FIXED_ONE / 32;
       ball->scaleY += FIXED_ONE / 32;
       System_Wait(1);
@@ -325,7 +332,7 @@ void NorthernReaches_FireMagmaBall(void) {
     FieldActor_WaitForMoveById(ACTOR_SHIP);
     Actor_SetSpeed(ACTOR_SHIP, 0.2);
     Actor_SetDestinationOffset(ACTOR_SHIP, 0, -12);
-    for (count = 19; count >= 0; count--) {
+    for (count = SHIP_SHRINK_STEPS - 1; count >= 0; count--) {
       Actor_ShrinkBy(ship, FIXED_ONE * 9 / 256);
       System_Wait(7);
     }

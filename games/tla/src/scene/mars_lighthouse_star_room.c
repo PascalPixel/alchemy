@@ -722,8 +722,8 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
     PaletteFade_Interpolate(20);
     System_Wait(20);
     {
-      // White held in a halfword of its own, which the ROM loads after the
-      // colour's address.
+      /* FAKEMATCH(temporary): white held in a one-member struct, stored
+       * as CENTERED_TEXT_COLOR = RGB_WHITE in the plain way. */
       struct {
         u16 value;
       } white;
@@ -1377,8 +1377,9 @@ s32 Fireball_CarryLeader(void) {
 #ifdef UBFIX
   Party_TakeFallDamage();
 #else
-  // UB: the fall damage takes no arguments and returns nothing.
-  ((s32 (*)())Party_TakeFallDamage)(-10, 0);
+  // UB: the fall damage takes no arguments and returns nothing; it is passed
+  // the arguments it gives Party_AddHp.
+  ((s32 (*)())Party_TakeFallDamage)(-FALL_DAMAGE, 0);
 #endif
   FieldCamera_SetSpeed(7);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);

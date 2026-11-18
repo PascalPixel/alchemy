@@ -272,6 +272,9 @@ void MtAlephSummit_PulseColors(void);
 /// out at CLIMB_FADE_STEP.
 #define CREEP_STEPS 10
 #define SKY_GOLD_STEPS 10
+/// Each step of the sky's turn to gold raises its green by one level for every
+/// SKY_RED_LEVELS_PER_GREEN its red rises, more than red ever rises in one.
+#define SKY_RED_LEVELS_PER_GREEN 16
 #define CLIMB_STEPS 20
 #define CLIMB_CAMERA_STEP 16
 #define CLIMB_FADE_STEP 19
@@ -366,9 +369,9 @@ s32 Scene_Initialize(void) {
         g = RGB_GREEN((u16)c);
         b = RGB_BLUE((u16)c);
         r += j;
-        // DEAD: j / 16 is 0 for every step, so green never changes; the ROM
-        // keeps its shift and add.
-        g += j / 16;
+        // DEAD: red rises fewer than SKY_RED_LEVELS_PER_GREEN levels in every
+        // step, so green never changes; the ROM keeps its shift and add.
+        g += j / SKY_RED_LEVELS_PER_GREEN;
         b -= j;
         if (r > RGB_LEVEL_MAX)
           r = RGB_LEVEL_MAX;

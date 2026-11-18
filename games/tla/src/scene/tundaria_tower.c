@@ -356,20 +356,16 @@ void TundariaTower_ScatterIceChips(struct Vector3 *position, s32 count,
   options.startScaleX = scale;
   options.update = TundariaTower_AdvanceIceChip;
   for (i = 0; i != count; i++) {
-    s32 mask;
-
     options.rotation = (Random16() & 15) << 12;
-    velocityX = Random16();
-    mask = 15;
-    velocityX &= mask;
+    velocityX = Random16() & 15;
     velocityX -= 8;
     velocityX *= toFIXED(1) / 4;
-    velocityY = Random16() & mask;
+    velocityY = Random16() & 15;
     velocityY += 8;
     velocityY *= toFIXED(1) / 4;
     x = position->x - INTtoFIXED(Random16() & 31) + toFIXED(15);
-    FieldEffect_Spawn(x, position->y + INTtoFIXED(Random16() & mask),
-                      position->z, velocityX, velocityY, 0,
+    FieldEffect_Spawn(x, position->y + INTtoFIXED(Random16() & 15), position->z,
+                      velocityX, velocityY, 0,
                       EFFECT_USE_UPDATE | EFFECT_USE_ROTATION |
                           EFFECT_USE_TYPE | EFFECT_USE_START_SCALE |
                           EFFECT_SCALE_TO_TARGET | EFFECT_USE_PRIORITY,

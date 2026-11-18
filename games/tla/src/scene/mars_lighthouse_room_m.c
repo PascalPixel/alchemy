@@ -265,11 +265,6 @@ s32 MarsLighthouseRoomM_ShowFlame(s32 id, s32 value) {
 #endif
 }
 
-#ifndef TLA_MARS_LIGHTHOUSE_ROOM_M_H
-#define TLA_MARS_LIGHTHOUSE_ROOM_M_H
-
-extern u8 gInventorySnapshot[];
-
 void Actor_StartScript(struct Actor *actor, const void *script);
 
 void Flame_UpdateForward(struct Actor *actor);
@@ -303,8 +298,6 @@ void Teleport_PlayWhirl(void);
 FIXED Trig_Cos(s32 angle);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
-
-#endif
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
@@ -606,15 +599,15 @@ void MarsLighthouseRoomM_FlashDoorways(void) {
   MapGrid_CopyCellsLayered(0, 125, 3, 3, 17, 72);
   MapGrid_CopyCellsLayered(0, 125, 3, 3, 8, 67);
   System_Wait(1);
-  gMarsLighthouseRoomM_DoorwayBlendTarget = 12;
+  gMarsLighthouseRoomM_DoorwayBlendTarget = BLEND_WEIGHT_MAX * 3 / 4;
   System_Wait(12);
-  gMarsLighthouseRoomM_DoorwayBlendTarget = 8;
+  gMarsLighthouseRoomM_DoorwayBlendTarget = BLEND_WEIGHT_MAX / 2;
   System_Wait(4);
-  gMarsLighthouseRoomM_DoorwayBlendTarget = 12;
+  gMarsLighthouseRoomM_DoorwayBlendTarget = BLEND_WEIGHT_MAX * 3 / 4;
   System_Wait(4);
-  gMarsLighthouseRoomM_DoorwayBlendTarget = 8;
+  gMarsLighthouseRoomM_DoorwayBlendTarget = BLEND_WEIGHT_MAX / 2;
   System_Wait(4);
-  gMarsLighthouseRoomM_DoorwayBlendTarget = 12;
+  gMarsLighthouseRoomM_DoorwayBlendTarget = BLEND_WEIGHT_MAX * 3 / 4;
   System_Wait(4);
   gMarsLighthouseRoomM_DoorwayBlendTarget = 0;
   System_Wait(12);
@@ -1102,7 +1095,6 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
 
 void Teleport_ArriveWhirling(void);
 
-extern u8 gInventorySnapshot[];
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 void Actor_Release(void *handle);
 s32 Leader_KnockBack(void);
@@ -1146,8 +1138,6 @@ void Ride_SpawnForward(struct Vector3 *position, s32 value, s32 flag) {
     Actor_SelectAnimation(actor, 2);
   }
 }
-
-extern u8 gInventorySnapshot[];
 
 s32 Actor_IsTouching(struct Actor *a, struct Actor *b);
 s32 Actor_IsBeside(struct Actor *a, struct Actor *b);
@@ -1320,8 +1310,9 @@ s32 Fireball_CarryLeader(void) {
 #ifdef UBFIX
   Party_TakeFallDamage();
 #else
-  // UB: the fall damage takes no arguments and returns nothing.
-  ((s32 (*)())Party_TakeFallDamage)(-10, 0);
+  // UB: the fall damage takes no arguments and returns nothing; it is passed
+  // the arguments it gives Party_AddHp.
+  ((s32 (*)())Party_TakeFallDamage)(-FALL_DAMAGE, 0);
 #endif
   FieldCamera_SetSpeed(7);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);

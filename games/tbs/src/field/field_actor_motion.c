@@ -49,25 +49,22 @@ s32 Actor_IsTargetUnset(struct Actor *actor) {
   s32 first;
   s32 second;
 
-  // One compare of three values: all must equal TARGET_UNSET, or with
+  // One compare of three values: all must equal ACTOR_NO_TARGET, or with
   // motion flags only x and z.
   if (actor->motionFlags == 0) {
     second = actor->targetX;
-    if (second != TARGET_UNSET)
+    if (second != ACTOR_NO_TARGET)
       return 0;
     first = actor->targetY;
   } else {
     first = actor->targetX;
-    second = TARGET_UNSET;
+    second = ACTOR_NO_TARGET;
   }
   if (first != second || actor->targetZ != first)
     return 0;
   return 1;
 }
 
-/// The highest script word run as a command, an index of
-/// gActorScript_CommandTable; a larger one is stepped over.
-#define SCRIPT_COMMAND_MAX 63
 /// A floating actor's bob, one cycle of gActorScript_CycleTable over this many
 /// frames; its rise and fall each frame is the table's value times its gravity
 /// over FLOAT_DIVISOR, or FLOAT_HIGH_DIVISOR with ACTOR_FLOATS_HIGH.
@@ -153,7 +150,7 @@ void Actor_UpdateAllThumb(void) {
       // Free flight (no motion flags): steer in 3D towards the target,
       // capped at the speed limit, or brake when there is none.
       if (actor->motionFlags == 0) {
-        if (actor->targetX != TARGET_UNSET) {
+        if (actor->targetX != ACTOR_NO_TARGET) {
           dx = (actor->targetX - x) / FIXED_ONE;
           dy = (actor->targetY - y) / FIXED_ONE;
           dz = (actor->targetZ - z) / FIXED_ONE;
@@ -206,7 +203,7 @@ void Actor_UpdateAllThumb(void) {
         }
       } else {
         // On the ground: steer in the XZ plane the same way.
-        if (actor->targetX != TARGET_UNSET) {
+        if (actor->targetX != ACTOR_NO_TARGET) {
           dx = (actor->targetX - x) / FIXED_ONE;
           dz = (actor->targetZ - z) / FIXED_ONE;
           distance = toFIXED(Iwram_Sqrt(Actor_Square(dx) + Actor_Square(dz)));
@@ -363,9 +360,9 @@ void Actor_UpdateAllThumb(void) {
           actor->velocityY = 0;
         }
       }
-      actor->targetX = TARGET_UNSET;
-      actor->targetY = TARGET_UNSET;
-      actor->targetZ = TARGET_UNSET;
+      actor->targetX = ACTOR_NO_TARGET;
+      actor->targetY = ACTOR_NO_TARGET;
+      actor->targetZ = ACTOR_NO_TARGET;
       actor->arrivalAxis = 0;
     }
 
@@ -397,9 +394,9 @@ void Actor_UpdateAllThumb(void) {
 void Actor_SetPositionAndResetMotion(struct Actor *actor, FIXED x, FIXED y,
                                      FIXED z) {
   actor->z.fixed = z;
-  actor->targetX = TARGET_UNSET;
-  actor->targetY = TARGET_UNSET;
-  actor->targetZ = TARGET_UNSET;
+  actor->targetX = ACTOR_NO_TARGET;
+  actor->targetY = ACTOR_NO_TARGET;
+  actor->targetZ = ACTOR_NO_TARGET;
   actor->x.fixed = x;
   actor->y.fixed = y;
   SET_VELOCITY(actor, 0, 0, 0);
@@ -429,9 +426,9 @@ void Actor_SetMoveTarget(struct Actor *actor, FIXED x, FIXED y, FIXED z) {
   }
   if (distance < FIXED_ONE) {
     SET_ACTOR_POSITION(actor, x, y, z);
-    actor->targetX = TARGET_UNSET;
-    actor->targetY = TARGET_UNSET;
-    actor->targetZ = TARGET_UNSET;
+    actor->targetX = ACTOR_NO_TARGET;
+    actor->targetY = ACTOR_NO_TARGET;
+    actor->targetZ = ACTOR_NO_TARGET;
     return;
   }
   if (actor->snapToTarget == 0) {
@@ -522,7 +519,7 @@ void Actor_UpdateAllMotion(void) {
 #endif
       // Steer in the XZ plane as Actor_UpdateAllThumb does on the ground,
       // or brake; this loop has no free flight, ground following or floating.
-      if (actor->targetX != TARGET_UNSET) {
+      if (actor->targetX != ACTOR_NO_TARGET) {
         dx = (actor->targetX - x) / FIXED_ONE;
         dz = (actor->targetZ - z) / FIXED_ONE;
         distance = toFIXED(Iwram_Sqrt(dx * dx + dz * dz));
@@ -618,9 +615,9 @@ void Actor_UpdateAllMotion(void) {
           actor->velocityY = 0;
         }
       }
-      actor->targetX = TARGET_UNSET;
-      actor->targetY = TARGET_UNSET;
-      actor->targetZ = TARGET_UNSET;
+      actor->targetX = ACTOR_NO_TARGET;
+      actor->targetY = ACTOR_NO_TARGET;
+      actor->targetZ = ACTOR_NO_TARGET;
       actor->arrivalAxis = 0;
     }
     SET_ACTOR_POSITION(actor, x, y, z);
@@ -641,7 +638,6 @@ void Actor_UpdateAllMotion(void) {
   }
 }
 
-#undef SCRIPT_COMMAND_MAX
 #undef FLOAT_CYCLE_FRAMES
 #undef FLOAT_DIVISOR
 #undef FLOAT_HIGH_DIVISOR

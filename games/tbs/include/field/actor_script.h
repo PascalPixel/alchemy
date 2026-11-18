@@ -53,6 +53,10 @@ enum ActorScriptCommand {
   SCRIPT_CMD_COUNT = 36
 };
 
+/// The highest script word run as a command, an index of
+/// gActorScript_CommandTable; a larger one is stepped over.
+#define SCRIPT_COMMAND_MAX 63
+
 #define SC_LABEL(n) (s32)(0x80000000 | (n) << 16) ///< Branch destination
 /// A jump's operand: the label SC_LABEL(n), which ActorScript_FindLabel
 /// matches without bit 30.

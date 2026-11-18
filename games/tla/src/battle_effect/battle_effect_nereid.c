@@ -241,16 +241,11 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-#undef NEREID_FRAMES
-#undef NEREID_COLUMNS_FRAME
-#undef NEREID_COLUMNS_END_FRAME
-#undef NEREID_OBJECTS
-#undef NEREID_DROPS
-#undef NEREID_COLUMN_PICTURE
 #undef NEREID_BURST_DROPS
 #undef NEREID_DROPS_A_FRAME
 #undef NEREID_WAVES_Y
 #undef NEREID_UNREAD_FIRST
 #undef NEREID_UNREAD_COUNT
-// NEREID_COLUMNS stays defined: particle_streams.c draws its copy's columns by
-// it.
+// NEREID_FRAMES, NEREID_COLUMNS_FRAME, NEREID_COLUMNS_END_FRAME,
+// NEREID_OBJECTS, NEREID_DROPS, NEREID_COLUMN_PICTURE and NEREID_COLUMNS stay
+// defined: particle_streams.c's copy of Nereid runs by them.

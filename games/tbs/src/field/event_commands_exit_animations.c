@@ -5,10 +5,6 @@
 
 #include "event_commands_internal.h"
 
-/// The window palette's black, the colour the World Map's encounter flash
-/// turns white and fades (as event_commands_mind_read.c names it).
-#define WINDOW_BLACK_COLOR 3
-
 /// Finds where an actor is on screen: position[0] and position[1] receive its x
 /// and y in pixels, y at the top of its sprite.
 s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
@@ -207,5 +203,3 @@ s32 Entrance_PlayArrival(void) {
   }
   return result;
 }
-
-#undef WINDOW_BLACK_COLOR

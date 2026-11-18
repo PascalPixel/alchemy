@@ -96,8 +96,10 @@ void BattleEffect_RunOuterSpace(struct BattleEffectParams *args) {
 /// The fall's flames, from work->particles[0], and its landings after them.
 #define PARTICLE_STREAMS_FLAME_COUNT 32
 #define PARTICLE_STREAMS_LANDINGS 16
-/// The burst's rising motes: the flames' particles, which it sets out, and the
-/// landings', drawn where they were left.
+/// The burst's rising motes, one at each of the 64 work->particles: the
+/// flames', which it sets out, the landings', drawn where they were left, and
+/// 16 this effect never places, which rise from wherever an earlier effect
+/// left them.
 #define PARTICLE_STREAMS_MOTES_DRAWN 64
 /// The starfield's stars.
 #define PARTICLE_STREAMS_STARS 256
@@ -114,11 +116,9 @@ void BattleEffect_RunOuterSpace(struct BattleEffectParams *args) {
 #define PARTICLE_STREAMS_BRIGHTEN_DELAY 20
 /// The blast sheet's flash pictures, each shown two frames.
 #define PARTICLE_STREAMS_FLASH_PICTURES 7
-/// An ember's depth is held between these: the nearest are drawn as mote 9,
-/// each PARTICLE_STREAMS_EMBER_SIZE_DEPTH deeper a size smaller.
-#define PARTICLE_STREAMS_EMBER_NEAR 160
-#define PARTICLE_STREAMS_EMBER_FAR 799
-#define PARTICLE_STREAMS_EMBER_SIZE_DEPTH 64
+/// An ember is drawn at size PARTICLE_STREAMS_EMBER_SIZE_MAX at
+/// MOTE_DEPTH_NEAR or nearer, one size smaller every MOTE_DEPTH_STEP farther.
+#define PARTICLE_STREAMS_EMBER_SIZE_MAX 9
 
 /// The mote pictures in the blast sheet, after its seven blast pictures
 /// (BLAST_PICTURE_SIZES): two sets, MOTE_SET_BYTES apart.
@@ -256,9 +256,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   work->bg2y = 0;
   work->scrollTimer = 0;
   work->scrollInterval = 2;
-  // Half a pixel a step with the stream and a pixel down, in 20.8.
-  work->scrollStepX = direction << 7;
-  work->scrollStepY = 1 << 8;
+  work->scrollStepX = direction * Q_8_8(0.5);
+  work->scrollStepY = Q_8_8(1);
   Task_Add(BattleEffect_AdvanceBg2OnInterval, TASK_PASS_VBLANK + 127);
   Task_Add(BattleEffect_FlushPendingGraphicsTransfer, TASK_PASS_VBLANK);
   for (i = 0; i != ARRAY_COUNT(offsets); i++)
@@ -563,16 +562,16 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
 
         Projection_Point(&ember->x, &screen);
         screen.x >>= 1;
-        if (screen.depth < PARTICLE_STREAMS_EMBER_NEAR)
-          screen.depth = PARTICLE_STREAMS_EMBER_NEAR;
-        if (screen.depth > PARTICLE_STREAMS_EMBER_FAR)
-          screen.depth = PARTICLE_STREAMS_EMBER_FAR;
+        if (screen.depth < MOTE_DEPTH_NEAR)
+          screen.depth = MOTE_DEPTH_NEAR;
+        if (screen.depth > MOTE_DEPTH_FAR)
+          screen.depth = MOTE_DEPTH_FAR;
         // UB: from depth 736 the size is 0, a picture 0 pixels wide, and its
         // picture is read from gBattleEffect_MotePictures[-1], the last
         // halfword of the blitter template, which ends at the table
         // (BattleEffect_BuildBlitter). No UBFIX form yet.
-        size = 9 - (screen.depth - PARTICLE_STREAMS_EMBER_NEAR) /
-                       PARTICLE_STREAMS_EMBER_SIZE_DEPTH;
+        size = PARTICLE_STREAMS_EMBER_SIZE_MAX -
+               (screen.depth - MOTE_DEPTH_NEAR) / MOTE_DEPTH_STEP;
         draw(canvas,
              work->sheet +
                  (gBattleEffect_MotePictures[size - 1] +
@@ -681,7 +680,5 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
 #undef PARTICLE_STREAMS_FLASH_FRAME
 #undef PARTICLE_STREAMS_BRIGHTEN_DELAY
 #undef PARTICLE_STREAMS_FLASH_PICTURES
-#undef PARTICLE_STREAMS_EMBER_NEAR
-#undef PARTICLE_STREAMS_EMBER_FAR
-#undef PARTICLE_STREAMS_EMBER_SIZE_DEPTH
 #undef PARTICLE_STREAMS_MOTE_PICTURES
+#undef PARTICLE_STREAMS_EMBER_SIZE_MAX

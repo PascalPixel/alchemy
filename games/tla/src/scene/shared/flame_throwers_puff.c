@@ -3,10 +3,6 @@
 /// copy of, with the views of the ride work and heap slots the routine reads
 /// them through.
 
-/// The bits of a flame thrower's flags that pick its flame (enum
-/// FlameThrowerFlags), above its reach.
-#define FLAME_THROWER_FLAG_BITS 0xf0
-
 /// A flame thrower of the ride work, as FlameThrowers_Puff reads it.
 typedef struct Entry {
   s16 active;

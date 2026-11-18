@@ -9,8 +9,6 @@
 #include "field/object.h"
 #include "field/ground_mask.h"
 
-/// WeatherWork.particles, as The Broken Seal's, which has 32.
-#define WEATHER_PARTICLE_COUNT 64
 /// The frames the first motes and sparkles are spread over as they start.
 #define FIRST_SPAWN_FRAMES 16
 
@@ -115,7 +113,7 @@ void Weather_StartRain(s32 withCue) {
     particle->posZ = z;
     particle->posY = MapGrid_GetTerrainHeightFar(0, (s32)p, z);
     // Timers 1 to 4 and 9 to 12, by the drop's index.
-    particle->timer = (i & 11) + 1;
+    particle->timer = (i & 0xb) + 1;
   }
   Io_Write16(BLDCNT_TGT2_ALL, &REG_BLDCNT);
   Io_Write16(BLEND_ALPHA(16, 16), &REG_BLDALPHA);
@@ -143,8 +141,8 @@ void FieldEffect_UpdateSparkles(void) {
   s32 *leader;
   s32 cameraX;
   s32 cameraZ;
-  s32 sx;
-  s32 sy;
+  s32 screenX;
+  s32 screenY;
   s32 delay;
   s32 x;
   u32 a;
@@ -160,8 +158,8 @@ void FieldEffect_UpdateSparkles(void) {
   i = 0;
   sparkle = work->particles;
   delay = 0;
-  sx = 0;
-  sy = 0;
+  screenX = 0;
+  screenY = 0;
   do {
     if (sparkle->timer != 0) {
       cameraX = camera[0];
@@ -172,13 +170,14 @@ void FieldEffect_UpdateSparkles(void) {
       a = Random16();
       b = Random16();
       x = FIXEDtoINT(sparkle->posX - cameraX) + (((a & 1) + (b & 1)) >> 1);
-      sx = x - 1;
-      sy = (sparkle->posZ - sparkle->posY - cameraZ) / FIXED_ONE +
-           *(const s16 *)frame;
+      screenX = x - 1;
+      screenY = (sparkle->posZ - sparkle->posY - cameraZ) / FIXED_ONE +
+                *(const s16 *)frame;
       frame++;
-      if (x >= -15 && x <= DISPLAY_WIDTH && sy >= -32 && sy < DISPLAY_HEIGHT) {
+      if (x >= -15 && x <= DISPLAY_WIDTH && screenY >= -32 &&
+          screenY < DISPLAY_HEIGHT) {
         sparkle->tile = work->tileBase + *frame;
-        sparkle->x = sx;
+        sparkle->x = screenX;
         sparkle->shape = 0;
         sparkle->size = 1;
 #ifdef UBFIX
@@ -187,7 +186,7 @@ void FieldEffect_UpdateSparkles(void) {
         // UB: this reads a u32 as unsigned long; UBFIX reads the declared type.
         frames = *(unsigned long *)&gFrameCount;
 #endif
-        sparkle->y = sy;
+        sparkle->y = screenY;
         sparkle->affineIndex = ((frames >> 1) & 1) << 3;
         Oam_AddSpriteAtDepthClamped(sparkle, OAM_DEPTH_WINDOW);
       }
@@ -198,7 +197,14 @@ void FieldEffect_UpdateSparkles(void) {
         // The rest of a burst, on the first sparkle's spot.
         sparkle->posX = spawnX;
         sparkle->posZ = spawnZ;
-        sparkle->posY = MapGrid_GetTerrainHeightFar(0, sx, sy);
+        // BUG: the ground's height is read at the last sparkle drawn's screen
+        // place taken as a 16.16 position, near the map's top left corner,
+        // rather than under the burst; the same below.
+#ifdef BUGFIX
+        sparkle->posY = MapGrid_GetTerrainHeightFar(0, spawnX, spawnZ);
+#else
+        sparkle->posY = MapGrid_GetTerrainHeightFar(0, screenX, screenY);
+#endif
         sparkle->timer = 62 - delay;
         sparkle->delay = 0;
         spawned++;
@@ -210,7 +216,11 @@ void FieldEffect_UpdateSparkles(void) {
         spawnZ = leader[2] + (Random16() << 8) - toFIXED(128);
         sparkle->posX = spawnX;
         sparkle->posZ = spawnZ;
-        sparkle->posY = MapGrid_GetTerrainHeightFar(0, sx, sy);
+#ifdef BUGFIX
+        sparkle->posY = MapGrid_GetTerrainHeightFar(0, spawnX, spawnZ);
+#else
+        sparkle->posY = MapGrid_GetTerrainHeightFar(0, screenX, screenY);
+#endif
         sparkle->timer = 30;
         sparkle->delay = delay;
         spawned++;
@@ -343,5 +353,4 @@ void Weather_StartLightningFlash(s32 from, s32 to) {
   Task_Add(Weather_UpdateLightning, TASK_PASS_FRAME);
 }
 
-#undef WEATHER_PARTICLE_COUNT
 #undef FIRST_SPAWN_FRAMES

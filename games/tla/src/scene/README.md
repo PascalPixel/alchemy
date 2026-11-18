@@ -53,10 +53,12 @@ and the way it faces, named in `include/scene_exits.h` for where the party
 comes from: `KIBOMBO_FROM_KIBOMBO_HOUSES_NORTHWEST`. A door has one number in each
 scene, as Camelot numbered it: exit a of one scene leads to entrance b of the
 other, and that scene's exit b leads back to entrance a, so in each scene the
-entrance and the exit of one number are one door and share its name. An entrance no exit reaches, or a way between rooms of one map,
-keeps its number. An entrance can also give a box the camera must stay
-inside, which is how a room drawn beside others on one map stays out of their
-sight. The tent on an islet, entrance 8 of Champa's rooms, is one:
+entrance and the exit of one number are one door and share its name. An
+entrance no exit reaches, or a way between rooms of one map, takes a name of
+its scene's own, in its file rather than `scene_exits.h`. An entrance can
+also give a box the camera must stay inside, which is how a room drawn beside
+others on one map stays out of their sight. The tent on an islet,
+`CHAMPA_ROOMS_FROM_SOUTHEAST_ANGARA_ISLET`, is one:
 
 ```c
 {CHAMPA_ROOMS_FROM_SOUTHEAST_ANGARA_ISLET, CONDITION_ALWAYS, 416, 0, 664,

@@ -33,8 +33,10 @@ enum CrescentSlashMode { CRESCENT_SLASH_HUMAN_HUNT, CRESCENT_SLASH_ECHO_CUT };
 #define BREATH_FLASH_GROWTH toFIXED(0.15552)
 #define BREATH_FLASH_SLANT 13000
 #define BREATH_RING_SLANT 14000
-/// A ring of flame's scale as it starts.
+/// A ring of flame's scale as it starts; it grows by its growth times
+/// BREATH_RING_GROWTH a frame.
 #define BREATH_RING_START_SCALE toFIXED(0.25586)
+#define BREATH_RING_GROWTH toFIXED(0.0229)
 /// Blast Breath's jet points BLAST_BREATH_JET_ANGLE from the user until frame
 /// 8, then sweeps a 512th of a turn a frame.
 #define BLAST_BREATH_JET_ANGLE 12384
@@ -355,9 +357,9 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
             s32 start = gBreaths_RingStarts[mode * 4 + i];
 
             if (frame > start) {
-              s32 scale =
-                  (frame - start) * gBreaths_RingGrowth[mode * 4 + i] * 1500 +
-                  BREATH_RING_START_SCALE;
+              s32 scale = (frame - start) * gBreaths_RingGrowth[mode * 4 + i] *
+                              BREATH_RING_GROWTH +
+                          BREATH_RING_START_SCALE;
               s32 shade = (start - frame) * 8 + 56;
 
               if (shade > 0)
@@ -449,9 +451,9 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
           if (frame >= i * 4 + gBreaths_BurstFrames[mode] &&
               frame < gBreaths_Frames[mode] - 8 && (frame & 3) == i) {
             work->shakeFrames = 8;
-            // DEAD: the burst shower's test for its grey mode, which these
-            // hits copy; never true inside Blast Breath, the ROM keeps the
-            // compare and the black tint's call.
+            // DEAD: the burst shower's test for BURST_SHOWER_MODE_GREY,
+            // copied into these hits; no breath's mode has that value, and
+            // the ROM keeps the compare and the black tint's call.
             if (mode == BURST_SHOWER_MODE_GREY)
               BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_BLACK,
                                        POSE_DAMAGE, i, 3);
@@ -500,12 +502,12 @@ void BattleEffect_RunEchoCut(struct BattleEffectParams *args) {
 enum CrescentSlashStep {
   CRESCENT_SLASH_STAR,     ///< the star crescent
   CRESCENT_SLASH_FLASH,    ///< the canvas filled at its brightest
-  CRESCENT_SLASH_GREY_A,   ///< the grey crescent's first half
-  CRESCENT_SLASH_GREY_B,   ///< its second half
+  CRESCENT_SLASH_GREY_A,   ///< the grey crescent's thin arc
+  CRESCENT_SLASH_GREY_B,   ///< the full crescent
   CRESCENT_SLASH_STAR_LAST ///< the star crescent's last cell
 };
 
-/// Each half of GreyCrescentSheet is a 128x128 picture.
+/// GreyCrescentSheet's two pictures are 128x128 each.
 #define GREY_CRESCENT_SIZE 128
 /// The canvas line Echo Cut's crescent is drawn from; Human Hunt's is drawn
 /// from the top.
@@ -513,10 +515,11 @@ enum CrescentSlashStep {
 
 /// The crescent slash of Human Hunt and Echo Cut. The caster closes in on the
 /// target; from frame 8 a crescent is cut in five steps of three frames: the
-/// star crescent, the canvas flashing white, the two halves of the grey
-/// crescent and the star crescent's last picture. Echo Cut cuts it upside
-/// down and lower, and throws the target into the air at frame 12. Human Hunt
-/// takes the Mars Djinn's colours, red, and blends its slash more faintly.
+/// star crescent, the canvas flashing white, the grey crescent's thin arc,
+/// then the full crescent, and the star crescent's last picture. Echo Cut cuts
+/// it upside down and lower, and throws the target into the air at frame 12.
+/// Human Hunt takes the Mars Djinn's colours, red, and blends its slash more
+/// faintly.
 void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   u8 *canvas = Ram_HeapSlots->battleCanvas;

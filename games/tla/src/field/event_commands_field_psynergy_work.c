@@ -356,9 +356,10 @@ void FieldPsynergy_StopMindReadWave(void) {
 #define WINDOW_COLOR_DARK_GREY 11
 #define WINDOW_COLOR_LIGHT_GREY 12
 
-/// Turns WINDOW_PALETTE's colours from WINDOW_COLOR_WHITE to
-/// WINDOW_COLOR_LIGHT_GREY grey, so messages show as thoughts, and starts the
-/// BG0 line scroll (FieldEffect_ArmBg0HBlankDma) at each VBlank.
+/// Turns WINDOW_COLOR_WHITE and WINDOW_PALETTE's colours from
+/// WINDOW_COLOR_BLACK to WINDOW_COLOR_LIGHT_GREY grey (all but colour 2), so
+/// messages show as thoughts, and starts the BG0 line scroll
+/// (FieldEffect_ArmBg0HBlankDma) at each VBlank.
 void FieldPsynergy_GreyMindReadPalette(void) {
   volatile u16 *p;
 

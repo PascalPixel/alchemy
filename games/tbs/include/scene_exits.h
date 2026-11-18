@@ -1104,9 +1104,10 @@ enum {
   TREE_ROOMS_TRET_FROM_ENTRANCE = 15,
   TREE_ROOMS_ENTRANCE_FROM_TRET = 16,
   /// The fall from the fifth floor's centre cocoon to Tret: from
-  /// TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_COCOON the leader falls on through each
-  /// room to the entrance numbered ten lower, A, B and C in the order fallen
-  /// through, and lands in front of Tret at TREE_ROOMS_FALL_LANDING.
+  /// TREE_ROOMS_FROM_FIFTH_FLOOR_CENTER_COCOON on the fourth floor the leader
+  /// falls on through the third floor, the second floor and the entrance room,
+  /// each entrance ten lower than the last, and lands in Tret's room at
+  /// TREE_ROOMS_FALL_LANDING.
   TREE_ROOMS_FALL_LANDING = 10,
   TREE_ROOMS_FALL_THROUGH_C = 20,
   TREE_ROOMS_FALL_THROUGH_B = 30,
@@ -3021,13 +3022,11 @@ enum {
   BABI_PALACE_SHEBAS_LANDING_FROM_CARPET_ROOM = 43,
   BABI_PALACE_SHEBAS_LANDING_FROM_SHEBAS_ROOM = 44,
   BABI_PALACE_SHEBAS_ROOM_FROM_SHEBAS_LANDING = 45,
-  // XXX: likely a debug start.
-  /// In no table row and led to by no exit: arriving by it sets
-  /// FLAG_BABI_SAVED.
+  /// In no table row and led to by no exit or event: only the debug scene
+  /// selector, which exits to any entrance by number, reaches it. Arriving by
+  /// it sets FLAG_BABI_SAVED.
   BABI_PALACE_AFTER_BABI_SAVED = 90,
-  // XXX: likely a debug start.
-  /// In no table row and led to by no exit: arriving by it sets FLAG_BABI_SAVED
-  /// and FLAG_COLOSSO_OVER.
+  /// As BABI_PALACE_AFTER_BABI_SAVED, and it sets FLAG_COLOSSO_OVER as well.
   BABI_PALACE_AFTER_COLOSSO = 91,
   BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH = 98,
   BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH = 99,
@@ -3587,12 +3586,10 @@ enum {
   /// In the table at (120, 272), facing east, but led to by no exit.
   SUHALLA_SIXTH_UNUSED = 6,
   SUHALLA_FROM_WORLD_MAP = 10,
-  // XXX: likely a debug start into the story after the audience, because Babi's
-  // Palace (BABI_PALACE_AFTER_COLOSSO) and Suhalla's buildings
-  // (TIMBER_ROOMS_A_AFTER_BABI_SPOKE) have entrances that set story
-  // flags the same way.
-  /// In no table row and led to by no exit: arriving by it sets
-  /// FLAG_BABI_SPOKE_AFTER_COLOSSO, marking Babi's audience as held.
+  /// In no table row and led to by no exit or event: only the debug scene
+  /// selector reaches it. Arriving by it sets FLAG_BABI_SPOKE_AFTER_COLOSSO,
+  /// marking Babi's audience as held, as Babi's Palace's
+  /// BABI_PALACE_AFTER_COLOSSO sets the story's flags up to Colosso.
   SUHALLA_AFTER_BABI_SPOKE = 90,
 };
 /// SceneId_Suhalla's exits.
@@ -3629,9 +3626,9 @@ enum {
   TIMBER_ROOMS_A_GUEST_ROOM_EAST_FROM_INN = 13,
   TIMBER_ROOMS_A_INN_FROM_LOFT = 14,
   TIMBER_ROOMS_A_LOFT_FROM_INN = 15,
-  // XXX: likely a debug start into the story after the audience.
-  /// In no table row and led to by no exit: arriving by it also marks Babi's
-  /// audience as held, as SUHALLA_AFTER_BABI_SPOKE does.
+  /// In no table row and led to by no exit or event: only the debug scene
+  /// selector reaches it. Arriving by it marks Babi's audience as held, as
+  /// SUHALLA_AFTER_BABI_SPOKE does.
   TIMBER_ROOMS_A_AFTER_BABI_SPOKE = 90,
 };
 /// SceneId_TimberRoomsA's exits.

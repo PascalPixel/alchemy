@@ -95,11 +95,11 @@ enum KandoreanTempleChestbeaterRoomActorId {
   /// The pot of boiling water Move chucks aside
   /// (gKandoreanTemple_PillarActors).
   ACTOR_BOILING_POT = ACTOR_FIRST_PLACED,
-  /// The fire under the pot: an actor in the pot's sprite at the pot's place,
-  /// in its animation 2, which is the sheet's last picture alone, the red
-  /// embers the pot boils over. It is drawn underfoot with no shadow, and
-  /// nothing moves it when the pot is chucked aside.
-  ACTOR_FIRE_UNDER_THE_POT,
+  /// The red embers the pot boils over: an actor in the pot's sprite at the
+  /// pot's place, in its animation 2, the sheet's last picture alone. It is
+  /// drawn underfoot with no shadow, and stays glowing on the floor when the
+  /// pot is chucked aside.
+  ACTOR_EMBERS_UNDER_THE_POT,
   /// The sign by the hot floor, which tells of Master Poi's trial.
   ACTOR_POIS_SIGN,
   ACTOR_MIDDLE_CHESTBEATER,
@@ -150,8 +150,8 @@ enum KandoreanTempleFogRoomActorId {
 /// The temple gate's actors (SceneId_KandoreanTempleGate), numbering the rows
 /// of gKandoreanTemple_GatePlacements.
 enum KandoreanTempleGateActorId {
-  /// The leafy plant over the mouth of the cave, which Whirlwind blows away.
-  ACTOR_PLANT_OVER_THE_CAVE = ACTOR_FIRST_PLACED,
+  /// The weeds over the mouth of the cave, which Whirlwind scatters.
+  ACTOR_WEEDS_OVER_THE_CAVE = ACTOR_FIRST_PLACED,
   /// "Have you come to see Master Poi?"
   ACTOR_STUDENT_ASKING_ABOUT_POI,
   /// "Once the period of meditation has begun, none may enter the temple
@@ -221,8 +221,9 @@ enum {
   /// The lift room's pillar blocks the shaft of steam, so stepping over it no
   /// longer sinks the leader into the steam.
   FLAG_PILLAR_BLOCKS_SHAFT = FLAG_SCENE_TEMP_11,
-  /// The trap door in Poi's room, or the passage by the gate's well, is open.
-  FLAG_TRAP_DOOR_OPEN = FLAG_SCENE_TEMP_12,
+  /// The door to the cave below Poi's statue, or the passage by the gate's
+  /// well, is open.
+  FLAG_CAVE_DOOR_OPEN = FLAG_SCENE_TEMP_12,
   FLAG_WELL_PASSAGE_OPEN = FLAG_SCENE_TEMP_12,
   /// Kraden has pointed out the suspicious wall by the gate on this visit.
   FLAG_KRADEN_SAW_THE_WALL = FLAG_SCENE_TEMP_30,
@@ -1390,8 +1391,8 @@ void KandoreanTemple_RunEastLift(void) {
 }
 
 /// The vent room's task: notes whether the leader stands on a cover (where
-/// it cannot save), lets a blowing vent push it north, and starts or stops the
-/// vents' sound.
+/// it cannot save), lets a blowing vent's steam push it south, and starts or
+/// stops the vents' sound.
 void KandoreanTemple_WatchVents(void) {
   struct Actor *leader;
   s32 cellX, cellZ, onCell;
@@ -1623,27 +1624,27 @@ void KandoreanTemple_ClimbDownTheWell(void) {
       KANDOREAN_TEMPLE_POI_TO_KANDOREAN_TEMPLE_CHESTBEATERS);
 }
 
-/// Opens the trap door in Poi's room.
-void KandoreanTemple_OpenTheTrapDoor(void) {
+/// Opens the door to the cave below Poi's statue.
+void KandoreanTemple_OpenTheCaveDoor(void) {
   MapGrid_CopyCellPictureIndicesRect(39, 39, 24, 38, 2, 2);
   wait(10);
   MapGrid_CopyCellPictureIndicesRect(39, 41, 24, 38, 2, 2);
   wait(20);
-  GameFlag_Set(FLAG_TRAP_DOOR_OPEN);
+  GameFlag_Set(FLAG_CAVE_DOOR_OPEN);
 }
 
-/// The leader walks onto the trap door in Poi's room, opening it if it is shut,
-/// and drops through.
-void KandoreanTemple_DropThroughTheTrapDoor(void) {
+/// The leader walks up to the door below Poi's statue, opening it if it is
+/// shut, and goes through into the cave.
+void KandoreanTemple_EnterTheCave(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 400, 648);
   Actor_FaceDirectionAndRefreshById(gMainRoutineWork.leaderActorId,
                                     FACING_NORTH);
-  if (GameFlag_Get(FLAG_TRAP_DOOR_OPEN) == 0) {
+  if (GameFlag_Get(FLAG_CAVE_DOOR_OPEN) == 0) {
     Sound_Play(SE_THUMP);
-    KandoreanTemple_OpenTheTrapDoor();
+    KandoreanTemple_OpenTheCaveDoor();
   }
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
@@ -1788,7 +1789,7 @@ void KandoreanTemple_OpenTheWellPassage(void) {
   Event_End();
 }
 
-/// Whirlwind has blown the bush away: the passage behind it opens and Kraden
+/// Whirlwind has scattered the weeds: the passage behind them opens and Kraden
 /// follows the leader in.
 void KandoreanTemple_FindTheHiddenPassage(void) {
   struct Actor *actor;
@@ -2049,11 +2050,11 @@ void KandoreanTemple_StartMimicRoom(void) {
 /// Sets up the Chestbeaters' room: the pot where Move left it, the sign, and
 /// the Chestbeaters gone once the ladder is lowered.
 void KandoreanTemple_StartChestbeaterRoom(void) {
-  struct Actor *actor = Actor_GetById(ACTOR_FIRE_UNDER_THE_POT);
+  struct Actor *actor = Actor_GetById(ACTOR_EMBERS_UNDER_THE_POT);
 
-  Actor_DisableById(ACTOR_FIRE_UNDER_THE_POT);
+  Actor_DisableById(ACTOR_EMBERS_UNDER_THE_POT);
   actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  Actor_SetAnimationById(ACTOR_FIRE_UNDER_THE_POT, 2);
+  Actor_SetAnimationById(ACTOR_EMBERS_UNDER_THE_POT, 2);
   actor = Actor_GetById(ACTOR_BOILING_POT);
   actor->motionFlags = 0;
   if (GameFlag_Get(FLAG_POT_PUSHED_WEST)) {
@@ -2211,12 +2212,12 @@ void KandoreanTemple_LandFromAbove(void) {
   options.update = FieldEffect_AdvanceMotion;
   options.startScaleX = FIXED_ONE * 4 / 5;
   options.startScaleY = FIXED_ONE * 4 / 5;
-  for (particleIndex = 0; particleIndex <= 16; particleIndex++) {
+  for (particleIndex = 0; particleIndex <= DUST_RING_PUFFS; particleIndex++) {
     FIXED velocity[3];
 
-    velocity[0] = Trig_Cos(particleIndex * FACING_STEP);
+    velocity[0] = Trig_Cos(particleIndex * (TRIG_TURN / DUST_RING_PUFFS));
     velocity[1] = 0;
-    velocity[2] = Trig_Sin(particleIndex * FACING_STEP);
+    velocity[2] = Trig_Sin(particleIndex * (TRIG_TURN / DUST_RING_PUFFS));
     velocity[0] += velocity[0] >> 1;
     velocity[0] += ((Random16() * 3) << 14) >> 16;
     velocity[0] += -toFIXED(3) / 8;
@@ -2230,7 +2231,7 @@ void KandoreanTemple_LandFromAbove(void) {
   Sound_Play(SE_THUMP);
   FieldEffect_SetAttached(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
-  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, 49);
+  Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_LEADER_SIT);
   MapGrid_SetShake(5, 5, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
@@ -2645,10 +2646,10 @@ void KandoreanTemple_StartMeditating(s32 id, s32 delay) {
 void KandoreanTemple_StartGate(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (GameFlag_Get(FLAG_HIDDEN_PASSAGE_FOUND)) {
-    Actor_SetPosition(ACTOR_PLANT_OVER_THE_CAVE, 0, 0);
+    Actor_SetPosition(ACTOR_WEEDS_OVER_THE_CAVE, 0, 0);
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 5, 13);
   } else {
-    Actor_DisableById(ACTOR_PLANT_OVER_THE_CAVE);
+    Actor_DisableById(ACTOR_WEEDS_OVER_THE_CAVE);
   }
   if (GameFlag_Get(FLAG_MET_POI)) {
     MapGrid_CopyCellAttributes(2, 0, 2, 3, 17, 24);
@@ -2697,7 +2698,7 @@ void KandoreanTemple_PoiWaitsByTheNorthRope(void) {
   }
 }
 
-/// Sets up Poi's hall: its ropes, the tested students, Poi and the trap door,
+/// Sets up Poi's hall: its ropes, the tested students, Poi and the cave door,
 /// by the entrance the party takes.
 void KandoreanTemple_StartPoisRoom(void) {
   gFieldWork->transition =
@@ -2727,8 +2728,8 @@ void KandoreanTemple_StartPoisRoom(void) {
   if ((gMainRoutineWork.entrance >= 1 && gMainRoutineWork.entrance <= 3) ||
       gMainRoutineWork.entrance ==
           KANDOREAN_TEMPLE_POI_FROM_KANDOREAN_TEMPLE_MIMIC) {
-    if (GameFlag_Get(FLAG_TRAP_DOOR_OPEN))
-      KandoreanTemple_OpenTheTrapDoor();
+    if (GameFlag_Get(FLAG_CAVE_DOOR_OPEN))
+      KandoreanTemple_OpenTheCaveDoor();
     if (GameFlag_Get(FLAG_MET_POI)) {
       Actor_SetPosition(ACTOR_POI, 0, 0);
       {
@@ -2981,7 +2982,7 @@ void KandoreanTemple_TestTheStudents(void) {
   Actor_WalkToAndWait(ACTOR_THIRD_TESTED_STUDENT, 400, 644);
   Event_Wait(20);
   Sound_Play(SE_THUMP);
-  KandoreanTemple_OpenTheTrapDoor();
+  KandoreanTemple_OpenTheCaveDoor();
   // "Enter the cave, and ascend!"
   Event_ShowMessageAndWait(ACTOR_POI, 0);
   Task_Remove(KandoreanTemple_MatchStudentsToLeader);
@@ -3596,8 +3597,8 @@ struct ActorPlacement gKandoreanTemple_LiftRoomPlacements[] = {
   };
 
 struct ActorPlacement gKandoreanTemple_ChestbeaterRoomPlacements[] = {
-    {368, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_SOUTH, 2, 2},
-    {368, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_SOUTH, 2, 2},
+    {SPRITE_SIGNAL_FIRE, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_SOUTH, 2, 2},
+    {SPRITE_SIGNAL_FIRE, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_SOUTH, 2, 2},
     ACTOR_PLACEMENT(SPRITE_SIGN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 504, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_CHESTBEATER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 328, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_CHESTBEATER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 296, 0, 140, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -3760,8 +3761,8 @@ struct Trigger gKandoreanTemple_GateEvents[] = {
      EVENT(KandoreanTemple_OpenTheWellPassage)},
     {TRIGGER_EXAMINE, 10, CONDITION_ALWAYS,
      EVENT(KandoreanTemple_TryTheLockedDoor)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 8, CONDITION_ALWAYS,
-     EVENT(KandoreanTemple_FindTheHiddenPassage)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WEEDS_OVER_THE_CAVE,
+     CONDITION_ALWAYS, EVENT(KandoreanTemple_FindTheHiddenPassage)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30,
      CONDITION_ALWAYS, EVENT(KandoreanTemple_CycloneFirstPatch)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 31,
@@ -3817,7 +3818,7 @@ struct Trigger gKandoreanTemple_PoisRoomEvents[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {STEP_TRIGGER_WALKING, 8, CONDITION_ALWAYS, EVENT(KandoreanTemple_ClimbDownTheWell)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(KandoreanTemple_DropThroughTheTrapDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(KandoreanTemple_EnterTheCave)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_SOUTH_ROPE_WEST_POST, FLAG_SOUTH_ROPE_TIED, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_NORTH_ROPE_EAST_POST, FLAG_NORTH_ROPE_TIED, 0},
     {TRIGGER_TALK, ACTOR_FIRST_TESTED_STUDENT, FLAG_MET_POI, MSGNO(MsgFieldHeWentInBeforeMeWhat)},

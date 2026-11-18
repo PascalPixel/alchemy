@@ -1,10 +1,22 @@
 /// @file
-/// Thrash and the spark approaches, and the picture that floods the canvas over
-/// the target.
+/// Thrash, Mighty Press and Severe Blow, and the flashing strikes: Quick
+/// Strike, Vorpal Slash, Lunar Slash, Boost Hack and Twin Shear.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
 #include "sounds.h"
+
+/// The flashing strike's frames, from the user's arrival: four pictures flash
+/// four frames each, then the canvas floods at its brightest for four frames,
+/// the damage shows and the target is hurled.
+#define FLASHING_STRIKE_FRAMES 21
+#define FLASHING_STRIKE_FLOOD_FRAME 16
+#define FLASHING_STRIKE_DAMAGE_FRAME 18
+#define FLASHING_STRIKE_HIT_FRAME 20
+
+/// One 120x120 picture of a flashing strike; Twin Shear's are half as tall.
+#define FLASHING_STRIKE_PICTURE_BYTES (SLASH_PICTURE_SIZE * SLASH_PICTURE_SIZE)
+#define FLASHING_STRIKE_HALF_BYTES (SLASH_PICTURE_SIZE * SLASH_PICTURE_SIZE / 2)
 
 /// The flashing strike's modes (BattleEffect_RunFlashingStrike), each named for
 /// the ability that plays it: which pictures it shows and how the user moves.
@@ -52,46 +64,51 @@ void BattleEffect_RunSevereBlow(struct BattleEffectParams *args) {
   BattleEffect_RunSparkGroups(args, SPARK_GROUPS_RISING);
 }
 
+/// The user leaps at the first target, four pictures flash across the effect
+/// layer, then it fills with one colour as the target is struck.
+///
 /// Abilities: Quick Strike.
 void BattleEffect_RunQuickStrike(struct BattleEffectParams *args) {
   BattleEffect_RunFlashingStrike(args, FLASHING_STRIKE_QUICK_STRIKE);
 }
 
+/// The user steps up to the first target, four pictures flash across the
+/// effect layer, then it fills with one colour as the target is struck.
+///
 /// Abilities: Vorpal Slash.
 void BattleEffect_RunVorpalSlash(struct BattleEffectParams *args) {
   BattleEffect_RunFlashingStrike(args, FLASHING_STRIKE_VORPAL_SLASH);
 }
 
+/// The user leaps where it stands, four pictures flash over the battle, then
+/// the effect layer fills with one colour as the target is struck and Weaken
+/// follows.
+///
 /// Abilities: Lunar Slash.
 void BattleEffect_RunLunarSlash(struct BattleEffectParams *args) {
   BattleEffect_RunFlashingStrike(args, FLASHING_STRIKE_LUNAR_SLASH);
 }
 
+/// The user takes its leap pose, Vorpal Slash's four pictures flash over the
+/// battle in other colours, then the effect layer fills with one colour as the
+/// target is struck.
+///
 /// Abilities: Boost Hack.
 void BattleEffect_RunBoostHack(struct BattleEffectParams *args) {
   BattleEffect_RunFlashingStrike(args, FLASHING_STRIKE_BOOST_HACK);
 }
 
+/// The user leaps at the first target and a slash sweeps over the battle in
+/// four pictures, each the slash's top half with its reflection below it, then
+/// the effect layer fills with one colour as the target is struck.
+///
 /// Abilities: Twin Shear.
 void BattleEffect_RunTwinShear(struct BattleEffectParams *args) {
   BattleEffect_RunFlashingStrike(args, FLASHING_STRIKE_TWIN_SHEAR);
 }
 
-#undef RESULTS_FRAME
-
-/// One 120x120 picture of a flashing strike; the reflected variant's are half
-/// as tall.
-#define FLASHING_STRIKE_PICTURE_BYTES (SLASH_PICTURE_SIZE * SLASH_PICTURE_SIZE)
-#define FLASHING_STRIKE_HALF_BYTES (SLASH_PICTURE_SIZE * SLASH_PICTURE_SIZE / 2)
-
-#define REVEAL_FRAMES 21
-#define FLOOD_FRAME 16 ///< the pictures end and the canvas floods
-#define RESULTS_FRAME 18
-#define HIT_FRAME 20
-
 /// Plays a flashing strike; nothing passes FLASHING_STRIKE_UNUSED.
-void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
-                                    s32 variant) {
+void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   DrawRectangle draw[2];
@@ -100,35 +117,37 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(0);
-  if ((u32)(variant - FLASHING_STRIKE_LUNAR_SLASH) > 2)
+  // Lunar Slash, Boost Hack and Twin Shear add the canvas to the battle; the
+  // others show it alone.
+  if (mode < FLASHING_STRIKE_LUNAR_SLASH || mode > FLASHING_STRIKE_TWIN_SHEAR)
     REG_BLDCNT = 0;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
 
   // The pictures: 1 and 2 in the sheet, 3 and 4 in the map cell
   // buffer (Twin Shear's four half pictures all there).
-  if (variant == FLASHING_STRIKE_UNUSED) {
+  if (mode == FLASHING_STRIKE_UNUSED) {
     Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_E, work->sheet, 1, 0);
     Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_F, Ram_MapCellBuffer, 1, 1);
-  } else if (variant == FLASHING_STRIKE_QUICK_STRIKE) {
+  } else if (mode == FLASHING_STRIKE_QUICK_STRIKE) {
     Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_C, work->sheet, 1, 0);
     Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_D, Ram_MapCellBuffer, 1, 1);
-  } else if (variant == FLASHING_STRIKE_BOOST_HACK) {
+  } else if (mode == FLASHING_STRIKE_BOOST_HACK) {
     s32 i;
 
     Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_A, work->sheet, 1, 0);
     Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_B, Ram_MapCellBuffer, 1, 1);
-    // Turn the first 64 BG colours: red to blue, blue to green, green to red.
-    for (i = 0; i != 64; i++) {
+    // Turn the canvas's colours: red to blue, blue to green, green to red.
+    for (i = 0; i != SHEET_PALETTE_COLORS; i++) {
       s32 blue = RGB_BLUE(((u16 *)BG_PLTT)[i]);
       s32 green = RGB_GREEN(((u16 *)BG_PLTT)[i]);
       s32 red = RGB_RED(((u16 *)BG_PLTT)[i]);
 
       ((u16 *)BG_PLTT)[i] = RGB(green, blue, red);
     }
-  } else if (variant == FLASHING_STRIKE_LUNAR_SLASH) {
+  } else if (mode == FLASHING_STRIKE_LUNAR_SLASH) {
     Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_C, work->sheet, 1, 0);
     Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_D, Ram_MapCellBuffer, 1, 1);
-  } else if (variant == FLASHING_STRIKE_TWIN_SHEAR) {
+  } else if (mode == FLASHING_STRIKE_TWIN_SHEAR) {
     Resource_LoadAndDecompress(RESOURCE_ARC_FRAGMENTS_SHEET, Ram_MapCellBuffer,
                                1, 1);
   } else {
@@ -139,22 +158,20 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
 
   // The user closes on the target in 16 frames (Lunar Slash jumps in place,
   // Boost Hack strikes a pose instead and waits 8).
-  if (variant == FLASHING_STRIKE_QUICK_STRIKE ||
-      variant == FLASHING_STRIKE_TWIN_SHEAR)
+  if (mode == FLASHING_STRIKE_QUICK_STRIKE ||
+      mode == FLASHING_STRIKE_TWIN_SHEAR)
     BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16,
                                    toFIXED(8));
-  else if (variant == FLASHING_STRIKE_LUNAR_SLASH)
-    // The target is a whole word: the user, passed twice, is loaded once and
-    // copied, where an s16 parameter would load it again halved.
+  else if (mode == FLASHING_STRIKE_LUNAR_SLASH)
     BattleMotion_ApproachTargetFar(args->user, args->user, 16, toFIXED(10));
-  else if (variant == FLASHING_STRIKE_BOOST_HACK) {
+  else if (mode == FLASHING_STRIKE_BOOST_HACK) {
     struct MotionObject *user = BattleObject_GetFar(args->user)->object;
 
     Actor_SelectAnimationFar(user, POSE_LEAP);
     Actor_SetAnimationSpeedFar(user, ANIMATION_STEP_NORMAL * 3);
   } else
     BattleMotion_ApproachTargetFar(args->user, args->targets[0], 16, 0);
-  if (variant == FLASHING_STRIKE_BOOST_HACK)
+  if (mode == FLASHING_STRIKE_BOOST_HACK)
     wait(8);
   else
     wait(16);
@@ -179,8 +196,8 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
 
   Sound_PlayFar(SE_POWER_UP);
-  for (frame = 0; frame != REVEAL_FRAMES; frame++) {
-    if (variant == FLASHING_STRIKE_TWIN_SHEAR) {
+  for (frame = 0; frame != FLASHING_STRIKE_FRAMES; frame++) {
+    if (mode == FLASHING_STRIKE_TWIN_SHEAR) {
       // Half the picture, then its reflection below it.
       if (frame <= 3) {
         draw[0](canvas, Ram_MapCellBuffer, 0, 0, SLASH_PICTURE_SIZE,
@@ -221,13 +238,14 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
                 SLASH_PICTURE_SIZE, SLASH_PICTURE_SIZE);
     }
 
-    // The flood: four frames of the canvas filled with colour 0x3f.
-    if ((u32)(frame - FLOOD_FRAME) <= 3)
+    // The flood: four frames of the canvas at its brightest.
+    if (frame >= FLASHING_STRIKE_FLOOD_FRAME &&
+        frame <= FLASHING_STRIKE_FLOOD_FRAME + 3)
       Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
                            CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-    if (frame == RESULTS_FRAME)
+    if (frame == FLASHING_STRIKE_DAMAGE_FRAME)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-    if (frame == HIT_FRAME) {
+    if (frame == FLASHING_STRIKE_HIT_FRAME) {
       work->shakeFrames = 8;
       BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
     }
@@ -238,19 +256,23 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args,
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
-  if (variant == FLASHING_STRIKE_LUNAR_SLASH) {
+  if (mode == FLASHING_STRIKE_LUNAR_SLASH) {
     // Clear the canvas and its tiles and hand the layer to the next scene.
     Iwram_ClearWords((void *)BG_CHAR_BLOCK(1), CANVAS_VIEW_BYTES);
     Iwram_ClearWords(canvas, CANVAS_VIEW_BYTES);
     Task_Remove(Palette_StepFadeTransfer);
     BattleEffect_RunWeaken(args);
   } else {
-    if (variant == FLASHING_STRIKE_BOOST_HACK)
+    if (mode == FLASHING_STRIKE_BOOST_HACK)
       Actor_SetAnimationSpeedFar(BattleObject_GetFar(args->user)->object,
                                  ANIMATION_STEP_NORMAL);
     BattleEffect_EndCanvasLayer();
   }
 }
 
+#undef FLASHING_STRIKE_FRAMES
+#undef FLASHING_STRIKE_FLOOD_FRAME
+#undef FLASHING_STRIKE_DAMAGE_FRAME
+#undef FLASHING_STRIKE_HIT_FRAME
 #undef FLASHING_STRIKE_PICTURE_BYTES
 #undef FLASHING_STRIKE_HALF_BYTES

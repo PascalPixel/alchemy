@@ -199,8 +199,8 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
     if (freeBlocks - DEBUG_RESOURCE_BEEP_FREE_BLOCKS < 0)
       Sound_PlayFar(SE_CLICK);
   }
-  // Debug: holding L spins through four empty loops (512, 96, 64 and 64
-  // passes), a short stall each frame; the last three count in a halfword.
+  // Debug: holding L stalls each frame in four empty loops, the last three
+  // counting in a halfword.
   if (gDebugMode != 0) {
     if (gKeysHeld & KEY_L) {
       s32 i;

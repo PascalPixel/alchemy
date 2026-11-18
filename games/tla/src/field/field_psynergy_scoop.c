@@ -15,15 +15,28 @@
 
 #include "sprite_ids.h"
 
-/// The particles of dust and sparkles Scoop throws up.
+/// The particles of dust and sparkles Scoop throws up; a dig at nothing draws
+/// the first SCOOP_DRAWN_DUST, a dig on a target the first
+/// SCOOP_DRAWN_TARGET_DUST.
 #define SCOOP_PARTICLE_COUNT 64
+#define SCOOP_DRAWN_DUST 18
+#define SCOOP_DRAWN_TARGET_DUST 20
+/// The earth that rises as the ground is dug, 32 pixels square in 256 colours.
+#define SCOOP_PICTURE_SIZE 32
+/// The sparkles the hand bursts into when it cannot dig.
+#define SCOOP_SPARKLES 16
+/// A dig at nothing turns something up when Random16() falls below this, one
+/// time in sixteen; what turns up is an item below SCOOP_ITEM_CHANCE, three
+/// times in four, and coins otherwise.
+#define SCOOP_FIND_CHANCE (FIXED_ONE / 16)
+#define SCOOP_ITEM_CHANCE (FIXED_ONE * 3 / 4)
 
 /// Scoop's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the dust and sparkle
 /// tiles, the picture that ripples as the ground is dug, 64 particles, the
 /// sprite that digs and the one left where it dug, and the stage of the cast.
 struct ScoopWork {
   u8 tiles[1024];
-  u8 picture[32 * 32];
+  u8 picture[SCOOP_PICTURE_SIZE * SCOOP_PICTURE_SIZE];
   struct EffectSprite sprites[SCOOP_PARTICLE_COUNT];
   struct FieldPsynergyParticle particles[SCOOP_PARTICLE_COUNT];
   struct EffectSprite pictureSprite;
@@ -83,13 +96,14 @@ void Scoop_Update(void) {
       vram = (u8 *)OBJ_VRAM0 + work->pictureTile * TILE_SIZE_4BPP;
       Picture_ShiftColumnsByWave(work->tiles, picture, work->timer + 14);
       ((const u8 *(*)(const u8 *, s32, s32,
-                      void *))Ram_HeapSlots->pictureUploader)(picture, 32, 32,
-                                                              vram);
+                      void *))Ram_HeapSlots->pictureUploader)(
+          picture, SCOOP_PICTURE_SIZE, SCOOP_PICTURE_SIZE, vram);
       sprite = &work->pictureSprite;
       EffectSprite_Draw(sprite);
     }
     if (*phase == 2) {
-      for (i = 0, particle = work->particles; i < 18; i++, particle++) {
+      for (i = 0, particle = work->particles; i < SCOOP_DRAWN_DUST;
+           i++, particle++) {
         sprite = &work->sprites[i];
         if (particle->timer >= 0 && particle->timer < 32)
           BattleEffect_UpdateGrowingParticleSprite(sprite, particle,
@@ -173,7 +187,7 @@ void Scoop_Update(void) {
     }
     particle = work->particles;
     sprite = work->sprites;
-    for (i = 0; i < 20; i++, sprite++, particle++) {
+    for (i = 0; i < SCOOP_DRAWN_TARGET_DUST; i++, sprite++, particle++) {
       if (particle->timer >= 0 && particle->timer < 32)
         BattleEffect_UpdateGrowingParticleSprite(sprite, particle,
                                                  work->particleTile);
@@ -194,7 +208,8 @@ void Scoop_DigUpItem(void);
 /// ground that cannot be dug it stops with the error sound; else earth (or, in
 /// a lit place, sparkles) is thrown up and the place's Scoop event runs.
 void FieldPsynergy_Scoop(void) {
-  struct ScoopWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 6460);
+  struct ScoopWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*work));
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *caster = scene->mainActor;
@@ -228,7 +243,8 @@ void FieldPsynergy_Scoop(void) {
   if (actor != NULL) {
     actor->motionFlags = 0;
     if (event->psynergyDrawFlags & 2) {
-      if ((actor->spriteStorageKind & 15) == ACTOR_SPRITE_ONE) {
+      if ((actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) ==
+          ACTOR_SPRITE_ONE) {
         ((struct EffectSprite *)actor->sprite)->oam.priority = 1;
         actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
       }
@@ -248,7 +264,7 @@ void FieldPsynergy_Scoop(void) {
     if (other != NULL) {
       other->z.fixed += toFIXED(3);
       other->motionFlags = 0;
-      other->priorityFlags = 1;
+      other->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
       other->scaleX = 0;
       if (!(event->psynergyDrawFlags & 1))
         FieldPsynergy_StartSceneSprite();
@@ -289,7 +305,7 @@ void FieldPsynergy_Scoop(void) {
         failed = 3;
       if (failed) {
         wait(2);
-        for (i = 0; i < 16; i++)
+        for (i = 0; i < SCOOP_SPARKLES; i++)
           BattleEffect_SpawnScatterParticle(actor->x.fixed, actor->y.fixed,
                                             actor->z.fixed);
         Sound_PlayFar(SE_MENU_ERROR);
@@ -297,7 +313,7 @@ void FieldPsynergy_Scoop(void) {
       } else {
 
         if (scene->enabled != 0) {
-          if (Random16() < 4096)
+          if (Random16() < SCOOP_FIND_CHANCE)
             work->mode = 1;
           else if (*alternate == 0)
             work->mode = 0;
@@ -433,7 +449,7 @@ void FieldPsynergy_Scoop(void) {
           while (work->phase != FIELD_PSYNERGY_FINISHED) {
             stage = 0;
             wait(1);
-            if (frame == 30)
+            if (frame == SCOOP_DUG_FRAME)
               stage = 1;
             if (frame == 50)
               stage = 2;
@@ -462,7 +478,8 @@ void FieldPsynergy_Scoop(void) {
 }
 
 /// Puts object id at the effect's anchor (if any) and lets it fall under
-/// gravity, waits 50 frames, then cues the event with id | 0x1000.
+/// gravity, waits 50 frames, then asks for its talk, which opens it without its
+/// "checked the ..." message (FIELD_TALK_SILENT).
 void BattleEffect_DropObjectAtAnchor(s32 id) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *anchor;
@@ -475,18 +492,18 @@ void BattleEffect_DropObjectAtAnchor(s32 id) {
                        anchor->z.fixed);
   }
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    actor->motionFlags = 2;
+    actor->motionFlags = ACTOR_FALLS;
     actor->groundHeight = 0;
   } else {
-    actor->motionFlags = 3;
+    actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   }
   actor->gravity = toFIXED(9) / 100;
   wait(50);
-  event->talk = id | 0x1000;
+  event->talk = id | FIELD_TALK_SILENT;
 }
 
 struct Unit *Unit_Get(u32 unitId);
-extern const u16 gScoop_DugItems[];
+extern const u16 gScoop_DugItems[16];
 
 /// SCOOPED_ITEM_ACTOR at the anchor, fetched or spawned (SPRITE_UNSEEN_MARKER),
 /// shows what Scoop dug up: three times in four one of gScoop_DugItems's
@@ -513,12 +530,12 @@ void Scoop_DigUpItem(void) {
       return;
     event->actors[id] = actor;
   }
-  if (Random16() < 49152) {
-    item = gScoop_DugItems[(Random16() * 16) >> 16];
+  if (Random16() < SCOOP_ITEM_CHANCE) {
+    item = gScoop_DugItems[Random_Below(ARRAY_COUNT(gScoop_DugItems))];
     if (PartyInventory_FindRoomFar(item) == -1)
       item = SCOOPED_COINS | 1;
   } else {
-    item = (((Random16() * unit->level) * 2) >> 16) + 1 | SCOOPED_COINS;
+    item = (Random_Below(unit->level * 2) + 1) | SCOOPED_COINS;
   }
   SET_ACTOR_POSITION(actor, anchor->x.fixed, anchor->y.fixed, anchor->z.fixed);
   Actor_ShowItemIconById(id, item);
@@ -526,3 +543,9 @@ void Scoop_DigUpItem(void) {
   BattleEffect_DropObjectAtAnchor(id);
 }
 #undef NEXT_PHASE
+#undef SCOOP_DRAWN_DUST
+#undef SCOOP_DRAWN_TARGET_DUST
+#undef SCOOP_PICTURE_SIZE
+#undef SCOOP_SPARKLES
+#undef SCOOP_FIND_CHANCE
+#undef SCOOP_ITEM_CHANCE

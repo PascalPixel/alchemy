@@ -100,26 +100,28 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
 // BUG: Restore cures stun and never confusion or charm, as its description
 // says ("Remove sleep, stun, and delusion.") and its cure does, but the count
 // takes confusion and charm and not stun, so Cerebus and the Hydros Statue
-// pass over an ally who is only stunned.
+// pass over an ally who is only stunned. COUNT_STUN_SLOT is the count's place
+// for stun.
 #ifdef BUGFIX
-#define COUNT_STUN(unit, count)                                                \
+#define COUNT_STUN_SLOT(unit, count)                                           \
   if ((unit)->stun != 0)                                                       \
     (count)++;
 #else
-#define COUNT_STUN(unit, count)                                                \
+#define COUNT_STUN_SLOT(unit, count)                                           \
   if ((u8)(unit)->confusion != 0)                                              \
     (count)++;                                                                 \
   if ((unit)->charm != 0)                                                      \
     (count)++;
 #endif
 
-/// Counts the statuses of unit that Restore cures: delusion, stun (COUNT_STUN),
-/// sleep, the Psynergy seal and the Grim Reaper.
+/// Counts the statuses of unit that Restore's count takes: delusion,
+/// COUNT_STUN_SLOT's (confusion and charm where Restore cures stun, the BUG
+/// above), sleep, the Psynergy seal and the Grim Reaper.
 #define COUNT_PARTIAL_CURES(unit, count)                                       \
   {                                                                            \
     if ((unit)->delusion != 0)                                                 \
       (count)++;                                                               \
-    COUNT_STUN((unit), (count))                                                \
+    COUNT_STUN_SLOT((unit), (count))                                           \
     if ((unit)->sleep != 0)                                                    \
       (count)++;                                                               \
     if ((unit)->psySeal != 0)                                                  \

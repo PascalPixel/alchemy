@@ -32,8 +32,6 @@
 #define KIRIN_BURSTS_DRAWN 6
 /// The canvas's usual weight over the battle, as battle_effect_canvas.c's.
 #define CANVAS_BLEND_LEVEL 14
-/// The largest of the ten mote pictures.
-#define MOTE_SIZE_MAX 10
 
 /// Over a scrolling forest Kirin bounds in through a hoop of light, trailing
 /// fire; then, unseen behind the battle background, it charges across the
@@ -428,4 +426,3 @@ void BattleEffect_RunKirin(struct BattleEffectParams *args) {
 #undef KIRIN_BURSTS_FREED
 #undef KIRIN_BURSTS_DRAWN
 #undef CANVAS_BLEND_LEVEL
-#undef MOTE_SIZE_MAX

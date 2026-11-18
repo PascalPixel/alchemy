@@ -9,9 +9,6 @@
 /// the four winged statues below, where a single cracked tile in a ring of
 /// studs (JupiterLighthouse_StepOnSingleCrackedTile) drops it into the room of
 /// the blue key.
-///
-/// After the scene's own code come the shared field effect spawner and the
-/// cracked tiles' routines, which it links between.
 
 #include "shared/tables.h"
 #include "flags.h"

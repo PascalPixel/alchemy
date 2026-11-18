@@ -4,6 +4,7 @@
 // Part of game.c.
 
 #include "game_internal.h"
+#include "system/mul_fx.h"
 
 /// Each character's element group, as The Broken Seal has it: 0 for the Venus
 /// and Mars Adepts, 1 for the Jupiter and Mercury ones.
@@ -157,6 +158,5 @@ const u32 gCharacter_LevelExpTable[] = {
 };
 // clang-format on
 
-/// Unused: one tenth as a 32-bit fraction, as gString_OneTenth; nothing reads
-/// this copy.
-const u32 gExperience_OneTenth = 0xffffffffU / 10 + 1;
+/// Unused: a copy of gString_OneTenth that nothing reads.
+const u32 gExperience_OneTenth = RECIPROCAL_OF(10);

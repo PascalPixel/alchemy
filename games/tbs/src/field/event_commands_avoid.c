@@ -66,7 +66,7 @@ void FieldPsynergy_ShowAvoidWoreOff(void) {
 
 #define AVOID_FLASHES 20      ///< white flashes, 5 frames each
 #define AVOID_BLINK_FRAMES 70 ///< the outline flashes
-#define AVOID_CHIME_FRAME 15  ///< SE_NOTE_MID, into the outline's flashing
+#define AVOID_NOTE_FRAME 15   ///< SE_NOTE_MID, into the outline's flashing
 
 /// The caster spins among falling arcs and flashes white, then flashes as an
 /// outline, and encounters are kept away until Avoid wears off.
@@ -112,9 +112,9 @@ void FieldPsynergy_Avoid(void) {
   actor->update = NULL;
   actor->facing = angle;
   Task_Add(FieldEffect_BlinkAvoidCaster, TASK_PASS_FRAME);
-  wait(AVOID_CHIME_FRAME);
+  wait(AVOID_NOTE_FRAME);
   Sound_PlayFar(SE_NOTE_MID);
-  wait(AVOID_BLINK_FRAMES - AVOID_CHIME_FRAME);
+  wait(AVOID_BLINK_FRAMES - AVOID_NOTE_FRAME);
   Task_Remove(FieldEffect_BlinkAvoidCaster);
   // Back to the caster's own look: outlined while Cloak is on, else with its
   // shadow.
@@ -130,4 +130,4 @@ void FieldPsynergy_Avoid(void) {
 
 #undef AVOID_FLASHES
 #undef AVOID_BLINK_FRAMES
-#undef AVOID_CHIME_FRAME
+#undef AVOID_NOTE_FRAME

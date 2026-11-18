@@ -190,7 +190,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
             Matrix_RotateZ(step->variant + DEGtoANG(180));
           }
           Matrix_Translate(0, -toFIXED(16), 0);
-          Matrix_Scale(size * (FIXED_ONE / 2), size * toFIXED(0.2013),
+          Matrix_Scale(size * (FIXED_ONE / 2), size * (FIXED_ONE * 1649 / 8192),
                        size * (FIXED_ONE / 8));
           if (args->side == EFFECT_SIDE_ENEMIES) {
             Matrix_RotateY(DEGtoANG(180));
@@ -223,7 +223,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
       }
       // The axe flies from frame 8, to reach the target at the strike.
       if (frame > 7) {
-        FIXED scale = toFIXED(1.22071);
+        FIXED scale = FIXED_ONE * 625 / 512;
 
         texture.pixels = work->sheet;
         Matrix_Initialize();
@@ -476,12 +476,13 @@ void BattleEffect_RunCool(struct BattleEffectParams *args) {
 
 #define WYRD_CURSE_FRAMES 120
 
-/// The drops set out at frame 0, of which the first WYRD_CURSE_SKULLS fall,
-/// one every eight frames. A landed drop feeds the glow a share each frame,
-/// halving it: the first drop's share starts at WYRD_CURSE_FIRST_DROP_SHARE,
-/// each later one's WYRD_CURSE_DROP_SHARE_STEP less.
+/// The drops set out at frame 0, of which the first WYRD_CURSE_SKULL_COUNT
+/// fall, one every eight frames. A landed drop feeds the glow a share each
+/// frame, halving it: the first drop's share starts at
+/// WYRD_CURSE_FIRST_DROP_SHARE, each later one's WYRD_CURSE_DROP_SHARE_STEP
+/// less.
 #define WYRD_CURSE_DROPS 16
-#define WYRD_CURSE_SKULLS 6
+#define WYRD_CURSE_SKULL_COUNT 6
 #define WYRD_CURSE_FIRST_DROP_SHARE 160
 #define WYRD_CURSE_DROP_SHARE_STEP 16
 /// The drops land, and the glow lies, on WYRD_CURSE_GROUND_Y.
@@ -501,7 +502,7 @@ void BattleEffect_RunCool(struct BattleEffectParams *args) {
 /// Where the glow, mirrored from its shaded disc, and BurningSkullSheet's two
 /// skulls are kept in the effect's pictures.
 #define WYRD_CURSE_GLOW 4096
-#define WYRD_CURSE_BURNING_SKULLS 16384
+#define WYRD_CURSE_SKULL_PICTURES 16384
 #define BURNING_SKULL_WIDTH 32
 #define BURNING_SKULL_HEIGHT 32
 
@@ -602,7 +603,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
   }
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_BURNING_SKULL_SHEET,
-                             work->sheet + WYRD_CURSE_BURNING_SKULLS, 0, 0);
+                             work->sheet + WYRD_CURSE_SKULL_PICTURES, 0, 0);
 
   zero = 0;
   for (frame = 0; frame != WYRD_CURSE_FRAMES; frame++) {
@@ -641,7 +642,8 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
     // The drops fall, each a mote its size, and stop where they land; a
     // landed drop keeps the speed its skull will drift aside with.
     if (frame < WYRD_CURSE_RISE_FRAME) {
-      for (i = 0, drop = work->particles; i != WYRD_CURSE_SKULLS; i++, drop++) {
+      for (i = 0, drop = work->particles; i != WYRD_CURSE_SKULL_COUNT;
+           i++, drop++) {
         if (frame > i * 8 && drop->variant == 0) {
           s32 dropSize = drop->z;
 
@@ -652,8 +654,9 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
                                         toFIXED(1) / 2);
           if (FIXED_INTEGER_PART(drop->y) >= WYRD_CURSE_GROUND_Y) {
             drop->variant = 1;
-            // DEAD: overwritten by the next store; the ROM keeps the call, its
-            // arithmetic and the store.
+            // DEAD: the store, overwritten by the next; the random draw still
+            // moves the sequence; the ROM keeps the call, its arithmetic and
+            // the store.
             drop->velocityX = ((Random16() & 31) - 16) * (toFIXED(1) / 16);
             drop->velocityX = gWyrdCurse_DropBounces[i % 4] * (toFIXED(1) / 8);
             drop->velocityY = 0;
@@ -709,14 +712,14 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
     texture.logHeight = 5;
     model->kind = MODEL_SHADED_ADDITIVE;
     model->mesh = gBattleEffect_SmallSquareMeshReversed;
-    for (i = 0; i != WYRD_CURSE_SKULLS; i++) {
+    for (i = 0; i != WYRD_CURSE_SKULL_COUNT; i++) {
       drop = &work->particles[i];
       /* FAKEMATCH(dead): skullScale set through its own address in every
        * turn; as one assignment before the loop. */
-      *&skullScale = toFIXED(0.38147);
+      *&skullScale = FIXED_ONE * 3125 / 8192;
       if (frame > i * 4 + WYRD_CURSE_RISE_FRAME) {
         model->shade = zero;
-        texture.pixels = work->sheet + WYRD_CURSE_BURNING_SKULLS +
+        texture.pixels = work->sheet + WYRD_CURSE_SKULL_PICTURES +
                          (i % 2) * PICTURE_BYTES(BURNING_SKULL);
         Matrix_Initialize();
         Matrix_Translate(drop->x - toFIXED(64), drop->y - toFIXED(48), 0);
@@ -734,7 +737,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
     if (frame == WYRD_CURSE_RISE_FRAME) {
       Sound_PlayFar(SE_BEAST_CRY);
     }
-    for (i = 0; i != WYRD_CURSE_SKULLS; i++) {
+    for (i = 0; i != WYRD_CURSE_SKULL_COUNT; i++) {
       if (frame == i * 4 + WYRD_CURSE_RISE_FRAME + 16) {
         work->shakeFrames = 2;
         BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
@@ -827,7 +830,7 @@ void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
   discs = (s16 *)work->sheet;
   for (i = 0; i != RADIANT_FIRE_DISCS; i++) {
     BattleEffect_DrawShadedCircles((void *)(offset + cells), size,
-                                   toFIXED(1.30518));
+                                   FIXED_ONE * 2673 / 2048);
     discs[i] = offset;
     offset += (i * 2 + 3) * size / 2;
     size += 2;
@@ -951,22 +954,22 @@ void BattleEffect_RunRadiantFire(struct BattleEffectParams *args) {
 /// HURRICANE_STREAK_LEVEL a row, a pixel further over every 16 rows, slanting
 /// as the streaks fall. The first HURRICANE_STREAKS of the work's particles
 /// fall as streaks, one more each frame, and a streak whose foot reaches
-/// HURRICANE_GROUND_Y starts a splash there.
+/// HURRICANE_GROUND_Y starts a puff there.
 #define HURRICANE_STREAK_WIDTH 4
 #define HURRICANE_STREAK_HEIGHT 64
 #define HURRICANE_STREAK_LEVEL 24
 #define HURRICANE_STREAKS 32
 #define HURRICANE_GROUND_Y 112
 
-/// The splashes, SmokeSheet's six pictures shown four frames each, in the map
-/// cell buffer; only the first HURRICANE_STREAKS are ever started.
-#define HURRICANE_SPLASHES 256
-#define HURRICANE_SPLASH_PICTURES 12800
-#define SMOKE_PUFF_FRAMES (6 * 4)
+/// The puffs, SmokeSheet's, in the map cell buffer; only the first
+/// HURRICANE_STREAKS are ever started.
+#define HURRICANE_PUFFS 256
+#define HURRICANE_PUFF_PICTURES 12800
 
-/// Rain driven by the wind streaks down over the target, splashing where it
-/// lands; the target flashes as it is lashed, and the user closes in to strike
-/// at frame 46. Then the canvas is cleared and Dull's effect follows.
+/// Rain driven by the wind streaks down over the target, and puffs rise where
+/// each streak lands; the target flashes as it is lashed, and the user closes
+/// in to strike at frame 46. Then the canvas is cleared and Dull's effect
+/// follows.
 ///
 /// Abilities: Hurricane.
 void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
@@ -977,7 +980,7 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
   DrawRectangle blit[2];
   struct ScreenPoint position;
   struct Particle *streak;
-  struct Particle *splash;
+  struct Particle *puff;
   s32 size;
   s32 frame;
   s32 i;
@@ -1009,14 +1012,14 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
       work->sheet[i * HURRICANE_STREAK_WIDTH + i / 16] = HURRICANE_STREAK_LEVEL;
   }
   Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET,
-                             work->sheet + HURRICANE_SPLASH_PICTURES, 1, 0);
+                             work->sheet + HURRICANE_PUFF_PICTURES, 1, 0);
   REG_BG2PA = Q_8_8(1);
 
   for (frame = 0; frame != HURRICANE_FRAMES; frame++) {
     // The streaks wait above the screen, drifting with the wind.
     if (frame == 0) {
       Sound_PlayFar(SE_AMBIENT_WATER);
-      EFFECT_FREE_PARTICLES(i, PARTICLES, HURRICANE_SPLASHES);
+      EFFECT_FREE_PARTICLES(i, PARTICLES, HURRICANE_PUFFS);
       for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
         streak = &work->particles[i];
         streak->y = INTtoFIXED((Random16() & 31) - 64);
@@ -1039,17 +1042,17 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
       BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
     }
 
-    splash = PARTICLES;
-    for (i = 0; i != HURRICANE_SPLASHES; i++, splash++) {
-      if (splash->variant >= 0 && splash->variant < SMOKE_PUFF_FRAMES) {
+    puff = PARTICLES;
+    for (i = 0; i != HURRICANE_PUFFS; i++, puff++) {
+      if (puff->variant >= 0 && puff->variant < SMOKE_PUFF_FRAMES) {
         blit[0](canvas,
-                work->sheet + HURRICANE_SPLASH_PICTURES +
-                    splash->variant / 4 * PICTURE_BYTES(SMOKE_PUFF),
-                FIXED_INTEGER_PART(splash->x) - SMOKE_PUFF_WIDTH / 2,
-                FIXED_INTEGER_PART(splash->y) - 32, SMOKE_PUFF_WIDTH,
+                work->sheet + HURRICANE_PUFF_PICTURES +
+                    puff->variant / 4 * PICTURE_BYTES(SMOKE_PUFF),
+                FIXED_INTEGER_PART(puff->x) - SMOKE_PUFF_WIDTH / 2,
+                FIXED_INTEGER_PART(puff->y) - 32, SMOKE_PUFF_WIDTH,
                 SMOKE_PUFF_HEIGHT);
-        Particle_AdvanceWithGravity2D(splash, 56, -toFIXED(1) / 4);
-        splash->variant++;
+        Particle_AdvanceWithGravity2D(puff, 56, -toFIXED(1) / 4);
+        puff->variant++;
       }
     }
 
@@ -1126,4 +1129,3 @@ void BattleEffect_RunThunderMine(struct BattleEffectParams *args) {
 
 #undef BURNING_SKULL_WIDTH
 #undef BURNING_SKULL_HEIGHT
-#undef SMOKE_PUFF_FRAMES

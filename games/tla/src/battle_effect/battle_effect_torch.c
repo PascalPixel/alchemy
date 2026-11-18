@@ -4,30 +4,35 @@
 
 #include "battle_effect_internal.h"
 
-/// The disc: a 128 x 128 picture of each pixel's distance from the centre,
-/// which the 63-colour ramp turns into rings.
-#define DISC_SIZE 128
-#define DISC_RINGS 63
+#define TORCH_FRAMES 80
+#define TORCH_FADE_FRAMES 8   ///< the disc fades in, and later out, over these
+#define TORCH_STRIKE_FRAME 48 ///< the target is struck
 
-#define RIPPLE_FRAMES 80
-#define RIPPLE_FADE_IN_FRAMES 8
-#define RIPPLE_FADE_OUT_FRAME 72
-#define RIPPLE_HIT_FRAME 48
+/// The ring level drawn brightest: the levels either side of it dim toward 0
+/// and toward the disc's edge.
+#define TORCH_BRIGHTEST_LEVEL 32
+/// The disc's colours are worked in eight-bit channels, each capped, then cut
+/// to the five bits a colour holds; blue's lower cap cuts to the same level.
+#define TORCH_CHANNEL_MAX 255
+#define TORCH_BLUE_MAX 250
+/// How far a line sways either way: 32 canvas pixels, in a sway's quarter
+/// pixels.
+#define TORCH_SWAY (32 * 4)
 
-/// A disc of rings rises on BG2 over the target's side, its colour ramp
-/// cycling outward one ring a frame while each scanline sways on a sine wave.
-/// Abilities: Torch.
+/// A line's sideways sway, in quarter canvas pixels (toFIXED(4) to a pixel),
+/// as the BG2X value of the effect's bg2xLines table.
+#define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
+
+/// A fiery disc fades in over the battle, its rings running outward while
+/// every line of the display ripples; the target is struck, the disc fades
+/// out.
 ///
-/// Setup: open the canvas, draw the distance map into the sheet and a warm
-/// ramp into BG palette 1-63, blit the disc to the canvas, and arm the
-/// per-scanline BG2 offsets. Each frame: fade in over the first 8 frames,
-/// rebuild the 160 sway offsets, rotate the ramp by one colour, shake the
-/// camera. At frame 48 the target is struck; from frame 72 the disc fades.
+/// Abilities: Torch.
 void BattleEffect_RunTorch(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
-  s32 screenX[3];
-  s32 screenY[3];
+  s32 screen[3];
+  s32 world[3];
   DrawRectangle draw[2];
   s32 x;
   s32 y;
@@ -49,14 +54,12 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-
-  // Open the canvas on BG2 over the target's side.
   BattleEffect_StartCanvasLayer(BGCNT_WRAP);
   BattleEffect_RunDjinniEntrance(
       args,
       DJINNI_ENTRANCE(ELEMENT_MARS + DJINNI_ENTRANCE_LONG, args->side,
                       DJINNI_ANCHOR_OVER_USER),
-      screenX, screenY);
+      screen, world);
   REG_BG2CNT =
       BGCNT_WRAP | BGCNT_SCREEN_BASE(7) | BGCNT_256_COLORS | BGCNT_CHAR_BASE(1);
   REG_BLDALPHA = EFFECT_BLEND_CANVAS(0);
@@ -64,100 +67,100 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
   BattleEffect_FetchRectangleBlitters(args->side, draw);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-  // The distance map, one quarter at a time mirrored into the other three,
-  // the centre an eighth lower than the middle so the disc leans back.
-  for (y = 0; y != DISC_SIZE / 2; y++) {
-    for (x = 0; x != DISC_SIZE / 2; x++) {
-      centerY = y / 8 + DISC_SIZE / 2;
+  // The disc: each pixel's level is half its distance from the middle, its
+  // rows drawn a little taller; one quarter is worked out and mirrored into
+  // the other three.
+  for (y = 0; y != CANVAS_SIZE / 2; y++) {
+    for (x = 0; x != CANVAS_SIZE / 2; x++) {
+      centerY = y / 8 + CANVAS_SIZE / 2;
       dy = y - centerY;
-      dx = x - DISC_SIZE / 2;
+      dx = x - CANVAS_SIZE / 2;
       distance = Iwram_Sqrt(dx * dx + dy * dy);
       distance /= 2;
       if (distance == 0)
         distance = 1;
-      if (distance > DISC_RINGS)
-        distance = DISC_RINGS;
-      work->sheet[y * DISC_SIZE + x] = distance;
-      work->sheet[y * DISC_SIZE + DISC_SIZE - 1 - x] = distance;
-      work->sheet[(DISC_SIZE - 1 - y) * DISC_SIZE + x] = distance;
-      work->sheet[(DISC_SIZE - 1 - y) * DISC_SIZE + DISC_SIZE - 1 - x] =
+      if (distance > CANVAS_LEVEL_BRIGHTEST)
+        distance = CANVAS_LEVEL_BRIGHTEST;
+      work->sheet[y * CANVAS_SIZE + x] = distance;
+      work->sheet[y * CANVAS_SIZE + CANVAS_SIZE - 1 - x] = distance;
+      work->sheet[(CANVAS_SIZE - 1 - y) * CANVAS_SIZE + x] = distance;
+      work->sheet[(CANVAS_SIZE - 1 - y) * CANVAS_SIZE + CANVAS_SIZE - 1 - x] =
           distance;
     }
   }
 
-  // The ramp: dark red at the rim, rising to pale yellow at ring 31 and
-  // back, kept in the map cell buffer and written to the BG palette.
+  // Its colours: red rises from the first level, green from the sixth and blue
+  // from the eighth, so the rings run from dark red to pale orange at
+  // TORCH_BRIGHTEST_LEVEL.
   ramp = (u16 *)Ram_MapCellBuffer;
-  for (i = 1; i != DISC_RINGS + 1; i++) {
-    if (i > 31)
-      shade = 64 - i;
+  for (i = 1; i != CANVAS_LEVEL_BRIGHTEST + 1; i++) {
+    if (i >= TORCH_BRIGHTEST_LEVEL)
+      shade = 2 * TORCH_BRIGHTEST_LEVEL - i;
     else
       shade = i;
     red = shade * 9;
-    green = shade * 7 - 42;
-    blue = shade * 7 - 56;
+    green = (shade - 6) * 7;
+    blue = (shade - 8) * 7;
     if (red < 0)
       red = 0;
     if (green < 0)
       green = 0;
     if (blue < 0)
       blue = 0;
-    if (red > 255)
-      red = 255;
-    if (green > 255)
-      green = 255;
-    if (blue > 250)
-      blue = 250;
+    if (red > TORCH_CHANNEL_MAX)
+      red = TORCH_CHANNEL_MAX;
+    if (green > TORCH_CHANNEL_MAX)
+      green = TORCH_CHANNEL_MAX;
+    if (blue > TORCH_BLUE_MAX)
+      blue = TORCH_BLUE_MAX;
     red >>= 3;
     green >>= 3;
     blue >>= 3;
     ramp[i] = ((u16 *)BG_PLTT)[i] = RGB(red, green, blue);
   }
 
-  // Blit the disc once; from here on only the palette and the scanline
-  // offsets move it.
-  draw[0](canvas, work->sheet, 0, 0, DISC_SIZE, DISC_SIZE);
+  draw[0](canvas, work->sheet, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
   work->transferPending = 1;
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
 
-  for (frame = 0; frame != RIPPLE_FRAMES; frame++) {
-    // Fade in, and the sway grows with the frame.
-    if (frame <= RIPPLE_FADE_IN_FRAMES) {
+  // Fade the disc in, ripple the display, then fade it out.
+  for (frame = 0; frame != TORCH_FRAMES; frame++) {
+    if (frame <= TORCH_FADE_FRAMES) {
       level = frame * 2;
       wave = level;
       REG_BLDALPHA = EFFECT_BLEND_CANVAS(level);
     } else {
       wave = frame * 2;
     }
-    if (frame > RIPPLE_FADE_OUT_FRAME)
-      REG_BLDALPHA = BLEND_ALPHA(RIPPLE_FRAMES * 2 - frame * 2, 16);
+    if (frame > TORCH_FRAMES - TORCH_FADE_FRAMES)
+      REG_BLDALPHA = EFFECT_BLEND_CANVAS(TORCH_FRAMES * 2 - frame * 2);
 
-    // The hit: the damage shown, a shake, and the target knocked back.
-    if (frame == RIPPLE_HIT_FRAME) {
+    if (frame == TORCH_STRIKE_FRAME) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
       work->shakeFrames = 8;
       BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_NUDGE);
     }
 
-    // One BG2 X offset per scanline, a sine wave running down the screen.
+    // Each line starts one canvas pixel further along than the one above,
+    // swayed either way by up to TORCH_SWAY.
     line = work->bg2xLines;
     for (i = 0, angle = -(wave << 9); i != DISPLAY_HEIGHT; i++) {
-      *line++ = ((i << 18) - (Trig_Sin(angle) << 7) + toFIXED(4)) >> 10;
+      *line++ = CANVAS_WAVE_BG2X(i * toFIXED(4) - Trig_Sin(angle) * TORCH_SWAY +
+                                 toFIXED(4));
       angle += TRIG_TURN / 128;
     }
 
-    // Rotate the ramp outward by one ring: the last colour wraps to the
-    // first, DMA shifts the rest up, and the queue writes it at VBlank.
+    // Rotate the colours so the rings run outward.
+    // DEAD: never true, as frame stays below TORCH_FRAMES; the ROM keeps the
+    // compare and the store.
     if (frame > 127) {
       work->transferPending = 1;
     } else {
-      ramp[1] = ramp[DISC_RINGS];
-      Dma_Set(ramp + DISC_RINGS - 1, ramp + DISC_RINGS,
-              (DMA_ENABLE | DMA_DEST_DEC | DMA_SRC_DEC) << 16 |
-                  (DISC_RINGS - 1),
-              REG_DMA3);
+      ramp[1] = ramp[CANVAS_LEVEL_BRIGHTEST];
+      Dma_Set(ramp + CANVAS_LEVEL_BRIGHTEST - 1, ramp + CANVAS_LEVEL_BRIGHTEST,
+              DMA_COPY_HALFWORDS_DOWN(CANVAS_LEVEL_BRIGHTEST - 1), REG_DMA3);
       IO_WRITE_QUEUE_PUSH((u32)&((u16 *)BG_PLTT)[1], (u32)(ramp + 1),
-                          DMA_COPY_HALFWORDS(63));
+                          DMA_COPY_HALFWORDS(CANVAS_LEVEL_BRIGHTEST));
     }
     BattleCamera_Shake(8, 8);
     BattleEffect_CountDownBattlerTints();
@@ -168,16 +171,27 @@ void BattleEffect_RunTorch(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
+/// The long Jupiter Djinni entrance over the first target is the whole effect.
+///
 /// Abilities: Kite.
 void BattleEffect_RunKite(struct BattleEffectParams *args) {
-  s32 b[3];
-  s32 a[3];
+  s32 screen[3];
+  s32 world[3];
 
   BattleEffect_StartCanvasLayer(0);
   BattleEffect_RunDjinniEntrance(
       args,
       DJINNI_ENTRANCE(ELEMENT_JUPITER + DJINNI_ENTRANCE_LONG, args->side ^ 1,
                       DJINNI_ANCHOR_OVER_TARGET),
-      b, a);
+      screen, world);
   BattleEffect_EndCanvasLayer();
 }
+
+#undef TORCH_FRAMES
+#undef TORCH_FADE_FRAMES
+#undef TORCH_STRIKE_FRAME
+#undef TORCH_BRIGHTEST_LEVEL
+#undef TORCH_CHANNEL_MAX
+#undef TORCH_BLUE_MAX
+#undef TORCH_SWAY
+#undef CANVAS_WAVE_BG2X

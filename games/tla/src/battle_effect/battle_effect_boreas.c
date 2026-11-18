@@ -45,17 +45,18 @@
 /// effect_table.c give the rest.
 enum IceBlockSheetPicture {
   /// After the three crystals and the four large shards.
-  BOREAS_BIG_BLOCK = 24 * 48 + 24 * 38 + 20 * 26 + 12 * 10 + 11 * 16 + 8 * 14 +
-      10 * 15,
+  BOREAS_BIG_BLOCK = PICTURE_BYTES(BOREAS_CRYSTAL) + 24 * 38 + 20 * 26 +
+      12 * 10 + 11 * 16 + 8 * 14 + 10 * 15,
   /// After the big block, the three spray pictures and the seven small shards.
-  BOREAS_STREAK = BOREAS_BIG_BLOCK + 24 * 48 + 3 * (16 * 16) + 8 * 4 + 12 * 4 +
-      5 * 3 + 7 * 4 + 7 * 6 + 6 * 12 + 7 * 10
+  BOREAS_STREAK = BOREAS_BIG_BLOCK + PICTURE_BYTES(BOREAS_BIG_BLOCK) +
+      3 * (16 * 16) + 8 * 4 + 12 * 4 + 5 * 3 + 7 * 4 + 7 * 6 + 6 * 12 + 7 * 10
 };
 
 /// gBoreas_Points has an x and a y for each of BOREAS_POINTS crystals: the
-/// mass's standing crystals, which crumble away BOREAS_POINTS, then
-/// BOREAS_CRYSTALS_AFTER_CRUMBLE_A and BOREAS_CRYSTALS_AFTER_CRUMBLE_B at a
-/// time, and the crystals that rise among the targets.
+/// mass's standing crystals, all BOREAS_POINTS of them until the first
+/// crumble, then BOREAS_CRYSTALS_AFTER_CRUMBLE_A, then
+/// BOREAS_CRYSTALS_AFTER_CRUMBLE_B, then none; and the crystals that rise among
+/// the targets.
 #define BOREAS_POINTS 16
 #define BOREAS_POINT_X(crystal) gBoreas_Points[crystal][0]
 #define BOREAS_POINT_Y(crystal) gBoreas_Points[crystal][1]
@@ -328,7 +329,7 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
         }
       }
       for (i = 0; i != BOREAS_SPRAY; i++) {
-        if (frame >= i / 4 + 224) {
+        if (frame >= i / 4 + BOREAS_SPRAY_FRAME) {
           s32 picture = i % 3;
 
           if ((i & 1) == 0) {
@@ -344,8 +345,8 @@ void BattleEffect_RunBoreas(struct BattleEffectParams *args) {
             PARTICLES[i].x = toFIXED(72);
             PARTICLES[i].y = toFIXED(56);
           }
-          // DEAD: a fleck's variant, random from frame 224, is never read
-          // (the second half sets 0 to 63 anew); the ROM keeps the count.
+          // DEAD: a fleck's variant, random from BOREAS_SPRAY_FRAME, is never
+          // read (the second half sets 0 to 63 anew); the ROM keeps the count.
           PARTICLES[i].variant++;
         }
       }

@@ -298,17 +298,18 @@ void BattleEffect_RunHealingMotes(struct BattleEffectParams *args, u32 mode) {
       // Each target's motes swirl round it.
       if (frame > start) {
         if (mode == HEALING_MODE_PLY || mode == HEALING_MODE_PSY_CRYSTAL) {
-          Matrix_RotateY((frame - start) << 9);
+          Matrix_RotateY((frame - start) * (TRIG_TURN / 128));
         } else if (mode == HEALING_MODE_WISH) {
-          Matrix_RotateX(frame << 9);
-          Matrix_RotateZ(frame << 9);
+          Matrix_RotateX(frame * (TRIG_TURN / 128));
+          Matrix_RotateZ(frame * (TRIG_TURN / 128));
         } else if (mode == HEALING_MODE_CURE) {
-          Matrix_RotateY((frame - member * HEALING_CURE_RING_LAG) << 9);
+          Matrix_RotateY((frame - member * HEALING_CURE_RING_LAG) *
+                         (TRIG_TURN / 128));
         } else if (mode == HEALING_MODE_CURE_POISON) {
-          Matrix_RotateY((frame - start) << 9);
+          Matrix_RotateY((frame - start) * (TRIG_TURN / 128));
         } else {
-          Matrix_RotateY((frame - start) << 9);
-          Matrix_RotateX((frame - start) << 9);
+          Matrix_RotateY((frame - start) * (TRIG_TURN / 128));
+          Matrix_RotateX((frame - start) * (TRIG_TURN / 128));
         }
 
         // Four motes appear each frame.

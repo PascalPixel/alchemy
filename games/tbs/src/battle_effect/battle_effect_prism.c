@@ -29,8 +29,6 @@
 /// How far each channel of the phase palette sways either way, in colour
 /// levels.
 #define PHASE_SWAY_LEVELS 16
-/// Twice a 16.16 value, as a whole number: FIXEDtoINT a shift short.
-#define FIXEDtoINT_TWICE(value) ((value) >> 15)
 
 /// Crystals drop out of the sky onto the targets' side and shatter on the
 /// ground into spinning shards, flashing the targets and shaking the screen.
@@ -236,4 +234,3 @@ void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
 #undef PRISM_TURN_SLOWING_FRAMES
 #undef PRISM_TURN_SLOWDOWN
 #undef PHASE_SWAY_LEVELS
-#undef FIXEDtoINT_TWICE

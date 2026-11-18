@@ -94,9 +94,9 @@ void Heading_WipeTilePixel(s32 x, s32 y, u32 pixel) {
   cell += pixel >> 2;
 
   switch (pixel & 3) {
-  case 0: {
+  case 0:
     *cell &= 0xfff0;
-  } break;
+    break;
   case 1:
     *cell &= 0xff00;
     break;

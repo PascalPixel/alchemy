@@ -8,6 +8,11 @@
 // attributes.
 #define MAPGRID_CELL_PICTURE_ID_MASK 0x00000fff ///< the cell picture number
 #define MAPGRID_ATTRIBUTE_MASK 0xfffff000       ///< the cell's attributes
+/// The shift that leaves a cell word's picture number on top, its attributes
+/// shifted out. Shifted back down by one less it is the number times 2, the
+/// picture's offset in words in gCellPictures (a word for each of its two rows
+/// of 2 tiles); by two less, times 4, its offset in halfwords.
+#define MAPGRID_CELL_PICTURE_SHIFT 20
 /// The map's 128 by 128 cell words.
 #define MAPGRID_CELLS ((u32 *)Ram_MapGridCellBuffer)
 /// A layer's visible area in cells: the screen's 15 by 10, and the row and
@@ -132,9 +137,9 @@ MapGrid_CopyCellPictureHalfColumn(u32 *cell, u8 *screenMap, u32 screenRowOffset,
                                   u32 screenColumnOffset, u32 tileHalf) {
   u16 *entry;
   u8 *screenTile;
-  // A cell picture is 8 bytes of gCellPictures: its top two tile entries, then
-  // its bottom two. The cell's low 12 bits times 4 index its first halfword.
-  u32 index = ((*cell << 20) >> 18) + tileHalf;
+  u32 index = ((*cell << MAPGRID_CELL_PICTURE_SHIFT) >>
+               (MAPGRID_CELL_PICTURE_SHIFT - 2)) +
+              tileHalf;
 
   entry = (u16 *)Ram_CellPictures + index;
   screenTile =
@@ -151,8 +156,8 @@ static __inline__ void MapGrid_CopyCellPictureToScreen(u32 *cell, u8 *screenMap,
                                                        u32 screenColumnOffset) {
   u32 *rows;
   u8 *screenTile;
-  // The cell's low 12 bits times 2 index the picture's first word.
-  u32 index = (*cell << 20) >> 19;
+  u32 index =
+      (*cell << MAPGRID_CELL_PICTURE_SHIFT) >> (MAPGRID_CELL_PICTURE_SHIFT - 1);
 
   rows = (u32 *)Ram_CellPictures + index;
   screenTile = screenMap + screenRowOffset * 2 + screenColumnOffset * 2;
@@ -911,6 +916,7 @@ void MapGrid_SetShownLayers(u32 layerFlags) {
 #undef MAPGRID_CELLS
 #undef MAPGRID_CELL_PICTURE_ID_MASK
 #undef MAPGRID_ATTRIBUTE_MASK
+#undef MAPGRID_CELL_PICTURE_SHIFT
 #undef MAPGRID_VISIBLE_WIDTH
 #undef MAPGRID_VISIBLE_HEIGHT
 #undef MAPGRID_LAYER_SCREEN_BYTES

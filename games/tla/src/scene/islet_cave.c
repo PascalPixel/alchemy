@@ -105,10 +105,6 @@ void Teleport_PlaySparks(void);
 void FieldEffect_StartBlankOverlay(s32 mode);
 void PaletteFade_PackTarget(void);
 
-/// The colours the palette fade keeps of each of the BG and OBJ palettes: its
-/// source holds the BG palette's first ones, then the OBJ palette's.
-#define PALETTE_FADE_LAYER_COLORS 224
-
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies the BG and OBJ palettes into the palette
 /// fade's source and starts the blend.
@@ -128,7 +124,7 @@ void Palette_SetColors(u16 *slots, u16 *colours, u16 *cycleColours,
     SET_RGB(BG_PLTT[index], red, green, blue);
   }
   Dma_Set((const void *)BG_PLTT, fade->palette, DMA_COPY_WORDS(112), REG_DMA3);
-  Dma_Set((const void *)OBJ_PLTT, &fade->palette[PALETTE_FADE_LAYER_COLORS],
+  Dma_Set((const void *)OBJ_PLTT, &fade->palette[PALETTE_FADE_BG_COLORS],
           DMA_COPY_WORDS(112), REG_DMA3);
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   if (gMainRoutineWork.teleportState == 2)
@@ -218,7 +214,7 @@ enum { ACTOR_SENTINEL = 8, ACTOR_FIRST_FIRE = 9 };
 
 /// Set once Tremor has shaken Serac out of the winged statue, or on entering
 /// once he is caught or has run off to hide: the statue then stays still.
-#define FLAG_SERAC_SHAKEN_OUT FLAG_SCENE_TEMP_30
+#define FLAG_SERAC_REVEALED FLAG_SCENE_TEMP_30
 
 /// The Sentinel's room's entrance the battle with it returns the party to.
 enum { ENTRANCE_AFTER_BATTLE = 2 };
@@ -443,8 +439,8 @@ s32 Scene_Initialize(void) {
   } else if (gMainRoutineWork.next == SCENE_ISLET_CAVE_SERAC) {
     if (GameFlag_Get(FLAG_DJINNI(DJINNI_SERAC)) ||
         GameFlag_Get(FLAG_DJINNI_HIDING(DJINNI_SERAC))) {
-      GameFlag_Set(FLAG_SERAC_SHAKEN_OUT);
-    } else if (!GameFlag_Get(FLAG_SERAC_SHAKEN_OUT)) {
+      GameFlag_Set(FLAG_SERAC_REVEALED);
+    } else if (!GameFlag_Get(FLAG_SERAC_REVEALED)) {
       Actor_SetPosition(ACTOR_SERAC, 0, 0);
       Actor_SetMovementTypeById(ACTOR_WINGED_STATUE,
                                 gIsletCave_TremorTargetScript);
@@ -467,9 +463,10 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// The logs floating in the cave's water, in the order the party rides them.
-/// The first six are three cells tall and drift east and west, the seventh is
-/// three cells wide and drifts north and south.
+/// The logs floating in the cave's water, in the order the scene places them:
+/// two in the west hall's water, four in the east hall's and the seventh across
+/// the east hall's south end. The first six are three cells tall and drift east
+/// and west, the seventh is three cells wide and drifts north and south.
 enum {
   ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
   ACTOR_SECOND_LOG,
@@ -545,10 +542,11 @@ void IsletCave_PlaceNorthSouthLog(s32 actorId, s32 sourceColumn, s32 sourceRow,
   }
 }
 
-/// Stepping onto a log plays its animation from the start.
+/// Stepping onto a log dips it under the leader's step: it is set back to
+/// floating first, so the dip plays from its start.
 void IsletCave_SettleLog(s32 actorId) {
-  Actor_SetAnimationById(actorId, 1);
-  Actor_SetAnimationById(actorId, 2);
+  Actor_SetAnimationById(actorId, FLOATING_LOG_ANIMATION_FLOAT);
+  Actor_SetAnimationById(actorId, FLOATING_LOG_ANIMATION_SETTLE);
   return;
 }
 
@@ -644,13 +642,13 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
   actor->acceleration = toFIXED(1) / 2;
   Actor_SetMoveTarget(actor, x, actor->y.fixed, z);
   if (dx < 0 || dz < 0) {
-    Actor_SelectAnimation(actor, 4);
+    Actor_SelectAnimation(actor, FLOATING_LOG_ANIMATION_ROLL_WEST_OR_NORTH);
   } else {
-    Actor_SelectAnimation(actor, 3);
+    Actor_SelectAnimation(actor, FLOATING_LOG_ANIMATION_ROLL_EAST_OR_SOUTH);
   }
   Sound_Play(SE_LOG_PUSH);
   Actor_WaitForMove(leader);
-  Actor_SelectAnimation(actor, 2);
+  Actor_SelectAnimation(actor, FLOATING_LOG_ANIMATION_SETTLE);
   Sound_Play(SE_STOP_EXIT_SE);
   Event_End();
 }
@@ -833,20 +831,19 @@ void IsletCave_SentinelAwaits(void) {
   Event_End();
 }
 
-/// A fixed-point z in pixels, rounded down to a multiple of 8.
-#define Z_ROUNDED_TO_8(z) (((z) >> 19) << 3)
-
-/// Tremor on the shaking spot: Serac drops out.
+/// Tremor on the winged statue shakes Serac out: he leaps from it and lands in
+/// the corridor beside the leader, and the statue stops.
 void IsletCave_TremorRevealsSerac(void) {
-  if (!Event_GetFlag(FLAG_SERAC_SHAKEN_OUT)) {
+  if (!Event_GetFlag(FLAG_SERAC_REVEALED)) {
     struct Actor *actor = Actor_GetById(ACTOR_SERAC);
     struct Actor *owner = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-    Event_SetFlag(FLAG_SERAC_SHAKEN_OUT);
+    Event_SetFlag(FLAG_SERAC_REVEALED);
     Actor_SetPosition(ACTOR_SERAC, 296, 160);
     actor->speedLimit = toFIXED(3) / 2;
     actor->velocityY = toFIXED(15);
-    Actor_MoveToAndWait(ACTOR_SERAC, 344, Z_ROUNDED_TO_8(owner->z.fixed) + 24);
+    Actor_MoveToAndWait(ACTOR_SERAC, 344,
+                        FIELD_HALF_CELL(owner->z.fixed) * 8 + 24);
     Actor_Stop(ACTOR_WINGED_STATUE);
     actor->speedLimit = toFIXED(1);
     Actor_TurnToFaceEachOther(gMainRoutineWork.leaderActorId, ACTOR_SERAC, 0);
@@ -984,7 +981,7 @@ struct Trigger gIsletCave_Triggers[] = {
     {TRIGGER_STEP, CELL_BEHAVIOR_ISLET_CAVE_FIFTH_LOG, CONDITION_ALWAYS, EVENT(IsletCave_SettleFifthLog)},
     {TRIGGER_STEP, CELL_BEHAVIOR_ISLET_CAVE_SIXTH_LOG, CONDITION_ALWAYS, EVENT(IsletCave_SettleSixthLog)},
     {TRIGGER_STEP, CELL_BEHAVIOR_ISLET_CAVE_SEVENTH_LOG, CONDITION_ALWAYS, EVENT(IsletCave_SettleSeventhLog)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, EVENT(IsletCave_FightMeld)},
+    {TRIGGER_TALK, ACTOR_MELD, CONDITION_ALWAYS, EVENT(IsletCave_FightMeld)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 50, CONDITION_ALWAYS, EVENT(IsletCave_TeleportToFirstCircle)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 51, CONDITION_ALWAYS, EVENT(IsletCave_TeleportToSecondCircle)},
     {TRIGGER_TABLE_END},
@@ -1001,8 +998,8 @@ struct Trigger gIsletCave_Room2Triggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(IsletCave_OpenDoorAndEnter)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(IsletCave_OpenDoorAndEnter)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(IsletCave_OpenDoorAndEnter)},
-    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 8, FLAG_SERAC_SHAKEN_OUT, EVENT(IsletCave_TremorRevealsSerac)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(IsletCave_FightSerac)},
+    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), ACTOR_WINGED_STATUE, FLAG_SERAC_REVEALED, EVENT(IsletCave_TremorRevealsSerac)},
+    {TRIGGER_TALK, ACTOR_SERAC, CONDITION_ALWAYS, EVENT(IsletCave_FightSerac)},
     {TRIGGER_TABLE_END},
 };
 

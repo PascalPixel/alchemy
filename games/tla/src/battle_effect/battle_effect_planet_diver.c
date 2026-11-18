@@ -13,10 +13,11 @@
 #define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
 
 #define HAUNT_SCATTERED 512
-#define HAUNT_SKULLS 8 ///< skulls drawn around each target
-#define HAUNT_SLOTS 64 ///< particles reserved for each target
+#define HAUNT_SPIRITS 8 ///< evil spirits drawn around each target
+#define HAUNT_SLOTS 64  ///< particles reserved for each target
 
-/// Skulls close in on each target in turn.
+/// Evil spirits (SkullSheet's skulls, smeared pink by the ripple) close in on
+/// each target in turn.
 ///
 /// Abilities: Haunt.
 void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
@@ -41,7 +42,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
 
-  // Scatter every skull up to 64 pixels from its centre.
+  // Scatter every spirit up to 64 pixels from its centre.
   for (i = 0; i != HAUNT_SCATTERED; i++) {
     SET_POSITION(&PARTICLES[i], ((Random16() & 255) - 127) << 15,
                  ((Random16() & 255) - 127) << 15,
@@ -71,7 +72,7 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
       struct MotionObject *target =
           BattleObject_GetFar(args->targets[k])->object;
 
-      // Spin the skulls about a point 20 pixels above the target.
+      // Spin the spirits about a point 20 pixels above the target.
       EFFECT_VIEW_FROM_CAMERA(camera);
       SET_VECTOR(point, target->x, toFIXED(20), target->z);
       Matrix_TranslateVector(point);
@@ -81,28 +82,28 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
           BattleEffect_TintBattler(args->targets[k], SPRITE_COLOR_WHITE,
                                    POSE_DAMAGE, k, 32);
 
-        // Each skull steps a part of its distance nearer the centre, and is
+        // Each spirit steps a part of its distance nearer the centre, and is
         // gone once it arrives.
-        for (i = 0; i != HAUNT_SKULLS; i++) {
-          struct Particle *skull = &PARTICLES[k * HAUNT_SLOTS + i];
+        for (i = 0; i != HAUNT_SPIRITS; i++) {
+          struct Particle *spirit = &PARTICLES[k * HAUNT_SLOTS + i];
 
           if (frame > (k * 8 + i) * 4) {
-            s32 x = (skull->x >> 8) * (skull->x >> 8);
-            s32 y = (skull->y >> 8) * (skull->y >> 8);
-            s32 z = (skull->z >> 8) * (skull->z >> 8);
+            s32 x = (spirit->x >> 8) * (spirit->x >> 8);
+            s32 y = (spirit->y >> 8) * (spirit->y >> 8);
+            s32 z = (spirit->z >> 8) * (spirit->z >> 8);
             s32 dist = Iwram_Sqrt(x + y + z) >> 8;
 
             if (dist != 0) {
-              EffectPosition_ProjectPoint((s32 *)skull, &screenPosition);
+              EffectPosition_ProjectPoint((s32 *)spirit, &screenPosition);
               screenPosition.x >>= 1;
               draw[0](canvas, work->sheet + i % 3 * PICTURE_BYTES(SKULL),
                       screenPosition.x - SKULL_WIDTH / 2,
                       screenPosition.y - SKULL_HEIGHT / 2, SKULL_WIDTH,
                       SKULL_HEIGHT);
-              skull->x -= skull->x / dist;
-              skull->y -= skull->y / dist;
-              skull->z -= skull->z / dist;
-              skull->variant++;
+              spirit->x -= spirit->x / dist;
+              spirit->y -= spirit->y / dist;
+              spirit->z -= spirit->z / dist;
+              spirit->variant++;
             }
           }
         }
@@ -127,10 +128,9 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
 
 /// Unused: no row of gAbilityBattleEffects in either game names its kind, and
 /// the handler table is reached with no other kind (BattleEffect_RunFromTable),
-/// so the player never sees it. Its code draws four spirals on a circle of
-/// radius 16 about the point 40 pixels above each target, one target after
-/// another, 16 frames apart and for 59 frames each, turning a 128th of a turn
-/// a frame; each target takes its damage pose 32 frames into its turn.
+/// so the player never sees it. Its code draws the spirals about the point 40
+/// pixels above each target, one target after another, turning a 128th of a
+/// turn a frame; each target takes its damage pose 32 frames into its turn.
 void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -457,7 +457,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
 
 #undef CANVAS_WAVE_BG2X
 #undef HAUNT_SCATTERED
-#undef HAUNT_SKULLS
+#undef HAUNT_SPIRITS
 #undef HAUNT_SLOTS
 #undef ORBITING_SPIRALS
 #undef ORBITING_SPIRALS_RADIUS

@@ -4,8 +4,6 @@
 
 #include "event_commands_internal.h"
 
-/// The actors in gActors, as field_internal.h counts them.
-#define ACTOR_COUNT 64
 /// A following actor (MOVEMENT_TYPE_FOLLOW_WATCHED) stays its timer's
 /// distance in pixels from the watched actor: from as far as that it walks
 /// toward a point this many pixels along the way for each timer's distance it
@@ -185,7 +183,6 @@ struct Actor *Actor_FindNearestFacingTarget(struct Actor *self, s32 sprite) {
   return found;
 }
 
-#undef ACTOR_COUNT
 #undef FOLLOW_STRIDE
 #undef FACING_TARGET_REACH
 #undef FACING_TARGET_HEIGHT

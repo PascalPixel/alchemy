@@ -295,8 +295,8 @@ next:
       const u16 *colors = gSpriteViewer_BackdropColors;
       backdrop++;
       backdrop &= 7;
-      /* FAKEMATCH(temporary): the colour's address summed by hand; as
-       * colors[backdrop]. */
+      /* FAKEMATCH(signature): the colour's address held and summed as an
+       * integer; as colors[backdrop]. */
       *palette = *(const u16 *)((u32)colors + (backdrop << 1));
     }
     wait(1);
@@ -386,7 +386,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
     for (; i < UI_SPRITE_VIEWER_COPY_COUNT; i++)
       positions++;
     break;
-  case ANIM_FACING_SIX_PICTURES:
+  case ANIM_FACING_FIVE_PICTURES:
   case ANIM_FACING_EIGHT_PICTURES:
   case ANIM_FACING_EIGHT_NO_TABLE:
   case ANIM_FACING_EIGHT_PICTURES_MIRRORED:
@@ -404,7 +404,7 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
       positions++;
     break;
   case ANIM_FACING_FOUR_PICTURES:
-  case ANIM_FACING_SIX_PICTURES_UNDRAWN:
+  case ANIM_FACING_SIX_PICTURES:
     for (i = 0; i < UI_SPRITE_VIEWER_COPY_COUNT; i++) {
       angle <<= ANGLE_BITS;
       positions->x = toFIXED(centerX);
@@ -576,7 +576,7 @@ void SpriteViewer_PlaceRing(void) {
     step = DEGtoANG(60);
     cnt = 6;
     break;
-  case ANIM_FACING_SIX_PICTURES:
+  case ANIM_FACING_FIVE_PICTURES:
   case ANIM_FACING_EIGHT_PICTURES:
   case ANIM_FACING_EIGHT_NO_TABLE:
   case ANIM_FACING_EIGHT_PICTURES_MIRRORED:
@@ -585,7 +585,7 @@ void SpriteViewer_PlaceRing(void) {
     cnt = 8;
     break;
   case ANIM_FACING_FOUR_PICTURES:
-  case ANIM_FACING_SIX_PICTURES_UNDRAWN:
+  case ANIM_FACING_SIX_PICTURES:
     angle = 0;
     step = DEGtoANG(36);
     cnt = UI_SPRITE_VIEWER_COPY_COUNT;

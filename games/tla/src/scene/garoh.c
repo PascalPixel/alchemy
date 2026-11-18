@@ -598,11 +598,14 @@ const void *Scene_GetTriggers(void) {
   return gGaroh_Triggers;
 }
 
+/// A howl comes each time the night's frames under this mask are 0.
+#define HOWL_PERIOD_MASK 0x3ff
+
 /// A howl every 1,024 frames while it is night.
 void Garoh_HowlAtNight(void) {
   if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED) && Flag_IsSet(FLAG_GAROH_NIGHT)) {
     gGaroh_HowlFrames++;
-    if ((gGaroh_HowlFrames & 0x3ff) == 0)
+    if ((gGaroh_HowlFrames & HOWL_PERIOD_MASK) == 0)
       Event_PlaySound(SE_HOWL);
   }
 }
@@ -964,7 +967,7 @@ void Garoh_ScatterDustRing(s32 objectId) {
   params.update = FieldEffect_AdvanceMotion;
   angleStep = 0;
   do {
-    angle = angleStep * (TRIG_TURN / 16);
+    angle = angleStep * (TRIG_TURN / DUST_RING_PUFFS);
     vec.x = Trig_Cos(angle);
     vec.y = 0;
     z = Math_Sin(angle);
@@ -975,10 +978,10 @@ void Garoh_ScatterDustRing(s32 objectId) {
     FieldEffect_Spawn(actor->x.fixed, actor->y.fixed, actor->z.fixed, x, vec.y,
                       z, EFFECT_USE_UPDATE | 1, &params);
     angleStep += 2;
-  } while (angleStep <= 16);
+  } while (angleStep <= DUST_RING_PUFFS);
 }
 
-extern u32 gGaroh_PuffScript[];
+extern u32 gGaroh_QuestionMarkScript[];
 
 /// Lash ties the rope between the third and fourth pillars.
 void Garoh_LashRope(void) {
@@ -992,11 +995,11 @@ s32 Garoh_MetWerewolves(void) {
     return Flag_IsSet(FLAG_GAROH_MET_WEREWOLVES);
 }
 
-/// Spawns a puff at (x, y, z), its picture turned by rotation, that waits
-/// timer frames: the shape of Eastern Alhafra's notes.
-void Garoh_SpawnPuff(x, y, z, rotation, timer) s32 x, y, z;
+/// Pops a "?" bubble up at (x, y, z), tilted by rotation, for the given
+/// frames.
+void Garoh_PopQuestionMark(x, y, z, rotation, frames) s32 x, y, z;
 s16 rotation;
-s32 timer;
+s32 frames;
 {
   struct Actor *object;
   struct Sprite *sprite;
@@ -1004,10 +1007,10 @@ s32 timer;
   object = FieldActor_Create(SPRITE_EMOTE, x, y, z);
   if (object != NULL) {
     sprite = object->sprite;
-    Actor_SelectAnimation(object, 1);
-    Actor_StartScript(object, gGaroh_PuffScript);
+    Actor_SelectAnimation(object, EMOTE_QUESTION);
+    Actor_StartScript(object, gGaroh_QuestionMarkScript);
     object->motionFlags = 0;
-    object->wait = timer;
+    object->wait = frames;
     sprite->flags = 0;
     sprite->rotation = rotation;
   }
@@ -1015,16 +1018,19 @@ s32 timer;
 
 #include "text/msg_ids.h"
 
-/// Two puffs rise from an actor's head.
-void Garoh_PuffFrom(s32 id) {
+/// Two question marks pop up over the actor's head in turn, right and left,
+/// each tilted, a third of a second apart.
+void Garoh_PopQuestionMarks(s32 id) {
   struct Actor *actor = Actor_Get(id);
 
-  Garoh_SpawnPuff(actor->x.fixed + toFIXED(8), actor->y.fixed + toFIXED(28),
-                  actor->z.fixed, TRIG_TURN / 16, 20);
+  Garoh_PopQuestionMark(actor->x.fixed + toFIXED(8),
+                        actor->y.fixed + toFIXED(28), actor->z.fixed,
+                        TRIG_TURN / 16, 20);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(20);
-  Garoh_SpawnPuff(actor->x.fixed - toFIXED(8), actor->y.fixed + toFIXED(28),
-                  actor->z.fixed, TRIG_TURN * 15 / 16, 20);
+  Garoh_PopQuestionMark(actor->x.fixed - toFIXED(8),
+                        actor->y.fixed + toFIXED(28), actor->z.fixed,
+                        TRIG_TURN * 15 / 16, 20);
   Event_PlaySound(SE_LIGHT_APPEAR);
   FieldEvent_Wait(20);
 }
@@ -1142,6 +1148,8 @@ void Garoh_WerewolfRunsPast(void) {
   FieldCamera_WaitForArrival();
   werewolf = Actor_Get(ACTOR_WEREWOLF);
   Actor_SetAnimation(ACTOR_WEREWOLF, 2);
+  // The werewolf lopes down the path in eight bounds at random speeds,
+  // weaving from side to side.
   i = 0;
   do {
     s32 tenths;
@@ -1354,7 +1362,7 @@ void Garoh_WerewolfRunsPast(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_KRADEN, 0, 0);
-  Garoh_PuffFrom(ACTOR_SHEBA);
+  Garoh_PopQuestionMarks(ACTOR_SHEBA);
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_SHEBA, 0, 0);
   Actor_RunRepeatedMotion(ACTOR_KRADEN, 2);
@@ -2423,8 +2431,9 @@ void Garoh_MahaTellsTheLegend(void) {
   Actor_SetAnimation(ACTOR_KRADEN, ANIM_NOD);
   Actor_AnimateThenWait(ACTOR_MAHA, ANIM_NOD, 20);
   FieldEvent_Wait(10);
-  FieldEvent_ShowTwoMessagesAndWait(ACTOR_MAHA, 9, 2, 9, 5, 9, 17, 14, 20, 9,
-                                    0);
+  // "She's right!", said by both at once.
+  FieldEvent_ShowTwoMessagesAndWait(ACTOR_MAHA, 9, 2, 9, 5, ACTOR_KRADEN, 17,
+                                    14, 20, 9, 0);
   if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
     Actor_FaceDirection(ACTOR_PIERS, FACING_NORTHWEST, 0);
   }
@@ -2507,8 +2516,8 @@ void Garoh_MahaTellsTheLegend(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_FaceDirection(ACTOR_MAHA, FACING_NORTH, 0);
   FieldEvent_Wait(40);
-  Garoh_PuffFrom(ACTOR_MAHA);
-  Garoh_PuffFrom(ACTOR_MAHA);
+  Garoh_PopQuestionMarks(ACTOR_MAHA);
+  Garoh_PopQuestionMarks(ACTOR_MAHA);
   FieldEvent_Wait(20);
   Actor_WalkByAndWait(ACTOR_MAHA, 16, 0);
   FieldEvent_Wait(20);
@@ -3108,7 +3117,7 @@ struct Trigger gGaroh_WerewolfCaveTriggers[] = {
 
 s32 gGaroh_HowlFrames = 0;
 
-u32 gGaroh_PuffScript[] = {
+u32 gGaroh_QuestionMarkScript[] = {
     SC_RELEASE,
 };
 #undef Actor_AnimateThenWait

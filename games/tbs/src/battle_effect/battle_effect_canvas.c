@@ -7,7 +7,10 @@
 
 /// How far a row of BattleEffect_WipeCanvas's wipe lags behind its front, at
 /// most: each row lags a random 0 to WIPE_LAG_MAX pixels.
-#define WIPE_LAG_MAX 0x3f
+#define WIPE_LAG_MAX 63
+/// Where the across wipe's front stops, three frames past
+/// CANVAS_SIZE + WIPE_LAG_MAX, where the wipe is finished.
+#define WIPE_ACROSS_END 256
 
 /// Wipes the whole canvas to one colour with a ragged edge, a frame at a time:
 /// 23 frames across, 15 down.
@@ -43,8 +46,7 @@ void BattleEffect_WipeCanvas(s32 direction, s32 fill) {
         }
       }
       EFFECT_PRESENT_CANVAS(work);
-      // The across wipe runs on to 256, further than it needs to finish.
-    } while (front <= 256);
+    } while (front <= WIPE_ACROSS_END);
   } else {
     s32 front;
     s32 speed;
@@ -154,11 +156,8 @@ void BattleEffect_FlushPendingGraphicsTransfer(void) {
   work->transferPending = 0;
 }
 
-/// One step of the battle background's darkening, a sixtieth of its full
-/// colour, as the battle darkens it.
-#define BACKGROUND_LEVEL_STEP (FIXED_ONE / 60)
-/// The battle background's colours, BG palettes 6 to 13.
-#define BATTLE_BACKGROUND_COLORS (8 * PALETTE_COLORS)
+/// The battle background's first BG palette, of the eight its colours take.
+#define BATTLE_BACKGROUND_PALETTE 6
 /// The canvas's usual weight over the battle, in sixteenths: every canvas
 /// opens with it.
 #define CANVAS_BLEND_LEVEL 14
@@ -197,7 +196,7 @@ void Palette_StepFadeTransfer(void) {
     s32 step = ++work->fadeStep;
 
     Graphics_ScaleRgb555ClampedFar(
-        battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
+        battle->palette, (void *)&BG_PLTT_COLOR(BATTLE_BACKGROUND_PALETTE, 0),
         FIXED_ONE - step * BACKGROUND_LEVEL_STEP, BATTLE_BACKGROUND_COLORS);
     work->fadeFrames--;
   }
@@ -217,7 +216,8 @@ void BattleEffect_CountDownBattlerTints(void) {
   s32 actorIndex;
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  for (actorIndex = 0; actorIndex != 8; actorIndex++) {
+  for (actorIndex = 0; actorIndex != ARRAY_COUNT(work->actorTimers);
+       actorIndex++) {
     if (work->actorTimers[actorIndex] != 0) {
       if ((work->actorTimers[actorIndex] = work->actorTimers[actorIndex] - 1) ==
           0) {
@@ -376,6 +376,12 @@ void BattleEffect_StartTiledCanvas(s32 bgControl) {
   }
 }
 
+/// The level a canvas darkens the battle background to, a level a frame.
+#define BACKGROUND_DARKENED_LEVEL BACKGROUND_DARKEN_FRAMES
+/// The levels the battle background brightens by each frame as the canvas
+/// closes, back to its own colours.
+#define BACKGROUND_RESTORE_STEP 3
+
 /// Closes the canvas layer and brings the battle background's colours back.
 void BattleEffect_EndCanvasLayer(void) {
   struct BattleEffectWork *work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
@@ -404,10 +410,13 @@ void BattleEffect_EndCanvasLayer(void) {
 
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, battle->background, 7);
   wait(1);
-  // The background brightens from level 21 back to its own colours over
-  // eight frames.
-  for (i = 0; i != 8; i++) {
-    BattleBackground_SetPaletteLevelFar(battle->background, 21 - i * 3);
+  // The background brightens from the darkened level back to its own colours
+  // over eight frames.
+  for (i = 0; i != BACKGROUND_DARKENED_LEVEL / BACKGROUND_RESTORE_STEP; i++) {
+    BattleBackground_SetPaletteLevelFar(battle->background,
+                                        BACKGROUND_DARKENED_LEVEL -
+                                            BACKGROUND_RESTORE_STEP -
+                                            i * BACKGROUND_RESTORE_STEP);
     wait(1);
   }
 
@@ -441,8 +450,6 @@ void BattleEffect_HideBg1AndRestoreBackdrop(void) {
 /// BG1's map while it shows the canvas at its own size: the battle's own BG1
 /// map, in screen block 31.
 #define CANVAS_BG1_SCREEN 31
-/// The bytes of one row of a background map, 32 entries.
-#define MAP_ROW_BYTES (BG_SCREEN_WIDTH * 2)
 /// Row `row` of BG1's map.
 #define BG1_MAP_ROW(row)                                                       \
   (BG_SCREEN_BLOCK(CANVAS_BG1_SCREEN) + (row) * MAP_ROW_BYTES)
@@ -592,11 +599,12 @@ void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
 }
 
 #undef WIPE_LAG_MAX
-#undef BACKGROUND_LEVEL_STEP
-#undef BATTLE_BACKGROUND_COLORS
+#undef WIPE_ACROSS_END
+#undef BATTLE_BACKGROUND_PALETTE
 #undef CANVAS_BLEND_LEVEL
+#undef BACKGROUND_DARKENED_LEVEL
+#undef BACKGROUND_RESTORE_STEP
 #undef CANVAS_BG1_SCREEN
-#undef MAP_ROW_BYTES
 #undef BG1_MAP_ROW
 #undef CANVAS_BG1_BLANK_TILE
 #undef CANVAS_BG1_FIRST_TILE

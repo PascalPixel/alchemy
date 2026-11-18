@@ -124,8 +124,8 @@ void Rope_Draw(void) {
         screenY = depth - prevY;
         if (screenX > -toFIXED(32) && screenX < toFIXED(DISPLAY_WIDTH + 32) &&
             screenY > -toFIXED(32) && screenY < toFIXED(DISPLAY_HEIGHT + 64)) {
-          s32 spriteX = (FIXEDtoINT(screenX) - 4) & 0x1ff;
-          s32 spriteY = (FIXEDtoINT(screenY) - 4) & 0xff;
+          s32 spriteX = (FIXEDtoINT(screenX) - 4) & OBJ_X_MASK;
+          s32 spriteY = (FIXEDtoINT(screenY) - 4) & OBJ_Y_MASK;
           struct AnimationSpritePart *sprite;
 
           prevY = FIXEDtoINT(prevY + depth) + ROPE_DEPTH;
@@ -843,8 +843,8 @@ void Tightrope_Draw(void) {
 
         if (screenX > -toFIXED(32) && screenX < toFIXED(DISPLAY_WIDTH + 32) &&
             screenY > -toFIXED(32) && screenY < toFIXED(DISPLAY_HEIGHT + 64)) {
-          s32 left = (FIXEDtoINT(screenX) - 4) & 0x1ff;
-          s32 top = (FIXEDtoINT(screenY) - 4) & 0xff;
+          s32 left = (FIXEDtoINT(screenX) - 4) & OBJ_X_MASK;
+          s32 top = (FIXEDtoINT(screenY) - 4) & OBJ_Y_MASK;
           s32 key = FIXEDtoINT(prevY + prevZ) + ROPE_DEPTH;
 
           ((u32 *)&node->sprite)[0] = 0;
@@ -1438,8 +1438,8 @@ void HangingVine_Draw(void) {
         screenY = prevZ - prevY;
         if (screenX > -toFIXED(32) && screenX < toFIXED(DISPLAY_WIDTH + 32) &&
             screenY > -toFIXED(32) && screenY < toFIXED(DISPLAY_HEIGHT + 64)) {
-          s32 sx = (FIXEDtoINT(screenX) - 8) & 0x1ff;
-          s32 sy = (FIXEDtoINT(screenY) - 8) & 0xff;
+          s32 sx = (FIXEDtoINT(screenX) - 8) & OBJ_X_MASK;
+          s32 sy = (FIXEDtoINT(screenY) - 8) & OBJ_Y_MASK;
           s32 depth = FIXEDtoINT(prevY + prevZ) + HANGING_VINE_DEPTH;
           struct AnimationSpritePart *sprite = &link->sprite;
 

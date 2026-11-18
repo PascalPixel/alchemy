@@ -14,8 +14,6 @@ extern const u8 gActor_WaitScript[];
 
 /// The actors of Ram_HeapSlots->actors, as field_internal.h's ACTOR_COUNT.
 #define ACTOR_COUNT 64
-/// The sprite priority bits of an OAM attribute 2's high byte.
-#define ATTR2_HIGH_PRIORITY_MASK (OBJ_PRIORITY(3) >> 8)
 
 /// The event command "actor set attached effect", by enum AttachedEffectFlag:
 /// removes the actor attached to an actor, attaches one
@@ -72,12 +70,13 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
   visual->flags = 0;
   effect->watchedActor = actor;
 
-  // The effect takes sprite priority 1, or the actor's: -(m + 1) is ~m, the
-  // bits besides the priority.
+  // The effect takes sprite priority 1, or the actor's.
   if (flags & ATTACHED_EFFECT_IN_FRONT) {
     s32 mask = ATTR2_HIGH_PRIORITY_MASK + 1;
     u8 attr = SPRITE_ATTR2_HIGH(visual);
 
+    /* FAKEMATCH(temporary): the mask's complement built as -(mask + 1) in a
+     * local; as attr & ~ATTR2_HIGH_PRIORITY_MASK. */
     mask = -mask;
     mask &= attr;
     mask |= OBJ_PRIORITY(1) >> 8;
@@ -90,6 +89,8 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
 
     priority &= src;
     dst = SPRITE_ATTR2_HIGH(visual);
+    /* FAKEMATCH(temporary): the mask's complement built as -(mask + 1) in a
+     * local; as dst & ~ATTR2_HIGH_PRIORITY_MASK. */
     mask = -mask;
     mask &= dst;
     mask |= priority;

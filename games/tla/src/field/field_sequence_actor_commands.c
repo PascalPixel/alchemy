@@ -31,12 +31,12 @@ void Actor_SetSpeedParameters(s32 actorId, FIXED speedLimit,
 }
 
 /// Gives an actor a movement type or actor script (Actor_SetMovementType)
-/// and makes it face where it moves (steeringFlags bit 0).
+/// and makes it face where it moves (ACTOR_FACES_MOTION).
 void Actor_SetMovementTypeById(s32 actorId, const void *script) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
-    actor->steeringFlags |= 1;
+    actor->steeringFlags |= ACTOR_FACES_MOTION;
     Actor_SetMovementType(actor, (s32)script);
   }
 }
@@ -47,7 +47,7 @@ void Actor_SetMovementTypeById(s32 actorId, const void *script) {
 void Actor_Stop(s32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
   if (actor != NULL) {
-    actor->steeringFlags |= 1;
+    actor->steeringFlags |= ACTOR_FACES_MOTION;
     Actor_StartIdleFar(actor);
   }
 }
@@ -58,7 +58,7 @@ void Actor_ResetTargetsAndVelocity(u32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
-    actor->steeringFlags |= 1;
+    actor->steeringFlags |= ACTOR_FACES_MOTION;
     Actor_StartIdleFar(actor);
     actor->targetX = TARGET_UNSET;
     actor->targetY = TARGET_UNSET;
@@ -94,7 +94,7 @@ void Actor_SetMovementTypeAndWaitById(s32 actorId, const void *script) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
-    actor->steeringFlags |= 1;
+    actor->steeringFlags |= ACTOR_FACES_MOTION;
     Actor_SetMovementType(actor, (s32)script);
     Actor_WaitForScriptEndFar(actor);
   }
@@ -270,7 +270,7 @@ void Actor_SetHorizontalPositionWithTerrain(u32 actorId, FIXED x, FIXED z) {
     Actor_SetPositionAndResetMotionFar(actor, x, actor->y.fixed, z);
     // Swap the old ground's height for the new one, so the actor's height above
     // the ground is kept.
-    if (actor->motionFlags & 1) {
+    if (actor->motionFlags & ACTOR_FOLLOWS_TERRAIN) {
       terrainHeight = MapGrid_GetTerrainHeightFar(actor->layer, actor->x.fixed,
                                                   actor->z.fixed);
       actor->y.fixed = actor->y.fixed - actor->groundHeight + terrainHeight;
@@ -297,7 +297,7 @@ void Actor_SetHorizontalPositionAndAngleWithTerrain(actorId, x, z, angle)
     Actor_StartIdleFar(actor);
     Actor_SetPositionAndResetMotionFar(actor, x, actor->y.fixed, z);
     actor->facing = angle;
-    if (actor->motionFlags & 1) {
+    if (actor->motionFlags & ACTOR_FOLLOWS_TERRAIN) {
       terrainHeight = MapGrid_GetTerrainHeightFar(actor->layer, actor->x.fixed,
                                                   actor->z.fixed);
       actor->y.fixed = actor->y.fixed - actor->groundHeight + terrainHeight;
@@ -316,7 +316,7 @@ void Actor_SetPositionWithTerrain(u32 actorId, FIXED x, FIXED y, FIXED z) {
   if (actor != NULL) {
     Actor_StartIdleFar(actor);
     Actor_SetPositionAndResetMotionFar(actor, x, y, z);
-    if (actor->motionFlags & 1) {
+    if (actor->motionFlags & ACTOR_FOLLOWS_TERRAIN) {
       terrainHeight = MapGrid_GetTerrainHeightFar(actor->layer, actor->x.fixed,
                                                   actor->z.fixed);
       actor->y.fixed = actor->y.fixed - actor->groundHeight + terrainHeight;
@@ -359,8 +359,8 @@ void Actor_SetAnimationSpeedById(s32 actorId, s32 steps) {
 }
 
 /// Waits, at most 90 frames, for an actor's animation to change or for its
-/// first sprite animation's script to reach code 241. Only an actor drawn as
-/// one sprite is waited for.
+/// first sprite animation's script to reach its hold command (241). Only an
+/// actor drawn as one sprite is waited for.
 void Actor_WaitForAnimationChange(u32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
   struct Sprite *sprite;
@@ -372,7 +372,7 @@ void Actor_WaitForAnimationChange(u32 actorId) {
   if (actor != NULL && actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
     sprite = actor->sprite;
     saved = sprite->lastNo;
-    for (elapsedFrames = 0; elapsedFrames <= 89; elapsedFrames++) {
+    for (elapsedFrames = 0; elapsedFrames < 90; elapsedFrames++) {
       wait(1);
       if (saved != sprite->lastNo)
         break;
@@ -397,7 +397,7 @@ void Actor_Jump(s32 actorId, s32 speed, s32 frames) {
 
   actor = Actor_Lookup(actorId);
   if (actor != NULL) {
-    actor->motionFlags |= 2;
+    actor->motionFlags |= ACTOR_FALLS;
     actor->velocityY = toFIXED(speed);
     if (speed > 5) {
       Sound_PlayFar(SE_HIGH_JUMP);
@@ -431,9 +431,14 @@ void Actor_RunRepeatedMotion(u32 actorId, s32 count) {
   Actor_WaitForScriptEndById(actorId);
 }
 
+/// The share of a dust puff's x and z velocity that drag takes each frame, as
+/// one part in this many.
+#define DUST_PUFF_DRAG_X 18
+#define DUST_PUFF_DRAG_Z 16
+
 /// Moves a dust puff of FieldEffect_SpawnDustPuff: it drifts with its x and z
-/// velocity (kept in speed and acceleration), which drag slows by 1/18 and 1/16
-/// each frame, and rises 1/64 pixel a frame.
+/// velocity (kept in speed and acceleration), which drag slows each frame, and
+/// rises 1/64 pixel a frame.
 void FieldEffect_UpdateDustPuff(struct Actor *particle) {
   FIXED velocityX = particle->speedLimit;
   FIXED velocityZ = particle->acceleration;
@@ -441,13 +446,13 @@ void FieldEffect_UpdateDustPuff(struct Actor *particle) {
   particle->x.fixed += velocityX;
   particle->z.fixed += velocityZ;
   particle->y.fixed += toFIXED(1) / 64;
-  particle->speedLimit = velocityX - velocityX / 18;
-  particle->acceleration = velocityZ - velocityZ / 16;
+  particle->speedLimit = velocityX - velocityX / DUST_PUFF_DRAG_X;
+  particle->acceleration = velocityZ - velocityZ / DUST_PUFF_DRAG_Z;
 }
 
-/// Kicks up a dust puff (sprite 285) where source stands: it flies off toward
-/// the back at 0.5 to 1.4 pixels a frame and sideways at up to 1.4, with one
-/// of two animations, drawn at source's priority.
+/// Kicks up a dust puff (SPRITE_DUST_CLOUD) where source stands: it flies off
+/// toward the back at 0.5 to 1.4 pixels a frame and sideways at up to 1.4, with
+/// one of two animations, drawn at source's priority.
 void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
   struct Actor *actor;
   struct Sprite *child;
@@ -482,7 +487,7 @@ void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
     speed <<= 1;
     actor->speedLimit = toFIXED(1) / 10 * speed;
     actor->timer = 0;
-    actor->priorityFlags |= 2;
+    actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     actor->frozen = 1;
     actor->update = (void (*)(void))FieldEffect_UpdateDustPuff;
     child->flags = 0;
@@ -495,13 +500,13 @@ void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
 /// toward FACING_SOUTH_SOUTHWEST while sinking 28 pixels with a dust puff every
 /// other frame (none when param is -1), then jumps on to 16 pixels south of
 /// where it started and lands, waiting at most 180 frames for it unless param
-/// has bit 12 set.
+/// has LEDGE_JUMP_NO_LANDING_WAIT.
 void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
   struct Actor *actor = Actor_GetById(actorId);
   FIXED startZ = actor->z.fixed;
   FIXED x = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
   s32 spriteFlags;
-  u32 i;
+  u32 frame;
 
   if (actor == NULL)
     return;
@@ -512,7 +517,7 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
   // Hop up and forward 12 pixels.
   Actor_SelectAnimationFar(actor, ANIM_STAND);
   Actor_SetSpriteFlagsFar(actor, 0);
-  actor->motionFlags |= 2;
+  actor->motionFlags |= ACTOR_FALLS;
   actor->velocityY = toFIXED(4);
   Actor_SetMoveTargetFar(actor, x, actor->y.fixed, startZ + toFIXED(12));
   wait(6);
@@ -522,11 +527,11 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
   Sound_PlayFar(SE_FLOOR_SWITCH);
   Actor_FaceDirectionById(actorId, FACING_SOUTH_SOUTHWEST, 0);
   actor->motionFlags = 0;
-  for (i = 0; i < 14; i++) {
+  for (frame = 0; frame < 14; frame++) {
     actor->y.fixed -= toFIXED(2);
     actor->targetY = actor->y.fixed;
     wait(1);
-    if (param != -1 && (i & 1))
+    if (param != -1 && (frame & 1))
       FieldEffect_SpawnDustPuff(actor, param);
   }
 
@@ -535,15 +540,15 @@ void Actor_JumpDownLedge(s32 actorId, s32 pose, s32 param) {
   actor->velocityY = toFIXED(3);
   Actor_SetMoveTargetFar(actor, x, actor->y.fixed, startZ + toFIXED(16));
   Actor_WaitForMoveFar(actor);
-  if (param & 0x1000) {
+  if (param & LEDGE_JUMP_NO_LANDING_WAIT) {
     wait(4);
     return;
   }
-  i = 0;
+  frame = 0;
   if (actor->y.fixed > actor->groundHeight) {
     do {
       wait(1);
-      if (++i >= 180)
+      if (++frame >= 180)
         break;
     } while (actor->y.fixed > actor->groundHeight);
   }
@@ -644,7 +649,7 @@ void Actor_ConfigureSpriteColor(s32 actorId, s32 param) {
 
   actor = Actor_Lookup(actorId);
   if (actor != NULL) {
-    if (param & 0x100) {
+    if (param & SPRITE_COLOR_BLINK) {
       actor->update = Actor_UpdateBlink;
       return;
     }
@@ -661,7 +666,7 @@ void Actor_UpdateBlink(struct Actor *actor) {
   s32 colorMode;
   s32 i;
 
-  if ((actor->spriteStorageKind & 0xf) == 1) {
+  if ((actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE) {
     sprite = actor->sprite;
     colorMode = gActor_BlinkSpriteColors[(gFrameCount >> 1) & 3];
     for (i = 0; i < sprite->count; i++) {
@@ -682,7 +687,7 @@ void Actor_SetSpriteColor(struct Actor *actor, s32 colorMode) {
   struct SpriteAnimation *animation;
   s32 i;
 
-  if ((actor->spriteStorageKind & 0xf) == 1) {
+  if ((actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE) {
     sprite = actor->sprite;
     for (i = 0; i < sprite->count; i++) {
       animation = sprite->entries[i];
@@ -694,17 +699,23 @@ void Actor_SetSpriteColor(struct Actor *actor, s32 colorMode) {
   }
 }
 
-/// Makes an actor follow the actor in the low 8 bits of targetId and starts
-/// script on it. Unless bit 16 of targetId is set it takes a follow distance
-/// of 40 pixels, the target's top speed with twice its acceleration, to keep
-/// up with it, and no collision flags, so it cannot block the target.
+/// Actor_WatchAndStartScript's targetId: the actor to watch, and a flag to keep
+/// the watcher's own motion.
+#define ACTOR_WATCH_ACTOR_MASK 0xff
+enum ActorWatchFlag { ACTOR_WATCH_KEEP_MOTION = 0x10000 };
+
+/// Makes an actor follow the actor in targetId's ACTOR_WATCH_ACTOR_MASK bits
+/// and starts script on it. Unless targetId has ACTOR_WATCH_KEEP_MOTION it
+/// takes a follow distance of 40 pixels, the target's top speed with twice its
+/// acceleration, to keep up with it, and no collision flags, so it cannot block
+/// the target.
 void Actor_WatchAndStartScript(u32 actorId, s32 targetId, const void *script) {
   struct Actor *follower = Actor_Lookup(actorId);
-  struct Actor *target = Actor_Lookup(targetId & 0xff);
+  struct Actor *target = Actor_Lookup(targetId & ACTOR_WATCH_ACTOR_MASK);
 
   if (follower != NULL && target != NULL) {
     follower->watchedActor = target;
-    if (!(targetId & 0x10000)) {
+    if (!(targetId & ACTOR_WATCH_KEEP_MOTION)) {
       u16 none = 0;
 
       follower->timer = 40;

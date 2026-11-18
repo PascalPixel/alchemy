@@ -12,7 +12,11 @@
 /// The generated marker pictures: four 16-colour 8 by 8 tiles, 32 bytes each.
 #define WORLD_MAP_MARKER_TILE_BYTES (4 * TILE_SIZE_4BPP)
 /// The word of a marker tile's pixel row, eight 4-bit pixels a word.
-#define MARKER_ROW(tile, row) ((tile) * (TILE_SIZE_4BPP / 4) + (row))
+#define MARKER_ROW_WORD(tile, row) ((tile) * (TILE_SIZE_4BPP / 4) + (row))
+/// The first five of a marker tile row's eight 4-bit pixels, the leftmost in
+/// the low bits; the rest are 0.
+#define WORLD_PICTURE_MARKER_ROW(p0, p1, p2, p3, p4)                           \
+  ((p0) | (p1) << 4 | (p2) << 8 | (p3) << 12 | (p4) << 16)
 
 // BUG: the original reserves 32 bytes but writes and uploads 128, as The
 // Broken Seal's does. The bump allocator takes bytes, not words; reserve the
@@ -49,9 +53,8 @@ void WorldPicture_Initialize(void) {
   work->searchX = 0;
   work->searchZ = 0;
   Dma_Fill32(0, markerTiles, WORLD_MAP_MARKER_TILE_BYTES);
-  // The marker tiles' pixel rows: eight 4-bit pixels a word, the leftmost
-  // in the low bits. Each tile holds one dot in its top-left corner, with a
-  // shadow in colour 1 to its right and below (# the dot, + the shadow):
+  // Each marker tile holds one dot in its top-left corner, with a shadow in
+  // colour 1 to its right and below (# the dot, + the shadow):
   //
   //   tiles 0 to 2      tile 3
   //     ##.               .##..
@@ -63,20 +66,26 @@ void WorldPicture_Initialize(void) {
   // Tile 0, in colour 15, marks where the party is; tiles 1 and 2, in colours
   // 4 and 7, a place by the marker its row asks for, and tile 2 the ship;
   // tile 3, in colour 15, is a larger dot.
-  markerTiles[MARKER_ROW(0, 0)] = 0xff;
-  markerTiles[MARKER_ROW(0, 1)] = 0x1ff;
-  markerTiles[MARKER_ROW(0, 2)] = 0x110;
-  markerTiles[MARKER_ROW(1, 0)] = 0x44;
-  markerTiles[MARKER_ROW(1, 1)] = 0x144;
-  markerTiles[MARKER_ROW(1, 2)] = 0x110;
-  markerTiles[MARKER_ROW(2, 0)] = 0x77;
-  markerTiles[MARKER_ROW(2, 1)] = 0x177;
-  markerTiles[MARKER_ROW(2, 2)] = 0x110;
-  markerTiles[MARKER_ROW(3, 0)] = 0xff0;
-  markerTiles[MARKER_ROW(3, 1)] = 0xffff;
-  markerTiles[MARKER_ROW(3, 2)] = 0x1ffff;
-  markerTiles[MARKER_ROW(3, 3)] = 0x11ff0;
-  markerTiles[MARKER_ROW(3, 4)] = 0x1100;
+  markerTiles[MARKER_ROW_WORD(0, 0)] =
+      WORLD_PICTURE_MARKER_ROW(15, 15, 0, 0, 0);
+  markerTiles[MARKER_ROW_WORD(0, 1)] =
+      WORLD_PICTURE_MARKER_ROW(15, 15, 1, 0, 0);
+  markerTiles[MARKER_ROW_WORD(0, 2)] = WORLD_PICTURE_MARKER_ROW(0, 1, 1, 0, 0);
+  markerTiles[MARKER_ROW_WORD(1, 0)] = WORLD_PICTURE_MARKER_ROW(4, 4, 0, 0, 0);
+  markerTiles[MARKER_ROW_WORD(1, 1)] = WORLD_PICTURE_MARKER_ROW(4, 4, 1, 0, 0);
+  markerTiles[MARKER_ROW_WORD(1, 2)] = WORLD_PICTURE_MARKER_ROW(0, 1, 1, 0, 0);
+  markerTiles[MARKER_ROW_WORD(2, 0)] = WORLD_PICTURE_MARKER_ROW(7, 7, 0, 0, 0);
+  markerTiles[MARKER_ROW_WORD(2, 1)] = WORLD_PICTURE_MARKER_ROW(7, 7, 1, 0, 0);
+  markerTiles[MARKER_ROW_WORD(2, 2)] = WORLD_PICTURE_MARKER_ROW(0, 1, 1, 0, 0);
+  markerTiles[MARKER_ROW_WORD(3, 0)] =
+      WORLD_PICTURE_MARKER_ROW(0, 15, 15, 0, 0);
+  markerTiles[MARKER_ROW_WORD(3, 1)] =
+      WORLD_PICTURE_MARKER_ROW(15, 15, 15, 15, 0);
+  markerTiles[MARKER_ROW_WORD(3, 2)] =
+      WORLD_PICTURE_MARKER_ROW(15, 15, 15, 15, 1);
+  markerTiles[MARKER_ROW_WORD(3, 3)] =
+      WORLD_PICTURE_MARKER_ROW(0, 15, 15, 1, 1);
+  markerTiles[MARKER_ROW_WORD(3, 4)] = WORLD_PICTURE_MARKER_ROW(0, 0, 1, 1, 0);
   tileAttributes = VramCache_Load(work->vramBlock, WORLD_MAP_MARKER_TILE_BYTES,
                                   markerTiles) |
                    OBJ_PRIORITY(1);

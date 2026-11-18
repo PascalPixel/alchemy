@@ -52,9 +52,10 @@ enum IceBlockSheetPicture {
 };
 
 /// gBoreas_Points has an x and a y for each of BOREAS_POINTS crystals: the
-/// mass's standing crystals, which crumble away BOREAS_POINTS, then
-/// BOREAS_CRYSTALS_AFTER_CRUMBLE_A and BOREAS_CRYSTALS_AFTER_CRUMBLE_B at a
-/// time, and the crystals that rise among the targets.
+/// mass's standing crystals, all BOREAS_POINTS at first,
+/// BOREAS_CRYSTALS_AFTER_CRUMBLE_A after the first crumble,
+/// BOREAS_CRYSTALS_AFTER_CRUMBLE_B after the second and none after the third,
+/// and the crystals that rise among the targets.
 #define BOREAS_POINTS 16
 #define BOREAS_POINT_X(crystal) gBoreas_Points[crystal][0]
 #define BOREAS_POINT_Y(crystal) gBoreas_Points[crystal][1]

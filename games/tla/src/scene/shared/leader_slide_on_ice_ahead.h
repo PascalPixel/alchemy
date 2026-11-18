@@ -1,4 +1,9 @@
-/// Leader_SlideOnIce in the direction the leader faces.
+/// Ram_HeapSlots->actors, as field_internal.h counts them.
+#define ACTOR_COUNT 64
+
+/// The leader slides cell by cell over ice the way they face, turned to the
+/// nearest cardinal, until a wall, ground more than 8 pixels up, a solid actor
+/// or the end of the ice stops them.
 void Leader_SlideOnIceAhead(void) {
   struct Vector3 probe;
   s32 heading;
@@ -17,7 +22,7 @@ void Leader_SlideOnIceAhead(void) {
   FIXED startZ;
 
   actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  heading = (s16)((actor->facing + DEGtoANG(45)) & -0x4000);
+  heading = (s16)FACING_NEAREST_CARDINAL(actor->facing);
   for (;;) {
     Leader_StopIfPending();
     actor->speedLimit = toFIXED(1);
@@ -53,8 +58,8 @@ void Leader_SlideOnIceAhead(void) {
     actor->speedLimit = toFIXED(2);
     actor->acceleration = toFIXED(1) / 10;
     actor->timer = 0;
-    Actor_SelectAnimation(actor, 2);
-    Actor_SetAnimationSpeed(actor, 48);
+    Actor_SelectAnimation(actor, ANIM_WALK);
+    Actor_SetAnimationSpeed(actor, ANIMATION_STEP_NORMAL * 3);
     actor->update = Actor_SteerByPad;
     for (;;) {
       FieldVector_AddPolarOffset(16, heading, &probe);
@@ -71,8 +76,10 @@ void Leader_SlideOnIceAhead(void) {
         s32 radius = actor->radius - 2;
         other = Ram_HeapSlots->actors;
         flags = &other->collisionFlags;
-        for (i = 0; i < 64; i++, flags += 128, other++) {
-          if (other->script != NULL && (*flags & 1) && other != actor) {
+        for (i = 0; i < ACTOR_COUNT;
+             i++, flags += sizeof(struct Actor), other++) {
+          if (other->script != NULL && (*flags & ACTOR_SOLID) &&
+              other != actor) {
             if (Event_CheckSpheresOverlap(&other->x.fixed, radius, &probe.x,
                                           other->radius - 2) >= 0) {
               goto stop;
@@ -107,5 +114,7 @@ done:
   actor->update = NULL;
   actor->steeringFlags |= ACTOR_FACES_MOTION;
   actor->acceleration = toFIXED(1) / 4;
-  Actor_SelectAnimation(actor, 1);
+  Actor_SelectAnimation(actor, ANIM_STAND);
 }
+
+#undef ACTOR_COUNT

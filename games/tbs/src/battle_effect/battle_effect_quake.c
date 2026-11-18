@@ -26,10 +26,6 @@ struct RockWallHeights {
 #define QUAKE_GROUND_X 32
 #define QUAKE_GROUND_Y 96
 #define QUAKE_GROUND_HEIGHT 16
-/// The byte of pixel (x, y) of the battle background: 8x8 tiles of 256
-/// colours, 64 bytes each, 32 to a row, from BG_CHAR_BLOCK(2).
-#define BACKGROUND_PIXEL_OFFSET(x, y)                                          \
-  (((x) & 7) + (((x) / 8) << 6) + (((y) & 7) << 3) + (((y) / 8) << 11))
 
 /// Three rock pillars rise from the left, 4 frames apart, and sink again,
 /// throwing the targets standing on them into the air.
@@ -176,4 +172,3 @@ void BattleEffect_RunQuake(struct BattleEffectParams *args) {
 #undef QUAKE_GROUND_X
 #undef QUAKE_GROUND_Y
 #undef QUAKE_GROUND_HEIGHT
-#undef BACKGROUND_PIXEL_OFFSET

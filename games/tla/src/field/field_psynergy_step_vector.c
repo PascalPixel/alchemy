@@ -142,13 +142,13 @@ void BattleEffect_DrawCanvasBlock(const u8 *src, s32 x, s32 y, s32 width,
   }
 }
 
-/// The canvas's ramp of colours, from 0xe0, which the darkening maps index by
-/// a colour's place in it.
+/// The canvas's ramp of colours, from colour 224 (palette 14 of the 256-colour
+/// canvas), which the darkening maps index by a colour's place in it.
 #define CANVAS_RAMP_COLORS 32
 
 /// Maps each drawn (nonzero) canvas pixel of buffer, count of them, through
 /// gColorBuffer_DarkenOneLevelMap, one level darker down the ramp of colours
-/// 0xe0 to 0xfe.
+/// 224 to 254.
 void ColorBuffer_DarkenOneLevel(u8 *buffer, s32 count) {
   if (count > 0) {
     const u8 *table = gColorBuffer_DarkenOneLevelMap;
@@ -204,8 +204,7 @@ void ColorBuffer_DarkenFourLevels(u8 *buffer, s32 count) {
 
 /// The canvas's frame callback: counts the frame and carries out the command
 /// the effect left for it, copying the canvas into the sprite's tiles (or to
-/// the start of BG VRAM), and clearing or fading it after the copy. Case 2
-/// comes before case 1: its body comes first in the ROM.
+/// the start of BG VRAM), and clearing or fading it after the copy.
 void BattleEffect_UploadCanvas(void) {
   struct CanvasSpriteWork *work = Ram_HeapSlots->canvasSprite;
   u8 *canvas = Ram_HeapSlots->battleCanvas;
@@ -398,9 +397,10 @@ void Actor_VanishInSparks(s32 objectId) {
   spark = work->sparks;
   for (; i < VANISH_SPARK_COUNT; i++, spark++) {
     sprite = &work->sprites[i];
-    // Set up as Teleport's orbs are; each draw picks its sparkle again.
+    // Set up as Teleport's sparks are; each draw picks its sparkle again.
     EffectSprite_Init(sprite, 4, 4, 0,
-                      tiles + (i & (ORB_PICTURES - 1)) * ORB_TILE);
+                      tiles +
+                          (i & (ORB_PICTURES - 1)) * OBJ_TILES_PER_8BPP_TILE);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->depth = BattleEffect_GetObjectDepth(actor);
@@ -457,8 +457,8 @@ void Actor_VanishInSparks(s32 objectId) {
           Camera_WorldToScreen(position);
           drawn->x = position[0];
           drawn->y = position[2];
-          drawn->oam.index =
-              tiles + (spark->age & (SPARKLE_PICTURES - 1)) * ORB_TILE;
+          drawn->oam.index = tiles + (spark->age & (SPARKLE_PICTURES - 1)) *
+                                         OBJ_TILES_PER_8BPP_TILE;
           EffectSprite_Draw(drawn);
           spark->angle += TRIG_TURN / 32;
           spark->radius -= toFIXED(1) / 5;
@@ -596,8 +596,8 @@ void FieldParticle_UpdateMotion(struct FieldParticle *effect) {
 
 /// Reports an unfinished target only for effects that stop on arrival.
 u32 FieldParticle_HasPendingTarget(struct FieldParticle *effect) {
-  /* FAKEMATCH(temporary): the target and EFFECT_NO_TARGET compared by the
-   * sign of their difference's bits, held in a local; as
+  /* FAKEMATCH(temporary): the target's bits that differ from
+   * EFFECT_NO_TARGET, held in a local for NONZERO; as
    * effect->targetX != EFFECT_NO_TARGET. */
   u32 value;
 
@@ -605,7 +605,7 @@ u32 FieldParticle_HasPendingTarget(struct FieldParticle *effect) {
     return 0;
   }
   value = (u32)effect->targetX ^ (u32)EFFECT_NO_TARGET;
-  return ((0u - value) | value) >> 31;
+  return NONZERO(value);
 }
 
 /// Places a field effect sprite at (x, z), at rest with no target.

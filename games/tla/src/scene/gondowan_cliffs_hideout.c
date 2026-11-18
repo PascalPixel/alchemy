@@ -3,6 +3,7 @@
 /// round a fire, until Briggs is caught (FLAG_BRIGGS_CAUGHT).
 
 #include "field/field.h"
+#include "field/field_sequence.h"
 #include "flags.h"
 #include "battle/battle.h"
 #include "game/game.h"
@@ -95,7 +96,8 @@ void GondowanCliffsHideout_WarriorsAreFound(void) {
 
 /// Entering the hideout: the fire and its marker cast no shadow.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRE_MARKER), 0);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRE), 0);
   return 0;

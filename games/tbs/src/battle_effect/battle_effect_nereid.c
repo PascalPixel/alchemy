@@ -25,7 +25,7 @@
 #define NEREID_DROPS_A_FRAME 16
 /// The canvas line below which a falling drop has sunk into the waves.
 #define NEREID_WAVES_Y 104
-/// Particles given a place and a delay that nothing reads again.
+/// Particles given a place and a delay that nothing reads.
 #define NEREID_UNREAD_FIRST 24
 #define NEREID_UNREAD_COUNT 16
 
@@ -74,6 +74,8 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
     velocity.x = -toFIXED(16);
     velocity.y = -toFIXED(4);
     EFFECT_FREE_PARTICLES(k, work->particles, 64);
+    // DEAD: particles NEREID_UNREAD_FIRST on get a place and delay nothing
+    // reads; the ROM keeps the stores.
     for (k = 0; k != NEREID_UNREAD_COUNT; k++) {
       point = &work->particles[NEREID_UNREAD_FIRST + k];
       point->x = Random16() & 127;

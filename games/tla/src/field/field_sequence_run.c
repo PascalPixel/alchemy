@@ -40,12 +40,12 @@ s32 Leader_StepOffTightrope(void);
 /// reaches aboard the ship.
 #define PLACE_MARKER_ON_FOOT (1 << 4)
 #define PLACE_MARKER_ABOARD (2 << 4)
-/// Felix's own collapse when the whole party falls: he slumps and falls on his
-/// face; any other leader plays ANIM_COLLAPSE.
-#define ANIM_LEADER_FALL_ON_FACE 36
 /// The sprite VRAM blocks the pause menu needs free, or the field's sprites
 /// stop drawing while it runs.
 #define PAUSE_MENU_VRAM_BLOCKS 136
+/// The search code aboard the ship facing sea of world map collision 3: the
+/// World Map has no examine trigger for it, so the search finds nothing there.
+#define SHIP_SEA_EXAMINE_CODE 99
 
 /// The field sequence: runs the current scene, which the party entered by
 /// entrance, until it leaves; returns the exit kind it left by, for
@@ -117,8 +117,9 @@ s32 FieldSequence_Run(void) {
     SCENE_ENTRIES->prepareMap();
     MapGrid_CenterOnFollowedPointFar();
   }
-  // Flag 0x11f is cleared as each scene starts; nothing in the game sets or
-  // reads it.
+  // XXX (no evidence): what flag 0x11f means; every scene start clears it,
+  // The Broken Seal's does not, and nothing in the game's source sets or reads
+  // it by its number.
   GameFlag_Clear(0x11f);
   PaletteFade_Initialize();
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
@@ -185,11 +186,9 @@ s32 FieldSequence_Run(void) {
     }
     arrivalState = gMainRoutineWork.teleportState;
     if (arrivalState == 1) {
-      // Through a pointer: stored as teleportState, the byte is read and masked
-      // with a 0 made before the store, which then serves ownerOverride.
+      // teleportState = 2, through its address.
       *(s8 *)&gMainRoutineWork.teleportState = 2;
-      // Once-only: inside the block the 0's one use counts at loop depth, so
-      // it stays in a register across Teleport_PlaySparksAndFade.
+      /* FAKEMATCH(dead): a once-only loop round the arrival. */
       do {
         s32 zero = 0;
 
@@ -508,8 +507,9 @@ done:
 
 /// Returns the cell behavior of the map cell 16 pixels ahead of the party
 /// leader when there is something to search there: a fixed search spot whose
-/// ground is level with the leader or up to 64 pixels above it, or a behavior
-/// the scene has an examine trigger for. Returns 0 otherwise.
+/// ground is level with the leader or up to 16 pixels above it, or a behavior
+/// the scene has an examine trigger for; aboard the ship on the World Map,
+/// SHIP_SEA_EXAMINE_CODE before sea of collision 3. Returns 0 otherwise.
 s32 Actor_GetTriggerCellAheadOfCurrent(void) {
   struct FieldWork *work;
   struct MapWork *map;
@@ -565,7 +565,7 @@ s32 Actor_GetTriggerCellAheadOfCurrent(void) {
     if (result == 0 && work->mode == ACTOR_SYSTEM_WORLD_MAP) {
       if (gMainRoutineWork.ownerOverride != 0 &&
           WorldMap_GetCollisionFar(probePosition.coordinates) == 3)
-        result = 99;
+        result = SHIP_SEA_EXAMINE_CODE;
     }
   }
   return result;
@@ -753,8 +753,8 @@ void BattleMap_ApplySceneEntranceView(void) {
 #undef HAZARD_LIMIT_DEFAULT
 #undef PLACE_MARKER_ON_FOOT
 #undef PLACE_MARKER_ABOARD
-#undef ANIM_LEADER_FALL_ON_FACE
 #undef PAUSE_MENU_VRAM_BLOCKS
+#undef SHIP_SEA_EXAMINE_CODE
 #undef MAP_ENTRANCE_FACING_MASK
 #undef MAP_ENTRANCE_RAISED
 #undef MAP_ENTRANCE_KEEP_BOUNDS

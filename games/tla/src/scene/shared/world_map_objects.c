@@ -24,10 +24,6 @@
 #include "field/flag_call.h"
 #include "field/field_sequence.h"
 
-/// The step trigger of place 0's actor; each next place's actor raises the
-/// next (world_map.c's own enum, here for staff_credit.c too).
-#define STEP_TRIGGER_AREA_BASE 100
-
 extern struct Actor *gWorldMap_PlacedActors[];
 
 /// Chooses a passage exit from the leader's east-west approach: exitBefore
@@ -307,5 +303,4 @@ void WorldMap_SpawnParticle(struct Actor *actor) {
   }
 }
 
-#undef STEP_TRIGGER_AREA_BASE
 #undef SPARK_RISE_FRAMES

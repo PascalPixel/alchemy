@@ -125,9 +125,6 @@ void Event_ShowMessageAndOfferScoop(s32 message) {
     gFieldWork->fieldMenu = 1;
 }
 
-/// The absolute value of x, which it reads twice.
-#define ABS(x) ((x) >= 0 ? (x) : -(x))
-
 /// Plays sound when the actor is in view: within 152 pixels across and 112 up
 /// or down the screen of the actor the camera follows.
 void Actor_PlaySoundInView(struct Actor *actor, s32 sound) {

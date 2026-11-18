@@ -185,15 +185,15 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
       // The columns of water scroll up.
       if (frame >= NEREID_COLUMNS_FRAME && frame < NEREID_COLUMNS_END_FRAME) {
         for (k = 0; k != NEREID_COLUMNS; k++) {
-          s32 span = (frame * 16 - 256 + k * 25) % NEREID_COLUMN_HEIGHT;
+          s32 span = (frame * 16 - 256 + k * 25) % FIRE_PILLAR_HEIGHT;
 
           draw[0](canvas, work->sheet + NEREID_COLUMN_PICTURE,
-                  gNereidCopy_Columns[k * 2] - NEREID_COLUMN_WIDTH / 2,
-                  gNereidCopy_Columns[k * 2 + 1] - span - NEREID_COLUMN_HEIGHT,
-                  NEREID_COLUMN_WIDTH, NEREID_COLUMN_HEIGHT);
+                  gNereidCopy_Columns[k * 2] - FIRE_PILLAR_WIDTH / 2,
+                  gNereidCopy_Columns[k * 2 + 1] - span - FIRE_PILLAR_HEIGHT,
+                  FIRE_PILLAR_WIDTH, FIRE_PILLAR_HEIGHT);
           draw[0](canvas, work->sheet + NEREID_COLUMN_PICTURE,
-                  gNereidCopy_Columns[k * 2] - NEREID_COLUMN_WIDTH / 2,
-                  gNereidCopy_Columns[k * 2 + 1] - span, NEREID_COLUMN_WIDTH,
+                  gNereidCopy_Columns[k * 2] - FIRE_PILLAR_WIDTH / 2,
+                  gNereidCopy_Columns[k * 2 + 1] - span, FIRE_PILLAR_WIDTH,
                   span);
         }
       }
@@ -1170,11 +1170,15 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
           point.depth = PARTICLE_STREAMS_EMBER_NEAR;
         if (point.depth > PARTICLE_STREAMS_EMBER_FAR)
           point.depth = PARTICLE_STREAMS_EMBER_FAR;
-        // UB: from depth 736 the size is 0, a picture 0 pixels wide, and its
-        // picture is read from gBattleEffect_MotePictures[-1]. No UBFIX form
-        // yet.
         size = 9 - (point.depth - PARTICLE_STREAMS_EMBER_NEAR) /
                        PARTICLE_STREAMS_EMBER_SIZE_DEPTH;
+        // UB: from depth 736 the size is 0, a picture 0 pixels wide, and its
+        // picture is read from gBattleEffect_MotePictures[-1]; UBFIX draws
+        // the farthest embers at the smallest size.
+#ifdef UBFIX
+        if (size < 1)
+          size = 1;
+#endif
         draw(canvas,
              work->sheet +
                  (gBattleEffect_MotePictures[size - 1] +

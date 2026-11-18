@@ -64,11 +64,16 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 #define DJINN_PREVIEW_VITALS_X 5
 #endif
 
+/// Where a widened number's last four characters start, room for 9999, and its
+/// last three, room for 999 (the Djinni preview's numberText).
+#define NUMBER_TEXT_FOUR_PLACES 7
+#define NUMBER_TEXT_THREE_PLACES 8
+
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define DJINN_PREVIEW_STAT_DIGIT_OFFSET 7
+#define DJINN_PREVIEW_STAT_DIGIT_OFFSET NUMBER_TEXT_FOUR_PLACES
 #define DJINN_PREVIEW_STAT_X 4
 #else
-#define DJINN_PREVIEW_STAT_DIGIT_OFFSET 8
+#define DJINN_PREVIEW_STAT_DIGIT_OFFSET NUMBER_TEXT_THREE_PLACES
 #define DJINN_PREVIEW_STAT_X 6
 #endif
 
@@ -139,6 +144,10 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, const struct Window *window,
 
 /// BG1's tile number of the command row's first icon tile.
 #define COMMAND_ROW_ICON_TILE (BG_CHAR_SIZE / (8 * 8))
+/// The command window's top tile row: it runs along the bottom three rows.
+#define COMMAND_ROW_TOP 17
+/// A command icon's pixels: 32x32 at a byte a pixel.
+#define COMMAND_ICON_BYTES (32 * 32)
 
 /// Places a battle menu's pointing hand at its list window's selected row:
 /// `position` takes the hand's spot, `margin` pixels left of the window and 20

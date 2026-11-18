@@ -15,6 +15,7 @@
 #include "system/system.h"
 #include "system/frame.h"
 #include "graphics/palette_snapshots.h"
+#include "graphics/palette_buffers.h"
 #include "system/io_write_queue.h"
 #include "field/flag_call.h"
 #include "field/curve.h"
@@ -39,32 +40,20 @@
 #define TILESET_ANIM_RAM_TILE 1536
 #define TILESET_ANIM_RAM_WIDE_TILE 512
 
-// The blend script's commands (BlendScript_Run): as the tileset animations',
-// and a BLDCNT value, told apart by its top four bits.
-#define BLEND_SCRIPT_LOOP 0xffff
+// The blend script's other commands (BlendScript_Run; BLEND_SCRIPT_LOOP and
+// BLEND_SCRIPT_JUMP are map_grid.h's): as the tileset animations', and a BLDCNT
+// value, told apart by its top four bits.
 #define BLEND_SCRIPT_OPCODE_MASK 0xff00
-#define BLEND_SCRIPT_JUMP 0xfe00
 #define BLEND_SCRIPT_STOP 0xff
 #define BLEND_SCRIPT_ARGUMENT_MASK 0xff
 #define BLEND_SCRIPT_BLDCNT_MASK 0xf000
 #define BLEND_SCRIPT_BLDCNT (BLDCNT_TGT2_OBJ | BLDCNT_TGT2_BD)
-
-/// BLDCNT's effect, bits 7 and 6 (BLDCNT_EFFECT_NONE to BLDCNT_EFFECT_DARKEN).
-#define BLDCNT_EFFECT_MASK 0x00c0
 
 /// A world map collision tile: 4 by 4 values of 4 bits, each for 4 by 4 pixels,
 /// in 8 bytes. The collision buffer holds the 256 tiles of the lower layer's,
 /// then the upper layer's.
 #define WORLD_MAP_COLLISION_TILE_BYTES 8
 #define WORLD_MAP_COLLISION_TILES 256
-
-/// A map cell shape's terrain kind, the low four bits of its first byte, as The
-/// Broken Seal names it.
-#define MAPGRID_SHAPE_KIND_MASK 0xf
-/// MapGrid_GetCellAttributeLowNibbleOrBump's kind for a rounded square whose
-/// two samples differ: a bump or a hollow, where TERRAIN_ROUNDED_SQUARE is
-/// flat.
-#define TERRAIN_BUMP 99
 
 /// The frames a world map graphics set takes to reload, one step a frame,
 /// counted down from this: its palette, animations and shapes, then each tile
@@ -141,14 +130,15 @@ void WorldMap_PreloadCurrentTileBlock(void) {
     return;
   if (value != 0)
     return;
-  buffer = Heap_Alloc(512);
+  buffer = Heap_Alloc(BG_PLTT_SIZE);
   switch (perspective->reloadSteps) {
   case WORLD_MAP_RELOAD_STEPS: {
     s16 backdropColor = *(s16 *)BG_PLTT;
 
     Decompress_ByteLz(Resource_GetTableEntry(resources[0]), buffer);
     *(s16 *)buffer = backdropColor;
-    Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
+    Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS / 2),
+            REG_DMA3);
     {
       u8 *anim = MAPGRID_ANIMATION_SCRIPT;
       PaletteFade_LoadPaletteFar(buffer);
@@ -277,7 +267,8 @@ s32 WorldMap_LoadAreaGraphics(void) {
   value = *(s16 *)BG_PLTT;
   Decompress_ByteLz(Resource_GetTableEntry(resources[0]), buffer);
   *(s16 *)buffer = value;
-  Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
+  Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS / 2),
+          REG_DMA3);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[3]), gBgTileBuffer);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[4]),
                       WORLD_MAP_TILE_SET(1));

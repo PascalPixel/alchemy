@@ -1,8 +1,4 @@
-/// The raised trigger a whirlwind raises as it catches the leader.
-#define RAISED_TRIGGER_WHIRLWIND 200
-/// How near the leader a whirlwind catches it, in pixels across the ground and
-/// in height.
-#define WHIRLWIND_CATCH_REACH 12
+#include "whirlwind_catch.h"
 
 /// Unused: the lower floors' copy of a whirlwind's update (whirlwind_update.h),
 /// for nothing in these rooms spawns a whirlwind. It travels forward, catches
@@ -22,7 +18,6 @@ void Whirlwind_Update(struct Actor *self) {
   Actor_SetAnimationSpeed(self, ANIMATION_STEP_NORMAL);
   if ((++*(u16 *)&self->timer & 31) == 31)
     Event_PlaySound(SE_WATER_LEVEL);
-  // The whirlwind takes the leader's sprite priority.
   ((struct FieldSprite *)self->sprite)->priority =
       ((struct FieldSprite *)leader->sprite)->priority;
   if (MapGrid_GetCellBehavior(self->x.fixed, self->z.fixed,

@@ -39,6 +39,10 @@ enum {
   ENTRANCE_AFTER_BATTLE = 99
 };
 
+/// Avimander's battle: slot 5 of ENCOUNTER_TABLE_SERPENT, between the
+/// Serpent's and Poseidon's.
+enum { ENCOUNTER_SLOT_AVIMANDER = 5 };
+
 /// A sliver of a turn off a heading: an actor turning round to face the
 /// opposite way turns by the side the nudge leans to.
 enum { FACING_NUDGE = 10 };
@@ -186,6 +190,11 @@ enum {
   GLOW_GREEN_MIDDLE = 20,
   GLOW_BLUE_MIDDLE = 3
 };
+
+/// A 256-colour pixel's palette row (its high four bits) and its colour in
+/// that row.
+#define PIXEL_PALETTE_ROW_MASK 0xf0
+#define PIXEL_ROW_COLOR_MASK 0xf
 
 void ChampaCliffCaves_LoadGlow(void);
 void ChampaCliffCaves_DrawForgeFire(void);
@@ -432,9 +441,11 @@ s32 Scene_Initialize(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
 #if !TLA_PATCH_1
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
 #else
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
 #endif
   if (party->next != SCENE_CHAMPA_CLIFF_CAVES_BRIGGS)
     Actor_GetById(party->leaderActorId)->priorityFlags |=
@@ -1105,7 +1116,8 @@ void ChampaCliffCaves_FightAvimander(void) {
     Event_SetAfterBattleDestination(SCENE_CHAMPA_CLIFF_CAVES_AVIMANDER,
                                     ENTRANCE_AFTER_BATTLE);
     Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
-    Field_RequestBattleFromEncounterTable(12, 5);
+    Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_SERPENT,
+                                          ENCOUNTER_SLOT_AVIMANDER);
   }
   Event_End();
 }
@@ -1137,7 +1149,8 @@ void ChampaCliffCaves_AskIfBriggsLearned(void) {
   Event_ShowMessageThenWait(ACTOR_OBABA, 0, 20);
   work = Ram_HeapSlots->fieldWork;
   work->transitionFrames = 40;
-  work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  work->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   Event_SetDestination((s16)gMainRoutineWork.restartScene,
@@ -1744,11 +1757,11 @@ void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
   s32 tile;
   struct EffectSprite *sprite;
   FIXED position[3];
-  s32 i;
+  s32 frame;
   FIXED z;
 
   if (mode == 0) {
-    for (i = 0; i < 16; i++) {
+    for (frame = 0; frame < 16; frame++) {
       s32 angle = actor->facing;
       angle += DEGtoANG(45);
       actor->facing = angle;
@@ -1782,9 +1795,9 @@ void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
     sprite->y = z + toFIXED(10);
   }
   Sound_Play(SE_CRASH);
-  for (i = 0; i <= 71; i++) {
+  for (frame = 0; frame <= 71; frame++) {
     sprite = &work->sprite;
-    switch (i) {
+    switch (frame) {
     case 6:
       sprite->oam.index = tile + 1 * FLASH_PICTURE_TILES;
       break;
@@ -1828,8 +1841,8 @@ void ChampaCliffCaves_LoadGlow(void) {
 
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_GLOW_DISC), work);
   for (i = 0, tile = work->tiles; i < (s32)sizeof(work->tiles); tile++, i++) {
-    if ((*tile & 0xf0) == GLOW_PICTURE_ROW * PALETTE_COLORS)
-      *tile = (*tile & 0xf) + GLOW_CYCLED_ROW * PALETTE_COLORS;
+    if ((*tile & PIXEL_PALETTE_ROW_MASK) == GLOW_PICTURE_ROW * PALETTE_COLORS)
+      *tile = (*tile & PIXEL_ROW_COLOR_MASK) + GLOW_CYCLED_ROW * PALETTE_COLORS;
   }
   entry = VramCache_FindFreeEntry();
   vram = VramCache_Load(entry, 64 * 64, work);
@@ -1857,8 +1870,8 @@ void ChampaCliffCaves_LoadColumn(void) {
 
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FIRE_COLUMN), work);
   for (i = 0, tile = work->tiles; i < (s32)sizeof(work->tiles); i++, tile++) {
-    if ((*tile & 0xf0) == GLOW_PICTURE_ROW * PALETTE_COLORS)
-      *tile = (*tile & 0xf) + GLOW_CYCLED_ROW * PALETTE_COLORS;
+    if ((*tile & PIXEL_PALETTE_ROW_MASK) == GLOW_PICTURE_ROW * PALETTE_COLORS)
+      *tile = (*tile & PIXEL_ROW_COLOR_MASK) + GLOW_CYCLED_ROW * PALETTE_COLORS;
   }
   entry = VramCache_FindFreeEntry();
   vram = VramCache_Load(entry, 32 * 64, work);
@@ -1874,11 +1887,15 @@ void ChampaCliffCaves_LoadColumn(void) {
   work->columnTrailingScale = 0;
 }
 
+/// The height the glow and the column are drawn at: 31/40 of the width they
+/// had the frame before.
+#define FIRE_HEIGHT_SCALE(widthScale) ((widthScale) * 31 / 40)
+
 /// Cycles the forge fire's 32 colours through waves of green and blue, a 32nd
 /// of a turn apart, the first sixteen to colours 111 down to 96 and the rest
 /// to 239 down to 224; places the glow's and the column's sprites at the
-/// fire's spot with their scales; and lets each sprite's height trail its
-/// width at 31/40.
+/// fire's spot with their scales; and sets the height each is drawn at the
+/// next frame (FIRE_HEIGHT_SCALE).
 void ChampaCliffCaves_DrawForgeFire(void) {
   struct ChampaCliffCavesWork *work = Ram_HeapSlots->menuWork;
   s32 position[3];
@@ -1926,8 +1943,8 @@ void ChampaCliffCaves_DrawForgeFire(void) {
   sprite->scaleX = work->columnScale;
   sprite->scaleY = work->columnTrailingScale;
   EffectSprite_Draw(sprite);
-  work->glowTrailingScale = work->glowScale * 31 / 40;
-  work->columnTrailingScale = work->columnScale * 31 / 40;
+  work->glowTrailingScale = FIRE_HEIGHT_SCALE(work->glowScale);
+  work->columnTrailingScale = FIRE_HEIGHT_SCALE(work->columnScale);
   work->frame++;
 }
 
@@ -1936,7 +1953,7 @@ void ChampaCliffCaves_DrawForgeFire(void) {
 void ChampaCliffCaves_StartForgeFire(const s32 *position) {
   struct ChampaCliffCavesWork *work =
       HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct ChampaCliffCavesWork));
-  s32 time;
+  s32 frames;
   s32 state;
 
   work->position[0] = position[0];
@@ -1945,7 +1962,7 @@ void ChampaCliffCaves_StartForgeFire(const s32 *position) {
   ChampaCliffCaves_LoadGlow();
   ChampaCliffCaves_LoadColumn();
   work->frame = 0;
-  time = 0;
+  frames = 0;
   Task_Add(ChampaCliffCaves_DrawForgeFire, TASK_PASS_FRAME);
   MapGrid_SetShake(4, 4, 1);
   state = 0;
@@ -1955,20 +1972,20 @@ void ChampaCliffCaves_StartForgeFire(const s32 *position) {
       if ((work->glowScale += FIXED_ONE * 3 / 128) >= FIXED_ONE * 13 / 10) {
         work->glowScale = FIXED_ONE * 13 / 10;
         state = 1;
-        time = -1;
+        frames = -1;
       }
       break;
     case 1:
-      if (time == 10) {
+      if (frames == 10) {
         state = 2;
-        time = -1;
+        frames = -1;
       }
       break;
     case 2:
       if ((work->columnScale += FIXED_ONE / 64) >= FIXED_ONE * 2 / 5) {
         work->columnScale = FIXED_ONE * 2 / 5;
         state = 3;
-        time = -1;
+        frames = -1;
       }
       break;
     case 3:
@@ -1979,7 +1996,7 @@ void ChampaCliffCaves_StartForgeFire(const s32 *position) {
       break;
     }
     System_Wait(1);
-    time++;
+    frames++;
   } while (state != GLOW_DONE);
 }
 
@@ -1989,19 +2006,19 @@ UNUSED void ChampaCliffCaves_PutOutForgeFire(void) {
   struct ChampaCliffCavesWork *work = Ram_HeapSlots->menuWork;
   FIXED position[3];
   s32 state;
-  s32 time;
+  s32 frames;
 
   position[0] = work->position[0];
   position[1] = work->position[1] - toFIXED(32);
   state = 0;
-  time = 0;
+  frames = 0;
   position[2] = work->position[2];
   do {
     switch (state) {
     case 0:
       if ((work->columnScale -= FIXED_ONE / 16) < 0) {
         work->columnScale = 0;
-        time = -1;
+        frames = -1;
         state = 1;
       }
       break;
@@ -2009,16 +2026,16 @@ UNUSED void ChampaCliffCaves_PutOutForgeFire(void) {
       if ((work->glowScale -= FIXED_ONE / 32) < 0) {
         work->glowScale = 0;
         state = 2;
-        time = -1;
+        frames = -1;
       }
       break;
     case 2:
-      if (time == 1)
+      if (frames == 1)
         state = GLOW_DONE;
       break;
     }
     wait(1);
-    time++;
+    frames++;
   } while (state != GLOW_DONE);
   Task_Remove(ChampaCliffCaves_DrawForgeFire);
   MapGrid_SetShake(0, 0, 0);
@@ -2268,8 +2285,8 @@ LATE_DATA struct ActorPlacement gChampaCliffCaves_ObabaPlacementsBriggsHome[] =
         {SCENE_TABLE_END},
 };
 
-/* FAKEMATCH(signature): placement rows declared as halfwords, so the table
-   starts on a halfword as the ROM's does. */
+/* FAKEMATCH(signature): placement rows declared as halfwords; as struct
+   ActorPlacement the table starts on a word. */
 LATE_DATA s16 gChampaCliffCaves_AvimanderPlacementsBriggsHome[] = {
     ACTOR_PLACEMENT_HALVES(SPRITE_OBABA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 736, 0, 248, FACING_WEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT_HALVES(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_SQUASH, 216, 0, 464, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -2338,8 +2355,8 @@ LATE_DATA struct ActorPlacement
         {SCENE_TABLE_END},
 };
 
-/* FAKEMATCH(signature): placement rows declared as halfwords, so the table
-   starts on a halfword as the ROM's does. */
+/* FAKEMATCH(signature): placement rows declared as halfwords; as struct
+   ActorPlacement the table starts on a word. */
 LATE_DATA s16 gChampaCliffCaves_AvimanderPlacementsAfterAvimander[] = {
     ACTOR_PLACEMENT_HALVES(SPRITE_OBABA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 648, 0, 188, FACING_SOUTH_SOUTHWEST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT_HALVES(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 464, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),

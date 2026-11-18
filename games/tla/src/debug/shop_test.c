@@ -72,7 +72,7 @@ enum ShopTestActorId {
   ACTOR_ITEM_SELECTOR,
   ACTOR_TREASURE,
   ACTOR_DJINN,
-  ACTOR_AFFLICTIONS,
+  ACTOR_AILMENTS,
   /// Four light bulbs, which do nothing when talked to (ShopTest_NoOp).
   ACTOR_LIGHT_BULB_A,
   ACTOR_LIGHT_BULB_B,
@@ -221,6 +221,7 @@ void ShopTest_TalkToSunshine(s32 actor) {
   if (!Event_GetFlag(FLAG_FORGE_OPEN)) {
     message = (s32)MsgAhSoYou;
     Event_SetMessageId(message);
+    // "Ah, so you're looking for a really unique item, huh?"
     FieldMessage_ShowAtActor(actor, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       Event_Wait(10);
@@ -232,22 +233,27 @@ void ShopTest_TalkToSunshine(s32 actor) {
     Event_ShowMessageAndWait(actor, 0);
   } else if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
     Event_SetMessageId((s32)MsgICanTWait);
+    // "I can't wait to see what I'm going to wind up making with this......"
     Event_ShowMessageAndWait(actor, 0);
   } else if (Forge_GetItem()) {
     Event_SetMessageId((s32)MsgMyWifeHas);
+    // "My wife has the item I made you. She can give it to you."
     Event_ShowMessageAndWait(actor, 0);
   } else {
     message = (s32)MsgYouWantMe;
     Event_SetMessageId(message);
+    // "You want me to make you a little something special?"
     FieldMessage_ShowAtActor(actor, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       Event_SetMessageId(message + 1);
+      // "Well, look at that! You went to get some raw materials for me..."
       Event_ShowMessageAndWait(actor, 0);
       Forge_Run(actor);
       if (Forge_GetItem())
         Event_SetFlag(FLAG_SCENE_TEMP_00);
     } else {
       Event_SetMessageId(message + 2);
+      // "Hm... Maybe I made a mistake. It's hard to tell... If you want..."
       Event_ShowMessageAndWait(actor, 0);
     }
   }
@@ -258,9 +264,11 @@ void ShopTest_TalkToSunshine(s32 actor) {
 void ShopTest_TalkToSunshinesWife(s32 actor) {
   if (!Event_GetFlag(FLAG_FORGE_OPEN)) {
     Event_SetMessageId((s32)MsgThisThisIs);
+    // "This? This is the blacksmith Sunshine's smithy, the best forge in..."
     Event_ShowMessageAndWait(actor, 0);
   } else if (Event_GetFlag(FLAG_SCENE_TEMP_00)) {
     Event_SetMessageId((s32)MsgItTakesOur);
+    // "It takes our Sunshine a long time to finish the items he works on...."
     Event_ShowMessageAndWait(actor, 0);
   } else if (Forge_GetItem()) {
     s32 item = Forge_GetItem();
@@ -271,18 +279,23 @@ void ShopTest_TalkToSunshinesWife(s32 actor) {
     MessageArgument_Push(price, MESSAGE_ARGUMENT_NUMBER);
     message = (s32)MsgHereSThe;
     Event_SetMessageId(message);
+    // "Here's the item you wanted. Now, about the payment... We only take..."
     FieldMessage_ShowAtActor(actor, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) != 0) {
       Event_SetMessageId(message + 1);
+      // "Hey, we're not a charity! If you can't pay for it, you don't get it!"
       Event_ShowMessageAndWait(actor, 0);
     } else if (PartyInventory_FindRoom(item) < 0) {
       Event_SetMessageId(message + 2);
+      // "Whoops! Looks like you've got a full load there! This'll have to..."
       Event_ShowMessageAndWait(actor, 0);
     } else if ((u32)gMainRoutineWork.coins < price) {
       Event_SetMessageId(message + 3);
+      // "You don't enough money! What are you trying to pull? I can't give..."
       Event_ShowMessageAndWait(actor, 0);
     } else {
       Event_SetMessageId(message + 4);
+      // "OK, here you go!"
       Event_ShowMessageAndWait(actor, 0);
       ItemDisplay_ShowItem(item, 3);
       PartyInventory_GiveItem(item, 0);
@@ -291,6 +304,7 @@ void ShopTest_TalkToSunshinesWife(s32 actor) {
     }
   } else {
     Event_SetMessageId((s32)MsgManSunshineWould);
+    // "Man, Sunshine would be rich if he worked more. What a waste..."
     Event_ShowMessageAndWait(actor, 0);
   }
 }
@@ -321,7 +335,8 @@ static inline void Event_GiveItemTo(s32 item, s32 owner) {
 void ShopTest_GiveEquipmentTestStock(void) {
   s32 i;
 
-  FieldMessage_Show((s32)MsgYouGotTreasure, 1);
+  // "You got treasure!"
+  FieldMessage_Show((s32)MsgYouGotTreasure, FIELD_MESSAGE_ZOOM);
   gMainRoutineWork.coins = 777777;
   for (i = 0; i < 10; i++) {
     Event_GiveItemTo(ITEM_GAME_TICKET, FELIX);
@@ -508,7 +523,7 @@ struct Trigger gSceneEvents[] = {
      EVENT(ShopTest_RunLevelEditor)},
     {TRIGGER_TALK, ACTOR_ITEM_SELECTOR, CONDITION_ALWAYS,
      EVENT(ShopTest_SelectItem)},
-    {TRIGGER_TALK, ACTOR_AFFLICTIONS, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_AILMENTS, CONDITION_ALWAYS,
      EVENT(ShopTest_DamageAndAfflictParty)},
     {TRIGGER_TALK, ACTOR_TREASURE, CONDITION_ALWAYS,
      EVENT(ShopTest_GiveEquipmentTestStock)},
@@ -528,13 +543,14 @@ void GameFlag_RefreshLureCap(void);
 
 /// Takes HP and PP from Felix, Jenna and Sheba, poisons and haunts Felix,
 /// curses and envenoms Jenna, and breaks the first item each of Felix and
-/// Jenna holds that may break when used. Talking to ACTOR_AFFLICTIONS.
+/// Jenna holds that may break when used. Talking to ACTOR_AILMENTS.
 void ShopTest_DamageAndAfflictParty(void) {
   struct Unit *unit;
   struct ItemDefinition *item;
   s32 i;
 
-  FieldMessage_Show(MsgTheBodyIs, 1);
+  // "The body is being torn apart."
+  FieldMessage_Show((s32)MsgTheBodyIs, FIELD_MESSAGE_ZOOM);
   FieldUnit_AddHp(FELIX, -100);
   FieldUnit_AddHp(JENNA, -100);
   FieldUnit_AddHp(SHEBA, -33);
@@ -585,7 +601,8 @@ void ShopTest_GiveDjinni(s32 owner, s32 element, s32 djinn, s32 activate) {
 void ShopTest_GivePartyDjinn(void) {
   s32 djinn;
 
-  FieldMessage_Show((s32)MsgYouGotA, 1);
+  // "You got a Djinni!"
+  FieldMessage_Show((s32)MsgYouGotA, FIELD_MESSAGE_ZOOM);
   for (djinn = DJINNI_INDEX(DJINNI_ECHO); djinn <= DJINNI_INDEX(DJINNI_MELD);
        djinn++)
     ShopTest_GiveDjinni(FELIX, ELEMENT_VENUS, djinn, 1);
@@ -606,9 +623,10 @@ void ShopTest_GivePartyDjinn(void) {
   s32 element;
   s32 djinn;
 
-  FieldMessage_Show((s32)MsgYouGotA, 1);
+  // "You got a Djinni!"
+  FieldMessage_Show((s32)MsgYouGotA, FIELD_MESSAGE_ZOOM);
   for (element = 0; element < ELEMENT_COUNT; element++) {
-    for (djinn = 0; djinn < 18; djinn++)
+    for (djinn = 0; djinn < DJINNI_SPARE_FIRST; djinn++)
       Djinn_GiveToParty(element, djinn);
   }
   GameFlag_RefreshLureCap();

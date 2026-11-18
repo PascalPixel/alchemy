@@ -113,10 +113,11 @@ struct RuinObject {
 /// scratch: no map is loaded during a battle.
 extern u8 gEffectScratch[];
 
-/// The map cell buffer holds WIN0's line table and then the splashes.
-struct DropSplashBuffer {
+/// The map cell buffer holds WIN0's line table and then the droplets Douse's
+/// drops throw up.
+struct DropletBuffer {
   u16 lines[160];
-  struct Particle splashes[512];
+  struct Particle droplets[512];
 };
 
 extern const struct Scale gEclipse_Scales;
@@ -148,6 +149,11 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define EFFECT_BLEND_ADD BLEND_ALPHA(BLEND_WEIGHT_MAX, BLEND_WEIGHT_MAX)
 /// The canvas at `level` sixteenths over the whole battle under it.
 #define EFFECT_BLEND_CANVAS(level) BLEND_ALPHA(level, BLEND_WEIGHT_MAX)
+/// The element pillar's and element burst's canvas weight over the battle.
+#define ELEMENT_BLEND_LEVEL 12
+/// The motes the element pillar and element burst set up in PARTICLES; the
+/// burst leaves them undrawn.
+#define ELEMENT_SPIRAL_MOTES 128
 
 /// The map cell buffer as BattleEffect_BuildWindowEdgeTable reads it: window
 /// 0's right edge, how far each of its lines is set in from that edge, and the
@@ -460,11 +466,19 @@ enum RedCrescentPicture {
 /// skulls and the tornado strips after TornadoSheet's glints.
 #define SMOKE_PUFF_WIDTH 24
 #define SMOKE_PUFF_HEIGHT 48
+/// A puff of SmokeSheet's lives through its six pictures, four frames each.
+#define SMOKE_PUFF_FRAMES (6 * 4)
 #define FLASH_BURST_WIDTH 32
 #define FLASH_BURST_HEIGHT 64
 /// FlashBurstSheet's six pictures: a white flash turning to a fireball that
 /// burns out to embers.
-#define FLASH_BURST_PICTURES 6
+#define FLASH_BURST_PICTURE_COUNT 6
+/// BlueBeamSheet: a blue bubble, a small splash of blue light the bubble's
+/// size, then a large splash.
+#define BLUE_BUBBLE_WIDTH 24
+#define BLUE_BUBBLE_HEIGHT 24
+#define BLUE_LARGE_SPLASH_WIDTH 42
+#define BLUE_LARGE_SPLASH_HEIGHT 42
 /// BlueCloudPuffSheet: four 32x32 puffs of cloud.
 #define CLOUD_PUFF_WIDTH 32
 #define CLOUD_PUFF_HEIGHT 32
@@ -503,6 +517,9 @@ enum RedCrescentPicture {
 
 /// The bytes of one set of the ten mote pictures: 2 * (1 + 4 + ... + 100).
 #define MOTE_SET_BYTES 770
+/// The bytes of ParticleSpritesD's ten flare pictures, 2 to 20 pixels square:
+/// 4 * (1 + 4 + ... + 100).
+#define FLARE_SET_BYTES 1540
 #define MOTE_PICTURES 10
 
 /// Clips overflow on all four sides.
@@ -659,8 +676,10 @@ enum CanvasFadeShare { CANVAS_FADE_HALF = 50, CANVAS_FADE_THREE_QUARTERS = 75 };
   (Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer),                   \
    HeapSlot_Release(HEAP_SLOT_RAM_CODE), BattleEffect_EndCanvasLayer())
 
-/// Draws mote picture `size` (1 to 10: size pixels wide, twice that tall),
-/// centred across x and standing on y.
+/// The largest of the ten mote pictures.
+#define MOTE_SIZE_MAX 10
+/// Draws mote picture `size` (1 to MOTE_SIZE_MAX: size pixels wide, twice that
+/// tall), centred across x and standing on y.
 #define EFFECT_DRAW_MOTE(draw, canvas, sheet, x, y, size)                      \
   (draw)(canvas, (sheet) + gBattleEffect_MotePictures[(size) - 1],             \
          (x) - (size) / 2, (y) - (size), size, (size) * 2)
@@ -875,11 +894,14 @@ void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
                                         s32 color);
 void BattleEffect_BuildCanvasTilemap(void);
 /// The 64x64 stamp Haures draws in 256 colours: the VRAM address of its
-/// sprite's tiles, past what struct BattleEffectWork names in the effect's
-/// work block (BATTLE_EFFECT_WORK_SIZE), and the picture drawn for them, the
-/// 4 KB before transferMode.
-#define STAMP_TILES(work) (*(u32 *)((u8 *)(work) + 31604))
-#define STAMP_CANVAS(work) ((u8 *)(work) + 26496)
+/// sprite's tiles, two words before the work block's end, past what struct
+/// BattleEffectWork names, and the picture drawn for them, the 4 KB before
+/// transferMode.
+#define STAMP_TILES(work)                                                      \
+  (*(u32 *)((u8 *)(work) + BATTLE_EFFECT_WORK_SIZE - 2 * sizeof(u32)))
+#define STAMP_CANVAS(work)                                                     \
+  ((u8 *)(work) + offsetof(struct BattleEffectWork, transferMode) -            \
+   OBJ_64X64_8BPP_BYTES)
 void BattleEffect_ProcessPendingStampTransfer(void);
 
 // mirrored_wall.c

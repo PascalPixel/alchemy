@@ -2,7 +2,7 @@
 /// Lemuria's rooms (SceneId_LemuriaRooms), a sheet of rooms behind the city's
 /// doors:
 ///
-/// - Piers' uncle's house (LEMURIA_ROOMS_TO_LEMURIA_WEST_A), where Piers comes
+/// - Piers's uncle's house (LEMURIA_ROOMS_TO_LEMURIA_WEST_A), where Piers comes
 ///   home to learn his mother has died (LemuriaRooms_PiersVisitsUncle) and his
 ///   uncle sends a bird with a letter to Lunpa
 ///   (LemuriaRooms_LeavePiersToMourn);
@@ -83,7 +83,7 @@ enum LemuriaRoomsActorId {
 
 /// The cell behaviors the rooms' step triggers answer.
 enum LemuriaRoomsCellBehavior {
-  /// Inside the door of Piers' uncle's house, where his uncle stops the party
+  /// Inside the door of Piers's uncle's house, where his uncle stops the party
   /// on its way out (LemuriaRooms_LeavePiersToMourn).
   CELL_BEHAVIOR_UNCLES_DOORWAY = 30,
   /// The foot of the stairs in Lunpa's tower, where Lunpa comes to meet the
@@ -162,7 +162,7 @@ void LemuriaRooms_TalkToPiersUncle(s32 actorId) {
   }
 }
 
-/// Mind Read on Piers' uncle: his thoughts follow how far Piers' homecoming
+/// Mind Read on Piers's uncle: his thoughts follow how far Piers's homecoming
 /// has gone.
 void LemuriaRooms_MindReadPiersUncle(s32 unused, s32 id) {
   if (Event_GetFlag(FLAG_PIERS_AT_MOTHERS_GRAVE)) {
@@ -817,9 +817,9 @@ void LemuriaRooms_LeavePiersToMourn(void) {
 
 void Actor_StartScript(struct Actor *actor, const void *script);
 
-/// Pops a "?" bubble up at (x, y, z), in 16.16 pixels, tilted by rotation,
-/// for the given frames.
-void LemuriaRooms_PopQuestionMark(s32 x, s32 y, s32 z, u16 rotation,
+/// Pops a "?" bubble up at (x, y, z), tilted by rotation, for the given
+/// frames.
+void LemuriaRooms_PopQuestionMark(FIXED x, FIXED y, FIXED z, u16 rotation,
                                   s32 frames) {
   struct Actor *actor;
   struct AnimatedSprite *sprite;
@@ -842,7 +842,7 @@ void LemuriaRooms_PopQuestionMark(s32 x, s32 y, s32 z, u16 rotation,
 
 /// Four "?" bubbles pop up over an actor in turn, to its right and its left,
 /// each tilted, a quarter of a second apart.
-void Actor_PopQuestionMarks(s32 id) {
+void LemuriaRooms_PopQuestionMarks(s32 id) {
   struct Actor *actor = Actor_GetById(id);
 
   LemuriaRooms_PopQuestionMark(actor->x.fixed + toFIXED(8),
@@ -1071,7 +1071,7 @@ void LemuriaRooms_MeetLunpa(void) {
   Event_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
   Actor_FaceDirection(ACTOR_LUNPA, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(30);
-  Actor_PopQuestionMarks(ACTOR_LUNPA);
+  LemuriaRooms_PopQuestionMarks(ACTOR_LUNPA);
   Event_PlaySound(SE_LIGHT_APPEAR);
   Actor_ShowEmote(ACTOR_LUNPA, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
   Actor_FaceDirection(ACTOR_LUNPA, FACING_NORTH_NORTHWEST, 0);
@@ -1572,7 +1572,7 @@ struct ActorPlacement gActorPlacements[] = {
 };
 // clang-format on
 
-/// The ways out, the steps that start Piers' uncle's letter and Lunpa's
+/// The ways out, the steps that start Piers's uncle's letter and Lunpa's
 /// talk, the people talked to and read, and the bookcases.
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, LEMURIA_ROOMS_TO_LEMURIA_WEST_A, CONDITION_ALWAYS,

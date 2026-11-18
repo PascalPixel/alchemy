@@ -158,6 +158,23 @@ struct Actor *gKibombo_BlackCrystal BSS_DATA;
 /// `palette`, as the fires' flicker indexes the colours it sets.
 #define BG_PLTT_INDEX(palette, color) ((palette) * PALETTE_COLORS + (color))
 
+/// The fires' colours in the background palettes, which each room keeps in
+/// gKibombo_FireColors as it opens and its flicker task brightens and dims:
+/// four in the night village, four on the night grounds, the first the same,
+/// and three before the statue's face.
+enum KibomboFireColor {
+  FIRE_COLOR_FIRST = BG_PLTT_INDEX(0, 9),
+  VILLAGE_FIRE_COLOR_SECOND = BG_PLTT_INDEX(5, 7),
+  VILLAGE_FIRE_COLOR_THIRD = BG_PLTT_INDEX(6, 7),
+  VILLAGE_FIRE_COLOR_FOURTH = BG_PLTT_INDEX(7, 7),
+  GROUNDS_FIRE_COLOR_SECOND = BG_PLTT_INDEX(0, 7),
+  GROUNDS_FIRE_COLOR_THIRD = BG_PLTT_INDEX(0, 6),
+  GROUNDS_FIRE_COLOR_FOURTH = BG_PLTT_INDEX(4, 12),
+  STATUE_FIRE_COLOR_FIRST = BG_PLTT_INDEX(10, 9),
+  STATUE_FIRE_COLOR_SECOND = BG_PLTT_INDEX(10, 7),
+  STATUE_FIRE_COLOR_THIRD = BG_PLTT_INDEX(10, 6)
+};
+
 /// Set once the party has found the dead end by the statue and turned back
 /// (Kibombo_DeadEndByTheStatue).
 #define FLAG_KIBOMBO_DEAD_END_SEEN 0x8f5
@@ -1803,7 +1820,7 @@ void Kibombo_FlickerRedColor(s32 index, s32 entry, s32 delta) {
                                                                                \
     if (work->psynergy == 0 && work->fieldMenu == 0 && work->pauseMenu == 0 && \
         (gFrameCount & 7) == 0) {                                              \
-      Kibombo_FlickerColor(BG_PLTT_INDEX(0, 9), 0, (Random_Below(10)) - 5);    \
+      Kibombo_FlickerColor(FIRE_COLOR_FIRST, 0, (Random_Below(10)) - 5);       \
       Kibombo_FlickerColor(secondIndex, 1,                                     \
                            (Random_Below(secondRange)) - secondBias);          \
       Kibombo_FlickerColor(thirdIndex, 2, (Random_Below(4)) - 2);              \
@@ -1811,17 +1828,19 @@ void Kibombo_FlickerRedColor(s32 index, s32 entry, s32 delta) {
     }                                                                          \
   }
 
-/// A frame task in the village: every eighth frame outside menus and Psynergy,
-/// the four fire colours flicker.
-DEFINE_KIBOMBO_FLICKER_FIRES(Kibombo_FlickerVillageFires, BG_PLTT_INDEX(5, 7),
-                             8, 4, BG_PLTT_INDEX(6, 7), Kibombo_FlickerColor,
-                             BG_PLTT_INDEX(7, 7), 4, 2)
+/// A frame task in the night village: every eighth frame outside menus and
+/// Psynergy, the four fire colours flicker.
+DEFINE_KIBOMBO_FLICKER_FIRES(Kibombo_FlickerVillageFires,
+                             VILLAGE_FIRE_COLOR_SECOND, 8, 4,
+                             VILLAGE_FIRE_COLOR_THIRD, Kibombo_FlickerColor,
+                             VILLAGE_FIRE_COLOR_FOURTH, 4, 2)
 
-/// As Kibombo_FlickerVillageFires on the ceremony night, its fourth colour
+/// As Kibombo_FlickerVillageFires on the night grounds, its fourth colour
 /// flickering redder.
-DEFINE_KIBOMBO_FLICKER_FIRES(Kibombo_FlickerCeremonyFires, BG_PLTT_INDEX(0, 7),
-                             6, 3, BG_PLTT_INDEX(0, 6), Kibombo_FlickerRedColor,
-                             BG_PLTT_INDEX(4, 12), 8, 4)
+DEFINE_KIBOMBO_FLICKER_FIRES(Kibombo_FlickerCeremonyFires,
+                             GROUNDS_FIRE_COLOR_SECOND, 6, 3,
+                             GROUNDS_FIRE_COLOR_THIRD, Kibombo_FlickerRedColor,
+                             GROUNDS_FIRE_COLOR_FOURTH, 8, 4)
 
 /// A frame task before the statue's face: every eighth frame outside menus and
 /// Psynergy, the three fire colours flicker.
@@ -1830,9 +1849,9 @@ void Kibombo_FlickerStatueFires(void) {
 
   if (work->psynergy == 0 && work->fieldMenu == 0 && work->pauseMenu == 0 &&
       (gFrameCount & 7) == 0) {
-    Kibombo_FlickerColor(BG_PLTT_INDEX(10, 9), 0, (Random_Below(4)) - 2);
-    Kibombo_FlickerColor(BG_PLTT_INDEX(10, 7), 1, (Random_Below(2)) - 1);
-    Kibombo_FlickerColor(BG_PLTT_INDEX(10, 6), 2, Random16() >> 16);
+    Kibombo_FlickerColor(STATUE_FIRE_COLOR_FIRST, 0, (Random_Below(4)) - 2);
+    Kibombo_FlickerColor(STATUE_FIRE_COLOR_SECOND, 1, (Random_Below(2)) - 1);
+    Kibombo_FlickerColor(STATUE_FIRE_COLOR_THIRD, 2, Random16() >> 16);
   }
 }
 
@@ -1926,8 +1945,11 @@ void Kibombo_RaiseEmbers(void) {
   }
 }
 
-/// A cloud of smoke's update: drifts sideways and up, swelling, until its 60
-/// frames are out.
+/// How long a cloud of smoke drifts before it is gone, in frames.
+#define SMOKE_FRAMES 60
+
+/// A cloud of smoke's update: drifts sideways and up, swelling, until its
+/// SMOKE_FRAMES are out.
 void Kibombo_UpdateSmoke(struct Actor *actor) {
   actor->x.fixed += actor->timer << 8;
 
@@ -1960,7 +1982,7 @@ void Kibombo_RaiseSmoke(void) {
       Actor_SetSpriteFlags(actor, 0);
       actor->scaleX = FIXED_ONE / 2;
       actor->scaleY = FIXED_ONE / 2;
-      *(s32 *)&actor->watchedActor = 60;
+      *(s32 *)&actor->watchedActor = SMOKE_FRAMES;
       actor->update = (void (*)(void))Kibombo_UpdateSmoke;
       Actor_SelectAnimation(actor, 5);
       Actor_SetBlendMode(actor, 1);
@@ -2956,8 +2978,9 @@ void Kibombo_GabombaSeesOrb(void) {
                                    gKibombo_EyesPopScript);
   Actor_SetMovementTypeById(ACTOR_STATUE_LEFT_EYE, gKibombo_EyesShakeScript);
   Actor_SetMovementTypeById(ACTOR_STATUE_RIGHT_EYE, gKibombo_EyesShakeScript);
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_STATUE_LEFT_EYE), 12);
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_STATUE_RIGHT_EYE), 12);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_STATUE_LEFT_EYE), SPRITE_COLOR_DARK);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_STATUE_RIGHT_EYE),
+                       SPRITE_COLOR_DARK);
   Event_Wait(120);
   Kibombo_CrowdCheers();
   GameFlag_Set(FLAG_GABOMBA_BACK_FROM_CEREMONY);
@@ -3287,10 +3310,10 @@ void Kibombo_InitializeCeremony(void) {
     }
   }
   GameFlag_Set(FLAG_KIBOMBO_FIRES_FLICKER);
-  gKibombo_FireColors[0] = *(u16 *)&BG_PLTT_COLOR(0, 9);
-  gKibombo_FireColors[1] = *(u16 *)&BG_PLTT_COLOR(5, 7);
-  gKibombo_FireColors[2] = *(u16 *)&BG_PLTT_COLOR(6, 7);
-  gKibombo_FireColors[3] = *(u16 *)&BG_PLTT_COLOR(7, 7);
+  gKibombo_FireColors[0] = *(u16 *)&BG_PLTT[FIRE_COLOR_FIRST];
+  gKibombo_FireColors[1] = *(u16 *)&BG_PLTT[VILLAGE_FIRE_COLOR_SECOND];
+  gKibombo_FireColors[2] = *(u16 *)&BG_PLTT[VILLAGE_FIRE_COLOR_THIRD];
+  gKibombo_FireColors[3] = *(u16 *)&BG_PLTT[VILLAGE_FIRE_COLOR_FOURTH];
   Kibombo_InitializeVillage();
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_LIT_CANDLESTICK_A), 0);
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_LIT_CANDLESTICK_B), 0);
@@ -3415,10 +3438,10 @@ void Kibombo_InitializeStatueGroundsCeremony(void) {
   Event_ResolvePendingActions(0);
   GameFlag_Set(FLAG_SAW_THE_GROUNDS_CEREMONY);
   GameFlag_Set(FLAG_KIBOMBO_FIRES_FLICKER);
-  gKibombo_FireColors[0] = *(u16 *)&BG_PLTT_COLOR(0, 9);
-  gKibombo_FireColors[1] = *(u16 *)&BG_PLTT_COLOR(0, 7);
-  gKibombo_FireColors[2] = *(u16 *)&BG_PLTT_COLOR(0, 6);
-  gKibombo_FireColors[3] = *(u16 *)&BG_PLTT_COLOR(4, 12);
+  gKibombo_FireColors[0] = *(u16 *)&BG_PLTT[FIRE_COLOR_FIRST];
+  gKibombo_FireColors[1] = *(u16 *)&BG_PLTT[GROUNDS_FIRE_COLOR_SECOND];
+  gKibombo_FireColors[2] = *(u16 *)&BG_PLTT[GROUNDS_FIRE_COLOR_THIRD];
+  gKibombo_FireColors[3] = *(u16 *)&BG_PLTT[GROUNDS_FIRE_COLOR_FOURTH];
   Kibombo_InitializeStatueGrounds();
   if (GameFlag_Get(FLAG_GABOMBA_RESPONDED)) {
     Kibombo_SetStatueMouth(1, 1);
@@ -3506,9 +3529,9 @@ void Kibombo_InitializeStatueFace(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   GameFlag_Set(FLAG_KIBOMBO_FIRES_FLICKER);
-  gKibombo_FireColors[0] = *(u16 *)&BG_PLTT_COLOR(10, 9);
-  gKibombo_FireColors[1] = *(u16 *)&BG_PLTT_COLOR(10, 7);
-  gKibombo_FireColors[2] = *(u16 *)&BG_PLTT_COLOR(10, 6);
+  gKibombo_FireColors[0] = *(u16 *)&BG_PLTT[STATUE_FIRE_COLOR_FIRST];
+  gKibombo_FireColors[1] = *(u16 *)&BG_PLTT[STATUE_FIRE_COLOR_SECOND];
+  gKibombo_FireColors[2] = *(u16 *)&BG_PLTT[STATUE_FIRE_COLOR_THIRD];
   if (gMainRoutineWork.entrance ==
       GABOMBA_STATUE_FACE_FROM_KIBOMBO_STATUE_GROUNDS_CEREMONY_EAST_A) {
     Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);

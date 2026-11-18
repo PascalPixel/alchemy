@@ -733,10 +733,9 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
           caster->y = 0;
           spark = LEAPING_STRIKE_SPARKS;
           for (i = 0; i != LEAPING_STRIKE_SPARK_COUNT; i++) {
-            s32 speed = 0x3ff;
+            s32 speed = 1023;
             s32 angle;
 
-            // Masked in place, the mask assigned first.
             speed &= Random16();
             angle = Random16() & TRIG_ANGLE_MASK;
 

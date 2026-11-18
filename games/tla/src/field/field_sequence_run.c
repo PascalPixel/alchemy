@@ -117,8 +117,9 @@ s32 FieldSequence_Run(void) {
     SCENE_ENTRIES->prepareMap();
     MapGrid_CenterOnFollowedPointFar();
   }
-  // Flag 0x11f is cleared as each scene starts; nothing in the game sets or
-  // reads it.
+  // XXX (no evidence): what flag 0x11f means; every scene start clears it,
+  // The Broken Seal's does not, and nothing in the game's source sets or reads
+  // it by its number.
   GameFlag_Clear(0x11f);
   PaletteFade_Initialize();
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);

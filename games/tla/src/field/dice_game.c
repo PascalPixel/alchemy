@@ -88,12 +88,12 @@ enum SuperLuckyDicePalette {
 /// How a throw ended, the banner it shows: in a hi-lo game a loss or a win, or
 /// for the first throw what the four dice show (SuperLuckyDice_ScoreDice).
 enum SuperLuckyDiceResult {
-  DICE_RESULT_LOSE = 0, ///< "Lose"
-  DICE_RESULT_WIN = 1,  ///< "Win!", a hi-lo game won
-  DICE_RESULT_ONE_PAIR = 2,
-  DICE_RESULT_TWO_PAIR = 3,
-  DICE_RESULT_TRIPLE = 4,
-  DICE_RESULT_PERFECT = 5 ///< all four alike
+  SUPER_LUCKY_DICE_RESULT_LOSE = 0, ///< "Lose"
+  SUPER_LUCKY_DICE_RESULT_WIN = 1,  ///< "Win!", a hi-lo game won
+  SUPER_LUCKY_DICE_RESULT_ONE_PAIR = 2,
+  SUPER_LUCKY_DICE_RESULT_TWO_PAIR = 3,
+  SUPER_LUCKY_DICE_RESULT_TRIPLE = 4,
+  SUPER_LUCKY_DICE_RESULT_PERFECT = 5 ///< all four alike
 };
 
 /// Super Lucky Dice's rules, as Contigo's sign gives them: four dice thrown at
@@ -289,9 +289,9 @@ s32 SuperLuckyDice_DrawLargeNumber(s32 sprite, s32 x, s32 y, s32 value,
   return sprite;
 }
 
-/// Scores the four dice's faces: DICE_RESULT_PERFECT when all four match,
-/// otherwise by the matching pairs among them, one pair, two pair or three
-/// (three alike), or DICE_RESULT_LOSE for none.
+/// Scores the four dice's faces: SUPER_LUCKY_DICE_RESULT_PERFECT when all four
+/// match, otherwise by the matching pairs among them, one pair, two pair or
+/// three (three alike), or SUPER_LUCKY_DICE_RESULT_LOSE for none.
 s32 SuperLuckyDice_ScoreDice(s32 *dice) {
 // UB: three alike make three pairs, and the list of matched faces, which
 // nothing reads, has room for two.
@@ -305,9 +305,9 @@ s32 SuperLuckyDice_ScoreDice(s32 *dice) {
   s32 i;
   s32 j;
 
-  score = DICE_RESULT_LOSE;
+  score = SUPER_LUCKY_DICE_RESULT_LOSE;
   if (dice[0] == dice[1] && dice[0] == dice[2] && dice[0] == dice[3]) {
-    score = DICE_RESULT_PERFECT;
+    score = SUPER_LUCKY_DICE_RESULT_PERFECT;
   } else {
     pairs = 0;
     for (i = 0; i != SUPER_LUCKY_DICE_COUNT - 1; i++) {
@@ -319,11 +319,11 @@ s32 SuperLuckyDice_ScoreDice(s32 *dice) {
       }
     }
     if (pairs == 1)
-      score = DICE_RESULT_ONE_PAIR;
+      score = SUPER_LUCKY_DICE_RESULT_ONE_PAIR;
     if (pairs == 2)
-      score = DICE_RESULT_TWO_PAIR;
+      score = SUPER_LUCKY_DICE_RESULT_TWO_PAIR;
     if (pairs == 3)
-      score = DICE_RESULT_TRIPLE;
+      score = SUPER_LUCKY_DICE_RESULT_TRIPLE;
   }
   return score;
 }
@@ -342,8 +342,8 @@ const u8 gSuperLuckyDice_FaceTiles[] = {0, 12, 16, 1, 14, 8, 2, 15, 10,
 #define COIN_WINDOW_X 19
 #define COIN_WINDOW_WIDTH 11
 #define COIN_TEXT_X 48
-#define HELP_WINDOW_X 22
-#define HELP_WINDOW_WIDTH 8
+#define SUPER_LUCKY_DICE_HELP_WINDOW_X 22
+#define SUPER_LUCKY_DICE_HELP_WINDOW_WIDTH 8
 #define BET_TEXT_X 24
 #define WINNINGS_WINDOW_X 10
 #define WINNINGS_WINDOW_MARGIN 10
@@ -357,8 +357,8 @@ const u8 gSuperLuckyDice_FaceTiles[] = {0, 12, 16, 1, 14, 8, 2, 15, 10,
 #define COIN_WINDOW_X 18
 #define COIN_WINDOW_WIDTH 12
 #define COIN_TEXT_X 48
-#define HELP_WINDOW_X 22
-#define HELP_WINDOW_WIDTH 8
+#define SUPER_LUCKY_DICE_HELP_WINDOW_X 22
+#define SUPER_LUCKY_DICE_HELP_WINDOW_WIDTH 8
 #define BET_TEXT_X 24
 #define WINNINGS_WINDOW_X 9
 #define WINNINGS_WINDOW_MARGIN 12
@@ -372,8 +372,8 @@ const u8 gSuperLuckyDice_FaceTiles[] = {0, 12, 16, 1, 14, 8, 2, 15, 10,
 #define COIN_WINDOW_X 17
 #define COIN_WINDOW_WIDTH 13
 #define COIN_TEXT_X 48
-#define HELP_WINDOW_X 20
-#define HELP_WINDOW_WIDTH 10
+#define SUPER_LUCKY_DICE_HELP_WINDOW_X 20
+#define SUPER_LUCKY_DICE_HELP_WINDOW_WIDTH 10
 #define BET_TEXT_X 32
 #define WINNINGS_WINDOW_X 7
 #define WINNINGS_WINDOW_MARGIN 14
@@ -387,8 +387,8 @@ const u8 gSuperLuckyDice_FaceTiles[] = {0, 12, 16, 1, 14, 8, 2, 15, 10,
 #define COIN_WINDOW_X 18
 #define COIN_WINDOW_WIDTH 12
 #define COIN_TEXT_X 56
-#define HELP_WINDOW_X 20
-#define HELP_WINDOW_WIDTH 10
+#define SUPER_LUCKY_DICE_HELP_WINDOW_X 20
+#define SUPER_LUCKY_DICE_HELP_WINDOW_WIDTH 10
 #define BET_TEXT_X 32
 #define WINNINGS_WINDOW_X 9
 #define WINNINGS_WINDOW_MARGIN 12
@@ -402,8 +402,8 @@ const u8 gSuperLuckyDice_FaceTiles[] = {0, 12, 16, 1, 14, 8, 2, 15, 10,
 #define COIN_WINDOW_X 16
 #define COIN_WINDOW_WIDTH 14
 #define COIN_TEXT_X 56
-#define HELP_WINDOW_X 20
-#define HELP_WINDOW_WIDTH 10
+#define SUPER_LUCKY_DICE_HELP_WINDOW_X 20
+#define SUPER_LUCKY_DICE_HELP_WINDOW_WIDTH 10
 #define BET_TEXT_X 24
 #define WINNINGS_WINDOW_X 7
 #define WINNINGS_WINDOW_MARGIN 14
@@ -417,8 +417,8 @@ const u8 gSuperLuckyDice_FaceTiles[] = {0, 12, 16, 1, 14, 8, 2, 15, 10,
 #define COIN_WINDOW_X 18
 #define COIN_WINDOW_WIDTH 12
 #define COIN_TEXT_X 56
-#define HELP_WINDOW_X 20
-#define HELP_WINDOW_WIDTH 10
+#define SUPER_LUCKY_DICE_HELP_WINDOW_X 20
+#define SUPER_LUCKY_DICE_HELP_WINDOW_WIDTH 10
 #define BET_TEXT_X 24
 #define WINNINGS_WINDOW_X 9
 #define WINNINGS_WINDOW_MARGIN 12
@@ -696,7 +696,7 @@ void SuperLuckyDice_Run(void) {
   REG_WIN1V = WIN_RANGE(0, DISPLAY_HEIGHT);
 
   total = 0;
-  resultKind = DICE_RESULT_LOSE;
+  resultKind = SUPER_LUCKY_DICE_RESULT_LOSE;
   state = SUPER_LUCKY_DICE_THROW;
   hiLoGame = 0;
   timer = 0;
@@ -741,7 +741,8 @@ void SuperLuckyDice_Run(void) {
   sprites->betWindow = window;
   // "Bet", the message before.
   Text_DrawMessageAsTilesFar((s32)&MsgLuckyDiceCoins - 1, window, 0, 0);
-  window = Window_CreateFar(HELP_WINDOW_X, 16, HELP_WINDOW_WIDTH, 4, 6);
+  window = Window_CreateFar(SUPER_LUCKY_DICE_HELP_WINDOW_X, 16,
+                            SUPER_LUCKY_DICE_HELP_WINDOW_WIDTH, 4, 6);
   sprites->helpWindow = window;
   // The Throw and Quit buttons.
   Text_DrawMessageAsTilesFar((s32)&MsgDiceGameThrow, window, 0, 0);
@@ -820,7 +821,8 @@ void SuperLuckyDice_Run(void) {
           Sound_PlayFar(SE_MENU_ERROR);
         } else {
           Window_CloseFar(sprites->helpWindow, 1);
-          window = Window_CreateFar(HELP_WINDOW_X, 16, HELP_WINDOW_WIDTH, 4, 6);
+          window = Window_CreateFar(SUPER_LUCKY_DICE_HELP_WINDOW_X, 16,
+                                    SUPER_LUCKY_DICE_HELP_WINDOW_WIDTH, 4, 6);
           sprites->helpWindow = window;
           Text_DrawMessageAsTilesFar((s32)&MsgDiceGameThrow, window, 0, 0);
           Text_DrawMessageAsTilesFar((s32)&MsgDiceGameThrow + 1,
@@ -1044,7 +1046,7 @@ void SuperLuckyDice_Run(void) {
       if (timer == 70)
         Sound_PlayFar(SE_CURSE);
       if (timer == 40) {
-        if ((u32)resultKind > DICE_RESULT_WIN)
+        if ((u32)resultKind > SUPER_LUCKY_DICE_RESULT_WIN)
           Sound_PlayFar(MUS_BOULDER_CHASE);
         else if (jingle != -1)
           Sound_PlayFar(jingle);
@@ -1052,35 +1054,35 @@ void SuperLuckyDice_Run(void) {
       }
       if (timer == 1) {
         loadPictures = DICE_PICTURES_RESULT;
-        resultKind = DICE_RESULT_LOSE;
+        resultKind = SUPER_LUCKY_DICE_RESULT_LOSE;
         jingle = -1;
         if (hiLoGame == 0) {
           resultKind = SuperLuckyDice_ScoreDice(numbers);
           switch (resultKind) {
-          case DICE_RESULT_PERFECT:
+          case SUPER_LUCKY_DICE_RESULT_PERFECT:
             jingle = MUS_JINGLE_LARGE;
             multiplier = SUPER_LUCKY_DICE_PERFECT_PAYOUT;
             break;
-          case DICE_RESULT_ONE_PAIR:
+          case SUPER_LUCKY_DICE_RESULT_ONE_PAIR:
             jingle = MUS_JINGLE_SMALL;
             multiplier = SUPER_LUCKY_DICE_ONE_PAIR_PAYOUT;
             break;
-          case DICE_RESULT_TWO_PAIR:
+          case SUPER_LUCKY_DICE_RESULT_TWO_PAIR:
             jingle = MUS_JINGLE_MEDIUM;
             multiplier = SUPER_LUCKY_DICE_TWO_PAIR_PAYOUT;
             break;
-          case DICE_RESULT_TRIPLE:
+          case SUPER_LUCKY_DICE_RESULT_TRIPLE:
             jingle = MUS_JINGLE_SMALL;
             multiplier = SUPER_LUCKY_DICE_TRIPLE_PAYOUT;
             break;
           }
         } else if (lower == 0) {
           if (total > target)
-            resultKind = DICE_RESULT_WIN;
+            resultKind = SUPER_LUCKY_DICE_RESULT_WIN;
         } else if (total < target) {
-          resultKind = DICE_RESULT_WIN;
+          resultKind = SUPER_LUCKY_DICE_RESULT_WIN;
         }
-        if (resultKind == DICE_RESULT_WIN) {
+        if (resultKind == SUPER_LUCKY_DICE_RESULT_WIN) {
           if (hiLoGame <= 3)
             jingle = MUS_JINGLE_SMALL;
           if (hiLoGame == 4)
@@ -1089,8 +1091,9 @@ void SuperLuckyDice_Run(void) {
             jingle = MUS_JINGLE_LARGE;
         }
       }
-      if (resultKind == DICE_RESULT_LOSE ? timer == 90 : timer == 68) {
-        if (resultKind != DICE_RESULT_LOSE) {
+      if (resultKind == SUPER_LUCKY_DICE_RESULT_LOSE ? timer == 90
+                                                     : timer == 68) {
+        if (resultKind != SUPER_LUCKY_DICE_RESULT_LOSE) {
           if (hiLoGame == 0)
             bet *= multiplier;
           else
@@ -1122,7 +1125,8 @@ void SuperLuckyDice_Run(void) {
           multiplier = 0;
           Sound_PlayFar(MUS_SUPER_LUCKY_DICE);
           state = SUPER_LUCKY_DICE_THROW;
-          window = Window_CreateFar(HELP_WINDOW_X, 16, HELP_WINDOW_WIDTH, 4, 6);
+          window = Window_CreateFar(SUPER_LUCKY_DICE_HELP_WINDOW_X, 16,
+                                    SUPER_LUCKY_DICE_HELP_WINDOW_WIDTH, 4, 6);
           sprites->helpWindow = window;
           Text_DrawMessageAsTilesFar((s32)&MsgDiceGameThrow, window, 0, 0);
           Text_DrawMessageAsTilesFar((s32)&MsgDiceGameThrow + 1,
@@ -1163,7 +1167,8 @@ void SuperLuckyDice_Run(void) {
           Sound_PlayFar(MUS_SUPER_LUCKY_DICE);
           Sound_PlayFar(SE_MENU_CONFIRM);
           state = SUPER_LUCKY_DICE_THROW;
-          window = Window_CreateFar(HELP_WINDOW_X, 16, HELP_WINDOW_WIDTH, 4, 6);
+          window = Window_CreateFar(SUPER_LUCKY_DICE_HELP_WINDOW_X, 16,
+                                    SUPER_LUCKY_DICE_HELP_WINDOW_WIDTH, 4, 6);
           sprites->helpWindow = window;
           Text_DrawMessageAsTilesFar((s32)&MsgDiceGameThrow, window, 0, 0);
           Text_DrawMessageAsTilesFar((s32)&MsgDiceGameThrow + 1,
@@ -1319,27 +1324,27 @@ void SuperLuckyDice_Run(void) {
                 DMA_COPY_WORDS(8), REG_DMA3);
       } else if (loadPictures == DICE_PICTURES_RESULT) {
         switch (resultKind) {
-        case DICE_RESULT_LOSE:
+        case SUPER_LUCKY_DICE_RESULT_LOSE:
           resourceAddress =
               Resource_GetTableEntry(RESOURCE_SLOTS_YOU_LOSE_BANNER);
           break;
-        case DICE_RESULT_WIN:
+        case SUPER_LUCKY_DICE_RESULT_WIN:
           resourceAddress =
               Resource_GetTableEntry(RESOURCE_SLOTS_YOU_WIN_BANNER);
           break;
-        case DICE_RESULT_ONE_PAIR:
+        case SUPER_LUCKY_DICE_RESULT_ONE_PAIR:
           resourceAddress =
               Resource_GetTableEntry(RESOURCE_SLOTS_ONE_PAIR_BANNER);
           break;
-        case DICE_RESULT_TWO_PAIR:
+        case SUPER_LUCKY_DICE_RESULT_TWO_PAIR:
           resourceAddress =
               Resource_GetTableEntry(RESOURCE_SLOTS_TWO_PAIR_BANNER);
           break;
-        case DICE_RESULT_TRIPLE:
+        case SUPER_LUCKY_DICE_RESULT_TRIPLE:
           resourceAddress =
               Resource_GetTableEntry(RESOURCE_SLOTS_TRIPLE_BANNER);
           break;
-        case DICE_RESULT_PERFECT:
+        case SUPER_LUCKY_DICE_RESULT_PERFECT:
           resourceAddress =
               Resource_GetTableEntry(RESOURCE_SLOTS_PERFECT_BANNER);
           break;
@@ -1564,7 +1569,7 @@ void SuperLuckyDice_Run(void) {
     // and fall away.
     if (state == SUPER_LUCKY_DICE_RESULT ||
         (state == SUPER_LUCKY_DICE_DOUBLE_UP &&
-         resultKind != DICE_RESULT_LOSE)) {
+         resultKind != SUPER_LUCKY_DICE_RESULT_LOSE)) {
       s32 x;
       s32 y;
       s32 angle;
@@ -1580,7 +1585,7 @@ void SuperLuckyDice_Run(void) {
         angle += TRIG_TURN / 16;
         x = FIXEDtoINT(Trig_Cos(angle) * 40) - (timer << 4) + 56;
         y = 48 - FIXEDtoINT(Trig_Sin(angle) * 48);
-      } else if (resultKind != DICE_RESULT_LOSE) {
+      } else if (resultKind != SUPER_LUCKY_DICE_RESULT_LOSE) {
         // Unused: a win would circle from frame 68, a turn in 44 frames, but
         // it moves on at frame 68.
         if (timer > 67) {
@@ -1604,7 +1609,7 @@ void SuperLuckyDice_Run(void) {
         spriteCount = SuperLuckyDice_DrawLargeNumber(
             spriteCount, x, y, total, DICE_PALETTE_RELOADED_A, 2);
       if (timer > 30 || (state == SUPER_LUCKY_DICE_DOUBLE_UP &&
-                         resultKind != DICE_RESULT_LOSE)) {
+                         resultKind != SUPER_LUCKY_DICE_RESULT_LOSE)) {
         s32 bannerX;
         s32 bannerY;
 

@@ -204,8 +204,7 @@ void ColorBuffer_DarkenFourLevels(u8 *buffer, s32 count) {
 
 /// The canvas's frame callback: counts the frame and carries out the command
 /// the effect left for it, copying the canvas into the sprite's tiles (or to
-/// the start of BG VRAM), and clearing or fading it after the copy. Case 2
-/// comes before case 1: its body comes first in the ROM.
+/// the start of BG VRAM), and clearing or fading it after the copy.
 void BattleEffect_UploadCanvas(void) {
   struct CanvasSpriteWork *work = Ram_HeapSlots->canvasSprite;
   u8 *canvas = Ram_HeapSlots->battleCanvas;

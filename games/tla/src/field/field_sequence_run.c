@@ -117,8 +117,9 @@ s32 FieldSequence_Run(void) {
     SCENE_ENTRIES->prepareMap();
     MapGrid_CenterOnFollowedPointFar();
   }
-  // Flag 0x11f is cleared as each scene starts; nothing in the game sets or
-  // reads it.
+  // XXX (no evidence): what flag 0x11f means; every scene start clears it,
+  // The Broken Seal's does not, and nothing in the game's source sets or reads
+  // it by its number.
   GameFlag_Clear(0x11f);
   PaletteFade_Initialize();
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
@@ -185,11 +186,9 @@ s32 FieldSequence_Run(void) {
     }
     arrivalState = gMainRoutineWork.teleportState;
     if (arrivalState == 1) {
-      // Through a pointer: stored as teleportState, the byte is read and masked
-      // with a 0 made before the store, which then serves ownerOverride.
+      // teleportState = 2, through its address.
       *(s8 *)&gMainRoutineWork.teleportState = 2;
-      // Once-only: inside the block the 0's one use counts at loop depth, so
-      // it stays in a register across Teleport_PlaySparksAndFade.
+      /* FAKEMATCH(dead): a once-only loop round the arrival. */
       do {
         s32 zero = 0;
 

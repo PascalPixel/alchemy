@@ -218,6 +218,15 @@ enum {
   POUND_CUBE_CRACKS = 16
 };
 
+/// The fifth room's two cracks that have another just south of them, the next
+/// in its list; once both are open, the hole drawn below is JOINED_HOLE of
+/// gDehkanPlateau_PoundCubeHolePictures in place of its own.
+enum {
+  POUND_CUBE_WEST_UPPER_CRACK = 0,
+  POUND_CUBE_EAST_UPPER_CRACK = 11,
+  JOINED_HOLE = 4
+};
+
 void Actor_DisableById(s32 id);
 extern s16 gDehkanPlateau_FullMetalVestChestCrumblingPillars[];
 /// The Pound Cube Cannon drops, while it lies on the ground.
@@ -768,11 +777,15 @@ void DehkanPlateau_StepOnCrack(void) {
                                              height);
         }
       } else if (scene == SCENE(DehkanPlateauPoundCube)) {
-        if ((n == 0 && GameFlag_Get(FLAG_CRACK_OPENED(1))) ||
-            (n == 11 && GameFlag_Get(FLAG_CRACK_OPENED(12)))) {
-          s32 srcX = gDehkanPlateau_PoundCubeHolePictures[8],
-              srcY = gDehkanPlateau_PoundCubeHolePictures[9], width = 1,
-              height = 2;
+        if ((n == POUND_CUBE_WEST_UPPER_CRACK &&
+             GameFlag_Get(
+                 FLAG_CRACK_OPENED(POUND_CUBE_WEST_UPPER_CRACK + 1))) ||
+            (n == POUND_CUBE_EAST_UPPER_CRACK &&
+             GameFlag_Get(
+                 FLAG_CRACK_OPENED(POUND_CUBE_EAST_UPPER_CRACK + 1)))) {
+          s32 srcX = gDehkanPlateau_PoundCubeHolePictures[2 * JOINED_HOLE],
+              srcY = gDehkanPlateau_PoundCubeHolePictures[2 * JOINED_HOLE + 1],
+              width = 1, height = 2;
           MapGrid_CopyCellPictureIndicesRect(srcX, srcY, toX, toZ, width,
                                              height);
         } else {
@@ -1794,6 +1807,9 @@ void DehkanPlateau_InitializeMintChest(void) {
     MapGrid_CopyCellPictureIndicesRect(3, 69, 30, 93, 1, 4);
   }
   {
+    /* FAKEMATCH(temporary): the entrance read once as a halfword into a local
+     * and its sign extended by hand; plainly, gMainRoutineWork.entrance in the
+     * test and GameFlag_Set(FLAG_FELL_THROUGH(gMainRoutineWork.entrance)). */
     s32 entrance = *(u16 *)&gMainRoutineWork.entrance;
 
     if ((u16)(entrance - FIRST_LANDING_ENTRANCE) <=

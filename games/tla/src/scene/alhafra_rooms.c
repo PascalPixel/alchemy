@@ -320,6 +320,9 @@ void AlhafraRooms_AlexHearsOfBriggs(s32 actor) {
   s32 msg = (s32)MsgAlhafraInteriorsSoIHearYouCaught;
 
   FieldEvent_SetMessageId(msg);
+  // "So, I hear you caught Briggs..."
+  // Yes: "Mia, a young girl from my clan, was very kind, much like you are..."
+  // No: "You have no need to hide such fine exploits from me. Working hard..."
   Event_OpenMessage(actor, 0);
   if (FieldEvent_AskYesNoWithActorAnimation(FieldParty_GetLeaderActor(), 0) ==
       0) {

@@ -40,8 +40,6 @@ s32 BattlePlayback_SchedulePhase(s32 frames) {
   return Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
 }
 
-#define OBJ_VRAM 0x06010000
-
 // BattlePlayback_Run's waits, in BattlePlaybackWork.phase beside the phases
 // BATTLE_PLAYBACK_PHASE_ names.
 #define PLAY_MESSAGE 3      ///< waits for the message, then for the player
@@ -55,6 +53,15 @@ s32 BattlePlayback_SchedulePhase(s32 frames) {
 #define FELLED_FLASH 1024
 /// The Djinn bonus's colour cycle lasts 30 frames.
 #define FELLED_FLASH_FRAMES 30
+/// A sprite dissolves over SpriteDissolve_Step's 128 steps, four a frame.
+#define DISSOLVE_STEPS 128
+#define DISSOLVE_STEPS_PER_FRAME 4
+/// PLAY_FELLED's timer at the dissolve's first frame.
+#define FELLED_DISSOLVE_START 5
+
+/// The arrow BattlePlayback_Run shows at a message: The Broken Seal's advance
+/// arrow, opaque.
+#define PLAYBACK_ARROW_ATTR0 (OBJ_SIZE_8X16 | OBJ_256_COLORS)
 
 /// Plays the action's targets one at a time: resolves each with
 /// BattleAbility_ApplyToTarget, then plays what it queued over the frames that
@@ -62,12 +69,13 @@ s32 BattlePlayback_SchedulePhase(s32 frames) {
 void BattlePlayback_Run(void) {
   u16 selection[2];
   struct Sprite *records[4];
-  struct BattleMessageWork *display;
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
   struct BattlePlaybackWork *events = &battle->events;
 
+  /// Clears a sprite's tiles in OBJ VRAM, at its VRAM cache entry's offset;
+  /// the last step of a fallen enemy's dissolve.
   void BattleSprite_ClearTiles(struct Sprite * record, s32 unused) {
-    u8 *tiles = (u8 *)OBJ_VRAM + gVramCacheEntries[record->slot].offset;
+    u8 *tiles = (u8 *)OBJ_VRAM0 + gVramCacheEntries[record->slot].offset;
 
     Iwram_ClearWordsEntry(tiles, record->width * record->height);
   }
@@ -218,6 +226,8 @@ void BattlePlayback_Run(void) {
         events->timer = gVBlankCount;
       }
     } else if (events->phase == PLAY_ADVANCE) {
+      // Show the arrow and wait for the player, as BattleMessage_WaitForAdvance
+      // does, but with an opaque arrow.
       struct AdvanceArrowSprite *prompt = &events->arrow;
       u8 *arrowTiles = gBattleMessage_AdvanceArrowTiles;
       s32 pictureTiles = (s32)arrowTiles + ((gFrameCount >> 2) & 7) * 128;
@@ -230,9 +240,9 @@ void BattlePlayback_Run(void) {
       if (events->arrowResource == -1)
         events->arrowResource = battle->arrowTiles;
       MessageArgument_ClearAllFar();
-      IoWriteQueue_ClearBits16((u32)&REG_WINOUT, 4);
-      IoWriteQueue_SetBits16((u32)&REG_WINOUT, 16);
-      ((u32 *)prompt)[1] = 0xa000;
+      IoWriteQueue_ClearBits16((u32)&REG_WINOUT, WINOUT_WIN01_BG2);
+      IoWriteQueue_SetBits16((u32)&REG_WINOUT, WINOUT_WIN01_OBJ);
+      ((u32 *)prompt)[1] = PLAYBACK_ARROW_ATTR0;
       ((u32 *)prompt)[2] = x;
       /* FAKEMATCH(barrier): an empty asm after x is stored. */
       asm("");
@@ -251,6 +261,7 @@ void BattlePlayback_Run(void) {
         return;
       }
     } else if (events->phase == PLAY_HIT) {
+      // A hit: the unit flashes white twice, its party panel lighting with it.
       if (gLastFrameVBlanks)
         events->timer |= 1;
       if (events->timer & 1) {
@@ -275,6 +286,8 @@ void BattlePlayback_Run(void) {
       events->phase = BATTLE_PLAYBACK_PHASE_DISPATCH;
       events->timer = 0;
     } else if (events->phase == PLAY_FELLED) {
+      // A fallen enemy: with the Djinn bonus it first cycles its colours for
+      // FELLED_FLASH_FRAMES, then turns grey, leaves the lists and dissolves.
       if (events->timer == 0 || events->timer >= FELLED_FLASH) {
         s32 colorMode = SPRITE_COLOR_GREY;
 
@@ -301,26 +314,31 @@ void BattlePlayback_Run(void) {
         }
         if (events->timer >= FELLED_FLASH)
           colorMode = (events->timer - FELLED_FLASH) / 8 % 5 + SPRITE_COLOR_GRB;
+        // Recolour every layer's first entry and have its picture redrawn.
         if (colorMode == SPRITE_COLOR_GREY || (events->timer & 7) == 0) {
           struct Sprite *record;
           s32 recordIndex;
           struct Sprite **slot;
-          s32 lastFrameMask;
+          s32 noPicture;
 
-          for (recordIndex = 0, slot = (struct Sprite **)records,
-              lastFrameMask = 0xff;
+          /* FAKEMATCH(temporary): SPRITE_PICTURE_NONE held in noPicture, set
+             as the loop starts. */
+          for (recordIndex = 0, slot = records, noPicture = SPRITE_PICTURE_NONE;
                (record =
                     GetMotionRecord(BattleObject_Get(events->unitId)->object,
                                     recordIndex)) != 0;
                recordIndex++) {
             struct SpriteAnimation *child;
-            u8 previousFrame;
+            u8 previousPicture;
 
             *slot++ = record;
             child = record->entries[0];
-            previousFrame = child->picture;
+            previousPicture = child->picture;
             child->colorMode = colorMode;
-            child->picture = previousFrame | lastFrameMask;
+            // DEAD: the old picture is read and ORed with SPRITE_PICTURE_NONE,
+            // which stores SPRITE_PICTURE_NONE whatever it was; the ROM keeps
+            // the load and the OR.
+            child->picture = previousPicture | noPicture;
           }
         }
         events->timer++;
@@ -343,9 +361,9 @@ void BattlePlayback_Run(void) {
         for (count = 0; (record = GetMotionRecord(slot->object, count)) != 0;
              count++)
           records[count] = record;
-        base = events->timer * 4;
-        step = base - 20;
-        if (step > 127) {
+        base = events->timer * DISSOLVE_STEPS_PER_FRAME;
+        step = base - FELLED_DISSOLVE_START * DISSOLVE_STEPS_PER_FRAME;
+        if (step > DISSOLVE_STEPS - 1) {
           s32 recordIndex;
 
           for (recordIndex = 0; recordIndex < count; recordIndex++)
@@ -360,9 +378,9 @@ void BattlePlayback_Run(void) {
 
           for (recordIndex = 0; recordIndex < count; recordIndex++) {
             SpriteDissolve_StepFar(records[recordIndex], step);
-            SpriteDissolve_StepFar(records[recordIndex], base - 19);
-            SpriteDissolve_StepFar(records[recordIndex], base - 18);
-            SpriteDissolve_StepFar(records[recordIndex], base - 17);
+            SpriteDissolve_StepFar(records[recordIndex], step + 1);
+            SpriteDissolve_StepFar(records[recordIndex], step + 2);
+            SpriteDissolve_StepFar(records[recordIndex], step + 3);
           }
         }
         events->timer++;
@@ -408,6 +426,6 @@ s32 BattlePlayback_WaitForReady(void) {
       wait(1U);
     } while (events->phase != BATTLE_PLAYBACK_PHASE_READY);
   }
-  Task_Remove((u32)BattlePlayback_Run);
+  Task_Remove(BattlePlayback_Run);
   return BattlePlayback_Reset();
 }

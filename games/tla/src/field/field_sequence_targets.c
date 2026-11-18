@@ -10,10 +10,11 @@
 #include "field/map.h"
 #include "system/system.h"
 
-/// Picks the object nearest object id, under 32 pixels away and 48 pixels in
+/// Picks the actor nearest actor id, under 32 pixels away and 48 pixels in
 /// height. Distances to treasure spots count double and to actors with
-/// ACTOR_NEAR_TALK ten thirteenths; beyond 11 pixels the object must also lie
-/// within 0x2fff of id's facing. Returns -1 when none qualifies.
+/// ACTOR_NEAR_TALK ten thirteenths; beyond 11 pixels the actor must also lie
+/// within three sixteenths of a turn of id's facing. Returns -1 when none
+/// qualifies.
 s32 Field_FindNearbyTalkTarget(s32 id) {
   struct Actor *self;
   struct Actor *candidate;
@@ -108,12 +109,16 @@ s32 Field_MeasurePsynergyHeight(s32 id, struct Actor *actor, s32 *position) {
   return -1;
 }
 
-// The Lift-style animation measures height by the object's footing, not y.
+// The Lift-style animation measures height by the actor's footing, not y.
 #define ANIMATION_MEASURES_FOOTING 18
+/// A distance beyond any field Psynergy's reach.
+#define BEYOND_REACH 9999
+/// A facing's sixteenths of a turn (FACING_STEP), as a shift.
+#define FACING_STEP_SHIFT 12
 
-/// How far object otherId stands from object selfId, in pixels over the
-/// ground, when it lies within the animation's reach in front of selfId;
-/// -1 when it does not.
+/// How far actor otherId stands from actor selfId, in pixels over the ground,
+/// when it lies within the animation's reach in front of selfId; -1 when it
+/// does not.
 s32 Field_MeasurePsynergyReach(s32 animation, s32 selfId, s32 otherId) {
   struct Actor *self;
   struct Actor *other;
@@ -178,7 +183,7 @@ s32 Field_MeasurePsynergyReach(s32 animation, s32 selfId, s32 otherId) {
 /// Returns the actor nearest in front of actor id that a field Psynergy of the
 /// given kind can reach, or -1.
 s32 Field_FindNearbyPsynergyTarget(s32 self, s32 effect) {
-  s32 nearest = 9999;
+  s32 nearest = BEYOND_REACH;
   s32 found = -1;
   s32 i;
 
@@ -213,10 +218,10 @@ s32 FieldEffect_PlayCueAndStartEmitterOnTarget(s32 actorId, s32 target,
   return emitter;
 }
 
-/// Whether the object 16 pixels in front of the current owner, along its
-/// facing rounded to a quarter turn, can be pushed on by 16 pixels: 1 when
-/// nothing solid stands on the cell beyond it or above it and its terrain
-/// test passes there, else 0. Leader_PushObjectAhead, after it, makes the push.
+/// Whether the actor 16 pixels in front of the leader, along its facing rounded
+/// to a quarter turn, can be pushed on by 16 pixels: 1 when nothing solid
+/// stands on the cell beyond it or above it and its terrain test passes there,
+/// else 0. Leader_PushObjectAhead, after it, makes the push.
 /// Since patch 1 the actor Halt has stopped (gMainRoutineWork.haltedActor)
 /// cannot be pushed; the Japanese release has no such test.
 s32 Leader_CanPushObjectAhead(void) {
@@ -228,13 +233,13 @@ s32 Leader_CanPushObjectAhead(void) {
   s32 id;
   s32 terrain;
   s32 result;
-  s32 half;
-  s32 angle = owner->facing >> 12;
+  s32 angle = owner->facing / FACING_STEP;
 
-  angle = ((angle + 2) & 12) << 12;
+  // The facing rounded to the nearest quarter turn, in sixteenths; the probe
+  // starts at the leader's height rounded to the nearest 8 pixels.
+  angle = ((angle + 2) & 12) << FACING_STEP_SHIFT;
   position[0] = owner->x.fixed;
-  half = 128;
-  position[1] = (owner->y.fixed + (half << 11)) & 0xfff80000;
+  position[1] = (owner->y.fixed + toFIXED(4)) & ~(toFIXED(8) - 1);
   position[2] = owner->z.fixed;
   Vector_AddPolarOffset(toFIXED(16), angle, position);
   target = Actor_FindAtCell(position, 1);
@@ -269,7 +274,7 @@ s32 Leader_CanPushObjectAhead(void) {
   return 1;
 }
 
-/// Pushes the object ahead of the current owner on by 16 pixels, as
+/// Pushes the actor ahead of the leader on by 16 pixels, as
 /// Leader_CanPushObjectAhead allowed.
 void Leader_PushObjectAhead(void) {
   s32 position[3];
@@ -279,11 +284,11 @@ void Leader_PushObjectAhead(void) {
   s32 result;
   s32 speed;
   s32 acceleration;
-  s32 angle = owner->facing >> 12;
+  s32 angle = owner->facing / FACING_STEP;
 
-  angle = ((angle + 2) & 12) << 12;
+  angle = ((angle + 2) & 12) << FACING_STEP_SHIFT;
   position[0] = owner->x.fixed;
-  position[1] = (owner->y.fixed + toFIXED(4)) & 0xfff80000;
+  position[1] = (owner->y.fixed + toFIXED(4)) & ~(toFIXED(8) - 1);
   position[2] = owner->z.fixed;
   Vector_AddPolarOffset(toFIXED(16), angle, position);
   target = Actor_FindAtCell(position, 1);
@@ -321,3 +326,7 @@ void Leader_PushObjectAhead(void) {
     owner->acceleration = acceleration;
   }
 }
+
+#undef ANIMATION_MEASURES_FOOTING
+#undef BEYOND_REACH
+#undef FACING_STEP_SHIFT

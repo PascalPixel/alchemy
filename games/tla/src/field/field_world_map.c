@@ -138,7 +138,6 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
   Matrix_TranslateVector(cameraPosition);
   Matrix_RotateY(perspective->yaw);
   Matrix_RotateX(perspective->pitch);
-  // eyeOffset in the block that uses it, as The Broken Seal declares it.
   {
     struct Point eyeOffset;
 
@@ -417,59 +416,72 @@ void WorldMap_ApplyAffinePage(void) {
   perspective->windowPending = 0;
 }
 
-/// Copies one world map cell's two tile entries (top and bottom) to a BG map.
+/// Copies one world map cell's tiles to a tile map: its top two, then its
+/// bottom two on the row below.
 static __inline__ void WorldMap_CopyCellTiles(u8 *cellBytes, u8 *screenTile) {
   u32 cellPictureIndex = *(u16 *)cellBytes;
   u16 *cellPictureTiles = (u16 *)Ram_MapCellBuffer;
 
   cellPictureTiles += cellPictureIndex * 2;
   *(u16 *)screenTile = *cellPictureTiles++;
-  *(u16 *)(screenTile + 64) = *cellPictureTiles;
+  *(u16 *)(screenTile + WORLD_MAP_TILE_MAP_WIDTH) = *cellPictureTiles;
 }
 
-/// Draws world map tileRow into the BG map: 32 cells, then 32 more a screen
-/// block on.
+/// Draws the cells of the world map's tile row tileRow into its tile maps: the
+/// lower layer's 32 cells, then the upper layer's.
 void WorldMap_RenderPaletteMappedRow(u32 tileRow) {
   u8 *sourceCell;
   u8 *screenTile;
   u32 cellsCopied;
 
-  sourceCell = Ram_MapBlocks + ((((s32)tileRow / 2) & 31) << 7);
-  screenTile = (u8 *)((u32)BG_SCREEN_BLOCK(8) + ((tileRow & 62) << 6));
+  sourceCell =
+      Ram_MapBlocks + (((s32)tileRow / 2) & (WORLD_MAP_VIEW_CELLS - 1)) *
+                          WORLD_MAP_VIEW_CELLS * sizeof(struct WorldMapCell);
+  screenTile = (u8 *)((u32)WORLD_MAP_LOWER_TILE_MAP +
+                      (tileRow & (WORLD_MAP_TILE_MAP_WIDTH - 2)) *
+                          WORLD_MAP_TILE_MAP_WIDTH);
   cellsCopied = 0;
   do {
     WorldMap_CopyCellTiles(sourceCell, screenTile);
     cellsCopied++;
     screenTile += 2;
-    sourceCell += 4;
-  } while (cellsCopied <= 31);
+    sourceCell += sizeof(struct WorldMapCell);
+  } while (cellsCopied < WORLD_MAP_VIEW_CELLS);
 
-  screenTile += 4032;
-  sourceCell += 3968;
+  // The upper layer's tile map and cells follow the lower layer's.
+  screenTile += WORLD_MAP_TILE_MAP_WIDTH * WORLD_MAP_TILE_MAP_WIDTH -
+                WORLD_MAP_TILE_MAP_WIDTH;
+  sourceCell += WORLD_MAP_VIEW_LAYER_BYTES -
+                WORLD_MAP_VIEW_CELLS * sizeof(struct WorldMapCell);
   cellsCopied = 0;
   do {
     WorldMap_CopyCellTiles(sourceCell, screenTile);
     cellsCopied++;
     screenTile += 2;
-    sourceCell += 4;
-  } while (cellsCopied <= 31);
+    sourceCell += sizeof(struct WorldMapCell);
+  } while (cellsCopied < WORLD_MAP_VIEW_CELLS);
 }
 
-/// Draws world map tileColumn into the BG map: 64 cells down.
+/// Draws the cells of the world map's tile column tileColumn into its tile
+/// maps: 64 cells down, the lower layer's 32 and then the upper layer's, which
+/// follow them in the tile maps and in the cells.
 void WorldMap_RenderPaletteMappedColumn(u32 tileColumn) {
   u8 *sourceCell;
   u8 *screenTile;
   u32 cellsCopied;
 
-  sourceCell = Ram_MapBlocks + ((((s32)tileColumn / 2) & 31) << 2);
-  screenTile = (u8 *)((u32)BG_SCREEN_BLOCK(8) + (tileColumn & 62));
+  sourceCell =
+      Ram_MapBlocks + (((s32)tileColumn / 2) & (WORLD_MAP_VIEW_CELLS - 1)) *
+                          sizeof(struct WorldMapCell);
+  screenTile = (u8 *)((u32)WORLD_MAP_LOWER_TILE_MAP +
+                      (tileColumn & (WORLD_MAP_TILE_MAP_WIDTH - 2)));
   cellsCopied = 0;
   do {
     WorldMap_CopyCellTiles(sourceCell, screenTile);
     cellsCopied++;
-    screenTile += 128;
-    sourceCell += 128;
-  } while (cellsCopied <= 63);
+    screenTile += 2 * WORLD_MAP_TILE_MAP_WIDTH;
+    sourceCell += WORLD_MAP_VIEW_CELLS * sizeof(struct WorldMapCell);
+  } while (cellsCopied < 2 * WORLD_MAP_VIEW_CELLS);
 }
 
 /// Each frame: follows the followed point with the screen shake, draws the rows

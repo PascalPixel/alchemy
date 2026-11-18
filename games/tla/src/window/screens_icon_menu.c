@@ -253,7 +253,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     if (mode == COMMAND_ICON_SWITCH) {
       Sound_PlayFar(SE_MENU_CONFIRM);
     choose_place:
-      mode = BattleTarget_RunSelection(0, ABILITY_TARGET_ALLIES, 1, 8);
+      mode = BattleTarget_RunSelection(0, ABILITY_TARGET_ALLIES, 1,
+                                       TARGET_HINT_LAST_TARGET);
       if (mode == -1)
         continue;
       mode = BattleParty_ChooseReserve(mode);
@@ -1348,7 +1349,7 @@ s32 FileList_SelectAction(void) {
     IconMenu_AddIcon(COMMAND_ICON_BATTLE);
   if (gTitleUpdateOptionEnabled != 0)
     IconMenu_AddIcon(COMMAND_ICON_UPDATE);
-  IconMenu_Center(ICON_MENU_BOTTOM_ROW, SAVE_SLOT_MENU_WIDTH, 0);
+  IconMenu_Center(ICON_MENU_BOTTOM_ROW, TYPE_MENU_WIDTH, 0);
   result = IconMenu_Run(initial);
   IconMenu_Close();
   if (result >= 0) {

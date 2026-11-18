@@ -43,7 +43,7 @@ struct FieldParticle {
   s8 updateMotion; ///< nonzero: FieldParticle_UpdateMotion moves it each frame
   s8 render;       ///< nonzero: drawn each frame
   s8 active;       ///< nonzero while the slot is in use
-  u8 randomValue;  ///< not read by name in TLA
+  u8 randomValue;  ///< not read by name
   u8 flags;        ///< FIELD_PARTICLE_LIFTED_BY_Z
 };
 

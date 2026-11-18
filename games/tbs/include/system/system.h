@@ -223,6 +223,9 @@ void Matrix_LookAt(FIXED *eye, FIXED *target);
 void Projection_SetFieldOfView(u32 fieldOfView, FIXED nearDepth,
                                FIXED farDepth);
 void Projection_Set(u32 focal, u32 nearDepth, u32 farDepth);
+/// The far depth well past everything drawn, the largest whole 16.16 number:
+/// the battle's, Thor's and Lucky Dice's projections.
+#define PROJECTION_FAR_DEPTH_MAX toFIXED(32767)
 s32 Matrix_ProjectPoint(const void *point, s32 *screen);
 
 void Decompress_Halfwords(const void *source, void *destination);

@@ -789,7 +789,7 @@ s32 Scene_Initialize(void) {
     Import_EventSetExitRequest(WORLD_MAP_TO_ROCK_ROOMS);
   } else {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
-    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_CENTRE_LINE, 0);
+    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_CENTER_LINE, 0);
     gFieldWork->transitionFrames = MAP_TRANSITION_FRAMES;
     wait(1);
     FieldCamera_SetSpeed(8);

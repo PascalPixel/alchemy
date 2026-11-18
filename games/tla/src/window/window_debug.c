@@ -13,6 +13,7 @@
 #include "game/character_ids.h"
 #include "window/settings_menu.h"
 #include "gamepak/far_call/field_sequence.h"
+#include "field/field_sequence.h"
 
 /// The sound test's per-frame task: moves the cursor.
 void DebugSoundTest_StepCursor(void) {
@@ -57,9 +58,9 @@ extern const u8 SoundTest_MusicString[], SoundTest_JingleString[],
 
 s32 Sound_LoadReverbCode(s32 preset);
 
-/// Unused: nothing calls it. The debug sound test. Four values (music, jingle,
-/// sound effect, sound preset) start from gDebugSoundTest_StartValues; up and
-/// down pick one, left and right step it by 1, L and R by 10; A plays it (the
+/// Unused: the debug sound test. Four values (music, jingle, sound effect,
+/// sound preset) start from gDebugSoundTest_StartValues; up and down pick one,
+/// left and right step it by 1, L and R by DEBUG_LARGE_STEP; A plays it (the
 /// fourth loads its preset parameters), START fades out the sound and stops the
 /// music, and B leaves.
 UNUSED s32 DebugSoundTest_Run(void) {
@@ -109,11 +110,11 @@ UNUSED s32 DebugSoundTest_Run(void) {
       Sound_PlayFar(MUS_SILENCE);
     }
     if (gInput.repeat & KEY_R) {
-      test.values[cursor] += 10;
+      test.values[cursor] += DEBUG_LARGE_STEP;
       redraw = 1;
     }
     if (gInput.repeat & KEY_L) {
-      test.values[cursor] -= 10;
+      test.values[cursor] -= DEBUG_LARGE_STEP;
       redraw = 1;
     }
     if (gInput.repeat & KEY_RIGHT) {
@@ -322,9 +323,10 @@ void DebugWarp_KaoruSpecial2(void) {
       MARS_LIGHTHOUSE_AERIE_FROM_MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS);
 }
 
-/// Preset 8, "Kaoru Special1": to the Mars Lighthouse's star room.
+/// Preset 8, "Kaoru Special1": to the Mars Lighthouse's star room, where the
+/// battle with the Flame Dragons returns the party.
 void DebugWarp_KaoruSpecial1(void) {
-  Event_SetDestinationFar((s32)&SceneId_MarsLighthouseStarRoom, 20);
+  Event_SetDestinationFar(SCENE_MARS_LIGHTHOUSE_STAR_ROOM, 20);
 }
 
 /// The debug warp menu's per-frame task: moves the cursor.
@@ -501,11 +503,14 @@ struct Window *DebugShortcut_Open(void) {
 
 s32 Party_FindOwnerWithActionFar(s32 action);
 
+/// The PP the debug ability grid gives Felix, Jenna, Sheba and Piers, full.
+#define DEBUG_SHORTCUT_PP 500
+
 /// Unused: nothing calls it. The debug ability grid, drawn by
 /// DebugShortcut_Open: the cursor moves over four columns of nine abilities
 /// (gDebugShortcut_Abilities); A, L and R give the chosen ability, packed with
-/// its owner, to slot 0, 1 or 2 and set units 4 to 7 to 500 PP; B cancels.
-/// Returns the slot, or -1.
+/// its owner, to slot 0, 1 or 2 and give Felix, Jenna, Sheba and Piers
+/// DEBUG_SHORTCUT_PP PP; B cancels. Returns the slot, or -1.
 UNUSED s32 DebugShortcut_Run(void) {
   s32 row = 0;
   struct OptionMenuWork *work;
@@ -603,7 +608,7 @@ UNUSED s32 DebugShortcut_Run(void) {
         party->secondShortcut = 0;
       }
     } else {
-      owner = (owner << 10) | (ability & 0x3fff);
+      owner = (owner << ACT_UNIT_SHIFT) | (ability & PSYNERGY_ABILITY_MASK);
       if (result == 0)
         events->psynergy = owner;
       if (result == 1)
@@ -613,15 +618,15 @@ UNUSED s32 DebugShortcut_Run(void) {
         party->secondShortcut = owner;
       }
     }
-    pp = 500;
-    Unit_Get(4)->pp = pp;
-    Unit_Get(5)->pp = pp;
-    Unit_Get(6)->pp = pp;
-    Unit_Get(7)->pp = pp;
-    Unit_Get(4)->ppMax = pp;
-    Unit_Get(5)->ppMax = pp;
-    Unit_Get(6)->ppMax = pp;
-    Unit_Get(7)->ppMax = pp;
+    pp = DEBUG_SHORTCUT_PP;
+    Unit_Get(FELIX)->pp = pp;
+    Unit_Get(JENNA)->pp = pp;
+    Unit_Get(SHEBA)->pp = pp;
+    Unit_Get(PIERS)->pp = pp;
+    Unit_Get(FELIX)->ppMax = pp;
+    Unit_Get(JENNA)->ppMax = pp;
+    Unit_Get(SHEBA)->ppMax = pp;
+    Unit_Get(PIERS)->ppMax = pp;
   }
   return result;
 }

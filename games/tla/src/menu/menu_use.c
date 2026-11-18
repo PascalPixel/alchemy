@@ -40,6 +40,12 @@ s32 Item_Use(s32 slot, s32 memberId, s32 targetId) {
 
 s32 Battle_CalculateRecoveryFar(s32 value, s32 selector, s32 multiplier);
 
+/// The element power at which healing is neither stronger nor weaker, and the
+/// multiplier that keeps an amount as it is, as game_battle_arithmetic.c's
+/// Battle_CalculateRecovery takes them.
+#define HEALING_BASE_POWER 100
+#define BATTLE_MULTIPLIER_ONE 256
+
 /// Applies the healing, curing, revival or lasting stat rise of action
 /// effectId, used by party member sourceId, to targetId, or to every party
 /// member when the action's range is ABILITY_RANGE_ALL.
@@ -91,8 +97,9 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
           elementIndex = effect->element;
           elementPower = caster->element[elementIndex].power;
         } else
-          elementPower = 100;
-        amount = Battle_CalculateRecoveryFar(amount, elementPower, 256);
+          elementPower = HEALING_BASE_POWER;
+        amount = Battle_CalculateRecoveryFar(amount, elementPower,
+                                             BATTLE_MULTIPLIER_ONE);
       }
 
       if (target->hp <= 0) {
@@ -308,9 +315,10 @@ s32 Item_PlayUseAnimation(s32 item) {
 }
 
 /// Plays the sound of action used from the menu, and returns at once: no
-/// animation is drawn and nothing waits. Formulas 1 and 11 play sound 126,
-/// formula 1 twice; otherwise effects 1, 2, 31 and 32 play nothing, effect 5
-/// sound 82, effect 3 sound 84, and every other effect sound 91.
+/// animation is drawn and nothing waits. The HP and PP healing formulas play
+/// SE_RECOVERY, HP healing twice; otherwise the HP and PP restores and drains
+/// play nothing, revival MUS_REVIVE, curing poison MUS_CURE, and every other
+/// effect MUS_JINGLE_SMALL.
 s32 Ability_PlayUseAnimation(s32 action) {
   s32 animationType;
   u32 targetType;
@@ -351,3 +359,6 @@ s32 Ability_PlayUseAnimation(s32 action) {
     break;
   }
 }
+
+#undef HEALING_BASE_POWER
+#undef BATTLE_MULTIPLIER_ONE

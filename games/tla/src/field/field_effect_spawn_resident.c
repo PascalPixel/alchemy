@@ -1,57 +1,67 @@
 /// @file
-/// FieldEffect_SpawnResident, an object of its own between the event commands.
+/// The main image's copy of the overlays' effect spawner
+/// (field_effect_spawn.c), an object of its own between the event commands:
+/// Carry's ring of dust (FieldEffect_SpawnRadialParticleRing) spawns through
+/// it.
 
 #include "types.h"
 #include "fixed_math.h"
+#include "sprite_ids.h"
 #include "system/field_effect.h"
+#include "system/main_routine_work.h"
+#include "field/field_sprite.h"
 #include "field/objdisp.h"
+#include "field/scene_tables.h"
 #include "gamepak/far_call/field.h"
 #include "field/sprite.h"
 
-/// The effect's sprite as the projection draft lays it out: FieldSprite with
-/// bytes 0x0c to 0x0f its 16.16 scale.
-struct LayeredSprite {
-  u8 unused[8]; ///< no code names it
-  u16 tile : 10;
-  u16 priority : 2;
-  u16 palette : 4;
-  u8 unusedAfterPalette[2]; ///< no code names it
-  FIXED scale;
-  u8 unusedAfterScale[2]; ///< no code names it
-  u16 rotation;
-  u8 unk14[6];
-  u8 nextFrame;
-};
+/// The sprite an effect takes unless EFFECT_USE_TYPE gives another.
+#define EFFECT_DEFAULT_TYPE SPRITE_DUST_CLOUD
+/// The spawn flags that pick an option, above the script number.
+#define EFFECT_OPTION_MASK 0xffff0000
+/// Where a duration script holds its repeat count, the frames
+/// EFFECT_SCALE_TO_TARGET grows over.
+#define EFFECT_SCRIPT_REPEAT_COUNT 3
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
 struct Actor *Actor_GetById(u32 objectId);
 void Actor_SetSpriteColor(struct Actor *actor, s32 attribute);
 
-/// Creates a field effect actor at (x, y, z) moving at the given velocity: of
-/// sprite 285, or of options' type when flags ask for it, set up by options.
+/// Places a small effect at (x, y, z) moving at a velocity: a dust cloud, or
+/// options' type when EFFECT_USE_TYPE asks for it, its script one of
+/// gFieldEffect_DurationScripts and its options chosen by the EFFECT_USE_
+/// flags.
 void FieldEffect_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX,
                                s32 velocityY, s32 velocityZ, u32 flags,
                                const struct EffectOptions *options) {
-  struct Actor *party = Actor_GetById(0);
+  // UB: actor 0 is Isaac's, on stage only while he leads; with Felix leading
+  // Actor_GetById returns NULL, and the sprite priority below is read through
+  // it. UBFIX takes the leader's, as the overlays' copy does.
+#ifdef UBFIX
+  struct Actor *party = Actor_GetById(gMainRoutineWork.leaderActorId);
+#else
+  struct Actor *party = Actor_GetById(ACTOR_ISAAC);
+#endif
   struct FieldEffect *effect;
-  struct LayeredSprite *sprite;
+  struct FieldSprite *sprite;
   const s32 *script;
 
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
-    effect = Actor_CreateFar(options->type, x, y, z);
+    effect = (struct FieldEffect *)Actor_CreateFar(options->type, x, y, z);
   else
-    effect = Actor_CreateFar(285, x, y, z);
+    effect =
+        (struct FieldEffect *)Actor_CreateFar(EFFECT_DEFAULT_TYPE, x, y, z);
   if (effect == 0)
     return;
 
-  sprite = (struct LayeredSprite *)effect->sprite;
+  sprite = effect->sprite;
   Actor_SelectAnimationFar((struct Actor *)effect,
                            (flags + 1) & EFFECT_SCRIPT_MASK);
   Actor_StartScriptFar(
       (void *)effect, gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK]);
   effect->motionFlags = 0;
-  sprite->nextFrame = 0;
+  sprite->flags = 0;
   effect->update = FieldEffect_UpdateMotionScaleAndSpin;
   effect->velocity.x = velocityX;
   effect->velocity.y = velocityY;
@@ -61,7 +71,7 @@ void FieldEffect_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX,
   effect->scaleRateY = 0;
   effect->spin = 0;
 
-  if ((flags & 0xffff0000) == 0 || options == 0)
+  if ((flags & EFFECT_OPTION_MASK) == 0 || options == 0)
     return;
   if ((flags & EFFECT_USE_PALETTE) != 0)
     Actor_SetSpriteColor((struct Actor *)effect, options->palette);
@@ -76,11 +86,15 @@ void FieldEffect_SpawnResident(s32 x, s32 y, s32 z, s32 velocityX,
   if ((flags & EFFECT_SCALE_TO_TARGET) != 0) {
     script = gFieldEffect_DurationScripts[flags & EFFECT_SCRIPT_MASK];
     if ((flags & EFFECT_USE_START_SCALE) != 0) {
-      effect->scaleRateX = (options->targetScaleX - effect->scaleX) / script[3];
-      effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
+      effect->scaleRateX = (options->targetScaleX - effect->scaleX) /
+                           script[EFFECT_SCRIPT_REPEAT_COUNT];
+      effect->scaleRateY = (options->targetScaleY - effect->scaleY) /
+                           script[EFFECT_SCRIPT_REPEAT_COUNT];
     } else {
-      effect->scaleRateX = (options->targetScaleX - FIXED_ONE) / script[3];
-      effect->scaleRateY = (options->targetScaleY - FIXED_ONE) / script[3];
+      effect->scaleRateX = (options->targetScaleX - FIXED_ONE) /
+                           script[EFFECT_SCRIPT_REPEAT_COUNT];
+      effect->scaleRateY = (options->targetScaleY - FIXED_ONE) /
+                           script[EFFECT_SCRIPT_REPEAT_COUNT];
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {

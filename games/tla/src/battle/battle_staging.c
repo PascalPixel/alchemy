@@ -10,14 +10,15 @@
 #include "gamepak/far_call/battle_effect.h"
 #include "battle/presentation.h"
 
-/// A party member's attack effect, staged by id range (0x4000): effect 1 for
-/// Isaac, Garet, Felix, Jenna and Piers, 4 for Ivan, Mia and Sheba, any other
-/// none. The Broken Seal writes the same choice inline in
+/// A party member's attack effect, staged by id range (EFFECT_BY_ID_RANGE):
+/// effect 1 for Isaac, Garet, Felix, Jenna and Piers, 4 for Ivan, Mia and
+/// Sheba, any other none. The Broken Seal writes the same choice inline in
 /// BattleActionRun_Build.
 s32 BattleUnit_GetPartyAttackEffect(s32 characterId) {
+  /* FAKEMATCH(temporary): the character copied to id, so that characterId
+     carries the effect. */
   s32 id = characterId;
 
-  // characterId carries the effect from here on, in the register it came in.
   characterId = 0;
   switch (id) {
   case ISAAC:
@@ -39,18 +40,19 @@ s32 BattleUnit_GetPartyAttackEffect(s32 characterId) {
 /// Called by Battle_Run at the start of every turn; does nothing.
 void Battle_TurnStartNoOp(void) {}
 
-/// The plan of an extra action queued for the turn's end (command 10): ability
-/// 403, Daedalus, from a random unit of the queuing side against every unit
-/// of the other, staged as a summon (0x8000 | 26).
+/// The plan of the extra action Daedalus queues for the turn's end
+/// (COMMAND_DAEDALUS): ABILITY_DAEDALUS_STRIKE from a random unit of the
+/// queuing side against every unit of the other, staged as the summon
+/// SUMMON_EFFECT_DAEDALUS_STRIKE.
 void BattleStaging_PlanDaedalus(u16 *source, struct BattlePlan *plan) {
   u16 ids[10];
   s32 count;
   s32 i;
-  s32 side = 2;
+  s32 side = BATTLE_SIDE_MASK_ENEMIES;
   s32 own;
 
   if (source[0] > ALLY_MAX)
-    side = 1;
+    side = BATTLE_SIDE_MASK_PARTY;
   count = BattleUnit_ListLivingIds(side, ids);
   // The plan and BattleWork.skipPlayback after it.
   Iwram_ClearWordsEntry(plan, sizeof(*plan) + sizeof(s32));
@@ -80,16 +82,17 @@ void BattleStaging_PlanDaedalus(u16 *source, struct BattlePlan *plan) {
   plan->battleEffect = EFFECT_SUMMON | 26;
 }
 
-/// The plan of command 12: ability 103, High Impact, from the acting unit
-/// on every living unit of its own side.
+/// The plan of Megaera's second part (STAGING_MEGAERA): High Impact
+/// (ABILITY_HIGH_IMPACT) from the acting unit on every living unit of its own
+/// side.
 void BattleStaging_PlanHighImpact(struct BattlePlan *plan) {
   u16 ids[10];
   s32 count;
   s32 i;
-  s32 side = 1;
+  s32 side = BATTLE_SIDE_MASK_PARTY;
 
   if (plan->unitId > ALLY_MAX)
-    side = 2;
+    side = BATTLE_SIDE_MASK_ENEMIES;
   count = BattleUnit_ListLivingIds(side, ids);
   for (i = 0; i < count; i++) {
     plan->targetIds[i] = ids[i];
@@ -103,8 +106,9 @@ void BattleStaging_PlanHighImpact(struct BattlePlan *plan) {
   plan->battleEffect = 1 << EFFECT_VARIANT_SHIFT | 181;
 }
 
-/// The plan of command 13: ability 298, Aurora Field, over the acting unit's
-/// whole side, reserves included for the party.
+/// The plan of Iris's second part (STAGING_IRIS): Aurora Field
+/// (ABILITY_AURORA_FIELD) over the acting unit's whole side, reserves included
+/// for the party.
 void BattleStaging_PlanAuroraField(struct BattlePlan *plan) {
   u16 ids[10];
   s32 count;
@@ -114,7 +118,7 @@ void BattleStaging_PlanAuroraField(struct BattlePlan *plan) {
     count = BattleParty_PrepareMembers(ids);
     count += BattleParty_PrepareReserveOwners(&ids[count]);
   } else {
-    count = BattleUnit_ListIds(2, ids);
+    count = BattleUnit_ListIds(BATTLE_SIDE_MASK_ENEMIES, ids);
   }
   for (i = 0; i < count; i++) {
     plan->targetIds[i] = ids[i];
@@ -132,6 +136,9 @@ void BattleStaging_PlanAuroraField(struct BattlePlan *plan) {
     plan->hauntDamage = zero;
   }
 }
+
+/// The far depth well past the battlefield: the largest whole 16.16 number.
+#define BATTLE_FAR_DEPTH toFIXED(32767)
 
 /// Sends every battler back to its spot.
 void BattleParty_ReturnAllToSpots(void) {
@@ -164,10 +171,13 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
   unit = Unit_Get(request->unitId);
   if (unit->hp == 0)
     return -1;
-  battle->actingAnimation = 3;
+  battle->actingAnimation = POSE_CAST;
+  // An enemy settles its ability now, as it acts.
   if (unit->classId == CLASS_NONE)
     BattleAI_ChooseAction(request, 1);
 
+  // The camera eases back over 60 frames, the background at full brightness,
+  // the far depth well past the battlefield.
   view = Ram_HeapSlots->battleBackground;
   view->frames = 60;
   view->flag = 0;
@@ -178,22 +188,23 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
   {
     s32 param;
     s32 ratio;
-    // Called through a local, as field/event_commands.c calls it:
-    // the routine's address is then loaded ahead of the shift that finishes
-    // param.
+    // Called through a local, as field/event_commands.c calls it.
     s32 (*ratioMul)(s32, s32) = Iwram_RatioMulQ14Entry;
 
+    /* FAKEMATCH(temporary): BATTLE_CAMERA_DISTANCE built in a local in two
+     * steps each time it is passed; as the name passed twice. */
     param = 255;
     param <<= 17;
-    ratio = ratioMul(param, 192 << 8);
+    ratio = ratioMul(param, FIXED_ONE * 3 / 4);
     param = 255;
     param <<= 17;
-    Projection_Set(param, ratio, 0x7fff0000);
+    Projection_Set(param, ratio, BATTLE_FAR_DEPTH);
   }
   if (delay != 0) {
     view->targetYaw = YAW_PARTY_ACTION;
     wait(delay);
   }
+  // Build the action, with the acting unit highlighted, and stage it.
   if (request->command == COMMAND_DAEDALUS) {
     BattleStaging_PlanDaedalus((u16 *)request, &battle->plan);
     /* FAKEMATCH(dead): an empty once-only block after the call. */
@@ -226,7 +237,8 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
       BattleStaging_HideField(&battle->plan, 0);
       break;
     case STAGING_DAEDALUS:
-      BattleStaging_HideField(&battle->plan, 3);
+      BattleStaging_HideField(&battle->plan,
+                              STAGING_HIDE_ACTOR | STAGING_NO_CAST);
       break;
     case STAGING_CAST:
     case STAGING_BEAST_PSYNERGY:
@@ -314,6 +326,8 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
     BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   }
 
+  // The action's end, then every unit back to its spot. A party that fled
+  // skips this and the action's mark.
   BattleMotion_DestroyAllSlotObjects();
   BattleUnit_ProcessActionEnd(&battle->plan);
   BattleObject_Put();
@@ -439,6 +453,8 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
   u32 kept;
   struct MotionObject *object;
 
+  // The camera turns to the acting unit's side for a summon, else to the usual
+  // view.
   BattleStaging_BuildTargetList(plan, &work);
   actor = plan->unitId;
   target = plan->targetIds[0];
@@ -461,6 +477,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
       view->targetYaw = yaw;
   }
 
+  // The unit raises its hand and glows; the side not targeted fades out.
   BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
   PartyStatus_DrawFar(Ram_HeapSlots->battleWork->partyStatus &
                       ~PARTY_STATUS_SHOW_PP);
@@ -471,7 +488,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
   for (; i != count; i++) {
     if (units[i] == BATTLE_UNIT_REMOVED)
       continue;
-    if ((mode & 2) || units[i] != actor) {
+    if ((mode & STAGING_NO_CAST) || units[i] != actor) {
       u32 unit = units[i];
 
       if ((target <= ALLY_MAX) != (unit <= ALLY_MAX))
@@ -481,7 +498,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
                                Ram_HeapSlots->battleWork->actingAnimation);
     }
   }
-  if (!(mode & 2)) {
+  if (!(mode & STAGING_NO_CAST)) {
     Sound_PlayFar(SE_CAST);
     ElementGlow_Play(work.actor, plan->element, GLOW_STAR_FIELD, 0);
   }
@@ -492,6 +509,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
     wait(1);
   }
 
+  // A failed cast: "blocked" (sealed) or too little PP, shown at once.
   if (plan->failure != ACTION_FAILURE_NONE) {
     if (plan->failure == ACTION_FAILURE_SEALED) {
       BattlePlayback_Push(PLAYBACK_UNIT_NAME, plan->unitId);
@@ -502,6 +520,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
     BattlePlayback_RunAll();
     BattleBackground_RestorePalette();
   } else {
+    // Only the target side stays on the field.
     kept = 0;
     for (i = 0; i < count; i++) {
       u32 unit = units[i];
@@ -518,6 +537,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
     for (i = 0; i < plan->targetCount; i++)
       units[i] = plan->targetIds[i];
     units[i] = BATTLE_UNIT_LIST_END;
+    // Each target's colour modes are saved beside the effect command.
     for (i = 0; i != work.count; i++) {
       struct Sprite *animation =
           GetMotionRecord(BattleObject_Get(work.actors[i])->object, 0);
@@ -526,11 +546,12 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
       for (child = 0; child != animation->count - 1; child++)
         work.params[i][child] = animation->entries[child]->colorMode;
     }
+    // The side the battle effect plays on: the targets'.
     if (plan->battleEffect & EFFECT_SUMMON) {
       if (target <= ALLY_MAX)
-        work.side = 1;
+        work.side = EFFECT_SIDE_PARTY;
       else
-        work.side = 0;
+        work.side = EFFECT_SIDE_ENEMIES;
     } else {
       if (plan->targetIds[0] <= ALLY_MAX)
         work.side = EFFECT_SIDE_PARTY;
@@ -539,6 +560,8 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
     }
     if (plan->battleEffect & EFFECT_OTHER_SIDE)
       work.side ^= 1;
+    // The battle effect runs to its end while playback, a task, plays each
+    // target's outcome from the frame the blow lands.
     Task_Add(BattlePlayback_Run, TASK_PASS_FRAME);
     if (plan->battleEffect & EFFECT_SUMMON)
       BattleEffect_RunSummonFar((s32 *)&work);
@@ -549,6 +572,8 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
     BattlePlayback_WaitForReady();
   }
 
+  // Everyone back: the faded units fade in over 16 frames and every colour
+  // mode is cleared.
   BattleObject_Put();
   count = BattleUnit_ListIds(BATTLE_SIDE_MASK_BOTH, units);
   REG_BLDCNT = BLEND_SPRITES_OVER_ALL;
@@ -557,7 +582,7 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
 
     if (units[i] == BATTLE_UNIT_REMOVED)
       continue;
-    if (!(mode & 2) && units[i] == actor && work.kind == 3)
+    if (!(mode & STAGING_NO_CAST) && units[i] == actor && work.kind == 3)
       continue;
     unit = units[i];
     if ((target <= ALLY_MAX) != (unit <= ALLY_MAX))
@@ -576,7 +601,6 @@ s32 BattleStaging_HideField(struct BattlePlan *plan, s32 mode) {
 
 /// Clears the highlights, applies each target's effect and runs the events.
 /// With no targets, only waits for the message to advance.
-/// plan: action and target information.
 s32 BattleStaging_RunActorEntries(struct BattlePlan *plan, s32 unused) {
   s32 targetIndex;
 

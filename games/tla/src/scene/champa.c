@@ -1,12 +1,13 @@
 /// @file
 /// Champa, the pirates' village on the coast of the Great Western Sea, whose
 /// people are fed once Briggs returns with the Ankohl jewels. Two of its
-/// sailors spot Felix and run to warn Briggs (Champa_SailorsSpotFelix); at the
-/// cliff where Obaba lives Alex, who had left Alhafra before them, meets the
-/// party again (Champa_MeetAlex), Jenna and Sheba glaring at each other on the
-/// way (Champa_JennaAndShebaGlare). In a game linked with The Broken Seal,
-/// Feizhi arrives with a gift (Champa_FeizhiArrives). The getters pick later
-/// tables once Briggs has sailed from Alhafra.
+/// sailors spot Felix and run to warn Briggs (Champa_SailorsSpotFelix); on the
+/// road out of the village Alex, who left the party when it landed on Indra,
+/// meets it again with Karst and Agatio (Champa_MeetAlex), Jenna and Sheba
+/// glaring at each other on the way (Champa_JennaAndShebaGlare). In a game
+/// linked with The Broken Seal, Feizhi arrives with a gift
+/// (Champa_FeizhiArrives). The getters pick later tables once Briggs has sailed
+/// from Alhafra.
 
 #include "system/task.h"
 #include "shared/tables.h"
@@ -40,12 +41,12 @@
 
 struct Actor;
 extern struct ActorPlacement gChampa_ActorPlacementsOnceBriggsSailed[];
-extern s32 gChampa_Doors[];
+extern struct MapGridCellAnimation gChampa_Doors[];
 s32 Event_PickUpItem();
 extern struct Trigger gChampa_Triggers[];
 extern struct Trigger gChampa_TriggersOnceBriggsSailed[];
-extern s16 gChampa_NoDoorEdit[];
-extern s16 gChampa_DoorEdit[];
+extern u16 gChampa_NoDoor[];
+extern u16 gChampa_SanctumDoorOpening[];
 s32 Tightrope_Place();
 s32 Window_CloseMatchingId();
 
@@ -59,11 +60,21 @@ static inline void Actor_HeadToward(s32 id, s32 target) {
 }
 
 /// The town's own story, which no other scene reads.
-#define FLAG_NEAR_THE_CLIFF 0x970 ///< the party walked up to Obaba's cliff
-#define FLAG_TOLD_OF_OBABA 0x972  ///< a villager told of Obaba
+#define FLAG_TOLD_OF_OBABA 0x972         ///< a villager told of Obaba
 #define FLAG_SAILORS_SPOTTED_FELIX 0x973 ///< two sailors ran to warn Briggs
 #define FLAG_FEIZHIS_GIFT_WAITING 0xa74  ///< Feizhi holds out her gift
 #define FLAG_FEIZHI_CAME 0xa75 ///< Feizhi came, taking Felix for a friend
+/// The party crossed the road into the village, so Alex meets it on its way
+/// back out (Champa_MeetAlex).
+#define FLAG_WALKED_INTO_THE_VILLAGE 0x970
+
+/// The last of the two waterfalls' colours in background palettes 3, 4 and 5,
+/// which run from colour 1, each a band of blues from light to dark and back.
+#define WATERFALL_LAST_COLOR 14
+/// The map's tile animation that swings the sanctum's stone door open, once.
+#define SANCTUM_DOOR_ANIMATION 8
+/// The same frames of the sanctum's door over and over, kept paused.
+#define SANCTUM_DOOR_LOOP_ANIMATION 3
 
 /// Champa's people and things, numbering the rows of gChampa_ActorPlacements
 /// whose sprites are not the party's; gChampa_ActorPlacementsOnceBriggsSailed
@@ -74,10 +85,10 @@ enum ChampaActorId {
   ACTOR_TIGHTROPE_START = ACTOR_FIRST_PLACED,
   ACTOR_TIGHTROPE_END,
   ///@}
-  /// The village's two flags, Champa's anchor on red.
+  /// The village's two flags either side of its road, Champa's anchor on red.
   ///@{
-  ACTOR_FLAG,
-  ACTOR_SECOND_FLAG,
+  ACTOR_WEST_FLAG,
+  ACTOR_EAST_FLAG,
   ///@}
   /// "Oh, I'm so hungry... And there won't be anything to eat until..."
   ACTOR_HUNGRY_YOUNG_MAN,
@@ -101,9 +112,9 @@ enum ChampaActorId {
   ACTOR_SAILOR_AT_THE_QUIET_CAVES,
   /// "Our matriarch is the last successor of the Ankohl."
   ACTOR_SAILOR_ON_THE_MATRIARCH,
-  /// The sailor who tells strangers they are not welcome.
-  ACTOR_UNWELCOMING_SAILOR,
-  /// A rock drawn at half size.
+  /// "The Champa sailors aren't...well liked outside of here, are we?"
+  ACTOR_SAILOR_ASKING_IF_WELL_LIKED,
+  /// A small rock by the practicing boy, drawn at half size.
   ACTOR_ROCK,
   /// "I bet you're wondering why only sailors and their families..."
   ACTOR_WOMAN_ON_THE_CLIFF,
@@ -120,8 +131,8 @@ enum ChampaActorId {
   ACTOR_FEIZHIS_GIFT,
   /// Once Briggs has sailed: "Whoa! You... You're Felix!"
   ACTOR_SAILOR_WHO_SPOTS_FELIX,
-  /// "What? Really? It's Felix?"
-  ACTOR_SECOND_SAILOR,
+  /// "What? Really? It's Felix?" and "Briggs, get outta here!"
+  ACTOR_SAILOR_WHO_WARNS_BRIGGS,
   ACTOR_BRIGGS
 };
 
@@ -142,16 +153,17 @@ const s16 *Scene_GetActorPlacements(void) {
   return gChampa_ActorPlacements;
 }
 
-/// The leader's update while it walks into one of the two cliff doorways: it
+/// The leader's update while it walks into the tent on one of the two boats: it
 /// shrinks by 3/128 of its size each frame.
-void Champa_ShrinkIntoDoorway(struct Actor *actor) {
+void Champa_ShrinkIntoTent(struct Actor *actor) {
   actor->scaleX += -(FIXED_ONE * 3 / 128);
   actor->scaleY += -(FIXED_ONE * 3 / 128);
 }
 
 /// Stepping into a door: it opens, the leader walks through and the scene
-/// leaves by the exit given.
-void Champa_OpenDoorAndEnter(const void *warp, s32 door, s32 mode) {
+/// leaves by the exit given. The door's map edit is not played.
+void Champa_OpenDoorAndEnter(const struct MapGridCellAnimation *opening,
+                             s32 door, s32 mode) {
   s32 id;
 
   Event_Start();
@@ -172,22 +184,22 @@ void Champa_OpenDoorAndEnter(const void *warp, s32 door, s32 mode) {
   Event_End();
 }
 
-void TilesetAnim_Resume(s32 a);
+void TilesetAnim_Resume(s32 channel);
 
-/// Walking into a door: the cliff doorways (1 and 2) shrink the leader as it
-/// goes; door 7 starts its animated tiles and edits the map as it opens; the
-/// others open plainly.
+/// Walking into a door: the boats' tents shrink the leader as it goes in; the
+/// sanctum's stone door swings open (SANCTUM_DOOR_ANIMATION); the others open
+/// plainly.
 void Champa_EnterDoor(s32 door) {
-  s32 *table = gChampa_Doors;
+  struct MapGridCellAnimation *table = gChampa_Doors;
 
-  if ((u32)(door - 1) <= 1)
+  if ((u32)(door - CHAMPA_TO_CHAMPA_ROOMS_SOUTHWEST_A) <= 1)
     Actor_Get(gMainRoutineWork.leaderActorId)->update =
-        (void (*)(void))Champa_ShrinkIntoDoorway;
-  if (door == 7) {
-    TilesetAnim_Resume(8);
-    Champa_OpenDoorAndEnter(table, 7, 1);
+        (void (*)(void))Champa_ShrinkIntoTent;
+  if (door == CHAMPA_TO_CHAMPA_SANCTUM) {
+    TilesetAnim_Resume(SANCTUM_DOOR_ANIMATION);
+    Champa_OpenDoorAndEnter(&table[0], CHAMPA_TO_CHAMPA_SANCTUM, 1);
   } else {
-    Champa_OpenDoorAndEnter(table + 2, door, 0);
+    Champa_OpenDoorAndEnter(&table[1], door, 0);
   }
 }
 
@@ -226,39 +238,44 @@ void Champa_SailorsSpotFelix(void) {
   Actor_SetAttachedEffect(ACTOR_SAILOR_WHO_SPOTS_FELIX,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(40);
-  Actor_FaceDirectionAndWait(ACTOR_SECOND_SAILOR, FACING_EAST);
+  Actor_FaceDirectionAndWait(ACTOR_SAILOR_WHO_WARNS_BRIGGS, FACING_EAST);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(ACTOR_SECOND_SAILOR, EMOTE_IN_FRONT | EMOTE_QUESTION, 35);
-  Actor_FaceDirectionAndWait(ACTOR_SECOND_SAILOR, FACING_SOUTH_SOUTHEAST);
+  Actor_ShowEmote(ACTOR_SAILOR_WHO_WARNS_BRIGGS,
+                  EMOTE_IN_FRONT | EMOTE_QUESTION, 35);
+  Actor_FaceDirectionAndWait(ACTOR_SAILOR_WHO_WARNS_BRIGGS,
+                             FACING_SOUTH_SOUTHEAST);
   FieldEvent_Wait(10);
-  Actor_ShowEmote(ACTOR_SECOND_SAILOR, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
+  Actor_ShowEmote(ACTOR_SAILOR_WHO_WARNS_BRIGGS,
+                  EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   // "What? Really? It's Felix?"
-  FieldEvent_ShowMessageThenWait(ACTOR_SECOND_SAILOR, 0, 5);
+  FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_WHO_WARNS_BRIGGS, 0, 5);
   FieldActor_Jump(ACTOR_SAILOR_WHO_SPOTS_FELIX, 6, 0);
-  FieldActor_Jump(ACTOR_SECOND_SAILOR, 6, 0);
+  FieldActor_Jump(ACTOR_SAILOR_WHO_WARNS_BRIGGS, 6, 0);
   Actor_SetSpeed(ACTOR_SAILOR_WHO_SPOTS_FELIX, 1.8);
-  Actor_SetSpeed(ACTOR_SECOND_SAILOR, 1.8);
+  Actor_SetSpeed(ACTOR_SAILOR_WHO_WARNS_BRIGGS, 1.8);
   Actor_Get(ACTOR_SAILOR_WHO_SPOTS_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkBy(ACTOR_SAILOR_WHO_SPOTS_FELIX, 0, -16);
-  Actor_Get(ACTOR_SECOND_SAILOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_WalkByAndWait(ACTOR_SECOND_SAILOR, 0, -16);
+  Actor_Get(ACTOR_SAILOR_WHO_WARNS_BRIGGS)->steeringFlags &=
+      ~ACTOR_FACES_MOTION;
+  Actor_WalkByAndWait(ACTOR_SAILOR_WHO_WARNS_BRIGGS, 0, -16);
   FieldEvent_Wait(1);
-  Actor_Get(ACTOR_SECOND_SAILOR)->steeringFlags |= ACTOR_FACES_MOTION;
+  Actor_Get(ACTOR_SAILOR_WHO_WARNS_BRIGGS)->steeringFlags |= ACTOR_FACES_MOTION;
   FieldEvent_Wait(15);
   Actor_ShowEmote(ACTOR_SAILOR_WHO_SPOTS_FELIX,
                   EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   // "You're awfully persistent, aren't you?"
   FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_WHO_SPOTS_FELIX, 0, 5);
   Actor_FaceDirection(ACTOR_SAILOR_WHO_SPOTS_FELIX, FACING_NORTH_NORTHWEST, 0);
-  Actor_FaceDirectionAndWait(ACTOR_SECOND_SAILOR, FACING_NORTH_NORTHEAST);
+  Actor_FaceDirectionAndWait(ACTOR_SAILOR_WHO_WARNS_BRIGGS,
+                             FACING_NORTH_NORTHEAST);
   FieldEvent_Wait(5);
   // "Briggs, get outta here! Felix is here to finish you off!"
-  FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_SECOND_SAILOR, 0,
-                                 5);
+  FieldEvent_ShowMessageThenWait(
+      SPEAKER_WINDOW_BELOW | ACTOR_SAILOR_WHO_WARNS_BRIGGS, 0, 5);
   // "What was that!? Felix? Here?"
   FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 5);
   FieldActor_WatchAndSetScript(ACTOR_SAILOR_WHO_SPOTS_FELIX, ACTOR_BRIGGS);
-  FieldActor_WatchAndSetScript(ACTOR_SECOND_SAILOR, ACTOR_BRIGGS);
+  FieldActor_WatchAndSetScript(ACTOR_SAILOR_WHO_WARNS_BRIGGS, ACTOR_BRIGGS);
   Actor_SetSpeed(ACTOR_BRIGGS, 1.2);
   Actor_WalkByAndWait(ACTOR_BRIGGS, 0, 32);
   Actor_FaceDirectionAndWait(ACTOR_BRIGGS, FACING_SOUTH_SOUTHEAST);
@@ -273,16 +290,16 @@ void Champa_SailorsSpotFelix(void) {
   Actor_SetSpeed(ACTOR_BRIGGS, 2);
   Actor_WalkByAndWait(ACTOR_BRIGGS, 0, -48);
   Actor_FaceDirection(ACTOR_SAILOR_WHO_SPOTS_FELIX, FACING_NORTH_NORTHWEST, 0);
-  Actor_FaceDirection(ACTOR_SECOND_SAILOR, FACING_NORTH_NORTHEAST, 0);
+  Actor_FaceDirection(ACTOR_SAILOR_WHO_WARNS_BRIGGS, FACING_NORTH_NORTHEAST, 0);
   Actor_SetPosition(ACTOR_BRIGGS, 0, 0);
   Actor_SetSpeed(ACTOR_SAILOR_WHO_SPOTS_FELIX, 2);
-  Actor_SetSpeed(ACTOR_SECOND_SAILOR, 2);
+  Actor_SetSpeed(ACTOR_SAILOR_WHO_WARNS_BRIGGS, 2);
   Actor_WalkByAndWait(ACTOR_SAILOR_WHO_SPOTS_FELIX, -16, -16);
-  Actor_WalkBy(ACTOR_SECOND_SAILOR, 16, -16);
+  Actor_WalkBy(ACTOR_SAILOR_WHO_WARNS_BRIGGS, 16, -16);
   Actor_WalkByAndWait(ACTOR_SAILOR_WHO_SPOTS_FELIX, 0, -16);
   Actor_SetPosition(ACTOR_SAILOR_WHO_SPOTS_FELIX, 0, 0);
-  Actor_WalkByAndWait(ACTOR_SECOND_SAILOR, 0, -16);
-  Actor_SetPosition(ACTOR_SECOND_SAILOR, 0, 0);
+  Actor_WalkByAndWait(ACTOR_SAILOR_WHO_WARNS_BRIGGS, 0, -16);
+  Actor_SetPosition(ACTOR_SAILOR_WHO_WARNS_BRIGGS, 0, 0);
   Event_End();
 }
 
@@ -364,9 +381,9 @@ void Champa_TellOfObaba(s32 actor) {
   Event_ShowMessage(actor, 0);
 }
 
-/// The sailor tells strangers that Champa's sailors are not welcoming, and
-/// answers the yes or the no.
-void Champa_SailorsNotWelcome(s32 actor) {
+/// A sailor asks whether Champa's sailors are well liked outside the village,
+/// and answers the yes or the no.
+void Champa_AskIfSailorsAreWellLiked(s32 actor) {
   s32 msg = (s32)&MsgChampaTheChampaSailorsArentWell;
 
   FieldEvent_SetMessageId(msg);
@@ -412,7 +429,7 @@ void Champa_FeizhiArrives(void) {
 #if TLA_PATCH_1
 #endif
 
-  if (!Event_GetFlag(FLAG_TRANSFERRED_HSU_RESCUED_BY_PARTY)) {
+  if (!Event_GetFlag(FLAG_TRANSFERRED_ISAAC_SAVED_ULMUCH)) {
   } else {
 #if TLA_PATCH_1
     // Once Isaac is in the party Feizhi no longer comes; the Japanese edition
@@ -555,23 +572,23 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gChampa_Triggers;
 }
 
-/// Every other frame, turns colours 1 to 14 of background palettes 3, 4 and 5
-/// one place on.
-void Champa_RotatePaletteColors(void) {
+/// The two waterfalls flow: every other frame, colours 1 to
+/// WATERFALL_LAST_COLOR of background palettes 3, 4 and 5 turn one place on.
+void Champa_CycleWaterfallPalettes(void) {
   if ((gFrameCount & 1) == 0) {
     s16 saved;
     s32 index;
 
-    saved = BG_PLTT_COLOR(3, 14);
-    for (index = 14; index != 1; index--)
+    saved = BG_PLTT_COLOR(3, WATERFALL_LAST_COLOR);
+    for (index = WATERFALL_LAST_COLOR; index != 1; index--)
       BG_PLTT_COLOR(3, index) = BG_PLTT_COLOR(3, index - 1);
     BG_PLTT_COLOR(3, 1) = saved;
-    saved = BG_PLTT_COLOR(4, 14);
-    for (index = 14; index != 1; index--)
+    saved = BG_PLTT_COLOR(4, WATERFALL_LAST_COLOR);
+    for (index = WATERFALL_LAST_COLOR; index != 1; index--)
       BG_PLTT_COLOR(4, index) = BG_PLTT_COLOR(4, index - 1);
     BG_PLTT_COLOR(4, 1) = saved;
-    saved = BG_PLTT_COLOR(5, 14);
-    for (index = 14; index != 1; index--)
+    saved = BG_PLTT_COLOR(5, WATERFALL_LAST_COLOR);
+    for (index = WATERFALL_LAST_COLOR; index != 1; index--)
       BG_PLTT_COLOR(5, index) = BG_PLTT_COLOR(5, index - 1);
     BG_PLTT_COLOR(5, 1) = saved;
   }
@@ -579,29 +596,32 @@ void Champa_RotatePaletteColors(void) {
 
 s32 Tightrope_Initialize();
 
+/// Sets up the village as the party enters: the waterfalls flowing, the
+/// sanctum's door shut, the tightrope strung, the sailors and Briggs as the
+/// story leaves them, and Feizhi's gift where she left it. Returns 0.
 s32 Scene_Initialize(void) {
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  Task_AddFrame((s32)Champa_RotatePaletteColors, TASK_PASS_VBLANK);
-  TilesetAnim_Pause(8);
-  Actor_SetSpriteFlags((s32)Actor_Get(ACTOR_FLAG), 0);
-  Actor_SetSpriteFlags((s32)Actor_Get(ACTOR_SECOND_FLAG), 0);
+  Task_AddFrame((s32)Champa_CycleWaterfallPalettes, TASK_PASS_VBLANK);
+  TilesetAnim_Pause(SANCTUM_DOOR_ANIMATION);
+  Actor_SetSpriteFlags((s32)Actor_Get(ACTOR_WEST_FLAG), 0);
+  Actor_SetSpriteFlags((s32)Actor_Get(ACTOR_EAST_FLAG), 0);
   FieldActor_SetSpritePriority(ACTOR_WOMAN_WAITING_FOR_FOOD, 3);
   Actor_Get(ACTOR_ROCK)->scaleX = FIXED_ONE / 2;
   Actor_Get(ACTOR_ROCK)->scaleY = FIXED_ONE / 2;
   Tightrope_Initialize();
   Tightrope_Place(0, ACTOR_TIGHTROPE_START, ACTOR_TIGHTROPE_END);
-  TilesetAnim_Pause(3);
+  TilesetAnim_Pause(SANCTUM_DOOR_LOOP_ANIMATION);
   if (Event_GetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA)) {
     FieldActor_SetSpritePriority(ACTOR_SAILOR_AT_THE_QUIET_CAVES, 2);
     FieldActor_SetSpritePriority(ACTOR_SAILOR_ON_THE_MATRIARCH, 3);
-    FieldActor_SetSpritePriority(ACTOR_UNWELCOMING_SAILOR, 3);
+    FieldActor_SetSpritePriority(ACTOR_SAILOR_ASKING_IF_WELL_LIKED, 3);
     FieldActor_SetSpritePriority(ACTOR_EOLEOS_FRIEND, 3);
     Actor_SetMovementType(Actor_Get(ACTOR_PRACTICING_BOY),
                           MOVEMENT_TYPE_TAKE_LEADER_LAYER);
     if (Event_GetFlag(FLAG_SAILORS_SPOTTED_FELIX)) {
       Actor_SetPosition(ACTOR_SAILOR_WHO_SPOTS_FELIX, 0, 0);
-      Actor_SetPosition(ACTOR_SECOND_SAILOR, 0, 0);
+      Actor_SetPosition(ACTOR_SAILOR_WHO_WARNS_BRIGGS, 0, 0);
       Actor_SetPosition(ACTOR_BRIGGS, 0, 0);
     }
   }
@@ -611,6 +631,8 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
+/// Once Briggs has sailed, crates of the food he brought stand on the road
+/// into the village. Returns 0.
 s32 Scene_PrepareMap(void) {
 
   if (Event_GetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA)) {
@@ -685,14 +707,14 @@ void Champa_ShowTwoMessages(s32 first, s32 firstX, s32 firstY,
   s32 secondSprite = Actor_GetSpriteById(second);
 
   Message_OpenWindow((s16)event->message++, firstX, firstY,
-                     Speaker_GetVoice(firstSprite) << 16);
+                     MESSAGE_WINDOW_VOICE(Speaker_GetVoice(firstSprite)));
   Portrait_OpenWindow(firstSprite, 0, firstPortraitX, firstPortraitY);
   if (delay != 0) {
     while (!Message_AllTyped())
       System_Wait(delay);
   }
   Message_OpenWindow((s16)event->message++, secondX, secondY,
-                     Speaker_GetVoice(secondSprite) << 16);
+                     MESSAGE_WINDOW_VOICE(Speaker_GetVoice(secondSprite)));
   Portrait_OpenWindow(secondSprite, 0, secondPortraitX, secondPortraitY);
   while (!Message_AllTyped())
     System_Wait(1);
@@ -710,19 +732,23 @@ void Champa_CloseTwoMessages(s32 first, s32 second) {
   Window_CloseMatchingId(secondSprite);
 }
 
-/// Walking up to Obaba's cliff sets FLAG_NEAR_THE_CLIFF, so Alex waits there.
-void Champa_ApproachTheCliff(void) { GameFlag_Set(FLAG_NEAR_THE_CLIFF); }
+/// Crossing the road into the village: Alex now meets the party on its way
+/// out.
+void Champa_WalkIntoTheVillage(void) {
+  GameFlag_Set(FLAG_WALKED_INTO_THE_VILLAGE);
+}
 
 /// Shows the speaker's message by its actor (FieldMessage_ShowAtActor).
 static __inline__ void Champa_MessageOpen(s32 speaker, s32 flags) {
   FieldMessage_ShowAtActor(speaker, flags);
 }
 
-/// Near Obaba's cliff Alex waits: "I see you've caught up with me again"
-/// (MsgChampaISeeYouveCaughtUp), and the party answers him.
+/// On the road out of the village Alex waits: "I see you've caught up with me
+/// again" (MsgChampaISeeYouveCaughtUp), and the party answers him; Karst and
+/// Agatio join him, and he leaves with news of Babi's death.
 void Champa_MeetAlex(void) {
 
-  if (!Event_GetFlag(FLAG_NEAR_THE_CLIFF)) {
+  if (!Event_GetFlag(FLAG_WALKED_INTO_THE_VILLAGE)) {
     return;
   }
   Event_SetFlag(FLAG_CHAMPA_MET_ALEX);
@@ -795,7 +821,7 @@ void Champa_MeetAlex(void) {
   Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   FieldEvent_Wait(5);
-  Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | 25, 0);
+  Event_OpenMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_EAST, 0);
   Actor_FaceDirectionAndWait(ACTOR_KRADEN, FACING_EAST);
@@ -1349,8 +1375,8 @@ void Champa_MeetAlex(void) {
   FieldEvent_Wait(10);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
-  FieldEvent_ShowTwoMessagesAndWait(ACTOR_JENNA, 5, 5, 18, 8, 6, 6, 14, 8, 9,
-                                    0);
+  FieldEvent_ShowTwoMessagesAndWait(ACTOR_JENNA, 5, 5, 18, 8, ACTOR_SHEBA, 6,
+                                    14, 8, 9, 0);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, 3);
   Event_ShowMessage(ACTOR_KRADEN, 0);
   FieldActor_StartRepeatedMotion(ACTOR_FELIX, 3);
@@ -1362,16 +1388,16 @@ void Champa_MeetAlex(void) {
   FieldEvent_Wait(10);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SCOWL, 0);
   Actor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-  Champa_ShowTwoMessages(5, 8, 5, 18, 8, 6, 8, 14, 8, 9, 0);
+  Champa_ShowTwoMessages(ACTOR_JENNA, 8, 5, 18, 8, ACTOR_SHEBA, 8, 14, 8, 9, 0);
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTHWEST);
   if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
-    Champa_CloseTwoMessages(5, 6);
+    Champa_CloseTwoMessages(ACTOR_JENNA, ACTOR_SHEBA);
     FieldEvent_Wait(15);
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     Event_ShowMessage(ACTOR_KRADEN, 0);
     gFieldWork->message = (gFieldWork->message + 1);
   } else {
-    Champa_CloseTwoMessages(5, 6);
+    Champa_CloseTwoMessages(ACTOR_JENNA, ACTOR_SHEBA);
     FieldEvent_Wait(35);
     Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
     gFieldWork->message = (gFieldWork->message + 1);
@@ -1428,17 +1454,17 @@ void Champa_MeetAlex(void) {
   FieldEvent_Wait(20);
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   Actor_SetAnimation(ACTOR_JENNA, ANIM_WALK);
-  Actor_HeadToward(5, gMainRoutineWork.leaderActorId);
+  Actor_HeadToward(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
   FieldActor_WaitForMoveById(ACTOR_JENNA);
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.2);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_WALK);
-  Actor_HeadToward(6, gMainRoutineWork.leaderActorId);
+  Actor_HeadToward(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
   FieldActor_WaitForMoveById(ACTOR_SHEBA);
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Actor_SetSpeed(ACTOR_PIERS, 1.2);
   Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
-  Actor_HeadToward(7, gMainRoutineWork.leaderActorId);
+  Actor_HeadToward(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
   FieldActor_WaitForMoveById(ACTOR_PIERS);
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
@@ -1456,17 +1482,30 @@ struct SceneEntrance gSceneEntrances[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(Champa),
-    SCENE_EXIT_UNLESS(1, ChampaRooms, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, ChampaRooms, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, ChampaRooms, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, ChampaRooms, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, ChampaRooms, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, ChampaRooms, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, ChampaSanctum, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, ChampaCliffCavesBriggs, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, WorldMap, 40, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(10, ChampaCliffCavesHouses, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(11, ChampaCliffCavesObaba, 19, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(CHAMPA_TO_CHAMPA_ROOMS_SOUTHWEST_A, ChampaRooms,
+                      CHAMPA_ROOMS_FROM_CHAMPA_SOUTHWEST_A, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(CHAMPA_TO_CHAMPA_ROOMS_SOUTHWEST_B, ChampaRooms,
+                      CHAMPA_ROOMS_FROM_CHAMPA_SOUTHWEST_B, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(CHAMPA_TO_CHAMPA_ROOMS_NORTH, ChampaRooms,
+                      CHAMPA_ROOMS_FROM_CHAMPA_NORTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(CHAMPA_TO_CHAMPA_ROOMS_WEST, ChampaRooms,
+                      CHAMPA_ROOMS_FROM_CHAMPA_WEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(CHAMPA_TO_CHAMPA_ROOMS_NORTHEAST, ChampaRooms,
+                      CHAMPA_ROOMS_FROM_CHAMPA_NORTHEAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(CHAMPA_TO_CHAMPA_ROOMS_EAST, ChampaRooms,
+                      CHAMPA_ROOMS_FROM_CHAMPA_EAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(CHAMPA_TO_CHAMPA_SANCTUM, ChampaSanctum,
+                      CHAMPA_SANCTUM_FROM_CHAMPA, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(CHAMPA_TO_CHAMPA_CLIFF_CAVES_BRIGGS,
+                      ChampaCliffCavesBriggs,
+                      CHAMPA_CLIFF_CAVES_BRIGGS_FROM_CHAMPA, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(CHAMPA_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_CHAMPA,
+                      EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(CHAMPA_TO_CHAMPA_CLIFF_CAVES_HOUSES,
+                      ChampaCliffCavesHouses,
+                      CHAMPA_CLIFF_CAVES_HOUSES_FROM_CHAMPA, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(CHAMPA_TO_CHAMPA_CLIFF_CAVES_OBABA, ChampaCliffCavesObaba,
+                      CHAMPA_CLIFF_CAVES_OBABA_FROM_CHAMPA, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
@@ -1485,9 +1524,9 @@ struct ActorPlacement gChampa_ActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_WITH_HEADBAND, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 280, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, 8, 440, 0, 392, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 408, FACING_EAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 280, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 296, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 280, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_CHAMPA_SAILOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 280, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_CHAMPA_SAILOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 216, 0, 296, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_CHAMPA_SAILOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 280, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 392, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 344, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_ALEX, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1518,9 +1557,9 @@ struct ActorPlacement gChampa_ActorPlacementsOnceBriggsSailed[] = {
     ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_WITH_HEADBAND, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 280, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 400, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 424, 0, 392, FACING_WEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 392, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 272, 0, 472, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 320, 0, 472, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_CHAMPA_SAILOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 392, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_CHAMPA_SAILOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 272, 0, 472, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_CHAMPA_SAILOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 320, 0, 472, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 392, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 904, 0, 344, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_ALEX, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, -56, 0, -56, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1533,31 +1572,31 @@ struct ActorPlacement gChampa_ActorPlacementsOnceBriggsSailed[] = {
     ACTOR_PLACEMENT(SPRITE_FEIZHI, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 296, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(SPRITE_CHAMPA_CREWMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 296, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(SPRITE_CHAMPA_SAILOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 296, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_THEN_WATCH, 0),
+    ACTOR_PLACEMENT(SPRITE_CHAMPA_SAILOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 152, 0, 296, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_THEN_WATCH, 0),
     ACTOR_PLACEMENT(SPRITE_BRIGGS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 168, 0, 264, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     {SCENE_TABLE_END},
 };
 
-/// A door's map edit: none.
-s16 gChampa_NoDoorEdit[] = {
-    -1,
+/// A doorway with no door: nothing to open.
+u16 gChampa_NoDoor[] = {
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
-/// Door 7's map edit as it opens.
-s16 gChampa_DoorEdit[] = {
-    36, 2, 2, 2, 6, 36, 4, 2,
-    2, 6, -1,
+/// The sanctum's door opening in two steps.
+u16 gChampa_SanctumDoorOpening[] = {
+    MAPGRID_ANIMATION_STEP(36, 2, 2, 2, 6),
+    MAPGRID_ANIMATION_STEP(36, 4, 2, 2, 6),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 // clang-format on
 
-/// The doors' map edits for Champa_OpenDoorAndEnter: door 7's, then the
-/// others'.
-s32 gChampa_Doors[] = {
-    (s32)gChampa_DoorEdit,
-    0x9001d,
-    (s32)gChampa_NoDoorEdit,
-    0,
+/// The doors' map edits for Champa_OpenDoorAndEnter, which does not play them:
+/// the sanctum's, then the others'. The sanctum's door opens through
+/// SANCTUM_DOOR_ANIMATION instead.
+struct MapGridCellAnimation gChampa_Doors[] = {
+    {gChampa_SanctumDoorOpening, 29, 9},
+    {gChampa_NoDoor, 0, 0},
 };
 
 /// Champa's exits, doors, talks, Mind Read and Psynergy.
@@ -1590,7 +1629,8 @@ struct Trigger gChampa_Triggers[] = {
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
      CONDITION_ALWAYS, EVENT(Champa_HideTreasureSpot)},
     {TRIGGER_STEP, 100, FLAG_FEIZHI_CAME, EVENT(Champa_FeizhiArrives)},
-    {TRIGGER_STEP, 19, FLAG_NEAR_THE_CLIFF, EVENT(Champa_ApproachTheCliff)},
+    {TRIGGER_STEP, 19, FLAG_WALKED_INTO_THE_VILLAGE,
+     EVENT(Champa_WalkIntoTheVillage)},
     {TRIGGER_STEP, 20, FLAG_CHAMPA_MET_ALEX, EVENT(Champa_MeetAlex)},
     {TRIGGER_TALK, ACTOR_HUNGRY_YOUNG_MAN, CONDITION_ALWAYS,
      MSGNO(MsgChampaOhImSoHungryAnd)},
@@ -1612,8 +1652,8 @@ struct Trigger gChampa_Triggers[] = {
      MSGNO(MsgChampaTheCliffCavesAreA)},
     {TRIGGER_TALK, ACTOR_SAILOR_ON_THE_MATRIARCH, CONDITION_ALWAYS,
      MSGNO(MsgChampaOurMatriarchIsTheLast)},
-    {TRIGGER_TALK, ACTOR_UNWELCOMING_SAILOR, CONDITION_ALWAYS,
-     EVENT(Champa_SailorsNotWelcome)},
+    {TRIGGER_TALK, ACTOR_SAILOR_ASKING_IF_WELL_LIKED, CONDITION_ALWAYS,
+     EVENT(Champa_AskIfSailorsAreWellLiked)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HUNGRY_YOUNG_MAN,
      CONDITION_ALWAYS, MSGNO(MsgChampaWhereCouldBriggsBeWasting)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_WAITING_FOR_FOOD,
@@ -1634,7 +1674,7 @@ struct Trigger gChampa_Triggers[] = {
      CONDITION_ALWAYS, MSGNO(MsgChampaWhyHaventBriggsAndHis)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SAILOR_ON_THE_MATRIARCH,
      CONDITION_ALWAYS, MSGNO(MsgChampaObabasLockedHerselfInHer)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_UNWELCOMING_SAILOR,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SAILOR_ASKING_IF_WELL_LIKED,
      CONDITION_ALWAYS, MSGNO(MsgChampaIfBriggsWouldJustBring)},
     {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_CLIFF, CONDITION_ALWAYS,
      MSGNO(MsgChampaIBetYoureWonderingWhy)},
@@ -1675,7 +1715,8 @@ struct Trigger gChampa_TriggersOnceBriggsSailed[] = {
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
      CONDITION_ALWAYS, EVENT(Champa_HideTreasureSpot)},
     {TRIGGER_STEP, 100, FLAG_FEIZHI_CAME, EVENT(Champa_FeizhiArrives)},
-    {TRIGGER_STEP, 19, FLAG_NEAR_THE_CLIFF, EVENT(Champa_ApproachTheCliff)},
+    {TRIGGER_STEP, 19, FLAG_WALKED_INTO_THE_VILLAGE,
+     EVENT(Champa_WalkIntoTheVillage)},
     {TRIGGER_STEP, 20, FLAG_CHAMPA_MET_ALEX, EVENT(Champa_MeetAlex)},
     {TRIGGER_STEP, 26, FLAG_SAILORS_SPOTTED_FELIX,
      EVENT(Champa_SailorsSpotFelix)},
@@ -1699,7 +1740,7 @@ struct Trigger gChampa_TriggersOnceBriggsSailed[] = {
      MSGNO(MsgChampaBriggsFoughtTheOddsTo)},
     {TRIGGER_TALK, ACTOR_SAILOR_ON_THE_MATRIARCH, CONDITION_ALWAYS,
      EVENT(Champa_TellOfObaba)},
-    {TRIGGER_TALK, ACTOR_UNWELCOMING_SAILOR, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_SAILOR_ASKING_IF_WELL_LIKED, CONDITION_ALWAYS,
      MSGNO(MsgChampaNowNobodyHasToDo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HUNGRY_YOUNG_MAN,
      CONDITION_ALWAYS, MSGNO(MsgChampaBriggsIsSoGenerousHe)},
@@ -1721,7 +1762,7 @@ struct Trigger gChampa_TriggersOnceBriggsSailed[] = {
      CONDITION_ALWAYS, MSGNO(MsgChampaIfChampaGetsEnoughMoney)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SAILOR_ON_THE_MATRIARCH,
      CONDITION_ALWAYS, MSGNO(MsgChampaIsObabaInAGood)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_UNWELCOMING_SAILOR,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SAILOR_ASKING_IF_WELL_LIKED,
      CONDITION_ALWAYS, MSGNO(MsgChampaNobodyReallyLikesToPlay)},
     {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_CLIFF, CONDITION_ALWAYS,
      MSGNO(MsgChampaWhenBriggsSetSailWe)},

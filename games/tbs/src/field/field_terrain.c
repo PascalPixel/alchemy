@@ -479,13 +479,38 @@ s32 MapGrid_IsWallAt(struct WorldPosition *position) {
   return (cell->behavior != CELL_BEHAVIOR_WALL) - 1;
 }
 
+/// The world map's collision: each tile of a terrain layer's map has a tile of
+/// 4-bit collision values, 8 bytes, two values a byte. The lower layer's map
+/// is in screen block 8, the upper's in screen block 10, and the upper's
+/// collision tiles follow the lower's 256 in the buffer.
+#define WORLD_MAP_LOWER_COLLISION_MAP BG_SCREEN_BLOCK(8)
+#define WORLD_MAP_UPPER_COLLISION_MAP BG_SCREEN_BLOCK(10)
+#define WORLD_MAP_COLLISION_TILE_BYTES 8
+#define WORLD_MAP_UPPER_COLLISION_TILES (256 * WORLD_MAP_COLLISION_TILE_BYTES)
+#define WORLD_MAP_COLLISION_BITS 4
+#define WORLD_MAP_COLLISION_MASK ((1 << WORLD_MAP_COLLISION_BITS) - 1)
+
+/// The world map's 32-pixel blocks, 32 to a row (gCellPictures): a 16.16
+/// coordinate shifted down this far is a block.
+#define WORLD_MAP_BLOCK_SHIFT 21
+#define WORLD_MAP_BLOCK_PIXELS 32
+#define WORLD_MAP_BLOCKS_ACROSS 32
+/// A block word's bit 31, in its top byte: the second bank of battle
+/// environments.
+#define WORLD_MAP_BLOCK_SECOND_BANK (1 << (31 - 24))
+/// A block word's encounter region, its bits 24 to 30.
+#define WORLD_MAP_BLOCK_REGION(word) (((word) << 1) >> 25)
+/// The battle environments of gWorldMap_BattleEnvironments come in banks of
+/// one for each collision value.
+#define WORLD_MAP_ENVIRONMENT_BANK 16
+
 /// Returns the world map's collision value (1-15) at position: from the upper
 /// collision layer where it has one, else the lower, else
 /// WORLD_MAP_COLLISION_DEFAULT.
 s32 WorldMap_GetCollision(struct WorldPosition *position) {
-  s32 halfPixelX = position->x >> 17;
+  s32 halfPixelX = FIXEDtoINT(position->x) >> 1;
   s32 y = position->y;
-  s32 halfPixelY = y >> 17;
+  s32 halfPixelY = FIXEDtoINT(y) >> 1;
   u32 collisionCell;
   u32 pixelOffset;
   u8 collisionTile;
@@ -496,28 +521,30 @@ s32 WorldMap_GetCollision(struct WorldPosition *position) {
   collisionCell = (((halfPixelY / 8) & 63) << 6) + ((halfPixelX / 8) & 63);
   pixelOffset = (((halfPixelY / 2) & 3) << 1) + ((halfPixelX / 4) & 1);
 
-  // The upper layer: its tile map in screen block 10, its tiles 0x800 bytes
-  // into the collision buffer.
-  collisionTile = BG_SCREEN_BLOCK(10)[collisionCell];
+  // The upper layer first.
+  collisionTile = WORLD_MAP_UPPER_COLLISION_MAP[collisionCell];
   packedCollisions =
-      *(Ram_MapGridShapes + 0x800 + (collisionTile << 3) + pixelOffset);
+      *(Ram_MapGridShapes + WORLD_MAP_UPPER_COLLISION_TILES +
+        collisionTile * WORLD_MAP_COLLISION_TILE_BYTES + pixelOffset);
   if (packedCollisions != 0) {
     if (halfPixelX & 2)
-      result = packedCollisions >> 4;
+      result = packedCollisions >> WORLD_MAP_COLLISION_BITS;
     else
-      result = packedCollisions & 15;
+      result = packedCollisions & WORLD_MAP_COLLISION_MASK;
     if (result != 0)
       return result;
   }
 
-  // The lower layer: its tile map in screen block 8, its tiles at the start.
-  collisionTile = BG_SCREEN_BLOCK(8)[collisionCell];
-  packedCollisions = *(Ram_MapGridShapes + (collisionTile << 3) + pixelOffset);
+  // Then the lower layer.
+  collisionTile = WORLD_MAP_LOWER_COLLISION_MAP[collisionCell];
+  packedCollisions =
+      *(Ram_MapGridShapes + collisionTile * WORLD_MAP_COLLISION_TILE_BYTES +
+        pixelOffset);
   if (packedCollisions != 0) {
     if (halfPixelX & 2)
-      result = packedCollisions >> 4;
+      result = packedCollisions >> WORLD_MAP_COLLISION_BITS;
     else
-      result = packedCollisions & 15;
+      result = packedCollisions & WORLD_MAP_COLLISION_MASK;
     if (result != 0)
       return result;
   }
@@ -552,26 +579,39 @@ s32 WorldMap_GetBattleEnvironment(struct WorldPosition *position,
   u32 index;
   u32 *cellPictureWord;
 
-  // Blocks are 32 pixels, 32 to a row; the bias rounds a negative coordinate
-  // towards zero, as division would.
+  // The bias rounds a negative coordinate towards zero, as division would.
   if (x < 0)
-    x += toFIXED(32) - 1;
-  cellPictureX = (x >> 21) & 31;
+    x += toFIXED(WORLD_MAP_BLOCK_PIXELS) - 1;
+  cellPictureX = (x >> WORLD_MAP_BLOCK_SHIFT) & (WORLD_MAP_BLOCKS_ACROSS - 1);
   y = position->y;
   if (y < 0)
-    y += toFIXED(32) - 1;
+    y += toFIXED(WORLD_MAP_BLOCK_PIXELS) - 1;
 
-  index = cellPictureX + (((y >> 21) & 31) << 5);
+  index = cellPictureX +
+          ((y >> WORLD_MAP_BLOCK_SHIFT) & (WORLD_MAP_BLOCKS_ACROSS - 1)) *
+              WORLD_MAP_BLOCKS_ACROSS;
   cellPictureWord = gCellPictures + index;
-  // Bit 31 of the block word selects the second bank of 16; the snowfield
-  // the third, whatever bit 31 says.
-  if (((u8 *)cellPictureWord)[3] & 0x80)
-    behaviorBank = 16;
+  // Bit 31 of the block word selects the second bank; the snowfield the
+  // third, whatever bit 31 says.
+  if (((u8 *)cellPictureWord)[3] & WORLD_MAP_BLOCK_SECOND_BANK)
+    behaviorBank = WORLD_MAP_ENVIRONMENT_BANK;
 
-  // The encounter region is bits 24 to 30 of the block word.
-  *terrainKind = (*cellPictureWord << 1) >> 25;
+  *terrainKind = WORLD_MAP_BLOCK_REGION(*cellPictureWord);
   if (*terrainKind == WORLD_MAP_ENCOUNTER_REGION_SNOWFIELD)
-    behaviorBank = 32;
+    behaviorBank = 2 * WORLD_MAP_ENVIRONMENT_BANK;
 
   return gWorldMap_BattleEnvironments[behaviorBank + collisionKind];
 }
+
+#undef WORLD_MAP_LOWER_COLLISION_MAP
+#undef WORLD_MAP_UPPER_COLLISION_MAP
+#undef WORLD_MAP_COLLISION_TILE_BYTES
+#undef WORLD_MAP_UPPER_COLLISION_TILES
+#undef WORLD_MAP_COLLISION_BITS
+#undef WORLD_MAP_COLLISION_MASK
+#undef WORLD_MAP_BLOCK_SHIFT
+#undef WORLD_MAP_BLOCK_PIXELS
+#undef WORLD_MAP_BLOCKS_ACROSS
+#undef WORLD_MAP_BLOCK_SECOND_BANK
+#undef WORLD_MAP_BLOCK_REGION
+#undef WORLD_MAP_ENVIRONMENT_BANK

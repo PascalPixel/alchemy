@@ -18,6 +18,7 @@
 #include "sound/sound.h"
 #include "system/system.h"
 #include "types.h"
+#include "version.h"
 #include "sprite_ids.h"
 #include "field/scene_tables.h"
 #include "system/input.h"
@@ -82,7 +83,7 @@ enum PsynergyTestActorId {
   /// Tremor and Grind.
   ACTOR_ICE_PILLAR,
   ACTOR_FLAME, ///< burns; Blaze at it does nothing
-  /// In Kraden's sprite, he answers Blaze as Daila's practising performer.
+  /// In Kraden's sprite, he answers Blaze as Daila's practising man.
   ACTOR_KRADEN,
   ACTOR_PUDDLE,      ///< grows out of the second Scoop spot
   ACTOR_WICKED_MACE, ///< the item's icon, which drops onto the third
@@ -336,7 +337,7 @@ void PsynergyTest_SetSandLayer(void) { Actor_GetById(FELIX)->layer = 2; }
 void PsynergyTest_ClearSandLayer(void) { Actor_GetById(FELIX)->layer = 0; }
 
 /// As Blaze reaches him, Kraden shouts and jumps to the other of his two
-/// spots, as Daila's practising performer would (DailaRooms_PracticeShout,
+/// spots, as Daila's practising man would (DailaRooms_PracticeShout,
 /// which Daila never runs).
 void PsynergyTest_PracticeShout(s32 unused, s32 actor) {
   Actor_ShowEmote(actor, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
@@ -362,7 +363,7 @@ void PsynergyTest_PracticeShout(s32 unused, s32 actor) {
 }
 
 /// Once Blaze has ended, Kraden turns to Felix, startled, as Daila's
-/// practising performer would (DailaRooms_StartleAtTheLeader).
+/// practising man would (DailaRooms_StartleAtTheLeader).
 void PsynergyTest_StartleAfterBlaze(s32 unused, s32 actor) {
   Actor_FaceActor(actor, FELIX, 0);
   FieldEvent_Wait(10);
@@ -371,6 +372,7 @@ void PsynergyTest_StartleAfterBlaze(s32 unused, s32 actor) {
   FieldActor_Jump(actor, 6, 15);
   FieldEvent_Wait(10);
   FieldEvent_SetMessageId((s32)MsgDailaInteriorsWhatAreYouDoing);
+  // "What are you doing???"
   Event_ShowMessage(actor, 0);
   FieldEvent_Wait(10);
 }
@@ -384,6 +386,7 @@ void PsynergyTest_StartleAgain(s32 unused, s32 actor) {
   FieldActor_Jump(actor, 6, 15);
   FieldEvent_Wait(10);
   FieldEvent_SetMessageId((s32)MsgDailaInteriorsWhatAreYouDoing);
+  // "What are you doing???"
   Event_ShowMessage(actor, 0);
   FieldEvent_Wait(10);
 }
@@ -442,8 +445,7 @@ void PsynergyTest_ArriveInRing(void) {
 }
 
 /// Cyclone on cell 57: a Mad Plant leaps at the leader, and a battle with no
-/// escape starts, encounter zone 14's first formation (a Wild Wolf and Giant
-/// Bats).
+/// escape starts, encounter zone 14's first formation, one or two Giant Bats.
 void PsynergyTest_FightMadPlant(void) {
   Import_DebugMadPlantLeap(SPRITE_MAD_PLANT, 40, 168);
   gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
@@ -893,9 +895,10 @@ struct Trigger gSceneEvents[] = {
      EVENT(PsynergyTest_TestItemSelection)},
     {TRIGGER_TALK, ACTOR_WICKED_MACE, CONDITION_ALWAYS,
      EVENT(PsynergyTest_PickUpItem)},
-// Mind Read hears what Eastern Alhafra's men say after Briggs's attack;
-// the Japanese table has one more row, for the innkeeper.
-#if LANGUAGE == LANGUAGE_JAPANESE
+// Mind Read hears what Eastern Alhafra's men say after Briggs's attack. The
+// Japanese table has one more row, for the innkeeper, which the later editions
+// dropped.
+#if !TLA_PATCH_1
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
      5618},
 #endif
@@ -976,7 +979,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-// The rings' start and stop, which the ROM places after the tables.
+// The rings' start and stop.
 
 /// Starts an actor's rings, kept in `work`: loads their tiles and hooks
 /// PsynergyTest_UpdateRings to the actor.

@@ -144,8 +144,15 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
 #define TILE_ROW_FROM_BOTTOM(tile, up)                                         \
   ((u32 *)((tile) * 32 - (up) * 4 + ((s32)BG_CHAR_BLOCK(0) + 7 * 4)))
 
+/// A party member's HP and PP bars: PARTY_STATUS_BAR_LENGTH pixels across
+/// five tiles, whose own pixels are drawn in BAR_TILE_COLOR over a shadow of
+/// BAR_TILE_SHADOW_COLOR.
+#define PARTY_STATUS_BAR_LENGTH 40
+#define BAR_TILE_COLOR 14
+#define BAR_TILE_SHADOW_COLOR 1
+
 /// Recolours the five bar tiles at (x, y) in `window` to show a bar `length`
-/// pixels long (0-40).
+/// pixels long (0 to PARTY_STATUS_BAR_LENGTH).
 UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
                                    s32 length) {
   s32 i;
@@ -168,7 +175,7 @@ UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
   }
   x += (s16)window->x;
   y += (s16)window->y;
-  for (i = 0; i < 5; i++, x++) {
+  for (i = 0; i < PARTY_STATUS_BAR_LENGTH / 8; i++, x++) {
     // This tile's eight pixels: filled up to `length`, empty after.
     tile = work->tilemap[0][y * BG_SCREEN_WIDTH + x];
     bar = PIXELS_4BPP(2);
@@ -185,20 +192,20 @@ UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
     } else if (length >= 0) {
 #endif
       bar <<= length * 4;
-      bar |= 0x88888888U >> (32 - length * 4);
+      bar |= PIXELS_4BPP(8) >> (32 - length * 4);
       shadow <<= length * 4;
-      shadow |= 0xddddddddU >> (32 - length * 4);
+      shadow |= PIXELS_4BPP(13) >> (32 - length * 4);
     }
     for (row = 0; row <= (fullLength != 0 ? 2 : 0); row++) {
       pixels = *TILE_ROW_FROM_BOTTOM(tile, row);
       recoloured = 0;
       for (column = 0; column <= 7; column++) {
-        u32 colour = pixels & 15;
+        u32 colour = pixels & 0xf;
 
-        if (colour == 14)
-          recoloured |= bar & (15U << (column * 4));
-        else if (colour == 1)
-          recoloured |= shadow & (15U << (column * 4));
+        if (colour == BAR_TILE_COLOR)
+          recoloured |= bar & (0xfU << (column * 4));
+        else if (colour == BAR_TILE_SHADOW_COLOR)
+          recoloured |= shadow & (0xfU << (column * 4));
         else
           recoloured |= colour << (column * 4);
         pixels >>= 4;
@@ -229,7 +236,7 @@ void PartyStatus_Draw(s32 flags) {
     y = -1;
     for (i = 0; i < count; i++) {
       members[i] = battle->partyUnits[i];
-      if (members[i] == 255)
+      if (members[i] == BATTLE_UNIT_LIST_END)
         break;
     }
   } else {
@@ -238,7 +245,7 @@ void PartyStatus_Draw(s32 flags) {
       count = 4;
     for (i = 0; i < count; i++)
       members[i] = gMainRoutineWork.party[i];
-    members[i] = 255;
+    members[i] = BATTLE_UNIT_LIST_END;
   }
   count = i;
 
@@ -294,7 +301,7 @@ void PartyStatus_Draw(s32 flags) {
     Text_SetColor(TEXT_COLOR_WHITE);
     if (unit->hpMax != 0) {
       current = unit->hp;
-      barLength = (current * 40) / unit->hpMax;
+      barLength = (current * PARTY_STATUS_BAR_LENGTH) / unit->hpMax;
       if (barLength == 0 && current != 0)
         barLength = 1;
       PartyStatus_DrawBars((struct Window *)window,
@@ -310,7 +317,7 @@ void PartyStatus_Draw(s32 flags) {
                                       y * 8 + 16, 1);
       if (unit->ppMax != 0) {
         current = unit->pp;
-        barLength = (current * 40) / unit->ppMax;
+        barLength = (current * PARTY_STATUS_BAR_LENGTH) / unit->ppMax;
         if (barLength == 0 && current != 0)
           barLength = 1;
         PartyStatus_DrawBars((struct Window *)window,
@@ -360,5 +367,8 @@ void PartyStatus_Close(void) {
 }
 
 #undef TILE_ROW_FROM_BOTTOM
+#undef PARTY_STATUS_BAR_LENGTH
+#undef BAR_TILE_COLOR
+#undef BAR_TILE_SHADOW_COLOR
 #undef PARTY_STATUS_DJINN_WIDTH
 #undef PARTY_STATUS_COLUMN_WIDTH

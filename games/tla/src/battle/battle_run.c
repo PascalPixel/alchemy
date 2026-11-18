@@ -25,7 +25,7 @@
 
 /// The six enemy units, which Unit_Get reads for unit ids 128 to 133 while the
 /// battle lasts (heap slot HEAP_SLOT_ENEMY_UNITS).
-#define ENEMY_UNITS_SIZE (6 * BATTLE_UNIT_SIZE)
+#define ENEMY_UNITS_SIZE (ENEMY_BATTLE_SIZE * BATTLE_UNIT_SIZE)
 
 /// With the front line down and someone living, sends the reserve members in
 /// to take the fallen ones' places, as many as there are of both.
@@ -82,6 +82,12 @@ void BattleCamera_Create(void) {
   camera->distance = toFIXED(256);
 }
 
+/// Name letters past every edition's last, which leave an enemy's name bare:
+/// 255, and NAME_LETTER_ALPHABET, past Z, the last letter the Japanese edition
+/// gives.
+#define NAME_LETTER_NONE 255
+#define NAME_LETTER_PAST_ALL NAME_LETTER_ALPHABET
+
 /// Replaces the first enemy with the Doom Dragon's next form:
 /// ENEMY_DOOM_DRAGON_E after FORMATION_DOOM_DRAGON_A, else ENEMY_DOOM_DRAGON_H.
 /// The form change's battle effect calls it through its far call.
@@ -97,8 +103,7 @@ void Battle_ChangeEnemyForm(s32 id) {
   BattleObject_MarkForRelease(FIRST_ENEMY_UNIT);
   BattleMotion_DestroyAllSlotObjects();
   BattleEnemy_ClaimNameLetter(unit, 1);
-  // A suffix past every edition's letters: the name has none.
-  BattleUnit_SetFar(FIRST_ENEMY_UNIT, unit, 255);
+  BattleUnit_SetFar(FIRST_ENEMY_UNIT, unit, NAME_LETTER_NONE);
   work->enemyIds[0] = FIRST_ENEMY_UNIT;
   work->enemyIds[1] = BATTLE_UNIT_LIST_END;
   Enemy_Update();
@@ -175,8 +180,8 @@ s32 Battle_Run(s32 enemyGroup) {
   REG_DISPCNT = DISPCNT_MODE_1;
   GameFlag_Set(FLAG_IN_BATTLE);
   // XXX (no evidence): what flag 0x169 marks; it is set as every battle
-  // starts, as The Broken Seal's, and nothing in C reads it. A reader of the
-  // flag would settle it.
+  // starts, as The Broken Seal's, and no code of either game reads it, so
+  // nothing the game does shows what it means.
   GameFlag_Set(0x169);
   Matrix_Initialize();
 
@@ -256,7 +261,7 @@ s32 Battle_Run(s32 enemyGroup) {
   BattleCamera_SetRange(toFIXED(160), toFIXED(80), 0, 0, FIXED_ONE * 2);
   // The camera on the centre at 190 percent until the opening zooms.
   BattleCamera_SetView(0, 0, 0, 190);
-  Party_ReservedNoOp5B14(1);
+  Party_BattleSetupNoOp(1);
   REG_BLDCNT = 0;
   BattleSpoils_Clear();
   battle->arrowTiles = VramCache_AllocEntry(128);
@@ -357,7 +362,7 @@ s32 Battle_Run(s32 enemyGroup) {
         battle->actions[i].command = COMMAND_DAEDALUS;
         battle->actions[i].parameter = 0;
         battle->actions[i].target = queue != 0 ? 0 : FIRST_ENEMY_UNIT;
-        battle->actions[i].range = 255;
+        battle->actions[i].range = ABILITY_RANGE_ALL;
         i--;
       }
       if (battle->ceaseFire != 0)
@@ -391,13 +396,14 @@ s32 Battle_Run(s32 enemyGroup) {
 
     window = Message_OpenWindowFar(Tutorial_GetDjinnGiveMessage() +
                                        DJINN_TUTORIAL_LINE_UNLEASHED,
-                                   0, 4, 1);
+                                   0, 4, MESSAGE_WINDOW_ZOOM);
     while (Message_AllTypedFar() == 0)
       wait(1);
     Window_CloseFar(window, 1);
     wait(1);
-    window = Message_OpenWindowFar(
-        Tutorial_GetDjinnGiveMessage() + DJINN_TUTORIAL_LINE_STANDBY, 10, 4, 1);
+    window = Message_OpenWindowFar(Tutorial_GetDjinnGiveMessage() +
+                                       DJINN_TUTORIAL_LINE_STANDBY,
+                                   10, 4, MESSAGE_WINDOW_ZOOM);
     BattleMessage_WaitForAdvanceAt(44, 24);
     Window_CloseFar(window, 1);
     wait(1);
@@ -414,10 +420,10 @@ won:
       if (battle->spoils.defeated != 0) {
         Sound_PlayFar(MUS_VICTORY);
         if (battle->defeatState <= DEFEAT_SEVERAL) {
-          // The first defeated enemy's name for the message, with no letter
-          // (26 is past every edition's).
+          // The first defeated enemy's name for the message, with no letter.
           BattleUnit_SetFar(FIRST_ENEMY_UNIT,
-                            battle->enemyKinds[battle->firstDefeated], 26);
+                            battle->enemyKinds[battle->firstDefeated],
+                            NAME_LETTER_PAST_ALL);
           MessageArgument_ClearAllFar();
           MessageArgument_PushFar(FIRST_ENEMY_UNIT, MESSAGE_ARGUMENT_ACTOR);
           BattleMessage_ShowAndWaitFar(battle->defeatState + (s32)MsgDowned);

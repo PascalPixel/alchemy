@@ -7,7 +7,7 @@
 /// riverbed the Venus Djinni Mold bolts into the snow until Scoop digs it out;
 /// in the upper village the party overhears the talk of freeing Felix's
 /// parents and meets Puelle. After the ending the storm is over, the children
-/// play tag, the people give thanks for the beacon and the party says its
+/// play chase, the people give thanks for the beacon and the party says its
 /// farewell at the south gate before the credits.
 #include "sprite_ids.h"
 #include "graphics/palette_buffers.h"
@@ -29,6 +29,8 @@
 #include "shared/event_check_spheres_overlap.h"
 #include "system/ram_buffer.h"
 #include "field/field_sequence_event.h"
+#include "field/field_sequence.h"
+#include "field/field_coordinate.h"
 #include "field/actor.h"
 #include "version.h"
 #include "battle/battle.h"
@@ -92,13 +94,15 @@ enum ProxTownActorId {
   /// "Once the final lighthouse is lit, the winds should weaken."
   ACTOR_VILLAGER_ON_THE_WINDS,
   /// The three children of Prox_TalkToPlayingChild,
-  /// Prox_TalkToRestlessChild and Prox_TalkToTrainingChild, who play tag
-  /// once the beacon is lit.
+  /// Prox_TalkToChildWhoMissesRunning and Prox_TalkToTrainingChild, who play
+  /// chase once the beacon is lit.
   ACTOR_PLAYING_CHILD,
-  ACTOR_RESTLESS_CHILD,
+  ACTOR_CHILD_WHO_MISSES_RUNNING,
   ACTOR_TRAINING_CHILD,
   /// The boulder Lift raises from the black dot Scoop digs.
   ACTOR_BOULDER,
+  /// Unused: a crate drawn hidden on the roof of the north-east house; nothing
+  /// but Prox_InitializeTown names it.
   ACTOR_TOWN_CRATE
 };
 
@@ -192,10 +196,6 @@ enum ProxCaveHomesActorId {
 /// The caves: one old man, who fears for Weyard (Prox_FearForWeyard).
 enum ProxCavesActorId { ACTOR_OLD_MAN_FEARING_FOR_WEYARD = ACTOR_FIRST_PLACED };
 
-#define FLAG_HEARD_OF_PARENTS 0x9c0 ///< overheard the talk of freeing them
-#define FLAG_CLAN_SPOKE_OF_LIGHTHOUSE 0x9c1
-#define FLAG_MET_PUELLE 0x9c2
-#define FLAG_THANKED_FOR_BEACON 0x9c5 ///< after the ending, in the house
 #define FLAG_SAID_FAREWELL 0x9cc
 #define FLAG_MOLD_HID_IN_SNOW 0xa2d
 /// The door the mayor's men came out of stays open.
@@ -242,16 +242,6 @@ void Prox_MercuryDjinniJoins(void) {
 
 #undef FIELD_AT
 
-#ifndef TLA_PROX_LOCAL_H
-#define TLA_PROX_LOCAL_H
-
-/// Overlay 6A8's scene layer: the declarations its scenes share and the
-/// inline helpers some of their calls go through, as overlay 694's do.
-
-#define EVENT_WORK gFieldWork
-
-#endif
-
 extern struct ActorPlacement gProx_SouthGateFarewellPlacements[];
 extern struct ActorPlacement gProx_TownPlacements[];
 extern struct ActorPlacement gProx_MoldPlacements[];
@@ -271,7 +261,7 @@ extern s32 gProx_KradenStepsUpToPuelle[];
 extern s32 gProx_StepBackFromPuelle[];
 extern s32 gProx_EnterDoorScript[];
 
-/// The lower village: after the ending its three children play tag.
+/// The lower village: after the ending its three children play chase.
 void Prox_InitializeTown(void);
 
 void Prox_InitializeMold(void);
@@ -338,10 +328,21 @@ void Leader_SlideOnIce(void);
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 
-/// Puffs rise from the roofs of the village while the storm is over.
-void Prox_PuffFromRoofs(void);
+/// Smoke rises from the village's chimneys while the storm is over.
+void Prox_SmokeFromChimneys(void);
 
 #define BYTE_AT(base, offset) (*(u8 *)((u8 *)(base) + (offset)))
+
+/// The sixteenth of a turn a heading points into, as a mask.
+#define HEADING_SECTOR_MASK (TRIG_TURN - FACING_STEP)
+/// The frames the leader must have pushed against a chasing child before it
+/// gives way.
+#define CHASE_GIVE_WAY_FRAMES 120
+/// How near, in pixels, a child chases another child or the leader, and how
+/// near the leader stops a child in its game (from patch 1).
+#define CHASE_CHILD_RANGE 24
+#define CHASE_LEADER_RANGE 32
+#define CHASE_STOP_RANGE 11
 
 /// Runs a child at its target while it is near and ahead, and says whether it
 /// is chasing.
@@ -362,43 +363,43 @@ s32 Prox_ChaseTarget(struct Actor *actor, struct Actor *target, s32 range,
       force != 0) {
     u32 angle = (u16)Trig_Atan(target->z.fixed - actor->z.fixed,
                                *targetPos - *objectPos);
-    u32 left = (angle - TRIG_TURN / 16) & 0xf000;
-    u32 right = (angle + TRIG_TURN / 16) & 0xf000;
-    u32 ahead = angle & 0xf000;
-    u32 facing = actor->facing & 0xf000;
+    u32 left = (angle - FACING_STEP) & HEADING_SECTOR_MASK;
+    u32 right = (angle + FACING_STEP) & HEADING_SECTOR_MASK;
+    u32 ahead = angle & HEADING_SECTOR_MASK;
+    u32 facing = actor->facing & HEADING_SECTOR_MASK;
 
     if (ahead == facing || right == facing || left == facing || force != 0) {
-      if (gFieldWork->blockedSteps > 120) {
+      if (gFieldWork->blockedSteps > CHASE_GIVE_WAY_FRAMES) {
         actor->paused = 0;
-        Actor_SelectAnimation(actor, 2);
+        Actor_SelectAnimation(actor, ANIM_WALK);
       } else {
         actor->paused = 1;
-        Actor_SelectAnimation(actor, 1);
+        Actor_SelectAnimation(actor, ANIM_STAND);
         result = 1;
       }
     }
   } else {
     actor->paused = 0;
-    Actor_SelectAnimation(actor, 2);
+    Actor_SelectAnimation(actor, ANIM_WALK);
   }
   return result;
 }
 
 #if TLA_PATCH_1
 
-/// The children's game of tag after the ending: each runs at the child it
+/// The children's game of chase after the ending: each runs at the child it
 /// chases, and stops when the leader comes up close (from patch 1).
-s32 Prox_PlayTag(struct Actor *actor) {
+s32 Prox_PlayChase(struct Actor *actor) {
   u8 *tiles = Ram_HeapSlots->windowWork;
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 flag = 0;
   struct Actor *target;
 
   target = Actor_Get(gMainRoutineWork.leaderActorId);
-  if (SceneActor_CalculateFixedPointDistance(&target->x.fixed,
-                                             &actor->x.fixed) <= 11) {
+  if (SceneActor_CalculateFixedPointDistance(
+          &target->x.fixed, &actor->x.fixed) <= CHASE_STOP_RANGE) {
     actor->paused = flag;
-    Actor_SelectAnimation(actor, 2);
+    Actor_SelectAnimation(actor, ANIM_WALK);
     return 0;
   }
   if (actor->timer == 0)
@@ -406,19 +407,19 @@ s32 Prox_PlayTag(struct Actor *actor) {
   else if (actor->timer == 1)
     target = Actor_Get(ACTOR_PLAYING_CHILD);
   else
-    target = Actor_Get(ACTOR_RESTLESS_CHILD);
-  if (Prox_ChaseTarget(actor, target, 24, 0) == 0) {
+    target = Actor_Get(ACTOR_CHILD_WHO_MISSES_RUNNING);
+  if (Prox_ChaseTarget(actor, target, CHASE_CHILD_RANGE, 0) == 0) {
     target = Actor_Get(gMainRoutineWork.leaderActorId);
     if ((work->talk != 0 || tiles[4] != 0) && (actor->timer & 2))
       flag = 1;
-    Prox_ChaseTarget(actor, target, 32, flag);
+    Prox_ChaseTarget(actor, target, CHASE_LEADER_RANGE, flag);
   }
   return 0;
 }
 
 #else
 
-s32 Prox_PlayTag(struct Actor *actor) {
+s32 Prox_PlayChase(struct Actor *actor) {
   u8 *tiles = Ram_HeapSlots->windowWork;
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 flag = 0;
@@ -429,12 +430,12 @@ s32 Prox_PlayTag(struct Actor *actor) {
   else if (actor->timer == 1)
     target = Actor_Get(ACTOR_PLAYING_CHILD);
   else
-    target = Actor_Get(ACTOR_RESTLESS_CHILD);
-  if (Prox_ChaseTarget(actor, target, 24, 0) == 0) {
+    target = Actor_Get(ACTOR_CHILD_WHO_MISSES_RUNNING);
+  if (Prox_ChaseTarget(actor, target, CHASE_CHILD_RANGE, 0) == 0) {
     target = Actor_Get(gMainRoutineWork.leaderActorId);
     if ((work->talk != 0 || tiles[4] != 0) && (actor->timer & 2))
       flag = 1;
-    Prox_ChaseTarget(actor, target, 32, flag);
+    Prox_ChaseTarget(actor, target, CHASE_LEADER_RANGE, flag);
   }
   return 0;
 }
@@ -500,7 +501,7 @@ void Prox_ScoopUpDarkMatter(s32 mode) {
 
 extern struct Trigger gProx_HousesTriggers[];
 
-const u8 *Scene_GetTriggers(void) {
+const struct Trigger *Scene_GetTriggers(void) {
   s32 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_PROX_SOUTH_GATE)
@@ -599,7 +600,7 @@ void Prox_FearForWeyard(void) {
   }
 }
 
-/// The child playing tag, held still while spoken to: faces the leader to say
+/// The child playing chase, held still while spoken to: faces the leader to say
 /// what fun it is to play outside, or under Mind Read is glad to be out of the
 /// igloo; then turns back and plays on.
 void Prox_TalkToPlayingChild(void) {
@@ -624,24 +625,25 @@ void Prox_TalkToPlayingChild(void) {
   Prox_EndEvent();
 }
 
-/// The restless child, held still while spoken to: misses running around
-/// outside, or under Mind Read thinks how unreal the blizzard was.
-void Prox_TalkToRestlessChild(void) {
+/// The child who misses running, held still while spoken to: misses running
+/// around outside, or under Mind Read thinks how unreal the blizzard was.
+void Prox_TalkToChildWhoMissesRunning(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *actor = Actor_Get(ACTOR_RESTLESS_CHILD);
+  struct Actor *actor = Actor_Get(ACTOR_CHILD_WHO_MISSES_RUNNING);
   s16 angle = actor->facing;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   actor->riseEnabled = 1;
   if (work->psynergy == 0) {
-    Actor_FaceActor(ACTOR_RESTLESS_CHILD, gMainRoutineWork.leaderActorId, 0);
+    Actor_FaceActor(ACTOR_CHILD_WHO_MISSES_RUNNING,
+                    gMainRoutineWork.leaderActorId, 0);
     FieldEvent_SetMessageId((s32)MsgProxIMissRunningAroundOutside);
   } else {
     FieldEvent_SetMessageId((s32)MsgProxThatBlizzardWasUnreal);
   }
   // "That blizzard was unreal, but it's gone now, and the weather's..."
-  Event_ShowMessage(ACTOR_RESTLESS_CHILD, 0);
+  Event_ShowMessage(ACTOR_CHILD_WHO_MISSES_RUNNING, 0);
   if (work->psynergy == 0)
     actor->facing = angle;
   actor->riseEnabled = 0;
@@ -742,7 +744,7 @@ void Prox_SearchForParents(void) {
 void FieldCamera_WaitForArrival(void);
 
 /// Puelle decides the clan cannot wait for Agatio any longer and must go to the
-/// Mars Lighthouse; the clansmen start at her words.
+/// Mars Lighthouse; the clansmen start at his words.
 void Prox_DecideToGoToLighthouse(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -973,7 +975,7 @@ void Prox_MeetPuelle(void) {
   // "They flung themselves into the opening of Venus Lighthouse's beacon..."
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | ACTOR_ISAAC,
                     0);
-  // Waits up to 80 frames, or until a key is held.
+  // A pause the player can cut short by holding a key.
   for (i = 0; i < 80; i++) {
     System_Wait(1);
     if (gInput.held != 0)
@@ -1038,10 +1040,10 @@ void Prox_MeetPuelle(void) {
     Actor_WaitForAnimationChange(owner);
     Event_ShowMessage(
         SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | ACTOR_ISAAC, 0);
-    EVENT_WORK->message++;
+    gFieldWork->message++;
   } else {
     FieldActor_WaitForMoveById(owner);
-    EVENT_WORK->message++;
+    gFieldWork->message++;
     Event_ShowMessage(
         SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | ACTOR_ISAAC, 0);
   }
@@ -1182,9 +1184,12 @@ void Prox_StartScoop(void) { MapGrid_CopyCellAttributes(25, 2, 1, 1, 25, 9); }
 /// After the Scoop, the dug ground's collision is filled back in.
 void Prox_EndScoop(void) { MapGrid_CopyCellAttributes(25, 3, 1, 1, 25, 9); }
 
-/// Drifts a roof's puff sideways ever faster, raises and widens it, and
+/// The frames a cloud of smoke rises before it is released.
+#define SMOKE_FRAMES 60
+
+/// Drifts a chimney's smoke sideways ever faster, raises and widens it, and
 /// releases it when its frames run out.
-void Prox_RisePuff(struct Actor *actor) {
+void Prox_RiseSmoke(struct Actor *actor) {
   actor->x.fixed += actor->timer << 8;
   actor->y.fixed += toFIXED(1) / 2;
   actor->scaleX += FIXED_ONE / 50;
@@ -1194,8 +1199,8 @@ void Prox_RisePuff(struct Actor *actor) {
     Actor_Release(actor);
 }
 
-/// Adds one puff rising from a roof.
-void Prox_AddPuff(s32 x, s32 y, s32 z) {
+/// Adds one cloud of smoke rising from a chimney.
+void Prox_AddSmoke(s32 x, s32 y, s32 z) {
   struct Actor *actor = FieldActor_Create(SPRITE_DUST_CLOUD, x, y, z);
 
   if (actor != NULL) {
@@ -1208,30 +1213,30 @@ void Prox_AddPuff(s32 x, s32 y, s32 z) {
     Actor_SetSpriteFlags(actor, 0);
     actor->scaleX = FIXED_ONE / 2;
     actor->scaleY = FIXED_ONE / 2;
-    *(s32 *)&actor->watchedActor = 60;
-    actor->update = (void (*)(void))Prox_RisePuff;
+    *(s32 *)&actor->watchedActor = SMOKE_FRAMES;
+    actor->update = (void (*)(void))Prox_RiseSmoke;
     Actor_SelectAnimation(actor, 5);
     Actor_SetBlendMode(actor, 1);
   }
 }
 
-void Prox_PuffFromRoofs(void) {
+void Prox_SmokeFromChimneys(void) {
   s32 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_PROX) {
     if ((gFrameCount & 63) == 0)
-      Prox_AddPuff(toFIXED(536), toFIXED(40), toFIXED(232));
+      Prox_AddSmoke(toFIXED(536), toFIXED(40), toFIXED(232));
     if (((gFrameCount + 60) & 63) == 0)
-      Prox_AddPuff(toFIXED(168), toFIXED(40), toFIXED(296));
+      Prox_AddSmoke(toFIXED(168), toFIXED(40), toFIXED(296));
     if (((gFrameCount + 20) & 63) == 0) {
-      Prox_AddPuff(toFIXED(280), toFIXED(42), toFIXED(184));
-      Prox_AddPuff(toFIXED(152), toFIXED(48), toFIXED(424));
+      Prox_AddSmoke(toFIXED(280), toFIXED(42), toFIXED(184));
+      Prox_AddSmoke(toFIXED(152), toFIXED(48), toFIXED(424));
     }
     if (((gFrameCount + 40) & 63) == 0)
-      Prox_AddPuff(toFIXED(336), toFIXED(42), toFIXED(362));
+      Prox_AddSmoke(toFIXED(336), toFIXED(42), toFIXED(362));
   } else if (scene == SCENE_PROX_MOLD) {
     if ((gFrameCount & 63) == 0)
-      Prox_AddPuff(toFIXED(568), toFIXED(104), toFIXED(296));
+      Prox_AddSmoke(toFIXED(568), toFIXED(104), toFIXED(296));
   }
 }
 
@@ -1258,8 +1263,11 @@ void Prox_EnterDoor(s32 sourceX, s32 sourceY, s32 x, s32 y, s32 width,
   if (width == 1) {
     actor = Actor_Get(gMainRoutineWork.leaderActorId);
     cell = FIXEDtoINT(actor->x.fixed);
-    FieldActor_SetMoveTargetFX(actor, toFIXED(8 - cell % 16) + actor->x.fixed,
-                               actor->y.fixed, actor->z.fixed);
+    FieldActor_SetMoveTargetFX(
+        actor,
+        toFIXED(MAPGRID_CELL_PIXELS / 2 - cell % MAPGRID_CELL_PIXELS) +
+            actor->x.fixed,
+        actor->y.fixed, actor->z.fixed);
     FieldActor_WaitForMove(actor);
     actor->facing = FACING_NORTH;
   }
@@ -1305,8 +1313,11 @@ void Prox_ClimbStairs(void) {
 
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   cell = FIXEDtoINT(actor->x.fixed);
-  FieldActor_SetMoveTargetFX(actor, toFIXED(8 - cell % 16) + actor->x.fixed,
-                             actor->y.fixed, actor->z.fixed - toFIXED(4));
+  FieldActor_SetMoveTargetFX(
+      actor,
+      toFIXED(MAPGRID_CELL_PIXELS / 2 - cell % MAPGRID_CELL_PIXELS) +
+          actor->x.fixed,
+      actor->y.fixed, actor->z.fixed - toFIXED(4));
   FieldActor_WaitForMove(actor);
   actor->facing = FACING_NORTH;
   Event_PlaySound(SE_STAIRS_UP);
@@ -1390,7 +1401,7 @@ void Prox_GiveThanksForBeacon(void) {
                              toFIXED(600), FACING_NORTH_NORTHWEST);
   Actor_SetPosition(ACTOR_JENNA, 184, 684);
   System_Wait(1);
-  EVENT_WORK->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
+  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldCamera_SetSpeed(0.8);
@@ -1497,9 +1508,9 @@ void Prox_GiveThanksForBeacon(void) {
     Actor_SetAnimationAndWait(ACTOR_HOUSES_ELDER, 3);
     // "Our village will not soon forget that you saved us from the edge of..."
     Event_ShowMessage(ACTOR_HOUSES_ELDER, 0);
-    EVENT_WORK->message++;
+    gFieldWork->message++;
   } else {
-    EVENT_WORK->message++;
+    gFieldWork->message++;
     Actor_SetAnimationAndWait(ACTOR_HOUSES_ELDER, 4);
     // "You have just completed a long and difficult journey. Perhaps when..."
     Event_ShowMessage(ACTOR_HOUSES_ELDER, 0);
@@ -1588,9 +1599,9 @@ void Prox_GiveThanksForBeacon(void) {
     Actor_WalkToAndWait(ACTOR_ISAAC, 168, 520);
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_ISAAC, 0);
     Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
-    EVENT_WORK->message += 2;
+    gFieldWork->message += 2;
   } else {
-    EVENT_WORK->message += 2;
+    gFieldWork->message += 2;
     FieldCamera_SetSpeed(2.4);
     FieldCamera_MoveTo(184, CAMERA_KEEP, 512, 1);
     Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTH);
@@ -1659,9 +1670,10 @@ void Prox_GiveThanksForBeacon(void) {
   FieldActor_WaitForMoveById(ACTOR_HOUSES_KRADEN);
   Actor_SetPosition(ACTOR_HOUSES_KRADEN, 0, 0);
   {
-    struct FieldWork *work = EVENT_WORK;
+    struct FieldWork *work = gFieldWork;
 
-    work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+    work->transition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     work->transitionFrames = 16;
   }
   Event_ClearFlag(FLAG_SHOW_AREA_NAME);
@@ -1684,16 +1696,18 @@ s32 Scene_Initialize(void) {
   }
   scene = gMainRoutineWork.next;
   if (scene == SCENE_PROX_HOUSES) {
-    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+    gFieldWork->transition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     Prox_InitializeHouses();
   } else if (scene == SCENE_PROX_CAVE_HOMES) {
-    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+    gFieldWork->transition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     Prox_InitializeCaveHomes();
   } else if (scene == SCENE_PROX_CAVES) {
     s32 *effect = &gFieldWork->transition;
     /* FAKEMATCH(pin): the call's argument fixed to a register. */
     register s32 skip __asm__("r0");
-    s32 value = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+    s32 value = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 
     skip = 0;
     *effect = value;
@@ -1706,7 +1720,7 @@ s32 Scene_Initialize(void) {
     } else {
       REG_BLDALPHA = BLEND_ALPHA(8, 12);
       REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
-      Task_Add(Prox_PuffFromRoofs, TASK_PASS_FRAME);
+      Task_Add(Prox_SmokeFromChimneys, TASK_PASS_FRAME);
       TilesetAnim_Pause(0);
       TilesetAnim_Pause(1);
       TilesetAnim_Resume(2);
@@ -1734,7 +1748,7 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// A child playing tag as its handlers read the actor: whether it has reached
+/// A child playing chase as its handlers read the actor: whether it has reached
 /// its target, its frames left, and its update.
 struct Walker {
   u8 beforeArrived[99];
@@ -1744,13 +1758,13 @@ struct Walker {
   void (*update)(void);
 };
 
-/// Puts a child at its place and starts its game of tag.
-void Prox_StartPlayingTag(s32 actor, s32 x, s32 z, s32 frames) {
+/// Puts a child at its place and starts its game of chase.
+void Prox_StartPlayingChase(s32 actor, s32 x, s32 z, s32 frames) {
   struct Walker *object = ((struct Walker *)Actor_Get(actor));
 
   object->frames = frames;
   object->arrived = 0;
-  object->update = Prox_PlayTag;
+  object->update = Prox_PlayChase;
   Actor_SetPosition(actor, x, z);
 }
 
@@ -1758,12 +1772,13 @@ void Prox_InitializeTown(void) {
 
   if (Event_GetFlag(FLAG_MARS_BEACON_LIT)) {
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
-      Prox_StartPlayingTag(ACTOR_PLAYING_CHILD, 536, 360, 0);
-      Prox_StartPlayingTag(ACTOR_RESTLESS_CHILD, 536, 424, 1);
-      Prox_StartPlayingTag(ACTOR_TRAINING_CHILD, 580, 420, 2);
+      Prox_StartPlayingChase(ACTOR_PLAYING_CHILD, 536, 360, 0);
+      Prox_StartPlayingChase(ACTOR_CHILD_WHO_MISSES_RUNNING, 536, 424, 1);
+      Prox_StartPlayingChase(ACTOR_TRAINING_CHILD, 580, 420, 2);
       System_Wait(1);
       Actor_SetScript(ACTOR_PLAYING_CHILD, (s32)gProx_FirstChildRuns);
-      Actor_SetScript(ACTOR_RESTLESS_CHILD, (s32)gProx_SecondChildRuns);
+      Actor_SetScript(ACTOR_CHILD_WHO_MISSES_RUNNING,
+                      (s32)gProx_SecondChildRuns);
       Actor_SetScript(ACTOR_TRAINING_CHILD, (s32)gProx_ThirdChildRuns);
       System_Wait(1);
     }
@@ -1849,15 +1864,12 @@ void Prox_InitializeCaveHomes(void) {
 
     if (gMainRoutineWork.entrance == PROX_CAVE_HOMES_FROM_PROX_HOUSES_NORTH)
       Prox_ComeDownStairs(0);
-    else if ((u32)((entrance - PROX_CAVE_HOMES_FROM_PROX_HOUSES_WEST) << 16) <=
-             (PROX_CAVE_HOMES_FROM_PROX_HOUSES_SOUTH -
-              PROX_CAVE_HOMES_FROM_PROX_HOUSES_WEST)
-                 << 16)
+    else if ((u16)(entrance - PROX_CAVE_HOMES_FROM_PROX_HOUSES_WEST) <=
+             PROX_CAVE_HOMES_FROM_PROX_HOUSES_SOUTH -
+                 PROX_CAVE_HOMES_FROM_PROX_HOUSES_WEST)
       Prox_ComeDownStairs(1);
   }
   FieldEffect_StartBlankOverlay(0);
-  // The priority in a local is built before the task function's address (passed
-  // directly, the address loads first).
   Task_AddFrame(Prox_MatchCaveHomesPriority, TASK_PASS_FRAME);
 }
 
@@ -1950,9 +1962,9 @@ void Prox_SayFarewell(void) {
       Event_ShowMessage(ACTOR_ISAAC, 0);
       Actor_FaceDirectionAndWait(ACTOR_KYLE, FACING_NORTH_NORTHEAST);
       Event_ShowMessage(ACTOR_KYLE, 0);
-      EVENT_WORK->message++;
+      gFieldWork->message++;
     } else {
-      EVENT_WORK->message += 2;
+      gFieldWork->message += 2;
       Actor_FaceDirectionAndWait(ACTOR_KYLE, FACING_NORTH_NORTHEAST);
       Event_ShowMessage(ACTOR_KYLE, 0);
     }
@@ -1984,9 +1996,9 @@ void Prox_SayFarewell(void) {
                                               0) == 0) {
       Actor_SetAnimationAndWait(ACTOR_ISAAC, ANIM_NOD);
       Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_ISAAC, 0);
-      EVENT_WORK->message++;
+      gFieldWork->message++;
     } else {
-      EVENT_WORK->message++;
+      gFieldWork->message++;
       Actor_SetAnimationAndWait(ACTOR_ISAAC, ANIM_SHAKE_HEAD);
       Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_ISAAC, 0);
     }
@@ -2069,9 +2081,9 @@ void Prox_SayFarewell(void) {
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                             ACTOR_SOUTH_GATE_KRADEN,
                         0);
-      EVENT_WORK->message++;
+      gFieldWork->message++;
     } else {
-      EVENT_WORK->message++;
+      gFieldWork->message++;
       Actor_SetAnimationAndWait(ACTOR_SOUTH_GATE_KRADEN, 4);
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                             ACTOR_SOUTH_GATE_KRADEN,
@@ -2116,9 +2128,9 @@ void Prox_SayFarewell(void) {
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                             ACTOR_SOUTH_GATE_KRADEN,
                         0);
-      EVENT_WORK->message++;
+      gFieldWork->message++;
     } else {
-      EVENT_WORK->message++;
+      gFieldWork->message++;
       Actor_SetAnimationAndWait(ACTOR_SOUTH_GATE_KRADEN, 3);
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                             ACTOR_SOUTH_GATE_KRADEN,
@@ -2196,9 +2208,9 @@ void Prox_SayFarewell(void) {
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                             ACTOR_SOUTH_GATE_KRADEN,
                         0);
-      EVENT_WORK->message++;
+      gFieldWork->message++;
     } else {
-      EVENT_WORK->message++;
+      gFieldWork->message++;
       Actor_SetAnimationAndWait(ACTOR_SOUTH_GATE_KRADEN, 4);
       Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW |
                             ACTOR_SOUTH_GATE_KRADEN,
@@ -2207,7 +2219,8 @@ void Prox_SayFarewell(void) {
     Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_SOUTHEAST);
     Actor_SetAnimation(ACTOR_SOUTH_GATE_KRADEN, 4);
     FieldEvent_ShowMessageThenWait(
-        SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | 11, 0, 20);
+        SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_BELOW | ACTOR_SOUTH_GATE_KRADEN,
+        0, 20);
     Event_ShowMessage(ACTOR_ISAAC, 0);
     FieldEvent_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_SOUTH_GATE_KRADEN, 3);
@@ -2284,7 +2297,7 @@ void Prox_SayFarewell(void) {
     PaletteFade_ApplyTarget(PALETTE_TINT_DIM_GRAY, PALETTES_ALL);
     PaletteFade_Interpolate(120);
     System_Wait(120);
-    // Waits up to 120 frames, or until a key is held.
+    // A pause the player can cut short by holding a key.
     for (i = 0; i < 120; i++) {
       System_Wait(1);
       if (gInput.held != 0)
@@ -2375,17 +2388,17 @@ UNUSED void Prox_StartFallingRocks(void) {
 
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FALLING_ROCK), work);
   entry = VramCache_FindFreeEntry();
-  tile = Vram_Load(entry, 1280, work);
+  tile = Vram_Load(entry, sizeof(work->tiles), work);
   work->tileBase = tile;
   work->resource = entry;
   rock = work->rocks;
   sprite = work->sprites;
-  for (i = 63; i >= 0; i--, sprite++, rock++) {
+  for (i = ARRAY_COUNT(work->rocks) - 1; i >= 0; i--, sprite++, rock++) {
     Prox_InitRockSprite(sprite, 8, 8, OBJ_SIZE_16X16, tile);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
-    sprite->depth = 240;
+    sprite->depth = OAM_DEPTH_WINDOW;
     rock->timer = -1;
   }
   {
@@ -2408,7 +2421,7 @@ UNUSED void Prox_EndFallingRocks(void) {
 void Prox_MoldJoins(void);
 void Prox_AskAboutIgloos(void);
 void Prox_TalkAboutParents(void);
-void Prox_TalkToRestlessChild(void);
+void Prox_TalkToChildWhoMissesRunning(void);
 
 extern u32 gFieldEffect_LongScript[];
 
@@ -2766,8 +2779,8 @@ struct Trigger gProx_TownTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_WINDS, CONDITION_ALWAYS, MSGNO(MsgProxIBetFelixAndHis)},
     {TRIGGER_TALK, ACTOR_PLAYING_CHILD, CONDITION_ALWAYS, EVENT(Prox_TalkToPlayingChild)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PLAYING_CHILD, CONDITION_ALWAYS, EVENT(Prox_TalkToPlayingChild)},
-    {TRIGGER_TALK, ACTOR_RESTLESS_CHILD, CONDITION_ALWAYS, EVENT(Prox_TalkToRestlessChild)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_RESTLESS_CHILD, CONDITION_ALWAYS, EVENT(Prox_TalkToRestlessChild)},
+    {TRIGGER_TALK, ACTOR_CHILD_WHO_MISSES_RUNNING, CONDITION_ALWAYS, EVENT(Prox_TalkToChildWhoMissesRunning)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD_WHO_MISSES_RUNNING, CONDITION_ALWAYS, EVENT(Prox_TalkToChildWhoMissesRunning)},
     {TRIGGER_TALK, ACTOR_TRAINING_CHILD, CONDITION_ALWAYS, EVENT(Prox_TalkToTrainingChild)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRAINING_CHILD, CONDITION_ALWAYS, EVENT(Prox_TalkToTrainingChild)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 100, FLAG_DIG_SPOT_SCOOPED, EVENT(Prox_ScoopUpDarkMatter)},

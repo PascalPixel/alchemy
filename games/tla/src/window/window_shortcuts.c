@@ -8,29 +8,32 @@
 #define TIMED_NOTICE_WORK ((struct FieldWork *)Ram_HeapSlots->fieldWork)
 
 void AreaNameWindow_Update(void);
-/// Opens the area-name window, which closes after ninety frames.
+
+/// Shows the area's name in a window near the top of the screen for
+/// AREA_NAME_WINDOW_FRAMES. The field work owns the window and countdown until
+/// a task closes it.
 void AreaNameWindow_Show(void) {
   struct FieldWork *work;
   s32 height;
   s32 width;
   s32 y;
   s32 x;
-  s32 resource;
-  struct Window *window;
+  s32 areaMessage;
+  struct Window *nameWindow;
   struct MainRoutineWork *state;
 
   work = TIMED_NOTICE_WORK;
   state = &gMainRoutineWork;
   x = 8;
   y = 8;
-  resource = Area_GetNameIndexFar(state->next, state->entrance) +
-             (s32)&MsgDebugAreaName;
-  Text_GetMessageSize(resource, &x, &y, &width, &height);
+  areaMessage = Area_GetNameIndexFar(state->next, state->entrance) +
+                (s32)&MsgDebugAreaName;
+  Text_GetMessageSize(areaMessage, &x, &y, &width, &height);
   x = (DISPLAY_TILE_WIDTH - width) >> 1;
   y = (10 - height) >> 1;
-  window = Window_Create(x, y, width, height, WINDOW_FLAG_INSTANT);
-  work->noticeWindow = window;
-  Text_DrawMessage(resource, (s32)window, 0, 0);
+  nameWindow = Window_Create(x, y, width, height, WINDOW_FLAG_INSTANT);
+  work->noticeWindow = nameWindow;
+  Text_DrawMessage(areaMessage, (s32)nameWindow, 0, 0);
   work->noticeFrames = AREA_NAME_WINDOW_FRAMES;
   Task_Add(AreaNameWindow_Update, TASK_PASS_FRAME);
 }
@@ -38,15 +41,12 @@ void AreaNameWindow_Show(void) {
 /// Counts the area name down, and closes it at 0.
 void AreaNameWindow_Update(void) {
   struct FieldWork *work;
-  u16 *countdown;
-  s32 count;
+  u16 framesLeft;
 
   work = TIMED_NOTICE_WORK;
-  countdown = &work->noticeFrames;
-  count = *countdown;
-  count += 0xffff;
-  *countdown = count;
-  if ((count << 16) == 0) {
+  // Adding (u16)-1 takes one off in 16 bits.
+  work->noticeFrames = (framesLeft = work->noticeFrames + (u16)-1);
+  if (framesLeft == 0) {
     Window_Close(work->noticeWindow, 2);
     Task_Remove(AreaNameWindow_Update);
   }

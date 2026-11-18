@@ -185,12 +185,12 @@ u8 MapGrid_ClearAttributeBBitsAt(s32 x, s32 z, s32 layer, s32 bits) {
 }
 
 /// Returns 1 when two upright cylinders overlap, their centres closer on the
-/// ground than the sum of radius_a and radius_b; else -1.
-s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b) {
+/// ground than the sum of radiusA and radiusB; else -1.
+s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radiusA, s32 *b, s32 radiusB) {
   s32 dx = FIXEDtoINT(*a++ - *b++);
   s32 dy = FIXEDtoINT(*a++ - *b++);
   s32 dz = FIXEDtoINT(*a - *b);
-  s32 radius = radius_a + radius_b;
+  s32 radius = radiusA + radiusB;
 
   // The box and height bounds are 16.16 against whole-pixel differences, so
   // on a map they never reject a pair and the ground circle alone decides.
@@ -202,6 +202,10 @@ s32 FieldPsynergy_CheckOverlap(s32 *a, s32 radius_a, s32 *b, s32 radius_b) {
     return 1;
   return -1;
 }
+
+/// The steps, one a frame, in which an object grows out of the caster or
+/// shrinks back into it.
+#define GROW_STEPS 10
 
 /// Moves the object from 16 pixels above the effect's main object to (x, y,
 /// z), growing it from 0.25 to 1.
@@ -217,17 +221,15 @@ void FieldPsynergy_GrowFromCaster(struct Actor *actor, s32 x, s32 y, s32 z) {
   start[1] = mainActor->y.fixed + toFIXED(16);
   start[2] = mainActor->z.fixed;
   do {
-    SET_ACTOR_POSITION(actor, start[0] + (x - start[0]) * i / 10,
-                       start[1] + (y - start[1]) * i / 10,
-                       start[2] + (z - start[2]) * i / 10);
+    SET_ACTOR_POSITION(actor, start[0] + (x - start[0]) * i / GROW_STEPS,
+                       start[1] + (y - start[1]) * i / GROW_STEPS,
+                       start[2] + (z - start[2]) * i / GROW_STEPS);
     actor->scaleY = actor->scaleX =
-        i * (FIXED_ONE * 3 / 4) / 10 + FIXED_ONE / 4;
+        i * (FIXED_ONE * 3 / 4) / GROW_STEPS + FIXED_ONE / 4;
     wait(1);
     i++;
-  } while (i <= 10);
+  } while (i <= GROW_STEPS);
 }
-
-struct MapCell;
 
 /// FieldPsynergy_GrowFromCaster backwards: moves the object from (x, y, z) to
 /// 16 pixels above the effect's main object, shrinking it from 1 to 0.25.
@@ -242,14 +244,16 @@ void FieldPsynergy_ShrinkToCaster(struct Actor *actor, s32 x, s32 y, s32 z) {
   start[1] = mainActor->y.fixed + toFIXED(16);
   start[2] = mainActor->z.fixed;
   do {
-    SET_ACTOR_POSITION(actor, x + (start[0] - x) * i / 10,
-                       y + (start[1] - y) * i / 10,
-                       z + (start[2] - z) * i / 10);
-    actor->scaleY = actor->scaleX = i * -(FIXED_ONE * 3 / 4) / 10 + FIXED_ONE;
+    SET_ACTOR_POSITION(actor, x + (start[0] - x) * i / GROW_STEPS,
+                       y + (start[1] - y) * i / GROW_STEPS,
+                       z + (start[2] - z) * i / GROW_STEPS);
+    actor->scaleY = actor->scaleX =
+        i * -(FIXED_ONE * 3 / 4) / GROW_STEPS + FIXED_ONE;
     wait(1);
     i++;
-  } while (i <= 10);
+  } while (i <= GROW_STEPS);
 }
+#undef GROW_STEPS
 
 /// Spawns a sparkle at x, y, z that hops off in a random
 /// direction 8 to 32 pixels away at 1 to 2 pixels a frame.
@@ -365,6 +369,12 @@ void Actor_SetOthersPaused(struct Actor *excludedObject, s32 groupMode,
 
 void PaletteFade_SetTarget(s32 value, s32 mode);
 
+/// The BG colours a palette fade keeps, palettes 0 to 13, before its OBJ
+/// colours.
+#define PALETTE_FADE_BG_COLORS (14 * PALETTE_COLORS)
+/// The channels of those colours, three a colour, before the OBJ colours'.
+#define BG_CHANNELS (PALETTE_FADE_BG_COLORS * 3)
+
 /// Fades the palettes to color over frames frames, keeping the field's colours
 /// for Field_StartPaletteTransition; FLAG_PSYNERGY_TINTED is set while it
 /// holds.
@@ -372,11 +382,13 @@ void Field_StartColorTransition(s32 frames, s32 color) {
   struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct PaletteFade *work = Ram_HeapSlots->paletteFade;
 
-  Dma_Set(&work->target[672], &field->savedFadeTarget[672], DMA_COPY_WORDS(336),
-          REG_DMA3);
+  // The OBJ colours are kept always, the BG colours only while Reveal has not
+  // greyed them.
+  Dma_Set(&work->target[BG_CHANNELS], &field->savedFadeTarget[BG_CHANNELS],
+          DMA_COPY_WORDS((PALETTE_FADE_CHANNELS - BG_CHANNELS) / 2), REG_DMA3);
   if (field->revealActive == 0)
-    Dma_Set(work->target, field->savedFadeTarget, DMA_COPY_WORDS(336),
-            REG_DMA3);
+    Dma_Set(work->target, field->savedFadeTarget,
+            DMA_COPY_WORDS(BG_CHANNELS / 2), REG_DMA3);
   Dma_Set(work->target, work->current, DMA_COPY_WORDS(sizeof work->current / 4),
           REG_DMA3);
   PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | color, 1);
@@ -453,3 +465,5 @@ void FieldPsynergy_FadeToCastColor(void) {
   Field_StartColorTransition(8, gFieldEffect_TargetColors[tint]);
 }
 #undef Actor_SetAnimationSpeedFar
+#undef PALETTE_FADE_BG_COLORS
+#undef BG_CHANNELS

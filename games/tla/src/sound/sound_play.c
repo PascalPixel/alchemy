@@ -8,7 +8,10 @@
 #include "types.h"
 #include "sound/sound_driver.h"
 
-/// Does nothing; the far-call table exports it and nothing calls it.
+/// The semitones of an octave.
+#define SEMITONES_PER_OCTAVE 12
+
+/// Unused: does nothing; the far-call table exports it.
 void Sound_NoOp(void) {}
 
 /// Starts the sound driver, resets the BGM ramps (gBgmVolume and its kin),
@@ -163,11 +166,14 @@ void Sound_UpdateBgmRamps(void) {
       gBgmTempoPitch -= gBgmTempoPitchStep;
     if ((((s16)gBgmTempoPitchTarget - (s16)gBgmTempoPitch) ^ delta) < 0)
       gBgmTempoPitch = gBgmTempoPitchTarget;
-    // The tempo scale and the pitch move together: 12 semitones for each 256
-    // of scale (pitch is in 1/256 semitone).
+    // The tempo scale and the pitch move together, like a record played at
+    // another speed, but in a straight line: an octave for each
+    // BGM_UNITY_SCALE of scale (pitch is in 1/256 semitone), so twice the
+    // scale plays an octave up.
     m4aMPlayTempoControl(&gMPlayInfo_BGM, gBgmTempoPitch);
     m4aMPlayPitchControl(&gMPlayInfo_BGM, TRACKS_ALL,
-                         (s16)gBgmTempoPitch * 12 - 12 * BGM_UNITY_SCALE);
+                         (s16)gBgmTempoPitch * SEMITONES_PER_OCTAVE -
+                             SEMITONES_PER_OCTAVE * BGM_UNITY_SCALE);
   }
 }
 

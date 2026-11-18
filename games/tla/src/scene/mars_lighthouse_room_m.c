@@ -6,11 +6,14 @@
 /// the peoples who ruled earth, water, fire and wind, and the great dragon
 /// statue speaks: without the Mars Star it sends the party away; with it, once
 /// the lighthouse has turned to fire, it bids them set the four spirits aflame.
-/// Four ledges in the rain (M2 to M5) lead from the hall to the four towers,
-/// and each tower comes out on a beacon ledge (M6), where Blaze lights its
-/// element's flame. With all four lit the statue says the heavens await, the
-/// floor before it breaks open, and Teleport there carries the party up to the
-/// aerie.
+/// Four ledges in the rain lead from the hall to the four towers, and each
+/// tower comes out on the beacon ledge (SceneId_MarsLighthouseRoomMFlame),
+/// where Blaze lights its element's flame. Each flame lit burns on one of the
+/// hall's four robed statues and makes its element's inscription glow. With
+/// all four lit the statue says the heavens await, a fireball from its mouth
+/// breaks the floor before it to show a round carving, and Teleport there
+/// carries the party up to the aerie. Once the lighthouse has thawed, the
+/// hall's four doorways light purple as the leader nears them.
 
 #include "system/task.h"
 #include "graphics/palette_buffers.h"
@@ -72,13 +75,48 @@
 /// Begone!"
 #define FLAG_TOLD_TO_BEGONE 0xa2f
 
-/// The beacon ledge (M6) is reached from each tower by its own entrance.
+/// The hall's own entrances, through its four doorways: arriving from the
+/// passage toward each element's tower, the party comes in under that
+/// doorway's arch with its light shown.
 enum {
-  ENTRANCE_FROM_VENUS_TOWER = 1,
-  ENTRANCE_FROM_MERCURY_TOWER = 2,
-  ENTRANCE_FROM_MARS_TOWER = 3,
-  ENTRANCE_FROM_JUPITER_TOWER = 4
+  ENTRANCE_THROUGH_VENUS_DOORWAY = 8,
+  ENTRANCE_THROUGH_MERCURY_DOORWAY = 10,
+  ENTRANCE_THROUGH_MARS_DOORWAY = 12,
+  ENTRANCE_THROUGH_JUPITER_DOORWAY = 14
 };
+
+/// The step cells before the hall's doorways, two to each in the doorways'
+/// order: the cell under the arch, which fades its light in, then the cells
+/// beside it, which fade it out.
+enum {
+  CELL_BEHAVIOR_VENUS_DOORWAY = 20,
+  CELL_BEHAVIOR_MERCURY_DOORWAY = 22,
+  CELL_BEHAVIOR_MARS_DOORWAY = 24,
+  CELL_BEHAVIOR_JUPITER_DOORWAY = 26
+};
+
+/// The inscriptions' colours: BG palettes 8 and 9 hold six for each element,
+/// the hall's four inscriptions glowing in them once that element's flame is
+/// lit, and the ledge's inscription takes its tower's six into palette 13.
+#define INSCRIPTION_FIRST_PALETTE 8
+#define LEDGE_INSCRIPTION_PALETTE 13
+/// The hall's palette whose last six colours are an unlit inscription's.
+#define UNLIT_INSCRIPTION_PALETTE 2
+#define GLOW_COLORS 6      ///< a glow's run of colours, which turns round
+#define GLOW_STEP_FRAMES 8 ///< frames before the run turns one colour on
+/// The first of each element's six colours in palettes 8 and 9, and of the
+/// ledge inscription's in palette 13.
+enum {
+  JUPITER_GLOW = 4,
+  VENUS_GLOW = 10,
+  MERCURY_GLOW = PALETTE_COLORS + 4,
+  MARS_GLOW = PALETTE_COLORS + 10,
+  LEDGE_GLOW = 10
+};
+
+/// The colour bare centred messages are written in, set white again under the
+/// statue's warm glow.
+#define CENTERED_TEXT_COLOR OBJ_PLTT_COLOR(0, 15)
 
 /// Each element's flame among the flame sprite's animations.
 enum {
@@ -88,17 +126,17 @@ enum {
   FLAME_ANIMATION_MERCURY = 5
 };
 
-/// The beacon ledge (M6): the torch Blaze is cast at, tinted to its tower's
-/// element, its flame, the point above it Blaze reaches, and two statues.
+/// The beacon ledge: the torch Blaze is cast at, tinted to its tower's element,
+/// its flame, the point above it Blaze reaches, and two dragon statues.
 enum {
   ACTOR_LEDGE_TORCH = 8,
   ACTOR_LEDGE_FLAME = 9,
   ACTOR_LEDGE_BLAZE_TARGET = 10
 };
 
-/// The central hall (M1): four torches (actors 8 to 11), the four elements'
-/// flames on them, shown once lit, and the statue's mouth, which lets the
-/// fireball fall that breaks the floor.
+/// The hall: four robed statues (actors 8 to 11), the four elements' flames on
+/// them, shown once lit, and the dragon statue's mouth, which lets fall the
+/// fireball that breaks the floor.
 enum {
   ACTOR_VENUS_FLAME = 12,
   ACTOR_MERCURY_FLAME = 13,
@@ -123,9 +161,9 @@ void MarsLighthouseRoomM_FadeDoorway(void);
 void MarsLighthouseRoomM_BreakFloorTile(s32 x, s32 z, s32 sourceX, s32 sourceY,
                                         s32 cellX, s32 cellY);
 
-void MarsLighthouseRoomM_CycleLedgeFlame(void);
+void MarsLighthouseRoomM_CycleLedgeInscription(void);
 
-void MarsLighthouseRoomM_CycleHallFlames(void);
+void MarsLighthouseRoomM_CycleHallInscriptions(void);
 
 void MarsLighthouseRoomM_StartDoorways(s32 entrance);
 
@@ -173,16 +211,16 @@ u16 *gPaletteColors BSS_DATA;
 u16 *gPaletteCycleColors BSS_DATA;
 u16 gPaletteCycleLength BSS_DATA;
 u16 gPaletteCycleIndex BSS_DATA ALIGNED(4);
-u16 gMarsLighthouseRoomM_LedgeFlameColors[2 * PALETTE_COLORS] BSS_DATA
+u16 gMarsLighthouseRoomM_LedgeElementColors[2 * PALETTE_COLORS] BSS_DATA
     ALIGNED(4);
 u16 gMarsLighthouseRoomM_LedgePalette[2 * PALETTE_COLORS] BSS_DATA;
 u16 gMarsLighthouseRoomM_LedgeSavedPalette[PALETTE_COLORS] BSS_DATA;
-struct HallColors gMarsLighthouseRoomM_HallFlameColors BSS_DATA;
+struct HallColors gMarsLighthouseRoomM_HallElementColors BSS_DATA;
 struct HallColors gMarsLighthouseRoomM_HallPalette BSS_DATA;
-/// BG palette 2's first ten colours; it is saved whole, with the unlit flame
-/// colours after them.
+/// BG palette 2's first ten colours; it is saved whole, with the unlit
+/// inscription colours after them.
 u16 gMarsLighthouseRoomM_HallSavedPalette[10] BSS_DATA;
-u16 gMarsLighthouseRoomM_UnlitFlameColors[6] BSS_DATA;
+u16 gMarsLighthouseRoomM_UnlitInscriptionColors[6] BSS_DATA;
 s16 gMarsLighthouseRoomM_DoorwayBlend BSS_DATA;
 s16 gMarsLighthouseRoomM_DoorwayBlendTarget BSS_DATA;
 s16 gMarsLighthouseRoomM_Doorway BSS_DATA;
@@ -249,8 +287,8 @@ extern struct Trigger gMarsLighthouseRoomM_Triggers[];
 extern struct Trigger gMarsLighthouseRoomM_Room6Triggers[];
 extern struct Trigger gMarsLighthouseRoomM_Room1Triggers[];
 extern struct Trigger gMarsLighthouseRoomM_Room5Triggers[];
-extern s32 gMarsLighthouseRoomM_RubbleBounceScript[];
-extern s32 gMarsLighthouseRoomM_RubbleFallScript[];
+extern s32 gMarsLighthouseRoomM_FlamePuffSwellScript[];
+extern s32 gMarsLighthouseRoomM_FlamePuffThrownScript[];
 
 s32 List_CountEntries(u16 *list);
 void PaletteCycle_Fade(void);
@@ -259,7 +297,7 @@ void Teleport_StartFastShimmer(void);
 s32 Actor_IsAbove(struct Actor *a, struct Actor *b);
 void Ride_UpdateDrift(struct Actor *actor);
 void Actor_SetupScripted(struct Actor *actor);
-void MarsLighthouseRoomM_SpawnRubble(s32 x, s32 z, s32 kind);
+void MarsLighthouseRoomM_SpawnFlamePuff(s32 x, s32 z, s32 kind);
 void Actor_HoldDuringEvent(struct Actor *actor);
 void Event_End(void);
 void Teleport_PlayWhirl(void);
@@ -281,9 +319,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 extern s32 gMarsLighthouseRoomM_LedgeCycleFrame;
 
-/// Each frame on the beacon ledge: once its flame is lit, its element's six
-/// colours turn round in the flame's palette.
-void MarsLighthouseRoomM_CycleLedgeFlame(void) {
+/// Each frame on the beacon ledge: once its flame is lit, the inscription on
+/// the wall behind it glows in its element's colours, turning round.
+void MarsLighthouseRoomM_CycleLedgeInscription(void) {
   s32 entrance = gMainRoutineWork.entrance;
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 base;
@@ -297,45 +335,53 @@ void MarsLighthouseRoomM_CycleLedgeFlame(void) {
     return;
   if (gMarsLighthouseRoomM_LedgeCycleFrame == -1) {
     Iwram_CopyWordsEntry(gMarsLighthouseRoomM_LedgeSavedPalette,
-                         (void *)&BG_PLTT_COLOR(13, 0),
+                         (void *)&BG_PLTT_COLOR(LEDGE_INSCRIPTION_PALETTE, 0),
                          sizeof(gMarsLighthouseRoomM_LedgeSavedPalette));
-    Iwram_CopyWordsEntry(gMarsLighthouseRoomM_LedgeFlameColors,
-                         (void *)&BG_PLTT_COLOR(8, 0),
-                         sizeof(gMarsLighthouseRoomM_LedgeFlameColors));
+    Iwram_CopyWordsEntry(gMarsLighthouseRoomM_LedgeElementColors,
+                         (void *)&BG_PLTT_COLOR(INSCRIPTION_FIRST_PALETTE, 0),
+                         sizeof(gMarsLighthouseRoomM_LedgeElementColors));
     Iwram_CopyWordsEntry(gMarsLighthouseRoomM_LedgePalette,
-                         gMarsLighthouseRoomM_LedgeFlameColors,
-                         sizeof(gMarsLighthouseRoomM_LedgeFlameColors));
+                         gMarsLighthouseRoomM_LedgeElementColors,
+                         sizeof(gMarsLighthouseRoomM_LedgeElementColors));
     gMarsLighthouseRoomM_LedgeCycleFrame = 0;
   }
-  base = gMarsLighthouseRoomM_LedgeCycleFrame / 8 % 6;
+  base = gMarsLighthouseRoomM_LedgeCycleFrame / GLOW_STEP_FRAMES % GLOW_COLORS;
   Iwram_CopyWordsEntry(gMarsLighthouseRoomM_LedgePalette,
                        gMarsLighthouseRoomM_LedgeSavedPalette,
                        sizeof(gMarsLighthouseRoomM_LedgeSavedPalette));
-  if (entrance == ENTRANCE_FROM_VENUS_TOWER &&
+  if (entrance ==
+          MARS_LIGHTHOUSE_ROOM_M_FLAME_FROM_MARS_LIGHTHOUSE_VENUS_TOWER &&
       Event_GetFlag(FLAG_VENUS_FLAME_LIT)) {
-    for (i = 0; i <= 5; i++)
-      gMarsLighthouseRoomM_LedgePalette[i + 10] =
-          gMarsLighthouseRoomM_LedgeFlameColors[(base + i) % 6 + 10];
+    for (i = 0; i < GLOW_COLORS; i++)
+      gMarsLighthouseRoomM_LedgePalette[LEDGE_GLOW + i] =
+          gMarsLighthouseRoomM_LedgeElementColors[VENUS_GLOW +
+                                                  (base + i) % GLOW_COLORS];
   }
-  if (entrance == ENTRANCE_FROM_MERCURY_TOWER &&
+  if (entrance ==
+          MARS_LIGHTHOUSE_ROOM_M_FLAME_FROM_MARS_LIGHTHOUSE_MERCURY_TOWER &&
       Event_GetFlag(FLAG_MERCURY_FLAME_LIT)) {
-    for (i = 0; i <= 5; i++)
-      gMarsLighthouseRoomM_LedgePalette[i + 10] =
-          gMarsLighthouseRoomM_LedgeFlameColors[(base + i) % 6 + 20];
+    for (i = 0; i < GLOW_COLORS; i++)
+      gMarsLighthouseRoomM_LedgePalette[LEDGE_GLOW + i] =
+          gMarsLighthouseRoomM_LedgeElementColors[MERCURY_GLOW +
+                                                  (base + i) % GLOW_COLORS];
   }
-  if (entrance == ENTRANCE_FROM_MARS_TOWER &&
+  if (entrance ==
+          MARS_LIGHTHOUSE_ROOM_M_FLAME_FROM_MARS_LIGHTHOUSE_MARS_TOWER &&
       Event_GetFlag(FLAG_MARS_FLAME_LIT)) {
-    for (i = 0; i <= 5; i++)
-      gMarsLighthouseRoomM_LedgePalette[i + 10] =
-          gMarsLighthouseRoomM_LedgeFlameColors[(base + i) % 6 + 26];
+    for (i = 0; i < GLOW_COLORS; i++)
+      gMarsLighthouseRoomM_LedgePalette[LEDGE_GLOW + i] =
+          gMarsLighthouseRoomM_LedgeElementColors[MARS_GLOW +
+                                                  (base + i) % GLOW_COLORS];
   }
-  if (entrance == ENTRANCE_FROM_JUPITER_TOWER &&
+  if (entrance ==
+          MARS_LIGHTHOUSE_ROOM_M_FLAME_FROM_MARS_LIGHTHOUSE_JUPITER_TOWER &&
       Event_GetFlag(FLAG_JUPITER_FLAME_LIT)) {
-    for (i = 0; i <= 5; i++)
-      gMarsLighthouseRoomM_LedgePalette[i + 10] =
-          gMarsLighthouseRoomM_LedgeFlameColors[(base + i) % 6 + 4];
+    for (i = 0; i < GLOW_COLORS; i++)
+      gMarsLighthouseRoomM_LedgePalette[LEDGE_GLOW + i] =
+          gMarsLighthouseRoomM_LedgeElementColors[JUPITER_GLOW +
+                                                  (base + i) % GLOW_COLORS];
   }
-  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(13, 0),
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(LEDGE_INSCRIPTION_PALETTE, 0),
                       (u32)gMarsLighthouseRoomM_LedgePalette,
                       DMA_COPY_WORDS(8));
   gMarsLighthouseRoomM_LedgeCycleFrame++;
@@ -347,10 +393,8 @@ void MarsLighthouseRoomM_LeaveLedge(void) {
   FieldEvent_SetExitRequest(gMainRoutineWork.entrance);
 }
 
-// XXX: what Blaze does otherwise once the field work's blazeLongSpray is set
-// (its mode 3 for 2 when it finds no torch); the rest of blaze.c's reading of
-// the mode would settle it.
-/// Blaze is cast at the ledge's torch.
+/// Blaze is cast at the ledge's torch: this cast's jet of flame is the long
+/// one, which reaches up to the flame.
 void MarsLighthouseRoomM_StartBlazeOnTorch(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
@@ -369,21 +413,21 @@ void MarsLighthouseRoomM_LightFlame(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  PaletteFade_ApplyTarget(RGB(31, 31, 31), PALETTES_ALL);
+  PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
   PaletteFade_Interpolate(30);
   FieldEvent_Wait(30);
   Event_PlaySound(SE_WARP);
   switch (gMainRoutineWork.entrance) {
-  case ENTRANCE_FROM_VENUS_TOWER:
+  case MARS_LIGHTHOUSE_ROOM_M_FLAME_FROM_MARS_LIGHTHOUSE_VENUS_TOWER:
     Event_SetFlag(FLAG_VENUS_FLAME_LIT);
     break;
-  case ENTRANCE_FROM_MERCURY_TOWER:
+  case MARS_LIGHTHOUSE_ROOM_M_FLAME_FROM_MARS_LIGHTHOUSE_MERCURY_TOWER:
     Event_SetFlag(FLAG_MERCURY_FLAME_LIT);
     break;
-  case ENTRANCE_FROM_MARS_TOWER:
+  case MARS_LIGHTHOUSE_ROOM_M_FLAME_FROM_MARS_LIGHTHOUSE_MARS_TOWER:
     Event_SetFlag(FLAG_MARS_FLAME_LIT);
     break;
-  case ENTRANCE_FROM_JUPITER_TOWER:
+  case MARS_LIGHTHOUSE_ROOM_M_FLAME_FROM_MARS_LIGHTHOUSE_JUPITER_TOWER:
     Event_SetFlag(FLAG_JUPITER_FLAME_LIT);
     break;
   }
@@ -399,9 +443,9 @@ void MarsLighthouseRoomM_LightFlame(void) {
 
 extern s32 gMarsLighthouseRoomM_HallCycleFrame;
 
-/// Each frame in the hall: the lit flames' colours turn round, and an unlit
-/// one shows the palette's unlit colours.
-void MarsLighthouseRoomM_CycleHallFlames(void) {
+/// Each frame in the hall: the inscription of each element whose flame is lit
+/// glows in its colours, turning round, and the others show unlit.
+void MarsLighthouseRoomM_CycleHallInscriptions(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 base;
   s32 i;
@@ -414,54 +458,56 @@ void MarsLighthouseRoomM_CycleHallFlames(void) {
     return;
   if (gMarsLighthouseRoomM_HallCycleFrame == -1) {
     Iwram_CopyWordsEntry(gMarsLighthouseRoomM_HallSavedPalette,
-                         (void *)&BG_PLTT_COLOR(2, 0), PALETTE_COLORS * 2);
-    Iwram_CopyWordsEntry(gMarsLighthouseRoomM_HallFlameColors.colors,
-                         (void *)&BG_PLTT_COLOR(8, 0),
-                         sizeof(gMarsLighthouseRoomM_HallFlameColors));
+                         (void *)&BG_PLTT_COLOR(UNLIT_INSCRIPTION_PALETTE, 0),
+                         PALETTE_COLORS * 2);
+    Iwram_CopyWordsEntry(gMarsLighthouseRoomM_HallElementColors.colors,
+                         (void *)&BG_PLTT_COLOR(INSCRIPTION_FIRST_PALETTE, 0),
+                         sizeof(gMarsLighthouseRoomM_HallElementColors));
     Iwram_CopyWordsEntry(gMarsLighthouseRoomM_HallPalette.colors,
-                         gMarsLighthouseRoomM_HallFlameColors.colors,
-                         sizeof(gMarsLighthouseRoomM_HallFlameColors));
+                         gMarsLighthouseRoomM_HallElementColors.colors,
+                         sizeof(gMarsLighthouseRoomM_HallElementColors));
     gMarsLighthouseRoomM_HallCycleFrame = 0;
   }
-  base = gMarsLighthouseRoomM_HallCycleFrame / 8 % 6;
-  for (i = 0; i <= 5; i++) {
-    gMarsLighthouseRoomM_HallPalette.colors[i + 4] =
-        gMarsLighthouseRoomM_HallFlameColors.colors[(base + i) % 6 + 4];
-    gMarsLighthouseRoomM_HallPalette.colors[i + 10] =
-        gMarsLighthouseRoomM_HallFlameColors.colors[(base + i) % 6 + 10];
-    gMarsLighthouseRoomM_HallPalette.colors[i + 20] =
-        gMarsLighthouseRoomM_HallFlameColors.colors[(base + i) % 6 + 20];
-    gMarsLighthouseRoomM_HallPalette.colors[i + 26] =
-        gMarsLighthouseRoomM_HallFlameColors.colors[(base + i) % 6 + 26];
+  base = gMarsLighthouseRoomM_HallCycleFrame / GLOW_STEP_FRAMES % GLOW_COLORS;
+  for (i = 0; i < GLOW_COLORS; i++) {
+    gMarsLighthouseRoomM_HallPalette.colors[JUPITER_GLOW + i] =
+        gMarsLighthouseRoomM_HallElementColors
+            .colors[JUPITER_GLOW + (base + i) % GLOW_COLORS];
+    gMarsLighthouseRoomM_HallPalette.colors[VENUS_GLOW + i] =
+        gMarsLighthouseRoomM_HallElementColors
+            .colors[VENUS_GLOW + (base + i) % GLOW_COLORS];
+    gMarsLighthouseRoomM_HallPalette.colors[MERCURY_GLOW + i] =
+        gMarsLighthouseRoomM_HallElementColors
+            .colors[MERCURY_GLOW + (base + i) % GLOW_COLORS];
+    gMarsLighthouseRoomM_HallPalette.colors[MARS_GLOW + i] =
+        gMarsLighthouseRoomM_HallElementColors
+            .colors[MARS_GLOW + (base + i) % GLOW_COLORS];
   }
   if (!Event_GetFlag(FLAG_VENUS_FLAME_LIT))
-    Iwram_CopyWordsEntry(&gMarsLighthouseRoomM_HallPalette.colors[10],
-                         gMarsLighthouseRoomM_UnlitFlameColors,
-                         sizeof(gMarsLighthouseRoomM_UnlitFlameColors));
+    Iwram_CopyWordsEntry(&gMarsLighthouseRoomM_HallPalette.colors[VENUS_GLOW],
+                         gMarsLighthouseRoomM_UnlitInscriptionColors,
+                         sizeof(gMarsLighthouseRoomM_UnlitInscriptionColors));
   if (!Event_GetFlag(FLAG_MERCURY_FLAME_LIT))
-    Iwram_CopyWordsEntry(&gMarsLighthouseRoomM_HallPalette.colors[20],
-                         gMarsLighthouseRoomM_UnlitFlameColors,
-                         sizeof(gMarsLighthouseRoomM_UnlitFlameColors));
+    Iwram_CopyWordsEntry(&gMarsLighthouseRoomM_HallPalette.colors[MERCURY_GLOW],
+                         gMarsLighthouseRoomM_UnlitInscriptionColors,
+                         sizeof(gMarsLighthouseRoomM_UnlitInscriptionColors));
   if (!Event_GetFlag(FLAG_MARS_FLAME_LIT))
-    Iwram_CopyWordsEntry(&gMarsLighthouseRoomM_HallPalette.colors[26],
-                         gMarsLighthouseRoomM_UnlitFlameColors,
-                         sizeof(gMarsLighthouseRoomM_UnlitFlameColors));
+    Iwram_CopyWordsEntry(&gMarsLighthouseRoomM_HallPalette.colors[MARS_GLOW],
+                         gMarsLighthouseRoomM_UnlitInscriptionColors,
+                         sizeof(gMarsLighthouseRoomM_UnlitInscriptionColors));
   if (!Event_GetFlag(FLAG_JUPITER_FLAME_LIT))
-    Iwram_CopyWordsEntry(&gMarsLighthouseRoomM_HallPalette.colors[4],
-                         gMarsLighthouseRoomM_UnlitFlameColors,
-                         sizeof(gMarsLighthouseRoomM_UnlitFlameColors));
-  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(8, 0),
+    Iwram_CopyWordsEntry(&gMarsLighthouseRoomM_HallPalette.colors[JUPITER_GLOW],
+                         gMarsLighthouseRoomM_UnlitInscriptionColors,
+                         sizeof(gMarsLighthouseRoomM_UnlitInscriptionColors));
+  IO_WRITE_QUEUE_PUSH((u32)&BG_PLTT_COLOR(INSCRIPTION_FIRST_PALETTE, 0),
                       (u32)gMarsLighthouseRoomM_HallPalette.colors,
                       DMA_COPY_WORDS(16));
   gMarsLighthouseRoomM_HallCycleFrame++;
 }
 
-// XXX: what the hall's four doorways are to the player (a layer that fades in
-// and out over them, their floor turning from picture 122 to 125, the way
-// through them opening when it is fully shown); a render of the thawed hall
-// beside cells 20 to 27 would settle it.
-/// Each frame the doorway's layer fades one step toward its target; fully
-/// faded in or out, the cells under it open or close.
+/// Each frame the doorway's purple light, drawn on BG1 over its arch, fades one
+/// step toward its target; fully shown it opens the way through the arch, and
+/// gone it closes it.
 void MarsLighthouseRoomM_FadeDoorway(void) {
   s32 step;
 
@@ -502,9 +548,9 @@ void MarsLighthouseRoomM_FadeDoorway(void) {
   }
 }
 
-/// Stepping on one of the cells before a doorway (20 to 27, two to each): the
-/// last doorway's floor goes dark, this one's lights, and its layer fades in
-/// from the near cell or out from the far one.
+/// Stepping on a cell before a doorway: the last doorway's light is taken
+/// away, this one's put up, and it fades in from the cell under the arch or
+/// out from those beside it.
 void MarsLighthouseRoomM_StepTowardDoorway(s32 state) {
   s32 next;
   s32 odd;
@@ -517,7 +563,7 @@ void MarsLighthouseRoomM_StepTowardDoorway(s32 state) {
   gMarsLighthouseRoomM_DoorwayStep = state;
   odd = state & 1;
   flash = (u16 *)&gMarsLighthouseRoomM_DoorwayBlendTarget;
-  next = state - 20;
+  next = state - CELL_BEHAVIOR_VENUS_DOORWAY;
   if (odd)
     *flash = 0;
   else
@@ -541,8 +587,7 @@ void MarsLighthouseRoomM_StepTowardDoorway(s32 state) {
     MapGrid_CopyCellsLayered(0, 125, 3, 3, 8, 67);
 }
 
-/// As the statue speaks, the four doorways' floors light and their layer
-/// flickers, then all goes dark again.
+/// As the statue speaks, the four doorways' lights flicker up and fade away.
 void MarsLighthouseRoomM_FlashDoorways(void) {
   MapGrid_CopyCellsLayered(0, 125, 3, 3, 17, 67);
   MapGrid_CopyCellsLayered(0, 125, 3, 3, 8, 72);
@@ -570,21 +615,21 @@ void MarsLighthouseRoomM_FlashDoorways(void) {
 
 void BlendScript_Suspend(void);
 
-/// On arriving in the hall: the doorway the party came through is shown, or
-/// none.
+/// On arriving in the hall: the light of the doorway the party came through is
+/// shown, one step short of full so the next fade opens its way, or none.
 void MarsLighthouseRoomM_StartDoorways(s32 entrance) {
   s32 cell = -1;
   s16 *blend;
   BlendScript_Suspend();
   blend = &gMarsLighthouseRoomM_DoorwayBlend;
-  if (entrance == 8)
-    cell = 20;
-  if (entrance == 10)
-    cell = 22;
-  if (entrance == 12)
-    cell = 24;
-  if (entrance == 14)
-    cell = 26;
+  if (entrance == ENTRANCE_THROUGH_VENUS_DOORWAY)
+    cell = CELL_BEHAVIOR_VENUS_DOORWAY;
+  if (entrance == ENTRANCE_THROUGH_MERCURY_DOORWAY)
+    cell = CELL_BEHAVIOR_MERCURY_DOORWAY;
+  if (entrance == ENTRANCE_THROUGH_MARS_DOORWAY)
+    cell = CELL_BEHAVIOR_MARS_DOORWAY;
+  if (entrance == ENTRANCE_THROUGH_JUPITER_DOORWAY)
+    cell = CELL_BEHAVIOR_JUPITER_DOORWAY;
   if (cell == -1) {
     *blend = 0;
     gMarsLighthouseRoomM_DoorwayBlendTarget = 0;
@@ -592,9 +637,9 @@ void MarsLighthouseRoomM_StartDoorways(s32 entrance) {
     gMarsLighthouseRoomM_DoorwayStep = cell;
   } else {
     s32 step;
-    *blend = 15;
+    *blend = BLEND_WEIGHT_MAX - 1;
     gMarsLighthouseRoomM_DoorwayBlendTarget = BLEND_WEIGHT_MAX;
-    step = (cell - 20) / 2;
+    step = (cell - CELL_BEHAVIOR_VENUS_DOORWAY) / 2;
     gMarsLighthouseRoomM_Doorway = step;
     gMarsLighthouseRoomM_DoorwayStep = cell;
     if (step == 0)
@@ -622,7 +667,8 @@ void MarsLighthouseRoomM_TeleportToAerie(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
   gMainRoutineWork.teleportState = 2;
-  FieldEvent_SetExitRequest(1);
+  FieldEvent_SetExitRequest(
+      MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS_TO_MARS_LIGHTHOUSE_AERIE);
   FieldEvent_Wait(40);
   Teleport_StopShimmer();
   FieldTask_Remove(MarsLighthouseRoomM_FadeDoorway);
@@ -666,9 +712,16 @@ s32 Scene_Initialize(void) {
   if (scene != SCENE_MARS_LIGHTHOUSE_ROOM_M_FLAME &&
       scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS) {
     Call1((void (*)())FieldEffect_StartBlankOverlay, 0);
-    gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
-    if ((u32)(entrance - 1) <= 1 || entrance == 8 || entrance == 10 ||
-        entrance == 12 || entrance == 14) {
+    gFieldWork->transition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
+    if (entrance ==
+            MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS_FROM_MARS_LIGHTHOUSE_AERIE ||
+        entrance ==
+            MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS_FROM_MARS_LIGHTHOUSE_ENTRANCE_FUGUE ||
+        entrance == ENTRANCE_THROUGH_VENUS_DOORWAY ||
+        entrance == ENTRANCE_THROUGH_MERCURY_DOORWAY ||
+        entrance == ENTRANCE_THROUGH_MARS_DOORWAY ||
+        entrance == ENTRANCE_THROUGH_JUPITER_DOORWAY) {
       s32 unset = Event_GetFlag(FLAG_WAY_TO_AERIE_OPEN);
 
       if (unset == 0 && Event_GetFlag(FLAG_VENUS_FLAME_LIT) &&
@@ -690,8 +743,10 @@ s32 Scene_Initialize(void) {
         PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_ALL);
         PaletteFade_Interpolate(20);
         System_Wait(20);
-        entrance = (s32)&OBJ_PLTT_COLOR(0, 15);
-        *(u16 *)entrance = RGB(31, 31, 31);
+        // entrance, read for the last time above, now holds the colour's
+        // address.
+        entrance = (s32)&CENTERED_TEXT_COLOR;
+        *(u16 *)entrance = RGB_WHITE;
         System_Wait(1);
         EventMessage_ShowCentered(
             (s32)MsgMarsLighthouseRoomMYouHaveProvenYourWorth, 0, 4);
@@ -766,26 +821,26 @@ s32 Scene_PrepareMap(void) {
   }
   if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_FLAME) {
     switch (entrance) {
-    case ENTRANCE_FROM_VENUS_TOWER:
+    case MARS_LIGHTHOUSE_ROOM_M_FLAME_FROM_MARS_LIGHTHOUSE_VENUS_TOWER:
       FieldActor_SetSpriteColor(Actor_Get(ACTOR_LEDGE_TORCH), SPRITE_COLOR_GRB);
       MarsLighthouseRoomM_ShowFlame(ACTOR_LEDGE_FLAME, FLAME_ANIMATION_VENUS);
       TilesetAnim_Resume(4);
       TilesetAnim_Resume(5);
       break;
-    case ENTRANCE_FROM_MERCURY_TOWER:
+    case MARS_LIGHTHOUSE_ROOM_M_FLAME_FROM_MARS_LIGHTHOUSE_MERCURY_TOWER:
       FieldActor_SetSpriteColor(Actor_Get(ACTOR_LEDGE_TORCH), SPRITE_COLOR_BGR);
       MarsLighthouseRoomM_ShowFlame(ACTOR_LEDGE_FLAME, FLAME_ANIMATION_MERCURY);
       TilesetAnim_Resume(6);
       TilesetAnim_Resume(7);
       break;
-    case ENTRANCE_FROM_MARS_TOWER:
+    case MARS_LIGHTHOUSE_ROOM_M_FLAME_FROM_MARS_LIGHTHOUSE_MARS_TOWER:
       FieldActor_SetSpriteColor(Actor_Get(ACTOR_LEDGE_TORCH),
                                 SPRITE_COLOR_NORMAL);
       MarsLighthouseRoomM_ShowFlame(ACTOR_LEDGE_FLAME, FLAME_ANIMATION_MARS);
       TilesetAnim_Resume(0);
       TilesetAnim_Resume(1);
       break;
-    case ENTRANCE_FROM_JUPITER_TOWER:
+    case MARS_LIGHTHOUSE_ROOM_M_FLAME_FROM_MARS_LIGHTHOUSE_JUPITER_TOWER:
       FieldActor_SetSpriteColor(Actor_Get(ACTOR_LEDGE_TORCH), SPRITE_COLOR_GBR);
       MarsLighthouseRoomM_ShowFlame(ACTOR_LEDGE_FLAME, FLAME_ANIMATION_JUPITER);
       TilesetAnim_Resume(2);
@@ -795,10 +850,17 @@ s32 Scene_PrepareMap(void) {
     actor = Actor_Get(ACTOR_LEDGE_BLAZE_TARGET);
     actor->motionFlags = 0;
     actor->z.fixed = toFIXED(104);
-    FieldTask_AddFrame(MarsLighthouseRoomM_CycleLedgeFlame, TASK_PASS_FRAME);
+    FieldTask_AddFrame(MarsLighthouseRoomM_CycleLedgeInscription,
+                       TASK_PASS_FRAME);
   } else if (scene == SCENE_MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS) {
-    if (entrance == 1 || entrance == 2 || entrance == 8 || entrance == 10 ||
-        entrance == 12 || entrance == 14) {
+    if (entrance ==
+            MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS_FROM_MARS_LIGHTHOUSE_AERIE ||
+        entrance ==
+            MARS_LIGHTHOUSE_ROOM_M_INSCRIPTIONS_FROM_MARS_LIGHTHOUSE_ENTRANCE_FUGUE ||
+        entrance == ENTRANCE_THROUGH_VENUS_DOORWAY ||
+        entrance == ENTRANCE_THROUGH_MERCURY_DOORWAY ||
+        entrance == ENTRANCE_THROUGH_MARS_DOORWAY ||
+        entrance == ENTRANCE_THROUGH_JUPITER_DOORWAY) {
       Ride_Create();
       if (Event_GetFlag(FLAG_WAY_TO_AERIE_OPEN)) {
         MapGrid_CopyCellAttributes(30, 12, 4, 3, 12, 12);
@@ -808,7 +870,7 @@ s32 Scene_PrepareMap(void) {
       {
         s32 priority = TASK_PASS_FRAME;
 
-        FieldTask_AddFrame(MarsLighthouseRoomM_CycleHallFlames, priority);
+        FieldTask_AddFrame(MarsLighthouseRoomM_CycleHallInscriptions, priority);
       }
       MarsLighthouseRoomM_ShowFlame(ACTOR_VENUS_FLAME, FLAME_ANIMATION_VENUS);
       MarsLighthouseRoomM_ShowFlame(ACTOR_MERCURY_FLAME,
@@ -840,7 +902,7 @@ s32 Scene_PrepareMap(void) {
 
 /// "Mankind... With the power of wisdom, they ruled the earth."
 void MarsLighthouseRoomM_ReadEarthInscription(void) {
-  u16 *color = (u16 *)&OBJ_PLTT_COLOR(0, 15);
+  u16 *color = (u16 *)&CENTERED_TEXT_COLOR;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -848,7 +910,7 @@ void MarsLighthouseRoomM_ReadEarthInscription(void) {
   PaletteFade_SetTarget(PALETTE_TINT_WARM, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
-  *color = RGB(31, 31, 31);
+  *color = RGB_WHITE;
   wait(1);
   EventMessage_ShowCentered((s32)MsgMarsLighthouseRoomMMankindWithPowerOfWisdom,
                             0, 0);
@@ -860,7 +922,7 @@ void MarsLighthouseRoomM_ReadEarthInscription(void) {
 
 /// "Fish... With cold courage, they ruled the water."
 void MarsLighthouseRoomM_ReadWaterInscription(void) {
-  u16 *color = (u16 *)&OBJ_PLTT_COLOR(0, 15);
+  u16 *color = (u16 *)&CENTERED_TEXT_COLOR;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -868,7 +930,7 @@ void MarsLighthouseRoomM_ReadWaterInscription(void) {
   PaletteFade_SetTarget(PALETTE_TINT_WARM, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
-  *color = RGB(31, 31, 31);
+  *color = RGB_WHITE;
   wait(1);
   EventMessage_ShowCentered((s32)MsgMarsLighthouseRoomMFishWithColdCourageThey,
                             0, 0);
@@ -880,7 +942,7 @@ void MarsLighthouseRoomM_ReadWaterInscription(void) {
 
 /// "Dragons... Burning with might, they ruled the fires."
 void MarsLighthouseRoomM_ReadFireInscription(void) {
-  u16 *color = (u16 *)&OBJ_PLTT_COLOR(0, 15);
+  u16 *color = (u16 *)&CENTERED_TEXT_COLOR;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -888,7 +950,7 @@ void MarsLighthouseRoomM_ReadFireInscription(void) {
   PaletteFade_SetTarget(PALETTE_TINT_WARM, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
-  *color = RGB(31, 31, 31);
+  *color = RGB_WHITE;
   wait(1);
   EventMessage_ShowCentered(
       (s32)MsgMarsLighthouseRoomMDragonsBurningWithMightThey, 0, 0);
@@ -900,7 +962,7 @@ void MarsLighthouseRoomM_ReadFireInscription(void) {
 
 /// "Bird... On the wings of truth, they ruled the winds."
 void MarsLighthouseRoomM_ReadWindInscription(void) {
-  u16 *color = (u16 *)&OBJ_PLTT_COLOR(0, 15);
+  u16 *color = (u16 *)&CENTERED_TEXT_COLOR;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -908,7 +970,7 @@ void MarsLighthouseRoomM_ReadWindInscription(void) {
   PaletteFade_SetTarget(PALETTE_TINT_WARM, 0);
   PaletteFade_StartInterpolation(20);
   wait(20);
-  *color = RGB(31, 31, 31);
+  *color = RGB_WHITE;
   wait(1);
   EventMessage_ShowCentered((s32)MsgMarsLighthouseRoomMBirdOnWingsOfTruth, 0,
                             0);
@@ -918,9 +980,9 @@ void MarsLighthouseRoomM_ReadWindInscription(void) {
   Event_End();
 }
 
-/// A piece of the broken floor: one that bounces up and back, or one that
-/// flies off at random.
-void MarsLighthouseRoomM_SpawnRubble(s32 x, s32 z, s32 kind) {
+/// A puff of flame where the fireball breaks the floor: one that swells as it
+/// rises and shrinks back, or one thrown off at random.
+void MarsLighthouseRoomM_SpawnFlamePuff(s32 x, s32 z, s32 kind) {
   struct Actor *actor;
 
   actor = FieldActor_Create(SPRITE_FLAME_PUFF, toFIXED(x), 0, toFIXED(z));
@@ -929,18 +991,19 @@ void MarsLighthouseRoomM_SpawnRubble(s32 x, s32 z, s32 kind) {
     Actor_SelectAnimation(actor, 3);
     if (kind != 0) {
       ((struct PlacedSprite *)actor->sprite)->priority = 2;
-      Actor_StartScript(actor, gMarsLighthouseRoomM_RubbleBounceScript);
+      Actor_StartScript(actor, gMarsLighthouseRoomM_FlamePuffSwellScript);
     } else {
       ((struct PlacedSprite *)actor->sprite)->priority = 1;
-      actor->velocityX = ((Random_Below(8)) - 4) << 16;
+      actor->velocityX = toFIXED(Random_Below(8) - 4);
       actor->velocityY = toFIXED(4);
-      Actor_StartScript(actor, gMarsLighthouseRoomM_RubbleFallScript);
+      Actor_StartScript(actor, gMarsLighthouseRoomM_FlamePuffThrownScript);
     }
   }
 }
 
-/// One floor tile before the statue breaks with a clatter and is gone: the
-/// cell (cellX, cellY) takes the broken picture at (sourceX, sourceY).
+/// One floor tile before the statue breaks in a burst of flame with a clatter,
+/// showing its part of the round carving beneath: the cell (cellX, cellY)
+/// takes the picture at (sourceX, sourceY).
 void MarsLighthouseRoomM_BreakFloorTile(s32 x, s32 z, s32 sourceX, s32 sourceY,
                                         s32 cellX, s32 cellY) {
   u32 i;
@@ -948,11 +1011,11 @@ void MarsLighthouseRoomM_BreakFloorTile(s32 x, s32 z, s32 sourceX, s32 sourceY,
   s32 pz;
 
   Event_PlaySound(SE_CLATTER);
-  MarsLighthouseRoomM_SpawnRubble(x, z + 12, 1);
+  MarsLighthouseRoomM_SpawnFlamePuff(x, z + 12, 1);
   for (i = 0; i < 3; i++) {
     px = x + (Random_Below(12)) - 6;
     pz = z + (Random_Below(12)) - 6;
-    MarsLighthouseRoomM_SpawnRubble(px, pz, 0);
+    MarsLighthouseRoomM_SpawnFlamePuff(px, pz, 0);
   }
   wait(4);
   MapGrid_CopyCellsTo(sourceX, sourceY, cellX + 64, cellY, 1, 1);
@@ -964,7 +1027,7 @@ void MarsLighthouseRoomM_BreakFloorTile(s32 x, s32 z, s32 sourceX, s32 sourceY,
 void MarsLighthouseRoomM_HearDragonStatue(void) {
   if (PartyInventory_FindMember(ITEM_MYTHRIL_BAG_MARS_STAR) == -1) {
     if (!Event_GetFlag(FLAG_TOLD_TO_BEGONE)) {
-      u16 *color = (volatile u16 *)&OBJ_PLTT_COLOR(0, 15);
+      u16 *color = (u16 *)&CENTERED_TEXT_COLOR;
 
       Event_Start();
       Event_ResolvePendingActions(0);
@@ -976,7 +1039,7 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
       PaletteFade_SetTarget(PALETTE_TINT_WARM, 0);
       PaletteFade_StartInterpolation(20);
       wait(20);
-      *color = RGB(31, 31, 31);
+      *color = RGB_WHITE;
       wait(1);
       EventMessage_ShowCentered((s32)MsgMarsLighthouseRoomMIfYouDoNotHold, 0,
                                 4);
@@ -992,7 +1055,7 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
 #else
   else if (Event_GetFlag(FLAG_MARS_LIGHTHOUSE_THAWED)) {
 #endif
-    u16 *color = (u16 *)&OBJ_PLTT_COLOR(0, 15);
+    u16 *color = (u16 *)&CENTERED_TEXT_COLOR;
 
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -1004,7 +1067,7 @@ void MarsLighthouseRoomM_HearDragonStatue(void) {
     PaletteFade_SetTarget(PALETTE_TINT_WARM, 0);
     PaletteFade_StartInterpolation(20);
     wait(20);
-    *color = RGB(31, 31, 31);
+    *color = RGB_WHITE;
     wait(1);
     EventMessage_ShowCentered((s32)MsgMarsLighthouseRoomMYouWhoHoldStarOpen, 0,
                               4);
@@ -1134,50 +1197,9 @@ void Ride_SpawnLandingBackward(struct Vector3 *position, s32 value, s32 flag) {
   }
 }
 
-/// Whether `a` is just above `b`: within 12 pixels across, 8 deep and up to
-/// 16 above.
-s32 Actor_IsAbove(struct Actor *a, struct Actor *b) {
-  FIXED height;
+#include "shared/actor_is_above.h"
 
-  if ((a->x.fixed - b->x.fixed >= 0 ? a->x.fixed - b->x.fixed
-                                    : b->x.fixed - a->x.fixed) < toFIXED(12)) {
-    height = a->y.fixed - b->y.fixed;
-    if (height > 0 && height < toFIXED(16)) {
-      if ((a->z.fixed - b->z.fixed >= 0 ? a->z.fixed - b->z.fixed
-                                        : b->z.fixed - a->z.fixed) < toFIXED(8))
-        return 1;
-    }
-  }
-  return 0;
-}
-
-/// Each frame a spark drifts, slowing, growing and turning; it rides up over
-/// the leader standing in its way.
-void Ride_UpdateDrift(struct Actor *actor) {
-  struct Actor *target = Actor_Get(gMainRoutineWork.leaderActorId);
-  FIXED vx;
-  FIXED vz;
-  s32 rate;
-  struct Sprite *animation;
-
-  vx = actor->bounce;
-  actor->x.fixed += vx;
-  actor->y.fixed += actor->gravity;
-  vz = actor->riseBaseY;
-  actor->z.fixed += vz;
-  actor->bounce = vx - vx / 18;
-  actor->riseBaseY = vz - vz / 16;
-  rate = actor->speedLimit;
-  actor->scaleX += rate;
-  animation = actor->sprite;
-  actor->scaleY += actor->acceleration;
-  animation->rotation += actor->timer;
-  if (target->y.fixed == target->groundHeight && Actor_IsAbove(actor, target)) {
-    actor->z.fixed -= actor->riseBaseY;
-    actor->gravity += actor->riseBaseY >> 2;
-    actor->riseBaseY = 0;
-  }
-}
+#include "shared/ride_update_drift.h"
 
 #include "shared/actor_setup_scripted.h"
 
@@ -1220,12 +1242,15 @@ void Ride_SetMode(s16 value) { RIDE_WORK->runsDuringPsynergy = value; }
 
 /// Whether flame thrower `index` is active.
 s32 Ride_GetEntryValue(s32 index) {
-  return ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.active;
+  return ((struct RideRow *)((u8 *)RIDE_WORK +
+                             index * sizeof(struct RideEntry)))
+      ->entry.active;
 }
 
 /// Turns flame thrower `index` on or off.
 void Ride_SetEntryValue(s32 index, s16 value) {
-  ((struct RideRow *)((u8 *)RIDE_WORK + index * 16))->entry.active = value;
+  ((struct RideRow *)((u8 *)RIDE_WORK + index * sizeof(struct RideEntry)))
+      ->entry.active = value;
 }
 
 /// The flame throwers' counter, which Ride_AdvanceCounter steps.
@@ -1307,7 +1332,7 @@ s32 Fireball_CarryLeader(void) {
   Event_ClearFlag(FLAG_MENU_OPEN);
   leader->update = (void (*)(void))Actor_Blink;
   leader->facing = FACING_SOUTH;
-  Actor_SelectAnimation(leader, 49);
+  Actor_SelectAnimation(leader, ANIM_LEADER_SIT);
   while (ride->car->timer == 0) {
     s32 kind = MapGrid_GetCellAttributeLowNibbleOrBump(0, leader->x.fixed,
                                                        leader->z.fixed);
@@ -1349,8 +1374,6 @@ s32 MarsLighthouseRoomM_IsSliding(void) { return RIDE_WORK->active; }
 #include "shared/embers_spawn.h"
 
 #include "shared/actor_hold_during_event.c"
-
-#define ABS(x) ((x) < 0 ? -(x) : (x))
 
 #include "shared/actor_roll_and_crumble.c"
 
@@ -1521,7 +1544,7 @@ struct Trigger gMarsLighthouseRoomM_Room5Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-s32 gMarsLighthouseRoomM_RubbleBounceScript[] = {
+s32 gMarsLighthouseRoomM_FlamePuffSwellScript[] = {
     SC_ADD(SW_SCALE_X, FIXED_ONE * 3 / 16),
     SC_ADD(SW_SCALE_Y, FIXED_ONE * 3 / 16),
     SC_ADD(SW_Y, -toFIXED(3) / 32),
@@ -1538,7 +1561,7 @@ s32 gMarsLighthouseRoomM_RubbleBounceScript[] = {
     SC_RELEASE,
 };
 
-s32 gMarsLighthouseRoomM_RubbleFallScript[] = {
+s32 gMarsLighthouseRoomM_FlamePuffThrownScript[] = {
     SC_WAIT(20),
     SC_POSITION_ORIGIN,
     SC_WAIT(1),

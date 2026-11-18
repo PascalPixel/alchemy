@@ -18,6 +18,11 @@
 // The other editions have no marks: in the first function's place they keep
 // one that accepts every letter, and they drop the second.
 #if LANGUAGE == LANGUAGE_JAPANESE
+// The keyboard's keys for the kana voicing marks (TEXT_MARK_VOICED and
+// TEXT_MARK_SEMIVOICED), as its tilemap's low bytes hold them.
+#define NAME_VOICED_KEY 254
+#define NAME_SEMIVOICED_KEY 255
+
 extern const u8 gNameEntry_VoicedMarkRanges[];
 extern const u8 gNameEntry_SemivoicedMarkRanges[];
 
@@ -93,7 +98,8 @@ void Window_CopyTilemapRegion(struct Window *window, const void *resource) {
 }
 
 /// Like Window_SetTextTileBitRect, but ORs all of `palette` into the palette
-/// number of each entry (bits 12-15) after clearing only its lowest bit.
+/// number of each entry after clearing only the bit in which WINDOW_PALETTE
+/// and HIGHLIGHT_PALETTE differ.
 void Window_SetTextTileRect(const struct Window *window, s32 x, s32 y,
                             s32 width, s32 height, u32 palette) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
@@ -127,7 +133,7 @@ void Window_SetTextTileRect(const struct Window *window, s32 x, s32 y,
       s32 remaining = width;
       while (remaining != 0) {
         u32 entry = *cell;
-        entry &= ~0x1000;
+        entry &= ~BG_TILE_PALETTE(WINDOW_PALETTE ^ HIGHLIGHT_PALETTE);
         entry |= palette;
         remaining--;
         *cell = entry;
@@ -140,25 +146,25 @@ void Window_SetTextTileRect(const struct Window *window, s32 x, s32 y,
   }
 }
 
-/// Loads the pointing hand cursor's tiles (128 bytes) into
-/// a free VRAM slot and returns the slot, which the caller frees with
-/// VramCache_FreeEntry.
+/// Loads the pointing hand cursor's tiles into a free VRAM slot and returns the
+/// slot, which the caller frees with VramCache_FreeEntry.
 s32 Resource_LoadFixedBlockBIntoFreeSlot(void) {
   s32 slot;
 
   slot = VramCache_FindFreeEntry();
-  VramBlock_LoadResourceFar(slot, 128, RESOURCE_UI_ICON_TILES);
+  VramBlock_LoadResourceFar(slot, ICON_TILE_BYTES, RESOURCE_UI_ICON_TILES);
   return slot;
 }
 
 /// Loads the UI icon tiles into VRAM cache entry slot.
 void Resource_CopyFixedBlockB(s32 slot) {
-  VramBlock_LoadResourceFar(slot, 128, RESOURCE_UI_ICON_TILES);
+  VramBlock_LoadResourceFar(slot, ICON_TILE_BYTES, RESOURCE_UI_ICON_TILES);
 }
 
 /// Loads the UI's fixed block A tiles into VRAM cache entry slot.
 void Resource_CopyFixedBlockA(s32 slot) {
-  VramBlock_LoadResourceFar(slot, 128, RESOURCE_UI_FIXED_BLOCK_A_TILES);
+  VramBlock_LoadResourceFar(slot, ICON_TILE_BYTES,
+                            RESOURCE_UI_FIXED_BLOCK_A_TILES);
 }
 
 #if (LANGUAGE != LANGUAGE_JAPANESE)
@@ -220,6 +226,9 @@ void NameEntry_DrawName(s32 window, u8 *name) {
 #define NAME_MAX_BYTES 14
 #define NAME_MAX_LETTERS 5
 #define NAME_COMMAND_COLUMN 18
+/// The empty columns between the keyboard's groups of letters.
+#define NAME_IS_GAP_COLUMN(column)                                             \
+  ((column) == 5 || (column) == 11 || (column) == 17)
 
 // The Japanese keyboard is a kana grid of eleven rows with a blank row in its
 // middle, and its command column has a third key, at the top, that turns to
@@ -272,9 +281,6 @@ void NameEntry_DrawName(s32 window, u8 *name) {
 extern const u8 gNameEntry_AlternateKeyboardTilemap[];
 
 void Text_DrawString(u8 *text, s32 window, s32 x, s32 y);
-// Japanese only, at 0x08044488 there.
-// Japanese only, at 0x080444c4 there: how many letters `name` has, its marks
-// not counted.
 #endif
 #if NAME_KEY_LABELS
 extern const u8 gNameEntry_DeleteKeyLabel[];
@@ -349,7 +355,8 @@ s32 NameEntry_EditMemberName(s32 member) {
   vramSlot = VramCache_FindFreeEntry();
   keyRow = NAME_FINISH_ROW;
   if (vramSlot < VRAM_CACHE_ENTRY_COUNT) {
-    VramBlock_LoadResourceFar(vramSlot, 128, RESOURCE_UI_ICON_TILES);
+    VramBlock_LoadResourceFar(vramSlot, ICON_TILE_BYTES,
+                              RESOURCE_UI_ICON_TILES);
     output = WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16,
                                  (struct Window *)keyboardWindow, 0, 0);
     keyMotion = &keyCursor.cursor;
@@ -362,7 +369,8 @@ s32 NameEntry_EditMemberName(s32 member) {
   }
   vramSlot = VramCache_FindFreeEntry();
   if (vramSlot < VRAM_CACHE_ENTRY_COUNT) {
-    VramBlock_LoadResourceFar(vramSlot, 128, RESOURCE_UI_FIXED_BLOCK_A_TILES);
+    VramBlock_LoadResourceFar(vramSlot, ICON_TILE_BYTES,
+                              RESOURCE_UI_FIXED_BLOCK_A_TILES);
     output = WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16,
                                  (struct Window *)keyboardWindow, 0, 0);
     nameCaret.sprite = output;
@@ -454,7 +462,7 @@ s32 NameEntry_EditMemberName(s32 member) {
           keyColumn = NAME_COMMAND_COLUMN;
         else
           keyColumn = 16;
-      } else if (keyColumn == 5 || keyColumn == 11 || keyColumn == 17) {
+      } else if (NAME_IS_GAP_COLUMN(keyColumn)) {
         keyColumn--;
       }
     }
@@ -464,7 +472,7 @@ s32 NameEntry_EditMemberName(s32 member) {
       keyColumn++;
       if (keyColumn == 19)
         keyColumn = 0;
-      else if (keyColumn == 5 || keyColumn == 11 || keyColumn == 17)
+      else if (NAME_IS_GAP_COLUMN(keyColumn))
         keyColumn++;
       if (keyColumn == NAME_COMMAND_COLUMN) {
         if (keyRow == NAME_PAGE_ROW || keyRow == NAME_REMOVE_ROW ||
@@ -531,7 +539,7 @@ s32 NameEntry_EditMemberName(s32 member) {
           u8 *src = editedName;
           s32 i;
 
-          for (i = 0; i < 15; i++)
+          for (i = 0; i < UNIT_NAME_SIZE; i++)
             *dst++ = *src++;
         }
         break;
@@ -548,10 +556,9 @@ s32 NameEntry_EditMemberName(s32 member) {
 
       letter = ((u8 *)render->tilemap +
                 (((s16)keyboardWindow->y + keyRow + 1) << 6))[tx + tx];
-      // The keyboard keeps the marks as 0xFE and 0xFF.
-      if (letter == 0xFE)
+      if (letter == NAME_VOICED_KEY)
         letter = TEXT_MARK_VOICED;
-      if (letter == 0xFF)
+      if (letter == NAME_SEMIVOICED_KEY)
         letter = TEXT_MARK_SEMIVOICED;
       if (letterCount == NAME_MAX_LETTERS && !IS_KANA_MARK(letter))
         continue;
@@ -607,7 +614,8 @@ s32 NameEntry_EditMemberName(s32 member) {
   Window_LoadGraphics();
   WindowColor_Apply(gMainRoutineWork.windowHue,
                     gMainRoutineWork.windowBrightness);
-  keyboardWindow = Window_Create(3, 6, 24, 9, WINDOW_FLAG_INSTANT);
+  keyboardWindow =
+      Window_Create(3, 6, 24, NAME_KEYBOARD_HEIGHT, WINDOW_FLAG_INSTANT);
   nameWindow = Window_Create(8, 3, NAME_LABEL_WIDTH, 3, WINDOW_FLAG_INSTANT);
   Portrait_OpenWindow(member, 0, 3, 1);
   Window_CopyTilemapRegion(keyboardWindow, gNameEntry_KeyboardTilemap);
@@ -615,7 +623,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   Text_DrawStringInWindow(gNameEntry_DeleteKeyLabel, keyboardWindow, 144, 32);
   Text_DrawStringInWindow(gNameEntry_EndKeyLabel, keyboardWindow, 144, 40);
 #endif
-  Window_DrawDividerLine(keyboardWindow, 18, 0, 18, 7);
+  Window_DrawDividerLine(keyboardWindow, 18, 0, 18, NAME_DIVIDER_BOTTOM);
   render->dirty = textDirty;
   text[0] = result;
   {
@@ -633,24 +641,26 @@ s32 NameEntry_EditMemberName(s32 member) {
   }
   editedName[NAME_MAX_BYTES] = 0;
   NameEntry_DrawName((s32)nameWindow, originalName);
-  keyRow = 5;
+  keyRow = NAME_FINISH_ROW;
   vramSlot = VramCache_FindFreeEntry();
   keyColumn = NAME_COMMAND_COLUMN;
   if (vramSlot < VRAM_CACHE_ENTRY_COUNT) {
-    VramBlock_LoadResourceFar(vramSlot, 128, RESOURCE_UI_ICON_TILES);
+    VramBlock_LoadResourceFar(vramSlot, ICON_TILE_BYTES,
+                              RESOURCE_UI_ICON_TILES);
     output = WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16,
                                  (struct Window *)keyboardWindow, 0, 0);
     keyMotion = &keyCursor.cursor;
     keyCursor.sprite = output;
-    MenuCursor_SetPositionImmediateFar(keyMotion,
-                                       (s16)keyboardWindow->x * 8 + 140,
-                                       (s16)keyboardWindow->y * 8 + 52);
+    MenuCursor_SetPositionImmediateFar(
+        keyMotion, (s16)keyboardWindow->x * 8 + 140,
+        (s16)keyboardWindow->y * 8 + NAME_KEY_CURSOR_Y);
   } else {
     keyMotion = &keyCursor.cursor;
   }
   vramSlot = VramCache_FindFreeEntry();
   if (vramSlot < VRAM_CACHE_ENTRY_COUNT) {
-    VramBlock_LoadResourceFar(vramSlot, 128, RESOURCE_UI_FIXED_BLOCK_A_TILES);
+    VramBlock_LoadResourceFar(vramSlot, ICON_TILE_BYTES,
+                              RESOURCE_UI_FIXED_BLOCK_A_TILES);
     output = WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16,
                                  (struct Window *)keyboardWindow, 0, 0);
     nameCaret.sprite = output;
@@ -668,9 +678,9 @@ s32 NameEntry_EditMemberName(s32 member) {
     s32 width = 1;
 
     if (keyColumn == NAME_COMMAND_COLUMN) {
-      if (keyRow == 4)
+      if (keyRow == NAME_REMOVE_ROW)
         width = 3;
-      if (keyRow == 5)
+      if (keyRow == NAME_FINISH_ROW)
         width = NAME_FINISH_WIDTH;
     }
     Window_SetTextTileRect(keyboardWindow, keyColumn, keyRow, width, 1,
@@ -703,10 +713,10 @@ s32 NameEntry_EditMemberName(s32 member) {
       keyRow--;
       if (keyColumn != NAME_COMMAND_COLUMN) {
         if (keyRow == -1)
-          keyRow = 5;
+          keyRow = NAME_LAST_ROW;
       } else {
-        keyRow = (keyRow != 3);
-        keyRow = 5 - keyRow;
+        keyRow = (keyRow != NAME_REMOVE_ROW - 1);
+        keyRow = NAME_FINISH_ROW - keyRow;
       }
     }
     if (gInput.repeat & KEY_DOWN) {
@@ -714,11 +724,11 @@ s32 NameEntry_EditMemberName(s32 member) {
       cursorDirty = 1;
       keyRow++;
       if (keyColumn != NAME_COMMAND_COLUMN) {
-        if (keyRow == 6)
+        if (keyRow == NAME_LAST_ROW + 1)
           keyRow = 0;
       } else {
-        keyRow = (keyRow != 6);
-        keyRow += 4;
+        keyRow = (keyRow != NAME_FINISH_ROW + 1);
+        keyRow += NAME_REMOVE_ROW;
       }
     }
     if (gInput.repeat & KEY_LEFT) {
@@ -726,11 +736,11 @@ s32 NameEntry_EditMemberName(s32 member) {
       cursorDirty = 1;
       keyColumn--;
       if (keyColumn == -1) {
-        if (keyRow >= 4 && keyRow <= 5)
+        if (keyRow >= NAME_REMOVE_ROW && keyRow <= NAME_FINISH_ROW)
           keyColumn = NAME_COMMAND_COLUMN;
         else
           keyColumn = 16;
-      } else if (keyColumn == 5 || keyColumn == 11 || keyColumn == 17) {
+      } else if (NAME_IS_GAP_COLUMN(keyColumn)) {
         keyColumn--;
       }
     }
@@ -740,16 +750,17 @@ s32 NameEntry_EditMemberName(s32 member) {
       keyColumn++;
       if (keyColumn == 19)
         keyColumn = 0;
-      else if (keyColumn == 5 || keyColumn == 11 || keyColumn == 17)
+      else if (NAME_IS_GAP_COLUMN(keyColumn))
         keyColumn++;
-      if (keyColumn == NAME_COMMAND_COLUMN && (keyRow < 4 || keyRow > 5))
+      if (keyColumn == NAME_COMMAND_COLUMN &&
+          (keyRow < NAME_REMOVE_ROW || keyRow > NAME_FINISH_ROW))
         keyColumn = 0;
     }
     if (gInput.pressed & KEY_START) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn = NAME_COMMAND_COLUMN;
-      keyRow = 5;
+      keyRow = NAME_FINISH_ROW;
     }
     if (gInput.repeat & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
@@ -769,7 +780,7 @@ s32 NameEntry_EditMemberName(s32 member) {
       continue;
     Sound_PlayFar(SE_MENU_CONFIRM);
     if (keyColumn == NAME_COMMAND_COLUMN) {
-      if (keyRow == 5) {
+      if (keyRow == NAME_FINISH_ROW) {
         if (letterCount == 0) {
           nameCaret.sprite->motion = WINDOW_SPRITE_MOTION_HIDDEN;
           WindowSprite_PrepareForRedraw(nameWindow);
@@ -780,12 +791,12 @@ s32 NameEntry_EditMemberName(s32 member) {
           u8 *src = editedName;
           s32 i;
 
-          for (i = 0; i < 15; i++)
+          for (i = 0; i < UNIT_NAME_SIZE; i++)
             *dst++ = *src++;
         }
         break;
       }
-      if (keyRow == 4)
+      if (keyRow == NAME_REMOVE_ROW)
         goto remove_character;
       continue;
     }
@@ -801,7 +812,7 @@ s32 NameEntry_EditMemberName(s32 member) {
       letterCount++;
       if (letterCount == NAME_MAX_LETTERS) {
         keyColumn = NAME_COMMAND_COLUMN;
-        keyRow = 5;
+        keyRow = NAME_FINISH_ROW;
         cursorDirty = 1;
       }
       WindowSprite_PrepareForRedraw(nameWindow);
@@ -822,6 +833,7 @@ s32 NameEntry_EditMemberName(s32 member) {
 #undef NAME_MAX_BYTES
 #undef NAME_MAX_LETTERS
 #undef NAME_COMMAND_COLUMN
+#undef NAME_IS_GAP_COLUMN
 #undef NAME_KEYBOARD_HEIGHT
 #undef NAME_DIVIDER_BOTTOM
 #undef NAME_KEY_CURSOR_Y

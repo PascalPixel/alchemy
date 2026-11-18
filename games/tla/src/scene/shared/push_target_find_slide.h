@@ -1,12 +1,13 @@
-/// What MapGrid_CheckCollision says of a step to a position, 2 for a wall:
+/// What MapGrid_CheckCollision says of a step to a position (enum Collision):
 /// The Broken Seal's system_call.h layer.
 static inline s32 FieldActor_CheckMovementCollision(struct Actor *actor,
                                                     s32 *position) {
   return MapGrid_CheckCollision(actor, position);
 }
 
-/// Finds how far the object ahead slides before something blocks it; 1 when it
-/// moves.
+/// Finds where the actor ahead stops when pushed: a cell at a time, the
+/// whole of its footprint (gPushFootprints) until a wall blocks it; 1 when it
+/// moves at all.
 s32 PushTarget_FindSlide(struct PushTarget *target) {
   struct Actor *actor;
   s32 direction;
@@ -30,32 +31,34 @@ s32 PushTarget_FindSlide(struct PushTarget *target) {
     height = (ABS(gPushFootprints[footprint][1]) +
               ABS(gPushFootprints[footprint][3])) >>
              4;
-    dx = gPushLeaderSteps[direction] & 0xffff0000;
-    dz = gPushLeaderSteps[direction] << 16;
+    // A push step holds x pixels in its high half and z in its low.
+    dx = gPushLeaderSteps[direction] & FIELD_PIXEL_MASK;
+    dz = INTtoFIXED(gPushLeaderSteps[direction]);
     target->callback = 0;
     count = 0;
     layer = &actor->layer;
-    *layer = 2;
+    *layer = MAPGRID_LAYER_OVERHEAD;
     target->x = actor->x.fixed + dx;
     target->z = actor->z.fixed + dz;
     position[1] = actor->y.fixed;
     for (;;) {
-      position[2] = target->z + (gPushFootprints[footprint][1] << 16);
+      position[2] = target->z + INTtoFIXED(gPushFootprints[footprint][1]);
       for (row = 0; row < height; row++) {
-        position[0] = target->x + (gPushFootprints[footprint][0] << 16);
+        position[0] = target->x + INTtoFIXED(gPushFootprints[footprint][0]);
         for (col = 0; col < width; col++) {
-          if (FieldActor_CheckMovementCollision(actor, position) == 2)
+          if (FieldActor_CheckMovementCollision(actor, position) ==
+              COLLISION_IMPASSABLE)
             goto blocked;
-          position[0] += toFIXED(16);
+          position[0] += toFIXED(MAPGRID_CELL_PIXELS);
         }
-        position[2] += toFIXED(16);
+        position[2] += toFIXED(MAPGRID_CELL_PIXELS);
       }
       target->x += dx;
       count++;
       target->z += dz;
     }
   blocked:
-    *layer = 0;
+    *layer = MAPGRID_LAYER_GROUND;
     if (count == 0)
       return 0;
     target->x = actor->x.fixed + dx * count;

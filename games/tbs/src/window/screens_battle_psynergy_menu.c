@@ -4,6 +4,10 @@
 
 #include "screens_internal.h"
 
+/// The last of the twelve range icons Window_DrawThreeTileColumn draws, which
+/// stands for ABILITY_RANGE_ALL; range n takes icon n - 1.
+#define RANGE_ICON_ALL 11
+
 /// The battle Psynergy list for unit `unitId`: `count` abilities of `actions`
 /// (ended by 0), five to a page, each with its icon, name, PP cost, element and
 /// range icon, in TEXT_COLOR_YELLOW when not usable in battle, TEXT_COLOR_RED
@@ -62,10 +66,14 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
     sprites[i].oam.f.tile = VramCache_Reload(iconSlots[i], -1);
   }
 
-  Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, 512);
-  Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, 513);
-  Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, 528);
-  Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, 529);
+  // XXX (no evidence): what shows tiles 0, 1, 16 and 17 of the second text
+  // range (TEXT_EXTRA_TILE_FIRST), which take the top and bottom tees here; no
+  // window code names an entry of them, and the battle recordings in reach
+  // (render guide fight-item) never open a list.
+  Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, TEXT_EXTRA_TILE_FIRST);
+  Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, TEXT_EXTRA_TILE_FIRST + 1);
+  Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, TEXT_EXTRA_TILE_FIRST + 16);
+  Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, TEXT_EXTRA_TILE_FIRST + 17);
 
   iconSprite = &cursor;
   for (;;) {
@@ -128,7 +136,7 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
 
           rangePattern = action->range;
           if (rangePattern == ABILITY_RANGE_ALL) {
-            rangePattern = 11;
+            rangePattern = RANGE_ICON_ALL;
           } else {
             rangePattern--;
           }
@@ -140,9 +148,9 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
 
       if (count > BATTLE_LIST_ROWS) {
         for (i = 0; i < (count + 4) / BATTLE_LIST_ROWS; i++) {
-          iconTile = i + LIST_TILE_PAGE_NUMBER;
+          iconTile = i + PAGE_NUMBER_TILE;
           if (i == firstEntry / BATTLE_LIST_ROWS) {
-            iconTile = i + LIST_TILE_PAGE_NUMBER_LIT;
+            iconTile = i + PAGE_NUMBER_LIT_TILE;
           }
           Window_SetTilemapEntry(
               window, iconTile,
@@ -160,10 +168,10 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
     // page arrows on the window's top edge (y -1).
     if (count > BATTLE_LIST_ROWS) {
       for (i = 0; i < (count + 4) / BATTLE_LIST_ROWS; i++) {
-        iconTile = i + LIST_TILE_PAGE_NUMBER;
+        iconTile = i + PAGE_NUMBER_TILE;
         if ((gFrameCount & 15) <= 11) {
           if (i == firstEntry / BATTLE_LIST_ROWS) {
-            iconTile = i + LIST_TILE_PAGE_NUMBER_LIT;
+            iconTile = i + PAGE_NUMBER_LIT_TILE;
           }
         }
         Window_SetTilemapEntry(
@@ -282,3 +290,5 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   wait(1);
   return result;
 }
+
+#undef RANGE_ICON_ALL

@@ -3,6 +3,10 @@
 /// copy of, with the views of the ride work and heap slots the routine reads
 /// them through.
 
+/// The bits of a flame thrower's flags that pick its flame (enum
+/// FlameThrowerFlags), above its reach.
+#define FLAME_THROWER_FLAG_BITS 0xf0
+
 /// A flame thrower of the ride work, as FlameThrowers_Puff reads it.
 typedef struct Entry {
   s16 active;
@@ -90,8 +94,8 @@ void FlameThrowers_Puff(void) {
     dz -= cameraZ;
     y = dz - y;
     offScreen = entry->offScreen;
-    x = dx >> 16;
-    y = (y >> 16) - 8;
+    x = FIXEDtoINT(dx);
+    y = FIXEDtoINT(y) - 8;
     if (offScreen == 0) {
       if ((u32)(x + 7) > 334)
         continue;
@@ -102,7 +106,7 @@ void FlameThrowers_Puff(void) {
     }
     y = (u16)entry->timer;
     if (entry->timer <= 0) {
-      y = entry->flags & 0xf0;
+      y = entry->flags & FLAME_THROWER_FLAG_BITS;
       switch (y) {
       case FLAME_SPARK:
         Ride_SpawnSpark((void *)&entry->actor->x, entry->reach, offScreen);

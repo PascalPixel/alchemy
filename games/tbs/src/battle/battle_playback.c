@@ -56,6 +56,10 @@ s32 BattlePlayback_SchedulePhase(s32 frames) {
 #define FELLED_FLASH 1024
 /// The Djinn bonus's colour cycle lasts 30 frames.
 #define FELLED_FLASH_FRAMES 30
+/// PLAY_FELLED's timer at which the dissolve starts, a frame after the enemy
+/// leaves the lists; it takes SpriteDissolve_Step's 128 steps, four a frame.
+#define FELLED_DISSOLVE_FIRST_FRAME 5
+#define FELLED_DISSOLVE_STEPS 128
 
 /// Plays the action's targets one at a time: resolves each with
 /// BattleAbility_ApplyToTarget, then plays what it queued over the frames that
@@ -243,9 +247,9 @@ void BattlePlayback_Run(void) {
       if (events->arrowResource == -1)
         events->arrowResource = battle->arrowTiles;
       MessageArgument_ClearAllFar();
-      IoWriteQueue_ClearBits16((u32)&REG_WINOUT, 4);
-      IoWriteQueue_SetBits16((u32)&REG_WINOUT, 16);
-      ((u32 *)prompt)[1] = 0xa000;
+      IoWriteQueue_ClearBits16((u32)&REG_WINOUT, WINOUT_WIN01_BG2);
+      IoWriteQueue_SetBits16((u32)&REG_WINOUT, WINOUT_WIN01_OBJ);
+      ((u32 *)prompt)[1] = OBJ_SIZE_8X16 | OBJ_256_COLORS;
       ((u32 *)prompt)[2] = x;
       prompt->tile = VramCache_Reload(events->arrowResource, pictureTiles);
       x = window->x * 8 + (offset->x >> 8) + 4;
@@ -313,14 +317,15 @@ void BattlePlayback_Run(void) {
         }
         if (events->timer >= FELLED_FLASH)
           colorMode = (events->timer - FELLED_FLASH) / 8 % 5 + SPRITE_COLOR_GRB;
-        // Recolour every layer's first entry and redraw its picture (255).
+        // Recolour every layer's first entry and have its picture drawn again.
         if (colorMode == SPRITE_COLOR_GREY || (events->timer & 7) == 0) {
           struct Sprite *record;
           s32 recordIndex;
           struct Sprite **slot;
           s32 lastPictureMask;
 
-          for (recordIndex = 0, slot = records, lastPictureMask = 0xff;
+          for (recordIndex = 0, slot = records,
+              lastPictureMask = SPRITE_PICTURE_NONE;
                (record = GetMotionRecord(
                     BattleObject_Get(events->unitId)->actor, recordIndex)) != 0;
                recordIndex++) {
@@ -356,8 +361,8 @@ void BattlePlayback_Run(void) {
              count++)
           records[count] = record;
         base = events->timer * 4;
-        step = base - 20;
-        if (step > 127) {
+        step = base - FELLED_DISSOLVE_FIRST_FRAME * 4;
+        if (step > FELLED_DISSOLVE_STEPS - 1) {
           s32 recordIndex;
 
           for (recordIndex = 0; recordIndex < count; recordIndex++)
@@ -372,9 +377,9 @@ void BattlePlayback_Run(void) {
 
           for (recordIndex = 0; recordIndex < count; recordIndex++) {
             SpriteDissolve_StepFar((u8 *)records[recordIndex], step);
-            SpriteDissolve_StepFar((u8 *)records[recordIndex], base - 19);
-            SpriteDissolve_StepFar((u8 *)records[recordIndex], base - 18);
-            SpriteDissolve_StepFar((u8 *)records[recordIndex], base - 17);
+            SpriteDissolve_StepFar((u8 *)records[recordIndex], step + 1);
+            SpriteDissolve_StepFar((u8 *)records[recordIndex], step + 2);
+            SpriteDissolve_StepFar((u8 *)records[recordIndex], step + 3);
           }
         }
         events->timer++;
@@ -419,3 +424,5 @@ UNREAD_RESULT BattlePlayback_WaitForReady(void) {
 }
 
 #undef FELLED_FLASH_FRAMES
+#undef FELLED_DISSOLVE_FIRST_FRAME
+#undef FELLED_DISSOLVE_STEPS

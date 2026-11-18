@@ -17,11 +17,15 @@ enum ScreenTransitionStyle {
   TRANSITION_WINDOW = 2,        ///< a window shape the variant chooses
   TRANSITION_DISSOLVE = 3,
   /// Opening from, or closing to, the centre line; the variant picks how.
-  TRANSITION_CENTRE_LINE = 4
+  TRANSITION_CENTER_LINE = 4
 };
 
 /// A scene transition as FieldWork.transition holds it.
 #define SCENE_TRANSITION(style, variant) ((style) << 8 | (variant))
+/// The two bytes of a SCENE_TRANSITION: its enum ScreenTransitionStyle, and
+/// the variant that style reads.
+#define SCENE_TRANSITION_STYLE(transition) (((transition) >> 8) & 0xff)
+#define SCENE_TRANSITION_VARIANT(transition) ((transition) & 0xff)
 
 #include "field/field_coordinate.h"
 

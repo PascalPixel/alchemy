@@ -6,10 +6,10 @@
 #include "system_internal.h"
 #include "fixed_math.h"
 
-// Divide OBJ character memory (from 0x06010000) into 512 blocks of 64 bytes;
-// gVramCacheBlockOwners records each block's owner (cache index).
-// There are 96 cache entries; byte offset 0xffff marks a free entry.
-// Entries with size <= VRAM_CACHE_SIZE_NO_BLOCKS do not own VRAM.
+// Sprite tile VRAM (OBJ_VRAM0) is VRAM_BLOCK_COUNT blocks of VRAM_BLOCK_BYTES,
+// and gVramCacheBlockOwners records each block's owner, its cache entry. An
+// entry whose offset is VRAM_CACHE_OFFSET_FREE is free, and one whose size is
+// VRAM_CACHE_SIZE_NO_BLOCKS or less owns no VRAM.
 
 /// Finds the first run of free blocks that holds `size` bytes and gives it to
 /// entry `id`, writing `id` into gVramCacheBlockOwners for each block. Returns
@@ -53,9 +53,8 @@ s32 VramCache_AllocateBlocks(u32 id, u32 size) {
   return first;
 }
 
-/// Returns the length, in blocks, of the longest run of free blocks. Nothing
-/// in the game calls it.
-s32 VramCache_GetLongestFreeRun(void) {
+/// Unused: returns the length, in blocks, of the longest run of free blocks.
+UNUSED s32 VramCache_GetLongestFreeRun(void) {
   s32 run = 0;
   u8 *owner = gVramCacheBlockOwners;
   s32 longestRun = 0;
@@ -75,7 +74,7 @@ s32 VramCache_GetLongestFreeRun(void) {
 }
 
 /// Counts the free blocks (owner VRAM_BLOCK_OWNER_FREE) of the sprite VRAM
-/// cache's 512 blocks, as The Broken Seal's.
+/// cache's VRAM_BLOCK_COUNT.
 s32 VramCache_CountFreeBlocks(void) {
   u8 *marker = gVramCacheBlockOwners;
   s32 freeCount;
@@ -179,7 +178,7 @@ s32 VramCache_Load(u32 no, u32 size, const void *src) {
       else
         Dma_Set(src, dst, DMA_COPY_WORDS(size >> 2), REG_DMA3);
     }
-    return (u32)offset >> 5;
+    return (u32)offset / TILE_SIZE_4BPP;
   }
   return 0;
 }
@@ -239,9 +238,10 @@ s32 VramCache_Reload(s32 no, s32 src) {
   return VramCache_Load(no, gVramCacheEntries[no].size, (const void *)src);
 }
 
-/// Takes the next of the 32 sprite affine matrices and fills it with a
-/// rotation by angle and the scales; returns its index, or 31 when all are
-/// taken. The body is OamMatrix_AllocFromTransform's.
+/// Takes the next of the OBJ_AFFINE_MATRIX_COUNT sprite affine matrices and
+/// fills it with a rotation by angle and the scales; returns its index, or the
+/// last matrix's when all are taken. The body is
+/// OamMatrix_AllocFromTransform's.
 s32 AffineMatrix_Build(s32 angle, s32 xScale, s32 yScale) {
   union AffineMatrix *matrix;
   s16 *coefficient;
@@ -263,6 +263,8 @@ s32 AffineMatrix_Build(s32 angle, s32 xScale, s32 yScale) {
     if (xScale == -yScale)
       xReciprocal = -reciprocal;
 
+    // pa alone in the first row, and pd alone in the second row's high
+    // halfword.
     matrix->rows[0] = (u16)xReciprocal;
     matrix->rows[1] = reciprocal << 16;
   } else {

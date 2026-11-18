@@ -768,6 +768,19 @@ extern char ResourceId_WhirlwindMap;
 /// ShamanVillage_BlowAwaySand.
 extern char ResourceId_WhirlwindTiles;
 #define RESOURCE_WHIRLWIND_TILES ((s32)&ResourceId_WhirlwindTiles)
+/// Whirlwind's picture is drawn on BG0, the windows' layer: its tiles, two rows
+/// of WHIRLWIND_ROW_TILES (the top halves, then the bottom ones), go over BG
+/// tiles WHIRLWIND_TOP_TILE and WHIRLWIND_BOTTOM_TILE of character block 3, and
+/// its map, WHIRLWIND_MAP_WIDTH by WHIRLWIND_MAP_HEIGHT cells numbering them
+/// from WHIRLWIND_MAP_FIRST_TILE, into the windows' screen block, whose other
+/// entries take WHIRLWIND_FILL_TILE.
+#define WHIRLWIND_ROW_TILES 26
+#define WHIRLWIND_TOP_TILE 320
+#define WHIRLWIND_BOTTOM_TILE 352
+#define WHIRLWIND_MAP_FIRST_TILE 512
+#define WHIRLWIND_MAP_WIDTH 16
+#define WHIRLWIND_MAP_HEIGHT 18
+#define WHIRLWIND_FILL_TILE 16
 /// Loaded by AirsRockInside_WakeHallStatue, AirsRockInside_WakeVialChestStatue,
 /// AirsRock_WhirlwindOpensTheTop and JupiterLighthouse_FlashSky.
 extern char ResourceId_LightningMap;
@@ -1106,14 +1119,14 @@ extern char ResourceId_SmokeBandSheet;
 extern char ResourceId_CrimsonBeastTiles;
 #define RESOURCE_CRIMSON_BEAST_TILES ((s32)&ResourceId_CrimsonBeastTiles)
 /// Drawn by Charon.
-extern char ResourceId_RedSlashTiles;
-#define RESOURCE_RED_SLASH_TILES ((s32)&ResourceId_RedSlashTiles)
+extern char ResourceId_RedDomeTiles;
+#define RESOURCE_RED_DOME_TILES ((s32)&ResourceId_RedDomeTiles)
 /// Drawn by Charon.
-extern char ResourceId_RedCrescentTiles;
-#define RESOURCE_RED_CRESCENT_TILES ((s32)&ResourceId_RedCrescentTiles)
+extern char ResourceId_RedOrbTiles;
+#define RESOURCE_RED_ORB_TILES ((s32)&ResourceId_RedOrbTiles)
 /// Drawn by Charon.
-extern char ResourceId_WhiteArrowsTiles;
-#define RESOURCE_WHITE_ARROWS_TILES ((s32)&ResourceId_WhiteArrowsTiles)
+extern char ResourceId_TumblingShardTiles;
+#define RESOURCE_TUMBLING_SHARD_TILES ((s32)&ResourceId_TumblingShardTiles)
 /// Drawn by Charon.
 extern char ResourceId_WhiteWispsTiles;
 #define RESOURCE_WHITE_WISPS_TILES ((s32)&ResourceId_WhiteWispsTiles)
@@ -1199,8 +1212,8 @@ extern char ResourceId_CrossTextureSheet;
 extern char ResourceId_BubbleAnimationSheet;
 #define RESOURCE_BUBBLE_ANIMATION_SHEET ((s32)&ResourceId_BubbleAnimationSheet)
 /// Drawn by Coatlicue.
-extern char ResourceId_BellMaidenTiles;
-#define RESOURCE_BELL_MAIDEN_TILES ((s32)&ResourceId_BellMaidenTiles)
+extern char ResourceId_CoatlicueTiles;
+#define RESOURCE_COATLICUE_TILES ((s32)&ResourceId_CoatlicueTiles)
 /// Drawn by Coatlicue.
 extern char ResourceId_ScaleTexture;
 #define RESOURCE_SCALE_TEXTURE ((s32)&ResourceId_ScaleTexture)

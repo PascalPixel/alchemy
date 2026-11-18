@@ -56,7 +56,7 @@ s32 HoverGlow_GetColor(s32 counter, s32 level) {
     blue = 0;
   if (blue > RGB_LEVEL_MAX)
     blue = RGB_LEVEL_MAX;
-  return (blue << 10) | (green << 5) | red;
+  return RGB(red, green, blue);
 }
 
 /// The glow's colours: sprite palette CANVAS_PALETTE.
@@ -66,18 +66,18 @@ s32 HoverGlow_GetColor(s32 counter, s32 level) {
 // time once the player leaves the place that feeds it.
 #define GLOW_FULL 112
 #define GLOW_SPENT_CUE (ABILITY_HOVER | ACT_PACKED)
+/// The frames the ring under the leader takes to grow, or to shrink away.
+#define HOVER_RING_GROW_FRAMES 32
 
 /// Hover's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the glowing ring under the
 /// hovering leader, its scale, tile and stage.
 struct HoverWork {
-  u8 unused[4096]; ///< no code names it
+  u8 tiles[4096]; ///< the ring's picture, decoded to be loaded
   struct EffectSprite sprite;
   s32 scale;
   s16 resource;
   u16 tile;
-  // XXX: only cleared as Hover starts and read nowhere in this file; a reader
-  // of offset 0x1030 elsewhere would say what it is.
-  u16 unk1030;
+  u16 unk_1030;
   u16 phase;
   s16 fading;
 };
@@ -117,17 +117,17 @@ void HoverGlow_Update(void) {
       level = GLOW_FULL;
     if (level < 0)
       level = 0;
-    work->scale = (level << 15) / GLOW_FULL + FIXED_ONE / 2;
+    work->scale = level * (FIXED_ONE / 2) / GLOW_FULL + FIXED_ONE / 2;
     if (level == 0)
       event->psynergy = GLOW_SPENT_CUE;
   }
 
   // Cycle the glow's colours; the last takes the 15th's level.
   palette = HOVER_GLOW_PALETTE;
-  for (i = 0; i < 16; i++) {
+  for (i = 0; i < PALETTE_COLORS; i++) {
     Io_Write16(
         HoverGlow_GetColor((((s16)work->phase >> 2) + i / 2) % HOVER_GLOW_STEPS,
-                           i == 15 ? 14 : i),
+                           i == PALETTE_COLORS - 1 ? PALETTE_COLORS - 2 : i),
         palette++);
   }
   work->phase++;
@@ -160,12 +160,13 @@ void FieldPsynergy_HoverOnTarget(void) { FieldPsynergy_Hover(); }
 #undef HOVER_GLOW_PALETTE
 #undef GLOW_SPENT_CUE
 
-/// Hover: a glowing ring grows under the leader, who rises and floats (movement
-/// mode 10) while HoverGlow_Update holds the glow up. Where it cannot hover
-/// (off a hover cell, or touching a solid actor) the ring shrinks away and the
-/// place's Hover event runs instead.
+/// Hover: a glowing ring grows under the leader, who rises and floats
+/// (LEADER_MOVEMENT_HOVER) while HoverGlow_Update holds the glow up. Where it
+/// cannot hover (off a hover cell, or touching a solid actor) the ring shrinks
+/// away and the place's Hover event runs instead.
 void FieldPsynergy_Hover(void) {
-  struct HoverWork *work = HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, 4152);
+  struct HoverWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct HoverWork));
   struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *player = scene->mainActor;
@@ -196,10 +197,12 @@ void FieldPsynergy_Hover(void) {
   Actor_SetPositionAndResetMotionFar(player, player->x.fixed, player->y.fixed,
                                      player->z.fixed);
   BattleEffect_SetObjectUpdateMode(player, 0);
-  Actor_SelectAnimationFar(player, 5);
+  Actor_SelectAnimationFar(player, ANIM_LEADER_RUN);
   Sound_PlayFar(SE_PSYNERGY_START);
   wait(1);
-  work->unk1030 = 0;
+  // DEAD: a halfword nothing reads, cleared as Hover starts; the ROM keeps the
+  // store.
+  work->unk_1030 = 0;
   work->phase = 0;
   work->fading = 0;
   Task_Add(HoverGlow_Update, TASK_PASS_FRAME);
@@ -229,16 +232,16 @@ void FieldPsynergy_Hover(void) {
   if (blocked) {
     wait(5);
     Sound_PlayFar(SE_GLITTER);
-    for (i = 0; i < 32; i++) {
-      work->scale = FIXED_ONE * i / 32;
+    for (i = 0; i < HOVER_RING_GROW_FRAMES; i++) {
+      work->scale = FIXED_ONE * i / HOVER_RING_GROW_FRAMES;
       wait(1);
     }
     wait(10);
     if (pending != NULL)
       Field_RunPsynergyEvent(pending, scene->firstActorId,
                              scene->secondActorId);
-    for (i = 31; i != 0; i--) {
-      work->scale = FIXED_ONE * i / 32;
+    for (i = HOVER_RING_GROW_FRAMES - 1; i != 0; i--) {
+      work->scale = FIXED_ONE * i / HOVER_RING_GROW_FRAMES;
       wait(1);
     }
     wait(5);
@@ -251,11 +254,11 @@ void FieldPsynergy_Hover(void) {
     work->scale = 0;
     event->glowHeld = 0;
     event->glow = 100;
-    for (i = 0; i < 32; i++) {
+    for (i = 0; i < HOVER_RING_GROW_FRAMES; i++) {
       if (i == 10)
         Sound_PlayFar(SE_GLITTER);
       player->y.fixed += toFIXED(1);
-      work->scale = FIXED_ONE * i / 32;
+      work->scale = FIXED_ONE * i / HOVER_RING_GROW_FRAMES;
       wait(1);
     }
     player->motionFlags = ACTOR_FLOATS;
@@ -269,6 +272,7 @@ void FieldPsynergy_Hover(void) {
 }
 
 #undef GLOW_FULL
+#undef HOVER_RING_GROW_FRAMES
 
 /// Ends Hover: the leader drops back to the ground with a splash and the ring
 /// is freed.

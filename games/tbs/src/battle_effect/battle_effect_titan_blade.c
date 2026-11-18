@@ -21,6 +21,26 @@
 #define TITAN_BLADE_SPARKS 340     ///< sparks after the dust
 /// The flash pictures in the sheet, after the 34x104 fire pillar.
 #define TITAN_BLADE_FLASH_PICTURES PICTURE_BYTES(FIRE_PILLAR)
+/// A flash counts down from TITAN_BLADE_FLASH_START, half a frame later for
+/// each flash, and shows its six pictures over the last of it, three frames
+/// each.
+#define TITAN_BLADE_FLASH_START 25
+#define TITAN_BLADE_FLASH_SHOWN 6
+#define TITAN_BLADE_FLASH_FRAMES 3
+/// The canvas row the sword, the dust and the sparks stop at: nothing below it
+/// is drawn.
+#define TITAN_BLADE_GROUND_Y 108
+/// The dust rises and the fire pillar scrolls up for 32 frames from frame 32,
+/// sixteen more dust each frame, the pillar's picture 16 pixels a frame.
+#define TITAN_BLADE_RISE_FRAMES 32
+#define TITAN_BLADE_DUST_PER_FRAME 16
+#define TITAN_BLADE_PILLAR_SPEED 16
+/// The frame the pillar's scroll is counted from.
+#define TITAN_BLADE_PILLAR_SCROLL_FRAME 16
+/// The sword's picture, and the row its top holds at once it has dropped.
+#define TITAN_BLADE_SWORD_WIDTH 36
+#define TITAN_BLADE_SWORD_HEIGHT 120
+#define TITAN_BLADE_SWORD_HOLD_TOP 16
 
 /// A huge gold-hilted sword drops onto the first target and is driven into the
 /// ground amid flashes, golden dust and sparks.
@@ -79,7 +99,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
 
     flash->x = Trig_Sin(ang) * scale;
     flash->y = -(Trig_Cos(ang) * scale);
-    flash->variant = i / 2 + 25;
+    flash->variant = i / 2 + TITAN_BLADE_FLASH_START;
   }
 
   for (i = 0; i != TITAN_BLADE_DUST; i++) {
@@ -145,13 +165,16 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
         y = FIXEDtoINT(flash->y);
         x = FIXEDtoINT(flash->x) + canvasCenterX;
         life = flash->variant;
-        if (life >= 0 && life <= 17) {
-          blitters[0](canvas,
-                      work->sheet +
-                          (gTitanBlade_FlashPictures[life / 3] << 11) +
-                          TITAN_BLADE_FLASH_PICTURES,
-                      x - FLASH_BURST_WIDTH / 2, y + 48, FLASH_BURST_WIDTH,
-                      FLASH_BURST_HEIGHT);
+        if (life >= 0 &&
+            life < TITAN_BLADE_FLASH_SHOWN * TITAN_BLADE_FLASH_FRAMES) {
+          blitters[0](
+              canvas,
+              work->sheet +
+                  gTitanBlade_FlashPictures[life / TITAN_BLADE_FLASH_FRAMES] *
+                      PICTURE_BYTES(FLASH_BURST) +
+                  TITAN_BLADE_FLASH_PICTURES,
+              x - FLASH_BURST_WIDTH / 2, y + 48, FLASH_BURST_WIDTH,
+              FLASH_BURST_HEIGHT);
         }
         life = flash->variant;
         flash->variant = life > 0 ? life - 1 : -1;
@@ -179,7 +202,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
     }
 
     step = frame - 32;
-    if (step >= 0 && step <= 31) {
+    if (step >= 0 && step < TITAN_BLADE_RISE_FRAMES) {
       s32 cnt;
 
       cnt = 0;
@@ -198,23 +221,28 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
           dust->velocityY = (-(Random16() & 63) - 8) << 13;
           dust->variant = 0;
           cnt++;
-          if (cnt == 16) {
+          if (cnt == TITAN_BLADE_DUST_PER_FRAME) {
             break;
           }
         }
       }
     }
 
-    if (step >= 0 && step <= 31) {
-      s32 phase = frame * 16;
-      s32 x = canvasCenterX - 17;
-      s32 width = 34;
+    // The fire pillar stands on the ground, its picture scrolling up and
+    // wrapping round.
+    if (step >= 0 && step < TITAN_BLADE_RISE_FRAMES) {
+      s32 phase = frame * TITAN_BLADE_PILLAR_SPEED;
+      s32 x = canvasCenterX - FIRE_PILLAR_WIDTH / 2;
+      s32 width = FIRE_PILLAR_WIDTH;
       DrawRectangle blit = blitters[0];
-      s32 high = 104;
-      s32 size = (phase - 256) % high;
+      s32 high = FIRE_PILLAR_HEIGHT;
+      s32 size =
+          (phase - TITAN_BLADE_PILLAR_SCROLL_FRAME * TITAN_BLADE_PILLAR_SPEED) %
+          high;
 
-      blit(canvas, work->sheet, x, 4 - size, width, high);
-      blit(canvas, work->sheet, x, 108 - size, width, size);
+      blit(canvas, work->sheet, x,
+           TITAN_BLADE_GROUND_Y - FIRE_PILLAR_HEIGHT - size, width, high);
+      blit(canvas, work->sheet, x, TITAN_BLADE_GROUND_Y - size, width, size);
     }
 
     if (frame <= 71) {
@@ -239,7 +267,8 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
           dust->velocityX = dust->velocityX * 62 / DAMPING_SCALE;
           dust->velocityY = dust->velocityY * 62 / DAMPING_SCALE;
           dust->variant++;
-          if (dust->velocityY > 0 && FIXEDtoINT(dust->y) > 108) {
+          if (dust->velocityY > 0 &&
+              FIXEDtoINT(dust->y) > TITAN_BLADE_GROUND_Y) {
             dust->variant = -1;
           }
         }
@@ -252,23 +281,24 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
       s32 high;
       s32 top;
 
-      x = canvasCenterX - 18;
-      high = 120;
+      x = canvasCenterX - TITAN_BLADE_SWORD_WIDTH / 2;
+      high = TITAN_BLADE_SWORD_HEIGHT;
       if (frame > TITAN_BLADE_STRIKE_FRAME) {
         top = frame * 8 - 450;
       } else if (frame > 32) {
-        top = step / 2 + 16;
+        top = step / 2 + TITAN_BLADE_SWORD_HOLD_TOP;
       } else if (frame <= 9) {
+        // It drops 16 pixels a frame, onto its hold at frame 9.
         top = frame * 16 - 128;
       } else {
-        top = 16;
+        top = TITAN_BLADE_SWORD_HOLD_TOP;
       }
-      if (top + 120 > 108) {
-        high = high - top - 12;
+      if (top + TITAN_BLADE_SWORD_HEIGHT > TITAN_BLADE_GROUND_Y) {
+        high = high - top - (TITAN_BLADE_SWORD_HEIGHT - TITAN_BLADE_GROUND_Y);
       }
       if (high > 0) {
-        blitters[1](canvas, work->sheet + TITAN_BLADE_SWORD_PICTURE, x, top, 36,
-                    high);
+        blitters[1](canvas, work->sheet + TITAN_BLADE_SWORD_PICTURE, x, top,
+                    TITAN_BLADE_SWORD_WIDTH, high);
       }
     }
 
@@ -286,7 +316,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
                                         toFIXED(1) / 8);
           y = spark->y;
           spark->variant--;
-          if (y > toFIXED(108)) {
+          if (y > toFIXED(TITAN_BLADE_GROUND_Y)) {
             spark->velocityY = -spark->velocityY / 2;
           } else {
             x = spark->x;
@@ -342,3 +372,14 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
 #undef TITAN_BLADE_DRAWN_DUST
 #undef TITAN_BLADE_SPARKS
 #undef TITAN_BLADE_FLASH_PICTURES
+#undef TITAN_BLADE_FLASH_START
+#undef TITAN_BLADE_FLASH_SHOWN
+#undef TITAN_BLADE_FLASH_FRAMES
+#undef TITAN_BLADE_GROUND_Y
+#undef TITAN_BLADE_RISE_FRAMES
+#undef TITAN_BLADE_DUST_PER_FRAME
+#undef TITAN_BLADE_PILLAR_SPEED
+#undef TITAN_BLADE_PILLAR_SCROLL_FRAME
+#undef TITAN_BLADE_SWORD_WIDTH
+#undef TITAN_BLADE_SWORD_HEIGHT
+#undef TITAN_BLADE_SWORD_HOLD_TOP

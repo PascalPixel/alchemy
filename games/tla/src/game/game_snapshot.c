@@ -25,8 +25,6 @@ s32 Item_RaisesStat(s32 id) {
 }
 #endif
 
-extern u8 gInventorySnapshot[];
-
 /// The first halfword of gInventorySnapshot while it holds the party's
 /// equipment, put aside while the Trial Road takes it away.
 #define INVENTORY_SNAPSHOT_SENTINEL 0x6774
@@ -47,7 +45,7 @@ void InventorySnapshot_Save(void) {
   s16 firstShortcut;
   s16 secondShortcut;
 
-  save = gInventorySnapshot;
+  save = (u16 *)gInventorySnapshot;
   if (*save != INVENTORY_SNAPSHOT_SENTINEL) {
     *save++ = INVENTORY_SNAPSHOT_SENTINEL;
     firstShortcut = gMainRoutineWork.firstShortcut;
@@ -94,7 +92,7 @@ void InventorySnapshot_Save(void) {
 /// put aside, empties the snapshot and clears FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT:
 /// at the end of the Trial Road, and from the clear scene.
 void InventorySnapshot_Restore(void) {
-  u16 *src = gInventorySnapshot;
+  u16 *src = (u16 *)gInventorySnapshot;
   s32 unitId;
 
   if (*src++ == INVENTORY_SNAPSHOT_SENTINEL) {
@@ -126,7 +124,7 @@ void InventorySnapshot_Restore(void) {
       *owners = *src;
     }
 #endif
-    src = gInventorySnapshot;
+    src = (u16 *)gInventorySnapshot;
     *src = 0;
   }
   GameFlag_Clear(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT);

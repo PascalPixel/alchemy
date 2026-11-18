@@ -8,9 +8,9 @@
 /// open. A Cyclone on the teleporter here leads back down
 /// (JupiterLighthouse_LeaveByCyclone).
 ///
-/// The cracked tiles' code is in
-/// jupiter_lighthouse_room_gate_button/, in two parts the shared field effect
-/// objects link between.
+/// After the scene's own code come the shared field effect spawner and the
+/// cracked tiles' routines, which it links between; this room has no cracked
+/// tiles.
 
 #include "shared/tables.h"
 #include "flags.h"
@@ -58,8 +58,15 @@
 #define FLAG_GATES_BUTTON_HELD FLAG_SCENE_TEMP_00
 
 /// The pillar the party pushes onto the button by the gates, after the two
-/// angel statues in gActorPlacements.
+/// winged statues in gActorPlacements.
 enum { ACTOR_GATES_PILLAR = ACTOR_FIRST_PLACED + 2 };
+
+/// The button's cell, which the pillar is moved onto.
+enum { GATES_BUTTON_CELL_X = 17, GATES_BUTTON_CELL_Z = 33 };
+
+/// The step triggers of the button: its cell, and the eight cells round it
+/// that the leader steps off it onto.
+enum { TRIGGER_GATES_BUTTON = 20, TRIGGER_OFF_GATES_BUTTON = 21 };
 
 struct Actor;
 struct LightOam;
@@ -92,10 +99,14 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 /// Cyclone on the teleporter: takes the party back down to the basement.
-void JupiterLighthouse_LeaveByCyclone(void) { Import_EventSetExitRequest(6); }
+void JupiterLighthouse_LeaveByCyclone(void) {
+  FieldEvent_SetExitRequest(
+      JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS);
+}
 
-/// Opens the gates, with their thud and a frame between when animate is 1.
-void JupiterLighthouse_OpenDoor(s32 animate) {
+/// Opens the gates; with animate 1 they thud and show their half-open picture
+/// first.
+void JupiterLighthouse_OpenGates(s32 animate) {
   if (animate == 1) {
     Event_PlaySound(SE_IMPACT);
     MapGrid_CopyCellsLayered(81, 20, 2, 3, 79, 29);
@@ -108,8 +119,8 @@ void JupiterLighthouse_OpenDoor(s32 animate) {
   MapGrid_CopyCellAttributes(20, 22, 2, 1, 15, 39);
 }
 
-/// Closes the gates with a heavy thud.
-void JupiterLighthouse_CloseDoor(void) {
+/// Closes the gates with a heavy thud, through their half-open picture.
+void JupiterLighthouse_CloseGates(void) {
   Event_PlaySound(SE_HEAVY_IMPACT);
   MapGrid_CopyCellsLayered(81, 20, 2, 3, 79, 29);
   MapGrid_CopyCellsLayered(81, 20, 2, 3, 79, 37);
@@ -120,15 +131,15 @@ void JupiterLighthouse_CloseDoor(void) {
   MapGrid_CopyCellAttributes(23, 22, 2, 1, 15, 39);
 }
 
-/// Opens the gates for good once the pillar stands on the button, cell (17,
-/// 33).
+/// Opens the gates for good once the pillar stands on the button.
 void JupiterLighthouse_CheckBlockOnCell(void) {
   struct Actor *actor = Actor_Get(ACTOR_GATES_PILLAR);
 
   if (!Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED) &&
-      FIELD_CELL(actor->x.fixed) == 17 && FIELD_CELL(actor->z.fixed) == 33) {
+      FIELD_CELL(actor->x.fixed) == GATES_BUTTON_CELL_X &&
+      FIELD_CELL(actor->z.fixed) == GATES_BUTTON_CELL_Z) {
     Event_SetFlag(FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED);
-    JupiterLighthouse_OpenDoor(1);
+    JupiterLighthouse_OpenGates(1);
   }
 }
 
@@ -137,7 +148,7 @@ void JupiterLighthouse_CheckBlockOnCell(void) {
 void JupiterLighthouse_StepOnButton(void) {
   if (!Event_GetFlag(FLAG_GATES_BUTTON_HELD)) {
     Event_SetFlag(FLAG_GATES_BUTTON_HELD);
-    JupiterLighthouse_OpenDoor(1);
+    JupiterLighthouse_OpenGates(1);
   }
 }
 
@@ -146,7 +157,7 @@ void JupiterLighthouse_StepOnButton(void) {
 void JupiterLighthouse_StepOffButton(void) {
   if (Event_GetFlag(FLAG_GATES_BUTTON_HELD) == 1) {
     Event_ClearFlag(FLAG_GATES_BUTTON_HELD);
-    JupiterLighthouse_CloseDoor();
+    JupiterLighthouse_CloseGates();
   }
   JupiterLighthouse_CheckBlockOnCell();
 }
@@ -162,14 +173,15 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
-      gMainRoutineWork.entrance == 6)
+      gMainRoutineWork.entrance ==
+          JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_FROM_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS)
     Actor_ArriveInRing(gMainRoutineWork.leaderActorId);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED)) {
     Actor_SetPosition(ACTOR_GATES_PILLAR, 280, 536);
-    JupiterLighthouse_OpenDoor(0);
+    JupiterLighthouse_OpenGates(0);
   }
   if (Event_GetFlag(FLAG_GATES_BUTTON_HELD))
-    JupiterLighthouse_OpenDoor(0);
+    JupiterLighthouse_OpenGates(0);
   return 0;
 }
 
@@ -189,7 +201,7 @@ extern s32 gPaletteCyclePausesInEvents;
 
 extern s32 gPaletteCycleFrame;
 
-/// Sets the counter, its value built as a word.
+/// Sets the palette cycle's frame counter.
 static inline void PaletteCycle_SetFrame(s32 value) {
   gPaletteCycleFrame = value;
 }
@@ -199,24 +211,8 @@ static inline void PaletteCycle_SetFrame(s32 value) {
 void MapGrid_SetCellHeight();
 void MapGrid_SetAttributeBAt();
 
-/// Loads the room's two palettes and starts their cycle once the lighthouse is
-/// lit; mode 1 starts it anyway, and mode 2 leaves the palettes as they are.
-void JupiterLighthouse_LoadPalettes(s32 mode) {
-  gPaletteCyclePausesInEvents = 1;
-  if (mode != 2) {
-    Iwram_CopyWordsEntry(gPaletteCycleColors, (void *)&BG_PLTT_COLOR(12, 0),
-                         PALETTE_COLORS * 2);
-    Iwram_CopyWordsEntry(gPaletteCycleUnlitPalette,
-                         (void *)&BG_PLTT_COLOR(13, 0), PALETTE_COLORS * 2);
-  }
-  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
-    PaletteCycle_SetFrame(0);
-    Task_Add(PaletteCycle_StepAt, TASK_PASS_FRAME);
-  } else {
-    Dma_Set(gPaletteCycleUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),
-            DMA_COPY_WORDS(2), REG_DMA3);
-  }
-}
+#define PALETTE_CYCLE_TASK PaletteCycle_StepAt
+#include "shared/jupiter_lighthouse_load_palettes.h"
 
 #include "shared/actor_raise_from_cell.h"
 
@@ -241,10 +237,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/jupiter_lighthouse_place_raised_actors.h"
 
-/// Queues the lit actors' sprites: for each listed actor with a position,
-/// projects it from the map's view, skips it off screen, and writes a 16 by 16
-/// sprite, or a 32 by 64 one when the big switch is set, at its animation
-/// picture and depth.
 #include "shared/light_sprites_draw.h"
 
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
@@ -257,12 +249,10 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 
 #include "shared/light_sprites_add.h"
 
+/// Sets the priority the lit actors' sprites are drawn at.
 void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 
 #include "../field/actor_set_sprite_priority.c"
-
-void JupiterLighthouse_LeaveByCyclone(void);
-void JupiterLighthouse_FinishMovingBlock(void);
 
 // clang-format off
 #include "shared/field_effect_duration_scripts.c"
@@ -293,8 +283,8 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_STEP, 20, FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED, EVENT(JupiterLighthouse_StepOnButton)},
-    {TRIGGER_STEP, 21, FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED, EVENT(JupiterLighthouse_StepOffButton)},
+    {TRIGGER_STEP, TRIGGER_GATES_BUTTON, FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED, EVENT(JupiterLighthouse_StepOnButton)},
+    {TRIGGER_STEP, TRIGGER_OFF_GATES_BUTTON, FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED, EVENT(JupiterLighthouse_StepOffButton)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LeaveByCyclone)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_GATES_PILLAR, FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED, EVENT(JupiterLighthouse_FinishMovingBlock)},
     {TRIGGER_TABLE_END},
@@ -320,8 +310,8 @@ const s32 *gFieldEffect_DurationScripts[] = {
 #include "../field/field_effect_move.c"
 
 #undef FLAG_GATES_BUTTON_HELD
-// Jupiter Lighthouse's ground floor: its copy of the effect spawner, and the
-// cracked tiles, found, cracked and fallen through.
+// The floor's copy of the effect spawner, and the cracked tiles, found, cracked
+// and fallen through.
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
@@ -332,8 +322,6 @@ extern const s32 *gFieldEffect_DurationScripts[];
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
 
-/// The cells CrackedTile_Step watches, and the cell it copies over the one the
-/// leader steps on.
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
 
@@ -341,10 +329,6 @@ extern const s32 *gFieldEffect_DurationScripts[];
 
 #include "shared/leader_center_in_cell.h"
 
-// Centers the leader on its cell, plays sound 161 and copies the cell below
-// the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
-// one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
 struct CellTargetEntry;
@@ -354,7 +338,7 @@ struct CellTargetEntry;
 #include "../field/field_effect_advance_motion.c"
 
 #undef CELL_PUSH_SLOT_ENTRY
-// Jupiter Lighthouse's ground floor: the cracked tiles' steps and landings.
+// The cracked tiles' steps and landings.
 
 void GameFlag_SetByte(s32 flag, s32 value);
 void MapGrid_CenterOnFollowedPoint(void);

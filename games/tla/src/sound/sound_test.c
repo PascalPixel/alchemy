@@ -21,12 +21,13 @@ void SoundTest_UnusedDummyFunc(void) {}
 
 void Sound_LoadReverbCode(s32 code);
 
-/// The three cues the test starts with.
-static const struct SoundTestCues sSoundTestCues = {{0, 80, 100}};
+/// The sounds the test's three selectors start on: one each for music, jingles
+/// and sound effects.
+static const struct SoundTestCues sSoundTestCues = {
+    {0, SOUND_JINGLE_FIRST, SOUND_SE_FIRST}};
 
-/// Runs the sound test's three cue selectors and five mixer presets forever,
-/// from preset 3, with the sound VBlank state's byte 2 set, a clip timer of 2
-/// and the commands 0, 78 and 390.
+/// Unused: runs the sound test's three sound selectors and five mixer presets
+/// forever, from preset 3, with gSoundVBlankState.soundTestActive set.
 void SoundTest_Run(void) {
   struct SoundTestCues cues;
   s32 preset;
@@ -41,6 +42,8 @@ void SoundTest_Run(void) {
   timer = 20;
 
   for (;;) {
+    // A countdown, restarted whenever the mixer has clipped a sample since the
+    // last frame; nothing reads it.
     if (timer != 0)
       timer--;
 
@@ -101,8 +104,8 @@ u16 Sound_GetCurrentBgm(void) { return gCurrentBgm; }
 /// The sound ids gSoundFlags has a bit for.
 enum { SOUND_FLAG_COUNT = 1024 };
 
-/// Returns sound `sound`'s bit in gSoundFlags, one bit for each of 1024 sound
-/// ids.
+/// Returns sound `sound`'s bit in gSoundFlags, one bit for each of the
+/// SOUND_FLAG_COUNT sound ids.
 s32 SoundFlag_Test(s32 sound) {
   s32 mask;
   u8 *bytes;
@@ -139,15 +142,20 @@ void SoundFlag_Clear(s32 sound) {
 
 s32 __divsi3(s32 numerator, s32 denominator);
 
+/// The CPU cycles of a VBlank: 228 lines of 1232 cycles, as driver.c
+/// counts them.
+#define SOUND_CYCLES_PER_VBLANK (228 * 1232)
+
 enum {
   SOUND_FIXED_RATE = 31536, ///< samples a second: SOUND_MODE_FREQ_GAME's rate
   /// SOUND_FIXED_RATE over the 59.7275 VBlanks a second, rounded.
   SOUND_FIXED_SAMPLES_PER_VBLANK = 528
 };
 
-/// Sets direct sound to a fixed 31536 Hz output with 528 samples a VBlank,
-/// keeping mode's rate nibble, clears the two PCM buffers and points DMA 1
-/// and 2 at them, then restarts timer 0 as line 159 begins.
+/// Sets direct sound to the fixed SOUND_FIXED_RATE with
+/// SOUND_FIXED_SAMPLES_PER_VBLANK samples a VBlank, keeping mode's rate
+/// nibble, clears the two PCM buffers and points DMA 1 and 2 at them, then
+/// restarts timer 0 as the screen's last line begins.
 void Sound_SetFixedSampleFreq(u32 mode) {
   struct SoundInfo *work = SOUND_INFO_PTR;
   u32 samples;
@@ -155,16 +163,19 @@ void Sound_SetFixedSampleFreq(u32 mode) {
   u32 control;
   volatile u8 *vcount;
 
-  mode = (mode >> SOUND_MODE_FREQ_SHIFT) & 15;
+  mode = (mode >> SOUND_MODE_FREQ_SHIFT) &
+         (SOUND_MODE_FREQ >> SOUND_MODE_FREQ_SHIFT);
   work->transferPeriod = SOUND_PCM_BUFFER_SIZE / SOUND_FIXED_SAMPLES_PER_VBLANK;
   work->outputRate = SOUND_FIXED_RATE;
   work->rate = mode;
   samples = SOUND_FIXED_SAMPLES_PER_VBLANK;
   work->pcmSamplesPerVBlank = samples;
+  // Half the rate's reciprocal in 24-bit fixed point, as SampleFreqSet's.
   work->rateStep = (1 << 23) / SOUND_FIXED_RATE;
   control = 0;
   Io_Write16(control, &REG_TM0CNT_H);
-  Io_Write16(__divsi3(-140448, samples), &REG_TM0CNT_L);
+  // Timer 0 overflows twice a sample: half a VBlank's cycles over its samples.
+  Io_Write16(__divsi3(-(SOUND_CYCLES_PER_VBLANK / 2), samples), &REG_TM0CNT_L);
   buffer = gMixerPcmBuffer;
   // Each channel's buffer here is twice the driver's own.
   Iwram_ClearWords(buffer, 4 * SOUND_PCM_BUFFER_SIZE);

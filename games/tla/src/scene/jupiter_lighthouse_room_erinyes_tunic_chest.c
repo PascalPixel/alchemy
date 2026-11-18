@@ -1,16 +1,11 @@
 /// @file
-/// The room of gaps and logs in Jupiter Lighthouse, between rooms 2, 4 and m.
-/// The party jumps the gaps between its ledges (JupiterLighthouse_JumpForward),
-/// pushes a blue log off the ledge to the floor below
-/// (JupiterLighthouse_PushLogOffTheLedge), and Moves two pillars into the gaps
-/// in the floor (JupiterLighthouse_FinishMovingPillar). A Cyclone teleporter
-/// leads on (JupiterLighthouse_LeaveByCyclone).
-///
-/// The cracked tiles' code is in
-/// jupiter_lighthouse_room_erinyes_tunic_chest/, in two parts the shared field
-/// effect objects link between, and the tables the scene's getters return are
-/// in data/jupiter_lighthouse_room_erinyes_tunic_chest.c, which the overlay
-/// links after the field's cached pictures.
+/// The room of gaps and fallen columns in Jupiter Lighthouse, where the
+/// Erinyes Tunic's chest stands. The party jumps the gaps between its ledges
+/// (JupiterLighthouse_JumpForward), pushes a fallen column off a ledge to the
+/// floor below (JupiterLighthouse_PushColumnOffTheLedge), and Moves two pillars
+/// into the gaps in the floor (JupiterLighthouse_FinishMovingPillar). A Cyclone
+/// teleporter leads on (JupiterLighthouse_LeaveByCyclone), and cracked tiles
+/// drop the leader to the floor below.
 
 #include "system/system.h"
 #include "system/io_write.h"
@@ -57,25 +52,28 @@ struct PushTarget {
   void (*callback)(void);
 };
 
-/// Set once the log has been pushed off the ledge this visit.
-#define FLAG_LOG_OFF_LEDGE FLAG_SCENE_TEMP_00
+/// Set once the column has been pushed off the ledge this visit.
+#define FLAG_COLUMN_OFF_LEDGE FLAG_SCENE_TEMP_00
 /// Set as Move drops each pillar into its gap.
 #define FLAG_LEFT_PILLAR_IN_GAP 0xa04
 #define FLAG_RIGHT_PILLAR_IN_GAP 0xa05
 
-/// The room's four blue logs (fallen columns), the third the one the leader
-/// pushes off the ledge, and the two pillars Move drops into the gaps.
+/// The room's four fallen columns, the third the one the leader pushes off the
+/// ledge, and the two pillars Move drops into the gaps.
 enum {
-  ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
-  ACTOR_SECOND_LOG,
-  ACTOR_LEDGE_LOG,
-  ACTOR_FOURTH_LOG,
-  /// The two seedlings the vines hang from (SPRITE_SEEDLING, at x 360 and 488).
-  ACTOR_WEST_VINE,
-  ACTOR_EAST_VINE,
+  ACTOR_FIRST_COLUMN = ACTOR_FIRST_PLACED,
+  ACTOR_SECOND_COLUMN,
+  ACTOR_LEDGE_COLUMN,
+  ACTOR_FOURTH_COLUMN,
+  /// The two chains that hang either side of the stairs (HangingVine_Place).
+  ACTOR_WEST_CHAIN,
+  ACTOR_EAST_CHAIN,
   ACTOR_LEFT_PILLAR = ACTOR_FIRST_PLACED + 6,
   ACTOR_RIGHT_PILLAR
 };
+
+/// How far a pillar sinks into its gap, its yellow top level with the floor.
+#define PILLAR_SINK_DEPTH 32
 
 /// The entrances at (152, 840) and (696, 840), where the leader arrives in a
 /// ring (Actor_DepartInRing).
@@ -113,7 +111,10 @@ s16 gLightSpritePriority BSS_DATA;
 struct CellTarget gCrackedTiles BSS_DATA;
 struct Actor *PushTarget_FindAhead(s32 *direction, s32 *slot, s32 *kind);
 s32 MapGrid_CheckCollision(struct Actor *actor, s32 *position);
-extern u16 gPushKinds[];
+/// The sprites that can be pushed, each with its footprint.
+enum { PUSH_KINDS = 6 };
+
+extern u16 gPushKinds[PUSH_KINDS];
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 void PaletteCycle_StepAt(void);
 
@@ -134,28 +135,28 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-/// The ledge log's update while it is pushed: at cell (14, 12), below the
+/// The ledge column's update while it is pushed: at cell (14, 12), below the
 /// ledge, it is drawn at priority 2.
-void JupiterLighthouse_DrawLogBelowLedge(struct Actor *actor) {
+void JupiterLighthouse_DrawColumnBelowLedge(struct Actor *actor) {
   if (FIELD_CELL(actor->x.fixed) == 14 && FIELD_CELL(actor->z.fixed) == 12)
     Actor_SetSpritePriorityDirect(actor, 2);
 }
 
-/// The leader pushes the ledge log; pushed to cell (16, 12) it falls off the
+/// The leader pushes the ledge column; pushed to cell (16, 12) it falls off the
 /// ledge with a thud and the four cells it lands across sink to the floor.
-void JupiterLighthouse_PushLogOffTheLedge(void) {
-  struct Actor *actor = Actor_Get(ACTOR_LEDGE_LOG);
+void JupiterLighthouse_PushColumnOffTheLedge(void) {
+  struct Actor *actor = Actor_Get(ACTOR_LEDGE_COLUMN);
   struct PushTarget target;
   s32 i;
   FIXED x;
 
-  actor->update = (void (*)(void))JupiterLighthouse_DrawLogBelowLedge;
+  actor->update = (void (*)(void))JupiterLighthouse_DrawColumnBelowLedge;
   if (PushTarget_FindSlide(&target))
     PushTarget_PushFill(target);
   if (FIELD_CELL(actor->x.fixed) == 16 && FIELD_CELL(actor->z.fixed) == 12 &&
-      Event_GetFlag(FLAG_LOG_OFF_LEDGE) == 0) {
-    Event_SetFlag(FLAG_LOG_OFF_LEDGE);
-    FieldActor_SetSpritePriority(ACTOR_LEDGE_LOG, 3);
+      Event_GetFlag(FLAG_COLUMN_OFF_LEDGE) == 0) {
+    Event_SetFlag(FLAG_COLUMN_OFF_LEDGE);
+    FieldActor_SetSpritePriority(ACTOR_LEDGE_COLUMN, 3);
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     System_Wait(5);
     Event_PlaySound(SE_HEAVY_IMPACT);
@@ -164,7 +165,7 @@ void JupiterLighthouse_PushLogOffTheLedge(void) {
       FieldMapGrid_SetCellHeight(toFIXED(256), x, 0, 0);
       MapGrid_SetCellBehavior(toFIXED(256), x, 0, 0);
       if (i <= 1)
-        MapGrid_SetAttributeBAt(toFIXED(256), x, 0, 128);
+        MapGrid_SetAttributeBAt(toFIXED(256), x, 0, MAP_CELL_JUMP);
     }
   }
   actor->update = 0;
@@ -206,13 +207,13 @@ void JupiterLighthouse_LeaveByCyclone(void) { Import_EventSetExitRequest(12); }
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-/// Sets up the room as the party enters: the window in, the two vines, and the
+/// Sets up the room as the party enters: the window in, the two chains, and the
 /// teleporter's ring the party arrives in. Returns 0.
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
-  HangingVine_Place(ACTOR_WEST_VINE, 1);
-  HangingVine_Place(ACTOR_EAST_VINE, 1);
+  HangingVine_Place(ACTOR_WEST_CHAIN, 1);
+  HangingVine_Place(ACTOR_EAST_CHAIN, 1);
   if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0 &&
       gMainRoutineWork.entrance == ENTRANCE_WEST_RING)
     Actor_DepartInRing(gMainRoutineWork.leaderActorId);
@@ -223,7 +224,8 @@ s32 Scene_Initialize(void) {
 }
 
 /// Sets the scene's arrival flags; puts the pillars back in their gaps, fixes
-/// the four logs in their cells, and sinks the cells the ledge log fell across.
+/// the four columns in their cells, and sinks the cells the ledge column fell
+/// across.
 /// Returns 0.
 s32 Scene_PrepareMap(void) {
   struct Actor *actor;
@@ -234,42 +236,42 @@ s32 Scene_PrepareMap(void) {
   if (Event_GetFlag(FLAG_LEFT_PILLAR_IN_GAP)) {
     actor = Actor_Get(ACTOR_LEFT_PILLAR);
     actor->motionFlags = 0;
-    actor->groundHeight = toFIXED(-32);
-    actor->y.fixed = toFIXED(-32);
+    actor->groundHeight = toFIXED(-PILLAR_SINK_DEPTH);
+    actor->y.fixed = toFIXED(-PILLAR_SINK_DEPTH);
     Actor_SetPosition(ACTOR_LEFT_PILLAR, 328, 584);
     MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, 0);
   }
   if (Event_GetFlag(FLAG_RIGHT_PILLAR_IN_GAP)) {
     actor = Actor_Get(ACTOR_RIGHT_PILLAR);
     actor->motionFlags = 0;
-    actor->groundHeight = toFIXED(-32);
-    actor->y.fixed = toFIXED(-32);
+    actor->groundHeight = toFIXED(-PILLAR_SINK_DEPTH);
+    actor->y.fixed = toFIXED(-PILLAR_SINK_DEPTH);
     Actor_SetPosition(ACTOR_RIGHT_PILLAR, 520, 584);
     MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, 0);
   }
-  Actor_Get(ACTOR_FIRST_LOG)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
-  Actor_Get(ACTOR_SECOND_LOG)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
-  Actor_Get(ACTOR_LEDGE_LOG)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
-  Actor_Get(ACTOR_FOURTH_LOG)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
-  FieldActor_SetSpritePriority(ACTOR_FIRST_LOG, 3);
-  FieldActor_SetSpritePriority(ACTOR_LEDGE_LOG, 3);
-  FieldActor_SetSpritePriority(ACTOR_SECOND_LOG, 3);
-  FieldActor_SetSpritePriority(ACTOR_FOURTH_LOG, 3);
-  Actor_Get(ACTOR_LEDGE_LOG)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  Actor_DisableById(ACTOR_FIRST_LOG);
-  Actor_DisableById(ACTOR_SECOND_LOG);
-  Actor_DisableById(ACTOR_LEDGE_LOG);
-  Actor_DisableById(ACTOR_FOURTH_LOG);
-  PushTarget_FillFootprint(ACTOR_FIRST_LOG);
-  PushTarget_FillFootprint(ACTOR_SECOND_LOG);
-  PushTarget_FillFootprint(ACTOR_LEDGE_LOG);
-  PushTarget_FillFootprint(ACTOR_FOURTH_LOG);
-  if (Event_GetFlag(FLAG_LOG_OFF_LEDGE)) {
+  Actor_Get(ACTOR_FIRST_COLUMN)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+  Actor_Get(ACTOR_SECOND_COLUMN)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+  Actor_Get(ACTOR_LEDGE_COLUMN)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+  Actor_Get(ACTOR_FOURTH_COLUMN)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
+  FieldActor_SetSpritePriority(ACTOR_FIRST_COLUMN, 3);
+  FieldActor_SetSpritePriority(ACTOR_LEDGE_COLUMN, 3);
+  FieldActor_SetSpritePriority(ACTOR_SECOND_COLUMN, 3);
+  FieldActor_SetSpritePriority(ACTOR_FOURTH_COLUMN, 3);
+  Actor_Get(ACTOR_LEDGE_COLUMN)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
+  Actor_DisableById(ACTOR_FIRST_COLUMN);
+  Actor_DisableById(ACTOR_SECOND_COLUMN);
+  Actor_DisableById(ACTOR_LEDGE_COLUMN);
+  Actor_DisableById(ACTOR_FOURTH_COLUMN);
+  PushTarget_FillFootprint(ACTOR_FIRST_COLUMN);
+  PushTarget_FillFootprint(ACTOR_SECOND_COLUMN);
+  PushTarget_FillFootprint(ACTOR_LEDGE_COLUMN);
+  PushTarget_FillFootprint(ACTOR_FOURTH_COLUMN);
+  if (Event_GetFlag(FLAG_COLUMN_OFF_LEDGE)) {
     for (i = 0, x = toFIXED(176); i <= 3; i++, x += toFIXED(16)) {
       FieldMapGrid_SetCellHeight(toFIXED(256), x, 0, 0);
       MapGrid_SetCellBehavior(toFIXED(256), x, 0, 0);
       if (i <= 1)
-        MapGrid_SetAttributeBAt(toFIXED(256), x, 0, 128);
+        MapGrid_SetAttributeBAt(toFIXED(256), x, 0, MAP_CELL_JUMP);
     }
   }
   return 0;
@@ -284,23 +286,8 @@ void JupiterLighthouse_JumpForward(void) { Field_TryJumpForward(); }
 
 #include "shared/palette_cycle_step_at.h"
 
-/// JupiterLighthouse_LoadPalettes as the aerie and room 3 compile it.
-void JupiterLighthouse_LoadPalettesZero(s32 mode) {
-  gPaletteCyclePausesInEvents = 1;
-  if (mode != 2) {
-    Iwram_CopyWordsEntry(gPaletteCycleColors, (void *)&BG_PLTT_COLOR(12, 0),
-                         32);
-    Iwram_CopyWordsEntry(gPaletteCycleUnlitPalette,
-                         (void *)&BG_PLTT_COLOR(13, 0), 32);
-  }
-  if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_ACTIVATED) || mode == 1) {
-    PaletteCycle_SetFrame(0);
-    Task_Add(PaletteCycle_StepAt, TASK_PASS_FRAME);
-  } else {
-    Dma_Set(gPaletteCycleUnlitColors, (void *)&BG_PLTT_COLOR(12, 2),
-            DMA_COPY_WORDS(2), REG_DMA3);
-  }
-}
+#define PALETTE_CYCLE_TASK PaletteCycle_StepAt
+#include "shared/jupiter_lighthouse_load_palettes.h"
 
 #include "shared/actor_raise_from_cell.h"
 
@@ -336,23 +323,16 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 extern s8 gPushFootprints[][4];
 
-/// Rewrites the map cells under a pushable actor: its sprite shape picks one of
-/// the six footprints in gPushFootprints (four signed bytes each, in sixteenths
-/// of a cell); the cells under it are copied from the map's spare area
-/// (Map_CopyCellAttributeRect) and byte 2 of both collision layers there is
-/// filled with 255. Returns 1, or 0 for a shape with no footprint.
-
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
-/// Rewrites the map cells under a pushable actor: its sprite shape picks one of
-/// the six footprints in gPushFootprints (four signed bytes each, in sixteenths
-/// of a cell); the cells under it are copied from the map's spare area
-/// (Map_CopyCellAttributeRect) and byte 2 of both collision layers there is
-/// filled with 255. Returns 1, or 0 for a shape with no footprint.
+/// Makes the cells under a pushable actor solid, by its footprint: its sprite
+/// picks one of the footprints in gPushFootprints, and the cells' own
+/// behaviors are kept in the map's spare area for when it moves. Returns 0 for
+/// a sprite that cannot be pushed.
 s32 PushTarget_FillFootprint(s32 id) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *actor = Actor_Get(id);
-  s16 shape = *(s16 *)((struct FieldSprite *)actor->sprite)->record;
+  s16 shape = ((struct Sprite *)actor->sprite)->entries[0]->animationId;
   s16 i = 0;
   u32 j;
   s32 width;
@@ -366,12 +346,15 @@ s32 PushTarget_FillFootprint(s32 id) {
 
   if ((u16)shape != gPushKinds[(u16)i]) {
     do {
-      j = (u16)((i << 16) + 0x10000 >> 16);
+      /* FAKEMATCH(temporary): the step taken in the high halfword, as the push
+       * footprints' copies of this search have it; plainly, j = (u16)(i + 1).
+       */
+      j = (u16)((i + 1) * 65536 >> 16);
       i = j;
-    } while (j <= 5 && (u16)shape != gPushKinds[j]);
+    } while (j <= PUSH_KINDS - 1 && (u16)shape != gPushKinds[j]);
   }
   j = (u16)i;
-  if (j == 6)
+  if (j == PUSH_KINDS)
     return 0;
   width = (ABS(gPushFootprints[j][0]) + ABS(gPushFootprints[j][2])) >> 4;
   height = (ABS(gPushFootprints[j][1]) + ABS(gPushFootprints[j][3])) >> 4;
@@ -383,8 +366,10 @@ s32 PushTarget_FillFootprint(s32 id) {
   toX = x + (u16)i;
   toZ = z + (u16)mapZ;
   MapGrid_CopyCellAttributes(x, z, width, height, toX, toZ);
-  PushedActor_FillGridAttributeRectangle(0, x, z, width, height, 255);
-  PushedActor_FillGridAttributeRectangle(2, x, z, width, height, 255);
+  PushedActor_FillGridAttributeRectangle(0, x, z, width, height,
+                                         CELL_BEHAVIOR_WALL);
+  PushedActor_FillGridAttributeRectangle(2, x, z, width, height,
+                                         CELL_BEHAVIOR_WALL);
   return 1;
 }
 
@@ -399,22 +384,14 @@ static inline s32 PushTarget_CheckCollision(struct Actor *actor,
   return MapGrid_CheckCollision(actor, position);
 }
 
-/// Finds the object the leader is pushing and steps its footprint, one cell
-/// at a time in the leader's direction, until a cell of it is blocked
-/// (MapGrid_CheckCollision returns 2). Leaves the object's resting place in
-/// target and returns 1, or 0 when nothing is pushed or it cannot move at all.
 #include "shared/push_target_find_slide.h"
 
 /// The whole-pixel half of a 16.16 coordinate.
 #define PIXEL_PART(v) (((s16 *)&(v))[1])
 
-/// Finds the object the leader is pushing: among objects 8 to 63 whose sprite
-/// shape is in the six-entry footprint table, the one whose footprint holds the
-/// cell one step ahead of the leader, when the leader is not in line with its
-/// near edge. Returns the object, with its id and the footprint's index.
 #include "shared/push_target_find_ahead.h"
 
-void PushTarget_UpdatePusher(struct Actor *actor);
+void Actor_StopAtPushTarget(struct Actor *actor);
 
 /// PushTarget_Push for the rooms that fill the cells with
 /// PushedActor_FillGridAttributeRectangle.
@@ -450,15 +427,16 @@ void PushTarget_PushFill(struct PushTarget target) {
            4;
   PushedActor_FillGridAttributeRectangle(0, cell[0], cell[2], width, height, 0);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.5, 0.1);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, 8);
+  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_PUSH);
   System_Wait(15);
+  // The leader follows the object half its way.
   {
-    s32 deltaX = (target.x - from[0]) >> 17;
-    s32 deltaZ = (target.z - from[2]) >> 17;
+    s32 deltaX = FIXEDtoINT(target.x - from[0]) >> 1;
+    s32 deltaZ = FIXEDtoINT(target.z - from[2]) >> 1;
 
     Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, deltaX, deltaZ);
   }
-  Actor_Get(gMainRoutineWork.leaderActorId)->update = PushTarget_UpdatePusher;
+  Actor_Get(gMainRoutineWork.leaderActorId)->update = Actor_StopAtPushTarget;
   System_Wait(4);
   if ((u32)(direction - 6) <= 7)
     Actor_SelectAnimation(actor, 3);
@@ -471,13 +449,13 @@ void PushTarget_PushFill(struct PushTarget target) {
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.1);
   Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId,
-                             (gPushLeaderSteps[direction] << 16) >> 31,
-                             (gPushLeaderSteps[direction] << 16) >> 17);
+                             toFIXED(gPushLeaderSteps[direction]) >> 31,
+                             toFIXED(gPushLeaderSteps[direction]) >> 17);
   if (target.callback != 0)
     target.callback();
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
-  leader->update = 0;
+  leader->update = NULL;
   leader->speedLimit = speed;
   leader->acceleration = acceleration;
   FieldActor_WaitForMove(actor);
@@ -495,9 +473,9 @@ void PushTarget_PushFill(struct PushTarget target) {
   MapGrid_CopyCellAttributes(target.x, target.z, width, height,
                              originX + target.x, originZ + target.z);
   PushedActor_FillGridAttributeRectangle(0, target.x, target.z, width, height,
-                                         255);
+                                         CELL_BEHAVIOR_WALL);
   PushedActor_FillGridAttributeRectangle(2, target.x, target.z, width, height,
-                                         255);
+                                         CELL_BEHAVIOR_WALL);
   cell[0] = FIELD_CELL(from[0] + toFIXED(gPushFootprints[footprint][0]));
   cell[2] = FIELD_CELL(from[2] + toFIXED(gPushFootprints[footprint][1]));
   originX += cell[0];
@@ -509,41 +487,7 @@ void PushTarget_PushFill(struct PushTarget target) {
 
 struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 
-/// Stops the object where it stands (Actor_SetPositionAndResetMotion) when
-/// the point a cell ahead along its facing holds another object
-/// (Actor_FindAtCell) whose sprite shape is not in the footprint table, and
-/// again when its own cell test (MapGrid_CheckCollision) is positive.
-void PushTarget_UpdatePusher(struct Actor *actor) {
-  FIXED position[3];
-  struct Actor *other;
-  u32 i;
-  s32 angle;
-
-  angle = actor->facing >> 12;
-  angle = ((angle + 2) & 12) << 12;
-  position[0] = actor->x.fixed;
-  position[1] = actor->y.fixed;
-  position[2] = actor->z.fixed;
-  FieldVector_AddPolarOffset(16, angle, position);
-  other = Actor_FindAtCell(position, 1);
-  if (other != NULL) {
-    i = 0;
-    do {
-      if (((struct Sprite *)other->sprite)->entries[0]->animationId ==
-          gPushKinds[i])
-        return;
-      i++;
-    } while (i < 6);
-    FieldActor_SetPositionAndResetMotion(actor, actor->x.fixed, actor->y.fixed,
-                                         actor->z.fixed);
-  }
-  position[0] = actor->x.fixed;
-  position[1] = actor->y.fixed;
-  position[2] = actor->z.fixed;
-  if (MapGrid_CheckCollision(actor, position) > 0)
-    FieldActor_SetPositionAndResetMotion(actor, actor->x.fixed, actor->y.fixed,
-                                         actor->z.fixed);
-}
+#include "shared/actor_stop_at_push_target.h"
 
 /// Queues the lit actors' sprites: for each listed actor with a position,
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16
@@ -567,8 +511,10 @@ void LightSprites_SetPriority(s32 value) { gLightSpritePriority = value; }
 #include "../field/actor_set_sprite_priority.c"
 
 // clang-format off
-u16 gPushKinds[] = {
-    258, 259, 293, 294, 332, 331,
+u16 gPushKinds[PUSH_KINDS] = {
+    SPRITE_LOG_WEST_EAST, SPRITE_LOG_NORTH_SOUTH,
+    SPRITE_PIPE_WEST_EAST, SPRITE_PIPE_NORTH_SOUTH,
+    SPRITE_FALLEN_COLUMN_WEST_EAST, SPRITE_FALLEN_COLUMN_NORTH_SOUTH,
 };
 
 s8 gPushFootprints[][4] = {
@@ -581,14 +527,14 @@ s8 gPushFootprints[][4] = {
 
 #include "../field/field_effect_move.c"
 
-#undef FLAG_LOG_OFF_LEDGE
+#undef FLAG_COLUMN_OFF_LEDGE
 #undef FLAG_LEFT_PILLAR_IN_GAP
 #undef FLAG_RIGHT_PILLAR_IN_GAP
 #undef ABS
 #define ABS(v) ((v) < 0 ? -(v) : (v))
 #undef PIXEL_PART
-// The room of gaps and logs in Jupiter Lighthouse: its copy of the effect
-// spawner, and the cracked tiles, found, cracked and fallen through.
+// Its copy of the effect spawner, and the cracked tiles, found, cracked and
+// fallen through.
 
 void CrackedTile_Update(void);
 
@@ -608,10 +554,6 @@ extern const s32 *gFieldEffect_DurationScripts[];
 
 #include "shared/leader_center_in_cell.h"
 
-// Centers the leader on its cell, plays sound 161 and copies the cell below
-// the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
-// one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
 #include "shared/cracked_tile_fall.h"
@@ -619,17 +561,13 @@ extern const s32 *gFieldEffect_DurationScripts[];
 #include "../field/field_effect_advance_motion.c"
 
 #undef CELL_PUSH_SLOT_ENTRY
-// The room of gaps and logs in Jupiter Lighthouse: the cracked tiles' steps
-// and the fall to the floor below.
+// The cracked tiles' steps and the fall to the floor below.
 
 #include "system/system.h"
 void GameFlag_SetByte(s32 flag, s32 value);
 void MapGrid_CenterOnFollowedPoint(void);
 
 extern u16 gPushKinds[];
-
-/// The cells CrackedTile_Step watches, and the cell it copies over the one the
-/// leader steps on.
 
 #include "shared/cracked_tile_drop_in.h"
 
@@ -638,8 +576,7 @@ void CrackedTile_Crack();
 
 #include "shared/cracked_tile_place_landing.h"
 
-// The tables of Jupiter Lighthouse's room of gaps and logs that the scene's
-// getters return.
+// The tables the scene's getters return.
 
 void JupiterLighthouse_StartMovingPillar(void);
 void JupiterLighthouse_LeaveByCyclone(void);
@@ -648,7 +585,7 @@ extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
 
-void JupiterLighthouse_PushLogOffTheLedge(void);
+void JupiterLighthouse_PushColumnOffTheLedge(void);
 
 // clang-format off
 #define FIELD_EFFECT_DURATION_SCRIPT_SECTION LATE_DATA
@@ -703,7 +640,7 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {STEP_TRIGGER_WALKING, 30, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PushLogOffTheLedge)},
+    {STEP_TRIGGER_WALKING, 30, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PushColumnOffTheLedge)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT(JupiterLighthouse_JumpForward)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 12, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 13, CONDITION_ALWAYS, 0},

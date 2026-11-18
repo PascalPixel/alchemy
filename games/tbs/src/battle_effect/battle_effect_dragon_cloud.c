@@ -20,6 +20,27 @@
 #define DRAGON_CLOUD_PUFFS 8             ///< puffs, particles 0 to 7
 #define DRAGON_CLOUD_EMBERS 40  ///< embers, from DRAGON_CLOUD_FIRST_EMBER
 #define DRAGON_CLOUD_FLASHES 16 ///< flashes, from DRAGON_CLOUD_FIRST_FLASH
+/// The trail's copies of the flame's path, the older ones from
+/// DRAGON_CLOUD_TRAIL_BRIGHT on drawn darker, four levels a copy.
+#define DRAGON_CLOUD_TRAIL_LENGTH 20
+#define DRAGON_CLOUD_TRAIL_BRIGHT 10
+/// The puffs' arc: this many pixels across and down from its centre.
+#define DRAGON_CLOUD_PUFF_RADIUS_X 24
+#define DRAGON_CLOUD_PUFF_RADIUS_Y 16
+/// The particles from DRAGON_CLOUD_FIRST_EMBER drawn as embers: the embers and
+/// the first eight flashes; the rest play the flash pictures. The Lost Age
+/// keeps the same count for Dragon Cloud (gDragonCloud_SparkCounts).
+#define DRAGON_CLOUD_DRAWN_EMBERS 48
+/// An ember is drawn at size DRAGON_CLOUD_EMBER_SIZE_MAX at depth
+/// DRAGON_CLOUD_EMBER_DEPTH_NEAR or nearer, one size smaller every
+/// DRAGON_CLOUD_EMBER_DEPTH_STEP farther, its depth held below
+/// DRAGON_CLOUD_EMBER_DEPTH_FAR.
+#define DRAGON_CLOUD_EMBER_SIZE_MAX 9
+#define DRAGON_CLOUD_EMBER_DEPTH_NEAR 160
+#define DRAGON_CLOUD_EMBER_DEPTH_STEP 64
+#define DRAGON_CLOUD_EMBER_DEPTH_FAR 799
+/// The flash and puff animations: six pictures, two frames each.
+#define DRAGON_CLOUD_ANIMATION_PICTURES 6
 
 /// Draws one puff picture sized by the puff tables.
 #define DRAGON_CLOUD_DRAW_PUFF(blit, canvas, sheet, picture, x, y)             \
@@ -34,7 +55,7 @@
 ///
 /// Abilities: Dragon Cloud.
 void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
-  struct Point2D trail[20];
+  struct Point2D trail[DRAGON_CLOUD_TRAIL_LENGTH];
   struct ScreenPoint position;
   DrawRectangle draw[2];
   struct BattleEffectWork *work;
@@ -59,16 +80,18 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   Resource_LoadAndDecompress(RESOURCE_FIRE_PILLAR_SHEET_B, work->sheet, 1, 1);
   // Darker copies of the trail picture, for the trail's tail.
-  for (i = 1; i != 20; i++) {
+  for (i = 1; i != DRAGON_CLOUD_TRAIL_LENGTH; i++) {
     for (j = 0; j != DRAGON_CLOUD_TRAIL_PICTURE_BYTES; j++) {
       s32 shade = work->sheet[DRAGON_CLOUD_TRAIL_PICTURE + j];
 
-      if (i > 10) {
-        shade = shade - i * 4 + 40;
+      if (i > DRAGON_CLOUD_TRAIL_BRIGHT) {
+        shade = shade - (i - DRAGON_CLOUD_TRAIL_BRIGHT) * 4;
         if (shade < 0)
           shade = 0;
         work->sheet[DRAGON_CLOUD_TRAIL_PICTURE +
-                    (i - 10) * DRAGON_CLOUD_TRAIL_PICTURE_BYTES + j] = shade;
+                    (i - DRAGON_CLOUD_TRAIL_BRIGHT) *
+                        DRAGON_CLOUD_TRAIL_PICTURE_BYTES +
+                    j] = shade;
       }
     }
   }
@@ -112,10 +135,10 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
     struct Particle *puff = &work->particles[i];
 
     if (work->args->side == EFFECT_SIDE_PARTY)
-      puff->x = FIXEDtoINT(Trig_Sin(j) * 24) + 88;
+      puff->x = FIXEDtoINT(Trig_Sin(j) * DRAGON_CLOUD_PUFF_RADIUS_X) + 88;
     else
-      puff->x = FIXEDtoINT(-(Trig_Sin(j) * 24)) + 16;
-    puff->y = FIXEDtoINT(Trig_Cos(j) * 16) + 40;
+      puff->x = FIXEDtoINT(-(Trig_Sin(j) * DRAGON_CLOUD_PUFF_RADIUS_X)) + 16;
+    puff->y = FIXEDtoINT(Trig_Cos(j) * DRAGON_CLOUD_PUFF_RADIUS_Y) + 40;
     puff->variant = -(i * 2);
   }
   path = Resource_GetTableEntry(RESOURCE_DUAL_STREAM_PATH);
@@ -165,14 +188,15 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
         y -= 16;
       }
     }
-    for (j = 19; j != 0; j--) {
+    for (j = DRAGON_CLOUD_TRAIL_LENGTH - 1; j != 0; j--) {
       if (frame > j + 18 && frame <= j + 83) {
         trail[j].x = trail[j - 1].x;
         trail[j].y = trail[j - 1].y;
-        if (j > 10)
+        if (j > DRAGON_CLOUD_TRAIL_BRIGHT)
           draw[0](canvas,
                   &work->sheet[DRAGON_CLOUD_TRAIL_PICTURE +
-                               (j - 10) * DRAGON_CLOUD_TRAIL_PICTURE_BYTES],
+                               (j - DRAGON_CLOUD_TRAIL_BRIGHT) *
+                                   DRAGON_CLOUD_TRAIL_PICTURE_BYTES],
                   trail[j].x, trail[j].y, DRAGON_CLOUD_TRAIL_WIDTH,
                   DRAGON_CLOUD_TRAIL_HEIGHT);
         else
@@ -224,13 +248,15 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
 
           Projection_Point(&ember->x, &position);
           position.x >>= 1;
-          if (position.depth <= 159)
-            position.depth = 160;
-          if (position.depth > 799)
-            position.depth = 799;
-          size = 9 - (position.depth - 160) / 64;
-          if (i > 47) {
-            if (ember->variant <= 11) {
+          if (position.depth < DRAGON_CLOUD_EMBER_DEPTH_NEAR)
+            position.depth = DRAGON_CLOUD_EMBER_DEPTH_NEAR;
+          if (position.depth > DRAGON_CLOUD_EMBER_DEPTH_FAR)
+            position.depth = DRAGON_CLOUD_EMBER_DEPTH_FAR;
+          size = DRAGON_CLOUD_EMBER_SIZE_MAX -
+                 (position.depth - DRAGON_CLOUD_EMBER_DEPTH_NEAR) /
+                     DRAGON_CLOUD_EMBER_DEPTH_STEP;
+          if (i >= DRAGON_CLOUD_DRAWN_EMBERS) {
+            if (ember->variant < 2 * DRAGON_CLOUD_ANIMATION_PICTURES) {
               draw[0](canvas,
                       Ram_MapGridCellBuffer +
                           ember->variant / 2 * PICTURE_BYTES(FLASH_BURST),
@@ -260,7 +286,8 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       for (i = 0; i != DRAGON_CLOUD_PUFFS; i++) {
         struct Particle *puff = &work->particles[i];
 
-        if (puff->variant >= 0 && puff->variant <= 11) {
+        if (puff->variant >= 0 &&
+            puff->variant < 2 * DRAGON_CLOUD_ANIMATION_PICTURES) {
           s32 picture = puff->variant / 2;
 
           DRAGON_CLOUD_DRAW_PUFF(
@@ -289,3 +316,13 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
 #undef DRAGON_CLOUD_EMBERS
 #undef DRAGON_CLOUD_FLASHES
 #undef DRAGON_CLOUD_DRAW_PUFF
+#undef DRAGON_CLOUD_TRAIL_LENGTH
+#undef DRAGON_CLOUD_TRAIL_BRIGHT
+#undef DRAGON_CLOUD_PUFF_RADIUS_X
+#undef DRAGON_CLOUD_PUFF_RADIUS_Y
+#undef DRAGON_CLOUD_DRAWN_EMBERS
+#undef DRAGON_CLOUD_EMBER_SIZE_MAX
+#undef DRAGON_CLOUD_EMBER_DEPTH_NEAR
+#undef DRAGON_CLOUD_EMBER_DEPTH_STEP
+#undef DRAGON_CLOUD_EMBER_DEPTH_FAR
+#undef DRAGON_CLOUD_ANIMATION_PICTURES

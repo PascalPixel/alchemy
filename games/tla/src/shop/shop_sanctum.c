@@ -1,5 +1,5 @@
 /// @file
-/// The sanctum's services, their prices and their sparkles.
+/// The sanctum's services, their donations and their sparkles.
 // Part of shop.c.
 
 #include "shop_internal.h"
@@ -12,21 +12,29 @@
 #include "system/system.h"
 #include "window/cursor.h"
 
-/// Returns the sanctum's fee, in coins, for `serviceKind` on party member
-/// `unitId`: 20 a level to revive, 10 to cure poison, 50 to exorcise and 10 a
-/// level to remove a curse.
+/// The donations the sanctum asks, in coins: reviving and removing a curse
+/// ask so many for each of the party member's levels.
+enum SanctumDonation {
+  DONATION_REVIVE_PER_LEVEL = 20,
+  DONATION_CURE_POISON = 10,
+  DONATION_REPEL_EVIL = 50,
+  DONATION_REMOVE_CURSE_PER_LEVEL = 10
+};
+
+/// Returns the sanctum's donation, in coins, for `serviceKind` on party member
+/// `unitId`.
 s32 Sanctum_ServicePrice(s32 unitId, s32 serviceKind) {
   u8 level = Unit_Get(unitId)->level;
   s32 donation = 0;
 
   if (serviceKind == SANCTUM_SERVICE_REVIVE) {
-    donation = level * 20;
+    donation = level * DONATION_REVIVE_PER_LEVEL;
   } else if (serviceKind == SANCTUM_SERVICE_CURE_POISON) {
-    donation = 10;
+    donation = DONATION_CURE_POISON;
   } else if (serviceKind == SANCTUM_SERVICE_REPEL_EVIL) {
-    donation = 50;
+    donation = DONATION_REPEL_EVIL;
   } else if (serviceKind == SANCTUM_SERVICE_REMOVE_CURSE) {
-    donation = level * 10;
+    donation = level * DONATION_REMOVE_CURSE_PER_LEVEL;
   }
   return donation;
 }
@@ -89,7 +97,9 @@ void Sanctum_ShowKeeperMessage(s32 messageId) {
   voice = Speaker_GetVoiceFar(shop->keeperGraphics);
   Message_CloseFinishedWindowsFar();
   messageId = Sanctum_GetServiceMessage(messageId);
-  Message_OpenWindowFar(messageId, 5, 0, MESSAGE_WINDOW_VOICE(voice) | 0x22);
+  Message_OpenWindowFar(messageId, 5, 0,
+                        MESSAGE_WINDOW_VOICE(voice) | MESSAGE_WINDOW_FIXED_X |
+                            2);
   while (Message_AllTypedFar() == 0)
     wait(1);
   wait(1);
@@ -109,7 +119,9 @@ void Sanctum_ShowKeeperMessageHidingCursor(s32 messageId) {
   messageId = Sanctum_GetServiceMessage(messageId);
   (*cursorSlot)->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   Message_CloseFinishedWindowsFar();
-  Message_OpenWindowFar(messageId, 5, 0, MESSAGE_WINDOW_VOICE(voice) | 0x22);
+  Message_OpenWindowFar(messageId, 5, 0,
+                        MESSAGE_WINDOW_VOICE(voice) | MESSAGE_WINDOW_FIXED_X |
+                            2);
   while (Message_AllTypedFar() == 0)
     wait(1);
   wait(1);
@@ -182,43 +194,43 @@ s32 Sanctum_Run(s32 actorId) {
   return 0;
 }
 
-// Italian creates no fee window and passes 0 where the others pass it, a
-// layout difference of that language's edition.
-// XXX: what Italian shows in its place; the Italian render of the sanctum
-// would settle it.
-#define SANCTUM_HAS_PRICE_WINDOW (LANGUAGE != LANGUAGE_ITALIAN)
+// Italian creates no donation window and passes 0 where the others pass it, a
+// layout difference of that language's edition: Sanctum_DrawFee draws nothing
+// without a window, so Italian shows no donation while a party member is
+// chosen, and the donation is first seen in the keeper's line (MsgReviving).
+#define SANCTUM_HAS_DONATION_WINDOW (LANGUAGE != LANGUAGE_ITALIAN)
 
-// The fee window's left column and width in tiles, sized to each language's
-// text.
+// The donation window's left column and width in tiles, sized to each
+// language's text.
 #if LANGUAGE == LANGUAGE_GERMAN
-#define SANCTUM_PRICE_WINDOW_X 0
-#define SANCTUM_PRICE_WINDOW_WIDTH 30
+#define SANCTUM_DONATION_WINDOW_X 0
+#define SANCTUM_DONATION_WINDOW_WIDTH 30
 #elif LANGUAGE == LANGUAGE_FRENCH
-#define SANCTUM_PRICE_WINDOW_X 1
-#define SANCTUM_PRICE_WINDOW_WIDTH 25
+#define SANCTUM_DONATION_WINDOW_X 1
+#define SANCTUM_DONATION_WINDOW_WIDTH 25
 #else
-#define SANCTUM_PRICE_WINDOW_X 1
-#define SANCTUM_PRICE_WINDOW_WIDTH 23
+#define SANCTUM_DONATION_WINDOW_X 1
+#define SANCTUM_DONATION_WINDOW_WIDTH 23
 #endif
 
-/// Runs one service: the player chooses the party member, sees the fee,
+/// Runs one service: the player chooses the party member, sees the donation,
 /// confirms, pays and watches the burst. Repeats while anyone still needs it,
 /// until B.
 s32 Sanctum_RunPartyService(void) {
   struct ShopWork *shop = Ram_HeapSlots->menuWork;
-  struct Window *priceWindow;
+  struct Window *donationWindow;
   s32 redraw;
   s32 serviceKind;
   struct Window *listWindow;
   s32 memberIndex;
   s32 unitId;
   s32 chooseAgain;
-  s32 price;
+  s32 donation;
   s32 messageBase;
 
-  // Neither window exists yet; Italian's fee window never does.
+  // Neither window exists yet; Italian's donation window never does.
   listWindow = NULL;
-  priceWindow = NULL;
+  donationWindow = NULL;
   // DEAD: memberIndex is set again after the windows before any read; the ROM
   // keeps its store.
   memberIndex = 0;
@@ -232,10 +244,10 @@ s32 Sanctum_RunPartyService(void) {
   shop->cursor.anchor->motion = WINDOW_SPRITE_MOTION_WOBBLE;
   shop->cursorFrames = redraw;
   Menu_PlaceOwnerEntryObjectsFar(listWindow, 2, 0);
-#if SANCTUM_HAS_PRICE_WINDOW
-  priceWindow =
-      Window_CreateFar(SANCTUM_PRICE_WINDOW_X, 16, SANCTUM_PRICE_WINDOW_WIDTH,
-                       3, WINDOW_FLAG_INSTANT);
+#if SANCTUM_HAS_DONATION_WINDOW
+  donationWindow =
+      Window_CreateFar(SANCTUM_DONATION_WINDOW_X, 16,
+                       SANCTUM_DONATION_WINDOW_WIDTH, 3, WINDOW_FLAG_INSTANT);
 #endif
   memberIndex = 0;
   while (memberIndex < shop->partyMemberCount) {
@@ -271,20 +283,20 @@ s32 Sanctum_RunPartyService(void) {
         wait(1);
       }
       Sanctum_HighlightMembers(listWindow, memberIndex);
-      Sanctum_DrawFee(priceWindow, unitId);
+      Sanctum_DrawFee(donationWindow, unitId);
       redraw = 0;
     }
 
     if ((gInput.pressed & KEY_A) != 0) {
       wait(1);
-      price = Sanctum_ServicePrice(unitId, serviceKind);
+      donation = Sanctum_ServicePrice(unitId, serviceKind);
       if (Sanctum_NeedsService(unitId, serviceKind) == 0) {
         Sound_PlayFar(SE_MENU_CANCEL);
         continue;
       }
       WindowSprite_PrepareForRedrawFar(listWindow);
       MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
-      MessageArgument_PushFar(price, MESSAGE_ARGUMENT_NUMBER);
+      MessageArgument_PushFar(donation, MESSAGE_ARGUMENT_NUMBER);
       messageBase = (s32)MsgReviving;
       Sanctum_ShowKeeperMessage(messageBase);
       if (Sanctum_AskYesNo(0) != 0) {
@@ -292,7 +304,7 @@ s32 Sanctum_RunPartyService(void) {
         chooseAgain = 1;
         continue;
       }
-      if ((u32)price > gMainRoutineWork.coins) {
+      if ((u32)donation > gMainRoutineWork.coins) {
         Sound_PlayFar(SE_MENU_CANCEL);
         Sanctum_ShowKeeperMessageHidingCursor(messageBase + 1);
         chooseAgain = 1;
@@ -303,7 +315,7 @@ s32 Sanctum_RunPartyService(void) {
       Message_CloseFinishedWindowsFar();
       Sanctum_ApplyService(unitId, serviceKind);
       Sanctum_RunMemberIconBurst(memberIndex % SHOP_PARTY_PAGE_MEMBERS);
-      Party_AdjustCoinsFar(-price);
+      Party_AdjustCoinsFar(-donation);
       Shop_DrawMoney();
       MessageArgument_PushFar(unitId, MESSAGE_ARGUMENT_ACTOR);
       Sanctum_ShowKeeperMessage(messageBase + 4);
@@ -323,15 +335,15 @@ s32 Sanctum_RunPartyService(void) {
   }
 
   Menu_ReleaseEntryObjectsFar();
-  Window_CloseFar(priceWindow, 2);
+  Window_CloseFar(donationWindow, 2);
   Window_CloseFar(listWindow, 2);
   wait(1);
   return 0;
 }
 
-#undef SANCTUM_HAS_PRICE_WINDOW
-#undef SANCTUM_PRICE_WINDOW_X
-#undef SANCTUM_PRICE_WINDOW_WIDTH
+#undef SANCTUM_HAS_DONATION_WINDOW
+#undef SANCTUM_DONATION_WINDOW_X
+#undef SANCTUM_DONATION_WINDOW_WIDTH
 
 /// Gives the party member the service: full HP for a revive, the poison or the
 /// haunting lifted, or every cursed item it wears taken off.
@@ -404,16 +416,16 @@ void Sanctum_HighlightMembers(struct Window *window, s32 selected) {
   }
 }
 
-/// Shows the chosen party member's fee for the service, or that none is
+/// Shows the chosen party member's donation for the service, or that none is
 /// needed.
 void Sanctum_DrawFee(struct Window *window, s32 unitId) {
   s32 message;
-  s32 price;
+  s32 donation;
   struct ShopWork *shop;
 
   shop = Ram_HeapSlots->menuWork;
   message = shop->action;
-  price = Sanctum_ServicePrice(unitId, message);
+  donation = Sanctum_ServicePrice(unitId, message);
   if (window != 0) {
     WindowSprite_PrepareForRedrawFar(window);
     if (Sanctum_NeedsService(unitId, message) != 0)
@@ -421,7 +433,7 @@ void Sanctum_DrawFee(struct Window *window, s32 unitId) {
     else
       message = (s32)MsgNoHealingNeeded;
     message = Sanctum_GetServiceMessage(message);
-    MessageArgument_PushFar(price, MESSAGE_ARGUMENT_NUMBER);
+    MessageArgument_PushFar(donation, MESSAGE_ARGUMENT_NUMBER);
     Text_DrawMessageFar(message, (s32)window, 0, 0);
   }
 }
@@ -559,7 +571,8 @@ void Sanctum_RunMemberIconBurst(s32 member) {
   }
 
   Task_Remove(Sanctum_UpdateBurst);
-  Sprite_SetAnimationSpeedFar(shop->partyMemberIcons[member], 16);
+  Sprite_SetAnimationSpeedFar(shop->partyMemberIcons[member],
+                              ANIMATION_STEP_NORMAL);
   Shop_RestoreFieldPalette();
   wait(30);
   shop->cursor.anchor->motion = savedCursorMode;

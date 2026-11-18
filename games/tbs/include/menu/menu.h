@@ -81,7 +81,7 @@ extern u8 gItemMenu_EquipmentKeyString[];
 /// standby, a class and the next), and the Djinn preview blinks it, drawing it
 /// and a fill of the window background (TEXT_CANVAS_BACKGROUND_WORD) in turn
 /// every four frames.
-extern const u8 gMenu_BackdropBorderTile[];
+extern const u8 gMenu_ChangeArrowTile[];
 /// The colon the debug menus' scene and flag rows draw
 /// (window/screens_debug.c): `:`.
 extern const u8 gMenu_ColonString[];

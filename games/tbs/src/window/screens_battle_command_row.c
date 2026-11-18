@@ -26,6 +26,18 @@ struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y) {
 /// The command window's top tile row: it runs along the bottom three rows.
 #define COMMAND_ROW_TOP 17
 
+/// The command icons stand 24 pixels apart on the row.
+#define COMMAND_ICON_SPACING 24
+
+/// The 256 colours of a command icon, each with a GlyphPalette.slot entry, and
+/// the entry of one with no BG colour yet, as screens_menu_titles.c names it.
+#define COMMAND_ICON_COLORS 256
+#define COMMAND_ICON_COLOR_UNSET 255
+
+/// BG1's map in battle (BATTLE_BG1CNT), where the strip places the icons'
+/// tiles.
+#define BATTLE_BG1_SCREEN_BLOCK 31
+
 /// Runs a battle command row: the commands as icons along the bottom of the
 /// screen, the selected one pulsing as a sprite and named in a window, until a
 /// command is chosen.
@@ -47,8 +59,8 @@ s32 BattleCommandRow_Run(s32 mode) {
   tradeCount = 0;
   selectionUi = Heap_AllocEwram(sizeof(*selectionUi));
   // No icon colour placed yet; the shared palette starts at BG entry 1.
-  for (i = 0; i < 256; i++)
-    selectionUi->palette.slot[i] = 255;
+  for (i = 0; i < COMMAND_ICON_COLORS; i++)
+    selectionUi->palette.slot[i] = COMMAND_ICON_COLOR_UNSET;
   selectionUi->palette.count = 1;
   if (mode == COMMAND_ROW_PARTY)
     selectionUi->window = Window_Create(20, 17, 10, 3, 6);
@@ -97,12 +109,12 @@ s32 BattleCommandRow_Run(s32 mode) {
   selectionUi->affine.scaleX = Q_8_8(1.25);
   selectionUi->affine.scaleY = Q_8_8(19.0 / 16);
   selectionUi->affine.angle = 0;
-  // Icons 24 pixels apart on the command row's top line, the last ending by
-  // the name window.
+  // The icons on the command row's top line, the last ending by the name
+  // window.
   entryIndex = 0;
   if (entryIndex < selectionUi->iconCount) {
     do {
-      s32 x = (entryIndex - selectionUi->iconCount) * 24;
+      s32 x = (entryIndex - selectionUi->iconCount) * COMMAND_ICON_SPACING;
 
       selectionUi->entries[entryIndex].positionX = x + 155;
       if (mode != COMMAND_ROW_PARTY)
@@ -117,9 +129,9 @@ s32 BattleCommandRow_Run(s32 mode) {
   Irq_SetHandler(IRQ_VCOUNT, COMMAND_ROW_TOP * 8, CommandRow_PutBg1InFront);
 
   for (;;) {
-    // 304 to 336 in 8.8 (1.19 to 1.31 times), over 16 frames.
+    // 1.19 to 1.31 times, over 16 frames.
     pulseScale = gWindowSprite_BounceScales[(gFrameCount * 2) & 31];
-    pulseScale = (pulseScale - 256) / 4 + 304;
+    pulseScale = (pulseScale - Q_8_8(1)) / 4 + Q_8_8(19.0 / 16);
     selectionUi->affine.scaleY = selectionUi->affine.scaleX = pulseScale;
     // Scrolled up 32 pixels, BG1's map rows 21 to 23 show on rows 17 to 19.
     gBgScroll[1].x = 0;
@@ -146,8 +158,9 @@ s32 BattleCommandRow_Run(s32 mode) {
           for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
             s32 col;
             for (col = 0; col <= 2; col++) {
-              volatile u16 *vram = (volatile u16 *)BG_SCREEN_BLOCK(31) +
-                                   21 * BG_SCREEN_WIDTH + WINDOW_X;
+              volatile u16 *vram =
+                  (volatile u16 *)BG_SCREEN_BLOCK(BATTLE_BG1_SCREEN_BLOCK) +
+                  21 * BG_SCREEN_WIDTH + WINDOW_X;
 
               vram[panel * 3 + entryIndex * BG_SCREEN_WIDTH + (col & 3) -
                    selectionUi->iconCount * 3] =
@@ -173,8 +186,9 @@ s32 BattleCommandRow_Run(s32 mode) {
           for (entryIndex = 0; entryIndex <= 2; entryIndex++) {
             s32 col;
             for (col = 0; col <= 2; col++) {
-              volatile u16 *vram = (volatile u16 *)BG_SCREEN_BLOCK(31) +
-                                   21 * BG_SCREEN_WIDTH + 20;
+              volatile u16 *vram =
+                  (volatile u16 *)BG_SCREEN_BLOCK(BATTLE_BG1_SCREEN_BLOCK) +
+                  21 * BG_SCREEN_WIDTH + 20;
 
               vram[panel * 3 + entryIndex * BG_SCREEN_WIDTH + (col & 3) -
                    selectionUi->iconCount * 3] =
@@ -377,7 +391,7 @@ void Window_HighlightRect(s32 x, s32 y, s32 width, s32 height, s32 paletteBit) {
 
       while (remaining != 0) {
         u32 tile = *cell;
-        tile = (tile & ~0x1000) | paletteBit;
+        tile = (tile & ~BG_TILE_PALETTE(1)) | paletteBit;
         remaining--;
         *cell = tile;
         cell++;

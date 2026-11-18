@@ -57,73 +57,79 @@ s32 Enemy_HasSpriteRoom(s32 classId) {
   return spriteSlot != ENEMY_SPRITE_SLOTS;
 }
 
-/// Loads the battle sprites of a unit into free sprite slots: one slot, or
-/// two neighbouring ones for a wide sprite. A few sprites load a second part
-/// into the next free slots. Returns the first slot in bits 12 and up with
-/// the sprite value below, or 0 when a load fails.
-s32 EnemySprite_LoadIntoSlots(s32 unit) {
-  s32 pass;
-  struct BattleWork *table = Ram_HeapSlots->battleWork;
-  struct Unit *actor = Unit_Get(unit);
-  s32 singleSlot = BattleSprite_IsSmall(actor->enemyId);
+/// Each enemy sprite slot owns 16 KB of the sprite buffers, gActorSpriteSlots.
+#define ENEMY_SPRITE_SLOT_SIZE 16384
+/// Where a battle object's resource keeps its sprite slot, above its sprite.
+#define RESOURCE_SLOT_SHIFT 12
+
+/// Loads an enemy's battle sprite into the first free enemy sprite slots: one
+/// slot, or two neighbouring ones for a large enemy. A few sprites load a
+/// second part into the next free slots. Returns (slot << RESOURCE_SLOT_SHIFT)
+/// | sprite, or 0 when a load fails.
+s32 EnemySprite_LoadIntoSlots(s32 unitId) {
+  s32 spritePart;
+  struct BattleWork *battle = Ram_HeapSlots->battleWork;
+  struct Unit *unit = Unit_Get(unitId);
+  s32 needsSingleSlot = BattleSprite_IsSmall(unit->enemyId);
   /* FAKEMATCH(temporary): result cleared a halfword at a time. */
   union {
     s32 value;
     u16 halves[2];
   } result;
-  s32 spriteValue;
-  s32 slotBuffers;
+  s32 sprite;
+  u8 *spriteBuffers;
 
   result.halves[0] = 0;
   result.halves[1] = 0;
-  spriteValue = BattleSprite_GetSprite(actor->enemyId);
-  pass = result.value;
+  sprite = BattleSprite_GetSprite(unit->enemyId);
+  spritePart = result.value;
+  // Once for the sprite, and again for its second part if it has one.
   do {
     s32 slot;
 
-    if (actor->classId != CLASS_NONE)
+    // A unit with a class is no enemy: nothing is loaded and the result stays
+    // 0.
+    if (unit->classId != CLASS_NONE)
       continue;
 
-    for (slot = 0; slot <= 5; slot++) {
-      if (table->spriteSlots[slot] != 0)
+    // The first free slot (and, for a large enemy, the one after it).
+    for (slot = 0; slot < ENEMY_SPRITE_SLOTS; slot++) {
+      if (battle->spriteSlots[slot] != 0)
         continue;
-      if (singleSlot)
+      if (needsSingleSlot)
         break;
-      if (slot <= 4 && table->spriteSlots[slot + 1] == 0)
+      if (slot < ENEMY_SPRITE_SLOTS - 1 && battle->spriteSlots[slot + 1] == 0)
         break;
     }
 
     if (slot == ENEMY_SPRITE_SLOTS)
       break;
 
-    // The buffers' address held in a local, taken before the palette's call,
-    slotBuffers = (s32)gActorSpriteSlots;
+    spriteBuffers = gActorSpriteSlots;
     {
-      s32 flag = BattleSprite_GetPalette(actor->enemyId);
-      s32 bufferAddr = (slot << 14) + slotBuffers;
+      s32 palette = BattleSprite_GetPalette(unit->enemyId);
+      u8 *spriteBuffer = spriteBuffers + slot * ENEMY_SPRITE_SLOT_SIZE;
 
-      if (SpritePictureCache_LoadFar(slot, (u32 *)bufferAddr,
-                                     spriteValue + pass, flag) == 0)
+      if (SpritePictureCache_LoadFar(slot, (u32 *)spriteBuffer,
+                                     sprite + spritePart, palette) == 0)
         return 0;
     }
 
-    if (pass == 0)
-      result.value = (slot << 12) | spriteValue;
+    if (spritePart == 0)
+      result.value = (slot << RESOURCE_SLOT_SHIFT) | sprite;
 
-    table->spriteSlots[slot] = unit;
-    if (!singleSlot)
-      table->spriteSlots[slot + 1] = unit;
+    battle->spriteSlots[slot] = unitId;
+    if (!needsSingleSlot)
+      battle->spriteSlots[slot + 1] = unitId;
 
-    // A two-part enemy loads its second sprite into the next slot.
-    if (spriteValue != SPRITE_BATTLE_SERPENT &&
-        spriteValue != SPRITE_BATTLE_KRAKEN &&
-        spriteValue != SPRITE_BATTLE_FUSION_DRAGON &&
-        spriteValue != SPRITE_BATTLE_POSEIDON &&
-        spriteValue != SPRITE_BATTLE_DOOM_DRAGON_A &&
-        spriteValue != SPRITE_BATTLE_DOOM_DRAGON_E &&
-        spriteValue != SPRITE_BATTLE_DOOM_DRAGON_H)
+    if (sprite != SPRITE_BATTLE_SERPENT && sprite != SPRITE_BATTLE_KRAKEN &&
+        sprite != SPRITE_BATTLE_FUSION_DRAGON &&
+        sprite != SPRITE_BATTLE_POSEIDON &&
+        sprite != SPRITE_BATTLE_DOOM_DRAGON_A &&
+        sprite != SPRITE_BATTLE_DOOM_DRAGON_E &&
+        sprite != SPRITE_BATTLE_DOOM_DRAGON_H)
       break;
-  } while (++pass <= 1);
+  } while (++spritePart <= 1);
 
   return result.value;
 }

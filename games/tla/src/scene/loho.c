@@ -63,18 +63,23 @@ enum LohoActorId {
   ACTOR_LULL,
   ACTOR_CANNON,
   ACTOR_MAGMA_BALL, ///< shown as ITEM_MAGMA_BALL as it is loaded
-  ACTOR_BOULDER     ///< raised by Lift
+  ACTOR_BOULDER     ///< raised by Lift, over the Golem Core
 };
 
 /// Loho's houses, by the rows of gLoho_RoomsPlacements.
 enum LohoRoomsActorId {
-  ACTOR_VILLAGER_ON_COMMERCE = ACTOR_FIRST_PLACED, ///< Loho_TalkAboutCommerce
-  ACTOR_INNKEEPER,
+  /// The woman who keeps the shop and the inn (Loho_TalkAboutCommerce).
+  ACTOR_VILLAGER_ON_COMMERCE = ACTOR_FIRST_PLACED,
+  /// An unseen marker on the inn's counter, so that talking across it reaches
+  /// the inn (Loho_TalkToInnkeeper).
+  ACTOR_INN_COUNTER,
   ACTOR_BEARDED_MAN_ON_THE_CANNON ///< Loho_TalkAboutCannon
 };
 
-/// The Golem Core under the rock, dug up.
-#define FLAG_GOLEM_CORE_DUG 0xff7
+/// The Golem Core under the boulder, dug up.
+#define FLAG_LOHO_GOLEM_CORE_DUG 0xff7
+/// Set once Lift has raised the boulder, this visit.
+#define FLAG_LOHO_BOULDER_LIFTED FLAG_SCENE_TEMP_01
 
 extern s32 gLoho_VillagerMovesNorth[];
 extern s32 gLoho_VillagerMovesWest[];
@@ -93,7 +98,7 @@ extern s32 gLoho_ThirdMinerStepsUp[];
 extern s32 gLoho_FirstMinerWalksBack[];
 extern s32 gLoho_FirstMinerFetchesCannon[];
 extern s32 gLoho_FirstMinerReturns[];
-extern s32 gLoho_ForemanComes[];
+extern s32 gLoho_CannonRises[];
 extern struct Trigger gLoho_Triggers[];
 extern struct Trigger gLoho_TownTriggers[];
 extern struct Trigger gLoho_RoomsTriggers[];
@@ -104,6 +109,16 @@ extern s16 gLoho_DoorOpening[];
 
 /// The sparks the cannon's blast throws over the screen.
 #define LOHO_SPARK_COUNT 96
+/// How long the blast throws sparks, in frames.
+#define LOHO_BLAST_FRAMES 120
+/// A spark's life in frames: the explosion sheet's eight pictures, four frames
+/// each.
+#define LOHO_SPARK_FRAMES 32
+/// The sprite palette the blast loads the sparks' colours into
+/// (Field_ExplosionPalette).
+#define LOHO_SPARK_PALETTE 15
+/// The sparks' depth slot among the field's sprites.
+#define LOHO_SPARK_DEPTH 100
 
 /// One of the 96 sparks the cannon's blast throws over the screen: the link the
 /// sprite list threads it by, its sprite, and its age in frames, negative while
@@ -182,13 +197,6 @@ void Loho_ExamineCannon(void) {
   FieldMessage_Show((s32)MsgLohoItLooksLikeItsEmpty, 1);
   gFieldWork->fieldMenu = 1;
 }
-
-#define FIELD_AT(base, type, off)                                              \
-  (((struct {                                                                  \
-     u8 pad[off];                                                              \
-     type v;                                                                   \
-   } *)(base))                                                                 \
-       ->v)
 
 void FieldCamera_WaitForArrival();
 
@@ -298,8 +306,9 @@ inPlace:
     timer += 4;
   }
   Dma_Set((const void *)(s32)Field_ExplosionPalette,
-          (void *)&OBJ_PLTT_COLOR(15, 0), DMA_COPY_HALFWORDS(16), REG_DMA3);
-  for (i = 0; i <= 119; i++) {
+          (void *)&OBJ_PLTT_COLOR(LOHO_SPARK_PALETTE, 0),
+          DMA_COPY_HALFWORDS(16), REG_DMA3);
+  for (i = 0; i < LOHO_BLAST_FRAMES; i++) {
     if ((i & 31) == 0) {
       Event_PlaySound(SE_CRASH);
     }
@@ -314,15 +323,15 @@ inPlace:
         spark->sprite.words[1] = 0;
         spark->sprite.oam.x = Random_Below(96) + 72;
         spark->sprite.oam.y = Random16() >> 10;
-        spark->sprite.oam.palette = 15;
+        spark->sprite.oam.palette = LOHO_SPARK_PALETTE;
         spark->sprite.oam.priority = 0;
       }
       if (spark->age >= 0) {
         spark->sprite.oam.tile = tiles + (spark->age >> 2) * 4;
-        Oam_AddSpriteAtDepthClamped(spark, 100);
+        Oam_AddSpriteAtDepthClamped(spark, LOHO_SPARK_DEPTH);
       }
       spark->age++;
-      if (spark->age > 31) {
+      if (spark->age >= LOHO_SPARK_FRAMES) {
         spark->age = -(Random_Below(7));
       }
       spark++;
@@ -346,8 +355,8 @@ inPlace:
   // "Is everyone all right?"
   Event_ShowMessage(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0);
   Actor_FaceDirection(ACTOR_MAN_KEEPING_THE_CANNON, FACING_SOUTHEAST, 0);
-  Actor_SetAnimation(ACTOR_MAN_KEEPING_THE_CANNON, 3);
-  Actor_SetAnimation(ACTOR_MINER_BY_THE_CANNON, 3);
+  Actor_SetAnimation(ACTOR_MAN_KEEPING_THE_CANNON, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_MINER_BY_THE_CANNON, ANIM_NOD);
   Event_Wait(30);
   FieldActor_ShowEmote(ACTOR_MAN_KEEPING_THE_CANNON,
                        EMOTE_IN_FRONT | EMOTE_WINCE, 35);
@@ -400,7 +409,7 @@ inPlace:
                        EMOTE_IN_FRONT | EMOTE_WINCE, 35);
   // "The wall... It's gone!"
   Event_ShowMessage(ACTOR_MAN_KEEPING_THE_CANNON, 0);
-  Actor_SetAnimation(ACTOR_MINER_BY_THE_CANNON, 3);
+  Actor_SetAnimation(ACTOR_MINER_BY_THE_CANNON, ANIM_NOD);
   // "Well, it's mostly gone, yeah... You can get through to the other..."
   Event_ShowMessage(ACTOR_MINER_BY_THE_CANNON, 0);
   Actor_FaceActor(ACTOR_MINER_PUZZLED_BY_THE_CANNON, ACTOR_FELIX, 0);
@@ -416,13 +425,13 @@ inPlace:
   Actor_WalkBy(ACTOR_MAN_KEEPING_THE_CANNON, 0, 16);
   Actor_WaitForMoveById(ACTOR_MAN_KEEPING_THE_CANNON);
   Actor_FaceDirectionAndWait(ACTOR_MAN_KEEPING_THE_CANNON, FACING_SOUTHEAST);
-  Actor_SetAnimation(ACTOR_MAN_KEEPING_THE_CANNON, 4);
+  Actor_SetAnimation(ACTOR_MAN_KEEPING_THE_CANNON, ANIM_SHAKE_HEAD);
   // "Ah, never mind... What's important here is that we can dig on the..."
   Event_ShowMessage(ACTOR_MAN_KEEPING_THE_CANNON, 0);
-  Actor_SetAnimation(ACTOR_MINER_BY_THE_CANNON, 3);
+  Actor_SetAnimation(ACTOR_MINER_BY_THE_CANNON, ANIM_NOD);
   // "Yeah, who cares how it happened? We can dig again!"
   Event_ShowMessage(ACTOR_MINER_BY_THE_CANNON, 0);
-  Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 3);
+  Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, ANIM_NOD);
   Actor_FaceDirection(ACTOR_MAN_KEEPING_THE_CANNON, FACING_SOUTH_SOUTHEAST, 0);
   // "Well, you did what we asked, so the cannon's all yours!"
   Event_ShowMessage(ACTOR_MAN_KEEPING_THE_CANNON, 0);
@@ -444,13 +453,13 @@ inPlace:
                        EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 35);
   // "Those guys are new in town, aren't they? Do you think they came from..."
   Event_ShowMessage(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0);
-  Actor_SetAnimation(ACTOR_MAN_KEEPING_THE_CANNON, 3);
+  Actor_SetAnimation(ACTOR_MAN_KEEPING_THE_CANNON, ANIM_NOD);
   Event_Wait(40);
   FieldActor_ShowEmote(ACTOR_MAN_KEEPING_THE_CANNON,
                        EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 35);
   // "I don't know, but I can tell you they came by boat..."
   Event_ShowMessage(ACTOR_MAN_KEEPING_THE_CANNON, 0);
-  Actor_SetAnimation(ACTOR_MINER_BY_THE_CANNON, 3);
+  Actor_SetAnimation(ACTOR_MINER_BY_THE_CANNON, ANIM_NOD);
   Event_Wait(30);
   FieldCamera_SetSpeed(0.5);
   FieldCamera_MoveTo(542, CAMERA_KEEP, 256, 1);
@@ -479,7 +488,7 @@ inPlace:
   Event_Wait(10);
   Actor_FaceDirectionAndWait(ACTOR_MINER_BY_THE_CANNON, FACING_SOUTH_SOUTHWEST);
   Event_Wait(40);
-  Actor_SetAnimation(ACTOR_MINER_BY_THE_CANNON, 3);
+  Actor_SetAnimation(ACTOR_MINER_BY_THE_CANNON, ANIM_NOD);
   Event_Wait(60);
   // "Yeah, I saw one anchored off the beach!"
   Event_ShowMessage(ACTOR_MINER_BY_THE_CANNON, 0);
@@ -488,8 +497,8 @@ inPlace:
   Actor_FaceEachOther(ACTOR_MAN_KEEPING_THE_CANNON,
                       ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0);
   Event_Wait(20);
-  Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 3);
-  Actor_SetAnimation(ACTOR_MAN_KEEPING_THE_CANNON, 3);
+  Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_MAN_KEEPING_THE_CANNON, ANIM_NOD);
   Event_Wait(30);
   Actor_FaceActor(ACTOR_MAN_KEEPING_THE_CANNON, ACTOR_FELIX, 0);
   Actor_SetSpeed(ACTOR_MINER_BY_THE_CANNON, 1);
@@ -501,7 +510,7 @@ inPlace:
   Event_OpenMessage(ACTOR_MAN_KEEPING_THE_CANNON, 0);
   if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0))
     goto answeredNo;
-  Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 3);
+  Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, ANIM_NOD);
   Event_ShowMessage(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0);
   gFieldWork->message++;
   goto crewLeaves;
@@ -509,10 +518,10 @@ toWest:
   Actor_WalkToAndWait(ACTOR_FELIX, 471, 373);
   goto inPlace;
 answeredNo:
-  Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 4);
+  Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, ANIM_SHAKE_HEAD);
   gFieldWork->message++;
   Event_ShowMessage(ACTOR_MAN_KEEPING_THE_CANNON, 0);
-  Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 3);
+  Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, ANIM_NOD);
   Event_ShowMessage(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0);
 crewLeaves:
   Actor_WalkBy(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 0, 24);
@@ -527,9 +536,9 @@ crewLeaves:
   Actor_FaceDirection(ACTOR_MAN_KEEPING_THE_CANNON, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_MINER_BY_THE_CANNON, FACING_SOUTHWEST, 0);
   Event_Wait(50);
-  Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 3);
-  Actor_SetAnimation(ACTOR_MAN_KEEPING_THE_CANNON, 3);
-  Actor_SetAnimation(ACTOR_MINER_BY_THE_CANNON, 3);
+  Actor_SetAnimation(ACTOR_MINER_PUZZLED_BY_THE_CANNON, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_MAN_KEEPING_THE_CANNON, ANIM_NOD);
+  Actor_SetAnimation(ACTOR_MINER_BY_THE_CANNON, ANIM_NOD);
   Event_Wait(60);
   FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_MINER_BY_THE_CANNON);
   Actor_WalkTo(ACTOR_MINER_PUZZLED_BY_THE_CANNON, 504, 370);
@@ -546,7 +555,7 @@ crewLeaves:
   Actor_SetSpeed(ACTOR_CANNON, 0.1);
   cannon = Actor_GetById(ACTOR_CANNON);
   cannon->motionFlags = 0;
-  Actor_SetScript(ACTOR_CANNON, (s32)gLoho_ForemanComes);
+  Actor_SetScript(ACTOR_CANNON, (s32)gLoho_CannonRises);
   Actor_WaitForScriptEndById(ACTOR_CANNON);
   Actor_SetSpeed(ACTOR_CANNON, 0.3);
   FieldCamera_SetSpeed(0.3);
@@ -602,17 +611,17 @@ void Loho_ScoopSecondTreasure(s32 id) {
   Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 1, FLAG_AREA_TEMP_01);
 }
 
-/// The third Scoop spot, under the rock Lift raises.
+/// The third Scoop spot, under the boulder Lift raises.
 void Loho_ScoopThirdTreasure(s32 id) {
   Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 2, FLAG_AREA_TEMP_02);
 }
 
-/// Lift raises the rock (FLAG_SCENE_TEMP_01), and the Golem Core under it shows
-/// until it is dug up (FLAG_GOLEM_CORE_DUG).
-void Loho_LiftRock(void) {
-  Event_SetFlag(FLAG_SCENE_TEMP_01);
+/// Lift raises the boulder, and the Golem Core under it shows until it is dug
+/// up (FLAG_LOHO_GOLEM_CORE_DUG).
+void Loho_LiftBoulder(void) {
+  Event_SetFlag(FLAG_LOHO_BOULDER_LIFTED);
   Actor_GetById(ACTOR_BOULDER)->collisionFlags &= ~ACTOR_SOLID;
-  if (Event_GetFlag(FLAG_GOLEM_CORE_DUG) == 0)
+  if (Event_GetFlag(FLAG_LOHO_GOLEM_CORE_DUG) == 0)
     Actor_SetPosition(FIELD_TREASURE_ACTOR + 2, 520, 136);
 }
 
@@ -641,10 +650,9 @@ enum { SHOP_LOHO = 30 };
 /// Loho's inn, as Inn_CheckIn numbers the inns.
 enum { LOHO_INN = 13 };
 
-/// The inn's counter: the innkeeper checks the party in.
+/// The inn's counter: the woman who keeps the shop checks the party in, so the
+/// inn's lines are hers; the counter itself is an unseen marker.
 void Loho_TalkToInnkeeper(void) {
-  // XXX: the lines take actor 8's portrait, not the innkeeper's (9); a render
-  // of the inn's counter would show whose face they carry.
   Inn_CheckIn(LOHO_INN, ACTOR_VILLAGER_ON_COMMERCE);
 }
 
@@ -652,7 +660,7 @@ void Loho_TalkToInnkeeper(void) {
 void Loho_TalkAboutCommerce(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId);
   if (Event_GetFlag(FLAG_AREA_TEMP_20)) {
-    Shop_Run(SHOP_LOHO, 8);
+    Shop_Run(SHOP_LOHO, ACTOR_VILLAGER_ON_COMMERCE);
   } else {
     if (Event_GetFlag(FLAG_LOHO_WALL_BREACHED))
       Event_SetMessageId((s32)MsgLohoIHearYouTookOur);
@@ -807,11 +815,11 @@ void Loho_SetUpTown(void) {
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_CANNON), 0);
 }
 
-/// The houses open with the window transition; the innkeeper, behind his
-/// counter, casts no shadow.
+/// The houses open with the window transition; the inn counter's marker casts
+/// no shadow.
 void Loho_SetUpRooms(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
-  Actor_SetSpriteFlags(Actor_GetById(ACTOR_INNKEEPER), 0);
+  Actor_SetSpriteFlags(Actor_GetById(ACTOR_INN_COUNTER), 0);
 }
 
 void Actor_SetWideSprite(s32 id, s32 wide);
@@ -850,9 +858,9 @@ s32 Scene_Initialize(void) {
       Loho_PlaceFacing(ACTOR_MAN_KEEPING_THE_CANNON, toFIXED(490), toFIXED(188),
                        FACING_SOUTHEAST);
       Actor_GetById(ACTOR_MAN_KEEPING_THE_CANNON)->timer =
-          Actor_GetById(ACTOR_MAN_KEEPING_THE_CANNON)->x.fixed >> 16;
+          FIXEDtoINT(Actor_GetById(ACTOR_MAN_KEEPING_THE_CANNON)->x.fixed);
       Actor_GetById(ACTOR_MAN_KEEPING_THE_CANNON)->userValue =
-          Actor_GetById(ACTOR_MAN_KEEPING_THE_CANNON)->z.fixed >> 16;
+          FIXEDtoINT(Actor_GetById(ACTOR_MAN_KEEPING_THE_CANNON)->z.fixed);
       Actor_SetScript(ACTOR_MAN_KEEPING_THE_CANNON, 2);
     }
   }
@@ -951,8 +959,9 @@ s32 gLoho_FirstMinerReturns[] = {
     SC_END,
 };
 
-/// Run on the cannon as the crew sets off with it.
-s32 gLoho_ForemanComes[] = {
+/// Run on the cannon as the crew sets off with it: it rises two pixels off the
+/// ground. The commands after the first SC_END are never reached.
+s32 gLoho_CannonRises[] = {
     SC_MOVE_BY(0, 2, 0),
     SC_SYNC,
     SC_END,
@@ -1029,22 +1038,22 @@ struct SceneRegion gLoho_Regions[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(Loho),
-    SCENE_EXIT_UNLESS(1, LohoRooms, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, LohoRooms, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, LohoRooms, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, LohoRooms, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, LohoRooms, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, LohoRooms, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, LohoRooms, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, LohoRooms, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, WorldMap, 59, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(LOHO_TO_LOHO_ROOMS_NORTHEAST, LohoRooms, LOHO_ROOMS_FROM_LOHO_NORTHEAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(LOHO_TO_LOHO_ROOMS_WEST, LohoRooms, LOHO_ROOMS_FROM_LOHO_WEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(LOHO_TO_LOHO_ROOMS_NORTHWEST, LohoRooms, LOHO_ROOMS_FROM_LOHO_NORTHWEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(LOHO_TO_LOHO_ROOMS_SOUTHWEST, LohoRooms, LOHO_ROOMS_FROM_LOHO_SOUTHWEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(LOHO_TO_LOHO_ROOMS_EAST, LohoRooms, LOHO_ROOMS_FROM_LOHO_EAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(LOHO_TO_LOHO_ROOMS_SOUTH_A, LohoRooms, LOHO_ROOMS_FROM_LOHO_SOUTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(LOHO_TO_LOHO_ROOMS_SOUTH_B, LohoRooms, LOHO_ROOMS_FROM_LOHO_SOUTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(LOHO_TO_LOHO_ROOMS_SOUTH_C, LohoRooms, LOHO_ROOMS_FROM_LOHO_SOUTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(LOHO_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_LOHO, EXIT_FLAG_NONE),
     SCENE_EXITS(LohoRooms),
-    SCENE_EXIT_UNLESS(1, Loho, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, Loho, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, Loho, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, Loho, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, Loho, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, Loho, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(LOHO_ROOMS_TO_LOHO_NORTHEAST, Loho, LOHO_FROM_LOHO_ROOMS_NORTHEAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(LOHO_ROOMS_TO_LOHO_WEST, Loho, LOHO_FROM_LOHO_ROOMS_WEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(LOHO_ROOMS_TO_LOHO_NORTHWEST, Loho, LOHO_FROM_LOHO_ROOMS_NORTHWEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(LOHO_ROOMS_TO_LOHO_SOUTHWEST, Loho, LOHO_FROM_LOHO_ROOMS_SOUTHWEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(LOHO_ROOMS_TO_LOHO_EAST, Loho, LOHO_FROM_LOHO_ROOMS_EAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(LOHO_ROOMS_TO_LOHO_SOUTH, Loho, LOHO_FROM_LOHO_ROOMS_SOUTH_A, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, LohoRooms, 8, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(8, LohoRooms, 7, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(9, LohoRooms, 10, EXIT_FLAG_NONE),
@@ -1093,8 +1102,8 @@ struct Trigger gLoho_TownTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(Loho_EnterDoor)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT(Loho_OpenDoorAndEnter)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 6, CONDITION_ALWAYS, EVENT(Loho_TurnAndClimbDownLadder)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), ACTOR_MINER_WELCOMING_TO_LOHO, CONDITION_ALWAYS, EVENT(Loho_StepOntoLadderFacingWest)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), ACTOR_MINER_ON_THE_EXCAVATIONS, CONDITION_ALWAYS, EVENT(Loho_StepOntoLadderFacingEast)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 8, CONDITION_ALWAYS, EVENT(Loho_StepOntoLadderFacingWest)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 9, CONDITION_ALWAYS, EVENT(Loho_StepOntoLadderFacingEast)},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_TALK, ACTOR_MINER_WELCOMING_TO_LOHO, IF_FLAG_SET(FLAG_LOHO_WALL_BREACHED), MSGNO(MsgLohoWasThatYouThatFired)},
     {TRIGGER_TALK, ACTOR_MINER_ON_THE_EXCAVATIONS, IF_FLAG_SET(FLAG_LOHO_WALL_BREACHED), MSGNO(MsgLohoThatCannonSureGivesOff)},
@@ -1147,7 +1156,7 @@ struct Trigger gLoho_TownTriggers[] = {
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 101, FLAG_AREA_TEMP_00, EVENT(Loho_ScoopFirstTreasure)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 102, FLAG_AREA_TEMP_01, EVENT(Loho_ScoopSecondTreasure)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 103, FLAG_AREA_TEMP_02, EVENT(Loho_ScoopThirdTreasure)},
-    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_BOULDER, FLAG_SCENE_TEMP_01, EVENT(Loho_LiftRock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_BOULDER, FLAG_LOHO_BOULDER_LIFTED, EVENT(Loho_LiftBoulder)},
     {TRIGGER_TABLE_END},
 };
 
@@ -1160,9 +1169,9 @@ struct Trigger gLoho_RoomsTriggers[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_EXIT, ACTOR_VILLAGER_ON_COMMERCE, CONDITION_ALWAYS, 8},
-    {TRIGGER_EXIT, ACTOR_INNKEEPER, CONDITION_ALWAYS, 9},
-    {TRIGGER_EXIT, ACTOR_BEARDED_MAN_ON_THE_CANNON, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
+    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {STEP_TRIGGER_FACING(FACING_NORTH), 20, FLAG_AREA_TEMP_20, EVENT(Loho_VillagerStepsAsideWest)},
     {STEP_TRIGGER_FACING(FACING_WEST), 22, FLAG_AREA_TEMP_20, EVENT(Loho_VillagerStepsAsideNorth)},
     {TRIGGER_STEP, 21, IF_FLAG_SET(FLAG_AREA_TEMP_20), EVENT(Loho_VillagerStepsBack)},
@@ -1170,7 +1179,7 @@ struct Trigger gLoho_RoomsTriggers[] = {
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_COMMERCE, CONDITION_ALWAYS, EVENT(Loho_TalkAboutCommerce)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_COMMERCE, FLAG_LOHO_WALL_BREACHED, MSGNO(MsgLohoWheneverSomeoneStrikesGold)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_COMMERCE, IF_FLAG_SET(FLAG_LOHO_WALL_BREACHED), MSGNO(MsgLohoNowWeDontHaveSymbol)},
-    {TRIGGER_TALK, ACTOR_INNKEEPER, IF_FLAG_SET(FLAG_AREA_TEMP_20), EVENT(Loho_TalkToInnkeeper)},
+    {TRIGGER_TALK, ACTOR_INN_COUNTER, IF_FLAG_SET(FLAG_AREA_TEMP_20), EVENT(Loho_TalkToInnkeeper)},
     {TRIGGER_TALK, ACTOR_BEARDED_MAN_ON_THE_CANNON, CONDITION_ALWAYS, EVENT(Loho_TalkAboutCannon)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BEARDED_MAN_ON_THE_CANNON, FLAG_LOHO_WALL_BREACHED, MSGNO(MsgLohoIfCannonIsTruly)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BEARDED_MAN_ON_THE_CANNON, IF_FLAG_SET(FLAG_LOHO_WALL_BREACHED), MSGNO(MsgLohoItWorriesMeToNo)},

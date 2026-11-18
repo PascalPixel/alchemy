@@ -547,8 +547,8 @@ enum SoundId {
   /// Altmiller Cave's rock turned.
   SE_WARP,
   /// Unused: nothing plays it here. The Lost Age plays the same sequence as
-  /// Gaia Rock's altar faces part, as Zagan gallops in and in Megiddo's dive.
-  SE_SHUDDER,
+  /// Gaia Rock's altar faces part, at Zagan's frame 32 and in Megiddo's dive.
+  SE_191,
   /// Unused: nothing plays it here. The Lost Age plays the same sequence for
   /// Shriek's and Harpy's cry.
   SE_SHRIEK,
@@ -645,9 +645,9 @@ enum SoundId {
   /// The lifts of Mercury Lighthouse and its aerie, as they carry the party.
   SE_LIFT,
   SE_224,
-  /// Unused: nothing plays it here. The Lost Age plays the same sequence as
-  /// Moloch's shower of motes starts to gather toward the middle.
-  SE_MOTES_GATHER,
+  /// Unused: nothing plays it here. The Lost Age plays the same sequence at
+  /// Moloch's frame 90.
+  SE_225,
   /// A pusher and its log moving together: the Colosso, Crossbone Isle and
   /// Donpa's judgment in the Lunpa Fortress.
   SE_LOG_PUSH,

@@ -81,6 +81,15 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
   return zone;
 }
 
+/// With Jenna in the party, random battles stop once her experience is past
+/// this.
+#define JENNA_ENCOUNTERS_EXPERIENCE_MAX 130
+/// A battle background rule's word (battle_background_rules.c's
+/// BATTLE_BACKGROUND): bit 31 marks a battle background, its resource id below;
+/// any other word is a scene.
+#define BATTLE_BACKGROUND_RULE 0x80000000
+#define BATTLE_BACKGROUND_RULE_RESOURCE 0xffff
+
 /// Advances the encounter counter for zone and returns the formation to fight
 /// (a row of formations.c), or 0 for no battle. steps (16.16) scales how far
 /// the counter moves; a battle starts once it reaches encounterThreshold.
@@ -113,11 +122,9 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, FIXED steps) {
     rate = entry->rate;
     if (rate == 0)
       return 0;
-    // With Jenna in the party, there are no encounters while she has more than
-    // 130 experience points.
     if (GameFlag_GetFar(FLAG_IN_PARTY(JENNA)) != 0) {
       level = Unit_GetFar(JENNA)->experience;
-      if (level > 130)
+      if (level > JENNA_ENCOUNTERS_EXPERIENCE_MAX)
         return 0;
     }
 
@@ -191,10 +198,17 @@ s32 Encounter_RollWorldMap(s32 pos, FIXED steps) {
       Encounter_ResolveWorldMapZoneAndBackdrop((void *)pos), steps);
 }
 
-/// Returns the formation in slot (0 to 7) of zone; 14 halfwords make a zone.
+/// A struct EncounterZone in halfwords, and where its formations start.
+#define ENCOUNTER_ZONE_HALFWORDS                                               \
+  ((s32)(sizeof(struct EncounterZone) / sizeof(u16)))
+#define ENCOUNTER_ZONE_FORMATIONS                                              \
+  ((s32)(offsetof(struct EncounterZone, formations) / sizeof(u16)))
+
+/// Returns the formation in slot (0 to 7) of zone, read from gEncounterZones as
+/// halfwords.
 u16 Encounter_GetFormationAtSlot(s32 zone, s32 slot) {
-  // A zone's halfwords are rate, level, then the eight formations.
-  return gEncounterZones[zone * 14 + slot + 2];
+  return gEncounterZones[zone * ENCOUNTER_ZONE_HALFWORDS + slot +
+                         ENCOUNTER_ZONE_FORMATIONS];
 }
 
 /// Returns the formation of Djinni battle djinni, which the table gives as a
@@ -308,9 +322,8 @@ void BattleBackground_SelectForMap(void) {
   s32 backdrop;
 
   while (entry != 0 && entry != target) {
-    // A battle background's word: bit 31 set, its resource id below.
-    if (entry & 0x80000000) {
-      backdrop = entry & 0xFFFF;
+    if (entry & BATTLE_BACKGROUND_RULE) {
+      backdrop = entry & BATTLE_BACKGROUND_RULE_RESOURCE;
     }
     entry = *table++;
   }
@@ -372,3 +385,9 @@ void Encounter_SelectBattleMusic(s32 zone, s32 slot) {
   }
   gMainRoutineWork.battleMusic = music;
 }
+
+#undef JENNA_ENCOUNTERS_EXPERIENCE_MAX
+#undef BATTLE_BACKGROUND_RULE
+#undef BATTLE_BACKGROUND_RULE_RESOURCE
+#undef ENCOUNTER_ZONE_HALFWORDS
+#undef ENCOUNTER_ZONE_FORMATIONS

@@ -312,7 +312,7 @@ static void Title_LoadBackground(void) {
   u32 screenY;
   u16 tileIndex;
   struct ScrollPair *bgScroll;
-  s32 blankTile = LOGO_BLANK_TILE;
+  s32 blankTile = OFFSCREEN_TILE;
 
   resourceId = RESOURCE_GOLDEN_SUN_LOGO;
   ScreenFade_ToBlack(0);

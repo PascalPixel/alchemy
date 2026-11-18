@@ -36,6 +36,14 @@
 #include "field/field_sprite.h"
 #include "system/dma.h"
 
+/// The caster's casting animations on the party's sheets: ANIM_CAST_PSYNERGY's
+/// first two pictures, held on the second, and its last two, held on the last
+/// with the hand held out.
+#define ANIM_CAST_PSYNERGY_BEGIN 20
+#define ANIM_CAST_PSYNERGY_END 21
+/// How long FieldPsynergy_End waits at most for the World Map's palette fade.
+#define END_FADE_WAIT_FRAMES 90
+
 /// Fades the palettes back to the saved ones over the given frames.
 void BattleEffect_FadeToSavedPalettes(s32 frames) {
   Field_StartPaletteTransition(frames);
@@ -145,7 +153,7 @@ void FieldPsynergy_LoadResources(s32 abilityId, s32 mode) {
   event->targetY = 0;
   event->targetZ = 0;
   event->blazeLongSpray = 0;
-  event->psynergyHitObject = 255;
+  event->psynergyHitObject = -1;
   BattleEffect_StartArcEffect();
   Task_Add(BattleEffect_UpdateAllEffectSlots, TASK_PASS_FRAME);
 }
@@ -162,9 +170,9 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   scene->secondActorId = targetId;
   scene->mainActor = user;
   target = Actor_Lookup((s16)targetId);
-  scene->angle = (user->facing + DEGtoANG(45)) &
-                 TRIG_TURN * 3 / 4; // Round to four directions.
-  scene->angle8 = (user->facing + FACING_STEP) & 0xe000;
+  // The facing rounded to four directions, and to eight.
+  scene->angle = (user->facing + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
+  scene->angle8 = (user->facing + FACING_STEP) & TRIG_TURN * 7 / 8;
   scene->child = target;
   if (user != NULL) {
     u8 terrain;
@@ -192,17 +200,17 @@ void FieldPsynergy_SetupActorPair(s32 userId, s32 targetId) {
   }
 }
 
-/// Starts casting: the caster takes its casting pose (animation 20) and stops,
-/// flashes with a sound, and the ability's name is announced; with
-/// FLAG_PLAY_PSYNERGY_CAST set the caster takes animation 21 and keeps its
-/// glow.
+/// Starts casting: the caster raises its hand (ANIM_CAST_PSYNERGY_BEGIN) and
+/// stops, flashes with a sound, and the ability's name is announced; with
+/// FLAG_PLAY_PSYNERGY_CAST set the caster holds out its hand
+/// (ANIM_CAST_PSYNERGY_END) and keeps its glow.
 void FieldPsynergy_StartCast(void) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *actor = work->mainActor;
   s32 ability = work->action;
 
-  Actor_SelectAnimationFar(actor, 20);
+  Actor_SelectAnimationFar(actor, ANIM_CAST_PSYNERGY_BEGIN);
   actor->targetX = actor->x.fixed;
   actor->velocityX = 0;
   actor->targetY = actor->y.fixed;
@@ -218,13 +226,13 @@ void FieldPsynergy_StartCast(void) {
     Actor_SetOthersPaused(actor, 1, 0);
     MessageArgument_PushFar(ability, MESSAGE_ARGUMENT_ABILITY);
     FieldMessage_ShowFar((s32)&MsgCastAbilityName, work->messageMode);
-    Actor_SetOthersPaused(actor, 0, 16);
+    Actor_SetOthersPaused(actor, 0, ANIMATION_STEP_NORMAL);
     work->messageShown = 0;
   }
   if (GameFlag_Get(FLAG_PLAY_PSYNERGY_CAST)) {
     if (work->visible != 0)
       BattleEffect_SetObjectUpdateMode(actor, 2);
-    Actor_SelectAnimationFar(actor, 21);
+    Actor_SelectAnimationFar(actor, ANIM_CAST_PSYNERGY_END);
   } else {
     BattleEffect_StopMainActor();
   }
@@ -251,7 +259,7 @@ void FieldPsynergy_End(void) {
   s32 i;
   s16 first;
 
-  for (i = 0; i < 24; i++) {
+  for (i = 0; i < (s32)ARRAY_COUNT(work->particles); i++) {
     struct FieldParticle *slot = &work->particles[i];
     if (slot->active)
       FieldEffect_ClearOwnedSlot(slot);
@@ -270,7 +278,7 @@ void FieldPsynergy_End(void) {
     if (fade->duration != 0) {
       do {
         wait(1);
-        if (++i > 89)
+        if (++i >= END_FADE_WAIT_FRAMES)
           break;
       } while (fade->duration != 0);
     }
@@ -341,12 +349,21 @@ void FieldPsynergy_StopMindReadWave(void) {
 
 #define MIND_READ_GREY RGB(28, 28, 28)
 
-/// Gray BG palette 15 colors 1 and 3-12, then start line scrolling.
+/// WINDOW_PALETTE's white, black and two greys, which Mind Read turns grey
+/// while it shows thoughts.
+#define WINDOW_COLOR_WHITE 1
+#define WINDOW_COLOR_BLACK 3
+#define WINDOW_COLOR_DARK_GREY 11
+#define WINDOW_COLOR_LIGHT_GREY 12
+
+/// Turns WINDOW_PALETTE's colours from WINDOW_COLOR_WHITE to
+/// WINDOW_COLOR_LIGHT_GREY grey, so messages show as thoughts, and starts the
+/// BG0 line scroll (FieldEffect_ArmBg0HBlankDma) at each VBlank.
 void FieldPsynergy_GreyMindReadPalette(void) {
   volatile u16 *p;
 
   ((struct WindowWork *)Ram_HeapSlots->windowWork)->mindRead = 1;
-  p = &BG_PLTT_COLOR(15, 1);
+  p = &BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_COLOR_WHITE);
   *p = MIND_READ_GREY;
   p += 2;
   *p = MIND_READ_GREY;
@@ -371,16 +388,16 @@ void FieldPsynergy_GreyMindReadPalette(void) {
   Task_Add((TaskFunc)FieldEffect_ArmBg0HBlankDma, TASK_PASS_VBLANK - 20);
 }
 
-/// Stops line scrolling and restores background palette 15.
+/// Stops the BG0 line scroll and restores WINDOW_PALETTE.
 void FieldPsynergy_RestoreMindReadPalette(void) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
 
   Task_Remove((TaskFunc)FieldEffect_ArmBg0HBlankDma);
-  BG_PLTT_COLOR(15, 1) = RGB_WHITE;
-  BG_PLTT_COLOR(15, 3) = RGB(0, 0, 0);
-  BG_PLTT_COLOR(15, 11) = RGB(10, 10, 10);
-  BG_PLTT_COLOR(15, 12) = RGB(20, 20, 20);
-  WindowColor_ApplyFar(gMainRoutineWork.unusedAfterParty[5],
-                       gMainRoutineWork.unusedAfterParty[6]);
+  BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_COLOR_WHITE) = RGB_WHITE;
+  BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_COLOR_BLACK) = RGB(0, 0, 0);
+  BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_COLOR_DARK_GREY) = RGB(10, 10, 10);
+  BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_COLOR_LIGHT_GREY) = RGB(20, 20, 20);
+  WindowColor_ApplyFar(gMainRoutineWork.windowHue,
+                       gMainRoutineWork.windowBrightness);
   work->mindRead = 0;
 }

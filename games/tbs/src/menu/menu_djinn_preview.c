@@ -245,8 +245,8 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     // 1, the block after the windows' own.
     Window_SetTilemapEntryFar(
         menu->helpWindow,
-        WINDOW_TILE(BG_CHAR_SIZE / TILE_SIZE_4BPP + DJINN_BACKDROP_BORDER_TILE),
-        7, 1, 0);
+        WINDOW_TILE(BG_CHAR_SIZE / TILE_SIZE_4BPP + DJINN_CHANGE_ARROW_TILE), 7,
+        1, 0);
   }
 
   for (;;) {
@@ -480,14 +480,14 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
     MenuCursor_Position(confirmationChoice * 56 + 80, 16);
 
     // Blink the down arrow between a thing and what the change makes of it
-    // (DJINN_BACKDROP_BORDER_TILE): drawn and blanked in turn every 4 frames.
+    // (DJINN_CHANGE_ARROW_TILE): drawn and blanked in turn every 4 frames.
     if ((frame & 3) == 0) {
       void *tile;
       u32 fill = TEXT_CANVAS_BACKGROUND_WORD;
 
-      tile = (void *)DJINN_BACKDROP_BORDER_VRAM;
+      tile = (void *)DJINN_CHANGE_ARROW_VRAM;
       if ((frame & 4) != 0) {
-        Iwram_CopyWords(tile, gMenu_BackdropBorderTile, 32);
+        Iwram_CopyWords(tile, gMenu_ChangeArrowTile, 32);
       } else {
         Iwram_FillWords(tile, 32, fill);
       }
@@ -668,10 +668,10 @@ s32 DjinnMenu_ShowMemberStatus(void) {
     }
     if ((frame & 3) == 0) {
       if (frame & 4)
-        Iwram_CopyWords((void *)DJINN_BACKDROP_BORDER_VRAM,
-                        gMenu_BackdropBorderTile, 32);
+        Iwram_CopyWords((void *)DJINN_CHANGE_ARROW_VRAM, gMenu_ChangeArrowTile,
+                        32);
       else
-        Iwram_FillWords((void *)DJINN_BACKDROP_BORDER_VRAM, 32,
+        Iwram_FillWords((void *)DJINN_CHANGE_ARROW_VRAM, 32,
                         TEXT_CANVAS_BACKGROUND_WORD);
     }
     if (pressedKeys & KEY_START) {

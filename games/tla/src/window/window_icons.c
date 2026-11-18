@@ -97,7 +97,8 @@ void Icon_Decode(GlyphTransfer *work, s32 overlay);
 
 /// Draws an item's icon into the glyph work buffer from its inventory code
 /// (enum InventoryEncoding) with the layers asked for (ICON_ flags): the frame,
-/// the equipped, broken and artifact marks, and the count.
+/// the equipped, broken and artifact marks, and the count. Returns 256, which
+/// no caller reads, or -1 without the glyph work buffer.
 s32 ItemIcon_Compose(u32 code, u32 layers) {
   s32 overlay;
   struct ItemDefinition *item;
@@ -150,7 +151,7 @@ s32 ItemIcon_Compose(u32 code, u32 layers) {
     count = (code & INVENTORY_QUANTITY_MASK) >> INVENTORY_QUANTITY_SHIFT;
     count++;
   }
-  if (count != 0 && count <= 30) {
+  if (count != 0 && count <= INVENTORY_STACK_MAX) {
     s32 ones = count % 10;
 
     work->encoded = gIcon_DigitPointers[ones];
@@ -268,11 +269,15 @@ void Icon_DrawMisc(u32 index) {
   Icon_Decode(state, 0);
 }
 
+/// The icon resource's row of the first sprite portrait,
+/// PORTRAIT_FIRST_SPRITE_PORTRAIT.
+#define PORTRAIT_FIRST_SPRITE_ICON 16
+
 /// Loads a 32x32 icon from the icon resource into sprite tile slot *slot (a
 /// free slot unless reuse is set) and its colours into the sprite palette
 /// named by palette. Returns the tile in *tile.
-/// This resource stores its palette before the encoded tile payload: 16
-/// colours, 32 bytes. Portraits (Portrait_Create) come through here.
+/// Each icon of the resource has its PALETTE_COLORS colours before its encoded
+/// tiles. Portraits (Portrait_Create) come through here.
 void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
                           s32 palette, s32 reuse) {
   GlyphTransfer *work;
@@ -280,14 +285,14 @@ void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
   u8 *entry;
   u32 index;
 
-  work = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 1544);
+  work = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   table = Resource_GetTableEntry(RESOURCE_ICONS);
-  if (icon <= 127)
+  if (icon < PORTRAIT_FIRST_SPRITE_PORTRAIT)
     index = icon;
   else
-    index = icon - 112;
+    index = icon - PORTRAIT_FIRST_SPRITE_PORTRAIT + PORTRAIT_FIRST_SPRITE_ICON;
   entry = (u8 *)table + table[index];
-  work->encoded = entry + 32;
+  work->encoded = entry + PALETTE_COLORS * sizeof(u16);
   work->width = 4;
   work->height = 4;
   Icon_Decode(work, 0);
@@ -295,8 +300,8 @@ void Icon_LoadWithPalette(u32 icon, s32 unused, s32 *slot, s32 *tile,
     *slot = VramCache_FindFreeEntry();
   *tile = VramCache_Load(*slot, 4 * 4 * TILE_SIZE_4BPP, work->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
-  Dma_Set(entry, (void *)(0x05000200 + palette * 32), DMA_COPY_HALFWORDS(16),
-          REG_DMA3);
+  Dma_Set(entry, (void *)&OBJ_PLTT_COLOR(palette, 0),
+          DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
 }
 
 /// An empty function. Nothing in the tree names it but its prototype.

@@ -34,7 +34,7 @@ s32 Actor_IsTargetUnset(struct Actor *actor) {
 /// destination. Airs Rock waits on it while the lift carries the leader up.
 s32 Actor_HasArrived(struct Actor *actor) { return Actor_IsTargetUnset(actor); }
 
-/// An object as the motion update reads it (struct Actor's layout).
+/// An actor as the motion update reads it (struct Actor's layout).
 struct MotionObject {
   struct MotionScript *script;
   s16 step;
@@ -83,10 +83,22 @@ typedef s32 (*MotionCommand)(struct MotionObject *object);
 extern const MotionCommand gActorScript_CommandTable[];
 extern const s32 gActorScript_CycleTable[];
 
+/// The highest script word read as a command, an index of
+/// gActorScript_CommandTable; a larger one is stepped over.
+#define SCRIPT_COMMAND_MAX 63
+/// A floating actor's bob, one cycle of gActorScript_CycleTable over this many
+/// frames; its rise and fall each frame is the table's value times its gravity
+/// over FLOAT_DIVISOR, or FLOAT_HIGH_DIVISOR with ACTOR_FLOATS_HIGH.
+#define FLOAT_CYCLE_FRAMES 64
+#define FLOAT_DIVISOR 64
+#define FLOAT_HIGH_DIVISOR 16
+/// The actor slots Actor_ListRunning looks through.
+#define RUNNING_LIST_SLOTS 14
+
 /// A whole-pixel distance squared.
 static __inline__ s32 Object_Square(s32 value) { return value * value; }
 
-/// Advances all 64 actors by one frame: their scripts and their motion, with
+/// Advances every actor by one frame: their scripts and their motion, with
 /// free flight in 3D, following the ground, floating, and solid actors that
 /// refuse to overlap.
 void Actor_UpdateAllThumb(void) {
@@ -139,7 +151,7 @@ void Actor_UpdateAllThumb(void) {
       for (;;) {
         u32 command = script->word[object->step];
 
-        if (command <= 63) {
+        if (command <= SCRIPT_COMMAND_MAX) {
           if (gActorScript_CommandTable[command](object) == 0)
             break;
         } else {
@@ -338,14 +350,14 @@ void Actor_UpdateAllThumb(void) {
 
         // Float: bob up and down on a triangle wave.
         if (object->motionFlags & ACTOR_FLOATS) {
-          u32 phase = object->bounce & 63;
+          u32 phase = object->bounce & (FLOAT_CYCLE_FRAMES - 1);
 
           if (object->motionFlags & ACTOR_FLOATS_HIGH)
-            object->velocityY =
-                gActorScript_CycleTable[phase >> 1] * object->gravity / 16;
+            object->velocityY = gActorScript_CycleTable[phase >> 1] *
+                                object->gravity / FLOAT_HIGH_DIVISOR;
           else
-            object->velocityY =
-                gActorScript_CycleTable[phase >> 1] * object->gravity / 64;
+            object->velocityY = gActorScript_CycleTable[phase >> 1] *
+                                object->gravity / FLOAT_DIVISOR;
           object->bounce++;
         }
       }
@@ -543,10 +555,10 @@ void Actor_SetMoveTarget(struct Actor *actor, FIXED x, FIXED y, FIXED z) {
   }
 }
 
-/// Lists the first 14 actors whose script is running, in slot order, ended by
-/// NULL; out holds 15.
+/// Lists those of the first RUNNING_LIST_SLOTS actors whose script is running,
+/// in slot order, ended by NULL; out holds one more.
 void Actor_ListRunning(struct Actor *actor, struct Actor **out) {
-  struct Actor *end = actor + 14;
+  struct Actor *end = actor + RUNNING_LIST_SLOTS;
 
   do {
     // A running script's address is above 0xffff, so its upper half alone
@@ -558,3 +570,8 @@ void Actor_ListRunning(struct Actor *actor, struct Actor **out) {
   *out = NULL;
 }
 #undef WORD_AT
+#undef SCRIPT_COMMAND_MAX
+#undef FLOAT_CYCLE_FRAMES
+#undef FLOAT_DIVISOR
+#undef FLOAT_HIGH_DIVISOR
+#undef RUNNING_LIST_SLOTS

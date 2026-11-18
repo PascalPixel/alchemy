@@ -1,17 +1,14 @@
 /// @file
-/// The room of grey blocks and locked doors in Jupiter Lighthouse, between
-/// rooms 3 and 5. The Red Key and the Blue Key open its two doors
-/// (JupiterLighthouse_UseRedKey, JupiterLighthouse_UseBlueKey), Reveal shows a
-/// hidden passage and its block (JupiterLighthouse_RevealThePassage), and once
-/// the lighthouse is activated its blocks hover, Move setting the fifth on its
-/// cell to bridge the gap (JupiterLighthouse_FinishMovingBlock). Two Cyclone
-/// teleporters lead on (JupiterLighthouse_LeaveByFirstCyclone,
-/// JupiterLighthouse_LeaveBySecondCyclone), and motes of light circle the room
-/// (JupiterLighthouse_SpawnCirclingMotes).
-///
-/// The cracked tiles' code is in
-/// jupiter_lighthouse_room_locked_doors/, in two parts the shared field effect
-/// objects link between.
+/// The room of hovering blocks and locked doors in Jupiter Lighthouse. The Red
+/// Key and the Blue Key open its two doors (JupiterLighthouse_UseRedKey,
+/// JupiterLighthouse_UseBlueKey), Reveal shows a hidden passage and its block
+/// (JupiterLighthouse_RevealThePassage), and once the lighthouse is activated
+/// its blocks hover, Move setting one on its cell to bridge the gap
+/// (JupiterLighthouse_FinishMovingBlock). Two Cyclone teleporters lead on
+/// (JupiterLighthouse_LeaveByFirstCyclone,
+/// JupiterLighthouse_LeaveBySecondCyclone), a beam of light carries the party
+/// up from the room below, and lights circle up the beam
+/// (JupiterLighthouse_SendUpBeamLights). Its cracked tiles' code comes last.
 
 #include "shared/tables.h"
 #include "flags.h"
@@ -57,11 +54,14 @@
 /// Set as each locked door opens to its key.
 #define FLAG_RED_DOOR_OPENED 0xa07
 #define FLAG_BLUE_DOOR_OPENED 0xa08
-/// Set once Move has set the fifth block on its cell, where it rises to bridge
+/// Set once Move has set the bridge block on its cell, where it rises to bridge
 /// the gap.
 #define FLAG_BRIDGE_BLOCK_RAISED 0xa06
 
-/// The grey blocks, numbering the rows of gActorPlacements.
+/// The bridge block's cell, where it rises to hover in line with the others.
+enum { BRIDGE_BLOCK_CELL_X = 10, BRIDGE_BLOCK_CELL_Z = 32 };
+
+/// The room's blocks, numbering the rows of gActorPlacements.
 enum JupiterLighthouseBlockId {
   /// The first of the six blocks that rise once the lighthouse is activated.
   ACTOR_FIRST_BLOCK = ACTOR_FIRST_PLACED,
@@ -71,9 +71,9 @@ enum JupiterLighthouseBlockId {
   ACTOR_BRIDGE_BLOCK,
   /// The first of three more that rise once the lighthouse is activated.
   ACTOR_LAST_BLOCKS,
-  /// An actor with no picture, raised with the blocks and given gravity.
-  // XXX: what it stands for; a render of the activated room would settle it.
-  ACTOR_UNSEEN = ACTOR_LAST_BLOCKS + 3
+  /// The unseen block at the top of the beam of light, between the hovering
+  /// blocks: the party the beam carries up stands on it.
+  ACTOR_BEAM_TOP_BLOCK = ACTOR_LAST_BLOCKS + 3
 };
 
 void Actor_RaiseFromCell(s32 id);
@@ -146,7 +146,8 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
   s32 i;
 
   actor = Actor_Get(id);
-  if (FIELD_CELL(actor->x.fixed) == 10 && FIELD_CELL(actor->z.fixed) == 32) {
+  if (FIELD_CELL(actor->x.fixed) == BRIDGE_BLOCK_CELL_X &&
+      FIELD_CELL(actor->z.fixed) == BRIDGE_BLOCK_CELL_Z) {
     actor->motionFlags = 0;
     for (i = 0; i < 16; i++) {
       actor->y.fixed += toFIXED(2);
@@ -209,13 +210,12 @@ void JupiterLighthouse_TryLockedDoor(void) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-/// A particle's step, Jupiter Lighthouse room 2's
-/// JupiterLighthouse_CircleTheMote with other numbers: it circles at its angle
-/// (timer) around x 232 and rises with its phase (userValue) from 120 pixels
-/// down, taking mode 7 at phase 1 and mode 2 at phase 38 and starting over once
-/// above the ground; drawn in front while the sine is negative and behind
-/// otherwise.
-void JupiterLighthouse_CircleTheMote(struct Actor *actor) {
+/// A light's step up the beam: it circles the beam at its angle (timer) and
+/// radius and rises with its phase (userValue) from 120 pixels below, taking
+/// its sheet's animation 7 at phase 1 and 2 at phase 38 and starting over once
+/// above the floor; drawn in front of the beam while the sine is negative and
+/// behind it otherwise.
+void JupiterLighthouse_CircleUpTheBeam(struct Actor *actor) {
   s16 angle = actor->timer;
   s16 height = actor->userValue;
 
@@ -236,9 +236,9 @@ void JupiterLighthouse_CircleTheMote(struct Actor *actor) {
   actor->userValue++;
 }
 
-/// Sends up seven motes of light, each at its own radius, speed and angle and
-/// five steps of rise apart, to circle the room's middle.
-void JupiterLighthouse_SpawnCirclingMotes(void) {
+/// Sends seven lights circling up the beam, each at its own radius, speed and
+/// angle and five steps of rise apart.
+void JupiterLighthouse_SendUpBeamLights(void) {
   struct Actor *actor;
   s32 i;
   s32 phase;
@@ -250,7 +250,7 @@ void JupiterLighthouse_SpawnCirclingMotes(void) {
     actor->priorityFlags = 0;
     actor->speedLimit = (Random16() << 2) + toFIXED(6);
     actor->acceleration = ((Random16() << 11) >> 16) + toFIXED(1) / 32;
-    actor->update = (void (*)(void))JupiterLighthouse_CircleTheMote;
+    actor->update = (void (*)(void))JupiterLighthouse_CircleUpTheBeam;
     actor->timer = Random16();
     actor->userValue = phase;
     Actor_SetSpriteFlags(actor, 0);
@@ -272,7 +272,7 @@ s32 Scene_Initialize(void) {
     JupiterLighthouse_OpenRedDoor();
   if (Event_GetFlag(FLAG_BLUE_DOOR_OPENED))
     JupiterLighthouse_OpenBlueDoor();
-  JupiterLighthouse_SpawnCirclingMotes();
+  JupiterLighthouse_SendUpBeamLights();
   flag = Event_GetFlag(FLAG_KEEP_PARTY_POSITION);
   if (flag == 0 &&
       gMainRoutineWork.entrance ==
@@ -283,7 +283,7 @@ s32 Scene_Initialize(void) {
     FieldEvent_ResolvePendingActions(0);
     FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
     Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
-    Actor_SetAnimationSpeed(leader, 64);
+    Actor_SetAnimationSpeed(leader, ANIMATION_STEP_NORMAL * 4);
     leader->motionFlags = flag;
     leader->y.fixed = leader->groundHeight = -toFIXED(120);
     Event_StartScreenTransition();
@@ -295,7 +295,7 @@ s32 Scene_Initialize(void) {
     }
     leader->groundHeight = leader->y.fixed = 0;
     leader->facing = FACING_SOUTH;
-    leader->motionFlags = 3;
+    leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     leader->velocityY = toFIXED(3);
     leader->gravity = toFIXED(1) / 2;
     Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
@@ -330,10 +330,10 @@ s32 Scene_PrepareMap(void) {
     Actor_RaiseFromCell(ACTOR_LAST_BLOCKS);
     Actor_RaiseFromCell(ACTOR_LAST_BLOCKS + 1);
     Actor_RaiseFromCell(ACTOR_LAST_BLOCKS + 2);
-    Actor_RaiseFromCell(ACTOR_UNSEEN);
-    Actor_Get(ACTOR_UNSEEN)->gravity = toFIXED(3);
+    Actor_RaiseFromCell(ACTOR_BEAM_TOP_BLOCK);
+    Actor_Get(ACTOR_BEAM_TOP_BLOCK)->gravity = toFIXED(3);
   }
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_UNSEEN), 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_BEAM_TOP_BLOCK), 0);
   if (Event_GetFlag(FLAG_BRIDGE_BLOCK_RAISED)) {
     Actor_SetPosition(ACTOR_BRIDGE_BLOCK, 168, 520);
     Actor_RaiseFromCell(ACTOR_BRIDGE_BLOCK);
@@ -352,7 +352,7 @@ extern s32 gPaletteCyclePausesInEvents;
 
 extern s32 gPaletteCycleFrame;
 
-/// Sets the counter, its value built as a word.
+/// Sets the palette cycle's frame counter.
 static inline void PaletteCycle_SetFrame(s32 value) {
   gPaletteCycleFrame = value;
 }
@@ -406,8 +406,11 @@ UNUSED s32 Actor_EmitRisingSparks(struct Actor *actor) {
 
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 
-/// The aerie beacon's actors, which the unused copy below of its
-/// JupiterLighthouse_EnergizeAngels places (jupiter_lighthouse_aerie_beacon.c).
+/// The aerie beacon's actors, which the unused copy below of
+/// jupiter_lighthouse_aerie_beacon.c's JupiterLighthouse_PlaceAngelsAndLid
+/// places, and the frames jupiter_lighthouse_aerie.c's
+/// JupiterLighthouse_EnergizeAngels raises an angel and tilts the lid (64),
+/// then lifts all three once both angels are energized (256).
 enum {
   ACTOR_LEFT_ANGEL = 9,
   ACTOR_RIGHT_ANGEL,
@@ -416,6 +419,8 @@ enum {
   ACTOR_LID_A = 23,
   ACTOR_LID_B
 };
+#define ANGEL_RISE_FRAMES 64
+#define LID_LIFT_FRAMES 256
 
 /// Unused here: places the aerie's two angels and the lid between them, each
 /// angel the archers have energized raised with its half of the lid, and all
@@ -424,48 +429,53 @@ enum {
 UNUSED void JupiterLighthouse_PlaceAngelsAndLid(void) {
   struct Actor *left = Actor_Get(ACTOR_LEFT_ANGEL);
   struct Actor *right = Actor_Get(ACTOR_RIGHT_ANGEL);
-  struct Actor *rider = Actor_Get(ACTOR_LID_A);
-  struct FieldSprite *sprite = rider->sprite;
+  struct Actor *lid = Actor_Get(ACTOR_LID_A);
+  struct FieldSprite *sprite = lid->sprite;
 
   Actor_SetPosition(ACTOR_LID_B, 512, 248);
   Actor_SetPosition(ACTOR_LID_A, 512, 248);
   Actor_SetPosition(ACTOR_LEFT_ANGEL, 472, 256);
   Actor_SetPosition(ACTOR_RIGHT_ANGEL, 552, 256);
   Actor_Get(ACTOR_LID_B)->scaleX = 0;
-  rider->motionFlags = 0;
-  rider->y.fixed = rider->groundHeight;
+  lid->motionFlags = 0;
+  lid->y.fixed = lid->groundHeight;
   left->motionFlags = 0;
   left->y.fixed = left->groundHeight;
   right->motionFlags = 0;
   right->y.fixed = right->groundHeight;
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED)) {
-    left->y.fixed += 0x66640;
-    rider->y.fixed += 0x1eb80;
-    rider->x.fixed += -0x28f40;
+    left->y.fixed += ANGEL_RISE_FRAMES * (toFIXED(1) / 10);
+    lid->y.fixed += ANGEL_RISE_FRAMES * (toFIXED(3) / 100);
+    lid->x.fixed -= ANGEL_RISE_FRAMES * (toFIXED(1) / 25);
     sprite->rotation += TRIG_TURN / 32;
-    Actor_SetSpriteColorMode(Actor_Get(ACTOR_LEFT_ANGEL), 4);
-    Actor_SetSpriteColorMode(Actor_Get(ACTOR_LEFT_ARCHER), 4);
+    Actor_SetSpriteColorMode(Actor_Get(ACTOR_LEFT_ANGEL), SPRITE_COLOR_GBR);
+    Actor_SetSpriteColorMode(Actor_Get(ACTOR_LEFT_ARCHER), SPRITE_COLOR_GBR);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
-    right->y.fixed += 0x66640;
-    rider->y.fixed += 0x1eb80;
-    rider->x.fixed += 0x28f40;
+    right->y.fixed += ANGEL_RISE_FRAMES * (toFIXED(1) / 10);
+    lid->y.fixed += ANGEL_RISE_FRAMES * (toFIXED(3) / 100);
+    lid->x.fixed += ANGEL_RISE_FRAMES * (toFIXED(1) / 25);
     sprite->rotation -= TRIG_TURN / 32;
-    Actor_SetSpriteColorMode(Actor_Get(ACTOR_RIGHT_ANGEL), 4);
-    Actor_SetSpriteColorMode(Actor_Get(ACTOR_RIGHT_ARCHER), 4);
+    Actor_SetSpriteColorMode(Actor_Get(ACTOR_RIGHT_ANGEL), SPRITE_COLOR_GBR);
+    Actor_SetSpriteColorMode(Actor_Get(ACTOR_RIGHT_ARCHER), SPRITE_COLOR_GBR);
   }
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED) &&
       Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_ENERGIZED)) {
-    left->y.fixed += 0x199900;
-    right->y.fixed += 0x199900;
-    rider->y.fixed += 0x1b8480;
-    left->motionFlags = 4;
-    right->motionFlags = 4;
-    rider->motionFlags = 4;
+    left->y.fixed += LID_LIFT_FRAMES * (toFIXED(1) / 10);
+    right->y.fixed += LID_LIFT_FRAMES * (toFIXED(1) / 10);
+    lid->y.fixed += LID_LIFT_FRAMES * (toFIXED(1) / 10) +
+                    ANGEL_RISE_FRAMES * (toFIXED(3) / 100);
+    left->motionFlags = ACTOR_FLOATS;
+    right->motionFlags = ACTOR_FLOATS;
+    lid->motionFlags = ACTOR_FLOATS;
   }
 }
 
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
+
+/// A light sprite's depth past its screen row: just behind an actor at the same
+/// spot, whose sprite sorts at + 62 and its shadow at + 60.
+#define LIGHT_SPRITE_DEPTH 58
 
 /// Queues the lit actors' sprites: for each listed actor with a position,
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16
@@ -495,7 +505,7 @@ void LightSprites_Draw(void) {
       y = actor->y.fixed - viewY + toFIXED(8);
       z = actor->z.fixed - viewZ - viewY;
       oy = z - y;
-      depth = FIXEDtoINT(y + z) + 58;
+      depth = FIXEDtoINT(y + z) + LIGHT_SPRITE_DEPTH;
       big = gLightSpritesLarge;
       if (big == 0) {
         s32 x, sy;
@@ -648,9 +658,6 @@ const s32 *gFieldEffect_DurationScripts[] = {
 #undef FLAG_RED_DOOR_OPENED
 #undef FLAG_BLUE_DOOR_OPENED
 #undef FLAG_BRIDGE_BLOCK_RAISED
-// The room of grey blocks and locked doors in Jupiter Lighthouse: its copy of
-// the effect spawner, and the cracked tiles, found, cracked and fallen
-// through.
 
 struct CellTarget;
 void Leader_CenterInCell(void);
@@ -674,10 +681,6 @@ extern const s32 *gFieldEffect_DurationScripts[];
 
 #include "shared/leader_center_in_cell.h"
 
-// Centers the leader on its cell, plays sound 161 and copies the cell below
-// the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
-// one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
 #include "shared/cracked_tile_fall.h"
@@ -685,8 +688,6 @@ extern const s32 *gFieldEffect_DurationScripts[];
 #include "../field/field_effect_advance_motion.c"
 
 #undef CELL_PUSH_SLOT_ENTRY
-// The room of grey blocks and locked doors in Jupiter Lighthouse: the cracked
-// tiles' steps and the fall to the floor below.
 
 struct CellTarget;
 struct CellTargetEntry;

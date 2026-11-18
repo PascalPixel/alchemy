@@ -1,9 +1,9 @@
 /// @file
-/// The world map's placed objects, which both the world map and the staff
-/// credits' overlays keep a copy of, included as text: the countdowns an
-/// object's side of the leader chooses, the task that shows the placed objects
-/// coming into view and hides those leaving it, the cell an object stands on,
-/// and the sparks and particles about them.
+/// The world map's placed actors, which both the world map and the staff
+/// credits' overlays keep a copy of, included as text: the exit a place's side
+/// of the leader chooses, the task that shows the places' actors coming into
+/// view and releases those leaving it, the cell a point lies in, and the
+/// sparks and particles about the ship.
 
 #include "types.h"
 #include "system/iwram_call.h"
@@ -22,17 +22,23 @@
 #include "field/field_sequence_event.h"
 #include "field/map_grid.h"
 #include "field/flag_call.h"
+#include "field/field_sequence.h"
+
+/// The step trigger of place 0's actor; each next place's actor raises the
+/// next (world_map.c's own enum, here for staff_credit.c too).
+#define STEP_TRIGGER_AREA_BASE 100
 
 extern struct Actor *gWorldMap_PlacedActors[];
 
 /// Chooses a passage exit from the leader's east-west approach: exitBefore
-/// while the leader is west of the placed object in slot - 100, else exitAfter.
+/// while the leader is west of the actor of the place whose step trigger is
+/// slot, else exitAfter.
 void WorldMap_SelectExitByX(s32 slot, s32 exitBefore, s32 exitAfter) {
   struct FieldWork *work;
   struct Actor *area;
   struct Actor *leader;
 
-  area = gWorldMap_PlacedActors[slot - 100];
+  area = gWorldMap_PlacedActors[slot - STEP_TRIGGER_AREA_BASE];
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   work = Ram_HeapSlots->fieldWork;
   if (leader->x.fixed < area->x.fixed) {
@@ -49,7 +55,7 @@ void WorldMap_SelectExitByZ(s32 slot, s32 exitBefore, s32 exitAfter) {
   struct Actor *area;
   struct Actor *leader;
 
-  area = gWorldMap_PlacedActors[slot - 100];
+  area = gWorldMap_PlacedActors[slot - STEP_TRIGGER_AREA_BASE];
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   work = Ram_HeapSlots->fieldWork;
   if (leader->z.fixed < area->z.fixed) {
@@ -66,6 +72,11 @@ extern s32 gWorldMap_PlacedActorScript[];
 void Actor_StartScript(struct Actor *actor, const s32 *script);
 void Actor_Release(struct Actor *actor);
 
+/// Each frame: creates the actor of each place (FlagEntries_GetTable) whose
+/// flag shows it as it comes within reach of the camera, releases those that
+/// leave it, and raises a place's step trigger when the leader touches its
+/// actor; in Sand's form on the World Map it asks for Sand again, at no PP,
+/// instead.
 void WorldMap_UpdatePlacedActors(void) {
   const struct FlagEntry *placement = FlagEntries_GetTable();
   struct Actor *leader = Actor_GetById(Party_GetLeaderActor());
@@ -116,7 +127,7 @@ void WorldMap_UpdatePlacedActors(void) {
 
       if (flag == -1)
         shown = 1;
-      else if (flag & 0x1000)
+      else if (flag & CONDITION_FLAG_SET)
         shown = GameFlag_Get(flag);
       else
         shown = Flag_IsClear(flag);
@@ -151,10 +162,10 @@ void WorldMap_UpdatePlacedActors(void) {
           if (dz >= 0 ? dx + dz < reach
                       : dx + (leader->z.fixed - actor->z.fixed) < reach) {
             if (GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) == 0) {
-              if (gMainRoutineWork.movementMode == 9)
-                work->psynergy = 0x208b;
+              if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_WORLD_SAND)
+                work->psynergy = ACT_PACKED | ABILITY_SAND;
               else
-                work->stepTrigger = i + 100;
+                work->stepTrigger = i + STEP_TRIGGER_AREA_BASE;
             }
           }
         }
@@ -169,13 +180,13 @@ void WorldMap_UpdatePlacedActors(void) {
     i++;
     slot++;
     placement++;
-    if (i > 127)
+    if (i >= WORLD_PICTURE_PLACE_COUNT)
       break;
     next = placement->flag;
   }
 }
 
-/// While the object system runs, the world map's blend is queued for the
+/// While the actor system runs, the world map's brightening is queued for the
 /// next frames.
 void WorldMap_QueueBlend(void) {
   if ((u16)Ram_HeapSlots->actorSystem->suspended == 0) {
@@ -187,24 +198,34 @@ void WorldMap_QueueBlend(void) {
   }
 }
 
+/// Clears the places' actors and starts WorldMap_UpdatePlacedActors.
 void WorldMap_StartPlacedActors(void) {
-  Iwram_ClearWords(gWorldMap_PlacedActors, 128 * sizeof(struct Actor *));
+  Iwram_ClearWords(gWorldMap_PlacedActors,
+                   WORLD_PICTURE_PLACE_COUNT * sizeof(struct Actor *));
   Task_AddFrame(WorldMap_UpdatePlacedActors, TASK_PASS_FRAME);
 }
 
 /// The cell index of a point in 16.16 pixels.
 s32 WorldMap_GetCellIndex(FIXED x, FIXED z) {
-  return x / toFIXED(16) + (z / toFIXED(16)) * 128;
+  return x / toFIXED(MAPGRID_CELL_PIXELS) +
+         (z / toFIXED(MAPGRID_CELL_PIXELS)) * MAPGRID_SIZE;
 }
 
+/// The frames a ship's spark rises for.
+#define SPARK_RISE_FRAMES 32
+
+/// A spark's rise (gWorldMap_SparkScript): rises a pixel a frame over the actor
+/// it watches, growing and shrinking again over SPARK_RISE_FRAMES; returns 0
+/// when done.
 s32 WorldMap_RiseFromAnchor(struct Actor *actor) {
   struct Actor *parent = actor->watchedActor;
   s32 step = ++actor->timer;
   FIXED scale;
 
-  if (step > 31)
+  if (step >= SPARK_RISE_FRAMES)
     return 0;
-  scale = Iwram_MulFX(Math_Sin(step << 10), FIXED_ONE * 5 / 4);
+  scale = Iwram_MulFX(Math_Sin(step * (DEGtoANG(180) / SPARK_RISE_FRAMES)),
+                      FIXED_ONE * 5 / 4);
   actor->scaleX = scale;
   actor->scaleY = scale;
   actor->x.fixed = parent->x.fixed;
@@ -218,8 +239,8 @@ extern u32 gWorldMap_ParticleScript[];
 
 void Actor_StartScript(struct Actor *actor, const s32 *script);
 
-/// Spawns a pair of sparks at the actor.
-// As ☀️'s MercuryLighthouse_SpawnSparkPair does at a spawn point.
+/// Spawns a pair of rising sparks at the actor, as The Broken Seal's
+/// MercuryLighthouse_SpawnSparkPair does at a spawn point.
 void WorldMap_SpawnSparkPair(struct Actor *actor) {
   struct Actor *spark;
   struct FieldSprite *sprite;
@@ -258,13 +279,14 @@ void WorldMap_SpawnSparkPair(struct Actor *actor) {
   }
 }
 
-/// Spawns a particle at a random spot around the object.
+/// Spawns a particle at a random spot around the actor.
 void WorldMap_SpawnParticle(struct Actor *actor) {
   s32 position[3];
   s32 angle;
   struct Actor *particle;
   struct FieldSprite *sprite;
 
+  // DEAD: a scale multiplied and dropped; the ROM keeps the call.
   Iwram_MulFX(actor->scaleX, FIXED_ONE * 3 / 2);
   SET_VECTOR(position, actor->x.fixed, actor->y.fixed + toFIXED(2),
              actor->z.fixed);
@@ -284,3 +306,6 @@ void WorldMap_SpawnParticle(struct Actor *actor) {
       sprite->flags = 0;
   }
 }
+
+#undef STEP_TRIGGER_AREA_BASE
+#undef SPARK_RISE_FRAMES

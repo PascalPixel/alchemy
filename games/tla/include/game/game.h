@@ -21,7 +21,6 @@ struct SummonDefinition;
 /// A field Psynergy, as the field kind: an ability's fieldPsynergy, named for
 /// the abilities that have it (the English release's names in
 /// gAbilityDefinitions). The field effect keeps it as its animation.
-/// The Broken Seal has 1 to 16; The Lost Age adds 17 to 30.
 enum FieldPsynergy {
   FIELD_PSYNERGY_MOVE = 1,
   FIELD_PSYNERGY_MIND_READ = 2,
@@ -158,8 +157,10 @@ extern const u8 gSummon_OrderList[SUMMON_COUNT];
 extern const u32 gCharacter_LevelExpTable[];
 
 extern const s16 gElement_PowerResistCurve[5][2];
-/// The power and resistance by element level (element_table.c): a table
-/// nothing writes, defined writable in .rodata as The Broken Seal's is.
+/// The power and resistance by element level (element_table.c); nothing writes
+/// it.
+/* FAKEMATCH(signature): declared without its const, the definition placed in
+ * .rodata by a section attribute; as const in both. */
 extern struct ElementLevelBonus gElement_PowerResistByLevel[16];
 extern const struct EnemyElementPreset gEnemy_ElementPresetTable[];
 extern const struct CharacterDefinition gCharacter_DefinitionTable[];
@@ -185,7 +186,7 @@ extern const s32 gClass_SeriesByElements[4][4];
 s32 Unit_KnowsPsynergy(s32 owner, s32 value);
 struct LevelUpResult *Unit_TryLevelUp(s32 unitId, struct LevelUpResult *gains);
 void MainRoutineWork_InitializeDefaults(void);
-extern const u8 Data_080b1f2c[4][5];
+extern const u8 gNewGame_SceneStateTable[4][5];
 void Party_InitializeCharacters(void);
 s32 Party_AddMember(s32 owner);
 s32 Unit_LearnPsynergy(s32 owner, s32 ability);
@@ -209,5 +210,9 @@ void Party_SetLeaderJenna(void);
 void Party_SetLeaderFelix(void);
 
 extern u8 gInventorySnapshot[];
+/// Where gInventorySnapshot's spare space begins, past the party's equipment
+/// InventorySnapshot_Save keeps and the Trial Road's state: the scenes keep
+/// their own work there (scene/ride.h's RIDE_WORK).
+#define INVENTORY_SNAPSHOT_SPARE 392
 
 #endif

@@ -139,6 +139,16 @@ void FieldPsynergy_Carry(void);
 /// open it..." (MsgCantOpenIt).
 #define FIND_CHEST_LOCKED 0x10000
 
+// A field Psynergy or item use, packed into one value, as FieldWork.psynergy
+// and FieldWork.item hold it. bits: 13..10 the user (13 is ACT_PACKED) | 9..0
+// the Psynergy or item.
+#define ACT_ID_MASK 0x3ff                 ///< bits 9..0
+#define ACT_UNIT_SHIFT 10                 ///< bits 13..10
+#define ABILITY_ID(c) ((c) & ACT_ID_MASK) ///< the Psynergy
+#define ACT_ITEM_ID(c) ((c) & ACT_ID_MASK)
+#define ACT_UNIT(c) (((c) >> ACT_UNIT_SHIFT) & 15) ///< who uses it
+#define ACT_PACKED 0x2000                          ///< use it without paying PP
+
 /// A 16.16 coordinate's whole cell: a map grid cell is 16 pixels square.
 #define FIELD_CELL_MASK 0xfff00000
 /// A 16.16 coordinate's shift to its map grid cell: 16 bits of fraction and 4
@@ -258,9 +268,9 @@ void Reveal_EmitSparkles(struct Actor *actor);
 s32 Field_IsRevealActive(struct Actor *interpreter);
 void FieldEffect_SpawnRevealMarkers(void);
 
-void FieldEffect_StartWindowHBlankDma(void);
+void ScreenTransition_StartWindowHBlankDma(void);
 void ScreenTransition_UpdateScanlineTable(void);
-void ScreenTransition_InitializeBattleEffectState(s32 mode);
+void ScreenTransition_StartHeldWindow(s32 mode);
 void ScreenTransition_SuspendCallbacks(void);
 struct ScreenTransitionState *ScreenTransition_AllocateAndClearState(void);
 void ScreenTransition_Start(s32 mode, s32 frames);

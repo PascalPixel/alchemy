@@ -4,6 +4,14 @@
 
 #include "event_commands_internal.h"
 
+/// A button shortcut's party member (bits 13 to 10) and Psynergy (bits 9 to 0),
+/// packed as a field Psynergy use is (field_sequence_internal.h's ACT_UNIT and
+/// ABILITY_ID).
+#define SHORTCUT_MEMBER(shortcut) (((shortcut) >> 10) & 0xf)
+#define SHORTCUT_ABILITY(shortcut) ((shortcut) & 0x3ff)
+/// The most of one item a party member carries.
+#define ITEM_CARRY_MAX 30
+
 // When a gift goes to another party member, `<leader> gave <item> to <member>.`
 // follows `<leader> got <item>.`; it is MsgGaveItemToMember, the next
 // message, in every edition.
@@ -97,6 +105,9 @@ void Event_Start(void) {
   runtime->unusedBeforeCamera[0] = -1;
   runtime->unusedBeforeCamera[1] = -1;
   Task_Add(Event_UpdateDebugSkip, TASK_PASS_FRAME);
+  // XXX (no evidence): what flag 0x132 means; every event start in both games
+  // clears it, and nothing in either game's source names it or reads it by its
+  // number.
   GameFlag_ClearFar(0x132);
   runtime->speaker = gMainRoutineWork.leaderActorId;
   runtime->messageWindow = 0;
@@ -159,13 +170,12 @@ void Event_AddPartyMemberPair(s32 first, s32 second) {
 /// Checks an L or R button shortcut, packed as the party member in bits 10 to
 /// 13 and the Psynergy in bits 0 to 9.
 s32 Party_CheckShortcut(u32 shortcut) {
-  s32 member = (shortcut >> 10) & 0xf;
-  s32 ability = shortcut & 0x3ff;
+  s32 member = SHORTCUT_MEMBER(shortcut);
+  s32 ability = SHORTCUT_ABILITY(shortcut);
 
-  if (member > 7)
+  if (member > ALLY_MAX)
     return -1;
-  // Flags 0 to 7 say who is in the party (FLAG_IN_PARTY).
-  if (GameFlag_GetFar(member) == 0)
+  if (GameFlag_GetFar(FLAG_IN_PARTY(member)) == 0)
     return -2;
   if (Unit_KnowsPsynergyFar(member, ability) == 0)
     return -3;
@@ -212,7 +222,7 @@ void Party_RemoveMemberRestored(s32 unit) {
 }
 
 /// Checks whether the party can carry one more of item: each party member
-/// carries at most 30 of one item.
+/// carries at most ITEM_CARRY_MAX of one item.
 s32 Party_CheckItemLimit(s32 item) {
   s32 partyCount;
   s32 heldQuantity = 0;
@@ -223,10 +233,12 @@ s32 Party_CheckItemLimit(s32 item) {
     heldQuantity +=
         Inventory_CountItemFar(gMainRoutineWork.party[partyIndex], item);
 
-  if (heldQuantity >= partyCount * 30) {
+  if (heldQuantity >= partyCount * ITEM_CARRY_MAX) {
     MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
+    // "Isaac's party cannot carry any more <item>s..."
     FieldMessage_ShowFar(MsgCannotCarryMore, FIELD_MESSAGE_ZOOM);
     MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
+    // "Isaac threw the <item> as far away as possible."
     FieldMessage_ShowFar(MsgCannotCarryMore + 1, FIELD_MESSAGE_ZOOM);
     return -1;
   }
@@ -289,10 +301,10 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
 
         discardQuantity = Shop_GetSelectionState(member, slot);
       }
-      // A party member who already carries 30 of the new item (the cap
-      // Party_CheckItemLimit counts) cannot take it: say so and ask again.
+      // A party member who already carries ITEM_CARRY_MAX of the new item
+      // cannot take it: say so and ask again.
 #if !(TBS_PATCH_1 && !TBS_PATCH_2)
-      if (Inventory_CountItemFar(member, item) > 29) {
+      if (Inventory_CountItemFar(member, item) >= ITEM_CARRY_MAX) {
         MessageArgument_PushFar(member, MESSAGE_ARGUMENT_ACTOR);
         MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
         FieldMessage_ShowFar(MsgWhatWillYouDrop + 7, FIELD_MESSAGE_ZOOM);
@@ -479,3 +491,7 @@ void Event_SetExitRequest(u16 request) {
 
 #undef GIFT_RECEIVED_MESSAGE
 #undef GIFT_RECEIVED_MESSAGE_MODE
+
+#undef SHORTCUT_MEMBER
+#undef SHORTCUT_ABILITY
+#undef ITEM_CARRY_MAX

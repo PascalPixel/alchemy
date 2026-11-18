@@ -22,15 +22,30 @@
 /// gone.
 #define FLAG_DULLAHAN_BEATEN 0xa9f
 
+/// Set once the six blocks stand on the dark square: their symbols are lit,
+/// for the rest of the visit.
+#define FLAG_SYMBOLS_LIT FLAG_SCENE_TEMP_00
+/// Set as the battle with the Dullahan starts, for the light to rise when the
+/// party returns.
+#define FLAG_DULLAHAN_FOUGHT FLAG_SCENE_TEMP_01
+
 /// The map's cell behaviour for the cells where Hover, cast once the six
-/// statues stand in their places, opens the way down.
+/// blocks stand in their places, opens the way down.
 enum { CELL_BEHAVIOR_ANEMOS_INNER_SANCTUM_ENTRANCE_HOVER = 77 };
 
 /// A glow's value with this bit drawn mirrored left to right; its low three
 /// bits are its frame.
-#define LIGHT_SPRITE_MIRRORED 0x80
+#define LIGHT_SPRITE_MIRRORED (1 << 7)
 
-void AnemosInnerSanctumEntrance_PlaceStatues(void);
+/// Where a glow joins the depth list: its actor's y + z plus this, where the
+/// actor's own sprite goes at + 62.
+enum { GLOW_DEPTH = 58 };
+
+/// The nine bits of a sprite's x and the eight of its y in OAM.
+#define OBJ_X_MASK 0x1ff
+#define OBJ_Y_MASK 0xff
+
+void AnemosInnerSanctumEntrance_PlaceBlocks(void);
 void AnemosInnerSanctumEntrance_SetLightPicture(u16 value);
 void Actor_MoveToObject(s32 id, s32 a);
 void Field_TryJumpForward(void);
@@ -66,17 +81,21 @@ void Field_TryJumpForward(void);
 enum AnemosInnerSanctumEntranceActorId {
   /// "I am the shadow, the keeper of light."
   ACTOR_SHADOW = ACTOR_FIRST_PLACED,
-  /// The six stone beasts set in place before the way opens.
+  /// The six grey stone blocks, each with a glowing symbol on top, that Move
+  /// sets in place before the way opens.
   ///@{
-  ACTOR_STATUE_A,
-  ACTOR_STATUE_B,
-  ACTOR_STATUE_C,
-  ACTOR_STATUE_D,
-  ACTOR_STATUE_E,
-  ACTOR_STATUE_F,
+  ACTOR_SYMBOL_BLOCK_A,
+  ACTOR_SYMBOL_BLOCK_B,
+  ACTOR_SYMBOL_BLOCK_C,
+  ACTOR_SYMBOL_BLOCK_D,
+  ACTOR_SYMBOL_BLOCK_E,
+  ACTOR_SYMBOL_BLOCK_F,
   ///@}
-  ACTOR_BLUE_ORB,
-  /// The fourteen coiled dragon statues, hidden by their script.
+  /// The light the shadow keeps: a white ball that swells over him once the
+  /// Dullahan is beaten.
+  ACTOR_LIGHT,
+  /// The fourteen coiled dragon statues, drawn without shadows by their
+  /// script.
   ACTOR_FIRST_DRAGON_STATUE
 };
 
@@ -91,7 +110,7 @@ enum AnemosInnerSanctumEntranceActorId {
 extern s32 gAnemosInnerSanctumEntrance_GlowGrowsScript[];
 extern s32 gAnemosInnerSanctumEntrance_GlowShrinksScript[];
 extern s32 gAnemosInnerSanctumEntrance_ShadowScript[];
-extern s8 gAnemosInnerSanctumEntrance_StatueOrder[];
+extern s8 gAnemosInnerSanctumEntrance_BlockOrder[];
 void AnemosInnerSanctumEntrance_StartLightSprites(void);
 void AnemosInnerSanctumEntrance_SetLightPriority(u16 value);
 void AnemosInnerSanctumEntrance_OpenTheWay(void);
@@ -112,10 +131,9 @@ s16 gAnemosInnerSanctumEntrance_LightPicture BSS_DATA;
 
 #include "text/msg_ids.h"
 
-/// The call gAnemosInnerSanctumEntrance_DragonStatueScript makes: clears the
-/// actor's sprite flags, hiding it.
-s32 AnemosInnerSanctumEntrance_ClearScriptedActorSpriteFlags(
-    struct Actor *actor) {
+/// The call gAnemosInnerSanctumEntrance_DragonStatueScript makes: the actor's
+/// shadow is no longer drawn.
+s32 AnemosInnerSanctumEntrance_RemoveShadow(struct Actor *actor) {
   Actor_SetSpriteFlags(actor, 0);
   return 0;
 }
@@ -136,8 +154,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 /// The shadow at the door speaks, the room warms, and the battle with the
-/// Dullahan starts, one the party cannot run from; FLAG_SCENE_TEMP_01 brings
-/// AnemosInnerSanctumEntrance_GlowRises on the party's return.
+/// Dullahan starts, one the party cannot run from.
 void AnemosInnerSanctumEntrance_ShadowChallenges(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -147,17 +164,19 @@ void AnemosInnerSanctumEntrance_ShadowChallenges(void) {
   PaletteFade_SetTarget(PALETTE_TINT_WARM, PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   Event_Wait(60);
+  // "I am the shadow, the keeper of light. If you want the sun's power, show
+  // me your own."
   FieldMessage_ShowCentered((s32)&MsgIAmTheShadow, 0, 6);
   gMainRoutineWork.pendingDjinni = IF_FLAG_SET(FLAG_DULLAHAN_BEATEN);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   Field_RequestBattleFromEncounterTable(103, 3);
-  GameFlag_Set(FLAG_SCENE_TEMP_01);
+  GameFlag_Set(FLAG_DULLAHAN_FOUGHT);
 }
 
-/// After the Dullahan's battle: the shadow and the blue orb flash, the orb
-/// swells and rises while the shadow shrinks away.
+/// After the Dullahan's battle: the shadow and his light flash white, and the
+/// light swells and rises over him while he shrinks away.
 void AnemosInnerSanctumEntrance_GlowRises(void) {
-  struct Actor *actor = Actor_GetById(ACTOR_BLUE_ORB);
+  struct Actor *actor = Actor_GetById(ACTOR_LIGHT);
 
   actor->motionFlags = 0;
   actor->scaleX = FIXED_ONE / 4;
@@ -165,28 +184,28 @@ void AnemosInnerSanctumEntrance_GlowRises(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SE_LIGHT_APPEAR);
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_SHADOW), 7);
-  Actor_SetSpriteColor(Actor_GetById(ACTOR_BLUE_ORB), 7);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_SHADOW), SPRITE_COLOR_WHITE);
+  Actor_SetSpriteColor(Actor_GetById(ACTOR_LIGHT), SPRITE_COLOR_WHITE);
   Event_Wait(20);
   Sound_Play(SE_WARP);
-  Actor_MoveToObject(ACTOR_BLUE_ORB, 8);
+  Actor_MoveToObject(ACTOR_LIGHT, ACTOR_SHADOW);
   wait(1);
   Actor_SetMovementTypeById(ACTOR_SHADOW,
                             gAnemosInnerSanctumEntrance_ShadowScript);
-  Actor_SetMovementTypeAndWaitById(ACTOR_BLUE_ORB,
+  Actor_SetMovementTypeAndWaitById(ACTOR_LIGHT,
                                    gAnemosInnerSanctumEntrance_GlowGrowsScript);
   Actor_SetMovementTypeAndWaitById(
-      ACTOR_BLUE_ORB, gAnemosInnerSanctumEntrance_GlowShrinksScript);
+      ACTOR_LIGHT, gAnemosInnerSanctumEntrance_GlowShrinksScript);
   Event_Wait(10);
   Event_End();
 }
 
-/// Leaves the six statues standing in their places, their bob counter at 1 and
+/// Leaves the six blocks standing in their places, their bob counter at 1 and
 /// no per-frame hook.
-void AnemosInnerSanctumEntrance_PlaceStatues(void) {
+void AnemosInnerSanctumEntrance_PlaceBlocks(void) {
   s32 i;
 
-  for (i = ACTOR_STATUE_A; i <= ACTOR_STATUE_F; i++) {
+  for (i = ACTOR_SYMBOL_BLOCK_A; i <= ACTOR_SYMBOL_BLOCK_F; i++) {
     struct Actor *actor = Actor_GetById(i);
 
     actor->riseCounter = 1;
@@ -194,28 +213,28 @@ void AnemosInnerSanctumEntrance_PlaceStatues(void) {
   }
 }
 
-/// A lowering statue's per-frame hook: shows its sprite while the ground under
-/// it is no more than 32 pixels down, and hides it below that.
-void AnemosInnerSanctumEntrance_ShowByHeight(struct Actor *actor) {
+/// A sliding block's per-frame hook: draws its shadow while the ground under
+/// it is no more than 32 pixels down, and none below that.
+void AnemosInnerSanctumEntrance_ShadowByHeight(struct Actor *actor) {
   if ((actor->groundHeight = Map_GetTerrainHeight(
            0, actor->x.fixed, actor->z.fixed)) >= -toFIXED(32))
-    Actor_SetSpriteFlags(actor, 1);
+    Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
   else
     Actor_SetSpriteFlags(actor, 0);
 }
 
-extern s8 gAnemosInnerSanctumEntrance_StatueSpots[];
+extern s8 gAnemosInnerSanctumEntrance_BlockSpots[];
 
-/// Move on a statue: once every statue stands on its cell of
-/// gAnemosInnerSanctumEntrance_StatueSpots, sets FLAG_SCENE_TEMP_00, lights the
-/// statues and leaves them placed.
-void AnemosInnerSanctumEntrance_MoveStatue(s32 a, s32 b) {
+/// Move on a block: once every block stands on its cell of
+/// gAnemosInnerSanctumEntrance_BlockSpots, the symbols flicker and the blocks
+/// stay placed for the visit.
+void AnemosInnerSanctumEntrance_MoveBlock(s32 a, s32 b) {
   s32 i;
 
-  const s8 *x = gAnemosInnerSanctumEntrance_StatueSpots;
-  const s8 *z = gAnemosInnerSanctumEntrance_StatueSpots + 1;
+  const s8 *x = gAnemosInnerSanctumEntrance_BlockSpots;
+  const s8 *z = gAnemosInnerSanctumEntrance_BlockSpots + 1;
 
-  for (i = ACTOR_STATUE_A; i <= ACTOR_STATUE_F; i++) {
+  for (i = ACTOR_SYMBOL_BLOCK_A; i <= ACTOR_SYMBOL_BLOCK_F; i++) {
     struct Actor *actor = Actor_GetById(i);
 
     if (FIELD_CELL(actor->x.fixed) != *x)
@@ -229,13 +248,13 @@ void AnemosInnerSanctumEntrance_MoveStatue(s32 a, s32 b) {
         return;
     }
   }
-  GameFlag_Set(FLAG_SCENE_TEMP_00);
+  GameFlag_Set(FLAG_SYMBOLS_LIT);
   Sound_Play(SE_ASCEND);
   AnemosInnerSanctumEntrance_SetLightPicture(1);
-  AnemosInnerSanctumEntrance_PlaceStatues();
+  AnemosInnerSanctumEntrance_PlaceBlocks();
 }
 
-/// A step on a pushing cell: pushes the statue ahead and checks the statues'
+/// A step on a pushing cell: pushes the block ahead and checks the blocks'
 /// places, or, with nothing to push, lets the leader jump forward off a ledge.
 void AnemosInnerSanctumEntrance_StepWhilePushing(s32 a) {
   struct MainRoutineWork *party;
@@ -245,7 +264,7 @@ void AnemosInnerSanctumEntrance_StepWhilePushing(s32 a) {
   if (held) {
     if (Field_FindNearbyTalkTarget(party->leaderActorId) != -1) {
       Leader_PushObjectAhead();
-      AnemosInnerSanctumEntrance_MoveStatue(0, a);
+      AnemosInnerSanctumEntrance_MoveBlock(0, a);
     }
   } else {
     if (Actor_GetById(party->leaderActorId)->y.fixed > -toFIXED(28))
@@ -253,7 +272,7 @@ void AnemosInnerSanctumEntrance_StepWhilePushing(s32 a) {
   }
 }
 
-/// Hover on the placed statues' cell: the six statues hop up, slide 19 cells
+/// Hover on the placed blocks' cells: the six blocks hop up, slide 19 cells
 /// away from the leader and settle; facing north with the Dullahan unbeaten,
 /// the shadow then challenges the party.
 void AnemosInnerSanctumEntrance_OpenTheWay(void) {
@@ -264,7 +283,7 @@ void AnemosInnerSanctumEntrance_OpenTheWay(void) {
   if (FIELD_CELL(actor->z.fixed) <= 9)
     shift = -shift;
   Event_ResolvePendingActions(0);
-  if (!GameFlag_Get(FLAG_SCENE_TEMP_00))
+  if (!GameFlag_Get(FLAG_SYMBOLS_LIT))
     return;
   if (MapGrid_GetCellBehaviorAt(actor->layer, actor->x.fixed, actor->z.fixed) !=
       CELL_BEHAVIOR_ANEMOS_INNER_SANCTUM_ENTRANCE_HOVER)
@@ -285,17 +304,17 @@ void AnemosInnerSanctumEntrance_OpenTheWay(void) {
   }
   wait(10);
   i = 0;
-  // BUG: the loop runs seven times, reading one byte past the six statues of
-  // gAnemosInnerSanctumEntrance_StatueOrder; BUGFIX stops at the sixth.
+  // BUG: the loop runs seven times, reading one byte past the six blocks of
+  // gAnemosInnerSanctumEntrance_BlockOrder; BUGFIX stops at the sixth.
   do {
-    actor = Actor_GetById(gAnemosInnerSanctumEntrance_StatueOrder[i]);
+    actor = Actor_GetById(gAnemosInnerSanctumEntrance_BlockOrder[i]);
     actor->motionFlags = 0;
     actor->y.fixed += toFIXED(1) / 2;
     actor->acceleration = toFIXED(1) / 16;
     actor->speedLimit = toFIXED(2);
-    Actor_SetSpriteFlags(actor, 1);
+    Actor_SetSpriteFlags(actor, SPRITE_FLAG_SHADOW);
     Actor_SetMoveTarget(actor, actor->x.fixed, -toFIXED(8), actor->z.fixed);
-    actor->update = AnemosInnerSanctumEntrance_ShowByHeight;
+    actor->update = AnemosInnerSanctumEntrance_ShadowByHeight;
     Sound_Play(SE_JUMP);
     wait((Random_Below(4)) + 3);
 #ifdef BUGFIX
@@ -305,7 +324,7 @@ void AnemosInnerSanctumEntrance_OpenTheWay(void) {
 #endif
   wait(40);
   Sound_Play(SE_KOLIMA_BRIDGE_POST);
-  i = ACTOR_STATUE_A;
+  i = ACTOR_SYMBOL_BLOCK_A;
   do {
     actor = Actor_GetById(i);
     {
@@ -313,16 +332,16 @@ void AnemosInnerSanctumEntrance_OpenTheWay(void) {
 
       Actor_SetMoveTarget(actor, actor->x.fixed, -toFIXED(8), z);
     }
-  } while (++i <= ACTOR_STATUE_F);
-  Actor_WaitForMove(Actor_GetById(ACTOR_STATUE_A));
+  } while (++i <= ACTOR_SYMBOL_BLOCK_F);
+  Actor_WaitForMove(Actor_GetById(ACTOR_SYMBOL_BLOCK_A));
   wait(40);
-  i = ACTOR_STATUE_A;
+  i = ACTOR_SYMBOL_BLOCK_A;
   do {
     actor = Actor_GetById(i);
     actor->z.fixed = (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     actor->update = 0;
-  } while (++i <= ACTOR_STATUE_F);
+  } while (++i <= ACTOR_SYMBOL_BLOCK_F);
   wait(3);
   Sound_Play(SE_THUMP);
   wait(10);
@@ -346,44 +365,54 @@ const struct Trigger *Scene_GetTriggers(void) {
 static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Get(flag); }
 
 /// Opens with the window transition. In the entrance room, gives the six
-/// statues their glows and sprite priority bits, and with FLAG_SCENE_TEMP_00
-/// set leaves them placed and lit. With FLAG_SCENE_TEMP_01 set, back from the
-/// Dullahan, runs AnemosInnerSanctumEntrance_GlowRises and clears the flag.
+/// blocks their symbols, lets the leader stand on them, and once they are
+/// placed this visit leaves them placed and flickering. Back from the
+/// Dullahan's battle, the light rises.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctumEntrance) {
     AnemosInnerSanctumEntrance_StartLightSprites();
     AnemosInnerSanctumEntrance_SetLightPriority(2);
     // LightSprites_Add, defined below, is called with no prototype in scope.
-    LightSprites_Add(ACTOR_STATUE_A, 0);
-    LightSprites_Add(ACTOR_STATUE_B, 1);
-    LightSprites_Add(ACTOR_STATUE_C, 2);
-    LightSprites_Add(ACTOR_STATUE_D, 3);
-    LightSprites_Add(ACTOR_STATUE_E, LIGHT_SPRITE_MIRRORED | 0);
-    LightSprites_Add(ACTOR_STATUE_F, LIGHT_SPRITE_MIRRORED | 1);
-    Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |= 0x40;
-    Actor_GetById(ACTOR_STATUE_A)->priorityFlags |= 0xc0;
-    Actor_GetById(ACTOR_STATUE_B)->priorityFlags |= 0x80;
-    Actor_GetById(ACTOR_STATUE_C)->priorityFlags |= 0x80;
-    Actor_GetById(ACTOR_STATUE_D)->priorityFlags |= 0x80;
-    Actor_GetById(ACTOR_STATUE_E)->priorityFlags |= 0x80;
-    Actor_GetById(ACTOR_STATUE_F)->priorityFlags |= 0x80;
-    if (GameFlag_Get(FLAG_SCENE_TEMP_00)) {
+    LightSprites_Add(ACTOR_SYMBOL_BLOCK_A, 0);
+    LightSprites_Add(ACTOR_SYMBOL_BLOCK_B, 1);
+    LightSprites_Add(ACTOR_SYMBOL_BLOCK_C, 2);
+    LightSprites_Add(ACTOR_SYMBOL_BLOCK_D, 3);
+    LightSprites_Add(ACTOR_SYMBOL_BLOCK_E, LIGHT_SPRITE_MIRRORED | 0);
+    LightSprites_Add(ACTOR_SYMBOL_BLOCK_F, LIGHT_SPRITE_MIRRORED | 1);
+    Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
+        ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
+    Actor_GetById(ACTOR_SYMBOL_BLOCK_A)->priorityFlags |=
+        ACTOR_PRIORITY_WALKS_ON_PLATFORMS | ACTOR_PRIORITY_PLATFORM;
+    Actor_GetById(ACTOR_SYMBOL_BLOCK_B)->priorityFlags |=
+        ACTOR_PRIORITY_PLATFORM;
+    Actor_GetById(ACTOR_SYMBOL_BLOCK_C)->priorityFlags |=
+        ACTOR_PRIORITY_PLATFORM;
+    Actor_GetById(ACTOR_SYMBOL_BLOCK_D)->priorityFlags |=
+        ACTOR_PRIORITY_PLATFORM;
+    Actor_GetById(ACTOR_SYMBOL_BLOCK_E)->priorityFlags |=
+        ACTOR_PRIORITY_PLATFORM;
+    Actor_GetById(ACTOR_SYMBOL_BLOCK_F)->priorityFlags |=
+        ACTOR_PRIORITY_PLATFORM;
+    if (GameFlag_Get(FLAG_SYMBOLS_LIT)) {
       AnemosInnerSanctumEntrance_SetLightPicture(1);
-      AnemosInnerSanctumEntrance_PlaceStatues();
+      AnemosInnerSanctumEntrance_PlaceBlocks();
     }
   }
-  if (Flag_Test(FLAG_SCENE_TEMP_01)) {
+  if (Flag_Test(FLAG_DULLAHAN_FOUGHT)) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     AnemosInnerSanctumEntrance_GlowRises();
-    GameFlag_Clear(FLAG_SCENE_TEMP_01);
+    GameFlag_Clear(FLAG_DULLAHAN_FOUGHT);
   }
   return 0;
 }
 
 s32 Scene_PrepareMap(void) { return 0; }
 
+/// Draws each listed actor's glow: a small 16-pixel glow on its frame, or, in
+/// the large mode, a 32 by 64 one.
 void LightSprites_Draw(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
@@ -403,28 +432,30 @@ void LightSprites_Draw(void) {
     struct Actor *actor = gLightSpriteActors[i];
 
     if (actor != 0 && actor->x.fixed != 0) {
-      s32 ox = actor->x.fixed - viewX;
+      s32 screenX = actor->x.fixed - viewX;
       FIXED y = actor->y.fixed - viewY + toFIXED(8);
       FIXED z = actor->z.fixed - viewZ - viewY;
-      s32 oy = z - y;
-      s32 depth = ((y + z) >> 16) + 58;
+      s32 screenY = z - y;
+      s32 depth = FIXEDtoINT(y + z) + GLOW_DEPTH;
       s32 mode = gLightSpritesLarge;
       u32 *word;
 
       if (mode == 0) {
         s32 frame = actor->timer;
-        s32 x = ox >> 16;
-        s32 sy = oy >> 16;
-        ox = x - 8;
-        oy = sy - 16;
-        if ((u32)(x + 7) > 334 || oy <= -16 || oy > 239)
+        s32 pixelX = FIXEDtoINT(screenX);
+        s32 pixelY = FIXEDtoINT(screenY);
+        screenX = pixelX - 8;
+        screenY = pixelY - 16;
+        if ((u32)(pixelX + 7) > 334 || screenY <= -16 || screenY > 239)
           continue;
-        ox &= 0x1ff;
-        oy &= 0xff;
+        screenX &= OBJ_X_MASK;
+        screenY &= OBJ_Y_MASK;
         word = (u32 *)oam;
         *word++ = 0;
-        *word++ = oy | (ox << 16) | (frame & LIGHT_SPRITE_MIRRORED) << 21 |
-                  0x40002000;
+        *word++ = screenY | OBJ_X(screenX) |
+                  (frame & LIGHT_SPRITE_MIRRORED) *
+                      (OBJ_HFLIP / LIGHT_SPRITE_MIRRORED) |
+                  OBJ_SIZE_16X16 | OBJ_256_COLORS;
         *word = (tile + picture + (frame & 7) * 8) | OBJ_PRIORITY(2);
         if (gLightSpritePriority == -1)
           oam->priority = BattleEffect_GetObjectPriority(actor);
@@ -434,17 +465,17 @@ void LightSprites_Draw(void) {
         oam++;
       } else {
         s32 frame = actor->timer;
-        s32 x = ox >> 16;
-        s32 sy = oy >> 16;
-        ox = x - 8;
-        oy = sy - 64;
-        if ((u32)(x + 23) > 350 || oy <= -64 || oy > 175)
+        s32 pixelX = FIXEDtoINT(screenX);
+        s32 pixelY = FIXEDtoINT(screenY);
+        screenX = pixelX - 8;
+        screenY = pixelY - 64;
+        if ((u32)(pixelX + 23) > 350 || screenY <= -64 || screenY > 175)
           continue;
-        ox &= 0x1ff;
-        oy &= 0xff;
+        screenX &= OBJ_X_MASK;
+        screenY &= OBJ_Y_MASK;
         word = (u32 *)oam;
         *word++ = 0;
-        *word++ = oy | (ox << 16) | 0xc000a000;
+        *word++ = screenY | OBJ_X(screenX) | OBJ_SIZE_32X64 | OBJ_256_COLORS;
         *word = (tile + frame * 8) | OBJ_PRIORITY(2);
         if (gLightSpritePriority == -1)
           oam->priority = BattleEffect_GetObjectPriority(actor);
@@ -467,7 +498,7 @@ static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
 void AnemosInnerSanctumEntrance_StartLightSprites(void) {
   u8 *buffer = BumpAlloc(6144);
 
-  Iwram_ClearWordsEntry(gLightSpriteActors, 64);
+  Iwram_ClearWordsEntry(gLightSpriteActors, sizeof(gLightSpriteActors));
   Decompress_TaggedLz(gField_CachedTilesD, buffer);
   gLightSpriteTile = VramCache_FindFreeEntry();
   VramCache_Load(gLightSpriteTile, 6144, buffer);
@@ -536,15 +567,15 @@ s32 gAnemosInnerSanctumEntrance_ShadowScript[] = {
 };
 // clang-format on
 
-/// The cells, x then z, where the six statues must stand before Hover opens the
-/// way.
-s8 gAnemosInnerSanctumEntrance_StatueSpots[] = {11, 27, 11, 28, 12, 27,
-                                                12, 28, 13, 27, 13, 28};
+/// The cells, x then z, where the six blocks must stand before Hover opens the
+/// way: the dark square in the middle of the room.
+s8 gAnemosInnerSanctumEntrance_BlockSpots[] = {11, 27, 11, 28, 12, 27,
+                                               12, 28, 13, 27, 13, 28};
 
-/// The order the statues hop up in when the way opens.
-s8 gAnemosInnerSanctumEntrance_StatueOrder[] = {
-    ACTOR_STATUE_D, ACTOR_STATUE_F, ACTOR_STATUE_A,
-    ACTOR_STATUE_C, ACTOR_STATUE_E, ACTOR_STATUE_B,
+/// The order the blocks hop up in when the way opens.
+s8 gAnemosInnerSanctumEntrance_BlockOrder[] = {
+    ACTOR_SYMBOL_BLOCK_D, ACTOR_SYMBOL_BLOCK_F, ACTOR_SYMBOL_BLOCK_A,
+    ACTOR_SYMBOL_BLOCK_C, ACTOR_SYMBOL_BLOCK_E, ACTOR_SYMBOL_BLOCK_B,
 };
 
 #undef EFFECT_SPAWN
@@ -563,7 +594,7 @@ LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
 /// The coiled dragon statues' script, from ACTOR_FIRST_DRAGON_STATUE on: hides
 /// each one's sprite, then stops.
 LATE_DATA s32 gAnemosInnerSanctumEntrance_DragonStatueScript[] = {
-    SC_CALL(AnemosInnerSanctumEntrance_ClearScriptedActorSpriteFlags),
+    SC_CALL(AnemosInnerSanctumEntrance_RemoveShadow),
     SC_END,
 };
 
@@ -653,8 +684,8 @@ LATE_DATA struct Trigger gAnemosInnerSanctumEntrance_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// The entrance room's exits, its pushing cells, Move on each statue and Hover
-/// on the statues' cell.
+/// The entrance room's exits, its pushing cells, Move on each block and Hover
+/// on the blocks' cells.
 LATE_DATA struct Trigger gAnemosInnerSanctumEntrance_HallTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -665,21 +696,21 @@ LATE_DATA struct Trigger gAnemosInnerSanctumEntrance_HallTriggers[] = {
      EVENT(AnemosInnerSanctumEntrance_StepWhilePushing)},
     {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_ANEMOS_INNER_SANCTUM_ENTRANCE_HOVER,
      CONDITION_ALWAYS, EVENT(AnemosInnerSanctumEntrance_StepWhilePushing)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STATUE_A, FLAG_SCENE_TEMP_00,
-     EVENT(AnemosInnerSanctumEntrance_MoveStatue)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STATUE_B, FLAG_SCENE_TEMP_00,
-     EVENT(AnemosInnerSanctumEntrance_MoveStatue)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STATUE_C, FLAG_SCENE_TEMP_00,
-     EVENT(AnemosInnerSanctumEntrance_MoveStatue)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STATUE_D, FLAG_SCENE_TEMP_00,
-     EVENT(AnemosInnerSanctumEntrance_MoveStatue)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STATUE_E, FLAG_SCENE_TEMP_00,
-     EVENT(AnemosInnerSanctumEntrance_MoveStatue)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STATUE_F, FLAG_SCENE_TEMP_00,
-     EVENT(AnemosInnerSanctumEntrance_MoveStatue)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SYMBOL_BLOCK_A, FLAG_SYMBOLS_LIT,
+     EVENT(AnemosInnerSanctumEntrance_MoveBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SYMBOL_BLOCK_B, FLAG_SYMBOLS_LIT,
+     EVENT(AnemosInnerSanctumEntrance_MoveBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SYMBOL_BLOCK_C, FLAG_SYMBOLS_LIT,
+     EVENT(AnemosInnerSanctumEntrance_MoveBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SYMBOL_BLOCK_D, FLAG_SYMBOLS_LIT,
+     EVENT(AnemosInnerSanctumEntrance_MoveBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SYMBOL_BLOCK_E, FLAG_SYMBOLS_LIT,
+     EVENT(AnemosInnerSanctumEntrance_MoveBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SYMBOL_BLOCK_F, FLAG_SYMBOLS_LIT,
+     EVENT(AnemosInnerSanctumEntrance_MoveBlock)},
     {PSYNERGY_ANYWHERE(ABILITY_HOVER, PSYNERGY_PHASE_AFTER_CAST),
      CELL_BEHAVIOR_ANEMOS_INNER_SANCTUM_ENTRANCE_HOVER,
-     IF_FLAG_SET(FLAG_SCENE_TEMP_00),
+     IF_FLAG_SET(FLAG_SYMBOLS_LIT),
      EVENT(AnemosInnerSanctumEntrance_OpenTheWay)},
     {TRIGGER_TABLE_END},
 };

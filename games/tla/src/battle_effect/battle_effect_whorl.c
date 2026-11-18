@@ -1,6 +1,6 @@
 /// @file
-/// The water-column scene of Whorl, Gale, Lethe Albion, Poison Flow and Raging
-/// Flood.
+/// The twisting column of Whorl, Gale, Lethe Albion, Poison Flow and Raging
+/// Flood, and the Djinn Core and Cannon.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
@@ -8,9 +8,18 @@
 
 struct StripQuad;
 
-/// The ring's rows of vertices, two (x, y, z, pad) each. The buffers in this
-/// function are constants built from the fixed buffer, not their own symbols.
+/// The column's rows of vertices, two (x, y, z, pad) each, as the strip's
+/// quads join them: WATER_COLUMN_QUADS quads, one row more.
 #define MAP_CELLS ((s8 (*)[2][4])Ram_MapCellBuffer)
+#define WATER_COLUMN_QUADS 32
+#define WATER_COLUMN_ROWS (WATER_COLUMN_QUADS + 1)
+#define WATER_COLUMN_VERTICES (WATER_COLUMN_ROWS * 2)
+
+/// The column's transformed corners, its strip's mesh and the second sheet, in
+/// the map cell buffer.
+#define WATER_COLUMN_TRANSFORMED (Ram_MapCellBuffer + 4096)
+#define WATER_COLUMN_MESH (Ram_MapCellBuffer + 8192)
+#define WATER_COLUMN_SHEET (Ram_MapCellBuffer + 16384)
 
 /// Where JupiterDjinnSmallSheet is decoded in the effect's pictures.
 #define WATER_COLUMN_JUPITER_DJINN_SMALL_PICTURES 8192
@@ -19,17 +28,42 @@ struct StripQuad;
 #define WATER_COLUMN_FLASH_BURST 20480
 
 /// The last particle keeps the target's position, and its scale in velocityX
-/// and velocityY, to restore when the column ends.
+/// and velocityY, to restore when the column ends; the particles before it are
+/// the motes and flashes.
 #define WATER_COLUMN_SAVED_TARGET 63
 
-/// The water-column scene shared by Whorl (0), Gale (1), Lethe Albion (2),
-/// Poison Flow (3) and Raging Flood (4): a twisting funnel of water (or wind)
-/// rises around the target, with spray, bubbles and a burst.
+/// The motes that trail the funnel of Whorl and Gale.
+#define WATER_COLUMN_MOTES 16
+
+/// The angle a frame the Jupiter Djinni's bob turns by as it rides the funnel.
+#define WATER_COLUMN_BOB_STEP 3304
+
+/// The angle a frame that lifts Lethe Albion's and Raging Flood's three bands
+/// of water and sets them down again over the cast.
+#define WATER_COLUMN_WAVE_RISE_STEP 630
+
+/// How far Whorl's and Gale's funnel turns about its length from the upright.
+#define WATER_COLUMN_LEAN 3096
+
+/// A texture's scroll wraps within 128 texels.
+#define WATER_COLUMN_SCROLL_MASK 0x7f
+
+/// The pictures of FlashBurstSheet, a white flash burning down to embers, each
+/// shown for four frames.
+#define WATER_COLUMN_FLASH_BURST_PICTURES 6
+
+/// The twisting column shared by the Djinn Whorl and Gale, Lethe Albion,
+/// Poison Flow and Raging Flood, a textured strip turned about its length.
+/// For the Djinn the Jupiter Djinni rides the head of a pink funnel of wind
+/// that sweeps down on the target, carrying it up (Whorl) or blowing it away
+/// (Gale); Poison Flow's red stream sweeps out from the caster through the
+/// targets; and Lethe Albion's and Raging Flood's three bands of water rise
+/// over the target and fall, flashes bursting from it.
 void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
   struct BattleEffectWork *work;
   u8 *canvas;
-  // Unused: the idle half of the blitter pair gives the stack frame its 176
-  // bytes.
+  /* LEFTOVER(frame): blit[1], the pair's idle second blitter, which the ROM's
+   * frame reserves and never touches; as one DrawRectangle. */
   DrawRectangle blit[2];
   s32 frame;
   struct BattleCamera *camera;
@@ -43,11 +77,11 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
   s32 shade;
   s32 i;
   s32 j;
-  // One constant for its whole life: the three palette copies' destination.
+  // Where the sheets' palettes are copied.
   void *palette = (void *)BG_PLTT;
-  void *vertices = Ram_MapCellBuffer + 4096;
-  u8 *sheet = Ram_MapCellBuffer + 16384;
-  void *mesh = Ram_MapCellBuffer + 8192;
+  void *vertices = WATER_COLUMN_TRANSFORMED;
+  u8 *sheet = WATER_COLUMN_SHEET;
+  void *mesh = WATER_COLUMN_MESH;
   s32 point[3];
   s32 screen[3];
   s32 pos[3];
@@ -76,15 +110,21 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
     if (mode == WATER_COLUMN_LETHE_ALBION) {
       s32 row;
       s32 k;
-      s32 size = 4096;
+      s32 size = RUNE_TEXTURE_SIZE * RUNE_TEXTURE_SIZE;
 
+      // The rune's half, mirrored into a whole rune on the texture.
       Resource_LoadAndDecompress(RESOURCE_RUNE_SHEET, sheet + size, 1, 0);
       Iwram_ClearWordsEntry(sheet, size);
-      for (row = 0; row != 48; row++) {
-        for (k = 0; k != 24; k++) {
-          (Ram_MapCellBuffer + 16904)[row * 64 + k] =
-              sheet[(row * 2 + row) * 8 + 4096 + k];
-          sheet[row * 64 + 567 - k] = sheet[(row * 2 + row) * 8 + 4096 + k];
+      for (row = 0; row != RUNE_HALF_HEIGHT; row++) {
+        for (k = 0; k != RUNE_HALF_WIDTH; k++) {
+          (WATER_COLUMN_SHEET +
+           RUNE_TEXTURE_RUNE)[row * RUNE_TEXTURE_SIZE + k] =
+              sheet[(row * 2 + row) * 8 +
+                    RUNE_TEXTURE_SIZE * RUNE_TEXTURE_SIZE + k];
+          sheet[row * RUNE_TEXTURE_SIZE +
+                (RUNE_TEXTURE_RUNE + 2 * RUNE_HALF_WIDTH - 1) - k] =
+              sheet[(row * 2 + row) * 8 +
+                    RUNE_TEXTURE_SIZE * RUNE_TEXTURE_SIZE + k];
         }
       }
       Iwram_CopyWordsEntry(palette,
@@ -143,7 +183,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
       (mode == WATER_COLUMN_LETHE_ALBION || mode == WATER_COLUMN_RAGING_FLOOD)
           ? 8
           : 4;
-  Render_BuildQuadStrip(mesh, columns, 32, 32);
+  Render_BuildQuadStrip(mesh, columns, 32, WATER_COLUMN_QUADS);
 
   frame = 0;
   if (frames != 0) {
@@ -161,7 +201,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         target->scaleX = work->particles[WATER_COLUMN_SAVED_TARGET].velocityX;
         target->scaleY = work->particles[WATER_COLUMN_SAVED_TARGET].velocityY;
         if (mode == WATER_COLUMN_WHORL) {
-          for (i = 0; i != 63; i++) {
+          for (i = 0; i != WATER_COLUMN_SAVED_TARGET; i++) {
             struct Particle *q = &work->particles[i];
 
             if (args->side == EFFECT_SIDE_PARTY) {
@@ -179,7 +219,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           {
             struct Particle *q = work->particles;
 
-            for (i = 0; i != 63; i++, q++) {
+            for (i = 0; i != WATER_COLUMN_SAVED_TARGET; i++, q++) {
               SET_POSITION(q, point[0],
                            INTtoFIXED(Random16() & 31) + toFIXED(64), 0);
               q->velocityX = ((Random16() & 63) + 64) << 13;
@@ -197,13 +237,14 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
       if (mode <= WATER_COLUMN_GALE) {
         s32 k = 4;
 
-        pos[0] = point[0] + (Trig_Sin(frame << 11) << 4);
+        pos[0] = point[0] + Trig_Sin(frame * (TRIG_TURN / 32)) * 16;
         if (frame > 39) {
           k = frame - 36;
         }
-        pos[1] = point[1] + INTtoFIXED(k) - Trig_Cos(frame * 3304) * k;
+        pos[1] = point[1] + INTtoFIXED(k) -
+                 Trig_Cos(frame * WATER_COLUMN_BOB_STEP) * k;
         if (frame > 27) {
-          pos[1] = pos[1] + (frame << 18) - toFIXED(112);
+          pos[1] = pos[1] + frame * toFIXED(4) - toFIXED(112);
         }
         {
           /* FAKEMATCH(temporary): out stands in for screen's address. */
@@ -283,7 +324,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         {
           struct Particle *q = work->particles;
 
-          for (i = 0; i != 16; i++, q++) {
+          for (i = 0; i != WATER_COLUMN_MOTES; i++, q++) {
             if (frame >= i && frame < i + 30) {
               s32 n = (i & 3) + 1;
 
@@ -295,8 +336,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
                 Particle_AdvanceWithGravity3D(q, 62, toFIXED(1) / 64);
               }
               EffectPosition_ProjectPoint(q, &proj);
-              blit[0](canvas, sprites + gBattleEffect_MotePictures[n - 1],
-                      proj.x / 2 - n / 2, proj.y - n, n, n * 2);
+              EFFECT_DRAW_MOTE(blit[0], canvas, sprites, proj.x / 2, proj.y, n);
             }
           }
         }
@@ -304,26 +344,27 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
 
       if (mode == WATER_COLUMN_LETHE_ALBION ||
           mode == WATER_COLUMN_RAGING_FLOOD) {
-        for (j = 0; j != 33; j++) {
+        for (j = 0; j != WATER_COLUMN_ROWS; j++) {
           s32 r = j;
 
           if (r > 28) {
             r = 28;
           }
           for (i = 0; i != 2; i++) {
-            // One zero for the row, as its own local: a vertex's stores hoist
-            // a zero, and this mode needs it back.
+            /* FAKEMATCH(temporary): the row's 0 held in a local; as 0. */
             s32 zero = 0;
 
             MAP_CELLS[j][i][0] = -j * 4 + 64;
             MAP_CELLS[j][i][1] =
-                (FIXEDtoINT(Trig_Cos((j << 10) - (frame << 11)) * r)) + i * 48 -
-                24;
+                (FIXEDtoINT(
+                    Trig_Cos(j * (TRIG_TURN / 64) - frame * (TRIG_TURN / 32)) *
+                    r)) +
+                i * 48 - 24;
             MAP_CELLS[j][i][2] = zero;
           }
         }
       } else if (mode == WATER_COLUMN_POISON_FLOW) {
-        for (j = 0; j != 33; j++) {
+        for (j = 0; j != WATER_COLUMN_ROWS; j++) {
           s32 r = j * 4;
           s32 w = j * 2 + 4;
 
@@ -333,13 +374,15 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           for (i = 0; i != 2; i++) {
             MAP_CELLS[j][i][0] = -j * 3;
             MAP_CELLS[j][i][1] =
-                (FIXEDtoINT(Trig_Cos((j << 10) - (frame << 11)) * r)) +
+                (FIXEDtoINT(
+                    Trig_Cos(j * (TRIG_TURN / 64) - frame * (TRIG_TURN / 32)) *
+                    r)) +
                 (i * w << 1) - w;
             MAP_CELLS[j][i][2] = 0;
           }
         }
       } else {
-        for (j = 0; j != 33; j++) {
+        for (j = 0; j != WATER_COLUMN_ROWS; j++) {
           s32 r = j * 2 + j;
           s32 w = j * 2;
 
@@ -350,7 +393,6 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             w = 40;
           }
           for (i = 0; i != 2; i++) {
-            // -4 * j, built on the row's j * 2 so it is worked out here.
             MAP_CELLS[j][i][0] = -(j + j) * 2;
             MAP_CELLS[j][i][1] =
                 (FIXEDtoINT(Trig_Cos((frame + j * 2) << 10) * r)) +
@@ -411,7 +453,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           {
             struct Particle *q = work->particles;
 
-            for (i = 0; i != 63; i++, q++) {
+            for (i = 0; i != WATER_COLUMN_SAVED_TARGET; i++, q++) {
               s32 r = (Random16() & 255) + 256;
               s32 a = (Random16() & 0x7fff) + DEGtoANG(90);
 
@@ -428,33 +470,35 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             struct Particle *q = work->particles;
 
             for (i = 0; i != 8; i++, q++) {
-              if (q->variant <= 23) {
+              if (q->variant < WATER_COLUMN_FLASH_BURST_PICTURES * 4) {
                 blit[0](canvas,
                         (Ram_MapCellBuffer + WATER_COLUMN_FLASH_BURST) +
-                            ((q->variant / 4) << 11),
-                        (s16)(FIXEDtoINT(q->x)) - 16,
-                        (s16)(FIXEDtoINT(q->y)) - 32, FLASH_BURST_WIDTH,
-                        FLASH_BURST_HEIGHT);
+                            q->variant / 4 * PICTURE_BYTES(FLASH_BURST),
+                        (s16)(FIXEDtoINT(q->x)) - FLASH_BURST_WIDTH / 2,
+                        (s16)(FIXEDtoINT(q->y)) - FLASH_BURST_HEIGHT / 2,
+                        FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
                 Particle_AdvanceWithGravity2D(q, 60, -toFIXED(1) / 8);
                 q->variant++;
               }
             }
           }
         }
-        model->scrollU = ~(frame << 3) & 127;
+        model->scrollU = ~(frame << 3) & WATER_COLUMN_SCROLL_MASK;
         model->scrollV = 0;
         for (i = 0; i != 3; i++) {
-          s32 y = 64 - (FIXEDtoINT(Trig_Sin(frame * 630) << 6));
+          s32 y = 64 - FIXEDtoINT(
+                           Trig_Sin(frame * WATER_COLUMN_WAVE_RISE_STEP) * 64);
 
           Matrix_Push();
           Matrix_Translate(0, INTtoFIXED(y - i * 8) + toFIXED(48), 0);
           if (args->side == EFFECT_SIDE_PARTY) {
             Matrix_RotateY(DEGtoANG(180));
           }
-          Matrix_RotateZ((i << 10) + 256);
-          Matrix_RotateX((i << 13) - (frame << 11));
+          Matrix_RotateZ(i * (TRIG_TURN / 64) + TRIG_TURN / 256);
+          Matrix_RotateX(i * (TRIG_TURN / 8) - frame * (TRIG_TURN / 32));
           Matrix_Scale(137072, FIXED_ONE, FIXED_ONE);
-          Render_TransformVertices(gMapGridCellBuffer, vertices, 66);
+          Render_TransformVertices(gMapGridCellBuffer, vertices,
+                                   WATER_COLUMN_VERTICES);
           Render_DrawModelList(model);
           Matrix_Pop();
         }
@@ -470,7 +514,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           s32 t = frame - i * 4 - 16;
 
           if (t >= 0) {
-            s32 s = (t * 3) << 12;
+            s32 s = t * 3 * (FIXED_ONE / 16);
 
             shade = 0;
             if (t > 7) {
@@ -484,7 +528,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
               Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
               Matrix_RotateZ(i * (DEGtoANG(90)) + DEGtoANG(45));
               Matrix_RotateX(-TRIG_TURN / 16);
-              Matrix_RotateY(frame << 12);
+              Matrix_RotateY(frame * (TRIG_TURN / 16));
               Matrix_ScaleUniform(s);
               Render_TransformVertices(gBattleEffect_GroundSquareCorners,
                                        vertices, 4);
@@ -516,9 +560,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         for (i = 0; i != 1; i++) {
           s32 scroll = ~((frame + i * 6) << 3);
 
-          // Masked in its own statement: with the mask in one expression the
-          // complement, not the scroll, is the running value.
-          scroll &= 127;
+          scroll &= WATER_COLUMN_SCROLL_MASK;
           model->scrollU = scroll;
           Matrix_Initialize();
           Matrix_Translate(INTtoFIXED(spos.x / 2 - 64),
@@ -526,10 +568,12 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           if (args->side == EFFECT_SIDE_PARTY) {
             Matrix_RotateY(DEGtoANG(180));
           }
-          Matrix_RotateX(i << 15);
-          Matrix_RotateZ(FIXEDtoINT(Trig_Sin((frame + i * 8) << 11) << 11));
+          Matrix_RotateX(i * (TRIG_TURN / 2));
+          Matrix_RotateZ(
+              FIXEDtoINT(Trig_Sin((frame + i * 8) << 11) * (TRIG_TURN / 32)));
           Matrix_Scale(85536, FIXED_ONE / 2, FIXED_ONE);
-          Render_TransformVertices(gMapGridCellBuffer, vertices, 66);
+          Render_TransformVertices(gMapGridCellBuffer, vertices,
+                                   WATER_COLUMN_VERTICES);
           Render_DrawModelList(model);
         }
       } else {
@@ -546,9 +590,9 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
           Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE);
           gProjection.centerX = 60;
           if (mode == WATER_COLUMN_WHORL) {
-            model->scrollU = (frame << 3) & 127;
+            model->scrollU = (frame << 3) & WATER_COLUMN_SCROLL_MASK;
           } else {
-            model->scrollU = ~(frame << 3) & 127;
+            model->scrollU = ~(frame << 3) & WATER_COLUMN_SCROLL_MASK;
           }
           model->scrollV = 0;
           Matrix_TranslateVector(pos);
@@ -558,14 +602,15 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             if (args->side == EFFECT_SIDE_PARTY) {
               Matrix_RotateY(DEGtoANG(180));
             }
-            Matrix_RotateZ((i << 10) + 3096);
+            Matrix_RotateZ(i * (TRIG_TURN / 64) + WATER_COLUMN_LEAN);
             if (mode != WATER_COLUMN_GALE) {
               Matrix_RotateX((frame + i * 4) << 11);
             } else {
-              Matrix_RotateX((i << 13) - (frame << 11));
+              Matrix_RotateX(i * (TRIG_TURN / 8) - frame * (TRIG_TURN / 32));
             }
             Matrix_Scale(FIXED_ONE * 4, FIXED_ONE, FIXED_ONE);
-            Render_ProjectVertices(gMapGridCellBuffer, vertices, 66);
+            Render_ProjectVertices(gMapGridCellBuffer, vertices,
+                                   WATER_COLUMN_VERTICES);
             Render_DrawModelList(model);
             Matrix_Pop();
           }
@@ -608,3 +653,18 @@ void BattleEffect_RunCannon(struct BattleEffectParams *args) {
 }
 #undef BLITTER
 #undef MAP_CELLS
+#undef WATER_COLUMN_QUADS
+#undef WATER_COLUMN_ROWS
+#undef WATER_COLUMN_VERTICES
+#undef WATER_COLUMN_TRANSFORMED
+#undef WATER_COLUMN_MESH
+#undef WATER_COLUMN_SHEET
+#undef WATER_COLUMN_JUPITER_DJINN_SMALL_PICTURES
+#undef WATER_COLUMN_FLASH_BURST
+#undef WATER_COLUMN_SAVED_TARGET
+#undef WATER_COLUMN_MOTES
+#undef WATER_COLUMN_FLASH_BURST_PICTURES
+#undef WATER_COLUMN_BOB_STEP
+#undef WATER_COLUMN_WAVE_RISE_STEP
+#undef WATER_COLUMN_LEAN
+#undef WATER_COLUMN_SCROLL_MASK

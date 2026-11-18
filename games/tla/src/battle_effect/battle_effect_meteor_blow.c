@@ -8,7 +8,8 @@
 struct MeshTriangle;
 struct StripQuad;
 
-/// One star of the opening sky: a point on a sphere and its cell kind.
+/// One star of the sky the meteor flies through: a point on a sphere and the
+/// picture it is drawn with, or METEOR_BLOW_PIXEL_STAR.
 struct MeteorStar {
   s32 x;
   s32 y;
@@ -18,29 +19,86 @@ struct MeteorStar {
 
 extern const struct Scale gMeteorBlow_DoubleScale;
 
-/// Where DustBlobSheet is decoded in the effect's pictures.
+/// The sky, drawn over the battle background's picture in the map cell buffer:
+/// METEOR_BLOW_STAR_COUNT stars on a sphere METEOR_BLOW_SKY_RADIUS across,
+/// centred at (METEOR_BLOW_SKY_CENTER_X, METEOR_BLOW_SKY_CENTER_Y). Every
+/// METEOR_BLOW_STARS_PER_ORB-th is a glowing orb, one of GlowOrbSetSheet's
+/// METEOR_BLOW_ORB_PICTURE_COUNT pictures in turn; the rest are single pixels
+/// of the first orb's middle row, METEOR_BLOW_BIG_ORB_SIZE across. The stars
+/// are kept in the effect's pictures after the orbs'.
+#define METEOR_BLOW_STAR_COUNT 256
+#define METEOR_BLOW_SKY_RADIUS 160
+#define METEOR_BLOW_SKY_CENTER_X 120
+#define METEOR_BLOW_SKY_CENTER_Y 64
+#define METEOR_BLOW_STARS_PER_ORB 32
+#define METEOR_BLOW_ORB_PICTURE_COUNT 7
+#define METEOR_BLOW_PIXEL_STAR METEOR_BLOW_ORB_PICTURE_COUNT
+#define METEOR_BLOW_BIG_ORB_SIZE 30
+#define METEOR_BLOW_STARS                                                      \
+  (METEOR_BLOW_BIG_ORB_SIZE * METEOR_BLOW_BIG_ORB_SIZE + 3 * 16 * 16 +         \
+   10 * 16 + 2 * 8 * 8)
+/// The view starts turned up METEOR_BLOW_START_PITCH and round
+/// METEOR_BLOW_START_YAW, and turns a 256th of a turn a frame on each.
+#define METEOR_BLOW_START_PITCH 3328
+#define METEOR_BLOW_START_YAW 9472
+
+/// The sky's colour, the backdrop's a line at a time over the battle view:
+/// each line's level is a quarter of its line plus a base, half of
+/// work->frame (which rises as the meteor comes) over
+/// METEOR_BLOW_SKY_BASE_LEVEL; its blue rises from level
+/// METEOR_BLOW_SKY_BLUE_LEVEL and its green, with half as much red, from
+/// METEOR_BLOW_SKY_GREEN_LEVEL.
+#define METEOR_BLOW_SKY_BASE_LEVEL 16
+#define METEOR_BLOW_SKY_BLUE_LEVEL 32
+#define METEOR_BLOW_SKY_GREEN_LEVEL 80
+
+/// The cone of flame the meteor plunges in: METEOR_BLOW_CONE_ROWS rings of two
+/// corners down an arc of a circle METEOR_BLOW_CONE_RADIUS across, six degrees
+/// apart, a strip of DustBlobSheet's picture drawn METEOR_BLOW_CONE_STRIPS
+/// times round it, each METEOR_BLOW_CONE_STRIP_SCROLL texels further down the
+/// picture; its corners, their projections and its mesh are kept in the
+/// effect's pictures.
+#define METEOR_BLOW_CONE_ROWS 16
+#define METEOR_BLOW_CONE_RADIUS 48
+#define METEOR_BLOW_CONE_STRIPS 5
+#define METEOR_BLOW_CONE_STRIP_SCROLL 20
+#define METEOR_BLOW_CONE_PROJECTED 22336
+#define METEOR_BLOW_CONE_CORNERS 24384
+#define METEOR_BLOW_CONE_MESH 25408
+
+/// Where DustBlobSheet, BillowTexture and FlameBandTexture are decoded in the
+/// effect's pictures.
 #define METEOR_BLOW_DUST_BLOB_PICTURES 8192
-
-#define METEOR_BLOW_FRAMES 50
-
-/// Where BillowTexture is decoded in the effect's pictures.
 #define METEOR_BLOW_BILLOW 16384
-
-/// Where FlameBandTexture is decoded in the effect's pictures.
 #define METEOR_BLOW_FLAME_BAND 20480
 
-/// Meteor Blow.
+/// The landing: the meteor comes down on the foes from METEOR_BLOW_LANDING_X,
+/// and METEOR_BLOW_SPARKS burst from it at METEOR_BLOW_BURST_FRAME.
+#define METEOR_BLOW_FRAMES 50
+#define METEOR_BLOW_LANDING_X 144
+#define METEOR_BLOW_BURST_FRAME 16
+#define METEOR_BLOW_SPARKS 256
+/// The billows lean back METEOR_BLOW_BILLOW_TILT and the rings of fire
+/// METEOR_BLOW_RING_TILT.
+#define METEOR_BLOW_BILLOW_TILT 1000
+#define METEOR_BLOW_RING_TILT 2000
+
+/// Meteor Blow: the screen goes black and the view flies through a sky of
+/// stars as a burning meteor comes in, growing, and plunges in a cone of
+/// flame; then it lands on the foes, rings of fire and billows spread from it
+/// and sparks fly up as every foe is thrown back.
 void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   u8 *canvas;
   struct BattleEffectWork *work;
   u8 *map;
-  // Unused: blit[1] gives the stack frame its 4 bytes.
+  /* LEFTOVER(frame): blit[1], the pair's idle second blitter, which the ROM's
+   * frame reserves and never touches; as one DrawRectangle. */
   DrawRectangle blit[2];
   u8 *sprites;
-  u8 *projected;
-  u8 *meshA;
-  u8 *triangles;
-  s32 *transition;
+  u8 *coneProjected;
+  u8 *coneCorners;
+  u8 *coneMesh;
+  struct BattleBackgroundWork *background;
   struct MeteorStar *stars;
   s32 pitch;
   s32 yaw;
@@ -48,13 +106,13 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   FIXED z;
   s32 size;
   FIXED scale;
-  s32 hx;
-  s32 hz;
+  s32 meteorX;
+  s32 meteorZ;
   void *verts;
-  s32 x0;
-  s32 half;
+  s32 billowX;
+  s32 canvasX;
   s32 blank;
-  s32 mode;
+  s32 clip;
   s32 offset;
   s32 frame;
   s32 arcAngle;
@@ -66,11 +124,11 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   s32 position[3];
   s32 screen[3];
   s32 point[3];
-  FIXED place[4];
-  FIXED summonPlace[4];
-  struct ModelTexture waveTexture;
-  struct Scale summonScale;
-  s32 req[2];
+  FIXED flightPlace[4];
+  FIXED meteorPlace[4];
+  struct ModelTexture landingTexture;
+  struct Scale meteorScale;
+  s32 meteorSize[2];
   struct ModelTexture texture;
 
   canvas = Ram_HeapSlots->battleCanvas;
@@ -91,7 +149,10 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_DUST_BLOB_SHEET,
                              work->sheet + METEOR_BLOW_DUST_BLOB_PICTURES, 1,
                              1);
-  Iwram_CopyWordsEntry(sprites, work->sheet + 450, 30);
+  Iwram_CopyWordsEntry(sprites,
+                       work->sheet + METEOR_BLOW_BIG_ORB_SIZE / 2 *
+                                         METEOR_BLOW_BIG_ORB_SIZE,
+                       METEOR_BLOW_BIG_ORB_SIZE);
   LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
   Graphics_LoadGreyRamp();
   gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
@@ -106,16 +167,16 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                BGCNT_SCREEN_BASE(7) | BGCNT_WRAP;
   IWRAM_FILL_WORDS(canvas, CANVAS_BYTES, 0);
-  Iwram_CopyWordsEntry((void *)BG_CHAR_BLOCK(1), canvas, 16384);
+  Iwram_CopyWordsEntry((void *)BG_CHAR_BLOCK(1), canvas, CANVAS_BYTES);
   Task_Add(BattleEffect_FlushPendingGraphicsTransfer, TASK_PASS_VBLANK);
   REG_BLDCNT =
       BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  projected = work->sheet + 22336;
-  meshA = work->sheet + 24384;
-  triangles = work->sheet + 25408;
-  transition = Ram_HeapSlots->battleBackground;
-  stars = (struct MeteorStar *)(work->sheet + 1956);
+  coneProjected = work->sheet + METEOR_BLOW_CONE_PROJECTED;
+  coneCorners = work->sheet + METEOR_BLOW_CONE_CORNERS;
+  coneMesh = work->sheet + METEOR_BLOW_CONE_MESH;
+  background = Ram_HeapSlots->battleBackground;
+  stars = (struct MeteorStar *)(work->sheet + METEOR_BLOW_STARS);
   // Default: the flight sets these at frame 0.
   pitch = 0;
   yaw = 0;
@@ -123,36 +184,42 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   z = 0;
   size = 0;
   scale = FIXED_ONE;
-  Mesh_BuildGrid(triangles, 2, 16, 32, 2);
-  for (offset = 0, frame = 0, arcAngle = 0; frame != 16;
-       arcAngle += 1092, offset += 8, frame++) {
-    s32 y = FIXEDtoINT(-Trig_Cos(arcAngle) * 48);
-    s32 r = FIXEDtoINT(Trig_Sin(arcAngle) * 48);
+  Mesh_BuildGrid(coneMesh, 2, METEOR_BLOW_CONE_ROWS, 32, 2);
+  for (offset = 0, frame = 0, arcAngle = 0; frame != METEOR_BLOW_CONE_ROWS;
+       arcAngle += DEGtoANG(6), offset += 2 * sizeof(struct ModelVertex),
+      frame++) {
+    s32 y = FIXEDtoINT(-Trig_Cos(arcAngle) * METEOR_BLOW_CONE_RADIUS);
+    s32 r = FIXEDtoINT(Trig_Sin(arcAngle) * METEOR_BLOW_CONE_RADIUS);
     struct ModelVertex *v;
 
     j = 0;
-    v = (struct ModelVertex *)(meshA + offset);
+    v = (struct ModelVertex *)(coneCorners + offset);
     for (; j != 2; j++, v++) {
-      v->x = FIXEDtoINT(Trig_Sin(j << 13) * r);
+      v->x = FIXEDtoINT(Trig_Sin(j * DEGtoANG(45)) * r);
       v->y = y;
-      v->z = FIXEDtoINT(Trig_Cos(j << 13) * r);
+      v->z = FIXEDtoINT(Trig_Cos(j * DEGtoANG(45)) * r);
     }
   }
-  mode = 3;
-  BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 8, 7, mode, 1);
+  /* FAKEMATCH(temporary): the blitter's clip flags in a local, which the
+   * dead transfer below takes as its mode; as EFFECT_CLIP_BOUNDS and
+   * CANVAS_COPY_AND_DARKEN at their uses. */
+  clip = EFFECT_CLIP_BOUNDS;
+  BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 8, 7, clip, BLITTER_MAX);
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   // DEAD: both fields are set again before anything reads them; the ROM keeps
   // the two stores.
-  EFFECT_SET_TRANSFER(work, mode, CANVAS_FILL_WORD(4));
+  EFFECT_SET_TRANSFER(work, clip, CANVAS_FILL_WORD(4));
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Task_Add(BattleEffect_ArmMeteorBlowPaletteDma, TASK_PASS_VBLANK + 126);
   gBgScroll[1].x = 0;
-  transition[4] = 1;
+  background->busy = 1;
   starKind = &stars->kind;
   current = stars;
-  for (star = 0; star != 256; star++, starKind += 4, current++) {
-    s32 a = (star & 255) << 7;
-    s32 r = 160;
+  for (star = 0; star != METEOR_BLOW_STAR_COUNT;
+       star++, starKind += 4, current++) {
+    s32 a = (star & (METEOR_BLOW_STAR_COUNT - 1)) * (TRIG_TURN / 2) /
+            METEOR_BLOW_STAR_COUNT;
+    s32 r = METEOR_BLOW_SKY_RADIUS;
     s32 b;
 
     current->y = Trig_Sin(a) * r;
@@ -160,10 +227,11 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     b = Random16() & 0x7fff;
     current->x = Trig_Sin(b) * r;
     current->z = Trig_Cos(b) * r;
-    if ((star & 31) == 0) {
-      *starKind = (star / 32) % 7;
+    if ((star & (METEOR_BLOW_STARS_PER_ORB - 1)) == 0) {
+      *starKind =
+          (star / METEOR_BLOW_STARS_PER_ORB) % METEOR_BLOW_ORB_PICTURE_COUNT;
     } else {
-      *starKind = 7;
+      *starKind = METEOR_BLOW_PIXEL_STAR;
     }
   }
 
@@ -178,8 +246,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       x = toFIXED(272);
       z = toFIXED(88);
       size = FIXED_ONE / 64;
-      pitch = 3328;
-      yaw = 9472;
+      pitch = METEOR_BLOW_START_PITCH;
+      yaw = METEOR_BLOW_START_YAW;
       work->frame = 8;
       Sound_PlayFar(SE_WAVE);
     }
@@ -217,7 +285,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     if (frame <= 1599) {
       u16 *dst = work->backdropLines;
       s32 value = work->frame;
-      s32 base = value / 2 + 16;
+      s32 base = value / 2 + METEOR_BLOW_SKY_BASE_LEVEL;
 
       if (frame > 79) {
         work->frame++;
@@ -225,16 +293,16 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
           work->frame = 236;
         }
       }
-      for (i = 0; i != 15; i++) {
+      for (i = 0; i != BATTLE_VIEW_TOP - 1; i++) {
         *dst++ = 0;
       }
-      for (; i != 135; i++) {
-        s32 g = i - 16;
+      for (; i != BATTLE_VIEW_BOTTOM - 1; i++) {
+        s32 g = i - BATTLE_VIEW_TOP;
         s32 b = g / 4;
 
         value = b + base;
-        b = value - 32;
-        g = value - 80;
+        b = value - METEOR_BLOW_SKY_BLUE_LEVEL;
+        g = value - METEOR_BLOW_SKY_GREEN_LEVEL;
 
         if (b < 0)
           b = 0;
@@ -267,15 +335,15 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       texture.pixels = work->sheet + METEOR_BLOW_DUST_BLOB_PICTURES;
       model->kind = MODEL_SHADED_MAX;
       model->texture = &texture;
-      model->mesh = triangles;
-      model->vertices = projected;
+      model->mesh = coneMesh;
+      model->vertices = coneProjected;
       model->shade = shade;
       model->scrollU = 0;
       if (frame > 127) {
         s32 d = (frame << 6) - FIXED_ONE / 8;
 
-        if (d > 1023) {
-          d = 1024;
+        if (d > FIXED_ONE / 64 - 1) {
+          d = FIXED_ONE / 64;
         }
         scale += d;
         Matrix_Scale(scale, scale, scale);
@@ -283,18 +351,20 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       i = 0;
       angle = -DEGtoANG(90);
       scroll = frame * 2;
-      for (; i != 5; i++) {
+      for (; i != METEOR_BLOW_CONE_STRIPS; i++) {
         model->scrollV = ~scroll & 127;
         Matrix_Initialize();
         Matrix_Translate(-toFIXED(2), -toFIXED(64), 0);
-        Matrix_Scale(42000, 149072, FIXED_ONE);
+        Matrix_Scale(FIXED_ONE * 2625 / 4096, FIXED_ONE * 9317 / 4096,
+                     FIXED_ONE);
         Matrix_Scale(scale, scale, scale);
         Matrix_RotateZ(DEGtoANG(180));
         Matrix_RotateY(angle);
-        Render_TransformVertices(meshA, projected, 32);
+        Render_TransformVertices(coneCorners, coneProjected,
+                                 2 * METEOR_BLOW_CONE_ROWS);
         Render_DrawModelList(model);
         angle += TRIG_TURN * 3 / 32;
-        scroll += 20;
+        scroll += METEOR_BLOW_CONE_STRIP_SCROLL;
       }
       Heap_Release(model);
     } else {
@@ -303,15 +373,15 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       if (frame <= 159) {
         pitch = FIXEDtoINT(INTtoFIXED(pitch) + toFIXED(256));
       } else if (frame <= 191) {
-        pitch = FIXEDtoINT(((u16)pitch - frame * 8 + 1216) << 16);
+        pitch = FIXEDtoINT(INTtoFIXED((u16)pitch - frame * 8 + 1216));
       }
       if (frame <= 47) {
         yaw = FIXEDtoINT(INTtoFIXED(yaw) + toFIXED(256));
       } else if (frame <= 111) {
-        yaw = FIXEDtoINT(((u16)yaw - frame * 4 + 448) << 16);
+        yaw = FIXEDtoINT(INTtoFIXED((u16)yaw - frame * 4 + 448));
       }
-      position[0] = 120;
-      position[1] = 64;
+      position[0] = METEOR_BLOW_SKY_CENTER_X;
+      position[1] = METEOR_BLOW_SKY_CENTER_Y;
       position[2] = 0;
       Matrix_Initialize();
       Matrix_TranslateVector(position);
@@ -320,7 +390,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       if (frame <= 112) {
         struct MeteorStar *s = stars;
 
-        for (i = 0; i != 256; i++, s++) {
+        for (i = 0; i != METEOR_BLOW_STAR_COUNT; i++, s++) {
           s32 kind = s->kind;
 
           point[0] = FIXED_INTEGER_PART(s->x);
@@ -328,8 +398,9 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
           point[2] = FIXED_INTEGER_PART(s->z);
           Render_ProjectPoint(point, screen);
           if (screen[2] > 0) {
-            if (kind == 7) {
-              blit[0](gMapGridCellBuffer, sprites + i % 30, screen[0],
+            if (kind == METEOR_BLOW_PIXEL_STAR) {
+              blit[0](gMapGridCellBuffer,
+                      sprites + i % METEOR_BLOW_BIG_ORB_SIZE, screen[0],
                       screen[1], 1, 1);
             } else {
               blit[0](gMapGridCellBuffer,
@@ -340,17 +411,18 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
           }
         }
       } else {
-        Iwram_ClearWordsEntry(gMapGridCellBuffer, 30720);
+        Iwram_ClearWordsEntry(gMapGridCellBuffer, BATTLE_BACKGROUND_BYTES);
       }
     }
 
-    req[1] = size;
-    req[0] = size;
-    place[3] = 0;
-    place[1] = toFIXED(255);
-    place[0] = x;
-    place[2] = z;
-    Render_ApplyProjectedPlacementFar(work->sprites[0], place, req, 0);
+    meteorSize[1] = size;
+    meteorSize[0] = size;
+    flightPlace[3] = 0;
+    flightPlace[1] = toFIXED(255);
+    flightPlace[0] = x;
+    flightPlace[2] = z;
+    Render_ApplyProjectedPlacementFar(work->sprites[0], flightPlace, meteorSize,
+                                      0);
     speed = toFIXED(1) / 32;
     {
       s32 a = DEGtoANG(135);
@@ -369,15 +441,15 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       }
       x -= (Trig_Sin(a) * speed) >> 10;
       z += (Trig_Cos(a) * speed) >> 10;
-      size += 512;
+      size += FIXED_ONE / 128;
     }
     if (frame > 127) {
-      speed = (frame << 13) - toFIXED(16);
+      speed = frame * (toFIXED(1) / 8) - toFIXED(16);
       if (speed > toFIXED(2) - 1) {
         speed = toFIXED(2);
       }
       z += speed;
-      size += 512;
+      size += FIXED_ONE / 128;
     } else if (size > FIXED_ONE) {
       size = FIXED_ONE;
     }
@@ -385,7 +457,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   }
 
   wait(1);
-  transition[4] = 0;
+  background->busy = 0;
   Task_Remove(BattleEffect_ArmMeteorBlowPaletteDma);
   if (frame <= 115) {
     Task_Remove(BattleEffect_FlushPendingGraphicsTransfer);
@@ -394,10 +466,10 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   }
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_SetupBlendedDisplay();
-  // DEAD: frame 0 sets hx and hz again before any read; the ROM keeps both
-  // moves.
-  hx = 200;
-  hz = 0;
+  // DEAD: frame 0 sets meteorX and meteorZ again before any read; the ROM keeps
+  // both moves.
+  meteorX = 200;
+  meteorZ = 0;
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2X = 0;
   REG_BG2Y = -(BATTLE_VIEW_TOP << 8);
@@ -419,11 +491,11 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE,
                              work->sheet + METEOR_BLOW_FLAME_BAND, 0, 0);
   LOAD_BG_PALETTE(RESOURCE_ORANGE_PALETTE_B);
-  for (i = 0; i != 256; i++)
+  for (i = 0; i != METEOR_BLOW_SPARKS; i++)
     PARTICLES[i].variant = 0;
   Palette_BrightenBattleBg(5, -4, -12);
 
-  // The impact: the meteor lands, rings of fire and shards fly.
+  // The landing: rings of fire and billows spread, and sparks fly.
   for (frame = 0; frame != METEOR_BLOW_FRAMES; frame++) {
     struct RenderModel *model;
     s32 angle;
@@ -432,38 +504,38 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     s32 step;
 
     if (frame == 0) {
-      hx = 144;
-      hz = 0;
+      meteorX = METEOR_BLOW_LANDING_X;
+      meteorZ = 0;
     }
     if (frame <= 33) {
-      summonScale = gMeteorBlow_DoubleScale;
-      summonPlace[3] = 0;
-      summonPlace[1] = toFIXED(255);
-      summonPlace[0] = INTtoFIXED(hx);
-      summonPlace[2] = INTtoFIXED(hz);
+      meteorScale = gMeteorBlow_DoubleScale;
+      meteorPlace[3] = 0;
+      meteorPlace[1] = toFIXED(255);
+      meteorPlace[0] = INTtoFIXED(meteorX);
+      meteorPlace[2] = INTtoFIXED(meteorZ);
       if (frame <= 15) {
-        hx -= 1;
-        hz += 9;
+        meteorX -= 1;
+        meteorZ += 9;
       } else {
-        hz += 2;
+        meteorZ += 2;
       }
-      Render_ApplyProjectedPlacementFar(work->sprites[0], summonPlace,
-                                        (s32 *)&summonScale, 0);
+      Render_ApplyProjectedPlacementFar(work->sprites[0], meteorPlace,
+                                        (s32 *)&meteorScale, 0);
     }
     if (frame == 34) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
-    if (frame == 16) {
+    if (frame == METEOR_BLOW_BURST_FRAME) {
       struct Particle *p;
-      s32 count = 256;
+      s32 count = METEOR_BLOW_SPARKS;
 
       p = (struct Particle *)gMapGridCellBuffer;
       i = 0;
-      half = INTtoFIXED(hx / 2);
-      /* FAKEMATCH(dead): updates of hx that cancel out end the shard's halving
-       * here. */
-      hx++;
-      hx--;
+      canvasX = INTtoFIXED(meteorX / 2);
+      /* FAKEMATCH(dead): updates of meteorX that cancel out, after it is halved
+       * for the sparks' start. */
+      meteorX++;
+      meteorX--;
       for (; i != count; i++, p++) {
         s32 r;
         s32 a;
@@ -474,7 +546,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
         r = (Random16() & 511) + count;
         a = (Random16() & 0x7fff) + DEGtoANG(90);
 
-        p->x = half;
+        p->x = canvasX;
         p->y = toFIXED(114);
         p->velocityX = (Trig_Sin(a) * r) >> 6;
         p->velocityY = (Trig_Cos(a) * r * 2) >> 6;
@@ -492,21 +564,21 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     verts = Heap_AllocEwram(1024);
     model = Render_AllocateModelList(1);
     shade = 0;
-    model->texture = &waveTexture;
+    model->texture = &landingTexture;
     model->vertices = verts;
     model->shade = shade;
-    waveTexture.logWidth = 6;
-    waveTexture.logHeight = 6;
-    waveTexture.pixels = work->sheet + METEOR_BLOW_BILLOW;
+    landingTexture.logWidth = 6;
+    landingTexture.logHeight = 6;
+    landingTexture.pixels = work->sheet + METEOR_BLOW_BILLOW;
     model->kind = MODEL_SHADED_ADDITIVE;
     model->mesh = gBattleEffect_RingMesh;
-    x0 = hx / 2 - 60;
-    step = frame << 11;
+    billowX = meteorX / 2 - 60;
+    step = frame * (TRIG_TURN / 32);
     i = 0;
     back = -step;
     angle = step;
     for (; i != 4; i++, back += DEGtoANG(45), angle += DEGtoANG(45)) {
-      s32 start = gMeteorBlow_WaveStarts[i] + 16;
+      s32 start = gMeteorBlow_WaveStarts[i] + METEOR_BLOW_BURST_FRAME;
 
       if (frame > start) {
         shade = (start - frame) * 8 + 56;
@@ -515,13 +587,14 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
           shade = -16;
         }
         if (shade > MODEL_SHADE_INVISIBLE) {
-          s32 s = (frame - start) * gMeteorBlow_WaveGrowth[i] * 2000 + 42768;
+          s32 s = (frame - start) * gMeteorBlow_WaveGrowth[i] * 2000 +
+                  FIXED_ONE * 2673 / 4096;
 
           model->shade = shade;
           Matrix_Initialize();
-          Matrix_Translate(INTtoFIXED(x0), toFIXED(40), 0);
+          Matrix_Translate(INTtoFIXED(billowX), toFIXED(40), 0);
           Matrix_Scale(s, s * gMeteorBlow_WaveStretch[i], s / 4);
-          Matrix_RotateX(1000);
+          Matrix_RotateX(METEOR_BLOW_BILLOW_TILT);
           if (i & 1) {
             Matrix_RotateY(angle);
           } else {
@@ -533,10 +606,10 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       }
     }
     model->mesh = gBattleEffect_CylinderMesh;
-    waveTexture.pixels = work->sheet + METEOR_BLOW_FLAME_BAND;
-    waveTexture.logWidth = 7;
-    waveTexture.logHeight = 7;
-    half = ((hx + (s32)((u32)hx >> 31)) >> 1) - 64;
+    landingTexture.pixels = work->sheet + METEOR_BLOW_FLAME_BAND;
+    landingTexture.logWidth = 7;
+    landingTexture.logHeight = 7;
+    canvasX = ((meteorX + (s32)((u32)meteorX >> 31)) >> 1) - CANVAS_SIZE / 2;
     for (i = 0; i != 3; i++) {
       s32 start = gMeteorBlow_RingStarts[i] + 8;
 
@@ -547,15 +620,16 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
           shade = 0;
         }
         if (shade > MODEL_SHADE_INVISIBLE) {
-          s32 s = (frame - start) * gMeteorBlow_RingGrowth[i] * 1500 + 0x4180;
+          s32 s = (frame - start) * gMeteorBlow_RingGrowth[i] * 1500 +
+                  FIXED_ONE * 131 / 512;
 
           model->shade = shade;
           model->scrollU = ((frame + i * 5) & 7) << 4;
           Matrix_Initialize();
-          Matrix_Translate(INTtoFIXED(half),
+          Matrix_Translate(INTtoFIXED(canvasX),
                            INTtoFIXED(gMeteorBlow_RingHeights[i]), 0);
           Matrix_Scale(s, s * 2, s);
-          Matrix_RotateX(2000);
+          Matrix_RotateX(METEOR_BLOW_RING_TILT);
           Render_TransformVertices(gBattleEffect_CylinderCorners, verts, 32);
           Render_DrawModelList(model);
         }
@@ -568,7 +642,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       struct Particle *p;
 
       p = (struct Particle *)gMapGridCellBuffer;
-      for (i = 0; i != 256; i++, p++) {
+      for (i = 0; i != METEOR_BLOW_SPARKS; i++, p++) {
         if (p->variant >= 0) {
           s32 n = (p->variant >> 2) + 1;
 

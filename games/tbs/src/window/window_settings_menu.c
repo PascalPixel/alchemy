@@ -10,17 +10,13 @@
 /// The settings menu's rows, in the order of their help messages
 /// (MsgOptionHelp on) and of OptionMenuWork.option.
 enum SettingsMenuRow {
-  SETTINGS_ROW_WINDOW_COLOR = 0, ///< "Window color", the window hue
+  SETTINGS_ROW_WINDOW_COLOR = 0, ///< "Window color"
   SETTINGS_ROW_WINDOW_BRIGHTNESS = 1,
   SETTINGS_ROW_MESSAGE_SPEED = 2,
   SETTINGS_ROW_SPEECH = 3, ///< "Turn voice sounds on or off."
   SETTINGS_ROW_AUTO_SLEEP = 4,
   SETTINGS_MENU_ROWS = 5
 };
-
-/// The colour presets SELECT steps through (gSettingsMenu_HuePresets and
-/// gSettingsMenu_BrightnessPresets).
-#define WINDOW_COLOR_PRESETS 6
 
 /// The window colours the window colour settings set: WINDOW_PALETTE's colours
 /// from its background (shade 0, WINDOW_BACKGROUND_COLOR) to shade 6.
@@ -76,8 +72,8 @@ UNUSED void WindowColor_CalculateTint(struct OptionMenuWork *work) {
   s32 red;
   s32 green;
 
-  phase = (gMainRoutineWork.windowHue + WINDOW_HUE_COUNT / 2) %
-          WINDOW_HUE_COUNT * 4;
+  phase = (gMainRoutineWork.windowHue + WINDOW_COLOR_COUNT / 2) %
+          WINDOW_COLOR_COUNT * 4;
   bias = gMainRoutineWork.windowBrightness - WINDOW_BRIGHTNESS_NEUTRAL;
   red = gWindowColor_WaveTable[(phase % WINDOW_COLOR_WHEEL_STEPS)];
   green = gWindowColor_WaveTable[(phase + WINDOW_COLOR_WHEEL_STEPS / 3) %
@@ -178,7 +174,7 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
   s16 offset;
 
   // The 24 hues are every fourth step of the 96-step wheel, hue 0 at step 48.
-  step = ((phase + WINDOW_HUE_COUNT / 2) % WINDOW_HUE_COUNT) * 4;
+  step = ((phase + WINDOW_COLOR_COUNT / 2) % WINDOW_COLOR_COUNT) * 4;
   offset = brightness - WINDOW_BRIGHTNESS_NEUTRAL;
   red = gWindowColor_WaveTable[(step % WINDOW_COLOR_WHEEL_STEPS)] + offset;
   green = gWindowColor_WaveTable[(step + WINDOW_COLOR_WHEEL_STEPS / 3) %
@@ -215,7 +211,7 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
 /// The rows of the unused three-row settings cursor (OptionMenuWork.page).
 enum OptionMenuRow {
   OPTION_ROW_MESSAGE_SPEED = 0,
-  OPTION_ROW_WINDOW_HUE = 1,
+  OPTION_ROW_WINDOW_COLOR = 1,
   OPTION_ROW_WINDOW_BRIGHTNESS = 2
 };
 
@@ -236,15 +232,15 @@ UNUSED void SettingsMenu_NextRow(struct OptionMenuWork *work) {
     work->page = OPTION_ROW_MESSAGE_SPEED;
 }
 
-/// Lowers the setting on the three-row cursor's row: message speed, window hue
-/// or window brightness.
+/// Lowers the setting on the three-row cursor's row: message speed, window
+/// color or window brightness.
 UNUSED void SettingsMenu_LowerSetting(struct OptionMenuWork *work) {
   switch (work->page) {
   case OPTION_ROW_MESSAGE_SPEED:
     if (gMainRoutineWork.messageSpeed != 0)
       gMainRoutineWork.messageSpeed--;
     break;
-  case OPTION_ROW_WINDOW_HUE:
+  case OPTION_ROW_WINDOW_COLOR:
     if (gMainRoutineWork.windowHue != 0)
       gMainRoutineWork.windowHue--;
     break;
@@ -255,16 +251,16 @@ UNUSED void SettingsMenu_LowerSetting(struct OptionMenuWork *work) {
   }
 }
 
-/// Raises the setting on the three-row cursor's row: message speed, window hue
-/// or window brightness.
+/// Raises the setting on the three-row cursor's row: message speed, window
+/// color or window brightness.
 UNUSED void SettingsMenu_RaiseSetting(struct OptionMenuWork *work) {
   switch (work->page) {
   case OPTION_ROW_MESSAGE_SPEED:
     if (gMainRoutineWork.messageSpeed < MESSAGE_SPEED_FAST)
       gMainRoutineWork.messageSpeed++;
     break;
-  case OPTION_ROW_WINDOW_HUE:
-    if (gMainRoutineWork.windowHue <= WINDOW_HUE_COUNT - 1)
+  case OPTION_ROW_WINDOW_COLOR:
+    if (gMainRoutineWork.windowHue <= WINDOW_COLOR_COUNT - 1)
       gMainRoutineWork.windowHue++;
     break;
   case OPTION_ROW_WINDOW_BRIGHTNESS:
@@ -325,7 +321,7 @@ void SettingsMenu_InitializeWork(void) {
                              sizeof(struct OptionMenuWork));
   Dma_Fill32(0, work, sizeof(struct OptionMenuWork));
   work->option[SETTINGS_ROW_WINDOW_COLOR] = gMainRoutineWork.windowHue;
-  work->optionCount[SETTINGS_ROW_WINDOW_COLOR] = WINDOW_HUE_COUNT;
+  work->optionCount[SETTINGS_ROW_WINDOW_COLOR] = WINDOW_COLOR_COUNT;
   work->option[SETTINGS_ROW_WINDOW_BRIGHTNESS] =
       gMainRoutineWork.windowBrightness;
   work->optionCount[SETTINGS_ROW_WINDOW_BRIGHTNESS] = WINDOW_BRIGHTNESS_COUNT;
@@ -347,11 +343,12 @@ void SettingsMenu_Release(void) {
 
 /// The sprite palettes of the sliders' ends, which gSettingsMenu_SliderPalette
 /// fills.
-#define HUE_SLIDER_PALETTE 14
-#define BRIGHTNESS_SLIDER_PALETTE (HUE_SLIDER_PALETTE + 1)
+#define WINDOW_COLOR_SLIDER_PALETTE 14
+#define WINDOW_BRIGHTNESS_SLIDER_PALETTE (WINDOW_COLOR_SLIDER_PALETTE + 1)
 
-/// Opens the settings menu's window: the labels, the hue and brightness sliders
-/// with their markers, the cursor and the setting icons. Returns the window.
+/// Opens the settings menu's window: the labels, the window color and
+/// brightness sliders with their markers, the cursor and the setting icons.
+/// Returns the window.
 struct Window *SettingsMenu_Open(void) {
   struct OptionMenuWork *work;
   struct Window *window;
@@ -397,25 +394,25 @@ struct Window *SettingsMenu_Open(void) {
   x = VramCache_FindFreeEntry();
   if (x < VRAM_CACHE_ENTRY_COUNT) {
     Dma_Set(gSettingsMenu_SliderPalette,
-            (void *)&OBJ_PLTT_COLOR(HUE_SLIDER_PALETTE, 0),
+            (void *)&OBJ_PLTT_COLOR(WINDOW_COLOR_SLIDER_PALETTE, 0),
             DMA_COPY_HALFWORDS(2 * PALETTE_COLORS), REG_DMA3);
     VramCache_Load(x, 256, gSettingsMenu_SliderTiles);
     y = 0;
     marker = WindowSprite_Create(x, OUTPUT_SIZE_32X8, window,
                                  OPTION_SLIDER_X - 6, y);
-    marker->oam.palette = HUE_SLIDER_PALETTE;
+    marker->oam.palette = WINDOW_COLOR_SLIDER_PALETTE;
     marker = WindowSprite_Create(x, OUTPUT_SIZE_32X8, window,
                                  OPTION_SLIDER_X + 26, y);
     marker->oam.index += 4;
-    marker->oam.palette = HUE_SLIDER_PALETTE;
+    marker->oam.palette = WINDOW_COLOR_SLIDER_PALETTE;
     y = 16;
     marker = WindowSprite_Create(x, OUTPUT_SIZE_32X8, window,
                                  OPTION_SLIDER_X - 6, y);
-    marker->oam.palette = BRIGHTNESS_SLIDER_PALETTE;
+    marker->oam.palette = WINDOW_BRIGHTNESS_SLIDER_PALETTE;
     marker = WindowSprite_Create(x, OUTPUT_SIZE_32X8, window,
                                  OPTION_SLIDER_X + 26, y);
     marker->oam.index += 4;
-    marker->oam.palette = BRIGHTNESS_SLIDER_PALETTE;
+    marker->oam.palette = WINDOW_BRIGHTNESS_SLIDER_PALETTE;
   }
 
   // The two markers: 16x16 sprites of 256 colours, whose 256 bytes
@@ -584,12 +581,12 @@ s32 SettingsMenu_Run(void) {
     MenuTitle_Bob(pair);
     wait(1);
 
-    // SELECT steps through the six colour presets (window/scales.c).
+    // SELECT steps through the colour presets (window/scales.c).
     if (gKeysPressed & KEY_SELECT) {
       Sound_PlayFar(SE_MENU_CONFIRM);
       work->preset++;
       redraw = 1;
-      if (work->preset > WINDOW_COLOR_PRESETS - 1)
+      if (work->preset > ARRAY_COUNT(gSettingsMenu_HuePresets) - 1)
         work->preset = 0;
       *hue = gSettingsMenu_HuePresets[work->preset];
       *brightness = gSettingsMenu_BrightnessPresets[work->preset];
@@ -865,10 +862,9 @@ s32 PauseMenu_Choose(void) {
 }
 
 #undef OPTION_SLIDER_WIDTH
-#undef WINDOW_COLOR_PRESETS
 #undef WINDOW_COLOR_SHADE
-#undef HUE_SLIDER_PALETTE
-#undef BRIGHTNESS_SLIDER_PALETTE
+#undef WINDOW_COLOR_SLIDER_PALETTE
+#undef WINDOW_BRIGHTNESS_SLIDER_PALETTE
 #undef PAUSE_MENU_ROWS
 #undef PAUSE_MENU_DEBUG_ROWS
 #undef PAUSE_MENU_ROW_HEIGHT

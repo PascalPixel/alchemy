@@ -47,11 +47,15 @@
 /// Set as the guards let the party go after questioning it about the
 /// Kibombo's raid.
 #define FLAG_MADRA_RAID_QUESTIONING_DONE 0x914
-/// Set as the mayor gives Felix the Cyclone Chip.
-#define FLAG_MADRA_CYCLONE_CHIP_GIVEN 0x918
 /// Set once Karst has come to Madra looking for Menardi; she is gone from the
 /// town afterwards.
 #define FLAG_MADRA_KARST_MET 0x98e
+/// Set once the party has heard Karst call for her sister, this visit.
+#define FLAG_MADRA_KARST_CALLED_FOR_MENARDI FLAG_SCENE_TEMP_0F
+/// The flag after the six DataTransfer_Apply copies from The Broken Seal's
+/// save: no code sets it, so Madra_MeetKarst's test of it never passes.
+#define FLAG_TRANSFERRED_NOT_COPIED                                            \
+  (FLAG_TRANSFERRED_DODONPA_LOCKED_UP + TRANSFERRED_FLAG_COUNT)
 
 /// The town's placed actors, by the rows of gMadra_Placements, the first
 /// visit's: Kraden follows the party as ACTOR_KRADEN, and the lady and her
@@ -66,7 +70,7 @@ enum MadraActorId {
   /// Who owns the boats the tidal wave ruined; on the party's return she asks
   /// after Jenna for Isaac's party.
   ACTOR_BOAT_OWNER,
-  ACTOR_OLD_MAN_ON_THE_CAPTIVE,
+  ACTOR_OLD_MAN_ON_THE_CAPTURED_CHAMPA,
   ACTOR_OLD_WOMAN_ON_AIRS_ROCK,
   /// The boy who asks about the Champa boat and Briggs.
   ACTOR_BRIGGS_FAN,
@@ -111,8 +115,9 @@ enum MadraActorId {
 enum MadraOnReturnActorId {
   ACTOR_KARST = ACTOR_LADY,
   ACTOR_MAYOR,
-  /// Who wanders by the gate asking whether the Kibombo scare the party.
-  ACTOR_KIBOMBO_WORRIER
+  /// A man with a pack who wanders by the gate asking whether the Kibombo
+  /// scare the party.
+  ACTOR_MAN_AFRAID_OF_THE_KIBOMBO
 };
 
 extern struct ActorPlacement gMadra_Placements[];
@@ -324,7 +329,7 @@ void Madra_MindReadKarst(void) {
 /// party hears Karst call for her sister.
 /// "Where could Menardi have gone? Where are you, my sister?"
 void Madra_KarstCallsForMenardi(void) {
-  if (Event_GetFlag(FLAG_SCENE_TEMP_0F) == 0) {
+  if (Event_GetFlag(FLAG_MADRA_KARST_CALLED_FOR_MENARDI) == 0) {
     Event_Start();
     Event_ResolvePendingActions(0);
     FieldActor_ShowEmote(ACTOR_KARST, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
@@ -332,7 +337,7 @@ void Madra_KarstCallsForMenardi(void) {
     // "Where could Menardi have gone? Where are you, my sister?"
     Event_ShowMessageThenWait(ACTOR_KARST, 0, 10);
     Event_End();
-    Event_SetFlag(FLAG_SCENE_TEMP_0F);
+    Event_SetFlag(FLAG_MADRA_KARST_CALLED_FOR_MENARDI);
   }
 }
 
@@ -374,7 +379,7 @@ void Madra_AskComingThroughHole(void) {
       Event_SetMessageId(msg + 1);
     } else {
       Event_Wait(20);
-      Actor_SetAnimationAndWait(ACTOR_HOLE_WORKER, 3);
+      Actor_SetAnimationAndWait(ACTOR_HOLE_WORKER, ANIM_NOD);
       Event_SetMessageId(msg + 2);
     }
   }
@@ -401,7 +406,7 @@ void Madra_AskComingThroughSealedHole(void) {
       Event_SetMessageId(msg + 1);
     } else {
       Event_Wait(20);
-      Actor_SetAnimationAndWait(ACTOR_HOLE_WORKER, 3);
+      Actor_SetAnimationAndWait(ACTOR_HOLE_WORKER, ANIM_NOD);
       Event_SetMessageId(msg + 2);
     }
   }
@@ -420,7 +425,7 @@ static inline void Madra_PlaceFacing(s32 actorId, s32 x, s32 z, u16 facing) {
 void Madra_WorkerBlocksHole(void) {
   if (Event_GetFlag(FLAG_MADRA_GATE_INSPECTED)) {
     Event_PlaySound(SE_MAP_EXIT);
-    Import_EventSetExitRequest(16);
+    Import_EventSetExitRequest(MADRA_TO_MADRA_CATACOMBS_LADDERS_EAST);
   } else if (!Event_GetFlag(FLAG_MADRA_WORKER_SEEN_AT_HOLE)) {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -479,9 +484,10 @@ void Madra_SealHole(void) {
 
 /// Sets up the town as the party enters: the worker at the hole, the two who
 /// saw the shaft of ice and Karst are there or not by the story so far; then
-/// coming out of the jail (entrance 9) the lady grants passage to Osenia
-/// (Madra_GrantPassageToOsenia), and on the return Karst arrives once at the
-/// gate (entrance 7, Madra_MeetKarst).
+/// coming out of the jail the lady grants passage to Osenia
+/// (Madra_GrantPassageToOsenia), and on the return, coming out of the
+/// north-west house, the party is met once by the mayor and Karst
+/// (Madra_MeetKarst).
 s32 Scene_Initialize(void) {
   struct Actor *actor;
 
@@ -489,16 +495,13 @@ s32 Scene_Initialize(void) {
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED)) {
     Madra_SealHole();
   } else {
+    // The worker stands down in the hole, his sprite sunk eight rows.
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_HOLE_WORKER), 0);
     actor = Actor_GetById(ACTOR_HOLE_WORKER);
     actor->radius = Actor_GetById(ACTOR_HOLE_WORKER)->radius * 4 / 3;
     ((struct FieldSprite *)Actor_GetById(ACTOR_HOLE_WORKER)->sprite)->flags |=
-        8;
-    {
-      struct FieldSprite *sprite = Actor_GetById(ACTOR_HOLE_WORKER)->sprite;
-
-      sprite->cacheBits = (sprite->cacheBits & 3) | 32;
-    }
+        SPRITE_FLAG_SUNK;
+    ((struct Sprite *)Actor_GetById(ACTOR_HOLE_WORKER)->sprite)->sunkRows = 8;
     ((struct FieldSprite *)Actor_GetById(ACTOR_HOLE_WORKER)->sprite)->dirty = 1;
     if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED) == 0 &&
         Event_GetFlag(FLAG_BRIGGS_CAUGHT) != 0) {
@@ -512,12 +515,12 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_HOLE_WORKER, 0, 0);
     }
   }
-  if (gMainRoutineWork.entrance == 9 &&
+  if (gMainRoutineWork.entrance == MADRA_FROM_MADRA_ROOMS_HOUSES_WEST &&
       Event_GetFlag(FLAG_OSENIA_PASSAGE_GRANTED) == 0)
     Madra_GrantPassageToOsenia();
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED) != 0 &&
       Event_GetFlag(FLAG_MADRA_FAREWELL_SAID) != 0) {
-    if (gMainRoutineWork.entrance == 7 &&
+    if (gMainRoutineWork.entrance == MADRA_FROM_MADRA_ROOMS_HOUSES_NORTHWEST &&
         Event_GetFlag(FLAG_MADRA_KARST_MET) == 0) {
       Madra_MeetKarst();
       Event_SetFlag(FLAG_MADRA_KARST_MET);
@@ -553,12 +556,18 @@ void Madra_AskAboutIceShaft(s32 actor) {
   Event_End();
 }
 
+// BUG: the boy's lines open beside ACTOR_FIRST_PLACED, the young man who talks
+// of the elder, wherever he stands, and not beside the boy:
+// FieldMessage_ShowAtActor places the window by its speaker's place on screen.
+// BUGFIX opens them beside the boy.
+#ifdef BUGFIX
+#define BRIGGS_FAN_SPEAKER ACTOR_BRIGGS_FAN
+#else
+#define BRIGGS_FAN_SPEAKER ACTOR_FIRST_PLACED
+#endif
+
 /// A boy asks whether the party came over the Dehkan Plateau and saw the Champa
 /// boat, or, once Briggs is caught, whether Felix is the one who beat him.
-// XXX: the boy's lines are shown at the first placed actor, not at him; a
-// render of the talk would show whose window it is.
-/// The Briggs fan asks the leader whether he is the one who beat up Briggs, and
-/// later about the Dehkan Plateau.
 void Madra_AskAboutBriggs(void) {
   s32 msg;
 
@@ -568,7 +577,7 @@ void Madra_AskAboutBriggs(void) {
     msg = (s32)&MsgMadraHeyMisterAreYouGuy;
     Event_SetMessageId(msg);
     // "Hey, mister! Are you the guy who beat up Briggs?"
-    Event_OpenMessage(ACTOR_FIRST_PLACED, 0);
+    Event_OpenMessage(BRIGGS_FAN_SPEAKER, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       Event_Wait(10);
       Event_SetMessageId(msg + 1);
@@ -576,14 +585,14 @@ void Madra_AskAboutBriggs(void) {
       Event_Wait(20);
       Event_SetMessageId(msg + 2);
     }
-    Event_ShowMessage(ACTOR_FIRST_PLACED, 0);
+    Event_ShowMessage(BRIGGS_FAN_SPEAKER, 0);
   } else {
     if (Event_GetFlag(FLAG_MADRA_BOY_HAS_ASKED) == 0)
       Actor_FaceActor(ACTOR_BRIGGS_FAN, ACTOR_FELIX, 0);
     msg = (s32)&MsgMadraDidYouComeHereOver;
     Event_SetMessageId(msg);
     // "Did you come here over the Dehkan Plateau? Yeah? You must have seen..."
-    Event_OpenMessage(ACTOR_FIRST_PLACED, 0);
+    Event_OpenMessage(BRIGGS_FAN_SPEAKER, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       Event_Wait(10);
       Event_SetMessageId(msg + 1);
@@ -591,14 +600,16 @@ void Madra_AskAboutBriggs(void) {
       Event_Wait(20);
       Event_SetMessageId(msg + 2);
     }
-    Event_ShowMessage(ACTOR_FIRST_PLACED, 0);
+    Event_ShowMessage(BRIGGS_FAN_SPEAKER, 0);
   }
   Actor_FaceDirection(ACTOR_BRIGGS_FAN, FACING_SOUTH, 0);
   Event_SetFlag(FLAG_MADRA_BOY_HAS_ASKED);
   Event_End();
 }
 
-/// Mind Read on the Briggs fan.
+/// Mind Read on the boy before he has asked anything: in place of his thoughts
+/// he asks his question as Madra_AskAboutBriggs does, starting at the party
+/// first while Briggs is free.
 void Madra_MindReadBriggsFan(void) {
   s32 msg, x, z;
 
@@ -608,7 +619,7 @@ void Madra_MindReadBriggsFan(void) {
     msg = (s32)&MsgMadraHeyMisterAreYouGuy;
     Event_SetMessageId(msg);
     // "Hey, mister! Are you the guy who beat up Briggs?"
-    Event_OpenMessage(ACTOR_FIRST_PLACED, 0);
+    Event_OpenMessage(BRIGGS_FAN_SPEAKER, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       Event_Wait(10);
       Event_SetMessageId(msg + 1);
@@ -616,7 +627,7 @@ void Madra_MindReadBriggsFan(void) {
       Event_Wait(20);
       Event_SetMessageId(msg + 2);
     }
-    Event_ShowMessage(ACTOR_FIRST_PLACED, 0);
+    Event_ShowMessage(BRIGGS_FAN_SPEAKER, 0);
   } else {
     if (Event_GetFlag(FLAG_MADRA_BOY_HAS_ASKED) == 0) {
       x = EMOTE_IN_FRONT | EMOTE_EXCLAMATION;
@@ -627,7 +638,7 @@ void Madra_MindReadBriggsFan(void) {
     msg = (s32)&MsgMadraDidYouComeHereOver;
     Event_SetMessageId(msg);
     // "Did you come here over the Dehkan Plateau? Yeah? You must have seen..."
-    Event_OpenMessage(ACTOR_FIRST_PLACED, 0);
+    Event_OpenMessage(BRIGGS_FAN_SPEAKER, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       Event_Wait(10);
       Event_SetMessageId(msg + 1);
@@ -635,7 +646,7 @@ void Madra_MindReadBriggsFan(void) {
       Event_Wait(20);
       Event_SetMessageId(msg + 2);
     }
-    Event_ShowMessage(ACTOR_FIRST_PLACED, 0);
+    Event_ShowMessage(BRIGGS_FAN_SPEAKER, 0);
   }
   Actor_FaceDirection(ACTOR_BRIGGS_FAN, FACING_SOUTH, 0);
   Event_SetFlag(FLAG_MADRA_BOY_HAS_ASKED);
@@ -667,7 +678,6 @@ void Madra_AskAboutJenna(void) {
   }
   Event_End();
 }
-#undef PLACE
 
 struct Actor *Actor_GetById(u32 objectId);
 void Actor_WaitForMoveById(s32 id);
@@ -1208,7 +1218,7 @@ void Madra_MeetKarst(void) {
   Event_ResolvePendingActions(0);
   Event_StartScreenTransition();
   if (GameFlag_Get(FLAG_TRANSFERRED_VAULT_WARNED_OF_ESCAPED_THIEVES) ||
-      GameFlag_Get(0x826))
+      GameFlag_Get(FLAG_TRANSFERRED_NOT_COPIED))
     GameFlag_Set(FLAG_BANDIT_ON_WORLD_MAP);
   Event_SetMessageId(MsgMadraFelixWait);
   // "Felix, wait!"
@@ -1227,7 +1237,7 @@ void Madra_MeetKarst(void) {
   Actor_SetHorizontalPositionAndAngleWithTerrain(ACTOR_MAYOR, x, z,
                                                  FACING_SOUTH);
   Actor_WalkByAndWaitById(ACTOR_MAYOR, 0, 4);
-  SET_MODE_AND_WAIT(ACTOR_MAYOR, 3, 20);
+  SET_MODE_AND_WAIT(ACTOR_MAYOR, ANIM_NOD, 20);
   // "I believe I promised you a reward for helping with the boat, didn't I?"
   FieldMessage_ShowAtActor(ACTOR_MAYOR, 0);
   Actor_FaceActorById(ACTOR_KRADEN, ACTOR_FELIX, 0);
@@ -1243,7 +1253,7 @@ void Madra_MeetKarst(void) {
     Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
     Actor_FaceDirectionById(ACTOR_MAYOR, FACING_SOUTH, 0);
     Event_Wait(20);
-    SET_MODE(ACTOR_MAYOR, 4);
+    SET_MODE(ACTOR_MAYOR, ANIM_SHAKE_HEAD);
     Event_Wait(33);
     Event_Wait(20);
     // "Imagine! You came all this way to put us at ease, and I totally..."
@@ -1256,7 +1266,7 @@ void Madra_MeetKarst(void) {
     Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
     Actor_FaceDirectionById(ACTOR_MAYOR, FACING_SOUTH, 0);
     Event_Wait(20);
-    SET_MODE(ACTOR_MAYOR, 4);
+    SET_MODE(ACTOR_MAYOR, ANIM_SHAKE_HEAD);
     Event_Wait(33);
     Event_Wait(20);
     (gFieldWork->message)++;
@@ -1266,7 +1276,7 @@ void Madra_MeetKarst(void) {
   FieldActor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "Regardless, I told you that I would reward you when the boat was..."
   Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 0);
-  SET_MODE(ACTOR_MAYOR, 3);
+  SET_MODE(ACTOR_MAYOR, ANIM_NOD);
   Event_Wait(20);
   Event_Wait(20);
   // "That being the case, I'd like to give you that reward now."
@@ -1315,7 +1325,7 @@ void Madra_MeetKarst(void) {
   Actor_FaceDirectionAndWait(ACTOR_MAYOR, FACING_SOUTH);
   FieldActor_ShowEmote(ACTOR_MAYOR, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
   Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 0);
-  SET_MODE(ACTOR_MAYOR, 3);
+  SET_MODE(ACTOR_MAYOR, ANIM_NOD);
   Event_Wait(20);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
@@ -1386,7 +1396,7 @@ void Madra_MeetKarst(void) {
     Event_ShowMessageAndWait(ACTOR_KARST, 0);
     FieldActor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
     Event_Wait(40);
-    SET_MODE(ACTOR_KARST, 3);
+    SET_MODE(ACTOR_KARST, ANIM_NOD);
     Event_Wait(20);
     Event_Wait(20);
     Event_ShowMessageAndWait(ACTOR_KARST, 0);
@@ -1430,7 +1440,7 @@ void Madra_MeetKarst(void) {
   SET_MODE(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   Event_Wait(33);
   Event_Wait(20);
-  SET_MODE(ACTOR_KARST, 3);
+  SET_MODE(ACTOR_KARST, ANIM_NOD);
   Event_Wait(20);
   Event_Wait(20);
   // "What? You feign ignorance? Why? Would you protect him from my fury!?"
@@ -1447,7 +1457,7 @@ void Madra_MeetKarst(void) {
   FieldActor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldActor_ShowEmote(ACTOR_SHEBA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
-  SET_MODE(ACTOR_KARST, 3);
+  SET_MODE(ACTOR_KARST, ANIM_NOD);
   Event_Wait(20);
   Event_Wait(20);
   // "Is this Isaac the same one they've been speaking of? Is he pursuing you?"
@@ -1463,7 +1473,7 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   // "What do you take me for? I'm a warrior, like my sister... I can..."
   Event_ShowMessageAndWait(ACTOR_KARST, 0);
-  SET_MODE(ACTOR_KARST, 4);
+  SET_MODE(ACTOR_KARST, ANIM_SHAKE_HEAD);
   Event_Wait(33);
   Event_Wait(20);
   // "Even if you doubled Felix's power, he would still be no match for my..."
@@ -1481,12 +1491,12 @@ void Madra_MeetKarst(void) {
   Event_ShowMessageAndWait(ACTOR_KARST, 0);
   Actor_RunRepeatedMotion(ACTOR_FELIX, 2);
   Event_Wait(20);
-  SET_MODE(ACTOR_KARST, 3);
+  SET_MODE(ACTOR_KARST, ANIM_NOD);
   Event_Wait(20);
   Event_Wait(20);
   // "But I must congratulate you on your successes at both the Mercury..."
   Event_ShowMessageAndWait(ACTOR_KARST, 0);
-  SET_MODE(ACTOR_KARST, 4);
+  SET_MODE(ACTOR_KARST, ANIM_SHAKE_HEAD);
   Event_Wait(33);
   Event_Wait(20);
   // "Although your success there now prevents us from returning to the..."
@@ -1519,7 +1529,7 @@ void Madra_MeetKarst(void) {
   Event_Wait(20);
   // "And if you make the journey, you'll have to light Jupiter on your..."
   Event_ShowMessageAndWait(ACTOR_KARST, 0);
-  SET_MODE(ACTOR_KARST, 3);
+  SET_MODE(ACTOR_KARST, ANIM_NOD);
   Event_Wait(20);
   Event_Wait(20);
   // "We have our own work to do, and number one on the list is taking..." Yes:
@@ -1544,7 +1554,7 @@ void Madra_MeetKarst(void) {
   Event_Wait(33);
   // "No, thank you. I believe we'll just find Jupiter Lighthouse on our..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
-  SET_MODE(ACTOR_KARST, 3);
+  SET_MODE(ACTOR_KARST, ANIM_NOD);
   Event_Wait(20);
   Event_Wait(20);
   // "I see. Just don't let us down."
@@ -1742,14 +1752,14 @@ void Madra_SkipRaidQuestioning(void) {
 }
 
 /// The leader, already beside a ladder top, turns north, steps onto the rungs
-/// and climbs down out of sight, then leaves by exit 16, or 15 from the door
-/// numbers above 34.
+/// and climbs down out of sight to the east ladders, or to the west ones from
+/// the cells numbered above 34. Only the unused routines below call it.
 void Madra_ClimbDownLadder(void) {
   s32 next;
 
-  next = 16;
+  next = MADRA_TO_MADRA_CATACOMBS_LADDERS_EAST;
   if (gFieldWork->stepTrigger > 34)
-    next = 15;
+    next = MADRA_TO_MADRA_CATACOMBS_LADDERS_WEST;
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(10);
   Actor_GetById(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -1802,46 +1812,46 @@ void Madra_StopPartyAfterRaid(void);
 
 #include "shared/scene_entrances_default.c"
 
+// clang-format off
 u32 gSceneExits[] = {
     SCENE_EXITS(Madra),
-    SCENE_EXIT_UNLESS(1, MadraRoomsCavernHomes, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, MadraRoomsHouses, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, MadraRoomsHouses, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, MadraRoomsHouses, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, MadraRoomsHouses, 10, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, MadraRoomsHouses, 15, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, MadraRoomsHouses, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, MadraRoomsHouses, 9, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, MadraRoomsHouses, 20, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(10, MadraRoomsCavernHomes, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(11, WorldMap, 9, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(15, MadraCatacombsLadders, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(16, MadraCatacombsLadders, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MADRA_TO_MADRA_ROOMS_CAVERN_HOMES_EAST, MadraRoomsCavernHomes, MADRA_ROOMS_CAVERN_HOMES_FROM_MADRA_EAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MADRA_TO_MADRA_ROOMS_HOUSES_SOUTHWEST, MadraRoomsHouses, MADRA_ROOMS_HOUSES_FROM_MADRA_SOUTHWEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MADRA_TO_MADRA_ROOMS_HOUSES_SOUTH_A, MadraRoomsHouses, MADRA_ROOMS_HOUSES_FROM_MADRA_SOUTH_A, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MADRA_TO_MADRA_ROOMS_HOUSES_SOUTHEAST, MadraRoomsHouses, MADRA_ROOMS_HOUSES_FROM_MADRA_SOUTHEAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MADRA_TO_MADRA_ROOMS_HOUSES_NORTHEAST_A, MadraRoomsHouses, MADRA_ROOMS_HOUSES_FROM_MADRA_NORTHEAST_A, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MADRA_TO_MADRA_ROOMS_HOUSES_NORTHEAST_B, MadraRoomsHouses, MADRA_ROOMS_HOUSES_FROM_MADRA_NORTHEAST_B, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MADRA_TO_MADRA_ROOMS_HOUSES_NORTHWEST, MadraRoomsHouses, MADRA_ROOMS_HOUSES_FROM_MADRA_NORTHWEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MADRA_TO_MADRA_ROOMS_HOUSES_SOUTH_B, MadraRoomsHouses, MADRA_ROOMS_HOUSES_FROM_MADRA_SOUTH_B, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MADRA_TO_MADRA_ROOMS_HOUSES_WEST, MadraRoomsHouses, MADRA_ROOMS_HOUSES_FROM_MADRA_WEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MADRA_TO_MADRA_ROOMS_CAVERN_HOMES_WEST, MadraRoomsCavernHomes, MADRA_ROOMS_CAVERN_HOMES_FROM_MADRA_WEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MADRA_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_MADRA, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MADRA_TO_MADRA_CATACOMBS_LADDERS_WEST, MadraCatacombsLadders, MADRA_CATACOMBS_LADDERS_FROM_MADRA_WEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MADRA_TO_MADRA_CATACOMBS_LADDERS_EAST, MadraCatacombsLadders, MADRA_CATACOMBS_LADDERS_FROM_MADRA_EAST, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
-// clang-format off
 /// The town until the party returns with Piers (enum MadraActorId).
 struct ActorPlacement gMadra_Placements[] = {
-    ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 296, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(72, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 392, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(73, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 360, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(74, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 440, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(75, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 280, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(76, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 384, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(77, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 274, 0, 510, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(78, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 376, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(75, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 264, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(73, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 232, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_IN_GREEN_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 296, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_WHITE_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 392, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BALD_MAN_IN_ORANGE_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 360, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_AUBURN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 440, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_BLUE_COAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 280, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_IN_GREEN_SHAWL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 384, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BOY_IN_BLUE_SHIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 274, 0, 510, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_GIRL_WITH_BLONDE_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 376, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_BLUE_COAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 264, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BALD_MAN_IN_ORANGE_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 232, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_IN_RED_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 296, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(78, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 259, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 472, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(72, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 440, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_GIRL_WITH_BLONDE_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 259, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_IN_GREEN_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 472, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_WHITE_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 440, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 88, 0, 360, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 128, 0, 360, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 248, FACING_NORTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_IN_GREEN_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_IN_GREEN_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_IN_GREEN_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 248, FACING_NORTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_STRONGMAN, IF_FLAG_SET(FLAG_PIERS_INTERROGATED), MOVEMENT_TYPE_STAND, 112, 0, 440, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, IF_FLAG_SET(FLAG_PIERS_INTERROGATED), MOVEMENT_TYPE_STAND, 88, 0, 440, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BALD_MAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 272, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1857,25 +1867,25 @@ struct ActorPlacement gMadra_Placements[] = {
 /// The town once the party returns with Piers (enum MadraActorId, then
 /// MadraOnReturnActorId).
 struct ActorPlacement gMadra_PlacementsOnReturn[] = {
-    ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 150, 0, 344, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(72, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 392, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(73, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 360, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(74, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 440, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(75, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 280, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(76, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 392, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(77, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 274, 0, 510, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(78, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 376, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(75, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 264, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(73, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 232, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_IN_GREEN_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 150, 0, 344, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_WHITE_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 392, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BALD_MAN_IN_ORANGE_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 360, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_AUBURN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 440, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_BLUE_COAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 280, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_IN_GREEN_SHAWL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 408, 0, 392, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BOY_IN_BLUE_SHIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 274, 0, 510, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_GIRL_WITH_BLONDE_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 376, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_BLUE_COAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 264, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BALD_MAN_IN_ORANGE_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 232, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_IN_RED_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 472, 0, 296, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(78, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 259, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 472, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(72, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 440, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_GIRL_WITH_BLONDE_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 259, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_IN_GREEN_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 472, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_WHITE_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 440, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_IN_GREEN_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 504, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_IN_GREEN_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 408, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_IN_GREEN_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_STRONGMAN, IF_FLAG_SET(FLAG_PIERS_INTERROGATED), MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_WITH_BROWN_HAIR, IF_FLAG_SET(FLAG_PIERS_INTERROGATED), MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BALD_MAN_IN_RED, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 376, 0, 272, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1883,7 +1893,7 @@ struct ActorPlacement gMadra_PlacementsOnReturn[] = {
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 280, 0, 256, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_KARST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 276, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(20, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MADRAS_MAYOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 112, 0, 393, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_PARTY, 0),
@@ -1952,7 +1962,7 @@ struct Trigger gMadra_TriggersBeforeRaid[] = {
      MSGNO(MsgMadraThatBigWaveMovedWhole)},
     {TRIGGER_TALK, ACTOR_BOAT_OWNER, CONDITION_ALWAYS,
      MSGNO(MsgMadraLetMeGuessYouWant)},
-    {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_CAPTIVE, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_CAPTURED_CHAMPA, CONDITION_ALWAYS,
      MSGNO(MsgMadraMaybeWellLearnBriggssWhereabouts)},
     {TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_AIRS_ROCK, CONDITION_ALWAYS,
      MSGNO(MsgMadraIfICouldWalk)},
@@ -2002,12 +2012,13 @@ struct Trigger gMadra_TriggersBeforeRaid[] = {
      CONDITION_ALWAYS, MSGNO(MsgMadraIfBigWaveCanMove)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOAT_OWNER, CONDITION_ALWAYS,
      MSGNO(MsgMadraItsBitOfProblem)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_CAPTIVE,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_CAPTURED_CHAMPA,
      CONDITION_ALWAYS, MSGNO(MsgMadraThatChampaInCellLooks)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_AIRS_ROCK,
      CONDITION_ALWAYS, MSGNO(MsgMadraIveAlwaysWantedToSee)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14 | TRIGGER_SUBJECT_OWN_EFFECT,
-     0x300, EVENT(Madra_MindReadBriggsFan)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
+     ACTOR_BRIGGS_FAN | TRIGGER_SUBJECT_OWN_EFFECT, FLAG_MADRA_BOY_HAS_ASKED,
+     EVENT(Madra_MindReadBriggsFan)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BRIGGS_FAN, CONDITION_ALWAYS,
      MSGNO(MsgMadraWhoWasItWhoTold)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_ON_THE_SUPERCONTINENT,
@@ -2086,7 +2097,7 @@ struct Trigger gMadra_TriggersAfterRaid[] = {
      MSGNO(MsgMadraKibomboCameInThroughBroken)},
     {TRIGGER_TALK, ACTOR_BOAT_OWNER, CONDITION_ALWAYS,
      MSGNO(MsgMadraIHeardThatElderGot)},
-    {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_CAPTIVE, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_CAPTURED_CHAMPA, CONDITION_ALWAYS,
      MSGNO(MsgMadraIGuessThatGuy)},
     {TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_AIRS_ROCK, CONDITION_ALWAYS,
      MSGNO(MsgMadraGondowanSoundsLikeFrighteningPlace)},
@@ -2130,7 +2141,7 @@ struct Trigger gMadra_TriggersAfterRaid[] = {
      CONDITION_ALWAYS, MSGNO(MsgMadraItsStrangeItsAlmost)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOAT_OWNER, CONDITION_ALWAYS,
      MSGNO(MsgMadraMayorIsSupposed)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_CAPTIVE,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_CAPTURED_CHAMPA,
      CONDITION_ALWAYS, MSGNO(MsgMadraHeToldUsHe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_AIRS_ROCK,
      CONDITION_ALWAYS, MSGNO(MsgMadraInGondowanTheyHaveEvil)},
@@ -2204,7 +2215,7 @@ struct Trigger gMadra_TriggersOnReturn[] = {
      EVENT(Madra_AskAboutJenna)},
     {TRIGGER_TALK, ACTOR_BOAT_OWNER, CONDITION_ALWAYS,
      MSGNO(MsgMadraThoseTravelersLookedWorriedAbout)},
-    {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_CAPTIVE, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_CAPTURED_CHAMPA, CONDITION_ALWAYS,
      MSGNO(MsgMadraIWonderIfLegends)},
     {TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_AIRS_ROCK, CONDITION_ALWAYS,
      MSGNO(MsgIDonTKnowWhatWill)},
@@ -2242,7 +2253,7 @@ struct Trigger gMadra_TriggersOnReturn[] = {
      EVENT(Madra_TalkToItemMerchant)},
     {TRIGGER_TALK, ACTOR_KARST, CONDITION_ALWAYS,
      EVENT(Madra_KarstAsksAboutMenardi)},
-    {TRIGGER_TALK, ACTOR_KIBOMBO_WORRIER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_MAN_AFRAID_OF_THE_KIBOMBO, CONDITION_ALWAYS,
      EVENT(Madra_AskAfraidOfKibombo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_ON_THE_ELDER,
      CONDITION_ALWAYS, MSGNO(MsgMadraWhyWouldAnyoneBeHappy)},
@@ -2252,7 +2263,7 @@ struct Trigger gMadra_TriggersOnReturn[] = {
      CONDITION_ALWAYS, MSGNO(MsgMadraEveryoneGetsUrgeToExplore)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOAT_OWNER, CONDITION_ALWAYS,
      MSGNO(MsgMadraIWonderWhyThoseTravelers)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_CAPTIVE,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_CAPTURED_CHAMPA,
      CONDITION_ALWAYS, MSGNO(MsgMadraWhatWasThatIslandAgain)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_AIRS_ROCK,
      CONDITION_ALWAYS, MSGNO(MsgMadraPeopleOfMadraKnowOur)},
@@ -2288,7 +2299,7 @@ struct Trigger gMadra_TriggersOnReturn[] = {
      CONDITION_ALWAYS, MSGNO(MsgMadraShinSeemsTerrifiedOfPiers)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_KARST, CONDITION_ALWAYS,
      EVENT(Madra_MindReadKarst)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_KIBOMBO_WORRIER,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_AFRAID_OF_THE_KIBOMBO,
      CONDITION_ALWAYS, MSGNO(MsgMadraWereStillRecoveringFromKibombo)},
     {TRIGGER_TABLE_END},
 };

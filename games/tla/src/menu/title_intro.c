@@ -558,6 +558,8 @@ s32 TitleIntro_ScrollLighthouse(struct TitleScroll *s) {
       }
       if (Title_WaitOrPress(s->frames))
         goto fail;
+      /* FAKEMATCH(volatile): the step read again through a volatile
+         pointer. */
       step = *(volatile u16 *)&s->step;
     }
   }
@@ -763,7 +765,7 @@ s32 TitleIntro_ShowLighthouse(void) {
   u8 *source;
   u16 *map;
   s16 tile;
-  FIXED fixedOne = FIXED_ONE;
+  s32 tileStep = 1 << 16;
   s32 number;
   s32 row;
   s32 i;
@@ -795,7 +797,7 @@ s32 TitleIntro_ShowLighthouse(void) {
       /* FAKEMATCH(temporary): the old tile kept in number, the step spelt on
        * the high halfword. */
       number = tile;
-      tile = FIXEDtoINT(INTtoFIXED(tile) + fixedOne);
+      tile = ((tile << 16) + tileStep) >> 16;
       *map++ = number;
     }
     *map++ = OFFSCREEN_TILE;
@@ -837,6 +839,7 @@ s32 TitleIntro_ShowLighthouse(void) {
     goto stopped;
   scroll.limit = 216;
   scroll.step = 2;
+  /* FAKEMATCH(signature): the result kept in the tile pointer map. */
   map = (u16 *)TitleIntro_ScrollLighthouse(&scroll);
   if (map)
     goto stopped;
@@ -853,19 +856,29 @@ s32 TitleIntro_ShowLighthouse(void) {
     goto stopped;
   Task_Add(TitleIntro_UpdateLogo, TASK_PASS_FRAME);
   // Back up, a pixel every eight frames, then fast under the fade to white,
-  // copying the picture's rows back from its row 15, the first the scroll down
+  // copying the picture's rows back from its row 15, the last the scroll down
   // wrote over, once eleven rows have passed.
-  // BUG: each row lands one row low, from VRAM row 16, the map row the cursor
-  // rewrites is row 7, one entry in, and the last copy reads the row above the
-  // picture; unseen, as the rows are sky under the fade to white.
   scroll.limit = 160;
   scroll.step = -1;
   scroll.scroll = 0;
+#ifdef BUGFIX
+  // From row 16, still in place, so that each row lands in its own place and
+  // the last copy is row 0.
+  scroll.source = Ram_MapCellBuffer + 16 * LIGHTHOUSE_ROW_BYTES;
+  scroll.destination = (u8 *)BG_CHAR_BLOCK(0) + 16 * LIGHTHOUSE_ROW_BYTES;
+  scroll.cursor =
+      (u16 *)BG_SCREEN_BLOCK(INTRO_BACK_SCREEN) + 16 * BG_SCREEN_WIDTH;
+  scroll.tile = 16 * DISPLAY_TILE_WIDTH;
+#else
+  // BUG: each row lands one row low, from VRAM row 16, the map row the cursor
+  // rewrites is row 7, one entry in, and the last copy reads the row above the
+  // picture; unseen, as the rows are sky under the fade to white.
   scroll.source = Ram_MapCellBuffer + 15 * LIGHTHOUSE_ROW_BYTES;
   scroll.destination = (u8 *)BG_CHAR_BLOCK(0) + 16 * LIGHTHOUSE_ROW_BYTES;
   scroll.cursor =
       (u16 *)BG_SCREEN_BLOCK(INTRO_BACK_SCREEN) + 7 * BG_SCREEN_WIDTH + 1;
   scroll.tile = 15 * DISPLAY_TILE_WIDTH;
+#endif
   scroll.rows = 11;
   scroll.frames = 8;
   if (TitleIntro_ScrollLighthouse(&scroll))
@@ -1251,8 +1264,13 @@ void Title_NoOpColor(void) {}
 // The palette fade (struct TitlePaletteFade) keeps the saved palettes, the
 // colour components shown now, the target components and each one's step.
 
-/// Computes each of the 1536 colour components' change per frame from the
-/// current components to the target (nothing when `frames` is not positive).
+/// A component is a colour's five-bit channel shifted into the high bits of a
+/// halfword, with ten bits of fraction below it.
+#define COMPONENT_SHIFT 10
+
+/// Computes the change per frame of each of the TITLE_PALETTE_FADE_CHANNELS
+/// colour components, from the current components to the target (nothing when
+/// `frames` is not positive).
 void TitlePaletteFade_CalculateSteps(s16 *current, s16 *target, s16 *step,
                                      s32 frames) {
   s32 n;
@@ -1301,8 +1319,10 @@ void TitlePaletteFade_Update(void) {
   i = PLTT_COLORS;
   current = work->current;
   for (; i != 0; i--) {
-    *packed++ = (current[0] & blueMask) | (((s16)current[1] >> 5) & 0x3e0) |
-                (((s16)current[2] >> 10) & 0x1f);
+    *packed++ =
+        (current[0] & blueMask) |
+        (((s16)current[1] >> (COMPONENT_SHIFT - RGB_GREEN_SHIFT)) & 0x3e0) |
+        (((s16)current[2] >> COMPONENT_SHIFT) & 0x1f);
     current += 3;
   }
   work->page ^= 1;
@@ -1342,8 +1362,8 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
 
   if (mode < PALETTE_TINT_FROM_SOURCE) {
     *destination++ = mode & 0x7c00;
-    *destination++ = (mode & 0x03e0) << 5;
-    *destination++ = (mode & 0x001f) << 10;
+    *destination++ = (mode & 0x03e0) << (COMPONENT_SHIFT - RGB_GREEN_SHIFT);
+    *destination++ = (mode & 0x001f) << COMPONENT_SHIFT;
     Dma_Set(destination - 3, destination,
             DMA_COPY_HALFWORDS(((colorCount - 1) * 6) >> 1), REG_DMA3);
   } else if (mode < PALETTE_TINT_FLAGS) {
@@ -1496,8 +1516,10 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
       for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
         colorWork = *source++;
         destination[colorIndex * 3 + 0] = colorWork & 0x7c00;
-        destination[colorIndex * 3 + 1] = (colorWork & 0x03e0) << 5;
-        destination[colorIndex * 3 + 2] = (colorWork & 0x001f) << 10;
+        destination[colorIndex * 3 + 1] =
+            (colorWork & 0x03e0) << (COMPONENT_SHIFT - RGB_GREEN_SHIFT);
+        destination[colorIndex * 3 + 2] = (colorWork & 0x001f)
+                                          << COMPONENT_SHIFT;
       }
       break;
     }
@@ -1565,8 +1587,9 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
     for (colorIndex = 0; colorIndex < colorCount; colorIndex++) {
       colorWork = *source++;
       destination[colorIndex * 3 + 0] = colorWork & 0x7c00;
-      destination[colorIndex * 3 + 1] = (colorWork & 0x03e0) << 5;
-      destination[colorIndex * 3 + 2] = (colorWork & 0x001f) << 10;
+      destination[colorIndex * 3 + 1] = (colorWork & 0x03e0)
+                                        << (COMPONENT_SHIFT - RGB_GREEN_SHIFT);
+      destination[colorIndex * 3 + 2] = (colorWork & 0x001f) << COMPONENT_SHIFT;
     }
   } else {
     if (selectedPalettes == PALETTES_OBJECTS)
@@ -1625,7 +1648,7 @@ UNUSED void TitlePaletteFade_SetBackdrop(s32 color) {
 }
 
 /// Starts fading the shown colours to the target over the requested frames:
-/// each of the 1,536 components (three for each of the 512 colours) steps by
+/// each of the components (three for each of the 512 colours) steps by
 /// its distance divided by the frames, the remainder kept in the ten bits below
 /// it, so every colour arrives together.
 void TitlePaletteFade_Start(s32 frames) {
@@ -1651,7 +1674,7 @@ s32 TitlePaletteFade_ClampComponent(s32 value) {
 /// Caps a colour component at a channel's brightest level shifted into the high
 /// bits. There is no lower bound.
 s32 TitlePaletteFade_ClampShiftedComponent(s32 value) {
-  if (value > RGB(0, 0, RGB_LEVEL_MAX))
-    value = RGB(0, 0, RGB_LEVEL_MAX);
+  if (value > RGB_LEVEL_MAX << COMPONENT_SHIFT)
+    value = RGB_LEVEL_MAX << COMPONENT_SHIFT;
   return value;
 }

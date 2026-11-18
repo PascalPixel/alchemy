@@ -56,9 +56,9 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
     id = Portrait_GetForSpeaker(name);
     Icon_LoadWithPalette(id, zero, &slot, &tile, PORTRAIT_PALETTE, zero);
 
-    // The portrait as a bare OAM entry, pushed at depth 250 each frame: a link
-    // word, attributes 0 and 1 (32x32 at y 12) and attribute 2, its tile with
-    // palette 14.
+    // The portrait as a bare OAM entry, pushed each frame: a link word,
+    // attributes 0 and 1 (32x32 at y 12) and attribute 2, its tile in
+    // PORTRAIT_PALETTE.
     p = entry;
     *p++ = zero;
     *p++ = OBJ_SIZE_32X32 | OBJ_X(DJINN_JOIN_X * 8 + 4) | 12;
@@ -119,9 +119,9 @@ void Party_ShowJoinedMessage(s32 member) {
     Icon_LoadWithPalette(
         Portrait_GetForSpeaker(Party_GetMemberPortraitSprite(member)), 0, &slot,
         &tile, PORTRAIT_PALETTE, 0);
-    // The portrait as a bare OAM entry, pushed at depth 250 each frame: a link
-    // word, attributes 0 and 1 (32x32 at x 20, y 12) and attribute 2, its tile
-    // with palette 14.
+    // The portrait as a bare OAM entry, pushed each frame: a link word,
+    // attributes 0 and 1 (32x32 at x 20, y 12) and attribute 2, its tile in
+    // PORTRAIT_PALETTE.
     p = entry;
     *p++ = 0;
     *p++ = OBJ_SIZE_32X32 | OBJ_X(2 * 8 + 4) | 12;
@@ -147,8 +147,8 @@ void Party_ShowJoinedMessage(s32 member) {
   }
 }
 
-/// Shows that two party members joined the party while the join jingle (sound
-/// 81) plays, until it ends or A, B, L or R is pressed.
+/// Shows that two party members joined the party while the join jingle
+/// (MUS_JOINED) plays, until it ends or A, B, L or R is pressed.
 void Party_ShowPairJoinedMessage(s32 first, s32 second) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   struct Window *window;
@@ -171,9 +171,9 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     Icon_LoadWithPalette(
         Portrait_GetForSpeaker(Party_GetMemberPortraitSprite(first)), 0,
         &firstSlot, &palette, PORTRAIT_PALETTE, 0);
-    // The portraits as bare OAM entries, pushed at depth 250 each frame: a
-    // link word, attributes 0 and 1 (32x32 at y 12, x 12 and 44) and
-    // attribute 2, the tile with palette 14 or 15.
+    // The portraits as bare OAM entries, pushed each frame: a link word,
+    // attributes 0 and 1 (32x32 at y 12, x 12 and 44) and attribute 2, the
+    // tile in PORTRAIT_PALETTE or the palette after it.
     p = firstEntry;
     *p++ = 0;
     *p++ = OBJ_SIZE_32X32 | OBJ_X(12) | 12;
@@ -239,7 +239,8 @@ void Summon_ShowLearnedMessage(s32 summon) {
   struct Window *window;
   s32 entries;
   u32 resource;
-  // Unused: gives the stack frame its 28 bytes.
+  /* LEFTOVER(frame): an unused local the frame reserves and no instruction
+   * touches. */
   UNUSED s32 unused[7];
   s32 counts[4];
   const u8 *djinn;
@@ -253,7 +254,7 @@ void Summon_ShowLearnedMessage(s32 summon) {
   work->dirty = 1;
   work->speakerVoiceSound = 0;
   work->speakerVoiceCountdown = 0;
-  MessageArgument_Push(gSummon_Abilities[summon & 31],
+  MessageArgument_Push(gSummon_Abilities[summon & (SUMMON_END - 1)],
                        MESSAGE_ARGUMENT_ABILITY);
   entries = Message_DecodeMode1((s32)MsgCanNowSummon);
   // UB: five of Message_Start's six arguments, as above; the flags are the
@@ -275,7 +276,7 @@ void Summon_ShowLearnedMessage(s32 summon) {
                          TO_SUMMON_WINDOW_HEIGHT, 0);
   if (window == NULL)
     return;
-  MessageArgument_Push(gSummon_Abilities[summon & 31],
+  MessageArgument_Push(gSummon_Abilities[summon & (SUMMON_END - 1)],
                        MESSAGE_ARGUMENT_ABILITY);
   entries = Message_DecodeMode1((s32)MsgToSummon);
   djinn = SummonDefinition_Get(summon)->djinnRequired;

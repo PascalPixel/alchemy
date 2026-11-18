@@ -1,12 +1,14 @@
 /// @file
 /// The great hall of Jupiter Lighthouse's right tower, behind its archer
 /// statue, where the Jupiter Djinni Whorl waits on a ledge
-/// (JupiterLighthouse_FightWhorl). Two energy path blocks, pushed or Moved into
-/// two of the three gaps in the floor (JupiterLighthouse_PlacePathBlock), light
-/// the path and raise a cone-shaped pillar; Pounding it throws the blocks back
-/// out of their gaps (JupiterLighthouse_RaiseBlocksFromGaps). A third block in
-/// the gap by the west wall lights the path its grey blocks stand on, and the
-/// pillar pushed onto the button by the door opens it for good, a shortcut.
+/// (JupiterLighthouse_FightWhorl). Two path blocks, one carrying a straight
+/// piece of the floor's path and one a corner, pushed or Moved into two of the
+/// three gaps in the floor of the east hall (JupiterLighthouse_PlacePathBlock),
+/// light the path and raise a stake; Pounding it throws the blocks back out of
+/// their gaps (JupiterLighthouse_RaiseBlocksFromGaps). In the west hall a third
+/// block in its gap lights the path the grey blocks stand on, and the west
+/// stake Pounded throws it out. The pillar pushed onto the button by the pit
+/// raises the bridge across it for good, a shortcut.
 #include "flags.h"
 #include "djinn_ids.h"
 #include "types.h"
@@ -56,37 +58,63 @@ void Leader_CenterInCell(void);
 #include "shared/tables.h"
 #include "field/actor_script.h"
 
-/// An energy path block in one of the three gaps, a flag for each block and
-/// gap: FLAG_PATH_BLOCK_IN_GAP(gap, block), gap the PathGap, block 0 for
-/// ACTOR_FIRST_PATH_BLOCK and 1 for ACTOR_SECOND_PATH_BLOCK.
-#define FLAG_PATH_BLOCK_IN_GAP(gap, block) (0xa10 + (gap) * 2 + (block))
-/// The cone-shaped pillar the two blocks raise, Pounded down again (and down
-/// until both blocks are in gaps).
-#define FLAG_FIRST_CONE_SUNK 0xa16
-/// The cone-shaped pillar the third block raises, Pounded down again.
-#define FLAG_SECOND_CONE_SUNK 0xa17
-/// The third energy path block lies in its gap by the west wall at (8, 12).
-#define FLAG_THIRD_BLOCK_IN_GAP 0xa1a
-/// The pillar stands on the button at (8, 37): the door stays open.
-#define FLAG_BUTTON_PILLAR_PLACED 0xa1b
-
-/// The three gaps the first two energy path blocks fit, by cell.
-enum PathGap {
-  PATH_GAP_EAST,  ///< cell (35, 15)
-  PATH_GAP_WEST,  ///< cell (31, 16)
-  PATH_GAP_NORTH, ///< cell (33, 10)
+/// Where the first two path blocks lie, each block in each of the east hall's
+/// three gaps: the block's flag after FLAG_PATH_BLOCK_PLACED(0), and what
+/// JupiterLighthouse_FindBlockGap returns.
+enum PathBlockPlace {
+  STRAIGHT_BLOCK_IN_EAST_GAP,
+  CORNER_BLOCK_IN_EAST_GAP,
+  STRAIGHT_BLOCK_IN_WEST_GAP,
+  CORNER_BLOCK_IN_WEST_GAP,
+  STRAIGHT_BLOCK_IN_NORTH_GAP,
+  CORNER_BLOCK_IN_NORTH_GAP,
 };
+
+/// A path block lies in a gap of the east hall, a flag for each PathBlockPlace.
+#define FLAG_PATH_BLOCK_PLACED(place) (0xa10 + (place))
+/// The east stake is down in the floor: Pounded, or not yet raised by the two
+/// blocks both lying in gaps.
+#define FLAG_EAST_STAKE_SUNK 0xa16
+/// The west stake is down in the floor, Pounded; the third block is then out
+/// of its gap.
+#define FLAG_WEST_STAKE_SUNK 0xa17
+/// The third path block lies in its gap below the west hall's north door.
+#define FLAG_THIRD_BLOCK_IN_GAP 0xa1a
+/// The pillar stands on the button by the pit: the bridge stays up.
+#define FLAG_BUTTON_PILLAR_PLACED 0xa1b
+/// Set while the leader stands on the button, which holds the bridge up.
+#define FLAG_BRIDGE_BUTTON_HELD FLAG_SCENE_TEMP_02
+
+/// The east hall's three gaps, by cell.
+#define EAST_GAP_CELL_X 35
+#define EAST_GAP_CELL_Z 15
+#define WEST_GAP_CELL_X 31
+#define WEST_GAP_CELL_Z 16
+#define NORTH_GAP_CELL_X 33
+#define NORTH_GAP_CELL_Z 10
+/// The third block's gap, by cell.
+#define THIRD_GAP_CELL_X 8
+#define THIRD_GAP_CELL_Z 12
+/// The button by the pit, by cell.
+#define BUTTON_CELL_X 8
+#define BUTTON_CELL_Z 37
+/// A gap's floor, 16 pixels below the hall's, where a thrown block starts.
+#define GAP_FLOOR_HEIGHT toFIXED(-16)
+/// The most frames the room waits for a block to come down.
+#define BLOCK_LANDING_FRAMES 30
+/// The way in from the bridge's floor, through its west arch.
+#define ENTRANCE_FROM_BRIDGE_FLOOR 12
 
 enum JupiterLighthouseWhorlActorId {
   ACTOR_ARCHER_STATUE = ACTOR_FIRST_PLACED,
-  ACTOR_SECOND_CONE,
-  /// The six grey blocks on the third block's path, raised while it is lit.
+  ACTOR_WEST_STAKE,
+  /// The six grey blocks; those on the west hall's path rise while it is lit.
   ACTOR_FIRST_GREY_BLOCK,
   ACTOR_LAST_GREY_BLOCK = ACTOR_FIRST_GREY_BLOCK + 5,
   ACTOR_BUTTON_PILLAR,
-  ACTOR_FIRST_CONE,
-  ACTOR_FIRST_PATH_BLOCK,
-  ACTOR_SECOND_PATH_BLOCK,
+  ACTOR_EAST_STAKE,
+  ACTOR_STRAIGHT_PATH_BLOCK,
+  ACTOR_CORNER_PATH_BLOCK,
   ACTOR_THIRD_PATH_BLOCK,
   ACTOR_WHORL
 };
@@ -106,11 +134,11 @@ struct LightOam gLightSpriteOams[16] BSS_DATA;
 s16 gLightSpritesLarge BSS_DATA;
 s16 gLightSpritePriority BSS_DATA;
 struct CellTarget gCrackedTiles BSS_DATA;
-void JupiterLighthouse_OpenDoor(s32 value);
-void JupiterLighthouse_CloseDoor(void);
-void JupiterLighthouse_CheckBlockOnCell(void);
-void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
-void MapGrid_ClearAttributeBBitsAt(s32 x, s32 z, s32 a, s32 b);
+void JupiterLighthouse_RaiseBridge(s32 mode);
+void JupiterLighthouse_LowerBridge(void);
+void JupiterLighthouse_CheckPillarOnButton(void);
+void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height);
+void MapGrid_ClearAttributeBBitsAt(s32 x, s32 z, s32 layer, s32 bits);
 void Field_TryJumpForward(void);
 
 /// Talking to Whorl: the Djinni fights the party.
@@ -128,8 +156,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-/// Opens a door three cells high, with its sound when `mode` is 1.
-void JupiterLighthouse_OpenDoor(s32 mode) {
+/// Swings the bridge's two halves up out of the pit to lie across it; in mode
+/// 1 with its sound and a frame halfway up.
+void JupiterLighthouse_RaiseBridge(s32 mode) {
   if (mode == 1) {
     Event_PlaySound(SE_IMPACT);
     MapGrid_CopyCellsLayered(76, 42, 4, 3, 76, 35);
@@ -139,8 +168,8 @@ void JupiterLighthouse_OpenDoor(s32 mode) {
   MapGrid_CopyCellAttributes(12, 41, 4, 1, 12, 35);
 }
 
-/// Closes a door three cells high.
-void JupiterLighthouse_CloseDoor(void) {
+/// Lets the bridge's two halves swing back down into the pit.
+void JupiterLighthouse_LowerBridge(void) {
   Event_PlaySound(SE_HEAVY_IMPACT);
   MapGrid_CopyCellsLayered(76, 42, 4, 3, 76, 35);
   System_Wait(6);
@@ -148,110 +177,111 @@ void JupiterLighthouse_CloseDoor(void) {
   MapGrid_CopyCellAttributes(12, 36, 4, 1, 12, 35);
 }
 
-/// Opens the door for good once the pillar stands on its button, cell (8, 37).
-void JupiterLighthouse_CheckBlockOnCell(void) {
+/// Raises the bridge for good once the pillar stands on the button.
+void JupiterLighthouse_CheckPillarOnButton(void) {
   struct Actor *actor = Actor_Get(ACTOR_BUTTON_PILLAR);
 
   if (!Event_GetFlag(FLAG_BUTTON_PILLAR_PLACED) &&
-      FIELD_CELL(actor->x.fixed) == 8 && FIELD_CELL(actor->z.fixed) == 37) {
+      FIELD_CELL(actor->x.fixed) == BUTTON_CELL_X &&
+      FIELD_CELL(actor->z.fixed) == BUTTON_CELL_Z) {
     Event_SetFlag(FLAG_BUTTON_PILLAR_PLACED);
-    JupiterLighthouse_OpenDoor(1);
+    JupiterLighthouse_RaiseBridge(1);
   }
 }
 
-/// The leader steps onto a door's button: the door opens and FLAG_SCENE_TEMP_02
-/// says the button holds it.
+/// The leader steps onto the button: the bridge rises, held up while the
+/// leader stands there.
 void JupiterLighthouse_StepOnButton(void) {
-  if (!Event_GetFlag(FLAG_SCENE_TEMP_02)) {
-    Event_SetFlag(FLAG_SCENE_TEMP_02);
-    JupiterLighthouse_OpenDoor(1);
+  if (!Event_GetFlag(FLAG_BRIDGE_BUTTON_HELD)) {
+    Event_SetFlag(FLAG_BRIDGE_BUTTON_HELD);
+    JupiterLighthouse_RaiseBridge(1);
   }
 }
 
-/// The leader steps off a door's button: a door the button held open
-/// (FLAG_SCENE_TEMP_02 set) closes, unless the block now stands on the button
-/// (JupiterLighthouse_CheckBlockOnCell).
+/// The leader steps off the button: the bridge the button held up falls
+/// again, unless the pillar now stands on the button.
 void JupiterLighthouse_StepOffButton(void) {
-  if (Event_GetFlag(FLAG_SCENE_TEMP_02) == 1) {
-    Event_ClearFlag(FLAG_SCENE_TEMP_02);
-    JupiterLighthouse_CloseDoor();
+  if (Event_GetFlag(FLAG_BRIDGE_BUTTON_HELD) == 1) {
+    Event_ClearFlag(FLAG_BRIDGE_BUTTON_HELD);
+    JupiterLighthouse_LowerBridge();
   }
-  JupiterLighthouse_CheckBlockOnCell();
+  JupiterLighthouse_CheckPillarOnButton();
 }
 
 /// After the pillar is pushed or Moved: once it settles, checks whether it
 /// stands on the button.
 void JupiterLighthouse_MoveButtonPillar(void) {
   System_Wait(10);
-  JupiterLighthouse_CheckBlockOnCell();
+  JupiterLighthouse_CheckPillarOnButton();
 }
 
-/// Marks the gap the first two blocks have just come to rest in; returns its
-/// flag's place after FLAG_PATH_BLOCK_IN_GAP(0, 0), or -1 for none.
+/// Marks the gap the first two blocks have just come to rest in; returns
+/// where the block lies, or -1 for no gap.
 s32 JupiterLighthouse_FindBlockGap(void) {
-  s32 x, z, gap;
-  struct Actor *second;
-  struct Actor *first;
+  s32 x, z, place;
+  struct Actor *corner;
+  struct Actor *straight;
 
-  first = Actor_Get(ACTOR_FIRST_PATH_BLOCK);
-  second = Actor_Get(ACTOR_SECOND_PATH_BLOCK);
-  gap = 1;
-  x = FIELD_CELL(first->x.fixed);
-  gap = -gap;
-  z = FIELD_CELL(first->z.fixed);
-  if (x == 35 && z == 15 &&
-      !Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 1))) {
-    Event_SetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 0));
-    gap = 0;
+  straight = Actor_Get(ACTOR_STRAIGHT_PATH_BLOCK);
+  corner = Actor_Get(ACTOR_CORNER_PATH_BLOCK);
+  place = 1;
+  x = FIELD_CELL(straight->x.fixed);
+  place = -place;
+  z = FIELD_CELL(straight->z.fixed);
+  if (x == EAST_GAP_CELL_X && z == EAST_GAP_CELL_Z &&
+      !Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_EAST_GAP))) {
+    Event_SetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_EAST_GAP));
+    place = STRAIGHT_BLOCK_IN_EAST_GAP;
   }
-  if (x == 31 && z == 16 &&
-      !Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 1))) {
-    Event_SetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 0));
-    gap = 2;
+  if (x == WEST_GAP_CELL_X && z == WEST_GAP_CELL_Z &&
+      !Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_WEST_GAP))) {
+    Event_SetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_WEST_GAP));
+    place = STRAIGHT_BLOCK_IN_WEST_GAP;
   }
-  if (x == 33 && z == 10 &&
-      !Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 1))) {
-    Event_SetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 0));
-    gap = 4;
+  if (x == NORTH_GAP_CELL_X && z == NORTH_GAP_CELL_Z &&
+      !Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_NORTH_GAP))) {
+    Event_SetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_NORTH_GAP));
+    place = STRAIGHT_BLOCK_IN_NORTH_GAP;
   }
-  x = FIELD_CELL(second->x.fixed);
-  z = FIELD_CELL(second->z.fixed);
-  if (x == 35 && z == 15 &&
-      !Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 0))) {
-    Event_SetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 1));
-    gap = 1;
+  x = FIELD_CELL(corner->x.fixed);
+  z = FIELD_CELL(corner->z.fixed);
+  if (x == EAST_GAP_CELL_X && z == EAST_GAP_CELL_Z &&
+      !Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_EAST_GAP))) {
+    Event_SetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_EAST_GAP));
+    place = CORNER_BLOCK_IN_EAST_GAP;
   }
-  if (x == 31 && z == 16 &&
-      !Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 0))) {
-    Event_SetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 1));
-    gap = 3;
+  if (x == WEST_GAP_CELL_X && z == WEST_GAP_CELL_Z &&
+      !Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_WEST_GAP))) {
+    Event_SetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_WEST_GAP));
+    place = CORNER_BLOCK_IN_WEST_GAP;
   }
-  if (x == 33 && z == 10 &&
-      !Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 0))) {
-    Event_SetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 1));
-    gap = 5;
+  if (x == NORTH_GAP_CELL_X && z == NORTH_GAP_CELL_Z &&
+      !Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_NORTH_GAP))) {
+    Event_SetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_NORTH_GAP));
+    place = CORNER_BLOCK_IN_NORTH_GAP;
   }
-  return gap;
+  return place;
 }
 
 /// How many of the first two blocks lie in gaps.
 s32 JupiterLighthouse_CountBlocksInGaps(void) {
   s32 count = 0;
 
-  if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 0)) ||
-      Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 0)) ||
-      Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 0)))
+  if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_EAST_GAP)) ||
+      Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_WEST_GAP)) ||
+      Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_NORTH_GAP)))
     count = 1;
-  if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 1)) ||
-      Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 1)) ||
-      Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 1)))
+  if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_EAST_GAP)) ||
+      Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_WEST_GAP)) ||
+      Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_NORTH_GAP)))
     count++;
   return count;
 }
 
-/// Draws the floor for the blocks that lie in gaps: each filled gap and the
-/// lit path between them.
+/// Draws the east hall's floor for the blocks that lie in gaps: each filled
+/// gap, the path lit between them, and the Hover tiles that path reaches.
 void JupiterLighthouse_DrawBlocksInGaps(void) {
+  // Every gap empty, two height steps deep, and no Hover tile.
   MapGrid_CopyCellsLayered(94, 60, 9, 8, 94, 10);
   Call4((void (*)())MapGrid_SetCellHeight, toFIXED(560), toFIXED(240), 0, -2);
   Call4((void (*)())MapGrid_SetCellHeight, toFIXED(496), toFIXED(256), 0, -2);
@@ -259,51 +289,50 @@ void JupiterLighthouse_DrawBlocksInGaps(void) {
   FieldMapGrid_SetCellBehavior(toFIXED(608), toFIXED(160), 2, 0);
   FieldMapGrid_SetCellBehavior(toFIXED(496), toFIXED(160), 2, 0);
   FieldMapGrid_SetCellBehavior(toFIXED(496), toFIXED(224), 2, 0);
-  if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 0)) ||
-      Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 1)))
+  if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_EAST_GAP)) ||
+      Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_EAST_GAP)))
     MapGrid_SetCellHeight(toFIXED(560), toFIXED(240), 0, 0);
-  if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 0)) ||
-      Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 1)))
+  if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_WEST_GAP)) ||
+      Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_WEST_GAP)))
     MapGrid_SetCellHeight(toFIXED(496), toFIXED(256), 0, 0);
-  if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 0)) ||
-      Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 1)))
+  if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_NORTH_GAP)) ||
+      Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_NORTH_GAP)))
     MapGrid_SetCellHeight(toFIXED(528), toFIXED(160), 0, 0);
-  if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 0))) {
+  if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_EAST_GAP))) {
     MapGrid_CopyCellsLayered(96, 56, 7, 2, 96, 15);
     MapGrid_CopyCellsLayered(111, 51, 1, 1, 99, 15);
-    if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 1))) {
+    if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_WEST_GAP))) {
       MapGrid_CopyCellsLayered(105, 51, 1, 3, 95, 14);
       FieldMapGrid_SetCellBehavior(toFIXED(496), toFIXED(224), 2,
                                    CELL_BEHAVIOR_HOVER);
     }
-    if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 1)))
+    if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_NORTH_GAP)))
       MapGrid_CopyCellsLayered(111, 53, 1, 1, 97, 10);
-  } else if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 1))) {
+  } else if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_EAST_GAP))) {
     MapGrid_CopyCellsLayered(98, 51, 5, 1, 98, 10);
     MapGrid_CopyCellsLayered(99, 52, 4, 5, 99, 11);
     FieldMapGrid_SetCellBehavior(toFIXED(608), toFIXED(160), 2,
                                  CELL_BEHAVIOR_HOVER);
-    if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 0)))
+    if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_WEST_GAP)))
       MapGrid_CopyCellsLayered(106, 53, 1, 1, 95, 16);
-    if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 0))) {
+    if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_NORTH_GAP))) {
       MapGrid_CopyCellsLayered(109, 51, 3, 1, 95, 10);
       FieldMapGrid_SetCellBehavior(toFIXED(496), toFIXED(160), 2,
                                    CELL_BEHAVIOR_HOVER);
     }
   } else {
-    if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 0)))
+    if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_WEST_GAP)))
       MapGrid_CopyCellsLayered(106, 53, 1, 1, 95, 16);
-    if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 1)))
+    if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_WEST_GAP)))
       MapGrid_CopyCellsLayered(107, 53, 1, 1, 95, 16);
-    if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 0)))
+    if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_NORTH_GAP)))
       MapGrid_CopyCellsLayered(111, 52, 1, 1, 97, 10);
-    if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 1)))
+    if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_NORTH_GAP)))
       MapGrid_CopyCellsLayered(111, 53, 1, 1, 97, 10);
   }
 }
 
-/// Whether the actor stands on one of the cells of the path of grey blocks by
-/// the west wall.
+/// Whether the actor stands on one of the cells of the west hall's path.
 s32 JupiterLighthouse_IsOnWestPath(struct Actor *actor) {
   s32 i;
 
@@ -315,9 +344,9 @@ s32 JupiterLighthouse_IsOnWestPath(struct Actor *actor) {
   return 0;
 }
 
-/// Lights or darkens the path of grey blocks by the west wall as the third
-/// block lies in its gap or not, raising the blocks on it (gradually for
-/// mode 1).
+/// Lights or darkens the west hall's path as the third block lies in its gap
+/// or not, raising the grey blocks that stand on it or letting them down
+/// (gradually in mode 1).
 void JupiterLighthouse_LightWestPath(s32 mode) {
   struct Actor *actor;
   s32 i, frame;
@@ -382,27 +411,29 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
   }
 }
 
-/// As Move lifts a block: under the third path block, the cell's height is set
-/// to 6 and its attribute bit 0x80 cleared.
+/// As a push or Move takes up a block: the third block's cell goes back to the
+/// west hall's floor, six height steps up, and is no longer a cell to jump.
 void JupiterLighthouse_LiftPathBlock(s32 unused, s32 id) {
   struct Actor *actor = Actor_Get(id);
 
   if (id == ACTOR_THIRD_PATH_BLOCK) {
     MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, 6);
-    MapGrid_ClearAttributeBBitsAt(actor->x.fixed, actor->z.fixed, 0, 0x80);
+    MapGrid_ClearAttributeBBitsAt(actor->x.fixed, actor->z.fixed, 0,
+                                  MAP_CELL_JUMP);
   }
 }
 
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
-void MapGrid_SetAttributeBBitsAt(s32 x, s32 z, s32 a, s32 b);
+void MapGrid_SetAttributeBBitsAt(s32 x, s32 z, s32 layer, s32 bits);
 
-/// An energy path block set down after a push or Move: it falls into place,
-/// and in a gap it lights the path there. Once both of the first two lie in
-/// gaps the cone-shaped pillar rises; the third, in its gap by the west wall,
-/// lights the path of grey blocks and raises the second cone.
+/// A path block set down after a push or Move: it falls into place, and in a
+/// gap it lights the path there. Once both of the first two lie in gaps the
+/// east stake rises; the third, in its gap, lights the west hall's path and
+/// raises the west stake. Set down anywhere else, the third block's cell stands
+/// its 16 pixels higher, a cell to jump onto.
 void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
   struct Actor *actor = Actor_GetById(id);
-  s32 spot;
+  s32 place;
   s32 i;
 
   if (actor->groundHeight !=
@@ -414,35 +445,38 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
       do {
         wait(1);
         i++;
-        if (i > 29)
+        if (i >= BLOCK_LANDING_FRAMES)
           break;
       } while (actor->y.fixed > actor->groundHeight || actor->velocityY != 0);
     }
     Event_PlaySound(SE_THUMP);
     actor->motionFlags = 0;
   }
-  if ((u32)(id - ACTOR_FIRST_PATH_BLOCK) <= 1) {
-    spot = JupiterLighthouse_FindBlockGap();
-    if (spot == -1)
+  if ((u32)(id - ACTOR_STRAIGHT_PATH_BLOCK) <= 1) {
+    place = JupiterLighthouse_FindBlockGap();
+    if (place == -1)
       return;
     Actor_SetSpriteFlags(Actor_GetById(id), 0);
     Event_Wait(30);
     JupiterLighthouse_DrawBlocksInGaps();
-    if (spot == 0)
+    // A sound as the lit path reaches the block.
+    if (place == STRAIGHT_BLOCK_IN_EAST_GAP)
       Event_PlaySound(SE_MAP_TRANSITION);
-    if (spot == 1)
+    if (place == CORNER_BLOCK_IN_EAST_GAP)
       Event_PlaySound(SE_MAP_TRANSITION);
-    if (spot == 3 && Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 0)))
+    if (place == CORNER_BLOCK_IN_WEST_GAP &&
+        Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_EAST_GAP)))
       Event_PlaySound(SE_MAP_TRANSITION);
-    if (spot == 4 && Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 1)))
+    if (place == STRAIGHT_BLOCK_IN_NORTH_GAP &&
+        Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_EAST_GAP)))
       Event_PlaySound(SE_MAP_TRANSITION);
     Actor_Stop(gMainRoutineWork.leaderActorId);
     Actor_SetPosition(id, 0, 0);
     if (JupiterLighthouse_CountBlocksInGaps() != 2 ||
-        !Event_GetFlag(FLAG_FIRST_CONE_SUNK))
+        !Event_GetFlag(FLAG_EAST_STAKE_SUNK))
       return;
-    actor = Actor_GetById(ACTOR_FIRST_CONE);
-    Event_ClearFlag(FLAG_FIRST_CONE_SUNK);
+    actor = Actor_GetById(ACTOR_EAST_STAKE);
+    Event_ClearFlag(FLAG_EAST_STAKE_SUNK);
     Event_Wait(10);
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -462,16 +496,17 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
   }
   if (id != ACTOR_THIRD_PATH_BLOCK)
     return;
-  if (FIELD_CELL(actor->x.fixed) == 8 && FIELD_CELL(actor->z.fixed) == 12) {
+  if (FIELD_CELL(actor->x.fixed) == THIRD_GAP_CELL_X &&
+      FIELD_CELL(actor->z.fixed) == THIRD_GAP_CELL_Z) {
     Event_SetFlag(FLAG_THIRD_BLOCK_IN_GAP);
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_THIRD_PATH_BLOCK), 0);
     Event_Wait(30);
     Event_PlaySound(SE_MAP_TRANSITION);
     JupiterLighthouse_LightWestPath(1);
-    if (!Event_GetFlag(FLAG_SECOND_CONE_SUNK))
+    if (!Event_GetFlag(FLAG_WEST_STAKE_SUNK))
       return;
-    actor = Actor_GetById(ACTOR_SECOND_CONE);
-    Event_ClearFlag(FLAG_SECOND_CONE_SUNK);
+    actor = Actor_GetById(ACTOR_WEST_STAKE);
+    Event_ClearFlag(FLAG_WEST_STAKE_SUNK);
     Event_Wait(20);
     Event_PlaySound(SE_LIGHT_APPEAR);
     Actor_SelectAnimation(actor, 3);
@@ -480,14 +515,15 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
                                  CELL_BEHAVIOR_WALL);
   } else {
     MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, 8);
-    MapGrid_SetAttributeBBitsAt(actor->x.fixed, actor->z.fixed, 0, 0x80);
+    MapGrid_SetAttributeBBitsAt(actor->x.fixed, actor->z.fixed, 0,
+                                MAP_CELL_JUMP);
   }
 }
 
 /// As Pound is cast: ends what the party was doing.
 void JupiterLighthouse_StartPound(void) { Event_ResolvePendingActions(0); }
 
-/// Pound on one of the room's pillars: sinks it into the floor.
+/// Pound on one of the room's stakes: sinks it into the floor.
 void JupiterLighthouse_SinkPoundTarget(s32 mode, s32 frame) {
   Pound_SinkTarget(gJupiterLighthouse_WhorlPoundTargets, mode, frame);
 }
@@ -498,69 +534,75 @@ void JupiterLighthouse_ThrowOutBlock(s32 id, s32 x, s32 z, s32 dx, s32 dz) {
 
   Actor_SetPositionFX(id, FIELD_CELL_CENTER(x), FIELD_CELL_CENTER(z));
   actor->motionFlags = 3;
-  actor->groundHeight = toFIXED(-16);
-  actor->y.fixed = toFIXED(-16);
+  actor->groundHeight = GAP_FLOOR_HEIGHT;
+  actor->y.fixed = GAP_FLOOR_HEIGHT;
   actor->velocityY = toFIXED(8);
   Actor_SetSpeed(id, 1.6);
   Actor_SetDestinationOffset(id, dx, dz);
   Event_PlaySound(SE_WHIRLWIND);
 }
 
-/// The cone-shaped pillar Pounded down throws the two blocks back out of their
-/// gaps, the camera watching.
+/// The east stake Pounded down throws the two blocks back out of their gaps,
+/// the camera watching.
 void JupiterLighthouse_RaiseBlocksFromGaps(void) {
   struct Actor *actor;
   s32 i;
 
-  if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 0)) +
-          Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 0)) +
-          Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 0)) +
-          Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 1)) +
-          Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 1)) +
-          Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 1)) ==
+  if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_EAST_GAP)) +
+          Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_WEST_GAP)) +
+          Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_NORTH_GAP)) +
+          Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_EAST_GAP)) +
+          Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_WEST_GAP)) +
+          Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_NORTH_GAP)) ==
       0)
     return;
   FieldCamera_MoveTo(592, CAMERA_KEEP, 248, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
-  if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 0)))
-    JupiterLighthouse_ThrowOutBlock(ACTOR_FIRST_PATH_BLOCK, 35, 15, -16, 0);
-  if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 1)))
-    JupiterLighthouse_ThrowOutBlock(ACTOR_SECOND_PATH_BLOCK, 35, 15, -16, 0);
-  if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 0)))
-    JupiterLighthouse_ThrowOutBlock(ACTOR_FIRST_PATH_BLOCK, 31, 16, 16, 0);
-  if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 1)))
-    JupiterLighthouse_ThrowOutBlock(ACTOR_SECOND_PATH_BLOCK, 31, 16, 16, 0);
-  if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 0)))
-    JupiterLighthouse_ThrowOutBlock(ACTOR_FIRST_PATH_BLOCK, 33, 10, -16, 0);
-  if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 1)))
-    JupiterLighthouse_ThrowOutBlock(ACTOR_SECOND_PATH_BLOCK, 33, 10, -16, 0);
-  Event_ClearFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 0));
-  Event_ClearFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 1));
-  Event_ClearFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 0));
-  Event_ClearFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 1));
-  Event_ClearFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 0));
-  Event_ClearFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 1));
+  if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_EAST_GAP)))
+    JupiterLighthouse_ThrowOutBlock(ACTOR_STRAIGHT_PATH_BLOCK, EAST_GAP_CELL_X,
+                                    EAST_GAP_CELL_Z, -16, 0);
+  if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_EAST_GAP)))
+    JupiterLighthouse_ThrowOutBlock(ACTOR_CORNER_PATH_BLOCK, EAST_GAP_CELL_X,
+                                    EAST_GAP_CELL_Z, -16, 0);
+  if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_WEST_GAP)))
+    JupiterLighthouse_ThrowOutBlock(ACTOR_STRAIGHT_PATH_BLOCK, WEST_GAP_CELL_X,
+                                    WEST_GAP_CELL_Z, 16, 0);
+  if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_WEST_GAP)))
+    JupiterLighthouse_ThrowOutBlock(ACTOR_CORNER_PATH_BLOCK, WEST_GAP_CELL_X,
+                                    WEST_GAP_CELL_Z, 16, 0);
+  if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_NORTH_GAP)))
+    JupiterLighthouse_ThrowOutBlock(ACTOR_STRAIGHT_PATH_BLOCK, NORTH_GAP_CELL_X,
+                                    NORTH_GAP_CELL_Z, -16, 0);
+  if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_NORTH_GAP)))
+    JupiterLighthouse_ThrowOutBlock(ACTOR_CORNER_PATH_BLOCK, NORTH_GAP_CELL_X,
+                                    NORTH_GAP_CELL_Z, -16, 0);
+  Event_ClearFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_EAST_GAP));
+  Event_ClearFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_EAST_GAP));
+  Event_ClearFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_WEST_GAP));
+  Event_ClearFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_WEST_GAP));
+  Event_ClearFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_NORTH_GAP));
+  Event_ClearFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_NORTH_GAP));
   JupiterLighthouse_DrawBlocksInGaps();
   System_Wait(2);
-  actor = Actor_Get(ACTOR_FIRST_PATH_BLOCK);
+  actor = Actor_Get(ACTOR_STRAIGHT_PATH_BLOCK);
   i = 0;
   if (actor->y.fixed > actor->groundHeight || actor->velocityY != 0) {
     do {
       System_Wait(1);
       i++;
-      if (i > 29)
+      if (i >= BLOCK_LANDING_FRAMES)
         break;
     } while (actor->y.fixed > actor->groundHeight || actor->velocityY != 0);
   }
   actor->motionFlags = 0;
-  actor = Actor_Get(ACTOR_SECOND_PATH_BLOCK);
+  actor = Actor_Get(ACTOR_CORNER_PATH_BLOCK);
   i = 0;
   if (actor->y.fixed > actor->groundHeight || actor->velocityY != 0) {
     do {
       System_Wait(1);
       i++;
-      if (i > 29)
+      if (i >= BLOCK_LANDING_FRAMES)
         break;
     } while (actor->y.fixed > actor->groundHeight || actor->velocityY != 0);
   }
@@ -570,18 +612,19 @@ void JupiterLighthouse_RaiseBlocksFromGaps(void) {
   FieldCamera_WaitForArrival();
 }
 
-/// The second cone Pounded down throws the third block back out of its gap.
+/// The west stake Pounded down throws the third block back out of its gap.
 void JupiterLighthouse_RaiseThirdBlockFromGap(void) {
   struct Actor *actor;
   s32 i;
 
   if (Event_GetFlag(FLAG_THIRD_BLOCK_IN_GAP))
-    JupiterLighthouse_ThrowOutBlock(ACTOR_THIRD_PATH_BLOCK, 8, 12, 16, 0);
+    JupiterLighthouse_ThrowOutBlock(ACTOR_THIRD_PATH_BLOCK, THIRD_GAP_CELL_X,
+                                    THIRD_GAP_CELL_Z, 16, 0);
   Event_ClearFlag(FLAG_THIRD_BLOCK_IN_GAP);
   JupiterLighthouse_LightWestPath(1);
   System_Wait(2);
   actor = Actor_Get(ACTOR_THIRD_PATH_BLOCK);
-  for (i = 0; i < 30; i++) {
+  for (i = 0; i < BLOCK_LANDING_FRAMES; i++) {
     if (actor->y.fixed <= actor->groundHeight && actor->velocityY == 0)
       break;
     System_Wait(1);
@@ -589,45 +632,43 @@ void JupiterLighthouse_RaiseThirdBlockFromGap(void) {
   actor->motionFlags = 0;
 }
 
-void Leader_PushObjectAhead(void);
-
 /// Walking into a block on the floor pushes it; walking at a gap with no block
-/// in it jumps the gap.
+/// in it jumps across.
 void JupiterLighthouse_JumpOrPushBlock(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
-  struct Actor *first = Actor_Get(ACTOR_FIRST_PATH_BLOCK);
-  struct Actor *second = Actor_Get(ACTOR_SECOND_PATH_BLOCK);
+  struct Actor *straight = Actor_Get(ACTOR_STRAIGHT_PATH_BLOCK);
+  struct Actor *corner = Actor_Get(ACTOR_CORNER_PATH_BLOCK);
   FIXED position[3];
   s32 found = 0;
   s32 x;
   s32 z;
   s32 facing;
 
-  facing = (leader->facing + DEGtoANG(45)) & 0xc000;
+  facing = (leader->facing + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;
   FieldVector_AddPolarOffset(16, facing, position);
   x = FIELD_CELL(position[0]);
   z = FIELD_CELL(position[2]);
-  if (first->y.fixed == 0 && x == FIELD_CELL(first->x.fixed) &&
-      z == FIELD_CELL(first->z.fixed))
+  if (straight->y.fixed == 0 && x == FIELD_CELL(straight->x.fixed) &&
+      z == FIELD_CELL(straight->z.fixed))
     found = 1;
-  if (second->y.fixed == 0 && x == FIELD_CELL(second->x.fixed) &&
-      z == FIELD_CELL(second->z.fixed))
+  if (corner->y.fixed == 0 && x == FIELD_CELL(corner->x.fixed) &&
+      z == FIELD_CELL(corner->z.fixed))
     found = 1;
   if (found == 0) {
-    if (x == 35 && z == 15 &&
-        (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 0)) ||
-         Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 1))))
+    if (x == EAST_GAP_CELL_X && z == EAST_GAP_CELL_Z &&
+        (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_EAST_GAP)) ||
+         Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_EAST_GAP))))
       found = 2;
-    if (x == 31 && z == 16 &&
-        (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 0)) ||
-         Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 1))))
+    if (x == WEST_GAP_CELL_X && z == WEST_GAP_CELL_Z &&
+        (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_WEST_GAP)) ||
+         Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_WEST_GAP))))
       found = 2;
-    if (x == 33 && z == 10 &&
-        (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 0)) ||
-         Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 1))))
+    if (x == NORTH_GAP_CELL_X && z == NORTH_GAP_CELL_Z &&
+        (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_NORTH_GAP)) ||
+         Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_NORTH_GAP))))
       found = 2;
     if (found == 0) {
       Field_TryJumpForward();
@@ -647,6 +688,9 @@ void Actors_SetCellsOpen();
 void LightSprites_InitB();
 void LightSprites_AddCounted();
 
+/// Sets up the hall as the party enters: the archer statue at three quarters
+/// of its size, the stakes and the bridge as their flags leave them, the
+/// blocks' glow, and the grey blocks as platforms. Returns 0.
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -658,24 +702,24 @@ s32 Scene_Initialize(void) {
   Actors_SetCellsOpen((s32)&gJupiterLighthouse_WhorlPoundTargets);
   if (Event_GetFlag(FLAG_BUTTON_PILLAR_PLACED)) {
     Actor_SetPosition(ACTOR_BUTTON_PILLAR, 136, 600);
-    JupiterLighthouse_OpenDoor(0);
+    JupiterLighthouse_RaiseBridge(0);
   }
-  if (Event_GetFlag(FLAG_SCENE_TEMP_02)) {
-    JupiterLighthouse_OpenDoor(0);
+  if (Event_GetFlag(FLAG_BRIDGE_BUTTON_HELD)) {
+    JupiterLighthouse_RaiseBridge(0);
   }
   LightSprites_InitB();
   LightSprites_SetPriority(2);
-  LightSprites_AddCounted(ACTOR_FIRST_PATH_BLOCK, 2);
-  LightSprites_AddCounted(ACTOR_SECOND_PATH_BLOCK, 1);
+  LightSprites_AddCounted(ACTOR_STRAIGHT_PATH_BLOCK, 2);
+  LightSprites_AddCounted(ACTOR_CORNER_PATH_BLOCK, 1);
   LightSprites_AddCounted(ACTOR_THIRD_PATH_BLOCK, 0);
-  if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 0)) ||
-      Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 0)) ||
-      Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 0)))
-    Actor_SetPosition(ACTOR_FIRST_PATH_BLOCK, 0, 0);
-  if (Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 1)) ||
-      Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 1)) ||
-      Event_GetFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 1)))
-    Actor_SetPosition(ACTOR_SECOND_PATH_BLOCK, 0, 0);
+  if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_EAST_GAP)) ||
+      Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_WEST_GAP)) ||
+      Event_GetFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_NORTH_GAP)))
+    Actor_SetPosition(ACTOR_STRAIGHT_PATH_BLOCK, 0, 0);
+  if (Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_EAST_GAP)) ||
+      Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_WEST_GAP)) ||
+      Event_GetFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_NORTH_GAP)))
+    Actor_SetPosition(ACTOR_CORNER_PATH_BLOCK, 0, 0);
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
   Actor_Get(ACTOR_FIRST_GREY_BLOCK)->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
@@ -694,13 +738,19 @@ s32 Scene_Initialize(void) {
 void JupiterLighthouse_LoadPalettes(s32 mode);
 s32 MapGrid_GetCellHeight(FIXED x, FIXED z, s32 layer);
 
+/// Lays out the blocks as the map is drawn: the first two stay in their gaps
+/// only when both lie in them or the party comes back to where it left, the
+/// third lies in its gap while the west stake stands, and the floor and the
+/// west hall's path follow. Returns 0.
 s32 Scene_PrepareMap(void) {
   struct Actor *actor;
   s32 value;
 
   Scene_SetArrivalFlags(0);
   JupiterLighthouse_LoadPalettes(1);
-  if (gMainRoutineWork.entrance == 12) {
+  // Arriving from the bridge's floor, the grey blocks stand afresh on six of
+  // the west hall's path cells.
+  if (gMainRoutineWork.entrance == ENTRANCE_FROM_BRIDGE_FLOOR) {
     Actor_SetPosition(ACTOR_FIRST_GREY_BLOCK, 168, 264);
     Actor_SetPosition(ACTOR_FIRST_GREY_BLOCK + 1, 200, 264);
     Actor_SetPosition(ACTOR_FIRST_GREY_BLOCK + 2, 232, 264);
@@ -710,30 +760,31 @@ s32 Scene_PrepareMap(void) {
   }
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
       JupiterLighthouse_CountBlocksInGaps() != 2) {
-    Event_ClearFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 0));
-    Event_ClearFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 0));
-    Event_ClearFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 0));
-    Event_ClearFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_EAST, 1));
-    Event_ClearFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_WEST, 1));
-    Event_ClearFlag(FLAG_PATH_BLOCK_IN_GAP(PATH_GAP_NORTH, 1));
+    Event_ClearFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_EAST_GAP));
+    Event_ClearFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_WEST_GAP));
+    Event_ClearFlag(FLAG_PATH_BLOCK_PLACED(STRAIGHT_BLOCK_IN_NORTH_GAP));
+    Event_ClearFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_EAST_GAP));
+    Event_ClearFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_WEST_GAP));
+    Event_ClearFlag(FLAG_PATH_BLOCK_PLACED(CORNER_BLOCK_IN_NORTH_GAP));
   }
   if (JupiterLighthouse_CountBlocksInGaps() == 2)
-    Event_ClearFlag(FLAG_FIRST_CONE_SUNK);
+    Event_ClearFlag(FLAG_EAST_STAKE_SUNK);
   else
-    Event_SetFlag(FLAG_FIRST_CONE_SUNK);
-  if (Event_GetFlag(FLAG_SECOND_CONE_SUNK))
+    Event_SetFlag(FLAG_EAST_STAKE_SUNK);
+  if (Event_GetFlag(FLAG_WEST_STAKE_SUNK))
     Event_ClearFlag(FLAG_THIRD_BLOCK_IN_GAP);
   else
     Event_SetFlag(FLAG_THIRD_BLOCK_IN_GAP);
-  Actor_Get(ACTOR_FIRST_PATH_BLOCK)->motionFlags = 0;
-  Actor_Get(ACTOR_SECOND_PATH_BLOCK)->motionFlags = 0;
+  Actor_Get(ACTOR_STRAIGHT_PATH_BLOCK)->motionFlags = 0;
+  Actor_Get(ACTOR_CORNER_PATH_BLOCK)->motionFlags = 0;
   Actor_Get(ACTOR_THIRD_PATH_BLOCK)->motionFlags = 0;
   JupiterLighthouse_DrawBlocksInGaps();
   if (!Event_GetFlag(FLAG_THIRD_BLOCK_IN_GAP)) {
     actor = Actor_Get(ACTOR_THIRD_PATH_BLOCK);
     value = MapGrid_GetCellHeight(actor->x.fixed, actor->z.fixed, 0);
     MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, value + 2);
-    MapGrid_SetAttributeBBitsAt(actor->x.fixed, actor->z.fixed, 0, 0x80);
+    MapGrid_SetAttributeBBitsAt(actor->x.fixed, actor->z.fixed, 0,
+                                MAP_CELL_JUMP);
   }
   JupiterLighthouse_LightWestPath(0);
   return 0;
@@ -776,23 +827,6 @@ struct LightOam;
 
 void Whirlwind_CarryLeader(void);
 
-void JupiterLighthouse_OpenDoor(s32 value);
-
-void JupiterLighthouse_CloseDoor(void);
-
-void JupiterLighthouse_CheckBlockOnCell(void);
-
-void JupiterLighthouse_StepOffButton(void);
-
-void JupiterLighthouse_MoveButtonPillar(void);
-
-void JupiterLighthouse_StartPound(void);
-void JupiterLighthouse_RaiseBlocksFromGaps(void);
-
-void JupiterLighthouse_RaiseThirdBlockFromGap(void);
-
-void JupiterLighthouse_JumpOrPushBlock(void);
-
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
@@ -804,10 +838,6 @@ s32 Actor_GetCellIndex(struct Actor *actor);
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 
 void CrackedTile_Fall(struct CellTarget *table, struct CellTargetEntry *entry);
-
-void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
-void MapGrid_ClearAttributeBBitsAt(s32 x, s32 z, s32 a, s32 b);
-void Field_TryJumpForward(void);
 
 void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 void Whirlwind_Update(struct Actor *self);
@@ -831,8 +861,8 @@ s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 
 /// Queues the lit actors' sprites: for each listed actor with a position,
 /// projects it from the map's view, skips it off screen, and writes a 16 by 16
-/// sprite, or a 32 by 64 one when the big switch is set, at its animation
-/// picture and depth.
+/// sprite, or a 32 by 64 one with gLightSpritesLarge, at its animation picture
+/// and depth.
 #include "shared/light_sprites_draw.h"
 
 static inline void *BumpAlloc(s32 size) { return Heap_Alloc(size); }
@@ -862,8 +892,6 @@ void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 #define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
 
-// The cells CrackedTile_Step watches, and the cell it copies over the one the
-// leader steps on.
 #define CELL_PUSH_SLOT_ENTRY Oam_AddSpriteAtDepthClamped
 #include "../field/map_cell_sprite.c"
 
@@ -871,10 +899,6 @@ void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 
 #include "shared/leader_center_in_cell.h"
 
-// Centers the leader on its cell, plays sound 161 and copies the cell below
-// the table's source cell over the leader's, keeping the source column's and
-// row's 64 bit; CrackedTile_Step calls it the first time the leader steps on
-// one of the table's cells.
 #include "shared/cracked_tile_crack.h"
 
 struct CellTargetEntry;
@@ -903,16 +927,12 @@ s16 gJupiterLighthouse_WestPathCells[][2] = {
 };
 // clang-format on
 
-void JupiterLighthouse_FightWhorl(void);
-void JupiterLighthouse_StepOnButton(void);
-void JupiterLighthouse_JumpForward(void);
-
 // clang-format off
 #define FIELD_EFFECT_DURATION_SCRIPT_SECTION LATE_DATA
 #include "shared/field_effect_duration_scripts.c"
 
 LATE_DATA s16 gJupiterLighthouse_WhorlPoundTargets[] = {
-    ACTOR_FIRST_CONE, 1, FLAG_FIRST_CONE_SUNK, ACTOR_SECOND_CONE, 1, FLAG_SECOND_CONE_SUNK, -1, 0,
+    ACTOR_EAST_STAKE, 1, FLAG_EAST_STAKE_SUNK, ACTOR_WEST_STAKE, 1, FLAG_WEST_STAKE_SUNK, -1, 0,
 };
 
 #define SCENE_ENTRANCES_SECTION LATE_DATA
@@ -965,10 +985,10 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 42, CONDITION_ALWAYS, EVENT(JupiterLighthouse_JumpOrPushBlock)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 43, CONDITION_ALWAYS, EVENT(JupiterLighthouse_JumpOrPushBlock)},
     {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_WHORL, CONDITION_ALWAYS, EVENT(JupiterLighthouse_FightWhorl)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_PATH_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LiftPathBlock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PATH_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlacePathBlock)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_SECOND_PATH_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LiftPathBlock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_PATH_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlacePathBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_STRAIGHT_PATH_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LiftPathBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STRAIGHT_PATH_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlacePathBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_CORNER_PATH_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LiftPathBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CORNER_PATH_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlacePathBlock)},
     {TRIGGER_PUSH, 35, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LiftPathBlock)},
     {TRIGGER_PUSHED, 35, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlacePathBlock)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_THIRD_PATH_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LiftPathBlock)},
@@ -980,11 +1000,11 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_GREY_BLOCK + 4, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LAST_GREY_BLOCK, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_BUTTON_PILLAR, FLAG_BUTTON_PILLAR_PLACED, EVENT(JupiterLighthouse_MoveButtonPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_FIRST), ACTOR_FIRST_CONE, FLAG_FIRST_CONE_SUNK, EVENT(JupiterLighthouse_StartPound)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_FIRST_CONE, FLAG_FIRST_CONE_SUNK, EVENT(JupiterLighthouse_SinkPoundTarget)},
-    {PSYNERGY_ON_ACTOR(ABILITY_POUND), ACTOR_FIRST_CONE, FLAG_FIRST_CONE_SUNK, EVENT(JupiterLighthouse_RaiseBlocksFromGaps)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_SECOND_CONE, FLAG_SECOND_CONE_SUNK, EVENT(JupiterLighthouse_SinkPoundTarget)},
-    {PSYNERGY_ON_ACTOR(ABILITY_POUND), ACTOR_SECOND_CONE, FLAG_SECOND_CONE_SUNK, EVENT(JupiterLighthouse_RaiseThirdBlockFromGap)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_FIRST), ACTOR_EAST_STAKE, FLAG_EAST_STAKE_SUNK, EVENT(JupiterLighthouse_StartPound)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_EAST_STAKE, FLAG_EAST_STAKE_SUNK, EVENT(JupiterLighthouse_SinkPoundTarget)},
+    {PSYNERGY_ON_ACTOR(ABILITY_POUND), ACTOR_EAST_STAKE, FLAG_EAST_STAKE_SUNK, EVENT(JupiterLighthouse_RaiseBlocksFromGaps)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_WEST_STAKE, FLAG_WEST_STAKE_SUNK, EVENT(JupiterLighthouse_SinkPoundTarget)},
+    {PSYNERGY_ON_ACTOR(ABILITY_POUND), ACTOR_WEST_STAKE, FLAG_WEST_STAKE_SUNK, EVENT(JupiterLighthouse_RaiseThirdBlockFromGap)},
     {TRIGGER_TABLE_END},
 };
 

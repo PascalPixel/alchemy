@@ -74,10 +74,11 @@ void ItemDisplay_EmitSparkles(struct Actor *emitter) {
   struct Actor *object;
   u32 randomRadius;
 
-  // Once the picture's rise has all but stopped (under 1/256 pixel a frame),
-  // clearing its motion flags (ACTOR_FALLS and ACTOR_FOLLOWS_TERRAIN)
-  // ends gravity, so it hangs at the top of its rise.
-  if (emitter->velocityY >= -255 && emitter->velocityY <= 255)
+  // Once the picture's rise has all but stopped, clearing its motion flags
+  // (ACTOR_FALLS and ACTOR_FOLLOWS_TERRAIN) ends gravity, so it hangs at the
+  // top of its rise.
+  if (emitter->velocityY > -(toFIXED(1) / 256) &&
+      emitter->velocityY < toFIXED(1) / 256)
     emitter->motionFlags = 0;
 
   // Test the chance before drawing the radius and angle from the RNG.
@@ -161,14 +162,15 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
     picture->velocityY = toFIXED(2);
     picture->gravity = toFIXED(1) / 4;
 
-    // Draw the item's icon into HEAP_SLOT_GLYPH_TRANSFER, then send it to the
-    // sprite's tiles: 128 bytes from byte 1,024 of the block.
+    // Draw the item's icon into HEAP_SLOT_GLYPH_TRANSFER, then send its tiles
+    // to the sprite's.
     iconBuffer =
         HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Icon_DrawItemFar(item);
 
     sprite->image.tile =
-        VramCache_Load(sprite->slot, ICON_TILE_BYTES, (u8 *)iconBuffer + 1024);
+        VramCache_Load(sprite->slot, ICON_TILE_BYTES,
+                       (u8 *)iconBuffer + offsetof(GlyphTransfer, tiles));
 
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
     picture->update = ItemDisplay_EmitSparkles;
@@ -254,7 +256,8 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
     sprite->image.priority = 1;
 
     Icon_DrawItemFar(item);
-    VramCache_Load(sprite->slot, ICON_TILE_BYTES, (u8 *)iconBuffer + 1024);
+    VramCache_Load(sprite->slot, ICON_TILE_BYTES,
+                   (u8 *)iconBuffer + offsetof(GlyphTransfer, tiles));
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 
     if (flags & 1)
@@ -344,10 +347,9 @@ void FieldEffect_SpawnRevealMarkers(void) {
   s32 row;
   s32 id;
 
-  // The layout's treasure spots: (column, row, id) triples, ended by 0xff,
-  // 0xff; the same list as MapGridMarkers's markers in
-  // field_sequence_treasure_spots.c.
-  markerData = *(u8 **)(((u8 *)gMapGridWork[0]) + 16);
+  // The layout's treasure spots: (column, row, id) triples, ended by
+  // TREASURE_SPOT_LIST_END twice, as Field_PlaceTreasureSpots reads them.
+  markerData = ((struct MapGridScrollWork *)gMapGridWork[0])->markers;
   actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
   leaderColumn = FIELD_CELL(actor->x.fixed);
   leaderRow = FIELD_CELL(actor->z.fixed);
@@ -373,7 +375,8 @@ void FieldEffect_SpawnRevealMarkers(void) {
       if (entry->kind == -1)
         continue;
       do {
-        if (entry->subject == id && (entry->kind & 15) == TRIGGER_EXAMINE) {
+        if (entry->subject == id &&
+            (entry->kind & TRIGGER_KIND_MASK) == TRIGGER_EXAMINE) {
           switch (entry->value & FIND_TYPE_MASK) {
           case 0:
           case FIND_ITEM(0):

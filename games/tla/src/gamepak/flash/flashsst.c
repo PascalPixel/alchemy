@@ -5,6 +5,9 @@
 #include "gamepak/flash.h"
 #include "gamepak/flash_data.h"
 
+/// The id the SST chip answers with: its device id above its maker id.
+#define FLASH_ID_SST (0xd4 << 8 | 0xbf)
+
 // clang-format off
 /// The SST chip's waits by timing: milliseconds, the timer's reload value and
 /// its control.
@@ -37,5 +40,5 @@ const struct FlashSetupInfo Flash_ChipSst = {
     .type = {.romSize = 65536,
              .sector = {.size = 4096, .shift = 12, .count = 16, .top = 0},
              .wait = {1, 2},
-             .id = {.joined = 0xd4bf}},
+             .id = {.joined = FLASH_ID_SST}},
 };

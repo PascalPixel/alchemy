@@ -8,7 +8,7 @@
 /// 0 yes; 1 no, "Using this will have no effect." (no item, an item that only
 /// teaches Psynergy while equipped, one with no action, or equipment the party
 /// member cannot equip); 2 not in battle, "Cannot be used during battle." (its
-/// action lacks BATTLE_OK).
+/// action lacks ABILITY_USABLE_IN_BATTLE).
 s32 Item_ClassifyUseAbility(s32 unit, s32 itemId) {
   struct ItemDefinition *item;
 
@@ -16,17 +16,17 @@ s32 Item_ClassifyUseAbility(s32 unit, s32 itemId) {
     return 1;
   }
   item = Item_GetDirectFar(itemId);
-  // Equipment that grants Psynergy.
-  if (item->useType == 3) {
+  if (item->useType == ITEM_USE_TEACHES) {
     return 1;
   }
   if (item->abilityId == 0) {
     return 1;
   }
-  if ((item->type != 0) && (Item_CanUnitEquip(unit, itemId) == 0)) {
+  if ((item->type != ITEM_TYPE_NONE) &&
+      (Item_CanUnitEquip(unit, itemId) == 0)) {
     return 1;
   }
-  if ((BATTLE_OK & Ability_Get(item->abilityId)->flags) == 0) {
+  if ((ABILITY_USABLE_IN_BATTLE & Ability_Get(item->abilityId)->flags) == 0) {
     return 2;
   }
   return 0;
@@ -96,10 +96,14 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
     sprites[i].oam.f.tile = VramCache_Reload(iconSlots[i], -1);
   }
 
-  Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, 512);
-  Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, 513);
-  Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, 528);
-  Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, 529);
+  // XXX (no evidence): what shows tiles 0, 1, 16 and 17 of the second text
+  // range (TEXT_EXTRA_TILE_FIRST), which take the top and bottom tees here; no
+  // window code names an entry of them, and the battle recordings in reach
+  // (render guide fight-item) never open a list.
+  Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, TEXT_EXTRA_TILE_FIRST);
+  Vram_CopyTile(WINDOW_TILE_BORDER_TOP_TEE, TEXT_EXTRA_TILE_FIRST + 1);
+  Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, TEXT_EXTRA_TILE_FIRST + 16);
+  Vram_CopyTile(WINDOW_TILE_BORDER_BOTTOM_TEE, TEXT_EXTRA_TILE_FIRST + 17);
 
   for (;;) {
     /* FAKEMATCH(temporary): sprite holds &cursorStorage. */
@@ -154,9 +158,9 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
 
       if (count > BATTLE_LIST_ROWS) {
         for (i = 0; i < (count + 4) / BATTLE_LIST_ROWS; i++) {
-          iconTile = i + LIST_TILE_PAGE_NUMBER;
+          iconTile = i + PAGE_NUMBER_TILE;
           if (i == firstEntry / BATTLE_LIST_ROWS) {
-            iconTile = i + LIST_TILE_PAGE_NUMBER_LIT;
+            iconTile = i + PAGE_NUMBER_LIT_TILE;
           }
           Window_SetTilemapEntry(
               window, iconTile,
@@ -174,10 +178,10 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
     // page arrows on the window's top edge (y -1).
     if (count > BATTLE_LIST_ROWS) {
       for (i = 0; i < (count + 4) / BATTLE_LIST_ROWS; i++) {
-        iconTile = i + LIST_TILE_PAGE_NUMBER;
+        iconTile = i + PAGE_NUMBER_TILE;
         if ((gFrameCount & 15) <= 11) {
           if (i == firstEntry / BATTLE_LIST_ROWS) {
-            iconTile = i + LIST_TILE_PAGE_NUMBER_LIT;
+            iconTile = i + PAGE_NUMBER_LIT_TILE;
           }
         }
         Window_SetTilemapEntry(

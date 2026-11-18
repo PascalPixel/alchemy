@@ -153,7 +153,7 @@ extern struct Trigger gMercuryLighthouseMiddleTriggers[];
 extern struct Trigger gMercuryLighthouseUpperTriggers[];
 extern struct Trigger gMercuryLighthouseTriggersOther[];
 extern s32 gMercuryLighthouse_SparkScript[];
-extern s32 gMercuryLighthouse_RampScript[];
+extern s32 gMercuryLighthouse_GrowLightScript[];
 extern s32 gMercuryLighthouse_ScaleCounterScript[];
 extern s32 gMercuryLighthouse_PillarScript[];
 extern u16 gMercuryLighthouse_MoveAngles[];
@@ -2865,7 +2865,7 @@ s32 gMercuryLighthouse_SparkScript[] = {
     SC_RELEASE,
 };
 
-s32 gMercuryLighthouse_RampScript[] = {
+s32 gMercuryLighthouse_GrowLightScript[] = {
     SC_CALL(MercuryLighthouse_GrowLight),
     SC_END,
 };

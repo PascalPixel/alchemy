@@ -20,25 +20,37 @@
 
 /// The sparkles that rise round the caster as the Ring is drawn.
 #define RING_SPARK_COUNT 64
-/// The motes that gather to the Ring, and the first 16 that circle it.
+/// The motes the Ring places, and the first 16 that twinkle on it.
 #define RING_MOTE_COUNT 32
 #define RING_CIRCLING_MOTES 16
 /// The frames the Ring lasts once it is drawn, or cast again.
 #define RING_FRAMES 600
 /// The OBJ and BG palette the Ring's colours cycle in.
 #define RING_PALETTE 15
+/// The ring's inner radius in pixels: its four bands run out to 3 more.
+#define RING_RADIUS 52
+/// The colour of the ring's band n, 0 innermost: every fourth colour of the
+/// cycling palette, so the bands shimmer one after another.
+#define RING_BAND_COLOR(n) (RING_PALETTE * PALETTE_COLORS + (n) * 4 + 3)
+/// The arc the sparkles sweep, and the ring is drawn over, each frame: half
+/// a turn in 32 frames, the picture's lower half being its upper half turned
+/// round (gParch_PictureTiles).
+#define RING_ARC_STEP (TRIG_TURN / 64)
+/// Added to a field Psynergy's kind, the gFieldPsynergy_Reach row for the
+/// objects its shaking reaches (Tremor's, 275).
+#define REACH_SHAKEN_OBJECTS 256
 
-/// The Ring's work (heap slot battleEffect): the sparkle
-/// picture, the 64 sparkles that rise round the caster as the ring is drawn,
-/// the motes that circle it after, and what the per-frame task shows.
+/// The Ring's work (heap slot battleEffect): the sparkle picture, the 64
+/// sparkles that rise round the caster as the ring is drawn and burst when it
+/// ends, the motes that circle it after, and what the per-frame task shows.
 struct RingWork {
-  u8 tiles[4096]; ///< the decoded sparkle picture, then the mote picture
+  u8 tiles[4096]; ///< the sparkle picture, then the motes', then the burst's
   struct EffectSprite sparkSprites[RING_SPARK_COUNT];
   struct FieldPsynergyParticle sparks[RING_SPARK_COUNT];
-  /// The motes: on screen as they gather, then 16 round the caster.
+  /// The motes, placed round the caster; the task draws the first 16.
   struct EffectSprite sprites[RING_MOTE_COUNT];
   struct FieldPsynergyParticle motes[RING_MOTE_COUNT];
-  u16 entry;    ///< the motes' VRAM cache entry
+  s16 entry;    ///< the motes' VRAM cache entry
   u16 tile;     ///< the motes' first tile
   s8 sparkling; ///< the task draws RING_CIRCLING_MOTES motes round the caster
   s8 orbiting;  ///< the ring sways round the caster as its time runs down
@@ -67,7 +79,8 @@ void FieldPsynergy_UpdateRing(void) {
   position[1] = actor->y.fixed + toFIXED(16);
   position[2] = actor->z.fixed;
   if (work->orbiting != 0)
-    Vector_AddPolarOffset(toFIXED(2), -(event->ringFrames << 11), position);
+    Vector_AddPolarOffset(toFIXED(2), -(event->ringFrames * (TRIG_TURN / 32)),
+                          position);
   Camera_WorldToScreen(position);
   x = FIXEDtoINT(position[0]);
   gBgScroll[0].x = 64 - x;
@@ -78,23 +91,25 @@ void FieldPsynergy_UpdateRing(void) {
   if (work->cycling != 0) {
     i = 0;
     phase = &work->phase;
-    red = 28;
+    red = GLOW_RED;
   cycle:
     {
       /* FAKEMATCH(pin): green fixed to a register; as a plain local. */
-      register s32 green asm("r5") = Trig_Sin(((*phase >> 1) + i) << 11) * 8;
+      register s32 green asm("r5") =
+          Trig_Sin(((*phase >> 1) + i) * (TRIG_TURN / 32)) * GLOW_GREEN_SWING;
       s32 blue;
 
-      blue = Trig_Sin((((*phase >> 2) + i) << 11) + TRIG_TURN * 9 / 32) * 10;
-      green = (green >> 16) + 23;
-      blue = ((blue >> 16) + 12) << 10;
-      green <<= 5;
-      Io_Write16(blue | green | red,
+      blue = Trig_Sin(((*phase >> 2) + i) * (TRIG_TURN / 32) +
+                      TRIG_TURN * 9 / 32) *
+             GLOW_BLUE_SWING;
+      green = FIXEDtoINT(green) + GLOW_GREEN;
+      blue = FIXEDtoINT(blue) + GLOW_BLUE;
+      Io_Write16(RGB(red, green, blue),
                  &((u16 *)&BG_PLTT_COLOR(RING_PALETTE, 0))[i]);
       ((u16 *)&OBJ_PLTT_COLOR(RING_PALETTE, 0))[i] =
           ((u16 *)&BG_PLTT_COLOR(RING_PALETTE, 0))[i];
     }
-    if (++i < 16)
+    if (++i < PALETTE_COLORS)
       goto cycle;
     work->phase++;
   }
@@ -110,8 +125,8 @@ void FieldPsynergy_UpdateRing(void) {
         position[2] = timer;
         position[1] = timer;
         position[0] = timer;
-        Vector_AddPolarOffset(toFIXED(54), sprite->angle + DEGtoANG(45),
-                              position);
+        Vector_AddPolarOffset(toFIXED(RING_RADIUS + 2),
+                              sprite->angle + DEGtoANG(45), position);
         SET_POSITION(entry, position[0], position[1] + toFIXED(16),
                      position[2]);
         timer = entry->timer;
@@ -136,8 +151,8 @@ void FieldPsynergy_UpdateRing(void) {
 }
 
 /// The Ring: a ring of light is drawn round the caster among rising
-/// sparkles, and motes gather to circle it; FieldPsynergy_UpdateRing keeps
-/// it for RING_FRAMES frames, then cue ABILITY_RING | ACT_PACKED ends it
+/// sparkles, then motes twinkle on it as it sways; FieldPsynergy_UpdateRing
+/// keeps it for RING_FRAMES frames, then cue ABILITY_RING | ACT_PACKED ends it
 /// (FieldPsynergy_EndRing). Cast again while it lasts, it only starts its
 /// frames again.
 void FieldPsynergy_Ring(void) {
@@ -149,7 +164,7 @@ void FieldPsynergy_Ring(void) {
   struct CanvasSpriteWork *canvas;
   s32 entry;
   s32 tile;
-  s32 spin;
+  s32 arcStart;
   s32 angle;
   s32 repeat;
   s32 drawing;
@@ -157,23 +172,22 @@ void FieldPsynergy_Ring(void) {
   struct EffectSprite *sprite;
   struct FieldPsynergyParticle *mote;
   s32 position[3];
-  s16 off; // Cycling is switched off through a halfword zero.
   s32 phase;
   s32 timer;
-  s32 radius;
+  s32 arc;
   s32 i;
   u8 *picture;
 
-  spin = 0;
+  arcStart = 0;
   angle = 0;
   repeat = 1;
   drawing = 0;
   if (event->ringActive == 0) {
     FieldPsynergy_FadeToCastColor();
-    gCpuLoadDisplayEnabled = angle;
+    gCpuLoadDisplayEnabled = 0;
     BattleEffect_StartCanvasSprite();
     canvas = Ram_HeapSlots->canvasSprite;
-    canvas->mode = angle;
+    canvas->mode = 0;
     pos = position;
     pos[0] = scene->mainActor->x.fixed;
     pos[1] = scene->mainActor->y.fixed + toFIXED(16);
@@ -216,36 +230,35 @@ void FieldPsynergy_Ring(void) {
     event->ringActive = 1;
     event->ringTimerRunning = 1;
     event->ringFrames = 999;
-    off = 0;
     Task_Add(FieldPsynergy_UpdateRing, TASK_PASS_FRAME);
     wait(1);
-    work->cycling = off;
+    work->cycling = 0;
     phase = 0;
     timer = 0;
     do {
       if (drawing) {
-        radius = spin;
+        arc = arcStart;
         for (i = 0; i < 8; i++) {
-          Canvas_PlotPolarPixel(picture, toFIXED(52), radius,
-                                RING_PALETTE * 16 + 3);
-          Canvas_PlotPolarPixel(picture, toFIXED(53), radius,
-                                RING_PALETTE * 16 + 7);
-          Canvas_PlotPolarPixel(picture, toFIXED(54), radius,
-                                RING_PALETTE * 16 + 11);
-          Canvas_PlotPolarPixel(picture, toFIXED(55), radius,
-                                RING_PALETTE * 16 + 15);
-          radius += 128;
+          Canvas_PlotPolarPixel(picture, toFIXED(RING_RADIUS), arc,
+                                RING_BAND_COLOR(0));
+          Canvas_PlotPolarPixel(picture, toFIXED(RING_RADIUS + 1), arc,
+                                RING_BAND_COLOR(1));
+          Canvas_PlotPolarPixel(picture, toFIXED(RING_RADIUS + 2), arc,
+                                RING_BAND_COLOR(2));
+          Canvas_PlotPolarPixel(picture, toFIXED(RING_RADIUS + 3), arc,
+                                RING_BAND_COLOR(3));
+          arc += RING_ARC_STEP / 8;
         }
         canvas->command = CANVAS_UPLOAD_TO_BG;
       }
       for (i = 0, mote = work->sparks; i < RING_SPARK_COUNT; i++, mote++) {
         sprite = &work->sparkSprites[i];
         if (mote->timer == 0) {
-          s32 heading = angle + ((i & 1) << 15);
+          s32 heading = angle + (i & 1) * DEGtoANG(180);
 
           SET_POSITION(mote, caster->x.fixed, caster->y.fixed + toFIXED(16),
                        caster->z.fixed);
-          Vector_AddPolarOffset(toFIXED(55), heading, &mote->x);
+          Vector_AddPolarOffset(toFIXED(RING_RADIUS + 3), heading, &mote->x);
           Vector_AddPolarOffset(Random16() * 6, Random16(), &mote->x);
         }
         if ((u32)mote->timer <= 15) {
@@ -259,7 +272,7 @@ void FieldPsynergy_Ring(void) {
       }
       switch (phase) {
       case 0:
-        angle = timer << 10;
+        angle = timer * RING_ARC_STEP;
         if (timer == 32) {
           phase = 1;
           timer = -1;
@@ -267,12 +280,7 @@ void FieldPsynergy_Ring(void) {
         break;
       case 1:
         drawing = 1;
-        {
-          s32 turn = timer << 10;
-
-          spin = turn;
-          angle = turn;
-        }
+        angle = arcStart = timer * RING_ARC_STEP;
         if (timer == 32) {
           phase = 2;
           timer = -1;
@@ -330,39 +338,14 @@ void FieldPsynergy_Ring(void) {
   Task_Add(FieldPsynergy_UpdateRing, TASK_PASS_FRAME);
 }
 
-/// One mote: a position and a velocity (Field_AdvanceWithGravity3D's vector)
-/// and a frame count, negative before it starts.
-struct BurstMote {
-  s32 x;
-  s32 y;
-  s32 z;
-  s32 vx;
-  s32 vy;
-  s32 vz;
-  s32 timer;
-};
-
-/// The work of the sparkle burst the Ring ends with (heap slot
-/// battleEffect): the sparkle picture, 64 sparkles and their motes.
-struct SparkleBurstWork {
-  u8 unused[4096]; ///< no code names it
-  struct EffectSprite sprites[RING_SPARK_COUNT];
-  struct BurstMote motes[RING_SPARK_COUNT];
-  u8 unusedAfterMotes[2176]; ///< no code names it
-  s16 resource;
-};
-
-/// The burst of 64 sparkles that FieldPsynergy_UpdateRing's effect ends
-/// with: once the event work asks for it, it plays SE_MAP_TRANSITION, clears
-/// screen block 4, reloads the window graphics, loads the sparkle picture
-/// (FieldEffect_SparkleFade) and scatters the sparkles around the current
-/// owner, starting a quarter of them a frame later than the last, then moves
-/// and animates them for 40 frames before releasing the effect.
+/// Ends the Ring, if one is up: the ring gives way to a burst of 64 sparkles
+/// from round the leader, four more setting off each frame, that fly out and
+/// fall for 40 frames, and the window graphics come back to BG0.
 void FieldPsynergy_EndRing(void) {
-  struct SparkleBurstWork *work = Ram_HeapSlots->battleEffect;
+  struct RingWork *work = Ram_HeapSlots->battleEffect;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
-  struct BurstMote *mote;
+  struct FieldPsynergyParticle *mote;
   struct EffectSprite *sprite;
   s32 slot;
   s32 tile;
@@ -378,7 +361,8 @@ void FieldPsynergy_EndRing(void) {
   Task_Remove(FieldPsynergy_UpdateRing);
   wait(1);
   Sound_PlayFar(SE_MAP_TRANSITION);
-  IWRAM_FILL_WORDS((void *)BG_SCREEN_BLOCK(4), 1280, 0xf000f000);
+  IWRAM_FILL_WORDS((void *)BG_SCREEN_BLOCK(4), 1280,
+                   WINDOW_TILE_PAIR(WINDOW_TILE_BLANK));
   Window_LoadGraphics();
   Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
   gBgScroll[0].x = 0;
@@ -390,17 +374,18 @@ void FieldPsynergy_EndRing(void) {
   tile = VramCache_Load(slot, 256, work);
 
   i = 0;
-  mote = work->motes;
-  sprite = work->sprites;
+  mote = work->sparks;
+  sprite = work->sparkSprites;
   for (; i < RING_SPARK_COUNT; i++, sprite++, mote++) {
     angle = Random16();
     SET_POSITION(mote, actor->x.fixed, actor->y.fixed + toFIXED(16),
                  actor->z.fixed);
-    Vector_AddPolarOffset(Random16() * 4 + toFIXED(52), angle, &mote->x);
-    mote->vx = 0;
-    mote->vy = -toFIXED(4);
-    mote->vz = 0;
-    Vector_AddPolarOffset(Random16() * 3 + toFIXED(2), angle, &mote->vx);
+    Vector_AddPolarOffset(Random16() * 4 + toFIXED(RING_RADIUS), angle,
+                          &mote->x);
+    mote->velocityX = 0;
+    mote->velocityY = -toFIXED(4);
+    mote->velocityZ = 0;
+    Vector_AddPolarOffset(Random16() * 3 + toFIXED(2), angle, &mote->velocityX);
     mote->timer = -i / 4;
     EffectSprite_Init(sprite, 4, 4, 0, tile);
     sprite->oam.fullColor = 1;
@@ -412,8 +397,8 @@ void FieldPsynergy_EndRing(void) {
 
   for (frame = 0; frame < 40; frame++) {
     struct EffectSprite *spark;
-    mote = work->motes;
-    spark = work->sprites;
+    mote = work->sparks;
+    spark = work->sparkSprites;
     for (i = RING_SPARK_COUNT - 1; i >= 0; i--, spark++, mote++) {
       /* FAKEMATCH(barrier): an empty asm that opens the loop's body, keeping
        * the index's mask loaded inside the loop; as the loop without it. */
@@ -428,7 +413,7 @@ void FieldPsynergy_EndRing(void) {
     wait(1);
   }
   VramCache_FreeEntry(slot);
-  VramCache_FreeEntry(work->resource);
+  VramCache_FreeEntry(work->entry);
   BattleEffect_EndCanvasSprite();
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
@@ -630,8 +615,9 @@ void ViewMove_SaveNearbySprites(void) {
     obj = *objects++;
     if (obj == NULL || obj->script == NULL || obj == scene->mainActor)
       continue;
-    if (Field_MeasurePsynergyReach((s16)(scene->fieldPsynergy | 0x100),
-                                   scene->firstActorId, i) == -1)
+    if (Field_MeasurePsynergyReach(
+            (s16)(scene->fieldPsynergy | REACH_SHAKEN_OBJECTS),
+            scene->firstActorId, i) == -1)
       continue;
     group->objects[group->count] = obj;
     group->spriteRotations[group->count] =
@@ -652,3 +638,7 @@ void ViewMove_RestoreNearbySprites(void) {
 }
 #undef VIEW_EDGE_MARGIN
 #undef SWING_SINE
+#undef RING_RADIUS
+#undef RING_BAND_COLOR
+#undef RING_ARC_STEP
+#undef REACH_SHAKEN_OBJECTS

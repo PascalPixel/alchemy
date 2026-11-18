@@ -1,5 +1,6 @@
-/// Turns an actor toward the direction pad, at most a sixteenth of a turn a
-/// frame.
+/// While the leader slides on ice, turns him toward the held direction, at most
+/// a sixteenth of a turn a frame; with none held, or a menu open, he looks
+/// around.
 void Actor_SteerByPad(struct Actor *actor) {
   s32 angle;
   s32 turn;
@@ -12,17 +13,17 @@ void Actor_SteerByPad(struct Actor *actor) {
   if (Event_GetFlag(FLAG_MENU_OPEN))
     angle = -1;
   else
-    angle = gSlideOnIce_SteerAngles[(gInput.held >> 4) & 15];
+    angle = gSlideOnIce_SteerAngles[(gInput.held >> 4) & 0xf];
   if (angle == -1) {
-    Actor_SelectAnimation(actor, 9);
+    Actor_SelectAnimation(actor, ANIM_LEADER_LOOK_AROUND);
     return;
   }
   turn = (s16)(angle - actor->facing);
-  if (turn > TRIG_TURN / 16)
-    turn = TRIG_TURN / 16;
-  if (turn < -(TRIG_TURN / 16))
-    turn = -(TRIG_TURN / 16);
+  if (turn > FACING_STEP)
+    turn = FACING_STEP;
+  if (turn < -FACING_STEP)
+    turn = -FACING_STEP;
   actor->facing += turn;
-  Actor_SelectAnimation(actor, 2);
-  Actor_SetAnimationSpeed(actor, 48);
+  Actor_SelectAnimation(actor, ANIM_WALK);
+  Actor_SetAnimationSpeed(actor, ANIMATION_STEP_NORMAL * 3);
 }

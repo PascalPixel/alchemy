@@ -57,6 +57,12 @@ enum {
 /// can cross.
 #define FLAG_KOLIMA_FOREST_CLIFF_LOG_IN_RIVER FLAG_SCENE_TEMP_01
 
+/// The column at the water's edge, where the river log pushed west tips in.
+#define RIVER_EDGE_COLUMN 12
+/// How far the curse tints the cliff until it is lifted: green and blue lose
+/// a sixth of themselves (KolimaPalette_Curse).
+#define CURSE_STRENGTH 6
+
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gKolimaForestCliffEntrances;
 }
@@ -79,7 +85,7 @@ static void KolimaForestCliff_PushLog(void) {
   if (PushedActor_FindClearPosition(&result)) {
     Actor_MoveAndRedraw(result);
     if (result.actorSlot == ACTOR_RIVER_LOG &&
-        (FIELD_CELL(result.position.x)) == 12) {
+        (FIELD_CELL(result.position.x)) == RIVER_EDGE_COLUMN) {
       Actor_SetAnimation(ACTOR_RIVER_LOG, LOG_ANIMATION_ROLL_WEST);
       Actor_SetDestinationOffset(ACTOR_RIVER_LOG, -18, 6);
       Event_Wait(30);
@@ -123,7 +129,7 @@ s32 Scene_Initialize(void) {
   Scene_RedrawActorFootprint(ACTOR_FIRST_LOG + 1);
 
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0) {
-    KolimaPalette_Curse(6);
+    KolimaPalette_Curse(CURSE_STRENGTH);
   }
   return 0;
 }

@@ -127,6 +127,9 @@ struct FieldPsynergyReach {
 };
 
 extern const struct FieldPsynergyReach gFieldPsynergy_Reach[];
+/// Added to a field Psynergy's kind, the gFieldPsynergy_Reach row for the
+/// objects its shaking reaches (Tremor's, 275).
+#define REACH_SHAKEN_OBJECTS 256
 
 /// Actor.spriteStorageKind, its low four bits: what the actor's sprite
 /// pointer holds.
@@ -188,14 +191,8 @@ struct OamWords {
   volatile u32 attr2;  ///< attr2 | affine value << 16
 };
 
-/// A sprite's place in its attr01 word: x in attribute 1's nine bits and y in
-/// attribute 0's eight, each wrapped as the screen wraps them.
-#define OBJ_POSITION(x, y) (OBJ_X((x) & 0x1ff) | ((y) & 0xff))
 /// An affine sprite's matrix, of the 32, in its attr01 word.
 #define OBJ_AFFINE_MATRIX(n) ((n) << 25)
-/// An affine parameter in an OamWords entry's attr2 word, its high half: the
-/// entries 4n to 4n + 3 hold affine matrix n's four.
-#define OBJ_AFFINE_PARAMETER(value) ((value) << 16)
 
 // The casino's four-dice game, built
 // like LuckyDice_Run (four dice in a round dome, Slots_DomePicture): A throws
@@ -304,7 +301,10 @@ struct WorldMapCell {
   u32 tile : 24; ///< low halfword: the cell picture
   /// Passed to WorldMap_UpdateRegionTint; region / 10 picks the graphics set.
   u32 region : 6;
-  u32 unusedHigh : 2; ///< no code names them
+  u32 unused : 1; ///< no code names it
+  /// A beach: WorldMap_GetBattleEnvironment fights on it from
+  /// gWorldMap_TerrainBehaviorTable's beach bank.
+  u32 beach : 1;
 };
 
 /// A map cell's terrain kind: the low four bits of its shape's first byte,
@@ -340,8 +340,7 @@ enum TerrainKind {
   TERRAIN_BUMP = 99
 };
 
-/// What MapGrid_CheckCollision says of a step to a position, as The Broken
-/// Seal's.
+/// What MapGrid_CheckCollision says of a step to a position.
 enum Collision {
   COLLISION_TOO_LOW = -1,  ///< the ground there is more than 12 pixels lower
   COLLISION_NONE = 0,      ///< the actor can step there

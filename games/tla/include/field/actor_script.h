@@ -6,9 +6,6 @@
 /// gActorScript_CommandTable runs them. Each macro expands to the words of
 /// one command. The script stores positions and speeds in 16.16 fixed point;
 /// its macros take plain pixels and decimal speeds and convert them.
-// The Lost Age numbers its commands as The Broken Seal does, with
-// SC_POSITION_ORIGIN added before SC_MOVE, the field's ways of moving after
-// SC_KEYS, SC_SE_IN_VIEW after SC_SE and SC_MOVE_XZ last.
 
 #include "fixed_math.h"
 #include "types.h"
@@ -170,6 +167,9 @@ enum ActorScriptValue {
   SW_RADIUS = 8,
   SW_SCALE_X = 9,
   SW_SCALE_Y = 10,
+  /// Sets or tests the Y scale as SW_SCALE_Y does: the operand table gives
+  /// both one handler.
+  SW_SCALE_Y_DUPLICATE = 11,
   SW_VELOCITY_X = 12,
   SW_VELOCITY_Y = 13,
   SW_VELOCITY_Z = 14,
@@ -198,6 +198,9 @@ enum ActorScriptValue {
   /// Actor.userValue, scene scratch: an event sets it for the scene code
   /// that reads or waits on it.
   SW_USER_VALUE = 36,
+  /// Actor.watchedActor: a fireball's path sets it to the routine the
+  /// fireball calls when it crashes (Actor_RollAndCrumble).
+  SW_WATCHED_ACTOR = 37,
   SW_HOOK = 38,
   SW_RISE_COUNTER = 39, ///< Actor.riseCounter, scene code's own byte
   SW_RISE_ENABLED = 40  ///< Actor's byte 0x63, scene code's own byte

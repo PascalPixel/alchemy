@@ -1,17 +1,25 @@
 /// @file
 /// The effect spawner each field overlay keeps its own copy of, the twin of The
-/// Broken Seal's EFFECT_SPAWN (scene/shared/field_effect_spawn.h) with default
-/// type 285. The including file names its overlay's copy and the imports it
-/// calls: EFFECT_SPAWN, EFFECT_CREATE, EFFECT_SET_MODE, EFFECT_SET_SCRIPT and
-/// EFFECT_SCRIPTS. Copies that also define EFFECT_SPRITE_PRIORITY create the
-/// actor as an event does (FieldActor_Create) and give the sprite the requested
-/// priority themselves before Scene_SetActorSpritePriority, as overlays 663,
-/// 664, 66b, 679 and 67b do.
+/// Broken Seal's EFFECT_SPAWN (scene/shared/field_effect_spawn.c). The
+/// including file names its overlay's copy and the imports it calls:
+/// EFFECT_SPAWN, EFFECT_CREATE, EFFECT_SET_MODE, EFFECT_SET_SCRIPT and
+/// EFFECT_SCRIPTS. A file that also defines EFFECT_SPRITE_PRIORITY creates the
+/// actor as an event does (FieldActor_Create) and gives the sprite the
+/// requested priority itself before Scene_SetActorSpritePriority.
 #include "types.h"
 #include "system/main_routine_work.h"
 #include "field/field_sprite.h"
 #include "system/field_effect.h"
 #include "fixed_math.h"
+#include "sprite_ids.h"
+
+/// The sprite an effect takes unless EFFECT_USE_TYPE gives another.
+#define EFFECT_DEFAULT_TYPE SPRITE_DUST_CLOUD
+/// The spawn flags that pick an option, above the script number.
+#define EFFECT_OPTION_MASK 0xffff0000
+/// Where a duration script holds its repeat count, the frames
+/// EFFECT_SCALE_TO_TARGET grows over.
+#define EFFECT_SCRIPT_REPEAT_COUNT 3
 
 extern struct Actor *EFFECT_CREATE(s32 type, s32 x, s32 y, s32 z);
 extern const s32 *EFFECT_SCRIPTS[];
@@ -31,12 +39,13 @@ void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
     effect = (struct FieldEffect *)FieldActor_Create(options->type, x, y, z);
   else
-    effect = (struct FieldEffect *)FieldActor_Create(285, x, y, z);
+    effect =
+        (struct FieldEffect *)FieldActor_Create(EFFECT_DEFAULT_TYPE, x, y, z);
 #else
   if ((flags & EFFECT_USE_TYPE) != 0 && options != 0)
     effect = (struct FieldEffect *)EFFECT_CREATE(options->type, x, y, z);
   else
-    effect = (struct FieldEffect *)EFFECT_CREATE(285, x, y, z);
+    effect = (struct FieldEffect *)EFFECT_CREATE(EFFECT_DEFAULT_TYPE, x, y, z);
 #endif
   if (effect == 0)
     return;
@@ -56,15 +65,14 @@ void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   effect->scaleRateY = 0;
   effect->spin = 0;
 
-  if ((flags & 0xffff0000) == 0 || options == 0)
+  if ((flags & EFFECT_OPTION_MASK) == 0 || options == 0)
     return;
   if ((flags & EFFECT_USE_PALETTE) != 0)
     Actor_SetSpriteColor(effect, options->palette);
   if ((flags & EFFECT_USE_PRIORITY) != 0) {
 #ifdef EFFECT_SPRITE_PRIORITY
     effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-    // Read as its low byte: (u8)options->priority orders the loads apart.
-    sprite->priority = *(u8 *)&options->priority;
+    sprite->priority = options->priority;
 #else
     effect->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
 #endif
@@ -81,13 +89,15 @@ void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
     script = EFFECT_SCRIPTS[flags & EFFECT_SCRIPT_MASK];
     targetX = options->targetScaleX;
-    count = script[3];
+    count = script[EFFECT_SCRIPT_REPEAT_COUNT];
     if (start != 0) {
       effect->scaleRateX = (targetX - effect->scaleX) / count;
-      effect->scaleRateY = (options->targetScaleY - effect->scaleY) / script[3];
+      effect->scaleRateY = (options->targetScaleY - effect->scaleY) /
+                           script[EFFECT_SCRIPT_REPEAT_COUNT];
     } else {
       effect->scaleRateX = (targetX - FIXED_ONE) / count;
-      effect->scaleRateY = (options->targetScaleY - FIXED_ONE) / script[3];
+      effect->scaleRateY = (options->targetScaleY - FIXED_ONE) /
+                           script[EFFECT_SCRIPT_REPEAT_COUNT];
     }
   }
   if ((flags & EFFECT_USE_SCRIPT) != 0) {
@@ -101,3 +111,7 @@ void EFFECT_SPAWN(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   if ((flags & EFFECT_USE_UPDATE) != 0)
     effect->update = options->update;
 }
+
+#undef EFFECT_DEFAULT_TYPE
+#undef EFFECT_OPTION_MASK
+#undef EFFECT_SCRIPT_REPEAT_COUNT

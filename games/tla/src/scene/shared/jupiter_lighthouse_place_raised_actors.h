@@ -5,7 +5,7 @@
 #define ACTOR_LEFT_ARCHER 11
 #define ACTOR_RIGHT_ARCHER 12
 #define ACTOR_LID 23
-#define ACTOR_LID_B 24 ///< a second lid at the first's place, kept hidden
+#define ACTOR_HIDDEN_LID 24 ///< a second lid at the first's place, kept hidden
 
 /// The frames JupiterLighthouse_EnergizeAngels takes to raise an angel, and
 /// then to lift both angels and the lid off the well.
@@ -23,11 +23,11 @@ void JupiterLighthouse_PlaceRaisedActors(void) {
   struct Actor *lid = Actor_Get(ACTOR_LID);
   struct FieldSprite *sprite = lid->sprite;
 
-  Actor_SetPosition(ACTOR_LID_B, 512, 248);
+  Actor_SetPosition(ACTOR_HIDDEN_LID, 512, 248);
   Actor_SetPosition(ACTOR_LID, 512, 248);
   Actor_SetPosition(ACTOR_LEFT_ANGEL, 472, 256);
   Actor_SetPosition(ACTOR_RIGHT_ANGEL, 552, 256);
-  Actor_Get(ACTOR_LID_B)->scaleX = 0;
+  Actor_Get(ACTOR_HIDDEN_LID)->scaleX = 0;
   lid->motionFlags = 0;
   lid->y.fixed = lid->groundHeight;
   leftAngel->motionFlags = 0;
@@ -79,6 +79,6 @@ void JupiterLighthouse_PlaceRaisedActors(void) {
 #undef ACTOR_LEFT_ARCHER
 #undef ACTOR_RIGHT_ARCHER
 #undef ACTOR_LID
-#undef ACTOR_LID_B
+#undef ACTOR_HIDDEN_LID
 #undef ANGEL_RISE_FRAMES
 #undef LID_LIFT_FRAMES

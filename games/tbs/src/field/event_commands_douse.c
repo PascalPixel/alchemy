@@ -4,6 +4,12 @@
 
 #include "event_commands_internal.h"
 
+/// The drops Douse rains: cast at nothing, cast on a target, and cast on a
+/// target where they sway down (FieldEffectWork.lit).
+#define DOUSE_DROPS 10
+#define DOUSE_DROPS_ON_TARGET 24
+#define DOUSE_SWAYING_DROPS_ON_TARGET 30
+
 /// Per-frame update of a falling drop: on reaching altitude it is released 2
 /// frames later and scatters three half-size splashes, which hop toward
 /// points 32 pixels away and are released after 6 frames.
@@ -62,8 +68,8 @@ void FieldEffect_UpdateDriftingFallActor(struct Actor *particle) {
 void FieldPsynergy_DouseOnTarget(s32 unused) { FieldPsynergy_Douse(); }
 
 /// A rain cloud rises from 16 pixels above the caster to 32 pixels above the
-/// destination (80 with variant) over 10 frames, growing as it goes, rains
-/// particles, and returns.
+/// destination (80 with childOption) over GROW_STEPS frames, growing as it
+/// goes, rains drops, and returns.
 void FieldPsynergy_Douse(void) {
   struct Vector3 pos;
   struct Vector3 start;
@@ -72,7 +78,7 @@ void FieldPsynergy_Douse(void) {
   struct Actor *caster = work->mainActor;
   struct Actor *cloud;
   s32 step;
-  s32 steps = 11;
+  s32 steps = GROW_STEPS + 1;
   s32 count;
   s32 y;
   struct Actor *particle;
@@ -102,9 +108,9 @@ void FieldPsynergy_Douse(void) {
   for (; step < steps; step++) {
     s32 scale;
 
-    SET_ACTOR_POSITION(cloud, start.x + (end.x - start.x) * step / 10,
-                       start.y + (end.y - start.y) * step / 10,
-                       start.z + (end.z - start.z) * step / 10);
+    SET_ACTOR_POSITION(cloud, start.x + (end.x - start.x) * step / GROW_STEPS,
+                       start.y + (end.y - start.y) * step / GROW_STEPS,
+                       start.z + (end.z - start.z) * step / GROW_STEPS);
     scale = FieldEffect_Interpolate(FIXED_ONE, FIXED_ONE / 4, step);
     cloud->scaleX = scale;
     cloud->scaleY = scale;
@@ -114,10 +120,10 @@ void FieldPsynergy_Douse(void) {
 
   if ((s8)work->lit == 0) {
     // Drop a particle every 6 frames from 3 to 8 pixels round the cloud (the
-    // last right under it).
-    count = 10;
+    // last right under it); enabled is cleared once a target is dispatched.
+    count = DOUSE_DROPS;
     if (work->enabled == 0)
-      count = 24;
+      count = DOUSE_DROPS_ON_TARGET;
     for (step = 0; step < count; step++) {
       pos.x = cloud->x.fixed;
       pos.y = cloud->y.fixed;
@@ -143,9 +149,9 @@ void FieldPsynergy_Douse(void) {
     // Every 6 frames, a swaying particle falls from 3 to 8 pixels round the
     // cloud.
     if (work->enabled != 0)
-      count = 10;
+      count = DOUSE_DROPS;
     else
-      count = 30;
+      count = DOUSE_SWAYING_DROPS_ON_TARGET;
     for (step = 0; step < count; step++) {
       pos.x = cloud->x.fixed;
       pos.y = cloud->y.fixed;
@@ -169,9 +175,9 @@ void FieldPsynergy_Douse(void) {
   do {
     s32 scale;
 
-    SET_ACTOR_POSITION(cloud, end.x + (start.x - end.x) * step / 10,
-                       end.y + (start.y - end.y) * step / 10,
-                       end.z + (start.z - end.z) * step / 10);
+    SET_ACTOR_POSITION(cloud, end.x + (start.x - end.x) * step / GROW_STEPS,
+                       end.y + (start.y - end.y) * step / GROW_STEPS,
+                       end.z + (start.z - end.z) * step / GROW_STEPS);
     scale = FieldEffect_Interpolate(FIXED_ONE / 4, FIXED_ONE, step);
     cloud->scaleX = scale;
     cloud->scaleY = scale;
@@ -181,3 +187,7 @@ void FieldPsynergy_Douse(void) {
   Actor_ReleaseFar(cloud);
   FieldPsynergy_FadeFromCastColor();
 }
+
+#undef DOUSE_DROPS
+#undef DOUSE_DROPS_ON_TARGET
+#undef DOUSE_SWAYING_DROPS_ON_TARGET

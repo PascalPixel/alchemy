@@ -36,13 +36,6 @@
 /// a turn in 32 frames, the picture's lower half being its upper half turned
 /// round (gParch_PictureTiles).
 #define RING_ARC_STEP (TRIG_TURN / 64)
-/// The cycling palette's colours: red stays put while green and blue swing
-/// either side of their middles, each colour a step further along the swing.
-#define RING_RED 28
-#define RING_GREEN 23
-#define RING_GREEN_SWING 8
-#define RING_BLUE 12
-#define RING_BLUE_SWING 10
 /// Added to a field Psynergy's kind, the gFieldPsynergy_Reach row for the
 /// objects its shaking reaches (Tremor's, 275).
 #define REACH_SHAKEN_OBJECTS 256
@@ -98,19 +91,19 @@ void FieldPsynergy_UpdateRing(void) {
   if (work->cycling != 0) {
     i = 0;
     phase = &work->phase;
-    red = RING_RED;
+    red = GLOW_RED;
   cycle:
     {
       /* FAKEMATCH(pin): green fixed to a register; as a plain local. */
       register s32 green asm("r5") =
-          Trig_Sin(((*phase >> 1) + i) * (TRIG_TURN / 32)) * RING_GREEN_SWING;
+          Trig_Sin(((*phase >> 1) + i) * (TRIG_TURN / 32)) * GLOW_GREEN_SWING;
       s32 blue;
 
       blue = Trig_Sin(((*phase >> 2) + i) * (TRIG_TURN / 32) +
                       TRIG_TURN * 9 / 32) *
-             RING_BLUE_SWING;
-      green = FIXEDtoINT(green) + RING_GREEN;
-      blue = FIXEDtoINT(blue) + RING_BLUE;
+             GLOW_BLUE_SWING;
+      green = FIXEDtoINT(green) + GLOW_GREEN;
+      blue = FIXEDtoINT(blue) + GLOW_BLUE;
       Io_Write16(RGB(red, green, blue),
                  &((u16 *)&BG_PLTT_COLOR(RING_PALETTE, 0))[i]);
       ((u16 *)&OBJ_PLTT_COLOR(RING_PALETTE, 0))[i] =
@@ -648,9 +641,4 @@ void ViewMove_RestoreNearbySprites(void) {
 #undef RING_RADIUS
 #undef RING_BAND_COLOR
 #undef RING_ARC_STEP
-#undef RING_RED
-#undef RING_GREEN
-#undef RING_GREEN_SWING
-#undef RING_BLUE
-#undef RING_BLUE_SWING
 #undef REACH_SHAKEN_OBJECTS

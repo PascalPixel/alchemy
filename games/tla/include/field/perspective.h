@@ -8,11 +8,10 @@
 #include "static_assert.h"
 #include "types.h"
 
-/// The world map's perspective view, as The Broken Seal's: the followed
-/// position, screen shake, view position, window, pitch and yaw, tile ids and
-/// zoom, in the map's heap slot. The Lost Age's World Map is four times The
-/// Broken Seal's, so its tile id grid is 32 by 32, and it adds the still
-/// picture's state and the region tint at the end.
+/// The world map's perspective view, in the map's heap slot: the followed
+/// position, screen shake, view position, window, pitch and yaw, a 32 by 32
+/// grid of tile ids and zoom, then the still picture's state and the region
+/// tint.
 struct WorldMapView {
   s32 *origin;                    ///< the followed point, as in MapWork
   s32 shakeX, shakeY, shakeDecay; ///< the screen shake, as in MapWork

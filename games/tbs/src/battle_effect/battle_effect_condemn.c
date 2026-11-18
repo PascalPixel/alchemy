@@ -7,6 +7,13 @@
 #define CONDEMN_FRAMES 132
 #define CONDEMN_SWING_FRAME 88   ///< the reaper swings, in a white flash
 #define CONDEMN_BOUNCE_FRAME 120 ///< the falling target bounces
+/// How far the reaper sways across and up and down as it circles, in pixels.
+#define CONDEMN_SWAY_X 16
+#define CONDEMN_SWAY_Y 4
+/// A line's 16.16 sideways sway as its BG2X value in work->bg2xLines.
+#define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
+/// The level a canvas darkens the battle background to, a level a frame.
+#define BACKGROUND_DARKENED_LEVEL BACKGROUND_DARKEN_FRAMES
 
 /// Where `picture`, one of the reaper's seven pictures, is drawn
 /// (REAPER_PICTURE_X), by the casting side's `column` and `row`.
@@ -87,8 +94,10 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     s32 *scanline;
 
     spin = frame * (TRIG_TURN / 128);
-    screenX = FIXEDtoINT(swayCenter[0]) + FIXEDtoINT(Trig_Sin(spin) * 16) + 48;
-    screenY = FIXEDtoINT(swayCenter[1]) + FIXEDtoINT(Trig_Cos(spin) * 4) + 16;
+    screenX = FIXEDtoINT(swayCenter[0]) +
+              FIXEDtoINT(Trig_Sin(spin) * CONDEMN_SWAY_X) + 48;
+    screenY = FIXEDtoINT(swayCenter[1]) +
+              FIXEDtoINT(Trig_Cos(spin) * CONDEMN_SWAY_Y) + 16;
     if (frame == CONDEMN_SWING_FRAME) {
       Sound_PlayFar(SE_HEAVY_IMPACT);
     }
@@ -145,7 +154,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     lineOffset = (6 - screenX) << 8;
     angle = frame * (TRIG_TURN / 32);
     for (; i != DISPLAY_HEIGHT; i++) {
-      *scanline++ = lineOffset - ((Trig_Sin(angle) * ripple) >> 10);
+      *scanline++ = lineOffset - CANVAS_WAVE_BG2X(Trig_Sin(angle) * ripple);
       angle += TRIG_TURN / 32;
     }
     if (drawReaper != 0) {
@@ -228,14 +237,14 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     }
     EFFECT_PRESENT_CANVAS(work);
   }
-  // Finish: the tasks, then the battle background reloaded, which repairs
-  // nothing this effect changed.
+  // Finish: the tasks, then the battle background reloaded, darkened as a
+  // canvas leaves it, which repairs nothing this effect changed.
   // XXX (no evidence): why Condemn reloads the background; the reload puts
   // back the picture already there, so nothing the game shows says why.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   Task_Remove(BattleEffect_ArmBg2AffineHBlankDma);
   BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED, gBattleWork->background,
-                           24);
+                           BACKGROUND_DARKENED_LEVEL);
   EFFECT_RELEASE_BLITTERS();
   BattleEffect_EndCanvasLayer();
 }
@@ -243,5 +252,9 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
 #undef CONDEMN_FRAMES
 #undef CONDEMN_SWING_FRAME
 #undef CONDEMN_BOUNCE_FRAME
+#undef CONDEMN_SWAY_X
+#undef CONDEMN_SWAY_Y
+#undef CANVAS_WAVE_BG2X
+#undef BACKGROUND_DARKENED_LEVEL
 #undef CONDEMN_PICTURE_X
 #undef CONDEMN_PICTURE_Y

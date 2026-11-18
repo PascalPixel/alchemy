@@ -32,7 +32,8 @@ void Actor_PlaceBlocks(u16 *actors) {
         actor->layer, actor->x.fixed, actor->z.fixed));
     s32 slot = Actor_GetCellIndex(actor);
     struct MapCell *cells = map->layers[actor->layer].cells;
-    // The layer's shapes, at its cells' index in the shape grid.
+    /* FAKEMATCH(temporary): the layer's row of the shape grid as an integer
+     * sum, its index first; as &grid[(cells - Ram_MapCellBuffer) / 4]. */
     u8 *shapes =
         (u8 *)((((s32)cells - (s32)Ram_MapCellBuffer) >> 2) + (s32)grid);
     struct MapCell *cell;
@@ -234,6 +235,8 @@ void EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
   words = (u32 *)&sprite->oam;
   *words++ = attributes;
   *words = 0;
+  /* FAKEMATCH(temporary): the OAM reached through its own address; as
+   * sprite->oam.fullColor. */
   (&sprite->oam)->fullColor = 1;
   sprite->oam.index = tile;
 }

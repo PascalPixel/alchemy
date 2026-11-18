@@ -1,18 +1,26 @@
 /// @file
-/// Field Psynergy kind 19: the view swayed from side to side.
+/// Tremor: the view swayed from side to side.
 // Part of field_psynergy.c.
 
 #include "field_psynergy_internal.h"
 #include "resource_ids.h"
 #include "sounds.h"
 
-// Field Psynergy kind 19 on a chosen object (FieldPsynergy_Dispatch's
-// case 19): FieldPsynergy_Tremor's sideways sway, stronger, with the object's
-// picture held in the work.
+// Tremor cast at a chosen object (FieldPsynergy_Dispatch):
+// FieldPsynergy_Tremor's sideways sway, stronger, with the object's picture
+// held in the work.
 
 #define SHAKE_SPRITE_COUNT 64
+/// The OBJ palette the shake sprites take.
+#define SHAKE_SPRITE_PALETTE 14
 #define PICTURE_SIZE 4096
 #define PICTURE_MAX_PIXELS 2048
+
+/// How far round the nearby objects' rocking goes each frame: 3/32 of a turn.
+#define ROCK_STEP (TRIG_TURN * 3 / 32)
+/// The objects rock as far as a whole turn for every ROCK_PIXELS_PER_TURN
+/// pixels the view sways past SWAY_SHAKE.
+#define ROCK_PIXELS_PER_TURN 128
 
 // The sway's amplitude (16.16 pixels) and how it ramps.
 #define SWAY_START toFIXED(2)
@@ -42,12 +50,13 @@ struct TremorWork {
 /// ANIMATION_STEP_NORMAL runs it at normal speed.
 void Sprite_SetAnimationSpeedFar(void *sprite, s32 value);
 
-/// Sways the view from side to side around the chosen object, as kind 19 does
-/// with no object: the swing grows from 2 to 12 pixels, holds 40 frames,
-/// shrinks back to 2 and stops. Past 4 pixels the nearby objects' sprites
-/// shake with it. The work also takes the object's picture and 64 sprites of
-/// two tiles, which nothing here draws. An object whose picture is larger
-/// than 2,048 pixels gets no sway.
+/// Tremor ("Shake objects left and right.") on the chosen object: sways the
+/// view from side to side, as FieldPsynergy_Tremor does with no object: the
+/// swing grows from 2 to 12 pixels, holds 40 frames, shrinks back to 2 and
+/// stops. Past 4 pixels the nearby objects' sprites shake with it. The work
+/// also takes the object's picture and 64 sprites of two tiles, which nothing
+/// here draws. An object whose picture is larger than 2,048 pixels gets no
+/// sway.
 void FieldPsynergy_TremorOnTarget(void) {
   struct TremorWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(*work));
@@ -81,7 +90,7 @@ void FieldPsynergy_TremorOnTarget(void) {
 
       EffectSprite_Init(sprite, 4, 4, 0, tile + (i & 1));
       sprite->oam.fullColor = 0;
-      sprite->oam.palette = 14;
+      sprite->oam.palette = SHAKE_SPRITE_PALETTE;
       sprite->oam.priority = 0;
       sprite->depth = OAM_DEPTH_WINDOW;
       particle->timer = -1;
@@ -117,8 +126,9 @@ void FieldPsynergy_TremorOnTarget(void) {
 
           if (amplitude > SWAY_SHAKE)
             sprite->rotation =
-                rotation + Iwram_MulFX(Trig_Sin(phase * 3 << 11),
-                                       (amplitude - SWAY_SHAKE) / 128);
+                rotation +
+                Iwram_MulFX(Trig_Sin(phase * ROCK_STEP),
+                            (amplitude - SWAY_SHAKE) / ROCK_PIXELS_PER_TURN);
           else
             sprite->rotation = rotation;
         }
@@ -183,8 +193,9 @@ void FieldPsynergy_TremorOnTarget(void) {
 #undef SWAY_PEAK
 #undef SWAY_RAMP
 #undef SWAY_HOLD_FRAMES
+#undef ROCK_PIXELS_PER_TURN
 
-// FIELD_PSYNERGY_TREMOR as FieldPsynergy_Run casts it: the view sways.
+// Tremor as FieldPsynergy_Run casts it, at no object: the view sways.
 
 /// The heap block the sway takes, Tremor's work's size though it holds only the
 /// view move.
@@ -195,12 +206,15 @@ void FieldPsynergy_TremorOnTarget(void) {
 #define SWAY_RAMP (toFIXED(3) / 20) // 0.15 pixels a frame
 #define SWAY_HOLD_FRAMES 10
 #define SWAY_SHAKE_FRAMES 50 // the hold while objects shake
+/// The objects rock as far as a whole turn for every ROCK_PIXELS_PER_TURN
+/// pixels the view sways.
+#define ROCK_PIXELS_PER_TURN 384
 
 /// Sways the view from side to side, with a sound every 16 frames: the swing
-/// grows from 2 to 6 pixels, holds, shrinks back to 2 and stops. While the
-/// field is in control mode 2 the nearby objects' sprites shake with it; when
-/// there are any, the hold lasts 50 frames instead of 10. Then the view bounds
-/// and the sprites come back.
+/// grows from 2 to 6 pixels, holds, shrinks back to 2 and stops. On a town or
+/// dungeon map the nearby objects' sprites rock with it; when there are any,
+/// the hold lasts 50 frames instead of 10. Then the view bounds and the sprites
+/// come back.
 void FieldPsynergy_Tremor(void) {
   struct ViewMoveWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, VIEW_MOVE_WORK_SIZE);
@@ -235,8 +249,9 @@ void FieldPsynergy_Tremor(void) {
         s32 rotation = work->spriteRotations[i];
 
         if (amplitude > 0)
-          sprite->rotation = rotation + Iwram_MulFX(Trig_Sin(phase * 3 << 11),
-                                                    amplitude / 384);
+          sprite->rotation =
+              rotation + Iwram_MulFX(Trig_Sin(phase * ROCK_STEP),
+                                     amplitude / ROCK_PIXELS_PER_TURN);
         else
           sprite->rotation = rotation;
       }
@@ -301,6 +316,7 @@ void BattleEffect_ShiftRowsDown(u8 *base, s32 stride, s32 rows) {
   Iwram_FillWordsEntry(base, stride, 0);
 }
 #undef SHAKE_SPRITE_COUNT
+#undef SHAKE_SPRITE_PALETTE
 #undef PICTURE_SIZE
 #undef PICTURE_MAX_PIXELS
 #undef SWAY_START
@@ -310,3 +326,5 @@ void BattleEffect_ShiftRowsDown(u8 *base, s32 stride, s32 rows) {
 #undef SWAY_HOLD_FRAMES
 #undef VIEW_MOVE_WORK_SIZE
 #undef SWAY_SHAKE_FRAMES
+#undef ROCK_STEP
+#undef ROCK_PIXELS_PER_TURN

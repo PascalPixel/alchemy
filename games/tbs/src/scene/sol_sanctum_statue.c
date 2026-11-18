@@ -28,7 +28,7 @@
 ///   FLAG_SOL_SANCTUM_STATUE_PUZZLE_EXPLAINED). From then on a seal opened
 ///   too soon closes again. Its statue slides back and the leader jumps clear.
 /// - With both beams shining, the floor before the centre statue opens
-///   (SolSanctumStatue_OpenCentralHole), and the centre statue, moved south
+///   (SolSanctumStatue_OpenCenterHole), and the centre statue, moved south
 ///   with Move, drops into it (SolSanctumStatue_CenterStatueMoved).
 /// - From then on the seals stay open. The first one opened cuts away to the
 ///   Luna and Sol rooms with the trap disarmed
@@ -85,7 +85,7 @@ extern struct SceneEntrance gSolSanctumStatue_Entrances[];
 extern u32 gSolSanctumStatue_Exits[];
 extern struct ActorPlacement gSolSanctumStatue_ActorPlacements[];
 extern struct Trigger gSolSanctumStatue_Triggers[];
-extern s32 gSolSanctumStatue_ScrollPhase;
+extern s32 gSolSanctumStatue_ScrollOffset;
 
 /// Both beams have opened the hole in the floor before the centre statue.
 #define FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN FLAG_SCENE_TEMP_07
@@ -261,14 +261,18 @@ static s32 SolSanctumStatue_SelectStoryExit(void) {
   return -1;
 }
 
+/// The floor before the centre statue flashes this many times, eight frames
+/// each, as it opens.
+#define CENTER_HOLE_FLASHES 22
+
 /// Animates the floor opening before the centre statue once both beams shine,
 /// then lets the statue drop in if Move has already brought it there.
-static void SolSanctumStatue_OpenCentralHole(void) {
+static void SolSanctumStatue_OpenCenterHole(void) {
   s32 flash;
 
   MapGrid_CopyCellsTo(0, 28, 17, 8, 2, 1);
   Sound_Play(SE_SPARKLE_FALL);
-  for (flash = 0; flash != 22; flash++) {
+  for (flash = 0; flash != CENTER_HOLE_FLASHES; flash++) {
     MapGrid_CopyCellsTo(10, 61, 17, 40, 2, 1);
     Event_Wait(4);
     MapGrid_CopyCellsTo(8, 61, 17, 40, 2, 1);
@@ -689,6 +693,11 @@ static void SolSanctumStatue_UnusedPutOutSeals(void) {
   grid->origin = savedOrigin;
 }
 
+/// The clouds' scroll offset gains this a frame. The back row moves by its
+/// 1024th part, the middle by its 512th and the front by its 256th: an eighth,
+/// a quarter and half a pixel a frame.
+#define SCROLL_OFFSET_STEP 128
+
 /// Draws the three rows of sky clouds while they overlap the screen.
 static void SolSanctumStatue_UpdateScrollingSprites(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
@@ -700,7 +709,7 @@ static void SolSanctumStatue_UpdateScrollingSprites(void) {
   u32 column;
 
   if (screenY >= -16 && screenY < DISPLAY_HEIGHT) {
-    scrollX = ((gSolSanctumStatue_ScrollPhase >> 10) - cameraX) |
+    scrollX = ((gSolSanctumStatue_ScrollOffset >> 10) - cameraX) |
               -SOL_SANCTUM_STATUE_SPRITE_WIDTH;
     for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
       sprite->x = scrollX;
@@ -709,7 +718,7 @@ static void SolSanctumStatue_UpdateScrollingSprites(void) {
       scrollX += SOL_SANCTUM_STATUE_SPRITE_WIDTH;
       sprite++;
     }
-    scrollX = ((gSolSanctumStatue_ScrollPhase >> 9) - cameraX) |
+    scrollX = ((gSolSanctumStatue_ScrollOffset >> 9) - cameraX) |
               -SOL_SANCTUM_STATUE_SPRITE_WIDTH;
     for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
       sprite->x = scrollX;
@@ -718,7 +727,7 @@ static void SolSanctumStatue_UpdateScrollingSprites(void) {
       scrollX += SOL_SANCTUM_STATUE_SPRITE_WIDTH;
       sprite++;
     }
-    scrollX = ((gSolSanctumStatue_ScrollPhase >> 8) - cameraX) |
+    scrollX = ((gSolSanctumStatue_ScrollOffset >> 8) - cameraX) |
               -SOL_SANCTUM_STATUE_SPRITE_WIDTH;
     for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
       sprite->x = scrollX;
@@ -728,8 +737,7 @@ static void SolSanctumStatue_UpdateScrollingSprites(void) {
       sprite++;
     }
   }
-  // The three shifts turn this into 1/8, 1/4 and 1/2 pixel drift per frame.
-  gSolSanctumStatue_ScrollPhase += 128;
+  gSolSanctumStatue_ScrollOffset += SCROLL_OFFSET_STEP;
 }
 
 /// Walking north over a jump spot jumps the leader two cells ahead
@@ -882,6 +890,9 @@ s32 Scene_Initialize(void) {
 }
 
 /// Loads the three strips of graphics and fills in a row of sprites for each.
+/// Each drifting row's picture: one 32x8 sprite, repeated along the row.
+#define ROW_SPRITE_BYTES (4 * TILE_SIZE_4BPP)
+
 static void SolSanctumStatue_InitializeScrollingSprites(void) {
   u32 column;
   s32 tile;
@@ -891,7 +902,7 @@ static void SolSanctumStatue_InitializeScrollingSprites(void) {
   spriteWords = sScrollingSprites.words;
   pixels = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gSolSanctumStatue_SpriteRowsGraphics, pixels);
-  tile = VramCache_Load(VramCache_FindFreeEntry(), 128, pixels);
+  tile = VramCache_Load(VramCache_FindFreeEntry(), ROW_SPRITE_BYTES, pixels);
   for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
     s32 *attributeWords = spriteWords;
 
@@ -900,7 +911,8 @@ static void SolSanctumStatue_InitializeScrollingSprites(void) {
     spriteWords += 3;
     *attributeWords = tile | OBJ_PRIORITY(3) | OBJ_PALETTE(10);
   }
-  tile = VramCache_Load(VramCache_FindFreeEntry(), 128, pixels + 128);
+  tile = VramCache_Load(VramCache_FindFreeEntry(), ROW_SPRITE_BYTES,
+                        pixels + ROW_SPRITE_BYTES);
   for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
     s32 *attributeWords = spriteWords;
 
@@ -909,7 +921,8 @@ static void SolSanctumStatue_InitializeScrollingSprites(void) {
     spriteWords += 3;
     *attributeWords = tile | OBJ_PRIORITY(3) | OBJ_PALETTE(13);
   }
-  tile = VramCache_Load(VramCache_FindFreeEntry(), 128, pixels + 256);
+  tile = VramCache_Load(VramCache_FindFreeEntry(), ROW_SPRITE_BYTES,
+                        pixels + 2 * ROW_SPRITE_BYTES);
   for (column = 0; column < SOL_SANCTUM_STATUE_ROW_SPRITE_COUNT; column++) {
     s32 *attributeWords = spriteWords;
 
@@ -1017,7 +1030,7 @@ static void SolSanctumStatue_CenterStatueMoved(void) {
     Event_Start();
     if (FIELD_CELL(statueZ) == 8) {
       if (GameFlag_Get(FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN) == 0) {
-        s32 halfCell = Actor_Get(ACTOR_PARTY_LEADER)->z.fixed >> 19;
+        s32 halfCell = FIELD_HALF_CELL(Actor_Get(ACTOR_PARTY_LEADER)->z.fixed);
 
         if (halfCell >= 0 && halfCell <= 17) {
           Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 289, 158);
@@ -1304,6 +1317,9 @@ static void SolSanctumStatue_OpenSoutheastSeal(void) {
   MapGrid_CopyCellsTo((copy).sourceX, (copy).sourceY, (copy).destinationX,     \
                       (copy).destinationY, (copy).width, (copy).height)
 
+/// The opened seal pulses this many times, a glitter at each.
+#define SEAL_PULSES 20
+
 /// Animates the seal and either advances the story or resets its statue.
 static void SolSanctumStatue_OpenSeal(void) {
   struct SealOpening *seal;
@@ -1318,7 +1334,7 @@ static void SolSanctumStatue_OpenSeal(void) {
     FieldCamera_WaitForMove();
     Sound_Play(SE_SOL_SANCTUM_LIGHT_UP);
     COPY_CELLS(sSealOpening.open);
-    for (pulse = 0; pulse != 20; pulse++) {
+    for (pulse = 0; pulse != SEAL_PULSES; pulse++) {
       Sound_Play(SE_GLITTER);
       COPY_CELLS(sSealOpening.pulseA);
       Event_Wait(4);
@@ -1391,7 +1407,7 @@ static void SolSanctumStatue_ShineLeftBeam(void) {
       Event_Wait(30);
       GameFlag_Set(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING);
       if (GameFlag_Get(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING) != 0) {
-        SolSanctumStatue_OpenCentralHole();
+        SolSanctumStatue_OpenCenterHole();
       }
     }
   }
@@ -1417,7 +1433,7 @@ static void SolSanctumStatue_ShineRightBeam(void) {
       Event_Wait(30);
       GameFlag_Set(FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING);
       if (GameFlag_Get(FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING) != 0) {
-        SolSanctumStatue_OpenCentralHole();
+        SolSanctumStatue_OpenCenterHole();
       }
     }
   }
@@ -1599,4 +1615,4 @@ struct Trigger gSolSanctumStatue_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-s32 gSolSanctumStatue_ScrollPhase = 0;
+s32 gSolSanctumStatue_ScrollOffset = 0;

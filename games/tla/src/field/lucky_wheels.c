@@ -150,7 +150,7 @@ enum LuckyWheelsState {
   LUCKY_WHEELS_SPINNING = 1, ///< the wheels spin until R or time stops each
   LUCKY_WHEELS_WON = 2,      ///< a payline won: a pause
   LUCKY_WHEELS_SHOWING_WIN = 3,    ///< the win is shown until A
-  LUCKY_WHEELS_CHOOSING_HOLDS = 5, ///< choose wheels to hold, or pull the lever
+  LUCKY_WHEELS_CHOOSING_LOCKS = 5, ///< choose wheels to lock, or pull the lever
   LUCKY_WHEELS_DONE = 10,          ///< the game ends
   LUCKY_WHEELS_NO_WIN = 11,        ///< no payline won: A to choose holds
   LUCKY_WHEELS_OUT_OF_SPINS =
@@ -647,7 +647,7 @@ void LuckyWheels_Update(void) {
           Sound_PlayFar(SE_LUCKY_WHEELS_SPIN);
         }
       }
-    } else if (work->state == LUCKY_WHEELS_CHOOSING_HOLDS) {
+    } else if (work->state == LUCKY_WHEELS_CHOOSING_LOCKS) {
       allHeld = 0;
       work->timer++;
       for (k = 0; k != LUCKY_WHEELS_REEL_COUNT && work->reels[k].held != 0; k++)
@@ -690,7 +690,7 @@ void LuckyWheels_Update(void) {
         }
       }
 
-      if (work->state == LUCKY_WHEELS_CHOOSING_HOLDS) {
+      if (work->state == LUCKY_WHEELS_CHOOSING_LOCKS) {
 #if TLA_PATCH_1
         if (work->cursor == LUCKY_WHEELS_LEVER) {
           if (allHeld != 0) {
@@ -788,7 +788,7 @@ void LuckyWheels_Update(void) {
       }
 #endif
       if (work->pressed & KEY_A) {
-        work->state = LUCKY_WHEELS_CHOOSING_HOLDS;
+        work->state = LUCKY_WHEELS_CHOOSING_LOCKS;
 #if TLA_PATCH_1
         work->phase = 0;
 #endif
@@ -961,7 +961,7 @@ void LuckyWheels_Update(void) {
     }
   }
 
-  if (work->state == LUCKY_WHEELS_CHOOSING_HOLDS) {
+  if (work->state == LUCKY_WHEELS_CHOOSING_LOCKS) {
     x = work->cursor * 36 + 36;
     y = 128;
     v = 0;

@@ -13,6 +13,27 @@
 /// The frames the triangle of flares shrinks and turns before the rune shows,
 /// with the damage.
 #define BIND_RUNE_FRAME 64
+/// The Djinni of Bind's prelude sways this far either way, a sway every 32
+/// frames.
+#define BIND_DJINNI_SWAY 20
+/// The frames Triangle Strike's user takes to leap at the target.
+#define TRIANGLE_STRIKE_LEAP_FRAMES 16
+
+/// The blue ramp: one colour for each blue level, in BG palette
+/// BLUE_RAMP_PALETTE and then BLUE_RAMP_SECOND_PALETTE, each the next's
+/// red and green at half its blue. A pixel takes the ramp's colour for its
+/// brightest channel, darkest at the top.
+#define BLUE_RAMP_PALETTE 2
+#define BLUE_RAMP_SECOND_PALETTE 6
+#define BLUE_RAMP_COLORS (RGB_LEVEL_MAX + 1)
+/// The ramp's edge moves down a quarter of its speed in rows a frame, from this
+/// speed and a row faster every four frames, for at most BLUE_RAMP_FRAMES or
+/// until it is past BLUE_RAMP_LAST_ROW.
+#define BLUE_RAMP_START_SPEED 16
+#define BLUE_RAMP_FRAMES 27
+#define BLUE_RAMP_LAST_ROW 248
+/// A row of the picture's 32 tiles of 256 colours, as a shift: 2048 bytes.
+#define BLUE_RAMP_TILE_ROW_SHIFT 11
 
 // Bind and Luff spin a shrinking triangle onto the first target and stand a
 // rune there. The triangle's corners are projected onto the canvas and each
@@ -26,21 +47,21 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
   u16 color;
   u8 *delays, *pixel;
   u16 *palette;
-  palette = (u16 *)&BG_PLTT_COLOR(2, 0);
-  for (i = 0; i != 32; i++) {
+  palette = (u16 *)&BG_PLTT_COLOR(BLUE_RAMP_PALETTE, 0);
+  for (i = 0; i != BLUE_RAMP_COLORS; i++) {
     s32 half;
     half = i / 2;
     *palette++ = RGB(half, half, i);
   }
   delays = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   end = 0;
-  speed = 16;
+  speed = BLUE_RAMP_START_SPEED;
   Iwram_CopyWords(BLUE_RAMP_PIXELS, BG_CHAR_BLOCK(2), BATTLE_BACKGROUND_BYTES);
   for (x = 0; x != BATTLE_BACKGROUND_WIDTH; x++) {
     delays[x] = Random16() & 63;
   }
   row = 0;
-  for (i = 0; i != 27; i++) {
+  for (i = 0; i != BLUE_RAMP_FRAMES; i++) {
     end += speed / 4;
     speed++;
     while (row != end) {
@@ -48,8 +69,10 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
         y = row - delays[x];
         if (y >= 0) {
           if (y < BATTLE_BACKGROUND_HEIGHT) {
-            pixel = BLUE_RAMP_PIXELS + ((x & 7) + ((x / 8) << 6) +
-                                        ((y & 7) << 3) + ((y / 8) << 11));
+            // The picture's 8x8 tiles of 256 colours, 64 bytes each.
+            pixel =
+                BLUE_RAMP_PIXELS + ((x & 7) + ((x / 8) << 6) + ((y & 7) << 3) +
+                                    ((y / 8) << BLUE_RAMP_TILE_ROW_SHIFT));
             color = ((s16 *)BG_PLTT)[*pixel];
             red = RGB_RED(color);
             green = RGB_GREEN(color);
@@ -58,7 +81,7 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
               red = green;
             if (red < blue)
               red = blue;
-            *pixel = 63 - red;
+            *pixel = BLUE_RAMP_PALETTE * PALETTE_COLORS + RGB_LEVEL_MAX - red;
           }
         }
       }
@@ -67,18 +90,19 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
     Iwram_CopyWords(BG_CHAR_BLOCK(2), BLUE_RAMP_PIXELS,
                     BATTLE_BACKGROUND_BYTES);
     wait(1);
-    if (end > 248)
+    if (end > BLUE_RAMP_LAST_ROW)
       break;
   }
   // Then onto a second blue ramp.
-  palette = (u16 *)&BG_PLTT_COLOR(6, 0);
-  for (i = 0; i != 32; i++) {
+  palette = (u16 *)&BG_PLTT_COLOR(BLUE_RAMP_SECOND_PALETTE, 0);
+  for (i = 0; i != BLUE_RAMP_COLORS; i++) {
     s32 half;
     half = i / 2;
     *palette++ = RGB(half, half, i);
   }
   for (i = 0; i != BATTLE_BACKGROUND_BYTES; i++) {
-    BLUE_RAMP_PIXELS[i] += 64;
+    BLUE_RAMP_PIXELS[i] +=
+        (BLUE_RAMP_SECOND_PALETTE - BLUE_RAMP_PALETTE) * PALETTE_COLORS;
   }
   Iwram_CopyWords(BG_CHAR_BLOCK(2), BLUE_RAMP_PIXELS, BATTLE_BACKGROUND_BYTES);
   wait(1);
@@ -153,8 +177,9 @@ void BattleEffect_RunBind(struct BattleEffectParams *args) {
       s32 x;
       s32 y;
 
-      x = FIXEDtoINT(Trig_Sin(frame << 11) * 20) + originX + shift - 20;
-      y = FIXEDtoINT(Trig_Cos(frame << 11) * 4) + originY - 24;
+      x = FIXEDtoINT(Trig_Sin(frame * (TRIG_TURN / 32)) * BIND_DJINNI_SWAY) +
+          originX + shift - DJINNI_WIDTH / 2;
+      y = FIXEDtoINT(Trig_Cos(frame * (TRIG_TURN / 32)) * 4) + originY - 24;
       BattleEffect_FetchRectangleBlitters(work->args->side, draw);
       if (frame > 32)
         y = y - frame * 2 + 64;
@@ -294,7 +319,7 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
     // The user sets off towards the target.
     if (frame == 46)
       BattleMotion_ApproachTargetFar(work->args->user, work->args->targets[0],
-                                     16, 0);
+                                     TRIANGLE_STRIKE_LEAP_FRAMES, 0);
     BattleEffect_UpdatePhasePalette(frame, TRIG_TURN - DEGtoANG(120),
                                     DEGtoANG(120), 0);
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -370,3 +395,13 @@ void BattleEffect_RunUnusedTriangleStrike(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
+
+#undef BIND_DJINNI_SWAY
+#undef TRIANGLE_STRIKE_LEAP_FRAMES
+#undef BLUE_RAMP_PALETTE
+#undef BLUE_RAMP_SECOND_PALETTE
+#undef BLUE_RAMP_COLORS
+#undef BLUE_RAMP_START_SPEED
+#undef BLUE_RAMP_FRAMES
+#undef BLUE_RAMP_LAST_ROW
+#undef BLUE_RAMP_TILE_ROW_SHIFT

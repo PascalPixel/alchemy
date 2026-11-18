@@ -23,7 +23,7 @@ struct MotionObject {
   FIXED groundHeight; ///< 16.16 fixed-point pixels
   FIXED scaleX;       ///< 16.16 fixed point, FIXED_ONE full size
   FIXED scaleY;       ///< 16.16 fixed point, FIXED_ONE full size
-  u16 height;         ///< not named by TLA code through this view
+  u16 height;         ///< no code names it through this view
   u8 layer;           ///< the map layer its ground height is read from
   u8 priorityFlags;
   FIXED velocityX;  ///< 16.16 fixed-point pixels per frame

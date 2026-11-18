@@ -11,6 +11,10 @@
 
 typedef u8 (*FlashByteRead)(u8 *address);
 
+/// The id a Macronix chip answers with (Flash_ChipMacronix's): its device id
+/// 0x1c above the maker id 0xc2.
+#define FLASH_ID_MACRONIX (0x1c << 8 | 0xc2)
+
 /// Enters flash ID mode, waits for the chip and reads its device and
 /// manufacturer IDs.
 s32 ReadFlashId(void) {
@@ -89,7 +93,7 @@ void FlashTimerIntr(void) {
 
     countLeft -= 1;
     gFlashTimerCount = countLeft;
-    if (((u32)countLeft << 16) == 0) {
+    if ((u16)countLeft == 0) {
       gFlashTimeoutFlag = 1;
     }
   }
@@ -187,8 +191,8 @@ u16 WaitForFlashWrite(u8 timingIndex, volatile u8 *address, u8 expected) {
       // One last read, in case the write finished as time ran out.
       if ((u8)gFlashReadRoutine((u8 *)address) == expected)
         break;
-      // A Macronix chip (0x1cc2) is sent FLASH_COMMAND_RESET.
-      if (gFlash->id.joined == 0x1cc2)
+      // A Macronix chip is sent FLASH_COMMAND_RESET.
+      if (gFlash->id.joined == FLASH_ID_MACRONIX)
         FLASH_WRITE(FLASH_COMMAND_ADDRESS, FLASH_COMMAND_RESET);
       result = timingIndex | FLASH_ERROR_TIMEOUT;
       break;

@@ -9,9 +9,9 @@
 /// (Daila_EnterDoor).
 ///
 /// Once it drains, Alex waits for the party by the inn and goes on alone to
-/// Madra (Daila_MeetAlex). Six puddles (sprite 290) lie in its streets: Parch
-/// dries one for the visit (Daila_ParchFirstPuddle to Daila_ParchSixthPuddle)
-/// and Frost freezes one into a pillar of ice to stand on
+/// Madra (Daila_MeetAlex). Six puddles lie in its streets: Parch dries one for
+/// the visit (Daila_ParchFirstPuddle to Daila_ParchSixthPuddle) and Frost
+/// freezes one into a pillar of ice to jump onto from the cells around it
 /// (Scene_RaiseHeldActor, gDailaRooms_PillarFrozenFlags). Scoop on one spot
 /// digs up a Psy Crystal (Daila_DigUpPsyCrystal).
 
@@ -52,11 +52,13 @@
 #define FLAG_DAILA_PUDDLE_FROZEN_FIRST 0x216
 
 /// The people and puddles the events move, numbering the rows of
-/// gDailaActorPlacements (the flooded village's rows to ACTOR_LAST_VILLAGER are
-/// alike).
+/// gDailaActorPlacements (the flooded village's rows to ACTOR_ITEM_SHOPKEEPER
+/// are alike).
 enum DailaActorId {
-  ACTOR_GREETER = ACTOR_FIRST_PLACED,
-  ACTOR_INDRA_MOVED_MAN,
+  /// "You don't look familiar. Have you been to Daila before?"
+  ACTOR_VILLAGER_ASKING_IF_BEEN_BEFORE = ACTOR_FIRST_PLACED,
+  /// "Didn't it feel like all of Indra moved when that wave hit?"
+  ACTOR_WOMAN_WHO_FELT_INDRA_MOVE,
   /// "I saw a bright light in the northwestern sky earlier... Somewhere over
   /// Gondowan."
   ACTOR_MAN_WHO_SAW_A_LIGHT,
@@ -72,17 +74,17 @@ enum DailaActorId {
   ACTOR_VILLAGER_ON_RIKI_AND_TAVI,
   /// "Our village survived the wave, but all our boats were destroyed..."
   ACTOR_SAILOR_WITHOUT_A_BOAT,
-  /// Who talks of the boats (Daila_TalkBoat).
+  /// "Hm? You want a boat?"
   ACTOR_SAILOR_ON_THE_BOATS,
   /// "That tidal wave left a lot of standing water in our village..."
-  ACTOR_STRONGMAN_ON_THE_STANDING_WATER,
+  ACTOR_MAN_ON_THE_STANDING_WATER,
   /// "Yaaay! Puddles in the village! Yaaay!"
   ACTOR_CHILD_WHO_LOVES_PUDDLES,
   /// "Bleah! I fell in a puddle and got my clothes dirty! Mom's gonna have a
   /// fit!"
   ACTOR_CHILD_WHO_FELL_IN_A_PUDDLE,
-  /// The innkeeper, across the counter to the west.
-  ACTOR_INNKEEPER,
+  /// The keeper of the item stall across from the inn.
+  ACTOR_ITEM_SHOPKEEPER,
   ACTOR_FIRST_PUDDLE,
   ACTOR_SECOND_PUDDLE,
   ACTOR_THIRD_PUDDLE,
@@ -94,8 +96,9 @@ enum DailaActorId {
   ACTOR_SIXTH_PUDDLE
 };
 
-/// The buried Psy Crystal, a treasure spot's actor.
-#define ACTOR_PSY_CRYSTAL 66
+/// The buried Psy Crystal: the village's third scene item, after the jar and
+/// the barrel.
+#define ACTOR_PSY_CRYSTAL (FIELD_TREASURE_ACTOR + 2)
 
 extern struct SceneEntrance gDailaEntrances[];
 extern s32 gDailaFloodedExits[];
@@ -172,7 +175,7 @@ void Daila_TalkBeenBefore(void) {
     msg = (s32)MsgDailaBeenBefore;
     Event_SetMessageId(msg);
     // "You don't look familiar. Have you been to Daila before?"
-    FieldMessage_ShowAtActor(ACTOR_GREETER, 0);
+    FieldMessage_ShowAtActor(ACTOR_VILLAGER_ASKING_IF_BEEN_BEFORE, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
       Event_Wait(10);
       Event_SetMessageId(msg + 1);
@@ -180,13 +183,13 @@ void Daila_TalkBeenBefore(void) {
       Event_Wait(20);
       Event_SetMessageId(msg + 2);
     }
-    Event_ShowMessageAndWait(ACTOR_GREETER, 0);
+    Event_ShowMessageAndWait(ACTOR_VILLAGER_ASKING_IF_BEEN_BEFORE, 0);
     GameFlag_Set(FLAG_DAILA_GREETER_ASKED);
     Event_End();
   } else {
     Event_SetMessageId((s32)MsgDailaWaveNoInjuries);
     // "We were hit by a gigantic tidal wave, but there were no injuries......"
-    Event_ShowMessageAndWait(ACTOR_GREETER, 0);
+    Event_ShowMessageAndWait(ACTOR_VILLAGER_ASKING_IF_BEEN_BEFORE, 0);
   }
 }
 
@@ -200,7 +203,7 @@ void Daila_TalkIndraMoved(void) {
   msg = (s32)MsgDailaIndraMoved;
   Event_SetMessageId(msg);
   // "Didn't it feel like all of Indra moved when that wave hit?"
-  FieldMessage_ShowAtActor(ACTOR_INDRA_MOVED_MAN, 0);
+  FieldMessage_ShowAtActor(ACTOR_WOMAN_WHO_FELT_INDRA_MOVE, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);
     Event_SetMessageId(msg + 1);
@@ -208,11 +211,19 @@ void Daila_TalkIndraMoved(void) {
     Event_Wait(20);
     Event_SetMessageId(msg + 2);
   }
-  Event_ShowMessageAndWait(ACTOR_INDRA_MOVED_MAN, 0);
+  Event_ShowMessageAndWait(ACTOR_WOMAN_WHO_FELT_INDRA_MOVE, 0);
   Event_End();
 }
 
-/// A villager asks whether the party wants a boat, and answers the choice.
+// BUG: the question and its answer open at the woman who felt Indra move, as
+// in Daila_TalkIndraMoved, not at the sailor who asks.
+#if BUGFIX
+#define BOAT_ASKER ACTOR_SAILOR_ON_THE_BOATS
+#else
+#define BOAT_ASKER ACTOR_WOMAN_WHO_FELT_INDRA_MOVE
+#endif
+
+/// A sailor asks whether the party wants a boat, and answers the choice.
 void Daila_TalkBoat(void) {
   s32 msg;
 
@@ -221,7 +232,7 @@ void Daila_TalkBoat(void) {
   msg = (s32)MsgDailaWantBoat;
   Event_SetMessageId(msg);
   // "Hm? You want a boat?"
-  FieldMessage_ShowAtActor(ACTOR_INDRA_MOVED_MAN, 0);
+  FieldMessage_ShowAtActor(BOAT_ASKER, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);
     Event_SetMessageId(msg + 1);
@@ -229,7 +240,7 @@ void Daila_TalkBoat(void) {
     Event_Wait(20);
     Event_SetMessageId(msg + 2);
   }
-  Event_ShowMessageAndWait(ACTOR_INDRA_MOVED_MAN, 0);
+  Event_ShowMessageAndWait(BOAT_ASKER, 0);
   Event_End();
 }
 
@@ -305,6 +316,17 @@ static inline void Actor_JoinLeader(s32 actor) {
   Actor_SetPosition(actor, 0, 0);
 }
 
+/// Where the meeting's lines, from MsgDailaFelixCall on, go their own way after
+/// Jenna asks whether to go to Madra with Alex.
+enum MeetAlexMessage {
+  /// "Ah... You...want to travel with me?"
+  MEET_ALEX_TRAVEL_WITH_ME = 11,
+  /// "Ah. Felix doesn't think it's a good idea."
+  MEET_ALEX_NOT_A_GOOD_IDEA = 13,
+  /// "No, that's not it. I'm just...preoccupied."
+  MEET_ALEX_PREOCCUPIED = 15
+};
+
 /// Alex waits for the party in the street, says the mayor sent him to look for
 /// a boat in Madra, turns down their company and leaves.
 void Daila_MeetAlex(void) {
@@ -329,7 +351,7 @@ void Daila_MeetAlex(void) {
   Event_Wait(30);
   Actor_ShowEmoteById(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Event_Wait(60);
-  // "Felix placed ... on the table."
+  // "Felix..."
   Event_ShowMessageAndWait(ACTOR_ALEX, 0);
   FieldActor_LaunchFromLeader(ACTOR_JENNA, 8, 16, FACING_NORTHWEST);
   FieldActor_LaunchFromLeader(ACTOR_SHEBA, 16, 0, FACING_NORTHWEST);
@@ -396,7 +418,7 @@ void Daila_MeetAlex(void) {
   FieldMessage_ShowAtActor(ACTOR_JENNA, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(30);
-    Event_SetMessageId(msg + 11);
+    Event_SetMessageId(msg + MEET_ALEX_TRAVEL_WITH_ME);
     // "Ah... You...want to travel with me?"
     Event_ShowMessageAndWait(ACTOR_ALEX, 0);
     Event_Wait(60);
@@ -405,10 +427,10 @@ void Daila_MeetAlex(void) {
     Actor_FaceActorById(ACTOR_JENNA, ACTOR_ALEX, 0);
     // "What, you don't like that idea?"
     Event_ShowMessageAndWait(ACTOR_JENNA, 0);
-    Event_SetMessageId(msg + 15);
+    Event_SetMessageId(msg + MEET_ALEX_PREOCCUPIED);
   } else {
     Event_Wait(30);
-    Event_SetMessageId(msg + 13);
+    Event_SetMessageId(msg + MEET_ALEX_NOT_A_GOOD_IDEA);
     // "Ah. Felix doesn't think it's a good idea."
     Event_ShowMessageAndWait(ACTOR_ALEX, 0);
     Event_Wait(60);
@@ -419,21 +441,26 @@ void Daila_MeetAlex(void) {
   }
   Actor_SetAnimationById(ACTOR_ALEX, ANIM_SHAKE_HEAD);
   Event_Wait(60);
+  // "No, that's not it. I'm just...preoccupied."
   Event_ShowMessageAndWait(ACTOR_ALEX, 0);
   Actor_RunRepeatedMotion(ACTOR_SHEBA, 1);
   Event_Wait(60);
+  // "Self-absorbed is more like it!"
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   Event_Wait(60);
   Actor_FaceActorById(ACTOR_ALEX, ACTOR_SHEBA, 0);
   Event_Wait(60);
+  // "I simply prefer to work alone."
   Event_ShowMessageAndWait(ACTOR_ALEX, 0);
   Event_Wait(60);
   Actor_ShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Event_Wait(60);
+  // "If that's the case, we'll let you be..."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Event_Wait(60);
   Actor_SetAnimationById(ACTOR_ALEX, ANIM_NOD);
   Event_Wait(60);
+  // "Perhaps you will see me in Madra..."
   Event_ShowMessageAndWait(ACTOR_ALEX, 0);
   Actor_WalkToAndWait(ACTOR_ALEX, 504, 328);
   Actor_FaceActorById(gMainRoutineWork.leaderActorId, ACTOR_ALEX, 0);
@@ -458,16 +485,19 @@ void Daila_MeetAlex(void) {
   Event_Wait(30);
   Actor_ShowEmoteById(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
   Event_Wait(60);
+  // "Gah! The nerve of that guy!"
   Event_ShowMessageAndWait(ACTOR_JENNA, 0);
   Event_Wait(60);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
   Event_Wait(60);
+  // "Yeah, I know... Now, I just want to find a boat before he does!"
   Event_ShowMessageAndWait(ACTOR_SHEBA, 0);
   Event_Wait(60);
   Actor_FaceActorById(ACTOR_KRADEN, gMainRoutineWork.leaderActorId, 0);
   Event_Wait(60);
   Actor_FaceDirectionById(ACTOR_KRADEN, FACING_SOUTH, 0);
   Event_Wait(30);
+  // "Let's be on our way."
   Event_ShowMessageAndWait(ACTOR_KRADEN, 0);
   Event_Wait(60);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_NOD);
@@ -509,11 +539,16 @@ DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchFourthPuddle, 17, 11, 18,
 DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchFifthPuddle, 30, 17, 31,
                           ACTOR_FIFTH_PUDDLE, FLAG_DAILA_FIFTH_PUDDLE_PARCHED)
 
-// XXX: the sixth puddle hides actor 31, which neither table places, where its
-// own is ACTOR_SIXTH_PUDDLE (29); playing Parch on it would settle whether its
-// sprite stays.
-DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchSixthPuddle, 16, 23, 17, 31,
-                          FLAG_DAILA_SIXTH_PUDDLE_PARCHED)
+// BUG: hides actor 31, which the sixth puddle would be if Jenna's and Sheba's
+// rows took numbers of their own; they place the party's actors, so the puddle
+// is actor 29, no actor 31 exists, and the puddle stays on its dried cell.
+#if BUGFIX
+#define SIXTH_PUDDLE_HIDDEN ACTOR_SIXTH_PUDDLE
+#else
+#define SIXTH_PUDDLE_HIDDEN (ACTOR_SIXTH_PUDDLE + 2)
+#endif
+DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchSixthPuddle, 16, 23, 17,
+                          SIXTH_PUDDLE_HIDDEN, FLAG_DAILA_SIXTH_PUDDLE_PARCHED)
 
 void Actor_SetWideSprite(s32 actor, s32 flag);
 
@@ -525,7 +560,7 @@ s32 Scene_Initialize(void) {
     Actor_FallOverById(ACTOR_FALLEN_OLD_MAN, FACING_EAST);
   else if (gMainRoutineWork.next == SCENE_DAILA)
     FlagBlock_PlaceAll(gDailaRooms_PillarFrozenFlags);
-  Actor_SetSpritePriority(ACTOR_INNKEEPER, 1);
+  Actor_SetSpritePriority(ACTOR_ITEM_SHOPKEEPER, 1);
   if (gMainRoutineWork.next == SCENE_DAILA &&
       GameFlag_Get(FLAG_DAILA_PSY_CRYSTAL_DUG) == 0)
     Actor_SetWideSprite(ACTOR_PSY_CRYSTAL, 0);
@@ -565,7 +600,7 @@ s16 gDailaRooms_PillarFrozenFlags[] = {
 };
 
 s32 gDaila_FallenOldManScript[] = {
-    SC_SET(SW_COLLISION, 131),
+    SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_PUSHABLE | ACTOR_SOLID),
     SC_ANIMATION(0),
     SC_LABEL(1),
     SC_ADD(SW_SCALE_X, -FIXED_ONE / 4),
@@ -609,9 +644,9 @@ s32 gDaila_FallenOldManScript[] = {
 };
 
 u32 gDaila_PuddleChildScript[] = {
-    SC_SET(SW_COLLISION, 129),
+    SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
     SC_ACCELERATION(0.2),
-    SC_SET(SW_GRAVITY, 6553),
+    SC_SET(SW_GRAVITY, toFIXED(0.1)),
     SC_SPEED(0.4),
     SC_ANIMATION(0),
     SC_LABEL(1),
@@ -632,24 +667,35 @@ struct SceneEntrance gDailaEntrances[] = {
 
 s32 gDailaFloodedExits[] = {
     SCENE_EXITS(DailaFlooded),
-    SCENE_EXIT_UNLESS(1, DailaRoomsHouses, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, DailaRoomsHouses, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, DailaRoomsHouses, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, DailaRoomsHouses, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, DailaRoomsHouses, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, DailaRoomsHouses, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, DailaRoomsSanctum, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, WorldMap, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, WorldMap, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(DAILA_FLOODED_TO_DAILA_ROOMS_HOUSES_WEST, DailaRoomsHouses, DAILA_ROOMS_HOUSES_FROM_DAILA_WEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(DAILA_FLOODED_TO_DAILA_ROOMS_HOUSES_NORTHWEST, DailaRoomsHouses, DAILA_ROOMS_HOUSES_FROM_DAILA_NORTHWEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(DAILA_FLOODED_TO_DAILA_ROOMS_HOUSES_NORTHEAST, DailaRoomsHouses, DAILA_ROOMS_HOUSES_FROM_DAILA_NORTHEAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(DAILA_FLOODED_TO_DAILA_ROOMS_HOUSES_EAST, DailaRoomsHouses, DAILA_ROOMS_HOUSES_FROM_DAILA_EAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(DAILA_FLOODED_TO_DAILA_ROOMS_HOUSES_SOUTHWEST, DailaRoomsHouses, DAILA_ROOMS_HOUSES_FROM_DAILA_SOUTHWEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(DAILA_FLOODED_TO_DAILA_ROOMS_HOUSES_SOUTHEAST, DailaRoomsHouses, DAILA_ROOMS_HOUSES_FROM_DAILA_SOUTHEAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(DAILA_FLOODED_TO_DAILA_ROOMS_SANCTUM, DailaRoomsSanctum, DAILA_ROOMS_SANCTUM_FROM_DAILA, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(DAILA_FLOODED_TO_WORLD_MAP_SOUTH, WorldMap, WORLD_MAP_FROM_DAILA_SOUTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(DAILA_FLOODED_TO_WORLD_MAP_NORTH, WorldMap, WORLD_MAP_FROM_DAILA_NORTH, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
 s32 gDailaExits[] = {
-    13, 0x1010100b, -1, 0x1020200b, -1, 0x1030300b,
-    -1, 0x1040400b, -1, 0x1050500b, -1, 0x1060600b,
-    -1, 0x1070100c, -1, 0x10802002, -1, 0x10903002,
-    -1, 511, 0xffff, 0, 0, 0,
-    0, 0,
+    SCENE_EXITS(Daila),
+    SCENE_EXIT_UNLESS(1, DailaRoomsHouses, DAILA_ROOMS_HOUSES_FROM_DAILA_WEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, DailaRoomsHouses, DAILA_ROOMS_HOUSES_FROM_DAILA_NORTHWEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, DailaRoomsHouses, DAILA_ROOMS_HOUSES_FROM_DAILA_NORTHEAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, DailaRoomsHouses, DAILA_ROOMS_HOUSES_FROM_DAILA_EAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, DailaRoomsHouses, DAILA_ROOMS_HOUSES_FROM_DAILA_SOUTHWEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, DailaRoomsHouses, DAILA_ROOMS_HOUSES_FROM_DAILA_SOUTHEAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, DailaRoomsSanctum, DAILA_ROOMS_SANCTUM_FROM_DAILA, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, WorldMap, WORLD_MAP_FROM_DAILA_SOUTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, WorldMap, WORLD_MAP_FROM_DAILA_NORTH, EXIT_FLAG_NONE),
+    SCENE_EXITS_END,
+};
+
+/// Unused: an empty placement table nothing reads.
+struct ActorPlacement gDaila_UnusedPlacements[] = {
+    {SCENE_TABLE_END},
 };
 // clang-format on
 
@@ -657,20 +703,27 @@ struct ActorPlacement gDailaFloodedActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS,
                     MOVEMENT_TYPE_WANDER, 40, 0, 280, FACING_EAST,
                     TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 264, 0,
-                    232, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 88, 0,
-                    376, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(143, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 312,
-                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, (s32)gDaila_FallenOldManScript, 360,
-                    0, 344, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(140, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 424,
-                    FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(146, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 456,
-                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(147, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 456,
-                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_WANDER_NEAR, 264, 0, 232, FACING_SOUTH,
+                    TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_WANDER_NEAR, 88, 0, 376, FACING_EAST,
+                    TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_SKIRT_SMALL, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 264, 0, 312, FACING_WEST,
+                    TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS,
+                    (s32)gDaila_FallenOldManScript, 360, 0, 344, FACING_SOUTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_WITH_HEADBAND_SMALL, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 568, 0, 424, FACING_NORTH,
+                    TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR_SMALL, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 248, 0, 456, FACING_SOUTH,
+                    TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT_SMALL, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 264, 0, 456, FACING_SOUTH,
+                    TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_IN_RED_BANDANA, CONDITION_ALWAYS,
                     MOVEMENT_TYPE_WANDER_NEAR, 376, 0, 472, FACING_SOUTH,
                     TALK_FACING_PARTY_AND_BACK, 0),
@@ -680,10 +733,12 @@ struct ActorPlacement gDailaFloodedActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND,
                     136, 0, 184, FACING_SOUTH_SOUTHWEST,
                     TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(146, CONDITION_ALWAYS, (s32)gDaila_PuddleChildScript, 584,
-                    0, 384, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(147, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 328,
-                    FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR_SMALL, CONDITION_ALWAYS,
+                    (s32)gDaila_PuddleChildScript, 584, 0, 384, FACING_SOUTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT_SMALL, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 568, 0, 328, FACING_SOUTH,
+                    TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_TEAL_HEADBAND, CONDITION_ALWAYS,
                     MOVEMENT_TYPE_STAND, 312, 0, 424, FACING_SOUTH,
                     TALK_FACING_PARTY_AND_BACK, 0),
@@ -694,20 +749,27 @@ struct ActorPlacement gDailaActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS,
                     MOVEMENT_TYPE_WANDER, 40, 0, 280, FACING_EAST,
                     TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 264, 0,
-                    232, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 88, 0,
-                    376, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(143, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 312,
-                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(139, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 344,
-                    FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(140, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 424,
-                    FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(146, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 456,
-                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(147, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 264, 0, 456,
-                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_WANDER_NEAR, 264, 0, 232, FACING_SOUTH,
+                    TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_WANDER_NEAR, 88, 0, 376, FACING_EAST,
+                    TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_SKIRT_SMALL, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 264, 0, 312, FACING_WEST,
+                    TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE_SMALL, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 360, 0, 344, FACING_SOUTH,
+                    TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_WITH_HEADBAND_SMALL, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 568, 0, 424, FACING_NORTH,
+                    TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR_SMALL, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 248, 0, 456, FACING_EAST,
+                    TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT_SMALL, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 264, 0, 456, FACING_WEST,
+                    TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_IN_RED_BANDANA, CONDITION_ALWAYS,
                     MOVEMENT_TYPE_WANDER_NEAR, 376, 0, 472, FACING_SOUTH,
                     TALK_FACING_PARTY_AND_BACK, 0),
@@ -717,10 +779,12 @@ struct ActorPlacement gDailaActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_ALWAYS,
                     MOVEMENT_TYPE_WANDER_NEAR, 120, 0, 216, FACING_WEST,
                     TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(146, CONDITION_ALWAYS, (s32)gDaila_PuddleChildScript, 584,
-                    0, 384, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(147, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 584, 0, 344,
-                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR_SMALL, CONDITION_ALWAYS,
+                    (s32)gDaila_PuddleChildScript, 584, 0, 384, FACING_SOUTH,
+                    TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT_SMALL, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 584, 0, 344, FACING_WEST,
+                    TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_TEAL_HEADBAND, CONDITION_ALWAYS,
                     MOVEMENT_TYPE_STAND, 312, 0, 424, FACING_SOUTH,
                     TALK_FACING_PARTY_AND_BACK, 0),
@@ -760,12 +824,12 @@ struct Trigger gDailaFloodedTriggers[] = {
     {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
     {TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
     {TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
-    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_TALK, ACTOR_GREETER, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, DAILA_FLOODED_TO_DAILA_ROOMS_SANCTUM},
+    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, DAILA_FLOODED_TO_WORLD_MAP_SOUTH},
+    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, DAILA_FLOODED_TO_WORLD_MAP_NORTH},
+    {TRIGGER_TALK, ACTOR_VILLAGER_ASKING_IF_BEEN_BEFORE, CONDITION_ALWAYS,
      EVENT(Daila_TalkBeenBefore)},
-    {TRIGGER_TALK, ACTOR_INDRA_MOVED_MAN, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_WOMAN_WHO_FELT_INDRA_MOVE, CONDITION_ALWAYS,
      EVENT(Daila_TalkIndraMoved)},
     {TRIGGER_TALK, ACTOR_MAN_WHO_SAW_A_LIGHT, CONDITION_ALWAYS,
      MSGNO(MsgFieldISawABrightLightIn)},
@@ -783,17 +847,17 @@ struct Trigger gDailaFloodedTriggers[] = {
      MSGNO(MsgFieldOurVillageSurvivedTheWaveBut)},
     {TRIGGER_TALK, ACTOR_SAILOR_ON_THE_BOATS, CONDITION_ALWAYS,
      EVENT(Daila_TalkBoat)},
-    {TRIGGER_TALK, ACTOR_STRONGMAN_ON_THE_STANDING_WATER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_MAN_ON_THE_STANDING_WATER, CONDITION_ALWAYS,
      MSGNO(MsgFieldThatTidalWaveLeftALot)},
     {TRIGGER_TALK, ACTOR_CHILD_WHO_LOVES_PUDDLES, CONDITION_ALWAYS,
      MSGNO(MsgFieldYaaayPuddlesInTheVillageYaaay)},
     {TRIGGER_TALK, ACTOR_CHILD_WHO_FELL_IN_A_PUDDLE, CONDITION_ALWAYS,
      MSGNO(MsgFieldBleahIFellInAPuddle)},
-    {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_ITEM_SHOPKEEPER, CONDITION_ALWAYS,
      EVENT(Daila_AskAfterTaviAndRiki)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GREETER, CONDITION_ALWAYS,
-     MSGNO(MsgFieldThatWaveTurnedThisPlaceInto)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INDRA_MOVED_MAN,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ASKING_IF_BEEN_BEFORE,
+     CONDITION_ALWAYS, MSGNO(MsgFieldThatWaveTurnedThisPlaceInto)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_WHO_FELT_INDRA_MOVE,
      CONDITION_ALWAYS, MSGNO(MsgFieldThatMustHaveBeenOneSerious)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_WHO_SAW_A_LIGHT,
      CONDITION_ALWAYS, MSGNO(MsgFieldIThoughtISawSomeLights)},
@@ -813,15 +877,14 @@ struct Trigger gDailaFloodedTriggers[] = {
      CONDITION_ALWAYS, MSGNO(MsgFieldThatWaveWasBrutalItSmashed)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SAILOR_ON_THE_BOATS,
      CONDITION_ALWAYS, MSGNO(MsgFieldWithAllTheBoatsGoneWe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
-     ACTOR_STRONGMAN_ON_THE_STANDING_WATER, CONDITION_ALWAYS,
-     MSGNO(MsgFieldWithAllThisSaltWaterOn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_STANDING_WATER,
+     CONDITION_ALWAYS, MSGNO(MsgFieldWithAllThisSaltWaterOn)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD_WHO_LOVES_PUDDLES,
      CONDITION_ALWAYS, MSGNO(MsgFieldYayWeNeverGetPuddlesLike)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD_WHO_FELL_IN_A_PUDDLE,
      CONDITION_ALWAYS, MSGNO(MsgFieldBleccchThisWatersSaaalty)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
-     MSGNO(MsgFieldImSureThoseTwoWentTo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_SHOPKEEPER,
+     CONDITION_ALWAYS, MSGNO(MsgFieldImSureThoseTwoWentTo)},
     {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgDailaWellSeawater))},
     {TRIGGER_TABLE_END},
@@ -846,9 +909,9 @@ struct Trigger gDailaTriggers[] = {
      EVENT(Daila_JumpForward)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 33, CONDITION_ALWAYS,
      EVENT(Daila_JumpForward)},
-    {TRIGGER_TALK, ACTOR_GREETER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_VILLAGER_ASKING_IF_BEEN_BEFORE, CONDITION_ALWAYS,
      MSGNO(MsgFieldAfterThatWaveHitIWas)},
-    {TRIGGER_TALK, ACTOR_INDRA_MOVED_MAN, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_WOMAN_WHO_FELT_INDRA_MOVE, CONDITION_ALWAYS,
      MSGNO(MsgFieldSureAreALotOfTravelers)},
     {TRIGGER_TALK, ACTOR_MAN_WHO_SAW_A_LIGHT, CONDITION_ALWAYS,
      MSGNO(MsgFieldThosePuddlesOfSeaWaterThe)},
@@ -866,17 +929,17 @@ struct Trigger gDailaTriggers[] = {
      MSGNO(MsgFieldIThoughtISawSomethingWhen)},
     {TRIGGER_TALK, ACTOR_SAILOR_ON_THE_BOATS, CONDITION_ALWAYS,
      MSGNO(MsgFieldSoIHearTheyCaughtThe)},
-    {TRIGGER_TALK, ACTOR_STRONGMAN_ON_THE_STANDING_WATER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_MAN_ON_THE_STANDING_WATER, CONDITION_ALWAYS,
      MSGNO(MsgFieldItWasCreepyRightBeforeThe)},
     {TRIGGER_TALK, ACTOR_CHILD_WHO_LOVES_PUDDLES, CONDITION_ALWAYS,
      MSGNO(MsgFieldThePuddlesAreGoneAndNow)},
     {TRIGGER_TALK, ACTOR_CHILD_WHO_FELL_IN_A_PUDDLE, CONDITION_ALWAYS,
      MSGNO(MsgFieldIGotHurtWhenIWas)},
-    {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_ITEM_SHOPKEEPER, CONDITION_ALWAYS,
      EVENT(Daila_TaviAndRikiAreHome)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GREETER, CONDITION_ALWAYS,
-     MSGNO(MsgFieldThankOurLuckyStarsOurLittle)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INDRA_MOVED_MAN,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ASKING_IF_BEEN_BEFORE,
+     CONDITION_ALWAYS, MSGNO(MsgFieldThankOurLuckyStarsOurLittle)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_WHO_FELT_INDRA_MOVE,
      CONDITION_ALWAYS, MSGNO(MsgFieldIsThatGuyStillMeetingWith)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_WHO_SAW_A_LIGHT,
      CONDITION_ALWAYS, MSGNO(MsgFieldThosePuddlesStankIThoughtId)},
@@ -896,23 +959,35 @@ struct Trigger gDailaTriggers[] = {
      CONDITION_ALWAYS, MSGNO(MsgFieldItsProbablyNothingButJunkAnd)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SAILOR_ON_THE_BOATS,
      CONDITION_ALWAYS, MSGNO(MsgFieldTheSeasArePeacefulAndFree)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
-     ACTOR_STRONGMAN_ON_THE_STANDING_WATER, CONDITION_ALWAYS,
-     MSGNO(MsgFieldBeforeTheWaveHitTheTide)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_STANDING_WATER,
+     CONDITION_ALWAYS, MSGNO(MsgFieldBeforeTheWaveHitTheTide)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD_WHO_LOVES_PUDDLES,
      CONDITION_ALWAYS, MSGNO(MsgFieldIHopeSomeOfTheLittle)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD_WHO_FELL_IN_A_PUDDLE,
      CONDITION_ALWAYS, MSGNO(MsgFieldICaughtMyFootOnSomething)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
-     MSGNO(MsgDailaTaviRikiPunishment)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_SHOPKEEPER,
+     CONDITION_ALWAYS, MSGNO(MsgDailaTaviRikiPunishment)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 60,
      FLAG_DAILA_FIRST_PUDDLE_PARCHED, EVENT(Daila_ParchFirstPuddle)},
+// BUG: cells 61 to 63 lie under the fourth, second and third puddles but take
+// the flags of the second, third and fourth, so drying the second puddle
+// turns off Parch on the fourth, the third the second's, and the fourth the
+// third's, for the rest of the visit.
+#if BUGFIX
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 61,
+     FLAG_DAILA_FOURTH_PUDDLE_PARCHED, EVENT(Daila_ParchFourthPuddle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 62,
+     FLAG_DAILA_SECOND_PUDDLE_PARCHED, EVENT(Daila_ParchSecondPuddle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 63,
+     FLAG_DAILA_THIRD_PUDDLE_PARCHED, EVENT(Daila_ParchThirdPuddle)},
+#else
     {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 61,
      FLAG_DAILA_SECOND_PUDDLE_PARCHED, EVENT(Daila_ParchFourthPuddle)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 62,
      FLAG_DAILA_THIRD_PUDDLE_PARCHED, EVENT(Daila_ParchSecondPuddle)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 63,
      FLAG_DAILA_FOURTH_PUDDLE_PARCHED, EVENT(Daila_ParchThirdPuddle)},
+#endif
     {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 64,
      FLAG_DAILA_FIFTH_PUDDLE_PARCHED, EVENT(Daila_ParchFifthPuddle)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 65,

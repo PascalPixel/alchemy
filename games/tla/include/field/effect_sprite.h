@@ -32,9 +32,6 @@ STATIC_ASSERT(offsetof(struct EffectSprite, angle) == 28);
 STATIC_ASSERT(offsetof(struct EffectSprite, pivotX) == 36);
 
 #define EFFECT_SPRITE_HIDDEN (-1)
-/// The depth slot the field Psynergy's effect sprites take: in front of every
-/// actor, whose slots stop at 239.
-#define EFFECT_SPRITE_FRONT_DEPTH 250
 
 void EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
                        u32 attributes, s32 tile);

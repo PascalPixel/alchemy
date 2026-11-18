@@ -42,6 +42,11 @@ struct MapAnimation {
 /// The collision code in MapCell_GetAttributes's halfword, above its
 /// attribute byte.
 #define CELL_CODE(attributes) ((attributes) >> 8)
+/// MapCell_Get's halfword: the collision code over the second attribute byte
+/// (MapCell.attributeB), and the halfword built from the two.
+#define CELL_CODE_BITS 0xff00
+#define CELL_ATTRIBUTE_BITS 0xff
+#define CELL_ATTRIBUTES(code, bits) (((code) << 8) | (bits))
 
 /// Where a layout's blend script is decoded, in the map collision buffer after
 /// the collision and the tileset animations; a scene may copy its own there.
@@ -280,9 +285,10 @@ enum BattleEnvironment {
   BATTLE_ENVIRONMENT_SNOWFIELD_SEA = 9,
   /// WORLD_MAP_COLLISION_SEA_LAST outside the snowfields, where no rule gives
   /// encounters; a battle there would take the ship deck's backdrop.
-  // XXX (no evidence): what sea WORLD_MAP_COLLISION_SEA_LAST marks; the render
-  // probe cannot sail the ship, and the collision is read from the tile maps
-  // the World Map streams into RAM as it scrolls (WorldMap_GetCollision).
+  // XXX: which waters BATTLE_ENVIRONMENT_SEA_LAST covers; the World Map cells
+  // whose collision is WORLD_MAP_COLLISION_SEA_LAST outside the snowfield
+  // regions, read from its collision tiles (WorldMap_GetCollision), would
+  // settle it.
   BATTLE_ENVIRONMENT_SEA_LAST = 10,
   BATTLE_ENVIRONMENT_BLIZZARD = 11, ///< ResourceId_BlizzardBackdrop
   /// ResourceId_BlizzardBackdrop, for the blizzard's forest.

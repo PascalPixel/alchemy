@@ -5,11 +5,11 @@
 
 #include "menu_internal.h"
 
-/// Copies the first sprite palette into background palette 14 and makes a
-/// highlight palette in palette 13. Nothing calls it.
+/// Lends HIGHLIGHT_PALETTE to the item icons and makes the highlight in the
+/// palette below it instead. Nothing calls it.
 void Item_PrepareUsePalette(void) {
   Palette_LoadIconsIntoHighlight();
-  Palette_LightenHighlight(13);
+  Palette_LightenHighlight(HIGHLIGHT_PALETTE - 1);
 }
 
 /// Nothing calls it.
@@ -103,8 +103,9 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
           elementIndex = effect->element;
           elementPower = caster->element[elementIndex].power;
         } else
-          elementPower = 100;
-        amount = Battle_CalculateRecoveryFar(amount, elementPower, 256);
+          elementPower = HEALING_BASE_POWER;
+        amount = Battle_CalculateRecoveryFar(amount, elementPower,
+                                             BATTLE_MULTIPLIER_ONE);
       }
 
       if (target->hp <= 0) {

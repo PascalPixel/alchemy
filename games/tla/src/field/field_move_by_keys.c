@@ -19,8 +19,9 @@
 /// The sixteenth of a turn a facing lies in, what is past it dropped, as The
 /// Broken Seal's.
 #define FACING_SIXTEENTH(facing) ((facing) & 0xf000)
-/// A squared distance, in 1/256 pixels, beyond any rope node.
-#define NODE_DISTANCE_MAX (1 << 28)
+/// A squared distance in pixels beyond any rope node, to start a search for
+/// the nearest.
+#define ROPE_NODE_DISTANCE_NONE (1 << 28)
 /// The leader going hand over hand along a rope (felix.tsv's pictures 32 to
 /// 34, the rope held over his head).
 #define ANIM_LEADER_CROSS_ROPE 29
@@ -43,12 +44,10 @@ s32 Actor_MoveByKeys(struct Actor *actor) {
   FIXED terrainHeight;
   struct MapWork *map;
   u32 keys;
-  s32 half;
 
   actor->acceleration = toFIXED(1) / 4;
   animation = ANIM_LEADER_CLING;
-  half = toFIXED(1) / 2;
-  actor->speedLimit = half;
+  actor->speedLimit = toFIXED(1) / 2;
   if (gDebugMode)
     keys = gInput.held;
   keys = gInput.held;
@@ -63,8 +62,7 @@ s32 Actor_MoveByKeys(struct Actor *actor) {
     animation = ANIM_LEADER_CLIMB_EAST;
     if (FACING_SIXTEENTH(angle) != FACING_EAST) {
       animation = ANIM_LEADER_CLIMB_WEST;
-      // half, toFIXED(1) / 2, is also FACING_WEST.
-      if (FACING_SIXTEENTH(angle) != half)
+      if (FACING_SIXTEENTH(angle) != FACING_WEST)
         animation = ANIM_LEADER_CLIMB;
     }
     collisionFlags = 0;
@@ -167,7 +165,7 @@ s32 Actor_CrossRope(struct Actor *actor) {
     rope = *(struct RopeWork **)&Ram_HeapSlots->rope;
     node = rope->nodes;
     best = NULL;
-    bestDistance = NODE_DISTANCE_MAX;
+    bestDistance = ROPE_NODE_DISTANCE_NONE;
     if (rope == NULL) {
       collisionFlags = PLAYER_STEP_BLOCKED_BY_MAP;
       /* FAKEMATCH(dead): the event work slot copied onto itself. */
@@ -289,7 +287,7 @@ s32 Actor_CrossTightrope(struct Actor *actor) {
     tightrope = *(struct TightropeWork **)&Ram_HeapSlots->tightrope;
     point = tightrope->nodes;
     best = NULL;
-    bestDistance = NODE_DISTANCE_MAX;
+    bestDistance = ROPE_NODE_DISTANCE_NONE;
     if (tightrope == NULL) {
       collisionFlags = PLAYER_STEP_BLOCKED_BY_MAP;
       /* FAKEMATCH(dead): the event work slot copied onto itself. */
@@ -950,5 +948,5 @@ update_object:
 }
 
 #undef FACING_SIXTEENTH
-#undef NODE_DISTANCE_MAX
+#undef ROPE_NODE_DISTANCE_NONE
 #undef ANIM_LEADER_CROSS_ROPE

@@ -1,8 +1,10 @@
 /// @file
 /// Vault, before and after the thieves are caught: the doorway to the Sanctum,
 /// which opens in two frames as the leader walks into it facing north. Both
-/// scenes number that exit 11 (VAULT_TO_SANCTUM and VAULT_REVISIT_TO_SANCTUM),
-/// so the shared code keeps the number.
+/// scenes give that exit one number, so the shared code names it
+/// VAULT_TO_SANCTUM.
+
+STATIC_ASSERT(VAULT_TO_SANCTUM == VAULT_REVISIT_TO_SANCTUM);
 
 enum {
   VAULT_DOOR_OPENING_COLUMN = 42,
@@ -33,5 +35,5 @@ static void Vault_OpenDoorwayAndEnter(void) {
   MapGrid_CopyCellAttributes(33, 21, 2, 2, 3, 16);
   actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
   sprite->image.priority = 3;
-  Vault_WalkThroughExit(64, 272, 11);
+  Vault_WalkThroughExit(64, 272, VAULT_TO_SANCTUM);
 }

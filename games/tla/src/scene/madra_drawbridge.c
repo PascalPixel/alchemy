@@ -5,7 +5,7 @@
 /// The first time the party steps onto the bridge (MadraDrawbridge_BlockBridge)
 /// the guards close ranks across it and send the party back for the elder's
 /// permission. Once FLAG_OSENIA_PASSAGE_GRANTED is set they greet the party
-/// instead (MadraDrawbridge_GreetPermittedParty) and step aside.
+/// instead (MadraDrawbridge_LetPermittedPartyThrough) and step aside.
 
 #include "battle/battle.h"
 #include "field/field.h"
@@ -26,10 +26,7 @@
 #include "field/sprite.h"
 
 /// The guards have let the permitted party over the bridge.
-#define FLAG_DRAWBRIDGE_GUARDS_GREETED 0x916
-
-/// What games/tla/src/field/map_*.c declare for the files that use it, written
-/// once.
+#define FLAG_DRAWBRIDGE_GUARDS_LET_PARTY_THROUGH 0x916
 
 void FieldCamera_WaitForArrival(void);
 
@@ -123,7 +120,7 @@ void MadraDrawbridge_BlockBridge(void) {
 
 /// With the elder's permission, the guards let the party through.
 /// "Yeah, we heard about you already."
-void MadraDrawbridge_GreetPermittedParty(void) {
+void MadraDrawbridge_LetPermittedPartyThrough(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgMadraHeardAboutYou);
@@ -135,7 +132,7 @@ void MadraDrawbridge_GreetPermittedParty(void) {
   Actor_SetAnimationAndWait(ACTOR_WEST_GUARD, ANIM_NOD);
   // "Alhafra is up along the northeast of Osenia... You'll see it eventually."
   Event_ShowMessage(ACTOR_WEST_GUARD, 0);
-  Event_SetFlag(FLAG_DRAWBRIDGE_GUARDS_GREETED);
+  Event_SetFlag(FLAG_DRAWBRIDGE_GUARDS_LET_PARTY_THROUGH);
   Event_End();
 }
 
@@ -172,8 +169,8 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_STEP, 10, FLAG_OSENIA_PASSAGE_GRANTED,
      EVENT(MadraDrawbridge_BlockBridge)},
-    {TRIGGER_STEP, 10, FLAG_DRAWBRIDGE_GUARDS_GREETED,
-     EVENT(MadraDrawbridge_GreetPermittedParty)},
+    {TRIGGER_STEP, 10, FLAG_DRAWBRIDGE_GUARDS_LET_PARTY_THROUGH,
+     EVENT(MadraDrawbridge_LetPermittedPartyThrough)},
     {TRIGGER_TALK, ACTOR_EAST_GUARD, FLAG_OSENIA_PASSAGE_GRANTED,
      EVENT(MadraDrawbridge_AskGoingToOsenia)},
     {TRIGGER_TALK, ACTOR_EAST_GUARD, CONDITION_ALWAYS,

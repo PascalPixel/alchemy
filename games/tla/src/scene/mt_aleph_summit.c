@@ -45,9 +45,10 @@ enum MtAlephSummitActorId {
   ACTOR_WISE_ONE ///< "I am called the Wise One..."
 };
 
-/// The summit's ways in, each a stretch of the ending; any other entrance
-/// waits on the summit for A before the credits begin, and B starts the wait
-/// over.
+/// The summit's ways in, each a stretch of the ending. Nothing in the game
+/// enters it any other way; one that does goes on to the credits' opening at
+/// once, unless B is held, which keeps it on the summit until B is let go or A
+/// is pressed.
 enum {
   /// Alex sees the Golden Sun begin to form and climbs toward it, between the
   /// credits' first two stretches.
@@ -55,7 +56,8 @@ enum {
   /// Alex takes the Golden Sun's power and the Wise One shows him its limits,
   /// after the lighthouses' beacons.
   ENTRANCE_ALEX_TAKES_THE_POWER = 3,
-  /// Unused: goes straight on to the credits' entrance 72.
+  /// Unused: goes straight on to the credits' world map, by the Jupiter
+  /// Lighthouse (its entrance 72).
   ENTRANCE_SKIP_TO_CREDITS = 10
 };
 
@@ -166,12 +168,13 @@ void MtAlephSummit_ShiftColors(u16 *colors, s32 count, s32 delta) {
   } while (i != count);
 }
 
-/// A task: background palette 4's colours 1 to 15 pulse brighter and darker
-/// than palette 6's with the frame count.
+/// A task: background palette 4's colours 1 to 15 pulse up to two levels
+/// brighter and darker than palette 6's, once every 64 frames.
 void MtAlephSummit_PulseColors(void) {
   u16 *src = (u16 *)&BG_PLTT_COLOR(6, 1);
   u16 *dst = (u16 *)&BG_PLTT_COLOR(4, 1);
-  s32 delta = (Math_Sin((gFrameCount << 11) >> 1) * 2) >> 16;
+  // A 64th of a turn a frame, as the ROM computes it: a 32nd, then halved.
+  s32 delta = FIXEDtoINT(Math_Sin(gFrameCount * (TRIG_TURN / 32) / 2) * 2);
   s32 i;
 
   for (i = 0; i != PALETTE_COLORS - 1; i++, src++, dst++) {
@@ -269,6 +272,9 @@ void MtAlephSummit_StepColorsToward(u16 *colors, u16 *target, s32 count);
 void MtAlephSummit_ShiftColors(u16 *colors, s32 count, s32 delta);
 void MtAlephSummit_PulseColors(void);
 
+/// Plays the stretch of the ending the entrance names, the Golden Sun forming
+/// or Alex taking its power until Mt. Aleph sinks, then goes on to the credits
+/// or the epilogue.
 s32 Scene_Initialize(void) {
   struct PaletteFade *fade;
   void *buffer;
@@ -296,7 +302,7 @@ s32 Scene_Initialize(void) {
     FieldCamera_SetSpeed(1);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_ALEX), 0);
     Actor_SetAnimation(ACTOR_ALEX, 12);
-    Actor_SetAnimationSpeedById(ACTOR_ALEX, 8);
+    Actor_SetAnimationSpeedById(ACTOR_ALEX, ANIMATION_STEP_NORMAL / 2);
     gFieldWork->transition = 0;
     REG_DISPCNT &= ~DISPCNT_BG1_ON;
     REG_BG1CNT &= ~BGCNT_PRIORITY(3);
@@ -318,7 +324,10 @@ s32 Scene_Initialize(void) {
       System_Wait(30);
     }
     Actor_SetAnimationSpeedById(ACTOR_ALEX, 0);
+    // DEAD: nothing reads the buffer in this stretch; the ROM keeps the copy.
     Iwram_CopyWords(buffer, (void *)&BG_PLTT_COLOR(0, 4), 14);
+    // Background palette 0's colours 7 to 14 warm a step every four frames,
+    // red rising and blue falling to no less than 8.
     for (j = 0; j != 10; j++) {
       out = (u16 *)&BG_PLTT_COLOR(0, 7);
       color = out;
@@ -328,6 +337,8 @@ s32 Scene_Initialize(void) {
         g = RGB_GREEN((u16)c);
         b = RGB_BLUE((u16)c);
         r += j;
+        // DEAD: j / 16 is 0 for every step, so green never changes; the ROM
+        // keeps its shift and add.
         g += j / 16;
         b -= j;
         if (r > RGB_LEVEL_MAX)
@@ -353,7 +364,7 @@ s32 Scene_Initialize(void) {
     Actor_RunRepeatedMotion(ACTOR_ALEX, 2);
     // "Wait for me! Please, wait! Wait until I reach the summit of Mt. Aleph!"
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_ALEX, 0);
-    Actor_SetAnimationSpeedById(ACTOR_ALEX, 32);
+    Actor_SetAnimationSpeedById(ACTOR_ALEX, ANIMATION_STEP_NORMAL * 2);
     for (i = 0; i != 20; i++) {
       if (i == 16) {
         FieldCamera_MoveTo(316, CAMERA_KEEP, 128, 1);

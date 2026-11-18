@@ -37,7 +37,7 @@ struct MindReadWork {
 };
 
 /// MindReadWork.counter held still: the wave sends no particles and plays no
-/// sound, as when Mind Read talks to Lonesome George.
+/// sound, as while Lonesome George carries the party.
 #define MIND_READ_QUIET 99
 
 /// A cell a Psynergy touched, in cells, as FieldWork.psynergyCells lists them
@@ -300,29 +300,32 @@ s32 Actor_GetScreenPosition(s32 objectId, s32 *position);
 
 void Weather_UpdateLightning(void);
 
-void Field_RequestBattleFromEncounterTable(s32 row, s32 column);
+void Field_RequestBattleFromEncounterTable(s32 zone, s32 slot);
 /// Field_RequestDjinnBattle's flag: the Djinni does not hop first.
 #define DJINN_NO_HOP 0x800
 
-/// The encounter table row of the hidden Mad Plants' battles, one column
-/// each, in FLAG_MAD_PLANT's order.
+/// The encounter zone of the hidden Mad Plants' battles, one slot each, in
+/// FLAG_MAD_PLANT's order.
 #define ENCOUNTER_TABLE_MAD_PLANTS 106
 
-/// The encounter table row of the battles below deck of the Lemurian Ship:
-/// column 0 an Aqua Jelly, column 1 the Aqua Hydra.
+/// The encounter zone of the battles below deck of the Lemurian Ship: slot 0
+/// an Aqua Jelly, slot 1 the Aqua Hydra.
 #define ENCOUNTER_TABLE_AQUA_JELLIES 11
-/// The encounter table row of the Serpent's battle in Gaia Rock, one column
-/// for each stream of Dragonsbane open.
+/// The encounter zone of three story battles: the Serpent's in Gaia Rock, one
+/// slot for each beam of sunlight let into its lair (ENEMY_SERPENT to
+/// ENEMY_SERPENT_FOUR_BEAMS, slots 0 to 4), then Avimander's in Champa (slot
+/// 5) and Poseidon's at the Sea of Time (slot 6).
 #define ENCOUNTER_TABLE_SERPENT 12
-/// The encounter table row of Moapa and his two Knights at the Trial Road's
-/// peak, one column per stage door the party reached first.
+/// The encounter zone of Moapa and his two Knights at the Trial Road's peak,
+/// one slot per stage door the party reached first (slots 0 to 4), then Karst
+/// and Agatio's three battles on Jupiter Lighthouse's aerie (slots 5 to 7).
 #define ENCOUNTER_TABLE_MOAPA 13
 
-/// The encounter table row of the battles with four guardians of hidden places,
-/// one column each (HiddenBoss).
+/// The encounter zone of the battles with four guardians of hidden places, one
+/// slot each (HiddenBoss).
 #define ENCOUNTER_TABLE_HIDDEN_BOSSES 103
 
-/// The columns of ENCOUNTER_TABLE_HIDDEN_BOSSES.
+/// The slots of ENCOUNTER_TABLE_HIDDEN_BOSSES.
 enum HiddenBoss {
   HIDDEN_BOSS_TREASURE_ISLE, ///< the Star Magician, at the end of Treasure Isle
   HIDDEN_BOSS_VALUKAR,       ///< Valukar, in the Yampi Desert Cave

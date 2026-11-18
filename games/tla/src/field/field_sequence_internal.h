@@ -29,15 +29,6 @@
 #include "field/scene_tables.h"
 #include "field/actor.h"
 #include "field/field_sequence_event.h"
-/// No user named: Field_UsePsynergy takes the first party member, and
-/// Field_UseItem whoever holds the item in the most inventory slots.
-#define UNIT_NONE 15
-/// What Scene_SelectPsynergyTarget chooses: a cell behavior as it is, an
-/// actor's id with PSYNERGY_TARGET_ACTOR, or PSYNERGY_TARGET_ANYWHERE.
-#define PSYNERGY_TARGET_ACTOR 0x100
-#define PSYNERGY_TARGET_ANYWHERE 0x200
-#define PSYNERGY_TARGET_KIND 0xff00 ///< which of the three
-#define PSYNERGY_TARGET_ID 0xff     ///< the cell behavior or actor
 #include "field/map_grid.h"
 #include "field/field_sprite.h"
 #include "system/dma.h"
@@ -52,7 +43,6 @@
 #include "system/input.h"
 #include "macros.h"
 #include "version.h"
-#include "field/field_sequence_event.h"
 #include "system/scene.h"
 #include "game/item.h"
 #include "battle/battle_system.h"
@@ -75,25 +65,31 @@
 #include "field/field_sequence.h"
 #include "field/object.h"
 #include "gamepak/far_call/field.h"
+#include "field/encounter_zone.h"
+#include "game/inventory.h"
+#include "graphics/uiwindow.h"
+#include "field/actor_view.h"
+
+/// No user named: Field_UsePsynergy takes the first party member, and
+/// Field_UseItem whoever holds the item in the most inventory slots.
+#define UNIT_NONE 15
+/// What Scene_SelectPsynergyTarget chooses: a cell behavior as it is, an
+/// actor's id with PSYNERGY_TARGET_ACTOR, or PSYNERGY_TARGET_ANYWHERE.
+#define PSYNERGY_TARGET_ACTOR 0x100
+#define PSYNERGY_TARGET_ANYWHERE 0x200
+#define PSYNERGY_TARGET_KIND 0xff00 ///< which of the three
+#define PSYNERGY_TARGET_ID 0xff     ///< the cell behavior or actor
 
 /// The running scene's entry table, at the start of gOverlayArea.
 #define SCENE_ENTRIES ((struct SceneEntries *)gOverlayArea)
-
-// The object's functions its parts call before their definitions.
 
 // Outside routines and data the parts had declared each in its own way, with
 // the one type they share.
 struct Actor *Actor_GetById(u32 objectId);
 
-#include "field/encounter_zone.h"
-#include "field/scene_tables.h"
-#include "game/inventory.h"
-#include "graphics/uiwindow.h"
-#include "field/actor_view.h"
-
 typedef void (*ItemTriggerCallback)(s32 item, s32 actor, s32 slot);
 
-/// The object fields this function sets as an actor's home cell.
+/// An actor's home, as an actor placement sets it (Actor.homeX and homeZ).
 struct SpawnActor {
   u8 unused[100]; ///< no code names it
   s16 homeX;

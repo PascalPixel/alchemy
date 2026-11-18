@@ -18,8 +18,6 @@
 #define DJINNI_CLONE_MAX 8 ///< afterimages of the leaping Djinni
 /// sequenceResult after a battle the party fled (battle_run.c).
 #define BATTLE_OUTCOME_FLED 999
-/// FieldEffectWork.particles, as field_psynergy_internal.h counts them.
-#define PSYNERGY_EFFECT_SLOT_COUNT 24
 /// The states of a Jupiter Djinni's light particle, in order.
 enum DjinniLightState {
   DJINNI_LIGHT_WIDENING = 0, ///< circles as its radius grows
@@ -339,7 +337,7 @@ void FieldEffect_UpdateAllSlots(void) {
   s32 remainingSlots;
 
   scene = Ram_HeapSlots->fieldEffectWork;
-  remainingSlots = PSYNERGY_EFFECT_SLOT_COUNT - 1;
+  remainingSlots = ARRAY_COUNT(scene->particles) - 1;
   slot = scene->particles;
   do {
     remainingSlots -= 1;
@@ -366,7 +364,7 @@ void FieldEffect_ReleaseSlots(void) {
   s32 i;
 
   Task_Remove(FieldEffect_UpdateAllSlots);
-  for (i = 0; i < PSYNERGY_EFFECT_SLOT_COUNT; i++) {
+  for (i = 0; i < (s32)ARRAY_COUNT(scene->particles); i++) {
     slot = &scene->particles[i];
     if (slot->active != 0)
       FieldEffect_ClearOwnedSlot(slot);
@@ -436,4 +434,3 @@ void FieldEffect_RunAngledApproachPhases(struct FieldParticle *particle) {
 
 #undef DJINNI_CLONE_MAX
 #undef BATTLE_OUTCOME_FLED
-#undef PSYNERGY_EFFECT_SLOT_COUNT

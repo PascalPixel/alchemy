@@ -24,7 +24,7 @@ static __inline__ FIXED MulFX(FIXED left, FIXED right) {
   __asm__ volatile("smull %1, %0, %3, %2"
                    : "=r"(high), "=r"(low)
                    : "r"(left), "r"(right));
-  high <<= 16;
+  high = INTtoFIXED(high);
   __asm__ volatile("orr %0, %1, %2, lsr #16"
                    : "=r"(result)
                    : "r"(high), "r"(low));

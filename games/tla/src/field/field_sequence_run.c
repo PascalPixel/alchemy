@@ -41,7 +41,7 @@ s32 Leader_StepOffTightrope(void);
 #define PLACE_MARKER_ON_FOOT (1 << 4)
 #define PLACE_MARKER_ABOARD (2 << 4)
 /// Felix's own collapse when the whole party falls: he slumps and falls on his
-/// face, where the others lie down on their backs (ANIM_COLLAPSE).
+/// face; any other leader plays ANIM_COLLAPSE.
 #define ANIM_LEADER_FALL_ON_FACE 36
 /// The sprite VRAM blocks the pause menu needs free, or the field's sprites
 /// stop drawing while it runs.

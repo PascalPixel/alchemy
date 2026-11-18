@@ -154,7 +154,7 @@ extern s32 gColosso_PrizeScript[];
 extern struct SceneEntrance gColosseumSatrageMatchEntrances[];
 extern u32 gColosseumSatrageMatchExits[];
 extern struct ActorPlacement gColosseumSatrageMatchActorPlacements[];
-extern s32 gColosseumSatrageMatch_LiftPhase;
+extern s32 gColosseumSatrageMatch_LiftsApart;
 extern u32 gColosseumSatrageMatch_LiftTimer;
 extern struct Trigger gColosseumSatrageMatchTriggers[];
 extern s16 gColosso_LetteringTitle[];
@@ -171,6 +171,17 @@ extern s16 gColosso_MarkerSlot;
 #define COLOSSEUM_SATRAGE_MATCH_LIFT_CROSSING_FRAME 75
 #define COLOSSEUM_SATRAGE_MATCH_DEMONSTRATION_TIMEOUT_FRAMES 600
 #define COLOSSEUM_SATRAGE_MATCH_LOG_TRAVEL_PIXELS 64
+/// The map grid rows the two riding logs lie across, from their first row.
+#define RIDING_LOG_NORTH_ROW 10
+#define RIDING_LOG_SOUTH_ROW 13
+/// The falling log's spin, in 1/65536 turns a frame: it speeds up by
+/// FALL_SPIN_ACCELERATION each frame, from 0 as it tips and from
+/// SETTLE_SPIN_START as it drops into the water.
+#define FALL_SPIN_ACCELERATION 36
+#define SETTLE_SPIN_START 360
+/// The column the stone pillar by The Wall stands in once pushed, a cell east
+/// of its place (568, 264).
+#define WALL_PILLAR_MOVED_COLUMN 36
 
 // UB: westward log travel passes -64, which cannot be shifted left as signed C.
 // Both callers supply only -64, 0 or 64, so fixed-point multiplication fits.
@@ -184,13 +195,13 @@ extern s16 gColosso_MarkerSlot;
 // call the bytes show; UBFIX calls it as declared.
 #ifdef UBFIX
 #define COLOSSEUM_SATRAGE_MATCH_SHOW_MESSAGE Event_ShowMessageAndWait
-#define COLOSSEUM_SATRAGE_MATCH_MOVE_ACTOR_PAIR                                \
-  ColosseumSatrageMatch_MovePusherAndLog
+#define COLOSSEUM_SATRAGE_MATCH_MOVE_RIDING_LOG                                \
+  ColosseumSatrageMatch_MoveRidingLog
 #else
 #define COLOSSEUM_SATRAGE_MATCH_SHOW_MESSAGE                                   \
   ((s32 (*)())Event_ShowMessageAndWait)
-#define COLOSSEUM_SATRAGE_MATCH_MOVE_ACTOR_PAIR                                \
-  ((s32 (*)())ColosseumSatrageMatch_MovePusherAndLog)
+#define COLOSSEUM_SATRAGE_MATCH_MOVE_RIDING_LOG                                \
+  ((s32 (*)())ColosseumSatrageMatch_MoveRidingLog)
 #endif
 
 static void ColosseumSatrageMatch_IntroduceSecondFinals(s32 attendantId);
@@ -325,7 +336,8 @@ static void ColosseumSatrageMatch_MoveWallPillar(void) {
   s32 column;
   s32 row;
 
-  if (FIELD_CELL(Actor_Get(ACTOR_WALL_PILLAR)->x.fixed) == 36) {
+  if (FIELD_CELL(Actor_Get(ACTOR_WALL_PILLAR)->x.fixed) ==
+      WALL_PILLAR_MOVED_COLUMN) {
     GameFlag_Set(FLAG_WALL_PILLAR_MOVED);
     column = 35;
     row = 77;
@@ -392,14 +404,14 @@ static void ColosseumSatrageMatch_KnockDownObstacle(void) {
   for (rotationStep = 0, fallFrames = 9; fallFrames >= 0; fallFrames--) {
     sprite->rotation -= rotationStep;
     wait(1);
-    rotationStep += 36;
+    rotationStep += FALL_SPIN_ACCELERATION;
   }
   FieldActor_SetMoveTarget(obstacle, 330, -16, 264);
-  for (settleRotationStep = 360, settleFrames = 21; settleFrames >= 0;
-       settleFrames--) {
+  for (settleRotationStep = SETTLE_SPIN_START, settleFrames = 21;
+       settleFrames >= 0; settleFrames--) {
     sprite->rotation -= settleRotationStep;
     wait(1);
-    settleRotationStep += 36;
+    settleRotationStep += FALL_SPIN_ACCELERATION;
   }
   Actor_WaitForMove(obstacle);
   Event_Wait(2);
@@ -449,33 +461,34 @@ static void ColosseumSatrageMatch_JumpWestFromLedge(void) {
   Field_TryJumpForward();
 }
 
-/// Moves a riding log and its pusher to aligned cell centers.
-static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
-                                                   s32 offsetZ) {
-  struct Actor *pusher;
+/// Carries a riding log and the leader on it by the offset, to the middle of
+/// their cells: the leader walks backwards as the log rolls under them.
+static void ColosseumSatrageMatch_MoveRidingLog(s32 logId, s32 offsetX,
+                                                s32 offsetZ) {
+  struct Actor *rider;
   struct Actor *log;
   FIXED destinationX;
   FIXED destinationZ;
 
-  pusher = Actor_Get(gMainRoutineWork.leaderActorId);
+  rider = Actor_Get(gMainRoutineWork.leaderActorId);
   log = Actor_Get(logId);
   Event_Start();
   {
     destinationX =
-        ((pusher->x.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(offsetX)) &
+        ((rider->x.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(offsetX)) &
          FIELD_CELL_MASK) +
         toFIXED(8);
     destinationZ =
-        ((pusher->z.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(offsetZ)) &
+        ((rider->z.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(offsetZ)) &
          FIELD_CELL_MASK) +
         toFIXED(8);
 
-    pusher->speedLimit = toFIXED(1);
-    pusher->acceleration = toFIXED(1) / 2;
-    FieldActor_SetMoveTargetFX(pusher, destinationX, pusher->y.fixed,
+    rider->speedLimit = toFIXED(1);
+    rider->acceleration = toFIXED(1) / 2;
+    FieldActor_SetMoveTargetFX(rider, destinationX, rider->y.fixed,
                                destinationZ);
   }
-  Actor_SelectAnimation(pusher, ANIM_LEADER_WALK_BACKWARDS);
+  Actor_SelectAnimation(rider, ANIM_LEADER_WALK_BACKWARDS);
   {
     destinationX =
         ((log->x.fixed + COLOSSEUM_SATRAGE_MATCH_OFFSET_FIXED(offsetX)) &
@@ -496,7 +509,7 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
     Actor_SelectAnimation(log, 3);
   }
   Sound_Play(SE_LOG_PUSH);
-  Actor_WaitForMove(pusher);
+  Actor_WaitForMove(rider);
   Sound_Play(SE_STOP_ACTION_SE);
   Actor_SelectAnimation(log, 2);
   Event_End();
@@ -505,12 +518,12 @@ static void ColosseumSatrageMatch_MovePusherAndLog(s32 logId, s32 offsetX,
 /// Standing on one of the Log-Rolling Stage's logs (step trigger 22) carries
 /// the rider across the water the way the player holds.
 static void ColosseumSatrageMatch_RideLog(void) {
-  struct Actor *pusher = Actor_Get(gMainRoutineWork.leaderActorId);
-  s32 column = FIELD_CELL(pusher->x.fixed);
+  struct Actor *rider = Actor_Get(gMainRoutineWork.leaderActorId);
+  s32 column = FIELD_CELL(rider->x.fixed);
   s32 offsetX = 0;
   s32 logId = ACTOR_RIDING_LOG_NORTH;
 
-  if (FIELD_CELL(pusher->z.fixed) > 12) {
+  if (FIELD_CELL(rider->z.fixed) >= RIDING_LOG_SOUTH_ROW) {
     logId = ACTOR_RIDING_LOG_SOUTH;
   }
   if (FIELD_CELL(Actor_Get(logId)->x.fixed) != column) {
@@ -524,16 +537,16 @@ static void ColosseumSatrageMatch_RideLog(void) {
     offsetX = COLOSSEUM_SATRAGE_MATCH_LOG_TRAVEL_PIXELS;
   }
   if (offsetX != 0) {
-    ColosseumSatrageMatch_MovePusherAndLog(logId, offsetX, 0);
+    ColosseumSatrageMatch_MoveRidingLog(logId, offsetX, 0);
     MapGrid_CopyCellAttributes(120, 10, 5, 6, 48, 10);
     column = FIELD_CELL(Actor_Get(ACTOR_RIDING_LOG_NORTH)->x.fixed);
-    MapGrid_CopyCellAttributes(52, 28, 1, 3, column, 10);
+    MapGrid_CopyCellAttributes(52, 28, 1, 3, column, RIDING_LOG_NORTH_ROW);
     column = FIELD_CELL(Actor_Get(ACTOR_RIDING_LOG_SOUTH)->x.fixed);
-    MapGrid_CopyCellAttributes(52, 28, 1, 3, column, 13);
+    MapGrid_CopyCellAttributes(52, 28, 1, 3, column, RIDING_LOG_SOUTH_ROW);
   }
 }
 
-/// Rolls a log to half-cell coordinates while its pusher follows halfway.
+/// Rolls a log to half-cell coordinates while its rider follows halfway.
 static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
                                                 s32 halfCellZ) {
   s32 pusher = gMainRoutineWork.leaderActorId;
@@ -544,8 +557,8 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   FIXED offsetX;
   FIXED offsetZ;
 
-  halfCellX <<= 19;
-  halfCellZ <<= 19;
+  halfCellX = FIELD_HALF_CELL_ORIGIN(halfCellX);
+  halfCellZ = FIELD_HALF_CELL_ORIGIN(halfCellZ);
   if (alongX) {
     offsetX = (halfCellX - log->x.fixed) / 2;
     offsetZ = 0;
@@ -703,7 +716,7 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
   // The final lift's destination selects the cell behaviors for the row.
   if (gColosseumSatrageMatch_LiftTimer != 0 &&
       lift->targetX == ACTOR_NO_TARGET) {
-    if (gColosseumSatrageMatch_LiftPhase == 0) {
+    if (gColosseumSatrageMatch_LiftsApart == 0) {
       MapGrid_CopyCellAttributes(58, 28, 7, 1, 58, 13);
     } else {
       MapGrid_CopyCellAttributes(58, 10, 1, 1, 58, 11);
@@ -713,8 +726,8 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
     MapGrid_CopyCellAttributes(58, 14, 7, 1, 58, 13);
   }
   if (gColosseumSatrageMatch_LiftTimer == 0) {
-    gColosseumSatrageMatch_LiftPhase ^= 1;
-    if (gColosseumSatrageMatch_LiftPhase != 0) {
+    gColosseumSatrageMatch_LiftsApart ^= 1;
+    if (gColosseumSatrageMatch_LiftsApart != 0) {
       FieldActor_SetMoveTarget(
           Actor_Get(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT), 936, 0, 184);
       FieldActor_SetMoveTarget(
@@ -750,7 +763,7 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
 /// Stops the moving-lift task and restores its starting row.
 static void ColosseumSatrageMatch_ResetLifts(void) {
   gColosseumSatrageMatch_LiftTimer = 0;
-  gColosseumSatrageMatch_LiftPhase = 0;
+  gColosseumSatrageMatch_LiftsApart = 0;
   Task_Remove(ColosseumSatrageMatch_UpdateLifts);
   Actor_SetPosition(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT, 936, 216);
   Actor_SetPosition(ACTOR_COLOSSEUM_SATRAGE_MATCH_FIRST_LIFT + 1, 968, 216);
@@ -773,7 +786,7 @@ static void ColosseumSatrageMatch_WaitForLiftsLinedUp(void) {
   wait(10);
 
   elapsedFrames = 0;
-  while (gColosseumSatrageMatch_LiftPhase != 0 ||
+  while (gColosseumSatrageMatch_LiftsApart != 0 ||
          gColosseumSatrageMatch_LiftTimer !=
              COLOSSEUM_SATRAGE_MATCH_LIFT_CROSSING_FRAME) {
     wait(1);
@@ -790,7 +803,7 @@ static void ColosseumSatrageMatch_HaltLifts(void) {
   FieldPsynergy_HaltActor(ACTOR_LIFT_OPERATOR);
   GameFlag_Set(FLAG_LIFTS_HALTED);
 
-  if (gColosseumSatrageMatch_LiftPhase != 0) {
+  if (gColosseumSatrageMatch_LiftsApart != 0) {
     gColosseumSatrageMatch_LiftTimer = 0;
   }
 
@@ -1257,7 +1270,9 @@ static void ColosseumSatrageMatch_TalkToLogRollingAttendant(s32 attendant) {
       Event_ShowMessage(attendant, 0);
       Colosso_WalkActorToAndStand(ACTOR_PARTY_LEADER, 840, 232);
       Event_Wait(10);
-      COLOSSEUM_SATRAGE_MATCH_MOVE_ACTOR_PAIR(ACTOR_RIDING_LOG_SOUTH, -64, 0);
+      COLOSSEUM_SATRAGE_MATCH_MOVE_RIDING_LOG(
+          ACTOR_RIDING_LOG_SOUTH, -COLOSSEUM_SATRAGE_MATCH_LOG_TRAVEL_PIXELS,
+          0);
       FieldCamera_MoveTo(752, CAMERA_KEEP, 216, 1);
       Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
       Event_Wait(10);
@@ -1643,7 +1658,7 @@ struct ActorPlacement gColosseumSatrageMatchActorPlacements[] = {
     { SCENE_TABLE_END },
 };
 
-s32 gColosseumSatrageMatch_LiftPhase = 0;
+s32 gColosseumSatrageMatch_LiftsApart = 0;
 
 u32 gColosseumSatrageMatch_LiftTimer = 0;
 

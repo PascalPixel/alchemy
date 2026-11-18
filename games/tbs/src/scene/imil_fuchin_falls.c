@@ -193,8 +193,15 @@ enum ImilFuchinFallsActorId {
 };
 
 enum {
-  IMIL_SLIDE_ANIMATION_STEP = 3 * 16 ///< three times normal animation speed
+  /// Three times normal animation speed.
+  IMIL_SLIDE_ANIMATION_STEP = ANIMATION_STEP_NORMAL * 3
 };
+
+/// The cells ImilFuchinFalls_HopOnTrigger tells apart: the Zephyr room's cell
+/// of the first log the leader hops north from (walking west from the second
+/// log's hops west), and the Dragon's Eye room's cell he hops south from once
+/// the first log lies in the middle.
+enum { ZEPHYR_ROOM_HOP_NORTH_CELL = 17, DRAGONS_EYE_ROOM_HOP_SOUTH_CELL = 25 };
 
 static void FuchinFallsCave_RebuildEntranceLogs(void);
 static void FuchinFallsCave_RebuildZephyrRoomLogs(void);
@@ -1425,19 +1432,20 @@ static void ImilFuchinFalls_RebuildLogRoom(void) {
   }
 }
 
-/// Hops across a gap in Fuchin Falls Cave.
+/// Hops the leader across a gap in Fuchin Falls Cave: north or west in the
+/// Zephyr room, south in the Dragon's Eye room.
 static void ImilFuchinFalls_HopOnTrigger(void) {
   s32 trigger = gFieldWork->stepTrigger;
 
   if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_ZEPHYR) {
-    if (trigger == 17) {
+    if (trigger == ZEPHYR_ROOM_HOP_NORTH_CELL) {
       ImilFuchinFalls_HopBy(0, -32);
     } else {
       ImilFuchinFalls_HopBy(-32, 0);
     }
   }
   if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_DRAGONS_EYE &&
-      trigger == 25 &&
+      trigger == DRAGONS_EYE_ROOM_HOP_SOUTH_CELL &&
       GameFlag_Get(FLAG_FUCHIN_FALLS_DRAGONS_EYE_ROOM_FIRST_LOG_MIDDLE)) {
     ImilFuchinFalls_HopBy(0, 32);
   }
@@ -1526,6 +1534,13 @@ static s32 FuchinFallsCave_SetDustPalette(struct Actor *actor) {
   return 0;
 }
 
+/// The spawn flags that ask for one of struct EffectOptions' fields
+/// (EFFECT_USE_PALETTE and up), as field_effect_spawn.c names them.
+#define EFFECT_OPTION_MASK 0xffff0000
+/// The word of a dust script holding its SC_LOOP count, the frames the dust
+/// grows over.
+#define EFFECT_SCRIPT_REPEAT_COUNT 3
+
 /// Creates scripted cave dust with the requested velocity, palette and scale.
 void ImilFuchinFalls_SpawnDust(FIXED x, FIXED y, FIXED z, s32 velocityX,
                                s32 velocityY, s32 velocityZ, u32 flags,
@@ -1555,7 +1570,7 @@ void ImilFuchinFalls_SpawnDust(FIXED x, FIXED y, FIXED z, s32 velocityX,
   effect->scaleRateX = 0;
   effect->scaleRateY = 0;
   sprite->image.priority = 1;
-  if ((flags & 0xffff0000) == 0 || extra == NULL)
+  if ((flags & EFFECT_OPTION_MASK) == 0 || extra == NULL)
     return;
   if (flags & EFFECT_USE_PALETTE)
     Actor_SetSpriteColor((struct Actor *)effect, extra->palette);
@@ -1570,11 +1585,15 @@ void ImilFuchinFalls_SpawnDust(FIXED x, FIXED y, FIXED z, s32 velocityX,
   if (flags & EFFECT_SCALE_TO_TARGET) {
     script = scripts[flags & EFFECT_SCRIPT_MASK];
     if (flags & EFFECT_USE_START_SCALE) {
-      effect->scaleRateX = (extra->targetScaleX - effect->scaleX) / script[3];
-      effect->scaleRateY = (extra->targetScaleY - effect->scaleY) / script[3];
+      effect->scaleRateX = (extra->targetScaleX - effect->scaleX) /
+                           script[EFFECT_SCRIPT_REPEAT_COUNT];
+      effect->scaleRateY = (extra->targetScaleY - effect->scaleY) /
+                           script[EFFECT_SCRIPT_REPEAT_COUNT];
     } else {
-      effect->scaleRateX = (extra->targetScaleX - FIXED_ONE) / script[3];
-      effect->scaleRateY = (extra->targetScaleY - FIXED_ONE) / script[3];
+      effect->scaleRateX = (extra->targetScaleX - FIXED_ONE) /
+                           script[EFFECT_SCRIPT_REPEAT_COUNT];
+      effect->scaleRateY = (extra->targetScaleY - FIXED_ONE) /
+                           script[EFFECT_SCRIPT_REPEAT_COUNT];
     }
   }
 }
@@ -1598,10 +1617,11 @@ static void ImilFuchinFalls_BlowCaveMouthDust(void) {
     Sound_Play(SE_WHOOSH);
   velocityX = -toFIXED(1) - toFIXED(Random_Below(2));
   velocityY = -((Random_Below(3)) * (toFIXED(1) / 5));
-  ImilFuchinFalls_SpawnDust(
-      toFIXED(308), toFIXED(64), toFIXED(222), velocityX, velocityY, framePhase,
-      1 | EFFECT_USE_PALETTE | EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
-      (const struct EffectOptions *)&options);
+  ImilFuchinFalls_SpawnDust(toFIXED(308), toFIXED(64), toFIXED(222), velocityX,
+                            velocityY, framePhase,
+                            EFFECT_SCRIPT_MEDIUM | EFFECT_USE_PALETTE |
+                                EFFECT_USE_START_SCALE | EFFECT_SCALE_TO_TARGET,
+                            (const struct EffectOptions *)&options);
 }
 
 /// Using the Dragon's Eye on the dragon statue in Fuchin Falls Cave (trigger
@@ -2066,12 +2086,12 @@ struct Trigger gImilFuchinFalls_EntranceTriggers[] = {
 struct Trigger gImilFuchinFalls_ZephyrRoomTriggers[] = {
     { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 11, FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_SECOND_LOG_SOUTH, EVENT(FuchinFallsCave_ZephyrRoom_MoveFirstLogToEastEnd) },
     { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT(FuchinFallsCave_ZephyrRoom_NudgeFirstLogWest) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 17, CONDITION_ALWAYS, EVENT(ImilFuchinFalls_HopOnTrigger) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 17, CONDITION_ALWAYS, EVENT(FuchinFallsCave_ZephyrRoom_MoveFirstLogEast) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), ZEPHYR_ROOM_HOP_NORTH_CELL, CONDITION_ALWAYS, EVENT(ImilFuchinFalls_HopOnTrigger) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), ZEPHYR_ROOM_HOP_NORTH_CELL, CONDITION_ALWAYS, EVENT(FuchinFallsCave_ZephyrRoom_MoveFirstLogEast) },
     { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 12, CONDITION_ALWAYS, EVENT(FuchinFallsCave_ZephyrRoom_MoveFirstLogToWestEnd) },
     { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(FuchinFallsCave_AnimateFirstLog) },
     { TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(FuchinFallsCave_AnimateFirstLog) },
-    { TRIGGER_STEP, 17, CONDITION_ALWAYS, EVENT(FuchinFallsCave_AnimateFirstLog) },
+    { TRIGGER_STEP, ZEPHYR_ROOM_HOP_NORTH_CELL, CONDITION_ALWAYS, EVENT(FuchinFallsCave_AnimateFirstLog) },
     { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 13, CONDITION_ALWAYS, EVENT(ImilFuchinFalls_HopOnTrigger) },
     { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 14, FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_EAST_END, EVENT(ImilFuchinFalls_HopOnTrigger) },
     { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 13, CONDITION_ALWAYS, EVENT(FuchinFallsCave_ZephyrRoom_MoveSecondLogSouth) },
@@ -2128,7 +2148,7 @@ struct Trigger gImilFuchinFalls_DragonsEyeRoomTriggers[] = {
     { TRIGGER_STEP, 22, CONDITION_ALWAYS, EVENT(FuchinFallsCave_AnimateFourthLog) },
     { TRIGGER_STEP, 23, CONDITION_ALWAYS, EVENT(FuchinFallsCave_AnimateFourthLog) },
     { TRIGGER_STEP, 24, CONDITION_ALWAYS, EVENT(FuchinFallsCave_AnimateFourthLog) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 25, CONDITION_ALWAYS, EVENT(ImilFuchinFalls_HopOnTrigger) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), DRAGONS_EYE_ROOM_HOP_SOUTH_CELL, CONDITION_ALWAYS, EVENT(ImilFuchinFalls_HopOnTrigger) },
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, FUCHIN_FALLS_CAVE_DRAGONS_EYE_CHAMBER_TO_LOGS },
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, FUCHIN_FALLS_CAVE_DRAGONS_EYE_TO_FUCHIN_FALLS_CAVE_DRAGON_STATUE },
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, FUCHIN_FALLS_CAVE_DRAGONS_EYE_LOGS_TO_CHAMBER },

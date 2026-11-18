@@ -1,17 +1,17 @@
 /// @file
 /// The hall of hover tiles at the top of Jupiter Lighthouse's right tower,
-/// below the aerie. Hover here lasts as long as the party stays on the hall's
-/// floor (JupiterLighthouse_StartHovering), and stone faces blow whirlwinds
-/// across the floor and the upper ledges as the party passes their cells
-/// (JupiterLighthouse_RaiseWhirlwind, JupiterLighthouse_RaiseUpperWhirlwind).
+/// below the aerie. While Hover holds the party up, the hall's stairs down are
+/// walled off (JupiterLighthouse_StartHovering), and stone faces blow
+/// whirlwinds across the lower hall's floor and the upper ledges as the party
+/// passes their cells (JupiterLighthouse_RaiseWhirlwind,
+/// JupiterLighthouse_RaiseUpperWhirlwind).
 /// Cracked tiles give way under a second step
 /// (JupiterLighthouse_StepOnLowerCrackedTile,
 /// JupiterLighthouse_StepOnUpperCrackedTile); the way on leads out to the
 /// aerie.
 ///
-/// The cracked tiles' code is in
-/// jupiter_lighthouse_room_phaetons_blade_chest/, in two parts the shared field
-/// effect objects link between.
+/// The cracked tiles' code comes last, in two parts with the shared field
+/// effect code linked between them.
 
 #include "shared/tables.h"
 #include "flags.h"
@@ -57,6 +57,43 @@
 /// that blows, which the whirlwind takes its place and heading from.
 enum { ACTOR_WHIRLWIND_SOURCE = ACTOR_FIRST_PLACED };
 
+/// The step triggers before the stone faces that blow whirlwinds: two on the
+/// lower hall's floor, blowing west and east, and four up on the hover hall's
+/// ledges, the west pair blowing west and the east pair east.
+enum {
+  TRIGGER_FLOOR_WHIRLWIND_WEST = 30,
+  TRIGGER_FLOOR_WHIRLWIND_EAST = 31,
+  TRIGGER_UPPER_WHIRLWIND_SOUTHWEST = 50,
+  TRIGGER_UPPER_WHIRLWIND_NORTHWEST,
+  TRIGGER_UPPER_WHIRLWIND_SOUTHEAST,
+  TRIGGER_UPPER_WHIRLWIND_NORTHEAST
+};
+
+/// The trigger a whirlwind raises as it reaches the leader, which then rides
+/// it (as Air's Rock's).
+enum { TRIGGER_RIDE_WHIRLWIND = 200 };
+
+/// A cracked tile's cell behavior on the floors, and up on the hover hall's
+/// ledges; each takes the next one up as it cracks.
+enum { CELL_BEHAVIOR_CRACKED_TILE = 33, CELL_BEHAVIOR_UPPER_CRACKED_TILE = 43 };
+
+/// Through a cracked tile to the room's own floor below: the exit and the
+/// entrance it lands at share the number.
+enum { THROUGH_CRACKED_TILE = 13, THROUGH_UPPER_CRACKED_TILE = 14 };
+
+/// The entrances Scene_Initialize tells apart: the lower hall's two stairs,
+/// north and south, and the hover hall's two.
+enum {
+  ENTRANCE_LOWER_HALL_NORTH = 3,
+  ENTRANCE_LOWER_HALL_SOUTH = 5,
+  ENTRANCE_HOVER_HALL_SOUTH = 6,
+  ENTRANCE_HOVER_HALL_NORTH = 7
+};
+
+/// The hover hall's stairs down, at (544, 272), whose cell takes the exit by
+/// its number.
+enum { EXIT_HOVER_HALL_STAIRS = 6 };
+
 struct Actor;
 struct LightOam;
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
@@ -93,42 +130,43 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 s32 CrackedTile_Step();
 struct Actor *Whirlwind_SpawnUpper();
 
-/// As Hover lifts the party: while the leader hovers, walls off the cell at
-/// (544, 272).
+/// As Hover lifts the party: while the leader hovers, the stairs down at
+/// (544, 272) are walled off.
 void JupiterLighthouse_StartHovering(void) {
   if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_HOVER)
     FieldMapGrid_SetCellBehavior(toFIXED(544), toFIXED(272), 0,
                                  CELL_BEHAVIOR_WALL);
 }
 
-/// As Hover ends: gives the cell at (544, 272) back its event 6.
+/// As Hover ends: the stairs at (544, 272) lead down again.
 void JupiterLighthouse_StopHovering(void) {
-  MapGrid_SetCellBehavior(toFIXED(544), toFIXED(272), 0, 6);
+  MapGrid_SetCellBehavior(toFIXED(544), toFIXED(272), 0,
+                          EXIT_HOVER_HALL_STAIRS);
 }
 
-/// Stepping on event 30 or 31 on the floor: unless a whirlwind is already
-/// carrying the party, the stone face there blows one across the hall.
+/// Stepping before a stone face of the lower hall's floor: unless a whirlwind
+/// is already carrying the party, the face blows one across the hall.
 void JupiterLighthouse_RaiseWhirlwind(s32 id) {
   struct Actor *actor;
 
   if (gWhirlwindRiding == 0) {
     actor = Actor_Get(ACTOR_WHIRLWIND_SOURCE);
-    if (id == 30) {
+    if (id == TRIGGER_FLOOR_WHIRLWIND_WEST) {
       Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 296, 600);
       actor->y.fixed = 0;
       actor->facing = FACING_WEST;
-    } else if (id == 31) {
+    } else if (id == TRIGGER_FLOOR_WHIRLWIND_EAST) {
       Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 136, 680);
       actor->y.fixed = 0;
-      actor->facing = 0;
+      actor->facing = FACING_EAST;
     }
     Whirlwind_SpawnUpper(actor);
     gWhirlwindRiding = 1;
   }
 }
 
-/// On the upper ledges, events 50 to 53: unless a whirlwind is already
-/// carrying the party, the stone face there blows a slower one, at a pixel a
+/// Stepping before a stone face of the hover hall's ledges: unless a whirlwind
+/// is already carrying the party, the face blows a slower one, at a pixel a
 /// frame, from 32 pixels up.
 void JupiterLighthouse_RaiseUpperWhirlwind(s32 id) {
   struct Actor *actor;
@@ -137,22 +175,22 @@ void JupiterLighthouse_RaiseUpperWhirlwind(s32 id) {
   if (gWhirlwindRiding == 0 &&
       Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed > 0) {
     actor = Actor_Get(ACTOR_WHIRLWIND_SOURCE);
-    if (id == 50) {
+    if (id == TRIGGER_UPPER_WHIRLWIND_SOUTHWEST) {
       Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 488, 280);
       actor->y.fixed = toFIXED(32);
       actor->facing = FACING_WEST;
-    } else if (id == 51) {
+    } else if (id == TRIGGER_UPPER_WHIRLWIND_NORTHWEST) {
       Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 472, 184);
       actor->y.fixed = toFIXED(32);
       actor->facing = FACING_WEST;
-    } else if (id == 52) {
+    } else if (id == TRIGGER_UPPER_WHIRLWIND_SOUTHEAST) {
       Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 616, 280);
       actor->y.fixed = toFIXED(32);
-      actor->facing = 0;
-    } else if (id == 53) {
+      actor->facing = FACING_EAST;
+    } else if (id == TRIGGER_UPPER_WHIRLWIND_NORTHEAST) {
       Actor_SetPosition(ACTOR_WHIRLWIND_SOURCE, 632, 184);
       actor->y.fixed = toFIXED(32);
-      actor->facing = 0;
+      actor->facing = FACING_EAST;
     }
     motion = Whirlwind_SpawnUpper(actor);
     if (motion != NULL)
@@ -162,16 +200,15 @@ void JupiterLighthouse_RaiseUpperWhirlwind(s32 id) {
 }
 
 /// A step on a cracked tile of the floor: a fall drops the party to the floor
-/// below (exit 13).
+/// below.
 void JupiterLighthouse_StepOnLowerCrackedTile(s32 arg) {
   if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed == 0 &&
       CrackedTile_Step(arg) != 0)
-    FieldEvent_SetExitRequest(13);
+    FieldEvent_SetExitRequest(THROUGH_CRACKED_TILE);
 }
 
 /// A step on a cracked tile of the upper ledges, on the floor's level: two
-/// cells draw the leader behind the ledge, and a fall drops the party below
-/// (exit 14).
+/// cells draw the leader behind the ledge, and a fall drops the party below.
 void JupiterLighthouse_StepOnUpperCrackedTile(s32 arg) {
   struct Actor *leader;
   s32 x;
@@ -186,12 +223,12 @@ void JupiterLighthouse_StepOnUpperCrackedTile(s32 arg) {
     if (x == 8 && z == 39)
       FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
     if (CrackedTile_Step(arg) != 0)
-      FieldEvent_SetExitRequest(14);
+      FieldEvent_SetExitRequest(THROUGH_UPPER_CRACKED_TILE);
   }
 }
 
-/// A step on event 34: on the floor, a lower cracked tile; up on the ledges,
-/// the four cells that raise the upper whirlwinds.
+/// A step on a cell of CELL_BEHAVIOR_CRACKED_TILE + 1: on the floor, a cracked
+/// tile; up on the ledges, the four cells before the upper stone faces.
 void JupiterLighthouse_StepOnCrackedTileOrWhirlwind(s32 arg) {
   struct Actor *leader;
   s32 x;
@@ -205,15 +242,19 @@ void JupiterLighthouse_StepOnCrackedTileOrWhirlwind(s32 arg) {
     z = FIELD_CELL(leader->z.fixed);
     if (x == 25) {
       if (z == 17)
-        JupiterLighthouse_RaiseUpperWhirlwind(50);
+        JupiterLighthouse_RaiseUpperWhirlwind(
+            TRIGGER_UPPER_WHIRLWIND_SOUTHWEST);
       if (z == 11)
-        JupiterLighthouse_RaiseUpperWhirlwind(51);
+        JupiterLighthouse_RaiseUpperWhirlwind(
+            TRIGGER_UPPER_WHIRLWIND_NORTHWEST);
     }
     if (x == 43) {
       if (z == 17)
-        JupiterLighthouse_RaiseUpperWhirlwind(52);
+        JupiterLighthouse_RaiseUpperWhirlwind(
+            TRIGGER_UPPER_WHIRLWIND_SOUTHEAST);
       if (z == 11)
-        JupiterLighthouse_RaiseUpperWhirlwind(53);
+        JupiterLighthouse_RaiseUpperWhirlwind(
+            TRIGGER_UPPER_WHIRLWIND_NORTHEAST);
     }
   }
 }
@@ -231,19 +272,24 @@ s32 Scene_Initialize(void) {
   FieldActor_SetSpritePriority(FIELD_TREASURE_ACTOR, 3);
   gWhirlwindRiding = 0;
   Actor_Get(ACTOR_WHIRLWIND_SOURCE)->motionFlags = 0;
-  if ((u16)(gMainRoutineWork.entrance - 6) <= 1) {
-    CrackedTile_Find(33, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 48, 1);
+  if ((u16)(gMainRoutineWork.entrance - ENTRANCE_HOVER_HALL_SOUTH) <=
+      ENTRANCE_HOVER_HALL_NORTH - ENTRANCE_HOVER_HALL_SOUTH) {
+    CrackedTile_Find(CELL_BEHAVIOR_CRACKED_TILE, FLAG_SCENE_TEMP_80,
+                     FLAG_AREA_TEMP_80, 48, 1);
     CrackedTile_PlaceLanding(
         0, 0,
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
-  } else if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 5 ||
-             gMainRoutineWork.entrance == 13) {
-    CrackedTile_Find(43, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 49, 1);
+  } else if (gMainRoutineWork.entrance == ENTRANCE_LOWER_HALL_NORTH ||
+             gMainRoutineWork.entrance == ENTRANCE_LOWER_HALL_SOUTH ||
+             gMainRoutineWork.entrance == THROUGH_CRACKED_TILE) {
+    CrackedTile_Find(CELL_BEHAVIOR_UPPER_CRACKED_TILE, FLAG_SCENE_TEMP_80,
+                     FLAG_AREA_TEMP_80, 49, 1);
     CrackedTile_PlaceLanding(
         -21, 32,
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
   } else {
-    CrackedTile_Find(43, FLAG_SCENE_TEMP_80, FLAG_AREA_TEMP_80, 0, 0);
+    CrackedTile_Find(CELL_BEHAVIOR_UPPER_CRACKED_TILE, FLAG_SCENE_TEMP_80,
+                     FLAG_AREA_TEMP_80, 0, 0);
     CrackedTile_PlaceLanding(
         -2, -27,
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE));
@@ -337,8 +383,8 @@ u32 gSceneExits[] = {
     SCENE_EXIT(6, JupiterLighthouseRoomPhaetonsBladeChest, 5),
     SCENE_EXIT(7, JupiterLighthouseRoomPhaetonsBladeChest, 8),
     SCENE_EXIT(8, JupiterLighthouseRoomPhaetonsBladeChest, 7),
-    SCENE_EXIT(13, JupiterLighthouseRoomPhaetonsBladeChest, 13),
-    SCENE_EXIT(14, JupiterLighthouseRoomPhaetonsBladeChest, 14),
+    SCENE_EXIT(THROUGH_CRACKED_TILE, JupiterLighthouseRoomPhaetonsBladeChest, THROUGH_CRACKED_TILE),
+    SCENE_EXIT(THROUGH_UPPER_CRACKED_TILE, JupiterLighthouseRoomPhaetonsBladeChest, THROUGH_UPPER_CRACKED_TILE),
     SCENE_EXITS_END,
 };
 
@@ -384,19 +430,19 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RaiseWhirlwind)},
-    {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RaiseWhirlwind)},
-    {TRIGGER_STEP, 50, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RaiseUpperWhirlwind)},
-    {TRIGGER_STEP, 51, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RaiseUpperWhirlwind)},
-    {TRIGGER_STEP, 52, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RaiseUpperWhirlwind)},
-    {TRIGGER_STEP, 53, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RaiseUpperWhirlwind)},
-    {TRIGGER_RAISED, 200, CONDITION_ALWAYS, EVENT(Whirlwind_CarryLeader)},
-    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnLowerCrackedTile)},
-    {TRIGGER_STEP, 34, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnCrackedTileOrWhirlwind)},
-    {TRIGGER_STEP, 35, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnLowerCrackedTile)},
-    {TRIGGER_STEP, 43, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnUpperCrackedTile)},
-    {TRIGGER_STEP, 44, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnUpperCrackedTile)},
-    {TRIGGER_STEP, 45, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnUpperCrackedTile)},
+    {TRIGGER_STEP, TRIGGER_FLOOR_WHIRLWIND_WEST, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RaiseWhirlwind)},
+    {TRIGGER_STEP, TRIGGER_FLOOR_WHIRLWIND_EAST, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RaiseWhirlwind)},
+    {TRIGGER_STEP, TRIGGER_UPPER_WHIRLWIND_SOUTHWEST, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RaiseUpperWhirlwind)},
+    {TRIGGER_STEP, TRIGGER_UPPER_WHIRLWIND_NORTHWEST, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RaiseUpperWhirlwind)},
+    {TRIGGER_STEP, TRIGGER_UPPER_WHIRLWIND_SOUTHEAST, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RaiseUpperWhirlwind)},
+    {TRIGGER_STEP, TRIGGER_UPPER_WHIRLWIND_NORTHEAST, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RaiseUpperWhirlwind)},
+    {TRIGGER_RAISED, TRIGGER_RIDE_WHIRLWIND, CONDITION_ALWAYS, EVENT(Whirlwind_CarryLeader)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CRACKED_TILE, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnLowerCrackedTile)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CRACKED_TILE + 1, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnCrackedTileOrWhirlwind)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CRACKED_TILE + 2, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnLowerCrackedTile)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_UPPER_CRACKED_TILE, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnUpperCrackedTile)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_UPPER_CRACKED_TILE + 1, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnUpperCrackedTile)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_UPPER_CRACKED_TILE + 2, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnUpperCrackedTile)},
     {PSYNERGY_ANYWHERE(ABILITY_HOVER, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartHovering)},
     {PSYNERGY_ANYWHERE(ABILITY_HOVER, PSYNERGY_PHASE_AFTER_END), 0, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StopHovering)},
     {TRIGGER_TABLE_END},

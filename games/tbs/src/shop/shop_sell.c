@@ -202,8 +202,10 @@ void Shop_DrawMemberItems(struct Window *window, s32 unitId) {
     } else {
       for (slot = 0; slot < INVENTORY_SLOTS; slot++) {
         if (unit->inventory[slot] != 0) {
-          icon = WindowSprite_CreateLoadedFar(unit->inventory[slot], 27, window,
-                                              x, y);
+          icon = WindowSprite_CreateLoadedFar(unit->inventory[slot],
+                                              ICON_BASE | ICON_COUNT_ABOVE_ONE |
+                                                  ICON_BROKEN | ICON_EQUIPPED,
+                                              window, x, y);
           icon->depth = OAM_DEPTH_FRONT - 3;
         }
         x += 16;

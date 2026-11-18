@@ -2,8 +2,8 @@
 /// Alhafra, the port town of Osenia across the Yampi Desert, where the tidal
 /// wave broke the mast of the town's only sailboat. Its events follow the
 /// story: Madra's mayor and his party arrive hunting Briggs
-/// (Alhafra_MadransArrive) while a Champa lookout runs to warn the crew
-/// (Alhafra_LookoutSeesMadrasMayor); once Briggs is caught, bread for a hungry
+/// (Alhafra_MadransArrive) while one of Briggs's pirates runs to warn the crew
+/// (Alhafra_PirateSeesMadrasMayor); once Briggs is caught, bread for a hungry
 /// boy (Alhafra_GiveBreadToHungryBoy) gets his father to let the party into the
 /// cave under the mayor's manor (Alhafra_FatherLetsPartyToCave), and the
 /// getters pick later tables once the mast is cleared and once the ship has
@@ -37,24 +37,24 @@
 
 #include "text/msg_ids.h"
 
-/// How the lookout's scene starts: the leader stepping past him, or reading his
+/// How the pirate's scene starts: the leader stepping past him, or reading his
 /// mind, which lets the party question him before he runs.
-enum AlhafraLookoutScene { LOOKOUT_STEPPED_PAST, LOOKOUT_READ_BY_MIND_READ };
+enum AlhafraPirateScene { PIRATE_STEPPED_PAST, PIRATE_READ_BY_MIND_READ };
 
-void Alhafra_LookoutSeesMadrasMayor(s32 how);
+void Alhafra_PirateSeesMadrasMayor(s32 how);
 void Alhafra_TalkToHungryBoy(s32 a);
 void Alhafra_TakeLeadersLayer();
 s32 Actor_TakeLeaderLayer();
-void Alhafra_ReadLookoutsMind(void);
-void Alhafra_DrawLookoutBehind(void);
-void Alhafra_DrawLookoutInFront(void);
+void Alhafra_ReadPiratesMind(void);
+void Alhafra_DrawPirateBehind(void);
+void Alhafra_DrawPirateInFront(void);
 void Alhafra_SailorToldToWork(void);
 void Alhafra_RevealTreasureSpot(void);
 void Alhafra_HideTreasureSpot(void);
 extern u32 gAlhafra_LookAroundScript[];
-extern s16 gAlhafra_NoDoorEdit[];
-extern s16 gAlhafra_DoorEdit[];
-extern s16 gAlhafra_LeftDoorEdit[];
+extern u16 gAlhafra_NoDoor[];
+extern u16 gAlhafra_DoorOpening[];
+extern u16 gAlhafra_SecondDoorOpening[];
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -63,8 +63,8 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 /// The town's own story, which no other scene reads.
-#define FLAG_TOLD_INDRA_MOVED 0x8b0 ///< told the fisherman Indra moved
-#define FLAG_LOOKOUT_LEFT 0x8b4     ///< the Champa lookout ran to his crew
+#define FLAG_TOLD_INDRA_MOVED 0x8b0 ///< told the man asking that Indra moved
+#define FLAG_PIRATE_LEFT 0x8b4      ///< the pirate ran to warn his crew
 #define FLAG_HUNGRY_BOY_FED 0x8b5   ///< the boy at the inn ate the bread
 #define FLAG_BOY_TOLD_OF_CAVE 0x8b6 ///< he told of the cave under the manor
 #define FLAG_GOLD_COINS_FOUND 0x8b7 ///< his mother found five gold coins
@@ -91,8 +91,8 @@ enum AlhafraActorId {
   ACTOR_WELCOMING_YOUNG_MAN,
   /// "A massive tidal wave hit us and destroyed every ship in Alhafra."
   ACTOR_WOMAN_ON_THE_LOST_SHIPS,
-  /// The fisherman who asks whether Indra moved.
-  ACTOR_FISHERMAN,
+  /// "I hear the tidal wave knocked Indra into Osenia. Is that true?"
+  ACTOR_MAN_ASKING_ABOUT_INDRA,
   /// "Right after my boat got crushed, a group of men came by..."
   ACTOR_BOY_WITH_A_CRUSHED_BOAT,
   /// "Uh... The mayor? Just keep going down this road."
@@ -101,21 +101,21 @@ enum AlhafraActorId {
   ACTOR_OLD_WOMAN_ON_THE_TRAVELERS,
   /// "We've had a lot of strangers coming through here lately"; once Briggs
   /// is caught, "Hey! You there! Sailor boy! Get back to work!"
-  ACTOR_WOMAN_SCOLDING_THE_SAILOR,
+  ACTOR_WOMAN_PUTTING_THE_SAILOR_TO_WORK,
   /// "Our port was ruined by the tidal wave, so kids aren't allowed there..."
   ACTOR_GIRL_KEPT_FROM_THE_PORT,
   /// "I wonder if my partner has finished up that canoe yet..."
-  ACTOR_CANOE_MAKERS_PARTNER,
-  /// The canoe maker, too busy to make one for the party.
-  ACTOR_CANOE_MAKER,
+  ACTOR_PARTNER_WAITING_FOR_THE_CANOE,
+  /// "Let me guess... You're here because you want to buy a canoe, right?"
+  ACTOR_MAN_FINISHING_A_CANOE,
   /// "That boat at the wharf uses a sail..."
-  ACTOR_SAILOR_IN_A_RED_BANDANA,
+  ACTOR_SAILOR_ON_THE_SAILBOAT,
   /// "Why would the mayor go and sell our boat to a bunch of foreigners?";
   /// once Briggs is caught, "What does a sailor like me know about building
   /// houses, anyway?"
   ACTOR_SAILOR_BUILDING_HOUSES,
-  /// A Champa sailor watching the road before Briggs is caught.
-  ACTOR_LOOKOUT,
+  /// One of Briggs's pirates, watching the road before Briggs is caught.
+  ACTOR_PIRATE,
   /// The three puddles of seawater Frost freezes.
   ///@{
   ACTOR_PUDDLE_A,
@@ -139,9 +139,9 @@ enum AlhafraActorId {
   /// A weary Madran who arrives before the elder: "Haaa hoo hooo... Are
   /// we...here?"
   ACTOR_WEARY_MADRAN,
-  /// Who walks in beside the Madran waiting for the elder, in the sprite of
-  /// the Yampi Desert's parched traveler.
-  ACTOR_PARCHED_MADRAN
+  /// A bald, bearded Madran who walks in beside the one waiting for the elder
+  /// and never speaks.
+  ACTOR_SILENT_MADRAN
 };
 
 /// The families whose houses are being rebuilt, after the townsfolk once
@@ -153,11 +153,12 @@ enum AlhafraOnceBriggsIsCaughtActorId {
   ACTOR_WOMAN_WAITING_AT_THE_INN,
   /// The boy too hungry to move.
   ACTOR_HUNGRY_BOY,
-  /// The family on the step where the mother finds five gold coins.
+  /// The family on the step where the mother finds five gold coins: "What a
+  /// stroke of luck!"
   ///@{
-  ACTOR_GOLD_COIN_FINDERS_HUSBAND,
-  ACTOR_GOLD_COIN_FINDER,
-  ACTOR_GOLD_COIN_FINDERS_CHILD,
+  ACTOR_LUCKY_MOTHERS_HUSBAND,
+  ACTOR_LUCKY_MOTHER,
+  ACTOR_LUCKY_MOTHERS_CHILD,
   ///@}
   /// "I wonder if there's any more money hidden around here..."
   ACTOR_BOY_HUNTING_FOR_COINS
@@ -179,7 +180,7 @@ enum AlhafraOnceTheMastIsClearedActorId {
   /// "Ever since we heard Briggs broke out of jail..."
   ACTOR_MAN_WARY_OF_BRIGGS,
   /// "I don't know why everyone's so excited about fixing the ship..."
-  ACTOR_MAN_UNMOVED_BY_THE_SHIP,
+  ACTOR_MAN_NOT_EXCITED_BY_THE_SHIP,
   /// "Oh! It's you! Where have you been?"
   ACTOR_MAN_GLAD_TO_SEE_FELIX,
   /// "With that ship, Alhafra's going to become a big, important town..."
@@ -251,16 +252,16 @@ s32 Shop_Run();
 /// Alhafra's shops, as Shop_Run numbers them.
 enum { SHOP_ALHAFRA_WEAPONS = 7, SHOP_ALHAFRA_ARMOR = 8 };
 
-/// The cell behaviors of the town's step triggers: the lookout drawn behind or
+/// The cell behaviors of the town's step triggers: the pirate drawn behind or
 /// in front of the wall as the leader passes, the Madrans arriving (from the
 /// first Felix stands in their way and steps aside, from the second he only
-/// turns to them), and the lookout running off to warn the crew.
+/// turns to them), and the pirate running off to warn the crew.
 enum AlhafraCellBehavior {
-  CELL_BEHAVIOR_LOOKOUT_BEHIND = 18,
-  CELL_BEHAVIOR_LOOKOUT_IN_FRONT,
+  CELL_BEHAVIOR_PIRATE_BEHIND = 18,
+  CELL_BEHAVIOR_PIRATE_IN_FRONT,
   CELL_BEHAVIOR_MADRANS_ARRIVE_BEHIND_FELIX,
   CELL_BEHAVIOR_MADRANS_ARRIVE_BESIDE_FELIX,
-  CELL_BEHAVIOR_LOOKOUT_RUNS_OFF
+  CELL_BEHAVIOR_PIRATE_RUNS_OFF
 };
 
 /// Talking to the weapon merchant across his counter opens his shop.
@@ -273,7 +274,7 @@ void Alhafra_OpenArmorShop(s32 keeperId) {
   Shop_Run(SHOP_ALHAFRA_ARMOR, keeperId);
 }
 
-/// The fisherman asks whether the tidal wave really knocked Indra into
+/// A townsman asks whether the tidal wave really knocked Indra into
 /// Osenia; a yes is remembered, and after it he only marvels that it is true.
 void Alhafra_AskWhetherIndraMoved(s32 actor) {
   s32 msg;
@@ -297,18 +298,21 @@ void Alhafra_AskWhetherIndraMoved(s32 actor) {
   }
 }
 
-/// The canoe maker guesses the party wants to buy a canoe; yes or no, he is too
-/// backlogged to make one.
-void Alhafra_CanoeMakerBacklogged(s32 actor) {
+/// The man finishing a canoe guesses the party wants to buy one; yes or no, he
+/// is too backlogged with preorders to make it.
+void Alhafra_BackloggedWithCanoes(s32 actor) {
   s32 msg = (s32)&MsgAlhafraLetMeGuessYoureHere;
 
   Event_SetMessageId(msg);
+  // "Let me guess... You're here because you want to buy a canoe, right?"
   FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);
+    // Yes: "Sorry, but I'm totally backlogged with preorders..."
     Event_SetMessageId(msg + 1);
   } else {
     Event_Wait(20);
+    // No: "That's good, because I've got a ton of work to do already..."
     Event_SetMessageId(msg + 2);
   }
   Event_ShowMessageAndWait(actor, 0);
@@ -320,37 +324,40 @@ void Alhafra_MayorInAMeeting(s32 actor) {
   s32 msg = (s32)&MsgAlhafraDidYouWantToSee;
 
   Event_SetMessageId(msg);
+  // "Did you want to see the mayor?"
   FieldMessage_ShowAtActor(actor, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);
+    // Yes: "Sorry, but he's meeting with some visitors from Madra right now..."
     Event_SetMessageId(msg + 1);
   } else {
     Event_Wait(20);
+    // No: "The mayor is very open to meeting visitors, but he's in an..."
     Event_SetMessageId(msg + 2);
   }
   Event_ShowMessageAndWait(actor, 0);
 }
 
-/// Mind Read on the Champa lookout: he sees the mayor of Madra, and the party
+/// Mind Read on the pirate: he sees the mayor of Madra, and the party
 /// can question him before he runs to warn the crew.
-void Alhafra_ReadLookoutsMind(void) {
-  Alhafra_LookoutSeesMadrasMayor(LOOKOUT_READ_BY_MIND_READ);
+void Alhafra_ReadPiratesMind(void) {
+  Alhafra_PirateSeesMadrasMayor(PIRATE_READ_BY_MIND_READ);
 }
 
-/// Stepping past the lookout: he sees the mayor of Madra and runs to warn the
+/// Stepping past the pirate: he sees the mayor of Madra and runs to warn the
 /// crew.
-void Alhafra_LookoutRunsToWarnTheCrew(void) {
-  Alhafra_LookoutSeesMadrasMayor(LOOKOUT_STEPPED_PAST);
+void Alhafra_PirateRunsToWarnTheCrew(void) {
+  Alhafra_PirateSeesMadrasMayor(PIRATE_STEPPED_PAST);
 }
 
-/// Passing the lookout's wall: he is drawn behind it.
-void Alhafra_DrawLookoutBehind(void) {
-  FieldActor_SetSpritePriority(ACTOR_LOOKOUT, 2);
+/// Passing the pirate's wall: he is drawn behind it.
+void Alhafra_DrawPirateBehind(void) {
+  FieldActor_SetSpritePriority(ACTOR_PIRATE, 2);
 }
 
 /// Coming back past it: he is drawn in front of it again.
-void Alhafra_DrawLookoutInFront(void) {
-  FieldActor_SetSpritePriority(ACTOR_LOOKOUT, 3);
+void Alhafra_DrawPirateInFront(void) {
+  FieldActor_SetSpritePriority(ACTOR_PIRATE, 3);
 }
 
 s32 FlagBlock_ApplyFlags();
@@ -368,17 +375,19 @@ void Alhafra_SailorToldToWork(void) {
   Event_SetMessageId((s32)MsgAlhafraWhatDoesASailorLike);
   // "What does a sailor like me know about building houses, anyway?"
   FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_BUILDING_HOUSES, 0, 10);
-  Actor_FaceDirectionById(ACTOR_WOMAN_SCOLDING_THE_SAILOR, -256, 0);
+  // She turns to the sailor, just north of east.
+  Actor_FaceDirectionById(ACTOR_WOMAN_PUTTING_THE_SAILOR_TO_WORK,
+                          FACING_EAST - TRIG_TURN / 256, 0);
   Event_Wait(10);
-  Actor_ShowEmoteById(ACTOR_WOMAN_SCOLDING_THE_SAILOR,
+  Actor_ShowEmoteById(ACTOR_WOMAN_PUTTING_THE_SAILOR_TO_WORK,
                       EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   // "Hey! You there! Sailor boy! Get back to work!"
-  FieldEvent_ShowMessageThenWait(ACTOR_WOMAN_SCOLDING_THE_SAILOR, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_WOMAN_PUTTING_THE_SAILOR_TO_WORK, 0, 10);
   FieldActor_StartRepeatedMotion(ACTOR_SAILOR_BUILDING_HOUSES, 3);
   FieldEffect_SetAttached(ACTOR_SAILOR_BUILDING_HOUSES,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
-  Actor_FaceDirection(ACTOR_WOMAN_SCOLDING_THE_SAILOR, FACING_WEST, 0);
+  Actor_FaceDirection(ACTOR_WOMAN_PUTTING_THE_SAILOR_TO_WORK, FACING_WEST, 0);
   // "Hey! Give me a break! I'm on it!"
   FieldEvent_ShowMessageThenWait(ACTOR_SAILOR_BUILDING_HOUSES, 0, 0);
 }
@@ -455,59 +464,59 @@ void Alhafra_FindGoldCoins(void) {
   FieldCamera_MoveTo(560, CAMERA_KEEP, 496, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(10);
-  Actor_RunRepeatedMotion(ACTOR_GOLD_COIN_FINDER, 2);
+  Actor_RunRepeatedMotion(ACTOR_LUCKY_MOTHER, 2);
   Event_Wait(10);
   // "Why, look at this!"
-  FieldEvent_ShowMessageThenWait(ACTOR_GOLD_COIN_FINDER, 0, 10);
-  Actor_FaceDirection(ACTOR_GOLD_COIN_FINDERS_HUSBAND, FACING_EAST, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_LUCKY_MOTHER, 0, 10);
+  Actor_FaceDirection(ACTOR_LUCKY_MOTHERS_HUSBAND, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_BOY_HUNTING_FOR_COINS, FACING_SOUTHWEST, 0);
-  Actor_FaceDirection(ACTOR_GOLD_COIN_FINDERS_CHILD, FACING_SOUTHWEST, 0);
-  Actor_SetAnimationById(ACTOR_GOLD_COIN_FINDER, 5);
+  Actor_FaceDirection(ACTOR_LUCKY_MOTHERS_CHILD, FACING_SOUTHWEST, 0);
+  Actor_SetAnimationById(ACTOR_LUCKY_MOTHER, 5);
   Sound_Play(MUS_LEVEL_UP);
-  gMainRoutineWork.leaderActorId = ACTOR_GOLD_COIN_FINDER;
+  gMainRoutineWork.leaderActorId = ACTOR_LUCKY_MOTHER;
   ItemDisplay_ShowItem(0, 3);
   gMainRoutineWork.leaderActorId = ACTOR_FELIX;
   Event_Wait(50);
-  FieldActor_Jump(ACTOR_GOLD_COIN_FINDERS_HUSBAND, 6, 15);
-  FieldActor_Jump(ACTOR_GOLD_COIN_FINDERS_HUSBAND, 6, 23);
+  FieldActor_Jump(ACTOR_LUCKY_MOTHERS_HUSBAND, 6, 15);
+  FieldActor_Jump(ACTOR_LUCKY_MOTHERS_HUSBAND, 6, 23);
   // "Wow, honey! You found some gold coins!"
-  FieldEvent_ShowMessageThenWait(ACTOR_GOLD_COIN_FINDERS_HUSBAND, 0, 10);
-  Actor_FaceDirectionById(ACTOR_GOLD_COIN_FINDER, FACING_WEST, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_LUCKY_MOTHERS_HUSBAND, 0, 10);
+  Actor_FaceDirectionById(ACTOR_LUCKY_MOTHER, FACING_WEST, 0);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_GOLD_COIN_FINDER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_LUCKY_MOTHER, ANIM_NOD);
   Event_Wait(20);
-  Actor_ShowEmoteById(ACTOR_GOLD_COIN_FINDERS_CHILD,
-                      EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Actor_ShowEmoteById(ACTOR_LUCKY_MOTHERS_CHILD, EMOTE_IN_FRONT | EMOTE_SMILE,
+                      30);
   // "Way to go, Mom! So... How much did you find?"
-  FieldEvent_ShowMessageThenWait(ACTOR_GOLD_COIN_FINDERS_CHILD, 0, 10);
-  Actor_ShowEmoteById(ACTOR_GOLD_COIN_FINDER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
-  Actor_FaceDirection(ACTOR_GOLD_COIN_FINDER, FACING_SOUTH, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_LUCKY_MOTHERS_CHILD, 0, 10);
+  Actor_ShowEmoteById(ACTOR_LUCKY_MOTHER, EMOTE_IN_FRONT | EMOTE_WINCE, 40);
+  Actor_FaceDirection(ACTOR_LUCKY_MOTHER, FACING_SOUTH, 0);
   Event_Wait(20);
-  Actor_RunRepeatedMotion(ACTOR_GOLD_COIN_FINDER, 2);
+  Actor_RunRepeatedMotion(ACTOR_LUCKY_MOTHER, 2);
   Event_Wait(10);
   // "Oh! Well, it's not too much... It's only 5 coins."
-  FieldEvent_ShowMessageThenWait(ACTOR_GOLD_COIN_FINDER, 0, 10);
-  Actor_RunRepeatedMotion(ACTOR_GOLD_COIN_FINDERS_CHILD, 2);
+  FieldEvent_ShowMessageThenWait(ACTOR_LUCKY_MOTHER, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_LUCKY_MOTHERS_CHILD, 2);
   Event_Wait(10);
   // "That's great, though! We can use it to buy some food!"
-  FieldEvent_ShowMessageThenWait(ACTOR_GOLD_COIN_FINDERS_CHILD, 0, 10);
-  Actor_FaceDirectionById(ACTOR_GOLD_COIN_FINDER, FACING_EAST, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_LUCKY_MOTHERS_CHILD, 0, 10);
+  Actor_FaceDirectionById(ACTOR_LUCKY_MOTHER, FACING_EAST, 0);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_GOLD_COIN_FINDER, ANIM_NOD);
+  Actor_SetAnimationAndWait(ACTOR_LUCKY_MOTHER, ANIM_NOD);
   Event_Wait(20);
   FieldActor_Jump(ACTOR_BOY_HUNTING_FOR_COINS, 6, 15);
   FieldActor_Jump(ACTOR_BOY_HUNTING_FOR_COINS, 6, 23);
   // "I'm going to start looking, too!"
   FieldEvent_ShowMessageThenWait(ACTOR_BOY_HUNTING_FOR_COINS, 0, 10);
-  Actor_FaceDirection(ACTOR_GOLD_COIN_FINDERS_CHILD, FACING_EAST, 0);
-  Actor_SetAnimationAndWait(ACTOR_GOLD_COIN_FINDERS_CHILD, ANIM_NOD);
+  Actor_FaceDirection(ACTOR_LUCKY_MOTHERS_CHILD, FACING_EAST, 0);
+  Actor_SetAnimationAndWait(ACTOR_LUCKY_MOTHERS_CHILD, ANIM_NOD);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_BOY_HUNTING_FOR_COINS, FACING_SOUTH, 0);
   Actor_SetAnimation(ACTOR_BOY_HUNTING_FOR_COINS, 6);
-  Actor_FaceDirection(ACTOR_GOLD_COIN_FINDERS_CHILD, FACING_NORTH, 0);
-  Actor_SetAnimation(ACTOR_GOLD_COIN_FINDERS_CHILD, 6);
-  Actor_FaceDirection(ACTOR_GOLD_COIN_FINDER, FACING_SOUTH, 0);
-  Actor_FaceDirection(ACTOR_GOLD_COIN_FINDERS_HUSBAND, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_LUCKY_MOTHERS_CHILD, FACING_NORTH, 0);
+  Actor_SetAnimation(ACTOR_LUCKY_MOTHERS_CHILD, 6);
+  Actor_FaceDirection(ACTOR_LUCKY_MOTHER, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_LUCKY_MOTHERS_HUSBAND, FACING_NORTH, 0);
   EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   Event_End();
@@ -521,18 +530,23 @@ void Alhafra_FatherLetsPartyToCave(s32 actor) {
 
   if (Event_GetFlag(FLAG_LET_INTO_CAVE) != 0) {
     Event_SetMessageId(message + 4);
+    // "I've heard that the deeper you go into the cave, the more dangerous..."
     FieldMessage_ShowAtActor(actor, 0);
   } else {
     Event_SetMessageId(message);
+    // "You're the one who gave my son some food, aren't you? Did you want to
+    // go see the cave?"
     FieldMessage_ShowAtActor(actor, 0);
     if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) != 0) {
       Event_Wait(20);
       Event_SetMessageId(message + 1);
+      // No: "If you were up for a little spelunking, I'd be glad to let you..."
       Event_ShowMessageAndWait(actor, 0);
     } else {
       GameFlag_Set(FLAG_LET_INTO_CAVE);
       Event_Wait(20);
       Event_SetMessageId(message + 2);
+      // Yes: "I'm only letting you pass because you did good by my son..."
       Event_ShowMessage(actor, 0);
       Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 72, 344);
       Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
@@ -544,6 +558,8 @@ void Alhafra_FatherLetsPartyToCave(s32 actor) {
       Event_Wait(20);
       Actor_SetAnimationAndWait(actor, 3);
       Event_Wait(10);
+      // "I'm only letting you by so you can explore a little. Make sure you
+      // don't lay a hand on any of the mayor's treasure."
       Event_ShowMessageAndWait(actor, 0);
     }
   }
@@ -584,7 +600,7 @@ s32 Scene_Initialize(void) {
       Actor_GetById(ACTOR_OLD_MAN_WAITING_FOR_THIS_DAY)->update =
           (void (*)(void))Alhafra_TakeLeadersLayer;
       Actor_SetSpritePriority(ACTOR_OLD_MAN_ON_SAILS, 2);
-      Actor_SetSpritePriority(ACTOR_MAN_UNMOVED_BY_THE_SHIP, 3);
+      Actor_SetSpritePriority(ACTOR_MAN_NOT_EXCITED_BY_THE_SHIP, 3);
       Actor_SetSpritePriority(ACTOR_WOMAN_ON_ALHAFRAS_FUTURE, 3);
       Actor_SetSpritePriority(ACTOR_WOMAN_ADMIRING_THE_MAST, 1);
     } else {
@@ -592,16 +608,16 @@ s32 Scene_Initialize(void) {
           (void (*)(void))Alhafra_TakeLeadersLayer;
       Actor_GetById(ACTOR_GIRL_KEPT_FROM_THE_PORT)->update =
           (void (*)(void))Alhafra_TakeLeadersLayer;
-      Actor_GetById(ACTOR_CANOE_MAKER)->update =
+      Actor_GetById(ACTOR_MAN_FINISHING_A_CANOE)->update =
           (void (*)(void))Alhafra_TakeLeadersLayer;
       Actor_SetSpritePriority(ACTOR_WELCOMING_YOUNG_MAN, 2);
-      Actor_SetSpritePriority(ACTOR_WOMAN_SCOLDING_THE_SAILOR, 3);
-      Actor_SetSpritePriority(ACTOR_SAILOR_IN_A_RED_BANDANA, 2);
+      Actor_SetSpritePriority(ACTOR_WOMAN_PUTTING_THE_SAILOR_TO_WORK, 3);
+      Actor_SetSpritePriority(ACTOR_SAILOR_ON_THE_SAILBOAT, 2);
       Actor_SetSpritePriority(ACTOR_SAILOR_BUILDING_HOUSES, 3);
       Actor_SetSpritePriority(ACTOR_HUNGRY_BOY, 2);
-      Actor_SetSpritePriority(ACTOR_GOLD_COIN_FINDERS_HUSBAND, 3);
-      Actor_SetSpritePriority(ACTOR_GOLD_COIN_FINDER, 1);
-      Actor_SetSpritePriority(ACTOR_GOLD_COIN_FINDERS_CHILD, 3);
+      Actor_SetSpritePriority(ACTOR_LUCKY_MOTHERS_HUSBAND, 3);
+      Actor_SetSpritePriority(ACTOR_LUCKY_MOTHER, 1);
+      Actor_SetSpritePriority(ACTOR_LUCKY_MOTHERS_CHILD, 3);
       Actor_SetSpritePriority(ACTOR_BOY_HUNTING_FOR_COINS, 3);
       Actor_SetSpritePriority(ACTOR_HUNGRY_BOYS_FATHER, 3);
       Actor_SetSpritePriority(ACTOR_MANOR_GUARD, 3);
@@ -612,14 +628,14 @@ s32 Scene_Initialize(void) {
     Actor_GetById(ACTOR_GIRL_KEPT_FROM_THE_PORT)->update =
         (void (*)(void))Alhafra_TakeLeadersLayer;
     Actor_SetSpritePriority(ACTOR_WELCOMING_YOUNG_MAN, 2);
-    Actor_SetSpritePriority(ACTOR_WOMAN_SCOLDING_THE_SAILOR, 3);
-    Actor_SetSpritePriority(ACTOR_SAILOR_IN_A_RED_BANDANA, 3);
+    Actor_SetSpritePriority(ACTOR_WOMAN_PUTTING_THE_SAILOR_TO_WORK, 3);
+    Actor_SetSpritePriority(ACTOR_SAILOR_ON_THE_SAILBOAT, 3);
     Actor_SetSpritePriority(ACTOR_SAILOR_BUILDING_HOUSES, 3);
-    Actor_SetSpritePriority(ACTOR_CANOE_MAKER, 2);
+    Actor_SetSpritePriority(ACTOR_MAN_FINISHING_A_CANOE, 2);
     Actor_SetSpritePriority(ACTOR_HUNGRY_BOY, 2);
-    Actor_SetSpritePriority(ACTOR_GOLD_COIN_FINDERS_HUSBAND, 3);
-    Actor_SetSpritePriority(ACTOR_GOLD_COIN_FINDER, 1);
-    Actor_SetSpritePriority(ACTOR_GOLD_COIN_FINDERS_CHILD, 3);
+    Actor_SetSpritePriority(ACTOR_LUCKY_MOTHERS_HUSBAND, 3);
+    Actor_SetSpritePriority(ACTOR_LUCKY_MOTHER, 1);
+    Actor_SetSpritePriority(ACTOR_LUCKY_MOTHERS_CHILD, 3);
     Actor_SetSpritePriority(ACTOR_BOY_HUNTING_FOR_COINS, 3);
     Actor_SetSpritePriority(ACTOR_HUNGRY_BOYS_FATHER, 3);
     Actor_SetMovementType(Actor_GetById(ACTOR_WOMAN_WAITING_AT_THE_INN),
@@ -627,7 +643,7 @@ s32 Scene_Initialize(void) {
     if (!GameFlag_Get(FLAG_HUNGRY_BOY_FED))
       Actor_SetAnimationById(ACTOR_HUNGRY_BOY, 5);
     if (GameFlag_Get(FLAG_GOLD_COINS_FOUND)) {
-      Actor_SetAnimationById(ACTOR_GOLD_COIN_FINDERS_CHILD, 6);
+      Actor_SetAnimationById(ACTOR_LUCKY_MOTHERS_CHILD, 6);
       Actor_SetAnimationById(ACTOR_BOY_HUNTING_FOR_COINS, 6);
     }
     if (GameFlag_Get(FLAG_LET_INTO_CAVE)) {
@@ -636,14 +652,14 @@ s32 Scene_Initialize(void) {
     }
   } else {
     Actor_SetSpritePriority(ACTOR_WELCOMING_YOUNG_MAN, 2);
-    Actor_SetSpritePriority(ACTOR_SAILOR_IN_A_RED_BANDANA, 2);
+    Actor_SetSpritePriority(ACTOR_SAILOR_ON_THE_SAILBOAT, 2);
     Actor_SetSpritePriority(ACTOR_MANOR_GUARD, 3);
     Actor_GetById(ACTOR_SAILOR_BUILDING_HOUSES)->update =
         (void (*)(void))Alhafra_TakeLeadersLayer;
     if (GameFlag_Get(FLAG_ALHAFRA_MADRANS_ARRIVED))
       Actor_SetPosition(ACTOR_WOMAN_ON_THE_LOST_SHIPS, 536, 760);
-    if (GameFlag_Get(FLAG_LOOKOUT_LEFT))
-      Actor_SetPosition(ACTOR_LOOKOUT, 0, 0);
+    if (GameFlag_Get(FLAG_PIRATE_LEFT))
+      Actor_SetPosition(ACTOR_PIRATE, 0, 0);
     FlagBlock_PlaceAllMarkingEdges((s32)&gAlhafra_Puddles);
     Actor_SetMovementType(Actor_GetById(ACTOR_PUDDLE_A),
                           MOVEMENT_TYPE_TAKE_LEADER_LAYER);
@@ -655,16 +671,30 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
+/// The pool of seawater the tidal wave left by the east road: its four colours
+/// in their palette, and the palette holding the dry ground's.
+enum {
+  SEAWATER_POOL_PALETTE = 7,
+  DRY_GROUND_PALETTE = 8,
+  SEAWATER_POOL_COLOR = 11
+};
+
+/// Once Briggs is caught the pool has dried up: its colours take the dry
+/// ground's.
 s32 Scene_PrepareMap(void) {
   if (GameFlag_Get(FLAG_BRIGGS_CAUGHT)) {
-    u16 *src = (u16 *)&BG_PLTT_COLOR(8, 11);
+    u16 *src = (u16 *)&BG_PLTT_COLOR(DRY_GROUND_PALETTE, SEAWATER_POOL_COLOR);
 
-    Io_Write16(*src, &BG_PLTT_COLOR(7, 11));
+    Io_Write16(*src,
+               &BG_PLTT_COLOR(SEAWATER_POOL_PALETTE, SEAWATER_POOL_COLOR));
     src++;
-    Io_Write16(*src, &BG_PLTT_COLOR(7, 12));
+    Io_Write16(*src,
+               &BG_PLTT_COLOR(SEAWATER_POOL_PALETTE, SEAWATER_POOL_COLOR + 1));
     src++;
-    Io_Write16(*src, &BG_PLTT_COLOR(7, 13));
-    Io_Write16(src[1], &BG_PLTT_COLOR(7, 14));
+    Io_Write16(*src,
+               &BG_PLTT_COLOR(SEAWATER_POOL_PALETTE, SEAWATER_POOL_COLOR + 2));
+    Io_Write16(src[1],
+               &BG_PLTT_COLOR(SEAWATER_POOL_PALETTE, SEAWATER_POOL_COLOR + 3));
     MapGrid_CopyCellAttributes(37, 18, 2, 2, 37, 33);
     MapGrid_CopyCellAttributes(37, 18, 2, 3, 39, 31);
     MapGrid_CopyCellAttributes(50, 80, 7, 5, 35, 95);
@@ -676,24 +706,24 @@ s32 Scene_PrepareMap(void) {
 /// over or under what the leader is.
 void Alhafra_TakeLeadersLayer(void) { Actor_TakeLeaderLayer(); }
 
-extern s32 gAlhafra_OfficialStepsBackScript[];
-extern u32 gAlhafra_PasserbyWalksOffScript[];
-extern u32 gAlhafra_PasserbyLeadsFromCell21Script[];
-extern u32 gAlhafra_OfficialFollowsFromCell21Script[];
-extern u32 gAlhafra_FirstMadranFollowsFromCell21Script[];
-extern u32 gAlhafra_MayorFollowsFromCell21Script[];
-extern u32 gAlhafra_SecondSoldierFollowsFromCell21Script[];
-extern u32 gAlhafra_FirstSoldierFollowsFromCell21Script[];
-extern u32 gAlhafra_ElderFollowsFromCell21Script[];
-extern u32 gAlhafra_SecondMadranFollowsFromCell21Script[];
-extern s32 gAlhafra_PasserbyLeadsFromCell20Script[];
-extern u32 gAlhafra_OfficialFollowsFromCell20Script[];
-extern u32 gAlhafra_FirstMadranFollowsFromCell20Script[];
-extern u32 gAlhafra_MayorFollowsFromCell20Script[];
-extern u32 gAlhafra_ElderFollowsFromCell20Script[];
-extern u32 gAlhafra_FirstSoldierFollowsFromCell20Script[];
-extern s32 gAlhafra_SecondMadranFollowsFromCell20Script[];
-extern u32 gAlhafra_SecondSoldierFollowsFromCell20Script[];
+extern s32 gAlhafra_ElderStepsBackScript[];
+extern u32 gAlhafra_WomanWalksOffScript[];
+extern u32 gAlhafra_AlhafranLeadsBesideFelixScript[];
+extern u32 gAlhafra_ElderFollowsBesideFelixScript[];
+extern u32 gAlhafra_WaitingMadranFollowsBesideFelixScript[];
+extern u32 gAlhafra_MayorFollowsBesideFelixScript[];
+extern u32 gAlhafra_SecondSoldierFollowsBesideFelixScript[];
+extern u32 gAlhafra_FirstSoldierFollowsBesideFelixScript[];
+extern u32 gAlhafra_WearyMadranFollowsBesideFelixScript[];
+extern u32 gAlhafra_SilentMadranFollowsBesideFelixScript[];
+extern s32 gAlhafra_AlhafranLeadsBehindFelixScript[];
+extern u32 gAlhafra_ElderFollowsBehindFelixScript[];
+extern u32 gAlhafra_WaitingMadranFollowsBehindFelixScript[];
+extern u32 gAlhafra_MayorFollowsBehindFelixScript[];
+extern u32 gAlhafra_WearyMadranFollowsBehindFelixScript[];
+extern u32 gAlhafra_FirstSoldierFollowsBehindFelixScript[];
+extern s32 gAlhafra_SilentMadranFollowsBehindFelixScript[];
+extern u32 gAlhafra_SecondSoldierFollowsBehindFelixScript[];
 
 /// The mayor and elder of Madra arrive with their soldiers and townsfolk,
 /// ask the way to Alhafra's mayor and follow an Alhafran to the manor.
@@ -708,7 +738,7 @@ void Alhafra_MadransArrive(s32 cellBehavior) {
   Actor_SetSpeed(ACTOR_SECOND_MADRAN_SOLDIER, 1);
   Actor_SetSpeed(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 1);
   Actor_SetSpeed(ACTOR_WEARY_MADRAN, 1);
-  Actor_SetSpeed(ACTOR_PARCHED_MADRAN, 1);
+  Actor_SetSpeed(ACTOR_SILENT_MADRAN, 1);
   Actor_SetSpeed(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 0.5);
   Actor_SetSpeed(ACTOR_WOMAN_ON_THE_LOST_SHIPS, 0.5);
   if (cellBehavior == CELL_BEHAVIOR_MADRANS_ARRIVE_BEHIND_FELIX) {
@@ -744,16 +774,16 @@ void Alhafra_MadransArrive(s32 cellBehavior) {
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_FIRST_MADRAN_SOLDIER, FACING_EAST, 0);
   Actor_SetPosition(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 392, 872);
-  Actor_SetPosition(ACTOR_PARCHED_MADRAN, 408, 872);
+  Actor_SetPosition(ACTOR_SILENT_MADRAN, 408, 872);
   // "We-We're here?"
   FieldEvent_ShowMessageThenWait(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 0, 10);
   Actor_FaceDirection(ACTOR_FIRST_MADRAN_SOLDIER, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_SECOND_MADRAN_SOLDIER, FACING_SOUTH_SOUTHEAST, 0);
   Event_Wait(20);
-  Actor_WalkBy(ACTOR_PARCHED_MADRAN, 0, -48);
+  Actor_WalkBy(ACTOR_SILENT_MADRAN, 0, -48);
   Actor_WalkByAndWait(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 0, -48);
-  Actor_WaitForMoveById(ACTOR_PARCHED_MADRAN);
-  Actor_FaceDirectionById(ACTOR_PARCHED_MADRAN, FACING_NORTH_NORTHWEST, 0);
+  Actor_WaitForMoveById(ACTOR_SILENT_MADRAN);
+  Actor_FaceDirectionById(ACTOR_SILENT_MADRAN, FACING_NORTH_NORTHWEST, 0);
   Event_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_FIRST_MADRAN_SOLDIER, 2);
   Event_Wait(10);
@@ -776,12 +806,12 @@ void Alhafra_MadransArrive(s32 cellBehavior) {
   Actor_SetAnimation(ACTOR_FIRST_MADRAN_SOLDIER, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_SECOND_MADRAN_SOLDIER, ANIM_NOD);
   Event_Wait(10);
-  Actor_WalkBy(ACTOR_PARCHED_MADRAN, 32, -48);
+  Actor_WalkBy(ACTOR_SILENT_MADRAN, 32, -48);
   Actor_WalkByAndWait(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 32, -48);
-  Actor_WaitForMoveById(ACTOR_PARCHED_MADRAN);
-  Actor_FaceDirection(ACTOR_PARCHED_MADRAN, FACING_SOUTH_SOUTHWEST, 0);
+  Actor_WaitForMoveById(ACTOR_SILENT_MADRAN);
+  Actor_FaceDirection(ACTOR_SILENT_MADRAN, FACING_SOUTH_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, FACING_SOUTH, 0);
-  Actor_SetSpritePriority(ACTOR_PARCHED_MADRAN, 3);
+  Actor_SetSpritePriority(ACTOR_SILENT_MADRAN, 3);
   Event_Wait(20);
   Actor_SetPosition(ACTOR_WEARY_MADRAN, 400, 872);
   // "Haaa hoo hooo... Are we...here? I feel like I just walked 500 miles."
@@ -819,7 +849,7 @@ void Alhafra_MadransArrive(s32 cellBehavior) {
   FieldActor_WatchAndSetScript(ACTOR_MADRAN_WAITING_FOR_THE_ELDER,
                                ACTOR_MADRAS_MAYOR);
   FieldActor_WatchAndSetScript(ACTOR_WEARY_MADRAN, ACTOR_MADRAS_MAYOR);
-  Actor_WatchAndSetScript(ACTOR_PARCHED_MADRAN, ACTOR_MADRAS_MAYOR);
+  Actor_WatchAndSetScript(ACTOR_SILENT_MADRAN, ACTOR_MADRAS_MAYOR);
   Event_Wait(20);
   Actor_FaceDirectionById(ACTOR_MADRAS_MAYOR, FACING_NORTHWEST, 0);
   Event_Wait(20);
@@ -833,7 +863,7 @@ void Alhafra_MadransArrive(s32 cellBehavior) {
   // "So...is this Alhafra?"
   FieldEvent_ShowMessageThenWait(ACTOR_MADRAS_MAYOR, 0, 10);
   Actor_SetMovementTypeById(ACTOR_MADRAS_ELDER,
-                            (s32)gAlhafra_OfficialStepsBackScript);
+                            (s32)gAlhafra_ElderStepsBackScript);
   Event_Wait(20);
   Actor_WalkByAndWait(ACTOR_MADRAS_MAYOR, 0, -32);
   Actor_WalkByAndWaitById(ACTOR_MADRAS_MAYOR, -32, 0);
@@ -870,7 +900,7 @@ void Alhafra_MadransArrive(s32 cellBehavior) {
   Actor_Stop(ACTOR_SECOND_MADRAN_SOLDIER);
   Actor_Stop(ACTOR_MADRAN_WAITING_FOR_THE_ELDER);
   Actor_Stop(ACTOR_WEARY_MADRAN);
-  Actor_Stop(ACTOR_PARCHED_MADRAN);
+  Actor_Stop(ACTOR_SILENT_MADRAN);
   Actor_SetAnimationById(ACTOR_MADRAS_ELDER, 5);
   Event_Wait(50);
   Actor_FaceDirection(ACTOR_FIRST_MADRAN_SOLDIER, FACING_SOUTH_SOUTHWEST, 0);
@@ -880,7 +910,7 @@ void Alhafra_MadransArrive(s32 cellBehavior) {
   Actor_FaceDirection(ACTOR_SECOND_MADRAN_SOLDIER, FACING_SOUTHEAST, 0);
   Event_Wait(20);
   Actor_SetMovementTypeById(ACTOR_WOMAN_ON_THE_LOST_SHIPS,
-                            (s32)gAlhafra_PasserbyWalksOffScript);
+                            (s32)gAlhafra_WomanWalksOffScript);
   FieldActor_Jump(ACTOR_FIRST_MADRAN_SOLDIER, 6, 15);
   FieldActor_Jump(ACTOR_FIRST_MADRAN_SOLDIER, 6, 23);
   // "We're in no shape to go present ourselves to the mayor right now!"
@@ -913,7 +943,7 @@ void Alhafra_MadransArrive(s32 cellBehavior) {
   Actor_FaceDirection(ACTOR_SECOND_MADRAN_SOLDIER, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_WEARY_MADRAN, FACING_EAST, 0);
-  Actor_FaceDirection(ACTOR_PARCHED_MADRAN, FACING_SOUTH_SOUTHEAST, 0);
+  Actor_FaceDirection(ACTOR_SILENT_MADRAN, FACING_SOUTH_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_MADRAS_MAYOR, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_MADRAS_ELDER, FACING_NORTH_NORTHEAST, 0);
   Event_Wait(20);
@@ -1015,7 +1045,7 @@ void Alhafra_MadransArrive(s32 cellBehavior) {
   Actor_SetSpeed(ACTOR_SECOND_MADRAN_SOLDIER, 0.5);
   Actor_SetSpeed(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 0.5);
   Actor_SetSpeed(ACTOR_WEARY_MADRAN, 0.5);
-  Actor_SetSpeed(ACTOR_PARCHED_MADRAN, 0.5);
+  Actor_SetSpeed(ACTOR_SILENT_MADRAN, 0.5);
   Actor_SetSpeed(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 0.5);
   EventCamera_FollowActor(ACTOR_MADRAS_MAYOR, 1);
   FieldCamera_WaitForArrival();
@@ -1027,11 +1057,12 @@ void Alhafra_MadransArrive(s32 cellBehavior) {
                                  ACTOR_MADRAS_ELDER);
     FieldActor_WatchAndSetScript(ACTOR_WEARY_MADRAN, ACTOR_MADRAS_ELDER);
     Actor_SetMovementTypeById(ACTOR_ALHAFRAN_GIVING_DIRECTIONS,
-                              (s32)gAlhafra_PasserbyLeadsFromCell21Script);
+                              (s32)gAlhafra_AlhafranLeadsBesideFelixScript);
     Actor_SetMovementTypeById(ACTOR_MADRAS_ELDER,
-                              (s32)gAlhafra_OfficialFollowsFromCell21Script);
-    Actor_SetMovementTypeById(ACTOR_MADRAN_WAITING_FOR_THE_ELDER,
-                              (s32)gAlhafra_FirstMadranFollowsFromCell21Script);
+                              (s32)gAlhafra_ElderFollowsBesideFelixScript);
+    Actor_SetMovementTypeById(
+        ACTOR_MADRAN_WAITING_FOR_THE_ELDER,
+        (s32)gAlhafra_WaitingMadranFollowsBesideFelixScript);
     Event_Wait(80);
     FieldActor_SetSpritePriority(ACTOR_MADRAS_ELDER, 3);
     FieldActor_SetSpritePriority(ACTOR_MADRAS_MAYOR, 3);
@@ -1039,25 +1070,25 @@ void Alhafra_MadransArrive(s32 cellBehavior) {
     FieldActor_SetSpritePriority(ACTOR_SECOND_MADRAN_SOLDIER, 3);
     FieldActor_SetSpritePriority(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 3);
     FieldActor_SetSpritePriority(ACTOR_WEARY_MADRAN, 3);
-    FieldActor_SetSpritePriority(ACTOR_PARCHED_MADRAN, 3);
+    FieldActor_SetSpritePriority(ACTOR_SILENT_MADRAN, 3);
     FieldActor_SetSpritePriority(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 3);
-    FieldActor_WatchAndSetScript(ACTOR_PARCHED_MADRAN, ACTOR_MADRAS_ELDER);
+    FieldActor_WatchAndSetScript(ACTOR_SILENT_MADRAN, ACTOR_MADRAS_ELDER);
     Actor_SetMovementTypeById(ACTOR_MADRAS_MAYOR,
-                              (s32)gAlhafra_MayorFollowsFromCell21Script);
+                              (s32)gAlhafra_MayorFollowsBesideFelixScript);
     Event_Wait(170);
     Actor_SetMovementTypeById(
         ACTOR_SECOND_MADRAN_SOLDIER,
-        (s32)gAlhafra_SecondSoldierFollowsFromCell21Script);
+        (s32)gAlhafra_SecondSoldierFollowsBesideFelixScript);
     Event_Wait(10);
     Actor_SetMovementTypeById(
         ACTOR_FIRST_MADRAN_SOLDIER,
-        (s32)gAlhafra_FirstSoldierFollowsFromCell21Script);
-    Actor_SetMovementTypeById(ACTOR_WEARY_MADRAN,
-                              (s32)gAlhafra_ElderFollowsFromCell21Script);
+        (s32)gAlhafra_FirstSoldierFollowsBesideFelixScript);
+    Actor_SetMovementTypeById(
+        ACTOR_WEARY_MADRAN, (s32)gAlhafra_WearyMadranFollowsBesideFelixScript);
     Event_Wait(60);
     Actor_SetMovementTypeById(
-        ACTOR_PARCHED_MADRAN,
-        (s32)gAlhafra_SecondMadranFollowsFromCell21Script);
+        ACTOR_SILENT_MADRAN,
+        (s32)gAlhafra_SilentMadranFollowsBesideFelixScript);
   } else {
     FieldActor_SetSpritePriority(ACTOR_MADRAS_MAYOR, 2);
     FieldActor_WatchAndSetScript(ACTOR_MADRAS_MAYOR,
@@ -1068,38 +1099,39 @@ void Alhafra_MadransArrive(s32 cellBehavior) {
                                  ACTOR_MADRAS_MAYOR);
     FieldActor_WatchAndSetScript(ACTOR_WEARY_MADRAN, ACTOR_MADRAS_MAYOR);
     Actor_SetMovementTypeById(ACTOR_ALHAFRAN_GIVING_DIRECTIONS,
-                              (s32)gAlhafra_PasserbyLeadsFromCell20Script);
+                              (s32)gAlhafra_AlhafranLeadsBehindFelixScript);
     Event_Wait(60);
     Actor_SetMovementTypeById(ACTOR_MADRAS_ELDER,
-                              (s32)gAlhafra_OfficialFollowsFromCell20Script);
-    Actor_SetMovementTypeById(ACTOR_MADRAN_WAITING_FOR_THE_ELDER,
-                              (s32)gAlhafra_FirstMadranFollowsFromCell20Script);
+                              (s32)gAlhafra_ElderFollowsBehindFelixScript);
+    Actor_SetMovementTypeById(
+        ACTOR_MADRAN_WAITING_FOR_THE_ELDER,
+        (s32)gAlhafra_WaitingMadranFollowsBehindFelixScript);
     Event_Wait(70);
-    FieldActor_WatchAndSetScript(ACTOR_PARCHED_MADRAN, ACTOR_MADRAS_ELDER);
+    FieldActor_WatchAndSetScript(ACTOR_SILENT_MADRAN, ACTOR_MADRAS_ELDER);
     Actor_SetMovementTypeById(ACTOR_MADRAS_MAYOR,
-                              (s32)gAlhafra_MayorFollowsFromCell20Script);
+                              (s32)gAlhafra_MayorFollowsBehindFelixScript);
     FieldActor_SetSpritePriority(ACTOR_MADRAS_ELDER, 3);
     FieldActor_SetSpritePriority(ACTOR_MADRAS_MAYOR, 3);
     FieldActor_SetSpritePriority(ACTOR_FIRST_MADRAN_SOLDIER, 3);
     FieldActor_SetSpritePriority(ACTOR_SECOND_MADRAN_SOLDIER, 3);
     FieldActor_SetSpritePriority(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 3);
     FieldActor_SetSpritePriority(ACTOR_WEARY_MADRAN, 3);
-    FieldActor_SetSpritePriority(ACTOR_PARCHED_MADRAN, 3);
+    FieldActor_SetSpritePriority(ACTOR_SILENT_MADRAN, 3);
     Actor_SetSpritePriority(ACTOR_ALHAFRAN_GIVING_DIRECTIONS, 3);
     Event_Wait(120);
-    Actor_SetMovementTypeById(ACTOR_WEARY_MADRAN,
-                              (s32)gAlhafra_ElderFollowsFromCell20Script);
+    Actor_SetMovementTypeById(
+        ACTOR_WEARY_MADRAN, (s32)gAlhafra_WearyMadranFollowsBehindFelixScript);
     Event_Wait(40);
     Actor_SetMovementTypeById(
         ACTOR_FIRST_MADRAN_SOLDIER,
-        (s32)gAlhafra_FirstSoldierFollowsFromCell20Script);
+        (s32)gAlhafra_FirstSoldierFollowsBehindFelixScript);
     Actor_SetMovementTypeById(
-        ACTOR_PARCHED_MADRAN,
-        (s32)gAlhafra_SecondMadranFollowsFromCell20Script);
+        ACTOR_SILENT_MADRAN,
+        (s32)gAlhafra_SilentMadranFollowsBehindFelixScript);
     Event_Wait(30);
     Actor_SetMovementTypeById(
         ACTOR_SECOND_MADRAN_SOLDIER,
-        (s32)gAlhafra_SecondSoldierFollowsFromCell20Script);
+        (s32)gAlhafra_SecondSoldierFollowsBehindFelixScript);
   }
   Event_Wait(300);
   Actor_WaitForScriptEndById(ACTOR_WEARY_MADRAN);
@@ -1130,7 +1162,7 @@ void Alhafra_MadransArrive(s32 cellBehavior) {
   Actor_SetAnimation(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_FIRST_MADRAN_SOLDIER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_SECOND_MADRAN_SOLDIER, ANIM_NOD);
-  Actor_SetAnimation(ACTOR_PARCHED_MADRAN, 3);
+  Actor_SetAnimation(ACTOR_SILENT_MADRAN, 3);
   Actor_SetAnimationAndWait(ACTOR_WEARY_MADRAN, ANIM_NOD);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_MADRAS_ELDER, FACING_NORTH, 0);
@@ -1145,13 +1177,13 @@ void Alhafra_MadransArrive(s32 cellBehavior) {
   Actor_SetSpeed(ACTOR_SECOND_MADRAN_SOLDIER, 1.9);
   Actor_SetSpeed(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 1.9);
   Actor_SetSpeed(ACTOR_WEARY_MADRAN, 1.9);
-  Actor_SetSpeed(ACTOR_PARCHED_MADRAN, 1.9);
+  Actor_SetSpeed(ACTOR_SILENT_MADRAN, 1.9);
   Actor_WalkBy(ACTOR_MADRAS_ELDER, 0, -150);
   Actor_WalkBy(ACTOR_MADRAS_MAYOR, 0, -150);
   Actor_WalkBy(ACTOR_FIRST_MADRAN_SOLDIER, 0, -150);
   Actor_WalkBy(ACTOR_SECOND_MADRAN_SOLDIER, 0, -150);
   Actor_WalkBy(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 0, -150);
-  Actor_WalkBy(ACTOR_PARCHED_MADRAN, 0, -150);
+  Actor_WalkBy(ACTOR_SILENT_MADRAN, 0, -150);
   Actor_WalkByAndWait(ACTOR_WEARY_MADRAN, 0, -150);
   Actor_SetPosition(ACTOR_MADRAS_ELDER, 0, 0);
   Actor_SetPosition(ACTOR_MADRAS_MAYOR, 0, 0);
@@ -1159,64 +1191,69 @@ void Alhafra_MadransArrive(s32 cellBehavior) {
   Actor_SetPosition(ACTOR_SECOND_MADRAN_SOLDIER, 0, 0);
   Actor_SetPosition(ACTOR_MADRAN_WAITING_FOR_THE_ELDER, 0, 0);
   Actor_SetPosition(ACTOR_WEARY_MADRAN, 0, 0);
-  Actor_SetPosition(ACTOR_PARCHED_MADRAN, 0, 0);
+  Actor_SetPosition(ACTOR_SILENT_MADRAN, 0, 0);
   Event_Wait(15);
   FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
   FieldCamera_WaitForArrival();
   Event_End();
 }
 
-/// The Champa lookout recognizes the mayor of Madra and runs to warn Briggs's
+/// The pirate recognizes the mayor of Madra and runs to warn Briggs's
 /// crew, after answering the party if they read his mind.
-void Alhafra_LookoutSeesMadrasMayor(s32 how) {
-  Event_SetFlag(FLAG_LOOKOUT_LEFT);
+void Alhafra_PirateSeesMadrasMayor(s32 how) {
+  Event_SetFlag(FLAG_PIRATE_LEFT);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldEvent_SetMessageId((s32)MsgAlhafraOooThisAintGood);
-  if (how == LOOKOUT_READ_BY_MIND_READ) {
+  if (how == PIRATE_READ_BY_MIND_READ) {
     FieldEvent_Wait(10);
     Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 168, 736);
     Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
   }
-  Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Actor_ShowEmote(ACTOR_PIRATE, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "Ooo... This ain't good!"
-  FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_LOOKOUT, ANIM_NOD);
+  FieldEvent_ShowMessageThenWait(ACTOR_PIRATE, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_PIRATE, ANIM_NOD);
   FieldEvent_Wait(10);
   // "That guy looked like the mayor of Madra..."
-  FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_LOOKOUT, ANIM_SHAKE_HEAD);
+  FieldEvent_ShowMessageThenWait(ACTOR_PIRATE, 0, 10);
+  Actor_SetAnimationAndWait(ACTOR_PIRATE, ANIM_SHAKE_HEAD);
   // "He must have come here looking for Briggs."
-  FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
-  Actor_RunRepeatedMotion(ACTOR_LOOKOUT, 2);
+  FieldEvent_ShowMessageThenWait(ACTOR_PIRATE, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_PIRATE, 2);
   FieldEvent_Wait(20);
   // "I'd better go tell the others!"
-  FieldEvent_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
-  if (how == LOOKOUT_READ_BY_MIND_READ) {
-    Actor_WalkByAndWaitById(ACTOR_LOOKOUT, -8, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_PIRATE, 0, 10);
+  if (how == PIRATE_READ_BY_MIND_READ) {
+    Actor_WalkByAndWaitById(ACTOR_PIRATE, -8, 0);
     Event_Wait(15);
-    Actor_StartRepeatedMotion(ACTOR_LOOKOUT, 3);
-    FieldEffect_SetAttached(ACTOR_LOOKOUT,
+    Actor_StartRepeatedMotion(ACTOR_PIRATE, 3);
+    FieldEffect_SetAttached(ACTOR_PIRATE,
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
     Event_Wait(40);
-    Actor_GetById(ACTOR_LOOKOUT)->steeringFlags &= ~ACTOR_FACES_MOTION;
-    Actor_WalkToAndWaitById(ACTOR_LOOKOUT, 192, 736);
+    Actor_GetById(ACTOR_PIRATE)->steeringFlags &= ~ACTOR_FACES_MOTION;
+    Actor_WalkToAndWaitById(ACTOR_PIRATE, 192, 736);
     Event_Wait(1);
-    Actor_GetById(ACTOR_LOOKOUT)->steeringFlags |= ACTOR_FACES_MOTION;
+    Actor_GetById(ACTOR_PIRATE)->steeringFlags |= ACTOR_FACES_MOTION;
     Event_Wait(10);
-    Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
-    Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
-    Event_OpenMessage(ACTOR_LOOKOUT, 0);
+    // "What's your problem? What are you, some kind of freak?"
+    Event_ShowMessageThenWait(ACTOR_PIRATE, 0, 10);
+    Actor_ShowEmote(ACTOR_PIRATE, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+    // "Well? What!? You got a problem with me?"
+    Event_OpenMessage(ACTOR_PIRATE, 0);
     if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
       Event_Wait(30);
-      Actor_RunRepeatedMotion(ACTOR_LOOKOUT, 2);
+      Actor_RunRepeatedMotion(ACTOR_PIRATE, 2);
       Event_Wait(20);
-      Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
+      // Yes: "Ah, who cares what you think? I've got stuff to do, so scram,
+      // kid!"
+      Event_ShowMessageThenWait(ACTOR_PIRATE, 0, 10);
       gFieldWork->message = (gFieldWork->message + 1);
     } else {
       Event_Wait(30);
       gFieldWork->message = (gFieldWork->message + 1);
-      Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
+      // No: "So where do you get off invading my personal space, huh?"
+      Event_ShowMessageThenWait(ACTOR_PIRATE, 0, 10);
     }
     Actor_GetById(ACTOR_FELIX)->steeringFlags &= ~ACTOR_FACES_MOTION;
     Actor_WalkToAndWait(ACTOR_FELIX, 152, 752);
@@ -1224,22 +1261,24 @@ void Alhafra_LookoutSeesMadrasMayor(s32 how) {
     Actor_GetById(ACTOR_FELIX)->steeringFlags |= ACTOR_FACES_MOTION;
     Actor_FaceDirection(ACTOR_FELIX, FACING_NORTHEAST, 0);
     Event_Wait(20);
-    Actor_SetAnimationAndWait(ACTOR_LOOKOUT, ANIM_NOD);
+    Actor_SetAnimationAndWait(ACTOR_PIRATE, ANIM_NOD);
     Event_Wait(10);
-    Actor_FaceDirectionById(ACTOR_LOOKOUT, FACING_NORTHEAST, 0);
+    Actor_FaceDirectionById(ACTOR_PIRATE, FACING_NORTHEAST, 0);
     Event_Wait(70);
-    Actor_ShowEmote(ACTOR_LOOKOUT, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
-    Event_ShowMessageThenWait(ACTOR_LOOKOUT, 0, 10);
+    Actor_ShowEmote(ACTOR_PIRATE, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
+    // "Where was I? Oh yeah, I was going to tell them about the mayor of
+    // Madra!"
+    Event_ShowMessageThenWait(ACTOR_PIRATE, 0, 10);
   }
-  Actor_WalkToAndWait(ACTOR_LOOKOUT, 184, 728);
-  Actor_WalkByAndWait(ACTOR_LOOKOUT, 0, -110);
-  if (how == LOOKOUT_STEPPED_PAST) {
+  Actor_WalkToAndWait(ACTOR_PIRATE, 184, 728);
+  Actor_WalkByAndWait(ACTOR_PIRATE, 0, -110);
+  if (how == PIRATE_STEPPED_PAST) {
     Event_Wait(50);
-    Actor_SetPosition(ACTOR_LOOKOUT, 264, 648);
-    Actor_WalkByAndWaitById(ACTOR_LOOKOUT, 0, 32);
-    Actor_WalkByAndWaitById(ACTOR_LOOKOUT, 150, 0);
+    Actor_SetPosition(ACTOR_PIRATE, 264, 648);
+    Actor_WalkByAndWaitById(ACTOR_PIRATE, 0, 32);
+    Actor_WalkByAndWaitById(ACTOR_PIRATE, 150, 0);
   }
-  Actor_SetPosition(ACTOR_LOOKOUT, 0, 0);
+  Actor_SetPosition(ACTOR_PIRATE, 0, 0);
   Event_End();
 }
 
@@ -1387,34 +1426,39 @@ struct ActorPlacement gAlhafra_ActorPlacementsOnceTheMastIsCleared[] = {
     {SCENE_TABLE_END},
 };
 
-s16 gAlhafra_NoDoorEdit[] = {
-    -1,
+/// A doorway with no door: nothing to open.
+u16 gAlhafra_NoDoor[] = {
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
-s16 gAlhafra_DoorEdit[] = {
-    63, 2, 1, 2, 6, -1,
+/// A door opening: one step of cells copied over it.
+u16 gAlhafra_DoorOpening[] = {
+    MAPGRID_ANIMATION_STEP(63, 2, 1, 2, 6),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
-s16 gAlhafra_LeftDoorEdit[] = {
-    62, 2, 1, 2, 6, -1, 0,
+/// The other shape of door's opening, from the cells beside the first's.
+u16 gAlhafra_SecondDoorOpening[] = {
+    MAPGRID_ANIMATION_STEP(62, 2, 1, 2, 6),
+    MAPGRID_ANIMATION_STEPS_END,
 };
 
 struct MapGridCellAnimation gAlhafra_Doors[] = {
     {NULL, 0, 0},
-    {gAlhafra_DoorEdit, 27, 37},
-    {gAlhafra_DoorEdit, 27, 43},
+    {gAlhafra_DoorOpening, 27, 37},
+    {gAlhafra_DoorOpening, 27, 43},
     {NULL, 0, 0},
     {NULL, 0, 0},
-    {gAlhafra_DoorEdit, 21, 36},
-    {gAlhafra_DoorEdit, 38, 46},
-    {gAlhafra_NoDoorEdit, 0, 0},
-    {gAlhafra_LeftDoorEdit, 11, 33},
+    {gAlhafra_DoorOpening, 21, 36},
+    {gAlhafra_DoorOpening, 38, 46},
+    {gAlhafra_NoDoor, 0, 0},
+    {gAlhafra_SecondDoorOpening, 11, 33},
     {NULL, 0, 0},
     {NULL, 0, 0},
     {NULL, 0, 0},
-    {gAlhafra_LeftDoorEdit, 5, 9},
+    {gAlhafra_SecondDoorOpening, 5, 9},
     {NULL, 0, 0},
-    {gAlhafra_DoorEdit, 16, 9},
+    {gAlhafra_DoorOpening, 16, 9},
 };
 
 struct Trigger gAlhafra_Triggers[] = {
@@ -1434,41 +1478,41 @@ struct Trigger gAlhafra_Triggers[] = {
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Alhafra_HideTreasureSpot)},
     {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, EVENT(Alhafra_OpenWeaponShop)},
     {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, EVENT(Alhafra_OpenArmorShop)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_LOOKOUT_BEHIND, CONDITION_ALWAYS, EVENT(Alhafra_DrawLookoutBehind)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_LOOKOUT_IN_FRONT, CONDITION_ALWAYS, EVENT(Alhafra_DrawLookoutInFront)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_PIRATE_BEHIND, CONDITION_ALWAYS, EVENT(Alhafra_DrawPirateBehind)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_PIRATE_IN_FRONT, CONDITION_ALWAYS, EVENT(Alhafra_DrawPirateInFront)},
     {TRIGGER_STEP, CELL_BEHAVIOR_MADRANS_ARRIVE_BEHIND_FELIX, FLAG_ALHAFRA_MADRANS_ARRIVED, EVENT(Alhafra_MadransArrive)},
     {TRIGGER_STEP, CELL_BEHAVIOR_MADRANS_ARRIVE_BESIDE_FELIX, FLAG_ALHAFRA_MADRANS_ARRIVED, EVENT(Alhafra_MadransArrive)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_LOOKOUT_RUNS_OFF, FLAG_LOOKOUT_LEFT, EVENT(Alhafra_LookoutRunsToWarnTheCrew)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_PIRATE_RUNS_OFF, FLAG_PIRATE_LEFT, EVENT(Alhafra_PirateRunsToWarnTheCrew)},
     {TRIGGER_TALK, ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgAlhafraWeWereHitByA)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEAPON_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgAlhafraLosingAllMyMostExpensive)},
     {TRIGGER_TALK, ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgAlhafraThatTidalWaveMayWell)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgAlhafraItDoesntMatterHowWell)},
     {TRIGGER_TALK, ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgAlhafraWelcomeToAlhafraThisIs)},
     {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_LOST_SHIPS, CONDITION_ALWAYS, MSGNO(MsgAlhafraAMassiveTidalWaveHit)},
-    {TRIGGER_TALK, ACTOR_FISHERMAN, CONDITION_ALWAYS, EVENT(Alhafra_AskWhetherIndraMoved)},
+    {TRIGGER_TALK, ACTOR_MAN_ASKING_ABOUT_INDRA, CONDITION_ALWAYS, EVENT(Alhafra_AskWhetherIndraMoved)},
     {TRIGGER_TALK, ACTOR_BOY_WITH_A_CRUSHED_BOAT, CONDITION_ALWAYS, MSGNO(MsgAlhafraRightAfterMyBoatGot)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgAlhafraThisGuysProbablyWonderingAbout)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_LOST_SHIPS, CONDITION_ALWAYS, MSGNO(MsgAlhafraLosingOurBoatsWasAwful)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FISHERMAN, CONDITION_ALWAYS, MSGNO(MsgAlhafraIJustCantBelieveA)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ASKING_ABOUT_INDRA, CONDITION_ALWAYS, MSGNO(MsgAlhafraIJustCantBelieveA)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_WITH_A_CRUSHED_BOAT, CONDITION_ALWAYS, MSGNO(MsgAlhafraThoseGuysLookingForA)},
     {TRIGGER_TALK, ACTOR_ALHAFRAN_GIVING_DIRECTIONS, CONDITION_ALWAYS, MSGNO(MsgAlhafraThoseMenDidntLookLike)},
     {TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_THE_TRAVELERS, CONDITION_ALWAYS, MSGNO(MsgAlhafraThosePeopleThatJustCame)},
-    {TRIGGER_TALK, ACTOR_WOMAN_SCOLDING_THE_SAILOR, CONDITION_ALWAYS, MSGNO(MsgAlhafraWeveHadALotOf)},
+    {TRIGGER_TALK, ACTOR_WOMAN_PUTTING_THE_SAILOR_TO_WORK, CONDITION_ALWAYS, MSGNO(MsgAlhafraWeveHadALotOf)},
     {TRIGGER_TALK, ACTOR_GIRL_KEPT_FROM_THE_PORT, CONDITION_ALWAYS, MSGNO(MsgAlhafraOurPortWasRuinedBy)},
-    {TRIGGER_TALK, ACTOR_CANOE_MAKERS_PARTNER, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheOnlyBoatSparedBy)},
-    {TRIGGER_TALK, ACTOR_CANOE_MAKER, CONDITION_ALWAYS, EVENT(Alhafra_CanoeMakerBacklogged)},
-    {TRIGGER_TALK, ACTOR_SAILOR_IN_A_RED_BANDANA, CONDITION_ALWAYS, MSGNO(MsgAlhafraThatBoatAtTheWharf)},
+    {TRIGGER_TALK, ACTOR_PARTNER_WAITING_FOR_THE_CANOE, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheOnlyBoatSparedBy)},
+    {TRIGGER_TALK, ACTOR_MAN_FINISHING_A_CANOE, CONDITION_ALWAYS, EVENT(Alhafra_BackloggedWithCanoes)},
+    {TRIGGER_TALK, ACTOR_SAILOR_ON_THE_SAILBOAT, CONDITION_ALWAYS, MSGNO(MsgAlhafraThatBoatAtTheWharf)},
     {TRIGGER_TALK, ACTOR_SAILOR_BUILDING_HOUSES, CONDITION_ALWAYS, MSGNO(MsgAlhafraWhyWouldTheMayorGo)},
-    {TRIGGER_TALK, ACTOR_LOOKOUT, CONDITION_ALWAYS, MSGNO(MsgAlhafraSilence)},
+    {TRIGGER_TALK, ACTOR_PIRATE, CONDITION_ALWAYS, MSGNO(MsgAlhafraSilence)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ALHAFRAN_GIVING_DIRECTIONS, CONDITION_ALWAYS, MSGNO(MsgAlhafraIfThisGuysLookingTo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_THE_TRAVELERS, CONDITION_ALWAYS, MSGNO(MsgAlhafraWhoWouldComeToAlhafra)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_SCOLDING_THE_SAILOR, CONDITION_ALWAYS, MSGNO(MsgAlhafraThisTidalWavesActuallyBeen)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_PUTTING_THE_SAILOR_TO_WORK, CONDITION_ALWAYS, MSGNO(MsgAlhafraThisTidalWavesActuallyBeen)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_KEPT_FROM_THE_PORT, CONDITION_ALWAYS, MSGNO(MsgAlhafraIDontKnowWhyThey)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CANOE_MAKERS_PARTNER, CONDITION_ALWAYS, MSGNO(MsgAlhafraIWonderIfMyPartner)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CANOE_MAKER, CONDITION_ALWAYS, MSGNO(MsgAlhafraWeCantRaiseTheMast)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SAILOR_IN_A_RED_BANDANA, CONDITION_ALWAYS, MSGNO(MsgAlhafraIStillCantBelieveThose)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PARTNER_WAITING_FOR_THE_CANOE, CONDITION_ALWAYS, MSGNO(MsgAlhafraIWonderIfMyPartner)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_FINISHING_A_CANOE, CONDITION_ALWAYS, MSGNO(MsgAlhafraWeCantRaiseTheMast)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SAILOR_ON_THE_SAILBOAT, CONDITION_ALWAYS, MSGNO(MsgAlhafraIStillCantBelieveThose)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SAILOR_BUILDING_HOUSES, CONDITION_ALWAYS, MSGNO(MsgAlhafraItMayBeNewfangledBut)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LOOKOUT | TRIGGER_SUBJECT_OWN_EFFECT, CONDITION_ALWAYS, EVENT(Alhafra_ReadLookoutsMind)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PIRATE | TRIGGER_SUBJECT_OWN_EFFECT, CONDITION_ALWAYS, EVENT(Alhafra_ReadPiratesMind)},
     {TRIGGER_TALK, ACTOR_MANOR_GUARD, CONDITION_ALWAYS, EVENT(Alhafra_MayorInAMeeting)},
     {TRIGGER_TALK, ACTOR_SECOND_MANOR_GUARD, CONDITION_ALWAYS, MSGNO(MsgAlhafraListenYouLookLikeAn)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MANOR_GUARD, CONDITION_ALWAYS, MSGNO(MsgAlhafraIHateMyJobI)},
@@ -1509,27 +1553,27 @@ struct Trigger gAlhafra_TriggersOnceBriggsIsCaught[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgAlhafraGettingABoatForNothing)},
     {TRIGGER_TALK, ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgAlhafraWereAllGoingToWork)},
     {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_LOST_SHIPS, CONDITION_ALWAYS, MSGNO(MsgAlhafraOnceThingsAreBackTo)},
-    {TRIGGER_TALK, ACTOR_FISHERMAN, CONDITION_ALWAYS, MSGNO(MsgAlhafraSoTheGuysWhoBought)},
+    {TRIGGER_TALK, ACTOR_MAN_ASKING_ABOUT_INDRA, CONDITION_ALWAYS, MSGNO(MsgAlhafraSoTheGuysWhoBought)},
     {TRIGGER_TALK, ACTOR_BOY_WITH_A_CRUSHED_BOAT, CONDITION_ALWAYS, MSGNO(MsgAlhafraEveryoneIsTalkingAboutHow)},
     {TRIGGER_TALK, ACTOR_ALHAFRAN_GIVING_DIRECTIONS, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheMayorIsTheOnly)},
     {TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_THE_TRAVELERS, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheMayorOfMadraApparently)},
-    {TRIGGER_TALK, ACTOR_WOMAN_SCOLDING_THE_SAILOR, CONDITION_ALWAYS, MSGNO(MsgAlhafraINeverThoughtAFine)},
+    {TRIGGER_TALK, ACTOR_WOMAN_PUTTING_THE_SAILOR_TO_WORK, CONDITION_ALWAYS, MSGNO(MsgAlhafraINeverThoughtAFine)},
     {TRIGGER_TALK, ACTOR_GIRL_KEPT_FROM_THE_PORT, CONDITION_ALWAYS, MSGNO(MsgAlhafraICanHelpBuildHouses)},
-    {TRIGGER_TALK, ACTOR_CANOE_MAKERS_PARTNER, CONDITION_ALWAYS, MSGNO(MsgAlhafraWevePutOffFixingThe)},
-    {TRIGGER_TALK, ACTOR_CANOE_MAKER, CONDITION_ALWAYS, MSGNO(MsgAlhafraOnceRepairsAreDoneHere)},
-    {TRIGGER_TALK, ACTOR_SAILOR_IN_A_RED_BANDANA, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheyToldMeTheydHelp)},
+    {TRIGGER_TALK, ACTOR_PARTNER_WAITING_FOR_THE_CANOE, CONDITION_ALWAYS, MSGNO(MsgAlhafraWevePutOffFixingThe)},
+    {TRIGGER_TALK, ACTOR_MAN_FINISHING_A_CANOE, CONDITION_ALWAYS, MSGNO(MsgAlhafraOnceRepairsAreDoneHere)},
+    {TRIGGER_TALK, ACTOR_SAILOR_ON_THE_SAILBOAT, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheyToldMeTheydHelp)},
     {TRIGGER_TALK, ACTOR_SAILOR_BUILDING_HOUSES, CONDITION_ALWAYS, EVENT(Alhafra_SailorToldToWork)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgAlhafraItsSoNiceOfEveryone)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_LOST_SHIPS, CONDITION_ALWAYS, MSGNO(MsgAlhafraEveryoneInTownIsSo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FISHERMAN, CONDITION_ALWAYS, MSGNO(MsgAlhafraYouKnowPiratesWhoPay)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ASKING_ABOUT_INDRA, CONDITION_ALWAYS, MSGNO(MsgAlhafraYouKnowPiratesWhoPay)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_WITH_A_CRUSHED_BOAT, CONDITION_ALWAYS, MSGNO(MsgAlhafraThosePiratesHaveTheCoolest)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ALHAFRAN_GIVING_DIRECTIONS, CONDITION_ALWAYS, MSGNO(MsgAlhafraICantBelieveTheyLeft)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_THE_TRAVELERS, CONDITION_ALWAYS, MSGNO(MsgAlhafraIfOurMayorThinksIm)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_SCOLDING_THE_SAILOR, CONDITION_ALWAYS, MSGNO(MsgAlhafraYouKnowSittingHereFixing)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_PUTTING_THE_SAILOR_TO_WORK, CONDITION_ALWAYS, MSGNO(MsgAlhafraYouKnowSittingHereFixing)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_KEPT_FROM_THE_PORT, CONDITION_ALWAYS, MSGNO(MsgAlhafraHelpingPeopleOutFeelsReally)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CANOE_MAKERS_PARTNER, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheFactThatMadraTook)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CANOE_MAKER, CONDITION_ALWAYS, MSGNO(MsgAlhafraIWonderIfTheCrew)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SAILOR_IN_A_RED_BANDANA, CONDITION_ALWAYS, MSGNO(MsgAlhafraItsStrangeTheQuartersDown)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PARTNER_WAITING_FOR_THE_CANOE, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheFactThatMadraTook)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_FINISHING_A_CANOE, CONDITION_ALWAYS, MSGNO(MsgAlhafraIWonderIfTheCrew)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SAILOR_ON_THE_SAILBOAT, CONDITION_ALWAYS, MSGNO(MsgAlhafraItsStrangeTheQuartersDown)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SAILOR_BUILDING_HOUSES, CONDITION_ALWAYS, MSGNO(MsgAlhafraWorkingOnDeckWithThe)},
     {TRIGGER_TALK, ACTOR_YOUNG_MAN_WAITING_AT_THE_INN, CONDITION_ALWAYS, MSGNO(MsgAlhafraOnceTheyFixTheOld)},
     {TRIGGER_TALK, ACTOR_WOMAN_WAITING_AT_THE_INN, CONDITION_ALWAYS, MSGNO(MsgAlhafraIWasAfraidMyHouse)},
@@ -1539,13 +1583,13 @@ struct Trigger gAlhafra_TriggersOnceBriggsIsCaught[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HUNGRY_BOY, FLAG_HUNGRY_BOY_FED, MSGNO(MsgAlhafraIWishSomeoneWouldJust)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HUNGRY_BOY, CONDITION_ALWAYS, MSGNO(MsgAlhafraIWonderIfIShould)},
     {USE_ITEM_ON_ACTOR(ITEM_LARGE_BREAD), 27, CONDITION_ALWAYS, EVENT(Alhafra_GiveBreadToHungryBoy)},
-    {TRIGGER_TALK, ACTOR_GOLD_COIN_FINDERS_HUSBAND, CONDITION_ALWAYS, MSGNO(MsgAlhafraAllMyNeighborsAreGoing)},
-    {TRIGGER_TALK, ACTOR_GOLD_COIN_FINDER, CONDITION_ALWAYS, MSGNO(MsgAlhafraWhatAStrokeOfLuck)},
-    {TRIGGER_TALK, ACTOR_GOLD_COIN_FINDERS_CHILD, CONDITION_ALWAYS, MSGNO(MsgAlhafraMyDadLostTheDraw)},
+    {TRIGGER_TALK, ACTOR_LUCKY_MOTHERS_HUSBAND, CONDITION_ALWAYS, MSGNO(MsgAlhafraAllMyNeighborsAreGoing)},
+    {TRIGGER_TALK, ACTOR_LUCKY_MOTHER, CONDITION_ALWAYS, MSGNO(MsgAlhafraWhatAStrokeOfLuck)},
+    {TRIGGER_TALK, ACTOR_LUCKY_MOTHERS_CHILD, CONDITION_ALWAYS, MSGNO(MsgAlhafraMyDadLostTheDraw)},
     {TRIGGER_TALK, ACTOR_BOY_HUNTING_FOR_COINS, CONDITION_ALWAYS, MSGNO(MsgAlhafraIWonderIfTheresAny)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GOLD_COIN_FINDERS_HUSBAND, CONDITION_ALWAYS, MSGNO(MsgAlhafraLosingTheLotteryAndBeing)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GOLD_COIN_FINDER, CONDITION_ALWAYS, MSGNO(MsgAlhafraIThoughtTheHardPart)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GOLD_COIN_FINDERS_CHILD, CONDITION_ALWAYS, MSGNO(MsgAlhafraAllBecauseOfMyDads)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUCKY_MOTHERS_HUSBAND, CONDITION_ALWAYS, MSGNO(MsgAlhafraLosingTheLotteryAndBeing)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUCKY_MOTHER, CONDITION_ALWAYS, MSGNO(MsgAlhafraIThoughtTheHardPart)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUCKY_MOTHERS_CHILD, CONDITION_ALWAYS, MSGNO(MsgAlhafraAllBecauseOfMyDads)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_HUNTING_FOR_COINS, CONDITION_ALWAYS, MSGNO(MsgAlhafraIReallyShouldntBePeeking)},
     {TRIGGER_TALK, ACTOR_MANOR_GUARD, CONDITION_ALWAYS, MSGNO(MsgAlhafraAhFelixWelcomeWelcomeListen)},
     {TRIGGER_TALK, ACTOR_SECOND_MANOR_GUARD, CONDITION_ALWAYS, MSGNO(MsgAlhafraOhFelixGoOnIn)},
@@ -1581,27 +1625,27 @@ struct Trigger gAlhafra_TriggersOnceTheShipIsStolen[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ARMOR_MERCHANT, CONDITION_ALWAYS, MSGNO(MsgAlhafraIDontKnowINever)},
     {TRIGGER_TALK, ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgAlhafraAlhafraLostItsShipNow)},
     {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_LOST_SHIPS, CONDITION_ALWAYS, MSGNO(MsgAlhafraEvenThoughWeLostThe)},
-    {TRIGGER_TALK, ACTOR_FISHERMAN, CONDITION_ALWAYS, MSGNO(MsgAlhafraAfterWeDidAllThat)},
+    {TRIGGER_TALK, ACTOR_MAN_ASKING_ABOUT_INDRA, CONDITION_ALWAYS, MSGNO(MsgAlhafraAfterWeDidAllThat)},
     {TRIGGER_TALK, ACTOR_BOY_WITH_A_CRUSHED_BOAT, CONDITION_ALWAYS, MSGNO(MsgAlhafraItWasGreatToSee)},
     {TRIGGER_TALK, ACTOR_ALHAFRAN_GIVING_DIRECTIONS, CONDITION_ALWAYS, MSGNO(MsgAlhafraWhenTheyFindThatTheir)},
     {TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_THE_TRAVELERS, CONDITION_ALWAYS, MSGNO(MsgAlhafraItsNotLikeTheBoat)},
-    {TRIGGER_TALK, ACTOR_WOMAN_SCOLDING_THE_SAILOR, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheRepairsAreComingAlong)},
+    {TRIGGER_TALK, ACTOR_WOMAN_PUTTING_THE_SAILOR_TO_WORK, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheRepairsAreComingAlong)},
     {TRIGGER_TALK, ACTOR_GIRL_KEPT_FROM_THE_PORT, CONDITION_ALWAYS, MSGNO(MsgAlhafraWhenIsThisHouseGoing)},
-    {TRIGGER_TALK, ACTOR_CANOE_MAKERS_PARTNER, CONDITION_ALWAYS, MSGNO(MsgAlhafraItFeltSoGreatWhen)},
-    {TRIGGER_TALK, ACTOR_CANOE_MAKER, CONDITION_ALWAYS, MSGNO(MsgAlhafraBackBeforeBriggsDestroyedThe)},
-    {TRIGGER_TALK, ACTOR_SAILOR_IN_A_RED_BANDANA, CONDITION_ALWAYS, MSGNO(MsgAlhafraWeFixedTheMastSo)},
+    {TRIGGER_TALK, ACTOR_PARTNER_WAITING_FOR_THE_CANOE, CONDITION_ALWAYS, MSGNO(MsgAlhafraItFeltSoGreatWhen)},
+    {TRIGGER_TALK, ACTOR_MAN_FINISHING_A_CANOE, CONDITION_ALWAYS, MSGNO(MsgAlhafraBackBeforeBriggsDestroyedThe)},
+    {TRIGGER_TALK, ACTOR_SAILOR_ON_THE_SAILBOAT, CONDITION_ALWAYS, MSGNO(MsgAlhafraWeFixedTheMastSo)},
     {TRIGGER_TALK, ACTOR_SAILOR_BUILDING_HOUSES, CONDITION_ALWAYS, MSGNO(MsgAlhafraIfTheyCaughtAGood)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgAlhafraIfOnlyWeHadThat)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_LOST_SHIPS, CONDITION_ALWAYS, MSGNO(MsgAlhafraIHopeTradeDoesntMake)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FISHERMAN, CONDITION_ALWAYS, MSGNO(MsgAlhafraItWasMadrasBoatIt)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ASKING_ABOUT_INDRA, CONDITION_ALWAYS, MSGNO(MsgAlhafraItWasMadrasBoatIt)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_WITH_A_CRUSHED_BOAT, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheMayorSeemedSoHappy)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ALHAFRAN_GIVING_DIRECTIONS, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheMayorOfMadraSeems)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_THE_TRAVELERS, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheresNoPointInWorrying)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_SCOLDING_THE_SAILOR, CONDITION_ALWAYS, MSGNO(MsgAlhafraWereAllPullingTogetherTo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_PUTTING_THE_SAILOR_TO_WORK, CONDITION_ALWAYS, MSGNO(MsgAlhafraWereAllPullingTogetherTo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_KEPT_FROM_THE_PORT, CONDITION_ALWAYS, MSGNO(MsgAlhafraIfMomWouldStopMaking)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CANOE_MAKERS_PARTNER, CONDITION_ALWAYS, MSGNO(MsgAlhafraIKnowItsTimeTo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CANOE_MAKER, CONDITION_ALWAYS, MSGNO(MsgAlhafraFirstHeStealsAShip)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SAILOR_IN_A_RED_BANDANA, CONDITION_ALWAYS, MSGNO(MsgAlhafraWhyWorryAboutBriggsIts)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PARTNER_WAITING_FOR_THE_CANOE, CONDITION_ALWAYS, MSGNO(MsgAlhafraIKnowItsTimeTo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_FINISHING_A_CANOE, CONDITION_ALWAYS, MSGNO(MsgAlhafraFirstHeStealsAShip)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SAILOR_ON_THE_SAILBOAT, CONDITION_ALWAYS, MSGNO(MsgAlhafraWhyWorryAboutBriggsIts)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SAILOR_BUILDING_HOUSES, CONDITION_ALWAYS, MSGNO(MsgAlhafraIfBriggsHadntStolenThat)},
     {TRIGGER_TALK, ACTOR_YOUNG_MAN_WAITING_AT_THE_INN, CONDITION_ALWAYS, MSGNO(MsgAlhafraThatGuysHouseIsntFixed)},
     {TRIGGER_TALK, ACTOR_WOMAN_WAITING_AT_THE_INN, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheMayorsBeenHandingOut)},
@@ -1609,14 +1653,14 @@ struct Trigger gAlhafra_TriggersOnceTheShipIsStolen[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_WAITING_AT_THE_INN, CONDITION_ALWAYS, MSGNO(MsgAlhafraWeCouldUseSomeHelp)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_WAITING_AT_THE_INN, CONDITION_ALWAYS, MSGNO(MsgAlhafraIDontKnowWhatWill)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HUNGRY_BOY, CONDITION_ALWAYS, MSGNO(MsgAlhafraIveSeenFatherTryingTo)},
-    {TRIGGER_TALK, ACTOR_GOLD_COIN_FINDERS_HUSBAND, CONDITION_ALWAYS, MSGNO(MsgAlhafraEvenIfWeFixIt)},
-    {TRIGGER_TALK, ACTOR_GOLD_COIN_FINDER, CONDITION_ALWAYS, MSGNO(MsgAlhafraWithEveryonesHelpWeWere)},
+    {TRIGGER_TALK, ACTOR_LUCKY_MOTHERS_HUSBAND, CONDITION_ALWAYS, MSGNO(MsgAlhafraEvenIfWeFixIt)},
+    {TRIGGER_TALK, ACTOR_LUCKY_MOTHER, CONDITION_ALWAYS, MSGNO(MsgAlhafraWithEveryonesHelpWeWere)},
     {TRIGGER_TALK, ACTOR_BOY_HUNTING_FOR_COINS, CONDITION_ALWAYS, MSGNO(MsgAlhafraMomWasHappyToHear)},
-    {TRIGGER_TALK, ACTOR_GOLD_COIN_FINDERS_CHILD, CONDITION_ALWAYS, MSGNO(MsgAlhafraThereAreALotOf)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GOLD_COIN_FINDERS_HUSBAND, CONDITION_ALWAYS, MSGNO(MsgAlhafraThisIsJustTooMuch)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GOLD_COIN_FINDER, CONDITION_ALWAYS, MSGNO(MsgAlhafraHesNeverGoingToGet)},
+    {TRIGGER_TALK, ACTOR_LUCKY_MOTHERS_CHILD, CONDITION_ALWAYS, MSGNO(MsgAlhafraThereAreALotOf)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUCKY_MOTHERS_HUSBAND, CONDITION_ALWAYS, MSGNO(MsgAlhafraThisIsJustTooMuch)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUCKY_MOTHER, CONDITION_ALWAYS, MSGNO(MsgAlhafraHesNeverGoingToGet)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_HUNTING_FOR_COINS, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheresNoWayDadCan)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GOLD_COIN_FINDERS_CHILD, CONDITION_ALWAYS, MSGNO(MsgAlhafraCarryingTheseThingsAllOver)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_LUCKY_MOTHERS_CHILD, CONDITION_ALWAYS, MSGNO(MsgAlhafraCarryingTheseThingsAllOver)},
     {TRIGGER_TALK, ACTOR_MANOR_GUARD, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheMayorOfAlhafraDoes)},
     {TRIGGER_TALK, ACTOR_SECOND_MANOR_GUARD, CONDITION_ALWAYS, MSGNO(MsgAlhafraYouReallyMadeAMess)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MANOR_GUARD, CONDITION_ALWAYS, MSGNO(MsgAlhafraTheMayorWasSoMad)},
@@ -1647,7 +1691,7 @@ struct Trigger gAlhafra_TriggersOnceTheMastIsCleared[] = {
     {TRIGGER_TALK, ACTOR_WOMAN_WONDERING_WHERE_BRIGGS_WENT, CONDITION_ALWAYS, MSGNO(MsgAlhafraIWonderWhereBriggsAnd)},
     {TRIGGER_TALK, ACTOR_WOMAN_GLAD_OF_THE_SAILBOAT, CONDITION_ALWAYS, MSGNO(MsgAlhafraIHeardYouMadeIt)},
     {TRIGGER_TALK, ACTOR_MAN_WARY_OF_BRIGGS, CONDITION_ALWAYS, MSGNO(MsgAlhafraEverSinceWeHeardBriggs)},
-    {TRIGGER_TALK, ACTOR_MAN_UNMOVED_BY_THE_SHIP, CONDITION_ALWAYS, MSGNO(MsgAlhafraIDontKnowWhyEveryones)},
+    {TRIGGER_TALK, ACTOR_MAN_NOT_EXCITED_BY_THE_SHIP, CONDITION_ALWAYS, MSGNO(MsgAlhafraIDontKnowWhyEveryones)},
     {TRIGGER_TALK, ACTOR_MAN_GLAD_TO_SEE_FELIX, CONDITION_ALWAYS, MSGNO(MsgAlhafraOhItsYouWhereHave)},
     {TRIGGER_TALK, ACTOR_WOMAN_ON_ALHAFRAS_FUTURE, CONDITION_ALWAYS, MSGNO(MsgAlhafraWithThatShipAlhafrasGoing)},
     {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_STONE, CONDITION_ALWAYS, MSGNO(MsgAlhafraOnceThatStoneWasTaken)},
@@ -1664,7 +1708,7 @@ struct Trigger gAlhafra_TriggersOnceTheMastIsCleared[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_WONDERING_WHERE_BRIGGS_WENT, CONDITION_ALWAYS, MSGNO(MsgAlhafraWhyDoIHaveTo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_GLAD_OF_THE_SAILBOAT, CONDITION_ALWAYS, MSGNO(MsgAlhafraIHateToTellFelix)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_WARY_OF_BRIGGS, CONDITION_ALWAYS, MSGNO(MsgAlhafraIdBetThatBriggsFled)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_UNMOVED_BY_THE_SHIP, CONDITION_ALWAYS, MSGNO(MsgAlhafraBriggsPaidALotFor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_NOT_EXCITED_BY_THE_SHIP, CONDITION_ALWAYS, MSGNO(MsgAlhafraBriggsPaidALotFor)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_GLAD_TO_SEE_FELIX, CONDITION_ALWAYS, MSGNO(MsgAlhafraFelixMustHaveFoundHimself)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_ALHAFRAS_FUTURE, CONDITION_ALWAYS, MSGNO(MsgAlhafraImCertainTheOnlyPerson)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_STONE, CONDITION_ALWAYS, MSGNO(MsgAlhafraNowThatAllTheDebris)},
@@ -1678,7 +1722,7 @@ struct Trigger gAlhafra_TriggersOnceTheMastIsCleared[] = {
     {TRIGGER_TABLE_END},
 };
 
-s32 gAlhafra_OfficialStepsBackScript[] = {
+s32 gAlhafra_ElderStepsBackScript[] = {
     SC_ANIMATION(2),
     SC_MOVE_BY(0, 0, -8),
     SC_SYNC,
@@ -1691,7 +1735,7 @@ s32 gAlhafra_OfficialStepsBackScript[] = {
     SC_END,
 };
 
-u32 gAlhafra_PasserbyWalksOffScript[] = {
+u32 gAlhafra_WomanWalksOffScript[] = {
     SC_ANIMATION(2),
     SC_MOVE(552, 0, 808),
     SC_SYNC,
@@ -1701,7 +1745,7 @@ u32 gAlhafra_PasserbyWalksOffScript[] = {
     SC_END,
 };
 
-u32 gAlhafra_PasserbyLeadsFromCell21Script[] = {
+u32 gAlhafra_AlhafranLeadsBesideFelixScript[] = {
     SC_ANIMATION(2),
     SC_MOVE(440, 0, 800),
     SC_SYNC,
@@ -1720,7 +1764,7 @@ u32 gAlhafra_PasserbyLeadsFromCell21Script[] = {
     SC_END,
 };
 
-u32 gAlhafra_MayorFollowsFromCell21Script[] = {
+u32 gAlhafra_MayorFollowsBesideFelixScript[] = {
     SC_ANIMATION(2),
     SC_MOVE(424, 0, 792),
     SC_SYNC,
@@ -1737,7 +1781,7 @@ u32 gAlhafra_MayorFollowsFromCell21Script[] = {
     SC_END,
 };
 
-u32 gAlhafra_OfficialFollowsFromCell21Script[] = {
+u32 gAlhafra_ElderFollowsBesideFelixScript[] = {
     SC_ANIMATION(2),
     SC_MOVE(440, 0, 808),
     SC_SYNC,
@@ -1756,7 +1800,7 @@ u32 gAlhafra_OfficialFollowsFromCell21Script[] = {
     SC_END,
 };
 
-u32 gAlhafra_FirstMadranFollowsFromCell21Script[] = {
+u32 gAlhafra_WaitingMadranFollowsBesideFelixScript[] = {
     SC_ANIMATION(2),
     SC_MOVE(440, 0, 808),
     SC_SYNC,
@@ -1773,7 +1817,7 @@ u32 gAlhafra_FirstMadranFollowsFromCell21Script[] = {
     SC_END,
 };
 
-u32 gAlhafra_FirstSoldierFollowsFromCell21Script[] = {
+u32 gAlhafra_FirstSoldierFollowsBesideFelixScript[] = {
     SC_ANIMATION(2),
     SC_MOVE(408, 0, 760),
     SC_SYNC,
@@ -1786,7 +1830,7 @@ u32 gAlhafra_FirstSoldierFollowsFromCell21Script[] = {
     SC_END,
 };
 
-u32 gAlhafra_ElderFollowsFromCell21Script[] = {
+u32 gAlhafra_WearyMadranFollowsBesideFelixScript[] = {
     SC_ANIMATION(2),
     SC_MOVE(408, 0, 760),
     SC_SYNC,
@@ -1803,7 +1847,7 @@ u32 gAlhafra_ElderFollowsFromCell21Script[] = {
     SC_END,
 };
 
-u32 gAlhafra_SecondSoldierFollowsFromCell21Script[] = {
+u32 gAlhafra_SecondSoldierFollowsBesideFelixScript[] = {
     SC_ANIMATION(2),
     SC_MOVE_BY(16, 0, 0),
     SC_SYNC,
@@ -1824,7 +1868,7 @@ u32 gAlhafra_SecondSoldierFollowsFromCell21Script[] = {
     SC_END,
 };
 
-u32 gAlhafra_SecondMadranFollowsFromCell21Script[] = {
+u32 gAlhafra_SilentMadranFollowsBesideFelixScript[] = {
     SC_ANIMATION(2),
     SC_MOVE(408, 0, 760),
     SC_SYNC,
@@ -1843,7 +1887,7 @@ u32 gAlhafra_SecondMadranFollowsFromCell21Script[] = {
     SC_END,
 };
 
-s32 gAlhafra_PasserbyLeadsFromCell20Script[] = {
+s32 gAlhafra_AlhafranLeadsBehindFelixScript[] = {
     SC_ANIMATION(2),
     SC_MOVE_BY(0, 0, -16),
     SC_SYNC,
@@ -1860,7 +1904,7 @@ s32 gAlhafra_PasserbyLeadsFromCell20Script[] = {
     SC_END,
 };
 
-u32 gAlhafra_MayorFollowsFromCell20Script[] = {
+u32 gAlhafra_MayorFollowsBehindFelixScript[] = {
     SC_ANIMATION(2),
     SC_MOVE(328, 0, 808),
     SC_SYNC,
@@ -1873,7 +1917,7 @@ u32 gAlhafra_MayorFollowsFromCell20Script[] = {
     SC_END,
 };
 
-u32 gAlhafra_OfficialFollowsFromCell20Script[] = {
+u32 gAlhafra_ElderFollowsBehindFelixScript[] = {
     SC_ANIMATION(2),
     SC_MOVE(328, 0, 808),
     SC_SYNC,
@@ -1886,7 +1930,7 @@ u32 gAlhafra_OfficialFollowsFromCell20Script[] = {
     SC_END,
 };
 
-u32 gAlhafra_FirstMadranFollowsFromCell20Script[] = {
+u32 gAlhafra_WaitingMadranFollowsBehindFelixScript[] = {
     SC_ANIMATION(2),
     SC_MOVE(328, 0, 808),
     SC_SYNC,
@@ -1899,7 +1943,7 @@ u32 gAlhafra_FirstMadranFollowsFromCell20Script[] = {
     SC_END,
 };
 
-u32 gAlhafra_ElderFollowsFromCell20Script[] = {
+u32 gAlhafra_WearyMadranFollowsBehindFelixScript[] = {
     SC_ANIMATION(2),
     SC_MOVE_BY(0, 0, 16),
     SC_SYNC,
@@ -1914,7 +1958,7 @@ u32 gAlhafra_ElderFollowsFromCell20Script[] = {
     SC_END,
 };
 
-u32 gAlhafra_SecondSoldierFollowsFromCell20Script[] = {
+u32 gAlhafra_SecondSoldierFollowsBehindFelixScript[] = {
     SC_ANIMATION(2),
     SC_MOVE_BY(0, 0, 16),
     SC_SYNC,
@@ -1929,7 +1973,7 @@ u32 gAlhafra_SecondSoldierFollowsFromCell20Script[] = {
     SC_END,
 };
 
-u32 gAlhafra_FirstSoldierFollowsFromCell20Script[] = {
+u32 gAlhafra_FirstSoldierFollowsBehindFelixScript[] = {
     SC_ANIMATION(2),
     SC_MOVE_BY(0, 0, 32),
     SC_SYNC,
@@ -1944,7 +1988,7 @@ u32 gAlhafra_FirstSoldierFollowsFromCell20Script[] = {
     SC_END,
 };
 
-s32 gAlhafra_SecondMadranFollowsFromCell20Script[] = {
+s32 gAlhafra_SilentMadranFollowsBehindFelixScript[] = {
     SC_ANIMATION(2),
     SC_MOVE_BY(-20, 0, 32),
     SC_SYNC,

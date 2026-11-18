@@ -25,10 +25,10 @@ struct SpeakerSprite {
 /// SE_VOICE_FIRST.
 #define SPEAKER_VOICE(sound) ((sound) - SE_VOICE_FIRST)
 /// SpeakerDefinition.value of a sprite with no voice.
-#define SPEAKER_VOICE_NONE 0xff
+#define SPEAKER_VOICE_NONE 255
 /// SpeakerDefinition.haltedLines of a sprite Halt never stops: the monsters
 /// that talk, and things such as chests, rocks, trees and signposts.
-#define SPEAKER_HALTED_LINES_NONE 0xff
+#define SPEAKER_HALTED_LINES_NONE 255
 
 /// A speaker definition, a row of gSpeakerDefinitions: a sprite, its
 /// voice (SPEAKER_VOICE_NONE for none) and the lines it says while Halted.

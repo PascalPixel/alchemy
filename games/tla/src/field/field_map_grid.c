@@ -1075,25 +1075,26 @@ void Map_ApplyFlagEdits(s32 flag, s32 attributes) {
   }
 }
 
-/// Reads map's camera bounds from its header, in 8-pixel tiles: size[0] its
-/// left, size[1] its right, size[2] its top and size[3] its bottom, a right or
-/// bottom of 0 standing for the map's whole MAPGRID_TILES.
-void Map_GetHeaderSize(s32 map, s32 *size) {
+/// Reads map's camera bounds from its header, in 8-pixel tiles: bounds[0] its
+/// left, bounds[1] its right, bounds[2] its top and bounds[3] its bottom, a
+/// right or bottom of 0 standing for the map's whole MAPGRID_TILES.
+void Map_GetHeaderSize(s32 map, s32 *bounds) {
   struct MapHeader *header;
 
-  // gMaps[map].header, its address worked out by hand.
+  /* FAKEMATCH(temporary): gMaps' row address summed by hand; as
+   * gMaps[map].header. */
   header = MAPGRID_RESOURCE(
       *(const u16 *)(map * sizeof(struct MapResources) + (u32)gMaps));
-  size[0] = header->cameraBounds[0];
+  bounds[0] = header->cameraBounds[0];
   if (header->cameraBounds[2] == 0)
-    size[1] = MAPGRID_TILES;
+    bounds[1] = MAPGRID_TILES;
   else
-    size[1] = header->cameraBounds[2];
-  size[2] = header->cameraBounds[1];
+    bounds[1] = header->cameraBounds[2];
+  bounds[2] = header->cameraBounds[1];
   if (header->cameraBounds[3] == 0)
-    size[3] = MAPGRID_TILES;
+    bounds[3] = MAPGRID_TILES;
   else
-    size[3] = header->cameraBounds[3];
+    bounds[3] = header->cameraBounds[3];
 }
 
 /// Decodes the current map's cells into the map cell buffer and converts them,
@@ -1168,8 +1169,9 @@ s32 WorldMap_WriteLayerCellTile(s32 layer, s32 x, s32 y, s32 tile, s32 update) {
         screenTiles++;
         sourceTiles += sizeof(struct WorldMapCell) / 2;
       }
-      // On to the next cell's two tile rows, two tiles a halfword.
-      screenTiles += WORLD_MAP_TILE_MAP_WIDTH - WORLD_MAP_TILE_CELLS;
+      // Down two rows of the tile map, of WORLD_MAP_TILE_MAP_WIDTH / 2
+      // halfwords each, less the halfwords just written.
+      screenTiles += 2 * (WORLD_MAP_TILE_MAP_WIDTH / 2) - WORLD_MAP_TILE_CELLS;
     }
   }
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);

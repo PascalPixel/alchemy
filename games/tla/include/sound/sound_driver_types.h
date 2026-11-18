@@ -36,6 +36,10 @@
 #define SOUND_MODE_FREQ 0x000F0000 ///< the rate
 #define SOUND_MODE_FREQ_SHIFT 16
 #define SOUND_MODE_DA_BIT 0x00B00000 ///< the sound bias's resolution
+/// The resolution itself, SOUNDBIAS_H's bits 7..6 (SOUNDBIAS_H_RESOLUTION) at
+/// bit SOUND_MODE_DA_BIT_SHIFT; bit 23 lets a mode ask for resolution 0.
+#define SOUND_MODE_DA_BIT_RESOLUTION 0x00300000
+#define SOUND_MODE_DA_BIT_SHIFT 20
 
 #define REG_NR10 (*(volatile u8 *)0x04000060)
 #define REG_NR11 (*(volatile u8 *)0x04000062)
@@ -64,6 +68,35 @@
 #define SOUNDCNT_X_ALL_TONES_ON 0x0f
 #define REG_SOUNDBIAS_H (*(volatile u8 *)0x04000089)
 #define REG_WAVE_RAM ((volatile u32 *)0x04000090)
+// The CGB channels' register bits, as GBATEK gives them.
+#define NRX2_ENVELOPE_UP 0x08 ///< NRx2: the envelope counts the volume up
+#define NRX4_LENGTH_STOP 0x40 ///< NRx4: the length counter stops the sound
+#define NRX4_RESTART 0x80     ///< NRx4: (re)starts the channel's sound
+/// NR30: plays wave RAM's second bank, so the CPU writes the first.
+#define NR30_SECOND_BANK 0x40
+#define NR30_PLAY 0x80      ///< NR30: channel 3 plays
+#define NR51_RIGHT_ALL 0x0F ///< NR51: the four channels to the right speaker
+#define NR51_LEFT_ALL 0xF0  ///< NR51: the four channels to the left speaker
+/// NR51: CGB channel n, 1 to 4, to both speakers (bit n - 1 for the right,
+/// n + 3 for the left).
+#define NR51_CHANNEL_BOTH(n) (0x11 << ((n) - 1))
+/// NR50: the master volume at its loudest, 7, on both speakers.
+#define NR50_VOLUME_FULL 0x77
+
+/// SOUNDBIAS_H's bits below the resolution: the bias level's top two and four
+/// unused, kept as the resolution changes.
+#define SOUNDBIAS_H_LEVEL 0x3F
+/// SOUNDBIAS_H's bits 7..6, the amplitude resolution: 0 is 9 bits at 32768
+/// samples a second, each step one bit fewer at twice the rate.
+#define SOUNDBIAS_H_RESOLUTION 0xC0
+#define SOUNDBIAS_H_RESOLUTION_SHIFT 6
+#define SOUNDBIAS_H_RESOLUTION_8BIT 0x40 ///< 8 bits at 65536 a second
+#define SOUNDBIAS_H_RESOLUTION_7BIT 0x80 ///< 7 bits at 131072 a second
+/// The tempo count that runs one song tick (MusicPlayerInfo.tempoCount), and
+/// so the tempo a song starts at: a tick a VBlank.
+#define SOUND_TEMPO_PER_TICK 150
+/// MusicPlayerInfo.tempoScale that plays a song at its own tempo.
+#define SOUND_TEMPO_SCALE_NORMAL 256
 
 struct SoundChannel;
 struct CgbChannel;
@@ -269,7 +302,7 @@ struct CgbChannel {
   u8 sustainLevel; ///< (peak * sustain + 15) / 16.
   u8 trigger;      ///< Value for NRx4: 7 restart, 6 length on, 2..0 frequency.
   u8 panBits;      ///< NR51 bits this note sets: one side or both.
-  u8 channelBits;  ///< This channel's NR51 bits: 0x11, 0x22, 0x44, 0x88.
+  u8 channelBits;  ///< This channel's NR51 bits, NR51_CHANNEL_BOTH(n).
   u8 modified;     ///< CgbChannelModify: what to write to the channel.
   u8 length;       ///< The voice's length.
   u8 sweep;        ///< CGB_CHANNEL_SWEEP_SQUARE's NR10 sweep; 8 when none.
@@ -439,14 +472,15 @@ struct MusicPlayerInfo {
   /// Nonzero: a song of lower priority does not replace a playing one. From
   /// gMPlayTable, 0 for every player.
   u8 checkPriority;
-  u32 clock;      ///< Song ticks played since the song started.
-  u8 gap[8];      ///< Unused by this driver, as in pret's.
-  u8 *workBytes;  ///< gMPlayMemAccArea, which the work-byte command uses.
-  u16 tempo;      ///< Twice the tempo command's byte; 150 at start.
-  u16 tempoScale; ///< 256 plays at the song's tempo.
+  u32 clock;     ///< Song ticks played since the song started.
+  u8 gap[8];     ///< Unused by this driver, as in pret's.
+  u8 *workBytes; ///< gMPlayMemAccArea, which the work-byte command uses.
+  /// Twice the tempo command's byte; SOUND_TEMPO_PER_TICK at start.
+  u16 tempo;
+  u16 tempoScale; ///< SOUND_TEMPO_SCALE_NORMAL plays at the song's tempo.
   /// tempo * tempoScale / 256, added to tempoCount each VBlank.
   u16 tempoStep;
-  /// Each 150 in it runs one tick, so a tempoStep of 150 is a tick a VBlank.
+  /// Each SOUND_TEMPO_PER_TICK in it runs one tick.
   u16 tempoCount;
   u16 fadePeriod;  ///< VBlanks between fade steps; 0 when not fading.
   u16 fadeCounter; ///< VBlanks left until the next fade step.

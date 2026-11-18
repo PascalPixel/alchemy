@@ -211,6 +211,21 @@ extern s32 gJupiterLighthouse_BeaconSparkScript[];
 
 void FieldCamera_WaitForArrival(void);
 
+/// Whom JupiterLighthouse_LowerElevator carries down, and where the camera
+/// goes: Alex, Agatio and Karst with the camera moving south after them;
+/// Isaac, the camera after him; Felix, carried all the way down; and Alex,
+/// Agatio and Karst with the camera following Isaac.
+enum ElevatorDescent {
+  DESCENT_ALEX_AGATIO_KARST,
+  DESCENT_ISAAC,
+  DESCENT_FELIX,
+  DESCENT_ALEX_AGATIO_KARST_FOLLOWING_ISAAC
+};
+
+/// How JupiterLighthouse_RaiseElevator brings the elevator back: put back at
+/// once, or rising with the camera moving after it.
+enum ElevatorAscent { ASCENT_AT_ONCE, ASCENT_RISING };
+
 void JupiterLighthouse_LowerElevator(s32 mode);
 void JupiterLighthouse_RaiseElevator(s32 mode);
 void JupiterLighthouse_PlaceAngelsAndLid(void);
@@ -1276,7 +1291,7 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   // "Felix! Jenna!"
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 0);
   Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(512), toFIXED(328), north);
-  JupiterLighthouse_LowerElevator(0);
+  JupiterLighthouse_LowerElevator(DESCENT_ALEX_AGATIO_KARST);
   Scene_PlayMusic();
   FieldEvent_Wait(10);
   Actor_SetPositionAndFacing(ACTOR_ISAAC, toFIXED(536), toFIXED(368), north);
@@ -1314,7 +1329,7 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   FieldEvent_ShowMessageThenWait(ACTOR_ISAAC, 0, 0);
   FieldCamera_MoveTo(512, 96, 352, 1);
   FieldCamera_WaitForArrival();
-  JupiterLighthouse_RaiseElevator(0);
+  JupiterLighthouse_RaiseElevator(ASCENT_AT_ONCE);
   Actor_AnimateThenWait(ACTOR_GARET, ANIM_SHAKE_HEAD, 33);
   // "How could they have done that to Jenna? Those monsters!"
   FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 0);
@@ -1502,14 +1517,14 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
-  JupiterLighthouse_LowerElevator(1);
+  JupiterLighthouse_LowerElevator(DESCENT_ISAAC);
   FieldEvent_Wait(100);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
-  JupiterLighthouse_RaiseElevator(1);
+  JupiterLighthouse_RaiseElevator(ASCENT_RISING);
   FieldEvent_Wait(60);
   EventCamera_FollowActor(ACTOR_FELIX, 1);
   FieldCamera_WaitForArrival();
@@ -1565,7 +1580,7 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTH);
   FieldEvent_Wait(10);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  JupiterLighthouse_LowerElevator(2);
+  JupiterLighthouse_LowerElevator(DESCENT_FELIX);
   work = gFieldWork;
   work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
@@ -1806,7 +1821,7 @@ void JupiterLighthouse_WeBeatThem(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
-  JupiterLighthouse_LowerElevator(3);
+  JupiterLighthouse_LowerElevator(DESCENT_ALEX_AGATIO_KARST_FOLLOWING_ISAAC);
   Scene_PlayMusic();
   FieldEvent_ShowMessageThenWait(ACTOR_ISAAC, 0, 0);
   Actor_ShowEmote(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
@@ -1815,7 +1830,7 @@ void JupiterLighthouse_WeBeatThem(void) {
   Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_WEST);
   Actor_FaceDirectionAndWait(ACTOR_GARET, FACING_NORTH);
   FieldEvent_Wait(20);
-  JupiterLighthouse_RaiseElevator(0);
+  JupiterLighthouse_RaiseElevator(ASCENT_AT_ONCE);
   FieldActor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
   FieldEvent_ShowMessageThenWait(ACTOR_GARET, 0, 0);
   Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHWEST);
@@ -1947,14 +1962,14 @@ void JupiterLighthouse_WeBeatThem(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_EAST, 0);
-  JupiterLighthouse_LowerElevator(1);
+  JupiterLighthouse_LowerElevator(DESCENT_ISAAC);
   FieldEvent_Wait(100);
   Actor_FaceDirection(ACTOR_FELIX, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_PIERS, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_WEST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
-  JupiterLighthouse_RaiseElevator(1);
+  JupiterLighthouse_RaiseElevator(ASCENT_RISING);
   FieldEvent_Wait(60);
   EventCamera_FollowActor(ACTOR_FELIX, 1);
   FieldCamera_WaitForArrival();
@@ -2010,7 +2025,7 @@ void JupiterLighthouse_WeBeatThem(void) {
   Actor_FaceDirectionAndWait(ACTOR_FELIX, FACING_SOUTH);
   FieldEvent_Wait(10);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  JupiterLighthouse_LowerElevator(2);
+  JupiterLighthouse_LowerElevator(DESCENT_FELIX);
   work = gFieldWork;
   work->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
@@ -2056,9 +2071,8 @@ extern s32 gJupiterLighthouse_ThirdElevatorRiders[];
 extern s32 gJupiterLighthouse_FourthElevatorRiders[];
 extern s32 gJupiterLighthouse_FloatingPlatforms[];
 
-/// The elevator (map layer 2) sinks with its riders, speeding up a tenth of a
-/// pixel every fourth frame: mode 0 and 3 carry Alex, Agatio and Karst, 1
-/// Isaac and 2 Felix, and picks where the camera goes; 0, 1 and 3 stop after
+/// The elevator (map layer 2) sinks with the riders of its descent, speeding
+/// up a tenth of a pixel every fourth frame; all but DESCENT_FELIX stop after
 /// 120 frames.
 void JupiterLighthouse_LowerElevator(s32 mode) {
   FIXED speed;
@@ -2075,14 +2089,14 @@ void JupiterLighthouse_LowerElevator(s32 mode) {
   count = 0;
   gJupiterLighthouse_ElevatorLevel = elevator->offsetY;
   switch (mode) {
-  case 0:
-  case 3:
+  case DESCENT_ALEX_AGATIO_KARST:
+  case DESCENT_ALEX_AGATIO_KARST_FOLLOWING_ISAAC:
     list = gJupiterLighthouse_FirstElevatorRiders;
     break;
-  case 1:
+  case DESCENT_ISAAC:
     list = gJupiterLighthouse_SecondElevatorRiders;
     break;
-  case 2:
+  case DESCENT_FELIX:
     list = gJupiterLighthouse_ThirdElevatorRiders;
     break;
   default:
@@ -2118,17 +2132,17 @@ void JupiterLighthouse_LowerElevator(s32 mode) {
     if (speed > toFIXED(3) / 2 - 1)
       speed = toFIXED(3) / 2;
     System_Wait(1);
-    if (mode == 0) {
+    if (mode == DESCENT_ALEX_AGATIO_KARST) {
       if (i == 40)
         FieldCamera_MoveTo(512, 104, 304, 1);
       if (i == 120)
         break;
-    } else if (mode == 1) {
+    } else if (mode == DESCENT_ISAAC) {
       if (i == 40)
         FieldCamera_MoveTo(512, 104, 352, 1);
       if (i == 120)
         break;
-    } else if (mode == 3) {
+    } else if (mode == DESCENT_ALEX_AGATIO_KARST_FOLLOWING_ISAAC) {
       if (i == 40)
         EventCamera_FollowActor(ACTOR_ISAAC, 1);
       if (i == 120)
@@ -2151,7 +2165,7 @@ void JupiterLighthouse_LowerElevator(s32 mode) {
 extern s32 gJupiterLighthouse_RisingElevatorRiders[];
 
 /// The elevator rises back to where it was before it sank, slowing as it nears
-/// it; mode 0 only puts it back.
+/// it, or with ASCENT_AT_ONCE is only put back.
 void JupiterLighthouse_RaiseElevator(s32 mode) {
   struct MapLayer *elevator = &Ram_HeapSlots->mapGrid->layers[2];
   s32 speed = toFIXED(3) / 2;
@@ -2163,7 +2177,7 @@ void JupiterLighthouse_RaiseElevator(s32 mode) {
     Actor_Get(ids[i])->motionFlags = 0;
     count++;
   }
-  if (mode != 0) {
+  if (mode != ASCENT_AT_ONCE) {
     Event_PlaySound(SE_LIFT);
     i = 0;
     elevator->offsetY += toFIXED(3) / 2;
@@ -2182,7 +2196,7 @@ void JupiterLighthouse_RaiseElevator(s32 mode) {
         speed = speed * 15 / 16;
       if (speed < toFIXED(1) / 20)
         speed = toFIXED(1) / 20;
-      if (mode == 1 && i == 40)
+      if (mode == ASCENT_RISING && i == 40)
         FieldCamera_MoveTo(288, 104, 368, 1);
       System_Wait(1);
       i++;
@@ -2312,7 +2326,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 
-/// The frames the aerie's JupiterLighthouse_EnergizeAngels raises an angel and
+/// The frames the aerie's JupiterLighthouse_RaiseAngels raises an angel and
 /// tilts the lid, then lifts all three once both angels are energized.
 #define ANGEL_RISE_FRAMES 64
 #define LID_LIFT_FRAMES 256

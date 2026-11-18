@@ -95,21 +95,17 @@
 /// The battle background's colours: BG palettes 6 to 13, filled from
 /// BattleWork.palette, darkened or not.
 #define BATTLE_BG_PALETTE ((u16 *)&BG_PLTT_COLOR(6, 0))
-/// The colours in BATTLE_BG_PALETTE, eight palettes of 16.
-#define BATTLE_BACKGROUND_COLORS (8 * 16)
-
-/// The battle background's darkening step (BattleBackground_SetPaletteLevel,
-/// BattleBackground_Load, the element glow): each level takes 1092 from the
-/// 16.16 brightness, so level 60 is almost black.
-#define BACKGROUND_LEVEL_STEP 1092
 
 /// The opening curtain's tiles: 4-bit tiles 128 to 136 of character block 1,
 /// which BG1 shows from its map in screen block 12.
 #define CURTAIN_TILE(n) (BG_CHAR_BLOCK(1) + (128 + (n)) * TILE_SIZE_4BPP)
 
-/// BG1 during a battle: 256 colours, priority 3, its map in screen block 31.
+/// BG1 during a battle: 256 colours, priority 3, its map in screen block
+/// BATTLE_BG1_SCREEN_BLOCK.
+#define BATTLE_BG1_SCREEN_BLOCK 31
 #define BATTLE_BG1CNT                                                          \
-  (BGCNT_PRIORITY(3) | BGCNT_256_COLORS | BGCNT_SCREEN_BASE(31))
+  (BGCNT_PRIORITY(3) | BGCNT_256_COLORS |                                      \
+   BGCNT_SCREEN_BASE(BATTLE_BG1_SCREEN_BLOCK))
 
 /// In a link battle each console sends LINK_PARTY_SIZE places, at most three
 /// party members (LinkBattle_SendParty), and the opponent's take the first
@@ -187,6 +183,10 @@ enum BattleCastKind {
   CAST_ENEMY = 2     ///< the element's streaks
 };
 
+/// An HP change that defeats any unit: the Grim Reaper's call deals it, and the
+/// debug defeat.
+#define DEFEAT_HP_CHANGE 0xc0000000
+
 /// BattleAI_ChooseTarget's results when it picks no one: the side it
 /// may target lists no one, or no one there is worth the ability.
 #define TARGET_PICK_SIDE_EMPTY -2
@@ -195,8 +195,12 @@ enum BattleCastKind {
 /// The list place codes the target pickers return (battle_targeting.c,
 /// Battle_FindUnitPlace): a place in the party's list or the enemies',
 /// or'd with the side's tag.
-#define PLACE_PARTY 0x100
-#define PLACE_ENEMY 0x180
+#define PLACE_PARTY (1 << 8)
+#define PLACE_ENEMY (PLACE_PARTY | PLACE_ENEMY_SIDE)
+/// A place code's side bit, set for the enemies' list, and its place in the
+/// list (Battle_GetUnitAtPlace).
+#define PLACE_ENEMY_SIDE (1 << 7)
+#define PLACE_INDEX_MASK ((1 << 4) - 1)
 
 /// BattleAction.target of a held unit's lost action (COMMAND_NONE, from
 /// Battle_BuildEnemyActions and

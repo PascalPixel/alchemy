@@ -171,22 +171,28 @@ s32 Shop_Run(s32 stockRow, s32 keeperId) {
 #define SHOP_DEBUG_STOCK_ROW SHOP_STOCK_ROW_VALE_ARMOR
 #endif
 
-/// Opens the debug shop with 200000 coins, the ticket counter at its cap,
+/// The coins the debug shop gives.
+#define DEBUG_SHOP_COINS 200000
+/// The actor whose sprite picks the debug shop keeper's portrait, in whatever
+/// room it opens.
+#define DEBUG_SHOP_KEEPER 30
+
+/// Opens the debug shop with DEBUG_SHOP_COINS, the ticket counter at its cap,
 /// broken equipment for repairs and poisoned or haunted party members for the
 /// sanctum.
 s32 Shop_OpenDebugShop(s32 unused) {
-  gMainRoutineWork.holdings.coins = 200000;
-  gMainRoutineWork.holdings.shopGifts = 28;
+  gMainRoutineWork.holdings.coins = DEBUG_SHOP_COINS;
+  gMainRoutineWork.holdings.shopGifts = SHOP_GIFTS_MAX;
   Inventory_EquipFar(
       GARET,
       Inventory_AddItemFar(GARET, INVENTORY_BROKEN | ITEM_VIRTUOUS_ARMLET));
   Inventory_EquipFar(
       ISAAC, Inventory_AddItemFar(ISAAC, INVENTORY_BROKEN | ITEM_MURAMASA));
   Inventory_AddItemFar(IVAN, ITEM_BONE);
-  Unit_GetFar(MIA)->poison = 1;
-  Unit_GetFar(JENNA)->poison = 1;
+  Unit_GetFar(MIA)->poison = POISON_NORMAL;
+  Unit_GetFar(JENNA)->poison = POISON_NORMAL;
   Unit_GetFar(IVAN)->haunt = 1;
-  Shop_Run(SHOP_DEBUG_STOCK_ROW, 30);
+  Shop_Run(SHOP_DEBUG_STOCK_ROW, DEBUG_SHOP_KEEPER);
   return 0;
 }
 
@@ -216,7 +222,8 @@ void Shop_ShowKeeperMessage(s32 messageId) {
   if ((s8)shop->warriorShop != 0)
     resolvedMessage += MsgWarriorShopWelcome - MsgWeaponShopWelcome;
   Message_OpenWindowFar(resolvedMessage, 5, 0,
-                        MESSAGE_WINDOW_VOICE(portraitResource) | 0x22);
+                        MESSAGE_WINDOW_VOICE(portraitResource) |
+                            MESSAGE_WINDOW_FIXED_X | MESSAGE_WINDOW_UNREAD);
   while (Message_AllTypedFar() == 0)
     wait(1);
   wait(1);
@@ -252,7 +259,8 @@ void Shop_ShowKeeperMessageHidingCursor(s32 messageId) {
   (*cursorSlot)->motion = WINDOW_SPRITE_MOTION_HIDDEN;
   Message_CloseFinishedWindowsFar();
   Message_OpenWindowFar(resolvedMessage, 5, 0,
-                        MESSAGE_WINDOW_VOICE(portraitResource) | 0x22);
+                        MESSAGE_WINDOW_VOICE(portraitResource) |
+                            MESSAGE_WINDOW_FIXED_X | MESSAGE_WINDOW_UNREAD);
   while (Message_AllTypedFar() == 0) {
     wait(1);
   }
@@ -298,3 +306,5 @@ NodeChain_GetNodeAtIndex(struct SelectionMenuCursorView *state) {
 }
 
 #undef SHOP_DEBUG_STOCK_ROW
+#undef DEBUG_SHOP_COINS
+#undef DEBUG_SHOP_KEEPER

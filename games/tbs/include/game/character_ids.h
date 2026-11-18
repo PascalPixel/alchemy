@@ -20,11 +20,11 @@ enum CharacterId {
 /// The portraits, one for each row of the portrait icons (Ui_Icons,
 /// graphics/ui/icons/icons.tsv) in order; rows 8 to 15 and 65 to 79 are empty
 /// and have no names. A character's portrait is its character id.
-/// Icon_LoadWithPalette takes a portrait number below 128 as its row, and the
-/// other speakers' portraits, numbered from 128 (Portrait_GetForSpeaker), as
-/// the rows from PORTRAIT_JUPITER_DJINNI on; each of those is the face of the
-/// speaker whose sprite gPortrait_SpriteMap pairs with it, and takes that
-/// sprite's name.
+/// Icon_LoadWithPalette takes a portrait number below PORTRAIT_SPRITE_MAP_FIRST
+/// as its row, and the other speakers' portraits, numbered from it
+/// (Portrait_GetForSpeaker), as the rows from PORTRAIT_JUPITER_DJINNI on; each
+/// of those is the face of the speaker whose sprite gPortrait_SpriteMap pairs
+/// with it, and takes that sprite's name.
 enum PortraitId {
   PORTRAIT_ISAAC,
   PORTRAIT_GARET,
@@ -86,5 +86,9 @@ enum PortraitId {
   PORTRAIT_INVISIBLE_BABI,
   PORTRAIT_FARAN
 };
+
+/// The portrait number of gPortrait_SpriteMap's first speaker: the speakers
+/// that are no playable character are numbered from it.
+#define PORTRAIT_SPRITE_MAP_FIRST 128
 
 #endif

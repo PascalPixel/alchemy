@@ -10,6 +10,20 @@
 #define RAMSES_FIRST_PUFF 6       ///< the first puff in work->particles
 #define RAMSES_FIRST_ROCK_PUFF 30 ///< the first rock puff in work->particles
 #define RAMSES_SPARKS 512         ///< sparks of the strike
+/// The statue's own sprites, its fist's two after them, and the rocks' after
+/// those.
+#define RAMSES_STATUE_SPRITES 7
+#define RAMSES_FIST_SPRITE RAMSES_STATUE_SPRITES
+#define RAMSES_FIRST_ROCK_SPRITE (RAMSES_FIST_SPRITE + 2)
+/// A puff's life: four pictures, six frames each; a spent one keeps its
+/// variant past it.
+#define RAMSES_PUFF_FRAMES 24
+#define RAMSES_PUFFS 56 ///< puffs drifted and drawn
+/// The fist's three slams, the first on the frame its circling ends, each
+/// RAMSES_SLAM_INTERVAL frames after the last.
+#define RAMSES_SLAMS 3
+#define RAMSES_FIRST_SLAM 91
+#define RAMSES_SLAM_INTERVAL 40
 
 /// In a desert the giant statue of Ramses pounds the ground with its fist while
 /// rocks rain down, then launches the fist at the targets, which strikes them
@@ -43,15 +57,15 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
   BattleEffect_WipeCanvas(CANVAS_WIPE_ACROSS, CANVAS_WIPE_FILL);
   BattleEffect_SelectLivingTargets(work->args);
   // The statue, its fist and wrist, then six rocks.
-  BattleEffect_SpawnObjects(9, SPRITE_RAMSES, 2);
+  BattleEffect_SpawnObjects(RAMSES_FIRST_ROCK_SPRITE, SPRITE_RAMSES, 2);
   for (i = 0; i != RAMSES_ROCKS; i++) {
     struct Sprite *sprite = Sprite_CreateFar(SPRITE_BATTLE_ROCKS);
 
-    work->sprites[9 + i] = sprite;
+    work->sprites[RAMSES_FIRST_ROCK_SPRITE + i] = sprite;
     if (sprite != 0) {
       sprite->flags = 0;
       Sprite_StartAnimationFar(sprite, i % 3);
-      work->sprites[9 + i]->image.priority = 1;
+      work->sprites[RAMSES_FIRST_ROCK_SPRITE + i]->image.priority = 1;
     }
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
@@ -85,8 +99,8 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
     rock->velocityY = 0;
     rock->variant = 0;
   }
-  for (i = 0; i != 58; i++)
-    work->particles[RAMSES_FIRST_PUFF + i].variant = 24;
+  for (i = 0; i != ARRAY_COUNT(work->particles) - RAMSES_FIRST_PUFF; i++)
+    work->particles[RAMSES_FIRST_PUFF + i].variant = RAMSES_PUFF_FRAMES;
   EFFECT_FREE_PARTICLES(i, PARTICLES, PARTICLE_POOL_COUNT);
   work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
   work->fadeStep = 0;
@@ -108,21 +122,22 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
       work->shakeFrames = 1;
     position.groundHeight = 0;
     position.height = 0;
-    for (i = 0; i != 7; i++) {
+    for (i = 0; i != RAMSES_STATUE_SPRITES; i++) {
       position.x = INTtoFIXED(gRamses_StatueColumns[i]) + base.x - toFIXED(32);
       position.y = INTtoFIXED(gRamses_StatueRows[i]) + base.y - toFIXED(32);
       Actor_ApplyProjectedPlacementFar(work->sprites[i], &position, &scale, 0);
     }
     // The fist circles.
-    if (frame <= 90) {
-      fist.x = Trig_Sin(frame << 9) * 16 + toFIXED(156);
-      fist.y = Trig_Cos(frame << 9) * 16 + toFIXED(92);
+    if (frame < RAMSES_FIRST_SLAM) {
+      fist.x = Trig_Sin(frame * (TRIG_TURN / 128)) * 16 + toFIXED(156);
+      fist.y = Trig_Cos(frame * (TRIG_TURN / 128)) * 16 + toFIXED(92);
     }
     // Then it slams down three times, throwing up dust.
     if (frame <= 196) {
       s32 start;
 
-      for (i = 0, start = 91; i != 3; start += 40, i++) {
+      for (i = 0, start = RAMSES_FIRST_SLAM; i != RAMSES_SLAMS;
+           start += RAMSES_SLAM_INTERVAL, i++) {
         if (frame >= start && frame < start + 4)
           fist.y += toFIXED(8);
         if (frame == start + 3) {
@@ -152,9 +167,11 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
       position.x = fist.x;
       position.height = -toFIXED(256);
       position.y = fist.y - toFIXED(256);
-      Actor_ApplyProjectedPlacementFar(work->sprites[7], &position, &scale, 0);
+      Actor_ApplyProjectedPlacementFar(work->sprites[RAMSES_FIST_SPRITE],
+                                       &position, &scale, 0);
       position.x = fist.x + toFIXED(32);
-      Actor_ApplyProjectedPlacementFar(work->sprites[8], &position, &scale, 0);
+      Actor_ApplyProjectedPlacementFar(work->sprites[RAMSES_FIST_SPRITE + 1],
+                                       &position, &scale, 0);
     }
     position.height = 0;
     // The rocks fall.
@@ -164,8 +181,8 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
       if (rock->variant != 2) {
         position.x = rock->x;
         position.y = rock->y;
-        Actor_ApplyProjectedPlacementFar(work->sprites[9 + i], &position,
-                                         &scale, 0);
+        Actor_ApplyProjectedPlacementFar(
+            work->sprites[RAMSES_FIRST_ROCK_SPRITE + i], &position, &scale, 0);
         rock->x += rock->velocityX;
         rock->y += rock->velocityY;
         if (frame > 96)
@@ -193,11 +210,11 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
       }
     }
     // Puffs of dust drift upwards.
-    for (i = 0; i != 56; i++) {
+    for (i = 0; i != RAMSES_PUFFS; i++) {
       struct Particle *puff = &work->particles[RAMSES_FIRST_PUFF + i];
 
       if (puff->variant >= 0) {
-        if (puff->variant >= 0 && puff->variant <= 23) {
+        if (puff->variant >= 0 && puff->variant < RAMSES_PUFF_FRAMES) {
           s32 picture = puff->variant / 6 + 3;
 
           draw[0](canvas, work->sheet + gRamses_PuffPictures[picture],
@@ -255,7 +272,7 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
 
   EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
   BattleEffect_SetupBlendedDisplay();
-  for (i = 0; i != 15; i++)
+  for (i = 0; i != RAMSES_FIRST_ROCK_SPRITE + RAMSES_ROCKS; i++)
     Sprite_DestroyFar(work->sprites[i]);
   EFFECT_FINISH_CANVAS();
 }
@@ -266,3 +283,11 @@ void BattleEffect_RunRamses(struct BattleEffectParams *args) {
 #undef RAMSES_FIRST_PUFF
 #undef RAMSES_FIRST_ROCK_PUFF
 #undef RAMSES_SPARKS
+#undef RAMSES_STATUE_SPRITES
+#undef RAMSES_FIST_SPRITE
+#undef RAMSES_FIRST_ROCK_SPRITE
+#undef RAMSES_PUFF_FRAMES
+#undef RAMSES_PUFFS
+#undef RAMSES_SLAMS
+#undef RAMSES_FIRST_SLAM
+#undef RAMSES_SLAM_INTERVAL

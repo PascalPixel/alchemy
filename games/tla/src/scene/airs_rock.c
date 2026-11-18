@@ -1214,18 +1214,21 @@ void AirsRock_CrumbleRock(s32 x, s32 z) {
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 }
 
-/// The lightning bolt's picture on the first background: its tiles at the start
-/// of character block 0, its map LIGHTNING_MAP_ROWS rows of
-/// LIGHTNING_MAP_COLUMNS, numbered from tile 512.
+/// The lightning bolt's picture (RESOURCE_LIGHTNING_TILES and
+/// RESOURCE_LIGHTNING_MAP), shown on BG0 for the strike: its tiles at the start
+/// of character block 0, and its map, LIGHTNING_MAP_ROWS rows of
+/// LIGHTNING_MAP_COLUMNS numbered from tile 512, on screen block
+/// LIGHTNING_SCREEN_BLOCK.
 #define LIGHTNING_TILES 64
 #define LIGHTNING_MAP_ROWS 16
 #define LIGHTNING_MAP_COLUMNS 4
+#define LIGHTNING_SCREEN_BLOCK 4
 
 /// Whirlwind on the purple twister rock at the top: it glows, the rocks in the
 /// way crumble with a crash (AirsRock_CrumbleRock) and the way to the top
 /// opens; sets flag FLAG_AIRS_ROCK_TOP_OPENED.
 void AirsRock_WhirlwindOpensTheTop(void) {
-  u16 *buffer = Heap_Alloc(2048);
+  u16 *buffer = Heap_Alloc(LIGHTNING_TILES * TILE_SIZE_4BPP);
   u16 *cell;
   struct Actor *spark;
   u32 i;
@@ -1233,12 +1236,13 @@ void AirsRock_WhirlwindOpensTheTop(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
-  Io_Write16(BGCNT_SCREEN_BASE(4), &REG_BG0CNT);
+  Io_Write16(BGCNT_SCREEN_BASE(LIGHTNING_SCREEN_BLOCK), &REG_BG0CNT);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_TILES), buffer);
   Dma_Set(buffer, (void *)BG_CHAR_BLOCK(0),
           DMA_COPY_WORDS(LIGHTNING_TILES * TILE_SIZE_4BPP / 4), REG_DMA3);
   Heap_Release(buffer);
-  Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(4), 2048);
+  Dma_Fill16(0, (void *)BG_SCREEN_BLOCK(LIGHTNING_SCREEN_BLOCK),
+             BG_SCREEN_SIZE);
   buffer = Heap_Alloc(LIGHTNING_MAP_ROWS * LIGHTNING_MAP_COLUMNS * sizeof(u16));
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_MAP), buffer);
   cell = buffer;
@@ -1249,8 +1253,10 @@ void AirsRock_WhirlwindOpensTheTop(void) {
   }
   cell = buffer;
   for (i = 0; i != LIGHTNING_MAP_ROWS; i++) {
-    Dma_Set(cell, (void *)(BG_SCREEN_BLOCK(4) + (i << 6)),
-            DMA_COPY_WORDS(LIGHTNING_MAP_COLUMNS / 2), REG_DMA3);
+    Dma_Set(cell,
+            (void *)(BG_SCREEN_BLOCK(LIGHTNING_SCREEN_BLOCK) +
+                     i * BG_SCREEN_WIDTH * sizeof(u16)),
+            DMA_COPY_WORDS(LIGHTNING_MAP_COLUMNS * sizeof(u16) / 4), REG_DMA3);
     cell += LIGHTNING_MAP_COLUMNS;
   }
   Heap_Release(buffer);
@@ -1623,7 +1629,8 @@ void AirsRock_SetLedgeCellsByLevel(void) {
 
 #define LEADER() Actor_GetById(gMainRoutineWork.leaderActorId)
 
-/// The fog's picture repeats every FOG_WRAP tiles across and down.
+/// The fog's picture repeats every FOG_WRAP map cells (64 pixels) across and
+/// down.
 #define FOG_WRAP 4
 
 /// A statue that breathes whirlwinds (AirsRock_StatueBreathesWhirlwind), from

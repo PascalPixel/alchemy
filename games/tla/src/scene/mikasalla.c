@@ -4,8 +4,8 @@
 /// and SceneId_MikasallaNorth, the tunnels).
 ///
 /// Scoop digs up a ladder by the sheep (Mikasalla_DigUpLadder); the tunnels
-/// lead to the inn's back yard, where Spark the Mars Djinni joins the party
-/// (Mikasalla_MeetSpark).
+/// come out in the cliff behind the inn, and on a path north of the village
+/// Spark the Mars Djinni joins the party (Mikasalla_MeetSpark).
 
 #include "flags.h"
 #include "sprite_ids.h"
@@ -34,10 +34,15 @@
 /// Set once Scoop has dug up the ladder down to the tunnels by the sheep; the
 /// village redraws it on every visit.
 #define FLAG_MIKASALLA_LADDER_DUG_UP 0x85b
-/// Set once Parch has dried the tunnels for this visit.
+/// Set once Parch has dried up the water in the tunnels, for this visit.
 #define FLAG_MIKASALLA_TUNNELS_PARCHED FLAG_SCENE_TEMP_00
 
-extern s16 gMikasalla_TunnelRegions[];
+/// The ways between the tunnels' cave and the chamber above it, by the way out
+/// behind the inn, each an exit and the entrance that lands there: the top of
+/// the cave's ladder, and the hole in the chamber's floor.
+enum { MIKASALLA_NORTH_CAVE_LADDER = 2, MIKASALLA_NORTH_CHAMBER_HOLE = 3 };
+
+extern struct SceneRegion gMikasalla_TunnelRegions[];
 extern struct ActorPlacement gMikasalla_VillagePlacements[];
 extern struct ActorPlacement gMikasalla_TunnelPlacements[];
 
@@ -68,7 +73,7 @@ enum MikasallaActorId {
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
-s16 *Scene_GetExitRegions(void) {
+const struct SceneRegion *Scene_GetExitRegions(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_MIKASALLA_NORTH)
@@ -86,7 +91,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gMikasalla_TunnelPlacements;
 }
 
-void TilesetAnim_Pause(s32 a);
+void TilesetAnim_Pause(s32 channel);
 
 void Mikasalla_ClimbDownLadder(void);
 
@@ -94,18 +99,18 @@ extern u8 MsgFieldAreYouLookingForSomeone[];
 
 /// A door that opens with a cell animation: the animation and the cell it
 /// plays at.
-struct WarpTarget {
+struct VillageDoor {
   const void *script;
   u16 x;
   u16 z;
 };
 
-extern struct WarpTarget gMikasalla_Doors[];
+extern struct VillageDoor gMikasalla_Doors[];
 
 /// The party leader walks into one of the village's doors. Everyone stops, the
 /// door opens with its cell animation (gMikasalla_Doors), and the leader walks
-/// in and leaves by the exit of the door's number. The fifth door is entered
-/// without the walk.
+/// in and leaves by the exit of the door's number. The Sanctum's wide door in
+/// the cliff is entered without the walk.
 void Mikasalla_EnterDoor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u32 id;
@@ -114,7 +119,7 @@ void Mikasalla_EnterDoor(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  for (id = 8; id <= 63; id++) {
+  for (id = ACTOR_FIRST_PLACED; id <= 63; id++) {
     struct Actor *actor = Actor_GetById(id);
 
     if (actor != NULL)
@@ -130,7 +135,7 @@ void Mikasalla_EnterDoor(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->motionFlags = 0;
 
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
-  if (index != 4) {
+  if (index != MIKASALLA_TO_MIKASALLA_ROOMS_SANCTUM - 1) {
     Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -8);
     Event_Wait(10);
   }
@@ -157,7 +162,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 /// A villager asks whether the party is looking for someone, and answers either
 /// way that strangers are rare here.
-/// "Are you looking for someone?"
 void Mikasalla_AskLookingForSomeone(void) {
   s32 msg;
 
@@ -166,6 +170,9 @@ void Mikasalla_AskLookingForSomeone(void) {
   msg = (s32)&MsgFieldAreYouLookingForSomeone;
   Event_SetMessageId(msg);
   // "Are you looking for someone?"
+  // Yes: "Well, if you're looking for someone... I'd say the best place to
+  // start would be... somewhere else." No: "Didn't think so... We don't get a
+  // lot of strangers coming here."
   Event_OpenMessage(ACTOR_VILLAGER_LOOKING_FOR_SOMEONE, 0);
   if (Event_AskYesNoWithActorAnimation(Party_GetLeaderActor(), 0) == 0) {
     Event_Wait(10);
@@ -179,31 +186,36 @@ void Mikasalla_AskLookingForSomeone(void) {
 }
 
 /// Scoop on the patch of ground by the sheep digs up the ladder down to the
-/// tunnels, and it stays dug, Scene_PrepareMap redrawing it on
-/// every visit.
+/// tunnels, and it stays dug, Scene_PrepareMap redrawing it on every visit.
 void Mikasalla_DigUpLadder(void) {
   MapGrid_CopyCellsTo(5, 49, 5, 41, 1, 1);
   MapGrid_CopyCellAttributes(4, 48, 3, 2, 4, 40);
   Event_SetFlag(FLAG_MIKASALLA_LADDER_DUG_UP);
 }
 
-/// Parch on cell 60 in the tunnels redraws three stretches of the cave and its
-/// ground, once a visit, as Scene_PrepareMap redraws them on a
-/// return.
+/// Dries up the water in the tunnels: its tile animations stop and dry ground
+/// is drawn over its pools.
+static inline void Mikasalla_DryTunnels(void) {
+  TilesetAnim_Pause(0);
+  TilesetAnim_Pause(1);
+  TilesetAnim_Pause(2);
+  MapGrid_CopyCellsTo(56, 46, 30, 46, 16, 16);
+  MapGrid_CopyCellsTo(56, 174, 30, 174, 16, 16);
+  MapGrid_CopyCells(28, 23, 16, 16, 15, 23);
+  MapGrid_CopyCells(28, 90, 2, 2, 21, 88);
+  MapGrid_CopyCells(28, 90, 4, 4, 17, 89);
+  MapGrid_CopyCells(28, 90, 2, 1, 17, 91);
+  MapGrid_CopyCells(28, 90, 2, 2, 19, 91);
+  MapGrid_CopyCells(28, 92, 2, 2, 15, 92);
+  MapGrid_CopyCells(30, 92, 2, 2, 17, 92);
+}
+
+/// Parch on the water in the tunnels dries it up: the water's tile animations
+/// stop and dry ground is drawn over its pools, once a visit, as
+/// Scene_PrepareMap draws it again on a return.
 void Mikasalla_CastParch(void) {
   if (Event_GetFlag(FLAG_MIKASALLA_TUNNELS_PARCHED) == 0) {
-    TilesetAnim_Pause(0);
-    TilesetAnim_Pause(1);
-    TilesetAnim_Pause(2);
-    MapGrid_CopyCellsTo(56, 46, 30, 46, 16, 16);
-    MapGrid_CopyCellsTo(56, 174, 30, 174, 16, 16);
-    MapGrid_CopyCells(28, 23, 16, 16, 15, 23);
-    MapGrid_CopyCells(28, 90, 2, 2, 21, 88);
-    MapGrid_CopyCells(28, 90, 4, 4, 17, 89);
-    MapGrid_CopyCells(28, 90, 2, 1, 17, 91);
-    MapGrid_CopyCells(28, 90, 2, 2, 19, 91);
-    MapGrid_CopyCells(28, 92, 2, 2, 15, 92);
-    MapGrid_CopyCells(30, 92, 2, 2, 17, 92);
+    Mikasalla_DryTunnels();
     Event_SetFlag(FLAG_MIKASALLA_TUNNELS_PARCHED);
   }
 }
@@ -221,20 +233,8 @@ s32 Scene_PrepareMap(void) {
   Actor_GetById(party->leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
   if (party->next == SCENE_MIKASALLA_NORTH) {
-    if (Event_GetFlag(FLAG_MIKASALLA_TUNNELS_PARCHED)) {
-      TilesetAnim_Pause(0);
-      TilesetAnim_Pause(1);
-      TilesetAnim_Pause(2);
-      MapGrid_CopyCellsTo(56, 46, 30, 46, 16, 16);
-      MapGrid_CopyCellsTo(56, 174, 30, 174, 16, 16);
-      MapGrid_CopyCells(28, 23, 16, 16, 15, 23);
-      MapGrid_CopyCells(28, 90, 2, 2, 21, 88);
-      MapGrid_CopyCells(28, 90, 4, 4, 17, 89);
-      MapGrid_CopyCells(28, 90, 2, 1, 17, 91);
-      MapGrid_CopyCells(28, 90, 2, 2, 19, 91);
-      MapGrid_CopyCells(28, 92, 2, 2, 15, 92);
-      MapGrid_CopyCells(30, 92, 2, 2, 17, 92);
-    }
+    if (Event_GetFlag(FLAG_MIKASALLA_TUNNELS_PARCHED))
+      Mikasalla_DryTunnels();
   } else if (Event_GetFlag(FLAG_MIKASALLA_LADDER_DUG_UP)) {
     Mikasalla_DigUpLadder();
   }
@@ -242,17 +242,17 @@ s32 Scene_PrepareMap(void) {
 }
 
 /// The leader, already beside a ladder top, turns north, steps onto the rungs
-/// and climbs down out of sight, then leaves by exit 12 from the village or
-/// exit 3 from the tunnels.
+/// and climbs down out of sight, then leaves down the dug ladder from the
+/// village to the tunnels, or from the tunnels' chamber to the cave below.
 void Mikasalla_ClimbDownLadder(void) {
   s32 exit;
   s32 drop;
 
   if (gMainRoutineWork.next == SCENE_MIKASALLA) {
-    exit = 12;
+    exit = MIKASALLA_TO_MIKASALLA_NORTH_SOUTH;
     drop = 17;
   } else {
-    exit = 3;
+    exit = MIKASALLA_NORTH_CHAMBER_HOLE;
     drop = 9;
   }
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
@@ -348,7 +348,7 @@ s16 gMikasalla_WideDoorOpening[] = {
 
 /// The village's doors that open with a cell animation as the party walks
 /// through.
-struct WarpTarget gMikasalla_Doors[] = {
+struct VillageDoor gMikasalla_Doors[] = {
     {gMikasalla_DoorOpening, 84, 29},
     {gMikasalla_DoorOpening, 77, 34},
     {gMikasalla_ThirdDoorOpening, 86, 38},
@@ -361,12 +361,12 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-/// The tunnels' exit regions (Scene_GetExitRegions): two boxes, each with the
-/// exit it leads to.
-s16 gMikasalla_TunnelRegions[] = {
-    68, 28, 404, 76, 36, 412, -1, 1,
-    244, 28, 100, 252, 36, 108, -1, 2,
-    -1, 0, 0, 0, 0, 0, 0, 0,
+/// The tunnels' exit regions (Scene_GetExitRegions): the tops of the ladders up
+/// to the village and up to the chamber.
+struct SceneRegion gMikasalla_TunnelRegions[] = {
+    {68, 28, 404, 76, 36, 412, CONDITION_ALWAYS, MIKASALLA_NORTH_TO_MIKASALLA_SOUTH},
+    {244, 28, 100, 252, 36, 108, CONDITION_ALWAYS, MIKASALLA_NORTH_CAVE_LADDER},
+    {SCENE_TABLE_END},
 };
 
 u32 gSceneExits[] = {
@@ -385,8 +385,8 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(12, MikasallaNorth, 1, EXIT_FLAG_NONE),
     SCENE_EXITS(MikasallaNorth),
     SCENE_EXIT_UNLESS(1, Mikasalla, 12, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, MikasallaNorth, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, MikasallaNorth, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MIKASALLA_NORTH_CAVE_LADDER, MikasallaNorth, MIKASALLA_NORTH_CHAMBER_HOLE, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MIKASALLA_NORTH_CHAMBER_HOLE, MikasallaNorth, MIKASALLA_NORTH_CAVE_LADDER, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, Mikasalla, 11, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
@@ -648,7 +648,8 @@ struct Trigger gMikasalla_VillageTriggers[] = {
 
 /// The tunnels' exits and the ladders.
 struct Trigger gMikasalla_TunnelTriggers[] = {
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, MIKASALLA_NORTH_CHAMBER_HOLE, CONDITION_ALWAYS,
+     MIKASALLA_NORTH_CHAMBER_HOLE},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 30, CONDITION_ALWAYS,
      EVENT(Mikasalla_TurnAndClimbDownLadder)},

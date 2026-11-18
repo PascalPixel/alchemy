@@ -256,6 +256,17 @@ enum StormNightAreaFlag {
 static s32 sShakeDone;
 static s32 sShakeShift;
 
+/// How long the elders call up their Psynergy once the camera reaches the
+/// Boulder, in frames.
+#define ELDERS_FLASH_FRAMES 40
+/// Frames between an elder's rings: RINGS_INTERVAL, and RINGS_INTERVAL_STEP
+/// more for each step of sShakeShift.
+#define RINGS_INTERVAL 16
+#define RINGS_INTERVAL_STEP 8
+/// The colour modes an elder or the Boulder cycles through: plain colours and
+/// their five swaps, SPRITE_COLOR_NORMAL to SPRITE_COLOR_BRG.
+#define SWAPPED_COLOR_MODES (SPRITE_COLOR_BRG + 1)
+
 /// A random pause of 20 to 39 frames between the glances of
 /// gValePrologue_LookAroundScript.
 #define VALE_PROLOGUE_GLANCE_PAUSE()                                           \
@@ -1352,7 +1363,7 @@ static void ValePrologue_WatchBoulderFall(void) {
     FieldCamera_SetSpeed(4);
     FieldCamera_MoveTo(112, CAMERA_KEEP, 331, 1);
     FieldCamera_WaitForMove();
-    for (i = 0; i < 40; i++) {
+    for (i = 0; i < ELDERS_FLASH_FRAMES; i++) {
       ValePrologue_FlashPaletteAndSpawnEffects(Actor_Get(ACTOR_ELDER_EAST));
       ValePrologue_FlashPaletteAndSpawnEffects(Actor_Get(ACTOR_ELDER_WEST));
       ValePrologue_FlashPaletteAndSpawnEffects(Actor_Get(ACTOR_ELDER_FAR_EAST));
@@ -2631,49 +2642,53 @@ static void ValePrologue_FightFourthMonster(void) {
   Event_End();
 }
 
-/// An elder calling up Psynergy, for 40 frames once the camera reaches the
-/// Boulder.
+/// An elder calling up Psynergy, for ELDERS_FLASH_FRAMES once the camera
+/// reaches the Boulder: white two frames in four, sending up rings.
 static void ValePrologue_FlashPaletteAndSpawnEffects(struct Actor *actor) {
   s32 spawnInterval;
 
   if ((gFrameCount & 2) != 0) {
-    Actor_SetColorMode(actor, 7);
+    Actor_SetColorMode(actor, SPRITE_COLOR_WHITE);
   } else {
-    Actor_SetColorMode(actor, 0);
+    Actor_SetColorMode(actor, SPRITE_COLOR_NORMAL);
   }
   {
     volatile u32 *frame = &gFrameCount;
 
-    spawnInterval = (sShakeShift << 3) + 16;
+    spawnInterval = sShakeShift * RINGS_INTERVAL_STEP + RINGS_INTERVAL;
     if (Math_RemainderUnsigned(*frame, spawnInterval) == 0) {
       Scene_SpawnPsynergyRings(actor);
     }
   }
 }
 
-/// An elder holding the Boulder. The sprite cycles through palettes 0 to 5,
-/// and rings rise and fall as in ValePrologue_FlashPaletteAndSpawnEffects.
+/// An elder holding the Boulder. The sprite cycles through the
+/// SWAPPED_COLOR_MODES, and rings rise and fall as in
+/// ValePrologue_FlashPaletteAndSpawnEffects.
 static void ValePrologue_CyclePaletteAndSpawnEffects(struct Actor *actor) {
   s32 paletteFrame;
   s32 spawnInterval;
 
   if ((gFrameCount & 1) != 0) {
     paletteFrame = (gFrameCount >> 1);
-    Actor_SetColorMode(actor, Math_RemainderUnsigned(paletteFrame, 6));
+    Actor_SetColorMode(
+        actor, Math_RemainderUnsigned(paletteFrame, SWAPPED_COLOR_MODES));
   }
-  spawnInterval = (sShakeShift << 3) + 16;
+  spawnInterval = sShakeShift * RINGS_INTERVAL_STEP + RINGS_INTERVAL;
   if (Math_RemainderUnsigned(gFrameCount, spawnInterval) == 0) {
     Scene_SpawnPsynergyRings(actor);
   }
 }
 
-/// Cycles the sprite through palettes 0 to 5, a step every second frame.
+/// Cycles the sprite through the SWAPPED_COLOR_MODES, a step every second
+/// frame.
 static void ValePrologue_CycleActorPalettes(struct Actor *actor) {
   s32 paletteFrame;
 
   if ((gFrameCount & 1) != 0) {
     paletteFrame = (gFrameCount >> 1);
-    Actor_SetColorMode(actor, Math_RemainderUnsigned(paletteFrame, 6));
+    Actor_SetColorMode(
+        actor, Math_RemainderUnsigned(paletteFrame, SWAPPED_COLOR_MODES));
   }
 }
 

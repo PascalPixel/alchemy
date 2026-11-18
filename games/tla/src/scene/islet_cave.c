@@ -5,7 +5,7 @@
 /// and the cycling colours of its water (IsletCave_StartSlowPaletteCycle).
 /// Teleport carries the party in by its circles
 /// (IsletCave_TeleportToFirstCircle), each corridor is darker than the last
-/// (IsletCave_DimPalette), Tremor shakes Serac out
+/// (IsletCave_DarkenPalette), Tremor shakes Serac out
 /// (IsletCave_TremorRevealsSerac), and at the end the Sentinel waits
 /// (IsletCave_SentinelAwaits).
 
@@ -89,7 +89,7 @@ void IsletCave_TremorRevealsSerac(void);
 
 extern u32 gIsletCave_SentinelScript[];
 
-extern s32 gIsletCave_ShrunkenSpriteScript[];
+extern s32 gIsletCave_ShrunkFireScript[];
 extern s16 gIsletCave_DoorFrames[];
 
 u16 gPaletteCycleBright BSS_DATA;
@@ -104,6 +104,10 @@ u16 gPaletteCycleIndex BSS_DATA ALIGNED(4);
 void Teleport_PlaySparks(void);
 void FieldEffect_StartBlankOverlay(s32 mode);
 void PaletteFade_PackTarget(void);
+
+/// The colours the palette fade keeps of each of the BG and OBJ palettes: its
+/// source holds the BG palette's first ones, then the OBJ palette's.
+#define PALETTE_FADE_LAYER_COLORS 224
 
 /// Records the four palette lists, writes each listed palette entry from its
 /// red, green and blue, then copies the BG and OBJ palettes into the palette
@@ -124,8 +128,8 @@ void Palette_SetColors(u16 *slots, u16 *colours, u16 *cycleColours,
     SET_RGB(BG_PLTT[index], red, green, blue);
   }
   Dma_Set((const void *)BG_PLTT, fade->palette, DMA_COPY_WORDS(112), REG_DMA3);
-  Dma_Set((const void *)OBJ_PLTT, &fade->palette[224], DMA_COPY_WORDS(112),
-          REG_DMA3);
+  Dma_Set((const void *)OBJ_PLTT, &fade->palette[PALETTE_FADE_LAYER_COLORS],
+          DMA_COPY_WORDS(112), REG_DMA3);
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   if (gMainRoutineWork.teleportState == 2)
     IsletCave_TeleportIn();
@@ -212,6 +216,10 @@ enum { ACTOR_SENTINEL = 8, ACTOR_FIRST_FIRE = 9 };
 /// Set once the Sentinel is beaten, as the party comes back to its room.
 #define FLAG_SENTINEL_DEFEATED 0x9cf
 
+/// Set once Tremor has shaken Serac out of the winged statue, or on entering
+/// once he is caught or has run off to hide: the statue then stays still.
+#define FLAG_SERAC_SHAKEN_OUT FLAG_SCENE_TEMP_30
+
 /// The Sentinel's room's entrance the battle with it returns the party to.
 enum { ENTRANCE_AFTER_BATTLE = 2 };
 
@@ -228,17 +236,25 @@ s32 IsletCave_ClearScriptedActorSpriteFlags(struct Actor *actor) {
   return 0;
 }
 
-/// The winged statue's script while Serac hides in it: every 64 frames it
-/// hops, rocking its sprite through the first half of the cycle.
+/// The winged statue's hop: one every STATUE_HOP_FRAMES, its sprite rocking
+/// to and fro over the first half, once every STATUE_ROCK_FRAMES, swung by the
+/// cosine's full turn shrunk by STATUE_ROCK_SHRINK.
+#define STATUE_HOP_FRAMES 64
+#define STATUE_ROCK_FRAMES 16
+#define STATUE_ROCK_SHRINK 128
+
+/// The winged statue's script while Serac hides in it: it hops, rocking its
+/// sprite through the first half of each hop.
 s32 IsletCave_HopWingedStatue(struct Actor *actor) {
-  s32 step = actor->riseCounter & 63;
+  s32 step = actor->riseCounter & (STATUE_HOP_FRAMES - 1);
   struct FieldSprite *sprite = actor->sprite;
 
   actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-  if (step < 32) {
+  if (step < STATUE_HOP_FRAMES / 2) {
     if (step == 0)
       actor->velocityY = toFIXED(1);
-    sprite->rotation = Trig_Cos(step << 12) / 128;
+    sprite->rotation =
+        Trig_Cos(step * (TRIG_TURN / STATUE_ROCK_FRAMES)) / STATUE_ROCK_SHRINK;
   }
   actor->riseCounter++;
   return -1;
@@ -322,7 +338,7 @@ DEFINE_ISLET_CAVE_ARRIVE_AT(IsletCave_TeleportToSecondCircle, 240, 480)
 
 /// Darkens the palette by the scale given, out of FADE_CHANNEL_LEVEL: each
 /// corridor is darker than the last.
-void IsletCave_DimPalette(s32 scale) {
+void IsletCave_DarkenPalette(s32 scale) {
   struct PaletteFade *fade = Ram_HeapSlots->paletteFade;
   u16 *source = fade->palette;
   u16 *channel = fade->target;
@@ -363,6 +379,9 @@ void IsletCave_DimPalette(s32 scale) {
 
 extern struct MapGridCellAnimation gIsletCave_Doors[];
 
+/// The last of the actor ids the scene's placed actors take.
+#define LAST_PLACED_ACTOR 63
+
 /// Walking north into one of the Serac room's doors: everything stops, the
 /// door opens and the leader walks through it to the next corridor.
 void IsletCave_OpenDoorAndEnter(void) {
@@ -372,7 +391,7 @@ void IsletCave_OpenDoorAndEnter(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  for (i = ACTOR_FIRST_PLACED; i <= 63; i++) {
+  for (i = ACTOR_FIRST_PLACED; i <= LAST_PLACED_ACTOR; i++) {
     struct Actor *actor = Actor_GetById(i);
 
     if (actor != 0)
@@ -399,7 +418,7 @@ void IsletCave_OpenDoorAndEnter(void) {
 
 extern u16 gIsletCave_PaletteSlots[];
 extern u16 gIsletCave_PaletteColors[];
-extern u16 gIsletCave_DimColors[];
+extern u16 gIsletCave_CycleColors[];
 extern u16 gIsletCave_CycleSlots[];
 extern s32 gIsletCave_TremorTargetScript[];
 
@@ -414,7 +433,7 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.next == SCENE_ISLET_CAVE_MELD) {
     IsletCave_PlaceLogs();
     Palette_SetColors(gIsletCave_PaletteSlots, gIsletCave_PaletteColors,
-                      gIsletCave_DimColors, gIsletCave_CycleSlots);
+                      gIsletCave_CycleColors, gIsletCave_CycleSlots);
   } else if (gMainRoutineWork.next == SCENE_ISLET_CAVE_SENTINEL) {
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_FIRST_FIRE), 0);
     if (gMainRoutineWork.entrance == ENTRANCE_AFTER_BATTLE) {
@@ -424,8 +443,8 @@ s32 Scene_Initialize(void) {
   } else if (gMainRoutineWork.next == SCENE_ISLET_CAVE_SERAC) {
     if (GameFlag_Get(FLAG_DJINNI(DJINNI_SERAC)) ||
         GameFlag_Get(FLAG_DJINNI_HIDING(DJINNI_SERAC))) {
-      GameFlag_Set(FLAG_SCENE_TEMP_30);
-    } else if (!GameFlag_Get(FLAG_SCENE_TEMP_30)) {
+      GameFlag_Set(FLAG_SERAC_SHAKEN_OUT);
+    } else if (!GameFlag_Get(FLAG_SERAC_SHAKEN_OUT)) {
       Actor_SetPosition(ACTOR_SERAC, 0, 0);
       Actor_SetMovementTypeById(ACTOR_WINGED_STATUE,
                                 gIsletCave_TremorTargetScript);
@@ -437,7 +456,8 @@ s32 Scene_Initialize(void) {
       dim = (gMainRoutineWork.entrance - 3) / 2;
     else
       dim = 3;
-    IsletCave_DimPalette(FADE_CHANNEL_LEVEL - dim * (FADE_CHANNEL_LEVEL / 8));
+    IsletCave_DarkenPalette(FADE_CHANNEL_LEVEL -
+                            dim * (FADE_CHANNEL_LEVEL / 8));
     PaletteFade_PackTarget();
     PaletteFade_StartInterpolation(1);
     Event_WaitTransitionFrames();
@@ -475,8 +495,9 @@ enum {
 /// Set while a log lies across the water from where it is placed, until the
 /// party leaves the cave's map: IsletCave_PlaceLogs then places it there.
 ///
-/// XXX: both of the fourth log's rides clear its flag, so it is placed back at
-/// its start; the game run past that log would show whether it jumps back.
+/// The fourth log is the odd one: its west ride, away from its start, clears
+/// its flag as the ride back does, so the room's next entry places that log
+/// back at its start, its cells with it.
 enum {
   FLAG_ISLET_CAVE_FIRST_LOG_MOVED = FLAG_SCENE_TEMP_80,
   FLAG_ISLET_CAVE_SECOND_LOG_MOVED = FLAG_SCENE_TEMP_81,
@@ -742,13 +763,13 @@ DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideSixthLogWest, ACTOR_SIXTH_LOG,
 void IsletCave_RideSeventhLogNorth(void) {
   FIXED fromX = Actor_GetById(ACTOR_SEVENTH_LOG)->x.fixed;
   s32 column = fromX;
-  s32 step = 112;
+  s32 dz = 112;
   s32 fromRow = Actor_GetById(ACTOR_SEVENTH_LOG)->z.fixed;
 
-  step = -step;
+  dz = -dz;
   fromRow = FIELD_CELL(fromRow);
-  IsletCave_RideLog(ACTOR_SEVENTH_LOG, 0, step);
-  IsletCave_RideLog(ACTOR_SEVENTH_LOG, 0, step);
+  IsletCave_RideLog(ACTOR_SEVENTH_LOG, 0, dz);
+  IsletCave_RideLog(ACTOR_SEVENTH_LOG, 0, dz);
   IsletCave_RideLog(ACTOR_SEVENTH_LOG, 0, -128);
   wait(2);
   column = FIELD_CELL(column) - 1;
@@ -812,17 +833,20 @@ void IsletCave_SentinelAwaits(void) {
   Event_End();
 }
 
+/// A fixed-point z in pixels, rounded down to a multiple of 8.
+#define Z_ROUNDED_TO_8(z) (((z) >> 19) << 3)
+
 /// Tremor on the shaking spot: Serac drops out.
 void IsletCave_TremorRevealsSerac(void) {
-  if (!Event_GetFlag(FLAG_SCENE_TEMP_30)) {
+  if (!Event_GetFlag(FLAG_SERAC_SHAKEN_OUT)) {
     struct Actor *actor = Actor_GetById(ACTOR_SERAC);
     struct Actor *owner = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-    Event_SetFlag(FLAG_SCENE_TEMP_30);
+    Event_SetFlag(FLAG_SERAC_SHAKEN_OUT);
     Actor_SetPosition(ACTOR_SERAC, 296, 160);
     actor->speedLimit = toFIXED(3) / 2;
     actor->velocityY = toFIXED(15);
-    Actor_MoveToAndWait(ACTOR_SERAC, 344, ((owner->z.fixed >> 19) << 3) + 24);
+    Actor_MoveToAndWait(ACTOR_SERAC, 344, Z_ROUNDED_TO_8(owner->z.fixed) + 24);
     Actor_Stop(ACTOR_WINGED_STATUE);
     actor->speedLimit = toFIXED(1);
     Actor_TurnToFaceEachOther(gMainRoutineWork.leaderActorId, ACTOR_SERAC, 0);
@@ -840,7 +864,7 @@ u16 gIsletCave_PaletteSlots[] = {9, 10, 11, 12, 13, 14, 15, 65535};
 
 u16 gIsletCave_PaletteColors[] = {23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 23, 25, 22, 65535};
 
-u16 gIsletCave_DimColors[] = {30, 27, 31, 22, 21, 31, 20, 18, 31, 13, 11, 27, 11, 8, 24, 8, 5, 21, 31, 31, 31, 65535};
+u16 gIsletCave_CycleColors[] = {30, 27, 31, 22, 21, 31, 20, 18, 31, 13, 11, 27, 11, 8, 24, 8, 5, 21, 31, 31, 31, 65535};
 
 u16 gIsletCave_CycleSlots[] = {                                                               
       14, 9, 10, 11, 12, 13, 13, 14, 9, 10, 11, 12, 12, 13, 14, 9, 10, 11,  
@@ -853,7 +877,7 @@ u32 gIsletCave_SentinelScript[] = {
     SC_END,
 };
 
-s32 gIsletCave_ShrunkenSpriteScript[] = {
+s32 gIsletCave_ShrunkFireScript[] = {
     SC_SET(SW_MOTION, 0),
     SC_ADD(SW_Y, toFIXED(-4)),
     SC_SET(SW_SCALE_X, FIXED_ONE * 4 / 5),
@@ -899,16 +923,16 @@ u32 gSceneExits[] = {
 
 struct ActorPlacement gIsletCave_Placements[] = {
     ACTOR_PLACEMENT(SPRITE_SENTINEL, FLAG_SENTINEL_DEFEATED, (s32)gIsletCave_SentinelScript, 184, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 152, 0, 144, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 216, 0, 144, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 136, 0, 176, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 232, 0, 176, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 152, 0, 224, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 216, 0, 224, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 136, 0, 256, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 232, 0, 256, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 136, 0, 304, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
-    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkenSpriteScript, 232, 0, 304, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkFireScript, 152, 0, 144, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkFireScript, 216, 0, 144, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkFireScript, 136, 0, 176, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkFireScript, 232, 0, 176, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkFireScript, 152, 0, 224, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkFireScript, 216, 0, 224, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkFireScript, 136, 0, 256, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkFireScript, 232, 0, 256, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkFireScript, 136, 0, 304, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
+    ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkFireScript, 232, 0, 304, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     {SCENE_TABLE_END},
 };
 
@@ -977,7 +1001,7 @@ struct Trigger gIsletCave_Room2Triggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(IsletCave_OpenDoorAndEnter)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(IsletCave_OpenDoorAndEnter)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(IsletCave_OpenDoorAndEnter)},
-    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 8, FLAG_SCENE_TEMP_30, EVENT(IsletCave_TremorRevealsSerac)},
+    {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), 8, FLAG_SERAC_SHAKEN_OUT, EVENT(IsletCave_TremorRevealsSerac)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(IsletCave_FightSerac)},
     {TRIGGER_TABLE_END},
 };

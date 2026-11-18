@@ -40,19 +40,19 @@ void IconMenu_ReleaseArrows(void) {
 }
 
 /// Decodes one icon into a temporary buffer and reloads its VRAM slot: the
-/// Psynergy icon of ability resourceId (Ability_LoadGlyphFar), built in 1544
-/// bytes of HEAP_SLOT_GLYPH_TRANSFER, which is released again.
+/// Psynergy icon of ability resourceId (Ability_LoadGlyphFar), built in a
+/// GlyphTransfer in HEAP_SLOT_GLYPH_TRANSFER, which is released again.
 s32 Icon_LoadResourceIntoSlot(s32 resourceId, s32 slot) {
   s32 decodedResource;
   s32 selectedSlot;
   s32 firstTile;
-  s32 allocationBits;
+  GlyphTransfer *allocation;
 
-  allocationBits =
-      (s32)HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+  allocation =
+      HeapSlot_AllocEwram(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   selectedSlot = slot;
   Ability_LoadGlyphFar(resourceId, 0, &selectedSlot, &decodedResource, 1);
-  firstTile = VramCache_Reload(slot, allocationBits + 1024);
+  firstTile = VramCache_Reload(slot, (s32)allocation->tiles);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   return firstTile;
 }

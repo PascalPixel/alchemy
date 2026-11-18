@@ -20,9 +20,9 @@ static void Colosso_PushActorAhead(void) {
   direction = FACING_INDEX(leader->facing);
 
   step = gPushedActor_DirectionSteps[direction];
-  position.x = leader->x.fixed + (step & 0xffff0000);
+  position.x = leader->x.fixed + DIRECTION_STEP_X_FIXED(step);
   position.y = leader->y.fixed;
-  step <<= 16;
+  step = DIRECTION_STEP_Z_FIXED(step);
   position.z = leader->z.fixed + step;
 
   pushed = Actor_FindAtPosition(&position, leader);
@@ -31,9 +31,9 @@ static void Colosso_PushActorAhead(void) {
   }
 
   step = gPushedActor_DirectionSteps[direction];
-  position.x = pushed->x.fixed + (step & 0xffff0000);
+  position.x = pushed->x.fixed + DIRECTION_STEP_X_FIXED(step);
   position.y = pushed->y.fixed;
-  step <<= 16;
+  step = DIRECTION_STEP_Z_FIXED(step);
   position.z = pushed->z.fixed + step;
 
   blocker = Actor_FindAtPosition(&position, pushed);
@@ -53,9 +53,9 @@ static void Colosso_PushActorAhead(void) {
   pushed->layer = 2;
 
   step = gPushedActor_DirectionSteps[direction];
-  position.x = pushed->x.fixed + (step & 0xffff0000);
+  position.x = pushed->x.fixed + DIRECTION_STEP_X_FIXED(step);
   position.y = pushed->y.fixed;
-  step <<= 16;
+  step = DIRECTION_STEP_Z_FIXED(step);
   position.z = pushed->z.fixed + step;
 
   if (FieldActor_CheckMovementCollision(pushed, &position) > 0) {

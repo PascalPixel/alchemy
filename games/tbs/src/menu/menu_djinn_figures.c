@@ -55,10 +55,9 @@ void DjinnFigures_InitializeTopRow(void *window, s32 unused) {
 DJINN_FIGURES_DEFINE_RELEASE(DjinnFigures_ReleaseTopRow,
                              DjinnFigures_UpdateAllPositions)
 
-/// Full size, 1.0 in 16.16, and the height the figures are placed from: 482
-/// pixels, in 16.16.
-#define FOUR_OBJECT_MOTION_FULL_SCALE ((u32)FIXED_ONE)
-#define FOUR_OBJECT_MOTION_ORIGIN_Y (482u << 16)
+/// The figures' full size, and the height they are placed from: 482 pixels.
+#define FIGURE_FULL_SCALE ((u32)FIXED_ONE)
+#define FIGURE_ORIGIN_Y toFIXED(482)
 
 /// Projects the four sprites at full scale from their saved row positions.
 /// Task, each frame from DjinnFigures_InitializeTopRow.
@@ -73,11 +72,10 @@ void DjinnFigures_UpdateAllPositions(void) {
     struct Sprite *animation = state->figures[index];
 
     if (animation != 0) {
-      u32 vertical =
-          FOUR_OBJECT_MOTION_ORIGIN_Y - toFIXED(state->memberY[index]);
+      u32 vertical = FIGURE_ORIGIN_Y - toFIXED(state->memberY[index]);
       animation->image.priority = 0;
-      scale.x = FOUR_OBJECT_MOTION_FULL_SCALE;
-      scale.y = FOUR_OBJECT_MOTION_FULL_SCALE;
+      scale.x = FIGURE_FULL_SCALE;
+      scale.y = FIGURE_FULL_SCALE;
       placement.x = toFIXED((s32)state->figureX[index]);
       placement.height = vertical;
       placement.y = toFIXED((s32)state->figureY[index]) + vertical;
@@ -103,8 +101,7 @@ void DjinnFigures_UpdateBottomRow(void) {
     struct Sprite *animation = menu->figures[figure];
 
     if (animation != 0) {
-      u32 projectedY =
-          FOUR_OBJECT_MOTION_ORIGIN_Y - toFIXED(menu->memberY[figure]);
+      u32 projectedY = FIGURE_ORIGIN_Y - toFIXED(menu->memberY[figure]);
       s32 phase;
       s32 limit;
       s32 rowY;
@@ -222,5 +219,5 @@ UNUSED void Menu_StartPartyFiguresStanding(void) {
 }
 
 #undef DJINN_FIGURES_DEFINE_RELEASE
-#undef FOUR_OBJECT_MOTION_FULL_SCALE
-#undef FOUR_OBJECT_MOTION_ORIGIN_Y
+#undef FIGURE_FULL_SCALE
+#undef FIGURE_ORIGIN_Y

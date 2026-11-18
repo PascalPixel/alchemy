@@ -8,6 +8,24 @@
 #define HUE_DEGREES 360
 #define HUE_CIRCLE (HUE_DEGREES << 16)
 
+/// A line's offset in Mind Read's wave at a phase: a sine 4 pixels either way,
+/// a turn every 160 phase steps.
+#define MIND_READ_WAVE_OFFSET(phase)                                           \
+  (Trig_Sin((u32)((phase) << 16) / (u32)160) >> 14)
+/// The wave's cycle runs to this count and starts again, 61 frames; at counts
+/// 0, 8 and 16 a particle flies from the target to the caster.
+#define MIND_READ_CYCLE_LAST 60
+#define MIND_READ_PARTICLE_GAP 8
+/// The tint's channels run from this level, a quarter of the hue's own on top.
+#define MIND_READ_TINT_LEVEL_MIN 4
+
+/// The window palette's colours that Mind Read greys and restores: the white
+/// and black of the text and border, and the border's two greys.
+#define WINDOW_WHITE_COLOR 1
+#define WINDOW_BLACK_COLOR 3
+#define WINDOW_BORDER_DARK_COLOR 11
+#define WINDOW_BORDER_LIGHT_COLOR 12
+
 /// The HEAP_SLOT_MIND_READ heap slot (gMindReadWork), 664 bytes.
 struct MindReadWork {
   /// Each scanline's BG0 horizontal scroll in pixels, two pages written in
@@ -81,12 +99,10 @@ void FieldPsynergy_UpdateMindReadWave(void) {
     return;
   }
 
-  // The 160 scanlines' offsets, a sine wave of 4 pixels either way (a 16.16
-  // sine >> 14), on the hidden page; then show that page.
+  // The scanlines' offsets on the hidden page; then show that page.
   line = work->lines[work->page ^ 1];
   for (scanline = 0; scanline < DISPLAY_HEIGHT; scanline++)
-    *line++ =
-        Trig_Sin(((u32)((work->phase + scanline * 8) << 16) / (u32)160)) >> 14;
+    *line++ = MIND_READ_WAVE_OFFSET(work->phase + scanline * 8);
   work->phase += 4;
   work->page ^= 1;
   // Every other frame the tint takes the next hue, in one frame.
@@ -98,9 +114,8 @@ void FieldPsynergy_UpdateMindReadWave(void) {
   }
   Actor_SetSpritePalette(Actor_GetById(work->sourceId), 0);
 
-  // At steps 0, 8 and 16 of the cycle, a particle from the target to the
-  // caster.
-  if (work->counter == 0 || work->counter == 8 || work->counter == 16) {
+  if (work->counter == 0 || work->counter == MIND_READ_PARTICLE_GAP ||
+      work->counter == 2 * MIND_READ_PARTICLE_GAP) {
     caster = Actor_GetById(work->sourceId);
     target = Actor_GetById(work->targetId);
     if (caster != 0 && target != 0) {
@@ -133,7 +148,7 @@ void FieldPsynergy_UpdateMindReadWave(void) {
 
   if (work->counter == 0)
     Sound_PlayFar(SE_PSYNERGY_START);
-  if (++work->counter > 60)
+  if (++work->counter > MIND_READ_CYCLE_LAST)
     work->counter = 0;
 }
 
@@ -170,18 +185,18 @@ void FieldEffect_AdvanceHueCycle(void) {
   u8 *pg;
   u8 *pb;
 
-  FieldEffect_CalculateHueChannels(work->hue << 16, &r, &g, &b);
+  FieldEffect_CalculateHueChannels(INTtoFIXED(work->hue), &r, &g, &b);
 
   // Squeeze 0 to 31 into 4 to 11; offset walks red, green and blue.
   offset = offsetof(struct MindReadWork, red);
   pr = (u8 *)work + offset;
-  *pr = (r >> 18) + 4;
+  *pr = (FIXEDtoINT(r) >> 2) + MIND_READ_TINT_LEVEL_MIN;
   offset += 1;
   pg = (u8 *)work + offset;
-  *pg = (g >> 18) + 4;
+  *pg = (FIXEDtoINT(g) >> 2) + MIND_READ_TINT_LEVEL_MIN;
   offset += 1;
   pb = (u8 *)work + offset;
-  *pb = (b >> 18) + 4;
+  *pb = (FIXEDtoINT(b) >> 2) + MIND_READ_TINT_LEVEL_MIN;
 
   work->hue += 4;
 
@@ -247,17 +262,18 @@ void FieldEffect_ReleaseOnArrival(struct Actor *actor) {
   }
 }
 
-/// Turns colours 1 and 3 to 12 of WINDOW_PALETTE grey and starts the BG0
-/// line scroll (FieldEffect_ArmBg0HBlankDma) at each VBlank.
+/// Turns WINDOW_PALETTE's white, black, window colours and border greys one
+/// grey, and starts the BG0 line scroll (FieldEffect_ArmBg0HBlankDma) at each
+/// VBlank.
 void FieldPsynergy_GreyMindReadPalette(void) {
   volatile u16 *p;
 
   // Window mode 1: messages show as thoughts until
   // FieldPsynergy_RestoreMindReadPalette clears it.
   WINDOW_WORK->mindRead = 1;
-  p = &BG_PLTT_COLOR(WINDOW_PALETTE, 1);
+  p = &BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_WHITE_COLOR);
   *p = MIND_READ_GREY;
-  p += 2;
+  p += WINDOW_BLACK_COLOR - WINDOW_WHITE_COLOR;
   *p = MIND_READ_GREY;
   p += 1;
   *p = MIND_READ_GREY;
@@ -286,17 +302,24 @@ void FieldPsynergy_RestoreMindReadPalette(void) {
 
   work = gWindowWork[0];
   Task_Remove(FieldEffect_ArmBg0HBlankDma);
-  // Palette 15's white, black and two greys.
-  BG_PLTT_COLOR(WINDOW_PALETTE, 1) = RGB_WHITE;
-  BG_PLTT_COLOR(WINDOW_PALETTE, 3) = 0;
-  BG_PLTT_COLOR(WINDOW_PALETTE, 11) = RGB(10, 10, 10);
-  BG_PLTT_COLOR(WINDOW_PALETTE, 12) = RGB(20, 20, 20);
+  BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_WHITE_COLOR) = RGB_WHITE;
+  BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BLACK_COLOR) = RGB(0, 0, 0);
+  BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BORDER_DARK_COLOR) = RGB(10, 10, 10);
+  BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BORDER_LIGHT_COLOR) = RGB(20, 20, 20);
   WindowColor_ApplyFar(gMainRoutineWork.windowHue,
                        gMainRoutineWork.windowBrightness);
   ((struct WindowWork *)work)->mindRead = 0;
 }
 
 #undef MIND_READ_GREY
+#undef MIND_READ_WAVE_OFFSET
+#undef MIND_READ_CYCLE_LAST
+#undef MIND_READ_PARTICLE_GAP
+#undef MIND_READ_TINT_LEVEL_MIN
+#undef WINDOW_WHITE_COLOR
+#undef WINDOW_BLACK_COLOR
+#undef WINDOW_BORDER_DARK_COLOR
+#undef WINDOW_BORDER_LIGHT_COLOR
 
 #undef HUE_DEGREES
 #undef HUE_CIRCLE

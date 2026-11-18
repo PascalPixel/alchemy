@@ -49,14 +49,18 @@ struct GroundParticle {
 /// when it was already free (0): the u16 wraps.
 #define GROUND_PARTICLE_FREED 65535
 
+/// WeatherWork.particles.
+#define WEATHER_PARTICLE_COUNT 64
+/// A raindrop's frames (Weather_UpdateRain).
+#define RAIN_DROP_FRAMES 12
+
 /// The heap slot weather while the ground particles run: their tiles' VRAM
-/// cache entry and first tile, and 64 particles.
+/// cache entry and first tile, and the particles.
 struct WeatherWork {
   s32 entry; ///< the VRAM cache entry holding the particles' tiles
-  // long, not s32: its own alias set lets Weather_UpdateRain's sprite stores
-  // pass its load.
+  /* FAKEMATCH(signature): the tile base typed long; as s32. */
   long tileBase; ///< their first tile in VRAM
-  struct GroundParticle particles[64];
+  struct GroundParticle particles[WEATHER_PARTICLE_COUNT];
   u8 unused[8]; ///< no code reads them
   s32 stopped;  ///< nonzero stops new sparkle bursts
 };

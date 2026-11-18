@@ -3,9 +3,9 @@
 /// in fade and blank forms, and the effect sprites that draw them.
 // Part of field_sequence.c.
 
-/// A pixel coordinate's mask that snaps it to its cell's 16-pixel grid, and
-/// the same for a screen row in an OAM entry's 8-bit y.
-#define CELL_GRID_MASK 0xfff0
+/// A whole pixel coordinate's map cell, in pixels, and the same for a screen
+/// row in an OAM entry's 8-bit y.
+#define MAPGRID_CELL_PIXEL_MASK 0xfff0
 #define CELL_GRID_ROW_MASK 0xf0
 
 /// Each frame of the fade overlay: on each of the two cells beside the actor
@@ -38,7 +38,6 @@ void FadeOverlay_DrawMarks(void) {
   terrainFloor = actor->floor;
   terrainLayer = actor->terrainId;
   tile = gVramCacheEntries[VRAM_CACHE_ENTRY_FADE_OVERLAY].offset >> 5;
-  // The left cell, 8 pixels left of the actor.
   x -= toFIXED(8);
   height =
       FIXEDtoINT(MapGrid_GetTerrainHeightFar(terrainLayer, x, z + toFIXED(16)));
@@ -57,12 +56,11 @@ void FadeOverlay_DrawMarks(void) {
     mark->tile = tile;
     mark->objectMode = OBJ_MODE_SEMI_TRANSPARENT;
     // Snapped to the cell's grid, then moved up by the ground's height.
-    mark->x = ((u32)FIXEDtoINT(x) & CELL_GRID_MASK) - cameraX;
+    mark->x = ((u32)FIXEDtoINT(x) & MAPGRID_CELL_PIXEL_MASK) - cameraX;
     screenRow = FIXEDtoINT(z) & CELL_GRID_ROW_MASK;
     mark->y = screenRow - cameraZ - height + 16;
     Oam_AddSpriteAtDepthClamped(mark, 0);
   }
-  // The right cell, 8 pixels right of the actor, read the same way.
   x += toFIXED(16);
   height =
       FIXEDtoINT(MapGrid_GetTerrainHeightFar(terrainLayer, x, z + toFIXED(16)));
@@ -78,7 +76,7 @@ void FadeOverlay_DrawMarks(void) {
     mark->priority = 0;
     mark->tile = tile;
     mark->objectMode = OBJ_MODE_SEMI_TRANSPARENT;
-    mark->x = ((u32)FIXEDtoINT(x) & CELL_GRID_MASK) - cameraX;
+    mark->x = ((u32)FIXEDtoINT(x) & MAPGRID_CELL_PIXEL_MASK) - cameraX;
     screenRow = FIXEDtoINT(z) & CELL_GRID_ROW_MASK;
     mark->y = screenRow - cameraZ - height + 16;
     Oam_AddSpriteAtDepthClamped(mark, 0);
@@ -245,5 +243,5 @@ void EffectSprite_InitWithFadeOverlayBlended(struct EffectSprite *sprite, s32 a,
   sprite->oam.objectMode = 1;
 }
 
-#undef CELL_GRID_MASK
+#undef MAPGRID_CELL_PIXEL_MASK
 #undef CELL_GRID_ROW_MASK

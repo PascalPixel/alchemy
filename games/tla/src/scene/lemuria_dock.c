@@ -30,8 +30,8 @@
 /// The dock's actors, by the rows of gActorPlacements.
 enum {
   ACTOR_KRADEN = ACTOR_FIRST_PLACED,
-  /// Loho's cannon (sprite 420), on the quay once the ship carries it, from
-  /// patch 1.
+  /// Loho's cannon, on the ship's deck once the ship carries it (placed only
+  /// under TLA_PATCH_1).
   ACTOR_CANNON
 };
 
@@ -189,21 +189,29 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 /// The background palette the dock's colour cycle turns.
 #define DOCK_PALETTE ((volatile u16 *)&BG_PLTT_COLOR(11, 0))
 
-/// A palette task: every eighth frame it turns colours 4 to 9 and 12 to 15 of
-/// DOCK_PALETTE round by one.
+/// The two runs of DOCK_PALETTE's colours that turn round, as the Lemurian
+/// Ship's deck turns its own: the blues of the band along the ship's hull, and
+/// the surf.
+#define HULL_BAND_FIRST_COLOR 4
+#define HULL_BAND_LAST_COLOR 9
+#define SURF_FIRST_COLOR 12
+#define SURF_LAST_COLOR 15
+
+/// A palette task: every eighth frame it turns both runs of DOCK_PALETTE's
+/// colours round by one.
 void LemuriaDock_CyclePalette(void) {
   if ((gFrameCount & 7) == 0) {
     s16 saved;
     s32 i;
 
-    saved = DOCK_PALETTE[9];
-    for (i = 9; i != 4; i--)
+    saved = DOCK_PALETTE[HULL_BAND_LAST_COLOR];
+    for (i = HULL_BAND_LAST_COLOR; i != HULL_BAND_FIRST_COLOR; i--)
       DOCK_PALETTE[i] = DOCK_PALETTE[i - 1];
-    DOCK_PALETTE[4] = saved;
-    saved = DOCK_PALETTE[15];
-    for (i = 15; i != 12; i--)
+    DOCK_PALETTE[HULL_BAND_FIRST_COLOR] = saved;
+    saved = DOCK_PALETTE[SURF_LAST_COLOR];
+    for (i = SURF_LAST_COLOR; i != SURF_FIRST_COLOR; i--)
       DOCK_PALETTE[i] = DOCK_PALETTE[i - 1];
-    DOCK_PALETTE[12] = saved;
+    DOCK_PALETTE[SURF_FIRST_COLOR] = saved;
   }
 }
 

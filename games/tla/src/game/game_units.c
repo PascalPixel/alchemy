@@ -478,10 +478,11 @@ void Party_DrainPp(s32 count) {
   Party_GetPpRatio();
 }
 
-/// Set in every build stamp's time; and set on top in a debug build's
-/// (gDebugMode), whose stamp is then above every release's.
+/// Set in every build stamp's time.
 #define BUILD_STAMP_MARK 0x1000
-#define BUILD_STAMP_DEBUG ((s16)0x8000)
+/// Set on top of the time in a debug build's stamp (gDebugMode): bit 15,
+/// sign-extended, so that its stamp is above every release build's.
+#define BUILD_STAMP_DEBUG 0xffff8000
 /// A build stamp's time counts 64 seconds to a minute and 16 minutes to an
 /// hour, so the minutes past 15 reach into the hours.
 #define BUILD_STAMP_SECONDS_PER_MINUTE 64

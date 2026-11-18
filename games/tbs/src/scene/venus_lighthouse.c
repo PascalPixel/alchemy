@@ -63,7 +63,7 @@
 ///   eight sockets, and the lights run on to the pillar room's gate
 ///   (FLAG_VENUS_LIGHTHOUSE_PILLAR_GATE_OPEN). A chest holds the Gaia Blade,
 ///   and a Psynergy Stone lies here. A passage raises the leader on a
-///   platform in a spray to the Lighthouse Aerie
+///   platform in rising sparkles to the Lighthouse Aerie
 ///   (VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_AERIE).
 ///
 /// Locked doors stand on the second floor and above
@@ -268,7 +268,7 @@ static void VenusLighthouse_EmitWestPassageParticles(void);
 static void VenusLighthouse_EmitEastPassageParticles(void);
 static void VenusLighthouse_AnimateWestTileWave(void);
 static void VenusLighthouse_AnimateEastTileWave(void);
-static void VenusLighthouse_RaiseLeaderWithSpray(void);
+static void VenusLighthouse_RaiseLeaderInSparkles(void);
 
 // The lighthouse's scene flags: FLAG_SCENE_TEMP_00: in the room with the floor
 // switch, the pillar holds the switch down; in the room of floating pillars,
@@ -387,7 +387,7 @@ enum VenusLighthouseFourthFloorActorId {
   /// Mercury Lighthouse's aerie. It dips as the leader lands on it at
   /// VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PSYNERGY_STONE_RISING
   /// and then carries him up to the Lighthouse Aerie
-  /// (VenusLighthouse_RaiseLeaderWithSpray).
+  /// (VenusLighthouse_RaiseLeaderInSparkles).
   ACTOR_RISING_PLATFORM
 };
 
@@ -501,7 +501,7 @@ VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
 
 /// The scene's names for the bytes Actor keeps for scene code. A statue
 /// with SW_VENUS_IMMOVABLE set cannot be pushed
-/// (VenusLighthouse_PushAdjacentPillar). A light sets
+/// (VenusLighthouse_PushPillarAhead). A light sets
 /// SW_VENUS_LIGHT_ARRIVED as it reaches its gate, which then opens.
 enum {
   SW_VENUS_IMMOVABLE = SW_RISE_COUNTER,
@@ -513,7 +513,7 @@ enum {
 
 /// Pushing a pillar moves the pillar ahead of the leader one cell on with him,
 /// leaning into it (ANIM_PUSH).
-static void VenusLighthouse_PushAdjacentPillar(void) {
+static void VenusLighthouse_PushPillarAhead(void) {
   struct FieldPosition targetPosition;
   struct Actor *leader;
   struct Actor *pillar;
@@ -901,10 +901,10 @@ static s32 VenusLighthouse_JumpAcrossGap(void) {
                           &landing);
 #else
     step = gPushedActor_DirectionSteps[direction];
-    // Two steps on: the step's halves read as 16.16 pixels and doubled.
-    landing.x = leader->x.fixed + (step & 0xffff0000) * 2;
+    // Two steps on.
+    landing.x = leader->x.fixed + DIRECTION_STEP_X_FIXED(step) * 2;
     landing.y = leader->y.fixed;
-    step = INTtoFIXED(step) * 2;
+    step = DIRECTION_STEP_Z_FIXED(step) * 2;
     landing.z = leader->z.fixed + step;
 #endif
     if (Actor_FindAtPosition(&landing, leader) == 0 &&
@@ -1005,6 +1005,10 @@ static void VenusLighthouse_SearchLockedDoor(void) {
   Event_End();
 }
 
+/// The times the soldier who tells of the attack flickers as he vanishes, the
+/// pause after each a frame shorter than the last, from eight frames to three.
+#define SOLDIER_FLICKERS 10
+
 /// At Venus Lighthouse Entry, talking to the soldier by the entrance (or
 /// reading his mind): "Venus Lighthouse was attacked by strange wanderers..."
 static void VenusLighthouse_HearOfTheAttack(void) {
@@ -1014,7 +1018,7 @@ static void VenusLighthouse_HearOfTheAttack(void) {
   Event_Start();
   Actor_RunRepeatedMotion(ACTOR_SOLDIER_TELLING_OF_THE_ATTACK, 3);
   Event_SetMessageId(MsgFieldVenusLighthouseWasAttackedBy);
-  flickersLeft = 10;
+  flickersLeft = SOLDIER_FLICKERS;
   flickerDelay = 8;
   // "Venus Lighthouse was... attacked by strange... wanderers..."
   Event_ShowMessageThenWait(ACTOR_SOLDIER_TELLING_OF_THE_ATTACK, 0, 20);
@@ -1294,7 +1298,7 @@ static void VenusLighthouse_MovePillarTowardWall(void) {
 /// behavior 50) works as Move does, with Garet's remark at the wall.
 static void VenusLighthouse_PushPillarTowardWall(void) {
   Event_Start();
-  VenusLighthouse_PushAdjacentPillar();
+  VenusLighthouse_PushPillarAhead();
   Event_Wait(20);
   Event_End();
   VenusLighthouse_MovePillarTowardWall();
@@ -1457,7 +1461,7 @@ static void VenusLighthouse_MoveCappedPillar(void) {
 static void VenusLighthouse_PushCappedPillar(void) {
   Event_Start();
   MapGrid_CopyCellAttributes(19, 44, 4, 1, 12, 44);
-  VenusLighthouse_PushAdjacentPillar();
+  VenusLighthouse_PushPillarAhead();
   VenusLighthouse_MoveCappedPillar();
   Event_End();
 }
@@ -1496,7 +1500,7 @@ static void VenusLighthouse_JumpOrPushCarryPillar(void) {
   Event_Start();
   if (VenusLighthouse_JumpAcrossGap() == 0) {
     VenusLighthouse_LiftCarryPillar();
-    VenusLighthouse_PushAdjacentPillar();
+    VenusLighthouse_PushPillarAhead();
     VenusLighthouse_MoveCarryPillar();
   }
   Event_End();
@@ -1704,7 +1708,7 @@ static void VenusLighthouse_JumpOrPushGatePillar(void) {
   Event_Start();
   if (VenusLighthouse_JumpAcrossGap() == 0) {
     MapGrid_CopyCellAttributes(109, 43, 7, 5, 45, 43);
-    VenusLighthouse_PushAdjacentPillar();
+    VenusLighthouse_PushPillarAhead();
   }
   Event_End();
   VenusLighthouse_MoveGatePillar();
@@ -1839,7 +1843,7 @@ static void VenusLighthouse_JumpOrPushSwitchPillar(void) {
   Event_Start();
   if (VenusLighthouse_JumpAcrossGap() == 0) {
     MapGrid_CopyCellAttributes(108, 39, 13, 7, 44, 39);
-    VenusLighthouse_PushAdjacentPillar();
+    VenusLighthouse_PushPillarAhead();
   }
   Event_End();
   VenusLighthouse_MoveSwitchPillar();
@@ -2043,7 +2047,7 @@ static void VenusLighthouse_CarryFloatingPillar(void) {
 /// (CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FLOATING_PILLARS and the gaps beside it).
 static void VenusLighthouse_PushPuzzlePillar(void) {
   Event_Start();
-  VenusLighthouse_PushAdjacentPillar();
+  VenusLighthouse_PushPillarAhead();
   Event_End();
 }
 
@@ -2338,7 +2342,7 @@ static void VenusLighthouse_JumpOrPushSocketPillar(void) {
   if (VenusLighthouse_JumpAcrossGap() == 0) {
     MapGrid_CopyCellAttributes(69, 48, 4, 2, 5, 48);
     MapGrid_CopyCellAttributes(73, 37, 9, 13, 9, 37);
-    VenusLighthouse_PushAdjacentPillar();
+    VenusLighthouse_PushPillarAhead();
   }
   Event_End();
   VenusLighthouse_MoveSocketPillar();
@@ -2829,7 +2833,7 @@ s32 Scene_Initialize(void) {
       }
       if (gMainRoutineWork.entrance ==
           VENUS_LIGHTHOUSE_FOURTH_FLOOR_WALL_SWITCHES_FROM_PSYNERGY_STONE_RISING)
-        VenusLighthouse_RaiseLeaderWithSpray();
+        VenusLighthouse_RaiseLeaderInSparkles();
       break;
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_FROM_WALL_SWITCHES_SOUTH:
     case VENUS_LIGHTHOUSE_FOURTH_FLOOR_PILLAR_SOCKETS_FROM_WALL_SWITCHES_EAST:
@@ -3013,9 +3017,9 @@ static void VenusLighthouse_StepActorWithDust(struct Vector3 *direction) {
   actor->z.fixed += VENUS_LIGHTHOUSE_FIXED_OFFSET(direction->z * 3, 15);
 }
 
-/// Chooses the particle scales and spin used by the tile-wave animations.
+/// Chooses the size and spin of a burst of sand as a tile wave pours down.
 static inline void
-VenusLighthouse_RubbleSetScaleAndSpin(struct EffectOptions *options) {
+VenusLighthouse_SetSandParticleScaleAndSpin(struct EffectOptions *options) {
   options->startScaleX =
       (Random_Below(2)) * (FIXED_ONE * 3 / 10) + 5 * (FIXED_ONE * 3 / 10);
   options->startScaleY =
@@ -3044,7 +3048,7 @@ static void VenusLighthouse_AnimatePairedTileWaves(void) {
   Sound_Play(SE_WAVE);
   extraBursts = 0;
   for (row = 0; row < 10; row++) {
-    VenusLighthouse_RubbleSetScaleAndSpin(&options);
+    VenusLighthouse_SetSandParticleScaleAndSpin(&options);
     for (;;) {
       for (particleIndex = 0; particleIndex < 4 && row < 8; particleIndex++) {
         FieldEffect_Spawn(
@@ -3065,7 +3069,7 @@ static void VenusLighthouse_AnimatePairedTileWaves(void) {
   MapGrid_CopyCellsTo(111, 7, 111, 5, 5, 2);
   MapGrid_CopyCellsTo(111, 7, 111, 10, 5, 2);
   for (row = 0; row < 10; row++) {
-    VenusLighthouse_RubbleSetScaleAndSpin(&options);
+    VenusLighthouse_SetSandParticleScaleAndSpin(&options);
     for (particleIndex = 0; particleIndex < 4 && row < 8; particleIndex++) {
       FieldEffect_Spawn(
           ((Random_Below(7)) << 19) + toFIXED(768), 0,
@@ -3144,8 +3148,8 @@ static void VenusLighthouse_AnimateWestTileWave(void) {
   // it opens starts to smoke.
   extraBursts = 0;
   for (row = 0; row <= 12; row++) {
-    VenusLighthouse_RubbleSetScaleAndSpin(&options);
-    // One burst of rubble: four bits down the row, each over a random one of
+    VenusLighthouse_SetSandParticleScaleAndSpin(&options);
+    // One burst of sand: four puffs down the row, each over a random one of
     // seven 8-pixel columns.
   burst:
     for (particleIndex = 0; particleIndex <= 3; particleIndex++) {
@@ -3200,7 +3204,7 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
   // As the western wave, but its smoke task is added again on every row.
   extraBursts = 0;
   for (row = 0; row <= 12; row++) {
-    VenusLighthouse_RubbleSetScaleAndSpin(&options);
+    VenusLighthouse_SetSandParticleScaleAndSpin(&options);
   burst:
     for (particleIndex = 0; particleIndex <= 3; particleIndex++) {
       FieldEffect_Spawn(
@@ -3226,8 +3230,8 @@ static void VenusLighthouse_AnimateEastTileWave(void) {
   Event_End();
 }
 
-/// Emit rising particles around the actor every four frames.
-static UNREAD_RESULT VenusLighthouse_UpdateRisingSpray(struct Actor *actor) {
+/// Sparkles rise around the actor, one every four frames.
+static UNREAD_RESULT VenusLighthouse_EmitRisingSparkles(struct Actor *actor) {
   struct EffectOptions options;
   s32 framePhase;
   FIXED particleX, particleY, particleZ, riseSpeed;
@@ -3253,9 +3257,10 @@ static UNREAD_RESULT VenusLighthouse_UpdateRisingSpray(struct Actor *actor) {
   RETURN_UNREAD(0);
 }
 
-/// Lands the leader on ACTOR_RISING_PLATFORM, then raises both in a rising
-/// spray and leaves by VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_AERIE.
-static void VenusLighthouse_RaiseLeaderWithSpray(void) {
+/// Lands the leader on ACTOR_RISING_PLATFORM, then raises both in rising
+/// sparkles and leaves by
+/// VENUS_LIGHTHOUSE_FOURTH_FLOOR_TO_VENUS_LIGHTHOUSE_AERIE.
+static void VenusLighthouse_RaiseLeaderInSparkles(void) {
   u32 riseFrame;
   struct Actor *leader;
   struct Actor *platform;
@@ -3308,9 +3313,9 @@ static void VenusLighthouse_RaiseLeaderWithSpray(void) {
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
   Event_Wait(40);
 #ifdef UBFIX
-  leader->update = VenusLighthouse_UpdateRisingSpray;
+  leader->update = VenusLighthouse_EmitRisingSparkles;
 #else
-  leader->update = (void *)VenusLighthouse_UpdateRisingSpray;
+  leader->update = (void *)VenusLighthouse_EmitRisingSparkles;
 #endif
   Event_Wait(60);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 1);

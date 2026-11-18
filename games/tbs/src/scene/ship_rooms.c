@@ -469,7 +469,7 @@ static void ShipRooms_MoveCameraAndWaitFX(FIXED x, FIXED y, FIXED z, u32 flags);
   ShipRooms_MoveCameraAndWaitFX(EVENT_CAMERA_FIXED(x), EVENT_CAMERA_FIXED(y),  \
                                 EVENT_CAMERA_FIXED(z), flags)
 static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt);
-static s32 ShipRooms_FindFirstSetFlag(u32 seat, s32 alternate);
+static s32 ShipRooms_FindFirstSetFlag(u32 seat, s32 inHold);
 static void ShipRooms_HideSelectedPassengers(void);
 static void ShipRooms_HideSelectedPassenger(s32 actorId, s32 firstFlag);
 static void ShipRooms_StartSecondAttack(void);
@@ -1570,6 +1570,8 @@ static void ShipRooms_WatchWarriorsStormOff(void) {
   Event_Start();
   Field_EndBusyAndReveal();
   FieldCamera_SetSpeed(2.4);
+  // The hold's camera box is one screen wide, so the camera stays at x 150
+  // whatever x is asked for.
   ShipRooms_MoveCameraAndWait(1463, CAMERA_KEEP, 464,
                               SHIP_CAMERA_WAIT_FOR_ARRIVAL | 20);
   Actor_RunRepeatedMotion(ACTOR_HOLD_OURANOS, 1);
@@ -3458,14 +3460,14 @@ static void ShipRooms_RunEventCommand(s32 step, u32 arg, u32 opt) {
   }
 }
 
-/// Finds the selected passenger or rowing-deck actor for a seat's flag
-/// group.
-static s32 ShipRooms_FindFirstSetFlag(u32 seat, s32 alternate) {
+/// The passenger chosen for a seat (0 to 3): their actor in the hold at sea if
+/// inHold, else on the rowing deck; 0 if no one has been chosen.
+static s32 ShipRooms_FindFirstSetFlag(u32 seat, s32 inHold) {
   s32 flag = 0;
   s32 id = ACTOR_SEA_HOLD_FIRST_PASSENGER;
   u32 i;
 
-  if (alternate == 0) {
+  if (inHold == 0) {
     id = ACTOR_ROWING_FIRST_PASSENGER;
   }
   switch (seat) {

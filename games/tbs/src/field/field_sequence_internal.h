@@ -52,7 +52,6 @@ STATIC_ASSERT(sizeof(union PolarOffsetPosition) == 12);
 /// No user named: Field_UsePsynergy takes ISAAC, and Field_UseItem
 /// whoever holds the item in the most inventory slots.
 #define UNIT_NONE 15
-#define ALLY_MAX 7 ///< the last party member; only users up to it pay PP
 
 /// Shows message m with the user's and the Psynergy's names, and waits.
 #define PSYNERGY_MESSAGE(who, act, m)                                          \
@@ -81,7 +80,7 @@ struct MapMusicRule {
   s16 entrance : 15; ///< -1 for any entrance
   u16 idIsMap : 1;   ///< 1 when id is a scene, 0 when it is an area
   s16 flag;          ///< -1, or a flag that must be set
-  s16 music;         ///< the song (sounds.h's MUS_ numbers)
+  s16 music;         ///< sounds.h's MUS_ numbers
 };
 
 extern const struct MapMusicRule gScene_MusicRules[];
@@ -125,7 +124,7 @@ struct TransitionSpan {
 /// both windows; bit 6 set too) and nothing in its high byte.
 #define TRANSITION_SHOW_LOW_BYTE 0x007f
 /// WININ or WINOUT showing BG0 alone, in both bytes.
-#define TRANSITION_SHOW_BG0 0x0101
+#define TRANSITION_SHOW_BG0 (WININ_WIN0_BG0 | WININ_WIN1_BG0)
 
 /// One step of WINDOW_TRANSITION_SHAPE, a row of
 /// gScreenTransition_Shapes chosen by the progress: the WININ and WINOUT

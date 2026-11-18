@@ -45,6 +45,8 @@
 #define FIELD_PROBE_ANGLE (TRIG_TURN / 16)
 /// The most a blocked actor turns toward its heading in one frame.
 #define FIELD_BLOCKED_TURN_MAX (TRIG_TURN / 16)
+/// Two 16.16 coordinates fall in the same 16-pixel cell, rounding to nearest.
+#define SAME_CELL(a, b) ((((a) - (b) + toFIXED(8)) >> 20) == 0)
 
 struct Actor;
 struct FieldPosition;

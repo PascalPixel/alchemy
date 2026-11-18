@@ -208,9 +208,6 @@ s32 Field_CheckConfiguredKeysAndCount(struct Actor *actor) {
 /// wider than FIELD_BLOCKED_TURN_MAX; a narrower one it makes at once.
 #define SHIP_TURN_STEP (TRIG_TURN / 64)
 
-// Two 16.16 coordinates fall in the same 16-pixel cell, rounding to nearest.
-#define SAME_CELL(a, b) ((((a) - (b) + toFIXED(8)) >> 20) == 0)
-
 /// Script command 0x1f (control mode 6): the ship moved by the direction pad
 /// on a field map, as the party's actor (gMainRoutineWork.ownerOverride), as at
 /// Lemuria's entrance.
@@ -501,7 +498,6 @@ counted:
   actor->scriptCursor++;
   return 1;
 }
-#undef SAME_CELL
 
 /// Script command 0x20 (control mode 7): the ship sailing the world map, laid
 /// out as The Broken Seal's later Actor_MoveOnWorldMap (one probe ahead, then

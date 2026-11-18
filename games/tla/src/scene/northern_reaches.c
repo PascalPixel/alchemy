@@ -123,9 +123,9 @@ struct IceWallWork {
   struct IceShard shards[ICE_SHARD_COUNT];
 };
 
-/// The ship's script: starts its animation from its first frame, on the
-/// middle layer.
-s32 NorthernReaches_ResetAnimationFrame(struct Actor *actor) {
+/// The ship's script call: drops its sprite's shadow (clearing its sprite
+/// flags) and puts it on the middle layer.
+s32 NorthernReaches_DropShipShadow(struct Actor *actor) {
   ((struct FieldSprite *)actor->sprite)->flags = 0;
   actor->layer = MAPGRID_LAYER_MIDDLE;
   return 1;
@@ -505,7 +505,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, FIXED *position,
 }
 
 s32 gNorthernReaches_ShipAtRest[] = {
-    SC_CALL((s32)NorthernReaches_ResetAnimationFrame),
+    SC_CALL((s32)NorthernReaches_DropShipShadow),
     SC_ANIMATION(7),
     SC_END,
 };

@@ -290,17 +290,11 @@ void ShamanVillage_TalkToInnkeeper(void);
 
 extern const s32 *gFieldEffect_DurationScripts[];
 
-#define EFFECT_SPAWN FieldEffect_Spawn
-#define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Import_ActorSetMode
 #define EFFECT_SET_SCRIPT Import_ActorStartScript
-#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
 
 void Shop_Run(s32 shop, s32 keeper);
 void Sanctum_Run(s32 keeper);
@@ -462,20 +456,6 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 void ShamanVillage_DriftSandLayer(void);
-
-/// Whirlwind's picture is drawn on BG0, the windows' layer: its tiles, two rows
-/// of WHIRLWIND_ROW_TILES (the top halves, then the bottom ones), go over BG
-/// tiles WHIRLWIND_TOP_TILE and WHIRLWIND_BOTTOM_TILE of character block 3, and
-/// its map, WHIRLWIND_MAP_WIDTH by WHIRLWIND_MAP_HEIGHT cells numbering them
-/// from WHIRLWIND_MAP_FIRST_TILE, into the windows' screen block, whose other
-/// entries take WHIRLWIND_FILL_TILE.
-#define WHIRLWIND_ROW_TILES 26
-#define WHIRLWIND_TOP_TILE 320
-#define WHIRLWIND_BOTTOM_TILE 352
-#define WHIRLWIND_MAP_FIRST_TILE 512
-#define WHIRLWIND_MAP_WIDTH 16
-#define WHIRLWIND_MAP_HEIGHT 18
-#define WHIRLWIND_FILL_TILE 16
 
 /// Whirlwind on the sand mound, from ShamanVillage_CastWhirlwindOnSand: the
 /// mound flickers and sheds sparks, the whirlwind swirls up over it in a rush
@@ -2797,9 +2777,6 @@ void ShamanVillage_DriftSmoke(struct Actor *actor) {
   if (--*(s32 *)&actor->watchedActor == 0)
     Actor_Release(actor);
 }
-
-/// The frames a puff of smoke drifts before it is released.
-#define SMOKE_FRAMES 60
 
 /// Puffs a blended cloud of smoke at x, y, z, half its size, that
 /// ShamanVillage_DriftSmoke moves for SMOKE_FRAMES.

@@ -20,10 +20,6 @@
 #define NEREID_COLUMNS 3
 #define NEREID_DROPS PARTICLE_POOL_COUNT ///< drops of spray in PARTICLES
 #define NEREID_COLUMN_PICTURE 1764       ///< the column of water in the sheet
-/// The drops burst up: every free one of the first NEREID_BURST_DROPS as the
-/// columns gather, then NEREID_DROPS_A_FRAME a frame while they rise.
-#define NEREID_BURST_DROPS 256
-#define NEREID_DROPS_A_FRAME 16
 /// The canvas line below which a falling drop has sunk into the waves.
 #define NEREID_WAVES_Y 104
 
@@ -241,8 +237,6 @@ void BattleEffect_RunNereid(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
-#undef NEREID_BURST_DROPS
-#undef NEREID_DROPS_A_FRAME
 #undef NEREID_WAVES_Y
 // NEREID_FRAMES, NEREID_COLUMNS_FRAME, NEREID_COLUMNS_END_FRAME,
 // NEREID_OBJECTS, NEREID_DROPS, NEREID_COLUMN_PICTURE and NEREID_COLUMNS stay

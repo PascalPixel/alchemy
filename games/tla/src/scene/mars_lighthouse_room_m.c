@@ -505,14 +505,16 @@ void MarsLighthouseRoomM_CycleHallInscriptions(void) {
   gMarsLighthouseRoomM_HallCycleFrame++;
 }
 
-// In a render of the thawed hall (MarsLighthouseRoomM_StepTowardDoorway's
-// event, entered by entrance 12) the arch the party came in by stands lit; as
-// the leader steps before the doorway above it, that arch is gone and another,
-// its opening purple, fades in over the bare carved wall, then fades back to
-// the bare wall as he steps aside.
-/// Each frame the doorway, an arch of purple light drawn on BG1 over the wall,
-/// fades one step toward its target; fully shown it opens the way through the
-/// wall, and gone it closes it.
+// In a render of the thawed hall (render event --scene
+// MarsLighthouseRoomMInscriptions --event MarsLighthouseRoomM_StepTowardDoorway
+// --edition tla-en, which enters by entrance 12) the arch the party came in by
+// stands lit; as the leader steps beside the doorway above it, that arch is
+// gone and the upper one, its opening purple, is shown whole at once over the
+// bare carved wall, the blend still full from the arrival, then fades back to
+// the bare wall over some 16 frames.
+/// Each frame the doorway, an arch with a purple opening drawn on BG1 over the
+/// wall, fades one step toward its target; fully shown it opens the way through
+/// the wall, and gone it closes it.
 void MarsLighthouseRoomM_FadeDoorway(void) {
   s32 step;
 

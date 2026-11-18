@@ -1,4 +1,6 @@
-/// Stops the leader in the middle of its cell and raises the camera.
+/// Walks the leader to the middle of the cell he stands on, as he does before
+/// dropping through a cracked tile, sets him there and lowers the camera's
+/// point 8 pixels.
 void Leader_CenterInCell(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = actor->x.fixed;
@@ -6,13 +8,14 @@ void Leader_CenterInCell(void) {
 
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 4);
 
-  x >>= 20;
-  z >>= 20;
-  Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId, (x << 4) + 8,
-                          (z << 4) + 8);
+  x = FIELD_CELL(x);
+  z = FIELD_CELL(z);
+  Actor_MoveToAndWaitById(gMainRoutineWork.leaderActorId,
+                          x * MAPGRID_CELL_PIXELS + MAPGRID_CELL_PIXELS / 2,
+                          z * MAPGRID_CELL_PIXELS + MAPGRID_CELL_PIXELS / 2);
   System_Wait(1);
-  FieldActor_SetPositionAndResetMotion(actor, (x << 20) + toFIXED(8),
-                                       actor->y.fixed, (z << 20) + toFIXED(8));
+  FieldActor_SetPositionAndResetMotion(actor, FIELD_CELL_CENTER(x),
+                                       actor->y.fixed, FIELD_CELL_CENTER(z));
   FieldEvent_Wait(4);
   EventCamera_GetActor()->y.fixed -= toFIXED(8);
 }

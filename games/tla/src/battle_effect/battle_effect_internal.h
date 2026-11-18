@@ -300,6 +300,17 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
   (BATTLE_BACKGROUND_WIDTH * BATTLE_BACKGROUND_HEIGHT)
 /// The battle background's colours, BG palettes 6 to 13.
 #define BATTLE_BACKGROUND_COLORS (8 * PALETTE_COLORS)
+/// BG1's map while it shows the canvas or a picture of an effect's own (the
+/// rune circles of Ulysses): the battle's own BG1 map.
+#define CANVAS_BG1_SCREEN 31
+/// Two entries of a background map in one word: `left`, then the one to its
+/// right.
+#define MAP_ENTRY_PAIR(left, right) ((u32)(right) << 16 | (left))
+/// The tile BG1 shows around a picture of its own, the last a map entry can
+/// name.
+#define BG1_CLEAR_TILE 1023
+/// BG character block 2's first tile, counted from BG1's character base.
+#define BG1_BLOCK2_FIRST_TILE (2 * BG_CHAR_SIZE / TILE_SIZE_8BPP)
 /// One step of the battle background's fade, a sixtieth of the full colour.
 #define CANVAS_FADE_STEP (FIXED_ONE / 60)
 /// The bytes of one 16-colour palette.

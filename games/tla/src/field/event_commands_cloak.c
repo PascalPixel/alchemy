@@ -41,7 +41,7 @@
 
 /// The drops Douse rains: cast at nothing, cast on a target, and cast on a
 /// target where they sway down (FieldEffectWork.lit).
-#define DOUSE_DROPS 10
+#define DOUSE_DROPS_AT_NOTHING 10
 #define DOUSE_DROPS_ON_TARGET 24
 #define DOUSE_SWAYING_DROPS_ON_TARGET 30
 /// The drop after which the target's Douse trigger runs.
@@ -173,7 +173,7 @@ void FieldPsynergy_Douse(void) {
   wait(10);
 
   if ((s8)work->lit == 0) {
-    count = DOUSE_DROPS;
+    count = DOUSE_DROPS_AT_NOTHING;
     if ((s8)work->enabled == 0)
       count = DOUSE_DROPS_ON_TARGET;
     for (n = 0; n < count; n++) {
@@ -212,7 +212,7 @@ void FieldPsynergy_Douse(void) {
     wait(10);
   } else {
     if ((s8)work->enabled != 0)
-      count = DOUSE_DROPS;
+      count = DOUSE_DROPS_AT_NOTHING;
     else
       count = DOUSE_SWAYING_DROPS_ON_TARGET;
     for (n = 0; n < count; n++) {
@@ -477,7 +477,7 @@ void FieldPsynergy_SteerLiftedTarget(s32 targetId) {
 
 #undef CLOAK_END
 #undef CLOAK_BLINKS
-#undef DOUSE_DROPS
+#undef DOUSE_DROPS_AT_NOTHING
 #undef DOUSE_DROPS_ON_TARGET
 #undef DOUSE_SWAYING_DROPS_ON_TARGET
 #undef DOUSE_TARGET_DROP

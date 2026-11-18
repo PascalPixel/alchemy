@@ -40,9 +40,6 @@
 /// 0, 8 and 16 a particle flies from the target to the caster.
 #define MIND_READ_CYCLE_LAST 60
 #define MIND_READ_PARTICLE_GAP 8
-/// MindReadWork.counter held still: no particles and no sound, while the
-/// islets' scenes read a mind.
-#define MIND_READ_QUIET 99
 
 /// Task of the wave effect: once its delay has run out, writes the next page
 /// of line offsets, steps the colour fade and the hue every other frame,

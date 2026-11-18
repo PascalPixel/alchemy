@@ -112,14 +112,6 @@ enum {
   ACTOR_COOK
 };
 
-/// The stock and inn numbers the counters open.
-enum {
-  VAULT_WEAPON_STOCK = 4,
-  VAULT_ARMOR_STOCK = 5,
-  VAULT_ITEM_STOCK = 6,
-  VAULT_INN = 1
-};
-
 /// Set once the mayor has told Isaac the thieves escaped from jail.
 enum { FLAG_VAULT_REVISIT_ISAAC_WELCOMED_BACK = FLAG_AREA_TEMP_00 };
 

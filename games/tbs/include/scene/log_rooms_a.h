@@ -4,7 +4,16 @@
 /// @file
 /// The cell behaviors of the layout of Vault's houses, shops and inn, which
 /// SceneId_LogRoomsA (log_rooms_a.c) and SceneId_LogRoomsB
-/// (log_rooms_b.c) both answer.
+/// (log_rooms_b.c) both answer, and the stock and inn numbers their counters
+/// open.
+
+/// The stock and inn numbers Vault's counters open (Shop_Run, Inn_CheckIn).
+enum {
+  VAULT_WEAPON_STOCK = 4,
+  VAULT_ARMOR_STOCK = 5,
+  VAULT_ITEM_STOCK = 6,
+  VAULT_INN = 1
+};
 
 /// The cells the rooms' step triggers and examine triggers answer; the
 /// exits have cell behaviors of their own.

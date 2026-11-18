@@ -19,7 +19,7 @@ enum StatBoostMode {
                       ///< plays it
   STAT_BOOST_SHADE,   ///< a pane of light, in Mercury colours
   STAT_BOOST_COAL,    ///< a gust of wind, in Mars colours
-  STAT_BOOST_CRUCIBLE_FIRE, ///< Impact's burst without the gathering lights
+  STAT_BOOST_CRUCIBLE_FIRE, ///< Impact's burst without the swirling flares
   STAT_BOOST_STEAM, ///< a shield, in Mercury colours, the backdrop turning to
                     ///< Jupiter's
   STAT_BOOST_GUARD_AURA ///< a pane of light, in grey
@@ -119,8 +119,8 @@ void BattleEffect_RunCoal(struct BattleEffectParams *args) {
   BattleEffect_RunStatBoost(args, STAT_BOOST_COAL);
 }
 
-/// The stat boost's burst with no gathering lights, with no prelude Djinni and
-/// the fade step cleared.
+/// The stat boost's burst with no swirling flares (STAT_BOOST_FLARES), with no
+/// prelude Djinni and the fade step cleared.
 ///
 /// Abilities: Crucible Fire.
 void BattleEffect_RunCrucibleFire(struct BattleEffectParams *args) {
@@ -182,9 +182,10 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
   s32 drawFlags;
   s32 start;
   s32 additive = BLITTER_ADDITIVE;
+  /* FAKEMATCH(temporary): 0 held in a local for the center's coordinates; as
+   * 0. */
   s32 zero = 0;
   s32 flipX = COMPOSITE_FLIP_X;
-  s32 flipX2 = COMPOSITE_FLIP_X;
   s32 frame;
   s32 i;
   s32 origin[3];
@@ -358,7 +359,7 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
 
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags ^ flipX, BLITTER_MAX);
       draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, drawFlags ^ flipX2,
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, drawFlags ^ flipX,
                           additive);
       draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
 
@@ -748,7 +749,9 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
                     x - SHIELD_WIDTH / 2, y - SHIELD_HEIGHT / 2, SHIELD_WIDTH,
                     SHIELD_HEIGHT);
         }
-        // That is, targetFrame == 24, the chime as the picture breaks.
+        // The chime as the picture breaks.
+        /* FAKEMATCH(temporary): the target's frame worked out again, here and
+         * for the shards' fade below; as targetFrame. */
         if (frame - j * STAT_REDUCTION_TARGET_DELAY == 24)
           Sound_PlayFar(SE_CRACK);
 

@@ -35,7 +35,7 @@
 #define MEGIDDO_CORONA_VERTICES ((MEGIDDO_CORONA_QUADS + 1) * 2)
 #define MEGIDDO_CORONA_INNER_RADIUS 80
 #define MEGIDDO_CORONA_OUTER_RADIUS 120
-#define MEGIDDO_CORONA_SCALE 46536
+#define MEGIDDO_CORONA_SCALE toFIXED(0.71009)
 
 /// The flames that wrap the falling sun: MEGIDDO_FLAMES bands of the cloud
 /// turned 3/32 of a turn apart about it, each a quarter circle of
@@ -57,7 +57,7 @@
 
 /// How much the falling sun's scale grows a frame, from a quarter to three
 /// quarters.
-#define MEGIDDO_SUN_GROWTH 1236
+#define MEGIDDO_SUN_GROWTH toFIXED(0.01886)
 
 /// How many lines a frame the red haze scrolls at its fastest.
 #define MEGIDDO_HAZE_SPEED 16
@@ -68,7 +68,7 @@
 #define MEGIDDO_FLASHES 5
 #define MEGIDDO_FLASH_SHINE_FRAMES 8
 
-/// The rays that shoot from the caster's sword (gMegiddo_Ray*), the flame of
+/// The rays that fan out about the caster (gMegiddo_Ray*), the flame of
 /// FlameGradientTexture stretched long: one every two frames from
 /// MEGIDDO_RAYS_START, each for MEGIDDO_RAY_FRAMES, shrinking away over the
 /// last MEGIDDO_RAY_SHRINK_FRAMES.
@@ -78,7 +78,7 @@
 #define MEGIDDO_RAY_SHRINK_FRAMES 16
 
 /// Megiddo: the caster leaps and hangs in the air before a red haze, rings of
-/// light flashing round them, rays shooting from their sword and sparks
+/// light flashing round them, rays fanning out about them and sparks
 /// rising; a burning sun sweeps down across the sky, then falls onto the
 /// target wrapped in flames and bursts in rings of light.
 ///
@@ -89,6 +89,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   s32 frame;
   s32 doubled;
   s32 k;
+  /* FAKEMATCH(temporary): 0 held in a local for the stores below; as 0. */
   s32 zero;
   u8 *coronaCorners;
   DrawRectangle blit[2];

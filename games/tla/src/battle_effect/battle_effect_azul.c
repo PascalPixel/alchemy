@@ -20,12 +20,10 @@ struct AzulFace {
 
 /// Clamps a sprite's projected y to the screen's band.
 #define CLAMP_Y(place)                                                         \
-  do {                                                                         \
-    if ((place)[2] < -toFIXED(1))                                              \
-      (place)[2] = -toFIXED(1);                                                \
-    if ((place)[2] > toFIXED(DISPLAY_HEIGHT) - 1)                              \
-      (place)[2] = toFIXED(DISPLAY_HEIGHT);                                    \
-  } while (0)
+  ((place)[2] < -toFIXED(1) ? (void)((place)[2] = -toFIXED(1)) : (void)0,      \
+   (place)[2] > toFIXED(DISPLAY_HEIGHT) - 1                                    \
+       ? (void)((place)[2] = toFIXED(DISPLAY_HEIGHT))                          \
+       : (void)0)
 
 #define AZUL_FRAMES 228
 
@@ -381,10 +379,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
                                   30 / 32) -
                                 i / 4 * 60) +
                      base.y + toFIXED(66);
-          if (place[2] < -toFIXED(1))
-            place[2] = -toFIXED(1);
-          if (place[2] > toFIXED(DISPLAY_HEIGHT) - 1)
-            place[2] = toFIXED(DISPLAY_HEIGHT);
+          CLAMP_Y(place);
           obj = work->sprites[i + AZUL_SERPENT_OBJECTS];
           obj->image.tile =
               ((struct Sprite *)work->sprites[(i & 3) + AZUL_BODY_SEGMENT])

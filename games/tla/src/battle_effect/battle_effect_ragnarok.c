@@ -301,8 +301,7 @@ void BattleEffect_RunAcheronsGrief(struct BattleEffectParams *args) {
   BattleEffect_RunFallingSword(args, FALLING_SWORD_ACHERONS_GRIEF);
 }
 
-/// The map cell buffer: the dust, then the sword's sparks.
-#define DUST ((struct Particle *)Ram_MapCellBuffer)
+/// The sword's sparks, in the map cell buffer after the dust (PARTICLES).
 #define TITAN_BLADE_SWORD_SPARKS                                               \
   ((struct Particle *)(Ram_MapCellBuffer +                                     \
                        TITAN_BLADE_DUST * sizeof(struct Particle)))
@@ -311,7 +310,7 @@ void BattleEffect_RunAcheronsGrief(struct BattleEffectParams *args) {
 #define TITAN_BLADE_SWORD_PICTURE 20000 ///< the sword picture in the sheet
 #define TITAN_BLADE_FLASHES 32          ///< flashes scattered
 #define TITAN_BLADE_RING 16             ///< of which drawn as the ring
-#define TITAN_BLADE_DUST 684       ///< dust slots in DUST, before the sparks
+#define TITAN_BLADE_DUST 684 ///< dust slots in PARTICLES, before the sparks
 #define TITAN_BLADE_FIRST_DUST 256 ///< dust lit at once on frame 28
 #define TITAN_BLADE_DRAWN_DUST 342 ///< dust moved and drawn
 #define TITAN_BLADE_SPARKS 340     ///< sparks after the dust
@@ -409,7 +408,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
 
   i = 0;
   do {
-    DUST[i].variant = -1;
+    PARTICLES[i].variant = -1;
     i++;
   } while (i != TITAN_BLADE_DUST);
 
@@ -495,7 +494,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
     if (frame == 28) {
       i = 0;
       do {
-        struct Particle *dust = &DUST[i];
+        struct Particle *dust = &PARTICLES[i];
 
         if (dust->variant == -1) {
           s32 speed;
@@ -520,7 +519,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
       spawned = 0;
       i = 0;
       do {
-        struct Particle *dust = &DUST[i];
+        struct Particle *dust = &PARTICLES[i];
 
         if (dust->variant == -1) {
           s32 speed;
@@ -559,7 +558,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
     if (frame <= 71) {
       i = 0;
       do {
-        struct Particle *dust = &DUST[i];
+        struct Particle *dust = &PARTICLES[i];
 
         if (dust->variant >= 0) {
           s32 size;
@@ -684,7 +683,6 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
   EFFECT_FINISH_CANVAS();
 }
 
-#undef DUST
 #undef TITAN_BLADE_SWORD_SPARKS
 #undef TITAN_BLADE_FRAMES
 #undef TITAN_BLADE_SWORD_PICTURE

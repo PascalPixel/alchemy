@@ -48,13 +48,6 @@ void LuckyWheels_Run(void);
 #define LUCKY_WHEELS_CANVAS_TILES                                              \
   (BG_CHAR_BLOCK(0) + LUCKY_WHEELS_CANVAS_FIRST_TILE * TILE_SIZE_8BPP)
 #define LUCKY_WHEELS_CANVAS_CLEAR_TILE 191
-/// What the canvas transfer does after each copy (transferMode): fill the
-/// canvas with transferValue, or fade each colour number to the share
-/// transferValue gives, as the battle effects' canvas transfer names them.
-#define CANVAS_COPY_AND_CLEAR 1
-#define CANVAS_COPY_AND_FADE 2
-#define CANVAS_FADE_HALF 50
-#define CANVAS_FADE_THREE_QUARTERS 75
 /// The canvas's first 64 colours, its sparks', from a Djinn sheet's palette and
 /// cycled through others while a win shows.
 #define LUCKY_WHEELS_SPARK_COLORS 64

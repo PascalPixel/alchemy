@@ -29,8 +29,6 @@ struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y) {
 /// BG1's tile number of the command row's first icon tile.
 #define COMMAND_ROW_ICON_TILE (BG_CHAR_SIZE / (8 * 8))
 
-/// BG1's map in a battle, screen block 31.
-#define BATTLE_BG1_SCREEN_BLOCK 31
 /// BG1's map row shown on the command row's top row, at the battle
 /// background's scroll.
 #define COMMAND_ROW_BG1_ROW (COMMAND_ROW_TOP + BATTLE_BACKGROUND_SCROLL_Y / 8)

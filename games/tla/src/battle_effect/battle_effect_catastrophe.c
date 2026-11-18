@@ -236,7 +236,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   // twice across: its upper 15 rows are the battle background's left half
   // (from tile 512, at BG character block 2), its lower 15 the right half.
   {
-    u16 *map = (u16 *)BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN);
+    u16 *map = (u16 *)BG_SCREEN_BLOCK(BATTLE_BG1_SCREEN_BLOCK);
 
     {
       s32 row;

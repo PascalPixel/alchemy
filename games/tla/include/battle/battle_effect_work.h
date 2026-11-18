@@ -13,6 +13,27 @@
 #include "system/io_reg.h"
 #include "types.h"
 
+/// How the canvas transfer treats the canvas after each copy (a battle
+/// effect's BattleEffectWork.transferMode, Lucky Wheels' ReelEffectWork's);
+/// transferValue is its argument.
+enum CanvasTransferMode {
+  CANVAS_COPY,             ///< copy as drawn
+  CANVAS_COPY_AND_CLEAR,   ///< copy, then fill the canvas with transferValue (0
+                           ///< clears it)
+  CANVAS_COPY_AND_FADE,    ///< copy, keeping half of each pixel's level for the
+                           ///< next frame when transferValue is
+                           ///< CANVAS_FADE_HALF, and three quarters for any
+                           ///< other value
+  CANVAS_COPY_AND_DARKEN,  ///< copy, then lower each level by a byte of
+                           ///< transferValue, stopping at 0
+  CANVAS_COPY_AND_BRIGHTEN ///< copy, then raise each level by a byte of
+                           ///< transferValue
+};
+
+/// CANVAS_COPY_AND_FADE's transferValue: the percentage of each pixel's level
+/// kept for the next frame.
+enum CanvasFadeShare { CANVAS_FADE_HALF = 50, CANVAS_FADE_THREE_QUARTERS = 75 };
+
 /// The running battle effect's work: its canvas image, 64 particles, the
 /// display registers it stages and its sprites. It lives in the
 /// HEAP_SLOT_BATTLE_EFFECT heap slot.
@@ -25,12 +46,11 @@ struct BattleEffectWork {
   /// The backdrop's 160 colours, one a line, that
   /// BattleEffect_ArmPaletteHBlankDma streams into colour 0.
   u16 backdropLines[160];
-  /// How the canvas transfer callback treats the canvas after each copy: 0
-  /// copies, 1 also fills it with transferValue, 2 keeps 50 or 75 percent, 3
-  /// darkens and 4 brightens it.
+  /// How the canvas transfer callback treats the canvas after each copy, an
+  /// enum CanvasTransferMode.
   s32 transferMode;
-  /// The transfer mode's argument: the fill value, the share kept (50 or 75
-  /// percent) or the darken or brighten amount.
+  /// The transfer mode's argument: the fill value, the share kept (an enum
+  /// CanvasFadeShare) or the darken or brighten amount.
   s32 transferValue;
   s32 unused;         ///< never read or written in either game
   s32 frame;          ///< frame counter some effects keep, from 0

@@ -5,9 +5,8 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-/// Legend's sparks live in the map cell buffer's second 16 KB, 128 for each
-/// sword; they bounce once on the ground at SPARK_GROUND_Y, as the cards' do.
-#define LEGEND_SPARKS ((struct Particle *)(Ram_MapCellBuffer + 16384))
+/// Legend's sparks live in EXTRA_PARTICLES, 128 for each sword; they bounce
+/// once on the ground at SPARK_GROUND_Y, as the cards' do.
 #define LEGEND_SPARK_COUNT 512
 #define SPARK_GROUND_Y 104
 #define LEGEND_SWORD_SPARKS 128
@@ -112,7 +111,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
         step->variant = 0;
       }
       for (i = 0; i != LEGEND_SPARK_COUNT; i++)
-        LEGEND_SPARKS[i].variant = -1;
+        EXTRA_PARTICLES[i].variant = -1;
     }
 
     // The swords, one each LEGEND_SWORD_INTERVAL frames.
@@ -133,7 +132,8 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
                                  POSE_DAMAGE, 0, 8);
         work->shakeFrames = 4;
         for (j = 0; j != LEGEND_SWORD_SPARKS; j++) {
-          struct Particle *spark = &LEGEND_SPARKS[i * LEGEND_SWORD_SPARKS + j];
+          struct Particle *spark =
+              &EXTRA_PARTICLES[i * LEGEND_SWORD_SPARKS + j];
           s32 angle;
           s32 force;
 
@@ -169,7 +169,7 @@ void BattleEffect_RunLegend(struct BattleEffectParams *args) {
 
     // The sparks bounce on the ground.
     for (i = 0; i != LEGEND_SPARK_COUNT; i++) {
-      step = &LEGEND_SPARKS[i];
+      step = &EXTRA_PARTICLES[i];
       if (step->variant >= 0) {
         s32 size = (step->variant >> 2) + 1;
 
@@ -325,10 +325,9 @@ void BattleEffect_RunThunderCard(struct BattleEffectParams *args) {
 /// The work's particles: the shards, smoke or pictures the card throws, then
 /// one strike countdown for each target. Each target has its own run of the
 /// sparks, and a strike throws up the next free 16 of them. The sparks live
-/// where Legend's do, in the map cell buffer's second 16 KB.
+/// where Legend's do, in EXTRA_PARTICLES.
 #define CARD_PIECES 56
 #define CARD_STRIKE_TIMERS CARD_PIECES
-#define CARD_SPARKS ((struct Particle *)(Ram_MapCellBuffer + 16384))
 #define CARD_SPARK_COUNT 512
 #define CARD_SPARKS_PER_TARGET 64
 #define CARD_STRIKE_SPARKS 16
@@ -424,7 +423,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
       for (i = 0; i != args->targetCount; i++)
         work->particles[CARD_STRIKE_TIMERS + i].variant = (Random16() & 3) + 2;
       for (i = 0; i != CARD_SPARK_COUNT; i++)
-        CARD_SPARKS[i].variant = -1;
+        EXTRA_PARTICLES[i].variant = -1;
       EffectPosition_ProjectSprite(args->user, &card);
       for (i = 0; i != args->targetCount; i++)
         EffectPosition_ProjectScaledBattler(args->targets[i], &targets[i]);
@@ -590,7 +589,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
           EffectPosition_ProjectScaledBattler(args->targets[i], &aim);
           for (j = 0; j != CARD_SPARKS_PER_TARGET; j++) {
             struct Particle *spark =
-                &CARD_SPARKS[i * CARD_SPARKS_PER_TARGET + j];
+                &EXTRA_PARTICLES[i * CARD_SPARKS_PER_TARGET + j];
 
             if (spark->variant < 0) {
               s32 angle;
@@ -735,7 +734,7 @@ void BattleEffect_RunElementCards(struct BattleEffectParams *args, s32 mode) {
 
     // The sparks bounce on the ground.
     for (i = 0; i != CARD_SPARK_COUNT; i++) {
-      struct Particle *step = &CARD_SPARKS[i];
+      struct Particle *step = &EXTRA_PARTICLES[i];
 
       if (step->variant >= 0) {
         s32 size = step->variant >> 3;
@@ -786,7 +785,6 @@ void BattleEffect_RunDeathCard(struct BattleEffectParams *args) {
 void BattleEffect_RunSwordCard(struct BattleEffectParams *args) {
   BattleEffect_RunCards(args, CARD_SWORD);
 }
-#undef LEGEND_SPARKS
 #undef LEGEND_SPARK_COUNT
 #undef SPARK_GROUND_Y
 #undef LEGEND_SWORD_SPARKS
@@ -809,7 +807,6 @@ void BattleEffect_RunSwordCard(struct BattleEffectParams *args) {
 #undef ELEMENT_CARDS_PICTURES
 #undef CARD_PIECES
 #undef CARD_STRIKE_TIMERS
-#undef CARD_SPARKS
 #undef CARD_SPARK_COUNT
 #undef CARD_SPARKS_PER_TARGET
 #undef CARD_STRIKE_SPARKS

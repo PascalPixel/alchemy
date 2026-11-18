@@ -88,12 +88,12 @@
 /// The square ramp drawn as the blast begins, brightening from left to right.
 #define ECLIPSE_RAMP_SIZE 120
 /// The landing's buffers in the map cell buffer: the dome's vertices and its
-/// grid mesh, the band's vertices and mesh, and the motes.
+/// grid mesh, and the band's vertices and mesh. Its motes are in
+/// EXTRA_PARTICLES.
 #define ECLIPSE_DOME_VERTICES (Ram_MapCellBuffer + 2048)
 #define ECLIPSE_DOME_MESH (Ram_MapCellBuffer + 4096)
 #define ECLIPSE_BAND_VERTICES (Ram_MapCellBuffer + 8192)
 #define ECLIPSE_BAND_MESH (Ram_MapCellBuffer + 10240)
-#define ECLIPSE_MOTES ((struct Particle *)(Ram_MapCellBuffer + 16384))
 #define ECLIPSE_MOTE_COUNT 512
 /// The landing's frames, and the motes it throws up each frame.
 #define ECLIPSE_LANDING_FRAMES 26
@@ -658,7 +658,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
                              work->sheet + ECLIPSE_GLOW_BAND_B, 0, 0);
   // Every mote starts free.
   {
-    s32 *v = &ECLIPSE_MOTES[0].variant;
+    s32 *v = &EXTRA_PARTICLES[0].variant;
     s32 c = -1;
 
     for (i = 0; i != ECLIPSE_MOTE_COUNT; i++) {
@@ -703,7 +703,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
       // Motes spring up about where the blast landed, farther out each frame.
       for (i = 0; i != ECLIPSE_MOTES_A_FRAME; i++) {
         struct Particle *q =
-            ECLIPSE_MOTES +
+            EXTRA_PARTICLES +
             ((frame * ECLIPSE_MOTES_A_FRAME + i) & (ECLIPSE_MOTE_COUNT - 1));
         // Default: set for real below.
         s32 a = 0;
@@ -718,7 +718,7 @@ void BattleEffect_RunEclipse(struct BattleEffectParams *args) {
         q->variant = (Random16() & 15) + 16;
       }
       for (i = 0; i != ECLIPSE_MOTE_COUNT; i++) {
-        p = ECLIPSE_MOTES + i;
+        p = EXTRA_PARTICLES + i;
         if (p->variant >= 0) {
           s32 n = (p->variant >> 3) + 1;
 
@@ -1361,14 +1361,14 @@ void BattleEffect_ProcessPendingBlock2Transfer(void) {
 
 /// Row `row` of BG1's map.
 #define BG1_MAP_ROW(row)                                                       \
-  (BG_SCREEN_BLOCK(CANVAS_BG1_SCREEN) + (row) * MAP_ROW_BYTES)
+  (BG_SCREEN_BLOCK(BATTLE_BG1_SCREEN_BLOCK) + (row) * MAP_ROW_BYTES)
 
 /// Writes BG1's map to show a picture CANVAS_SIZE wide from BG character block
 /// 2, as BattleTransition_BuildTilemap does for the battle background: four
 /// rows of blank entries, two of BG1_CLEAR_TILE, then the picture's tiles in
 /// order, CANVAS_TILES rows of them, each row closed with BG1_CLEAR_TILE.
 void BattleEffect_BuildCanvasTilemap(void) {
-  u32 *map = (u32 *)BG_SCREEN_BLOCK(CANVAS_BG1_SCREEN);
+  u32 *map = (u32 *)BG_SCREEN_BLOCK(BATTLE_BG1_SCREEN_BLOCK);
   u32 tiles;
   s32 row;
   s32 column;
@@ -1720,7 +1720,7 @@ void BattleEffect_HideBg1AndRestoreBackdrop(void) {
   BattleBackground_SetModeFar(BATTLE_BACKGROUND_ZOOMED, battle->background, 0);
   IO_WRITE_QUEUE_PUSH((u32)&REG_BG1CNT,
                       BGCNT_PRIORITY(3) | BGCNT_256_COLORS |
-                          BGCNT_SCREEN_BASE(CANVAS_BG1_SCREEN),
+                          BGCNT_SCREEN_BASE(BATTLE_BG1_SCREEN_BLOCK),
                       IO_WRITE_HALFWORD);
   wait(1);
 }
@@ -1769,7 +1769,7 @@ void BattleEffect_SetupCanvasTileMap(void) {
   }
   REG_DISPCNT = EFFECT_DISPCNT;
   REG_BG1CNT = BGCNT_PRIORITY(1) | BGCNT_256_COLORS |
-               BGCNT_SCREEN_BASE(CANVAS_BG1_SCREEN);
+               BGCNT_SCREEN_BASE(BATTLE_BG1_SCREEN_BLOCK);
   REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   EFFECT_SET_BATTLE_WINDOWS();
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG2 |

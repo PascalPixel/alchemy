@@ -263,12 +263,6 @@
     }                                                                          \
   }
 
-/// EnemyDefinition.targetStrategy: a single-target attacker favours the
-/// target with the most HP left, the most maximum HP, or no one.
-#define TARGET_STRATEGY_MOST_HP 0
-#define TARGET_STRATEGY_MOST_MAX_HP 1
-#define TARGET_STRATEGY_RANDOM 2
-
 /// Picks the target of an enemy's ability, or a confused unit's, at random
 /// among those it would affect; a single-target attack by an enemy with a
 /// strategy favours the strongest.

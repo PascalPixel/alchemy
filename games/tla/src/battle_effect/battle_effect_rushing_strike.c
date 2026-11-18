@@ -253,7 +253,7 @@ void BattleEffect_RunStarMine(struct BattleEffectParams *args) {
 /// tiles by BACKDROP_ROWS, twice across and twice down, so that the backdrop
 /// scrolls on without end.
 void BattleEffect_BuildRepeatingTilemap(void) {
-  u16 *dst = (u16 *)BG_SCREEN_BLOCK(BACKGROUND_PADDED_SCREEN);
+  u16 *dst = (u16 *)BG_SCREEN_BLOCK(BATTLE_BG1_SCREEN_BLOCK);
   s32 y;
   s32 x;
 
@@ -276,13 +276,11 @@ struct CornerRow {
   struct Corner corners[2];
 };
 /// The dragon's buffers in the map cell buffer: its strip's corners, their
-/// transformed vertices, the strip mesh, and the sparks: the first half thrown
-/// up at the start, the second the trail behind the dragon, and all of them
-/// scattered from its top at frame 134.
+/// transformed vertices and the strip mesh; and its sparks, in
+/// EXTRA_PARTICLES: the first half thrown up at the start, the second the trail
+/// behind the dragon, and all of them scattered from its top at frame 134.
 #define RISING_DRAGON_ENEMY_VERTICES 4096
 #define RISING_DRAGON_ENEMY_STRIP 8192
-#define RISING_DRAGON_ENEMY_SPARKS                                             \
-  ((struct Particle *)(Ram_MapCellBuffer + 16384))
 #define RISING_DRAGON_ENEMY_SPARK_COUNT 256
 #define TRAIL_SPARKS (RISING_DRAGON_ENEMY_SPARK_COUNT / 2)
 
@@ -392,9 +390,9 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
         work->particles[i].variant = -1;
       }
       for (i = 0; i != TRAIL_SPARKS; i++) {
-        RISING_DRAGON_ENEMY_SPARKS[TRAIL_SPARKS + i].variant = -1;
+        EXTRA_PARTICLES[TRAIL_SPARKS + i].variant = -1;
       }
-      for (i = 0, spawned = RISING_DRAGON_ENEMY_SPARKS; i != TRAIL_SPARKS;
+      for (i = 0, spawned = EXTRA_PARTICLES; i != TRAIL_SPARKS;
            i++, spawned++) {
         s32 angle;
         s32 speed;
@@ -498,7 +496,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
           camera->yaw = yaw;
         }
         for (i = 0; i != RISING_DRAGON_ENEMY_SPARK_COUNT; i++) {
-          RISING_DRAGON_ENEMY_SPARKS[i].variant = -1;
+          EXTRA_PARTICLES[i].variant = -1;
         }
         height = 220;
       }
@@ -612,7 +610,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
         Heap_Release(model);
 
         if (frame == 134) {
-          for (i = 0, scatter = RISING_DRAGON_ENEMY_SPARKS;
+          for (i = 0, scatter = EXTRA_PARTICLES;
                i != RISING_DRAGON_ENEMY_SPARK_COUNT; i++, scatter++) {
             s32 angle;
             s32 speed;
@@ -676,7 +674,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
           }
           first = slot * 2;
           for (i = 0, startY = INTtoFIXED(y),
-              trail = &RISING_DRAGON_ENEMY_SPARKS[TRAIL_SPARKS + first];
+              trail = &EXTRA_PARTICLES[TRAIL_SPARKS + first];
                i != 2; i++, trail++) {
             s32 random;
             s32 angle;
@@ -706,7 +704,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
           if (frame > 59) {
             gravity = toFIXED(1) / 4;
           }
-          for (i = 0, spark = RISING_DRAGON_ENEMY_SPARKS;
+          for (i = 0, spark = EXTRA_PARTICLES;
                i != RISING_DRAGON_ENEMY_SPARK_COUNT; i++, spark++) {
             s32 size;
 
@@ -784,7 +782,6 @@ void BattleEffect_RunLivingArmor(struct BattleEffectParams *args) {
 #undef BACKDROP_FIRST_TILE
 #undef BACKDROP_ROWS
 #undef BACKDROP_RIGHT_HALF
-#undef RISING_DRAGON_ENEMY_SPARKS
 #undef RISING_DRAGON_ENEMY_SPARK_COUNT
 #undef TRAIL_SPARKS
 #undef RISING_DRAGON_ENEMY_VERTICES

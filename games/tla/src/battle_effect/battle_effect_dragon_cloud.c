@@ -40,11 +40,9 @@
 /// flashes, four frames each).
 #define DRAGON_CLOUD_ANIMATION_PICTURES 6
 
-/// Epicenter's sparks, in the map cell buffer's second 16 KB, come in three
-/// batches: at the target, thrown up from the user's side, and shed by the
-/// flame. The sparks thrown up start on EPICENTER_SPARK_GROUND and bounce
-/// there.
-#define EPICENTER_SPARKS ((struct Particle *)(Ram_MapCellBuffer + 16384))
+/// Epicenter's sparks, in EXTRA_PARTICLES, come in three batches: at the
+/// target, thrown up from the user's side, and shed by the flame. The sparks
+/// thrown up start on EPICENTER_SPARK_GROUND and bounce there.
 #define EPICENTER_SPARK_COUNT 512
 #define EPICENTER_SPARK_BATCH 128
 #define EPICENTER_SPARK_GROUND 108
@@ -140,9 +138,9 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
   // Epicenter's sparks: all asleep but the first batch, at the target (only
   // Epicenter draws them).
   for (i = 0; i != EPICENTER_SPARK_COUNT; i++)
-    EPICENTER_SPARKS[i].variant = -1;
+    EXTRA_PARTICLES[i].variant = -1;
   for (i = 0; i != EPICENTER_SPARK_BATCH; i++) {
-    step = &EPICENTER_SPARKS[i];
+    step = &EXTRA_PARTICLES[i];
     SET_POSITION(step, actor->x.fixed, 0, actor->z.fixed);
     step->velocityX = ((Random16() & 63) - 32) << 14;
     step->velocityY = (Random16() & 63) << 12;
@@ -218,7 +216,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
           s32 angle;
           s32 force;
 
-          step = &EPICENTER_SPARKS[EPICENTER_SPARK_BATCH + i];
+          step = &EXTRA_PARTICLES[EPICENTER_SPARK_BATCH + i];
           step->x = toFIXED(60);
           step->y = toFIXED(EPICENTER_SPARK_GROUND);
           angle = (Random16() & 0x7fff) + DEGtoANG(90);
@@ -230,7 +228,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
       }
       // Only the first half of them is drawn.
       for (i = 0; i != EPICENTER_SPARK_BATCH / 2; i++) {
-        step = &EPICENTER_SPARKS[EPICENTER_SPARK_BATCH + i];
+        step = &EXTRA_PARTICLES[EPICENTER_SPARK_BATCH + i];
         if (step->variant >= 0 && frame >= i / 8) {
           s32 size = (step->variant >> 4) + 1;
 
@@ -326,7 +324,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
 
         index = ((frame * 4 + i) & (EPICENTER_SPARK_BATCH - 1)) +
                 EPICENTER_SPARK_BATCH * 2;
-        step = &EPICENTER_SPARKS[index];
+        step = &EXTRA_PARTICLES[index];
         step->x = INTtoFIXED(position.x);
         step->y = INTtoFIXED(position.y);
         angle = Random16();
@@ -384,7 +382,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
         for (i = 0; i != EPICENTER_SPARK_BATCH; i++) {
           s32 size;
 
-          step = &EPICENTER_SPARKS[i];
+          step = &EXTRA_PARTICLES[i];
           size = step->variant;
           if (size >= 0) {
             EffectPosition_ProjectPoint(&step->x, &position);
@@ -403,7 +401,7 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
 
     // Epicenter: the sparks the flame shed.
     if (args->variant == EFFECT_VARIANT_STRONGER) {
-      struct Particle *spark = &EPICENTER_SPARKS[EPICENTER_SPARK_BATCH * 2];
+      struct Particle *spark = &EXTRA_PARTICLES[EPICENTER_SPARK_BATCH * 2];
 
       for (i = 0; i != EPICENTER_SPARK_BATCH; i++, spark++) {
         if (spark->variant >= 0) {
@@ -471,7 +469,6 @@ void BattleEffect_RunDragonCloud(struct BattleEffectParams *args) {
 #undef DRAGON_CLOUD_EMBER_DEPTH_STEP
 #undef DRAGON_CLOUD_EMBER_DEPTH_FAR
 #undef DRAGON_CLOUD_ANIMATION_PICTURES
-#undef EPICENTER_SPARKS
 #undef EPICENTER_SPARK_COUNT
 #undef EPICENTER_SPARK_BATCH
 #undef EPICENTER_SPARK_GROUND

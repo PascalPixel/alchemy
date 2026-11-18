@@ -7,9 +7,10 @@
 /// Runs Catch cast on a target, through FieldPsynergy_Catch.
 void FieldPsynergy_CatchOnTarget(s32 unused) { FieldPsynergy_Catch(); }
 
-/// Carries the hand (sprite 215) from 16 pixels above the caster to the goal in
-/// 10 steps, growing from a quarter to full size, presses down 20 pixels moving
-/// child to (-9, -9), rises 19.5 pixels and shrinks back.
+/// A hand (SPRITE_MOVE_HAND) reaches from 16 pixels above the caster to the
+/// target over GROW_STEPS frames, growing from a quarter to full size, clenches
+/// and presses down 20 pixels, taking what it caught off the map, then rises
+/// 19.5 pixels and shrinks back into the caster.
 void FieldPsynergy_Catch(void) {
   struct FieldEffectWork *effectWork = gFieldEffectWork;
   struct Actor *actor = effectWork->mainActor;
@@ -20,7 +21,7 @@ void FieldPsynergy_Catch(void) {
   struct Point target;
   s32 step;
   s32 i;
-  s32 steps = 11;
+  s32 steps = GROW_STEPS + 1;
 
   origin.x = actor->x.fixed;
   origin.y = actor->y.fixed + toFIXED(16);
@@ -39,7 +40,7 @@ void FieldPsynergy_Catch(void) {
   spawn.y = effectWork->y + toFIXED(32);
   spawn.z = effectWork->z;
   object = Actor_Spawn(SPRITE_MOVE_HAND, spawn.x, spawn.y, spawn.z);
-  if (object == 0)
+  if (object == NULL)
     return;
   FieldPsynergy_FadeToCastColor();
   Sound_PlayFar(SE_ITEM_BREAK);
@@ -49,15 +50,15 @@ void FieldPsynergy_Catch(void) {
   Actor_SelectAnimationFar(object, MOVE_HAND_ANIMATION_FIST);
   Actor_SetSpriteColorModeFar(object, SPRITE_COLOR_GRB);
 
-  // Reach out to the goal: steps 0 to 10 of an 11-step loop, a tenth of the
-  // way each frame.
+  // Reach out to the target, a step of the way each frame.
   step = 0;
   do {
     s32 scale;
 
-    SET_ACTOR_POSITION(object, origin.x + (target.x - origin.x) * step / 10,
-                       origin.y + (target.y - origin.y) * step / 10,
-                       origin.z + (target.z - origin.z) * step / 10);
+    SET_ACTOR_POSITION(object,
+                       origin.x + (target.x - origin.x) * step / GROW_STEPS,
+                       origin.y + (target.y - origin.y) * step / GROW_STEPS,
+                       origin.z + (target.z - origin.z) * step / GROW_STEPS);
     scale = FieldEffect_Interpolate(FIXED_ONE, FIXED_ONE / 4, step);
     object->scaleX = scale;
     object->scaleY = scale;
@@ -77,7 +78,7 @@ void FieldPsynergy_Catch(void) {
   Sound_PlayFar(SE_WATER);
   // As the hand presses down, the caught actor vanishes: (-9, -9) pixels is
   // just off the map's corner, where no view reaches.
-  if (child != 0)
+  if (child != NULL)
     Actor_SetPositionAndResetMotionFar(child, -toFIXED(9), child->y.fixed,
                                        -toFIXED(9));
   wait(20);
@@ -95,9 +96,10 @@ void FieldPsynergy_Catch(void) {
   do {
     s32 scale;
 
-    SET_ACTOR_POSITION(object, target.x + (origin.x - target.x) * step / 10,
-                       target.y + (origin.y - target.y) * step / 10,
-                       target.z + (origin.z - target.z) * step / 10);
+    SET_ACTOR_POSITION(object,
+                       target.x + (origin.x - target.x) * step / GROW_STEPS,
+                       target.y + (origin.y - target.y) * step / GROW_STEPS,
+                       target.z + (origin.z - target.z) * step / GROW_STEPS);
     scale = FieldEffect_Interpolate(FIXED_ONE / 4, FIXED_ONE, step);
     object->scaleX = scale;
     object->scaleY = scale;

@@ -129,7 +129,7 @@
 #include "text/msg_ids.h"
 
 extern s32 gBilibin_FaceLeaderScript[];
-extern u16 gBilibinEntrancesOther[];
+extern struct SceneEntrance gBilibinEntrancesOther[];
 extern struct SceneEntrance gBilibinEntrances[];
 extern struct SceneEntrance gBilibinBarricadeEntrances[];
 extern struct SceneEntrance gBilibinTreasuryEntrances[];
@@ -262,7 +262,7 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   if (sceneId == SCENE_BILIBIN_TREASURY) {
     return gBilibinTreasuryEntrances;
   }
-  return (const struct SceneEntrance *)gBilibinEntrancesOther;
+  return gBilibinEntrancesOther;
 }
 
 /// Only the Bilibin Treasury has exit regions.
@@ -967,12 +967,10 @@ s32 gBilibin_FaceLeaderScript[] = {
 };
 
 /// Unused: the entrances for a scene other than the three, which never loads
-/// this overlay. Its words read as a MAPGRID_ANIMATION_STEP list, not as
-/// entrances.
-u16 gBilibinEntrancesOther[] = {
-    MAPGRID_ANIMATION_STEP(0, 65535, 168, 0, 168),
-    MAPGRID_ANIMATION_STEP(16384, 0, 65535, 65535, 65535),
-    MAPGRID_ANIMATION_STEPS_END,
+/// this overlay. Its one row has no SCENE_TABLE_END after it.
+struct SceneEntrance gBilibinEntrancesOther[] = {
+    {ENTRANCE_DEFAULT, CONDITION_ALWAYS, 168, 0, 168, FACING_SOUTH, 0, -1, -1,
+     -1, -1, 0},
 };
 
 struct SceneEntrance gBilibinEntrances[] = {

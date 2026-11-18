@@ -9,7 +9,8 @@
 #include "system/system.h"
 #include "resource_ids.h"
 
-/// A line's 16.16 sideways sway as its BG2X value in work->bg2xLines.
+/// The header's CANVAS_WAVE_BG2X again: battle_effect_streaks.c #undefs it
+/// before this part.
 #define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
 
 #define HAUNT_SCATTERED 512
@@ -455,7 +456,6 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
   BattleEffect_EndCanvasLayer();
 }
 
-#undef CANVAS_WAVE_BG2X
 #undef HAUNT_SCATTERED
 #undef HAUNT_SPIRITS
 #undef HAUNT_SLOTS

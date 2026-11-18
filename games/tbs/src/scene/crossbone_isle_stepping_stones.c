@@ -105,10 +105,6 @@ extern struct Trigger gCrossboneIsleFloodgateTriggers[];
 extern struct Trigger gCrossboneIsleStackedPillarsTriggers[];
 extern struct Trigger gCrossboneIsleDragonStatueTriggers[];
 
-/// A chest searched while facing the given way.
-#define EXAMINE_CHEST_FACING(facing)                                           \
-  (EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | (facing))
-
 /// The placed actors, numbered in the order of each room's actor
 /// placements (Scene_GetActorPlacements).
 enum CrossboneIsleSteppingStonesActorId {

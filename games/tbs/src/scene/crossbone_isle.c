@@ -126,10 +126,6 @@ extern struct Trigger gCrossboneIsle_FloatingLogsTriggers[];
 extern struct Trigger gCrossboneIsle_PierTriggers[];
 extern struct Trigger gCrossboneIsle_PirateShipTriggers[];
 
-/// A chest searched while facing the given way.
-#define EXAMINE_CHEST_FACING(facing)                                           \
-  (EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | (facing))
-
 /// Crossbone Isle's placed actors, numbered in the order of
 /// gCrossboneIsle_IsleActorPlacements.
 enum CrossboneIsleActorId {

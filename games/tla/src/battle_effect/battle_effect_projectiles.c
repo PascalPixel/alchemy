@@ -457,8 +457,8 @@ void BattleEffect_RunPoisonSting(struct BattleEffectParams *args) {
   BattleEffect_RunProjectileVolley(args, PROJECTILE_VOLLEY_POISON_STING);
 }
 
-/// Thirty needles stream at each target, one a frame, and glints of water
-/// spray scatter where they land.
+/// Thirty blue needles stream at each target, one a frame, and blue glints
+/// flash about it where they land.
 ///
 /// Abilities: Stun Sting.
 void BattleEffect_RunStunSting(struct BattleEffectParams *args) {
@@ -488,20 +488,21 @@ void BattleEffect_RunChillBreath(struct BattleEffectParams *args) {
 #define PROJECTILE_VOLLEY_FIRST_STREAK 960 ///< the first streak in PARTICLES
 #define PROJECTILE_VOLLEY_STREAKS                                              \
   (PROJECTILE_VOLLEY_PARTICLE_COUNT - PROJECTILE_VOLLEY_FIRST_STREAK)
-/// The stings' short streak, then the smoke or water spray drawn where each
-/// lands.
+/// The stings' short streak, then what each draws where it lands: Poison
+/// Sting's smoke, Stun Sting's glints.
 #define SHORT_STREAK_WIDTH 17
 #define SHORT_STREAK_HEIGHT 2
-#define PROJECTILE_VOLLEY_STING_SPRAY_PICTURES PICTURE_BYTES(SHORT_STREAK)
+#define PROJECTILE_VOLLEY_STING_HIT_PICTURES PICTURE_BYTES(SHORT_STREAK)
 /// Hydro Slash's bubble, BlueBeamSheet's first picture, decoded at the sheet's
 /// start; its three pictures copied at every second byte after it, which
 /// nothing draws.
 #define PROJECTILE_VOLLEY_HALVED_BUBBLE_PICTURES 4096
 #define PROJECTILE_VOLLEY_HALVED_BUBBLE_BYTES                                  \
   ((2 * PICTURE_BYTES(BLUE_BUBBLE) + PICTURE_BYTES(BLUE_LARGE_SPLASH)) / 2)
-/// A hit's sparks fly at up to 4 pixels a frame each way: a roll of -128 to
-/// 127 shifted by this; Cutting Edge's twice as fast.
-#define PROJECTILE_VOLLEY_SPARK_SHIFT 11
+/// A hit's sparks fly at up to 4 pixels a frame each way, as a random -128 to
+/// 127 shifted up; Cutting Edge's at up to 8.
+#define PROJECTILE_VOLLEY_SPARK_SPEED_SHIFT 11
+#define CUTTING_EDGE_SPARK_SPEED_SHIFT 12
 
 /// The volley's comets, its CometSheet resources: Slash, Wind Slash and Sonic
 /// Slash fire the one their variant picks.
@@ -659,14 +660,14 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                            SHEET_PALETTE_BYTES);
       Resource_LoadAndDecompress(
           RESOURCE_SMOKE_SHEET,
-          work->sheet + PROJECTILE_VOLLEY_STING_SPRAY_PICTURES, 1, 0);
+          work->sheet + PROJECTILE_VOLLEY_STING_HIT_PICTURES, 1, 0);
     } else {
       Iwram_CopyWordsEntry((void *)BG_PLTT,
                            Resource_GetTableEntry(RESOURCE_WATER_SPRAY_SHEET),
                            SHEET_PALETTE_BYTES);
       Resource_LoadAndDecompress(
           RESOURCE_TORNADO_SHEET,
-          work->sheet + PROJECTILE_VOLLEY_STING_SPRAY_PICTURES, 1, 0);
+          work->sheet + PROJECTILE_VOLLEY_STING_HIT_PICTURES, 1, 0);
     }
   } else if (mode == PROJECTILE_VOLLEY_SHURIKEN) {
     Resource_LoadAndDecompress(RESOURCE_SHURIKEN_SHEET, work->sheet, 1, 1);
@@ -1027,8 +1028,8 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
               } else if (mode != PROJECTILE_VOLLEY_BEAST_NEEDLE) {
                 // Sparks fly from the hit.
                 trailsOrShift = mode == PROJECTILE_VOLLEY_CUTTING_EDGE
-                                    ? PROJECTILE_VOLLEY_SPARK_SHIFT + 1
-                                    : PROJECTILE_VOLLEY_SPARK_SHIFT;
+                                    ? CUTTING_EDGE_SPARK_SPEED_SHIFT
+                                    : PROJECTILE_VOLLEY_SPARK_SPEED_SHIFT;
                 for (k = PROJECTILE_VOLLEY_FIRST_SPARK;
                      k != PROJECTILE_VOLLEY_FIRST_TRAIL; k++) {
                   struct Particle *p = &PARTICLES[k];
@@ -1251,7 +1252,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
 
           if ((u32)p->variant < SMOKE_PUFF_FRAMES) {
             draw[0](canvas,
-                    work->sheet + PROJECTILE_VOLLEY_STING_SPRAY_PICTURES +
+                    work->sheet + PROJECTILE_VOLLEY_STING_HIT_PICTURES +
                         p->variant / 4 * PICTURE_BYTES(SMOKE_PUFF),
                     FIXED_INTEGER_PART(p->x) - SMOKE_PUFF_WIDTH / 2,
                     FIXED_INTEGER_PART(p->y) - SMOKE_PUFF_HEIGHT / 2,
@@ -1261,8 +1262,7 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
           }
         }
       } else if (mode == PROJECTILE_VOLLEY_STUN_STING) {
-        // Glints of water spray scatter about each landed streak, each with
-        // a random palette.
+        // Glints scatter about each landed streak, each flipped at random.
         for (i = 0; i != PROJECTILE_VOLLEY_STREAKS; i++) {
           struct Particle *p = &PARTICLES[PROJECTILE_VOLLEY_FIRST_STREAK + i];
 
@@ -1283,12 +1283,12 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                                 gProjectileVolley_GlintFlips[flip & 3] |
                                     EFFECT_CLIP_BOUNDS,
                                 BLITTER_ADDITIVE);
-            DRAW_ALTERNATE(
-                canvas,
-                work->sheet + PROJECTILE_VOLLEY_STING_SPRAY_PICTURES +
-                    gBattleEffect_GlintPictures[glint],
-                glintX, glintY, gBattleEffect_GlintPictureWidths[glint],
-                gBattleEffect_GlintPictureHeights[glint]);
+            DRAW_ALTERNATE(canvas,
+                           work->sheet + PROJECTILE_VOLLEY_STING_HIT_PICTURES +
+                               gBattleEffect_GlintPictures[glint],
+                           glintX, glintY,
+                           gBattleEffect_GlintPictureWidths[glint],
+                           gBattleEffect_GlintPictureHeights[glint]);
             HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
             p->variant++;
           }
@@ -1302,8 +1302,9 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/// Sends a unit back to its place (its anchor) with a hop.
-void BattleEffect_InitializeRisingObject(s32 slot) {
+/// Unused: nothing calls it. Sends a unit back to its place (its anchor) with a
+/// hop.
+UNUSED void BattleEffect_InitializeRisingObject(s32 slot) {
   struct BattleObject *context = BattleObject_GetFar(slot);
   struct Actor *actor = context->object;
 
@@ -1352,3 +1353,38 @@ void BattleEffect_SetApproachMotion(s32 id, s32 targetId, s32 frames,
   Actor_SetMoveTargetFar(obj, x, 0, z);
   Actor_SelectAnimationFar(obj, POSE_LEAP);
 }
+
+#undef DJINNI_ENTRANCE_SPARKS
+#undef DJINNI_ENTRANCE_TRAVEL_FRAMES
+#undef DJINNI_SPARK_DEPTH_NEAR
+#undef DJINNI_SPARK_DEPTH_STEP
+#undef DJINNI_SPARK_DEPTH_FAR
+#undef PROJECTILE_VOLLEY_PARTICLE_COUNT
+#undef PROJECTILE_VOLLEY_FIRST_SPARK
+#undef PROJECTILE_VOLLEY_FIRST_TRAIL
+#undef PROJECTILE_VOLLEY_FIRST_STREAK
+#undef PROJECTILE_VOLLEY_STREAKS
+#undef SHORT_STREAK_WIDTH
+#undef SHORT_STREAK_HEIGHT
+#undef PROJECTILE_VOLLEY_STING_HIT_PICTURES
+#undef PROJECTILE_VOLLEY_HALVED_BUBBLE_PICTURES
+#undef PROJECTILE_VOLLEY_HALVED_BUBBLE_BYTES
+#undef PROJECTILE_VOLLEY_SPARK_SPEED_SHIFT
+#undef CUTTING_EDGE_SPARK_SPEED_SHIFT
+#undef DRAW_ALTERNATE
+#undef PROJECTILE_VOLLEY_STREAK_PICTURES
+#undef PROJECTILE_VOLLEY_DJINNI_PICTURE
+#undef PROJECTILE_VOLLEY_COMET_PICTURES
+#undef PROJECTILE_VOLLEY_FLASH_TURNED
+#undef PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE_WIDTH
+#undef PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE_HEIGHT
+#undef PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE_WIDTH
+#undef PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE_HEIGHT
+#undef PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE_WIDTH
+#undef PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE_HEIGHT
+#undef PROJECTILE_VOLLEY_SMALL_SPARK_PICTURE
+#undef PROJECTILE_VOLLEY_MEDIUM_SPARK_PICTURE
+#undef PROJECTILE_VOLLEY_LARGE_SPARK_PICTURE
+#undef PROJECTILE_VOLLEY_COMET_WIDTH
+#undef SHURIKEN_WIDTH
+#undef SHURIKEN_HEIGHT

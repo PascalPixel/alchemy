@@ -9,8 +9,6 @@
 
 #define PLASMA_SPARK_COUNT                                                     \
   PARTICLE_POOL_COUNT ///< sparks in PARTICLES, shared by every pillar
-/// Volcano, later in the object, counts its sparks in the same pool by this.
-#define SPARK_MAX PLASMA_SPARK_COUNT
 #define PILLAR_BASE_Y 104
 
 #define PLASMA_SPACING 8 ///< frames between pillars

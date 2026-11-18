@@ -12,13 +12,24 @@
 // more.
 
 #define VOLCANO_FRAMES 96
+/// The frames the pillars burn, and the strongest variant's camera turns.
+#define VOLCANO_PILLAR_FRAMES 64
+/// The camera's turn each of those frames: three sixteenths of a turn in all.
+#define VOLCANO_CAMERA_SPIN (TRIG_TURN * 3 / 16 / VOLCANO_PILLAR_FRAMES)
 #define VOLCANO_ERUPTION 200 ///< sparks thrown as a pillar starts
 #define VOLCANO_TRICKLE 4    ///< and each frame after
-
+#define VOLCANO_SPARK_POOL PARTICLE_POOL_COUNT ///< sparks in PARTICLES
 /// The flame on odd frames, then on even frames, after the 34x104 column.
 #define VOLCANO_FLAME_PICTURE_ODD PICTURE_BYTES(FIRE_PILLAR)
 #define VOLCANO_FLAME_PICTURE_EVEN                                             \
   (VOLCANO_FLAME_PICTURE_ODD + PICTURE_BYTES(FIRE_PILLAR_FLAME))
+/// Sparks are thrown from this far below the column's foot.
+#define VOLCANO_SPARK_DROP 16
+/// How much faster a spark falls each frame: a sixteenth of a pixel a frame.
+#define VOLCANO_SPARK_GRAVITY (Q_8_8(1) / 16)
+/// The mote size a spark is drawn at: a size smaller every 8 frames of its
+/// life, and the smallest for its last 32, which is all of a trickled spark's.
+#define VOLCANO_SPARK_SIZE(life) (((life) - 17) / 8)
 
 /// One, two or four columns of fire rise among the targets, each erupting in a
 /// fountain of sparks and knocking the targets back.
@@ -37,8 +48,6 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
   struct BattleCamera *camera;
   s32 i;
 
-  // Set up: the canvas layer, the pillar sheet, the particle sprites, the
-  // variant's palette and two max blitters, the second mirrored.
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
@@ -57,11 +66,11 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
   draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
 
-  for (i = 0; i != SPARK_MAX; i++)
+  for (i = 0; i != VOLCANO_SPARK_POOL; i++)
     PARTICLES[i].variant = 0;
 
-  // The pillars stand in front of the first target, on its side of the
-  // field, at the variant's depths.
+  // The pillars stand on the first target's side of the field, at the
+  // variant's depths.
   object = BattleObject_GetFar(args->targets[0])->object;
   for (i = 0; i != 4; i++) {
     struct Particle *base = &work->particles[i];
@@ -76,20 +85,19 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != VOLCANO_FRAMES; frame++) {
-    // The strongest variant turns the camera for 64 frames.
     camera = Ram_HeapSlots->cameraWork;
-    if (args->variant == EFFECT_VARIANT_STRONGEST && frame < 64) {
+    if (args->variant == EFFECT_VARIANT_STRONGEST &&
+        frame < VOLCANO_PILLAR_FRAMES) {
       if (args->side == EFFECT_SIDE_ENEMIES)
-        camera->yaw = camera->yaw + 192;
+        camera->yaw = camera->yaw + VOLCANO_CAMERA_SPIN;
       else
-        camera->yaw = (s16)camera->yaw - 192;
+        camera->yaw = (s16)camera->yaw - VOLCANO_CAMERA_SPIN;
     }
     if (frame == 16)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-    Matrix_Initialize();
-    Matrix_SetLookAt(camera->eye, camera->focus);
+    EFFECT_VIEW_FROM_CAMERA(camera);
 
-    if (frame < 64) {
+    if (frame < VOLCANO_PILLAR_FRAMES) {
       for (pillar = 0; pillar != gVolcano_Counts[args->variant]; pillar++) {
         EffectPosition_ProjectPoint((s32 *)&work->particles[pillar], &screen);
         screen.x /= 2;
@@ -97,8 +105,7 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
         if (frame == gVolcano_StartFrames[pillar])
           Sound_PlayFar(SE_CRASH);
 
-        // Four frames after it starts the pillar burns: its flames scroll
-        // up through two copies, and its base flickers between two cels.
+        // The column scrolls up over its flickering flame.
         if (frame >= gVolcano_StartFrames[pillar] + 4) {
           s32 scroll = (frame * 16 + pillar * 25) % FIRE_PILLAR_HEIGHT;
 
@@ -126,13 +133,12 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
           }
         }
 
-        // Sparks: 200 as the pillar starts, then four a frame from its
-        // sixteenth frame on.
+        // Sparks: a fountain at the start, then a few a frame.
         if (frame == gVolcano_StartFrames[pillar] ||
             frame >= gVolcano_StartFrames[pillar] + 16) {
           s32 spawned = 0;
 
-          for (i = 0; i != SPARK_MAX; i++) {
+          for (i = 0; i != VOLCANO_SPARK_POOL; i++) {
             struct Particle *spark = &PARTICLES[i];
 
             if (spark->variant == 0) {
@@ -141,9 +147,11 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
 
               speed = (Random16() & 0x3ff) + 32;
               angle = (Random16() & 0x7fff) - DEGtoANG(90);
-              SET_POSITION(spark, screen.x << 8, (screen.y << 8) + (16 << 8),
-                           (Trig_Sin(angle) * speed) >> 15);
-              spark->velocityY = -(Trig_Cos(angle) * speed * 2) >> 15;
+              SET_POSITION(spark, screen.x << 8,
+                           (screen.y << 8) + Q_8_8(VOLCANO_SPARK_DROP),
+                           FIXEDtoINT_TWICE(Trig_Sin(angle) * speed));
+              spark->velocityY =
+                  FIXEDtoINT_TWICE(-(Trig_Cos(angle) * speed * 2));
               spawned++;
               if (frame == gVolcano_StartFrames[pillar]) {
                 spark->variant = (Random16() & 7) + 48;
@@ -158,10 +166,9 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
           }
         }
 
-        // The pillar strikes every target as it starts.
         if (frame == gVolcano_StartFrames[pillar]) {
           work->shakeFrames = 2;
-          for (i = 0; i != args->targetCount; i++) {
+          EFFECT_FOR_EACH_TARGET(i, args) {
             BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_RED_TINT,
                                      POSE_DAMAGE, i, 8);
             BattleMotion_ApplyKnockbackFar(args->targets[i], KNOCKBACK_HOP);
@@ -170,33 +177,33 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
       }
     }
 
-    // The sparks: 8.8 fixed point, z holding the x speed; they slow, fall,
-    // bounce at half speed below line 120, and shrink as they burn out.
-    for (i = 0; i != SPARK_MAX; i++) {
+    // The sparks, in 24.8 fixed point (z holds the speed across).
+    for (i = 0; i != VOLCANO_SPARK_POOL; i++) {
       struct Particle *spark = &PARTICLES[i];
       s32 life = spark->variant;
 
       if (life > 0) {
         FIXED x;
         s32 y;
-        s32 py;
+        s32 drawY;
 
         spark->variant = life - 1;
         x = spark->x += spark->z;
         y = spark->y += spark->velocityY;
         spark->z = spark->z * 60 / DAMPING_SCALE;
-        spark->velocityY = spark->velocityY * 60 / DAMPING_SCALE - 16;
-        py = y / 256;
-        if (py > 120) {
+        spark->velocityY =
+            spark->velocityY * 60 / DAMPING_SCALE - VOLCANO_SPARK_GRAVITY;
+        drawY = y / 256;
+        // A spark bounces at half its speed off the foot of the battle view.
+        if (drawY > BATTLE_VIEW_HEIGHT) {
           spark->velocityY = -spark->velocityY / 2;
         } else if (x >= 0 && x >> 8 <= 126 && y >= 0) {
-          s32 px = x >> 8;
-          s32 size = (life - 17) / 8;
+          s32 drawX = x >> 8;
+          s32 size = VOLCANO_SPARK_SIZE(life);
 
           if (size <= 0)
             size = 1;
-          draw[i & 1](canvas, sheet + gBattleEffect_MotePictures[size - 1],
-                      px - size / 2, py - size, size, size * 2);
+          EFFECT_DRAW_MOTE(draw[i & 1], canvas, sheet, drawX, drawY, size);
         }
       }
     }
@@ -205,8 +212,19 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(work);
   }
 
-  // Tear down.
   EFFECT_RELEASE_BLITTERS();
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
+
+#undef VOLCANO_FRAMES
+#undef VOLCANO_PILLAR_FRAMES
+#undef VOLCANO_CAMERA_SPIN
+#undef VOLCANO_ERUPTION
+#undef VOLCANO_TRICKLE
+#undef VOLCANO_SPARK_POOL
+#undef VOLCANO_FLAME_PICTURE_ODD
+#undef VOLCANO_FLAME_PICTURE_EVEN
+#undef VOLCANO_SPARK_DROP
+#undef VOLCANO_SPARK_GRAVITY
+#undef VOLCANO_SPARK_SIZE

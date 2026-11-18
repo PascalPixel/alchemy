@@ -23,6 +23,11 @@
 /// battle lasts (heap slot HEAP_SLOT_ENEMY_UNITS).
 #define ENEMY_UNITS_SIZE (ENEMY_BATTLE_SIZE * BATTLE_UNIT_SIZE)
 
+/// The camera's zoom, in percent, from the battle's setup until the opening
+/// sets its own: the curtain's a frame later, or the Doom Dragon's shattering
+/// opening's, so no frame shows it.
+#define BATTLE_ZOOM_BEFORE_OPENING 190
+
 /// With the front line down and someone living, sends the reserve members in
 /// to take the fallen ones' places, as many as there are of both.
 void BattleParty_SwapInReserves(void) {
@@ -65,7 +70,7 @@ void BattleParty_SwapInReserves(void) {
   wait(32);
 }
 
-/// Allocates the battle camera (heap slot 48) and sets its starting view.
+/// Allocates the battle camera and sets its starting view.
 void BattleCamera_Create(void) {
   struct BattleCamera *camera =
       HeapSlot_AllocEwram(HEAP_SLOT_CAMERA, sizeof(struct BattleCamera));
@@ -90,7 +95,7 @@ void BattleCamera_Create(void) {
 void Battle_ChangeEnemyForm(s32 id) {
   struct BattleWork *work = Ram_HeapSlots->battleWork;
   s32 unit;
-  s32 *object;
+  struct BattleObject *object;
 
   if (id == FORMATION_DOOM_DRAGON_A)
     unit = ENEMY_DOOM_DRAGON_E;
@@ -103,9 +108,9 @@ void Battle_ChangeEnemyForm(s32 id) {
   work->enemyIds[0] = FIRST_ENEMY_UNIT;
   work->enemyIds[1] = BATTLE_UNIT_LIST_END;
   Enemy_Update();
-  object = (s32 *)BattleObject_Get(FIRST_ENEMY_UNIT);
-  BattleObject_Make((struct BattleObject *)object, FIRST_ENEMY_UNIT,
-                    object[3] / FIXED_ONE, object[4] / FIXED_ONE);
+  object = BattleObject_Get(FIRST_ENEMY_UNIT);
+  BattleObject_Make(object, FIRST_ENEMY_UNIT, object->anchorX / FIXED_ONE,
+                    object->anchorZ / FIXED_ONE);
   BattleObject_Put();
 }
 
@@ -134,8 +139,6 @@ s32 Tutorial_GetDjinnGiveMessage(void) {
     return (s32)MsgDjinnGiveTutorialB;
   return (s32)MsgDjinnGiveTutorialA;
 }
-
-/// The actor sprite slot buffers, 0x4000 bytes a slot.
 
 void ActorSystem_InitializeFar(s32 mode);
 void Sound_LoadReverbCode(s32 preset);
@@ -255,8 +258,7 @@ s32 Battle_Run(s32 enemyGroup) {
   BattleBackground_Init();
   BattleBackground_Load(BATTLE_BACKGROUND_FIXED, battle->background, 0);
   BattleCamera_SetRange(toFIXED(160), toFIXED(80), 0, 0, FIXED_ONE * 2);
-  // The camera on the centre at 190 percent until the opening zooms.
-  BattleCamera_SetView(0, 0, 0, 190);
+  BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_BEFORE_OPENING);
   Party_BattleSetupNoOp(1);
   REG_BLDCNT = 0;
   BattleSpoils_Clear();
@@ -390,6 +392,8 @@ s32 Battle_Run(s32 enemyGroup) {
     if (GameFlag_Get(FLAG_DJINN_LESSON) == 0)
       continue;
 
+    // "See! What did I tell you? When you unleashed me, I used my special
+    // attack ability!"
     window = Message_OpenWindowFar(Tutorial_GetDjinnGiveMessage() +
                                        DJINN_TUTORIAL_LINE_UNLEASHED,
                                    0, 4, MESSAGE_WINDOW_ZOOM);
@@ -397,6 +401,8 @@ s32 Battle_Run(s32 enemyGroup) {
       wait(1);
     Window_CloseFar(window, 1);
     wait(1);
+    // "After being unleashed, we Djinn will then stand by, ready to be
+    // summoned back again..."
     window = Message_OpenWindowFar(Tutorial_GetDjinnGiveMessage() +
                                        DJINN_TUTORIAL_LINE_STANDBY,
                                    10, 4, MESSAGE_WINDOW_ZOOM);
@@ -483,7 +489,7 @@ finished:
   return result;
 }
 
-/// Lists the party members who fight, three in a link battle, into unitIds when
+/// Lists the party members who fight, three in a link battle, into owners when
 /// it is not null, and returns how many.
 s32 BattleParty_PrepareMembers(u16 *owners) {
   s32 limit;
@@ -519,15 +525,15 @@ s32 BattleParty_PrepareReserveOwners(u16 *owners) {
   s32 index;
 
   count = Party_CountMembersFar();
-  if (count > 4)
-    count -= 4;
+  if (count > PARTY_BATTLE_SIZE)
+    count -= PARTY_BATTLE_SIZE;
   else
     count = 0;
   if (Ram_HeapSlots->battleWork->isLink != 0)
     count = 0;
 
   for (index = 0; index < count; index++) {
-    s32 owner = gMainRoutineWork.party[index + 4];
+    s32 owner = gMainRoutineWork.party[index + PARTY_BATTLE_SIZE];
 
     if (owners != 0)
       *owners++ = owner;
@@ -540,20 +546,20 @@ s32 BattleParty_PrepareReserveOwners(u16 *owners) {
 }
 
 /// Lists the enemy units present and returns how many, 0 when unitIds is null.
-s32 BattleEnemy_List(s16 *unit_ids) {
+s32 BattleEnemy_List(s16 *unitIds) {
   s16 *output;
   s32 count;
   s32 id;
   s32 limit;
   s32 listed;
 
-  output = unit_ids;
+  output = unitIds;
   listed = 0;
   limit = ENEMY_BATTLE_SIZE;
   count = 0;
   if (output != NULL) {
     if (GameFlag_Get(FLAG_LINK_BATTLE) != 0)
-      limit = 3;
+      limit = LINK_PARTY_SIZE;
     id = FIRST_ENEMY_UNIT;
     limit += FIRST_ENEMY_UNIT;
     for (; id < limit; id++) {
@@ -730,35 +736,35 @@ s32 BattleUnit_ListIds(s32 sideMask, u16 *unitIds) {
   return count;
 }
 
-/// As BattleUnit_ListIds, listing only the actors whose HP is not 0.
-s32 BattleUnit_ListLivingIds(s32 groups, u16 *dst) {
-  struct BattleWork *order;
+/// As BattleUnit_ListIds, listing only the units whose HP is not 0.
+s32 BattleUnit_ListLivingIds(s32 sideMask, u16 *unitIds) {
+  struct BattleWork *battle;
   s32 count;
   s32 i;
 
-  order = Ram_HeapSlots->battleWork;
+  battle = Ram_HeapSlots->battleWork;
   count = 0;
-  if (groups & BATTLE_SIDE_MASK_PARTY) {
-    for (i = 0; order->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
-      if (order->partyUnits[i] != BATTLE_UNIT_REMOVED &&
-          Unit_Get(order->partyUnits[i])->hp != 0) {
-        if (dst != NULL)
-          *dst++ = order->partyUnits[i];
+  if (sideMask & BATTLE_SIDE_MASK_PARTY) {
+    for (i = 0; battle->partyUnits[i] != BATTLE_UNIT_LIST_END; i++) {
+      if (battle->partyUnits[i] != BATTLE_UNIT_REMOVED &&
+          Unit_Get(battle->partyUnits[i])->hp != 0) {
+        if (unitIds != NULL)
+          *unitIds++ = battle->partyUnits[i];
         count++;
       }
     }
   }
-  if (groups & BATTLE_SIDE_MASK_ENEMIES) {
-    for (i = 0; order->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
-      if (order->enemyIds[i] != BATTLE_UNIT_REMOVED &&
-          Unit_Get(order->enemyIds[i])->hp != 0) {
-        if (dst != NULL)
-          *dst++ = order->enemyIds[i];
+  if (sideMask & BATTLE_SIDE_MASK_ENEMIES) {
+    for (i = 0; battle->enemyIds[i] != BATTLE_UNIT_LIST_END; i++) {
+      if (battle->enemyIds[i] != BATTLE_UNIT_REMOVED &&
+          Unit_Get(battle->enemyIds[i])->hp != 0) {
+        if (unitIds != NULL)
+          *unitIds++ = battle->enemyIds[i];
         count++;
       }
     }
   }
-  if (dst != NULL)
-    *dst = BATTLE_UNIT_LIST_END;
+  if (unitIds != NULL)
+    *unitIds = BATTLE_UNIT_LIST_END;
   return count;
 }

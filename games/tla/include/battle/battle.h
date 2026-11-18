@@ -229,7 +229,7 @@ s32 BattleUnit_GetEffectHeight(s32 owner);
 s32 BattleUnit_ListLivingWithReserve(s32 sideMask, u16 *unitIds);
 void BattleUnit_RefreshPlacement(void);
 void BattleSpoils_Clear(void);
-s32 BattleUnit_ListLivingIds(s32 groups, u16 *dst);
+s32 BattleUnit_ListLivingIds(s32 sideMask, u16 *unitIds);
 void BattleObject_UpdateSpritePriorities(void);
 void Battle_TurnStartNoOp(void);
 s32 Battle_GatherActions(struct BattleActionRecord *actions);

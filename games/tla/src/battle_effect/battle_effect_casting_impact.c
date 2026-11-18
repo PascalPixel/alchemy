@@ -50,6 +50,12 @@ void BattleEffect_StepPaletteToResource(s32 resourceId) {
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->ramCode)
 #define ALT_BLITTER ((DrawRectangle)Ram_HeapSlots->ramCodePaired)
 
+/// A line's sideways sway as its BG2X value in work->bg2xLines, which the
+/// wave HBlank DMA writes line by line. BG2X counts 256ths of a canvas pixel,
+/// so a sway of toFIXED(n) moves the line n / 4 canvas pixels: n / 2 screen
+/// pixels where the canvas is shown at twice its width.
+#define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
+
 /// The casting impacts, by effect kind less 100: each is named for the first
 /// ability whose effect entry selects it as a casting impact; those no ability
 /// selects are named UNUSED_ and for what they load or share. The kinds before
@@ -149,6 +155,8 @@ enum CastingImpact {
 #define CASTING_IMPACT_DJINNI_PICTURE 15446
 #define CASTING_IMPACT_GATHER_FRAMES 32 ///< frames the sparks gather
 #define CASTING_IMPACT_SPARKS 64        ///< sparks in work->particles
+/// How far either side of the caster the gathering sparks' depth is clamped.
+#define CASTING_IMPACT_SPARK_DEPTH 60
 /// The impact pictures' particles, in the map cell buffer after the Djinni
 /// and Stun Jip's flame band.
 #define CASTING_IMPACT_IMPACT_PARTICLES                                        \
@@ -226,6 +234,15 @@ enum CastingImpact {
 #define CHILL_PUFF_WIDTH 32
 #define CHILL_PUFF_HEIGHT 64
 #define CHILL_PUFFS 24 ///< puffs Chill sends up
+/// Bad Omen's skulls rise faster by the frame, the slowest by toFIXED(1) / 32
+/// more a frame, written as a shift of 1, and each of the next three twice as
+/// fast as the one before.
+#define BAD_OMEN_SKULL_LIFT_SHIFT 11
+/// The level the canvas flashes to, three times, in Flash Edge.
+#define FLASH_EDGE_FLASH_LEVEL 47
+/// How far Stun Jip's ring of fire and bands of flame and Armor Crush's rings
+/// of billows lean back.
+#define CASTING_IMPACT_RING_TILT 1000
 
 /// ImpFaceSheet's 32x32 face, and the seven dimmer copies Wheeze makes after
 /// it.
@@ -749,10 +766,12 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
               sparkScreen.y = sparkScreen.y + casterPos.y + 44;
             else
               sparkScreen.y = sparkScreen.y + casterPos.y + 12;
-            // DEAD: the depth is clamped to -60..60 and moved to 0..120 but
-            // never read; the ROM keeps the clamp and the move.
-            CLAMP(sparkScreen.depth, -60, 60);
-            sparkScreen.depth += 60;
+            // DEAD: the depth is clamped either side of the caster and moved
+            // to start at 0, but never read; the ROM keeps the clamp and the
+            // move.
+            CLAMP(sparkScreen.depth, -CASTING_IMPACT_SPARK_DEPTH,
+                  CASTING_IMPACT_SPARK_DEPTH);
+            sparkScreen.depth += CASTING_IMPACT_SPARK_DEPTH;
             EFFECT_DRAW_MOTE(blitters[1], canvas, sprites, sparkScreen.x,
                              sparkScreen.y, n);
             p->x -= 4;
@@ -1111,12 +1130,12 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           kind != CASTING_IMPACT_IMPACT_SARCOPHAGUS &&
           kind != CASTING_IMPACT_IMPACT_RAIDENS_WRATH &&
           kind != CASTING_IMPACT_IMPACT_APOCALYPSE) {
-        // The wave: each line's BG2 offset, from 0 to 2 pixels.
+        // The wave: each line sways 0 to 2 canvas pixels sideways.
         s32 *scanline;
         scanline = work->bg2xLines;
         for (i = 0; i != DISPLAY_HEIGHT; i++) {
           s32 phase = frame * (TRIG_TURN / 16) + i * (TRIG_TURN / 32);
-          *scanline++ = (toFIXED(4) - Trig_Sin(phase) * 4) >> 10;
+          *scanline++ = CANVAS_WAVE_BG2X(toFIXED(4) - Trig_Sin(phase) * 4);
         }
       }
       // Step the background palette towards the impact's colours.
@@ -2196,7 +2215,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             }
             blitters[i > 2 ? 0 : 1](
                 canvas,
-                pictures + PRISM_SHARD_PICTURES + gPrism_ShardPictures[m],
+                pictures + CRYSTAL_SHARD_PICTURES + gPrism_ShardPictures[m],
                 (FIXEDtoINT(particle->x)) - gPrism_ShardWidths[m] / 2,
                 (FIXEDtoINT(particle->y)) - gPrism_ShardHeights[m] / 2,
                 gPrism_ShardWidths[m], gPrism_ShardHeights[m]);
@@ -2585,7 +2604,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             Matrix_Initialize();
             Matrix_Translate(INTtoFIXED(targetPos.x / 2 - 64), toFIXED(40), 0);
             Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
-            Matrix_RotateX(1000);
+            Matrix_RotateX(CASTING_IMPACT_RING_TILT);
             Matrix_ScaleUniform(scale);
             Render_TransformVertices(gBattleEffect_GroundSquareCorners, matrix,
                                      4);
@@ -2613,7 +2632,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                                INTtoFIXED(gCastingImpact_StunJipBandHeights[i]),
                                0);
               Matrix_Scale(scale * 2, scale * 4, scale / 4);
-              Matrix_RotateX(1000);
+              Matrix_RotateX(CASTING_IMPACT_RING_TILT);
               if (i & 1)
                 Matrix_RotateY((i * 2 + frame) * (TRIG_TURN / 16));
               else
@@ -2663,7 +2682,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
               Matrix_Scale(scale,
                            gCastingImpact_ArmorCrushWaveStretch[i] * scale * 2,
                            scale / 4);
-              Matrix_RotateX(1000);
+              Matrix_RotateX(CASTING_IMPACT_RING_TILT);
               if (i & 1)
                 Matrix_RotateY((i * 8 + frame) * (TRIG_TURN / 64));
               else
@@ -2689,15 +2708,14 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
             p->z = i * 2 + 80;
           }
         }
-        // Copies the sheet's first 1024 bytes over its third 1024, a level of
-        // the second 1024 every two frames, darkest first. Here they hold the
-        // skulls, which the blocks cut across.
-        // XXX: the copy works on 32x32 blocks, as Wheeze's faces are laid out,
-        // over the skull sheet; whether it is Wheeze's code left here would be
-        // settled by a sibling or an edition that runs it on the faces.
-        for (i = 0; i != 1024; i++) {
-          if (pictures[1024 + i] >> 1 == frame / 2)
-            pictures[2 * 1024 + i] = pictures[i];
+        // DEAD: a dissolve laid out as Wheeze's face and its fades are: the
+        // first 32x32 picture is copied over the third wherever the second
+        // holds the level frame / 2 * 2 or one more, darkest first. Here the
+        // pictures are the three 24x24 skulls, which end before the third
+        // block, so nothing drawn changes; the ROM keeps the loop.
+        for (i = 0; i != PICTURE_BYTES(IMP_FACE); i++) {
+          if (pictures[PICTURE_BYTES(IMP_FACE) + i] >> 1 == frame / 2)
+            pictures[2 * PICTURE_BYTES(IMP_FACE) + i] = pictures[i];
         }
         EffectPosition_ProjectScaledBattler(action->targets[0], &targetPoint);
         targetPoint.x = targetPoint.x / 2;
@@ -2791,7 +2809,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                           projected.x - SKULL_WIDTH / 2,
                           projected.y - SKULL_HEIGHT / 2, SKULL_WIDTH,
                           SKULL_HEIGHT);
-          Particle_AdvanceWithGravity3D(p, 60, 1 << ((i & 3) + 11));
+          Particle_AdvanceWithGravity3D(
+              p, 60, 1 << ((i & 3) + BAD_OMEN_SKULL_LIFT_SHIFT));
           p->variant++;
         }
       } else if (kind == CASTING_IMPACT_IMPACT_FLASH_EDGE) {
@@ -2801,7 +2820,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         for (i = 0; i != 3; i++) {
           if (frame == i * 3 + 3) {
             Sound_PlayFar(SE_POWER_UP);
-            Iwram_FillWords(canvas, CANVAS_BYTES, CANVAS_FILL_WORD(47));
+            Iwram_FillWords(canvas, CANVAS_BYTES,
+                            CANVAS_FILL_WORD(FLASH_EDGE_FLASH_LEVEL));
           }
         }
       } else if (kind == CASTING_IMPACT_IMPACT_SCORPIONFISH) {
@@ -3041,3 +3061,104 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
     EFFECT_FINISH_CANVAS();
   }
 }
+#undef BG_VRAM
+#undef BLITTER
+#undef ALT_BLITTER
+#undef CANVAS_WAVE_BG2X
+#undef CASTING_IMPACT_DJINN_KINDS
+#undef CASTING_IMPACT_ORB_PICTURES
+#undef CASTING_IMPACT_DJINNI_WIDTH
+#undef CASTING_IMPACT_DJINNI_HEIGHT
+#undef CASTING_IMPACT_DJINNI_PICTURE
+#undef CASTING_IMPACT_GATHER_FRAMES
+#undef CASTING_IMPACT_SPARKS
+#undef CASTING_IMPACT_SPARK_DEPTH
+#undef CASTING_IMPACT_IMPACT_PARTICLES
+#undef CASTING_IMPACT_IMPACT_PARTICLE_COUNT
+#undef CASTING_IMPACT_SPARK_LIFE
+#undef CASTING_IMPACT_SPARK_SHRINK
+#undef ASURA_SHEET_LOW_WIDTH
+#undef ASURA_SHEET_LOW_HEIGHT
+#undef ASURA_SHEET_SWUNG_WIDTH
+#undef ASURA_SHEET_SWUNG_HEIGHT
+#undef ASURA_SHEET_CRESCENT_WIDTH
+#undef ASURA_SHEET_CRESCENT_HEIGHT
+#undef ASURA_SHEET_SWUNG
+#undef ASURA_SHEET_CRESCENT
+#undef ASURA_CRESCENT_FADE_A_HEIGHT
+#undef ASURA_CRESCENT_FADE_B_HEIGHT
+#undef ASURA_CRESCENT_FADE_C_HEIGHT
+#undef ASURA_CRESCENT_FADE_D_HEIGHT
+#undef ASURA_CRESCENT_FADE_B
+#undef ASURA_CRESCENT_FADE_C
+#undef ASURA_CRESCENT_FADE_D
+#undef SARCOPHAGUS_COFFIN_WIDTH
+#undef SARCOPHAGUS_COFFIN_HEIGHT
+#undef SARCOPHAGUS_GHOST_A
+#undef SARCOPHAGUS_GHOST_A_WIDTH
+#undef SARCOPHAGUS_GHOST_A_HEIGHT
+#undef SARCOPHAGUS_GHOST_B
+#undef SARCOPHAGUS_GHOST_B_WIDTH
+#undef SARCOPHAGUS_GHOST_B_HEIGHT
+#undef SARCOPHAGUS_GHOST_C
+#undef SARCOPHAGUS_GHOST_C_WIDTH
+#undef SARCOPHAGUS_GHOST_C_HEIGHT
+#undef SARCOPHAGUS_GHOST_D
+#undef SARCOPHAGUS_GHOST_D_WIDTH
+#undef SARCOPHAGUS_GHOST_D_HEIGHT
+#undef SARCOPHAGUS_GHOST_E
+#undef SARCOPHAGUS_GHOST_E_WIDTH
+#undef SARCOPHAGUS_GHOST_E_HEIGHT
+#undef SARCOPHAGUS_GHOST_F
+#undef SARCOPHAGUS_GHOST_F_WIDTH
+#undef SARCOPHAGUS_GHOST_F_HEIGHT
+#undef SARCOPHAGUS_GHOST_G
+#undef SARCOPHAGUS_GHOST_G_WIDTH
+#undef SARCOPHAGUS_GHOST_G_HEIGHT
+#undef ROCK_SPIRE_WIDTH
+#undef ROCK_SPIRE_HEIGHT
+#undef FALLING_FLAME_WIDTH
+#undef FALLING_FLAME_HEIGHT
+#undef CHILL_PUFF_WIDTH
+#undef CHILL_PUFF_HEIGHT
+#undef CHILL_PUFFS
+#undef BAD_OMEN_SKULL_LIFT_SHIFT
+#undef FLASH_EDGE_FLASH_LEVEL
+#undef CASTING_IMPACT_RING_TILT
+#undef IMP_FACE_WIDTH
+#undef IMP_FACE_HEIGHT
+#undef IMP_FACE_FADES
+#undef STUN_BOLT_TEXTURE_WIDTH
+#undef STUN_BOLT_TEXTURE_HEIGHT
+#undef STUN_BOLT_TEXTURES
+#undef STUN_BOLT_PICTURES
+#undef HAMMERSPHERE_BALL
+#undef HAMMERSPHERE_BALL_WIDTH
+#undef HAMMERSPHERE_BALL_HEIGHT
+#undef BITE_HALF_WIDTH
+#undef BITE_HALF_HEIGHT
+#undef CASTING_IMPACT_SMOKE_PICTURES
+#undef CASTING_IMPACT_FLASH_BURST_PICTURES
+#undef CASTING_IMPACT_RUNE_PICTURES
+#undef CASTING_IMPACT_BOULDER_PICTURES
+#undef BOULDER_PICTURE_SIZE
+#undef MOTHER_EARTH_SHARDS
+#undef CASTING_IMPACT_FLAME_BAND
+#undef CASTING_IMPACT_RISING_PICTURES
+#undef CASTING_IMPACT_RISING_LIFE
+#undef CASTING_IMPACT_BURST_LIFE
+#undef POWER_DRIVE_FIREBALLS
+#undef POWER_DRIVE_FIREBALL_LIFE
+#undef TERRIBLE_BITE_BURSTS
+#undef RAIDENS_WRATH_PICTURES
+#undef APOCALYPSE_PICTURES
+#undef RAIDENS_WRATH_WARRIOR_WIDTH
+#undef RAIDENS_WRATH_WARRIOR_HEIGHT
+#undef APOCALYPSE_WOMAN_WIDTH
+#undef APOCALYPSE_WOMAN_HEIGHT
+#undef SARCOPHAGUS_DISSOLVE_ROWS
+#undef BROIL_STREAKS
+#undef CASTING_IMPACT_TRAIL_MOTES
+#undef STUN_BOLT_BOLTS
+#undef STUN_BOLT_COUNT
+#undef STUN_BOLT_STRIKES

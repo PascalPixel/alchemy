@@ -476,27 +476,29 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
   } break;
 
   case COMMAND_DJINN:
-    abilityId = Djinn_GetAbilityIdFar(DJINN_ELEMENT(request->parameter),
-                                      DJINN_INDEX(request->parameter));
-    if (!Djinn_IsSetFar(request->unitId, DJINN_ELEMENT(request->parameter),
-                        DJINN_INDEX(request->parameter))) {
-      if (Djinn_CanSetFar(request->unitId, DJINN_ELEMENT(request->parameter),
-                          DJINN_INDEX(request->parameter))) {
+    abilityId = Djinn_GetAbilityIdFar(DJINN_COMMAND_ELEMENT(request->parameter),
+                                      DJINN_COMMAND_INDEX(request->parameter));
+    if (!Djinn_IsSetFar(request->unitId,
+                        DJINN_COMMAND_ELEMENT(request->parameter),
+                        DJINN_COMMAND_INDEX(request->parameter))) {
+      if (Djinn_CanSetFar(request->unitId,
+                          DJINN_COMMAND_ELEMENT(request->parameter),
+                          DJINN_COMMAND_INDEX(request->parameter))) {
         Ability_Get(abilityId);
         BattleHighlight_SetModes(0, HIGHLIGHT_OFF);
-        Djinn_SetFar(request->unitId, DJINN_ELEMENT(request->parameter),
-                     DJINN_INDEX(request->parameter));
+        Djinn_SetFar(request->unitId, DJINN_COMMAND_ELEMENT(request->parameter),
+                     DJINN_COMMAND_INDEX(request->parameter));
         DjinnRecovery_RemoveFar(request->unitId,
-                                DJINN_ELEMENT(request->parameter),
-                                DJINN_INDEX(request->parameter));
+                                DJINN_COMMAND_ELEMENT(request->parameter),
+                                DJINN_COMMAND_INDEX(request->parameter));
         Unit_CalculateFar(request->unitId);
         BattlePlayback_Reset();
         BattlePlayback_SchedulePhase(30);
         BattlePlayback_Push(PLAYBACK_UNIT_NAME, request->unitId);
         BattlePlayback_Push(
             PLAYBACK_ABILITY_NAME,
-            DJINN_ELEMENT(request->parameter) * DJINN_PER_ELEMENT +
-                DJINN_INDEX(request->parameter) + ABILITY_DJINNI_FIRST);
+            DJINN_COMMAND_ELEMENT(request->parameter) * DJINN_PER_ELEMENT +
+                DJINN_COMMAND_INDEX(request->parameter) + ABILITY_DJINNI_FIRST);
         BattlePlayback_Push(PLAYBACK_SOUND, SE_NOTE_HIGH);
         BattlePlayback_Push(PLAYBACK_DRAW_STATUS, 0);
         BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)&MsgDjinnIsSet);
@@ -507,8 +509,9 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
         Actor_SetAnimationSpeedFar(
             (struct Actor *)BattleObject_Get(request->unitId)->object,
             ANIMATION_STEP_NORMAL * 2);
-        ElementGlow_Play(request->unitId, DJINN_ELEMENT(request->parameter),
-                         GLOW_BURST, 0);
+        ElementGlow_Play(request->unitId,
+                         DJINN_COMMAND_ELEMENT(request->parameter), GLOW_BURST,
+                         0);
         BattlePlayback_WaitForReady();
         return ACTION_NOTHING_TO_SHOW;
       }
@@ -525,8 +528,8 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       if (BattleActionRun_SetTargets(abilityId) == ACTION_REPORTED)
         return ACTION_REPORTED;
       DjinnRecovery_AddStandbyFar(request->unitId,
-                                  DJINN_ELEMENT(request->parameter),
-                                  DJINN_INDEX(request->parameter));
+                                  DJINN_COMMAND_ELEMENT(request->parameter),
+                                  DJINN_COMMAND_INDEX(request->parameter));
       ability = Ability_Get(abilityId);
       MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
       MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);

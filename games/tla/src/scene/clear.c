@@ -706,9 +706,23 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// A unit's Djinn, djinnHeld to djinnSetCounts.
 #define UNIT_DJINN_BYTES 40
 
-u8 gClear_PasswordText[PASSWORD_GOLD_LENGTH] BSS_DATA;
-u8 gClear_PasswordCodes[60] BSS_DATA;
-u8 gClear_PasswordWork[PASSWORD_GOLD_BYTES] BSS_DATA;
+/// The password as entered, a symbol a byte: a Gold password is 260 symbols,
+/// which the Japanese buffer holds exactly, as in The Broken Seal.
+// XXX (no evidence): why the other editions reserve 320, and the Japanese 60
+// bytes after the decoded password; nothing in this game writes or reads past
+// 260 or the decoded bytes, so the bytes show only the space.
+#if TLA_PATCH_1
+#define PASSWORD_BUFFER_SIZE 320
+#else
+#define PASSWORD_BUFFER_SIZE PASSWORD_GOLD_LENGTH
+#endif
+u8 gClear_PasswordText[PASSWORD_BUFFER_SIZE] BSS_DATA;
+/// The entered password's bytes, decoded (Clear_DecodePassword).
+u8 gClear_DecodedPassword[PASSWORD_GOLD_BYTES] BSS_DATA;
+#if !TLA_PATCH_1
+/// Unused: the Japanese edition's 60 bytes after the decoded password.
+u8 gClear_PasswordSpare[60] BSS_DATA;
+#endif
 
 /// The password grid's glyph sprites, one for each place of a page.
 struct PasswordWork {
@@ -1068,15 +1082,12 @@ static inline void Cursor_Show(struct MenuCursor *cursor, s32 x, s32 y) {
 #define SIDE_HIGHLIGHT_WIDTH 3
 #define CHECK_WINDOW_X 8
 #define CHECK_WINDOW_WIDTH 14
-/// Japanese decodes into the bytes after its 260-byte entered password.
-#define DECODED_PASSWORD gClear_PasswordCodes
 #define CURSOR_ON_SIDE_COLUMN(column) ((column) == SIDE_COLUMN)
 #else
 #define SIDE_COLUMN 16
 #define SIDE_HIGHLIGHT_WIDTH 6
 #define CHECK_WINDOW_X 5
 #define CHECK_WINDOW_WIDTH 20
-#define DECODED_PASSWORD gClear_PasswordWork
 #define CURSOR_ON_SIDE_COLUMN(column) ((column) > SIDE_COLUMN - 1)
 #endif
 
@@ -1364,16 +1375,17 @@ s32 Clear_EnterPassword(void) {
           s16 crc;
 
           action = Clear_DecodePassword(gClear_PasswordText, length,
-                                        DECODED_PASSWORD);
+                                        gClear_DecodedPassword);
           crcLength = action - PASSWORD_CRC_BYTES;
-          check = Clear_CalculatePasswordCrc16(crcLength, DECODED_PASSWORD);
+          check =
+              Clear_CalculatePasswordCrc16(crcLength, gClear_DecodedPassword);
 
           state = 0;
           box = Window_Create(CHECK_WINDOW_X, 12, CHECK_WINDOW_WIDTH, 3,
                               WINDOW_FLAG_INSTANT);
           crc = check;
-          if (DECODED_PASSWORD[crcLength] == (u16)crc >> 8 &&
-              DECODED_PASSWORD[action - 1] == (u16)crc % 256) {
+          if (gClear_DecodedPassword[crcLength] == (u16)crc >> 8 &&
+              gClear_DecodedPassword[action - 1] == (u16)crc % 256) {
             Text_DrawMessageAsTiles((s32)MsgFieldPasswordAccepted, box, 0, 0);
             Sound_Play(SE_MENU_CONFIRM);
             do {
@@ -1391,7 +1403,7 @@ s32 Clear_EnterPassword(void) {
             Party_AddMember(GARET);
             Party_AddMember(IVAN);
             Party_AddMember(MIA);
-            Clear_ApplyImportedData(mode, DECODED_PASSWORD);
+            Clear_ApplyImportedData(mode, gClear_DecodedPassword);
             Window_Close(box, 2);
             Window_Close(grid, 2);
             Window_Close(window, 2);
@@ -2112,7 +2124,6 @@ s16 gClear_ExtraCodeHeld = 0;
 #undef SIDE_HIGHLIGHT_WIDTH
 #undef CHECK_WINDOW_X
 #undef CHECK_WINDOW_WIDTH
-#undef DECODED_PASSWORD
 #undef CURSOR_ON_SIDE_COLUMN
 #undef DRAW_KEYS
 #undef PAGE_DIGITS_TILE

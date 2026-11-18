@@ -14,25 +14,36 @@ enum StatBoostMode {
   STAT_BOOST_GRANITE, ///< a pane of light, in Venus colours
   STAT_BOOST_ZEPHYR,  ///< a gust of wind, keeping the palette
   STAT_BOOST_FLASH,   ///< a pane of light, in Mars colours
-  STAT_BOOST_IRON,
-  STAT_BOOST_UNUSED, ///< no ability's effect plays it
-  STAT_BOOST_SHADE,
-  STAT_BOOST_COAL,
+  STAT_BOOST_IRON,    ///< a shield, in Venus colours, the backdrop turning grey
+  STAT_BOOST_UNUSED,  ///< a shield, in Mercury colours; no ability's effect
+                     ///< plays it
+  STAT_BOOST_SHADE,         ///< a pane of light, in Mercury colours
+  STAT_BOOST_COAL,          ///< a gust of wind, in Mars colours
   STAT_BOOST_CRUCIBLE_FIRE, ///< Impact's burst without the gathering lights
-  STAT_BOOST_STEAM,
-  STAT_BOOST_GUARD_AURA
+  STAT_BOOST_STEAM, ///< a shield, in Mercury colours, the backdrop turning to
+                    ///< Jupiter's
+  STAT_BOOST_GUARD_AURA ///< a pane of light, in grey
 };
 
+/// Light swirls into each target and bursts, then a dagger appears in Mars
+/// colours.
+///
 /// Abilities: Impact, High Impact, Demon Spear, Angel Spear; Forge; Kindle.
 void BattleEffect_RunImpact(struct BattleEffectParams *args) {
   BattleEffect_RunStatBoost(args, STAT_BOOST_IMPACT);
 }
 
+/// Light swirls into each target and bursts, then a shield appears in Mars
+/// colours.
+///
 /// Abilities: Guard, Protect, Guardian, Protector; Corona.
 void BattleEffect_RunGuard(struct BattleEffectParams *args) {
   BattleEffect_RunStatBoost(args, STAT_BOOST_GUARD);
 }
 
+/// Light swirls into each target and bursts, then a shield appears in Venus
+/// colours as the backdrop turns grey.
+///
 /// Abilities: Iron.
 void BattleEffect_RunIron(struct BattleEffectParams *args) {
   BattleEffect_RunStatBoost(args, STAT_BOOST_IRON);
@@ -43,41 +54,66 @@ void BattleEffect_RunUnusedStatBoost(struct BattleEffectParams *args) {
   BattleEffect_RunStatBoost(args, STAT_BOOST_UNUSED);
 }
 
+/// Light swirls into each target and bursts, then a shield appears in Jupiter
+/// colours.
+///
 /// Abilities: Ward, Resist, Magic Shell, Magic Shield; Breeze.
 void BattleEffect_RunWard(struct BattleEffectParams *args) {
   BattleEffect_RunStatBoost(args, STAT_BOOST_WARD);
 }
 
+/// Light swirls into each target and bursts, then a shield appears in Mercury
+/// colours as the backdrop turns to Jupiter's colours.
+///
 /// Abilities: Steam.
 void BattleEffect_RunSteam(struct BattleEffectParams *args) {
   BattleEffect_RunStatBoost(args, STAT_BOOST_STEAM);
 }
 
+/// Light swirls into each target and bursts, then a pane of light appears in
+/// Venus colours.
+///
 /// Abilities: Granite.
 void BattleEffect_RunGranite(struct BattleEffectParams *args) {
   BattleEffect_RunStatBoost(args, STAT_BOOST_GRANITE);
 }
 
+/// Light swirls into each target and bursts, then a pane of light appears in
+/// Mars colours.
+///
 /// Abilities: Flash.
 void BattleEffect_RunFlash(struct BattleEffectParams *args) {
   BattleEffect_RunStatBoost(args, STAT_BOOST_FLASH);
 }
 
+/// Light swirls into each target and bursts, then a pane of light appears in
+/// Mercury colours.
+///
 /// Abilities: Shade.
 void BattleEffect_RunShade(struct BattleEffectParams *args) {
   BattleEffect_RunStatBoost(args, STAT_BOOST_SHADE);
 }
 
+/// Light swirls into each target and bursts, then a pane of light appears in
+/// grey.
+///
 /// Abilities: Guard Aura.
 void BattleEffect_RunGuardAura(struct BattleEffectParams *args) {
   BattleEffect_RunStatBoost(args, STAT_BOOST_GUARD_AURA);
 }
 
+/// Light swirls into each target and bursts, then a gust of wind sweeps across
+/// it in the colours already loaded, as this is the one boost that keeps the
+/// palette.
+///
 /// Abilities: Zephyr.
 void BattleEffect_RunZephyr(struct BattleEffectParams *args) {
   BattleEffect_RunStatBoost(args, STAT_BOOST_ZEPHYR);
 }
 
+/// Light swirls into each target and bursts, then a gust of wind sweeps across
+/// it in Mars colours.
+///
 /// Abilities: Coal.
 void BattleEffect_RunCoal(struct BattleEffectParams *args) {
   BattleEffect_RunStatBoost(args, STAT_BOOST_COAL);
@@ -103,23 +139,37 @@ enum StatBoostSheet {
   STAT_BOOST_DJINNI = 26048   ///< the Djinni
 };
 
-/// Build a blitter in its heap slot and fetch its entry.
-#define LOAD_BLITTER(out, flags, mode)                                         \
-  EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, flags, mode);                        \
-  out = (DrawRectangle)Ram_HeapSlots->ramCode
-
-#define FLARES ((struct Particle *)Ram_MapCellBuffer)
-#define FLARES_PER_MEMBER 64
-
-// Lights gather around each target in turn, eight frames apart, turning as
-// they close in; at the center they burst, and the mode's picture plays
-// there (a dagger, a shield, a streak or a wisp).
-
-#define STAT_BOOST_PICTURE_FRAME 80
-
 /// When the first target's flares burst and its picture appears, with the
-/// damage; each later target follows 8 frames behind.
+/// damage; each later target follows STAT_BOOST_TARGET_DELAY frames behind.
+/// Crucible Fire starts at STAT_BOOST_CRUCIBLE_FIRE_FRAME, after the flares.
 #define STAT_BOOST_BURST_FRAME 52
+#define STAT_BOOST_PICTURE_FRAME 80
+#define STAT_BOOST_TARGET_DELAY 8
+#define STAT_BOOST_CRUCIBLE_FIRE_FRAME (STAT_BOOST_BURST_FRAME + 1)
+
+/// The particles both kinds of stat change set out: the first half of the pool.
+#define STAT_CHANGE_PARTICLES (PARTICLE_POOL_COUNT / 2)
+/// Each target swirls in STAT_BOOST_TARGET_FLARES flares from its own run of
+/// STAT_BOOST_TARGET_PARTICLES particles.
+#define STAT_BOOST_TARGET_PARTICLES 64
+#define STAT_BOOST_TARGET_FLARES 32
+/// How far the flares turn about the target each frame.
+#define STAT_BOOST_FLARE_SPIN (TRIG_TURN / 64)
+/// A flare is drawn at size STAT_BOOST_FLARE_SIZE_MAX at depth
+/// STAT_BOOST_FLARE_DEPTH_NEAR or nearer, one size smaller every
+/// STAT_BOOST_FLARE_DEPTH_STEP farther, and at size 1 from
+/// STAT_BOOST_FLARE_DEPTH_FAR on.
+#define STAT_BOOST_FLARE_SIZE_MAX 6
+#define STAT_BOOST_FLARE_DEPTH_NEAR 314
+#define STAT_BOOST_FLARE_DEPTH_STEP 64
+#define STAT_BOOST_FLARE_DEPTH_FAR                                             \
+  (STAT_BOOST_FLARE_DEPTH_NEAR +                                               \
+   (STAT_BOOST_FLARE_SIZE_MAX - 1) * STAT_BOOST_FLARE_DEPTH_STEP)
+/// How far the prelude's Djinni sways to either side, in pixels.
+#define STAT_BOOST_DJINNI_SWAY 20
+/// The shift that sets the canvas, shown 1.25 times as wide, against the
+/// screen's right edge over the party.
+#define STAT_BOOST_PARTY_CANVAS_X (DISPLAY_WIDTH * 4 / 5 - CANVAS_SIZE)
 
 /// Flares of light swirl in to the centre of each target in turn and burst, and
 /// the mode's picture plays over it.
@@ -128,14 +178,10 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
   void *canvas;
   DrawRectangle draw[2];
   s32 member;
-  s32 shift;
-  s32 flags;
+  s32 canvasShiftX;
+  s32 drawFlags;
   s32 start;
-  // Holds BLITTER_ADDITIVE for the whole function: the lights' second build
-  // then reloads its 0 in place of a fresh constant.
   s32 additive = BLITTER_ADDITIVE;
-  // Holds 0 for the whole function: the center's coordinates are stored from
-  // it.
   s32 zero = 0;
   s32 flipX = COMPOSITE_FLIP_X;
   s32 flipX2 = COMPOSITE_FLIP_X;
@@ -182,13 +228,13 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
     origin[0] = origin[0] * 4 / 5;
   }
 
-  // Crucible Fire is Impact joined at frame 53, with a fade.
+  // Crucible Fire is Impact joined after the flares, with a fade.
   if (mode == STAT_BOOST_CRUCIBLE_FIRE) {
     work->fadeFrames = BACKGROUND_DARKEN_FRAMES;
     mode = STAT_BOOST_IMPACT;
-    start = 53;
+    start = STAT_BOOST_CRUCIBLE_FIRE_FRAME;
   }
-  REG_BG2PA = Q_8_8(0.8); // 1.25 times as wide
+  REG_BG2PA = Q_8_8(0.8); // 1.25 times the width
 
   // The pictures and the colors.
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D,
@@ -256,9 +302,9 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
     Resource_LoadAndDecompress(RESOURCE_MARS_DJINN_SHEET,
                                work->sheet + STAT_BOOST_DJINNI, 1, 0);
 
-  // The lights: 25 pixels across and deep, 50 up and down.
-  for (i = 0; i != 512; i++) {
-    struct Particle *flare = &FLARES[i];
+  // The flares: 25 pixels across and deep, 50 up and down.
+  for (i = 0; i != STAT_CHANGE_PARTICLES; i++) {
+    struct Particle *flare = &PARTICLES[i];
 
     SET_POSITION(flare, (Random16() % 200 - 100) << 14,
                  (Random16() % 200 - 100) << 15,
@@ -266,27 +312,28 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
     flare->variant = 0;
   }
 
-  // A lone target is moved to the canvas's middle (64).
+  // A lone target is moved to the canvas's middle.
   if (args->targetCount == 1) {
     EffectPosition_ProjectScaledBattler(args->targets[0], &base);
-    shift = -base.x * 4 / 5 + 64;
+    canvasShiftX = -base.x * 4 / 5 + CANVAS_SIZE / 2;
   } else {
     if (args->side == EFFECT_SIDE_PARTY)
-      shift = -64;
+      canvasShiftX = -STAT_BOOST_PARTY_CANVAS_X;
     else
-      shift = 0;
+      canvasShiftX = 0;
   }
-  REG_BG2X = shift << 8;
-  work->transferMode =
-      CANVAS_COPY_AND_FADE; // each transfer fades the canvas: a trail
+  REG_BG2X = canvasShiftX << 8;
+  work->transferMode = CANVAS_COPY_AND_FADE;
   work->transferValue = CANVAS_FADE_HALF;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   if (args->side == EFFECT_SIDE_PARTY)
-    flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y | COMPOSITE_FLIP_X;
+    drawFlags = EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X;
   else
-    flags = COMPOSITE_CLIP_X | COMPOSITE_CLIP_Y;
+    drawFlags = EFFECT_CLIP_BOUNDS;
 
-  for (frame = start; frame != args->targetCount * 8 + 108; frame++) {
+  for (frame = start; frame != args->targetCount * STAT_BOOST_TARGET_DELAY +
+                                   STAT_BOOST_PICTURE_FRAME + 28;
+       frame++) {
     struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
     s32 prelude;
 
@@ -299,15 +346,20 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
     if (frame == STAT_BOOST_PICTURE_FRAME)
       EFFECT_SHOW_DAMAGE(0);
 
-    // The Djinni sways, and after frame 32 rises two pixels a frame; for
-    // the first four frames it is drawn ADDITIVE as well.
+    // The prelude's Djinni sways, and from frame 32 rises two pixels a frame;
+    // for its first four frames it is drawn added as well.
     prelude = args->prelude;
     if (prelude == 1) {
-      s32 x = (FIXEDtoINT(Trig_Sin(frame << 11) * 20)) + origin[0] + shift - 20;
-      s32 y = (FIXEDtoINT(Trig_Cos(frame << 11) * 4)) + origin[1] - 24;
+      s32 x = (FIXEDtoINT(Trig_Sin(frame * (TRIG_TURN / 32)) *
+                          STAT_BOOST_DJINNI_SWAY)) +
+              origin[0] + canvasShiftX - DJINNI_WIDTH / 2;
+      s32 y =
+          (FIXEDtoINT(Trig_Cos(frame * (TRIG_TURN / 32)) * 4)) + origin[1] - 24;
 
-      LOAD_BLITTER(draw[0], flags ^ flipX, BLITTER_MAX);
-      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags ^ flipX2, additive);
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags ^ flipX, BLITTER_MAX);
+      draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+      EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, drawFlags ^ flipX2,
+                          additive);
       draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
 
       if (frame > 32)
@@ -325,28 +377,27 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
           BattleObject_GetFar(args->targets[member])->object;
       s32 height = BattleUnit_GetEffectHeightFar(args->targets[member]) * 2 / 3;
 
-      if (frame == member * 8 + STAT_BOOST_PICTURE_FRAME)
+      if (frame == member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_PICTURE_FRAME)
         Sound_PlayFar(SE_POWER_UP);
-      Matrix_Initialize();
-      Matrix_SetLookAt(camera->eye, camera->focus);
-      // The lights turn about two thirds of the target's height.
-      point[0] = object->x;
-      point[1] = height;
-      point[2] = object->z;
+      // The flares turn about two thirds of the target's height.
+      EFFECT_VIEW_FROM_CAMERA(camera);
+      SET_VECTOR(point, object->x, height, object->z);
       Matrix_TranslateVector(point);
       if (start != 0) {
-        if (frame == member * 8 + 53)
+        if (frame ==
+            member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_CRUCIBLE_FIRE_FRAME)
           BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_WHITE,
                                    TINT_KEEP, member, 16);
       } else {
-        if (frame == member * 8 + 48)
+        if (frame == member * STAT_BOOST_TARGET_DELAY + 48)
           BattleEffect_TintBattler(args->targets[member], SPRITE_COLOR_WHITE,
                                    TINT_KEEP, member, 16);
 
-        // The lights turn and close in two pixels a frame.
-        if (frame > member * 8) {
-          LOAD_BLITTER(draw[0], flags, BLITTER_MAX);
-          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, flags, additive);
+        // Flares turn and close in on the centre.
+        if (frame > member * STAT_BOOST_TARGET_DELAY) {
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, BLITTER_MAX);
+          draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, drawFlags, additive);
           {
             void **slot = &Ram_HeapSlots->ramCodePaired;
 
@@ -356,18 +407,19 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
             draw[1] = (DrawRectangle)*slot;
           }
           if (mode == STAT_BOOST_IMPACT) {
-            Matrix_RotateX(-frame << 10);
+            Matrix_RotateX(-frame * STAT_BOOST_FLARE_SPIN);
           } else if (mode == STAT_BOOST_GUARD) {
           } else if (mode == STAT_BOOST_WARD) {
-            Matrix_RotateY(frame << 10);
+            Matrix_RotateY(frame * STAT_BOOST_FLARE_SPIN);
           } else {
-            Matrix_RotateY(frame << 10);
-            Matrix_RotateZ(frame << 10);
+            Matrix_RotateY(frame * STAT_BOOST_FLARE_SPIN);
+            Matrix_RotateZ(frame * STAT_BOOST_FLARE_SPIN);
           }
-          for (i = 0; i != 32; i++) {
-            struct Particle *flare = &FLARES[member * FLARES_PER_MEMBER + i];
+          for (i = 0; i != STAT_BOOST_TARGET_FLARES; i++) {
+            struct Particle *flare =
+                &PARTICLES[member * STAT_BOOST_TARGET_PARTICLES + i];
 
-            if (frame > member * 8 + i) {
+            if (frame > member * STAT_BOOST_TARGET_DELAY + i) {
               s32 xx = (flare->x >> 8) * (flare->x >> 8);
               s32 yy = (flare->y >> 8) * (flare->y >> 8);
               s32 zz = (flare->z >> 8) * (flare->z >> 8);
@@ -376,17 +428,15 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
               if (distance != 0) {
                 s32 size;
 
-                // Half the width: depth 314-634 gives 6 down to 1.
                 EffectPosition_ProjectPoint((s32 *)flare, &screen);
-                screen.x = screen.x * 4 / 5 + shift;
-                if (screen.depth < 314)
-                  screen.depth = 314;
-                if (screen.depth > 634)
-                  screen.depth = 634;
-                size = 6 - (screen.depth - 314) / 64;
-                draw[1](canvas,
-                        work->sheet + gBattleEffect_FlarePictures[size - 1],
-                        screen.x - size, screen.y - size, size * 2, size * 2);
+                screen.x = screen.x * 4 / 5 + canvasShiftX;
+                CLAMP(screen.depth, STAT_BOOST_FLARE_DEPTH_NEAR,
+                      STAT_BOOST_FLARE_DEPTH_FAR);
+                size = STAT_BOOST_FLARE_SIZE_MAX -
+                       (screen.depth - STAT_BOOST_FLARE_DEPTH_NEAR) /
+                           STAT_BOOST_FLARE_DEPTH_STEP;
+                EFFECT_DRAW_FLARE(draw[1], canvas, work->sheet, screen.x,
+                                  screen.y, size);
                 flare->x -= flare->x / distance;
                 flare->y -= flare->y / distance;
                 flare->z -= flare->z / distance;
@@ -397,38 +447,45 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
         }
       }
 
-      // Where the center is on the screen.
-      center[0] = zero;
-      center[1] = zero;
-      center[2] = zero;
+      SET_VECTOR(center, zero, zero, zero);
       EffectPosition_ProjectPoint(center, &screen);
-      screen.x = screen.x * 4 / 5 + shift;
+      screen.x = screen.x * 4 / 5 + canvasShiftX;
 
-      // The burst: from frame 52, six pictures four frames apart.
-      if (frame >= member * 8 + STAT_BOOST_BURST_FRAME &&
-          frame < member * 8 + 76) {
-        s32 cel;
+      // The burst: six pictures four frames apart.
+      if (frame >= member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_BURST_FRAME &&
+          frame <
+              member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_BURST_FRAME + 24) {
+        s32 picture;
 
-        cel = (frame - member * 8 - STAT_BOOST_BURST_FRAME) / 4 % 6;
+        picture = (frame - member * STAT_BOOST_TARGET_DELAY -
+                   STAT_BOOST_BURST_FRAME) /
+                  4 % 6;
 
-        LOAD_BLITTER(draw[0], flags, BLITTER_MAX);
+        EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, BLITTER_MAX);
+        draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
         draw[0](canvas,
-                work->sheet + cel * PICTURE_BYTES(GLOW_ORB) + STAT_BOOST_BURST,
+                work->sheet + picture * PICTURE_BYTES(GLOW_ORB) +
+                    STAT_BOOST_BURST,
                 screen.x - GLOW_ORB_WIDTH / 2, screen.y - GLOW_ORB_HEIGHT / 2,
                 GLOW_ORB_WIDTH, GLOW_ORB_HEIGHT);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE);
       }
 
-      // From frame 80, the mode's picture.
+      // The mode's picture.
       if (mode == STAT_BOOST_IMPACT) {
         // Seven 24x40 pictures, four frames apart.
-        if (frame >= member * 8 + STAT_BOOST_PICTURE_FRAME &&
-            frame < member * 8 + STAT_BOOST_PICTURE_FRAME + 28) {
-          s32 cel = (frame - member * 8 - STAT_BOOST_PICTURE_FRAME) / 4 % 7;
+        if (frame >=
+                member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_PICTURE_FRAME &&
+            frame < member * STAT_BOOST_TARGET_DELAY +
+                        STAT_BOOST_PICTURE_FRAME + 28) {
+          s32 picture = (frame - member * STAT_BOOST_TARGET_DELAY -
+                         STAT_BOOST_PICTURE_FRAME) /
+                        4 % 7;
 
-          LOAD_BLITTER(draw[0], flags, BLITTER_MAX);
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, BLITTER_MAX);
+          draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
           draw[0](canvas,
-                  work->sheet + cel * PICTURE_BYTES(DAGGER) +
+                  work->sheet + picture * PICTURE_BYTES(DAGGER) +
                       STAT_BOOST_PICTURE,
                   screen.x - DAGGER_WIDTH / 2, screen.y - DAGGER_HEIGHT / 2,
                   DAGGER_WIDTH, DAGGER_HEIGHT);
@@ -437,13 +494,18 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
       } else if (mode == STAT_BOOST_GRANITE || mode == STAT_BOOST_FLASH ||
                  mode == STAT_BOOST_SHADE || mode == STAT_BOOST_GUARD_AURA) {
         // Six 32x64 pictures, four frames apart.
-        if (frame >= member * 8 + STAT_BOOST_PICTURE_FRAME &&
-            frame < member * 8 + STAT_BOOST_PICTURE_FRAME + 24) {
-          s32 cel = (frame - member * 8 - STAT_BOOST_PICTURE_FRAME) / 4 % 6;
+        if (frame >=
+                member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_PICTURE_FRAME &&
+            frame < member * STAT_BOOST_TARGET_DELAY +
+                        STAT_BOOST_PICTURE_FRAME + 24) {
+          s32 picture = (frame - member * STAT_BOOST_TARGET_DELAY -
+                         STAT_BOOST_PICTURE_FRAME) /
+                        4 % 6;
 
-          LOAD_BLITTER(draw[0], flags, BLITTER_MAX);
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, BLITTER_MAX);
+          draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
           draw[0](canvas,
-                  work->sheet + cel * PICTURE_BYTES(VIOLET_STREAK) +
+                  work->sheet + picture * PICTURE_BYTES(VIOLET_STREAK) +
                       STAT_BOOST_PICTURE,
                   screen.x - VIOLET_STREAK_WIDTH / 2,
                   screen.y - VIOLET_STREAK_HEIGHT / 2, VIOLET_STREAK_WIDTH,
@@ -452,35 +514,44 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
         }
       } else if (mode == STAT_BOOST_ZEPHYR || mode == STAT_BOOST_COAL) {
         // Six 64x32 pictures two frames apart, mirrored below into 64x64.
-        if (frame >= member * 8 + STAT_BOOST_PICTURE_FRAME &&
-            frame < member * 8 + STAT_BOOST_PICTURE_FRAME + 24) {
-          s32 cel = (frame - member * 8 - STAT_BOOST_PICTURE_FRAME) / 2 % 6;
-          u8 *picture;    // the cel, drawn as its upper and mirrored lower half
+        if (frame >=
+                member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_PICTURE_FRAME &&
+            frame < member * STAT_BOOST_TARGET_DELAY +
+                        STAT_BOOST_PICTURE_FRAME + 24) {
+          s32 picture = (frame - member * STAT_BOOST_TARGET_DELAY -
+                         STAT_BOOST_PICTURE_FRAME) /
+                        2 % 6;
+          u8 *wisp;       // drawn as its upper and mirrored lower half
           s32 lowerFlags; // the lower half drawn flipped
 
-          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, flags, BLITTER_MAX);
-          lowerFlags = flags | COMPOSITE_FLIP_Y;
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, BLITTER_MAX);
+          lowerFlags = drawFlags | COMPOSITE_FLIP_Y;
           draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
           BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE_PAIRED, 7, 7, lowerFlags,
                                     BLITTER_MAX);
-          picture =
-              work->sheet + cel * PICTURE_BYTES(WISP) + STAT_BOOST_PICTURE;
+          wisp =
+              work->sheet + picture * PICTURE_BYTES(WISP) + STAT_BOOST_PICTURE;
           draw[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
-          draw[0](canvas, picture, screen.x - WISP_WIDTH / 2, screen.y - 24,
+          draw[0](canvas, wisp, screen.x - WISP_WIDTH / 2, screen.y - 24,
                   WISP_WIDTH, WISP_HEIGHT);
-          draw[1](canvas, picture, screen.x - WISP_WIDTH / 2, screen.y + 8,
+          draw[1](canvas, wisp, screen.x - WISP_WIDTH / 2, screen.y + 8,
                   WISP_WIDTH, WISP_HEIGHT);
           EFFECT_RELEASE_BLITTERS();
         }
       } else {
         // Six 40x40 pictures four frames apart, ADDITIVE.
-        if (frame >= member * 8 + STAT_BOOST_PICTURE_FRAME &&
-            frame < member * 8 + STAT_BOOST_PICTURE_FRAME + 24) {
-          s32 cel = (frame - member * 8 - STAT_BOOST_PICTURE_FRAME) / 4 % 6;
+        if (frame >=
+                member * STAT_BOOST_TARGET_DELAY + STAT_BOOST_PICTURE_FRAME &&
+            frame < member * STAT_BOOST_TARGET_DELAY +
+                        STAT_BOOST_PICTURE_FRAME + 24) {
+          s32 picture = (frame - member * STAT_BOOST_TARGET_DELAY -
+                         STAT_BOOST_PICTURE_FRAME) /
+                        4 % 6;
 
-          LOAD_BLITTER(draw[0], flags, BLITTER_ADDITIVE);
+          EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, drawFlags, BLITTER_ADDITIVE);
+          draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
           draw[0](canvas,
-                  work->sheet + cel * PICTURE_BYTES(SHIELD) +
+                  work->sheet + picture * PICTURE_BYTES(SHIELD) +
                       STAT_BOOST_PICTURE,
                   screen.x - SHIELD_WIDTH / 2, screen.y - SHIELD_HEIGHT / 2,
                   SHIELD_WIDTH, SHIELD_HEIGHT);
@@ -497,46 +568,58 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
 
 /// The stat reductions' modes (BattleEffect_RunStatReduction).
 enum StatReductionMode {
-  STAT_REDUCTION_UNUSED, ///< a dagger; no effect table entry reaches it
-  STAT_REDUCTION_IMPAIR, ///< a shield
-  STAT_REDUCTION_WEAKEN, ///< a shield
-  STAT_REDUCTION_DULL    ///< a dagger
+  STAT_REDUCTION_UNUSED, ///< a dagger, in the pink burst's colours; unused
+  STAT_REDUCTION_IMPAIR, ///< a shield, in the glow orb's colours
+  STAT_REDUCTION_WEAKEN, ///< a shield, in the pink burst's colours
+  STAT_REDUCTION_DULL    ///< a dagger, in the glow orb's colours
 };
 
-/// Breaks the dagger picture into fading shards as Dull does; no effect table
-/// entry reaches it.
+/// Breaks the dagger picture into fading shards as Dull does, in the pink
+/// burst's colours; no effect table entry reaches it.
 UNUSED void BattleEffect_RunUnusedStatReduction(void *action) {
   BattleEffect_RunStatReduction(action, STAT_REDUCTION_UNUSED);
 }
 
+/// A dagger appears over each target and breaks into shards that fade through
+/// darker copies, in the glow orb's colours.
+///
 /// Abilities: Dull, Blunt.
 void BattleEffect_RunDull(struct BattleEffectParams *args) {
   BattleEffect_RunStatReduction(args, STAT_REDUCTION_DULL);
 }
 
+/// A shield appears over each target and breaks into shards that fade through
+/// darker copies, in the glow orb's colours.
+///
 /// Abilities: Impair, Debilitate.
 void BattleEffect_RunImpair(struct BattleEffectParams *args) {
   BattleEffect_RunStatReduction(args, STAT_REDUCTION_IMPAIR);
 }
 
+/// A shield appears over each target and breaks into fading shards, in the pink
+/// burst's colours.
+///
 /// Abilities: Weaken, Enfeeble.
 void BattleEffect_RunWeaken(struct BattleEffectParams *args) {
   BattleEffect_RunStatReduction(args, STAT_REDUCTION_WEAKEN);
 }
 
-#define STAT_REDUCTION_SHARD_PICTURES                                          \
-  9600 ///< the shard picture, then seven darker copies
-#define STAT_REDUCTION_SHARD_BYTES 696 ///< one copy
+/// The shard picture in the sheet, followed by seven copies of it, each
+/// with its colour levels capped 7 lower than the one before.
+#define STAT_REDUCTION_SHARD_PICTURES 9600
+#define STAT_REDUCTION_SHARD_BYTES 696 ///< bytes in each copy
+#define STAT_REDUCTION_SHARD_COPIES 8  ///< the picture and its darker copies
+/// The level copy `copy` of the shard picture is capped at.
+#define STAT_REDUCTION_SHARD_CAP(copy) (CANVAS_LEVEL_BRIGHTEST + 1 - (copy) * 7)
+/// Each target throws STAT_REDUCTION_TARGET_SHARDS shards from its own run of
+/// STAT_REDUCTION_TARGET_PARTICLES particles, STAT_REDUCTION_TARGET_DELAY
+/// frames after the target before it.
+#define STAT_REDUCTION_TARGET_PARTICLES 32
+#define STAT_REDUCTION_TARGET_SHARDS 24
+#define STAT_REDUCTION_TARGET_DELAY 4
 
-/// A dagger (STAT_REDUCTION_DULL and _UNUSED) or a shield (the others) appears
-/// over each target in turn, four frames apart, and breaks into shards that fly
-/// off and darken.
-///
-/// Setup: seven darker copies of the shard picture are built by clamping
-/// its levels; 24 shards a target start in a grid across the target and
-/// scatter with random headings toward the user's side. Frame loop: a
-/// target's picture plays for 24 frames; at frame 24 a chime sounds and the
-/// shards fly for 36 frames, one shade darker every four frames.
+/// A dagger (Dull) or a shield (Impair and Weaken) appears over each target
+/// and breaks into shards that fly off and fade.
 void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -571,13 +654,12 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress(RESOURCE_PALETTE_RAMP_IMAGE,
                              work->sheet + STAT_REDUCTION_SHARD_PICTURES, 0, 0);
 
-  // Copy i holds every level clamped to 64 - 7i.
-  for (i = 1; i != 8; i++) {
+  for (i = 1; i != STAT_REDUCTION_SHARD_COPIES; i++) {
     for (j = 0; j != STAT_REDUCTION_SHARD_BYTES; j++) {
       s32 level = work->sheet[STAT_REDUCTION_SHARD_PICTURES + j];
 
-      if (level > 64 - i * 7)
-        level = 64 - i * 7;
+      if (level > STAT_REDUCTION_SHARD_CAP(i))
+        level = STAT_REDUCTION_SHARD_CAP(i);
       if (level < 0)
         level = 0;
       work->sheet[STAT_REDUCTION_SHARD_PICTURES +
@@ -593,27 +675,30 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
     xOffset = 0;
   }
 
-  // The shards: rows six pixels apart, columns two (dagger) or eight
-  // (shield) pixels deep, thrown toward the user's side.
-  for (i = 0; i != 512; i++) {
-    struct Particle *shard = &SHARDS[i];
+  // The shards start in a grid where the picture was, in rows 6 pixels apart,
+  // four to a row 2 (dagger) or 8 (shield) pixels apart, and fly away from the
+  // user's side, scattering.
+  for (i = 0; i != STAT_CHANGE_PARTICLES; i++) {
+    struct Particle *shard = &PARTICLES[i];
     s32 radius = 192;
     s32 angle;
 
     angle = Random16() & TRIG_ANGLE_MASK;
     shard->x = 0;
     if (mode == STAT_REDUCTION_UNUSED || mode == STAT_REDUCTION_DULL) {
-      shard->y = INTtoFIXED((i & 31) / 4 * 6 - 10);
+      shard->y =
+          INTtoFIXED((i & (STAT_REDUCTION_TARGET_PARTICLES - 1)) / 4 * 6 - 10);
       shard->z = INTtoFIXED(i % 4 * 2 - 2);
     } else {
-      shard->y = INTtoFIXED((i & 31) / 4 * 6 - 10);
+      shard->y =
+          INTtoFIXED((i & (STAT_REDUCTION_TARGET_PARTICLES - 1)) / 4 * 6 - 10);
       shard->z = INTtoFIXED(i % 4 * 8 - 16);
     }
     if (args->side == EFFECT_SIDE_PARTY)
-      shard->velocityX = FIXED_ONE * 2;
+      shard->velocityX = toFIXED(2);
     else
-      shard->velocityX = -FIXED_ONE * 2;
-    shard->velocityY = ((Trig_Cos(angle) * radius) >> 6) + FIXED_ONE;
+      shard->velocityX = -toFIXED(2);
+    shard->velocityY = ((Trig_Cos(angle) * radius) >> 6) + toFIXED(1);
     shard->velocityZ = (Trig_Sin(angle) * radius) >> 6;
     shard->variant = Random16() & 0xff;
   }
@@ -621,75 +706,78 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
   BattleEffect_FetchRectangleBlitters(args->side, draw = callbacks);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
-  for (frame = 0; frame != args->targetCount * 4 + 64; frame++) {
+  for (frame = 0; frame != args->targetCount * STAT_REDUCTION_TARGET_DELAY + 64;
+       frame++) {
     camera = Ram_HeapSlots->cameraWork;
+    // The loop runs count * STAT_REDUCTION_TARGET_DELAY + 64 frames, so frame
+    // 72 comes only with three or more targets. With one or two,
+    // BattlePlayback_WaitForReady starts playback once the effect returns, so
+    // the messages follow the shards instead of overlapping them.
     if (frame == 72)
       EFFECT_SHOW_DAMAGE(0);
     for (j = 0; j != args->targetCount; j++) {
       struct MotionObject *object;
-      s32 time;
+      s32 targetFrame;
       s32 x;
       s32 y;
 
-      time = frame - j * 4;
+      targetFrame = frame - j * STAT_REDUCTION_TARGET_DELAY;
       object = BattleObject_GetFar(args->targets[j])->object;
-      if (time > 0) {
-        // The picture stands 40 pixels above the target.
-        Matrix_Initialize();
-        Matrix_SetLookAt(camera->eye, camera->focus);
-        point[0] = object->x;
-        point[1] = toFIXED(20);
-        point[2] = object->z;
-        Matrix_Initialize();
-        Matrix_SetLookAt(camera->eye, camera->focus);
+      if (targetFrame > 0) {
+        // DEAD: the view set from the camera a first time, which the second
+        // call repeats; the ROM keeps both calls.
+        EFFECT_VIEW_FROM_CAMERA(camera);
+        SET_VECTOR(point, object->x, toFIXED(20), object->z);
+        EFFECT_VIEW_FROM_CAMERA(camera);
         Matrix_TranslateVector(point);
-        origin[0] = 0;
-        origin[1] = 0;
-        origin[2] = 0;
+        SET_VECTOR(origin, 0, 0, 0);
         EffectPosition_ProjectPoint(origin, &screen);
         x = screen.x + xOffset;
         y = screen.y;
         if (mode == STAT_REDUCTION_UNUSED || mode == STAT_REDUCTION_DULL) {
-          if (time <= 26)
+          if (targetFrame <= 26)
             callbacks[0](canvas,
-                         work->sheet + time / 4 % 7 * PICTURE_BYTES(DAGGER),
+                         work->sheet +
+                             targetFrame / 4 % 7 * PICTURE_BYTES(DAGGER),
                          x - DAGGER_WIDTH / 2, y - DAGGER_HEIGHT / 2,
                          DAGGER_WIDTH, DAGGER_HEIGHT);
         } else {
-          if (time <= 23)
-            draw[1](canvas, work->sheet + time / 4 % 6 * PICTURE_BYTES(SHIELD),
+          if (targetFrame <= 23)
+            draw[1](canvas,
+                    work->sheet + targetFrame / 4 % 6 * PICTURE_BYTES(SHIELD),
                     x - SHIELD_WIDTH / 2, y - SHIELD_HEIGHT / 2, SHIELD_WIDTH,
                     SHIELD_HEIGHT);
         }
-        // frame - j * 4 is time; this spelling matches here and below.
-        if (frame - j * 4 == 24)
+        // That is, targetFrame == 24, the chime as the picture breaks.
+        if (frame - j * STAT_REDUCTION_TARGET_DELAY == 24)
           Sound_PlayFar(SE_CRACK);
 
         // The shards fly for 36 frames, a shade darker every four.
-        if (time >= 24 && time <= 60) {
+        if (targetFrame >= 24 && targetFrame <= 60) {
           s32 level;
 
           level = 0;
-          if (frame - j * 4 > 28) {
-            level = (time - 24) / 4;
-            if (level > 7)
-              level = 7;
+          if (frame - j * STAT_REDUCTION_TARGET_DELAY > 28) {
+            level = (targetFrame - 24) / 4;
+            if (level > STAT_REDUCTION_SHARD_COPIES - 1)
+              level = STAT_REDUCTION_SHARD_COPIES - 1;
           }
-          for (i = 0; i != 24; i++) {
-            struct Particle *shard = &SHARDS[j * 32 + i];
-            s32 cell;
+          for (i = 0; i != STAT_REDUCTION_TARGET_SHARDS; i++) {
+            struct Particle *shard =
+                &PARTICLES[j * STAT_REDUCTION_TARGET_PARTICLES + i];
+            s32 picture;
 
-            cell = i % 4 * 3 + (shard->variant + time) / 8 % 3;
+            picture = i % 4 * 3 + (shard->variant + targetFrame) / 8 % 3;
             EffectPosition_ProjectPoint((s32 *)shard, &screen);
             x = screen.x + xOffset;
             y = screen.y;
             callbacks[0](canvas,
                          work->sheet +
                              (level * STAT_REDUCTION_SHARD_BYTES +
-                              gStatChange_ShardPictures[cell]) +
+                              gStatChange_ShardPictures[picture]) +
                              STAT_REDUCTION_SHARD_PICTURES,
-                         x, y, gStatChange_ShardWidths[cell],
-                         gStatChange_ShardHeights[cell]);
+                         x, y, gStatChange_ShardWidths[picture],
+                         gStatChange_ShardHeights[picture]);
             Particle_AdvanceWithGravity3D(shard, 60, 0);
           }
         }
@@ -700,4 +788,25 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
 
   EFFECT_FINISH_CANVAS();
 }
-#undef SHARDS
+
+#undef STAT_BOOST_BURST_FRAME
+#undef STAT_BOOST_PICTURE_FRAME
+#undef STAT_BOOST_TARGET_DELAY
+#undef STAT_BOOST_CRUCIBLE_FIRE_FRAME
+#undef STAT_CHANGE_PARTICLES
+#undef STAT_BOOST_TARGET_PARTICLES
+#undef STAT_BOOST_TARGET_FLARES
+#undef STAT_BOOST_FLARE_SPIN
+#undef STAT_BOOST_FLARE_SIZE_MAX
+#undef STAT_BOOST_FLARE_DEPTH_NEAR
+#undef STAT_BOOST_FLARE_DEPTH_STEP
+#undef STAT_BOOST_FLARE_DEPTH_FAR
+#undef STAT_BOOST_DJINNI_SWAY
+#undef STAT_BOOST_PARTY_CANVAS_X
+#undef STAT_REDUCTION_SHARD_PICTURES
+#undef STAT_REDUCTION_SHARD_BYTES
+#undef STAT_REDUCTION_SHARD_COPIES
+#undef STAT_REDUCTION_SHARD_CAP
+#undef STAT_REDUCTION_TARGET_PARTICLES
+#undef STAT_REDUCTION_TARGET_SHARDS
+#undef STAT_REDUCTION_TARGET_DELAY

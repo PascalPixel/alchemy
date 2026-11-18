@@ -35,9 +35,16 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
 
 UNUSED void Exit_NoOp(void) {}
 
+/// The encounter's screen closes over ENCOUNTER_CLOSE_FRAMES, and its white
+/// flash then fades to black over ENCOUNTER_FADE_FRAMES, ENCOUNTER_FADE_STEP
+/// levels a frame from just below RGB_LEVEL_MAX.
+#define ENCOUNTER_CLOSE_FRAMES 16
+#define ENCOUNTER_FADE_FRAMES 16
+#define ENCOUNTER_FADE_STEP 2
+
 /// Starts the transition into a random battle: plays the scene's battle music
 /// and the encounter sounds, closes the screen and flashes the backdrop white,
-/// fading it to black over 16 frames.
+/// fading it to black.
 UNREAD_RESULT Field_StartEncounterTransition(s32 unused) {
   struct FieldWork *work = gFieldWork;
   s32 i;
@@ -53,12 +60,12 @@ UNREAD_RESULT Field_StartEncounterTransition(s32 unused) {
     // WINDOW_TRANSITION_LEADER_INVERSE.
     Io_Write16(RGB_WHITE,
                (u16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BLACK_COLOR));
-    ScreenTransition_Finish(SCENE_TRANSITION(TRANSITION_CENTER_LINE, 1), 16);
+    ScreenTransition_Finish(SCENE_TRANSITION(TRANSITION_CENTER_LINE, 1),
+                            ENCOUNTER_CLOSE_FRAMES);
     work->transitionActive = 0;
-    wait(16);
-    // Step the white down by 2 a frame: 30 to 0 in 16 frames.
-    for (i = 0; i < 16; i++) {
-      level = 30 - i * 2;
+    wait(ENCOUNTER_CLOSE_FRAMES);
+    for (i = 0; i < ENCOUNTER_FADE_FRAMES; i++) {
+      level = RGB_LEVEL_MAX - 1 - i * ENCOUNTER_FADE_STEP;
       Io_Write16(RGB(level, level, level),
                  (u16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BLACK_COLOR));
       wait(1);
@@ -67,11 +74,11 @@ UNREAD_RESULT Field_StartEncounterTransition(s32 unused) {
     Io_Write16(RGB_WHITE, &PLTT_BACKDROP);
     ScreenTransition_Finish(
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER_INVERSE),
-        16);
+        ENCOUNTER_CLOSE_FRAMES);
     work->transitionActive = 0;
-    wait(16);
-    for (i = 0; i < 16; i++) {
-      level = 30 - i * 2;
+    wait(ENCOUNTER_CLOSE_FRAMES);
+    for (i = 0; i < ENCOUNTER_FADE_FRAMES; i++) {
+      level = RGB_LEVEL_MAX - 1 - i * ENCOUNTER_FADE_STEP;
       Io_Write16(RGB(level, level, level), &PLTT_BACKDROP);
       wait(1);
     }
@@ -98,7 +105,6 @@ void Exit_PrepareAnimation(s32 animation) {
     doorway->colorMode = hidden;
     // Keep the cell and put the leader at its middle in x and its south edge in
     // z.
-    // Each coordinate read and written as the word it is.
     actor->x.fixed = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
     actor->z.fixed = (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(16);
     actor->velocityX = cleared;
@@ -136,7 +142,6 @@ void Entrance_EndArrivalAnimation(s32 animation) {
                                                        SPRITE_DOORWAY);
   spriteAnimation->flags = 0;
   eff->colorMode = SPRITE_COLOR_HIDDEN;
-  // The coordinates as plain words: through .fixed, the union moves a store.
   leader->x.fixed = (leader->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
   leader->z.fixed &= FIELD_CELL_MASK;
   Actor_SelectAnimationFar(leader, animation);
@@ -203,3 +208,7 @@ s32 Entrance_PlayArrival(void) {
   }
   return result;
 }
+
+#undef ENCOUNTER_CLOSE_FRAMES
+#undef ENCOUNTER_FADE_FRAMES
+#undef ENCOUNTER_FADE_STEP

@@ -7,6 +7,8 @@
 #include "fixed_math.h"
 #include "field/field.h"
 #include "field/speaker.h"
+#include "graphics/glyph.h"
+#include "item_ids.h"
 #include "system/system.h"
 
 struct Actor *Actor_GetById(u32 objectId);
@@ -45,18 +47,19 @@ void Actor_FaceDirectionAndRefreshById(s32 objectId, s32 angle) {
 
   if (actor != NULL) {
     actor->timer = angle;
-    Actor_StartScriptFar(actor, (u32)gActor_StepAngleScript);
+    Actor_StartScriptFar(actor, (const s32 *)gActor_StepAngleScript);
     Actor_WaitForScriptEndById(objectId);
   }
 }
 
 /// The event command "set actor sprite priority": fixes the priority of the
-/// actor's sprite and its shadow, which then no longer follow its depth
-/// (clears priorityFlags bit 0).
+/// actor's sprite and its shadow, which then no longer follow its depth:
+/// clears ACTOR_PRIORITY_AUTOMATIC.
 void Actor_SetSpritePriority(u32 objectId, s32 priority) {
   struct Actor *actor = Actor_Lookup(objectId);
 
-  if (actor != NULL && (actor->spriteStorageKind & 0xF) == 1) {
+  if (actor != NULL &&
+      (actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE) {
     struct Sprite *sprite = actor->sprite;
 
     sprite->image.priority = priority;
@@ -189,14 +192,12 @@ void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 mode) {
   sprite->rotation = angle + DEGtoANG(90);
 }
 
-/// Gives an actor's sprite a still picture: resource, drawn by Icon_DrawItemFar
-/// into a cleared 128-byte buffer, or a blank one when bit 15 is set, loaded
-/// into the sprite's VRAM block as its tile.
-void Actor_ShowItemIconById(s32 id, s32 resource) {
+/// Shows an actor as an item's icon, its sprite's only picture: the item, or
+/// for coins (SCOOPED_COINS) item 0's icon, a gold coin.
+void Actor_ShowItemIconById(s32 id, s32 item) {
   struct Actor *actor = Actor_GetById(id);
   struct Sprite *sprite;
-  u8 *buffer;
-  s32 zero;
+  GlyphTransfer *icon;
   s32 tile;
   u8 kind;
 
@@ -204,28 +205,26 @@ void Actor_ShowItemIconById(s32 id, s32 resource) {
     kind = actor->spriteStorageKind;
     if (kind == ACTOR_SPRITE_ONE) {
       sprite = actor->sprite;
-      if (resource & 0x8000)
-        resource = 0;
-      buffer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, 1544);
-      zero = 0;
-      buffer += 1024;
-      Dma_Fill32(zero, buffer, 128);
+      if (item & SCOOPED_COINS)
+        item = ITEM_NONE;
+      icon = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
+      Dma_Fill32(0, icon->tiles, ICON_TILE_BYTES);
 #ifdef UBFIX
-      Icon_DrawItemFar(resource);
+      Icon_DrawItemFar(item);
 #else
-      // UB: Icon_DrawItem takes the item alone; the call passes the buffer too.
-      ((void (*)(s32, u8 *))Icon_DrawItemFar)(resource, buffer);
+      // UB: Icon_DrawItem takes the item alone; the call passes the tiles too.
+      ((void (*)(s32, u8 *))Icon_DrawItemFar)(item, icon->tiles);
 #endif
-      tile = VramCache_Load(sprite->slot, 128, buffer);
+      tile = VramCache_Load(sprite->slot, ICON_TILE_BYTES, icon->tiles);
       HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
       actor->retainSpriteCache = kind;
       SpriteAnimation_ClearFar(sprite->entries[0]);
       sprite->entries[0] = NULL;
-      sprite->count = zero;
-      sprite->image.fullColor = zero;
+      sprite->count = 0;
+      sprite->image.fullColor = 0;
       sprite->image.tile = tile;
-      sprite->dirty = zero;
-      sprite->flags = zero;
+      sprite->dirty = 0;
+      sprite->flags = 0;
     }
   }
 }
@@ -234,30 +233,30 @@ void Actor_ShowItemIconById(s32 id, s32 resource) {
 /// written to work->message.
 void Event_SetMessageId(s32 message) { gFieldWork->message = message; }
 
-/// Returns the sprite (the first animation's id) of the actor in the low 12
-/// bits of actorId, or -1 if there is no such animated actor.
+/// Returns the sprite (the first animation's id) of the actor whose id is
+/// key's under SPEAKER_ACTOR_MASK, or -1 if there is no such animated actor.
 s32 Actor_GetSpriteById(s32 key) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 result = -1;
-  struct Actor *actor = event->actors[key & SPEAKER_ACTOR_MASK];
+  struct Actor *actor = work->actors[key & SPEAKER_ACTOR_MASK];
 
   if (actor != NULL && actor->spriteStorageKind == ACTOR_SPRITE_ONE)
     result = ((struct Sprite *)actor->sprite)->entries[0]->animationId;
   return result;
 }
 
-/// Returns the first of the scene's placed actors (ids 8 to 79) showing
-/// sprite, or -1.
-s32 Actor_FindBySprite(s32 value) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+/// Returns the first of the scene's placed actors (from ACTOR_FIRST_PLACED)
+/// showing spriteId, or -1.
+s32 Actor_FindBySprite(s32 spriteId) {
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 result = -1;
   s32 index;
   struct Actor *actor;
 
   for (index = ACTOR_FIRST_PLACED; index < FIELD_ACTOR_COUNT; index++) {
-    actor = event->actors[index];
+    actor = work->actors[index];
     if (actor != NULL && actor->spriteStorageKind == ACTOR_SPRITE_ONE &&
-        ((struct Sprite *)actor->sprite)->entries[0]->animationId == value) {
+        ((struct Sprite *)actor->sprite)->entries[0]->animationId == spriteId) {
       result = index;
       break;
     }

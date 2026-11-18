@@ -1988,17 +1988,17 @@ s32 ItemMenu_OpenDetail(s32 itemIndex) {
 // The Details window's width in tiles: Japanese opens it over the left part
 // only, beside the item window, the other editions over the whole top half.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define DETAILS_WINDOW_WIDTH 13
+#define ITEM_DETAILS_WINDOW_WIDTH 13
 #else
-#define DETAILS_WINDOW_WIDTH 30
+#define ITEM_DETAILS_WINDOW_WIDTH 30
 #endif
 
 void Window_CloseFar(s32, s32);
 
 /// The item menu's Details screen: describes the item entry value in a window
-/// over the top half (DETAILS_WINDOW_WIDTH) and waits for A or B. Up and Down
-/// move an unused counter from 0 to 4. Returns the counter after A or Start, or
-/// -1 after B. The twin of The Broken Seal's ItemMenu_ShowDetails.
+/// over the top half (ITEM_DETAILS_WINDOW_WIDTH) and waits for A or B. Up and
+/// Down move an unused counter from 0 to 4. Returns the counter after A or
+/// Start, or -1 after B. The twin of The Broken Seal's ItemMenu_ShowDetails.
 s32 ItemMenu_ShowDetails(s32 value) {
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 changed = 1;
@@ -2011,8 +2011,8 @@ s32 ItemMenu_ShowDetails(s32 value) {
 #if LANGUAGE != LANGUAGE_JAPANESE
   itemIcon->motion = ICON_HIDDEN;
 #endif
-  window =
-      Window_CreateFar(0, 0, DETAILS_WINDOW_WIDTH, 10, WINDOW_FLAG_INSTANT);
+  window = Window_CreateFar(0, 0, ITEM_DETAILS_WINDOW_WIDTH, 10,
+                            WINDOW_FLAG_INSTANT);
   Task_Remove(Menu_UpdateEntryObjectTransforms);
 
   {
@@ -2075,7 +2075,7 @@ s32 ItemMenu_ShowDetails(s32 value) {
   return counter;
 }
 
-#undef DETAILS_WINDOW_WIDTH
+#undef ITEM_DETAILS_WINDOW_WIDTH
 
 void ItemMenu_DrawItemDetailsWithCount(s32 window, s32 item, s32 count);
 
@@ -2457,12 +2457,12 @@ void ItemMenu_FitMessageWindowToQuestion(void) {
 #define HOW_MANY_Y 32
 // こ, the counter after a count: the message before MsgItemCommandUse.
 #define PIECE_MESSAGE ((s32)MsgItemCommandUse - 1)
-#define CURSOR_X 88
+#define HOW_MANY_CURSOR_X 88
 #else
 #define HOW_MANY_MESSAGE ((s32)MsgHowMany)
 #define HOW_MANY_X 32
 #define HOW_MANY_Y 0
-#define CURSOR_X 128
+#define HOW_MANY_CURSOR_X 128
 #endif
 
 /// The item menu's quantity bar picture, which QuantityBar_FillFar fills in
@@ -2503,7 +2503,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
     WindowSprite_CreateFar(entry, OUTPUT_SIZE_32X8, window, 48, 32);
     arrow = WindowSprite_CreateFar(entry, OUTPUT_SIZE_32X8, window, 80, 32);
     arrow->sprite.oam.index = arrow->sprite.oam.index + 4;
-    MenuCursor_Slide(CURSOR_X, 40);
+    MenuCursor_Slide(HOW_MANY_CURSOR_X, 40);
     while (!GameFlag_Get(FLAG_MENU_START_PRESSED)) {
       if (changed) {
         changed = 0;
@@ -2551,7 +2551,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
         Sound_PlayFar(SE_MENU_CANCEL);
         break;
       }
-      MenuCursor_Position(CURSOR_X, 40);
+      MenuCursor_Position(HOW_MANY_CURSOR_X, 40);
       if (gInput.repeat & KEY_LEFT) {
         value--;
         changed = 1;
@@ -2575,7 +2575,7 @@ s32 ItemMenu_SelectGiveQuantity(s32 baseQuantity, s32 quantityRange,
 }
 
 #undef HOW_MANY_Y
-#undef CURSOR_X
+#undef HOW_MANY_CURSOR_X
 
 // Draws the selected item's icon, owner and item name in the heading.
 /// Shows the selected item at the top of the message window: its icon, its
@@ -2873,10 +2873,10 @@ s32 ItemMenu_DrawItemDetailPage(s32 listWindow, void *memberWork,
 
 // The Japanese page draws its page icons and names further right.
 #if LANGUAGE == LANGUAGE_JAPANESE
-#define PAGE_X 120
+#define ITEM_PAGE_ICONS_X 120
 #define ENTRY_X 32
 #else
-#define PAGE_X 116
+#define ITEM_PAGE_ICONS_X 116
 #define ENTRY_X 24
 #endif
 /// Draws the names on one five-row page of the item list: The Broken Seal's
@@ -2900,7 +2900,7 @@ s32 ItemMenu_DrawNamePage(s32 window, s32 unused,
     visibleCount = LIST_PAGE_SIZE;
   }
 
-  Menu_SetPageIcons(LIST_PAGE_SIZE, firstEntry, window, PAGE_X, 34);
+  Menu_SetPageIcons(LIST_PAGE_SIZE, firstEntry, window, ITEM_PAGE_ICONS_X, 34);
   PagedList_DrawPageNumbers(window, state->entryCount, LIST_PAGE_SIZE,
                             state->page, PAGE_NUMBERS_RIGHT);
 
@@ -2919,15 +2919,8 @@ s32 ItemMenu_DrawNamePage(s32 window, s32 unused,
   return 1;
 }
 
-#undef PAGE_X
+#undef ITEM_PAGE_ICONS_X
 #undef ENTRY_X
-
-// The Japanese list puts its help line at another column.
-#if LANGUAGE == LANGUAGE_JAPANESE
-#define CHANGE_HELP_X 16
-#else
-#define CHANGE_HELP_X 0
-#endif
 
 /// The item list of the party member in sideIndex (0: the holder, 1: the
 /// receiver of a trade), five items a page. The cursor's item is named in the
@@ -3104,5 +3097,3 @@ s32 ItemMenu_GetCommandCursorY(s32 column, s32 row) {
   return y;
 }
 #endif
-
-#undef CHANGE_HELP_X

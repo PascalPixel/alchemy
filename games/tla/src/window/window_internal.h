@@ -289,6 +289,8 @@ enum BattleTargetHint {
 
 /// The command window's top tile row: it runs along the bottom three rows.
 #define COMMAND_ROW_TOP 17
+/// A command icon's pixels: 32x32 at a byte a pixel.
+#define COMMAND_ICON_BYTES (32 * 32)
 
 /// A space's width in pixels.
 #if LANGUAGE == LANGUAGE_JAPANESE
@@ -296,10 +298,6 @@ enum BattleTargetHint {
 #else
 #define WINDOW_SPRITE_SPACE_WIDTH 5
 #endif
-
-/// The last of the twelve range icons, which ABILITY_RANGE_ALL takes; range n
-/// takes icon n - 1.
-#define RANGE_ICON_ALL 11
 
 /// A sprite speaker's portrait is numbered PORTRAIT_FIRST_SPRITE_PORTRAIT more
 /// than its entry in gPortrait_SpriteMap: Icon_LoadWithPalette takes portrait

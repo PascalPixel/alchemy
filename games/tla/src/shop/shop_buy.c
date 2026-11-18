@@ -26,11 +26,11 @@
 #endif
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH) ||          \
     (LANGUAGE == LANGUAGE_ITALIAN)
-#define PRICE_WINDOW_WIDTH 16
+#define BUY_PRICE_WINDOW_WIDTH 16
 #elif LANGUAGE == LANGUAGE_JAPANESE
-#define PRICE_WINDOW_WIDTH 14
+#define BUY_PRICE_WINDOW_WIDTH 14
 #else
-#define PRICE_WINDOW_WIDTH 15
+#define BUY_PRICE_WINDOW_WIDTH 15
 #endif
 
 /// Runs the Buy and Artifacts counters: the player browses the stock seven
@@ -70,7 +70,7 @@ s32 Shop_SelectBuy(void) {
                        4, WINDOW_FLAG_INSTANT);
   Shop_DrawMoney();
   priceWindow =
-      Window_CreateFar(0, 8, PRICE_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
+      Window_CreateFar(0, 8, BUY_PRICE_WINDOW_WIDTH, 4, WINDOW_FLAG_INSTANT);
 
 next_page:
   selectionIndex = selected;
@@ -265,7 +265,7 @@ close:
 
 #undef HELD_WINDOW_X
 #undef HELD_WINDOW_WIDTH
-#undef PRICE_WINDOW_WIDTH
+#undef BUY_PRICE_WINDOW_WIDTH
 
 /// Draws a page of seven stock items with their prices, the page arrows, and
 /// the chosen item lifted and pulsing.

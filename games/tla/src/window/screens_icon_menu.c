@@ -82,8 +82,6 @@
 void Graphics_ExpandVramTilesByColorTable(u16 *tiles);
 
 #define COMMAND_ICON_X(state) ((state)->icons[0].oam.f.x)
-/// A command icon's pixels: 32x32 at a byte a pixel.
-#define COMMAND_ICON_BYTES (32 * 32)
 
 /// Collects the party's commands for a turn into `commands`, one for each of
 /// the `commandCount` units in `actors`, with two nested functions: the party
@@ -1158,8 +1156,6 @@ s32 IconMenu_AnimateTo(s32 start, s32 goal) {
   return goal;
 }
 
-#define Decompress_ByteLz ((void (*)(void *, void *))Decompress_ByteLz)
-
 /// Decodes command icon `index` into the VRAM cache entry `slot`, through a
 /// block it allocates and frees.
 void CommandIcon_LoadIntoSlot(s32 slot, s32 index) {
@@ -1768,7 +1764,6 @@ s32 Menu_SelectCoinsOrMedals(s32 selection) {
 UNUSED void DebugSceneSelect_Schedule(void) {
   Task_Add(DebugSceneSelect_Run, TASK_PASS_FRAME);
 }
-#undef Decompress_ByteLz
 #undef LABEL_RIGHT
 #undef HELP_X
 #undef ENTRY_WIDTH
@@ -1785,7 +1780,6 @@ UNUSED void DebugSceneSelect_Schedule(void) {
 #undef PASSWORD_TEXT_Y
 #undef PASSWORD_LINE_HEIGHT
 #undef PAIR_WIDTH
-#undef COMMAND_ICON_BYTES
 #undef ICON_MENU_BOTTOM_ROW
 #undef ICON_ROW_LINES
 #undef PULSE_OVERHANG_X

@@ -186,6 +186,8 @@ void BattleEffect_RunMadZephyr(struct BattleEffectParams *args) {
 #define TARGET_STRIKE_DRAWN_MOTES 64
 /// A flash lives through FlashBurstSheet's six pictures, four frames each.
 #define TARGET_STRIKE_FLASH_FRAMES (FLASH_BURST_PICTURE_COUNT * 4)
+/// The frames a drained mote flies out before the user pulls it in.
+#define TARGET_STRIKE_MOTE_FLIGHT_FRAMES 10
 /// The star's sine steps a 32nd of a turn a frame, and its scale rises to
 /// TARGET_STRIKE_STAR_SCALE 256ths, about 2.4 times.
 #define TARGET_STRIKE_STAR_STEP_SHIFT 11
@@ -196,7 +198,8 @@ void BattleEffect_RunMadZephyr(struct BattleEffectParams *args) {
 /// The bite's stages after the tornado sheet: BeamImage for a slash,
 /// TwelveModeImage otherwise.
 #define TARGET_STRIKE_BITE_PICTURES 3200
-
+/// The canvas row the fangs' pictures start at.
+#define TARGET_STRIKE_BITE_Y 56
 #define TARGET_STRIKE_BITE_WIDTH 18
 #define TARGET_STRIKE_BITE_HEIGHT 48
 
@@ -527,8 +530,9 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       BLITTER(canvas,
               work->sheet + stage * PICTURE_BYTES(TARGET_STRIKE_BITE) +
                   TARGET_STRIKE_BITE_PICTURES,
-              targetPosition.x / 2 - TARGET_STRIKE_BITE_WIDTH, 56,
-              TARGET_STRIKE_BITE_WIDTH, TARGET_STRIKE_BITE_HEIGHT);
+              targetPosition.x / 2 - TARGET_STRIKE_BITE_WIDTH,
+              TARGET_STRIKE_BITE_Y, TARGET_STRIKE_BITE_WIDTH,
+              TARGET_STRIKE_BITE_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
@@ -536,8 +540,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
       BLITTER(canvas,
               work->sheet + stage * PICTURE_BYTES(TARGET_STRIKE_BITE) +
                   TARGET_STRIKE_BITE_PICTURES,
-              targetPosition.x / 2, 56, TARGET_STRIKE_BITE_WIDTH,
-              TARGET_STRIKE_BITE_HEIGHT);
+              targetPosition.x / 2, TARGET_STRIKE_BITE_Y,
+              TARGET_STRIKE_BITE_WIDTH, TARGET_STRIKE_BITE_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE);
 
       // The hit, on each bite's fourth picture.
@@ -709,7 +713,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                              size);
             Particle_AdvanceWithGravity3D(step, 60, 0);
             step->variant++;
-            if (step->variant > 10) {
+            if (step->variant > TARGET_STRIKE_MOTE_FLIGHT_FRAMES) {
               s32 dx = (source->x - step->x) >> 8;
               s32 dy = (source->y - step->y + toFIXED(20)) >> 8;
               s32 dz = (source->z - step->z) >> 8;
@@ -717,7 +721,8 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
               step->velocityX += dx;
               step->velocityY += dy;
               step->velocityZ += dz;
-              if ((dx >= -4095 && dx <= 4095) && (dz >= -4095 && dz <= 4095))
+              if ((dx > -(toFIXED(1) / 16) && dx < toFIXED(1) / 16) &&
+                  (dz > -(toFIXED(1) / 16) && dz < toFIXED(1) / 16))
                 step->variant = -1;
             }
           }
@@ -798,6 +803,9 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
 /// A sword drifts sideways 0 to 3 steps of two pixels a frame, and its picture
 /// is its step's: velocityX is the step << BLADE_RAIN_STEP_SHIFT.
 #define BLADE_RAIN_STEP_SHIFT 17
+/// Where on the canvas the first sword waits for its turn; each four after it
+/// wait a pixel higher.
+#define BLADE_RAIN_WAIT_Y 24
 /// CrossedDaggersSheet: four 32x32 pictures of a sword falling point down, each
 /// slanting more than the last.
 #define BLADE_RAIN_SWORD_WIDTH 32
@@ -846,7 +854,7 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
     blade = &work->particles[i];
     column = Random16() % 96 + 16;
     blade->x = column;
-    blade->y = INTtoFIXED(24 - i / 4);
+    blade->y = toFIXED(BLADE_RAIN_WAIT_Y - i / 4);
     if (column <= 43)
       blade->velocityX = 3;
     else if (column <= 51)

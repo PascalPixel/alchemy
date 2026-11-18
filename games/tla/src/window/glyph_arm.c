@@ -16,8 +16,6 @@
 #define SCREEN_TILE_COLUMNS 30
 /// The fonts start at the space.
 #define FONT_FIRST_CODE ' '
-/// In Japanese, the codes after the font's are kanji (gFont_KanjiGlyphs).
-#define KANJI_FIRST_CODE (TEXT_LAST_FONT_CODE + 1)
 /// A main-font glyph's bytes, as struct FontGlyph lays one out: its width, then
 /// its rows, a halfword each; Glyph_DrawArm reads the codes up to
 /// TEXT_LAST_FONT_CODE as MAIN_FONT_GLYPH_BYTES apart in every edition, the

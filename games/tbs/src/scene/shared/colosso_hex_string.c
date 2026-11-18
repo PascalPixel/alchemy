@@ -13,7 +13,7 @@ UNUSED static void String_WriteU32AsHex(u8 *text, u32 value) {
   *text = 0;
   text--;
   for (i = 7; i >= 0; i--) {
-    *text = gHexDigits[value & 15];
+    *text = gHexDigits[value & 0xf];
     value >>= 4;
     text--;
   }

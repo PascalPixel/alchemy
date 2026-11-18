@@ -2,8 +2,10 @@
 #define ALCHEMY_FIELD_SCREEN_TRANSITION_H
 
 /// @file
-/// What games/tla/src/field/field_sequence_screen_transition.c declares for the
-/// files that use it, written once.
+/// What the field sequence's parts share with the files that define their
+/// tables: the speakers' voices and Halted lines, the field effects' scripts
+/// and colour curves, the screen transitions' shapes and window values, and
+/// the views of an actor and of the map work that the ground mask reads.
 
 #include "types.h"
 #include "resource_ids.h"

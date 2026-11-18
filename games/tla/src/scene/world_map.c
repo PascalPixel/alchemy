@@ -406,20 +406,13 @@ extern struct ActorPlacement gWorldMap_DriftPlacements[];
 extern struct ActorPlacement gWorldMap_FirstVoyagePlacements[];
 extern struct ActorPlacement gWorldMap_DriftingIdejimaPlacements[];
 
-/// The story's scenes the world map plays on arrival; its code tests the
-/// arrivals by a place's exit by scene_exits.h's names (WORLD_MAP_FROM_).
+/// The story's scenes the world map plays on arrival that no other scene's exit
+/// leads to; the others it tests by scene_exits.h's names.
 enum WorldMapEntrance {
-  WORLD_MAP_VENUS_COLLAPSE = 64, ///< Venus Lighthouse falls, Idejima breaks
-  WORLD_MAP_DRIFT_NORTH = 65,    ///< the tidal wave carries Idejima north
   WORLD_MAP_ALHAFRA_MANOR_VIEW = 67,
-  WORLD_MAP_FIRST_VOYAGE = 68, ///< the party first takes the ship's tiller
-  WORLD_MAP_SAIL_TO_DECK = 69,
   WORLD_MAP_PIERS_DJINN = 70,
-  WORLD_MAP_JUPITER_BEACON = 72, ///< the beacon lit, seen from the sea
-  WORLD_MAP_BANDIT_BEATEN = 73,  ///< after the battle with the bandit
+  WORLD_MAP_BANDIT_BEATEN = 73, ///< after the battle with the bandit
   WORLD_MAP_BANDIT_LOST = 74,
-  WORLD_MAP_IDEJIMA_DRIFTING = 77,
-  WORLD_MAP_TO_AQUA_ROCK = 78,
   WORLD_MAP_DEBUG_FLIGHT = 98, ///< the debug menu's: the ship flying
   WORLD_MAP_DEBUG_SAILING = 99
 };
@@ -437,14 +430,14 @@ void Leader_Search(void);
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   switch (gMainRoutineWork.entrance) {
-  case WORLD_MAP_VENUS_COLLAPSE:
+  case WORLD_MAP_FROM_IDEJIMA_NORTH_A:
     return gWorldMap_CollapsePlacements;
-  case WORLD_MAP_DRIFT_NORTH:
+  case WORLD_MAP_FROM_IDEJIMA_NORTHEAST:
     return gWorldMap_DriftPlacements;
-  case WORLD_MAP_FIRST_VOYAGE:
+  case WORLD_MAP_FROM_LEMURIAN_SHIP_MAIN_DECK_SOUTH:
     if (!Event_GetFlag(FLAG_SHIP_SAILABLE))
       return gWorldMap_FirstVoyagePlacements;
-  case WORLD_MAP_IDEJIMA_DRIFTING:
+  case WORLD_MAP_FROM_IDEJIMA_NORTH_B:
     return gWorldMap_DriftingIdejimaPlacements;
   default:
     return gWorldMapActorPlacements;
@@ -915,10 +908,10 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_BANDIT_ON_WORLD_MAP))
       WorldMap_FightBanditAndThieves(gMainRoutineWork.entrance);
     break;
-  case WORLD_MAP_IDEJIMA_DRIFTING:
+  case WORLD_MAP_FROM_IDEJIMA_NORTH_B:
     WorldMap_ShowIdejimaDrifting();
     break;
-  case WORLD_MAP_TO_AQUA_ROCK:
+  case WORLD_MAP_FROM_AQUA_ROCK_MOAI_NORTH:
     WorldMap_CarryPartyToAquaRock();
     break;
   case WORLD_MAP_FROM_LOHO:
@@ -928,10 +921,10 @@ s32 Scene_Initialize(void) {
       WorldMap_DeliverLohoCannon();
     }
     break;
-  case WORLD_MAP_VENUS_COLLAPSE:
+  case WORLD_MAP_FROM_IDEJIMA_NORTH_A:
     WorldMap_WatchVenusLighthouseCollapse();
     break;
-  case WORLD_MAP_DRIFT_NORTH:
+  case WORLD_MAP_FROM_IDEJIMA_NORTHEAST:
     WorldMap_DriftNorthOfContinent();
     break;
   case WORLD_MAP_PIERS_DJINN:
@@ -946,13 +939,13 @@ s32 Scene_Initialize(void) {
   case WORLD_MAP_ALHAFRA_MANOR_VIEW:
     WorldMap_PanToAlhafraManor();
     break;
-  case WORLD_MAP_FIRST_VOYAGE:
+  case WORLD_MAP_FROM_LEMURIAN_SHIP_MAIN_DECK_SOUTH:
     WorldMap_TakeTheTiller();
     break;
-  case WORLD_MAP_SAIL_TO_DECK:
+  case WORLD_MAP_FROM_LEMURIAN_SHIP_AQUA_HYDRA:
     WorldMap_SailToShipDeck();
     break;
-  case WORLD_MAP_JUPITER_BEACON:
+  case WORLD_MAP_FROM_JUPITER_LIGHTHOUSE_AERIE_BEACON:
     WorldMap_PlayLighthouseTransition(2);
     FieldActor_SetSpriteColor(Actor_GetById(ACTOR_PIERS), SPRITE_COLOR_HIDDEN);
     Actor_SetPosition(ACTOR_PIERS, 7277, 7300);
@@ -2849,7 +2842,8 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
 
 LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS(WorldMap),
-    SCENE_EXIT(WORLD_MAP_EXIT_IDEJIMA_DRIFTING, WorldMap, 77),
+    SCENE_EXIT(WORLD_MAP_EXIT_IDEJIMA_DRIFTING, WorldMap,
+               WORLD_MAP_FROM_IDEJIMA_NORTH_B),
     SCENE_EXIT(WORLD_MAP_EXIT_IDEJIMA, Idejima, 2),
     SCENE_EXIT(WORLD_MAP_EXIT_SHIP_TILLER, LemurianShipTiller, 10),
     SCENE_EXIT(WORLD_MAP_EXIT_IDEJIMA_AFTER_DRIFT, Idejima, 12),

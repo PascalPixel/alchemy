@@ -221,9 +221,10 @@ enum SoundId {
   SE_SHOP_PURCHASE,
   SE_SHOP_SELL,
   SE_CURSE,
-  /// Something launched: the Stone Justice boulders thrown up, a rolling block
-  /// launched ahead (Actor_LaunchAhead), and the Azul, Charon, Megiddo, Flora,
-  /// Moloch and other battle effects; The Broken Seal's row 104 note for note.
+  /// Something launched: the Stone Justice boulders thrown up, a Mars
+  /// Lighthouse fireball launched to roll ahead (Actor_LaunchAhead), and the
+  /// Azul, Charon, Megiddo, Flora, Moloch and other battle effects; The Broken
+  /// Seal's row 104 note for note.
   SE_LAUNCH,
   /// Super Lucky Dice's winnings counted into the party's coins.
   SE_COIN_PAYOUT,
@@ -618,10 +619,12 @@ enum SoundId {
   /// SE_CURRENT at volume 100 for its 40; nothing plays it, nor its copy
   /// SE_UNUSED_LOUD_CURRENT_B.
   SE_UNUSED_LOUD_CURRENT_A,
-  /// A rolling block crumbling (Actor_RollAndCrumble), Mars Lighthouse's ice
-  /// ground away, and the Doom Dragon faced.
+  /// A rolling fireball breaking a tall ice crystal beside its path
+  /// (Actor_RollAndCrumble), Mars Lighthouse's ice ground away, and the Doom
+  /// Dragon faced.
   SE_CRUMBLE,
-  /// Played as Mars Lighthouse's ice sheets crack.
+  /// Played as Mars Lighthouse's ice sheets crack, and as a rolling fireball
+  /// breaks a small ice crystal beside its path (Actor_RollAndCrumble).
   SE_ICE_CRACK,
   /// The white flash: as Psynergy is learned in the four rocks, as a pillar of
   /// the Anemos Inner Sanctum lights, and as Burst breaks Mars Lighthouse's

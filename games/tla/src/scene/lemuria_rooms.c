@@ -17,6 +17,7 @@
 ///   to the king (LemuriaRooms_MeetLunpa).
 
 #include "flags.h"
+#include "game/character_ids.h"
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -80,6 +81,16 @@ enum LemuriaRoomsActorId {
   ACTOR_OLD_MAN_ON_THE_DRAUGHTS
 };
 
+/// The cell behaviors the rooms' step triggers answer.
+enum LemuriaRoomsCellBehavior {
+  /// Inside the door of Piers' uncle's house, where his uncle stops the party
+  /// on its way out (LemuriaRooms_LeavePiersToMourn).
+  CELL_BEHAVIOR_UNCLES_DOORWAY = 30,
+  /// The foot of the stairs in Lunpa's tower, where Lunpa comes to meet the
+  /// party (LemuriaRooms_MeetLunpa).
+  CELL_BEHAVIOR_FOOT_OF_LUNPAS_STAIRS = 31
+};
+
 /// SPRITE_WHITE_BIRD's own animations: standing, now and then stirring, and
 /// beating its spread wings.
 enum { ANIM_WHITE_BIRD_PERCH = 1, ANIM_WHITE_BIRD_FLAP = 3 };
@@ -101,16 +112,11 @@ void LemuriaRooms_PiersVisitsUncle(void);
 extern struct SceneRegion gSceneRegions[];
 extern u32 gLemuriaRooms_QuestionMarkScript[];
 
-void FieldCamera_WaitForArrival();
-
 void LemuriaRooms_AskFromBeyondSeaOfTime(s32 actorId);
 
 void LemuriaRooms_NoticeMindRead(s32 unused, s32 actorId);
 
-void LemuriaRooms_LeavePiersToMourn(s32 a0, s32 a1, s32 a2);
-
-void Event_Start();
-void Event_End();
+void LemuriaRooms_LeavePiersToMourn(void);
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -131,7 +137,7 @@ void LemuriaRooms_TalkToPiersUncle(s32 actorId) {
     Event_SetMessageId((s32)MsgLemuriaInteriorsGoToLunpasTowerHe);
     // "Go to Lunpa's tower. He will see you."
     Event_ShowMessage(actorId, 0);
-    Actor_WatchAndSetScript(ACTOR_PIERS_UNCLE, 4);
+    Actor_WatchAndSetScript(ACTOR_PIERS_UNCLE, ACTOR_FELIX);
   } else if (Event_GetFlag(FLAG_PIERS_VISITED_UNCLE) != 0) {
     Event_Start();
     Event_ResolvePendingActions(0);
@@ -249,6 +255,9 @@ void LemuriaRooms_NoticeMindRead(s32 unused, s32 actorId) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
+/// Sets the rooms up: once Piers is at his mother's grave his uncle stands
+/// where he sent his bird from, and once Lunpa has gone to the king his tower
+/// is empty.
 s32 Scene_Initialize(void) {
   struct Actor *actor;
 
@@ -283,7 +292,7 @@ void LemuriaRooms_PiersVisitsUncle(void) {
   struct Actor *leader;
 
   Event_SetFlag(FLAG_PIERS_VISITED_UNCLE);
-  Party_RemoveMember(7);
+  Party_RemoveMember(PIERS);
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgLemuriaInteriorsIAmSorryItHas);
@@ -469,9 +478,9 @@ void LemuriaRooms_PiersVisitsUncle(void) {
   Actor_SetAttachedEffect(ACTOR_PIERS,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(55);
-  Actor_WatchAndSetScript(ACTOR_FELIX, 7);
-  Actor_WatchAndSetScript(ACTOR_KRADEN, 7);
-  Actor_WatchAndSetScript(ACTOR_PIERS_UNCLE, 7);
+  Actor_WatchAndSetScript(ACTOR_FELIX, ACTOR_PIERS);
+  Actor_WatchAndSetScript(ACTOR_KRADEN, ACTOR_PIERS);
+  Actor_WatchAndSetScript(ACTOR_PIERS_UNCLE, ACTOR_PIERS);
   Actor_SetSpeed(ACTOR_PIERS, 2.2);
   Actor_WalkByAndWait(ACTOR_PIERS, -8, 88);
   Actor_Stop(ACTOR_FELIX);
@@ -519,7 +528,7 @@ void LemuriaRooms_PiersVisitsUncle(void) {
 /// way out, asks it to leave Piers to his mourning, tells of the mission the
 /// king gave Piers, and sends his bird with a letter so that Lunpa will see the
 /// party.
-void LemuriaRooms_LeavePiersToMourn(s32 a0, s32 a1, s32 a2) {
+void LemuriaRooms_LeavePiersToMourn(void) {
   struct Actor *actor;
   s32 startBuf[3], targetBuf[3], posBuf[3];
   s32 *start, *target, *pos;
@@ -810,7 +819,7 @@ void Actor_StartScript(struct Actor *actor, const void *script);
 
 /// Pops a "?" bubble up at (x, y, z), in 16.16 pixels, tilted by rotation,
 /// for the given frames.
-void LemuriaRooms_PopQuestionMark(s32 x, s32 y, s32 z, s16 rotation,
+void LemuriaRooms_PopQuestionMark(s32 x, s32 y, s32 z, u16 rotation,
                                   s32 frames) {
   struct Actor *actor;
   struct AnimatedSprite *sprite;
@@ -830,10 +839,6 @@ void LemuriaRooms_PopQuestionMark(s32 x, s32 y, s32 z, s16 rotation,
     sprite->rotation = rotation;
   }
 }
-
-#ifndef MODERN
-void LemuriaRooms_PopQuestionMark();
-#endif
 
 /// Four "?" bubbles pop up over an actor in turn, to its right and its left,
 /// each tilted, a quarter of a second apart.
@@ -863,9 +868,6 @@ void Actor_PopQuestionMarks(s32 id) {
 }
 
 #include "shared/actor_cycle_pictures.h"
-
-void Event_Start();
-void Event_End();
 
 /// Lunpa comes to meet the party in his tower and asks after Piers, learns from
 /// Kraden that his old friend Babi has died and that his grandson Dodonpa rules
@@ -978,7 +980,7 @@ void LemuriaRooms_MeetLunpa(void) {
   Actor_SetAnimation(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_NOD);
   Event_Wait(15);
-  Actor_SetAnimationAndWait(ACTOR_LUNPA, 4);
+  Actor_SetAnimationAndWait(ACTOR_LUNPA, ANIM_SHAKE_HEAD);
   // "I'm afraid I know nothing of any northern "Fire Clan.""
   Event_ShowMessageThenWait(ACTOR_LUNPA, 0, 20);
   Actor_WalkByAndWait(ACTOR_LUNPA, 12, 0);
@@ -1020,11 +1022,11 @@ void LemuriaRooms_MeetLunpa(void) {
   Event_Wait(30);
   // "Ah! So...he's still out there, living in the outside world?"
   Event_ShowMessageThenWait(ACTOR_LUNPA, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_LUNPA, 3);
+  Actor_SetAnimationAndWait(ACTOR_LUNPA, ANIM_NOD);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_LUNPA, 3);
+  Actor_SetAnimationAndWait(ACTOR_LUNPA, ANIM_NOD);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_LUNPA, 3);
+  Actor_SetAnimationAndWait(ACTOR_LUNPA, ANIM_NOD);
   Event_Wait(20);
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
   // "Well, that might not be the most accurate way of putting it."
@@ -1052,7 +1054,7 @@ void LemuriaRooms_MeetLunpa(void) {
   Actor_RunRepeatedMotion(ACTOR_LUNPA, 2);
   Event_Wait(10);
   Event_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_LUNPA, 4);
+  Actor_SetAnimationAndWait(ACTOR_LUNPA, ANIM_SHAKE_HEAD);
   // "Then...I no longer know anyone in the world outside."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_LUNPA, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_SHAKE_HEAD);
@@ -1131,7 +1133,7 @@ void LemuriaRooms_MeetLunpa(void) {
     Event_Wait(20);
     Actor_FaceDirection(ACTOR_LUNPA, FACING_NORTH_NORTHEAST, 0);
     Event_Wait(20);
-    Actor_SetAnimationAndWait(ACTOR_LUNPA, 3);
+    Actor_SetAnimationAndWait(ACTOR_LUNPA, ANIM_NOD);
     Event_Wait(10);
     // "You are kind, Felix, but there are much more important matters at hand."
     Event_ShowMessageThenWait(ACTOR_LUNPA, 0, 10);
@@ -1140,7 +1142,7 @@ void LemuriaRooms_MeetLunpa(void) {
     Event_Wait(35);
     Actor_FaceDirection(ACTOR_LUNPA, FACING_NORTH_NORTHEAST, 0);
     Event_Wait(20);
-    Actor_SetAnimationAndWait(ACTOR_LUNPA, 4);
+    Actor_SetAnimationAndWait(ACTOR_LUNPA, ANIM_SHAKE_HEAD);
     gFieldWork->message++;
     // "Yes, yes... I am sorry we were sidetracked. We have much more to..."
     Event_ShowMessageThenWait(ACTOR_LUNPA, 0, 10);
@@ -1298,7 +1300,7 @@ void LemuriaRooms_MeetLunpa(void) {
   Event_Wait(15);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_LUNPA, 3);
+  Actor_SetAnimationAndWait(ACTOR_LUNPA, ANIM_NOD);
   Event_Wait(10);
   // "If you came to this theory on your own, you are indeed a wise..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_LUNPA, 0, 10);
@@ -1314,7 +1316,7 @@ void LemuriaRooms_MeetLunpa(void) {
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
   // "You do!?!"
   Event_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_LUNPA, 3);
+  Actor_SetAnimationAndWait(ACTOR_LUNPA, ANIM_NOD);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_FELIX, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_WEST, 0);
@@ -1326,7 +1328,7 @@ void LemuriaRooms_MeetLunpa(void) {
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
   Event_Wait(25);
-  Actor_SetAnimationAndWait(ACTOR_LUNPA, 3);
+  Actor_SetAnimationAndWait(ACTOR_LUNPA, ANIM_NOD);
   Event_Wait(10);
   // "Knowledge gained in one generation should be taken even further by..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_LUNPA, 0, 10);
@@ -1335,7 +1337,7 @@ void LemuriaRooms_MeetLunpa(void) {
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_NOD);
   Event_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_LUNPA, 4);
+  Actor_SetAnimationAndWait(ACTOR_LUNPA, ANIM_SHAKE_HEAD);
   // "But where is the world today?"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_LUNPA, 0, 10);
   Actor_FaceDirection(ACTOR_LUNPA, FACING_SOUTH_SOUTHWEST, 0);
@@ -1358,7 +1360,7 @@ void LemuriaRooms_MeetLunpa(void) {
   Actor_SetAnimation(ACTOR_JENNA, ANIM_SHAKE_HEAD);
   Actor_SetAnimation(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
   Actor_SetAnimationAndWait(ACTOR_KRADEN, ANIM_SHAKE_HEAD);
-  Actor_SetAnimationAndWait(ACTOR_LUNPA, 4);
+  Actor_SetAnimationAndWait(ACTOR_LUNPA, ANIM_SHAKE_HEAD);
   // "No, they are not... But this is not the only sign of the decay you..."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_LUNPA, 0, 10);
   FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_QUESTION, 50);
@@ -1380,7 +1382,7 @@ void LemuriaRooms_MeetLunpa(void) {
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_LUNPA, 0, 10);
   Actor_WalkByAndWait(ACTOR_LUNPA, -2, -12);
   Event_Wait(10);
-  Actor_SetAnimationAndWait(ACTOR_LUNPA, 3);
+  Actor_SetAnimationAndWait(ACTOR_LUNPA, ANIM_NOD);
   Event_Wait(10);
   // "I will meet with the king and press our evidence upon Conservato...."
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_LUNPA, 0, 10);
@@ -1407,7 +1409,7 @@ void LemuriaRooms_MeetLunpa(void) {
   Event_Wait(1);
   Actor_GetById(ACTOR_LUNPA)->steeringFlags |= ACTOR_FACES_MOTION;
   Event_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_LUNPA, 3);
+  Actor_SetAnimationAndWait(ACTOR_LUNPA, ANIM_NOD);
   Event_Wait(20);
   Actor_Jump(ACTOR_LUNPA, 6, 15);
   Actor_Jump(ACTOR_LUNPA, 6, 23);
@@ -1594,10 +1596,10 @@ struct Trigger gSceneEvents[] = {
      LEMURIA_ROOMS_TO_LEMURIA_EAST_B},
     {TRIGGER_EXIT, LEMURIA_ROOMS_TO_LEMURIA_EAST_C, CONDITION_ALWAYS,
      LEMURIA_ROOMS_TO_LEMURIA_EAST_C},
-    {TRIGGER_STEP, 30, FLAG_PIERS_AT_MOTHERS_GRAVE,
+    {TRIGGER_STEP, CELL_BEHAVIOR_UNCLES_DOORWAY, FLAG_PIERS_AT_MOTHERS_GRAVE,
      EVENT(LemuriaRooms_LeavePiersToMourn)},
-    {TRIGGER_STEP, 31, FLAG_TOLD_OF_PIERS_MOTHER,
-     EVENT(LemuriaRooms_MeetLunpa)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_FOOT_OF_LUNPAS_STAIRS,
+     FLAG_TOLD_OF_PIERS_MOTHER, EVENT(LemuriaRooms_MeetLunpa)},
     {TRIGGER_TALK, ACTOR_GIRL_WHO_NEVER_LEFT, CONDITION_ALWAYS,
      MSGNO(MsgLemuriaInteriorsIHaveNeverBeenOutside)},
     {TRIGGER_TALK, ACTOR_WOMAN_AWAITING_PIERS_TALES, CONDITION_ALWAYS,

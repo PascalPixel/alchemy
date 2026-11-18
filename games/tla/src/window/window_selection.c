@@ -1358,8 +1358,6 @@ void MenuArrow_SetPosition(struct MenuSprite *sprite, s32 x, s32 y) {
 /// Frees an arrow sprite's tile slot.
 void MenuArrow_Release(s32 value) { VramCache_FreeEntry(value); }
 
-#define Decompress_ByteLz ((void (*)(void *, void *))Decompress_ByteLz)
-
 /// The large icon's zoom: it opens at this scale (in 8.8) and grows by as much
 /// each frame until six steps, when SelectionMenu_Draw shows it at its own
 /// size.
@@ -1529,4 +1527,3 @@ u32 Menu_RunSelectionForValue(u32 value) {
 #undef NODE_KIND_YES_NO
 #undef SELECTION_LAST_PLACE
 #undef ARROW_SCROLL_FRAMES
-#undef Decompress_ByteLz

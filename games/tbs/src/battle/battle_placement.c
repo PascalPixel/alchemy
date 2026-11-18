@@ -239,7 +239,7 @@ void BattleObject_Make(struct BattleObject *actor, s32 unitId, s32 x, s32 y) {
   // size.
   facingAngle = Trig_Atan(y / 8, x) + DEGtoANG(180);
   object->facing = facingAngle;
-  object->collisionFlags = 3;
+  object->collisionFlags = ACTOR_SOLID | ACTOR_PUSHABLE;
   object->motionFlags = ACTOR_FALLS;
   if (unit->classId == CLASS_NONE) {
     object->scaleX = FIXED_ONE * 13 / 10;

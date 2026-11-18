@@ -264,7 +264,7 @@ enum AbilityUse {
 /// The bits of Unit.baseActionCount that count the unit's actions a turn.
 #define UNIT_ACTION_COUNT_MASK 0xf
 
-/// A Resistance stage adds 20 to the resistance to every element
+/// What a Resistance stage adds to the resistance to every element
 /// (Unit_Calculate).
 #define RESISTANCE_PER_STAGE 20
 

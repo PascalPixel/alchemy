@@ -48,6 +48,24 @@
 /// condition the unit has, in a row.
 #define STATUS_ICON_COUNT 11
 
+/// The Status screen's labels, in their message order up to MsgExp
+/// (OWNER_STATUS_LABEL).
+enum BattleSummaryLabel {
+  OWNER_STATUS_LABEL_ATTACK = 0,
+  OWNER_STATUS_LABEL_DEFENSE = 1,
+  OWNER_STATUS_LABEL_AGILITY = 2,
+  OWNER_STATUS_LABEL_LUCK = 3,
+  OWNER_STATUS_LABEL_ATTRIBUTES = 4,    ///< "Attrib.", which nothing draws
+  OWNER_STATUS_LABEL_ELEMENT_LEVEL = 5, ///< "Lv"
+  OWNER_STATUS_LABEL_POWER = 6,
+  OWNER_STATUS_LABEL_RESIST = 7,
+  OWNER_STATUS_LABEL_CLASS = 8, ///< "Class", which nothing draws
+  OWNER_STATUS_LABEL_DJINN = 9,
+  OWNER_STATUS_LABEL_EXP = 10 ///< MsgExp
+};
+
+#define OWNER_STATUS_LABEL(row) ((s32)MsgExp - OWNER_STATUS_LABEL_EXP + (row))
+
 /// The Status screen's help lines, from MsgOwnerStatusEntryHelp, which the
 /// cursor stops in window_tables.s name; the status icons' places and the
 /// three list pages follow.
@@ -928,29 +946,37 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
         Text_DrawNumberInWindow(unit->pp, 4, statusWindow, 56, 32);
         Text_DrawStringAtOffset(gOwnerStatus_SlashString, statusWindow, 88, 32);
         Text_DrawNumberInWindow(unit->ppMax, 4, statusWindow, 96, 32);
-        // "Attack", "Defense", "Agility" and "Luck", which come before "Exp".
-        Text_DrawMessageAsTiles((s32)MsgExp - 10, statusWindow, 136, 16);
+        Text_DrawMessageAsTiles(OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_ATTACK),
+                                statusWindow, 136, 16);
         Text_DrawNumberInWindow(unit->atk, 3, statusWindow,
                                 SUMMARY_STAT_VALUE_X, 16);
-        Text_DrawMessageAsTiles((s32)MsgExp - 9, statusWindow, 136, 24);
+        Text_DrawMessageAsTiles(OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_DEFENSE),
+                                statusWindow, 136, 24);
         Text_DrawNumberInWindow(unit->def, 3, statusWindow,
                                 SUMMARY_STAT_VALUE_X, 24);
-        Text_DrawMessageAsTiles((s32)MsgExp - 8, statusWindow, 136, 32);
+        Text_DrawMessageAsTiles(OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_AGILITY),
+                                statusWindow, 136, 32);
         Text_DrawNumberInWindow(unit->agi, 3, statusWindow,
                                 SUMMARY_STAT_VALUE_X, 32);
-        Text_DrawMessageAsTiles((s32)MsgExp - 7, statusWindow, 136, 40);
+        Text_DrawMessageAsTiles(OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_LUCK),
+                                statusWindow, 136, 40);
         Text_DrawNumberInWindow(unit->luck, 3, statusWindow,
                                 SUMMARY_STAT_VALUE_X, 40);
         Text_DrawMessageAsTiles((s32)MsgClassName + unit->classId, statusWindow,
                                 0, 48);
         if (page == STATUS_PAGE_STATS) {
-          // "Djinn", "Lv", "Power" and "Resist".
           if (hasDjinn != 0)
-            Text_DrawMessageAsTiles((s32)MsgExp - 1, statusWindow, 0, 72);
-          Text_DrawMessageAsTiles((s32)MsgExp - 5, statusWindow, 0, 80);
-          Text_DrawMessageAsTiles((s32)MsgExp - 4, statusWindow, 0, 88);
-          Text_DrawMessageAsTiles((s32)MsgExp - 3, statusWindow, 0, 96);
-          for (j = 0; j <= 3; j++) {
+            Text_DrawMessageAsTiles(
+                OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_DJINN), statusWindow, 0,
+                72);
+          Text_DrawMessageAsTiles(
+              OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_ELEMENT_LEVEL),
+              statusWindow, 0, 80);
+          Text_DrawMessageAsTiles(OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_POWER),
+                                  statusWindow, 0, 88);
+          Text_DrawMessageAsTiles(OWNER_STATUS_LABEL(OWNER_STATUS_LABEL_RESIST),
+                                  statusWindow, 0, 96);
+          for (j = 0; j < ELEMENT_COUNT; j++) {
             s32 pal = 1;
 
             if (hasDjinn != 0)
@@ -1134,7 +1160,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
             break;
           case OWNER_CONDITION_RESISTANCE_UP:
           case OWNER_CONDITION_RESISTANCE_DOWN:
-            helpValue = unit->resistanceStage * 20;
+            helpValue = unit->resistanceStage * RESISTANCE_PER_STAGE;
             if (helpValue < 0)
               helpValue = -helpValue;
             break;
@@ -1258,3 +1284,4 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
 #undef SUMMARY_HELP_TEXT_LENGTH
 #undef SUMMARY_STAT_VALUE_X
 #undef SUMMARY_DRAW_PAGE_MARKS
+#undef OWNER_STATUS_LABEL

@@ -461,6 +461,8 @@ enum KeyMask {
 #define BG_SCREEN_WIDTH 32
 /// The bytes of one row of a text background map, 32 entries.
 #define MAP_ROW_BYTES (BG_SCREEN_WIDTH * 2)
+/// The words of the same row, two entries a word.
+#define MAP_ROW_WORDS (MAP_ROW_BYTES / 4)
 /// Two screen entries in a word, tiles n and n + 1 side by side, for numbering
 /// a map's tiles two at a time; adding TILE_PAIR_STEP moves both on by two.
 #define TILE_PAIR(n) ((u32)((n) + 1) << 16 | (n))

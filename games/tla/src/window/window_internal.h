@@ -304,10 +304,6 @@ enum BattleTargetHint {
 /// PORTRAIT_FIRST_SPRITE_PORTRAIT + n from icon PORTRAIT_FIRST_SPRITE_ICON + n.
 #define PORTRAIT_FIRST_SPRITE_PORTRAIT 128
 
-/// The step the debug menus take on L and R: ten scenes, entrances, flag
-/// pages, portraits or sound numbers.
-#define DEBUG_LARGE_STEP 10
-
 /// A battle Djinn list entry, as the battle Status screen's Djinn page and the
 /// battle Djinn menu pack it: bits 21..17 the recovery turns left, 16 set for a
 /// Djinni not set (on standby or recovering), 11..8 its element and 7..0 its

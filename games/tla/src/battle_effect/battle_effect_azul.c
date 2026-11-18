@@ -77,9 +77,6 @@ struct AzulFace {
 #define AZUL_WATER_BLUE 40
 #define AZUL_WATER_GREEN 32
 #define AZUL_WATER_RED 16
-#define GRADIENT_BLUE_LINES 15
-#define GRADIENT_GREEN_LINES 16
-#define GRADIENT_RED_LINES 17
 #define AZUL_WATER_DEPTH 12
 #define AZUL_WATER_DEEPEST 20
 /// The drops the sphere bursts into, kept in the map grid's cell buffer.
@@ -914,9 +911,6 @@ void BattleEffect_GetTargetsMidpoint(struct ScreenPoint *position) {
 #undef AZUL_WATER_BLUE
 #undef AZUL_WATER_GREEN
 #undef AZUL_WATER_RED
-#undef GRADIENT_BLUE_LINES
-#undef GRADIENT_GREEN_LINES
-#undef GRADIENT_RED_LINES
 #undef AZUL_WATER_DEPTH
 #undef AZUL_WATER_DEEPEST
 #undef AZUL_DROPS

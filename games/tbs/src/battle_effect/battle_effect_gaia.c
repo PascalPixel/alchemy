@@ -5,8 +5,10 @@
 #include "battle_effect_internal.h"
 
 #define GAIA_FRAMES 192 ///< frames of Gaia
-/// The wall stands once it has risen, and sinks away a row every three
-/// frames.
+/// The shaft of light widens into the wall a row every three frames from
+/// GAIA_WALL_WIDEN_FRAME, stands once it has risen, and sinks away a row every
+/// three frames.
+#define GAIA_WALL_WIDEN_FRAME 64
 #define GAIA_WALL_STAND_FRAME 88
 #define GAIA_WALL_SINK_FRAME 160
 
@@ -209,7 +211,7 @@ void BattleEffect_RunGaia(struct BattleEffectParams *args) {
 
     // The rising wall widens a row at a time.
     if (frame >= 12 && frame < GAIA_WALL_STAND_FRAME) {
-      s32 row = (frame - 64) / 3;
+      s32 row = (frame - GAIA_WALL_WIDEN_FRAME) / 3;
 
       CLAMP(row, 0, 7);
       for (i = 0; i != 4; i++) {

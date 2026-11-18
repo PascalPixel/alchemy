@@ -13,7 +13,12 @@
 
 /// The six enemy units, gEnemyUnits, which Unit_Get reads for unit ids 128 to
 /// 133 while the battle lasts.
-#define ENEMY_UNITS_SIZE (6 * BATTLE_UNIT_SIZE)
+#define ENEMY_UNITS_SIZE (ENEMY_BATTLE_SIZE * BATTLE_UNIT_SIZE)
+
+/// The camera's zoom, in percent, from the battle's setup until the opening
+/// sets its own: the curtain's a frame later, or the Fusion Dragon's
+/// shattering opening's, so no frame shows it.
+#define BATTLE_ZOOM_BEFORE_OPENING 190
 
 /// Fights the battle against the enemy formation enemyGroup, from the opening
 /// to the end. Returns the number of enemies defeated when the party won or the
@@ -59,8 +64,9 @@ s32 Battle_Run(s32 enemyGroup) {
   view->unusedAfterFlag[1] = 0;
   REG_DISPCNT = DISPCNT_MODE_1;
   GameFlag_SetFar(FLAG_IN_BATTLE);
-  // XXX (no evidence): what flag 0x169 marks; it is set as every battle starts
-  // and nothing reads it.
+  // XXX (no evidence): what flag 0x169 marks; it is set as every battle
+  // starts, as The Lost Age's is, and no code of either game reads or clears
+  // it, so nothing the game does shows what it means.
   GameFlag_SetFar(0x169);
   Matrix_Initialize();
 
@@ -145,9 +151,8 @@ s32 Battle_Run(s32 enemyGroup) {
   BattleObject_Put();
   BattleBackground_Init();
   BattleBackground_Load(BATTLE_BACKGROUND_FIXED, battle->background, 0);
-  // The camera on the centre at 190 percent until the opening zooms.
   BattleCamera_SetRange(toFIXED(160), toFIXED(80), 0, 0, 2 * FIXED_ONE);
-  BattleCamera_SetView(0, 0, 0, 190);
+  BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_BEFORE_OPENING);
   Party_BattleSetupNoOp(1);
   REG_BLDCNT = 0;
   BattleSpoils_Clear();
@@ -190,7 +195,9 @@ s32 Battle_Run(s32 enemyGroup) {
     Iwram_ClearWords(battle->actions, sizeof(battle->actions));
     VramCache_FreeEntry(battle->arrowTiles);
     if (GameFlag_GetFar(FLAG_AUTO_BATTLE) == 0) {
-      // XXX (no evidence): who read the free memory around the command menu.
+      // DEAD: the heap's free IWRAM and EWRAM measured and dropped, before and
+      // after the commands are chosen and around each action; the ROM keeps
+      // the calls.
       Heap_GetRemainingIwram();
       Heap_GetRemainingEwram();
       actionCount = Battle_GatherActions(battle->actions);
@@ -245,13 +252,17 @@ s32 Battle_Run(s32 enemyGroup) {
     if (GameFlag_GetFar(FLAG_DJINN_LESSON) == 0)
       continue;
 
-    // The Djinn tutorial explains unleashing, then standby.
-    tutorialWindow = Message_OpenWindowFar(MsgTutorialUnleashed, 0, 4, 1);
+    // The Djinn lesson's two lines after each turn.
+    // "See! When you unleashed me, I attacked with my mighty stone-cleaver!"
+    tutorialWindow =
+        Message_OpenWindowFar(MsgTutorialUnleashed, 0, 4, MESSAGE_WINDOW_ZOOM);
     while (Message_AllTypedFar() == 0)
       wait(1);
     Window_CloseFar(tutorialWindow, 1);
     wait(1);
-    tutorialWindow = Message_OpenWindowFar(MsgTutorialStandby, 10, 4, 1);
+    // "After being unleashed, we Djinn will then stand by to be summoned..."
+    tutorialWindow =
+        Message_OpenWindowFar(MsgTutorialStandby, 10, 4, MESSAGE_WINDOW_ZOOM);
     BattleMessage_WaitForAdvanceAt(92, 24);
     Window_CloseFar(tutorialWindow, 1);
     wait(1);

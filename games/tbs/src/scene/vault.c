@@ -923,6 +923,7 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   anchor = Actor_Get(ACTOR_VAULT_DOG);
   if (anchor == NULL)
     return;
+  // Up to four pixels either way of the dog, Random_Below(8) - 4 on each roll.
   x = Random_Next();
   z = Random_Next();
   x <<= 3;
@@ -931,8 +932,8 @@ UNUSED static void Vault_SpawnDriftingEffect(s32 flags) {
   x -= 4;
   z = (u32)z >> 16;
   z -= 4;
-  x <<= 16;
-  z <<= 16;
+  x = INTtoFIXED(x);
+  z = INTtoFIXED(z);
   x += anchor->x.fixed;
   y = anchor->y.fixed;
   z += anchor->z.fixed;

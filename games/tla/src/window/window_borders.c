@@ -7,6 +7,9 @@
 void Window_DrawZoomBorder(struct Window *window, s32 savePosition);
 void Window_DrawOpened(struct Window *window);
 
+/// A tilemap entry's tile number and flip bits, below its palette.
+#define TILE_NUMBER_AND_FLIPS (TILE_NUMBER_MASK | TILE_HFLIP | TILE_VFLIP)
+
 /// Steps each window's open or close animation: an open window moves toward
 /// its geometry and is drawn when it arrives; a closing one is erased frame
 /// by frame and cleared when its duration is reached.
@@ -64,9 +67,9 @@ void Window_UpdateZooms(void) {
 /// Scratch values for a stage of a window's zoom, as in The Broken Seal: the
 /// scaled part of a side, the scaled duration and their ratio.
 struct WindowZoomScratch {
-  s32 scaledPart;
-  s32 scaledDuration;
-  s32 result;
+  FIXED scaledPart;     ///< zoom stage (or stages left) times a side in tiles
+  FIXED scaledDuration; ///< twice the zoom's duration
+  FIXED result;         ///< scaledPart / scaledDuration, in tiles
 };
 
 /// Draws a zooming window at its size for this frame: the window grows from
@@ -100,7 +103,7 @@ void Window_DrawZoomBorder(struct Window *window, s32 savePosition) {
       Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
   {
     s32 part = stage * window->height;
-    width = scratch.result >> 15;
+    width = FIXEDtoINT_TWICE(scratch.result);
     scratch.scaledPart = toFIXED(part);
   }
   scratch.scaledDuration = toFIXED(2 * window->duration);
@@ -111,7 +114,7 @@ void Window_DrawZoomBorder(struct Window *window, s32 savePosition) {
   scratch.scaledPart = toFIXED(remaining * window->height);
   scratch.result =
       Iwram_RatioMulQ14(scratch.scaledDuration, scratch.scaledPart);
-  height = scratch.result >> 15;
+  height = FIXEDtoINT_TWICE(scratch.result);
 
   Window_DrawBorder(x, y, width, height);
   if (savePosition != 0) {
@@ -221,6 +224,9 @@ void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
   if (width <= 1 || height <= 1 || width > DISPLAY_TILE_WIDTH ||
       height > DISPLAY_TILE_WIDTH)
     return;
+  // Canvas tiles run down each column of the interior: the tile at interior
+  // row r (from 1) of column c (from 0) is TEXT_CANVAS_FIRST_TILE - 1 + r plus
+  // c columns of height - 2 tiles.
   cursor += BG_SCREEN_WIDTH;
   if (fullWidth == 0) {
     for (row = 1; row < height - 1; row++) {
@@ -228,7 +234,7 @@ void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
       for (column = 1; column < width - 1; column++)
         *cursor++ = WINDOW_TILE(
             (TEXT_CANVAS_FIRST_TILE - 1 + row + (column - 1) * (height - 2)) &
-            0xfff);
+            TILE_NUMBER_AND_FLIPS);
       cursor++;
       cursor += BG_SCREEN_WIDTH - width;
     }
@@ -236,7 +242,8 @@ void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
     for (row = 1; row < height - 1; row++) {
       for (column = 0; column < width; column++)
         *cursor++ = WINDOW_TILE(
-            (TEXT_CANVAS_FIRST_TILE - 1 + row + column * (height - 2)) & 0xfff);
+            (TEXT_CANVAS_FIRST_TILE - 1 + row + column * (height - 2)) &
+            TILE_NUMBER_AND_FLIPS);
       cursor += BG_SCREEN_WIDTH - width;
     }
   }
@@ -250,7 +257,7 @@ s32 Message_AllTyped(void) {
   s32 i;
 
   ch = WINDOW_WORK->channels;
-  for (i = 0; i != 3; i++, ch++) {
+  for (i = 0; i != MESSAGE_COUNT; i++, ch++) {
     if (ch->work != NULL && ch->work->state == 0)
       return 0;
   }
@@ -453,10 +460,10 @@ struct Window *Message_OpenWindow(s32 message, s32 x, s32 y, u32 packed) {
   struct WindowWork *work;
 
   work = WINDOW_WORK;
-  work->speakerVoiceSound = (packed << 4) >> 20;
+  work->speakerVoiceSound = MESSAGE_WINDOW_VOICE_OF(packed);
   window = NULL;
   work->speakerVoiceCountdown = 0;
-  packed &= 0xffff;
+  packed &= MESSAGE_WINDOW_OPTIONS_MASK;
   flags = 0;
   entry = Message_Decode(message, 1);
   if (work->textBuffer[entry] == 0)

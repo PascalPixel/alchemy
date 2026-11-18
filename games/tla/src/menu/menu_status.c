@@ -524,7 +524,6 @@ s32 PsynergyMenu_ChooseMember(void) {
   Text_DrawMessageAsTilesFar((s32)MsgChooseCharacter + 1, menu->selectorWindow,
                              0, 16);
   while (1) {
-    // PERM
     if (pending) {
       selection = (selection + count) % count;
       // DEAD: Unit_Get's result is not used; the ROM keeps the call.

@@ -257,7 +257,7 @@ void Actor_SetHorizontalPositionWithTerrain(u32 actorId, FIXED x, FIXED z) {
     actor->z.fixed = z;
     // Swap the old ground's height for the new one, so the actor's height above
     // the ground is kept.
-    if (1 & actor->motionFlags) {
+    if (actor->motionFlags & ACTOR_FOLLOWS_TERRAIN) {
       terrainId = actor->layer;
       tileX = x;
       if (tileX < 0) {
@@ -293,7 +293,7 @@ void Actor_SetPositionWithTerrain(u32 actorId, FIXED x, FIXED y, FIXED z) {
     actor->targetY = ACTOR_NO_TARGET;
     actor->targetX = ACTOR_NO_TARGET;
     SET_ACTOR_POSITION(actor, x, y, z);
-    if (1 & actor->motionFlags) {
+    if (actor->motionFlags & ACTOR_FOLLOWS_TERRAIN) {
       s32 terrainId = actor->layer;
       tileX = x;
       if (tileX < 0) {
@@ -383,19 +383,26 @@ void Actor_Jump(u32 actorId, s32 speed, s32 frames) {
   }
 }
 
+/// The most times a repeated motion repeats: gActor_VariantScripts holds the
+/// motion that many times over, REPEATED_MOTION_SCRIPT_BYTES (32 words) each.
+#define REPEATED_MOTION_MAX 3
+#define REPEATED_MOTION_SCRIPT_BYTES (32 * sizeof(s32))
+
 /// The event command "start repeated motion": the actor squashes and springs
-/// back count times (1 to 3), through gActor_VariantScripts.
+/// back count times (1 to REPEATED_MOTION_MAX), through gActor_VariantScripts.
 void Actor_StartRepeatedMotion(u32 actorId, s32 count) {
   struct Actor *actor;
 
   actor = Actor_Lookup(actorId);
   if (actor != NULL && count > 0) {
-    if (count > 3) {
-      count = 3;
+    if (count > REPEATED_MOTION_MAX) {
+      count = REPEATED_MOTION_MAX;
     }
-    // Each count is 32 words of the script; start that many from its end.
-    Actor_StartScriptFar(
-        actor, (const s32 *)(gActor_VariantScripts + ((3 - count) << 7)));
+    // Start count motions from the script's end.
+    Actor_StartScriptFar(actor,
+                         (const s32 *)(gActor_VariantScripts +
+                                       (REPEATED_MOTION_MAX - count) *
+                                           REPEATED_MOTION_SCRIPT_BYTES));
   }
 }
 
@@ -480,6 +487,11 @@ void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
   }
 }
 
+/// The frames a ledge jump sinks for, 2 pixels a frame, and the most it waits
+/// to land.
+#define LEDGE_JUMP_SINK_FRAMES 14
+#define LEDGE_JUMP_LANDING_FRAMES 180
+
 /// Makes an actor jump down off a ledge in front of it (the field runs it for
 /// the leader when the player presses down at a ledge): it shows pose for 10
 /// frames, hops 12 pixels south, turns toward FACING_SOUTH_SOUTHWEST (1/16 turn
@@ -506,8 +518,8 @@ void Actor_JumpDownLedge(s32 actorId, u32 pose, s32 param) {
                            startZ + toFIXED(12));
     wait(6);
 
-    // Turn and sink 2 pixels a frame for 14 frames, raising dust, in free
-    // flight: no motion flags, so it neither falls nor follows the ground.
+    // Turn and sink, raising dust, in free flight: no motion flags, so it
+    // neither falls nor follows the ground.
     Sound_PlayFar(SE_FLOOR_SWITCH);
     // From here pose counts frames.
     pose = 0;
@@ -522,16 +534,18 @@ void Actor_JumpDownLedge(s32 actorId, u32 pose, s32 param) {
         FieldEffect_SpawnDustPuff(actor, param);
       }
       pose++;
-    } while (pose < 14);
+    } while (pose < LEDGE_JUMP_SINK_FRAMES);
 
-    // Jump 16 pixels forward and wait (at most 180 frames) to land, following
-    // the ground and falling again.
+    // Jump 16 pixels forward and wait to land, following the ground and
+    // falling again.
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     actor->velocityY = toFIXED(3);
     Actor_SetMoveTargetFar(actor, actor->x.fixed, actor->y.fixed,
                            startZ + toFIXED(16));
     Actor_WaitForMoveFar(actor);
-    for (pose = 0; pose < 180 && actor->y.fixed > actor->groundHeight; pose++) {
+    for (pose = 0; pose < LEDGE_JUMP_LANDING_FRAMES &&
+                   actor->y.fixed > actor->groundHeight;
+         pose++) {
       wait(1);
     }
     wait(2);
@@ -712,9 +726,15 @@ void Actor_SetSpriteColor(struct Actor *actor, s32 param) {
 /// The actor in Actor_WatchAndStartScript's targetId, below its enum
 /// ActorWatchFlag bits.
 #define ACTOR_WATCH_ACTOR_MASK 0xff
+/// The distance, in pixels, a follower stays behind the actor it watches
+/// (Actor_MoveTowardTarget reads it from the follower's timer).
+#define ACTOR_FOLLOW_DISTANCE 40
 
-/// Makes an actor watch the actor in targetId's ACTOR_WATCH_ACTOR_MASK bits and
-/// starts script on it.
+/// Makes an actor follow the actor in targetId's ACTOR_WATCH_ACTOR_MASK bits
+/// and starts script on it. Unless targetId has ACTOR_WATCH_KEEP_MOTION it
+/// keeps ACTOR_FOLLOW_DISTANCE, takes the target's top speed with twice its
+/// acceleration, to keep up with it, and no collision flags, so it cannot block
+/// the target.
 void Actor_WatchAndStartScript(u32 actorId, s32 targetId, const void *script) {
   struct Actor *follower = Actor_Lookup(actorId);
   struct Actor *target = Actor_Lookup(targetId & ACTOR_WATCH_ACTOR_MASK);
@@ -722,7 +742,7 @@ void Actor_WatchAndStartScript(u32 actorId, s32 targetId, const void *script) {
   if (follower != NULL && target != NULL) {
     follower->watchedActor = target;
     if (!(targetId & ACTOR_WATCH_KEEP_MOTION)) {
-      follower->timer = 40;
+      follower->timer = ACTOR_FOLLOW_DISTANCE;
       follower->acceleration = target->acceleration * 2;
       follower->speedLimit = target->speedLimit;
       follower->collisionFlags = 0;
@@ -784,7 +804,8 @@ void Actor_FaceDirectionById(s32 actorId, s32 angle, s32 frames) {
 void Actor_SetSpritePriority(s32 actorId, s32 priority) {
   struct Actor *actor = Actor_Lookup(actorId);
 
-  if (actor != NULL && (actor->spriteStorageKind & 0xF) == ACTOR_SPRITE_ONE) {
+  if (actor != NULL &&
+      (actor->spriteStorageKind & ACTOR_SPRITE_KIND_MASK) == ACTOR_SPRITE_ONE) {
     struct Sprite *sprite = actor->sprite;
 
     sprite->image.priority = priority;
@@ -865,3 +886,8 @@ s32 Actor_FindBySprite(s32 sprite) {
 #undef DUST_PUFF_DRAG_X
 #undef DUST_PUFF_DRAG_Z
 #undef ACTOR_WATCH_ACTOR_MASK
+#undef ACTOR_FOLLOW_DISTANCE
+#undef REPEATED_MOTION_MAX
+#undef REPEATED_MOTION_SCRIPT_BYTES
+#undef LEDGE_JUMP_SINK_FRAMES
+#undef LEDGE_JUMP_LANDING_FRAMES

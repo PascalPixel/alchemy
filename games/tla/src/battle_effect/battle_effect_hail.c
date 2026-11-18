@@ -9,6 +9,8 @@
 
 #define GROUND_FRAMES 96 ///< frames of Ground
 #define HAIL_FRAMES 64   ///< frames of Hail
+/// Hail's last frames, which fade the canvas out.
+#define HAIL_FADE_FRAMES 16
 
 /// The ice chips, after the wave.
 #define HAIL_CHIP_PICTURES PICTURE_BYTES(WATER_WAVE)
@@ -62,8 +64,8 @@ void BattleEffect_RunHail(struct BattleEffectParams *args) {
   }
 
   for (frame = 0; frame != HAIL_FRAMES; frame++) {
-    if (frame > 47)
-      REG_BLDALPHA = EFFECT_BLEND_CANVAS(64 - frame);
+    if (frame >= HAIL_FRAMES - HAIL_FADE_FRAMES)
+      REG_BLDALPHA = EFFECT_BLEND_CANVAS(HAIL_FRAMES - frame);
     // The chips and the Djinni load on frame 1, so on frame 0 the prelude draws
     // whatever the sheet holds.
     if (frame == 1) {

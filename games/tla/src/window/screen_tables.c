@@ -103,14 +103,15 @@ const u8 gSummon_UnusedElements[SUMMON_END] = {
 /// A window sprite pair's bob, in pixels, one step every four frames.
 const u8 gMenuTitleBobOffsets[8] = {0, 0, 1, 2, 3, 3, 2, 1};
 
-/// A window sprite's pulse, its scale one step every two frames.
+/// A window sprite's pulse, its scale one step every two frames: about 1.10 up
+/// to 1.22 and back.
 const s32 gWindowSprite_PulseScales[8] = {
-    FIXED_ONE * 110 / 100, FIXED_ONE * 113 / 100, FIXED_ONE * 116 / 100,
-    FIXED_ONE * 119 / 100, FIXED_ONE * 122 / 100, FIXED_ONE * 119 / 100,
-    FIXED_ONE * 116 / 100, FIXED_ONE * 113 / 100,
+    toFIXED(1.1),  toFIXED(1.13), toFIXED(1.16), toFIXED(1.19),
+    toFIXED(1.22), toFIXED(1.19), toFIXED(1.16), toFIXED(1.13),
 };
 
-/// 4bpp rows in colour 5 that grow by one pixel at a time.
+/// A row of 4-bit pixels for the centre tile and one for the end tile, colour
+/// 5 where the pattern marks, growing a pixel at a time.
 const struct BarPatternRow gMenu_BarPatternRows[6] = {
     {0x00055000, 0x00000000}, {0x05055050, 0x00000000},
     {0x05055050, 0x00000005}, {0x05055050, 0x00000505},

@@ -507,18 +507,24 @@ enum SoundId {
   /// SE_CAST's notes an octave lower on voice 99, against a falling line on
   /// voice 98; nothing plays it.
   SE_UNUSED_CAST_LOW = 520,
-  SE_521,
+  /// SE_SPIN_AWAY's voice on one long note, where SE_SPIN_AWAY plays a falling
+  /// run of eleven short ones; nothing plays it.
+  SE_UNUSED_SPIN_AWAY_SINGLE,
   /// The beams of Jupiter Lighthouse's aerie flickering as its angels are
   /// energized.
   SE_JUPITER_LIGHTHOUSE_BEAMS,
   /// SE_MARS_LIGHTHOUSE_DOORWAY's notes on voice 70 at tempo 100; nothing plays
   /// it.
   SE_UNUSED_MARS_LIGHTHOUSE_DOORWAY_A,
+  /// SE_528's first eight notes and times on noise voice 21 at SE_529's tempo,
+  /// the seventh 82 for 63; nothing plays it.
   SE_524,
   /// Played as Garoh's people howl at night.
   SE_HOWL,
   SE_526,
-  SE_527,
+  /// SE_GABOMBA_JAWS_OPEN's voice on one note above its two, held and bent up
+  /// and down until stopped; nothing plays it.
+  SE_UNUSED_GABOMBA_JAWS_OPEN_HELD,
   SE_528,
   /// SE_528's notes at a faster tempo, their loudness rising and falling;
   /// nothing plays either.
@@ -541,7 +547,10 @@ enum SoundId {
   SE_SAND_EMERGE,
   /// The field Psynergy Parch.
   SE_PARCH = 542,
-  SE_543,
+  /// SE_PARCH's notes fourteen semitones higher on its first voice, one more
+  /// among them and nine after, doubled softly on noise voice 21; nothing plays
+  /// it.
+  SE_UNUSED_PARCH_HIGH,
   /// The sand mound sinking away as Sand ends (FieldPsynergy_EndSand).
   SE_SAND_END,
   SE_545,
@@ -550,6 +559,8 @@ enum SoundId {
   SE_UNUSED_SETTLE_SHORT,
   /// SE_TABLET_RISE two semitones lower and softer; nothing plays it.
   SE_UNUSED_TABLET_RISE_LOW,
+  /// The first seven notes of SE_538's second track seventeen semitones lower,
+  /// louder and at half its tempo; nothing plays either.
   SE_548,
   /// SE_BOOKSHELF_SLIDE with its first note three semitones higher; nothing
   /// plays it.
@@ -557,6 +568,8 @@ enum SoundId {
   /// Played as the party drops through a hole on an islet.
   SE_DROP_THROUGH_HOLE,
   SE_551,
+  /// SE_551's five note times and three of its notes on voice 92, at a faster
+  /// tempo; nothing plays either.
   SE_552,
   /// Played as Magma Rock's flames grow.
   SE_FLAME_GROW = 554,
@@ -625,15 +638,19 @@ enum SoundId {
   /// SE_UNUSED_LOUD_CURRENT_A's notes again; nothing plays it.
   SE_UNUSED_LOUD_CURRENT_B,
   SE_579,
-  SE_580,
+  /// SE_GABOMBA_STATUE_HOLE's first three pairs of notes, the first two an
+  /// octave higher and the third two; nothing plays it.
+  SE_UNUSED_GABOMBA_STATUE_HOLE_HIGH,
   /// The leader jumping down a hole of the Gabomba Statue.
   SE_GABOMBA_STATUE_HOLE,
-  /// Played as an Anemos Inner Sanctum lift turns its arrow up and floats, once
-  /// the room's seven round switches are pressed
-  /// (AnemosInnerSanctum_PressRoundSwitch), and as the Gabomba Statue's
-  /// flashing cog drops into place (GabombaStatue_CogsTurnBack).
+  /// SE_LEMURIAN_SHIP_LIFT's notes with the second pair sooner, louder and at
+  /// a faster tempo, on voice 113 for its 21: an Anemos Inner Sanctum lift
+  /// turning its arrow up and floating once the room's seven round switches are
+  /// pressed (AnemosInnerSanctum_PressRoundSwitch), and the Gabomba Statue's
+  /// flashing cog dropping into place (GabombaStatue_CogsTurnBack).
   SE_582,
-  SE_583,
+  /// SE_ICE_CRACK's second note alone, held longer; nothing plays it.
+  SE_UNUSED_ICE_CRACK_SINGLE,
   /// Played as the party presses a switch or button in Mars Lighthouse, the
   /// Ankohl Ruins and the Anemos Inner Sanctum.
   SE_BUTTON_PRESS,
@@ -642,6 +659,8 @@ enum SoundId {
   SE_GABOMBA_STATUE_COGS,
   SE_587,
   SE_588,
+  /// SE_588's times and loudness, a note of each of its chords, with other
+  /// notes on voice 108 at a slower tempo; nothing plays either.
   SE_589,
   /// Played as Gaia Rock's statue rises under the leader.
   SE_STATUE_RISE,
@@ -672,7 +691,7 @@ enum SoundId {
   /// SE_SPIN_AWAY's first track alone, two octaves higher; nothing plays it.
   SE_UNUSED_SPIN_AWAY_HIGH_B,
   /// SE_UNUSED_SPIN_AWAY_HIGH_B's rhythm on its voice, six of its eleven notes
-  /// changed, at tempo 32; nothing plays it.
+  /// changed, at tempo 65; nothing plays it.
   SE_UNUSED_SPIN_AWAY_HIGH_C,
   /// SE_KOLIMA_BRIDGE_HOP's voice and rhythm with three of its five notes;
   /// nothing plays it.
@@ -692,7 +711,9 @@ enum SoundId {
   /// SE_UNUSED_COIN_PAYOUT_C an octave higher and slower, on voice 118; nothing
   /// plays it.
   SE_UNUSED_COIN_PAYOUT_HIGH,
-  SE_622,
+  /// SE_WADE's voice and tempo, louder and on two shorter notes, a soft 60 and
+  /// then 84; nothing plays it.
+  SE_UNUSED_WADE_SHORT,
   /// Played as an actor wades through water.
   SE_WADE,
   /// The Broken Seal's MUS_VALE, note for note.

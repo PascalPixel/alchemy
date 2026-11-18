@@ -101,10 +101,6 @@ enum LemuriaSpringAnimation {
   ANIM_SIGN_SLAB = 2
 };
 
-/// The leader's animation of swinging an arm out to throw, as he tosses the
-/// coin or medal (felix.tsv's animation 39).
-#define ANIM_LEADER_TOSS 39
-
 /// What searching answers at Lemuria's spring.
 enum LemuriaSpringCellBehavior {
   /// The spring's rim: the party drinks from it while its target is hidden.

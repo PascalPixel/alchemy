@@ -36,11 +36,6 @@
 #include "field/field_sprite.h"
 #include "system/dma.h"
 
-/// The caster's casting animations on the party's sheets: ANIM_CAST_PSYNERGY's
-/// first two pictures, held on the second, and its last two, held on the last
-/// with the hand held out.
-#define ANIM_CAST_PSYNERGY_BEGIN 20
-#define ANIM_CAST_PSYNERGY_END 21
 /// How long FieldPsynergy_End waits at most for the World Map's palette fade.
 #define END_FADE_WAIT_FRAMES 90
 

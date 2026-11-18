@@ -3371,9 +3371,6 @@ extern u32 gGaiaRockInside_FlyingRockScript[];
 /// The rocks that burst out as a statue rises.
 enum { STATUE_ROCKS = 16 };
 
-/// The leader standing still, ANIM_STILL's picture held.
-enum { ANIM_LEADER_STILL = 38 };
-
 /// A statue rises under the leader in a burst of rocks, lifting him with it;
 /// he lands on top, and its flag is set.
 void GaiaRockInside_StatueRisesUnderLeader(s32 id, s32 flag) {

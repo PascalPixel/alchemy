@@ -1719,12 +1719,6 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
 #define VINE_SWING_HELD (TRIG_TURN * 3 / 128)
 #define VINE_SWING_CARRYING (TRIG_TURN / 32)
 
-/// The leader's animations on a vine, as Felix's sheet draws them: hanging on,
-/// seen from behind with an arm raised; and carried across, the leap's
-/// picture, then flying at full stretch.
-#define ANIM_LEADER_HANG 32
-#define ANIM_LEADER_SWING 16
-
 /// Whirlwind on the vine hanging from actor id: the vine swings out to the
 /// leader's side and the leader takes hold. While the leader hangs on, B, Down
 /// or the direction away from the vine lets go; any other button leaps, and the

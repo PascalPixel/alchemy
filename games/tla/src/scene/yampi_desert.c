@@ -99,10 +99,6 @@ extern u16 gYampiDesertKingScorpionStakes[];
 extern u16 gYampiDesertBlowMaceChestStakes[];
 extern s32 gYampiDesert_RaisedEvent;
 
-/// The scorpion pit's entrance after the King Scorpion's battle, where the
-/// Scoop Gem is won.
-#define ENTRANCE_AFTER_KING_SCORPION_BATTLE 2
-
 /// The triggers the scene raises through gYampiDesert_RaisedEvent while the
 /// King Scorpion is chased through the sand.
 enum YampiDesertRaisedTrigger {
@@ -2123,8 +2119,9 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   Actor_SetSpeed(ACTOR_KING_SCORPION, 1.6);
   Actor_MoveToAndWaitById(ACTOR_KING_SCORPION, 232, 184);
   party->battleType = BATTLE_TYPE_NO_ESCAPE;
-  Event_SetAfterBattleDestination(SCENE_YAMPI_DESERT_SCORPION_PIT,
-                                  ENTRANCE_AFTER_KING_SCORPION_BATTLE);
+  Event_SetAfterBattleDestination(
+      SCENE_YAMPI_DESERT_SCORPION_PIT,
+      YAMPI_DESERT_SCORPION_PIT_AFTER_KING_SCORPION_BATTLE);
   Field_RequestBattleFromEncounterTable(10, 0);
 }
 
@@ -2426,7 +2423,8 @@ void YampiDesert_SetUpScorpionPit(void) {
       !GameFlag_Get(FLAG_KING_SCORPION_BEATEN)) {
     YampiDesert_LandAndFightKingScorpion();
   } else {
-    if (gMainRoutineWork.entrance == ENTRANCE_AFTER_KING_SCORPION_BATTLE &&
+    if (gMainRoutineWork.entrance ==
+            YAMPI_DESERT_SCORPION_PIT_AFTER_KING_SCORPION_BATTLE &&
         !GameFlag_Get(FLAG_KING_SCORPION_BEATEN))
       YampiDesert_DropScoopGem();
   }

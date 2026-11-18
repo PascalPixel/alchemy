@@ -12,9 +12,6 @@
 /// How far the reaper sways across and up and down as it circles, in pixels.
 #define CONDEMN_SWAY_X 16
 #define CONDEMN_SWAY_Y 4
-/// The header's CANVAS_WAVE_BG2X again: battle_effect_streaks.c and
-/// battle_effect_planet_diver.c #undef it before this part.
-#define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
 
 /// The pictures Condemn draws: the reaper raised and swinging, the crescent
 /// its scythe leaves and the crescent's four fades.

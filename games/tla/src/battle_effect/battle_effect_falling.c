@@ -240,7 +240,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 /// Each Douse variant: the drops that fall, of the 64 set out, the droplets
 /// each throws up, the pixels between drops along the slant, and its frames;
 /// the damage shows 64 frames before the end.
-#define DOUSE_DROPS(variant) gFalling_Counts[(variant) * 4]
+#define DOUSE_FALLING_DROPS(variant) gFalling_Counts[(variant) * 4]
 #define DOUSE_DROPLETS_PER_DROP(variant) gFalling_Counts[(variant) * 4 + 1]
 #define DOUSE_DROP_SPACING(variant) gFalling_Counts[(variant) * 4 + 2]
 #define DOUSE_FRAMES(variant) gFalling_Counts[(variant) * 4 + 3]
@@ -335,7 +335,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
     // Drops fall down the slant, then burst in a splash.
-    for (i = 0; i != DOUSE_DROPS(args->variant); i++) {
+    for (i = 0; i != DOUSE_FALLING_DROPS(args->variant); i++) {
       s32 x;
       s32 y;
 
@@ -426,7 +426,7 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
 #undef ICE_PUFF_LAST_FRAME
 #undef ICE_PUFF_FRAMES
 #undef DOUSE_DROPLET_BUFFER
-#undef DOUSE_DROPS
+#undef DOUSE_FALLING_DROPS
 #undef DOUSE_DROPLETS_PER_DROP
 #undef DOUSE_DROP_SPACING
 #undef DOUSE_FRAMES

@@ -38,9 +38,6 @@ extern const struct SpriteScale gKirin_ChargeScale;
 /// targets.
 #define KIRIN_BURSTS_FREED 10
 #define KIRIN_BURSTS_DRAWN 6
-/// The header's CANVAS_BLEND_LEVEL again: battle_effect_spider_web.c #undefs it
-/// before this part.
-#define CANVAS_BLEND_LEVEL 14
 
 /// Over a scrolling forest Kirin bounds in through a hoop of light, trailing
 /// fire; then it charges in from the right across the targets, each bursting

@@ -33,6 +33,7 @@
 #include "field/field_sequence_event.h"
 #include "field/actor_view.h"
 #include "field/actor_script.h"
+#include "scene/scene.h"
 #include "scene/event_layer.h"
 #include "text/msg_ids.h"
 #include "field/sprite.h"
@@ -164,14 +165,6 @@ s32 Actor_IsFacingNear(struct Actor *self, struct Actor *other, s32 range) {
 }
 
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
-
-/// How near, in pixels, the walking children heed: the other child they face,
-/// the leader they face, and the leader come so near that they walk on.
-enum {
-  CHILD_SEES_CHILD_RANGE = 18,
-  CHILD_SEES_LEADER_RANGE = 26,
-  CHILD_WALKS_ON_RANGE = 11
-};
 
 /// An update for the two walking children: each stands while it is talked to,
 /// while Mind Read shows its thoughts, or while it faces the other child or the

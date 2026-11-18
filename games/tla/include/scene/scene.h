@@ -591,6 +591,15 @@ struct Window;
 /// Shaman Village's and Kibombo's, each scene's own copy of the same drift.
 #define SMOKE_FRAMES 60
 
+/// How near, in pixels, the two walking children of Lemuria and of Contigo
+/// heed: the other child they face, the leader they face, and the leader come
+/// so near that they walk on (Lemuria_NoticeLeader, Contigo_PauseWhenFaced).
+enum {
+  CHILD_SEES_CHILD_RANGE = 18,
+  CHILD_SEES_LEADER_RANGE = 26,
+  CHILD_WALKS_ON_RANGE = 11
+};
+
 /// The vents of Aqua Rock and Taopo Swamp (struct VentWork, shared/vent_*.h):
 /// the most vents a room has, and the most actors besides the leader their
 /// puffs land on.

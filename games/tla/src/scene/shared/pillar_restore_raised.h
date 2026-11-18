@@ -1,4 +1,8 @@
-/// Pillar_Restore without the reset, lifting the leader onto the ground.
+/// Puts the crumbling pillars of a list back where their flags left them: one
+/// whose second flag is set has fallen and is put away; the others stand on
+/// their cells raised 32 pixels, gaps to jump onto, in animation 0 once their
+/// first flag is set, as the first step on one leaves it. Then a leader left
+/// below the ground is lifted onto it.
 void MagmaRockInside_RestoreCrumblingPillars(const u16 *table) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *actor;
@@ -34,9 +38,10 @@ void MagmaRockInside_RestoreCrumblingPillars(const u16 *table) {
       height =
           Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed);
       Actor_DisableById(id);
-      cell->attributeB = 128;
-      *slot =
-          MapCollision_FindOrAddTag(actor->layer, shape, (height >> 19) + 4);
+      cell->attributeB = MAP_CELL_JUMP;
+      *slot = MapCollision_FindOrAddTag(actor->layer, shape,
+                                        CELL_HEIGHT_STEPS(height) +
+                                            CELL_HEIGHT_STEPS(toFIXED(32)));
       if (Event_GetFlag(flag))
         Actor_SelectAnimation(actor, 0);
     }

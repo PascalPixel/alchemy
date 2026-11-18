@@ -154,11 +154,6 @@ void HoverGlow_Update(void) {
 
 /// Hover cast on a target: runs FieldPsynergy_Hover.
 void FieldPsynergy_HoverOnTarget(void) { FieldPsynergy_Hover(); }
-#undef VIEW_MOVE_WORK_SIZE
-#undef SWAY_START
-#undef SWAY_PEAK
-#undef SWAY_RAMP
-#undef SWAY_HOLD_FRAMES
 #undef HOVER_GLOW_PALETTE
 #undef GLOW_SPENT_CUE
 

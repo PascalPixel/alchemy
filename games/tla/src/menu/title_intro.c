@@ -1272,11 +1272,6 @@ void Title_NoOpColor(void) {}
 /// A component is a colour's five-bit channel shifted into the high bits of a
 /// halfword, with ten bits of fraction below it.
 #define COMPONENT_SHIFT 10
-/// The brightness 2R + 4G + B that PALETTE_TINT_GRAYSCALE and
-/// PALETTE_TINT_CUSTOM build, each channel in a component's place: red moved up
-/// and doubled, green moved up and doubled twice.
-#define BRIGHTNESS_RED_SHIFT (COMPONENT_SHIFT + 1)
-#define BRIGHTNESS_GREEN_SHIFT (COMPONENT_SHIFT - RGB_GREEN_SHIFT + 2)
 
 /// Computes the change per frame of each of the TITLE_PALETTE_FADE_CHANNELS
 /// colour components, from the current components to the target (nothing when

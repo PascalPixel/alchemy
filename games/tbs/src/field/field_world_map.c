@@ -62,20 +62,12 @@ struct WorldMapCell {
 /// MapGridScrollWork's wideTiles, which the world map shares: any nonzero
 /// value has the tileset animations copy 64-byte tiles.
 #define WORLD_MAP_WIDE_TILES 128
-/// REG_DISPCNT's video mode bits.
-#define DISPCNT_MODE_MASK 0x0007
 
 /// The window rows WorldMap_StartStillPicture sets, below the screen: the
 /// frame update then picks mode 0 and BG1 shows the still picture.
 #define WORLD_MAP_STILL_WINDOW_TOP 200
 #define WORLD_MAP_STILL_WINDOW_BOTTOM 255
-/// The first tile, in BG1's character base, of the 30 by 20 tile picture of
-/// 256 colours that screen block 6 numbers: the still picture's, and the
-/// world picture's (WorldPicture_Show).
-#define WORLD_MAP_STILL_FIRST_TILE 424
 #define WORLD_MAP_STILL_TILES (DISPLAY_TILE_WIDTH * DISPLAY_TILE_HEIGHT)
-/// Two background map entries side by side, written a word at a time.
-#define MAP_ENTRY_PAIR(left, right) ((right) << 16 | (left))
 
 /// Grid cell (column, row) shows its alternate tile.
 #define WORLD_MAP_USE_ALTERNATE_TILE(perspective, column, row)                 \
@@ -796,10 +788,7 @@ void WorldMap_LoadDefaultCellsAndUpdateBlock(void) {
 #undef WORLD_MAP_SCREEN_ROW_HALFWORDS
 #undef WORLD_MAP_LAYER_SCREEN_BYTES
 #undef WORLD_MAP_WIDE_TILES
-#undef DISPCNT_MODE_MASK
 #undef WORLD_MAP_STILL_WINDOW_TOP
 #undef WORLD_MAP_STILL_WINDOW_BOTTOM
-#undef WORLD_MAP_STILL_FIRST_TILE
 #undef WORLD_MAP_STILL_TILES
-#undef MAP_ENTRY_PAIR
 #undef WORLD_MAP_USE_ALTERNATE_TILE

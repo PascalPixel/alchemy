@@ -3069,8 +3069,8 @@ void TrialRoad_DrawFountains(void) {
         depth = FIXEDtoINT(height + z) + FOUNTAIN_DEPTH_OFFSET;
         if ((u32)(x + 15) > 334 || screenY <= -16 || screenY > 239)
           continue;
-        x &= 0x1ff;
-        screenY &= 0xff;
+        x &= OBJ_X_MASK;
+        screenY &= OBJ_Y_MASK;
         cursor = entry;
         *cursor++ = 0;
         *cursor++ = screenY | OBJ_X(x) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
@@ -3092,8 +3092,8 @@ void TrialRoad_DrawFountains(void) {
     depth = FIXEDtoINT(height + z) + FOUNTAIN_DEPTH_OFFSET;
     if ((u32)(x + 15) > 334 || screenY <= -16 || screenY > 239)
       continue;
-    x &= 0x1ff;
-    screenY &= 0xff;
+    x &= OBJ_X_MASK;
+    screenY &= OBJ_Y_MASK;
     cursor = entry;
     *cursor++ = 0;
     *cursor++ = screenY | OBJ_X(x) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
@@ -3161,9 +3161,9 @@ struct TrialRoadFountain *TrialRoad_AddFountain(s32 slot, s32 id, s32 timer,
     fountain->unusedAfterSpeed = 0;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   }
-  top = ((struct Actor *)Import_ActorCreate(ACTOR_CREATE_NO_SPRITE << 12,
-                                            actor->x.fixed, actor->y.fixed,
-                                            actor->z.fixed));
+  top = ((struct Actor *)Import_ActorCreate(
+      ACTOR_CREATE_KIND(ACTOR_CREATE_NO_SPRITE), actor->x.fixed, actor->y.fixed,
+      actor->z.fixed));
   top->collisionFlags = 0;
   top->motionFlags = 0;
   top->priorityFlags |= ACTOR_PRIORITY_PLATFORM;
@@ -3310,6 +3310,11 @@ void TrialRoad_StepOnTrap(const u16 *table) {
   }
 }
 
+/// A drifting effect loses a FIELD_EFFECT_DRAG_X-th of its x speed and a
+/// FIELD_EFFECT_DRAG_Z-th of its z speed each frame.
+#define FIELD_EFFECT_DRAG_X 18
+#define FIELD_EFFECT_DRAG_Z 16
+
 /// The dust's motion each frame, as Effect_AdvanceMotionAtLeaderPriority's: it
 /// drifts, slows, grows and spins, drawn at the leader's sprite priority.
 void TrialRoad_DriftDust(union FieldObject *object) {
@@ -3328,8 +3333,8 @@ void TrialRoad_DriftDust(union FieldObject *object) {
   effect->y += effect->velocity.y;
   velocityZ = effect->velocity.z;
   effect->z += velocityZ;
-  effect->velocity.x = velocityX - velocityX / 18;
-  effect->velocity.z = velocityZ - velocityZ / 16;
+  effect->velocity.x = velocityX - velocityX / FIELD_EFFECT_DRAG_X;
+  effect->velocity.z = velocityZ - velocityZ / FIELD_EFFECT_DRAG_Z;
   {
     effect->scaleX += effect->scaleRateX;
   }
@@ -3347,6 +3352,9 @@ void TrialRoad_DriftDust(union FieldObject *object) {
   bits.priority = source.priority;
   to->bits = bits;
 }
+
+#undef FIELD_EFFECT_DRAG_X
+#undef FIELD_EFFECT_DRAG_Z
 
 extern s32 gDust_ScatterScript[];
 
@@ -3455,18 +3463,19 @@ void MagmaRockInside_SetLeaderCellShape(s32 a, s32 b) {
 
 extern u32 gTrialRoad_HexDigits[];
 
-/// Writes value as eight hexadecimal digits and a terminating null.
-UNUSED void String_WriteU32AsHex(u8 *buf, u32 value) {
+/// Unused: writes value as eight hexadecimal digits (gTrialRoad_HexDigits) and
+/// a terminating null.
+UNUSED void String_WriteU32AsHex(u8 *text, u32 value) {
   s32 i;
   const u8 *digits = gTrialRoad_HexDigits;
 
-  buf += 8;
-  *buf = 0;
-  buf--;
+  text += 8;
+  *text = 0;
+  text--;
   for (i = 0; i < 8; i++) {
-    *buf = digits[value % 16];
-    value /= 16;
-    buf--;
+    *text = digits[value & 0xf];
+    value >>= 4;
+    text--;
   }
 }
 
@@ -3733,14 +3742,14 @@ void TrialRoad_DrawRaceMap(void) {
   }
   for (row = 0; row < 2; row++) {
     s32 x;
-    y = (work->scrollY + 8) & 255;
+    y = (work->scrollY + 8) & OBJ_Y_MASK;
     if (row == 0) {
       x = work->fade * 6 + work->scrollX - 12;
-      x &= 511;
+      x &= OBJ_X_MASK;
       flip = 0;
     } else {
       x = 236 - work->fade * 6 - work->scrollX;
-      x &= 511;
+      x &= OBJ_X_MASK;
       flip = OBJ_HFLIP;
     }
     for (i = 0; i < 4 && y < 160; i++) {

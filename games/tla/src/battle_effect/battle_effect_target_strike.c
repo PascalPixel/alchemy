@@ -167,7 +167,6 @@ void BattleEffect_RunMadZephyr(struct BattleEffectParams *args) {
 }
 
 #define BLITTER ((DrawRectangle)Ram_HeapSlots->ramCode)
-#define BLITTER_ALTERNATE ((DrawRectangle)Ram_HeapSlots->ramCodePaired)
 
 /// Column `field` of style `mode`'s row of gTargetStrike_Styles.
 #define TARGET_STRIKE_VALUE(mode, field) gTargetStrike_Styles[(mode)][(field)]
@@ -627,10 +626,9 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
                             gTargetStrike_GlintDrawFlags[flip & 3] |
                                 EFFECT_CLIP_BOUNDS,
                             BLITTER_ADDITIVE);
-        BLITTER_ALTERNATE(canvas,
-                          work->sheet + gBattleEffect_GlintPictures[image], x,
-                          y, gBattleEffect_GlintPictureWidths[image],
-                          gBattleEffect_GlintPictureHeights[image]);
+        ALT_BLITTER(canvas, work->sheet + gBattleEffect_GlintPictures[image], x,
+                    y, gBattleEffect_GlintPictureWidths[image],
+                    gBattleEffect_GlintPictureHeights[image]);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       }
     }
@@ -641,7 +639,7 @@ void BattleEffect_RunTargetStrike(struct BattleEffectParams *args, s32 mode) {
     draw[0] = BLITTER;
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                         BLITTER_ADDITIVE);
-    draw[1] = BLITTER_ALTERNATE;
+    draw[1] = ALT_BLITTER;
     /* LEFTOVER(template): a per-target loop whose count is 1, the user only. */
     for (k = 0; k != 1; k++) {
       source = BattleObject_GetFar(args->user)->object;
@@ -1185,23 +1183,7 @@ void BattleEffect_RunBackgroundFadeIn(struct BattleEffectParams *args) {
   HeapSlot_Release(HEAP_SLOT_BATTLE_EFFECT);
 }
 #undef BLITTER
-#undef CLIP
 #undef TARGET_STRIKE_VALUE
-#undef BLITTER_ALTERNATE
-#undef TARGET_STRIKE_KIND
-#undef TARGET_STRIKE_HITS
-#undef TARGET_STRIKE_FLAGS
-#undef TARGET_STRIKE_COLOR
-#undef TARGET_STRIKE_PICTURE_FRAMES
-#undef TARGET_STRIKE_COMPOSITE
-#undef TARGET_STRIKE_FRAMES
-#undef STRIKE_SMOKE
-#undef STRIKE_ABSORB
-#undef STRIKE_GLINTS
-#undef STRIKE_SPARKS
-#undef STRIKE_HEAVY
-#undef STRIKE_FLASH
-#undef STRIKE_STAR
 #undef TARGET_STRIKE_MOTES_PER_TARGET
 #undef TARGET_STRIKE_MOTE_SLOTS
 #undef TARGET_STRIKE_SPARK_COUNT

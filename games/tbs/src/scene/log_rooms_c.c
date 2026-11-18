@@ -12,8 +12,7 @@
 /// is lifted in Kolima Forest (FLAG_KOLIMA_CURSE_LIFTED),
 /// Scene_GetActorPlacements gives them tree sprites that stand still.
 /// They answer only Mind Read, each with the thoughts of someone stuck as a
-/// tree
-/// ("Who caused all this? Someone must have tried to cut down Tret!").
+/// tree ("Who caused all this? Someone must have tried to cut down Tret!").
 ///
 /// Once the curse is lifted they talk. They speak of the warriors said to
 /// have saved the village, of McCoy's halted palace and the lumberjacks' lost
@@ -31,15 +30,13 @@
 /// Entered by its door from the village
 /// (LOG_ROOMS_C_HOUSE_FROM_KOLIMA_SOUTH), it is the father's house, with its
 /// bookcase and rug and the father's family (ACTOR_FATHER_WITH_A_SECRET,
-/// ACTOR_WIFE_KEPT_FROM_THE_SECRET and ACTOR_CHILD_TOLD_THE_SECRET;
-/// places/kolima-interiors_cursed/map-7.png).
+/// ACTOR_WIFE_KEPT_FROM_THE_SECRET and ACTOR_CHILD_TOLD_THE_SECRET).
 ///
 /// It can also be entered from behind: by the village doorway the leader
 /// steps south into (LOG_ROOMS_C_HOUSE_FROM_KOLIMA_NORTH), or up the ladder
 /// from Kolima Tunnel (LOG_ROOMS_C_FROM_KOLIMA_TUNNEL). Then other cells are
 /// copied in, and it is a storeroom of crates and sacks with the ladder down
-/// in its floor. The family is put out of sight
-/// (places/kolima-interiors_cursed/map-8.png).
+/// in its floor. The family is put out of sight.
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -247,10 +244,9 @@ s32 Scene_Initialize(void) {
 
   entrance = (u16)gMainRoutineWork.entrance;
 
-  // LOG_ROOMS_C_HOUSE_FROM_KOLIMA_SOUTH uses one layout;
-  // LOG_ROOMS_C_HOUSE_FROM_KOLIMA_NORTH and
-  // LOG_ROOMS_C_FROM_KOLIMA_TUNNEL use the other. The unsigned packed
-  // comparison below tests the low 16-bit difference.
+  // By the village's south door the room is the father's house. By the north
+  // doorway or up from Kolima Tunnel, the two entrances after it, other cells
+  // make it a storeroom and the family is put out of sight.
   if ((s16)entrance == LOG_ROOMS_C_HOUSE_FROM_KOLIMA_SOUTH) {
     s32 height;
     s32 width;
@@ -349,35 +345,35 @@ u32 gLogRoomsC_Exits[] = {
 
 // clang-format off
 struct ActorPlacement gLogRoomsC_ActorPlacements[] = {
-    ACTOR_PLACEMENT(SPRITE_OLD_MAN_WITH_CANE, 0, MOVEMENT_TYPE_WANDER,
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_WITH_CANE, CONDITION_IN_VIEW, MOVEMENT_TYPE_WANDER,
         166, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_OLD_WOMAN, 0, MOVEMENT_TYPE_STAND,
+    ACTOR_PLACEMENT(SPRITE_OLD_WOMAN, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         88, 0, 144, FACING_EAST, TALK_FACING_PARTY_THEN_WATCH, 0),
-    ACTOR_PLACEMENT(SPRITE_BURLY_MAN_WITH_GREY_HAIR, 0, MOVEMENT_TYPE_STAND,
+    ACTOR_PLACEMENT(SPRITE_BURLY_MAN_WITH_GREY_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         408, 0, 472, FACING_WEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_DRESS, 0, MOVEMENT_TYPE_STAND,
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_DRESS, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         360, 0, 440, FACING_EAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_BOY_WITH_FAIR_HAIR, 0, 3,
+    ACTOR_PLACEMENT(SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_WANDER_NEAR,
         440, 0, 456, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_STRONGMAN, 0, MOVEMENT_TYPE_STAND,
+    ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         376, 0, 616, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, 0, MOVEMENT_TYPE_STAND,
+    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_FAIR_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         448, 0, 680, FACING_WEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_BOY_WITH_FAIR_HAIR, 0, MOVEMENT_TYPE_WANDER,
+    ACTOR_PLACEMENT(SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_WANDER,
         424, 0, 648, FACING_WEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_BALD_MAN_IN_RED, 0, MOVEMENT_TYPE_STAND,
+    ACTOR_PLACEMENT(SPRITE_BALD_MAN_IN_RED, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         624, 0, 360, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_IN_GREEN, 0, MOVEMENT_TYPE_STAND,
+    ACTOR_PLACEMENT(SPRITE_YOUNG_MAN_IN_GREEN, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         648, 0, 360, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_PONYTAIL, 0, MOVEMENT_TYPE_STAND,
+    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_PONYTAIL, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         392, 0, 136, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_MAN_WITH_DARK_HAIR, 0, MOVEMENT_TYPE_STAND,
+    ACTOR_PLACEMENT(SPRITE_MAN_WITH_DARK_HAIR, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         648, 0, 136, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PINK_APRON, 0, MOVEMENT_TYPE_WANDER,
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PINK_APRON, CONDITION_IN_VIEW, MOVEMENT_TYPE_WANDER,
         624, 0, 200, FACING_EAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_STRONGMAN, 0, MOVEMENT_TYPE_WANDER,
+    ACTOR_PLACEMENT(SPRITE_STRONGMAN, CONDITION_IN_VIEW, MOVEMENT_TYPE_WANDER,
         120, 0, 656, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(SPRITE_MAN_CARRYING_A_PACK, 0, MOVEMENT_TYPE_STAND,
+    ACTOR_PLACEMENT(SPRITE_MAN_CARRYING_A_PACK, CONDITION_IN_VIEW, MOVEMENT_TYPE_STAND,
         144, 0, 368, FACING_SOUTH, TALK_FACING_PARTY, 0),
     { SCENE_TABLE_END },
 };

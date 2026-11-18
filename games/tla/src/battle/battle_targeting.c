@@ -49,16 +49,29 @@
 /// A summon's bonus damage counts the target's max HP up to this much.
 #define SUMMON_BONUS_HP_MAX 10000
 
-/// Counts the statuses of unit that Restore is taken to cure: delusion,
-/// confusion, charm, sleep, the Psynergy seal and the Grim Reaper.
+// BUG: Restore cures stun and never confusion or charm, as its description
+// says ("Remove sleep, stun, and delusion.") and its cure does, but the count
+// takes confusion and charm and not stun, so Cerberus, the Hydros Statue and
+// the Refresh Ball pass over an ally who is only stunned.
+#ifdef BUGFIX
+#define COUNT_STUN(unit, count)                                                \
+  if ((unit)->stun != 0)                                                       \
+    (count)++;
+#else
+#define COUNT_STUN(unit, count)                                                \
+  if ((u8)(unit)->confusion != 0)                                              \
+    (count)++;                                                                 \
+  if ((unit)->charm != 0)                                                      \
+    (count)++;
+#endif
+
+/// Counts the statuses of unit that Restore cures: delusion, stun (COUNT_STUN),
+/// sleep, the Psynergy seal and the Grim Reaper.
 #define COUNT_PARTIAL_CURES(unit, count)                                       \
   {                                                                            \
     if ((unit)->delusion != 0)                                                 \
       (count)++;                                                               \
-    if ((u8)(unit)->confusion != 0)                                            \
-      (count)++;                                                               \
-    if ((unit)->charm != 0)                                                    \
-      (count)++;                                                               \
+    COUNT_STUN((unit), (count))                                                \
     if ((unit)->sleep != 0)                                                    \
       (count)++;                                                               \
     if ((unit)->psySeal != 0)                                                  \
@@ -67,8 +80,7 @@
       (count)++;                                                               \
   }
 
-/// Counts the statuses Tonic is taken to cure: those, the evil spirit and
-/// poison.
+/// Counts the statuses Tonic cures: those, the evil spirit and poison.
 #define COUNT_ALL_CURES(unit, count)                                           \
   {                                                                            \
     COUNT_PARTIAL_CURES((unit), (count));                                      \
@@ -106,42 +118,42 @@
     switch ((action)->effect) {                                                \
     case ABILITY_EFFECT_ATTACK_UP_SHARPLY:                                     \
     case ABILITY_EFFECT_ATTACK_UP:                                             \
-      if ((unit)->attackStage + 1 <= 4)                                        \
+      if ((unit)->attackStage + 1 <= STAT_STAGE_MAX)                           \
         (applies) = 1;                                                         \
       if ((unit)->attackTurns == 1)                                            \
         (applies)++;                                                           \
       break;                                                                   \
     case ABILITY_EFFECT_ATTACK_DOWN_SHARPLY:                                   \
     case ABILITY_EFFECT_ATTACK_DOWN:                                           \
-      if ((unit)->attackStage - 1 >= -4)                                       \
+      if ((unit)->attackStage - 1 >= STAT_STAGE_MIN)                           \
         (applies) = 1;                                                         \
       if ((unit)->attackTurns == 1)                                            \
         (applies)++;                                                           \
       break;                                                                   \
     case ABILITY_EFFECT_DEFENSE_UP_SHARPLY:                                    \
     case ABILITY_EFFECT_DEFENSE_UP:                                            \
-      if ((unit)->defenseStage + 1 <= 4)                                       \
+      if ((unit)->defenseStage + 1 <= STAT_STAGE_MAX)                          \
         (applies) = 1;                                                         \
       if ((unit)->defenseTurns == 1)                                           \
         (applies)++;                                                           \
       break;                                                                   \
     case ABILITY_EFFECT_DEFENSE_DOWN_SHARPLY:                                  \
     case ABILITY_EFFECT_DEFENSE_DOWN:                                          \
-      if ((unit)->defenseStage - 1 >= -4)                                      \
+      if ((unit)->defenseStage - 1 >= STAT_STAGE_MIN)                          \
         (applies) = 1;                                                         \
       if ((unit)->defenseTurns == 1)                                           \
         (applies)++;                                                           \
       break;                                                                   \
     case ABILITY_EFFECT_RESISTANCE_UP_SHARPLY:                                 \
     case ABILITY_EFFECT_RESISTANCE_UP:                                         \
-      if ((unit)->resistanceStage + 1 <= 4)                                    \
+      if ((unit)->resistanceStage + 1 <= STAT_STAGE_MAX)                       \
         (applies) = 1;                                                         \
       if ((unit)->resistanceTurns == 1)                                        \
         (applies)++;                                                           \
       break;                                                                   \
     case ABILITY_EFFECT_RESISTANCE_DOWN_SHARPLY:                               \
     case ABILITY_EFFECT_RESISTANCE_DOWN:                                       \
-      if ((unit)->resistanceStage - 1 >= -4)                                   \
+      if ((unit)->resistanceStage - 1 >= STAT_STAGE_MIN)                       \
         (applies) = 1;                                                         \
       if ((unit)->resistanceTurns == 1)                                        \
         (applies)++;                                                           \

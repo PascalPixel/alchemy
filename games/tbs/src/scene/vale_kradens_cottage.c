@@ -582,8 +582,6 @@ static void ValeKradensCottage_EnterCottage(void) {
 static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   struct Actor *actor;
   s32 x, z;
-  s32 strangersMessage;
-  s32 accusationMessage;
 
   if (Event_GetFlag(FLAG_MET_SATUROS_AND_MENARDI) != 0) {
     return;
@@ -594,8 +592,7 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   GameFlag_Set(FLAG_MET_SATUROS_AND_MENARDI);
 
   // Saturos is overheard: the villagers know little of Sol Sanctum.
-  strangersMessage = MsgValeTheyKnowLittleOfThe;
-  Event_SetMessageId(strangersMessage);
+  Event_SetMessageId(MsgValeTheyKnowLittleOfThe);
   // "They seem to know little of Sol Sanctum's mysteries."
   Event_ShowMessageThenWait(ACTOR_SATUROS, 0, 10);
 
@@ -685,10 +682,10 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   // "Were you eavesdropping on our conversation?"
   if (Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0) == 0) {
     // "Oh ho! Well... I can't permit you to continue your spying."
-    Event_SetMessageId(strangersMessage + 10);
+    Event_SetMessageId(MsgValeTheyKnowLittleOfThe + 10);
   } else {
     // "Hmph! I guess that I should take you at your word..."
-    Event_SetMessageId(strangersMessage + 11);
+    Event_SetMessageId(MsgValeTheyKnowLittleOfThe + 11);
   }
 
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_MENARDI, 0, 10);
@@ -697,8 +694,7 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   // Garet accuses them of sneaking around; Menardi guesses Kraden's
   // engagement was with the children, and Jenna says they are off to meet
   // him.
-  accusationMessage = MsgValeYoureTheOnesSneakingAround;
-  Event_SetMessageId(accusationMessage);
+  Event_SetMessageId(MsgValeYoureTheOnesSneakingAround);
   // "Hey, you're the ones who were sneaking around!"
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
   Actor_FaceEachOther(ACTOR_SATUROS, ACTOR_MENARDI, 40);
@@ -723,9 +719,11 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   Event_OpenMessage(ACTOR_SATUROS, 0);
 
   if (Event_AskYesNoWithActorAnimation(0, 0) == 0) {
-    Event_SetMessageId(accusationMessage + 5);
+    // "Pfeh! If your errand is more important than our own, then..."
+    Event_SetMessageId(MsgValeYoureTheOnesSneakingAround + 5);
   } else {
-    Event_SetMessageId(accusationMessage + 6);
+    // "Nevertheless, Kraden sent us away. He awaits you."
+    Event_SetMessageId(MsgValeYoureTheOnesSneakingAround + 6);
   }
 
   Actor_FaceDirection(ACTOR_JENNA, FACING_EAST, 0);

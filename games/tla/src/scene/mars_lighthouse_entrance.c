@@ -316,9 +316,7 @@ void Teleport_PlaySparks(void);
 /// that raise one (jupiter_lighthouse_room_m.c and
 /// jupiter_lighthouse_room_phaetons_blade_chest.c); shared/whirlwind_update.h
 /// clears it as the ride ends. The rooms of this overlay have no whirlwind,
-/// and only Scene_Initialize's clear touches the word here: in the linked
-/// overlay (objdump -D of out/tla-en/overlays/resource_6aa.elf, and tla-ja's)
-/// its address is loaded once, from that clear's literal pool.
+/// and nothing here but Scene_Initialize's clear touches it.
 s32 gWhirlwindRiding BSS_DATA;
 u16 gPaletteCycleBright BSS_DATA;
 u16 *gPaletteCycleSlots BSS_DATA;

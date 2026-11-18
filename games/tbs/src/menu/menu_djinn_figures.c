@@ -5,10 +5,15 @@
 
 #include "menu_internal.h"
 
+/// Where a new row's figures stand until their screen places them: the top
+/// row's at (FIGURE_START_X, TOP_ROW_START_Y), the bottom row's at
+/// FIGURE_START_X, parked below the screen (MENU_FIGURE_HIDDEN_Y).
+#define FIGURE_START_X 16
+#define TOP_ROW_START_Y 32
+
 /// Replaces the four displayed sprites and starts their projected-position
 /// task: one Djinni figure of each element (gDjinnFigures_SpriteIds) in
-/// ANIM_WALK, at (16, 32) until the screen moves them, placed each frame by
-/// DjinnFigures_UpdateAllPositions.
+/// ANIM_WALK, placed each frame by DjinnFigures_UpdateAllPositions.
 void DjinnFigures_InitializeTopRow(void *window, s32 unused) {
   struct ItemMenuWork *state = gMenuWork;
   s32 index;
@@ -29,8 +34,8 @@ void DjinnFigures_InitializeTopRow(void *window, s32 unused) {
       Sprite_StartAnimationFar(animation, ANIM_WALK);
     }
     state->figures[index] = animation;
-    state->figureX[index] = 16;
-    state->figureY[index] = 32;
+    state->figureX[index] = FIGURE_START_X;
+    state->figureY[index] = TOP_ROW_START_Y;
   }
   Task_Add(DjinnFigures_UpdateAllPositions, TASK_PASS_FRAME);
 }
@@ -89,7 +94,9 @@ void DjinnFigures_UpdateAllPositions(void) {
   }
 }
 
-/// Projects the bottom row using its saved scale or easing toward full size.
+/// Projects the bottom row using its saved scale or easing toward full size,
+/// facing south, or west for a figure whose y is marked negative
+/// (DjinnFigures_SetSlotPosition).
 void DjinnFigures_UpdateBottomRow(void) {
   struct ItemMenuWork *menu = gMenuWork;
   s32 figure;
@@ -103,7 +110,7 @@ void DjinnFigures_UpdateBottomRow(void) {
     if (animation != 0) {
       u32 projectedY = FIGURE_ORIGIN_Y - toFIXED(menu->memberY[figure]);
       s32 phase;
-      s32 limit;
+      s32 facing;
       s32 rowY;
 
       animation->image.priority = 0;
@@ -126,17 +133,17 @@ void DjinnFigures_UpdateBottomRow(void) {
       /* FAKEMATCH(dead): the scale's x assigned to itself while rowY is live.
        */
       scale.x = scale.x;
-      limit = FACING_WEST;
+      facing = FACING_WEST;
       if (rowY >= 0)
-        limit = FACING_SOUTH;
-      Actor_ApplyProjectedPlacementFar(animation, &placement, &scale, limit);
+        facing = FACING_SOUTH;
+      Actor_ApplyProjectedPlacementFar(animation, &placement, &scale, facing);
     }
   }
 }
 
 /// Replaces the bottom row's four sprites and starts its easing task: one
-/// Djinni figure of each element in ANIM_WALK, at full size, at (16, 200) below
-/// the screen until the Djinn menu moves one.
+/// Djinni figure of each element in ANIM_WALK, at full size, parked until the
+/// Djinn menu moves one.
 void DjinnFigures_InitializeBottomRow(s32 window, s32 unused) {
   struct ItemMenuWork *state = gMenuWork;
   s32 index;
@@ -156,14 +163,16 @@ void DjinnFigures_InitializeBottomRow(s32 window, s32 unused) {
       Sprite_StartAnimationFar(animation, ANIM_WALK);
     state->figures[index] = animation;
     state->figureScales[index] = FIXED_ONE;
-    state->figureX[index] = 16;
-    state->figureY[index] = 200;
+    state->figureX[index] = FIGURE_START_X;
+    state->figureY[index] = MENU_FIGURE_HIDDEN_Y;
   }
   Task_Add(DjinnFigures_UpdateBottomRow, TASK_PASS_FRAME);
 }
 
-/// Updates one object's saved position and its signed y marker: with negative
-/// set, y keeps its low bits but gets bit 15, which makes it negative.
+/// Places figure index at (x, y). With negative set, y keeps its low bits and
+/// is marked negative from bit 15 up, and the bottom row faces that figure
+/// west; no caller sets it. Returns where figureY[index] lies in the menu work,
+/// or index when there is no figure.
 s32 DjinnFigures_SetSlotPosition(s32 index, s32 x, s32 y, s32 negative) {
   struct ItemMenuWork *state = gMenuWork;
 
@@ -221,3 +230,5 @@ UNUSED void Menu_StartPartyFiguresStanding(void) {
 #undef DJINN_FIGURES_DEFINE_RELEASE
 #undef FIGURE_FULL_SCALE
 #undef FIGURE_ORIGIN_Y
+#undef FIGURE_START_X
+#undef TOP_ROW_START_Y

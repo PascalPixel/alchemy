@@ -136,7 +136,7 @@ s32 PartyMemberChooser_Open(void) {
   s32 index;
 
   gActorSystemWork->suspended = 1;
-  Window_DrawBorderFar(0, 0, 30, 20);
+  Window_DrawBorderFar(0, 0, DISPLAY_TILE_WIDTH, DISPLAY_TILE_HEIGHT);
   wait(1);
   Window_InitializeWork(0);
 
@@ -191,7 +191,7 @@ s32 StatusScreen_Run(void) {
   s32 index;
 
   gActorSystemWork->suspended = 1;
-  Window_DrawBorderFar(0, 0, 30, 20);
+  Window_DrawBorderFar(0, 0, DISPLAY_TILE_WIDTH, DISPLAY_TILE_HEIGHT);
   wait(1);
   Menu_SuspendFieldTasks();
   Window_InitializeWork(0);
@@ -243,7 +243,7 @@ s32 StatusScreen_Run(void) {
   WindowSprite_ClearListFar(menu->statusWindow);
   DjinnFigures_ReleaseTopRow();
   Menu_ResumeFieldTasks();
-  Window_DrawBorderFar(0, 0, 30, 20);
+  Window_DrawBorderFar(0, 0, DISPLAY_TILE_WIDTH, DISPLAY_TILE_HEIGHT);
   wait(1);
 #if TBS_PATCH_1
   Window_MarkVisibleTextTilesFar();
@@ -256,7 +256,7 @@ s32 StatusScreen_Run(void) {
   Heap_Release(palette);
   WINDOW_WORK->holdTilemapUpload = 1;
   ItemMenu_Close();
-  Window_DrawBorderFar(0, 0, 30, 20);
+  Window_DrawBorderFar(0, 0, DISPLAY_TILE_WIDTH, DISPLAY_TILE_HEIGHT);
   HeapSlot_Release(HEAP_SLOT_MENU);
   gActorSystemWork->suspended = 0;
   wait(1);
@@ -282,7 +282,6 @@ s32 StatusScreen_RunPages(void) {
   s32 step = STATUS_STEP_MEMBER;
   s32 finished = step;
   s32 result = 0;
-  u32 changed;
 
   while (!finished && !GameFlag_GetFar(FLAG_MENU_START_PRESSED)) {
     switch (step) {
@@ -310,8 +309,7 @@ s32 StatusScreen_RunPages(void) {
       menu->memberCursors[0]->motion = ICON_HIDDEN;
       result = ItemMenu_SelectItem();
       // STATUS_STEP_MEMBER for -1, STATUS_STEP_STATUS otherwise.
-      changed = ~result;
-      step = (-changed | changed) >> 31;
+      step = NONZERO(~result);
       break;
     default:
       finished = 1;
@@ -905,7 +903,6 @@ s32 StatusScreen_SelectCommand(void) {
 void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
                                       s32 invert) {
   struct StatusScreenWork *menu = gMenuWork;
-  u32 different;
   s32 count;
   s32 index;
   s32 x;
@@ -940,8 +937,7 @@ void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
   }
 
   // HIGHLIGHT_PALETTE when invert is 0, WINDOW_PALETTE when it is 1.
-  different = 1 ^ invert;
-  palette = WINDOW_PALETTE - (((0u - different) | different) >> 31);
+  palette = WINDOW_PALETTE - NONZERO(invert ^ 1);
   Render_SetTilemapFlagRect(menu->statusWindow, x, y, width, 1, palette);
 }
 
@@ -1130,6 +1126,11 @@ void Menu_BusyWait(void) {
 
 #endif
 
+/// Stat label `n` of "Attack", "Defense", "Agility" and "Luck" (MsgStatLabel +
+/// n), counted back from "Exp" (MsgExpLabel), which the status page also shows.
+#define STAT_LABEL(n)                                                          \
+  (MsgExpLabel - (MSGNO(MsgExpLabel) - MSGNO(MsgStatLabel)) + (n))
+
 /// Draws the top rows of party member memberId's status page into window: name,
 /// class, level, experience, HP and PP on the left, Attack, Defense, Agility
 /// and Luck on the right.
@@ -1163,12 +1164,11 @@ void ItemMenu_DrawMemberStatus(struct Window *window, s32 memberId, s32 flags) {
     wait(1);
     Window_ClearInteriorTilesFar(window, 144, 0, 224, 40);
   }
-  // The labels "Attack", "Defense", "Agility" and "Luck", 23 to 20 messages
-  // before "Exp".
-  Text_DrawMessageAsTilesFar(MsgExpLabel - 23, window, 152, 0);
-  Text_DrawMessageAsTilesFar(MsgExpLabel - 22, window, 152, 8);
-  Text_DrawMessageAsTilesFar(MsgExpLabel - 21, window, 152, 16);
-  Text_DrawMessageAsTilesFar(MsgExpLabel - 20, window, 152, 24);
+  // "Attack", "Defense", "Agility" and "Luck".
+  Text_DrawMessageAsTilesFar(STAT_LABEL(0), window, 152, 0);
+  Text_DrawMessageAsTilesFar(STAT_LABEL(1), window, 152, 8);
+  Text_DrawMessageAsTilesFar(STAT_LABEL(2), window, 152, 16);
+  Text_DrawMessageAsTilesFar(STAT_LABEL(3), window, 152, 24);
   Text_DrawNumberInWindowFar(unit->atk, STATUS_STAT_DIGITS, window,
                              STATUS_STAT_X, 0);
   Text_DrawNumberInWindowFar(unit->def, STATUS_STAT_DIGITS, window,
@@ -2269,3 +2269,4 @@ s32 StatusScreen_UpdateSelectionIcons(const u8 *enabled) {
 #undef EQUIPPED_ICON_X
 #undef EQUIPPED_ICON_Y
 #undef EQUIPPED_ROW_Y
+#undef STAT_LABEL

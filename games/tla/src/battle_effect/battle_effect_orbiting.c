@@ -212,6 +212,4 @@ void BattleEffect_RunTargetBursts(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
-#undef TRAILS
-
 #undef STARS

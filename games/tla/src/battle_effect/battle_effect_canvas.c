@@ -119,10 +119,6 @@
 #define ECLIPSE_LANDING_GREEN (-15)
 #define ECLIPSE_LANDING_BLUE 4
 
-/// The battle background's level once the canvas's fade has darkened it, a
-/// level a frame (BattleBackground_LoadFar and _SetPaletteLevelFar).
-#define BACKGROUND_DARKENED_LEVEL BACKGROUND_DARKEN_FRAMES
-
 /// Eclipse: after a flash the golden dragon looms over the horizon while rays
 /// of light spin out from its head; it opens its jaws, gathers an orb of light
 /// and breathes it as a blast that whites out the field, and the blast lands
@@ -907,12 +903,11 @@ UNUSED void BattleEffect_ReservedNoOpB(void) {}
 /// The flashes: FORM_CHANGE_FLASHES of them, two a frame from the burst, each
 /// thrown at FORM_CHANGE_FLASH_SPEED eighths of a pixel a frame and up to as
 /// much again at random, and each showing FlashBurstSheet's
-/// FLASH_BURST_PICTURES for FLASH_PICTURE_FRAMES apiece. The burst first frees
-/// FORM_CHANGE_FLASH_SLOTS.
+/// FLASH_BURST_PICTURE_COUNT pictures for FLASH_PICTURE_FRAMES apiece. The
+/// burst first frees FORM_CHANGE_FLASH_SLOTS.
 #define FORM_CHANGE_FLASHES 16
 #define FORM_CHANGE_FLASH_SLOTS 64
 #define FORM_CHANGE_FLASH_SPEED 32
-#define FLASH_BURST_PICTURES 6
 #define FLASH_PICTURE_FRAMES 3
 /// The glow's largest radius: it widens a pixel a frame from 8.
 #define FORM_CHANGE_GLOW_RADIUS 64
@@ -1063,7 +1058,8 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
 
         for (i = 0; i != FORM_CHANGE_FLASHES; i++, flash++) {
           if (flash->variant >= 0 &&
-              flash->variant < FLASH_BURST_PICTURES * FLASH_PICTURE_FRAMES) {
+              flash->variant <
+                  FLASH_BURST_PICTURE_COUNT * FLASH_PICTURE_FRAMES) {
             draw[0](canvas,
                     work->sheet + flash->variant / FLASH_PICTURE_FRAMES *
                                       PICTURE_BYTES(FLASH_BURST),
@@ -1254,13 +1250,6 @@ void BattleEffect_ProcessPendingGraphicsTransfer(void) {
     work->vblanksSinceTransfer++;
   }
 }
-
-/// The 64x64 stamp Haures draws in 256 colours: the VRAM address of its
-/// sprite's tiles, past what struct BattleEffectWork names in the effect's
-/// work block (BATTLE_EFFECT_WORK_SIZE), and the picture drawn for them, the
-/// 4 KB before transferMode.
-#define STAMP_TILES(work) (*(u32 *)((u8 *)(work) + 31604))
-#define STAMP_CANVAS(work) ((u8 *)(work) + 26496)
 
 /// Copies the stamp's picture to its sprite's tiles once the effect has drawn
 /// it, then clears the picture.
@@ -1900,11 +1889,7 @@ void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
 #undef LIGHT_RAYS
 #undef LIGHT_RAY_FRAMES
 #undef BAND_SHADE_BRIGHTEST
-#undef BACKGROUND_DARKENED_LEVEL
-#undef FLASH_BURST_PICTURES
 #undef FLASH_PICTURE_FRAMES
-#undef STAMP_TILES
-#undef STAMP_CANVAS
 #undef CANVAS_BG1_SCREEN
 #undef MAP_ROW_BYTES
 #undef MAP_ROW_WORDS

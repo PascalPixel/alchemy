@@ -1147,7 +1147,6 @@ void BattleObject_SetRecordPriority(s32 objectId, s32 priority) {
 /// SmokeSheet's six pictures, four frames each.
 #define SMOKE_COUNT 32
 #define SMOKE_DRAWN 24
-#define SMOKE_PUFF_FRAMES 24
 #define STAR_COUNT 16
 #define STAR_CELS 16000 ///< the pink star's six 16x16 cels, after the smoke's
 
@@ -1360,6 +1359,5 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
 #undef BACKSTAB_STRIKE_FRAME
 #undef SMOKE_COUNT
 #undef SMOKE_DRAWN
-#undef SMOKE_PUFF_FRAMES
 #undef STAR_COUNT
 #undef STAR_CELS

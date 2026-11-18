@@ -13,11 +13,6 @@
 /// A boulder shatters this many frames after it starts to fall.
 #define SPIRE_FALL_FRAMES 18
 
-#define SPIRE_ROCK_WIDTH 34  ///< the boulder picture, the first in the sheet
-#define SPIRE_ROCK_HEIGHT 62 ///< the boulder picture's height
-/// The shard pictures, after the boulder.
-#define SPIRE_SHARD_PICTURES (SPIRE_ROCK_WIDTH * SPIRE_ROCK_HEIGHT)
-
 /// Boulders drop along the row of targets, centred on it, and shatter into
 /// tumbling shards, hitting every target as each lands.
 ///
@@ -98,7 +93,7 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
           shard = &SHARDS[i * SPIRE_SHARDS + j];
           cel = (j % 5) * 3 + shard->variant / 96 % 3;
           blit(canvas,
-               work->sheet + gSpire_ShardPictures[cel] + SPIRE_SHARD_PICTURES,
+               work->sheet + gSpire_ShardPictures[cel] + BOULDER_SHARD_PICTURES,
                FIXED_INTEGER_PART(shard->x) -
                    ((width = gSpire_ShardWidths[cel]) >> 1),
                FIXED_INTEGER_PART(shard->y) -
@@ -116,8 +111,7 @@ void BattleEffect_RunSpire(struct BattleEffectParams *args) {
       if (frame < gSpire_DropFrames[i] + SPIRE_FALL_FRAMES) {
         if (frame >= gSpire_DropFrames[i])
           blit(canvas, work->sheet, gSpire_RockX[i] + 47,
-               FIXED_INTEGER_PART(rock->y), SPIRE_ROCK_WIDTH,
-               SPIRE_ROCK_HEIGHT);
+               FIXED_INTEGER_PART(rock->y), BOULDER_WIDTH, BOULDER_HEIGHT);
         rock->y += rock->velocityY;
         if (frame > gSpire_DropFrames[i])
           rock->velocityY += toFIXED(1);

@@ -17,8 +17,6 @@
 /// turn from one to the next, a tenth of a turn rounded up.
 #define STAR_CORNERS 10
 #define STAR_CORNER_ANGLE ((TRIG_TURN + STAR_CORNERS - 1) / STAR_CORNERS)
-/// The largest of the ten mote pictures.
-#define MOTE_SIZE_MAX 10
 
 /// How fast the camera swings round, slowing from frame 40 to a stop.
 #define ASTRAL_BLAST_TURN_SPEED 128
@@ -329,7 +327,6 @@ void BattleEffect_RunShiningStar(struct BattleEffectParams *args) {
 #undef ASTRAL_BLAST_FRAMES
 #undef STAR_CORNERS
 #undef STAR_CORNER_ANGLE
-#undef MOTE_SIZE_MAX
 #undef ASTRAL_BLAST_TURN_SPEED
 #undef ASTRAL_BLAST_STAR_INTERVAL
 #undef ASTRAL_BLAST_SPIN

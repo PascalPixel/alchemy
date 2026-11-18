@@ -11,8 +11,6 @@ enum FallingSwordMode {
   FALLING_SWORD_ACHERONS_GRIEF
 };
 
-#undef RESULTS_FRAME
-
 /// A flash waits out its life, the ring's inner ones least, and in its last
 /// FLASH_BURN_FRAMES burns down from FlashBurstSheet's fireball to embers, a
 /// picture every three frames.

@@ -370,13 +370,16 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     } else {
       // DEAD: frame is at most 115 here, so the second arm never runs; the ROM
       // keeps both compares and the arm.
+      /* FAKEMATCH(signature): pitch and yaw, halfword angles, held in s32
+       * and wrapped through a 16.16 round trip; as s16 locals stepped
+       * plainly. */
       if (frame <= 159) {
-        pitch = FIXEDtoINT(INTtoFIXED(pitch) + toFIXED(256));
+        pitch = FIXEDtoINT(INTtoFIXED(pitch) + INTtoFIXED(TRIG_TURN / 256));
       } else if (frame <= 191) {
         pitch = FIXEDtoINT(INTtoFIXED((u16)pitch - frame * 8 + 1216));
       }
       if (frame <= 47) {
-        yaw = FIXEDtoINT(INTtoFIXED(yaw) + toFIXED(256));
+        yaw = FIXEDtoINT(INTtoFIXED(yaw) + INTtoFIXED(TRIG_TURN / 256));
       } else if (frame <= 111) {
         yaw = FIXEDtoINT(INTtoFIXED((u16)yaw - frame * 4 + 448));
       }

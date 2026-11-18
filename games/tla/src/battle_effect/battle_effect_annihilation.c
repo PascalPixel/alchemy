@@ -5,8 +5,6 @@
 #include "battle_effect_internal.h"
 #include "sounds.h"
 
-#undef HIT_FRAME
-
 #define SHARD_COUNT 64
 #define STREAK_PICTURE_BYTES PICTURE_BYTES(FIRE_STREAK)
 #define BURST_PICTURE_BYTES PICTURE_BYTES(FIRE_BURST)
@@ -168,3 +166,5 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
+
+#undef HIT_FRAME

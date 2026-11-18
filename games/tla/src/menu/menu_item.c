@@ -191,7 +191,8 @@ enum ItemMenuStep {
 };
 
 #ifdef MODERN
-// Called with no prototype in scope, as its bytes need; a current GCC gets
+// The item menu calls this with no prototype in scope, so its argument takes
+// the old promotions; a current GCC, which refuses implicit declarations, gets
 // it here.
 void Unit_RefreshPsynergyFar(s32 unit);
 #endif
@@ -1591,9 +1592,9 @@ s32 Inventory_RemoveFirstUnflagged(s32 memberId) {
 }
 
 // Where the cursor points at a command. The German, French and Spanish
-// releases ask two helpers of their own (named by their German addresses):
-// the first reads x from a table that sets the middle column 9 pixels left of
-// the even 40-pixel spacing the other releases compute, the second gives y.
+// releases ask two helpers of their own: the first reads x from a table that
+// sets the middle column 9 pixels left of the even 40-pixel spacing the other
+// releases compute, the second gives y.
 #if (LANGUAGE == LANGUAGE_GERMAN) || (LANGUAGE == LANGUAGE_FRENCH) ||          \
     (LANGUAGE == LANGUAGE_SPANISH)
 s32 ItemMenu_GetCommandCursorX(s32 column, s32 row);
@@ -1764,8 +1765,6 @@ s32 ItemMenu_ChooseCommand(void) {
 }
 
 #undef COMMAND_CURSOR_Y
-
-// The item menu work block, as this function reads it.
 
 #define COMMAND_DISABLED (-1)
 #define COMMAND_AVAILABLE 1

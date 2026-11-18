@@ -59,11 +59,8 @@
 
 #include "../field/field_effect_move.c"
 
-#define EFFECT_SPAWN FieldEffect_Spawn
-#define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
-#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
 
 /// Set as Pound on a stake of the Psynergy Stone's room stirs the King Scorpion
@@ -178,14 +175,14 @@ static inline void YampiDesert_ReturnHome(s32 mode, s32 actorId, s32 flag) {
 
 /// The stakes Pound sinks, the first rows of the rooms that have them (the
 /// Guardian Ring chest's, Blitz's, the Psynergy Stone's, the King Scorpion's
-/// and the Blow Mace chest's): stake n is the placed actor
-/// STAKE(n), and FLAG_STAKE_POUNDED(n) is set once Pound has sunk it.
+/// and the Blow Mace chest's): stake n is the placed actor STAKE(n), and
+/// FLAG_YAMPI_DESERT_STAKE_POUNDED(n) is set once Pound has sunk it.
 #define STAKE(n) (ACTOR_FIRST_PLACED + (n))
-#define FLAG_STAKE_POUNDED(n) (FLAG_SCENE_TEMP_00 + (n))
+#define FLAG_YAMPI_DESERT_STAKE_POUNDED(n) (FLAG_SCENE_TEMP_00 + (n))
 /// A row of a room's stake list, as Pound_SinkTarget and Actor_SetCellOpen read
 /// it: the stake, its kind of poses (0, a stake's) and its flag. A list ends at
 /// ACTOR_LIST_END.
-#define STAKE_ROW(n) STAKE(n), 0, FLAG_STAKE_POUNDED(n)
+#define STAKE_ROW(n) STAKE(n), 0, FLAG_YAMPI_DESERT_STAKE_POUNDED(n)
 
 /// The travelers from Madra resting by the spring (SceneId_YampiDesertSpring),
 /// by the rows of gYampiDesertSpringActorPlacements and
@@ -734,11 +731,8 @@ void YampiDesert_WatchScorpionStop(void) {
 
 #include "../field/field_effect_advance_motion_priority.c"
 
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
 #undef DEFINE_POUND_STAKE_STOPPING_SCORPION
 
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
@@ -1054,6 +1048,8 @@ void YampiDesert_RevealRockHint(void) {
       MOVE_LEADER_TO(17, 43)
   }
 }
+
+#undef MOVE_LEADER_TO
 
 /// Moves the leader to the centre of a cell, in pixels.
 #define MOVE_LEADER_TO(column, row)                                            \
@@ -1675,7 +1671,7 @@ void YampiDesert_ScorpionRoamsPsynergyStone(struct Actor *actor) {
     break;
   case 7:
     if (YampiDesert_HasArrived(actor)) {
-      if (GameFlag_Get(FLAG_STAKE_POUNDED(3))) {
+      if (GameFlag_Get(FLAG_YAMPI_DESERT_STAKE_POUNDED(3))) {
         actor->update = NULL;
         gYampiDesert_RaisedEvent = RAISED_STIR_SCORPION;
       } else {
@@ -1756,7 +1752,7 @@ void YampiDesert_ScorpionRoamsKingScorpion(struct Actor *actor) {
     WALK(4, toFIXED(246), toFIXED(728))
   case 5:
     if (YampiDesert_HasArrived(actor)) {
-      if (GameFlag_Get(FLAG_STAKE_POUNDED(0))) {
+      if (GameFlag_Get(FLAG_YAMPI_DESERT_STAKE_POUNDED(0))) {
         actor->update = NULL;
         gYampiDesert_RaisedEvent = RAISED_STIR_SCORPION_AGAIN;
       } else {
@@ -1777,7 +1773,7 @@ void YampiDesert_ScorpionRoamsKingScorpion(struct Actor *actor) {
     WALK(16, toFIXED(232), toFIXED(744))
   case 17:
     if (YampiDesert_HasArrived(actor)) {
-      if (!GameFlag_Get(FLAG_STAKE_POUNDED(0)))
+      if (!GameFlag_Get(FLAG_YAMPI_DESERT_STAKE_POUNDED(0)))
         *state = 18;
       else
         *state = 32;
@@ -1868,19 +1864,19 @@ void YampiDesert_ScorpionRoamsToTrap(struct Actor *actor) {
     WALK(2, toFIXED(312), toFIXED(344))
     ARRIVE(3, 4)
     WALK(4, toFIXED(296), toFIXED(344))
-    ARRIVE_OR(5, FLAG_STAKE_POUNDED(2), 32, 6)
+    ARRIVE_OR(5, FLAG_YAMPI_DESERT_STAKE_POUNDED(2), 32, 6)
     WALK(6, toFIXED(168), toFIXED(344))
     ARRIVE(7, 8)
     WALK(8, toFIXED(168), toFIXED(296))
     ARRIVE(9, 10)
     WALK(10, toFIXED(184), toFIXED(296))
-    ARRIVE_OR(11, FLAG_STAKE_POUNDED(1), 48, 12)
+    ARRIVE_OR(11, FLAG_YAMPI_DESERT_STAKE_POUNDED(1), 48, 12)
     WALK(12, toFIXED(280), toFIXED(296))
     ARRIVE(13, 14)
     WALK(14, toFIXED(280), toFIXED(328))
   case 15:
     if (YampiDesert_HasArrived(actor)) {
-      if (GameFlag_Get(FLAG_STAKE_POUNDED(2))) {
+      if (GameFlag_Get(FLAG_YAMPI_DESERT_STAKE_POUNDED(2))) {
         actor->update = NULL;
         gYampiDesert_RaisedEvent = RAISED_CORNER_SCORPION;
       } else {
@@ -1893,7 +1889,7 @@ void YampiDesert_ScorpionRoamsToTrap(struct Actor *actor) {
     WALK(18, toFIXED(200), toFIXED(360))
     ARRIVE(19, 20)
     WALK(20, toFIXED(200), toFIXED(312))
-    ARRIVE_OR(21, FLAG_STAKE_POUNDED(1), 34, 22)
+    ARRIVE_OR(21, FLAG_YAMPI_DESERT_STAKE_POUNDED(1), 34, 22)
     WALK(22, toFIXED(200), toFIXED(264))
     ARRIVE(23, 0)
     WALK_ON(32, toFIXED(296), toFIXED(312))
@@ -2406,19 +2402,6 @@ struct Geyser {
   struct Actor *rider; ///< the platform at its top, which the leader rides
 };
 
-/// The most sprites Geyser_Draw queues in a frame.
-#define GEYSER_SPRITES 80
-/// The geysers a room can have.
-#define GEYSER_ENTRIES 16
-/// A geyser's six-second round, and the frames of it at which it starts to rise
-/// and to fall.
-#define GEYSER_PERIOD_FRAMES 360
-#define GEYSER_RISE_FRAME 60
-#define GEYSER_FALL_FRAME 240
-/// The terrain id and collision slot of the first geyser: the geysers take the
-/// last GEYSER_ENTRIES of the 256 terrain ids.
-#define GEYSER_FIRST_TERRAIN (256 - GEYSER_ENTRIES)
-
 /// The geysers' work, kept in the inventory snapshot's spare room.
 struct GeyserWork {
   s16 entry;        ///< the VRAM cache entry holding the column's tiles
@@ -2427,9 +2410,6 @@ struct GeyserWork {
   /// The OAM words Geyser_Draw queues: GEYSER_SPRITES sprites of three words.
   void *block;
 };
-
-#define GEYSER_WORK                                                            \
-  ((struct GeyserWork *)(gInventorySnapshot + INVENTORY_SNAPSHOT_SPARE))
 
 void Geyser_Start(s32 unused, s32 firstTerrain);
 struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 minHeight,
@@ -3082,12 +3062,12 @@ LATE_DATA struct Trigger gYampiDesert_Triggers[] = {
 LATE_DATA struct Trigger gYampiDesertGuardianRingChestTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(0), FLAG_STAKE_POUNDED(0), EVENT(YampiDesert_PoundGuardianRingChestStake)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(1), FLAG_STAKE_POUNDED(1), EVENT(YampiDesert_PoundGuardianRingChestStake)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(2), FLAG_STAKE_POUNDED(2), EVENT(YampiDesert_PoundGuardianRingChestStake)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(3), FLAG_STAKE_POUNDED(3), EVENT(YampiDesert_PoundGuardianRingChestStake)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(4), FLAG_STAKE_POUNDED(4), EVENT(YampiDesert_PoundGuardianRingChestStake)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(5), FLAG_STAKE_POUNDED(5), EVENT(YampiDesert_PoundGuardianRingChestStake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(0), FLAG_YAMPI_DESERT_STAKE_POUNDED(0), EVENT(YampiDesert_PoundGuardianRingChestStake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(1), FLAG_YAMPI_DESERT_STAKE_POUNDED(1), EVENT(YampiDesert_PoundGuardianRingChestStake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(2), FLAG_YAMPI_DESERT_STAKE_POUNDED(2), EVENT(YampiDesert_PoundGuardianRingChestStake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(3), FLAG_YAMPI_DESERT_STAKE_POUNDED(3), EVENT(YampiDesert_PoundGuardianRingChestStake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(4), FLAG_YAMPI_DESERT_STAKE_POUNDED(4), EVENT(YampiDesert_PoundGuardianRingChestStake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(5), FLAG_YAMPI_DESERT_STAKE_POUNDED(5), EVENT(YampiDesert_PoundGuardianRingChestStake)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_EndSand)},
     {TRIGGER_TABLE_END},
@@ -3141,17 +3121,17 @@ LATE_DATA struct Trigger gYampiDesertSpringTriggers[] = {
 LATE_DATA struct Trigger gYampiDesertBlitzTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(0), FLAG_STAKE_POUNDED(0), EVENT(YampiDesert_PoundBlitzStake)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(1), FLAG_STAKE_POUNDED(1), EVENT(YampiDesert_PoundBlitzStake)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(2), FLAG_STAKE_POUNDED(2), EVENT(YampiDesert_PoundBlitzStake)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(3), FLAG_STAKE_POUNDED(3), EVENT(YampiDesert_PoundBlitzStake)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(4), FLAG_STAKE_POUNDED(4), EVENT(YampiDesert_PoundBlitzStake)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(5), FLAG_STAKE_POUNDED(5), EVENT(YampiDesert_PoundBlitzStake)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(6), FLAG_STAKE_POUNDED(6), EVENT(YampiDesert_PoundBlitzStake)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(7), FLAG_STAKE_POUNDED(7), EVENT(YampiDesert_PoundBlitzStake)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(8), FLAG_STAKE_POUNDED(8), EVENT(YampiDesert_PoundBlitzStake)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(9), FLAG_STAKE_POUNDED(9), EVENT(YampiDesert_PoundBlitzStake)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(10), FLAG_STAKE_POUNDED(10), EVENT(YampiDesert_PoundBlitzStake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(0), FLAG_YAMPI_DESERT_STAKE_POUNDED(0), EVENT(YampiDesert_PoundBlitzStake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(1), FLAG_YAMPI_DESERT_STAKE_POUNDED(1), EVENT(YampiDesert_PoundBlitzStake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(2), FLAG_YAMPI_DESERT_STAKE_POUNDED(2), EVENT(YampiDesert_PoundBlitzStake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(3), FLAG_YAMPI_DESERT_STAKE_POUNDED(3), EVENT(YampiDesert_PoundBlitzStake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(4), FLAG_YAMPI_DESERT_STAKE_POUNDED(4), EVENT(YampiDesert_PoundBlitzStake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(5), FLAG_YAMPI_DESERT_STAKE_POUNDED(5), EVENT(YampiDesert_PoundBlitzStake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(6), FLAG_YAMPI_DESERT_STAKE_POUNDED(6), EVENT(YampiDesert_PoundBlitzStake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(7), FLAG_YAMPI_DESERT_STAKE_POUNDED(7), EVENT(YampiDesert_PoundBlitzStake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(8), FLAG_YAMPI_DESERT_STAKE_POUNDED(8), EVENT(YampiDesert_PoundBlitzStake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(9), FLAG_YAMPI_DESERT_STAKE_POUNDED(9), EVENT(YampiDesert_PoundBlitzStake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(10), FLAG_YAMPI_DESERT_STAKE_POUNDED(10), EVENT(YampiDesert_PoundBlitzStake)},
     {TRIGGER_STEP, 11, FLAG_YAMPI_DESERT_ON_STAKE_TOPS, EVENT(YampiDesert_StepOntoStakeTops)},
     {TRIGGER_STEP, 10, IF_FLAG_SET(FLAG_YAMPI_DESERT_ON_STAKE_TOPS), EVENT(YampiDesert_StepOffStakeTops)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
@@ -3166,10 +3146,10 @@ LATE_DATA struct Trigger gYampiDesertPsynergyStoneTriggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(0), FLAG_STAKE_POUNDED(0), EVENT(YampiDesert_PoundPsynergyStoneStake)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(1), FLAG_STAKE_POUNDED(1), EVENT(YampiDesert_PoundPsynergyStoneStake)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(2), FLAG_STAKE_POUNDED(2), EVENT(YampiDesert_PoundPsynergyStoneStake)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(3), FLAG_STAKE_POUNDED(3), EVENT(YampiDesert_PoundPsynergyStoneStake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(0), FLAG_YAMPI_DESERT_STAKE_POUNDED(0), EVENT(YampiDesert_PoundPsynergyStoneStake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(1), FLAG_YAMPI_DESERT_STAKE_POUNDED(1), EVENT(YampiDesert_PoundPsynergyStoneStake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(2), FLAG_YAMPI_DESERT_STAKE_POUNDED(2), EVENT(YampiDesert_PoundPsynergyStoneStake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(3), FLAG_YAMPI_DESERT_STAKE_POUNDED(3), EVENT(YampiDesert_PoundPsynergyStoneStake)},
     {TRIGGER_STEP, 11, FLAG_YAMPI_DESERT_ON_STAKE_TOPS, EVENT(YampiDesert_StepOntoStakeTops)},
     {TRIGGER_STEP, 10, IF_FLAG_SET(FLAG_YAMPI_DESERT_ON_STAKE_TOPS), EVENT(YampiDesert_StepOffStakeTops)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
@@ -3184,9 +3164,9 @@ LATE_DATA struct Trigger gYampiDesertKingScorpionTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(0), FLAG_STAKE_POUNDED(0), EVENT(YampiDesert_PoundKingScorpionStake)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(1), FLAG_STAKE_POUNDED(1), EVENT(YampiDesert_PoundKingScorpionStake)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(2), FLAG_STAKE_POUNDED(2), EVENT(YampiDesert_PoundKingScorpionStake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(0), FLAG_YAMPI_DESERT_STAKE_POUNDED(0), EVENT(YampiDesert_PoundKingScorpionStake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(1), FLAG_YAMPI_DESERT_STAKE_POUNDED(1), EVENT(YampiDesert_PoundKingScorpionStake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(2), FLAG_YAMPI_DESERT_STAKE_POUNDED(2), EVENT(YampiDesert_PoundKingScorpionStake)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_EndSand)},
     {TRIGGER_RAISED, RAISED_WATCH_SCORPION_STOP, FLAG_YAMPI_DESERT_SCORPION_CORNERED, EVENT(YampiDesert_WatchScorpionStop)},
@@ -3259,7 +3239,7 @@ LATE_DATA struct Trigger gYampiDesertSpringCaveTriggers[] = {
 LATE_DATA struct Trigger gYampiDesertBlowMaceChestTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(0), FLAG_STAKE_POUNDED(0), EVENT(YampiDesert_PoundBlowMaceChestStake)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(0), FLAG_YAMPI_DESERT_STAKE_POUNDED(0), EVENT(YampiDesert_PoundBlowMaceChestStake)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_EndSand)},
     {TRIGGER_TABLE_END},

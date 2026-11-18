@@ -230,7 +230,7 @@ FIXED Party_GetPpRatio(void);
 
 void WorldMap_WatchVenusLighthouseCollapse(void);
 
-s32 Event_PickUpItem(s32 a, s32 b, s32 c);
+s32 Event_PickUpItem(s32 actor, s32 item, s32 flag);
 void Actor_StartRenderModeScript(void);
 s32 Field_FindNearbyTalkTarget(s32 owner);
 s32 WorldMap_IsWalkable(struct Actor *actor, s32 *position);
@@ -240,10 +240,11 @@ void DjinnMenu_Run(void);
 void Party_RestoreHpPp(s32 value);
 
 // Once the party has walked nine tenths of the encounter threshold, a coin
-// toss either requests the event's battle now or makes the party walk the
-// whole threshold first. The Japanese release has no render mode test.
+// toss either requests the Djinni's battle now or makes the party walk the
+// whole threshold first. From the international editions on, only while the
+// party walks the World Map, not aboard the ship or as sand.
 #if !TLA_PATCH_1
-#define WORLD_MAP_TRY_ENCOUNTER(a, b)                                          \
+#define WORLD_MAP_TRY_ENCOUNTER(actorId, djinni)                               \
   {                                                                            \
     struct FieldWork *work;                                                    \
     struct MainRoutineWork *party;                                             \
@@ -252,7 +253,7 @@ void Party_RestoreHpPp(s32 value);
     party = &gMainRoutineWork;                                                 \
     if (party->encounterSteps >= work->encounterThreshold * 9 / 10) {          \
       if (Random16() < 32768) {                                                \
-        Event_RequestDjinnBattle(a, b);                                        \
+        Event_RequestDjinnBattle(actorId, djinni);                             \
         work->encounterBias = 0;                                               \
       } else {                                                                 \
         party->encounterSteps = work->encounterThreshold;                      \
@@ -260,17 +261,17 @@ void Party_RestoreHpPp(s32 value);
     }                                                                          \
   }
 #else
-#define WORLD_MAP_TRY_ENCOUNTER(a, b)                                          \
+#define WORLD_MAP_TRY_ENCOUNTER(actorId, djinni)                               \
   {                                                                            \
     struct MainRoutineWork *party;                                             \
     struct FieldWork *work;                                                    \
                                                                                \
     party = &gMainRoutineWork;                                                 \
     work = Ram_HeapSlots->fieldWork;                                           \
-    if (party->movementMode == 1) {                                            \
+    if (party->movementMode == LEADER_MOVEMENT_WORLD_MAP) {                    \
       if (party->encounterSteps >= work->encounterThreshold * 9 / 10) {        \
         if (Random16() < 32768) {                                              \
-          Event_RequestDjinnBattle(a, b);                                      \
+          Event_RequestDjinnBattle(actorId, djinni);                           \
           work->encounterBias = 0;                                             \
         } else {                                                               \
           party->encounterSteps = work->encounterThreshold;                    \
@@ -316,8 +317,6 @@ const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
-
-u32 __umodsi3(u32 a, u32 b);
 
 #include "shared/tile_sprite_reset.h"
 
@@ -407,14 +406,9 @@ extern struct ActorPlacement gWorldMap_DriftPlacements[];
 extern struct ActorPlacement gWorldMap_FirstVoyagePlacements[];
 extern struct ActorPlacement gWorldMap_DriftingIdejimaPlacements[];
 
-/// The world map's entrances its code tests: arrivals at a place by its exit
-/// (WORLD_MAP_AT_), and the story's scenes the map plays on arrival.
+/// The story's scenes the world map plays on arrival; its code tests the
+/// arrivals by a place's exit by scene_exits.h's names (WORLD_MAP_FROM_).
 enum WorldMapEntrance {
-  WORLD_MAP_AT_DAILA = 2,
-  WORLD_MAP_AT_MADRA = 9,
-  WORLD_MAP_AT_GAIA_ROCK = 39,
-  WORLD_MAP_AT_LOHO = 59,
-  WORLD_MAP_AT_NORTHERN_REACHES = 61,
   WORLD_MAP_VENUS_COLLAPSE = 64, ///< Venus Lighthouse falls, Idejima breaks
   WORLD_MAP_DRIFT_NORTH = 65,    ///< the tidal wave carries Idejima north
   WORLD_MAP_ALHAFRA_MANOR_VIEW = 67,
@@ -911,11 +905,11 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Get(FLAG_GOLDEN_BOOTS_ON_MAP))
     WorldMap_ShowGoldenBoots();
   switch (gMainRoutineWork.entrance) {
-  case WORLD_MAP_AT_GAIA_ROCK:
+  case WORLD_MAP_FROM_GAIA_ROCK_SUSA:
     if (GameFlag_Get(FLAG_SERPENT_SLAIN))
       GameFlag_Set(FLAG_SUSA_REJOICES);
     break;
-  case WORLD_MAP_AT_MADRA:
+  case WORLD_MAP_FROM_MADRA:
   case WORLD_MAP_BANDIT_BEATEN:
   case WORLD_MAP_BANDIT_LOST:
     if (GameFlag_Get(FLAG_BANDIT_ON_WORLD_MAP))
@@ -927,7 +921,7 @@ s32 Scene_Initialize(void) {
   case WORLD_MAP_TO_AQUA_ROCK:
     WorldMap_CarryPartyToAquaRock();
     break;
-  case WORLD_MAP_AT_LOHO:
+  case WORLD_MAP_FROM_LOHO:
     if (!Event_GetFlag(FLAG_SHIP_CARRIES_CANNON) &&
         GameFlag_Get(FLAG_LOHO_WALL_BREACHED) != 0) {
       GameFlag_Set(FLAG_SHIP_CARRIES_CANNON);
@@ -943,7 +937,7 @@ s32 Scene_Initialize(void) {
   case WORLD_MAP_PIERS_DJINN:
     Party_GivePiersDjinn();
     break;
-  case WORLD_MAP_AT_DAILA:
+  case WORLD_MAP_FROM_DAILA_SOUTH:
     if (GameFlag_Get(FLAG_DJINNI(DJINNI_ECHO)) == 0) {
       Actor_SetScript(ACTOR_ECHO, gWorldMap_EchoScript);
       WorldMap_MeetEcho();
@@ -981,7 +975,8 @@ s32 Scene_Initialize(void) {
     // XXX (no evidence): what flag 0x11d is; no code of this game reads it,
     // and only these two debug arrivals set it.
     Event_SetFlag(0x11d);
-    Event_SetDestination(SCENE_WORLD_MAP, WORLD_MAP_AT_NORTHERN_REACHES);
+    Event_SetDestination(SCENE_WORLD_MAP,
+                         WORLD_MAP_FROM_NORTHERN_REACHES_NORTH);
     break;
   case WORLD_MAP_DEBUG_SAILING:
     GameFlag_Set(FLAG_DEBUG_STEPS_OFF);
@@ -991,15 +986,14 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-void Menu_AnimateSelectionToEntry(s32 a, s32 b);
+s32 Menu_AnimateSelectionToEntry(s32 start, s32 command);
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// The djinn tutorial. With flag 0x175 set each message is offset by
-/// MsgDjinnGiveTutorialB less A.
-// As The Broken Seal's WorldMap_ShowDjinnTutorial.
-/// Echo shows how to give Djinn to another party member, then opens the Djinn
-/// menu.
+/// Echo's lesson on Djinn: "After bringing a Djinni into your party, you must
+/// set it to somebody." and the Djinn menu, then "Next, I'll show you how you
+/// can use us in battle." and the menu again, and a battle. With
+/// FLAG_ALREADY_KNOWS_DJINN set he says the lesson's second copy of its lines.
 void WorldMap_ExplainGivingDjinn(void) {
   WorldMap_ReloadPendingAreaGraphics();
   FieldEffect_ScheduleRatioTransition(FIXED_ONE, 6);
@@ -1040,7 +1034,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  if (entrance == WORLD_MAP_AT_MADRA) {
+  if (entrance == WORLD_MAP_FROM_MADRA) {
     north = FACING_NORTH;
     Actor_SetPositionAndFacing(ACTOR_BANDIT, toFIXED(10168), toFIXED(9000),
                                north);
@@ -1723,17 +1717,13 @@ void WorldMap_SpawnCollapseDust(void) {
   }
 }
 
-/// Places an actor at whole pixels.
-static __inline__ void PosSet(s32 id, s32 x, s32 z) {
-  Actor_SetPosition(id, x, z);
-}
-
 /// Moves the actor by whole pixels.
 void WorldMap_ShiftActor(s32 id, s32 dx, s32 dz) {
   struct Actor *actor = Actor_Get(id);
 
   if (actor != NULL)
-    PosSet(id, actor->x.part[0].integer + dx, actor->z.part[0].integer + dz);
+    Actor_SetPosition(id, actor->x.part[0].integer + dx,
+                      actor->z.part[0].integer + dz);
 }
 
 /// Breaks a piece of Idejima's tiles away and moves the party on it with

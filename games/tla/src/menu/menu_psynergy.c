@@ -314,26 +314,26 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
 /// (ABILITY_RANGE_ALL), 1 on one chosen party member when it targets
 /// ABILITY_TARGET_ALLIES, and 0 otherwise.
 s32 PsynergyMenu_ClassifySelectedPsynergy(void) {
-  struct AbilityDefinition *psynergy;
-  s32 diff;
-  s32 ret;
+  struct AbilityDefinition *action;
+  s32 targetModeDifference;
+  s32 classification;
 
-  psynergy = Ability_Get(
+  action = Ability_Get(
       PSYNERGY_ABILITY_MASK &
       ((struct PsynergyMenuWork *)Ram_HeapSlots->menuWork)->sideAction[0]);
-  if (Scene_HasPsynergyTriggerFar(psynergy->fieldPsynergy) != 0)
+  if (Scene_HasPsynergyTriggerFar(action->fieldPsynergy) != 0)
     return 0;
-  ret = 2;
-  if (psynergy->range != ABILITY_RANGE_ALL) {
-    u8 kind = psynergy->targetMode;
+  classification = 2;
+  if (action->range != ABILITY_RANGE_ALL) {
+    u8 kind = action->targetMode;
 
     // 1 when it targets ABILITY_TARGET_ALLIES.
-    diff = kind ^ ABILITY_TARGET_ALLIES;
-    ret = (0 - diff) | diff;
-    ret = (u32)ret >> 31;
-    ret = 1 - ret;
+    targetModeDifference = kind ^ ABILITY_TARGET_ALLIES;
+    classification = (0 - targetModeDifference) | targetModeDifference;
+    classification = (u32)classification >> 31;
+    classification = 1 - classification;
   }
-  return ret;
+  return classification;
 }
 
 s32 PsynergyMenu_CollectActions(struct Unit *unit, u16 *actions, s32 mode);

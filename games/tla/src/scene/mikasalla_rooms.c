@@ -35,7 +35,7 @@
 #define FLAG_MIKASALLA_GALAHAD_MET_THIS_VISIT FLAG_AREA_TEMP_41
 
 /// Mikasalla's houses and inn (MikasallaRoomsHouses), by the rows of
-/// gMikasallaRooms_InnPlacements.
+/// gMikasallaRooms_HousesPlacements.
 enum MikasallaRoomsActorId {
   /// The family of the explorer who founded the village: his son, the son's
   /// wife, and the grandson who asks whether the leader is an explorer too.
@@ -80,9 +80,9 @@ enum MikasallaRoomsSanctumActorId {
 /// Mikasalla's shop and inn, as Shop_Run and Inn_CheckIn number them.
 enum { SHOP_MIKASALLA = 13, MIKASALLA_INN = 4 };
 
-extern struct ActorPlacement gMikasallaRooms_InnPlacements[];
+extern struct ActorPlacement gMikasallaRooms_HousesPlacements[];
 extern struct ActorPlacement gMikasallaRooms_SanctumPlacements[];
-extern struct Trigger gMikasallaRooms_InnTriggers[];
+extern struct Trigger gMikasallaRooms_HousesTriggers[];
 extern struct Trigger gMikasallaRooms_SanctumTriggers[];
 
 void Shop_Run();
@@ -101,7 +101,7 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_MIKASALLA_ROOMS_SANCTUM)
     return gMikasallaRooms_SanctumPlacements;
-  return gMikasallaRooms_InnPlacements;
+  return gMikasallaRooms_HousesPlacements;
 }
 
 /// Mind Read on Mikasalla's sanctum counter: the priest wonders about
@@ -132,7 +132,7 @@ s32 MikasallaRooms_ReadApojiiPriestsMind(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == SCENE_MIKASALLA_ROOMS_SANCTUM)
     return gMikasallaRooms_SanctumTriggers;
-  return gMikasallaRooms_InnTriggers;
+  return gMikasallaRooms_HousesTriggers;
 }
 
 void Sanctum_Run();
@@ -449,7 +449,7 @@ u32 gSceneExits[] = {
 };
 
 /// Mikasalla's houses and inn (enum MikasallaRoomsActorId).
-struct ActorPlacement gMikasallaRooms_InnPlacements[] = {
+struct ActorPlacement gMikasallaRooms_HousesPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_MAN_IN_GREEN_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 552, 0, 152, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_WHITE_DRESS, CONDITION_ALWAYS, gMikasallaRooms_DaughterInLawPaces, 616, 0, 104, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_IN_BLUE_SHIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 632, 0, 136, FACING_NORTH, TALK_FACING_PARTY_THEN_WATCH, 0),
@@ -479,7 +479,7 @@ struct ActorPlacement gMikasallaRooms_SanctumPlacements[] = {
 
 // clang-format off
 /// The houses' and inn's talk and Mind Read, Galahad, and what is cooking.
-struct Trigger gMikasallaRooms_InnTriggers[] = {
+struct Trigger gMikasallaRooms_HousesTriggers[] = {
     {TRIGGER_EXIT, MIKASALLA_ROOMS_HOUSES_TO_MIKASALLA_NORTHEAST, CONDITION_ALWAYS, MIKASALLA_ROOMS_HOUSES_TO_MIKASALLA_NORTHEAST},
     {TRIGGER_EXIT, MIKASALLA_ROOMS_HOUSES_TO_MIKASALLA_NORTHWEST, CONDITION_ALWAYS, MIKASALLA_ROOMS_HOUSES_TO_MIKASALLA_NORTHWEST},
     {TRIGGER_EXIT, MIKASALLA_ROOMS_HOUSES_TO_MIKASALLA_EAST, CONDITION_ALWAYS, MIKASALLA_ROOMS_HOUSES_TO_MIKASALLA_EAST},

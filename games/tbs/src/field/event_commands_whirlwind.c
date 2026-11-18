@@ -6,7 +6,6 @@
 
 enum {
   WHIRLWIND_RADIAL_DIRECTIONS = 16,
-  WHIRLWIND_RADIAL_ANGLE_SHIFT = 12,
   WHIRLWIND_ORBIT_PARTICLES = 16,
   WHIRLWIND_ORBIT_RADIUS = toFIXED(8),
   WHIRLWIND_ORBIT_ANGLE_STEP = TRIG_TURN / 32,
@@ -39,13 +38,16 @@ void FieldEffect_SpawnRadialParticleRing(struct Actor *origin) {
   opt.startScaleY = FIXED_ONE * 4 / 5;
   i = 0;
   do {
-    angle = i << WHIRLWIND_RADIAL_ANGLE_SHIFT;
+    angle = i * (TRIG_TURN / WHIRLWIND_RADIAL_DIRECTIONS);
     vel[0] = Trig_Cos(angle) * 3 / 2;
     vel[1] = 0;
     vz = Trig_Sin(angle);
     vel[2] = vz;
     FieldEffect_SpawnResident(origin->x.fixed, origin->y.fixed, origin->z.fixed,
-                              vel[0], vel[1], vz, 0x01090001, &opt);
+                              vel[0], vel[1], vz,
+                              EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
+                                  EFFECT_USE_PALETTE | EFFECT_SCRIPT_MEDIUM,
+                              &opt);
     i++;
   } while (i <= WHIRLWIND_RADIAL_DIRECTIONS);
 }
@@ -66,14 +68,13 @@ void FieldEffect_WanderAroundAnchor(struct Actor *effect) {
   dz = Iwram_MulFX(len, Trig_Sin(angle));
   effect->x.fixed += dx;
   effect->z.fixed += dz;
-  // The u16 angle wraps: -16 gives a small backwards drift.
-  effect->facing += -16;
+  // A small backwards drift, a 4096th of a turn a frame.
+  effect->facing += -(TRIG_TURN / 4096);
   if (effect->turnFrames != 0) {
     effect->turnFrames--;
     effect->facing += TRIG_TURN / 32;
-  } else if ((Random16() << 5) >> 16 == 0) // one chance in 32
-  {
-    effect->turnFrames = ((Random16() << 4) >> 16) + 8; // 8 to 23 frames
+  } else if (Random16_Below(32) == 0) {
+    effect->turnFrames = Random16_Below(16) + 8; // 8 to 23 frames
   }
   if (++effect->swirlFrames == WHIRLWIND_WANDER_FRAMES)
     Actor_StartScriptFar(effect, gFieldEffect_SharedParticleScript);

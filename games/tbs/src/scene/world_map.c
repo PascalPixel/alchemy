@@ -1896,7 +1896,8 @@ static void WorldMap_IodemCallsIsaacBack(void) {
 }
 
 /// Searching the wreck off Gateway Cave shows "The wreckage of a ship
-/// scuttled off the coast."
+/// scuttled off the coast." Once Iodem has handed over the Black Orb, the
+/// field menu opens after it, for the orb to be used.
 static void WorldMap_SearchWreckage(void) {
   Event_Start();
 #if !TBS_PATCH_3

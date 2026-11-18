@@ -1,8 +1,9 @@
-/// The distance in whole pixels between two 16.16 positions of x and y, the
-/// second raised 6 pixels.
+/// The distance in whole pixels between two positions in x and height, the
+/// first raised 6 pixels, each given by its x and read on through its y.
+// UB: an actor's x, y and z are separate members, read here as an array.
 s32 Position_DistanceAbove(FIXED *a, FIXED *b) {
-  s32 dx = (*a++ - *b++) >> 16;
-  s32 dy = (*a - *b + toFIXED(6)) >> 16;
+  s32 dx = FIXEDtoINT(*a++ - *b++);
+  s32 dy = FIXEDtoINT(*a - *b + toFIXED(6));
 
   return Iwram_Sqrt(dx * dx + dy * dy);
 }

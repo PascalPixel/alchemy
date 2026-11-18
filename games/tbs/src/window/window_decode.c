@@ -11,10 +11,9 @@
 /// The highest character code outside Japanese: those fonts hold a byte's
 /// worth.
 #define CHARACTER_CODE_MAX 255
-/// The Japanese font's kana are codes 128 to 255 (charmap_ja.tsv), its kanji
-/// from 256 on.
+/// The Japanese font's first kana (charmap_ja.tsv): its kana run to
+/// TEXT_LAST_FONT_CODE, and its kanji start at KANJI_FIRST_CODE (window.h).
 #define KANA_FIRST_CODE 128
-#define KANJI_FIRST_CODE 256
 /// Halting speech breaks off with an ellipsis at its first space, or after
 /// this many codes.
 #define HALTING_SPEECH_MAX_CODES 10
@@ -1088,7 +1087,6 @@ s32 Message_Decode(s32 script, s32 clear) {
 #undef POSSESSIVE_MAX_LETTERS
 #undef CHARACTER_CODE_MAX
 #undef KANA_FIRST_CODE
-#undef KANJI_FIRST_CODE
 #undef HALTING_SPEECH_MAX_CODES
 #undef BUTTON_ICON_FIRST_CODE
 #undef OPERAND_VALUE

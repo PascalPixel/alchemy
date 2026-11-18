@@ -1,13 +1,5 @@
 #include "jupiter_lighthouse_aerie.h"
 
-// The aerie's actors besides its angels, as jupiter_lighthouse_aerie.c
-// numbers them; the scenes that keep a copy of this routine number theirs
-// otherwise.
-#define ACTOR_LEFT_ARCHER 11
-#define ACTOR_RIGHT_ARCHER 12
-#define ACTOR_LID 23
-#define ACTOR_HIDDEN_LID 24 ///< a second lid at the first's place, kept hidden
-
 /// Puts the aerie's two angels and the well's lid where the archers' arrows
 /// left them (FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_ENERGIZED and its right
 /// twin): each energized angel and its archer glow, the angel rises and its
@@ -19,11 +11,11 @@ void JupiterLighthouse_PlaceRaisedActors(void) {
   struct Actor *lid = Actor_Get(ACTOR_LID);
   struct FieldSprite *sprite = lid->sprite;
 
-  Actor_SetPosition(ACTOR_HIDDEN_LID, 512, 248);
+  Actor_SetPosition(ACTOR_UNSEEN_LID, 512, 248);
   Actor_SetPosition(ACTOR_LID, 512, 248);
   Actor_SetPosition(ACTOR_LEFT_ANGEL, 472, 256);
   Actor_SetPosition(ACTOR_RIGHT_ANGEL, 552, 256);
-  Actor_Get(ACTOR_HIDDEN_LID)->scaleX = 0;
+  Actor_Get(ACTOR_UNSEEN_LID)->scaleX = 0;
   lid->motionFlags = 0;
   lid->y.fixed = lid->groundHeight;
   leftAngel->motionFlags = 0;
@@ -69,8 +61,3 @@ void JupiterLighthouse_PlaceRaisedActors(void) {
     lid->motionFlags = ACTOR_FLOATS;
   }
 }
-
-#undef ACTOR_LEFT_ARCHER
-#undef ACTOR_RIGHT_ARCHER
-#undef ACTOR_LID
-#undef ACTOR_HIDDEN_LID

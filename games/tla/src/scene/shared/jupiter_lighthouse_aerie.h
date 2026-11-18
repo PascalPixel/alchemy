@@ -21,9 +21,20 @@
 
 /// The aerie's placed actors that its two scenes
 /// (SceneId_JupiterLighthouseAerie and SceneId_JupiterLighthouseAerieBeacon)
-/// number alike and JupiterLighthouse_PlaceRaisedActors moves: the angels
-/// either side of the lid over the well.
-enum { ACTOR_LEFT_ANGEL = ACTOR_FIRST_PLACED + 1, ACTOR_RIGHT_ANGEL };
+/// number alike and JupiterLighthouse_PlaceRaisedActors moves.
+enum {
+  /// The angels either side of the lid over the well, and the archer statues
+  /// that energize them.
+  ACTOR_LEFT_ANGEL = ACTOR_FIRST_PLACED + 1,
+  ACTOR_RIGHT_ANGEL,
+  ACTOR_LEFT_ARCHER,
+  ACTOR_RIGHT_ARCHER,
+  /// The round stone lid over the well, which the angels lift, and a second
+  /// actor wearing its picture at its place, drawn zero wide: unseen, it holds
+  /// the party back at the well's rim.
+  ACTOR_LID = ACTOR_FIRST_PLACED + 15,
+  ACTOR_UNSEEN_LID
+};
 
 struct EffectOptions;
 

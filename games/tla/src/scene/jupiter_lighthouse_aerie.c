@@ -52,14 +52,11 @@
 #include "field/actor_script.h"
 #include "fixed_math.h"
 
-/// The placed actors after the angels (ACTOR_LEFT_ANGEL and ACTOR_RIGHT_ANGEL,
-/// shared/jupiter_lighthouse_aerie.h).
+/// The placed actors between the archers and the lid (ACTOR_RIGHT_ARCHER and
+/// ACTOR_LID, shared/jupiter_lighthouse_aerie.h).
 enum JupiterLighthouseAerieActorId {
-  /// The archer statues that energize the angels.
-  ACTOR_LEFT_ARCHER = ACTOR_RIGHT_ANGEL + 1,
-  ACTOR_RIGHT_ARCHER,
   /// The blocks Move pushes into the gaps at the ends of the archers' paths.
-  ACTOR_LEFT_PATH_BLOCK,
+  ACTOR_LEFT_PATH_BLOCK = ACTOR_RIGHT_ARCHER + 1,
   ACTOR_RIGHT_PATH_BLOCK,
   /// The seedlings below the well that HangingVine_Place hangs as vines.
   ACTOR_WEST_VINE,
@@ -71,9 +68,7 @@ enum JupiterLighthouseAerieActorId {
   ACTOR_FLOATING_PLATFORM_C,
   ACTOR_FLOATING_PLATFORM_D,
   ACTOR_FLOATING_PLATFORM_E,
-  ACTOR_FLOATING_PLATFORM_F,
-  /// The lid over the well, which the angels lift.
-  ACTOR_LID
+  ACTOR_FLOATING_PLATFORM_F
 };
 
 /// What JupiterLighthouse_RaiseAngels raises: one angel, or the second of

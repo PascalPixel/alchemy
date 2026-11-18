@@ -55,9 +55,6 @@
 /// (STAT_REDUCTION_SHARD_PICTURES) is this many levels darker than the one
 /// before, but never blank.
 #define SWORD_CARD_SHARD_DIMMING 6
-/// The header's CANVAS_WAVE_BG2X again: battle_effect_gasp.c #undefs it before
-/// this part.
-#define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
 
 /// The four cards (Sleep, Baffle, Death and Sword Card): a card flies from
 /// the user to above the targets' middle, spinning upright and growing, and

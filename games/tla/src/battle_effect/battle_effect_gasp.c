@@ -25,13 +25,9 @@ struct StripQuad;
     Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE);                         \
     Matrix_RotateZ((p)->z);                                                    \
   } while (0)
-/// A line's 16.16 sideways sway as the BG2X value of the effect's bg2xLines,
-/// which the wave HBlank DMA writes line by line.
+/// The header's CANVAS_WAVE_BG2X again: battle_effect_torch.c #undefs it before
+/// this part.
 #define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
-// DEAD: each test reads the count twice and drops the first read; the ROM
-// keeps both loads.
-#define WAIT_TRANSFER(work)                                                    \
-  while ((work)->vblanksSinceTransfer, (work)->vblanksSinceTransfer <= 1)
 
 /// The last three particles: the point a mode centres on (Shine's Djinni in
 /// flight, Emu's target), Shine's fall towards the target, and where its
@@ -1489,8 +1485,6 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   BattleEffect_EndCanvasLayer();
 }
-#undef CANVAS_WAVE_BG2X
 #undef EXTRA_PARTICLES
 #undef FIGURE
 #undef PLACE_PARTICLE
-#undef WAIT_TRANSFER

@@ -13,15 +13,9 @@
 // reads it back).
 #if LANGUAGE == LANGUAGE_JAPANESE
 #define NAME_SUFFIX_BASE 'A'
-#define NAME_SUFFIX_COUNT 26
 #else
 #define NAME_SUFFIX_BASE '1'
-#define NAME_SUFFIX_COUNT 9
 #endif
-
-/// The highest enemy id a battle unit takes; an id past the table's rows takes
-/// its first row.
-#define ENEMY_ID_MAX 1000
 
 /// Fills a battle unit with an enemy: its stats, its name with its suffix, its
 /// items, rewards and elements. A Djinni fought is put on the party's side
@@ -238,4 +232,3 @@ void Summon_Learn(s32 summonId) {
 }
 
 #undef NAME_SUFFIX_BASE
-#undef NAME_SUFFIX_COUNT

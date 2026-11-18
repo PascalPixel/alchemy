@@ -5,6 +5,10 @@
 
 #include "battle_internal.h"
 
+/// Each frame of a turn the camera closes this share of the gap to its target
+/// yaw, one sixteenth, so it slows as it nears it.
+#define CAMERA_YAW_EASE 16
+
 /// Runs each frame of a battle: pauses a link battle whose connection is lost,
 /// turns the camera a sixteenth of the way toward its target yaw, places it,
 /// and refreshes the background's zoom.
@@ -36,11 +40,9 @@ void BattleCamera_Update(void) {
     }
   }
 
-  // Each frame of a turn closes a sixteenth of the gap that remains, so the
-  // camera slows as it nears targetYaw.
   if (view->frames != 0) {
     delta = view->targetYaw - camera->yaw;
-    delta /= 16;
+    delta /= CAMERA_YAW_EASE;
     camera->yaw += delta;
     view->frames--;
   }
@@ -137,9 +139,10 @@ void BattleUnit_Collect(void) {
   battle->enemyIds[count] = BATTLE_UNIT_LIST_END;
 }
 
-// XXX (no evidence): what the tiles moved are; nothing calls this in either
-// game.
-/// Unused: moves 16 bytes of tiles down in VRAM and clears the 20 after them.
+// XXX (no evidence): what the bytes moved are, tiles of character block 0 or
+// entries of screen block 0; nothing calls this in either game.
+/// Unused: moves 16 bytes of VRAM down by 16 and clears the 20 from 12 bytes
+/// past where they land.
 s32 Battle_ShiftVramTiles(void) {
   Dma_Set((const void *)0x06000290, (void *)0x06000280, DMA_COPY_HALFWORDS(8),
           REG_DMA3);
@@ -324,3 +327,5 @@ struct DjinnRecoveryTable *BattleSummon_UpdateAvailability(void) {
 
 /// Does nothing; nothing in the source calls it.
 void BattleSummon_ReservedNoOp(void) {}
+
+#undef CAMERA_YAW_EASE

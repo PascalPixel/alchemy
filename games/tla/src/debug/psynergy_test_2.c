@@ -98,8 +98,8 @@ void PsynergyTest2_IgnoreTremor(void) {}
 /// Grind on ACTOR_STAKE stands the stone stake up again.
 void PsynergyTest2_GrindActor(void) { Actor_SetAnimationById(ACTOR_STAKE, 3); }
 
-/// Burst on cell 50 copies in the broken wall, a 1 by 2 block from (49, 1),
-/// cell behaviors and all.
+/// Burst on cell behavior 50 copies in the broken wall, a 1 by 2 block from
+/// (49, 1), cell behaviors and all.
 void PsynergyTest2_BurstWall(s32 mode) {
   if (mode == 1) {
     MapGrid_CopyCellsLayered(49, 1, 1, 2, 34, 1);

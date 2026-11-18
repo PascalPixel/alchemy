@@ -9,53 +9,57 @@
 #include "field/event_commands.h"
 #include "field/object.h"
 
-/// Sets up a battle with the formation in slot of encounter table zone.
+/// Sets up a battle with the formation at row and column of the encounter
+/// table.
 void Field_RequestBattleFromEncounterTable(s32 row, s32 column) {
-  struct FieldWork *event = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
-  event->encounter = Encounter_GetFormationAtSlot(row, column);
-  if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
+  work->encounter = Encounter_GetFormationAtSlot(row, column);
+  if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
     Encounter_ResolveWorldMapZoneAndBackdrop(
         &Actor_Lookup(Party_GetLeaderActor())->x.fixed);
   BattleEffect_SelectBattleCue(row, column);
 }
 
-/// Queues a Djinni battle. djinn / 20 is the element and djinn % 20 the
-/// Djinni, where 19 means the one recorded for the element in the save (none:
-/// nothing happens). Unless DJINN_NO_HOP is set the element's encounter
-/// is prepared first; the pending event is DJINNI_BATTLE_EVENT_FIRST plus the
-/// Djinni id with that flag,
-/// the enemy group is chosen, and on the world map the zone and backdrop come
-/// from the leader's position.
-/// The low 8 bits of flags are the Djinni's actor, which hops first unless
-/// DJINN_NO_HOP is set.
+/// The low bits of Field_RequestDjinnBattle's flags: the Djinni's actor.
+#define DJINN_ACTOR_MASK 0xff
+
+/// Sets up the battle with Djinni djinn, DJINN_PER_ELEMENT to an element; an
+/// element's last Djinni stands for the one of The Broken Seal's chosen for it
+/// (SCENE_STATE_CHOSEN_DJINN; none: nothing happens). The low 8 bits of flags
+/// are the Djinni's actor, which hops first unless DJINN_NO_HOP is set.
 void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  u32 noPrepare = flags & DJINN_NO_HOP;
-  u32 group;
+  u32 skipHop = flags & DJINN_NO_HOP;
+  u32 element;
   s32 index;
 
-  flags &= 0xff;
-  group = djinn / DJINN_PER_ELEMENT;
+  flags &= DJINN_ACTOR_MASK;
+  element = djinn / DJINN_PER_ELEMENT;
   index = djinn % DJINN_PER_ELEMENT;
 
   if (index == DJINN_PER_ELEMENT - 1) {
-    index = gSceneLocalState[group + SCENE_STATE_CHOSEN_DJINN];
+    index = gSceneLocalState[element + SCENE_STATE_CHOSEN_DJINN];
     if (index == 0)
       return;
     index--;
   }
-  djinn = group * DJINN_PER_ELEMENT + index;
-  if (noPrepare == 0)
+  djinn = element * DJINN_PER_ELEMENT + index;
+  if (skipHop == 0)
     Djinn_RunBattleStartHop(flags);
+  // DJINN_NO_HOP rides along: it tells Djinn_RestoreActorAfterBattle to put
+  // the Djinni back 32 pixels north of the leader, not at its placement's
+  // position.
   gMainRoutineWork.pendingDjinni =
-      (djinn + DJINNI_BATTLE_EVENT_FIRST) | noPrepare;
+      (djinn + DJINNI_BATTLE_EVENT_FIRST) | skipHop;
   work->encounter = Encounter_GetDjinnFormation(djinn);
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
     Encounter_ResolveWorldMapZoneAndBackdrop(
         &Actor_Lookup(Party_GetLeaderActor())->x.fixed);
   BattleEffect_SelectBattleCue(0, 0);
 }
+
+#undef DJINN_ACTOR_MASK
 
 /// Sets the after-battle destination (gMainRoutineWork.afterBattleScene and
 /// afterBattleEntrance), where the party goes once the coming battle is won.
@@ -73,7 +77,7 @@ void Event_SetDefeatDestination(s32 sceneId, s32 entrance) {
 
 /// Makes the event leave for entrance entrance of scene sceneId: sets
 /// gMainRoutineWork.next and entrance and raises the exit request
-/// EXIT_KEEP_DESTINATION (999), so the field sequence leaves on its next pass.
+/// EXIT_KEEP_DESTINATION, so the field sequence leaves on its next pass.
 void Event_LeaveFor(u16 sceneId, u16 entrance) {
   struct FieldWork *work = gFieldWork;
   gMainRoutineWork.next = sceneId;
@@ -138,5 +142,5 @@ void Actor_PlaySoundInView(struct Actor *actor, s32 sound) {
   Sound_PlayFar(sound);
 }
 
-/// Counts up the main routine's weirdAnswers.
+/// Counts one more weird answer Felix gives (gMainRoutineWork.weirdAnswers).
 void Event_CountAnswer(void) { gMainRoutineWork.weirdAnswers++; }

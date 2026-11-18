@@ -217,12 +217,6 @@ struct SceneState {
 
 extern struct SceneState gSceneState;
 
-/// A 16-bit I/O register.
-struct IoReg16 {
-  u16 value;
-};
-
-#define REG_BLDALPHA ((struct IoReg16 *)0x04000052)
 /// One vent: whether it blows, the frames to its next puff, its position and
 /// its gust's speed, in 16.16 pixels a frame.
 struct VentEntry {
@@ -267,10 +261,6 @@ enum { MAP_WADING_MUD = 2 };
 /// and how many the stump sinks before it is gone.
 #define LEADER_SINK_ROWS 20
 #define STUMP_SINK_ROWS 24
-
-/// Actor_JumpDownLedge's param bit that lands at once, without waiting for
-/// the jumper to reach the ground.
-#define LEDGE_JUMP_NO_LANDING_WAIT (1 << 12)
 
 /// The vents' gusts: each vent blows south along a column of cells whose step
 /// trigger is TRIGGER_FIRST_GUST plus its place in its room's list
@@ -793,9 +783,9 @@ void TaopoSwamp_FillDripSpot(s32 caster, s32 id) {
   // XXX (no evidence): does Douse alone let Frost freeze this puddle? Douse
   // runs this with the leader's actor (FieldPsynergy_Douse passes
   // FieldEffectWork.firstActorId) and a drop with 0, so caster == 5 holds only
-  // while actor 5 leads, where PSYNERGY_PHASE_ACTS is also 5; render event
-  // cannot cast Frost here after Douse (no ground within reach of the spot),
-  // so no recording shows which.
+  // while actor 5 leads, where PSYNERGY_PHASE_ACTS is also 5; casting Frost
+  // on the puddle Douse leaves before four drops have fallen would settle it,
+  // but no ground within Frost's reach of the spot lets it be cast.
   if (caster == 5 ||
       FieldGameFlag_GetByte(FLAG_BYTE_TAOPO_SWAMP_DROPS_CAUGHT) > 3) {
     Event_SetFlag(FLAG_TAOPO_SWAMP_SPOT_WET);
@@ -1881,9 +1871,6 @@ void TaopoSwamp_SparkleStarDust(void) {
 
 extern u8 gMapGridCellBuffer[];
 
-/// The 16.16 coordinate of an 8-pixel tile, half a map grid cell.
-#define FIELD_TILE_ORIGIN(tile) ((tile) << 19)
-
 /// Shows the Star Dust rooms' light, the map's layer 2, from its 8-pixel tile
 /// (x, z) on, and the screen follows.
 void TaopoSwamp_FocusMapOn(s32 x, s32 z) {
@@ -1917,19 +1904,19 @@ void TaopoSwamp_FocusMapOn(s32 x, s32 z) {
 void TaopoSwamp_DarkenRoom(s32 fade) {
   BlendScript_Suspend();
   if (fade) {
-    Io_Write16(BLEND_ALPHA(6, 14), &REG_BLDALPHA->value);
+    Io_Write16(BLEND_ALPHA(6, 14), (u16 *)&REG_BLDALPHA);
     System_Wait(10);
-    Io_Write16(BLEND_ALPHA(4, 13), &REG_BLDALPHA->value);
+    Io_Write16(BLEND_ALPHA(4, 13), (u16 *)&REG_BLDALPHA);
     System_Wait(10);
-    Io_Write16(BLEND_ALPHA(2, 13), &REG_BLDALPHA->value);
+    Io_Write16(BLEND_ALPHA(2, 13), (u16 *)&REG_BLDALPHA);
     System_Wait(10);
-    Io_Write16(BLEND_ALPHA(1, 12), &REG_BLDALPHA->value);
+    Io_Write16(BLEND_ALPHA(1, 12), (u16 *)&REG_BLDALPHA);
     System_Wait(10);
-    Io_Write16(BLEND_ALPHA(0, 12), &REG_BLDALPHA->value);
+    Io_Write16(BLEND_ALPHA(0, 12), (u16 *)&REG_BLDALPHA);
     System_Wait(10);
   }
   TaopoSwamp_FocusMapOn(100, 50);
-  Io_Write16(BLEND_ALPHA(7, 12), &REG_BLDALPHA->value);
+  Io_Write16(BLEND_ALPHA(7, 12), (u16 *)&REG_BLDALPHA);
   if (gMainRoutineWork.entrance == 6)
     FieldTask_AddFrame(TaopoSwamp_SparkleStarDust, TASK_PASS_FRAME);
 }
@@ -2086,11 +2073,6 @@ void Vent_Puff(s32 *position, s32 base) {
 }
 
 #include "shared/vent_update.h"
-
-// io_reg.h's REG_BLDALPHA from here on: TaopoSwamp_DarkenRoom above writes
-// the register through struct IoReg16 instead.
-#undef REG_BLDALPHA
-#define REG_BLDALPHA (*(volatile u16 *)0x04000052)
 
 /// Places a room's vents from its table and the actors their puffs land on,
 /// unless the party comes back to the room as it left it, and starts the

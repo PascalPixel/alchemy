@@ -59,11 +59,40 @@ extern struct SceneRegion gGabombaStatueChamber_IdolExitRegions[];
 #include "field/actor_script.h"
 #include "fixed_math.h"
 
-/// The idol's room (SceneId_GabombaStatueChamberIdol): the statue's face, and
+/// The colour bare centred messages are written in, set white again under the
+/// statue's warm glow.
+#define CENTERED_TEXT_COLOR OBJ_PLTT_COLOR(0, 15)
+
+/// How far, in pixels, the lift's map layers move between the two floors, a
+/// pixel a frame.
+#define LIFT_TRAVEL 352
+/// The frames over which the layers' blend shifts a step every four frames.
+#define LIFT_BLEND_FRAMES 63
+/// The lift's blend weight for its second target at the given step, rising
+/// one every four steps; the first target keeps the rest of BLEND_WEIGHT_MAX
+/// (BLEND_ALPHA's bottom and top).
+#define LIFT_BLEND_BOTTOM(step) (((step) + 1) / 4)
+/// Rising, the blend starts shifting this many pixels into the ride.
+#define LIFT_RISE_BLEND_START 17
+/// Settling back, it stops shifting this many pixels before the end.
+#define LIFT_SETTLE_BLEND_END 33
+/// The frames the Black Crystal rises over the idol, half a pixel a frame, as
+/// the Great Gabomba begins, and the frame Akafubu startles at it.
+#define CRYSTAL_RISE_FRAMES 80
+#define AKAFUBU_STARTLED_FRAME 20
+/// The halves of the stone doors in the final chamber's floor.
+#define STONE_DOOR_HALVES 18
+/// Set once the lift has carried the leader, while he stays on it: its step
+/// trigger waits until he steps off.
+#define FLAG_LEADER_ON_LIFT FLAG_SCENE_TEMP_06
+/// Set while the lift is up, the party having ridden it.
+#define FLAG_LIFT_UP FLAG_SCENE_TEMP_07
+
+/// The idol's room (SceneId_GabombaStatueChamberIdol): the seated idol, and
 /// Kraden ("It vanished into that hole!") and Akafubu ("Who... Who are
 /// you!?"); Piers's, Sheba's and Jenna's rows take their own numbers.
 enum {
-  ACTOR_STATUE = ACTOR_FIRST_PLACED,
+  ACTOR_SEATED_IDOL = ACTOR_FIRST_PLACED,
   ACTOR_LEFT_DRUM, ///< the two pink drums that turn as the lap opens
   ACTOR_RIGHT_DRUM,
   ACTOR_KRADEN,
@@ -82,7 +111,7 @@ enum {
   /// An unseen actor the Great Gabomba's flash and a puzzled emote show at.
   ACTOR_CHAMBER_MARKER,
   ACTOR_WITCH_DOCTOR,
-  ACTOR_FIRST_DOOR_HALF ///< the 18 halves of the stone doors in its floor
+  ACTOR_FIRST_DOOR_HALF ///< the first of the STONE_DOOR_HALVES in its floor
 };
 
 void GabombaStatueChamber_OpenTheLap(void);
@@ -140,10 +169,10 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// The Great Gabomba speaks through the seated idol: it glows warm and shows
 /// the next message centred on the screen.
 void GabombaStatueChamber_StatueSpeaks(void) {
-  volatile u16 *color = (volatile u16 *)&OBJ_PLTT_COLOR(0, 15);
+  volatile u16 *color = (volatile u16 *)&CENTERED_TEXT_COLOR;
   struct FieldWork *work;
 
-  Actor_SetAnimationById(ACTOR_STATUE, 2);
+  Actor_SetAnimationById(ACTOR_SEATED_IDOL, 2);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, 2);
   PaletteFade_SetTarget(PALETTE_TINT_WARM, 2);
   PaletteFade_StartInterpolation(20);
@@ -155,14 +184,14 @@ void GabombaStatueChamber_StatueSpeaks(void) {
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 2);
   PaletteFade_StartInterpolation(20);
   wait(20);
-  Actor_SetAnimationById(ACTOR_STATUE, 1);
+  Actor_SetAnimationById(ACTOR_SEATED_IDOL, 1);
 }
 
 /// The item shown above the statue, while it is there.
 extern struct Actor *gGabombaStatueChamber_ShownItem;
-extern u32 gGabombaStatueChamber_SpiritRisesScript[];
-extern s32 gGabombaStatueChamber_AkafubuStepsUpScript[];
-extern u32 gGabombaStatueChamber_AkafubuLeavesScript[];
+extern u32 gGabombaStatueChamber_SpinScript[];
+extern s32 gGabombaStatueChamber_ChestDescendsScript[];
+extern u32 gGabombaStatueChamber_ChestRisesScript[];
 extern u32 gGabombaStatueChamber_PartyLeavesScript[];
 void ActorSystem_ResumeProjectionAndHideLayers(void);
 
@@ -176,7 +205,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   Event_ResolvePendingActions(0);
   Sound_Play(MUS_JUPITER_LIGHTHOUSE);
   Sound_Play(SE_POWER_UP);
-  Actor_SetAnimationById(ACTOR_STATUE, 3);
+  Actor_SetAnimationById(ACTOR_SEATED_IDOL, 3);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, 2);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 2);
   PaletteFade_SetSource(PALETTE_TINT_NONE, 1);
@@ -188,15 +217,15 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   if (gGabombaStatueChamber_ShownItem != 0) {
     i = 0;
     do {
-      if (i == 20)
+      if (i == AKAFUBU_STARTLED_FRAME)
         Actor_ShowEmote(ACTOR_CHAMBER_AKAFUBU,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
       gGabombaStatueChamber_ShownItem->y.fixed += toFIXED(1) / 2;
       wait(1);
-    } while (++i <= 79);
+    } while (++i <= CRYSTAL_RISE_FRAMES - 1);
     gGabombaStatueChamber_ShownItem->motionFlags = 4;
   }
-  Actor_SetAnimationById(ACTOR_STATUE, 1);
+  Actor_SetAnimationById(ACTOR_SEATED_IDOL, 1);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
   Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 358, 108);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHEAST, 0);
@@ -226,7 +255,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   Actor_ShowEmote(ACTOR_CHAMBER_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_CHAMBER_KRADEN, FACING_SOUTH_SOUTHEAST, 0);
-  Actor_SetAnimationById(ACTOR_STATUE, 3);
+  Actor_SetAnimationById(ACTOR_SEATED_IDOL, 3);
   Actor_FaceDirectionById(ACTOR_CHAMBER_AKAFUBU, FACING_SOUTH_SOUTHEAST, 20);
   actor = Actor_Get(ACTOR_WITCH_DOCTOR);
   actor->facing = Actor_Get(ACTOR_CHAMBER_AKAFUBU)->facing;
@@ -238,22 +267,22 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   Event_Wait(60);
   Event_Wait(20);
   Actor_FaceDirection(ACTOR_WITCH_DOCTOR, FACING_NORTH_NORTHWEST, 0);
-  Actor_SetAnimationById(ACTOR_STATUE, 1);
+  Actor_SetAnimationById(ACTOR_SEATED_IDOL, 1);
   Event_Wait(40);
-  Actor_SetAnimationById(ACTOR_STATUE, 3);
+  Actor_SetAnimationById(ACTOR_SEATED_IDOL, 3);
   Sound_Play(SE_CHIME);
   Actor_SetAnimationById(ACTOR_WITCH_DOCTOR, 6);
   Event_Wait(60);
   Actor_SetAnimationById(ACTOR_WITCH_DOCTOR, ANIM_STAND);
   Event_Wait(20);
-  Actor_SetAnimationById(ACTOR_STATUE, 1);
+  Actor_SetAnimationById(ACTOR_SEATED_IDOL, 1);
   Event_Wait(40);
   GabombaStatueChamber_StatueSpeaks();
   Actor_Jump(ACTOR_WITCH_DOCTOR, 2, 10);
   Actor_Jump(ACTOR_WITCH_DOCTOR, 4, 10);
   Event_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_WITCH_DOCTOR, 0);
   Actor_SetMovementTypeAndWaitById(ACTOR_WITCH_DOCTOR,
-                                   gGabombaStatueChamber_SpiritRisesScript);
+                                   gGabombaStatueChamber_SpinScript);
   Event_ShowMessageAndWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_WITCH_DOCTOR, 0);
   Actor_SetSpeed(ACTOR_WITCH_DOCTOR, 1.6);
   Actor_WalkToAndWait(ACTOR_WITCH_DOCTOR, 392, 164);
@@ -267,7 +296,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   Actor_FaceDirectionById(ACTOR_CHAMBER_KRADEN, FACING_EAST, 0);
   Actor_Get(ACTOR_CHAMBER_CHEST)->motionFlags = 0;
   Actor_SetMovementTypeAndWaitById(ACTOR_CHAMBER_CHEST,
-                                   gGabombaStatueChamber_AkafubuStepsUpScript);
+                                   gGabombaStatueChamber_ChestDescendsScript);
   Event_Wait(20);
   GabombaStatueChamber_StatueSpeaks();
   Actor_ShowEmote(gMainRoutineWork.leaderActorId,
@@ -281,11 +310,11 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 20);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_WEST, 40);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 20);
-  Actor_SetAnimationById(ACTOR_STATUE, 3);
+  Actor_SetAnimationById(ACTOR_SEATED_IDOL, 3);
   PaletteFade_ApplySource(PALETTE_TINT_NONE, 2);
   PaletteFade_SetTarget(PALETTE_TINT_WARM, 2);
   {
-    volatile u16 *color = (volatile u16 *)&OBJ_PLTT_COLOR(0, 15);
+    volatile u16 *color = (volatile u16 *)&CENTERED_TEXT_COLOR;
 
     PaletteFade_StartInterpolation(10);
     wait(10);
@@ -296,7 +325,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 2);
   PaletteFade_StartInterpolation(20);
   wait(20);
-  Actor_SetAnimationById(ACTOR_STATUE, 1);
+  Actor_SetAnimationById(ACTOR_SEATED_IDOL, 1);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHEAST, 0);
   Actor_ShowEmoteById(gMainRoutineWork.leaderActorId,
                       EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 40);
@@ -313,7 +342,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
   Actor_FaceDirectionById(ACTOR_CHAMBER_KRADEN, FACING_EAST, 0);
   Actor_SetMovementTypeAndWaitById(ACTOR_CHAMBER_CHEST,
-                                   gGabombaStatueChamber_AkafubuLeavesScript);
+                                   gGabombaStatueChamber_ChestRisesScript);
   GabombaStatueChamber_StatueSpeaks();
   Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
@@ -347,7 +376,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   GabombaStatueChamber_StatueSpeaks();
   Sound_Play(MUS_SILENCE);
   Sound_Play(SE_SHIMMER);
-  Actor_SetAnimationById(ACTOR_STATUE, 3);
+  Actor_SetAnimationById(ACTOR_SEATED_IDOL, 3);
   Actor_SetSpriteColor(((s32)Actor_GetById(ACTOR_CHAMBER_MARKER)), 7);
   Actor_SetPosition(ACTOR_CHAMBER_MARKER, 424, 104);
   PaletteFade_SetTarget(RGB_WHITE, 0);
@@ -520,11 +549,12 @@ void GabombaStatueChamber_ArriveByLift(void) {
   Event_ResolvePendingActions(0);
   BlendScript_Suspend();
   step = 1;
-  for (i = 0; i < 352; i++) {
-    if (i >= 17 && i < 80) {
-      s32 blend = ((step + 1) / 4) << 8;
+  for (i = 0; i < LIFT_TRAVEL; i++) {
+    if (i >= LIFT_RISE_BLEND_START &&
+        i < LIFT_RISE_BLEND_START + LIFT_BLEND_FRAMES) {
+      s32 blend = LIFT_BLEND_BOTTOM(step) << 8;
 
-      blend |= 16 - (step + 1) / 4;
+      blend |= BLEND_WEIGHT_MAX - LIFT_BLEND_BOTTOM(step);
       REG_BLDALPHA = blend;
       step++;
     }
@@ -541,10 +571,11 @@ void GabombaStatueChamber_ArriveByLift(void) {
   Sound_Play(SE_MATERIALIZE);
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
   for (; i != 0; i--) {
-    if (i >= 33 && i < 96) {
-      s32 blend = ((step + 1) / 4) << 8;
+    if (i >= LIFT_SETTLE_BLEND_END &&
+        i < LIFT_SETTLE_BLEND_END + LIFT_BLEND_FRAMES) {
+      s32 blend = LIFT_BLEND_BOTTOM(step) << 8;
 
-      blend |= 16 - (step + 1) / 4;
+      blend |= BLEND_WEIGHT_MAX - LIFT_BLEND_BOTTOM(step);
       REG_BLDALPHA = blend;
       step--;
     }
@@ -557,7 +588,7 @@ void GabombaStatueChamber_ArriveByLift(void) {
   wait(1);
   Sound_Play(SE_CHEST_CLOSE);
   Event_Wait(20);
-  GameFlag_Set(FLAG_SCENE_TEMP_06);
+  GameFlag_Set(FLAG_LEADER_ON_LIFT);
   Event_End();
 }
 
@@ -580,11 +611,11 @@ void GabombaStatueChamber_RideLiftUp(void) {
   Sound_Play(SE_MATERIALIZE);
   step = 1;
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
-  for (i = 0; i <= 351; i++) {
-    if ((u32)(i - 17) <= 62) {
-      s32 blend = ((step + 1) / 4) << 8;
+  for (i = 0; i <= LIFT_TRAVEL - 1; i++) {
+    if ((u32)(i - LIFT_RISE_BLEND_START) <= LIFT_BLEND_FRAMES - 1) {
+      s32 blend = LIFT_BLEND_BOTTOM(step) << 8;
 
-      blend |= 16 - (step + 1) / 4;
+      blend |= BLEND_WEIGHT_MAX - LIFT_BLEND_BOTTOM(step);
       REG_BLDALPHA = blend;
       step++;
     }
@@ -598,14 +629,14 @@ void GabombaStatueChamber_RideLiftUp(void) {
   Sound_Play(SE_CHEST_CLOSE);
   Event_Wait(20);
   Actor_GetById(gMainRoutineWork.leaderActorId)->layer = 1;
-  GameFlag_Set(FLAG_SCENE_TEMP_06);
-  GameFlag_Set(FLAG_SCENE_TEMP_07);
+  GameFlag_Set(FLAG_LEADER_ON_LIFT);
+  GameFlag_Set(FLAG_LIFT_UP);
   Event_End();
 }
 
 /// Stepping off the lift lets it be ridden again.
 void GabombaStatueChamber_StepOffLift(void) {
-  GameFlag_Clear(FLAG_SCENE_TEMP_06);
+  GameFlag_Clear(FLAG_LEADER_ON_LIFT);
 }
 
 /// Akafubu reaches the final chamber and wonders what he must do there.
@@ -636,12 +667,12 @@ void GabombaStatueChamber_AkafubuReachesChamber(void) {
 
 /// Each frame, keeps the shown item over the seated idol.
 void GabombaStatueChamber_KeepItemWithStatue(struct Actor *actor) {
-  actor->x.fixed = Actor_GetById(ACTOR_STATUE)->x.fixed;
+  actor->x.fixed = Actor_GetById(ACTOR_SEATED_IDOL)->x.fixed;
 }
 
 /// Shows the Dragon's Eye over the seated idol, as its item icon.
 void GabombaStatueChamber_ShowDragonsEye(void) {
-  struct Actor *statue = Actor_GetById(ACTOR_STATUE);
+  struct Actor *statue = Actor_GetById(ACTOR_SEATED_IDOL);
   s32 x = statue->x.fixed;
   s32 z = statue->z.fixed;
   struct Actor *item;
@@ -671,7 +702,7 @@ void GabombaStatueChamber_ShowDragonsEye(void) {
 
 /// Shows the Black Crystal over the seated idol, as its item icon.
 void GabombaStatueChamber_ShowBlackCrystal(void) {
-  struct Actor *statue = Actor_GetById(ACTOR_STATUE);
+  struct Actor *statue = Actor_GetById(ACTOR_SEATED_IDOL);
   s32 x = statue->x.fixed;
   s32 z = statue->z.fixed;
   struct Actor *item;
@@ -987,13 +1018,13 @@ void GabombaStatueChamber_AkafubuOffersToHelp(void) {
   FieldEvent_Wait(40);
   Event_PlaySound(SE_PUSH);
   {
-    struct Actor *guard = Actor_GetById(ACTOR_STATUE);
+    struct Actor *guard = Actor_GetById(ACTOR_SEATED_IDOL);
 
     guard->motionFlags = zero;
   }
   GabombaStatueChamber_SetPassageCells();
-  Actor_SetSpeed(ACTOR_STATUE, 0.4);
-  Actor_MoveToAndWait(ACTOR_STATUE, 424, 152);
+  Actor_SetSpeed(ACTOR_SEATED_IDOL, 0.4);
+  Actor_MoveToAndWait(ACTOR_SEATED_IDOL, 424, 152);
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBU, FACING_SOUTH_SOUTHWEST);
   FieldEvent_SetMessageId((s32)MsgIMightBe);
   // "I might be able to retrieve the orb."
@@ -1084,14 +1115,14 @@ s32 Scene_PrepareMap(void) { return 0; }
 /// help, or else his first two events; entering by its third entrance sets
 /// where Retreat leads.
 void GabombaStatueChamber_InitializeIdol(void) {
-  Actor_DisableById(ACTOR_STATUE);
+  Actor_DisableById(ACTOR_SEATED_IDOL);
   Actor_DisableById(ACTOR_LEFT_DRUM);
   Actor_DisableById(ACTOR_RIGHT_DRUM);
   wait(1);
   if (GameFlag_Get(FLAG_AKAFUBU_OFFERED_HELP)) {
     GabombaStatueChamber_OpenThePassage();
     GabombaStatueChamber_SetPassageCells();
-    Actor_SetPosition(ACTOR_STATUE, 424, 152);
+    Actor_SetPosition(ACTOR_SEATED_IDOL, 424, 152);
     wait(1);
     GabombaStatueChamber_ShowDragonsEye();
   } else {
@@ -1121,7 +1152,7 @@ void GabombaStatueChamber_InitializeIdol(void) {
 /// the party arrives by it.
 void GabombaStatueChamber_InitializeLift(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-    if (GameFlag_Get(FLAG_SCENE_TEMP_07)) {
+    if (GameFlag_Get(FLAG_LIFT_UP)) {
       struct MapWork *map = Ram_HeapSlots->mapGrid;
       struct MapLayer *front = &map->layers[0];
       struct MapLayer *back = &map->layers[2];
@@ -1131,17 +1162,18 @@ void GabombaStatueChamber_InitializeLift(void) {
       BlendScript_Suspend();
       i = 0;
       do {
-        if (i >= 17 && i <= 79) {
-          u32 alpha = ((blend + 1) / 4) << 8;
+        if (i >= LIFT_RISE_BLEND_START &&
+            i <= LIFT_RISE_BLEND_START + LIFT_BLEND_FRAMES - 1) {
+          u32 alpha = LIFT_BLEND_BOTTOM(blend) << 8;
 
-          alpha |= 16 - (blend + 1) / 4;
+          alpha |= BLEND_WEIGHT_MAX - LIFT_BLEND_BOTTOM(blend);
           REG_BLDALPHA = alpha;
           blend++;
         }
         front->offsetY += toFIXED(1);
         back->offsetY += toFIXED(1);
         i++;
-      } while (i < 352);
+      } while (i < LIFT_TRAVEL);
       MapGrid_CenterOnFollowedPoint();
       wait(1);
     }
@@ -1157,10 +1189,10 @@ void GabombaStatueChamber_InitializeLift(void) {
 void GabombaStatueChamber_InitializeWitchDoctor(void) {
   u32 i;
 
-  for (i = 0; i <= 17; i++)
+  for (i = 0; i <= STONE_DOOR_HALVES - 1; i++)
     Actor_SetSpritePriority(i + ACTOR_FIRST_DOOR_HALF, 2);
-  Actor_DisableById(ACTOR_STATUE);
-  Actor_GetById(ACTOR_STATUE)->y.fixed = 0;
+  Actor_DisableById(ACTOR_SEATED_IDOL);
+  Actor_GetById(ACTOR_SEATED_IDOL)->y.fixed = 0;
   if (GameFlag_Get(FLAG_GABOMBA_MESSAGE_CARRIED)) {
     GabombaStatueChamber_OpenTheLap();
     Actor_SetPosition(ACTOR_CHAMBER_AKAFUBU, 0, 0);
@@ -1204,14 +1236,17 @@ u32 gGabombaStatueChamber_AkafubuPath[] = {
     SC_END,
 };
 
-u32 gGabombaStatueChamber_SpiritRisesScript[] = {
+/// The new witch doctor spins round once, a 32nd of a turn a frame.
+u32 gGabombaStatueChamber_SpinScript[] = {
     SC_ADD(SW_FACING, TRIG_TURN / 32),
     SC_WAIT(1),
     SC_LOOP(32, SC_TOP),
     SC_END,
 };
 
-s32 gGabombaStatueChamber_AkafubuStepsUpScript[] = {
+/// The chest appears 64 pixels above the floor before the idol and sinks to
+/// it, a pixel a frame.
+s32 gGabombaStatueChamber_ChestDescendsScript[] = {
     SC_POSITION(392, 64, 124),
     SC_WAIT(1),
     SC_LABEL(1),
@@ -1222,7 +1257,8 @@ s32 gGabombaStatueChamber_AkafubuStepsUpScript[] = {
     SC_END,
 };
 
-u32 gGabombaStatueChamber_AkafubuLeavesScript[] = {
+/// The chest rises away, two pixels a frame for 80 frames, and is put away.
+u32 gGabombaStatueChamber_ChestRisesScript[] = {
     SC_ADD(SW_Y, toFIXED(2)),
     SC_WAIT(1),
     SC_LOOP(80, SC_TOP),
@@ -1272,7 +1308,7 @@ u32 gSceneExits[] = {
 };
 
 struct ActorPlacement gGabombaStatueChamber_IdolActorPlacements[] = {
-    ACTOR_PLACEMENT(375, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SEATED_IDOL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_PINK_DRUM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 328, 0, 256, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_PINK_DRUM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 456, 0, 256, FACING_EAST, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
     ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -1280,17 +1316,17 @@ struct ActorPlacement gGabombaStatueChamber_IdolActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_AKAFUBU, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gGabombaStatueChamber_WitchDoctorActorPlacements[] = {
-    ACTOR_PLACEMENT(375, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 88, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SEATED_IDOL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 88, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_AKAFUBU, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 136, FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, 7, 392, 0, 84, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, 7, 392, 0, 84, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(337, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_AKAFUBU_WITCH_DOCTOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STONE_DOOR_HALF, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 336, 0, 264, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STONE_DOOR_HALF, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 352, 0, 264, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
@@ -1329,7 +1365,7 @@ struct Trigger gGabombaStatueChamber_IdolTriggers[] = {
 struct Trigger gGabombaStatueChamber_LiftTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, 3, FLAG_SCENE_TEMP_06,
+    {TRIGGER_STEP, 3, FLAG_LEADER_ON_LIFT,
      EVENT(GabombaStatueChamber_RideLiftUp)},
     {TRIGGER_STEP, 4, CONDITION_ALWAYS,
      EVENT(GabombaStatueChamber_StepOffLift)},

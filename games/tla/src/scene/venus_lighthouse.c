@@ -1,7 +1,8 @@
 /// @file
-/// The Venus Lighthouse, as the prologue opens on it: Felix moves a statue
-/// with Psynergy and goes on alone, and Jenna and Kraden, doubting they should
-/// leave, meet Alex and set off for Idejima (SceneId_VenusLighthouse).
+/// The Venus Lighthouse, as the prologue opens on it: Felix moves a statue onto
+/// the floor switch with Psynergy and goes on alone, and Jenna and Kraden,
+/// doubting they should leave, meet Alex and set off for Idejima
+/// (SceneId_VenusLighthouse).
 #include "fixed_math.h"
 #include "flags.h"
 #include "scene_ids.h"
@@ -41,33 +42,58 @@
 #include "../field/actor_set_sprite_priority.c"
 #include "shared/tables.h"
 
-/// Set once the statue Felix moved has sunk into the floor; the statue by it no
-/// longer throws the leader back.
-#define FLAG_VENUS_LIGHTHOUSE_STATUE_SUNK FLAG_SCENE_TEMP_00
+/// Set once the statue Felix moved onto the floor switch has sunk into it and
+/// holds it down; the barrier no longer throws the leader back.
+#define FLAG_VENUS_LIGHTHOUSE_SWITCH_HELD FLAG_SCENE_TEMP_00
 /// Set while the leader stands on the floor switch, pressed down.
-#define FLAG_VENUS_LIGHTHOUSE_SWITCH_PRESSED FLAG_SCENE_TEMP_01
+#define FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH FLAG_SCENE_TEMP_01
+
+/// The cell behaviors the scene's events answer, as The Broken Seal numbers
+/// them on this floor.
+enum VenusLighthouseCellBehavior {
+  /// The first of the five reliefs VenusLighthouse_ReadRelief shows the words
+  /// of.
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FIRST_RELIEF = 35,
+  /// The relief by the stairs down from the floor switch's room
+  /// (VenusLighthouse_ReadTrueHeart).
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_TRUE_HEART_RELIEF = 40,
+  /// The floor of yellow lightning south of the floor switch, which throws the
+  /// leader back until the switch is held (VenusLighthouse_RepelLeader).
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_BARRIER = 45,
+  CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FLOOR_SWITCH = 46
+};
+
+/// The entrance the prologue opens on (gVenusLighthouseOpeningActorPlacements).
+enum { ENTRANCE_OPENING = 99 };
+/// The stairs down at the south of the floor switch's room, where the prologue
+/// opens, to the room of the spiral pillars, as The Broken Seal names them:
+/// Jenna, Kraden and Alex leave by its exit, and from patch 1 the game restarts
+/// at its entrance.
+enum {
+  VENUS_LIGHTHOUSE_FLOOR_SWITCH_TO_PILLARS = 22,
+  VENUS_LIGHTHOUSE_FLOOR_SWITCH_FROM_PILLARS = 22
+};
 
 /// The scene's actors, numbering the rows of gActorPlacements: The Broken
 /// Seal's ground floor's, with Kraden and Alex in place of Garet and its three
 /// scholars set aside in the corner. At ENTRANCE_OPENING Felix and Jenna are
 /// placed as the first two rows of gVenusLighthouseOpeningActorPlacements and
 /// keep their own ids.
-/// The entrance the prologue opens on (gVenusLighthouseOpeningActorPlacements).
-enum { ENTRANCE_OPENING = 99 };
-
 enum VenusLighthouseActorId {
   ACTOR_KRADEN = ACTOR_FIRST_PLACED,
   ACTOR_ALEX,
-  /// The statue Felix moves aside with Move; it sinks into the floor.
-  ACTOR_MOVED_STATUE,
+  /// The lady statue Felix moves onto the floor switch with Move; it sinks in
+  /// and holds the switch down.
+  ACTOR_FLOOR_SWITCH_STATUE,
   /// The Broken Seal's three scholars of this floor (SPRITE_OLD_MAN_IN_BLUE_CAP
-  /// and SPRITE_MAN_WITH_GLASSES), kept at (8, 8) out of sight.
+  /// and SPRITE_MAN_WITH_GLASSES), under its names, kept at (8, 8) out of
+  /// sight; they never speak here.
   ///@{
-  ACTOR_SCHOLAR_A,
-  ACTOR_SCHOLAR_B,
-  ACTOR_SCHOLAR_C,
+  ACTOR_SCHOLAR_ATTACKED_ANYWAY,
+  ACTOR_SCHOLAR_NOT_THE_ENTRANCE,
+  ACTOR_DOOR_SCHOLAR,
   ///@}
-  /// The two spiral pillars by the north stairs.
+  /// The two spiral pillars below the stairs of entrance 9.
   ///@{
   ACTOR_SPIRAL_PILLAR_A,
   ACTOR_SPIRAL_PILLAR_B,
@@ -142,6 +168,10 @@ VenusLighthouse_CreateOccludingPassageEffect(s32 x, s32 y, s32 z, s32 type) {
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 extern const s32 *gFieldEffect_DurationScripts[];
 
+/// The flags of FieldEffect_Spawn that ask for its options (EFFECT_USE_ and
+/// EFFECT_SCALE_TO_TARGET), above the script number.
+#define EFFECT_OPTION_MASK 0xffff0000
+
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options) {
@@ -175,7 +205,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
   effect->scaleRateY = 0;
   effect->spin = 0;
 
-  if ((flags & 0xffff0000) == 0 || options == 0)
+  if ((flags & EFFECT_OPTION_MASK) == 0 || options == 0)
     return;
   if ((flags & EFFECT_USE_PALETTE) != 0)
     FieldActor_SetSpriteColor(effect, options->palette);
@@ -223,10 +253,11 @@ extern u32 gPushedActor_DirectionSteps[];
 
 s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
 
-/// Unused: pushing a pillar moves the pillar ahead of the leader one cell on
-/// with him, leaning into it, as The Broken Seal's Venus Lighthouse does;
-/// nothing here calls it.
-UNUSED void VenusLighthouse_PushAdjacentPillar(void) {
+/// Unused: the leader pushes what stands in front of him a cell on, unless
+/// something solid is beyond it or on top of it, the ground beyond refuses it
+/// or it is still moving, as The Broken Seal's pushing scenes do; nothing here
+/// calls it.
+UNUSED void PushedActor_AdvancePair(void) {
   struct FieldPosition targetPosition;
   struct Actor *leader;
   struct Actor *pillar;
@@ -237,11 +268,11 @@ UNUSED void VenusLighthouse_PushAdjacentPillar(void) {
   s32 transitionBusy;
 
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  directionIndex = leader->facing >> 12;
+  directionIndex = FACING_INDEX(leader->facing);
   step = gPushedActor_DirectionSteps[directionIndex];
   targetPosition.x = leader->x.fixed + (step & FIELD_PIXEL_MASK);
   targetPosition.y = leader->y.fixed;
-  step <<= 16;
+  step = INTtoFIXED(step);
   targetPosition.z = leader->z.fixed + step;
   pillar = Actor_FindInCell((s32 *)&targetPosition, leader);
   if (pillar == 0)
@@ -250,7 +281,7 @@ UNUSED void VenusLighthouse_PushAdjacentPillar(void) {
   step = gPushedActor_DirectionSteps[directionIndex];
   targetPosition.x = pillar->x.fixed + (step & FIELD_PIXEL_MASK);
   targetPosition.y = pillar->y.fixed;
-  step <<= 16;
+  step = INTtoFIXED(step);
   targetPosition.z = pillar->z.fixed + step;
   blockingActor = Actor_FindInCell((s32 *)&targetPosition, pillar);
   if (blockingActor != 0 && (blockingActor->collisionFlags & ACTOR_SOLID) != 0)
@@ -267,7 +298,7 @@ UNUSED void VenusLighthouse_PushAdjacentPillar(void) {
   step = gPushedActor_DirectionSteps[directionIndex];
   targetPosition.x = pillar->x.fixed + (step & FIELD_PIXEL_MASK);
   targetPosition.y = pillar->y.fixed;
-  step <<= 16;
+  step = INTtoFIXED(step);
   targetPosition.z = pillar->z.fixed + step;
   if (MapGrid_CheckCollision(pillar, &targetPosition) > 0)
     return;
@@ -397,8 +428,8 @@ extern s32 gVenusLeaderDazedScript[];
 /// Sets bits in a byte of flags.
 static inline void SetFlagBits(u8 *flags, u8 bits) { *flags |= bits; }
 
-/// Until the statue has sunk, stepping by it throws the leader
-/// back in a flash of sparks.
+/// Until the statue holds the floor switch down, stepping onto the barrier
+/// throws the leader back, dazed and flashing.
 void VenusLighthouse_RepelLeader(void) {
   s32 leader = Party_GetLeaderActor();
   struct Actor *actor = Actor_GetById(leader);
@@ -434,8 +465,8 @@ void VenusLighthouse_RepelLeader(void) {
 }
 
 /// Standing on the floor switch presses it
-/// (FLAG_VENUS_LIGHTHOUSE_SWITCH_PRESSED) and lowers the leader into it;
-/// stepping off releases it.
+/// (FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH) and lowers the leader into
+/// it; stepping off releases it.
 void VenusLighthouse_StepOnFloorSwitch(void) {
   struct Actor *leader = Actor_GetById(Party_GetLeaderActor());
   s32 z = leader->z.part[0].integer;
@@ -443,17 +474,17 @@ void VenusLighthouse_StepOnFloorSwitch(void) {
   if ((u32)(leader->x.part[0].integer - 676) > 7 || z < 788 || z >= 796) {
     MapGrid_CopyCellPictureIndicesRect(53, 50, 42, 49, 1, 1);
     MapGrid_CopyCellsTo(55, 117, 41, 117, 3, 5);
-    GameFlag_Clear(FLAG_VENUS_LIGHTHOUSE_SWITCH_PRESSED);
+    GameFlag_Clear(FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH);
     leader->motionFlags |= ACTOR_FOLLOWS_TERRAIN;
     leader->groundHeight = 0;
     leader->y.fixed = 0;
-  } else if (!Event_GetFlag(FLAG_VENUS_LIGHTHOUSE_SWITCH_PRESSED)) {
+  } else if (!Event_GetFlag(FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH)) {
     Event_Start();
     Event_ResolvePendingActions(0);
     Event_Wait(5);
     MapGrid_CopyCellPictureIndicesRect(52, 50, 42, 49, 1, 1);
     MapGrid_CopyCellsTo(52, 117, 41, 117, 3, 5);
-    GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_SWITCH_PRESSED);
+    GameFlag_Set(FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH);
     Sound_Play(SE_RATTLE);
     leader->motionFlags &= ~ACTOR_FOLLOWS_TERRAIN;
     leader->groundHeight = -toFIXED(2);
@@ -462,15 +493,15 @@ void VenusLighthouse_StepOnFloorSwitch(void) {
   }
 }
 
-/// The statue Felix moved sinks into the floor in column 42, and
-/// the way past it opens.
+/// The statue Felix moved onto the floor switch, in column 42, sinks in and
+/// holds it down, and the barrier lets the leader by.
 void VenusLighthouse_SinkStatue(void) {
   struct Actor *obj;
   FIXED val;
   s32 a;
   s32 b;
 
-  obj = Actor_Get(ACTOR_MOVED_STATUE);
+  obj = Actor_Get(ACTOR_FLOOR_SWITCH_STATUE);
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   if (FIELD_CELL(obj->x.fixed) == 42) {
@@ -480,7 +511,7 @@ void VenusLighthouse_SinkStatue(void) {
     val = -toFIXED(2);
     obj->groundHeight = val;
     obj->y.fixed = val;
-    Event_SetFlag(FLAG_VENUS_LIGHTHOUSE_STATUE_SUNK);
+    Event_SetFlag(FLAG_VENUS_LIGHTHOUSE_SWITCH_HELD);
     a = 3;
     b = 5;
     MapGrid_CopyCellsTo(44, 117, 41, 117, a, b);
@@ -561,7 +592,7 @@ s32 VenusLighthouse_Idle(void) { return 0; }
 /// Felix casts Move on the statue.
 void VenusLighthouse_FelixMovesStatue(void) {
   FieldPsynergy_LoadResources(ABILITY_MOVE, 1);
-  FieldPsynergy_SetupActorPair(ACTOR_FELIX, ACTOR_MOVED_STATUE);
+  FieldPsynergy_SetupActorPair(ACTOR_FELIX, ACTOR_FLOOR_SWITCH_STATUE);
   ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->finishCallback =
       (void (*)(void))VenusLighthouse_Idle;
   FieldPsynergy_StartCast();
@@ -572,7 +603,7 @@ void VenusLighthouse_FelixMovesStatue(void) {
 }
 
 // The Japanese form; from patch 1, the form below also saves this scene and
-// entrance 22.
+// VENUS_LIGHTHOUSE_FLOOR_SWITCH_FROM_PILLARS as where the game restarts.
 #if !TLA_PATCH_1
 s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
@@ -583,7 +614,8 @@ s32 Scene_Initialize(void) {
     VenusLighthouse_DoubtLeaving();
     Event_End();
   } else {
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_MOVED_STATUE), SPRITE_COLOR_GREY);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FLOOR_SWITCH_STATUE),
+                              SPRITE_COLOR_GREY);
     FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GREY_STATUE),
                               SPRITE_COLOR_GREY);
     FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GREY_STATUE + 1),
@@ -617,16 +649,16 @@ s32 Scene_Initialize(void) {
   routine = &gMainRoutineWork;
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   if (routine->entrance == ENTRANCE_OPENING) {
-    // From patch 1 it also saves this scene and entrance 22.
     routine->restartScene = SCENE_VENUS_LIGHTHOUSE;
-    routine->restartEntrance = 22;
+    routine->restartEntrance = VENUS_LIGHTHOUSE_FLOOR_SWITCH_FROM_PILLARS;
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     VenusLighthouse_FelixLeaves();
     VenusLighthouse_DoubtLeaving();
     Event_End();
   } else {
-    FieldActor_SetSpriteColor(Actor_Get(ACTOR_MOVED_STATUE), SPRITE_COLOR_GREY);
+    FieldActor_SetSpriteColor(Actor_Get(ACTOR_FLOOR_SWITCH_STATUE),
+                              SPRITE_COLOR_GREY);
     FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GREY_STATUE),
                               SPRITE_COLOR_GREY);
     FieldActor_SetSpriteColor(Actor_Get(ACTOR_FIRST_GREY_STATUE + 1),
@@ -1195,8 +1227,8 @@ void VenusLighthouse_DoubtLeaving(void) {
   FieldEvent_Wait(40);
   MapGrid_CopyCellsTo(53, 50, 42, 49, 1, 1);
   MapGrid_CopyCellsTo(55, 117, 41, 117, 3, 5);
-  Event_ClearFlag(FLAG_VENUS_LIGHTHOUSE_SWITCH_PRESSED);
-  Actor_SetPosition(ACTOR_MOVED_STATUE, 664, 792);
+  Event_ClearFlag(FLAG_VENUS_LIGHTHOUSE_ON_GROUND_FLOOR_SWITCH);
+  Actor_SetPosition(ACTOR_FLOOR_SWITCH_STATUE, 664, 792);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   gMainRoutineWork.leaderActorId = ACTOR_JENNA;
   Party_RemoveMember(FELIX);
@@ -1206,7 +1238,7 @@ void VenusLighthouse_DoubtLeaving(void) {
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_SetExitRequest(22);
+  FieldEvent_SetExitRequest(VENUS_LIGHTHOUSE_FLOOR_SWITCH_TO_PILLARS);
 }
 
 extern u32 gFieldEffect_LongScript[];
@@ -1242,13 +1274,11 @@ u32 gFieldEffect_LongScript[] = {
 /// The cell ahead for each of sixteen headings, 16 pixels east-west in the
 /// upper halfword and north-south in the lower (PUSH_STEP).
 u32 gPushedActor_DirectionSteps[] = {
-      PUSH_STEP(16, 0),  PUSH_STEP(16, 0),  PUSH_STEP(16, 0),                  
-      PUSH_STEP(0, 16),  PUSH_STEP(0, 16),  PUSH_STEP(0, 16),                  
-      PUSH_STEP(0, 16),  PUSH_STEP(-16, 0), PUSH_STEP(-16, 0),                 
-      PUSH_STEP(-16, 0), PUSH_STEP(-16, 0), PUSH_STEP(0, -16),                 
-      PUSH_STEP(0, -16), PUSH_STEP(0, -16), PUSH_STEP(0, -16),                 
-      PUSH_STEP(16, 0),                                                        
-  };
+    PUSH_STEP(16, 0), PUSH_STEP(16, 0), PUSH_STEP(16, 0), PUSH_STEP(0, 16),
+    PUSH_STEP(0, 16), PUSH_STEP(0, 16), PUSH_STEP(0, 16), PUSH_STEP(-16, 0),
+    PUSH_STEP(-16, 0), PUSH_STEP(-16, 0), PUSH_STEP(-16, 0), PUSH_STEP(0, -16),
+    PUSH_STEP(0, -16), PUSH_STEP(0, -16), PUSH_STEP(0, -16), PUSH_STEP(16, 0),
+};
 // clang-format on
 
 const s32 *gFieldEffect_DurationScripts[] = {
@@ -1319,7 +1349,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT(6, VenusLighthouse, 7),
     SCENE_EXIT(7, VenusLighthouse, 6),
     SCENE_EXIT(8, VenusLighthouse, 32),
-    SCENE_EXIT(9, VenusLighthouse, 22),
+    SCENE_EXIT(9, VenusLighthouse, VENUS_LIGHTHOUSE_FLOOR_SWITCH_FROM_PILLARS),
     SCENE_EXIT(10, VenusLighthouse, 12),
     SCENE_EXIT(11, VenusLighthouse, 13),
     SCENE_EXIT(12, VenusLighthouse, 10),
@@ -1327,7 +1357,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT(14, VenusLighthouse, 24),
     SCENE_EXIT(20, VenusLighthouse, 26),
     SCENE_EXIT(21, VenusLighthouse, 25),
-    SCENE_EXIT(22, VenusLighthouse, 9),
+    SCENE_EXIT(VENUS_LIGHTHOUSE_FLOOR_SWITCH_TO_PILLARS, VenusLighthouse, 9),
     SCENE_EXIT(24, VenusLighthouse, 14),
     SCENE_EXIT(25, VenusLighthouse, 21),
     SCENE_EXIT(26, VenusLighthouse, 20),
@@ -1450,17 +1480,22 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 30, CONDITION_ALWAYS, 30},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 31, CONDITION_ALWAYS, 31},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 32, CONDITION_ALWAYS, 32},
-    {TRIGGER_STEP, 45, FLAG_VENUS_LIGHTHOUSE_STATUE_SUNK,
-     EVENT(VenusLighthouse_RepelLeader)},
-    {TRIGGER_STEP, 46, CONDITION_ALWAYS,
-     EVENT(VenusLighthouse_StepOnFloorSwitch)},
-    {TRIGGER_EXAMINE, 35, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
-    {TRIGGER_EXAMINE, 36, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
-    {TRIGGER_EXAMINE, 37, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
-    {TRIGGER_EXAMINE, 38, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
-    {TRIGGER_EXAMINE, 39, CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
-    {TRIGGER_EXAMINE, 40, CONDITION_ALWAYS,
-     EVENT(VenusLighthouse_ReadTrueHeart)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_BARRIER,
+     FLAG_VENUS_LIGHTHOUSE_SWITCH_HELD, EVENT(VenusLighthouse_RepelLeader)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FLOOR_SWITCH,
+     CONDITION_ALWAYS, EVENT(VenusLighthouse_StepOnFloorSwitch)},
+    {TRIGGER_EXAMINE, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FIRST_RELIEF,
+     CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
+    {TRIGGER_EXAMINE, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FIRST_RELIEF + 1,
+     CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
+    {TRIGGER_EXAMINE, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FIRST_RELIEF + 2,
+     CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
+    {TRIGGER_EXAMINE, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FIRST_RELIEF + 3,
+     CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
+    {TRIGGER_EXAMINE, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_FIRST_RELIEF + 4,
+     CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadRelief)},
+    {TRIGGER_EXAMINE, CELL_BEHAVIOR_VENUS_LIGHTHOUSE_TRUE_HEART_RELIEF,
+     CONDITION_ALWAYS, EVENT(VenusLighthouse_ReadTrueHeart)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(VenusLighthouse_RevealPaths)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,

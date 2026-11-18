@@ -1,6 +1,6 @@
 /// @file
 /// Madra's houses: the inn, the shops, the elder's home with the Black Crystal
-/// on its mantel, the jail where Piers is questioned (entrance 20), and, as a
+/// on its mantel, the jail where Piers is held (entrance 20), and, as a
 /// second scene, the left cavern home. The old couple trade Char the Mars
 /// Djinni for the Healing Fungus, and on the return with Piers the elder's
 /// household welcomes him home.
@@ -40,8 +40,8 @@
 #define FLAG_MADRA_FUNGUS_FOR_DINNER FLAG_AREA_TEMP_10
 /// Set once the old man has been offered the Laughing Fungus on this visit.
 #define FLAG_MADRA_LAUGHING_FUNGUS_OFFERED FLAG_SCENE_TEMP_10
-/// Set once the ill man has groaned on this visit.
-#define FLAG_MADRA_ILL_MAN_GROANED FLAG_SCENE_TEMP_11
+/// Set once the man focusing on making ice has groaned on this visit.
+#define FLAG_MADRA_FOCUSING_MAN_GROANED FLAG_SCENE_TEMP_11
 
 /// Madra's houses, numbering the rows gMadraRooms_Placements and
 /// gMadraRooms_PlacementsOnReturn share.
@@ -111,16 +111,18 @@ enum MadraRoomsReturnActorId {
 enum MadraRoomsJailActorId {
   /// The puddle Piers freezes into a shaft of ice.
   ACTOR_JAIL_PUDDLE = ACTOR_FIRST_PLACED,
-  /// The two who question Piers.
-  ACTOR_STERN_INTERROGATOR,
-  ACTOR_ACCUSING_INTERROGATOR,
+  /// Shin, who threatens Piers, and his friend, who accuses him of being one
+  /// of the Champa.
+  ACTOR_SHIN,
+  ACTOR_SHINS_FRIEND,
   /// Kraden, who jumps out from behind Felix.
   ACTOR_JAIL_KRADEN,
   ACTOR_SECOND_JAIL_PUDDLE,
   /// Once FLAG_GABOMBA_MESSAGE_CARRIED is set: who saw Isaac's party hear of
-  /// Felix, and the ill man who has feared the cold since Piers' ice.
+  /// Felix, and a man who has been focusing for days to make ice as Piers
+  /// did.
   ACTOR_WITNESS_ON_ISAACS_PARTY,
-  ACTOR_ILL_MAN
+  ACTOR_MAN_FOCUSING_ON_ICE
 };
 
 /// The left cavern home (MadraRoomsCavernHomes), by the rows of
@@ -138,9 +140,9 @@ enum MadraRoomsCavernHomeActorId {
 /// Madra's inn, as Inn_CheckIn numbers the inns.
 enum { MADRA_INN = 1 };
 
-extern s32 gMadraRooms_InterrogatorLifted[];
-extern s32 gMadraRooms_InterrogatorTopples[];
-void MadraRooms_SayGoodbyeAgain(void);
+extern s32 gMadraRooms_ShinLifted[];
+extern s32 gMadraRooms_ShinFalls[];
+void MadraRooms_SayFarewellAgain(void);
 
 void MadraRooms_AskToStayLonger(void);
 
@@ -172,12 +174,12 @@ extern struct Trigger gMadraRooms_TriggersOnReturn[];
 void Event_End(void);
 void Sanctum_Run(s32 actor);
 void Inn_CheckIn(s32 slot, s32 actor);
-void MadraRooms_InterrogatePiers(void);
+void MadraRooms_ShinAngersPiers(void);
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_MADRA_ROOMS_CAVERN_HOMES)
     return gMadraRooms_SecondRoomsPlacements;
-  if (gMainRoutineWork.entrance == 20)
+  if (gMainRoutineWork.entrance == MADRA_ROOMS_HOUSES_FROM_MADRA_WEST)
     return gMadraRooms_JailPlacements;
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
     return gMadraRooms_PlacementsOnReturn;
@@ -394,37 +396,38 @@ void MadraRooms_MindReadMushroomCook(void) {
   }
 }
 
-/// The ill man in the cavern home groans, the first time, and thinks of the ice
-/// he saw made by thinking.
-/// "Uhhhnnn... UHHHNNN!"
-void MadraRooms_TalkToIllMan(void) {
-  if (!Event_GetFlag(FLAG_MADRA_ILL_MAN_GROANED)) {
-    Event_SetFlag(FLAG_MADRA_ILL_MAN_GROANED);
+/// The man in the jail who has been focusing for days to make ice groans with
+/// the effort, the first time, and then wonders how anyone makes ice by
+/// thinking.
+void MadraRooms_TalkToManFocusingOnIce(void) {
+  if (!Event_GetFlag(FLAG_MADRA_FOCUSING_MAN_GROANED)) {
+    Event_SetFlag(FLAG_MADRA_FOCUSING_MAN_GROANED);
     FieldEvent_SetMessageId((s32)MsgMadraUhhhnnnUhhhnnn);
-    Actor_WalkByAndWait(ACTOR_ILL_MAN, -12, 0);
+    Actor_WalkByAndWait(ACTOR_MAN_FOCUSING_ON_ICE, -12, 0);
     FieldEvent_Wait(20);
-    Actor_RunRepeatedMotion(ACTOR_ILL_MAN, 2);
+    Actor_RunRepeatedMotion(ACTOR_MAN_FOCUSING_ON_ICE, 2);
     FieldEvent_Wait(20);
     // "Uhhhnnn... UHHHNNN!"
-    Event_ShowMessage(ACTOR_ILL_MAN, 0);
-    FieldActor_ShowEmote(ACTOR_ILL_MAN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
+    Event_ShowMessage(ACTOR_MAN_FOCUSING_ON_ICE, 0);
+    FieldActor_ShowEmote(ACTOR_MAN_FOCUSING_ON_ICE,
+                         EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 30);
     FieldEvent_Wait(20);
-    Actor_WalkByAndWait(ACTOR_ILL_MAN, 12, 0);
-    Actor_FaceActor(ACTOR_ILL_MAN, ACTOR_FELIX, 0);
+    Actor_WalkByAndWait(ACTOR_MAN_FOCUSING_ON_ICE, 12, 0);
+    Actor_FaceActor(ACTOR_MAN_FOCUSING_ON_ICE, ACTOR_FELIX, 0);
     // "They told me that you make Psynergy by focusing your mind... I've..."
-    Event_ShowMessage(ACTOR_ILL_MAN, 0);
+    Event_ShowMessage(ACTOR_MAN_FOCUSING_ON_ICE, 0);
   } else {
     FieldEvent_SetMessageId((s32)MsgMadraInteriorsHowCanAnyoneJustCreate);
-    Actor_FaceActor(ACTOR_ILL_MAN, ACTOR_FELIX, 0);
+    Actor_FaceActor(ACTOR_MAN_FOCUSING_ON_ICE, ACTOR_FELIX, 0);
     // "How can anyone just create ice by thinking about it? I mean, imagine..."
-    Event_ShowMessage(ACTOR_ILL_MAN, 0);
+    Event_ShowMessage(ACTOR_MAN_FOCUSING_ON_ICE, 0);
   }
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == SCENE_MADRA_ROOMS_CAVERN_HOMES)
     return gMadraRooms_SecondRoomsTriggers;
-  if (gMainRoutineWork.entrance == 20)
+  if (gMainRoutineWork.entrance == MADRA_ROOMS_HOUSES_FROM_MADRA_WEST)
     return gMadraRooms_JailTriggers;
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED))
     return gMadraRooms_TriggersOnReturn;
@@ -451,33 +454,33 @@ static inline void MadraRooms_PlaceFacing(s32 actorId, s32 x, s32 z,
   Actor_SetPositionAndFacing(actorId, x, z, facing);
 }
 
-/// The jail on entrance 20: Piers' interrogation the first time, then his
-/// interrogators by the story flags.
+/// The jail, entrance 20 from Madra: Shin angers Piers the first time, and
+/// later Shin and his friend stand by the story flags.
 void MadraRooms_SetUpJail(void) {
   if (!Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
     gFieldWork->psynergyDrawFlags = 3;
     if (!Event_GetFlag(FLAG_PIERS_INTERROGATED)) {
-      MadraRooms_InterrogatePiers();
+      MadraRooms_ShinAngersPiers();
     } else {
-      Actor_SetPosition(ACTOR_STERN_INTERROGATOR, 0, 0);
-      Actor_SetPosition(ACTOR_ACCUSING_INTERROGATOR, 0, 0);
+      Actor_SetPosition(ACTOR_SHIN, 0, 0);
+      Actor_SetPosition(ACTOR_SHINS_FRIEND, 0, 0);
     }
   } else if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED)) {
-    MadraRooms_PlaceFacing(ACTOR_STERN_INTERROGATOR, toFIXED(515), toFIXED(841),
+    MadraRooms_PlaceFacing(ACTOR_SHIN, toFIXED(515), toFIXED(841),
                            FACING_NORTHEAST);
-    MadraRooms_PlaceFacing(ACTOR_ACCUSING_INTERROGATOR, toFIXED(472),
-                           toFIXED(877), FACING_NORTH);
+    MadraRooms_PlaceFacing(ACTOR_SHINS_FRIEND, toFIXED(472), toFIXED(877),
+                           FACING_NORTH);
     Actor_SetPosition(ACTOR_JAIL_PUDDLE, 0, 0);
   } else {
-    MadraRooms_PlaceFacing(ACTOR_STERN_INTERROGATOR, toFIXED(515), toFIXED(841),
+    MadraRooms_PlaceFacing(ACTOR_SHIN, toFIXED(515), toFIXED(841),
                            FACING_NORTHWEST);
-    MadraRooms_PlaceFacing(ACTOR_ACCUSING_INTERROGATOR, toFIXED(472),
-                           toFIXED(877), FACING_NORTH);
+    MadraRooms_PlaceFacing(ACTOR_SHINS_FRIEND, toFIXED(472), toFIXED(877),
+                           FACING_NORTH);
     Actor_SetPosition(ACTOR_JAIL_PUDDLE, 0, 0);
   }
 }
 
-extern s32 gMadraRooms_InterrogatorsLeave[];
+extern s32 gMadraRooms_ShinAndFriendRunAway[];
 void FieldCamera_WaitForArrival();
 void FieldPsynergy_LoadResources();
 void FieldPsynergy_SetupActorPair();
@@ -508,7 +511,7 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(2, 46, 16, 10, 16, 0);
     }
   }
-  if (gMainRoutineWork.entrance == 20)
+  if (gMainRoutineWork.entrance == MADRA_ROOMS_HOUSES_FROM_MADRA_WEST)
     MadraRooms_SetUpJail();
   if (gMainRoutineWork.next == SCENE_MADRA_ROOMS_CAVERN_HOMES) {
     if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
@@ -516,10 +519,11 @@ s32 Scene_Initialize(void) {
     } else {
       Actor_SetSpriteRotationById(ACTOR_SISTER_IN_BED, TRIG_TURN * 3 / 4);
       Actor_SetSpriteFlags(Actor_Get(ACTOR_SISTER_IN_BED), 0);
+      // Lying under the covers: her sprite turned, its bottom 8 rows sunk.
       ((struct FieldSprite *)Actor_Get(ACTOR_SISTER_IN_BED)->sprite)->flags |=
-          8;
+          SPRITE_FLAG_SUNK;
       sprite = Actor_Get(ACTOR_SISTER_IN_BED)->sprite;
-      sprite->cacheBits = (sprite->cacheBits & 3) | 32;
+      sprite->cacheBits = (sprite->cacheBits & 3) | 8 << 2;
       ((struct FieldSprite *)Actor_Get(ACTOR_SISTER_IN_BED)->sprite)->dirty = 1;
     }
   }
@@ -535,9 +539,9 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// Tips an actor's sprite a thirty-second of a turn, a frame of the
-/// interrogator toppling over (gMadraRooms_InterrogatorTopples).
-s32 MadraRooms_TiltSprite(struct Actor *actor) {
+/// Turns an actor's sprite a thirty-second of a turn, a frame of Shin falling
+/// over (gMadraRooms_ShinFalls).
+s32 MadraRooms_RotateSprite(struct Actor *actor) {
   struct FieldSprite *sprite;
 
   sprite = actor->sprite;
@@ -547,7 +551,7 @@ s32 MadraRooms_TiltSprite(struct Actor *actor) {
 }
 
 /// Unused: stands an actor's sprite upright again; no script calls it.
-UNUSED s32 MadraRooms_StraightenSprite(struct Actor *actor) {
+UNUSED s32 MadraRooms_ResetSpriteRotation(struct Actor *actor) {
   struct FieldSprite *sprite;
 
   sprite = actor->sprite;
@@ -556,10 +560,9 @@ UNUSED s32 MadraRooms_StraightenSprite(struct Actor *actor) {
   return 0;
 }
 
-/// The party enters the jail as Piers is questioned, and sees him drive off an
-/// interrogator with Psynergy.
-/// "Admit it! You're one of the Champa, aren't you, Piers?"
-void MadraRooms_InterrogatePiers(void) {
+/// The party enters the jail as Shin and his friend accuse Piers of being one
+/// of the Champa, and sees Piers, angered, lift Shin on a shaft of ice.
+void MadraRooms_ShinAngersPiers(void) {
   s32 i;
   struct Actor *felix;
 
@@ -573,7 +576,7 @@ void MadraRooms_InterrogatePiers(void) {
   Actor_SetSpeed(ACTOR_PIERS, 0.8);
   FieldEvent_SetMessageId((s32)MsgMadraInteriorsAdmitItYoureOne);
   // "Admit it! You're one of the Champa, aren't you, Piers?"
-  FieldEvent_ShowMessageThenWait(ACTOR_ACCUSING_INTERROGATOR, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_SHINS_FRIEND, 0, 10);
   Actor_WalkToAndWait(ACTOR_FELIX, 396, 869);
   FieldActor_LaunchFromLeader(ACTOR_JAIL_KRADEN, 25, 19, FACING_NORTH);
   FieldActor_WaitForScriptEndById(ACTOR_JAIL_KRADEN);
@@ -588,75 +591,72 @@ void MadraRooms_InterrogatePiers(void) {
   FieldEvent_Wait(20);
   Actor_RunRepeatedMotion(ACTOR_PIERS, 2);
   FieldEvent_Wait(20);
-  Actor_ShowEmote(ACTOR_STERN_INTERROGATOR, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
+  Actor_ShowEmote(ACTOR_SHIN, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   // "Speak! Or let your silence condemn you!"
-  FieldEvent_ShowMessageThenWait(ACTOR_STERN_INTERROGATOR, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_SHIN, 0, 10);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
   // "I told you already... I'm not a Champa."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  Actor_RunRepeatedMotion(ACTOR_STERN_INTERROGATOR, 2);
+  Actor_RunRepeatedMotion(ACTOR_SHIN, 2);
   // "Then where did you come from?"
-  FieldEvent_ShowMessageThenWait(ACTOR_STERN_INTERROGATOR, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_SHIN, 0, 10);
   Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_NORTH);
   Actor_WalkByAndWait(ACTOR_PIERS, 0, -16);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
   // "The heart of the Eastern Sea... If I told you where, you'd never..."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  FieldActor_ShowEmote(ACTOR_STERN_INTERROGATOR,
-                       EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
-  Actor_Get(ACTOR_STERN_INTERROGATOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  FieldActor_ShowEmote(ACTOR_SHIN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 0);
+  Actor_Get(ACTOR_SHIN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   for (i = 0; i < 3; i++) {
-    Actor_WalkByAndWait(ACTOR_STERN_INTERROGATOR, 0, -8);
+    Actor_WalkByAndWait(ACTOR_SHIN, 0, -8);
     Event_PlaySound(SE_HEAVY_IMPACT);
-    Actor_WalkByAndWait(ACTOR_STERN_INTERROGATOR, 0, 8);
+    Actor_WalkByAndWait(ACTOR_SHIN, 0, 8);
   }
-  Actor_Get(ACTOR_STERN_INTERROGATOR)->steeringFlags |= ACTOR_FACES_MOTION;
+  Actor_Get(ACTOR_SHIN)->steeringFlags |= ACTOR_FACES_MOTION;
   FieldEvent_Wait(30);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "Look at me when I'm talking to you! Are you trying to mock me!?"
-  FieldEvent_ShowMessageThenWait(ACTOR_STERN_INTERROGATOR, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_SHIN, 0, 10);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
   // "I implore you, do not anger me."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  Actor_ShowEmote(ACTOR_STERN_INTERROGATOR, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
+  Actor_ShowEmote(ACTOR_SHIN, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "Oh, do you? So what's going to happen if I make you angry?"
-  FieldEvent_ShowMessageThenWait(ACTOR_STERN_INTERROGATOR, 0, 10);
-  Actor_FaceActor(ACTOR_ACCUSING_INTERROGATOR, ACTOR_STERN_INTERROGATOR, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_SHIN, 0, 10);
+  Actor_FaceActor(ACTOR_SHINS_FRIEND, ACTOR_SHIN, 0);
   FieldEvent_Wait(20);
-  Actor_RunRepeatedMotion(ACTOR_ACCUSING_INTERROGATOR, 2);
+  Actor_RunRepeatedMotion(ACTOR_SHINS_FRIEND, 2);
   // "Hey, Shin... Maybe you should go easy on him..."
-  FieldEvent_ShowMessageThenWait(ACTOR_ACCUSING_INTERROGATOR, 0, 10);
-  Actor_FaceActor(ACTOR_STERN_INTERROGATOR, ACTOR_ACCUSING_INTERROGATOR, 0);
+  FieldEvent_ShowMessageThenWait(ACTOR_SHINS_FRIEND, 0, 10);
+  Actor_FaceActor(ACTOR_SHIN, ACTOR_SHINS_FRIEND, 0);
   FieldEvent_Wait(20);
-  Actor_RunRepeatedMotion(ACTOR_STERN_INTERROGATOR, 2);
+  Actor_RunRepeatedMotion(ACTOR_SHIN, 2);
   // "Hey, it wasn't your girlfriend who got hurt!"
-  FieldEvent_ShowMessageThenWait(ACTOR_STERN_INTERROGATOR, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_SHIN, 0, 10);
   FieldEvent_Wait(10);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
   // "I'm sorry she was injured, but I cannot°"
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  FieldActor_ShowEmote(ACTOR_STERN_INTERROGATOR, EMOTE_IN_FRONT | EMOTE_SCOWL,
-                       20);
-  Actor_FaceDirectionAndWait(ACTOR_STERN_INTERROGATOR, FACING_NORTH);
+  FieldActor_ShowEmote(ACTOR_SHIN, EMOTE_IN_FRONT | EMOTE_SCOWL, 20);
+  Actor_FaceDirectionAndWait(ACTOR_SHIN, FACING_NORTH);
   // "I don't want your sympathy, freak! I want you to get angry for me!"
-  FieldEvent_ShowMessageThenWait(ACTOR_STERN_INTERROGATOR, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_SHIN, 0, 10);
   Actor_RunRepeatedMotion(ACTOR_PIERS, 2);
   FieldEvent_Wait(20);
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
   // "Stop, please... Even my patience has its limits."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  Actor_FaceDirection(ACTOR_STERN_INTERROGATOR, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_SHIN, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
   // "Hey, don't you want to see what he'll do?"
-  FieldEvent_ShowMessageThenWait(ACTOR_STERN_INTERROGATOR, 0, 10);
-  Actor_ShowEmote(ACTOR_ACCUSING_INTERROGATOR, EMOTE_IN_FRONT | EMOTE_WINCE,
-                  30);
+  FieldEvent_ShowMessageThenWait(ACTOR_SHIN, 0, 10);
+  Actor_ShowEmote(ACTOR_SHINS_FRIEND, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
   // "I think we should just stop..."
-  FieldEvent_ShowMessageThenWait(ACTOR_ACCUSING_INTERROGATOR, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_SHINS_FRIEND, 0, 10);
   // "If my words will not cool your temper, then..."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   FieldEvent_Wait(20);
@@ -664,97 +664,95 @@ void MadraRooms_InterrogatePiers(void) {
   FieldPsynergy_LoadResources(ABILITY_FROST, 1);
   FieldPsynergy_SetupActorPair(ACTOR_PIERS, ACTOR_JAIL_PUDDLE);
   FieldPsynergy_StartCast();
-  Actor_ShowEmote(ACTOR_STERN_INTERROGATOR, EMOTE_IN_FRONT | EMOTE_QUESTION,
-                  30);
-  Actor_FaceActor(ACTOR_STERN_INTERROGATOR, ACTOR_PIERS, 0);
-  Actor_FaceActor(ACTOR_ACCUSING_INTERROGATOR, ACTOR_PIERS, 0);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_STERN_INTERROGATOR), 0);
-  Actor_SetScript(ACTOR_STERN_INTERROGATOR, gMadraRooms_InterrogatorLifted);
+  Actor_ShowEmote(ACTOR_SHIN, EMOTE_IN_FRONT | EMOTE_QUESTION, 30);
+  Actor_FaceActor(ACTOR_SHIN, ACTOR_PIERS, 0);
+  Actor_FaceActor(ACTOR_SHINS_FRIEND, ACTOR_PIERS, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_SHIN), 0);
+  Actor_SetScript(ACTOR_SHIN, gMadraRooms_ShinLifted);
   FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
   FieldPsynergy_End();
   // "Oh! That was Psynergy!"
   FieldEvent_ShowMessageThenWait(ACTOR_JAIL_KRADEN, 0, 10);
-  FieldActor_Stop(ACTOR_STERN_INTERROGATOR);
-  Actor_Get(ACTOR_STERN_INTERROGATOR)->scaleX = FIXED_ONE;
-  Actor_Get(ACTOR_STERN_INTERROGATOR)->scaleY = FIXED_ONE;
+  FieldActor_Stop(ACTOR_SHIN);
+  Actor_Get(ACTOR_SHIN)->scaleX = FIXED_ONE;
+  Actor_Get(ACTOR_SHIN)->scaleY = FIXED_ONE;
   FieldEvent_Wait(4);
-  Actor_Get(ACTOR_STERN_INTERROGATOR)->motionFlags = ACTOR_FALLS;
-  Actor_Get(ACTOR_STERN_INTERROGATOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_SetDestinationOffset(ACTOR_STERN_INTERROGATOR, -8, 0);
-  Actor_SetScript(ACTOR_STERN_INTERROGATOR, gMadraRooms_InterrogatorTopples);
-  FieldActor_WaitForScriptEndById(ACTOR_STERN_INTERROGATOR);
+  Actor_Get(ACTOR_SHIN)->motionFlags = ACTOR_FALLS;
+  Actor_Get(ACTOR_SHIN)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_SetDestinationOffset(ACTOR_SHIN, -8, 0);
+  Actor_SetScript(ACTOR_SHIN, gMadraRooms_ShinFalls);
+  FieldActor_WaitForScriptEndById(ACTOR_SHIN);
   Event_PlaySound(SE_LANDING_THUD);
   FieldEvent_Wait(60);
-  Actor_Get(ACTOR_STERN_INTERROGATOR)->steeringFlags |= ACTOR_FACES_MOTION;
-  FieldActor_Jump(ACTOR_STERN_INTERROGATOR, 6, 0);
+  Actor_Get(ACTOR_SHIN)->steeringFlags |= ACTOR_FACES_MOTION;
+  FieldActor_Jump(ACTOR_SHIN, 6, 0);
   FieldEvent_Wait(3);
-  Actor_SetSpriteRotationById(ACTOR_STERN_INTERROGATOR, 0);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_STERN_INTERROGATOR), 1);
-  Actor_FaceDirection(ACTOR_STERN_INTERROGATOR, FACING_SOUTH, 0);
+  Actor_SetSpriteRotationById(ACTOR_SHIN, 0);
+  Actor_SetSpriteFlags(Actor_Get(ACTOR_SHIN), 1);
+  Actor_FaceDirection(ACTOR_SHIN, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(ACTOR_ACCUSING_INTERROGATOR, FACING_EAST, 0);
+  Actor_FaceDirection(ACTOR_SHINS_FRIEND, FACING_EAST, 0);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(ACTOR_ACCUSING_INTERROGATOR, FACING_NORTH, 0);
+  Actor_FaceDirection(ACTOR_SHINS_FRIEND, FACING_NORTH, 0);
   FieldEvent_Wait(20);
-  FieldActor_ShowEmote(ACTOR_ACCUSING_INTERROGATOR,
-                       EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 30);
-  Actor_RunRepeatedMotion(ACTOR_STERN_INTERROGATOR, 2);
+  FieldActor_ShowEmote(ACTOR_SHINS_FRIEND, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
+                       30);
+  Actor_RunRepeatedMotion(ACTOR_SHIN, 2);
   FieldEvent_Wait(20);
   FieldEvent_Wait(10);
-  FieldActor_Jump(ACTOR_STERN_INTERROGATOR, 6, 20);
+  FieldActor_Jump(ACTOR_SHIN, 6, 20);
   FieldEvent_Wait(20);
-  Actor_FaceActor(ACTOR_STERN_INTERROGATOR, ACTOR_PIERS, 0);
+  Actor_FaceActor(ACTOR_SHIN, ACTOR_PIERS, 0);
   FieldEvent_Wait(20);
-  Actor_Get(ACTOR_ACCUSING_INTERROGATOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_Get(ACTOR_STERN_INTERROGATOR)->steeringFlags &= ~ACTOR_FACES_MOTION;
-  Actor_WalkByAndWait(ACTOR_STERN_INTERROGATOR, -16, 16);
+  Actor_Get(ACTOR_SHINS_FRIEND)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_Get(ACTOR_SHIN)->steeringFlags &= ~ACTOR_FACES_MOTION;
+  Actor_WalkByAndWait(ACTOR_SHIN, -16, 16);
   Actor_RunRepeatedMotion(ACTOR_PIERS, 2);
   FieldEvent_Wait(20);
-  Actor_FaceDirection(ACTOR_STERN_INTERROGATOR, FACING_SOUTH, 0);
+  Actor_FaceDirection(ACTOR_SHIN, FACING_SOUTH, 0);
   FieldEvent_Wait(20);
   FieldEvent_Wait(10);
-  FieldActor_Jump(ACTOR_STERN_INTERROGATOR, 6, 20);
+  FieldActor_Jump(ACTOR_SHIN, 6, 20);
   FieldEvent_Wait(20);
-  Actor_Get(ACTOR_STERN_INTERROGATOR)->steeringFlags |= ACTOR_FACES_MOTION;
-  Actor_SetScript(ACTOR_STERN_INTERROGATOR, gMadraRooms_InterrogatorsLeave);
-  FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_STERN_INTERROGATOR);
-  FieldActor_WatchAndSetScript(ACTOR_JAIL_KRADEN, ACTOR_STERN_INTERROGATOR);
+  Actor_Get(ACTOR_SHIN)->steeringFlags |= ACTOR_FACES_MOTION;
+  Actor_SetScript(ACTOR_SHIN, gMadraRooms_ShinAndFriendRunAway);
+  FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_SHIN);
+  FieldActor_WatchAndSetScript(ACTOR_JAIL_KRADEN, ACTOR_SHIN);
   // "Waaaaaaaaaahh!"
-  FieldEvent_ShowMessageThenWait(ACTOR_STERN_INTERROGATOR, 0, 10);
-  Actor_RunRepeatedMotion(ACTOR_ACCUSING_INTERROGATOR, 2);
+  FieldEvent_ShowMessageThenWait(ACTOR_SHIN, 0, 10);
+  Actor_RunRepeatedMotion(ACTOR_SHINS_FRIEND, 2);
   FieldEvent_Wait(20);
-  Actor_FaceActor(ACTOR_ACCUSING_INTERROGATOR, ACTOR_PIERS, 0);
-  FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_ACCUSING_INTERROGATOR);
-  FieldActor_WatchAndSetScript(ACTOR_JAIL_KRADEN, ACTOR_ACCUSING_INTERROGATOR);
+  Actor_FaceActor(ACTOR_SHINS_FRIEND, ACTOR_PIERS, 0);
+  FieldActor_WatchAndSetScript(ACTOR_FELIX, ACTOR_SHINS_FRIEND);
+  FieldActor_WatchAndSetScript(ACTOR_JAIL_KRADEN, ACTOR_SHINS_FRIEND);
   // "Did you do that?"
-  FieldEvent_ShowMessageThenWait(ACTOR_ACCUSING_INTERROGATOR, 0, 10);
+  FieldEvent_ShowMessageThenWait(ACTOR_SHINS_FRIEND, 0, 10);
   Actor_ShowEmote(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 30);
   // "What did your friend expect?"
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
-  Actor_ShowEmote(ACTOR_ACCUSING_INTERROGATOR, EMOTE_IN_FRONT | EMOTE_WINCE,
-                  30);
-  Actor_WalkByAndWait(ACTOR_ACCUSING_INTERROGATOR, -16, 16);
+  Actor_ShowEmote(ACTOR_SHINS_FRIEND, EMOTE_IN_FRONT | EMOTE_WINCE, 30);
+  Actor_WalkByAndWait(ACTOR_SHINS_FRIEND, -16, 16);
   // "You monster!"
-  FieldEvent_ShowMessageThenWait(ACTOR_ACCUSING_INTERROGATOR, 0, 1);
+  FieldEvent_ShowMessageThenWait(ACTOR_SHINS_FRIEND, 0, 1);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_SHAKE_HEAD);
   // "I... I am no monster."
   FieldEvent_ShowMessageThenWait(ACTOR_PIERS, 0, 10);
   FieldEvent_Wait(20);
-  Actor_WalkByAndWait(ACTOR_ACCUSING_INTERROGATOR, -16, 8);
+  Actor_WalkByAndWait(ACTOR_SHINS_FRIEND, -16, 8);
   FieldEvent_Wait(20);
-  Actor_RunRepeatedMotion(ACTOR_ACCUSING_INTERROGATOR, 2);
+  Actor_RunRepeatedMotion(ACTOR_SHINS_FRIEND, 2);
   FieldEvent_Wait(20);
   // "Help!!!"
-  FieldEvent_ShowMessageThenWait(ACTOR_ACCUSING_INTERROGATOR, 0, 10);
-  Actor_Get(ACTOR_ACCUSING_INTERROGATOR)->steeringFlags |= ACTOR_FACES_MOTION;
-  Actor_SetScript(ACTOR_ACCUSING_INTERROGATOR, gMadraRooms_InterrogatorsLeave);
+  FieldEvent_ShowMessageThenWait(ACTOR_SHINS_FRIEND, 0, 10);
+  Actor_Get(ACTOR_SHINS_FRIEND)->steeringFlags |= ACTOR_FACES_MOTION;
+  Actor_SetScript(ACTOR_SHINS_FRIEND, gMadraRooms_ShinAndFriendRunAway);
   FieldEvent_Wait(40);
   FieldActor_Stop(ACTOR_FELIX);
   FieldActor_Stop(ACTOR_JAIL_KRADEN);
-  FieldActor_WaitForScriptEndById(ACTOR_ACCUSING_INTERROGATOR);
-  Actor_SetPosition(ACTOR_STERN_INTERROGATOR, 0, 0);
-  Actor_SetPosition(ACTOR_ACCUSING_INTERROGATOR, 0, 0);
+  FieldActor_WaitForScriptEndById(ACTOR_SHINS_FRIEND);
+  Actor_SetPosition(ACTOR_SHIN, 0, 0);
+  Actor_SetPosition(ACTOR_SHINS_FRIEND, 0, 0);
   Actor_SetAnimation(ACTOR_JAIL_PUDDLE, 6);
   Actor_SetSpriteColorById(ACTOR_JAIL_PUDDLE, SPRITE_COLOR_NORMAL);
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
@@ -840,11 +838,11 @@ void MadraRooms_MindReadPiers(void) {
   return;
 }
 
-/// Unused: Piers' Psynergy at actor 8 alone, as the interrogation plays it;
-/// nothing calls it.
+/// Unused: Piers' Frost at the jail's puddle alone, as
+/// MadraRooms_ShinAngersPiers plays it; nothing calls it.
 UNUSED void MadraRooms_PiersUsesPsynergy(void) {
   FieldPsynergy_LoadResources(ABILITY_FROST, 1);
-  FieldPsynergy_SetupActorPair(7, 8);
+  FieldPsynergy_SetupActorPair(ACTOR_PIERS, ACTOR_JAIL_PUDDLE);
   FieldPsynergy_StartCast();
   FieldPsynergy_RunHandler(1);
   BattleEffect_StopMainActor();
@@ -1011,7 +1009,7 @@ static inline void MadraRooms_WalkIntoLeader(s32 actorId) {
   struct Actor *leader;
 
   Actor_SetSpeed(actorId, 1.2);
-  Actor_SetAnimation(actorId, 2);
+  Actor_SetAnimation(actorId, ANIM_WALK);
   leader = Actor_Get(ACTOR_FELIX);
   if (leader != NULL)
     Actor_SetDestination(actorId, leader->x.part[0].integer,
@@ -1116,7 +1114,7 @@ void MadraRooms_WelcomePiersHome(void) {
   FieldEvent_Wait(20);
   FieldEvent_ShowMessageThenWait(ACTOR_KRADEN, 0, 10);
   if (Event_GetFlag(FLAG_PIERS_SETTING_SAIL) != 0)
-    MadraRooms_SayGoodbyeAgain();
+    MadraRooms_SayFarewellAgain();
   else
     MadraRooms_AskToStayLonger();
   Actor_FaceDirection(ACTOR_PIERS, FACING_SOUTH, 0);
@@ -1148,7 +1146,7 @@ void MadraRooms_WelcomePiersHome(void) {
 
 /// Leaving a second time, the household asks whether the party must go so soon.
 /// "Ah, so you'll be leaving again, will you?"
-void MadraRooms_SayGoodbyeAgain(void) {
+void MadraRooms_SayFarewellAgain(void) {
   FieldEvent_SetMessageId((s32)MsgMadraInteriorsAhSoYoullBeLeaving);
   // "Ah, so you'll be leaving again, will you?"
   FieldEvent_ShowMessageThenWait(ACTOR_MAYOR, 0, 10);
@@ -1177,14 +1175,14 @@ void MadraRooms_SayGoodbyeAgain(void) {
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
   // "But we'll be back, I promise. Maybe we'll be able to visit at a more..."
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_ELDERS_GRANDSON, 3);
+  Actor_SetAnimationAndWait(ACTOR_ELDERS_GRANDSON, ANIM_NOD);
   FieldEvent_Wait(20);
   // "I'd like that..."
   FieldEvent_ShowMessageThenWait(ACTOR_ELDERS_GRANDSON, 0, 10);
   Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTH);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_ELDERS_GRANDDAUGHTER, 3);
+  Actor_SetAnimationAndWait(ACTOR_ELDERS_GRANDDAUGHTER, ANIM_NOD);
   FieldEvent_Wait(20);
   // "So would I!"
   FieldEvent_ShowMessageThenWait(ACTOR_ELDERS_GRANDDAUGHTER, 0, 10);
@@ -1197,7 +1195,7 @@ void MadraRooms_SayGoodbyeAgain(void) {
 /// longer?"
 void MadraRooms_AskToStayLonger(void) {
   FieldEvent_SetMessageId((s32)MsgMadraInteriorsIfYouveAlreadyRecovered);
-  Actor_SetAnimationAndWait(ACTOR_ELDERS_GRANDSON, 3);
+  Actor_SetAnimationAndWait(ACTOR_ELDERS_GRANDSON, ANIM_NOD);
   FieldEvent_Wait(20);
   // "If you've already recovered your jewel, why don't you stay here for..."
   FieldEvent_ShowMessageThenWait(ACTOR_ELDERS_GRANDSON, 0, 10);
@@ -1290,14 +1288,14 @@ void MadraRooms_AskToStayLonger(void) {
   Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   // "But we'll be back, I promise. Maybe we'll be able to visit at a more..."
   FieldEvent_ShowMessageThenWait(ACTOR_JENNA, 0, 10);
-  Actor_SetAnimationAndWait(ACTOR_ELDERS_GRANDSON, 3);
+  Actor_SetAnimationAndWait(ACTOR_ELDERS_GRANDSON, ANIM_NOD);
   FieldEvent_Wait(20);
   // "I'd like that..."
   FieldEvent_ShowMessageThenWait(ACTOR_ELDERS_GRANDSON, 0, 10);
   Actor_FaceDirectionAndWait(ACTOR_JENNA, FACING_SOUTH);
   Actor_SetAnimationAndWait(ACTOR_JENNA, ANIM_NOD);
   FieldEvent_Wait(20);
-  Actor_SetAnimationAndWait(ACTOR_ELDERS_GRANDDAUGHTER, 3);
+  Actor_SetAnimationAndWait(ACTOR_ELDERS_GRANDDAUGHTER, ANIM_NOD);
   FieldEvent_Wait(20);
   // "So would I!"
   FieldEvent_ShowMessageThenWait(ACTOR_ELDERS_GRANDDAUGHTER, 0, 10);
@@ -1308,7 +1306,7 @@ void MadraRooms_AskToStayLonger(void) {
 /// The old couple's walks into their back room and out again, Char hopping
 /// after them, as they fetch the Djinni for the Healing Fungus.
 s32 gMadraRooms_WifeWalksToBackRoom[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE_XZ(356, 72),
     SC_SYNC,
     SC_MOVE(324, 0, 73),
@@ -1319,10 +1317,10 @@ s32 gMadraRooms_WifeWalksToBackRoom[] = {
 
 /// The leader's script as the old man passes: one step aside.
 s32 gMadraRooms_LeaderStepsAside[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE_XZ(339, 111),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_NORTHWEST),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_NORTH),
@@ -1331,7 +1329,7 @@ s32 gMadraRooms_LeaderStepsAside[] = {
 
 /// The mushroom lover's script off to the back room to fetch Char.
 s32 gMadraRooms_OldManWalksToBackRoom[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE_XZ(356, 72),
     SC_SYNC,
     SC_MOVE(324, 0, 73),
@@ -1341,54 +1339,54 @@ s32 gMadraRooms_OldManWalksToBackRoom[] = {
 };
 
 /// The mushroom cook's script back to her place.
-s32 gMadraRooms_WifeComesBack[] = {                                                               
-      SC_ANIMATION(2),                                                               
-      SC_POSITION(327, 0, 71),                                 
-      SC_SET(SW_FACING, FACING_EAST),                                          
-      SC_MOVE(352, 0, 72),                                     
-      SC_SYNC,                                                                 
-      SC_MOVE_XZ(373, 109),                                     
-      SC_SYNC,                                                                 
-      SC_ANIMATION(1),                                                               
-      SC_SET(SW_FACING, FACING_NORTH),                                         
-      SC_WAIT(10),                                                             
-      SC_SET(SW_FACING, FACING_SOUTHWEST),                                     
-      SC_WAIT(10),                                                             
-      SC_SET(SW_FACING, FACING_WEST),                                          
-      SC_WAIT(10),                                                             
-      SC_END,                                                                  
-  };
+s32 gMadraRooms_WifeComesBack[] = {
+    SC_ANIMATION(ANIM_WALK),
+    SC_POSITION(327, 0, 71),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_MOVE(352, 0, 72),
+    SC_SYNC,
+    SC_MOVE_XZ(373, 109),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_SET(SW_FACING, FACING_NORTH),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_SOUTHWEST),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(10),
+    SC_END,
+};
 
 /// The mushroom lover's script back from the back room with Char.
-s32 gMadraRooms_OldManComesBack[] = {                                                               
-      SC_ANIMATION(2),                                                               
-      SC_POSITION(327, 0, 71),                                 
-      SC_SET(SW_FACING, FACING_EAST),                                          
-      SC_MOVE(352, 0, 72),                                     
-      SC_SYNC,                                                                 
-      SC_MOVE_XZ(373, 97),                                     
-      SC_SYNC,                                                                 
-      SC_ANIMATION(1),                                                               
-      SC_SET(SW_FACING, FACING_NORTH),                                         
-      SC_WAIT(10),                                                             
-      SC_SET(SW_FACING, FACING_SOUTHWEST),                                     
-      SC_WAIT(10),                                                             
-      SC_SET(SW_FACING, FACING_WEST),                                          
-      SC_WAIT(10),                                                             
-      SC_END,                                                                  
-  };
+s32 gMadraRooms_OldManComesBack[] = {
+    SC_ANIMATION(ANIM_WALK),
+    SC_POSITION(327, 0, 71),
+    SC_SET(SW_FACING, FACING_EAST),
+    SC_MOVE(352, 0, 72),
+    SC_SYNC,
+    SC_MOVE_XZ(373, 97),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_SET(SW_FACING, FACING_NORTH),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_SOUTHWEST),
+    SC_WAIT(10),
+    SC_SET(SW_FACING, FACING_WEST),
+    SC_WAIT(10),
+    SC_END,
+};
 
 /// Char's script once the old man gives him to the party: he follows the
 /// leader.
 s32 gMadraRooms_CharFollows[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_POSITION(327, 24, 71),
     SC_SET(SW_FACING, FACING_EAST),
     SC_MOVE(352, 0, 72),
     SC_SYNC,
     SC_MOVE_XZ(373, 97),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_SET(SW_FACING, FACING_NORTH),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_SOUTHWEST),
@@ -1402,50 +1400,50 @@ s32 gMadraRooms_CharFollows[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(MadraRoomsHouses),
-    SCENE_EXIT_UNLESS(1, Madra, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, Madra, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MADRA_ROOMS_HOUSES_TO_MADRA_SOUTHWEST, Madra, MADRA_FROM_MADRA_ROOMS_HOUSES_SOUTHWEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MADRA_ROOMS_HOUSES_TO_MADRA_SOUTH_A, Madra, MADRA_FROM_MADRA_ROOMS_HOUSES_SOUTH_A, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, MadraRoomsHouses, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, MadraRoomsHouses, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, Madra, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MADRA_ROOMS_HOUSES_TO_MADRA_NORTHWEST, Madra, MADRA_FROM_MADRA_ROOMS_HOUSES_NORTHWEST, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(6, MadraRoomsHouses, 7, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(7, MadraRoomsHouses, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, Madra, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, Madra, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(10, Madra, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MADRA_ROOMS_HOUSES_TO_MADRA_SOUTHEAST, Madra, MADRA_FROM_MADRA_ROOMS_HOUSES_SOUTHEAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MADRA_ROOMS_HOUSES_TO_MADRA_SOUTH_B, Madra, MADRA_FROM_MADRA_ROOMS_HOUSES_SOUTH_B, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MADRA_ROOMS_HOUSES_TO_MADRA_NORTHEAST_A, Madra, MADRA_FROM_MADRA_ROOMS_HOUSES_NORTHEAST_A, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(11, MadraRoomsHouses, 12, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(12, MadraRoomsHouses, 11, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(13, MadraRoomsHouses, 14, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(14, MadraRoomsHouses, 13, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(15, Madra, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(20, Madra, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MADRA_ROOMS_HOUSES_TO_MADRA_NORTHEAST_B, Madra, MADRA_FROM_MADRA_ROOMS_HOUSES_NORTHEAST_B, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MADRA_ROOMS_HOUSES_TO_MADRA_WEST, Madra, MADRA_FROM_MADRA_ROOMS_HOUSES_WEST, EXIT_FLAG_NONE),
     SCENE_EXITS(MadraRoomsCavernHomes),
-    SCENE_EXIT_UNLESS(1, Madra, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, Madra, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MADRA_ROOMS_CAVERN_HOMES_TO_MADRA_EAST, Madra, MADRA_FROM_MADRA_ROOMS_CAVERN_HOMES_EAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(MADRA_ROOMS_CAVERN_HOMES_TO_MADRA_WEST, Madra, MADRA_FROM_MADRA_ROOMS_CAVERN_HOMES_WEST, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
 /// Madra's houses, shops, inn and sanctum until the party returns with Piers
 /// (enum MadraRoomsActorId, then MadraRoomsTravelersActorId).
 struct ActorPlacement gMadraRooms_Placements[] = {
-    ACTOR_PLACEMENT(73, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 184, 0, 120, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(74, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 112, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(75, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 109, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(76, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 96, FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BALD_MAN_IN_ORANGE_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 184, 0, 120, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_AUBURN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 112, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_BLUE_COAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 109, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_IN_GREEN_SHAWL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 96, FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_IN_RED_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 296, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_IN_BLUE_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 384, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(74, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 112, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_AUBURN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 616, 0, 112, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_BLUE_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 640, 0, 152, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(76, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 615, 0, 311, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_IN_GREEN_SHAWL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 615, 0, 311, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 728, 0, 364, FACING_NORTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 348, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 160, 0, 556, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(74, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 624, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(76, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 648, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_AUBURN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 624, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_IN_GREEN_SHAWL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 648, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_WITH_DARK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 604, 0, 548, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PINK_APRON, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 432, 0, 616, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(72, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 518, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_WHITE_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 518, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, 98, MOVEMENT_TYPE_WANDER, 368, 0, 320, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 56, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 56, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 676, 0, 762, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_CARRYING_A_PACK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 730, 0, 712, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WARRIOR_IN_GOLDEN_HELMET, FLAG_BRIGGS_CAUGHT, MOVEMENT_TYPE_STAND, 847, 0, 711, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -1456,27 +1454,27 @@ struct ActorPlacement gMadraRooms_Placements[] = {
 /// Madra's houses once the party returns with Piers (enum
 /// MadraRoomsActorId, then MadraRoomsReturnActorId).
 struct ActorPlacement gMadraRooms_PlacementsOnReturn[] = {
-    ACTOR_PLACEMENT(73, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 184, 0, 120, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(74, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 112, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(75, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 109, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(76, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 96, FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_BALD_MAN_IN_ORANGE_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 184, 0, 120, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_AUBURN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 112, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_BLUE_COAT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 109, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_IN_GREEN_SHAWL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 96, FACING_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_IN_RED_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 296, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_IN_BLUE_BANDANA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 72, 0, 384, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(74, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 584, 0, 88, FACING_NORTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_AUBURN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 584, 0, 88, FACING_NORTHEAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_BLUE_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 640, 0, 152, FACING_NORTHWEST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(76, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 620, 0, 152, FACING_NORTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_IN_GREEN_SHAWL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 620, 0, 152, FACING_NORTHEAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_FAIR_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 152, FACING_NORTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_GIRL_WITH_PIGTAILS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 696, 0, 136, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 160, 0, 552, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(74, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 624, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(76, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 648, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_AUBURN_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 624, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_IN_GREEN_SHAWL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 648, FACING_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_WITH_DARK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 604, 0, 548, FACING_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PINK_APRON, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 432, 0, 616, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(72, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 518, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, 0x62, MOVEMENT_TYPE_WANDER, 368, 0, 320, FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(489, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 56, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(19, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 614, 0, 111, FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(20, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 636, 0, 111, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_WHITE_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 518, FACING_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, FLAG_DJINNI(DJINNI_CHAR), MOVEMENT_TYPE_WANDER, 368, 0, 320, FACING_SOUTH, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 600, 0, 56, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MADRAS_ELDER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 614, 0, 111, FACING_SOUTHEAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_MADRAS_MAYOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 636, 0, 111, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1288, 0, 8, FACING_WEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1288, 0, 8, FACING_WEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 1288, 0, 8, FACING_WEST, TALK_FACING_PARTY, 0),
@@ -1503,8 +1501,8 @@ struct ActorPlacement gMadraRooms_JailPlacements[] = {
 
 /// The left cavern home (enum MadraRoomsCavernHomeActorId).
 struct ActorPlacement gMadraRooms_SecondRoomsPlacements[] = {
-    ACTOR_PLACEMENT(71, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 192, 0, 128, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(72, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 128, 0, 192, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_IN_GREEN_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 192, 0, 128, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_WHITE_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 128, 0, 192, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_PONYTAIL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 356, 0, 109, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_GIRL_WITH_PIGTAILS, IF_FLAG_SET(FLAG_BRIGGS_CAUGHT), MOVEMENT_TYPE_STAND, 357, 0, 131, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
@@ -1583,22 +1581,22 @@ struct Trigger gMadraRooms_TriggersBeforeRaid[] = {
 /// The jail's talk and Mind Read, by the story flags.
 struct Trigger gMadraRooms_JailTriggers[] = {
     {TRIGGER_EXIT, 20, CONDITION_ALWAYS, 20},
-    {TRIGGER_TALK, ACTOR_STERN_INTERROGATOR, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgMadraInteriorsOhPiersAfterWay)},
-    {TRIGGER_TALK, ACTOR_ACCUSING_INTERROGATOR, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgMadraInteriorsShinsDevelopedTerribleFear)},
+    {TRIGGER_TALK, ACTOR_SHIN, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgMadraInteriorsOhPiersAfterWay)},
+    {TRIGGER_TALK, ACTOR_SHINS_FRIEND, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgMadraInteriorsShinsDevelopedTerribleFear)},
     {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_WITNESS_ON_ISAACS_PARTY, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgWhenAndHis)},
     {TALK_TRIGGER_FACING(FACING_NORTHWEST), ACTOR_WITNESS_ON_ISAACS_PARTY, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgWhenAndHis)},
     {TALK_TRIGGER_FACING(FACING_WEST), ACTOR_WITNESS_ON_ISAACS_PARTY, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgWhenAndHis)},
-    {TRIGGER_TALK, ACTOR_ILL_MAN, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), EVENT(MadraRooms_TalkToIllMan)},
-    {TRIGGER_TALK, ACTOR_STERN_INTERROGATOR, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsPiersWasntOneOfChampa)},
-    {TRIGGER_TALK, ACTOR_ACCUSING_INTERROGATOR, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsSoThatPiersGuyWasnt)},
+    {TRIGGER_TALK, ACTOR_MAN_FOCUSING_ON_ICE, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), EVENT(MadraRooms_TalkToManFocusingOnIce)},
+    {TRIGGER_TALK, ACTOR_SHIN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsPiersWasntOneOfChampa)},
+    {TRIGGER_TALK, ACTOR_SHINS_FRIEND, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsSoThatPiersGuyWasnt)},
     {TRIGGER_TALK, ACTOR_PIERS, CONDITION_ALWAYS, EVENT(MadraRooms_TalkToPiers)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STERN_INTERROGATOR, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgMadraInteriorsEvenSoundOfNamePiers)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ACCUSING_INTERROGATOR, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgMadraInteriorsIUnderstandWhyShinsScared)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SHIN, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgMadraInteriorsEvenSoundOfNamePiers)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SHINS_FRIEND, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgMadraInteriorsIUnderstandWhyShinsScared)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WITNESS_ON_ISAACS_PARTY, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), MSGNO(MsgSoThisFellow)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ILL_MAN, IF_FLAG_SET(FLAG_MADRA_ILL_MAN_GROANED), MSGNO(MsgMadraIKnewIShouldHave)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14 | TRIGGER_SUBJECT_OWN_EFFECT, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), EVENT(MadraRooms_TalkToIllMan)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STERN_INTERROGATOR, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsThereWasSomethingReallyFrightening)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ACCUSING_INTERROGATOR, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsThatPiersWasStrangeFellow)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_FOCUSING_ON_ICE, IF_FLAG_SET(FLAG_MADRA_FOCUSING_MAN_GROANED), MSGNO(MsgMadraIKnewIShouldHave)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_FOCUSING_ON_ICE | TRIGGER_SUBJECT_OWN_EFFECT, IF_FLAG_SET(FLAG_GABOMBA_MESSAGE_CARRIED), EVENT(MadraRooms_TalkToManFocusingOnIce)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SHIN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsThereWasSomethingReallyFrightening)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SHINS_FRIEND, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsThatPiersWasStrangeFellow)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PIERS, CONDITION_ALWAYS, EVENT(MadraRooms_MindReadPiers)},
     {TRIGGER_TABLE_END},
 };
@@ -1759,8 +1757,8 @@ struct Trigger gMadraRooms_TriggersOnReturn[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_STAYING_AT_THE_INN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsItMustBeVeryStrange)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRAVELER_WHO_SLEPT_THROUGH_THE_RAID_ON_RETURN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsIfIHadBoat)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRAVELERS_PARTNER_ON_RETURN, CONDITION_ALWAYS, MSGNO(MsgMadraInteriorsHmIWonderIfTidal)},
-    {USE_ITEM_ON_ACTOR(ITEM_HEALING_FUNGUS), 10, FLAG_MADRA_HEALING_FUNGUS_GIVEN, EVENT(MadraRooms_GiveHealingFungus)},
-    {USE_ITEM_ON_ACTOR(ITEM_LAUGHING_FUNGUS), 10, FLAG_MADRA_HEALING_FUNGUS_GIVEN, EVENT(MadraRooms_GiveLaughingFungus)},
+    {USE_ITEM_ON_ACTOR(ITEM_HEALING_FUNGUS), ACTOR_MUSHROOM_LOVER, FLAG_MADRA_HEALING_FUNGUS_GIVEN, EVENT(MadraRooms_GiveHealingFungus)},
+    {USE_ITEM_ON_ACTOR(ITEM_LAUGHING_FUNGUS), ACTOR_MUSHROOM_LOVER, FLAG_MADRA_HEALING_FUNGUS_GIVEN, EVENT(MadraRooms_GiveLaughingFungus)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriorsThereAreSomePotatoesBoiling))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriorsTheyreMakingNanItLooks))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgMadraInteriorsAllSpicesAreNeatlyArranged))},
@@ -1769,38 +1767,42 @@ struct Trigger gMadraRooms_TriggersOnReturn[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// The interrogators walk out of the jail once Piers has been questioned.
-s32 gMadraRooms_InterrogatorsLeave[] = {                                                               
-      SC_ANIMATION(2), SC_MOVE(408, 0, 872),                           
-      SC_SYNC,   SC_MOVE(408, 0, 904),                           
-      SC_SYNC,   SC_MOVE(408, 0, 920),                           
-      SC_SYNC,   SC_ANIMATION(1),                                                    
-      SC_END,                                                                  
-  };
+/// Shin and then his friend run out of the jail, crying for help.
+s32 gMadraRooms_ShinAndFriendRunAway[] = {
+    SC_ANIMATION(ANIM_WALK),
+    SC_MOVE(408, 0, 872),
+    SC_SYNC,
+    SC_MOVE(408, 0, 904),
+    SC_SYNC,
+    SC_MOVE(408, 0, 920),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_END,
+};
 
-/// The interrogator topples over, a quarter turn in eight frames.
-s32 gMadraRooms_InterrogatorTopples[] = {
-    SC_CALL(MadraRooms_TiltSprite),
+/// Shin falls over, a quarter turn in eight frames.
+s32 gMadraRooms_ShinFalls[] = {
+    SC_CALL(MadraRooms_RotateSprite),
     SC_WAIT(1),
-    SC_CALL(MadraRooms_TiltSprite),
+    SC_CALL(MadraRooms_RotateSprite),
     SC_WAIT(1),
-    SC_CALL(MadraRooms_TiltSprite),
+    SC_CALL(MadraRooms_RotateSprite),
     SC_WAIT(1),
-    SC_CALL(MadraRooms_TiltSprite),
+    SC_CALL(MadraRooms_RotateSprite),
     SC_WAIT(1),
-    SC_CALL(MadraRooms_TiltSprite),
+    SC_CALL(MadraRooms_RotateSprite),
     SC_WAIT(1),
-    SC_CALL(MadraRooms_TiltSprite),
+    SC_CALL(MadraRooms_RotateSprite),
     SC_WAIT(1),
-    SC_CALL(MadraRooms_TiltSprite),
+    SC_CALL(MadraRooms_RotateSprite),
     SC_WAIT(1),
-    SC_CALL(MadraRooms_TiltSprite),
+    SC_CALL(MadraRooms_RotateSprite),
     SC_WAIT(1),
     SC_END,
 };
 
-/// Piers' Psynergy lifts the interrogator and holds him bobbing in the air.
-s32 gMadraRooms_InterrogatorLifted[] = {
+/// Piers' shaft of ice lifts Shin and holds him bobbing in the air.
+s32 gMadraRooms_ShinLifted[] = {
     SC_SET(SW_MOTION, 0),
     SC_WAIT(100),
     SC_WAIT(36),

@@ -1,8 +1,8 @@
 /// @file
 /// The houses of Champa, the village of Briggs's people on the cliffs of the
-/// Eastern Sea, as SceneId_ChampaRooms, with the inn and the artifact shop;
-/// the same scene entered from the islets at entrances 8 and 9 is a house on an
-/// islet.
+/// Eastern Sea, as SceneId_ChampaRooms, with the inn and the artifact shop.
+/// Entered from the islets, the same scene is the tent on SoutheastAngaraIslet
+/// or the hut on WestIndraIslet's pier.
 ///
 /// Until Briggs sails from Alhafra in the boat he bought
 /// (FLAG_BRIGGS_SAILED_FROM_ALHAFRA) the village is hungry, its fish gone
@@ -21,6 +21,7 @@
 #include "system/main_routine_work.h"
 #include "system/ram_buffer.h"
 #include "version.h"
+#include "field/field_sequence.h"
 #include "field/field_sequence_event.h"
 #include "scene_ids.h"
 #include "field/event_inline.h"
@@ -28,10 +29,10 @@
 #include "scene/scene.h"
 
 extern struct ActorPlacement gChampaRooms_ActorPlacements[];
-extern struct ActorPlacement gChampaRooms_IsletHouseActorPlacements[];
+extern struct ActorPlacement gChampaRooms_IsletActorPlacements[];
 extern struct Trigger gChampaRooms_Triggers[];
 extern struct Trigger gChampaRooms_TriggersOnceBriggsSailed[];
-extern struct Trigger gChampaRooms_IsletHouseTriggers[];
+extern struct Trigger gChampaRooms_IsletTriggers[];
 
 void Scene_FadeInAndClearFlag(void);
 
@@ -54,22 +55,15 @@ enum ChampaRoomsActorId {
   ACTOR_FISH_TRADER
 };
 
-/// The ways into the islet houses this overlay also holds: from the islet with
-/// the pier (SoutheastAngaraIslet) and from the islet with the dog
-/// (WestIndraIslet).
-enum ChampaRoomsEntrance {
-  ENTRANCE_PIER_ISLET_HOUSE = 8,
-  ENTRANCE_DOG_ISLET_HOUSE = 9
-};
-
-/// Whether the party is in one of the islet houses.
-#define IN_ISLET_HOUSE()                                                       \
+/// Whether the party is in the tent on SoutheastAngaraIslet or the hut on
+/// WestIndraIslet's pier, which this overlay also holds.
+#define IN_ISLET_ROOMS()                                                       \
   (gMainRoutineWork.next == SCENE_CHAMPA_ROOMS &&                              \
-   (gMainRoutineWork.entrance == ENTRANCE_PIER_ISLET_HOUSE ||                  \
-    gMainRoutineWork.entrance == ENTRANCE_DOG_ISLET_HOUSE))
+   (gMainRoutineWork.entrance == CHAMPA_ROOMS_FROM_SOUTHEAST_ANGARA_ISLET ||   \
+    gMainRoutineWork.entrance == CHAMPA_ROOMS_FROM_WEST_INDRA_ISLET))
 
-/// The islet house's one actor.
-enum ChampaIsletHouseActorId { ACTOR_INDRA_NEIGHBOR = ACTOR_FIRST_PLACED };
+/// The islet rooms' one actor, in the hut on WestIndraIslet's pier.
+enum ChampaIsletActorId { ACTOR_INDRA_NEIGHBOR = ACTOR_FIRST_PLACED };
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -77,11 +71,11 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-void Shop_Run(s32 a, s32 b);
+void Shop_Run(s32 shop, s32 actorId);
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
-  if (IN_ISLET_HOUSE())
-    return gChampaRooms_IsletHouseActorPlacements;
+  if (IN_ISLET_ROOMS())
+    return gChampaRooms_IsletActorPlacements;
   return gChampaRooms_ActorPlacements;
 }
 
@@ -92,14 +86,18 @@ enum { SHOP_CHAMPA = 25 };
 enum { CHAMPA_INN = 10 };
 
 /// Talking to the artifact merchant across his counter opens his shop.
-void ChampaRooms_OpenArtifactShop(s32 actor) { Shop_Run(SHOP_CHAMPA, actor); }
+void ChampaRooms_TalkToArtifactMerchant(s32 actorId) {
+  Shop_Run(SHOP_CHAMPA, actorId);
+}
 
 /// Talking to the innkeeper across his counter opens the inn.
-void ChampaRooms_OpenInn(s32 actor) { Inn_CheckIn(CHAMPA_INN, actor); }
+void ChampaRooms_TalkToInnkeeper(s32 actorId) {
+  Inn_CheckIn(CHAMPA_INN, actorId);
+}
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (IN_ISLET_HOUSE())
-    return gChampaRooms_IsletHouseTriggers;
+  if (IN_ISLET_ROOMS())
+    return gChampaRooms_IsletTriggers;
   if (GameFlag_Get(FLAG_BRIGGS_SAILED_FROM_ALHAFRA))
     return gChampaRooms_TriggersOnceBriggsSailed;
   return gChampaRooms_Triggers;
@@ -108,13 +106,13 @@ const struct Trigger *Scene_GetTriggers(void) {
 s32 Scene_Initialize(void) {
   s32 *effect = &gFieldWork->transition;
 #if !TLA_PATCH_1
-  s32 value = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  s32 value = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
 #else
-  s32 value = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
+  s32 value = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 #endif
 
   *effect = value;
-  if (IN_ISLET_HOUSE())
+  if (IN_ISLET_ROOMS())
     Scene_FadeInAndClearFlag();
   return 0;
 }
@@ -127,10 +125,10 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {ENTRANCE_PIER_ISLET_HOUSE, CONDITION_ALWAYS, 416, 0, 664, FACING_NORTH, 0,
-     288, 536, 528, 696, 0},
-    {ENTRANCE_DOG_ISLET_HOUSE, CONDITION_ALWAYS, 608, 0, 664, FACING_NORTH, 0,
-     488, 528, 728, 704, 0},
+    {CHAMPA_ROOMS_FROM_SOUTHEAST_ANGARA_ISLET, CONDITION_ALWAYS, 416, 0, 664,
+     FACING_NORTH, 0, 288, 536, 528, 696, 0},
+    {CHAMPA_ROOMS_FROM_WEST_INDRA_ISLET, CONDITION_ALWAYS, 608, 0, 664,
+     FACING_NORTH, 0, 488, 528, 728, 704, 0},
     {SCENE_TABLE_END},
 };
 
@@ -159,8 +157,9 @@ struct ActorPlacement gChampaRooms_ActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS,
                     MOVEMENT_TYPE_STAND, 128, 0, 72, FACING_SOUTH,
                     TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(116, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 88,
-                    FACING_EAST, TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 104, 0, 88, FACING_EAST,
+                    TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS,
                     MOVEMENT_TYPE_WANDER, 144, 0, 136, FACING_SOUTH_SOUTHWEST,
                     TALK_FACING_PARTY_AND_BACK, 0),
@@ -176,19 +175,24 @@ struct ActorPlacement gChampaRooms_ActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_BALD_MUSCULAR_MAN, CONDITION_ALWAYS,
                     MOVEMENT_TYPE_STAND, 328, 0, 88, FACING_WEST,
                     TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(112, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 152, 0, 360,
-                    FACING_SOUTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(113, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 104, 0, 336,
-                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER, 344, 0, 360,
-                    FACING_NORTH, TALK_FACING_PARTY, 0),
-    ACTOR_PLACEMENT(128, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 336,
-                    FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_WANDER, 152, 0, 360, FACING_SOUTH,
+                    TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_WITH_HEADBAND, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 104, 0, 336, FACING_WEST,
+                    TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_WANDER, 344, 0, 360, FACING_NORTH,
+                    TALK_FACING_PARTY, 0),
+    ACTOR_PLACEMENT(SPRITE_WOMAN_IN_GREEN_SKIRT, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 296, 0, 336, FACING_EAST,
+                    TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_ARTIFACT_MERCHANT, CONDITION_ALWAYS,
                     MOVEMENT_TYPE_STAND, 208, 0, 592, FACING_SOUTH_SOUTHWEST,
                     TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(114, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 112, 0, 584,
-                    FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MAN_WITH_CURLY_HAIR, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_STAND, 112, 0, 584, FACING_WEST,
+                    TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MAN_WITH_DARK_HAIR, CONDITION_ALWAYS,
                     MOVEMENT_TYPE_STAND, 600, 0, 80, FACING_SOUTH_SOUTHWEST,
                     TALK_FACING_PARTY_AND_BACK, 0),
@@ -198,9 +202,10 @@ struct ActorPlacement gChampaRooms_ActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gChampaRooms_IsletHouseActorPlacements[] = {
-    ACTOR_PLACEMENT(74, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 608, 0,
-                    612, FACING_SOUTH, TALK_FACING_PARTY, 0),
+struct ActorPlacement gChampaRooms_IsletActorPlacements[] = {
+    ACTOR_PLACEMENT(SPRITE_WOMAN_WITH_AUBURN_HAIR, CONDITION_ALWAYS,
+                    MOVEMENT_TYPE_WANDER_NEAR, 608, 0, 612, FACING_SOUTH,
+                    TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
@@ -254,7 +259,7 @@ struct Trigger gChampaRooms_Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TIDAL_WAVE_RUMORMONGER,
      CONDITION_ALWAYS, MSGNO(MsgAllTheSailors)},
     {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_ARTIFACT_MERCHANT,
-     CONDITION_ALWAYS, EVENT(ChampaRooms_OpenArtifactShop)},
+     CONDITION_ALWAYS, EVENT(ChampaRooms_TalkToArtifactMerchant)},
     {TRIGGER_TALK, ACTOR_ARTIFACT_MERCHANT, CONDITION_ALWAYS,
      MSGNO(MsgIHaveSome)},
     {TRIGGER_TALK, ACTOR_ANKOHL_ADVISER, CONDITION_ALWAYS, MSGNO(MsgIfYouGo)},
@@ -263,7 +268,7 @@ struct Trigger gChampaRooms_Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ANKOHL_ADVISER,
      CONDITION_ALWAYS, MSGNO(MsgTheStuffIn)},
     {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_INNKEEPER, CONDITION_ALWAYS,
-     EVENT(ChampaRooms_OpenInn)},
+     EVENT(ChampaRooms_TalkToInnkeeper)},
     {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgListenIfYou)},
     {TRIGGER_TALK, ACTOR_FISH_TRADER, CONDITION_ALWAYS, MSGNO(MsgWeUsedTo)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
@@ -321,7 +326,7 @@ struct Trigger gChampaRooms_TriggersOnceBriggsSailed[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TIDAL_WAVE_RUMORMONGER,
      CONDITION_ALWAYS, MSGNO(MsgSupportingAnEntire)},
     {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_ARTIFACT_MERCHANT,
-     CONDITION_ALWAYS, EVENT(ChampaRooms_OpenArtifactShop)},
+     CONDITION_ALWAYS, EVENT(ChampaRooms_TalkToArtifactMerchant)},
     {TRIGGER_TALK, ACTOR_ARTIFACT_MERCHANT, CONDITION_ALWAYS,
      MSGNO(MsgTheJewelsBriggs)},
     {TRIGGER_TALK, ACTOR_ANKOHL_ADVISER, CONDITION_ALWAYS,
@@ -331,7 +336,7 @@ struct Trigger gChampaRooms_TriggersOnceBriggsSailed[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ANKOHL_ADVISER,
      CONDITION_ALWAYS, MSGNO(MsgNowSThe)},
     {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_INNKEEPER, CONDITION_ALWAYS,
-     EVENT(ChampaRooms_OpenInn)},
+     EVENT(ChampaRooms_TalkToInnkeeper)},
     {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgWeStillHaven)},
     {TRIGGER_TALK, ACTOR_FISH_TRADER, CONDITION_ALWAYS, MSGNO(MsgItSNice)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
@@ -341,7 +346,7 @@ struct Trigger gChampaRooms_TriggersOnceBriggsSailed[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gChampaRooms_IsletHouseTriggers[] = {
+struct Trigger gChampaRooms_IsletTriggers[] = {
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_TALK, ACTOR_INDRA_NEIGHBOR, CONDITION_ALWAYS,

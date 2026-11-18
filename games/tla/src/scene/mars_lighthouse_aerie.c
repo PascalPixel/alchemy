@@ -424,6 +424,7 @@ void MarsLighthouseAerie_SpawnBeaconFlames(void) {
       actor->update = MarsLighthouseAerie_SwingBeaconFlame;
       actor->watchedActor = anchor;
       actor->speedLimit = FIXEDtoINT(Math_Sin((offset & 0xfffff) >> 4) * 24);
+      // The same byte, written through its address.
       *(u8 *)&sprite->nextFrame = 0;
       sprite->priority =
           ((struct MarsLighthouseAerieSprite *)anchor->sprite)->priority;
@@ -1977,6 +1978,8 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
       actor->speedLimit = Math_Sin(Random16() * 0xffff >> 20) * 24;
       actor->speedLimit = FIXEDtoINT(anchor->speedLimit);
       sprite->nextFrame = 0;
+      /* FAKEMATCH(temporary): the priority bits set in attribute 2's high byte
+       * with the mask held in a local; plainly, sprite->priority = 1. */
       mask = ~(OBJ_PRIORITY(3) >> 8);
       ((u8 *)sprite)[9] = (((u8 *)sprite)[9] & mask) | OBJ_PRIORITY(1) >> 8;
     }
@@ -2359,7 +2362,8 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   FieldCamera_MoveTo(512, 96, 288, 0);
   MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 1);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(20);
@@ -3111,7 +3115,7 @@ u16 gMarsLighthouseAerie_FadeOrder[] ALIGNED(4) = {
 
 s32 gMarsLighthouseAerie_BeaconFireScript[] = {
     SC_LABEL(1),
-    SC_ADD(SW_SCALE_X, -1536),
+    SC_ADD(SW_SCALE_X, -(FIXED_ONE * 3 / 128)),
     SC_WAIT(1),
     SC_LOOP(4, SC_TO(1)),
     SC_LABEL(2),

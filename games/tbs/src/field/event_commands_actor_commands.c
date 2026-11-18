@@ -728,11 +728,11 @@ void Actor_SetSpriteColor(struct Actor *actor, s32 param) {
 #define ACTOR_WATCH_ACTOR_MASK 0xff
 /// The distance, in pixels, a follower stays behind the actor it watches
 /// (Actor_MoveTowardTarget reads it from the follower's timer).
-#define ACTOR_FOLLOW_DISTANCE 40
+#define FOLLOW_DISTANCE 40
 
 /// Makes an actor follow the actor in targetId's ACTOR_WATCH_ACTOR_MASK bits
 /// and starts script on it. Unless targetId has ACTOR_WATCH_KEEP_MOTION it
-/// keeps ACTOR_FOLLOW_DISTANCE, takes the target's top speed with twice its
+/// keeps FOLLOW_DISTANCE, takes the target's top speed with twice its
 /// acceleration, to keep up with it, and no collision flags, so it cannot block
 /// the target.
 void Actor_WatchAndStartScript(u32 actorId, s32 targetId, const void *script) {
@@ -742,7 +742,7 @@ void Actor_WatchAndStartScript(u32 actorId, s32 targetId, const void *script) {
   if (follower != NULL && target != NULL) {
     follower->watchedActor = target;
     if (!(targetId & ACTOR_WATCH_KEEP_MOTION)) {
-      follower->timer = ACTOR_FOLLOW_DISTANCE;
+      follower->timer = FOLLOW_DISTANCE;
       follower->acceleration = target->acceleration * 2;
       follower->speedLimit = target->speedLimit;
       follower->collisionFlags = 0;
@@ -886,7 +886,7 @@ s32 Actor_FindBySprite(s32 sprite) {
 #undef DUST_PUFF_DRAG_X
 #undef DUST_PUFF_DRAG_Z
 #undef ACTOR_WATCH_ACTOR_MASK
-#undef ACTOR_FOLLOW_DISTANCE
+#undef FOLLOW_DISTANCE
 #undef REPEATED_MOTION_MAX
 #undef REPEATED_MOTION_SCRIPT_BYTES
 #undef LEDGE_JUMP_SINK_FRAMES

@@ -278,34 +278,20 @@ s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, FIXED scale,
 #endif
 
 #define DICE_COUNT 2
-#define DICE_FACE_COUNT 6
 #define DICE_RESULT_COUNT 4
-#define DICE_BET_PER_LEVEL 10
 /// The result: one number every 5 frames, then 20 frames in the lettering,
 /// the winnings, and A to go on; the payout closes 15 frames after it starts.
 #define DICE_NUMBER_REVEAL_FRAMES 5
 #define DICE_RESULT_FRAMES 20
 #define DICE_PAYOUT_FRAMES 15
-/// The coins are drawn with six digits.
-#define DICE_COIN_DIGITS 6
-
-/// The board fades in and out over 16 frames, a sixteenth of full brightness a
-/// frame.
-#define DICE_FADE_FRAMES 16
-
-/// The depths from the camera a die is drawn between: nearer or further is
-/// drawn as at the limit, and the nearer, the larger.
-#define DICE_NEAREST_DEPTH 350
-#define DICE_FARTHEST_DEPTH 650
 
 /// Two dice whose centres come closer than this push each other apart.
 #define DICE_TOUCH_DISTANCE 50
 /// Where each picture's sprite tiles start, in OAM's 32-byte steps (two to a
-/// 256-colour tile): the rolling die's views from 0, its shadow, the big
-/// numbers (the result's lettering counted on from them), the aiming hand,
-/// the Perfect Bonus sign, its 3, 5 and times sign, and the lucky numbers'
-/// small faces.
-#define DICE_SHADOW_TILE 144
+/// 256-colour tile): the rolling die's views from 0, its shadow at
+/// DICE_SHADOW_TILE (field/field.h), the big numbers (the result's lettering
+/// counted on from them), the aiming hand, the Perfect Bonus sign, its 3, 5
+/// and times sign, and the lucky numbers' small faces.
 #define DICE_NUMBER_TILES 152
 #define DICE_AIM_MARKER_TILE 344
 #define DICE_BONUS_SIGN_TILE 856
@@ -321,27 +307,11 @@ s32 LuckyDice_ScaleRgb555Buffer(u16 *source, u16 *destination, FIXED scale,
 /// A win flashes a die (both for four alike) for this many frames.
 #define DICE_FLASH_FRAMES 60
 #define DICE_PERFECT_FLASH_FRAMES 120
-/// A thrown die starts spinning at this rate, its roll angle a frame; each
-/// bounce takes 20 off it.
-#define DICE_THROW_SPIN 300
-#define DICE_BOUNCE_SPIN_LOSS 20
-
-/// A die's roll angle (its particle's variant) crosses a face in
-/// DICE_TILES_PER_FACE tiles, and LuckyDice_Run reads the tile as angle /
-/// DICE_ROLL_PER_TILE and the face as angle / DICE_ROLL_PER_FACE.
-#define DICE_TILES_PER_FACE 3
-#define DICE_ROLL_PER_TILE 1024
-#define DICE_ROLL_PER_FACE (DICE_TILES_PER_FACE * DICE_ROLL_PER_TILE)
-#define DICE_ROLL_TURN (DICE_FACE_COUNT * DICE_ROLL_PER_FACE) ///< six faces
 
 /// The board's picture begins with its 224 colours, the sprites' with all 256,
 /// each before its tiles.
 #define DICE_BOARD_PALETTE_COLORS 224
 #define DICE_SPRITES_PALETTE_COLORS 256
-
-/// A die's or a shadow's affine scale at DICE_NEAREST_DEPTH, in 256ths: drawn
-/// at twice its size, and smaller by half of its depth past it.
-#define DICE_NEAREST_SCALE 128
 
 /// What the Lucky Dice screen is doing.
 enum LuckyDiceState {

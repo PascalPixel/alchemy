@@ -82,7 +82,7 @@
 #define TOTAL_CIRCLE_RADIUS 48
 
 /// How far left of and above its point a die's sprite, and a shadow's, has its
-/// corner at DICE_NEAREST_DEPTH; the further the die, the less, as its scale.
+/// corner at DICE_NEAREST_DEPTH, in pixels; the further the die, the less.
 #define DIE_CORNER_X 48
 #define DIE_CORNER_Y 32
 #define SHADOW_CORNER_X 48

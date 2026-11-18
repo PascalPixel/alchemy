@@ -140,7 +140,7 @@ enum {
 
 /// The speaker of a message. Every speaker in this scene has
 /// SPEAKER_WINDOW_BELOW.
-#define SPEAKER(actorId) (SPEAKER_WINDOW_BELOW | (actorId))
+#define TREE_ROOMS_SPEAKER(actorId) (SPEAKER_WINDOW_BELOW | (actorId))
 
 // The scene's temporary flags: FLAG_TRET_TREE_SECOND_FLOOR_COCOON_A_TORN and
 // the others are set the first time each cocoon is stepped on, tearing it; the
@@ -463,7 +463,7 @@ static void TreeRooms_FightTret(void) {
   Sound_Play(SOUND_FADE_OUT_BGM);
   Event_SetMessageId(MsgTretHmHrooom);
   // "Hm HROOOM!!!"
-  Event_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
+  Event_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   Sound_Play(MUS_CONFRONTATION);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
   Actor_SetSpeed(ACTOR_GARET, 1);
@@ -492,7 +492,7 @@ static void TreeRooms_FightTret(void) {
   Actor_SetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
   Event_Wait(20);
   TreeRooms_ChangeFace(TRET_FACE_CHANGE_WRATHFUL_OPEN_EYES);
-  Event_ShowMessage(SPEAKER(ACTOR_TRET), 0);
+  Event_ShowMessage(TREE_ROOMS_SPEAKER(ACTOR_TRET), 0);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_StartRepeatedMotion(ACTOR_MIA, 2);
@@ -502,12 +502,12 @@ static void TreeRooms_FightTret(void) {
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   TreeRooms_ChangeFace(TRET_FACE_CHANGE_WRATHFUL_BLINK);
-  FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_TRET), 0, 10);
+  FieldEvent_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_TRET), 0, 10);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Actor_StartRepeatedMotion(ACTOR_GARET, 1);
   Actor_StartRepeatedMotion(ACTOR_MIA, 1);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
-  Event_ShowMessage(SPEAKER(ACTOR_TRET), 0);
+  Event_ShowMessage(TREE_ROOMS_SPEAKER(ACTOR_TRET), 0);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_GARET,
@@ -518,7 +518,7 @@ static void TreeRooms_FightTret(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
   TreeRooms_ChangeFace(TRET_FACE_CHANGE_WRATHFUL_BLINK);
-  Event_ShowMessage(SPEAKER(ACTOR_TRET), 0);
+  Event_ShowMessage(TREE_ROOMS_SPEAKER(ACTOR_TRET), 0);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
   gFieldWork->transitionFrames = 64;
@@ -583,7 +583,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   // Tret comes to.
   Event_SetMessageId(MsgTretMmmmm);
   // "Oh... Mmmmm..."
-  FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
+  FieldEvent_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_StartRepeatedMotion(ACTOR_MIA, 2);
@@ -596,23 +596,23 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Event_Wait(60);
   Sound_Play(MUS_FOREST);
   TreeRooms_ChangeFace(TRET_FACE_CHANGE_BLINK);
-  FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
+  FieldEvent_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 80);
-  Event_ShowMessage(SPEAKER(ACTOR_SECOND_TRET), 0);
+  Event_ShowMessage(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0);
   Event_Wait(40);
-  FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
+  FieldEvent_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);
   Actor_SetAnimation(ACTOR_MIA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(20);
-  FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
+  FieldEvent_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   TreeRooms_ChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
   Event_Wait(40);
-  FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
+  FieldEvent_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Actor_SetAttachedEffect(ACTOR_GARET,
@@ -626,14 +626,14 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 10);
-  FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_GARET), 0, 10);
+  FieldEvent_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_GARET), 0, 10);
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_SHAKE_HEAD);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
-  FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_IVAN), 0, 20);
+  FieldEvent_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_IVAN), 0, 20);
   TreeRooms_ChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
   Event_Wait(40);
-  FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 10);
+  FieldEvent_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 10);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_StartRepeatedMotion(ACTOR_MIA, 2);
@@ -644,7 +644,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   TreeRooms_ChangeFace(TRET_FACE_CHANGE_BLINK);
   // "Do you need something?" Answering no: "What are you doing, Isaac! Now's
   // not the time to fool around!"
-  Event_OpenMessage(SPEAKER(ACTOR_SECOND_TRET), 0);
+  Event_OpenMessage(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
   if (Event_AskYesNoWithActorAnimation(0, 0) != 0) {
@@ -652,17 +652,17 @@ static void TreeRooms_PlayPostBattleConversation(void) {
     Actor_SetAnimation(ACTOR_GARET, ANIM_SHAKE_HEAD);
     Event_SetMessageId(MsgTretDoingNowsNot);
     // "What are you doing, Isaac! Now's not the time to fool around!"
-    Event_ShowMessage(SPEAKER(ACTOR_GARET), 0);
+    Event_ShowMessage(TREE_ROOMS_SPEAKER(ACTOR_GARET), 0);
     Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 10);
     Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
-    Event_ShowMessage(SPEAKER(ACTOR_IVAN), 0);
+    Event_ShowMessage(TREE_ROOMS_SPEAKER(ACTOR_IVAN), 0);
   }
   Event_Wait(20);
   TreeRooms_ChangeFace(TRET_FACE_CHANGE_BLINK);
   Event_SetMessageId(MsgTretTurnedPeopleKolima);
   // "I turned the people of Kolima into trees?"
-  FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
-  FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 10);
+  FieldEvent_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 20);
+  FieldEvent_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 10);
   TreeRooms_ChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
   Event_Wait(20);
   // Tret tries to release the people of Kolima: the colours shift and sparks
@@ -697,25 +697,25 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   // "I can't do it... My power no longer reaches Kolima..." His face sinks
   // away on "People of Kolima... Forgive me...", and the party resolve to
   // heal him.
-  FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 10);
+  FieldEvent_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 10);
   TreeRooms_ChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
-  Event_ShowMessage(SPEAKER(ACTOR_SECOND_TRET), 0);
+  Event_ShowMessage(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0);
   Actor_RunScriptAndWait(ACTOR_TRET, gTreeRooms_FaceSinksActions);
   Event_Wait(40);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_WINCE, 60);
-  Event_ShowMessage(SPEAKER(ACTOR_GARET), 0);
+  Event_ShowMessage(TREE_ROOMS_SPEAKER(ACTOR_GARET), 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 10);
-  Event_ShowMessage(SPEAKER(ACTOR_IVAN), 0);
+  Event_ShowMessage(TREE_ROOMS_SPEAKER(ACTOR_IVAN), 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 10);
   Actor_RunRepeatedMotion(ACTOR_GARET, 1);
-  Event_ShowMessageThenWait(SPEAKER(ACTOR_GARET), 0, 10);
+  Event_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_GARET), 0, 10);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 1);
-  Event_ShowMessageThenWait(SPEAKER(ACTOR_IVAN), 0, 10);
+  Event_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_IVAN), 0, 10);
   if (hasMia != 0) {
     Actor_RunRepeatedMotion(ACTOR_MIA, 1);
-    Event_ShowMessageThenWait(SPEAKER(ACTOR_MIA), 0, 10);
+    Event_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_MIA), 0, 10);
   }
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_NOD);
   Actor_SetAnimation(ACTOR_GARET, ANIM_NOD);

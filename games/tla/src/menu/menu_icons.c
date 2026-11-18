@@ -409,8 +409,12 @@ void DjinnFigures_UpdateTopRow(void) {
 /// The four Djinn figures' sprites, one an element (menu_tables.c).
 extern s32 gDjinnFigures_SpriteIds[];
 
+/// The x a new row's figures stand at, parked below the screen
+/// (MENU_FIGURE_HIDDEN_Y), until their screen places them.
+#define FIGURE_START_X 16
+
 /// Replaces the four Djinn figures with one Djinni of each element
-/// (gDjinnFigures_SpriteIds) walking (ANIM_WALK), at x 16 and
+/// (gDjinnFigures_SpriteIds) walking (ANIM_WALK), at FIGURE_START_X and
 /// MENU_FIGURE_HIDDEN_Y until the screen moves them, and starts placing them
 /// each frame (DjinnFigures_UpdateTopRow).
 void DjinnFigures_InitializeTopRow(void) {
@@ -431,7 +435,7 @@ void DjinnFigures_InitializeTopRow(void) {
       object->image.priority = 0;
     }
     menu->figures[i] = object;
-    menu->figureX[i] = 16;
+    menu->figureX[i] = FIGURE_START_X;
     menu->figureY[i] = MENU_FIGURE_HIDDEN_Y;
     menu->figureScales[i] = FIXED_ONE;
     menu->figureFacings[i] = FACING_SOUTH;

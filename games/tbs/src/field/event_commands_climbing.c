@@ -9,8 +9,6 @@
 #define TILE_CELLS ((struct MapGridCell *)Ram_MapGridCellBuffer)
 #define TILE_CELLS_SOUTH (TILE_CELLS + MAPGRID_SIZE)
 #define TILE_CELLS_NORTH (TILE_CELLS - MAPGRID_SIZE)
-/// A whole pixel coordinate's map cell, in pixels.
-#define MAPGRID_CELL_PIXEL_MASK 0xfff0
 /// The middle pixel of the map cell a whole pixel lies in.
 #define CELL_MIDDLE(pixels)                                                    \
   (MAPGRID_CELL_PIXELS / 2 + ((pixels) & MAPGRID_CELL_PIXEL_MASK))
@@ -251,5 +249,4 @@ failure:
 #undef TILE_CELLS
 #undef TILE_CELLS_SOUTH
 #undef TILE_CELLS_NORTH
-#undef MAPGRID_CELL_PIXEL_MASK
 #undef CELL_MIDDLE

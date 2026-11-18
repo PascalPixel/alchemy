@@ -8,13 +8,7 @@
 /// cell (MapGridCell.behavior), or of a 4-byte gCellPictures entry on the
 /// World Map.
 #define CLOAK_TILE 251
-/// The Psynergy request that ends Cloak, without paying PP.
-#define CLOAK_END (ACT_PACKED | ABILITY_CLOAK)
-/// The World Map's 32-pixel blocks, 32 to a row of gCellPictures, wrapping
-/// round, as field_terrain.c names them: the block of a 16.16 coordinate.
-#define WORLD_MAP_BLOCK_SHIFT 21
-#define WORLD_MAP_BLOCK_PIXELS 32
-#define WORLD_MAP_BLOCKS_ACROSS 32
+/// The World Map block of a 16.16 coordinate.
 #define WORLD_MAP_BLOCK(coordinate) ((coordinate) >> WORLD_MAP_BLOCK_SHIFT)
 
 /// Task of Cloak: when the cell under the leader is not CLOAK_TILE, requests
@@ -159,8 +153,4 @@ void FieldPsynergy_StartCloak(void) {
 }
 
 #undef CLOAK_TILE
-#undef CLOAK_END
-#undef WORLD_MAP_BLOCK_SHIFT
-#undef WORLD_MAP_BLOCK_PIXELS
-#undef WORLD_MAP_BLOCKS_ACROSS
 #undef WORLD_MAP_BLOCK

@@ -4,11 +4,6 @@
 
 #include "event_commands_internal.h"
 
-/// The field Psynergy sprites a field Psynergy's work holds
-/// (FieldEffectWork.particles).
-#define FIELD_EFFECT_PARTICLES 24
-/// The actors in gActors, as field_internal.h counts them.
-#define ACTOR_COUNT 64
 /// The frames FieldPsynergy_End waits at most for the swelling arcs to end.
 #define END_ARC_WAIT_FRAMES 30
 
@@ -135,7 +130,7 @@ void FieldPsynergy_End(void) {
   effectWork = gFieldEffectWork;
   runtime = gFieldWork;
   grid = gMapGridWork[0];
-  for (i = 0; i < FIELD_EFFECT_PARTICLES; i++) {
+  for (i = 0; i < PSYNERGY_EFFECT_SLOT_COUNT; i++) {
     effectSlot = &effectWork->particles[i];
     if (effectSlot->active != 0)
       FieldEffect_ClearOwnedSlot(effectSlot);
@@ -332,8 +327,6 @@ void Camera_WorldToScreen(struct Vector3 *position) {
 // From here on positions are passed in each function's own structures.
 
 #undef SETUP_OBJECT_SLOTS
-#undef FIELD_EFFECT_PARTICLES
-#undef ACTOR_COUNT
 #undef END_ARC_WAIT_FRAMES
 #undef ANIM_CAST_PSYNERGY_BEGIN
 #undef ANIM_CAST_PSYNERGY_END

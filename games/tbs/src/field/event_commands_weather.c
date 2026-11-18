@@ -77,7 +77,7 @@ void Weather_UpdateLightning(void) {
     work->timer = 128;
   switch (work->timer--) {
   case 0:
-    // The burst ends: arm the next, 150 frames plus up to 399 less up to 99.
+    // The burst ends: arm the next.
     if (work->enabled != 0) {
       work->timer = Random16_Below(400) - Random16_Below(100) + 150;
       if (work->loud != 0)

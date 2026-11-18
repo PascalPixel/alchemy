@@ -46,7 +46,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   Actor_ReleaseFar(djinni);
   Sound_PlayFar(SE_SCATTER);
   effect = effectWork->particles;
-  remainingParticles = ARRAY_COUNT(effectWork->particles) - 1;
+  remainingParticles = PSYNERGY_EFFECT_SLOT_COUNT - 1;
   // One a frame, each in a random colour mode from SPRITE_COLOR_NORMAL to
   // SPRITE_COLOR_GREY.
   do {

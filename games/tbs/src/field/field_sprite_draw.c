@@ -364,10 +364,10 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, FIXED screenX,
 }
 
 /// Render_ApplyProjectedPlacement's draw slots: a sprite one slot further in
-/// front for every two screen rows lower, on from PLACEMENT_IMAGE_DEPTH, and
-/// its shadow in PLACEMENT_SHADOW_DEPTH, behind them.
-#define PLACEMENT_IMAGE_DEPTH 10
-#define PLACEMENT_SHADOW_DEPTH 2
+/// front for every two screen rows lower, on from PLACEMENT_IMAGE_SLOT, and
+/// its shadow in PLACEMENT_SHADOW_SLOT, behind them.
+#define PLACEMENT_IMAGE_SLOT 10
+#define PLACEMENT_SHADOW_SLOT 2
 
 /// Places a sprite for the scrolling camera and queues it for drawing.
 void Render_ApplyProjectedPlacement(struct Sprite *sprite,
@@ -427,8 +427,8 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite,
     slot = 1;
     depth = 0;
   } else {
-    slot = (FIXEDtoINT(screenY) >> 1) + PLACEMENT_IMAGE_DEPTH;
-    depth = PLACEMENT_SHADOW_DEPTH;
+    slot = (FIXEDtoINT(screenY) >> 1) + PLACEMENT_IMAGE_SLOT;
+    depth = PLACEMENT_SHADOW_SLOT;
   }
   // Queue the shadow at ground height before the raised image.
   y = FIXEDtoINT(screenY - groundHeight) - shadowHalfHeight;

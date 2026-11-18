@@ -7,10 +7,6 @@
 /// How many bytes of gNumberBuffer are widened: the eleven characters
 /// String_FormatDecimal writes, its terminator and the two bytes after.
 #define NUMBER_TEXT_WIDE_LENGTH 14
-/// Where the widened text's last four characters start, room for 9999.
-#define NUMBER_TEXT_FOUR_PLACES 7
-/// Where its last three start, room for 999.
-#define NUMBER_TEXT_THREE_PLACES 8
 
 /// A changed stat's arrow, right of its value on window tile row `row` (HP
 /// on row 1 to Luck on row 6).

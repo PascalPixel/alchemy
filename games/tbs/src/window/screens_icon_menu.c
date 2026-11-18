@@ -29,8 +29,6 @@
 /// The most icons a menu shows, and so the row length of
 /// gFileList_ActionByPosition, which has an action for each place.
 #define ICON_MENU_MAX_ICONS ((s32)ARRAY_COUNT(gIconMenuWork->entries))
-/// A command icon's pixels: 32x32 at a byte a pixel.
-#define COMMAND_ICON_BYTES (32 * 32)
 
 /// How far the selected icon overhangs its place while it pulses at the 8.8
 /// `scale`: on each side, half its 24-pixel width grown by the scale, rounded
@@ -832,6 +830,5 @@ s32 Menu_SelectCoinsOrMedals(s32 selection) {
 #undef ICON_MENU_BOTTOM_ROW
 #undef ICON_ROW_LINES
 #undef ICON_MENU_MAX_ICONS
-#undef COMMAND_ICON_BYTES
 #undef PULSE_OVERHANG_X
 #undef PULSE_OVERHANG_LINES

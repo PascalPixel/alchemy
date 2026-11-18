@@ -880,7 +880,7 @@ UNUSED void BattleEffect_RunBladeRain(struct BattleEffectParams *args) {
         REG_BLDCNT = 0;
     }
     if (frame > 103) {
-      REG_BLDALPHA = EFFECT_BLEND_CANVAS(120 - frame);
+      REG_BLDALPHA = EFFECT_BLEND_CANVAS(BLADE_RAIN_FRAMES - frame);
       if (frame == 104)
         REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
     }

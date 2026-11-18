@@ -73,9 +73,6 @@ s32 BattleDjinn_CountStandby(u32 unitId, u8 *counts) {
   return standbyCount;
 }
 
-/// The most targets an action holds (BATTLE_TARGET_CAPACITY).
-#define TARGET_MAX 14
-
 /// A range that reaches every place of a side from any of them: Dazzle's.
 #define RANGE_WHOLE_SIDE 11
 
@@ -88,6 +85,9 @@ enum ActionChance {
   CHANCE_VENGEANCE_EXTRA = 179, ///< Vengeance strikes one more time or two
   CHANCE_VENGEANCE_TWICE = 128  ///< of those, two more
 };
+
+/// Battle_RollEffectSuccess's successScale at full strength, in percent.
+#define EFFECT_CHANCE_FULL 100
 
 /// Announces the action and builds it for its targets, paying its PP or Djinn.
 /// Returns 0 to stage it, ACTION_REPORTED when it failed with its message
@@ -130,6 +130,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       plan->targetMultiplier[0] = 1;
       break;
     default:
+      // The places within range of the aimed one, on its side.
       targetCount = 0;
       range = request->range;
       for (pass = 0; pass <= 1; pass++) {
@@ -193,6 +194,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     return 0;
   }
 
+  // A fresh action run, and the debug defeat.
   selectedTargetId = Battle_GetUnitAtPlace(request->target);
   BattlePlayback_Reset();
   // The word after the plan in BattleWork is skipPlayback.
@@ -208,6 +210,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
   if (actor->hp == 0)
     return ACTION_NOTHING_TO_SHOW;
 
+  // Debug: hold R to defeat all enemies, or R and Select the whole party.
   if (gDebugMode && GameFlag_Get(FLAG_DEBUG_BATTLE_KEYS) &&
       (gInput.held & KEY_R)) {
     s32 enemy = 1;
@@ -225,7 +228,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
         break;
       if (id == BATTLE_UNIT_REMOVED)
         continue;
-      if (Unit_AddHpFar(id, 0xc0000000) == 0) {
+      if (Unit_AddHpFar(id, DEFEAT_HP_CHANGE) == 0) {
         BattlePlayback_Push(PLAYBACK_HIT, id);
         BattlePlayback_Push(PLAYBACK_DEFEAT, id);
       }
@@ -234,6 +237,8 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     return ACTION_NOTHING_TO_SHOW;
   }
 
+  // What stops the unit, unless it strikes back with the Djinn Counter:
+  // Ground, sleep, stun, a bound unit's bad luck.
   MessageArgument_ClearAllFar();
   if (request->command != COMMAND_DJINN_COUNTER) {
     if (actor->immobile) {
@@ -252,6 +257,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       BattleMessage_ShowAndWaitFar((s32)&MsgIsParalyzed);
       return ACTION_REPORTED;
     }
+    // A bound unit loses one action in four, except Defend.
     if ((actor->curse & CURSE_BOUND) && request->command != COMMAND_DEFEND &&
         (Battle_RandomFar() & 3) == 0) {
       MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
@@ -265,12 +271,13 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
   {
     s32 index;
 
-    for (index = 0; index < TARGET_MAX; index++)
+    for (index = 0; index < BATTLE_TARGET_CAPACITY; index++)
       plan->targetCritical[index] = 0;
-    for (index = 0; index < TARGET_MAX; index++)
+    for (index = 0; index < BATTLE_TARGET_CAPACITY; index++)
       plan->targetHit[index] = HIT_NOT_ROLLED;
   }
 
+  // The announcement, the ability id and the targets, by command.
   switch (request->command) {
   case COMMAND_FLEE:
     if ((u16)request->unitId <= ALLY_MAX) {
@@ -284,6 +291,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     return 0;
 
   case COMMAND_ATTACK:
+    // A weapon unleash replaces the action with its ability.
     abilityId = RollWeaponUnleashFar(actor);
     if (BattleActionRun_SetTargets(abilityId) == ACTION_REPORTED)
       return ACTION_REPORTED;
@@ -333,6 +341,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       BattleMessage_ShowAndWaitFar((s32)&MsgActorCasts);
       break;
     }
+    // Too little PP or a seal fails the cast; only a cast that goes ahead pays.
     if (actor->pp < ability->ppCost) {
       plan->failure = ACTION_FAILURE_NO_PP;
       canCast = 0;
@@ -355,11 +364,14 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
   case COMMAND_ITEM: {
     struct ItemDefinition *item;
 
+    // A slot of -1: an earlier command this turn used the item up
+    // (BattleStaging_RunItem).
     if (request->parameter < 0) {
       MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
       BattleMessage_ShowAndWaitFar((s32)&MsgItemAlreadyUsed);
       return ACTION_REPORTED;
     }
+    // An item with no ability, or a broken one, and the user defends.
     item = Item_GetDirectFar(actor->inventory[request->parameter]);
     abilityId = item->abilityId;
     if (abilityId == 0 ||
@@ -375,6 +387,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
     MessageArgument_PushFar(actor->inventory[request->parameter],
                             MESSAGE_ARGUMENT_ITEM);
+    // An item that is kept is raised ("raises"); anything else is used.
     if (item->useType == ITEM_USE_MAY_BREAK || item->useType == ITEM_USE_FREE) {
       switch (item->type) {
       case ITEM_TYPE_WEAPON:
@@ -415,6 +428,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       message = (s32)&MsgActorUnleashesAbility;
     else
       message = (s32)&MsgActorUsesAbility;
+    // Some enemy abilities have their own wording.
     switch (abilityId) {
     case ABILITY_SONIC_WAVE:
     case ABILITY_SONIC_WAVE_STRONG:
@@ -476,6 +490,8 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
   } break;
 
   case COMMAND_DJINN:
+    // A Djinni on standby that has recovered is set again, and nothing else
+    // happens; one still recovering says so. A set Djinni is unleashed.
     abilityId = Djinn_GetAbilityIdFar(DJINN_COMMAND_ELEMENT(request->parameter),
                                       DJINN_COMMAND_INDEX(request->parameter));
     if (!Djinn_IsSetFar(request->unitId,
@@ -515,6 +531,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
         BattlePlayback_WaitForReady();
         return ACTION_NOTHING_TO_SHOW;
       }
+      // Recovering.
       MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
       MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
       Sound_PlayFar(SE_MENU_ERROR);
@@ -522,6 +539,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       wait(60);
       return ACTION_REPORTED;
     }
+    // Unleash the set Djinni; it goes on standby.
     {
       struct AbilityDefinition *ability;
 
@@ -545,6 +563,8 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     u8 counts[ELEMENT_COUNT];
     s32 index;
 
+    // Enough Djinn of each element on standby? A link battle counts the
+    // summoner's side; any other counts the party's.
     summon = SummonDefinition_Get(request->parameter);
     BattleDjinn_CountStandby(
         ((struct BattleWork *)Ram_HeapSlots->battleWork)->isLink
@@ -572,6 +592,8 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     MessageArgument_PushFar(request->unitId, MESSAGE_ARGUMENT_ACTOR);
     MessageArgument_PushFar(abilityId, MESSAGE_ARGUMENT_ABILITY);
     BattleMessage_ShowAndWaitFar((s32)&MsgActorSummons);
+    // Mark the standby Djinn being used DJINN_RECOVERY_SUMMONED, the first
+    // found of each element, from units in the formation.
     for (index = 0; index != list->count; index++) {
       struct DjinnRecoveryEntry *entry = &list->entries[index];
 
@@ -581,6 +603,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
         counts[entry->element]--;
       }
     }
+    // Daedalus strikes again at the turn's end (BattleStaging_PlanDaedalus).
     if (abilityId == ABILITY_DAEDALUS) {
       if ((u16)request->unitId > ALLY_MAX)
         battle->nextDaedalusFromEnemies |= 1 << battle->nextDaedalusStrikes;
@@ -595,6 +618,8 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     plan->abilityId = ABILITY_ATTACK;
     plan->element = Item_GetEquippedElementFar(request->unitId);
     plan->staging = STAGING_ATTACK;
+    // An enemy's attack effect comes from its class; a party member's from who
+    // it is.
     if (actor->classId == CLASS_NONE) {
       plan->battleEffect =
           BattleSprite_GetAttackEffect(actor->enemyId) | EFFECT_BY_ID_RANGE;
@@ -709,6 +734,9 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
     } else if (abilityId == ABILITY_ANNIHILATION ||
                abilityId == ABILITY_WHORL ||
                ability->effect == ABILITY_EFFECT_BLOW_AWAY) {
+      // Annihilation, Whorl and Gale roll their hit now, so that the effect
+      // can show it (the variant below): against foes at the falloff for each
+      // target's distance, at full rate otherwise.
       s32 index;
 
       for (index = 0; index < plan->targetCount; index++) {
@@ -718,7 +746,7 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
           rate =
               gActionRun_EffectChance[__builtin_abs(plan->targetOffset[index])];
         } else {
-          rate = 100;
+          rate = EFFECT_CHANCE_FULL;
         }
         plan->targetHit[index] = Battle_RollEffectSuccessFar(
             request->unitId, plan->targetIds[index], ability->element,
@@ -738,6 +766,8 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
           break;
       } while (++tries <= 9);
     }
+    // How it is staged: the ability's battle effect, stronger for a double or
+    // triple blow, and its staging.
     if (abilityId >= 0 && abilityId <= ABILITY_PSY_BOOST) {
       plan->battleEffect = gAbilityBattleEffects[abilityId];
       if (plan->targetMultiplier[0] > 1)
@@ -760,11 +790,14 @@ s32 BattleActionRun_Build(struct BattleActionRecord *request,
       plan->staging = STAGING_MESSAGES;
     if (Battle_IsReviveEffectFar(ability->effect))
       plan->battleEffect |= EFFECT_ON_DOWNED;
+    // When the hit rolled ahead lands on the first target, the effect plays
+    // its next variant.
     if ((abilityId == ABILITY_ANNIHILATION || abilityId == ABILITY_WHORL ||
          ability->effect == ABILITY_EFFECT_BLOW_AWAY) &&
         plan->targetHit[0] != 0)
       plan->battleEffect |= 1 << EFFECT_VARIANT_SHIFT;
   }
+  // An item is staged as an item, unless its ability takes the whole screen.
   if (request->command == COMMAND_ITEM && plan->staging != STAGING_SUMMON &&
       plan->staging != STAGING_FULL_SCREEN)
     plan->staging = STAGING_ITEM;

@@ -240,6 +240,10 @@ struct BattleLinkedActionState {
 /// (slot << RESOURCE_SLOT_SHIFT) | sprite.
 #define RESOURCE_SLOT_SHIFT 12
 
+/// An HP change that defeats any unit: the Grim Reaper's call deals it, and the
+/// debug defeat.
+#define DEFEAT_HP_CHANGE 0xc0000000
+
 // What BattleActionRun_Build returns besides 0, which stages the action.
 #define ACTION_REPORTED -1 ///< the action failed and its message is shown
 #define ACTION_NOTHING_TO_SHOW -2 ///< nothing to stage or show

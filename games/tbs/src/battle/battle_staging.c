@@ -5,6 +5,11 @@
 
 #include "battle_internal.h"
 
+/// A critical hit's zoom on the attacker and its target, in percent: from
+/// CRITICAL_ZOOM_START, CRITICAL_ZOOM_GAIN more by the end of the run up.
+#define CRITICAL_ZOOM_START 100
+#define CRITICAL_ZOOM_GAIN 30
+
 /// Plays one action of the turn, after delay frames facing the party: the
 /// action is built and staged, its end effects run and every unit returns to
 /// its spot. Returns 1 when the party got away, -1 when the unit is already
@@ -43,7 +48,7 @@ s32 BattleStaging_DispatchAction(struct BattleAction *request, s32 delay) {
   Matrix_SetLookAt(camera->eye, camera->focus);
   Projection_Set(BATTLE_CAMERA_DISTANCE,
                  Iwram_RatioMulQ14(BATTLE_CAMERA_DISTANCE, FIXED_ONE * 3 / 4),
-                 0x7fff0000);
+                 toFIXED(32767));
   if (delay != 0) {
     view->targetYaw = YAW_PARTY_ACTION;
     wait(delay);
@@ -421,7 +426,7 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
   adjusted = angle - DEGtoANG(45);
   if (plan->unitId > ALLY_MAX)
     adjusted = angle + TRIG_TURN * 3 / 8;
-  adjusted &= 0x7fff;
+  adjusted &= TRIG_TURN / 2 - 1;
   facingAngle = (adjusted - YAW_PARTY_ACTION) / 2 + YAW_PARTY_ACTION;
 
   if (view->targetYaw == facingAngle) {
@@ -509,8 +514,9 @@ s32 BattleStaging_RunAttack(struct BattleActionRun *plan, s32 mode) {
         if (zoomOnCritical != 0) {
           first = work.effect.user;
           second = work.effect.firstTarget;
-          BattleCamera_SetViewAtPairMidpoint(first, second,
-                                             index * 30 / frames + 100);
+          BattleCamera_SetViewAtPairMidpoint(
+              first, second,
+              index * CRITICAL_ZOOM_GAIN / frames + CRITICAL_ZOOM_START);
         }
         wait(1);
       }
@@ -562,7 +568,7 @@ UNUSED s32 BattleStaging_RunPlainAttack(struct BattleActionRun *input,
   adjusted = angle - DEGtoANG(45);
   if (savedInput->unitId > ALLY_MAX)
     adjusted = angle + TRIG_TURN * 3 / 8;
-  adjusted &= 0x7fff;
+  adjusted &= TRIG_TURN / 2 - 1;
   facingAngle = (adjusted - YAW_PARTY_ACTION) / 2 + YAW_PARTY_ACTION;
 
   if (view->targetYaw == facingAngle) {
@@ -669,8 +675,8 @@ s32 BattleStaging_RunItem(struct BattleActionRun *plan, s32 unused,
         FIXED value = FIXED_ONE - fade;
 
         battle->brightness = value;
-        Graphics_ScaleRgb555Clamped(palette, (u16 *)(BG_PLTT + 6 * 16), value,
-                                    128);
+        Graphics_ScaleRgb555Clamped(palette, BATTLE_BG_PALETTE, value,
+                                    BATTLE_BG_PALETTE_COLORS);
       }
       wait(1);
       targetOrFadeIndex++;
@@ -738,7 +744,7 @@ UNREAD_RESULT BattleObject_SetColorMode(struct Actor *actor, s32 colorMode) {
   struct Sprite *record;
   struct SpriteAnimation *child;
   struct SpriteAnimation **children;
-  u8 lastPictureMask = 0xff;
+  u8 lastPictureMask = SPRITE_PICTURE_NONE;
   u8 previousPicture;
 
   while ((record = GetMotionRecord(actor, recordIndex)) != NULL) {
@@ -961,3 +967,6 @@ void BattleMotion_ShowDowned(s32 unitId) {
     BattleObject_MarkForRelease(unitId);
   }
 }
+
+#undef CRITICAL_ZOOM_START
+#undef CRITICAL_ZOOM_GAIN

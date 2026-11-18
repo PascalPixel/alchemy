@@ -52,7 +52,7 @@ void PartyStatus_BuildLayoutBounds(s32 flags) {
   if (flags & PARTY_STATUS_SHOW_DJINN)
     width += PARTY_STATUS_DJINN_WIDTH;
 
-  x = 30;
+  x = DISPLAY_TILE_WIDTH;
   x -= width;
   layout->x = x;
   layout->y = 0;
@@ -106,7 +106,9 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
     column = gWindow_PartyColumnOffsets[i] + shift;
     if (column < lastColumn) {
       for (row = 0; row != rows; row++) {
-        cell = (u16 *)(((window->y + row) * 32 + (window->x + column)) * 2 +
+        cell = (u16 *)(((window->y + row) * BG_SCREEN_WIDTH +
+                        (window->x + column)) *
+                           2 +
                        (u32)work->tilemap);
         if (row == 0)
           *cell = WINDOW_TILE_BORDER_TOP_TEE;
@@ -119,7 +121,8 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
     i++;
   }
   if (work->battleMode) {
-    cell = work->tilemap + (window->y + window->height - 1) * 32 + window->x;
+    cell = work->tilemap + (window->y + window->height - 1) * BG_SCREEN_WIDTH +
+           window->x;
     column = 1;
     *cell++ = WINDOW_TILE_BATTLE_BORDER_BOTTOM_LEFT;
     while (column < lastColumn) {
@@ -131,8 +134,17 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
   work->dirty = 1;
 }
 
-// Recolours the five bar tiles at (x, y) in `window` to show a bar `length`
-// pixels long (0-40).
+/// An HP or PP bar at full, in pixels: five tiles.
+#define PARTY_STATUS_BAR_LENGTH 40
+/// The colours of the bar tiles that the bar recolours: its body and its
+/// shadow.
+#define BAR_TILE_COLOR 14
+#define BAR_TILE_SHADOW_COLOR 1
+/// A 4bpp tile row: eight pixels of four bits, one word.
+#define TILE_ROW_BITS 32
+
+/// Recolours the five bar tiles at (x, y) in `window` to show a bar `length`
+/// pixels long (0 to PARTY_STATUS_BAR_LENGTH).
 UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
                                    s32 length) {
   s32 i;
@@ -155,7 +167,7 @@ UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
   }
   x += window->x;
   y += window->y;
-  for (i = 0; i < 5; i++, x++) {
+  for (i = 0; i < PARTY_STATUS_BAR_LENGTH / 8; i++, x++) {
     // This tile's eight pixels: filled up to `length`, empty after.
     tile = work->tilemap[y * BG_SCREEN_WIDTH + x];
     bar = PIXELS_4BPP(2);
@@ -172,20 +184,20 @@ UNREAD_RESULT PartyStatus_DrawBars(struct Window *window, s32 x, s32 y,
     } else if (length >= 0) {
 #endif
       bar <<= length * 4;
-      bar |= 0x88888888U >> (32 - length * 4);
+      bar |= PIXELS_4BPP(8) >> (TILE_ROW_BITS - length * 4);
       shadow <<= length * 4;
-      shadow |= 0xddddddddU >> (32 - length * 4);
+      shadow |= PIXELS_4BPP(13) >> (TILE_ROW_BITS - length * 4);
     }
     for (row = 0; row <= (fullLength != 0 ? 2 : 0); row++) {
       pixels = *TILE_ROW_FROM_BOTTOM(tile, row);
       recoloured = 0;
       for (column = 0; column <= 7; column++) {
-        u32 colour = pixels & 15;
+        u32 colour = pixels & 0xf;
 
-        if (colour == 14)
-          recoloured |= bar & (15U << (column * 4));
-        else if (colour == 1)
-          recoloured |= shadow & (15U << (column * 4));
+        if (colour == BAR_TILE_COLOR)
+          recoloured |= bar & (0xfU << (column * 4));
+        else if (colour == BAR_TILE_SHADOW_COLOR)
+          recoloured |= shadow & (0xfU << (column * 4));
         else
           recoloured |= colour << (column * 4);
         pixels >>= 4;
@@ -218,14 +230,14 @@ void PartyStatus_Draw(s32 flags) {
     y = -1;
     for (i = 0; i < count; i++) {
       members[i] = battle->partyUnits[i];
-      if (members[i] == 255)
+      if (members[i] == BATTLE_UNIT_LIST_END)
         break;
     }
   } else {
     count = Party_CountMembersFar();
     for (i = 0; i < count; i++)
       members[i] = gMainRoutineWork.party[i];
-    members[i] = 255;
+    members[i] = BATTLE_UNIT_LIST_END;
   }
   count = i;
 
@@ -256,7 +268,7 @@ void PartyStatus_Draw(s32 flags) {
     Window_DrawColumnBorders(window, flags);
   }
 
-  // Each party member's column: name, HP and PP, each bar 40 pixels at full.
+  // Each party member's column: name, HP and PP, and their bars.
   if (flags & PARTY_STATUS_SHOW_DJINN)
     x = PARTY_STATUS_DJINN_WIDTH;
   for (i = 0; i != count; i++) {
@@ -284,7 +296,7 @@ void PartyStatus_Draw(s32 flags) {
     if (unit->hpMax != 0) {
       // A party member with any HP left shows at least one pixel of bar.
       current = unit->hp;
-      barLength = ((current * 40) / unit->hpMax);
+      barLength = current * PARTY_STATUS_BAR_LENGTH / unit->hpMax;
       if (barLength == 0 && current != 0)
         barLength = 1;
       PartyStatus_DrawBars(window, x + i * PARTY_STATUS_COLUMN_WIDTH + 1, y + 2,
@@ -299,7 +311,7 @@ void PartyStatus_Draw(s32 flags) {
                                       y * 8 + 16, 1);
       if (unit->ppMax != 0) {
         current = unit->pp;
-        barLength = ((current * 40) / unit->ppMax);
+        barLength = current * PARTY_STATUS_BAR_LENGTH / unit->ppMax;
         if (barLength == 0 && current != 0)
           barLength = 1;
         PartyStatus_DrawBars(window, x + i * PARTY_STATUS_COLUMN_WIDTH + 1,
@@ -379,7 +391,7 @@ void Window_SetTextTileBitRect(const struct Window *window, s32 x, s32 y,
       s32 remaining = width;
       while (remaining != 0) {
         u32 entry = *cell;
-        entry &= ~0x1000;
+        entry &= ~BG_TILE_PALETTE(1);
         entry |= set;
         remaining--;
         *cell = entry;

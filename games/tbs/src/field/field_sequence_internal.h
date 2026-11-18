@@ -40,9 +40,8 @@
 /// Speaker_FindDefinition.
 extern const struct SpeakerDefinition gSpeakerDefinitions[];
 
-/// Scene ids above the field scenes, which MainRoutine_Run runs without a
-/// layout; each returns a result to Scene_ReturnFromSequence instead of an
-/// exit.
+/// A position Vector_AddPolarOffset moves: as a vector, or as its three
+/// coordinates.
 union PolarOffsetPosition {
   struct Vector3 vector;
   s32 coordinates[3];
@@ -56,7 +55,7 @@ STATIC_ASSERT(sizeof(union PolarOffsetPosition) == 12);
 #define ABILITY_ID(c) ((c) & 0x3ff) ///< the Psynergy
 #define ACT_ITEM_ID(c) ((c) & 0x3ff)
 #define ACT_UNIT(c) (((c) >> 10) & 15) ///< who uses it
-#define ACT_PACKED 0x2000              ///< use it without paying PP
+#define ACT_PACKED (1 << 13)           ///< use it without paying PP
 /// No user named: Field_UsePsynergy takes ISAAC, and Field_UseItem
 /// whoever holds the item in the most inventory slots.
 #define UNIT_NONE 15

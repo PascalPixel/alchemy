@@ -4,6 +4,11 @@
 
 #include "field_sequence_internal.h"
 
+/// A whole pixel coordinate's map cell, in pixels, and the same for a screen
+/// row in an OAM entry's 8-bit y.
+#define MAPGRID_CELL_PIXEL_MASK 0xfff0
+#define CELL_GRID_ROW_MASK 0xf0
+
 /// Each frame of the fade overlay: on each of the two cells beside the actor
 /// (left and right of it), where the ground one or two cells south rises above
 /// the actor's floor, draws a semi-transparent 16-pixel-wide sprite of colour 1
@@ -34,9 +39,9 @@ void FadeOverlay_DrawMarks(void) {
   z = actor->z.fixed;
   terrainFloor = FIXEDtoINT(actor->groundHeight);
   terrainLayer = actor->layer;
-  // The first tile of the solid block FieldEffect_StartFadeOverlay loaded (VRAM
-  // cache entry VRAM_CACHE_ENTRY_FADE_OVERLAY; tiles are 32 bytes).
-  tile = gVramCacheEntries[VRAM_CACHE_ENTRY_FADE_OVERLAY].offset >> 5;
+  // The first tile of the solid block FieldEffect_StartFadeOverlay loaded.
+  tile =
+      gVramCacheEntries[VRAM_CACHE_ENTRY_FADE_OVERLAY].offset / TILE_SIZE_4BPP;
   // The left cell, 8 pixels left of the actor.
   x -= toFIXED(8);
   height =
@@ -55,10 +60,9 @@ void FadeOverlay_DrawMarks(void) {
     mark->priority = 0;
     mark->tile = tile;
     mark->objectMode = OBJ_MODE_SEMI_TRANSPARENT;
-    // Snapped to the cell's 16-pixel grid, then moved up by the ground's
-    // height.
-    mark->x = ((u32)FIXEDtoINT(x) & 0xfff0) - cameraX;
-    screenRow = FIXEDtoINT(z) & 0xf0;
+    // Snapped to the cell's grid, then moved up by the ground's height.
+    mark->x = ((u32)FIXEDtoINT(x) & MAPGRID_CELL_PIXEL_MASK) - cameraX;
+    screenRow = FIXEDtoINT(z) & CELL_GRID_ROW_MASK;
     mark->y = screenRow - cameraZ - height + 16;
     Oam_AddSpriteAtDepth(mark, 0);
   }
@@ -78,8 +82,8 @@ void FadeOverlay_DrawMarks(void) {
     mark->priority = 0;
     mark->tile = tile;
     mark->objectMode = OBJ_MODE_SEMI_TRANSPARENT;
-    mark->x = ((u32)FIXEDtoINT(x) & 0xfff0) - cameraX;
-    screenRow = FIXEDtoINT(z) & 0xf0;
+    mark->x = ((u32)FIXEDtoINT(x) & MAPGRID_CELL_PIXEL_MASK) - cameraX;
+    screenRow = FIXEDtoINT(z) & CELL_GRID_ROW_MASK;
     mark->y = screenRow - cameraZ - height + 16;
     Oam_AddSpriteAtDepth(mark, 0);
   }
@@ -95,7 +99,7 @@ void FieldEffect_StartFadeOverlay(void *object) {
   work = HeapSlot_AllocEwram(HEAP_SLOT_FADE_OVERLAY, sizeof(*work));
   // Upload the solid sprite tiles before enabling the drawing task.
   tiles = HeapSlot_Alloc(HEAP_SLOT_TILE_SCRATCH, 1024);
-  Dma_Fill32Cell(fill, 0x11111111, tiles, 512);
+  Dma_Fill32Cell(fill, PIXELS_4BPP(1), tiles, 512);
   VramCache_Load(VRAM_CACHE_ENTRY_FADE_OVERLAY, 512, tiles);
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   Task_Add(FadeOverlay_DrawMarks, TASK_PASS_FRAME);
@@ -116,3 +120,6 @@ void FadeOverlay_Suspend(void) { Task_SuspendAll(FadeOverlay_DrawMarks); }
 
 /// Draws the fade overlay again after FadeOverlay_Suspend.
 void FadeOverlay_Resume(void) { Task_ResumeAll(FadeOverlay_DrawMarks); }
+
+#undef MAPGRID_CELL_PIXEL_MASK
+#undef CELL_GRID_ROW_MASK

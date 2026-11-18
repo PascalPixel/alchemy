@@ -11,14 +11,23 @@
 // a kana's mark at the top right.
 #define GLYPH_BUFFER_WIDTH 16
 #define GLYPH_PIXEL(x, y) ((y) * GLYPH_BUFFER_WIDTH + (x))
+/// The pixels across a tile, which the packing reads a row at a time.
+#define GLYPH_TILE_WIDTH 8
+
+/// The second character of a pair, in bits 8 to 23 of its code.
+#define GLYPH_PAIR_SECOND(code) (((code) << 8) >> 16)
+
+/// The code a character past the font is measured as: '@' in the font's
+/// Latin-1.
+#define TEXT_PAST_FONT_CODE 64
 
 #if LANGUAGE != LANGUAGE_JAPANESE
 /// Draws a character, and a second one when the code carries it in bits 8 to
 /// 15, into a 16x16-pixel cell of four 4bpp tiles at out: in the text colour
 /// over a shadow, or with an outline when WindowWork.outline is 1.
 s32 Text_DrawGlyphPair(s32 code, u32 *out) {
-  // 24 rows of 16 pixels, of which the top 16 are packed.
-  u8 pixels[384];
+  // 24 rows, of which the top 16 are packed.
+  u8 pixels[24 * GLYPH_BUFFER_WIDTH];
   struct WindowWork *work;
   const u8 *glyph;
   s32 width;
@@ -35,8 +44,8 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
   u32 tileLine;
 
   work = WINDOW_WORK;
-  secondIndex = (code << 8) >> 16;
-  code &= 255;
+  secondIndex = GLYPH_PAIR_SECOND(code);
+  code &= TEXT_LAST_FONT_CODE;
   Iwram_ClearWords(pixels, sizeof(pixels));
   // While WindowWork.mindRead is set, the text is colour 8 with no shadow.
   if (work->mindRead != 0) {
@@ -67,7 +76,7 @@ s32 Text_DrawGlyphPair(s32 code, u32 *out) {
 #ifdef UBFIX
     // Form only the actual glyph address: &glyphs[-TEXT_SPACE] is already
     // outside the array before the later byte offset is added.
-    glyph = (const u8 *)&gFont_Glyphs[(u16)secondIndex - 32];
+    glyph = (const u8 *)&gFont_Glyphs[(u16)secondIndex - TEXT_SPACE];
 #else
     glyph = (const u8 *)&gFont_Glyphs[-TEXT_SPACE] + ((u16)secondIndex << 5);
 #endif
@@ -166,29 +175,32 @@ s32 Text_DrawGlyphPair(u32 code, u32 *out) {
   }
 #endif
 
-  // Pack either font into four tiles, with the leftmost pixel in the low
-  // nibble.
-  pixel = pixels + 7;
-  tileColumn = 0;
+  // Pack either font into four tiles, left to right and then down, with the
+  // leftmost pixel in the low nibble: each tile row is read right to left, so
+  // the next starts a buffer row on and a tile's width back.
+  pixel = pixels + GLYPH_TILE_WIDTH - 1;
+  tileRow = 0;
   do {
-    tileRow = 0;
+    tileColumn = 0;
     do {
       line = 0;
       do {
         tileLine = 0;
-        for (pixelsLeft = 0; pixelsLeft < 8; pixelsLeft++) {
+        for (pixelsLeft = 0; pixelsLeft < GLYPH_TILE_WIDTH; pixelsLeft++) {
           tileLine = (tileLine << 4) + *pixel--;
         }
         *out++ = tileLine;
         line++;
-        pixel += 24;
+        pixel += GLYPH_BUFFER_WIDTH + GLYPH_TILE_WIDTH;
       } while (line <= 7);
-      tileRow++;
-      pixel -= 120;
-    } while (tileRow <= 1);
-    tileColumn++;
-    pixel += 112;
-  } while (tileColumn <= 1);
+      tileColumn++;
+      // Back up to the top row, at the next tile's right edge.
+      pixel -= GLYPH_TILE_WIDTH * GLYPH_BUFFER_WIDTH - GLYPH_TILE_WIDTH;
+    } while (tileColumn <= 1);
+    tileRow++;
+    // Down to the next row of tiles, at the first tile's right edge.
+    pixel += GLYPH_TILE_WIDTH * GLYPH_BUFFER_WIDTH - 2 * GLYPH_TILE_WIDTH;
+  } while (tileRow <= 1);
   return width;
 }
 
@@ -269,11 +281,9 @@ void Text_DrawWideStringAtOffset(u16 *text, struct Window *window, s32 x,
 #endif
   {
 #if LANGUAGE != LANGUAGE_JAPANESE
-    // Codes above TEXT_LAST_FONT_CODE become code 64, as the decoder makes
-    // them.
     code = *text++;
     if (code > TEXT_LAST_FONT_CODE)
-      code = 64;
+      code = TEXT_PAST_FONT_CODE;
     if (code == 0)
       break;
 #endif

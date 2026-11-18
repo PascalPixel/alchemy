@@ -6,7 +6,17 @@
 
 #define UNDEAD_SWORD_FRAMES 54 ///< frames of the columns
 
-#define UNDEAD_SWORD_SPARK_SHEET (14 * 80)
+/// LimeColumnSheet's half column of light, drawn twice, the second mirrored
+/// beside it.
+#define LIME_COLUMN_WIDTH 14
+#define LIME_COLUMN_HEIGHT 80
+/// The sparks' pictures, after the half column.
+#define UNDEAD_SWORD_SPARK_SHEET PICTURE_BYTES(LIME_COLUMN)
+#define UNDEAD_SWORD_SPARKS 16
+/// A spark's seven pictures, three frames each, the last held until it goes
+/// out.
+#define UNDEAD_SWORD_SPARK_PICTURES 7
+#define UNDEAD_SWORD_SPARK_FRAMES 29
 
 /// Two mirrored columns of light rise at the first target's feet and sink
 /// again, scattering sparks that drift upward.
@@ -52,7 +62,7 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
   REG_BG2X = (64 - screenPosition.x) << 8;
 
   // Sparks scatter and drift upward.
-  for (i = 0, spark = work->particles; i != 16; i++) {
+  for (i = 0, spark = work->particles; i != UNDEAD_SWORD_SPARKS; i++) {
     speed = (Random16() & 0x1ff) + 128;
     angle = Random16() & TRIG_ANGLE_MASK;
     spark->x = toFIXED(64);
@@ -80,37 +90,37 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
       else
         height = 272 - frame * 6;
       if (height > 0) {
-        if (height > 80) {
-          height = 80;
+        if (height > LIME_COLUMN_HEIGHT) {
+          height = LIME_COLUMN_HEIGHT;
           mode = COMPOSITE_LIGHTEN;
         } else {
           mode = COMPOSITE_ADDITIVE;
         }
-        for (i = 0, x = 50; i != 2; i++, x += 14) {
+        for (i = 0, x = 50; i != 2; i++, x += LIME_COLUMN_WIDTH) {
           if (i == 0)
             EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, mode);
           else
             EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE,
                                 EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, mode);
           draw[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-          EFFECT_BLITTER(HEAP_SLOT_RAM_CODE)(canvas, work->sheet, x,
-                                             112 - height, 14, height);
+          EFFECT_BLITTER(HEAP_SLOT_RAM_CODE)(
+              canvas, work->sheet, x, 112 - height, LIME_COLUMN_WIDTH, height);
           HeapSlot_Release(HEAP_SLOT_RAM_CODE);
         }
       }
     }
 
     BattleEffect_FetchRectangleBlitters(work->args->side, draw);
-    for (i = 0, particle = work->particles; i != 16; i++) {
-      if (frame >= i / 2 + 8 && particle->variant <= 28) {
+    for (i = 0, particle = work->particles; i != UNDEAD_SWORD_SPARKS; i++) {
+      if (frame >= i / 2 + 8 && particle->variant < UNDEAD_SWORD_SPARK_FRAMES) {
         s32 drawX;
         s32 drawY;
 
         picture = particle->variant / 3;
         drawX = FIXEDtoINT(particle->x);
         drawY = FIXEDtoINT(particle->y);
-        if (picture > 6)
-          picture = 6;
+        if (picture > UNDEAD_SWORD_SPARK_PICTURES - 1)
+          picture = UNDEAD_SWORD_SPARK_PICTURES - 1;
         src = work->sheet + gUndeadSword_SparkPictures[picture] +
               UNDEAD_SWORD_SPARK_SHEET;
         size = gUndeadSword_SparkSizes[picture];
@@ -131,4 +141,10 @@ void BattleEffect_RunUndeadSword(struct BattleEffectParams *args) {
   BattleEffect_EndCanvasLayer();
 }
 
+#undef UNDEAD_SWORD_FRAMES
+#undef LIME_COLUMN_WIDTH
+#undef LIME_COLUMN_HEIGHT
 #undef UNDEAD_SWORD_SPARK_SHEET
+#undef UNDEAD_SWORD_SPARKS
+#undef UNDEAD_SWORD_SPARK_PICTURES
+#undef UNDEAD_SWORD_SPARK_FRAMES

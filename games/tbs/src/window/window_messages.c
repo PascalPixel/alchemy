@@ -4,10 +4,26 @@
 
 #include "window_internal.h"
 
+/// A capacity no message reaches: the largest s32.
+#define MESSAGE_CAPACITY_UNLIMITED 0x7fffffff
+
+/// The previous code's low byte, which picks a symbol's tree in its bank.
+#define SYMBOL_TREE_MASK 0xff
+/// A byte of the bit stream as it is read from: the first bit taken, the seven
+/// left, and a stop bit above them that reads as the last 1 with nothing left,
+/// when the next byte is loaded.
+#define BIT_STREAM_STOP (1 << 7)
+
+/// Speakers up to Garet's child sprite take their portrait from
+/// gPortrait_CharacterMap, the others from gPortrait_SpriteMap; the portraits
+/// of those others are numbered from PORTRAIT_OTHER_FIRST (Icon_LoadWithPalette
+/// takes it as the row PORTRAIT_JUPITER_DJINNI).
+#define PORTRAIT_OTHER_FIRST 128
+
 /// Decodes message into text (a u16 string) with no length limit: text must
 /// have room for the whole message and its terminator.
 void Message_DecodeRawUnbounded(s32 message, u16 *text) {
-  Message_DecodeRaw(message, text, 0x7fffffff);
+  Message_DecodeRaw(message, text, MESSAGE_CAPACITY_UNLIMITED);
 }
 
 /// Decodes message into destination as a zero-terminated string of at most
@@ -402,7 +418,7 @@ UNUSED s32 Text_DecodeSymbolInC(struct MessageReader *reader) {
   treeBits = 1;
   // The previous code's high bits pick the bank, its low byte the tree.
   contextBank = code >> 8;
-  code &= 0xff;
+  code &= SYMBOL_TREE_MASK;
   base = Text_MessageContexts[contextBank][0];
   base += ((const u16 *)Text_MessageContexts[contextBank][1])[code];
   tree = base;
@@ -415,7 +431,7 @@ UNUSED s32 Text_DecodeSymbolInC(struct MessageReader *reader) {
     if (bit != 0 && treeBits == 0) {
       treeBits = *tree++;
       bit = treeBits & 1;
-      treeBits = (treeBits >> 1) | 0x80;
+      treeBits = (treeBits >> 1) | BIT_STREAM_STOP;
     }
     if (bit != 0)
       break;
@@ -424,7 +440,7 @@ UNUSED s32 Text_DecodeSymbolInC(struct MessageReader *reader) {
     if (bit != 0 && textBits == 0) {
       textBits = *text++;
       bit = textBits & 1;
-      textBits = (textBits >> 1) | 0x80;
+      textBits = (textBits >> 1) | BIT_STREAM_STOP;
     }
     if (bit == 0)
       continue;
@@ -435,7 +451,7 @@ UNUSED s32 Text_DecodeSymbolInC(struct MessageReader *reader) {
       if (bit != 0 && treeBits == 0) {
         treeBits = *tree++;
         bit = treeBits & 1;
-        treeBits = (treeBits >> 1) | 0x80;
+        treeBits = (treeBits >> 1) | BIT_STREAM_STOP;
       }
       if (bit == 0)
         depth++;
@@ -477,14 +493,14 @@ void Portrait_ClearSlots(void) {
   } while (index != 2);
 }
 
-/// Returns the portrait of a character (ids below 20) or another speaker's
-/// sprite (128 and up for those), or -1 when it has none.
+/// Returns the portrait of a character or another speaker's sprite (from
+/// PORTRAIT_OTHER_FIRST for those), or -1 when it has none.
 s32 Portrait_GetForSpeaker(u32 value) {
   s32 result = -1;
   s32 portraitIndex = 0;
 
   // Both maps are {speaker, portrait} pairs ending in -1 (window/scales.c).
-  if (value < 20) {
+  if (value <= SPRITE_GARET_CHILD) {
     for (;;) {
       s32 speakerId = gPortrait_CharacterMap[portraitIndex];
 
@@ -506,7 +522,7 @@ s32 Portrait_GetForSpeaker(u32 value) {
       if (speakerId == value) {
         portraitIndex++;
         result = gPortrait_SpriteMap[portraitIndex];
-        result += 128;
+        result += PORTRAIT_OTHER_FIRST;
         break;
       }
       portraitIndex += 2;

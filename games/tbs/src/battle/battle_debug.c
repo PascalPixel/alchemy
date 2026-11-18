@@ -13,6 +13,12 @@
 #define DEBUG_SECOND_FORM MsgDebugSecondForm
 #endif
 
+/// How far R and L, or Up and Down in the battle test's chooser, step through a
+/// list at once.
+#define DEBUG_LARGE_STEP 10
+/// The number a browsed message's number placeholder shows.
+#define DEBUG_SAMPLE_NUMBER 999
+
 /// The last row of gDebug_ParameterSets; the scan reports a missing parameter
 /// set past it.
 #define DEBUG_PARAMETER_SET_LAST_ROW 332
@@ -142,7 +148,7 @@ void DebugBattle_ViewMessages(void) {
     for (;;) {
       // Sample arguments for the message's placeholders.
       MessageArgument_ClearAllFar();
-      MessageArgument_PushFar(999, MESSAGE_ARGUMENT_NUMBER);
+      MessageArgument_PushFar(DEBUG_SAMPLE_NUMBER, MESSAGE_ARGUMENT_NUMBER);
       MessageArgument_PushFar(0, MESSAGE_ARGUMENT_CLASS);
       MessageArgument_PushFar(1, MESSAGE_ARGUMENT_ACTOR);
       MessageArgument_PushFar(1, MESSAGE_ARGUMENT_ITEM);
@@ -178,9 +184,9 @@ void DebugBattle_ViewMessages(void) {
         if (gKeysRepeat & KEY_DOWN)
           secondRange = 0;
         if (gKeysRepeat & KEY_R)
-          index += 10;
+          index += DEBUG_LARGE_STEP;
         if (gKeysRepeat & KEY_L)
-          index -= 10;
+          index -= DEBUG_LARGE_STEP;
         if (index < 0)
           index = 0;
         if (index >= (u32)DEBUG_VIEW_LIMIT)
@@ -235,9 +241,9 @@ restart:
         if (gKeysRepeat & KEY_LEFT)
           encounter--;
         if (gKeysRepeat & KEY_UP)
-          encounter -= 10;
+          encounter -= DEBUG_LARGE_STEP;
         if (gKeysRepeat & KEY_DOWN)
-          encounter += 10;
+          encounter += DEBUG_LARGE_STEP;
         if (gKeysRepeat & KEY_R)
           set++;
         if (gKeysRepeat & KEY_L)
@@ -281,3 +287,6 @@ restart:
   Battle_Run(DEBUG_FIRST_ENCOUNTER);
   goto restart;
 }
+
+#undef DEBUG_LARGE_STEP
+#undef DEBUG_SAMPLE_NUMBER

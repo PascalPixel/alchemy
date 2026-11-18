@@ -7,6 +7,9 @@
 /// Battle_Run's results besides the number of enemies defeated.
 #define BATTLE_OUTCOME_LOST -1
 #define BATTLE_OUTCOME_FLED 999
+/// A name letter past every edition's last (Z, the Japanese edition's 26th),
+/// which leaves an enemy's name bare, as The Lost Age names it.
+#define NAME_LETTER_PAST_ALL 26
 
 /// The six enemy units, gEnemyUnits, which Unit_Get reads for unit ids 128 to
 /// 133 while the battle lasts.
@@ -256,7 +259,7 @@ s32 Battle_Run(s32 enemyGroup) {
 
 won:
   // "X has been downed!" or "X's party goes down!", named after the first
-  // enemy to fall, then the spoils. Letter 26 gives the name with no letter.
+  // enemy to fall, with no letter, then the spoils.
   Battle_ClearSerialTransferPayload();
   if (GameFlag_GetFar(FLAG_DJINN_LESSON) == 0) {
     if (battle->isLink != 0)
@@ -265,7 +268,8 @@ won:
       Sound_PlayFar(MUS_VICTORY);
       if (battle->defeatState <= DEFEAT_SEVERAL) {
         BattleUnit_SetFar(FIRST_ENEMY_UNIT,
-                          battle->enemyKinds[battle->firstDefeated], 26);
+                          battle->enemyKinds[battle->firstDefeated],
+                          NAME_LETTER_PAST_ALL);
         MessageArgument_ClearAllFar();
         MessageArgument_PushFar(FIRST_ENEMY_UNIT, MESSAGE_ARGUMENT_ACTOR);
         BattleMessage_ShowAndWaitFar(battle->defeatState + MsgDowned);

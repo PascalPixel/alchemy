@@ -4,8 +4,14 @@
 
 #include "battle_effect_internal.h"
 
-/// Where the flash graphics start: after the 64x128 sword image.
-#define RAGNAROK_FLASH_PICTURES (64 * 128)
+/// FlameBladeSheet's blade, and where the flash graphics start after it.
+#define FLAME_BLADE_WIDTH 64
+#define FLAME_BLADE_HEIGHT 128
+#define RAGNAROK_FLASH_PICTURES PICTURE_BYTES(FLAME_BLADE)
+/// The canvas row the blade is cut off at, as it sinks into the ground.
+#define RAGNAROK_BLADE_BOTTOM 104
+/// A flash's life it is drawn for: six pictures, three frames each.
+#define RAGNAROK_FLASH_FRAMES 18
 
 #define RAGNAROK_FRAMES 80
 #define RAGNAROK_COLUMNS 2  ///< columns that strike
@@ -103,11 +109,11 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
       s32 x;
       s32 top;
 
-      height = 128;
+      height = FLAME_BLADE_HEIGHT;
       if (work->args->side == EFFECT_SIDE_PARTY) {
         if (frame <= 9) {
           x = frame * 10 - 8;
-          top = frame * 16 - 128;
+          top = frame * 16 - FLAME_BLADE_HEIGHT;
         } else if (frame > 20) {
           x = frame + 62;
           top = frame * 2 - 24;
@@ -118,7 +124,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
       } else {
         if (frame <= 9) {
           x = 128 - frame * 10;
-          top = frame * 16 - 128;
+          top = frame * 16 - FLAME_BLADE_HEIGHT;
         } else if (frame > 20) {
           x = 58 - frame;
           top = frame * 2 - 24;
@@ -127,11 +133,12 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
           top = 16;
         }
       }
-      if (top + 128 > 104) {
-        height = height - top - 24;
+      if (top + FLAME_BLADE_HEIGHT > RAGNAROK_BLADE_BOTTOM) {
+        height = height - top - (FLAME_BLADE_HEIGHT - RAGNAROK_BLADE_BOTTOM);
       }
       if (height > 0) {
-        blit[0](canvas, work->sheet, x - 32, top, 64, height);
+        blit[0](canvas, work->sheet, x - FLAME_BLADE_WIDTH / 2, top,
+                FLAME_BLADE_WIDTH, height);
       }
     }
 
@@ -164,7 +171,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
           x = FIXEDtoINT(flash->x) +
               gRagnarok_StrikeColumns[work->args->side][col];
           life = flash->variant;
-          if (life >= 0 && life <= 17) {
+          if (life >= 0 && life < RAGNAROK_FLASH_FRAMES) {
             blit[0](canvas,
                     work->sheet +
                         gRagnarok_FlashPictures[life / 3] *
@@ -233,7 +240,11 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
 }
 
+#undef FLAME_BLADE_WIDTH
+#undef FLAME_BLADE_HEIGHT
 #undef RAGNAROK_FLASH_PICTURES
+#undef RAGNAROK_BLADE_BOTTOM
+#undef RAGNAROK_FLASH_FRAMES
 #undef RAGNAROK_FRAMES
 #undef RAGNAROK_COLUMNS
 #undef RAGNAROK_SEEDED

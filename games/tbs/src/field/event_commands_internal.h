@@ -53,6 +53,10 @@ void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *actor,
 /// A Djinni battle's event without DJINN_NO_HOP.
 #define DJINN_PENDING_BATTLE_EVENT_MASK 0x7ff
 
+/// The steps, one a frame, in which an object grows out of the caster on its
+/// way to the target or shrinks back into it: FieldEffect_Interpolate's tenths.
+#define GROW_STEPS 10
+
 /// The trailing copies of a moving Djinni or Force's hand are drawn a little
 /// smaller than what they follow.
 #define AFTERIMAGE_SCALE (FIXED_ONE * 15 / 16)

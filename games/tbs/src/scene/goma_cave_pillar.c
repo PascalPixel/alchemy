@@ -67,6 +67,7 @@
 #include "game/game.h"
 #include "graphics/graphics.h"
 #include "menu/menu.h"
+#include "scene/goma_cave.h"
 #include "scene/import.h"
 #include "sound/sound.h"
 #include "system/point.h"
@@ -82,16 +83,6 @@ extern struct SceneEntrance gGomaCavePillar_Entrances[];
 extern u32 gGomaCavePillar_Exits[];
 extern struct ActorPlacement gGomaCavePillar_ActorPlacements[];
 extern struct Trigger gGomaCavePillar_Triggers[];
-
-// Map-section temp flags: Scene_Arrive clears FLAG_AREA_TEMP_FIRST to
-// FLAG_AREA_TEMP_LAST when the party enters another area, and other areas use
-// the numbers for their own.
-/// The stump has been pushed over into the room below.
-#define FLAG_GOMA_CAVE_STUMP_FELL FLAG_AREA_TEMP_00
-/// The east stone pillar has sunk into its place.
-#define FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE FLAG_AREA_TEMP_01
-/// The west stone pillar stands one step east of its start.
-#define FLAG_GOMA_CAVE_WEST_PILLAR_MOVED FLAG_AREA_TEMP_02
 
 enum GomaCavePillarFragmentPlane { PLANE_XY = 0, PLANE_XZ = 1, PLANE_YZ = 2 };
 

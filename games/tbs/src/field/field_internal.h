@@ -95,8 +95,8 @@ enum CellPicturePacking {
 /// Where a layout's tileset animation and blend scripts are decoded, in the
 /// space after the shapes; the world map decodes its tileset animation there
 /// too.
-#define MAPGRID_ANIMATION_SCRIPT (Ram_MapGridShapes + 0x1000)
-#define MAPGRID_BLEND_SCRIPT (Ram_MapGridShapes + 0x1e00)
+#define MAPGRID_ANIMATION_SCRIPT (Ram_MapGridShapes + 4096)
+#define MAPGRID_BLEND_SCRIPT (Ram_MapGridShapes + 7680)
 
 /// A row of gSpritePictureCache_Sources: the packed resource that holds an
 /// animation number's pictures, ending at number 0.

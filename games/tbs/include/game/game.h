@@ -31,8 +31,8 @@ struct EnemyElementPreset;
 /// The 519 abilities by ability id (ability_table.c).
 extern const struct AbilityDefinition gAbilityDefinitions[];
 /// Each character's lighthouse group: 0 for Isaac, Garet, Felix and Jenna,
-/// whose PP a lit Venus or Mars Lighthouse restores; 1 for the others, by
-/// Mercury or Jupiter (Party_RestorePpOfLitElements).
+/// whose PP is restored inside Venus or Mars Lighthouse; 1 for the others,
+/// inside Mercury or Jupiter Lighthouse (Party_RestorePpOfLitElements).
 extern const u8 gCharacter_ElementGroupTable[];
 /// The experience each character needs for levels 1 to 99, 99 words a
 /// character (Unit_GetExperienceForLevel).

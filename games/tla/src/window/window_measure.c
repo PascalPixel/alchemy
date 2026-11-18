@@ -213,9 +213,9 @@ void Text_MeasureDecoded(s32 entryIndex, u32 *outWidth, u32 *outHeight,
 #if TLA_PATCH_1
       lineSpacingCounts[lines] = count;
 #else
-      // UB: with flag 0xc00 clear the line's count is never stored, and the
-      // spacing below reads what the stack held there.
-      if (GameFlag_Get(0xc00))
+      // UB: with FLAG_SPREAD_LINES clear the line's count is never stored, and
+      // the spacing below reads what the stack held there.
+      if (GameFlag_Get(FLAG_SPREAD_LINES))
         lineSpacingCounts[lines] = count;
 #ifdef UBFIX
       else

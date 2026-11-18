@@ -8,9 +8,18 @@
 /// its first 16, and of the second, the columns of water.
 #define NEPTUNE_LEAP_FRAMES 244
 #define NEPTUNE_COLUMN_FRAMES 144
-/// The first stage's flares converging on Neptune's head, and the burst at
-/// its end.
+/// The first stage's cues: flares converge on Neptune's head from
+/// NEPTUNE_FLARES_FRAME, looked at for NEPTUNE_FLARES_WINDOW frames, while the
+/// flare on the head grows and from NEPTUNE_BEAM_FRAME the beam joins it to the
+/// sky; the flare swells from NEPTUNE_SWELL_FRAME, and again from
+/// NEPTUNE_SECOND_SWELL_FRAME with a second flare beside it, until the splash
+/// curls up from NEPTUNE_SPLASH_FRAME and it bursts at NEPTUNE_BURST_FRAME.
 #define NEPTUNE_FLARES_FRAME 152
+#define NEPTUNE_FLARES_WINDOW 88
+#define NEPTUNE_BEAM_FRAME 176
+#define NEPTUNE_SWELL_FRAME 192
+#define NEPTUNE_SECOND_SWELL_FRAME 200
+#define NEPTUNE_SPLASH_FRAME 214
 #define NEPTUNE_BURST_FRAME 222
 
 /// Sets BG2's horizontal scale back to one texel a pixel above the stretched
@@ -56,12 +65,15 @@ void BattleEffect_SetBg2AffineScaleHalf(void) { REG_BG2PA = Q_8_8(0.5); }
 /// The columns of water: NEPTUNE_COLUMN_SLOTS set out, the first
 /// NEPTUNE_COLUMNS falling NEPTUNE_COLUMN_INTERVAL frames apart at
 /// NEPTUNE_COLUMN_SPEED pixels a frame until they reach the canvas row
-/// NEPTUNE_COLUMN_GROUND.
+/// NEPTUNE_COLUMN_GROUND, where each stands NEPTUNE_COLUMN_LANDED_FRAMES
+/// frames, shaking the battle for the first NEPTUNE_COLUMN_SHAKE_FRAMES.
 #define NEPTUNE_COLUMN_SLOTS 16
 #define NEPTUNE_COLUMNS 5
 #define NEPTUNE_COLUMN_INTERVAL 16
 #define NEPTUNE_COLUMN_SPEED 16
 #define NEPTUNE_COLUMN_GROUND 112
+#define NEPTUNE_COLUMN_LANDED_FRAMES 32
+#define NEPTUNE_COLUMN_SHAKE_FRAMES 8
 
 /// Under storm clouds Neptune leaps out of the sea in a burst of spray, light
 /// gathers at its head and a beam of light joins its head to the sky, with a
@@ -89,7 +101,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
   u32 *cache;
   struct BattleEffectWork *work;
   s32 frame;
-  s32 t;
+  s32 flareFrame;
   s32 i;
   s32 n;
   s32 s;
@@ -275,8 +287,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     }
 
     // Flares converge on Neptune's head.
-    t = frame - NEPTUNE_FLARES_FRAME;
-    if (t >= 0 && t < 88) {
+    flareFrame = frame - NEPTUNE_FLARES_FRAME;
+    if (flareFrame >= 0 && flareFrame < NEPTUNE_FLARES_WINDOW) {
       for (i = 0; i != NEPTUNE_FLARE_COUNT; i++) {
         flare = &work->particles[i];
         if (frame >= i / 4 + NEPTUNE_FLARES_FRAME &&
@@ -339,7 +351,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     }
 
     // The beam runs from the top of the canvas to the burst.
-    if (frame > 175) {
+    if (frame >= NEPTUNE_BEAM_FRAME) {
       n = NEPTUNE_BEAM_THIN;
       if (frame >= NEPTUNE_BURST_FRAME) {
         n = NEPTUNE_BEAM_FLASH;
@@ -372,34 +384,35 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
     }
 
     // The flare at the burst grows, then the splash covers it.
-    if (t >= 0 && t < 40) {
+    if (flareFrame >= 0 &&
+        flareFrame < NEPTUNE_SWELL_FRAME - NEPTUNE_FLARES_FRAME) {
       s32 z;
-      z = t / 2 + 1;
+      z = flareFrame / 2 + 1;
       if (z > 4) {
         z = 4;
       }
       EFFECT_DRAW_FLARE(blit[1], canvas, work->sheet + NEPTUNE_FLARE_SHEET, 108,
                         60, z);
     }
-    if (frame >= 192 && frame < 200) {
+    if (frame >= NEPTUNE_SWELL_FRAME && frame < NEPTUNE_SECOND_SWELL_FRAME) {
       s32 z;
-      z = (frame - 192) / 2 + 3;
+      z = (frame - NEPTUNE_SWELL_FRAME) / 2 + 3;
       if (z > 6) {
         z = 6;
       }
       EFFECT_DRAW_FLARE(blit[1], canvas, work->sheet + NEPTUNE_FLARE_SHEET, 108,
                         60, z);
     }
-    if (frame > 199) {
+    if (frame >= NEPTUNE_SECOND_SWELL_FRAME) {
       s32 z;
-      s32 u = frame - 200;
+      s32 u = frame - NEPTUNE_SECOND_SWELL_FRAME;
       z = u / 4 + 5;
       if (z > 8) {
         z = 8;
       }
       EFFECT_DRAW_FLARE(blit[1], canvas, work->sheet + NEPTUNE_FLARE_SHEET, 108,
                         60, z);
-      if (frame <= 213) {
+      if (frame < NEPTUNE_SPLASH_FRAME) {
         z = u / 4 + 1;
         if (z > 4) {
           z = 4;
@@ -408,9 +421,9 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
                           100, 52, z);
       }
     }
-    if (frame >= NEPTUNE_BURST_FRAME - 8 && frame < NEPTUNE_BURST_FRAME) {
+    if (frame >= NEPTUNE_SPLASH_FRAME && frame < NEPTUNE_BURST_FRAME) {
       s32 z;
-      z = (frame - (NEPTUNE_BURST_FRAME - 8)) / 4;
+      z = (frame - NEPTUNE_SPLASH_FRAME) / 4;
       if (z > 2) {
         z = 2;
       }
@@ -495,7 +508,8 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         Sound_PlayFar(SE_CAST);
       }
       // A column falls.
-      if (frame >= i * NEPTUNE_COLUMN_INTERVAL && column->variant <= 31) {
+      if (frame >= i * NEPTUNE_COLUMN_INTERVAL &&
+          column->variant < NEPTUNE_COLUMN_LANDED_FRAMES) {
         s32 wobble = frame * NEPTUNE_COLUMN_SPEED % BLUE_FLAME_COLUMN_HEIGHT;
         blit[1](canvas, work->sheet, column->x - BLUE_FLAME_COLUMN_WIDTH / 2,
                 column->y + wobble - 216, BLUE_FLAME_COLUMN_WIDTH,
@@ -515,7 +529,7 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
         if (column->y >= NEPTUNE_COLUMN_GROUND) {
           emittedDrops = 0;
           dropOriginX = column->x;
-          if (column->variant <= 7) {
+          if (column->variant < NEPTUNE_COLUMN_SHAKE_FRAMES) {
             work->shakeFrames = 4;
           }
           for (j = 0; j != PARTICLE_POOL_COUNT; j++) {
@@ -575,6 +589,11 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
 #undef NEPTUNE_LEAP_FRAMES
 #undef NEPTUNE_COLUMN_FRAMES
 #undef NEPTUNE_FLARES_FRAME
+#undef NEPTUNE_FLARES_WINDOW
+#undef NEPTUNE_BEAM_FRAME
+#undef NEPTUNE_SWELL_FRAME
+#undef NEPTUNE_SECOND_SWELL_FRAME
+#undef NEPTUNE_SPLASH_FRAME
 #undef NEPTUNE_BURST_FRAME
 #undef NEPTUNE_FLARE_SHEET
 #undef NEPTUNE_SPLASH
@@ -597,3 +616,5 @@ void BattleEffect_RunNeptune(struct BattleEffectParams *args) {
 #undef NEPTUNE_COLUMN_INTERVAL
 #undef NEPTUNE_COLUMN_SPEED
 #undef NEPTUNE_COLUMN_GROUND
+#undef NEPTUNE_COLUMN_LANDED_FRAMES
+#undef NEPTUNE_COLUMN_SHAKE_FRAMES

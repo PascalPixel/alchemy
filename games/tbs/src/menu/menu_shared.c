@@ -676,8 +676,9 @@ void PsynergyMenu_PositionMemberEntry(struct WindowSprite **slot, s32 index,
   Icon_PrepareActor(icon);
 }
 
-/// Places the icon at slotIndex (0 above 15) in a columns-wide grid of
-/// 24x16 cells starting at (originX, originY), and shows it.
+/// Places the icon at slotIndex in a columns-wide grid of 24x16 cells starting
+/// at (originX, originY), and shows it. A slotIndex above 15, which the item
+/// menu never passes, is taken as 0.
 void ItemMenu_PlaceIcon(struct WindowSprite **slot, s32 slotIndex, s32 originX,
                         s32 originY, s32 columns) {
   struct WindowSprite *icon;

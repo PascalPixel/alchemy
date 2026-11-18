@@ -242,6 +242,11 @@ enum LetteringShape {
 #define LETTERING_PALETTE 15
 #define LETTERING_ATTRIBUTES (OBJ_PALETTE(LETTERING_PALETTE) | OBJ_PRIORITY(1))
 #define LETTERING_DEPTH (OAM_DEPTH_WINDOW - 4)
+/// The lettering's x and speed are kept in 256ths of a pixel.
+#define LETTERING_SUBPIXELS 256
+/// The lettering's pieces are 32 pixels wide: piece i of a row of n lies this
+/// far from the row's centre.
+#define LETTERING_PIECE_X(i, n) ((i) * 32 - ((n) - 1) * 16)
 
 extern s16 gShamanVillage_LetteringTitleScript[];
 extern s16 gShamanVillage_LetteringDigitScript[];
@@ -553,13 +558,13 @@ void ShamanVillage_BlowAwaySand(void) {
   FieldCamera_WaitForArrival();
   Task_Add(ShamanVillage_WaveWhirlwindLines, TASK_PASS_VBLANK);
   Event_PlaySound(SE_RUSH);
-  REG_BLDALPHA = BLEND_ALPHA(0, 15);
+  REG_BLDALPHA = BLEND_ALPHA(0, BLEND_WEIGHT_MAX - 1);
   REG_BLDCNT = BLDCNT_TGT1_BG0 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_DISPCNT |= DISPCNT_BG0_ON;
   MapGrid_SetShake(1, 1, 1);
   i = 0;
   do {
-    REG_BLDALPHA = ((15 - (i >> 2)) << 8) | (i >> 2);
+    REG_BLDALPHA = ((BLEND_WEIGHT_MAX - 1 - (i >> 2)) << 8) | (i >> 2);
     Actor_GetById(ACTOR_TWISTER_ROCK)->flickerColor = Random16() & 7;
     i++;
     Event_Wait(1);
@@ -1852,7 +1857,7 @@ void ShamanVillage_UpdateLettering(void) {
   s32 tile =
       gVramCacheEntries[gShamanVillage_LetteringVramEntry[0]].offset >> 5;
   u32 flags;
-  s32 blend, scale, pos;
+  s32 blend, scale, speed, centerX;
   s32 matrix, i, x, y, left;
   struct AffineTransform work;
 
@@ -1927,13 +1932,13 @@ commands:
     s32 duration;
     duration = gShamanVillage_LetteringSpeedFrames;
     if (duration == 0) {
-      pos = gShamanVillage_LetteringSpeed;
+      speed = gShamanVillage_LetteringSpeed;
     } else {
       s32 start, progress, target;
       start = gShamanVillage_LetteringSpeedFrom;
       target = gShamanVillage_LetteringSpeed;
       progress = ++gShamanVillage_LetteringSpeedFrame;
-      pos = start + (target - start) * progress / duration;
+      speed = start + (target - start) * progress / duration;
       if (progress >= duration)
         gShamanVillage_LetteringSpeedFrames = 0;
     }
@@ -1942,17 +1947,17 @@ commands:
     work.scaleY = scale;
     matrix = (s16)OamMatrix_AllocFromTransform(&work);
   }
-  gShamanVillage_LetteringX += pos;
-  pos = gShamanVillage_LetteringX / 256;
+  gShamanVillage_LetteringX += speed;
+  centerX = gShamanVillage_LetteringX / LETTERING_SUBPIXELS;
   switch (gShamanVillage_LetteringMode) {
   case LETTERING_SHAPE_TITLE: {
     for (i = 0; i < 4; i++) {
       y = 56;
       flags = OBJ_SIZE_32X16;
-      x = pos + scale * (i * 32 - 48) / 256;
+      x = centerX + scale * LETTERING_PIECE_X(i, 4) / 256;
       left = x + 88;
       if ((u32)(x + 152) < 304) {
-        x = left & 511;
+        x = left & OBJ_X_MASK;
         *write++ = 0;
         *write++ = OBJ_X(x) | y | flags | OBJ_AFFINE_MATRIX(matrix) |
                    LETTERING_OBJ_MODE;
@@ -1967,10 +1972,10 @@ commands:
     for (i = 0; i < 2; i++) {
       y = 48;
       flags = OBJ_SIZE_32X16;
-      x = pos + scale * (i * 32 - 16) / 256;
+      x = centerX + scale * LETTERING_PIECE_X(i, 2) / 256;
       left = x + 88;
       if ((u32)(x + 152) < 304) {
-        x = left & 511;
+        x = left & OBJ_X_MASK;
         *write++ = 0;
         *write++ = OBJ_X(x) | y | flags | OBJ_AFFINE_MATRIX(matrix) |
                    LETTERING_OBJ_MODE;
@@ -1987,10 +1992,10 @@ commands:
     for (i = 0; i < 2; i++) {
       y = 64;
       flags = OBJ_SIZE_32X16;
-      x = pos + scale * (i * 32 - 16) / 256;
+      x = centerX + scale * LETTERING_PIECE_X(i, 2) / 256;
       left = x + 88;
       if ((u32)(x + 152) < 304) {
-        x = left & 511;
+        x = left & OBJ_X_MASK;
         *write++ = 0;
         *write++ = OBJ_X(x) | y | flags | OBJ_AFFINE_MATRIX(matrix) |
                    LETTERING_OBJ_MODE;
@@ -2006,9 +2011,9 @@ commands:
   case LETTERING_SHAPE_GO:
     y = 48;
     flags = OBJ_SIZE_64X32;
-    left = pos + 56;
-    if ((u32)(pos + 120) < 304) {
-      x = left & 511;
+    left = centerX + 56;
+    if ((u32)(centerX + 120) < 304) {
+      x = left & OBJ_X_MASK;
       *write++ = 0;
       *write++ =
           OBJ_X(x) | y | flags | OBJ_AFFINE_MATRIX(matrix) | LETTERING_OBJ_MODE;
@@ -2021,9 +2026,9 @@ commands:
   case LETTERING_SHAPE_DIGIT:
     y = 48;
     flags = OBJ_SIZE_32X32;
-    left = pos + 88;
-    if ((u32)(pos + 152) < 304) {
-      x = left & 511;
+    left = centerX + 88;
+    if ((u32)(centerX + 152) < 304) {
+      x = left & OBJ_X_MASK;
       *write++ = 0;
       *write++ =
           OBJ_X(x) | y | flags | OBJ_AFFINE_MATRIX(matrix) | LETTERING_OBJ_MODE;
@@ -2121,7 +2126,8 @@ void ShamanVillage_LoadLettering(s32 picture) {
 void ShamanVillage_CountDownToStart(void) {
   // The title's hold in the middle, as Colosso's third match sets it; the
   // village never shows the title.
-  gShamanVillage_LetteringTitleScript[LETTERING_TITLE_HOLD] = 180;
+  gShamanVillage_LetteringTitleScript[LETTERING_TITLE_HOLD] =
+      3 * FRAMES_PER_SECOND;
   Event_Wait(30);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
   ShamanVillage_LoadLettering(LETTERING_PICTURE_COUNTDOWN_START);
@@ -2793,8 +2799,11 @@ void ShamanVillage_DriftSmoke(struct Actor *actor) {
     Actor_Release(actor);
 }
 
+/// The frames a puff of smoke drifts before it is released.
+#define SMOKE_FRAMES 60
+
 /// Puffs a blended cloud of smoke at x, y, z, half its size, that
-/// ShamanVillage_DriftSmoke moves for 60 frames.
+/// ShamanVillage_DriftSmoke moves for SMOKE_FRAMES.
 void ShamanVillage_SpawnSmoke(s32 x, s32 y, s32 z) {
   struct Actor *actor =
       ((struct Actor *)Import_ActorCreate(SPRITE_DUST_CLOUD, x, y, z));
@@ -2804,13 +2813,13 @@ void ShamanVillage_SpawnSmoke(s32 x, s32 y, s32 z) {
     actor->motionFlags = 0;
     actor->timer = 0;
     actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-    FieldActor_SetSpriteColor(actor, 7);
+    FieldActor_SetSpriteColor(actor, SPRITE_COLOR_WHITE);
     ((struct FieldSprite *)actor->sprite)->priority = 1;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetSpriteFlags(actor, 0);
     actor->scaleX = FIXED_ONE / 2;
     actor->scaleY = FIXED_ONE / 2;
-    *(s32 *)&actor->watchedActor = 60;
+    *(s32 *)&actor->watchedActor = SMOKE_FRAMES;
     actor->update = ShamanVillage_DriftSmoke;
     Import_ActorSetMode(actor, 5);
     Actor_SetBlendMode(actor, 1);

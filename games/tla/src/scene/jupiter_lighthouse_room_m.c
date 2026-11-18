@@ -176,6 +176,9 @@ enum { ENERGY_BLOCK_GAP_CELL_X = 63, ENERGY_BLOCK_GAP_CELL_Z = 15 };
 #define LIGHTNING_MAP_ROWS 16
 #define LIGHTNING_MAP_COLUMNS 4
 #define LIGHTNING_SCREEN_BLOCK 4
+/// The bits of a map entry that number the map's tiles from 512; cleared, the
+/// map draws the tiles at the start of character block 0.
+#define LIGHTNING_MAP_TILE_BASE_MASK 0x300
 
 /// More HP or PP than anyone has, so that taking it away leaves none; and the
 /// HP Isaac is left with for the fight that cannot be won.
@@ -267,7 +270,7 @@ void JupiterLighthouse_FlashSky(void) {
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_LIGHTNING_MAP), buffer);
   p = buffer;
   for (i = 0; i != LIGHTNING_MAP_COLUMNS * LIGHTNING_MAP_ROWS; i++)
-    *p++ &= 0xfcff;
+    *p++ &= ~LIGHTNING_MAP_TILE_BASE_MASK;
   p = buffer;
   for (i = 0; i != LIGHTNING_MAP_ROWS; i++) {
     Dma_Set(p,
@@ -347,19 +350,19 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *actor = Actor_GetById(id);
   s32 x;
-  s32 i;
+  s32 frames;
 
   if (FIELD_CELL(actor->x.fixed) == ENERGY_BLOCK_GAP_CELL_X &&
       FIELD_CELL(actor->z.fixed) == ENERGY_BLOCK_GAP_CELL_Z) {
     Event_SetFlag(FLAG_ENERGY_BLOCK_IN_GAP);
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     System_Wait(2);
-    i = 0;
+    frames = 0;
     if (actor->y.fixed > actor->groundHeight || actor->velocityY != 0) {
       do {
         System_Wait(1);
-        i++;
-        if (i > 29)
+        frames++;
+        if (frames > 29)
           break;
       } while (actor->y.fixed > actor->groundHeight || actor->velocityY != 0);
     }
@@ -437,7 +440,7 @@ void JupiterLighthouse_OpenFloor(void) {
   struct Actor *actor = Actor_GetById(ACTOR_GRAY_BLOCK);
   s32 spot = 0;
   s32 x;
-  s32 i;
+  s32 frames;
 
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LID_LIFTED))
     return;
@@ -475,12 +478,12 @@ void JupiterLighthouse_OpenFloor(void) {
     actor->gravity = toFIXED(1) / 2;
     actor->motionFlags = ACTOR_FALLS;
     actor->groundHeight = toFIXED(-80);
-    i = 0;
+    frames = 0;
     if (actor->y.fixed > actor->groundHeight) {
       do {
         System_Wait(1);
-        i++;
-        if (i > 29)
+        frames++;
+        if (frames > 29)
           break;
       } while (actor->y.fixed > actor->groundHeight);
     }
@@ -592,6 +595,10 @@ void JupiterLighthouse_TalkAfterTheFight(s32 actor) {
   Event_End();
 }
 
+/// Garet's sprite's rotation swings by the sine over this: up to a 128th of a
+/// turn either way.
+#define GARET_SWING_DIVISOR 128
+
 /// A frame task while Garet hangs from the ledge: his sprite, pivoting on his
 /// hand, swings on a sine about a tilt of a 32nd of a turn, and every 128
 /// frames his grip strains.
@@ -608,7 +615,8 @@ s32 JupiterLighthouse_KeepGaretHanging(void) {
       sprite->box[3] = 30;
       sprite->box[2] = -4;
       sprite->rotation =
-          Math_Sin(gFrameCount * DEGtoANG(4)) / 128 - TRIG_TURN / 32;
+          Math_Sin(gFrameCount * DEGtoANG(4)) / GARET_SWING_DIVISOR -
+          TRIG_TURN / 32;
     }
   }
   return 1;

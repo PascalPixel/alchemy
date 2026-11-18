@@ -189,7 +189,7 @@ void BattleEffect_RunDynamite(struct BattleEffectParams *args) {
 /// Each spark group variant's row of gPlasma_Shapes: sparks per burst, bursts,
 /// and from SPARK_GROUPS_OFFSET each burst's offset across.
 #define SPARK_GROUPS_SPARKS 0 ///< sparks each burst throws
-#define SPARK_GROUPS_BURSTS 1 ///< bursts, 8 frames apart
+#define SPARK_GROUPS_BURSTS 1 ///< bursts, SPARK_GROUPS_SPACING frames apart
 #define SPARK_GROUPS_OFFSET 2 ///< burst i's offset across, at [2 + i]
 
 #define SPARK_GROUPS_FLASHES 16     ///< flashes kept per burst

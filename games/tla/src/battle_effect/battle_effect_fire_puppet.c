@@ -30,14 +30,18 @@
 #define PUPPET_RETURN_FRAMES 32
 /// The caster kneels, grey, until this frame.
 #define PUPPET_CASTER_RISE_FRAME 100
+/// The skull grows from half size by this much a step of the curl, to about
+/// full size at PUPPET_CURL_MAX.
+#define PUPPET_SKULL_GROWTH 23
 
 /// The trail is PUPPET_WIDTH wide, pinched by up to PUPPET_PINCH along a sine
-/// that runs PUPPET_PINCH_STEP a segment from PUPPET_PINCH_START: 32 pixels at
-/// the caster, 6 at its narrowest, near the middle, and 46 at the skull.
+/// that runs PUPPET_PINCH_STEP a segment, starting five segments before the
+/// caster: 33 pixels at the caster, 6 at its narrowest, near the middle, and 47
+/// at the skull.
 #define PUPPET_WIDTH 50
 #define PUPPET_PINCH 44
-#define PUPPET_PINCH_START 4310
 #define PUPPET_PINCH_STEP 862
+#define PUPPET_PINCH_START (5 * PUPPET_PINCH_STEP)
 /// The trail sways up to PUPPET_SWAY pixels at the skull, less towards the
 /// caster, a wave that runs along it a segment a frame.
 #define PUPPET_SWAY 16
@@ -222,8 +226,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
       model->shade = 0;
       Matrix_Translate(INTtoFIXED(endX), INTtoFIXED(endY), 0);
       Matrix_RotateZ(PUPPET_SKULL_TURN - curl * (PUPPET_SEGMENTS - 1));
-      Matrix_ScaleUniform(curl * (FIXED_ONE / 2 / PUPPET_CURL_MAX) +
-                          FIXED_ONE / 2);
+      Matrix_ScaleUniform(curl * PUPPET_SKULL_GROWTH + FIXED_ONE / 2);
       Render_TransformVertices(gBattleEffect_SquareCorners, projected, 4);
       Render_DrawModelList(model);
       Heap_Release(model);
@@ -241,23 +244,23 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
 /// The frame the lash strikes the target.
 #define WHIPLASH_HIT_FRAME 18
 /// SlashFlameSheet: the violet lash in five pictures, shown one after another
-/// for WHIP_LASH_PICTURE_FRAMES apiece.
-#define WHIP_LASH_A 0
-#define WHIP_LASH_A_WIDTH 48
-#define WHIP_LASH_A_HEIGHT 96
-#define WHIP_LASH_B (WHIP_LASH_A + PICTURE_BYTES(WHIP_LASH_A))
-#define WHIP_LASH_B_WIDTH 38
-#define WHIP_LASH_B_HEIGHT 92
-#define WHIP_LASH_C (WHIP_LASH_B + PICTURE_BYTES(WHIP_LASH_B))
-#define WHIP_LASH_C_WIDTH 30
-#define WHIP_LASH_C_HEIGHT 76
-#define WHIP_LASH_D (WHIP_LASH_C + PICTURE_BYTES(WHIP_LASH_C))
-#define WHIP_LASH_D_WIDTH 56
-#define WHIP_LASH_D_HEIGHT 96
-#define WHIP_LASH_E (WHIP_LASH_D + PICTURE_BYTES(WHIP_LASH_D))
-#define WHIP_LASH_E_WIDTH 56
-#define WHIP_LASH_E_HEIGHT 88
-#define WHIP_LASH_PICTURE_FRAMES 6
+/// for WHIPLASH_LASH_PICTURE_FRAMES apiece.
+#define WHIPLASH_LASH_A 0
+#define WHIPLASH_LASH_A_WIDTH 48
+#define WHIPLASH_LASH_A_HEIGHT 96
+#define WHIPLASH_LASH_B (WHIPLASH_LASH_A + PICTURE_BYTES(WHIPLASH_LASH_A))
+#define WHIPLASH_LASH_B_WIDTH 38
+#define WHIPLASH_LASH_B_HEIGHT 92
+#define WHIPLASH_LASH_C (WHIPLASH_LASH_B + PICTURE_BYTES(WHIPLASH_LASH_B))
+#define WHIPLASH_LASH_C_WIDTH 30
+#define WHIPLASH_LASH_C_HEIGHT 76
+#define WHIPLASH_LASH_D (WHIPLASH_LASH_C + PICTURE_BYTES(WHIPLASH_LASH_C))
+#define WHIPLASH_LASH_D_WIDTH 56
+#define WHIPLASH_LASH_D_HEIGHT 96
+#define WHIPLASH_LASH_E (WHIPLASH_LASH_D + PICTURE_BYTES(WHIPLASH_LASH_D))
+#define WHIPLASH_LASH_E_WIDTH 56
+#define WHIPLASH_LASH_E_HEIGHT 88
+#define WHIPLASH_LASH_PICTURE_FRAMES 6
 /// The motes the lash's crack sprays, kept as particles in the map cell
 /// buffer.
 #define WHIPLASH_MOTES 256
@@ -305,48 +308,48 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
     // The lash, its pictures placed by the caster.
     EffectPosition_ProjectBattler(args->user, &caster);
     if (args->side == EFFECT_SIDE_ENEMIES) {
-      switch (frame / WHIP_LASH_PICTURE_FRAMES) {
+      switch (frame / WHIPLASH_LASH_PICTURE_FRAMES) {
       case 0:
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIP_LASH_A,
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_LASH_A,
                             caster.x / 2 - 48, caster.y - 120);
         break;
       case 1:
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIP_LASH_B,
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_LASH_B,
                             caster.x / 2 - 38, caster.y - 120);
         break;
       case 2:
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIP_LASH_C,
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_LASH_C,
                             caster.x / 2 - 38, caster.y - 100);
         break;
       case 3:
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIP_LASH_D,
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_LASH_D,
                             caster.x / 2 - 64, caster.y - 88);
         break;
       case 4:
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIP_LASH_E,
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_LASH_E,
                             caster.x / 2 - 64, caster.y - 88);
         break;
       }
     } else {
-      switch (frame / WHIP_LASH_PICTURE_FRAMES) {
+      switch (frame / WHIPLASH_LASH_PICTURE_FRAMES) {
       case 0:
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIP_LASH_A,
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_LASH_A,
                             caster.x / 2, caster.y - 120);
         break;
       case 1:
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIP_LASH_B,
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_LASH_B,
                             caster.x / 2, caster.y - 120);
         break;
       case 2:
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIP_LASH_C,
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_LASH_C,
                             caster.x / 2, caster.y - 100);
         break;
       case 3:
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIP_LASH_D,
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_LASH_D,
                             caster.x / 2, caster.y - 88);
         break;
       case 4:
-        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIP_LASH_E,
+        EFFECT_DRAW_PICTURE(draw[0], canvas, work->sheet, WHIPLASH_LASH_E,
                             caster.x / 2, caster.y - 88);
         break;
       }
@@ -417,29 +420,30 @@ void BattleEffect_RunWhiplash(struct BattleEffectParams *args) {
 #undef PUPPET_RETURN_FRAME
 #undef PUPPET_RETURN_FRAMES
 #undef PUPPET_CASTER_RISE_FRAME
+#undef PUPPET_SKULL_GROWTH
 #undef PUPPET_WIDTH
 #undef PUPPET_PINCH
-#undef PUPPET_PINCH_START
 #undef PUPPET_PINCH_STEP
+#undef PUPPET_PINCH_START
 #undef PUPPET_SWAY
 #undef PUPPET_SKULL_TURN
 #undef FIRE_PUPPET_GHOST_SKULL
 #undef WHIPLASH_FRAMES
 #undef WHIPLASH_HIT_FRAME
-#undef WHIP_LASH_A
-#undef WHIP_LASH_A_WIDTH
-#undef WHIP_LASH_A_HEIGHT
-#undef WHIP_LASH_B
-#undef WHIP_LASH_B_WIDTH
-#undef WHIP_LASH_B_HEIGHT
-#undef WHIP_LASH_C
-#undef WHIP_LASH_C_WIDTH
-#undef WHIP_LASH_C_HEIGHT
-#undef WHIP_LASH_D
-#undef WHIP_LASH_D_WIDTH
-#undef WHIP_LASH_D_HEIGHT
-#undef WHIP_LASH_E
-#undef WHIP_LASH_E_WIDTH
-#undef WHIP_LASH_E_HEIGHT
-#undef WHIP_LASH_PICTURE_FRAMES
+#undef WHIPLASH_LASH_A
+#undef WHIPLASH_LASH_A_WIDTH
+#undef WHIPLASH_LASH_A_HEIGHT
+#undef WHIPLASH_LASH_B
+#undef WHIPLASH_LASH_B_WIDTH
+#undef WHIPLASH_LASH_B_HEIGHT
+#undef WHIPLASH_LASH_C
+#undef WHIPLASH_LASH_C_WIDTH
+#undef WHIPLASH_LASH_C_HEIGHT
+#undef WHIPLASH_LASH_D
+#undef WHIPLASH_LASH_D_WIDTH
+#undef WHIPLASH_LASH_D_HEIGHT
+#undef WHIPLASH_LASH_E
+#undef WHIPLASH_LASH_E_WIDTH
+#undef WHIPLASH_LASH_E_HEIGHT
+#undef WHIPLASH_LASH_PICTURE_FRAMES
 #undef WHIPLASH_MOTES

@@ -65,6 +65,8 @@ s32 HoverGlow_GetColor(s32 counter, s32 level) {
 // The glow's strength, in frames: full at 112, and it fades out a frame at a
 // time once the player leaves the place that feeds it.
 #define GLOW_FULL 112
+/// The glow's strength set as the ring grows, before the glow is held.
+#define GLOW_RISING 100
 #define GLOW_SPENT_CUE (ABILITY_HOVER | ACT_PACKED)
 /// The frames the ring under the leader takes to grow, or to shrink away.
 #define HOVER_RING_GROW_FRAMES 32
@@ -77,7 +79,7 @@ struct HoverWork {
   s32 scale;
   s16 resource;
   u16 tile;
-  u16 unk_1030;
+  u16 unused; ///< cleared as Hover starts; nothing reads it
   u16 phase;
   s16 fading;
 };
@@ -200,9 +202,8 @@ void FieldPsynergy_Hover(void) {
   Actor_SelectAnimationFar(player, ANIM_LEADER_RUN);
   Sound_PlayFar(SE_PSYNERGY_START);
   wait(1);
-  // DEAD: a halfword nothing reads, cleared as Hover starts; the ROM keeps the
-  // store.
-  work->unk_1030 = 0;
+  // DEAD: nothing reads it; the ROM keeps the store.
+  work->unused = 0;
   work->phase = 0;
   work->fading = 0;
   Task_Add(HoverGlow_Update, TASK_PASS_FRAME);
@@ -253,7 +254,9 @@ void FieldPsynergy_Hover(void) {
     player->y.fixed = player->groundHeight;
     work->scale = 0;
     event->glowHeld = 0;
-    event->glow = 100;
+    // DEAD: HoverGlow_Update holds the glow at GLOW_FULL from the next frame,
+    // the leader standing on a hover cell; the ROM keeps the store.
+    event->glow = GLOW_RISING;
     for (i = 0; i < HOVER_RING_GROW_FRAMES; i++) {
       if (i == 10)
         Sound_PlayFar(SE_GLITTER);
@@ -272,6 +275,7 @@ void FieldPsynergy_Hover(void) {
 }
 
 #undef GLOW_FULL
+#undef GLOW_RISING
 #undef HOVER_RING_GROW_FRAMES
 
 /// Ends Hover: the leader drops back to the ground with a splash and the ring

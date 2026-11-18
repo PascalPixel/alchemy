@@ -10,6 +10,11 @@
 
 #define Decompress_ByteLz ((void (*)(void *, void *))Decompress_ByteLz)
 
+/// A command icon's pixels: 32x32 at a byte a pixel.
+#define COMMAND_ICON_BYTES (32 * 32)
+/// A row of a command icon's 8x8 tiles, four across, as a sprite holds them.
+#define COMMAND_ICON_TILE_ROW_BYTES (4 * TILE_SIZE_8BPP)
+
 /// Decompresses picture `picture` of gMenuTitlePictures, a 64x16
 /// heading (Save, Continue, Copy, Erase, Battle, Link, Pause, Setup) of 512
 /// bytes, into VRAM slot `slot`, through a 1 KB staging block in
@@ -69,17 +74,17 @@ void MenuTitle_Bob(struct WindowSprite *obj) {
 }
 
 /// Decompresses command icon `icon` (a 32x32 picture of 256 colours, 1 KB)
-/// into VRAM slot `slot`, remapping its first 768 bytes' colours by table
-/// when `remap` is nonzero.
+/// into VRAM slot `slot`, remapping the colours of its top three rows of tiles
+/// by table when `remap` is nonzero.
 void CommandIcon_Load(s32 icon, s32 slot, s32 remap) {
-  s32 size = 32 * 32;
+  s32 size = COMMAND_ICON_BYTES;
   void *buffer = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, size);
   u16 *offsetTable = Resource_GetTableEntry(RESOURCE_COMMAND_ICONS);
 
   if (slot < VRAM_CACHE_ENTRY_COUNT) {
     Decompress_ByteLz((void *)((u32)offsetTable + offsetTable[icon]), buffer);
     if (remap != 0)
-      SpriteColor_RemapPixelsFar(buffer, 768);
+      SpriteColor_RemapPixelsFar(buffer, 3 * COMMAND_ICON_TILE_ROW_BYTES);
     VramCache_Load(slot, size, buffer);
     HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
   }
@@ -199,6 +204,9 @@ UNREAD_RESULT Window_DrawThreeTileColumn(struct Window *window, s32 x, s32 y,
   Window_SetTilemapEntry(window, rightTile, x + 2, y, 0);
 }
 
+/// A 4bpp tile row's eighth pixel, in the top four bits of its word.
+#define ROW_LAST_PIXEL_SHIFT 28
+
 /// Merges two 8x8 4bpp tiles row by row into `output`: `second` moved `shift`
 /// pixels (right when positive, left when negative), drawn over `first`, which
 /// shows wherever the moved pixel is colour 0.
@@ -231,10 +239,10 @@ void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
     pixel = 7;
     do {
       result <<= 4;
-      if (shifted > 0x0FFFFFFF)
-        result += shifted >> 28;
+      if (shifted >= 1u << ROW_LAST_PIXEL_SHIFT)
+        result += shifted >> ROW_LAST_PIXEL_SHIFT;
       else
-        result += fallback >> 28;
+        result += fallback >> ROW_LAST_PIXEL_SHIFT;
       pixel--;
       shifted <<= 4;
       fallback <<= 4;
@@ -468,7 +476,7 @@ s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon) {
 /// their pixels first use them; a colour met after that takes colour 64.
 #define COMMAND_ICON_COLORS 64
 /// A command icon as BG1 tiles: 32 by 32 pixels, 16 tiles of 256 colours.
-#define COMMAND_ICON_BG_TILES (32 * 32 / TILE_SIZE_8BPP)
+#define COMMAND_ICON_BG_TILES (COMMAND_ICON_BYTES / TILE_SIZE_8BPP)
 
 /// Loads command icon `glyph` as 8bpp BG tiles into character block 1 from
 /// 64-byte tile `tile` on (COMMAND_ICON_BG_TILES, 32x32), for the command row's
@@ -488,10 +496,10 @@ void BattleCommandRow_LoadIconTiles(struct GlyphPalette *palette, s32 glyph,
   font = Resource_GetTableEntry(RESOURCE_COMMAND_ICONS);
   decoded->encoded = font + ((u16 *)font)[glyph];
   Decompress_ByteLz(decoded->encoded, decoded);
-  remapped = Heap_Alloc(32 * 32);
+  remapped = Heap_Alloc(COMMAND_ICON_BYTES);
   source = decoded->input;
   destination = remapped;
-  for (i = 0; i < 32 * 32; i++) {
+  for (i = 0; i < COMMAND_ICON_BYTES; i++) {
     index = *source++;
     if (palette->slot[index] == GLYPH_PALETTE_SLOT_FREE) {
       palette->slot[index] = palette->count;
@@ -503,7 +511,7 @@ void BattleCommandRow_LoadIconTiles(struct GlyphPalette *palette, s32 glyph,
     *destination++ = palette->slot[index];
   }
   Dma_Set(remapped, BG_CHAR_BLOCK(1) + tile * TILE_SIZE_8BPP,
-          DMA_COPY_WORDS(32 * 32 / 4), REG_DMA3);
+          DMA_COPY_WORDS(COMMAND_ICON_BYTES / 4), REG_DMA3);
   Heap_Release(remapped);
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 }
@@ -555,3 +563,8 @@ UNUSED void Graphics_InstallBg1VCountHandler(void) {
 
 #undef Decompress_ByteLz
 #undef Text_DrawStringAtOffset
+#undef COMMAND_ICON_BYTES
+#undef COMMAND_ICON_TILE_ROW_BYTES
+#undef ROW_LAST_PIXEL_SHIFT
+#undef COMMAND_ICON_COLORS
+#undef COMMAND_ICON_BG_TILES

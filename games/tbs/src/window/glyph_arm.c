@@ -1,11 +1,15 @@
 /// @file
-/// The text canvas renderer, compiled as ARM code and copied to RAM to run.
+/// The text canvas renderer, and the window edges of the screen transition,
+/// compiled as ARM code and copied to RAM to run.
 ///
 /// A text window draws its text into a canvas of 4bpp tiles in VRAM
 /// (TEXT_CANVAS_VRAM, mapped by Window_MapTextCanvasTiles). The canvas tiles
 /// run down columns: each column of tiles is as tall as the window's interior,
 /// which is the window height less its two border rows. Glyph_Draw and
-/// ScanlineWindow_FillSpans copy these routines into RAM for each call.
+/// ScanlineWindow_FillSpans copy these routines into RAM for each call, as the
+/// tree walker is copied: RamCode_Load takes IWRAM when the copy fits, whose
+/// 32-bit bus fetches an ARM instruction in one read, where the cartridge's
+/// 16-bit bus takes two.
 
 #include "window/glyph_arm.h"
 #include "edition.h"
@@ -16,29 +20,23 @@
 #include "window/text_font.h"
 #include "window/window.h"
 
-// ARM code copied to RAM, as the tree walker is: RamCode_Load takes IWRAM
-// when the copy fits, whose 32-bit bus fetches an ARM instruction in one read,
-// where the cartridge's 16-bit bus takes two.
-
 /// The pixel rows text may reach: four tiles, the battle message window's
 /// interior; a glyph is cut off below it.
 #define TEXT_CANVAS_PIXEL_HEIGHT 32
-#define SCREEN_TILE_ROWS 20
-#define SCREEN_TILE_COLUMNS 30
 /// The fonts start at the space.
 #define FONT_FIRST_CODE ' '
-/// The last character code the fonts have a glyph for; in Japanese the codes
-/// after it are kanji (gFont_KanjiGlyphs).
-#define TEXT_LAST_FONT_CODE 255
+/// In Japanese, the codes after the font's are kanji (gFont_KanjiGlyphs).
 #define KANJI_FIRST_CODE (TEXT_LAST_FONT_CODE + 1)
 /// In English, the last code the main font has a glyph for.
 #define ENGLISH_FONT_LAST_CODE 143
 /// A main-font glyph's bytes, as struct FontGlyph lays one out: its width, then
-/// its rows, a halfword each; Glyph_DrawArm reads the codes up to
-/// TEXT_LAST_FONT_CODE as MAIN_FONT_GLYPH_BYTES apart in every edition, the
-/// Japanese layout of 12 rows.
+/// its rows, a halfword each.
 #define FONT_GLYPH_BYTES ((1 + FONT_GLYPH_ROWS) * 2)
-#define MAIN_FONT_GLYPH_BYTES 26
+/// The rows of a main-font glyph Glyph_DrawArm draws. It reads the codes up to
+/// TEXT_LAST_FONT_CODE MAIN_FONT_GLYPH_BYTES apart in every edition, the
+/// Japanese layout of a width and 12 rows.
+#define MAIN_FONT_GLYPH_ROWS 12
+#define MAIN_FONT_GLYPH_BYTES ((1 + MAIN_FONT_GLYPH_ROWS) * 2)
 /// The Japanese small font's rows: a byte each.
 #define SMALL_FONT_ROWS 10
 /// A halfword of four 4-bit pixels, all colour `color`: what
@@ -66,6 +64,16 @@ static __inline__ void Text_SetCanvasPixel(u32 windowHeight, u32 x, u32 tileY,
 /// Draws one character into a window's text canvas with its top-left corner at
 /// pixel (x, y) of the window's interior, and returns how far the text
 /// advances.
+///
+/// With font set, the character comes from that small font: in Japanese
+/// SMALL_FONT_ROWS rows of a bit a pixel, elsewhere the 8x8 characters of the
+/// window tiles. With no font, it comes from the main font (gFont_Glyphs, and
+/// in Japanese gFont_KanjiGlyphs from KANJI_FIRST_CODE), drawn in four passes:
+/// the first three draw an outline in colour 5, offset left, right and down
+/// when the window has WINDOW_FLAG_OUTLINED_TEXT, and the last draws the glyph
+/// itself in colour 1. In Japanese a kana mark sits over the character before
+/// it and advances 0; in English a code past ENGLISH_FONT_LAST_CODE draws
+/// nothing and advances 1.
 s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
                   const u8 *font) {
   const u16 *glyphRows;
@@ -196,7 +204,7 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
               color = secondaryColor;
               if ((bits & 0xf) == 1)
                 color = foregroundColor;
-              if (((x + column) >> 3) < SCREEN_TILE_COLUMNS)
+              if (((x + column) >> 3) < DISPLAY_TILE_WIDTH)
                 Text_SetCanvasPixel(windowHeight, x + column, tileY, rowLine,
                                     vram, color);
             }
@@ -225,7 +233,8 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
         (const u16 *)(gFont_KanjiGlyphs +
                       (character - KANJI_FIRST_CODE) * KANJI_GLYPH_SIZE);
 #else
-    // Its glyph's last 12 rows, after the width and the first three.
+    // Its glyph's last MAIN_FONT_GLYPH_ROWS rows, after the width and the first
+    // three.
     glyphRows = (const u16 *)((const u8 *)gFont_Glyphs +
                               (character - FONT_FIRST_CODE) * FONT_GLYPH_BYTES);
     glyphWidth = *glyphRows;
@@ -290,7 +299,7 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
             break;
         }
         row = nextRow;
-        if (nextRow > 11)
+        if (nextRow >= MAIN_FONT_GLYPH_ROWS)
           break;
         bits = *nextGlyphRow++;
         bits <<= 16;
@@ -307,7 +316,8 @@ s32 Glyph_DrawArm(struct Window *window, u32 character, u32 x, u32 y,
 }
 
 /// Builds the hardware window's horizontal extent for each of the screen's 160
-/// scanlines from the UI tilemap at tilemap (32 tiles a row, 30 shown).
+/// scanlines from the window borders in the UI tilemap at tilemap
+/// (BG_SCREEN_WIDTH tiles a row, DISPLAY_TILE_WIDTH shown).
 void Tile_BuildCellPictures(u16 *scanlineBounds, u16 *tilemap) {
   u32 tileRow;
   u32 tileColumn;
@@ -320,7 +330,7 @@ void Tile_BuildCellPictures(u16 *scanlineBounds, u16 *tilemap) {
   s32 foundLeftEdge;
   s32 horizontalBounds;
 
-  for (tileRow = 0; tileRow < SCREEN_TILE_ROWS; tileRow++) {
+  for (tileRow = 0; tileRow < DISPLAY_TILE_HEIGHT; tileRow++) {
     bottomLeft = 0;
     left = bottomLeft;
     topLeft = bottomLeft;
@@ -330,7 +340,7 @@ void Tile_BuildCellPictures(u16 *scanlineBounds, u16 *tilemap) {
     foundLeftEdge = bottomRight;
     tileColumn = bottomRight;
     scanlineBounds++;
-    for (; tileColumn < SCREEN_TILE_COLUMNS; tileColumn++) {
+    for (; tileColumn < DISPLAY_TILE_WIDTH; tileColumn++) {
       u16 tile = *tilemap++;
 
       if (tile == 0)
@@ -408,7 +418,7 @@ void Tile_BuildCellPictures(u16 *scanlineBounds, u16 *tilemap) {
     scanlineBounds++;
     *scanlineBounds++ = horizontalBounds;
     scanlineBounds++;
-    tilemap += 2;
+    tilemap += BG_SCREEN_WIDTH - DISPLAY_TILE_WIDTH;
     *scanlineBounds++ = horizontalBounds;
     scanlineBounds++;
     *scanlineBounds++ = horizontalBounds;

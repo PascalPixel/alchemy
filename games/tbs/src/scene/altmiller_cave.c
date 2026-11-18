@@ -634,7 +634,7 @@ static void AltmillerCave_SpinLights(void) {
     }
   } else if (phase == WHEEL_STOPPING) {
     s32 chosenLight = CAVE_SIGNED_STATE(CAVE_CHOSEN_LIGHT);
-    s32 chosenAngle = Math_Divide(chosenLight * FIXED_ONE, 5);
+    s32 chosenAngle = Math_Divide(chosenLight * TRIG_TURN, LIGHT_COUNT);
 
     // The angle from the chosen light to the top, as a halfword, within
     // WHEEL_LOW_SPEED - 1 either way.
@@ -693,7 +693,7 @@ static void AltmillerCave_TurnRock(s32 rock) {
   previousLight = ROCK_PUZZLE->chosenLight;
   wheel = gAltmillerCave_LightWheel;
   chosenLight = ROCK_PUZZLE->chosenLight;
-  wheel->angle = (chosenLight * FIXED_ONE) / 5 + DEGtoANG(90);
+  wheel->angle = (chosenLight * TRIG_TURN) / LIGHT_COUNT + DEGtoANG(90);
   // The leftmost rock, then the rightmost, before the rounds of lights.
   if (state == PUZZLE_START) {
     if (rock == ACTOR_BLUE_ROCK) {
@@ -1981,8 +1981,8 @@ static void AltmillerCave_MatchLeaderPriority(struct Actor *actor) {
   }
 }
 
-/// Redraws the three obstacles' cells where they stand.
-static inline void AltmillerCave_RedrawObstacleFootprints(void) {
+/// Walls off the cells the three fallen columns stand on.
+static inline void AltmillerCave_BlockFallenColumnCells(void) {
   Scene_RedrawActorFootprint(ACTOR_FIRST_OBSTACLE);
   Scene_RedrawActorFootprint(ACTOR_FIRST_OBSTACLE + 1);
   Scene_RedrawActorFootprint(ACTOR_FIRST_OBSTACLE + 2);
@@ -2044,7 +2044,7 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_SQUALL) {
     GameFlag_Clear(FLAG_ALTMILLER_CAVE_DARK);
-    AltmillerCave_RedrawObstacleFootprints();
+    AltmillerCave_BlockFallenColumnCells();
     if (GameFlag_Get(FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN)) {
       Actor_SetAnimation(ACTOR_SQUALL_ROOM_PUDDLE, PUDDLE_ANIMATION_PILLAR);
       MapGrid_CopyCellAttributes(76, 16, 1, 1, 73, 17);
@@ -2063,7 +2063,7 @@ s32 Scene_Initialize(void) {
   }
   if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_DRAUGHT) {
     GameFlag_Clear(FLAG_ALTMILLER_CAVE_DARK);
-    AltmillerCave_RedrawObstacleFootprints();
+    AltmillerCave_BlockFallenColumnCells();
     Actor_Get(ACTOR_FIRST_OBSTACLE)->update = AltmillerCave_MatchLeaderPriority;
     Actor_Get(ACTOR_FIRST_OBSTACLE + 1)->update =
         AltmillerCave_MatchLeaderPriority;
@@ -2092,7 +2092,7 @@ s32 Scene_Initialize(void) {
     }
     if (CAVE_SIGNED_STATE(CAVE_PUZZLE) == PUZZLE_LIGHTS_SHOWN) {
       AltmillerCave_PlaceLights(
-          (CAVE_SIGNED_STATE(CAVE_CHOSEN_LIGHT) * FIXED_ONE) / 5 +
+          (CAVE_SIGNED_STATE(CAVE_CHOSEN_LIGHT) * TRIG_TURN) / LIGHT_COUNT +
           DEGtoANG(90));
     }
     for (i = 0; i < LIGHT_COUNT; i++) {

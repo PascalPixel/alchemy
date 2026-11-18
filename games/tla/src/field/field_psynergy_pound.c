@@ -184,7 +184,7 @@ void FieldPsynergy_Pound(void) {
   s32 glowTile;
   s32 spot;
   s32 size = POUND_GLOW_SIZE * POUND_GLOW_SIZE / 2;
-  s32 rise;
+  s32 riseFrames;
   s32 speed;
   s32 angle;
   s32 frame;
@@ -309,12 +309,12 @@ void FieldPsynergy_Pound(void) {
     FieldPsynergy_GrowFromCaster(shine, scene->x, scene->y + lift, scene->z);
     Actor_SelectAnimationFar(shine, 1);
     wait(15);
-    rise = 24;
+    riseFrames = 24;
     do {
       shine->y.fixed += toFIXED(1) / 2;
-      rise--;
+      riseFrames--;
       wait(1);
-    } while (rise >= 0);
+    } while (riseFrames >= 0);
     wait(15);
     work->state = 0;
     work->timer = 0;

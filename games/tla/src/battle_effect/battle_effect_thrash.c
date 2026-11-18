@@ -137,7 +137,7 @@ void BattleEffect_RunFlashingStrike(struct BattleEffectParams *args, s32 mode) {
     Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_A, work->sheet, 1, 0);
     Resource_LoadAndDecompress(RESOURCE_REVEAL_MASK_B, Ram_MapCellBuffer, 1, 1);
     // Turn the canvas's colours: red to blue, blue to green, green to red.
-    for (i = 0; i != CANVAS_LEVEL_BRIGHTEST + 1; i++) {
+    for (i = 0; i != SHEET_PALETTE_COLORS; i++) {
       s32 blue = RGB_BLUE(((u16 *)BG_PLTT)[i]);
       s32 green = RGB_GREEN(((u16 *)BG_PLTT)[i]);
       s32 red = RGB_RED(((u16 *)BG_PLTT)[i]);

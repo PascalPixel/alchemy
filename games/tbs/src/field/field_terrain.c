@@ -490,11 +490,6 @@ s32 MapGrid_IsWallAt(struct WorldPosition *position) {
 #define WORLD_MAP_COLLISION_BITS 4
 #define WORLD_MAP_COLLISION_MASK ((1 << WORLD_MAP_COLLISION_BITS) - 1)
 
-/// The world map's 32-pixel blocks, 32 to a row (gCellPictures): a 16.16
-/// coordinate shifted down this far is a block.
-#define WORLD_MAP_BLOCK_SHIFT 21
-#define WORLD_MAP_BLOCK_PIXELS 32
-#define WORLD_MAP_BLOCKS_ACROSS 32
 /// A block word's bit 31, in its top byte: the second bank of battle
 /// environments.
 #define WORLD_MAP_BLOCK_SECOND_BANK (1 << (31 - 24))
@@ -609,9 +604,6 @@ s32 WorldMap_GetBattleEnvironment(struct WorldPosition *position,
 #undef WORLD_MAP_UPPER_COLLISION_TILES
 #undef WORLD_MAP_COLLISION_BITS
 #undef WORLD_MAP_COLLISION_MASK
-#undef WORLD_MAP_BLOCK_SHIFT
-#undef WORLD_MAP_BLOCK_PIXELS
-#undef WORLD_MAP_BLOCKS_ACROSS
 #undef WORLD_MAP_BLOCK_SECOND_BANK
 #undef WORLD_MAP_BLOCK_REGION
 #undef WORLD_MAP_ENVIRONMENT_BANK

@@ -442,8 +442,8 @@ static void KolimaForestFloodgate_PushShortLogEast(void) {
 }
 
 /// How far the curse tints the floodgate until it is lifted: green and blue
-/// lose 1 / CURSE_DIVISOR of themselves (KolimaPalette_Curse).
-#define CURSE_DIVISOR 4
+/// lose 1 / FLOODGATE_CURSE_DIVISOR of themselves (KolimaPalette_Curse).
+#define FLOODGATE_CURSE_DIVISOR 4
 
 /// Sets up the logs and the river's level on entry.
 s32 Scene_Initialize(void) {
@@ -476,7 +476,7 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) == 0)
-    KolimaPalette_Curse(CURSE_DIVISOR);
+    KolimaPalette_Curse(FLOODGATE_CURSE_DIVISOR);
   return 0;
 }
 

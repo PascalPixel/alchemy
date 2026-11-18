@@ -748,8 +748,8 @@ static void KolimaForestTree_RestoreTret(void) {
 }
 
 /// How far the curse tints the forest round Tret until it is lifted: green and
-/// blue lose 1 / CURSE_DIVISOR of themselves (KolimaPalette_Curse).
-#define CURSE_DIVISOR 3
+/// blue lose 1 / TREE_CURSE_DIVISOR of themselves (KolimaPalette_Curse).
+#define TREE_CURSE_DIVISOR 3
 
 /// Sets up Tret, Laurel and the forest's colours on entry.
 s32 Scene_Initialize(void) {
@@ -767,7 +767,7 @@ s32 Scene_Initialize(void) {
   gMainRoutineWork.retreatScene = SCENE_KOLIMA_FOREST_ENTRANCE;
   gMainRoutineWork.retreatEntrance = KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP;
   if (!GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED))
-    KolimaPalette_Curse(CURSE_DIVISOR);
+    KolimaPalette_Curse(TREE_CURSE_DIVISOR);
   Actor_Get(ACTOR_TRET)->radius = 6;
   Actor_Get(ACTOR_LAUREL)->radius = 6;
   Actor_Get(ACTOR_TRET_STAND_IN)->radius = 6;

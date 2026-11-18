@@ -1286,9 +1286,6 @@ struct MeshVertex;
 /// before the line: from BATTLE_VIEW_TOP - 1 a gradient over the battle view,
 /// each channel a level darker every so many lines, blue and green starting
 /// above red, all lifted by `lift`; black below it.
-#define GRADIENT_BLUE_LINES 15
-#define GRADIENT_GREEN_LINES 16
-#define GRADIENT_RED_LINES 17
 #define GRADIENT_BLUE_LIFT 32
 #define GRADIENT_GREEN_LIFT 16
 #define FILL_GRADIENT(table, i, lift, c)                                       \

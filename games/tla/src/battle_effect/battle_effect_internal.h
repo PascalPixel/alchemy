@@ -227,6 +227,12 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define BATTLE_VIEW_TOP 16
 #define BATTLE_VIEW_HEIGHT 120
 #define BATTLE_VIEW_BOTTOM (BATTLE_VIEW_TOP + BATTLE_VIEW_HEIGHT)
+/// The backdrop gradients Azul and Coatlicue write over the battle view, a
+/// colour a line from BATTLE_VIEW_TOP - 1: each channel a level darker every
+/// so many lines down, blue every 15, green every 16 and red every 17.
+#define GRADIENT_BLUE_LINES 15
+#define GRADIENT_GREEN_LINES 16
+#define GRADIENT_RED_LINES 17
 
 /// Writes one row of BG2's map for the canvas, two tiles at a time.
 #define EFFECT_WRITE_CANVAS_MAP_ROW(row, column, offset)                       \

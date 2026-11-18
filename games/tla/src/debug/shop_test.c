@@ -740,7 +740,8 @@ s32 PartyInventory_HasSpace(void);
 s32 PartyInventory_Add(s32 item);
 void ItemMenu_DrawItemDetails(void *window, s32 item);
 
-#define ITEM_COUNT 500
+/// The selector's item numbers, 0 to 499, wrapping.
+#define ITEM_SELECTOR_ITEM_COUNT 500
 #define BROWSER_ROW_STEP 10  ///< Right and Left move ten items.
 #define BROWSER_PAGE_STEP 30 ///< R and L move thirty.
 
@@ -756,7 +757,7 @@ void ShopTest_SelectItem(void) {
   s32 entryCount;
   s8 step;
 
-  entryCount = ITEM_COUNT;
+  entryCount = ITEM_SELECTOR_ITEM_COUNT;
   step = 0;
   item = 1;
   redraw = 1;
@@ -834,15 +835,15 @@ void ShopTest_SelectItem(void) {
       Sound_Play(SE_MENU_CURSOR_MOVE);
     }
     if (step == -1) {
-      for (item = (item + ITEM_COUNT) % entryCount;
+      for (item = (item + ITEM_SELECTOR_ITEM_COUNT) % entryCount;
            Item_GetDirect(item & INVENTORY_ITEM_ID_MASK)->icon == 0;
-           item = (item + ITEM_COUNT - 1) % entryCount)
+           item = (item + ITEM_SELECTOR_ITEM_COUNT - 1) % entryCount)
         ;
     }
     if (step == 1) {
-      for (item = (item + ITEM_COUNT) % entryCount;
+      for (item = (item + ITEM_SELECTOR_ITEM_COUNT) % entryCount;
            Item_GetDirect(item & INVENTORY_ITEM_ID_MASK)->icon == 0;
-           item = (item + ITEM_COUNT + 1) % entryCount)
+           item = (item + ITEM_SELECTOR_ITEM_COUNT + 1) % entryCount)
         ;
     }
     step = 0;
@@ -944,4 +945,4 @@ UNUSED void ShopTest_RaiseMonster(s32 mode, s32 x, s32 z, s32 scene,
     }
   }
 }
-#undef ITEM_COUNT
+#undef ITEM_SELECTOR_ITEM_COUNT

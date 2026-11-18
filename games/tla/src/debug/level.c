@@ -232,8 +232,9 @@ void IncreaseItemAndLevel_RunLevelEditor(void) {
   }
 }
 
-#define ITEM_COUNT 512      ///< The browser's item numbers, 0 to 511, wrapping.
-#define BROWSER_ROW_STEP 10 ///< Right and Left move ten numbers.
+/// The browser's item numbers, 0 to 511, wrapping.
+#define ITEM_BROWSER_ITEM_COUNT 512
+#define BROWSER_ROW_STEP 10  ///< Right and Left move ten numbers.
 #define BROWSER_PAGE_STEP 30 ///< R and L move thirty.
 
 void ItemMenu_DrawItemDetails(void *window, s32 item);
@@ -252,7 +253,7 @@ void IncreaseItemAndLevel_SelectItem(void) {
   s32 entryCount;
   s8 seekDirection;
 
-  entryCount = ITEM_COUNT;
+  entryCount = ITEM_BROWSER_ITEM_COUNT;
   seekDirection = 0;
   Sound_Play(SE_MENU_CONFIRM);
   selectedItemId = 1;
@@ -276,7 +277,7 @@ void IncreaseItemAndLevel_SelectItem(void) {
     if (redraw) {
       redraw = 0;
       // Wrap the number into 0 to 511 (a step back from 0 is 511).
-      selectedItemId = (selectedItemId + ITEM_COUNT) % entryCount;
+      selectedItemId = (selectedItemId + ITEM_BROWSER_ITEM_COUNT) % entryCount;
       WindowSprite_RedrawSavedRect(window);
       WindowSprite_ClearList(window);
       Text_DrawStringInWindow(gIncreaseItemAndLevel_ItemPrompt, window, 0, 0);
@@ -344,14 +345,16 @@ void IncreaseItemAndLevel_SelectItem(void) {
     }
     // Skip items with no icon in the chosen direction.
     if (seekDirection == -1) {
-      selectedItemId = (selectedItemId + ITEM_COUNT) % entryCount;
+      selectedItemId = (selectedItemId + ITEM_BROWSER_ITEM_COUNT) % entryCount;
       while (Item_GetDirect(selectedItemId & INVENTORY_ITEM_ID_MASK)->icon == 0)
-        selectedItemId = (selectedItemId + ITEM_COUNT - 1) % entryCount;
+        selectedItemId =
+            (selectedItemId + ITEM_BROWSER_ITEM_COUNT - 1) % entryCount;
     }
     if (seekDirection == 1) {
-      selectedItemId = (selectedItemId + ITEM_COUNT) % entryCount;
+      selectedItemId = (selectedItemId + ITEM_BROWSER_ITEM_COUNT) % entryCount;
       while (Item_GetDirect(selectedItemId & INVENTORY_ITEM_ID_MASK)->icon == 0)
-        selectedItemId = (selectedItemId + ITEM_COUNT + 1) % entryCount;
+        selectedItemId =
+            (selectedItemId + ITEM_BROWSER_ITEM_COUNT + 1) % entryCount;
     }
     seekDirection = 0;
     wait(1);

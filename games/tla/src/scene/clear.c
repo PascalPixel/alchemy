@@ -59,10 +59,6 @@
 #include "game/character_ids.h"
 #include "system/save.h"
 
-/// SceneId_Title's entrances (title.c): the logos and the intro, then this
-/// screen; and the opening credits, then the prologue.
-enum { TITLE_START = 1, TITLE_CREDITS = 8 };
-
 /// The file menu's choices, as FileList_SelectAction returns them
 /// (gMenu_SaveSlotActionByPosition), as The Broken Seal's enum FileAction.
 enum FileAction {

@@ -75,21 +75,6 @@ s32 Save_ScanFileSummaries(void);
 s32 Title_ShowNintendoLogo(s32 mode);
 void Title_ShowCamelotLogo(s32 unused);
 
-/// The title's entrances, named by what each plays; TITLE_FROM_IDEJIMA, at the
-/// end of the prologue, plays the intro once more, then the game with Felix.
-enum {
-  /// The Nintendo and Camelot logos and the intro, then the clear-data screen
-  /// (power-on, and after saving the clear data).
-  TITLE_START = 1,
-  /// The intro without its prompt, then the prologue with Jenna.
-  TITLE_PROLOGUE = 2,
-  /// Credits_Run, then TITLE_PROLOGUE.
-  TITLE_CREDITS = 8,
-  /// Unused: nothing sends the party here. The Golden Sun logo with "To Be
-  /// Continued" under it, held up to a minute, then TITLE_PROLOGUE.
-  TITLE_TO_BE_CONTINUED = 10,
-};
-
 /// The overlay's initialize entry, which plays what the entrance asks for.
 s32 Scene_Initialize(void) {
   s32 waitFrames;

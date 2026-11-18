@@ -18,9 +18,21 @@
 /// selector starts there.
 enum DefaultEntrance { ENTRANCE_DEFAULT = 0 };
 
-/// SceneId_Title's entrances.
+/// SceneId_Title's entrances, named by what each plays.
 enum {
+  /// The Nintendo and Camelot logos and the intro, then the clear-data screen
+  /// (power-on, and after saving the clear data).
+  TITLE_START = 1,
+  /// The intro without its prompt, then the prologue with Jenna.
+  TITLE_PROLOGUE = 2,
+  /// At the end of the prologue: the intro once more, then the game with
+  /// Felix.
   TITLE_FROM_IDEJIMA = 3,
+  /// Credits_Run, then TITLE_PROLOGUE.
+  TITLE_CREDITS = 8,
+  /// Unused: nothing sends the party here. The Golden Sun logo with "To Be
+  /// Continued" under it, held up to a minute, then TITLE_PROLOGUE.
+  TITLE_TO_BE_CONTINUED = 10,
 };
 
 /// SceneId_Clear's entrances.

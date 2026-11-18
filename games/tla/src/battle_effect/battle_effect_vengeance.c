@@ -724,8 +724,7 @@ void BattleEffect_RunDjinnStorm(struct BattleEffectParams *args) {
 #define GEYSER_FRAMES 54
 #define GEYSER_DRAW_FRAMES 40 ///< the column is drawn
 #define GEYSER_PEAK_FRAME 20  ///< the result phase starts
-#define DROP_COUNT 512        ///< drops in the map cell buffer, used in a ring
-#define GEYSER_DROPS ((struct Particle *)Ram_MapCellBuffer)
+#define DROP_COUNT 512        ///< drops in PARTICLES, used in a ring
 /// The drops that burst on the first frame, and Djinn Storm's that follow
 /// each frame to frame 23; Djinn Blast's are fewer.
 #define GEYSER_BURST 200
@@ -811,13 +810,13 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
         // drop at a time, past the drop's other members.
 #ifdef UBFIX
         for (i = 0; i != DROP_COUNT; i++)
-          GEYSER_DROPS[i].variant = -1;
+          PARTICLES[i].variant = -1;
 #else
         {
           s32 *life;
 
           i = 0;
-          life = &GEYSER_DROPS->variant;
+          life = &PARTICLES->variant;
           for (; i != DROP_COUNT; i++) {
             *life = -1;
             life += sizeof(struct Particle) / sizeof(*life);
@@ -861,7 +860,7 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
         s32 speed;
         s32 angle;
 
-        drop = &GEYSER_DROPS[spawned & (DROP_COUNT - 1)];
+        drop = &PARTICLES[spawned & (DROP_COUNT - 1)];
         speed = (Random16() & 1023) + 32;
         angle = (Random16() & 0x7fff) - DEGtoANG(90);
         drop->x = INTtoFIXED(midpoint.x / 2);
@@ -876,7 +875,7 @@ void BattleEffect_RunGeyser(struct BattleEffectParams *args, s32 mode) {
 
       // Each drop falls, bounces off the floor at y 120, and is drawn while
       // it is on the canvas, its cel shrinking as it burns down.
-      drop = GEYSER_DROPS;
+      drop = PARTICLES;
       for (i = 0; i != DROP_COUNT; i++, drop++) {
         if (drop->variant > 0) {
           s32 x;
@@ -967,9 +966,8 @@ void BattleEffect_RunMysticCall(struct BattleEffectParams *args) {
   BattleEffect_RunStarSwarm(args, STAR_SWARM_MYSTIC_CALL);
 }
 
-#define STARS_PER_TARGET 64 ///< each target's slice of the star buffer
+#define STARS_PER_TARGET 64               ///< each target's slice of PARTICLES
 #define STAR_TOTAL (6 * STARS_PER_TARGET) ///< six targets' slices
-#define STAR_SWARM_STARS ((struct Particle *)Ram_MapCellBuffer)
 /// The stars of each target's swarm.
 #define DJINN_STUN_STARS 16
 #define MYSTIC_CALL_STARS 48
@@ -1043,7 +1041,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
         work->particles[i].velocityZ = 0;
       }
       for (i = 0; i != STAR_TOTAL; i++) {
-        struct Particle *star = &STAR_SWARM_STARS[i];
+        struct Particle *star = &PARTICLES[i];
         s32 angle = Random16() & TRIG_ANGLE_MASK;
         s32 speed = STAR_SPEED_RANDOM;
 
@@ -1104,8 +1102,7 @@ void BattleEffect_RunStarSwarm(struct BattleEffectParams *args, s32 mode) {
       // Each star turns about the point on one of four axes, faster the
       // later it is in the swarm.
       for (i = 0; i != starCount; i++) {
-        struct Particle *star =
-            &STAR_SWARM_STARS[member * STARS_PER_TARGET + i];
+        struct Particle *star = &PARTICLES[member * STARS_PER_TARGET + i];
 
         if (frame >= i / 8 + startFrame && star->variant == 0) {
           s32 size;

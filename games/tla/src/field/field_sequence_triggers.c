@@ -15,10 +15,6 @@
 #include "shop/shop.h"
 #include "window/screens.h"
 
-/// The frames the leader pushes against a step trigger, a ledge, a gap or a
-/// wall before it runs, jumps or climbs, as in The Broken Seal.
-#define FIELD_PUSH_FRAMES 12
-
 /// What an examine trigger is on (enum ExamineTarget), the control bits 8..4
 /// EXAMINE_TRIGGER() packs it into.
 #define EXAMINE_TARGET(kind) (((kind) >> 4) & 0x1f)

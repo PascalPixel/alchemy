@@ -147,7 +147,8 @@ void PsynergyTest_IgnorePsynergy(void) {}
 /// lines open (Shop_ShowKeeperMessage) and waits until it is typed out.
 void PsynergyTest_ShowMessageAndWait(s32 message) {
   Message_CloseFinishedWindows();
-  Message_OpenWindow(message, 5, 0, 0x22);
+  Message_OpenWindow(message, 5, 0,
+                     MESSAGE_WINDOW_FIXED_X | MESSAGE_WINDOW_UNREAD);
   while (Message_AllTyped() == 0)
     System_Wait(1);
   System_Wait(1);
@@ -541,7 +542,6 @@ s32 Scene_Initialize(void) {
   gMainRoutineWork.messageSpeed = 2;
   Actor_SetAnimation(ACTOR_ICE_PILLAR, 2);
   Actor_SetAnimation(ACTOR_FLAME, 2);
-  // Call3 and Call2 build each call's constants afresh (call.h).
   Call3((void (*)())Actor_FallOverWithAnimationById, ACTOR_FALLEN_MAN,
         FACING_WEST, 0);
   Call2((void (*)())Actor_FallOverById, ACTOR_INNKEEPER, FACING_WEST);

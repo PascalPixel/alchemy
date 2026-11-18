@@ -4,9 +4,6 @@
 
 #include "window_internal.h"
 
-/// The bytes of one pixel row of a 16-colour tile.
-#define TILE_ROW_SIZE_4BPP (TILE_SIZE_4BPP / 8)
-
 /// A text tile battle keeps for the bottom border's lower rows: neither taken
 /// nor shown, it is never free (WindowWork.textTileState).
 #define TEXT_TILE_RESERVED 4

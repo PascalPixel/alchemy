@@ -75,9 +75,6 @@ struct WhirlSpark {
 /// frame % 6, which cycles its colours.
 void Actor_CycleSpriteColors(struct Actor *actor);
 
-/// The effect sprites a field Psynergy has (FieldEffectWork.particles).
-#define PSYNERGY_EFFECT_SLOT_COUNT 24
-
 /// The states of a Retreat particle (FieldEffect_UpdateRadialLaunch).
 enum RetreatParticleState {
   RETREAT_PARTICLE_AIM = 0,    ///< placed on the main actor and aimed
@@ -85,10 +82,6 @@ enum RetreatParticleState {
   /// Set by FieldPsynergy_Retreat: freed on arrival.
   RETREAT_PARTICLE_LAST_FLIGHT = 2
 };
-
-/// The phase or state a field Psynergy's work is left in when it has
-/// finished, which the cast waits for.
-#define FIELD_PSYNERGY_FINISHED 999
 
 /// The view's sway (ViewMove_Swing) as FieldPsynergy_Run casts Tremor and
 /// Grind at no object, in 16.16 pixels: it grows from SWAY_START to SWAY_PEAK

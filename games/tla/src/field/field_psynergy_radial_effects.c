@@ -47,9 +47,6 @@ enum {
 /// The radial ring's particles, a 16th of a turn apart; the last goes where the
 /// first went.
 #define RADIAL_RING_STEPS 16
-/// The depth slot of the field Psynergy's effect sprites: in front of every
-/// actor, whose slots stop at 239.
-#define EFFECT_SPRITE_FRONT_DEPTH 250
 
 /// Spawns 17 particles that spread from origin in a flat ring, their x velocity
 /// 1.5 times their z velocity, so the ring is wider than deep as the field is
@@ -446,9 +443,6 @@ void FieldPsynergy_Halt(void) {
   wait(30);
   FieldPsynergy_FadeFromCastColor();
 }
-
-#define Actor_SetAnimationSpeedFar                                             \
-  ((void (*)(void *, s32))Actor_SetAnimationSpeedFar)
 
 /// Per-frame update of a paused actor: gives its sprite one of the table's
 /// eight params at random.

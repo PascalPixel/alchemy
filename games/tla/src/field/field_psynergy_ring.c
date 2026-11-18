@@ -36,9 +36,6 @@
 /// a turn in 32 frames, the picture's lower half being its upper half turned
 /// round (gParch_PictureTiles).
 #define RING_ARC_STEP (TRIG_TURN / 64)
-/// Added to a field Psynergy's kind, the gFieldPsynergy_Reach row for the
-/// objects its shaking reaches (Tremor's, 275).
-#define REACH_SHAKEN_OBJECTS 256
 
 /// The Ring's work (heap slot battleEffect): the sparkle picture, the 64
 /// sparkles that rise round the caster as the ring is drawn and burst when it
@@ -641,4 +638,3 @@ void ViewMove_RestoreNearbySprites(void) {
 #undef RING_RADIUS
 #undef RING_BAND_COLOR
 #undef RING_ARC_STEP
-#undef REACH_SHAKEN_OBJECTS

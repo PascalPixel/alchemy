@@ -71,6 +71,13 @@
 /// screen block's own zeroed tail and so is clear.
 #define CREDITS_BLANK_TILE 511
 
+/// Where Credits_DrawLine starts a line in its 192-pixel row.
+enum CreditsAlignment {
+  CREDITS_ALIGN_LEFT,
+  CREDITS_ALIGN_CENTER,
+  CREDITS_ALIGN_RIGHT,
+};
+
 /// Fills a battle background's 256-colour tiles with colour 1 of its half,
 /// black once its palette is cleared and opaque, for the next crossfade, and
 /// clears the half's palette colours.
@@ -1002,8 +1009,9 @@ void Credits_DrawEnteringLine(void) {
     if ((s16)gCreditsScrollPosition / 8 != CREDITS_LAST_LINE_POSITION / 8) {
       lineIndex = (s16)gCreditsScrollPosition / 8;
       CREDITS_LAST_LINE_POSITION = scrollPosition;
-      CREDITS_END_OF_TEXT = Credits_DrawLine(
-          gCredits_Lines[lineIndex], CREDITS_RING_LINE_TILE(lineIndex), 1);
+      CREDITS_END_OF_TEXT = Credits_DrawLine(gCredits_Lines[lineIndex],
+                                             CREDITS_RING_LINE_TILE(lineIndex),
+                                             CREDITS_ALIGN_CENTER);
     }
   }
 }
@@ -1063,7 +1071,8 @@ void Credits_InitTextSprites(void) {
   Task_Add(Credits_UpdateTextSprites, TASK_PASS_VBLANK);
   Task_Add(Credits_DrawEnteringLine, TASK_PASS_FRAME);
   for (row = 0; row < CREDITS_RING_ROWS; row++)
-    Credits_DrawLine(gCredits_Lines[0], row * CREDITS_LINE_TILES, 1);
+    Credits_DrawLine(gCredits_Lines[0], row * CREDITS_LINE_TILES,
+                     CREDITS_ALIGN_CENTER);
 }
 
 /// Row `row` (4 bytes, 8 pixels) of sprite tile `tile` in OBJ VRAM.
@@ -1120,9 +1129,9 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
     if (sourceValue >= ' ')
       textAdvance += gCredits_GlyphWidths[sourceValue - ' '];
   }
-  if (alignment == 2)
+  if (alignment == CREDITS_ALIGN_RIGHT)
     startX = lineWidth - textAdvance;
-  else if (alignment == 1)
+  else if (alignment == CREDITS_ALIGN_CENTER)
     startX = (lineWidth - textAdvance) / 2;
 
   // Rasterize each glyph and its one-pixel shadow at the aligned start.

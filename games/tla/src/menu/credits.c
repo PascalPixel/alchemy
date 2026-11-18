@@ -145,6 +145,9 @@ extern u8 gDebugTextEnabled;
 /// and to the right in colour 1, the strips' black.
 #define CREDITS_TEXT_COLOR 15
 #define CREDITS_SHADOW_COLOR 1
+/// A glyph of the credits' font is eight rows of a byte each, its leftmost
+/// pixel the top bit.
+#define CREDITS_GLYPH_LEFT_PIXEL_BIT 0x80
 /// A message of the story crawl takes two scroll lines of 8 pixels.
 #define CRAWL_MESSAGE_PIXELS (2 * 8)
 
@@ -178,6 +181,12 @@ extern u8 gDebugTextEnabled;
 /// A battle backdrop's 480 tiles of 256 colours, 256 by 120 pixels.
 #define BACKDROP_TILES 480
 #define BACKDROP_TILE_BYTES (BACKDROP_TILES * 64)
+/// The credits grey a backdrop's colours: a channel becomes the colour's
+/// brightness (2 red + 4 green + blue) and BACKDROP_CHANNEL_WEIGHT parts of
+/// itself, over BACKDROP_GREY_PARTS. The weights add to 12, so a grey keeps
+/// three quarters of its level.
+#define BACKDROP_CHANNEL_WEIGHT 5
+#define BACKDROP_GREY_PARTS 16
 
 /// The two pictures' screen blocks, each holding the same tilemap: BG3's, over
 /// character block 0, and BG2's, over character block 2.
@@ -223,8 +232,8 @@ extern u16 gWaitForFlashWrite[];
 
 /// Loads a backdrop resource (its 128 colours, then its packed tiles) into
 /// one half of BG VRAM and queues its palette for the next VBlank, as The
-/// Broken Seal does, but greyed: each channel becomes (2 red + 4 green + blue +
-/// 5 * channel) / 16. A zero resource clears that half instead. The tiles are
+/// Broken Seal does, but greyed by BACKDROP_CHANNEL_WEIGHT and
+/// BACKDROP_GREY_PARTS. A zero resource clears that half instead. The tiles are
 /// unpacked by Credits_DecodeBackground, run from a heap block, and the grey
 /// colours are built in gWaitForFlashWrite.
 void Credits_LoadBackground(u32 resourceId, s32 alternate) {
@@ -263,9 +272,9 @@ void Credits_LoadBackground(u32 resourceId, s32 alternate) {
     s32 sum = (green * 2 + red) * 2 + blue;
 
     resourceData += 2;
-    blue = (sum + blue * 5) / 16;
-    green = (sum + green * 5) / 16;
-    red = (sum + red * 5) / 16;
+    blue = (sum + blue * BACKDROP_CHANNEL_WEIGHT) / BACKDROP_GREY_PARTS;
+    green = (sum + green * BACKDROP_CHANNEL_WEIGHT) / BACKDROP_GREY_PARTS;
+    red = (sum + red * BACKDROP_CHANNEL_WEIGHT) / BACKDROP_GREY_PARTS;
     gWaitForFlashWrite[i] = RGB(red, green, blue);
   }
   IO_WRITE_QUEUE_PUSH(paletteDestination, (u32)gWaitForFlashWrite,
@@ -780,9 +789,15 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
    * touches. */
   UNUSED u32 unused[8];
 
-  // BUG: the end marker is checked after allocation, leaking one line buffer.
-  if (text == NULL)
+  if (text == NULL) {
+    // BUG: the end marker is checked after allocation, leaking one line
+    // buffer. Heap_Release rewinds this bump pool to the allocation's start.
+#ifdef BUGFIX
+    if (linePixels != NULL)
+      Heap_Release(linePixels);
+#endif
     return -1;
+  }
   // The ninth raster row holds the shadow below this line.
   if (!GameFlag_Get(FLAG_CREDITS_LINE_DRAWN)) {
     Iwram_FillWordsEntry(linePixels, CREDITS_BUFFER_BYTES, 0);
@@ -817,7 +832,7 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
       destination = linePixels + startX + textAdvance;
       for (row = 0; row < 8; row++) {
         glyphBits = *sourceBytes++;
-        glyphMask = 0x80;
+        glyphMask = CREDITS_GLYPH_LEFT_PIXEL_BIT;
         for (columnIndex = 0; columnIndex < 8; columnIndex++) {
           if (glyphBits & glyphMask) {
             destination[CREDITS_RASTER_STRIDE + 1] = CREDITS_SHADOW_COLOR;

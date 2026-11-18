@@ -8,6 +8,7 @@
 #include "flags.h"
 #include "window/message_argument.h"
 #include "battle/battle.h"
+#include "debug/debug.h"
 #include "system/io_reg.h"
 #include "sounds.h"
 #include "field/field.h"
@@ -742,8 +743,6 @@ void ItemMenu_DrawItemDetails(void *window, s32 item);
 
 /// The selector's item numbers, 0 to 499, wrapping.
 #define ITEM_SELECTOR_ITEM_COUNT 500
-#define BROWSER_ROW_STEP 10  ///< Right and Left move ten items.
-#define BROWSER_PAGE_STEP 30 ///< R and L move thirty.
 
 /// The item selector, as Increase item and level's
 /// (IncreaseItemAndLevel_SelectItem): Up and Down move one item, Right and Left

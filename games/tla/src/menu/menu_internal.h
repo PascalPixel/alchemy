@@ -139,7 +139,7 @@ enum DjinnSelectMode {
 
 /// A Djinn list entry's party member, element and index, shifted down.
 #define DJINN_MEMBER(v) (((v) & DJINN_ENTRY_MEMBER) >> 8)
-#define DJINN_ELEMENT(v) (((v) & DJINN_ENTRY_ELEMENT) >> 5)
+#define DJINN_ENTRY_ELEMENT_OF(v) (((v) & DJINN_ENTRY_ELEMENT) >> 5)
 #define DJINN_NUMBER(v) ((v) & DJINN_ENTRY_INDEX)
 
 /// The preview loop's four operations, as its confirmation text describes them

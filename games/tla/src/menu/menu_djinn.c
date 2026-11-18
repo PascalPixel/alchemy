@@ -627,7 +627,7 @@ s32 Djinn_IsSetFar(s32 owner, s32 element, s32 index);
 /// DJINN_ENTRY_IS_SET. DjinnMenu_DrawPage colours each name by it.
 s32 DjinnMenu_GetEntryState(u32 entry) {
   s32 owner = DJINN_MEMBER(entry);
-  s32 element = DJINN_ELEMENT(entry);
+  s32 element = DJINN_ENTRY_ELEMENT_OF(entry);
   s32 index = DJINN_NUMBER(entry);
   s32 state;
 
@@ -688,7 +688,7 @@ void DjinnMenu_DrawPage(struct DjinnMenuBackdrop *backdrop, s32 page) {
     if (menu->memberSprites[column] != NULL) {
       for (element = 0; element < ELEMENT_COUNT; element++) {
         for (i = 0; i < backdrop->counts[page + column]; i++) {
-          if (element == DJINN_ELEMENT(entries[i])) {
+          if (element == DJINN_ENTRY_ELEMENT_OF(entries[i])) {
             switch (DjinnMenu_GetEntryState(entries[i])) {
             case DJINNI_STATE_STANDBY:
               Text_SetColorFar(TEXT_COLOR_RED);
@@ -1113,7 +1113,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
       if (selectedRow != -1)
         djinn = backdrop->ids[memberColumn][selectedRow];
       owner = DJINN_MEMBER(djinn);
-      element = DJINN_ELEMENT(djinn);
+      element = DJINN_ENTRY_ELEMENT_OF(djinn);
       number = DJINN_NUMBER(djinn);
       state = DjinnMenu_GetEntryState(djinn);
       if (selectedRow == -1) {
@@ -1187,12 +1187,13 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
 #endif
       if (mode == DJINN_SELECT_ACTION) {
 #if TRADE_HELP_DJINNI_FIRST
-        Window_SetTilemapEntryFar(
-            helpWindow, DJINN_ELEMENT(menu->pairEntries[0]) + ELEMENT_ICON_TILE,
-            0, 0, 0);
+        Window_SetTilemapEntryFar(helpWindow,
+                                  DJINN_ENTRY_ELEMENT_OF(menu->pairEntries[0]) +
+                                      ELEMENT_ICON_TILE,
+                                  0, 0, 0);
         MessageArgument_PushFar(menu->shownMember[0], MESSAGE_ARGUMENT_ACTOR);
         MessageArgument_PushFar(
-            DJINN_ELEMENT(menu->pairEntries[0]) * DJINN_PER_ELEMENT +
+            DJINN_ENTRY_ELEMENT_OF(menu->pairEntries[0]) * DJINN_PER_ELEMENT +
                 DJINN_NUMBER(menu->pairEntries[0]) + ABILITY_DJINNI_FIRST,
             MESSAGE_ARGUMENT_ABILITY);
         Text_DrawMessageAsTilesFar((s32)MsgDjinnOwnerLabel, helpWindow, 8, 0);
@@ -1200,12 +1201,13 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
         MessageArgument_PushFar(menu->shownMember[0], MESSAGE_ARGUMENT_ACTOR);
         Text_DrawMessageAsTilesFar((s32)MsgDjinnOwnerLabel, helpWindow, 0, 0);
         MessageArgument_PushFar(
-            DJINN_ELEMENT(menu->pairEntries[0]) * DJINN_PER_ELEMENT +
+            DJINN_ENTRY_ELEMENT_OF(menu->pairEntries[0]) * DJINN_PER_ELEMENT +
                 DJINN_NUMBER(menu->pairEntries[0]) + ABILITY_DJINNI_FIRST,
             MESSAGE_ARGUMENT_ABILITY);
-        Window_SetTilemapEntryFar(
-            helpWindow, DJINN_ELEMENT(menu->pairEntries[0]) + ELEMENT_ICON_TILE,
-            6, 0, 0);
+        Window_SetTilemapEntryFar(helpWindow,
+                                  DJINN_ENTRY_ELEMENT_OF(menu->pairEntries[0]) +
+                                      ELEMENT_ICON_TILE,
+                                  6, 0, 0);
         Text_DrawMessageAsTilesFar((s32)MsgDjinnOwnerLabel + 1, helpWindow, 56,
                                    0);
 #endif
@@ -1495,7 +1497,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
           for (j = 0; j < backdrop->counts[i]; j++) {
             u32 entry = backdrop->ids[i][j];
             s32 entryOwner = DJINN_MEMBER(entry);
-            s32 entryElement = DJINN_ELEMENT(entry);
+            s32 entryElement = DJINN_ENTRY_ELEMENT_OF(entry);
             s32 entryNumber = DJINN_NUMBER(entry);
 
             switch (DjinnMenu_GetEntryState(entry)) {
@@ -1615,7 +1617,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
     menu->pairEntries[mode] = id = backdrop->ids[memberColumn][selectedRow];
     entry = (u16)id;
     menu->pairIndex[mode] = entry % (DJINN_ENTRY_INDEX + 1);
-    menu->pairElement[mode] = DJINN_ELEMENT(entry);
+    menu->pairElement[mode] = DJINN_ENTRY_ELEMENT_OF(entry);
     menu->pairMember[mode] = DJINN_MEMBER(entry);
   }
   menu->selection[mode] = memberColumn + djinnRow * 10;

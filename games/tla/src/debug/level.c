@@ -5,6 +5,7 @@
 /// rooms of people in rows, each of whom says their name when talked to.
 
 #include "battle/battle.h"
+#include "debug/debug.h"
 #include "sounds.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -234,8 +235,6 @@ void IncreaseItemAndLevel_RunLevelEditor(void) {
 
 /// The browser's item numbers, 0 to 511, wrapping.
 #define ITEM_BROWSER_ITEM_COUNT 512
-#define BROWSER_ROW_STEP 10  ///< Right and Left move ten numbers.
-#define BROWSER_PAGE_STEP 30 ///< R and L move thirty.
 
 void ItemMenu_DrawItemDetails(void *window, s32 item);
 

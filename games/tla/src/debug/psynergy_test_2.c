@@ -28,6 +28,7 @@
 #include "field/particle.h"
 
 #include "scene/kibombo.h"
+#include "scene/falling_rocks.h"
 #include "graphics/resource.h"
 #include "gamepak/far_call/system.h"
 #include "system/task.h"
@@ -44,7 +45,6 @@ enum PsynergyTest2ActorId {
   ACTOR_SECOND_POST, ///< the rope's other end
 };
 
-#define ROCK_COUNT 64
 #define ROCK_SHEET_BYTES 1280 ///< the falling rock's pictures, decompressed
 #define ROCK_FRAMES 20        ///< how long a rock flies
 

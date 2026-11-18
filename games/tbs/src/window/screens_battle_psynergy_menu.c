@@ -4,10 +4,6 @@
 
 #include "screens_internal.h"
 
-/// The last of the twelve range icons Window_DrawThreeTileColumn draws, which
-/// stands for ABILITY_RANGE_ALL; range n takes icon n - 1.
-#define RANGE_ICON_ALL 11
-
 /// The battle Psynergy list for unit `unitId`: `count` abilities of `actions`
 /// (ended by 0), five to a page, each with its icon, name, PP cost, element and
 /// range icon, in TEXT_COLOR_YELLOW when not usable in battle, TEXT_COLOR_RED
@@ -297,5 +293,3 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
   wait(1);
   return result;
 }
-
-#undef RANGE_ICON_ALL

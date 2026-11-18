@@ -122,6 +122,9 @@ void BattleEffect_RunHaunt(struct BattleEffectParams *args) {
 #define ORBITING_SPIRALS_RADIUS 16
 #define ORBITING_SPIRALS_INTERVAL 16
 #define ORBITING_SPIRALS_LIFE 60
+/// The canvas's scroll on the party side until the first frame's wave rows
+/// replace it, 8 pixels short of NARROW_CANVAS_PARTY_X.
+#define ORBITING_SPIRALS_PARTY_START_X (NARROW_CANVAS_PARTY_X - 8)
 
 /// Unused: no row of gAbilityBattleEffects in either game names its kind, and
 /// the handler table is reached with no other kind (BattleEffect_RunFromTable),
@@ -150,7 +153,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ArmBg2AffineHBlankDma, TASK_PASS_VBLANK);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   if (args->side == EFFECT_SIDE_PARTY) {
-    REG_BG2X = -(104 << 8);
+    REG_BG2X = -(ORBITING_SPIRALS_PARTY_START_X << 8);
     offsetX = -NARROW_CANVAS_PARTY_X;
   } else {
     offsetX = 0;
@@ -165,22 +168,14 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
     camera = Ram_HeapSlots->cameraWork;
     row = work->bg2xLines;
     if (args->side == EFFECT_SIDE_ENEMIES) {
-      s32 angle;
-      s32 base;
-
-      for (i = 0, base = toFIXED(8), angle = frame * (TRIG_TURN / 64);
-           i != DISPLAY_HEIGHT; i++) {
-        *row++ = CANVAS_WAVE_BG2X(base - Trig_Sin(angle) * 8);
-        angle += TRIG_TURN / 64;
-      }
+      for (i = 0; i != DISPLAY_HEIGHT; i++)
+        *row++ = CANVAS_WAVE_BG2X(toFIXED(8) -
+                                  Trig_Sin((frame + i) * (TRIG_TURN / 64)) * 8);
     } else {
-      s32 angle;
-
-      for (i = 0, angle = frame * (TRIG_TURN / 64); i != DISPLAY_HEIGHT; i++) {
-        *row++ = CANVAS_WAVE_BG2X(Trig_Sin(angle) * 8) -
-                 (NARROW_CANVAS_PARTY_X << 8);
-        angle += TRIG_TURN / 64;
-      }
+      for (i = 0; i != DISPLAY_HEIGHT; i++)
+        *row++ =
+            CANVAS_WAVE_BG2X(Trig_Sin((frame + i) * (TRIG_TURN / 64)) * 8) -
+            (NARROW_CANVAS_PARTY_X << 8);
     }
 
     EFFECT_VIEW_FROM_CAMERA(camera);
@@ -204,7 +199,7 @@ void BattleEffect_RunUnusedOrbitingSpirals(struct BattleEffectParams *args) {
           s32 y;
           s32 half;
 
-          spin = (frame + i * 32) << 9;
+          spin = frame * (TRIG_TURN / 128) + i * (TRIG_TURN / ORBITING_SPIRALS);
           x = (screen.x +
                FIXEDtoINT(Trig_Sin(spin) * ORBITING_SPIRALS_RADIUS)) +
               offsetX;
@@ -459,6 +454,7 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
 #undef ORBITING_SPIRALS_RADIUS
 #undef ORBITING_SPIRALS_INTERVAL
 #undef ORBITING_SPIRALS_LIFE
+#undef ORBITING_SPIRALS_PARTY_START_X
 #undef GATHERING_SPIRITS_SLOTS
 #undef GATHERING_SPIRITS_TARGET_FRAMES
 #undef GATHERING_SPIRITS_HIT_FRAME

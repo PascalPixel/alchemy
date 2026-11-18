@@ -48,9 +48,16 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
   return 0;
 }
 
+/// The encounter's screen closes over ENCOUNTER_CLOSE_FRAMES, and its white
+/// flash then fades to black over ENCOUNTER_FADE_FRAMES, ENCOUNTER_FADE_STEP
+/// levels a frame from just below RGB_LEVEL_MAX.
+#define ENCOUNTER_CLOSE_FRAMES 16
+#define ENCOUNTER_FADE_FRAMES 16
+#define ENCOUNTER_FADE_STEP 2
+
 /// Starts the transition into a random battle: plays the scene's battle music
 /// and the encounter sounds, closes the screen and flashes the backdrop white,
-/// fading it to black over 16 frames.
+/// fading it to black.
 void Field_StartEncounterTransition(s32 unused) {
   struct FieldWork *work;
   s32 i;
@@ -66,12 +73,12 @@ void Field_StartEncounterTransition(s32 unused) {
     // scene closes with WINDOW_TRANSITION_LEADER_INVERSE.
     Io_Write16(RGB_WHITE,
                (u16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_COLOR_BLACK));
-    ScreenTransition_Finish(SCENE_TRANSITION(TRANSITION_CENTRE_LINE, 1), 16);
+    ScreenTransition_Finish(SCENE_TRANSITION(TRANSITION_CENTRE_LINE, 1),
+                            ENCOUNTER_CLOSE_FRAMES);
     work->transitionActive = 0;
-    wait(16);
-    // Step the white down by 2 a frame: 30 to 0 in 16 frames.
-    for (i = 0; i < 16; i++) {
-      level = 30 - i * 2;
+    wait(ENCOUNTER_CLOSE_FRAMES);
+    for (i = 0; i < ENCOUNTER_FADE_FRAMES; i++) {
+      level = RGB_LEVEL_MAX - 1 - i * ENCOUNTER_FADE_STEP;
       Io_Write16(RGB(level, level, level),
                  (u16 *)&BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_COLOR_BLACK));
       wait(1);
@@ -80,11 +87,11 @@ void Field_StartEncounterTransition(s32 unused) {
     Io_Write16(RGB_WHITE, &PLTT_BACKDROP);
     ScreenTransition_Finish(
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER_INVERSE),
-        16);
+        ENCOUNTER_CLOSE_FRAMES);
     work->transitionActive = 0;
-    wait(16);
-    for (i = 0; i < 16; i++) {
-      level = 30 - i * 2;
+    wait(ENCOUNTER_CLOSE_FRAMES);
+    for (i = 0; i < ENCOUNTER_FADE_FRAMES; i++) {
+      level = RGB_LEVEL_MAX - 1 - i * ENCOUNTER_FADE_STEP;
       Io_Write16(RGB(level, level, level), &PLTT_BACKDROP);
       wait(1);
     }
@@ -254,3 +261,7 @@ void Exit_AddHiddenLeaderLayer(void) {
 
   layer->colorMode = SPRITE_COLOR_HIDDEN;
 }
+
+#undef ENCOUNTER_CLOSE_FRAMES
+#undef ENCOUNTER_FADE_FRAMES
+#undef ENCOUNTER_FADE_STEP

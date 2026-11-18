@@ -34,7 +34,7 @@
 #define TILESET_ANIM_WIDE_TILE_BYTES (TILE_SIZE_4BPP * 2)
 #define TILESET_ANIM_MARKER 0xfd00 ///< low four bits: the animation it starts
 #define TILESET_ANIM_MARKER_PAUSED 0x80 ///< a marker's bit: start it paused
-#define TILESET_ANIM_MARKER_CHANNEL_MASK 0xf ///< a marker's animation
+#define TILESET_ANIM_MARKER_ANIMATION_MASK 0xf ///< a marker's animation
 // The first source tile read from gMapGridAnimTiles rather than VRAM, for
 // 32-byte and for 64-byte (wide) tiles: both bases put it at its start.
 #define TILESET_ANIM_RAM_TILE 1536
@@ -218,7 +218,7 @@ void WorldMap_StartStillPicture(void) {
   struct WorldMapAffineWork *affineWork = Ram_HeapSlots->worldMapAffine;
   struct WorldMapView *perspective =
       (struct WorldMapView *)Ram_HeapSlots->mapGrid;
-  u32 *resources;
+  const u32 *resources;
 
   perspective->animationActive = 1;
   Task_SuspendAll(TilesetAnim_Update);
@@ -257,16 +257,16 @@ void WorldMap_ShowBg1FromBuffer(void) {
 /// the default cells back and returns to the perspective view.
 s32 WorldMap_LoadAreaGraphics(void) {
   struct WorldMapView *perspective;
-  u32 *resources;
+  const u32 *resources;
   u8 *buffer;
-  s16 value;
+  s16 backdropColor;
 
   perspective = (struct WorldMapView *)Ram_HeapSlots->mapGrid;
   buffer = Ram_MapCellBuffer;
   resources = perspective->resources;
-  value = *(s16 *)BG_PLTT;
+  backdropColor = *(s16 *)BG_PLTT;
   Decompress_ByteLz(Resource_GetTableEntry(resources[0]), buffer);
-  *(s16 *)buffer = value;
+  *(s16 *)buffer = backdropColor;
   Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS / 2),
           REG_DMA3);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[3]), gBgTileBuffer);
@@ -278,6 +278,8 @@ s32 WorldMap_LoadAreaGraphics(void) {
                       WORLD_MAP_TILE_SET(3));
   Decompress_TaggedLz(Resource_GetTableEntry(resources[7]), gMapGridAnimTiles);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[8]), &gWorldMapWork);
+  // The VBlank copies the tiles back and the next frame shows the ground;
+  // only then is the still picture's buffer refilled with the cells.
   gVBlankCallback = WorldMap_ShowBg1FromBuffer;
   perspective->windowTop = 0;
   perspective->windowBottom = DISPLAY_HEIGHT - 1;
@@ -405,9 +407,9 @@ void TilesetAnim_Pause(u32 channelIndex) {
   channel->paused = 1;
 }
 
-/// Starts the tileset animations a map's animation script lists: each 0xfdNN
-/// marker starts the tileset animation its low four bits name there, paused
-/// when bit 7 is set.
+/// Starts the tileset animations a map's animation script lists: each
+/// TILESET_ANIM_MARKER starts the tileset animation its low four bits name
+/// there (paused with TILESET_ANIM_MARKER_PAUSED).
 void TilesetAnim_StartAll(const u16 *script) {
   struct MapWork *gridState = Ram_HeapSlots->mapGrid;
   s32 channelsStarted;
@@ -424,7 +426,7 @@ void TilesetAnim_StartAll(const u16 *script) {
   while (marker != TILESET_ANIM_LOOP) {
     if ((marker & TILESET_ANIM_OPCODE_MASK) == TILESET_ANIM_MARKER) {
       struct MapAnimation *channel;
-      u32 channelIndex = marker & TILESET_ANIM_MARKER_CHANNEL_MASK;
+      u32 channelIndex = marker & TILESET_ANIM_MARKER_ANIMATION_MASK;
       u32 paused = 0;
 
       if (marker & TILESET_ANIM_MARKER_PAUSED)
@@ -503,7 +505,8 @@ again:
       goto again;
     }
 
-    // A level is BLDALPHA's while the effect blends, else BLDY's.
+    // An alpha blend takes the level as BLDALPHA; a fade to white or black
+    // takes it as BLDY.
     if ((gridState->blendControl & BLDCNT_EFFECT_MASK) == BLDCNT_EFFECT_BLEND)
       REG_BLDALPHA = instruction;
     else
@@ -512,33 +515,33 @@ again:
     blend->cursor += 2;
     goto again;
   }
-  // Adding (u16)-1 to the halfword counts the wait down by one.
-  blend->delay = delayOrJumpIndex + (u16)-1;
+  // Counts the wait down by one.
+  blend->delay = delayOrJumpIndex - 1;
 }
 
 /// Starts a map's blend script, unless it is empty. Clears the map work's
 /// three-word blend state first, then adds BlendScript_Run as a task.
 void BlendScript_Start(u16 *script) {
-  struct BlendScriptState *state;
-  s32 started;
+  struct BlendScriptState *blend;
+  s32 hasScript;
   volatile u32 zero;
-  u32 first;
 
-  started = 0;
+  // A fixed-source DMA of the zero word clears script, cursor, delay and
+  // paused; a script that is only its end marker leaves the blend unset.
+  hasScript = 0;
   zero = 0;
-  state = &Ram_HeapSlots->mapGrid->blend;
-  Dma_Set((const void *)&zero, state, DMA_FILL_WORDS(sizeof(*state) / 4),
+  blend = &Ram_HeapSlots->mapGrid->blend;
+  Dma_Set((const void *)&zero, blend, DMA_FILL_WORDS(sizeof(*blend) / 4),
           REG_DMA3);
-  first = *script;
-  if (first != BLEND_SCRIPT_LOOP) {
-    state->script = script;
-    state->cursor = script;
-    state->delay = 0;
-    state->paused = 0;
-    started = 1;
+  if (*script != BLEND_SCRIPT_LOOP) {
+    blend->script = script;
+    blend->cursor = script;
+    blend->delay = 0;
+    blend->paused = 0;
+    hasScript = 1;
   }
-  if (started)
-    Task_Add((s32)(BlendScript_Run), TASK_PASS_FRAME);
+  if (hasScript)
+    Task_Add(BlendScript_Run, TASK_PASS_FRAME);
 }
 
 /// Suspends the blend script; scenes reach it through BlendScript_SuspendFar.
@@ -558,8 +561,8 @@ UNUSED void PaletteCycle_Initialize(void) {
   paletteCycles = HeapSlot_AllocEwram(HEAP_SLOT_PALETTE_CYCLES,
                                       sizeof(struct PaletteCycleWork));
   cycle = paletteCycles->entries;
-  // Four cycles of up to 16 saved colours each.
-  for (cycleIndex = 0; cycleIndex != 4; cycleIndex++) {
+  for (cycleIndex = 0; cycleIndex != ARRAY_COUNT(paletteCycles->entries);
+       cycleIndex++) {
     cycle->source = 0;
     cycle->position = 0;
     cycle->timer = 0;
@@ -576,23 +579,26 @@ UNUSED void PaletteCycle_Initialize(void) {
 
 #include "palqueue_add.c"
 
-/// Stops the palette cycles: removes their task and frees their work.
-void PaletteQueue_Stop(void) {
+/// Unused: stops the palette cycles and frees their queue
+/// (HEAP_SLOT_PALETTE_CYCLES).
+UNUSED void PaletteQueue_Stop(void) {
   Task_Remove(PaletteCycle_Step);
   HeapSlot_Release(HEAP_SLOT_PALETTE_CYCLES);
 }
 
-/// Starts the palette cycles' task.
-void PaletteCycle_Start(void) { Task_Add(PaletteCycle_Step, TASK_PASS_FRAME); }
+/// Unused: starts running the palette cycles each frame.
+UNUSED void PaletteCycle_Start(void) {
+  Task_Add(PaletteCycle_Step, TASK_PASS_FRAME);
+}
 
-/// The palette cycles' task: each queued cycle whose timer has run out rotates
-/// its run of colours one place further.
+/// Each frame: advances each palette cycle whose timer has run out by one
+/// colour, writing the rotated colours back to the palette.
 void PaletteCycle_Step(void) {
   struct PaletteCycleWork *paletteQueue = Ram_HeapSlots->paletteCycles;
   u8 cycleIndex;
   // BUG: four queued cycles become zero here, so none advance.
   u16 activeCycles = paletteQueue->count & 3;
-  u16 rotatedColors[16];
+  u16 rotatedColors[PALETTE_COLORS];
 
   for (cycleIndex = 0; cycleIndex < activeCycles; cycleIndex++) {
     struct PaletteCycle *cycle = &paletteQueue->entries[cycleIndex];

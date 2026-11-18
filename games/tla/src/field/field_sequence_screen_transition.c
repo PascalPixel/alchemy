@@ -607,8 +607,6 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
   case TRANSITION_CENTRE_LINE: {
     struct ScreenTransitionState *state =
         ScreenTransition_AllocateAndClearState();
-    // One zero for both branches' stores; a literal 0 at each store differs.
-    s32 zero = 0;
 
     state->centreLine = 1;
     if (variant == 0) {
@@ -624,7 +622,7 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
       state->start = 0;
       state->end = DISPLAY_HEIGHT / 2;
       state->duration = frames;
-      state->step = zero;
+      state->step = 0;
     }
     break;
   }
@@ -874,14 +872,15 @@ void ScreenTransition_FillTilemapAndSolidTile(s32 color) {
   }
 }
 
-/// Starts a dissolve of the given mode and waits 120 frames.
-void ScreenTransition_InitializeState(s32 value) {
+/// Starts a dissolve of the given mode, its value held at 0, and waits two
+/// seconds.
+void ScreenTransition_InitializeState(s32 mode) {
   struct ScreenTransitionState *state;
 
   state = HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
   Dma_Fill32(0, state, sizeof(*state));
   ScreenTransition_FillTilemapAndSolidTile(0);
-  state->mode = value;
+  state->mode = mode;
   state->value = 0;
   Task_Add(ScreenTransition_UpdateDissolve, TASK_PASS_FRAME);
   wait(120);
@@ -889,7 +888,6 @@ void ScreenTransition_InitializeState(s32 value) {
 
 #undef TRANSITION_OPEN
 #undef TRANSITION_CLOSED
-#undef TRANSITION_SHOW_ALL
 #undef TRANSITION_NOISE_EDGE_MAX
 #undef TRANSITION_RIPPLE_LINES_MAX
 #undef TRANSITION_EDGE_OFFSETS

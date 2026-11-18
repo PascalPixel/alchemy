@@ -6,9 +6,12 @@
 #include "window/window_tile.h"
 
 /// A heading picture: 26 by 5 tiles of 16 colours, drawn from tile 16 of
-/// character block 0 and shown in the window palette on BG0.
+/// character block 0 and shown in the window palette on BG0, 2 cells from the
+/// screen's left and 3 from its top.
 #define HEADING_COLUMNS 26
 #define HEADING_ROWS 5
+#define HEADING_LEFT 2
+#define HEADING_TOP 3
 #define HEADING_FIRST_TILE 16
 #define HEADING_TILES                                                          \
   ((u8 *)BG_CHAR_BLOCK(0) + HEADING_FIRST_TILE * TILE_SIZE_4BPP)
@@ -42,13 +45,13 @@ void Heading_Show(s32 heading) {
   Heap_Release(tiles);
   REG_DISPCNT &= ~DISPCNT_BG0_ON;
   Dma_Fill32(HEADING_BLANK_CELL, cell, BG_SCREEN_SIZE);
-  cell = (u16 *)BG_SCREEN_BLOCK(4) + 3 * BG_SCREEN_WIDTH;
+  cell = (u16 *)BG_SCREEN_BLOCK(4) + HEADING_TOP * BG_SCREEN_WIDTH;
   for (row = 0; row < HEADING_ROWS; row++) {
-    cell += 2;
+    cell += HEADING_LEFT;
     for (column = 0; column < HEADING_COLUMNS; column++) {
       *cell++ = (u16)(tile++) | HEADING_BLANK_CELL;
     }
-    cell += 4;
+    cell += BG_SCREEN_WIDTH - HEADING_LEFT - HEADING_COLUMNS;
   }
   REG_DISPCNT &= ~(DISPCNT_WIN0_ON | DISPCNT_WIN1_ON | DISPCNT_OBJWIN_ON);
   REG_DISPCNT |= DISPCNT_WIN0_ON;
@@ -66,7 +69,7 @@ void Heading_Show(s32 heading) {
   for (column = 0; column < HEADING_OPEN_FRAMES; column++) {
     left -= HEADING_OPEN_STEP;
     right += HEADING_OPEN_STEP;
-    REG_WIN0H = (left << 8) | right;
+    REG_WIN0H = WIN_RANGE(left, right);
     wait(1);
   }
 }
@@ -150,6 +153,8 @@ void Heading_Close(void) {
 
 #undef HEADING_COLUMNS
 #undef HEADING_ROWS
+#undef HEADING_LEFT
+#undef HEADING_TOP
 #undef HEADING_FIRST_TILE
 #undef HEADING_TILES
 #undef HEADING_TILE_BYTES

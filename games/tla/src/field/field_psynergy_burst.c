@@ -31,7 +31,8 @@
 /// in front of the caster on the canvas sprite, the 32 sparks that fly into it,
 /// the 32 explosions round the target, and the stage of the cast.
 struct BurstWork {
-  u8 tiles[1024];
+  /// The explosion's eight pictures, unpacked before they are loaded.
+  u8 tiles[8 * BURST_EXPLOSION_PICTURE_TILES * TILE_SIZE_4BPP];
   struct FieldPsynergyParticle sparks[BURST_SPARK_COUNT];
   struct EffectSprite sparkSprites[BURST_SPARK_COUNT];
   struct EffectSprite burstSprites[BURST_EXPLOSION_COUNT];
@@ -116,7 +117,12 @@ void FieldPsynergy_UpdateBurst(void) {
       SET_POSITION(particle, scene->x, scene->y, scene->z);
       Vector_AddPolarOffset(Random16() * 12 + toFIXED(4), Random16(),
                             &particle->x);
+      // UB: nextBurst is incremented and assigned, unsequenced.
+#ifdef UBFIX
+      work->nextBurst = (work->nextBurst + 1) % BURST_EXPLOSION_COUNT;
+#else
       work->nextBurst = ++work->nextBurst % BURST_EXPLOSION_COUNT;
+#endif
     }
     work->newBursts = 0;
     i = 0;
@@ -235,7 +241,12 @@ void FieldPsynergy_UpdateBurst(void) {
       particle = &work->bursts[work->nextBurst];
       particle->timer = 0;
       SET_POSITION(particle, scene->x, scene->y, scene->z);
+      // UB: nextBurst is incremented and assigned, unsequenced.
+#ifdef UBFIX
+      work->nextBurst = (work->nextBurst + 1) % BURST_EXPLOSION_COUNT;
+#else
       work->nextBurst = ++work->nextBurst % BURST_EXPLOSION_COUNT;
+#endif
     }
     work->newBursts = 0;
     i = 0;
@@ -319,7 +330,8 @@ void FieldPsynergy_UpdateBurst(void) {
 void FieldPsynergy_BurstOnTarget(void) { FieldPsynergy_Burst(); }
 #undef BURST_NEXT_PHASE
 
-/// The tiles of the sparks that fly into Burst's glow, 64 bytes.
+/// The tile of the sparks that fly into Burst's glow, one 8x8 tile of 256
+/// colours.
 extern const u8 gBurst_GlowTiles[];
 
 s32 FieldPsynergy_GetCanvasPriority(struct Actor *actor, s32 facing);
@@ -370,11 +382,11 @@ void FieldPsynergy_Burst(void) {
     canvas->depth -= 4;
 
   sparkEntry = VramCache_FindFreeEntry();
-  sparkTile = VramCache_Load(sparkEntry, 64, gBurst_GlowTiles);
+  sparkTile = VramCache_Load(sparkEntry, TILE_SIZE_8BPP, gBurst_GlowTiles);
   for (i = 0, particle = work->sparks, mul = Iwram_MulFX,
       sprite = work->sparkSprites;
        i < BURST_SPARK_COUNT;) {
-    EffectSprite_Init(sprite, 4, 4, 0, sparkTile);
+    EffectSprite_Init(sprite, 4, 4, OBJ_SIZE_8X8, sparkTile);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = canvas->priority;
@@ -397,7 +409,7 @@ void FieldPsynergy_Burst(void) {
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FIELD_EFFECT_EXPLOSION),
                       work);
   burstEntry = VramCache_FindFreeEntry();
-  tile = VramCache_Load(burstEntry, 1024, work);
+  tile = VramCache_Load(burstEntry, sizeof(work->tiles), work);
   work->burstTile = tile;
   particle = work->bursts;
   burstSprite = work->burstSprites;

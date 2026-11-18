@@ -95,7 +95,7 @@ enum ActorSystemMode {
 /// wall before it runs, jumps or climbs (FieldWork.blockedSteps).
 #define FIELD_PUSH_FRAMES 12
 
-/// A field scene's work: FieldSequence_Run allocates it in heap slot 108,
+/// A field scene's work: FieldSequence_Run allocates it in HEAP_SLOT_FIELD,
 /// zeroes it and frees it on the way out, and the field sequence, the event
 /// commands and the scene overlays all reach it through
 /// Ram_HeapSlots->fieldWork.
@@ -112,8 +112,9 @@ struct FieldWork {
   ///@{
   s16 stepTrigger; ///< a step trigger (1 to 230) for Scene_RunStepTriggerOrExit
   s16 pushCell;    ///< a cell's attributes for Field_RunPushCell
-  s16 exit;        ///< the exit taken, which ends the scene; 999 for a warp
-  s16 fieldMenu;   ///< open the field menu
+  /// The exit taken, which ends the scene; EXIT_KEEP_DESTINATION for a warp.
+  s16 exit;
+  s16 fieldMenu; ///< open the field menu
   /// The A button: a talk, an examine or the field menu, by what is ahead.
   s16 aButton;
   s16 pauseMenu;   ///< the Start button: open the Pause menu
@@ -152,11 +153,13 @@ struct FieldWork {
   FIXED walkingDistance;
   struct MapCell *currentCell;  ///< the cell the leader last stepped onto
   struct MapCell *previousCell; ///< the cell before it
-  s32 transition; ///< SCENE_TRANSITION(style, variant); (1, 0) on entry
+  /// A SCENE_TRANSITION(style, variant): a TRANSITION_BACKDROP_FADE on entry.
+  s32 transition;
   u16 unused;
   u16 transitionActive; ///< set once the opening transition has started
-  s32 transitionFrames; ///< frames; 16 on entry and at each event
-  s32 fastForward;      ///< debug: skip timed event waits and actor messages
+  /// The transition's frames: MAP_TRANSITION_FRAMES on entry and at each event.
+  s32 transitionFrames;
+  s32 fastForward; ///< debug: skip timed event waits and actor messages
   u8 unusedAfterFastForward[8];
   s16 message; ///< the next message, advanced as each window opens
   /// Set to 0xffff by Event_Start at each event; nothing reads it.
@@ -261,8 +264,8 @@ STATIC_ASSERT(offsetof(struct FieldWork, hoverReady) == 3385);
 STATIC_ASSERT(offsetof(struct FieldWork, glow) == 3396);
 STATIC_ASSERT(offsetof(struct FieldWork, psynergyDrawFlags) == 3404);
 
-/// The running field scene's work, heap slot 108; FieldSequence_Run takes it
-/// and frees it.
+/// The running field scene's work, in HEAP_SLOT_FIELD; FieldSequence_Run takes
+/// it and frees it.
 #define gFieldWork ((struct FieldWork *)Ram_HeapSlots->fieldWork)
 
 #endif

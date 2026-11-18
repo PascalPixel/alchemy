@@ -12,10 +12,10 @@
 #include "battle/object_effect_scripts.h"
 #include "macros.h"
 
-/// A Jupiter Djinni joins the party: it bounces three times, spins and leaps
-/// away, leaving a light particle in every slot of the effect work, which
-/// circle and then close on the leader, who turns to the camera and raises its
-/// arms.
+/// A Jupiter Djinni joins the party: it bounces three times, spins, leaps out
+/// of sight and bursts into a light particle for each of the effect work's,
+/// which circle and close in on the leader, who turns to the camera and raises
+/// its arms (ANIM_LEADER_ARMS_RAISED).
 void Djinn_RunJupiterJoinEffect(s32 djinniId) {
   struct Vector3 position;
   struct Actor *djinni;
@@ -29,7 +29,7 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
     return;
   FieldEffect_InitializeSlots();
   effectWork = Ram_HeapSlots->fieldEffectWork;
-  // Tint the screen yellow: PALETTE_TINT_CUSTOM | RGB(12, 12, 4).
+  // Tint the screen yellow.
   Shop_SaveAndTintFieldPaletteFar(PALETTE_TINT_CUSTOM | RGB(12, 12, 4));
   Sound_PlayFar(SE_NOTE_LOW);
   Actor_RunRepeatedMotion(djinniId, 1);
@@ -62,7 +62,8 @@ void Djinn_RunJupiterJoinEffect(s32 djinniId) {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, position.x, position.z);
     FieldParticle_SetCallback(effect, FieldEffect_RunAngledApproachPhases);
     FieldParticle_SetActorMode(effect, 7);
-    Sprite_SetAnimationColorModesFar(effect->actor, (Random16() * 7) >> 16);
+    Sprite_SetAnimationColorModesFar(
+        effect->actor, (Random16() * (SPRITE_COLOR_GREY + 1)) >> 16);
     scale = Random16() / 3 + FIXED_ONE; // 1.0 to 1.33
     effect->scaleY = scale;
     effect->scaleX = scale;
@@ -128,11 +129,10 @@ void FieldEffect_ShrinkActorAndDestroySlow(void *obj) {
 }
 
 /// Field effect sprite callback of a Mars Djinni's sparks (enum
-/// MarsSparkState): the spark flies 120
-/// pixels up the screen (give or take 3/32 turn) from its origin at up to 5
-/// pixels a frame and starts over, until it stops where it arrives, hidden; 40
-/// frames later it swarms to points within 4 pixels of one 20 pixels over the
-/// leader, until it is freed once it arrives.
+/// MarsSparkState): the spark flies 120 pixels up the screen (give or take 3/32
+/// turn) from its origin at up to 5 pixels a frame and starts over, until it
+/// stops where it arrives, hidden; 40 frames later it swarms to points within 4
+/// pixels of one 20 pixels over the leader, until it is freed once it arrives.
 void FieldEffect_UpdateMarsSpark(struct FieldParticle *effect) {
   struct Actor *owner;
   struct Vector3 position;

@@ -56,7 +56,7 @@ retry:
   }
   FieldVector_AddPolarOffset(16, angle, position);
   cell = MapGrid_GetCellBehaviorAt(*layer, position[0], position[2]);
-  if (cell == 255 ||
+  if (cell == CELL_BEHAVIOR_WALL ||
       Map_GetTerrainHeight(*layer, position[0], position[2]) - actor->y.fixed >
           toFIXED(8)) {
     actor->facing = angle;
@@ -88,7 +88,7 @@ retry:
     FieldVector_AddPolarOffset(16, angle, position);
     q = position;
     cell = MapGrid_GetCellBehaviorAt(*layer, q[0], q[2]);
-    if (cell == 255)
+    if (cell == CELL_BEHAVIOR_WALL)
       break;
     if (Map_GetTerrainHeight(*layer, q[0], q[2]) - actor->y.fixed > toFIXED(8))
       goto blocked;

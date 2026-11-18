@@ -68,6 +68,26 @@
 /// pixels and back every 32 frames.
 #define CHOICE_BOB_SHIFT 14
 
+/// Where the total and the result's banner come to rest after sliding in from
+/// the left; after a loss each sways about its own x and falls from there.
+#define TOTAL_X 100
+#define TOTAL_Y 48
+#define RESULT_BANNER_X 60
+#define RESULT_BANNER_Y 64
+/// Offered the hi-lo game, the total arcs up and over to the left on an
+/// ellipse this wide and high, a sixteenth of a turn a frame.
+#define TOTAL_ARC_RADIUS_X 40
+#define TOTAL_ARC_RADIUS_Y 48
+/// Unused: the circle a won total would ride.
+#define TOTAL_CIRCLE_RADIUS 48
+
+/// How far left of and above its point a die's sprite, and a shadow's, has its
+/// corner at DICE_NEAREST_DEPTH, in pixels; the further the die, the less.
+#define DIE_CORNER_X 48
+#define DIE_CORNER_Y 32
+#define SHADOW_CORNER_X 48
+#define SHADOW_CORNER_Y 24
+
 /// The sprite palettes SuperLuckyDice_Run gives its pictures, after the six the
 /// dice faces' copy fills; the last four are loaded again for each part of a
 /// game.
@@ -1551,14 +1571,15 @@ void SuperLuckyDice_Run(void) {
       s32 swayWidth;
 
       x = (timer << 4) - 376;
-      y = 48;
-      if (x > 100)
-        x = 100;
+      y = TOTAL_Y;
+      if (x > TOTAL_X)
+        x = TOTAL_X;
       if (state == SUPER_LUCKY_DICE_DOUBLE_UP) {
         angle = slide * (TRIG_TURN / 16);
         angle += TRIG_TURN / 16;
-        x = FIXEDtoINT(Trig_Cos(angle) * 40) - (timer << 4) + 56;
-        y = 48 - FIXEDtoINT(Trig_Sin(angle) * 48);
+        x = FIXEDtoINT(Trig_Cos(angle) * TOTAL_ARC_RADIUS_X) - (timer << 4) +
+            56;
+        y = TOTAL_Y - FIXEDtoINT(Trig_Sin(angle) * TOTAL_ARC_RADIUS_Y);
       } else if (resultKind != SUPER_LUCKY_DICE_RESULT_LOSE) {
         // Unused: a win would circle from frame 68, a turn in 44 frames, but
         // it moves on at frame 68.
@@ -1566,15 +1587,15 @@ void SuperLuckyDice_Run(void) {
           s32 elapsed = timer - 68;
 
           angle = elapsed * (TRIG_TURN / 44);
-          x = FIXEDtoINT(Trig_Cos(angle) * 48) + 52;
-          y = 48 - FIXEDtoINT(Trig_Sin(angle) * 48);
+          x = FIXEDtoINT(Trig_Cos(angle) * TOTAL_CIRCLE_RADIUS) + 52;
+          y = TOTAL_Y - FIXEDtoINT(Trig_Sin(angle) * TOTAL_CIRCLE_RADIUS);
         }
       } else if (timer > 67) {
         doubled = timer * 2;
         swayWidth = doubled - 128;
         x = FIXEDtoINT(Trig_Sin(timer * (TRIG_TURN / 16) - TRIG_TURN * 4) *
                        swayWidth) +
-            100;
+            TOTAL_X;
         doubled += timer;
         doubled *= 2;
         y = doubled - 360;
@@ -1587,18 +1608,18 @@ void SuperLuckyDice_Run(void) {
         s32 bannerX;
         s32 bannerY;
 
-        bannerY = 64;
-        bannerX = timer > 37 ? 60 : (timer << 4) - 620;
+        bannerY = RESULT_BANNER_Y;
+        bannerX = timer > 37 ? RESULT_BANNER_X : (timer << 4) - 620;
         if (state == SUPER_LUCKY_DICE_DOUBLE_UP) {
-          bannerY = 64;
-          bannerX = slide * 24 + 60;
+          bannerY = RESULT_BANNER_Y;
+          bannerX = slide * 24 + RESULT_BANNER_X;
         } else if (timer > 67) {
           doubled = timer * 2;
           swayWidth = doubled - 136;
           bannerX = FIXEDtoINT(Trig_Sin(timer * (TRIG_TURN / 16) -
                                         TRIG_TURN * 17 / 4) *
                                swayWidth) +
-                    60;
+                    RESULT_BANNER_X;
           doubled += timer;
           doubled *= 2;
           bannerY = doubled - 344;
@@ -1644,12 +1665,12 @@ void SuperLuckyDice_Run(void) {
       if (screen[2] > DICE_FARTHEST_DEPTH)
         screen[2] = DICE_FARTHEST_DEPTH;
       spriteDepth[drawOrder[index]] = screen[2] - DICE_NEAREST_DEPTH;
-      // The sprite's corner, up and left of the die's point by less the
-      // further it is.
-      x = screen[0] - Q_8_8(12) / (spriteDepth[drawOrder[index]] / 4 +
-                                   DICE_NEAREST_SCALE / 2);
-      y = screen[1] - Q_8_8(8) / (spriteDepth[drawOrder[index]] / 4 +
-                                  DICE_NEAREST_SCALE / 2);
+      x = screen[0] -
+          DIE_CORNER_X * (DICE_NEAREST_SCALE / 2) /
+              (spriteDepth[drawOrder[index]] / 4 + DICE_NEAREST_SCALE / 2);
+      y = screen[1] -
+          DIE_CORNER_Y * (DICE_NEAREST_SCALE / 2) /
+              (spriteDepth[drawOrder[index]] / 4 + DICE_NEAREST_SCALE / 2);
       if (y + 92 > -16) {
         sprites->oam[spriteCount].attr01 =
             (OBJ_AFFINE_MATRIX(drawOrder[index]) |
@@ -1686,8 +1707,8 @@ void SuperLuckyDice_Run(void) {
         spriteDepth[SUPER_LUCKY_DICE_COUNT + index] += (s16)FIXEDtoINT(die->y);
         scale = spriteDepth[SUPER_LUCKY_DICE_COUNT + index] / 2 +
                 DICE_NEAREST_SCALE;
-        x = screen[0] - Q_8_8(24) / scale;
-        y = screen[1] - Q_8_8(12) / scale;
+        x = screen[0] - SHADOW_CORNER_X * DICE_NEAREST_SCALE / scale;
+        y = screen[1] - SHADOW_CORNER_Y * DICE_NEAREST_SCALE / scale;
         if (y + 92 > -16) {
           sprites->oam[spriteCount].attr01 =
               (OBJ_AFFINE_MATRIX(SUPER_LUCKY_DICE_COUNT + index) |

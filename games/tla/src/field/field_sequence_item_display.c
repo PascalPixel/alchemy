@@ -47,9 +47,10 @@
 #include "field/ground_mask.h"
 #include "resource_ids.h"
 
-/// Unused: only the far-call table refers to it. Finds the first treasure spot
-/// actor within 16 pixels of the leader on both axes and puts the leader 20
-/// pixels from it, on the line from it to the leader, with no destination.
+/// Unused: only the far-call table refers to it. Keeps the party leader off the
+/// treasure spots: a leader within 16 pixels of a treasure spot's actor is
+/// moved 20 pixels from it, in the direction it stood, and loses its move
+/// target.
 void Leader_StepAwayFromNearbyActor(void) {
   struct Actor *leader;
   struct Actor *other;
@@ -90,7 +91,7 @@ static inline void Actor_InitializeSparkle(struct Actor *actor) {
 /// within 16 pixels of it.
 void ItemDisplay_EmitSparkles(struct Actor *emitter) {
   union PolarOffsetPosition position;
-  struct Actor *actor;
+  struct Actor *sparkle;
   u32 randomRadius;
 
   // Once the picture's rise has all but stopped (under 1/256 pixel a frame),
@@ -109,9 +110,9 @@ void ItemDisplay_EmitSparkles(struct Actor *emitter) {
   position.vector.z = emitter->z.fixed;
   randomRadius = Random16();
   Vector_AddPolarOffset(randomRadius << 4, Random16(), position.coordinates);
-  actor = Actor_Spawn(SPRITE_SPARKLE, position.vector.x, position.vector.y,
-                      position.vector.z);
-  Actor_InitializeSparkle(actor);
+  sparkle = Actor_Spawn(SPRITE_SPARKLE, position.vector.x, position.vector.y,
+                        position.vector.z);
+  Actor_InitializeSparkle(sparkle);
 }
 
 /// Returns 1 while Reveal is active, else 0.
@@ -132,8 +133,10 @@ s32 Field_IsRevealActive(struct Actor *interpreter) {
 
 void Reveal_EmitSparkles(struct Actor *source);
 
-/// Shows the picture of item above actor (in front of the controlled owner,
-/// on the centre of the cell), clearing Reveal's sparkles first.
+/// Shows the picture of item 16 pixels above actor actorId, or for the leader
+/// at the centre of the cell 16 pixels in front of them: it rises a little and
+/// hangs there, sparkling. While Reveal is active it first releases Reveal's
+/// sparkles, and then its mark on the picture's cell.
 struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *picture = work->actors[actorId];
@@ -155,6 +158,7 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
     position[2] = (position[2] & FIELD_CELL_MASK) + toFIXED(8);
   }
   if (work->revealActive != 0) {
+    // Stop both the marker emitters and the sparkle actors they already made.
     actor = Ram_HeapSlots->actors;
     i = ACTOR_COUNT - 1;
     do {
@@ -175,6 +179,8 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
     return NULL;
   Actor_StartScriptFar(picture, gFieldEffect_ParticleEmitterScript);
   sprite = picture->sprite;
+  // No shadow, outline or sprite animations: a 16-colour sprite in OBJ
+  // palette 0 whose tiles are the item's icon.
   sprite->flags = 0;
   sprite->count = 0;
   sprite->image.fullColor = 0;
@@ -186,7 +192,7 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
   picture->gravity = toFIXED(1) / 4;
   transfer = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   Icon_DrawItemFar(item);
-  tile = VramCache_Load(sprite->slot, 4 * TILE_SIZE_4BPP, transfer->tiles);
+  tile = VramCache_Load(sprite->slot, ICON_TILE_BYTES, transfer->tiles);
   sprite->image.tile = tile;
   HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   picture->update = ItemDisplay_EmitSparkles;
@@ -207,48 +213,50 @@ struct Actor *ItemDisplay_ShowItemInFront(s32 actorId, s32 item) {
   return picture;
 }
 
-/// Releases object unless it is NULL.
+/// Releases actor unless it is NULL.
 void Actor_ReleaseIfPresent(struct Actor *actor) {
   if (actor != 0)
     Actor_ReleaseFar(actor);
 }
 
-/// Does nothing; nothing in the image calls it.
-void ScreenTransition_ReservedNoOp(void) {}
+/// Does nothing; nothing calls it.
+UNUSED void ItemDisplay_ReservedNoOp(void) {}
 
-/// Places the object 36 pixels above the controlled owner, gives it its
-/// sprite priority and, three frames on, the descent script, and turns the
-/// owner to face a quarter turn.
+/// Raises a found item's picture to 36 pixels above the party leader, who holds
+/// it up (ANIM_LEADER_ARMS_RAISED) facing the screen.
 void ItemDisplay_RaiseAboveLeader(struct Actor *actor) {
-  struct Actor *owner;
+  struct Actor *leader;
 
   if (actor == 0)
     return;
 
   {
     struct Actor *found = Actor_Lookup(Party_GetLeaderActor());
+    // Up to 2 pixels a frame, gaining 1 a frame, in free flight: no motion
+    // flags, so it neither falls nor follows the ground.
     actor->acceleration = toFIXED(1);
     actor->speedLimit = toFIXED(2);
     actor->motionFlags = 0;
-    owner = found;
+    leader = found;
   }
-  Actor_SetMoveTargetFar(actor, owner->x.fixed, owner->y.fixed + toFIXED(36),
-                         owner->z.fixed);
+  Actor_SetMoveTargetFar(actor, leader->x.fixed, leader->y.fixed + toFIXED(36),
+                         leader->z.fixed);
   Actor_SetSpritePriorityDirectFar(actor, 1);
   wait(3);
-  Actor_SelectAnimationFar(owner, ANIM_LEADER_ARMS_RAISED);
+  Actor_SelectAnimationFar(leader, ANIM_LEADER_ARMS_RAISED);
   Actor_StartScriptFar(actor, gFieldEffect_RisingPulseScript);
-  owner->facing = FACING_SOUTH;
+  // FACING_SOUTH, a quarter turn, faces the screen.
+  leader->facing = FACING_SOUTH;
 }
 
 /// Shows a found item's picture: flags bit 0 adds sparkles and bit 1 raises it
 /// above the leader, with waits of 60 and 80 frames around that when both are
 /// set.
 void ItemDisplay_ShowPicture(struct Actor *actor, s32 flags) {
-  struct Actor *owner;
+  struct Actor *leader;
 
   if (actor != NULL) {
-    owner = Actor_Lookup(Party_GetLeaderActor());
+    leader = Actor_Lookup(Party_GetLeaderActor());
     if (flags & 1) {
       Actor_SetSpriteFlagsFar(actor, 0);
       Actor_StartScriptFar(actor, gFieldEffect_ParticleEmitterScript);
@@ -262,19 +270,19 @@ void ItemDisplay_ShowPicture(struct Actor *actor, s32 flags) {
       ItemDisplay_RaiseAboveLeader(actor);
     if (flags == 3)
       wait(80);
-    Actor_SelectAnimationFar(owner, ANIM_STAND);
+    Actor_SelectAnimationFar(leader, ANIM_STAND);
   }
 }
 
 /// Shows the picture of item 36 pixels above the party leader for 80 frames;
 /// flags bit 0 adds sparkles and bit 1 raises it as a found item.
 void ItemDisplay_ShowItem(s32 item, s32 flags) {
-  struct Actor *owner = Actor_Lookup(Party_GetLeaderActor());
+  struct Actor *leader = Actor_Lookup(Party_GetLeaderActor());
   GlyphTransfer *transfer =
       HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
   struct Actor *actor =
-      Actor_CreateFar(SPRITE_UNSEEN_MARKER, owner->x.fixed,
-                      owner->y.fixed + toFIXED(36), owner->z.fixed);
+      Actor_CreateFar(SPRITE_UNSEEN_MARKER, leader->x.fixed,
+                      leader->y.fixed + toFIXED(36), leader->z.fixed);
 
   if (actor != 0) {
     struct Sprite *sprite = actor->sprite;
@@ -286,7 +294,7 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
     sprite->image.priority = 1;
 
     Icon_DrawItemFar(item);
-    VramCache_Load(sprite->slot, 4 * TILE_SIZE_4BPP, transfer->tiles);
+    VramCache_Load(sprite->slot, ICON_TILE_BYTES, transfer->tiles);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 
     if (flags & 1)
@@ -295,7 +303,7 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
       ItemDisplay_RaiseAboveLeader(actor);
 
     wait(80);
-    Actor_SelectAnimationFar(owner, ANIM_STAND);
+    Actor_SelectAnimationFar(leader, ANIM_STAND);
     Actor_ReleaseFar(actor);
   }
 }
@@ -305,7 +313,7 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
 void Reveal_EmitSparkles(struct Actor *actor) {
   const struct Actor *source = (const struct Actor *)actor;
   union PolarOffsetPosition position;
-  struct Actor *object;
+  struct Actor *sparkle;
   u32 randomRadius;
 
   if ((100 * Random16() >> 16) > 9)
@@ -316,9 +324,9 @@ void Reveal_EmitSparkles(struct Actor *actor) {
   position.vector.z = source->z.fixed;
   randomRadius = Random16();
   Vector_AddPolarOffset(randomRadius << 4, Random16(), position.coordinates);
-  object = Actor_Spawn(SPRITE_SPARKLE, position.vector.x, position.vector.y,
-                       position.vector.z);
-  Actor_InitializeSparkle(object);
+  sparkle = Actor_Spawn(SPRITE_SPARKLE, position.vector.x, position.vector.y,
+                        position.vector.z);
+  Actor_InitializeSparkle(sparkle);
 }
 
 /// Places Reveal's markers from the scene's item rows (a type, an event id, a

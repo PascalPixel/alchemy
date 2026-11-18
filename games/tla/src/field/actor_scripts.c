@@ -1,6 +1,7 @@
 /// @file
 /// The actor scripts the field and its scenes run.
 
+#include "field/actor.h"
 #include "field/actor_script.h"
 #include "types.h"
 #include "edition.h"
@@ -121,11 +122,11 @@ const s32 gActor_WaitScript[] = {
     SC_RELEASE,
 };
 
-/// Action kind 2: wanders near home, pausing between steps.
+/// MOVEMENT_TYPE_WANDER: wanders near home, pausing between steps.
 const s32 gMovementType_WanderScript[] = {
     SC_SPEED(0.5),
     SC_ACCELERATION(0.05),
-    SC_SET(SW_COLLISION, 0x83),
+    SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_PUSHABLE | ACTOR_SOLID),
     SC_LABEL(1),
     SC_ANIMATION(2),
     SC_WANDER_HOME(4, 8, 16),
@@ -146,35 +147,36 @@ const s32 gMovementType_WanderScript[] = {
     SC_END,
 };
 
-/// Action kind 1: does nothing, as The Broken Seal's gActor_IdleScript.
+/// MOVEMENT_TYPE_STAND: does nothing, as The Broken Seal's gActor_IdleScript.
 const s32 gMovementType_StandScript[] = {
     SC_END,
 };
 
-/// Clears the actor's child and collision flags.
+/// MOVEMENT_TYPE_CLEAR_COLLISION: clears the actor's sprite and collision
+/// flags.
 const s32 gMovementType_ClearCollisionScript[] = {
     SC_CALL(Actor_ClearChildAndCollisionFlags),
     SC_END,
 };
 
-/// Movement type 11: clears the actor's sprite flags.
+/// MOVEMENT_TYPE_CLEAR_CHILD: clears the actor's sprite flags.
 const s32 gMovementType_ClearChildScript[] = {
     SC_CALL(Actor_ClearChildFlags),
     SC_END,
 };
 
-/// Movement type 10: the actor takes its cells' priority even where the
-/// ground in front rises.
+/// MOVEMENT_TYPE_RESET_ACTION: the actor takes its cells' priority even where
+/// the ground in front rises.
 const s32 gMovementType_ResetActionScript[] = {
     SC_CALL(Actor_IgnoreRises),
     SC_END,
 };
 
-/// Action kind 3: wanders a shorter way near home.
+/// MOVEMENT_TYPE_WANDER_NEAR: wanders a shorter way near home.
 const s32 gMovementType_WanderNearScript[] = {
     SC_SPEED(0.5),
     SC_ACCELERATION(0.05),
-    SC_SET(SW_COLLISION, 0x83),
+    SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_PUSHABLE | ACTOR_SOLID),
     SC_LABEL(1),
     SC_ANIMATION(2),
     SC_WANDER_HOME(2, 2, 8),
@@ -195,14 +197,14 @@ const s32 gMovementType_WanderNearScript[] = {
     SC_END,
 };
 
-/// Action kind 4: wanders near home without pausing.
+/// MOVEMENT_TYPE_WANDER_CLOSE: wanders near home without pausing.
 const s32 gMovementType_WanderCloseScript[] = {
     SC_SPEED(0.4), SC_ACCELERATION(0.2),          SC_ANIMATION(2),
     SC_LABEL(1),   SC_WANDER_HOME(2, 2, 6),       SC_SYNC,
     SC_WAIT(4),    SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-/// Squash and stretch, twice in each round, for ever.
+/// MOVEMENT_TYPE_SQUASH: squashes and stretches twice a round, for ever.
 const s32 gMovementType_SquashScript[] = {
     SC_LABEL(1),
     SC_SET(SW_SCALE_X, FIXED_ONE),
@@ -234,19 +236,22 @@ const s32 gMovementType_SquashScript[] = {
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-/// Moves the actor toward its target every frame.
+/// MOVEMENT_TYPE_FOLLOW_WATCHED: moves the actor toward its watched actor
+/// every frame.
 const s32 gMovementType_FollowWatchedScript[] = {
     SC_CALL(Actor_MoveTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// Turns the actor toward its target every frame.
+/// MOVEMENT_TYPE_FACE_LEADER: turns the actor toward its watched actor, the
+/// leader, every frame.
 const s32 gMovementType_FaceLeaderScript[] = {
     SC_CALL(Actor_TurnTowardWatchedActor),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// Movement type 9: keeps the leader's display layer, every frame.
+/// MOVEMENT_TYPE_TAKE_LEADER_LAYER: keeps the leader's display layer, every
+/// frame.
 const s32 gMovementType_TakeLeaderLayerScript[] = {
     SC_CALL(Actor_TakeLeaderLayer),
     SC_WAIT(1),

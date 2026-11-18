@@ -43,37 +43,39 @@ s32 FlagEntries_GetValue(s32 flag) {
 }
 
 /// Chooses the current scene's encounter zones, one for each kind of ground the
-/// party can stand on (gFieldWork->encounterZones), from the first rule
-/// matching the scene and entrance.
-void Encounter_SelectMapZones(s32 search) {
+/// party can stand on (gFieldWork->encounterZones, read by
+/// Encounter_RollTerrain), from the first rule matching the scene and entrance.
+void Encounter_SelectMapZones(s32 useRules) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  s32 scene = gMainRoutineWork.next;
+  s32 sceneId = gMainRoutineWork.next;
   s32 entrance = gMainRoutineWork.entrance;
-  u8 *out = work->encounterZones;
+  u8 *groundZones = work->encounterZones;
   u32 first = 0;
   u32 second = 0;
-  const struct SceneMusicEntry *entry = gScene_EncounterRules;
+  const struct SceneMusicEntry *rule = gScene_EncounterRules;
   u32 i;
 
-  if (search != 0) {
-    for (; entry->scene != -1; entry++) {
-      if (entry->scene != scene)
+  if (useRules != 0) {
+    for (; rule->scene != -1; rule++) {
+      if (rule->scene != sceneId)
         continue;
-      if (entry->entrance != -1 && entry->entrance != entrance)
+      if (rule->entrance != -1 && rule->entrance != entrance)
         continue;
-      if (entry->flag != -1 && GameFlag_Get(entry->flag))
+      if (rule->flag != -1 && GameFlag_Get(rule->flag))
         continue;
-      first = entry->first;
-      second = entry->second;
+      first = rule->first;
+      second = rule->second;
       break;
     }
   }
-  *out++ = first;
-  *out++ = second;
-  for (i = 0; i < 6; i++)
-    *out++ = 0;
+  *groundZones++ = first;
+  *groundZones++ = second;
+  for (i = 0; i < ARRAY_COUNT(work->encounterZones) - 2; i++)
+    *groundZones++ = 0;
   work->encounterBias = 0;
-  work->encounterThreshold = 16 * FIXED_ONE;
+  // Encounter_CountStepsAndSelectFormation starts a battle once
+  // gMainRoutineWork.encounterSteps reaches it.
+  work->encounterThreshold = toFIXED(16);
   BattleBackground_SelectForMap();
 }
 
@@ -154,10 +156,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, FIXED steps) {
     // Each level (up to five) the party's average is above the zone's raises
     // the rate by 5; with Avoid active such a zone has no encounters at all.
     level = Party_GetAverageLevelFar() - entry->level;
-    if (level < 0)
-      level = 0;
-    if (level > 5)
-      level = 5;
+    CLAMP(level, 0, 5);
     if (level > 0 && gMainRoutineWork.avoidDistance != 0)
       return 0;
     rate += level * 5;
@@ -184,6 +183,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, FIXED steps) {
       return 0;
   }
 
+  // Draw one of the zone's formations by weight.
   work->encounterBias = 0;
   sum = 0;
   for (i = 0; i < 8; i++)
@@ -201,13 +201,14 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, FIXED steps) {
   return sum;
 }
 
-/// Rolls a random battle on the encounter zone of the ground underfoot: index
-/// into work->encounterZones; steps, the step weight, is passed on to
-/// Encounter_CountStepsAndSelectFormation.
-s32 Encounter_RollTerrain(u32 index, FIXED steps) {
-  u8 *table = gFieldWork->encounterZones;
+/// Rolls a random battle on the encounter zone of the ground underfoot.
+/// terrain: the ground, an index into work->encounterZones: 0 for ordinary
+/// ground, 1 for a MAP_CELL_SECOND_ZONE cell. steps: the step weight, passed on
+/// to Encounter_CountStepsAndSelectFormation.
+s32 Encounter_RollTerrain(u32 terrain, FIXED steps) {
+  u8 *zone = gFieldWork->encounterZones;
 
-  return Encounter_CountStepsAndSelectFormation(table[index], steps);
+  return Encounter_CountStepsAndSelectFormation(zone[terrain], steps);
 }
 
 /// Rolls a random battle on the World Map, taking the zone from the cell at
@@ -240,21 +241,21 @@ u16 Encounter_GetDjinnFormation(s32 djinni) {
 /// first rule matching the scene or its area and the entrance; SOUND_KEEP_BGM
 /// when none does.
 void Scene_ChooseMusic(void) {
-  s16 cue = SOUND_KEEP_BGM;
-  s16 scene = gMainRoutineWork.next;
+  s16 music = SOUND_KEEP_BGM;
+  s16 sceneId = gMainRoutineWork.next;
   s16 entrance = gMainRoutineWork.entrance;
   s16 group = gMainRoutineWork.area;
   const struct SceneCueRule *rule = gScene_CueRuleTable;
 
   for (; rule->id != -1; rule++) {
     if (rule->byScene) {
-      if (rule->id != scene)
+      if (rule->id != sceneId)
         continue;
       if (rule->entrance != -1 && rule->entrance != entrance)
         continue;
       if (rule->flag != -1 && GameFlag_Get(rule->flag) == 0)
         continue;
-      cue = rule->cue;
+      music = rule->cue;
       break;
     } else {
       if (rule->id != group)
@@ -263,65 +264,65 @@ void Scene_ChooseMusic(void) {
         continue;
       if (rule->flag != -1 && GameFlag_Get(rule->flag) == 0)
         continue;
-      cue = rule->cue;
+      music = rule->cue;
       break;
     }
   }
 
-  gMainRoutineWork.sceneMusic = cue;
+  gMainRoutineWork.sceneMusic = music;
 }
 
 /// Returns the area name of sceneId and entrance, from the first rule matching
 /// the scene or its area; 0, the Title's name, when none does.
-s32 Area_GetNameIndex(s32 scene, s32 entrance) {
-  const struct SceneAreaNameRule *entry = gScene_AreaNameRules;
-  s32 areaNameIndex = 0;
-  s32 group = Scene_GetArea(scene);
+s32 Area_GetNameIndex(s32 sceneId, s32 entrance) {
+  const struct SceneAreaNameRule *rule = gScene_AreaNameRules;
+  s32 name = 0;
+  s32 area = Scene_GetArea(sceneId);
 
-  while (entry->id != -1) {
-    if (entry->useSceneId) {
-      if (entry->id == scene) {
-        if (entry->entrance == -1 || entry->entrance == entrance) {
-          areaNameIndex = entry->areaNameIndex;
+  while (rule->id != -1) {
+    if (rule->useSceneId) {
+      if (rule->id == sceneId) {
+        if (rule->entrance == -1 || rule->entrance == entrance) {
+          name = rule->areaNameIndex;
           break;
         }
       }
     } else {
-      if (entry->id == group) {
-        if (entry->entrance == -1 || entry->entrance == entrance) {
-          areaNameIndex = entry->areaNameIndex;
+      if (rule->id == area) {
+        if (rule->entrance == -1 || rule->entrance == entrance) {
+          name = rule->areaNameIndex;
           break;
         }
       }
     }
-    entry++;
+    rule++;
   }
-  return areaNameIndex;
+  return name;
 }
 
 /// Sets the scene the party returns to after a defeat
-/// (gMainRoutineWork.restartScene and savedEntrance), from the first rule of
+/// (gMainRoutineWork.restartScene and restartEntrance), from the first rule of
 /// gParty_PairResolveRules that matches the current scene and entrance: rows
 /// of eight halfwords that open {scene, entrance (-1 for any), return scene,
 /// return entrance}, ended by scene -1. Without a match the restart point stays
 /// as it was.
 void Scene_SetRestartPoint(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
-  s16 first;
-  s16 second;
-  const s16 *entry;
+  s16 sceneId;
+  s16 entrance;
+  const s16 *rule;
 
-  first = party->next;
-  second = party->entrance;
-  entry = gParty_PairResolveRules;
+  sceneId = party->next;
+  entrance = party->entrance;
+  rule = gParty_PairResolveRules;
 
-  while (entry[0] != -1) {
-    if (entry[0] == first && (entry[1] == -1 || entry[1] == second)) {
-      party->restartScene = entry[2];
-      party->restartEntrance = entry[3];
+  while (rule[0] != -1) {
+    if (rule[0] == sceneId && (rule[1] == -1 || rule[1] == entrance)) {
+      party->restartScene = rule[2];
+      party->restartEntrance = rule[3];
       return;
     }
-    entry += 8;
+    rule += 8;
   }
 }
 
@@ -410,10 +411,10 @@ void BattleBackground_SelectForMap(void) {
 /// Chooses the battle background for a World Map battle environment (enum
 /// BattleEnvironment; any other gives the ship deck's) and sets
 /// gMainRoutineWork.battleBackground.
-void BattleBackground_SelectForEnvironment(s32 behavior) {
+void BattleBackground_SelectForEnvironment(s32 environment) {
   u16 backdrop;
 
-  switch (behavior - 1) {
+  switch (environment - 1) {
   case BATTLE_ENVIRONMENT_GRASSLAND - 1:
     backdrop = RESOURCE_GRASSLAND_B_BACKDROP;
     break;
@@ -442,14 +443,14 @@ void BattleBackground_SelectForEnvironment(s32 behavior) {
   gMainRoutineWork.battleBackground = backdrop;
 }
 
-/// Whether the character is one of the first four party members, the ones in
-/// battle.
+/// Whether the character is one of the first PARTY_BATTLE_SIZE party members,
+/// the ones in battle.
 s32 Party_IsInFrontRow(s32 owner) {
   s32 count = Party_CountMembersFar();
   s32 i;
 
-  if (count > 4)
-    count = 4;
+  if (count > PARTY_BATTLE_SIZE)
+    count = PARTY_BATTLE_SIZE;
   for (i = 0; i < count; i++) {
     if (gMainRoutineWork.party[i] == owner)
       return 1;

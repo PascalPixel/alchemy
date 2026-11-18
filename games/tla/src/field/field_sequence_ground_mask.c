@@ -36,7 +36,10 @@ void FadeOverlay_DrawMarks(void) {
   x = actor->x;
   terrainFloor = actor->floor;
   terrainLayer = actor->terrainId;
-  tile = gVramCacheEntries[VRAM_CACHE_ENTRY_FADE_OVERLAY].offset >> 5;
+  // The first tile of the solid block FieldEffect_StartFadeOverlay loaded.
+  tile =
+      gVramCacheEntries[VRAM_CACHE_ENTRY_FADE_OVERLAY].offset / TILE_SIZE_4BPP;
+  // The left cell, 8 pixels left of the actor.
   x -= toFIXED(8);
   height =
       FIXEDtoINT(MapGrid_GetTerrainHeightFar(terrainLayer, x, z + toFIXED(16)));
@@ -60,6 +63,7 @@ void FadeOverlay_DrawMarks(void) {
     mark->y = screenRow - cameraZ - height + 16;
     Oam_AddSpriteAtDepthClamped(mark, 0);
   }
+  // The right cell, 8 pixels right of the actor, read the same way.
   x += toFIXED(16);
   height =
       FIXEDtoINT(MapGrid_GetTerrainHeightFar(terrainLayer, x, z + toFIXED(16)));
@@ -98,8 +102,8 @@ void FieldEffect_StartFadeOverlay(void *object) {
   Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
                  BLDCNT_TGT1_OBJ | BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL,
              &REG_BLDCNT);
-  Io_Write16(BLEND_ALPHA(16, 0), &REG_BLDALPHA);
-  // 31 is above the register's useful maximum of 16, which it acts as.
+  Io_Write16(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0), &REG_BLDALPHA);
+  // 31 is above the register's useful maximum, BLEND_FADE_MAX, and acts as it.
   Io_Write16(31, &REG_BLDY);
   Dma_Fill32Cell(fill, 0, work, sizeof(*work));
   if (object == NULL)
@@ -107,10 +111,10 @@ void FieldEffect_StartFadeOverlay(void *object) {
   work->actor = object;
 }
 
-/// Suspends the fade overlay's drawing callback.
+/// Stops drawing the fade overlay, keeping its work.
 void FadeOverlay_Suspend(void) { Task_SuspendAll(FadeOverlay_DrawMarks); }
 
-/// Resumes the fade overlay's drawing callback.
+/// Draws the fade overlay again after FadeOverlay_Suspend.
 void FadeOverlay_Resume(void) { Task_ResumeAll(FadeOverlay_DrawMarks); }
 
 /// The blank overlay's task, which FieldEffect_StartBlankOverlay starts: each
@@ -136,10 +140,13 @@ void BlankOverlay_DrawMarks(void) {
     return;
   x = ((s16 *)&actor->x)[1];
   row = FIXEDtoINT(actor->z - actor->y);
-  tile = gVramCacheEntries[VRAM_CACHE_ENTRY_FADE_OVERLAY].offset >> 5;
+  tile =
+      gVramCacheEntries[VRAM_CACHE_ENTRY_FADE_OVERLAY].offset / TILE_SIZE_4BPP;
   cells = map->layers[2].cells;
-  a = cells + (x + 8) / 16 + (row / 16 - 2) * 128;
-  b = cells + (x - 8) / 16 + (row / 16 - 2) * 128;
+  a = cells + (x + 8) / MAPGRID_CELL_PIXELS +
+      (row / MAPGRID_CELL_PIXELS - 2) * MAPGRID_SIZE;
+  b = cells + (x - 8) / MAPGRID_CELL_PIXELS +
+      (row / MAPGRID_CELL_PIXELS - 2) * MAPGRID_SIZE;
   if ((a->attributeB & 1) || (b->attributeB & 1)) {
     m = mark;
     ((u32 *)m)[1] = OBJ_SIZE_16X16;
@@ -150,8 +157,10 @@ void BlankOverlay_DrawMarks(void) {
     mark = m + 1;
     Oam_AddSpriteAtDepthClamped(m, 1);
   }
-  a = cells + (x + 8) / 16 + (row / 16 - 1) * 128;
-  b = cells + (x - 8) / 16 + (row / 16 - 1) * 128;
+  a = cells + (x + 8) / MAPGRID_CELL_PIXELS +
+      (row / MAPGRID_CELL_PIXELS - 1) * MAPGRID_SIZE;
+  b = cells + (x - 8) / MAPGRID_CELL_PIXELS +
+      (row / MAPGRID_CELL_PIXELS - 1) * MAPGRID_SIZE;
   if ((a->attributeB & 1) || (b->attributeB & 1)) {
     m = mark;
     ((u32 *)m)[1] = OBJ_SIZE_16X16;
@@ -202,13 +211,13 @@ void BattleEffect_FillOverlayTiles(s32 solid) {
   HeapSlot_Release(HEAP_SLOT_TILE_SCRATCH);
 }
 
-/// Sets up sprite through EffectSprite_Init with resource 94's tiles, at
-/// priority 1 in palette 0.
-void EffectSprite_InitWithFadeOverlay(struct EffectSprite *sprite, s32 a, s32 b,
-                                      s32 c) {
-  EffectSprite_Init(sprite, a, b, c,
-                    gVramCacheEntries[VRAM_CACHE_ENTRY_FADE_OVERLAY].offset >>
-                        5);
+/// Sets up sprite through EffectSprite_Init with the overlay's tiles
+/// (VRAM_CACHE_ENTRY_FADE_OVERLAY), at priority 1 in palette 0.
+void EffectSprite_InitWithFadeOverlay(struct EffectSprite *sprite, s32 pivotX,
+                                      s32 pivotY, u32 attributes) {
+  EffectSprite_Init(sprite, pivotX, pivotY, attributes,
+                    gVramCacheEntries[VRAM_CACHE_ENTRY_FADE_OVERLAY].offset /
+                        TILE_SIZE_4BPP);
   sprite->depth = 0;
   sprite->oam.priority = 1;
   sprite->oam.fullColor = 0;
@@ -228,18 +237,18 @@ void BattleEffect_DrawSpriteAtWorldPosition(struct EffectSprite *sprite, s32 x,
   EffectSprite_Draw(sprite);
 }
 
-/// The twin of EffectSprite_InitWithFadeOverlay with object mode 1 and priority
-/// 0.
-void EffectSprite_InitWithFadeOverlayBlended(struct EffectSprite *sprite, s32 a,
-                                             s32 b, s32 c) {
-  EffectSprite_Init(sprite, a, b, c,
-                    gVramCacheEntries[VRAM_CACHE_ENTRY_FADE_OVERLAY].offset >>
-                        5);
+/// As EffectSprite_InitWithFadeOverlay, semi-transparent and at priority 0.
+void EffectSprite_InitWithFadeOverlayBlended(struct EffectSprite *sprite,
+                                             s32 pivotX, s32 pivotY,
+                                             u32 attributes) {
+  EffectSprite_Init(sprite, pivotX, pivotY, attributes,
+                    gVramCacheEntries[VRAM_CACHE_ENTRY_FADE_OVERLAY].offset /
+                        TILE_SIZE_4BPP);
   sprite->depth = 0;
   sprite->oam.priority = 0;
   sprite->oam.fullColor = 0;
   sprite->oam.palette = 0;
-  sprite->oam.objectMode = 1;
+  sprite->oam.objectMode = OBJ_MODE_SEMI_TRANSPARENT;
 }
 
 #undef CELL_GRID_ROW_MASK

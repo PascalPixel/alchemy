@@ -7,6 +7,7 @@
 #include "field/field_coordinate.h"
 #include "fixed_math.h"
 #include "types.h"
+#include "static_assert.h"
 
 /// How a scene fades in and out: SCENE_TRANSITION's high byte, which
 /// ScreenTransition_Start and ScreenTransition_Finish read.
@@ -30,13 +31,11 @@ enum ScreenTransitionStyle {
 #define TARGET_UNSET ((s32)0x80000000)
 
 /// The actor id that ends a list of actors, or of rows that start with one.
-#define ACTOR_LIST_END 0xffff
+#define ACTOR_LIST_END 65535
 
 /// The actors of Ram_HeapSlots->actors.
 #define ACTOR_COUNT 64
 
-/// A field object's sprite animation, which Actor.sprite points to
-/// when animationKind is 1.
 /// Sets an actor's position in one statement, as SET_POSITION does for a
 /// particle.
 #define SET_ACTOR_POSITION(p, fixedX, fixedY, fixedZ)                          \
@@ -74,13 +73,11 @@ enum ActorMotionFlag {
   ACTOR_KEEPS_SPEED_ON_SLOPES = 0x10,
   /// Unused: nothing sets or reads it; a jump clears it with
   /// ACTOR_FOLLOWS_TERRAIN.
-  ACTOR_MOTION_SPARE = 0x80
+  ACTOR_MOTION_SPARE = 0x80,
+  /// The motion flags a jump keeps as the actor leaves the ground: all but
+  /// ACTOR_FOLLOWS_TERRAIN and the spare bit.
+  ACTOR_JUMP_KEEPS_MOTION = (u8)~(ACTOR_FOLLOWS_TERRAIN | ACTOR_MOTION_SPARE)
 };
-
-/// The motion flags a jump keeps as the actor leaves the ground: all but
-/// ACTOR_FOLLOWS_TERRAIN and the spare bit.
-#define ACTOR_JUMP_KEEPS_MOTION                                                \
-  ((u8)~(ACTOR_FOLLOWS_TERRAIN | ACTOR_MOTION_SPARE))
 
 /// Actor.collisionFlags bits.
 enum ActorCollisionFlag {
@@ -125,12 +122,12 @@ struct Actor {
   struct FieldCoordinate y; ///< 16.16 fixed-point pixels
   struct FieldCoordinate z; ///< 16.16 fixed-point pixels
   FIXED groundHeight;       ///< 16.16 fixed-point pixels
-  FIXED scaleX;             ///< 16.16 fixed point, 0x10000 full size
-  FIXED scaleY;             ///< 16.16 fixed point, 0x10000 full size
+  FIXED scaleX;             ///< 16.16 fixed point, FIXED_ONE full size
+  FIXED scaleY;             ///< 16.16 fixed point, FIXED_ONE full size
   u16 radius;               ///< collision radius in pixels
   u8 layer;                 ///< the map layer its ground height is read from
-  /// Bit 0 is cleared when Actor_SetSpritePriorityDirect fixes its
-  /// sprite's priority.
+  /// ActorPriorityFlag bits; Actor_SetSpritePriorityDirect clears
+  /// ACTOR_PRIORITY_AUTOMATIC as it fixes its sprite's priority.
   u8 priorityFlags;
   FIXED velocityX;  ///< 16.16 fixed-point pixels per frame
   FIXED velocityY;  ///< 16.16 fixed-point pixels per frame
@@ -139,9 +136,9 @@ struct Actor {
   /// Added toward the target each frame, or taken off the speed when there is
   /// none, in 16.16 fixed-point pixels per frame.
   FIXED acceleration;
-  FIXED targetX; ///< 16.16 fixed-point pixels; 0x80000000 when unset
-  FIXED targetY; ///< 16.16 fixed-point pixels; 0x80000000 when unset
-  FIXED targetZ; ///< 16.16 fixed-point pixels; 0x80000000 when unset
+  FIXED targetX; ///< 16.16 fixed-point pixels; TARGET_UNSET when unset
+  FIXED targetY; ///< 16.16 fixed-point pixels; TARGET_UNSET when unset
+  FIXED targetZ; ///< 16.16 fixed-point pixels; TARGET_UNSET when unset
   /// The share of its falling speed kept as it bounces on landing, 16.16
   /// fixed point.
   FIXED bounce;
@@ -149,24 +146,23 @@ struct Actor {
   /// ground, in 16.16 fixed-point pixels per frame.
   FIXED gravity;
   /// Not read by the motion update; field code keeps its own values here (a
-  /// drifting speed, a 0x31415927 marker), and scene code a resting height.
+  /// drifting speed, or the mark of a treasure spot that stands for a map
+  /// cell), and scene code a resting height.
   s32 riseBaseY;
-  /// Its sprite (a struct FieldSprite) when spriteStorageKind is 1, or its list
-  /// of sprites when it is 2. Code that reads one kind converts it.
+  /// Its sprite (a struct FieldSprite) for ACTOR_SPRITE_ONE, or its list of
+  /// sprites for ACTOR_SPRITE_GROUP. Code that reads one kind converts it.
   void *sprite;
-  /// 1 one sprite, 2 a group of sprites, in the low four bits, which is all
+  /// ACTOR_SPRITE_ONE or ACTOR_SPRITE_GROUP in the low four bits, which is all
   /// the field and the scenes test.
   u8 spriteStorageKind;
-  u8 motionFlags; ///< bit 1: falls by its gravity and bounces
-  /// The axis watched for arrival at the target; zero once it arrives, and
-  /// cleared with the target.
+  u8 motionFlags; ///< ActorMotionFlag bits
+  /// The ARRIVAL_AXIS_* watched for arrival at the target; ARRIVAL_AXIS_NONE
+  /// once it arrives, and cleared with the target.
   u8 arrivalAxis;
   u8 conditionResult; ///< the actor script's last flag test
   u8 snapToTarget;    ///< nonzero lands it exactly on its target
-  /// bits: 4 targeted from half as far again | 3 skipped by the target
-  /// searches | 2 counts as 10/13 as far in the nearest search | 0 solid
-  u8 collisionFlags;
-  u8 steeringFlags; ///< bit 0: turns toward its velocity, 1/16 turn a frame
+  u8 collisionFlags;  ///< ActorCollisionFlag bits
+  u8 steeringFlags;   ///< ActorSteeringFlag bits
   u8 paused;
   /// Keeps its sprite's VRAM cache entry (Actor_SetItemIcon sets it).
   u8 retainSpriteCache;
@@ -326,10 +322,8 @@ struct Actor {
   struct Actor *carrier;
 };
 
-typedef char Actor_size[sizeof(struct Actor) == 128 ? 1 : -1];
-
-typedef char Actor_collision_flags_offset
-    [(u32)&((struct Actor *)0)->collisionFlags == 89 ? 1 : -1];
+STATIC_ASSERT(sizeof(struct Actor) == 128);
+STATIC_ASSERT(offsetof(struct Actor, collisionFlags) == 89);
 
 void Actor_SetPositionAndResetMotion(struct Actor *actor, FIXED x, FIXED y,
                                      FIXED z);
@@ -352,8 +346,8 @@ void Actor_SetAnimationById(u32, s32);
 void Actor_WaitForScriptEndById(u32);
 void Sound_PlayFar(s32);
 
-extern const u8 gActor_FaceWatchedScript[];
-extern const u8 gActor_OffsetScript[];
+extern const s32 gActor_FaceWatchedScript[];
+extern const s32 gActor_OffsetScript[];
 extern const u8 gActor_VariantScripts[];
 
 /// Sets bits in one of an actor's flag bytes.

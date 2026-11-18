@@ -11,6 +11,7 @@
 #include "field/object.h"
 #include "system/system.h"
 #include "system/task.h"
+#include "macros.h"
 
 /// SpriteAnimation.mode: how a layer's pictures are packed, each with its
 /// decoder.
@@ -20,42 +21,47 @@ enum SpritePictureCodec {
   SPRITE_PICTURE_LZ = 3         ///< LZ-compressed
 };
 
-/// Runs each of the player's animation channels on to its next stop (an
-/// end, hold, jump or play command), taking the frames and
-/// settings on the way, and leaves the stop to run next; marks the player and
-/// each channel changed. The battle's motion calls it before it releases a
-/// borrowed sprite buffer.
-void Animation_SkipToStop(struct Sprite *player) {
+/// Facing table `table`'s entry for facing angle `dir`, the turn cut into as
+/// many sectors as the table has entries.
+#define FACING_TABLE_ENTRY(table, dir)                                         \
+  ((table)[FACING_SECTOR(dir, ARRAY_COUNT(table))])
+
+/// Runs each of the sprite's sprite animations on to its next stop (an end,
+/// hold, jump or play command), taking the pictures and settings on the way,
+/// and leaves the stop to run next; marks the sprite and each sprite animation
+/// changed. The battle's motion calls it before it releases a borrowed sprite
+/// buffer.
+void Animation_SkipToStop(struct Sprite *sprite) {
   s32 i;
 
-  for (i = 0; i < player->count; i++) {
-    struct SpriteAnimation *channel = player->entries[i];
+  for (i = 0; i < sprite->count; i++) {
+    struct SpriteAnimation *animation = sprite->entries[i];
     u8 command;
     u8 argument;
 
-    if (channel == 0 || channel->script == 0)
+    if (animation == 0 || animation->script == 0)
       continue;
     for (;;) {
-      command = channel->script[channel->scriptOffset++];
-      argument = channel->script[channel->scriptOffset++];
+      command = animation->script[animation->scriptOffset++];
+      argument = animation->script[animation->scriptOffset++];
       switch (command) {
       case ANIMCMD_SET_KIND:
-        channel->kind = argument;
+        animation->kind = argument;
         continue;
       case ANIMCMD_OFFSET_X:
-        player->offsetX = argument;
+        sprite->offsetX = argument;
         continue;
       case ANIMCMD_OFFSET_Y:
-        player->offsetY = argument;
+        sprite->offsetY = argument;
         continue;
       case ANIMCMD_BLANK:
-        channel->pictureBase = SPRITE_PICTURE_NONE;
+        animation->pictureBase = SPRITE_PICTURE_NONE;
         continue;
       case ANIMCMD_UNUSED_FIRST ... ANIMCMD_UNUSED_LAST:
       case ANIMCMD_SOUND:
         continue;
       default:
-        channel->pictureBase = command;
+        animation->pictureBase = command;
         continue;
       case ANIMCMD_END:
       case ANIMCMD_HOLD:
@@ -65,9 +71,9 @@ void Animation_SkipToStop(struct Sprite *player) {
       }
       break;
     }
-    channel->scriptOffset -= 2;
-    player->dirty = 1;
-    channel->timer = 1;
+    animation->scriptOffset -= 2;
+    sprite->dirty = 1;
+    animation->timer = 1;
   }
 }
 
@@ -172,16 +178,16 @@ s32 Sprite_ComposePicture(struct Sprite *obj, u32 dir) {
       break;
     case ANIM_FACING_FRONT_BACK:
     case ANIM_FACING_TWO_PART:
-      facing = gAnimationFacing_FrontBack[FACING_SECTOR(dir, 8)];
+      facing = FACING_TABLE_ENTRY(gAnimationFacing_FrontBack, dir);
       break;
     case ANIM_FACING_FRONT_BACK_SWAPPED:
-      facing = gAnimationFacing_FrontBackSwapped[FACING_SECTOR(dir, 8)];
+      facing = FACING_TABLE_ENTRY(gAnimationFacing_FrontBackSwapped, dir);
       break;
     case ANIM_FACING_THREE_PICTURES:
-      facing = gAnimationFacing_ThreePictures[FACING_SECTOR(dir, 16)];
+      facing = FACING_TABLE_ENTRY(gAnimationFacing_ThreePictures, dir);
       break;
     case ANIM_FACING_FIVE_PICTURES:
-      facing = gAnimationFacing_SixPictures[FACING_SECTOR(dir, 64)];
+      facing = FACING_TABLE_ENTRY(gAnimationFacing_SixPictures, dir);
       break;
     case ANIM_FACING_EIGHT_PICTURES:
       // Half a sector on, so each sector is centred on its direction.
@@ -193,7 +199,7 @@ s32 Sprite_ComposePicture(struct Sprite *obj, u32 dir) {
       break;
     }
     picture += facing & ANIM_FACING_PICTURE_MASK;
-    if (i == 0 && (facing >> 7) != 0)
+    if (i == 0 && (facing & ANIM_FACING_MIRRORED) != 0)
       mirrored = 1;
     if (layer->picture != picture) {
       layer->picture = picture;
@@ -202,7 +208,7 @@ s32 Sprite_ComposePicture(struct Sprite *obj, u32 dir) {
   }
 
   if (obj->flags & SPRITE_FLAG_KEEP_PICTURE) {
-    if (gAnimationFacing_FrontBack[FACING_SECTOR(dir, 8)] &
+    if (FACING_TABLE_ENTRY(gAnimationFacing_FrontBack, dir) &
         ANIM_FACING_MIRRORED)
       mirrored = 1;
   } else if (obj->dirty != 0) {
@@ -716,25 +722,27 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
   }
 }
 
-/// Sets the colour mode (enum SpriteColorMode) of the sprite's first layer
-/// and has it drawn again.
-void Animation_ApplyChildValueToFirst(struct Sprite *record, u32 value) {
-  if (record != NULL) {
-    record->entries[0]->colorMode = value;
-    record->dirty = 1;
+/// Sets the colour mode (enum SpriteColorMode) of the sprite's first sprite
+/// animation and has it drawn again.
+void Animation_ApplyChildValueToFirst(struct Sprite *sprite, u32 colorMode) {
+  if (sprite != NULL) {
+    sprite->entries[0]->colorMode = colorMode;
+    sprite->dirty = 1;
   }
 }
 
-/// Sets the colour mode of every layer of the sprite that is not hidden
-/// (SPRITE_COLOR_HIDDEN) and has it drawn again.
-void Sprite_SetAnimationColorModes(struct Sprite *record, u32 value) {
+/// Sets the colour mode of every sprite animation of the sprite that is not
+/// hidden (SPRITE_COLOR_HIDDEN) and has it drawn again.
+void Sprite_SetAnimationColorModes(struct Sprite *sprite, u32 colorMode) {
   s32 i;
 
-  if (record != NULL) {
-    for (i = 0; i < record->count; i++) {
-      if (record->entries[i]->colorMode != SPRITE_COLOR_HIDDEN)
-        record->entries[i]->colorMode = value;
+  if (sprite != NULL) {
+    for (i = 0; i < sprite->count; i++) {
+      if (sprite->entries[i]->colorMode != SPRITE_COLOR_HIDDEN)
+        sprite->entries[i]->colorMode = colorMode;
     }
-    record->dirty = 1;
+    sprite->dirty = 1;
   }
 }
+
+#undef FACING_TABLE_ENTRY

@@ -87,8 +87,8 @@ void Event_Start(void) {
   state->unusedBeforeCamera[1] = -1;
   Task_Add((s32)Event_UpdateDebugSkip, TASK_PASS_FRAME);
   // XXX (no evidence): what flag 0x132 means; every event start in both games
-  // clears it, and nothing in either game's source sets or reads it by its
-  // number.
+  // clears it, and nothing in either game's code, tables or cleared ranges of
+  // flags sets or reads it.
   GameFlag_Clear(0x132);
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
@@ -270,6 +270,9 @@ s32 PartyInventory_GiveItem(s32 item, s32 unused) {
         FieldMessage_ShowFar((s32)&MsgItemDropPrompt + 2, FIELD_MESSAGE_ZOOM);
         goto done;
       }
+      // A carried item was picked: drop it (the whole stack) and take the new
+      // one. A party member who already carries INVENTORY_STACK_MAX of the new
+      // item cannot take it: say so and ask again.
       Unit_Get(member);
       count = Inventory_GetQuantityFar(member, slot);
       if (Inventory_CountItemFar(member, item) >= INVENTORY_STACK_MAX) {
@@ -466,26 +469,28 @@ void Event_FinishScreenTransition(void) {
 void Event_WaitTransitionFrames(void) { wait(gFieldWork->transitionFrames); }
 
 /// Makes the event leave for the given entrance of the given scene: raises the
-/// exit request 999 and writes gMainRoutineWork.next and entrance.
+/// exit request EXIT_KEEP_DESTINATION and writes gMainRoutineWork.next and
+/// entrance.
 void Event_SetDestination(s32 sceneId, s32 entrance) {
   gFieldWork->exit = EXIT_KEEP_DESTINATION;
   gMainRoutineWork.next = sceneId;
   gMainRoutineWork.entrance = entrance;
 }
 
-/// Makes the event leave and records scene and entrance as the restart point.
-void Event_SetRestartPoint(s32 scene, s32 entrance) {
+/// Makes the event leave and records sceneId and entrance as the restart
+/// point.
+void Event_SetRestartPoint(s32 sceneId, s32 entrance) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party;
 
   event->exit = EXIT_KEEP_DESTINATION;
   party = &gMainRoutineWork;
-  party->restartScene = scene;
+  party->restartScene = sceneId;
   party->restartEntrance = entrance;
 }
 
-/// The event command "request exit": sets the field's exit request (999 leaves
-/// for gMainRoutineWork's next and entrance).
+/// The event command "request exit": sets the field's exit request
+/// (EXIT_KEEP_DESTINATION leaves for gMainRoutineWork's next and entrance).
 void Event_SetExitRequest(u16 request) {
   struct FieldWork *state = gFieldWork;
   state->exit = request;

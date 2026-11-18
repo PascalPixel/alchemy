@@ -17,6 +17,7 @@
 #include "field/world_map.h"
 #include "window/window.h"
 #include "window/window_tile.h"
+#include "graphics/palette_buffers.h"
 
 #define WORLD_MAP_BG_PALETTE ((s16 *)BG_PLTT)
 
@@ -193,7 +194,7 @@ void WorldMap_SetWindowCellTile(s32 x, s32 y, s32 cellX, s32 cellY) {
   s32 originY;
   s32 tile;
 
-  perspective = Ram_HeapSlots->mapGrid;
+  perspective = (struct WorldMapView *)Ram_HeapSlots->mapGrid;
   originX = 0;
   originY = 0;
   followedPosition = perspective->origin;
@@ -293,7 +294,8 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
   backdropColor = WORLD_MAP_BG_PALETTE[0];
   Decompress_ByteLz(Resource_GetTableEntry(resources[0]), buffer);
   *(s16 *)buffer = backdropColor;
-  Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(112), REG_DMA3);
+  Dma_Set(buffer, (void *)BG_PLTT, DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS / 2),
+          REG_DMA3);
   PaletteFade_LoadPaletteFar(buffer);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[1]),
                       MAPGRID_ANIMATION_SCRIPT);
@@ -316,10 +318,10 @@ void WorldMap_LoadGraphics(s32 x, s32 z) {
           DMA_COPY_WORDS(WORLD_MAP_TILE_SET_BYTES / 4), REG_DMA3);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[7]), gMapGridAnimTiles);
   Decompress_TaggedLz(Resource_GetTableEntry(resources[8]), &gWorldMapWork);
-  // BG1's map (screen block 5) is filled with tile 127 of WINDOW_PALETTE, and
-  // screen block 6 numbers the picture's tiles in rows, two a word: the still
-  // picture's, then on round the picture.
-  Dma_Fill32(WINDOW_TILE_PAIR(WINDOW_TILE(127)), BG_SCREEN_BLOCK(5),
+  // BG1's map (screen block 5) is filled with the window tiles' black tile,
+  // and screen block 6 numbers the picture's tiles in rows, two a word: the
+  // still picture's, then on round the picture.
+  Dma_Fill32(WINDOW_TILE_PAIR(WINDOW_TILE_COMMAND_PANEL), BG_SCREEN_BLOCK(5),
              24 * BG_SCREEN_WIDTH * sizeof(u16));
   screenTiles = (u32 *)BG_SCREEN_BLOCK(6);
   tilePair = TILE_PAIR(STILL_PICTURE_FIRST_TILE);

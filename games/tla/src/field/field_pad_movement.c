@@ -14,7 +14,7 @@
 
 /// A world map camera turn of less than this either way is made at once.
 #define WORLD_MAP_YAW_SNAP 16
-/// The winged ship's camera turns toward the pad's yaw by at most this a frame.
+/// The flying ship's camera turns toward the pad's yaw by at most this a frame.
 #define FLYING_YAW_STEP_MAX (TRIG_TURN / 2048)
 
 /// SC_WORLD: moves the player on the world map by the direction pad, as
@@ -533,6 +533,9 @@ s32 Actor_SailOnWorldMap(struct Actor *actor) {
   count = 0;
   terrain = WorldMap_GetCollision((struct WorldPosition *)&actor->x.fixed);
   worldWork = Ram_HeapSlots->fieldWork;
+  // FieldWork.terrainKind, which WorldMap_IsFlyable reads: 0 over the sea but
+  // its last kind, 1 over walkable ground up to shallow water, 2 over the sea's
+  // last kind, 3 over the rest of the walkable ground.
   if (terrain >= WORLD_MAP_COLLISION_SEA_FIRST &&
       terrain < WORLD_MAP_COLLISION_SEA_LAST)
     worldWork->terrainKind = 0;

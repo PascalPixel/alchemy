@@ -1,5 +1,5 @@
 /// @file
-/// The view bounds, and effect objects linked to another object.
+/// The view bounds, zoom transitions and actors that ride another.
 // Part of event_commands.c.
 
 #include "event_commands_internal.h"
@@ -9,8 +9,16 @@
 #include "field/emote.h"
 #include "sprite_ids.h"
 
-// The byte of a sprite's OAM attribute 2 that holds its priority and palette.
+/// The high byte of the first sprite part's OAM attribute 2, which holds its
+/// priority and palette.
 #define SPRITE_ATTR2_HIGH(sprite) (((u8 *)(sprite))[9])
+/// The priority's bits in that byte.
+#define ATTR2_HIGH_PRIORITY_MASK (OBJ_PRIORITY(3) >> 8)
+
+/// Actor_ShowEmoteById's emote: the bubble (enum Emote) in its low byte, of
+/// which the low four bits pick its animation, then flags (EMOTE_IN_FRONT).
+#define EMOTE_BUBBLE_MASK 0xff
+#define EMOTE_ANIMATION_MASK 15
 
 /// Sets the map coordinates the camera keeps the screen inside.
 void MapGrid_SetCameraBounds(s32 minX, s32 minZ, s32 maxX, s32 maxZ) {
@@ -94,34 +102,35 @@ void Event_WaitForZoomTransition(void) {
 /// Per-frame update: keeps the actor on the actor it watches, raised by the
 /// height of that actor's sprite and 8 pixels more.
 s32 FieldEffect_CopyWatchedActorPosition(struct Actor *actor) {
-  struct Actor *link;
+  struct Actor *host;
 
-  link = actor->watchedActor;
-  if (link != NULL) {
+  host = actor->watchedActor;
+  if (host != NULL) {
     actor->motionFlags = 0;
-    actor->x.fixed = link->x.fixed;
+    actor->x.fixed = host->x.fixed;
     actor->y.fixed =
-        link->y.fixed +
-        ((s8)Resource_GetMetadataRecordFarFar(
-             *(s16 *)Scene_FindActorPlacement((s16)actor->userValue))
-             ->boxX
-         << 16) +
+        host->y.fixed +
+        toFIXED((s8)Resource_GetMetadataRecordFarFar(
+                    ((struct ActorPlacement *)Scene_FindActorPlacement(
+                         (s16)actor->userValue))
+                        ->sprite)
+                    ->boxX) +
         toFIXED(8);
-    actor->groundHeight = link->groundHeight;
-    actor->z.fixed = link->z.fixed;
+    actor->groundHeight = host->groundHeight;
+    actor->z.fixed = host->z.fixed;
   }
   return 0;
 }
 
 extern const u8 gFieldEffect_WatchedActorScript[];
 
-/// The event command "actor show emote": shows an emote bubble (sprite 488)
+/// The event command "actor show emote": shows an emote bubble (SPRITE_EMOTE)
 /// over an actor, then waits the given number of frames. Returns the bubble.
 struct Actor *Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames) {
   struct Actor *target;
   struct Actor *bubble;
 
-  if ((emote & 0xff) == EMOTE_LIGHT_BULB) {
+  if ((emote & EMOTE_BUBBLE_MASK) == EMOTE_LIGHT_BULB) {
     Sound_PlayFar(SE_CHIME);
   }
 
@@ -134,7 +143,7 @@ struct Actor *Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames) {
 
       Actor_StartScriptFar(bubble,
                            (const s32 *)gFieldEffect_WatchedActorScript);
-      Actor_SelectAnimationFar(bubble, emote & 15);
+      Actor_SelectAnimationFar(bubble, emote & EMOTE_ANIMATION_MASK);
       bubble->motionFlags = 0;
       bubble->timer = 0;
       bubble->userValue = actorId;
@@ -144,21 +153,21 @@ struct Actor *Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames) {
       sprite = bubble->sprite;
       sprite->flags = 0;
 
-      // Replace the bubble\x27s priority bits (2 and 3) with 1 or the
-      // actor\x27s.
+      // The bubble takes sprite priority 1, or the actor's: -(m + 1) is ~m,
+      // the bits besides the priority.
       if ((emote & EMOTE_IN_FRONT) != 0) {
-        s32 mask = 13;
+        s32 mask = ATTR2_HIGH_PRIORITY_MASK + 1;
         u8 attr = SPRITE_ATTR2_HIGH(sprite);
 
         mask = -mask;
         mask &= attr;
-        mask |= 4;
+        mask |= OBJ_PRIORITY(1) >> 8;
         SPRITE_ATTR2_HIGH(sprite) = mask;
       } else {
-        s32 priority = 12;
+        s32 priority = ATTR2_HIGH_PRIORITY_MASK;
         u8 src = SPRITE_ATTR2_HIGH(target->sprite);
         u8 dst;
-        s32 mask = 13;
+        s32 mask = ATTR2_HIGH_PRIORITY_MASK + 1;
 
         priority &= src;
         dst = SPRITE_ATTR2_HIGH(sprite);

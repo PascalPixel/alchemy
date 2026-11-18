@@ -3,8 +3,13 @@
 #ifndef ALCHEMY_SCENE_SHARED_TABLES_H
 #define ALCHEMY_SCENE_SHARED_TABLES_H
 
-/// One step of the leader as he pushes: x pixels in the high half, z in the
-/// low half, as the push routines read it.
-#define PUSH_STEP(x, z) ((x) * 0x10000 + ((z) & 0xffff))
+/// One step of the leader as he pushes, packed as one word: x pixels in the
+/// upper halfword, z in the lower. Packed through u32, so a negative step is
+/// its two's-complement bits.
+#define PUSH_STEP(x, z) (((u32)(x) << 16) | ((u32)(z) & 0xffff))
+/// A PUSH_STEP's x, in pixels.
+#define PUSH_STEP_X(step) ((s32)(step) >> 16)
+/// A PUSH_STEP's z, in pixels.
+#define PUSH_STEP_Z(step) ((s16)(step))
 
 #endif

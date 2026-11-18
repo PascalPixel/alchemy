@@ -13,6 +13,12 @@
 #include "system/bg_scroll.h"
 
 #define WHIRL_COUNT 100
+/// The frames an orb flies before it vanishes.
+#define ORB_FRAMES 20
+/// Before the sparks, the leader spins for SPARKS_SPIN_FRAMES, its turn each
+/// frame SPARKS_SPIN_ACCELERATION (1/65536 turns) faster than the last.
+#define SPARKS_SPIN_FRAMES 50
+#define SPARKS_SPIN_ACCELERATION 60
 
 /// Teleport's whirl (heap slot battleEffect): the decoded spark picture,
 /// then the 100 sparks and their sprites.
@@ -50,7 +56,8 @@ void Teleport_PlayWhirl(void) {
   tiles = VramCache_Load(entry, 1024, work);
   for (i = 0, spark = work->sparks; i < WHIRL_COUNT; i++, spark++) {
     sprite = &work->sprites[i];
-    EffectSprite_Init(sprite, 4, 4, 0, tiles + (i & 15) * 2);
+    EffectSprite_Init(sprite, 4, 4, 0,
+                      tiles + (i & (ORB_PICTURES - 1)) * ORB_TILE);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
@@ -90,7 +97,7 @@ void Teleport_PlayWhirl(void) {
     sprite = work->sprites;
     for (i = 0; i < WHIRL_COUNT; i++, sprite++, spark++) {
       if (spark->age >= 0) {
-        if ((u32)spark->age < 20) {
+        if ((u32)spark->age < ORB_FRAMES) {
           s32 sparkAngle = spark->angle;
           s32 sparkRadius = spark->radius;
           position[0] = spark->x;
@@ -104,7 +111,7 @@ void Teleport_PlayWhirl(void) {
           spark->angle += TRIG_TURN / 32;
           spark->radius += -toFIXED(4);
         }
-        if (++spark->age == 20)
+        if (++spark->age == ORB_FRAMES)
           spark->age = -1;
       }
     }
@@ -191,7 +198,8 @@ void Teleport_PlaySparks(void) {
   tiles = VramCache_Load(entry, 1024, work);
   for (i = 0, particle = work->particles; i < SPARK_COUNT; i++, particle++) {
     sprite = &work->sprites[i];
-    EffectSprite_Init(sprite, 4, 4, 0, tiles + (i & 15) * 2);
+    EffectSprite_Init(sprite, 4, 4, 0,
+                      tiles + (i & (ORB_PICTURES - 1)) * ORB_TILE);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
@@ -206,8 +214,9 @@ void Teleport_PlaySparks(void) {
   Sound_PlayFar(SE_PSYNERGY_SPARKLE);
   wait(30);
   Sound_PlayFar(SE_SHIMMER);
-  Actor_SelectAnimationFar(actor, 3);
-  for (spin = 0, frame = 49; frame >= 0; frame--, spin += 60) {
+  Actor_SelectAnimationFar(actor, ANIM_NOD);
+  for (spin = 0, frame = SPARKS_SPIN_FRAMES - 1; frame >= 0;
+       frame--, spin += SPARKS_SPIN_ACCELERATION) {
     actor->facing += spin + FACING_STEP;
     wait(1);
   }
@@ -245,9 +254,10 @@ void Teleport_PlaySparks(void) {
          i < SPARK_COUNT; i++, sprite++, particle++) {
       age = particle->timer;
       if (age >= 0) {
-        if ((u32)age < 20) {
+        if ((u32)age < ORB_FRAMES) {
           EffectSprite_DrawAtWorldPosition(sprite, particle);
-          // Reread in each arm: the two calls share one bl only this way.
+          /* FAKEMATCH(dead): age reread at the end of both arms; as one read
+           * after the if. */
           if (i & 1) {
             Field_AdvanceWithGravity3D(&particle->x, 63, toFIXED(1) / 2);
             age = particle->timer;
@@ -257,7 +267,7 @@ void Teleport_PlaySparks(void) {
           }
         }
         particle->timer = ++age;
-        if (age == 20)
+        if (age == ORB_FRAMES)
           particle->timer = -1;
       }
     }
@@ -320,4 +330,7 @@ void FieldPsynergy_Teleport(void) {
   gFieldWork->raisedTrigger = FIELD_RAISED_TRIGGER_TELEPORT;
 }
 #undef WHIRL_COUNT
+#undef ORB_FRAMES
+#undef SPARKS_SPIN_FRAMES
+#undef SPARKS_SPIN_ACCELERATION
 #undef SPARK_COUNT

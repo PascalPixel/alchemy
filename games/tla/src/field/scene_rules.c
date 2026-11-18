@@ -24,8 +24,13 @@
 /// bit 31 set, before the scenes that take it.
 #define BATTLE_BACKGROUND(resource) (s32)(0x80000000 + (resource))
 
-/// A song's row in gEncounter_BattleMusic, before the encounters that take it.
-#define BATTLE_MUSIC(song) (s16)(0x8000 + (song))
+/// The bit that marks a song in gEncounter_BattleMusic; encounter keys have it
+/// clear.
+#define ENCOUNTER_BATTLE_MUSIC_MARKER 0x8000
+/// A song's row in gEncounter_BattleMusic, before the encounters that take it:
+/// the song (a MUS_ id) with ENCOUNTER_BATTLE_MUSIC_MARKER set.
+#define ENCOUNTER_BATTLE_MUSIC(song)                                           \
+  (s16)(ENCOUNTER_BATTLE_MUSIC_MARKER | (song))
 /// An encounter's row in gEncounter_BattleMusic: slot of encounter zone.
 #define ENCOUNTER_KEY(zone, slot) (((zone) << 4) + (slot))
 
@@ -298,29 +303,29 @@ const s32 gScene_BattleBackgroundRules[] = {
 /// battle's key or at the end (0), so a battle not listed takes the last
 /// song, 0, for which the function chooses music of its own.
 const s16 gEncounter_BattleMusic[] = {
-    BATTLE_MUSIC(MUS_FUSION_DRAGON_BATTLE),
+    ENCOUNTER_BATTLE_MUSIC(MUS_FUSION_DRAGON_BATTLE),
     ENCOUNTER_KEY(103, 3),
-    BATTLE_MUSIC(MUS_SATUROS_AND_MENARDI_BATTLE),
+    ENCOUNTER_BATTLE_MUSIC(MUS_SATUROS_AND_MENARDI_BATTLE),
     ENCOUNTER_KEY(103, 2),
-    BATTLE_MUSIC(MUS_BOSS_BATTLE),
+    ENCOUNTER_BATTLE_MUSIC(MUS_BOSS_BATTLE),
     ENCOUNTER_KEY(103, 1),
-    BATTLE_MUSIC(MUS_SATUROS_BATTLE),
+    ENCOUNTER_BATTLE_MUSIC(MUS_SATUROS_BATTLE),
     ENCOUNTER_KEY(103, 0),
-    BATTLE_MUSIC(MUS_ISAAC_BATTLE),
+    ENCOUNTER_BATTLE_MUSIC(MUS_ISAAC_BATTLE),
     ENCOUNTER_KEY(102, 3),
-    BATTLE_MUSIC(MUS_TRIAL_ROAD),
+    ENCOUNTER_BATTLE_MUSIC(MUS_TRIAL_ROAD),
     ENCOUNTER_KEY(102, 2),
-    BATTLE_MUSIC(MUS_DOOM_DRAGON_BATTLE),
+    ENCOUNTER_BATTLE_MUSIC(MUS_DOOM_DRAGON_BATTLE),
     ENCOUNTER_KEY(102, 1),
-    BATTLE_MUSIC(MUS_FLAME_DRAGONS),
+    ENCOUNTER_BATTLE_MUSIC(MUS_FLAME_DRAGONS),
     ENCOUNTER_KEY(102, 0),
-    BATTLE_MUSIC(MUS_KARST_AND_AGATIO_BATTLE),
+    ENCOUNTER_BATTLE_MUSIC(MUS_KARST_AND_AGATIO_BATTLE),
     ENCOUNTER_KEY(13, 5),
     ENCOUNTER_KEY(13, 6),
     ENCOUNTER_KEY(13, 7),
-    BATTLE_MUSIC(MUS_KARST_AND_AGATIO),
+    ENCOUNTER_BATTLE_MUSIC(MUS_KARST_AND_AGATIO),
     ENCOUNTER_KEY(102, 4),
-    BATTLE_MUSIC(MUS_AQUA_HYDRA),
+    ENCOUNTER_BATTLE_MUSIC(MUS_AQUA_HYDRA),
     ENCOUNTER_KEY(9, 4),
     ENCOUNTER_KEY(10, 0),
     ENCOUNTER_KEY(11, 1),
@@ -331,14 +336,14 @@ const s16 gEncounter_BattleMusic[] = {
     ENCOUNTER_KEY(12, 4),
     ENCOUNTER_KEY(12, 5),
     ENCOUNTER_KEY(12, 6),
-    BATTLE_MUSIC(MUS_BRIGGS_BATTLE),
+    ENCOUNTER_BATTLE_MUSIC(MUS_BRIGGS_BATTLE),
     ENCOUNTER_KEY(10, 1),
     ENCOUNTER_KEY(13, 0),
     ENCOUNTER_KEY(13, 1),
     ENCOUNTER_KEY(13, 2),
     ENCOUNTER_KEY(13, 3),
     ENCOUNTER_KEY(13, 4),
-    BATTLE_MUSIC(0),
+    ENCOUNTER_BATTLE_MUSIC(0),
     0,
 };
 // clang-format on

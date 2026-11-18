@@ -21,20 +21,10 @@ enum {
   UI_SPRITE_VIEWER_FAST_STEP = 10
 };
 
-/// Facing kinds the viewer rings as The Broken Seal's viewer does, though
-/// this game's Sprite_ComposePicture has no table for them: that game's four
-/// and six pictures, ten round, and its eight with no table and eight
-/// mirrored, eight round.
-enum {
-  UI_SPRITE_VIEWER_KIND_FOUR_PICTURES = 4,
-  UI_SPRITE_VIEWER_KIND_SIX_PICTURES = 6,
-  UI_SPRITE_VIEWER_KIND_EIGHT_NO_TABLE = 44,
-  UI_SPRITE_VIEWER_KIND_EIGHT_MIRRORED = 88
-};
-
 /// A sprite id with the sprite picture cache its pictures load into, as a
 /// SpritePictureCache's tag holds them.
-#define SPRITE_PICTURE_TAG(slot, id) ((id) + ((slot) << 12))
+#define SPRITE_PICTURE_TAG(slot, id)                                           \
+  ((id) + ((slot) << PICTURE_CACHE_TAG_SLOT_SHIFT))
 /// An angle's bits: shifted up and back down, a value keeps only them.
 #define ANGLE_BITS 16
 
@@ -309,7 +299,8 @@ next:
       const u16 *colors = gSpriteViewer_BackdropColors;
       backdrop++;
       backdrop &= 7;
-      // The next of the eight backdrop colours.
+      /* FAKEMATCH(temporary): the colour's address summed by hand; as
+       * colors[backdrop]. */
       *palette = *(const u16 *)((u32)colors + (backdrop << 1));
     }
     wait(1);
@@ -401,8 +392,8 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
     break;
   case ANIM_FACING_SIX_PICTURES:
   case ANIM_FACING_EIGHT_PICTURES:
-  case UI_SPRITE_VIEWER_KIND_EIGHT_NO_TABLE:
-  case UI_SPRITE_VIEWER_KIND_EIGHT_MIRRORED:
+  case ANIM_FACING_EIGHT_NO_TABLE:
+  case ANIM_FACING_EIGHT_PICTURES_MIRRORED:
     for (i = 0; i < 8; i++) {
       angle = (u32)angle << ANGLE_BITS;
       positions->x = toFIXED(centerX);
@@ -416,8 +407,8 @@ void SpriteViewer_BuildProbeRing(s32 centerX, s32 centerY,
     for (; i < UI_SPRITE_VIEWER_COPY_COUNT; i++)
       positions++;
     break;
-  case UI_SPRITE_VIEWER_KIND_FOUR_PICTURES:
-  case UI_SPRITE_VIEWER_KIND_SIX_PICTURES:
+  case ANIM_FACING_FOUR_PICTURES:
+  case ANIM_FACING_SIX_PICTURES_UNDRAWN:
     for (i = 0; i < UI_SPRITE_VIEWER_COPY_COUNT; i++) {
       angle <<= ANGLE_BITS;
       positions->x = toFIXED(centerX);
@@ -591,14 +582,14 @@ void SpriteViewer_PlaceRing(void) {
     break;
   case ANIM_FACING_SIX_PICTURES:
   case ANIM_FACING_EIGHT_PICTURES:
-  case UI_SPRITE_VIEWER_KIND_EIGHT_NO_TABLE:
-  case UI_SPRITE_VIEWER_KIND_EIGHT_MIRRORED:
+  case ANIM_FACING_EIGHT_NO_TABLE:
+  case ANIM_FACING_EIGHT_PICTURES_MIRRORED:
     angle = 0;
     step = DEGtoANG(45);
     cnt = 8;
     break;
-  case UI_SPRITE_VIEWER_KIND_FOUR_PICTURES:
-  case UI_SPRITE_VIEWER_KIND_SIX_PICTURES:
+  case ANIM_FACING_FOUR_PICTURES:
+  case ANIM_FACING_SIX_PICTURES_UNDRAWN:
     angle = 0;
     step = DEGtoANG(36);
     cnt = UI_SPRITE_VIEWER_COPY_COUNT;

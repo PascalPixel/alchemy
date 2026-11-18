@@ -190,7 +190,6 @@ struct WaitingActor {
   u8 refused;
 };
 
-/// Animation script commands.
 /// SpriteAnimation.kind: the facing table a sprite animation's pictures follow
 /// (Sprite_ComposePicture), as The Broken Seal names them; this game's six
 /// pictures are kind 5.
@@ -199,27 +198,52 @@ enum AnimationFacingKind {
   ANIM_FACING_ONE_PICTURE = 1, ///< 8 sectors: one picture, mirrored to the left
   ANIM_FACING_FRONT_BACK = 2,  ///< 8 sectors: a front and a back picture
   ANIM_FACING_THREE_PICTURES = 3, ///< 16 sectors: front, side and back
-  ANIM_FACING_SIX_PICTURES = 5,   ///< 64 sectors
+  /// Unused, with no facing table: drawn as ANIM_FACING_NONE. The sprite
+  /// viewer rings it ten round, as The Broken Seal's does its four pictures.
+  ANIM_FACING_FOUR_PICTURES = 4,
+  ANIM_FACING_SIX_PICTURES = 5, ///< 64 sectors
+  /// Unused, with no facing table: The Broken Seal's number for its six
+  /// pictures, which the sprite viewer still rings ten round.
+  ANIM_FACING_SIX_PICTURES_UNDRAWN = 6,
   /// 8 sectors centred on the compass directions, a picture for each.
   ANIM_FACING_EIGHT_PICTURES = 8,
   /// ANIM_FACING_FRONT_BACK's table for a sprite drawn in two parts, the
   /// second the next sprite id (the sprite viewer).
   ANIM_FACING_TWO_PART = 20,
   /// As ANIM_FACING_FRONT_BACK, with the front picture mirrored the other way.
-  ANIM_FACING_FRONT_BACK_SWAPPED = 22
+  ANIM_FACING_FRONT_BACK_SWAPPED = 22,
+  /// Unused, with no facing table: rung as eight facings by the sprite viewer,
+  /// as The Broken Seal's is.
+  ANIM_FACING_EIGHT_NO_TABLE = 44,
+  /// Unused, with no facing table: The Broken Seal's eight pictures with three
+  /// mirrored, rung as eight facings by the sprite viewer.
+  ANIM_FACING_EIGHT_PICTURES_MIRRORED = 88
 };
 
+/// A facing table entry: the picture's offset from the base picture, and the
+/// bit that mirrors it.
+#define ANIM_FACING_PICTURE_MASK 7
+#define ANIM_FACING_MIRRORED (1 << 7)
+/// The sector a facing angle lies in, a turn cut into `sectors`.
+#define FACING_SECTOR(dir, sectors)                                            \
+  ((dir) / (TRIG_TURN / (sectors)) % (sectors))
+
+/// Animation script commands.
 enum AnimationCommand {
   ANIMCMD_END = 239,      ///< blank the layer and stop its script
   ANIMCMD_SET_KIND = 240, ///< use facing table `arg`
   ANIMCMD_HOLD = 241,     ///< stay on this command and frame for good
   ANIMCMD_OFFSET_Y = 242, ///< set the sprite's offsetY to `arg`
   ANIMCMD_OFFSET_X = 243, ///< set the sprite's offsetX to `arg`
-  ANIMCMD_WAIT = 245,     ///< keep the current frame `arg` frames longer
-  ANIMCMD_SOUND = 252,    ///< play sound `arg`
-  ANIMCMD_JUMP = 253,     ///< continue at script position `arg`
-  ANIMCMD_PLAY = 254,     ///< switch to animation `arg`
-  ANIMCMD_BLANK = 255     ///< show nothing for `arg`
+  /// The commands from here to ANIMCMD_UNUSED_LAST no script uses, skipped
+  /// (ANIMCMD_WAIT lies among them); 251 is not one: it shows as a picture.
+  ANIMCMD_UNUSED_FIRST = ANIMCMD_OFFSET_X + 1,
+  ANIMCMD_WAIT = 245, ///< keep the current frame `arg` frames longer
+  ANIMCMD_UNUSED_LAST = 250,
+  ANIMCMD_SOUND = 252, ///< play sound `arg`
+  ANIMCMD_JUMP = 253,  ///< continue at script position `arg`
+  ANIMCMD_PLAY = 254,  ///< switch to animation `arg`
+  ANIMCMD_BLANK = 255  ///< show nothing for `arg`
 };
 
 /// The field's pool sizes, and a sprite animation's timer step at normal speed.
@@ -327,5 +351,12 @@ extern u8 Render_CopyStridedCodeSize[];
                            2),                                                 \
             REG_DMA3);                                                         \
   } while (0)
+
+// field_view.c's routines, which field_tile_animation.c and field_world_map.c
+// call before it.
+void TileMap_DrawRowsFromRam(const struct WorldMapAffinePair *lines,
+                             u8 *pixels);
+void WorldMap_BuildScanlineTable(FIXED pitchSlope, s32 *position,
+                                 struct WorldMapScanline *scanline);
 
 #endif // ALCHEMY_FIELD_INTERNAL_H

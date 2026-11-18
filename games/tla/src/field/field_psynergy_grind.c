@@ -12,8 +12,13 @@
 #define GRIND_SPLASH_COUNT 64
 /// The largest picture Grind grinds down, in bytes, a byte a pixel.
 #define GRIND_PICTURE_SIZE 2048
+/// The tiles of each frame of the splash picture (RESOURCE_WATER_SPLASH), 16 by
+/// 16 pixels in 256 colours.
+#define GRIND_SPLASH_FRAME_TILES SPRITE_TILES_8BPP(16, 16)
+/// How far in front of or behind the target the spray is drawn.
+#define GRIND_SPRAY_DEPTH 15
 
-/// Grind's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the splash picture and 64
+/// Grind's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the splash picture and the
 /// splash particles.
 struct GrindWork {
   u8 unused[32]; ///< no code names it
@@ -143,9 +148,11 @@ void FieldPsynergy_GrindOnTarget(void) {
       if (child != NULL) {
         sprite->oam.priority = BattleEffect_GetObjectPriority(child);
         if (angle < TRIG_TURN / 2)
-          sprite->depth = BattleEffect_GetObjectDepth(child) + 15;
+          sprite->depth =
+              BattleEffect_GetObjectDepth(child) + GRIND_SPRAY_DEPTH;
         else
-          sprite->depth = BattleEffect_GetObjectDepth(child) - 15;
+          sprite->depth =
+              BattleEffect_GetObjectDepth(child) - GRIND_SPRAY_DEPTH;
       }
       particle->timer = 0;
       SET_POSITION(particle, scene->x, scene->y + toFIXED(5), scene->z);
@@ -163,18 +170,19 @@ void FieldPsynergy_GrindOnTarget(void) {
         if (particle->timer == 0)
           sprite->oam.index = tile;
         if (particle->timer == 18)
-          sprite->oam.index = tile + 8;
+          sprite->oam.index = tile + GRIND_SPLASH_FRAME_TILES;
         if (particle->timer == 20)
-          sprite->oam.index = tile + 16;
+          sprite->oam.index = tile + 2 * GRIND_SPLASH_FRAME_TILES;
         if (particle->timer == 22)
-          sprite->oam.index = tile + 24;
+          sprite->oam.index = tile + 3 * GRIND_SPLASH_FRAME_TILES;
         EffectSprite_DrawAtWorldPosition(sprite, particle);
         particle->timer++;
       }
     }
     if (child != NULL && animation != NULL && animating) {
       s32 size = animation->width * animation->height;
-      dst = (u8 *)OBJ_VRAM0 + VramCache_Load(animation->slot, size, NULL) * 32;
+      dst = (u8 *)OBJ_VRAM0 +
+            VramCache_Load(animation->slot, size, NULL) * TILE_SIZE_4BPP;
       if (shifts % 3 == 0)
         BattleEffect_ShiftRowsDown(picture, animation->width,
                                    animation->height);
@@ -249,9 +257,9 @@ end:
 #define SWAY_RAMP (toFIXED(3) / 20) ///< 0.15 pixels a frame
 #define SWAY_HOLD_FRAMES 10
 
-/// Sways the view up and down the screen: the swing grows from 2 to 6 pixels,
-/// holds for 10 frames, shrinks back to 2 and stops; then the map's view
-/// bounds come back.
+/// Sways the view up and down the screen: the swing grows from SWAY_START to
+/// SWAY_PEAK, holds for SWAY_HOLD_FRAMES, shrinks back and stops; then the
+/// map's view bounds come back.
 void FieldPsynergy_Grind(void) {
   struct FieldEffectWork *scene;
   s32 phase;

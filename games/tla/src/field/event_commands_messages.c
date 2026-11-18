@@ -12,9 +12,6 @@
 #include "field/speaker.h"
 #include "macros.h"
 
-/// Message_OpenWindow's option bit 2, which the speech windows of Mind Read set
-/// as they open without zooming; Message_OpenWindow never reads it.
-#define MESSAGE_WINDOW_NO_ZOOM 2
 /// Message_SetVoiceFromActor's key for no voice: it clears the voice.
 #define MESSAGE_VOICE_NONE 0x80000000
 
@@ -166,10 +163,10 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
       if (extra != 0)
         handle = Message_OpenWindowFar(message, left, top + extra - 1,
                                        MESSAGE_WINDOW_ANCHOR_BOTTOM |
-                                           MESSAGE_WINDOW_NO_ZOOM);
+                                           MESSAGE_WINDOW_UNUSED);
       else
         handle =
-            Message_OpenWindowFar(message, left, top, MESSAGE_WINDOW_NO_ZOOM);
+            Message_OpenWindowFar(message, left, top, MESSAGE_WINDOW_UNUSED);
     } else {
       s32 voice = Speaker_GetVoice(sprite);
 
@@ -454,5 +451,4 @@ void Camera_SetSpeedParameters(FIXED first, FIXED second) {
   work->camera->speedLimit = first;
   work->camera->acceleration = second;
 }
-#undef MESSAGE_WINDOW_NO_ZOOM
 #undef MESSAGE_VOICE_NONE

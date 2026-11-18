@@ -31,16 +31,10 @@ struct ParchPuff {
 #define PARCH_PUFF_COUNT 64
 /// The disc's tiles, this many tiles after the window sprites' glyph tiles.
 #define PARCH_DISC_TILE_OFFSET 128
-/// The disc's colours, the last 32 of the sprite palette: red stays put while
-/// green and blue swing either side of their middles, each colour a step
-/// further along the swing, as the Ring's do; then the white flash of drying
-/// water raises them all.
+/// The disc's colours, the last 32 of the sprite palette, which glow as the
+/// Ring's do (GLOW_RED and the rest); the white flash of drying water raises
+/// them all.
 #define PARCH_GLOW_COLORS 32
-#define PARCH_GLOW_RED 28
-#define PARCH_GLOW_GREEN 23
-#define PARCH_GLOW_GREEN_SWING 8
-#define PARCH_GLOW_BLUE 12
-#define PARCH_GLOW_BLUE_SWING 10
 
 /// What Parch finds before the caster.
 enum ParchResult {
@@ -241,10 +235,10 @@ loaded:
       else
         add = fade / 4;
       blue = Trig_Sin((frame / 2 + i) * (TRIG_TURN / 32)); // green's sine
-      green = FIXEDtoINT(blue * PARCH_GLOW_GREEN_SWING) + PARCH_GLOW_GREEN;
+      green = FIXEDtoINT(blue * GLOW_GREEN_SWING) + GLOW_GREEN;
       blue = Trig_Sin((frame / 4 + i) * (TRIG_TURN / 32) + TRIG_TURN * 9 / 32);
-      blue = FIXEDtoINT(blue * PARCH_GLOW_BLUE_SWING) + PARCH_GLOW_BLUE;
-      red = add + PARCH_GLOW_RED;
+      blue = FIXEDtoINT(blue * GLOW_BLUE_SWING) + GLOW_BLUE;
+      red = add + GLOW_RED;
       if (red > RGB_LEVEL_MAX)
         red = RGB_LEVEL_MAX;
       green += add;
@@ -434,9 +428,4 @@ void BgMap_DrawClipped16x16(s32 x, s32 y) {
 }
 #undef PARCH_DISC_TILE_OFFSET
 #undef PARCH_GLOW_COLORS
-#undef PARCH_GLOW_RED
-#undef PARCH_GLOW_GREEN
-#undef PARCH_GLOW_GREEN_SWING
-#undef PARCH_GLOW_BLUE
-#undef PARCH_GLOW_BLUE_SWING
 #undef CLIPPED_PICTURE_TILES

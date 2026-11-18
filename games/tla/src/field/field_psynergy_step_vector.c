@@ -142,6 +142,10 @@ void BattleEffect_DrawCanvasBlock(const u8 *src, s32 x, s32 y, s32 width,
   }
 }
 
+/// The canvas's ramp of colours, from 0xe0, which the darkening maps index by
+/// a colour's place in it.
+#define CANVAS_RAMP_COLORS 32
+
 /// Maps each drawn (nonzero) canvas pixel of buffer, count of them, through
 /// gColorBuffer_DarkenOneLevelMap, one level darker down the ramp of colours
 /// 0xe0 to 0xfe.
@@ -151,7 +155,7 @@ void ColorBuffer_DarkenOneLevel(u8 *buffer, s32 count) {
 
     do {
       if (*buffer != 0)
-        *buffer = table[*buffer & 31];
+        *buffer = table[*buffer & (CANVAS_RAMP_COLORS - 1)];
       count--;
       buffer++;
     } while (count != 0);
@@ -166,7 +170,7 @@ void ColorBuffer_DarkenTwoLevels(u8 *buffer, s32 count) {
 
     do {
       if (*buffer != 0)
-        *buffer = table[*buffer & 31];
+        *buffer = table[*buffer & (CANVAS_RAMP_COLORS - 1)];
       count--;
       buffer++;
     } while (count != 0);
@@ -181,13 +185,16 @@ void ColorBuffer_DarkenFourLevels(u8 *buffer, s32 count) {
 
     do {
       if (*buffer != 0)
-        *buffer = table[*buffer & 31];
+        *buffer = table[*buffer & (CANVAS_RAMP_COLORS - 1)];
       count--;
       buffer++;
     } while (count != 0);
   }
 }
 
+/// The depth the canvas sprite is drawn at, between OAM_DEPTH_WINDOW and
+/// OAM_DEPTH_FRONT.
+#define CANVAS_SPRITE_DEPTH 250
 #define OBJ_TILES ((u8 *)OBJ_VRAM0)
 #define BG_VRAM ((void *)BG_CHAR_BLOCK(0))
 #define TILE_SIZE 32
@@ -232,9 +239,6 @@ void BattleEffect_UploadCanvas(void) {
   work->command = 0;
 }
 
-// OAM attributes 0 and 1 of a 64x64 square sprite.
-#define OAM_SQUARE_64X64 0xc0000000
-
 /// The canvas sprite's frame callback: places the sprite at the work's
 /// position (whole pixels), scale and angle, and draws it. A sprite scaled to
 /// nothing is not drawn.
@@ -247,7 +251,7 @@ void BattleEffect_DrawCanvasSprite(void) {
 
   if (scaleX != 0 && scaleY != 0) {
     if (work->mode == CANVAS_SPRITE_16_COLORS) {
-      EffectSprite_Init(&work->sprite, 32, 32, OAM_SQUARE_64X64, work->tile);
+      EffectSprite_Init(&work->sprite, 32, 32, OBJ_SIZE_64X64, work->tile);
       work->sprite.oam.fullColor = 0;
       work->sprite.oam.palette = CANVAS_PALETTE;
       work->sprite.oam.priority = work->priority;
@@ -260,7 +264,7 @@ void BattleEffect_DrawCanvasSprite(void) {
       EffectSprite_Draw(&work->sprite);
     }
     if (work->mode == CANVAS_SPRITE_256_COLORS) {
-      EffectSprite_Init(&work->sprite, 32, 32, OAM_SQUARE_64X64, work->tile);
+      EffectSprite_Init(&work->sprite, 32, 32, OBJ_SIZE_64X64, work->tile);
       work->sprite.oam.fullColor = 1;
       work->sprite.oam.palette = 0;
       work->sprite.oam.priority = work->priority;
@@ -312,7 +316,7 @@ void BattleEffect_StartCanvasSprite(void) {
   work->scaleX = FIXED_ONE;
   work->scaleY = FIXED_ONE;
   work->priority = 1;
-  work->depth = 250;
+  work->depth = CANVAS_SPRITE_DEPTH;
   Iwram_FillWordsEntry(canvas, CANVAS_SIZE, 0);
   Dma_Set(canvas, OBJ_TILES + work->tile * TILE_SIZE,
           DMA_COPY_WORDS(CANVAS_SIZE / 4), REG_DMA3);
@@ -356,12 +360,19 @@ struct VanishSparksWork {
 
 #define SPARK_LIFE 50
 #define PHASE_DONE 999
+/// RESOURCE_SPARKLE_FADE's sparkles, each smaller and fainter than the last.
+#define SPARKLE_PICTURES 4
+/// The frames the sparks keep coming, and the frames the object then takes to
+/// widen back to full width.
+#define VANISH_SPAWN_FRAMES 10
+#define VANISH_WIDEN_FRAMES 64
 
-/// An object vanishes in a whirl of sparks: 64 sprites of picture 0x1ea circle
-/// out from it, each spark rising and closing in for 50 frames. Ten frames in
-/// the sparks stop coming and the object spins and widens from nothing back to
-/// full width over 64 frames, when its sprite and its child flags come back;
-/// 74 frames later it ends.
+/// An object vanishes in a whirl of sparks: VANISH_SPARK_COUNT sparkles
+/// (RESOURCE_SPARKLE_FADE) circle out from it, each rising and closing in for
+/// SPARK_LIFE frames. VANISH_SPAWN_FRAMES in, the sparks stop coming and the
+/// object spins and widens from nothing back to full width over
+/// VANISH_WIDEN_FRAMES, when its sprite and its child flags come back; then it
+/// ends.
 void Actor_VanishInSparks(s32 objectId) {
   struct VanishSparksWork *work =
       HeapSlot_Alloc(HEAP_SLOT_BATTLE_EFFECT, sizeof(struct VanishSparksWork));
@@ -387,7 +398,9 @@ void Actor_VanishInSparks(s32 objectId) {
   spark = work->sparks;
   for (; i < VANISH_SPARK_COUNT; i++, spark++) {
     sprite = &work->sprites[i];
-    EffectSprite_Init(sprite, 4, 4, 0, tiles + (i & 15) * 2);
+    // Set up as Teleport's orbs are; each draw picks its sparkle again.
+    EffectSprite_Init(sprite, 4, 4, 0,
+                      tiles + (i & (ORB_PICTURES - 1)) * ORB_TILE);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->depth = BattleEffect_GetObjectDepth(actor);
@@ -444,7 +457,8 @@ void Actor_VanishInSparks(s32 objectId) {
           Camera_WorldToScreen(position);
           drawn->x = position[0];
           drawn->y = position[2];
-          drawn->oam.index = tiles + (spark->age & 3) * 2;
+          drawn->oam.index =
+              tiles + (spark->age & (SPARKLE_PICTURES - 1)) * ORB_TILE;
           EffectSprite_Draw(drawn);
           spark->angle += TRIG_TURN / 32;
           spark->radius -= toFIXED(1) / 5;
@@ -456,25 +470,25 @@ void Actor_VanishInSparks(s32 objectId) {
     }
     switch (phase) {
     case 0:
-      if (frame == 10) {
+      if (frame == VANISH_SPAWN_FRAMES) {
         phase = 1;
         frame = -1;
       }
       break;
     case 1:
-      if (frame < 64) {
+      if (frame < VANISH_WIDEN_FRAMES) {
         actor->facing -= FACING_STEP;
-        actor->scaleX = frame << 10;
+        actor->scaleX = frame * (FIXED_ONE / VANISH_WIDEN_FRAMES);
         if (actor->scaleX > FIXED_ONE)
           actor->scaleX = FIXED_ONE;
       }
-      if (frame == 64) {
+      if (frame == VANISH_WIDEN_FRAMES) {
         actor->facing = angle;
         Actor_SetSpriteFlagsFar(actor, 1);
       }
-      if (frame == 10)
+      if (frame == VANISH_SPAWN_FRAMES)
         spawning = 0;
-      if (frame == 74)
+      if (frame == VANISH_WIDEN_FRAMES + VANISH_SPAWN_FRAMES)
         phase = PHASE_DONE;
       break;
     }
@@ -581,8 +595,10 @@ void FieldParticle_UpdateMotion(struct FieldParticle *effect) {
 }
 
 /// Reports an unfinished target only for effects that stop on arrival.
-/// A plain != adds two bytes to the English function.
 u32 FieldParticle_HasPendingTarget(struct FieldParticle *effect) {
+  /* FAKEMATCH(temporary): the target and EFFECT_NO_TARGET compared by the
+   * sign of their difference's bits, held in a local; as
+   * effect->targetX != EFFECT_NO_TARGET. */
   u32 value;
 
   if (effect->stopAtTarget == 0) {

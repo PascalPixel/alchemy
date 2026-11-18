@@ -17,6 +17,9 @@
 /// The PCM buffer's size in samples, one byte each; pret calls it
 /// PCM_DMA_BUF_SIZE.
 #define SOUND_PCM_BUFFER_SIZE 1584
+/// CPU cycles from one VBlank to the next: 228 lines of 1232 cycles, which
+/// timer 0's reload divides by a VBlank's samples.
+#define SOUND_CYCLES_PER_VBLANK (228 * 1232)
 
 // A sound mode word, as m4aSoundMode and a song header's mode byte take it,
 // under pret's names (include/gba/m4a_internal.h); a zero field leaves its

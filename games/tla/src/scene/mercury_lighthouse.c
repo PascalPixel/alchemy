@@ -268,7 +268,8 @@ void MercuryLighthouse_HearVoices(void) {
   Event_ShowMessage(ACTOR_SHEBA, 0);
   FieldPsynergy_StopMindReadWave();
   Event_Wait(20);
-  *(u16 *)BG_PLTT = 0;
+  // The backdrop, black.
+  BG_PLTT_COLOR(0, 0) = RGB(0, 0, 0);
   wait(1);
   gFieldWork->transitionFrames = 16;
   gFieldWork->transition =

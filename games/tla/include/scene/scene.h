@@ -518,4 +518,12 @@ struct Window;
     FieldEvent_Wait(frames);                                                   \
   } while (0)
 
+/// The runs of a background palette's colours the shore scenes turn a step at
+/// a time: 12 to 15, the surf, and on the Lemurian Ship's palette (BG palette
+/// 11) also 4 to 9, the blues of the band along its hull.
+#define HULL_BAND_FIRST_COLOR 4
+#define HULL_BAND_LAST_COLOR 9
+#define SURF_FIRST_COLOR 12
+#define SURF_LAST_COLOR 15
+
 #endif

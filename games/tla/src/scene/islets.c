@@ -2185,13 +2185,13 @@ void Islets_InitializeSoutheastAngara(void) {
     MapGrid_CopyCellAttributes(5, 2, 1, 2, 5, 28);
 }
 
-/// The Sea of Time Islet's surf, two palette cycles of the same four colours:
-/// the foam along the shore in the shallows, and the surf round the islets and
-/// their rocks out at sea, each turned one place every sixth frame.
+/// The Sea of Time Islet's surf, two palette cycles of the same four colours
+/// from SURF_FIRST_COLOR: the foam along the shore in the shallows, and the
+/// surf round the islets and their rocks out at sea, each turned one place
+/// every sixth frame.
 enum {
   SHALLOWS_SURF_PALETTE = 3,
   SEA_SURF_PALETTE = 4,
-  SURF_FIRST_COLOR = 12,
   SURF_COLORS = 4,
   SURF_CYCLE_DELAY = 5
 };

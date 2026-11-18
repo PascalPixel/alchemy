@@ -1,5 +1,5 @@
 /// @file
-/// Ice and Douse: shards and bolts falling on the targets' side.
+/// Ice and Douse: shards and drops of water falling on the targets' side.
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
@@ -7,24 +7,51 @@
 #include "gamepak/far_call/battle.h"
 #include "resource_ids.h"
 
-#define SHARD_COUNT(variant) gFalling_IceCounts[(variant) * 2]
-#define FRAME_COUNT(variant) gFalling_IceCounts[(variant) * 2 + 1]
+/// Fills window 0's per-line edges: from line 8 to line last, slant, the band
+/// the shards and drops fall down, which moves along as the lines go down until
+/// the line before it reaches span, the targets' side; span on the other lines
+/// to the battle view's bottom; nothing below it.
+#define FALLING_BUILD_SLANTED_WINDOW(line, i, last, slant, span)               \
+  for ((i) = 0; (i) != DISPLAY_HEIGHT; (i)++) {                                \
+    if ((i) >= 8 && (i) <= (last))                                             \
+      (line)[i] = (slant);                                                     \
+    else if ((i) < BATTLE_VIEW_BOTTOM)                                         \
+      (line)[i] = (span);                                                      \
+    else                                                                       \
+      (line)[i] = WIN_RANGE(1, 0);                                             \
+  }
+/// The band from left, as wide as the canvas.
+#define FALLING_BAND(left) WIN_RANGE(left, (left) + CANVAS_SIZE)
+
+// The falling shards (Ice) and drops of water (Douse) rain diagonally onto the
+// targets' side, seen only through a slanted band of window 0 whose edges an
+// HBlank DMA feeds line by line; each lands just above line 80, shards
+// shattering into sparkle and drops bursting in a splash that throws up
+// droplets.
+
+/// Each Ice variant's shards that fall, and its frames; the damage shows 16
+/// frames before the end.
+#define ICE_SHARDS(variant) gFalling_IceCounts[(variant) * 2]
+#define ICE_FRAMES(variant) gFalling_IceCounts[(variant) * 2 + 1]
 
 enum { FALLING_SHARD_COUNT = 32, FALLING_SHARD_PUFF_COUNT = 32 };
 
-// Shards of ice fall in a slanting column onto the targets' side. Each one
-// flies down at 8 pixels a frame until it reaches the ground line, then
-// flashes every target, shakes the screen and shatters: fourteen frames of
-// breaking pictures, with a burst of sparkle puffs in the middle of them.
-// Window 0 is narrowed line by line through an HBlank DMA table into a
-// slanting band, so the shards appear only over the targets.
-
-/// A falling shard or bolt keeps falling while its y, in eighths of a pixel, is
+/// A falling shard or drop keeps falling while its y, in eighths of a pixel, is
 /// at most this.
 #define FALLING_LAND_Y (80 * 8 - 1)
 /// IceShardSheet: the shard, then its shatter, each picture 32x32.
 #define ICE_SHARD_WIDTH 32
 #define ICE_SHARD_HEIGHT 32
+/// A landed shard or drop counts its frames since landing up to one past this.
+#define FALLING_LANDED_LAST_FRAME 14
+/// A landed shard shows its shatter's pictures from its first frame to
+/// FALLING_LANDED_LAST_FRAME, ICE_SHATTER_PICTURE_FRAMES each, and kicks up a
+/// puff on frames ICE_PUFF_FIRST_FRAME to ICE_PUFF_LAST_FRAME.
+#define ICE_SHATTER_PICTURE_FRAMES 3
+#define ICE_PUFF_FIRST_FRAME 9
+#define ICE_PUFF_LAST_FRAME 11
+/// A puff's frames: the nine sparkle pictures, two frames each.
+#define ICE_PUFF_FRAMES 18
 
 /// Ice shards rain down diagonally onto the targets' side of the field and
 /// shatter into puffs of sparkle, flashing and shaking each target as they
@@ -35,7 +62,7 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   void *canvas;
   s32 frame;
-  u8 *graphics;
+  u8 *sparkles;
   void *draw[2];
   struct Particle *shard;
   struct Particle *puff;
@@ -45,12 +72,10 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  graphics = Ram_HeapSlots->battleSheet;
-
-  // Set up the canvas, the shard pictures in the sheet and the puffs.
+  sparkles = Ram_HeapSlots->battleSheet;
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress(RESOURCE_ICE_SHARD_SHEET, work->sheet, 1, 1);
-  Resource_LoadAndDecompress(RESOURCE_SPARKLE_DOTS, graphics, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_SPARKLE_DOTS, sparkles, 0, 0);
   BattleEffect_ConfigureEffectDisplay();
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_WININ = EFFECT_WIN0_LAYERS | WININ_WIN1_BG0 | WININ_WIN1_BG1 |
@@ -73,12 +98,12 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
       else
         x = x - slant + 80;
       shard->x = x << 3;
-      shard->variant = -1;
+      shard->variant = -1; // still falling
       shard->y = y;
     }
   }
   for (i = 0; i != FALLING_SHARD_PUFF_COUNT; i++)
-    work->particles[FALLING_SHARD_COUNT + i].variant = -1;
+    work->particles[FALLING_SHARD_COUNT + i].variant = -1; // puff slot free
 
   // Falling shards draw at their maximum; the puffs add their light. Both
   // mirror for the other side.
@@ -95,28 +120,14 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
   draw[0] = Ram_HeapSlots->ramCode;
   draw[1] = Ram_HeapSlots->ramCodePaired;
 
-  // Window 0's left and right edge for each line: a band slanting with the
-  // shards' fall, then the targets' full width, then nothing.
   if (args->side == EFFECT_SIDE_ENEMIES) {
-    line = gMapGridCellBuffer;
-    for (i = 0; i != DISPLAY_HEIGHT; i++) {
-      if (i >= 8 && i <= 103)
-        line[i] = WIN_RANGE(112 - i, 240 - i);
-      else if (i <= 135)
-        line[i] = WIN_RANGE(8, 136);
-      else
-        line[i] = WIN_RANGE(1, 0);
-    }
+    line = (u16 *)gMapGridCellBuffer;
+    FALLING_BUILD_SLANTED_WINDOW(line, i, 103, FALLING_BAND(112 - i),
+                                 FALLING_BAND(8));
   } else {
-    line = gMapGridCellBuffer;
-    for (i = 0; i != DISPLAY_HEIGHT; i++) {
-      if (i >= 8 && i <= 95)
-        line[i] = WIN_RANGE(i + 24, i - 8 + 160);
-      else if (i <= 135)
-        line[i] = WIN_RANGE(120, 248);
-      else
-        line[i] = WIN_RANGE(1, 0);
-    }
+    line = (u16 *)gMapGridCellBuffer;
+    FALLING_BUILD_SLANTED_WINDOW(line, i, 95, FALLING_BAND(i + 24),
+                                 FALLING_BAND(120));
   }
 
   Task_Add(BattleEffect_ArmWin0HBlankDma, TASK_PASS_VBLANK);
@@ -127,15 +138,14 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
     work->transferValue = CANVAS_FADE_HALF;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
-  for (frame = 0; frame != FRAME_COUNT(args->variant); frame++) {
-    if (frame == FRAME_COUNT(args->variant) - 16)
+  for (frame = 0; frame != ICE_FRAMES(args->variant); frame++) {
+    if (frame == ICE_FRAMES(args->variant) - 16)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
-    for (i = 0; i != SHARD_COUNT(args->variant); i++) {
+    // Shards fall down the slant, 8 pixels down and 8 across a frame, and on
+    // landing shatter, kicking up puffs.
+    for (i = 0; i != ICE_SHARDS(args->variant); i++) {
       shard = &work->particles[i];
-
-      // A falling shard moves 8 pixels down and 8 across; at the ground
-      // line it lands.
       if (shard->variant == -1) {
         s32 x = shard->x / 8;
         s32 y = shard->y / 8;
@@ -150,59 +160,59 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
             shard->x += 64;
           shard->y += 64;
         } else {
+          // Every target flashes blue as the shards land.
           if ((i & 3) == 0)
             Sound_PlayFar(SE_ICE);
           work->shakeFrames = 2;
           shard->variant = 0;
-          for (k = 0; k != args->targetCount; k++)
+          EFFECT_FOR_EACH_TARGET(k, args)
             BattleEffect_TintBattler(args->targets[k], SPRITE_COLOR_BLUE_TINT,
                                      POSE_DAMAGE, k, 8);
         }
       }
-
-      // A landed shard breaks over fourteen frames, three to a picture,
-      // and throws a sparkle puff on each of frames 9 to 11.
       if (shard->variant != -1) {
         s32 x = shard->x / 8;
         s32 y = shard->y / 8;
 
-        if (shard->variant >= 1 && shard->variant <= 14) {
+        if (shard->variant >= 1 &&
+            shard->variant <= FALLING_LANDED_LAST_FRAME) {
           ((DrawRectangle)
                draw[args->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0])(
               canvas,
               work->sheet + PICTURE_BYTES(ICE_SHARD) +
-                  ((shard->variant / 3) << 10),
+                  shard->variant / ICE_SHATTER_PICTURE_FRAMES *
+                      PICTURE_BYTES(ICE_SHARD),
               x, y, ICE_SHARD_WIDTH, ICE_SHARD_HEIGHT);
         }
-        if (shard->variant >= 9 && shard->variant <= 11) {
+        if (shard->variant >= ICE_PUFF_FIRST_FRAME &&
+            shard->variant <= ICE_PUFF_LAST_FRAME) {
           for (k = 0; k != FALLING_SHARD_PUFF_COUNT; k++) {
             puff = &work->particles[FALLING_SHARD_COUNT + k];
             if (puff->variant == -1) {
-              puff->variant = 18;
+              puff->variant = ICE_PUFF_FRAMES;
               puff->x = (((Random16() & 31) + shard->x / 8) << 3) + 8;
               puff->y = ((Random16() & 15) + shard->y / 8 - 15) << 3;
               break;
             }
           }
         }
-        if (shard->variant <= 14)
+        if (shard->variant <= FALLING_LANDED_LAST_FRAME)
           shard->variant++;
       }
     }
 
-    // Each puff counts down from 18 through its nine pictures, two frames
-    // apiece, centred on its point.
+    // Puffs twinkle out.
     for (i = 0; i != FALLING_SHARD_PUFF_COUNT; i++) {
       puff = &work->particles[FALLING_SHARD_COUNT + i];
       if (puff->variant != -1) {
-        if (puff->variant <= 17) {
+        if (puff->variant < ICE_PUFF_FRAMES) {
           s32 image = puff->variant / 2;
           s32 x = puff->x / 8 - (gBattleEffect_SparkleSizes[image] >> 1);
           s32 y = puff->y / 8 - (gBattleEffect_SparkleSizes[image] >> 1);
 
           ((DrawRectangle)
                draw[args->variant == EFFECT_VARIANT_STRONGEST ? 1 : 0])(
-              canvas, graphics + gBattleEffect_SparklePictures[image], x, y,
+              canvas, sparkles + gBattleEffect_SparklePictures[image], x, y,
               gBattleEffect_SparkleSizes[image],
               gBattleEffect_SparkleSizes[image]);
         }
@@ -223,37 +233,32 @@ void BattleEffect_RunIce(struct BattleEffectParams *args) {
   BattleEffect_ConfigureEffectDisplay();
 }
 
-#undef FRAME_COUNT
+/// Ram_MapCellBuffer as Douse uses it: window 0's table, then the drops'
+/// droplets, each free while its variant is -1.
+#define DOUSE_SPLASH_BUFFER ((struct DropSplashBuffer *)Ram_MapCellBuffer)
 
-#define gDropSplashes ((struct DropSplashBuffer *)Ram_MapCellBuffer)
+/// Each Douse variant: the drops that fall, of the 64 set out, the droplets
+/// each throws up, the pixels between drops along the slant, and its frames;
+/// the damage shows 64 frames before the end.
+#define DOUSE_DROPS(variant) gFalling_Counts[(variant) * 4]
+#define DOUSE_DROPLETS_PER_DROP(variant) gFalling_Counts[(variant) * 4 + 1]
+#define DOUSE_DROP_SPACING(variant) gFalling_Counts[(variant) * 4 + 2]
+#define DOUSE_FRAMES(variant) gFalling_Counts[(variant) * 4 + 3]
 
-#define DROP_COUNT(variant) gFalling_Counts[(variant) * 4]
-#define SPLASH_COUNT(variant) gFalling_Counts[(variant) * 4 + 1]
-#define DROP_SPACING(variant) gFalling_Counts[(variant) * 4 + 2]
-#define FRAME_COUNT(variant) gFalling_Counts[(variant) * 4 + 3]
-
-// Drops of water fall in a slanting column onto the targets' side, 8 pixels
-// down and 4 across a frame. At the ground line each one flashes every
-// target and bursts: its splash pictures play for eight frames while a spray
-// of droplets is thrown up and falls back under gravity. Window 0 is narrowed
-// line by line through an HBlank DMA table into a slanting band over the
-// targets. Deluge throws its droplets higher.
-
-/// Where BlueBeamSheet is decoded in the effect's pictures.
-#define DOUSE_BLUE_BEAM_PICTURES 1540
-
+/// BlueBeamSheet, after ParticleSpritesD's ten flare pictures (as many bytes as
+/// two sets of motes): the falling drop, a blue bubble; the small splash it
+/// lands in; then the large splash.
 #define DOUSE_DROP_WIDTH 24
 #define DOUSE_DROP_HEIGHT 24
-/// The small and the large splash in ParticleSpritesD, decoded at the start
-/// of the effect's pictures.
-#define DOUSE_SPLASH 2116
-#define DOUSE_BURST 2692
 #define DOUSE_BURST_PICTURE_WIDTH 42
 #define DOUSE_BURST_PICTURE_HEIGHT 42
+#define DOUSE_FALLING_PICTURE (2 * MOTE_SET_BYTES)
+#define DOUSE_FLASH_PICTURE (DOUSE_FALLING_PICTURE + PICTURE_BYTES(DOUSE_DROP))
+#define DOUSE_BURST_PICTURE (DOUSE_FLASH_PICTURE + PICTURE_BYTES(DOUSE_DROP))
 
-/// Blue bolts streak down diagonally onto the targets' side of the field, each
-/// bursting into a fountain of falling sparks where it lands, while the targets
-/// flash.
+/// Drops of water fall diagonally onto the targets' side of the field, 8 pixels
+/// down and 4 across a frame, each bursting in a splash that throws up droplets
+/// where it lands, while the targets flash; Deluge throws them higher.
 ///
 /// Abilities: Douse, Drench, Deluge.
 void BattleEffect_RunDouse(struct BattleEffectParams *args) {
@@ -270,10 +275,9 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
 
-  // Set up the canvas, the drop pictures and the droplets.
   EFFECT_START_NARROW_CANVAS(BGCNT_WRAP | BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress(RESOURCE_BLUE_BEAM_SHEET,
-                             work->sheet + DOUSE_BLUE_BEAM_PICTURES, 1, 1);
+                             work->sheet + DOUSE_FALLING_PICTURE, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_D, work->sheet, 0, 0);
   BattleEffect_ConfigureEffectDisplay();
   REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -287,8 +291,8 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
                       BLITTER_ADDITIVE);
   draw[1] = Ram_HeapSlots->ramCodePaired;
 
-  for (i = 0; i != ARRAY_COUNT(gDropSplashes->splashes); i++)
-    gDropSplashes->splashes[i].variant = -1;
+  EFFECT_FREE_PARTICLES(i, DOUSE_SPLASH_BUFFER->splashes,
+                        ARRAY_COUNT(DOUSE_SPLASH_BUFFER->splashes));
 
   // Line the drops up above the screen along the slant, each the variant's
   // spacing higher than the one before.
@@ -298,38 +302,24 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
 
     drop = &work->particles[i];
     x = Random16() & 63;
-    y = -(i * DROP_SPACING(args->variant) + 16);
+    y = -(i * DOUSE_DROP_SPACING(args->variant) + 16);
     if (args->side == EFFECT_SIDE_PARTY)
       x = x + y / 2 - 48;
     else
       x = x - y / 2 + 72;
     drop->x = x << 3;
     drop->y = y << 3;
-    drop->variant = -1;
+    drop->variant = -1; // still falling
   }
 
-  // Window 0's left and right edge for each line: a band slanting with the
-  // drops' fall, then the targets' width, then nothing.
   if (args->side == EFFECT_SIDE_ENEMIES) {
-    line = gMapGridCellBuffer;
-    for (i = 0; i != DISPLAY_HEIGHT; i++) {
-      if (i >= 8 && i <= 103)
-        line[i] = WIN_RANGE(52 - i / 2, 180 - i / 2);
-      else if (i <= 135)
-        line[i] = WIN_RANGE(0, 128);
-      else
-        line[i] = WIN_RANGE(1, 0);
-    }
+    line = (u16 *)gMapGridCellBuffer;
+    FALLING_BUILD_SLANTED_WINDOW(line, i, 103, FALLING_BAND(52 - i / 2),
+                                 FALLING_BAND(0));
   } else {
-    line = gMapGridCellBuffer;
-    for (i = 0; i != DISPLAY_HEIGHT; i++) {
-      if (i >= 8 && i <= 103)
-        line[i] = WIN_RANGE(i / 2 + 60, i / 2 + 188);
-      else if (i <= 135)
-        line[i] = WIN_RANGE(112, 240);
-      else
-        line[i] = WIN_RANGE(1, 0);
-    }
+    line = (u16 *)gMapGridCellBuffer;
+    FALLING_BUILD_SLANTED_WINDOW(line, i, 103, FALLING_BAND(i / 2 + 60),
+                                 FALLING_BAND(112));
   }
 
   // Douse copies the canvas plainly; Drench and Deluge blend it in.
@@ -343,11 +333,12 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   }
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
-  for (frame = 0; frame != FRAME_COUNT(args->variant); frame++) {
-    if (frame == FRAME_COUNT(args->variant) - 64)
+  for (frame = 0; frame != DOUSE_FRAMES(args->variant); frame++) {
+    if (frame == DOUSE_FRAMES(args->variant) - 64)
       EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
-    for (i = 0; i != DROP_COUNT(args->variant); i++) {
+    // Drops fall down the slant, then burst in a splash.
+    for (i = 0; i != DOUSE_DROPS(args->variant); i++) {
       s32 x;
       s32 y;
 
@@ -355,9 +346,8 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
       x = drop->x / 8;
       y = drop->y / 8;
       if (drop->variant == -1) {
-        // Falling: draw the drop and move it on, or land it.
-        draw[0](canvas, work->sheet + DOUSE_BLUE_BEAM_PICTURES, x, y, 24,
-                DOUSE_DROP_HEIGHT);
+        draw[0](canvas, work->sheet + DOUSE_FALLING_PICTURE, x, y,
+                DOUSE_DROP_WIDTH, DOUSE_DROP_HEIGHT);
         if (drop->y <= FALLING_LAND_Y) {
           if (args->side == EFFECT_SIDE_ENEMIES)
             drop->x -= 32;
@@ -365,13 +355,13 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
             drop->x += 32;
           drop->y += 64;
         } else {
-          // Landed: throw this drop's droplets up from its middle in 16.16
-          // fixed point, sound every fourth landing and flash the targets.
+          // Droplets fly up from the middle of the landed drop.
           drop->variant = 0;
-          for (k = 0; k != SPLASH_COUNT(args->variant); k++) {
+          for (k = 0; k != DOUSE_DROPLETS_PER_DROP(args->variant); k++) {
             splash =
-                &gDropSplashes->splashes[i * SPLASH_COUNT(args->variant) + k];
-            splash->x = INTtoFIXED(x + 12);
+                &DOUSE_SPLASH_BUFFER
+                     ->splashes[i * DOUSE_DROPLETS_PER_DROP(args->variant) + k];
+            splash->x = INTtoFIXED(x + DOUSE_DROP_WIDTH / 2);
             splash->y = INTtoFIXED(y);
             splash->velocityX = ((Random16() & 255) - 128) << 9;
             if (args->variant == EFFECT_VARIANT_STRONGEST)
@@ -380,36 +370,39 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
               splash->velocityY = ((Random16() & 255) - 255) << 10;
             splash->variant = (Random16() & 15) + 16;
           }
+          // Every target flashes white as the drops land.
           if ((i & 3) == 0)
             Sound_PlayFar(SE_WATER);
-          for (k = 0; k != args->targetCount; k++)
+          EFFECT_FOR_EACH_TARGET(k, args)
             BattleEffect_TintBattler(args->targets[k], SPRITE_COLOR_WHITE,
                                      POSE_DAMAGE, k, 2);
         }
       } else {
-        // Landed: four frames of the small splash, four of the large one.
+        // Four frames of the small splash, four of the large one.
         if (drop->variant >= 0 && drop->variant <= 3)
-          draw[0](canvas, work->sheet + DOUSE_SPLASH, x, y, DOUSE_DROP_WIDTH,
-                  DOUSE_DROP_HEIGHT);
+          draw[0](canvas, work->sheet + DOUSE_FLASH_PICTURE, x, y,
+                  DOUSE_DROP_WIDTH, DOUSE_DROP_HEIGHT);
         else if (drop->variant <= 7)
-          draw[0](canvas, work->sheet + DOUSE_BURST, x - 9, y - 9,
+          draw[0](canvas, work->sheet + DOUSE_BURST_PICTURE,
+                  x - (DOUSE_BURST_PICTURE_WIDTH - DOUSE_DROP_WIDTH) / 2,
+                  y - (DOUSE_BURST_PICTURE_HEIGHT - DOUSE_DROP_HEIGHT) / 2,
                   DOUSE_BURST_PICTURE_WIDTH, DOUSE_BURST_PICTURE_HEIGHT);
-        if (drop->variant <= 14)
+        if (drop->variant <= FALLING_LANDED_LAST_FRAME)
           drop->variant++;
       }
     }
 
-    // Each droplet shrinks as its life runs out, centred on its point.
-    for (i = 0; i != ARRAY_COUNT(gDropSplashes->splashes); i++) {
-      splash = &gDropSplashes->splashes[i];
+    // Droplets fall and shrink as they die.
+    for (i = 0; i != ARRAY_COUNT(DOUSE_SPLASH_BUFFER->splashes); i++) {
+      splash = &DOUSE_SPLASH_BUFFER->splashes[i];
       if (splash->variant != -1) {
         s32 size = splash->variant + 1;
 
         if (size > 6)
           size = 6;
-        draw[1](canvas, work->sheet + gBattleEffect_FlarePictures[size - 1],
-                ((s16 *)&splash->x)[1] - size, ((s16 *)&splash->y)[1] - size,
-                size * 2, size * 2);
+        EFFECT_DRAW_FLARE(draw[1], canvas, work->sheet,
+                          FIXED_INTEGER_PART(splash->x),
+                          FIXED_INTEGER_PART(splash->y), size);
         Particle_AdvanceWithGravity2D(splash, 60, toFIXED(1) / 8);
         splash->variant--;
       }
@@ -422,5 +415,28 @@ void BattleEffect_RunDouse(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS();
   BattleEffect_ConfigureEffectDisplay();
 }
-#undef SHARD_COUNT
-#undef DROP_COUNT
+
+#undef FALLING_BUILD_SLANTED_WINDOW
+#undef FALLING_BAND
+#undef ICE_SHARDS
+#undef ICE_FRAMES
+#undef FALLING_LAND_Y
+#undef ICE_SHARD_WIDTH
+#undef ICE_SHARD_HEIGHT
+#undef FALLING_LANDED_LAST_FRAME
+#undef ICE_SHATTER_PICTURE_FRAMES
+#undef ICE_PUFF_FIRST_FRAME
+#undef ICE_PUFF_LAST_FRAME
+#undef ICE_PUFF_FRAMES
+#undef DOUSE_SPLASH_BUFFER
+#undef DOUSE_DROPS
+#undef DOUSE_DROPLETS_PER_DROP
+#undef DOUSE_DROP_SPACING
+#undef DOUSE_FRAMES
+#undef DOUSE_DROP_WIDTH
+#undef DOUSE_DROP_HEIGHT
+#undef DOUSE_BURST_PICTURE_WIDTH
+#undef DOUSE_BURST_PICTURE_HEIGHT
+#undef DOUSE_FALLING_PICTURE
+#undef DOUSE_FLASH_PICTURE
+#undef DOUSE_BURST_PICTURE

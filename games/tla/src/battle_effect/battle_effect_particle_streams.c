@@ -42,12 +42,6 @@ UNUSED void BattleEffect_StartActorMotionRandomDistance(s32 id) {
   Actor_SelectAnimationFar(object, POSE_DAMAGE);
 }
 
-/// Nereid's spray: the first burst, at frame 28, takes every free drop of the
-/// first NEREID_BURST_DROPS; from NEREID_COLUMNS_FRAME the next
-/// NEREID_DROPS_A_FRAME free ones burst up each frame; a falling drop that
-/// passes NEREID_SINK_Y has sunk back into the waves.
-#define NEREID_SINK_Y 104
-
 /// Unused: nothing reaches it (no handler, summon case or call). A second copy
 /// of BattleEffect_RunNereid, with its names: Nereid rides in on her turtle
 /// over rising waves, columns of water and spray rise over the targets, and
@@ -96,10 +90,10 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
     velocity.x = -toFIXED(16);
     velocity.y = -toFIXED(4);
     EFFECT_FREE_PARTICLES(k, work->particles, 64);
-    // DEAD: a place and a delay for particles 24 to 39, which nothing reads;
-    // the ROM keeps their stores.
-    for (k = 0; k != 16; k++) {
-      point = &work->particles[24 + k];
+    // DEAD: particles NEREID_UNREAD_FIRST on get a place and delay nothing
+    // reads; the ROM keeps the stores.
+    for (k = 0; k != NEREID_UNREAD_COUNT; k++) {
+      point = &work->particles[NEREID_UNREAD_FIRST + k];
       point->x = Random16() & 127;
       point->y = (Random16() & 7) + 56;
       point->variant = -(Random16() & 15);
@@ -235,7 +229,7 @@ UNUSED void BattleEffect_RunNereidCopy(struct BattleEffectParams *args) {
           drop->velocityY = drop->velocityY * 62 / DAMPING_SCALE;
           drop->variant++;
           if (drop->velocityY > 0 &&
-              FIXED_INTEGER_PART(drop->y) > NEREID_SINK_Y)
+              FIXED_INTEGER_PART(drop->y) > NEREID_WAVES_Y)
             drop->variant = -1;
         }
       }
@@ -1275,7 +1269,6 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   BattleEffect_EndCanvasLayer();
 }
 
-#undef NEREID_SINK_Y
 #undef FORMATION_SPACING
 #undef PARTICLE_STREAMS_FALL_FRAMES
 #undef PARTICLE_STREAMS_BURST_FRAMES

@@ -861,7 +861,8 @@ static void KalayTolbiDocks_GaretSeesTheKaragol(void) {
   Actor_SetPosition(ACTOR_GARET, 0, 0);
   Event_Wait(20);
   Actor_Get(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI)->paused = 0;
-  Actor_SetMovementTypeById(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI, 2);
+  Actor_SetMovementTypeById(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI,
+                            MOVEMENT_TYPE_WANDER);
   actor = Actor_Get(ACTOR_YOUNG_MAN_ASKING_ABOUT_TOLBI);
   actor->timer = actor->x.fixed / toFIXED(1);
   actor->userValue = actor->z.fixed / toFIXED(1);

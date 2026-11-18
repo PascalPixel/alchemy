@@ -95,6 +95,21 @@
 /// back to the tower's first room.
 #define JUPITER_TOWER_THROUGH_HOLE 16
 
+/// The Venus tower's doorways the party comes through from the small rooms
+/// between its halls: the west and east doorways of the hall of the flame
+/// throwers and stones; the statue hall's west doorway (the upper doorway,
+/// whose statue stands aside once moved) and east doorway; the statue hall's
+/// south passage, from the lower hall; and the lower hall's doorway in its
+/// row of statues (the lower doorway).
+enum {
+  VENUS_TOWER_HALL_WEST_DOORWAY = 6,
+  VENUS_TOWER_HALL_EAST_DOORWAY = 8,
+  VENUS_TOWER_UPPER_DOORWAY = 11,
+  VENUS_TOWER_STATUE_HALL_EAST_DOORWAY = 13,
+  VENUS_TOWER_STATUE_HALL_SOUTH_PASSAGE = 14,
+  VENUS_TOWER_LOWER_DOORWAY = 15
+};
+
 /// The Mars tower (F1). Its first rooms: the flame thrower the button sets
 /// moving, the torch its flame lights (two actors, lit and unlit), the torch
 /// below it that shoots at the center wall, its glint and fireball, and the
@@ -1218,6 +1233,10 @@ s32 Scene_Initialize(void) {
                           gMarsLighthouseRoomF_JupiterFlameStops, 0,
                           STEP_TRIGGER_FLAME_HIT);
     }
+    // Entrances 2 to 14 are the landings of Cyclone's circles, numbered as
+    // the exit table pairs them: on some the party spins down from above
+    // (Actor_DepartInRing), on the others it shows in a widening whirlwind
+    // (Actor_ArriveInRing).
     if (!Flag_IsSet(FLAG_KEEP_PARTY_POSITION)) {
       if (entrance == 2 || entrance == 4 || entrance == 6 || entrance == 7 ||
           entrance == 8 || entrance == 10 || entrance == 11 || entrance == 13)
@@ -1238,7 +1257,8 @@ s32 Scene_Initialize(void) {
     Actor_GetById(ACTOR_TIGHTROPE_FAR_POST)->riseCounter = 1;
     if (entrance ==
             MARS_LIGHTHOUSE_VENUS_TOWER_FROM_MARS_LIGHTHOUSE_ROOM_M_FLAME ||
-        entrance == 6 || entrance == 8) {
+        entrance == VENUS_TOWER_HALL_WEST_DOORWAY ||
+        entrance == VENUS_TOWER_HALL_EAST_DOORWAY) {
       FlameThrowers_Start(gMarsLighthouseRoomF_VenusFlameThrowers,
                           gMarsLighthouseRoomF_VenusFlameStops, 0,
                           STEP_TRIGGER_FLAME_HIT);
@@ -1246,18 +1266,20 @@ s32 Scene_Initialize(void) {
       MarsLighthouseRoomF_FillGapsWithStones();
 #endif
     } else if (
-        entrance == 11 || entrance == 13 || entrance == 14 ||
+        entrance == VENUS_TOWER_UPPER_DOORWAY ||
+        entrance == VENUS_TOWER_STATUE_HALL_EAST_DOORWAY ||
+        entrance == VENUS_TOWER_STATUE_HALL_SOUTH_PASSAGE ||
         entrance ==
             MARS_LIGHTHOUSE_VENUS_TOWER_FROM_MARS_LIGHTHOUSE_VENUS_LEDGE ||
-        entrance == 15) {
+        entrance == VENUS_TOWER_LOWER_DOORWAY) {
       FlameThrowers_Start(gMarsLighthouseRoomF_VenusStatueFlameThrowers,
                           gMarsLighthouseRoomF_VenusStatueFlameStops, 0,
                           STEP_TRIGGER_FLAME_HIT);
     }
     if (!Flag_IsSet(FLAG_KEEP_PARTY_POSITION)) {
-      if (entrance == 15)
+      if (entrance == VENUS_TOWER_LOWER_DOORWAY)
         Actor_SetPosition(ACTOR_LOWER_DOORWAY_STATUE, 664, 712);
-      if (entrance == 11)
+      if (entrance == VENUS_TOWER_UPPER_DOORWAY)
         Actor_SetPosition(ACTOR_UPPER_DOORWAY_STATUE, 536, 552);
     }
     Actor_GetById(ACTOR_PUSHED_STATUE)->motionFlags = 0;
@@ -2246,15 +2268,17 @@ LATE_DATA u32 gSceneExits[] = {
                MarsLighthouseVenusLedge,
                MARS_LIGHTHOUSE_VENUS_LEDGE_FROM_MARS_LIGHTHOUSE_VENUS_TOWER),
     SCENE_EXIT(6, MarsLighthouseVenusTower, 7),
-    SCENE_EXIT(7, MarsLighthouseVenusTower, 6),
+    SCENE_EXIT(7, MarsLighthouseVenusTower, VENUS_TOWER_HALL_WEST_DOORWAY),
     SCENE_EXIT(8, MarsLighthouseVenusTower, 9),
-    SCENE_EXIT(9, MarsLighthouseVenusTower, 8),
-    SCENE_EXIT(10, MarsLighthouseVenusTower, 11),
+    SCENE_EXIT(9, MarsLighthouseVenusTower, VENUS_TOWER_HALL_EAST_DOORWAY),
+    SCENE_EXIT(10, MarsLighthouseVenusTower, VENUS_TOWER_UPPER_DOORWAY),
     SCENE_EXIT(11, MarsLighthouseVenusTower, 10),
-    SCENE_EXIT(12, MarsLighthouseVenusTower, 13),
+    SCENE_EXIT(12, MarsLighthouseVenusTower,
+               VENUS_TOWER_STATUE_HALL_EAST_DOORWAY),
     SCENE_EXIT(13, MarsLighthouseVenusTower, 12),
-    SCENE_EXIT(14, MarsLighthouseVenusTower, 15),
-    SCENE_EXIT(15, MarsLighthouseVenusTower, 14),
+    SCENE_EXIT(14, MarsLighthouseVenusTower, VENUS_TOWER_LOWER_DOORWAY),
+    SCENE_EXIT(15, MarsLighthouseVenusTower,
+               VENUS_TOWER_STATUE_HALL_SOUTH_PASSAGE),
     SCENE_EXIT(MARS_LIGHTHOUSE_VENUS_TOWER_TO_MARS_LIGHTHOUSE_ROOM_M_FLAME,
                MarsLighthouseRoomMFlame,
                MARS_LIGHTHOUSE_ROOM_M_FLAME_FROM_MARS_LIGHTHOUSE_VENUS_TOWER),

@@ -3,6 +3,7 @@
 // Part of battle_effect.c.
 
 #include "battle_effect_internal.h"
+#include "sounds.h"
 
 /// Frames of the first stage, Neptune's leap, which A or B cuts short after
 /// its first 16, and of the second, the columns of water.

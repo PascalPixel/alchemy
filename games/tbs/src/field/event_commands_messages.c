@@ -7,6 +7,9 @@
 /// Message_SetVoiceFromActor's actor id for no voice: it clears the voice.
 #define MESSAGE_VOICE_NONE 0x80000000
 
+/// A speaker's portrait window, PORTRAIT_TILES tiles square.
+#define PORTRAIT_TILES 5
+
 /// The event command "open message": opens the event's current message in a
 /// speech window next to the speaking actor, with the speaker's portrait beside
 /// it when it has one, and moves on to the next message.
@@ -127,9 +130,9 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
         column = x - margin - 2;
     }
 
-    // A speaker with a portrait: put the portrait's 5 rows just above or
-    // below the message, within the screen's rows, and grow the
-    // message to the portrait's height.
+    // A speaker with a portrait: put the portrait just above or below the
+    // message, within the screen's rows, and grow the message to the
+    // portrait's height.
 #if TBS_PATCH_1
     found = Portrait_GetForSpeakerFar(sprite);
     if (found != -1) {
@@ -137,13 +140,13 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
                                 (u32 *)&height);
       message = -1;
       if (top > y)
-        portraitTop = top - 5;
+        portraitTop = top - PORTRAIT_TILES;
       else
         portraitTop = top + height;
       if (portraitTop < 0)
         portraitTop = top + height;
-      else if (portraitTop + 5 > DISPLAY_TILE_HEIGHT - 1)
-        portraitTop = top - 5;
+      else if (portraitTop + PORTRAIT_TILES > DISPLAY_TILE_HEIGHT - 1)
+        portraitTop = top - PORTRAIT_TILES;
       if (top < portraitTop) {
         s32 lines = height;
 
@@ -168,13 +171,13 @@ struct Window *FieldMessage_ShowAtActor(s32 actorId, s32 unused) {
                                 (u32 *)&height);
       message = found;
       if (top > y)
-        portraitTop = top - 5;
+        portraitTop = top - PORTRAIT_TILES;
       else
         portraitTop = top + height;
       if (portraitTop < 0)
         portraitTop = top + height;
-      else if (portraitTop + 5 > DISPLAY_TILE_HEIGHT - 1)
-        portraitTop = top - 5;
+      else if (portraitTop + PORTRAIT_TILES > DISPLAY_TILE_HEIGHT - 1)
+        portraitTop = top - PORTRAIT_TILES;
     }
     if (top < y) {
       s32 lines = height;
@@ -298,14 +301,23 @@ s32 Event_AskYesNoAndShowResponse(s32 actorId, s32 flags) {
 
 void Event_EmptyCallback(void) {}
 
+/// Event_ShowSpeakerMessage and Event_ShowMessageAtPosition move a position
+/// MESSAGE_POSITION_SHIFT away from the middle row of a MESSAGE_POSITION_WIDTH
+/// by MESSAGE_POSITION_HEIGHT area, larger than the 240 by 160 screen, and hold
+/// it MESSAGE_POSITION_MARGIN_X and MESSAGE_POSITION_MARGIN_Y inside the area.
+#define MESSAGE_POSITION_WIDTH 320
+#define MESSAGE_POSITION_HEIGHT 240
+#define MESSAGE_POSITION_MARGIN_X 8
+#define MESSAGE_POSITION_MARGIN_Y 20
+#define MESSAGE_POSITION_SHIFT 32
+
 /// Unused: reached only through a bare veneer in
 /// gamepak/far_call/field_sequence.s, which has no symbol, so no code can call
 /// it. It would record the speaker, open the message near it and wait unless
-/// fast-forwarding, then advance the message index. Like
-/// Event_ShowMessageAtPosition it moves the position 32 away from the middle
-/// and clamps it to 8..312 and 20..220, ranges larger than the 240 by 160
-/// screen, before passing it to a window routine that takes tiles; with no
-/// caller, the units it expected can't be told.
+/// fast-forwarding, then advance the message index. It places the message as
+/// Event_ShowMessageAtPosition does, before passing the position to a window
+/// routine that takes tiles; with no caller, the units it expected can't be
+/// told.
 void Event_ShowSpeakerMessage(s32 speaker) {
   // BUG: the lookup's result is discarded, and pos is left unset.
 #ifdef UBFIX
@@ -354,16 +366,18 @@ void Event_ShowSpeakerMessage(s32 speaker) {
     s32 win;
 #endif
 
-      if (windowY > 119)
-        windowY += 32;
+      if (windowY > MESSAGE_POSITION_HEIGHT / 2 - 1)
+        windowY += MESSAGE_POSITION_SHIFT;
       else
-        windowY -= 32;
-      windowX = windowX < 8 ? 8 : windowX;
-      if (windowX > 312)
-        windowX = 312;
-      windowY = windowY < 20 ? 20 : windowY;
-      if (windowY > 220)
-        windowY = 220;
+        windowY -= MESSAGE_POSITION_SHIFT;
+      windowX = windowX < MESSAGE_POSITION_MARGIN_X ? MESSAGE_POSITION_MARGIN_X
+                                                    : windowX;
+      if (windowX > MESSAGE_POSITION_WIDTH - MESSAGE_POSITION_MARGIN_X)
+        windowX = MESSAGE_POSITION_WIDTH - MESSAGE_POSITION_MARGIN_X;
+      windowY = windowY < MESSAGE_POSITION_MARGIN_Y ? MESSAGE_POSITION_MARGIN_Y
+                                                    : windowY;
+      if (windowY > MESSAGE_POSITION_HEIGHT - MESSAGE_POSITION_MARGIN_Y)
+        windowY = MESSAGE_POSITION_HEIGHT - MESSAGE_POSITION_MARGIN_Y;
       win = (s32)Message_OpenWindowFar(state->message, windowX, windowY,
                                        MESSAGE_WINDOW_ZOOM);
       state->messageWindow = win;
@@ -384,26 +398,27 @@ void Event_ForwardShowMessageAtPosition(s32 unusedA, s32 unusedB, s32 x,
 }
 
 /// Unused: reached only through a bare veneer in field_sequence.s. It would
-/// open the event's message at (x, y), wait for it and advance the message
-/// index; its units are as unknown as Event_ShowSpeakerMessage's.
+/// open the event's message at (x, y), moved and held as
+/// MESSAGE_POSITION_WIDTH says, wait for it and advance the message index; its
+/// units are as unknown as Event_ShowSpeakerMessage's.
 void Event_ShowMessageAtPosition(s32 unusedA, s32 unusedB, s32 x, s32 y) {
   struct FieldWork *state = gFieldWork;
   s32 windowY = y;
   s32 windowX = x;
-  s32 minX = 8;
-  s32 minY = 20;
+  s32 minX = MESSAGE_POSITION_MARGIN_X;
+  s32 minY = MESSAGE_POSITION_MARGIN_Y;
   s32 window;
 
-  if (windowY > 119)
-    windowY += 32;
+  if (windowY > MESSAGE_POSITION_HEIGHT / 2 - 1)
+    windowY += MESSAGE_POSITION_SHIFT;
   else
-    windowY -= 32;
+    windowY -= MESSAGE_POSITION_SHIFT;
 
   if (x < minX)
     windowX = minX;
-  if (windowX > 312)
-    windowX = 312;
-  CLAMP(windowY, minY, 220);
+  if (windowX > MESSAGE_POSITION_WIDTH - MESSAGE_POSITION_MARGIN_X)
+    windowX = MESSAGE_POSITION_WIDTH - MESSAGE_POSITION_MARGIN_X;
+  CLAMP(windowY, minY, MESSAGE_POSITION_HEIGHT - MESSAGE_POSITION_MARGIN_Y);
 
   window = (s32)Message_OpenWindowFar(state->message, windowX, windowY,
                                       MESSAGE_WINDOW_ZOOM);
@@ -484,6 +499,10 @@ void Message_SetVoiceFromActor(s32 actorId) {
   }
 }
 
-#undef DISPLAY_TILE_WIDTH
-#undef DISPLAY_TILE_HEIGHT
 #undef MESSAGE_VOICE_NONE
+#undef PORTRAIT_TILES
+#undef MESSAGE_POSITION_WIDTH
+#undef MESSAGE_POSITION_HEIGHT
+#undef MESSAGE_POSITION_MARGIN_X
+#undef MESSAGE_POSITION_MARGIN_Y
+#undef MESSAGE_POSITION_SHIFT

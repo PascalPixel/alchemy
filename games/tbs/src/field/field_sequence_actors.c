@@ -19,9 +19,6 @@ enum {
 /// past them reads the field work's members after the slots.
 #define LOOKUP_ID_COUNT 192
 
-/// An Actor_Create id of enum ActorCreateKind `kind`, above its sprite.
-#define ACTOR_CREATE_KIND(kind) ((kind) << 12)
-
 /// Returns the sprite of character, which is the character itself except that
 /// FLAG_CHILDHOOD gives Isaac and Garet SPRITE_ISAAC_CHILD and
 /// SPRITE_GARET_CHILD, and FLAG_ISAAC_WEARS_TUNIC gives grown Isaac sprite
@@ -582,5 +579,4 @@ void Actor_Restore(void) {
 #undef PLACED_MAX
 #undef PLACEMENT_SPRITE_MAX
 #undef LOOKUP_ID_COUNT
-#undef ACTOR_CREATE_KIND
 #undef SPRITE_CACHE_FLAGS

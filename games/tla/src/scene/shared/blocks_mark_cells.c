@@ -1,9 +1,9 @@
-/// For each id of a list ended by ACTOR_LIST_END: clears the actor's mark and,
-/// on a cell with attribute bit 6, blocks the cells ahead of and behind it and
-/// sets the mark.
+/// For each actor of a list ended by ACTOR_LIST_END: clears its mark and, if it
+/// stands on a climbable cell, walls off the overhead layer's cells a row north
+/// and south of where it is drawn and marks it.
 void Blocks_MarkCells(u16 *ids) {
   struct Actor *actor;
-  u8 *blocked;
+  u8 *marked;
   struct MapWork *map;
   struct MapCell **cells;
   struct MapCell *cell;
@@ -11,15 +11,15 @@ void Blocks_MarkCells(u16 *ids) {
 
   while (*ids != ACTOR_LIST_END) {
     actor = Actor_Get(*ids);
-    blocked = &actor->riseEnabled;
-    *blocked = 0;
-    if (MapCell_GetAttributes(0, FIELD_CELL(actor->x.fixed),
+    marked = &actor->riseEnabled;
+    *marked = 0;
+    if (MapCell_GetAttributes(MAPGRID_LAYER_GROUND, FIELD_CELL(actor->x.fixed),
                               FIELD_CELL(actor->z.fixed)) &
-        0x40) {
+        MAP_CELL_CLIMBABLE) {
       map = Ram_HeapSlots->mapGrid;
       if (map == NULL)
         return;
-      cells = &map->layers[2].cells;
+      cells = &map->layers[MAPGRID_LAYER_OVERHEAD].cells;
       z = FIELD_CELL(actor->z.fixed - actor->y.fixed);
       x = FIELD_CELL(actor->x.fixed);
       cell = *cells;
@@ -28,7 +28,7 @@ void Blocks_MarkCells(u16 *ids) {
       cell = *cells;
       cell += x + ((z - 1) << 7);
       cell->collisionCode = CELL_BEHAVIOR_WALL;
-      *blocked = 1;
+      *marked = 1;
     }
     ids++;
   }

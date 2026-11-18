@@ -57,9 +57,8 @@ struct GroundParticle {
 /// The heap slot weather while the ground particles run: their tiles' VRAM
 /// cache entry and first tile, and the particles.
 struct WeatherWork {
-  s32 entry; ///< the VRAM cache entry holding the particles' tiles
-  /* FAKEMATCH(signature): the tile base typed long; as s32. */
-  long tileBase; ///< their first tile in VRAM
+  s32 entry;    ///< the VRAM cache entry holding the particles' tiles
+  s32 tileBase; ///< their first tile in VRAM
   struct GroundParticle particles[WEATHER_PARTICLE_COUNT];
   u8 unused[8]; ///< no code reads them
   s32 stopped;  ///< nonzero stops new sparkle bursts

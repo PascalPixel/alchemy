@@ -14,13 +14,13 @@
 
 /// Enemy ids, one for each row of enemy_table.c in order: an enemy id is the
 /// row plus ENEMY_ID_FIRST. The rows the text names "?" are unused: two
-/// enemies in no formation, three blank rows after the Djinn lesson's Zombie
-/// and the empty row that ends the table, which have no names here. Where
-/// several rows share a name, each takes what tells its battle apart: the one
-/// place it is fought (its formation in formations.c, chosen from a zone of
-/// encounter_zones.c), the prize a Colosso finalist carries, or the Djinni a
-/// Djinni battle is with; a row fought in several places is named for where it
-/// is first met.
+/// enemies in no formation, named here for the enemy whose picture each draws,
+/// and three blank rows after the Djinn lesson's Zombie and the empty row that
+/// ends the table, which have no names here. Where several rows share a name,
+/// each takes what tells its battle apart: the one place it is fought (its
+/// formation in formations.c, chosen from a zone of encounter_zones.c), the
+/// prize a Colosso finalist carries, or the Djinni a Djinni battle is with; a
+/// row fought in several places is named for where it is first met.
 enum EnemyId {
   /// Row 0: "???", in no formation; a formation's empty places list it.
   ENEMY_NONE = ENEMY_ID_FIRST,

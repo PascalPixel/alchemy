@@ -3778,8 +3778,11 @@ void TrialRoad_DrawRaceMap(void) {
   if (actor == NULL || actor->x.fixed == 0)
     return;
   {
-    // This side's offset adds scrollX where the first marker's subtracts it;
-    // nothing writes scrollX, which stays 0, so the two agree.
+    // This side's offset adds scrollX where the first marker's subtracts it.
+    // Nothing writes scrollX, and in a render of the race (the stage room by
+    // entrance 31 with FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT set) both columns stand
+    // at the screen's edges with "1P" and "2P" at their feet: it is 0, so the
+    // two agree.
     MARKER(+work->fade * 6 + work->scrollX + 189,
            -work->fade * 6 + work->scrollX + 23, 1, RACE_MAP_TILE_2P);
   }

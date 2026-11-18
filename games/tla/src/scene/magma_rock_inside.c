@@ -65,7 +65,7 @@ extern s32 gMagmaRockInside_FlameScript[];
 
 extern s32 gMagmaRockInside_LastStepCell;
 
-void MagmaRockInside_BurstStatue(s32 a, s32 b);
+void MagmaRockInside_BurstCrackedPillar(s32 stage, s32 cue);
 void MagmaRockInside_TrackStepCell(void);
 void MagmaRockInside_SetActorCellShape(s32 heightOffset, s32 layer, s32 owner);
 void Actor_StartScript(struct Actor *actor, const void *data);
@@ -110,6 +110,12 @@ static __inline__ struct Actor *Create(s32 kind, s32 x, s32 y, s32 z) {
 #define FLAG_ANY_MARKER_LIT FLAG_SCENE_TEMP_00
 #define FLAG_MARKER_LIT(marker) (FLAG_SCENE_TEMP_00 + (marker))
 enum { STEP_CELL_TRIGGER_BASE = 200 };
+
+/// A map grid cell kept in one word, x in the high half and z in the low, as
+/// the cell stampers keep the leader's.
+#define CELL_KEY(x, z) (((x) << 16) + (z))
+#define CELL_KEY_X(key) ((key) >> 16)
+#define CELL_KEY_Z(key) ((key) & 0xffff)
 
 /// The room past the Lucky Medal's chest: one lava platform.
 enum MagmaRockInsideLuckyMedalChestActorId {
@@ -210,6 +216,12 @@ enum MagmaRockInsideEmberStoneActorId {
 #define FLAG_TORCH_LIT(flame)                                                  \
   ((flame) - ACTOR_WEST_TORCH_FLAME + FLAG_WEST_TORCH_LIT)
 
+/// Blaze on a torch: its flame, set on it at a sixteenth of its size, grows by
+/// a sixteenth FLAME_GROW_STEPS times, 5 frames apart; then the pillar it
+/// lowers sinks PILLAR_SINK_DEPTH pixels into the floor, a pixel every 5
+/// frames, as deep as the ember stone room's sunken pillars stand.
+enum { FLAME_GROW_STEPS = 16, PILLAR_SINK_DEPTH = 32 };
+
 /// The quarter turn a facing lies in, as the leader faces a switch or a pillar:
 /// an eighth of a turn added, then this kept.
 #define FACING_QUARTER_MASK (TRIG_TURN - DEGtoANG(90))
@@ -228,6 +240,9 @@ enum { PLATFORM_PATH_THIRD_CORNER = 10 };
 /// frame to 2 pixels in LEARN_SPIRAL_FRAMES; each one's count of steps ends
 /// with the last's.
 enum { LEARN_SPARKS = 16, LEARN_SPARK_INTERVAL = 8, LEARN_SPIRAL_FRAMES = 15 };
+
+/// The sparks that shoot up from the Blaze tablet as it lifts, flashing.
+enum { TABLET_RISING_SPARKS = 16 };
 
 /// The Blaze tablet's room: the tablet, the pillar its torch lowers, the flame
 /// Blaze moves and the torch's flame.
@@ -376,7 +391,7 @@ void MagmaRockInside_ReadBlazeTabletFromSouth(void);
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 
-void MagmaRockInside_BurstStatue(s32 mode, s32 cue);
+void MagmaRockInside_BurstCrackedPillar(s32 stage, s32 cue);
 
 void Actor_LiftTargetBlock(s16 *cells);
 void Actor_PlaceMovedBlock(void);
@@ -436,14 +451,14 @@ s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 
 /// Waits up to 60 frames for an actor's vertical speed to come to zero.
 void MagmaRockInside_WaitForLanding(struct Actor *actor) {
-  s32 count;
+  s32 frames;
   s32 busy;
 
-  count = 60;
-  while (count != 0) {
+  frames = 60;
+  while (frames != 0) {
     System_Wait(1);
     busy = actor->velocityY;
-    count--;
+    frames--;
     if (busy == 0) {
       break;
     }
@@ -749,7 +764,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 void MagmaRockInside_TrailEmbers(struct Actor *actor) {
   struct EffectOptions options;
   u32 frame = gFrameCount;
-  s32 dz;
+  s32 randomZ;
   s32 vz;
 
   if ((frame & 3) != 0)
@@ -759,11 +774,11 @@ void MagmaRockInside_TrailEmbers(struct Actor *actor) {
   options.script = gMagmaRockInside_EmberScript;
   if ((frame & 15) == 0)
     Actor_PlaySoundInView(actor, SE_WHOOSH);
-  dz = Random16() & 15;
+  randomZ = Random16() & 15;
   vz = ((Random16() & 31) - 16) << 12;
   FieldEffect_Spawn(
-      actor->x.fixed, actor->y.fixed, actor->z.fixed + ((dz - 8) << 15), 0, 0,
-      vz, EFFECT_USE_SCRIPT | EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | 1,
+      actor->x.fixed, actor->y.fixed, actor->z.fixed + ((randomZ - 8) << 15), 0,
+      0, vz, EFFECT_USE_SCRIPT | EFFECT_USE_TYPE | EFFECT_USE_PRIORITY | 1,
       &options);
 }
 
@@ -872,6 +887,10 @@ static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
   return (struct Actor *)Import_ActorCreate(kind, x, y, z);
 }
 
+/// The frames a statue's fire bursts where it lands, throwing out an ember
+/// every other frame.
+enum { FIRE_BURST_FRAMES = 16 };
+
 /// A statue's fire flies ahead until it meets a wall, lava or an actor: it
 /// bursts there, floods the room in lava, or plays Burst on the actor.
 void MagmaRockInside_FireFromStatue(struct Actor *source) {
@@ -928,7 +947,7 @@ end:
   FieldActor_WaitForMove(flame);
   flame->update = NULL;
   Actor_Release(flame);
-  for (id = 0; id != 16; id++) {
+  for (id = 0; id != FIRE_BURST_FRAMES; id++) {
     bit = gFrameCount;
     bit &= 1;
     if (bit == 0) {
@@ -997,20 +1016,30 @@ void MagmaRockInside_FireStatue(void) {
   Event_End();
 }
 
-/// Burst on a statue: rocks fall from the ceiling while it lasts, one in mode 2
-/// and eight in mode 3, which also moves the statue away.
-void MagmaRockInside_BurstStatue(s32 mode, s32 cue) {
+/// A cracked pillar's animation as Burst breaks it: its two cracked pictures,
+/// then its stump, 41 frames each. It starts at frame
+/// CRACKED_PILLAR_CRUMBLE_FRAME of the cast, among the small explosions, and
+/// the pillar has crumbled to its stump by the last blast, which takes it away.
+enum {
+  CRACKED_PILLAR_ANIMATION_CRUMBLE = 3,
+  CRACKED_PILLAR_CRUMBLE_FRAME = 178
+};
+
+/// Burst on a cracked pillar: rocks fall round it while Burst lasts, one at
+/// each small explosion (stage 2) and eight at the last blast (stage 3), which
+/// also takes the pillar away; meanwhile the pillar crumbles.
+void MagmaRockInside_BurstCrackedPillar(s32 stage, s32 cue) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
   if (cue == 0)
     MagmaRockInside_StartFallingRocks();
-  if (mode == 2) {
+  if (stage == 2) {
     struct Actor *actor = work->child;
 
     MagmaRockInside_DropRocks(actor->x.fixed, actor->y.fixed + toFIXED(15),
                               actor->z.fixed, 1);
   }
-  if (mode == 3) {
+  if (stage == 3) {
     struct Actor *actor = work->child;
     struct Actor *target;
 
@@ -1021,8 +1050,8 @@ void MagmaRockInside_BurstStatue(s32 mode, s32 cue) {
   }
   if (cue == PSYNERGY_EVENT_LAST_FRAME)
     MagmaRockInside_EndFallingRocks();
-  if (cue == 178)
-    Actor_SelectAnimation(work->child, 3);
+  if (cue == CRACKED_PILLAR_CRUMBLE_FRAME)
+    Actor_SelectAnimation(work->child, CRACKED_PILLAR_ANIMATION_CRUMBLE);
 }
 
 /// The leader springs onto the pillar ahead and pushes it into the lava, where
@@ -1076,6 +1105,9 @@ void MagmaRockInside_PushPillarIntoLava(void) {
 
 extern s32 gMagmaRockInside_FlameEmberScript[];
 
+/// The bursts of flame, 8 frames apart, as a statue's fire strikes a lava fall.
+enum { LAVA_FALL_FLAME_BURSTS = 16 };
+
 /// A statue's fire Burst into a lava fall: the fall bursts into flame and
 /// pours, the lava rises over the room's floor, and the room is flooded.
 void MagmaRockInside_RaiseLava(void) {
@@ -1121,7 +1153,7 @@ void MagmaRockInside_RaiseLava(void) {
     if (Event_GetFlag(FLAG_LOWER_ROOMS_FLOODED))
       frame = LAVA_ALREADY_UP;
   }
-  for (i = 0; i != 16; i++) {
+  for (i = 0; i != LAVA_FALL_FLAME_BURSTS; i++) {
     position[0] = baseX + ((Random16() & 31) << 16);
     Event_PlaySound(SE_CRASH);
     FieldEffect_Spawn(position[0], position[1], position[2], 0,
@@ -1252,7 +1284,8 @@ void MagmaRockInside_DrainLava(void) {
   s32 open = 0;
   s32 srcX = 0;
   u8 *flags;
-  u32 i = 0;
+  // The gate's row on the map, then each row of embers over the drained fall.
+  u32 row = 0;
   u32 j;
   s32 rowAbove;
 
@@ -1272,7 +1305,7 @@ void MagmaRockInside_DrainLava(void) {
   FieldEvent_Wait(30);
   if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_INSIDE_ENTRANCE) {
     srcX = 20;
-    i = 89;
+    row = 89;
     dstX = 84;
     dstZ = 26;
     baseX = toFIXED(320);
@@ -1288,7 +1321,7 @@ void MagmaRockInside_DrainLava(void) {
       Actor_SetAnimation(j + ACTOR_COLUMN_A, 1);
   } else if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_INSIDE_FURY) {
     srcX = 28;
-    i = 83;
+    row = 83;
     dstX = 92;
     dstZ = 21;
     baseX = toFIXED(448);
@@ -1304,7 +1337,7 @@ void MagmaRockInside_DrainLava(void) {
              SCENE_MAGMA_ROCK_INSIDE_GOLEM_CORE_CHEST) {
     if (gMainRoutineWork.entrance <= 8) {
       srcX = 49;
-      i = 75;
+      row = 75;
       dstX = 113;
       dstZ = 13;
       baseX = toFIXED(792);
@@ -1315,7 +1348,7 @@ void MagmaRockInside_DrainLava(void) {
       Event_ClearFlag(FLAG_LOWER_ROOMS_FLOODED);
     } else {
       srcX = 51;
-      i = 104;
+      row = 104;
       dstX = 115;
       dstZ = 42;
       baseX = toFIXED(824);
@@ -1329,8 +1362,8 @@ void MagmaRockInside_DrainLava(void) {
   Event_PlaySound(SE_BOOM);
   MapGrid_SetShake(5, 7, 1);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  rowAbove = i - 1;
-  MapGrid_CopyCellsTo(srcX, i, srcX, rowAbove, 3, 4);
+  rowAbove = row - 1;
+  MapGrid_CopyCellsTo(srcX, row, srcX, rowAbove, 3, 4);
   if (open == 0) {
     FieldMapGrid_WaitForShakeToSettle();
     FieldEvent_Wait(20);
@@ -1340,20 +1373,20 @@ void MagmaRockInside_DrainLava(void) {
     options.priority = 2;
     options.palette = SPRITE_COLOR_RED_TINT;
     options.script = gMagmaRockInside_EmberScript;
-    for (i = 0; i != 10; i++) {
+    for (row = 0; row != 10; row++) {
       for (j = 0; j != 6; j++) {
         u32 random = Random16();
 
         position[0] = baseX + ((random % 48) << 16);
         FieldEffect_Spawn(position[0], position[1],
-                          position[2] + i * toFIXED(4) + toFIXED(23), 0,
+                          position[2] + row * toFIXED(4) + toFIXED(23), 0,
                           toFIXED(1), 0,
                           EFFECT_USE_SCRIPT | EFFECT_USE_TYPE |
                               EFFECT_USE_PRIORITY | EFFECT_USE_PALETTE,
                           &options);
       }
       System_Wait(3);
-      MapGrid_CopyCellsTo(75, 64, dstX, dstZ, 3, (i >> 1) + 1);
+      MapGrid_CopyCellsTo(75, 64, dstX, dstZ, 3, (row >> 1) + 1);
     }
     for (j = 0; j != BLEND_WEIGHT_MAX * 4; j++) {
       REG_BLDALPHA = ((j >> 2) << 8) | (BLEND_WEIGHT_MAX - (j >> 2));
@@ -1392,11 +1425,11 @@ void MagmaRockInside_DrainLava(void) {
 }
 
 #define DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR(name, n1, n2)                    \
-  void name(s32 mode, s32 cue) {                                               \
+  void name(s32 stage, s32 cue) {                                              \
     struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;             \
                                                                                \
     work->child = Actor_Get(n1);                                               \
-    MagmaRockInside_BurstStatue(mode, cue);                                    \
+    MagmaRockInside_BurstCrackedPillar(stage, cue);                            \
     Event_SetFlag(n2);                                                         \
   }
 
@@ -1446,7 +1479,7 @@ static __inline__ void Arrive(s32 id, s32 x, s32 z) {
 void MagmaRockInside_ReleaseRocks(void) {
   FIXED position[3];
   struct EffectOptions options;
-  s32 i;
+  s32 beat;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1462,7 +1495,10 @@ void MagmaRockInside_ReleaseRocks(void) {
   options.startScaleY = FIXED_ONE * 3 / 2;
   options.startScaleX = FIXED_ONE * 3 / 2;
   position[1] = 0;
-  i = 0;
+  // A beat every 3 frames: embers burst from the stone, a pound every eighth
+  // beat; the rocks and flames are thrown eight beats apart from beat 32, and
+  // the stone itself at beat 112.
+  beat = 0;
   do {
     position[0] = toFIXED(Random16() & 31) + (toFIXED(760));
     position[2] = toFIXED(Random16() & 31) + (toFIXED(256));
@@ -1471,25 +1507,25 @@ void MagmaRockInside_ReleaseRocks(void) {
                           EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY |
                           EFFECT_USE_PALETTE,
                       &options);
-    if ((i & 7) == 0)
+    if ((beat & 7) == 0)
       Event_PlaySound(SE_POUND);
-    if (i == 32) {
+    if (beat == 32) {
       Arrive(ACTOR_FALLEN_ROCK_A, 744, 216);
-    } else if (i == 40) {
+    } else if (beat == 40) {
       Arrive(ACTOR_FALLEN_FLAME_D, 776, 328);
-    } else if (i == 48) {
+    } else if (beat == 48) {
       Arrive(ACTOR_FALLEN_ROCK_B, 856, 232);
-    } else if (i == 56) {
+    } else if (beat == 56) {
       Arrive(ACTOR_FALLEN_FLAME_C, 696, 312);
-    } else if (i == 64) {
+    } else if (beat == 64) {
       Arrive(ACTOR_FALLEN_ROCK_C, 728, 280);
-    } else if (i == 72) {
+    } else if (beat == 72) {
       Arrive(ACTOR_FALLEN_FLAME_B, 824, 280);
-    } else if (i == 80) {
+    } else if (beat == 80) {
       Arrive(ACTOR_FALLEN_ROCK_D, 824, 312);
-    } else if (i == 88) {
+    } else if (beat == 88) {
       Arrive(ACTOR_FALLEN_FLAME_A, 776, 232);
-    } else if (i == 112) {
+    } else if (beat == 112) {
       Actor_SetPosition(ACTOR_EMBER_STONE, 776, 248);
       Actor_SetDestination(ACTOR_EMBER_STONE, 696, 232);
       FieldCamera_MoveTo(696, CAMERA_KEEP, 232, 1);
@@ -1500,8 +1536,8 @@ void MagmaRockInside_ReleaseRocks(void) {
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     }
     wait(3);
-    i++;
-  } while (i != 128);
+    beat++;
+  } while (beat != 128);
   FieldActor_WaitForMoveById(ACTOR_EMBER_STONE);
   FieldMapGrid_WaitForShakeToSettle();
   Event_PlaySound(SE_STOP_ACTION_SE);
@@ -1558,10 +1594,10 @@ void MagmaRockInside_GrowFlame(void) {
   Event_PlaySound(SE_WHOOSH);
   i = 0;
   do {
-    object->scaleY = object->scaleX += FIXED_ONE / 16;
+    object->scaleY = object->scaleX += FIXED_ONE / FLAME_GROW_STEPS;
     wait(5);
     i++;
-  } while (i != 16);
+  } while (i != FLAME_GROW_STEPS);
   Event_SetFlag(FLAG_TORCH_LIT(work->psynergyHitObject));
   if (Event_GetFlag(FLAG_WEST_TORCH_LIT) &&
       Event_GetFlag(FLAG_EAST_TORCH_LIT)) {
@@ -1590,7 +1626,7 @@ void MagmaRockInside_GrowFlame(void) {
       other->y.fixed -= toFIXED(1);
       FieldEvent_Wait(5);
       i++;
-    } while (i != 32);
+    } while (i != PILLAR_SINK_DEPTH);
     Event_PlaySound(SE_FLAME_GROW);
     Actor_SelectAnimation(other, 4);
     Actor_Release(actor);
@@ -1670,7 +1706,7 @@ void MagmaRockInside_TrackStepCell(void) {
   struct Actor *actor = Actor_Get(FieldParty_GetLeaderActor());
   s32 x = FIELD_CELL(actor->x.fixed);
   s32 z = FIELD_CELL(actor->z.fixed);
-  s32 key = (x << 16) + z;
+  s32 key = CELL_KEY(x, z);
   s32 last;
   s32 value;
   s32 trigger;
@@ -1681,8 +1717,8 @@ void MagmaRockInside_TrackStepCell(void) {
   last = gMagmaRockInside_LastStepCell;
   if (last == -1 || key == last)
     return;
-  x = last >> 16;
-  z = last & 0xffff;
+  x = CELL_KEY_X(last);
+  z = CELL_KEY_Z(last);
   gMagmaRockInside_LastStepCell = -1;
   MapGrid_CopyCellsLayered(
       73, 72, gMagmaRockInside_StepCellWidth, gMagmaRockInside_StepCellHeight,
@@ -1717,7 +1753,7 @@ void MagmaRockInside_StampStepCell(void) {
   s32 x = FIELD_CELL(actor->x.fixed);
   s32 y = FIELD_CELL(actor->y.fixed);
   s32 z = FIELD_CELL(actor->z.fixed);
-  s32 key = (x << 16) + z;
+  s32 key = CELL_KEY(x, z);
 
   if (key != gMagmaRockInside_LastStepCell) {
     gMagmaRockInside_LastStepCell = key;
@@ -1739,7 +1775,7 @@ void MagmaRockInside_StampOtherStepCell(void) {
   s32 x = FIELD_CELL(actor->x.fixed);
   s32 y = FIELD_CELL(actor->y.fixed);
   s32 z = FIELD_CELL(actor->z.fixed);
-  s32 key = (x << 16) + z;
+  s32 key = CELL_KEY(x, z);
 
   if (key != gMagmaRockInside_LastStepCell) {
     gMagmaRockInside_LastStepCell = key;
@@ -1839,10 +1875,10 @@ void MagmaRockInside_GrowTabletFlame(void) {
   Event_PlaySound(SE_WHOOSH);
   i = 0;
   do {
-    object->scaleY = object->scaleX += FIXED_ONE / 16;
+    object->scaleY = object->scaleX += FIXED_ONE / FLAME_GROW_STEPS;
     System_Wait(5);
     i++;
-  } while (i != 16);
+  } while (i != FLAME_GROW_STEPS);
   Event_SetFlag(FLAG_TABLET_TORCH_LIT);
   other = Actor_Get(ACTOR_TORCH_PILLAR);
   Event_Start();
@@ -1869,7 +1905,7 @@ void MagmaRockInside_GrowTabletFlame(void) {
     other->y.fixed -= toFIXED(1);
     FieldEvent_Wait(5);
     i++;
-  } while (i != 32);
+  } while (i != PILLAR_SINK_DEPTH);
   Event_PlaySound(SE_FLAME_GROW);
   Actor_SelectAnimation(other, 4);
   Actor_Release(actor);
@@ -1969,7 +2005,7 @@ s32 MagmaRockInside_DriftForSteps(struct Orbit *object) {
   object->y += object->orbitRadius;
   object->z += object->centreZ;
   steps = &object->phase;
-  left = *steps + 255;
+  left = *steps + (u8)-1;
   *steps = left;
   stepsLeft = left;
   return stepsLeft != 0;
@@ -2065,7 +2101,7 @@ void MagmaRockInside_LearnBlaze(s32 a, s32 b) {
     REG_BLDALPHA = BLEND_ALPHA(10, 16);
     wait(2);
     i++;
-  } while (i != 16);
+  } while (i != TABLET_RISING_SPARKS);
   REG_BLDALPHA = BLEND_ALPHA(8, 16);
   wait(30);
   for (i = 0; i != LEARN_SPARKS; i++) {
@@ -2616,7 +2652,7 @@ s32 Scene_Initialize(void) {
 
       Actor_SelectAnimation(actor, 4);
       actor->motionFlags = 0;
-      actor->y.fixed = actor->groundHeight = -toFIXED(32);
+      actor->y.fixed = actor->groundHeight = -toFIXED(PILLAR_SINK_DEPTH);
     } while (++i != 3);
     if (Event_GetFlag(FLAG_LEDGE_PILLAR_PUSHED)) {
       Actor_SetAnimation(ACTOR_LEDGE_PILLAR, 4);
@@ -2630,7 +2666,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_EAST_TORCH_FLAME, 0, 0);
     if (Event_GetFlag(FLAG_WEST_TORCH_LIT) &&
         Event_GetFlag(FLAG_EAST_TORCH_LIT)) {
-      Lower(ACTOR_BLOCKING_PILLAR, -toFIXED(32));
+      Lower(ACTOR_BLOCKING_PILLAR, -toFIXED(PILLAR_SINK_DEPTH));
       Actor_SetAnimation(ACTOR_BLOCKING_PILLAR, 4);
     } else {
       MagmaRockInside_SwapCells(0, 38, 18, CELL_BEHAVIOR_WALL << 8);
@@ -2661,7 +2697,7 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_SOURCE_FLAME), 0);
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_TORCH_FLAME), 0);
     if (Event_GetFlag(FLAG_TABLET_TORCH_LIT)) {
-      Lower(ACTOR_TORCH_PILLAR, -toFIXED(32));
+      Lower(ACTOR_TORCH_PILLAR, -toFIXED(PILLAR_SINK_DEPTH));
       Actor_SetAnimation(ACTOR_TORCH_PILLAR, 4);
     } else {
       MagmaRockInside_SwapCells(0, 7, 21, CELL_BEHAVIOR_WALL << 8);
@@ -2880,7 +2916,7 @@ void MagmaRockInside_SpawnDustRing(void) {
           ((struct FieldSprite *)leader->sprite)->priority;
     }
     i++;
-  } while (i <= 16);
+  } while (i <= DUST_RING_PUFFS);
 }
 
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);
@@ -2894,8 +2930,8 @@ void MagmaRockInside_SetActorCellShape(s32 heightOffset, s32 layer, s32 owner) {
                                   (struct MapCell *)Ram_MapCellBuffer);
   s32 value =
       MapGrid_GetTerrainKind(actor->layer, actor->x.fixed, actor->z.fixed);
-  s32 height =
-      Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed) >> 19;
+  s32 height = CELL_HEIGHT_STEPS(
+      Map_GetTerrainHeight(actor->layer, actor->x.fixed, actor->z.fixed));
 
   height += heightOffset;
 
@@ -2913,9 +2949,6 @@ void BattleEffect_StepVector3(struct Particle *particle, s32 damping,
                               s32 gravity);
 
 #include "shared/particle_update_falling.h"
-
-/// The falling rocks in flight at once.
-#define ROCK_COUNT 64
 
 /// The falling rocks' work: their tiles, the rocks and their sprites, in a ring
 /// that next walks round.
@@ -2981,7 +3014,7 @@ void MagmaRockInside_StartFallingRocks(void) {
     sprite->oam.fullColor = 1;
     sprite->oam.palette = SPRITE_COLOR_NORMAL;
     sprite->oam.priority = 0;
-    sprite->depth = 240;
+    sprite->depth = OAM_DEPTH_WINDOW;
     rock->timer = -1;
   }
   {

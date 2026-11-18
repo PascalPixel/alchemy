@@ -158,11 +158,9 @@ s32 ActorScript_JumpIfFalse(struct Actor *interpreter) {
 /// SC_END: hands the actor back to the idle script, gActorScript_EndScript,
 /// whose lone SC_END runs again each frame. Returns 0.
 s32 ActorScript_End(struct Actor *interpreter) {
-  s32 result;
-
   interpreter->script = gActorScript_EndScript;
-  interpreter->scriptCursor = (result = 0);
-  return result;
+  interpreter->scriptCursor = 0;
+  return 0;
 }
 
 /// SC_FLAG_CHECK(f): tests game flag f.
@@ -198,8 +196,7 @@ s32 ActorScript_ToggleFlagAndTest(struct Actor *interpreter) {
   flagId = interpreter->script[interpreter->scriptCursor + 1];
   previousFlagValue = GameFlag_GetFar(flagId);
   interpreter->conditionResult = previousFlagValue;
-  // The test's low byte is 1 when the flag was set.
-  if ((previousFlagValue << 24) == 1 << 24) {
+  if ((u8)previousFlagValue == 1) {
     GameFlag_ClearFar(flagId);
   } else {
     GameFlag_SetFar(flagId);
@@ -305,7 +302,6 @@ s32 ActorScript_ApplyAbsolutePosition(struct Actor *interpreter) {
 
 /// SC_MOVE_BY(x, y, z): sends the actor towards its position plus (x, y, z).
 s32 ActorScript_ApplyRelativePosition(struct Actor *actor) {
-
   u8 *commandBytes = (u8 *)(actor->script + actor->scriptCursor);
   s32 *arguments = (s32 *)(commandBytes + 4);
   s32 deltaX = *arguments++;
@@ -321,7 +317,6 @@ s32 ActorScript_ApplyRelativePosition(struct Actor *actor) {
 /// SC_FACE_WATCHED: stores the angle from the actor to its watched actor in
 /// scriptValue, measured on the ground plane (x and z).
 s32 ActorScript_StoreAngleToWatchedActor(struct Actor *actor) {
-
   struct Actor *target;
 
   target = actor->watchedActor;
@@ -333,7 +328,6 @@ s32 ActorScript_StoreAngleToWatchedActor(struct Actor *actor) {
 
 /// SC_MOVE_TO_WATCHED: sends the actor towards its watched actor.
 s32 ActorScript_ApplyWatchedActorPosition(struct Actor *actor) {
-
   struct Actor *target;
 
   target = actor->watchedActor;
@@ -345,7 +339,6 @@ s32 ActorScript_ApplyWatchedActorPosition(struct Actor *actor) {
 /// SC_MOVE_LOCAL(a, b): sends the actor towards its position plus an offset
 /// that is never filled in; the operands are skipped unread.
 s32 ActorScript_ApplyLocalOffsetPosition(struct Actor *actor) {
-
   s32 localOffset[3];
 
   // BUG: offset is never set, so the target is the position plus whatever
@@ -363,7 +356,6 @@ s32 ActorScript_ApplyLocalOffsetPosition(struct Actor *actor) {
 /// SC_CAMERA: keeps the camera actor on its leader (watchedActor), clamped so
 /// the view stays on the map.
 s32 FieldCamera_FollowLeaderInBounds(struct Actor *cameraActor) {
-
   struct Actor *leader;
   struct MapGridScrollWork *bounds;
   s32 minX;
@@ -460,7 +452,6 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *cameraActor) {
 
 /// SC_APPROACH_WATCHED: follows the watched actor at its speed.
 s32 Actor_ApproachWatchedActor(struct Actor *actor) {
-
   s32 distancePixels;
   FIXED moveZ;
   FIXED dx;
@@ -490,7 +481,7 @@ s32 Actor_ApproachWatchedActor(struct Actor *actor) {
     Actor_SetMoveTarget(actor, actor->x.fixed + moveX, actor->y.fixed,
                         actor->z.fixed + moveZ);
     Actor_SelectAnimation(actor, ANIM_WALK);
-    actor->scriptCursor = (actor->scriptCursor + 1);
+    actor->scriptCursor++;
     return 1;
   }
   Actor_SelectAnimation(actor, ANIM_STAND);
@@ -502,7 +493,6 @@ s32 Actor_ApproachWatchedActor(struct Actor *actor) {
 /// solid actor or wall blocks, with clear ground 8 pixels further at 45 degrees
 /// either side, and within limit pixels of home.
 s32 Actor_Wander(struct Actor *actor) {
-
   struct FieldPosition candidatePosition;
   struct FieldPosition probePosition;
   s32 minimumDistance;
@@ -594,7 +584,6 @@ retry:
 /// ground around the point, while it is within limit pixels of home; outside
 /// that, or when no point works, it heads back towards home.
 s32 ActorScript_WanderNearHome(struct Actor *actor) {
-
   struct FieldPosition candidatePosition;
   struct FieldPosition probePosition;
   s32 minimumDistance;
@@ -701,7 +690,7 @@ back:
     Vector_AddPolarOffset(travelDistance, heading, &candidatePosition);
     if (MapGrid_CheckCollision(actor, &candidatePosition) != COLLISION_NONE)
       goto back;
-    actor->collisionFlags &= ~2;
+    actor->collisionFlags &= ~ACTOR_PUSHABLE;
     Actor_SetMoveTarget(actor, candidatePosition.x, candidatePosition.y,
                         candidatePosition.z);
   }
@@ -790,7 +779,7 @@ void ActorScript_SetOrCompareRadius(struct ScriptOperands *state, s32 operation,
     return;
   }
   if (operation == SCRIPT_OPERAND_ADD) {
-    state->radius = (state->radius + value);
+    state->radius += value;
     return;
   }
   state->conditionResult = state->radius == (s16)value;

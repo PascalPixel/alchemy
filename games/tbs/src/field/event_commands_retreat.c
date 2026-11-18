@@ -18,15 +18,15 @@ void FieldEffect_UpdateSpinAngle(struct Actor *actor) {
     actor->timer = actor->timer + 1;
 }
 
-/// Per-frame update: spins 1/8 turn a frame as it shrinks by 640, rising a
-/// pixel a frame; once its scale falls below FIXED_ONE * 3 / 16 (84 frames from
-/// full size) its sprites are hidden (spriteStorageKind 0), but it is not
-/// released. Retreat gives it to the caster.
+/// Per-frame update: spins 1/8 turn a frame as it shrinks by 5/512 of its full
+/// size, rising a pixel a frame; once its scale falls below 3/16 (84 frames
+/// from full size) its sprites are hidden, but it is not released. Retreat
+/// gives it to the caster.
 void FieldEffect_UpdateRetreatCaster(struct Actor *actor) {
   u32 scale;
 
-  actor->scaleY -= 640;
-  scale = actor->scaleX - 640;
+  actor->scaleY -= FIXED_ONE * 5 / 512;
+  scale = actor->scaleX - FIXED_ONE * 5 / 512;
   actor->facing += DEGtoANG(45);
   actor->y.fixed += toFIXED(1);
   actor->scaleX = scale;
@@ -68,10 +68,11 @@ void FieldEffect_UpdateRadialLaunch(struct FieldParticle *effect) {
     pos.z = effect->originZ;
     pos.x = effect->originX;
 
+    // Up the screen, within 1/8 turn either way.
     spread = Random16();
     Vector_AddPolarOffset(toFIXED(120),
-                          ((spread << 13) >> 16) - ((Random16() << 13) >> 16) +
-                              FACING_NORTH,
+                          FIXEDtoINT(spread * (TRIG_TURN / 8)) -
+                              Random16_Below(TRIG_TURN / 8) + FACING_NORTH,
                           &pos);
 
     effect->targetX = pos.x;
@@ -135,7 +136,7 @@ void FieldPsynergy_Retreat(void) {
     FieldParticle_Initialize(effect, SPRITE_PARTICLE, pos.x, pos.z);
     FieldParticle_SetCallback(effect, FieldEffect_UpdateRadialLaunch);
     FieldParticle_SetActorMode(effect, 7);
-    Sprite_SetAnimationColorModesFar(effect->actor, (Random16() * 7) >> 16);
+    Sprite_SetAnimationColorModesFar(effect->actor, Random16_Below(7));
     scale = (Random16() >> 1) + FIXED_ONE * 6 / 5; // 1.2 to 1.7
     effect->scaleY = scale;
     effect->scaleX = scale;

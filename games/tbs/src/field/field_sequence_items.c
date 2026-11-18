@@ -51,8 +51,8 @@ const struct Trigger *Field_FindItemTrigger(s32 item) {
 }
 
 /// Uses an item on the field. packedItem holds the item (bits 0 to 9) and the
-/// character using it (bits 10 to 13; 15 for the character carrying most of
-/// it); slot is its inventory slot.
+/// character using it (bits 10 to 13; UNIT_NONE for whoever holds it in the
+/// most inventory slots); slot is its inventory slot.
 s32 Field_UseItem(s32 packedItem, s32 slot) {
   s32 result;
   s32 itemId;
@@ -75,7 +75,7 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     mostMatchingSlots = 0;
     partyCount = Party_CountMembersFar();
 
-    if (actorId == 15) {
+    if (actorId == UNIT_NONE) {
       actorId = 0;
       for (partyIndex = 0; partyIndex < partyCount; partyIndex++) {
         unit = Unit_GetFar(gMainRoutineWork.party[partyIndex]);
@@ -130,7 +130,8 @@ s32 Field_UseItem(s32 packedItem, s32 slot) {
     result = 0;
   } else {
     // The item's own field action, if it has one: the ability abilityId names
-    // plays as if cast. Items with useType bit 0 are used up.
+    // plays as if cast, and one whose useType has bit 0 set (ITEM_USE_CONSUMED,
+    // and ITEM_USE_TEACHES too) is used up.
     s32 abilityId;
 
     GameFlag_ClearFar(FLAG_ITEM_USED_UP);

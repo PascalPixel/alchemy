@@ -5,9 +5,27 @@
 #include "battle_effect_internal.h"
 
 #define ANNIHILATION_FRAMES 64
+#define ANNIHILATION_SHARDS 64
+/// The first four shards' life in frames; each four after live two frames
+/// longer.
+#define ANNIHILATION_SHARD_LIFE 16
+/// The fire streak in front of the user, its pictures a frame each from here,
+/// and the target's first red flash.
+#define ANNIHILATION_STREAK_FRAME 6
+#define ANNIHILATION_STREAK_PICTURES 6
+/// The white flash, the damage and the knock-back.
+#define ANNIHILATION_HIT_FRAME 8
+#define ANNIHILATION_FLASH_FRAME 14 ///< the target's second red flash
+/// The fire burst over the target, from ANNIHILATION_BURST_FRAME to
+/// ANNIHILATION_BURST_LAST_FRAME: three pictures two frames each, the last
+/// held.
+#define ANNIHILATION_BURST_FRAME 16
+#define ANNIHILATION_BURST_LAST_FRAME 47
+#define ANNIHILATION_BURST_PICTURES 3
 
 /// The user closes on the first target and fire bursts from it in a shower of
-/// shards.
+/// shards, the flames settling into the kanji for destroy over it (the
+/// stronger variant, which no ability plays, draws the kanji for kill).
 ///
 /// Abilities: Annihilation.
 void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
@@ -41,7 +59,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
   wait(1);
   targetActor = GetBattleObjectSlotFar(work->args->targets[0])->actor;
 
-  for (i = 0; i != 64; i++) {
+  for (i = 0; i != ANNIHILATION_SHARDS; i++) {
     // Shards burst from the target.
     struct Particle *seed = &work->particles[i];
 
@@ -52,7 +70,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
                  ((Random16() & 255) - 127) << 12);
     if (seed->x > 0)
       seed->velocityX = -seed->velocityX;
-    seed->variant = i / 4 * 2 + 16;
+    seed->variant = i / 4 * 2 + ANNIHILATION_SHARD_LIFE;
   }
 
   Projection_ScaledUnit(work->args->targets[0], &origin);
@@ -60,13 +78,15 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   for (frame = 0; frame != ANNIHILATION_FRAMES; frame++) {
-    if (frame == 8)
+    if (frame == ANNIHILATION_HIT_FRAME)
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-    if (work->args->variant != EFFECT_VARIANT_BASIC && frame == 8)
+    if (work->args->variant != EFFECT_VARIANT_BASIC &&
+        frame == ANNIHILATION_HIT_FRAME)
       Sound_PlayFar(SE_POWER_UP);
     Projection_ScaledUnit(work->args->user, &position);
     // The fire streak in front of the user.
-    if (frame >= 6 && frame <= 11) {
+    if (frame >= ANNIHILATION_STREAK_FRAME &&
+        frame < ANNIHILATION_STREAK_FRAME + ANNIHILATION_STREAK_PICTURES) {
       if (work->args->side == EFFECT_SIDE_ENEMIES)
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                             COMPOSITE_ADDITIVE);
@@ -77,30 +97,33 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
       blitters[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
       if (work->args->side == EFFECT_SIDE_ENEMIES)
         blitters[0](canvas,
-                    work->sheet + (frame - 6) * PICTURE_BYTES(FIRE_STREAK),
+                    work->sheet + (frame - ANNIHILATION_STREAK_FRAME) *
+                                      PICTURE_BYTES(FIRE_STREAK),
                     position.x / 2 - FIRE_STREAK_WIDTH / 2, position.y - 24,
                     FIRE_STREAK_WIDTH, FIRE_STREAK_HEIGHT);
       else
         blitters[0](canvas,
-                    work->sheet + (frame - 6) * PICTURE_BYTES(FIRE_STREAK),
+                    work->sheet + (frame - ANNIHILATION_STREAK_FRAME) *
+                                      PICTURE_BYTES(FIRE_STREAK),
                     position.x / 2, position.y - 24, FIRE_STREAK_WIDTH,
                     FIRE_STREAK_HEIGHT);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     }
     // The fire burst over the target grows.
-    if (frame >= 16 && frame <= 47) {
-      s32 step = (frame - 16) / 2;
+    if (frame >= ANNIHILATION_BURST_FRAME &&
+        frame <= ANNIHILATION_BURST_LAST_FRAME) {
+      s32 step = (frame - ANNIHILATION_BURST_FRAME) / 2;
       s32 strip;
 
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                           COMPOSITE_LIGHTEN);
       blitters[0] = EFFECT_BLITTER(HEAP_SLOT_RAM_CODE);
-      if (step > 2)
-        step = 2;
+      if (step > ANNIHILATION_BURST_PICTURES - 1)
+        step = ANNIHILATION_BURST_PICTURES - 1;
       if (work->args->variant == EFFECT_VARIANT_BASIC)
         strip = 0;
       else
-        strip = 3 * PICTURE_BYTES(FIRE_BURST);
+        strip = ANNIHILATION_BURST_PICTURES * PICTURE_BYTES(FIRE_BURST);
       blitters[0](canvas,
                   Ram_MapGridCellBuffer + strip +
                       step * PICTURE_BYTES(FIRE_BURST),
@@ -113,7 +136,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
       HeapSlot_Release(HEAP_SLOT_RAM_CODE);
     }
     // The strike flashes the canvas.
-    if (frame == 8) {
+    if (frame == ANNIHILATION_HIT_FRAME) {
       Dma_Fill32(CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST), canvas,
                  CANVAS_BYTES);
     }
@@ -121,7 +144,7 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
     // Shards shrink and fall.
     if (frame > 3) {
       BattleEffect_FetchRectangleBlitters(work->args->side, blitters);
-      for (i = 0; i != 64; i++) {
+      for (i = 0; i != ANNIHILATION_SHARDS; i++) {
         s32 life;
 
         shard = &work->particles[i];
@@ -140,14 +163,14 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
       EFFECT_RELEASE_BLITTERS();
     }
     // The strike throws the target back.
-    if (frame == 8) {
+    if (frame == ANNIHILATION_HIT_FRAME) {
       BattleMotion_ApplyKnockbackFar(work->args->targets[0], KNOCKBACK_HURL);
       work->shakeFrames = 4;
     }
-    if (frame == 6)
+    if (frame == ANNIHILATION_STREAK_FRAME)
       BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_RED_TINT,
                                TINT_KEEP, TINT_KEEP, 0);
-    if (frame == 14)
+    if (frame == ANNIHILATION_FLASH_FRAME)
       BattleEffect_TintBattler(work->args->targets[0], SPRITE_COLOR_RED_TINT,
                                TINT_KEEP, TINT_KEEP, 0);
     BattleCamera_Shake(16, 16);
@@ -158,3 +181,12 @@ void BattleEffect_RunAnnihilation(struct BattleEffectParams *args) {
 }
 
 #undef ANNIHILATION_FRAMES
+#undef ANNIHILATION_SHARDS
+#undef ANNIHILATION_SHARD_LIFE
+#undef ANNIHILATION_STREAK_FRAME
+#undef ANNIHILATION_STREAK_PICTURES
+#undef ANNIHILATION_HIT_FRAME
+#undef ANNIHILATION_FLASH_FRAME
+#undef ANNIHILATION_BURST_FRAME
+#undef ANNIHILATION_BURST_LAST_FRAME
+#undef ANNIHILATION_BURST_PICTURES

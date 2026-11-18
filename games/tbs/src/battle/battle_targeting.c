@@ -97,19 +97,29 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
   return positions[Random16_Below(count)];
 }
 
-// XXX (no evidence): which list is the slip; Restore cures stun and never
-// confusion or charm, but this counts confusion and charm and not stun, so
-// Cerebus and the Hydros Statue pass over an ally who is only stunned.
-/// Counts the statuses of unit that Restore is taken to cure: delusion,
-/// confusion, charm, sleep, the Psynergy seal and the Grim Reaper.
+// BUG: Restore cures stun and never confusion or charm, as its description
+// says ("Remove sleep, stun, and delusion.") and its cure does, but the count
+// takes confusion and charm and not stun, so Cerebus and the Hydros Statue
+// pass over an ally who is only stunned.
+#ifdef BUGFIX
+#define COUNT_STUN(unit, count)                                                \
+  if ((unit)->stun != 0)                                                       \
+    (count)++;
+#else
+#define COUNT_STUN(unit, count)                                                \
+  if ((u8)(unit)->confusion != 0)                                              \
+    (count)++;                                                                 \
+  if ((unit)->charm != 0)                                                      \
+    (count)++;
+#endif
+
+/// Counts the statuses of unit that Restore cures: delusion, stun (COUNT_STUN),
+/// sleep, the Psynergy seal and the Grim Reaper.
 #define COUNT_PARTIAL_CURES(unit, count)                                       \
   {                                                                            \
     if ((unit)->delusion != 0)                                                 \
       (count)++;                                                               \
-    if ((u8)(unit)->confusion != 0)                                            \
-      (count)++;                                                               \
-    if ((unit)->charm != 0)                                                    \
-      (count)++;                                                               \
+    COUNT_STUN((unit), (count))                                                \
     if ((unit)->sleep != 0)                                                    \
       (count)++;                                                               \
     if ((unit)->psySeal != 0)                                                  \
@@ -118,8 +128,8 @@ s32 BattleAI_ChooseRandomTarget(s32 requireLivingUnit) {
       (count)++;                                                               \
   }
 
-/// Counts the statuses Tonic is taken to cure: those, the evil spirit and
-/// poison, with the same mismatch. No enemy has Tonic.
+/// Counts the statuses Tonic cures: those, the evil spirit and poison. No enemy
+/// has Tonic.
 #define COUNT_ALL_CURES(unit, count)                                           \
   {                                                                            \
     COUNT_PARTIAL_CURES((unit), (count));                                      \
@@ -406,33 +416,35 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
       }
     }
 
-    // Weighted toward the front; five or more fall through to an even roll.
+    // Weighted toward the front: of a roll's outcomes the first target takes
+    // 6, the second 5, the third 4 and the fourth 3; five or more fall
+    // through to an even roll.
     switch (targetCount) {
     case 1:
       selected = 0;
       break;
     case 2:
-      roll = Random16_Below(11);
+      roll = Random16_Below(6 + 5);
       selected = 0;
-      if (roll > 5)
+      if (roll >= 6)
         selected = 1;
       break;
     case 3:
-      selected = Random16_Below(15);
-      if (selected <= 5)
+      selected = Random16_Below(6 + 5 + 4);
+      if (selected < 6)
         selected = 0;
-      else if (selected <= 10)
+      else if (selected < 6 + 5)
         selected = 1;
       else
         selected = 2;
       break;
     case 4:
-      selected = Random16_Below(18);
-      if (selected <= 5)
+      selected = Random16_Below(6 + 5 + 4 + 3);
+      if (selected < 6)
         selected = 0;
-      else if (selected <= 10)
+      else if (selected < 6 + 5)
         selected = 1;
-      else if (selected <= 14)
+      else if (selected < 6 + 5 + 4)
         selected = 2;
       else
         selected = 3;

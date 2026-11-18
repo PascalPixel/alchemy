@@ -25,6 +25,12 @@ u32 BattleSpoils_RankItem(u32 inventoryEntry) {
   return priority;
 }
 
+/// Above every item's rank: the search for the lowest of the spoils' four
+/// starts here.
+#define SPOILS_RANK_CEILING (1 << 30)
+/// PsynergyEntry.encodedAction's top bit: the action comes from the class.
+#define PSYNERGY_FROM_CLASS_SHIFT 15
+
 /// Empties the battle's spoils (BattleWork.spoils) and
 /// gMainRoutineWork.pendingItem.
 void BattleSpoils_Clear(void) {
@@ -144,7 +150,7 @@ s32 BattleEnemy_RecordDefeat(s32 unitId, s32 djinnBonus) {
   // Twice FIXED_ONE >> n against a 16-bit random number: 1 in 2^(n - 1).
   if ((FIXED_ONE * 2 >> dropShift) > (Battle_RandomFar() & 0xffff)) {
     lowestSlot = -1;
-    lowestItemPriority = 0x40000000;
+    lowestItemPriority = SPOILS_RANK_CEILING;
     for (i = 0; i <= 3; i++) {
       itemPriority = BattleSpoils_RankItem(spoils->items[i]);
       if (itemPriority < lowestItemPriority) {
@@ -204,11 +210,11 @@ void Battle_AwardSpoils(void) {
         MessageArgument_PushFar(unit->level, MESSAGE_ARGUMENT_NUMBER);
         BattleMessage_ShowAndWaitFar(MsgLevelUp);
         BattleMessage_WaitForAdvance();
-        // A class ability (bit 15) the copy lacks is newly learned.
+        // A class ability the copy lacks is newly learned.
         for (abilityIndex = 0; abilityIndex < PSYNERGY_SLOTS; abilityIndex++) {
           encodedAbility = unit->psynergy[abilityIndex].encodedAction;
           if ((encodedAbility & PSYNERGY_ABILITY_MASK) &&
-              (encodedAbility >> 15)) {
+              (encodedAbility >> PSYNERGY_FROM_CLASS_SHIFT)) {
             for (oldAbilityIndex = 0; oldAbilityIndex < PSYNERGY_SLOTS;
                  oldAbilityIndex++) {
               if (encodedAbility ==
@@ -298,3 +304,6 @@ void Battle_AwardSpoils(void) {
 
 /// Does nothing; the debug battle menu (DebugBattle_RunMenu) calls it.
 void Battle_DebugSelectNoOp(void) {}
+
+#undef SPOILS_RANK_CEILING
+#undef PSYNERGY_FROM_CLASS_SHIFT

@@ -4,10 +4,14 @@
 
 #include "battle_internal.h"
 
+/// The choices an enemy may fail to carry out before it defends instead.
+#define AI_MAX_FAILED_CHOICES 16
+
 /// Chooses an enemy's action: one of the eight in its definition, picked by its
-/// strategy, and a target worth it; after 18 tries that fail, the enemy
-/// defends. retry is 0 as the turn is built, when only a guard is chosen, and 1
-/// when the enemy acts.
+/// strategy, and a target worth it; if a pick fails after more than
+/// AI_MAX_FAILED_CHOICES have failed before it, the enemy defends. retry is 0
+/// as the turn is built, when only a guard is chosen, and 1 when the enemy
+/// acts.
 UNREAD_RESULT BattleAI_ChooseAction(struct BattleAction *request, s32 retry) {
   u32 selection;
   struct BattleAIState *selectionMemory;
@@ -242,7 +246,7 @@ select_again:
         needsChoice = 0;
       }
       break;
-    case 3:
+    case 3: // No ability has this mode.
       request->target = Battle_FindUnitPlace(request->unitId);
       break;
     default:
@@ -256,8 +260,7 @@ select_again:
   if (retry == 0)
     needsChoice = 0;
 next_candidate:
-  // On the 18th failed pick, defend.
-  if (needsChoice != 0 && failedChoices > 16) {
+  if (needsChoice != 0 && failedChoices > AI_MAX_FAILED_CHOICES) {
     request->command = COMMAND_DEFEND;
     needsChoice = 0;
   }
@@ -267,3 +270,5 @@ next_candidate:
 done:
   return;
 }
+
+#undef AI_MAX_FAILED_CHOICES

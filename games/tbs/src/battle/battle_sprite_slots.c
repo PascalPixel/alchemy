@@ -28,6 +28,11 @@ s32 BattleObject_GetPalette(s32 id) { return BattleObject_Get(id)->palette; }
 /// The battle has six enemy sprite slots; a large enemy takes two side by
 /// side, a small one (BattleSprite_IsSmall) one.
 #define ENEMY_SPRITE_SLOTS 6
+/// Each enemy sprite slot owns 16 KB of Ram_EnemySpriteSlots.
+#define ENEMY_SPRITE_SLOT_SIZE (16 * 1024)
+/// A picture cache's tag holds its slot above the sprite's bits, as
+/// SPRITE_PICTURE_TAG does.
+#define PICTURE_CACHE_TAG_SLOT_SHIFT 12
 
 /// Returns 1 if an enemy of the class would find room among the enemy sprite
 /// slots, two side by side for a large one.
@@ -51,8 +56,8 @@ s32 Enemy_HasSpriteRoom(s32 classId) {
 }
 
 /// Loads an enemy's battle sprite into the first free enemy sprite slots, the
-/// Kraken's and the Fusion Dragon's second part too. Returns (slot << 12) |
-/// sprite, or 0.
+/// Kraken's and the Fusion Dragon's second part too. Returns the sprite with
+/// its first slot (SPRITE_PICTURE_TAG), or 0.
 s32 EnemySprite_LoadIntoSlots(s32 unitId) {
   s32 spritePart;
   struct BattleWork *battle = gBattleWork;
@@ -89,8 +94,7 @@ s32 EnemySprite_LoadIntoSlots(s32 unitId) {
 
     {
       s32 palette = BattleSprite_GetPalette(unit->id);
-      // Each slot owns 16 KB of sprite buffer.
-      u8 *spriteBuffer = Ram_EnemySpriteSlots + slot * 16384;
+      u8 *spriteBuffer = Ram_EnemySpriteSlots + slot * ENEMY_SPRITE_SLOT_SIZE;
 
       if (SpritePictureCache_LoadFar(slot, (u32 *)spriteBuffer,
                                      sprite + spritePart, palette) == 0)
@@ -98,7 +102,7 @@ s32 EnemySprite_LoadIntoSlots(s32 unitId) {
     }
 
     if (spritePart == 0)
-      result = (slot << 12) | sprite;
+      result = (slot << PICTURE_CACHE_TAG_SLOT_SHIFT) | sprite;
 
     battle->spriteSlots[slot] = unitId;
     if (!needsSingleSlot)
@@ -185,3 +189,7 @@ s32 BattleUnit_GetWeaponSprite(s32 unitId) {
   }
   return weaponSprite;
 }
+
+#undef ENEMY_SPRITE_SLOTS
+#undef ENEMY_SPRITE_SLOT_SIZE
+#undef PICTURE_CACHE_TAG_SLOT_SHIFT

@@ -113,13 +113,18 @@ enum {
   /// MESSAGE_ACTOR_NAME as Message_DecodeRaw keeps it, unexpanded: the next
   /// entry names the unit, and drawing and measuring skip both.
   TEXT_ACTOR_NAME = 17,
+  /// The first letters of a unit's name, a stammer, as The Lost Age's decoder
+  /// writes its MESSAGE_ACTOR_NAME_START: the next two entries are the unit and
+  /// how many letters, and drawing and measuring skip all three, as The Lost
+  /// Age's do. No message of The Broken Seal uses it.
+  TEXT_ACTOR_NAME_START = 28,
   /// MESSAGE_ARTICLE_CLASS as Message_DecodeRaw keeps it outside Japanese, at
   /// the head of an item or class name: drawing skips it and its class.
   TEXT_ARTICLE_CLASS = 29,
-  // XXX: codes 11 and 12 (one operand), 14 (two) and 28 (one) reach decoded
-  // text with their operands, which drawing and measuring skip, but no
-  // message of any edition uses them. A message that did, or Camelot's name
-  // for them, would name them.
+  // XXX (no evidence): what codes 11 and 12 (one operand) and 14 (two) are
+  // for, which drawing and measuring skip with their operands; no message of
+  // The Broken Seal uses them and neither game's decoder names them, so
+  // nothing the game shows settles it.
   TEXT_END_ALT = 30, ///< ends the text as TEXT_END does
   /// The message runs the codes below it as control codes and draws the rest.
   TEXT_COMMANDS = 31,

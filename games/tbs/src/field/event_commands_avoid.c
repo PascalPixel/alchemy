@@ -4,8 +4,9 @@
 
 #include "event_commands_internal.h"
 
-/// End of the Psynergy: switches the caster's display flags between 3 and 1 on
-/// a 5-frame cycle, so its outline (bit 1) blinks beside its shadow (bit 0).
+/// End of the Psynergy: switches the caster's sprite between SPRITE_FLAG_SHADOW
+/// | SPRITE_FLAG_OUTLINED and SPRITE_FLAG_SHADOW on a 5-frame cycle, so it
+/// flashes as a dark outline.
 void FieldEffect_BlinkAvoidCaster(void) {
   struct Actor *caster;
   struct Sprite *rec;
@@ -63,8 +64,12 @@ void FieldPsynergy_ShowAvoidWoreOff(void) {
   FieldMessage_ShowFar(MsgItemWoreOff, FIELD_MESSAGE_ZOOM);
 }
 
-/// The caster spins and flashes, then blinks, and encounters are kept away
-/// until Avoid wears off.
+#define AVOID_FLASHES 20      ///< white flashes, 5 frames each
+#define AVOID_BLINK_FRAMES 70 ///< the outline flashes
+#define AVOID_CHIME_FRAME 15  ///< SE_NOTE_MID, into the outline's flashing
+
+/// The caster spins among falling arcs and flashes white, then flashes as an
+/// outline, and encounters are kept away until Avoid wears off.
 void FieldPsynergy_Avoid(void) {
   struct FieldEffectWork *effectWork;
   struct Actor *actor;
@@ -86,7 +91,7 @@ void FieldPsynergy_Avoid(void) {
   VramCache_Load((s16)slot, 256, gFieldEffect_ArcSparkTiles);
   gMainRoutineWork.avoidDistance = toFIXED(2400);
   gMainRoutineWork.avoidByItem = GameFlag_GetFar(FLAG_ITEM_USE);
-  Actor_SetSpriteColorModeFar(actor, 0);
+  Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_NORMAL);
   actor->update = FieldEffect_UpdateAvoidCaster;
   actor->arcPhase = 0;
   actor->arcFrames = 0;
@@ -95,7 +100,7 @@ void FieldPsynergy_Avoid(void) {
   actor->arcPhase = 1;
   wait(10);
   // Flash white for 2 frames in every 5.
-  for (count = 0; count < 20; count++) {
+  for (count = 0; count < AVOID_FLASHES; count++) {
     entry->colorMode = SPRITE_COLOR_WHITE;
     group->dirty = 1;
     wait(2);
@@ -107,9 +112,9 @@ void FieldPsynergy_Avoid(void) {
   actor->update = NULL;
   actor->facing = angle;
   Task_Add(FieldEffect_BlinkAvoidCaster, TASK_PASS_FRAME);
-  wait(15);
+  wait(AVOID_CHIME_FRAME);
   Sound_PlayFar(SE_NOTE_MID);
-  wait(55);
+  wait(AVOID_BLINK_FRAMES - AVOID_CHIME_FRAME);
   Task_Remove(FieldEffect_BlinkAvoidCaster);
   // Back to the caster's own look: outlined while Cloak is on, else with its
   // shadow.
@@ -119,5 +124,10 @@ void FieldPsynergy_Avoid(void) {
     Actor_SetSpriteFlagsFar(actor, SPRITE_FLAG_SHADOW);
   Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_NORMAL);
   VramCache_FreeEntry(effectWork->arcTileSlot);
+  // "Monsters won't attack so often now."
   FieldMessage_ShowFar(MsgMonstersAttackLess, FIELD_MESSAGE_ZOOM);
 }
+
+#undef AVOID_FLASHES
+#undef AVOID_BLINK_FRAMES
+#undef AVOID_CHIME_FRAME

@@ -5,6 +5,10 @@
 #include "battle_effect_internal.h"
 
 #define CONDEMN_FRAMES 132
+/// The reaper's first two passes, in frames; it fades out, rippling harder,
+/// over the last CONDEMN_FADE_FRAMES of each.
+#define CONDEMN_PASS_FRAMES 32
+#define CONDEMN_FADE_FRAMES 16
 #define CONDEMN_SWING_FRAME 88   ///< the reaper swings, in a white flash
 #define CONDEMN_BOUNCE_FRAME 120 ///< the falling target bounces
 /// How far the reaper sways across and up and down as it circles, in pixels.
@@ -102,7 +106,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_HEAVY_IMPACT);
     }
     // The second pass, lower and further across.
-    if (frame == 32) {
+    if (frame == CONDEMN_PASS_FRAMES) {
       if (work->args->side == EFFECT_SIDE_PARTY) {
         swayCenter[0] = -toFIXED(32);
       } else {
@@ -111,12 +115,12 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       swayCenter[1] = toFIXED(24);
       drawReaper = 0;
     }
-    if (frame == 33) {
+    if (frame == CONDEMN_PASS_FRAMES + 1) {
       REG_BLDALPHA = EFFECT_BLEND_ADD;
       drawReaper = 1;
     }
     // The last pass, on the first target.
-    if (frame == 64) {
+    if (frame == 2 * CONDEMN_PASS_FRAMES) {
       Projection_ScaledUnit(work->args->targets[0], position);
       if (work->args->side == EFFECT_SIDE_PARTY) {
         swayCenter[0] = INTtoFIXED(position[0].x - 128);
@@ -126,22 +130,22 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
       swayCenter[1] = 0;
       drawReaper = 0;
     }
-    if (frame == 65) {
+    if (frame == 2 * CONDEMN_PASS_FRAMES + 1) {
       REG_BLDALPHA = EFFECT_BLEND_ADD;
       drawReaper = 1;
     }
     // Each of the first two passes ripples harder as the reaper fades out.
     scanline = work->bg2xLines;
     ripple = 0;
-    if (frame <= 31) {
-      if (frame > 15) {
-        ripple = (frame * 2) - 32;
-        REG_BLDALPHA = EFFECT_BLEND_CANVAS(31 - frame);
+    if (frame < CONDEMN_PASS_FRAMES) {
+      if (frame >= CONDEMN_PASS_FRAMES - CONDEMN_FADE_FRAMES) {
+        ripple = (frame - (CONDEMN_PASS_FRAMES - CONDEMN_FADE_FRAMES)) * 2;
+        REG_BLDALPHA = EFFECT_BLEND_CANVAS(CONDEMN_PASS_FRAMES - 1 - frame);
       }
-    } else if (frame <= 63) {
-      if (frame > 47) {
-        ripple = (frame * 2) - 96;
-        REG_BLDALPHA = EFFECT_BLEND_CANVAS(63 - frame);
+    } else if (frame < 2 * CONDEMN_PASS_FRAMES) {
+      if (frame >= 2 * CONDEMN_PASS_FRAMES - CONDEMN_FADE_FRAMES) {
+        ripple = (frame - (2 * CONDEMN_PASS_FRAMES - CONDEMN_FADE_FRAMES)) * 2;
+        REG_BLDALPHA = EFFECT_BLEND_CANVAS(2 * CONDEMN_PASS_FRAMES - 1 - frame);
       }
     }
     if (ripple < 0) {
@@ -166,7 +170,7 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
         /* FAKEMATCH(dead): i is 160 here. */
         pictureRow = i >> 31;
       }
-      if (frame <= 87) {
+      if (frame < CONDEMN_SWING_FRAME) {
         draw[work->args->side](
             canvas, work->sheet, CONDEMN_PICTURE_X(pictureColumn, 0),
             CONDEMN_PICTURE_Y(pictureRow, 0) + screenY,
@@ -250,6 +254,8 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
 }
 
 #undef CONDEMN_FRAMES
+#undef CONDEMN_PASS_FRAMES
+#undef CONDEMN_FADE_FRAMES
 #undef CONDEMN_SWING_FRAME
 #undef CONDEMN_BOUNCE_FRAME
 #undef CONDEMN_SWAY_X

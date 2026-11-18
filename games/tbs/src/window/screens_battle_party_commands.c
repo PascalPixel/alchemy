@@ -4,6 +4,18 @@
 
 #include "screens_internal.h"
 
+/// BattleAction.target's place code for place 0 of the party's list, as
+/// BattleTarget_RunSelection returns it (battle_internal.h's PLACE_PARTY).
+#define PLACE_PARTY (1 << 8)
+/// The frames a link battle tolerates without a connection before it gives
+/// up (battle_internal.h's LINK_MAX_MISSED_FRAMES).
+#define LINK_MAX_MISSED_FRAMES 24
+/// Flee's priority, above every other action's: the party flees first in the
+/// turn.
+#define FLEE_PRIORITY 32766
+/// The priority an action takes when its Agility roll runs past 32767.
+#define OVERFLOWED_PRIORITY 2000
+
 /// Classifies ability `act` for the target selection (the `kind` of
 /// BattleTarget_RunSelection, enum BattleTargetHint), which shows what it would
 /// do on a party member and, for the curing and reviving hints, starts on one
@@ -73,7 +85,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   // the lists' page numbers (PAGE_DIGITS_TILE), page arrows
   // (LIST_PAGE_ARROW_VRAM) and range icons (RANGE_ICON_FIRST_TILE), and no
   // Djinni chosen yet (BATTLE_MENU_NO_DJINNI).
-  target = 256;
+  target = PLACE_PARTY;
   commandKind = 0;
   parameter = 0;
   largeIconSlot = VramCache_AllocEntry(1024);
@@ -120,7 +132,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         break;
       }
       if ((gLinkStatus & LINK_STATUS_HEARD_BOTH) != LINK_STATUS_HEARD_BOTH) {
-        if (++missedLinkFrames > 24) {
+        if (++missedLinkFrames > LINK_MAX_MISSED_FRAMES) {
           commandCount = -1;
           state->linkTimer = 0;
           break;
@@ -182,7 +194,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       continue;
     }
     // Flee, unless the battle forbids it: one COMMAND_FLEE for the party,
-    // first in the turn (priority 32766).
+    // first in the turn.
     if (mode == COMMAND_ICON_FLEE) {
       if (Battle_RefuseFlee() != 0) {
         continue;
@@ -190,10 +202,10 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       commandCount = 1;
       command = commands;
       command->unitId = actors[0];
-      command->priority = 32766;
+      command->priority = FLEE_PRIORITY;
       command->command = COMMAND_FLEE;
       command->parameter = 0;
-      command->target = 256;
+      command->target = PLACE_PARTY;
       break;
     }
     if (mode != COMMAND_ICON_FIGHT) {
@@ -680,9 +692,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
           actors[commandIndex] == actors[commandIndex - 1]) {
         command->priority = (s16)priority / 2;
       }
-      // A priority past 32767 reads negative as s16 and becomes 2000.
+      // A priority past 32767 reads negative as s16.
       if ((s16)command->priority < 0) {
-        command->priority = 2000;
+        command->priority = OVERFLOWED_PRIORITY;
       }
       command->command = commandKind;
       command->parameter = parameter;
@@ -730,7 +742,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     // The wait message shows only when the countdown never opened its
     // window, that is while the partner is still choosing; a timer window
     // was closed above and is only forgotten here. mode counts the frames
-    // without the link: 25 give up (-1).
+    // without the link, and past LINK_MAX_MISSED_FRAMES gives up (-1).
     linkBattle = gBattleWork;
     mode = 0;
     if (state->timerWindow == 0 && linkBattle->linkPaused == 0) {
@@ -751,7 +763,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       }
       if ((gLinkStatus & LINK_STATUS_HEARD_BOTH) != LINK_STATUS_HEARD_BOTH) {
         mode++;
-        if (mode > 24) {
+        if (mode > LINK_MAX_MISSED_FRAMES) {
           commandCount = -1;
           break;
         }
@@ -776,3 +788,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
   HeapSlot_Release(HEAP_SLOT_BATTLE_MENU);
   return commandCount;
 }
+
+#undef PLACE_PARTY
+#undef LINK_MAX_MISSED_FRAMES
+#undef FLEE_PRIORITY
+#undef OVERFLOWED_PRIORITY

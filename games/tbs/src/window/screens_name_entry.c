@@ -112,21 +112,21 @@ void Window_SetTextTileRect(const struct Window *window, s32 x, s32 y,
     height = DISPLAY_TILE_HEIGHT - y;
   }
   if (width > 0 && height > 0) {
-    y <<= 6;
-    x = y + (x << 1);
+    y *= MAP_ROW_BYTES;
+    x = y + x * 2;
     do {
       u16 *cell = (u16 *)(x + (u32)tilemap);
       s32 remaining = width;
       while (remaining != 0) {
         u32 entry = *cell;
-        entry &= ~0x1000;
+        entry &= ~BG_TILE_PALETTE(1);
         entry |= palette;
         remaining--;
         *cell = entry;
         cell++;
       }
       height--;
-      x += 64;
+      x += MAP_ROW_BYTES;
     } while (height != 0);
     ((struct WindowWork *)tilemap)->dirty = 1;
   }
@@ -134,7 +134,7 @@ void Window_SetTextTileRect(const struct Window *window, s32 x, s32 y,
 
 /// Loads the pointing hand cursor's tiles into VRAM slot `slot`.
 void NameEntry_LoadPointingHandTiles(s32 slot) {
-  VramCache_Load(slot, 128, gPointingHandTiles);
+  VramCache_Load(slot, 2 * 2 * TILE_SIZE_4BPP, gPointingHandTiles);
 }
 
 /// Loads the 16x16 sprite gNameEntry_CaretTiles into VRAM slot `slot`.
@@ -146,10 +146,19 @@ void NameEntry_LoadCaretTiles(s32 slot) {
 // command keys on its right (Delete and End, and in Japanese the keyboard
 // switch), the name above it and the character's portrait.
 #define NAME_COMMAND_COLUMN 18 ///< the keyboard column of the command keys
+#define NAME_LAST_LETTER_COLUMN 16
 /// The keyboard's last row, where the command column has End, and the row of
-/// its Delete.
+/// its Delete; the Japanese keyboard's switch is on its first row, and its two
+/// blocks of letters have an empty row between them.
+#if LANGUAGE == LANGUAGE_JAPANESE
 #define NAME_LAST_ROW 10
 #define NAME_DELETE_ROW 8
+#define NAME_SWITCH_ROW 0
+#define NAME_GAP_ROW 5
+#else
+#define NAME_LAST_ROW 5
+#define NAME_DELETE_ROW 4
+#endif
 /// The empty columns between the keyboard's groups of letters.
 #define NAME_IS_GAP_COLUMN(column)                                             \
   ((column) == 5 || (column) == 11 || (column) == 17)
@@ -286,13 +295,12 @@ s32 NameEntry_EditMemberName(s32 member) {
   editedName[NAME_MAX_BYTES] = 0;
   NameEntry_DrawName(nameWindow, originalName);
   vramSlot = VramCache_FindFreeEntry();
-  // The cursor starts on End. 95 is the last of the VRAM_CACHE_ENTRY_COUNT
-  // slots; without a free one a sprite is not made, though the loop below
-  // still uses it.
+  // The cursor starts on End. Without a free VRAM cache entry a sprite is not
+  // made, though the loop below still uses it.
   keyColumn = NAME_COMMAND_COLUMN;
-  keyRow = 5;
+  keyRow = NAME_LAST_ROW;
   if (vramSlot < VRAM_CACHE_ENTRY_COUNT) {
-    VramCache_Load(vramSlot, 128, gPointingHandTiles);
+    VramCache_Load(vramSlot, 2 * 2 * TILE_SIZE_4BPP, gPointingHandTiles);
     sprite =
         WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
     keyCursor.sprite = sprite;
@@ -302,7 +310,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   }
   vramSlot = VramCache_FindFreeEntry();
   if (vramSlot < VRAM_CACHE_ENTRY_COUNT) {
-    VramCache_Load(vramSlot, 128, gNameEntry_CaretTiles);
+    VramCache_Load(vramSlot, 2 * 2 * TILE_SIZE_4BPP, gNameEntry_CaretTiles);
     sprite =
         WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
     nameCaret.sprite = sprite;
@@ -324,9 +332,9 @@ s32 NameEntry_EditMemberName(s32 member) {
 
     // Delete and End are wider than a letter key.
     if (keyColumn == NAME_COMMAND_COLUMN) {
-      if (keyRow == 4)
+      if (keyRow == NAME_DELETE_ROW)
         width = 3;
-      if (keyRow == 5)
+      if (keyRow == NAME_LAST_ROW)
         width = NAME_END_KEY_WIDTH;
     }
     // Flash the key under the cursor, then move the cursor and the caret.
@@ -363,11 +371,11 @@ s32 NameEntry_EditMemberName(s32 member) {
       keyRow--;
       if (keyColumn != NAME_COMMAND_COLUMN) {
         if (keyRow == -1)
-          keyRow = 5;
+          keyRow = NAME_LAST_ROW;
       } else {
         // In the command column up and down swap Delete and End.
-        keyRow = (keyRow != 3);
-        keyRow = 5 - keyRow;
+        keyRow = (keyRow != NAME_DELETE_ROW - 1);
+        keyRow = NAME_LAST_ROW - keyRow;
       }
     }
     if (gKeysRepeat & KEY_DOWN) {
@@ -375,11 +383,11 @@ s32 NameEntry_EditMemberName(s32 member) {
       cursorDirty = 1;
       keyRow++;
       if (keyColumn != NAME_COMMAND_COLUMN) {
-        if (keyRow == 6)
+        if (keyRow == NAME_LAST_ROW + 1)
           keyRow = 0;
       } else {
-        keyRow = (keyRow != 6);
-        keyRow += 4;
+        keyRow = (keyRow != NAME_LAST_ROW + 1);
+        keyRow += NAME_DELETE_ROW;
       }
     }
     if (gKeysRepeat & KEY_LEFT) {
@@ -390,8 +398,8 @@ s32 NameEntry_EditMemberName(s32 member) {
       // else to the last letter column.
       if (keyColumn == -1) {
         keyColumn = NAME_COMMAND_COLUMN;
-        if (keyRow < 4 || keyRow > 5)
-          keyColumn = 16;
+        if (keyRow < NAME_DELETE_ROW || keyRow > NAME_LAST_ROW)
+          keyColumn = NAME_LAST_LETTER_COLUMN;
       } else if (NAME_IS_GAP_COLUMN(keyColumn)) {
         keyColumn--;
       }
@@ -400,18 +408,19 @@ s32 NameEntry_EditMemberName(s32 member) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn++;
-      if (keyColumn == 19)
+      if (keyColumn == NAME_COMMAND_COLUMN + 1)
         keyColumn = 0;
       else if (NAME_IS_GAP_COLUMN(keyColumn))
         keyColumn++;
-      if (keyColumn == NAME_COMMAND_COLUMN && (keyRow < 4 || keyRow > 5))
+      if (keyColumn == NAME_COMMAND_COLUMN &&
+          (keyRow < NAME_DELETE_ROW || keyRow > NAME_LAST_ROW))
         keyColumn = 0;
     }
     if (gKeysPressed & KEY_START) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn = NAME_COMMAND_COLUMN;
-      keyRow = 5;
+      keyRow = NAME_LAST_ROW;
     }
     if (gKeysRepeat & KEY_B) {
       Sound_PlayFar(SE_MENU_CANCEL);
@@ -432,10 +441,10 @@ s32 NameEntry_EditMemberName(s32 member) {
       continue;
     Sound_PlayFar(SE_MENU_CONFIRM);
     if (keyColumn == NAME_COMMAND_COLUMN) {
-      if (keyRow == 5) {
+      if (keyRow == NAME_LAST_ROW) {
         // End: an empty name shows the old one again for 10 frames, the
         // caret hidden (WINDOW_SPRITE_MOTION_HIDDEN), and keeps it; otherwise
-        // the 14 name bytes and their terminator are copied over the unit's
+        // the name's bytes and their terminator are copied over the unit's
         // name.
         if (letterCount == 0) {
           nameCaret.sprite->motion = WINDOW_SPRITE_MOTION_HIDDEN;
@@ -458,14 +467,14 @@ s32 NameEntry_EditMemberName(s32 member) {
             dst = NULL;
           if (originalName)
             dst = dstSave;
-          while (i < 15) {
+          while (i < NAME_MAX_BYTES + 1) {
             *dst++ = *src++;
             i++;
           }
         }
         break;
       }
-      if (keyRow == 4)
+      if (keyRow == NAME_DELETE_ROW)
         goto remove_character;
       continue;
     }
@@ -485,7 +494,7 @@ s32 NameEntry_EditMemberName(s32 member) {
       // A full name sends the cursor to End.
       if (letterCount == NAME_MAX_LETTERS) {
         keyColumn = NAME_COMMAND_COLUMN;
-        keyRow = 5;
+        keyRow = NAME_LAST_ROW;
         cursorDirty = 1;
       }
       WindowSprite_PrepareForRedraw(nameWindow);
@@ -557,7 +566,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   vramSlot = VramCache_FindFreeEntry();
   keyRow = NAME_LAST_ROW;
   if (vramSlot < VRAM_CACHE_ENTRY_COUNT) {
-    VramCache_Load(vramSlot, 128, gPointingHandTiles);
+    VramCache_Load(vramSlot, 2 * 2 * TILE_SIZE_4BPP, gPointingHandTiles);
     sprite =
         WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
     keyCursor.sprite = sprite;
@@ -567,7 +576,7 @@ s32 NameEntry_EditMemberName(s32 member) {
   }
   vramSlot = VramCache_FindFreeEntry();
   if (vramSlot < VRAM_CACHE_ENTRY_COUNT) {
-    VramCache_Load(vramSlot, 128, gNameEntry_CaretTiles);
+    VramCache_Load(vramSlot, 2 * 2 * TILE_SIZE_4BPP, gNameEntry_CaretTiles);
     sprite =
         WindowSprite_Create(vramSlot, OUTPUT_SIZE_16X16, keyboardWindow, 0, 0);
     nameCaret.sprite = sprite;
@@ -588,7 +597,7 @@ s32 NameEntry_EditMemberName(s32 member) {
 
     // The command keys are wider than a letter key.
     if (keyColumn == NAME_COMMAND_COLUMN) {
-      if (keyRow == 0)
+      if (keyRow == NAME_SWITCH_ROW)
         width = 4;
       if (keyRow == NAME_DELETE_ROW)
         width = 3;
@@ -627,19 +636,19 @@ s32 NameEntry_EditMemberName(s32 member) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyRow--;
-      // Letters skip the gap row 5; the command column cycles the switch,
+      // Letters skip the gap row; the command column cycles the switch,
       // Delete and End.
       if (keyColumn != NAME_COMMAND_COLUMN) {
         if (keyRow == -1)
           keyRow = NAME_LAST_ROW;
-        else if (keyRow == 5)
-          keyRow = 4;
+        else if (keyRow == NAME_GAP_ROW)
+          keyRow = NAME_GAP_ROW - 1;
       } else {
         if (keyRow == -1) {
           keyRow = NAME_LAST_ROW;
         } else {
-          keyRow = (keyRow != 7);
-          keyRow *= 8;
+          keyRow = (keyRow != NAME_DELETE_ROW - 1);
+          keyRow *= NAME_DELETE_ROW;
         }
       }
     }
@@ -650,15 +659,15 @@ s32 NameEntry_EditMemberName(s32 member) {
       if (keyColumn != NAME_COMMAND_COLUMN) {
         if (keyRow == NAME_LAST_ROW + 1)
           keyRow = 0;
-        if (keyRow == 5)
-          keyRow = 6;
+        if (keyRow == NAME_GAP_ROW)
+          keyRow = NAME_GAP_ROW + 1;
       } else {
-        if (keyRow == 1)
-          keyRow = 8;
-        else if (keyRow == 9)
+        if (keyRow == NAME_SWITCH_ROW + 1)
+          keyRow = NAME_DELETE_ROW;
+        else if (keyRow == NAME_DELETE_ROW + 1)
           keyRow = NAME_LAST_ROW;
         else
-          keyRow = 0;
+          keyRow = NAME_SWITCH_ROW;
       }
     }
     if (gKeysRepeat & KEY_LEFT) {
@@ -666,10 +675,11 @@ s32 NameEntry_EditMemberName(s32 member) {
       cursorDirty = 1;
       keyColumn--;
       if (keyColumn == -1) {
-        if (keyRow == 0 || keyRow == NAME_DELETE_ROW || keyRow == NAME_LAST_ROW)
+        if (keyRow == NAME_SWITCH_ROW || keyRow == NAME_DELETE_ROW ||
+            keyRow == NAME_LAST_ROW)
           keyColumn = NAME_COMMAND_COLUMN;
         else
-          keyColumn = 16;
+          keyColumn = NAME_LAST_LETTER_COLUMN;
       } else if (NAME_IS_GAP_COLUMN(keyColumn)) {
         keyColumn--;
       }
@@ -678,12 +688,13 @@ s32 NameEntry_EditMemberName(s32 member) {
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       cursorDirty = 1;
       keyColumn++;
-      if (keyColumn == 19)
+      if (keyColumn == NAME_COMMAND_COLUMN + 1)
         keyColumn = 0;
       else if (NAME_IS_GAP_COLUMN(keyColumn))
         keyColumn++;
       if (keyColumn == NAME_COMMAND_COLUMN) {
-        if (keyRow == 0 || keyRow == NAME_DELETE_ROW || keyRow == NAME_LAST_ROW)
+        if (keyRow == NAME_SWITCH_ROW || keyRow == NAME_DELETE_ROW ||
+            keyRow == NAME_LAST_ROW)
           keyColumn = NAME_COMMAND_COLUMN;
         else
           keyColumn = 0;
@@ -762,7 +773,7 @@ s32 NameEntry_EditMemberName(s32 member) {
             src = NULL;
           if (keyboardWindow->height)
             src = srcSave;
-          while (i < 15) {
+          while (i < NAME_MAX_BYTES + 1) {
             *dst++ = *src++;
             i++;
           }
@@ -771,7 +782,7 @@ s32 NameEntry_EditMemberName(s32 member) {
       }
       if (keyRow == NAME_DELETE_ROW)
         goto remove_character;
-      if (keyRow == 0)
+      if (keyRow == NAME_SWITCH_ROW)
         goto change_keyboard;
       continue;
     }

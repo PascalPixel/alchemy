@@ -25,8 +25,6 @@
 /// The mote size a spark is drawn at: a size smaller every 8 frames of its
 /// life, and the smallest for its last 32, which is all of a trickled spark's.
 #define VOLCANO_SPARK_SIZE(life) (((life) - 17) / 8)
-/// Twice a 16.16 value, as a whole number: FIXEDtoINT a shift short.
-#define FIXEDtoINT_TWICE(value) ((value) >> 15)
 
 /// One, two or four columns of fire rise among the targets, each erupting in a
 /// fountain of sparks and knocking the targets back.
@@ -219,7 +217,6 @@ void BattleEffect_RunVolcano(struct BattleEffectParams *args) {
 #undef VOLCANO_CAMERA_SPIN
 #undef VOLCANO_SPARK_GRAVITY
 #undef VOLCANO_SPARK_SIZE
-#undef FIXEDtoINT_TWICE
 #undef VOLCANO_ERUPTION
 #undef VOLCANO_TRICKLE
 #undef VOLCANO_SPARK_POOL

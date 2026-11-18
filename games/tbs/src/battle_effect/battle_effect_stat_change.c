@@ -451,13 +451,9 @@ UNUSED void
 BattleEffect_RunUnusedStatReduction(struct BattleEffectParams *args) {
   BattleEffect_RunStatReduction(args, STAT_REDUCTION_UNUSED);
 }
-/// The shard picture in the sheet, followed by seven copies of it, each
-/// with its colour levels capped 7 lower than the one before.
+/// The shard picture in the sheet, then its DIMMED_COPIES - 1 dimmed copies.
 #define STAT_REDUCTION_SHARD_PICTURES 9600
 #define STAT_REDUCTION_SHARD_BYTES 696 ///< bytes in each copy
-#define STAT_REDUCTION_SHARD_COPIES 8  ///< the picture and its darker copies
-/// The level copy `copy` of the shard picture is capped at.
-#define STAT_REDUCTION_SHARD_CAP(copy) (CANVAS_LEVEL_BRIGHTEST + 1 - (copy) * 7)
 /// Each target throws STAT_REDUCTION_TARGET_SHARDS shards from its own run of
 /// STAT_REDUCTION_TARGET_PARTICLES particles, STAT_REDUCTION_TARGET_DELAY
 /// frames after the target before it.
@@ -499,11 +495,11 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress(RESOURCE_PALETTE_RAMP_IMAGE,
                              work->sheet + STAT_REDUCTION_SHARD_PICTURES, 0, 0);
 
-  for (i = 1; i != STAT_REDUCTION_SHARD_COPIES; i++) {
+  for (i = 1; i != DIMMED_COPIES; i++) {
     for (j = 0; j != STAT_REDUCTION_SHARD_BYTES; j++) {
       s32 level = work->sheet[STAT_REDUCTION_SHARD_PICTURES + j];
 
-      EFFECT_CAP_LEVEL(level, STAT_REDUCTION_SHARD_CAP(i));
+      EFFECT_CAP_LEVEL(level, DIMMED_COPY_CAP(i));
       work->sheet[STAT_REDUCTION_SHARD_PICTURES +
                   i * STAT_REDUCTION_SHARD_BYTES + j] = level;
     }
@@ -603,8 +599,8 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
           level = 0;
           if (targetFrame > 28) {
             level = (targetFrame - 24) / 4;
-            if (level > STAT_REDUCTION_SHARD_COPIES - 1)
-              level = STAT_REDUCTION_SHARD_COPIES - 1;
+            if (level > DIMMED_COPIES - 1)
+              level = DIMMED_COPIES - 1;
           }
           for (i = 0; i != STAT_REDUCTION_TARGET_SHARDS; i++) {
             struct Particle *shard =
@@ -648,8 +644,6 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
 #undef STAT_BOOST_PARTY_CANVAS_X
 #undef STAT_REDUCTION_SHARD_PICTURES
 #undef STAT_REDUCTION_SHARD_BYTES
-#undef STAT_REDUCTION_SHARD_COPIES
-#undef STAT_REDUCTION_SHARD_CAP
 #undef STAT_REDUCTION_TARGET_PARTICLES
 #undef STAT_REDUCTION_TARGET_SHARDS
 #undef STAT_REDUCTION_TARGET_DELAY

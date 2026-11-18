@@ -6,11 +6,6 @@
 /// The bytes of Judgment's work block before its dimmed mote copies.
 #define JUDGMENT_SHEET_BYTES 10000
 
-/// The dimmed copies of the mote pictures: DIMMED_MOTE_SETS sets of
-/// MOTE_SET_BYTES, set i with every level capped at DIMMED_MOTE_CAP(i), 7
-/// levels lower than the set before, set 0 not at all.
-#define DIMMED_MOTE_SETS 8
-#define DIMMED_MOTE_CAP(set) (CANVAS_LEVEL_BRIGHTEST + 1 - (set) * 7)
 /// The battle background's colours, BG palettes 6 to 13.
 #define BATTLE_BACKGROUND_COLORS (8 * PALETTE_COLORS)
 
@@ -22,7 +17,7 @@ struct JudgmentWork {
   u8 sheet[JUDGMENT_SHEET_BYTES];
   /// The dimmed motes, which the gathering's ring of motes steps through as
   /// it fades.
-  u8 dimmedMotes[DIMMED_MOTE_SETS][MOTE_SET_BYTES];
+  u8 dimmedMotes[DIMMED_COPIES][MOTE_SET_BYTES];
 };
 
 /// The gathering's motes in PARTICLES, then its sparks.
@@ -209,11 +204,11 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
                              work->sheet + JUDGMENT_SHEET_TORNADO, 1, 0);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, motes, 0, 0);
 
-  for (i = 0; i != DIMMED_MOTE_SETS; i++) {
+  for (i = 0; i != DIMMED_COPIES; i++) {
     u8 *src = motes;
     for (j = 0; j != MOTE_SET_BYTES; j++) {
       s32 v = *src++;
-      EFFECT_CAP_LEVEL(v, DIMMED_MOTE_CAP(i));
+      EFFECT_CAP_LEVEL(v, DIMMED_COPY_CAP(i));
       ((struct JudgmentWork *)work)->dimmedMotes[i][j] = v;
     }
   }
@@ -982,8 +977,6 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
 #undef JUDGMENT_SHEET_FLASH_GLOW
 #undef JUDGMENT_EXPLOSION_PICTURE_BYTES
 #undef JUDGMENT_WAVE_SIZE
-#undef DIMMED_MOTE_SETS
-#undef DIMMED_MOTE_CAP
 #undef BATTLE_BACKGROUND_COLORS
 #undef JUDGMENT_FORMATION_COLUMNS
 #undef JUDGMENT_FORMATION_SPRITE_SIZE

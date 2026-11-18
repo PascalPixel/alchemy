@@ -120,7 +120,8 @@ enum CastingImpact {
 /// The impact particles that carry the rising pictures: flash bursts, skulls
 /// or puffs of smoke.
 #define CASTING_IMPACT_RISING_PICTURES 16
-/// The frames a rising picture lives, and a flash burst, two to each picture.
+/// The frames a rising puff of smoke lives, four to each of its six pictures,
+/// and a flash burst, two to each of its six.
 #define CASTING_IMPACT_RISING_LIFE 24
 #define CASTING_IMPACT_BURST_LIFE 12
 /// Broil's ember streaks.
@@ -612,7 +613,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
           base = toFIXED(4);
           phase = frame * (TRIG_TURN / 16);
           for (; i != DISPLAY_HEIGHT; i++) {
-            s32 offset = (base - ((Trig_Sin(phase) * 4))) >> 10;
+            s32 offset = CANVAS_WAVE_BG2X(base - Trig_Sin(phase) * 4);
             *scanline++ = offset;
             phase += TRIG_TURN / 32;
           }
@@ -1197,8 +1198,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
                             projected.x - SKULL_WIDTH / 2,
                             projected.y - SKULL_HEIGHT / 2, SKULL_WIDTH,
                             SKULL_HEIGHT);
-            // Each skull of four rises faster: toFIXED(1) / 32 to toFIXED(1)
-            // / 4.
+            // Each of four skulls rises twice as fast as the one before.
             Particle_AdvanceWithGravity3D(step, 60, 1 << ((i & 3) + 11));
             step->variant++;
           }

@@ -17,9 +17,6 @@
 /// FROTH_FIRST_TARGET.
 #define FROTH_BUBBLE_SLOTS 30
 #define FROTH_FIRST_TARGET 32
-/// The depths a bubble's projection is held between.
-#define FROTH_BUBBLE_DEPTH_NEAR 160
-#define FROTH_BUBBLE_DEPTH_FAR 799
 /// The frames a vortex turns where a bubble landed.
 #define FROTH_VORTEX_FRAMES 16
 
@@ -111,8 +108,7 @@ void BattleEffect_RunFroth(struct BattleEffectParams *args) {
         Projection_Point(point, &screenPosition);
         screenPosition.x >>= 1;
         // DEAD: the clamped depth is never read; the ROM keeps the clamp.
-        CLAMP(screenPosition.depth, FROTH_BUBBLE_DEPTH_NEAR,
-              FROTH_BUBBLE_DEPTH_FAR);
+        CLAMP(screenPosition.depth, MOTE_DEPTH_NEAR, MOTE_DEPTH_FAR);
         draw[0](canvas, work->sheet + FROTH_BUBBLE_PICTURE,
                 screenPosition.x - FROTH_BUBBLE_PICTURE_WIDTH / 2,
                 screenPosition.y - FROTH_BUBBLE_PICTURE_HEIGHT / 2,
@@ -303,8 +299,6 @@ void BattleEffect_RunWhirlwind(struct BattleEffectParams *args) {
 #undef WHIRLWIND_SECTION_BYTES
 #undef FROTH_BUBBLE_SLOTS
 #undef FROTH_FIRST_TARGET
-#undef FROTH_BUBBLE_DEPTH_NEAR
-#undef FROTH_BUBBLE_DEPTH_FAR
 #undef FROTH_VORTEX_FRAMES
 #undef WHIRLWIND_GLINTS
 #undef WHIRLWIND_SWEEP_SWAY

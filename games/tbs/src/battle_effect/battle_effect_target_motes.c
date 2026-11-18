@@ -97,9 +97,9 @@ enum { TARGET_MOTES_GLINT_PICTURES = 9600 };
 #define TARGET_MOTES 512      ///< motes scattered at the start
 #define TARGET_MOTES_SLOTS 64 ///< particles reserved for each target
 #define TARGET_MOTES_CYCLE 24 ///< frames of a mote's image cycle
-/// The motes about each target: TARGET_MOTES_COUNT, or Demon Fire's orbs or
-/// Drown's drops.
-#define TARGET_MOTES_COUNT 16
+/// The motes about each target: TARGET_MOTES_PER_TARGET, or Demon Fire's orbs
+/// or Drown's drops.
+#define TARGET_MOTES_PER_TARGET 16
 #define DEMON_FIRE_ORBS 24
 #define DROWN_DROPS 32
 /// The frames between one target's motes starting and the next's.
@@ -131,7 +131,7 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
 
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
   canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
-  count = TARGET_MOTES_COUNT;
+  count = TARGET_MOTES_PER_TARGET;
   work->args = args;
   BattleEffect_StartCanvasLayer(0);
   Resource_LoadAndDecompress(RESOURCE_SMOKE_SHEET, work->sheet, 1, 1);
@@ -209,10 +209,9 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
     }
     row = work->bg2xLines;
     for (i = 0; i != DISPLAY_HEIGHT; i++)
-      *row++ =
-          (toFIXED(4) -
-           ((Trig_Sin(frame * (TRIG_TURN / 16) + i * (TRIG_TURN / 32)) * 4))) >>
-          10;
+      *row++ = CANVAS_WAVE_BG2X(
+          toFIXED(4) -
+          Trig_Sin(frame * (TRIG_TURN / 16) + i * (TRIG_TURN / 32)) * 4);
 
     EFFECT_FOR_EACH_TARGET(member, work->args) {
       struct Actor *actor =
@@ -258,9 +257,9 @@ void BattleEffect_RunTargetMotes(struct BattleEffectParams *args, u32 mode) {
       SET_VECTOR(point, actor->x.fixed, toFIXED(20), actor->z.fixed);
       Matrix_TranslateVector(point);
       if (frame > member * TARGET_MOTES_STAGGER) {
-        Matrix_RotateY(frame << 9);
+        Matrix_RotateY(frame * (TRIG_TURN / 128));
         if (mode <= TARGET_MOTES_PINK_SMOKE || mode == TARGET_MOTES_HEARTRENDER)
-          Matrix_RotateX(frame << 9);
+          Matrix_RotateX(frame * (TRIG_TURN / 128));
         for (i = 0; i != count; i++) {
           struct Particle *mote = &PARTICLES[member * TARGET_MOTES_SLOTS + i];
           s32 distance;
@@ -539,7 +538,7 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
 #undef TARGET_MOTES
 #undef TARGET_MOTES_SLOTS
 #undef TARGET_MOTES_CYCLE
-#undef TARGET_MOTES_COUNT
+#undef TARGET_MOTES_PER_TARGET
 #undef DEMON_FIRE_ORBS
 #undef DROWN_DROPS
 #undef TARGET_MOTES_STAGGER

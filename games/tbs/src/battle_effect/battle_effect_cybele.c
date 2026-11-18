@@ -38,7 +38,7 @@
 #define CYBELE_VINES_DRAWN 10
 /// The chips that fly, from the first after the sparks.
 #define CYBELE_FLYING_CHIPS 32
-#define CYBELE_FIRST_FLYING_CHIP 32
+#define CYBELE_FIRST_FLYING_CHIP (CYBELE_FIRST_SPARK + CYBELE_SPARKS)
 /// The sparks round each target, from CYBELE_FIRST_SPARK, flashing from the
 /// vines' first frame to CYBELE_SPARKS_END frames after it.
 #define CYBELE_TARGET_SPARKS 6

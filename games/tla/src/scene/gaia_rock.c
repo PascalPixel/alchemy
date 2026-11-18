@@ -44,8 +44,9 @@
 
 /// The ledge where the party finds Susa beaten (SceneId_GaiaRockSusa): the
 /// eight vines the wind swings, the two pillars Moved into the gaps, the statue
-/// that blows wind and its whirlwind, and Susa ("Kushinada's safe... She's
-/// safe! Nothing else matters.").
+/// that blows wind, a whirlwind's row parked off the map (the whirlwinds the
+/// statue blows are spawned), and Susa ("Kushinada's safe... She's safe!
+/// Nothing else matters.").
 enum {
   ACTOR_FIRST_VINE = ACTOR_FIRST_PLACED,
   ACTOR_FIRST_PILLAR = ACTOR_FIRST_VINE + 8,
@@ -76,8 +77,8 @@ enum {
 #define FLAG_SECOND_STATUE_RISEN FLAG_AREA_TEMP_01
 #define FLAG_THIRD_STATUE_RISEN FLAG_AREA_TEMP_02
 
-/// The two pillars Moved into the gaps: the first dropped in at the west end,
-/// the second at (79, 12).
+/// The two pillars Moved into the gaps: each stands sunk into its gap, its top
+/// level with the ledge it was Moved along.
 #define FLAG_FIRST_PILLAR_DROPPED 0x920
 #define FLAG_SECOND_PILLAR_DROPPED 0x921
 

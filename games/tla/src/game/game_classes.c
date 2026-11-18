@@ -88,6 +88,8 @@ void Unit_CalculateBaseElements(s32 unitId,
   u32 index;
   s32 levels[ELEMENT_COUNT];
   s32 i;
+  /* FAKEMATCH(signature): the table declared without its const. */
+  extern struct ElementLevelBonus gElement_PowerResistByLevel[16];
 
   if (state->classId == CLASS_NONE) {
     index = Enemy_GetDefinition(state->enemyId)->elementPreset;

@@ -19,6 +19,7 @@
 #include "field/field_sequence_event.h"
 #include "field/field_sprite.h"
 #include "field/scene_tables.h"
+#include "game/game.h"
 #include "graphics/graphics.h"
 #include "scene/lemurian_ship.h"
 #include "scene/scene.h"
@@ -228,10 +229,6 @@ struct VentEntry {
   FIXED value;
 };
 
-/// The most vents a room has, and the most actors their puffs land on.
-#define VENTS_MAX 16
-#define VENT_IDS_MAX 4
-
 /// The vents of the room: their frame counter, the room's hook run each frame,
 /// its vents and the actors their puffs land on, besides the leader.
 struct VentWork {
@@ -292,8 +289,8 @@ enum { VENT_BESIDE_WEST_PILLAR = 2, VENT_BESIDE_EAST_PILLAR = 8 };
 
 extern u8 gInventorySnapshot[];
 /// The vents' work, in the inventory snapshot's spare space.
-#define VENT_WORK ((struct VentWork *)(gInventorySnapshot + 392))
-#define DIFF(a, b) ((a) - (b) >= 0 ? (a) - (b) : (b) - (a))
+#define VENT_WORK                                                              \
+  ((struct VentWork *)(gInventorySnapshot + INVENTORY_SNAPSHOT_SPARE))
 
 void Vent_Bounce(struct Actor *actor);
 extern u32 gTaopoSwamp_PuffRises[];
@@ -2060,8 +2057,6 @@ void TaopoSwamp_SaveFirmGround(void) {
   state->z = (actor->z.fixed & -toFIXED(16)) + toFIXED(8);
 }
 
-#define VENT_TOUCHING Vent_IsTouching
-#define VENT_BOUNCE Vent_Bounce
 #include "../field/actor_vent_bounce.c"
 
 #include "shared/actor_start_scripted.h"
@@ -2143,11 +2138,6 @@ void TaopoSwamp_StartVents(u16 *points, u16 *ids, s32 cycle) {
   Task_AddFrame(Vent_Update, TASK_PASS_FRAME);
 }
 
-/// Vent index's entry, reached as the first entry of the work index entries
-/// on, as the accessors below read it.
-#define VENT_AT(work, index)                                                   \
-  ((struct VentWork *)((u8 *)(work) + (index) * sizeof(struct VentEntry)))
-
 /// Whether vent index is blowing now.
 s32 Vent_IsBlowing(s32 index) {
   struct VentWork *work;
@@ -2179,12 +2169,8 @@ void Vent_SetGust(s32 index, s32 value) {
 
 #include "shared/vent_set_id.h"
 #undef VENT_WORK
-#undef DIFF
 #undef DEFINE_TAOPO_SWAMP_FREEZE_SPOT
 #undef DEFINE_DRIP_AT_RANDOM
-#undef VENT_TOUCHING
-#undef VENT_BOUNCE
-#undef VENT_AT
 
 void TaopoSwamp_FightFlower(void);
 void TaopoSwamp_ScatterWeeds(void);

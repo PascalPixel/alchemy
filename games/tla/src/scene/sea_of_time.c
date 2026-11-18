@@ -28,6 +28,7 @@
 #include "field/event_inline.h"
 #include "system/frame.h"
 #include "field/actor.h"
+#include "field/field_coordinate.h"
 #include "field/map_grid.h"
 #include "system/field_effect.h"
 #include "field/field_sequence_event.h"
@@ -73,11 +74,8 @@ static inline s32 SeaOfTime_Cos(s32 angle) { return Trig_Cos(angle); }
 
 #include "../field/field_effect_move.c"
 
-#define EFFECT_SPAWN FieldEffect_Spawn
-#define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
-#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect_spawn.c"
 
@@ -261,8 +259,6 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 #define SEA_PALETTE 3
 #define SEA_COLORS 14
 #define FLOW_PALETTE (SEA_PALETTE + 1)
-/// The background colours at the start of the palette fade's source.
-#define PALETTE_FADE_BG_COLORS (14 * PALETTE_COLORS)
 /// The colour the waves tint the sea's colours toward, a step a channel at a
 /// time.
 #define WAVE_RED 11
@@ -1227,8 +1223,6 @@ void SeaOfTime_AnimateSea(void) {
           (volatile u32 *)REG_DMA0);
 }
 
-/// An 8-pixel half cell's corner as a 16.16 coordinate.
-#define FIELD_HALF_CELL_ORIGIN(halfCell) ((halfCell) << 19)
 /// The frames a rock takes to grow to its height out of the sea.
 #define ROCK_RISE_FRAMES 10
 
@@ -1693,9 +1687,6 @@ struct Trigger gSeaOfTime_SouthPartTriggers[] = {
 s16 gSeaOfTime_RedPulseStep[] = {
     1,
 };
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
 #undef EFFECT_SPRITE_PRIORITY

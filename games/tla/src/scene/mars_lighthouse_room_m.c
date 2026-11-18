@@ -55,6 +55,7 @@
 #include "shared/event_check_spheres_overlap.h"
 #include "graphics/display_transition.h"
 #include "window/item_icon.h"
+#include "window/window.h"
 #include "field/map_grid.h"
 #include "field/field_sprite.h"
 #include "macros.h"
@@ -113,10 +114,6 @@ enum {
   MARS_GLOW = PALETTE_COLORS + 10,
   LEDGE_GLOW = 10
 };
-
-/// The colour bare centred messages are written in, set white again under the
-/// statue's warm glow.
-#define CENTERED_TEXT_COLOR OBJ_PLTT_COLOR(0, 15)
 
 /// Each element's flame among the flame sprite's animations.
 enum {
@@ -1281,19 +1278,7 @@ s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
 
 s32 MapGrid_GetCellAttributeLowNibbleOrBump(s32 terrain, s32 x, s32 z);
 
-#define KNOCK_BACK Leader_KnockBack
-#define KNOCK_BACK_TAKE_DAMAGE Party_TakeFallDamage
-#define KNOCK_BACK_BLINK Actor_Blink
-#define KNOCK_BACK_SET_ANIMATION Actor_SelectAnimation
-#define KNOCK_BACK_CELL_ATTRIBUTE MapGrid_GetCellAttributeLowNibbleOrBump
-#define KNOCK_BACK_CHECK_COLLISION MapGrid_CheckCollision
 #include "shared/leader_knock_back.c"
-#undef KNOCK_BACK
-#undef KNOCK_BACK_TAKE_DAMAGE
-#undef KNOCK_BACK_BLINK
-#undef KNOCK_BACK_SET_ANIMATION
-#undef KNOCK_BACK_CELL_ATTRIBUTE
-#undef KNOCK_BACK_CHECK_COLLISION
 
 /// Hit by the flames, the leader is knocked back.
 void MarsLighthouseRoomM_KnockBackIfHit(void) {

@@ -479,17 +479,11 @@ void Teleport_ArriveWhirling(void) {
 
 void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 
-#define EFFECT_SPAWN FieldEffect_Spawn
-#define EFFECT_CREATE Import_ActorCreate
 #define EFFECT_SET_MODE Actor_SelectAnimation
 #define EFFECT_SET_SCRIPT Actor_StartScript
-#define EFFECT_SCRIPTS gFieldEffect_DurationScripts
 #include "../field/field_effect_spawn.c"
-#undef EFFECT_SPAWN
-#undef EFFECT_CREATE
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
-#undef EFFECT_SCRIPTS
 
 /// Salt, dug up in the patch of weeds, joins the party.
 void Contigo_SaltJoinsParty(void) {
@@ -2680,12 +2674,6 @@ void Contigo_InitializeLuckyDice(void) {
 
 void Actor_SetSpriteColorMode(struct Actor *, u32);
 s32 BattleEffect_GetObjectDepth(struct Actor *actor);
-
-/// How far a ring climbs, in pixels, how many frames apart the rings start,
-/// and the height of one not yet started.
-#define RING_CLIMB 32
-#define RING_INTERVAL 16
-#define RING_NOT_STARTED 999
 
 /// The sparkle's update: raises two pairs of sprites over the actor, a pair
 /// starting every 16 frames, until both have climbed RING_CLIMB pixels.

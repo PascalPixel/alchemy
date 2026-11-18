@@ -109,19 +109,14 @@ enum { ACTOR_STREAM_PUDDLE = ACTOR_FIRST_PLACED };
 enum { ACTOR_SEATED_IDOL = ACTOR_FIRST_PLACED, ACTOR_KRADEN };
 
 /// Each puddle Frost has frozen into a pillar, by the puddles above.
-#define FLAG_FIRST_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
-#define FLAG_SECOND_PUDDLE_FROZEN FLAG_SCENE_TEMP_01
-#define FLAG_THIRD_PUDDLE_FROZEN FLAG_SCENE_TEMP_02
-#define FLAG_FOURTH_PUDDLE_FROZEN FLAG_SCENE_TEMP_03
-#define FLAG_FIFTH_PUDDLE_FROZEN FLAG_SCENE_TEMP_04
-#define FLAG_SIXTH_PUDDLE_FROZEN FLAG_SCENE_TEMP_05
-#define FLAG_SEVENTH_PUDDLE_FROZEN FLAG_SCENE_TEMP_06
-#define FLAG_STREAM_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
-
-/// Set once the Mint hidden under the weeds by the statue is taken.
-#define FLAG_GABOMBA_CATACOMBS_MINT_TAKEN 0xf53
-/// Set once the Tomegathericon is taken from the seated idol.
-#define FLAG_TOMEGATHERICON_TAKEN 0xf93
+#define FLAG_GABOMBA_CATACOMBS_FIRST_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
+#define FLAG_GABOMBA_CATACOMBS_SECOND_PUDDLE_FROZEN FLAG_SCENE_TEMP_01
+#define FLAG_GABOMBA_CATACOMBS_THIRD_PUDDLE_FROZEN FLAG_SCENE_TEMP_02
+#define FLAG_GABOMBA_CATACOMBS_FOURTH_PUDDLE_FROZEN FLAG_SCENE_TEMP_03
+#define FLAG_GABOMBA_CATACOMBS_FIFTH_PUDDLE_FROZEN FLAG_SCENE_TEMP_04
+#define FLAG_GABOMBA_CATACOMBS_SIXTH_PUDDLE_FROZEN FLAG_SCENE_TEMP_05
+#define FLAG_GABOMBA_CATACOMBS_SEVENTH_PUDDLE_FROZEN FLAG_SCENE_TEMP_06
+#define FLAG_GABOMBA_CATACOMBS_STREAM_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
 
 /// Talking to Mud starts its battle.
 void GabombaCatacombs_FightMud(void) {
@@ -365,7 +360,7 @@ void GabombaCatacombs_HideWall(void) {
 void GabombaCatacombs_FreezeFirstPuddle(void) {
   struct Actor *actor = Actor_GetById(ACTOR_FIRST_PUDDLE);
 
-  GameFlag_Set(FLAG_FIRST_PUDDLE_FROZEN);
+  GameFlag_Set(FLAG_GABOMBA_CATACOMBS_FIRST_PUDDLE_FROZEN);
   actor->motionFlags = 0;
   actor->priorityFlags = 0;
   MapGrid_CopyCellAttributes(6, 23, 1, 1, 8, 23);
@@ -376,7 +371,7 @@ void GabombaCatacombs_FreezeFirstPuddle(void) {
 void GabombaCatacombs_FreezeSecondPuddle(void) {
   struct Actor *actor = Actor_GetById(ACTOR_SECOND_PUDDLE);
 
-  GameFlag_Set(FLAG_SECOND_PUDDLE_FROZEN);
+  GameFlag_Set(FLAG_GABOMBA_CATACOMBS_SECOND_PUDDLE_FROZEN);
   actor->motionFlags = 0;
   actor->priorityFlags = 0;
   MapGrid_CopyCellAttributes(0, 4, 1, 1, 8, 15);
@@ -387,7 +382,7 @@ void GabombaCatacombs_FreezeSecondPuddle(void) {
 void GabombaCatacombs_FreezeThirdPuddle(void) {
   struct Actor *actor = Actor_GetById(ACTOR_THIRD_PUDDLE);
 
-  GameFlag_Set(FLAG_THIRD_PUDDLE_FROZEN);
+  GameFlag_Set(FLAG_GABOMBA_CATACOMBS_THIRD_PUDDLE_FROZEN);
   actor->motionFlags = 0;
   actor->priorityFlags = 0;
   MapGrid_CopyCellAttributes(0, 4, 1, 1, 9, 16);
@@ -398,7 +393,7 @@ void GabombaCatacombs_FreezeThirdPuddle(void) {
 void GabombaCatacombs_FreezeFourthPuddle(void) {
   struct Actor *actor = Actor_GetById(ACTOR_FOURTH_PUDDLE);
 
-  GameFlag_Set(FLAG_FOURTH_PUDDLE_FROZEN);
+  GameFlag_Set(FLAG_GABOMBA_CATACOMBS_FOURTH_PUDDLE_FROZEN);
   actor->motionFlags = 0;
   actor->priorityFlags = 0;
   MapGrid_CopyCellAttributes(0, 4, 1, 1, 8, 17);
@@ -409,7 +404,7 @@ void GabombaCatacombs_FreezeFourthPuddle(void) {
 void GabombaCatacombs_FreezeFifthPuddle(void) {
   struct Actor *actor = Actor_GetById(ACTOR_FIFTH_PUDDLE);
 
-  GameFlag_Set(FLAG_FIFTH_PUDDLE_FROZEN);
+  GameFlag_Set(FLAG_GABOMBA_CATACOMBS_FIFTH_PUDDLE_FROZEN);
   actor->motionFlags = 0;
   actor->priorityFlags = 0;
   MapGrid_CopyCellAttributes(0, 4, 1, 1, 6, 17);
@@ -420,7 +415,7 @@ void GabombaCatacombs_FreezeFifthPuddle(void) {
 void GabombaCatacombs_FreezeSixthPuddle(void) {
   struct Actor *actor = Actor_GetById(ACTOR_SIXTH_PUDDLE);
 
-  GameFlag_Set(FLAG_SIXTH_PUDDLE_FROZEN);
+  GameFlag_Set(FLAG_GABOMBA_CATACOMBS_SIXTH_PUDDLE_FROZEN);
   actor->motionFlags = 0;
   actor->priorityFlags = 0;
   MapGrid_CopyCellAttributes(0, 4, 1, 1, 5, 16);
@@ -431,7 +426,7 @@ void GabombaCatacombs_FreezeSixthPuddle(void) {
 void GabombaCatacombs_FreezeSeventhPuddle(void) {
   struct Actor *actor = Actor_GetById(ACTOR_SEVENTH_PUDDLE);
 
-  GameFlag_Set(FLAG_SEVENTH_PUDDLE_FROZEN);
+  GameFlag_Set(FLAG_GABOMBA_CATACOMBS_SEVENTH_PUDDLE_FROZEN);
   actor->motionFlags = 0;
   actor->priorityFlags = 0;
   MapGrid_CopyCellAttributes(0, 4, 1, 1, 6, 15);
@@ -442,7 +437,7 @@ void GabombaCatacombs_FreezeSeventhPuddle(void) {
 void GabombaCatacombs_FreezeStreamPuddle(void) {
   struct Actor *actor = Actor_GetById(ACTOR_STREAM_PUDDLE);
 
-  GameFlag_Set(FLAG_STREAM_PUDDLE_FROZEN);
+  GameFlag_Set(FLAG_GABOMBA_CATACOMBS_STREAM_PUDDLE_FROZEN);
   actor->motionFlags = 0;
   actor->priorityFlags = 0;
   MapGrid_CopyCellAttributes(15, 18, 1, 1, 17, 18);
@@ -704,23 +699,23 @@ s32 Scene_Initialize(void) {
       gMainRoutineWork.entrance > 2)
     Actor_DepartInRing(gMainRoutineWork.leaderActorId);
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_HIDDEN_WALL) {
-    if (GameFlag_Get(FLAG_FIRST_PUDDLE_FROZEN))
+    if (GameFlag_Get(FLAG_GABOMBA_CATACOMBS_FIRST_PUDDLE_FROZEN))
       MapGrid_CopyCellAttributes(6, 23, 1, 1, 8, 23);
-    if (GameFlag_Get(FLAG_SECOND_PUDDLE_FROZEN))
+    if (GameFlag_Get(FLAG_GABOMBA_CATACOMBS_SECOND_PUDDLE_FROZEN))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 8, 15);
-    if (GameFlag_Get(FLAG_THIRD_PUDDLE_FROZEN))
+    if (GameFlag_Get(FLAG_GABOMBA_CATACOMBS_THIRD_PUDDLE_FROZEN))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 9, 16);
-    if (GameFlag_Get(FLAG_FOURTH_PUDDLE_FROZEN))
+    if (GameFlag_Get(FLAG_GABOMBA_CATACOMBS_FOURTH_PUDDLE_FROZEN))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 8, 17);
-    if (GameFlag_Get(FLAG_FIFTH_PUDDLE_FROZEN))
+    if (GameFlag_Get(FLAG_GABOMBA_CATACOMBS_FIFTH_PUDDLE_FROZEN))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 6, 17);
-    if (GameFlag_Get(FLAG_SIXTH_PUDDLE_FROZEN))
+    if (GameFlag_Get(FLAG_GABOMBA_CATACOMBS_SIXTH_PUDDLE_FROZEN))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 5, 16);
-    if (GameFlag_Get(FLAG_SEVENTH_PUDDLE_FROZEN))
+    if (GameFlag_Get(FLAG_GABOMBA_CATACOMBS_SEVENTH_PUDDLE_FROZEN))
       MapGrid_CopyCellAttributes(0, 4, 1, 1, 6, 15);
   }
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_STREAM &&
-      GameFlag_Get(FLAG_STREAM_PUDDLE_FROZEN))
+      GameFlag_Get(FLAG_GABOMBA_CATACOMBS_STREAM_PUDDLE_FROZEN))
     MapGrid_CopyCellAttributes(15, 18, 1, 1, 17, 18);
   if (gMainRoutineWork.next == SCENE_GABOMBA_CATACOMBS_TOMEGATHERICON &&
       GameFlag_Get(FLAG_GABOMBA_BESTOWED_POWER) &&
@@ -870,19 +865,26 @@ struct Trigger gGabombaCatacombs_HiddenWallTriggers[] = {
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 49,
      CONDITION_ALWAYS, EVENT(GabombaCatacombs_ScatterWeedsByTheStatue)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE,
-     FLAG_FIRST_PUDDLE_FROZEN, EVENT(GabombaCatacombs_FreezeFirstPuddle)},
+     FLAG_GABOMBA_CATACOMBS_FIRST_PUDDLE_FROZEN,
+     EVENT(GabombaCatacombs_FreezeFirstPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SECOND_PUDDLE,
-     FLAG_SECOND_PUDDLE_FROZEN, EVENT(GabombaCatacombs_FreezeSecondPuddle)},
+     FLAG_GABOMBA_CATACOMBS_SECOND_PUDDLE_FROZEN,
+     EVENT(GabombaCatacombs_FreezeSecondPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_THIRD_PUDDLE,
-     FLAG_THIRD_PUDDLE_FROZEN, EVENT(GabombaCatacombs_FreezeThirdPuddle)},
+     FLAG_GABOMBA_CATACOMBS_THIRD_PUDDLE_FROZEN,
+     EVENT(GabombaCatacombs_FreezeThirdPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FOURTH_PUDDLE,
-     FLAG_FOURTH_PUDDLE_FROZEN, EVENT(GabombaCatacombs_FreezeFourthPuddle)},
+     FLAG_GABOMBA_CATACOMBS_FOURTH_PUDDLE_FROZEN,
+     EVENT(GabombaCatacombs_FreezeFourthPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIFTH_PUDDLE,
-     FLAG_FIFTH_PUDDLE_FROZEN, EVENT(GabombaCatacombs_FreezeFifthPuddle)},
+     FLAG_GABOMBA_CATACOMBS_FIFTH_PUDDLE_FROZEN,
+     EVENT(GabombaCatacombs_FreezeFifthPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SIXTH_PUDDLE,
-     FLAG_SIXTH_PUDDLE_FROZEN, EVENT(GabombaCatacombs_FreezeSixthPuddle)},
+     FLAG_GABOMBA_CATACOMBS_SIXTH_PUDDLE_FROZEN,
+     EVENT(GabombaCatacombs_FreezeSixthPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SEVENTH_PUDDLE,
-     FLAG_SEVENTH_PUDDLE_FROZEN, EVENT(GabombaCatacombs_FreezeSeventhPuddle)},
+     FLAG_GABOMBA_CATACOMBS_SEVENTH_PUDDLE_FROZEN,
+     EVENT(GabombaCatacombs_FreezeSeventhPuddle)},
     {TRIGGER_TABLE_END},
 };
 
@@ -912,6 +914,7 @@ struct Trigger gGabombaCatacombs_StreamTriggers[] = {
      CONDITION_ALWAYS, EVENT(GabombaCatacombs_UncoverStreamPuddle)},
     {TRIGGER_STEP, 50, CONDITION_ALWAYS, EVENT(GabombaCatacombs_WadeStream)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_STREAM_PUDDLE,
-     FLAG_STREAM_PUDDLE_FROZEN, EVENT(GabombaCatacombs_FreezeStreamPuddle)},
+     FLAG_GABOMBA_CATACOMBS_STREAM_PUDDLE_FROZEN,
+     EVENT(GabombaCatacombs_FreezeStreamPuddle)},
     {TRIGGER_TABLE_END},
 };

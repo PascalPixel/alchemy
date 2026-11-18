@@ -85,10 +85,6 @@ enum {
   FILE_LIST_UPDATE = 6
 };
 
-/// A question's window, left open for the Yes/No menu below it.
-#define QUESTION_MESSAGE                                                       \
-  (FIELD_MESSAGE_ZOOM | FIELD_MESSAGE_KEEP_OPEN | FIELD_MESSAGE_LOWER)
-
 /// The two secret button codes: unlocked, held and progress of each.
 extern s16 gClear_CodeUnlocked;
 
@@ -2061,15 +2057,6 @@ u8 gClear_SecondPasswordRow[] = "STUVW XYZ23 45678 9";
 u8 gClear_ThirdPasswordRow[] = "abcde fghij kmnpq r";
 u8 gClear_FourthPasswordRow[] = "stuvw xyz!? #&$%+ =";
 #endif
-
-/// Flags of The Broken Seal's save, by its own names and numbers, which
-/// DataTransfer_Apply reads (game/experience_table.c names them the same).
-#define FLAG_BROKEN_SEAL_VISITED_SICK_DORA 0x81e
-#define FLAG_BROKEN_SEAL_VAULT_WARNED_OF_ESCAPED_THIEVES 0x868
-#define FLAG_BROKEN_SEAL_HSU_RESCUED_WITHOUT_PARTY 0x8b3
-#define FLAG_BROKEN_SEAL_CROSSBONE_ISLE_DEADBEARD_DEFEATED 0x8d1
-#define FLAG_BROKEN_SEAL_DODONPA_LOCKED_UP 0x941
-#define FLAG_BROKEN_SEAL_WON_COLOSSO 0x951
 
 /// The six story flags of a password's PASSWORD_FLAGS_BYTE, by The Broken
 /// Seal's numbers, which DataTransfer_Apply reads them by.

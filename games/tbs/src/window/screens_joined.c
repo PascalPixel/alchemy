@@ -4,7 +4,7 @@
 
 #include "screens_internal.h"
 
-// UB: the joined messages pass five of Message_Start' six
+// UB: the joined messages pass five of Message_Start's six
 // arguments, so its flags are whatever the stack slot of the sixth holds;
 // UBFIX passes 0, as the window object's own messages do.
 #ifdef UBFIX
@@ -109,10 +109,9 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   s32 *entry;
   s32 palette, handle;
   s32 *word;
-  u32 cleared;
+  u32 cleared = 0;
 
   window = NULL;
-  cleared = 0;
   speaker = gDjinn_ElementSprites[element & 3];
   entry = portrait;
   window = Window_Create(DJINN_JOIN_X, 1, DJINN_JOIN_WIDTH, 5, 0);
@@ -122,8 +121,8 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   work->dirty = 1;
   Icon_LoadWithPalette(Portrait_GetForSpeaker(speaker), cleared, &handle,
                        &palette, PORTRAIT_PALETTE, cleared);
-  // The portrait as a bare OAM entry, pushed onto draw layer 250 each
-  // frame: a link word, attributes 0 and 1 and attribute 2.
+  // The portrait as a bare OAM entry, drawn each frame: a link word,
+  // attributes 0 and 1 and attribute 2.
   word = entry;
   *word++ = cleared;
   *word++ = OBJ_SIZE_32X32 | OBJ_X(DJINN_JOIN_X * 8 + 4) | 12;
@@ -179,8 +178,8 @@ void Party_ShowJoinedMessage(s32 member) {
     Icon_LoadWithPalette(
         Portrait_GetForSpeaker(Party_GetMemberPortraitSprite(member)), 0,
         &handle, &palette, PORTRAIT_PALETTE, 0);
-    // The portrait as a bare OAM entry, pushed onto draw layer 250 each frame:
-    // a link word, attributes 0 and 1 and attribute 2.
+    // The portrait as a bare OAM entry, drawn each frame: a link word,
+    // attributes 0 and 1 and attribute 2.
     p = entry;
     *p++ = 0;
     *p++ = OBJ_SIZE_32X32 | OBJ_X(2 * 8 + 4) | 12;
@@ -202,10 +201,10 @@ void Party_ShowJoinedMessage(s32 member) {
   }
 }
 
-/// Shows that two party members joined the party while the join jingle (sound
-/// 81) plays, until it ends or A, B, L or R is pressed.
+/// Shows that two party members joined the party while the join jingle
+/// (MUS_JOINED) plays, until it ends or A, B, L or R is pressed.
 void Party_ShowPairJoinedMessage(s32 first, s32 second) {
-  u8 *work = gWindowWork[0];
+  struct WindowWork *work = WINDOW_WORK;
   struct Window *window;
   s32 secondOam[3];
   s32 firstOam[3];
@@ -229,13 +228,13 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     Window_DrawDividerLine(window, 8, 0, 4, 4);
 #endif
 
-    ((struct WindowWork *)work)->dirty = 1;
+    work->dirty = 1;
 
     Icon_LoadWithPalette(
         Portrait_GetForSpeaker(Party_GetMemberPortraitSprite(first)), 0,
         &firstHandle, &palette, PORTRAIT_PALETTE, 0);
-    // The portrait as a bare OAM entry, pushed onto draw layer 250 each frame:
-    // a link word, attributes 0 and 1 and attribute 2.
+    // The portrait as a bare OAM entry, drawn each frame: a link word,
+    // attributes 0 and 1 and attribute 2.
     p = firstEntry;
     *p++ = 0;
     *p++ = OBJ_SIZE_32X32 | OBJ_X(12) | 12;
@@ -247,11 +246,11 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
         &secondHandle, &palette, PORTRAIT_PALETTE + 1, 0);
     p = secondEntry;
     *p++ = 0;
-    *p++ = OBJ_SIZE_32X32 | (44 << 16) | 12;
+    *p++ = OBJ_SIZE_32X32 | OBJ_X(44) | 12;
     *p = palette | OBJ_PALETTE(PORTRAIT_PALETTE + 1);
 
-    ((struct WindowWork *)work)->voiceSound = 0;
-    ((struct WindowWork *)work)->voiceCountdown = 0;
+    work->voiceSound = 0;
+    work->voiceCountdown = 0;
 
     MessageArgument_Push(first, MESSAGE_ARGUMENT_ACTOR);
     MessageArgument_Push(second, MESSAGE_ARGUMENT_ACTOR);

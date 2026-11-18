@@ -1075,6 +1075,10 @@ static inline s32 Garoh_PathStep(s32 from, s32 to, s32 i) {
   return from + ((to - from) * i) / 8;
 }
 
+/// How far, in pixels, the werewolf weaves either side of the path as it runs
+/// past: across the screen, and up and down it.
+enum { WEAVE_ACROSS = 12, WEAVE_DOWN = 7 };
+
 /// The first night: a werewolf howls ("Gaaaroooooo!") and runs along the path
 /// back into the village.
 void Garoh_WerewolfRunsPast(void) {
@@ -1145,9 +1149,10 @@ void Garoh_WerewolfRunsPast(void) {
 
     wave = Math_Sin(i * (DEGtoANG(45)));
     pos = position;
-    pos[0] = Garoh_PathStep(toFIXED(104), toFIXED(88), i) - wave * 12;
+    pos[0] = Garoh_PathStep(toFIXED(104), toFIXED(88), i) - wave * WEAVE_ACROSS;
     wave = Math_Sin(i * (DEGtoANG(45)));
-    position[2] = Garoh_PathStep(toFIXED(32), toFIXED(120), i) - wave * 7;
+    position[2] =
+        Garoh_PathStep(toFIXED(32), toFIXED(120), i) - wave * WEAVE_DOWN;
     position[1] = 0;
     tenths = Random_Below(10) + 4;
     Actor_SetSpeedFX(ACTOR_WEREWOLF, tenths * (toFIXED(1) / 10),

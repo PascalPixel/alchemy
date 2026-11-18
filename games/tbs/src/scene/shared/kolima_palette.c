@@ -1,11 +1,18 @@
-#include "system/dma.h"
+/// @file
+/// Kolima Forest, while Tret's curse lasts (FLAG_KOLIMA_CURSE_LIFTED clear):
+/// the forest's colours turned redder and darker, and both sets of colours kept
+/// for the event where the curse lifts.
 
-// Kolima Forest, while Tret's curse lasts (FLAG_KOLIMA_CURSE_LIFTED clear):
-// the forest's colours turned redder and darker, and both sets of colours kept
-// for the event where the curse lifts.
+#include "system/dma.h"
 
 /// Background colour `color` of palette `palette`, counted from colour 0.
 #define BG_COLOR_INDEX(palette, color) ((palette) * PALETTE_COLORS + (color))
+
+/// The background palettes whose first colours are the water's blues, colours
+/// 1 to 7 of the one and 1 to 8 of the other, which the curse leaves as they
+/// are. At Tret's tree the second palette's are tans.
+#define KOLIMA_WATER_PALETTE 1
+#define KOLIMA_SECOND_WATER_PALETTE 12
 
 /// The size of a kept set of colours: the palette fade's background and sprite
 /// colours.
@@ -22,16 +29,17 @@ static void KolimaPalette_SaveHealthy(void);
 static void KolimaPalette_SaveCursed(void);
 static void KolimaPalette_Capture(void);
 
-/// Keeps the healthy colours, curses the background palettes 0 to 13 (all but
-/// colours 1 to 7 of palette 1 and 1 to 8 of palette 12) by divisor, keeps
-/// the cursed colours too, and shows them.
+/// Keeps the healthy colours, curses the background colours but the water's
+/// by divisor, keeps the cursed colours too, and shows them.
 void KolimaPalette_Curse(s32 divisor) {
   u16 i;
 
   KolimaPalette_SaveHealthy();
   for (i = 0; i < PALETTE_FADE_BG_COLORS; i++) {
-    if ((i < BG_COLOR_INDEX(1, 1) || i > BG_COLOR_INDEX(1, 7)) &&
-        (i < BG_COLOR_INDEX(12, 1) || i > BG_COLOR_INDEX(12, 8))) {
+    if ((i < BG_COLOR_INDEX(KOLIMA_WATER_PALETTE, 1) ||
+         i > BG_COLOR_INDEX(KOLIMA_WATER_PALETTE, 7)) &&
+        (i < BG_COLOR_INDEX(KOLIMA_SECOND_WATER_PALETTE, 1) ||
+         i > BG_COLOR_INDEX(KOLIMA_SECOND_WATER_PALETTE, 8))) {
       u16 *pal = (u16 *)&BG_PLTT[i];
       *pal = KolimaPalette_CurseColor(*pal, divisor);
     }
@@ -103,4 +111,6 @@ void KolimaPalette_Restore(s32 second) {
 }
 
 #undef BG_COLOR_INDEX
+#undef KOLIMA_WATER_PALETTE
+#undef KOLIMA_SECOND_WATER_PALETTE
 #undef KOLIMA_PALETTE_WORDS

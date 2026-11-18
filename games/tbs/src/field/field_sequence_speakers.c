@@ -4,6 +4,10 @@
 
 #include "field_sequence_internal.h"
 
+/// The rows of gSpeakerDefinitions Speaker_FindDefinition searches; the row
+/// after them is the default.
+#define SPEAKER_DEFINITION_COUNT 130
+
 /// Returns the speaker definition of sprite id from gSpeakerDefinitions, or its
 /// last entry, the default, when there is none.
 const struct SpeakerDefinition *Speaker_FindDefinition(u32 id) {
@@ -14,25 +18,23 @@ const struct SpeakerDefinition *Speaker_FindDefinition(u32 id) {
     do {
       definitionIndex += 1;
       entry++;
-      if (definitionIndex > 129)
+      if (definitionIndex >= SPEAKER_DEFINITION_COUNT)
         break;
     } while (entry->id != id);
   }
   return entry;
 }
 
-/// Returns the sprite id stored by a live actor's animated sprite, or 0 when
-/// that actor has no animated sprite or its sprite-id pointer is absent.
+/// Returns the sprite id actor id shows, its one sprite's first animation's,
+/// or 0 when it shows no single sprite or that animation is absent.
 s32 Speaker_GetActorSprite(s32 id) {
   struct Actor *actor = Actor_Lookup(id);
-  struct SpeakerSprite *sprite;
 
-  if (actor->spriteStorageKind != ACTOR_SPRITE_ONE ||
-      (sprite = (struct SpeakerSprite *)actor->sprite) == NULL ||
-      sprite->firstEntry == NULL) {
+  if (actor->spriteStorageKind != ACTOR_SPRITE_ONE || actor->sprite == NULL ||
+      actor->sprite->entries[0] == NULL) {
     return 0;
   }
-  return *sprite->firstEntry;
+  return actor->sprite->entries[0]->animationId;
 }
 
 /// Returns the voice of sprite id's messages: the first of its four blip

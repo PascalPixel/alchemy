@@ -7,16 +7,20 @@
 /// How many bytes of gNumberBuffer are widened: the eleven characters
 /// String_FormatDecimal writes, its terminator and the two bytes after.
 #define NUMBER_TEXT_WIDE_LENGTH 14
+/// Where the widened text's last four characters start, room for 9999.
+#define NUMBER_TEXT_FOUR_PLACES 7
+/// Where its last three start, room for 999.
+#define NUMBER_TEXT_THREE_PLACES 8
 
 /// A changed stat's arrow, right of its value on window tile row `row` (HP
 /// on row 1 to Luck on row 6).
 #define PREVIEW_STAT_ARROW_X 80
 #define PREVIEW_STAT_ARROW_Y(row) ((row) * 8 + 6)
 
-// Writes `value` into `out` as String_FormatDecimal's eleven-character,
-// right-aligned decimal text, widened to halfwords for
-// Text_DrawWideStringInWindow: out + 7 is its last four characters, out + 8 its
-// last three. `out` needs room for 14 halfwords.
+/// Writes `value` into `out` as String_FormatDecimal's eleven-character,
+/// right-aligned decimal text, widened to halfwords for
+/// Text_DrawWideStringInWindow. `out` needs room for NUMBER_TEXT_WIDE_LENGTH
+/// halfwords.
 UNREAD_RESULT String_FormatNumberToHalfwords(s16 *out, s32 value) {
   s16 *destination;
   s32 i;
@@ -30,18 +34,25 @@ UNREAD_RESULT String_FormatNumberToHalfwords(s16 *out, s32 value) {
   }
 }
 
-// Preview marks are separate from the action ID in the low fourteen bits.
-#define DJINN_PREVIEW_ABILITY_GAINED                                           \
-  0x8000 ///< new with the change; TEXT_COLOR_YELLOW
-#define DJINN_PREVIEW_ABILITY_LOST                                             \
-  0x4000 ///< gone with the change; TEXT_COLOR_RED
+/// The marks BattleDjinnMenu_ListChangedDjinn gives an ability in its list,
+/// above its id: the preview draws a gained one in TEXT_COLOR_YELLOW and a
+/// lost one in TEXT_COLOR_RED.
+#define DJINN_PREVIEW_ABILITY_GAINED 0x8000 ///< new with the change
+#define DJINN_PREVIEW_ABILITY_LOST 0x4000   ///< gone with the change
 /// Entries of the change list: the new list's 32 and the lost ones after.
 #define DJINN_PREVIEW_ABILITY_CAPACITY 48
+/// The abilities a page of the preview lists.
+#define DJINN_PREVIEW_ABILITIES_PER_PAGE 5
+/// The last of the twelve range icons Window_DrawThreeTileColumn draws, which
+/// stands for ABILITY_RANGE_ALL; range n takes icon n - 1.
+#define RANGE_ICON_ALL 11
 
-/// Lists into `out` the abilities usable in battle (BATTLE_OK) of the action
-/// list `newGrid`, in its order, marking with DJINN_PREVIEW_ABILITY_GAINED
-/// those `oldGrid` lacks; then appends those of `oldGrid` that `newGrid` lacks,
-/// marked DJINN_PREVIEW_ABILITY_LOST.
+/// Lists into `out` the abilities usable in battle (ABILITY_USABLE_IN_BATTLE)
+/// of the action list `newGrid`, in its order, marking with
+/// DJINN_PREVIEW_ABILITY_GAINED those `oldGrid` lacks; then appends those of
+/// `oldGrid` that `newGrid` lacks, marked DJINN_PREVIEW_ABILITY_LOST. Returns
+/// the entries written, and the gained and lost counts through `gained` and
+/// `lost`.
 s32 BattleDjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,
                                      const struct PsynergyEntry *newGrid,
                                      u16 *out, s32 *gained, s32 *lost) {
@@ -55,7 +66,8 @@ s32 BattleDjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,
   lostCount = 0;
   count = 0;
   for (i = 0; i < PSYNERGY_SLOTS && newGrid[i].encodedAction != 0; i++) {
-    if (Ability_Get(newGrid[i].encodedAction)->flags & BATTLE_OK) {
+    if (Ability_Get(newGrid[i].encodedAction)->flags &
+        ABILITY_USABLE_IN_BATTLE) {
       out[count] = newGrid[i].encodedAction & ACTION_ID_MASK;
       count++;
       for (j = 0; j < PSYNERGY_SLOTS; j++) {
@@ -70,7 +82,8 @@ s32 BattleDjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,
     }
   }
   for (i = 0; i < PSYNERGY_SLOTS && oldGrid[i].encodedAction != 0; i++) {
-    if (Ability_Get(oldGrid[i].encodedAction)->flags & BATTLE_OK) {
+    if (Ability_Get(oldGrid[i].encodedAction)->flags &
+        ABILITY_USABLE_IN_BATTLE) {
       for (j = 0; j < PSYNERGY_SLOTS; j++) {
         if (((oldGrid[i].encodedAction ^ newGrid[j].encodedAction) &
              ACTION_ID_MASK) == 0)
@@ -89,9 +102,9 @@ s32 BattleDjinnMenu_ListChangedDjinn(const struct PsynergyEntry *oldGrid,
   return count;
 }
 
-// Loads the icon of ability `abilityId` into the first free VRAM cache slot and
-// shows it as a 16x16 sprite at pixel (x, y) inside `window`, whose sprite list
-// then owns the slot. Does nothing when the cache is full.
+/// Loads the icon of ability `abilityId` into the first free VRAM cache slot
+/// and shows it as a 16x16 sprite at pixel (x, y) inside `window`, whose
+/// sprite list then owns the slot. Does nothing when the cache is full.
 UNREAD_RESULT WindowSprite_CreateAbilityIcon(struct Window *window, s32 x,
                                              s32 y, s32 abilityId) {
   s32 iconSlot;
@@ -106,7 +119,12 @@ UNREAD_RESULT WindowSprite_CreateAbilityIcon(struct Window *window, s32 x,
 
 /// Shows what setting or removing Djinni `encodedDjinn` (element << 8 | index)
 /// would change for `member`: closes the preview window `win`, opens a new one
-/// and returns it, or NULL when none could be opened.
+/// and returns it, or NULL when none could be opened. Page 0 compares the
+/// class and stats, old against new, with an arrow by each stat that rises or
+/// falls; pages 1 on list the unit's battle abilities after the change and
+/// then those it would lose, and *pageCount is set to their number (at least
+/// 1). The Djinni is toggled and the unit recalculated only to measure: the
+/// unit is restored from a copy before it returns.
 struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
                                                  s32 encodedDjinn, s32 page,
                                                  s32 *pageCount) {
@@ -133,14 +151,14 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
   s32 rising;
   s32 i;
 
-  // Attach the rising/falling stat arrow to the preview window captured here:
-  // a 16x16 sprite on layer 240 at pixel (x, y) of the window, in a VRAM
-  // cache entry of its own that the window's sprite list frees (kind 1).
+  // Draws a rising or falling stat arrow at pixel (x, y) of the preview
+  // window: a 16x16 sprite in a VRAM cache entry of its own, which the
+  // window's sprite list frees with it (WINDOW_SPRITE_ICON).
   void DjinnMenu_DrawStatArrow(s32 x, s32 y, s32 rising) {
     struct WindowSprite *sprite = WindowSprite_AcquireFree();
     struct PreviewSprite *entry;
     if (sprite) {
-      sprite->motion = 1;
+      sprite->motion = WINDOW_SPRITE_MOTION_STILL;
       sprite->kind = WINDOW_SPRITE_ICON;
       *(s8 *)&sprite->index = VramCache_AllocEntry(128);
       entry = (struct PreviewSprite *)sprite->link;
@@ -165,18 +183,16 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
   }
 
   unit = Unit_GetFar(member);
-  if (win != 0)
+  if (win != NULL)
     Window_Close(win, 1);
 
   if (page == 0)
     win = Window_Create(0, 8, 21, 11, 6);
   else
     win = Window_Create(0, 5, 21, 14, 6);
-  if (win == 0)
-    return 0;
+  if (win == NULL)
+    return NULL;
 
-  // Save the unit before the temporary Djinn toggle changes its class/stats.
-  // Fourteen widened characters fit well inside the 64-halfword text buffer.
   numberText = Heap_Alloc(64 * sizeof(*numberText));
   savedUnit = Heap_Alloc(sizeof(*savedUnit));
   changedAbilities = Heap_AllocEwram(DJINN_PREVIEW_ABILITY_CAPACITY *
@@ -193,10 +209,10 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
 
   abilityCount = BattleDjinnMenu_ListChangedDjinn(
       savedUnit->psynergy, unit->psynergy, changedAbilities, &gained, &lost);
-  // Five abilities a page; a page past the list shows the last.
-  pages = ((abilityCount - 1) / 5) + 1;
+  // A page past the list shows the last.
+  pages = (abilityCount - 1) / DJINN_PREVIEW_ABILITIES_PER_PAGE + 1;
   *pageCount = pages;
-  if (page * 5 - 5 >= abilityCount)
+  if ((page - 1) * DJINN_PREVIEW_ABILITIES_PER_PAGE >= abilityCount)
     page = pages;
 
   // The first page compares stats; the remaining pages compare Psynergy.
@@ -213,10 +229,12 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
     // The old values, by the labels; the new ones go at column 11 below.
     oldHp = savedUnit->hp;
     String_FormatNumberToHalfwords(numberText, oldHp);
-    Text_DrawWideStringInWindow(numberText + 7, win, DJINN_PREVIEW_VITALS_X, 1);
+    Text_DrawWideStringInWindow(numberText + NUMBER_TEXT_FOUR_PLACES, win,
+                                DJINN_PREVIEW_VITALS_X, 1);
     oldPp = savedUnit->pp;
     String_FormatNumberToHalfwords(numberText, oldPp);
-    Text_DrawWideStringInWindow(numberText + 7, win, DJINN_PREVIEW_VITALS_X, 2);
+    Text_DrawWideStringInWindow(numberText + NUMBER_TEXT_FOUR_PLACES, win,
+                                DJINN_PREVIEW_VITALS_X, 2);
     oldAtk = savedUnit->atk;
     String_FormatNumberToHalfwords(numberText, oldAtk);
     Text_DrawWideStringInWindow(numberText + DJINN_PREVIEW_STAT_DIGIT_OFFSET,
@@ -230,11 +248,12 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
     Text_DrawWideStringInWindow(numberText + DJINN_PREVIEW_STAT_DIGIT_OFFSET,
                                 win, DJINN_PREVIEW_STAT_X, 5);
     String_FormatNumberToHalfwords(numberText, savedUnit->luck);
-    Text_DrawWideStringInWindow(numberText + 8, win, 5, 6);
+    Text_DrawWideStringInWindow(numberText + NUMBER_TEXT_THREE_PLACES, win, 5,
+                                6);
 
     Window_DrawDividerLine(win, 0, 8, 19, 8);
-    // "R: Psynergy Gained" stands out in TEXT_COLOR_RED when the Psynergy
-    // changes.
+    // The prompt for the Psynergy pages, its button and ":Psynergy Gained",
+    // stands out in TEXT_COLOR_RED when the Psynergy changes.
     if (gained != 0 || lost != 0)
       Text_SetColor(TEXT_COLOR_RED);
     Text_DrawMessageAsTiles(MsgBattleAdditionalPsynergyHelp, win,
@@ -245,9 +264,9 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
   if (page > 0) {
     summaryRows = 0;
     visibleRows = abilityCount;
-    if (abilityCount > 4)
-      visibleRows = 5;
-    i = page * 5 - 5;
+    if (abilityCount >= DJINN_PREVIEW_ABILITIES_PER_PAGE)
+      visibleRows = DJINN_PREVIEW_ABILITIES_PER_PAGE;
+    i = (page - 1) * DJINN_PREVIEW_ABILITIES_PER_PAGE;
     for (visibleRow = 0; visibleRow < visibleRows && i < abilityCount;
          visibleRow++, i++) {
       ability = Ability_Get(changedAbilities[i]);
@@ -258,7 +277,7 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
       // Its element icon, range icon, icon, name and PP cost.
       rangePattern = ability->range;
       if (rangePattern == ABILITY_RANGE_ALL)
-        rangePattern = 11;
+        rangePattern = RANGE_ICON_ALL;
       else
         rangePattern--;
       Window_DrawThreeTileColumn(win, 16, visibleRow * 2, rangePattern, 0);
@@ -313,7 +332,8 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
           win, WINDOW_TILE(DJINN_MENU_ARROW_TILE + 1) | TILE_HFLIP, 9, 0, page);
 
     String_FormatNumberToHalfwords(numberText, unit->hp);
-    Text_DrawWideStringInWindow(numberText + 7, win, 11, 1);
+    Text_DrawWideStringInWindow(numberText + NUMBER_TEXT_FOUR_PLACES, win, 11,
+                                1);
     if (unit->hp != oldHp) {
       rising = 0;
       if (unit->hp > oldHp)
@@ -323,7 +343,8 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
     }
 
     String_FormatNumberToHalfwords(numberText, unit->pp);
-    Text_DrawWideStringInWindow(numberText + 7, win, 11, 2);
+    Text_DrawWideStringInWindow(numberText + NUMBER_TEXT_FOUR_PLACES, win, 11,
+                                2);
     if (unit->pp != oldPp) {
       rising = 0;
       if (unit->pp > oldPp)
@@ -333,7 +354,8 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
     }
 
     String_FormatNumberToHalfwords(numberText, unit->atk);
-    Text_DrawWideStringInWindow(numberText + 7, win, 11, 3);
+    Text_DrawWideStringInWindow(numberText + NUMBER_TEXT_FOUR_PLACES, win, 11,
+                                3);
     if (unit->atk != oldAtk) {
       rising = 0;
       if (unit->atk > oldAtk)
@@ -343,7 +365,8 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
     }
 
     String_FormatNumberToHalfwords(numberText, unit->def);
-    Text_DrawWideStringInWindow(numberText + 7, win, 11, 4);
+    Text_DrawWideStringInWindow(numberText + NUMBER_TEXT_FOUR_PLACES, win, 11,
+                                4);
     if (unit->def != oldDef) {
       rising = 0;
       if (unit->def > oldDef)
@@ -353,7 +376,8 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
     }
 
     String_FormatNumberToHalfwords(numberText, unit->agi);
-    Text_DrawWideStringInWindow(numberText + 7, win, 11, 5);
+    Text_DrawWideStringInWindow(numberText + NUMBER_TEXT_FOUR_PLACES, win, 11,
+                                5);
     if (unit->agi != oldAgi) {
       rising = 0;
       if (unit->agi > oldAgi)
@@ -363,7 +387,8 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
     }
 
     String_FormatNumberToHalfwords(numberText, unit->luck);
-    Text_DrawWideStringInWindow(numberText + 8, win, 12, 6);
+    Text_DrawWideStringInWindow(numberText + NUMBER_TEXT_THREE_PLACES, win, 12,
+                                6);
     if (unit->luck != savedUnit->luck) {
       rising = 0;
       if (unit->luck > savedUnit->luck)
@@ -380,3 +405,5 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
   Heap_Release(numberText);
   return win;
 }
+
+#undef RANGE_ICON_ALL

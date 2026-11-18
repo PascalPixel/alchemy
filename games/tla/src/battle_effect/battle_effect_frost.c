@@ -195,9 +195,8 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
 
     // Chips fly up at the burst.
     // BUG: velocityX is never set, so a chip drifts sideways by whatever word
-    // its PARTICLES slot last held. Nothing in a battle clears that buffer,
-    // the map grid's cells, so the word is the field's cells or an earlier
-    // effect's particles or pictures.
+    // its PARTICLES slot last held in the map grid's cell buffer: the field's
+    // cells, or an earlier effect's particles or pictures.
     if (frame == FROST_TIMING(args->variant, RISE_FRAME)) {
       for (i = 0; i != FROST_CHIPS; i++) {
         struct Particle *chip = &PARTICLES[i];

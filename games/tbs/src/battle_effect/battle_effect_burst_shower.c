@@ -65,9 +65,9 @@ void BattleEffect_RunDarkBlessing(struct BattleEffectParams *args) {
 void BattleEffect_RunAcidBlessing(struct BattleEffectParams *args) {
   BattleEffect_RunBurstShower(args, BURST_SHOWER_MODE_PINK);
 }
-/// Shows violet lightning between the user and targets instead of bursts: a
-/// bolt flickers through three pictures in front of the user, and the targets
-/// flash in turn without being knocked back.
+/// Violet lightning reaches from the user across to the targets instead of
+/// bursts, on a canvas shown three times as wide, flickering through three
+/// pictures, and the targets flash in turn without being knocked back.
 ///
 /// Abilities: Storm Blessing.
 void BattleEffect_RunStormBlessing(struct BattleEffectParams *args) {
@@ -198,7 +198,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
   }
   if (mode == BURST_SHOWER_MODE_LIGHTNING) {
     origin.x = origin.x / 3;
-    REG_BG2PA = Q_8_8(1.0 / 3);
+    REG_BG2PA = Q_8_8(1.0 / 3); // three times the width
   }
 
   for (i = 0; i != work->args->targetCount; i++) {
@@ -220,8 +220,8 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
       }
     }
 
-    // The lightning mode flickers its bolt in front of the user; the others
-    // fire bursts at the targets.
+    // The lightning mode flickers its bolt from the user towards the targets;
+    // the others fire bursts at them.
     if (mode == BURST_SHOWER_MODE_LIGHTNING) {
       if (work->args->side == EFFECT_SIDE_PARTY) {
         draw[0](canvas,
@@ -233,8 +233,8 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, s32 mode) {
         draw[0](canvas,
                 (work->sheet + BURST_SHOWER_PICTURES) +
                     frame / 3 % 3 * VIOLET_LIGHTNING_PICTURE_BYTES,
-                origin.x - 70, origin.y - 32, VIOLET_LIGHTNING_WIDTH,
-                VIOLET_LIGHTNING_HEIGHT);
+                origin.x - (VIOLET_LIGHTNING_WIDTH - 2), origin.y - 32,
+                VIOLET_LIGHTNING_WIDTH, VIOLET_LIGHTNING_HEIGHT);
       }
     } else {
       aim[0] = (targetSpots[target].x + (Random16() & 31)) - 16;

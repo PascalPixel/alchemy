@@ -224,7 +224,8 @@ s16 Encounter_GetDjinnFormation(s32 djinni) {
 #ifdef UBFIX
   return Encounter_GetFormationAtSlot(battle->zone, battle->slot);
 #else
-  // UB: no return statement; the result of the call is left in r0.
+  // UB: no return statement; callers get the formation only because it is the
+  // last call's result.
   Encounter_GetFormationAtSlot(battle->zone, battle->slot);
 #endif
 }

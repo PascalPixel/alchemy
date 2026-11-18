@@ -4,13 +4,6 @@
 
 #include "event_commands_internal.h"
 
-/// Message_OpenWindow's window options, in packed's low bits (as
-/// window_borders.c names them).
-#define MESSAGE_WINDOW_ZOOM 1 ///< zoom open rather than appear at once
-/// Set by the mind-read windows; Message_OpenWindow never reads it.
-#define MESSAGE_WINDOW_UNREAD 2
-#define MESSAGE_WINDOW_ANCHOR_BOTTOM 16 ///< WINDOW_FLAG_ANCHOR_BOTTOM
-
 /// Message_SetVoiceFromActor's actor id for no voice: it clears the voice.
 #define MESSAGE_VOICE_NONE 0x80000000
 
@@ -493,7 +486,4 @@ void Message_SetVoiceFromActor(s32 actorId) {
 
 #undef DISPLAY_TILE_WIDTH
 #undef DISPLAY_TILE_HEIGHT
-#undef MESSAGE_WINDOW_ZOOM
-#undef MESSAGE_WINDOW_UNREAD
-#undef MESSAGE_WINDOW_ANCHOR_BOTTOM
 #undef MESSAGE_VOICE_NONE

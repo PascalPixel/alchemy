@@ -4,11 +4,6 @@
 
 #include "battle_internal.h"
 
-/// A battle place as an action's target names it: its index on its side in the
-/// low bits, and a bit for the enemies' side.
-#define PLACE_ENEMY_SIDE (1 << 7)
-#define PLACE_INDEX_MASK ((1 << 4) - 1)
-
 /// The chances, out of 256, an action rolls against the battle's random byte.
 enum ActionChance {
   CHANCE_DELUDED_MISS = 153, ///< a deluded attacker misses
@@ -17,8 +12,6 @@ enum ActionChance {
   CHANCE_BLOW = 64           ///< any other
 };
 
-/// An HP change that defeats any unit, as the debug defeat deals it.
-#define DEBUG_DEFEAT_HP_CHANGE 0xc0000000
 /// Battle_RollEffectSuccess's successScale at full strength, in percent.
 #define EFFECT_CHANCE_FULL 100
 
@@ -223,7 +216,7 @@ s32 BattleActionRun_Build(struct BattleAction *request,
         break;
       if (id == BATTLE_UNIT_REMOVED)
         continue;
-      if (Unit_AddHpFar(id, DEBUG_DEFEAT_HP_CHANGE) == 0) {
+      if (Unit_AddHpFar(id, DEFEAT_HP_CHANGE) == 0) {
         BattlePlayback_Push(PLAYBACK_HIT, id);
         BattlePlayback_Push(PLAYBACK_DEFEAT, id);
       }

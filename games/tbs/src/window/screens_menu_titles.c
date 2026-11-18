@@ -435,9 +435,8 @@ s32 Resource_LoadIndexedIntoBuffer(s32 slotIndex, s32 icon) {
 /// The command icons on BG1 share at most COMMAND_ICON_COLORS BG colours,
 /// given out in the order their pixels first use them; a colour met after that
 /// takes colour COMMAND_ICON_COLORS. A GlyphPalette slot holds
-/// COMMAND_ICON_COLOR_UNSET until its colour is given out.
+/// GLYPH_PALETTE_SLOT_UNSET until its colour is given out.
 #define COMMAND_ICON_COLORS 64
-#define COMMAND_ICON_COLOR_UNSET 255
 /// A command icon as BG1 tiles: 32 by 32 pixels, 16 tiles of 256 colours.
 #define COMMAND_ICON_BG_TILES (COMMAND_ICON_BYTES / TILE_SIZE_8BPP)
 
@@ -463,7 +462,7 @@ void BattleCommandRow_LoadIconTiles(struct GlyphPalette *palette, s32 glyph,
   destination = remapped;
   for (i = 0; i < COMMAND_ICON_BYTES; i++) {
     index = *source++;
-    if (palette->slot[index] == COMMAND_ICON_COLOR_UNSET) {
+    if (palette->slot[index] == GLYPH_PALETTE_SLOT_UNSET) {
       palette->slot[index] = palette->count;
       if (palette->count < COMMAND_ICON_COLORS) {
         ((u16 *)BG_PLTT)[palette->count] = ((u16 *)OBJ_PLTT)[index];
@@ -528,6 +527,5 @@ UNUSED void Graphics_InstallBg1VCountHandler(void) {
 #undef COMMAND_ICON_TILE_ROW_BYTES
 #undef ROW_LAST_PIXEL_SHIFT
 #undef COMMAND_ICON_COLORS
-#undef COMMAND_ICON_COLOR_UNSET
 #undef COMMAND_ICON_BG_TILES
 #undef COMMAND_ROW_TOP

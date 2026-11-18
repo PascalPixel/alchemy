@@ -32,7 +32,6 @@ struct Window *Message_ShowAndWait(s32 message, s32 x, s32 y) {
 /// The 256 colours of a command icon, each with a GlyphPalette.slot entry, and
 /// the entry of one with no BG colour yet, as screens_menu_titles.c names it.
 #define COMMAND_ICON_COLORS 256
-#define COMMAND_ICON_COLOR_UNSET 255
 
 /// BG1's map in battle (BATTLE_BG1CNT), where the strip places the icons'
 /// tiles.
@@ -60,7 +59,7 @@ s32 BattleCommandRow_Run(s32 mode) {
   selectionUi = Heap_AllocEwram(sizeof(*selectionUi));
   // No icon colour placed yet; the shared palette starts at BG entry 1.
   for (i = 0; i < COMMAND_ICON_COLORS; i++)
-    selectionUi->palette.slot[i] = COMMAND_ICON_COLOR_UNSET;
+    selectionUi->palette.slot[i] = GLYPH_PALETTE_SLOT_UNSET;
   selectionUi->palette.count = 1;
   if (mode == COMMAND_ROW_PARTY)
     selectionUi->window = Window_Create(20, 17, 10, 3, 6);

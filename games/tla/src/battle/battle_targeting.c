@@ -377,33 +377,35 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
       }
     }
 
-    // Weighted toward the front; five or more fall through to an even roll.
+    // Weighted toward the front: of a roll's outcomes the first target takes
+    // 6, the second 5, the third 4 and the fourth 3; five or more fall
+    // through to an even roll.
     switch (targetCount) {
     case 1:
       selected = 0;
       break;
     case 2:
-      roll = (11 * Random16()) >> 16;
+      roll = Random_Below(6 + 5);
       selected = 0;
-      if (roll > 5)
+      if (roll >= 6)
         selected = 1;
       break;
     case 3:
-      selected = (15 * Random16()) >> 16;
-      if (selected <= 5)
+      selected = Random_Below(6 + 5 + 4);
+      if (selected < 6)
         selected = 0;
-      else if (selected <= 10)
+      else if (selected < 6 + 5)
         selected = 1;
       else
         selected = 2;
       break;
     case 4:
-      selected = (18 * Random16()) >> 16;
-      if (selected <= 5)
+      selected = Random_Below(6 + 5 + 4 + 3);
+      if (selected < 6)
         selected = 0;
-      else if (selected <= 10)
+      else if (selected < 6 + 5)
         selected = 1;
-      else if (selected <= 14)
+      else if (selected < 6 + 5 + 4)
         selected = 2;
       else
         selected = 3;
@@ -413,7 +415,7 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
     if (selected >= 0)
       return targetPositions[selected];
   }
-  return targetPositions[(Random16() * targetCount) >> 16];
+  return targetPositions[Random_Below(targetCount)];
 }
 
 /// Clears every status and stat change of a unit that goes down and works out
@@ -462,10 +464,6 @@ void BattleUnit_ClearStatuses(s32 unitId) {
   BattleUnit_BuildStatusFlags(unitId, BattleObject_Get(unitId));
 }
 
-/// The advance arrow's attribute 0: a 256-colour, semi-transparent tall
-/// sprite; with attribute 1's size 0 it is 8 by 16 pixels.
-#define ADVANCE_ARROW_ATTR0 0xa400
-
 /// Waits for the player to advance a battle message: once the window has
 /// finished printing, shows the bobbing arrow at its corner until B is held,
 /// or A, B, L or R is pressed (or held, after 16 frames), then plays the
@@ -484,7 +482,6 @@ void BattleMessage_WaitForAdvance(void) {
   while (!Message_AllTypedFar())
     wait(1);
   prompt = &promptStorage;
-  // The arrow sheet's address held in a local is added after the window's
   sheet = (s32)gBattleMessage_AdvanceArrowTiles;
   tileSlot = VramCache_AllocEntry(128);
   for (frame = 0;; frame++) {
@@ -495,7 +492,10 @@ void BattleMessage_WaitForAdvance(void) {
     IoWriteQueue_ClearBits16((u32)&REG_WINOUT, WINOUT_WIN01_BG2);
     IoWriteQueue_SetBits16((u32)&REG_WINOUT, WINOUT_WIN01_OBJ);
     Io_Write16(BLEND_ALPHA(BLEND_WEIGHT_MAX, 0), &REG_BLDALPHA);
-    ((u32 *)prompt)[1] = ADVANCE_ARROW_ATTR0;
+    // Both attribute words are set whole: an 8 by 16 arrow of 256 colours,
+    // blended with what is behind it.
+    ((u32 *)prompt)[1] =
+        OBJ_SIZE_8X16 | OBJ_256_COLORS | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
     ((u32 *)prompt)[2] = 0;
     prompt->tile = VramCache_Reload(tileSlot, pictureTiles);
     prompt->x = (s16)window->x * 8 + (offset->x >> 8) + 4;
@@ -788,6 +788,12 @@ void BattleParty_InsertUnitCentered(u16 *list, s32 unit) {
 /// The element power an item, or an ability with no element, acts with.
 #define ITEM_ELEMENT_POWER 100
 
+/// An unleashed Djinni gives the Djinn bonus (more coins and experience, and a
+/// likelier item, from the enemies that fall) against a target weakest to its
+/// element, with a chance in percent of the user's power less the target's
+/// resistance, plus this many.
+#define DJINN_BONUS_CHANCE 30
+
 /// Applies the action's ability to one of its targets, slot, in the seven steps
 /// of README.md's "How an ability resolves", queueing what playback will show.
 /// The Lost Age adds the shields that turn an ability away, the abilities that
@@ -927,17 +933,16 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
   else
     elementPower = ITEM_ELEMENT_POWER;
 
-  // 2. The Djinn bonus, and whether the effect lands: a chance of the user's
-  // power less the target's resistance, plus 30, in percent.
+  // 2. The Djinn bonus, and whether the effect lands.
   if (plan->command == COMMAND_DJINN &&
       (plan->element >= ELEMENT_VENUS && plan->element <= ELEMENT_JUPITER) &&
       affinity > 0) {
     s32 chance;
 
     chance = elementPower - target->element[plan->element].resistance;
-    chance += 30;
+    chance += DJINN_BONUS_CHANCE;
     // Percent to a fraction of the 16-bit random range.
-    chance *= 65536 / 100;
+    chance *= FIXED_ONE / 100;
     if (chance > (Battle_RandomFar() & 0xffff))
       BattlePlayback_Push(PLAYBACK_DJINN_BONUS, 5);
   }
@@ -1711,13 +1716,10 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
         maxu = *pt--;
         maxv = *(s16 *)(pt + 1);
 #endif
-        if (ability->effect == ABILITY_EFFECT_FIZZ) {
-          s32 p = maxv * 60;
-          heal += p / 100;
-        } else {
-          s32 p = maxv * 30;
-          heal += p / 100;
-        }
+        if (ability->effect == ABILITY_EFFECT_FIZZ)
+          heal += maxv * 60 / 100;
+        else
+          heal += maxv * 30 / 100;
       }
       if (heal > (s16)maxu)
         heal = (s16)maxu;

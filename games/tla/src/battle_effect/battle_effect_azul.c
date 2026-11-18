@@ -66,6 +66,22 @@ struct AzulFace {
 #define AZUL_SPHERE_RADIUS 48
 /// The phase of a bubble's sway, a bubble after the one before.
 #define AZUL_BUBBLE_PHASE_STEP 6678
+/// The bubbles show one after another: bubble i waits AZUL_BUBBLE_DELAY times
+/// 1 - cos(i / 128 of a turn) frames, each a little longer than the last.
+#define AZUL_BUBBLE_DELAY 32
+/// The water behind the foes: the backdrop's colour on each line of the battle
+/// view, its top line these levels of blue, green and red (cyan, the brighter
+/// levels held at the brightest), each channel a level darker every so many
+/// lines down. The water deepens a level every 8 frames to AZUL_WATER_DEPTH,
+/// and from frame 160 a level every 4 frames to AZUL_WATER_DEEPEST.
+#define AZUL_WATER_BLUE 40
+#define AZUL_WATER_GREEN 32
+#define AZUL_WATER_RED 16
+#define GRADIENT_BLUE_LINES 15
+#define GRADIENT_GREEN_LINES 16
+#define GRADIENT_RED_LINES 17
+#define AZUL_WATER_DEPTH 12
+#define AZUL_WATER_DEEPEST 20
 /// The drops the sphere bursts into, kept in the map grid's cell buffer.
 #define AZUL_DROPS 256
 /// How far FireRingTexture's square is turned about the upright.
@@ -99,8 +115,8 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
   s32 j;
   s32 k;
   s32 n;
-  u32 t;
-  u32 u;
+  u32 shatterFrame;
+  u32 sphereFrame;
   FIXED place[4];
   struct ModelTexture texture;
   struct ModelTexture scratchTexture;
@@ -249,9 +265,9 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       REG_BG2CNT = BGCNT_PRIORITY(3) | BGCNT_CHAR_BASE(1) | BGCNT_256_COLORS |
                    BGCNT_SCREEN_BASE(7);
     }
-    t = frame - 10;
-    if (t <= BLEND_WEIGHT_MAX) {
-      REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, t);
+    shatterFrame = frame - 10;
+    if (shatterFrame <= BLEND_WEIGHT_MAX) {
+      REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, shatterFrame);
     }
     if ((u32)(frame - 16) <= 63) {
       if (frame == 16) {
@@ -265,7 +281,9 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
           p->y = INTtoFIXED((Random16() & 15) + 120);
           p->velocityX = ((Random16() & mask) - 16) << 13;
           p->velocityY = ((Random16() & mask) - 63) << 12;
-          p->variant = FIXEDtoINT(Trig_Cos(i * (TRIG_TURN / 128)) * 32) - 32;
+          p->variant =
+              FIXEDtoINT(Trig_Cos(i * (TRIG_TURN / 128)) * AZUL_BUBBLE_DELAY) -
+              AZUL_BUBBLE_DELAY;
         }
       }
       i = 0;
@@ -289,21 +307,21 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       s32 level = frame / 8;
 
       if (frame > 159) {
-        level = (frame - 160) / 4 + 12;
-        if (level > 20) {
-          level = 20;
+        level = (frame - 160) / 4 + AZUL_WATER_DEPTH;
+        if (level > AZUL_WATER_DEEPEST) {
+          level = AZUL_WATER_DEEPEST;
         }
-      } else if (level > 12) {
-        level = 12;
+      } else if (level > AZUL_WATER_DEPTH) {
+        level = AZUL_WATER_DEPTH;
       }
       for (i = 0; i != BATTLE_VIEW_TOP - 1; i++) {
         *c++ = 0;
       }
       for (; i != BATTLE_VIEW_BOTTOM - 1; i++) {
         s32 d = i - (BATTLE_VIEW_TOP - 1);
-        s32 b = -(d / 15) - level + 40;
-        s32 g = -(d / 16) - level + 32;
-        s32 r = -(d / 17) - level + 16;
+        s32 b = -(d / GRADIENT_BLUE_LINES) - level + AZUL_WATER_BLUE;
+        s32 g = -(d / GRADIENT_GREEN_LINES) - level + AZUL_WATER_GREEN;
+        s32 r = -(d / GRADIENT_RED_LINES) - level + AZUL_WATER_RED;
 
         if (b < 0) {
           b = 0;
@@ -484,6 +502,8 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         s32 cy = piece[1];
 
         SET_POSITION(p, INTtoFIXED(cx), INTtoFIXED(cy), 0);
+        // A shard flies out a 16th of a pixel a frame across, and a 64th
+        // down, for each pixel it lies from the centre.
         p->velocityX = (cx - AZUL_SHATTER_CENTER) << 12;
         p->velocityY = (cy - AZUL_SHATTER_CENTER) << 10;
         p->velocityZ = ((Random16() & 127) << 2) + 512;
@@ -531,7 +551,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
         actor->velocityY = actor->velocityY * 60 / DAMPING_SCALE;
       }
     }
-    if (t <= 43) {
+    if (shatterFrame <= 43) {
       vertices = Heap_AllocEwram(32);
       model = Render_AllocateModelList(1);
       texture.logWidth = 8;
@@ -627,8 +647,8 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       Resource_LoadAndDecompress(RESOURCE_SWIRL_TEXTURE,
                                  Ram_MapCellBuffer + AZUL_TEXTURES, 0, 0);
     }
-    u = frame - 80;
-    if (u <= 107) {
+    sphereFrame = frame - 80;
+    if (sphereFrame <= 107) {
       s32 scale;
       s32 shade;
       s32 size;
@@ -660,7 +680,7 @@ void BattleEffect_RunAzul(struct BattleEffectParams *args) {
       }
       if (frame <= 185) {
         model = Render_AllocateModelList(1);
-        scale = u * 3 << 8;
+        scale = sphereFrame * 3 << 8;
         shade = 0;
         if (scale > FIXED_ONE) {
           scale = FIXED_ONE;
@@ -890,6 +910,15 @@ void BattleEffect_GetTargetsMidpoint(struct ScreenPoint *position) {
 #undef AZUL_SPHERE_RING_VERTICES
 #undef AZUL_SPHERE_RADIUS
 #undef AZUL_BUBBLE_PHASE_STEP
+#undef AZUL_BUBBLE_DELAY
+#undef AZUL_WATER_BLUE
+#undef AZUL_WATER_GREEN
+#undef AZUL_WATER_RED
+#undef GRADIENT_BLUE_LINES
+#undef GRADIENT_GREEN_LINES
+#undef GRADIENT_RED_LINES
+#undef AZUL_WATER_DEPTH
+#undef AZUL_WATER_DEEPEST
 #undef AZUL_DROPS
 #undef AZUL_RING_TURN
 #undef AZUL_TEXTURES

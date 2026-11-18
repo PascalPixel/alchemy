@@ -13,8 +13,9 @@
 ///   (SuhallaGate_PunchAntHopsFromWest), and whose far end leads to Idejima.
 ///
 /// Every battle sends the party back to ENTRANCE_AFTER_SUHALLA_GATE_BATTLE in
-/// its room, and a lost one to the Venus Lighthouse's entrance. Back from each,
-/// its flag set, the beaten Ruffians lie where they fell.
+/// its room, and a lost one to the Venus Lighthouse's entrance
+/// (VENUS_LIGHTHOUSE_ENTRANCE_AFTER_DEFEAT). Back from each, its flag set, the
+/// beaten Ruffians lie where they fell.
 #include "djinn_ids.h"
 #include "flags.h"
 #include "item_ids.h"
@@ -55,8 +56,6 @@
 /// The entrance each room's battle sends the party back to, 99 in each of the
 /// three.
 #define ENTRANCE_AFTER_SUHALLA_GATE_BATTLE 99
-/// The Venus Lighthouse entrance a lost battle sends the party back to.
-#define ENTRANCE_VENUS_LIGHTHOUSE_DEFEAT 98
 
 /// The road's one placed actor.
 enum SuhallaGateRoadActorId {
@@ -272,7 +271,7 @@ void SuhallaGate_RuffianSpotsParty(void) {
   Event_SetAfterBattleDestination(SCENE_SUHALLA_GATE_HOUSE,
                                   ENTRANCE_AFTER_SUHALLA_GATE_BATTLE);
   Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
-                             ENTRANCE_VENUS_LIGHTHOUSE_DEFEAT);
+                             VENUS_LIGHTHOUSE_ENTRANCE_AFTER_DEFEAT);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   Field_RequestBattleFromEncounterTable(9, 1);
   Event_End();
@@ -320,7 +319,7 @@ void SuhallaGate_RuffiansAmbushParty(void) {
   FieldEvent_SetAfterBattleDestination(SCENE_SUHALLA_GATE_AMBUSH,
                                        ENTRANCE_AFTER_SUHALLA_GATE_BATTLE);
   Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
-                             ENTRANCE_VENUS_LIGHTHOUSE_DEFEAT);
+                             VENUS_LIGHTHOUSE_ENTRANCE_AFTER_DEFEAT);
   work->battleType = BATTLE_TYPE_NO_ESCAPE;
   Field_RequestBattleFromEncounterTable(9, 2);
   Event_End();
@@ -339,7 +338,7 @@ void SuhallaGate_FightPunchAnt(void) {
   Event_SetAfterBattleDestination(SCENE_SUHALLA_GATE_PSYNERGY_STONE,
                                   ENTRANCE_AFTER_SUHALLA_GATE_BATTLE);
   Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
-                             ENTRANCE_VENUS_LIGHTHOUSE_DEFEAT);
+                             VENUS_LIGHTHOUSE_ENTRANCE_AFTER_DEFEAT);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   Field_RequestBattleFromEncounterTable(9, 3);
   Event_End();

@@ -9,10 +9,6 @@
 #include "system/system.h"
 #include "resource_ids.h"
 
-/// The header's CANVAS_WAVE_BG2X again: battle_effect_streaks.c #undefs it
-/// before this part.
-#define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
-
 #define HAUNT_SCATTERED 512
 #define HAUNT_SPIRITS 8 ///< evil spirits drawn around each target
 #define HAUNT_SLOTS 64  ///< particles reserved for each target

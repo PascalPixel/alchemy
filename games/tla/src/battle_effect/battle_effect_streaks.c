@@ -88,10 +88,6 @@ UNUSED void BattleEffect_RunLimeStreaks(struct BattleEffectParams *args) {
 #define STREAKS_FLIGHT 24       ///< frames from user to target
 #define STREAKS_TARGET_DELAY 32 ///< frames between targets
 
-/// A line's 16.16 sideways sway as the BG2X value of the effect's bg2xLines,
-/// which the wave HBlank DMA writes line by line.
-#define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
-
 /// Fires the streaks at each target in turn from above the user; each leaves a
 /// fading trail.
 void BattleEffect_RunStreakVolley(struct BattleEffectParams *args, s32 mode) {
@@ -514,7 +510,6 @@ void BattleEffect_RunMoteFountain(struct BattleEffectParams *args, s32 mode) {
 #undef STREAKS_SPACING
 #undef STREAKS_FLIGHT
 #undef STREAKS_TARGET_DELAY
-#undef CANVAS_WAVE_BG2X
 #undef MOTE_FOUNTAIN_FRAMES
 #undef MOTE_FOUNTAIN_SLAVER_FRAMES
 #undef FLARE_DEPTH_NEAR

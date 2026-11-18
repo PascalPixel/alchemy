@@ -181,8 +181,9 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
     if (frame == STONE_JUSTICE_HURL_FRAME)
       Sound_PlayFar(SE_LAUNCH);
 
-    // Frame 0: the rocks stand in a column 2 pixels apart, on the user's side
-    // of the canvas, and are thrown upward at random speeds.
+    // Frame 0: the rocks stand in a column 2 pixels apart from canvas row 96
+    // down, on the user's side of the canvas, and are thrown upward at random
+    // speeds.
     if (frame == 0) {
       for (i = 0; i != STONE_JUSTICE_ROCKS; i++) {
         rock = &work->particles[i];

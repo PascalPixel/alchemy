@@ -1,9 +1,10 @@
 /// @file
-/// Contigo, the village below Jupiter Lighthouse, in the rooms of this
-/// overlay: its shops, inn and Sanctum (Contigo_TalkToWeaponMerchant,
-/// Contigo_TalkToInnkeeper, Contigo_TalkToHealer), the bushes where Scoop
-/// finds the Venus Djinni Salt, and the cycling colours of its water
-/// (Contigo_StartSlowPaletteCycle).
+/// Contigo, the village below Jupiter Lighthouse, and the rooms of its
+/// overlay: the village with its Teleport circle, its weeds for Cyclone and
+/// the Djinn Salt and Shine; its houses, shops, inn and Sanctum, where Isaac's
+/// party and Felix's are reunited (Contigo_TheReunion); the hall of Lucky
+/// Dice, Super Lucky Dice and Lucky Wheels; and the Anemos geoglyph, where the
+/// villagers build the wings, below the Anemos Sanctum's front.
 
 #include "types.h"
 #include "macros.h"
@@ -19,21 +20,28 @@
 #include "text/msg_ids.h"
 #include "scene/sparkle.h"
 #include "graphics/palette_buffers.h"
+#include "version.h"
 
 /// Force has freed Shine from the ground it was stuck in.
 #define FLAG_SHINE_FREED 0x9e7
 /// Set as Shine, freed, joins the party; until then it waits where it landed.
 #define FLAG_SHINE_CAUGHT 0x9e6
-/// Set once the Bramble Seed in the bushes over Salt is picked up
-/// (gSceneItems).
-#define FLAG_CONTIGO_BRAMBLE_SEED_TAKEN 0xfc7
-/// Set as Kraden comes out to greet the party in the house once it has set out
-/// with the wings (Contigo_ReturnToNewHome).
-#define FLAG_CONTIGO_KRADEN_GREETED_PARTY 0x9d1
+/// Set once Hamma has welcomed the party to her new home, after it set out
+/// with the wings, and told Ivan why she kept from him that she is his sister
+/// (Contigo_ReturnToNewHome).
+#define FLAG_HAMMA_WELCOMED_PARTY 0x9d1
 
 /// The village's temp flag: the camera follows the leader across the whole
 /// village, rather than its western part alone (Contigo_WidenCameraBounds).
 #define FLAG_WHOLE_VILLAGE_IN_VIEW FLAG_SCENE_TEMP_00
+
+/// The tile row of Hamma's portrait as she and Isaac speak at once in the
+/// reunion (Contigo_TheReunion): two rows higher from the first patch on.
+#if !TLA_PATCH_1
+#define REUNION_HAMMA_PORTRAIT_Y 12
+#else
+#define REUNION_HAMMA_PORTRAIT_Y 10
+#endif
 
 /// Set as the party leaves the dice hall for one of its games, so that the
 /// hall greets it on its way back by the game's entrance.
@@ -50,9 +58,8 @@ enum ContigoDiceHallEntrance {
 enum ContigoVillageActorId {
   /// "The Anemos blood in our veins often brings about strange..."
   ACTOR_YOUNG_MAN_ON_THE_WIND_LEGEND = ACTOR_FIRST_PLACED,
-  /// "Everyone's been going on about how amazing it was to watch the ship
-  /// fly..."; once the beacon is lit, "The beacon within Jupiter Lighthouse
-  /// will soon be lit."
+  /// "The beacon within Jupiter Lighthouse will soon be lit. I know this
+  /// because of a strange premonition I had three years ago."
   ACTOR_WOMAN_FORESEEING_THE_BEACON,
   /// "It must be so exciting to travel around the world in a flying ship."
   ACTOR_MAN_ON_THE_FLYING_SHIP,
@@ -63,10 +70,15 @@ enum ContigoVillageActorId {
   ACTOR_OLD_MAN_ON_THE_RISEN_CITY,
   /// "The Anemos geoglyphs show a boat with wings..."
   ACTOR_OLD_WOMAN_ON_THE_GEOGLYPHS,
-  /// The boy who points the way (Contigo_TalkToWanderer).
-  ACTOR_WANDERER,
-  /// The girl who talks of the ship (Contigo_TalkAboutTheShip).
+  /// The two children walking round the middle of the village: the boy,
+  /// "Cities flying up into the sky? I don't buy that for a second!"
+  /// (Contigo_TalkToDoubtingBoy), and the girl, "It wasn't what I expected,
+  /// but seeing the ship take off was still amazing."
+  /// (Contigo_TalkAboutTheShip)
+  ///@{
+  ACTOR_BOY_DOUBTING_THE_LEGENDS,
   ACTOR_GIRL_ON_THE_SHIP,
+  ///@}
   /// The Djinn Salt (Venus) and Shine (Mars).
   ACTOR_SALT,
   ACTOR_SHINE
@@ -87,25 +99,31 @@ enum ContigoShopsActorId {
   ACTOR_OLD_MAN_ON_HESPERIA,
   /// "Winter just ended, but it keeps getting colder. What's going on?"
   ACTOR_OLD_WOMAN_FEELING_THE_COLD,
+  /// The woman behind the item shop's counter (Contigo_TalkToItemMerchant).
   ACTOR_ITEM_MERCHANT,
   /// "Soon, the siblings with the power of the Anemos will return."
   ACTOR_YOUNG_MAN_ON_THE_SIBLINGS,
   /// "The power of the Anemos is all but gone in Contigo."
   ACTOR_WOMAN_ON_THE_ANEMOS_POWER,
-  /// The baby whose furrowed brow brings the wind (Contigo_BabyThinks).
-  /// The baby's brother: "Mom and Dad have been walking around in a daze
-  /// since the ship took off."
+  /// The baby's brother: "I don't have any powers like the Anemos did, but my
+  /// sister, Ahri, is different."
   ACTOR_BABYS_BROTHER,
+  /// The baby whose furrowed brow brings the wind (Contigo_BabyThinks).
   ACTOR_BABY,
+  /// The two men behind the counter of swords and shields: the weapon
+  /// merchant, and the armor merchant, "Mining materials in the ruins is
+  /// dangerous work, so my armor is selling well."
+  ///@{
   ACTOR_WEAPON_MERCHANT,
   ACTOR_ARMOR_MERCHANT,
+  ///@}
   ACTOR_INNKEEPER,
-  /// "The inn has become so..."
+  /// "All the work on the wings means that our inn is always full!"
   ACTOR_INN_WORKER,
-  /// "Gosh, we were so busy..."; once the beacon is lit, "Gotta make all the
-  /// beds..."
+  /// "Gotta make all the beds before everyone returns from Anemos
+  /// Sanctum..."
   ACTOR_WOMAN_MAKING_THE_BEDS,
-  /// "Now's my chance to experiment..."
+  /// "I must be the greatest chef in the world!"
   ACTOR_COOK,
   /// The workers on the wings, resting at the inn: "I worked myself half to
   /// death yesterday."
@@ -116,6 +134,7 @@ enum ContigoShopsActorId {
   ACTOR_OLD_MAN_TOO_OLD_TO_HELP,
   /// "When is that miracle of the Anemos gonna hurry up..."
   ACTOR_OLD_WOMAN_AWAITING_THE_MIRACLE,
+  /// The robed man behind the Sanctum's counter (Contigo_TalkToHealer).
   ACTOR_HEALER
 };
 
@@ -166,21 +185,25 @@ enum ContigoGeoglyphActorId {
   /// "The wings are almost done."
   ACTOR_WOMAN_ON_THE_WINGS,
   /// The four workers building the wings: "Which part goes where? Does this
-  /// metal feather..."
+  /// metal feather connect to that wooden post?"
   ///@{
   ACTOR_WING_WORKER_A,
   ACTOR_WING_WORKER_B,
   ACTOR_WING_WORKER_C,
   ACTOR_WING_WORKER_D,
   ///@}
-  /// The four scholars in long robes studying the geoglyph.
+  /// The four men in long robes by the Sanctum's wall: "Have you taken a good
+  /// look at the Anemos geoglyph?"; "I know that devoted pilgrims will
+  /// appreciate having this translation."; "I want to get a good look at the
+  /// inside of the sanctum, but I can't get this door open."; "The merchant
+  /// Hammet took the gold in this room with him when he left Contigo."
   ///@{
-  ACTOR_SCHOLAR_A,
-  ACTOR_SCHOLAR_B,
-  ACTOR_SCHOLAR_C,
-  ACTOR_SCHOLAR_D,
+  ACTOR_MAN_ON_THE_GEOGLYPH,
+  ACTOR_MAN_WHO_TRANSLATED_THE_WALL,
+  ACTOR_MAN_LOCKED_OUT_OF_THE_SANCTUM,
+  ACTOR_MAN_ON_HAMMET,
   ///@}
-  /// The sign with a translation of the geoglyph's characters.
+  /// The sign with a translation of the characters carved into the wall.
   ACTOR_SIGN,
   /// The wings' parts lying about: three frames, five metal feathers and
   /// seven loose pieces.
@@ -212,7 +235,7 @@ void Actor_MoveToObject(s32 actor, s32 target);
 void FieldCamera_WaitForArrival(void);
 void Party_AddIsaacsParty(void);
 void Contigo_SendToLuckyWheels(s32 mode);
-void Contigo_OpenGameDoor(s32 sourceX, s32 sourceY, s32 doorX, s32 doorY);
+void Contigo_OpenSanctumDoor(s32 sourceX, s32 sourceY, s32 doorX, s32 doorY);
 
 #include "system/task.h"
 #include "field/actor.h"
@@ -237,13 +260,12 @@ void Contigo_OpenGameDoor(s32 sourceX, s32 sourceY, s32 doorX, s32 doorY);
 #include "system/system.h"
 #include "scene_ids.h"
 #include "system/frame.h"
-#include "edition.h"
-#include "version.h"
 #include "system/vector3.h"
+#include "field/objdisp.h"
 #include "field/field_psynergy_work.h"
 
 /// The village's treasure actors after the Power Bread's (gSceneItems): the
-/// Corn, and the Bramble Seed in the bushes over Salt.
+/// Corn, and the Bramble Seed under the weeds north of the Teleport circle.
 enum {
   ACTOR_CORN = FIELD_TREASURE_ACTOR + 1,
   ACTOR_BRAMBLE_SEED = FIELD_TREASURE_ACTOR + 2
@@ -253,16 +275,16 @@ extern const s32 *gFieldEffect_DurationScripts[];
 extern struct ActorPlacement gContigo_VillagePlacements[];
 extern struct ActorPlacement gContigo_GeoglyphPlacements[];
 extern struct ActorPlacement gContigo_ShopsPlacementsBeforeReunion[];
-extern s16 gContigo_ShopsPlacementsReunion[];
+extern struct ActorPlacement gContigo_ShopsPlacementsReunion[];
 extern struct ActorPlacement gContigo_ShopsPlacements[];
 extern struct ActorPlacement gContigo_LuckyDicePlacements[];
 extern struct Trigger gContigo_VillageTriggers[];
 extern struct Trigger gContigo_ShopsTriggers[];
 extern struct Trigger gContigo_ShopsReunionTriggers[];
 
-void Contigo_StartSlowPaletteCycle(void);
+void Teleport_StartShimmer(void);
 
-void Contigo_StopPaletteCycle(void);
+void Teleport_StopShimmer(void);
 
 extern u32 gContigo_WheelsPrizes[];
 /// The Lucky Wheels' icons that win prizes, shirts, boots, rings, then the
@@ -273,17 +295,17 @@ enum {
   WHEELS_ICON_MOON = WHEELS_PRIZE_ICONS,
   WHEELS_PRIZES_PER_ICON = 3
 };
-extern s32 gContigo_EnterGameDoorScript[];
-extern u32 gContigo_HostScript[];
+extern s32 gContigo_EnterSanctumDoorScript[];
+extern u32 gContigo_RejoinLeaderScript[];
 void Contigo_InitializeVillage(void);
 void Contigo_InitializeGeoglyph(void);
 void Contigo_InitializeShops(void);
 void Contigo_InitializeLuckyDice(void);
-extern s16 gContigo_PaletteSlots[];
-extern s16 gContigo_PaletteColors[];
-extern s16 gContigo_DimColors[];
+extern u16 gContigo_PaletteSlots[];
+extern u16 gContigo_PaletteColors[];
+extern u16 gContigo_ShimmerColors[];
 extern u16 gContigo_CycleSlots[];
-extern s32 gContigo_ShopsWatcherScript[];
+extern s32 gContigo_ShiverScript[];
 extern u32 gContigo_SparkleTiles[];
 void Contigo_FreedDjinniJoinsParty(void);
 void Contigo_ExamineWall(void);
@@ -308,42 +330,41 @@ void Contigo_TalkToWheelsAttendant(void);
 void Contigo_ExplainLuckyWheels(void);
 void Contigo_ListLuckyWheelsPrizes(void);
 void Contigo_AskAboutGeoglyph(void);
-void Contigo_TalkToWanderer(void);
+void Contigo_TalkToDoubtingBoy(void);
 void Contigo_TalkAboutTheShip(void);
-void Contigo_ClearFirstBushes(void);
-void Contigo_ClearSecondBushes(void);
+void Contigo_ScatterFirstWeeds(void);
+void Contigo_ScatterSecondWeeds(void);
 
-void Contigo_ClearBushesBySalt(void);
+void Contigo_ScatterWeedsOverBrambleSeed(void);
 
-/// Clears the fourth clump of bushes where Whirlwind touched it.
-void Contigo_ClearFourthBushes(void);
-void Contigo_ClearFifthBushes(void);
-void Contigo_ClearSixthBushes(void);
-void Contigo_ClearSeventhBushes(void);
-void Contigo_ClearEighthBushes(void);
-void Contigo_ClearFirstHedgeRow(void);
-void Contigo_ClearSecondHedgeRow(void);
-void Contigo_ClearThirdHedgeRow(void);
-void Contigo_ClearFourthHedgeRow(void);
-void Contigo_ClearFifthHedgeRow(void);
+void Contigo_ScatterFourthWeeds(void);
+void Contigo_ScatterFifthWeeds(void);
+void Contigo_ScatterSixthWeeds(void);
+void Contigo_ScatterSeventhWeeds(void);
+void Contigo_ScatterEighthWeeds(void);
+void Contigo_ScatterFirstWeedRow(void);
+void Contigo_ScatterSecondWeedRow(void);
+void Contigo_ScatterThirdWeedRow(void);
+void Contigo_ScatterFourthWeedRow(void);
+void Contigo_ScatterFifthWeedRow(void);
 void Contigo_WidenCameraBounds(void);
 void Contigo_NarrowCameraBounds(void);
 void Contigo_ScoopForSalt(void);
-void Contigo_RevealSteps(void);
+void Contigo_RevealMiddleDoor(void);
 
 void Contigo_ForceFreesDjinni(void);
 
 void Contigo_SendToLuckyDice(void);
 void Contigo_SendToSuperLuckyDice(void);
-void Contigo_EnterLuckyWheels(void);
-void Contigo_EnterSuperLuckyDice(void);
+void Contigo_EnterSanctumWestDoor(void);
+void Contigo_EnterSanctumEastDoor(void);
 void Contigo_ReturnToNewHome(void);
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
-extern u32 gContigo_WandererScript[];
-extern u32 gContigo_PacerScript[];
-extern s32 gContigo_StatueScript[];
+extern u32 gContigo_DoubtingBoyScript[];
+extern u32 gContigo_GirlOnTheShipScript[];
+extern s32 gContigo_PuzzledWorkerScript[];
 
 u16 gPaletteCycleBright BSS_DATA;
 u16 *gPaletteCycleSlots BSS_DATA;
@@ -355,15 +376,15 @@ u16 *gPaletteCycleColors BSS_DATA;
 u16 gPaletteCycleLength BSS_DATA;
 u16 gPaletteCycleIndex BSS_DATA ALIGNED(4);
 
-void Contigo_TeleportIn(void);
+void Teleport_ArriveWhirling(void);
 
 s32 List_CountEntries(u16 *list);
 
 void PaletteCycle_Fade(void);
 
-/// Records the four palette lists, writes each listed palette entry from its
-/// red, green and blue, then copies the BG and OBJ palettes into the palette
-/// fade's source and starts the blend.
+/// Writes each listed background colour from its red, green and blue, keeps
+/// the lists for the Teleport circle's shimmer, and saves the palettes as the
+/// fade's source; arriving by Teleport, the party then arrives on the circle.
 void Palette_SetColors(u16 *slots, u16 *colours, u16 *cycleColours,
                        u16 *cycleSlots) {
   struct PaletteFade *fade = Ram_HeapSlots->paletteFade;
@@ -379,17 +400,20 @@ void Palette_SetColors(u16 *slots, u16 *colours, u16 *cycleColours,
     int blue = *colours++;
     SET_RGB(BG_PLTT[index], red, green, blue);
   }
-  Dma_Set((const void *)BG_PLTT, fade->palette, DMA_COPY_WORDS(112), REG_DMA3);
-  Dma_Set((const void *)OBJ_PLTT, &fade->palette[224], DMA_COPY_WORDS(112),
-          REG_DMA3);
+  Dma_Set((const void *)BG_PLTT, fade->palette,
+          DMA_COPY_WORDS(PALETTE_FADE_BG_COLORS / 2), REG_DMA3);
+  Dma_Set(
+      (const void *)OBJ_PLTT, &fade->palette[PALETTE_FADE_BG_COLORS],
+      DMA_COPY_WORDS((ARRAY_COUNT(fade->palette) - PALETTE_FADE_BG_COLORS) / 2),
+      REG_DMA3);
   PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   if (gMainRoutineWork.teleportState == 2)
-    Contigo_TeleportIn();
+    Teleport_ArriveWhirling();
 }
 
-/// Starts the slow cycle of the village's water colours, a step every 16
-/// frames, as a VBlank task.
-void Contigo_StartSlowPaletteCycle(void) {
+/// Starts the shimmer at its slow pace, as Teleport is cast: the first step
+/// after 16 frames, each after a frame less, down to two.
+void Teleport_StartShimmer(void) {
   gPaletteCycleIndex = 0;
   gPaletteCycleLength = List_CountEntries(gPaletteSlots);
   gPaletteCycleDelay = 15;
@@ -398,18 +422,16 @@ void Contigo_StartSlowPaletteCycle(void) {
   Task_Add(PaletteCycle_Fade, TASK_PASS_FRAME);
 }
 
-/// Stops the cycle of colours and leaves the scene's next transition a backdrop
-/// fade.
-void Contigo_StopPaletteCycle(void) {
+/// Stops the shimmer, leaving the next transition a backdrop fade.
+void Teleport_StopShimmer(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Task_Remove(PaletteCycle_Fade);
 }
 
-/// Starts the fast cycle of colours, a step every 2 frames, which spins the
-/// colours as the party teleports.
-void Contigo_StartFastPaletteCycle(void) {
+/// Starts the shimmer at a step every two frames, as the party arrives.
+void Teleport_StartFastShimmer(void) {
   gPaletteCycleIndex = 0;
   gPaletteCycleLength = List_CountEntries(gPaletteSlots);
   gPaletteCycleDelay = 2;
@@ -418,34 +440,26 @@ void Contigo_StartFastPaletteCycle(void) {
   Task_Add(PaletteCycle_Fade, TASK_PASS_FRAME);
 }
 
-/// Counts a list of palette slots ended by PALETTE_LIST_END, less one.
-s32 List_CountEntries(u16 *list) {
-  s32 count = 0;
-
-  while (list[count] != PALETTE_LIST_END)
-    count++;
-  count--;
-  return count;
-}
+#include "shared/list_count_entries.h"
 
 #include "shared/palette_cycle_fade.h"
 
-/// The party's arrival by teleport from Anemos: the scene fades in through grey
-/// while the colours spin and the whirl plays, then settles.
-void Contigo_TeleportIn(void) {
+/// The party arrives by Teleport on the circle: the village fades in grey
+/// while the circle shimmers and the whirl plays, then its colours come back.
+void Teleport_ArriveWhirling(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 saved;
 
   saved = work->transition;
-  PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 8), 1);
+  PaletteFade_SetTarget(PALETTE_TINT_CUSTOM | RGB(8, 8, 8), PALETTES_BG);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_OBJECTS);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Contigo_StartFastPaletteCycle();
+  Teleport_StartFastShimmer();
   Teleport_PlayWhirl();
   wait(40);
-  Contigo_StopPaletteCycle();
+  Teleport_StopShimmer();
   PaletteFade_SetTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(16);
   wait(16);
@@ -477,7 +491,7 @@ void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 #undef EFFECT_SET_SCRIPT
 #undef EFFECT_SCRIPTS
 
-/// Salt, found in the bushes, joins the party.
+/// Salt, dug up in the patch of weeds, joins the party.
 void Contigo_SaltJoinsParty(void) {
   Djinn_JoinParty(ACTOR_SALT, DJINNI_SALT / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_SALT));
@@ -490,21 +504,10 @@ void Contigo_FreedDjinniJoinsParty(void) {
   GameFlag_Set(FLAG_SHINE_CAUGHT);
 }
 
-/// The distance in whole pixels between two positions of three 16.16
-/// coordinates, as Lemuria's copy of it.
-s32 Lemuria_Distance(s32 *a, s32 *b) {
-  s32 dx = FIXEDtoINT(*a++ - *b++);
-  s32 dy = FIXEDtoINT(*a++ - *b++);
-  s32 dz = FIXEDtoINT(*a - *b);
-  s32 dxsq = dx * dx;
-  s32 dysq = dy * dy;
-  s32 dzsq = dz * dz;
+#include "shared/position_distance.h"
 
-  return Iwram_Sqrt(dxsq + dysq + dzsq);
-}
-
-/// 1 when `other` is within `range` of `self` and `self` faces it, within one
-/// eighth of a turn.
+/// 1 when `other` is nearer `self` than `range` pixels and lies in the
+/// sixteenth of a turn `self` faces or in one either side of it.
 s32 Actor_IsFacingNear(struct Actor *self, struct Actor *other, s32 range) {
   s32 result = 0;
   s32 *to;
@@ -512,12 +515,12 @@ s32 Actor_IsFacingNear(struct Actor *self, struct Actor *other, s32 range) {
 
   to = &other->x.fixed;
   from = &self->x.fixed;
-  if (Lemuria_Distance(to, from) < range) {
+  if (Position_Distance(to, from) < range) {
     u32 angle = (u16)Trig_Atan(other->z.fixed - self->z.fixed, *to - *from);
-    u32 left = (angle - TRIG_TURN / 16) & 0xf000;
-    u32 right = (angle + TRIG_TURN / 16) & 0xf000;
-    u32 ahead = angle & 0xf000;
-    u32 facing = self->facing & 0xf000;
+    u32 left = FACING_SIXTEENTH(angle - FACING_STEP);
+    u32 right = FACING_SIXTEENTH(angle + FACING_STEP);
+    u32 ahead = FACING_SIXTEENTH(angle);
+    u32 facing = FACING_SIXTEENTH(self->facing);
 
     if (ahead == facing || right == facing || left == facing)
       result = 1;
@@ -528,10 +531,18 @@ s32 Actor_IsFacingNear(struct Actor *self, struct Actor *other, s32 range) {
 void Actor_SetSpritePriorityDirect(struct Actor *actor, s32 value);
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 
-/// The update of the wanderer and the girl by the ship: each stands still
-/// while it faces the other within 18 pixels or the leader within 26, or while
-/// Mind Read is cast, and walks on otherwise or when the leader comes within 11
-/// pixels.
+/// How near, in pixels, the two walking children heed: the other child they
+/// face, the leader they face, and the leader come so near that they walk on.
+enum {
+  CHILD_SEES_CHILD_RANGE = 18,
+  CHILD_SEES_LEADER_RANGE = 26,
+  CHILD_WALKS_ON_RANGE = 11
+};
+
+/// The update of the two children walking round the middle of the village:
+/// each stands while it is talked to, while Mind Read shows its thoughts, or
+/// while it faces the other child or the leader close by, and walks on
+/// otherwise or once the leader is right by it.
 s32 Contigo_PauseWhenFaced(struct Actor *self) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u8 *state;
@@ -552,16 +563,17 @@ s32 Contigo_PauseWhenFaced(struct Actor *self) {
   if (self->riseEnabled == 1)
     goto stand;
   other = Actor_GetById(gMainRoutineWork.leaderActorId);
-  if (Lemuria_Distance(&self->x.fixed, &other->x.fixed) <= 11)
+  if (Position_Distance(&self->x.fixed, &other->x.fixed) <=
+      CHILD_WALKS_ON_RANGE)
     goto walk;
   if (self->riseCounter == 1)
     other = Actor_GetById(ACTOR_GIRL_ON_THE_SHIP);
   else
-    other = Actor_GetById(ACTOR_WANDERER);
-  if (Actor_IsFacingNear(self, other, 18) != 0)
+    other = Actor_GetById(ACTOR_BOY_DOUBTING_THE_LEGENDS);
+  if (Actor_IsFacingNear(self, other, CHILD_SEES_CHILD_RANGE) != 0)
     goto stand;
   if (Actor_IsFacingNear(self, Actor_GetById(gMainRoutineWork.leaderActorId),
-                         26) != 0)
+                         CHILD_SEES_LEADER_RANGE) != 0)
     goto stand;
 walk:
   *state = 0;
@@ -573,10 +585,10 @@ stand:
   return 0;
 }
 
-/// A question mark over the woman who talks of Anemos.
-s32 Contigo_ShowSurprise(void) {
-  FieldActor_ShowEmote(ACTOR_WOMAN_ON_THE_ANEMOS,
-                       EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
+/// A question mark over the worker wondering which part goes where, as he
+/// looks from one part of the wings to another (gContigo_PuzzledWorkerScript).
+s32 Contigo_ShowWorkerPuzzled(void) {
+  FieldActor_ShowEmote(ACTOR_WING_WORKER_B, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   return 0;
 }
 
@@ -704,15 +716,15 @@ void Contigo_WhirlLeaf(struct Actor *effect) {
   dz = Iwram_MulFX(radius, Trig_Sin(angle));
   effect->x.fixed += dx;
   effect->z.fixed += dz;
-  // The u16 angle wraps: -16 gives a small backwards drift.
-  effect->facing -= 16;
-  if (effect->userValue != 0) {
-    effect->userValue--;
+  // A small backwards drift, a 4096th of a turn a frame.
+  effect->facing += -(TRIG_TURN / 4096);
+  if (effect->turnFrames != 0) {
+    effect->turnFrames--;
     effect->facing += TRIG_TURN / 32;
-  } else if ((Random16() << 5) >> 16 == 0) {           // one chance in 32
-    effect->userValue = ((Random16() << 4) >> 16) + 8; // 8 to 23 frames
+  } else if ((Random16() << 5) >> 16 == 0) {            // one chance in 32
+    effect->turnFrames = ((Random16() << 4) >> 16) + 8; // 8 to 23 frames
   }
-  if (++effect->timer == 101)
+  if (++effect->swirlFrames == 101)
     Actor_Release(effect);
 }
 
@@ -727,8 +739,8 @@ void Contigo_RaiseLeaves(void) {
       Actor_SetSpriteFlags(actor, 0);
       actor->update = Contigo_WhirlLeaf;
       actor->motionFlags = 0;
-      actor->timer = -(s32)(Random_Below(16)) * 2 + 20;
-      actor->userValue = 0;
+      actor->swirlFrames = -(s32)(Random_Below(16)) * 2 + 20;
+      actor->turnFrames = 0;
       actor->gravity = toFIXED(1) / 10;
       actor->velocityY = toFIXED(3);
       actor->facing = Random16();
@@ -835,7 +847,7 @@ enum {
 /// Contigo's inn, as Inn_CheckIn numbers the inns.
 enum { CONTIGO_INN = 12 };
 
-/// The item merchant: facing the counter opens the shop; otherwise he talks of
+/// The item merchant: facing the counter opens the shop; otherwise she talks of
 /// the wings.
 void Contigo_TalkToItemMerchant(void) {
   if (Leader_IsFacingNorth()) {
@@ -1024,36 +1036,38 @@ void Contigo_ListLuckyWheelsPrizes(void) {
   FieldMessage_Show(msg + 1, 1);
   FieldMessage_Show(msg + 2, 1);
   FieldMessage_Show(msg + 3, 1);
-#if (LANGUAGE !=                                                               \
-     LANGUAGE_SPANISH) /* The Spanish edition ends after four messages.        \
-                        */
+  // The Spanish sign ends after four messages.
+#if LANGUAGE != LANGUAGE_SPANISH
   FieldMessage_Show(msg + 4, 1);
 #endif
   Event_End();
 }
 
-/// A scholar asks whether the party has looked at the Anemos geoglyph.
+/// A man in a long robe asks whether the party has looked at the Anemos
+/// geoglyph.
 void Contigo_AskAboutGeoglyph(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgContigoHaveYouTakenAGood);
   // "Have you taken a good look at the Anemos geoglyph?"
-  Event_AskYesNoAndShowResponse(ACTOR_SCHOLAR_A, 0);
+  Event_AskYesNoAndShowResponse(ACTOR_MAN_ON_THE_GEOGLYPH, 0);
   Event_End();
 }
 
-/// The wanderer talks of the geoglyphs and of Anemos, turning to the leader
-/// unless Mind Read is cast on him, and back after.
-void Contigo_TalkToWanderer(void) {
+/// The boy walking with the girl talks of the geoglyphs and of the city of the
+/// Anemos, which he will not believe flew, turning to the leader unless Mind
+/// Read is cast on him, and back after.
+void Contigo_TalkToDoubtingBoy(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
-  struct Actor *actor = Actor_GetById(ACTOR_WANDERER);
+  struct Actor *actor = Actor_GetById(ACTOR_BOY_DOUBTING_THE_LEGENDS);
   s16 angle = actor->facing;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   actor->riseEnabled = 1;
   if (work->psynergy == 0) {
-    Actor_FaceActorById(ACTOR_WANDERER, gMainRoutineWork.leaderActorId, 0);
+    Actor_FaceActorById(ACTOR_BOY_DOUBTING_THE_LEGENDS,
+                        gMainRoutineWork.leaderActorId, 0);
     if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS) != 0)
       Event_SetMessageId((s32)MsgContigoIveSeenALotOf);
     else if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0)
@@ -1068,7 +1082,7 @@ void Contigo_TalkToWanderer(void) {
     else
       Event_SetMessageId((s32)MsgContigoTheAnemosGeoglyphsAreThe);
   }
-  Event_ShowMessageAndWait(ACTOR_WANDERER, 0);
+  Event_ShowMessageAndWait(ACTOR_BOY_DOUBTING_THE_LEGENDS, 0);
   if (work->psynergy == 0)
     actor->facing = angle;
   actor->riseEnabled = 0;
@@ -1107,26 +1121,27 @@ void Contigo_TalkAboutTheShip(void) {
 
 void Teleport_PlaySparks(void);
 
-/// Teleport from Contigo: the colours spin, the sparks play, and the party
-/// leaves for the Anemos Inner Sanctum, to arrive by teleport.
+/// Teleport on the circle: it shimmers, the sparks play, and the party leaves
+/// for the Anemos Inner Sanctum, to arrive there by Teleport.
 void Contigo_TeleportOut(void) {
-  Contigo_StartSlowPaletteCycle();
+  Teleport_StartShimmer();
   Teleport_PlaySparks();
 
   gMainRoutineWork.teleportState = 2;
-  Event_SetDestination(SCENE_ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST, 99);
+  Event_SetDestination(SCENE_ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST,
+                       ANEMOS_INNER_SANCTUM_DRAGON_SKIN_CHEST_FROM_CONTIGO);
   Event_Wait(40);
-  Contigo_StopPaletteCycle();
+  Teleport_StopShimmer();
 }
 
-/// Clears a clump of bushes where Whirlwind touched them, as each of the clumps
-/// and hedge rows below does with its own cells.
-void Contigo_ClearFirstBushes(void) {
+/// Cyclone scatters a clump of weeds, as each clump and each row of the weed
+/// patch south-east of the village below does with its own cells.
+void Contigo_ScatterFirstWeeds(void) {
   FieldTileCopies_CopyTouchedCells(3, 50, 1, 1, 8, 54, 0);
 }
 
-/// Clears the second clump of bushes where Whirlwind touched it.
-void Contigo_ClearSecondBushes(void) {
+/// Cyclone scatters the second clump of weeds.
+void Contigo_ScatterSecondWeeds(void) {
   FieldTileCopies_CopyTouchedCells(4, 43, 2, 1, 2, 43, 0);
 }
 
@@ -1139,9 +1154,9 @@ static __inline__ void Contigo_CopyTouchedCells(s32 sourceX, s32 sourceZ,
                               layer);
 }
 
-/// Clears the bushes over Salt; unless the Bramble Seed there was taken it is
-/// shown, and a leader standing on its spot hops back.
-void Contigo_ClearBushesBySalt(void) {
+/// Cyclone scatters the weeds over the Bramble Seed: unless it was taken, the
+/// seed is shown, and a leader standing on its spot hops back off it.
+void Contigo_ScatterWeedsOverBrambleSeed(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   Contigo_CopyTouchedCells(16, 37, 1, 1, 17, 37, 0);
@@ -1161,52 +1176,53 @@ void Contigo_ClearBushesBySalt(void) {
   }
 }
 
-void Contigo_ClearFourthBushes(void) {
+/// Cyclone scatters the fourth clump of weeds.
+void Contigo_ScatterFourthWeeds(void) {
   FieldTileCopies_CopyTouchedCells(29, 35, 1, 2, 23, 47, 0);
 }
 
-/// Clears the fifth clump of bushes where Whirlwind touched it.
-void Contigo_ClearFifthBushes(void) {
+/// Cyclone scatters the fifth clump of weeds.
+void Contigo_ScatterFifthWeeds(void) {
   FieldTileCopies_CopyTouchedCells(32, 55, 2, 3, 29, 58, 0);
 }
 
-/// Clears the sixth clump of bushes where Whirlwind touched it.
-void Contigo_ClearSixthBushes(void) {
+/// Cyclone scatters the sixth clump of weeds.
+void Contigo_ScatterSixthWeeds(void) {
   FieldTileCopies_CopyTouchedCells(3, 60, 1, 1, 3, 56, 0);
 }
 
-/// Clears the seventh clump of bushes where Whirlwind touched it.
-void Contigo_ClearSeventhBushes(void) {
+/// Cyclone scatters the seventh clump of weeds.
+void Contigo_ScatterSeventhWeeds(void) {
   FieldTileCopies_CopyTouchedCells(7, 62, 2, 1, 7, 58, 0);
 }
 
-/// Clears the eighth clump of bushes where Whirlwind touched it.
-void Contigo_ClearEighthBushes(void) {
+/// Cyclone scatters the eighth clump of weeds.
+void Contigo_ScatterEighthWeeds(void) {
   FieldTileCopies_CopyTouchedCells(10, 63, 2, 1, 10, 59, 0);
 }
 
-/// Clears the first hedge row where Whirlwind touched it.
-void Contigo_ClearFirstHedgeRow(void) {
+/// Cyclone scatters the first row of the weed patch.
+void Contigo_ScatterFirstWeedRow(void) {
   FieldTileCopies_CopyTouchedCells(32, 55, 3, 1, 40, 57, 0);
 }
 
-/// Clears the second hedge row where Whirlwind touched it.
-void Contigo_ClearSecondHedgeRow(void) {
+/// Cyclone scatters the second row of the weed patch.
+void Contigo_ScatterSecondWeedRow(void) {
   FieldTileCopies_CopyTouchedCells(32, 55, 5, 1, 39, 58, 0);
 }
 
-/// Clears the third hedge row where Whirlwind touched it.
-void Contigo_ClearThirdHedgeRow(void) {
+/// Cyclone scatters the third row of the weed patch.
+void Contigo_ScatterThirdWeedRow(void) {
   FieldTileCopies_CopyTouchedCells(32, 55, 5, 1, 39, 59, 0);
 }
 
-/// Clears the fourth hedge row where Whirlwind touched it.
-void Contigo_ClearFourthHedgeRow(void) {
+/// Cyclone scatters the fourth row of the weed patch.
+void Contigo_ScatterFourthWeedRow(void) {
   FieldTileCopies_CopyTouchedCells(32, 55, 5, 1, 39, 60, 0);
 }
 
-/// Clears the fifth hedge row where Whirlwind touched it.
-void Contigo_ClearFifthHedgeRow(void) {
+/// Cyclone scatters the fifth row of the weed patch.
+void Contigo_ScatterFifthWeedRow(void) {
   FieldTileCopies_CopyTouchedCells(32, 55, 3, 1, 40, 61, 0);
 }
 
@@ -1226,8 +1242,8 @@ void Contigo_NarrowCameraBounds(void) {
 /// The trigger Scoop raises once Salt has appeared: it joins the party.
 enum { RAISED_SALT_FOUND = 200 };
 
-/// Scoop by the bushes: until the party has Salt, Salt appears beside the
-/// leader and turns to him.
+/// Scoop in the gap in the middle of the weed patch: until the party has Salt,
+/// Salt appears there and turns to the leader.
 void Contigo_ScoopForSalt(void) {
   if (!GameFlag_Get(FLAG_DJINNI(DJINNI_SALT))) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -1242,15 +1258,17 @@ void Contigo_ScoopForSalt(void) {
   }
 }
 
-/// Draws the steps by the dice hall's door and makes them walkable.
-void Contigo_RevealSteps(void) {
+/// Reveal at the Sanctum's front: redraws the head of its middle steps and
+/// puts the way in to the Anemos Inner Sanctum's entrance (cell code 14, kept
+/// out of reach at the top of the map) at their foot.
+void Contigo_RevealMiddleDoor(void) {
   MapGrid_CopyCellsTo(27, 4, 48, 12, 1, 2);
   MapGrid_CopyCellPictureIndicesRect(27, 6, 49, 12, 1, 2);
   MapGrid_CopyCellAttributes(48, 1, 2, 1, 48, 19);
 }
 
-/// Takes the steps away again.
-void Contigo_HideSteps(void) {
+/// As Reveal fades, puts the middle steps and the cells at their foot back.
+void Contigo_HideMiddleDoor(void) {
   MapGrid_CopyCellsTo(27, 8, 48, 12, 1, 2);
   MapGrid_CopyCellPictureIndicesRect(27, 10, 49, 12, 1, 2);
   MapGrid_CopyCellAttributes(48, 0, 2, 1, 48, 19);
@@ -1274,8 +1292,8 @@ void Contigo_ForceFreesDjinni(void) {
   options.priority = 2;
   Sound_Play(SE_THUMP);
   MapGrid_SetShake(1, 2, 1);
-  for (i = 0; i <= 16; i++) {
-    angle = i * FACING_STEP;
+  for (i = 0; i <= DUST_RING_PUFFS; i++) {
+    angle = i * (TRIG_TURN / DUST_RING_PUFFS);
     velocity[0] = Trig_Cos(angle);
     velocity[1] = 0;
     velocity[2] = Trig_Sin(angle);
@@ -1304,8 +1322,10 @@ void Contigo_ForceFreesDjinni(void) {
   Event_End();
 }
 
-/// Opens the doors of the games' rooms once the beacon is lit.
-void Contigo_OpenGamesRooms(void) {
+/// Once the beacon is lit, while everyone has left town with the wings: shuts
+/// the doors of two houses, the item shop and the weapon and armor shop, and
+/// locks them (cell code 19, Scene_ShowEntranceLocked).
+void Contigo_LockDoors(void) {
   MapGrid_CopyCellsTo(0, 1, 26, 42, 1, 2);
   MapGrid_CopyCellPictureIndicesRect(0, 1, 26, 48, 1, 2);
   MapGrid_CopyCellPictureIndicesRect(0, 1, 11, 54, 1, 2);
@@ -1459,12 +1479,18 @@ s32 Contigo_PickPrize(s32 icon) {
 
 extern u8 gSceneState[];
 
-/// The dice games' fee: ten coins for each level of the party's average.
-enum { DICE_COINS_PER_LEVEL = 10 };
+/// The dice games cost this many coins for each level of the party's average
+/// level; a win of LUCKY_DICE_MEDIUM_WIN coins or more, or of
+/// LUCKY_DICE_LARGE_WIN, is greeted with a bigger jingle.
+enum {
+  LUCKY_DICE_COINS_PER_LEVEL = 10,
+  LUCKY_DICE_MEDIUM_WIN = 5000,
+  LUCKY_DICE_LARGE_WIN = 20000
+};
 
 /// The dice game attendant: the fee is ten coins a level.
 void Contigo_SendToLuckyDice(void) {
-  u32 price = Party_GetAverageLevel() * DICE_COINS_PER_LEVEL;
+  u32 price = Party_GetAverageLevel() * LUCKY_DICE_COINS_PER_LEVEL;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1504,7 +1530,7 @@ void Contigo_SendToLuckyDice(void) {
 
 /// The Super Lucky Dice attendant: the same check without the fee shown.
 void Contigo_SendToSuperLuckyDice(void) {
-  u32 price = Party_GetAverageLevel() * DICE_COINS_PER_LEVEL;
+  u32 price = Party_GetAverageLevel() * LUCKY_DICE_COINS_PER_LEVEL;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1551,9 +1577,9 @@ void Contigo_ShrinkActor(s32 id) {
   actor->radius = 8;
 }
 
-/// Opens a game's door in the dice hall, two cells of map edits, and walks the
-/// leader in.
-void Contigo_OpenGameDoor(s32 sourceX, s32 sourceY, s32 doorX, s32 doorY) {
+/// Opens one of the doors at the head of the Sanctum's steps, two cells of map
+/// edits, and walks the leader in through it.
+void Contigo_OpenSanctumDoor(s32 sourceX, s32 sourceY, s32 doorX, s32 doorY) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SE_THUMP);
@@ -1569,37 +1595,45 @@ void Contigo_OpenGameDoor(s32 sourceX, s32 sourceY, s32 doorX, s32 doorY) {
   Event_Wait(20);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
   Actor_SetMovementTypeById(gMainRoutineWork.leaderActorId,
-                            gContigo_EnterGameDoorScript);
+                            gContigo_EnterSanctumDoorScript);
   wait(12);
   Sound_Play(SE_MAP_EXIT);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
 }
 
-/// Enters the Lucky Wheels' door.
-void Contigo_EnterLuckyWheels(void) {
-  Contigo_OpenGameDoor(27, 0, 42, 13);
-  Import_EventSetExitRequest(22);
+/// Walking into the Sanctum's west door: it opens onto the Anemos Inner
+/// Sanctum's entrance.
+void Contigo_EnterSanctumWestDoor(void) {
+  Contigo_OpenSanctumDoor(27, 0, 42, 13);
+  Import_EventSetExitRequest(
+      CONTIGO_GEOGLYPH_TO_ANEMOS_INNER_SANCTUM_ENTRANCE_NORTH);
 }
 
-/// Enters the Lucky Dice's door.
-void Contigo_EnterLuckyDice(void) {
-  Contigo_OpenGameDoor(27, 4, 48, 12);
-  Import_EventSetExitRequest(23);
+/// Unused: the same for the Sanctum's middle door, which Reveal opens as a
+/// plain exit instead (Contigo_RevealMiddleDoor).
+UNUSED void Contigo_EnterSanctumMiddleDoor(void) {
+  Contigo_OpenSanctumDoor(27, 4, 48, 12);
+  Import_EventSetExitRequest(
+      CONTIGO_GEOGLYPH_TO_ANEMOS_INNER_SANCTUM_ENTRANCE_NORTHEAST);
 }
 
-/// Enters the Super Lucky Dice's door.
-void Contigo_EnterSuperLuckyDice(void) {
-  Contigo_OpenGameDoor(27, 0, 54, 13);
-  Import_EventSetExitRequest(24);
+/// Walking into the Sanctum's east door: it opens onto the Anemos Inner
+/// Sanctum's entrance.
+void Contigo_EnterSanctumEastDoor(void) {
+  Contigo_OpenSanctumDoor(27, 0, 54, 13);
+  Import_EventSetExitRequest(
+      CONTIGO_GEOGLYPH_TO_ANEMOS_INNER_SANCTUM_ENTRANCE_SOUTH);
 }
 
 extern u32 gContigo_JennaReunionScript[];
 extern u32 gContigo_PiersReunionScript[];
 extern u32 gContigo_ShebaReunionScript[];
 extern u32 gContigo_KradenReunionScript[];
-extern u32 gContigo_IsaacLeavesScript[];
+extern u32 gContigo_JoinLeaderScript[];
 struct SparkleWork gContigo_SparkleWork BSS_DATA ALIGNED(16);
+void Contigo_StartSparkle(struct Actor *actor, struct SparkleWork *work);
+void Contigo_StopSparkle(struct Actor *actor);
 
 /// The reunion scene. It opens with "Glad you kept your promise".
 void Contigo_TheReunion(void) {
@@ -1902,13 +1936,8 @@ void Contigo_TheReunion(void) {
   Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTHEAST);
   Actor_SetAnimationById(ACTOR_ISAAC, ANIM_NOD);
   Event_Wait(10);
-#if !TLA_PATCH_1
-  FieldEvent_ShowTwoMessagesAndWait(ACTOR_ISAAC, 5, 5, 8, 10, 8, 9, 20, 18, 12,
-                                    10);
-#else
-  FieldEvent_ShowTwoMessagesAndWait(ACTOR_ISAAC, 5, 5, 8, 10, 8, 9, 20, 18, 10,
-                                    10);
-#endif
+  FieldEvent_ShowTwoMessagesAndWait(ACTOR_ISAAC, 5, 5, 8, 10, ACTOR_HAMMA, 9,
+                                    20, 18, REUNION_HAMMA_PORTRAIT_Y, 10);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_SOUTHEAST, 0);
   FieldActor_ShowEmote(gMainRoutineWork.leaderActorId,
                        EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -2081,14 +2110,14 @@ void Contigo_TheReunion(void) {
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_NOD);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_NOD);
   Actor_SetAnimationAndWait(ACTOR_PIERS, ANIM_NOD);
-  Actor_SetMovementTypeById(ACTOR_ISAAC, gContigo_IsaacLeavesScript);
-  Actor_SetMovementTypeById(ACTOR_GARET, gContigo_IsaacLeavesScript);
-  Actor_SetMovementTypeById(ACTOR_MIA, gContigo_IsaacLeavesScript);
-  Actor_SetMovementTypeById(ACTOR_IVAN, gContigo_IsaacLeavesScript);
-  Actor_SetMovementTypeById(ACTOR_KRADEN, gContigo_IsaacLeavesScript);
-  Actor_SetMovementTypeById(ACTOR_JENNA, gContigo_IsaacLeavesScript);
-  Actor_SetMovementTypeById(ACTOR_SHEBA, gContigo_IsaacLeavesScript);
-  Actor_SetMovementTypeAndWaitById(ACTOR_PIERS, gContigo_IsaacLeavesScript);
+  Actor_SetMovementTypeById(ACTOR_ISAAC, gContigo_JoinLeaderScript);
+  Actor_SetMovementTypeById(ACTOR_GARET, gContigo_JoinLeaderScript);
+  Actor_SetMovementTypeById(ACTOR_MIA, gContigo_JoinLeaderScript);
+  Actor_SetMovementTypeById(ACTOR_IVAN, gContigo_JoinLeaderScript);
+  Actor_SetMovementTypeById(ACTOR_KRADEN, gContigo_JoinLeaderScript);
+  Actor_SetMovementTypeById(ACTOR_JENNA, gContigo_JoinLeaderScript);
+  Actor_SetMovementTypeById(ACTOR_SHEBA, gContigo_JoinLeaderScript);
+  Actor_SetMovementTypeAndWaitById(ACTOR_PIERS, gContigo_JoinLeaderScript);
   Party_AddIsaacsParty();
   GameFlag_Set(FLAG_REUNITED_AT_CONTIGO);
   Event_End();
@@ -2096,8 +2125,10 @@ void Contigo_TheReunion(void) {
 
 extern u32 gContigo_LeaderVisitsScript[];
 
-/// Once the party has set out with the wings, stepping into the house brings
-/// Kraden out to greet them, once.
+/// The party's first step into Hamma's house after it set out with the wings:
+/// she welcomes it to her new home, tells Ivan why she kept from him that she
+/// is his sister, and warns that the world is falling into ruin unless Mars
+/// Lighthouse is lit.
 void Contigo_ReturnToNewHome(void) {
   if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS)) {
     Event_Start();
@@ -2358,10 +2389,10 @@ void Contigo_ReturnToNewHome(void) {
     Actor_SetSpeed(ACTOR_IVAN, 1.2);
     Actor_SetSpeed(ACTOR_ISAAC, 1.2);
     Actor_SetSpeed(ACTOR_KRADEN, 1.2);
-    Actor_SetMovementTypeById(ACTOR_IVAN, gContigo_HostScript);
-    Actor_SetMovementTypeById(ACTOR_ISAAC, gContigo_HostScript);
-    Actor_SetMovementTypeAndWaitById(ACTOR_KRADEN, gContigo_HostScript);
-    GameFlag_Set(FLAG_CONTIGO_KRADEN_GREETED_PARTY);
+    Actor_SetMovementTypeById(ACTOR_IVAN, gContigo_RejoinLeaderScript);
+    Actor_SetMovementTypeById(ACTOR_ISAAC, gContigo_RejoinLeaderScript);
+    Actor_SetMovementTypeAndWaitById(ACTOR_KRADEN, gContigo_RejoinLeaderScript);
+    GameFlag_Set(FLAG_HAMMA_WELCOMED_PARTY);
     Event_End();
   }
 }
@@ -2392,13 +2423,14 @@ void Contigo_KeepPriorityWithLeader(void) {
   }
 }
 
-/// Sets up the village: the wanderer and the girl by the ship stop when faced
-/// (Contigo_PauseWhenFaced), the girl and the old woman gone and the games'
-/// rooms open once the beacon is lit; Shine waits where it landed until
-/// caught; arriving by entrances 1 to 4, the camera follows the leader across
-/// the whole village; then the water's colours are set.
+/// Sets up the village: the two walking children stop when faced
+/// (Contigo_PauseWhenFaced); once the beacon is lit, until the party sets out
+/// with the wings, the girl and the old woman are gone and four doors are
+/// locked; Shine waits where it landed until caught; arriving by four ways in
+/// from the south, the camera follows the leader across the whole village;
+/// then the Teleport circle's colours are set.
 void Contigo_InitializeVillage(void) {
-  struct Actor *actor = Actor_GetById(ACTOR_WANDERER);
+  struct Actor *actor = Actor_GetById(ACTOR_BOY_DOUBTING_THE_LEGENDS);
 
   Task_Add(Contigo_KeepPriorityWithLeader, TASK_PASS_FRAME);
   actor->riseCounter = 1;
@@ -2409,7 +2441,7 @@ void Contigo_InitializeVillage(void) {
     Actor_Stop(ACTOR_GIRL_ON_THE_SHIP);
     Actor_SetPosition(ACTOR_GIRL_ON_THE_SHIP, 0, 0);
     Actor_SetPosition(ACTOR_OLD_WOMAN_ON_THE_GEOGLYPHS, 0, 0);
-    Contigo_OpenGamesRooms();
+    Contigo_LockDoors();
   } else {
     actor = Actor_GetById(ACTOR_GIRL_ON_THE_SHIP);
     actor->riseCounter = 0;
@@ -2443,12 +2475,12 @@ void Contigo_InitializeVillage(void) {
     wait(1);
   }
   Palette_SetColors(gContigo_PaletteSlots, gContigo_PaletteColors,
-                    gContigo_DimColors, gContigo_CycleSlots);
+                    gContigo_ShimmerColors, gContigo_CycleSlots);
 }
 
 /// Sets up the geoglyph: before the beacon is lit the wings' parts lie by it;
-/// after, they and their workers are gone, the scholars too until the party
-/// sets out.
+/// after, they and their workers are gone, the men in long robes too until the
+/// party sets out.
 void Contigo_InitializeGeoglyph(void) {
   Contigo_ShrinkActor(ACTOR_SIGN);
   if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0) {
@@ -2475,10 +2507,10 @@ void Contigo_InitializeGeoglyph(void) {
     Actor_SetPosition(ACTOR_WING_WORKER_D, 0, 0);
     if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS) == 0) {
       Actor_SetPosition(ACTOR_WING_WORKER_A, 0, 0);
-      Actor_SetPosition(ACTOR_SCHOLAR_A, 0, 0);
-      Actor_SetPosition(ACTOR_SCHOLAR_B, 0, 0);
-      Actor_SetPosition(ACTOR_SCHOLAR_C, 0, 0);
-      Actor_SetPosition(ACTOR_SCHOLAR_D, 0, 0);
+      Actor_SetPosition(ACTOR_MAN_ON_THE_GEOGLYPH, 0, 0);
+      Actor_SetPosition(ACTOR_MAN_WHO_TRANSLATED_THE_WALL, 0, 0);
+      Actor_SetPosition(ACTOR_MAN_LOCKED_OUT_OF_THE_SANCTUM, 0, 0);
+      Actor_SetPosition(ACTOR_MAN_ON_HAMMET, 0, 0);
     } else {
       Actor_GetById(ACTOR_WING_WORKER_A)->facing = FACING_NORTH_NORTHEAST;
       wait(1);
@@ -2504,7 +2536,7 @@ void Contigo_InitializeShops(void) {
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_BABY), 0);
     if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS) != 0)
       Actor_SetMovementTypeById(ACTOR_OLD_MAN_ON_HESPERIA,
-                                gContigo_ShopsWatcherScript);
+                                gContigo_ShiverScript);
     if (GameFlag_Get(FLAG_REUNITED_AT_CONTIGO) != 0) {
       Actor_SetPosition(ACTOR_WORN_OUT_WORKER, 0, 0);
       Actor_SetPosition(ACTOR_WORKER_ON_THE_PROPHECIES, 0, 0);
@@ -2516,7 +2548,7 @@ void Contigo_InitializeShops(void) {
 
 // The lines the prize counter speaks: the Spanish text numbers them
 // differently.
-#if (LANGUAGE == LANGUAGE_SPANISH)
+#if LANGUAGE == LANGUAGE_SPANISH
 #define COINS_WON_MESSAGE ((s32)MsgContigoHeyYaDontHaveEnough + 1)
 #define COINS_LOST_MESSAGE ((s32)MsgContigoHeyYaDontHaveEnough + 2)
 #define READ_SIGN_MESSAGE ((s32)MsgContigoYaWonCoinTalkAbout)
@@ -2566,9 +2598,9 @@ void Contigo_InitializeLuckyDice(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     if (diff > 0) {
-      if (diff > 19999)
+      if (diff >= LUCKY_DICE_LARGE_WIN)
         Sound_Play(MUS_JINGLE_LARGE);
-      else if (diff > 4999)
+      else if (diff >= LUCKY_DICE_MEDIUM_WIN)
         Sound_Play(MUS_JINGLE_MEDIUM);
       else
         Sound_Play(MUS_JINGLE_SMALL);
@@ -2590,9 +2622,9 @@ void Contigo_InitializeLuckyDice(void) {
     Event_StartScreenTransition();
     Event_WaitTransitionFrames();
     if (diff > 0) {
-      if (diff > 19999)
+      if (diff >= LUCKY_DICE_LARGE_WIN)
         Sound_Play(MUS_JINGLE_LARGE);
-      else if (diff > 4999)
+      else if (diff >= LUCKY_DICE_MEDIUM_WIN)
         Sound_Play(MUS_JINGLE_MEDIUM);
       else
         Sound_Play(MUS_JINGLE_SMALL);
@@ -2649,8 +2681,10 @@ void Contigo_InitializeLuckyDice(void) {
 void Actor_SetSpriteColorMode(struct Actor *, u32);
 s32 BattleEffect_GetObjectDepth(struct Actor *actor);
 
-/// How far a ring climbs, in pixels, and the height of one not yet started.
+/// How far a ring climbs, in pixels, how many frames apart the rings start,
+/// and the height of one not yet started.
 #define RING_CLIMB 32
+#define RING_INTERVAL 16
 #define RING_NOT_STARTED 999
 
 /// The sparkle's update: raises two pairs of sprites over the actor, a pair
@@ -2665,10 +2699,11 @@ void Contigo_RaiseSparkle(struct Actor *actor) {
   struct EffectSprite *sprite;
 
   if (*count & 1)
-    Actor_SetSpriteColorMode(
-        actor, (u8)((u32)((struct CounterBits *)count)->rest % 6));
+    Actor_SetSpriteColorMode(actor,
+                             (u8)((u32)((struct CounterBits *)count)->rest %
+                                  (SPRITE_COLOR_BRG + 1)));
   if (actor->riseCounter == 0) {
-    if ((*count & 15) == 0) {
+    if ((*count & (RING_INTERVAL - 1)) == 0) {
       Sound_Play(SE_RISING_RINGS);
       work->heights[work->nextPair] = 0;
       work->nextPair ^= 1;
@@ -2683,7 +2718,8 @@ void Contigo_RaiseSparkle(struct Actor *actor) {
   }
   (*count)++;
   for (i = 0; i < 2; i++) {
-    sine = Trig_Sin(work->heights[i] << 10);
+    // Its size: half a turn of sine over the climb.
+    sine = Trig_Sin(work->heights[i] * (DEGtoANG(180) / RING_CLIMB));
     if (work->heights[i] >= 0) {
       if (work->heights[i] < RING_CLIMB) {
         position.x = actor->x.fixed;
@@ -2820,7 +2856,7 @@ u32 gContigo_WheelsPrizes[] = {
     ITEM_WATER_OF_LIFE, ITEM_PSY_CRYSTAL, ITEM_ELIXIR,
 };
 
-s32 gContigo_EnterGameDoorScript[] = {
+s32 gContigo_EnterSanctumDoorScript[] = {
     SC_SET(SW_MOTION, 0),
     SC_ADD(SW_Z, -(toFIXED(1) / 2)),
     SC_WAIT(1),
@@ -2828,26 +2864,33 @@ s32 gContigo_EnterGameDoorScript[] = {
     SC_END,
 };
 
-s16 gContigo_PaletteSlots[] = {
-    89, 90, 91, 92, 93, 94, 95, -1,
+/// The Teleport circle's colours (shared/teleport_shimmer.c): their slots, the
+/// colours they rest at, the shimmer's colours, and the slots each step of the
+/// shimmer paints those into, so that the colours run round the circle.
+u16 gContigo_PaletteSlots[] = {
+    89, 90, 91, 92, 93, 94, 95, PALETTE_LIST_END,
 };
 
-s16 gContigo_PaletteColors[] = {
+u16 gContigo_PaletteColors[] = {
     23, 25, 22, 23, 25, 22, 23, 25,
     22, 23, 25, 22, 23, 25, 22, 23,
-    25, 22, 23, 25, 22, -1,
+    25, 22, 23, 25, 22, PALETTE_LIST_END,
 };
 
-s16 gContigo_DimColors[] = {
+u16 gContigo_ShimmerColors[] = {
     30, 27, 31, 22, 21, 31, 20, 18,
     31, 13, 11, 27, 11, 8, 24, 8,
-    5, 21, 31, 31, 31, -1,
+    5, 21, 31, 31, 31, PALETTE_LIST_END,
 };
 
-u16 gContigo_CycleSlots[] = {                                                               
-      94, 89, 90, 91, 92, 93, 93, 94, 89, 90, 91, 92, 92, 93, 94, 89, 90, 91,  
-      91, 92, 93, 94, 89, 90, 90, 91, 92, 93, 94, 89, 89, 90, 91, 92, 93, 94,  
-  };
+u16 gContigo_CycleSlots[] = {
+    94, 89, 90, 91, 92, 93,
+    93, 94, 89, 90, 91, 92,
+    92, 93, 94, 89, 90, 91,
+    91, 92, 93, 94, 89, 90,
+    90, 91, 92, 93, 94, 89,
+    89, 90, 91, 92, 93, 94,
+};
 
 const s32 *gFieldEffect_DurationScripts[] = {
     (s32)gFieldEffect_ShortScript,
@@ -2855,7 +2898,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
     (s32)gFieldEffect_LongScript,
 };
 
-u32 gContigo_WandererScript[] = {
+u32 gContigo_DoubtingBoyScript[] = {
     SC_ANIMATION(ANIM_WALK),
     SC_SPEED(1),
     SC_ACCELERATION(0.4),
@@ -2874,7 +2917,7 @@ u32 gContigo_WandererScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-u32 gContigo_PacerScript[] = {
+u32 gContigo_GirlOnTheShipScript[] = {
     SC_ANIMATION(ANIM_WALK),
     SC_SPEED(1),
     SC_ACCELERATION(0.4),
@@ -2894,10 +2937,10 @@ u32 gContigo_PacerScript[] = {
 };
 
 u32 gContigo_JennaReunionScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(164, 0, 360),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_NORTHWEST),
     SC_WAIT(10),
@@ -2907,10 +2950,10 @@ u32 gContigo_JennaReunionScript[] = {
 };
 
 u32 gContigo_PiersReunionScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(190, 0, 352),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(10),
@@ -2918,10 +2961,10 @@ u32 gContigo_PiersReunionScript[] = {
 };
 
 u32 gContigo_ShebaReunionScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(190, 0, 390),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(10),
@@ -2929,31 +2972,37 @@ u32 gContigo_ShebaReunionScript[] = {
 };
 
 u32 gContigo_KradenReunionScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(182, 0, 368),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(10),
     SC_END,
 };
 
-u32 gContigo_IsaacLeavesScript[] = {
-    SC_ANIMATION(2),
+/// The end of the reunion: each walks to the leader and goes into him, as the
+/// two parties become one.
+u32 gContigo_JoinLeaderScript[] = {
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(160, 0, 382),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(1),
     SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_END,
-    SC_ANIMATION(2),
+    // Unused: past the end.
+    SC_ANIMATION(ANIM_WALK),
     SC_WAIT(10),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-s32 gContigo_ShopsWatcherScript[] = {
+/// The old man on Hesperia shivering once the party has set out with the
+/// wings: "Brrr...Brrr... It's been really cold since the lighthouse beacon was
+/// lit!"
+s32 gContigo_ShiverScript[] = {
     SC_SET(SW_SCALE_X, FIXED_ONE),
     SC_SET(SW_SCALE_Y, FIXED_ONE),
     SC_ADD(SW_SCALE_X, -FIXED_ONE * 5 / 32),
@@ -2962,40 +3011,45 @@ s32 gContigo_ShopsWatcherScript[] = {
     SC_ADD(SW_SCALE_X, FIXED_ONE * 5 / 64),
     SC_ADD(SW_SCALE_Y, -FIXED_ONE / 64),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 2560),
+    SC_ADD(SW_SCALE_X, FIXED_ONE * 5 / 128),
     SC_ADD(SW_SCALE_Y, -FIXED_ONE / 128),
     SC_WAIT(2),
-    SC_ADD(SW_SCALE_X, 2560),
+    SC_ADD(SW_SCALE_X, FIXED_ONE * 5 / 128),
     SC_ADD(SW_SCALE_Y, -FIXED_ONE / 128),
     SC_WAIT(2),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
+/// In Hamma's new home the leader steps up to face her from the west.
 u32 gContigo_LeaderVisitsScript[] = {
-    SC_ANIMATION(2),
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(128, 0, 378),
     SC_SYNC,
     SC_MOVE(132, 0, 360),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(10),
     SC_SET(SW_FACING, FACING_EAST),
     SC_WAIT(10),
     SC_END,
 };
 
-u32 gContigo_HostScript[] = {
-    SC_ANIMATION(2),
+/// The end of the visit to Hamma's new home: Ivan, Isaac and Kraden walk to
+/// the leader and go into him.
+u32 gContigo_RejoinLeaderScript[] = {
+    SC_ANIMATION(ANIM_WALK),
     SC_MOVE(132, 0, 359),
     SC_SYNC,
-    SC_ANIMATION(1),
+    SC_ANIMATION(ANIM_STAND),
     SC_WAIT(1),
     SC_POSITION_ORIGIN,
     SC_WAIT(1),
     SC_END,
 };
 
-s32 gContigo_StatueScript[] = {
+/// The worker wondering which part goes where looks from one part of the
+/// wings to another, and wonders (Contigo_ShowWorkerPuzzled).
+s32 gContigo_PuzzledWorkerScript[] = {
     SC_SET(SW_FACING, FACING_WEST),
     SC_WAIT(120),
     SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),
@@ -3004,7 +3058,7 @@ s32 gContigo_StatueScript[] = {
     SC_WAIT(20),
     SC_SET(SW_FACING, FACING_SOUTH_SOUTHEAST),
     SC_WAIT(40),
-    SC_CALL((s32)Contigo_ShowSurprise),
+    SC_CALL((s32)Contigo_ShowWorkerPuzzled),
     SC_WAIT(120),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
@@ -3060,8 +3114,8 @@ struct ActorPlacement gContigo_VillagePlacements[] = {
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_WIFE, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 116, 0, 680, FACING_NORTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 336, 0, 792, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_WITH_HEADBAND, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 348, 0, 804, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, (s32)gContigo_WandererScript, 352, 0, 872, FACING_NORTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT, CONDITION_ALWAYS, (s32)gContigo_PacerScript, 304, 0, 872, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, (s32)gContigo_DoubtingBoyScript, 352, 0, 872, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT, CONDITION_ALWAYS, (s32)gContigo_GirlOnTheShipScript, 304, 0, 872, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_VENUS_DJINNI, FLAG_DJINNI(DJINNI_SALT), MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_MARS_DJINNI, FLAG_DJINNI(DJINNI_SHINE), MOVEMENT_TYPE_STAND, 56, 0, 706, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
@@ -3071,7 +3125,7 @@ struct ActorPlacement gContigo_GeoglyphPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 846, 0, 660, FACING_SOUTH, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 744, 0, 616, FACING_NORTH_NORTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MUSCULAR_MAN_WITH_BLOND_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 686, 0, 756, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
-    ACTOR_PLACEMENT(SPRITE_MUSCULAR_MAN_WITH_BLOND_HAIR, CONDITION_ALWAYS, (s32)gContigo_StatueScript, 774, 0, 664, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
+    ACTOR_PLACEMENT(SPRITE_MUSCULAR_MAN_WITH_BLOND_HAIR, CONDITION_ALWAYS, (s32)gContigo_PuzzledWorkerScript, 774, 0, 664, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MUSCULAR_MAN_WITH_BLOND_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 696, 0, 588, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_MUSCULAR_MAN_WITH_BLOND_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 806, 0, 596, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BEARDED_MAN_IN_LONG_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 832, 0, 310, FACING_SOUTH_SOUTHWEST, TALK_FACING_PARTY, 0),
@@ -3122,22 +3176,17 @@ struct ActorPlacement gContigo_ShopsPlacementsBeforeReunion[] = {
     {SCENE_TABLE_END},
 };
 
-s16 gContigo_ShopsPlacementsReunion[] = {
-    59, -1, 1, 0, 0, 0, 0, 0,
-    0, 0, FACING_NORTH, 2, 5, -1, 1, 0,
-    0, 0, 0, 0, 0, 0, FACING_WEST, 2,
-    7, -1, 1, 0, 0, 0, 0, 0,
-    0, 0, FACING_WEST, 2, 6, -1, 1, 0,
-    0, 0, 0, 0, 0, 0, FACING_WEST, 2,
-    56, -1, 1, 0, 0, 0, 0, 0,
-    0, 0, FACING_WEST, 2, 0, -1, 1, 0,
-    0, 132, 0, 0, 0, 382, 0, 2,
-    1, -1, 1, 0, 0, 128, 0, 0,
-    0, 366, 0, 2, 3, -1, 1, 0,
-    0, 112, 0, 0, 0, 354, 0, 2,
-    2, -1, 1, 0, 0, 120, 0, 0,
-    0, 398, 0, 2, -1, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
+struct ActorPlacement gContigo_ShopsPlacementsReunion[] = {
+    ACTOR_PLACEMENT(SPRITE_HAMMA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_JENNA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_PIERS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_SHEBA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_WEST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ISAAC, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 132, 0, 382, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_GARET, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 128, 0, 366, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_MIA, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 112, 0, 354, FACING_EAST, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_IVAN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 120, 0, 398, FACING_EAST, TALK_FACING_KEEP, 0),
+    {SCENE_TABLE_END},
 };
 
 struct ActorPlacement gContigo_ShopsPlacements[] = {
@@ -3183,19 +3232,19 @@ struct Trigger gContigo_VillageTriggers[] = {
     {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 30, CONDITION_ALWAYS, EVENT(Contigo_TeleportOut)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 39, CONDITION_ALWAYS, EVENT(Contigo_ClearFirstBushes)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 40, CONDITION_ALWAYS, EVENT(Contigo_ClearSecondBushes)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 41, CONDITION_ALWAYS, EVENT(Contigo_ClearBushesBySalt)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 42, CONDITION_ALWAYS, EVENT(Contigo_ClearFourthBushes)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 43, CONDITION_ALWAYS, EVENT(Contigo_ClearFifthBushes)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 44, CONDITION_ALWAYS, EVENT(Contigo_ClearSixthBushes)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 45, CONDITION_ALWAYS, EVENT(Contigo_ClearSeventhBushes)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 46, CONDITION_ALWAYS, EVENT(Contigo_ClearEighthBushes)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 47, CONDITION_ALWAYS, EVENT(Contigo_ClearFirstHedgeRow)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 48, CONDITION_ALWAYS, EVENT(Contigo_ClearSecondHedgeRow)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 49, CONDITION_ALWAYS, EVENT(Contigo_ClearThirdHedgeRow)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 50, CONDITION_ALWAYS, EVENT(Contigo_ClearFourthHedgeRow)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 51, CONDITION_ALWAYS, EVENT(Contigo_ClearFifthHedgeRow)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 39, CONDITION_ALWAYS, EVENT(Contigo_ScatterFirstWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 40, CONDITION_ALWAYS, EVENT(Contigo_ScatterSecondWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 41, CONDITION_ALWAYS, EVENT(Contigo_ScatterWeedsOverBrambleSeed)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 42, CONDITION_ALWAYS, EVENT(Contigo_ScatterFourthWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 43, CONDITION_ALWAYS, EVENT(Contigo_ScatterFifthWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 44, CONDITION_ALWAYS, EVENT(Contigo_ScatterSixthWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 45, CONDITION_ALWAYS, EVENT(Contigo_ScatterSeventhWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 46, CONDITION_ALWAYS, EVENT(Contigo_ScatterEighthWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 47, CONDITION_ALWAYS, EVENT(Contigo_ScatterFirstWeedRow)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 48, CONDITION_ALWAYS, EVENT(Contigo_ScatterSecondWeedRow)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 49, CONDITION_ALWAYS, EVENT(Contigo_ScatterThirdWeedRow)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 50, CONDITION_ALWAYS, EVENT(Contigo_ScatterFourthWeedRow)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 51, CONDITION_ALWAYS, EVENT(Contigo_ScatterFifthWeedRow)},
     {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(Contigo_NarrowCameraBounds)},
     {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Contigo_WidenCameraBounds)},
     {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_SHINE, FLAG_SHINE_FREED, EVENT(Contigo_ForceFreesDjinni)},
@@ -3234,8 +3283,8 @@ struct Trigger gContigo_VillageTriggers[] = {
     {TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_THE_GEOGLYPHS, CONDITION_ALWAYS, MSGNO(MsgContigoISawTheShipFly)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_THE_GEOGLYPHS, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoItsHardToBelieveBut)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_THE_GEOGLYPHS, CONDITION_ALWAYS, MSGNO(MsgContigoTheShipLookedLikeIt)},
-    {TRIGGER_TALK, ACTOR_WANDERER, CONDITION_ALWAYS, EVENT(Contigo_TalkToWanderer)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WANDERER, CONDITION_ALWAYS, EVENT(Contigo_TalkToWanderer)},
+    {TRIGGER_TALK, ACTOR_BOY_DOUBTING_THE_LEGENDS, CONDITION_ALWAYS, EVENT(Contigo_TalkToDoubtingBoy)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_DOUBTING_THE_LEGENDS, CONDITION_ALWAYS, EVENT(Contigo_TalkToDoubtingBoy)},
     {TRIGGER_TALK, ACTOR_GIRL_ON_THE_SHIP, CONDITION_ALWAYS, EVENT(Contigo_TalkAboutTheShip)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_ON_THE_SHIP, CONDITION_ALWAYS, EVENT(Contigo_TalkAboutTheShip)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 32, CONDITION_ALWAYS, EVENT(Contigo_ScoopForSalt)},
@@ -3249,9 +3298,9 @@ struct Trigger gContigo_VillageTriggers[] = {
 
 struct Trigger gContigo_GeoglyphTriggers[] = {
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 21},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS, EVENT(Contigo_EnterLuckyWheels)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS, EVENT(Contigo_EnterSanctumWestDoor)},
     {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 14, CONDITION_ALWAYS, 23},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 15, CONDITION_ALWAYS, EVENT(Contigo_EnterSuperLuckyDice)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 15, CONDITION_ALWAYS, EVENT(Contigo_EnterSanctumEastDoor)},
     {TRIGGER_TALK, ACTOR_VISITOR_FROM_AFAR, CONDITION_ALWAYS, MSGNO(MsgContigoIveComeALongWay)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VISITOR_FROM_AFAR, CONDITION_ALWAYS, MSGNO(MsgContigoTheGuysCarryingTheOther)},
     {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_WINGS, CONDITION_ALWAYS, MSGNO(MsgContigoTheWingsAreAlmostDone)},
@@ -3266,26 +3315,26 @@ struct Trigger gContigo_GeoglyphTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WING_WORKER_C, CONDITION_ALWAYS, MSGNO(MsgContigoWhenIStartGettingIrritated)},
     {TRIGGER_TALK, ACTOR_WING_WORKER_D, CONDITION_ALWAYS, MSGNO(MsgContigoJustAFewMoreTouches)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WING_WORKER_D, CONDITION_ALWAYS, MSGNO(MsgContigoHowLongHaveWeBeen)},
-    {TRIGGER_TALK, ACTOR_SCHOLAR_A, FLAG_SET_OUT_WITH_WINGS, EVENT(Contigo_AskAboutGeoglyph)},
-    {TRIGGER_TALK, ACTOR_SCHOLAR_A, CONDITION_ALWAYS, MSGNO(MsgContigoLookCloselyAtTheGeoglyph)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_A, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoICantEvenImagineHow)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_A, CONDITION_ALWAYS, MSGNO(MsgContigoWeAllCameTogetherAnd)},
-    {TRIGGER_TALK, ACTOR_SCHOLAR_B, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoThatSignHasATranslation)},
-    {TRIGGER_TALK, ACTOR_SCHOLAR_B, CONDITION_ALWAYS, MSGNO(MsgContigoImConvincedTheresSomethingHidden)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_B, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoIDontKnowIfAnyone)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_B, CONDITION_ALWAYS, MSGNO(MsgContigoAllRightSoWeveFollowed)},
-    {TRIGGER_TALK, ACTOR_SCHOLAR_C, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoIWantToGetA)},
-    {TRIGGER_TALK, ACTOR_SCHOLAR_C, CONDITION_ALWAYS, MSGNO(MsgContigoAllTheAmazingThingsWeve)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_C, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoWouldntThatBeTerribleIf)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_C, CONDITION_ALWAYS, MSGNO(MsgContigoIfYouTapOnThe)},
-    {TRIGGER_TALK, ACTOR_SCHOLAR_D, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheMerchantHammetTookThe)},
-    {TRIGGER_TALK, ACTOR_SCHOLAR_D, CONDITION_ALWAYS, MSGNO(MsgContigoHesAnOddBoyBut)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_D, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoSomeoneToldMeThatHammet)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SCHOLAR_D, CONDITION_ALWAYS, MSGNO(MsgContigoIvanWasSupposedToBe)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_THE_GEOGLYPH, FLAG_SET_OUT_WITH_WINGS, EVENT(Contigo_AskAboutGeoglyph)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_THE_GEOGLYPH, CONDITION_ALWAYS, MSGNO(MsgContigoLookCloselyAtTheGeoglyph)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_GEOGLYPH, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoICantEvenImagineHow)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_GEOGLYPH, CONDITION_ALWAYS, MSGNO(MsgContigoWeAllCameTogetherAnd)},
+    {TRIGGER_TALK, ACTOR_MAN_WHO_TRANSLATED_THE_WALL, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoThatSignHasATranslation)},
+    {TRIGGER_TALK, ACTOR_MAN_WHO_TRANSLATED_THE_WALL, CONDITION_ALWAYS, MSGNO(MsgContigoImConvincedTheresSomethingHidden)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_WHO_TRANSLATED_THE_WALL, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoIDontKnowIfAnyone)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_WHO_TRANSLATED_THE_WALL, CONDITION_ALWAYS, MSGNO(MsgContigoAllRightSoWeveFollowed)},
+    {TRIGGER_TALK, ACTOR_MAN_LOCKED_OUT_OF_THE_SANCTUM, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoIWantToGetA)},
+    {TRIGGER_TALK, ACTOR_MAN_LOCKED_OUT_OF_THE_SANCTUM, CONDITION_ALWAYS, MSGNO(MsgContigoAllTheAmazingThingsWeve)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_LOCKED_OUT_OF_THE_SANCTUM, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoWouldntThatBeTerribleIf)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_LOCKED_OUT_OF_THE_SANCTUM, CONDITION_ALWAYS, MSGNO(MsgContigoIfYouTapOnThe)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_HAMMET, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheMerchantHammetTookThe)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_HAMMET, CONDITION_ALWAYS, MSGNO(MsgContigoHesAnOddBoyBut)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_HAMMET, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoSomeoneToldMeThatHammet)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_HAMMET, CONDITION_ALWAYS, MSGNO(MsgContigoIvanWasSupposedToBe)},
     {TRIGGER_EXAMINE, 22, CONDITION_ALWAYS, EVENT(Contigo_ExamineWall)},
     {TRIGGER_TALK, ACTOR_SIGN, CONDITION_ALWAYS, EVENT(Contigo_ReadSign)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Contigo_RevealSteps)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Contigo_HideSteps)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Contigo_RevealMiddleDoor)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Contigo_HideMiddleDoor)},
     {TRIGGER_TABLE_END},
 };
 
@@ -3385,7 +3434,7 @@ struct Trigger gContigo_ShopsReunionTriggers[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_TALK, ACTOR_HAMMA, CONDITION_ALWAYS, MSGNO(MsgContigoNoMatterWhatHappensYou)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HAMMA, CONDITION_ALWAYS, MSGNO(MsgContigoMyHeartIsWithYou)},
-    {TRIGGER_STEP, 20, FLAG_CONTIGO_KRADEN_GREETED_PARTY, EVENT(Contigo_ReturnToNewHome)},
+    {TRIGGER_STEP, 20, FLAG_HAMMA_WELCOMED_PARTY, EVENT(Contigo_ReturnToNewHome)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoTheresABrightRedSoup))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoAhTheSmellOfFresh))},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoContigosFamousForTheseCookies))},

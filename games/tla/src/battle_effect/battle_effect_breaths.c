@@ -8,8 +8,9 @@
 /// The crescent slash's modes (BattleEffect_RunCrescentSlash).
 enum CrescentSlashMode { CRESCENT_SLASH_HUMAN_HUNT, CRESCENT_SLASH_ECHO_CUT };
 
-/// The jaws' texture, unpacked into the map cell buffer's second 16 KB.
-#define JAW_TEXTURE (Ram_MapCellBuffer + 16384)
+/// FlameBandTexture, wrapped round the rings of flame, unpacked into the map
+/// cell buffer's second 16 KB.
+#define FLAME_RING_TEXTURE (Ram_MapCellBuffer + 16384)
 /// The Beam's 16 fading rings of 32x32, one after another in the sheet, and the
 /// glow every breath draws at the mouth after them.
 #define BEAM_RING_SIZE 32
@@ -22,17 +23,29 @@ enum CrescentSlashMode { CRESCENT_SLASH_HUMAN_HUNT, CRESCENT_SLASH_ECHO_CUT };
 /// DustCloudSheet's ball.
 #define DUST_BALL_WIDTH 32
 #define DUST_BALL_HEIGHT 48
+/// Blast Breath's glow, before it shrinks.
+#define BLAST_BREATH_GLOW_SIZE 40
+/// The flash at the mouth grows at full brightness for BREATH_FLASH_FULL
+/// frames, then fades 8 levels a frame; it is turned BREATH_FLASH_SLANT about
+/// its upright axis, and the rings of flame BREATH_RING_SLANT, so that both
+/// face across the field.
+#define BREATH_FLASH_FULL 16
+#define BREATH_FLASH_GROWTH toFIXED(0.15552)
+#define BREATH_FLASH_SLANT 13000
+#define BREATH_RING_SLANT 14000
+/// A ring of flame's scale as it starts.
+#define BREATH_RING_START_SCALE toFIXED(0.25586)
+/// Blast Breath's jet points BLAST_BREATH_JET_ANGLE from the user until frame
+/// 8, then sweeps a 512th of a turn a frame.
+#define BLAST_BREATH_JET_ANGLE 12384
 
-// The breaths (Beam, Rolling Flame, Ghost Soldier and Pike Assault, Blast
-// Breath): 32 motes gather at the user's mouth, then burst out of it as
-// sparks while a flash grows there. The Beam glows and fires a beam of
-// fading rings; Rolling Flame rolls a ball of dust to the target; Blast
-// Breath glows, blasts and jets. With variant 2, four jaws open one after
-// another in front of the user. Each breath hits every target at its frame
-// (Blast Breath strikes them in turn, four frames apart).
 /// The breaths (Beam, Rolling Flame, Ghost Soldier, Pike Assault and Blast
-/// Breath): motes gather at the user's mouth and burst out of it, then each
-/// breath fires its own way.
+/// Breath): motes gather at the user's mouth, then burst out of it as sparks
+/// while a flash grows there. The Beam glows and fires a beam of fading
+/// rings; Rolling Flame rolls a ball of dust to the target; Blast Breath
+/// glows, blasts and jets. With variant 2, four rings of flame swell one after
+/// another in front of the user. Each breath hits every target at its frame
+/// (Blast Breath strikes them in turn, four frames apart).
 void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
@@ -51,8 +64,9 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
   graphics = Ram_HeapSlots->battleSheet;
 
   // Set up the canvas, the sparks, the colours (blue for the pikes, orange
-  // otherwise) and the jaws' texture, then each breath's own sheet: the Beam
-  // computes 16 fading rings of 32 x 32.
+  // otherwise) and the rings of flame's texture, then each breath's own
+  // sheet: the Beam computes its fading rings, each row lit by a half turn
+  // of a sine and each ring 4 levels dimmer.
   if (mode != BREATH_BEAM)
     BattleEffect_StartCanvasLayer(0);
   else
@@ -65,7 +79,8 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
   }
   Resource_LoadAndDecompress(RESOURCE_FIRE_RING_TEXTURE, Ram_MapCellBuffer, 0,
                              0);
-  Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE, JAW_TEXTURE, 0, 0);
+  Resource_LoadAndDecompress(RESOURCE_FLAME_BAND_TEXTURE, FLAME_RING_TEXTURE, 0,
+                             0);
   if (mode == BREATH_BEAM) {
     for (i = 0; i != BEAM_RING_COUNT; i++) {
       u8 *pixel = work->sheet + i * BEAM_RING_BYTES;
@@ -74,11 +89,15 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         s32 shade;
         s32 k;
 
+        // The basic Beam's are twice as bright across, less a whole ramp,
+        // so that only their middle shows.
         if (args->variant == EFFECT_VARIANT_BASIC)
-          shade = (FIXEDtoINT(Trig_Sin(j << 10) << 7)) - i * 4 - 64;
+          shade = (FIXEDtoINT(Trig_Sin(j * (TRIG_TURN / 64)) << 7)) - i * 4 -
+                  (CANVAS_LEVEL_BRIGHTEST + 1);
         else
-          shade =
-              (FIXEDtoINT(Trig_Sin(j << 10) * CANVAS_LEVEL_BRIGHTEST)) - i * 4;
+          shade = (FIXEDtoINT(Trig_Sin(j * (TRIG_TURN / 64)) *
+                              CANVAS_LEVEL_BRIGHTEST)) -
+                  i * 4;
         if (shade > CANVAS_LEVEL_BRIGHTEST)
           shade = CANVAS_LEVEL_BRIGHTEST;
         if (shade < 0)
@@ -134,8 +153,8 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
       step->y = INTtoFIXED(user.y - 32);
       step->velocityX = 0;
       step->velocityY = 0;
-      step->z = (target.x / 2 - user.x / 2) << 10;
-      step->velocityZ = (target.y - user.y) << 10;
+      step->z = (target.x / 2 - user.x / 2) * (toFIXED(1) / 64);
+      step->velocityZ = (target.y - user.y) * (toFIXED(1) / 64);
       step->variant = 0;
     }
     {
@@ -167,7 +186,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
 
       // Blast Breath's glow, frames 0-47, shrinking from frame 40.
       if (mode == BREATH_BLAST && (frame >= 0 && frame <= 47)) {
-        s32 size = 40;
+        s32 size = BLAST_BREATH_GLOW_SIZE;
         s32 half;
 
         if (frame > 39)
@@ -243,12 +262,12 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
             ring = BEAM_RING_COUNT - 1;
           for (i = 0; i != 4; i++) {
             if (args->side == EFFECT_SIDE_ENEMIES) {
-              draw[0](canvas, work->sheet + (ring << 10), x - 40, y - 48,
-                      BEAM_RING_SIZE, BEAM_RING_SIZE);
+              draw[0](canvas, work->sheet + ring * BEAM_RING_BYTES, x - 40,
+                      y - 48, BEAM_RING_SIZE, BEAM_RING_SIZE);
               x -= BEAM_RING_SIZE;
             } else {
-              draw[0](canvas, work->sheet + (ring << 10), x + 8, y - 48,
-                      BEAM_RING_SIZE, BEAM_RING_SIZE);
+              draw[0](canvas, work->sheet + ring * BEAM_RING_BYTES, x + 8,
+                      y - 48, BEAM_RING_SIZE, BEAM_RING_SIZE);
               x += BEAM_RING_SIZE;
             }
           }
@@ -281,24 +300,24 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         model->vertices = vertices;
         texture.pixels = Ram_MapCellBuffer;
 
-        // The flash at the mouth grows and fades over 16 frames; Blast
-        // Breath's is two, crossed.
+        // The flash at the mouth grows, and fades from its sixteenth frame;
+        // Blast Breath's is two, crossed.
         if (mode != BREATH_ROLLING_FLAME) {
-          s32 growth = 10192;
+          s32 growth = BREATH_FLASH_GROWTH;
           s32 age = frame - gBreaths_BurstFrames[mode];
           s32 scale = age * growth + FIXED_ONE / 2;
-          s32 alpha = 128 - age * 8;
+          s32 shade = BREATH_FLASH_FULL * 8 - age * 8;
 
           if (args->variant == EFFECT_VARIANT_BASIC)
             scale /= 2;
           else if (args->variant == EFFECT_VARIANT_STRONGER)
             scale = scale * 3 / 2;
-          if (alpha > 0)
-            alpha = 0;
-          if (alpha > -64) {
+          if (shade > 0)
+            shade = 0;
+          if (shade > MODEL_SHADE_INVISIBLE) {
             s32 count = 2 - (mode != BREATH_BLAST);
 
-            model->shade = alpha;
+            model->shade = shade;
             for (i = 0; i != count; i++) {
               Matrix_Initialize();
               if (mode == BREATH_BLAST) {
@@ -314,7 +333,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
                 else
                   Matrix_Translate(INTtoFIXED(mouthX - 56),
                                    INTtoFIXED(mouthY - 64), 0);
-                Matrix_RotateY(13000);
+                Matrix_RotateY(BREATH_FLASH_SLANT);
                 Matrix_RotateX(DEGtoANG(90));
               }
               if (mode == BREATH_PIKE)
@@ -327,9 +346,9 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
           }
         }
 
-        // Variant 2: four jaws open one after another.
+        // Variant 2: four rings of flame swell one after another, turning.
         if (args->variant == EFFECT_VARIANT_STRONGEST) {
-          texture.pixels = JAW_TEXTURE;
+          texture.pixels = FLAME_RING_TEXTURE;
           model->kind = MODEL_SHADED_ADDITIVE;
           model->mesh = gBattleEffect_CylinderMesh;
           for (i = 0; i != 4; i++) {
@@ -338,13 +357,13 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
             if (frame > start) {
               s32 scale =
                   (frame - start) * gBreaths_RingGrowth[mode * 4 + i] * 1500 +
-                  0x4180;
-              s32 alpha = (start - frame) * 8 + 56;
+                  BREATH_RING_START_SCALE;
+              s32 shade = (start - frame) * 8 + 56;
 
-              if (alpha > 0)
-                alpha = 0;
-              if (alpha > -64) {
-                model->shade = alpha;
+              if (shade > 0)
+                shade = 0;
+              if (shade > MODEL_SHADE_INVISIBLE) {
+                model->shade = shade;
                 Matrix_Initialize();
                 if (mode == BREATH_PIKE) {
                   scale /= 2;
@@ -367,9 +386,9 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
                         INTtoFIXED(mouthY - 64), 0);
                 }
                 Matrix_Scale(scale, scale, scale);
-                Matrix_RotateY(14000);
+                Matrix_RotateY(BREATH_RING_SLANT);
                 Matrix_RotateX(DEGtoANG(90));
-                Matrix_RotateY(frame << 10);
+                Matrix_RotateY(frame * (TRIG_TURN / 64));
                 Render_TransformVertices(gBattleEffect_CylinderCorners,
                                          vertices, 32);
                 Render_DrawModelList(model);
@@ -381,12 +400,12 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
         // Blast Breath's jet, sweeping round from frame 8 and fading from
         // frame 32.
         if (mode == BREATH_BLAST) {
-          s32 alpha = 0;
-          s32 angle = 12384;
+          s32 shade = 0;
+          s32 angle = BLAST_BREATH_JET_ANGLE;
 
           if (frame > 31)
-            alpha = (32 - frame) * 4;
-          model->shade = alpha;
+            shade = (32 - frame) * 4;
+          model->shade = shade;
           texture.logWidth = 5;
           texture.logHeight = 2;
           model->kind = MODEL_SHADED_ADDITIVE;
@@ -396,7 +415,7 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
           Matrix_Translate(INTtoFIXED(mouthX - 64), INTtoFIXED(mouthY - 64), 0);
           Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE);
           if (frame > 7)
-            angle = (frame << 7) + 11360;
+            angle = BLAST_BREATH_JET_ANGLE + (frame - 8) * (TRIG_TURN / 512);
           if (args->side == EFFECT_SIDE_PARTY)
             angle = -angle;
           Matrix_RotateZ(angle);
@@ -430,9 +449,10 @@ void BattleEffect_RunBreaths(struct BattleEffectParams *args, s32 mode) {
           if (frame >= i * 4 + gBreaths_BurstFrames[mode] &&
               frame < gBreaths_Frames[mode] - 8 && (frame & 3) == i) {
             work->shakeFrames = 8;
-            // DEAD: never true inside Blast Breath; the ROM keeps the compare
-            // and the black tint's call.
-            if (mode == 6)
+            // DEAD: the burst shower's test for its grey mode, which these
+            // hits copy; never true inside Blast Breath, the ROM keeps the
+            // compare and the black tint's call.
+            if (mode == BURST_SHOWER_MODE_GREY)
               BattleEffect_TintBattler(args->targets[i], SPRITE_COLOR_BLACK,
                                        POSE_DAMAGE, i, 3);
             else
@@ -487,14 +507,16 @@ enum CrescentSlashStep {
 
 /// Each half of GreyCrescentSheet is a 128x128 picture.
 #define GREY_CRESCENT_SIZE 128
+/// The canvas line Echo Cut's crescent is drawn from; Human Hunt's is drawn
+/// from the top.
+#define ECHO_CUT_Y 16
 
-/// The crescent slash of Human Hunt (mode 0) and Echo Cut (kind 390,
-/// mode 1). The caster closes in on the target; from frame 8 a crescent is cut
-/// in five steps of three frames: the star crescent, a blank frame, the two
-/// halves of the grey crescent and the star crescent's last cell. Echo Cut
-/// cuts it upside down and higher, and throws the target into the air at
-/// frame 12. Human Hunt loads the Mars Djinn's colours into the background
-/// palette and blends its slash more faintly.
+/// The crescent slash of Human Hunt and Echo Cut. The caster closes in on the
+/// target; from frame 8 a crescent is cut in five steps of three frames: the
+/// star crescent, the canvas flashing white, the two halves of the grey
+/// crescent and the star crescent's last picture. Echo Cut cuts it upside
+/// down and lower, and throws the target into the air at frame 12. Human Hunt
+/// takes the Mars Djinn's colours, red, and blends its slash more faintly.
 void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
   u8 *canvas = Ram_HeapSlots->battleCanvas;
@@ -557,7 +579,7 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
     // From frame 8: the slash, one step every three frames.
     if (frame > 7) {
       s32 step = (frame - 8) / 3;
-      s32 y = mode != CRESCENT_SLASH_HUMAN_HUNT ? 16 : 0;
+      s32 y = mode != CRESCENT_SLASH_HUMAN_HUNT ? ECHO_CUT_Y : 0;
       s32 x;
 
       if (args->side == EFFECT_SIDE_ENEMIES)
@@ -620,11 +642,9 @@ void BattleEffect_RunCrescentSlash(struct BattleEffectParams *args, s32 mode) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-typedef s32 (*CanvasBlitFunc)(u8 *canvas, void *source, s32 x, s32 y, s32 width,
-                              s32 height);
-
-/// Draws a picture `size` pixels tall and half as wide into the canvas,
-/// standing on (x, y), at its maximum.
+/// Draws a quarter picture, `size` pixels tall and half as wide, four times
+/// into the canvas, mirrored about (x, y), at its maximum: a shape centred
+/// there, round at the canvas's double width.
 void Canvas_BlitAtFoot(void *source, s32 x, s32 y, s32 size) {
   u8 *canvas = Ram_HeapSlots->battleCanvas;
   s32 half;
@@ -632,24 +652,41 @@ void Canvas_BlitAtFoot(void *source, s32 x, s32 y, s32 size) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                       BLITTER_MAX);
   half = size / 2;
-  ((CanvasBlitFunc)Ram_HeapSlots->ramCodePaired)(canvas, source, x - half,
-                                                 y - size, half, size);
+  ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(canvas, source, x - half,
+                                                y - size, half, size);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
-  ((CanvasBlitFunc)Ram_HeapSlots->ramCodePaired)(canvas, source, x, y - size,
-                                                 half, size);
+  ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(canvas, source, x, y - size,
+                                                half, size);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
-  ((CanvasBlitFunc)Ram_HeapSlots->ramCodePaired)(canvas, source, x - half, y,
-                                                 half, size);
+  ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(canvas, source, x - half, y,
+                                                half, size);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
-  ((CanvasBlitFunc)Ram_HeapSlots->ramCodePaired)(canvas, source, x, y, half,
-                                                 size);
+  ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(canvas, source, x, y, half,
+                                                size);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
 }
-#undef BLITTER
-#undef JAW_TEXTURE
+#undef FLAME_RING_TEXTURE
+#undef BEAM_RING_SIZE
+#undef BEAM_RING_COUNT
+#undef BEAM_RING_BYTES
+#undef BREATH_GLOW
+#undef BREATH_MOTES
+#undef BREATH_MOTE_COUNT
+#undef DUST_BALL_WIDTH
+#undef DUST_BALL_HEIGHT
+#undef BLAST_BREATH_GLOW_SIZE
+#undef BREATH_FLASH_FULL
+#undef BREATH_FLASH_GROWTH
+#undef BREATH_FLASH_SLANT
+#undef BREATH_RING_SLANT
+#undef BREATH_RING_START_SCALE
+#undef BLAST_BREATH_JET_ANGLE
+#undef CRESCENT_SLASH_FRAMES
+#undef GREY_CRESCENT_SIZE
+#undef ECHO_CUT_Y

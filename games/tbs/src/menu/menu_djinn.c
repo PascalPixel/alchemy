@@ -80,15 +80,19 @@ s32 Menu_WrapIndex(s32 value, s32 modulus) {
   return (value + modulus) % modulus;
 }
 
-/// Places the four party figures over their Djinn columns, 56 pixels apart
-/// from x 32, at screen y 61 plus yOffset. Returns that y.
+/// Where the first party figure stands, over its Djinn column.
+#define DJINN_MEMBER_FIGURE_X 32
+#define DJINN_MEMBER_FIGURE_Y 61
+
+/// Places the four party figures over their Djinn columns, at screen y
+/// DJINN_MEMBER_FIGURE_Y plus yOffset. Returns that y.
 s32 Menu_SetFirstActorRowCoordinates(s32 yOffset) {
   struct DjinnMenuWork *menu;
   s32 memberX;
   s32 memberIndex;
   menu = gMenuWork;
-  yOffset += 61;
-  memberX = 32;
+  yOffset += DJINN_MEMBER_FIGURE_Y;
+  memberX = DJINN_MEMBER_FIGURE_X;
   for (memberIndex = 0; memberIndex < 4; memberIndex++) {
     menu->memberX[memberIndex] = memberX;
     menu->memberY[memberIndex] = yOffset;
@@ -103,14 +107,13 @@ s32 Menu_SetFirstActorRowCoordinates(s32 yOffset) {
 s32 DjinnMenu_Run(void) {
   struct DjinnMenuWork *menu;
   u32 savedMessageSpeed;
-  s32 enabled;
   struct DjinnMenuBackdrop *backdrop;
 
   menu = HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_WORK_SIZE);
   savedMessageSpeed = gMainRoutineWork.messageSpeed;
   gMainRoutineWork.messageSpeed = MESSAGE_SPEED_FAST;
-  enabled = gActorSystemWork->suspended = 1;
-  Window_DrawBorderFar(0, 0, 30, 20);
+  gActorSystemWork->suspended = 1;
+  Window_DrawBorderFar(0, 0, DISPLAY_TILE_WIDTH, DISPLAY_TILE_HEIGHT);
   wait(1);
   Window_InitializeWork(0);
   backdrop = Heap_AllocEwram(sizeof(*backdrop));
@@ -121,7 +124,7 @@ s32 DjinnMenu_Run(void) {
   if (GameFlag_GetFar(FLAG_DJINN_LESSON)) {
     if (!GameFlag_GetFar(FLAG_DJINN_LESSON_PART_A)) {
       if (!GameFlag_GetFar(FLAG_DJINN_LESSON_PART_B))
-        backdrop->tutorialStep = enabled;
+        backdrop->tutorialStep = DJINN_TUTORIAL_GIVE;
       else
         backdrop->tutorialStep = DJINN_TUTORIAL_POWERS;
     } else {
@@ -151,7 +154,7 @@ s32 DjinnMenu_Run(void) {
   IconMenu_ReleaseArrows();
   wait(1);
   ItemMenu_Close();
-  Window_DrawBorderFar(0, 0, 30, 20);
+  Window_DrawBorderFar(0, 0, DISPLAY_TILE_WIDTH, DISPLAY_TILE_HEIGHT);
   gActorSystemWork->suspended = 0;
   Window_MarkVisibleTextTilesFar();
   Text_UseExtraTilesFar(0);
@@ -160,7 +163,7 @@ s32 DjinnMenu_Run(void) {
                   backdrop->palette, sizeof(backdrop->palette));
   wait(1);
   Menu_ResumeFieldTasks();
-  Window_EraseBorderRectFar(0, 0, 30, 20);
+  Window_EraseBorderRectFar(0, 0, DISPLAY_TILE_WIDTH, DISPLAY_TILE_HEIGHT);
   Heap_Release(menu->backdrop);
   HeapSlot_Release(HEAP_SLOT_MENU);
   Party_ClearUnusableShortcutsFar();
@@ -1972,6 +1975,8 @@ s32 DjinnMenu_DrawStatPreview(struct Window *window, s32 x, s32 y, s32 memberId,
 #undef DJINN_DIM_PALETTE
 #undef DJINN_WINDOW_COPY_PALETTE
 #undef DJINN_HELP_TOPICS
+#undef DJINN_MEMBER_FIGURE_X
+#undef DJINN_MEMBER_FIGURE_Y
 #undef DJINN_CURSOR_WIDTH
 #undef DJINN_SWAP_PREVIEW_MODE
 #undef DJINN_PREVIEW_DIGITS

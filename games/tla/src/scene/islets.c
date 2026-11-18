@@ -191,7 +191,7 @@ enum {
   ACTOR_TREASURE_HUNTERS_PARTNER = 9,
   ACTOR_BIRD = 10,
   /// An unseen marker the setup parks at the map's corner (0, 0).
-  ACTOR_PARKED_MARKER = 11,
+  ACTOR_UNSEEN_MARKER = 11,
   ACTOR_CRATE_A = 12,
   ACTOR_CRATE_B = 13,
   ACTOR_PUDDLE ///< frozen into an ice pillar by Frost (Islets_FreezePuddle)
@@ -2152,7 +2152,7 @@ void Islets_InitializeSoutheastAngara(void) {
     actor->motionFlags = 0;
     FieldActor_SetSpritePriority(ACTOR_BIRD, 1);
   }
-  Actor_SetPosition(ACTOR_PARKED_MARKER, 0, 0);
+  Actor_SetPosition(ACTOR_UNSEEN_MARKER, 0, 0);
   Actor_DisableById(ACTOR_CRATE_A);
   Actor_DisableById(ACTOR_CRATE_B);
   set = Event_GetFlag(FLAG_CRATES_IN_ONE_CELL);

@@ -14,12 +14,15 @@
 #include "window/screens.h"
 #include "window/window.h"
 
+/// The save files; file n is parts n and n + SAVE_FILE_COUNT.
+#define SAVE_FILE_COUNT 3
+
 /// The header of a save sector in flash: its signature, the part it holds,
 /// its checksum and its counter.
 struct SaveSectorHeader {
   u8 signature[7]; ///< `CAMELOT`, unterminated
-  /// File n's parts are n and n + 3; SAVE_PART_NONE (system/system_save.c)
-  /// marks a free sector.
+  /// File n's parts are n and n + SAVE_FILE_COUNT; SAVE_PART_NONE
+  /// (system/system_save.c) marks a free sector.
   u8 partId;
   u16 checksum; ///< low half of the payload's checksum
   u16 counter;  ///< the highest is the current copy; restarts after 65000
@@ -71,7 +74,8 @@ struct SaveWork {
     } part;
     u8 bytes[4096];
   } slot; ///< one sector, read from or written to flash
-  struct SaveFileSummary summary[3]; ///< each file's, read from its first part
+  /// Each file's summary, read from its first part.
+  struct SaveFileSummary summary[SAVE_FILE_COUNT];
 };
 
 STATIC_ASSERT(sizeof(struct SaveFileSummary) == 64);

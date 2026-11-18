@@ -9,15 +9,18 @@
 /// the tilemap at the last look.
 #define TEXT_TILE_TAKEN 1
 #define TEXT_TILE_SHOWN 2
-/// The bit that sets the TEXT_TILES from TEXT_TILE_FIRST apart: ORed into a
-/// free state's index it gives the tile's number, and flipped in a tile
-/// number's low byte it gives the tile's index in textTileState, the first
-/// text tiles' states before the extra ones'.
-#define TEXT_TILE_FIRST_BIT 0x80
+/// A text tile's place in WindowWork.textTileState: the TEXT_TILES tiles from
+/// TEXT_TILE_FIRST take the first places, those from TEXT_EXTRA_TILE_FIRST the
+/// next TEXT_TILES.
+#define TEXT_TILE_STATE_INDEX(tile) (((tile) & 0xFF) ^ TEXT_TILE_FIRST)
 
-/// Tile text is drawn into a canvas of one byte a pixel, eight rows of 256.
-#define TILE_TEXT_CANVAS_STRIDE 256
-#define TILE_TEXT_CANVAS_BYTES (8 * TILE_TEXT_CANVAS_STRIDE)
+/// Tile text is drawn into a canvas of one byte a pixel, a tile tall, then
+/// packed into 4bpp tiles in place: row `row` of its tile `tile` is then a word
+/// of eight pixels.
+#define TILE_TEXT_CANVAS_WIDTH 256
+#define TILE_TEXT_CANVAS_SIZE (TILE_TEXT_CANVAS_WIDTH * 8)
+#define TILE_TEXT_PACKED_ROW(tile, row)                                        \
+  (((u32 *)canvas)[(tile) + (row) * TILE_TEXT_CANVAS_WIDTH / 4])
 
 /// Draws window tile pattern over the tile of tilemap entry *entry, with its
 /// colours mapped through remap (0 leaves a pixel as it was).
@@ -80,7 +83,7 @@ void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
       n++;
     } while (n < TEXT_TILES);
     work->textTileState[slot] = TEXT_TILE_TAKEN;
-    slot |= TEXT_TILE_FIRST_BIT;
+    slot |= TEXT_TILE_FIRST;
     *entry = WINDOW_TILE(slot);
     *mirror = WINDOW_TILE(slot);
   }
@@ -139,7 +142,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
   u32 bits;
 
   work = WINDOW_WORK;
-  canvas = Heap_Alloc(TILE_TEXT_CANVAS_BYTES);
+  canvas = Heap_Alloc(TILE_TEXT_CANVAS_SIZE);
   glyphs = Resource_GetTableEntry(RESOURCE_WINDOW_TILES);
   paletteBits = BG_TILE_PALETTE(work->textPalette);
   Iwram_ClearWords(pens, 16);
@@ -148,12 +151,12 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
   if (paletteBits == BG_TILE_PALETTE(WINDOW_PALETTE)) {
     pens[1] = gText_ColourPens[work->colour & (PALETTE_COLORS - 1)];
     pens[3] = 3;
-    Iwram_FillWords(canvas, TILE_TEXT_CANVAS_BYTES,
+    Iwram_FillWords(canvas, TILE_TEXT_CANVAS_SIZE,
                     PIXELS_8BPP(WINDOW_BACKGROUND_COLOR));
   } else {
     pens[1] = (u8)work->colour & (PALETTE_COLORS - 1);
     pens[3] = 1;
-    Iwram_FillWords(canvas, TILE_TEXT_CANVAS_BYTES,
+    Iwram_FillWords(canvas, TILE_TEXT_CANVAS_SIZE,
                     PIXELS_8BPP(TEXT_BACKGROUND_COLOR));
   }
   // Expand glyph pixels and control-code colour changes into a byte canvas.
@@ -226,7 +229,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
             dst++;
             bits >>= 4;
           }
-          dst += TILE_TEXT_CANVAS_STRIDE - 8;
+          dst += TILE_TEXT_CANVAS_WIDTH - 8;
         }
         // The sign tiles Text_DrawPrefixedNumberAtOffset writes (the HP and PP
         // labels' tiles) advance 8 for a first tile and 3 for a second, in
@@ -271,8 +274,8 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
       *(u32 *)dst = (glyphCode << 4) >> 16 | bits << 16;
       dst += 4;
     }
-    dst = dst - tileCount * 4 + TILE_TEXT_CANVAS_STRIDE;
-    src = (u32 *)((u8 *)src - tileCount * 8 + TILE_TEXT_CANVAS_STRIDE);
+    dst = dst - tileCount * 4 + TILE_TEXT_CANVAS_WIDTH;
+    src = (u32 *)((u8 *)src - tileCount * 8 + TILE_TEXT_CANVAS_WIDTH);
   }
 
   // Reuse private text tiles, allocate any new ones, then upload each tile.
@@ -296,20 +299,19 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
       if (tile > (TEXT_TILES - 1))
         tile += TEXT_EXTRA_TILE_FIRST - TEXT_TILES;
       else
-        tile |= TEXT_TILE_FIRST_BIT;
+        tile |= TEXT_TILE_FIRST;
       *tiles = paletteBits | tile;
       *mirror = paletteBits | tile;
     }
     vramTile = (u32 *)(BG_CHAR_BLOCK(0) + tile * TILE_SIZE_4BPP);
-    // A tile's eight rows of 4 bytes, each a canvas row apart.
-    *vramTile++ = ((u32 *)canvas)[index];
-    *vramTile++ = ((u32 *)canvas)[index + 1 * (TILE_TEXT_CANVAS_STRIDE / 4)];
-    *vramTile++ = ((u32 *)canvas)[index + 2 * (TILE_TEXT_CANVAS_STRIDE / 4)];
-    *vramTile++ = ((u32 *)canvas)[index + 3 * (TILE_TEXT_CANVAS_STRIDE / 4)];
-    *vramTile++ = ((u32 *)canvas)[index + 4 * (TILE_TEXT_CANVAS_STRIDE / 4)];
-    *vramTile++ = ((u32 *)canvas)[index + 5 * (TILE_TEXT_CANVAS_STRIDE / 4)];
-    *vramTile++ = ((u32 *)canvas)[index + 6 * (TILE_TEXT_CANVAS_STRIDE / 4)];
-    *vramTile++ = ((u32 *)canvas)[index + 7 * (TILE_TEXT_CANVAS_STRIDE / 4)];
+    *vramTile++ = TILE_TEXT_PACKED_ROW(index, 0);
+    *vramTile++ = TILE_TEXT_PACKED_ROW(index, 1);
+    *vramTile++ = TILE_TEXT_PACKED_ROW(index, 2);
+    *vramTile++ = TILE_TEXT_PACKED_ROW(index, 3);
+    *vramTile++ = TILE_TEXT_PACKED_ROW(index, 4);
+    *vramTile++ = TILE_TEXT_PACKED_ROW(index, 5);
+    *vramTile++ = TILE_TEXT_PACKED_ROW(index, 6);
+    *vramTile++ = TILE_TEXT_PACKED_ROW(index, 7);
     tiles++;
     mirror++;
   }
@@ -334,7 +336,7 @@ void Window_ClearTextTilesInRect(s32 x, s32 y, u32 width, u32 height) {
       if ((tile - TEXT_TILE_FIRST) <= TEXT_TILES - 1 ||
           (alternate != 0 && tile > (TEXT_EXTRA_TILE_FIRST - 1) &&
            tile <= TEXT_EXTRA_TILE_FIRST + TEXT_TILES - 1)) {
-        u32 index = (tile & 0xff) ^ TEXT_TILE_FIRST_BIT;
+        u32 index = TEXT_TILE_STATE_INDEX(tile);
 
         ((struct WindowWork *)base)->textTileState[index] &=
             ~(TEXT_TILE_TAKEN | TEXT_TILE_SHOWN);
@@ -364,7 +366,7 @@ void Window_MarkVisibleTextTiles(void) {
       if ((tile - TEXT_TILE_FIRST) <= TEXT_TILES - 1 ||
           (alternate != 0 && tile > (TEXT_EXTRA_TILE_FIRST - 1) &&
            tile <= TEXT_EXTRA_TILE_FIRST + TEXT_TILES - 1)) {
-        u32 index = (tile & 0xff) ^ TEXT_TILE_FIRST_BIT;
+        u32 index = TEXT_TILE_STATE_INDEX(tile);
 
         ((struct WindowWork *)base)->textTileState[index] |= TEXT_TILE_SHOWN;
       }
@@ -782,5 +784,7 @@ void Text_DrawPrefixedNumberAtOffset(s32 value, struct Window *work,
 
 #undef TEXT_TILE_TAKEN
 #undef TEXT_TILE_SHOWN
-#undef TILE_TEXT_CANVAS_STRIDE
-#undef TILE_TEXT_CANVAS_BYTES
+#undef TEXT_TILE_STATE_INDEX
+#undef TILE_TEXT_CANVAS_WIDTH
+#undef TILE_TEXT_CANVAS_SIZE
+#undef TILE_TEXT_PACKED_ROW

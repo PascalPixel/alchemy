@@ -117,7 +117,10 @@ enum SuhallaGateDewActorId {
   /// drawn in the frame Scene_Initialize gives it.
   ACTOR_FIRST_SPROUT = ACTOR_FIRST_PLACED,
   /// A Mercury Djinni.
-  ACTOR_DEW = ACTOR_FIRST_SPROUT + 5
+  ACTOR_DEW = ACTOR_FIRST_SPROUT + 5,
+  /// The eighth placed actor, where the scene places six: Scene_Initialize
+  /// stretches it all the same.
+  ACTOR_UNPLACED = ACTOR_FIRST_PLACED + 7
 };
 
 /// SPRITE_SPROUT's animations as the sprouts here stand, half grown or fully
@@ -228,10 +231,10 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(ACTOR_FIRST_SPROUT + 3, SPROUT_ANIMATION_GROWN);
     Actor_SetAnimation(ACTOR_FIRST_SPROUT + 4, SPROUT_ANIMATION_HALF_GROWN);
     // UB: the scene places only actors up to ACTOR_DEW, so there is no
-    // actor 15 and Actor_GetById returns NULL; the store goes to the BIOS,
+    // ACTOR_UNPLACED and Actor_Get returns NULL; the store goes to the BIOS,
     // which ignores it.
 #ifndef UBFIX
-    Actor_Get(15)->scaleY = 8 * FIXED_ONE / 5;
+    Actor_Get(ACTOR_UNPLACED)->scaleY = 8 * FIXED_ONE / 5;
 #endif
     MapGrid_CopyCellAttributes(108, 38, 1, 1, 102, 56);
   }
@@ -289,8 +292,6 @@ static void SuhallaGate_GuardsBlockPassage(void) {
 /// steps out of the party and demands to know what happened.
 static void SuhallaGate_IodemQuestionsGuards(void) {
   struct Actor *leader;
-#if !TBS_PATCH_3
-#endif
 
   Event_Start();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1.6);

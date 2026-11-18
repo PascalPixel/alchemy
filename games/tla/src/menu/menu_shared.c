@@ -118,7 +118,7 @@ enum StatusPanelKind {
   STATUS_PANEL_EQUIP_CLASS = 9
 };
 
-// Messages are linker symbols; the unnamed ones by their numbers.
+// The status panel's messages, as its routines pass them.
 #define MESSAGE_CLASS_NAME ((s32)&MsgClassName)
 #define MESSAGE_EXP_LABEL ((s32)&MsgExpLabel)
 #define MESSAGE_PANEL_STAT_LABEL ((s32)&MsgPanelStatLabel)

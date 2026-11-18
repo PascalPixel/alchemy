@@ -163,6 +163,11 @@ struct Orbit {
 #define LEARN_SPIRAL_FRAMES 15
 ///@}
 
+/// How far a pillar sinks, its top then level with the floor: into the floor
+/// as Blaze at a torch lowers it in Magma Rock, and into its gap as Move drops
+/// it in Jupiter Lighthouse.
+#define PILLAR_SINK_DEPTH 32
+
 /// A glow sprite queued for the OAM: the link at its depth, attributes 0 and 1
 /// as one word, and attribute 2's fields.
 struct LightOam {

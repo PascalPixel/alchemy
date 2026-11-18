@@ -73,9 +73,6 @@ enum {
   ACTOR_RIGHT_PILLAR
 };
 
-/// How far a pillar sinks into its gap, its yellow top level with the floor.
-#define PILLAR_SINK_DEPTH 32
-
 /// The entrances at (152, 840) and (696, 840), where the leader arrives in a
 /// ring (Actor_DepartInRing).
 enum { ENTRANCE_WEST_RING = 12, ENTRANCE_EAST_RING = 13 };

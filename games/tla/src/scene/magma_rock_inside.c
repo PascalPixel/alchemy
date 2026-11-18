@@ -215,7 +215,7 @@ enum MagmaRockInsideEmberStoneActorId {
 /// a sixteenth FLAME_GROW_STEPS times, 5 frames apart; then the pillar it
 /// lowers sinks PILLAR_SINK_DEPTH pixels into the floor, a pixel every 5
 /// frames, as deep as the ember stone room's sunken pillars stand.
-enum { FLAME_GROW_STEPS = 16, PILLAR_SINK_DEPTH = 32 };
+enum { FLAME_GROW_STEPS = 16 };
 
 /// The quarter turn a facing lies in, as the leader faces a switch or a pillar:
 /// an eighth of a turn added, then this kept.

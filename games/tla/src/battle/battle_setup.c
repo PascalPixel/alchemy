@@ -70,8 +70,8 @@ void BattleCamera_Update(void) {
   }
 }
 
-/// Announces each enemy that appears, then who strikes first. The Broken
-/// Seal's BattleIntro_AnnounceEncounter.
+/// Announces the enemies at the start of a battle, "<enemy> appeared!" for
+/// each, then whether the party strikes first or is caught by surprise.
 void BattleIntro_AnnounceEncounter(s32 enemyCount) {
   s16 enemies[8];
   struct BattleWork *battle;
@@ -143,30 +143,29 @@ placed:
   battle->enemyIds[count] = BATTLE_UNIT_LIST_END;
 }
 
-// XXX (no evidence): what the bytes moved are, tiles of character block 0 or
-// entries of screen block 0; nothing calls this in either game.
 /// Unused: moves 16 bytes of VRAM down by 16 and clears the 20 from 12 bytes
 /// past where they land.
-s32 Battle_ShiftVramTiles(void) {
+UNUSED s32 Battle_ShiftVramTiles(void) {
+  // XXX (no evidence): what the bytes moved are, tiles of character block 0 or
+  // entries of screen block 0; nothing calls this in either game.
   Dma_Set((const void *)0x06000290, (void *)0x06000280, DMA_COPY_HALFWORDS(8),
           REG_DMA3);
   return Iwram_ClearWords((void *)0x0600028c, 20);
 }
 
-/// Unused: clears BG0's vertical scroll, as an interrupt handler would from the
-/// line it fires on.
-void BattleTransition_ClearBg0Vofs(void) {
+/// Unused: clears BG0's vertical scroll.
+UNUSED void Battle_ClearBg0Vofs(void) {
   u32 zero = 0;
 
   REG_BG0VOFS = zero;
 }
 
 /// Does nothing; Battle_Run calls it with 1 as the battle is set up.
-void Party_BattleSetupNoOp(s32 value) {}
+void Party_BattleSetupNoOp(s32 unused) {}
 
 /// Clears the party's battle-only states, and works their stats out again, as a
 /// battle ends.
-s32 BattleParty_ResetActiveRuntimeFields(void) {
+UNREAD_RESULT BattleParty_ResetActiveRuntimeFields(void) {
   u16 owners[10];
   s32 count;
   s32 i;
@@ -174,48 +173,37 @@ s32 BattleParty_ResetActiveRuntimeFields(void) {
   count = BattleParty_PrepareMembers(owners);
   count += BattleParty_PrepareReserveOwners(owners + count);
 
-  i = 0;
-  if (i < count) {
-    struct Unit *unit;
-    u8 *cursor;
-    s32 remaining;
+  for (i = 0; i < count; i++) {
+    struct Unit *unit = Unit_Get(owners[i]);
+    s32 element;
 
-    do {
-      unit = Unit_Get(owners[i]);
-      remaining = 3;
-      cursor = (u8 *)&unit->summonBoost[3];
+    for (element = ELEMENT_COUNT - 1; element >= 0; element--)
+      unit->summonBoost[element] = 0;
 
-      do {
-        remaining--;
-        *cursor-- = 0;
-      } while (remaining >= 0);
+    unit->attackTurns = 0;
+    unit->attackStage = 0;
+    unit->defenseTurns = 0;
+    unit->defenseStage = 0;
+    unit->resistanceTurns = 0;
+    unit->resistanceStage = 0;
+    unit->delusion = 0;
+    unit->confusion = 0;
+    unit->charm = 0;
+    unit->stun = 0;
+    unit->sleep = 0;
+    unit->psySeal = 0;
+    unit->regenerate = 0;
+    unit->reflect = 0;
+    unit->grimReaper = 0;
+    unit->equipBonus[0] = 0;
+    unit->equipBonus[1] = 0;
+    unit->ready = 0;
+    unit->immobile = 0;
+    unit->agilityTurns = 0;
+    unit->agilityStage = 0;
+    unit->challenge = 0;
 
-      unit->attackTurns = 0;
-      unit->attackStage = 0;
-      unit->defenseTurns = 0;
-      unit->defenseStage = 0;
-      unit->resistanceTurns = 0;
-      unit->resistanceStage = 0;
-      unit->delusion = 0;
-      unit->confusion = 0;
-      unit->charm = 0;
-      unit->stun = 0;
-      unit->sleep = 0;
-      unit->psySeal = 0;
-      unit->regenerate = 0;
-      unit->reflect = 0;
-      unit->grimReaper = 0;
-      unit->equipBonus[0] = 0;
-      unit->equipBonus[1] = 0;
-      unit->ready = 0;
-      unit->immobile = 0;
-      unit->agilityTurns = 0;
-      unit->agilityStage = 0;
-      unit->challenge = 0;
-
-      Unit_CalculateFar(owners[i]);
-      i++;
-    } while (i < count);
+    Unit_CalculateFar(owners[i]);
   }
 }
 
@@ -293,8 +281,8 @@ void BattleSummon_UpdateAvailability(void) {
   u32 availableMask;
 
   partySize = BattleParty_PrepareMembers(partyMembers);
-  availableMask =
-      Djinn_GetRecoveryTableFar(0)->summonMask & SUMMON_MASK_LEARNED;
+  availableMask = Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY)->summonMask &
+                  SUMMON_MASK_LEARNED;
 
   element = 0;
   do {
@@ -309,7 +297,7 @@ void BattleSummon_UpdateAvailability(void) {
       }
     }
     element++;
-  } while (element <= 3);
+  } while (element < ELEMENT_COUNT);
 
   element = 0;
   do {
@@ -325,7 +313,7 @@ void BattleSummon_UpdateAvailability(void) {
 
         do {
           elementsMet++;
-          if (elementsMet > 3)
+          if (elementsMet >= ELEMENT_COUNT)
             break;
           total++;
           required++;
@@ -342,4 +330,4 @@ void BattleSummon_UpdateAvailability(void) {
 }
 
 /// Unused: does nothing.
-void BattleSummon_ReservedNoOp(void) {}
+UNUSED void BattleSummon_ReservedNoOp(void) {}

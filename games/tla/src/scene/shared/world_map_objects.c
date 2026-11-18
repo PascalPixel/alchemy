@@ -1,9 +1,9 @@
 /// @file
-/// The world map's placed actors, which both the world map and the staff
-/// credits' overlays keep a copy of, included as text: the exit a place's side
-/// of the leader chooses, the task that shows the places' actors coming into
-/// view and releases those leaving it, the cell a point lies in, and the
-/// sparks and particles about the ship.
+/// The World Map's placed actors, which both the World Map's and the staff
+/// credits' overlays keep a copy of, included as text: the exit chosen by the
+/// side the leader approaches a place from, the task that shows the places'
+/// actors coming into view and releases those leaving it, and the sparks and
+/// particles about the ship.
 
 #include "types.h"
 #include "system/iwram_call.h"
@@ -26,15 +26,14 @@
 
 extern struct Actor *gWorldMap_PlacedActors[];
 
-/// Chooses a passage exit from the leader's east-west approach: exitBefore
-/// while the leader is west of the actor of the place whose step trigger is
-/// slot, else exitAfter.
-void WorldMap_SelectExitByX(s32 slot, s32 exitBefore, s32 exitAfter) {
+/// Unused: chooses a passage exit from the leader's east-west approach:
+/// exitBefore while the leader is west of the place's actor, else exitAfter.
+UNUSED void WorldMap_SelectExitByX(s32 trigger, s32 exitBefore, s32 exitAfter) {
   struct FieldWork *work;
   struct Actor *area;
   struct Actor *leader;
 
-  area = gWorldMap_PlacedActors[slot - STEP_TRIGGER_AREA_BASE];
+  area = gWorldMap_PlacedActors[trigger - STEP_TRIGGER_AREA_BASE];
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   work = Ram_HeapSlots->fieldWork;
   if (leader->x.fixed < area->x.fixed) {
@@ -46,12 +45,12 @@ void WorldMap_SelectExitByX(s32 slot, s32 exitBefore, s32 exitAfter) {
 }
 
 /// Chooses a passage exit from the leader's north-south approach.
-void WorldMap_SelectExitByZ(s32 slot, s32 exitBefore, s32 exitAfter) {
+void WorldMap_SelectExitByZ(s32 trigger, s32 exitBefore, s32 exitAfter) {
   struct FieldWork *work;
   struct Actor *area;
   struct Actor *leader;
 
-  area = gWorldMap_PlacedActors[slot - STEP_TRIGGER_AREA_BASE];
+  area = gWorldMap_PlacedActors[trigger - STEP_TRIGGER_AREA_BASE];
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   work = Ram_HeapSlots->fieldWork;
   if (leader->z.fixed < area->z.fixed) {
@@ -62,7 +61,6 @@ void WorldMap_SelectExitByZ(s32 slot, s32 exitBefore, s32 exitAfter) {
   Event_PlaySound(SE_MAP_EXIT);
 }
 
-extern struct Actor *gWorldMap_PlacedActors[];
 extern s32 gWorldMap_PlacedActorScript[];
 
 void Actor_StartScript(struct Actor *actor, const s32 *script);
@@ -81,7 +79,7 @@ void WorldMap_UpdatePlacedActors(void) {
   s32 next;
   FIXED left, right, top, bottom;
   struct Actor **slot;
-  /* FAKEMATCH(pin): the form kept. */
+  /* FAKEMATCH(pin): work fixed to a register; as a plain local. */
   register struct FieldWork *work asm("r9") = Ram_HeapSlots->fieldWork;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *actor = work->camera;
@@ -104,10 +102,10 @@ void WorldMap_UpdatePlacedActors(void) {
   }
   i = 0;
   next = kind;
-  /* FAKEMATCH(barrier): the form kept. */
+  /* FAKEMATCH(barrier): an empty asm on next; as no asm. */
   asm("" : "+g"(next));
   slot = objects;
-  /* FAKEMATCH(barrier): the form kept. */
+  /* FAKEMATCH(barrier): an empty asm on leader; as no asm. */
   asm("" : "+g"(leader));
   while (next != 0) {
     FIXED px, pz;
@@ -182,9 +180,9 @@ void WorldMap_UpdatePlacedActors(void) {
   }
 }
 
-/// While the actor system runs, the world map's brightening is queued for the
-/// next frames.
-void WorldMap_QueueBlend(void) {
+/// Unused: unless a menu has suspended the actors, queues the World Map's
+/// backgrounds lightened toward white.
+UNUSED void WorldMap_QueueBlend(void) {
   if ((u16)Ram_HeapSlots->actorSystem->suspended == 0) {
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
                         BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
@@ -201,8 +199,8 @@ void WorldMap_StartPlacedActors(void) {
   Task_AddFrame(WorldMap_UpdatePlacedActors, TASK_PASS_FRAME);
 }
 
-/// The cell index of a point in 16.16 pixels.
-s32 WorldMap_GetCellIndex(FIXED x, FIXED z) {
+/// Unused: the cell index of a point in 16.16 pixels.
+UNUSED s32 WorldMap_GetCellIndex(FIXED x, FIXED z) {
   return x / toFIXED(MAPGRID_CELL_PIXELS) +
          (z / toFIXED(MAPGRID_CELL_PIXELS)) * MAPGRID_SIZE;
 }
@@ -232,8 +230,6 @@ s32 WorldMap_RiseFromAnchor(struct Actor *actor) {
 
 extern s32 gWorldMap_SparkScript[];
 extern u32 gWorldMap_ParticleScript[];
-
-void Actor_StartScript(struct Actor *actor, const s32 *script);
 
 /// Spawns a pair of rising sparks at the actor, as The Broken Seal's
 /// MercuryLighthouse_SpawnSparkPair does at a spawn point.
@@ -275,10 +271,10 @@ void WorldMap_SpawnSparkPair(struct Actor *actor) {
   }
 }
 
-/// Spawns a particle at a random spot around the actor.
+/// Spawns a particle at a random spot near the actor.
 void WorldMap_SpawnParticle(struct Actor *actor) {
   s32 position[3];
-  s32 angle;
+  FIXED spread;
   struct Actor *particle;
   struct FieldSprite *sprite;
 
@@ -286,8 +282,8 @@ void WorldMap_SpawnParticle(struct Actor *actor) {
   Iwram_MulFX(actor->scaleX, FIXED_ONE * 3 / 2);
   SET_VECTOR(position, actor->x.fixed, actor->y.fixed + toFIXED(2),
              actor->z.fixed);
-  angle = Random16();
-  FieldVector_AddPolarOffsetFX(angle * 20, Random16(), position);
+  spread = Random16();
+  FieldVector_AddPolarOffsetFX(spread * 20, Random16(), position);
   particle =
       (FieldActor_Create(SPRITE_GLINT, position[0], position[1], position[2]));
   if (particle != NULL) {

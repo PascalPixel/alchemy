@@ -70,8 +70,10 @@ enum PathBlockPlace {
   CORNER_BLOCK_IN_NORTH_GAP,
 };
 
-/// A path block lies in a gap of the east hall, a flag for each PathBlockPlace.
-#define FLAG_PATH_BLOCK_PLACED(place) (0xa10 + (place))
+/// A path block lies in a gap of the east hall, a flag for each PathBlockPlace
+/// from the first.
+#define FLAG_PATH_BLOCK_PLACED_FIRST 0xa10
+#define FLAG_PATH_BLOCK_PLACED(place) (FLAG_PATH_BLOCK_PLACED_FIRST + (place))
 /// The east stake is down in the floor: Pounded, or not yet raised by the two
 /// blocks both lying in gaps.
 #define FLAG_EAST_STAKE_SUNK 0xa16

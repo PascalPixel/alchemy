@@ -709,6 +709,11 @@ enum CanvasFadeShare { CANVAS_FADE_HALF = 50, CANVAS_FADE_THREE_QUARTERS = 75 };
    REG_BLDALPHA = EFFECT_BLEND_CANVAS(top),                                    \
    REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL)
 
+/// A line's 16.16 sideways sway as its BG2X value in work->bg2xLines, which the
+/// wave HBlank DMA writes line by line. BG2X counts 256ths of a canvas pixel,
+/// so a sway of toFIXED(n) moves the line n / 4 canvas pixels.
+#define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
+
 /// Which way BattleEffect_WipeCanvas sweeps.
 enum CanvasWipeDirection {
   CANVAS_WIPE_DOWN,  ///< top to bottom

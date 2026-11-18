@@ -124,8 +124,9 @@ FLURRY_DEFINE_BY_VARIANT(BattleEffect_RunDoublestep, FLURRY_GUST,
 #define FLURRY_SMOKE_PICTURE_FRAMES 4
 #define FLURRY_SMOKE_FRAMES (6 * FLURRY_SMOKE_PICTURE_FRAMES)
 
-/// A line's sideways sway, in quarter canvas pixels (toFIXED(4) to a pixel),
-/// as the BG2X value of the effect's bg2xLines table.
+/// The header's CANVAS_WAVE_BG2X again: battle_effect_streaks.c,
+/// battle_effect_planet_diver.c, battle_effect_condemn.c and
+/// battle_effect_target_motes.c #undef it before this part.
 #define CANVAS_WAVE_BG2X(sway) ((sway) >> 10)
 
 /// The bytes of a gFlurry_Styles row, one row a mode.
@@ -291,7 +292,7 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
     }
     draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
     /* FAKEMATCH(signature): the paired slot read through a padded view that
-     * types it as a drawing routine; as
+     * types it as a drawing routine, here and for the motes below; as
      * (DrawRectangle)Ram_HeapSlots->ramCodePaired. */
     draw[1] = ALTERNATE_BLITTER_SLOT;
     for (i = 0; i != strikes; i++) {
@@ -366,9 +367,6 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
     EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                         BLITTER_MAX);
     draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-    /* FAKEMATCH(signature): the paired slot read through a padded view that
-     * types it as a drawing routine; as
-     * (DrawRectangle)Ram_HeapSlots->ramCodePaired. */
     draw[1] = ALTERNATE_BLITTER_SLOT;
     for (i = 0; i != FLURRY_MOTE_COUNT; i++) {
       struct Particle *mote = &PARTICLES[i];
@@ -458,4 +456,3 @@ void BattleEffect_RunFlurry(struct BattleEffectParams *args, s32 mode) {
 #undef FLURRY_SMOKE_PUFFS
 #undef FLURRY_SMOKE_PICTURE_FRAMES
 #undef FLURRY_SMOKE_FRAMES
-#undef CANVAS_WAVE_BG2X

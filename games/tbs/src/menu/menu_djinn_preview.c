@@ -450,6 +450,8 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       s32 rise;
       s32 slide;
 
+      // DEAD: step never reaches DJINN_PREVIEW_HOP_FRAMES, so the modulo
+      // leaves it as it is; the ROM keeps its division.
       rise = -Iwram_MulFX(DJINN_PREVIEW_HOP_SINE_HEIGHT,
                           Trig_Sin((step % DJINN_PREVIEW_HOP_FRAMES) *
                                    (DEGtoANG(180) / DJINN_PREVIEW_HOP_FRAMES)));
@@ -461,7 +463,8 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
       if (rise > 12) {
         rise = 12;
       }
-      // step never reaches 35, so the slide never wraps.
+      // DEAD: step never reaches 35, so the modulo leaves it as it is and the
+      // slide never wraps; the ROM keeps its division.
       slide = (step % 35) * 2;
       DjinnFigures_SetSlotPosition(0, slide + 34, rise + 20, 0);
       if (mode == DJINN_COMPARE_TRADE) {

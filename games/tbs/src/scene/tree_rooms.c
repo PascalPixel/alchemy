@@ -161,24 +161,25 @@ enum {
 
 static void TretPalette_SaveMapColors(void);
 static void TretPalette_UpdateMapTint(void);
-/// The face gestures TreeRooms_PlayGesture plays on Tret. Each starts from the
+/// The face changes TreeRooms_ChangeFace plays on Tret. Each starts from the
 /// face with its eyes open, and the wrathful ones are on his wrathful face.
-enum TreeRoomsGesture {
-  TRET_GESTURE_CLOSE_EYES = 0,
-  TRET_GESTURE_OPEN_EYES = 1,
-  TRET_GESTURE_LOOK_LEFT = 2,
-  TRET_GESTURE_LOOK_RIGHT = 3,
-  TRET_GESTURE_BLINK = 4, ///< twice
-  TRET_GESTURE_HALF_CLOSE_EYES = 5,
-  TRET_GESTURE_WRATHFUL_CLOSE_EYES = 7,
-  TRET_GESTURE_WRATHFUL_OPEN_EYES = 8,
-  TRET_GESTURE_WRATHFUL_LOOK_RIGHT = 9,
-  TRET_GESTURE_WRATHFUL_LOOK_LEFT = 10,
-  TRET_GESTURE_WRATHFUL_BLINK = 11, ///< twice
-  TRET_GESTURE_WRATHFUL_STARE = 12  ///< as TRET_GESTURE_WRATHFUL_OPEN_EYES
+enum TreeRoomsFaceChange {
+  TRET_FACE_CHANGE_CLOSE_EYES = 0,
+  TRET_FACE_CHANGE_OPEN_EYES = 1,
+  TRET_FACE_CHANGE_LOOK_LEFT = 2,
+  TRET_FACE_CHANGE_LOOK_RIGHT = 3,
+  TRET_FACE_CHANGE_BLINK = 4, ///< twice
+  TRET_FACE_CHANGE_HALF_CLOSE_EYES = 5,
+  TRET_FACE_CHANGE_WRATHFUL_CLOSE_EYES = 7,
+  TRET_FACE_CHANGE_WRATHFUL_OPEN_EYES = 8,
+  TRET_FACE_CHANGE_WRATHFUL_LOOK_RIGHT = 9,
+  TRET_FACE_CHANGE_WRATHFUL_LOOK_LEFT = 10,
+  TRET_FACE_CHANGE_WRATHFUL_BLINK = 11, ///< twice
+  TRET_FACE_CHANGE_WRATHFUL_STARE =
+      12 ///< as TRET_FACE_CHANGE_WRATHFUL_OPEN_EYES
 };
 
-static void TreeRooms_PlayGesture(s32 gesture);
+static void TreeRooms_ChangeFace(s32 change);
 static void TreeRooms_SpawnSwirlSparks(void);
 static void TreeRooms_ApplyFlaggedMapPatches(void);
 static void TreeRooms_LandFromFall(void);
@@ -490,7 +491,7 @@ static void TreeRooms_FightTret(void) {
   Event_Wait(10);
   Actor_SetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
   Event_Wait(20);
-  TreeRooms_PlayGesture(TRET_GESTURE_WRATHFUL_OPEN_EYES);
+  TreeRooms_ChangeFace(TRET_FACE_CHANGE_WRATHFUL_OPEN_EYES);
   Event_ShowMessage(SPEAKER(ACTOR_TRET), 0);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
@@ -500,7 +501,7 @@ static void TreeRooms_FightTret(void) {
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
-  TreeRooms_PlayGesture(TRET_GESTURE_WRATHFUL_BLINK);
+  TreeRooms_ChangeFace(TRET_FACE_CHANGE_WRATHFUL_BLINK);
   FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_TRET), 0, 10);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Actor_StartRepeatedMotion(ACTOR_GARET, 1);
@@ -516,7 +517,7 @@ static void TreeRooms_FightTret(void) {
   Actor_SetAttachedEffect(ACTOR_IVAN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   Event_Wait(40);
-  TreeRooms_PlayGesture(TRET_GESTURE_WRATHFUL_BLINK);
+  TreeRooms_ChangeFace(TRET_FACE_CHANGE_WRATHFUL_BLINK);
   Event_ShowMessage(SPEAKER(ACTOR_TRET), 0);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_BARS);
@@ -558,7 +559,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
     Actor_SetPosition(ACTOR_MIA, 166, 104);
     Actor_Get(ACTOR_MIA)->facing = FACING_NORTH;
   }
-  TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
+  TreeRooms_ChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
   wait(10);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   gFieldWork->transitionFrames = 48;
@@ -591,10 +592,10 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   FieldCamera_MoveTo(168, CAMERA_KEEP, 90, 1);
   FieldCamera_WaitForMove();
   Event_Wait(40);
-  TreeRooms_PlayGesture(TRET_GESTURE_OPEN_EYES);
+  TreeRooms_ChangeFace(TRET_FACE_CHANGE_OPEN_EYES);
   Event_Wait(60);
   Sound_Play(MUS_FOREST);
-  TreeRooms_PlayGesture(TRET_GESTURE_BLINK);
+  TreeRooms_ChangeFace(TRET_FACE_CHANGE_BLINK);
   FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
   Actor_ShowEmote(ACTOR_GARET, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);
@@ -609,7 +610,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Actor_SetAnimationAndWait(ACTOR_IVAN, ANIM_NOD);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
-  TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
+  TreeRooms_ChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
   Event_Wait(40);
   FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
@@ -630,7 +631,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTHWEST, 0);
   FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_IVAN), 0, 20);
-  TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
+  TreeRooms_ChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
   Event_Wait(40);
   FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 10);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
@@ -640,7 +641,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 40);
-  TreeRooms_PlayGesture(TRET_GESTURE_BLINK);
+  TreeRooms_ChangeFace(TRET_FACE_CHANGE_BLINK);
   // "Do you need something?" Answering no: "What are you doing, Isaac! Now's
   // not the time to fool around!"
   Event_OpenMessage(SPEAKER(ACTOR_SECOND_TRET), 0);
@@ -657,12 +658,12 @@ static void TreeRooms_PlayPostBattleConversation(void) {
     Event_ShowMessage(SPEAKER(ACTOR_IVAN), 0);
   }
   Event_Wait(20);
-  TreeRooms_PlayGesture(TRET_GESTURE_BLINK);
+  TreeRooms_ChangeFace(TRET_FACE_CHANGE_BLINK);
   Event_SetMessageId(MsgTretTurnedPeopleKolima);
   // "I turned the people of Kolima into trees?"
   FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 10);
-  TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
+  TreeRooms_ChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
   Event_Wait(20);
   // Tret tries to release the people of Kolima: the colours shift and sparks
   // swirl out from his face, then fade.
@@ -691,13 +692,13 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_StartInterpolation(20);
   wait(40);
-  TreeRooms_PlayGesture(TRET_GESTURE_BLINK);
+  TreeRooms_ChangeFace(TRET_FACE_CHANGE_BLINK);
   Event_Wait(20);
   // "I can't do it... My power no longer reaches Kolima..." His face sinks
   // away on "People of Kolima... Forgive me...", and the party resolve to
   // heal him.
   FieldEvent_ShowMessageThenWait(SPEAKER(ACTOR_SECOND_TRET), 0, 10);
-  TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
+  TreeRooms_ChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
   Event_ShowMessage(SPEAKER(ACTOR_SECOND_TRET), 0);
   Actor_RunScriptAndWait(ACTOR_TRET, gTreeRooms_FaceSinksActions);
   Event_Wait(40);
@@ -777,7 +778,7 @@ s32 Scene_Initialize(void) {
   secondTret->motionFlags = 0;
   secondTret->y.fixed = -toFIXED(10);
   Actor_SetSpriteColorById(ACTOR_SECOND_TRET, SPRITE_COLOR_HIDDEN);
-  TreeRooms_PlayGesture(TRET_GESTURE_CLOSE_EYES);
+  TreeRooms_ChangeFace(TRET_FACE_CHANGE_CLOSE_EYES);
   if (gMainRoutineWork.entrance != TREE_ROOMS_AFTER_FIGHT_TRET)
     Task_AddFrame(TretPalette_UpdateMapTint, TASK_PASS_FRAME);
   if (GameFlag_Get(FLAG_TRET_DEFEATED)) {
@@ -917,28 +918,28 @@ static void TretPalette_UpdateMapTint(void) {
     gTreeRooms_TintIndex = 0;
 }
 
-/// Plays one of Tret's gestures with its original pauses.
-static void TreeRooms_PlayGesture(s32 gesture) {
-  switch (gesture) {
-  case TRET_GESTURE_CLOSE_EYES:
+/// Plays one of Tret's face changes with its original pauses.
+static void TreeRooms_ChangeFace(s32 change) {
+  switch (change) {
+  case TRET_FACE_CHANGE_CLOSE_EYES:
     Actor_SetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
     wait(6);
     Actor_SetAnimation(ACTOR_TRET, TRET_FACE_CLOSED);
     break;
-  case TRET_GESTURE_OPEN_EYES:
+  case TRET_FACE_CHANGE_OPEN_EYES:
     Actor_SetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
     break;
-  case TRET_GESTURE_LOOK_LEFT:
+  case TRET_FACE_CHANGE_LOOK_LEFT:
     Actor_SetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
     wait(6);
     Actor_SetAnimation(ACTOR_TRET, TRET_FACE_LOOK_LEFT);
     break;
-  case TRET_GESTURE_LOOK_RIGHT:
+  case TRET_FACE_CHANGE_LOOK_RIGHT:
     Actor_SetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
     wait(6);
     Actor_SetAnimation(ACTOR_TRET, TRET_FACE_LOOK_RIGHT);
     break;
-  case TRET_GESTURE_BLINK:
+  case TRET_FACE_CHANGE_BLINK:
     Actor_SetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
     wait(6);
     Actor_SetAnimation(ACTOR_TRET, TRET_FACE_CLOSED);
@@ -949,30 +950,30 @@ static void TreeRooms_PlayGesture(s32 gesture) {
     wait(6);
     Actor_SetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
     break;
-  case TRET_GESTURE_HALF_CLOSE_EYES:
+  case TRET_FACE_CHANGE_HALF_CLOSE_EYES:
     Actor_SetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
     wait(6);
     Actor_SetAnimation(ACTOR_TRET, TRET_FACE_HALF_CLOSED);
     break;
-  case TRET_GESTURE_WRATHFUL_CLOSE_EYES:
+  case TRET_FACE_CHANGE_WRATHFUL_CLOSE_EYES:
     Actor_SetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
     wait(6);
     Actor_SetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
     break;
-  case TRET_GESTURE_WRATHFUL_OPEN_EYES:
+  case TRET_FACE_CHANGE_WRATHFUL_OPEN_EYES:
     Actor_SetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
     break;
-  case TRET_GESTURE_WRATHFUL_LOOK_RIGHT:
+  case TRET_FACE_CHANGE_WRATHFUL_LOOK_RIGHT:
     Actor_SetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
     wait(6);
     Actor_SetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_LOOK_RIGHT);
     break;
-  case TRET_GESTURE_WRATHFUL_LOOK_LEFT:
+  case TRET_FACE_CHANGE_WRATHFUL_LOOK_LEFT:
     Actor_SetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
     wait(6);
     Actor_SetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_LOOK_LEFT);
     break;
-  case TRET_GESTURE_WRATHFUL_BLINK:
+  case TRET_FACE_CHANGE_WRATHFUL_BLINK:
     Actor_SetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
     wait(6);
     Actor_SetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
@@ -983,7 +984,7 @@ static void TreeRooms_PlayGesture(s32 gesture) {
     wait(6);
     Actor_SetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
     break;
-  case TRET_GESTURE_WRATHFUL_STARE:
+  case TRET_FACE_CHANGE_WRATHFUL_STARE:
     Actor_SetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
     break;
   }

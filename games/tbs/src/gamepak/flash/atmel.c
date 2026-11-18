@@ -7,7 +7,7 @@
 #include "system/io_reg.h"
 
 /// An error's kind, in its high byte, without the enum FlashPhase in its low.
-#define FLASH_ERROR_KIND_MASK 0xFF00
+#define FLASH_ERROR_KIND_MASK 0xff00
 /// The 128-byte sectors in each 4 KB standard sector.
 #define ATMEL_SMALL_SECTORS_PER_SECTOR 32
 

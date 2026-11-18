@@ -1,5 +1,5 @@
-
-// Mercury and Venus Lighthouses' aeries.
+/// @file
+/// Mercury and Venus Lighthouses' aeries.
 
 /// How far from the leader a floating platform is looked for, in pixels.
 #define FLOATING_PLATFORM_SEARCH_DISTANCE 640

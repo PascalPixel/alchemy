@@ -92,8 +92,8 @@ extern s32 gKolimaForestTreeEffectScript[];
 /// The actors, numbering gKolimaForestTreeActorPlacements' rows
 /// from ACTOR_FIRST_PLACED.
 enum {
-  /// Tret's face, drawn in SPRITE_TRET_RAISED. Its animations are his face's
-  /// gestures (KolimaForestTree_ChangeFace).
+  /// Tret's face, drawn in SPRITE_TRET_RAISED. Its animations are the changes
+  /// of his face (KolimaForestTree_ChangeFace).
   ACTOR_TRET = ACTOR_FIRST_PLACED,
   ACTOR_LAUREL,
   // XXX (no evidence): why these exist; likely left from a version where
@@ -118,25 +118,25 @@ static void KolimaForestTree_RejectHermesWater(void);
 static void KolimaForestTree_RestoreTret(void);
 static void KolimaForestTree_SpawnRepelSpark(void);
 static void KolimaForestTree_UpdateHealingPalette(void);
-/// The face gestures KolimaForestTree_ChangeFace plays, each from the face
+/// The face changes KolimaForestTree_ChangeFace plays, each from the face
 /// with its eyes open. Laurel has only the first six, and the wrathful ones,
 /// on Tret's wrathful face, are never asked for here.
-enum KolimaForestTreeGesture {
-  FACE_GESTURE_CLOSE_EYES = 0,
-  FACE_GESTURE_OPEN_EYES = 1,
-  FACE_GESTURE_LOOK_LEFT = 2,
-  FACE_GESTURE_LOOK_RIGHT = 3,
-  FACE_GESTURE_BLINK = 4, ///< twice
-  FACE_GESTURE_HALF_CLOSE_EYES = 5,
-  FACE_GESTURE_WRATHFUL_CLOSE_EYES = 6,
-  FACE_GESTURE_WRATHFUL_OPEN_EYES = 7,
-  FACE_GESTURE_WRATHFUL_LOOK_RIGHT = 8,
-  FACE_GESTURE_WRATHFUL_LOOK_LEFT = 9,
-  FACE_GESTURE_WRATHFUL_BLINK = 10,
-  FACE_GESTURE_WRATHFUL_STARE = 11 ///< as FACE_GESTURE_WRATHFUL_OPEN_EYES
+enum KolimaForestTreeFaceChange {
+  FACE_CHANGE_CLOSE_EYES = 0,
+  FACE_CHANGE_OPEN_EYES = 1,
+  FACE_CHANGE_LOOK_LEFT = 2,
+  FACE_CHANGE_LOOK_RIGHT = 3,
+  FACE_CHANGE_BLINK = 4, ///< twice
+  FACE_CHANGE_HALF_CLOSE_EYES = 5,
+  FACE_CHANGE_WRATHFUL_CLOSE_EYES = 6,
+  FACE_CHANGE_WRATHFUL_OPEN_EYES = 7,
+  FACE_CHANGE_WRATHFUL_LOOK_RIGHT = 8,
+  FACE_CHANGE_WRATHFUL_LOOK_LEFT = 9,
+  FACE_CHANGE_WRATHFUL_BLINK = 10,
+  FACE_CHANGE_WRATHFUL_STARE = 11 ///< as FACE_CHANGE_WRATHFUL_OPEN_EYES
 };
 
-static void KolimaForestTree_ChangeFace(s32 blankActorId, s32 gesture);
+static void KolimaForestTree_ChangeFace(s32 blankActorId, s32 change);
 static void KolimaForestTree_SpawnOrbitSparks(void);
 static void KolimaForestTree_ReplaceInventoryItem(s32 oldItemId, s32 newItemId);
 
@@ -191,7 +191,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// to Laurel (ACTOR_LAUREL_STAND_IN), she asks who the party is.
 static void KolimaForestTree_TalkToLaurel(void) {
   Event_Start();
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_OPEN_EYES);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_OPEN_EYES);
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
     Event_SetMessageId(MsgKolimaForestKolimaAlive);
     // "The forest of Kolima is alive once again, thanks to you......"
@@ -204,23 +204,21 @@ static void KolimaForestTree_TalkToLaurel(void) {
     Event_SetMessageId(MsgKolimaWho);
     // "Who are you...?"
     Event_ShowMessageThenWait(ACTOR_LAUREL, 0, 20);
-    KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL,
-                                FACE_GESTURE_CLOSE_EYES);
+    KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_CLOSE_EYES);
     Event_Wait(60);
-    KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_OPEN_EYES);
+    KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_OPEN_EYES);
     Event_ShowMessageThenWait(ACTOR_LAUREL, 0, 10);
     Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
     Event_Wait(40);
     Event_ShowMessage(ACTOR_LAUREL, 0);
-    KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL,
-                                FACE_GESTURE_CLOSE_EYES);
+    KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_CLOSE_EYES);
     Event_Wait(80);
     Event_ShowMessageThenWait(ACTOR_LAUREL, 0, 20);
-    KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_OPEN_EYES);
+    KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_OPEN_EYES);
     Event_ShowMessageThenWait(ACTOR_LAUREL, 0, 20);
     GameFlag_Set(FLAG_MET_LAUREL);
   }
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_CLOSE_EYES);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_CLOSE_EYES);
   Event_End();
 }
 
@@ -231,19 +229,18 @@ static void KolimaForestTree_TalkToTret(void) {
 
   Event_Start();
   if (GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED) != 0) {
-    KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_GESTURE_OPEN_EYES);
+    KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_OPEN_EYES);
     Event_SetMessageId(MsgKolimaNowHaveSuchPowerAxe);
     // "Now that I have such power, no axe shall ever touch me..."
     Event_ShowMessage(ACTOR_TRET, 0);
-    KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_GESTURE_CLOSE_EYES);
+    KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_CLOSE_EYES);
   } else {
     if (GameFlag_Get(FLAG_TRET_DEFEATED) != 0) {
-      KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_GESTURE_OPEN_EYES);
+      KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_OPEN_EYES);
       Event_SetMessageId(MsgKolimaSilenceAfterTretDefeated);
       // "..."
       Event_ShowMessage(ACTOR_TRET, 0);
-      KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET,
-                                  FACE_GESTURE_CLOSE_EYES);
+      KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_CLOSE_EYES);
       waterHolder = PartyInventory_FindMember(ITEM_HERMES_WATER);
       if (waterHolder != -1) {
         u16 *menuRequest = &gFieldWork->fieldMenu;
@@ -473,7 +470,7 @@ static void KolimaForestTree_RestoreTret(void) {
   FieldCamera_MoveTo(328, 8, 212, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(40);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_GESTURE_OPEN_EYES);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_OPEN_EYES);
   Event_Wait(40);
   Sound_Play(MUS_COLOSSO_INTRO);
   // Tret and Laurel discover that their powers have returned.
@@ -485,11 +482,11 @@ static void KolimaForestTree_RestoreTret(void) {
   Actor_StartRepeatedMotion(ACTOR_MIA, 2);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
   KolimaForestTree_FaceParty(FACING_NORTH, 20);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_GESTURE_LOOK_LEFT);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_LOOK_LEFT);
   Event_Wait(20);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_GESTURE_LOOK_RIGHT);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_LOOK_RIGHT);
   Event_Wait(40);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_GESTURE_OPEN_EYES);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_OPEN_EYES);
   Event_Wait(20);
   Event_ShowMessage(ACTOR_TRET, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
@@ -499,27 +496,27 @@ static void KolimaForestTree_RestoreTret(void) {
   FieldCamera_MoveTo(234, 0, 232, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(40);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_OPEN_EYES);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_OPEN_EYES);
   Event_Wait(40);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_LOOK_RIGHT);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_LOOK_RIGHT);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 20);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_LOOK_LEFT);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_LOOK_LEFT);
   Event_Wait(10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_SOUTHWEST, 0);
   Actor_FaceDirection(ACTOR_MIA, FACING_SOUTHWEST, 20);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_LOOK_RIGHT);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_LOOK_RIGHT);
   Event_Wait(20);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_LOOK_LEFT);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_LOOK_LEFT);
   Event_Wait(20);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_LOOK_RIGHT);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_LOOK_RIGHT);
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 10);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_GESTURE_CLOSE_EYES);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_CLOSE_EYES);
   Event_Wait(20);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_GESTURE_OPEN_EYES);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_OPEN_EYES);
   Event_Wait(20);
   Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
@@ -551,7 +548,7 @@ static void KolimaForestTree_RestoreTret(void) {
   FieldCamera_MoveTo(328, 8, 212, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(20);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_GESTURE_CLOSE_EYES);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_CLOSE_EYES);
   Event_Wait(20);
   KolimaPalette_Restore(0);
   PaletteFade_StartInterpolation(1);
@@ -574,7 +571,7 @@ static void KolimaForestTree_RestoreTret(void) {
   KolimaPalette_Restore(0);
   PaletteFade_StartInterpolation(20);
   Event_Wait(40);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_GESTURE_OPEN_EYES);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_OPEN_EYES);
   Event_Wait(10);
   Event_SetMessageId(MsgKolimaShouldDoPeopleKolimaCursed);
   // "That should do it. The people of Kolima are cursed no more."
@@ -596,7 +593,7 @@ static void KolimaForestTree_RestoreTret(void) {
     gFieldWork->message += 1;
   }
   Event_ShowMessage(ACTOR_GARET, 0);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_GESTURE_BLINK);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_BLINK);
   Event_Wait(20);
   Event_SetMessageId(MsgKolimaWasIndeedAngryPeopleHad);
   // "I was indeed angry that people had laid waste to my..."
@@ -606,17 +603,17 @@ static void KolimaForestTree_RestoreTret(void) {
   // "Then those gems fell into my branches..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
   KolimaForestTree_NodTogether();
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_GESTURE_BLINK);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_BLINK);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0, 20);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_CLOSE_EYES);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_CLOSE_EYES);
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 20);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_LOOK_RIGHT);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_LOOK_RIGHT);
   Event_Wait(40);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_OPEN_EYES);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_OPEN_EYES);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 20);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_GESTURE_LOOK_LEFT);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_LOOK_LEFT);
   Event_Wait(20);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
@@ -624,15 +621,15 @@ static void KolimaForestTree_RestoreTret(void) {
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_WINCE, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL,
-                              FACE_GESTURE_HALF_CLOSE_EYES);
+                              FACE_CHANGE_HALF_CLOSE_EYES);
   Event_Wait(60);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_LOOK_RIGHT);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_LOOK_RIGHT);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 20);
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET,
-                              FACE_GESTURE_HALF_CLOSE_EYES);
+                              FACE_CHANGE_HALF_CLOSE_EYES);
   Event_Wait(40);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_GESTURE_LOOK_LEFT);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_LOOK_LEFT);
   Event_Wait(20);
   Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_TRET, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_GARET, 2);
@@ -640,19 +637,19 @@ static void KolimaForestTree_RestoreTret(void) {
   Event_ShowMessage(ACTOR_GARET, 0);
   Actor_FaceDirection(ACTOR_IVAN, FACING_WEST, 20);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_IVAN, 0);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_BLINK);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_BLINK);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 20);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHWEST, 10);
   Event_ShowMessageThenWait(ACTOR_GARET, 0, 20);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_GESTURE_OPEN_EYES);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_OPEN_EYES);
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0, 10);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_GESTURE_LOOK_LEFT);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_LOOK_LEFT);
   Event_Wait(20);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_LOOK_RIGHT);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_LOOK_RIGHT);
   Event_Wait(40);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_CLOSE_EYES);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_CLOSE_EYES);
   Event_Wait(20);
   KolimaPalette_Restore(0);
   PaletteFade_StartInterpolation(1);
@@ -675,7 +672,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTHEAST, 10);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_GESTURE_BLINK);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_BLINK);
   Event_Wait(20);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
   Actor_ShowEmote(ACTOR_IVAN, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
@@ -692,20 +689,20 @@ static void KolimaForestTree_RestoreTret(void) {
   Event_Wait(60);
   KolimaPalette_Restore(0);
   PaletteFade_StartInterpolation(40);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_GESTURE_LOOK_LEFT);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_LOOK_LEFT);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0, 20);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_LOOK_RIGHT);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_LOOK_RIGHT);
   Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0);
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_BLINK);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_BLINK);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 10);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   Actor_StartRepeatedMotion(ACTOR_GARET, 2);
   Actor_StartRepeatedMotion(ACTOR_MIA, 2);
   Actor_RunRepeatedMotion(ACTOR_IVAN, 2);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_GESTURE_OPEN_EYES);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_OPEN_EYES);
   Event_OpenMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTHEAST, 0);
@@ -715,11 +712,11 @@ static void KolimaForestTree_RestoreTret(void) {
     gFieldWork->message += 1;
   }
   Event_Wait(10);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_GESTURE_LOOK_LEFT);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_LOOK_LEFT);
   Event_Wait(20);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_LOOK_RIGHT);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_LOOK_RIGHT);
   Event_Wait(40);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_GESTURE_OPEN_EYES);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_OPEN_EYES);
   Event_Wait(20);
   FieldEvent_ShowMessageThenWait(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0, 10);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_SOUTH, 0);
@@ -734,14 +731,14 @@ static void KolimaForestTree_RestoreTret(void) {
     Actor_SetScript(ACTOR_MIA, finalActions);
   }
   Actor_RunScriptAndWait(ACTOR_IVAN, finalActions);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_GESTURE_BLINK);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_GESTURE_BLINK);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_BLINK);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_BLINK);
   Event_Wait(20);
   Event_SetMessageId(MsgKolimaOweGreatDebtHaveSaved);
   // "I owe you a great debt. You have saved Kolima, the forest,..."
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_TRET, 0);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_BLINK);
-  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_GESTURE_BLINK);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_BLINK);
+  KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_LAUREL, FACE_CHANGE_BLINK);
   Event_Wait(20);
   Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
@@ -749,6 +746,10 @@ static void KolimaForestTree_RestoreTret(void) {
   Sound_Play(MUS_TOWN);
   KolimaForestTree_ReplaceInventoryItem(ITEM_HERMES_WATER, ITEM_EMPTY_BOTTLE);
 }
+
+/// How far the curse tints the forest round Tret until it is lifted: green and
+/// blue lose 1 / CURSE_DIVISOR of themselves (KolimaPalette_Curse).
+#define CURSE_DIVISOR 3
 
 /// Sets up Tret, Laurel and the forest's colours on entry.
 s32 Scene_Initialize(void) {
@@ -766,7 +767,7 @@ s32 Scene_Initialize(void) {
   gMainRoutineWork.retreatScene = SCENE_KOLIMA_FOREST_ENTRANCE;
   gMainRoutineWork.retreatEntrance = KOLIMA_FOREST_ENTRANCE_FROM_WORLD_MAP;
   if (!GameFlag_Get(FLAG_KOLIMA_CURSE_LIFTED))
-    KolimaPalette_Curse(3);
+    KolimaPalette_Curse(CURSE_DIVISOR);
   Actor_Get(ACTOR_TRET)->radius = 6;
   Actor_Get(ACTOR_LAUREL)->radius = 6;
   Actor_Get(ACTOR_TRET_STAND_IN)->radius = 6;
@@ -863,86 +864,86 @@ static inline void KolimaForestTree_SwapFaces(s32 actorId, s32 firstFace,
   Actor_SetAnimation(actorId, firstFace);
 }
 
-/// Plays one of Tret's or Laurel's face gestures, chosen by the blank
+/// Plays one of Tret's or Laurel's face changes, chosen by the blank
 /// actor at their spot.
-static void KolimaForestTree_ChangeFace(s32 blankActorId, s32 gesture) {
+static void KolimaForestTree_ChangeFace(s32 blankActorId, s32 change) {
   if (blankActorId == ACTOR_INVISIBLE_TRET) {
-    switch (gesture) {
-    case FACE_GESTURE_CLOSE_EYES:
+    switch (change) {
+    case FACE_CHANGE_CLOSE_EYES:
       Actor_SetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
       wait(6);
       Actor_SetAnimation(ACTOR_TRET, TRET_FACE_CLOSED);
       break;
-    case FACE_GESTURE_OPEN_EYES:
+    case FACE_CHANGE_OPEN_EYES:
       Actor_SetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
       break;
-    case FACE_GESTURE_LOOK_LEFT:
+    case FACE_CHANGE_LOOK_LEFT:
       Actor_SetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
       wait(6);
       Actor_SetAnimation(ACTOR_TRET, TRET_FACE_LOOK_LEFT);
       break;
-    case FACE_GESTURE_LOOK_RIGHT:
+    case FACE_CHANGE_LOOK_RIGHT:
       Actor_SetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
       wait(6);
       Actor_SetAnimation(ACTOR_TRET, TRET_FACE_LOOK_RIGHT);
       break;
-    case FACE_GESTURE_BLINK:
+    case FACE_CHANGE_BLINK:
       KolimaForestTree_SwapFaces(ACTOR_TRET, TRET_FACE_OPEN, TRET_FACE_CLOSED);
       break;
-    case FACE_GESTURE_HALF_CLOSE_EYES:
+    case FACE_CHANGE_HALF_CLOSE_EYES:
       Actor_SetAnimation(ACTOR_TRET, TRET_FACE_OPEN);
       wait(6);
       Actor_SetAnimation(ACTOR_TRET, TRET_FACE_HALF_CLOSED);
       break;
-    case FACE_GESTURE_WRATHFUL_CLOSE_EYES:
+    case FACE_CHANGE_WRATHFUL_CLOSE_EYES:
       Actor_SetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
       wait(6);
       Actor_SetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_CLOSED);
       break;
-    case FACE_GESTURE_WRATHFUL_LOOK_RIGHT:
+    case FACE_CHANGE_WRATHFUL_LOOK_RIGHT:
       Actor_SetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
       wait(6);
       Actor_SetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_LOOK_RIGHT);
       break;
-    case FACE_GESTURE_WRATHFUL_LOOK_LEFT:
+    case FACE_CHANGE_WRATHFUL_LOOK_LEFT:
       Actor_SetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
       wait(6);
       Actor_SetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_LOOK_LEFT);
       break;
-    case FACE_GESTURE_WRATHFUL_BLINK:
+    case FACE_CHANGE_WRATHFUL_BLINK:
       KolimaForestTree_SwapFaces(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN,
                                  TRET_FACE_WRATHFUL_CLOSED);
       break;
-    case FACE_GESTURE_WRATHFUL_OPEN_EYES:
-    case FACE_GESTURE_WRATHFUL_STARE:
+    case FACE_CHANGE_WRATHFUL_OPEN_EYES:
+    case FACE_CHANGE_WRATHFUL_STARE:
       Actor_SetAnimation(ACTOR_TRET, TRET_FACE_WRATHFUL_OPEN);
       break;
     }
   } else {
-    switch (gesture) {
-    case FACE_GESTURE_CLOSE_EYES:
+    switch (change) {
+    case FACE_CHANGE_CLOSE_EYES:
       Actor_SetAnimation(ACTOR_LAUREL, LAUREL_FACE_OPEN);
       wait(6);
       Actor_SetAnimation(ACTOR_LAUREL, LAUREL_FACE_CLOSED);
       break;
-    case FACE_GESTURE_OPEN_EYES:
+    case FACE_CHANGE_OPEN_EYES:
       Actor_SetAnimation(ACTOR_LAUREL, LAUREL_FACE_OPEN);
       break;
-    case FACE_GESTURE_LOOK_LEFT:
+    case FACE_CHANGE_LOOK_LEFT:
       Actor_SetAnimation(ACTOR_LAUREL, LAUREL_FACE_OPEN);
       wait(6);
       Actor_SetAnimation(ACTOR_LAUREL, LAUREL_FACE_LOOK_LEFT);
       break;
-    case FACE_GESTURE_LOOK_RIGHT:
+    case FACE_CHANGE_LOOK_RIGHT:
       Actor_SetAnimation(ACTOR_LAUREL, LAUREL_FACE_OPEN);
       wait(6);
       Actor_SetAnimation(ACTOR_LAUREL, LAUREL_FACE_LOOK_RIGHT);
       break;
-    case FACE_GESTURE_BLINK:
+    case FACE_CHANGE_BLINK:
       KolimaForestTree_SwapFaces(ACTOR_LAUREL, LAUREL_FACE_OPEN,
                                  LAUREL_FACE_CLOSED);
       break;
-    case FACE_GESTURE_HALF_CLOSE_EYES:
+    case FACE_CHANGE_HALF_CLOSE_EYES:
       Actor_SetAnimation(ACTOR_LAUREL, LAUREL_FACE_OPEN);
       wait(6);
       Actor_SetAnimation(ACTOR_LAUREL, LAUREL_FACE_HALF_CLOSED);

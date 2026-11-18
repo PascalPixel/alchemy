@@ -3,7 +3,7 @@
 
 #include "types.h"
 
-void KolimaPalette_Curse(s32 strength);
+void KolimaPalette_Curse(s32 divisor);
 void KolimaPalette_Restore(s32 second);
 
 #endif

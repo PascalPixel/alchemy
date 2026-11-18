@@ -228,6 +228,7 @@ s32 Summon_ListLearned(u8 *output) {
 
 /// Returns summon `summonId`'s definition, or NULL past the last.
 const struct SummonDefinition *SummonDefinition_GetNear(u32 summonId) {
+  // The order list holds every summon once.
   if (summonId >= ARRAY_COUNT(gSummon_OrderList))
     return NULL;
   return &gSummon_DefinitionTable[summonId];

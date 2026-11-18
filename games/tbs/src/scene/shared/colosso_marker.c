@@ -1,8 +1,8 @@
-
-// The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
-// what a stage's guide uses to describe the stage. Isaac appears on the stage
-// to show how it is crossed, a blinking pointer moves over the screen, and
-// Isaac is put back where he stood.
+/// @file
+/// The sites of the three Colosso finals matches (Colosseum Final 1, 2 and 3):
+/// what a stage's guide uses to describe the stage. Isaac appears on the stage
+/// to show how it is crossed, a blinking pointer moves over the screen, and
+/// Isaac is put back where he stood.
 
 /// The sprite outline's colours: the field's own, as field_actors.c sets them
 /// up, and those of the warrior a stage's guide shows.
@@ -50,6 +50,8 @@ void Colosso_FadeInWarrior(s32 id, s32 x, s32 z) {
   for (i = 0; i < BLEND_WEIGHT_MAX; i += 2) {
     actor->scaleX = i * (FIXED_ONE / 16) + FIXED_ONE / 16;
     actor->scaleY = 31 * FIXED_ONE / 16 - i * (FIXED_ONE / 16);
+    // BLEND_ALPHA(i + 1, BLEND_WEIGHT_MAX - 1 - i), its bottom weight
+    // written first.
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA,
                         ((BLEND_WEIGHT_MAX - 1 - i) << 8) | (i + 1),
                         IO_WRITE_HALFWORD);

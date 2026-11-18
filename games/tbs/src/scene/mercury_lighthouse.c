@@ -451,10 +451,6 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 #include "shared/mercury_lighthouse_passage.c"
 
-/// The lighthouse's exit cells: each one's cell behavior is its exit's number
-/// plus this, for the exit triggers and the sparkling passages alike.
-#define EXIT_CELL_BEHAVIOR_OFFSET 50
-
 /// MercuryLighthouseUpper, walking north into cell behavior 53: the leader
 /// rises through
 /// MERCURY_LIGHTHOUSE_UPPER_TO_MERCURY_LIGHTHOUSE_MIDDLE_NORTHWEST (the
@@ -2163,7 +2159,8 @@ static void MercuryLighthouse_SparkleBurst(s32 x, s32 y, s32 z, s32 angle) {
       options.startScaleX = 3 * FIXED_ONE / 5;
       options.startScaleY = 3 * FIXED_ONE / 5;
       SET_VECTOR(velocity, 0, 0, 0);
-      Vector_AddPolarOffset((6 - (particleIndex >> 1)) * (toFIXED(1) / 10),
+      Vector_AddPolarOffset((BURST_SPARKLES - (particleIndex >> 1)) *
+                                (toFIXED(1) / 10),
                             angle, velocity);
       {
         FIXED particleX = x + INTtoFIXED(6 - Random_Below(6));

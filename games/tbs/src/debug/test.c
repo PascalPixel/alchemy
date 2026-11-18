@@ -464,7 +464,8 @@ static void MenuTest_GiveConsumableTestStock(void) {
 
 /// Grants and sets test Djinn.
 static void MenuTest_GivePartyDjinn(void) {
-  /* LEFTOVER(frame): the buffer tbs-ja's loop below fills sixteen times. */
+  /* LEFTOVER(frame): the buffer the Japanese release's loop below fills
+     FILL_PASSES times. */
   UNUSED u8 fillBuffer[256];
 #if !TBS_PATCH_1
   s32 pass;

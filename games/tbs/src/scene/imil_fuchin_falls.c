@@ -197,11 +197,16 @@ enum {
   IMIL_SLIDE_ANIMATION_STEP = ANIMATION_STEP_NORMAL * 3
 };
 
-/// The cells ImilFuchinFalls_HopOnTrigger tells apart: the Zephyr room's cell
-/// of the first log the leader hops north from (walking west from the second
-/// log's hops west), and the Dragon's Eye room's cell he hops south from once
-/// the first log lies in the middle.
-enum { ZEPHYR_ROOM_HOP_NORTH_CELL = 17, DRAGONS_EYE_ROOM_HOP_SOUTH_CELL = 25 };
+/// The cells ImilFuchinFalls_HopOnTrigger tells apart.
+enum {
+  /// The Zephyr room's cell of the first log, where the leader settles on it,
+  /// pushes it east, and hops north from it (walking west from the second
+  /// log's hops west).
+  ZEPHYR_ROOM_FIRST_LOG_CELL = 17,
+  /// The Dragon's Eye room's cell the leader hops south from once the first
+  /// log lies in the middle.
+  DRAGONS_EYE_ROOM_HOP_SOUTH_CELL = 25
+};
 
 static void FuchinFallsCave_RebuildEntranceLogs(void);
 static void FuchinFallsCave_RebuildZephyrRoomLogs(void);
@@ -1438,7 +1443,7 @@ static void ImilFuchinFalls_HopOnTrigger(void) {
   s32 trigger = gFieldWork->stepTrigger;
 
   if (gMainRoutineWork.next == SCENE_FUCHIN_FALLS_CAVE_ZEPHYR) {
-    if (trigger == ZEPHYR_ROOM_HOP_NORTH_CELL) {
+    if (trigger == ZEPHYR_ROOM_FIRST_LOG_CELL) {
       ImilFuchinFalls_HopBy(0, -32);
     } else {
       ImilFuchinFalls_HopBy(-32, 0);
@@ -2086,12 +2091,12 @@ struct Trigger gImilFuchinFalls_EntranceTriggers[] = {
 struct Trigger gImilFuchinFalls_ZephyrRoomTriggers[] = {
     { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 11, FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_SECOND_LOG_SOUTH, EVENT(FuchinFallsCave_ZephyrRoom_MoveFirstLogToEastEnd) },
     { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT(FuchinFallsCave_ZephyrRoom_NudgeFirstLogWest) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), ZEPHYR_ROOM_HOP_NORTH_CELL, CONDITION_ALWAYS, EVENT(ImilFuchinFalls_HopOnTrigger) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), ZEPHYR_ROOM_HOP_NORTH_CELL, CONDITION_ALWAYS, EVENT(FuchinFallsCave_ZephyrRoom_MoveFirstLogEast) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), ZEPHYR_ROOM_FIRST_LOG_CELL, CONDITION_ALWAYS, EVENT(ImilFuchinFalls_HopOnTrigger) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), ZEPHYR_ROOM_FIRST_LOG_CELL, CONDITION_ALWAYS, EVENT(FuchinFallsCave_ZephyrRoom_MoveFirstLogEast) },
     { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 12, CONDITION_ALWAYS, EVENT(FuchinFallsCave_ZephyrRoom_MoveFirstLogToWestEnd) },
     { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(FuchinFallsCave_SettleFirstLog) },
     { TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(FuchinFallsCave_SettleFirstLog) },
-    { TRIGGER_STEP, ZEPHYR_ROOM_HOP_NORTH_CELL, CONDITION_ALWAYS, EVENT(FuchinFallsCave_SettleFirstLog) },
+    { TRIGGER_STEP, ZEPHYR_ROOM_FIRST_LOG_CELL, CONDITION_ALWAYS, EVENT(FuchinFallsCave_SettleFirstLog) },
     { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 13, CONDITION_ALWAYS, EVENT(ImilFuchinFalls_HopOnTrigger) },
     { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 14, FLAG_FUCHIN_FALLS_ZEPHYR_ROOM_FIRST_LOG_EAST_END, EVENT(ImilFuchinFalls_HopOnTrigger) },
     { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 13, CONDITION_ALWAYS, EVENT(FuchinFallsCave_ZephyrRoom_MoveSecondLogSouth) },

@@ -1349,14 +1349,14 @@ static void CrossboneIsleSteppingStones_FreezeThirdPuddle(void) {
 /// Move begins on CrossboneIsleDragonStatue's sinking boulder: its cell is
 /// cleared.
 static void CrossboneIsleSteppingStones_StartMovingSinkingBoulder(void) {
-  struct Actor *pillar = Actor_Get(ACTOR_SINKING_BOULDER);
+  struct Actor *boulder = Actor_Get(ACTOR_SINKING_BOULDER);
   s32 x;
   s32 z;
 
   Event_Start();
 
-  x = FIELD_CELL(pillar->x.fixed);
-  z = FIELD_CELL(pillar->z.fixed);
+  x = FIELD_CELL(boulder->x.fixed);
+  z = FIELD_CELL(boulder->z.fixed);
 
   PushedActor_FillGridAttributeRectangle(2, x, z, 1, 1, CELL_BEHAVIOR_NORMAL);
   Event_End();
@@ -1366,23 +1366,23 @@ static void CrossboneIsleSteppingStones_StartMovingSinkingBoulder(void) {
 /// once it reaches SINKING_BOULDER_COLUMN it sinks two pixels into place for
 /// good.
 static void CrossboneIsleSteppingStones_MoveSinkingBoulder(void) {
-  struct Actor *pillar;
+  struct Actor *boulder;
   s32 alreadyLowered;
 
-  pillar = Actor_Get(ACTOR_SINKING_BOULDER);
+  boulder = Actor_Get(ACTOR_SINKING_BOULDER);
   Event_Start();
-  PushedActor_FillGridAttributeRectangle(2, FIELD_CELL(pillar->x.fixed),
-                                         (FIELD_CELL(pillar->z.fixed)), 1, 1,
+  PushedActor_FillGridAttributeRectangle(2, FIELD_CELL(boulder->x.fixed),
+                                         (FIELD_CELL(boulder->z.fixed)), 1, 1,
                                          CELL_BEHAVIOR_WALL);
-  if (FIELD_CELL(pillar->x.fixed) == SINKING_BOULDER_COLUMN) {
+  if (FIELD_CELL(boulder->x.fixed) == SINKING_BOULDER_COLUMN) {
     alreadyLowered =
         Event_GetFlag(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_BOULDER_SUNK);
     if (alreadyLowered == 0) {
       Event_Wait(10);
       Sound_Play(SE_DOOR_CLOSE);
-      pillar->motionFlags = alreadyLowered;
-      pillar->groundHeight = -toFIXED(2);
-      pillar->y.fixed = -toFIXED(2);
+      boulder->motionFlags = alreadyLowered;
+      boulder->groundHeight = -toFIXED(2);
+      boulder->y.fixed = -toFIXED(2);
       GameFlag_Set(FLAG_CROSSBONE_ISLE_DRAGON_STATUE_BOULDER_SUNK);
     }
   }

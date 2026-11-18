@@ -304,8 +304,8 @@ static void MogallForest_HopActorToWithSpeedFX(s32 actorId, s32 targetX,
   MogallForest_HopActorToWithSpeedFX(actorId, targetX, targetZ,                \
                                      toFIXED(verticalSpeed))
 
-/// Scatters a complete ring of rising puffs around an actor.
-static void MogallForest_SpawnParticleRing(s32 id) {
+/// Scatters a complete ring of rising puffs of dust around an actor.
+static void MogallForest_SpawnPuffRing(s32 id) {
   struct Vector3 velocity;
   struct EffectOptions options;
   struct Actor *actor;
@@ -333,7 +333,7 @@ static void MogallForest_ApeComesOut(s32 actorId, s32 color) {
   FieldCamera_MoveToActorById(actorId, 1);
   FieldCamera_WaitForArrival();
   Event_Wait(30);
-  MogallForest_SpawnParticleRing(actorId);
+  MogallForest_SpawnPuffRing(actorId);
   Actor_SetSpriteColorById(actorId, color);
 }
 
@@ -383,8 +383,23 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gMogallForestSidePaths_ActorPlacements;
 }
 
+/// The cells where a pushed log reaches the river bank and rolls in, or opens
+/// the way.
+enum {
+  /// The first area's river log, at the bank.
+  FIRST_AREA_RIVER_BANK_ROW = 26,
+  /// The second area's log, pushed here, opens the cells behind it.
+  SECOND_AREA_LOG_OPENS_WAY_ROW = 23,
+  /// The second area's river log, at the bank.
+  SECOND_AREA_RIVER_BANK_COLUMN = 35,
+  /// The third area's north river log, at the bank.
+  THIRD_AREA_NORTH_RIVER_BANK_COLUMN = 42,
+  /// The third area's south river log, at the bank.
+  THIRD_AREA_SOUTH_RIVER_BANK_COLUMN = 40
+};
+
 /// Mogall Forest, the first area: walking into a log (cell behavior 20) pushes
-/// it. The river log, pushed to row 26 at the bank, rolls into the river.
+/// it. The river log, pushed to the bank, rolls into the river.
 static void MogallForest_FirstArea_PushLog(void) {
   struct PushedActorProbe probe;
 
@@ -392,7 +407,7 @@ static void MogallForest_FirstArea_PushLog(void) {
   if (PushedActor_FindClearPosition(&probe) != 0) {
     Actor_MoveAndRedraw(probe);
     if (probe.actorSlot == ACTOR_FIRST_AREA_RIVER_LOG &&
-        FIELD_CELL(probe.position.z) == 26) {
+        FIELD_CELL(probe.position.z) == FIRST_AREA_RIVER_BANK_ROW) {
       GameFlag_Set(FLAG_MOGALL_FOREST_FIRST_AREA_LOG_ROLLED);
       Actor_SetAnimation(ACTOR_FIRST_AREA_RIVER_LOG, MOGALL_FOREST_LOG_ROLLING);
       Actor_SetSpeedAndAcceleration(ACTOR_FIRST_AREA_RIVER_LOG, 0.25, 0.5);
@@ -589,8 +604,8 @@ static void MogallForest_CatchNut(void) {
 }
 
 /// Mogall Forest, the second area: walking into a log (cell behavior 20) pushes
-/// it. The log pushed to row 23 opens the cells behind it, and the river log,
-/// pushed to column 35 at the bank, rolls into the river.
+/// it. The log pushed to SECOND_AREA_LOG_OPENS_WAY_ROW opens the cells behind
+/// it, and the river log, pushed to the bank, rolls into the river.
 static void MogallForest_SecondArea_PushLog(void) {
   struct PushedActorProbe probe;
   s32 destinationColumn;
@@ -602,13 +617,14 @@ static void MogallForest_SecondArea_PushLog(void) {
     Actor_MoveAndRedraw(probe);
 
     if (probe.actorSlot == ACTOR_SECOND_AREA_LOG &&
-        (FIELD_CELL(probe.position.z)) == 23) {
+        (FIELD_CELL(probe.position.z)) == SECOND_AREA_LOG_OPENS_WAY_ROW) {
       destinationColumn = 35;
       destinationRow = 68;
       MapGrid_CopyCellAttributes(35, 67, 4, 1, destinationColumn,
                                  destinationRow);
     } else if (probe.actorSlot == ACTOR_SECOND_AREA_RIVER_LOG &&
-               (FIELD_CELL(probe.position.x)) == 35) {
+               (FIELD_CELL(probe.position.x)) ==
+                   SECOND_AREA_RIVER_BANK_COLUMN) {
       GameFlag_Set(FLAG_MOGALL_FOREST_SECOND_AREA_LOG_ROLLED);
       Actor_SetAnimation(ACTOR_SECOND_AREA_RIVER_LOG,
                          MOGALL_FOREST_LOG_ROLLING);
@@ -746,7 +762,7 @@ static void MogallForest_SecondArea_SouthApeHidesAgain(void) {
   MogallForest_ApeComesOut(ACTOR_SECOND_AREA_SOUTH_APE, SPRITE_COLOR_GRB);
   MogallForest_HopActorTo(ACTOR_SECOND_AREA_SOUTH_APE, 424, 480, 7.6);
   Event_Wait(2);
-  MogallForest_SpawnParticleRing(ACTOR_SECOND_AREA_SOUTH_APE);
+  MogallForest_SpawnPuffRing(ACTOR_SECOND_AREA_SOUTH_APE);
   Actor_SetSpriteColorById(ACTOR_SECOND_AREA_SOUTH_APE, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_SECOND_AREA_SOUTH_APE), 0);
   Event_Wait(30);
@@ -798,8 +814,7 @@ static void MogallForest_SecondArea_SouthApeShowsWay(void) {
 }
 
 /// Mogall Forest, the third area: walking into a log (cell behavior 20) pushes
-/// it. The north river log lands in the river at column 42, and the south one
-/// at column 40.
+/// it. Each river log, pushed to the bank, lands in the river.
 static void MogallForest_ThirdArea_PushLog(void) {
   struct PushedActorProbe probe;
   s32 landed;
@@ -813,7 +828,8 @@ static void MogallForest_ThirdArea_PushLog(void) {
       if (probe.actorSlot == ACTOR_THIRD_AREA_NORTH_RIVER_LOG) {
         MapGrid_CopyCellAttributes(38, 68, 1, 4, FIELD_CELL(probe.position.x),
                                    68);
-        if (FIELD_CELL(probe.position.x) == 42) {
+        if (FIELD_CELL(probe.position.x) ==
+            THIRD_AREA_NORTH_RIVER_BANK_COLUMN) {
           MapGrid_CopyCellAttributes(26, 20, 2, 4, FIELD_CELL(probe.position.x),
                                      23);
           Actor_SetSpritePriority(ACTOR_THIRD_AREA_NORTH_RIVER_LOG, 1);
@@ -821,7 +837,8 @@ static void MogallForest_ThirdArea_PushLog(void) {
           GameFlag_Set(FLAG_MOGALL_FOREST_THIRD_AREA_NORTH_LOG_ROLLED);
         }
       } else {
-        if (FIELD_CELL(probe.position.x) == 40) {
+        if (FIELD_CELL(probe.position.x) ==
+            THIRD_AREA_SOUTH_RIVER_BANK_COLUMN) {
           MapGrid_CopyCellAttributes(26, 20, 2, 4, FIELD_CELL(probe.position.x),
                                      32);
           Actor_SetSpritePriority(ACTOR_THIRD_AREA_SOUTH_RIVER_LOG, 1);
@@ -1050,7 +1067,7 @@ static void MogallForest_ThirdArea_EastApeHidesAgain(void) {
   MogallForest_ApeComesOut(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_GRB);
   FieldCamera_MoveTo(744, CAMERA_KEEP, 504, 1);
   MogallForest_HopActorTo(ACTOR_THIRD_AREA_EAST_APE, 744, 504, 9);
-  MogallForest_SpawnParticleRing(ACTOR_THIRD_AREA_EAST_APE);
+  MogallForest_SpawnPuffRing(ACTOR_THIRD_AREA_EAST_APE);
   Actor_SetSpriteColorById(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_HIDDEN);
   Actor_SetSpriteFlags(Actor_Get(ACTOR_THIRD_AREA_EAST_APE), 0);
   Event_Wait(30);
@@ -1152,18 +1169,18 @@ static void MogallForest_KillerApeAttacks(void) {
   FieldCamera_WaitForArrival();
   Event_Wait(60);
   MapGrid_SetShake(5, 5, 1);
-  MogallForest_SpawnParticleRing(ACTOR_THIRD_AREA_EAST_APE);
+  MogallForest_SpawnPuffRing(ACTOR_THIRD_AREA_EAST_APE);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 2);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   Event_Wait(40);
   MapGrid_SetShake(5, 5, 1);
-  MogallForest_SpawnParticleRing(ACTOR_THIRD_AREA_EAST_APE);
+  MogallForest_SpawnPuffRing(ACTOR_THIRD_AREA_EAST_APE);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   MapGrid_WaitForShakeToSettle();
   Event_Wait(40);
-  MogallForest_SpawnParticleRing(ACTOR_THIRD_AREA_EAST_APE);
+  MogallForest_SpawnPuffRing(ACTOR_THIRD_AREA_EAST_APE);
   actor->scaleX = 6 * FIXED_ONE / 5;
   actor->scaleY = 6 * FIXED_ONE / 5;
   Actor_SetSpriteColorById(ACTOR_THIRD_AREA_EAST_APE, SPRITE_COLOR_BRG);
@@ -1256,7 +1273,7 @@ s32 Scene_Initialize(void) {
         Actor_RunRepeatedMotion(ACTOR_FIRST_AREA_NORTH_APE, 2);
         Event_Wait(30);
         MogallForest_HopActorTo(ACTOR_FIRST_AREA_NORTH_APE, 136, 116, 7);
-        MogallForest_SpawnParticleRing(ACTOR_FIRST_AREA_NORTH_APE);
+        MogallForest_SpawnPuffRing(ACTOR_FIRST_AREA_NORTH_APE);
         Actor_SetSpriteColorById(ACTOR_FIRST_AREA_NORTH_APE,
                                  SPRITE_COLOR_HIDDEN);
         Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_AREA_NORTH_APE), 0);

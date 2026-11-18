@@ -4,9 +4,6 @@
 
 #include "game_internal.h"
 
-/// The battle's multipliers are 256ths: this one keeps an amount as it is.
-#define BATTLE_MULTIPLIER_ONE 256
-
 /// Returns the multiplier, 256 for 1x, for an element difference: 256 plus 1.28
 /// a point, the difference held to -200 to 200, its effect half with halve.
 s32 Battle_GetElementMultiplier(s32 input, s32 halve) {
@@ -94,10 +91,6 @@ s32 Battle_CalculatePsynergyPower(s32 power, s32 elementDifference,
   return scaledPower / (BATTLE_MULTIPLIER_ONE * BATTLE_MULTIPLIER_ONE);
 }
 
-/// The element power at which healing is neither stronger nor weaker: each
-/// point above it counts as two points of element difference.
-#define HEALING_BASE_POWER 100
-
 /// Returns the amount healed: power times powerMultiplier and the multiplier
 /// for the healer's element power above HEALING_BASE_POWER.
 s32 Battle_CalculateRecovery(s32 power, s32 elementPower, s32 powerMultiplier) {
@@ -166,9 +159,8 @@ s32 RollWeaponUnleash(struct Unit *unit) {
   if (item->unleashAbility == 0) {
     return 1;
   }
-  rate =
-      toFIXED(Equipment_GetUnleashRateBonus(unit) + item->unleashChance * 5) /
-      100;
+  rate = FIXED_ONE *
+         (Equipment_GetUnleashRateBonus(unit) + item->unleashChance * 5) / 100;
   if (rate > (Battle_Random() & 0xFFFF)) {
     return item->unleashAbility;
   }

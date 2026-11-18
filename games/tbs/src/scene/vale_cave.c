@@ -511,18 +511,18 @@ static void ValeCave_PushLogOverEdge(void) {
     Actor_MoveAndRedraw(probe);
     // At the ledge's edge the log slides west and drops.
     if (FIELD_CELL(probe.position.x) == LEDGE_EDGE_COLUMN) {
-      Actor_SetAnimation(probe.actorSlot, 3);
+      Actor_SetAnimation(probe.actorSlot, LOG_ANIMATION_ROLL_WEST);
       Actor_Get(probe.actorSlot)->motionFlags = 0;
       Actor_Get(probe.actorSlot)->bounce = 0;
       Actor_SetDestinationOffset(probe.actorSlot, -12, 0);
       Actor_WaitForMoveById(probe.actorSlot);
-      Actor_SetAnimation(probe.actorSlot, 3);
+      Actor_SetAnimation(probe.actorSlot, LOG_ANIMATION_ROLL_WEST);
       Actor_SetSpritePriority(ACTOR_EAST_LOG, 3);
       Actor_Get(probe.actorSlot)->motionFlags =
           ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       Actor_SetDestinationOffset(probe.actorSlot, -6, 0);
       ValeCave_WaitForActorLanding(Actor_Get(probe.actorSlot));
-      Actor_SetAnimation(probe.actorSlot, 8);
+      Actor_SetAnimation(probe.actorSlot, LOG_ANIMATION_DROP_IN);
 
       Actor_Get(probe.actorSlot)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       // The cells it held on the ledge, and its landing, become open floor.

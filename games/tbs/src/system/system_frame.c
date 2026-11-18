@@ -4,7 +4,8 @@
 
 #include "system_internal.h"
 
-/// The word a soft reset leaves in gCartridgeResetMarker.
+/// The word a soft reset leaves in gCartridgeResetMarker: a date, 4 July 1967,
+/// its digits packed four bits each.
 #define CARTRIDGE_RESET_MARK 0x19670704
 
 /// DISPSTAT's low byte: its flags and interrupt enables, without the VCount
@@ -12,7 +13,7 @@
 #define DISPSTAT_FLAGS 0xff
 
 /// The lines REG_VCOUNT counts in VBlank, after the DISPLAY_HEIGHT drawn: it
-/// runs to 227.
+/// runs to DISPLAY_TOTAL_LINES - 1.
 #define VBLANK_LINES (DISPLAY_TOTAL_LINES - DISPLAY_HEIGHT)
 
 /// Every bit of a key word, as KEYINPUT's 16 bits.

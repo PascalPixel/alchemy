@@ -492,8 +492,9 @@ MenuBackdropResult Menu_OpenBackdropScreen(void) {
   Iwram_CopyWords(backdrop->palette, (void *)&BG_PLTT_COLOR(4, 0),
                   sizeof(backdrop->palette));
   Iwram_FillWords(BG_CHAR_BLOCK(1), sizeof(backdrop->tiles), PIXELS_4BPP(3));
+  // Every colour of the backdrop's palettes RGB(21, 10, 21), two to a word.
   Iwram_FillWords((void *)&BG_PLTT_COLOR(4, 0), sizeof(backdrop->palette),
-                  PIXELS_4BPP(5));
+                  RGB(21, 10, 21) << 16 | RGB(21, 10, 21));
   Graphics_ExpandVramTilesByColorTableFar(
       (u16 *)(BG_CHAR_BLOCK(1) + DJINN_BACKDROP_DIGIT_TILE * TILE_SIZE_4BPP));
   Iwram_CopyWords(BG_CHAR_BLOCK(1) + DJINN_CHANGE_ARROW_TILE * TILE_SIZE_4BPP,
@@ -717,7 +718,7 @@ void Window_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
       tileCursor = &((u16 (*)[BG_SCREEN_WIDTH])work->tilemap)[y][x];
       for (column = width; column != 0; column--) {
         tile = *tileCursor;
-        if ((tile / BG_TILE_PALETTE(1) & 0xf) == WINDOW_PALETTE) {
+        if (BG_TILE_PALETTE_OF(tile) == WINDOW_PALETTE) {
           masked = tile & ~BG_TILE_PALETTE(0xf);
           *tileCursor = masked | palette;
         }

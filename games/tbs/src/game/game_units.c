@@ -463,10 +463,12 @@ void GameFlag_RefreshLureCap(void) {
   }
 }
 
-/// Set in every build stamp's time; and set on top in a debug build's
-/// (gDebugMode), whose saves then list after every release's.
+/// Set in every build stamp's time.
 #define BUILD_STAMP_MARK 0x1000
-#define BUILD_STAMP_DEBUG ((s16)0x8000)
+/// Set on top of the time in a debug build's stamp (gDebugMode): bit 15,
+/// sign-extended, so that its stamp is above every release build's. A release's
+/// saves show there as from an older build, and its own never do in a release.
+#define BUILD_STAMP_DEBUG 0xffff8000
 
 /// Encodes the build stamp's time, which a new game takes as its start stamp
 /// and the file list compares saves with.

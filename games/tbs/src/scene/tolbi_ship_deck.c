@@ -466,15 +466,15 @@ TOLBI_SHIP_DECK_HOVER_AND_DIVE(TolbiShipDeck_HoverAndDiveAtSean, ACTOR_SEA_SEAN,
 
 static u16 sStrokePhase[4] ALIGNED(16);
 
-static s32 sSwayAngleY;
-UNUSED static s32 sUnusedAfterSwayY; ///< never used; keeps the statics' layout
+static s32 sRockAngleY;
+UNUSED static s32 sUnusedAfterRockY; ///< never used; keeps the statics' layout
 
 static u16 sOarAngle[8];
 
 static s32 sSeaScroll[2];
 
-static s32 sSwayAngleX;
-UNUSED static s32 sUnusedAfterSwayX; ///< never used; keeps the statics' layout
+static s32 sRockAngleX;
+UNUSED static s32 sUnusedAfterRockX; ///< never used; keeps the statics' layout
 
 static s32 sSeaSpeed[2];
 
@@ -618,20 +618,17 @@ static void TolbiShipDeck_ShrinkToNormalSize(struct Actor *actor) {
   }
 }
 
-/// The roll TolbiShipDeck_IdleTurn draws from, split in thirds.
-#define IDLE_TURN_ROLL 300
-
 /// Turns the actor east, northeast-by-north or southeast-by-south at
 /// random intervals of 80 to 160 frames.
 static s32 TolbiShipDeck_IdleTurn(struct Actor *actor) {
   if (actor->riseCounter != 0) {
     actor->riseCounter--;
   } else {
-    u32 roll = Random_Below(IDLE_TURN_ROLL);
+    u32 roll = Random_Below(300);
 
-    if (roll > IDLE_TURN_ROLL * 2 / 3) {
+    if (roll > 200) {
       actor->facing = FACING_NORTH_NORTHEAST;
-    } else if (roll > IDLE_TURN_ROLL / 3) {
+    } else if (roll > 100) {
       actor->facing = FACING_SOUTH_SOUTHWEST;
     } else {
       actor->facing = FACING_EAST;
@@ -1049,8 +1046,8 @@ s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
   sea->speedY = 0;
-  sSwayAngleX = (u16)Random_Next();
-  sSwayAngleY = (u16)Random_Next();
+  sRockAngleX = (u16)Random_Next();
+  sRockAngleY = (u16)Random_Next();
   sSeaScroll[0] = 0;
   sSeaScroll[1] = 0;
   sSeaSpeed[0] = 0;
@@ -2094,16 +2091,16 @@ static s32 TolbiShipDeck_GetRowerAtSeat(u32 seat) {
 static void TolbiShipDeck_RockDeck(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   s32 *origin = grid->origin;
-  FIXED dx = Trig_Cos(sSwayAngleX);
-  FIXED dy = Trig_Sin(sSwayAngleY);
+  FIXED dx = Trig_Cos(sRockAngleX);
+  FIXED dy = Trig_Sin(sRockAngleY);
   struct MapGridLayerScroll *layer;
 
   *origin++ += dx >> 1;
   *origin += dy;
-  sSwayAngleX += Random_Below(384);
-  sSwayAngleY += Random_Below(512);
-  sSwayAngleX &= TRIG_TURN - 1;
-  sSwayAngleY &= TRIG_TURN - 1;
+  sRockAngleX += Random_Below(384);
+  sRockAngleY += Random_Below(512);
+  sRockAngleX &= TRIG_ANGLE_MASK;
+  sRockAngleY &= TRIG_ANGLE_MASK;
   layer = &grid->layers[MAPGRID_LAYER_GROUND];
   layer->offsetX = sSeaScroll[0];
   sSeaScroll[0] -= sSeaSpeed[0];

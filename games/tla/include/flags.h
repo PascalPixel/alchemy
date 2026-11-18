@@ -77,6 +77,10 @@
 #define FLAG_TRANSFERRED_VAULT_WARNED_OF_ESCAPED_THIEVES 0x825
 /// How many flags gDataTransfer_Flags lists.
 #define TRANSFERRED_FLAG_COUNT 6
+/// The flag after the six DataTransfer_Apply copies from The Broken Seal's
+/// save: no code sets it, so Madra_MeetKarst's test of it never passes.
+#define FLAG_TRANSFERRED_NOT_COPIED                                            \
+  (FLAG_TRANSFERRED_DODONPA_LOCKED_UP + TRANSFERRED_FLAG_COUNT)
 /// Flags of The Broken Seal's save, by its own names and numbers:
 /// DataTransfer_Apply reads them (gDataTransfer_Flags), and the Clear scene
 /// sets them from a password (gClear_ImportedFlags).

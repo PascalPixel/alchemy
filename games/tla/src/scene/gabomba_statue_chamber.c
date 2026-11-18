@@ -77,7 +77,8 @@ extern struct SceneRegion gGabombaStatueChamber_IdolExitRegions[];
 /// the Great Gabomba begins, and the frame Akafubu startles at it.
 #define CRYSTAL_RISE_FRAMES 80
 #define AKAFUBU_STARTLED_FRAME 20
-/// The halves of the stone doors in the final chamber's floor.
+/// The stone door halves in the final chamber's six alcoves, three to each,
+/// along the path up to the idol.
 #define STONE_DOOR_HALVES 18
 /// Set once the lift has carried the leader, while he stays on it: its step
 /// trigger waits until he steps off.
@@ -90,7 +91,7 @@ extern struct SceneRegion gGabombaStatueChamber_IdolExitRegions[];
 /// you!?"); Piers's, Sheba's and Jenna's rows take their own numbers.
 enum {
   ACTOR_SEATED_IDOL = ACTOR_FIRST_PLACED,
-  ACTOR_LEFT_DRUM, ///< the two pink drums that turn as the lap opens
+  ACTOR_LEFT_DRUM, ///< the two pink drums that turn as the Black Crystal rolls
   ACTOR_RIGHT_DRUM,
   ACTOR_KRADEN,
   ACTOR_AKAFUBU,
@@ -105,13 +106,15 @@ enum {
   ACTOR_CHAMBER_KRADEN = ACTOR_FIRST_PLACED + 1,
   ACTOR_CHAMBER_AKAFUBU,
   ACTOR_CHAMBER_CHEST = ACTOR_FIRST_PLACED + 4,
-  /// An unseen actor the Great Gabomba's flash and a puzzled emote show at.
-  ACTOR_CHAMBER_MARKER,
+  /// Unseen until the Great Gabomba's flash, when it turns white over the
+  /// floor where the second hole opens, hiding the change. Its "?" earlier in
+  /// the scene is shown while it is still off the map, where nobody sees it.
+  ACTOR_HOLE_COVER,
   ACTOR_WITCH_DOCTOR,
-  ACTOR_FIRST_DOOR_HALF ///< the first of the STONE_DOOR_HALVES in its floor
+  ACTOR_FIRST_DOOR_HALF ///< the first of the STONE_DOOR_HALVES
 };
 
-void GabombaStatueChamber_OpenTheLap(void);
+void GabombaStatueChamber_OpenSecondHole(void);
 
 void GabombaStatueChamber_KeepItemWithStatue();
 void GabombaStatueChamber_InitializeIdol(void);
@@ -354,8 +357,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   Actor_FaceDirectionAndWait(ACTOR_CHAMBER_KRADEN, FACING_NORTH_NORTHEAST);
   Event_ShowMessageAndWait(ACTOR_CHAMBER_KRADEN, 0);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHEAST, 0);
-  Actor_ShowEmoteById(ACTOR_CHAMBER_MARKER, EMOTE_IN_FRONT | EMOTE_QUESTION,
-                      40);
+  Actor_ShowEmoteById(ACTOR_HOLE_COVER, EMOTE_IN_FRONT | EMOTE_QUESTION, 40);
   GabombaStatueChamber_StatueSpeaks();
   Event_ShowMessageThenWait(ACTOR_CHAMBER_KRADEN, 0, 40);
   GabombaStatueChamber_StatueSpeaks();
@@ -374,13 +376,14 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   Sound_Play(MUS_SILENCE);
   Sound_Play(SE_SHIMMER);
   Actor_SetAnimationById(ACTOR_SEATED_IDOL, 3);
-  Actor_SetSpriteColor(((s32)Actor_GetById(ACTOR_CHAMBER_MARKER)), 7);
-  Actor_SetPosition(ACTOR_CHAMBER_MARKER, 424, 104);
+  Actor_SetSpriteColor(((s32)Actor_GetById(ACTOR_HOLE_COVER)),
+                       SPRITE_COLOR_WHITE);
+  Actor_SetPosition(ACTOR_HOLE_COVER, 424, 104);
   PaletteFade_SetTarget(RGB_WHITE, 0);
   PaletteFade_StartInterpolation(40);
   wait(40);
-  GabombaStatueChamber_OpenTheLap();
-  Actor_SetPosition(ACTOR_CHAMBER_MARKER, 0, 0);
+  GabombaStatueChamber_OpenSecondHole();
+  Actor_SetPosition(ACTOR_HOLE_COVER, 0, 0);
   Event_Wait(1);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, 2);
   PaletteFade_SetTarget(PALETTE_TINT_BLEND | RGB(8, 8, 12), 1);
@@ -741,8 +744,8 @@ void GabombaStatueChamber_SetPassageCells(void) {
   Map_CopyCellAttributeRect(23, 0, 3, 1, 25, 9);
 }
 
-/// Opens the seated idol's lap in the map.
-void GabombaStatueChamber_OpenTheLap(void) {
+/// Opens the second hole, the way down to the Gabomba Catacombs, in the map.
+void GabombaStatueChamber_OpenSecondHole(void) {
   MapGrid_CopyCellPictureIndicesRect(0, 1, 26, 6, 1, 1);
   MapGrid_CopyCellPictureIndicesRect(0, 65, 26, 70, 1, 1);
   MapGrid_CopyCellAttributes(0, 2, 3, 3, 25, 5);
@@ -1179,8 +1182,8 @@ void GabombaStatueChamber_InitializeLift(void) {
   }
 }
 
-/// Sets up the chamber: its lap open once the message of the Gabomba is
-/// carried, or else the place of the Black Crystal; arriving by entrance 2,
+/// Sets up the chamber: its second hole open once the message of the Gabomba
+/// is carried, or else the place of the Black Crystal; arriving by entrance 2,
 /// Retreat leads back to the statue's top or to the chamber's first room, by
 /// the way the party came.
 void GabombaStatueChamber_InitializeWitchDoctor(void) {
@@ -1191,7 +1194,7 @@ void GabombaStatueChamber_InitializeWitchDoctor(void) {
   Actor_DisableById(ACTOR_SEATED_IDOL);
   Actor_GetById(ACTOR_SEATED_IDOL)->y.fixed = 0;
   if (GameFlag_Get(FLAG_GABOMBA_MESSAGE_CARRIED)) {
-    GabombaStatueChamber_OpenTheLap();
+    GabombaStatueChamber_OpenSecondHole();
     Actor_SetPosition(ACTOR_CHAMBER_AKAFUBU, 0, 0);
   } else {
     GabombaStatueChamber_ShowBlackCrystal();
@@ -1321,9 +1324,9 @@ struct ActorPlacement gGabombaStatueChamber_WitchDoctorActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_SEATED_IDOL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 88, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_AKAFUBU, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 392, 0, 136, FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, 7, 392, 0, 84, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, 7, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 392, 0, 84, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_CHEST, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_UNSEEN_BLOCK, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_AKAFUBU_WITCH_DOCTOR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_NORTH_NORTHEAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STONE_DOOR_HALF, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 336, 0, 264, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STONE_DOOR_HALF, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 352, 0, 264, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),

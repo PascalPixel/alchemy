@@ -308,15 +308,18 @@ struct CornerRow {
   (RISING_DRAGON_ENEMY_BURST_FRAMES * RISING_DRAGON_ENEMY_BURSTS_A_FRAME)
 /// How many lines a frame the sky scrolls past as the dragon climbs.
 #define RISING_DRAGON_ENEMY_HAZE_SPEED 8
+/// The level the canvas is cleared to each frame of the whitening from frame
+/// 152, until its last five frames turn it CANVAS_LEVEL_BRIGHTEST.
+#define RISING_DRAGON_ENEMY_FLASH_LEVEL 32
 
 #define RISING_DRAGON_ENEMY_FRAMES 186
 
 /// A dragon of flame bursts up under the target in a shower of sparks and
 /// carries it off in its jaws, into a teal sky (the red haze, its colours
 /// turned) that scrolls past as it climbs, swaying. At frame 134 the dragon's
-/// top bursts into flashes and sparks and the screen whitens; at frame 166
-/// the battle's own background is back and the target drops to the field,
-/// landing at 179.
+/// top bursts into flashes and sparks, and from frame 152 the screen whitens;
+/// at frame 166 the battle's own background is back and the target drops to
+/// the field, landing at 179.
 ///
 /// Abilities: Rising Dragon (the enemies').
 void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
@@ -512,7 +515,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
         // A scroll above the haze's range is a negative one, read back from
         // its halfword.
         if (scroll > BATTLE_BACKGROUND_HEIGHT - BATTLE_VIEW_TOP) {
-          scroll -= 1 << 16;
+          scroll -= BG_SCROLL_WRAP;
         }
         scroll -= RISING_DRAGON_ENEMY_HAZE_SPEED;
         if (scroll < -BATTLE_VIEW_TOP) {
@@ -546,7 +549,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
         EffectPosition_ProjectBattler(args->targets[0], &target);
       }
       if ((u32)(frame - 152) <= 15) {
-        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR, CANVAS_FILL_WORD(32));
+        EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_CLEAR,
+                            CANVAS_FILL_WORD(RISING_DRAGON_ENEMY_FLASH_LEVEL));
         if (frame > 162) {
           work->transferValue = CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST);
         }
@@ -773,6 +777,7 @@ void BattleEffect_RunLivingArmor(struct BattleEffectParams *args) {
 #undef STAR_MINE_SPARKS
 #undef STAR_MINE_PULL
 #undef STAR_MINE_STAR_PICTURES
+#undef STAR_MINE_FLASH_BURST_PICTURES
 #undef STAR_WIDTH
 #undef STAR_HEIGHT
 #undef STAR_HALF
@@ -791,7 +796,11 @@ void BattleEffect_RunLivingArmor(struct BattleEffectParams *args) {
 #undef RISING_DRAGON_ENEMY_ROW_PHASE
 #undef RISING_DRAGON_ENEMY_BODY_SCALE
 #undef RISING_DRAGON_ENEMY_SWAY_STEP
+#undef RISING_DRAGON_ENEMY_FLASH_BURST_PICTURES
+#undef RISING_DRAGON_ENEMY_FLAME_DRAGON_HEAD_PICTURES
 #undef RISING_DRAGON_ENEMY_BURST_FRAMES
 #undef RISING_DRAGON_ENEMY_BURSTS_A_FRAME
 #undef RISING_DRAGON_ENEMY_FLASH_BURSTS
 #undef RISING_DRAGON_ENEMY_HAZE_SPEED
+#undef RISING_DRAGON_ENEMY_FLASH_LEVEL
+#undef RISING_DRAGON_ENEMY_FRAMES

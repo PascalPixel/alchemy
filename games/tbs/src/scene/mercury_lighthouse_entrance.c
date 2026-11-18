@@ -102,7 +102,6 @@
 #include "menu/menu.h"
 #include "scene/field_effect_spawn.h"
 #include "scene/import.h"
-#include "scene/mercury_lighthouse.h"
 #include "scene/mercury_lighthouse_lights.h"
 #include "scene/mercury_lighthouse_pillar.h"
 #include "sound/sound.h"

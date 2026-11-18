@@ -502,8 +502,8 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
   struct Window *coinsWindow;
   struct MainRoutineWork *state;
   s32 ticketPrice = 600;
-
   s32 coinLabel;
+
   Event_Start();
   if (Event_GetFlag(FLAG_KALAY_DOCKS_TICKET_BOUGHT) != 0) {
     Event_SetMessageId(MsgKalayHandInTicketPlank);
@@ -554,7 +554,6 @@ static void KalayTolbiDocks_TalkToTicketSeller(void) {
         gFieldWork->message += 3;
         // "All right then, please take your ticket."
         Event_ShowMessage(ACTOR_SELLING_TICKETS, 0);
-        // Complete both inventory and coin changes only after confirmation.
         Party_GiveItem(ITEM_BOAT_TICKET, 0);
         Event_SetFlag(FLAG_KALAY_DOCKS_TICKET_BOUGHT);
         Party_AdjustCoins(-ticketPrice);

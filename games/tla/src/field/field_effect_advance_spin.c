@@ -7,16 +7,21 @@
 #include "system/field_effect.h"
 #include "field/event.h"
 
+/// A drifting effect loses a FIELD_EFFECT_DRAG_X-th of its x speed and a
+/// FIELD_EFFECT_DRAG_Z-th of its z speed each frame.
+#define FIELD_EFFECT_DRAG_X 18
+#define FIELD_EFFECT_DRAG_Z 16
+
 /// FieldEffect_AdvanceMotion with a fixed spin: moves the effect by its
-/// velocity, damps the X and Z velocity, steps the scale and turns the sprite
-/// 0x1000 each frame. The leader's object is looked up and not used. Overlays
-/// 6aa, 6ab, 6ac and 6ad hold it.
-void Effect_AdvanceMotionAndSpin(union FieldObject *object) {
+/// velocity, which loses drag, grows it at its rates and turns its sprite a
+/// sixteenth of a turn each frame. Nothing calls it.
+UNUSED void FieldEffect_AdvanceMotionAndSpin(union FieldObject *object) {
   struct FieldEffect *effect = &object->effect;
   s32 velocityX;
   s32 velocityZ;
   s32 scaleRateX;
 
+  // DEAD: the leader looked up and not used; the ROM keeps the call.
   Actor_GetById(gMainRoutineWork.leaderActorId);
   velocityX = effect->velocity.x;
   effect->x += velocityX;
@@ -24,11 +29,14 @@ void Effect_AdvanceMotionAndSpin(union FieldObject *object) {
   velocityZ = effect->velocity.z;
   effect->z += velocityZ;
 
-  effect->velocity.x = velocityX - velocityX / 18;
-  effect->velocity.z = velocityZ - velocityZ / 16;
+  effect->velocity.x = velocityX - velocityX / FIELD_EFFECT_DRAG_X;
+  effect->velocity.z = velocityZ - velocityZ / FIELD_EFFECT_DRAG_Z;
 
   scaleRateX = effect->scaleRateX;
   effect->scaleX += scaleRateX;
   effect->scaleY += effect->scaleRateY;
   effect->sprite->rotation += TRIG_TURN / 16;
 }
+
+#undef FIELD_EFFECT_DRAG_X
+#undef FIELD_EFFECT_DRAG_Z

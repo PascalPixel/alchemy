@@ -236,22 +236,22 @@ enum {
 #define SECRET_WIDTH 4
 #define SECRET_HEIGHT 2
 #define SECRET_SPARE_FIRST_COLUMN 64
-#define SECRET_SPARE_COLUMN(number)                                            \
-  (SECRET_SPARE_FIRST_COLUMN + SECRET_WIDTH * (number))
+#define SECRET_SPARE_COLUMN(secret)                                            \
+  (SECRET_SPARE_FIRST_COLUMN + SECRET_WIDTH * (secret))
 #define SECRET_SPARE_ROW 126
 #define PLAIN_SAND_COLUMN 70
 #define PLAIN_SAND_ROW 68
 /// Saves the secret whose top-left cell is (column, row) to its spare patch.
-#define SAVE_SECRET(number, column, row)                                       \
+#define SAVE_SECRET(secret, column, row)                                       \
   MapGrid_CopyCells(column, row, SECRET_WIDTH, SECRET_HEIGHT,                  \
-                    SECRET_SPARE_COLUMN(number), SECRET_SPARE_ROW)
+                    SECRET_SPARE_COLUMN(secret), SECRET_SPARE_ROW)
 /// Draws plain sand over a secret.
 #define HIDE_SECRET(column, row)                                               \
   MapGrid_CopyCells(PLAIN_SAND_COLUMN, PLAIN_SAND_ROW, SECRET_WIDTH,           \
                     SECRET_HEIGHT, column, row)
 /// Copies a secret back from its spare patch.
-#define SHOW_SECRET(number, column, row)                                       \
-  MapGrid_CopyCells(SECRET_SPARE_COLUMN(number), SECRET_SPARE_ROW,             \
+#define SHOW_SECRET(secret, column, row)                                       \
+  MapGrid_CopyCells(SECRET_SPARE_COLUMN(secret), SECRET_SPARE_ROW,             \
                     SECRET_WIDTH, SECRET_HEIGHT, column, row)
 // A pit's secret also changes the ground a row further south: hidden, the row
 // two below the patch's top takes the sand's ground; shown, the two rows from
@@ -259,8 +259,8 @@ enum {
 #define HIDE_SECRET_SOUTH_ROW(column, row)                                     \
   MapGrid_CopyCellAttributes(PLAIN_SAND_COLUMN, PLAIN_SAND_ROW, SECRET_WIDTH,  \
                              1, column, (row) + 2)
-#define SHOW_SECRET_SOUTH_ROWS(number, column, row)                            \
-  MapGrid_CopyCellAttributes(SECRET_SPARE_COLUMN(number), SECRET_SPARE_ROW,    \
+#define SHOW_SECRET_SOUTH_ROWS(secret, column, row)                            \
+  MapGrid_CopyCellAttributes(SECRET_SPARE_COLUMN(secret), SECRET_SPARE_ROW,    \
                              SECRET_WIDTH, 2, column, (row) + 1)
 
 /// LamakanDesertEast's secrets, numbered as their spare patches are, each

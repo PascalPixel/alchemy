@@ -293,7 +293,7 @@ void AlhafraManor_TellOfTheEasternSea(void) {
   // here in Alhafra..." No: "Ah, such a pity that you don't see the
   // potential..."
   FieldMessage_ShowAtActor(ACTOR_MAYOR, 0);
-  if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
     Event_Wait(20);
     // "Great! Why don't you just stay here in Alhafra until we're ready for..."
     Event_ShowMessageThenWait(ACTOR_MAYOR, 0, 10);
@@ -379,7 +379,8 @@ void AlhafraManor_CountAnswer(void);
 /// The night at the mayor's manor: the party thanks the mayor for his
 /// house, Jenna and Sheba doubt he will hand the boat over to Madra, the mayor
 /// asks Jiya after the repairs, and a guard runs in with news: Briggs has
-/// escaped. Felix's answer to the mayor is counted in the event work.
+/// escaped. Felix saying yes to going after Briggs for the mayor counts among
+/// his weird answers.
 void AlhafraManor_BriggsEscapes(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -736,7 +737,7 @@ void AlhafraManor_BriggsEscapes(void) {
   // have to do them any favors!" No: "That's right! Why should we help the
   // mayor..."
   FieldMessage_ShowAtActor(SPEAKER_PORTRAIT_RIGHT | ACTOR_JENNA, 0);
-  if (Event_AskYesNoWithActorAnimation(4, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
     AlhafraManor_CountAnswer();
     Event_Wait(30);
     Actor_SetAnimationAndWait(ACTOR_SHEBA, ANIM_SHAKE_HEAD);
@@ -884,7 +885,6 @@ struct ActorPlacement gAlhafraManor_ActorPlacementsOnceTheMastIsCleared[] = {
                     -56, FACING_NORTHEAST, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
-// clang-format on
 
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, ALHAFRA_MANOR_TO_ALHAFRA, CONDITION_ALWAYS,

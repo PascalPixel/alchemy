@@ -1979,25 +1979,21 @@ extern u32 gGabombaStatue_ChannelSeeds[16];
 /// Kraden sees how the statue works, and the party agrees to mend the channel
 /// for Akafubu's ceremony.
 void GabombaStatue_SeeHowItWorks(void) {
-  s32 north;
   s32 piers = SPEAKER_PORTRAIT_RIGHT | SPEAKER_WINDOW_ABOVE | ACTOR_PIERS;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  {
-    s32 leader = gMainRoutineWork.leaderActorId;
-
-    /* FAKEMATCH(temporary): north assigned in the body; plainly, at its
-     * declaration. */
-    north = FACING_NORTH;
-    Actor_SetPositionAndFacing(leader, toFIXED(348), toFIXED(312), north);
-  }
-  Actor_SetPositionAndFacing(ACTOR_PIERS, toFIXED(330), toFIXED(312), north);
+  Actor_SetPositionAndFacing(gMainRoutineWork.leaderActorId, toFIXED(348),
+                             toFIXED(312), FACING_NORTH);
+  Actor_SetPositionAndFacing(ACTOR_PIERS, toFIXED(330), toFIXED(312),
+                             FACING_NORTH);
   Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(432), toFIXED(312),
                              FACING_NORTH_NORTHWEST);
-  Actor_SetPositionAndFacing(ACTOR_SHEBA, toFIXED(448), toFIXED(312), north);
-  Actor_SetPositionAndFacing(ACTOR_JENNA, toFIXED(468), toFIXED(312), north);
+  Actor_SetPositionAndFacing(ACTOR_SHEBA, toFIXED(448), toFIXED(312),
+                             FACING_NORTH);
+  Actor_SetPositionAndFacing(ACTOR_JENNA, toFIXED(468), toFIXED(312),
+                             FACING_NORTH);
   System_Wait(1);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
@@ -2148,8 +2144,6 @@ void GabombaStatue_SawEnergyFlow(void) {
   FIXED z;
   struct Actor *hand;
   struct Actor *actor;
-  s32 south;
-  s32 facing;
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2172,12 +2166,10 @@ void GabombaStatue_SawEnergyFlow(void) {
   System_Wait(1);
   FieldCamera_MoveTo(440, CAMERA_KEEP, 182, 0);
   Actor_SetPosition(gMainRoutineWork.leaderActorId, 0, 0);
-  /* FAKEMATCH(temporary): south and facing assigned in the body; plainly, at
-   * their declarations. */
-  south = FACING_SOUTH;
-  Actor_SetPositionAndFacing(ACTOR_JENNA, toFIXED(472), toFIXED(216), south);
-  facing = FACING_SOUTH_SOUTHEAST;
-  Actor_SetPositionAndFacing(ACTOR_AKAFUBU, toFIXED(472), toFIXED(200), facing);
+  Actor_SetPositionAndFacing(ACTOR_JENNA, toFIXED(472), toFIXED(216),
+                             FACING_SOUTH);
+  Actor_SetPositionAndFacing(ACTOR_AKAFUBU, toFIXED(472), toFIXED(200),
+                             FACING_SOUTH_SOUTHEAST);
   System_Wait(1);
   MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
@@ -2231,10 +2223,13 @@ void GabombaStatue_SawEnergyFlow(void) {
   // "But...if you truly did this, then why? Why did you help me?"
   Event_ShowMessage(ACTOR_AKAFUBU, 0);
   Actor_SetPositionAndFacing(gMainRoutineWork.leaderActorId, toFIXED(472),
-                             toFIXED(204), south);
-  Actor_SetPositionAndFacing(ACTOR_PIERS, toFIXED(440), toFIXED(204), south);
-  Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(456), toFIXED(204), facing);
-  Actor_SetPositionAndFacing(ACTOR_SHEBA, toFIXED(488), toFIXED(204), south);
+                             toFIXED(204), FACING_SOUTH);
+  Actor_SetPositionAndFacing(ACTOR_PIERS, toFIXED(440), toFIXED(204),
+                             FACING_SOUTH);
+  Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(456), toFIXED(204),
+                             FACING_SOUTH_SOUTHEAST);
+  Actor_SetPositionAndFacing(ACTOR_SHEBA, toFIXED(488), toFIXED(204),
+                             FACING_SOUTH);
   System_Wait(1);
   // "We were sort of hoping that we could take the orb if your ceremony..."
   Event_ShowMessage(ACTOR_KRADEN, 0);

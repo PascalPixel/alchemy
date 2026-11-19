@@ -1507,8 +1507,8 @@ void VenusLighthouseEntrance_StartDust(void) {
   work->tileBase = tileBase;
   work->resource = resource;
   state = work->particles;
-  sprite = work->sprites;
   for (i = 0; i < DUST_PUFFS; i++) {
+    sprite = &work->sprites[i];
     EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tileBase);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
@@ -1516,13 +1516,8 @@ void VenusLighthouseEntrance_StartDust(void) {
     sprite->depth = OAM_DEPTH_WINDOW;
     state->frame = -1;
     state++;
-    sprite++;
   }
-  {
-    /* FAKEMATCH(temporary): the 0 held in a local; as work->next = 0. */
-    s32 zero = 0;
-    work->next = zero;
-  }
+  work->next = 0;
   Task_AddFrame(VenusLighthouseEntrance_UpdateDust, TASK_PASS_FRAME);
 }
 

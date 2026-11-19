@@ -245,10 +245,7 @@ void BattleTransition_DrawRows(void) {
 
 /// Clears BG0's scroll from the line the VCount interrupt fires on.
 void BattleTransition_ResetBg0Scroll(void) {
-  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
-  u32 zero = 0;
-
-  REG_BG0VOFS = zero;
+  Io_Write16(0, &REG_BG0VOFS);
 }
 
 /// Opens the battle against formation kind with enemyCount enemies: the curtain

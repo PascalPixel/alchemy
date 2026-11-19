@@ -155,10 +155,7 @@ UNUSED s32 Battle_ShiftVramTiles(void) {
 
 /// Unused: clears BG0's vertical scroll.
 UNUSED void Battle_ClearBg0Vofs(void) {
-  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
-  u32 zero = 0;
-
-  REG_BG0VOFS = zero;
+  Io_Write16(0, &REG_BG0VOFS);
 }
 
 /// Does nothing; Battle_Run calls it with 1 as the battle is set up.

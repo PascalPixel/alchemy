@@ -312,6 +312,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   struct ModelTexture texture;
   struct RenderModel *model;
   void *vertices;
+  // Default: set for real below.
   struct Particle *p = NULL;
   u8 *ringPixels;
   s32 size;

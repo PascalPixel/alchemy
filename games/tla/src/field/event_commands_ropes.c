@@ -596,6 +596,7 @@ void Rope_Untie(s32 index, s32 fromId, s32 toId) {
 /// clearing its flag, starting four frames after both posts start to unwind.
 s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z) {
   struct RopeWork *work = ROPE_WORK;
+  // Default: each count below sets it again.
   s32 i = 0;
   struct RopeSlot *slot = &work->slots[index];
   struct RopeNode *node = slot->head;

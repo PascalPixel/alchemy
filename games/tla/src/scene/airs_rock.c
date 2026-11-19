@@ -713,11 +713,8 @@ void AirsRock_WhirlwindClearsWall(void) {
   Heap_Release(buffer);
   FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   FieldActor_SetSpritePriority(ACTOR_TWISTER_ROCK_BY_THE_WALL, 1);
-  {
-    s32 control = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(3) | BGCNT_SCREEN_BASE(4);
-
-    REG_BG0CNT = control;
-  }
+  Io_Write16(BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(3) | BGCNT_SCREEN_BASE(4),
+             &REG_BG0CNT);
   REG_BG1CNT &= ~BGCNT_PRIORITY(3);
   REG_BG1CNT |= BGCNT_PRIORITY(2);
   Dma_Fill16(WHIRLWIND_FILL_TILE, BG_SCREEN_BLOCK(4), 1280);
@@ -1526,15 +1523,9 @@ void AirsRock_WhirlwindClearsFog(void) {
           BG_CHAR_BLOCK(3) + WHIRLWIND_BOTTOM_TILE * TILE_SIZE_4BPP,
           DMA_COPY_WORDS(WHIRLWIND_TILE_ROW_SIZE / 4), REG_DMA3);
   Heap_Release(buffer);
-  {
-    s32 control = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(3) | BGCNT_SCREEN_BASE(4);
-
-    REG_BG0CNT = control;
-  }
-  /* FAKEMATCH(dead): a once-only loop around the fill. */
-  do {
-    Dma_Fill16(WHIRLWIND_FILL_TILE, BG_SCREEN_BLOCK(4), 1280);
-  } while (0);
+  Io_Write16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(3) | BGCNT_SCREEN_BASE(4),
+             &REG_BG0CNT);
+  Dma_Fill16(WHIRLWIND_FILL_TILE, BG_SCREEN_BLOCK(4), 1280);
   buffer = Heap_Alloc(WHIRLWIND_MAP_HEIGHT * WHIRLWIND_MAP_WIDTH * sizeof(u16));
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHIRLWIND_MAP), buffer);
   cell = buffer;

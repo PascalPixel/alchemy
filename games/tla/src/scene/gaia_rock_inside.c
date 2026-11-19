@@ -1947,12 +1947,9 @@ s32 GaiaRockInside_RecordStumpSpots(void) {
       secondIndex = i;
   }
   {
-    /* FAKEMATCH(temporary): the second spot shifted to the top half byte in a
-     * local, and the byte sign-extended by hand; plainly,
-     * (s8)(firstIndex | secondIndex << 4). */
-    u32 high = secondIndex << 28;
-    return GameFlag_SetByte(FLAG_STUMP_SPOTS,
-                            (s32)((firstIndex << 24) | high) >> 24);
+    s8 spots = firstIndex | secondIndex << 4;
+
+    return GameFlag_SetByte(FLAG_STUMP_SPOTS, spots);
   }
 }
 

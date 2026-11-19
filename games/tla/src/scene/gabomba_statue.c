@@ -2381,11 +2381,8 @@ void GabombaStatue_InitializeSteel(void) {
 /// Sets up the cogs room: its rope, coiled.
 void GabombaStatue_InitializeCogs(void) {
   Rope_Initialize();
-  /* FAKEMATCH(signature): Rope_Coil's stub called as returning a value; as
-   * GabombaStatue_CoilRope(0, ACTOR_COGS_ROPE_POST_A, ACTOR_COGS_ROPE_POST_B).
-   */
-  ((s32 (*)(s32, s32, s32))GabombaStatue_CoilRope)(0, ACTOR_COGS_ROPE_POST_A,
-                                                   ACTOR_COGS_ROPE_POST_B);
+  Value3((s32 (*)())GabombaStatue_CoilRope, 0, ACTOR_COGS_ROPE_POST_A,
+         ACTOR_COGS_ROPE_POST_B);
 }
 
 /// Which of the channel's seeds this game lays it from: the letters of the

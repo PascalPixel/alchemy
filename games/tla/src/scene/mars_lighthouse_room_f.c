@@ -1172,9 +1172,7 @@ s32 Scene_Initialize(void) {
       Event_PlaySound(SE_WHOOSH);
       Event_Wait(60);
       Flag_Set(FLAG_KEEP_PARTY_POSITION);
-      /* FAKEMATCH(signature): the exit request called as if it returned a
-       * value, which the set-up returns. */
-      return ((s32 (*)())Import_EventSetExitRequest)(3);
+      return Value1((s32 (*)())Import_EventSetExitRequest, 3);
     }
     if (Flag_IsSet(FLAG_PIPELINE_MENDED)) {
       Actor_SetPosition(ACTOR_MERCURY_PIPE_A, 600, 144);

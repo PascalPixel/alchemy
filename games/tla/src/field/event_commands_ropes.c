@@ -600,7 +600,7 @@ s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z) {
   s32 zero = 0;
   struct RopeSlot *slot = &work->slots[index];
   struct RopeNode *node = slot->head;
-  struct RopeNode **cursor;
+  void **cursor;
   s32 i;
   s32 angle;
   s32 radius;
@@ -609,7 +609,7 @@ s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z) {
   s32 frame;
   s32 lastX;
   s32 lastY;
-  struct RopeNode **nodes;
+  void **nodes;
 
   if (slot->state == 0)
     return;
@@ -623,8 +623,6 @@ s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z) {
     i = segments + 1;
     do {
       i += -1;
-      /* FAKEMATCH(barrier): an empty asm reading the counter. */
-      asm("" : : "l"(i));
       *cursor++ = node;
       node = node->next;
     } while (i != 0);
@@ -1135,8 +1133,8 @@ s32 Tightrope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
   s32 height;
   FIXED cosine;
   s32 lastX, lastY, lastZ;
-  struct TightropeNode **nodes;
-  struct TightropeNode **cursor;
+  void **nodes;
+  void **cursor;
   struct TightropeSlot *slot;
   s32 i;
   u16 angle;
@@ -1146,8 +1144,6 @@ s32 Tightrope_Throw(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY, s32 toZ) {
     i = segments + 1;
     do {
       i += -1;
-      /* FAKEMATCH(barrier): an empty asm reading the counter. */
-      asm("" : : "l"(i));
       *cursor++ = node;
       node = node->next;
     } while (i != 0);
@@ -1230,8 +1226,8 @@ s32 Tightrope_Recoil(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
   s32 i;
   s32 angle;
   s32 x, y, z;
-  struct TightropeNode **nodes;
-  struct TightropeNode **entry;
+  void **nodes;
+  void **entry;
 
   dx = (x2 - x1) >> 8;
   dy = (y2 - y1) >> 8;
@@ -1245,8 +1241,6 @@ s32 Tightrope_Recoil(s32 slot, s32 x1, s32 y1, s32 z1, s32 x2, s32 y2, s32 z2,
     i = count + 1;
     do {
       i += -1;
-      /* FAKEMATCH(barrier): an empty asm reading the counter. */
-      asm("" : : "l"(i));
       *entry++ = node;
       node = node->next;
     } while (i != 0);

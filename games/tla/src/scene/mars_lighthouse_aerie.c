@@ -2787,29 +2787,16 @@ void MarsLighthouseAerie_StartTalkWhileHalted(s32 id) {
 // From patch 1; the Japanese overlay has no such function.
 #if TLA_PATCH_1
 
-/// The halted actor's id read as one halfword, for the FAKEMATCH in
-/// MarsLighthouseAerie_EndTalkWhileHalted.
-struct HeldHalfword {
-  u16 value;
-};
-
 /// From patch 1: the talk over, Halt's hold on its speaker ends, and with it
 /// the halting speech.
 void MarsLighthouseAerie_EndTalkWhileHalted(s32 id) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
-  struct MainRoutineWork *party = &gMainRoutineWork;
-  s32 held = party->haltedActor;
-  /* FAKEMATCH(temporary): the word held in a halfword struct. */
-  struct HeldHalfword raw = *(struct HeldHalfword *)&party->haltedActor;
-  struct HeldHalfword ones;
+  s32 held = gMainRoutineWork.haltedActor;
 
   if (held == id) {
-    s32 zero = 0;
-
-    work->haltingSpeech = zero;
-    ones.value = -1;
-    party->haltedActor = raw.value | ones.value;
-    Actor_Get(held)->update = (void *)zero;
+    work->haltingSpeech = 0;
+    gMainRoutineWork.haltedActor = -1;
+    Actor_Get(held)->update = NULL;
     FieldActor_SetSpriteColor(Actor_Get(held), SPRITE_COLOR_NORMAL);
   }
 }

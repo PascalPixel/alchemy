@@ -428,19 +428,11 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
 /// its stats again.
 void BattleUnit_ClearStatuses(s32 unitId) {
   struct Unit *unit;
-  s8 *boost;
   s32 element;
-  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
-  u8 zero;
 
   unit = Unit_Get(unitId);
-  zero = 0;
-  element = ELEMENT_COUNT - 1;
-  boost = &unit->summonBoost[ELEMENT_COUNT - 1];
-  do {
-    element--;
-    *boost-- = zero;
-  } while (element >= 0);
+  for (element = 0; element < ELEMENT_COUNT; element++)
+    unit->summonBoost[element] = 0;
 
   unit->poison = 0;
   unit->attackTurns = 0;

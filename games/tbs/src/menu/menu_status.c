@@ -649,26 +649,8 @@ s32 PartyMemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
     }
   }
 
-  {
-    u32 fill = 0;
-#ifdef UBFIX
-    s32 clearIndex = ARRAY_COUNT(reordered) - 1;
-
-    // UB: the pointer walk below forms reordered - 1 after its last store and
-    // compares the addresses as signed numbers; this clear counts an index
-    // down instead.
-    do {
-      reordered[clearIndex] = fill;
-      clearIndex--;
-    } while (clearIndex >= 0);
-#else
-    u32 *clear = &reordered[ARRAY_COUNT(reordered) - 1];
-
-    do {
-      *clear = fill;
-      clear--;
-    } while ((s32)clear >= (s32)reordered);
-#endif
+  for (index = 0; index < (s32)ARRAY_COUNT(reordered); index++) {
+    reordered[index] = 0;
   }
   for (index = 0; index < menu->partyCount; index++) {
     reordered[index] = menu->memberIds[index];

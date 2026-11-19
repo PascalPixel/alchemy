@@ -570,16 +570,8 @@ s32 PartyMemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
       return 0;
   }
 
-  {
-    /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
-    u32 zero = 0;
-    u32 *clear = &reordered[ARRAY_COUNT(reordered) - 1];
-
-    do {
-      *clear = zero;
-      clear--;
-    } while ((s32)clear >= (s32)reordered);
-  }
+  for (index = 0; index < (s32)ARRAY_COUNT(reordered); index++)
+    reordered[index] = 0;
   for (index = 0; index < *(u8 *)&menu->partyCount; index++)
     reordered[index] = menu->memberIds[index];
 

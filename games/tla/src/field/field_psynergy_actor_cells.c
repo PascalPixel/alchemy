@@ -235,8 +235,7 @@ void EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
   words = (u32 *)&sprite->oam;
   *words++ = attributes;
   *words = 0;
-  /* FAKEMATCH(temporary): the OAM reached through its own address; as
-   * sprite->oam.fullColor. */
+  // Spelt through the OAM's address, as the two words above are written.
   (&sprite->oam)->fullColor = 1;
   sprite->oam.index = tile;
 }

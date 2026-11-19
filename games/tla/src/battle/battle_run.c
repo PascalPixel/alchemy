@@ -331,9 +331,6 @@ s32 Battle_Run(s32 enemyGroup) {
         if (enemyGroup == FORMATION_DOOM_DRAGON_C)
           Battle_PlayFormChange(FORMATION_DOOM_DRAGON_C);
         if (actingUnit <= ALLY_MAX && battle->spoils.defeated == 1) {
-          /* FAKEMATCH(barrier): an empty asm before the defeatState store; as
-           * the store alone. */
-          asm("");
           battle->defeatState = DEFEAT_BY_PARTY_MEMBER;
         }
         goto won;

@@ -475,20 +475,14 @@ void ViewMove_Start(s32 direction) {
     }
   }
 
-  /* FAKEMATCH(barrier): an empty asm before the bounds are fetched. */
-  __asm__("");
-  /* FAKEMATCH(barrier): a second empty asm. */
-  __asm__("");
-  /* FAKEMATCH(barrier): a third empty asm. */
-  __asm__("");
   Map_GetHeaderSizeFar(gMainRoutineWork.mapId, &bounds);
   minX = bounds.minX;
-  maxX = bounds.maxX;
-  minZ = bounds.minZ;
-  maxZ = bounds.maxZ;
   left = minX * 8;
+  maxX = bounds.maxX;
   right = maxX * 8;
+  minZ = bounds.minZ;
   top = minZ * 8;
+  maxZ = bounds.maxZ;
   bottom = maxZ * 8;
   SET_POSITION(work, center->x.fixed, center->y.fixed, center->z.fixed);
 

@@ -548,7 +548,7 @@ void ApojiiIslands_FatherSeesTheStone(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_Get(ACTOR_AQUA_STONE)->update =
-      (void (*)(void))ApojiiIslands_StopFlashing;
+      (ObjectUpdate)ApojiiIslands_StopFlashing;
   FieldEvent_SetMessageId((s32)&MsgWhatWhatJust);
   Actor_FaceActor(gMainRoutineWork.leaderActorId, ACTOR_FATHER, 0);
   Event_StartScreenTransition();

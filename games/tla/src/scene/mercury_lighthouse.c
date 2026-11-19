@@ -210,12 +210,12 @@ void MercuryLighthouse_HearVoices(void) {
   delay = (Random_Below(80)) + 40;
   actor->riseCounter = delay;
   actor->riseEnabled = 0;
-  actor->update = (void (*)(void))MercuryLighthouse_LookAround;
+  actor->update = (ObjectUpdate)MercuryLighthouse_LookAround;
   actor = Actor_GetById(ACTOR_OLD_WOMAN);
   delay = (Random_Below(80)) + 40;
   actor->riseCounter = delay;
   actor->riseEnabled = 2;
-  actor->update = (void (*)(void))MercuryLighthouse_LookAround;
+  actor->update = (ObjectUpdate)MercuryLighthouse_LookAround;
   FieldPsynergy_StartMindReadWave(ACTOR_VOICES_SOURCE, ACTOR_VOICES_TARGET);
   // "How is it that we can hear you?"
   Event_ShowMessage(ACTOR_MIA, 0);

@@ -44,12 +44,12 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
   Actor_Jump(djinniId, 4, 15);
   // Spin and leap, then shrink away while the screen shakes (1.3 pixels).
   wait(30);
-  djinni->update = (void (*)(void))Djinn_AdvanceSpinAngle;
+  djinni->update = (ObjectUpdate)Djinn_AdvanceSpinAngle;
   Sound_PlayFar(SE_HIGH_JUMP);
   Actor_Jump(djinniId, 8, 22);
   Sound_PlayFar(SE_SPIN);
   MapGrid_SetScreenShakeFar(toFIXED(13) / 10, toFIXED(13) / 10, FIXED_ONE);
-  djinni->update = (void (*)(void))FieldEffect_ShrinkActorAndDestroyFast;
+  djinni->update = (ObjectUpdate)FieldEffect_ShrinkActorAndDestroyFast;
   Actor_SelectAnimationFar(djinni, 3);
   // The leader turns to face the camera (FACING_SOUTH).
   wait(90);
@@ -102,7 +102,7 @@ void Djinn_RunVenusJoinEffect(s32 djinniId) {
       djinni->scaleX = scale;
       djinni->orbitFrames = 100;
       djinni->orbitAngle = remaining * TRIG_TURN / VENUS_JOIN_MOTES;
-      djinni->update = (void (*)(void))FieldEffect_UpdateDescendingOrbitActor;
+      djinni->update = (ObjectUpdate)FieldEffect_UpdateDescendingOrbitActor;
       djinni->motionFlags = 0;
       Actor_SelectAnimationFar(djinni, 7);
       Actor_SetSpriteColorModeFar(djinni, SPRITE_COLOR_GREEN_TINT);

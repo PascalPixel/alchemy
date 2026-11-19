@@ -146,7 +146,7 @@ void JupiterLighthouse_PushColumnOffTheLedge(void) {
   s32 i;
   FIXED x;
 
-  actor->update = (void (*)(void))JupiterLighthouse_DrawColumnBelowLedge;
+  actor->update = (ObjectUpdate)JupiterLighthouse_DrawColumnBelowLedge;
   if (PushTarget_FindSlide(&target))
     PushTarget_PushFill(target);
   if (FIELD_CELL(actor->x.fixed) == 16 && FIELD_CELL(actor->z.fixed) == 12 &&

@@ -263,7 +263,7 @@ void Orb_SpawnRising(void) {
     angle = Random16() & 0xffff000;
     effect->timer = angle;
     effect->userValue = 0;
-    effect->update = (void (*)(void))Orb_Update;
+    effect->update = (ObjectUpdate)Orb_Update;
     effect->speedLimit = Math_Sin((u32)(Random16() * 65535) >> 20) * 24 >> 16;
     sprite->flags = 0;
     sprite->priority = 1;

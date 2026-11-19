@@ -1063,7 +1063,7 @@ void SeaOfTime_FacePoseidon(void) {
     i++;
   }
   actor = Import_ActorCreate(SPRITE_POSEIDON, toFIXED(348), 0, toFIXED(184));
-  actor->update = (void (*)(void))SeaOfTime_UpdateWater;
+  actor->update = (ObjectUpdate)SeaOfTime_UpdateWater;
   Event_Wait(60);
   Actor_SelectAnimation(actor, 1);
   Event_Wait(40);
@@ -1293,7 +1293,7 @@ void SeaOfTime_Open(void) {
   Event_PlaySound(MUS_SILENCE);
   MapGrid_CopyCellsTo(49, 70, 19, 73, 6, 6);
   actor = FieldActor_Create(SPRITE_POSEIDON, toFIXED(348), 0, toFIXED(184));
-  actor->update = (void (*)(void))SeaOfTime_UpdateWater;
+  actor->update = (ObjectUpdate)SeaOfTime_UpdateWater;
   FieldCamera_MoveTo(352, CAMERA_KEEP, 196, 0);
   Event_StartScreenTransition();
   wait(1);

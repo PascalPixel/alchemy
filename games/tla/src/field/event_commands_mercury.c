@@ -88,7 +88,7 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
       copy->motionFlags = 0;
       copy->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
       copy->steeringFlags |= ACTOR_FACES_MOTION;
-      copy->update = (void (*)(void))Actor_MoveHalfwayTowardTargetCopy;
+      copy->update = (ObjectUpdate)Actor_MoveHalfwayTowardTargetCopy;
       copy->facing = djinni->facing;
       Actor_SetSpriteColorModeFar(copy, SPRITE_COLOR_BLUE_TINT);
       Actor_SelectAnimationFar(copy, ANIM_STILL);

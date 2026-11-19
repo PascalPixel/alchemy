@@ -1407,7 +1407,7 @@ void LemuriaRooms_MeetLunpa(void) {
   Actor_Jump(ACTOR_LUNPA, 6, 23);
   actor = Actor_GetById(ACTOR_LUNPA);
   actor->timer = 0;
-  actor->update = (void (*)(void))Actor_CyclePictures;
+  actor->update = (ObjectUpdate)Actor_CyclePictures;
   // "HAHHH-AHH!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_LUNPA, 0, 10);
   Actor_SetSpeed(ACTOR_LUNPA, 2.2);

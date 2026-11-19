@@ -1111,7 +1111,7 @@ void MarsLighthouseEntrance_WaitForDragonFace(struct Actor *actor) {
   if (ABS(actor->x.fixed - actor->watchedActor->x.fixed) > toFIXED(32))
     return;
   actor->timer = 0;
-  actor->update = (void (*)(void))MarsLighthouseEntrance_FlingIceCone;
+  actor->update = (ObjectUpdate)MarsLighthouseEntrance_FlingIceCone;
 }
 
 /// Each frame, while a fireball carries the leader, his slide on the ice is
@@ -1299,23 +1299,23 @@ s32 Scene_Initialize(void) {
       Task_AddFrame(MarsLighthouseEntrance_StopSlideWhileRiding,
                     TASK_PASS_FRAME);
       Actor_Get(ACTOR_DRAGON_FACE)->update =
-          (void (*)(void))MarsLighthouseEntrance_FlickerDragonFace;
+          (ObjectUpdate)MarsLighthouseEntrance_FlickerDragonFace;
       Ride_SetMode(1);
       MarsLighthouseEntrance_PlaceIceCones(
           (s32)gMarsLighthouseEntrance_ValkyrieIceCones);
       target = Actor_Get(ACTOR_VALKYRIE_FIREBALL);
       Actor_Get(ACTOR_VALKYRIE_ICE_CONE_A)->update =
-          (void (*)(void))MarsLighthouseEntrance_WaitForDragonFace;
+          (ObjectUpdate)MarsLighthouseEntrance_WaitForDragonFace;
       Actor_Get(ACTOR_VALKYRIE_ICE_CONE_B)->update =
-          (void (*)(void))MarsLighthouseEntrance_WaitForDragonFace;
+          (ObjectUpdate)MarsLighthouseEntrance_WaitForDragonFace;
       Actor_Get(ACTOR_VALKYRIE_ICE_CONE_C)->update =
-          (void (*)(void))MarsLighthouseEntrance_WaitForDragonFace;
+          (ObjectUpdate)MarsLighthouseEntrance_WaitForDragonFace;
       Actor_Get(ACTOR_VALKYRIE_ICE_CONE_D)->update =
-          (void (*)(void))MarsLighthouseEntrance_WaitForDragonFace;
+          (ObjectUpdate)MarsLighthouseEntrance_WaitForDragonFace;
       Actor_Get(ACTOR_VALKYRIE_ICE_CONE_E)->update =
-          (void (*)(void))MarsLighthouseEntrance_WaitForDragonFace;
+          (ObjectUpdate)MarsLighthouseEntrance_WaitForDragonFace;
       Actor_Get(ACTOR_VALKYRIE_ICE_CONE_F)->update =
-          (void (*)(void))MarsLighthouseEntrance_WaitForDragonFace;
+          (ObjectUpdate)MarsLighthouseEntrance_WaitForDragonFace;
       Actor_Get(ACTOR_VALKYRIE_ICE_CONE_A)->watchedActor = target;
       Actor_Get(ACTOR_VALKYRIE_ICE_CONE_B)->watchedActor = target;
       Actor_Get(ACTOR_VALKYRIE_ICE_CONE_C)->watchedActor = target;
@@ -1553,7 +1553,7 @@ int MarsLighthouseEntrance_RideFireball(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Flag_Clear(FLAG_MENU_OPEN);
-  leader->update = (void (*)(void))Actor_Blink;
+  leader->update = (ObjectUpdate)Actor_Blink;
   leader->facing = FACING_SOUTH;
   Actor_SelectAnimation(leader, ANIM_LEADER_SIT);
   while (ride->car->timer == 0) {
@@ -1624,7 +1624,7 @@ s32 Actor_Attach(s32 torchId, s32 sparkleId, s32 fireballId, s32 facing,
   actor->timer = 0;
   actor->userValue = facing;
   actor->launchedActorId = fireballId;
-  actor->update = (void (*)(void))Actor_HoldDuringEvent;
+  actor->update = (ObjectUpdate)Actor_HoldDuringEvent;
   // UB: no value is returned, though the callers take one.
 #ifdef UBFIX
   return 0;

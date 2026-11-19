@@ -1204,7 +1204,7 @@ void Prox_AddSmoke(s32 x, s32 y, s32 z) {
     actor->scaleX = FIXED_ONE / 2;
     actor->scaleY = FIXED_ONE / 2;
     *(s32 *)&actor->watchedActor = SMOKE_FRAMES;
-    actor->update = (void (*)(void))Prox_RiseSmoke;
+    actor->update = (ObjectUpdate)Prox_RiseSmoke;
     Actor_SelectAnimation(actor, 5);
     Actor_SetBlendMode(actor, 1);
   }

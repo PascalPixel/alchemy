@@ -194,7 +194,7 @@ void FieldPsynergy_Douse(void) {
         } else {
           particle->groundHeight = pos.y - toFIXED(32);
         }
-        particle->update = (void (*)(void))BattleEffect_LandFallingObject;
+        particle->update = (ObjectUpdate)BattleEffect_LandFallingObject;
         particle->motionFlags = ACTOR_FALLS;
         particle->priorityFlags =
             ACTOR_PRIORITY_AUTOMATIC | ACTOR_PRIORITY_OVERHEAD;
@@ -220,7 +220,7 @@ void FieldPsynergy_Douse(void) {
       Vector_AddPolarOffset(Random16() * 5 + toFIXED(3), Random16(), &pos);
       particle = Actor_Spawn(SPRITE_PARTICLE, pos.x, pos.y, pos.z);
       if (particle != 0) {
-        particle->update = (void (*)(void))FieldEffect_UpdateDriftingFallActor;
+        particle->update = (ObjectUpdate)FieldEffect_UpdateDriftingFallActor;
         particle->motionFlags = 0;
         ((struct Sprite *)particle->sprite)->image.priority = 2;
         Actor_SelectAnimationFar(particle, 8);

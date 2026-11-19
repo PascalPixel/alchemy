@@ -1763,7 +1763,7 @@ s32 Scene_Initialize(s32 a0) {
       actor->motionFlags = 0;
       actor->groundHeight = toFIXED(72);
       actor->y.fixed = toFIXED(72);
-      actor->update = (void (*)(void))AnkohlRuins_SparkleChest;
+      actor->update = (ObjectUpdate)AnkohlRuins_SparkleChest;
     }
   }
   return 0;
@@ -2039,7 +2039,7 @@ s32 Scene_Initialize(s32 a0) {
       actor->motionFlags = 0;
       actor->groundHeight = toFIXED(72);
       actor->y.fixed = toFIXED(72);
-      actor->update = (void (*)(void))AnkohlRuins_SparkleChest;
+      actor->update = (ObjectUpdate)AnkohlRuins_SparkleChest;
     }
   }
   return 0;

@@ -1041,7 +1041,7 @@ void Islets_GiveTurtle(void) {
       Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
       /* FAKEMATCH(temporary): the splash update kept in an actor pointer. */
       a = (struct Actor *)Actor_EmitWadingSplashes;
-      leader->update = (void (*)(void))a;
+      leader->update = (ObjectUpdate)a;
       Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 318, 424);
       leader->update = 0;
       Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
@@ -1055,7 +1055,7 @@ void Islets_GiveTurtle(void) {
       if (answer == 0) {
         Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_WEST);
         Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
-        leader->update = (void (*)(void))a;
+        leader->update = (ObjectUpdate)a;
         STEP(gMainRoutineWork.leaderActorId, 302, 424);
         SPAWN(a, b, 0)
         STEP(gMainRoutineWork.leaderActorId, 318, 424);
@@ -1210,7 +1210,7 @@ void Islets_RideBackToIsland(void) {
     FieldActor_Jump(gMainRoutineWork.leaderActorId, 6, 0);
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
     Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 152, 768);
-    leader->update = (void (*)(void))Islets_RideOnLonesomeGeorge;
+    leader->update = (ObjectUpdate)Islets_RideOnLonesomeGeorge;
     FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId),
                               SPRITE_COLOR_HIDDEN);
     Actor_SetAnimation(ACTOR_LONESOME_GEORGE, ANIM_NOD);
@@ -1795,7 +1795,7 @@ void Islets_ArriveBackAtIsland(void) {
   Actor_SetPosition(ACTOR_LIL_TURTLE, 273, 520);
   System_Wait(1);
   actor->facing = FACING_NORTH;
-  owner->update = (void (*)(void))Islets_RideOnLonesomeGeorge;
+  owner->update = (ObjectUpdate)Islets_RideOnLonesomeGeorge;
   FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId),
                             SPRITE_COLOR_HIDDEN);
   Actor_SetAnimation(ACTOR_LONESOME_GEORGE, ANIM_NOD);
@@ -1807,9 +1807,8 @@ void Islets_ArriveBackAtIsland(void) {
   Event_WaitTransitionFrames();
   Actor_SetSpeed(ACTOR_LONESOME_GEORGE, 0.6);
   Actor_SetSpeed(ACTOR_LIL_TURTLE, 0.6);
-  Actor_Get(ACTOR_LIL_TURTLE)->update =
-      (void (*)(void))Actor_EmitWadingSplashes;
-  actor->update = (void (*)(void))Actor_EmitWadingSplashes;
+  Actor_Get(ACTOR_LIL_TURTLE)->update = (ObjectUpdate)Actor_EmitWadingSplashes;
+  actor->update = (ObjectUpdate)Actor_EmitWadingSplashes;
   Actor_WalkTo(ACTOR_LIL_TURTLE, 280, 468);
   Actor_MoveToAndWait(ACTOR_LONESOME_GEORGE, 296, 452);
   Actor_SetAnimation(ACTOR_LIL_TURTLE, 1);

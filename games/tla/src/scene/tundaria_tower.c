@@ -432,7 +432,7 @@ void TundariaTower_FreeCenterProng(void) {
   Actor_SetPosition(ACTOR_FROZEN_CENTER_PRONG, 0, 0);
   Actor_SetPosition(ACTOR_FALLEN_CENTER_PRONG, 344, 372);
   Actor_GetById(ACTOR_FALLEN_CENTER_PRONG)->update =
-      (void (*)(void))TundariaTower_SparkleCenterProng;
+      (ObjectUpdate)TundariaTower_SparkleCenterProng;
   Event_End();
 }
 
@@ -941,7 +941,7 @@ s32 Scene_Initialize(void) {
           MapGrid_CopyCellAttributes(11, 22, 3, 2, 20, 22);
           Actor_SetPosition(ACTOR_FALLEN_CENTER_PRONG, 344, 372);
           Actor_GetById(ACTOR_FALLEN_CENTER_PRONG)->update =
-              (void (*)(void))TundariaTower_SparkleCenterProng;
+              (ObjectUpdate)TundariaTower_SparkleCenterProng;
           Actor_SetPosition(ACTOR_FROZEN_CENTER_PRONG, 0, 0);
         }
       } else if (GameFlag_Get(FLAG_CRYSTAL_BROKEN)) {

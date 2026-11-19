@@ -247,8 +247,7 @@ void GondowanCliffs_LeapStumpIntoWater(s32 mode, s32 id) {
     Event_PlaySound(SE_RUMBLE);
     MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     ((struct FieldSprite *)actor->sprite)->rotation = TRIG_TURN / 16;
-    /* FAKEMATCH(signature): the update cleared through a word. */
-    *(u32 *)&actor->update = 0;
+    actor->update = NULL;
     options.type = SPRITE_SPLASH;
     options.startScaleX = FIXED_ONE / 2;
     options.targetScaleX = FIXED_ONE * 3 / 2;

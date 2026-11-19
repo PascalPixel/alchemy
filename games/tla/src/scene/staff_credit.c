@@ -660,9 +660,9 @@ void Actor_SetFlightMode(struct Actor *actor, s32 mode) {
     Actor_SetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
     Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   } else if (mode == 1) {
-    actor->update = (void (*)(void))StaffCredit_FlashPoweringUp;
+    actor->update = (ObjectUpdate)StaffCredit_FlashPoweringUp;
   } else {
-    actor->update = (void (*)(void))StaffCredit_GlowInFlight;
+    actor->update = (ObjectUpdate)StaffCredit_GlowInFlight;
     Event_PlaySound(SE_TAKE_FLIGHT);
   }
 }

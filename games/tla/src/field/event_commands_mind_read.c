@@ -119,7 +119,7 @@ void FieldPsynergy_UpdateMindReadWave(void) {
         actor->speedLimit = toFIXED(16) / 25; // 0.64 pixels a frame
         actor->acceleration = toFIXED(16) / 25;
         actor->facing = Trig_Atan(from.z - to.z, from.x - to.x);
-        actor->update = (void (*)(void))FieldEffect_ReleaseOnArrival;
+        actor->update = (ObjectUpdate)FieldEffect_ReleaseOnArrival;
         sprite->flags = 0;
         sprite->priority = 1;
         Actor_SetMoveTargetFar(actor, from.x, from.y, from.z);
@@ -331,7 +331,7 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
   pusher->speedLimit = toFIXED(4);
   pusher->acceleration = FIXED_ONE / 2;
   pusher->motionFlags = ACTOR_FLOATS;
-  target->update = (void (*)(void))Actor_CycleSpriteColors;
+  target->update = (ObjectUpdate)Actor_CycleSpriteColors;
   target->speedLimit = toFIXED(2) / 5;
   target->acceleration = toFIXED(1) / 5;
   target->steeringFlags = moved;
@@ -445,7 +445,7 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
   *layer = savedLayer;
   Actor_SetSpriteColorModeFar(target, scene->savedPalette);
   Actor_StartScriptFar(target, scene->savedScript);
-  target->update = (void (*)(void))scene->savedCallback;
+  target->update = (ObjectUpdate)scene->savedCallback;
   if (pushed) {
     pusher->update = NULL;
     Actor_SelectAnimationFar(pusher, 4);
@@ -1378,7 +1378,7 @@ void FieldEffect_UpdateOrbitingParticleLeft(struct Actor *particle) {
                             &pos);
       SET_ACTOR_POSITION(particle, pos.x, pos.y, pos.z);
     } else {
-      particle->update = (void (*)(void))FieldEffect_UpdateOrbitingParticleFade;
+      particle->update = (ObjectUpdate)FieldEffect_UpdateOrbitingParticleFade;
     }
   }
 }
@@ -1401,7 +1401,7 @@ void FieldEffect_UpdateOrbitingParticleRight(struct Actor *particle) {
                             &pos);
       SET_ACTOR_POSITION(particle, pos.x, pos.y, pos.z);
     } else {
-      particle->update = (void (*)(void))FieldEffect_UpdateOrbitingParticleFade;
+      particle->update = (ObjectUpdate)FieldEffect_UpdateOrbitingParticleFade;
     }
   }
 }
@@ -1448,11 +1448,10 @@ void FieldPsynergy_Frost(void) {
       particle->scaleY = scale;
       particle->scaleX = scale;
       if ((Random16() & 1) != 0)
-        particle->update =
-            (void (*)(void))FieldEffect_UpdateOrbitingParticleLeft;
+        particle->update = (ObjectUpdate)FieldEffect_UpdateOrbitingParticleLeft;
       else
         particle->update =
-            (void (*)(void))FieldEffect_UpdateOrbitingParticleRight;
+            (ObjectUpdate)FieldEffect_UpdateOrbitingParticleRight;
 
       particle->facing = Random16();
       particle->timer = 60;
@@ -1490,7 +1489,7 @@ void FieldPsynergy_Frost(void) {
       Actor_SelectAnimationFar(target, 2);
     }
 
-    target->update = (void (*)(void))FieldEffect_UpdateFrostGlint;
+    target->update = (ObjectUpdate)FieldEffect_UpdateFrostGlint;
     ev = Scene_FindPsynergyTrigger(PSYNERGY_TRIGGER(PSYNERGY_PHASE_ACTS), 6,
                                    Scene_SelectPsynergyTarget(6));
     if (ev != NULL)
@@ -1571,7 +1570,7 @@ void FieldEffect_RunSparkEmitter(struct Actor *emitter) {
     spark = Actor_Spawn(SPRITE_SPARKLE, pos[0], pos[1], pos[2]);
     // Each is released after 72 frames, its script's wait.
     if (spark != 0) {
-      spark->update = (void (*)(void))FieldEffect_SwayParticle;
+      spark->update = (ObjectUpdate)FieldEffect_SwayParticle;
       spark->scaleX = spark->scaleY = FIXED_ONE * 3 / 5;
       spark->motionFlags = ACTOR_FALLS;
       spark->gravity = toFIXED(0.007);
@@ -1614,7 +1613,7 @@ void FieldPsynergy_Ply(void) {
     if (actor != 0) {
       actor->scaleY = FIXED_ONE * 7 / 10;
       actor->scaleX = FIXED_ONE * 7 / 10;
-      actor->update = (void (*)(void))FieldEffect_UpdateShrinkingOrbitActor;
+      actor->update = (ObjectUpdate)FieldEffect_UpdateShrinkingOrbitActor;
       actor->timer = 120;
       actor->userValue = i * (TRIG_TURN / 8);
       actor->motionFlags = ACTOR_FLOATS;
@@ -1664,7 +1663,7 @@ void FieldPsynergy_Ply(void) {
   Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_NORMAL);
   Sound_PlayFar(MUS_CURE);
   if (actor != 0) {
-    target->update = (void (*)(void))FieldEffect_RunSparkEmitter;
+    target->update = (ObjectUpdate)FieldEffect_RunSparkEmitter;
     target->timer = 0;
     // Cast on a target (enabled cleared by FieldPsynergy_Dispatch),
     // the sparks fall for 192 frames instead of 128.

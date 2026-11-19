@@ -1159,8 +1159,7 @@ void LemurianShipDeck_SetOutForMadra(void) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Actor_SetSpeed(ACTOR_FELIX, 0.8);
-    Actor_Get(ACTOR_PIERS)->update =
-        (void (*)(void))LemurianShipDeck_EmitSplash;
+    Actor_Get(ACTOR_PIERS)->update = (ObjectUpdate)LemurianShipDeck_EmitSplash;
     FieldActor_LaunchFromLeader(ACTOR_PIERS, 16, 0, FACING_WEST);
     Actor_SetSpriteFlags(Actor_Get(ACTOR_PIERS), 0);
     Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
@@ -1171,11 +1170,10 @@ void LemurianShipDeck_SetOutForMadra(void) {
     Event_ShowMessage(ACTOR_PIERS, 0);
     Actor_SetAnimationAndWait(ACTOR_FELIX, ANIM_NOD);
     Actor_Get(gMainRoutineWork.leaderActorId)->update =
-        (void (*)(void))LemurianShipDeck_EmitSplash;
+        (ObjectUpdate)LemurianShipDeck_EmitSplash;
     Actor_WalkByAndWait(ACTOR_FELIX, 0, 16);
     Actor_Get(gMainRoutineWork.leaderActorId)->update = NULL;
-    Actor_Get(ACTOR_PIERS)->update =
-        (void (*)(void))LemurianShipDeck_EmitSplash;
+    Actor_Get(ACTOR_PIERS)->update = (ObjectUpdate)LemurianShipDeck_EmitSplash;
     Actor_SetAnimation(ACTOR_PIERS, ANIM_WALK);
     actor = Actor_Get(ACTOR_FELIX);
     if (actor != 0)

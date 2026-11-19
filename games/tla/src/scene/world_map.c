@@ -358,7 +358,7 @@ s32 WorldMap_SetUpEcho(struct Actor *actor) {
   if (Event_GetFlag(FLAG_DJINN_LESSON) != 0) {
     return 0;
   }
-  actor->update = (void (*)(void))WorldMap_CircleEcho;
+  actor->update = (ObjectUpdate)WorldMap_CircleEcho;
   actor->motionFlags = 0;
   actor->timer = 0;
   actor->userValue = 0;
@@ -2374,9 +2374,9 @@ void Actor_SetFlightMode(struct Actor *actor, s32 mode) {
     Actor_SetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
     Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   } else if (mode == 1) {
-    actor->update = (void (*)(void))WorldMap_FlashPoweringUp;
+    actor->update = (ObjectUpdate)WorldMap_FlashPoweringUp;
   } else {
-    actor->update = (void (*)(void))WorldMap_GlowInFlight;
+    actor->update = (ObjectUpdate)WorldMap_GlowInFlight;
     Event_PlaySound(SE_TAKE_FLIGHT);
   }
 }

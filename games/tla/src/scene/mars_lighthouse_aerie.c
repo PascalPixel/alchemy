@@ -458,7 +458,7 @@ void MarsLighthouseAerie_StartLookingAround(s32 id) {
 
   FieldActor_Stop(id);
   actor->riseCounter = (Random_Below(40)) + 20;
-  actor->update = (void (*)(void))MarsLighthouseAerie_LookAround;
+  actor->update = (ObjectUpdate)MarsLighthouseAerie_LookAround;
 }
 
 /// The actor stops looking about and faces the beacon.
@@ -540,7 +540,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Event_ShowMessage(ACTOR_MIA, 0);
   FieldActor_Stop(gMainRoutineWork.leaderActorId);
   actor->riseCounter = (Random_Below(20)) + 20;
-  actor->update = (void (*)(void))MarsLighthouseAerie_LookAround;
+  actor->update = (ObjectUpdate)MarsLighthouseAerie_LookAround;
   MarsLighthouseAerie_StartLookingAround(ACTOR_GARET);
   MarsLighthouseAerie_StartLookingAround(ACTOR_MIA);
   Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
@@ -1079,7 +1079,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_SetAnimation(ACTOR_IVAN, ANIM_NOD);
   FieldActor_SetAnimationAndWait(ACTOR_MIA, ANIM_NOD);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
-  actor->update = (void (*)(void))MarsLighthouseAerie_Flicker;
+  actor->update = (ObjectUpdate)MarsLighthouseAerie_Flicker;
   Actor_SetScript(ACTOR_WISE_ONE, gMarsLighthouseAerie_VoiceFadeScript);
   PaletteFade_ApplyTarget(PALETTE_TINT_GRAYSCALE, PALETTES_BG);
   PaletteFade_Interpolate(20);
@@ -1328,16 +1328,16 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   gMarsLighthouseAerie_FlickerFrame = 0;
   gMarsLighthouseAerie_FlickerRate = 4;
   Actor_Get(ACTOR_DOOM_DRAGON)->update =
-      (void (*)(void))MarsLighthouseAerie_FlickerDragon;
+      (ObjectUpdate)MarsLighthouseAerie_FlickerDragon;
   Actor_Get(ACTOR_DRAGON_HEAD_A)->update =
-      (void (*)(void))MarsLighthouseAerie_FlickerDragon;
+      (ObjectUpdate)MarsLighthouseAerie_FlickerDragon;
   Actor_Get(ACTOR_DRAGON_HEAD_B)->update =
-      (void (*)(void))MarsLighthouseAerie_FlickerDragon;
+      (ObjectUpdate)MarsLighthouseAerie_FlickerDragon;
   Actor_Get(ACTOR_DRAGON_HEAD_C)->update =
-      (void (*)(void))MarsLighthouseAerie_FlickerDragon;
-  mother->update = (void (*)(void))MarsLighthouseAerie_FlickerParent;
-  father->update = (void (*)(void))MarsLighthouseAerie_FlickerParent;
-  kyle->update = (void (*)(void))MarsLighthouseAerie_FlickerParent;
+      (ObjectUpdate)MarsLighthouseAerie_FlickerDragon;
+  mother->update = (ObjectUpdate)MarsLighthouseAerie_FlickerParent;
+  father->update = (ObjectUpdate)MarsLighthouseAerie_FlickerParent;
+  kyle->update = (ObjectUpdate)MarsLighthouseAerie_FlickerParent;
   Event_PlaySound(SE_DRAGON_FLICKER);
   System_Wait(10);
   Event_PlaySound(SE_DRAGON_FLICKER);
@@ -1381,9 +1381,9 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   mother->riseCounter = (Random_Below(80)) + 40;
   father->riseCounter = (Random_Below(80)) + 40;
   kyle->riseCounter = (Random_Below(80)) + 40;
-  mother->update = (void (*)(void))MarsLighthouseAerie_Throb;
-  father->update = (void (*)(void))MarsLighthouseAerie_Throb;
-  kyle->update = (void (*)(void))MarsLighthouseAerie_Throb;
+  mother->update = (ObjectUpdate)MarsLighthouseAerie_Throb;
+  father->update = (ObjectUpdate)MarsLighthouseAerie_Throb;
+  kyle->update = (ObjectUpdate)MarsLighthouseAerie_Throb;
   FieldEvent_Wait(20);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_Interpolate(40);
@@ -1914,7 +1914,7 @@ void Orb_SpawnRising(void) {
     angle = Random16() & 0xffff000;
     effect->timer = angle;
     effect->userValue = 0;
-    effect->update = (void (*)(void))Orb_UpdateRising;
+    effect->update = (ObjectUpdate)Orb_UpdateRising;
     effect->speedLimit = Math_Sin((u32)(Random16() * 65535) >> 20) * 24 >> 16;
     sprite->flags = 0;
     sprite->priority = 2;

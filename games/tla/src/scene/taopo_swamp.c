@@ -2049,7 +2049,7 @@ void Vent_Puff(s32 *position, s32 base) {
     // A spin of up to half a turn a frame, either way.
     actor->timer = Random_Below(TRIG_TURN) - DEGtoANG(180);
     Actor_StartScripted(actor, 3);
-    actor->update = (void (*)(void))Vent_Bounce;
+    actor->update = (ObjectUpdate)Vent_Bounce;
     Actor_SetBlendMode(actor, 1);
   }
 }

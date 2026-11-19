@@ -703,7 +703,7 @@ void KandoreanTemple_BlowSteam(s32 *position, s32 value) {
     timer = (u16)Random16() - 32768;
     actor->timer = timer;
     KandoreanTemple_InitializeSteam(actor, 3);
-    actor->update = (void (*)(void))KandoreanTemple_UpdateVentSteam;
+    actor->update = (ObjectUpdate)KandoreanTemple_UpdateVentSteam;
     Actor_SetBlendMode(actor, 1);
   }
 }
@@ -760,7 +760,7 @@ void KandoreanTemple_BlowStreamSteam(void) {
     timer = (u16)Random16() - 32768;
     actor->timer = timer;
     KandoreanTemple_InitializeSteam(actor, 1);
-    actor->update = (void (*)(void))KandoreanTemple_UpdateStreamSteam;
+    actor->update = (ObjectUpdate)KandoreanTemple_UpdateStreamSteam;
     Actor_SetBlendMode(actor, 1);
   }
 }

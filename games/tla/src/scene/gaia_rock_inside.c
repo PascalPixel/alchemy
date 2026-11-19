@@ -515,7 +515,7 @@ s32 GaiaRockInside_CaskPours(void) {
   sprite->priority = 1;
   actor->bounce = 0;
   actor->riseBaseY = 0;
-  actor->update = (void (*)(void))GaiaRockInside_FlickerPour;
+  actor->update = (ObjectUpdate)GaiaRockInside_FlickerPour;
   return 0;
 }
 
@@ -728,9 +728,9 @@ void GaiaRockInside_PlantPointsTheWay(s32 unused, u32 id) {
   actor->collisionFlags = 0;
   Actor_SelectAnimation(actor, ARROW_ANIMATION(direction));
   if (ARROW_UP_OR_DOWN(direction))
-    actor->update = (void (*)(void))GaiaRockInside_PulseUpDownArrow;
+    actor->update = (ObjectUpdate)GaiaRockInside_PulseUpDownArrow;
   else
-    actor->update = (void (*)(void))GaiaRockInside_PulseSidewaysArrow;
+    actor->update = (ObjectUpdate)GaiaRockInside_PulseSidewaysArrow;
   actor->collisionFlags = 1;
   Event_SetFlag(FLAG_MAZE_PLANT_POINTED(*state));
   Event_SetFlag(FLAG_PLANT_POINTING);
@@ -2940,8 +2940,8 @@ s32 Scene_PrepareMap(void) {
         plant->collisionFlags = 0;
         Actor_SelectAnimation(plant, ARROW_ANIMATION(angle));
         plant->update = ARROW_UP_OR_DOWN(angle) != 0
-                            ? (void (*)(void))GaiaRockInside_PulseUpDownArrow
-                            : (void (*)(void))GaiaRockInside_PulseSidewaysArrow;
+                            ? (ObjectUpdate)GaiaRockInside_PulseUpDownArrow
+                            : (ObjectUpdate)GaiaRockInside_PulseSidewaysArrow;
         plant->collisionFlags = 1;
         GameFlag_Set(FLAG_PLANT_POINTING);
       }

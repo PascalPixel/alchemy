@@ -13,7 +13,7 @@ void Actor_LaunchAhead(struct Actor *self) {
   actor->motionFlags = 0;
   FieldActor_SetPositionAndResetMotion(actor, position[0], position[1],
                                        position[2]);
-  actor->update = (void (*)(void))Actor_RollAndCrumble;
+  actor->update = (ObjectUpdate)Actor_RollAndCrumble;
   actor->steeringFlags = 0;
   actor->speedLimit = toFIXED(8);
   actor->acceleration = toFIXED(1) / 8;

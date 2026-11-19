@@ -386,7 +386,7 @@ void Caverns_FinishMovingAngaraBlock(void) {
       velocity[2] = actor->z.fixed;
       other = Actor_FindAtCell(velocity, 1);
       if (other != NULL) {
-        actor->update = (void (*)(void))Caverns_LayerLeaderByTopBlock;
+        actor->update = (ObjectUpdate)Caverns_LayerLeaderByTopBlock;
         actor->riseCounter = 1;
         other->riseCounter = 1;
         GameFlag_Set(FLAG_ANGARA_BLOCK_ON_TOP);

@@ -112,6 +112,11 @@ enum ArrivalAxis {
   ARRIVAL_AXIS_Z = 18
 };
 
+union FieldObject;
+
+/// An object's per-frame hook, called with the object (Actor_UpdateAllThumb).
+typedef void (*ObjectUpdate)(union FieldObject *object);
+
 /// A field object: its script, position, motion toward a target, sprites and
 /// update hook.
 struct Actor {
@@ -313,7 +318,7 @@ struct Actor {
   };
   /// The object its action script follows or faces.
   struct Actor *watchedActor;
-  void (*update)(void); ///< the object's per-frame hook
+  ObjectUpdate update; ///< the object's per-frame hook
   /// What a carrier moved this frame, which Actor_MoveWithCarriers adds to
   /// an actor riding it, and that actor's carrier.
   s32 stepX;

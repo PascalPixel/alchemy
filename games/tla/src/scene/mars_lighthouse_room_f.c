@@ -1511,7 +1511,7 @@ s32 Fireball_CarryLeader(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Flag_Clear(FLAG_MENU_OPEN);
-  leader->update = (void (*)(void))Actor_Blink;
+  leader->update = (ObjectUpdate)Actor_Blink;
   leader->facing = FACING_SOUTH;
   Actor_SelectAnimation(leader, ANIM_LEADER_SIT);
   while (ride->car->timer == 0) {

@@ -551,7 +551,7 @@ void MagmaRockInside_StartLavaPlatform(s32 id, s32 *path, s16 flag) {
     platform->groundHeight = -toFIXED(14);
     platform->y.fixed = -toFIXED(14);
   }
-  platform->update = (void (*)(void))MagmaRockInside_PausePlatform;
+  platform->update = (ObjectUpdate)MagmaRockInside_PausePlatform;
 }
 
 s32 MagmaRockInside_SetCellShape(s32 terrain, s32 x, s32 z, s32 height);
@@ -827,7 +827,7 @@ void MagmaRockInside_TargetStatue(s32 stage) {
     MagmaRockInside_FindStatue(table);
     actor = watch->child;
     actor->flashMask = 4;
-    actor->update = (void (*)(void))MagmaRockInside_FlashStatue;
+    actor->update = (ObjectUpdate)MagmaRockInside_FlashStatue;
   }
   if (stage == 3) {
     struct Actor *actor;
@@ -835,7 +835,7 @@ void MagmaRockInside_TargetStatue(s32 stage) {
     MagmaRockInside_FindStatue(table);
     actor = watch->child;
     actor->flashMask = 2;
-    actor->update = (void (*)(void))MagmaRockInside_FlashStatue;
+    actor->update = (ObjectUpdate)MagmaRockInside_FlashStatue;
   }
 }
 
@@ -920,7 +920,7 @@ void MagmaRockInside_FireFromStatue(struct Actor *source) {
 end:
   flame->acceleration = toFIXED(2);
   flame->speedLimit = toFIXED(2);
-  flame->update = (void (*)(void))MagmaRockInside_TrailEmbers;
+  flame->update = (ObjectUpdate)MagmaRockInside_TrailEmbers;
   FieldActor_SetMoveTargetFX(flame, position[0], position[1], position[2]);
   FieldCamera_SetSpeed(2);
   FieldCamera_MoveToFX(position[0], position[1], position[2], 1);
@@ -959,7 +959,7 @@ end:
 hit:
   flame->acceleration = toFIXED(2);
   flame->speedLimit = toFIXED(2);
-  flame->update = (void (*)(void))MagmaRockInside_TrailEmbers;
+  flame->update = (ObjectUpdate)MagmaRockInside_TrailEmbers;
   FieldActor_SetMoveTargetFX(flame, position[0], position[1], position[2]);
   FieldCamera_SetSpeed(2);
   FieldCamera_MoveToFX(position[0], position[1], position[2], 1);
@@ -2153,7 +2153,7 @@ void MagmaRockInside_LearnBlaze(s32 tabletId, s32 learnerId) {
   PaletteFade_StartInterpolation(80);
   Actor_SetScript(tabletId, gMagmaRockInside_TabletSettleScript);
   Actor_SetScript(learnerId, gMagmaRockInside_JennaSettleScript);
-  learner->update = (void (*)(void))MagmaRockInside_TrailSparks;
+  learner->update = (ObjectUpdate)MagmaRockInside_TrailSparks;
   wait(120);
   learner->update = NULL;
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);

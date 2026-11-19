@@ -1940,7 +1940,7 @@ void Kibombo_RaiseEmbers(void) {
       actor->timer = 0;
       actor->speedLimit = 0;
       actor->acceleration = 0;
-      actor->update = (void (*)(void))FieldEffect_AdvanceMotion;
+      actor->update = (ObjectUpdate)FieldEffect_AdvanceMotion;
     }
   }
 }
@@ -1975,7 +1975,7 @@ void Kibombo_RaiseSmoke(void) {
       actor->scaleX = FIXED_ONE / 2;
       actor->scaleY = FIXED_ONE / 2;
       *(s32 *)&actor->watchedActor = SMOKE_FRAMES;
-      actor->update = (void (*)(void))Kibombo_UpdateSmoke;
+      actor->update = (ObjectUpdate)Kibombo_UpdateSmoke;
       Actor_SelectAnimation(actor, 5);
       Actor_SetBlendMode(actor, 1);
     }
@@ -2011,7 +2011,7 @@ void Kibombo_SpawnFlame(s32 x, s32 y, s32 z) {
     actor->scaleY = FIXED_ONE * 2;
     actor->timer = (Random_Below(10)) + 10;
     actor->userValue = 0;
-    actor->update = (void (*)(void))Kibombo_FlickerFlame;
+    actor->update = (ObjectUpdate)Kibombo_FlickerFlame;
     sprite = actor->sprite;
     sprite->priority = 1;
     Actor_SetSpriteFlags(actor, 0);
@@ -2247,7 +2247,7 @@ void Kibombo_AkafubuChants(void) {
       spark->targetX = center->x.fixed;
       spark->targetY = center->y.fixed + toFIXED(24);
       spark->targetZ = center->z.fixed;
-      spark->update = (void (*)(void))Kibombo_SpinSpark;
+      spark->update = (ObjectUpdate)Kibombo_SpinSpark;
     }
     angle += toFIXED(22);
     i++;
@@ -2991,9 +2991,9 @@ void Kibombo_GabombaResponds(void) {
                        SPRITE_COLOR_WHITE);
   wait(8);
   Actor_GetById(ACTOR_STATUE_LEFT_EYE)->update =
-      (void (*)(void))Kibombo_FlashSprite;
+      (ObjectUpdate)Kibombo_FlashSprite;
   Actor_GetById(ACTOR_STATUE_RIGHT_EYE)->update =
-      (void (*)(void))Kibombo_FlashSprite;
+      (ObjectUpdate)Kibombo_FlashSprite;
   Actor_ShowEmoteById(ACTOR_AKAFUBU, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_SetMessageId((s32)MsgLookTheGreat);
   // "Look! The Great Gabomba has responded to our gift!"

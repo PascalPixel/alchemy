@@ -814,7 +814,7 @@ void MagmaRock_TargetStatue(s32 stage) {
     MagmaRock_FindStatue(table);
     target = work->child;
     target->flashMask = 4;
-    target->update = (void (*)(void))MagmaRock_FlashStatue;
+    target->update = (ObjectUpdate)MagmaRock_FlashStatue;
   }
   if (stage == 3) {
     struct Actor *target;
@@ -822,7 +822,7 @@ void MagmaRock_TargetStatue(s32 stage) {
     MagmaRock_FindStatue(table);
     target = work->child;
     target->flashMask = 2;
-    target->update = (void (*)(void))MagmaRock_FlashStatue;
+    target->update = (ObjectUpdate)MagmaRock_FlashStatue;
   }
 }
 

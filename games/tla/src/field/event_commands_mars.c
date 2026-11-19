@@ -53,10 +53,10 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
   // Spin up for 80 frames, then spin and shrink away.
   wait(20);
   Sound_PlayFar(SE_SPIN);
-  djinni->update = (void (*)(void))FieldEffect_AdvanceAngleWithRamp;
+  djinni->update = (ObjectUpdate)FieldEffect_AdvanceAngleWithRamp;
   djinni->timer = 0;
   wait(80);
-  djinni->update = (void (*)(void))FieldEffect_ShrinkActorAndDestroySlow;
+  djinni->update = (ObjectUpdate)FieldEffect_ShrinkActorAndDestroySlow;
   Actor_SelectAnimationFar(djinni, 3);
 
   // The sparks start where the Djinni is on screen.
@@ -94,7 +94,7 @@ void Djinn_RunMarsJoinEffect(s32 djinniId) {
 
   // The leader pulses while the sparks swarm it.
   wait(60);
-  leader->update = (void (*)(void))FieldEffect_PulseActorScale;
+  leader->update = (ObjectUpdate)FieldEffect_PulseActorScale;
   wait(100);
 
   // Every spark still in use goes.

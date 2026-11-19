@@ -62,7 +62,7 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
 
   effect->userValue = actorId;
   effect->motionFlags = 0;
-  effect->update = (void (*)(void))FieldEffect_CopyWatchedActorPosition;
+  effect->update = (ObjectUpdate)FieldEffect_CopyWatchedActorPosition;
   visual = effect->sprite;
   visual->flags = 0;
   effect->watchedActor = actor;

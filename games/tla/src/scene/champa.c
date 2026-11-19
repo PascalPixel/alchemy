@@ -194,7 +194,7 @@ void Champa_EnterDoor(s32 door) {
 
   if ((u32)(door - CHAMPA_TO_CHAMPA_ROOMS_SOUTHWEST_A) <= 1)
     Actor_Get(gMainRoutineWork.leaderActorId)->update =
-        (void (*)(void))Champa_ShrinkIntoTent;
+        (ObjectUpdate)Champa_ShrinkIntoTent;
   if (door == CHAMPA_TO_CHAMPA_SANCTUM) {
     TilesetAnim_Resume(SANCTUM_DOOR_ANIMATION);
     Champa_OpenDoorAndEnter(&table[0], CHAMPA_TO_CHAMPA_SANCTUM, 1);

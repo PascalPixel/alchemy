@@ -1790,7 +1790,7 @@ s32 Scene_Initialize(void) {
     Actor_SetSpriteFlags(actor, 0);
     actor->collisionFlags = 0;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-    actor->update = (void (*)(void))AquaRockInside_SplashBeneath;
+    actor->update = (ObjectUpdate)AquaRockInside_SplashBeneath;
     if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION) &&
         entrance == AQUA_ROCK_INSIDE_VIAL_CHEST_FROM_AQUA_ROCK_MIST_SABRE_CHEST)
       AquaRockInside_FallThroughWater();
@@ -2642,7 +2642,7 @@ void Vent_Puff(s32 *position, s32 base) {
     angle = (u16)Random16() - DEGtoANG(180);
     actor->timer = angle;
     Actor_StartScripted(actor, 3);
-    actor->update = (void (*)(void))Vent_Bounce;
+    actor->update = (ObjectUpdate)Vent_Bounce;
     Actor_SetBlendMode(actor, 1);
   }
 }

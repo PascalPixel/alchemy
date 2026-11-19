@@ -620,20 +620,17 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
     s32 level;
 
     if (frame == 0) {
-      /* FAKEMATCH(temporary): still, 0 in a local; as 0 at its uses. */
-      s32 still;
-
       EffectPosition_ProjectBattler(args->targets[0], &screen);
-      still = 0;
-      for (i = 0, drop = work->particles; i != WYRD_CURSE_DROPS; i++, drop++) {
+      for (i = 0; i != WYRD_CURSE_DROPS; i++) {
+        drop = &work->particles[i];
         drop->x = INTtoFIXED(screen.x / 2 + (Random16() & 15) - 8);
         drop->y = -8;
-        drop->velocityX = still;
-        drop->velocityY = still;
+        drop->velocityX = 0;
+        drop->velocityY = 0;
         drop->z = (Random16() & 3) + 4;
         drop->velocityZ =
             WYRD_CURSE_FIRST_DROP_SHARE - i * WYRD_CURSE_DROP_SHARE_STEP;
-        drop->variant = still;
+        drop->variant = 0;
       }
       {
         struct Particle *glow =

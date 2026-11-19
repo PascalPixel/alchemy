@@ -1442,6 +1442,7 @@ void WorldMap_MeetEcho(void) {
   s32 i;
   s32 flag;
   // Holds 0 for its whole life; see its one use.
+  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
   s32 zero = 0;
 
   djinni = Actor_GetById(ACTOR_ECHO);
@@ -1479,6 +1480,7 @@ void WorldMap_MeetEcho(void) {
     Event_Wait(10);
     FieldActor_ShowEmote(owner, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     {
+      /* FAKEMATCH(temporary): one, 1 held in a local; as 1 at its uses. */
       s32 one = 1;
       *(u16 *)&djinni->userValue = one;
     }

@@ -380,6 +380,7 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
       if (frame == i * 8 + 68)
         Sound_PlayFar(SE_POWER_UP);
       if (frame == i * 8 + 72) {
+        /* FAKEMATCH(temporary): none, 0 held in a local; as 0 at its uses. */
         s32 none = 0;
 
         BattleEffect_TintBattler(args->user, SPRITE_COLOR_WHITE, TINT_KEEP, 0,

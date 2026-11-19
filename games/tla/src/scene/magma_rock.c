@@ -2418,6 +2418,7 @@ void MagmaRock_StartFallingRocks(void) {
     rock->timer = -1;
   }
   {
+    /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
     s32 zero = 0;
 
     work->next = zero;

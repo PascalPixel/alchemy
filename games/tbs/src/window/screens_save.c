@@ -701,6 +701,8 @@ void FileList_PlaceDjinnSprites(void) {
     struct Sprite *sprite = menu->figures[index];
 
     if (sprite != NULL) {
+      /* FAKEMATCH(temporary): one, FIXED_ONE held in a local; as FIXED_ONE at
+       * its uses. */
       FIXED one = FIXED_ONE;
       FIXED height = toFIXED(500);
 

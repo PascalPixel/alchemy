@@ -1858,6 +1858,7 @@ void Kibombo_FlickerStatueFires(void) {
 /// Creates the Black Crystal, drawn with the item's own icon.
 void Kibombo_CreateBlackCrystal(void) {
   struct Actor **slot = &gKibombo_BlackCrystal;
+  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
   s32 zero = 0;
   struct Actor *actor = Import_ActorCreate(SPRITE_UNSEEN_MARKER, toFIXED(265),
                                            toFIXED(36), toFIXED(344));

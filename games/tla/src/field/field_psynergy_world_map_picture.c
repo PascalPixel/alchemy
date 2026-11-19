@@ -764,6 +764,7 @@ s32 WorldPicture_Show(s32 mode) {
   s32 *cursorZ;
   s32 *scrollX;
   s32 *scrollZ;
+  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
   s32 zero;
   s32 limitX;
   s32 limitZ;
@@ -950,6 +951,8 @@ s32 WorldPicture_Show(s32 mode) {
         if (mode != 0) {
           routine->teleportScene = -1;
           {
+            /* FAKEMATCH(temporary): none, -1 held in a local; as -1 at its
+             * uses. */
             s32 none = -1;
 
             choice->flag = none;

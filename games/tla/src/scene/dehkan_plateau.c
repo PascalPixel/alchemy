@@ -1929,6 +1929,7 @@ void DehkanPlateau_InitializePoundCube(void) {
 /// Creates the Pound Cube Cannon drops, drawn with the item's own icon.
 void DehkanPlateau_CreatePoundCube(void) {
   struct Actor **slot = &gDehkanPlateau_PoundCube;
+  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
   s32 zero = 0;
   struct Actor *actor =
       ((struct Actor *)Import_ActorCreate(SPRITE_UNSEEN_MARKER, 0, 0, 0));

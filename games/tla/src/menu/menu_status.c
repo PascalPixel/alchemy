@@ -571,6 +571,7 @@ s32 PartyMemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
   }
 
   {
+    /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
     u32 zero = 0;
     u32 *clear = &reordered[ARRAY_COUNT(reordered) - 1];
 

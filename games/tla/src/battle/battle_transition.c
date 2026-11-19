@@ -245,6 +245,7 @@ void BattleTransition_DrawRows(void) {
 
 /// Clears BG0's scroll from the line the VCount interrupt fires on.
 void BattleTransition_ResetBg0Scroll(void) {
+  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
   u32 zero = 0;
 
   REG_BG0VOFS = zero;
@@ -358,6 +359,7 @@ void BattleTransition_Run(s32 enemyCount, s32 kind) {
     gBgScroll[0].y = 0;
     Irq_SetHandler(IRQ_VCOUNT, 0, 0);
   } else {
+    /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
     s32 zero;
 
     battle = heap->battleWork;

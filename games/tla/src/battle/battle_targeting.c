@@ -430,6 +430,7 @@ void BattleUnit_ClearStatuses(s32 unitId) {
   struct Unit *unit;
   s8 *boost;
   s32 element;
+  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
   u8 zero;
 
   unit = Unit_Get(unitId);

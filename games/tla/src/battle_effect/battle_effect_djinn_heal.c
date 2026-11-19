@@ -313,6 +313,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   struct RenderModel *model;
   void *vertices;
   struct Particle *p;
+  /* FAKEMATCH(temporary): none, 0 held in a local; as 0 at its uses. */
   s32 none;
   u8 *ringPixels;
   s32 size;

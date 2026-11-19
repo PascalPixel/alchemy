@@ -1937,6 +1937,7 @@ void TrialRoad_StartPaletteCycle(s32 mode) {
     Iwram_CopyWords(gTrialRoad_PaletteCycleColors, (void *)&BG_PLTT_COLOR(5, 0),
                     32);
   if (mode == 1) {
+    /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
     s32 zero = 0;
 
     gTrialRoad_PaletteCycleFrame = zero;
@@ -3761,6 +3762,7 @@ void TrialRoad_ShowRaceMap(s32 leaderId, s32 rivalId) {
   struct TrialRoadLinkWork *work = HeapSlot_AllocEwram(
       HEAP_SLOT_TRIAL_ROAD_LINK, sizeof(struct TrialRoadLinkWork));
   void *buffer = Heap_AllocEwram(RACE_MAP_PICTURE_BYTES);
+  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
   s32 zero;
   s32 owner;
   s16 *fade;
@@ -3812,6 +3814,7 @@ void TrialRoad_StartRival(s32 mirrored) {
 /// Plays Moapa's recording from the given resource.
 void TrialRoad_PlayRivalRecording(s32 resource) {
   struct TrialRoadReplay *state = (struct TrialRoadReplay *)gSceneState;
+  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
   s32 zero = 0;
 
   ((struct TrialRoadLinkWork *)Ram_HeapSlots->trialRoadLink)->resource = zero;

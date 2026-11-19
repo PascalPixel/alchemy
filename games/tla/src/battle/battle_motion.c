@@ -18,6 +18,7 @@
 /// Sends unitId back to its spot, landing exactly there (snapToTarget), and
 /// turns it to face the centre at once.
 void BattleMotion_ReturnToSpot(s32 unitId) {
+  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
   s32 zero;
   struct BattleObject *slot;
   struct MotionObject *object;

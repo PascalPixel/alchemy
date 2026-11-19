@@ -1136,6 +1136,7 @@ void LemuriaSpring_InitializeTossSimulation(void) {
   u16 *headings;
   struct SpringObstacle *obstacle;
   u8 *startZ;
+  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
   s32 zero;
 
   headings = gLemuriaSpring_ObstacleHeadings;

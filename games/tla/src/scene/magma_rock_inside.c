@@ -1718,6 +1718,7 @@ void MagmaRockInside_TrackStepCell(void) {
 /// Starts watching the cells the leader steps on in the Blaze tablet's room
 /// (MagmaRockInside_TrackStepCell).
 void MagmaRockInside_StartStepCells(void) {
+  /* FAKEMATCH(temporary): none, -1 held in a local; as -1 at its uses. */
   s32 none = -1;
   s32 priority;
 
@@ -3003,6 +3004,7 @@ void MagmaRockInside_StartFallingRocks(void) {
     rock->timer = -1;
   }
   {
+    /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
     s32 zero = 0;
 
     work->next = zero;

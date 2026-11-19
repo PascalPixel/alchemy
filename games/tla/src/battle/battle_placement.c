@@ -18,6 +18,7 @@
 void BattleObject_Reset(struct BattleObject *actor, s32 keep) {
   struct MotionObject *object;
   s32 facingAngle;
+  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
   FIXED zero;
 
   if (actor->object == 0)

@@ -587,6 +587,7 @@ void Text_SetStyle(s32 value) {
 void Text_DrawMessage(s32 message, s32 window, s32 x, s32 y) {
   struct WindowWork *canvas = WINDOW_WORK;
   u16 *counter = &canvas->textBufferEnd;
+  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
   s32 zero = 0;
 
   *counter = zero;
@@ -605,6 +606,7 @@ void Text_DrawMessageAsTiles(s32 message, struct Window *window, u32 offsetX,
   s32 byteOffset;
   s32 vramAddress;
   u16 *text;
+  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
   s32 zero;
   u32 cell;
   struct WindowWork *canvas;

@@ -294,6 +294,7 @@ void TundariaTower_OpenDoor(void) {
   s16 *choice;
   s32 x = 37;
   struct MainRoutineWork *state;
+  /* FAKEMATCH(temporary): one, 1 held in a local; as 1 at its uses. */
   s32 one;
   s32 cell;
 
@@ -1557,6 +1558,7 @@ void TundariaTower_StartFallingRocks(void) {
     rock++;
   }
   {
+    /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
     s32 zero = 0;
 
     work->next = zero;

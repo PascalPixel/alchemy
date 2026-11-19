@@ -610,6 +610,7 @@ void MarsLighthouseStarRoom_CreateMarsStar(s32 rise) {
   GlyphTransfer *glyph;
   struct Actor *actor;
   struct FieldSprite *sprite;
+  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
   u8 zero;
   s32 size;
 
@@ -788,6 +789,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   struct FieldSprite *sprite;
   GlyphTransfer *glyph;
   u16 *screen;
+  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
   s32 zero;
 
   screen = (u16 *)Ram_HeapSlots->paletteFade;

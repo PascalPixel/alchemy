@@ -1955,6 +1955,7 @@ void YampiDesert_SetUpBlowMaceChestBlocks(void) {
 /// The leader climbs down the ladder at (x, z) and leaves by `exit`.
 void YampiDesert_ClimbDownLadder(struct Actor *actor, s32 x, s32 z, s32 exit) {
   struct MainRoutineWork *party;
+  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
   s32 zero;
   u8 *flags;
 

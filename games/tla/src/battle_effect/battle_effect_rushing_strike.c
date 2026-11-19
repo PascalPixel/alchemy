@@ -342,6 +342,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
   struct ModelTexture texture;
   struct RenderModel *model;
   struct ModelTexture *tex;
+  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
   s32 zero;
   s32 burstFrame;
   s32 yaw;

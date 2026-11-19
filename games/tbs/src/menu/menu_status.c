@@ -1234,8 +1234,6 @@ s32 PagedList_Build(struct PagedList *result, s32 index) {
   return 1;
 }
 
-static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
-
 /// The Psynergy range icons' tiles: two sets of RANGE_ICON_PAIRS tile pairs,
 /// a pair RANGE_ICON_PAIR_WORDS of tile data, a word to a 4bpp tile row.
 /// RANGE_ICON_ALL, the last pair, stands for ABILITY_RANGE_ALL.

@@ -1151,8 +1151,6 @@ extern const u32 gMenu_PatternRowMasks[][2];
 /// own elsewhere (Menu_BuildLocalizedPatternTiles).
 #define STATUS_RANGE_ICON_FIRST_TILE 768
 
-static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
-
 /// Builds the twelve range icons PsynergyMenu_DrawRange draws, as the 24 BG
 /// tiles from STATUS_RANGE_ICON_FIRST_TILE: icon n is a centre tile and an end
 /// tile, filled with WINDOW_BACKGROUND_COLOR, then marked row by row by XOR
@@ -1183,8 +1181,6 @@ void Menu_BuildPatternTiles(void) {
           if (sourcePattern < 0)
             sourcePattern = 0;
         }
-        /* FAKEMATCH(wrapper): the XOR made through XorWord, as The Broken
-           Seal's twin writes it. */
         tile[row] = XorWord(tile[row], gMenu_PatternRowMasks[sourcePattern][0]);
         tile[row + 8] =
             XorWord(tile[row + 8], gMenu_PatternRowMasks[sourcePattern][1]);

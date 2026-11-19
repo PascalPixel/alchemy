@@ -38,6 +38,12 @@ struct BarPatternRow {
   u32 secondTile;
 };
 
+/// One word of a tile XORed with a row's mask. Ours, not the original's
+/// name: the helper of a family of four sites, the two marks each of
+/// Menu_BuildPatternTiles and Menu_BuildLocalizedPatternTiles makes on a tile
+/// pair, which match through it and through no plain XOR.
+static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
+
 /// The twelve Psynergy range icons, built in two sets of six
 /// (Menu_BuildPatternTiles for the Status menu,
 /// Menu_BuildLocalizedPatternTiles for the battle menu): range n takes icon

@@ -136,9 +136,6 @@ s32 Djinn_GetGiveTutorialMessage(void) {
   return (s32)MsgDjinnGiveTutorialA;
 }
 
-/// One word of a tile marked by XOR with `mask`.
-static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
-
 #define RANGE_PATTERN_PAIR_BYTES (2 * TILE_SIZE_4BPP)
 /// The first of the range icons' BG tiles, which Window_DrawThreeTileColumn
 /// draws as tilemap entries.

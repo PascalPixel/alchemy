@@ -1913,8 +1913,8 @@ s32 DjinnMenu_DrawStatPreview(s32 window, s32 x, s32 y, s32 ownerId,
                                   unit->djinnSetCounts[i] + WINDOW_TILE('0'),
                                   tileColumn, y + 5, 0);
       }
-      // An empty once-only block: it ends the tile loop's block before the
-      // stats.
+      /* FAKEMATCH(dead): an empty once-only block after the tile loop; as no
+       * block. */
       do {
       } while (0);
       if (unit->hp != originalUnit->hp) {

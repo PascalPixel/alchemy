@@ -1393,9 +1393,7 @@ void ShrineOfTheSeaGod_LashRope(void) {
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_TAVI), 0);
   Actor_SetSpeed(ACTOR_TAVI, 0.4);
   FieldActor_SetMoveTarget(tavi, 328, 38, 168);
-  do {
-    Actor_WaitForMoveById(ACTOR_TAVI);
-  } while (0);
+  Actor_WaitForMoveById(ACTOR_TAVI);
   tavi->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
   tavi->groundHeight = toFIXED(32);
   tavi->scaleX = FIXED_ONE;

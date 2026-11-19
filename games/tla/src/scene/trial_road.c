@@ -1536,6 +1536,8 @@ void TrialRoad_ChallengeMoapa(void) {
     TrialRoad_ReachPeakSecond();
   party = &gMainRoutineWork;
   party->battleType = BATTLE_TYPE_NO_ESCAPE;
+  /* FAKEMATCH(dead): an empty once-only block after the battle type; as no
+   * block. */
   do {
   } while (0);
   Event_SetAfterBattleDestination(SCENE_TRIAL_ROAD_SUMMIT,

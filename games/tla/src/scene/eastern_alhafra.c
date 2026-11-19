@@ -834,10 +834,7 @@ s32 Scene_Initialize(void) {
   flag = Event_GetFlag(FLAG_EASTERN_ALHAFRA_STAKE_POUNDED);
   if (flag == 0) {
     actor = Actor_Get(ACTOR_FIRST_STAKE_ROPE_START);
-    /* FAKEMATCH(dead): the not-targeted bit set in a once-only block. */
-    do {
-      actor->collisionFlags |= ACTOR_NOT_TARGETED;
-    } while (0);
+    actor->collisionFlags |= ACTOR_NOT_TARGETED;
     actor = Actor_Get(ACTOR_FIRST_STAKE_ROPE_END);
     actor->motionFlags = flag;
     actor->y.fixed = toFIXED(16);
@@ -852,8 +849,10 @@ s32 Scene_Initialize(void) {
     Tightrope_Place(2, ACTOR_SECOND_STAKE_ROPE_START,
                     ACTOR_SECOND_STAKE_ROPE_END);
   }
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_LAST_ROCK), 0);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_ROCK), 0);
+  actor = Actor_Get(ACTOR_LAST_ROCK);
+  Actor_SetSpriteFlags(actor, 0);
+  actor = Actor_Get(ACTOR_FIRST_ROCK);
+  Actor_SetSpriteFlags(actor, 0);
   FieldActor_SetSpritePriority(ACTOR_FIRST_CRATE, 2);
   Actor_Get(ACTOR_SAILOR_WHO_PAID_FOR_THE_SHIP)->riseCounter = 1;
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT) != 0 &&

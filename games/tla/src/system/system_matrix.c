@@ -362,7 +362,6 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
   u32 code[8];
   s32 dx, dy, dz;
   s32 ux;
-  s32 zero = 0;
   s32 ex;
   s32 ey;
   s32 uz;
@@ -425,9 +424,9 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
   ey = eye[1];
   ez = eye[2];
   out[0] = ux;
-  out[3] = zero;
+  out[3] = 0;
   out[6] = uz;
-  out[MATRIX_TRANSLATION_X] = -dot(ex, ux, ez, uz, zero, zero);
+  out[MATRIX_TRANSLATION_X] = -dot(ex, ux, ez, uz, 0, 0);
   out[1] = vx;
   out[4] = vy;
   out[7] = vz;

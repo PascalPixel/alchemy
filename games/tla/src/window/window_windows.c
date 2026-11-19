@@ -322,14 +322,11 @@ void WindowSprite_RedrawSavedRect(struct Window *window);
 
 /// Closes a window: clears its contents and remembers its last rectangle.
 void Window_Close(struct Window *work, s32 release) {
-  u16 zero;
-
   if (work == 0)
     return;
 
   WindowSprite_PrepareForRedraw(work);
-  zero = 0;
-  work->flags = zero;
+  work->flags = 0;
   work->previousX = work->x;
   work->previousY = work->y;
   work->previousWidth = work->width;
@@ -340,20 +337,20 @@ void Window_Close(struct Window *work, s32 release) {
                            work->height);
     work->sprites.head = NULL;
     work->sprites.tailLink = NULL;
-    work->width = zero;
-    work->height = zero;
-    work->x = zero;
-    work->y = zero;
-    work->opened = zero;
-    work->animation = zero;
-    work->state = zero;
-    work->flags = zero;
-    work->zoomStage = zero;
-    work->duration = zero;
-    work->previousX = zero;
-    work->previousY = zero;
-    work->previousWidth = zero;
-    work->previousHeight = zero;
+    work->width = 0;
+    work->height = 0;
+    work->x = 0;
+    work->y = 0;
+    work->opened = 0;
+    work->animation = 0;
+    work->state = 0;
+    work->flags = 0;
+    work->zoomStage = 0;
+    work->duration = 0;
+    work->previousX = 0;
+    work->previousY = 0;
+    work->previousWidth = 0;
+    work->previousHeight = 0;
   } else {
     work->zoomStage = release;
     work->duration = WINDOW_CLOSE_FRAMES;
@@ -544,7 +541,6 @@ struct UiChannelSlot *BattleMessage_Continue(struct Window *window, s32 entry,
   struct UiChannelSlot *slot;
   struct UiChannelSlot *selected;
   u16 *spacing;
-  u16 zero;
   u16 lineSpacing;
   u32 index;
 
@@ -575,23 +571,22 @@ struct UiChannelSlot *BattleMessage_Continue(struct Window *window, s32 entry,
       selected->x = 3 << 8;
     }
 
-    zero = 0;
     selected->startX = 3 << 8;
-    selected->work->state = zero;
+    selected->work->state = 0;
     // Start the next text run without retaining the previous run's style.
     selected->colour = TEXT_COLOR_WHITE;
     selected->entry = entry;
     lineSpacing = TEXT_DEFAULT_LINE_SPACING;
-    selected->countdown = zero;
-    selected->outline = zero;
-    selected->line = zero;
-    selected->ended = zero;
+    selected->countdown = 0;
+    selected->outline = 0;
+    selected->line = 0;
+    selected->ended = 0;
     selected->lineSpacing = lineSpacing;
     index = 0;
     spacing = selected->spacing;
     do {
       index++;
-      *spacing++ = zero;
+      *spacing++ = 0;
     } while (index < MESSAGE_LINE_COUNT);
   }
   return selected;

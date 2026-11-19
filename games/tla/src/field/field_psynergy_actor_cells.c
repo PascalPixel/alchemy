@@ -81,7 +81,6 @@ void Actor_LiftTargetBlock(u16 *actors) {
   for (; *actors != ACTOR_LIST_END; actors++) {
     if (target == Actor_GetById(*actors)) {
       struct MapWork *map = Ram_HeapSlots->mapGrid;
-      s32 zero = 0;
       u8 *grid = gMapShapeGrid;
       struct MapCell *cells = map->layers[target->layer].cells;
       struct MapCell *blocks = map->layers[2].cells;
@@ -100,7 +99,7 @@ void Actor_LiftTargetBlock(u16 *actors) {
       blocks += slot;
       ((struct ShapeCell *)shapes)->shape = tag;
       cells->attributeB = target->riseBaseY;
-      blocks->collisionCode = zero;
+      blocks->collisionCode = 0;
       event->movedBlock = target;
     }
   }

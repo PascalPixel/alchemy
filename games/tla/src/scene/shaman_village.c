@@ -644,18 +644,14 @@ void ShamanVillage_BlowAwaySand(void) {
     Event_Wait(1);
   }
   Task_Remove(ShamanVillage_WaveWhirlwindLines);
-  {
-    s32 zero = 0;
-
-    Actor_GetById(ACTOR_TWISTER_ROCK)->flickerShift = zero;
-    wait(30);
-    Actor_GetById(ACTOR_TWISTER_ROCK)->update = (void *)zero;
-    FieldActor_SetSpriteColor(Actor_GetById(ACTOR_TWISTER_ROCK),
-                              SPRITE_COLOR_GREY);
-    MapGrid_WaitForShakeToSettle();
-    Event_Wait(60);
-    REG_BLDCNT = zero;
-  }
+  Actor_GetById(ACTOR_TWISTER_ROCK)->flickerShift = 0;
+  wait(30);
+  Actor_GetById(ACTOR_TWISTER_ROCK)->update = (void *)0;
+  FieldActor_SetSpriteColor(Actor_GetById(ACTOR_TWISTER_ROCK),
+                            SPRITE_COLOR_GREY);
+  MapGrid_WaitForShakeToSettle();
+  Event_Wait(60);
+  REG_BLDCNT = 0;
   Window_LoadGraphics();
   DebugText_Clear();
   FieldWindowColor_Apply(gMainRoutineWork.windowHue,

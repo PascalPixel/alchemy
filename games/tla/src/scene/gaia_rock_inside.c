@@ -2296,14 +2296,12 @@ s32 Scene_Initialize(void) {
     room = &gMainRoutineWork;
     entrance = &room->entrance;
     if (*entrance == ENTRANCE_LAIR) {
-      FIXED none;
       s32 found;
 
       if (!Test(FLAG_SERPENT_SLAIN)) {
         Sound_Play(MUS_FLAME_DRAGONS);
         found = FieldPartyInventory_FindMember(ITEM_DANCING_IDOL);
-        none = -1;
-        if (found != none) {
+        if (found != -1) {
           s32 flag;
           struct Actor *susa;
           struct Actor *serpent;
@@ -2342,7 +2340,7 @@ s32 Scene_Initialize(void) {
             Actor_SetAnimationById(ACTOR_SERPENT, 2);
             Event_StartScreenTransition();
             Event_WaitTransitionFrames();
-            FieldCamera_MoveToFX(toFIXED(488), none, toFIXED(384), 1);
+            FieldCamera_MoveToFX(toFIXED(488), -1, toFIXED(384), 1);
             FieldCamera_WaitForArrival();
             Actor_ShowEmoteById(ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
             Event_Wait(40);

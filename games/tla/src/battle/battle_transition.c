@@ -272,7 +272,6 @@ void BattleTransition_Run(s32 enemyCount, s32 kind) {
   if ((u32)(kind - FORMATION_DOOM_DRAGON_A) >
       FORMATION_DOOM_DRAGON_C - FORMATION_DOOM_DRAGON_A) {
     s32 y;
-    s32 zero;
 
     Dma_Set(gBattleTransition_CurtainTiles, CURTAIN_TILE(1), DMA_COPY_WORDS(8),
             REG_DMA3);
@@ -322,7 +321,6 @@ void BattleTransition_Run(s32 enemyCount, s32 kind) {
     gBgScroll[1].x = 8;
     gBgScroll[0].y = y;
     gBgScroll[1].y = y;
-    zero = 0;
     wait(1);
     REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
     REG_WIN0V = WIN_RANGE(0, 136);
@@ -337,7 +335,7 @@ void BattleTransition_Run(s32 enemyCount, s32 kind) {
                              DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
                              DISPCNT_WIN0_ON | DISPCNT_WIN1_ON);
     BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_NORMAL + TRANSITION_OPEN_FRAMES);
-    *timer = zero;
+    *timer = 0;
     Task_Add(BattleTransition_AdvanceTimer, TASK_PASS_FRAME);
     Task_Add(BattleTransition_DrawRows, TASK_PASS_VBLANK);
     Irq_SetHandler(IRQ_VCOUNT, TRANSITION_BG0_BAND,

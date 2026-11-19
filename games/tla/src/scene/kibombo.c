@@ -2052,18 +2052,16 @@ void Kibombo_RestoreBlocks(void) {
 /// pixels.
 void Kibombo_HideGroundsBlocks(void) {
   u32 i;
-  FIXED zero;
 
   for (i = 0; i <= 1; i++) {
     s32 id = i + ACTOR_GROUNDS_FIRST_BLOCK;
     struct Actor *actor = Actor_GetById(id);
 
     Actor_Hide(id);
-    zero = 0;
-    actor->motionFlags = zero;
+    actor->motionFlags = 0;
   }
   Actor_GetById(ACTOR_GROUNDS_FIRST_BLOCK)->y.fixed = toFIXED(32);
-  Actor_GetById(ACTOR_GROUNDS_SECOND_BLOCK)->y.fixed = zero;
+  Actor_GetById(ACTOR_GROUNDS_SECOND_BLOCK)->y.fixed = 0;
   Kibombo_RestoreBlocks();
 }
 

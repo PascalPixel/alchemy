@@ -869,7 +869,6 @@ void AirsRock_RideWhirlwind(void) {
   s32 moved, i, height;
   s32 angle;
   u16 facing;
-  s32 still;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -975,7 +974,6 @@ void AirsRock_RideWhirlwind(void) {
                                (angle = FACING_EIGHTH_INDEX(angle)) - 1);
     leader->z.fixed = FIELD_HALF_CELL_ORIGIN(
         (FIELD_HALF_CELL(ride->z.fixed) & ~1) - (angle & 2) + 1);
-    still = 0;
     Actor_SetSpriteFlags(leader, 1);
     leader->velocityY = toFIXED(6);
     leader->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
@@ -984,7 +982,7 @@ void AirsRock_RideWhirlwind(void) {
     camera = FieldCamera_GetActor();
     camera->speedLimit = toFIXED(8);
     camera->acceleration = toFIXED(1);
-    camera->motionFlags = still;
+    camera->motionFlags = 0;
     FieldActor_SetMoveTargetFX(
         camera, leader->x.fixed,
         Map_GetTerrainHeight(0, leader->x.fixed, leader->z.fixed),

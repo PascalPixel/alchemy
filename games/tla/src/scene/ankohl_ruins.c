@@ -807,12 +807,7 @@ void AnkohlRuins_PushedOffLedge(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   actor->motionFlags = 0;
   actor->steeringFlags = 0;
-  {
-    s32 zero;
-
-    zero = 0;
-    Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, zero, 8);
-  }
+  Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 0, 8);
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_ShowEmoteById(gMainRoutineWork.leaderActorId,
                       EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);

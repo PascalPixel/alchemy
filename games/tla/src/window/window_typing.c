@@ -43,7 +43,6 @@ void Window_StepSwellEffect(struct UiChannelSlot *window);
 void Message_UpdateAll(void) {
   struct UiChannelSlot *channel = WINDOW_WORK->channels;
   s32 channelNo = 0;
-  s32 one = 1;
 
   do {
     struct Window *current = channel->work;
@@ -65,7 +64,7 @@ void Message_UpdateAll(void) {
           step = Message_Type(channel);
           switch (step) {
           case CHANNEL_STEP_ENDED:
-            channel->work->state = one;
+            channel->work->state = 1;
             break;
           case CHANNEL_STEP_CLOSE: {
             struct Window *window = channel->work;
@@ -79,7 +78,7 @@ void Message_UpdateAll(void) {
             channel->colour = pending;
             channel->outline = pending;
             channel->lineSpacing = pending;
-            channel->work->state = one;
+            channel->work->state = 1;
             break;
           }
           }

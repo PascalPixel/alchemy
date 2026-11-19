@@ -54,20 +54,18 @@ void PartyStatus_BuildLayoutBounds(s32 flags) {
 /// Opens the party status window, sized by PartyStatus_BuildLayoutBounds, and
 /// draws it, holding the tilemap upload meanwhile.
 void PartyStatus_CreateWindow(s32 flags) {
-  s32 zero;
   struct PartyStatusWindow *window;
   struct WindowWork *work;
 
   window = HeapSlot_AllocEwram(HEAP_SLOT_PARTY_STATUS,
                                sizeof(struct PartyStatusWindow));
   work = (struct WindowWork *)Ram_HeapSlots->windowWork;
-  zero = 0;
   work->holdTilemapUpload = 1;
   PartyStatus_BuildLayoutBounds(flags);
   window->window = (struct Window *)Window_Create(
       window->x, window->y, window->width, window->height, 6);
   PartyStatus_Draw(flags);
-  work->holdTilemapUpload = zero;
+  work->holdTilemapUpload = 0;
 }
 
 /// Draws the vertical lines between the party members' columns of the party

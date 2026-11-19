@@ -190,7 +190,6 @@ void Teleport_PlaySparks(void) {
   s32 angle;
   s32 next;
   s32 frame;
-  s32 zero = 0;
   s32 age;
 
   wait(20);
@@ -233,14 +232,14 @@ void Teleport_PlaySparks(void) {
     for (i = 0; i < count; i++) {
       angle = Random16();
       particle = &work->particles[next];
-      particle->timer = zero;
+      particle->timer = 0;
       SET_POSITION(particle, actor->x.fixed, actor->y.fixed + Random16() * 20,
                    actor->z.fixed);
       Vector_AddPolarOffset(Random16() << 3, angle, &particle->x);
       if (next & 1) {
-        particle->velocityX = zero;
+        particle->velocityX = 0;
         particle->velocityY = -toFIXED(4);
-        particle->velocityZ = zero;
+        particle->velocityZ = 0;
         Vector_AddPolarOffset((Random16() << 2) + toFIXED(4), angle,
                               &work->particles[next].velocityX);
       } else {

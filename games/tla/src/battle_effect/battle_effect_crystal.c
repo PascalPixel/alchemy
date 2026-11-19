@@ -49,17 +49,17 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
   s32 i;
   s32 size;
   s32 offset;
-  /* FAKEMATCH(signature): the map cell buffer's address held as an integer
-   * and summed with its offset first; as u8 *cells and cells + offset. */
-  s32 cells;
+  u8 *cells;
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   discOffsets = (u16 *)(work->sheet + CRYSTAL_DISC_OFFSETS);
-  cells = (s32)gMapGridCellBuffer;
-  Iwram_ClearWords((void *)cells, 32768);
+  cells = gMapGridCellBuffer;
+  Iwram_ClearWords(cells, 32768);
   for (offset = 0, i = 0, size = 2; i != CRYSTAL_DISCS; size += 2, i++) {
-    BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, FIXED_ONE);
+    // As an integer sum, the offset first.
+    BattleEffect_DrawShadedCircles((u8 *)(offset + (s32)cells), size,
+                                   FIXED_ONE);
     discOffsets[i] = offset;
     offset += (i * 2 + 3) * size / 2;
   }
@@ -163,8 +163,8 @@ void BattleEffect_RunCrystal(struct BattleEffectParams *args) {
                 x += (Random16() & 7) - 4;
                 y += (Random16() & 7) - 4;
               }
-              Canvas_BlitAtFoot((u8 *)((s16)discOffsets[disc] + cells), x, y,
-                                width);
+              Canvas_BlitAtFoot((u8 *)((s16)discOffsets[disc] + (s32)cells), x,
+                                y, width);
             }
             orb->y += orb->velocityY;
           }

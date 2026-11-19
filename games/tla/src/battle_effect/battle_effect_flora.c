@@ -894,8 +894,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
           k = 0;
           offset = t << 3;
           for (; k != 8; k++, offset += FLORA_PETAL_SIZE) {
-            /* FAKEMATCH(signature): the address summed as an integer, its
-             * offset first; as sheet + offset. */
+            // As an integer sum, the offset first.
             u8 *d = (u8 *)(offset + (s32)sheet);
 
             for (m = 0; m != 4; m++) {

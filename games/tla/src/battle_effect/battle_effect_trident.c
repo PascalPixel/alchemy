@@ -147,8 +147,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
                              (u8 *)offset + TRIDENT_FLASH_BURST, 1, 0);
   offset = TRIDENT_DISC_PICTURES;
   for (i = 0; i != TRIDENT_DISC_SIZES; i++) {
-    /* FAKEMATCH(signature): the address summed as an integer, its offset
-     * first; as cells + offset. */
+    // As an integer sum, the offset first.
     BattleEffect_DrawShadedCircles((u8 *)(offset + (s32)cells), size,
                                    FIXED_ONE);
     circles[i] = offset;
@@ -300,8 +299,7 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
             s32 tier = index >> 1;
 
             Particle_AdvanceWithGravity2D(p, PARTICLE_DAMPING_NONE, 0);
-            /* FAKEMATCH(signature): the address summed as an integer, its
-             * offset first; as cells + circles[tier]. */
+            // As an integer sum, the offset first.
             Canvas_BlitAtFoot((u8 *)(circles[tier] + (s32)cells), discX, discY,
                               diameter);
           }

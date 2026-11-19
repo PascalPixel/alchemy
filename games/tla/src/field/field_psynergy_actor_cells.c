@@ -32,8 +32,8 @@ void Actor_PlaceBlocks(u16 *actors) {
         actor->layer, actor->x.fixed, actor->z.fixed));
     s32 slot = Actor_GetCellIndex(actor);
     struct MapCell *cells = map->layers[actor->layer].cells;
-    /* FAKEMATCH(temporary): the layer's row of the shape grid as an integer
-     * sum, its index first; as &grid[(cells - Ram_MapCellBuffer) / 4]. */
+    // The layer's row of the shape grid, as an integer sum with its index
+    // first.
     u8 *shapes =
         (u8 *)((((s32)cells - (s32)Ram_MapCellBuffer) >> 2) + (s32)grid);
     struct MapCell *cell;

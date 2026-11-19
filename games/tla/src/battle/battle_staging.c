@@ -127,15 +127,10 @@ void BattleStaging_PlanAuroraField(struct BattlePlan *plan) {
     plan->targetCritical[i] = 0;
     plan->targetHit[i] = 1;
   }
-  {
-    /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
-    s32 zero = 0;
-
-    plan->abilityId = ABILITY_AURORA_FIELD;
-    plan->targetCount = count;
-    plan->battleEffect = EFFECT_ON_DOWNED | 2 << EFFECT_VARIANT_SHIFT | 182;
-    plan->hauntDamage = zero;
-  }
+  plan->targetCount = count;
+  plan->abilityId = ABILITY_AURORA_FIELD;
+  plan->battleEffect = EFFECT_ON_DOWNED | 2 << EFFECT_VARIANT_SHIFT | 182;
+  plan->hauntDamage = 0;
 }
 
 /// Sends every battler back to its spot.

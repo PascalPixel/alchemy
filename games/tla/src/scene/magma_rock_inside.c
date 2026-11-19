@@ -1718,13 +1718,8 @@ void MagmaRockInside_TrackStepCell(void) {
 /// Starts watching the cells the leader steps on in the Blaze tablet's room
 /// (MagmaRockInside_TrackStepCell).
 void MagmaRockInside_StartStepCells(void) {
-  /* FAKEMATCH(temporary): none, -1 held in a local; as -1 at its uses. */
-  s32 none = -1;
-  s32 priority;
-
-  gMagmaRockInside_LastStepCell = none;
-  priority = TASK_PASS_FRAME;
-  FieldTask_AddFrame(MagmaRockInside_TrackStepCell, priority);
+  gMagmaRockInside_LastStepCell = -1;
+  FieldTask_AddFrame(MagmaRockInside_TrackStepCell, TASK_PASS_FRAME);
 }
 
 /// Saves the 1 by 2 cells 64 columns across from the controlled object at

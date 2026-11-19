@@ -3816,12 +3816,10 @@ void TrialRoad_StartRival(s32 mirrored) {
 /// Plays Moapa's recording from the given resource.
 void TrialRoad_PlayRivalRecording(s32 resource) {
   struct TrialRoadReplay *state = (struct TrialRoadReplay *)gSceneState;
-  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
-  s32 zero = 0;
 
-  ((struct TrialRoadLinkWork *)Ram_HeapSlots->trialRoadLink)->resource = zero;
   state->resource = resource;
-  state->point = zero;
+  ((struct TrialRoadLinkWork *)Ram_HeapSlots->trialRoadLink)->resource = 0;
+  state->point = 0;
   state->mode = RIVAL_REPLAY;
   TrialRoad_MoveRival();
 }

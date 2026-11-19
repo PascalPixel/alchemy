@@ -650,14 +650,6 @@ enum TargetStrikeStyle {
 /// The second blitter, the drawing routine in the paired heap slot.
 #define ALT_BLITTER ((DrawRectangle)Ram_HeapSlots->ramCodePaired)
 
-/// The second blitter slot read as what it holds, a drawing routine.
-#define ALTERNATE_BLITTER_SLOT                                                 \
-  (((struct {                                                                  \
-     u8 before[188];                                                           \
-     DrawRectangle draw;                                                       \
-   } *)Ram_HeapSlots)                                                          \
-       ->draw)
-
 /// Builds a blitter for the canvas in heap slot `slot`, for one clip, mirror
 /// and blend mode (BLITTER_ADDITIVE to BLITTER_COPY): where both are constants
 /// they go packed into one word to BattleEffect_LoadBlitter, the shorter call,

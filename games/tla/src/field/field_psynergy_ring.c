@@ -71,6 +71,9 @@ void FieldPsynergy_UpdateRing(void) {
   u16 *phase;
   u16 *tile;
   s32 red;
+  s32 green;
+  s32 blue;
+  FIXED sine;
 
   position[0] = actor->x.fixed;
   position[1] = actor->y.fixed + toFIXED(16);
@@ -90,22 +93,17 @@ void FieldPsynergy_UpdateRing(void) {
     phase = &work->phase;
     red = GLOW_RED;
   cycle:
-    {
-      /* FAKEMATCH(pin): green fixed to a register; as a plain local. */
-      register s32 green asm("r5") =
-          Trig_Sin(((*phase >> 1) + i) * (TRIG_TURN / 32)) * GLOW_GREEN_SWING;
-      s32 blue;
-
-      blue = Trig_Sin(((*phase >> 2) + i) * (TRIG_TURN / 32) +
-                      TRIG_TURN * 9 / 32) *
-             GLOW_BLUE_SWING;
-      green = FIXEDtoINT(green) + GLOW_GREEN;
-      blue = FIXEDtoINT(blue) + GLOW_BLUE;
-      Io_Write16(RGB(red, green, blue),
-                 &((u16 *)&BG_PLTT_COLOR(RING_PALETTE, 0))[i]);
-      ((u16 *)&OBJ_PLTT_COLOR(RING_PALETTE, 0))[i] =
-          ((u16 *)&BG_PLTT_COLOR(RING_PALETTE, 0))[i];
-    }
+    sine = Trig_Sin(((*phase >> 1) + i) * (TRIG_TURN / 32));
+    green = sine * GLOW_GREEN_SWING;
+    sine =
+        Trig_Sin(((*phase >> 2) + i) * (TRIG_TURN / 32) + TRIG_TURN * 9 / 32);
+    blue = sine * GLOW_BLUE_SWING;
+    green = FIXEDtoINT(green) + GLOW_GREEN;
+    blue = FIXEDtoINT(blue) + GLOW_BLUE;
+    Io_Write16(RGB(red, green, blue),
+               &((u16 *)&BG_PLTT_COLOR(RING_PALETTE, 0))[i]);
+    ((u16 *)&OBJ_PLTT_COLOR(RING_PALETTE, 0))[i] =
+        ((u16 *)&BG_PLTT_COLOR(RING_PALETTE, 0))[i];
     if (++i < PALETTE_COLORS)
       goto cycle;
     work->phase++;

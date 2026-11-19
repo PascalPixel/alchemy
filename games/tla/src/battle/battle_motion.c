@@ -18,20 +18,17 @@
 /// Sends unitId back to its spot, landing exactly there (snapToTarget), and
 /// turns it to face the centre at once.
 void BattleMotion_ReturnToSpot(s32 unitId) {
-  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
-  s32 zero;
   struct BattleObject *slot;
   struct MotionObject *object;
 
   slot = BattleObject_Get(unitId);
   object = slot->object;
-  zero = 0;
   object->acceleration = toFIXED(2);
   object->speedLimit = toFIXED(8);
+  object->velocityY = 0;
   object->verticalMotionStrength = BATTLE_UNIT_GRAVITY;
-  object->velocityY = zero;
-  object->verticalMotionPhase = zero;
-  object->autoFaceMotion = zero;
+  object->verticalMotionPhase = 0;
+  object->autoFaceMotion = 0;
   object->snapToTarget = 1;
   Actor_StartIdleFar(object);
   Actor_SetMoveTargetFar(object, slot->anchorX, 0, slot->anchorZ);

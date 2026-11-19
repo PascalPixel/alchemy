@@ -176,9 +176,6 @@ extern struct Trigger gAquaRock_Triggers[];
 extern struct Trigger gAquaRock_SlopesTriggers[];
 extern struct Trigger gAquaRock_MistSabreChestTriggers[];
 
-/// Clears the game flag.
-static __inline__ void GameFlag_ClearBit_(s32 flag) { GameFlag_Clear(flag); }
-
 static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
                                                     s32 z) {
   return Import_ActorCreate(kind, x, y, z);
@@ -187,6 +184,7 @@ static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
 /// Takes `size` bytes from the heap.
 static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
 #include "flags.h"
+#include "field/event.h"
 #include "field/field_sequence_event.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -686,9 +684,7 @@ void AquaRock_MovePillar(s32 unused, s32 id) {
     row = FIELD_CELL(first->z.fixed);
     GameFlag_SetByte(FLAG_PILLAR_COLUMN, column);
     GameFlag_SetByte(FLAG_PILLAR_ROW, row);
-    /* FAKEMATCH(wrapper): the west flag cleared through a call layer; as
-     * GameFlag_Clear. */
-    GameFlag_ClearBit_(FLAG_PILLAR_BEFORE_WEST_MOAI);
+    Event_ClearFlag(FLAG_PILLAR_BEFORE_WEST_MOAI);
     GameFlag_Clear(FLAG_PILLAR_BEFORE_EAST_MOAI);
     if (column == WEST_MOAI_COLUMN && row == MOAI_FRONT_ROW)
       GameFlag_Set(FLAG_PILLAR_BEFORE_WEST_MOAI);

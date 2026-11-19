@@ -830,9 +830,6 @@ void ChampaCliffCaves_ObabaForgesTrident(s32 value) {
   Event_End();
 }
 
-/// Whether the game flag is set.
-static __inline__ s32 GameFlag_Test_(s32 flag) { return GameFlag_Get(flag); }
-
 /// Talking to Obaba at her counter: she takes the next prong the party carries,
 /// right, left then center, or talks of the trident when it has none. From
 /// east of the forge path's column the field menu opens instead.
@@ -866,15 +863,13 @@ first:
   PartyInventory_Remove(item);
 chosen:
   if (item != -1) {
-    /* FAKEMATCH(wrapper): each prong's flag tested through a call layer; as
-     * GameFlag_Get. */
-    if (!GameFlag_Test_(FLAG_OBABA_SAW_FIRST_PRONG)) {
+    if (!Event_GetFlag(FLAG_OBABA_SAW_FIRST_PRONG)) {
       GameFlag_Set(FLAG_OBABA_SAW_FIRST_PRONG);
       ChampaCliffCaves_ObabaSeesAWeapon(item);
-    } else if (!GameFlag_Test_(FLAG_OBABA_SAW_SECOND_PRONG)) {
+    } else if (!Event_GetFlag(FLAG_OBABA_SAW_SECOND_PRONG)) {
       GameFlag_Set(FLAG_OBABA_SAW_SECOND_PRONG);
       ChampaCliffCaves_ObabaAsksForSecondPiece(item);
-    } else if (!GameFlag_Test_(FLAG_TRIDENT_FORGED)) {
+    } else if (!Event_GetFlag(FLAG_TRIDENT_FORGED)) {
       GameFlag_Set(FLAG_TRIDENT_FORGED);
       FieldMapGrid_SetCellHeight(toFIXED(656), toFIXED(208), 0, -4);
       FieldMapGrid_SetCellHeight(toFIXED(656), toFIXED(224), 0, -4);

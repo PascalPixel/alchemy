@@ -543,13 +543,9 @@ void ChampaCliffCaves_FadeColors(u16 *from, u16 *to, s32 frames) {
       red += step * (toRed - red) / frames;
       green += step * (toGreen - green) / frames;
       blue += step * (toBlue - blue) / frames;
-      /* FAKEMATCH(dead): a once-only block around the colour's store. */
-      do {
-        s32 color = RGB(red, green, blue);
-
-        *(u16 *)((u32)&BG_PLTT_COLOR(FORGE_PALETTE, FORGE_FIRST_COLOR) +
-                 offset) = color;
-      } while (0);
+      SET_RGB(*(u16 *)((u32)&BG_PLTT_COLOR(FORGE_PALETTE, FORGE_FIRST_COLOR) +
+                       offset),
+              red, green, blue);
       offset += 2;
     }
     wait(1);

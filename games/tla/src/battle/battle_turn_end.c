@@ -951,8 +951,9 @@ void BattleUnit_ProcessActionEnd(struct BattlePlan *plan) {
       BattlePlayback_Push(PLAYBACK_HIT, unitId);
       BattlePlayback_Push(PLAYBACK_DEFEAT, unitId);
       BattlePlayback_Push(PLAYBACK_UNIT_NAME, unitId);
-      /* FAKEMATCH(temporary): MsgGoesDown and MsgStrengthExhausted counted
-         from MsgReaperCalls. */
+      // MsgGoesDown, "... goes down...", or MsgStrengthExhausted, "...'s
+      // strength is exhausted...", counted from MsgReaperCalls as the ROM
+      // counts them.
       if (unitId <= ALLY_MAX) {
         BattlePlayback_Push(PLAYBACK_MESSAGE, (u32)MsgReaperCalls - 3);
       } else {

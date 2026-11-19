@@ -1082,8 +1082,8 @@ void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags) {
     wait(1);
     Window_ClearInteriorTilesFar(window, 144, 0, 224, 40);
   }
-  /* FAKEMATCH(temporary): "Attack", "Defense", "Agility" and "Luck",
-     MsgStatLabel and the three after it, counted back from MsgExpLabel. */
+  // "Attack", "Defense", "Agility" and "Luck", each counted back from
+  // MsgExpLabel as the ROM counts them.
   Text_DrawMessageAsTilesFar(STAT_LABEL(0), window, 152, 0);
   Text_DrawMessageAsTilesFar(STAT_LABEL(1), window, 152, 8);
   Text_DrawMessageAsTilesFar(STAT_LABEL(2), window, 152, 16);

@@ -2380,21 +2380,17 @@ UNUSED void Prox_StartFallingRocks(void) {
   work->tileBase = tile;
   work->resource = entry;
   rock = work->rocks;
-  sprite = work->sprites;
-  for (i = ARRAY_COUNT(work->rocks) - 1; i >= 0; i--, sprite++, rock++) {
+  for (i = 0; i < (s32)ARRAY_COUNT(work->rocks); i++) {
+    sprite = &work->sprites[i];
     Prox_InitRockSprite(sprite, 8, 8, OBJ_SIZE_16X16, tile);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
     sprite->depth = OAM_DEPTH_WINDOW;
     rock->timer = -1;
+    rock++;
   }
-  {
-    /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
-    s32 zero = 0;
-
-    work->next = zero;
-  }
+  work->next = 0;
   FieldTask_AddFrame(Particle_UpdateFalling, TASK_PASS_FRAME);
 }
 

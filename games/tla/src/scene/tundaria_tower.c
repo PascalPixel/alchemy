@@ -1546,23 +1546,17 @@ void TundariaTower_StartFallingRocks(void) {
   work->tileBase = tile;
   work->resource = resource;
   rock = work->rocks;
-  sprite = work->sprites;
   for (i = 0; i < ROCK_COUNT; i++) {
+    sprite = &work->sprites[i];
     EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tile);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
     sprite->depth = OAM_DEPTH_WINDOW;
     rock->timer = -1;
-    sprite++;
     rock++;
   }
-  {
-    /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
-    s32 zero = 0;
-
-    work->next = zero;
-  }
+  work->next = 0;
   Task_AddFrame(Particle_UpdateFalling, TASK_PASS_FRAME);
 }
 

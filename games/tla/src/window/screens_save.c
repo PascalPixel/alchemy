@@ -439,13 +439,11 @@ s32 Save_BuildFileSummary(void) {
 
     frames = gMainRoutineWork.buildStamp;
     word = (u32 *)gGameFlagBytes;
-    /* FAKEMATCH(barrier): an empty asm reading frames and word. */
-    __asm__("" : : "r"(frames), "r"(word));
     // The checksum's words, counted in fours and multiplied back below.
     n = SAVE_CHECKSUM_WORDS / 4;
     i = 0;
     n <<= 2;
-    summary->frames = frames;
+    Io_Write32(frames, &summary->frames);
     goto test;
     do {
       sum += *word++;

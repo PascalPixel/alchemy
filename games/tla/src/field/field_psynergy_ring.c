@@ -395,11 +395,11 @@ void FieldPsynergy_EndRing(void) {
     mote = work->sparks;
     spark = work->sparkSprites;
     for (i = RING_SPARK_COUNT - 1; i >= 0; i--, spark++, mote++) {
-      /* FAKEMATCH(barrier): an empty asm that opens the loop's body, keeping
-       * the index's mask loaded inside the loop; as the loop without it. */
-      asm("");
       if (mote->timer >= 0) {
-        spark->oam.index = tile + (mote->timer & 3) * 2;
+        // angle carries the spark's age here, as it carried each spark's
+        // heading above.
+        angle = mote->timer;
+        spark->oam.index = tile + (angle & 3) * 2;
         EffectSprite_DrawAtWorldPosition(spark, mote);
         Field_AdvanceWithGravity3D(&mote->x, 62, toFIXED(1) / 2);
       }

@@ -179,7 +179,6 @@ s32 YampiDesertCave_SetLogCells(s32 id) {
   struct Actor *actor = Actor_GetById(id);
   s16 sprite = ((struct Sprite *)actor->sprite)->entries[0]->animationId;
   s16 i;
-  s32 next;
   u32 kind;
   s32 w, h, x, z;
   s32 az;
@@ -188,11 +187,8 @@ s32 YampiDesertCave_SetLogCells(s32 id) {
   i = 0;
   if ((u16)sprite != gYampiDesertCave_LogSprites[i]) {
     do {
-      /* FAKEMATCH(temporary): the step taken in the high halfword, as the push
-       * footprints' copies of this search have it. */
-      next = toFIXED(i + 1);
-      kind = FIXEDtoINT((u32)next);
-      i = FIXEDtoINT(next);
+      kind = (u16)NEXT_HALFWORD(i);
+      i = kind;
     } while (kind < LOG_KIND_COUNT &&
              (u16)sprite != gYampiDesertCave_LogSprites[kind]);
   }

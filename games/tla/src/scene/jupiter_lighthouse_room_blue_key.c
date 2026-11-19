@@ -282,7 +282,7 @@ s32 PushTarget_FillFootprint(s32 id) {
 
   if ((u16)shape != gPushKinds[(u16)i]) {
     do {
-      j = (u16)FIXEDtoINT(INTtoFIXED(i) + INTtoFIXED(1));
+      j = (u16)NEXT_HALFWORD(i);
       i = j;
     } while (j <= PUSH_KINDS - 1 && (u16)shape != gPushKinds[j]);
   }

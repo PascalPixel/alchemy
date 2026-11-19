@@ -2382,7 +2382,6 @@ s32 PushTarget_FillFootprint(s32 id) {
   struct Actor *actor = Actor_GetById(id);
   s16 kind = ((struct Sprite *)actor->sprite)->entries[0]->animationId;
   s16 i = 0;
-  s32 next;
   u32 index;
   s32 a, b;
   s32 fromX, fromZ;
@@ -2390,11 +2389,8 @@ s32 PushTarget_FillFootprint(s32 id) {
 
   if ((u16)kind != gPushKinds[(u16)i]) {
     do {
-      /* FAKEMATCH(temporary): the step taken in the high halfword, as the push
-       * footprints' copies of this search have it. */
-      next = toFIXED(i + 1);
-      index = FIXEDtoINT((u32)next);
-      i = FIXEDtoINT(next);
+      index = (u16)NEXT_HALFWORD(i);
+      i = index;
     } while (index <= PUSH_KINDS - 1 && (u16)kind != gPushKinds[index]);
   }
   fromX = (u16)i;

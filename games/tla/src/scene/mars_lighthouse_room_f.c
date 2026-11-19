@@ -1662,9 +1662,7 @@ s32 PushTarget_FillFootprint(s32 id) {
 
   if ((u16)shape != gPushKinds[(u16)i]) {
     do {
-      /* FAKEMATCH(temporary): the step taken in the high halfword, as the push
-       * footprints' copies of this search have it. */
-      j = (u16)FIXEDtoINT(toFIXED(i + 1));
+      j = (u16)NEXT_HALFWORD(i);
       i = j;
     } while (j <= PUSH_KINDS - 1 && (u16)shape != gPushKinds[j]);
   }

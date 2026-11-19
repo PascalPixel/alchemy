@@ -1131,14 +1131,11 @@ void ApojiiIslands_AddCellMarkers(u32 base, s32 level, s32 restLevel) {
               terrain[(u16)x + ((u16)z << 7)] = MAP_SHAPE_MARKED;
             }
           }
-          /* FAKEMATCH(temporary): the step taken through a 16.16 value, as
-           * the push footprints' searches take theirs; plainly, x++. */
-          x = FIXEDtoINT(toFIXED(x + 1));
+          x = NEXT_HALFWORD(x);
           cell++;
         } while ((u16)x < width);
       }
-      /* FAKEMATCH(temporary): the same step; plainly, z++. */
-      z = FIXEDtoINT(toFIXED(z + 1));
+      z = NEXT_HALFWORD(z);
     } while ((u16)z < height);
   }
 }

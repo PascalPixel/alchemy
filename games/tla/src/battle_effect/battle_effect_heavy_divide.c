@@ -618,7 +618,6 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
     void *vertices;
 
     s32 level;
-    FIXED skullScale;
 
     if (frame == 0) {
       /* FAKEMATCH(temporary): still, 0 in a local; as 0 at its uses. */
@@ -721,10 +720,9 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
     model->mesh = gBattleEffect_SmallSquareMeshReversed;
     for (i = 0; i != WYRD_CURSE_SKULL_COUNT; i++) {
       drop = &work->particles[i];
-      /* FAKEMATCH(dead): skullScale set through its own address in every
-       * turn; as one assignment before the loop. */
-      *&skullScale = FIXED_ONE * 3125 / 8192;
       if (frame > i * 4 + WYRD_CURSE_RISE_FRAME) {
+        FIXED skullScale = FIXED_ONE * 3125 / 8192;
+
         model->shade = zero;
         texture.pixels = work->sheet + WYRD_CURSE_SKULL_PICTURES +
                          (i % 2) * PICTURE_BYTES(BURNING_SKULL);

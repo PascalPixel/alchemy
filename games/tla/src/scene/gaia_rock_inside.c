@@ -2821,7 +2821,7 @@ s32 Scene_Initialize(void) {
         Actor_SelectAnimation(other, 1);
         Actor_SetSpriteColorMode(other, SPRITE_COLOR_BLACK);
         // The high byte of its OAM attribute 2: drawn at priority 3.
-        ((u8 *)other->sprite)[9] |= OBJ_PRIORITY(3) >> 8;
+        ((struct FieldSprite *)other->sprite)->priority = 3;
         other->scaleX = FIXED_ONE * 6 / 5;
         other->scaleY = FIXED_ONE * 6 / 5;
       }

@@ -510,12 +510,9 @@ void ShamanVillage_BlowAwaySand(void) {
           SPRITE_PARTICLE, Actor_GetById(ACTOR_TWISTER_ROCK)->x.fixed,
           Actor_GetById(ACTOR_TWISTER_ROCK)->y.fixed,
           Actor_GetById(ACTOR_TWISTER_ROCK)->z.fixed);
-      /* FAKEMATCH(signature): the rock's priority read from attribute 2's
-       * high byte as a signed byte, masked and shifted. */
-      ((struct SpriteAttr2High *)spark->sprite)->priority =
-          (((s8 *)Actor_GetById(ACTOR_TWISTER_ROCK)->sprite)[9] &
-           (OBJ_PRIORITY(3) >> 8)) >>
-          2;
+      ((struct FieldSprite *)spark->sprite)->priority =
+          ((struct FieldSprite *)Actor_GetById(ACTOR_TWISTER_ROCK)->sprite)
+              ->priority;
       spark->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       spark->motionFlags = 0;
       spark->bounce = spark->x.fixed;

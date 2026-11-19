@@ -17,12 +17,8 @@ void Whirlwind_Update(struct Actor *self) {
   Actor_SetAnimationSpeed(self, ANIMATION_STEP_NORMAL);
   if ((++*(u16 *)&self->timer & 31) == 31)
     Event_PlaySound(SE_WATER_LEVEL);
-  {
-    s8 *to = self->sprite;
-    s8 *from = leader->sprite;
-    u32 a = from[9] & ATTR2_HIGH_PRIORITY_MASK;
-    to[9] = (s8)((to[9] & ~ATTR2_HIGH_PRIORITY_MASK) | a);
-  }
+  ((struct FieldSprite *)self->sprite)->priority =
+      ((struct FieldSprite *)leader->sprite)->priority;
   if (MapGrid_GetCellBehavior(self->x.fixed, self->z.fixed,
                               MAPGRID_LAYER_OVERHEAD) != CELL_BEHAVIOR_WALL) {
     position[0] = self->x.fixed;

@@ -1964,18 +1964,13 @@ void Kibombo_RaiseSmoke(void) {
   if ((gFrameCount & 63) == 0) {
     struct Actor *actor = Import_ActorCreate(SPRITE_DUST_CLOUD, toFIXED(88),
                                              toFIXED(16), toFIXED(314));
-    u8 *part;
-    s32 mask;
 
     if (actor != 0) {
       actor->retainSpriteCache = 2;
       actor->motionFlags = 0;
       actor->timer = 0;
       actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-      /* FAKEMATCH(temporary): the priority bits' mask held in a word local. */
-      mask = ~(OBJ_PRIORITY(3) >> 8);
-      part = (u8 *)actor->sprite;
-      part[9] = (part[9] & mask) | OBJ_PRIORITY(2) >> 8;
+      ((struct FieldSprite *)actor->sprite)->priority = 2;
       Actor_SetSpriteFlags(actor, 0);
       actor->scaleX = FIXED_ONE / 2;
       actor->scaleY = FIXED_ONE / 2;

@@ -1998,8 +1998,6 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
                                   toFIXED(8),
                               anchor->z.fixed);
     if (actor != NULL) {
-      s32 mask;
-
       sprite = actor->sprite;
       Actor_StartScript(actor, gMarsLighthouseAerie_BeaconSparkScript);
       FieldActor_SetSpriteColor(actor, SPRITE_COLOR_GRB);
@@ -2013,12 +2011,7 @@ void MarsLighthouseAerie_RaiseBeaconFire(void) {
       actor->speedLimit = Math_Sin(Random16() * 0xffff >> 20) * 24;
       actor->speedLimit = FIXEDtoINT(anchor->speedLimit);
       sprite->nextFrame = 0;
-      /* FAKEMATCH(signature): the priority bits set through a u8 view of
-       * attribute 2's high byte; as sprite->priority = 1. */
-      /* FAKEMATCH(temporary): the view's mask held in a local; as
-       * ~(OBJ_PRIORITY(3) >> 8) in place. */
-      mask = ~(OBJ_PRIORITY(3) >> 8);
-      ((u8 *)sprite)[9] = (((u8 *)sprite)[9] & mask) | OBJ_PRIORITY(1) >> 8;
+      ((struct FieldSprite *)sprite)->priority = 1;
     }
   }
   if (++gMarsLighthouseAerie_BeaconFireFrame >

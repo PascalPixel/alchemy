@@ -932,7 +932,8 @@ void AnkohlRuins_InitSand(s32 unused) {
   struct AnkohlRuinsSpriteWork *work = &gAnkohlRuins_Sand;
   u32 *tiles = Heap_Alloc(SAND_MASK_BYTES);
   u32 *pixel = tiles;
-  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[1];
+  struct MapLayer *layer =
+      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[1];
   struct AnkohlRuinsSprite *sprite = work->sprites;
   s32 i;
 

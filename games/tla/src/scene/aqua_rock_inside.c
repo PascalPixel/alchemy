@@ -510,7 +510,8 @@ void AquaRockInside_JumpForward(void) { Field_TryJumpForward(); }
 /// Douse on the Water of Life chest's room's east Moai: it fills, the water and
 /// the pillars rise, and the water pillar beside it rises too.
 void AquaRockInside_DouseWaterOfLifeChestEastMoai(s32 unused, s32 id) {
-  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[1];
+  struct MapLayer *layer =
+      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[1];
   s32 i;
   s32 column;
   s32 objectId = id;
@@ -544,7 +545,8 @@ void AquaRockInside_DouseWaterOfLifeChestEastMoai(s32 unused, s32 id) {
 /// Douse on the Water of Life chest's room's west Moai: it fills and the water
 /// and the pillars rise.
 void AquaRockInside_DouseWaterOfLifeChestWestMoai(s32 unused, s32 id) {
-  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[1];
+  struct MapLayer *layer =
+      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[1];
   s32 i;
 
   FieldActor_SetSpriteColor(Actor_Get(id), SPRITE_COLOR_NORMAL);
@@ -878,7 +880,8 @@ void AquaRockInside_DouseRustySwordChestWaterStone(void) {
 /// Douse on the Rusty Sword chest's room's Moai: it fills and the water rises
 /// a level, and the stream can be turned.
 void AquaRockInside_DouseRustySwordChestMoai(s32 unused, s32 id) {
-  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[1];
+  struct MapLayer *layer =
+      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[1];
   s32 i;
 
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_RUSTY_SWORD_CHEST_MOAI),
@@ -1024,7 +1027,8 @@ void AquaRockInside_MovePillarByFalls(s32 unused, s32 id) {
   struct Actor *actor = Actor_GetById(id);
 
   if (FIELD_CELL(actor->x.fixed) == 49) {
-    struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[1];
+    struct MapLayer *layer =
+        &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[1];
     s32 i;
     s32 fade;
 
@@ -1166,7 +1170,8 @@ void AquaRockInside_DouseTearStoneWaterStone(void) {
 
 /// Douse on the Tear Stone's room's Moai: it fills and the water rises.
 void AquaRockInside_DouseTearStoneMoai(s32 unused, s32 id) {
-  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[1];
+  struct MapLayer *layer =
+      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[1];
   s32 i;
 
   FieldActor_SetSpriteColor(Actor_Get(id), SPRITE_COLOR_BRG);
@@ -1192,7 +1197,8 @@ enum { POOL_FLICKERS = 15 };
 
 /// After Parch is learned, the water in the tablet's room sinks with a tremor.
 void AquaRockInside_WaterSinks(void) {
-  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[1];
+  struct MapLayer *layer =
+      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[1];
   s32 i;
 
   Event_Start();
@@ -2228,7 +2234,7 @@ UNUSED void Leader_SpinAway(s32 entrance) {
 /// Draws the scene's pillars: a top sprite for each active one and, when it
 /// stands above its base, a column sprite as tall as its height.
 void AquaRockInside_DrawPillars(void) {
-  s32 *view = &Ram_HeapSlots->mapGrid->viewX;
+  s32 *view = &((struct MapWork *)Ram_HeapSlots->mapGrid)->viewX;
   struct PillarWork *work = &gAquaRockInside_Pillars;
   s32 viewX = view[0];
   struct PillarEntry *entry = work->entries;
@@ -2240,7 +2246,7 @@ void AquaRockInside_DrawPillars(void) {
 
   viewX &= FIELD_PIXEL_MASK;
   viewZ = view[1] & FIELD_PIXEL_MASK;
-  originY = Ram_HeapSlots->mapGrid->origin[1];
+  originY = ((struct MapWork *)Ram_HeapSlots->mapGrid)->origin[1];
   tile = gVramCacheEntries[work->vramEntry].offset >> 5;
 
   for (i = 0; i < PILLAR_ENTRIES; i++) {

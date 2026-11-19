@@ -3411,8 +3411,9 @@ void MagmaRockInside_SpawnDustRing(void) {
 /// Sets the shape of the cell under an actor (Actor_SetCellShape).
 void TrialRoad_SetActorCellShape(s32 level, s32 layer, s32 owner) {
   struct Actor *actor = Actor_GetById(owner);
-  u8 *shape = Ram_MapShapeGrid + (Ram_HeapSlots->mapGrid->layers[layer].cells -
-                                  (struct MapCell *)Ram_MapCellBuffer);
+  u8 *shape = Ram_MapShapeGrid +
+              (((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[layer].cells -
+               (struct MapCell *)Ram_MapCellBuffer);
   s32 value =
       MapGrid_GetTerrainKind(actor->layer, actor->x.fixed, actor->z.fixed);
   s32 height = CELL_HEIGHT_STEPS(

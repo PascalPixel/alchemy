@@ -607,7 +607,8 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_STATUE_SPOTS &&
       (u16)(gMainRoutineWork.entrance - 3) <= 1) {
-    struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[1];
+    struct MapLayer *layer =
+        &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[1];
 
     layer->offsetX = -toFIXED(128);
     layer->offsetY = toFIXED(1096);
@@ -621,7 +622,8 @@ s32 Scene_PrepareMap(void) {
 /// blocks that cell.
 void GaiaRock_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
   struct Actor *actor = Actor_Get(id);
-  struct MapCell *cell = Ram_HeapSlots->mapGrid->layers[2].cells;
+  struct MapCell *cell =
+      ((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2].cells;
   s32 cellX = x / toFIXED(16);
   s32 cellZ = (z - y + toFIXED(1) / 2 - 1) / toFIXED(16);
 

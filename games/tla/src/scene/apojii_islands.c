@@ -787,7 +787,8 @@ void Scroll_HBlank(void) {
 /// Each frame, follows the third map layer's scroll for the split, the water
 /// below it drifting west a pixel every fourth frame.
 void Layer_TrackScroll(void) {
-  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[2];
+  struct MapLayer *layer =
+      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
   s16 y = FIXEDtoINT(layer->y);
 
   gApojiiIslands_SplitLine = 1448 - y;

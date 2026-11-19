@@ -521,7 +521,8 @@ extern s16 gGondowanCliffs_CameraBoxes[];
 
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.next == SCENE_GONDOWAN_CLIFFS)
-    Ram_HeapSlots->mapGrid->cameraBoxes = gGondowanCliffs_CameraBoxes;
+    ((struct MapWork *)Ram_HeapSlots->mapGrid)->cameraBoxes =
+        gGondowanCliffs_CameraBoxes;
   return 0;
 }
 

@@ -3342,7 +3342,8 @@ void GaiaRockInside_SetMazeLayer(s32 layer, s32 keep) {
 /// Stands a statue on the cell at (x, y, z), its wall cell blocked.
 void GaiaRockInside_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
   struct Actor *actor = Actor_Get(id);
-  struct MapCell *cell = Ram_HeapSlots->mapGrid->layers[2].cells;
+  struct MapCell *cell =
+      ((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2].cells;
   s32 column = x / toFIXED(16);
   s32 row = (z - y + toFIXED(1) / 2 - 1) / toFIXED(16);
 

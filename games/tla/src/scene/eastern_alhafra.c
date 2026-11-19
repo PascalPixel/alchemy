@@ -710,7 +710,8 @@ void EasternAlhafra_StartWaveDma(void) {
 /// scroll plus a sine of up to 2 pixels that moves up the screen a line each
 /// frame.
 void EasternAlhafra_FillWaveLines(void) {
-  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[2];
+  struct MapLayer *layer =
+      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
   u16 *line;
   s32 i = 0;
 
@@ -1800,10 +1801,10 @@ void EasternAlhafra_BriggsStealsShip(void) {
   Actor_SetPosition(ACTOR_BRIGGS, 224, 8);
   // "Did you call me a thief?"
   FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
-  Ram_HeapSlots->mapGrid->minX = 0;
-  Ram_HeapSlots->mapGrid->maxX = toFIXED(1024);
-  Ram_HeapSlots->mapGrid->minZ = 0;
-  Ram_HeapSlots->mapGrid->maxZ = toFIXED(1024);
+  ((struct MapWork *)Ram_HeapSlots->mapGrid)->minX = 0;
+  ((struct MapWork *)Ram_HeapSlots->mapGrid)->maxX = toFIXED(1024);
+  ((struct MapWork *)Ram_HeapSlots->mapGrid)->minZ = 0;
+  ((struct MapWork *)Ram_HeapSlots->mapGrid)->maxZ = toFIXED(1024);
   FieldCamera_SetSpeed(4);
   FieldCamera_MoveTo(208, CAMERA_KEEP, 168, 1);
   FieldEvent_Wait(50);

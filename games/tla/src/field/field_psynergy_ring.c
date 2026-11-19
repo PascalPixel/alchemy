@@ -532,7 +532,7 @@ void ViewMove_Swing(s32 direction, s32 phase, FIXED amplitude) {
 
   // Japanese does not check the map's rectangle list here.
 #if TLA_PATCH_1
-  if (Ram_HeapSlots->mapGrid->cameraBoxes != NULL)
+  if (((struct MapWork *)Ram_HeapSlots->mapGrid)->cameraBoxes != NULL)
     return;
 #endif
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP)

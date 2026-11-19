@@ -118,12 +118,12 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// A step trigger (cell behavior 20): the camera keeps south of z 750, short
 /// of the shore's upper part.
 void AncientLemuria_KeepCameraSouth(void) {
-  Ram_HeapSlots->mapGrid->minZ = toFIXED(750);
+  ((struct MapWork *)Ram_HeapSlots->mapGrid)->minZ = toFIXED(750);
 }
 
 /// A step trigger (cell behavior 21): the camera may go north to z 352 again.
 void AncientLemuria_LetCameraNorth(void) {
-  Ram_HeapSlots->mapGrid->minZ = toFIXED(352);
+  ((struct MapWork *)Ram_HeapSlots->mapGrid)->minZ = toFIXED(352);
 }
 
 /// Move lifts the blue statue; nothing else happens.

@@ -30,7 +30,7 @@ void GroundParticles_Start(void) {
   u32 fill = 0;
 
   work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct WeatherWork));
-  leader = Ram_HeapSlots->mapGrid->origin;
+  leader = ((struct MapWork *)Ram_HeapSlots->mapGrid)->origin;
   Scene_QueueMusic(SE_AMBIENT_WATER);
   particle = work->particles;
   Dma_Fill32(fill, work, sizeof(struct WeatherWork));

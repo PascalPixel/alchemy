@@ -35,7 +35,7 @@ struct HeapSlots {
   void *worldMapAffine;                ///< the world map's affine work
   /// The field map's scrolling work, or on the world map its perspective view
   /// (struct WorldMapView).
-  struct MapWork *mapGrid;
+  void *mapGrid;
   struct BattleWork *battleWork; ///< a battle's work, from Battle_Run on
   void *battleScanlines;         ///< the battle background's scanline work
   /// Unused: 640 bytes Battle_Run allocates with the battle's other blocks,

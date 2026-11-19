@@ -702,7 +702,7 @@ void MapGrid_CopyCellPictureIndicesRect(s32 srcX, s32 srcY, u32 dstX, u32 dstY,
                                         u32 width, u32 height) {
   u32 *src = (u32 *)Ram_MapCellBuffer + (srcY * MAPGRID_SIZE + srcX);
   u32 *dst = (u32 *)Ram_MapCellBuffer + (dstY * MAPGRID_SIZE + dstX);
-  struct MapLayer *layer = Ram_HeapSlots->mapGrid->layers;
+  struct MapLayer *layer = ((struct MapWork *)Ram_HeapSlots->mapGrid)->layers;
   struct MapGridTilePosition tile[3];
   s32 i;
   struct MapGridTilePosition *pos = tile;
@@ -876,7 +876,7 @@ void MapGrid_CopyCellPictureCellsRect(s32 srcX, s32 srcY, s32 width, s32 height,
   s32 y;
   u32 *src = (u32 *)gMapGridCellBuffer + (srcY * MAPGRID_SIZE + srcX);
   u32 *dst = &((u32 *)gMapGridCellBuffer)[dstY * MAPGRID_SIZE + dstX];
-  struct MapLayer *layer = Ram_HeapSlots->mapGrid->layers;
+  struct MapLayer *layer = ((struct MapWork *)Ram_HeapSlots->mapGrid)->layers;
   struct MapGridTilePosition views[3];
   s32 i;
   struct MapGridTilePosition *view = views;

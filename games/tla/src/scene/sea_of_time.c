@@ -1141,7 +1141,8 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// palette and ripples the layer's horizontal scroll line by line.
 void SeaOfTime_AnimateSea(void) {
   u16 *line = gSeaOfTime_RippleLines;
-  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[2];
+  struct MapLayer *layer =
+      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
   struct PaletteFade *fade = Ram_HeapSlots->paletteFade;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   s32 i;

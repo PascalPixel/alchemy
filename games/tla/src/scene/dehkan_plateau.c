@@ -955,11 +955,11 @@ void DehkanPlateau_PlaceVinePillar(struct Actor *actor) {
     Map_CopyCellAttributeRect(1, 32, 1, 1, x, 11);
     Event_End();
   } else if (x == 18) {
-    cell = Ram_HeapSlots->mapGrid->layers[0].cells;
+    cell = ((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[0].cells;
     cell += Actor_GetCellIndex(actor);
     cell->attributeB &= ~MAP_CELL_JUMP;
   } else if (x == 54) {
-    cell = Ram_HeapSlots->mapGrid->layers[0].cells;
+    cell = ((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[0].cells;
     cell += Actor_GetCellIndex(actor);
     cell->attributeB &= ~MAP_CELL_JUMP;
     cell->collisionCode = TRIGGER_TIGHTROPES_PILLARS_WEST;
@@ -1685,7 +1685,8 @@ void DehkanPlateau_InitializeTightropes(void) {
     value = pillar->x.fixed;
     zero = 0;
     if (FIELD_CELL(value) == 54) {
-      struct MapCell *cell = Ram_HeapSlots->mapGrid->layers[0].cells;
+      struct MapCell *cell =
+          ((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[0].cells;
 
       cell += Actor_GetCellIndex(pillar);
       cell->attributeB &= ~MAP_CELL_JUMP;

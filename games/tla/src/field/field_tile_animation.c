@@ -530,7 +530,7 @@ void BlendScript_Start(u16 *script) {
   // paused; a script that is only its end marker leaves the blend unset.
   hasScript = 0;
   zero = 0;
-  blend = &Ram_HeapSlots->mapGrid->blend;
+  blend = &((struct MapWork *)Ram_HeapSlots->mapGrid)->blend;
   Dma_Set((const void *)&zero, blend, DMA_FILL_WORDS(sizeof(*blend) / 4),
           REG_DMA3);
   if (*script != BLEND_SCRIPT_LOOP) {

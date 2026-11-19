@@ -33,7 +33,7 @@ s32 Actor_GetScreenPosition(s32 actorId, s32 *position) {
   cameraX = map->viewX & FIELD_PIXEL_MASK;
   cameraZ = map->viewZ & FIELD_PIXEL_MASK;
 #else
-  camera = &Ram_HeapSlots->mapGrid->viewX;
+  camera = &((struct MapWork *)Ram_HeapSlots->mapGrid)->viewX;
   cameraX = camera[0] & FIELD_PIXEL_MASK;
   cameraZ = camera[1] & FIELD_PIXEL_MASK;
 #endif

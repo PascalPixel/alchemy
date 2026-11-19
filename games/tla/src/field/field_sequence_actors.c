@@ -268,11 +268,10 @@ void Actor_ResetForLeader(s32 table) {
     gMainRoutineWork.movementMode = LEADER_MOVEMENT_SHIP_ON_MAP;
   } else {
     gMainRoutineWork.movementMode = LEADER_MOVEMENT_WALK;
-    /* FAKEMATCH(barrier): an empty asm after the store. */
-    asm("");
-    cell = Ram_HeapSlots->mapGrid->layers[actor->layer].cells +
-           ((actor->x.fixed / toFIXED(MAPGRID_CELL_PIXELS)) +
-            ((actor->z.fixed / toFIXED(MAPGRID_CELL_PIXELS)) * MAPGRID_SIZE));
+    cell =
+        ((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[actor->layer].cells +
+        ((actor->x.fixed / toFIXED(MAPGRID_CELL_PIXELS)) +
+         ((actor->z.fixed / toFIXED(MAPGRID_CELL_PIXELS)) * MAPGRID_SIZE));
     above = cell - MAPGRID_SIZE;
     if (gMainRoutineWork.y != 0 && (cell->attributeB & MAP_CELL_CLIMBABLE) &&
         (above->attributeB & MAP_CELL_CLIMBABLE)) {
@@ -311,7 +310,7 @@ void Actor_ResetForLeader(s32 table) {
     meta->colorMode = SPRITE_COLOR_HIDDEN;
     meta->priority = 9;
   }
-  Ram_HeapSlots->mapGrid->origin = &camera->x.fixed;
+  ((struct MapWork *)Ram_HeapSlots->mapGrid)->origin = &camera->x.fixed;
   work->camera = camera;
 }
 
@@ -463,7 +462,7 @@ void Actor_Restore(void) {
       sprite->shadow.priority = priority;
       if (index == Party_GetLeaderActor()) {
         camera = gFieldWork->camera;
-        view = Ram_HeapSlots->mapGrid->origin;
+        view = ((struct MapWork *)Ram_HeapSlots->mapGrid)->origin;
         y = actor->y.fixed;
         camera->x.fixed = actor->x.fixed;
         camera->groundHeight = y;

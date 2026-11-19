@@ -4,7 +4,8 @@
 /// stone.
 void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer) {
   struct Actor *actor = Actor_GetById(id);
-  struct MapCell *cell = Ram_HeapSlots->mapGrid->layers[layer].cells;
+  struct MapCell *cell =
+      ((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[layer].cells;
 
   cell += Actor_GetCellIndex(actor);
   if (GameFlag_Get(flag)) {

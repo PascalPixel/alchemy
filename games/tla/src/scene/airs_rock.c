@@ -1421,7 +1421,8 @@ void AirsRock_WhirlwindOpensTheTop(void) {
 /// The fog: its blend breathes between FOG_WEIGHT and half that while its lines
 /// ripple.
 void AirsRock_DriftFog(void) {
-  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[2];
+  struct MapLayer *layer =
+      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
   s16 *line = gAirsRock_WaveLines;
   s32 i;
   volatile u16 *channel;
@@ -1457,7 +1458,8 @@ void AirsRock_DriftFog(void) {
 /// more the higher it stands above its foot, while the fog's lines ripple and
 /// its blend breathes as in AirsRock_DriftFog.
 void AirsRock_LiftFog(void) {
-  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[2];
+  struct MapLayer *layer =
+      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
   s16 *line = gAirsRock_WaveLines;
   s32 i;
   FIXED wave;
@@ -1508,7 +1510,7 @@ void AirsRock_LiftFog(void) {
 /// and the fog lifts (AirsRock_LiftFog) for good.
 void AirsRock_WhirlwindClearsFog(void) {
   u16 *buffer = Heap_Alloc(2 * WHIRLWIND_TILE_ROW_SIZE);
-  struct MapLayer *fog = &Ram_HeapSlots->mapGrid->layers[2];
+  struct MapLayer *fog = &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
   u16 *cell;
   struct Actor *spark;
   s32 i;

@@ -1096,7 +1096,7 @@ void MagmaRockInside_RaiseLava(void) {
   s32 srcZ = 0;
   FIXED baseX = 0;
   struct MapLayer *layer =
-      &Ram_HeapSlots->mapGrid->layers[MAPGRID_LAYER_MIDDLE];
+      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[MAPGRID_LAYER_MIDDLE];
   struct EffectOptions options;
   s32 position[3];
   // LAVA_ALREADY_UP when the room is already flooded; then the frames the
@@ -2910,8 +2910,9 @@ s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 /// by heightOffset steps of 8 pixels.
 void MagmaRockInside_SetActorCellShape(s32 heightOffset, s32 layer, s32 owner) {
   struct Actor *actor = Actor_GetById(owner);
-  u8 *shape = Ram_MapShapeGrid + (Ram_HeapSlots->mapGrid->layers[layer].cells -
-                                  (struct MapCell *)Ram_MapCellBuffer);
+  u8 *shape = Ram_MapShapeGrid +
+              (((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[layer].cells -
+               (struct MapCell *)Ram_MapCellBuffer);
   s32 value =
       MapGrid_GetTerrainKind(actor->layer, actor->x.fixed, actor->z.fixed);
   s32 height = CELL_HEIGHT_STEPS(

@@ -841,7 +841,8 @@ void Scroll_HBlank(void) {
 
 /// Follows the third map layer's scroll.
 void Layer_TrackScroll(void) {
-  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[2];
+  struct MapLayer *layer =
+      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
   s16 y = FIXEDtoINT(layer->y);
 
   gSettlements_WaterfallLine = 1448 - y;

@@ -2085,7 +2085,7 @@ void JupiterLighthouse_LowerElevator(s32 mode) {
   u32 j;
   struct MapLayer *elevator;
 
-  elevator = &Ram_HeapSlots->mapGrid->layers[2];
+  elevator = &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
   speed = toFIXED(1) / 10;
   count = 0;
   gJupiterLighthouse_ElevatorLevel = elevator->offsetY;
@@ -2174,7 +2174,8 @@ extern s32 gJupiterLighthouse_RisingElevatorRiders[];
 /// The elevator rises back to where it was before it sank, slowing as it nears
 /// it, or with ASCENT_AT_ONCE is only put back.
 void JupiterLighthouse_RaiseElevator(s32 mode) {
-  struct MapLayer *elevator = &Ram_HeapSlots->mapGrid->layers[2];
+  struct MapLayer *elevator =
+      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
   s32 speed = toFIXED(3) / 2;
   u32 count = 0;
   u32 i;

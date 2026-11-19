@@ -1699,8 +1699,6 @@ s32 Scene_Initialize(s32 a0) {
       Task_AddFrame(AnkohlRuins_FlowWithSand, TASK_PASS_FRAME);
     }
   } else if (scene == SCENE_ANKOHL_RUINS_SAND_DOORS) {
-    s16 *entrance = &work->entrance;
-
     if (work->entrance <= 4)
       AnkohlRuins_InitSand(a0);
     if (GameFlag_Get(FLAG_FIRST_SAND_DOOR_OPENED)) {
@@ -1720,10 +1718,7 @@ s32 Scene_Initialize(s32 a0) {
       FIXED level = toFIXED(32);
 
       gAnkohlRuins_Sand.level = level;
-      /* FAKEMATCH(signature): the entrance read through the sand work's type;
-       * as (u16)(*entrance - 1) <= 1, 12 of 989 instructions differ in
-       * tla-en. */
-      if ((u16)(((struct AnkohlRuinsSpriteWork *)entrance)->unused - 1) <= 1) {
+      if ((u16)(work->entrance - 1) <= 1) {
         s32 z;
         s32 x;
 
@@ -1739,7 +1734,7 @@ s32 Scene_Initialize(s32 a0) {
         }
         MapGrid_CopyCellsLayered(69, 6, 1, 2, 68, z);
       }
-      if ((u16)(*entrance - 3) <= 1) {
+      if ((u16)(work->entrance - 3) <= 1) {
         s32 z;
         s32 x;
 
@@ -1980,8 +1975,6 @@ s32 Scene_Initialize(s32 a0) {
       Task_AddFrame(AnkohlRuins_FlowWithSand, TASK_PASS_FRAME);
     }
   } else if (scene == SCENE_ANKOHL_RUINS_SAND_DOORS) {
-    s16 *entrance = &work->entrance;
-
     if (work->entrance <= 4)
       AnkohlRuins_InitSand(a0);
     if (GameFlag_Get(FLAG_FIRST_SAND_DOOR_OPENED)) {
@@ -2001,10 +1994,7 @@ s32 Scene_Initialize(s32 a0) {
       FIXED level = toFIXED(32);
 
       gAnkohlRuins_Sand.level = level;
-      /* FAKEMATCH(signature): the entrance read through the sand work's type;
-       * as (u16)(*entrance - 1) <= 1, 12 of 989 instructions differ in
-       * tla-en. */
-      if ((u16)(((struct AnkohlRuinsSpriteWork *)entrance)->unused - 1) <= 1) {
+      if ((u16)(work->entrance - 1) <= 1) {
         s32 z;
         s32 x;
 
@@ -2020,7 +2010,7 @@ s32 Scene_Initialize(s32 a0) {
         }
         MapGrid_CopyCellsLayered(69, 6, 1, 2, 68, z);
       }
-      if ((u16)(*entrance - 3) <= 1) {
+      if ((u16)(work->entrance - 3) <= 1) {
         s32 z;
         s32 x;
 

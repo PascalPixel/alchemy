@@ -90,8 +90,7 @@ void Weather_UpdateRain(void) {
       particle->priority = 1;
       particle->x = x;
       particle->y = y;
-      /* FAKEMATCH(signature): the tile base read as long. */
-      particle->tile = *(long *)&work->tileBase;
+      particle->tile = work->tileBase;
       particle->shape = 1;
       particle->size = 2;
       Oam_AddSpriteAtDepthClamped(particle, OAM_DEPTH_WINDOW);

@@ -1506,7 +1506,7 @@ void HangingVine_Update(void) {
       continue;
 
     slot->phase += TRIG_TURN / 128;
-    link = slot->root->next;
+    link = ((struct HangingVineLink *)slot->root)->next;
     x = link->x;
     y = link->y;
     z = link->z;
@@ -1656,7 +1656,7 @@ void HangingVine_Hang(s32 objectId, s32 grow) {
   // Hang the links 14 pixels apart, the upper and lower pictures taking turns
   // between the top and the bottom.
   last = 6;
-  tail = &slot->root;
+  tail = (struct HangingVineLink **)&slot->root;
   for (i = 0; i <= last && (link = HangingVine_AllocLink()) != 0; i++) {
     SET_POSITION(link, x, y + toFIXED(15) - i * toFIXED(14), z);
     if (i == 0)
@@ -1724,10 +1724,7 @@ void HangingVine_Swing(s32 id) {
   s32 side = 0;
   struct Actor *leader = Actor_GetById(Party_GetLeaderActor());
   struct Actor *anchor = Actor_GetById(id);
-  /* FAKEMATCH(wrapper): the slot read through a one-member union. */
-  union {
-    struct HangingVineSlot s;
-  } *slot;
+  struct HangingVineSlot *slot;
   struct Sprite *sprite;
   s32 swing;
   s32 start;
@@ -1745,26 +1742,26 @@ void HangingVine_Swing(s32 id) {
   heldSprite = leader->sprite;
   if (leader->x.fixed < anchor->x.fixed)
     side = 1;
-  slot = (void *)HangingVine_FindSlot(id);
+  slot = HangingVine_FindSlot(id);
   if (slot == NULL)
     return;
 
-  start = slot->s.swing;
-  if ((slot->s.phase ^ SIDE_TURN(side)) & (DEGtoANG(180))) {
+  start = slot->swing;
+  if ((slot->phase ^ SIDE_TURN(side)) & (DEGtoANG(180))) {
     for (swing = start; swing >= 0; swing -= VINE_SWING_STEP) {
-      slot->s.swing = swing;
+      slot->swing = swing;
       wait(1);
     }
     start = 0;
   }
   for (swing = start; swing <= VINE_SWING_HELD; swing += VINE_SWING_STEP) {
-    slot->s.swing = swing;
-    slot->s.phase = SIDE_TURN(side) + DEGtoANG(90);
+    slot->swing = swing;
+    slot->phase = SIDE_TURN(side) + DEGtoANG(90);
     wait(1);
   }
-  while ((slot->s.phase & VINE_PHASE_MASK) !=
+  while ((slot->phase & VINE_PHASE_MASK) !=
          SIDE_TURN(side ^ 1) + DEGtoANG(90)) {
-    slot->s.swing = VINE_SWING_HELD;
+    slot->swing = VINE_SWING_HELD;
     wait(1);
   }
 
@@ -1775,40 +1772,40 @@ void HangingVine_Swing(s32 id) {
     dir -= 2;
   } else
     letGo = KEY_DOWN | KEY_RIGHT | KEY_B;
-  slot->s.active = 1;
+  slot->active = 1;
   Actor_SelectAnimationFar(leader, ANIM_LEADER_HANG);
   while (1) {
     // The vine bounces under the leader twice in 64 frames.
-    slot->s.phase = SIDE_TURN(side ^ 1) + DEGtoANG(90);
+    slot->phase = SIDE_TURN(side ^ 1) + DEGtoANG(90);
     switch (gFrameCount & 63) {
     case 0:
     case 16:
-      slot->s.swing = VINE_SWING_HELD + TRIG_TURN / 2048;
-      slot->s.spacing = toFIXED(29) / 2;
+      slot->swing = VINE_SWING_HELD + TRIG_TURN / 2048;
+      slot->spacing = toFIXED(29) / 2;
       sprite->rotation = dir * (TRIG_TURN / 64);
       break;
     case 1:
     case 2:
     case 17:
     case 18:
-      slot->s.swing += TRIG_TURN / 4096;
-      slot->s.spacing += toFIXED(1) / 4;
+      slot->swing += TRIG_TURN / 4096;
+      slot->spacing += toFIXED(1) / 4;
       sprite->rotation += dir * (TRIG_TURN / 128);
       break;
     default:
-      if (slot->s.swing > VINE_SWING_HELD)
-        slot->s.swing -= TRIG_TURN / 2048;
+      if (slot->swing > VINE_SWING_HELD)
+        slot->swing -= TRIG_TURN / 2048;
       else
-        slot->s.swing = VINE_SWING_HELD;
-      if (slot->s.spacing > toFIXED(14))
-        slot->s.spacing -= toFIXED(1) / 32;
+        slot->swing = VINE_SWING_HELD;
+      if (slot->spacing > toFIXED(14))
+        slot->spacing -= toFIXED(1) / 32;
       if (sprite->rotation != 0)
         sprite->rotation -= dir * (TRIG_TURN / 512);
       break;
     }
     if (gInput.pressed & letGo) {
       sprite->rotation = 0;
-      slot->s.active = 1;
+      slot->active = 1;
       return;
     }
     if (gInput.pressed != 0)
@@ -1817,7 +1814,7 @@ void HangingVine_Swing(s32 id) {
   }
 
   sprite->rotation = 0;
-  slot->s.active = 0;
+  slot->active = 0;
   Actor_SelectAnimationFar(leader, ANIM_LEADER_SPRING);
   wait(6);
   Sound_PlayFar(SE_JUMP);
@@ -1830,25 +1827,25 @@ void HangingVine_Swing(s32 id) {
   wait(5);
   Actor_SelectAnimationFar(leader, ANIM_LEADER_SWING);
   leader->motionFlags = 0;
-  rootX = slot->s.root->next->x;
-  rootY = slot->s.root->next->y;
+  rootX = ((struct HangingVineLink *)slot->root)->next->x;
+  rootY = ((struct HangingVineLink *)slot->root)->next->y;
   radius = toFIXED(65);
   steps = 8;
-  while ((slot->s.phase & VINE_PHASE_MASK) !=
+  while ((slot->phase & VINE_PHASE_MASK) !=
          SIDE_TURN(side) + TRIG_TURN * 7 / 32) {
     if (steps != 0) {
       radius += toFIXED(5) / 16;
-      slot->s.spacing += toFIXED(1) / 16;
+      slot->spacing += toFIXED(1) / 16;
       steps--;
     }
-    slot->s.swing = VINE_SWING_CARRYING;
-    slot->s.active = 1;
+    slot->swing = VINE_SWING_CARRYING;
+    slot->active = 1;
     // The leader hangs where the bottom link sways.
     /* FAKEMATCH(dead): the sine taken in a once-only block. */
     do {
-      sine = Trig_Sin(slot->s.phase - 5 * VINE_LINK_LAG);
+      sine = Trig_Sin(slot->phase - 5 * VINE_LINK_LAG);
     } while (0);
-    angle = Iwram_MulFX(sine, slot->s.swing + slot->s.swing * 5 / 2);
+    angle = Iwram_MulFX(sine, slot->swing + slot->swing * 5 / 2);
     leader->x.fixed = rootX - Iwram_MulFX(Trig_Sin(angle), radius);
     leader->y.fixed = rootY - Iwram_MulFX(Trig_Cos(angle), radius);
     leader->targetX = leader->x.fixed;
@@ -1856,21 +1853,21 @@ void HangingVine_Swing(s32 id) {
     heldSprite->rotation = angle;
     wait(1);
   }
-  slot->s.active = 1;
+  slot->active = 1;
   Actor_SelectAnimationFar(leader, ANIM_LEADER_LEAP);
   leader->motionFlags = motionFlags & ~1;
   leader->velocityY = toFIXED(4);
   for (i = 7; i >= 0; i--) {
-    slot->s.spacing -= toFIXED(1) / 16;
+    slot->spacing -= toFIXED(1) / 16;
     wait(1);
   }
-  slot->s.spacing = toFIXED(14);
+  slot->spacing = toFIXED(14);
   heldSprite->rotation = 0;
   Actor_SelectAnimationFar(leader, ANIM_LEADER_SPRING);
   Actor_SetSpriteFlagsFar(leader, 1);
   leader->motionFlags = motionFlags;
   wait(6);
-  slot->s.active = 1;
+  slot->active = 1;
 }
 
 /// Hangs a vine at once from high above actor id down to its feet

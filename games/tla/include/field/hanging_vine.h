@@ -27,8 +27,7 @@ struct HangingVineSlot {
   u8 unusedAfterSpacing[4]; ///< no code names it
   s32 phase;                ///< where the swing is in its arc, an angle
   s32 active;
-  struct HangingVineLink
-      *root; ///< the first link HangingVine_Hang hangs; NULL if free
+  void *root; ///< the first link HangingVine_Hang hangs; NULL if free
 };
 
 /// The hanging vine's work (Ram_HeapSlots->hangingVine): the links' picture,

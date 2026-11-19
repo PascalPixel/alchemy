@@ -262,7 +262,6 @@ s32 Scene_Initialize(void) {
   struct MainRoutineWork *work;
   s32 savedSpeed;
   s32 count;
-  void *p;
   struct Actor *leader;
   struct WindowWork *windowWork;
   struct BgScroll *scroll;
@@ -395,14 +394,8 @@ s32 Scene_Initialize(void) {
   EndingPicture_Show(RESOURCE_ENDING_EMBRACE_PICTURE, Ram_MapCellBuffer, 0);
   FieldEvent_Wait(60);
   // The embrace stays until a button is pressed.
-  goto checkForPress;
-waitForPress:
-  System_Wait(1);
-checkForPress:
-  /* FAKEMATCH(temporary): gInput read through the void pointer p. */
-  p = &gInput;
-  if (((struct InputState *)p)->pressed == 0)
-    goto waitForPress;
+  while (gInput.pressed == 0)
+    System_Wait(1);
   Call3((void (*)())EndingPicture_Show, RESOURCE_ENDING_REUNION_PICTURE,
         (s32)Ram_MapCellBuffer, 0);
   FieldEvent_Wait(120);
@@ -417,9 +410,7 @@ checkForPress:
   EndingPicture_Show(RESOURCE_ENDING_THE_END_PICTURE, Ram_MapCellBuffer, 0);
   FieldEvent_Wait(180);
   Event_PlaySound(SOUND_FADE_OUT_BGM);
-  /* FAKEMATCH(temporary): the speed put back through the void pointer p. */
-  p = &gMainRoutineWork;
-  ((struct MainRoutineWork *)p)->messageSpeed = savedSpeed;
+  gMainRoutineWork.messageSpeed = savedSpeed;
   FieldEvent_Wait(300);
   // The End stays until a button is pressed, or for three minutes.
   count = 0;

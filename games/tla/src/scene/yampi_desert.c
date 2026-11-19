@@ -642,17 +642,12 @@ void YampiDesert_BlockPoundedStakes(u16 *list) {
 /// As Sand ends, makes each stake's cell in the overhead layer sand again.
 void YampiDesert_OpenStakeCells(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct MapCell *cell;
-  s32 collisionCode;
 
-  while (*list != ACTOR_LIST_END) {
-    cell = &map->layers[2].cells[Actor_GetCellIndex(Actor_GetById(*list))];
-    collisionCode = CELL_BEHAVIOR_SAND;
-    /* FAKEMATCH(dead): the advance in a once-only block. */
-    do {
-      list += 3;
-    } while (0);
-    cell->collisionCode = collisionCode;
+  for (; *list != ACTOR_LIST_END; list += 3) {
+    struct MapCell *cell =
+        &map->layers[2].cells[Actor_GetCellIndex(Actor_GetById(list[0]))];
+
+    cell->collisionCode = CELL_BEHAVIOR_SAND;
   }
 }
 

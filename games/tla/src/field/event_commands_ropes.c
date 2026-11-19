@@ -596,12 +596,10 @@ void Rope_Untie(s32 index, s32 fromId, s32 toId) {
 /// clearing its flag, starting four frames after both posts start to unwind.
 s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z) {
   struct RopeWork *work = ROPE_WORK;
-  /* FAKEMATCH(temporary): zero held in a local; as 0. */
-  s32 zero = 0;
+  s32 i = 0;
   struct RopeSlot *slot = &work->slots[index];
   struct RopeNode *node = slot->head;
   void **cursor;
-  s32 i;
   s32 angle;
   s32 radius;
   s32 lastZ;
@@ -613,10 +611,10 @@ s32 Rope_Recoil(s32 index, s32 x, s32 y, s32 z) {
 
   if (slot->state == 0)
     return;
-  slot->state = zero;
+  slot->state = 0;
   segments = slot->segments;
   cursor = nodes = Heap_Alloc(512);
-  slot->swinging = zero;
+  slot->swinging = 0;
   if (slot->flag != 0)
     GameFlag_Clear(slot->flag);
   if (segments >= 0) {

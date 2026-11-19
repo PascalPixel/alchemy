@@ -1091,10 +1091,7 @@ void Map_ApplyFlagEdits(s32 flag, s32 attributes) {
 void Map_GetHeaderSize(s32 map, s32 *bounds) {
   struct MapHeader *header;
 
-  /* FAKEMATCH(signature): gMaps' row address held and summed as an integer;
-   * as gMaps[map].header. */
-  header = MAPGRID_RESOURCE(
-      *(const u16 *)(map * sizeof(struct MapResources) + (u32)gMaps));
+  header = MAPGRID_RESOURCE((gMaps + map)->header);
   bounds[0] = header->cameraBounds[0];
   if (header->cameraBounds[2] == 0)
     bounds[1] = MAPGRID_TILES;

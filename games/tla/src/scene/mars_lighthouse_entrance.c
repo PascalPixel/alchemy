@@ -207,13 +207,6 @@ enum MarsLighthouseEntranceValkyrieMailChestActorId {
   ACTOR_VALKYRIE_SPARKLE, ///< the sparkle that leaves the lit torch
   ACTOR_VALKYRIE_FIREBALL ///< the fireball the sparkle sets rolling
 };
-/// The ride work seen from one flame thrower's entry: the work's header, then
-/// the entry, as the getters below index it.
-struct RideRow {
-  u8 beforeEntries[20];
-  struct RideEntry entry;
-};
-
 extern u8 gInventorySnapshot[];
 
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
@@ -1493,9 +1486,9 @@ void Ride_SetEntryState(s32 index, s32 value) {
 
 /// Flame thrower `index`'s flags: which flame it sends and how far.
 UNUSED s32 Ride_GetEntryFlags(s32 index) {
-  return ((struct RideRow *)((u8 *)RIDE_WORK +
-                             index * sizeof(struct RideEntry)))
-      ->entry.flags;
+  struct FlameHitWork *work = RIDE_WORK;
+
+  return (work->entries + index)->flags;
 }
 
 /// Sets the actor the flames check against in slot `index`.

@@ -1435,13 +1435,6 @@ typedef struct Actor Actor;
 
 #include "shared/ride_create.c"
 
-/// The ride work seen from one flame thrower's entry: the work's header, then
-/// the entry, as the getters below index it.
-struct RideRow {
-  u8 beforeEntries[20];
-  struct RideEntry entry;
-};
-
 void Actor_SetupScriptedFor(struct Actor *actor, s32 unused);
 
 #include "shared/ride_release_handle.h"

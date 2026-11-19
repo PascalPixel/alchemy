@@ -101,7 +101,9 @@ extern u16 gClear_ImportedFlags[];
 
 struct Window;
 
-void DataTransfer_Apply(void *save, s32 byPassword, s32 update);
+// The scene passes it a third argument it does not take, 0 for a new game and
+// 1 for Update.
+void DataTransfer_Apply(u8 *save, s32 byPassword);
 void DataTransfer_GiveDefaultDjinn(void);
 void ClearData_Apply(void *data);
 extern u8 gClear_FirstPasswordRow[];
@@ -310,8 +312,6 @@ s32 Scene_Initialize(void) {
   u32 mask;
   s32 result, i, limit, status, message, recovery;
 
-  /* FAKEMATCH(signature): DataTransfer_Apply called with a third argument it
-     does not take, 0 for a new game and 1 for Update. */
   Clear_LoadBackground();
   Task_Add(Clear_CheckButtonCodes, TASK_PASS_FRAME);
   gFieldWork->transition = started;
@@ -411,7 +411,7 @@ top:
           if (status == -1) {
             continue;
           }
-          DataTransfer_Apply(TRANSFERRED_SAVE, 0, 0);
+          Call3((void (*)())DataTransfer_Apply, (s32)TRANSFERRED_SAVE, 0, 0);
         } else if (result == TRANSFER_METHOD_PASSWORD) {
           KEEP_SAVE_IMAGE();
           MainRoutineWork_InitializeDefaults();
@@ -425,7 +425,7 @@ top:
           Clear_EnterPassword();
           RESTORE_SAVE_IMAGE()
 #endif
-          DataTransfer_Apply(TRANSFERRED_SAVE, 1, 0);
+          Call3((void (*)())DataTransfer_Apply, (s32)TRANSFERRED_SAVE, 1, 0);
         }
         break;
       }
@@ -594,7 +594,7 @@ link:
       if (status == -1) {
         continue;
       }
-      DataTransfer_Apply(TRANSFERRED_SAVE, 0, 1);
+      Call3((void (*)())DataTransfer_Apply, (s32)TRANSFERRED_SAVE, 0, 1);
     } else if (result == TRANSFER_METHOD_PASSWORD) {
       KEEP_SAVE_IMAGE();
       MainRoutineWork_InitializeDefaults();
@@ -603,7 +603,7 @@ link:
       if (status == -1) {
         continue;
       }
-      DataTransfer_Apply(TRANSFERRED_SAVE, 1, 1);
+      Call3((void (*)())DataTransfer_Apply, (s32)TRANSFERRED_SAVE, 1, 1);
     }
     break;
   }

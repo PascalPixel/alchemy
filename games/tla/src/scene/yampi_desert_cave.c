@@ -232,7 +232,7 @@ struct LogSlide {
   FIXED x, y, z;          ///< the log's position at the end of the slide
   s32 kind;               ///< its row of gYampiDesertCave_LogFootprints
   s32 slot;               ///< its actor id
-  void (*onPushed)(void); ///< run as the log slides, if not NULL
+  void *onPushed;         ///< run as the log slides, if not NULL
 };
 
 /// Finds the log the leader faces and can push: its kind, its actor slot and
@@ -384,10 +384,7 @@ void Pound_SinkTarget(u16 *list, s32 mode, s32 count);
 void Teleport_PlaySparks(void);
 
 void YampiDesertCave_PushLog(struct LogSlide slide) {
-  /* FAKEMATCH(signature): the map work read through the heap slots as words;
-     as Ram_HeapSlots->mapGrid. */
-  struct MapWork *map =
-      (struct MapWork *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 w, h;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *actor = Actor_GetById(slide.slot);
@@ -458,7 +455,7 @@ void YampiDesertCave_PushLog(struct LogSlide slide) {
 #endif
   }
   if (slide.onPushed != NULL)
-    slide.onPushed();
+    ((void (*)(void))slide.onPushed)();
   Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   leader->update = NULL;

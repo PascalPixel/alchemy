@@ -241,13 +241,6 @@ struct ListedActor {
   u16 id;
 };
 
-/// The heap slots read as words: the map slot comes through u32, not its
-/// pointer type, so its load stays behind the stores of the block.
-struct HeapSlotWords {
-  u32 slots[8];
-  u32 mapWork;
-};
-
 /// An event's message counter, read as a word or as its halfword (Gabomba
 /// Catacombs' centred lines).
 union EventLine {

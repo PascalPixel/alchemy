@@ -1020,15 +1020,14 @@ void LuckyDice_Run(void) {
     }
 
     for (index = 0; index != DICE_RESULT_COUNT; index++) {
-      // The sprite's matrix: its scale on the diagonal and none across.
+      // The sprite's matrix: its scale on the diagonal and none across, each
+      // element stored through its address.
       u16 affineA;
       u16 affineB;
       u16 affineC;
       u16 affineD;
 
       affineScale = spriteDepth[index] / 2 + DICE_NEAREST_SCALE;
-      /* FAKEMATCH(dead): each element stored through its own address; as
-       * affineA = affineScale and so on. */
       *&affineA = affineScale;
       *&affineB = 0;
       *&affineC = 0;

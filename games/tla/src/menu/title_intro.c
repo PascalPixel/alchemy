@@ -937,7 +937,7 @@ s32 TitleIntro_Run(void) {
     TitleIntro_ShowLighthouse();
   gOamCopyEnabled = 1;
   wait(1);
-  /* FAKEMATCH(temporary): result reused as the counter. */
+  // result is reused as the counter.
   for (result = 0; result < 4; result++)
     gBgScroll[result].x = gBgScroll[result].y = 0;
   REG_DISPCNT = 0;

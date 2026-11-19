@@ -30,8 +30,9 @@
 ///
 /// Abilities: Condemn.
 void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
-  struct BattleEffectWork *work;
-  void *canvas;
+  struct BattleEffectWork *work = Ram_HeapSlots->battleEffect;
+  void *canvas = Ram_HeapSlots->battleCanvas;
+  s32 transferValue = 0; // what the canvas is cleared to after each copy
   BlitterPair draw;
   /* LEFTOVER(frame): position[1], which the ROM's frame reserves and never
    * touches; as one struct ScreenPoint. */
@@ -40,15 +41,8 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   s32 drawReaper;
   s32 pictureColumn;
   s32 pictureRow;
-  s32 transferValue;
   u8 *cells;
   s32 frame;
-
-  work = Ram_HeapSlots->battleEffect;
-  canvas = Ram_HeapSlots->battleCanvas;
-  /* FAKEMATCH(temporary): the canvas's clear word held in a local; as 0 passed
-   * to EFFECT_START_TRANSFER. */
-  transferValue = 0;
 
   BattleEffect_StartTiledCanvas(BGCNT_WRAP);
   REG_BG2PA = Q_8_8(1);

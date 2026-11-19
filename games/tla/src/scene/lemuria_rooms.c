@@ -818,20 +818,16 @@ void Actor_StartScript(struct Actor *actor, const void *script);
 void LemuriaRooms_PopQuestionMark(FIXED x, FIXED y, FIXED z, u16 rotation,
                                   s32 frames) {
   struct Actor *actor;
-  struct AnimatedSprite *sprite;
+  struct Sprite *sprite;
 
   actor = Import_ActorCreate(SPRITE_EMOTE, x, y, z);
   if (actor != 0) {
-    sprite = (struct AnimatedSprite *)actor->sprite;
+    sprite = actor->sprite;
     Actor_SelectAnimation(actor, EMOTE_QUESTION);
     Actor_StartScript(actor, gLemuriaRooms_QuestionMarkScript);
     actor->motionFlags = 0;
-    {
-      /* FAKEMATCH(barrier): the empty asm before the frames' store. */
-      __asm__("");
-      actor->wait = frames;
-    }
-    sprite->nextFrame = 0;
+    actor->wait = frames;
+    sprite->flags = 0;
     sprite->rotation = rotation;
   }
 }

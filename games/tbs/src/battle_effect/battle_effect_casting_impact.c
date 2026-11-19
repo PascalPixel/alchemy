@@ -1162,26 +1162,15 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
       } else if (mode == CASTING_IMPACT_IMPACT_FORCIBLE_ARM ||
                  mode == CASTING_IMPACT_IMPACT_TRUNCHEON_FIST) {
         // A flame falls diagonally onto the target over six frames.
-        s32 offset;
         s32 imageX;
         s32 imageY;
         if (frame <= 5) {
           if (work->args->side == EFFECT_SIDE_ENEMIES) {
-            /* FAKEMATCH(temporary): imageX halves targetPos.x written out, its
-             * sign bit added before the shift, in both arms. */
-            imageX = targetPos.x;
-            imageX += (u32)imageX >> 31;
-            imageX >>= 1;
-            offset = (6 - frame) * 3;
-            imageX += offset * 2;
-            imageY = targetPos.y - offset * 4 + 24;
+            imageX = targetPos.x / 2 + (6 - frame) * 6;
+            imageY = targetPos.y - (6 - frame) * 12 + 24;
           } else {
-            imageX = targetPos.x;
-            imageX += (u32)imageX >> 31;
-            imageX >>= 1;
-            offset = (6 - frame) * 3;
-            imageX -= offset * 2;
-            imageY = targetPos.y - offset * 4 + 24;
+            imageX = targetPos.x / 2 - (6 - frame) * 6;
+            imageY = targetPos.y - (6 - frame) * 12 + 24;
           }
           blitters[1](canvas, pictures, imageX - FALLING_FLAME_WIDTH / 2,
                       imageY - FALLING_FLAME_HEIGHT / 2, FALLING_FLAME_WIDTH,

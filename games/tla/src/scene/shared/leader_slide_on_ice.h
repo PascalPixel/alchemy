@@ -100,14 +100,11 @@ top:
         }
       }
     }
-    /* FAKEMATCH(dead): the form kept; as next set once, at the head of the
-     * loop. */
-    next = &probe;
-    x = next->x;
-    z = next->z;
+    x = probe.x;
+    z = probe.z;
     actor->speedLimit = toFIXED(2);
     actor->acceleration = toFIXED(1) / 10;
-    FieldActor_SetMoveTargetFX(actor, next->x, next->y, next->z);
+    FieldActor_SetMoveTargetFX(actor, probe.x, probe.y, probe.z);
     FieldActor_WaitForMove(actor);
     if (nextBehavior != startBehavior) {
       goto blocked;

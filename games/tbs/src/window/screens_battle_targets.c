@@ -274,6 +274,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
                          WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
                              WINDOW_FLAG_OUTLINED_TEXT);
   do {
+    /* FAKEMATCH(temporary): firstSprite holds &cursorSprites[0]. */
     firstSprite = cursorSprites;
     drawCursors = 0;
     {

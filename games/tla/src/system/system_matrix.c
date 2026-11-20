@@ -357,8 +357,7 @@ void Matrix_RotateTranslateScale(s32 *angles, FIXED *position, FIXED *scale) {
 /// Builds in `out` the camera matrix of an eye at `eye` looking at `target`.
 /// The camera's sideways axis is kept level (no Y component).
 void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
-  /* FAKEMATCH(pin): dot fixed to a register. */
-  register Dot3Fn dot asm("r10");
+  Dot3Fn dot;
   u32 code[8];
   s32 dx, dy, dz;
   s32 ux;
@@ -376,12 +375,13 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
 
   // Copy the dot-product routine to the stack and call it there.
   {
-    dot = (Dot3Fn)code;
     mul = Iwram_MulFX;
+    /* FAKEMATCH(barrier): an empty asm sets dot to code, clobbers r3, r9. */
+    asm("" : "=r"(dot) : "0"((Dot3Fn)code) : "r3", "r9");
     divide = Iwram_UnsignedDivideEntry;
+    /* FAKEMATCH(barrier): an empty asm on divide, reads dot, clobbers r1. */
+    asm("" : "+r"(divide) : "r"(dot) : "r1");
     Dma_Set(RelocatedInnerProduct, code, DMA_COPY_WORDS(8), REG_DMA3);
-    /* FAKEMATCH(barrier): an empty asm on divide. */
-    asm("" : "+r"(divide));
   }
 
   // The view axis d, pointing from the target back to the eye, normalized:
@@ -414,8 +414,6 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
   vy = mul(dz, ux) - mul(dx, uz);
   vz = -mul(dy, ux);
   scale = divide(dividend, Math_SqrtFX(dot(vx, vx, vy, vy, vz, vz))) << 1;
-  /* FAKEMATCH(barrier): an empty asm that clobbers r9. */
-  asm("" : : : "r9");
   vx = mul(vx, scale);
   vy = mul(vy, scale);
   vz = mul(vz, scale);
@@ -425,6 +423,8 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
   // Place the three axes in columns; translation uses dot products with
   // eye.
   ex = eye[0];
+  /* FAKEMATCH(barrier): an empty asm on vz that clobbers r9. */
+  asm("" : "+r"(vz) : : "r9");
   ey = eye[1];
   ez = eye[2];
   out[0] = ux;

@@ -670,6 +670,7 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
   struct Actor *leader;
   struct Actor *actor;
   s32 i;
+  u16 *color = (u16 *)&CENTERED_TEXT_COLOR;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -715,16 +716,7 @@ void MarsLighthouseStarRoom_TakeMarsStar(void) {
     PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_ALL);
     PaletteFade_Interpolate(20);
     System_Wait(20);
-    {
-      /* FAKEMATCH(temporary): white held in a one-member struct, stored
-       * as CENTERED_TEXT_COLOR = RGB_WHITE in the plain way. */
-      struct {
-        u16 value;
-      } white;
-
-      white.value = RGB_WHITE;
-      CENTERED_TEXT_COLOR = white.value;
-    }
+    *color = RGB_WHITE;
     System_Wait(1);
     FieldMessage_ShowCentered((s32)MsgMarsLighthouseStarRoomYouWhoHoldStarOpen,
                               0, 0);

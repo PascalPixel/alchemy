@@ -3635,26 +3635,18 @@ static inline void *TrialRoadLink_AllocPicture(void) {
 #define MARKER(left, right, which, tileAdd)                                    \
   do {                                                                         \
     s32 lift;                                                                  \
-    /* FAKEMATCH(pin): originZ fixed to a register. */                         \
-    register s32 *originZ asm("r6");                                           \
-    s32 arg;                                                                   \
     s32 side = gMainRoutineWork.entrance & 1;                                  \
     if (side) {                                                                \
       x = (actor->x.fixed - work->originX) / toFIXED(16) left;                 \
-      arg = which;                                                             \
+      lift = TrialRoad_GetStage(which);                                        \
+      y = (actor->z.fixed - work->originZ) / toFIXED(16) + work->scrollY -     \
+          lift * RACE_MAP_STAGE_SPACING + 4;                                   \
     } else {                                                                   \
       x = (actor->x.fixed - work->originX) / toFIXED(16) right;                \
-      arg = which;                                                             \
+      lift = TrialRoad_GetStage(which);                                        \
+      y = (actor->z.fixed - work->originZ) / toFIXED(16) + work->scrollY -     \
+          lift * RACE_MAP_STAGE_SPACING + 4;                                   \
     }                                                                          \
-    /* FAKEMATCH(barrier): an empty asm on arg. */                             \
-    asm("" : "+r"(arg));                                                       \
-    originZ = &work->originZ;                                                  \
-    lift = TrialRoad_GetStage(arg);                                            \
-    y = (actor->z.fixed - *originZ) / toFIXED(16) + work->scrollY -            \
-        lift * RACE_MAP_STAGE_SPACING + 4;                                     \
-    /* FAKEMATCH(dead): an empty once-only block. */                           \
-    do {                                                                       \
-    } while (0);                                                               \
     x &= 511;                                                                  \
     y &= 255;                                                                  \
     *cursor++ = 0;                                                             \

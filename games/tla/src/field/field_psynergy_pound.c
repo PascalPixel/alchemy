@@ -370,14 +370,11 @@ void FieldPsynergy_Pound(void) {
 /// dropped. The Scoop draws its rising picture with it.
 void Picture_ShiftColumnsByWave(u8 *source, u8 *destination, s32 phase) {
   s32 width = WAVE_PICTURE_SIZE;
-  s32 height;
+  s32 height = WAVE_PICTURE_SIZE;
   s32 column;
   s32 row;
 
-  Iwram_ClearWordsEntry(destination, WAVE_PICTURE_SIZE * WAVE_PICTURE_SIZE);
-  /* FAKEMATCH(temporary): the height set after the clear; as
-   * s32 height = WAVE_PICTURE_SIZE. */
-  height = WAVE_PICTURE_SIZE;
+  Iwram_ClearWords(destination, WAVE_PICTURE_SIZE * WAVE_PICTURE_SIZE);
   for (column = 0; column < width; column++) {
     FIXED wave = Trig_Sin(column * (TRIG_TURN / 8)) * 8 + FIXED_ONE * 8;
 

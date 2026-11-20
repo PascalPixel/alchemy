@@ -18,11 +18,6 @@ UNUSED void BattleEffect_InitializeTilemapAndFlushQueue(void) {
   BattleEffect_EndCanvasLayer();
 }
 
-/// Runs the impact burst at (x, y) in a formation.
-static __inline__ void Cybele_RunImpactBurst(s32 formation, s32 x, s32 y) {
-  BattleEffect_RunImpactBurst(formation, x, y);
-}
-
 #define CYBELE_FRAMES 366
 /// The first target lands on its spreading ring, sixteen frames after it is
 /// dropped; the others follow.
@@ -96,6 +91,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
   struct BattleEffectWork *work;
   u8 *canvas;
   s32 frame;
+  FIXED cybeleX = toFIXED(128);
   FIXED height;
   FIXED speed;
   s32 phase;
@@ -201,7 +197,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
     height += speed;
     if (height > toFIXED(64))
       height = toFIXED(64);
-    BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_CYBELE, toFIXED(128),
+    BattleEffect_PlaceFormationObjects(SUMMON_FORMATION_CYBELE, cybeleX,
                                        height);
     if (frame >= 48 && frame <= 96) {
       s32 pose = (frame - 48) / 24 % 3;
@@ -551,8 +547,7 @@ void BattleEffect_RunCybele(struct BattleEffectParams *args) {
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
   EFFECT_RELEASE_BLITTERS();
   EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-  /* FAKEMATCH(wrapper): the burst through Cybele_RunImpactBurst. */
-  Cybele_RunImpactBurst(SUMMON_FORMATION_CYBELE, toFIXED(128), height);
+  BattleEffect_RunImpactBurst(SUMMON_FORMATION_CYBELE, cybeleX, height);
   for (i = 0; i != CYBELE_SPRITES; i++)
     Sprite_DestroyFar(work->sprites[i]);
   BattleEffect_EndCanvasLayer();

@@ -314,7 +314,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   struct ModelTexture quadTexture;
   struct Scale mageScale;
   struct BattleWork *battle;
-  s32 mask;
+  s32 mask = RGB_LEVEL_MAX;
 
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;
@@ -324,7 +324,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
   skip = 0;
   BattleEffect_SelectLivingTargets(work->args);
   // The battle background darkens to black, its green first.
-  for (frame = 0, mask = RGB_LEVEL_MAX; frame != 32; frame++) {
+  for (frame = 0; frame != 32; frame++) {
     volatile u16 *c = (volatile u16 *)&BG_PLTT_COLOR(6, 0);
 
     for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++, c++) {

@@ -1756,6 +1756,8 @@ extern u16 gDehkanPlateau_FallLandingCells[];
         x = *entry++;                                                          \
         y = *entry++;                                                          \
         {                                                                      \
+          /* FAKEMATCH(temporary): the copies' width of one cell held in a     \
+           * local; as 1 written at them. */                                   \
           s32 width = 1;                                                       \
                                                                                \
           MapGrid_CopyCellsTo(sourceX, sourceZ, x, y, width, 1);               \

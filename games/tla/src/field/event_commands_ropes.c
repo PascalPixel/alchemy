@@ -1023,16 +1023,14 @@ s32 Tightrope_LayBowed(s32 index, s32 x, s32 y, s32 z, s32 toX, s32 toY,
                  1;
   struct TightropeNode *node = work->slots[index].head;
   s32 i;
-  /* FAKEMATCH(temporary): one held in a local, the step and the nodes' kind;
-   * as i++ and ROPE_NODE_CROSSABLE. */
-  s32 one = 1;
+  s32 kind = ROPE_NODE_CROSSABLE;
 
-  for (i = 0; i <= segments; i += one) {
+  for (i = 0; i <= segments; i++) {
     FIXED bow = IwramMulFX(Trig_Sin(i * (TRIG_TURN / 2) / segments), height);
 
     SET_POSITION(node, x + i * dx / segments, y + i * dy / segments + bow,
                  z + i * dz / segments);
-    node->kind = one;
+    node->kind = kind;
     node = node->next;
   }
   return 0;

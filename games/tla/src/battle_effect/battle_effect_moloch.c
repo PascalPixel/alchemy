@@ -3027,12 +3027,12 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
 
   {
     u32 words = (u32)runSize / 4;
-    /* FAKEMATCH(pin): count fixed to a register. */
-    register s32 count __asm__("r2") = words * 4;
-    s32 size = count;
+    s32 count = words * 4;
+    s32 size;
 
-    /* FAKEMATCH(barrier): an empty asm. */
-    __asm__("" : : "r"(words));
+    /* FAKEMATCH(barrier): an empty asm that copies count into size, with
+     * words as an input. */
+    __asm__("" : "=r"(size) : "0"(count), "r"(words));
     Dma_Set(runCopy, dst, DMA_COPY_WORDS(count / 4), REG_DMA3);
     dst = (u32 *)((u8 *)dst + size);
   }

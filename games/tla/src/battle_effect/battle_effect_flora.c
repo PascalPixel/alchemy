@@ -1291,11 +1291,7 @@ void BattleEffect_RunBackstab(struct BattleEffectParams *args) {
     EFFECT_END_FRAME(work);
   }
 
-  {
-    s32 cleared = 0;
-
-    battle->keepObjectPriorities = cleared;
-  }
+  battle->keepObjectPriorities = 0;
   Task_Remove((s32)BattleEffect_ProcessPendingGraphicsTransfer);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
   BattleEffect_EndCanvasLayer();

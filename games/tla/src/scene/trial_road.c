@@ -1469,12 +1469,12 @@ void TrialRoad_LiftCaveRock(void) { GameFlag_Set(FLAG_CAVE_ROCK_LIFTED); }
 
 /// Cyclone ("Conjure wind to scatter weeds.") scatters the weeds it touches.
 void TrialRoad_ScatterWeeds(void) {
-  Cyclone_CopyTouchedCells_(68, 6, MAPGRID_LAYER_MIDDLE, 21, 13, 64, 64);
+  FieldCyclone_CopyTouchedCells(68, 6, MAPGRID_LAYER_MIDDLE, 21, 13, 64, 64);
 }
 
 /// Cyclone scatters the weeds, and the Mad Plant hiding in them attacks.
 void TrialRoad_ScatterWeedsHidingMadPlant(void) {
-  Cyclone_CopyTouchedCells_(68, 6, MAPGRID_LAYER_MIDDLE, 21, 13, 64, 64);
+  FieldCyclone_CopyTouchedCells(68, 6, MAPGRID_LAYER_MIDDLE, 21, 13, 64, 64);
   if (!Event_GetFlag(FLAG_MAD_PLANT(MAD_PLANT_TRIAL_ROAD))) {
     Import_MadPlantLeapAtLeader(SPRITE_MAD_PLANT, 72, 152);
     gMainRoutineWork.pendingDjinni =

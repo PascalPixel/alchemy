@@ -14,6 +14,7 @@
 #include "field/field_sequence.h"
 #include "field/actor.h"
 #include "field/event_inline.h"
+#include "scene/event_layer.h"
 #include "battle/battle.h"
 #include "battle/battle_unit.h"
 #include "field/field.h"
@@ -250,8 +251,6 @@ extern struct ActorPlacement gGaiaRockInside_PlatformsActorPlacements[];
 extern struct ActorPlacement gGaiaRockInside_AltarActorPlacements[];
 extern s32 gGaiaRockInside_SquashYScript[];
 
-void Cyclone_CopyTouchedCells(s32 x, s32 z, s32 layerIndex, s32 width,
-                              s32 height, s32 toX, s32 toZ);
 void MadPlant_LeapAtLeader(s32 a, s32 b, s32 c);
 
 extern u32 gGaiaRockInside_LeaderStepsBackScript[];
@@ -737,21 +736,13 @@ void GaiaRockInside_PlantPointsTheWay(s32 unused, u32 id) {
   System_Wait(20);
 }
 
-/// Cyclone_CopyTouchedCells, each argument passed as a word.
-static __inline__ void GaiaRockInside_CopyTouchedCells(s32 x, s32 z,
-                                                       s32 layerIndex,
-                                                       s32 width, s32 height,
-                                                       s32 toX, s32 toZ) {
-  Cyclone_CopyTouchedCells(x, z, layerIndex, width, height, toX, toZ);
-}
-
 /// Cyclone on the bushes of the twin altars' room blows them away; once the
 /// cell they hid is clear its beam of sunlight opens (a leader standing there
 /// hops aside), shown shining into the lair first while the Serpent lives.
 void GaiaRockInside_CycloneClearsTwinAltarsBushes(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
-  GaiaRockInside_CopyTouchedCells(37, 26, 0, 3, 3, 61, 0);
+  FieldCyclone_CopyTouchedCells(37, 26, 0, 3, 3, 61, 0);
   if (FieldMapGrid_GetCellBehaviorAt(2, toFIXED(608), toFIXED(400)) == 0) {
     MapGrid_CopyCellAttributes(36, 23, 1, 1, 38, 25);
     Event_Start();
@@ -787,7 +778,7 @@ static __inline__ void GaiaRockInside_MadPlantLeaps(s32 sprite, s32 x, s32 z) {
 /// Cyclone on the bushes by the platforms: they blow away, and the first time
 /// the platforms start to sway.
 void GaiaRockInside_CycloneStartsPlatforms(void) {
-  GaiaRockInside_CopyTouchedCells(16, 25, 0, 5, 5, 40, 8);
+  FieldCyclone_CopyTouchedCells(16, 25, 0, 5, 5, 40, 8);
   if (GameFlag_Test_(FLAG_PLATFORMS_SWAYING) == 0) {
     Event_SetFlag(FLAG_PLATFORMS_SWAYING);
     GaiaRockInside_StartPlatforms(2);
@@ -797,7 +788,7 @@ void GaiaRockInside_CycloneStartsPlatforms(void) {
 /// Cyclone on the bushes hiding a Mad Plant: they blow away, and until it is
 /// beaten the plant leaps out to fight.
 void GaiaRockInside_CycloneMadPlant(void) {
-  GaiaRockInside_CopyTouchedCells(18, 17, 0, 3, 3, 31, 0);
+  FieldCyclone_CopyTouchedCells(18, 17, 0, 3, 3, 31, 0);
   if (Event_GetFlag(FLAG_MAD_PLANT(2)) == 0) {
     GaiaRockInside_MadPlantLeaps(SPRITE_MAD_PLANT, 328, 344);
     gMainRoutineWork.pendingDjinni = IF_FLAG_SET(FLAG_MAD_PLANT(2));
@@ -808,13 +799,13 @@ void GaiaRockInside_CycloneMadPlant(void) {
 
 /// Cyclone on the bushes around the altar blows them away.
 void GaiaRockInside_CycloneClearsAltarBushes(void) {
-  GaiaRockInside_CopyTouchedCells(19, 24, 0, 4, 3, 31, 4);
+  FieldCyclone_CopyTouchedCells(19, 24, 0, 4, 3, 31, 4);
 }
 
 /// Cyclone on another cell of the Mad Plant's bushes
 /// (GaiaRockInside_CycloneMadPlant) blows them away, the plant staying put.
 void GaiaRockInside_CycloneClearsMadPlantBushes(void) {
-  GaiaRockInside_CopyTouchedCells(18, 17, 0, 3, 3, 31, 0);
+  FieldCyclone_CopyTouchedCells(18, 17, 0, 3, 3, 31, 0);
 }
 
 extern struct CellPoint gGaiaRockInside_CobwebCells[12];

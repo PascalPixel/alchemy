@@ -21,6 +21,7 @@
 #include "system/frame.h"
 #include "system/scene.h"
 #include "field/event_inline.h"
+#include "scene/event_layer.h"
 #include "field/field.h"
 #include "scene/scene.h"
 #include "battle/battle.h"
@@ -38,20 +39,8 @@
 void Actor_StartScript(struct Actor *actor, const void *script);
 s32 MapGrid_CheckCollision(struct Actor *actor, struct FieldPosition *position);
 void Event_End(void);
-void Cyclone_CopyTouchedCells(s32 x, s32 z, s32 layerIndex, s32 width,
-                              s32 height, s32 toX, s32 toZ);
 
 extern u32 gGabombaCatacombs_SplashScript[];
-
-/// Cyclone scatters the weeds it touches: their cells of the width by height
-/// rectangle at (x, z) of the layer take those of the scattered weeds, kept at
-/// (toX, toZ) in the map.
-static __inline__ void GabombaCatacombs_ScatterWeeds(s32 x, s32 z,
-                                                     s32 layerIndex, s32 width,
-                                                     s32 height, s32 toX,
-                                                     s32 toZ) {
-  Cyclone_CopyTouchedCells(x, z, layerIndex, width, height, toX, toZ);
-}
 
 /// A Mad Plant of the given sprite leaps at the leader from (x, z).
 static __inline__ void GabombaCatacombs_MadPlantLeaps(s32 sprite, s32 x,
@@ -125,32 +114,32 @@ void GabombaCatacombs_FightMud(void) {
 
 /// Cyclone on the weeds of the teleport stones' room.
 void GabombaCatacombs_ScatterTeleportersWeeds(void) {
-  GabombaCatacombs_ScatterWeeds(7, 63, 1, 16, 16, 57, 63);
+  FieldCyclone_CopyTouchedCells(7, 63, 1, 16, 16, 57, 63);
 }
 
 /// Cyclone on the weeds by the statue in the hidden wall's room.
 void GabombaCatacombs_ScatterHiddenWallWeeds(void) {
-  GabombaCatacombs_ScatterWeeds(22, 15, 0, 5, 5, 63, 52);
+  FieldCyclone_CopyTouchedCells(22, 15, 0, 5, 5, 63, 52);
 }
 
 /// Cyclone on the small weeds of the hidden wall's room.
 void GabombaCatacombs_ScatterHiddenWallSmallWeeds(void) {
-  GabombaCatacombs_ScatterWeeds(7, 22, 0, 3, 3, 56, 58);
+  FieldCyclone_CopyTouchedCells(7, 22, 0, 3, 3, 56, 58);
 }
 
 /// Cyclone on the stream room's weeds.
 void GabombaCatacombs_ScatterStreamWeeds(void) {
-  GabombaCatacombs_ScatterWeeds(44, 25, 0, 4, 3, 66, 57);
+  FieldCyclone_CopyTouchedCells(44, 25, 0, 4, 3, 66, 57);
 }
 
 /// Cyclone on the stream room's wide weeds.
 void GabombaCatacombs_ScatterStreamWideWeeds(void) {
-  GabombaCatacombs_ScatterWeeds(16, 13, 0, 4, 8, 61, 52);
+  FieldCyclone_CopyTouchedCells(16, 13, 0, 4, 8, 61, 52);
 }
 
 /// Cyclone on the stream room's small weeds.
 void GabombaCatacombs_ScatterStreamSmallWeeds(void) {
-  GabombaCatacombs_ScatterWeeds(21, 9, 0, 2, 2, 57, 52);
+  FieldCyclone_CopyTouchedCells(21, 9, 0, 2, 2, 57, 52);
 }
 
 /// Cyclone on the weeds before the statue: until it is taken, the Mint hidden
@@ -158,7 +147,7 @@ void GabombaCatacombs_ScatterStreamSmallWeeds(void) {
 void GabombaCatacombs_ScatterWeedsByTheStatue(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-  GabombaCatacombs_ScatterWeeds(22, 15, 0, 5, 5, 63, 52);
+  FieldCyclone_CopyTouchedCells(22, 15, 0, 5, 5, 63, 52);
   if (GameFlag_Get(FLAG_GABOMBA_CATACOMBS_MINT_TAKEN) == 0) {
     Actor_SetPosition(FIELD_TREASURE_ACTOR, 392, 344);
     if (LEADER_ON_CELL(leader, 24, 21)) {
@@ -198,7 +187,7 @@ void GabombaCatacombs_TakeThirdTeleportStone(void) {
 void GabombaCatacombs_UncoverFirstPuddle(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-  GabombaCatacombs_ScatterWeeds(7, 22, 0, 3, 3, 56, 58);
+  FieldCyclone_CopyTouchedCells(7, 22, 0, 3, 3, 56, 58);
   Actor_SetPosition(ACTOR_FIRST_PUDDLE, 136, 376);
   if (LEADER_ON_CELL(leader, 8, 23)) {
     LEADER_HOP();
@@ -214,7 +203,7 @@ void GabombaCatacombs_UncoverFirstPuddle(void) {
 void GabombaCatacombs_UncoverSecondPuddle(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-  GabombaCatacombs_ScatterWeeds(5, 13, 0, 5, 3, 56, 52);
+  FieldCyclone_CopyTouchedCells(5, 13, 0, 5, 3, 56, 52);
   Actor_SetPosition(ACTOR_SECOND_PUDDLE, 136, 248);
   if (LEADER_ON_CELL(leader, 8, 15)) {
     LEADER_HOP();
@@ -230,7 +219,7 @@ void GabombaCatacombs_UncoverSecondPuddle(void) {
 void GabombaCatacombs_UncoverThirdPuddle(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-  GabombaCatacombs_ScatterWeeds(5, 13, 0, 5, 3, 56, 52);
+  FieldCyclone_CopyTouchedCells(5, 13, 0, 5, 3, 56, 52);
   Actor_SetPosition(ACTOR_THIRD_PUDDLE, 152, 264);
   if (LEADER_ON_CELL(leader, 9, 16)) {
     Event_Start();
@@ -249,7 +238,7 @@ void GabombaCatacombs_UncoverThirdPuddle(void) {
 void GabombaCatacombs_UncoverFourthPuddle(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-  GabombaCatacombs_ScatterWeeds(5, 13, 0, 5, 3, 56, 52);
+  FieldCyclone_CopyTouchedCells(5, 13, 0, 5, 3, 56, 52);
   Actor_SetPosition(ACTOR_FOURTH_PUDDLE, 136, 280);
   if (LEADER_ON_CELL(leader, 8, 17)) {
     LEADER_HOP();
@@ -265,7 +254,7 @@ void GabombaCatacombs_UncoverFourthPuddle(void) {
 void GabombaCatacombs_UncoverFifthPuddle(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-  GabombaCatacombs_ScatterWeeds(5, 13, 0, 5, 3, 56, 52);
+  FieldCyclone_CopyTouchedCells(5, 13, 0, 5, 3, 56, 52);
   Actor_SetPosition(ACTOR_FIFTH_PUDDLE, 104, 280);
   if (LEADER_ON_CELL(leader, 6, 17)) {
     LEADER_HOP();
@@ -281,7 +270,7 @@ void GabombaCatacombs_UncoverFifthPuddle(void) {
 void GabombaCatacombs_UncoverSixthPuddle(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-  GabombaCatacombs_ScatterWeeds(5, 13, 0, 5, 3, 56, 52);
+  FieldCyclone_CopyTouchedCells(5, 13, 0, 5, 3, 56, 52);
   Actor_SetPosition(ACTOR_SIXTH_PUDDLE, 88, 264);
   if (LEADER_ON_CELL(leader, 5, 16)) {
     LEADER_HOP();
@@ -297,7 +286,7 @@ void GabombaCatacombs_UncoverSixthPuddle(void) {
 void GabombaCatacombs_UncoverSeventhPuddle(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-  GabombaCatacombs_ScatterWeeds(5, 13, 0, 5, 3, 56, 52);
+  FieldCyclone_CopyTouchedCells(5, 13, 0, 5, 3, 56, 52);
   Actor_SetPosition(ACTOR_SEVENTH_PUDDLE, 104, 248);
   if (LEADER_ON_CELL(leader, 6, 15)) {
     LEADER_HOP();
@@ -313,7 +302,7 @@ void GabombaCatacombs_UncoverSeventhPuddle(void) {
 void GabombaCatacombs_UncoverStreamPuddle(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
-  GabombaCatacombs_ScatterWeeds(16, 13, 0, 4, 8, 61, 52);
+  FieldCyclone_CopyTouchedCells(16, 13, 0, 4, 8, 61, 52);
   Actor_SetPosition(ACTOR_STREAM_PUDDLE, 280, 296);
   if (LEADER_ON_CELL(leader, 17, 18)) {
     Event_Start();
@@ -329,12 +318,12 @@ void GabombaCatacombs_UncoverStreamPuddle(void) {
 
 /// Cyclone on the weeds of the Tomegathericon's room.
 void GabombaCatacombs_ScatterTomegathericonWeeds(void) {
-  GabombaCatacombs_ScatterWeeds(7, 23, 0, 4, 5, 60, 56);
+  FieldCyclone_CopyTouchedCells(7, 23, 0, 4, 5, 60, 56);
 }
 
 /// Cyclone on the last weeds: a Mad Plant hides there, and attacks.
 void GabombaCatacombs_UncoverMadPlant(void) {
-  GabombaCatacombs_ScatterWeeds(7, 23, 0, 4, 5, 60, 56);
+  FieldCyclone_CopyTouchedCells(7, 23, 0, 4, 5, 60, 56);
   if (GameFlag_Get(FLAG_MAD_PLANT(0)) == 0) {
     GabombaCatacombs_MadPlantLeaps(SPRITE_MAD_PLANT, 168, 424);
     gMainRoutineWork.pendingDjinni = IF_FLAG_SET(FLAG_MAD_PLANT(0));

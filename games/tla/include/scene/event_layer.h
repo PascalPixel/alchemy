@@ -36,6 +36,18 @@ static inline void Event_StartColorTransition(s32 frames, s32 color) {
   Field_StartColorTransition(frames, color);
 }
 
+void Cyclone_CopyTouchedCells(s32 x, s32 z, s32 layerIndex, s32 width,
+                              s32 height, s32 toX, s32 toZ);
+
+/// Cyclone scatters the bushes or weeds it touches: the cells of the width by
+/// height rectangle at (x, z) of the layer take those of the scattered plants,
+/// kept at (toX, toZ) in the map (Cyclone_CopyTouchedCells).
+static inline void FieldCyclone_CopyTouchedCells(s32 x, s32 z, s32 layerIndex,
+                                                 s32 width, s32 height, s32 toX,
+                                                 s32 toZ) {
+  Cyclone_CopyTouchedCells(x, z, layerIndex, width, height, toX, toZ);
+}
+
 void TileCopies_CopyTouchedCells(s32 sourceX, s32 sourceZ, s32 width,
                                  s32 height, s32 windowX, s32 windowZ,
                                  s32 layer);

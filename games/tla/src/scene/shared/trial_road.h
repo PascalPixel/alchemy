@@ -42,11 +42,12 @@ void TrialRoad_CopyTouchedCells(s32 x, s32 z, s32 layerIndex, s32 width,
                                 s32 height, s32 toX, s32 toZ);
 void Import_MadPlantLeapAtLeader(s32 sprite, s32 x, s32 z);
 
-static __inline__ void Cyclone_CopyTouchedCells_(s32 x, s32 z, s32 layerIndex,
+/// Cyclone scatters the bushes or weeds it touches (Cyclone_CopyTouchedCells):
+/// event_layer.h's FieldCyclone_CopyTouchedCells, through the import this
+/// scene calls the routine by.
+static inline void FieldCyclone_CopyTouchedCells(s32 x, s32 z, s32 layerIndex,
                                                  s32 width, s32 height, s32 toX,
                                                  s32 toZ) {
-  /* FAKEMATCH(wrapper): a layer that only forwards its arguments; as
-   * TrialRoad_CopyTouchedCells called directly. */
   TrialRoad_CopyTouchedCells(x, z, layerIndex, width, height, toX, toZ);
 }
 

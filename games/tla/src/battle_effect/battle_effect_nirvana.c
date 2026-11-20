@@ -234,13 +234,13 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
       if (rock->variant == 0) {
         if (args->side == EFFECT_SIDE_ENEMIES) {
           if (targetPosition.x >
-              Fixed_Halves(&rock->x)[1] + userPosition.x - 64) {
+              FIXED_INTEGER_PART(rock->x) + userPosition.x - 64) {
             rock->variant = 1;
             hit = 1;
           }
         } else {
           if (targetPosition.x <
-              Fixed_Halves(&rock->x)[1] + userPosition.x - 64) {
+              FIXED_INTEGER_PART(rock->x) + userPosition.x - 64) {
             rock->variant = 1;
             hit = 1;
           }

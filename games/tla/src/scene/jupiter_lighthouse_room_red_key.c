@@ -825,12 +825,7 @@ void JupiterLighthouse_StartSparkRing(const s32 *from, const s32 *to) {
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = BattleEffect_GetObjectPriority(leader);
-    // Through a union, so this store may alias the age store after it.
-    ((union {
-       u16 v;
-       s32 w;
-     } *)&sprite->depth)
-        ->v = BattleEffect_GetObjectDepth(leader) - 1;
+    sprite->depth = BattleEffect_GetObjectDepth(leader) - 1;
     spark->age = -1;
   }
   {

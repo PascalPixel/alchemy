@@ -772,8 +772,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
                     sparkScreen.x - CASTING_IMPACT_DJINNI_WIDTH / 2,
                     sparkScreen.y - 4, CASTING_IMPACT_DJINNI_WIDTH,
                     CASTING_IMPACT_DJINNI_HEIGHT);
-        /* FAKEMATCH(barrier): an empty asm reading djinnPos. */
-        __asm__("" : : "X"(djinnPos));
+        /* FAKEMATCH(dead): vec set to djinnPos again, a store nothing reads. */
+        vec = djinnPos;
       }
       EFFECT_PRESENT_CANVAS(work);
     }

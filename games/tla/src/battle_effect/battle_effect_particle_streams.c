@@ -929,10 +929,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
       {
         s32 hold;
 
-        /* FAKEMATCH(barrier): hold set by an empty asm. */
-        asm("" : "=r"(hold));
-        /* FAKEMATCH(barrier): an empty asm before the call. */
-        asm("" : : : "r6");
+        /* FAKEMATCH(barrier): hold set by an empty asm that clobbers r6. */
+        asm("" : "=r"(hold) : : "r6");
         if (frame == 0)
           Sound_PlayFar(SE_RUMBLE);
         /* FAKEMATCH(dead): updates of hold that cancel out. */

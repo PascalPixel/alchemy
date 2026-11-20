@@ -61,11 +61,9 @@ void BattleEffect_RunBreak(struct BattleEffectParams *args) {
     s32 offset;
     s32 height;
     struct Particle *shard;
-    struct ScreenPoint *position;
+    struct ScreenPoint *position = &screen;
 
     offset = member * BREAK_SHARDS_PER_TARGET * sizeof(struct Particle);
-    /* FAKEMATCH(temporary): position holds &screen. */
-    position = &screen;
     object = BattleObject_GetFar(args->targets[member])->object;
     height = BattleUnit_GetEffectHeightFar(args->targets[member]) / 2;
     point[0] = object->x;

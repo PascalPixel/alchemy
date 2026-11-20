@@ -259,18 +259,12 @@ void Teleport_PlaySparks(void) {
       if (age >= 0) {
         if ((u32)age < TELEPORT_SPARK_FRAMES) {
           EffectSprite_DrawAtWorldPosition(sprite, particle);
-          /* FAKEMATCH(dead): age reread at the end of both arms; as one read
-           * after the if. */
-          if (i & 1) {
+          if (i & 1)
             Field_AdvanceWithGravity3D(&particle->x, 63, toFIXED(1) / 2);
-            age = particle->timer;
-          } else {
+          else
             Field_AdvanceWithGravity3D(&particle->x, 63, -(toFIXED(5) / 8));
-            age = particle->timer;
-          }
         }
-        particle->timer = ++age;
-        if (age == TELEPORT_SPARK_FRAMES)
+        if (++particle->timer == TELEPORT_SPARK_FRAMES)
           particle->timer = -1;
       }
     }

@@ -1397,10 +1397,9 @@ void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   struct EffectSprite *sprite;
   struct SparkState *state;
   s32 resource, tile, i;
-  /* FAKEMATCH(temporary): the 0 held in a local; as actor->paused = 0. */
-  u8 zero = 0;
+  u8 unpaused = 0;
 
-  actor->paused = zero;
+  actor->paused = unpaused;
   work->object = actor;
   work->x = actor->x.fixed;
   work->y = actor->y.fixed;

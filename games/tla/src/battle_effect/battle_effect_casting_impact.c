@@ -2637,17 +2637,14 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           work->shakeFrames = 8;
       } else if (kind == CASTING_IMPACT_IMPACT_ARMOR_CRUSH) {
         // Four rings of billows spread and turn about the target.
-        struct ModelTexture *tex;
         s32 scale;
         matrix = Heap_AllocEwram(512);
         model = Render_AllocateModelList(1);
-        /* FAKEMATCH(temporary): tex holds &armorCrushTexture. */
-        tex = &armorCrushTexture;
-        tex->logWidth = 6;
-        tex->logHeight = 6;
-        model->texture = tex;
+        model->texture = &armorCrushTexture;
+        armorCrushTexture.logWidth = 6;
+        armorCrushTexture.logHeight = 6;
         model->vertices = matrix;
-        tex->pixels = pictures;
+        armorCrushTexture.pixels = pictures;
         model->kind = MODEL_SHADED_ADDITIVE;
         model->mesh = gBattleEffect_RingMesh;
         for (i = 0; i != 4; i++) {

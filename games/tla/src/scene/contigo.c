@@ -1574,9 +1574,10 @@ void Contigo_OfferLuckyDice(void) {
   FieldMessage_ShowAtActor(ACTOR_LUCKY_DICE_ATTENDANT, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       0) {
-    /* FAKEMATCH(pin): the scene state's address fixed to a register. */
-    register u32 *state __asm__("r3") = (u32 *)gSceneState;
+    u32 *state = (u32 *)gSceneState;
 
+    /* FAKEMATCH(barrier): an empty asm on state; as no asm. */
+    asm volatile("" : "+r"(state));
     *state = gMainRoutineWork.coins;
     ObjectTable_Snapshot();
     // "OK! Then take the dice."
@@ -1614,9 +1615,10 @@ void Contigo_OfferSuperLuckyDice(void) {
   FieldMessage_ShowAtActor(ACTOR_SUPER_LUCKY_DICE_ATTENDANT, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       0) {
-    /* FAKEMATCH(pin): the scene state's address fixed to a register. */
-    register u32 *state __asm__("r3") = (u32 *)gSceneState;
+    u32 *state = (u32 *)gSceneState;
 
+    /* FAKEMATCH(barrier): an empty asm on state; as no asm. */
+    asm volatile("" : "+r"(state));
     *state = gMainRoutineWork.coins;
     ObjectTable_Snapshot();
     // "OK, then let 'em roll!"

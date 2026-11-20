@@ -1694,11 +1694,12 @@ s32 Scene_Initialize(void) {
     Prox_InitializeCaveHomes();
   } else if (scene == SCENE_PROX_CAVES) {
     s32 *effect = &gFieldWork->transition;
-    /* FAKEMATCH(pin): the call's argument fixed to a register. */
-    register s32 skip __asm__("r0");
+    s32 skip;
     s32 value = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
 
     skip = 0;
+    /* FAKEMATCH(barrier): an empty asm on skip. */
+    __asm__("" : "+r"(skip));
     *effect = value;
     FieldEffect_StartBlankOverlay(skip);
   } else {

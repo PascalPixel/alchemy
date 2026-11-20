@@ -317,16 +317,13 @@ void BattlePlayback_Run(void) {
         // Recolour every layer's first entry and have its picture redrawn.
         if (colorMode == SPRITE_COLOR_GREY || (events->timer & 7) == 0) {
           struct Sprite *record;
-          s32 recordIndex;
-          struct Sprite **slot;
-          s32 noPicture;
+          s32 recordIndex = 0;
+          struct Sprite **slot = records;
+          s32 noPicture = SPRITE_PICTURE_NONE;
 
-          /* FAKEMATCH(temporary): SPRITE_PICTURE_NONE held in noPicture, set
-             as the loop starts. */
-          for (recordIndex = 0, slot = records, noPicture = SPRITE_PICTURE_NONE;
-               (record =
-                    GetMotionRecord(BattleObject_Get(events->unitId)->object,
-                                    recordIndex)) != 0;
+          for (; (record =
+                      GetMotionRecord(BattleObject_Get(events->unitId)->object,
+                                      recordIndex)) != 0;
                recordIndex++) {
             struct SpriteAnimation *child;
             u8 previousPicture;

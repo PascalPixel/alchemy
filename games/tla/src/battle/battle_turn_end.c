@@ -193,35 +193,19 @@ s32 BattleUnit_CountDownSleep(s32 unitId) {
 /// Counts down both seals in Unit.psySeal and returns 1 when the last
 /// ends; only Bind's, once Luff's is gone, may end early.
 s32 BattleUnit_CountDownPsynergySeal(s32 unitId) {
-  s32 decremented;
-  u8 remaining;
-  s32 turns;
-  s32 sealCounter;
-  struct Unit *unit;
+  struct Unit *unit = Unit_Get(unitId);
 
-  unit = Unit_Get(unitId);
-  sealCounter = unit->psySeal;
-  /* FAKEMATCH(dead): the seal byte masked again. */
-  turns = sealCounter & 0xFF;
-  if (turns != 0) {
-    // In the byte, adding (u8)-n takes n off.
-    if (turns > (u32)PSY_SEAL_BIND_MASK) {
-      turns += (u8)-PSY_SEAL_LUFF_TURN;
-      unit->psySeal = turns;
-      sealCounter = turns;
-    }
-    if (sealCounter & PSY_SEAL_BIND_MASK) {
-      decremented = sealCounter + (u8)-1;
-      unit->psySeal = decremented;
-      sealCounter = decremented;
-    }
-    remaining = sealCounter;
-    if (remaining == 0)
+  if (unit->psySeal != 0) {
+    if (unit->psySeal > PSY_SEAL_BIND_MASK)
+      unit->psySeal -= PSY_SEAL_LUFF_TURN;
+    if (unit->psySeal & PSY_SEAL_BIND_MASK)
+      unit->psySeal--;
+    if (unit->psySeal == 0)
       return 1;
-    if (remaining <= (u32)PSY_SEAL_BIND_MASK &&
+    if (unit->psySeal <= PSY_SEAL_BIND_MASK &&
         BattleUnit_RollCounterEarlyEnd(unitId, unit->psySeal, EARLY_END_BIND) !=
             0) {
-      unit->psySeal = 0U;
+      unit->psySeal = 0;
       return 1;
     }
   }

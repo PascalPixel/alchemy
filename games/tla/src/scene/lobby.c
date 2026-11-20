@@ -642,7 +642,6 @@ static __inline__ void Lobby_ResetTransferState(void) {
 
   state = &gSerialTransfer;
   IRQ_LOCK(saved);
-  state = &gSerialTransfer;
   state->status = SERIAL_STATUS_RUNNING;
   *(u8 *)&state->peerFlags = 0;
   gSerialSendSource = 0;

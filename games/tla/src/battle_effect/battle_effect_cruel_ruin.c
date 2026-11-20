@@ -802,8 +802,6 @@ void BattleEffect_EndElementStreaks(void) {
 #define CRUEL_RUIN_RIBBON_SWAY_STEP 2348
 #define CRUEL_RUIN_RIBBON_FRAMES 46
 #define CRUEL_RUIN_FIRST_RIBBON_ROLL 3048
-/// A texture's scroll wraps within 128 texels.
-#define TEXTURE_SCROLL_MASK 0x7f
 /// The ribbons' texture scrolls back from ~CRUEL_RUIN_RIBBON_SCROLL, 2 texels a
 /// frame on the first and 4 on the second.
 #define CRUEL_RUIN_RIBBON_SCROLL 63
@@ -1887,4 +1885,3 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
 #undef STREAKS
 #undef STREAK_START_DISTANCE
 #undef STREAK_LENGTH
-#undef TEXTURE_SCROLL_MASK

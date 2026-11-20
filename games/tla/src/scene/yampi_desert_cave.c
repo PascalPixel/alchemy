@@ -225,10 +225,10 @@ extern s32 gPushLeaderSteps[];
 
 /// Where a pushed log comes to rest, found before the leader pushes it.
 struct LogSlide {
-  FIXED x, y, z;          ///< the log's position at the end of the slide
-  s32 kind;               ///< its row of gYampiDesertCave_LogFootprints
-  s32 slot;               ///< its actor id
-  void *onPushed;         ///< run as the log slides, if not NULL
+  FIXED x, y, z;  ///< the log's position at the end of the slide
+  s32 kind;       ///< its row of gYampiDesertCave_LogFootprints
+  s32 slot;       ///< its actor id
+  void *onPushed; ///< run as the log slides, if not NULL
 };
 
 /// Finds the log the leader faces and can push: its kind, its actor slot and

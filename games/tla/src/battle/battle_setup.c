@@ -154,9 +154,7 @@ UNUSED s32 Battle_ShiftVramTiles(void) {
 }
 
 /// Unused: clears BG0's vertical scroll.
-UNUSED void Battle_ClearBg0Vofs(void) {
-  Io_Write16(0, &REG_BG0VOFS);
-}
+UNUSED void Battle_ClearBg0Vofs(void) { Io_Write16(0, &REG_BG0VOFS); }
 
 /// Does nothing; Battle_Run calls it with 1 as the battle is set up.
 void Party_BattleSetupNoOp(s32 unused) {}

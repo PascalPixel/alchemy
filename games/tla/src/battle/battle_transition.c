@@ -356,9 +356,6 @@ void BattleTransition_Run(s32 enemyCount, s32 kind) {
     gBgScroll[0].y = 0;
     Irq_SetHandler(IRQ_VCOUNT, 0, 0);
   } else {
-    /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
-    s32 zero;
-
     battle = heap->battleWork;
     view->secondMode = BATTLE_BACKGROUND_FIXED;
     view->busy = 0;
@@ -381,17 +378,18 @@ void BattleTransition_Run(s32 enemyCount, s32 kind) {
     {
       s32 background = RESOURCE_SERPENT_STARS_BACKDROP;
       u16 *slot = &battle->background;
+      s32 start = 0;
 
-      zero = 0;
       *slot = background;
+      // The enemies alone take part in the shattering opening.
+      work.count =
+          BattleUnit_ListIds(BATTLE_SIDE_MASK_ENEMIES, (u16 *)work.actors);
+      work.actors[work.count] = BATTLE_UNIT_LIST_END;
+      BattleActor_SpawnObjectsForList(work.actors, 0);
+      BattleEffect_RunShatteringOpeningFar(&work);
+      BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
+      *timer = start;
     }
-    work.count =
-        BattleUnit_ListIds(BATTLE_SIDE_MASK_ENEMIES, (u16 *)work.actors);
-    work.actors[work.count] = BATTLE_UNIT_LIST_END;
-    BattleActor_SpawnObjectsForList(work.actors, 0);
-    BattleEffect_RunShatteringOpeningFar(&work);
-    BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_NORMAL);
-    *timer = zero;
     Irq_SetHandler(IRQ_VCOUNT, TRANSITION_BG0_BAND,
                    BattleTransition_ResetBg0Scroll);
     wait(1);

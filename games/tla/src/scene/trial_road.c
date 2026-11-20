@@ -3635,10 +3635,7 @@ static inline void *TrialRoadLink_AllocPicture(void) {
     s32 lift;                                                                  \
     /* FAKEMATCH(pin): originZ fixed to a register. */                         \
     register s32 *originZ asm("r6");                                           \
-    /* FAKEMATCH(pin): x fixed to a register. */                               \
-    register s32 x asm("r9");                                                  \
-    /* FAKEMATCH(pin): arg fixed to a register. */                             \
-    register s32 arg asm("r0");                                                \
+    s32 arg;                                                                   \
     s32 side = gMainRoutineWork.entrance & 1;                                  \
     if (side) {                                                                \
       x = (actor->x.fixed - work->originX) / toFIXED(16) left;                 \
@@ -3647,6 +3644,8 @@ static inline void *TrialRoadLink_AllocPicture(void) {
       x = (actor->x.fixed - work->originX) / toFIXED(16) right;                \
       arg = which;                                                             \
     }                                                                          \
+    /* FAKEMATCH(barrier): an empty asm on arg. */                             \
+    asm("" : "+r"(arg));                                                       \
     originZ = &work->originZ;                                                  \
     lift = TrialRoad_GetStage(arg);                                            \
     y = (actor->z.fixed - *originZ) / toFIXED(16) + work->scrollY -            \
@@ -3678,6 +3677,7 @@ void TrialRoad_DrawRaceMap(void) {
   u32 row, i;
   s32 tile = gVramCacheEntries[*vramEntry].offset >> 5;
   u32 flip, word;
+  s32 x;
   s32 y;
   u32 markerSize = OBJ_SIZE_16X16;
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
@@ -3705,7 +3705,6 @@ void TrialRoad_DrawRaceMap(void) {
     return;
   }
   for (row = 0; row < 2; row++) {
-    s32 x;
     y = (work->scrollY + 8) & OBJ_Y_MASK;
     if (row == 0) {
       x = work->fade * 6 + work->scrollX - 12;

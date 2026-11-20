@@ -623,8 +623,6 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
   s32 frame;
   s32 j;
   s32 xOffset;
-  DrawRectangle *draw;
-  struct BattleCamera *camera;
   s32 origin[3];
   struct ScreenPoint screen;
   FIXED point[3];
@@ -701,12 +699,13 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
     shard->variant = Random16() & 0xff;
   }
 
-  BattleEffect_FetchRectangleBlitters(args->side, draw = callbacks);
+  BattleEffect_FetchRectangleBlitters(args->side, callbacks);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
 
   for (frame = 0; frame != args->targetCount * STAT_REDUCTION_TARGET_DELAY + 64;
        frame++) {
-    camera = Ram_HeapSlots->cameraWork;
+    struct BattleCamera *camera = Ram_HeapSlots->cameraWork;
+
     // The loop runs count * STAT_REDUCTION_TARGET_DELAY + 64 frames, so frame
     // 72 comes only with three or more targets. With one or two,
     // BattlePlayback_WaitForReady starts playback once the effect returns, so
@@ -741,10 +740,11 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
                          DAGGER_WIDTH, DAGGER_HEIGHT);
         } else {
           if (targetFrame <= 23)
-            draw[1](canvas,
-                    work->sheet + targetFrame / 4 % 6 * PICTURE_BYTES(SHIELD),
-                    x - SHIELD_WIDTH / 2, y - SHIELD_HEIGHT / 2, SHIELD_WIDTH,
-                    SHIELD_HEIGHT);
+            callbacks[1](canvas,
+                         work->sheet +
+                             targetFrame / 4 % 6 * PICTURE_BYTES(SHIELD),
+                         x - SHIELD_WIDTH / 2, y - SHIELD_HEIGHT / 2,
+                         SHIELD_WIDTH, SHIELD_HEIGHT);
         }
         // The chime as the picture breaks.
         /* FAKEMATCH(temporary): the target's frame worked out again, here and

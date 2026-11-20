@@ -242,10 +242,14 @@ void wait(s32 frames) {
     u32 *size = &gSavedStackSize;
 
     if (*size != 0) {
-      /* FAKEMATCH(barrier): the read also takes the old base as an input
-       * ("+r"). */
+      /* FAKEMATCH(dead): updates of base that cancel out, under a test of base
+       * against size, keep the old base live up to the read. */
+      if (base != (u8 *)size) {
+        base++;
+        base--;
+      }
       CAMELOT_ASM("read the hardware stack pointer for its restore copy")
-      __asm__ volatile("mov %0, sp" : "+r"(base));
+      __asm__ volatile("mov %0, sp" : "=r"(base));
       /* FAKEMATCH(volatile): the size read again, a load apart from the test's.
        */
       base -= *(volatile u32 *)size;

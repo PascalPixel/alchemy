@@ -720,6 +720,7 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
         if (picture < 0) {
           continue;
         }
+        /* FAKEMATCH(temporary): position holds &screen. */
         position = &screen;
         if (EffectPosition_ProjectPoint(step, position) == 0 &&
             FIXED_INTEGER_PART(position->depth) > WATERY_GRAVE_PUFF_DEPTH) {

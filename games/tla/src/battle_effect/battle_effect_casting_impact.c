@@ -2641,6 +2641,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         s32 scale;
         matrix = Heap_AllocEwram(512);
         model = Render_AllocateModelList(1);
+        /* FAKEMATCH(temporary): tex holds &armorCrushTexture. */
         tex = &armorCrushTexture;
         tex->logWidth = 6;
         tex->logHeight = 6;

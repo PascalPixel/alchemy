@@ -701,13 +701,11 @@ void FileList_PlaceDjinnSprites(void) {
     struct Sprite *sprite = menu->figures[index];
 
     if (sprite != NULL) {
-      /* FAKEMATCH(temporary): one, FIXED_ONE held in a local; as FIXED_ONE at
-       * its uses. */
-      FIXED one = FIXED_ONE;
+      FIXED fullSize = FIXED_ONE;
       FIXED height = toFIXED(500);
 
-      scale.x = one;
-      scale.y = one;
+      scale.x = fullSize;
+      scale.y = fullSize;
       position.x = toFIXED(menu->figureX[index]);
       position.height = height;
       position.y = toFIXED(menu->figureY[index]) + height;

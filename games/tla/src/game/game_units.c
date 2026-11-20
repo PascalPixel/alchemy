@@ -555,22 +555,18 @@ void MainRoutineWork_InitializeDefaults(void) {
   // Clear the state up to the characters, the scene state with its snapshots,
   // and the flags.
   Dma_Fill32Cell(zero, 0, &gMainRoutineWork, sizeof(gMainRoutineWork));
-#if TLA_PATCH_1
   Dma_Fill32Cell(zero, 0, gSceneLocalState, SCENE_STATE_WORDS * 4);
+#if TLA_PATCH_1
   WaitDma(DMA3);
 #else
-  zero = 0;
   {
-    /* FAKEMATCH(pin): the channel fixed to a register. */
-    register u32 held asm("r3") = (u32)DMA3;
+    struct DmaRegisters volatile *dma = DMA3;
     struct DmaRegisters volatile *channel;
 
-    Dma_Set((const void *)&zero, gSceneLocalState,
-            DMA_FILL_WORDS(SCENE_STATE_WORDS), (volatile u32 *)held);
-    channel = (struct DmaRegisters volatile *)held;
-    held = DMA_BUSY;
-    while ((channel->control & held) != 0) {
-    }
+    /* FAKEMATCH(barrier): an empty asm copying dma to channel and claiming to
+     * change dma. */
+    asm volatile("" : "=r"(channel), "+r"(dma) : "0"(dma));
+    WaitDma(channel);
   }
 #endif
   Dma_Fill32Cell(zero, 0, gGameFlagBytes, 128 * 4);

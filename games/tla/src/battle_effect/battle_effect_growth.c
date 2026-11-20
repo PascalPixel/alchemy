@@ -47,13 +47,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   struct BattleEffectWork *work;
   void *canvas;
   BlitterPair rectangle;
-  DrawRectangle mirroredBlitter;
   s32 frame;
-  s32 duration;
-  DrawRectangle *draw;
-  s32 fadeStart;
-  s32 fadeEnd;
-  s32 damageFrame;
   s32 start;
   struct DualColumn *setup;
   s32 x;
@@ -70,6 +64,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   struct Particle *flare;
   s32 flareAge;
   s32 picture;
+  s32 duration;
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
@@ -89,12 +84,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_TRANSPARENT);
-  /* FAKEMATCH(temporary): mirroredBlitter holds the mirrored blitter and draw
-   * stands in for rectangle; as rectangle[1] = the blitter and
-   * rectangle[side](...). */
-  mirroredBlitter = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
-  draw = rectangle;
-  draw[1] = mirroredBlitter;
+  rectangle[1] = (DrawRectangle)Ram_HeapSlots->ramCodePaired;
 
   duration = gGrowth_ColumnCounts[args->variant] * COLUMN_INTERVAL + 56;
 
@@ -119,132 +109,128 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
 
-  frame = 0;
-  if (duration != 0) {
-    damageFrame = duration - 64;
-    fadeStart = duration - 20;
-    fadeEnd = duration - 4;
-    do {
-      if (frame == damageFrame) {
-        EFFECT_SHOW_DAMAGE(SE_IMPACT);
-      }
-      if (frame >= fadeStart && frame < fadeEnd) {
-        // Fade out over the last 16 frames.
-        REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
-        REG_BLDALPHA = EFFECT_BLEND_CANVAS((duration - frame) - 5);
-      }
-      if (frame < fadeEnd) {
-        for (i = 0; i != gGrowth_ColumnCounts[args->variant]; i++) {
-          column = &((struct DualColumn *)work->particles)[i];
-          start = i * COLUMN_INTERVAL + 8;
-          if (frame == i * COLUMN_INTERVAL + 9) {
-            work->shakeFrames = 2;
+  for (frame = 0; frame != duration; frame++) {
+    s32 damageFrame = duration - 64;
+    s32 fadeStart = duration - 20;
+    s32 fadeEnd = duration - 4;
+
+    if (frame == damageFrame) {
+      EFFECT_SHOW_DAMAGE(SE_IMPACT);
+    }
+    if (frame >= fadeStart && frame < fadeEnd) {
+      // Fade out over the last 16 frames.
+      REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
+      REG_BLDALPHA = EFFECT_BLEND_CANVAS((duration - frame) - 5);
+    }
+    if (frame < fadeEnd) {
+      for (i = 0; i != gGrowth_ColumnCounts[args->variant]; i++) {
+        column = &((struct DualColumn *)work->particles)[i];
+        start = i * COLUMN_INTERVAL + 8;
+        if (frame == i * COLUMN_INTERVAL + 9) {
+          work->shakeFrames = 2;
+        }
+
+        // A column grows from its root.
+        if (frame > start) {
+          u32 shape = i % 3;
+          s32 side;
+
+          length = (frame - start) * 8;
+          reach = column->height;
+          if (length > reach) {
+            length = reach;
           }
+          if (mode == GROWING_COLUMNS_VINES) {
+            u8 *source;
+            u32 width;
 
-          // A column grows from its root.
-          if (frame > start) {
-            u32 shape = i % 3;
-            s32 side;
-
-            length = (frame - start) * 8;
-            reach = column->height;
-            if (length > reach) {
-              length = reach;
-            }
-            if (mode == GROWING_COLUMNS_VINES) {
-              u8 *source;
-              u32 width;
-
-              /* FAKEMATCH(temporary): side holds 1 before it is masked with
-               * i, here and for the pillars; as side = 1 & i. */
-              side = 1;
-              side &= i;
-              source = work->sheet + gGrowth_VinePictures[shape];
-              width = gGrowth_VineWidths[shape];
-              draw[side](canvas, source, column->x - (width >> 1),
-                         column->y - length, width, length);
-            } else {
-              u8 *source;
-              u32 width;
-
-              pillarHeight = gGrowth_PillarHeights[7 & i];
-              if (length > pillarHeight) {
-                length = pillarHeight;
-              }
-              side = 1;
-              side &= i;
-              source = work->sheet + gGrowth_PillarPictures[shape];
-              width = gGrowth_PillarWidths[shape];
-              draw[side](canvas, source, column->x - (width >> 1),
-                         column->y - length, width, length);
-            }
-          }
-
-          // The targets react as it grows.
-          n = 0;
-          if (args->targetCount != 0) {
-            reactFrame = start + 4;
-            do {
-              if (frame == reactFrame) {
-                if (!(i & 1)) {
-                  Sound_PlayFar(SE_IMPACT);
-                }
-                BattleEffect_TintBattler(args->targets[n], SPRITE_COLOR_WHITE,
-                                         POSE_DAMAGE, n, 3);
-              }
-              n++;
-            } while (n != args->targetCount);
+            /* FAKEMATCH(temporary): side holds 1 before it is masked with
+             * i, here and for the pillars; as side = 1 & i. */
+            side = 1;
+            side &= i;
+            source = work->sheet + gGrowth_VinePictures[shape];
+            width = gGrowth_VineWidths[shape];
+            rectangle[side](canvas, source, column->x - (width >> 1),
+                            column->y - length, width, length);
           } else {
-            reactFrame = start + 4;
-          }
+            u8 *source;
+            u32 width;
 
-          // Impact flares at the root.
-          if ((frame == reactFrame) || (frame == (start + 8))) {
-            for (n = 0; n != GROWTH_FLARES; n++) {
-              flare = &PARTICLES[n];
-              if (flare->variant == -1) {
-                flare->x = ((Random16() & 0xf) + column->x) - 8;
-                flare->y = (Random16() & 0xf) + 80;
-                flare->variant = 0;
-                break;
+            pillarHeight = gGrowth_PillarHeights[7 & i];
+            if (length > pillarHeight) {
+              length = pillarHeight;
+            }
+            side = 1;
+            side &= i;
+            source = work->sheet + gGrowth_PillarPictures[shape];
+            width = gGrowth_PillarWidths[shape];
+            rectangle[side](canvas, source, column->x - (width >> 1),
+                            column->y - length, width, length);
+          }
+        }
+
+        // The targets react as it grows.
+        n = 0;
+        if (args->targetCount != 0) {
+          reactFrame = start + 4;
+          do {
+            if (frame == reactFrame) {
+              if (!(i & 1)) {
+                Sound_PlayFar(SE_IMPACT);
               }
+              BattleEffect_TintBattler(args->targets[n], SPRITE_COLOR_WHITE,
+                                       POSE_DAMAGE, n, 3);
+            }
+            n++;
+          } while (n != args->targetCount);
+        } else {
+          reactFrame = start + 4;
+        }
+
+        // Impact flares at the root.
+        if ((frame == reactFrame) || (frame == (start + 8))) {
+          for (n = 0, flare = PARTICLES; n != GROWTH_FLARES; flare++, n++) {
+            if (flare->variant == -1) {
+              flare->x = ((Random16() & 0xf) + column->x) - 8;
+              flare->y = (Random16() & 0xf) + 80;
+              flare->variant = 0;
+              break;
             }
           }
         }
       }
+    }
 
-      // The flares, over the columns, each beside its mirror image.
-      for (i = 0; i != GROWTH_FLARES; i++) {
-        flare = &PARTICLES[i];
-        flareAge = flare->variant;
-        if (flareAge >= 0) {
-          picture = flareAge / 2;
-          flarePictures = GROWING_COLUMNS_VINE_FLARE_PICTURES;
-          if (mode != GROWING_COLUMNS_VINES) {
-            flarePictures = GROWING_COLUMNS_PILLAR_FLARE_PICTURES;
-          }
-          rectangle[0](
-              canvas,
-              work->sheet + (gGrowth_PuffPictures[picture] + flarePictures),
-              flare->x - gGrowth_PuffWidths[picture],
-              flare->y - (s8)gGrowth_PuffHeights[picture] / 2,
-              gGrowth_PuffWidths[picture], (s8)gGrowth_PuffHeights[picture]);
-          rectangle[1](
-              canvas,
-              work->sheet + (gGrowth_PuffPictures[picture] + flarePictures),
-              flare->x, flare->y - (s8)gGrowth_PuffHeights[picture] / 2,
-              gGrowth_PuffWidths[picture], (s8)gGrowth_PuffHeights[picture]);
-          flare->variant++;
-          if (flare->variant == GROWTH_FLARE_FRAMES) {
-            flare->variant = -1;
-          }
+    // The flares, over the columns, each beside its mirror image.
+    for (i = 0; i != GROWTH_FLARES; i++) {
+      flare = &PARTICLES[i];
+      flareAge = flare->variant;
+      if (flareAge >= 0) {
+        picture = flareAge / 2;
+        flarePictures = GROWING_COLUMNS_VINE_FLARE_PICTURES;
+        if (mode != GROWING_COLUMNS_VINES) {
+          flarePictures = GROWING_COLUMNS_PILLAR_FLARE_PICTURES;
+        }
+        rectangle[0](
+            canvas,
+            work->sheet + (gGrowth_PuffPictures[picture] + flarePictures),
+            flare->x - gGrowth_PuffWidths[picture],
+            flare->y - (s8)gGrowth_PuffHeights[picture] / 2,
+            gGrowth_PuffWidths[picture], (s8)gGrowth_PuffHeights[picture]);
+        rectangle[1](
+            canvas,
+            work->sheet + (gGrowth_PuffPictures[picture] + flarePictures),
+            flare->x, flare->y - (s8)gGrowth_PuffHeights[picture] / 2,
+            gGrowth_PuffWidths[picture], (s8)gGrowth_PuffHeights[picture]);
+        flare->variant++;
+        if (flare->variant == GROWTH_FLARE_FRAMES) {
+          flare->variant = -1;
         }
       }
+    }
 
-      BattleCamera_Shake(4, 4);
-      EFFECT_END_FRAME(work);
-      frame++;
-    } while (frame != duration);
+    BattleCamera_Shake(4, 4);
+    EFFECT_END_FRAME(work);
   }
   EFFECT_FINISH_CANVAS();
 }

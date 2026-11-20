@@ -1715,14 +1715,11 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         y = frame * 28 - SARCOPHAGUS_COFFIN_HEIGHT;
         if (y > 16)
           y = 16;
-        {
-          /* FAKEMATCH(pin): hold, an input of the empty asm below. */
-          register s32 hold __asm__("r2");
-          h = SARCOPHAGUS_COFFIN_HEIGHT;
-          /* FAKEMATCH(barrier): an empty asm through h, with hold as an input.
-           */
-          __asm__("" : "=r"(h) : "0"(h), "r"(hold));
-        }
+        /* FAKEMATCH(dead): a store the next line overwrites, under a test never
+         * true. */
+        if (y == 300)
+          h = 0;
+        h = SARCOPHAGUS_COFFIN_HEIGHT;
         if (frame > 7) {
           s32 t;
           i = 0;

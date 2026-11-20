@@ -1740,28 +1740,36 @@ extern u16 gDehkanPlateau_FallLandingCells[];
                                             columnSourceX, columnSourceZ,      \
                                             belowOffsetZ, belowSourceZ)        \
   void name(void) {                                                            \
-    /* FAKEMATCH(pin): flag fixed to a register. */                            \
-    register s32 flag asm("r5") = FLAG_FELL_THROUGH_FIRST;                     \
+    s32 flag = FLAG_FELL_THROUGH_FIRST;                                        \
     s32 offset = 0;                                                            \
                                                                                \
     while (1) {                                                                \
       if (GameFlag_Get(flag)) {                                                \
-        u16 *entry = (u16 *)((u8 *)gDehkanPlateau_FallLandingCells + offset);  \
+        u16 *entry = gDehkanPlateau_FallLandingCells;                          \
+        /* FAKEMATCH(temporary): the fall's number held in a local; as         \
+         * flag - FLAG_FELL_THROUGH_FIRST at its test. */                      \
+        s32 fall = flag - FLAG_FELL_THROUGH_FIRST;                             \
         s32 y;                                                                 \
         s32 x;                                                                 \
                                                                                \
-        flag -= FLAG_FELL_THROUGH_FIRST;                                       \
+        entry = (u16 *)((u8 *)entry + offset);                                 \
         x = *entry++;                                                          \
         y = *entry++;                                                          \
-        MapGrid_CopyCellsTo(sourceX, sourceZ, x, y, 1, 1);                     \
-        x = entry[0];                                                          \
-        y = entry[1];                                                          \
-        MapGrid_CopyCellsTo(columnSourceX, columnSourceZ, x, y, 1, 5);         \
-        if (flag == 1)                                                         \
-          MapGrid_CopyCellsTo(67, 4, 69, 3, 1, 1);                             \
-        x -= 64;                                                               \
-        y += belowOffsetZ;                                                     \
-        MapGrid_CopyCellsTo(sourceX, belowSourceZ, x, y, 1, 4);                \
+        {                                                                      \
+          s32 width = 1;                                                       \
+                                                                               \
+          MapGrid_CopyCellsTo(sourceX, sourceZ, x, y, width, 1);               \
+          x = entry[0];                                                        \
+          y = entry[1];                                                        \
+          MapGrid_CopyCellsTo(columnSourceX, columnSourceZ, x, y, width, 5);   \
+          if (fall == 1)                                                       \
+            MapGrid_CopyCellsTo(67, 4, 69, 3, width, 1);                       \
+          /* FAKEMATCH(barrier): an empty asm on entry. */                     \
+          asm("" : : "r"(entry));                                              \
+          x -= 64;                                                             \
+          y += belowOffsetZ;                                                   \
+          MapGrid_CopyCellsTo(sourceX, belowSourceZ, x, y, width, 4);          \
+        }                                                                      \
         return;                                                                \
       }                                                                        \
       if (flag == FLAG_FELL_THROUGH_LAST)                                      \

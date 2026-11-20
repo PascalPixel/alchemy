@@ -53,12 +53,6 @@ void SpriteViewer_Run(void) {
   struct SpritePlacement *ring;
   s32 selectedLayer;
   u32 spriteSteps;
-  // The selected resource offset becomes its sprite, then its flags address.
-  union {
-    s32 resourceOffset;
-    struct Sprite *sprite;
-    u8 *flags;
-  } spriteWork;
   s32 changed;
   // The edit loop reads the held and repeated keys through these pointers.
   volatile u32 *heldKeys;
@@ -120,23 +114,20 @@ restart:
   // Ten copies of the sprite; for a two-part sprite every other copy
   // shows its second part, number + 1, from sprite picture cache 1.
   for (i = 0; i < UI_SPRITE_VIEWER_COPY_COUNT; i++) {
+    struct Sprite *sprite;
+    s32 part = 0;
+
     spriteMetadata = Resource_GetMetadataRecordFar(layers[0].spriteId);
-    spriteWork.resourceOffset = 0;
     if (spriteMetadata->drawKind == ANIM_FACING_TWO_PART && (i & 1) != 0) {
-      spriteWork.resourceOffset = 1;
+      part = 1;
     }
-    spriteWork.sprite = Sprite_Create(
-        SPRITE_PICTURE_TAG(spriteWork.resourceOffset,
-                           layers[0].spriteId + spriteWork.resourceOffset));
+    sprite = Sprite_Create(SPRITE_PICTURE_TAG(part, layers[0].spriteId + part));
     // Sprite animations 1 to 3 are added to every copy whether shown or not; a
     // hidden sprite animation is kept out of the drawing by its priority below.
-    Sprite_AddAnimation(spriteWork.sprite, layers[1].spriteId);
-    Sprite_AddAnimation(spriteWork.sprite, layers[2].spriteId);
-    Sprite_AddAnimation(spriteWork.sprite, layers[3].spriteId);
-    /* FAKEMATCH(temporary): the flags' address built by adding their offset to
-     * the sprite pointer in place. */
-    spriteWork.flags = &spriteWork.sprite->flags;
-    *spriteWork.flags = shadowsEnabled;
+    Sprite_AddAnimation(sprite, layers[1].spriteId);
+    Sprite_AddAnimation(sprite, layers[2].spriteId);
+    Sprite_AddAnimation(sprite, layers[3].spriteId);
+    sprite->flags = shadowsEnabled;
   }
 
   // Priority 8 hides a sprite animation: Sprite_ComposePicture draws only

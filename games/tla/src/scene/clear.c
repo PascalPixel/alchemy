@@ -1149,6 +1149,7 @@ s32 Clear_EnterPassword(void) {
   s32 advance;
   struct Window *window;
   s32 action;
+  s32 count;
   s32 page;
   s32 i;
   s32 message;
@@ -1459,18 +1460,13 @@ s32 Clear_EnterPassword(void) {
         Window_SetTilemapEntry(grid, tile, i - pages + 18, 10, 0);
       }
     }
-    action = length;
-    /* FAKEMATCH(barrier): the count is not known to be the length. */
-    asm volatile("" : "+r"(action));
-    if (length > PASSWORD_SYMBOLS_PER_PAGE - 1) {
-      if (pages - 1 == page) {
-        /* FAKEMATCH(barrier): an empty asm once the length is read. */
-        asm volatile("" : : : "r2");
-        action = length % PASSWORD_SYMBOLS_PER_PAGE;
-      } else
-        action = PASSWORD_SYMBOLS_PER_PAGE;
-    }
-    for (i = 0; i != action; i++) {
+    if (length < PASSWORD_SYMBOLS_PER_PAGE)
+      count = length;
+    else if (pages - 1 == page)
+      count = length % PASSWORD_SYMBOLS_PER_PAGE;
+    else
+      count = PASSWORD_SYMBOLS_PER_PAGE;
+    for (i = 0; i != count; i++) {
       u8 *entered = gClear_PasswordText;
       s32 index = i + page * PASSWORD_SYMBOLS_PER_PAGE;
       s32 raw = entered[index];

@@ -1441,9 +1441,8 @@ void WorldMap_MeetEcho(void) {
   s32 count;
   s32 i;
   s32 flag;
-  // Holds 0 for its whole life; see its one use.
-  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
-  s32 zero = 0;
+  // Echo is a Venus Djinni.
+  s32 element = ELEMENT_VENUS;
 
   djinni = Actor_GetById(ACTOR_ECHO);
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -1473,8 +1472,8 @@ void WorldMap_MeetEcho(void) {
     Event_SetFlag(FLAG_DJINN_LESSON);
     Event_Start();
     Event_ResolvePendingActions(0);
-    Djinn_Give(owner, 0, 7);
-    DjinnRecovery_AddStandby(owner, 0, 7);
+    Djinn_Give(owner, element, 7);
+    DjinnRecovery_AddStandby(owner, element, 7);
     WorldMap_Freeze();
     Actor_FaceActorById(owner, ACTOR_ECHO, 0);
     Event_Wait(10);
@@ -1669,7 +1668,7 @@ refused:
   Actor_Jump(ACTOR_ECHO, 2, 20);
   Event_ShowMessageAndWait(ACTOR_ECHO, 0);
   WorldMap_ReloadPendingAreaGraphics();
-  FieldDjinn_JoinParty(9, zero, 7);
+  FieldDjinn_JoinParty(9, element, 7);
   Scene_PlayMusic();
   Event_End();
   Event_ClearFlag(FLAG_DJINN_LESSON);

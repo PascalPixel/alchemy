@@ -244,8 +244,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
       model->mesh = gBattleEffect_SmallSquareMesh;
       model->kind = MODEL_SHADED_ADDITIVE;
       for (i = 0; i != LIQUIFIER_BEAMS; i++) {
-        /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
-        s32 zero = 0;
+        s32 shade = 0;
         struct Particle *step = &work->particles[LIQUIFIER_FIRST_BEAM + i];
         s32 start = i * 2 + LIQUIFIER_STRIKE_FRAME;
 
@@ -253,7 +252,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
           s32 scale;
 
           scale = FIXED_ONE * 2 - (frame - start) * (FIXED_ONE / 8);
-          model->shade = zero;
+          model->shade = shade;
           Matrix_Initialize();
           Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
           Matrix_Translate(step->x - toFIXED(128), step->y - toFIXED(64), 0);

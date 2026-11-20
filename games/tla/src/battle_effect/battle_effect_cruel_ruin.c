@@ -1456,17 +1456,16 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
       verts = Heap_AllocEwram(528);
       model = Render_AllocateModelList(1);
       {
-        /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
-        s32 zero = 0;
+        s32 shade = 0;
         streakTexture.logWidth = 5;
         streakTexture.logHeight = 2;
         streakTexture.pixels = work->sheet + CRUEL_RUIN_BAND_A;
-        model->shade = zero;
+        model->shade = shade;
         model->mesh = gBattleEffect_SmallSquareMesh;
         model->texture = &streakTexture;
         model->vertices = verts;
         model->kind = MODEL_SHADED_MAX;
-        for (i = zero; i != CRUEL_RUIN_BLASTS; i++) {
+        for (i = 0; i != CRUEL_RUIN_BLASTS; i++) {
           s32 d = frame - gCruelRuin_BlastFrames[i];
 
           if (d == 0) {
@@ -1823,12 +1822,11 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
         verts = Heap_AllocEwram(32);
         model = Render_AllocateModelList(1);
         {
-          /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
-          s32 zero = 0;
+          s32 shade = 0;
           burstTexture.logWidth = 5;
           burstTexture.logHeight = 2;
           burstTexture.pixels = work->sheet + CRUEL_RUIN_BURST_BAND;
-          model->shade = zero;
+          model->shade = shade;
           model->mesh = gBattleEffect_SmallSquareMesh;
           model->texture = &burstTexture;
           model->vertices = verts;

@@ -389,8 +389,7 @@ void BattleObject_UpdateSpritePriorities(void) {
   unitIndex = 0;
   if (unitIds[unitIndex] != BATTLE_UNIT_LIST_END) {
     for (;;) {
-      /* FAKEMATCH(pin): slot fixed to a register. */
-      register struct BattleObject *slot asm("r5");
+      struct BattleObject *slot;
 
       object = 0;
       slot = BattleObject_GetInline(unitIds[unitIndex]);
@@ -407,6 +406,10 @@ void BattleObject_UpdateSpritePriorities(void) {
             if (object->y != 0)
               effectPriority = 9;
             effect = slot->shadowEntry;
+            /* FAKEMATCH(dead): a store the loops below overwrite, behind a
+             * test of slot. */
+            if ((void *)slot == effect)
+              recordIndex = 0;
             if (effect->priority != effectPriority) {
               effect->priority = effectPriority;
               record->dirty = 1;

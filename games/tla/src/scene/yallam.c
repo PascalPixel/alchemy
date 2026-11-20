@@ -1018,12 +1018,10 @@ void Yallam_RunSongPath(s32 actorId) {
   case 223:
   case 239:
     if (Yallam_HasArrived(actor) != 0)
-      (*timer)++;
+      actor->timer++;
   case 224:
   case 240:
     Actor_SetDestination(actorId, 248, 872);
-    /* FAKEMATCH(barrier): an empty asm on actor; as (*timer)++. */
-    asm("" : "+r"(actor));
     actor->timer++;
     return;
   case 242:

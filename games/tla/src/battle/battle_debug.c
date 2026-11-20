@@ -40,16 +40,15 @@ void ScriptedBattle_SaveUnits(void) {
         snap->vitals[i].hp = unit->hp > 0 ? unit->hp : 1;
         {
           struct SnapshotVitals *pv;
-          /* FAKEMATCH(pin): the PP base fixed to a register. */
-          register struct SnapshotVitals *base asm("r0");
           u32 pp;
 
           /* FAKEMATCH(temporary): the PP value held in a local while pv is
            * built. */
           pp = (u16)unit->pp;
-          base = gScriptedBattle_SnapshotVitals;
-          // As an integer sum, the offset first.
-          pv = (struct SnapshotVitals *)(i * 4 + (s32)base);
+          /* FAKEMATCH(signature): j, the boosts' s32 index, holds the PP rows'
+           * address through casts; as a pointer of their own type. */
+          j = (s32)gScriptedBattle_SnapshotVitals;
+          pv = (struct SnapshotVitals *)j + i;
           /* FAKEMATCH(dead): a store the tag loop's init overwrites. */
           if (i == 300)
             j = 0;

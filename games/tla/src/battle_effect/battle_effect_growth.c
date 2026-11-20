@@ -362,12 +362,11 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   s32 age;
   s32 start;
 
-  heap = (u32 *)Ram_HeapSlots;
-  /* FAKEMATCH(barrier): an empty asm through heap hides that it holds the heap
-   * slots' fixed address. */
-  __asm__("" : "+r"(heap));
-  work = (struct BattleEffectWork *)heap[HEAP_SLOT_BATTLE_EFFECT / sizeof(u32)];
-  canvas = (void *)heap[HEAP_SLOT_BATTLE_CANVAS / sizeof(u32)];
+  /* FAKEMATCH(dead): heap set through its own address; as heap =
+   * (u32 *)Ram_HeapSlots. */
+  *&heap = (u32 *)Ram_HeapSlots;
+  work = Ram_HeapSlots->battleEffect;
+  canvas = Ram_HeapSlots->battleCanvas;
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   REG_BLDCNT = 0;
   REG_BLDALPHA = EFFECT_BLEND_ADD;

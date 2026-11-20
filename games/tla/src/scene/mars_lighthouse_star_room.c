@@ -610,11 +610,9 @@ void MarsLighthouseStarRoom_CreateMarsStar(s32 rise) {
   GlyphTransfer *glyph;
   struct Actor *actor;
   struct FieldSprite *sprite;
-  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
-  u8 zero;
   s32 size;
+  u8 clear = 0;
 
-  zero = 0;
   actor =
       FieldActor_Create(SPRITE_UNSEEN_MARKER, toFIXED(702), 0, toFIXED(224));
   *slot = actor;
@@ -628,8 +626,8 @@ void MarsLighthouseStarRoom_CreateMarsStar(s32 rise) {
   actor->retainSpriteCache = 1;
   actor->update = MarsLighthouseStarRoom_DrawStarWithLeader;
   size = sizeof(GlyphTransfer);
-  sprite->flags = zero;
-  sprite->countAndShadow[0] = zero;
+  sprite->flags = clear;
+  sprite->countAndShadow[0] = clear;
   glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, size);
   Item_LoadIcon(ITEM_MARS_STAR);
   Vram_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);

@@ -1894,6 +1894,13 @@ void TrialRoad_SetPaletteCycleRunning(s32 value) {
 
 extern s32 gTrialRoad_PaletteCycleFrame;
 
+/// Sets the palette cycle's frame counter: the PaletteCycle_SetFrame of the
+/// Jupiter and Mars Lighthouse rooms, whose palette cycles this one copies (the
+/// name is ours).
+static inline void PaletteCycle_SetFrame(s32 value) {
+  gTrialRoad_PaletteCycleFrame = value;
+}
+
 void PaletteCycle_StepAt(void) {
   u16 colors[16];
   s32 phase = (gTrialRoad_PaletteCycleFrame / 4) % 5;
@@ -1937,10 +1944,7 @@ void TrialRoad_StartPaletteCycle(s32 mode) {
     Iwram_CopyWords(gTrialRoad_PaletteCycleColors, (void *)&BG_PLTT_COLOR(5, 0),
                     32);
   if (mode == 1) {
-    /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
-    s32 zero = 0;
-
-    gTrialRoad_PaletteCycleFrame = zero;
+    PaletteCycle_SetFrame(0);
     Task_Add(PaletteCycle_StepAt, TASK_PASS_FRAME);
   }
 }

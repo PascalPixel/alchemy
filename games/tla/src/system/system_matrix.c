@@ -371,10 +371,8 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
   s32 length;
   FIXED levelSquared;
   u32 dividend = (u32)FIXED_ONE << RECIPROCAL_SHIFT;
-  /* FAKEMATCH(pin): divide fixed to a register. */
-  register u32 (*divide)(u32 dividend, u32 divisor) asm("r9");
-  /* FAKEMATCH(pin): mul fixed to a register. */
-  register s32 (*mul)(s32 a, s32 b) asm("r11");
+  u32 (*divide)(u32 dividend, u32 divisor);
+  s32 (*mul)(s32 a, s32 b);
 
   // Copy the dot-product routine to the stack and call it there.
   {
@@ -382,6 +380,8 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
     mul = Iwram_MulFX;
     divide = Iwram_UnsignedDivideEntry;
     Dma_Set(RelocatedInnerProduct, code, DMA_COPY_WORDS(8), REG_DMA3);
+    /* FAKEMATCH(barrier): an empty asm on divide. */
+    asm("" : "+r"(divide));
   }
 
   // The view axis d, pointing from the target back to the eye, normalized:
@@ -414,9 +414,13 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
   vy = mul(dz, ux) - mul(dx, uz);
   vz = -mul(dy, ux);
   scale = divide(dividend, Math_SqrtFX(dot(vx, vx, vy, vy, vz, vz))) << 1;
+  /* FAKEMATCH(barrier): an empty asm that clobbers r9. */
+  asm("" : : : "r9");
   vx = mul(vx, scale);
   vy = mul(vy, scale);
   vz = mul(vz, scale);
+  /* FAKEMATCH(barrier): an empty asm on dot that clobbers r11. */
+  asm("" : "+r"(dot) : : "r11");
 
   // Place the three axes in columns; translation uses dot products with
   // eye.

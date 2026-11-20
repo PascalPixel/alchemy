@@ -904,11 +904,7 @@ void EndingPicture_CopyMap(const u8 *source, u8 *destination, s32 position) {
 
   start = ENDING_PICTURE_ROW_OFFSET(gEndingPicture_MapScroll);
   gEndingPicture_TargetRow = gEndingPicture_Row = position;
-  {
-    volatile s32 *word = &gEndingPicture_Scroll;
-
-    *word = toFIXED(position);
-  }
+  gEndingPicture_Scroll = toFIXED(position);
   for (column = 0; column < ENDING_PICTURE_COLUMNS; column++) {
     from = (position / 8) * ENDING_PICTURE_ROW_BYTES;
     offset = ENDING_PICTURE_WRAP(start);

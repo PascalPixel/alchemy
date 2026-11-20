@@ -131,8 +131,7 @@ void SpriteDissolve_RunMany(u8 **sprites, s32 count) {
   u32 fourthDissolveStep;
 
   firstSprite = sprites;
-  step = 0;
-  do {
+  for (step = 0; step <= DISSOLVE_STEPS - 1U; step += 4) {
     if (count > 0) {
       secondDissolveStep = step + 1;
       thirdDissolveStep = step + 2;
@@ -148,8 +147,7 @@ void SpriteDissolve_RunMany(u8 **sprites, s32 count) {
       } while (spritesRemaining != 0);
     }
     wait(1U);
-    step += 4;
-  } while (step <= DISSOLVE_STEPS - 1U);
+  }
 }
 
 /// Writes the actor's screen position, in pixels, to screenPosition[0..1] and
@@ -1003,9 +1001,8 @@ s32 ActorScript_ShowSprite(struct Actor *interpreter) {
 void Actor_WaitForMove(void *actor) {
   s32 waitedFrames;
 
-  waitedFrames = 0;
-  while (waitedFrames < 600 && Actor_IsTargetUnset(actor) == 0) {
+  for (waitedFrames = 0; waitedFrames < 600 && Actor_IsTargetUnset(actor) == 0;
+       waitedFrames++) {
     wait(1);
-    waitedFrames++;
   }
 }

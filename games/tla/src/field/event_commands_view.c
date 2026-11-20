@@ -85,10 +85,9 @@ void Event_WaitForZoomTransition(void) {
           ->mode == ACTOR_SYSTEM_WORLD_MAP) {
     frames = 0;
     if (map->zoomFrames != 0) {
-      do {
+      for (; frames < 300 && map->zoomFrames != 0; frames++) {
         wait(1);
-        frames++;
-      } while (frames < 300 && map->zoomFrames != 0);
+      }
     }
   }
 }

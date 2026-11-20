@@ -378,8 +378,7 @@ void MarsLighthouseEntrance_PlaceIceCones(u16 *table) {
 
   if (table[0] == ACTOR_LIST_END)
     return;
-  row = table;
-  do {
+  for (row = table; row[0] != ACTOR_LIST_END; row += 3) {
     object = (struct FieldActor *)Actor_Get(row[0]);
     animation = row[1];
     flag = row[2];
@@ -390,8 +389,7 @@ void MarsLighthouseEntrance_PlaceIceCones(u16 *table) {
     object->collisionFlags &= ~ACTOR_SOLID;
     object->timer = flag;
     MarsLighthouseEntrance_SetIceConeCells(object);
-    row += 3;
-  } while (row[0] != ACTOR_LIST_END);
+  }
 }
 
 /// One step of Pound on an ice cone: through step 7 the cone shrinks and a
@@ -1893,7 +1891,7 @@ void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
 UNUSED void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
-  while (*list != ACTOR_LIST_END) {
+  for (; *list != ACTOR_LIST_END; list += 3) {
     s32 entry = *list;
     s32 id = work->secondActorId;
 
@@ -1914,7 +1912,6 @@ UNUSED void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
       }
       break;
     }
-    list += 3;
   }
 }
 

@@ -523,13 +523,11 @@ void ApojiiIslands_DouseAquaStone(s32 unused, s32 id) {
   Task_Add(ApojiiIslands_CycleAquaStoneColors, TASK_PASS_FRAME);
   ApojiiIslands_StartCellMarkers();
   ApojiiIslands_AddCellMarkers(CELL_BEHAVIOR_SPRING, 0, 0);
-  i = 1;
-  do {
+  for (i = 1; i <= 6; i++) {
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDALPHA, BLEND_ALPHA(i, BLEND_WEIGHT_MAX),
                         IO_WRITE_HALFWORD);
     wait(4);
-    i++;
-  } while (i <= 6);
+  }
   GameFlag_Set(FLAG_APOJII_AQUA_STONE_DOUSED);
   GameFlag_Set(FLAG_FATHER_SEES_THE_STONE);
   FieldCamera_SetSpeed(1);

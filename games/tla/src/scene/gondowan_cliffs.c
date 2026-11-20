@@ -628,7 +628,7 @@ void Geyser_Draw(void) {
   viewX &= FIELD_PIXEL_MASK;
   viewZ = view[1] & FIELD_PIXEL_MASK;
   originY = map->origin[1];
-  for (i = GEYSER_ENTRIES - 1; i >= 0; i--, entry++) {
+  for (i = 0; i < GEYSER_ENTRIES; i++, entry++) {
     if (entry->id == 0 || entry->height == 0)
       continue;
     actor = Actor_GetById(entry->id);

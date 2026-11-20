@@ -791,26 +791,22 @@ void Contigo_BabyThinks(void) {
     effect->motionFlags = 0;
     effect->scaleX = FIXED_ONE / 10;
     effect->scaleY = FIXED_ONE / 10;
-    i = 0;
-    do {
+    for (i = 0; i < 28; i++) {
       effect->scaleX += FIXED_ONE / 40;
       effect->scaleY += FIXED_ONE / 40;
       wait(1);
-      i++;
-    } while (i < 28);
+    }
   }
   Task_Add(Contigo_RaiseLeaves, TASK_PASS_FRAME);
   Event_Wait(120);
   Task_Remove(Contigo_RaiseLeaves);
   if (effect != 0) {
-    i = 0;
-    do {
+    for (i = 0; i < 28; i++) {
       effect->scaleX -= FIXED_ONE / 40;
       effect->scaleY -= FIXED_ONE / 40;
       effect->y.fixed += toFIXED(1) / 2;
       wait(1);
-      i++;
-    } while (i < 28);
+    }
     Actor_Release(effect);
   }
   BattleEffect_SetObjectUpdateMode(Actor_GetById(ACTOR_BABY), 0);
@@ -2776,8 +2772,7 @@ void Contigo_InitializeLuckyDice(void) {
       // "Congratulations!"
       Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
       if (wonPrizes[0] != -1) {
-        prize = wonPrizes;
-        do {
+        for (prize = wonPrizes; *prize != -1; prize++) {
           if (prize == wonPrizes)
             Event_SetMessageId(FIRST_PRIZE_MESSAGE);
           else
@@ -2789,8 +2784,7 @@ void Contigo_InitializeLuckyDice(void) {
           ItemDisplay_ShowItem(item, 3);
           PartyInventory_GiveItem(item, 0);
           Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTH);
-          prize++;
-        } while (*prize != -1);
+        }
       }
       gMainRoutineWork.wheelsPrizes[0] = -2;
       Event_SetMessageId(COME_AGAIN_MESSAGE);

@@ -106,7 +106,7 @@ void Rope_Draw(void) {
   struct RopeNode *node;
   u32 angle;
 
-  for (i = ROPE_SLOT_COUNT - 1; i >= 0; i--, slot++) {
+  for (i = 0; i < ROPE_SLOT_COUNT; i++, slot++) {
     for (node = slot->head; node != NULL; node = node->next) {
       s32 priority = slot->priority;
       FIXED y = node->y;

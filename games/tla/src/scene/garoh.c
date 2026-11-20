@@ -327,16 +327,14 @@ void Garoh_OpenDoorAndEnter(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  i = ACTOR_FIRST_PLACED;
-  do {
+  for (i = ACTOR_FIRST_PLACED; (u32)i <= 63; i++) {
     {
       struct Actor *actor = Actor_Get(i);
 
       if (actor != NULL)
         actor->motionFlags = 0;
     }
-    i++;
-  } while ((u32)i <= 63);
+  }
   index = work->stepTrigger;
   Event_PlaySound(SE_DOOR_OPEN);
   index--;
@@ -1143,8 +1141,7 @@ void Garoh_WerewolfRunsPast(void) {
   Actor_SetAnimation(ACTOR_WEREWOLF, 2);
   // The werewolf lopes down the path in eight bounds at random speeds,
   // weaving from side to side.
-  i = 0;
-  do {
+  for (i = 0; i <= 7; i++) {
     s32 tenths;
     s32 wave;
 
@@ -1160,8 +1157,7 @@ void Garoh_WerewolfRunsPast(void) {
                      tenths * (toFIXED(1) / 20));
     Actor_WalkToAndWait(ACTOR_WEREWOLF, position[0] / toFIXED(1),
                         position[2] / toFIXED(1));
-    i++;
-  } while (i <= 7);
+  }
   Actor_SetAnimation(ACTOR_WEREWOLF, 1);
   FieldEvent_Wait(10);
   Actor_RunRepeatedMotion(ACTOR_WEREWOLF, 2);
@@ -1178,8 +1174,7 @@ void Garoh_WerewolfRunsPast(void) {
   z = werewolf->z.fixed;
   toX = toFIXED(128);
   toZ = toFIXED(184);
-  i = 0;
-  do {
+  for (i = 0; i <= 7; i++) {
     s32 tenths;
     FIXED wave;
 
@@ -1192,8 +1187,7 @@ void Garoh_WerewolfRunsPast(void) {
                      tenths * (toFIXED(1) / 20));
     Actor_WalkToAndWait(ACTOR_WEREWOLF, position[0] / toFIXED(1),
                         position[2] / toFIXED(1));
-    i++;
-  } while (i <= 7);
+  }
   Actor_SetAnimation(ACTOR_WEREWOLF, 1);
   Actor_FaceDirection(ACTOR_WEREWOLF, FACING_SOUTH_SOUTHEAST, 0);
   FieldEvent_Wait(20);

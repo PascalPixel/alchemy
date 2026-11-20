@@ -170,7 +170,7 @@ void StaffCredit_DrawGlowRings(u8 *grid, s32 count, s32 scale) {
       level = GLOW_LEVEL_MAX;
     if (level <= 0)
       level = 1;
-    while (x >= y) {
+    for (; x >= y; y++) {
       s32 lastColumn = GLOW_GRID_SIZE - 1;
       s32 column = cornerColumn - x;
       s32 row = cornerRow - y;
@@ -191,7 +191,6 @@ void StaffCredit_DrawGlowRings(u8 *grid, s32 count, s32 scale) {
         error = error + x * 2 - 2;
         x--;
       }
-      y++;
     }
     i++;
   } while (i != count - 1);

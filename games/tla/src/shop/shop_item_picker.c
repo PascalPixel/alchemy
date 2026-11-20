@@ -439,7 +439,7 @@ void ItemIconGrid_Initialize(void) {
   struct ShopWork *shop = Ram_HeapSlots->menuWork;
   s32 i;
 
-  for (i = INVENTORY_SLOTS - 1; i >= 0; i--)
+  for (i = 0; i < INVENTORY_SLOTS; i++)
     shop->iconSlots[i] = ICON_NONE;
   {
     s32 hidden = 0;

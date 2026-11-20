@@ -139,7 +139,7 @@ void MtAlephSummit_ShiftColors(u16 *colors, s32 count, s32 delta) {
   i = 0;
   if (count == 0)
     return;
-  do {
+  for (; i != count; i++) {
     r = RGB_RED(*colors) + delta;
     g = RGB_GREEN(*colors) + delta;
     b = RGB_BLUE(*colors) + delta;
@@ -156,8 +156,7 @@ void MtAlephSummit_ShiftColors(u16 *colors, s32 count, s32 delta) {
     if (b < 0)
       b = 0;
     *colors++ = RGB(r, g, b);
-    i++;
-  } while (i != count);
+  }
 }
 
 /// A task: background palette 4's colours 1 to 15 pulse up to two levels
@@ -494,13 +493,11 @@ s32 Scene_Initialize(void) {
     Task_AddFrame(MtAlephSummit_PulseColors, TASK_PASS_FRAME);
     // The background walks back to the saved colours, a level a step, as many
     // steps as a channel has levels.
-    j = 0;
-    do {
+    for (j = 0; j != RGB_LEVEL_MAX + 1; j++) {
       MtAlephSummit_StepColorsToward((u16 *)&BG_PLTT_COLOR(0, 0), buffer,
                                      PALETTE_FADE_BG_COLORS);
       System_Wait(4);
-      j++;
-    } while (j != RGB_LEVEL_MAX + 1);
+    }
     FieldActor_SetSpritePriority(ACTOR_ALEX, 1);
     Actor_SetAnimation(ACTOR_ALEX, 1);
     FieldCamera_MoveTo(256, CAMERA_KEEP, 128, 1);
@@ -591,24 +588,20 @@ s32 Scene_Initialize(void) {
     FieldEvent_Wait(20);
     Actor_SetAnimation(ACTOR_WISE_ONE, 3);
     Actor_SetSpeed(ACTOR_WISE_ONE, 0.1);
-    j = 0;
-    do {
+    for (j = 0; j != 4; j++) {
       if (j & 1) {
         Actor_WalkToAndWait(ACTOR_WISE_ONE, 216, 96);
       } else {
         Actor_Get(ACTOR_WISE_ONE)->steeringFlags &= ~ACTOR_FACES_MOTION;
         Actor_WalkTo(ACTOR_WISE_ONE, 208, 88);
       }
-      i = 0;
-      do {
+      for (i = 0; i != WISE_ONE_BLINKS; i++) {
         Actor_SetSpriteColorById(ACTOR_WISE_ONE, SPRITE_COLOR_BLINK);
         FieldEvent_Wait(3);
         Actor_SetSpriteColorById(ACTOR_WISE_ONE, 0);
         FieldEvent_Wait(3);
-        i++;
-      } while (i != WISE_ONE_BLINKS);
-      j++;
-    } while (j != 4);
+      }
+    }
     Actor_ShowEmote(ACTOR_ALEX, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
     // "Look at me! My body is brimming with power!"
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0, 5);
@@ -622,16 +615,14 @@ s32 Scene_Initialize(void) {
     System_Wait(30);
     Event_PlaySound(SE_POWER_UP);
     MapGrid_SetShake(16, 16, 1);
-    i = 0;
-    do {
+    for (i = 0; i != 4; i++) {
       PaletteFade_ApplyTarget(PALETTE_TINT_PALE, PALETTES_BG);
       PaletteFade_Interpolate(1);
       FieldEvent_Wait(2);
       PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
       PaletteFade_Interpolate(1);
       FieldEvent_Wait(2);
-      i++;
-    } while (i != 4);
+    }
     MapGrid_SetShake(0, 0, 0);
     Actor_RunRepeatedMotion(ACTOR_ALEX, 2);
     Field_StartPaletteTransition(1);
@@ -651,30 +642,25 @@ s32 Scene_Initialize(void) {
     Event_PlaySound(SE_GATHERING_POWER);
     i = 0;
     Actor_Get(ACTOR_ALEX)->motionFlags = i;
-    do {
+    for (; i != 64; i++) {
       if (i == 16)
         Actor_SetAnimation(ACTOR_ALEX, 18);
       Actor_Get(ACTOR_ALEX)->y.fixed += toFIXED(3) / 20;
       FieldEvent_Wait(1);
-      i++;
-    } while (i != 64);
+    }
     Actor_RunRepeatedMotion(ACTOR_ALEX, 2);
     FieldEvent_Wait(5);
     // "How!? What's going on? I should be all-powerful! How can you defeat..."
     FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_RIGHT | ACTOR_ALEX, 0, 5);
-    i = 0;
-    do {
+    for (i = 0; i != 32; i++) {
       Actor_Get(ACTOR_ALEX)->y.fixed += toFIXED(1);
       FieldEvent_Wait(1);
-      i++;
-    } while (i != 32);
+    }
     Actor_Get(ACTOR_ALEX)->motionFlags = ACTOR_FOLLOWS_TERRAIN;
-    i = 0;
-    do {
+    for (i = 0; i != 5; i++) {
       Actor_Get(ACTOR_ALEX)->y.fixed -= toFIXED(832) / 100;
       FieldEvent_Wait(1);
-      i++;
-    } while (i != 5);
+    }
     MtAlephSummit_ScatterDustRing(256, 16);
     Actor_SetAnimation(ACTOR_ALEX, 17);
     Event_PlaySound(SE_CRASH);

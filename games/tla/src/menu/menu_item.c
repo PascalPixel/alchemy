@@ -590,8 +590,8 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
       // Take both whole stacks out, one item at a time (at most
       // INVENTORY_STACK_MAX): Inventory_RemoveFar returns INVENTORY_REMOVE_LAST
       // for the last one and INVENTORY_REMOVE_EMPTY_SLOT for an empty slot.
-      sourceQuantity = 0;
-      while (sourceQuantity <= INVENTORY_STACK_MAX - 1) {
+      for (sourceQuantity = 0; sourceQuantity < INVENTORY_STACK_MAX;
+           sourceQuantity++) {
         result =
             Inventory_RemoveFar(menu->sideMember[0], menu->selectedSlots[0]);
         if (result == INVENTORY_REMOVE_LAST) {
@@ -601,11 +601,10 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           transferFailed = 1;
           break;
         }
-        sourceQuantity++;
       }
       sourceQuantity++;
-      targetQuantity = 0;
-      while (targetQuantity <= INVENTORY_STACK_MAX - 1) {
+      for (targetQuantity = 0; targetQuantity < INVENTORY_STACK_MAX;
+           targetQuantity++) {
         // The receiver cannot trade away a worn item that will not come off.
         if ((menu->selectedItems[1] & INVENTORY_EQUIPPED) != 0) {
           item = Item_GetDirectFar(menu->selectedItems[1] &
@@ -623,7 +622,6 @@ s32 ItemMenu_RunCommands(s32 *ownerOut, s32 *targetOut, s32 *itemOut) {
           transferFailed = 1;
           break;
         }
-        targetQuantity++;
       }
       targetQuantity++;
       // Then give each the other's items.
@@ -835,7 +833,7 @@ void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
   s32 ownerIndex;
 
   Menu_PlaceOwnerEntryObjects(MenuCursor_Create(menu), 2, 2);
-  for (ownerIndex = 3; ownerIndex >= 0; ownerIndex--)
+  for (ownerIndex = 0; ownerIndex < 4; ownerIndex++)
     menu->memberY[ownerIndex] = MENU_MEMBER_Y;
 
   {
@@ -872,11 +870,10 @@ void Menu_SpawnIconEntries(struct ItemMenuWork *menu, struct Window *window) {
     s32 y = MENU_ICON_HIDDEN_Y;
 
     firstIcons = &menu->entryIcons[0];
-    do {
+    for (; firstSlot < ICON_GRID_ROW; firstSlot++) {
       *firstIcons++ = WindowSprite_CreateFromResourceFar(
           ICON_KIND_ITEM, firstSlot, window, MENU_ICON_HIDDEN_X, y);
-      firstSlot++;
-    } while (firstSlot < ICON_GRID_ROW);
+    }
   }
 
   secondSlot = ICON_GRID_ROW;
@@ -884,11 +881,10 @@ void Menu_SpawnIconEntries(struct ItemMenuWork *menu, struct Window *window) {
     s32 y = MENU_ICON_HIDDEN_Y;
 
     secondIcons = &menu->entryIcons[ICON_GRID_ROW];
-    do {
+    for (; secondSlot < 2 * ICON_GRID_ROW; secondSlot++) {
       *secondIcons++ = WindowSprite_CreateFromResourceFar(
           ICON_KIND_ITEM, secondSlot, window, 256, y);
-      secondSlot++;
-    } while (secondSlot < 2 * ICON_GRID_ROW);
+    }
   }
 
   remainingSlot = 2 * ICON_GRID_ROW;
@@ -896,11 +892,10 @@ void Menu_SpawnIconEntries(struct ItemMenuWork *menu, struct Window *window) {
     s32 y = MENU_ICON_HIDDEN_Y;
 
     remainingIcons = &menu->entryIcons[2 * ICON_GRID_ROW];
-    do {
+    for (; remainingSlot < MENU_ENTRY_ICONS; remainingSlot++) {
       *remainingIcons++ = WindowSprite_CreateFromResourceFar(
           ICON_KIND_ITEM, remainingSlot, window, 256, y);
-      remainingSlot++;
-    } while (remainingSlot <= MENU_ENTRY_ICONS - 1);
+    }
   }
 }
 
@@ -1364,16 +1359,14 @@ s32 ItemMenu_GetItemQuantity(s32 owner, s32 item) {
 
   quantity = 0;
   state = Unit_Get(owner);
-  i = 0;
-  do {
+  for (i = 0; i < INVENTORY_SLOTS; i++) {
     if (state->inventory[i] != 0 &&
         (state->inventory[i] & INVENTORY_ITEM_ID_MASK) == item) {
       quantity += (state->inventory[i] & INVENTORY_QUANTITY_MASK) >>
                   INVENTORY_QUANTITY_SHIFT;
       quantity++;
     }
-    i++;
-  } while (i <= INVENTORY_SLOTS - 1);
+  }
   return quantity;
 }
 
@@ -2850,8 +2843,7 @@ s32 ItemMenu_DrawItemDetailPage(s32 listWindow, void *memberWork,
 #endif
   }
 
-  row = 0;
-  do {
+  for (row = 0; row <= 4; row++) {
     if (row == state->row) {
       Render_SetTilemapFlagRect(menu->itemWindow, 1, row * 2 + 1, 14, 1,
                                 HIGHLIGHT_PALETTE);
@@ -2859,8 +2851,7 @@ s32 ItemMenu_DrawItemDetailPage(s32 listWindow, void *memberWork,
       Render_SetTilemapFlagRect(menu->itemWindow, 1, row * 2 + 1, 14, 1,
                                 WINDOW_PALETTE);
     }
-    row++;
-  } while (row <= 4);
+  }
 
   wait(1);
   return 1;

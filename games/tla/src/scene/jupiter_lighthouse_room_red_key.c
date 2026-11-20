@@ -739,7 +739,7 @@ void JupiterLighthouse_UpdateSparkRing(void) {
   s32 duration;
   s32 i;
 
-  for (i = ACTIVATION_SPARKS - 1; i >= 0; sprite++, i--, spark++) {
+  for (i = 0; i < ACTIVATION_SPARKS; sprite++, i++, spark++) {
     duration = spark->duration;
     if (spark->age < 0 || spark->age > duration)
       continue;

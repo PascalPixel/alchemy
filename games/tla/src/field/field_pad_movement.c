@@ -379,7 +379,7 @@ push_objects:
   SET_POSITION(&contact, actor->x.fixed, actor->y.fixed, actor->z.fixed);
   Vector_AddPolarOffset(toFIXED(15), (u16)heading, &contact);
   other = (struct Actor *)Ram_HeapSlots->actors;
-  for (angleIndex = ACTOR_COUNT - 1; angleIndex >= 0; angleIndex--, other++) {
+  for (angleIndex = 0; angleIndex < ACTOR_COUNT; angleIndex++, other++) {
     s32 radius;
 
     radius = actor->radius - 2;
@@ -843,8 +843,7 @@ s32 Actor_FlyOnWorldMap(struct Actor *actor) {
 
     check_objects:
       other = Ram_HeapSlots->actors;
-      for (angleIndex = ACTOR_COUNT - 1; angleIndex >= 0;
-           angleIndex -= 1, other++) {
+      for (angleIndex = 0; angleIndex < ACTOR_COUNT; angleIndex++, other++) {
         if (other->script != NULL && (other->collisionFlags & ACTOR_SOLID) &&
             other != actor &&
             Field_CheckSpheresOverlap(&other->x.fixed, other->radius,

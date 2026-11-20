@@ -34,10 +34,9 @@ void WorldMap_MarkPlaceVisited(s32 id, s32 variant) {
 s32 FlagEntries_GetValue(s32 flag) {
   const struct FlagEntry *entry = FlagEntries_GetTable();
 
-  while (entry->flag != 0) {
+  for (; entry->flag != 0; entry++) {
     if (entry->flag == flag && entry->value != 0)
       return entry->value;
-    entry++;
   }
   return 1;
 }
@@ -279,7 +278,7 @@ s32 Area_GetNameIndex(s32 sceneId, s32 entrance) {
   s32 name = 0;
   s32 area = Scene_GetArea(sceneId);
 
-  while (rule->id != -1) {
+  for (; rule->id != -1; rule++) {
     if (rule->useSceneId) {
       if (rule->id == sceneId) {
         if (rule->entrance == -1 || rule->entrance == entrance) {
@@ -295,7 +294,6 @@ s32 Area_GetNameIndex(s32 sceneId, s32 entrance) {
         }
       }
     }
-    rule++;
   }
   return name;
 }
@@ -314,15 +312,13 @@ void Scene_SetRestartPoint(void) {
 
   sceneId = party->next;
   entrance = party->entrance;
-  rule = gParty_PairResolveRules;
 
-  while (rule[0] != -1) {
+  for (rule = gParty_PairResolveRules; rule[0] != -1; rule += 8) {
     if (rule[0] == sceneId && (rule[1] == -1 || rule[1] == entrance)) {
       party->restartScene = rule[2];
       party->restartEntrance = rule[3];
       return;
     }
-    rule += 8;
   }
 }
 
@@ -337,7 +333,7 @@ void WorldMap_SetReturnForScene(s32 scene, s32 entrance) {
 
   if (GameFlag_Get(FLAG_SHIP_SAILABLE) == 0)
     return;
-  while (rule[0] != -1) {
+  for (; rule[0] != -1; rule += 8) {
     if (rule[0] == scene &&
         (rule[1] == -1 || entrance == -1 || rule[1] == entrance)) {
       gMainRoutineWork.shipX = toFIXED(rule[4]);
@@ -345,7 +341,6 @@ void WorldMap_SetReturnForScene(s32 scene, s32 entrance) {
       gMainRoutineWork.shipFacing = rule[6];
       return;
     }
-    rule += 8;
   }
 }
 
@@ -358,7 +353,7 @@ void WorldMap_SetReturnLeavingScene(s32 scene, s32 entrance) {
   if (GameFlag_Get(FLAG_SHIP_SAILABLE) == 0)
     return;
   gMainRoutineWork.ownerOverride = 0;
-  while (rule[0] != -1) {
+  for (; rule[0] != -1; rule += 8) {
     if (rule[2] == scene &&
         (rule[3] == -1 || entrance == -1 || rule[3] == entrance)) {
       gMainRoutineWork.shipX = toFIXED(rule[4]);
@@ -366,7 +361,6 @@ void WorldMap_SetReturnLeavingScene(s32 scene, s32 entrance) {
       gMainRoutineWork.shipFacing = rule[6];
       return;
     }
-    rule += 8;
   }
 }
 

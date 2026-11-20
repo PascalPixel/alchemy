@@ -2228,7 +2228,7 @@ void Kibombo_AkafubuChants(void) {
   Sound_Play(SE_MERCURY_LIGHTHOUSE_DOOR_OPEN);
   i = 0;
   angle = 0;
-  do {
+  for (; i < CHANT_SPARKS; i++) {
     x = center->x.fixed;
     y = center->y.fixed + toFIXED(24);
     z = center->z.fixed;
@@ -2249,8 +2249,7 @@ void Kibombo_AkafubuChants(void) {
       spark->update = (ObjectUpdate)Kibombo_SpinSpark;
     }
     angle += toFIXED(22);
-    i++;
-  } while (i < CHANT_SPARKS);
+  }
 }
 
 /// Ends the offering: the fires stop flickering and, while the crystal is still
@@ -3063,14 +3062,12 @@ void Kibombo_GabombaRespondsToGift(void) {
   Sound_Play(SE_CRUNCH);
   if (gKibombo_BlackCrystal != 0) {
     gKibombo_BlackCrystal->motionFlags = 0;
-    i = 0;
-    do {
+    for (i = 0; i < 4; i++) {
       gKibombo_BlackCrystal->y.fixed += toFIXED(6);
       actor->scaleY -= FIXED_ONE / 8;
       actor->y.fixed -= toFIXED(1) / 2;
       wait(1);
-      i++;
-    } while (i < 4);
+    }
     Actor_SetPositionAndResetMotion(gKibombo_BlackCrystal, 0, 0, 0);
     for (i = 0; i < 4; i++) {
       actor->scaleY -= FIXED_ONE / 8;

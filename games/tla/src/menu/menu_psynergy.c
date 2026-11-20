@@ -904,8 +904,7 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
     GameFlag_Clear(FLAG_SCENE_TEMP_FF);
   }
 
-  row = 0;
-  do {
+  for (row = 0; row <= 4; row++) {
     if (row == state->row) {
       Render_SetTilemapFlagRect(menu->psynergyWindow, 1, row * 2 + 1, 14, 1,
                                 HIGHLIGHT_PALETTE);
@@ -913,8 +912,7 @@ s32 PsynergyMenu_DrawDetailPage(s32 window, s32 *work,
       Render_SetTilemapFlagRect(menu->psynergyWindow, 1, row * 2 + 1, 14, 1,
                                 WINDOW_PALETTE);
     }
-    row++;
-  } while (row <= 4);
+  }
 
   wait(1);
   return 1;

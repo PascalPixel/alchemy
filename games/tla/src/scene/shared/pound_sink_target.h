@@ -5,7 +5,7 @@
 void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
-  while (*list != ACTOR_LIST_END) {
+  for (; *list != ACTOR_LIST_END; list += 3) {
     u32 entry = *list;
     s32 id = work->secondActorId;
 
@@ -26,6 +26,5 @@ void Pound_SinkTarget(u16 *list, s32 mode, s32 count) {
       }
       break;
     }
-    list += 3;
   }
 }

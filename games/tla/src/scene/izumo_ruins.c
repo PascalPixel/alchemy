@@ -200,7 +200,7 @@ void IzumoRuins_PlaceStakes(u16 *list) {
   struct Actor *actor;
   s32 flag;
 
-  while (list[0] != (u16)-1) {
+  for (; list[0] != (u16)-1; list += 3) {
     actor = Actor_Get(list[0]);
     flag = (s16)list[2];
     Actor_SetSpriteFlags(actor, 0);
@@ -209,7 +209,6 @@ void IzumoRuins_PlaceStakes(u16 *list) {
     actor->collisionFlags &= ~ACTOR_SOLID;
     actor->timer = flag;
     IzumoRuins_ShowStakeState(actor);
-    list += 3;
   }
 }
 

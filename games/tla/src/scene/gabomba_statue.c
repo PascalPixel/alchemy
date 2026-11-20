@@ -529,11 +529,10 @@ void GabombaStatue_LashRope(void) {
     GabombaStatue_TurnCogs(0);
     Event_SetFlag(FLAG_COGS_STOPPED);
     gFieldWork->psynergy = 0;
-    i = 0;
-    do {
+    for (i = 0; i < ROPE_STOP_FRAMES; i++) {
       actor->riseCounter += gGabombaStatue_RopeStopSteps[i] * direction;
       System_Wait(1);
-    } while (++i < ROPE_STOP_FRAMES);
+    }
   }
 }
 
@@ -1551,10 +1550,9 @@ void GabombaStatue_DrawCogCells(void) {
   u32 i;
   s32 x, z, cell, found;
 
-  i = 0;
-  do {
+  for (i = 0; i < COG_SHAPE_COUNT; i++) {
     *dest++ = *src++;
-  } while (++i < COG_SHAPE_COUNT);
+  }
   for (i = ACTOR_FIRST_PLACED; (s32)i < FIELD_TREASURE_ACTOR; i++) {
     actor = Actor_GetById(i);
     if (actor == 0)
@@ -1787,8 +1785,7 @@ void GabombaStatue_LandFromFall(void) {
   options.update = FieldEffect_AdvanceMotion;
   options.startScaleX = FIXED_ONE * 4 / 5;
   options.startScaleY = FIXED_ONE * 4 / 5;
-  i = 0;
-  do {
+  for (i = 0; i <= DUST_RING_PUFFS; i++) {
     s32 angle;
     FIXED velocity[3];
 
@@ -1804,8 +1801,7 @@ void GabombaStatue_LandFromFall(void) {
                       EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
                           EFFECT_USE_PALETTE | 1,
                       &options);
-    i++;
-  } while (i <= DUST_RING_PUFFS);
+  }
   Event_PlaySound(SE_THUMP);
   Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
@@ -2956,10 +2952,8 @@ void GabombaStatue_SetBlocksRaised(s32 id, s32 show) {
 
   state->blocksRaised = show;
   state->firstBlock = id;
-  row = 0;
-  do {
-    column = 0;
-    do {
+  for (row = 0; row < CHANNEL_ROWS; row++) {
+    for (column = 0; column < CHANNEL_COLUMNS; column++) {
       {
         struct PuzzleCell *cell =
             state->cells[0] + (row * CHANNEL_COLUMNS + column);
@@ -2987,10 +2981,8 @@ void GabombaStatue_SetBlocksRaised(s32 id, s32 show) {
           id++;
         }
       }
-      column++;
-    } while (column < CHANNEL_COLUMNS);
-    row++;
-  } while (row < CHANNEL_ROWS);
+    }
+  }
   state->endBlock = id;
 }
 
@@ -3761,7 +3753,7 @@ void GabombaStatue_ResetClock(void) {
 void GabombaStatue_PlaceSwitchActors(const u16 *entry) {
   s32 value;
 
-  while ((value = *entry) != (u16)-1) {
+  for (; (value = *entry) != (u16)-1; entry += 2) {
     u16 id = *entry++;
     struct Actor *actor = Actor_Get(id);
     s16 mode = entry[0];
@@ -3770,7 +3762,6 @@ void GabombaStatue_PlaceSwitchActors(const u16 *entry) {
     actor->collisionFlags &= ~ACTOR_SOLID;
     Actor_SetSpriteFlags(actor, 0);
     Actor_SetCellOpen(id, (u16)mode, (u16)flag, actor->layer);
-    entry += 2;
   }
 }
 

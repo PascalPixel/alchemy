@@ -113,7 +113,7 @@ void FieldPsynergy_UpdateRing(void) {
     entry = work->motes;
     sprite = work->sprites;
     tile = &work->tile;
-    for (i = RING_CIRCLING_MOTES - 1; i >= 0; i--, sprite++, entry++) {
+    for (i = 0; i < RING_CIRCLING_MOTES; i++, sprite++, entry++) {
       timer = entry->timer;
       if (timer == 0) {
         sprite->angle = Random16();
@@ -394,7 +394,7 @@ void FieldPsynergy_EndRing(void) {
     struct EffectSprite *spark;
     mote = work->sparks;
     spark = work->sparkSprites;
-    for (i = RING_SPARK_COUNT - 1; i >= 0; i--, spark++, mote++) {
+    for (i = 0; i < RING_SPARK_COUNT; i++, spark++, mote++) {
       if (mote->timer >= 0) {
         // angle carries the spark's age here, as it carried each spark's
         // heading above.

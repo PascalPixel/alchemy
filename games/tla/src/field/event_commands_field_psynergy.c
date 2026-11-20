@@ -216,15 +216,14 @@ void FieldPsynergy_GrowFromCaster(struct Actor *actor, s32 x, s32 y, s32 z) {
   start[0] = mainActor->x.fixed;
   start[1] = mainActor->y.fixed + toFIXED(16);
   start[2] = mainActor->z.fixed;
-  do {
+  for (; i <= GROW_STEPS; i++) {
     SET_ACTOR_POSITION(actor, start[0] + (x - start[0]) * i / GROW_STEPS,
                        start[1] + (y - start[1]) * i / GROW_STEPS,
                        start[2] + (z - start[2]) * i / GROW_STEPS);
     actor->scaleY = actor->scaleX =
         i * (FIXED_ONE * 3 / 4) / GROW_STEPS + FIXED_ONE / 4;
     wait(1);
-    i++;
-  } while (i <= GROW_STEPS);
+  }
 }
 
 /// FieldPsynergy_GrowFromCaster backwards: moves the object from (x, y, z) to
@@ -239,15 +238,14 @@ void FieldPsynergy_ShrinkToCaster(struct Actor *actor, s32 x, s32 y, s32 z) {
   start[0] = mainActor->x.fixed;
   start[1] = mainActor->y.fixed + toFIXED(16);
   start[2] = mainActor->z.fixed;
-  do {
+  for (; i <= GROW_STEPS; i++) {
     SET_ACTOR_POSITION(actor, x + (start[0] - x) * i / GROW_STEPS,
                        y + (start[1] - y) * i / GROW_STEPS,
                        z + (start[2] - z) * i / GROW_STEPS);
     actor->scaleY = actor->scaleX =
         i * -(FIXED_ONE * 3 / 4) / GROW_STEPS + FIXED_ONE;
     wait(1);
-    i++;
-  } while (i <= GROW_STEPS);
+  }
 }
 
 /// Spawns a sparkle at x, y, z that hops off in a random

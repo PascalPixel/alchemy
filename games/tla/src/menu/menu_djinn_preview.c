@@ -75,7 +75,7 @@ s32 PsynergyList_RunCompareLoop(u32 mode) {
   first = owners[menu->selectedColumn[0]];
   second = owners[menu->selectedColumn[1]];
   Menu_CreatePairEntryObjects(first, second);
-  for (memberIndex = 3; memberIndex >= 0; memberIndex--)
+  for (memberIndex = 0; memberIndex < 4; memberIndex++)
     menu->memberY[memberIndex] = MENU_FIGURE_HIDDEN_Y;
   menu->memberX[0] = 16;
   menu->memberY[0] = 32;

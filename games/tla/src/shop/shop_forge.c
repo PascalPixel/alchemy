@@ -62,11 +62,10 @@ s32 Forge_UnitHasMaterial(s32 unitId) {
   unit = Unit_Get(unitId);
   slot = 0;
   inventory = unit->inventory;
-  do {
+  for (; slot < INVENTORY_SLOTS; slot++) {
     if (Forge_GetItemCondition(*inventory++) != 0)
       return 1;
-    slot++;
-  } while (slot < INVENTORY_SLOTS);
+  }
   return 0;
 }
 

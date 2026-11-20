@@ -9,7 +9,7 @@ void Blocks_MarkCells(u16 *ids) {
   struct MapCell *cell;
   s32 x, z;
 
-  while (*ids != ACTOR_LIST_END) {
+  for (; *ids != ACTOR_LIST_END; ids++) {
     actor = Actor_Get(*ids);
     marked = &actor->riseEnabled;
     *marked = 0;
@@ -30,6 +30,5 @@ void Blocks_MarkCells(u16 *ids) {
       cell->collisionCode = CELL_BEHAVIOR_WALL;
       *marked = 1;
     }
-    ids++;
   }
 }

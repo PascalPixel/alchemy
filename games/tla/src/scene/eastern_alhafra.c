@@ -391,8 +391,7 @@ void EasternAlhafra_FinishPushing(s32 mode, s32 id) {
     actor->collisionFlags = 0;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     Actor_SelectAnimation(actor, 4);
-    i = 0;
-    do {
+    for (i = 0; i <= 2; i++) {
       splash = (FieldActor_Create(SPRITE_SPLASH, actor->x.fixed, actor->y.fixed,
                                   actor->z.fixed));
       splashes[i] = splash;
@@ -401,8 +400,7 @@ void EasternAlhafra_FinishPushing(s32 mode, s32 id) {
       Actor_SetSpriteFlags(splash, 0);
       Event_PlaySound(SE_CAST);
       System_Wait(5);
-      i++;
-    } while (i <= 2);
+    }
     EasternAlhafra_PlaceClearedDebris();
     FieldActor_Stop(gMainRoutineWork.leaderActorId);
     System_Wait(30);
@@ -507,10 +505,9 @@ void EasternAlhafra_RollLog(void) {
       log->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       frames = 0;
       if (log->y.fixed > 0) {
-        do {
+        for (; frames < 60 && log->y.fixed > 0; frames++) {
           System_Wait(1);
-          frames++;
-        } while (frames < 60 && log->y.fixed > 0);
+        }
       }
       EasternAlhafra_PlaceClearedDebris();
       Event_PlaySound(SE_LOG_FALL);

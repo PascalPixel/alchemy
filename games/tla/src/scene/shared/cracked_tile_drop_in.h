@@ -25,8 +25,7 @@ void CrackedTile_DropIn(void) {
   options.startScaleX = FIXED_ONE * 16 / 25;
   options.startScaleY = FIXED_ONE * 16 / 25;
   // A puff each sixteenth of a turn, the last over the first.
-  i = 0;
-  do {
+  for (i = 0; i <= TRIG_TURN / FACING_STEP; i++) {
     s32 angle;
     s32 velocity[3];
 
@@ -42,8 +41,7 @@ void CrackedTile_DropIn(void) {
                       EFFECT_USE_PALETTE | EFFECT_USE_START_SCALE |
                           EFFECT_USE_UPDATE | EFFECT_SCRIPT_MEDIUM,
                       &options);
-    i++;
-  } while (i <= TRIG_TURN / FACING_STEP);
+  }
   Event_PlaySound(SE_THUMP);
   Actor_SetAttachedEffect(gMainRoutineWork.leaderActorId,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);

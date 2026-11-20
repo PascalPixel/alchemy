@@ -218,8 +218,8 @@ void Teleport_PlaySparks(void) {
   wait(30);
   Sound_PlayFar(SE_SHIMMER);
   Actor_SelectAnimationFar(actor, ANIM_NOD);
-  for (spin = 0, frame = SPARKS_SPIN_FRAMES - 1; frame >= 0;
-       frame--, spin += SPARKS_SPIN_ACCELERATION) {
+  for (spin = 0, frame = 0; frame < SPARKS_SPIN_FRAMES;
+       frame++, spin += SPARKS_SPIN_ACCELERATION) {
     actor->facing += spin + FACING_STEP;
     wait(1);
   }

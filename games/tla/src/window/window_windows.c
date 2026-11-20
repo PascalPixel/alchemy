@@ -132,7 +132,7 @@ void WindowSystem_InitBattle(s32 kind) {
   {
     u8 mode = TEXT_TILE_RESERVED;
 
-    for (i = 2; i >= 0; i--)
+    for (i = 0; i < 3; i++)
       work->textTileState[i] = mode;
   }
 }
@@ -204,10 +204,9 @@ void Window_EraseBorderRect(s32 x, s32 y, u32 width, u32 height) {
       }
       column = 0;
       if (column < width) {
-        do {
+        for (; column < width; column++) {
           *cursor++ = tile;
-          column++;
-        } while (column < width);
+        }
       }
       row++;
       cursor += BG_SCREEN_WIDTH - width;
@@ -584,10 +583,9 @@ struct UiChannelSlot *BattleMessage_Continue(struct Window *window, s32 entry,
     selected->lineSpacing = lineSpacing;
     index = 0;
     spacing = selected->spacing;
-    do {
-      index++;
+    for (; index < MESSAGE_LINE_COUNT; index++) {
       *spacing++ = 0;
-    } while (index < MESSAGE_LINE_COUNT);
+    }
   }
   return selected;
 }

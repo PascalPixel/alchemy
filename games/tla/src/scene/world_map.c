@@ -2144,7 +2144,7 @@ void WorldMap_TakeOff(void) {
   z = Actor_Get(ACTOR_SHIP)->z.fixed / toFIXED(1);
   i = 0;
   {
-    do {
+    for (; i <= 7; i++) {
       if (Actor_Get(i) != NULL) {
         gWorldMap_HiddenMembers[i] = i;
         Actor_Get(i)->scaleX = 0;
@@ -2153,8 +2153,7 @@ void WorldMap_TakeOff(void) {
       } else {
         gWorldMap_HiddenMembers[i] = -1;
       }
-      i++;
-    } while (i <= 7);
+    }
   }
   Actor_Get(ACTOR_KRADEN)->scaleX = 0;
   Actor_SetSpriteFlags(Actor_Get(ACTOR_KRADEN), 0);

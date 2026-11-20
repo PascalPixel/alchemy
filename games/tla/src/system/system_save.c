@@ -88,15 +88,14 @@ s32 Save_InitializeWork(void) {
     work->occupied[index] = 1;
     work->partId[index] = partId;
     if (status < index) {
-      do {
+      for (; status < index; status++) {
         if (work->partId[status] == (u8)partId) {
           if (work->counter[status] < slot->counter)
             work->occupied[status] = 0;
           else
             work->occupied[index] = 0;
         }
-        status++;
-      } while (status < index);
+      }
     }
   }
   return 0;
@@ -116,14 +115,12 @@ u32 Save_SelectWriteSector(s32 mode) {
 
   slot = ((struct SaveWorkspace *)Ram_HeapSlots->saveWork)->occupied;
   count = 0;
-  index = 0;
-  do {
+  for (index = 0; index < SAVE_SECTOR_COUNT; index += SAVE_SECTORS_PER_PART) {
     value = *slot;
     slot += SAVE_SECTORS_PER_PART;
     if (value == 0)
       empty[count++] = index;
-    index += SAVE_SECTORS_PER_PART;
-  } while (index < SAVE_SECTOR_COUNT);
+  }
   index = SAVE_SECTOR_COUNT;
   if (count != 0) {
     if (count == 1) {
@@ -272,7 +269,7 @@ s32 Save_ChecksumSector(void) {
   sum = 0;
   offset = 0;
   limit = SAVE_CHECKSUM_BYTES - 1;
-  do {
+  for (; offset <= limit; offset += 8) {
     sum += work->slot[SAVE_HEADER_BYTES + offset + 0];
     sum += work->slot[SAVE_HEADER_BYTES + offset + 1];
     sum += work->slot[SAVE_HEADER_BYTES + offset + 2];
@@ -281,8 +278,7 @@ s32 Save_ChecksumSector(void) {
     sum += work->slot[SAVE_HEADER_BYTES + offset + 5];
     sum += work->slot[SAVE_HEADER_BYTES + offset + 6];
     sum += work->slot[SAVE_HEADER_BYTES + offset + 7];
-    offset += 8;
-  } while (offset <= limit);
+  }
   return sum;
 }
 

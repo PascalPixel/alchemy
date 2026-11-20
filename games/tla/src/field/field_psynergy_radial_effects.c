@@ -62,8 +62,7 @@ void FieldEffect_SpawnRadialParticleRing(struct MotionObject *origin) {
   options.update = FieldEffect_AdvanceMotion;
   options.startScaleX = FIXED_ONE * 4 / 5;
   options.startScaleY = FIXED_ONE * 4 / 5;
-  i = 0;
-  do {
+  for (i = 0; i <= RADIAL_RING_STEPS; i++) {
     angle = i * (TRIG_TURN / RADIAL_RING_STEPS);
     velocity[0] = Trig_Cos(angle) * 3 / 2;
     velocity[1] = 0;
@@ -73,8 +72,7 @@ void FieldEffect_SpawnRadialParticleRing(struct MotionObject *origin) {
         origin->x, origin->y, origin->z, velocity[0], velocity[1], sine,
         EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE | EFFECT_USE_PALETTE | 1,
         &options);
-    i++;
-  } while (i <= RADIAL_RING_STEPS);
+  }
 }
 
 /// Per-frame update: wanders away from the anchor, 2 to 3 pixels a frame, now

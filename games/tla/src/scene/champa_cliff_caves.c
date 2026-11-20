@@ -531,7 +531,7 @@ void ChampaCliffCaves_FadeColors(u16 *from, u16 *to, s32 frames) {
     s32 offset;
     s32 left;
 
-    for (offset = 0, left = FORGE_COLORS - 1; left >= 0; left--) {
+    for (offset = 0, left = 0; left < FORGE_COLORS; left++) {
       s32 red, green, blue, toRed, toGreen, toBlue;
 
       red = RGB_RED(*(u16 *)(offset + (s32)from));

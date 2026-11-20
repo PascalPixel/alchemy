@@ -185,10 +185,8 @@ void ReleaseBattleObjectRecords(s32 no) {
     if (obj != NULL) {
       slot->animationEntry = 0;
       slot->shadowEntry = 0;
-      i = 0;
-      while ((rec = GetMotionRecord(obj, i)) != NULL) {
+      for (i = 0; (rec = GetMotionRecord(obj, i)) != NULL; i += 1) {
         Sprite_DestroyFar(rec);
-        i += 1;
       }
       obj->recordStorageKind = ACTOR_SPRITE_NONE; // No graphics.
       obj->records = NULL;
@@ -551,8 +549,7 @@ void BattleMotion_DestroyAllSlotObjects(void) {
   s32 i;
   struct BattleObject *slot;
 
-  i = 0;
-  do {
+  for (i = 0; i < UNIT_MAX; i += 1) {
     no = i + FIRST_ENEMY_UNIT - PARTY_UNIT_COUNT;
     if (i <= ALLY_MAX) {
       no = i;
@@ -563,8 +560,7 @@ void BattleMotion_DestroyAllSlotObjects(void) {
       slot->object = NULL;
       slot->active = 0;
     }
-    i += 1;
-  } while (i < UNIT_MAX);
+  }
 }
 
 /// Writes a battle object's anchor to out, at height 0.

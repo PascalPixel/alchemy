@@ -319,24 +319,22 @@ void AnemosInnerSanctumEntrance_OpenTheWay(void) {
 #endif
   wait(40);
   Sound_Play(SE_KOLIMA_BRIDGE_POST);
-  i = ACTOR_SYMBOL_BLOCK_A;
-  do {
+  for (i = ACTOR_SYMBOL_BLOCK_A; i <= ACTOR_SYMBOL_BLOCK_F; i++) {
     actor = Actor_GetById(i);
     {
       FIXED z = actor->z.fixed - shift;
 
       Actor_SetMoveTarget(actor, actor->x.fixed, -toFIXED(8), z);
     }
-  } while (++i <= ACTOR_SYMBOL_BLOCK_F);
+  }
   Actor_WaitForMove(Actor_GetById(ACTOR_SYMBOL_BLOCK_A));
   wait(40);
-  i = ACTOR_SYMBOL_BLOCK_A;
-  do {
+  for (i = ACTOR_SYMBOL_BLOCK_A; i <= ACTOR_SYMBOL_BLOCK_F; i++) {
     actor = Actor_GetById(i);
     actor->z.fixed = (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(8);
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
     actor->update = 0;
-  } while (++i <= ACTOR_SYMBOL_BLOCK_F);
+  }
   wait(3);
   Sound_Play(SE_THUMP);
   wait(10);

@@ -546,7 +546,7 @@ void *FieldEffect_SpawnMoveHand(void *object) {
   Actor_SelectAnimationFar(parent, 3);
   Actor_SetTargetPositionFromMagnitudeAngle(parent, toFIXED(16), angle);
 
-  for (fragmentIndex = 7; fragmentIndex >= 0; fragmentIndex--) {
+  for (fragmentIndex = 0; fragmentIndex < 8; fragmentIndex++) {
     child = Actor_Spawn(SPRITE_SPARKLE, source->x.fixed,
                         source->y.fixed + toFIXED(16), source->z.fixed);
     if (child != 0) {
@@ -601,7 +601,7 @@ void UpdateRisingParticleBurst(void *object) {
   u32 spread;
 
   Sound_PlayFar(SE_CAST);
-  for (i = BURST_RISE_FRAMES - 1; i >= 0; i--) {
+  for (i = 0; i < BURST_RISE_FRAMES; i++) {
     src->y.fixed += toFIXED(1);
     src->facing += DEGtoANG(45);
     src->scaleX += -FIXED_ONE / 32;
@@ -730,12 +730,10 @@ void FieldPsynergy_Reveal(void) {
   event->revealFrames = REVEAL_FRAMES;
   event->effectTimerRunning = 1;
   FieldEffect_SpawnRevealMarkers();
-  frame = 0;
-  do {
+  for (frame = 0; frame <= 18; frame++) {
     wait(1);
     state->value = frame;
-    frame++;
-  } while (frame <= 18);
+  }
   if ((s8)scene->mode == 0)
     Task_Add(FieldPsynergy_WatchLeaderDistance, TASK_PASS_FRAME);
 }
@@ -883,7 +881,7 @@ void FieldEffect_SpawnBurstParticleField(void) {
   FieldPsynergy_FadeToCastColor();
 
   p = pos;
-  for (n = BURST_FIELD_PARTICLES - 1; n >= 0; n--) {
+  for (n = 0; n < BURST_FIELD_PARTICLES; n++) {
     struct Actor *obj;
     struct BurstParticleVisual *visual;
     struct BurstParticleVisual *child;

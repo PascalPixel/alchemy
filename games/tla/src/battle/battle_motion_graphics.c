@@ -648,7 +648,7 @@ void BattleObject_SetColorMode(struct MotionObject *object, s32 value) {
   u8 mask = SPRITE_PICTURE_NONE;
   u8 frame;
 
-  while ((record = GetMotionRecord(object, index)) != NULL) {
+  for (; (record = GetMotionRecord(object, index)) != NULL; index++) {
     children = &record->entries[1];
     child = record->entries[0];
     frame = child->picture;
@@ -663,7 +663,6 @@ void BattleObject_SetColorMode(struct MotionObject *object, s32 value) {
       child->colorMode = 0;
       child->picture |= SPRITE_PICTURE_NONE;
     }
-    index++;
   }
 }
 
@@ -869,23 +868,21 @@ void BattleMotion_ShowDowned(s32 id) {
   s32 n;
 
   unit = Unit_Get(id);
-  n = 0;
-  while ((rec = GetMotionRecord(BattleObject_Get(id)->object, n)) != 0) {
+  for (n = 0; (rec = GetMotionRecord(BattleObject_Get(id)->object, n)) != 0;
+       n++) {
     if (unit->side != BATTLE_SIDE_ENEMY)
       Sprite_StartAnimationFar(rec, POSE_PARTY_HELD);
     else
       Sprite_StartAnimationFar(rec, POSE_ENEMY_DOWN);
-    n++;
   }
 
   if (unit->side == BATTLE_SIDE_ENEMY) {
-    n = 0;
-    while ((rec = GetMotionRecord(BattleObject_Get(id)->object, n)) != 0) {
+    for (n = 0; (rec = GetMotionRecord(BattleObject_Get(id)->object, n)) != 0;
+         n++) {
       ent = rec->entries[0];
       recs[n] = rec;
       ent->colorMode = SPRITE_COLOR_GREY;
       ent->picture = SPRITE_PICTURE_NONE;
-      n++;
     }
     wait(4);
     BattleObject_RemoveFromLists(id);

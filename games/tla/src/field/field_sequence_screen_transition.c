@@ -862,10 +862,10 @@ void ScreenTransition_FillTilemapAndSolidTile(s32 color) {
     u32 pattern = 0;
     s32 remainingWords;
     u32 *tile;
-    for (remainingWords = 7; remainingWords >= 0; --remainingWords)
+    for (remainingWords = 0; remainingWords < 8; remainingWords++)
       pattern = (pattern << 4) | color;
     tile = work->solidTile;
-    for (remainingWords = 7; remainingWords >= 0; --remainingWords)
+    for (remainingWords = 0; remainingWords < 8; remainingWords++)
       *tile++ = pattern;
     Dma_Set(work->solidTile, BG_CHAR_BLOCK(0),
             DMA_COPY_WORDS(TILE_SIZE_4BPP / 4), REG_DMA3);

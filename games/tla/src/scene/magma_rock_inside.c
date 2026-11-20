@@ -482,7 +482,7 @@ void MagmaRockInside_MarkBlockCells(u16 *ids) {
   struct MapCell *cell;
   s32 x, z;
 
-  while (*ids != ACTOR_LIST_END) {
+  for (; *ids != ACTOR_LIST_END; ids++) {
     actor = Actor_Get(*ids);
     blocked = &actor->riseEnabled;
     *blocked = 0;
@@ -503,7 +503,6 @@ void MagmaRockInside_MarkBlockCells(u16 *ids) {
       cell->collisionCode = CELL_BEHAVIOR_WALL;
       *blocked = 1;
     }
-    ids++;
   }
 }
 
@@ -1066,15 +1065,13 @@ void MagmaRockInside_LeapOverLava(void) {
   Actor_SetSpriteFlags(leader, 0);
   stepX = (position[0] - leader->x.fixed) / 12;
   stepZ = (position[2] - leader->z.fixed) / 12;
-  i = 0;
-  do {
+  for (i = 0; i != 12; i++) {
     leader->x.fixed += target->x.fixed - position[0] + stepX;
     leader->z.fixed += target->z.fixed - position[2] + stepZ;
     position[0] = target->x.fixed;
     position[2] = target->z.fixed;
     System_Wait(1);
-    i++;
-  } while (i != 12);
+  }
   leader->x.fixed = target->x.fixed;
   leader->y.fixed = leader->groundHeight = target->y.fixed + toFIXED(16);
   leader->z.fixed = target->z.fixed;
@@ -1480,8 +1477,7 @@ void MagmaRockInside_ReleaseRocks(void) {
   // A beat every 3 frames: embers burst from the stone, a pound every eighth
   // beat; the rocks and flames are thrown eight beats apart from beat 32, and
   // the stone itself at beat 112.
-  beat = 0;
-  do {
+  for (beat = 0; beat != 128; beat++) {
     position[0] = toFIXED(Random16() & 31) + (toFIXED(760));
     position[2] = toFIXED(Random16() & 31) + (toFIXED(256));
     FieldEffect_Spawn(position[0], position[1], position[2], 0, toFIXED(1), 0,
@@ -1518,8 +1514,7 @@ void MagmaRockInside_ReleaseRocks(void) {
       MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     }
     wait(3);
-    beat++;
-  } while (beat != 128);
+  }
   FieldActor_WaitForMoveById(ACTOR_EMBER_STONE);
   FieldMapGrid_WaitForShakeToSettle();
   Event_PlaySound(SE_STOP_ACTION_SE);
@@ -1788,16 +1783,14 @@ void MagmaRockInside_OpenFlamePassage(s32 x, s32 z) {
                WINOUT_WIN01_BG3 | WINOUT_WIN01_OBJ | WINOUT_WINOBJ_ALL;
   REG_DISPCNT |= DISPCNT_OBJWIN_ON;
   Event_PlaySound(SE_DRIP);
-  i = 0;
-  do {
+  for (i = 0; i != BLEND_WEIGHT_MAX / 2; i++) {
     REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX, i * 2);
     System_Wait(1);
-  } while (++i != BLEND_WEIGHT_MAX / 2);
-  i = 0;
-  do {
+  }
+  for (i = 0; i != BLEND_WEIGHT_MAX; i++) {
     REG_BLDALPHA = BLEND_ALPHA(BLEND_WEIGHT_MAX - i, BLEND_WEIGHT_MAX);
     System_Wait(1);
-  } while (++i != BLEND_WEIGHT_MAX);
+  }
   x >>= 4;
   cellZ = (z >> 4) - 1;
   MapGrid_CopyCellsTo(65, 1, x + 64, cellZ, 1, 2);
@@ -2460,15 +2453,14 @@ s32 Scene_Initialize(void) {
     FieldEffect_StartBlankOverlay(0);
     Actor_GetById(ACTOR_ENTRANCE_PILLAR)->update =
         MagmaRockInside_LayerWithLeader;
-    j = 0;
-    do {
+    for (j = 0; j != 6; j++) {
       {
         struct Actor *actor = Actor_GetById(j + ACTOR_COLUMN_A);
 
         actor->motionFlags = 0;
         actor->y.fixed = actor->groundHeight = 0;
       }
-    } while (++j != 6);
+    }
     if (Event_GetFlag(FLAG_ENTRANCE_PILLAR_PUSHED))
       Actor_GetById(ACTOR_ENTRANCE_PILLAR)->z.fixed = toFIXED(264);
     Actor_PlaceBlocks(gMagmaRockInside_EntrancePillars);
@@ -2626,14 +2618,13 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellsTo(71, 64, 50, 102, 1, 1);
     }
   } else if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_INSIDE_EMBER_STONE) {
-    i = 0;
-    do {
+    for (i = 0; i != 3; i++) {
       struct Actor *actor = Actor_GetById(i + ACTOR_SUNKEN_PILLAR_A);
 
       Actor_SelectAnimation(actor, 4);
       actor->motionFlags = 0;
       actor->y.fixed = actor->groundHeight = -toFIXED(PILLAR_SINK_DEPTH);
-    } while (++i != 3);
+    }
     if (Event_GetFlag(FLAG_LEDGE_PILLAR_PUSHED)) {
       Actor_SetAnimation(ACTOR_LEDGE_PILLAR, 4);
       Actor_SetPosition(ACTOR_LEDGE_PILLAR, 696, 648);
@@ -2664,8 +2655,7 @@ s32 Scene_Initialize(void) {
   } else if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_INSIDE_BLAZE_TABLET) {
     MagmaRockInside_StartStepCells();
     Event_SetFlag(FLAG_RETREAT_BLOCKED);
-    i = 0;
-    do {
+    for (i = 0; i != 6; i++) {
       if (Event_GetFlag(FLAG_MARKER_LIT(i + 2))) {
         s32 y = 24 - i * 2;
 
@@ -2673,7 +2663,7 @@ s32 Scene_Initialize(void) {
         Call4((void (*)())MagmaRockInside_SwapCells, 0, 16, y,
               CELL_BEHAVIOR_WALL << 8);
       }
-    } while (++i != 6);
+    }
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_SOURCE_FLAME), 0);
     Actor_SetSpriteFlags(Actor_GetById(ACTOR_TORCH_FLAME), 0);
     if (Event_GetFlag(FLAG_TABLET_TORCH_LIT)) {
@@ -2871,8 +2861,7 @@ void MagmaRockInside_SpawnDustRing(void) {
   if (leader == 0)
     return;
   frame = 0;
-  i = 0;
-  do {
+  for (i = 0; i <= DUST_RING_PUFFS; i++) {
     effect = (struct FieldEffect *)FieldActor_Create(
         SPRITE_DUST_CLOUD, leader->x.fixed, leader->y.fixed, leader->z.fixed);
     if (effect != 0) {
@@ -2895,8 +2884,7 @@ void MagmaRockInside_SpawnDustRing(void) {
       effect->sprite->priority =
           ((struct FieldSprite *)leader->sprite)->priority;
     }
-    i++;
-  } while (i <= DUST_RING_PUFFS);
+  }
 }
 
 s32 MapGrid_GetTerrainKind(s32 layer, s32 x, s32 z);

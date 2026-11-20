@@ -668,15 +668,14 @@ void LemuriaSpring_SetActorAppearance(s32 id, s32 *position, s32 facing,
   i = 0;
   if (i < sprite->count) {
     entry = sprite->entries;
-    do {
+    for (; i < sprite->count; i++) {
       struct SpriteAnimation *animation = *entry++;
 
       if (animation->colorMode != colorMode) {
         animation->colorMode = colorMode;
         animation->picture = SPRITE_PICTURE_NONE;
       }
-      i++;
-    } while (i < sprite->count);
+    }
   }
 }
 

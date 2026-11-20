@@ -163,7 +163,7 @@ void SummonTablet_UpdateRunes(void) {
 
   piece = work->runes;
   sprite = work->runeSprites;
-  for (i = TABLET_RUNE_COUNT - 1; i >= 0; i--, sprite++, piece++) {
+  for (i = 0; i < TABLET_RUNE_COUNT; i++, sprite++, piece++) {
     if (work->state == 0) {
       if (piece->timer >= 0) {
         Motion_StepTowardTarget(&piece->rune, toFIXED(4));
@@ -190,7 +190,7 @@ void SummonTablet_UpdateRunes(void) {
   piece = work->pebbles;
   tile = &work->pebbleTile;
   sprite = work->pebbleSprites;
-  for (i = TABLET_PEBBLE_COUNT - 1; i >= 0; i--, sprite++, piece++) {
+  for (i = 0; i < TABLET_PEBBLE_COUNT; i++, sprite++, piece++) {
     if ((u32)piece->timer < PEBBLE_PICTURES * PEBBLE_PICTURE_FRAMES) {
       sprite->oam.index = *tile + (piece->timer / PEBBLE_PICTURE_FRAMES & 7) *
                                       PEBBLE_PICTURE_TILES;

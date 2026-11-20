@@ -6,8 +6,7 @@ void Pillar_Place(const u16 *list) {
 
   if (list[0] == ACTOR_LIST_END)
     return;
-  entry = list;
-  do {
+  for (entry = list; entry[0] != ACTOR_LIST_END; entry += 3) {
     u32 id = entry[0];
     struct Actor *actor = Actor_Get(id);
     s16 kind = entry[1];
@@ -16,6 +15,5 @@ void Pillar_Place(const u16 *list) {
     actor->collisionFlags &= ~ACTOR_SOLID;
     Actor_SetSpriteFlags(actor, 0);
     Actor_SetCellOpen(id, (u16)kind, (u16)flag, actor->layer);
-    entry += 3;
-  } while (entry[0] != ACTOR_LIST_END);
+  }
 }

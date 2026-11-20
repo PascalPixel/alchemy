@@ -444,7 +444,7 @@ void Actor_MoveWithCarriers(void) {
   struct Actor *actor = Ram_HeapSlots->actors;
   s32 i;
 
-  for (i = ACTOR_COUNT - 1; i >= 0; i--, actor++) {
+  for (i = 0; i < ACTOR_COUNT; i++, actor++) {
     if (actor->script != NULL) {
       FIXED x = actor->x.fixed;
       FIXED y = actor->y.fixed;

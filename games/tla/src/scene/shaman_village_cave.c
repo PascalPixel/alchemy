@@ -659,13 +659,11 @@ void ShamanVillageCave_EnterPassage(void) {
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  id = ACTOR_FIRST_PLACED;
-  do {
+  for (id = ACTOR_FIRST_PLACED; id < FIELD_TREASURE_ACTOR; id++) {
     actor = Actor_Get(id);
     if (actor)
       actor->motionFlags = 0;
-    id++;
-  } while (id < FIELD_TREASURE_ACTOR);
+  }
   Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = 0;
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_CenterAndWalk(gMainRoutineWork.leaderActorId, 2, -8);

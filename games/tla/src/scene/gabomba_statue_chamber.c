@@ -215,14 +215,13 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   Sound_Play(SE_GABOMBA_VOICE);
   wait(1);
   if (gGabombaStatueChamber_ShownItem != 0) {
-    i = 0;
-    do {
+    for (i = 0; i < CRYSTAL_RISE_FRAMES; i++) {
       if (i == AKAFUBU_STARTLED_FRAME)
         Actor_ShowEmote(ACTOR_CHAMBER_AKAFUBU,
                         EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
       gGabombaStatueChamber_ShownItem->y.fixed += toFIXED(1) / 2;
       wait(1);
-    } while (++i <= CRYSTAL_RISE_FRAMES - 1);
+    }
     gGabombaStatueChamber_ShownItem->motionFlags = 4;
   }
   Actor_SetAnimationById(ACTOR_SEATED_IDOL, 1);
@@ -1158,8 +1157,7 @@ void GabombaStatueChamber_InitializeLift(void) {
       s32 i;
 
       BlendScript_Suspend();
-      i = 0;
-      do {
+      for (i = 0; i < LIFT_TRAVEL; i++) {
         if (i >= LIFT_RISE_BLEND_START &&
             i <= LIFT_RISE_BLEND_START + LIFT_BLEND_FRAMES - 1) {
           u32 alpha = LIFT_BLEND_BOTTOM(blend) << 8;
@@ -1170,8 +1168,7 @@ void GabombaStatueChamber_InitializeLift(void) {
         }
         front->offsetY += toFIXED(1);
         back->offsetY += toFIXED(1);
-        i++;
-      } while (i < LIFT_TRAVEL);
+      }
       MapGrid_CenterOnFollowedPoint();
       wait(1);
     }

@@ -171,11 +171,10 @@ void Window_CloseAll(void) {
   }
 
   // Then the windows opened directly.
-  while (i != WINDOW_COUNT) {
+  for (; i != WINDOW_COUNT; i++) {
     if (win->flags != 0)
       Window_Close(win, 0);
     win++;
-    i++;
   }
 }
 
@@ -238,13 +237,11 @@ void MessageArgument_ClearAll(void) {
   struct WindowWork *work;
 
   work = WINDOW_WORK;
-  no = 0;
 
-  do {
+  for (no = 0; no != MESSAGE_ARGUMENT_COUNT; no++) {
     work->argumentValues[no] = 0;
     work->argumentKinds[no] = MESSAGE_ARGUMENT_NONE;
-    no++;
-  } while (no != MESSAGE_ARGUMENT_COUNT);
+  }
 }
 
 /// Adds a message argument of kind (MESSAGE_ARGUMENT_) with value to the first
@@ -707,10 +704,9 @@ void Portrait_ClearSlots(void) {
   struct WindowWork *work = WINDOW_WORK;
   s32 index = 0;
 
-  do {
+  for (; index != ARRAY_COUNT(work->portraitPictures); index++) {
     work->portraitPictures[index] = PORTRAIT_SLOT_EMPTY;
-    index++;
-  } while (index != ARRAY_COUNT(work->portraitPictures));
+  }
 }
 
 /// A speaker below this is a character, found in gPortrait_CharacterMap; one

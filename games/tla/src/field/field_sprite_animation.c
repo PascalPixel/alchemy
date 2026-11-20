@@ -133,7 +133,7 @@ s32 Sprite_ResetAnimations(struct Sprite *state) {
   index = 0;
   if (index < state->count) {
     slot = state->entries;
-    do {
+    for (; index < state->count; index++) {
       struct SpriteAnimation *object = *slot++;
       struct AnimationMetadata *metadata =
           Resource_GetMetadataRecordFar(object->animationId);
@@ -169,7 +169,7 @@ s32 Sprite_ResetAnimations(struct Sprite *state) {
       object->picture = SPRITE_PICTURE_NONE;
       object->script = 0;
       object->scriptOffset = 0;
-    } while (++index < state->count);
+    }
   }
 
   return 0;

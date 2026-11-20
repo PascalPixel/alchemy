@@ -1461,8 +1461,7 @@ void BattleEffect_CountDownBattlerTints(void) {
   s32 actorIndex;
 
   work = Ram_HeapSlots->battleEffect;
-  actorIndex = 0;
-  do {
+  for (actorIndex = 0; actorIndex != 8; actorIndex += 1) {
     if (work->actorTimers[actorIndex] != 0) {
       if ((work->actorTimers[actorIndex] = work->actorTimers[actorIndex] - 1) ==
           0) {
@@ -1470,8 +1469,7 @@ void BattleEffect_CountDownBattlerTints(void) {
                                  SPRITE_COLOR_NORMAL, TINT_KEEP, TINT_KEEP, 0);
       }
     }
-    actorIndex += 1;
-  } while (actorIndex != 8);
+  }
 }
 
 /// Shows the canvas on BG2 stretched to twice its width across the battle

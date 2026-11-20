@@ -237,8 +237,7 @@ void JupiterLighthouse_SpawnSparks(void) {
   s32 i;
   struct Actor *actor;
 
-  i = 0;
-  do {
+  for (i = 0; i != JUPITER_LIGHTHOUSE_BASEMENT_SPARK_COUNT; i++) {
     actor = FieldActor_Create(SPRITE_PARTICLE, 0, 0, 0);
     actor->motionFlags = 0;
     actor->priorityFlags = 0;
@@ -257,8 +256,7 @@ void JupiterLighthouse_SpawnSparks(void) {
       actor->timer = PARTICLE_QUICK_LIFETIME;
       actor->userValue = 0;
     }
-    i++;
-  } while (i != JUPITER_LIGHTHOUSE_BASEMENT_SPARK_COUNT);
+  }
 }
 
 /// Sets up the basement room being entered: the teleporters' palettes, cycling

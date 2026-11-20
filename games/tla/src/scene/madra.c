@@ -174,14 +174,12 @@ void Madra_EnterDoor(void) {
   work = Ram_HeapSlots->fieldWork;
   Event_Start();
   Event_ResolvePendingActions(0);
-  id = ACTOR_FIRST_PLACED;
-  do {
+  for (id = ACTOR_FIRST_PLACED; id < FIELD_TREASURE_ACTOR; id++) {
     actor = Actor_GetById(id);
     if (actor != NULL) {
       actor->motionFlags = 0;
     }
-    id++;
-  } while (id < FIELD_TREASURE_ACTOR);
+  }
   trigger = &work->stepTrigger;
   index = *trigger - 1;
   Event_PlaySound(SE_DOOR_OPEN);

@@ -332,7 +332,7 @@ void NorthernReaches_FireMagmaBall(void) {
     FieldActor_WaitForMoveById(ACTOR_SHIP);
     Actor_SetSpeed(ACTOR_SHIP, 0.2);
     Actor_SetDestinationOffset(ACTOR_SHIP, 0, -12);
-    for (count = SHIP_SHRINK_STEPS - 1; count >= 0; count--) {
+    for (count = 0; count < SHIP_SHRINK_STEPS; count++) {
       Actor_ShrinkBy(ship, FIXED_ONE * 9 / 256);
       System_Wait(7);
     }

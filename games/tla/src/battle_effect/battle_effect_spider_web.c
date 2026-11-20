@@ -78,7 +78,7 @@ void BattleEffect_DrawShadedCircles(u8 *map, s32 size, FIXED scale) {
 
     if (shade > CANVAS_LEVEL_BRIGHTEST)
       shade = CANVAS_LEVEL_BRIGHTEST;
-    while (x >= y) {
+    for (; x >= y; y++) {
       col = center - x / 2;
       map[half * (last - y) + col] = shade;
       col = center - y / 2;
@@ -88,7 +88,6 @@ void BattleEffect_DrawShadedCircles(u8 *map, s32 size, FIXED scale) {
         d = d + x * 2 - 2;
         x--;
       }
-      y++;
     }
   }
 }
@@ -115,7 +114,7 @@ void BattleEffect_DrawShadedCirclesMirrored(u8 *map, s32 size, s32 scale) {
     shade = shade * scale / (FIXED_ONE);
     if (shade > CANVAS_LEVEL_BRIGHTEST)
       shade = CANVAS_LEVEL_BRIGHTEST;
-    while (x >= y) {
+    for (; x >= y; y++) {
       col = center - x / 2;
       row = last - y;
       map[row * size + col] = shade;
@@ -133,7 +132,6 @@ void BattleEffect_DrawShadedCirclesMirrored(u8 *map, s32 size, s32 scale) {
         d = d + x * 2 - 2;
         x--;
       }
-      y++;
     }
   }
 }
@@ -1210,7 +1208,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
 
   frame = 0;
   size = SPIDER_WEB_QUARTER_SIZE;
-  do {
+  for (; frame != SPIDER_WEB_FRAMES; frame++) {
     // It fades in over its first nine frames and out over its last nine.
     if (frame <= 8)
       *blend = EFFECT_BLEND_CANVAS(frame << 1);
@@ -1247,8 +1245,7 @@ void BattleEffect_RunSpiderWeb(struct BattleEffectParams *args) {
                                  TINT_KEEP, i, 8);
     }
     EFFECT_END_FRAME(work);
-    frame++;
-  } while (frame != SPIDER_WEB_FRAMES);
+  }
 
   // Both canvases are cleared, and Impair's effect follows: the targets'
   // Defense drops.

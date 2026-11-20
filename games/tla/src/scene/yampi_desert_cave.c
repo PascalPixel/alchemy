@@ -315,7 +315,7 @@ struct Actor *YampiDesertCave_FindPushedLog(s32 *direction, s32 *slot,
   *direction = FACING_INDEX(leader->facing);
   i = ACTOR_FIRST_PLACED;
   entry = &work->actors[ACTOR_FIRST_PLACED];
-  do {
+  for (; i < FIELD_TREASURE_ACTOR; i++) {
     actor = *entry;
     for (k = 0; k < LOG_KIND_COUNT; k++) {
       if (((struct Sprite *)actor->sprite)->entries[0]->animationId ==
@@ -355,8 +355,7 @@ struct Actor *YampiDesertCave_FindPushedLog(s32 *direction, s32 *slot,
       }
     }
     entry++;
-    i++;
-  } while (i < FIELD_TREASURE_ACTOR);
+  }
   return NULL;
 }
 
@@ -533,8 +532,7 @@ void YampiDesertCave_PlaceStakes(const u16 *list) {
 
   if (list[0] == ACTOR_LIST_END)
     return;
-  entry = list;
-  do {
+  for (entry = list; entry[0] != ACTOR_LIST_END; entry += 3) {
     u32 id = entry[0];
     struct Actor *actor = Actor_GetById(id);
     s16 kind = entry[1];
@@ -543,8 +541,7 @@ void YampiDesertCave_PlaceStakes(const u16 *list) {
     actor->collisionFlags &= ~ACTOR_SOLID;
     Actor_SetSpriteFlags(actor, 0);
     Actor_SetCellOpen(id, (u16)kind, (u16)flag, actor->layer);
-    entry += 3;
-  } while (entry[0] != ACTOR_LIST_END);
+  }
 }
 
 // Finds the current target's table row and shrinks it.

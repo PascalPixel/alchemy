@@ -210,7 +210,7 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 source, u32 priority) {
 
   if (entryCount == 0)
     return;
-  do {
+  for (; entryIndex != entryCount; entryIndex++) {
     struct FieldSprite *sprite = (struct FieldSprite *)Sprite_CreateFar(source);
 
     work->sprites[entryIndex] = sprite;
@@ -219,8 +219,7 @@ void BattleEffect_SpawnObjects(s32 entryCount, s32 source, u32 priority) {
       Sprite_StartAnimationFar(sprite, entryIndex);
       ((struct FieldSprite *)work->sprites[entryIndex])->priority = priority;
     }
-    entryIndex++;
-  } while (entryIndex != entryCount);
+  }
 }
 
 /// Does nothing; BattleEffect_CallDoNothing calls it in a busy wait.

@@ -267,7 +267,7 @@ s32 Actor_CheckBlocked(struct Actor *actor) {
       result = 1;
   }
   other = Ram_HeapSlots->actors;
-  for (i = ACTOR_COUNT - 1; i >= 0; i--, other++) {
+  for (i = 0; i < ACTOR_COUNT; i++, other++) {
     if (other->script != NULL && (other->collisionFlags & ACTOR_SOLID) &&
         other != actor) {
       if (Field_CheckSpheresOverlapFar(&actor->x.fixed, actor->radius - 2,

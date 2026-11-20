@@ -329,7 +329,7 @@ void Menu_PlaceOwnerEntryObjects(struct Window *window, s32 originX,
   struct ItemMenuWork *menu = Ram_HeapSlots->menuWork;
   s32 i;
 
-  for (i = 7; i >= 0; i--)
+  for (i = 0; i < 8; i++)
     menu->memberSprites[i] = NULL;
   Menu_CreateOwnerEntryObjects(0);
   for (i = 0; i <= 3; i++) {
@@ -615,7 +615,7 @@ s32 StatusScreen_BuildAvailability(u8 *ailments, s32 requested, s32 memberId) {
   s32 poison;
 
   unit = Unit_Get(memberId);
-  for (ailmentIndex = 4; ailmentIndex >= 0; ailmentIndex--)
+  for (ailmentIndex = 0; ailmentIndex < 5; ailmentIndex++)
     ailments[ailmentIndex] = 0;
 
   count = 0;

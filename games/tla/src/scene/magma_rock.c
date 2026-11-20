@@ -334,7 +334,7 @@ s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 /// top, keeps the cell's attributes, and where it stands on a climbable cell
 /// (MAP_CELL_CLIMBABLE) blocks the cells ahead of and behind it.
 void MagmaRock_SettleBlocks(u16 *ids) {
-  while (*ids != ACTOR_LIST_END) {
+  for (; *ids != ACTOR_LIST_END; ids++) {
     struct Actor *actor = Actor_Get(*ids);
     u8 *terrainId = &actor->layer;
     s32 height =
@@ -374,7 +374,6 @@ void MagmaRock_SettleBlocks(u16 *ids) {
       cell->collisionCode = CELL_BEHAVIOR_WALL;
       *blocked = 1;
     }
-    ids++;
   }
 }
 
@@ -2019,7 +2018,7 @@ void MagmaRock_RestoreCrumblingPillars(const u16 *table) {
   struct Actor *leader;
   s32 ground;
 
-  while (*table != ACTOR_LIST_END) {
+  for (; *table != ACTOR_LIST_END; table += 2) {
     id = table[0];
     actor = Actor_Get(id);
     flag = table[1];
@@ -2047,7 +2046,6 @@ void MagmaRock_RestoreCrumblingPillars(const u16 *table) {
       if (Event_GetFlag(flag))
         Actor_SelectAnimation(actor, 0);
     }
-    table += 2;
   }
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   ground =

@@ -220,7 +220,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
   {
     s32 angle = DEGtoANG(180);
 
-    do {
+    for (; frame != JUPITER_FRAMES; frame++) {
       if (frame == DJINN_ATTACK_DAMAGE_FRAME)
         EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
@@ -280,8 +280,7 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
       BattleCamera_Shake(4, 4);
       EFFECT_END_FRAME(work);
       angle -= TRIG_TURN / 32;
-      frame++;
-    } while (frame != JUPITER_FRAMES);
+    }
   }
   EFFECT_FINISH_CANVAS();
 }
@@ -360,7 +359,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
   Sound_PlayFar(SE_RUMBLE);
   frame = 0;
   angle = DEGtoANG(180);
-  do {
+  for (; frame != VENUS_FRAMES; frame++) {
     // The Djinni sways from side to side as it drops.
     if (frame <= 79) {
       s32 x = FIXEDtoINT(Trig_Sin(angle) * VENUS_DJINNI_SWAY);
@@ -418,8 +417,7 @@ void BattleEffect_RunVenus(struct BattleEffectParams *args) {
     BattleCamera_Shake(4, 4);
     EFFECT_END_FRAME(work);
     angle -= TRIG_TURN / 32;
-    frame++;
-  } while (frame != VENUS_FRAMES);
+  }
   EFFECT_FINISH_CANVAS();
 }
 
@@ -467,7 +465,7 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
   // Nine flames spread out along the ground, alternately left and right.
   index = 0;
   step = work->particles;
-  do {
+  for (; index != MARS_FLAMES; index++) {
     s32 angle = index * (TRIG_TURN / 32);
 
     step->x = FIXEDtoINT(Trig_Sin(angle) * MARS_ROW_REACH);
@@ -488,8 +486,7 @@ void BattleEffect_RunMars(struct BattleEffectParams *args) {
       mote->velocityZ = Random16() & TRIG_ANGLE_MASK;
     }
     step++;
-    index++;
-  } while (index != MARS_FLAMES);
+  }
 
   Sound_PlayFar(SE_WHOOSH);
   for (frame = 0; frame != MARS_FRAMES; frame++) {

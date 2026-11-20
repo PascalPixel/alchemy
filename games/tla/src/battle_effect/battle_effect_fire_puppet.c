@@ -165,15 +165,14 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
 
         i = 0;
         outer = width + sway;
-        do {
+        for (; i != 2; i++) {
           corners[j][i].x =
               (FIXEDtoINT(Trig_Cos(j * curl) * (i * width + sway + 16))) -
               outer / 2 - 16;
           corners[j][i].y =
               -(FIXEDtoINT(Trig_Sin(j * curl) * (i * width + j + sway + 32)));
           corners[j][i].z = 0;
-          i++;
-        } while (i != 2);
+        }
         // The skull's place, the middle of the last segment.
         if (j == PUPPET_SEGMENTS - 1) {
           endX = (FIXEDtoINT(Trig_Cos(curl * (PUPPET_SEGMENTS - 1)) *

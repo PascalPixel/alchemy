@@ -713,10 +713,8 @@ void AquaRockInside_UseAquariusStone(void) {
   MapGrid_CopyCellsLayered(91, 96, 7, 10, 16, 31);
   MapGrid_CopyCellsLayered(99, 96, 7, 14, 16, 91);
   MapGrid_CopyCellAttributes(43, 0, 5, 9, 17, 31);
-  i = 0;
-  do {
-    j = 0;
-    do {
+  for (i = 0; i < SPRING_LEVELS - 1; i++) {
+    for (j = 0; j <= 6; j++) {
       {
         s32 index = (i + (1 & ~j)) * 2;
 
@@ -725,10 +723,8 @@ void AquaRockInside_UseAquariusStone(void) {
                                  13, 80, 27);
         System_Wait(1);
       }
-      j++;
-    } while (j <= 6);
-    i++;
-  } while (i < SPRING_LEVELS - 1);
+    }
+  }
   FieldCamera_WaitForArrival();
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
@@ -1042,8 +1038,7 @@ void AquaRockInside_MovePillarByFalls(s32 unused, s32 id) {
       layer->offsetY -= toFIXED(1);
       System_Wait(4);
     }
-    i = ACTOR_VIAL_CHEST_PUDDLE_A;
-    do {
+    for (i = ACTOR_VIAL_CHEST_PUDDLE_A; i <= ACTOR_VIAL_CHEST_PUDDLE_C; i++) {
       actor = Actor_GetById(i);
       actor->x.fixed = INTtoFIXED(actor->timer);
       actor->z.fixed = toFIXED(actor->userValue);
@@ -1051,8 +1046,7 @@ void AquaRockInside_MovePillarByFalls(s32 unused, s32 id) {
       actor->groundHeight = -toFIXED(WATER_LEVEL_STEP);
       actor->y.fixed = -toFIXED(WATER_LEVEL_STEP);
       FieldActor_SetSpritePriority(i, 3);
-      i++;
-    } while (i <= ACTOR_VIAL_CHEST_PUDDLE_C);
+    }
     BlendScript_Suspend();
     fade = 12;
     do {
@@ -1955,14 +1949,14 @@ s32 Scene_PrepareMap(void) {
                                         COLLISION_STREAM_GOAL);
         Event_SetFlag(FLAG_RUSTY_SWORD_CHEST_MOAI_FILLED);
       }
-      rustySwordPillar = ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_A;
-      do {
+      for (rustySwordPillar = ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_A;
+           rustySwordPillar <= ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_C;
+           rustySwordPillar++) {
         actor = Actor_GetById(rustySwordPillar);
         actor->motionFlags = 0;
         actor->groundHeight = 0;
         actor->y.fixed = 0;
-        rustySwordPillar++;
-      } while (rustySwordPillar <= ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_C);
+      }
     } else {
       AquaRockInside_AddSpouts(COLLISION_STREAM_BEND, 0, -4);
     }
@@ -1996,14 +1990,13 @@ s32 Scene_PrepareMap(void) {
       AquaRockInside_AddSpouts(COLLISION_STREAM_BEND, 0, -2);
     }
     if (!GameFlag_Get(FLAG_VIAL_CHEST_FALLS_PILLAR_MOVED)) {
-      hiddenPuddle = ACTOR_VIAL_CHEST_PUDDLE_A;
-      do {
+      for (hiddenPuddle = ACTOR_VIAL_CHEST_PUDDLE_A;
+           hiddenPuddle <= ACTOR_VIAL_CHEST_PUDDLE_C; hiddenPuddle++) {
         actor = Actor_GetById(hiddenPuddle);
         actor->motionFlags = 0;
         actor->x.fixed = 0;
         actor->z.fixed = 0;
-        hiddenPuddle++;
-      } while (hiddenPuddle <= ACTOR_VIAL_CHEST_PUDDLE_C);
+      }
       return 0;
     } else {
       MapGrid_CopyCellsLayered(114, 39, 1, 2, 113, 39);
@@ -2078,14 +2071,13 @@ s32 Scene_PrepareMap(void) {
         Event_SetFlag(FLAG_TEAR_STONE_MOAI_FILLED);
       }
     }
-    tearStonePillar = ACTOR_TEAR_STONE_WATER_PILLAR_A;
-    do {
+    for (tearStonePillar = ACTOR_TEAR_STONE_WATER_PILLAR_A;
+         tearStonePillar <= ACTOR_TEAR_STONE_PILLAR_B; tearStonePillar++) {
       actor = Actor_GetById(tearStonePillar);
       actor->motionFlags = 0;
       actor->groundHeight = 0;
       actor->y.fixed = 0;
-      tearStonePillar++;
-    } while (tearStonePillar <= ACTOR_TEAR_STONE_PILLAR_B);
+    }
     actor = Actor_GetById(ACTOR_TEAR_STONE_PILLAR_A);
     MapGrid_CopyCellAttributes(23, 39, 1, 1, FIELD_CELL(actor->x.fixed), 39);
     if ((u32)(entrance - 1) <= 1) {

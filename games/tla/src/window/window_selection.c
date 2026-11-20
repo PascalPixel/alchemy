@@ -155,7 +155,7 @@ void SelectionMenu_BuildEntries(u32 unused) {
   struct SelectionNode *node;
   s32 rowPosition = 0;
 
-  while (index < count) {
+  for (; index < count; index++) {
     s32 base = screen->bases[index];
     u32 kind = screen->kinds[index];
 
@@ -176,7 +176,6 @@ void SelectionMenu_BuildEntries(u32 unused) {
     previous = node;
     if (rowPosition == 5)
       break;
-    index++;
   }
 
   // Icons are 16 pixels apart: the row is centred on x 100, at y 140.
@@ -1229,9 +1228,8 @@ u32 Menu_ConfirmSelection(struct SelectionMenuWork *screen) {
   screen->records[SELECTION_RECORD_HAND].scale = 0;
   Resource_ResetPendingTransfer();
   node = screen->head;
-  while (node != NULL && screen->cursorIndex != cnt) {
+  for (; node != NULL && screen->cursorIndex != cnt; cnt++) {
     node = node->next;
-    cnt++;
   }
   node->homeX = node->x;
   node->homeY = node->y;

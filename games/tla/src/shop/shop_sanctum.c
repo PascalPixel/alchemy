@@ -249,12 +249,10 @@ s32 Sanctum_RunPartyService(void) {
       Window_CreateFar(SANCTUM_DONATION_WINDOW_X, 16,
                        SANCTUM_DONATION_WINDOW_WIDTH, 3, WINDOW_FLAG_INSTANT);
 #endif
-  memberIndex = 0;
-  while (memberIndex < shop->partyMemberCount) {
+  for (memberIndex = 0; memberIndex < shop->partyMemberCount; memberIndex++) {
     unitId = shop->partyMemberIds[memberIndex];
     if (Sanctum_NeedsService(unitId, serviceKind) != 0)
       break;
-    memberIndex++;
   }
 
   redraw = 2;
@@ -263,12 +261,11 @@ s32 Sanctum_RunPartyService(void) {
       chooseAgain = 0;
       Sanctum_ShowKeeperMessage((s32)MsgWhoShallIRevive);
       redraw = 2;
-      memberIndex = 0;
-      while (memberIndex < shop->partyMemberCount) {
+      for (memberIndex = 0; memberIndex < shop->partyMemberCount;
+           memberIndex++) {
         unitId = shop->partyMemberIds[memberIndex];
         if (Sanctum_NeedsService(unitId, serviceKind) != 0)
           break;
-        memberIndex++;
       }
     }
 
@@ -556,8 +553,7 @@ void Sanctum_RunMemberIconBurst(s32 member) {
     u8 *active = (u8 *)&shop->effects[0].active;
     struct FieldParticle *particle = shop->effects;
 
-    for (effectIndex = SANCTUM_PARTICLE_COUNT - 1; effectIndex >= 0;
-         effectIndex--) {
+    for (effectIndex = 0; effectIndex < SANCTUM_PARTICLE_COUNT; effectIndex++) {
       s32 flag = *active;
 
       // DEAD: the byte moved to the top of the word, which cannot change

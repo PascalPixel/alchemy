@@ -597,7 +597,7 @@ void YampiDesert_StepOffStakeTops(void) {
     list = gYampiDesertKingScorpionStakes;
   if (list == NULL)
     return;
-  while (*list != ACTOR_LIST_END) {
+  for (; *list != ACTOR_LIST_END; list++) {
     struct Actor *actor = Actor_GetById(*list);
 
     list += 2;
@@ -618,7 +618,6 @@ void YampiDesert_StepOffStakeTops(void) {
       cells->attributeB &= ~MAP_CELL_JUMP;
       *shapes = MapCollision_FindOrAddTag(layer, shape, height - 4);
     }
-    list++;
   }
   GameFlag_Clear(FLAG_YAMPI_DESERT_ON_STAKE_TOPS);
 }
@@ -2411,8 +2410,7 @@ void YampiDesert_PlaceStakes(const void *script) {
 
   if (*(const u16 *)script == ACTOR_LIST_END)
     return;
-  entry = script;
-  do {
+  for (entry = script; entry[0] != ACTOR_LIST_END; entry += 3) {
     s32 id = entry[0];
     struct Actor *actor = Actor_GetById(id);
     s32 kind = (s16)entry[1];
@@ -2421,8 +2419,7 @@ void YampiDesert_PlaceStakes(const void *script) {
     actor->collisionFlags &= ~ACTOR_SOLID;
     Actor_SetSpriteFlags(actor, 0);
     Actor_SetCellOpen(id, (u16)kind, (u16)flag, actor->layer);
-    entry += 3;
-  } while (entry[0] != ACTOR_LIST_END);
+  }
 }
 #undef WALK
 #undef ARRIVE
@@ -2537,7 +2534,7 @@ void Geyser_Draw(void) {
   viewX &= FIELD_PIXEL_MASK;
   viewZ = view[1] & FIELD_PIXEL_MASK;
   originY = map->origin[1];
-  for (i = GEYSER_ENTRIES - 1; i >= 0; i--, entry++) {
+  for (i = 0; i < GEYSER_ENTRIES; i++, entry++) {
     if (entry->id == 0 || entry->height == 0)
       continue;
     actor = Actor_GetById(entry->id);

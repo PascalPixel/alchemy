@@ -1041,8 +1041,7 @@ void SeaOfTime_FacePoseidon(void) {
     }
   }
   // Then the larger puffs, one a frame.
-  i = 0;
-  while (i != BIG_PUFFS) {
+  for (i = 0; i != BIG_PUFFS; i++) {
     {
       s32 x = Random16();
       s32 mask = PUFF_SPREAD - 1;
@@ -1060,7 +1059,6 @@ void SeaOfTime_FacePoseidon(void) {
           &rain);
       wait(1);
     }
-    i++;
   }
   actor = Import_ActorCreate(SPRITE_POSEIDON, toFIXED(348), 0, toFIXED(184));
   actor->update = (ObjectUpdate)SeaOfTime_UpdateWater;

@@ -216,8 +216,7 @@ void TundariaTower_SetUpIceColumns(u16 *table) {
 
   if (table[0] == ACTOR_LIST_END)
     return;
-  row = table;
-  do {
+  for (row = table; row[0] != ACTOR_LIST_END; row += 3) {
     object = ((struct FieldActor *)Actor_GetById(row[0]));
     animation = row[1];
     flag = row[2];
@@ -228,8 +227,7 @@ void TundariaTower_SetUpIceColumns(u16 *table) {
     object->collisionFlags &= ~ACTOR_SOLID;
     object->timer = flag;
     TundariaTower_SetColumnCell(object);
-    row += 3;
-  } while (row[0] != ACTOR_LIST_END);
+  }
 }
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -1072,8 +1070,7 @@ UNUSED void TundariaTower_PlaceStakes(u16 *table) {
 
   if (table[0] == ACTOR_LIST_END)
     return;
-  row = table;
-  do {
+  for (row = table; row[0] != ACTOR_LIST_END; row += 3) {
     id = row[0];
     actor = Actor_GetById(id);
     x = row[1];
@@ -1082,8 +1079,7 @@ UNUSED void TundariaTower_PlaceStakes(u16 *table) {
     actor->collisionFlags &= ~ACTOR_SOLID;
     Actor_SetSpriteFlags(actor, 0);
     Actor_SetCellOpen(id, (u16)x, (u16)z, actor->layer);
-    row += 3;
-  } while (row[0] != ACTOR_LIST_END);
+  }
 }
 
 #include "shared/pound_sink_target.h"
@@ -1107,7 +1103,7 @@ UNUSED void TundariaTower_RestoreCrumblingPillars(const u16 *table) {
   s32 ground;
 
   if (*table != ACTOR_LIST_END) {
-    do {
+    for (; *table != ACTOR_LIST_END; table += 2) {
       id = table[0];
       actor = Actor_GetById(id);
       flag = table[1];
@@ -1135,8 +1131,7 @@ UNUSED void TundariaTower_RestoreCrumblingPillars(const u16 *table) {
         if (GameFlag_Get(flag))
           Actor_SelectAnimation(actor, 0);
       }
-      table += 2;
-    } while (*table != ACTOR_LIST_END);
+    }
   }
   leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   ground =
@@ -1294,7 +1289,7 @@ UNUSED void TundariaTower_RestorePillars(u16 *list) {
   Actor_SetPosition(ACTOR_FIRST_PLACED + 2, 0, 0);
   wait(1);
   if (*list != ACTOR_LIST_END) {
-    do {
+    for (; *list != ACTOR_LIST_END; list += 2) {
       id = list[0];
       actor = Actor_GetById(id);
       flag = list[1];
@@ -1323,8 +1318,7 @@ UNUSED void TundariaTower_RestorePillars(u16 *list) {
         if (GameFlag_Get(flag))
           Actor_CopyGraphics(id, ACTOR_FIRST_PLACED + 1);
       }
-      list += 2;
-    } while (*list != ACTOR_LIST_END);
+    }
   }
   wait(10);
 }
@@ -1429,7 +1423,7 @@ void TundariaTower_ScatterDust(s32 spread) {
   u32 frame = 0;
   u32 i = 0;
 
-  do {
+  for (; i <= 7; i++) {
     {
       // Each piece starts 0 to 13 pixels lower than the leader.
       FIXED y = leader->y.fixed - ((Random_Below(14)) << 16);
@@ -1461,8 +1455,7 @@ void TundariaTower_ScatterDust(s32 spread) {
       effect->scaleRateY = -(FIXED_ONE * 3 / 128);
       effect->update = Effect_AdvanceMotionAtLeaderPriority;
     }
-    i++;
-  } while (i <= 7);
+  }
 }
 
 /// Throws a ring of dust clouds out from the leader as something lands.

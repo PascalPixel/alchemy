@@ -821,8 +821,7 @@ void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
     x = 0;
     width = 5;
     count = 0;
-    index = 0;
-    while (index <= 4) {
+    for (index = 0; index <= 4; index++) {
       if (entries[index] != 0) {
         if (selected == count) {
           width = gStatusScreen_CursorWidths[index];
@@ -830,7 +829,6 @@ void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
         }
         count++;
       }
-      index++;
     }
   } else if (selected <= 3) {
     y = selected;
@@ -855,7 +853,7 @@ void StatusScreen_DrawSelectionLabels(s32 target, s32 selected,
   s32 labelCount = 0;
   s32 labelIndex = 0;
 
-  do {
+  for (; labelIndex <= 4; labelIndex++) {
     if (entries[labelIndex] != 0) {
       if (selected == labelCount) {
         s32 messageId = MsgStatusAdvice + labelIndex * 2;
@@ -864,8 +862,7 @@ void StatusScreen_DrawSelectionLabels(s32 target, s32 selected,
       }
       labelCount++;
     }
-    labelIndex++;
-  } while (labelIndex <= 4);
+  }
 
   if (labelCount == 0)
     Text_DrawMessageFar(MsgStatusNormal, target, 0, 0);

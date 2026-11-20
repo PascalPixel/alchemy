@@ -78,7 +78,7 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   resource = NULL;
   previous = djinni;
   cursor = copies;
-  for (remaining = MERCURY_AFTERIMAGE_MAX - 1; remaining >= 0; remaining--) {
+  for (remaining = 0; remaining < MERCURY_AFTERIMAGE_MAX; remaining++) {
     copy = Actor_CreateFar(kind, djinni->x.fixed, djinni->y.fixed,
                            djinni->z.fixed);
     *cursor++ = copy;
@@ -102,13 +102,13 @@ void Djinn_RunMercuryJoinEffect(s32 djinniId) {
   resourceId = resource->slot;
   Sound_PlayFar(SE_HIGH_JUMP);
   djinni->motionFlags = 0;
-  for (remaining = MERCURY_RISE_FRAMES - 1; remaining >= 0; remaining--) {
+  for (remaining = 0; remaining < MERCURY_RISE_FRAMES; remaining++) {
     djinni->y.fixed += toFIXED(8);
     wait(1);
   }
   Actor_ReleaseFar(djinni);
   list = copies;
-  for (remaining = MERCURY_AFTERIMAGE_MAX - 1; remaining >= 0; remaining--)
+  for (remaining = 0; remaining < MERCURY_AFTERIMAGE_MAX; remaining++)
     Actor_ReleaseFar((*list++));
   if (resourceId != VRAM_CACHE_ENTRY_COUNT)
     VramCache_FreeEntry(resourceId);

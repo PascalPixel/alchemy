@@ -260,13 +260,11 @@ s32 ActorScript_FindLabel(struct Actor *interpreter, u32 labelKey) {
 
   labelKey &= SCRIPT_LABEL_KEY_MASK;
   scriptWords = (u32 *)interpreter->script;
-  wordIndex = 0;
-  do {
+  for (wordIndex = 0; wordIndex < SCRIPT_LABEL_SEARCH_WORDS; wordIndex++) {
     if (*scriptWords++ == labelKey) {
       return wordIndex + 1;
     }
-    wordIndex++;
-  } while (wordIndex <= SCRIPT_LABEL_SEARCH_WORDS - 1);
+  }
   return 0;
 }
 
@@ -1316,8 +1314,7 @@ s32 Actor_UpdateHoverControl(struct Actor *actor) {
       SET_POSITION(&contact, actor->x.fixed, actor->y.fixed, actor->z.fixed);
       Vector_AddPolarOffset(toFIXED(4), (u16)heading, &contact);
       other = Ram_HeapSlots->actors;
-      for (angleIndex = ACTOR_COUNT - 1; angleIndex >= 0;
-           angleIndex -= 1, other++) {
+      for (angleIndex = 0; angleIndex < ACTOR_COUNT; angleIndex++, other++) {
         s32 radius;
 
         radius = actor->radius - 2;

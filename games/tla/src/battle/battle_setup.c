@@ -175,7 +175,7 @@ UNREAD_RESULT BattleParty_ResetActiveRuntimeFields(void) {
     struct Unit *unit = Unit_Get(owners[i]);
     s32 element;
 
-    for (element = ELEMENT_COUNT - 1; element >= 0; element--)
+    for (element = 0; element < ELEMENT_COUNT; element++)
       unit->summonBoost[element] = 0;
 
     unit->attackTurns = 0;
@@ -282,8 +282,7 @@ void BattleSummon_UpdateAvailability(void) {
   availableMask = Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY)->summonMask &
                   SUMMON_MASK_LEARNED;
 
-  element = 0;
-  do {
+  for (element = 0; element < ELEMENT_COUNT; element++) {
     totals[element] = 0;
     {
       s32 partySlot;
@@ -294,11 +293,9 @@ void BattleSummon_UpdateAvailability(void) {
         totals[element] += member->djinnHeldCounts[element];
       }
     }
-    element++;
-  } while (element < ELEMENT_COUNT);
+  }
 
-  element = 0;
-  do {
+  for (element = 0; element <= SUMMON_THOR; element++) {
     const struct SummonDefinition *summon = SummonDefinition_Get(element);
     s32 elementsMet;
 
@@ -321,8 +318,7 @@ void BattleSummon_UpdateAvailability(void) {
       if (elementsMet == ELEMENT_COUNT)
         availableMask |= 1u << element;
     }
-    element++;
-  } while (element <= SUMMON_THOR);
+  }
 
   Djinn_GetRecoveryTableFar(DJINN_RECOVERY_PARTY)->summonMask = availableMask;
 }

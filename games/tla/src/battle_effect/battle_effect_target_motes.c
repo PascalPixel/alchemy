@@ -542,14 +542,13 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
     work->particles[i].variant = Random16() & 63;
   }
 
-  frame = 0;
-  while (frame != (args->targetCount << 5) + 32) {
+  for (frame = 0; frame != (args->targetCount << 5) + 32; frame += 1) {
     if (frame == 32) {
       EFFECT_SHOW_DAMAGE(0);
     }
     i = 0;
     if (args->targetCount != 0) {
-      do {
+      for (; i != args->targetCount; i++) {
         start = i * CURSE_STAGGER;
         if (frame == start) {
           Sound_PlayFar(SE_CRACK);
@@ -576,11 +575,9 @@ void BattleEffect_RunCurse(struct BattleEffectParams *args) {
                     CURSE_FLAME_WIDTH, CURSE_FLAME_HEIGHT);
           }
         }
-        i++;
-      } while (i != args->targetCount);
+      }
     }
     EFFECT_PRESENT_CANVAS(work);
-    frame += 1;
   }
 
   EFFECT_FINISH_CANVAS_ONE_BLITTER();

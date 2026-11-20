@@ -735,8 +735,7 @@ void FileList_UpdatePulse(void) {
 
   vblankCount = (s32 *)&gVBlankCount;
   palette = (volatile u16 *)&BG_PLTT_COLOR(HIGHLIGHT_PALETTE, 8);
-  i = 0;
-  do {
+  for (i = 0; i <= 3; i++) {
 #ifdef UBFIX
     // Wrap the frame phase before Trig_Sin takes its low sixteen bits.
     sine = Trig_Sin((((u32)*vblankCount + i * 8U) * (TRIG_TURN * 3 / 256U)) &
@@ -759,7 +758,7 @@ void FileList_UpdatePulse(void) {
       colour += FILE_LIST_GLOW_BLUE;
       Io_Write16(RGB(red, green, colour), palette++);
     }
-  } while (++i <= 3);
+  }
 }
 
 /// Starts the palette glow (FileList_UpdatePulse) as a task.

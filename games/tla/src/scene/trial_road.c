@@ -996,8 +996,7 @@ extern s8 gTrialRoad_PoundPartners[4];
 void TrialRoad_CheckStakesCovered(s32 a, s32 b) {
   s32 id;
 
-  id = ACTOR_WEST_STAKE;
-  do {
+  for (id = ACTOR_WEST_STAKE; id <= ACTOR_EAST_STAKE; id++) {
     struct Actor *actor = Actor_GetById(id);
     s32 x = FIELD_CELL(actor->x.fixed);
     s32 z = FIELD_CELL(actor->z.fixed);
@@ -1013,8 +1012,7 @@ void TrialRoad_CheckStakesCovered(s32 a, s32 b) {
         break;
       }
     }
-    id++;
-  } while (id <= ACTOR_EAST_STAKE);
+  }
 }
 
 /// Pound drives a stake down and raises its partner
@@ -3334,7 +3332,7 @@ void Dust_Scatter(s32 spread) {
   u32 frame = 0;
   u32 i = 0;
 
-  do {
+  for (; i <= 7; i++) {
     {
       // Each piece starts 0 to 13 pixels lower than the leader.
       FIXED y = leader->y.fixed - ((Random_Below(14)) << 16);
@@ -3366,8 +3364,7 @@ void Dust_Scatter(s32 spread) {
       effect->scaleRateY = -(FIXED_ONE * 3 / 128);
       effect->update = TrialRoad_DriftDust;
     }
-    i++;
-  } while (i <= 7);
+  }
 }
 
 extern s32 gTrialRoad_DustScript[];
@@ -3383,8 +3380,7 @@ void MagmaRockInside_SpawnDustRing(void) {
   if (leader == 0)
     return;
   frame = 0;
-  i = 0;
-  do {
+  for (i = 0; i < DUST_RING_PIECES; i++) {
     effect = (struct FieldEffect *)Import_ActorCreate(
         SPRITE_DUST_CLOUD, leader->x.fixed, leader->y.fixed, leader->z.fixed);
     if (effect != 0) {
@@ -3407,8 +3403,7 @@ void MagmaRockInside_SpawnDustRing(void) {
       effect->sprite->priority =
           ((struct FieldSprite *)leader->sprite)->priority;
     }
-    i++;
-  } while (i < DUST_RING_PIECES);
+  }
 }
 
 /// Sets the shape of the cell under an actor (Actor_SetCellShape).

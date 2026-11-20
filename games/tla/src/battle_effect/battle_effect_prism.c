@@ -206,8 +206,7 @@ void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
   blueOffset = FIXEDtoINT_TWICE(Trig_Sin(phase + bluePhase) * PHASE_PEAK);
 
   palette[0] = 0;
-  index = 1;
-  do {
+  for (index = 1; index != PHASE_RAMP_COLORS; index++) {
     s32 red;
     s32 green;
     s32 blue;
@@ -221,8 +220,7 @@ void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
     CLAMP(blue, 0, RGB_LEVEL_MAX);
 
     palette[index] = RGB(red, green, blue);
-    index++;
-  } while (index != PHASE_RAMP_COLORS);
+  }
 
   // Entry 0, black, goes to colour 1, so canvas level n shows entry n - 1.
   Iwram_CopyWords((void *)&BG_PLTT_COLOR(0, 1), palette, sizeof(palette));

@@ -492,10 +492,10 @@ void Serial_WaitForSend(void) {
   u32 count = 0;
 
   if (gSerialSendSource != 0) {
-    do {
+    for (; count < SERIAL_TRANSFER_TIMEOUT_FRAMES && gSerialSendSource != 0;
+         count++) {
       wait(1);
-      count++;
-    } while (count < SERIAL_TRANSFER_TIMEOUT_FRAMES && gSerialSendSource != 0);
+    }
   }
 }
 

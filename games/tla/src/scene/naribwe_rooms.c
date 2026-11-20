@@ -767,7 +767,7 @@ s32 NaribweRooms_ListMissingDjinn(s32 limit, s32 group, s32 *out) {
   if (i < limit) {
     s32 *cursor = out;
 
-    do {
+    for (; i < limit; i++) {
       s32 flag;
 
       if (group == ELEMENT_VENUS && i == DJINNI_INDEX(DJINNI_ECHO))
@@ -783,7 +783,7 @@ s32 NaribweRooms_ListMissingDjinn(s32 limit, s32 group, s32 *out) {
         *cursor++ = flag;
         count++;
       }
-    } while (++i < limit);
+    }
   }
   return count;
 }

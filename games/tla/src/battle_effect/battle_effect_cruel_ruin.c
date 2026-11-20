@@ -212,7 +212,7 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
         px = r;
         py = 0;
         d = r;
-        while (px >= py) {
+        for (; px >= py; py++) {
           // BUG: j and k are the tile map's finished counters, 8 and 16, not
           // the circle's centre.
           x2 = px + j;
@@ -276,7 +276,6 @@ void BattleEffect_RunShatteringOpening(struct BattleEffectParams *args) {
             d += px * 2 - 2;
             px--;
           }
-          py++;
         }
       }
       Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), Ram_MapCellBuffer,

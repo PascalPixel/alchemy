@@ -398,7 +398,7 @@ s32 GaiaRock_SpawnCirclingLeaves(struct OrbitEffect *source) {
 
   i = 0;
   timer = 20;
-  do {
+  for (; i < WHIRLWIND_LEAVES; i++) {
     {
       struct OrbitEffect *effect;
       s32 radius;
@@ -425,8 +425,7 @@ s32 GaiaRock_SpawnCirclingLeaves(struct OrbitEffect *source) {
       }
     }
     timer -= 2;
-    i++;
-  } while (i < WHIRLWIND_LEAVES);
+  }
   return 0;
 }
 

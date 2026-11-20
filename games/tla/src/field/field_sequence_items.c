@@ -77,7 +77,7 @@ const struct Trigger *Field_FindItemTrigger(s32 item) {
   item &= INVENTORY_ITEM_ID_MASK;
   tileAhead = Field_GetCollisionAheadOfLeader();
 
-  while (trigger->control != -1) {
+  for (; trigger->control != -1; trigger++) {
     s32 eventFacing = (s16)(u16)trigger->subject & TRIGGER_SUBJECT_FACING;
     s16 requiresFacing = (u16)trigger->subject & TRIGGER_SUBJECT_NEEDS_FACING;
     s32 eventTarget = (u16)trigger->subject & TRIGGER_SUBJECT_TARGET;
@@ -99,7 +99,6 @@ const struct Trigger *Field_FindItemTrigger(s32 item) {
         }
       }
     }
-    trigger++;
   }
   return NULL;
 }

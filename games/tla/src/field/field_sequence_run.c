@@ -608,14 +608,13 @@ s32 Scene_ApplyEntrance(s32 findEntrance) {
   s32 left;
 
   if (findEntrance) {
-    while (entranceEntry->entrance != -1) {
+    for (; entranceEntry->entrance != -1; entranceEntry++) {
       if (entranceEntry->entrance == entrance &&
           (entranceEntry->requiredFlag == -1 ||
            GameFlag_Get(entranceEntry->requiredFlag))) {
         foundEntrance = 1;
         break;
       }
-      entranceEntry++;
     }
     if (!foundEntrance)
       return 0;

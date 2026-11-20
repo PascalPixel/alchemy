@@ -202,8 +202,7 @@ void Title_UpdateSpriteReveal(void) {
   sprite = gTitleSprites;
   attributes = gTitleSprites[0].attr;
   tileIndex = gVramCacheEntries[gTitleVramBlock].offset >> 5;
-  column = 0;
-  do {
+  for (column = 0; column <= 17; column++) {
     s32 screenY = 136;
 
     screenX = 232 - (18 - column) * 8;
@@ -224,7 +223,7 @@ void Title_UpdateSpriteReveal(void) {
     if (revealAge != 0)
       Oam_AddSpriteAtDepthClamped(sprite++, OAM_DEPTH_FRONT);
     tileIndex += 2;
-  } while (++column <= 17);
+  }
   gTitleRevealFrame++;
 }
 

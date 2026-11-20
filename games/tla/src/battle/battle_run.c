@@ -617,7 +617,7 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
     remaining = FIRST_ENEMY_UNIT;
     enemyLimit = enemyCapacity + FIRST_ENEMY_UNIT;
     if (remaining < enemyLimit) {
-      do {
+      for (; remaining < enemyLimit; remaining += 1) {
         unit = Unit_Get(remaining);
         if (unit->side != BATTLE_SIDE_NONE && unit->hp > 0) {
           if (output != NULL) {
@@ -626,8 +626,7 @@ s32 BattleUnit_ListLiving(s32 sideMask, u16 *unitIds) {
           }
           livingCount += 1;
         }
-        remaining += 1;
-      } while (remaining < enemyLimit);
+      }
     }
   }
   if (output != NULL) {
@@ -682,7 +681,7 @@ s32 BattleUnit_ListLivingWithReserve(s32 sideMask, u16 *unitIds) {
     remaining = FIRST_ENEMY_UNIT;
     enemyLimit = enemyCapacity + FIRST_ENEMY_UNIT;
     if (remaining < enemyLimit) {
-      do {
+      for (; remaining < enemyLimit; remaining += 1) {
         unit = Unit_Get(remaining);
         if (unit->side != BATTLE_SIDE_NONE && unit->hp > 0) {
           if (output != NULL) {
@@ -691,8 +690,7 @@ s32 BattleUnit_ListLivingWithReserve(s32 sideMask, u16 *unitIds) {
           }
           livingCount += 1;
         }
-        remaining += 1;
-      } while (remaining < enemyLimit);
+      }
     }
   }
   if (output != NULL) {

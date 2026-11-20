@@ -16,7 +16,7 @@ void MagmaRockInside_RestoreCrumblingPillars(const u16 *table) {
   struct Actor *leader;
   s32 ground;
 
-  while (*table != ACTOR_LIST_END) {
+  for (; *table != ACTOR_LIST_END; table += 2) {
     id = table[0];
     actor = Actor_Get(id);
     flag = table[1];
@@ -45,7 +45,6 @@ void MagmaRockInside_RestoreCrumblingPillars(const u16 *table) {
       if (Event_GetFlag(flag))
         Actor_SelectAnimation(actor, 0);
     }
-    table += 2;
   }
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   ground =

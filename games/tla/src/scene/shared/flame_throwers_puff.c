@@ -66,7 +66,7 @@ void FlameThrowers_Puff(void) {
   v = (u16)state->stopped;
   state->wasStopped = v;
   state->stopped = 0;
-  for (i = 3; i >= 0; i--, entry++) {
+  for (i = 0; i < 4; i++, entry++) {
     struct Actor *actor;
     s32 flag, x, y, offScreen, value;
     FIXED dx, dz;

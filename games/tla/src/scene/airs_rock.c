@@ -901,7 +901,7 @@ void AirsRock_RideWhirlwind(void) {
         FIELD_HALF_CELL_ORIGIN((FIELD_HALF_CELL(ride->y.fixed) & ~1) + 3);
     leader->z.fixed =
         FIELD_HALF_CELL_ORIGIN((FIELD_HALF_CELL(leader->z.fixed) & ~1) + 1);
-    do {
+    for (; i != 60; i++) {
       moved = 0;
       if (gInput.held & KEY_UP) {
         dx = 0;
@@ -927,7 +927,7 @@ void AirsRock_RideWhirlwind(void) {
                        CELL_MARK_BLOCKED)
         goto found;
       wait(1);
-    } while (++i != 60);
+    }
     dx = 0;
     leader->facing = FACING_NORTH;
     dz = -toFIXED(16);

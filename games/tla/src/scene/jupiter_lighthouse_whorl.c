@@ -358,19 +358,16 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
     MapGrid_CopyCellsLayered(78, 47, 1, 1, 8, 74);
     MapGrid_SetCellHeight(toFIXED(128), toFIXED(192), 0, 4);
     if (mode == 1) {
-      frame = 0;
-      do {
-        i = 0;
-        do {
+      for (frame = 0; frame <= 15; frame++) {
+        for (i = 0; i <= 5; i++) {
           actor = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
           if (JupiterLighthouse_IsOnWestPath(actor)) {
             actor->motionFlags = 0;
             actor->y.fixed -= toFIXED(2);
           }
-        } while (++i <= 5);
+        }
         System_Wait(1);
-        frame++;
-      } while (frame <= 15);
+      }
     }
     i = 0;
     do {
@@ -387,28 +384,24 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
     FieldActor_Stop(gMainRoutineWork.leaderActorId);
     Actor_SetPosition(ACTOR_THIRD_PATH_BLOCK, 0, 0);
     if (mode == 1) {
-      frame = 0;
-      do {
-        i = 0;
-        do {
+      for (frame = 0; frame <= 15; frame++) {
+        for (i = 0; i <= 5; i++) {
           actor = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
           if (JupiterLighthouse_IsOnWestPath(actor)) {
             actor->motionFlags = 0;
             actor->y.fixed += toFIXED(2);
           }
-        } while (++i <= 5);
+        }
         System_Wait(1);
-        frame++;
-      } while (frame <= 15);
+      }
     }
-    i = 0;
-    do {
+    for (i = 0; i <= 5; i++) {
       actor = Actor_Get(ACTOR_FIRST_GREY_BLOCK + i);
       if (JupiterLighthouse_IsOnWestPath(actor)) {
         actor->motionFlags = ACTOR_FLOATS;
         actor->y.fixed = toFIXED(65) / 2;
       }
-    } while (++i <= 5);
+    }
   }
 }
 

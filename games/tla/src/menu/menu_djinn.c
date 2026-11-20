@@ -861,12 +861,11 @@ s32 DjinnMenu_ShowHelp(void) {
   Window_MarkVisibleTextTilesFar();
   helpIndex = 0;
   listMessage = (s32)MsgDjinnInfoTopic;
-  do {
+  for (; helpIndex <= 6; helpIndex++) {
     s32 y = helpIndex * 8;
 
     Text_DrawMessageAsTilesFar(helpIndex + listMessage, list, 0, y);
-    helpIndex++;
-  } while (helpIndex <= 6);
+  }
   do {
     WindowSprite_PrepareForRedrawFar(statusWindow);
     Text_DrawMessageFar(selection + (s32)MsgDjinnInfoTopic, statusWindow, 0, 0);
@@ -1019,7 +1018,7 @@ s32 DjinnMenu_SelectDjinn(s32 mode) {
 
   selectedRow = -1;
   status = columnFlags;
-  for (i = 7; i >= 0; i--)
+  for (i = 0; i < 8; i++)
     status[i] = 0;
   if (mode == DJINN_SELECT_DJINNI) {
     savedRow = djinnRow;

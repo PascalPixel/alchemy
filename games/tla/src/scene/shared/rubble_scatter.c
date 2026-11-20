@@ -7,7 +7,7 @@ void Dust_Scatter(s32 spread) {
   u32 i = 0;
   FIXED y;
 
-  do {
+  for (; i <= 7; i++) {
     y = leader->y.fixed - toFIXED(Random_Below(14));
     effect = (struct FieldEffect *)FieldActor_Create(
         SPRITE_DUST_CLOUD, i * toFIXED(2) + leader->x.fixed - toFIXED(8),
@@ -35,6 +35,5 @@ void Dust_Scatter(s32 spread) {
       effect->scaleRateY = -(FIXED_ONE * 3 / 128);
       effect->update = Effect_AdvanceMotionAtLeaderPriority;
     }
-    i++;
-  } while (i <= 7);
+  }
 }

@@ -34,11 +34,10 @@ s32 VramCache_AllocateBlocks(u32 id, u32 size) {
         return -1;
       }
       first = block;
-      while (block < first + blocks) {
+      for (; block < first + blocks; block++) {
         if (gVramCacheBlockOwners[block] != VRAM_BLOCK_OWNER_FREE) {
           goto occupied;
         }
-        block++;
       }
       for (i = 0; i < blocks; i++) {
         gVramCacheBlockOwners[first + i] = id;

@@ -2074,11 +2074,9 @@ void GaiaRockInside_SwayPlatforms(void) {
       GaiaRockInside_PlacePlatform(ACTOR_LAST_PLATFORM, 3, 0);
       break;
     case 180:
-      id = ACTOR_FIRST_PLATFORM;
-      do {
+      for (id = ACTOR_FIRST_PLATFORM; id <= ACTOR_LAST_PLATFORM; id++) {
         GaiaRockInside_PlacePlatform(id, 0, 0);
-        id++;
-      } while (id <= ACTOR_LAST_PLATFORM);
+      }
       break;
     }
     if (++*frame == 240)

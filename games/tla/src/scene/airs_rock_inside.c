@@ -417,8 +417,7 @@ void Pillar_Place(s16 *list) {
 
   if ((u16)list[0] == ACTOR_LIST_END)
     return;
-  entry = list;
-  do {
+  for (entry = list; (u16)entry[0] != ACTOR_LIST_END; entry += 3) {
     s32 id = (u16)entry[0];
     struct Actor *actor = Actor_GetById(id);
     s32 kind = entry[1];
@@ -427,8 +426,7 @@ void Pillar_Place(s16 *list) {
     actor->collisionFlags &= ~ACTOR_SOLID;
     Actor_SetSpriteFlags(actor, 0);
     Actor_SetCellOpen(id, (u16)kind, (u16)flag, actor->layer);
-    entry += 3;
-  } while ((u16)entry[0] != ACTOR_LIST_END);
+  }
 }
 
 #include "shared/pound_sink_target.h"
@@ -633,8 +631,7 @@ void AirsRockInside_PlaceStakes(u16 *list) {
 
   if (*list == ACTOR_LIST_END)
     return;
-  entry = list;
-  do {
+  for (entry = list; *entry != ACTOR_LIST_END; entry += 3) {
     actor = Actor_GetById(*entry);
     pose = ((s16 *)entry)[1];
     flag = ((s16 *)entry)[2];
@@ -651,8 +648,7 @@ void AirsRockInside_PlaceStakes(u16 *list) {
     actor->collisionFlags &= ~ACTOR_SOLID;
     actor->timer = flag;
     AirsRockInside_SetStakeCells(actor);
-    entry += 3;
-  } while (*entry != ACTOR_LIST_END);
+  }
 }
 
 /// The leader rides a statue's whirlwind along its path until it fades.
@@ -706,7 +702,7 @@ void AirsRockInside_RideWhirlwind(void) {
         FIELD_HALF_CELL_ORIGIN((FIELD_HALF_CELL(ride->y.fixed) & ~1) + 3);
     leader->z.fixed =
         FIELD_HALF_CELL_ORIGIN((FIELD_HALF_CELL(leader->z.fixed) & ~1) + 1);
-    do {
+    for (; frames != 60; frames++) {
       moved = 0;
       if (gInput.held & KEY_UP) {
         dx = 0;
@@ -732,8 +728,7 @@ void AirsRockInside_RideWhirlwind(void) {
                        CELL_BEHAVIOR_WALL)
         goto found;
       wait(1);
-      frames++;
-    } while (frames != 60);
+    }
     dx = 0;
     dz = -toFIXED(16);
     leader->facing = FACING_NORTH;
@@ -3067,7 +3062,7 @@ void AirsRockInside_SpawnMotes(void) {
   s32 i = 0;
   struct FieldSprite *sprite;
 
-  do {
+  for (; i != 8; i++) {
     actor = Import_ActorCreate(SPRITE_PARTICLE, 0, 0, 0);
     sprite = actor->sprite;
     sprite->priority = 1;
@@ -3087,8 +3082,7 @@ void AirsRockInside_SpawnMotes(void) {
       actor->userValue = 0;
     }
     Actor_SetBlendMode(actor, 1);
-    i++;
-  } while (i != 8);
+  }
 }
 
 extern s32 gAirsRockInside_LeaderLevel;
@@ -3370,16 +3364,14 @@ s32 Scene_Initialize(void) {
   } else if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_REVEAL_TABLET) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
     AirsRockInside_StartRestoringCells();
-    i = 0;
-    do {
+    for (i = 0; i != 6; i++) {
       if (GameFlag_Get(FLAG_FIRST_STONE_VANISHED + i)) {
         z = 24 - (i << 1);
         MapGrid_CopyCellsTo(65, 1, 80, z, 1, 2);
         FieldMapCell_SetAttributes(MAPGRID_LAYER_GROUND, 16, z,
                                    CELL_ATTRIBUTES(CELL_BEHAVIOR_WALL, 0));
       }
-      i++;
-    } while (i != 6);
+    }
     Actor_GetById(ACTOR_REVEAL_TABLET)->motionFlags = 0;
     actor = Actor_GetById(ACTOR_REVEAL_TABLET);
     Actor_GetById(ACTOR_REVEAL_TABLET)->groundHeight = toFIXED(16);

@@ -44,9 +44,10 @@ void BattleEffect_TintBattler(s32 unitId, s32 palette, s32 animation,
 
   slot = BattleObject_GetFar(unitId);
   work = Ram_HeapSlots->battleEffect;
-  groupIndex = 0;
 
-  while ((group = GetMotionRecordFar(slot->object, groupIndex)) != NULL) {
+  for (groupIndex = 0;
+       (group = GetMotionRecordFar(slot->object, groupIndex)) != NULL;
+       groupIndex++) {
     if (timerSlot != TINT_KEEP)
       work->actorTimers[timerSlot] = timerFrames;
     if (slot->fading == 0) {
@@ -72,6 +73,5 @@ void BattleEffect_TintBattler(s32 unitId, s32 palette, s32 animation,
       if (animation != TINT_KEEP)
         Sprite_StartAnimationFar(group, animation);
     }
-    groupIndex++;
   }
 }

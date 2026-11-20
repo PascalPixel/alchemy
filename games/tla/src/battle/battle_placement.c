@@ -599,7 +599,7 @@ void BattleUnit_RefreshPlacement(void) {
   // placement[0..7] is each party unit id's place and placement[8..13] the
   // enemy places, numbered 8 to 13.
   value = BATTLE_OBJECT_NONE;
-  for (i = UNIT_MAX - 1; i >= 0; i--)
+  for (i = 0; i < UNIT_MAX; i++)
     work->placement[i] = value;
   for (n = ENEMY_BATTLE_SIZE - 1, p = &work->placement[UNIT_MAX - 1],
       value = UNIT_MAX - 1;

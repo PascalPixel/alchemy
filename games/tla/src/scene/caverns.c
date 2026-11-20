@@ -137,7 +137,7 @@ void Caverns_PlaceAngaraBlocks(const s16 *data) {
   s32 height;
   s32 cell;
 
-  while (*ids != ACTOR_LIST_END) {
+  for (; *ids != ACTOR_LIST_END; ids++) {
     actor = Actor_GetById(*ids);
     actor->motionFlags = 0;
     actor->collisionFlags = 0;
@@ -153,7 +153,6 @@ void Caverns_PlaceAngaraBlocks(const s16 *data) {
     actor->riseBaseY = cell;
     MapCell_SetAttributes(0, FIELD_CELL(actor->x.fixed),
                           FIELD_CELL(actor->z.fixed), cell | MAP_CELL_JUMP);
-    ids++;
   }
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     wait(1);

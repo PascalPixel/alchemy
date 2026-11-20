@@ -20,16 +20,14 @@ void CrackedTile_Fall(struct CellTarget *table, struct CellTargetEntry *entry) {
   table->shown = 1;
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
   FieldEvent_Wait(16);
-  x = 0;
-  do {
+  for (x = 0; x <= 39; x++) {
     if (x == 5)
       Event_PlaySound(SE_DUST_PUFF);
     leader->scaleX += -(FIXED_ONE / 64);
     leader->scaleY += -(FIXED_ONE * 3 / 256);
     leader->y.fixed += -(toFIXED(3) / 5);
     System_Wait(1);
-    x++;
-  } while (x <= 39);
+  }
   Actor_Get(gMainRoutineWork.leaderActorId)->spriteStorageKind = 0;
   table->shown = 0;
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);

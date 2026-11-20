@@ -12,7 +12,7 @@ void Rubble_Spray(s32 spread) {
   u32 i = 0;
   FIXED y;
 
-  do {
+  for (; i <= 7; i++) {
     y = leader->y.fixed - toFIXED(Random_Below(14));
     effect = (struct FieldEffect *)FieldActor_Create(
         SPRITE_DUST_CLOUD, i * toFIXED(2) + leader->x.fixed - toFIXED(8),
@@ -40,8 +40,7 @@ void Rubble_Spray(s32 spread) {
       effect->scaleRateY = -(FIXED_ONE * 3 / 128);
       effect->update = Effect_AdvanceMotionAtLeaderPriority;
     }
-    i++;
-  } while (i <= 7);
+  }
 }
 
 extern u32 gRubble_BurstScript[];
@@ -57,8 +56,7 @@ void Rubble_Burst(void) {
   if (leader == 0)
     return;
   frame = 0;
-  i = 0;
-  do {
+  for (i = 0; i <= DUST_RING_PUFFS; i++) {
     effect = (struct FieldEffect *)FieldActor_Create(
         SPRITE_DUST_CLOUD, leader->x.fixed, leader->y.fixed, leader->z.fixed);
     if (effect != 0) {
@@ -81,6 +79,5 @@ void Rubble_Burst(void) {
       effect->sprite->priority =
           ((struct FieldSprite *)leader->sprite)->priority;
     }
-    i++;
-  } while (i <= DUST_RING_PUFFS);
+  }
 }

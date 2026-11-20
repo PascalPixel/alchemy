@@ -56,14 +56,13 @@ s32 Unit_KnowsPsynergy(s32 unitId, s32 abilityId) {
   s32 actionMask = PSYNERGY_ABILITY_MASK;
 
   entry = unit->psynergy;
-  do {
+  for (; index < PSYNERGY_SLOTS; index++) {
     s32 currentAction = entry->encodedAction;
 
     entry++;
     if ((currentAction & actionMask) == abilityId)
       return 1;
-    index++;
-  } while (index <= PSYNERGY_SLOTS - 1);
+  }
   return 0;
 }
 
@@ -260,12 +259,12 @@ void Party_InitializeCharacters(void) {
   // gCharacter_StartingEquipUnitIds lists the characters given starting
   // equipment, ended by -1 (artifact_slots.c).
   if (*startingUnitId != -1) {
-    do {
+    for (; *startingUnitId != -1; startingUnitId++) {
       unit = Unit_Get(*startingUnitId);
       if (unit != 0) {
         unit->enemyId = *startingUnitId;
         character = Character_GetDefinition(unit->enemyId);
-        for (i = INVENTORY_SLOTS - 1; i >= 0; i--)
+        for (i = 0; i < INVENTORY_SLOTS; i++)
           unit->inventory[i] = 0;
 
         for (i = 0; i < sizeof(character->items) / sizeof(character->items[0]);
@@ -282,8 +281,7 @@ void Party_InitializeCharacters(void) {
         Unit_UpdateClass(*startingUnitId);
         Unit_Calculate(*startingUnitId);
       }
-      startingUnitId++;
-    } while (*startingUnitId != -1);
+    }
   }
 }
 
@@ -420,9 +418,8 @@ void Unit_LevelUpTo(s32 unitId, s32 targetLevel) {
   struct LevelUpResult gains;
   s32 currentLevel = Unit_Get(unitId)->level;
 
-  while (currentLevel < targetLevel) {
+  for (; currentLevel < targetLevel; currentLevel++) {
     Unit_LevelUp(unitId, &gains);
-    currentLevel++;
   }
   Unit_Calculate(unitId);
 }

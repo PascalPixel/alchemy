@@ -429,8 +429,7 @@ void TaopoSwamp_SinkStump(s32 unused, s32 id) {
   actor->velocityY = 0;
   actor->y.fixed = toFIXED(4);
   sprite = actor->sprite;
-  i = 0;
-  do {
+  for (i = 0; i <= STUMP_SINK_ROWS; i++) {
     ((struct Sprite *)sprite)->sunkRows = i;
     sprite->flags |= SPRITE_FLAG_SUNK;
     sprite->flags &= ~SPRITE_FLAG_SHADOW;
@@ -456,8 +455,7 @@ void TaopoSwamp_SinkStump(s32 unused, s32 id) {
       }
     }
     System_Wait(3);
-    i++;
-  } while (i <= STUMP_SINK_ROWS);
+  }
 
   actor->spriteStorageKind = 0;
   actor->y.fixed = 0;

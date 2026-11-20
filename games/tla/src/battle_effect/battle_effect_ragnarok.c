@@ -83,10 +83,8 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
 
   // Each column's flashes (a ring, 2 pixels apart, living 25 to 32 frames)
   // and sparks (from y = 88, at random speeds and angles, living 32 to 39).
-  col = 0;
-  do {
-    i = 0;
-    do {
+  for (col = 0; col != RAGNAROK_SEEDED; col++) {
+    for (i = 0; i != RAGNAROK_FLASHES; i++) {
       struct Particle *flash = &work->particles[col * RAGNAROK_FLASHES + i];
       s32 radius = i * 2;
       s32 angle = Random16() & TRIG_ANGLE_MASK;
@@ -94,11 +92,9 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
       flash->x = Trig_Sin(angle) * radius;
       flash->y = -(Trig_Cos(angle) * radius);
       flash->variant = i / 2 + FLASH_LIFE;
-      i++;
-    } while (i != RAGNAROK_FLASHES);
+    }
 
-    i = 0;
-    do {
+    for (i = 0; i != RAGNAROK_SPARKS; i++) {
       struct Particle *spark = &PARTICLES[col * RAGNAROK_SPARKS + i];
       s32 speed;
       s32 angle;
@@ -111,15 +107,12 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
       spark->velocityX = (Trig_Sin(angle) * speed) >> 6;
       spark->velocityY = -(Trig_Cos(angle) * speed * 2) >> 6;
       spark->variant = (Random16() & 7) + 32;
-      i++;
-    } while (i != RAGNAROK_SPARKS);
-    col++;
-  } while (col != RAGNAROK_SEEDED);
+    }
+  }
 
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
-  frame = 0;
-  do {
+  for (frame = 0; frame != RAGNAROK_FRAMES; frame++) {
     if (frame == 4)
       Sound_PlayFar(SE_POWER_UP);
     if (frame == 8)
@@ -170,8 +163,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
     if (frame > FIRST_STRIKE_FRAME)
       BattleEffect_StepPaletteToResource(RESOURCE_BLAST_SHEET);
 
-    col = 0;
-    do {
+    for (col = 0; col != RAGNAROK_COLUMNS; col++) {
       s32 start = col * 8 + FIRST_STRIKE_FRAME;
 
       // The strike: a shake, two frames of the big flash, then the ring.
@@ -183,8 +175,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
                   gRagnarok_StrikeColumns[col + args->side * 3] + baseX -
                       FLASH_BURST_WIDTH / 2,
                   56, FLASH_BURST_WIDTH, FLASH_BURST_HEIGHT);
-        i = 0;
-        do {
+        for (i = 0; i != RAGNAROK_RING; i++) {
           struct Particle *flash = &work->particles[col * RAGNAROK_FLASHES + i];
           s32 x;
           s32 life;
@@ -204,14 +195,12 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
                     FLASH_BURST_HEIGHT);
           life = flash->variant;
           flash->variant = life > 0 ? life - 1 : -1;
-          i++;
-        } while (i != RAGNAROK_RING);
+        }
       }
 
       // The sparks, from six frames after the strike, bouncing on the ground.
       if (frame > start + 5) {
-        i = 0;
-        do {
+        for (i = 0; i != RAGNAROK_DRAWN_SPARKS; i++) {
           struct Particle *spark = &PARTICLES[col * RAGNAROK_SPARKS + i];
 
           if (spark->variant > 0) {
@@ -242,8 +231,7 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
               }
             }
           }
-          i++;
-        } while (i != RAGNAROK_DRAWN_SPARKS);
+        }
       }
 
       // The column's targets flash at the strike and are struck by its
@@ -256,13 +244,11 @@ void BattleEffect_RunRagnarok(struct BattleEffectParams *args) {
           EFFECT_STRIKE_TARGET(args, i, 10, KNOCKBACK_HURL);
         }
       }
-      col++;
-    } while (col != RAGNAROK_COLUMNS);
+    }
 
     BattleCamera_Shake(16, 16);
     EFFECT_END_FRAME(work);
-    frame++;
-  } while (frame != RAGNAROK_FRAMES);
+  }
 
   Actor_SetAnimationSpeedFar(user, ANIMATION_STEP_NORMAL);
   EFFECT_FINISH_CANVAS();
@@ -389,8 +375,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_THREE_QUARTERS);
 
   // 32 flashes on rings, two pixels apart.
-  i = 0;
-  do {
+  for (i = 0; i != TITAN_BLADE_FLASHES; i++) {
     struct Particle *flash = &work->particles[i];
     s32 scale = i * 2;
     s32 angle = Random16() & TRIG_ANGLE_MASK;
@@ -398,19 +383,16 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
     flash->x = Trig_Sin(angle) * scale;
     flash->y = -(Trig_Cos(angle) * scale);
     flash->variant = i / 2 + FLASH_LIFE;
-    i++;
-  } while (i != TITAN_BLADE_FLASHES);
+  }
 
-  i = 0;
-  do {
+  for (i = 0; i != TITAN_BLADE_DUST; i++) {
     PARTICLES[i].variant = -1;
-    i++;
-  } while (i != TITAN_BLADE_DUST);
+  }
 
   // The sparks wait at the target's feet.
   i = 0;
   origin = INTtoFIXED(centerX);
-  do {
+  for (; i != TITAN_BLADE_SPARKS; i++) {
     struct Particle *spark = &TITAN_BLADE_SWORD_SPARKS[i];
     s32 speed;
     s32 angle;
@@ -422,11 +404,9 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
     spark->velocityX = (Trig_Sin(angle) * speed) >> 5;
     spark->velocityY = -(Trig_Cos(angle) * speed) >> 6;
     spark->variant = (Random16() & 7) + 32;
-    i++;
-  } while (i != TITAN_BLADE_SPARKS);
+  }
 
-  frame = 0;
-  do {
+  for (frame = 0; frame != TITAN_BLADE_FRAMES; frame++) {
     if (mode == FALLING_SWORD_TITAN_BLADE) {
       if (frame >= 41 && frame <= 63)
         BattleEffect_StepPaletteToResource(RESOURCE_BLAST_SHEET);
@@ -460,8 +440,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
 
     // The flashes, from frame 56.
     if (frame > 55) {
-      i = 0;
-      do {
+      for (i = 0; i != TITAN_BLADE_RING; i++) {
         struct Particle *flash = &work->particles[i];
         s32 x;
         s32 life;
@@ -480,15 +459,13 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
                   FLASH_BURST_HEIGHT);
         life = flash->variant;
         flash->variant = life > 0 ? life - 1 : -1;
-        i++;
-      } while (i != TITAN_BLADE_RING);
+      }
     }
 
     // The dust: a fountain at frame 28, then more each frame while the
     // pillar rises.
     if (frame == 28) {
-      i = 0;
-      do {
+      for (i = 0; i != TITAN_BLADE_FIRST_DUST; i++) {
         struct Particle *dust = &PARTICLES[i];
 
         if (dust->variant == -1) {
@@ -503,8 +480,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
           dust->velocityY = (-(Random16() & 63) - 8) << 13;
           dust->variant = 0;
         }
-        i++;
-      } while (i != TITAN_BLADE_FIRST_DUST);
+      }
     }
 
     step = frame - TITAN_BLADE_PILLAR_FRAME;
@@ -512,8 +488,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
       s32 spawned;
 
       spawned = 0;
-      i = 0;
-      do {
+      for (i = 0; i != TITAN_BLADE_DUST; i++) {
         struct Particle *dust = &PARTICLES[i];
 
         if (dust->variant == -1) {
@@ -531,8 +506,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
           if (spawned == TITAN_BLADE_DUST_PER_FRAME)
             break;
         }
-        i++;
-      } while (i != TITAN_BLADE_DUST);
+      }
     }
 
     // The pillar of fire, its flames climbing 16 pixels a frame.
@@ -551,8 +525,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
 
     // The dust grows as it falls and toward the end.
     if (frame <= 71) {
-      i = 0;
-      do {
+      for (i = 0; i != TITAN_BLADE_DRAWN_DUST; i++) {
         struct Particle *dust = &PARTICLES[i];
 
         if (dust->variant >= 0) {
@@ -588,8 +561,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
               FIXED_INTEGER_PART(dust->y) > SWORD_GROUND_Y)
             dust->variant = -1;
         }
-        i++;
-      } while (i != TITAN_BLADE_DRAWN_DUST);
+      }
     }
 
     // The sword: down 16 pixels a frame, held, sinking while the pillar
@@ -618,8 +590,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
 
     // The sparks bounce on the ground.
     if (frame > 59) {
-      i = 0;
-      do {
+      for (i = 0; i != TITAN_BLADE_SPARKS; i++) {
         struct Particle *spark = &TITAN_BLADE_SWORD_SPARKS[i];
 
         if (spark->variant > 0) {
@@ -648,8 +619,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
             }
           }
         }
-        i++;
-      } while (i != TITAN_BLADE_SPARKS);
+      }
     }
 
     // The hit, and the canvas flooded as the sword arrives and as it
@@ -672,8 +642,7 @@ void BattleEffect_RunFallingSword(struct BattleEffectParams *args, s32 mode) {
 
     BattleCamera_Shake(16, 16);
     EFFECT_END_FRAME(work);
-    frame++;
-  } while (frame != TITAN_BLADE_FRAMES);
+  }
 
   EFFECT_FINISH_CANVAS();
 }

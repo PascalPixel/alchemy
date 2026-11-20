@@ -101,7 +101,7 @@ void BattleEffect_DrawHalfCanvasCircle(s32 cx, s32 cy, s32 radius, s32 color) {
   s32 x = radius;
   s32 y = 0;
 
-  while (x >= y) {
+  for (; x >= y; y++) {
     BattleEffect_PlotHalfCanvasPixel(cx + x, cy + y, color);
     BattleEffect_PlotHalfCanvasPixel(cx + x, cy - y, color);
     BattleEffect_PlotHalfCanvasPixel(cx - x, cy + y, color);
@@ -117,7 +117,6 @@ void BattleEffect_DrawHalfCanvasCircle(s32 cx, s32 cy, s32 radius, s32 color) {
       radius += next * 2;
       x = next;
     }
-    y++;
   }
 }
 

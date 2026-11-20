@@ -2561,8 +2561,7 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
   FieldActor_SetPositionAndResetMotion(actor, toFIXED(512), toFIXED(64),
                                        toFIXED(204));
-  frame = 0;
-  do {
+  for (frame = 0; (u32)frame < 40; frame++) {
     if (frame == 20) {
       MapGrid_SetShake(2, 2, 1);
       FieldActor_ShowEmote(gMainRoutineWork.leaderActorId,
@@ -2587,8 +2586,7 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
     }
     actor->scaleX += FIXED_ONE / 64;
     System_Wait(1);
-    frame++;
-  } while ((u32)frame < 40);
+  }
   Event_PlaySound(MUS_BEACON_LIT);
   Actor_SetScript(ACTOR_BEAM_BOTTOM,
                   gMarsLighthouseAerie_WatchGoldenSunRiseScript);

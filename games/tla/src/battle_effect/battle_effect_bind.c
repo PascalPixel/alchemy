@@ -77,7 +77,7 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
   for (i = 0; i != BLUE_RAMP_FRAMES; i++) {
     end += speed / 4;
     speed++;
-    while (row != end) {
+    for (; row != end; row++) {
       for (x = 0; x != BATTLE_BACKGROUND_WIDTH; x++) {
         y = row - delays[x];
         if (y >= 0) {
@@ -98,7 +98,6 @@ UNUSED void BattleEffect_ConvertBackgroundToBlueRamp(void) {
           }
         }
       }
-      row++;
     }
     Iwram_CopyWords((void *)BG_CHAR_BLOCK(2), BLUE_RAMP_PIXELS,
                     BATTLE_BACKGROUND_BYTES);

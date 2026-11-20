@@ -109,14 +109,13 @@ void MapGrid_WaitForShakeToSettle(void) {
   s32 waitedFrames;
 
   grid = Ram_HeapSlots->mapGrid;
-  waitedFrames = 0;
   // 300 frames is five seconds; 255 in 16.16 is just under 1/256 pixel.
   // A decay of 1.0 or more never settles, so the limit ends the wait.
-  while (waitedFrames < MAPGRID_SHAKE_SETTLE_FRAMES &&
-         (grid->shakeX > MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE ||
-          grid->shakeY > MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE)) {
+  for (waitedFrames = 0; waitedFrames < MAPGRID_SHAKE_SETTLE_FRAMES &&
+                         (grid->shakeX > MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE ||
+                          grid->shakeY > MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE);
+       waitedFrames++) {
     wait(1);
-    waitedFrames++;
   }
   // A zero decay makes the next view update's shake its last.
   grid->shakeDecay = 0;

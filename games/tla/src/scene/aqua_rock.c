@@ -1122,8 +1122,7 @@ void AquaRock_MoaiStepAside(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Sound_Play(SE_POP_UP);
-  i = ACTOR_FIRST_GUARDIAN_MOAI;
-  do {
+  for (i = ACTOR_FIRST_GUARDIAN_MOAI; i <= ACTOR_FIRST_GUARDIAN_MOAI + 4; i++) {
     {
       struct Actor *actor = Actor_GetById(i);
 
@@ -1133,7 +1132,7 @@ void AquaRock_MoaiStepAside(void) {
       actor->timer = Random16();
       actor->userValue = 0;
     }
-  } while (++i <= ACTOR_FIRST_GUARDIAN_MOAI + 4);
+  }
   Event_Wait(60);
   Map_CopyCellsRect(64, 69, 11, 4, 87, 53);
   Actor_SetDestination(ACTOR_FIRST_GUARDIAN_MOAI, 392, 824);
@@ -1143,10 +1142,9 @@ void AquaRock_MoaiStepAside(void) {
   Actor_SetDestinationById(ACTOR_FIRST_GUARDIAN_MOAI + 4, 520, 824);
   Event_Wait(240);
   Map_CopyCellsRect(64, 66, 11, 7, 87, 50);
-  i = ACTOR_FIRST_GUARDIAN_MOAI;
-  do {
+  for (i = ACTOR_FIRST_GUARDIAN_MOAI; i <= ACTOR_FIRST_GUARDIAN_MOAI + 4; i++) {
     Actor_GetById(i)->update = (ObjectUpdate)AquaRock_StopShakingMoai;
-  } while (++i <= ACTOR_FIRST_GUARDIAN_MOAI + 4);
+  }
   Sound_Play(SE_STOP_EXIT_SE);
   Event_Wait(60);
   {
@@ -1541,7 +1539,7 @@ void AquaRock_DrawRisingBubbles(void) {
       work->next = 0;
   }
   entry = work->bubbles;
-  for (i = STREAM_BUBBLE_COUNT - 1; i >= 0; i--, entry++) {
+  for (i = 0; i < STREAM_BUBBLE_COUNT; i++, entry++) {
     if (entry->x != 0) {
       // screenX holds the ground's height here, before its own value.
       screenX = Map_GetTerrainHeight(0, entry->x, entry->z);
@@ -1608,7 +1606,7 @@ void AquaRock_DrawFallingBubbles(void) {
       work->next = 0;
   }
   bubble = work->bubbles;
-  for (i = STREAM_BUBBLE_COUNT - 1; i >= 0; i--, bubble++) {
+  for (i = 0; i < STREAM_BUBBLE_COUNT; i++, bubble++) {
     if (bubble->x != 0) {
       if (Map_GetTerrainHeight(0, bubble->x, bubble->z) < bubble->y)
         bubble->y -= toFIXED(2);

@@ -15,7 +15,7 @@ void Pillar_LowerHeldCells(u16 *list) {
   }
   grid = (struct ShapeCell *)Ram_MapShapeGrid;
   work->movedBlock = NULL;
-  while (*list != ACTOR_LIST_END) {
+  for (; *list != ACTOR_LIST_END; list++) {
     if (held == Actor_GetById(*list)) {
       u8 *cell = (u8 *)((struct MapWork *)Ram_HeapSlots->mapGrid)
                      ->layers[held->layer]
@@ -42,6 +42,5 @@ void Pillar_LowerHeldCells(u16 *list) {
       ((struct MapCell *)cell)->attributeB &= ~MAP_CELL_CLIMBABLE;
       work->movedBlock = held;
     }
-    list++;
   }
 }

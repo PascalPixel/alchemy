@@ -341,12 +341,11 @@ void Actor_WaitForAnimationEnd(s32 actorId, s32 animation) {
     s32 frames = 0;
     struct Sprite *sprite = actor->sprite;
 
-    while (frames <= 89) {
+    for (; frames <= 89; frames++) {
       wait(1);
       if (animation != sprite->lastNo) {
         break;
       }
-      frames++;
     }
   }
 }

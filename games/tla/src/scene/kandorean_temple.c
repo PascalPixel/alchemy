@@ -2816,12 +2816,10 @@ void KandoreanTemple_TestTheStudents(void) {
   actor = Actor_GetById(ACTOR_FIRST_TESTED_STUDENT);
   sprite = actor->sprite;
   actor->motionFlags = 0;
-  frame = 0;
-  do {
+  for (frame = 0; frame <= 63; frame++) {
     actor->y.fixed += toFIXED(0.05);
     Event_Wait(1);
-    frame++;
-  } while (frame <= 63);
+  }
   KandoreanTemple_TurnSprite(sprite, 32, TRIG_TURN / 2048);
   Event_Wait(20);
   Actor_SetAttachedEffect(ACTOR_FIRST_TESTED_STUDENT,
@@ -2874,12 +2872,10 @@ void KandoreanTemple_TestTheStudents(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ATTACH);
   actor = Actor_GetById(ACTOR_SECOND_TESTED_STUDENT);
   actor->motionFlags = 0;
-  frame = 0;
-  do {
+  for (frame = 0; frame <= 63; frame++) {
     actor->y.fixed += toFIXED(3) / 20;
     Event_Wait(1);
-    frame++;
-  } while (frame <= 63);
+  }
   KandoreanTemple_Drift(actor, 64, toFIXED(1) / 16);
   KandoreanTemple_Drift(actor, 128, -toFIXED(1) / 16);
   KandoreanTemple_Drift(actor, 128, toFIXED(1) / 16);
@@ -2912,12 +2908,10 @@ void KandoreanTemple_TestTheStudents(void) {
   actor = Actor_GetById(ACTOR_THIRD_TESTED_STUDENT);
   sprite = actor->sprite;
   actor->motionFlags = 0;
-  frame = 0;
-  do {
+  for (frame = 0; frame <= 63; frame++) {
     actor->y.fixed += toFIXED(1) / 5;
     Event_Wait(1);
-    frame++;
-  } while (frame <= 63);
+  }
   KandoreanTemple_TurnSprite(sprite, 32, TRIG_TURN / 1024);
   sprite->rotation = 0;
   Actor_RunRepeatedMotion(ACTOR_THIRD_TESTED_STUDENT, 1);
@@ -2926,12 +2920,10 @@ void KandoreanTemple_TestTheStudents(void) {
   sprite->rotation = 0;
   Actor_RunRepeatedMotion(ACTOR_THIRD_TESTED_STUDENT, 1);
   Event_Wait(60);
-  frame = 0;
-  do {
+  for (frame = 0; frame <= 63; frame++) {
     actor->y.fixed += -toFIXED(1) / 5;
     Event_Wait(1);
-    frame++;
-  } while (frame <= 63);
+  }
   Event_Wait(20);
   Actor_ShowEmoteById(ACTOR_THIRD_TESTED_STUDENT, EMOTE_IN_FRONT | EMOTE_SMILE,
                       0);

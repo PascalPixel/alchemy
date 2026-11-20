@@ -1749,21 +1749,19 @@ extern u16 gDehkanPlateau_FallLandingCells[];
         u16 *entry = (u16 *)((u8 *)gDehkanPlateau_FallLandingCells + offset);  \
         s32 y;                                                                 \
         s32 x;                                                                 \
-        s32 one;                                                               \
                                                                                \
         flag -= FLAG_FELL_THROUGH_FIRST;                                       \
         x = *entry++;                                                          \
         y = *entry++;                                                          \
-        one = 1;                                                               \
-        MapGrid_CopyCellsTo(sourceX, sourceZ, x, y, one, one);                 \
+        MapGrid_CopyCellsTo(sourceX, sourceZ, x, y, 1, 1);                     \
         x = entry[0];                                                          \
         y = entry[1];                                                          \
-        MapGrid_CopyCellsTo(columnSourceX, columnSourceZ, x, y, one, 5);       \
+        MapGrid_CopyCellsTo(columnSourceX, columnSourceZ, x, y, 1, 5);         \
         if (flag == 1)                                                         \
-          MapGrid_CopyCellsTo(67, 4, 69, 3, one, one);                         \
+          MapGrid_CopyCellsTo(67, 4, 69, 3, 1, 1);                             \
         x -= 64;                                                               \
         y += belowOffsetZ;                                                     \
-        MapGrid_CopyCellsTo(sourceX, belowSourceZ, x, y, one, 4);              \
+        MapGrid_CopyCellsTo(sourceX, belowSourceZ, x, y, 1, 4);                \
         return;                                                                \
       }                                                                        \
       if (flag == FLAG_FELL_THROUGH_LAST)                                      \

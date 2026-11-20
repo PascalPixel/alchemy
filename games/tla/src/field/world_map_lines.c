@@ -100,13 +100,16 @@ void Matrix_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
     depth = targetZ - eyeZ;
     targetDeltaX -= eyeX;
     {
-      /* FAKEMATCH(pin): x fixed to a register. */
-      register s32 x __asm__("r0") = targetDeltaX >> 4;
-      s32 y = depth >> 4;
+      s32 x = targetDeltaX >> 4;
+      s32 y;
       CAMELOT_ASM("ip holds the target Matrix_CallInThumb jumps to, a "
                   "linkage no procedure-call standard produces")
-      register void *entry __asm__("ip") = table->arcTan2.target;
+      register void *entry __asm__("ip");
 
+      /* FAKEMATCH(barrier): an empty asm on targetDeltaX. */
+      __asm__("" : : "r"(targetDeltaX));
+      y = depth >> 4;
+      entry = table->arcTan2.target;
       CAMELOT_ASM("the empty asm keeps ip set for the call, which C cannot say")
       __asm__("" : : "r"(entry));
       angle = (u16)Matrix_CallInThumb(x, y);

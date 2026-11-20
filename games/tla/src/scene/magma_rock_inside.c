@@ -1383,11 +1383,7 @@ void MagmaRockInside_DrainLava(void) {
   MapGrid_CopyCellsTo(72, 63, srcX, rowAbove, 3, 4);
   FieldMapGrid_WaitForShakeToSettle();
   Event_PlaySound(SE_BUTTON_PRESS);
-  {
-    s32 bit = ACTOR_PRIORITY_WALKS_ON_PLATFORMS;
-    bit |= *flags;
-    *flags = bit;
-  }
+  ActorFlags_Set(flags, ACTOR_PRIORITY_WALKS_ON_PLATFORMS);
   FieldEvent_Wait(20);
   Actor_Get(gMainRoutineWork.leaderActorId)->steeringFlags &=
       ~ACTOR_FACES_MOTION;

@@ -491,12 +491,6 @@ void BattleEffect_RunOdyssey(struct BattleEffectParams *args) {
 /// the 16.16 sine and cosine of its turn divided by this.
 #define SWIRL_STEP_DIVISOR 532
 
-/// Draws a size by size square of the swirl at x along the top of the buffer.
-static inline s32 Swirl_Draw(DrawRectangle draw, void *buffer,
-                             const void *canvas, s32 x, s32 size) {
-  return draw(buffer, canvas, x, 0, size, size);
-}
-
 /// Unused: reached only from BattleEffect_RunBackgroundFadeIn, which nothing
 /// refers to. A turning cloud swirl on BG2: the cloud sheet is drawn once into
 /// the canvas in the battle background's colours and copied twice across the
@@ -516,6 +510,7 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   FIXED sine;
   FIXED cosine;
   s32 i;
+  u8 *cells = Ram_MapCellBuffer;
 
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;
@@ -565,10 +560,8 @@ void BattleEffect_RunCloudSwirl(struct BattleEffectParams *args) {
   draw = (DrawRectangle)Ram_HeapSlots->ramCode;
   Task_Add(BattleEffect_FlushPendingGraphicsTransfer, TASK_PASS_VBLANK);
   transition->busy = enabled;
-  /* FAKEMATCH(wrapper): the blit through Swirl_Draw with the constant buffer.
-   */
-  Swirl_Draw(draw, Ram_MapCellBuffer, canvas, 0, CANVAS_SIZE);
-  draw(Ram_MapCellBuffer, canvas, CANVAS_SIZE, 0, CANVAS_SIZE, CANVAS_SIZE);
+  draw(cells, canvas, 0, 0, CANVAS_SIZE, CANVAS_SIZE);
+  draw(cells, canvas, CANVAS_SIZE, 0, CANVAS_SIZE, CANVAS_SIZE);
   work->transferPending = enabled;
   wait(1);
 

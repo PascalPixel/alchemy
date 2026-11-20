@@ -278,36 +278,24 @@ struct PendingEvent;
 void FieldPsynergy_SteerPushedTarget(s32 unused) {
   struct Vector3 position;
   struct Vector3 beyond;
-  struct FieldEffectWork *scene;
-  struct Actor *user;
-  struct Actor *target;
+  struct FieldEffectWork *scene = Ram_HeapSlots->fieldEffectWork;
+  struct Actor *user = scene->mainActor;
+  struct Actor *target = scene->child;
   struct Actor *pusher;
   struct Actor *hit;
   FIXED x;
   FIXED z;
-  s32 angle;
-  s32 moved;
+  s32 angle = (u16)scene->angle + DEGtoANG(180);
+  s32 moved = 0;
   s32 direction;
   s32 cellX;
   s32 cellZ;
   s32 (*callback)(void);
-  u8 savedLayer;
-  u8 *layer;
+  u8 savedLayer = target->layer;
   struct PendingEvent *event;
-  s32 pushed;
-  u8 *userFlags;
+  s32 pushed = 0;
   const u8 *modes;
 
-  scene = Ram_HeapSlots->fieldEffectWork;
-  user = scene->mainActor;
-  target = scene->child;
-  angle = (u16)scene->angle + DEGtoANG(180);
-  moved = 0;
-  /* FAKEMATCH(temporary): a byte pointer standing in for target->terrainId at
-   * the save and the restore. */
-  layer = &target->layer;
-  savedLayer = *layer;
-  pushed = 0;
   if (target == NULL)
     return;
   FieldPsynergy_FadeToCastColor();
@@ -442,7 +430,7 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
     break;
   }
 
-  *layer = savedLayer;
+  target->layer = savedLayer;
   Actor_SetSpriteColorModeFar(target, scene->savedPalette);
   Actor_StartScriptFar(target, scene->savedScript);
   target->update = (ObjectUpdate)scene->savedCallback;
@@ -455,10 +443,7 @@ void FieldPsynergy_SteerPushedTarget(s32 unused) {
   }
   BattleEffect_StopMainActor();
   if (moved == 1) {
-    /* FAKEMATCH(temporary): a byte pointer standing in for the actor's
-     * actionFlags. */
-    userFlags = &Actor_GetById(scene->firstActorId)->steeringFlags;
-    *userFlags |= ACTOR_FACES_MOTION;
+    Actor_GetById(scene->firstActorId)->steeringFlags |= ACTOR_FACES_MOTION;
   }
   FieldPsynergy_FadeFromCastColor();
   UpdateRisingParticleBurst(pusher);

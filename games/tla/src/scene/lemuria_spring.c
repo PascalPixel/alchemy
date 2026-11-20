@@ -1130,37 +1130,20 @@ void LemuriaSpring_UpdateTossSimulation(void);
 /// its task.
 void LemuriaSpring_InitializeTossSimulation(void) {
   struct SpringTossMotion *toss = &gLemuriaSpring_Toss;
-  s32 obstacleIndex = 0;
-  u8 *startX;
-  u16 *headings;
   struct SpringObstacle *obstacle;
-  u8 *startZ;
-  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
-  s32 zero;
+  s32 i;
 
-  headings = gLemuriaSpring_ObstacleHeadings;
-  startZ = gLemuriaSpring_ObstacleStartZ;
-  startX = gLemuriaSpring_ObstacleStartX;
-  obstacle = gLemuriaSpring_Obstacles;
-
-  do {
-    zero = 0;
-    obstacle->position.x = INTtoFIXED(*startX);
-    /* FAKEMATCH(barrier): the x store ends the first group. */
-    __asm__("");
-    obstacle->position.z = INTtoFIXED(*startZ);
-    obstacle->position.y = zero;
-    obstacle->heading = *headings;
-    obstacle->pauseOrPhase = zero;
-    obstacle->speedMode = zero;
-    obstacle->reactionFrames = zero;
-    obstacle->hitCooldownFrames = zero;
-    obstacleIndex++;
-    startX++;
-    startZ++;
-    headings++;
-    obstacle++;
-  } while (obstacleIndex != 4);
+  for (i = 0; i != 4; i++) {
+    obstacle = &gLemuriaSpring_Obstacles[i];
+    obstacle->position.x = INTtoFIXED(gLemuriaSpring_ObstacleStartX[i]);
+    obstacle->position.y = 0;
+    obstacle->position.z = INTtoFIXED(gLemuriaSpring_ObstacleStartZ[i]);
+    obstacle->heading = gLemuriaSpring_ObstacleHeadings[i];
+    obstacle->pauseOrPhase = 0;
+    obstacle->speedMode = 0;
+    obstacle->reactionFrames = 0;
+    obstacle->hitCooldownFrames = 0;
+  }
 
   toss->trail[0].x = -toFIXED(30);
   toss->trail[0].y = 0;

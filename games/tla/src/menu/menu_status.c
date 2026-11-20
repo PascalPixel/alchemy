@@ -75,15 +75,8 @@ s32 PartyMemberChooser_Open(void) {
   state->partyCount = Party_ListMembersFar(state->memberIds);
   StatusScreen_Initialize(0, 3, 0, 7);
   state->selectorWindow = Window_CreateFar(13, 0, 17, 5, WINDOW_FLAG_INSTANT);
-  {
-    struct {
-      u16 value;
-    } y;
-
-    y.value = MENU_MEMBER_Y;
-    for (index = 3; index >= 0; index--)
-      state->memberY[index] = y.value;
-  }
+  for (index = 0; index < 4; index++)
+    state->memberY[index] = MENU_MEMBER_Y;
   state->page = STATUS_SCREEN_PAGE_CHOOSER;
 
   result = PartyMemberChooser_Run();

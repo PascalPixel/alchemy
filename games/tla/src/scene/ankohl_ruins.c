@@ -850,12 +850,9 @@ void AnkohlRuins_DrawSand(void) {
   s32 viewX = view[0] & FIELD_PIXEL_MASK;
   s32 viewZ = view[1] & FIELD_PIXEL_MASK;
   struct AnkohlRuinsSpriteWork *work = &gAnkohlRuins_Sand;
-  s32 *origin = map->origin;
-  // DEAD: the view origin's height, kept and never read; the ROM keeps its
-  // load and its store.
-  /* FAKEMATCH(volatile): the kept height; without it, 21 of 148 instructions
-   * differ in tla-en. */
-  volatile s32 kept = origin[1];
+  // DEAD: viewY, subtracted from both y and z, cancels in screenY; the ROM
+  // keeps its load and its store to the stack.
+  s32 viewY = map->origin[1];
   s32 tile = gVramCacheEntries[work->tile].offset >> 5;
   struct AnkohlRuinsSprite *sprite = work->sprites;
   s32 i;
@@ -898,7 +895,9 @@ void AnkohlRuins_DrawSand(void) {
         break;
       }
       x -= viewX;
-      screenY = z - viewZ - y;
+      y -= viewY;
+      z = z - viewZ - viewY;
+      screenY = z - y;
       screenX = FIXEDtoINT(x) - 8;
       screenY = FIXEDtoINT(screenY) - 8;
       if (screenX >= -15 && screenX <= 319 && screenY >= -15 &&

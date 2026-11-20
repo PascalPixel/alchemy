@@ -963,9 +963,7 @@ static void TolbiSpring_SetActorAppearance(s32 actorId, const s32 *coordinate,
   sprite = actor->sprite;
   count = sprite->count;
   if (count != 0) {
-    /* FAKEMATCH(temporary): none, SPRITE_PICTURE_NONE held in a local; as
-     * SPRITE_PICTURE_NONE at its uses. */
-    u32 none = SPRITE_PICTURE_NONE;
+    s32 noPicture = SPRITE_PICTURE_NONE;
     struct SpriteAnimation **animation = sprite->entries;
     u32 left = count;
 
@@ -977,7 +975,7 @@ static void TolbiSpring_SetActorAppearance(s32 actorId, const s32 *coordinate,
 
         entry->colorMode = colorVariant;
         // No picture is cached in the new colours yet.
-        picture = entry->picture | none;
+        picture = entry->picture | noPicture;
         entry->picture = picture;
       }
     } while (--left != 0);

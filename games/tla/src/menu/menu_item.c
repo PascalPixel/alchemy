@@ -1459,13 +1459,10 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
     style = STATUS_PANEL_LOWER_ONLY;
   switch (item->type) {
   case ITEM_TYPE_NONE: // usable items
+    StatusPanel_Draw(menu->statusWindow, target, slot, style);
+    break;
   case ITEM_TYPE_ELEMENTAL_STAR:
-    /* FAKEMATCH(dead): the test of menu, whose two branches make the same call,
-     * kept. */
-    if (menu)
-      StatusPanel_Draw(menu->statusWindow, target, slot, style);
-    else
-      StatusPanel_Draw(menu->statusWindow, target, slot, style);
+    StatusPanel_Draw(menu->statusWindow, target, slot, style);
     break;
   case ITEM_TYPE_CLASS_CHANGE:
     if (owner == target) {

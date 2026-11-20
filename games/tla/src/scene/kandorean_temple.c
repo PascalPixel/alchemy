@@ -3347,8 +3347,7 @@ void KandoreanTemple_MeetPoi(void) {
 /// Creates the Lash Pebble's actor on Poi's table, drawn from its item icon.
 void KandoreanTemple_CreateLashPebble(void) {
   struct Actor **slot = &gKandoreanTemple_LashPebble;
-  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
-  s32 zero = 0;
+  u8 clear = 0;
   struct Actor *actor = ((struct Actor *)Import_ActorCreate(
       SPRITE_UNSEEN_MARKER, toFIXED(408), toFIXED(40), toFIXED(344)));
 
@@ -3359,10 +3358,10 @@ void KandoreanTemple_CreateLashPebble(void) {
 
     sprite->fullColor = 0;
     sprite->palette = 0;
-    actor->motionFlags = zero;
+    actor->motionFlags = clear;
     actor->retainSpriteCache = 1;
-    sprite->flags = zero;
-    sprite->countAndShadow[0] = zero;
+    sprite->flags = clear;
+    sprite->countAndShadow[0] = clear;
     glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Icon_DrawItem(ITEM_LASH_PEBBLE);
     VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);

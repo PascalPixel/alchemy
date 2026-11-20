@@ -1858,8 +1858,7 @@ void Kibombo_FlickerStatueFires(void) {
 /// Creates the Black Crystal, drawn with the item's own icon.
 void Kibombo_CreateBlackCrystal(void) {
   struct Actor **slot = &gKibombo_BlackCrystal;
-  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
-  s32 zero = 0;
+  u8 clear = 0;
   struct Actor *actor = Import_ActorCreate(SPRITE_UNSEEN_MARKER, toFIXED(265),
                                            toFIXED(36), toFIXED(344));
 
@@ -1871,10 +1870,10 @@ void Kibombo_CreateBlackCrystal(void) {
     sprite->fullColor = 0;
     sprite->palette = 0;
     sprite->priority = 1;
-    actor->motionFlags = zero;
+    actor->motionFlags = clear;
     actor->retainSpriteCache = 1;
-    sprite->flags = zero;
-    sprite->countAndShadow[0] = zero;
+    sprite->flags = clear;
+    sprite->countAndShadow[0] = clear;
     glyph = HeapSlot_Alloc(HEAP_SLOT_GLYPH_TRANSFER, sizeof(GlyphTransfer));
     Icon_DrawItem(ITEM_BLACK_CRYSTAL);
     VramCache_Load(sprite->slot, ICON_TILE_BYTES, glyph->tiles);

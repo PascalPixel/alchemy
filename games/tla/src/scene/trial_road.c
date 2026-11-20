@@ -1240,6 +1240,7 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   s32 mode = 2;
   s32 x = FIELD_CELL(leader->x.fixed);
   s32 z = FIELD_CELL(leader->z.fixed);
+  s32 value;
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
    * touches. */
   struct Vector3 unused;
@@ -1303,16 +1304,17 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
     Actor_SelectAnimation(actor, 8);
     Actor_WaitForMove(actor);
     {
-      /* FAKEMATCH(pin): the 2 fixed to a register. */
       u8 *flags = &actor->priorityFlags;
-      register s32 value asm("r2") = 2;
 
+      value = ACTOR_PRIORITY_UNDERFOOT;
       *flags = value;
     }
     Sound_Play(SE_STOP_EXIT_SE);
     Sound_Play(SE_LOG_FALL);
     GameFlag_Set(id + FLAG_LOG_PUSHED_BASE);
   }
+  /* FAKEMATCH(barrier): an empty asm writing value after its last use. */
+  asm volatile("" : "=r"(value));
   Event_Wait(15);
   Event_End();
   TrialRoad_BlockLogs();

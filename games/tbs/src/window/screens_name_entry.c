@@ -460,8 +460,6 @@ s32 NameEntry_EditMemberName(s32 member) {
 
           /* FAKEMATCH(dead): no-op saves. */
           if (originalName)
-            src = NULL;
-          if (originalName)
             src = srcSave;
           if (originalName)
             dst = NULL;

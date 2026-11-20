@@ -71,6 +71,9 @@ void FieldPsynergy_UpdateRing(void) {
   u16 *phase;
   u16 *tile;
   s32 red;
+  s32 green;
+  s32 blue;
+  FIXED sine;
 
   position[0] = actor->x.fixed;
   position[1] = actor->y.fixed + toFIXED(16);
@@ -90,22 +93,17 @@ void FieldPsynergy_UpdateRing(void) {
     phase = &work->phase;
     red = GLOW_RED;
   cycle:
-    {
-      /* FAKEMATCH(pin): green fixed to a register; as a plain local. */
-      register s32 green asm("r5") =
-          Trig_Sin(((*phase >> 1) + i) * (TRIG_TURN / 32)) * GLOW_GREEN_SWING;
-      s32 blue;
-
-      blue = Trig_Sin(((*phase >> 2) + i) * (TRIG_TURN / 32) +
-                      TRIG_TURN * 9 / 32) *
-             GLOW_BLUE_SWING;
-      green = FIXEDtoINT(green) + GLOW_GREEN;
-      blue = FIXEDtoINT(blue) + GLOW_BLUE;
-      Io_Write16(RGB(red, green, blue),
-                 &((u16 *)&BG_PLTT_COLOR(RING_PALETTE, 0))[i]);
-      ((u16 *)&OBJ_PLTT_COLOR(RING_PALETTE, 0))[i] =
-          ((u16 *)&BG_PLTT_COLOR(RING_PALETTE, 0))[i];
-    }
+    sine = Trig_Sin(((*phase >> 1) + i) * (TRIG_TURN / 32));
+    green = sine * GLOW_GREEN_SWING;
+    sine =
+        Trig_Sin(((*phase >> 2) + i) * (TRIG_TURN / 32) + TRIG_TURN * 9 / 32);
+    blue = sine * GLOW_BLUE_SWING;
+    green = FIXEDtoINT(green) + GLOW_GREEN;
+    blue = FIXEDtoINT(blue) + GLOW_BLUE;
+    Io_Write16(RGB(red, green, blue),
+               &((u16 *)&BG_PLTT_COLOR(RING_PALETTE, 0))[i]);
+    ((u16 *)&OBJ_PLTT_COLOR(RING_PALETTE, 0))[i] =
+        ((u16 *)&BG_PLTT_COLOR(RING_PALETTE, 0))[i];
     if (++i < PALETTE_COLORS)
       goto cycle;
     work->phase++;
@@ -397,11 +395,11 @@ void FieldPsynergy_EndRing(void) {
     mote = work->sparks;
     spark = work->sparkSprites;
     for (i = RING_SPARK_COUNT - 1; i >= 0; i--, spark++, mote++) {
-      /* FAKEMATCH(barrier): an empty asm that opens the loop's body, keeping
-       * the index's mask loaded inside the loop; as the loop without it. */
-      asm("");
       if (mote->timer >= 0) {
-        spark->oam.index = tile + (mote->timer & 3) * 2;
+        // angle carries the spark's age here, as it carried each spark's
+        // heading above.
+        angle = mote->timer;
+        spark->oam.index = tile + (angle & 3) * 2;
         EffectSprite_DrawAtWorldPosition(spark, mote);
         Field_AdvanceWithGravity3D(&mote->x, 62, toFIXED(1) / 2);
       }
@@ -475,20 +473,14 @@ void ViewMove_Start(s32 direction) {
     }
   }
 
-  /* FAKEMATCH(barrier): an empty asm before the bounds are fetched. */
-  __asm__("");
-  /* FAKEMATCH(barrier): a second empty asm. */
-  __asm__("");
-  /* FAKEMATCH(barrier): a third empty asm. */
-  __asm__("");
   Map_GetHeaderSizeFar(gMainRoutineWork.mapId, &bounds);
   minX = bounds.minX;
-  maxX = bounds.maxX;
-  minZ = bounds.minZ;
-  maxZ = bounds.maxZ;
   left = minX * 8;
+  maxX = bounds.maxX;
   right = maxX * 8;
+  minZ = bounds.minZ;
   top = minZ * 8;
+  maxZ = bounds.maxZ;
   bottom = maxZ * 8;
   SET_POSITION(work, center->x.fixed, center->y.fixed, center->z.fixed);
 
@@ -532,7 +524,7 @@ void ViewMove_Swing(s32 direction, s32 phase, FIXED amplitude) {
 
   // Japanese does not check the map's rectangle list here.
 #if TLA_PATCH_1
-  if (Ram_HeapSlots->mapGrid->cameraBoxes != NULL)
+  if (((struct MapWork *)Ram_HeapSlots->mapGrid)->cameraBoxes != NULL)
     return;
 #endif
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP)

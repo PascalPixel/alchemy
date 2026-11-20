@@ -1536,6 +1536,8 @@ void TrialRoad_ChallengeMoapa(void) {
     TrialRoad_ReachPeakSecond();
   party = &gMainRoutineWork;
   party->battleType = BATTLE_TYPE_NO_ESCAPE;
+  /* FAKEMATCH(dead): an empty once-only block after the battle type; as no
+   * block. */
   do {
   } while (0);
   Event_SetAfterBattleDestination(SCENE_TRIAL_ROAD_SUMMIT,
@@ -1937,6 +1939,7 @@ void TrialRoad_StartPaletteCycle(s32 mode) {
     Iwram_CopyWords(gTrialRoad_PaletteCycleColors, (void *)&BG_PLTT_COLOR(5, 0),
                     32);
   if (mode == 1) {
+    /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
     s32 zero = 0;
 
     gTrialRoad_PaletteCycleFrame = zero;
@@ -3411,8 +3414,9 @@ void MagmaRockInside_SpawnDustRing(void) {
 /// Sets the shape of the cell under an actor (Actor_SetCellShape).
 void TrialRoad_SetActorCellShape(s32 level, s32 layer, s32 owner) {
   struct Actor *actor = Actor_GetById(owner);
-  u8 *shape = Ram_MapShapeGrid + (Ram_HeapSlots->mapGrid->layers[layer].cells -
-                                  (struct MapCell *)Ram_MapCellBuffer);
+  u8 *shape = Ram_MapShapeGrid +
+              (((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[layer].cells -
+               (struct MapCell *)Ram_MapCellBuffer);
   s32 value =
       MapGrid_GetTerrainKind(actor->layer, actor->x.fixed, actor->z.fixed);
   s32 height = CELL_HEIGHT_STEPS(
@@ -3760,6 +3764,7 @@ void TrialRoad_ShowRaceMap(s32 leaderId, s32 rivalId) {
   struct TrialRoadLinkWork *work = HeapSlot_AllocEwram(
       HEAP_SLOT_TRIAL_ROAD_LINK, sizeof(struct TrialRoadLinkWork));
   void *buffer = Heap_AllocEwram(RACE_MAP_PICTURE_BYTES);
+  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
   s32 zero;
   s32 owner;
   s16 *fade;
@@ -3811,11 +3816,10 @@ void TrialRoad_StartRival(s32 mirrored) {
 /// Plays Moapa's recording from the given resource.
 void TrialRoad_PlayRivalRecording(s32 resource) {
   struct TrialRoadReplay *state = (struct TrialRoadReplay *)gSceneState;
-  s32 zero = 0;
 
-  ((struct TrialRoadLinkWork *)Ram_HeapSlots->trialRoadLink)->resource = zero;
   state->resource = resource;
-  state->point = zero;
+  ((struct TrialRoadLinkWork *)Ram_HeapSlots->trialRoadLink)->resource = 0;
+  state->point = 0;
   state->mode = RIVAL_REPLAY;
   TrialRoad_MoveRival();
 }

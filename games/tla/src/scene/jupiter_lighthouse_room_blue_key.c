@@ -109,7 +109,7 @@ struct PushTarget {
   s32 z;
   s32 footprint; ///< index into the footprint table
   s32 id;
-  void (*callback)(void);
+  void *callback;
 };
 
 s32 PushTarget_FindSlide(struct PushTarget *target);
@@ -282,7 +282,7 @@ s32 PushTarget_FillFootprint(s32 id) {
 
   if ((u16)shape != gPushKinds[(u16)i]) {
     do {
-      j = (u16)FIXEDtoINT(INTtoFIXED(i) + INTtoFIXED(1));
+      j = (u16)NEXT_HALFWORD(i);
       i = j;
     } while (j <= PUSH_KINDS - 1 && (u16)shape != gPushKinds[j]);
   }
@@ -324,8 +324,7 @@ void Actor_StopAtPushTarget(struct Actor *actor);
 /// The leader pushes an actor to its resting place: both walk there, then the
 /// cells it left are opened and those it covers made solid.
 void PushTarget_PushFill(struct PushTarget target) {
-  struct MapWork *map =
-      (struct MapWork *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *actor = Actor_Get(target.id);
   s32 cell[3];
@@ -401,7 +400,7 @@ void PushTarget_PushFill(struct PushTarget target) {
 #endif
   }
   if (target.callback != 0)
-    target.callback();
+    ((void (*)(void))target.callback)();
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   leader->update = NULL;

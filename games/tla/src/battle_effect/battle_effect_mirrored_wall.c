@@ -104,13 +104,10 @@ void BattleEffect_RunDjinnBeams(struct BattleEffectParams *args, s32 element) {
   s32 offsetX;
   s32 i;
   s32 k;
-  struct HeapSlots *heap;
+  struct HeapSlots *heap = Ram_HeapSlots;
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
-  /* FAKEMATCH(temporary): the heap slots held in a local for the second
-   * blitter's read; as Ram_HeapSlots->ramCodePaired there. */
-  heap = Ram_HeapSlots;
 
   BattleEffect_StartCanvasLayer(0);
   if (args->prelude == 1)

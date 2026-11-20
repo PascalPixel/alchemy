@@ -69,6 +69,7 @@ s32 Actor_UpdateWalkingControl(struct Actor *actor) {
   u16 angle;
   s16 heading;
   s32 angleIndex;
+  s32 headingCount;
   s32 onObject;
   struct Actor *other;
   struct FieldWork *work;
@@ -76,6 +77,7 @@ s32 Actor_UpdateWalkingControl(struct Actor *actor) {
   movementAnimation = ANIM_WALK;
   collision = 0;
   pushed = 0;
+  headingCount = 0;
   if (gInput.held & gMainRoutineWork.dashKeys) {
     actor->speedLimit = toFIXED(1);
     actor->acceleration = toFIXED(1) / 20;
@@ -163,49 +165,40 @@ s32 Actor_UpdateWalkingControl(struct Actor *actor) {
       }
     }
   }
-  {
-    s32 headingCount = 0;
-
-    angleOffsets[headingCount++] = angle + FIELD_PROBE_ANGLE;
-    angleOffsets[headingCount++] = angle - FIELD_PROBE_ANGLE;
-    angleOffsets[headingCount++] = angle + DEGtoANG(45);
-    angleOffsets[headingCount++] = angle - DEGtoANG(45);
-    angleOffsets[headingCount++] = angle + FIELD_PROBE_ANGLE * 3;
-    /* FAKEMATCH(dead): the count through its own address at the last heading,
-     * which keeps the loop's test of an empty list until the list is known. */
-    angleOffsets[(*&headingCount)++] = angle - FIELD_PROBE_ANGLE * 3;
-    for (angleIndex = 0; angleIndex < headingCount; angleIndex++) {
-      heading = angleOffsets[angleIndex];
-      SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
-      Vector_AddPolarOffset(toFIXED(8), (u16)heading, &position);
-      if (MapGrid_CheckCollision(actor, &position))
-        continue;
-      SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-                   actor->z.fixed);
-      Vector_AddPolarOffset(toFIXED(8), (u16)heading + FIELD_PROBE_ANGLE,
-                            &testPosition);
-      if (MapGrid_CheckCollision(actor, &testPosition))
-        continue;
-      SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-                   actor->z.fixed);
-      Vector_AddPolarOffset(toFIXED(8), (u16)heading - FIELD_PROBE_ANGLE,
-                            &testPosition);
-      if (MapGrid_CheckCollision(actor, &testPosition))
-        continue;
-      SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-                   actor->z.fixed);
-      Vector_AddPolarOffset(toFIXED(8), (u16)heading + DEGtoANG(45),
-                            &testPosition);
-      if (MapGrid_CheckCollision(actor, &testPosition))
-        continue;
-      SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed,
-                   actor->z.fixed);
-      Vector_AddPolarOffset(toFIXED(8), (u16)heading - DEGtoANG(45),
-                            &testPosition);
-      if (!MapGrid_CheckCollision(actor, &testPosition))
-        goto push_objects;
-    }
+  angleOffsets[headingCount++] = angle + FIELD_PROBE_ANGLE;
+  angleOffsets[headingCount++] = angle - FIELD_PROBE_ANGLE;
+  angleOffsets[headingCount++] = angle + DEGtoANG(45);
+  angleOffsets[headingCount++] = angle - DEGtoANG(45);
+  angleOffsets[headingCount++] = angle + FIELD_PROBE_ANGLE * 3;
+  angleOffsets[headingCount++] = angle - FIELD_PROBE_ANGLE * 3;
+  for (angleIndex = 0; angleIndex < headingCount; angleIndex++) {
+    heading = angleOffsets[angleIndex];
+    SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+    Vector_AddPolarOffset(toFIXED(8), (u16)heading, &position);
+    if (MapGrid_CheckCollision(actor, &position))
+      continue;
+    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+    Vector_AddPolarOffset(toFIXED(8), (u16)heading + FIELD_PROBE_ANGLE,
+                          &testPosition);
+    if (MapGrid_CheckCollision(actor, &testPosition))
+      continue;
+    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+    Vector_AddPolarOffset(toFIXED(8), (u16)heading - FIELD_PROBE_ANGLE,
+                          &testPosition);
+    if (MapGrid_CheckCollision(actor, &testPosition))
+      continue;
+    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+    Vector_AddPolarOffset(toFIXED(8), (u16)heading + DEGtoANG(45),
+                          &testPosition);
+    if (MapGrid_CheckCollision(actor, &testPosition))
+      continue;
+    SET_POSITION(&testPosition, actor->x.fixed, actor->y.fixed, actor->z.fixed);
+    Vector_AddPolarOffset(toFIXED(8), (u16)heading - DEGtoANG(45),
+                          &testPosition);
+    if (!MapGrid_CheckCollision(actor, &testPosition))
+      goto push_objects;
   }
+
   goto blocked;
 
 clear:

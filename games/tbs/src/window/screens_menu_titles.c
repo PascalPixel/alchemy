@@ -117,8 +117,6 @@ void WindowSprite_Pulse(struct WindowSprite *obj) {
   }
 }
 
-static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
-
 #define RANGE_PATTERN_SET_COUNT 2
 #define RANGE_PATTERN_COUNT 6
 #define RANGE_PATTERN_PAIR_WORDS 16

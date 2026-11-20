@@ -158,16 +158,14 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
     switch (step) {
     // Choose whose Psynergy to look at.
     case PSYNERGY_STEP_MEMBER: {
-      s32 cancelled;
+      s8 cancelled;
       s32 chosen;
 
       menu->sideRow[0] = 0;
       ItemMenu_DrawMessage(0, (s32)MsgPsynergyChooseOwner);
       chosen = PsynergyMenu_SelectPartySlot(0);
       cancelled = -1;
-      /* FAKEMATCH(dead): a redundant copy of -1 and an XOR test. */
-      if (chosen == -1)
-        cancelled = chosen;
+      /* FAKEMATCH(dead): the test written as an XOR. */
       if (((u32)chosen ^ (u32)cancelled) == 0) {
         done = 1;
         useResult = cancelled;

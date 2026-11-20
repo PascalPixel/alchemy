@@ -244,7 +244,7 @@ void JupiterLighthouse_SpawnSparks(void) {
     actor->priorityFlags = 0;
     actor->speedLimit = i * (toFIXED(1) / 16) + toFIXED(1) / 2;
     actor->acceleration = i * (toFIXED(1) / 16) + toFIXED(1) / 2;
-    actor->update = (void (*)(void))JupiterLighthouse_UpdateSpark;
+    actor->update = (ObjectUpdate)JupiterLighthouse_UpdateSpark;
     actor->riseEnabled = i << 3;
     Actor_SetSpriteFlags(actor, 0);
     FieldActor_SetSpriteColor(actor, SPRITE_COLOR_RBG);

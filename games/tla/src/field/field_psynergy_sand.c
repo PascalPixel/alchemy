@@ -27,10 +27,9 @@
 /// The phase the leader's sunk picture rises from, 1.5 less each frame.
 #define SAND_RISE_PHASE 92
 /// An OAM attribute's high byte: the bits below its top two, the shape in
-/// attribute 0 and the size in attribute 1, and the size bits of a sprite 16
-/// or 32 pixels square.
+/// attribute 0 and the size in attribute 1, and the size bits of a sprite 32
+/// pixels square.
 #define OAM_BELOW_SHAPE_OR_SIZE 63
-#define OAM_SIZE_16X16_BYTE (OBJ_SIZE_16X16 >> 24)
 #define OAM_SIZE_32X32_BYTE (OBJ_SIZE_32X32 >> 24)
 
 /// Sand's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the leader's picture and
@@ -517,10 +516,8 @@ void FieldPsynergy_Sand(void) {
       if (frame == 60) {
         Actor_SetFirstSpriteAnimationFar(owner, SPRITE_SAND_RIPPLE);
         // The image's OAM shape and size: square, 16 by 16 pixels.
-        ((u8 *)owner->sprite)[5] &= OAM_BELOW_SHAPE_OR_SIZE;
-        ((u8 *)owner->sprite)[7] =
-            (((u8 *)owner->sprite)[7] & OAM_BELOW_SHAPE_OR_SIZE) |
-            OAM_SIZE_16X16_BYTE;
+        ((struct FieldSprite *)owner->sprite)->shape = 0;
+        ((struct FieldSprite *)owner->sprite)->size = 1;
         Actor_SelectAnimationFar(owner, 1);
         Actor_SetSpriteFlagsFar(Actor_GetById(effect->firstActorId), 0);
         FieldCamera_FollowActor(effect->firstActorId, 1);
@@ -556,5 +553,4 @@ void FieldPsynergy_Sand(void) {
 #undef SAND_PICTURE_SIZE
 #undef SAND_RISE_PHASE
 #undef OAM_BELOW_SHAPE_OR_SIZE
-#undef OAM_SIZE_16X16_BYTE
 #undef OAM_SIZE_32X32_BYTE

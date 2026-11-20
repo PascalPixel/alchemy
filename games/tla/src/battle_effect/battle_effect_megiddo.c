@@ -131,6 +131,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   s32 screen[3];
   u8 req[8];
   struct ModelTexture scratchTexture;
+  s32 twice;
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
@@ -288,10 +289,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       if (frame <= 63) {
         d = -MEGIDDO_HAZE_SPEED;
       } else if ((u32)(frame - 64) <= 7) {
-        s32 twice = frame * 2;
-
-        /* FAKEMATCH(barrier): an empty asm on twice. */
-        asm("" : "+l"(twice) : : "r3");
+        twice = frame * 2;
         d = twice - 2 * MEGIDDO_HAZE_REST_FRAME;
       } else if ((u32)(frame - MEGIDDO_HAZE_REST_FRAME) <= 11) {
         d = 0;
@@ -478,7 +476,6 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         s32 scroll = 0;
         s32 angle = 0;
         s32 tilt = 0;
-        s32 twice;
 
         if (n > MEGIDDO_FALL_TILT_FRAMES) {
           n = MEGIDDO_FALL_TILT_FRAMES;

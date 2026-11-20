@@ -1456,6 +1456,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
       verts = Heap_AllocEwram(528);
       model = Render_AllocateModelList(1);
       {
+        /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
         s32 zero = 0;
         streakTexture.logWidth = 5;
         streakTexture.logHeight = 2;
@@ -1822,6 +1823,7 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
         verts = Heap_AllocEwram(32);
         model = Render_AllocateModelList(1);
         {
+          /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
           s32 zero = 0;
           burstTexture.logWidth = 5;
           burstTexture.logHeight = 2;

@@ -703,7 +703,7 @@ void KandoreanTemple_BlowSteam(s32 *position, s32 value) {
     timer = (u16)Random16() - 32768;
     actor->timer = timer;
     KandoreanTemple_InitializeSteam(actor, 3);
-    actor->update = (void (*)(void))KandoreanTemple_UpdateVentSteam;
+    actor->update = (ObjectUpdate)KandoreanTemple_UpdateVentSteam;
     Actor_SetBlendMode(actor, 1);
   }
 }
@@ -760,7 +760,7 @@ void KandoreanTemple_BlowStreamSteam(void) {
     timer = (u16)Random16() - 32768;
     actor->timer = timer;
     KandoreanTemple_InitializeSteam(actor, 1);
-    actor->update = (void (*)(void))KandoreanTemple_UpdateStreamSteam;
+    actor->update = (ObjectUpdate)KandoreanTemple_UpdateStreamSteam;
     Actor_SetBlendMode(actor, 1);
   }
 }
@@ -3355,6 +3355,7 @@ void KandoreanTemple_MeetPoi(void) {
 /// Creates the Lash Pebble's actor on Poi's table, drawn from its item icon.
 void KandoreanTemple_CreateLashPebble(void) {
   struct Actor **slot = &gKandoreanTemple_LashPebble;
+  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
   s32 zero = 0;
   struct Actor *actor = ((struct Actor *)Import_ActorCreate(
       SPRITE_UNSEEN_MARKER, toFIXED(408), toFIXED(40), toFIXED(344)));

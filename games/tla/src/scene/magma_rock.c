@@ -814,7 +814,7 @@ void MagmaRock_TargetStatue(s32 stage) {
     MagmaRock_FindStatue(table);
     target = work->child;
     target->flashMask = 4;
-    target->update = (void (*)(void))MagmaRock_FlashStatue;
+    target->update = (ObjectUpdate)MagmaRock_FlashStatue;
   }
   if (stage == 3) {
     struct Actor *target;
@@ -822,7 +822,7 @@ void MagmaRock_TargetStatue(s32 stage) {
     MagmaRock_FindStatue(table);
     target = work->child;
     target->flashMask = 2;
-    target->update = (void (*)(void))MagmaRock_FlashStatue;
+    target->update = (ObjectUpdate)MagmaRock_FlashStatue;
   }
 }
 
@@ -2316,7 +2316,7 @@ s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 /// height plus heightOffset steps.
 void MagmaRock_SetActorCellShape(s32 heightOffset, s32 layer, s32 id) {
   struct Actor *actor = Actor_Get(id);
-  s32 cell = Ram_HeapSlots->mapGrid->layers[layer].cells -
+  s32 cell = ((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[layer].cells -
              (struct MapCell *)Ram_MapCellBuffer;
   FIXED z = actor->z.fixed;
   u8 *shapes = gMapShapeGrid + cell;
@@ -2408,20 +2408,17 @@ void MagmaRock_StartFallingRocks(void) {
   work->tileBase = tile;
   work->resource = entry;
   rock = work->rocks;
-  sprite = work->sprites;
-  for (i = ROCK_COUNT - 1; i >= 0; i--, sprite++, rock++) {
+  for (i = 0; i < ROCK_COUNT; i++) {
+    sprite = &work->sprites[i];
     EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tile);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = SPRITE_COLOR_NORMAL;
     sprite->oam.priority = 0;
     sprite->depth = OAM_DEPTH_WINDOW;
     rock->timer = -1;
+    rock++;
   }
-  {
-    s32 zero = 0;
-
-    work->next = zero;
-  }
+  work->next = 0;
   Task_AddFrame(Particle_UpdateFalling, TASK_PASS_FRAME);
 }
 

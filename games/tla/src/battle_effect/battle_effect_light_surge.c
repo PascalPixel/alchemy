@@ -80,14 +80,18 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   void *canvas;
   s32 frame;
   s32 i;
-  /* FAKEMATCH(dead): seven locals nothing uses. */
-  s32 unusedA;
-  s32 unusedB;
-  s32 unusedC;
-  s32 unusedD;
-  s32 unusedE;
-  s32 unusedF;
-  s32 unusedG;
+  s32 radius;
+  s32 angle;
+  s32 z;
+  s32 turn;
+  void *picture;
+  s32 half;
+  s32 index;
+  s16 *entry;
+  s32 left;
+  struct ScreenPoint *out;
+  s32 growth;
+  u32 scale;
   struct BattleCamera *camera;
   s16 savedYaw;
   struct MotionObject *target;
@@ -162,10 +166,6 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
       // middle of the battlefield, to the ground 4 to 35 pixels out from the
       // target in the same direction.
       for (i = 0; i != ARRAY_COUNT(work->particles) - SURGE_FIRST_BOLT; i++) {
-        s32 radius;
-        s32 angle;
-        s32 z;
-
         fall = &work->particles[SURGE_FIRST_BOLT + i];
         radius = (Random16() & 63) + 32;
         angle = Random16() & TRIG_ANGLE_MASK;
@@ -188,8 +188,6 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
     }
     if ((u32)(frame - SURGE_SWING_START) <
         SURGE_SWING_END - SURGE_SWING_START) {
-      s32 turn;
-
       if (frame < SURGE_SWING_END - SURGE_SWING_SLOWING) {
         turn = SURGE_SWING_TURN;
       } else {
@@ -209,11 +207,6 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
     // The flashes and glows, each a shaded disc of four quarters: a flash shows
     // only its upper half.
     for (i = 0, disc = work->particles; i != SURGE_DISCS; disc++, i++) {
-      void *picture;
-      s32 half;
-      s32 index;
-      s16 *entry;
-      s32 left;
       s32 size;
 
       if ((u32)disc->variant >= SURGE_DISC_FRAMES) {
@@ -282,7 +275,6 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
         bolt = &work->particles[SURGE_FIRST_BOLT];
          i != SURGE_BOLTS; flash++, glow++, bolt++, i++) {
       s32 t = ++bolt->variant;
-      struct ScreenPoint *out;
 
       if ((u32)t >= SURGE_BOLT_FRAMES) {
         continue;
@@ -354,8 +346,6 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
                     Trig_Sin((s16)camera->yaw);
         s32 z = -((gLightSurge_PillarOffsets[i] * sway / FIXED_ONE) *
                   Trig_Cos((s16)camera->yaw));
-        s32 growth;
-        u32 scale;
 
         /* FAKEMATCH(dead): a store both arms below overwrite. */
         if (i == 300)

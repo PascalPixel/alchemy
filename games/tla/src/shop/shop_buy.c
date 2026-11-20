@@ -742,8 +742,8 @@ s32 Shop_SelectQuantity(s32 minimum, s32 maximum, s32 price) {
           Text_DrawNumberInWindowFar(result, 2, (s32)window, QUANTITY_COUNT_X,
                                      0);
 #if LANGUAGE == LANGUAGE_JAPANESE
-          // The counter コ after the count (MsgPiece).
-          /* FAKEMATCH(temporary): MsgPiece counted from MsgCoins. */
+          // The counter コ after the count: MsgPiece, which the ROM reaches
+          // from MsgCoins, the message before it.
           Text_DrawMessageAsTilesFar((s32)MsgCoins + 1, window,
                                      QUANTITY_PIECE_X, 0);
 #endif

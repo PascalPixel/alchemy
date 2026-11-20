@@ -166,7 +166,7 @@ struct PushTarget {
   s32 z;
   s32 footprint; ///< index into the footprint table
   s32 id;
-  void (*callback)(void);
+  void *callback;
 };
 
 void EasternAlhafra_PlaceClearedDebris(void);
@@ -710,7 +710,8 @@ void EasternAlhafra_StartWaveDma(void) {
 /// scroll plus a sine of up to 2 pixels that moves up the screen a line each
 /// frame.
 void EasternAlhafra_FillWaveLines(void) {
-  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[2];
+  struct MapLayer *layer =
+      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
   u16 *line;
   s32 i = 0;
 
@@ -833,10 +834,7 @@ s32 Scene_Initialize(void) {
   flag = Event_GetFlag(FLAG_EASTERN_ALHAFRA_STAKE_POUNDED);
   if (flag == 0) {
     actor = Actor_Get(ACTOR_FIRST_STAKE_ROPE_START);
-    /* FAKEMATCH(dead): the not-targeted bit set in a once-only block. */
-    do {
-      actor->collisionFlags |= ACTOR_NOT_TARGETED;
-    } while (0);
+    actor->collisionFlags |= ACTOR_NOT_TARGETED;
     actor = Actor_Get(ACTOR_FIRST_STAKE_ROPE_END);
     actor->motionFlags = flag;
     actor->y.fixed = toFIXED(16);
@@ -851,8 +849,10 @@ s32 Scene_Initialize(void) {
     Tightrope_Place(2, ACTOR_SECOND_STAKE_ROPE_START,
                     ACTOR_SECOND_STAKE_ROPE_END);
   }
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_LAST_ROCK), 0);
-  Actor_SetSpriteFlags(Actor_Get(ACTOR_FIRST_ROCK), 0);
+  actor = Actor_Get(ACTOR_LAST_ROCK);
+  Actor_SetSpriteFlags(actor, 0);
+  actor = Actor_Get(ACTOR_FIRST_ROCK);
+  Actor_SetSpriteFlags(actor, 0);
   FieldActor_SetSpritePriority(ACTOR_FIRST_CRATE, 2);
   Actor_Get(ACTOR_SAILOR_WHO_PAID_FOR_THE_SHIP)->riseCounter = 1;
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT) != 0 &&
@@ -1800,10 +1800,10 @@ void EasternAlhafra_BriggsStealsShip(void) {
   Actor_SetPosition(ACTOR_BRIGGS, 224, 8);
   // "Did you call me a thief?"
   FieldEvent_ShowMessageThenWait(ACTOR_BRIGGS, 0, 10);
-  Ram_HeapSlots->mapGrid->minX = 0;
-  Ram_HeapSlots->mapGrid->maxX = toFIXED(1024);
-  Ram_HeapSlots->mapGrid->minZ = 0;
-  Ram_HeapSlots->mapGrid->maxZ = toFIXED(1024);
+  ((struct MapWork *)Ram_HeapSlots->mapGrid)->minX = 0;
+  ((struct MapWork *)Ram_HeapSlots->mapGrid)->maxX = toFIXED(1024);
+  ((struct MapWork *)Ram_HeapSlots->mapGrid)->minZ = 0;
+  ((struct MapWork *)Ram_HeapSlots->mapGrid)->maxZ = toFIXED(1024);
   FieldCamera_SetSpeed(4);
   FieldCamera_MoveTo(208, CAMERA_KEEP, 168, 1);
   FieldEvent_Wait(50);
@@ -2447,20 +2447,17 @@ void EasternAlhafra_StartFallingRocks(void) {
   work->tileBase = tile;
   work->resource = entry;
   rock = work->rocks;
-  sprite = work->sprites;
-  for (i = 0; i < ROCK_COUNT; i++, sprite++, rock++) {
+  for (i = 0; i < ROCK_COUNT; i++) {
+    sprite = &work->sprites[i];
     EasternAlhafra_InitializeRockSprite(sprite, 8, 8, OBJ_SIZE_16X16, tile);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
     sprite->depth = OAM_DEPTH_WINDOW;
     rock->timer = -1;
+    rock++;
   }
-  {
-    s32 zero = 0;
-
-    work->next = zero;
-  }
+  work->next = 0;
   FieldTask_AddFrame(Particle_UpdateFalling, TASK_PASS_FRAME);
 }
 
@@ -2484,7 +2481,6 @@ s32 PushTarget_FillFootprint(s32 id) {
   struct Actor *actor = Actor_GetById(id);
   s16 kind = ((struct Sprite *)actor->sprite)->entries[0]->animationId;
   s16 i = 0;
-  s32 next;
   u32 index;
   s32 a, b;
   s32 fromX, fromZ;
@@ -2492,11 +2488,8 @@ s32 PushTarget_FillFootprint(s32 id) {
 
   if ((u16)kind != gPushKinds[(u16)i]) {
     do {
-      /* FAKEMATCH(temporary): the step taken in the high halfword, as the push
-       * footprints' copies of this search have it. */
-      next = toFIXED(i + 1);
-      index = FIXEDtoINT((u32)next);
-      i = FIXEDtoINT(next);
+      index = (u16)NEXT_HALFWORD(i);
+      i = index;
     } while (index <= PUSH_KINDS - 1 && (u16)kind != gPushKinds[index]);
   }
   fromX = (u16)i;
@@ -2532,8 +2525,7 @@ extern s32 gPushLeaderSteps[];
 /// The leader pushes the object to its resting place: the cells it leaves are
 /// floor again and the cells it comes to are walls.
 void PushTarget_Push(struct PushTarget target) {
-  struct MapWork *map =
-      (struct MapWork *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *actor = Actor_Get(target.id);
   s32 cell[3];
@@ -2609,7 +2601,7 @@ void PushTarget_Push(struct PushTarget target) {
 #endif
   }
   if (target.callback != 0)
-    target.callback();
+    ((void (*)(void))target.callback)();
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   leader->update = NULL;

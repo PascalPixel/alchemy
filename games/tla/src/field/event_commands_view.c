@@ -148,31 +148,11 @@ struct Actor *Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames) {
       sprite->flags = 0;
 
       // The bubble takes sprite priority 1, or the actor's.
-      if ((emote & EMOTE_IN_FRONT) != 0) {
-        s32 mask = ATTR2_HIGH_PRIORITY_MASK + 1;
-        u8 attr = SPRITE_ATTR2_HIGH(sprite);
-
-        /* FAKEMATCH(temporary): the mask's complement built as -(mask + 1) in
-         * a local. */
-        mask = -mask;
-        mask &= attr;
-        mask |= OBJ_PRIORITY(1) >> 8;
-        SPRITE_ATTR2_HIGH(sprite) = mask;
-      } else {
-        s32 priority = ATTR2_HIGH_PRIORITY_MASK;
-        u8 src = SPRITE_ATTR2_HIGH(target->sprite);
-        u8 dst;
-        s32 mask = ATTR2_HIGH_PRIORITY_MASK + 1;
-
-        priority &= src;
-        dst = SPRITE_ATTR2_HIGH(sprite);
-        /* FAKEMATCH(temporary): the mask's complement built as -(mask + 1) in
-         * a local. */
-        mask = -mask;
-        mask &= dst;
-        mask |= priority;
-        SPRITE_ATTR2_HIGH(sprite) = mask;
-      }
+      if ((emote & EMOTE_IN_FRONT) != 0)
+        ((struct PlacedSprite *)sprite)->priority = 1;
+      else
+        ((struct PlacedSprite *)sprite)->priority =
+            ((struct PlacedSprite *)target->sprite)->priority;
     }
     Event_Wait(frames);
   }

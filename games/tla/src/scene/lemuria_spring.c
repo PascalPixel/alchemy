@@ -248,18 +248,13 @@ void LemuriaSpring_InitializeTossSimulation(void);
 s32 Scene_Initialize(void) {
   struct Actor *leader;
   s32 blend;
-  s32 alpha;
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   leader->priorityFlags = ACTOR_PRIORITY_IGNORES_RISES | leader->priorityFlags;
   blend = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
   REG_BLDCNT = blend;
-  /* FAKEMATCH(dead): the form kept; as no block. */
-  do {
-  } while (0);
-  alpha = BLEND_ALPHA(12, 8);
-  REG_BLDALPHA = alpha;
+  Io_Write16(BLEND_ALPHA(12, 8), &REG_BLDALPHA);
   Actor_SetAnimation(ACTOR_LEMURIA_SPRING_EAST_SIGN_SLAB, ANIM_SIGN_SLAB);
   Actor_SetAnimation(ACTOR_LEMURIA_SPRING_WEST_SIGN_SLAB, ANIM_SIGN_SLAB);
   Actor_Get(ACTOR_LEMURIA_SPRING_EAST_SIGN_SLAB)->priorityFlags =
@@ -324,87 +319,85 @@ s32 LemuriaSpring_RunSpringGame(void) {
   struct Window *window;
   s32 result;
   s32 prizeRoll;
-#if TLA_PATCH_1
-  s32 notice;
-#endif
   s32 total;
   s32 prize;
-  /* FAKEMATCH(temporary): minusOne, a 64-bit -1 for these calls. */
-  s64 minusOne = -1;
+  s32 cancelled = -1; // the toss's result when B puts it off
 
 #if TLA_PATCH_1
   Event_Start();
   choice = 0;
   Event_ResolvePendingActions(0);
-prompt:
-  coins = gMainRoutineWork.coins;
-  medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
-  message = (s32)MsgLemuriaSpringWhatWillYouThrow;
-  Event_SetMessageId(message);
-  // "What will you throw?"
-  Event_OpenMessage(-1, 0);
-  window = Window_Create(0, 0, COUNT_WINDOW_WIDTH, 4, 2);
-  result = (s32)MsgLemuriaSpringCoins;
-  Text_DrawMessageAsTiles(result, window, 0, 0);
-  Text_DrawNumberInWindow(coins, 6, window, COUNT_NUMBER_X, 0);
-  Text_DrawMessageAsTiles(result + 1, window, 0, 8);
-  Text_DrawNumberInWindow(medals, 6, window, COUNT_NUMBER_X, 8);
-  choice = Menu_SelectCoinsOrMedals(choice);
-  Window_Close(window, 2);
-  Message_CloseFinishedWindows();
-  if (choice == -1) {
-    Event_End();
-    return 0;
-  }
-  if (choice == SPRING_TOSS_COIN) {
-    if (coins != 0)
-      goto toss;
-    notice = message + 1;
-  } else {
-    if (choice != SPRING_TOSS_MEDAL)
-      goto toss;
-    if (medals != 0)
-      goto full;
-    notice = message + 2;
-  }
-  Event_SetMessageId(notice);
-  Event_ShowMessage(-1, 0);
-  wait(1);
-  goto prompt;
-full:
-  if (PartyInventory_CountFreeSlots() == 0) {
-    Event_SetMessageId(message + 4);
-    // "You can't carry more items. Do you still want to play?"
-    Event_OpenMessage(minusOne, 0);
-    if (Event_AskYesNoWithActorAnimation(0, 0) != 0)
-      goto end;
-  }
-toss:
-  window = Window_Create(TOSS_WINDOW_X, 15, TOSS_WINDOW_WIDTH, 4, 2);
-  result = (s32)MsgLemuriaSpringToss;
-  Text_DrawMessageAsTiles(result, window, 0, 0);
-  Text_DrawMessageAsTiles(result + 1, window, 0, 8);
-  wait(5);
-  Event_PlaySound(SE_TOLBI_SPRING_TOSS_PROMPT);
   for (;;) {
-    if (gInput.pressed & KEY_A) {
-      Event_PlaySound(SE_MENU_CONFIRM);
-      result = 0;
-      break;
+    coins = gMainRoutineWork.coins;
+    medals = PartyInventory_CountItem(ITEM_LUCKY_MEDAL);
+    message = (s32)MsgLemuriaSpringWhatWillYouThrow;
+    Event_SetMessageId(message);
+    // "What will you throw?"
+    Event_OpenMessage(-1, 0);
+    window = Window_Create(0, 0, COUNT_WINDOW_WIDTH, 4, 2);
+    result = (s32)MsgLemuriaSpringCoins;
+    Text_DrawMessageAsTiles(result, window, 0, 0);
+    Text_DrawNumberInWindow(coins, 6, window, COUNT_NUMBER_X, 0);
+    Text_DrawMessageAsTiles(result + 1, window, 0, 8);
+    Text_DrawNumberInWindow(medals, 6, window, COUNT_NUMBER_X, 8);
+    choice = Menu_SelectCoinsOrMedals(choice);
+    Window_Close(window, 2);
+    Message_CloseFinishedWindows();
+    if (choice == -1) {
+      Event_End();
+      return 0;
     }
-    if (gInput.pressed & KEY_B) {
-      Event_PlaySound(SE_MENU_CANCEL);
-      result = -1;
-      break;
+    if (choice == SPRING_TOSS_COIN) {
+      if (coins == 0) {
+        Event_SetMessageId(message + 1);
+        // "You don't have any coins!"
+        Event_ShowMessage(-1, 0);
+        wait(1);
+        continue;
+      }
+    } else if (choice == SPRING_TOSS_MEDAL) {
+      if (medals == 0) {
+        Event_SetMessageId(message + 2);
+        // "You have no Lucky Medals!"
+        Event_ShowMessage(-1, 0);
+        wait(1);
+        continue;
+      }
+      if (PartyInventory_CountFreeSlots() == 0) {
+        Event_SetMessageId(message + 4);
+        // "You can't carry more items. Do you still want to play?"
+        Event_OpenMessage(-1, 0);
+        if (Event_AskYesNoWithActorAnimation(0, 0) != 0)
+          goto end;
+      }
     }
-    wait(1);
+    window = Window_Create(TOSS_WINDOW_X, 15, TOSS_WINDOW_WIDTH, 4, 2);
+    result = (s32)MsgLemuriaSpringToss;
+    Text_DrawMessageAsTiles(result, window, 0, 0);
+    Text_DrawMessageAsTiles(result + 1, window, 0, 8);
+    wait(5);
+    Event_PlaySound(SE_TOLBI_SPRING_TOSS_PROMPT);
+    for (;;) {
+      if (gInput.pressed & KEY_A) {
+        Event_PlaySound(SE_MENU_CONFIRM);
+        result = 0;
+        break;
+      }
+      if (gInput.pressed & KEY_B) {
+        Event_PlaySound(SE_MENU_CANCEL);
+        result = cancelled;
+        break;
+      }
+      wait(1);
+    }
+    Window_Close(window, 2);
+    break;
   }
-  Window_Close(window, 2);
 #else
-  // The Japanese release keeps The Broken Seal's Japanese layout: a real loop
-  // around the prompt and the toss, a counter word after each count, and the
-  // coin or medal taken as soon as it is chosen, so cancelling the toss loses
-  // it. From patch 1 it is taken once the toss is confirmed.
+  // The Japanese release keeps The Broken Seal's Japanese layout: a counter
+  // word after each count, and the coin or medal taken as soon as it is
+  // chosen, so cancelling the toss loses it. From patch 1 it is taken once the
+  // toss is confirmed.
   choice = 0;
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -470,7 +463,7 @@ toss:
       }
       if (gInput.pressed & KEY_B) {
         Event_PlaySound(SE_MENU_CANCEL);
-        result = -1;
+        result = cancelled;
         break;
       }
       wait(1);
@@ -479,10 +472,10 @@ toss:
     break;
   }
 #endif
-  if (result != -1) {
+  if (result != cancelled) {
 #if TLA_PATCH_1
     if (choice == SPRING_TOSS_COIN) {
-      Party_AdjustCoins(minusOne);
+      Party_AdjustCoins(-1);
     } else if (choice == SPRING_TOSS_MEDAL) {
       PartyInventory_Remove(ITEM_LUCKY_MEDAL);
     }
@@ -496,7 +489,7 @@ toss:
                              MESSAGE_ARGUMENT_NUMBER);
         Event_SetMessageId((s32)MsgLemuriaSpringYouWonCoin);
         // "You won ... coin!"
-        Event_ShowMessage((s32)minusOne, 0);
+        Event_ShowMessage(-1, 0);
       } else {
         Event_PlaySound(SE_MENU_CANCEL);
         FieldEvent_Wait(10);
@@ -506,7 +499,7 @@ toss:
       if (result == TOSS_RING_MIDDLE &&
           Event_GetFlag(FLAG_LEMURIA_SPRING_ECLIPSE_WON) == 0) {
         Event_SetFlag(FLAG_LEMURIA_SPRING_ECLIPSE_WON);
-        LemuriaSpring_GivePrize((s32)minusOne);
+        LemuriaSpring_GivePrize(-1);
       } else {
         for (prize = 0; prize < result * 3 + 3; prize++)
           total += (s8)gMainRoutineWork.prizeWeights[prize];
@@ -1143,6 +1136,7 @@ void LemuriaSpring_InitializeTossSimulation(void) {
   u16 *headings;
   struct SpringObstacle *obstacle;
   u8 *startZ;
+  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
   s32 zero;
 
   headings = gLemuriaSpring_ObstacleHeadings;

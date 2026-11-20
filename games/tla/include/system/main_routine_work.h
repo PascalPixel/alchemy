@@ -185,7 +185,7 @@ struct MainRoutineWork {
   s8 pendingThird;
   s8 cloaked; ///< Cloak: the leader is hidden
   u8 unusedAfterCloaked[2];
-  u32 pausedUpdate; ///< the paused object's update, restored on resuming
+  void *pausedUpdate; ///< the paused object's update, restored on resuming
   /// The weird answers Felix gives, counted up by Event_CountAnswer from 0 on a
   /// new game: telling Kraden on Idejima that the Western Sea is not where
   /// they go, agreeing with Alhafra's mayor that the party owes him, and

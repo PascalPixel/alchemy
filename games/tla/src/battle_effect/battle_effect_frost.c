@@ -44,10 +44,6 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   void *canvas;
   s32 frame;
   u8 *sparkleSheet;
-  DrawRectangle *draw;
-  s32 count;
-  s32 lowest;
-  s32 highest;
   FIXED xyz[3];
   struct ScreenPoint screen;
   FIXED point[3];
@@ -61,8 +57,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
   Resource_LoadAndDecompress(RESOURCE_ICE_CHIP_SHEET, work->sheet, 1, 1);
   Resource_LoadAndDecompress(RESOURCE_SPARKLE_DOTS, sparkleSheet, 0, 0);
-  /* FAKEMATCH(temporary): draw holds pair; the plain form calls pair[1]. */
-  BattleEffect_FetchRectangleBlitters(0, draw = pair);
+  BattleEffect_FetchRectangleBlitters(0, pair);
 
   // A mote: x holds its angle, z its radius, y its height.
   for (i = 0; i != ARRAY_COUNT(work->particles); i++) {
@@ -79,6 +74,10 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
 
   for (frame = 0; frame != FROST_TIMING(args->variant, RISE_FRAME) + 50;
        frame++) {
+    s32 count;
+    s32 lowest;
+    s32 highest;
+
     lowest = toFIXED(120);
     highest = 0;
     if (frame == FROST_TIMING(args->variant, RISE_FRAME) + 11)
@@ -121,11 +120,11 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
 #ifdef UBFIX
             width = gFrost_MoteWidths[picture];
             height = gFrost_MoteHeights[picture];
-            draw[1](canvas, work->sheet + gFrost_MoteCells[picture],
+            pair[1](canvas, work->sheet + gFrost_MoteCells[picture],
                     screen.x - (width >> 1), screen.y - (height >> 1), width,
                     height);
 #else
-            draw[1](canvas, work->sheet + gFrost_MoteCells[picture],
+            pair[1](canvas, work->sheet + gFrost_MoteCells[picture],
                     screen.x - ((width = gFrost_MoteWidths[picture]) >> 1),
                     screen.y - ((height = gFrost_MoteHeights[picture]) >> 1),
                     width, height);
@@ -163,12 +162,12 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
           if (frame >= FROST_TIMING(args->variant, RISE_FRAME) - 7) {
 #ifdef UBFIX
             height = gFrost_MoundHeights[picture];
-            draw[1](canvas, work->sheet + gFrost_MoundPictures[picture],
+            pair[1](canvas, work->sheet + gFrost_MoundPictures[picture],
                     FROST_MOUND_SPOT(i, FROST_MOUND_X),
                     FROST_MOUND_SPOT(i, FROST_MOUND_FOOT) - height,
                     FROST_MOUND_WIDTH, height);
 #else
-            draw[1](canvas, work->sheet + gFrost_MoundPictures[picture],
+            pair[1](canvas, work->sheet + gFrost_MoundPictures[picture],
                     FROST_MOUND_SPOT(i, FROST_MOUND_X),
                     FROST_MOUND_SPOT(i, FROST_MOUND_FOOT) -
                         (height = gFrost_MoundHeights[picture]),
@@ -218,7 +217,7 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
         if (chip->variant >= 0) {
           s32 picture = i % 8;
 
-          draw[1](canvas, work->sheet + gFrost_ChipCells[picture],
+          pair[1](canvas, work->sheet + gFrost_ChipCells[picture],
                   FIXEDtoINT(chip->x), FIXEDtoINT(chip->y),
                   gFrost_ChipWidths[picture], gFrost_ChipHeights[picture]);
           chip->x += chip->velocityX;
@@ -264,12 +263,12 @@ void BattleEffect_RunFrost(struct BattleEffectParams *args) {
 
 #ifdef UBFIX
           size = gBattleEffect_SparkleSizes[picture];
-          draw[1](canvas, sparkleSheet + gBattleEffect_SparklePictures[picture],
+          pair[1](canvas, sparkleSheet + gBattleEffect_SparklePictures[picture],
                   FIXEDtoINT(sparkle->velocityX) - (size >> 1),
                   FIXEDtoINT(sparkle->velocityY) - (size >> 1) - rise, size,
                   size);
 #else
-          draw[1](canvas, sparkleSheet + gBattleEffect_SparklePictures[picture],
+          pair[1](canvas, sparkleSheet + gBattleEffect_SparklePictures[picture],
                   FIXEDtoINT(sparkle->velocityX) -
                       ((size = gBattleEffect_SparkleSizes[picture]) >> 1),
                   FIXEDtoINT(sparkle->velocityY) - (size >> 1) - rise, size,

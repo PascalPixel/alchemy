@@ -6,7 +6,7 @@ void Leader_SinkAway(s32 entrance) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_SPARKLING_PASSAGE);
-  leader->update = (void (*)(void))Actor_EmitMist;
+  leader->update = (ObjectUpdate)Actor_EmitMist;
   leader->motionFlags = 0;
   leader->speedLimit = toFIXED(1) / 5;
   Actor_SetAnimation(*owner, 2);

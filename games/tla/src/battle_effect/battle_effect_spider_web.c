@@ -712,9 +712,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
           }
           step->velocityZ += TRIG_TURN / 64;
           if (draw) {
-            /* FAKEMATCH(signature): the address summed as an integer, its
-             * offset first; as crescents + u * PICTURE_BYTES(ULYSSES_CRESCENT).
-             */
+            // As an integer sum, the offset first.
             texture.pixels =
                 (u8 *)(u * PICTURE_BYTES(ULYSSES_CRESCENT) + (s32)crescents);
             Matrix_Initialize();
@@ -737,8 +735,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
           {
             s32 first = i * ULYSSES_STRIKE_SPARKS;
 
-            /* FAKEMATCH(signature): the address summed as an integer, its
-             * offset first; as &sparks[first]. */
+            // As an integer sum, the offset first.
             q = (struct Particle *)(first * (s32)sizeof(*q) + (s32)sparks);
           }
           for (; j != ULYSSES_STRIKE_SPARKS; j++, q++) {

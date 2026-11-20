@@ -1728,7 +1728,8 @@ void SuperLuckyDice_Run(void) {
       sprites->oam[spriteCount].attr2 = 0;
     }
     for (index = 0; index != SUPER_LUCKY_DICE_COUNT * 2; index++) {
-      // The sprite's matrix: its scale on the diagonal and none across.
+      // The sprite's matrix: its scale on the diagonal and none across, each
+      // element stored through its address.
       u16 affineA;
       u16 affineB;
       u16 affineC;
@@ -1739,8 +1740,6 @@ void SuperLuckyDice_Run(void) {
       s32 zero = 0;
 
       scaleX = spriteDepth[index] / 4 + DICE_NEAREST_SCALE;
-      /* FAKEMATCH(dead): each element stored through its own address; as
-       * affineA = scaleX and so on. */
       *&affineA = scaleX;
       *&affineB = zero;
       *&affineC = zero;

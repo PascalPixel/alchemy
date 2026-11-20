@@ -191,21 +191,17 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
   s32 frame;
   u8 *sheet;
   BlitterPair blit;
-  DrawRectangle *draw;
   struct Particle *ball;
   struct Particle *mote;
   s32 i;
   s32 j;
-  s32 angle;
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   sheet = Ram_HeapSlots->battleSheet;
   BattleEffect_StartCanvasLayer(0);
   REG_BLDALPHA = EFFECT_BLEND_ADD;
-  /* FAKEMATCH(temporary): draw stands for blit. */
-  draw = blit;
-  BattleEffect_FetchRectangleBlitters(0, draw);
+  BattleEffect_FetchRectangleBlitters(0, blit);
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sheet, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_JUPITER_DJINN_SMALL_SHEET, work->sheet, 1,
                              1);
@@ -221,69 +217,72 @@ void BattleEffect_RunJupiter(struct BattleEffectParams *args) {
   EFFECT_FREE_PARTICLES(i, PARTICLES, DJINN_ATTACKS_MOTE_SLOTS);
   Sound_PlayFar(SE_THUNDER);
   frame = 0;
-  angle = DEGtoANG(180);
-  do {
-    if (frame == DJINN_ATTACK_DAMAGE_FRAME)
-      EFFECT_SHOW_DAMAGE(SE_IMPACT);
+  {
+    s32 angle = DEGtoANG(180);
 
-    // DEAD: always true, as the loop ends at JUPITER_FRAMES; the ROM keeps the
-    // compare.
-    if (frame <= JUPITER_FRAMES - 1) {
-      s32 x = FIXEDtoINT(Trig_Sin(angle) * (64 - frame * 2)) >> 1;
-      s32 y = FIXEDtoINT(Trig_Cos(angle) * (64 - frame * 2));
+    do {
+      if (frame == DJINN_ATTACK_DAMAGE_FRAME)
+        EFFECT_SHOW_DAMAGE(SE_IMPACT);
 
-      blit[0](canvas, work->sheet, x + 86, y + 28, SMALL_DJINNI_WIDTH,
-              SMALL_DJINNI_HEIGHT);
-    }
+      // DEAD: always true, as the loop ends at JUPITER_FRAMES; the ROM keeps
+      // the compare.
+      if (frame <= JUPITER_FRAMES - 1) {
+        s32 x = FIXEDtoINT(Trig_Sin(angle) * (64 - frame * 2)) >> 1;
+        s32 y = FIXEDtoINT(Trig_Cos(angle) * (64 - frame * 2));
 
-    // Flameballs fall from the top right, one every 4 frames.
-    for (i = 0; i != JUPITER_FLAMEBALLS; i++) {
-      ball = &work->particles[i];
-      if (frame >= i * 4 + 8 && ball->y <= JUPITER_BURST_Y) {
-        blit[0](canvas, work->sheet + JUPITER_FLAMEBALL,
-                ball->x - FLAMEBALL_WIDTH / 2, ball->y - FLAMEBALL_HEIGHT / 2,
-                FLAMEBALL_WIDTH, FLAMEBALL_HEIGHT);
-        ball->x -= 6;
-        ball->y += 12;
-        if (ball->y > JUPITER_BURST_Y) {
-          for (j = 0; j != DJINN_ATTACKS_MOTES_PER_FLAME; j++) {
-            s32 direction;
-            s32 speed;
+        blit[0](canvas, work->sheet, x + 86, y + 28, SMALL_DJINNI_WIDTH,
+                SMALL_DJINNI_HEIGHT);
+      }
 
-            mote = &PARTICLES[i * DJINN_ATTACKS_MOTES_PER_FLAME + j];
-            direction = Random16() & TRIG_ANGLE_MASK;
-            speed = (Random16() & 0x1ff) + 256;
-            mote->x = INTtoFIXED(ball->x);
-            mote->y = INTtoFIXED(ball->y);
-            mote->velocityX = (Trig_Sin(direction) * speed) >> 7;
-            mote->velocityY = (Trig_Cos(direction) * speed) >> 6;
-            mote->variant = (Random16() & 15) + 32; // lives 32 to 47 frames
-          }
-          Sound_PlayFar(SE_IMPACT);
-          work->shakeFrames = 4;
-          EFFECT_FOR_EACH_TARGET(j, args) {
-            EFFECT_STRIKE_TARGET(args, j, 6, KNOCKBACK_BOUNCE);
+      // Flameballs fall from the top right, one every 4 frames.
+      for (i = 0; i != JUPITER_FLAMEBALLS; i++) {
+        ball = &work->particles[i];
+        if (frame >= i * 4 + 8 && ball->y <= JUPITER_BURST_Y) {
+          blit[0](canvas, work->sheet + JUPITER_FLAMEBALL,
+                  ball->x - FLAMEBALL_WIDTH / 2, ball->y - FLAMEBALL_HEIGHT / 2,
+                  FLAMEBALL_WIDTH, FLAMEBALL_HEIGHT);
+          ball->x -= 6;
+          ball->y += 12;
+          if (ball->y > JUPITER_BURST_Y) {
+            for (j = 0; j != DJINN_ATTACKS_MOTES_PER_FLAME; j++) {
+              s32 direction;
+              s32 speed;
+
+              mote = &PARTICLES[i * DJINN_ATTACKS_MOTES_PER_FLAME + j];
+              direction = Random16() & TRIG_ANGLE_MASK;
+              speed = (Random16() & 0x1ff) + 256;
+              mote->x = INTtoFIXED(ball->x);
+              mote->y = INTtoFIXED(ball->y);
+              mote->velocityX = (Trig_Sin(direction) * speed) >> 7;
+              mote->velocityY = (Trig_Cos(direction) * speed) >> 6;
+              mote->variant = (Random16() & 15) + 32; // lives 32 to 47 frames
+            }
+            Sound_PlayFar(SE_IMPACT);
+            work->shakeFrames = 4;
+            EFFECT_FOR_EACH_TARGET(j, args) {
+              EFFECT_STRIKE_TARGET(args, j, 6, KNOCKBACK_BOUNCE);
+            }
           }
         }
       }
-    }
 
-    for (i = 0; i != DJINN_ATTACKS_MOTE_SLOTS; i++) {
-      mote = &PARTICLES[i];
-      if (mote->variant != -1) {
-        s32 size = mote->variant / DJINN_ATTACKS_MOTE_SHRINK_FRAMES + 1;
+      for (i = 0; i != DJINN_ATTACKS_MOTE_SLOTS; i++) {
+        mote = &PARTICLES[i];
+        if (mote->variant != -1) {
+          s32 size = mote->variant / DJINN_ATTACKS_MOTE_SHRINK_FRAMES + 1;
 
-        EFFECT_DRAW_MOTE(draw[1], canvas, sheet, FIXED_INTEGER_PART(mote->x),
-                         FIXED_INTEGER_PART(mote->y), size);
-        Particle_AdvanceWithGravity2D(mote, 62, toFIXED(1) / 8);
-        mote->variant--;
+          EFFECT_DRAW_MOTE(blit[1], canvas, sheet, FIXED_INTEGER_PART(mote->x),
+                           FIXED_INTEGER_PART(mote->y), size);
+          Particle_AdvanceWithGravity2D(mote, 62, toFIXED(1) / 8);
+          mote->variant--;
+        }
       }
-    }
-    BattleCamera_Shake(4, 4);
-    EFFECT_END_FRAME(work);
-    angle -= TRIG_TURN / 32;
-    frame++;
-  } while (frame != JUPITER_FRAMES);
+      BattleCamera_Shake(4, 4);
+      EFFECT_END_FRAME(work);
+      angle -= TRIG_TURN / 32;
+      frame++;
+    } while (frame != JUPITER_FRAMES);
+  }
   EFFECT_FINISH_CANVAS();
 }
 

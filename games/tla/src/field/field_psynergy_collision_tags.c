@@ -78,8 +78,9 @@ void FlagBlock_ApplyFlags(struct ActorFlag *list) {
         change = 1;
     }
     if (change) {
-      struct MapCell *cells =
-          Ram_HeapSlots->mapGrid->layers[actor->layer].cells;
+      struct MapCell *cells = ((struct MapWork *)Ram_HeapSlots->mapGrid)
+                                  ->layers[actor->layer]
+                                  .cells;
       u8 *shapes;
       s32 slot;
       u32 key;

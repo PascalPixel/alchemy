@@ -596,20 +596,20 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Get(FLAG_ALHAFRA_MAST_CLEARED)) {
     if (!GameFlag_Get(FLAG_ALHAFRA_SHIP_GONE)) {
       Actor_GetById(ACTOR_OLD_WOMAN_ON_FISHING_BOATS)->update =
-          (void (*)(void))Alhafra_TakeLeadersLayer;
+          (ObjectUpdate)Alhafra_TakeLeadersLayer;
       Actor_GetById(ACTOR_OLD_MAN_WAITING_FOR_THIS_DAY)->update =
-          (void (*)(void))Alhafra_TakeLeadersLayer;
+          (ObjectUpdate)Alhafra_TakeLeadersLayer;
       Actor_SetSpritePriority(ACTOR_OLD_MAN_ON_SAILS, 2);
       Actor_SetSpritePriority(ACTOR_MAN_NOT_EXCITED_BY_THE_SHIP, 3);
       Actor_SetSpritePriority(ACTOR_WOMAN_ON_ALHAFRAS_FUTURE, 3);
       Actor_SetSpritePriority(ACTOR_WOMAN_ADMIRING_THE_MAST, 1);
     } else {
       Actor_Get(ACTOR_WOMAN_ON_THE_LOST_SHIPS)->update =
-          (void (*)(void))Alhafra_TakeLeadersLayer;
+          (ObjectUpdate)Alhafra_TakeLeadersLayer;
       Actor_GetById(ACTOR_GIRL_KEPT_FROM_THE_PORT)->update =
-          (void (*)(void))Alhafra_TakeLeadersLayer;
+          (ObjectUpdate)Alhafra_TakeLeadersLayer;
       Actor_GetById(ACTOR_MAN_FINISHING_A_CANOE)->update =
-          (void (*)(void))Alhafra_TakeLeadersLayer;
+          (ObjectUpdate)Alhafra_TakeLeadersLayer;
       Actor_SetSpritePriority(ACTOR_WELCOMING_YOUNG_MAN, 2);
       Actor_SetSpritePriority(ACTOR_WOMAN_PUTTING_THE_SAILOR_TO_WORK, 3);
       Actor_SetSpritePriority(ACTOR_SAILOR_ON_THE_SAILBOAT, 2);
@@ -624,9 +624,9 @@ s32 Scene_Initialize(void) {
     }
   } else if (GameFlag_Get(FLAG_BRIGGS_CAUGHT)) {
     Actor_GetById(ACTOR_WOMAN_ON_THE_LOST_SHIPS)->update =
-        (void (*)(void))Alhafra_TakeLeadersLayer;
+        (ObjectUpdate)Alhafra_TakeLeadersLayer;
     Actor_GetById(ACTOR_GIRL_KEPT_FROM_THE_PORT)->update =
-        (void (*)(void))Alhafra_TakeLeadersLayer;
+        (ObjectUpdate)Alhafra_TakeLeadersLayer;
     Actor_SetSpritePriority(ACTOR_WELCOMING_YOUNG_MAN, 2);
     Actor_SetSpritePriority(ACTOR_WOMAN_PUTTING_THE_SAILOR_TO_WORK, 3);
     Actor_SetSpritePriority(ACTOR_SAILOR_ON_THE_SAILBOAT, 3);
@@ -655,7 +655,7 @@ s32 Scene_Initialize(void) {
     Actor_SetSpritePriority(ACTOR_SAILOR_ON_THE_SAILBOAT, 2);
     Actor_SetSpritePriority(ACTOR_MANOR_GUARD, 3);
     Actor_GetById(ACTOR_SAILOR_BUILDING_HOUSES)->update =
-        (void (*)(void))Alhafra_TakeLeadersLayer;
+        (ObjectUpdate)Alhafra_TakeLeadersLayer;
     if (GameFlag_Get(FLAG_ALHAFRA_MADRANS_ARRIVED))
       Actor_SetPosition(ACTOR_WOMAN_ON_THE_LOST_SHIPS, 536, 760);
     if (GameFlag_Get(FLAG_PIRATE_LEFT))

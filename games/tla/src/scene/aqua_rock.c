@@ -176,9 +176,6 @@ extern struct Trigger gAquaRock_Triggers[];
 extern struct Trigger gAquaRock_SlopesTriggers[];
 extern struct Trigger gAquaRock_MistSabreChestTriggers[];
 
-/// Clears the game flag.
-static __inline__ void GameFlag_ClearBit_(s32 flag) { GameFlag_Clear(flag); }
-
 static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
                                                     s32 z) {
   return Import_ActorCreate(kind, x, y, z);
@@ -187,6 +184,7 @@ static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
 /// Takes `size` bytes from the heap.
 static __inline__ void *MemAlloc_(s32 size) { return Heap_Alloc(size); }
 #include "flags.h"
+#include "field/event.h"
 #include "field/field_sequence_event.h"
 #include "battle/battle.h"
 #include "field/field.h"
@@ -382,7 +380,7 @@ s32 AquaRock_StartFish(struct Actor *actor) {
   actor->speedLimit = toFIXED(1);
   actor->acceleration = toFIXED(1) / 20;
   actor->collisionFlags = 0;
-  actor->update = (void (*)(void))AquaRock_TurnFish;
+  actor->update = (ObjectUpdate)AquaRock_TurnFish;
   return 0;
 }
 
@@ -422,7 +420,7 @@ UNUSED void AquaRock_SpawnSparkleAtRandom(struct Actor *actor) {
                                actor->z.fixed);
     if (child != 0) {
       Actor_SetSpriteFlags(child, 0);
-      child->update = (void (*)(void))AquaRock_FlowSparkleUpStream;
+      child->update = (ObjectUpdate)AquaRock_FlowSparkleUpStream;
       child->motionFlags = 0;
     }
   }
@@ -624,7 +622,7 @@ void AquaRock_DouseWaterStone(s32 unused, s32 id) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  actor->update = (void (*)(void))Actor_FlickerChild;
+  actor->update = (ObjectUpdate)Actor_FlickerChild;
   wait(30);
   if (GameFlag_Get(FLAG_AQUA_ROCK_STREAMS_TURNED_BACK) == 0)
     AquaRock_SetSparkleAnchor(ACTOR_WATER_STONE);
@@ -649,7 +647,7 @@ void AquaRock_DouseWaterStone(s32 unused, s32 id) {
     TilesetAnim_Pause(6);
     TilesetAnim_Resume(7);
     TilesetAnim_Resume(8);
-    actor->update = (void (*)(void))AquaRock_StopFlashing;
+    actor->update = (ObjectUpdate)AquaRock_StopFlashing;
     AquaRock_SetBubbleAnchor(ACTOR_WATER_STONE);
   } else {
     GameFlag_Clear(FLAG_AQUA_ROCK_STREAMS_TURNED_BACK);
@@ -659,7 +657,7 @@ void AquaRock_DouseWaterStone(s32 unused, s32 id) {
     TilesetAnim_Pause(8);
     TilesetAnim_Resume(5);
     TilesetAnim_Resume(6);
-    actor->update = (void (*)(void))AquaRock_StopFlashing;
+    actor->update = (ObjectUpdate)AquaRock_StopFlashing;
     AquaRock_SetBubbleAnchor(0);
   }
   Event_Wait(30);
@@ -686,9 +684,7 @@ void AquaRock_MovePillar(s32 unused, s32 id) {
     row = FIELD_CELL(first->z.fixed);
     GameFlag_SetByte(FLAG_PILLAR_COLUMN, column);
     GameFlag_SetByte(FLAG_PILLAR_ROW, row);
-    /* FAKEMATCH(wrapper): the west flag cleared through a call layer; as
-     * GameFlag_Clear. */
-    GameFlag_ClearBit_(FLAG_PILLAR_BEFORE_WEST_MOAI);
+    Event_ClearFlag(FLAG_PILLAR_BEFORE_WEST_MOAI);
     GameFlag_Clear(FLAG_PILLAR_BEFORE_EAST_MOAI);
     if (column == WEST_MOAI_COLUMN && row == MOAI_FRONT_ROW)
       GameFlag_Set(FLAG_PILLAR_BEFORE_WEST_MOAI);
@@ -927,7 +923,7 @@ void AquaRock_DouseMistSabreChestWaterStone(s32 unused, s32 id) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  actor->update = (void (*)(void))Actor_FlickerChild;
+  actor->update = (ObjectUpdate)Actor_FlickerChild;
   wait(30);
   AquaRock_SetSparkleAnchor(ACTOR_MIST_SABRE_WATER_STONE);
   Sound_Play(SE_SHIMMER);
@@ -945,7 +941,7 @@ void AquaRock_DouseMistSabreChestWaterStone(s32 unused, s32 id) {
   GameFlag_Set(FLAG_AQUA_ROCK_MIST_SABRE_CHEST_WATER_STONE_DOUSED);
   Map_CopyCellAttributeRect(15, 48, 1, 1, 16, 48);
   Map_CopyCellAttributeRect(17, 50, 1, 1, 16, 50);
-  actor->update = (void (*)(void))AquaRock_StopFlashing;
+  actor->update = (ObjectUpdate)AquaRock_StopFlashing;
   AquaRock_SetBubbleAnchor(ACTOR_MIST_SABRE_WATER_STONE);
   MapGrid_CopyCellPictureCellsRect(64, 68, 5, 13, 14, 94);
   Map_CopyCellAttributeRect(64, 68, 5, 8, 14, 34);
@@ -960,7 +956,7 @@ void AquaRock_DouseMistSabreChestWaterStone(s32 unused, s32 id) {
   Actor_SetSpriteFlags(Actor_GetById(ACTOR_WAY_INSIDE), 0);
   Actor_GetById(ACTOR_WAY_INSIDE)->collisionFlags = 0;
   Actor_GetById(ACTOR_WAY_INSIDE)->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
-  Actor_GetById(ACTOR_WAY_INSIDE)->update = (void (*)(void))Actor_EmitWaterDrop;
+  Actor_GetById(ACTOR_WAY_INSIDE)->update = (ObjectUpdate)Actor_EmitWaterDrop;
   Event_Wait(30);
   for (i = 0; i < 6; i++) {
     Sound_Play(SE_WADE);
@@ -1133,7 +1129,7 @@ void AquaRock_MoaiStepAside(void) {
 
       actor->speedLimit = toFIXED(1) / 4;
       actor->acceleration = toFIXED(1) / 64;
-      actor->update = (void (*)(void))AquaRock_ShakeMoai;
+      actor->update = (ObjectUpdate)AquaRock_ShakeMoai;
       actor->timer = Random16();
       actor->userValue = 0;
     }
@@ -1149,14 +1145,14 @@ void AquaRock_MoaiStepAside(void) {
   Map_CopyCellsRect(64, 66, 11, 7, 87, 50);
   i = ACTOR_FIRST_GUARDIAN_MOAI;
   do {
-    Actor_GetById(i)->update = (void (*)(void))AquaRock_StopShakingMoai;
+    Actor_GetById(i)->update = (ObjectUpdate)AquaRock_StopShakingMoai;
   } while (++i <= ACTOR_FIRST_GUARDIAN_MOAI + 4);
   Sound_Play(SE_STOP_EXIT_SE);
   Event_Wait(60);
   {
     struct Actor *actor = Actor_GetById(ACTOR_FIRST_GUARDIAN_MOAI + 4);
 
-    actor->update = (void (*)(void))AquaRock_RockMoai;
+    actor->update = (ObjectUpdate)AquaRock_RockMoai;
     actor->timer = 0;
   }
   Event_FinishScreenTransition();
@@ -1462,7 +1458,7 @@ void AquaRock_EnterSparklingPassage(s32 entrance) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SE_SPARKLING_PASSAGE);
-  leader->update = (void (*)(void))Actor_EmitMist;
+  leader->update = (ObjectUpdate)Actor_EmitMist;
   leader->motionFlags = 0;
   leader->speedLimit = toFIXED(1) / 5;
   Actor_SetAnimationById(*owner, 2);
@@ -1496,7 +1492,7 @@ void AquaRock_ArriveFromPassage(void) {
     Actor_SetSpriteFlags(Actor_GetById(*owner), 0);
     Event_StartScreenTransition();
     Sound_Play(SE_SPARKLING_PASSAGE);
-    leader->update = (void (*)(void))Actor_EmitMist;
+    leader->update = (ObjectUpdate)Actor_EmitMist;
     Actor_SetSpeed(*owner, 0.4);
     Actor_WalkByAndWaitById(*owner, 0, 8);
     Actor_SetSpriteColor(Actor_GetById(*owner), SPRITE_COLOR_NORMAL);
@@ -1504,7 +1500,7 @@ void AquaRock_ArriveFromPassage(void) {
     ((struct FieldSprite *)leader->sprite)->priority = 1;
     Actor_WalkByAndWaitById(*owner, 0, 10);
     leader->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
-    leader->update = (void (*)(void))flag;
+    leader->update = (ObjectUpdate)flag;
     Event_NoOp();
     Event_WaitTransitionFrames();
     Event_End();

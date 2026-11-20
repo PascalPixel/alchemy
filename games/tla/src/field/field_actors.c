@@ -720,6 +720,7 @@ void ActorSystem_PlaceSprites(void) {
   Render_LoadDecoder();
   {
     // The zero is set before the objects are read.
+    /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
     u32 zero = 0;
 
     actor = Ram_HeapSlots->actors;

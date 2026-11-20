@@ -32,8 +32,8 @@ void Actor_PlaceBlocks(u16 *actors) {
         actor->layer, actor->x.fixed, actor->z.fixed));
     s32 slot = Actor_GetCellIndex(actor);
     struct MapCell *cells = map->layers[actor->layer].cells;
-    /* FAKEMATCH(temporary): the layer's row of the shape grid as an integer
-     * sum, its index first; as &grid[(cells - Ram_MapCellBuffer) / 4]. */
+    // The layer's row of the shape grid, as an integer sum with its index
+    // first.
     u8 *shapes =
         (u8 *)((((s32)cells - (s32)Ram_MapCellBuffer) >> 2) + (s32)grid);
     struct MapCell *cell;
@@ -81,7 +81,6 @@ void Actor_LiftTargetBlock(u16 *actors) {
   for (; *actors != ACTOR_LIST_END; actors++) {
     if (target == Actor_GetById(*actors)) {
       struct MapWork *map = Ram_HeapSlots->mapGrid;
-      s32 zero = 0;
       u8 *grid = gMapShapeGrid;
       struct MapCell *cells = map->layers[target->layer].cells;
       struct MapCell *blocks = map->layers[2].cells;
@@ -100,7 +99,7 @@ void Actor_LiftTargetBlock(u16 *actors) {
       blocks += slot;
       ((struct ShapeCell *)shapes)->shape = tag;
       cells->attributeB = target->riseBaseY;
-      blocks->collisionCode = zero;
+      blocks->collisionCode = 0;
       event->movedBlock = target;
     }
   }
@@ -235,8 +234,7 @@ void EffectSprite_Init(struct EffectSprite *sprite, s32 pivotX, s32 pivotY,
   words = (u32 *)&sprite->oam;
   *words++ = attributes;
   *words = 0;
-  /* FAKEMATCH(temporary): the OAM reached through its own address; as
-   * sprite->oam.fullColor. */
+  // Spelt through the OAM's address, as the two words above are written.
   (&sprite->oam)->fullColor = 1;
   sprite->oam.index = tile;
 }

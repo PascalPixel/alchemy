@@ -226,25 +226,15 @@ u32 Save_BuildFileSummary(void) {
   summary->childhood = GameFlag_GetFar(FLAG_CHILDHOOD) != 0;
   {
     s32 n;
-    u32 *frame = &gMainRoutineWork.buildStamp;
     u32 frames;
 
+    frames = gMainRoutineWork.buildStamp;
     // The checksum's words, counted in fours and multiplied back below.
     n = SAVE_CHECKSUM_WORDS / 4;
-    /* FAKEMATCH(dead): a never-taken null arm, whose updates cancel, and an
-     * else arm whose read of frame is repeated below. */
-    if (!frame) {
-      n++;
-      n--;
-    } else {
-      n = SAVE_CHECKSUM_WORDS / 4;
-      frames = *frame;
-    }
-    frames = *frame;
-    word = (u32 *)gGameFlagBytes;
     i = 0;
     n <<= 2;
-    summary->frames = frames;
+    word = (u32 *)gGameFlagBytes;
+    Io_Write32(frames, &summary->frames);
     // Entered at its test: as a while loop it gains a second test (4 bytes).
     goto test;
     do {
@@ -711,11 +701,11 @@ void FileList_PlaceDjinnSprites(void) {
     struct Sprite *sprite = menu->figures[index];
 
     if (sprite != NULL) {
-      FIXED one = FIXED_ONE;
+      FIXED fullSize = FIXED_ONE;
       FIXED height = toFIXED(500);
 
-      scale.x = one;
-      scale.y = one;
+      scale.x = fullSize;
+      scale.y = fullSize;
       position.x = toFIXED(menu->figureX[index]);
       position.height = height;
       position.y = toFIXED(menu->figureY[index]) + height;

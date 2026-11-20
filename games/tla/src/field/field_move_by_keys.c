@@ -711,7 +711,6 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *actor) {
   s32 angleIndex;
   s32 count;
   s32 difference;
-  FIXED y;
   s32 terrainCollision;
   FIXED speed;
   s32 targetCameraYaw;
@@ -738,18 +737,18 @@ s32 Actor_MoveAsSandOnWorldMap(struct Actor *actor) {
   } else {
     SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
     Vector_AddPolarOffset(toFIXED(8), direction, &position);
-    if (gDebugMode == 0 || (gInput.held & KEY_L) == 0) {
+    if (gDebugMode != 0 && (gInput.held & KEY_L)) {
+      /* LEFTOVER(template): the debug walk takes the key's heading, as
+       * Actor_MoveAsSand's and Actor_SailOnMap's debug branches do before they
+       * use it; nothing reads it here; as the branch left empty. */
+      direction = angle;
+    } else {
       SET_POSITION(&leftPosition, actor->x.fixed, actor->y.fixed,
                    actor->z.fixed);
       Vector_AddPolarOffset(toFIXED(8), direction + DEGtoANG(30),
                             &leftPosition);
-      rightPosition.x = actor->x.fixed;
-      y = actor->y.fixed;
-      /* FAKEMATCH(dead): the right probe's y stored in a once-only block. */
-      do {
-        rightPosition.y = y;
-      } while (0);
-      rightPosition.z = actor->z.fixed;
+      SET_POSITION(&rightPosition, actor->x.fixed, actor->y.fixed,
+                   actor->z.fixed);
       Vector_AddPolarOffset(toFIXED(8), direction - DEGtoANG(30),
                             &rightPosition);
       if ((WorldMap_IsWalkable(actor, &position) |

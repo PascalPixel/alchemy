@@ -385,7 +385,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// two pixels a frame, back in x and on in z, and starts again once z passes
 /// 1040.
 void ShamanVillage_DriftSandLayer(void) {
-  struct MapLayer *sand = &Ram_HeapSlots->mapGrid->layers[2];
+  struct MapLayer *sand =
+      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
 
   sand->offsetX -= toFIXED(2);
 
@@ -510,12 +511,9 @@ void ShamanVillage_BlowAwaySand(void) {
           SPRITE_PARTICLE, Actor_GetById(ACTOR_TWISTER_ROCK)->x.fixed,
           Actor_GetById(ACTOR_TWISTER_ROCK)->y.fixed,
           Actor_GetById(ACTOR_TWISTER_ROCK)->z.fixed);
-      /* FAKEMATCH(signature): the rock's priority read from attribute 2's
-       * high byte as a signed byte, masked and shifted. */
-      ((struct SpriteAttr2High *)spark->sprite)->priority =
-          (((s8 *)Actor_GetById(ACTOR_TWISTER_ROCK)->sprite)[9] &
-           (OBJ_PRIORITY(3) >> 8)) >>
-          2;
+      ((struct FieldSprite *)spark->sprite)->priority =
+          ((struct FieldSprite *)Actor_GetById(ACTOR_TWISTER_ROCK)->sprite)
+              ->priority;
       spark->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       spark->motionFlags = 0;
       spark->bounce = spark->x.fixed;
@@ -646,18 +644,14 @@ void ShamanVillage_BlowAwaySand(void) {
     Event_Wait(1);
   }
   Task_Remove(ShamanVillage_WaveWhirlwindLines);
-  {
-    s32 zero = 0;
-
-    Actor_GetById(ACTOR_TWISTER_ROCK)->flickerShift = zero;
-    wait(30);
-    Actor_GetById(ACTOR_TWISTER_ROCK)->update = (void *)zero;
-    FieldActor_SetSpriteColor(Actor_GetById(ACTOR_TWISTER_ROCK),
-                              SPRITE_COLOR_GREY);
-    MapGrid_WaitForShakeToSettle();
-    Event_Wait(60);
-    REG_BLDCNT = zero;
-  }
+  Actor_GetById(ACTOR_TWISTER_ROCK)->flickerShift = 0;
+  wait(30);
+  Actor_GetById(ACTOR_TWISTER_ROCK)->update = (void *)0;
+  FieldActor_SetSpriteColor(Actor_GetById(ACTOR_TWISTER_ROCK),
+                            SPRITE_COLOR_GREY);
+  MapGrid_WaitForShakeToSettle();
+  Event_Wait(60);
+  REG_BLDCNT = 0;
   Window_LoadGraphics();
   DebugText_Clear();
   FieldWindowColor_Apply(gMainRoutineWork.windowHue,

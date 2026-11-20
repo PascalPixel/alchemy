@@ -596,16 +596,11 @@ void FieldParticle_UpdateMotion(struct FieldParticle *effect) {
 
 /// Reports an unfinished target only for effects that stop on arrival.
 u32 FieldParticle_HasPendingTarget(struct FieldParticle *effect) {
-  /* FAKEMATCH(temporary): the target's bits that differ from
-   * EFFECT_NO_TARGET, held in a local for NONZERO; as
-   * effect->targetX != EFFECT_NO_TARGET. */
-  u32 value;
-
-  if (effect->stopAtTarget == 0) {
+  if (effect->stopAtTarget == 0)
     return 0;
-  }
-  value = (u32)effect->targetX ^ (u32)EFFECT_NO_TARGET;
-  return NONZERO(value);
+  if (effect->targetX != EFFECT_NO_TARGET)
+    return 1;
+  return 0;
 }
 
 /// Places a field effect sprite at (x, z), at rest with no target.

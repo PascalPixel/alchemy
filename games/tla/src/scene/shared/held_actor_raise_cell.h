@@ -11,7 +11,9 @@ void HeldActor_RaiseCell() {
 
   if (held == NULL)
     return;
-  cells = (u8 *)Ram_HeapSlots->mapGrid->layers[held->layer].cells;
+  cells = (u8 *)((struct MapWork *)Ram_HeapSlots->mapGrid)
+              ->layers[held->layer]
+              .cells;
   shapes = (struct ShapeCell *)Ram_MapShapeGrid +
            (((struct MapCell *)cells) - (struct MapCell *)Ram_MapCellBuffer);
   shape = MapGrid_GetTerrainKind(held->layer, held->x.fixed, held->z.fixed);

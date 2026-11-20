@@ -37,6 +37,12 @@
 /// so; the name is ours. `v` is read twice.
 #define NONZERO(v) ((u32)(-(v) | (v)) >> 31)
 
+/// One more than `i` as a signed halfword, the step taken in the high half of
+/// a word. The scenes step the halfword counters of their short searches so:
+/// PushTarget_FillFootprint in five scenes, Yampi Desert Cave's search of its
+/// logs and Apojii Islands' scan of its cells. The name is ours.
+#define NEXT_HALFWORD(i) ((s32)(((i) << 16) + (1 << 16)) >> 16)
+
 /// A scene's data that its overlay places after pictures linked between its
 /// tables: the overlay's linker script places .data.late after the first
 /// of them and .data.last after the next.

@@ -98,7 +98,7 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   Actor_ShowEmoteById(djinniId, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 50);
   Actor_GetById(djinniId)->steeringFlags &= ~ACTOR_FACES_MOTION;
   djinni->motionFlags = ACTOR_FALLS;
-  djinni->update = (void (*)(void))FieldEffect_AdvanceSpinAngle;
+  djinni->update = (ObjectUpdate)FieldEffect_AdvanceSpinAngle;
 #if TLA_PATCH_1
   Sound_PlayFar(SE_JUMP);
 #endif

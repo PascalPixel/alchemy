@@ -263,7 +263,7 @@ void Orb_SpawnRising(void) {
     angle = Random16() & 0xffff000;
     effect->timer = angle;
     effect->userValue = 0;
-    effect->update = (void (*)(void))Orb_Update;
+    effect->update = (ObjectUpdate)Orb_Update;
     effect->speedLimit = Math_Sin((u32)(Random16() * 65535) >> 20) * 24 >> 16;
     sprite->flags = 0;
     sprite->priority = 1;
@@ -834,6 +834,7 @@ void JupiterLighthouse_StartSparkRing(const s32 *from, const s32 *to) {
     spark->age = -1;
   }
   {
+    /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
     s32 zero = 0;
 
     work->next = zero;

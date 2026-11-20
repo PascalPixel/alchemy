@@ -129,13 +129,6 @@ enum {
   ACTOR_WEST_FIREBALL = 20
 };
 
-/// The ride work seen from one flame thrower's entry: the work's header, then
-/// the entry, as the getters below index it.
-struct RideRow {
-  u8 beforeEntries[20];
-  struct RideEntry entry;
-};
-
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 
 /// The torches start with their sprite flags clear.
@@ -617,6 +610,7 @@ void MarsLighthouseStarRoom_CreateMarsStar(s32 rise) {
   GlyphTransfer *glyph;
   struct Actor *actor;
   struct FieldSprite *sprite;
+  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
   u8 zero;
   s32 size;
 
@@ -795,6 +789,7 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   struct FieldSprite *sprite;
   GlyphTransfer *glyph;
   u16 *screen;
+  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
   s32 zero;
 
   screen = (u16 *)Ram_HeapSlots->paletteFade;
@@ -1315,14 +1310,15 @@ void Ride_SetMode(s16 value) { RIDE_WORK->runsDuringPsynergy = value; }
 #include "shared/beam_start.h"
 
 s32 Ride_GetEntryValue(s32 index) {
-  return ((struct RideRow *)((u8 *)RIDE_WORK +
-                             index * sizeof(struct RideEntry)))
-      ->entry.active;
+  struct FlameHitWork *work = RIDE_WORK;
+
+  return (work->entries + index)->active;
 }
 
 void Ride_SetEntryValue(s32 index, s16 value) {
-  ((struct RideRow *)((u8 *)RIDE_WORK + index * sizeof(struct RideEntry)))
-      ->entry.active = value;
+  struct FlameHitWork *work = RIDE_WORK;
+
+  (work->entries + index)->active = value;
 }
 
 s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
@@ -1388,7 +1384,7 @@ s32 Fireball_CarryLeader(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_ClearFlag(FLAG_MENU_OPEN);
-  leader->update = (void (*)(void))Actor_Blink;
+  leader->update = (ObjectUpdate)Actor_Blink;
   leader->facing = FACING_SOUTH;
   Actor_SelectAnimation(leader, ANIM_LEADER_SIT);
   while (ride->car->timer == 0) {

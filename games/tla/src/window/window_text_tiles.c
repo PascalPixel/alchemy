@@ -586,13 +586,11 @@ void Text_SetStyle(s32 value) {
 /// all at once.
 void Text_DrawMessage(s32 message, s32 window, s32 x, s32 y) {
   struct WindowWork *canvas = WINDOW_WORK;
-  u16 *counter = &canvas->textBufferEnd;
-  s32 zero = 0;
 
-  *counter = zero;
+  canvas->textBufferEnd = 0;
   Message_Decode(message, 1);
-  canvas->textBuffer[*counter] = zero;
-  *counter = (*counter + 1) & TEXT_BUFFER_MASK;
+  canvas->textBuffer[canvas->textBufferEnd] = 0;
+  canvas->textBufferEnd = (canvas->textBufferEnd + 1) & TEXT_BUFFER_MASK;
   Text_DrawWideStringAtOffset(canvas->textBuffer, (struct Window *)window, x,
                               y);
 }
@@ -605,19 +603,15 @@ void Text_DrawMessageAsTiles(s32 message, struct Window *window, u32 offsetX,
   s32 byteOffset;
   s32 vramAddress;
   u16 *text;
-  s32 zero;
   u32 cell;
   struct WindowWork *canvas;
-  u16 *counter;
 
   canvas = WINDOW_WORK;
-  counter = &canvas->textBufferEnd;
-  zero = 0;
-  *counter = zero;
+  canvas->textBufferEnd = 0;
   Message_Decode(message, 1);
 
-  canvas->textBuffer[*counter] = zero;
-  *counter = (u16)((*counter + 1) & TEXT_BUFFER_MASK);
+  canvas->textBuffer[canvas->textBufferEnd] = 0;
+  canvas->textBufferEnd = (canvas->textBufferEnd + 1) & TEXT_BUFFER_MASK;
 
   cell = (((s16)window->y + (offsetY >> 3) + 1) << 5) +
          ((s16)window->x + (offsetX >> 3)) + 1;

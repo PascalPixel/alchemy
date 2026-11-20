@@ -118,12 +118,12 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// A step trigger (cell behavior 20): the camera keeps south of z 750, short
 /// of the shore's upper part.
 void AncientLemuria_KeepCameraSouth(void) {
-  Ram_HeapSlots->mapGrid->minZ = toFIXED(750);
+  ((struct MapWork *)Ram_HeapSlots->mapGrid)->minZ = toFIXED(750);
 }
 
 /// A step trigger (cell behavior 21): the camera may go north to z 352 again.
 void AncientLemuria_LetCameraNorth(void) {
-  Ram_HeapSlots->mapGrid->minZ = toFIXED(352);
+  ((struct MapWork *)Ram_HeapSlots->mapGrid)->minZ = toFIXED(352);
 }
 
 /// Move lifts the blue statue; nothing else happens.
@@ -784,13 +784,8 @@ void AncientLemuria_MeetTheLemurians(void) {
     }
     gFieldWork->message += 2;
   } else {
-    /* FAKEMATCH(pin): the count fixed to a register. */
-    register u32 n asm("r2");
-
-    n = (u16)gFieldWork->message;
-    gFieldWork->message = n + 2;
-    result = FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0);
-    if (result == 0) {
+    gFieldWork->message += 2;
+    if (FieldEvent_AskYesNoWithActorAnimation(ACTOR_FELIX, 0) == 0) {
       Event_Wait(25);
       Actor_FaceDirection(ACTOR_KRADEN, FACING_SOUTH_SOUTHWEST, 0);
       Actor_FaceDirectionAndRefreshById(ACTOR_PIERS, FACING_SOUTH_SOUTHEAST);

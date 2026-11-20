@@ -649,26 +649,8 @@ s32 PartyMemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
     }
   }
 
-  {
-    u32 fill = 0;
-#ifdef UBFIX
-    s32 clearIndex = ARRAY_COUNT(reordered) - 1;
-
-    // UB: the pointer walk below forms reordered - 1 after its last store and
-    // compares the addresses as signed numbers; this clear counts an index
-    // down instead.
-    do {
-      reordered[clearIndex] = fill;
-      clearIndex--;
-    } while (clearIndex >= 0);
-#else
-    u32 *clear = &reordered[ARRAY_COUNT(reordered) - 1];
-
-    do {
-      *clear = fill;
-      clear--;
-    } while ((s32)clear >= (s32)reordered);
-#endif
+  for (index = 0; index < (s32)ARRAY_COUNT(reordered); index++) {
+    reordered[index] = 0;
   }
   for (index = 0; index < menu->partyCount; index++) {
     reordered[index] = menu->memberIds[index];
@@ -1251,8 +1233,6 @@ s32 PagedList_Build(struct PagedList *result, s32 index) {
   result->selectedIndex = selected;
   return 1;
 }
-
-static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 
 /// The Psynergy range icons' tiles: two sets of RANGE_ICON_PAIRS tile pairs,
 /// a pair RANGE_ICON_PAIR_WORDS of tile data, a word to a 4bpp tile row.

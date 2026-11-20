@@ -480,6 +480,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
     s32 phase;
     s32 scale;
     s32 timer;
+    /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
     s32 zero;
     s32 still;
     s32 width;
@@ -1445,6 +1446,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
   s32 sh;
   s32 ty;
   s32 spin;
+  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
   s32 zero;
   u8 *coilMesh = COATLICUE_COIL_MESH;
   s16 list[UNIT_MAX];

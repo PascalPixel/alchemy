@@ -157,6 +157,11 @@ extern const struct TileMask gMenu_BarPatternRows[];
 /// The row masks Menu_BuildPatternTiles XORs into the range icons' tile
 /// pairs (menu_strings.s).
 extern const struct TileMask gMenu_PatternRowMasks[];
+/// One word of a tile XORed with a row's mask. Ours, not the original's
+/// name: the helper of a family of four sites, the two marks each of
+/// Menu_BuildPatternTiles and Menu_BuildLocalizedPatternTiles makes on a tile
+/// pair, which match through it and through no plain XOR.
+static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
 /// The credits' 8x8 one-bit font, ASCII 32 to 127.
 extern const u8 gCredits_Font[];
 extern const u8 gScreenTransition_DitherTable[];

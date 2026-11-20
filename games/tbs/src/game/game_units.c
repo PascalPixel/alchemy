@@ -197,9 +197,6 @@ void Unit_Calculate(s32 unitId) {
       if (stats->item->flags & ITEM_CURSED)
         unit->curse |= CURSE_BOUND | CURSE_ITEM;
       stats->atk += stats->item->primaryBonus;
-      /* FAKEMATCH(dead): an empty once-only loop after the Attack bonus. */
-      do {
-      } while (0);
       stats->def += stats->item->secondaryBonus;
       for (effectIndex = 0; effectIndex < EQUIP_EFFECT_SLOTS; effectIndex++) {
         effectKind = stats->item->effects[effectIndex].kind;

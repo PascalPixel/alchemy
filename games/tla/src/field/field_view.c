@@ -155,15 +155,12 @@ void WorldMap_BuildScanlineTable(FIXED pitchSlope, s32 *position,
   FIXED scale;
   s32 horizontal;
   FIXED squaredSum;
-  s32 zero;
+  s32 groundHeight = 0;
 
   // The followed point on the ground (height 0), in camera space; horizon is
   // its height less its depth times the pitch slope.
-  /* FAKEMATCH(temporary): the ground's height 0 held in a local; as
-   * groundPoint[1] = 0. */
-  zero = 0;
   groundPoint[0] = position[0];
-  groundPoint[1] = zero;
+  groundPoint[1] = groundHeight;
   groundPoint[2] = position[2];
   Iwram_TransformVector(groundPoint, cameraPoint);
   horizon = cameraPoint[1] - Iwram_MulFX(cameraPoint[2], pitchSlope);

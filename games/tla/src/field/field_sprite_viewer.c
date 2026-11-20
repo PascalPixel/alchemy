@@ -295,8 +295,7 @@ next:
       const u16 *colors = gSpriteViewer_BackdropColors;
       backdrop++;
       backdrop &= 7;
-      /* FAKEMATCH(signature): the colour's address held and summed as an
-       * integer; as colors[backdrop]. */
+      // The colour's address as an integer sum.
       *palette = *(const u16 *)((u32)colors + (backdrop << 1));
     }
     wait(1);

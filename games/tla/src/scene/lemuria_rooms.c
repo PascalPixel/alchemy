@@ -818,20 +818,16 @@ void Actor_StartScript(struct Actor *actor, const void *script);
 void LemuriaRooms_PopQuestionMark(FIXED x, FIXED y, FIXED z, u16 rotation,
                                   s32 frames) {
   struct Actor *actor;
-  struct AnimatedSprite *sprite;
+  struct Sprite *sprite;
 
   actor = Import_ActorCreate(SPRITE_EMOTE, x, y, z);
   if (actor != 0) {
-    sprite = (struct AnimatedSprite *)actor->sprite;
+    sprite = actor->sprite;
     Actor_SelectAnimation(actor, EMOTE_QUESTION);
     Actor_StartScript(actor, gLemuriaRooms_QuestionMarkScript);
     actor->motionFlags = 0;
-    {
-      /* FAKEMATCH(barrier): the empty asm before the frames' store. */
-      __asm__("");
-      actor->wait = frames;
-    }
-    sprite->nextFrame = 0;
+    actor->wait = frames;
+    sprite->flags = 0;
     sprite->rotation = rotation;
   }
 }
@@ -1411,7 +1407,7 @@ void LemuriaRooms_MeetLunpa(void) {
   Actor_Jump(ACTOR_LUNPA, 6, 23);
   actor = Actor_GetById(ACTOR_LUNPA);
   actor->timer = 0;
-  actor->update = (void (*)(void))Actor_CyclePictures;
+  actor->update = (ObjectUpdate)Actor_CyclePictures;
   // "HAHHH-AHH!"
   FieldEvent_ShowMessageThenWait(SPEAKER_PORTRAIT_LEFT | ACTOR_LUNPA, 0, 10);
   Actor_SetSpeed(ACTOR_LUNPA, 2.2);

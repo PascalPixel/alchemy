@@ -358,7 +358,7 @@ s32 WorldMap_SetUpEcho(struct Actor *actor) {
   if (Event_GetFlag(FLAG_DJINN_LESSON) != 0) {
     return 0;
   }
-  actor->update = (void (*)(void))WorldMap_CircleEcho;
+  actor->update = (ObjectUpdate)WorldMap_CircleEcho;
   actor->motionFlags = 0;
   actor->timer = 0;
   actor->userValue = 0;
@@ -1442,6 +1442,7 @@ void WorldMap_MeetEcho(void) {
   s32 i;
   s32 flag;
   // Holds 0 for its whole life; see its one use.
+  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
   s32 zero = 0;
 
   djinni = Actor_GetById(ACTOR_ECHO);
@@ -1479,6 +1480,7 @@ void WorldMap_MeetEcho(void) {
     Event_Wait(10);
     FieldActor_ShowEmote(owner, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
     {
+      /* FAKEMATCH(temporary): one, 1 held in a local; as 1 at its uses. */
       s32 one = 1;
       *(u16 *)&djinni->userValue = one;
     }
@@ -2374,9 +2376,9 @@ void Actor_SetFlightMode(struct Actor *actor, s32 mode) {
     Actor_SetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
     Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   } else if (mode == 1) {
-    actor->update = (void (*)(void))WorldMap_FlashPoweringUp;
+    actor->update = (ObjectUpdate)WorldMap_FlashPoweringUp;
   } else {
-    actor->update = (void (*)(void))WorldMap_GlowInFlight;
+    actor->update = (ObjectUpdate)WorldMap_GlowInFlight;
     Event_PlaySound(SE_TAKE_FLIGHT);
   }
 }

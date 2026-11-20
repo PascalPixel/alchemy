@@ -179,7 +179,6 @@ s32 YampiDesertCave_SetLogCells(s32 id) {
   struct Actor *actor = Actor_GetById(id);
   s16 sprite = ((struct Sprite *)actor->sprite)->entries[0]->animationId;
   s16 i;
-  s32 next;
   u32 kind;
   s32 w, h, x, z;
   s32 az;
@@ -188,11 +187,8 @@ s32 YampiDesertCave_SetLogCells(s32 id) {
   i = 0;
   if ((u16)sprite != gYampiDesertCave_LogSprites[i]) {
     do {
-      /* FAKEMATCH(temporary): the step taken in the high halfword, as the push
-       * footprints' copies of this search have it. */
-      next = toFIXED(i + 1);
-      kind = FIXEDtoINT((u32)next);
-      i = FIXEDtoINT(next);
+      kind = (u16)NEXT_HALFWORD(i);
+      i = kind;
     } while (kind < LOG_KIND_COUNT &&
              (u16)sprite != gYampiDesertCave_LogSprites[kind]);
   }
@@ -229,10 +225,10 @@ extern s32 gPushLeaderSteps[];
 
 /// Where a pushed log comes to rest, found before the leader pushes it.
 struct LogSlide {
-  FIXED x, y, z;          ///< the log's position at the end of the slide
-  s32 kind;               ///< its row of gYampiDesertCave_LogFootprints
-  s32 slot;               ///< its actor id
-  void (*onPushed)(void); ///< run as the log slides, if not NULL
+  FIXED x, y, z;  ///< the log's position at the end of the slide
+  s32 kind;       ///< its row of gYampiDesertCave_LogFootprints
+  s32 slot;       ///< its actor id
+  void *onPushed; ///< run as the log slides, if not NULL
 };
 
 /// Finds the log the leader faces and can push: its kind, its actor slot and
@@ -384,10 +380,7 @@ void Pound_SinkTarget(u16 *list, s32 mode, s32 count);
 void Teleport_PlaySparks(void);
 
 void YampiDesertCave_PushLog(struct LogSlide slide) {
-  /* FAKEMATCH(signature): the map work read through the heap slots as words;
-     as Ram_HeapSlots->mapGrid. */
-  struct MapWork *map =
-      (struct MapWork *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 w, h;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *actor = Actor_GetById(slide.slot);
@@ -458,7 +451,7 @@ void YampiDesertCave_PushLog(struct LogSlide slide) {
 #endif
   }
   if (slide.onPushed != NULL)
-    slide.onPushed();
+    ((void (*)(void))slide.onPushed)();
   Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   leader->update = NULL;

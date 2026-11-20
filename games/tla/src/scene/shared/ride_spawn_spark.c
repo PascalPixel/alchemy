@@ -11,7 +11,7 @@ void Ride_SpawnSpark(s32 *position, s32 speed, s32 mode) {
     spin = (u16)Random16() + 0xffff8000;
     actor->timer = spin;
     Actor_SetupScriptedFor(actor, 2);
-    actor->update = (void (*)(void))Ride_UpdateDrift;
+    actor->update = (ObjectUpdate)Ride_UpdateDrift;
     Actor_SetBlendMode(actor, 1);
   }
 }

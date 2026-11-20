@@ -31,7 +31,7 @@ void Cyclone_CopyTouchedCells(s32 x, s32 z, s16 layerIndex, s16 width,
                               s16 height, s32 toX, s32 toZ) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *owner = Actor_GetById(Party_GetLeaderActor());
-  struct MapLayer *layer = Ram_HeapSlots->mapGrid->layers;
+  struct MapLayer *layer = ((struct MapWork *)Ram_HeapSlots->mapGrid)->layers;
   struct TouchCell *cell = (struct TouchCell *)event->psynergyCells;
   s32 lift;
   s32 scrollX = FIELD_CELL(layer->offsetX);

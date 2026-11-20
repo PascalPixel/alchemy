@@ -326,7 +326,7 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, FIXED screenX,
                                 s32 height, s32 screenY, s32 groundHeight,
                                 FIXED *scale) {
   u32 halfWidth = sprite->width >> 1;
-  u32 halfHeight = sprite->height >> 1;
+  u32 halfHeight = sprite->height / 2;
   s32 marginX = SHADOW_HALF_WIDTH;
   s32 marginY = SHADOW_HALF_HEIGHT;
   s32 affine = 1;
@@ -349,7 +349,7 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, FIXED screenX,
   // raised by half the height less offsetY, scaled and rounded up to a whole
   // pixel.
   y = FIXEDtoINT(screenY - height) - halfHeight -
-      FIXEDtoINT(((sprite->height >> 1) - sprite->offsetY) * scaleY +
+      FIXEDtoINT(((sprite->height / 2) - sprite->offsetY) * scaleY +
                  (FIXED_ONE - 1));
   sprite->image.affine = affine;
   sprite->image.x = x;

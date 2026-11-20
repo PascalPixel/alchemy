@@ -547,18 +547,16 @@ s32 Serial_GetActiveTransfers(void) {
 void LinkBattle_ResetTransferState(void) {
   struct SerialTransferState *state;
   u32 saved;
-  u32 zero;
 
   state = &gSerialTransfer;
   IRQ_LOCK(saved);
-  zero = 0;
   state->status = SERIAL_STATUS_RUNNING;
-  *(u8 *)&state->peerFlags = zero;
-  gSerialSendSource = zero;
-  *(u8 *)&state->flags = zero;
-  gSerialSendSize = zero;
-  gSerialReceiveDestination = zero;
-  gSerialReceivedSize = zero;
+  *(u8 *)&state->peerFlags = 0;
+  gSerialSendSource = 0;
+  *(u8 *)&state->flags = 0;
+  gSerialSendSize = 0;
+  gSerialReceiveDestination = 0;
+  gSerialReceivedSize = 0;
   IRQ_UNLOCK(saved);
 }
 

@@ -50,7 +50,7 @@ struct PushTarget {
   s32 z;
   s32 footprint; ///< index into the footprint table
   s32 id;
-  void (*callback)(void);
+  void *callback;
 };
 
 /// Set once the column has been pushed off the ledge this visit.
@@ -146,7 +146,7 @@ void JupiterLighthouse_PushColumnOffTheLedge(void) {
   s32 i;
   FIXED x;
 
-  actor->update = (void (*)(void))JupiterLighthouse_DrawColumnBelowLedge;
+  actor->update = (ObjectUpdate)JupiterLighthouse_DrawColumnBelowLedge;
   if (PushTarget_FindSlide(&target))
     PushTarget_PushFill(target);
   if (FIELD_CELL(actor->x.fixed) == 16 && FIELD_CELL(actor->z.fixed) == 12 &&
@@ -344,10 +344,7 @@ s32 PushTarget_FillFootprint(s32 id) {
 
   if ((u16)shape != gPushKinds[(u16)i]) {
     do {
-      /* FAKEMATCH(temporary): the step taken through a 16.16 value, as the
-       * push footprints' copies of this search have it; plainly,
-       * j = (u16)(i + 1). */
-      j = (u16)FIXEDtoINT(toFIXED(i + 1));
+      j = (u16)NEXT_HALFWORD(i);
       i = j;
     } while (j <= PUSH_KINDS - 1 && (u16)shape != gPushKinds[j]);
   }
@@ -389,8 +386,7 @@ void Actor_StopAtPushTarget(struct Actor *actor);
 /// PushTarget_Push for the rooms that fill the cells with
 /// PushedActor_FillGridAttributeRectangle.
 void PushTarget_PushFill(struct PushTarget target) {
-  struct MapWork *map =
-      (struct MapWork *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *actor = Actor_Get(target.id);
   s32 cell[3];
@@ -466,7 +462,7 @@ void PushTarget_PushFill(struct PushTarget target) {
 #endif
   }
   if (target.callback != 0)
-    target.callback();
+    ((void (*)(void))target.callback)();
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   leader->update = NULL;

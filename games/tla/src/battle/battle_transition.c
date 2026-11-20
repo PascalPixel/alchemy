@@ -244,11 +244,7 @@ void BattleTransition_DrawRows(void) {
 }
 
 /// Clears BG0's scroll from the line the VCount interrupt fires on.
-void BattleTransition_ResetBg0Scroll(void) {
-  u32 zero = 0;
-
-  REG_BG0VOFS = zero;
-}
+void BattleTransition_ResetBg0Scroll(void) { Io_Write16(0, &REG_BG0VOFS); }
 
 /// Opens the battle against formation kind with enemyCount enemies: the curtain
 /// opening, then the enemies announced (Karst and Agatio's battles wait a
@@ -272,7 +268,6 @@ void BattleTransition_Run(s32 enemyCount, s32 kind) {
   if ((u32)(kind - FORMATION_DOOM_DRAGON_A) >
       FORMATION_DOOM_DRAGON_C - FORMATION_DOOM_DRAGON_A) {
     s32 y;
-    s32 zero;
 
     Dma_Set(gBattleTransition_CurtainTiles, CURTAIN_TILE(1), DMA_COPY_WORDS(8),
             REG_DMA3);
@@ -322,7 +317,6 @@ void BattleTransition_Run(s32 enemyCount, s32 kind) {
     gBgScroll[1].x = 8;
     gBgScroll[0].y = y;
     gBgScroll[1].y = y;
-    zero = 0;
     wait(1);
     REG_WIN0H = WIN_RANGE(0, DISPLAY_WIDTH);
     REG_WIN0V = WIN_RANGE(0, 136);
@@ -337,7 +331,7 @@ void BattleTransition_Run(s32 enemyCount, s32 kind) {
                              DISPCNT_BG1_ON | DISPCNT_BG2_ON | DISPCNT_OBJ_ON |
                              DISPCNT_WIN0_ON | DISPCNT_WIN1_ON);
     BattleCamera_SetView(0, 0, 0, BATTLE_ZOOM_NORMAL + TRANSITION_OPEN_FRAMES);
-    *timer = zero;
+    *timer = 0;
     Task_Add(BattleTransition_AdvanceTimer, TASK_PASS_FRAME);
     Task_Add(BattleTransition_DrawRows, TASK_PASS_VBLANK);
     Irq_SetHandler(IRQ_VCOUNT, TRANSITION_BG0_BAND,
@@ -360,6 +354,7 @@ void BattleTransition_Run(s32 enemyCount, s32 kind) {
     gBgScroll[0].y = 0;
     Irq_SetHandler(IRQ_VCOUNT, 0, 0);
   } else {
+    /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
     s32 zero;
 
     battle = heap->battleWork;

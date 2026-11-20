@@ -515,7 +515,7 @@ s32 GaiaRockInside_CaskPours(void) {
   sprite->priority = 1;
   actor->bounce = 0;
   actor->riseBaseY = 0;
-  actor->update = (void (*)(void))GaiaRockInside_FlickerPour;
+  actor->update = (ObjectUpdate)GaiaRockInside_FlickerPour;
   return 0;
 }
 
@@ -728,9 +728,9 @@ void GaiaRockInside_PlantPointsTheWay(s32 unused, u32 id) {
   actor->collisionFlags = 0;
   Actor_SelectAnimation(actor, ARROW_ANIMATION(direction));
   if (ARROW_UP_OR_DOWN(direction))
-    actor->update = (void (*)(void))GaiaRockInside_PulseUpDownArrow;
+    actor->update = (ObjectUpdate)GaiaRockInside_PulseUpDownArrow;
   else
-    actor->update = (void (*)(void))GaiaRockInside_PulseSidewaysArrow;
+    actor->update = (ObjectUpdate)GaiaRockInside_PulseSidewaysArrow;
   actor->collisionFlags = 1;
   Event_SetFlag(FLAG_MAZE_PLANT_POINTED(*state));
   Event_SetFlag(FLAG_PLANT_POINTING);
@@ -1947,12 +1947,9 @@ s32 GaiaRockInside_RecordStumpSpots(void) {
       secondIndex = i;
   }
   {
-    /* FAKEMATCH(temporary): the second spot shifted to the top half byte in a
-     * local, and the byte sign-extended by hand; plainly,
-     * (s8)(firstIndex | secondIndex << 4). */
-    u32 high = secondIndex << 28;
-    return GameFlag_SetByte(FLAG_STUMP_SPOTS,
-                            (s32)((firstIndex << 24) | high) >> 24);
+    s8 spots = firstIndex | secondIndex << 4;
+
+    return GameFlag_SetByte(FLAG_STUMP_SPOTS, spots);
   }
 }
 
@@ -2299,14 +2296,12 @@ s32 Scene_Initialize(void) {
     room = &gMainRoutineWork;
     entrance = &room->entrance;
     if (*entrance == ENTRANCE_LAIR) {
-      FIXED none;
       s32 found;
 
       if (!Test(FLAG_SERPENT_SLAIN)) {
         Sound_Play(MUS_FLAME_DRAGONS);
         found = FieldPartyInventory_FindMember(ITEM_DANCING_IDOL);
-        none = -1;
-        if (found != none) {
+        if (found != -1) {
           s32 flag;
           struct Actor *susa;
           struct Actor *serpent;
@@ -2345,7 +2340,7 @@ s32 Scene_Initialize(void) {
             Actor_SetAnimationById(ACTOR_SERPENT, 2);
             Event_StartScreenTransition();
             Event_WaitTransitionFrames();
-            FieldCamera_MoveToFX(toFIXED(488), none, toFIXED(384), 1);
+            FieldCamera_MoveToFX(toFIXED(488), -1, toFIXED(384), 1);
             FieldCamera_WaitForArrival();
             Actor_ShowEmoteById(ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_SMILE, 0);
             Event_Wait(40);
@@ -2821,7 +2816,7 @@ s32 Scene_Initialize(void) {
         Actor_SelectAnimation(other, 1);
         Actor_SetSpriteColorMode(other, SPRITE_COLOR_BLACK);
         // The high byte of its OAM attribute 2: drawn at priority 3.
-        ((u8 *)other->sprite)[9] |= OBJ_PRIORITY(3) >> 8;
+        ((struct FieldSprite *)other->sprite)->priority = 3;
         other->scaleX = FIXED_ONE * 6 / 5;
         other->scaleY = FIXED_ONE * 6 / 5;
       }
@@ -2940,8 +2935,8 @@ s32 Scene_PrepareMap(void) {
         plant->collisionFlags = 0;
         Actor_SelectAnimation(plant, ARROW_ANIMATION(angle));
         plant->update = ARROW_UP_OR_DOWN(angle) != 0
-                            ? (void (*)(void))GaiaRockInside_PulseUpDownArrow
-                            : (void (*)(void))GaiaRockInside_PulseSidewaysArrow;
+                            ? (ObjectUpdate)GaiaRockInside_PulseUpDownArrow
+                            : (ObjectUpdate)GaiaRockInside_PulseSidewaysArrow;
         plant->collisionFlags = 1;
         GameFlag_Set(FLAG_PLANT_POINTING);
       }
@@ -3342,7 +3337,8 @@ void GaiaRockInside_SetMazeLayer(s32 layer, s32 keep) {
 /// Stands a statue on the cell at (x, y, z), its wall cell blocked.
 void GaiaRockInside_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
   struct Actor *actor = Actor_Get(id);
-  struct MapCell *cell = Ram_HeapSlots->mapGrid->layers[2].cells;
+  struct MapCell *cell =
+      ((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2].cells;
   s32 column = x / toFIXED(16);
   s32 row = (z - y + toFIXED(1) / 2 - 1) / toFIXED(16);
 

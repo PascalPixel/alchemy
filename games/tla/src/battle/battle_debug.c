@@ -48,8 +48,7 @@ void ScriptedBattle_SaveUnits(void) {
            * built. */
           pp = (u16)unit->pp;
           base = gScriptedBattle_SnapshotVitals;
-          /* FAKEMATCH(signature): the address summed as an integer, its
-           * offset first; as &base[i]. */
+          // As an integer sum, the offset first.
           pv = (struct SnapshotVitals *)(i * 4 + (s32)base);
           /* FAKEMATCH(dead): a store the tag loop's init overwrites. */
           if (i == 300)

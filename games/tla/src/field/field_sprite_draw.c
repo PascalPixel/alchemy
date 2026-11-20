@@ -340,13 +340,6 @@ s32 Sprite_ComposePicture(struct Sprite *obj, u32 dir) {
   return mirrored;
 }
 
-// The height read through a u8 copy: see the FAKEMATCH tag below.
-#define HEIGHT_COPY(sprite)                                                    \
-  ({                                                                           \
-    u8 heightCopy = (sprite)->height;                                          \
-    heightCopy;                                                                \
-  })
-
 /// Positions a sprite's image (part 0) and shadow (part 1) on the screen: the
 /// image centred on screenX and raised height above screenY, the shadow at
 /// groundHeight. scale is the sprite's (x, y) scale (16.16); above 1.0 both
@@ -355,7 +348,7 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, FIXED screenX,
                                 s32 height, s32 screenY, s32 groundHeight,
                                 FIXED *scale) {
   u32 halfWidth = sprite->width >> 1;
-  u32 halfHeight = HEIGHT_COPY(sprite) >> 1;
+  u32 halfHeight = sprite->height / 2;
   s32 marginX = SHADOW_HALF_WIDTH;
   s32 marginY = SHADOW_HALF_HEIGHT;
   s32 affine = 1;
@@ -365,8 +358,6 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, FIXED screenX,
   s32 y;
   struct AnimationSpritePart *shadow;
 
-  /* FAKEMATCH(temporary): the height read through HEIGHT_COPY, a u8 copy, at
-   * both uses. */
   if (scaleX > FIXED_ONE || scaleY > FIXED_ONE) {
     affine = 3;
     halfWidth <<= 1;
@@ -376,7 +367,7 @@ void Render_PlaceSpritePartPair(struct Sprite *sprite, FIXED screenX,
   }
   x = FIXEDtoINT(screenX) - halfWidth;
   y = FIXEDtoINT(screenY - height) - halfHeight -
-      FIXEDtoINT(((HEIGHT_COPY(sprite) >> 1) - sprite->offsetY) * scaleY +
+      FIXEDtoINT(((sprite->height / 2) - sprite->offsetY) * scaleY +
                  (FIXED_ONE - 1));
   sprite->image.affine = affine;
   sprite->image.x = x;

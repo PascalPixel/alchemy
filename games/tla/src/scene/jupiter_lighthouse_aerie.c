@@ -499,7 +499,7 @@ void JupiterLighthouse_FlickerBeam(struct Actor *actor) {
 /// Starts an actor's flicker (JupiterLighthouse_FlickerBeam).
 void JupiterLighthouse_StartBeamFlicker(struct Actor *actor) {
   actor->riseEnabled = 0;
-  actor->update = (void (*)(void))JupiterLighthouse_FlickerBeam;
+  actor->update = (ObjectUpdate)JupiterLighthouse_FlickerBeam;
 }
 
 /// Stops an actor's flicker and leaves it in its beam's colours.

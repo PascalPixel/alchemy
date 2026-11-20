@@ -260,7 +260,7 @@ struct PushTarget {
   s32 z;
   s32 footprint; ///< index into the footprint table
   s32 id;
-  void (*callback)(void);
+  void *callback;
 };
 
 extern struct ActorPlacement gIslets_Placements[];
@@ -1041,7 +1041,7 @@ void Islets_GiveTurtle(void) {
       Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
       /* FAKEMATCH(temporary): the splash update kept in an actor pointer. */
       a = (struct Actor *)Actor_EmitWadingSplashes;
-      leader->update = (void (*)(void))a;
+      leader->update = (ObjectUpdate)a;
       Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 318, 424);
       leader->update = 0;
       Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
@@ -1055,7 +1055,7 @@ void Islets_GiveTurtle(void) {
       if (answer == 0) {
         Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_WEST);
         Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
-        leader->update = (void (*)(void))a;
+        leader->update = (ObjectUpdate)a;
         STEP(gMainRoutineWork.leaderActorId, 302, 424);
         SPAWN(a, b, 0)
         STEP(gMainRoutineWork.leaderActorId, 318, 424);
@@ -1210,7 +1210,7 @@ void Islets_RideBackToIsland(void) {
     FieldActor_Jump(gMainRoutineWork.leaderActorId, 6, 0);
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
     Actor_MoveToAndWait(gMainRoutineWork.leaderActorId, 152, 768);
-    leader->update = (void (*)(void))Islets_RideOnLonesomeGeorge;
+    leader->update = (ObjectUpdate)Islets_RideOnLonesomeGeorge;
     FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId),
                               SPRITE_COLOR_HIDDEN);
     Actor_SetAnimation(ACTOR_LONESOME_GEORGE, ANIM_NOD);
@@ -1313,7 +1313,8 @@ void Islets_StartWaveDma(void) {
 /// frame, swaying each line up to 2 pixels either way, for the water's HBlank
 /// ripple.
 void Islets_FillWaveLines(void) {
-  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[2];
+  struct MapLayer *layer =
+      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
   s16 *lines = gIslets_WaveLines[gIslets_WaveTableIndex ^ 1];
   FIXED v[2];
   s32 *count = &v[1];
@@ -1794,7 +1795,7 @@ void Islets_ArriveBackAtIsland(void) {
   Actor_SetPosition(ACTOR_LIL_TURTLE, 273, 520);
   System_Wait(1);
   actor->facing = FACING_NORTH;
-  owner->update = (void (*)(void))Islets_RideOnLonesomeGeorge;
+  owner->update = (ObjectUpdate)Islets_RideOnLonesomeGeorge;
   FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId),
                             SPRITE_COLOR_HIDDEN);
   Actor_SetAnimation(ACTOR_LONESOME_GEORGE, ANIM_NOD);
@@ -1806,9 +1807,8 @@ void Islets_ArriveBackAtIsland(void) {
   Event_WaitTransitionFrames();
   Actor_SetSpeed(ACTOR_LONESOME_GEORGE, 0.6);
   Actor_SetSpeed(ACTOR_LIL_TURTLE, 0.6);
-  Actor_Get(ACTOR_LIL_TURTLE)->update =
-      (void (*)(void))Actor_EmitWadingSplashes;
-  actor->update = (void (*)(void))Actor_EmitWadingSplashes;
+  Actor_Get(ACTOR_LIL_TURTLE)->update = (ObjectUpdate)Actor_EmitWadingSplashes;
+  actor->update = (ObjectUpdate)Actor_EmitWadingSplashes;
   Actor_WalkTo(ACTOR_LIL_TURTLE, 280, 468);
   Actor_MoveToAndWait(ACTOR_LONESOME_GEORGE, 296, 452);
   Actor_SetAnimation(ACTOR_LIL_TURTLE, 1);
@@ -2382,7 +2382,6 @@ s32 PushTarget_FillFootprint(s32 id) {
   struct Actor *actor = Actor_GetById(id);
   s16 kind = ((struct Sprite *)actor->sprite)->entries[0]->animationId;
   s16 i = 0;
-  s32 next;
   u32 index;
   s32 a, b;
   s32 fromX, fromZ;
@@ -2390,11 +2389,8 @@ s32 PushTarget_FillFootprint(s32 id) {
 
   if ((u16)kind != gPushKinds[(u16)i]) {
     do {
-      /* FAKEMATCH(temporary): the step taken in the high halfword, as the push
-       * footprints' copies of this search have it. */
-      next = toFIXED(i + 1);
-      index = FIXEDtoINT((u32)next);
-      i = FIXEDtoINT(next);
+      index = (u16)NEXT_HALFWORD(i);
+      i = index;
     } while (index <= PUSH_KINDS - 1 && (u16)kind != gPushKinds[index]);
   }
   fromX = (u16)i;
@@ -2439,8 +2435,7 @@ void Actor_StopAtPushTarget(struct Actor *actor);
 /// The leader pushes the object to its resting place: the cells it leaves are
 /// floor again and the cells it comes to are walls.
 void PushTarget_Push(struct PushTarget target) {
-  struct MapWork *map =
-      (struct MapWork *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *actor = Actor_Get(target.id);
   s32 cell[3];
@@ -2516,7 +2511,7 @@ void PushTarget_Push(struct PushTarget target) {
 #endif
   }
   if (target.callback != 0)
-    target.callback();
+    ((void (*)(void))target.callback)();
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   leader->update = NULL;

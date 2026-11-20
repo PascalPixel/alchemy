@@ -117,18 +117,14 @@ void ItemDisplay_EmitSparkles(struct Actor *emitter) {
 
 /// Returns 1 while Reveal is active, else 0.
 s32 Field_IsRevealActive(struct Actor *interpreter) {
-  /* FAKEMATCH(temporary): the state tested for nonzero by the sign bit of
-   * (0 - x) | x, held in a local; as work->revealActive != 0. */
-  s16 revealState;
-  u32 isActive = 0;
   struct FieldWork *work = gFieldWork;
 
-  if (work != NULL) {
-    revealState = work->revealActive;
-    isActive = (0 - revealState) | revealState;
-    isActive >>= 31;
-  }
-  return isActive;
+  if (work == NULL)
+    return 0;
+  if (work->revealActive != 0)
+    return 1;
+  else
+    return 0;
 }
 
 void Reveal_EmitSparkles(struct Actor *source);

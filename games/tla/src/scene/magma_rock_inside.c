@@ -551,7 +551,7 @@ void MagmaRockInside_StartLavaPlatform(s32 id, s32 *path, s16 flag) {
     platform->groundHeight = -toFIXED(14);
     platform->y.fixed = -toFIXED(14);
   }
-  platform->update = (void (*)(void))MagmaRockInside_PausePlatform;
+  platform->update = (ObjectUpdate)MagmaRockInside_PausePlatform;
 }
 
 s32 MagmaRockInside_SetCellShape(s32 terrain, s32 x, s32 z, s32 height);
@@ -827,7 +827,7 @@ void MagmaRockInside_TargetStatue(s32 stage) {
     MagmaRockInside_FindStatue(table);
     actor = watch->child;
     actor->flashMask = 4;
-    actor->update = (void (*)(void))MagmaRockInside_FlashStatue;
+    actor->update = (ObjectUpdate)MagmaRockInside_FlashStatue;
   }
   if (stage == 3) {
     struct Actor *actor;
@@ -835,7 +835,7 @@ void MagmaRockInside_TargetStatue(s32 stage) {
     MagmaRockInside_FindStatue(table);
     actor = watch->child;
     actor->flashMask = 2;
-    actor->update = (void (*)(void))MagmaRockInside_FlashStatue;
+    actor->update = (ObjectUpdate)MagmaRockInside_FlashStatue;
   }
 }
 
@@ -920,7 +920,7 @@ void MagmaRockInside_FireFromStatue(struct Actor *source) {
 end:
   flame->acceleration = toFIXED(2);
   flame->speedLimit = toFIXED(2);
-  flame->update = (void (*)(void))MagmaRockInside_TrailEmbers;
+  flame->update = (ObjectUpdate)MagmaRockInside_TrailEmbers;
   FieldActor_SetMoveTargetFX(flame, position[0], position[1], position[2]);
   FieldCamera_SetSpeed(2);
   FieldCamera_MoveToFX(position[0], position[1], position[2], 1);
@@ -959,7 +959,7 @@ end:
 hit:
   flame->acceleration = toFIXED(2);
   flame->speedLimit = toFIXED(2);
-  flame->update = (void (*)(void))MagmaRockInside_TrailEmbers;
+  flame->update = (ObjectUpdate)MagmaRockInside_TrailEmbers;
   FieldActor_SetMoveTargetFX(flame, position[0], position[1], position[2]);
   FieldCamera_SetSpeed(2);
   FieldCamera_MoveToFX(position[0], position[1], position[2], 1);
@@ -1096,7 +1096,7 @@ void MagmaRockInside_RaiseLava(void) {
   s32 srcZ = 0;
   FIXED baseX = 0;
   struct MapLayer *layer =
-      &Ram_HeapSlots->mapGrid->layers[MAPGRID_LAYER_MIDDLE];
+      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[MAPGRID_LAYER_MIDDLE];
   struct EffectOptions options;
   s32 position[3];
   // LAVA_ALREADY_UP when the room is already flooded; then the frames the
@@ -1718,12 +1718,8 @@ void MagmaRockInside_TrackStepCell(void) {
 /// Starts watching the cells the leader steps on in the Blaze tablet's room
 /// (MagmaRockInside_TrackStepCell).
 void MagmaRockInside_StartStepCells(void) {
-  s32 none = -1;
-  s32 priority;
-
-  gMagmaRockInside_LastStepCell = none;
-  priority = TASK_PASS_FRAME;
-  FieldTask_AddFrame(MagmaRockInside_TrackStepCell, priority);
+  gMagmaRockInside_LastStepCell = -1;
+  FieldTask_AddFrame(MagmaRockInside_TrackStepCell, TASK_PASS_FRAME);
 }
 
 /// Saves the 1 by 2 cells 64 columns across from the controlled object at
@@ -2153,7 +2149,7 @@ void MagmaRockInside_LearnBlaze(s32 tabletId, s32 learnerId) {
   PaletteFade_StartInterpolation(80);
   Actor_SetScript(tabletId, gMagmaRockInside_TabletSettleScript);
   Actor_SetScript(learnerId, gMagmaRockInside_JennaSettleScript);
-  learner->update = (void (*)(void))MagmaRockInside_TrailSparks;
+  learner->update = (ObjectUpdate)MagmaRockInside_TrailSparks;
   wait(120);
   learner->update = NULL;
   Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
@@ -2910,8 +2906,9 @@ s32 MapCollision_FindOrAddTag(s32 layer, s32 shape, s32 height);
 /// by heightOffset steps of 8 pixels.
 void MagmaRockInside_SetActorCellShape(s32 heightOffset, s32 layer, s32 owner) {
   struct Actor *actor = Actor_GetById(owner);
-  u8 *shape = Ram_MapShapeGrid + (Ram_HeapSlots->mapGrid->layers[layer].cells -
-                                  (struct MapCell *)Ram_MapCellBuffer);
+  u8 *shape = Ram_MapShapeGrid +
+              (((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[layer].cells -
+               (struct MapCell *)Ram_MapCellBuffer);
   s32 value =
       MapGrid_GetTerrainKind(actor->layer, actor->x.fixed, actor->z.fixed);
   s32 height = CELL_HEIGHT_STEPS(
@@ -2992,20 +2989,17 @@ void MagmaRockInside_StartFallingRocks(void) {
   work->tileBase = tile;
   work->resource = entry;
   rock = work->rocks;
-  sprite = work->sprites;
-  for (i = 0; i < ROCK_COUNT; i++, sprite++, rock++) {
+  for (i = 0; i < ROCK_COUNT; i++) {
+    sprite = &work->sprites[i];
     MagmaRockInside_InitRockSprite(sprite, 8, 8, OBJ_SIZE_16X16, tile);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = SPRITE_COLOR_NORMAL;
     sprite->oam.priority = 0;
     sprite->depth = OAM_DEPTH_WINDOW;
     rock->timer = -1;
+    rock++;
   }
-  {
-    s32 zero = 0;
-
-    work->next = zero;
-  }
+  work->next = 0;
   FieldTask_AddFrame(Particle_UpdateFalling, TASK_PASS_FRAME);
 }
 

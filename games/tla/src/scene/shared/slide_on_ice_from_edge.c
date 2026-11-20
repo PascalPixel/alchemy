@@ -83,7 +83,7 @@ retry:
     System_Wait(1);
   }
 #endif
-  actor->update = (void (*)(void))Actor_SteerByPad;
+  actor->update = (ObjectUpdate)Actor_SteerByPad;
   for (;;) {
     FieldVector_AddPolarOffset(16, angle, position);
     q = position;

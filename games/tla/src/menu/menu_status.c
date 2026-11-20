@@ -75,15 +75,8 @@ s32 PartyMemberChooser_Open(void) {
   state->partyCount = Party_ListMembersFar(state->memberIds);
   StatusScreen_Initialize(0, 3, 0, 7);
   state->selectorWindow = Window_CreateFar(13, 0, 17, 5, WINDOW_FLAG_INSTANT);
-  {
-    struct {
-      u16 value;
-    } y;
-
-    y.value = MENU_MEMBER_Y;
-    for (index = 3; index >= 0; index--)
-      state->memberY[index] = y.value;
-  }
+  for (index = 0; index < 4; index++)
+    state->memberY[index] = MENU_MEMBER_Y;
   state->page = STATUS_SCREEN_PAGE_CHOOSER;
 
   result = PartyMemberChooser_Run();
@@ -570,15 +563,8 @@ s32 PartyMemberChooser_MoveEntry(s32 selectedIndex, s32 direction) {
       return 0;
   }
 
-  {
-    u32 zero = 0;
-    u32 *clear = &reordered[ARRAY_COUNT(reordered) - 1];
-
-    do {
-      *clear = zero;
-      clear--;
-    } while ((s32)clear >= (s32)reordered);
-  }
+  for (index = 0; index < (s32)ARRAY_COUNT(reordered); index++)
+    reordered[index] = 0;
   for (index = 0; index < *(u8 *)&menu->partyCount; index++)
     reordered[index] = menu->memberIds[index];
 
@@ -1082,8 +1068,8 @@ void ItemMenu_DrawMemberStatus(s32 window, s32 owner, s32 flags) {
     wait(1);
     Window_ClearInteriorTilesFar(window, 144, 0, 224, 40);
   }
-  /* FAKEMATCH(temporary): "Attack", "Defense", "Agility" and "Luck",
-     MsgStatLabel and the three after it, counted back from MsgExpLabel. */
+  // "Attack", "Defense", "Agility" and "Luck", each counted back from
+  // MsgExpLabel as the ROM counts them.
   Text_DrawMessageAsTilesFar(STAT_LABEL(0), window, 152, 0);
   Text_DrawMessageAsTilesFar(STAT_LABEL(1), window, 152, 8);
   Text_DrawMessageAsTilesFar(STAT_LABEL(2), window, 152, 16);
@@ -1158,8 +1144,6 @@ extern const u32 gMenu_PatternRowMasks[][2];
 /// own elsewhere (Menu_BuildLocalizedPatternTiles).
 #define STATUS_RANGE_ICON_FIRST_TILE 768
 
-static __inline__ u32 XorWord(u32 word, u32 mask) { return word ^ mask; }
-
 /// Builds the twelve range icons PsynergyMenu_DrawRange draws, as the 24 BG
 /// tiles from STATUS_RANGE_ICON_FIRST_TILE: icon n is a centre tile and an end
 /// tile, filled with WINDOW_BACKGROUND_COLOR, then marked row by row by XOR
@@ -1190,8 +1174,6 @@ void Menu_BuildPatternTiles(void) {
           if (sourcePattern < 0)
             sourcePattern = 0;
         }
-        /* FAKEMATCH(wrapper): the XOR made through XorWord, as The Broken
-           Seal's twin writes it. */
         tile[row] = XorWord(tile[row], gMenu_PatternRowMasks[sourcePattern][0]);
         tile[row + 8] =
             XorWord(tile[row + 8], gMenu_PatternRowMasks[sourcePattern][1]);

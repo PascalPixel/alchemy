@@ -74,7 +74,6 @@ void FieldPsynergy_Parch(void) {
   struct Actor *actor;
   struct Sprite *actorSprite;
   struct EffectSprite *sprite;
-  struct EffectSprite *cursor;
   struct EffectSprite *fresh;
   struct ParchPuff *particle;
   FIXED screen[3];
@@ -197,13 +196,12 @@ loaded:
       particle->timer = 0;
       next = (next + 1) & (PARCH_PUFF_COUNT - 1);
     }
-    particle = work->particles;
-    cursor = work->sprites;
-    for (i = 0; i < PARCH_PUFF_COUNT; i++) {
+    for (i = 0, particle = work->particles; i < PARCH_PUFF_COUNT;
+         i++, particle++) {
       if (particle->timer >= 0) {
         s32 grown;
-        /* FAKEMATCH(temporary): sprite holds a copy of cursor. */
-        sprite = cursor;
+
+        sprite = &work->sprites[i];
         sprite->oam.index = tile + ((particle->timer >> 2) & 7) * 8;
         grown = sprite->scaleX + FIXED_ONE / 10;
         // DEAD: stored again after the clamp; the ROM keeps both stores.
@@ -225,8 +223,6 @@ loaded:
         if (++particle->timer == 32)
           particle->timer = -1;
       }
-      cursor++;
-      particle++;
     }
 
     for (i = 0; i < PARCH_GLOW_COLORS; i++) {

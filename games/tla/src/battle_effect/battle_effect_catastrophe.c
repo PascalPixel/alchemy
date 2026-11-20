@@ -198,6 +198,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   struct Particle *burst;
   u16 *backdropColor;
   u8 *resource;
+  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
   s32 zero;
   u8 *cellBuffer = Ram_MapCellBuffer;
   s32 span = toFIXED(8);

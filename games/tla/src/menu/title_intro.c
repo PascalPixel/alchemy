@@ -768,9 +768,7 @@ s32 TitleIntro_ShowLighthouse(void) {
   struct TitleLogoState *logo;
   u8 *source;
   u16 *map;
-  s16 tile;
-  s32 tileStep = 1 << 16;
-  s32 number;
+  u16 tile;
   s32 row;
   s32 i;
   u8 *buffer;
@@ -798,11 +796,7 @@ s32 TitleIntro_ShowLighthouse(void) {
   tile = 0;
   for (row = 0; row < DISPLAY_TILE_HEIGHT; row++) {
     for (i = 0; i < DISPLAY_TILE_WIDTH; i++) {
-      /* FAKEMATCH(temporary): the old tile kept in number, the step spelt on
-       * the high halfword. */
-      number = tile;
-      tile = ((tile << 16) + tileStep) >> 16;
-      *map++ = number;
+      *map++ = tile++;
     }
     *map++ = OFFSCREEN_TILE;
     *map++ = OFFSCREEN_TILE;
@@ -937,7 +931,7 @@ s32 TitleIntro_Run(void) {
     TitleIntro_ShowLighthouse();
   gOamCopyEnabled = 1;
   wait(1);
-  /* FAKEMATCH(temporary): result reused as the counter. */
+  // result is reused as the counter.
   for (result = 0; result < 4; result++)
     gBgScroll[result].x = gBgScroll[result].y = 0;
   REG_DISPCNT = 0;

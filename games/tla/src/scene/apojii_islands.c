@@ -548,7 +548,7 @@ void ApojiiIslands_FatherSeesTheStone(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Actor_Get(ACTOR_AQUA_STONE)->update =
-      (void (*)(void))ApojiiIslands_StopFlashing;
+      (ObjectUpdate)ApojiiIslands_StopFlashing;
   FieldEvent_SetMessageId((s32)&MsgWhatWhatJust);
   Actor_FaceActor(gMainRoutineWork.leaderActorId, ACTOR_FATHER, 0);
   Event_StartScreenTransition();
@@ -787,7 +787,8 @@ void Scroll_HBlank(void) {
 /// Each frame, follows the third map layer's scroll for the split, the water
 /// below it drifting west a pixel every fourth frame.
 void Layer_TrackScroll(void) {
-  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[2];
+  struct MapLayer *layer =
+      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
   s16 y = FIXEDtoINT(layer->y);
 
   gApojiiIslands_SplitLine = 1448 - y;
@@ -1130,14 +1131,11 @@ void ApojiiIslands_AddCellMarkers(u32 base, s32 level, s32 restLevel) {
               terrain[(u16)x + ((u16)z << 7)] = MAP_SHAPE_MARKED;
             }
           }
-          /* FAKEMATCH(temporary): the step taken through a 16.16 value, as
-           * the push footprints' searches take theirs; plainly, x++. */
-          x = FIXEDtoINT(toFIXED(x + 1));
+          x = NEXT_HALFWORD(x);
           cell++;
         } while ((u16)x < width);
       }
-      /* FAKEMATCH(temporary): the same step; plainly, z++. */
-      z = FIXEDtoINT(toFIXED(z + 1));
+      z = NEXT_HALFWORD(z);
     } while ((u16)z < height);
   }
 }

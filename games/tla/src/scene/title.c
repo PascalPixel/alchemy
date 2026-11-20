@@ -308,7 +308,8 @@ static void Title_LoadBackground(void) {
     bgScroll++;
   }
   Dma_Set(gBgScroll, REG_BG0HOFS, DMA_COPY_WORDS(4), REG_DMA3);
-  Ram_HeapSlots->mapGrid->dispcnt = DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
+  ((struct MapWork *)Ram_HeapSlots->mapGrid)->dispcnt =
+      DISPCNT_BG2_ON | DISPCNT_OBJ_ON;
 }
 
 struct SceneEntrance gSceneEntrances[] = {

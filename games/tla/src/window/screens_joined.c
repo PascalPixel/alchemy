@@ -39,6 +39,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   s32 tile, slot;
   s32 id;
   s32 text;
+  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
   u32 zero;
   s32 *p;
 

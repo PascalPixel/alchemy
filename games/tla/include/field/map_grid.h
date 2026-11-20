@@ -118,7 +118,9 @@ enum MapCellAttribute {
 /// One cell of a map layer: its cell picture and flags, its collision
 /// code and a second attribute byte.
 struct MapCell {
-  u16 cellPictureAndFlags;
+  u16 picture : 12;      ///< its cell picture
+  u16 actorLayer : 2;    ///< the map layer an actor here takes, plus one
+  u16 actorPriority : 2; ///< the sprite priority an actor here is drawn at
   u8 collisionCode;
   u8 attributeB;
 };
@@ -130,7 +132,7 @@ struct MapCell {
   ((u32)(attributes) << 24 | (behavior) << 16 | (pictureFlags))
 /// A cell picture's flags for an actor standing on the cell: the sprite
 /// priority it is drawn at and the map layer it takes, which the actors'
-/// placement reads (bits 15..14 and 13..12 of cellPictureAndFlags).
+/// placement reads (MapCell's actorPriority and actorLayer).
 #define CELL_DRAWS_ACTOR(priority, layer)                                      \
   ((priority) << 14 | ((layer) + 1) << 12)
 

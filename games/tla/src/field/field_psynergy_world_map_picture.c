@@ -509,6 +509,7 @@ void WorldMapPicture_Draw(void) {
   FIXED right;
   FIXED bottom;
   s32 tile;
+  s32 cell;
 
   if (work->centered != 0) {
     resource = RESOURCE_WORLD_MAP_PICTURE;
@@ -538,37 +539,24 @@ void WorldMapPicture_Draw(void) {
   for (row = 0; row < PICTURE_DRAWN_ROWS; row++) {
     bufferRow = firstRow + row;
     unwrapped = bufferRow;
-    /* FAKEMATCH(barrier): an empty asm reading x. */
-    asm("" : : "r"(x));
     if (bufferRow >= WORLD_PICTURE_TILE_ROWS)
       bufferRow -= WORLD_PICTURE_TILE_ROWS;
-    // z is reused for the tile's place in BG1's map, and x for the cell.
+    cell = bufferRow * PICTURE_TILES_ACROSS + column;
+    // z is reused for the tile's place in BG1's map.
     z = (column & (BG_SCREEN_WIDTH - 1)) + unwrapped * BG_SCREEN_WIDTH;
     tile = (z + WORLD_PICTURE_MAP_START) % WORLD_PICTURE_TILES +
            WORLD_PICTURE_FIRST_TILE;
     Decompress_TaggedLz((u8 *)graphics + graphics[unwrapped + 1],
                         buffer + bufferRow * PICTURE_ROW_BYTES);
-    x = bufferRow * PICTURE_TILES_ACROSS;
-    x += column;
-    {
-      s32 to;
-
-      i = 0;
-      to = VRAM;
-      x *= TILE_SIZE_8BPP;
-      x += (s32)buffer;
-      /* FAKEMATCH(barrier): VRAM's address through an empty asm that also reads
-       * i. */
-      asm("" : "=r"(to) : "0"(to), "r"(i));
-      for (; i < PICTURE_DRAWN_COLUMNS; i++) {
-        Dma_Set((void *)x, (void *)(tile * TILE_SIZE_8BPP + to),
-                DMA_COPY_WORDS(TILE_SIZE_8BPP / 4), REG_DMA3);
-        x += TILE_SIZE_8BPP;
-        tile++;
-        // BG1's map is 32 tiles wide: the next column wraps to its left edge.
-        if (i + column == BG_SCREEN_WIDTH - 1)
-          tile -= BG_SCREEN_WIDTH;
-      }
+    for (i = 0; i < PICTURE_DRAWN_COLUMNS; i++) {
+      Dma_Set(buffer + cell * TILE_SIZE_8BPP,
+              (void *)(VRAM + tile * TILE_SIZE_8BPP),
+              DMA_COPY_WORDS(TILE_SIZE_8BPP / 4), REG_DMA3);
+      cell++;
+      tile++;
+      // BG1's map is 32 tiles wide: the next column wraps to its left edge.
+      if (i + column == BG_SCREEN_WIDTH - 1)
+        tile -= BG_SCREEN_WIDTH;
     }
   }
 }
@@ -776,6 +764,7 @@ s32 WorldPicture_Show(s32 mode) {
   s32 *cursorZ;
   s32 *scrollX;
   s32 *scrollZ;
+  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
   s32 zero;
   s32 limitX;
   s32 limitZ;
@@ -962,6 +951,8 @@ s32 WorldPicture_Show(s32 mode) {
         if (mode != 0) {
           routine->teleportScene = -1;
           {
+            /* FAKEMATCH(temporary): none, -1 held in a local; as -1 at its
+             * uses. */
             s32 none = -1;
 
             choice->flag = none;

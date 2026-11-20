@@ -1858,6 +1858,7 @@ void Kibombo_FlickerStatueFires(void) {
 /// Creates the Black Crystal, drawn with the item's own icon.
 void Kibombo_CreateBlackCrystal(void) {
   struct Actor **slot = &gKibombo_BlackCrystal;
+  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
   s32 zero = 0;
   struct Actor *actor = Import_ActorCreate(SPRITE_UNSEEN_MARKER, toFIXED(265),
                                            toFIXED(36), toFIXED(344));
@@ -1940,7 +1941,7 @@ void Kibombo_RaiseEmbers(void) {
       actor->timer = 0;
       actor->speedLimit = 0;
       actor->acceleration = 0;
-      actor->update = (void (*)(void))FieldEffect_AdvanceMotion;
+      actor->update = (ObjectUpdate)FieldEffect_AdvanceMotion;
     }
   }
 }
@@ -1964,23 +1965,18 @@ void Kibombo_RaiseSmoke(void) {
   if ((gFrameCount & 63) == 0) {
     struct Actor *actor = Import_ActorCreate(SPRITE_DUST_CLOUD, toFIXED(88),
                                              toFIXED(16), toFIXED(314));
-    u8 *part;
-    s32 mask;
 
     if (actor != 0) {
       actor->retainSpriteCache = 2;
       actor->motionFlags = 0;
       actor->timer = 0;
       actor->priorityFlags &= ~ACTOR_PRIORITY_AUTOMATIC;
-      /* FAKEMATCH(temporary): the priority bits' mask held in a word local. */
-      mask = ~(OBJ_PRIORITY(3) >> 8);
-      part = (u8 *)actor->sprite;
-      part[9] = (part[9] & mask) | OBJ_PRIORITY(2) >> 8;
+      ((struct FieldSprite *)actor->sprite)->priority = 2;
       Actor_SetSpriteFlags(actor, 0);
       actor->scaleX = FIXED_ONE / 2;
       actor->scaleY = FIXED_ONE / 2;
       *(s32 *)&actor->watchedActor = SMOKE_FRAMES;
-      actor->update = (void (*)(void))Kibombo_UpdateSmoke;
+      actor->update = (ObjectUpdate)Kibombo_UpdateSmoke;
       Actor_SelectAnimation(actor, 5);
       Actor_SetBlendMode(actor, 1);
     }
@@ -2016,7 +2012,7 @@ void Kibombo_SpawnFlame(s32 x, s32 y, s32 z) {
     actor->scaleY = FIXED_ONE * 2;
     actor->timer = (Random_Below(10)) + 10;
     actor->userValue = 0;
-    actor->update = (void (*)(void))Kibombo_FlickerFlame;
+    actor->update = (ObjectUpdate)Kibombo_FlickerFlame;
     sprite = actor->sprite;
     sprite->priority = 1;
     Actor_SetSpriteFlags(actor, 0);
@@ -2057,18 +2053,16 @@ void Kibombo_RestoreBlocks(void) {
 /// pixels.
 void Kibombo_HideGroundsBlocks(void) {
   u32 i;
-  FIXED zero;
 
   for (i = 0; i <= 1; i++) {
     s32 id = i + ACTOR_GROUNDS_FIRST_BLOCK;
     struct Actor *actor = Actor_GetById(id);
 
     Actor_Hide(id);
-    zero = 0;
-    actor->motionFlags = zero;
+    actor->motionFlags = 0;
   }
   Actor_GetById(ACTOR_GROUNDS_FIRST_BLOCK)->y.fixed = toFIXED(32);
-  Actor_GetById(ACTOR_GROUNDS_SECOND_BLOCK)->y.fixed = zero;
+  Actor_GetById(ACTOR_GROUNDS_SECOND_BLOCK)->y.fixed = 0;
   Kibombo_RestoreBlocks();
 }
 
@@ -2252,7 +2246,7 @@ void Kibombo_AkafubuChants(void) {
       spark->targetX = center->x.fixed;
       spark->targetY = center->y.fixed + toFIXED(24);
       spark->targetZ = center->z.fixed;
-      spark->update = (void (*)(void))Kibombo_SpinSpark;
+      spark->update = (ObjectUpdate)Kibombo_SpinSpark;
     }
     angle += toFIXED(22);
     i++;
@@ -2996,9 +2990,9 @@ void Kibombo_GabombaResponds(void) {
                        SPRITE_COLOR_WHITE);
   wait(8);
   Actor_GetById(ACTOR_STATUE_LEFT_EYE)->update =
-      (void (*)(void))Kibombo_FlashSprite;
+      (ObjectUpdate)Kibombo_FlashSprite;
   Actor_GetById(ACTOR_STATUE_RIGHT_EYE)->update =
-      (void (*)(void))Kibombo_FlashSprite;
+      (ObjectUpdate)Kibombo_FlashSprite;
   Actor_ShowEmoteById(ACTOR_AKAFUBU, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
   Event_SetMessageId((s32)MsgLookTheGreat);
   // "Look! The Great Gabomba has responded to our gift!"

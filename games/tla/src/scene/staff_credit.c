@@ -149,15 +149,12 @@ void StaffCredit_StepPaletteColors(u16 *colors, s32 count, s32 red, s32 green,
 /// Draws the beacon's glow as rings of light about a corner, brightest at the
 /// middle.
 void StaffCredit_DrawGlowRings(u8 *grid, s32 count, s32 scale) {
-  /* FAKEMATCH(temporary): Iwram_FillWordsEntry called through the local fill.
-   */
-  s32 (*fill)(void *destination, s32 size, u32 value) = Iwram_FillWordsEntry;
   s32 i = 0;
   // The corner the rings are centred on.
   s32 cornerColumn = GLOW_GRID_SIZE - 1;
   s32 cornerRow = GLOW_GRID_SIZE - 1;
 
-  fill(grid, GLOW_GRID_SIZE * GLOW_GRID_SIZE, PIXELS_8BPP(1));
+  Iwram_FillWords(grid, GLOW_GRID_SIZE * GLOW_GRID_SIZE, PIXELS_8BPP(1));
   if (count == 1)
     return;
   do {
@@ -301,15 +298,8 @@ void StaffCredit_ShowBeacon(s32 stage) {
         (u32)&BG_PLTT_COLOR(PICTURE_PALETTE, 0),
         (u32)(gStaffCredit_BeaconPalettes + palette * PALETTE_COLORS * 2),
         DMA_COPY_HALFWORDS(PALETTE_COLORS));
-    {
-      /* FAKEMATCH(temporary): Iwram_ClearWordsEntry called through the local
-       * clear, with its arguments in locals. */
-      void (*clear)(void *, s32) = (void (*)(void *, s32))Iwram_ClearWordsEntry;
-      s32 size = GLOW_CLEARED_TILES * TILE_SIZE_4BPP;
-      void *tilesAt = (void *)PICTURE_TILES;
-
-      clear(tilesAt, size);
-    }
+    Iwram_ClearWords((void *)PICTURE_TILES,
+                     GLOW_CLEARED_TILES * TILE_SIZE_4BPP);
     wait(1);
     // The glow's map: its quarter drawn four times, mirrored across and down
     // into a whole disc, and blank rows below.
@@ -670,9 +660,9 @@ void Actor_SetFlightMode(struct Actor *actor, s32 mode) {
     Actor_SetSpriteColorMode(actor, SPRITE_COLOR_NORMAL);
     Event_PlaySound(SOUND_FADE_OUT_ACTION_SE);
   } else if (mode == 1) {
-    actor->update = (void (*)(void))StaffCredit_FlashPoweringUp;
+    actor->update = (ObjectUpdate)StaffCredit_FlashPoweringUp;
   } else {
-    actor->update = (void (*)(void))StaffCredit_GlowInFlight;
+    actor->update = (ObjectUpdate)StaffCredit_GlowInFlight;
     Event_PlaySound(SE_TAKE_FLIGHT);
   }
 }

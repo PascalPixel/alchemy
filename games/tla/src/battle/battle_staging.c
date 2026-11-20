@@ -127,14 +127,10 @@ void BattleStaging_PlanAuroraField(struct BattlePlan *plan) {
     plan->targetCritical[i] = 0;
     plan->targetHit[i] = 1;
   }
-  {
-    s32 zero = 0;
-
-    plan->abilityId = ABILITY_AURORA_FIELD;
-    plan->targetCount = count;
-    plan->battleEffect = EFFECT_ON_DOWNED | 2 << EFFECT_VARIANT_SHIFT | 182;
-    plan->hauntDamage = zero;
-  }
+  plan->targetCount = count;
+  plan->abilityId = ABILITY_AURORA_FIELD;
+  plan->battleEffect = EFFECT_ON_DOWNED | 2 << EFFECT_VARIANT_SHIFT | 182;
+  plan->hauntDamage = 0;
 }
 
 /// Sends every battler back to its spot.
@@ -183,20 +179,9 @@ s32 BattleStaging_DispatchAction(struct BattleActionRecord *request,
   Matrix_Initialize();
   Matrix_SetLookAt(camera->eye, camera->focus);
   {
-    s32 param;
-    s32 ratio;
-    // Called through a local, as field/event_commands.c calls it.
-    s32 (*ratioMul)(s32, s32) = Iwram_RatioMulQ14Entry;
+    s32 ratio = Iwram_RatioMulQ14(BATTLE_CAMERA_DISTANCE, FIXED_ONE * 3 / 4);
 
-    /* FAKEMATCH(temporary): BATTLE_CAMERA_DISTANCE built in a local in two
-     * steps each time it is passed, its half in pixels shifted back up by 17;
-     * as the name passed twice. */
-    param = FIXEDtoINT(BATTLE_CAMERA_DISTANCE) / 2;
-    param <<= 17;
-    ratio = ratioMul(param, FIXED_ONE * 3 / 4);
-    param = FIXEDtoINT(BATTLE_CAMERA_DISTANCE) / 2;
-    param <<= 17;
-    Projection_Set(param, ratio, BATTLE_FAR_DEPTH);
+    Projection_Set(BATTLE_CAMERA_DISTANCE, ratio, BATTLE_FAR_DEPTH);
   }
   if (delay != 0) {
     view->targetYaw = YAW_PARTY_ACTION;

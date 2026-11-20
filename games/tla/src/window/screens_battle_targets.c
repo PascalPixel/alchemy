@@ -289,16 +289,13 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
                              WINDOW_FLAG_OUTLINED_TEXT);
 
   for (;;) {
-    /* FAKEMATCH(dead): a once-only block; as its body alone. */
-    do {
-      /* FAKEMATCH(temporary): firstSprite holds &cursorSprites[0]. */
-      firstSprite = cursorSprites;
-      drawCursors = 0;
-      BattleMotion_ProjectConditionalPositionFar(candidateIds[targetIndex],
-                                                 &selectedPosition);
-      ((u32 *)firstSprite)[1] = OBJ_SIZE_16X16 | OBJ_256_COLORS;
-      ((u32 *)firstSprite)[2] = 0;
-    } while (0);
+    /* FAKEMATCH(temporary): firstSprite holds &cursorSprites[0]. */
+    firstSprite = cursorSprites;
+    drawCursors = 0;
+    BattleMotion_ProjectConditionalPositionFar(candidateIds[targetIndex],
+                                               &selectedPosition);
+    ((u32 *)firstSprite)[1] = OBJ_SIZE_16X16 | OBJ_256_COLORS;
+    Io_Write32(0, &((u32 *)firstSprite)[2]);
     // The cursor: 32 frames (256 bytes each), a frame every four frames,
     // bobbing 2 pixels each way every 16 frames.
     firstSprite->tile =

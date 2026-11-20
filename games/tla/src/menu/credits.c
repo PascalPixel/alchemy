@@ -961,8 +961,8 @@ void EndingPicture_Scroll(void) {
     gEndingPicture_Row += d;
   }
   {
-    /* FAKEMATCH(temporary): the scroll read through a word pointer. */
-    s32 *word = (s32 *)&gEndingPicture_Scroll;
+    /* FAKEMATCH(temporary): the scroll read through a pointer to it. */
+    volatile s32 *word = &gEndingPicture_Scroll;
     FIXED target = toFIXED(gEndingPicture_Row);
 
     scroll = *word;
@@ -1023,11 +1023,8 @@ void EndingPicture_Start(void) {
   gIdleSleepEnabled = 0;
   Task_ResetAll();
   gEndingPicture_MapScroll = 0;
-  gEndingPicture_Scroll = 0;
-  /* FAKEMATCH(temporary): the rows zeroed through the map pointer's NULL in
-     one chained assignment. */
-  gEndingPicture_TargetRow = gEndingPicture_Row =
-      (s32)(gEndingPicture_Map = NULL);
+  gEndingPicture_TargetRow = gEndingPicture_Row = gEndingPicture_Scroll = 0;
+  gEndingPicture_Map = NULL;
   gEndingPicture_Speed = 1;
   gEndingPicture_Block = 0;
   Task_Add(EndingPicture_Scroll, TASK_PASS_FRAME);

@@ -124,7 +124,7 @@ void FieldEffect_CircleAnchor(struct Actor *effect) {
   effect->z.fixed = anchor->z.fixed + dz;
   effect->facing += WHIRLWIND_ORBIT_ANGLE_STEP;
   if (++effect->swirlFrames == WHIRLWIND_ORBIT_FRAMES) {
-    effect->update = (void (*)(void))FieldEffect_WanderAroundAnchor;
+    effect->update = (ObjectUpdate)FieldEffect_WanderAroundAnchor;
     effect->swirlFrames = 0;
     effect->turnFrames = 0;
     effect->gravity = toFIXED(1) / 10;
@@ -223,7 +223,7 @@ void FieldPsynergy_Whirlwind(void) {
     // higher each, 3 to 8 pixels out, circle it while the target shrinks.
     wait(20);
     if (target != 0)
-      target->update = (void (*)(void))FieldEffect_ShrinkActorScaleUntilHalf;
+      target->update = (ObjectUpdate)FieldEffect_ShrinkActorScaleUntilHalf;
     for (i = 0; i < WHIRLWIND_LEAF_COUNT; i++) {
       s32 distance;
 
@@ -234,7 +234,7 @@ void FieldPsynergy_Whirlwind(void) {
       Vector_AddPolarOffset(distance, Random16(), &position);
       leaf = Actor_Spawn(SPRITE_LEAF, position.x, position.y, position.z);
       if (leaf != 0) {
-        leaf->update = (void (*)(void))FieldEffect_CircleAnchor;
+        leaf->update = (ObjectUpdate)FieldEffect_CircleAnchor;
         leaf->watchedActor = orb;
         leaf->swirlFrames = 0;
         leaf->turnFrames = 0;
@@ -266,7 +266,7 @@ void FieldPsynergy_Whirlwind(void) {
         Vector_AddPolarOffset(distance, Random16(), &position);
         leaf = Actor_Spawn(SPRITE_LEAF, position.x, position.y, position.z);
         if (leaf != 0) {
-          leaf->update = (void (*)(void))FieldEffect_WanderAroundAnchor;
+          leaf->update = (ObjectUpdate)FieldEffect_WanderAroundAnchor;
           leaf->swirlFrames = 20 + i * -2;
           leaf->turnFrames = 0;
           leaf->gravity = toFIXED(1) / 10;
@@ -278,7 +278,7 @@ void FieldPsynergy_Whirlwind(void) {
     BattleEffect_SetObjectUpdateMode(scene->mainActor, 0);
     FieldPsynergy_FadeFromCastColor();
     orb->timer = 0;
-    orb->update = (void (*)(void))BattleEffect_AgeAndCueAtEighty;
+    orb->update = (ObjectUpdate)BattleEffect_AgeAndCueAtEighty;
     HangingVine_Swing(scene->secondActorId);
     Actor_WaitForTrackEndFar(orb);
     Actor_ReleaseFar(orb);
@@ -460,7 +460,7 @@ void FieldPsynergy_HaltActor(s32 actorId) {
 
   actor = Actor_Lookup(actorId);
   if (actor != NULL) {
-    gMainRoutineWork.pausedUpdate = (u32)actor->update;
+    gMainRoutineWork.pausedUpdate = actor->update;
     gMainRoutineWork.pausedPose = 0;
     if (actor->spriteStorageKind == ACTOR_SPRITE_ONE) {
       entry = ((struct Sprite *)actor->sprite)->entries[0];
@@ -468,7 +468,7 @@ void FieldPsynergy_HaltActor(s32 actorId) {
         gMainRoutineWork.pausedPose = entry->colorMode;
       }
     }
-    actor->update = (void (*)(void))FieldPsynergy_UpdateHaltedActor;
+    actor->update = (ObjectUpdate)FieldPsynergy_UpdateHaltedActor;
     actor->paused = 1;
     Actor_SetAnimationSpeedFar(actor, 0);
   }
@@ -479,9 +479,9 @@ void FieldPsynergy_ResumeHaltedActor(s32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
-    if (actor->update == (void (*)(void))FieldPsynergy_UpdateHaltedActor) {
-      actor->update = (void (*)(void))gMainRoutineWork.pausedUpdate;
-      gMainRoutineWork.pausedUpdate = 0;
+    if (actor->update == (ObjectUpdate)FieldPsynergy_UpdateHaltedActor) {
+      actor->update = gMainRoutineWork.pausedUpdate;
+      gMainRoutineWork.pausedUpdate = NULL;
       Actor_SetSpriteColorModeFar(actor, (s8)gMainRoutineWork.pausedPose);
     }
     actor->paused = 0;
@@ -914,7 +914,7 @@ void FieldPsynergy_Retreat(void) {
   wait(10);
   Actor_FaceDirectionById(effectWork->firstActorId, FACING_SOUTH, 0);
   wait(30);
-  actor->update = (void (*)(void))Actor_CycleSpriteColors;
+  actor->update = (ObjectUpdate)Actor_CycleSpriteColors;
   Sound_PlayFar(SE_PSYNERGY_SPARKLE);
   Actor_SelectAnimationFar(actor, ANIM_LEADER_ARMS_RAISED);
   wait(40);
@@ -923,14 +923,14 @@ void FieldPsynergy_Retreat(void) {
   Sound_PlayFar(SE_SHIMMER);
   Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_NORMAL);
   Actor_SelectAnimationFar(actor, 3);
-  actor->update = (void (*)(void))FieldEffect_UpdateSpinAngle;
+  actor->update = (ObjectUpdate)FieldEffect_UpdateSpinAngle;
   actor->timer = 0;
   wait(70);
 
   // Start shrinking, and send particles from where it is on screen.
   Actor_SetSpriteFlagsFar(actor, 0);
   actor->motionFlags = 0;
-  actor->update = (void (*)(void))FieldEffect_UpdateRetreatCaster;
+  actor->update = (ObjectUpdate)FieldEffect_UpdateRetreatCaster;
   actor->targetX = TARGET_UNSET;
   SET_POSITION(&pos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
   Camera_WorldToScreen(&pos);
@@ -1067,10 +1067,10 @@ void FieldEffect_SpawnDescendingArcParticles(struct Actor *source) {
   }
   // BUG: failed allocations above leave a missing arc or sprite here.
   actors[0]->update =
-      (void (*)(void))FieldEffect_UpdateDescendingParticleNegativeArc;
+      (ObjectUpdate)FieldEffect_UpdateDescendingParticleNegativeArc;
   ((struct DescendingArcSprite *)actors[0]->sprite)->attr.byte.priority = 0;
   actors[1]->update =
-      (void (*)(void))FieldEffect_UpdateDescendingParticlePositiveArc;
+      (ObjectUpdate)FieldEffect_UpdateDescendingParticlePositiveArc;
   ((struct DescendingArcSprite *)actors[1]->sprite)->attr.byte.priority =
       ((struct DescendingArcSprite *)leader->sprite)->attr.byte.priority;
 }
@@ -1150,7 +1150,7 @@ void FieldPsynergy_Avoid(void) {
   gMainRoutineWork.avoidDistance = toFIXED(2400);
   gMainRoutineWork.avoidByItem = GameFlag_Get(FLAG_ITEM_USE);
   Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_NORMAL);
-  actor->update = (void (*)(void))FieldEffect_UpdateAvoidCaster;
+  actor->update = (ObjectUpdate)FieldEffect_UpdateAvoidCaster;
   actor->arcPhase = 0;
   actor->arcFrames = 0;
   Sound_PlayFar(SE_SPIN);
@@ -1244,9 +1244,9 @@ void BattleEffect_SetObjectUpdateMode(struct Actor *actor, s32 mode) {
     actor->update = 0;
     Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_NORMAL);
   } else if (mode == 1) {
-    actor->update = (void (*)(void))FieldEffect_FlickerActorAndSpawnArcs;
+    actor->update = (ObjectUpdate)FieldEffect_FlickerActorAndSpawnArcs;
   } else {
-    actor->update = (void (*)(void))FieldEffect_CycleActorAndSpawnArcs;
+    actor->update = (ObjectUpdate)FieldEffect_CycleActorAndSpawnArcs;
   }
 }
 

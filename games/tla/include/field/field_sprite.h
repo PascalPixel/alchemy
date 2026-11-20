@@ -18,8 +18,7 @@ struct FieldSprite {
   u16 shape : 2;
   u16 x : 9; ///< screen pixels
   u16 affineIndex : 5;
-  u16 flipX : 1;
-  u16 flipY : 1;
+  u16 size : 2;
   u16 tile : 10; ///< first sprite tile in VRAM
   u16 priority : 2;
   u16 palette : 4;

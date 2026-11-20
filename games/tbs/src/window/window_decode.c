@@ -342,7 +342,6 @@ s32 Message_Decode(s32 script, s32 clear) {
   u16 name[MESSAGE_NAME_HALFWORDS];
   u8 numberBuffer[TEXT_NUMBER_BUFFER_SIZE];
   struct MessageReader reader;
-  struct MessageReader *messageReader;
 #if LANGUAGE == LANGUAGE_GERMAN || LANGUAGE == LANGUAGE_ITALIAN
   struct ItemPossessiveTable possessives;
   s32 kind;
@@ -357,14 +356,12 @@ s32 Message_Decode(s32 script, s32 clear) {
     decode = (s32 (*)(struct MessageReader *))HEAP_SLOT_BLOCK(
         HEAP_SLOT_MESSAGE_DECODER);
     Message_Find(&reader, script);
-    /* FAKEMATCH(temporary): messageReader holds &reader. */
-    messageReader = &reader;
 
-    do {
+    for (; running != 0 && decodedCount <= TEXT_BUFFER_MASK; decodedCount++) {
 #if LANGUAGE == LANGUAGE_ENGLISH
       previousCode = code;
 #endif
-      code = (u32)decode(messageReader);
+      code = (u32)decode(&reader);
       // A symbol past the font's characters becomes '@'.
       if (code > CHARACTER_CODE_MAX)
         code = '@';
@@ -375,7 +372,7 @@ s32 Message_Decode(s32 script, s32 clear) {
         if (code < TEXT_SPACE) {
           switch (code) {
           case MESSAGE_ARGUMENT_CLASS_NAME:
-            decode(messageReader);
+            decode(&reader);
             MessageArgument_Lookup(MESSAGE_ARGUMENT_CLASS, clear);
             break;
           case MESSAGE_END:
@@ -387,7 +384,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             MessageArgument_Lookup(MESSAGE_ARGUMENT_NUMBER, clear);
             break;
           case MESSAGE_ARGUMENT_ITEM_NAME:
-            decode(messageReader);
+            decode(&reader);
             MessageArgument_Lookup(MESSAGE_ARGUMENT_ITEM, clear);
             break;
           case MESSAGE_ARGUMENT_ABILITY_NAME:
@@ -398,16 +395,16 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case MESSAGE_TEXT_COLOR:
           case MESSAGE_TEXT_EFFECT:
-            decode(messageReader);
+            decode(&reader);
             break;
           case MESSAGE_ACTOR_NAME:
-            decode(messageReader);
+            decode(&reader);
             break;
           case MESSAGE_ARGUMENT_ACTOR_NAME:
-            decode(messageReader);
+            decode(&reader);
             break;
           case MESSAGE_ARTICLE_CLASS:
-            decode(messageReader);
+            decode(&reader);
             break;
           case MESSAGE_PAGE_BREAK:
             // The message ends at its first page, waiting for a button.
@@ -500,8 +497,7 @@ s32 Message_Decode(s32 script, s32 clear) {
           case MESSAGE_TEXT_EFFECT:
           case MESSAGE_ARTICLE_CLASS:
             TEXT_APPEND(entry, writePosition, (u16)code);
-            TEXT_APPEND(entry, writePosition,
-                        OPERAND_VALUE(decode(messageReader)));
+            TEXT_APPEND(entry, writePosition, OPERAND_VALUE(decode(&reader)));
             break;
           case MESSAGE_ARGUMENT_SIGNED_NUMBER:
             value = (s32)MessageArgument_Lookup(MESSAGE_ARGUMENT_NUMBER, clear);
@@ -525,7 +521,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             }
             break;
           case MESSAGE_ARGUMENT_CLASS_NAME:
-            no = decode(messageReader) - 1;
+            no = decode(&reader) - 1;
             argument = MessageArgument_Lookup(MESSAGE_ARGUMENT_CLASS, clear);
             Message_DecodeRaw(argument + MsgClassName, name,
                               MESSAGE_NAME_HALFWORDS);
@@ -533,7 +529,7 @@ s32 Message_Decode(s32 script, s32 clear) {
                 0, name, writePosition, entry, no, plural, &suffix);
             break;
           case MESSAGE_ARGUMENT_ITEM_NAME:
-            no = decode(messageReader) - 1;
+            no = decode(&reader) - 1;
 #if LANGUAGE == LANGUAGE_SPANISH
             form = no & 7;
 #endif
@@ -603,7 +599,7 @@ s32 Message_Decode(s32 script, s32 clear) {
                                                       entry, 0, 0, &suffix);
             break;
           case MESSAGE_ARGUMENT_ACTOR_NAME:
-            no = decode(messageReader) - 1;
+            no = decode(&reader) - 1;
             nameBytes = Unit_GetFar(MessageArgument_Lookup(
                                         MESSAGE_ARGUMENT_ACTOR, clear))
                             ->name;
@@ -619,7 +615,7 @@ s32 Message_Decode(s32 script, s32 clear) {
                 0, name, writePosition, entry, no, plural, &suffix);
             break;
           case MESSAGE_ACTOR_NAME:
-            argument = decode(messageReader) - 1;
+            argument = decode(&reader) - 1;
             nameBytes = Unit_GetFar(argument)->name;
             nameOutput = name;
             j = 0;
@@ -633,8 +629,7 @@ s32 Message_Decode(s32 script, s32 clear) {
                                                       entry, 0, 0, &suffix);
             break;
           case MESSAGE_BUTTON_ICON:
-            argument =
-                ((decode(messageReader) - 1) << 1) + BUTTON_ICON_FIRST_CODE;
+            argument = ((decode(&reader) - 1) << 1) + BUTTON_ICON_FIRST_CODE;
             TEXT_APPEND(entry, writePosition, argument);
             TEXT_APPEND(entry, writePosition, argument + 1);
             break;
@@ -648,7 +643,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
 #if LANGUAGE == LANGUAGE_GERMAN
           case MESSAGE_LOCALIZED_WORD:
-            no = decode(messageReader) - 1;
+            no = decode(&reader) - 1;
             nameBytes = gLocalizedWord_CountedNouns[(no & 7) * 2 + plural];
             while (*nameBytes != 0) {
               TEXT_APPEND(entry, writePosition, *nameBytes++);
@@ -657,7 +652,7 @@ s32 Message_Decode(s32 script, s32 clear) {
 #endif
 #if LANGUAGE == LANGUAGE_ITALIAN
           case MESSAGE_LOCALIZED_WORD:
-            ending = decode(messageReader) - 1;
+            ending = decode(&reader) - 1;
             if (ending == 0) {
               if (plural == 0)
                 entry[writePosition] = 'o';
@@ -764,8 +759,7 @@ s32 Message_Decode(s32 script, s32 clear) {
           }
         }
       }
-      decodedCount++;
-    } while (running != 0 && decodedCount <= TEXT_BUFFER_MASK);
+    }
 
     // The code that ended the message goes in too (TEXT_END, TEXT_WAIT_KEY or
     // TEXT_END_ALT, or the last code of a message cut at the ring's length),
@@ -843,7 +837,6 @@ s32 Message_Decode(s32 script, s32 clear) {
   u16 name[MESSAGE_NAME_HALFWORDS];
   u8 numberBuffer[TEXT_NUMBER_BUFFER_SIZE];
   struct MessageReader reader;
-  struct MessageReader *messageReader;
 
   if (script == -1) {
     start = work->lastMessageStart;
@@ -854,11 +847,9 @@ s32 Message_Decode(s32 script, s32 clear) {
     decode = (s32 (*)(struct MessageReader *))HEAP_SLOT_BLOCK(
         HEAP_SLOT_MESSAGE_DECODER);
     Message_Find(&reader, script);
-    /* FAKEMATCH(temporary): messageReader holds &reader. */
-    messageReader = &reader;
-    do {
+    for (; running != 0 && decodedCount <= TEXT_BUFFER_MASK; decodedCount++) {
       previousCode = code;
-      code = (u32)decode(messageReader);
+      code = (u32)decode(&reader);
       // Once halting speech has broken off, the rest of the message is
       // skipped, though its arguments are still taken from the table.
       if (overflow != 0) {
@@ -874,7 +865,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             break;
           case MESSAGE_TEXT_COLOR:
           case MESSAGE_TEXT_EFFECT:
-            decode(messageReader);
+            decode(&reader);
             break;
           case MESSAGE_ARGUMENT_SIGNED_NUMBER:
             MessageArgument_Lookup(MESSAGE_ARGUMENT_NUMBER, clear);
@@ -889,7 +880,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             MessageArgument_Lookup(MESSAGE_ARGUMENT_LOCATION, clear);
             break;
           case MESSAGE_ACTOR_NAME:
-            decode(messageReader);
+            decode(&reader);
             break;
           case MESSAGE_ARGUMENT_ACTOR_NAME:
             break;
@@ -954,8 +945,7 @@ s32 Message_Decode(s32 script, s32 clear) {
           case MESSAGE_TEXT_COLOR:
           case MESSAGE_TEXT_EFFECT:
             TEXT_APPEND(entry, writePosition, (u16)code);
-            TEXT_APPEND(entry, writePosition,
-                        OPERAND_VALUE(decode(messageReader)));
+            TEXT_APPEND(entry, writePosition, OPERAND_VALUE(decode(&reader)));
             break;
           case MESSAGE_ARGUMENT_SIGNED_NUMBER:
             value = MessageArgument_Lookup(MESSAGE_ARGUMENT_NUMBER, clear);
@@ -1040,7 +1030,7 @@ s32 Message_Decode(s32 script, s32 clear) {
             }
             break;
           case MESSAGE_ACTOR_NAME:
-            argument = decode(messageReader) - 1;
+            argument = decode(&reader) - 1;
             nameBytes = Unit_GetFar(argument)->name;
             nameOutput = name;
             j = 0;
@@ -1066,8 +1056,7 @@ s32 Message_Decode(s32 script, s32 clear) {
           }
         }
       }
-      decodedCount++;
-    } while (running != 0 && decodedCount <= TEXT_BUFFER_MASK);
+    }
     TEXT_APPEND(entry, writePosition, (u16)code);
     entry[writePosition] = 0;
     nextPosition = (writePosition + 1) & TEXT_BUFFER_MASK;

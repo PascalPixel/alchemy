@@ -18,7 +18,7 @@ void Leader_RiseFromWater(void) {
     Actor_SetSpriteFlags(Actor_Get(gMainRoutineWork.leaderActorId), 0);
     Event_StartScreenTransition();
     Event_PlaySound(SE_SPARKLING_PASSAGE);
-    leader->update = (void (*)(void))Actor_EmitMist;
+    leader->update = (ObjectUpdate)Actor_EmitMist;
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.4);
     Actor_WalkByAndWait(gMainRoutineWork.leaderActorId, 0, 8);
     FieldActor_SetSpriteColor(Actor_Get(gMainRoutineWork.leaderActorId),

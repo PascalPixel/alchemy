@@ -203,7 +203,7 @@ struct PushTarget {
   s32 z;
   s32 footprint; ///< index into the footprint table
   s32 id;
-  void (*callback)(void);
+  void *callback;
 };
 
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
@@ -1172,9 +1172,7 @@ s32 Scene_Initialize(void) {
       Event_PlaySound(SE_WHOOSH);
       Event_Wait(60);
       Flag_Set(FLAG_KEEP_PARTY_POSITION);
-      /* FAKEMATCH(signature): the exit request called as if it returned a
-       * value, which the set-up returns. */
-      return ((s32 (*)())Import_EventSetExitRequest)(3);
+      return Value1((s32 (*)())Import_EventSetExitRequest, 3);
     }
     if (Flag_IsSet(FLAG_PIPELINE_MENDED)) {
       Actor_SetPosition(ACTOR_MERCURY_PIPE_A, 600, 144);
@@ -1435,13 +1433,6 @@ typedef struct Actor Actor;
 
 #include "shared/ride_create.c"
 
-/// The ride work seen from one flame thrower's entry: the work's header, then
-/// the entry, as the getters below index it.
-struct RideRow {
-  u8 beforeEntries[20];
-  struct RideEntry entry;
-};
-
 void Actor_SetupScriptedFor(struct Actor *actor, s32 unused);
 
 #include "shared/ride_release_handle.h"
@@ -1518,7 +1509,7 @@ s32 Fireball_CarryLeader(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Flag_Clear(FLAG_MENU_OPEN);
-  leader->update = (void (*)(void))Actor_Blink;
+  leader->update = (ObjectUpdate)Actor_Blink;
   leader->facing = FACING_SOUTH;
   Actor_SelectAnimation(leader, ANIM_LEADER_SIT);
   while (ride->car->timer == 0) {
@@ -1671,9 +1662,7 @@ s32 PushTarget_FillFootprint(s32 id) {
 
   if ((u16)shape != gPushKinds[(u16)i]) {
     do {
-      /* FAKEMATCH(temporary): the step taken in the high halfword, as the push
-       * footprints' copies of this search have it. */
-      j = (u16)FIXEDtoINT(toFIXED(i + 1));
+      j = (u16)NEXT_HALFWORD(i);
       i = j;
     } while (j <= PUSH_KINDS - 1 && (u16)shape != gPushKinds[j]);
   }
@@ -1730,8 +1719,7 @@ static inline s32 PushTarget_CheckCollision(struct Actor *actor,
 /// The leader pushes the object to its resting place: the cells it leaves are
 /// floor again and the cells it comes to are walls.
 void PushTarget_Push(struct PushTarget target) {
-  struct MapWork *map =
-      (struct MapWork *)((struct HeapSlotWords *)Ram_HeapSlots)->mapWork;
+  struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *actor = Actor_Get(target.id);
   s32 cell[3];
@@ -1807,7 +1795,7 @@ void PushTarget_Push(struct PushTarget target) {
 #endif
   }
   if (target.callback != 0)
-    target.callback();
+    ((void (*)(void))target.callback)();
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   leader->update = NULL;

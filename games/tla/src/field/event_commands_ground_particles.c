@@ -30,7 +30,7 @@ void GroundParticles_Start(void) {
   u32 fill = 0;
 
   work = HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct WeatherWork));
-  leader = Ram_HeapSlots->mapGrid->origin;
+  leader = ((struct MapWork *)Ram_HeapSlots->mapGrid)->origin;
   Scene_QueueMusic(SE_AMBIENT_WATER);
   particle = work->particles;
   Dma_Fill32(fill, work, sizeof(struct WeatherWork));
@@ -126,14 +126,15 @@ void RisingParticles_Start(void) {
       HeapSlot_AllocEwram(HEAP_SLOT_WEATHER, sizeof(struct WeatherWork));
   struct RisingParticle *particle = work->particles;
   volatile u32 fill;
-  /* FAKEMATCH(pin): the fill's zero fixed to a register. */
-  register u32 zero asm("r2");
   s32 priority;
   u8 *tiles;
   u32 i;
+  FIXED z;
 
-  zero = 0;
-  Dma_Fill32Cell(fill, zero, work, sizeof(struct WeatherWork));
+  // z carries the fill's zero before it is a particle's z, as
+  // FieldEffect_InitializeSparkles's size does.
+  z = 0;
+  Dma_Fill32Cell(fill, z, work, sizeof(struct WeatherWork));
   tiles = HeapSlot_AllocEwram(HEAP_SLOT_TILE_SCRATCH, 1024);
   Decompress_ByteLz(gFieldEffect_MoteTiles, tiles);
   work->vramEntry = VramCache_FindFreeEntry();
@@ -142,7 +143,6 @@ void RisingParticles_Start(void) {
   for (i = 0; i < ARRAY_COUNT(work->particles); i++, particle++) {
     u32 *sprite = particle->sprite.words;
     s32 x;
-    FIXED z;
 
     *sprite++ = 0;
     *sprite++ = OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);

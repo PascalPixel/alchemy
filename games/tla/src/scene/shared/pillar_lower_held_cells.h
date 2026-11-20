@@ -17,7 +17,9 @@ void Pillar_LowerHeldCells(u16 *list) {
   work->movedBlock = NULL;
   while (*list != ACTOR_LIST_END) {
     if (held == Actor_GetById(*list)) {
-      u8 *cell = (u8 *)Ram_HeapSlots->mapGrid->layers[held->layer].cells;
+      u8 *cell = (u8 *)((struct MapWork *)Ram_HeapSlots->mapGrid)
+                     ->layers[held->layer]
+                     .cells;
       struct ShapeCell *slot =
           grid + ((struct MapCell *)cell - (struct MapCell *)Ram_MapCellBuffer);
       s32 kind =

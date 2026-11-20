@@ -839,15 +839,14 @@ void ItemMenu_Initialize(s32 x, s32 y, s32 mode, s32 columns) {
     menu->memberY[ownerIndex] = MENU_MEMBER_Y;
 
   {
-    u8 zero = 0;
     s32 style;
     menu->buttonHelpWindow = NULL;
     menu->statusWindow = NULL;
     style = 2;
     menu->infoWindow = (struct Window *)Window_CreateFar(0, 17, 30, 3, style);
     menu->itemWindow = NULL;
-    menu->selectedColumn = zero;
-    menu->selectedRow = zero;
+    menu->selectedColumn = 0;
+    menu->selectedRow = 0;
     menu->columnCount = 8;
     menu->rowCount = style;
   }
@@ -1460,13 +1459,10 @@ void ItemMenu_DrawEquipPreview(s32 owner, s32 slot, s32 mode, s32 target) {
     style = STATUS_PANEL_LOWER_ONLY;
   switch (item->type) {
   case ITEM_TYPE_NONE: // usable items
+    StatusPanel_Draw(menu->statusWindow, target, slot, style);
+    break;
   case ITEM_TYPE_ELEMENTAL_STAR:
-    /* FAKEMATCH(dead): the test of menu, whose two branches make the same call,
-     * kept. */
-    if (menu)
-      StatusPanel_Draw(menu->statusWindow, target, slot, style);
-    else
-      StatusPanel_Draw(menu->statusWindow, target, slot, style);
+    StatusPanel_Draw(menu->statusWindow, target, slot, style);
     break;
   case ITEM_TYPE_CLASS_CHANGE:
     if (owner == target) {

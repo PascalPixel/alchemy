@@ -965,7 +965,6 @@ void GabombaStatueChamber_AkafubuOffersToHelp(void) {
   s32 *owner;
   s32 facing;
   s32 angleC;
-  s32 zero;
   s32 turn;
   struct HeapSlots *heap;
   Event_Start();
@@ -984,8 +983,7 @@ void GabombaStatueChamber_AkafubuOffersToHelp(void) {
                                FACING_NORTHEAST);
   }
   facing = FACING_NORTHWEST;
-  zero = 0;
-  Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(360), toFIXED(200), zero);
+  Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(360), toFIXED(200), 0);
   Actor_SetPositionAndFacing(ACTOR_JENNA, toFIXED(408), toFIXED(216), facing);
   angleC = FACING_WEST;
   Actor_SetPositionAndFacing(ACTOR_SHEBA, toFIXED(424), toFIXED(200), angleC);
@@ -1020,7 +1018,7 @@ void GabombaStatueChamber_AkafubuOffersToHelp(void) {
   {
     struct Actor *guard = Actor_GetById(ACTOR_SEATED_IDOL);
 
-    guard->motionFlags = zero;
+    guard->motionFlags = 0;
   }
   GabombaStatueChamber_SetPassageCells();
   Actor_SetSpeed(ACTOR_SEATED_IDOL, 0.4);

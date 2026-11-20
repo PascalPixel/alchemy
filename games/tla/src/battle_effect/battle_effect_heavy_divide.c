@@ -618,23 +618,19 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
     void *vertices;
 
     s32 level;
-    FIXED skullScale;
 
     if (frame == 0) {
-      /* FAKEMATCH(temporary): still, 0 in a local; as 0 at its uses. */
-      s32 still;
-
       EffectPosition_ProjectBattler(args->targets[0], &screen);
-      still = 0;
-      for (i = 0, drop = work->particles; i != WYRD_CURSE_DROPS; i++, drop++) {
+      for (i = 0; i != WYRD_CURSE_DROPS; i++) {
+        drop = &work->particles[i];
         drop->x = INTtoFIXED(screen.x / 2 + (Random16() & 15) - 8);
         drop->y = -8;
-        drop->velocityX = still;
-        drop->velocityY = still;
+        drop->velocityX = 0;
+        drop->velocityY = 0;
         drop->z = (Random16() & 3) + 4;
         drop->velocityZ =
             WYRD_CURSE_FIRST_DROP_SHARE - i * WYRD_CURSE_DROP_SHARE_STEP;
-        drop->variant = still;
+        drop->variant = 0;
       }
       {
         struct Particle *glow =
@@ -721,10 +717,9 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
     model->mesh = gBattleEffect_SmallSquareMeshReversed;
     for (i = 0; i != WYRD_CURSE_SKULL_COUNT; i++) {
       drop = &work->particles[i];
-      /* FAKEMATCH(dead): skullScale set through its own address in every
-       * turn; as one assignment before the loop. */
-      *&skullScale = FIXED_ONE * 3125 / 8192;
       if (frame > i * 4 + WYRD_CURSE_RISE_FRAME) {
+        FIXED skullScale = FIXED_ONE * 3125 / 8192;
+
         model->shade = zero;
         texture.pixels = work->sheet + WYRD_CURSE_SKULL_PICTURES +
                          (i % 2) * PICTURE_BYTES(BURNING_SKULL);

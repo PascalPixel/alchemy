@@ -312,8 +312,8 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   struct ModelTexture texture;
   struct RenderModel *model;
   void *vertices;
-  struct Particle *p;
-  s32 none;
+  // Default: set for real below.
+  struct Particle *p = NULL;
   u8 *ringPixels;
   s32 size;
   s32 bgX;
@@ -321,7 +321,6 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   s32 i;
   s32 j;
 
-  none = 0;
   ringPixels = Ram_MapCellBuffer + ZAGAN_FLAME_BAND;
   battle = Ram_HeapSlots->battleWork;
   canvas = Ram_HeapSlots->battleCanvas;
@@ -332,7 +331,7 @@ void BattleEffect_RunZagan(struct BattleEffectParams *args) {
   BattleEffect_ConfigureEffectDisplay();
   BattleEffect_StartCanvasLayer(0);
   RagingHeat_FillGradientCanvas();
-  work->transferMode = none;
+  work->transferMode = 0;
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
 
   // The battle flashes away as the summons' openings do, stopping while the

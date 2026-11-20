@@ -208,7 +208,8 @@ void Garoh_WaveHypnosSwordChestLayer(void) {
   // The sine routine itself, called at the address Trig_Sin's far call
   // jumps to.
   s32 (*sine)(s32) = *(s32 (**)(s32))(((u32)Trig_Sin & ~3) + 4);
-  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[1];
+  struct MapLayer *layer =
+      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[1];
   /* FAKEMATCH(pin): the form kept; as a plain local. */
   register u16 *line asm("r5") = gGaroh_WaveLines;
 

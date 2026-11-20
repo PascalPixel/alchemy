@@ -190,7 +190,6 @@ void Teleport_PlaySparks(void) {
   s32 angle;
   s32 next;
   s32 frame;
-  s32 zero = 0;
   s32 age;
 
   wait(20);
@@ -233,14 +232,14 @@ void Teleport_PlaySparks(void) {
     for (i = 0; i < count; i++) {
       angle = Random16();
       particle = &work->particles[next];
-      particle->timer = zero;
+      particle->timer = 0;
       SET_POSITION(particle, actor->x.fixed, actor->y.fixed + Random16() * 20,
                    actor->z.fixed);
       Vector_AddPolarOffset(Random16() << 3, angle, &particle->x);
       if (next & 1) {
-        particle->velocityX = zero;
+        particle->velocityX = 0;
         particle->velocityY = -toFIXED(4);
-        particle->velocityZ = zero;
+        particle->velocityZ = 0;
         Vector_AddPolarOffset((Random16() << 2) + toFIXED(4), angle,
                               &work->particles[next].velocityX);
       } else {
@@ -260,18 +259,12 @@ void Teleport_PlaySparks(void) {
       if (age >= 0) {
         if ((u32)age < TELEPORT_SPARK_FRAMES) {
           EffectSprite_DrawAtWorldPosition(sprite, particle);
-          /* FAKEMATCH(dead): age reread at the end of both arms; as one read
-           * after the if. */
-          if (i & 1) {
+          if (i & 1)
             Field_AdvanceWithGravity3D(&particle->x, 63, toFIXED(1) / 2);
-            age = particle->timer;
-          } else {
+          else
             Field_AdvanceWithGravity3D(&particle->x, 63, -(toFIXED(5) / 8));
-            age = particle->timer;
-          }
         }
-        particle->timer = ++age;
-        if (age == TELEPORT_SPARK_FRAMES)
+        if (++particle->timer == TELEPORT_SPARK_FRAMES)
           particle->timer = -1;
       }
     }

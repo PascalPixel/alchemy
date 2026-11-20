@@ -807,12 +807,7 @@ void AnkohlRuins_PushedOffLedge(void) {
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   actor->motionFlags = 0;
   actor->steeringFlags = 0;
-  {
-    s32 zero;
-
-    zero = 0;
-    Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, zero, 8);
-  }
+  Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 0, 8);
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   Actor_ShowEmoteById(gMainRoutineWork.leaderActorId,
                       EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -932,7 +927,8 @@ void AnkohlRuins_InitSand(s32 unused) {
   struct AnkohlRuinsSpriteWork *work = &gAnkohlRuins_Sand;
   u32 *tiles = Heap_Alloc(SAND_MASK_BYTES);
   u32 *pixel = tiles;
-  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[1];
+  struct MapLayer *layer =
+      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[1];
   struct AnkohlRuinsSprite *sprite = work->sprites;
   s32 i;
 
@@ -1699,8 +1695,6 @@ s32 Scene_Initialize(s32 a0) {
       Task_AddFrame(AnkohlRuins_FlowWithSand, TASK_PASS_FRAME);
     }
   } else if (scene == SCENE_ANKOHL_RUINS_SAND_DOORS) {
-    s16 *entrance = &work->entrance;
-
     if (work->entrance <= 4)
       AnkohlRuins_InitSand(a0);
     if (GameFlag_Get(FLAG_FIRST_SAND_DOOR_OPENED)) {
@@ -1720,10 +1714,7 @@ s32 Scene_Initialize(s32 a0) {
       FIXED level = toFIXED(32);
 
       gAnkohlRuins_Sand.level = level;
-      /* FAKEMATCH(signature): the entrance read through the sand work's type;
-       * as (u16)(*entrance - 1) <= 1, 12 of 989 instructions differ in
-       * tla-en. */
-      if ((u16)(((struct AnkohlRuinsSpriteWork *)entrance)->unused - 1) <= 1) {
+      if ((u16)(work->entrance - 1) <= 1) {
         s32 z;
         s32 x;
 
@@ -1739,7 +1730,7 @@ s32 Scene_Initialize(s32 a0) {
         }
         MapGrid_CopyCellsLayered(69, 6, 1, 2, 68, z);
       }
-      if ((u16)(*entrance - 3) <= 1) {
+      if ((u16)(work->entrance - 3) <= 1) {
         s32 z;
         s32 x;
 
@@ -1767,7 +1758,7 @@ s32 Scene_Initialize(s32 a0) {
       actor->motionFlags = 0;
       actor->groundHeight = toFIXED(72);
       actor->y.fixed = toFIXED(72);
-      actor->update = (void (*)(void))AnkohlRuins_SparkleChest;
+      actor->update = (ObjectUpdate)AnkohlRuins_SparkleChest;
     }
   }
   return 0;
@@ -1980,8 +1971,6 @@ s32 Scene_Initialize(s32 a0) {
       Task_AddFrame(AnkohlRuins_FlowWithSand, TASK_PASS_FRAME);
     }
   } else if (scene == SCENE_ANKOHL_RUINS_SAND_DOORS) {
-    s16 *entrance = &work->entrance;
-
     if (work->entrance <= 4)
       AnkohlRuins_InitSand(a0);
     if (GameFlag_Get(FLAG_FIRST_SAND_DOOR_OPENED)) {
@@ -2001,10 +1990,7 @@ s32 Scene_Initialize(s32 a0) {
       FIXED level = toFIXED(32);
 
       gAnkohlRuins_Sand.level = level;
-      /* FAKEMATCH(signature): the entrance read through the sand work's type;
-       * as (u16)(*entrance - 1) <= 1, 12 of 989 instructions differ in
-       * tla-en. */
-      if ((u16)(((struct AnkohlRuinsSpriteWork *)entrance)->unused - 1) <= 1) {
+      if ((u16)(work->entrance - 1) <= 1) {
         s32 z;
         s32 x;
 
@@ -2020,7 +2006,7 @@ s32 Scene_Initialize(s32 a0) {
         }
         MapGrid_CopyCellsLayered(69, 6, 1, 2, 68, z);
       }
-      if ((u16)(*entrance - 3) <= 1) {
+      if ((u16)(work->entrance - 3) <= 1) {
         s32 z;
         s32 x;
 
@@ -2048,7 +2034,7 @@ s32 Scene_Initialize(s32 a0) {
       actor->motionFlags = 0;
       actor->groundHeight = toFIXED(72);
       actor->y.fixed = toFIXED(72);
-      actor->update = (void (*)(void))AnkohlRuins_SparkleChest;
+      actor->update = (ObjectUpdate)AnkohlRuins_SparkleChest;
     }
   }
   return 0;

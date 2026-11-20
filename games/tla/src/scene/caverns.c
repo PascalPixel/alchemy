@@ -386,7 +386,7 @@ void Caverns_FinishMovingAngaraBlock(void) {
       velocity[2] = actor->z.fixed;
       other = Actor_FindAtCell(velocity, 1);
       if (other != NULL) {
-        actor->update = (void (*)(void))Caverns_LayerLeaderByTopBlock;
+        actor->update = (ObjectUpdate)Caverns_LayerLeaderByTopBlock;
         actor->riseCounter = 1;
         other->riseCounter = 1;
         GameFlag_Set(FLAG_ANGARA_BLOCK_ON_TOP);
@@ -457,7 +457,6 @@ enum CavernsIndraActorId {
 /// to jump onto.
 void Caverns_InitializeIndra(void) {
   struct Actor *actor;
-  s32 row;
 
   Actor_GetById(ACTOR_FELIX)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   Rope_Initialize();
@@ -465,11 +464,12 @@ void Caverns_InitializeIndra(void) {
              ACTOR_UPPER_ROPE_POST);
   actor = Actor_GetById(ACTOR_PILLAR);
   actor->motionFlags = 0;
+  {
+    s32 row = INDRA_PILLAR_ROW;
 
-  /* FAKEMATCH(temporary): the row held in a local; as INDRA_PILLAR_ROW. */
-  row = INDRA_PILLAR_ROW;
-  Map_CopyCellAttributeRect(INDRA_GAP_COLUMN, row, 1, 1,
-                            FIELD_CELL(actor->x.fixed), row);
+    Map_CopyCellAttributeRect(INDRA_GAP_COLUMN, row, 1, 1,
+                              FIELD_CELL(actor->x.fixed), row);
+  }
 }
 
 /// Move on Indra Cavern's pillar: stills it, sets its row's cells back to plain

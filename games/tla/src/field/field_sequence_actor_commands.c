@@ -486,7 +486,7 @@ void FieldEffect_SpawnDustPuff(struct Actor *source, s32 param) {
     actor->timer = 0;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     actor->frozen = 1;
-    actor->update = (void (*)(void))FieldEffect_UpdateDustPuff;
+    actor->update = (ObjectUpdate)FieldEffect_UpdateDustPuff;
     child->flags = 0;
     child->image.priority = ((struct Sprite *)source->sprite)->image.priority;
   }
@@ -716,12 +716,10 @@ void Actor_WatchAndStartScript(u32 actorId, s32 targetId, const void *script) {
   if (follower != NULL && target != NULL) {
     follower->watchedActor = target;
     if (!(targetId & ACTOR_WATCH_KEEP_MOTION)) {
-      u16 none = 0;
-
       follower->timer = FOLLOW_DISTANCE;
       follower->acceleration = target->acceleration * 2;
       follower->speedLimit = target->speedLimit;
-      follower->collisionFlags = none;
+      follower->collisionFlags = 0;
     }
     Actor_StartScriptFar(follower, script);
   }

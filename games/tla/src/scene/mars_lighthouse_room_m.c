@@ -235,13 +235,6 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/// The ride work seen from one flame thrower's entry: the work's header, then
-/// the entry, as the getters below index it.
-struct RideRow {
-  u8 beforeEntries[20];
-  struct RideEntry entry;
-};
-
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 
 void Teleport_StopShimmer(void);
@@ -1244,15 +1237,16 @@ void Ride_SetMode(s16 value) { RIDE_WORK->runsDuringPsynergy = value; }
 
 /// Whether flame thrower `index` is active.
 s32 Ride_GetEntryValue(s32 index) {
-  return ((struct RideRow *)((u8 *)RIDE_WORK +
-                             index * sizeof(struct RideEntry)))
-      ->entry.active;
+  struct FlameHitWork *work = RIDE_WORK;
+
+  return (work->entries + index)->active;
 }
 
 /// Turns flame thrower `index` on or off.
 void Ride_SetEntryValue(s32 index, s16 value) {
-  ((struct RideRow *)((u8 *)RIDE_WORK + index * sizeof(struct RideEntry)))
-      ->entry.active = value;
+  struct FlameHitWork *work = RIDE_WORK;
+
+  (work->entries + index)->active = value;
 }
 
 /// The flame throwers' counter, which Ride_AdvanceCounter steps.
@@ -1321,7 +1315,7 @@ s32 Fireball_CarryLeader(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_ClearFlag(FLAG_MENU_OPEN);
-  leader->update = (void (*)(void))Actor_Blink;
+  leader->update = (ObjectUpdate)Actor_Blink;
   leader->facing = FACING_SOUTH;
   Actor_SelectAnimation(leader, ANIM_LEADER_SIT);
   while (ride->car->timer == 0) {

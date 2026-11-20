@@ -568,7 +568,7 @@ void Settlements_SpawnSmoke(s32 x, s32 y, s32 z) {
     actor->scaleX = FIXED_ONE / 2;
     actor->scaleY = FIXED_ONE / 2;
     *(s32 *)&actor->watchedActor = SMOKE_FRAMES;
-    actor->update = (void (*)(void))Settlements_DriftSmoke;
+    actor->update = (ObjectUpdate)Settlements_DriftSmoke;
     Actor_SelectAnimation(actor, 5);
     Actor_SetBlendMode(actor, 1);
   }
@@ -841,7 +841,8 @@ void Scroll_HBlank(void) {
 
 /// Follows the third map layer's scroll.
 void Layer_TrackScroll(void) {
-  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[2];
+  struct MapLayer *layer =
+      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
   s16 y = FIXEDtoINT(layer->y);
 
   gSettlements_WaterfallLine = 1448 - y;

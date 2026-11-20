@@ -391,14 +391,9 @@ s32 Party_ApplyPoisonDamage(void) {
   s32 count = Party_CountMembersFar();
 
   if (result < count) {
-    /* FAKEMATCH(temporary): the party's offset held in a local and added to
-     * the work's address; as entry = gMainRoutineWork.party. */
-    s32 offset = offsetof(struct MainRoutineWork, party);
-    u8 *entry;
-    s32 remaining;
-
-    entry = (u8 *)&gMainRoutineWork + offset;
-    remaining = count;
+    struct MainRoutineWork *work = &gMainRoutineWork;
+    u8 *entry = work->party;
+    s32 remaining = count;
 
     do {
       struct Unit *object = Unit_Get(*entry);

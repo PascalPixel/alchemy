@@ -16,24 +16,19 @@ void BattleMotion_ReturnToSpot(s32 unitId) {
 
   battleObject = BattleObject_Get(unitId);
   actor = battleObject->actor;
-  {
-    s32 stopped = 0;
-
-    actor->acceleration = toFIXED(2);
-    actor->speedLimit = toFIXED(8);
-    actor->gravity = BATTLE_UNIT_GRAVITY;
-    actor->velocityY = stopped;
-    actor->bounce = stopped;
-    actor->steeringFlags = stopped;
-    actor->snapToTarget = 1;
-    Actor_StartIdleFar(actor);
-    Actor_SetMoveTargetFar(actor, battleObject->anchorX, 0,
-                           battleObject->anchorZ);
-    // As BattleObject_Make turns a new actor.
-    actor->facing =
-        Trig_Atan(battleObject->anchorZ / 8, battleObject->anchorX) -
-        DEGtoANG(180);
-  }
+  actor->acceleration = toFIXED(2);
+  actor->speedLimit = toFIXED(8);
+  actor->velocityY = 0;
+  actor->gravity = BATTLE_UNIT_GRAVITY;
+  actor->bounce = 0;
+  actor->steeringFlags = 0;
+  actor->snapToTarget = 1;
+  Actor_StartIdleFar(actor);
+  Actor_SetMoveTargetFar(actor, battleObject->anchorX, 0,
+                         battleObject->anchorZ);
+  // As BattleObject_Make turns a new actor.
+  actor->facing = Trig_Atan(battleObject->anchorZ / 8, battleObject->anchorX) -
+                  DEGtoANG(180);
 }
 
 /// Sends unitId running off its side of the battlefield, three times as far

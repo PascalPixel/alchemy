@@ -628,6 +628,7 @@ void AirsRockInside_PoundStake(s32 mode, s32 step) {
 void AirsRockInside_PlaceStakes(u16 *list) {
   struct Actor *actor;
   s32 flag, base;
+  s16 pose;
   u16 *entry;
 
   if (*list == ACTOR_LIST_END)
@@ -635,16 +636,13 @@ void AirsRockInside_PlaceStakes(u16 *list) {
   entry = list;
   do {
     actor = Actor_GetById(*entry);
-    base = ((s16 *)entry)[1];
+    pose = ((s16 *)entry)[1];
     flag = ((s16 *)entry)[2];
     Actor_SetSpriteFlags(actor, 0);
     {
       s32 choice = GameFlag_Get((u16)flag);
 
-      /* FAKEMATCH(signature): the first pose read as a signed halfword and
-         cut back to unsigned. */
-      base <<= 16;
-      base = (u32)base >> 16;
+      base = (u16)pose;
       base += base << 1;
       base += choice;
     }

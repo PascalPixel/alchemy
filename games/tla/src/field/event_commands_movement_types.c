@@ -62,37 +62,17 @@ void FieldEffect_SetAttached(s32 actorId, s32 flags) {
 
   effect->userValue = actorId;
   effect->motionFlags = 0;
-  effect->update = (void (*)(void))FieldEffect_CopyWatchedActorPosition;
+  effect->update = (ObjectUpdate)FieldEffect_CopyWatchedActorPosition;
   visual = effect->sprite;
   visual->flags = 0;
   effect->watchedActor = actor;
 
   // The effect takes sprite priority 1, or the actor's.
-  if (flags & ATTACHED_EFFECT_IN_FRONT) {
-    s32 mask = ATTR2_HIGH_PRIORITY_MASK + 1;
-    u8 attr = SPRITE_ATTR2_HIGH(visual);
-
-    /* FAKEMATCH(temporary): the mask's complement built as -(mask + 1) in a
-     * local. */
-    mask = -mask;
-    mask &= attr;
-    mask |= OBJ_PRIORITY(1) >> 8;
-    SPRITE_ATTR2_HIGH(visual) = mask;
-  } else {
-    s32 priority = ATTR2_HIGH_PRIORITY_MASK;
-    u8 src = SPRITE_ATTR2_HIGH(actor->sprite);
-    u8 dst;
-    s32 mask = ATTR2_HIGH_PRIORITY_MASK + 1;
-
-    priority &= src;
-    dst = SPRITE_ATTR2_HIGH(visual);
-    /* FAKEMATCH(temporary): the mask's complement built as -(mask + 1) in a
-     * local. */
-    mask = -mask;
-    mask &= dst;
-    mask |= priority;
-    SPRITE_ATTR2_HIGH(visual) = mask;
-  }
+  if (flags & ATTACHED_EFFECT_IN_FRONT)
+    ((struct PlacedSprite *)visual)->priority = 1;
+  else
+    ((struct PlacedSprite *)visual)->priority =
+        ((struct PlacedSprite *)actor->sprite)->priority;
 }
 
 /// The SC_CALL routine of movement type 7: clears an actor's sprite flags and

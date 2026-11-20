@@ -294,6 +294,7 @@ void TundariaTower_OpenDoor(void) {
   s16 *choice;
   s32 x = 37;
   struct MainRoutineWork *state;
+  /* FAKEMATCH(temporary): one, 1 held in a local; as 1 at its uses. */
   s32 one;
   s32 cell;
 
@@ -432,7 +433,7 @@ void TundariaTower_FreeCenterProng(void) {
   Actor_SetPosition(ACTOR_FROZEN_CENTER_PRONG, 0, 0);
   Actor_SetPosition(ACTOR_FALLEN_CENTER_PRONG, 344, 372);
   Actor_GetById(ACTOR_FALLEN_CENTER_PRONG)->update =
-      (void (*)(void))TundariaTower_SparkleCenterProng;
+      (ObjectUpdate)TundariaTower_SparkleCenterProng;
   Event_End();
 }
 
@@ -941,7 +942,7 @@ s32 Scene_Initialize(void) {
           MapGrid_CopyCellAttributes(11, 22, 3, 2, 20, 22);
           Actor_SetPosition(ACTOR_FALLEN_CENTER_PRONG, 344, 372);
           Actor_GetById(ACTOR_FALLEN_CENTER_PRONG)->update =
-              (void (*)(void))TundariaTower_SparkleCenterProng;
+              (ObjectUpdate)TundariaTower_SparkleCenterProng;
           Actor_SetPosition(ACTOR_FROZEN_CENTER_PRONG, 0, 0);
         }
       } else if (GameFlag_Get(FLAG_CRYSTAL_BROKEN)) {
@@ -1545,22 +1546,17 @@ void TundariaTower_StartFallingRocks(void) {
   work->tileBase = tile;
   work->resource = resource;
   rock = work->rocks;
-  sprite = work->sprites;
   for (i = 0; i < ROCK_COUNT; i++) {
+    sprite = &work->sprites[i];
     EffectSprite_Init(sprite, 8, 8, OBJ_SIZE_16X16, tile);
     sprite->oam.fullColor = 1;
     sprite->oam.palette = 0;
     sprite->oam.priority = 0;
     sprite->depth = OAM_DEPTH_WINDOW;
     rock->timer = -1;
-    sprite++;
     rock++;
   }
-  {
-    s32 zero = 0;
-
-    work->next = zero;
-  }
+  work->next = 0;
   Task_AddFrame(Particle_UpdateFalling, TASK_PASS_FRAME);
 }
 

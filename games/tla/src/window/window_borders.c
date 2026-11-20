@@ -17,7 +17,6 @@ void Window_UpdateZooms(void) {
   struct WindowWork *state = WINDOW_WORK;
   struct Window *window = state->windows;
   s32 index = 0;
-  u8 dirty;
 
   do {
     if (window->flags != 0) {
@@ -34,8 +33,7 @@ void Window_UpdateZooms(void) {
                                (s16)window->previousHeight);
         Window_DrawZoomBorder(window, 1);
         window->zoomStage++;
-        dirty = 1;
-        state->dirty = dirty;
+        state->dirty = 1;
       } else {
         Window_EraseBorderRect((s16)window->previousX, (s16)window->previousY,
                                (s16)window->previousWidth,
@@ -507,7 +505,6 @@ void FieldMessage_Show(s32 message, s32 flags) {
   s32 y;
   s32 x;
   struct Window *window = NULL;
-  s32 zero;
   s32 margin;
   s32 rows;
 
@@ -562,10 +559,9 @@ void FieldMessage_Show(s32 message, s32 flags) {
     }
   }
 
-  zero = 0;
-  state->waitingForSound = zero;
-  state->speakerVoiceSound = zero;
-  state->speakerVoiceCountdown = zero;
+  state->waitingForSound = 0;
+  state->speakerVoiceSound = 0;
+  state->speakerVoiceCountdown = 0;
   wait(3);
 }
 

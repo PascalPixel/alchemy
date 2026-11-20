@@ -713,11 +713,8 @@ void AirsRock_WhirlwindClearsWall(void) {
   Heap_Release(buffer);
   FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   FieldActor_SetSpritePriority(ACTOR_TWISTER_ROCK_BY_THE_WALL, 1);
-  {
-    s32 control = BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(3) | BGCNT_SCREEN_BASE(4);
-
-    REG_BG0CNT = control;
-  }
+  Io_Write16(BGCNT_PRIORITY(1) | BGCNT_CHAR_BASE(3) | BGCNT_SCREEN_BASE(4),
+             &REG_BG0CNT);
   REG_BG1CNT &= ~BGCNT_PRIORITY(3);
   REG_BG1CNT |= BGCNT_PRIORITY(2);
   Dma_Fill16(WHIRLWIND_FILL_TILE, BG_SCREEN_BLOCK(4), 1280);
@@ -872,7 +869,6 @@ void AirsRock_RideWhirlwind(void) {
   s32 moved, i, height;
   s32 angle;
   u16 facing;
-  s32 still;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -978,7 +974,6 @@ void AirsRock_RideWhirlwind(void) {
                                (angle = FACING_EIGHTH_INDEX(angle)) - 1);
     leader->z.fixed = FIELD_HALF_CELL_ORIGIN(
         (FIELD_HALF_CELL(ride->z.fixed) & ~1) - (angle & 2) + 1);
-    still = 0;
     Actor_SetSpriteFlags(leader, 1);
     leader->velocityY = toFIXED(6);
     leader->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
@@ -987,7 +982,7 @@ void AirsRock_RideWhirlwind(void) {
     camera = FieldCamera_GetActor();
     camera->speedLimit = toFIXED(8);
     camera->acceleration = toFIXED(1);
-    camera->motionFlags = still;
+    camera->motionFlags = 0;
     FieldActor_SetMoveTargetFX(
         camera, leader->x.fixed,
         Map_GetTerrainHeight(0, leader->x.fixed, leader->z.fixed),
@@ -1421,7 +1416,8 @@ void AirsRock_WhirlwindOpensTheTop(void) {
 /// The fog: its blend breathes between FOG_WEIGHT and half that while its lines
 /// ripple.
 void AirsRock_DriftFog(void) {
-  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[2];
+  struct MapLayer *layer =
+      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
   s16 *line = gAirsRock_WaveLines;
   s32 i;
   volatile u16 *channel;
@@ -1457,7 +1453,8 @@ void AirsRock_DriftFog(void) {
 /// more the higher it stands above its foot, while the fog's lines ripple and
 /// its blend breathes as in AirsRock_DriftFog.
 void AirsRock_LiftFog(void) {
-  struct MapLayer *layer = &Ram_HeapSlots->mapGrid->layers[2];
+  struct MapLayer *layer =
+      &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
   s16 *line = gAirsRock_WaveLines;
   s32 i;
   FIXED wave;
@@ -1508,7 +1505,7 @@ void AirsRock_LiftFog(void) {
 /// and the fog lifts (AirsRock_LiftFog) for good.
 void AirsRock_WhirlwindClearsFog(void) {
   u16 *buffer = Heap_Alloc(2 * WHIRLWIND_TILE_ROW_SIZE);
-  struct MapLayer *fog = &Ram_HeapSlots->mapGrid->layers[2];
+  struct MapLayer *fog = &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
   u16 *cell;
   struct Actor *spark;
   s32 i;
@@ -1524,15 +1521,9 @@ void AirsRock_WhirlwindClearsFog(void) {
           BG_CHAR_BLOCK(3) + WHIRLWIND_BOTTOM_TILE * TILE_SIZE_4BPP,
           DMA_COPY_WORDS(WHIRLWIND_TILE_ROW_SIZE / 4), REG_DMA3);
   Heap_Release(buffer);
-  {
-    s32 control = BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(3) | BGCNT_SCREEN_BASE(4);
-
-    REG_BG0CNT = control;
-  }
-  /* FAKEMATCH(dead): a once-only loop around the fill. */
-  do {
-    Dma_Fill16(WHIRLWIND_FILL_TILE, BG_SCREEN_BLOCK(4), 1280);
-  } while (0);
+  Io_Write16(BGCNT_PRIORITY(2) | BGCNT_CHAR_BASE(3) | BGCNT_SCREEN_BASE(4),
+             &REG_BG0CNT);
+  Dma_Fill16(WHIRLWIND_FILL_TILE, BG_SCREEN_BLOCK(4), 1280);
   buffer = Heap_Alloc(WHIRLWIND_MAP_HEIGHT * WHIRLWIND_MAP_WIDTH * sizeof(u16));
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_WHIRLWIND_MAP), buffer);
   cell = buffer;

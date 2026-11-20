@@ -116,6 +116,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
       }
       // Two steps a frame, the n-th spark from frame n / 4.
       for (i = 0; i != LIQUIFIER_SPARKS; i++) {
+        /* FAKEMATCH(temporary): one, 1 held in a local; as 1 at its uses. */
         s32 one = 1;
         struct Particle *step = &work->particles[i];
 
@@ -170,6 +171,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
       }
       // Four steps a frame.
       for (i = 0, step = work->particles; i != LIQUIFIER_SPARKS; i++, step++) {
+        /* FAKEMATCH(temporary): one, 1 held in a local; as 1 at its uses. */
         s32 one = 1;
         if (step->variant >= 0) {
           s32 odd = i;
@@ -242,6 +244,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
       model->mesh = gBattleEffect_SmallSquareMesh;
       model->kind = MODEL_SHADED_ADDITIVE;
       for (i = 0; i != LIQUIFIER_BEAMS; i++) {
+        /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
         s32 zero = 0;
         struct Particle *step = &work->particles[LIQUIFIER_FIRST_BEAM + i];
         s32 start = i * 2 + LIQUIFIER_STRIKE_FRAME;

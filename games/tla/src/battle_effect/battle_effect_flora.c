@@ -160,6 +160,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   u8 *cells;
   u16 *phase;
   u8 *source;
+  u8 *e;
   struct ScreenPoint out;
   struct ScreenPoint pos;
   u8 dot[2];
@@ -184,8 +185,6 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   bgX = -80;
   for (frame = 0; frame != SUMMON_OPENING_FRAMES; frame++) {
     if (frame == SUMMON_OPENING_LOAD_FRAME) {
-      u8 *e;
-
       gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
       BattleEffect_SelectLivingTargets(work->args);
       BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
@@ -863,9 +862,6 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
   REG_BLDALPHA = EFFECT_BLEND_ADD;
   REG_BG2PA = Q_8_8(0.5);
   {
-    /* FAKEMATCH(pin): e fixed to a register. */
-    register u8 *e asm("r6") =
-        Resource_GetTableEntry(RESOURCE_PINK_PETALS_TILES);
     s32 picture;
     s32 tileRow;
     s32 tileColumn;
@@ -875,6 +871,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
     u8 *sheet;
     s32 hi;
 
+    e = Resource_GetTableEntry(RESOURCE_PINK_PETALS_TILES);
     Iwram_CopyWordsEntry((void *)BG_PLTT, e, PALETTE_BANK_BYTES);
     e += PALETTE_BANK_BYTES;
     Decompress_TaggedLz(e, SheetOf(work));
@@ -894,8 +891,7 @@ void BattleEffect_RunFlora(struct BattleEffectParams *args) {
           k = 0;
           offset = t << 3;
           for (; k != 8; k++, offset += FLORA_PETAL_SIZE) {
-            /* FAKEMATCH(signature): the address summed as an integer, its
-             * offset first; as sheet + offset. */
+            // As an integer sum, the offset first.
             u8 *d = (u8 *)(offset + (s32)sheet);
 
             for (m = 0; m != 4; m++) {

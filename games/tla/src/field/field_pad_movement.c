@@ -232,6 +232,7 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
 
   collision = 0;
   pushed = 0;
+  headingCount = 0;
   // Debug: holding L counts the free sprite VRAM blocks, cache entries, actors
   // and sprites.
   // DEAD: nothing reads the four counts, so the tests are gone; the ROM keeps
@@ -338,15 +339,12 @@ s32 Actor_SailOnMap(struct Actor *interpreter) {
     }
   }
   direction = angle;
-  headingCount = 0;
   angleOffsets[headingCount++] = direction + FIELD_PROBE_ANGLE;
   angleOffsets[headingCount++] = direction - FIELD_PROBE_ANGLE;
   angleOffsets[headingCount++] = direction + DEGtoANG(45);
   angleOffsets[headingCount++] = direction - DEGtoANG(45);
   angleOffsets[headingCount++] = direction + FIELD_PROBE_ANGLE * 3;
-  /* FAKEMATCH(dead): the count through its own address at the last heading,
-   * which keeps the loop's test of an empty list until the list is known. */
-  angleOffsets[(*&headingCount)++] = direction - FIELD_PROBE_ANGLE * 3;
+  angleOffsets[headingCount++] = direction - FIELD_PROBE_ANGLE * 3;
   for (angleIndex = 0; angleIndex < headingCount; angleIndex++) {
     heading = angleOffsets[angleIndex];
     SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);

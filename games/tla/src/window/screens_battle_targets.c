@@ -172,6 +172,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   s32 result;
   struct TargetTrack *track;
   struct SelectionSprite *marker;
+  struct SelectionSprite *firstSprite;
   struct Unit *target;
 
   battle = Ram_HeapSlots->battleWork;
@@ -288,7 +289,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
                              WINDOW_FLAG_OUTLINED_TEXT);
 
   for (;;) {
-    struct SelectionSprite *firstSprite = cursorSprites;
+    /* FAKEMATCH(temporary): firstSprite holds &cursorSprites[0]. */
+    firstSprite = cursorSprites;
     drawCursors = 0;
     BattleMotion_ProjectConditionalPositionFar(candidateIds[targetIndex],
                                                &selectedPosition);

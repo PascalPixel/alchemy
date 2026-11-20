@@ -851,9 +851,9 @@ void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
 void StatusScreen_DrawSelectionLabels(s32 target, s32 selected,
                                       const u8 *entries) {
   s32 labelCount = 0;
-  s32 labelIndex = 0;
+  s32 labelIndex;
 
-  for (; labelIndex <= 4; labelIndex++) {
+  for (labelIndex = 0; labelIndex <= 4; labelIndex++) {
     if (entries[labelIndex] != 0) {
       if (selected == labelCount) {
         s32 messageId = MsgStatusAdvice + labelIndex * 2;

@@ -859,9 +859,8 @@ s32 DjinnMenu_ShowHelp(void) {
   helpWindow = Window_CreateFar(8, 12, 22, 7, WINDOW_FLAG_INSTANT);
   statusWindow = Window_CreateFar(8, 9, 22, 3, WINDOW_FLAG_INSTANT);
   Window_MarkVisibleTextTilesFar();
-  helpIndex = 0;
   listMessage = (s32)MsgDjinnInfoTopic;
-  for (; helpIndex <= 6; helpIndex++) {
+  for (helpIndex = 0; helpIndex <= 6; helpIndex++) {
     s32 y = helpIndex * 8;
 
     Text_DrawMessageAsTilesFar(helpIndex + listMessage, list, 0, y);

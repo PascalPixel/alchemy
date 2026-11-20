@@ -99,9 +99,9 @@ void BattleEffect_DrawHalfCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,
 /// the midpoint method: each step plots the eight symmetric points.
 void BattleEffect_DrawHalfCanvasCircle(s32 cx, s32 cy, s32 radius, s32 color) {
   s32 x = radius;
-  s32 y = 0;
+  s32 y;
 
-  for (; x >= y; y++) {
+  for (y = 0; x >= y; y++) {
     BattleEffect_PlotHalfCanvasPixel(cx + x, cy + y, color);
     BattleEffect_PlotHalfCanvasPixel(cx + x, cy - y, color);
     BattleEffect_PlotHalfCanvasPixel(cx - x, cy + y, color);

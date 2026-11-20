@@ -316,9 +316,9 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
       u16 *output = (u16 *)((u8 *)dst + destinationOffset);
       u16 *source =
           (u16 *)(BG_CHAR_BLOCK(0) + '0' * TILE_SIZE_4BPP + (row << 5));
-      s32 column = 0;
+      s32 column;
 
-      for (; column < TILE_SIZE_4BPP / 2; column++) {
+      for (column = 0; column < TILE_SIZE_4BPP / 2; column++) {
         u32 packed = *source++;
         u32 expanded = 0;
         s32 nibble = 0;

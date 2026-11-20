@@ -896,12 +896,11 @@ void AirsRock_RideWhirlwind(void) {
     leader->priorityFlags = ACTOR_PRIORITY_OVERHEAD;
     leader->x.fixed =
         FIELD_HALF_CELL_ORIGIN((FIELD_HALF_CELL(leader->x.fixed) & ~1) + 1);
-    i = 0;
     leader->y.fixed =
         FIELD_HALF_CELL_ORIGIN((FIELD_HALF_CELL(ride->y.fixed) & ~1) + 3);
     leader->z.fixed =
         FIELD_HALF_CELL_ORIGIN((FIELD_HALF_CELL(leader->z.fixed) & ~1) + 1);
-    for (; i != 60; i++) {
+    for (i = 0; i != 60; i++) {
       moved = 0;
       if (gInput.held & KEY_UP) {
         dx = 0;

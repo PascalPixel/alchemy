@@ -164,9 +164,9 @@ s32 VramCache_Load(u32 no, u32 size, const void *src) {
 void VramCache_Reset(void) {
   u32 limit = VRAM_BLOCK_COUNT - 1;
   u8 *p = gVramCacheBlockOwners;
-  u32 n = 0;
+  u32 n;
 
-  for (; n <= limit; n++) {
+  for (n = 0; n <= limit; n++) {
     *p++ = VRAM_BLOCK_OWNER_FREE;
   }
 

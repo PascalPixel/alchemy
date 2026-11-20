@@ -578,8 +578,7 @@ void BattleEffect_DrawStreaks(void) {
   }
   point.y = 0;
   point.z = 0;
-  i = 0;
-  for (; i != STREAKS; i++) {
+  for (i = 0; i != STREAKS; i++) {
     streak = &((struct Streak *)Ram_MapCellBuffer)[i];
     if (frame > i / 4 && streak->head > 0) {
       s32 fade;

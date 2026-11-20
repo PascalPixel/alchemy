@@ -2142,9 +2142,8 @@ void WorldMap_TakeOff(void) {
   WorldMap_SetUpShip();
   x = Actor_Get(ACTOR_SHIP)->x.fixed / toFIXED(1);
   z = Actor_Get(ACTOR_SHIP)->z.fixed / toFIXED(1);
-  i = 0;
   {
-    for (; i <= 7; i++) {
+    for (i = 0; i <= 7; i++) {
       if (Actor_Get(i) != NULL) {
         gWorldMap_HiddenMembers[i] = i;
         Actor_Get(i)->scaleX = 0;

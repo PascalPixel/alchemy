@@ -473,9 +473,9 @@ UNUSED s32 Text_DecodeSymbolInC(struct MessageReader *reader) {
 /// setup calls it.
 void Portrait_ClearSlots(void) {
   struct WindowWork *work = WINDOW_WORK;
-  s32 index = 0;
+  s32 index;
 
-  for (; index != ARRAY_COUNT(work->portraitPictures); index++) {
+  for (index = 0; index != ARRAY_COUNT(work->portraitPictures); index++) {
     work->portraitPictures[index] = PORTRAIT_SLOT_EMPTY;
   }
 }

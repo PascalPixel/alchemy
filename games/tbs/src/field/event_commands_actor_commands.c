@@ -522,10 +522,9 @@ void Actor_JumpDownLedge(s32 actorId, u32 pose, s32 param) {
     // neither falls nor follows the ground.
     Sound_PlayFar(SE_FLOOR_SWITCH);
     // From here pose counts frames.
-    pose = 0;
     Actor_FaceDirectionById(actorId, FACING_SOUTH_SOUTHWEST, 0);
     actor->motionFlags = 0;
-    for (; pose < LEDGE_JUMP_SINK_FRAMES; pose++) {
+    for (pose = 0; pose < LEDGE_JUMP_SINK_FRAMES; pose++) {
       nextY = actor->y.fixed - toFIXED(2);
       actor->y.fixed = nextY;
       actor->targetY = nextY;

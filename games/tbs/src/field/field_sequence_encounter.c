@@ -296,9 +296,9 @@ s32 Area_GetNameIndex(s32 sceneId, s32 entrance) {
 void Scene_SetRestartPoint(void) {
   s16 sceneId = gMainRoutineWork.next;
   s16 entrance = gMainRoutineWork.entrance;
-  const s16 *rule = gScene_RestartRules;
+  const s16 *rule;
 
-  for (; rule[0] != -1; rule += 4) {
+  for (rule = gScene_RestartRules; rule[0] != -1; rule += 4) {
     if (rule[0] == sceneId && (rule[1] == -1 || rule[1] == entrance)) {
       gMainRoutineWork.restartScene = rule[2];
       gMainRoutineWork.restartEntrance = rule[3];

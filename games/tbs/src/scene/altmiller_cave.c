@@ -602,9 +602,9 @@ static void AltmillerCave_PlaceLight(s32 actorId, s32 radius, s32 angle) {
 /// Spaces the five lights evenly around the ring, the first at the given
 /// angle.
 static void AltmillerCave_PlaceLights(s32 angle) {
-  s32 i = 0;
+  s32 i;
 
-  for (; i < LIGHT_COUNT; i++) {
+  for (i = 0; i < LIGHT_COUNT; i++) {
     AltmillerCave_PlaceLight(ACTOR_FIRST_LIGHT + i, toFIXED(24), angle);
     angle -= DEGtoANG(72);
   }

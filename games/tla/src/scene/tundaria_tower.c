@@ -1421,9 +1421,9 @@ void TundariaTower_ScatterDust(s32 spread) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
   u32 frame = 0;
-  u32 i = 0;
+  u32 i;
 
-  for (; i <= 7; i++) {
+  for (i = 0; i <= 7; i++) {
     {
       // Each piece starts 0 to 13 pixels lower than the leader.
       FIXED y = leader->y.fixed - ((Random_Below(14)) << 16);

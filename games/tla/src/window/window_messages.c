@@ -164,14 +164,13 @@ void Window_CloseAll(void) {
       i++;
       message++;
     } while (i != ARRAY_COUNT(work->channels));
-    i = 0;
     if (done)
       break;
     wait(1);
   }
 
   // Then the windows opened directly.
-  for (; i != WINDOW_COUNT; i++) {
+  for (i = 0; i != WINDOW_COUNT; i++) {
     if (win->flags != 0)
       Window_Close(win, 0);
     win++;
@@ -702,9 +701,9 @@ extern const s16 gPortrait_SpriteMap[];
 /// setup calls it.
 void Portrait_ClearSlots(void) {
   struct WindowWork *work = WINDOW_WORK;
-  s32 index = 0;
+  s32 index;
 
-  for (; index != ARRAY_COUNT(work->portraitPictures); index++) {
+  for (index = 0; index != ARRAY_COUNT(work->portraitPictures); index++) {
     work->portraitPictures[index] = PORTRAIT_SLOT_EMPTY;
   }
 }

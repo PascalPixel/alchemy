@@ -150,12 +150,12 @@ void SelectionMenu_AddEntry(u32 first, u32 second) {
 void SelectionMenu_BuildEntries(u32 unused) {
   struct SelectionMenuWork *screen = Ram_HeapSlots->selectionMenu;
   u32 count = screen->count;
-  u32 index = screen->top;
+  u32 index;
   struct SelectionNode *previous = 0;
   struct SelectionNode *node;
   s32 rowPosition = 0;
 
-  for (; index < count; index++) {
+  for (index = screen->top; index < count; index++) {
     s32 base = screen->bases[index];
     u32 kind = screen->kinds[index];
 

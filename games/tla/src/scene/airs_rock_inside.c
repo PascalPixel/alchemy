@@ -697,12 +697,11 @@ void AirsRockInside_RideWhirlwind(void) {
     leader->priorityFlags = ACTOR_PRIORITY_OVERHEAD;
     leader->x.fixed =
         FIELD_HALF_CELL_ORIGIN((FIELD_HALF_CELL(leader->x.fixed) & ~1) + 1);
-    frames = 0;
     leader->y.fixed =
         FIELD_HALF_CELL_ORIGIN((FIELD_HALF_CELL(ride->y.fixed) & ~1) + 3);
     leader->z.fixed =
         FIELD_HALF_CELL_ORIGIN((FIELD_HALF_CELL(leader->z.fixed) & ~1) + 1);
-    for (; frames != 60; frames++) {
+    for (frames = 0; frames != 60; frames++) {
       moved = 0;
       if (gInput.held & KEY_UP) {
         dx = 0;
@@ -3059,10 +3058,10 @@ void AirsRockInside_RiseOnLift(void) {
 /// last; the odd ones swell slowly, the even ones quickly.
 void AirsRockInside_SpawnMotes(void) {
   struct Actor *actor;
-  s32 i = 0;
+  s32 i;
   struct FieldSprite *sprite;
 
-  for (; i != 8; i++) {
+  for (i = 0; i != 8; i++) {
     actor = Import_ActorCreate(SPRITE_PARTICLE, 0, 0, 0);
     sprite = actor->sprite;
     sprite->priority = 1;

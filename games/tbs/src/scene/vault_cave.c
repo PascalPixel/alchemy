@@ -686,9 +686,9 @@ static void VaultCave_FlipSwitch(void) {
 /// Resets a low water drop sharing the subject's cell and reports a hit.
 static s32 VaultCave_ResetFallingActorAtActorCell(s32 subjectActorId) {
   struct Actor *subject = Actor_Get(subjectActorId);
-  s32 fallingIndex = 0;
+  s32 fallingIndex;
 
-  for (; fallingIndex <= 3; fallingIndex++) {
+  for (fallingIndex = 0; fallingIndex <= 3; fallingIndex++) {
     struct Actor *fallingActor =
         Actor_Get(fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP);
 

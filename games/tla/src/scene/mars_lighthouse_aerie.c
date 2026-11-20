@@ -2963,10 +2963,9 @@ void MarsLighthouseAerie_UpdateRisingRings(struct Actor *actor) {
                      actor->z.fixed);
         Camera_WorldToScreen(&position);
         x = position.x;
-        j = 0;
         z = position.z;
         sprite = &work->sprites[i * 2];
-        for (; j <= 1; j++) {
+        for (j = 0; j <= 1; j++) {
           sprite->x = x;
           sprite->y = z;
           sprite->scaleX = sine;

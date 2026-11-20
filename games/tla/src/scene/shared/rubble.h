@@ -9,10 +9,10 @@ void Rubble_Spray(s32 spread) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
   void *frame = 0;
-  u32 i = 0;
+  u32 i;
   FIXED y;
 
-  for (; i <= 7; i++) {
+  for (i = 0; i <= 7; i++) {
     y = leader->y.fixed - toFIXED(Random_Below(14));
     effect = (struct FieldEffect *)FieldActor_Create(
         SPRITE_DUST_CLOUD, i * toFIXED(2) + leader->x.fixed - toFIXED(8),

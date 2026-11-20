@@ -413,9 +413,10 @@ struct LevelUpResult *Unit_TryLevelUp(s32 unitId, struct LevelUpResult *gains) {
 void Unit_LevelUpTo(s32 unitId, s32 targetLevel) {
   // Each level's gains are discarded.
   struct LevelUpResult gains;
-  s32 currentLevel = Unit_Get(unitId)->level;
+  s32 currentLevel;
 
-  for (; currentLevel < targetLevel; currentLevel++) {
+  for (currentLevel = Unit_Get(unitId)->level; currentLevel < targetLevel;
+       currentLevel++) {
     Unit_LevelUp(unitId, &gains);
   }
   Unit_Calculate(unitId);

@@ -113,12 +113,12 @@ void SelectionMenu_AddEntry(u32 kind, u32 base) {
 void SelectionMenu_BuildEntries(u32 unused) {
   struct SelectionMenuWork *screen = gSelectionMenuWork;
   u32 count = screen->count;
-  u32 entryIndex = screen->top;
+  u32 entryIndex;
   struct SelectionNode *previous = 0;
   struct SelectionNode *node;
   s32 rowPosition = 0;
 
-  for (; entryIndex < count; entryIndex++) {
+  for (entryIndex = screen->top; entryIndex < count; entryIndex++) {
     s32 base = screen->bases[entryIndex];
     u32 kind = screen->kinds[entryIndex];
 

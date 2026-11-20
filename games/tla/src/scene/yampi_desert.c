@@ -2441,9 +2441,10 @@ void Geyser_Update(void) {
   u8 *terrain = map->layers[0].terrainIds;
   struct MapCell *cells = map->layers[0].cells;
   s32 i = 0;
-  s32 *collision = (s32 *)Ram_MapCollision + firstTerrain;
+  s32 *collision;
 
-  for (; i < GEYSER_ENTRIES; collision++, entry++, i++) {
+  for (collision = (s32 *)Ram_MapCollision + firstTerrain; i < GEYSER_ENTRIES;
+       collision++, entry++, i++) {
     struct Actor *actor;
     struct Actor *rider;
     struct MapCell *cell;

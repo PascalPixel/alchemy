@@ -2924,8 +2924,8 @@ void TrialRoad_UpdateFountains(void) {
   s32 i;
 
   i = 0;
-  collision = (s32 *)Ram_MapCollision + shape;
-  for (; i < FOUNTAIN_COUNT; collision++, i++, fountain++) {
+  for (collision = (s32 *)Ram_MapCollision + shape; i < FOUNTAIN_COUNT;
+       collision++, i++, fountain++) {
     if (fountain->id == 0)
       continue;
     actor = Actor_GetById(fountain->id);
@@ -3330,9 +3330,9 @@ void Dust_Scatter(s32 spread) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldEffect *effect;
   u32 frame = 0;
-  u32 i = 0;
+  u32 i;
 
-  for (; i <= 7; i++) {
+  for (i = 0; i <= 7; i++) {
     {
       // Each piece starts 0 to 13 pixels lower than the leader.
       FIXED y = leader->y.fixed - ((Random_Below(14)) << 16);

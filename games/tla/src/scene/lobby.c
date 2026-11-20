@@ -543,8 +543,6 @@ s32 LinkLobby_SendPartyRecords(void) {
   // or while the link is not ready, every frame is a try, and past
   // LOBBY_TRANSFER_RETRY_LIMIT tries the exchange fails. A send that cannot
   // start leaves the block.
-  /* FAKEMATCH(dead): the sends in a once-only block; as a goto to done from
-   * each break. */
   do {
     for (i = 0; i < memberCount; i++) {
       s32 tries = 0;

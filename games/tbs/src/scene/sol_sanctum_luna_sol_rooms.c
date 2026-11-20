@@ -1179,20 +1179,13 @@ static void SolSanctumLunaSolRooms_RiseToElementalStarRoom(void) {
     Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH, 20);
     Actor_SetSpeed(ACTOR_KRADEN, 0.3);
     actor = Actor_Get(ACTOR_KRADEN);
-    {
-      /* FAKEMATCH(temporary): Kraden's cleared steering flags held in a local
-       * and stored after frame = 0. */
-      s32 flags = (u8)~ACTOR_FACES_MOTION;
-
-      flags &= actor->steeringFlags;
-      frame = 0;
-      actor->steeringFlags = flags;
-      actor->motionFlags = 0;
-    }
+    actor->steeringFlags &= ~ACTOR_FACES_MOTION;
+    actor->motionFlags = 0;
     Sound_Play(SE_ASCEND);
     Actor_SetSpriteColorById(ACTOR_KRADEN, SPRITE_COLOR_BLINK);
     sprite = actor->sprite;
     sprite->flags = 0;
+    frame = 0;
     do {
       actor->y.fixed += toFIXED(1) / 5;
       wait(1);

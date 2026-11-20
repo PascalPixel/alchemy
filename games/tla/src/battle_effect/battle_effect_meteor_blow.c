@@ -111,8 +111,8 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   u8 *coneMesh;
   struct BattleBackgroundWork *background;
   struct MeteorStar *stars;
-  s32 pitch;
-  s32 yaw;
+  u16 pitch;
+  u16 yaw;
   FIXED x;
   FIXED z;
   s32 size;
@@ -381,26 +381,23 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
     } else {
       // DEAD: frame is at most 115 here, so the second arm never runs; the ROM
       // keeps both compares and the arm.
-      /* FAKEMATCH(signature): pitch and yaw, halfword angles, held in s32
-       * and wrapped through a 16.16 round trip; as s16 locals stepped
-       * plainly. */
       if (frame <= 159) {
-        pitch = FIXEDtoINT(INTtoFIXED(pitch) + INTtoFIXED(TRIG_TURN / 256));
+        pitch += TRIG_TURN / 256;
       } else if (frame <= 191) {
-        pitch = FIXEDtoINT(INTtoFIXED((u16)pitch - frame * 8 + 1216));
+        pitch = pitch - frame * 8 + 1216;
       }
       if (frame <= 47) {
-        yaw = FIXEDtoINT(INTtoFIXED(yaw) + INTtoFIXED(TRIG_TURN / 256));
+        yaw += TRIG_TURN / 256;
       } else if (frame <= 111) {
-        yaw = FIXEDtoINT(INTtoFIXED((u16)yaw - frame * 4 + 448));
+        yaw = yaw - frame * 4 + 448;
       }
       position[0] = METEOR_BLOW_SKY_CENTER_X;
       position[1] = METEOR_BLOW_SKY_CENTER_Y;
       position[2] = 0;
       Matrix_Initialize();
       Matrix_TranslateVector(position);
-      Matrix_RotateX((u16)pitch);
-      Matrix_RotateY((u16)yaw);
+      Matrix_RotateX(pitch);
+      Matrix_RotateY(yaw);
       if (frame <= 112) {
         struct MeteorStar *s = stars;
 

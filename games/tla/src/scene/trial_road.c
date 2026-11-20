@@ -1522,7 +1522,6 @@ void TrialRoad_OpenSummitGate(s32 sound) {
 
 /// Moapa at the summit: the race's result decides his challenge.
 void TrialRoad_ChallengeMoapa(void) {
-  struct MainRoutineWork *party;
   s32 count = Event_GetFlag(FLAG_RIVAL_FIRST_AT_DOOR_BASE);
 
   count += Event_GetFlag(FLAG_RIVAL_FIRST_AT_DOOR_BASE + 1);
@@ -1532,12 +1531,7 @@ void TrialRoad_ChallengeMoapa(void) {
     TrialRoad_ReachPeakFirst();
   else
     TrialRoad_ReachPeakSecond();
-  party = &gMainRoutineWork;
-  party->battleType = BATTLE_TYPE_NO_ESCAPE;
-  /* FAKEMATCH(dead): an empty once-only block after the battle type; as no
-   * block. */
-  do {
-  } while (0);
+  Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
   Event_SetAfterBattleDestination(SCENE_TRIAL_ROAD_SUMMIT,
                                   TRIAL_ROAD_SUMMIT_AFTER_WIN);
   Event_SetDefeatDestination(SCENE_TRIAL_ROAD_SUMMIT,

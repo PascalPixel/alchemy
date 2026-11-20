@@ -79,8 +79,7 @@ void WorldMap_UpdatePlacedActors(void) {
   s32 next;
   FIXED left, right, top, bottom;
   struct Actor **slot;
-  /* FAKEMATCH(pin): work fixed to a register; as a plain local. */
-  register struct FieldWork *work asm("r9") = Ram_HeapSlots->fieldWork;
+  struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *actor = work->camera;
   s32 zoom = map->zoom;
@@ -105,8 +104,8 @@ void WorldMap_UpdatePlacedActors(void) {
   /* FAKEMATCH(barrier): an empty asm on next; as no asm. */
   asm("" : "+g"(next));
   slot = objects;
-  /* FAKEMATCH(barrier): an empty asm on leader; as no asm. */
-  asm("" : "+g"(leader));
+  /* FAKEMATCH(barrier): an empty asm on leader and work; as no asm. */
+  asm("" : "+g"(leader), "+r"(work));
   while (next != 0) {
     FIXED px, pz;
 

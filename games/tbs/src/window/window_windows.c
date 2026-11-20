@@ -590,10 +590,9 @@ struct Message *BattleMessage_Continue(struct Window *window, s32 entry,
     selected->ended = 0;
     index = 0;
     spacing = selected->spacing;
-    do {
-      index++;
+    for (; index < MESSAGE_LINE_COUNT; index++) {
       *spacing++ = 0;
-    } while (index < MESSAGE_LINE_COUNT);
+    }
   }
   return selected;
 }

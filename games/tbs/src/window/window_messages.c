@@ -219,13 +219,11 @@ void MessageArgument_ClearAll(void) {
   struct WindowWork *work;
 
   work = WINDOW_WORK;
-  no = 0;
 
-  do {
+  for (no = 0; no != MESSAGE_ARGUMENT_COUNT; no++) {
     work->argumentValues[no] = 0;
     work->argumentKinds[no] = MESSAGE_ARGUMENT_NONE;
-    no++;
-  } while (no != MESSAGE_ARGUMENT_COUNT);
+  }
 }
 
 /// Adds a message argument of kind (MESSAGE_ARGUMENT_) with value to the first
@@ -477,10 +475,9 @@ void Portrait_ClearSlots(void) {
   struct WindowWork *work = WINDOW_WORK;
   s32 index = 0;
 
-  do {
+  for (; index != ARRAY_COUNT(work->portraitPictures); index++) {
     work->portraitPictures[index] = PORTRAIT_SLOT_EMPTY;
-    index++;
-  } while (index != ARRAY_COUNT(work->portraitPictures));
+  }
 }
 
 /// Returns the portrait of a character or another speaker's sprite, or -1 when

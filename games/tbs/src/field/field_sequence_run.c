@@ -450,14 +450,13 @@ void Scene_ApplyEntrance(void) {
   const struct SceneEntrance *entranceEntry = gOverlayArea.entrances();
   s32 foundEntrance = 0;
 
-  while (entranceEntry->entrance != -1) {
+  for (; entranceEntry->entrance != -1; entranceEntry++) {
     if (entranceEntry->entrance == entrance &&
         (entranceEntry->requiredFlag == -1 ||
          GameFlag_GetFar(entranceEntry->requiredFlag))) {
       foundEntrance = 1;
       break;
     }
-    entranceEntry++;
   }
   if (!foundEntrance)
     entranceEntry = gOverlayArea.entrances();

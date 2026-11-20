@@ -612,8 +612,8 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
       // Take both whole stacks out, one item at a time (at most
       // INVENTORY_STACK_MAX): Inventory_RemoveFar returns INVENTORY_REMOVE_LAST
       // for the last one and INVENTORY_REMOVE_EMPTY_SLOT for an empty slot.
-      sourceQuantity = 0;
-      while (sourceQuantity <= INVENTORY_STACK_MAX - 1) {
+      for (sourceQuantity = 0; sourceQuantity < INVENTORY_STACK_MAX;
+           sourceQuantity++) {
         result =
             Inventory_RemoveFar(menu->sideMember[0], menu->selectedSlots[0]);
         if (result == INVENTORY_REMOVE_LAST) {
@@ -623,11 +623,10 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
           transferFailed = 1;
           break;
         }
-        sourceQuantity++;
       }
       sourceQuantity++;
-      targetQuantity = 0;
-      while (targetQuantity <= INVENTORY_STACK_MAX - 1) {
+      for (targetQuantity = 0; targetQuantity < INVENTORY_STACK_MAX;
+           targetQuantity++) {
         // The receiver cannot trade away a worn item that will not come off.
         if ((menu->selectedItems[1] & INVENTORY_EQUIPPED) != 0) {
           item = Item_GetDirectFar(menu->selectedItems[1] &
@@ -645,7 +644,6 @@ s32 ItemMenu_RunCommands(s32 *memberOut, s32 *targetOut, s32 *itemOut) {
           transferFailed = 1;
           break;
         }
-        targetQuantity++;
       }
       targetQuantity++;
       // Then give each the other's items.
@@ -886,11 +884,10 @@ void Menu_SpawnIconEntries(struct ItemMenuWork *menu, struct Window *window) {
     s32 y = MENU_ICON_HIDDEN_Y;
 
     firstIcons = &menu->entryIcons[0];
-    do {
+    for (; firstSlot < ICON_GRID_ROW; firstSlot++) {
       *firstIcons++ = WindowSprite_CreateFromResourceFar(
           ICON_KIND_ITEM, firstSlot, window, MENU_ICON_HIDDEN_X, y);
-      firstSlot++;
-    } while (firstSlot < ICON_GRID_ROW);
+    }
   }
 
   secondSlot = ICON_GRID_ROW;
@@ -898,11 +895,10 @@ void Menu_SpawnIconEntries(struct ItemMenuWork *menu, struct Window *window) {
     s32 y = MENU_ICON_HIDDEN_Y;
 
     secondIcons = &menu->entryIcons[ICON_GRID_ROW];
-    do {
+    for (; secondSlot < 2 * ICON_GRID_ROW; secondSlot++) {
       *secondIcons++ = WindowSprite_CreateFromResourceFar(
           ICON_KIND_ITEM, secondSlot, window, 256, y);
-      secondSlot++;
-    } while (secondSlot < 2 * ICON_GRID_ROW);
+    }
   }
 
   remainingSlot = 2 * ICON_GRID_ROW;
@@ -910,11 +906,10 @@ void Menu_SpawnIconEntries(struct ItemMenuWork *menu, struct Window *window) {
     s32 y = MENU_ICON_HIDDEN_Y;
 
     remainingIcons = &menu->entryIcons[2 * ICON_GRID_ROW];
-    do {
+    for (; remainingSlot < MENU_ENTRY_ICONS; remainingSlot++) {
       *remainingIcons++ = WindowSprite_CreateFromResourceFar(
           ICON_KIND_ITEM, remainingSlot, window, 256, y);
-      remainingSlot++;
-    } while (remainingSlot <= MENU_ENTRY_ICONS - 1);
+    }
   }
 }
 
@@ -1362,8 +1357,7 @@ s32 ItemMenu_GetItemQuantity(s32 memberId, s32 itemId) {
 
   quantity = 0;
   unit = Unit_GetFar(memberId);
-  slotIndex = 0;
-  do {
+  for (slotIndex = 0; slotIndex < INVENTORY_SLOTS; slotIndex++) {
     if (unit->inventory[slotIndex] != 0 &&
         (unit->inventory[slotIndex] & INVENTORY_ITEM_ID_MASK) == itemId) {
 #if TBS_PATCH_4
@@ -1377,8 +1371,7 @@ s32 ItemMenu_GetItemQuantity(s32 memberId, s32 itemId) {
       break;
 #endif
     }
-    slotIndex++;
-  } while (slotIndex < INVENTORY_SLOTS);
+  }
   return quantity;
 }
 
@@ -2697,8 +2690,7 @@ s32 ItemMenu_DrawItemDetailPage(struct Window *window, void *memberWork,
     MENU_DRAW_DESCRIPTION(name, menu->descriptionWindow, 0, 0);
   }
 
-  row = 0;
-  do {
+  for (row = 0; row < LIST_PAGE_SIZE; row++) {
     if (row == pageState->row) {
       Render_SetTilemapFlagRect((void *)menu->itemWindow, 1, row * 2 + 1, 14, 1,
                                 HIGHLIGHT_PALETTE);
@@ -2706,8 +2698,7 @@ s32 ItemMenu_DrawItemDetailPage(struct Window *window, void *memberWork,
       Render_SetTilemapFlagRect((void *)menu->itemWindow, 1, row * 2 + 1, 14, 1,
                                 WINDOW_PALETTE);
     }
-    row++;
-  } while (row < LIST_PAGE_SIZE);
+  }
 
   wait(1);
   return 1;

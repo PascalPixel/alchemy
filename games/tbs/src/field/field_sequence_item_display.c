@@ -374,7 +374,7 @@ void FieldEffect_SpawnRevealMarkers(void) {
       entry = gOverlayArea.triggers();
       if (entry->kind == -1)
         continue;
-      do {
+      for (; entry->kind != -1; entry++) {
         if (entry->subject == id &&
             (entry->kind & TRIGGER_KIND_MASK) == TRIGGER_EXAMINE) {
           switch (entry->value & FIND_TYPE_MASK) {
@@ -399,8 +399,7 @@ void FieldEffect_SpawnRevealMarkers(void) {
             break;
           }
         }
-        entry++;
-      } while (entry->kind != -1);
+      }
     }
   }
 }

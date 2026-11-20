@@ -38,13 +38,12 @@ void MapGrid_WaitForShakeToSettle(void) {
   s32 waitedFrames;
 
   grid = gMapGridWork[0];
-  waitedFrames = 0;
   // A decay of 1.0 or more never settles, so the limit ends the wait.
-  while (waitedFrames < MAPGRID_SHAKE_SETTLE_FRAMES &&
-         (grid->shakeX > MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE ||
-          grid->shakeY > MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE)) {
+  for (waitedFrames = 0; waitedFrames < MAPGRID_SHAKE_SETTLE_FRAMES &&
+                         (grid->shakeX > MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE ||
+                          grid->shakeY > MAPGRID_SHAKE_SETTLE_MAX_AMPLITUDE);
+       waitedFrames++) {
     wait(1);
-    waitedFrames++;
   }
   // A zero decay makes the next view update's shake its last.
   grid->shakeDecay = 0;

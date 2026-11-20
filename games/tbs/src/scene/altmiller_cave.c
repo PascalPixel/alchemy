@@ -604,11 +604,10 @@ static void AltmillerCave_PlaceLight(s32 actorId, s32 radius, s32 angle) {
 static void AltmillerCave_PlaceLights(s32 angle) {
   s32 i = 0;
 
-  do {
+  for (; i < LIGHT_COUNT; i++) {
     AltmillerCave_PlaceLight(ACTOR_FIRST_LIGHT + i, toFIXED(24), angle);
     angle -= DEGtoANG(72);
-    i++;
-  } while (i < LIGHT_COUNT);
+  }
 }
 
 /// Task that spins the ring of lights.

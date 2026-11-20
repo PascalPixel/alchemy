@@ -1154,13 +1154,12 @@ static struct Actor *ShipRooms_FindActorNear(s32 x, s32 z) {
   top = z - 12;
   bottom = z + 12;
   actor = &work->actors[ACTOR_FIRST_PLACED];
-  while (i <= ACTOR_LAST_ID) {
+  for (; i <= ACTOR_LAST_ID; i++) {
     current = *actor++;
     actorX = current->x.part[0].integer;
     actorZ = current->z.part[0].integer;
     if (left < actorX && right > actorX && top < actorZ && bottom > actorZ)
       return current;
-    i++;
   }
   return 0;
 }

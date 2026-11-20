@@ -213,7 +213,7 @@ static void KolimaForestFloodgate_DrawWaterLevel(void) {
   }
 
   // Each log floats or rests, and on high water its four cells are drawn.
-  while (record->sprite != -1) {
+  for (; record->sprite != -1; record++) {
     piece = record->actor;
 
     if (*gKolimaForestFloodgate_WaterHigh == 1) {
@@ -234,7 +234,6 @@ static void KolimaForestFloodgate_DrawWaterLevel(void) {
       piece->motionFlags = ACTOR_FALLS;
       piece->y.fixed = 0;
     }
-    record++;
   }
 
   MapGrid_CopyCells(70, 42, 1, 1, 10, 50);
@@ -520,7 +519,7 @@ void KolimaForestFloodgate_MarkLogCells(const struct FloodgateLog *records,
 
   if (record->sprite == -1)
     return;
-  do {
+  for (; record->sprite != -1; record++) {
     column = record->x;
     row = record->z;
     for (i = 0; i < 4; i++) {
@@ -531,14 +530,13 @@ void KolimaForestFloodgate_MarkLogCells(const struct FloodgateLog *records,
       else
         row++;
     }
-    record++;
-  } while (record->sprite != -1);
+  }
 }
 
 /// The log lying across the cell, or none.
 static struct FloodgateLog *
 KolimaForestFloodgate_FindLogAt(struct FloodgateLog *run, s32 x, s32 y) {
-  while (run->sprite != -1) {
+  for (; run->sprite != -1; run++) {
     s32 x0 = run->x;
     s32 x1 = x0;
     s32 y0 = run->z;
@@ -551,7 +549,6 @@ KolimaForestFloodgate_FindLogAt(struct FloodgateLog *run, s32 x, s32 y) {
 
     if (x >= x0 && x <= x1 && y >= y0 && y <= y1)
       return run;
-    run++;
   }
   return 0;
 }

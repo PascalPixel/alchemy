@@ -84,13 +84,11 @@ s32 ActorScript_FindLabel(struct Actor *interpreter, u32 labelKey) {
 
   labelKey &= SCRIPT_LABEL_KEY_MASK;
   scriptWords = (u32 *)interpreter->script;
-  wordIndex = 0;
-  do {
+  for (wordIndex = 0; wordIndex < SCRIPT_LABEL_SEARCH_WORDS; wordIndex++) {
     if (*scriptWords++ == labelKey) {
       return wordIndex + 1;
     }
-    wordIndex++;
-  } while (wordIndex <= SCRIPT_LABEL_SEARCH_WORDS - 1);
+  }
   return 0;
 }
 

@@ -147,12 +147,10 @@ void FieldPsynergy_Retreat(void) {
   wait(70);
 
   // The flying particles vanish once they arrive.
-  i = 0;
-  do {
+  for (i = 0; i < PSYNERGY_EFFECT_SLOT_COUNT; i++) {
     if (effectWork->particles[i].active != 0)
       effectWork->particles[i].state = RETREAT_PARTICLE_LAST_FLIGHT;
-    i++;
-  } while (i < PSYNERGY_EFFECT_SLOT_COUNT);
+  }
   wait(40);
   FieldPsynergy_FadeFromCastColor();
   wait(10);

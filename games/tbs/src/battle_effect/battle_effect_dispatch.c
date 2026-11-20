@@ -180,9 +180,10 @@ void BattleEffect_TintBattler(s32 unitId, s32 palette, s32 animation,
 
   slot = GetBattleObjectSlotFar(unitId);
   work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
-  groupIndex = 0;
 
-  while ((group = GetMotionRecordFar(slot->actor, groupIndex)) != NULL) {
+  for (groupIndex = 0;
+       (group = GetMotionRecordFar(slot->actor, groupIndex)) != NULL;
+       groupIndex++) {
     if (timerSlot != TINT_KEEP) {
       work->actorTimers[timerSlot] = timerFrames;
     }
@@ -206,7 +207,6 @@ void BattleEffect_TintBattler(s32 unitId, s32 palette, s32 animation,
       if (animation != TINT_KEEP)
         Sprite_StartAnimationFar(group, animation);
     }
-    groupIndex++;
   }
 }
 

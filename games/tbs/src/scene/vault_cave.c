@@ -642,7 +642,7 @@ static void VaultCave_RunRumble(void) {
   // switch shows the floor coming through at full and the water's blue then
   // thinning away over it in four steps, one every 20 frames.
   upperFadeBits = fadeLevel << BLUE_SHIFT;
-  do {
+  for (; frame <= 69; frame++) {
     IoWriteQueue_Store16((u32)&REG_BLDALPHA, upperFadeBits |
                                                  (fadeLevel << GREEN_SHIFT) |
                                                  lowFadeLevel);
@@ -651,8 +651,7 @@ static void VaultCave_RunRumble(void) {
       lowFadeLevel--;
       fadeLevel--;
     }
-    frame++;
-  } while (frame <= 69);
+  }
   MapGrid_CopyCells(19, 83, 15, 8, 19, 91);
   Sound_Play(SE_STOP_ACTION_SE);
   MapGrid_CenterOnFollowedPoint();
@@ -689,7 +688,7 @@ static s32 VaultCave_ResetFallingActorAtActorCell(s32 subjectActorId) {
   struct Actor *subject = Actor_Get(subjectActorId);
   s32 fallingIndex = 0;
 
-  do {
+  for (; fallingIndex <= 3; fallingIndex++) {
     struct Actor *fallingActor =
         Actor_Get(fallingIndex + ACTOR_FIRST_TIMED_WATER_DROP);
 
@@ -708,9 +707,7 @@ static s32 VaultCave_ResetFallingActorAtActorCell(s32 subjectActorId) {
         return 1;
       }
     }
-
-    fallingIndex++;
-  } while (fallingIndex <= 3);
+  }
 
   return 0;
 }

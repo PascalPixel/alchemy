@@ -23,7 +23,7 @@ const struct Trigger *Field_FindItemTrigger(s32 item) {
   // below.
   tileAhead = Field_GetCollisionAheadOfLeader();
   // The kind's bits: 15..8 the item, 4 on an actor, 3..0 the kind.
-  while (trigger->kind != -1) {
+  for (; trigger->kind != -1; trigger++) {
     s32 eventFacing = trigger->subject & TRIGGER_SUBJECT_FACING;
     s16 requiresFacing = trigger->subject & TRIGGER_SUBJECT_NEEDS_FACING;
     s32 eventTarget = trigger->subject & TRIGGER_SUBJECT_TARGET;
@@ -45,7 +45,6 @@ const struct Trigger *Field_FindItemTrigger(s32 item) {
         }
       }
     }
-    trigger++;
   }
   return 0;
 }
@@ -207,7 +206,7 @@ void *Scene_FindPsynergyTrigger(s32 eventFlags, s32 group, s32 *target) {
   if (eventFlags == PSYNERGY_TRIGGER_ANY)
     anyPhase = 1;
 
-  while (trigger->kind != -1) {
+  for (; trigger->kind != -1; trigger++) {
     s32 eventFacing = trigger->subject & TRIGGER_SUBJECT_FACING;
     s16 requiresFacing = trigger->subject & TRIGGER_SUBJECT_NEEDS_FACING;
     s32 eventTarget = trigger->subject & TRIGGER_SUBJECT_TARGET;
@@ -231,7 +230,6 @@ void *Scene_FindPsynergyTrigger(s32 eventFlags, s32 group, s32 *target) {
         return (void *)trigger;
       }
     }
-    trigger++;
   }
   return NULL;
 }

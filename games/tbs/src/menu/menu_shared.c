@@ -807,8 +807,7 @@ s32 ItemMenu_Sort(u16 *inventory, s32 mode) {
 
   // One pass for each entry of the order: move its items across, the highest
   // id first, until none is left.
-  pass = 0;
-  while (order[pass] != LIST_ORDER_END) {
+  for (pass = 0; order[pass] != LIST_ORDER_END; pass++) {
     for (;;) {
       best = 0;
       for (i = 0; i < count; i++) {
@@ -832,7 +831,6 @@ s32 ItemMenu_Sort(u16 *inventory, s32 mode) {
       items[bestSlot] = 0;
       sortedCount++;
     }
-    pass++;
   }
 
   for (i = 0; i < count; i++)

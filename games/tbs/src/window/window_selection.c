@@ -118,7 +118,7 @@ void SelectionMenu_BuildEntries(u32 unused) {
   struct SelectionNode *node;
   s32 rowPosition = 0;
 
-  while (entryIndex < count) {
+  for (; entryIndex < count; entryIndex++) {
     s32 base = screen->bases[entryIndex];
     u32 kind = screen->kinds[entryIndex];
 
@@ -138,7 +138,6 @@ void SelectionMenu_BuildEntries(u32 unused) {
     previous = node;
     if (rowPosition == 5)
       break;
-    entryIndex++;
   }
 
   // The row is centred on x 100, at y 140.
@@ -1177,9 +1176,8 @@ u32 Menu_ConfirmSelection(struct SelectionMenuWork *screen) {
   screen->records[SELECTION_RECORD_HAND].scale = 0;
   Resource_ResetPendingTransfer();
   node = screen->head;
-  while (node != NULL && screen->cursorIndex != nodeIndex) {
+  for (; node != NULL && screen->cursorIndex != nodeIndex; nodeIndex++) {
     node = node->next;
-    nodeIndex++;
   }
   node->homeX = node->x;
   node->homeY = node->y;

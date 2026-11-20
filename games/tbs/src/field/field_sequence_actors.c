@@ -279,14 +279,13 @@ s32 Actor_FindLastActiveId(void) {
   s32 actorIndex = ACTOR_FIRST_PLACED;
   struct Actor **slot = &work->actors[ACTOR_FIRST_PLACED];
 
-  do {
+  for (; actorIndex < ACTOR_ID_COUNT; actorIndex++) {
     struct Actor *actor = *slot++;
 
     if (actor != 0) {
       lastActorIndex = actorIndex;
     }
-    actorIndex++;
-  } while (actorIndex <= ACTOR_ID_COUNT - 1);
+  }
   lastActorIndex++;
   if (lastActorIndex == ACTOR_ID_COUNT) {
     lastActorIndex = -1;
@@ -433,7 +432,7 @@ void Actor_ClearAll(void) {
 
   emptyActor = NULL;
   work = gFieldWork;
-  for (actorIndex = ACTOR_ID_COUNT - 1; actorIndex >= 0; actorIndex--) {
+  for (actorIndex = 0; actorIndex < ACTOR_ID_COUNT; actorIndex++) {
     work->actors[actorIndex] = emptyActor;
   }
 }

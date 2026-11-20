@@ -533,8 +533,7 @@ void Field_UpdateActorVisibilityBounds(void) {
   top = y - toFIXED(600);
   bottom = y + toFIXED(400);
 
-  id = ACTOR_FIRST_PLACED;
-  do {
+  for (id = ACTOR_FIRST_PLACED; id < WORLD_PICTURE_MARKER_CAPACITY; id++) {
     actor = Actor_Lookup(id);
 
     if (actor != 0) {
@@ -547,8 +546,7 @@ void Field_UpdateActorVisibilityBounds(void) {
         actor->spriteStorageKind = ACTOR_SPRITE_ONE;
       }
     }
-    id++;
-  } while (id < WORLD_PICTURE_MARKER_CAPACITY);
+  }
 }
 
 /// On the World Map, zooms the view out to FIXED_ONE * 8 / 13 while L is held,

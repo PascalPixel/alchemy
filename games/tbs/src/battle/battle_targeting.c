@@ -337,8 +337,9 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
 
     if (((userId < 0 || userId > ALLY_MAX) && ownSide == 0) ||
         (userId >= 0 && userId <= ALLY_MAX && ownSide != 0)) {
-      targetIndex = 0;
-      while (turnOrder->partyUnits[targetIndex] != BATTLE_UNIT_LIST_END) {
+      for (targetIndex = 0;
+           turnOrder->partyUnits[targetIndex] != BATTLE_UNIT_LIST_END;
+           targetIndex++) {
         slot = &turnOrder->partyUnits[targetIndex];
         unitId = *slot;
         if (unitId != BATTLE_UNIT_REMOVED) {
@@ -349,11 +350,11 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
             candidateCount++;
           }
         }
-        targetIndex++;
       }
     } else {
-      targetIndex = 0;
-      while (turnOrder->enemyIds[targetIndex] != BATTLE_UNIT_LIST_END) {
+      for (targetIndex = 0;
+           turnOrder->enemyIds[targetIndex] != BATTLE_UNIT_LIST_END;
+           targetIndex++) {
         unitId = turnOrder->enemyIds[targetIndex];
         if (unitId != BATTLE_UNIT_REMOVED) {
           if (action->targetMode != ABILITY_TARGET_SELF || unitId == userId) {
@@ -363,7 +364,6 @@ s32 BattleAI_ChooseTarget(s32 userId, struct AbilityDefinition *action) {
             candidateCount++;
           }
         }
-        targetIndex++;
       }
     }
   }

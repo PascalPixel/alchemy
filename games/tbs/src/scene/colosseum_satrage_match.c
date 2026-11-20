@@ -398,14 +398,14 @@ static void ColosseumSatrageMatch_KnockDownObstacle(void) {
   obstacle->speedLimit = toFIXED(6) / 5;
   Sound_Play(SE_TOPPLE);
   FieldActor_SetMoveTarget(obstacle, 336, 10, 264);
-  for (rotationStep = 0, fallFrames = 9; fallFrames >= 0; fallFrames--) {
+  for (rotationStep = 0, fallFrames = 0; fallFrames < 10; fallFrames++) {
     sprite->rotation -= rotationStep;
     wait(1);
     rotationStep += FALL_SPIN_ACCELERATION;
   }
   FieldActor_SetMoveTarget(obstacle, 330, -16, 264);
-  for (settleRotationStep = SETTLE_SPIN_START, settleFrames = 21;
-       settleFrames >= 0; settleFrames--) {
+  for (settleRotationStep = SETTLE_SPIN_START, settleFrames = 0;
+       settleFrames < 22; settleFrames++) {
     sprite->rotation -= settleRotationStep;
     wait(1);
     settleRotationStep += FALL_SPIN_ACCELERATION;
@@ -823,7 +823,7 @@ static void ColosseumSatrageMatch_ReachArena(void) {
   Event_Start();
   opponentFinishedFirst = Colosso_TakePrize(ITEM_CHAIN_MAIL, ITEM_COTTON_SHIRT);
   Colosso_WaitForOpponentToFinish();
-  for (refreshCount = 9; refreshCount >= 0; refreshCount--) {
+  for (refreshCount = 0; refreshCount < 10; refreshCount++) {
     Actor_WaitForScriptEndById(ACTOR_OPPONENT);
   }
   Actor_SetSpeed(ACTOR_OPPONENT, 1);

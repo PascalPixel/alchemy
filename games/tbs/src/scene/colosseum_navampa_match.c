@@ -1800,7 +1800,7 @@ static void ColosseumNavampaMatch_TalkToMovingSidewalkAttendant(s32 guideId) {
 #endif
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ELLIPSIS, 0);
       actor = Actor_Get(ACTOR_PARTY_LEADER);
-      for (i = 119; i >= 0; i--) {
+      for (i = 0; i < 120; i++) {
         if (actor->x.fixed > toFIXED(992)) {
           actor->x.fixed -= toFIXED(6) / 5;
         }

@@ -178,7 +178,7 @@ UNUSED void Code_ResolveLongBranches(u16 *pair, s32 byteLength) {
     pair -= 2;
 #endif
     // Each halfword from the second on is tried as the second of a pair.
-    do {
+    for (; i < entryCount; i++) {
       u16 first, second;
       u32 secondMarker, firstMarker;
 
@@ -220,8 +220,7 @@ UNUSED void Code_ResolveLongBranches(u16 *pair, s32 byteLength) {
 #ifdef UBFIX
       pair++;
 #endif
-      i++;
-    } while (i < entryCount);
+    }
   }
 }
 

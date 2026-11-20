@@ -525,7 +525,7 @@ void Actor_JumpDownLedge(s32 actorId, u32 pose, s32 param) {
     pose = 0;
     Actor_FaceDirectionById(actorId, FACING_SOUTH_SOUTHWEST, 0);
     actor->motionFlags = 0;
-    do {
+    for (; pose < LEDGE_JUMP_SINK_FRAMES; pose++) {
       nextY = actor->y.fixed - toFIXED(2);
       actor->y.fixed = nextY;
       actor->targetY = nextY;
@@ -533,8 +533,7 @@ void Actor_JumpDownLedge(s32 actorId, u32 pose, s32 param) {
       if ((param != -1) && (pose & 1)) {
         FieldEffect_SpawnDustPuff(actor, param);
       }
-      pose++;
-    } while (pose < LEDGE_JUMP_SINK_FRAMES);
+    }
 
     // Jump 16 pixels forward and wait to land, following the ground and
     // falling again.

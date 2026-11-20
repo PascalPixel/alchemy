@@ -589,7 +589,7 @@ static void ColosseumAzartMatch_ReachArena(void) {
   Event_Start();
   approach = Colosso_TakePrize(ITEM_IRON_SHIELD, ITEM_PADDED_GLOVES);
   Colosso_WaitForOpponentToFinish();
-  for (n = 9; n >= 0; n--) {
+  for (n = 0; n < 10; n++) {
     Actor_WaitForScriptEndById(ACTOR_OPPONENT);
   }
   Actor_SetSpeed(ACTOR_OPPONENT, 1);

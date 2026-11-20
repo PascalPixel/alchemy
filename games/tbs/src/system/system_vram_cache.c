@@ -31,11 +31,10 @@ s32 VramCache_AllocateBlocks(u32 id, u32 size) {
     if (gVramCacheBlockOwners[pos] == VRAM_BLOCK_OWNER_FREE) {
       ret = pos;
       end = blocks + ret;
-      while (pos < end) {
+      for (; pos < end; pos++) {
         if (gVramCacheBlockOwners[pos] != VRAM_BLOCK_OWNER_FREE) {
           goto occupied;
         }
-        pos++;
       }
       for (i = 0; i < blocks; i++) {
         gVramCacheBlockOwners[ret + i] = id;
@@ -167,21 +166,18 @@ void VramCache_Reset(void) {
   u8 *p = gVramCacheBlockOwners;
   u32 n = 0;
 
-  do {
+  for (; n <= limit; n++) {
     *p++ = VRAM_BLOCK_OWNER_FREE;
-    n++;
-  } while (n <= limit);
+  }
 
   {
     struct VramCacheEntry *entry = gVramCacheEntries;
 
-    n = 0;
-    do {
+    for (n = 0; n < VRAM_CACHE_ENTRY_COUNT; n++) {
       entry->offset |= VRAM_CACHE_OFFSET_FREE;
       entry->size = 0;
       entry++;
-      n++;
-    } while (n < VRAM_CACHE_ENTRY_COUNT);
+    }
   }
 }
 

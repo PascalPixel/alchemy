@@ -241,7 +241,7 @@ static void Title_UpdateSpriteReveal(void) {
   tileIndex = gVramCacheEntries[gTitleVramBlock].offset >> 5;
   column = 0;
   screenY = 136;
-  do {
+  for (; column <= 17; column++) {
     screenX = 232 - (18 - column) * 8;
 #ifdef UBFIX
     attributes = gTitleSprites[column].attr;
@@ -258,7 +258,7 @@ static void Title_UpdateSpriteReveal(void) {
     if (revealAge != 0)
       Oam_AddSpriteAtDepth(sprite++, OAM_DEPTH_FRONT);
     tileIndex += 2;
-  } while (++column <= 17);
+  }
 #endif
   gTitleRevealFrame++;
 }

@@ -344,8 +344,8 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
       contact.z = actor->z.fixed;
       Vector_AddPolarOffset(toFIXED(4), (u16)heading, &contact);
       pushedActor = gActors;
-      for (angleIndex = ACTOR_COUNT - 1; angleIndex >= 0;
-           angleIndex -= 1, pushedActor++) {
+      for (angleIndex = 0; angleIndex < ACTOR_COUNT;
+           angleIndex++, pushedActor++) {
         s32 radius;
 
         radius = actor->radius - 2;

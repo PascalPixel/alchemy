@@ -35,10 +35,9 @@ s32 ActorScript_ShowSprite(struct Actor *interpreter) {
 void Actor_WaitForMove(void *actor) {
   s32 waitedFrames;
 
-  waitedFrames = 0;
-  while (waitedFrames < 600 && Actor_IsTargetUnset(actor) == 0) {
+  for (waitedFrames = 0; waitedFrames < 600 && Actor_IsTargetUnset(actor) == 0;
+       waitedFrames++) {
     wait(1);
-    waitedFrames++;
   }
 }
 
@@ -502,7 +501,7 @@ void Actor_UpdateAllMotion(void) {
   // The first UNIT_MAX actors, as a battle makes one for each unit
   // (BattleObject_Make).
   actor = gActors;
-  for (actorsLeft = UNIT_MAX - 1; actorsLeft >= 0; actorsLeft--, actor++) {
+  for (actorsLeft = 0; actorsLeft < UNIT_MAX; actorsLeft++, actor++) {
     if (actor->script == 0)
       continue;
     x = actor->x.fixed;

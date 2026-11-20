@@ -18,7 +18,7 @@ s32 Actor_FindNearestFloatingPlatform(void) {
   origin = Actor_GetById(ACTOR_PARTY_LEADER);
   actorId = ACTOR_FIRST_PLACED;
   slot = &work->actors[ACTOR_FIRST_PLACED];
-  do {
+  for (; actorId < sizeof(work->actors) / sizeof(work->actors[0]); actorId++) {
     struct Actor *actor = *slot++;
     if (actor != NULL) {
       if (actor->sprite->entries[0]->animationId == SPRITE_FLOATING_PLATFORM) {
@@ -29,7 +29,6 @@ s32 Actor_FindNearestFloatingPlatform(void) {
         }
       }
     }
-    actorId++;
-  } while (actorId < sizeof(work->actors) / sizeof(work->actors[0]));
+  }
   return nearestActorId;
 }

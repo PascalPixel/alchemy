@@ -89,8 +89,7 @@ void SpriteDissolve_RunMany(u8 **sprites, s32 count) {
   u32 fourthDissolveStep;
 
   firstSprite = sprites;
-  step = 0;
-  do {
+  for (step = 0; step <= DISSOLVE_STEPS - 1U; step += 4) {
     if (count > 0) {
       secondDissolveStep = step + 1;
       thirdDissolveStep = step + 2;
@@ -106,8 +105,7 @@ void SpriteDissolve_RunMany(u8 **sprites, s32 count) {
       } while (spritesRemaining != 0);
     }
     wait(1U);
-    step += 4;
-  } while (step <= DISSOLVE_STEPS - 1U);
+  }
 }
 
 /// Writes the actor's screen position, in pixels, to screenPosition[0..1] and

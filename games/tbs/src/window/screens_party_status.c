@@ -101,8 +101,7 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
     shift = PARTY_STATUS_DJINN_WIDTH;
     first = 0;
   }
-  i = first;
-  while (gWindow_PartyColumnOffsets[i] >= 0) {
+  for (i = first; gWindow_PartyColumnOffsets[i] >= 0; i++) {
     column = gWindow_PartyColumnOffsets[i] + shift;
     if (column < lastColumn) {
       for (row = 0; row != rows; row++) {
@@ -118,15 +117,12 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
           *cell = WINDOW_TILE_DIVIDER_VERTICAL;
       }
     }
-    i++;
   }
   if (work->battleMode) {
     cell = work->tilemap + (window->y + window->height - 1) * BG_SCREEN_WIDTH +
            window->x;
-    column = 1;
     *cell++ = WINDOW_TILE_BATTLE_BORDER_BOTTOM_LEFT;
-    while (column < lastColumn) {
-      column++;
+    for (column = 1; column < lastColumn; column++) {
       *cell++ = WINDOW_TILE_BATTLE_BORDER_BOTTOM;
     }
     *cell = WINDOW_TILE_BATTLE_BORDER_BOTTOM_RIGHT;

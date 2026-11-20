@@ -747,7 +747,8 @@ UNREAD_RESULT BattleObject_SetColorMode(struct Actor *actor, s32 colorMode) {
   u8 lastPictureMask = SPRITE_PICTURE_NONE;
   u8 previousPicture;
 
-  while ((record = GetMotionRecord(actor, recordIndex)) != NULL) {
+  for (; (record = GetMotionRecord(actor, recordIndex)) != NULL;
+       recordIndex++) {
     children = &record->entries[1];
     child = record->entries[0];
     previousPicture = child->picture;
@@ -759,7 +760,6 @@ UNREAD_RESULT BattleObject_SetColorMode(struct Actor *actor, s32 colorMode) {
       child->colorMode = 0;
       child->picture = SPRITE_PICTURE_NONE;
     }
-    recordIndex++;
   }
 }
 
@@ -940,25 +940,25 @@ void BattleMotion_ShowDowned(s32 unitId) {
   s32 recordCount;
 
   unit = Unit_GetFar(unitId);
-  recordCount = 0;
-  while ((record = GetMotionRecord(BattleObject_Get(unitId)->actor,
-                                   recordCount)) != 0) {
+  for (recordCount = 0;
+       (record =
+            GetMotionRecord(BattleObject_Get(unitId)->actor, recordCount)) != 0;
+       recordCount++) {
     if (unit->side != BATTLE_SIDE_ENEMY)
       Sprite_StartAnimationFar(record, POSE_PARTY_HELD);
     else
       Sprite_StartAnimationFar(record, POSE_ENEMY_DOWN);
-    recordCount++;
   }
 
   if (unit->side == BATTLE_SIDE_ENEMY) {
-    recordCount = 0;
-    while ((record = GetMotionRecord(BattleObject_Get(unitId)->actor,
-                                     recordCount)) != 0) {
+    for (recordCount = 0;
+         (record = GetMotionRecord(BattleObject_Get(unitId)->actor,
+                                   recordCount)) != 0;
+         recordCount++) {
       entry = record->entries[0];
       records[recordCount] = record;
       entry->colorMode = SPRITE_COLOR_GREY;
       entry->picture = SPRITE_PICTURE_NONE;
-      recordCount++;
     }
     wait(4);
     BattleObject_RemoveFromLists(unitId);

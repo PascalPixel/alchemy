@@ -108,7 +108,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
 
   i = 0;
   sparkOriginX = INTtoFIXED(canvasCenterX);
-  do {
+  for (; i != TITAN_BLADE_SPARKS; i++) {
     struct Particle *spark = &TITAN_BLADE_SWORD_SPARKS[i];
 
     s32 mag;
@@ -121,8 +121,7 @@ void BattleEffect_RunTitanBlade(struct BattleEffectParams *args) {
     spark->velocityX = (Trig_Sin(ang) * mag) >> 5;
     spark->velocityY = -(Trig_Cos(ang) * mag) >> 6;
     spark->variant = (Random16() & 7) + 32;
-    i++;
-  } while (i != TITAN_BLADE_SPARKS);
+  }
 
   for (frame = 0; frame != TITAN_BLADE_FRAMES; frame++) {
     // The palette fades: the dust and sparks turn from gold to pink and violet.

@@ -194,7 +194,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
         n = 0;
         if (work->args->targetCount != 0) {
           reactFrame = start + 4;
-          do {
+          for (; n != work->args->targetCount; n++) {
             if (frame == reactFrame) {
               if (!(i & 1)) {
                 Sound_PlayFar(SE_IMPACT);
@@ -202,8 +202,7 @@ void BattleEffect_RunGrowingColumns(struct BattleEffectParams *args, s32 mode) {
               BattleEffect_TintBattler(work->args->targets[n],
                                        SPRITE_COLOR_WHITE, POSE_DAMAGE, n, 3);
             }
-            n++;
-          } while (n != work->args->targetCount);
+          }
         } else {
           reactFrame = start + 4;
         }

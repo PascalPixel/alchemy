@@ -212,11 +212,10 @@ s32 Sanctum_RunPartyService(void) {
   memberIndex = 0;
   unitId = 0;
   chooseAgain = 0;
-  while (memberIndex < shop->partyMemberCount) {
+  for (; memberIndex < shop->partyMemberCount; memberIndex++) {
     unitId = shop->partyMemberIds[memberIndex];
     if (Sanctum_NeedsService(unitId, serviceKind) != 0)
       break;
-    memberIndex++;
   }
 
   redraw = 1;

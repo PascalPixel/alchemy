@@ -78,14 +78,13 @@ s32 Save_InitializeWork(void) {
     work->occupied[index] = 1;
     work->partId[index] = part;
     // An interrupted replacement can leave both copies valid.
-    while (status < index) {
+    for (; status < index; status++) {
       if (work->partId[status] == (u8)part) {
         if (work->counter[status] < header->counter)
           work->occupied[status] = 0;
         else
           work->occupied[index] = 0;
       }
-      status++;
     }
   }
   return 0;
@@ -101,14 +100,12 @@ u32 Save_SelectWriteSector(s32 mode) {
 
   slot = gSaveWork->occupied;
   count = 0;
-  index = 0;
-  do {
+  for (index = 0; index < SAVE_SECTOR_COUNT; index += 1) {
     value = *slot++;
     if (value == 0) {
       empty[count++] = index;
     }
-    index += 1;
-  } while (index < SAVE_SECTOR_COUNT);
+  }
   index = SAVE_SECTOR_COUNT;
   if (count != 0) {
     if (count == 1) {
@@ -254,8 +251,7 @@ s32 Save_ChecksumSector(void) {
   work = gSaveWork;
   limit = SAVE_CHECKSUM_BYTES - 1;
   sum = 0;
-  offset = 0;
-  do {
+  for (offset = 0; offset <= limit; offset += 8) {
     sum += work->slot.part.payload[offset + 0];
     sum += work->slot.part.payload[offset + 1];
     sum += work->slot.part.payload[offset + 2];
@@ -264,8 +260,7 @@ s32 Save_ChecksumSector(void) {
     sum += work->slot.part.payload[offset + 5];
     sum += work->slot.part.payload[offset + 6];
     sum += work->slot.part.payload[offset + 7];
-    offset += 8;
-  } while (offset <= limit);
+  }
   return sum;
 }
 

@@ -28,7 +28,7 @@ void Encounter_SelectMapZones(s32 useRules) {
   zone = 0;
   firstZoneOnGround = 0;
   if (useRules != 0) {
-    while (rule->sceneId != -1) {
+    for (; rule->sceneId != -1; rule++) {
       if (rule->sceneId == sceneId &&
           (rule->entrance == -1 || rule->entrance == entrance)) {
         if (rule->flag == -1 || GameFlag_GetFar(rule->flag) == 0) {
@@ -37,7 +37,6 @@ void Encounter_SelectMapZones(s32 useRules) {
           break;
         }
       }
-      rule++;
     }
   }
 
@@ -68,14 +67,13 @@ s32 Encounter_ResolveWorldMapZoneAndBackdrop(void *pos) {
   s32 environment = WorldMap_GetBattleEnvironmentFar(pos, &region);
   s32 zone = 0;
 
-  while (rule->region != -1) {
+  for (; rule->region != -1; rule++) {
     if (rule->region == region &&
         (rule->environment == -1 || rule->environment == environment) &&
         (rule->flag == -1 || GameFlag_GetFar(rule->flag) == 0)) {
       zone = rule->zone;
       break;
     }
-    rule++;
   }
   BattleBackground_SelectForEnvironment(environment);
   return zone;
@@ -271,7 +269,7 @@ s32 Area_GetNameIndex(s32 sceneId, s32 entrance) {
   s32 name = 0;
   s32 area = Scene_GetArea(sceneId);
 
-  while (rule->id != -1) {
+  for (; rule->id != -1; rule++) {
     if (rule->useMapId) {
       if (rule->id == sceneId) {
         if (rule->entrance == -1 || rule->entrance == entrance) {
@@ -287,7 +285,6 @@ s32 Area_GetNameIndex(s32 sceneId, s32 entrance) {
         }
       }
     }
-    rule++;
   }
   return name;
 }
@@ -301,13 +298,12 @@ void Scene_SetRestartPoint(void) {
   s16 entrance = gMainRoutineWork.entrance;
   const s16 *rule = gScene_RestartRules;
 
-  while (rule[0] != -1) {
+  for (; rule[0] != -1; rule += 4) {
     if (rule[0] == sceneId && (rule[1] == -1 || rule[1] == entrance)) {
       gMainRoutineWork.restartScene = rule[2];
       gMainRoutineWork.restartEntrance = rule[3];
       return;
     }
-    rule += 4;
   }
 }
 

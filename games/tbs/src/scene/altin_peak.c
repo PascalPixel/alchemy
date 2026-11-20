@@ -2248,7 +2248,7 @@ static void AltinPeak_TurnCartRight(struct Actor *actor) {
   Actor_SelectAnimation(actor, 5);
   turnFrame = 0;
   Sound_Play(SE_CART_TURN);
-  while (turnFrame < 16) {
+  for (; turnFrame < 16; turnFrame++) {
     angle += TRIG_TURN / 64;
     position.x = x;
     position.z = z;
@@ -2257,7 +2257,6 @@ static void AltinPeak_TurnCartRight(struct Actor *actor) {
     actor->z.fixed = position.z;
     actor->facing = angle + DEGtoANG(90);
     wait(1);
-    turnFrame++;
   }
   Sound_Play(SE_CART_ROLL);
 }
@@ -2279,7 +2278,7 @@ static void AltinPeak_TurnCartLeft(struct Actor *actor) {
   Actor_SelectAnimation(actor, 6);
   turnFrame = 0;
   Sound_Play(SE_CART_TURN);
-  while (turnFrame < 16) {
+  for (; turnFrame < 16; turnFrame++) {
     angle -= TRIG_TURN / 64;
     position.x = x;
     position.z = z;
@@ -2288,7 +2287,6 @@ static void AltinPeak_TurnCartLeft(struct Actor *actor) {
     actor->z.fixed = position.z;
     actor->facing = angle - DEGtoANG(90);
     wait(1);
-    turnFrame++;
   }
   Sound_Play(SE_CART_ROLL);
 }

@@ -940,8 +940,7 @@ s32 PsynergyMenu_DrawDetailPage(struct Window *window, s32 *work,
 #endif
   }
 
-  rowIndex = 0;
-  do {
+  for (rowIndex = 0; rowIndex < LIST_PAGE_SIZE; rowIndex++) {
     if (rowIndex == state->row) {
       Render_SetTilemapFlagRect(
           (void *)menu->psynergyWindow, PSYNERGY_DETAIL_ROW_X, rowIndex * 2 + 1,
@@ -951,8 +950,7 @@ s32 PsynergyMenu_DrawDetailPage(struct Window *window, s32 *work,
                                 PSYNERGY_DETAIL_ROW_X, rowIndex * 2 + 1,
                                 PSYNERGY_DETAIL_ROW_WIDTH, 1, WINDOW_PALETTE);
     }
-    rowIndex++;
-  } while (rowIndex < LIST_PAGE_SIZE);
+  }
 
   wait(1);
   return 1;

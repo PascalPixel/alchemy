@@ -938,10 +938,9 @@ static s32 BattleArena_EnterBattle(void) {
     i = 0;
     source = savedWork;
     destination = gActorSpriteSlots;
-    do {
-      i++;
+    for (; i < 6 * BATTLE_UNIT_SIZE; i++) {
       *destination++ = *source++;
-    } while (i <= 6 * BATTLE_UNIT_SIZE - 1);
+    }
     HeapSlot_Release(HEAP_SLOT_ENEMY_UNITS);
   }
   Event_End();

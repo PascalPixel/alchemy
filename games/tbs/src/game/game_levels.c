@@ -38,7 +38,7 @@ s32 Unit_KnowsPsynergy(s32 unitId, s32 abilityId) {
   s32 index = 0;
 
   entry = unit->psynergy;
-  do {
+  for (; index < PSYNERGY_SLOTS; index++) {
     s32 currentAction = entry->encodedAction;
 
     currentAction &= actionMask;
@@ -46,8 +46,7 @@ s32 Unit_KnowsPsynergy(s32 unitId, s32 abilityId) {
     if (currentAction == abilityId) {
       return 1;
     }
-    index++;
-  } while (index <= PSYNERGY_SLOTS - 1);
+  }
   return 0;
 }
 
@@ -416,9 +415,8 @@ void Unit_LevelUpTo(s32 unitId, s32 targetLevel) {
   struct LevelUpResult gains;
   s32 currentLevel = Unit_Get(unitId)->level;
 
-  while (currentLevel < targetLevel) {
+  for (; currentLevel < targetLevel; currentLevel++) {
     Unit_LevelUp(unitId, &gains);
-    currentLevel++;
   }
   Unit_Calculate(unitId);
 }

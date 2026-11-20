@@ -277,8 +277,8 @@ UNREAD_RESULT WorldMap_InitializePerspective(void) {
   Task_Add(WorldMap_UpdateView, TASK_PASS_FRAME + 5);
   Task_Add(WorldMap_ApplyAffinePage, TASK_PASS_VBLANK);
   // Each of the 16 by 16 grid cells starts on the tile of its own number.
-  for (tileIndex = WORLD_MAP_TILES_ACROSS * WORLD_MAP_TILES_ACROSS - 1;
-       tileIndex >= 0; tileIndex--)
+  for (tileIndex = 0;
+       tileIndex < WORLD_MAP_TILES_ACROSS * WORLD_MAP_TILES_ACROSS; tileIndex++)
     perspective->tileIds[tileIndex] = tileIndex;
 }
 

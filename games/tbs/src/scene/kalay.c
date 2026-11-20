@@ -2053,15 +2053,13 @@ static void Kalay_UpdateTunnelPassages(void) {
     frostEffect = Actor_Get(ACTOR_PUDDLE);
     Event_Start();
     MapGrid_CopyCellAttributes(7, 44, 1, 1, 0, 1);
-    i = PASSAGE_FIRST_FRAME_COLUMN;
-    do {
+    for (i = PASSAGE_FIRST_FRAME_COLUMN; i <= PASSAGE_LAST_FRAME_COLUMN; i++) {
       MapGrid_CopyCellsTo(i, 58, 78, 41, 1, 5);
       Event_Wait(4);
       if (i == PASSAGE_OPEN_FRAME_COLUMN) {
         GameFlag_Set(FLAG_TUNNEL_FIRST_PASSAGE_OPEN);
       }
-      i++;
-    } while (i <= PASSAGE_LAST_FRAME_COLUMN);
+    }
     MapGrid_CopyCellsTo(16, 109, 13, 109, 3, 2);
     Event_Wait(40);
     frostEffect->scaleX = FIXED_ONE / 10;
@@ -2104,15 +2102,13 @@ static void Kalay_UpdateTunnelPassages(void) {
       FIELD_HALF_CELL(secondStatue->x.fixed) <=
           SECOND_STATUE_OPENING_HALF_CELL) {
     Event_Start();
-    i = PASSAGE_FIRST_FRAME_COLUMN;
-    do {
+    for (i = PASSAGE_FIRST_FRAME_COLUMN; i <= PASSAGE_LAST_FRAME_COLUMN; i++) {
       MapGrid_CopyCellsTo(i, 58, 107, 41, 1, 5);
       Event_Wait(4);
       if (i == PASSAGE_OPEN_FRAME_COLUMN) {
         GameFlag_Set(FLAG_TUNNEL_SECOND_PASSAGE_OPEN);
       }
-      i++;
-    } while (i <= PASSAGE_LAST_FRAME_COLUMN);
+    }
     MapGrid_CopyCellsTo(45, 109, 42, 109, 3, 2);
     Event_Wait(40);
     MapGrid_CopyCellsTo(67, 64, 102, 44, 1, 2);

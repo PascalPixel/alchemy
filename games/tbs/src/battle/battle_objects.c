@@ -299,10 +299,10 @@ void ReleaseBattleObjectRecords(s32 unitId) {
     if (actor != NULL) {
       battleObject->animationEntry = 0;
       battleObject->shadowEntry = 0;
-      recordIndex = 0;
-      while ((record = GetMotionRecord(actor, recordIndex)) != NULL) {
+      for (recordIndex = 0;
+           (record = GetMotionRecord(actor, recordIndex)) != NULL;
+           recordIndex++) {
         Sprite_DestroyFar(record);
-        recordIndex++;
       }
       actor->spriteStorageKind = ACTOR_SPRITE_NONE;
       actor->sprite = NULL;

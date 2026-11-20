@@ -36,8 +36,7 @@ void FieldEffect_SpawnRadialParticleRing(struct Actor *origin) {
   opt.update = FieldEffect_AdvanceMotion;
   opt.startScaleX = FIXED_ONE * 4 / 5;
   opt.startScaleY = FIXED_ONE * 4 / 5;
-  i = 0;
-  do {
+  for (i = 0; i <= WHIRLWIND_RADIAL_DIRECTIONS; i++) {
     angle = i * (TRIG_TURN / WHIRLWIND_RADIAL_DIRECTIONS);
     vel[0] = Trig_Cos(angle) * 3 / 2;
     vel[1] = 0;
@@ -48,8 +47,7 @@ void FieldEffect_SpawnRadialParticleRing(struct Actor *origin) {
                               EFFECT_USE_UPDATE | EFFECT_USE_START_SCALE |
                                   EFFECT_USE_PALETTE | EFFECT_SCRIPT_MEDIUM,
                               &opt);
-    i++;
-  } while (i <= WHIRLWIND_RADIAL_DIRECTIONS);
+  }
 }
 
 /// Per-frame update: wanders away from the anchor, 2 to 3 pixels a frame, now
@@ -156,7 +154,7 @@ void FieldPsynergy_Whirlwind(void) {
   }
   FieldPsynergy_FadeToCastColor();
   Actor_SelectAnimationFar(ball, 2);
-  do {
+  for (; step < steps; step++) {
     FIXED scale;
     ball->x.fixed = from.x + step * (to.x - from.x) / WHIRLWIND_TRAVEL_FRAMES;
     ball->y.fixed = from.y + step * (to.y - from.y) / WHIRLWIND_TRAVEL_FRAMES;
@@ -166,8 +164,7 @@ void FieldPsynergy_Whirlwind(void) {
     ball->scaleX = scale;
     ball->scaleY = scale;
     wait(1);
-    step++;
-  } while (step < steps);
+  }
   ball->scaleX = FIXED_ONE * 17 / 10; // wide
   ball->scaleY = FIXED_ONE * 13 / 10; // high
   Sound_PlayFar(SE_RUSH);
@@ -180,8 +177,7 @@ void FieldPsynergy_Whirlwind(void) {
 
     // Particles from 4 pixels above the orb, each 0.8 pixel higher, 3 to 8
     // pixels away.
-    step = 0;
-    do {
+    for (step = 0; step < WHIRLWIND_ORBIT_PARTICLES; step++) {
       FIXED dist;
 
       pos.x = ball->x.fixed;
@@ -198,8 +194,7 @@ void FieldPsynergy_Whirlwind(void) {
         particle->facing = Random16();
       }
       wait(6);
-      step++;
-    } while (step <= WHIRLWIND_ORBIT_PARTICLES - 1);
+    }
     wait(20);
     wait(120);
   }

@@ -1116,11 +1116,10 @@ void LuckyWheels_Update(void) {
     sprite++;
   }
 
-  while (sprite != OAM_SIZE / sizeof(struct OamWords)) {
+  for (; sprite != OAM_SIZE / sizeof(struct OamWords); sprite++) {
     work->oam[sprite].attr01 =
         OBJ_X(DISPLAY_WIDTH) | OBJ_SIZE_16X16 | OBJ_256_COLORS;
     work->oam[sprite].attr2 = 0;
-    sprite++;
   }
 
   Dma_Set(work->oam, OAM, DMA_COPY_WORDS(sprite * 2), REG_DMA3);

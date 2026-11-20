@@ -514,10 +514,9 @@ s32 Message_Decode(s32 script, s32 clear) {
             if (magnitude <= 1)
               plural = 0;
             numberText = String_FormatNumber(numberBuffer, value, 0);
-            i = numberText - numberBuffer;
-            while (i != TEXT_NUMBER_BUFFER_SIZE && numberBuffer[i] != 0) {
+            for (i = numberText - numberBuffer;
+                 i != TEXT_NUMBER_BUFFER_SIZE && numberBuffer[i] != 0; i++) {
               TEXT_APPEND(entry, writePosition, numberBuffer[i]);
-              i++;
             }
             break;
           case MESSAGE_ARGUMENT_CLASS_NAME:

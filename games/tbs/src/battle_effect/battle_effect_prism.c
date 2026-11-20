@@ -197,7 +197,7 @@ void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
   palette[0] = 0;
   index = 1;
   output = &palette[1];
-  do {
+  for (; index != CANVAS_LEVEL_BRIGHTEST + 1; index++) {
     s32 red;
     s32 green;
     s32 blue;
@@ -211,8 +211,7 @@ void BattleEffect_UpdatePhasePalette(s32 frame, s32 redPhase, s32 greenPhase,
     CLAMP(blue, 0, RGB_LEVEL_MAX);
 
     *output++ = RGB(red, green, blue);
-    index++;
-  } while (index != CANVAS_LEVEL_BRIGHTEST + 1);
+  }
 
   // The entries, black first, are copied to colours 1 to 64, so level n shows
   // entry n - 1, half a level darker.

@@ -783,10 +783,9 @@ static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
   Irq_SetHandler(IRQ_HBLANK, 0,
                  CrossboneIsleSteppingStones_JitterBackgroundScroll);
   Sound_Play(SE_WATER_LEVEL);
-  sOtherWaterChance = 0;
-  do {
+  for (sOtherWaterChance = 0; sOtherWaterChance <= 100; sOtherWaterChance++) {
     wait(1);
-  } while (++sOtherWaterChance <= 100);
+  }
   // The map takes the new level for good.
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED) == 0) {

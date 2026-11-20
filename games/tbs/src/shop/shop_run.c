@@ -19,7 +19,7 @@ s32 Shop_ListAvailableArtifacts(void) {
   stockItems = shop->stockItemIds;
   // The shop's type is the equipment group it sells (enum ShopType). Every
   // 9-bit id is tried, past the 324 rows of item_table.c too.
-  do {
+  for (; itemId <= INVENTORY_ITEM_ID_MASK; itemId++) {
     equipmentGroup = shop->shopType;
     if (equipmentGroup == Item_GetEquipmentGroupFar(itemId) &&
         Item_AdjustCounterFar(itemId, 0) != 0) {
@@ -27,8 +27,7 @@ s32 Shop_ListAvailableArtifacts(void) {
       count++;
       stockItems++;
     }
-    itemId++;
-  } while (itemId <= INVENTORY_ITEM_ID_MASK);
+  }
   shop->stockItemIds[count] = 0;
   shop->stockCount = count;
   return count;

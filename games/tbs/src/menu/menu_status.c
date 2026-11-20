@@ -897,8 +897,7 @@ void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
     x = 0;
     width = 5;
     count = 0;
-    index = 0;
-    while (index <= 4) {
+    for (index = 0; index <= 4; index++) {
       if (entries[index] != 0) {
         if (selected == count) {
           width = gStatusScreen_CursorWidths[index];
@@ -906,7 +905,6 @@ void StatusScreen_DrawSelectionCursor(s32 mode, s32 selected, u8 *entries,
         }
         count++;
       }
-      index++;
     }
   } else if (selected <= 3) {
     y = selected;
@@ -931,7 +929,7 @@ void StatusScreen_DrawSelectionLabels(struct Window *target, s32 selected,
   s32 labelCount = 0;
   s32 labelIndex = 0;
 
-  do {
+  for (; labelIndex <= 4; labelIndex++) {
     if (entries[labelIndex] != 0) {
       if (selected == labelCount) {
         s32 messageId = MsgStatusAdvice + labelIndex * 2;
@@ -940,8 +938,7 @@ void StatusScreen_DrawSelectionLabels(struct Window *target, s32 selected,
       }
       labelCount++;
     }
-    labelIndex++;
-  } while (labelIndex <= 4);
+  }
 
   if (labelCount == 0)
     Text_DrawMessageFar(MsgStatusNormal, target, 0, 0);
@@ -2192,7 +2189,7 @@ s32 StatusScreen_UpdateSelectionIcons(const u8 *enabled) {
   struct ItemMenuWork *menu = gMenuWork;
   s32 index = 0;
 
-  do {
+  for (; index <= 4; index++) {
     if (enabled[index] != 0) {
       s32 kind;
       switch (index) {
@@ -2218,8 +2215,7 @@ s32 StatusScreen_UpdateSelectionIcons(const u8 *enabled) {
       Resource_LoadByModeIntoSlotFar(ICON_KIND_PATTERN, kind,
                                      (u8)menu->categoryIcons[index]->index, 0);
     }
-    index++;
-  } while (index <= 4);
+  }
   return 1;
 }
 

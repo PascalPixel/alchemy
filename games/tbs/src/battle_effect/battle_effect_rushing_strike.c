@@ -10,15 +10,14 @@ void BattleEffect_PackTileRows(u8 *src, u8 *dst, s32 stride, s32 rowCount) {
   s32 rows = YELLOW_ORB_PICTURES * YELLOW_ORB_HEIGHT;
   s32 offset = 0;
 
-  do {
+  for (; row != rows; row++) {
     s32 x;
 
     for (x = 0; x != YELLOW_ORB_WIDTH; x++) {
       dst[offset / 2 + x / 2] = src[offset + x];
     }
     offset += stride;
-    row++;
-  } while (row != rows);
+  }
 }
 
 #define RUSHING_STRIKE_SPARK_COUNT 64

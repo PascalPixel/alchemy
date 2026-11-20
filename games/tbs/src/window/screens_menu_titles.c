@@ -195,7 +195,7 @@ void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
   rightShift = oppositeShift * 4;
   leftShift = shift * 4;
 
-  do {
+  for (; row <= 7; row++) {
     u32 result;
     u32 shifted;
     u32 fallback;
@@ -220,8 +220,7 @@ void Graphics_MergeShiftedTileRows(u32 *first, u32 *second, u32 *output,
     }
 
     *output++ = result;
-    row++;
-  } while (row <= 7);
+  }
 }
 
 /// Draws the two page arrows (gPageArrowTiles) into the two tiles at VRAM
@@ -260,7 +259,7 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
 
   // bank 0 writes from byte 0, bank 1 from (4 + 1) << 6 = 320, just after
   // the first ten tiles of 32 bytes. Each "row" is one tile.
-  do {
+  for (; bank <= 1; bank++) {
     s32 row = 0;
     s32 destinationOffset = (destinationBank + bank) << 6;
 
@@ -270,7 +269,7 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
                             row * TILE_SIZE_4BPP);
       s32 column = 0;
 
-      do {
+      for (; column <= 15; column++) {
         u32 packed = *source++;
         u32 expanded = 0;
         s32 nibble = 0;
@@ -284,9 +283,8 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
           expanded |= color;
         } while (nibble <= 3);
 
-        column++;
         *output++ = expanded;
-      } while (column <= 15);
+      }
 
       row++;
       destinationOffset += TILE_SIZE_4BPP;
@@ -294,8 +292,7 @@ void Graphics_ExpandVramTilesByColorTable(u16 *dst) {
 
     paletteOffset += PALETTE_COLORS;
     destinationBank += 4;
-    bank++;
-  } while (bank <= 1);
+  }
 }
 
 /// Builds icon `resource` (0 to 31) of gIcon_MiscIconPointers, the table the

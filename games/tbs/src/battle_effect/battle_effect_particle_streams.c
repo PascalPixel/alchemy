@@ -308,27 +308,28 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
     do {
       s32 growth = frame << 8;
       s32 count = work->frame;
-      u8 *sheet = work->sheet;
       s32 dividend;
       s32 glow;
       u16 *line;
       s32 size;
       s32 x;
       s32 y;
+      s32 hold;
 
       /* FAKEMATCH(temporary): the division written out on a copy of count. */
       dividend = count;
       /* FAKEMATCH(dead): updates of count that cancel out. */
-      if (sheet) {
+      if (work) {
         count++;
         count--;
       }
       if (dividend < 0)
         dividend += 3;
       glow = dividend >> 2;
-      /* FAKEMATCH(barrier): count and sheet through an empty asm. */
-      __asm__("" : "=r"(sheet) : "0"(sheet), "r"(count) : "r1", "r3");
-      line = (u16 *)(sheet + PARTICLE_STREAMS_BACKDROP_LINES);
+      /* FAKEMATCH(barrier): hold set by an empty asm that reads count and
+       * clobbers r1, r3 and r6. */
+      __asm__("" : "=r"(hold) : "r"(count) : "r1", "r3", "r6");
+      line = (u16 *)(work->sheet + PARTICLE_STREAMS_BACKDROP_LINES);
       if (mode == PARTICLE_STREAMS_OUTER_SPACE) {
         if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 16)
           break;
@@ -336,19 +337,12 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
         if ((gKeysRepeat & (KEY_A | KEY_B)) && frame > 4)
           break;
       }
-      {
-        s32 hold;
-
-        /* FAKEMATCH(barrier): hold set by an empty asm that clobbers r6. */
-        __asm__("" : "=r"(hold) : : "r6");
-        if (frame == 0)
-          Sound_PlayFar(SE_RUMBLE);
-        /* FAKEMATCH(dead): updates of hold that cancel out, under a test of
-         * hold. */
-        if (hold) {
-          hold++;
-          hold--;
-        }
+      if (frame == 0)
+        Sound_PlayFar(SE_RUMBLE);
+      /* FAKEMATCH(dead): updates of hold that cancel out. */
+      if (hold) {
+        hold++;
+        hold--;
       }
       // The backdrop: a blue glow that climbs and pales as the fall goes on,
       // over the battle view. Entry i colours line i + 1: the HBlank DMA writes

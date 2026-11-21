@@ -51,8 +51,8 @@ loop:
                              window->previousWidth, window->previousHeight);
       Window_DrawZoomBorder(window, 1);
       window->zoomStage++;
-      /* FAKEMATCH(dead): a once-only block that places allBands, the dirty
-       * bit that uploads every band, at its store; as state->dirty = 1. */
+      /* FAKEMATCH(temporary): allBands, 1 held in a local declared in a block
+       * at its store; as state->dirty = 1. */
       {
         u8 allBands = 1;
 

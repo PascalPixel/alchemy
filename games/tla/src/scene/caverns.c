@@ -335,6 +335,8 @@ void Caverns_FinishMovingAngaraBlock(void) {
       actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
       REG_BLDALPHA = BLEND_ALPHA(0, 16);
       REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
+      /* FAKEMATCH(temporary): sum holds kind + 2 for the one call; as
+       * kind + 2 at its use. */
       sum = kind + 2;
       spawned = OverlayObject_PrepareObject(
           actor->x.fixed, 0, actor->z.fixed + FIELD_CELL_ORIGIN(sum),

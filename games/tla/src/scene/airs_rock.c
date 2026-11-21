@@ -479,7 +479,7 @@ void AirsRock_BlowGust(void) {
   struct Vector3 velocity;
   struct EffectOptions glints, dust;
   struct Cell delta, cell;
-  s32 cellZ, cellX, newZ, newX, flag = 0, steps = 0, hit, angle, i;
+  s32 newZ, newX, flag = 0, steps = 0, hit, angle, i;
 
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -492,7 +492,7 @@ void AirsRock_BlowGust(void) {
   gust->scaleY = FIXED_ONE / 5;
   /* FAKEMATCH(signature): the gust's motion flags stored through MotionView, a
    * view of the actor. */
-  ((struct MotionView *)gust)->flags = flag;
+  ((struct MotionView *)gust)->flags = 0;
   ((struct FieldSprite *)gust->sprite)->priority =
       ((struct FieldSprite *)effect->child->sprite)->priority;
   Actor_SetMoveTarget(gust, effect->child->x.fixed, effect->child->y.fixed,
@@ -505,8 +505,8 @@ void AirsRock_BlowGust(void) {
   gust->z.fixed = effect->child->z.fixed - toFIXED(1);
   while (gust->scaleY < FIXED_ONE * 18 / 10) {
     if ((gFrameCount & 3) == 0) {
-      spark = (struct Actor *)Import_ActorCreate(
-          SPRITE_PARTICLE, effect->child->x.fixed, 0, effect->child->z.fixed);
+      spark = FieldActor_Create(SPRITE_PARTICLE, effect->child->x.fixed, 0,
+                                effect->child->z.fixed);
       spark->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       spark->motionFlags = 0;
       spark->bounce = spark->x.fixed;
@@ -550,6 +550,8 @@ void AirsRock_BlowGust(void) {
   newX = effect->child->x.part[0].integer + ((steps * delta.x) << 3);
   newZ = effect->child->z.part[0].integer + ((steps * delta.z) << 3);
   ((struct FieldSprite *)gust->sprite)->priority = 1;
+  /* FAKEMATCH(temporary): cell, a map cell's pair, takes the gust's pixel
+   * target; as newX and newZ at the move target. */
   cell.x = newX;
   cell.z = newZ;
   gust->speedLimit = toFIXED(4);
@@ -557,8 +559,7 @@ void AirsRock_BlowGust(void) {
   Actor_SetMoveTarget(gust, INTtoFIXED(cell.x), gust->y.fixed,
                       INTtoFIXED(cell.z));
   FieldCamera_SetSpeedAndAcceleration(5, 5);
-  FieldCamera_MoveToFX((s32)INTtoFIXED(newX), (s32)(-1), (s32)INTtoFIXED(newZ),
-                       (s32)(1));
+  FieldCamera_MoveToFX(INTtoFIXED(newX), -1, INTtoFIXED(newZ), 1);
   while (Actor_HasArrived(gust) == 0) {
     if ((gFrameCount & 1) == 0) {
       glints.priority = 1;
@@ -596,28 +597,25 @@ void AirsRock_BlowGust(void) {
                           EFFECT_USE_START_SCALE | EFFECT_USE_PRIORITY, &dust);
       }
       if ((gFrameCount & 3) == 0) {
-        s32 sourceX;
         cell.x = gAirsRock_GustTargets[hit][2] + FIELD_CELL(gust->x.fixed);
         cell.z = gAirsRock_GustTargets[hit][3] + FIELD_CELL(gust->z.fixed);
-        cellX = cell.x;
-        cellZ = cell.z;
         if (hit & 1) {
-          sourceX = (u16)gAirsRock_GustTargets[hit][0];
-          MapGrid_CopyCellsTo((s16)sourceX, gAirsRock_GustTargets[hit][1],
-                              cellX, cellZ - 1, 1, 3);
+          MapGrid_CopyCellsTo(gAirsRock_GustTargets[hit][0],
+                              gAirsRock_GustTargets[hit][1], cell.x, cell.z - 1,
+                              1, 3);
           MapGrid_CopyCellAttributes(gAirsRock_GustTargets[hit][0],
-                                     gAirsRock_GustTargets[hit][1], 1, 2, cellX,
-                                     cellZ);
+                                     gAirsRock_GustTargets[hit][1], 1, 2,
+                                     cell.x, cell.z);
           MapGrid_CopyCellAttributes(
               gAirsRock_GustTargets[hit][0], gAirsRock_GustTargets[hit][1], 1,
               2, FIELD_CELL(gust->x.fixed), FIELD_CELL(gust->z.fixed));
         } else {
-          sourceX = (u16)gAirsRock_GustTargets[hit][0];
-          MapGrid_CopyCellsTo((s16)sourceX, gAirsRock_GustTargets[hit][1],
-                              cellX, cell.z - (hit >> 1), 1, 1);
+          MapGrid_CopyCellsTo(gAirsRock_GustTargets[hit][0],
+                              gAirsRock_GustTargets[hit][1], cell.x,
+                              cell.z - (hit >> 1), 1, 1);
           MapGrid_CopyCellAttributes(gAirsRock_GustTargets[hit][0],
-                                     gAirsRock_GustTargets[hit][1], 1, 1, cellX,
-                                     cellZ);
+                                     gAirsRock_GustTargets[hit][1], 1, 1,
+                                     cell.x, cell.z);
           MapGrid_CopyCellAttributes(
               gAirsRock_GustTargets[hit][0], gAirsRock_GustTargets[hit][1], 1,
               1, FIELD_CELL(gust->x.fixed), FIELD_CELL(gust->z.fixed));
@@ -1701,7 +1699,6 @@ void AirsRock_SetLedgeCellsByLevel(void) {
 
 s32 Scene_Initialize(void) {
   struct Actor *leader;
-  struct MapLayer *layer;
   volatile struct DmaRegisters *dma;
 
   gFieldWork->transition =
@@ -1870,15 +1867,17 @@ s32 Scene_Initialize(void) {
       if (GameFlag_Get(FLAG_AREA_TEMP_11))
         Actor_SetPosition(ACTOR_SECOND_PILLAR, 520, 872);
       AirsRock_MoveSecondPillar();
-      /* FAKEMATCH(signature): layer, a struct MapLayer *, holds the map work's
-       * address before the layer is reached from it, here, at the fog's drift
-       * and at the Fujin Shield chest. */
-      layer = (struct MapLayer *)Ram_HeapSlots->mapGrid;
-      layer = &((struct MapWork *)layer)->layers[2];
-      layer->offsetX = toFIXED(1408);
-      layer->offsetY = toFIXED(576);
-      layer->scaleX = FIXED_ONE / 4;
-      layer->scaleY = FIXED_ONE / 4;
+      {
+        /* FAKEMATCH(temporary): layer, a pointer standing in for the map work's
+         * layers[2]; as that layer by name. */
+        struct MapLayer *layer =
+            &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
+
+        layer->offsetX = toFIXED(1408);
+        layer->offsetY = toFIXED(576);
+        layer->scaleX = FIXED_ONE / 4;
+        layer->scaleY = FIXED_ONE / 4;
+      }
       MapGrid_CenterOnFollowedPoint();
       System_Wait(1);
       break;
@@ -1922,12 +1921,17 @@ s32 Scene_Initialize(void) {
         while ((s32)dma->control < 0)
           ;
         Task_AddFrame(AirsRock_DriftFog, TASK_PASS_VBLANK);
-        layer = (struct MapLayer *)Ram_HeapSlots->mapGrid;
-        layer = &((struct MapWork *)layer)->layers[2];
-        layer->speedX = toFIXED(0.25);
-        layer->speedY = -toFIXED(0.5);
-        layer->maskX = FOG_WRAP - 1;
-        layer->maskY = (FOG_WRAP - 1) * MAPGRID_SIZE;
+        {
+          /* FAKEMATCH(temporary): layer, a pointer standing in for the map
+           * work's layers[2]; as that layer by name. */
+          struct MapLayer *layer =
+              &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
+
+          layer->speedX = toFIXED(0.25);
+          layer->speedY = -toFIXED(0.5);
+          layer->maskX = FOG_WRAP - 1;
+          layer->maskY = (FOG_WRAP - 1) * MAPGRID_SIZE;
+        }
       } else {
         REG_BLDALPHA = BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
         REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -1943,9 +1947,12 @@ s32 Scene_Initialize(void) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
         LEADER()->z.fixed += toFIXED(16);
       Leader_Lift(-toFIXED(48));
-    case AIRS_ROCK_FUJIN_SHIELD_CHEST_FROM_AIRS_ROCK_INSIDE_VIAL_CHEST:
-      layer = (struct MapLayer *)Ram_HeapSlots->mapGrid;
-      layer = &((struct MapWork *)layer)->layers[2];
+    case AIRS_ROCK_FUJIN_SHIELD_CHEST_FROM_AIRS_ROCK_INSIDE_VIAL_CHEST: {
+      /* FAKEMATCH(temporary): layer, a pointer standing in for the map work's
+       * layers[2]; as that layer by name. */
+      struct MapLayer *layer =
+          &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
+
       layer->offsetX = toFIXED(1152);
       layer->offsetY = toFIXED(800);
       layer->scaleX = FIXED_ONE * 13 / 16;
@@ -1972,6 +1979,7 @@ s32 Scene_Initialize(void) {
         EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
       }
       break;
+    }
     case ENTRANCE_OPEN_THE_TOP:
       MapGrid_CopyCellsTo(29, 9, 62, 2, 9, 9);
       MapGrid_CopyCellAttributes(29, 9, 9, 9, 62, 2);

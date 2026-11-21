@@ -1870,8 +1870,9 @@ s32 Scene_Initialize(void) {
       if (GameFlag_Get(FLAG_AREA_TEMP_11))
         Actor_SetPosition(ACTOR_SECOND_PILLAR, 520, 872);
       AirsRock_MoveSecondPillar();
-      /* FAKEMATCH(temporary): the layer reached in two steps through the map
-       * work, its pointer held first as the layer's. */
+      /* FAKEMATCH(signature): layer, a struct MapLayer *, holds the map work's
+       * address before the layer is reached from it, here, at the fog's drift
+       * and at the Fujin Shield chest. */
       layer = (struct MapLayer *)Ram_HeapSlots->mapGrid;
       layer = &((struct MapWork *)layer)->layers[2];
       layer->offsetX = toFIXED(1408);

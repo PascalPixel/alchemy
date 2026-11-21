@@ -844,9 +844,9 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   Map_CopyPalette(gMainRoutineWork.mapId +
                       (SCENE_MARS_LIGHTHOUSE_JUPITER_LEDGE - SCENE_PROX),
                   screen);
-  /* FAKEMATCH(dead): a once-only block that places black, the colour the
-   * palette's first entry takes, at its store; as black declared with the
-   * routine's locals. */
+  /* FAKEMATCH(temporary): black, 0 held in a local declared in a block at its
+   * store, the colour the palette's first entry takes; as RGB(0, 0, 0) at the
+   * store. */
   {
     s32 black = RGB(0, 0, 0);
 

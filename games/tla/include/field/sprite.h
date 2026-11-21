@@ -89,7 +89,7 @@ struct SpritePictureCache {
 struct ActorSystemWork {
   u16 used; ///< sprite pixel bytes composed since the camera reset it
   u8 unusedAfterUsed[2]; ///< no code names it
-  s16 suspended;       ///< nonzero while a menu has suspended sprite projection
+  u16 suspended;       ///< nonzero while a menu has suspended sprite projection
   u8 edge;             ///< outline edge colour; 15 when the field sets up
   u8 fill;             ///< outline fill colour; 0 when the field sets up
   u8 spriteGroups[16]; ///< the sprite group tables, taken in turn by count

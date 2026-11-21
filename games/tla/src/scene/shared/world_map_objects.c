@@ -180,7 +180,7 @@ void WorldMap_UpdatePlacedActors(void) {
 /// Unused: unless a menu has suspended the actors, queues the World Map's
 /// backgrounds lightened toward white.
 UNUSED void WorldMap_QueueBlend(void) {
-  if ((u16)Ram_HeapSlots->actorSystem->suspended == 0) {
+  if (Ram_HeapSlots->actorSystem->suspended == 0) {
     IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT,
                         BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT1_BG3 |
                             BLDCNT_EFFECT_LIGHTEN | BLDCNT_TGT2_ALL,

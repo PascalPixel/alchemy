@@ -958,7 +958,7 @@ void EndingPicture_Scroll(void) {
   }
   {
     /* FAKEMATCH(temporary): the scroll read through a pointer to it. */
-    volatile s32 *word = &gEndingPicture_Scroll;
+    s32 *word = &gEndingPicture_Scroll;
     FIXED target = toFIXED(gEndingPicture_Row);
 
     scroll = *word;

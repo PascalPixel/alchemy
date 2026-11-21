@@ -262,6 +262,8 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
     if (frame >= gHeavyBlow_StrikeFrames[mode]) {
       i = 0;
       if (i != gHeavyBlow_ChipCounts[mode]) {
+        /* FAKEMATCH(temporary): blitter, blit[0] held in a local across the
+         * chips' draws; as blit[0] at each call. */
         DrawRectangle blitter = blit[0];
         struct Particle *chip = (struct Particle *)gMapGridCellBuffer;
 

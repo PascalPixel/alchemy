@@ -673,16 +673,19 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
         effect->motionFlags = 0;
         Sound_PlayFar(SE_SAND_MOVE);
         if (sprite != NULL) {
-          /* FAKEMATCH(signature): the field work read through SandTrailWork,
-           * whose priority is the low byte of a halfword; as struct FieldWork *
-           * and work->sandTrailPriority & 3. */
-          struct SandTrailWork *work = Ram_HeapSlots->fieldWork;
+          struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
           Sprite_StartAnimation(sprite, 1);
           sprite->flags = 0;
           // DEAD: overwritten by the next line; the ROM keeps its mask and OR.
           sprite->priority = 2;
-          sprite->priority = work->trailPriority & 3;
+          /* FAKEMATCH(dead): a block that only places the mask's declaration
+           * after the stores. */
+          {
+            u8 mask = 3;
+
+            sprite->priority = work->sandTrailPriority & mask;
+          }
         }
         *wakeTimer = 5;
       }

@@ -3026,14 +3026,28 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   } while (0);
 
   {
-    u32 words = (u32)runSize / 4;
-    s32 count = words * 4;
+    s32 count = (u32)runSize / 4 * 4;
     s32 size;
 
-    /* FAKEMATCH(barrier): an empty asm that copies count into size, with
-     * words as an input. */
-    __asm__("" : "=r"(size) : "0"(count), "r"(words));
-    Dma_Set(runCopy, dst, DMA_COPY_WORDS(count / 4), REG_DMA3);
+    /* FAKEMATCH(dead): updates of count that cancel out, between its set and
+     * its copy. */
+    if (dst) {
+      count++;
+      count--;
+    }
+    /* FAKEMATCH(temporary): size, a copy of count for the step past the
+     * copied run. */
+    size = count;
+    /* FAKEMATCH(dead): updates of size that cancel out. */
+    if (dst) {
+      size++;
+      size--;
+    }
+    /* FAKEMATCH(dead): the division by 4 rounded towards zero by hand, under a
+     * test never true of a count of bytes. */
+    if (count < 0)
+      count += 3;
+    Dma_Set(runCopy, dst, DMA_COPY_WORDS(count >> 2), REG_DMA3);
     dst = (u32 *)((u8 *)dst + size);
   }
   PATCH(skip);

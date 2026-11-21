@@ -300,6 +300,9 @@ void FieldPsynergy_EndSand(void) {
   u8 *motionFlags;
   u8 *rippled;
 
+  /* FAKEMATCH(temporary): sprite, the leader's first tile, first holding the
+   * picture's size for the decode and the load; as sizeof(work->picture) at
+   * both. */
   s32 sprite;
   struct FieldPsynergyParticle *particle;
   struct EffectSprite *particleSprite;
@@ -353,7 +356,9 @@ void FieldPsynergy_EndSand(void) {
   Animation_ApplyChildValueToFirstFar(owner->sprite, SPRITE_COLOR_HIDDEN);
   wait(1);
   Animation_ApplyChildValueToFirstFar(owner->sprite, SPRITE_COLOR_NORMAL);
-  /* FAKEMATCH(dead): a once-only block round the decode, declaring source. */
+  /* FAKEMATCH(temporary): source, the sprite's first entry held in a local for
+   * the decode, declared in a once-only block round it; as the entry passed to
+   * the decode. */
   {
     void *source = ((struct Sprite *)owner->sprite)->entries[0];
 

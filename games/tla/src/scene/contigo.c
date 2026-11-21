@@ -1574,11 +1574,13 @@ void Contigo_OfferLuckyDice(void) {
   FieldMessage_ShowAtActor(ACTOR_LUCKY_DICE_ATTENDANT, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       0) {
-    u32 *state = (u32 *)gSceneState;
-
-    /* FAKEMATCH(barrier): an empty asm on state; as no asm. */
-    asm volatile("" : "+r"(state));
-    *state = gMainRoutineWork.coins;
+    *(s32 *)gSceneState = gMainRoutineWork.coins;
+    /* FAKEMATCH(dead): tests of the coins, never above COINS_MAX, around a
+     * store to price, which nothing reads again. */
+    if (gMainRoutineWork.coins > COINS_MAX) {
+      if (gMainRoutineWork.coins != 0)
+        price = 0;
+    }
     ObjectTable_Snapshot();
     // "OK! Then take the dice."
     Event_ShowMessageAndWait(ACTOR_LUCKY_DICE_ATTENDANT, 0);
@@ -1615,11 +1617,13 @@ void Contigo_OfferSuperLuckyDice(void) {
   FieldMessage_ShowAtActor(ACTOR_SUPER_LUCKY_DICE_ATTENDANT, 0);
   if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
       0) {
-    u32 *state = (u32 *)gSceneState;
-
-    /* FAKEMATCH(barrier): an empty asm on state; as no asm. */
-    asm volatile("" : "+r"(state));
-    *state = gMainRoutineWork.coins;
+    *(s32 *)gSceneState = gMainRoutineWork.coins;
+    /* FAKEMATCH(dead): tests of the coins, never above COINS_MAX, around a
+     * store to price, which nothing reads again. */
+    if (gMainRoutineWork.coins > COINS_MAX) {
+      if (gMainRoutineWork.coins != 0)
+        price = 0;
+    }
     ObjectTable_Snapshot();
     // "OK, then let 'em roll!"
     Event_ShowMessageAndWait(ACTOR_SUPER_LUCKY_DICE_ATTENDANT, 0);

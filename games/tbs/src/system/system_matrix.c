@@ -267,19 +267,19 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
   t = Iwram_Sqrt(dot(dx >> 8, dx >> 8, dy >> 8, dy >> 8, dz >> 8, dz >> 8));
   scale = Iwram_UnsignedDivide(dividend, t) >> RECIPROCAL_SHIFT;
   scale = -scale;
-  /* FAKEMATCH(dead): the normalization in a once-only block. */
-  do {
-    dx = Iwram_MulFX(dx, scale);
-    dy = Iwram_MulFX(dy, scale);
-    dz = Iwram_MulFX(dz, scale);
-    uz = -dx;
-  } while (0);
+  dx = Iwram_MulFX(dx, scale);
+  dy = Iwram_MulFX(dy, scale);
+  dz = Iwram_MulFX(dz, scale);
+  uz = -dx;
 
-  // The sideways axis u = (dz, 0, -dx), normalized.
-  t = Iwram_MulFX(dy, dy);
-  scale = FIXED_ONE;
-  if (scale - t > 0)
+  // The sideways axis u = (dz, 0, -dx), normalized, unless d is vertical.
+  do {
+    t = Iwram_MulFX(dy, dy);
+    scale = FIXED_ONE;
+    if (scale - t <= 0)
+      break;
     scale = Iwram_UnsignedDivide(dividend, Math_SqrtFX(scale - t)) << 1;
+  } while (0);
   ux = Iwram_MulFX(dz, scale);
   uz = Iwram_MulFX(uz, scale);
 

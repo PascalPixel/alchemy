@@ -195,10 +195,11 @@ s32 FieldSequence_Run(void) {
     }
     arrivalState = gMainRoutineWork.teleportState;
     if (arrivalState == 1) {
-      // teleportState = 2, through its address.
+      /* FAKEMATCH(dead): teleportState set to 2 through its address. */
       *(s8 *)&gMainRoutineWork.teleportState = 2;
       /* FAKEMATCH(dead): a once-only loop round the arrival. */
       do {
+        /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its use. */
         s32 zero = 0;
 
         Teleport_PlaySparksAndFade();

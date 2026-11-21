@@ -291,14 +291,12 @@ void IzumoRuins_StartMovingPillar(void) {
   if (gMainRoutineWork.next == SCENE_IZUMO_RUINS_FIRST_ROOM) {
     Actor_LiftTargetBlock(gIzumoRuins_FirstRoomPillars);
   } else {
-    /* FAKEMATCH(signature): the cell read through an s16 return type. */
+    s32 cell = MapCell_GetAttributes(MAPGRID_LAYER_OVERHEAD,
+                                     RING_SOUTH_GAP_COLUMN, RING_SOUTH_GAP_ROW);
+
+    cell = CELL_ATTRIBUTES(CELL_BEHAVIOR_WALL, cell & CELL_ATTRIBUTE_BITS);
     MapCell_SetAttributes(MAPGRID_LAYER_OVERHEAD, RING_SOUTH_GAP_COLUMN,
-                          RING_SOUTH_GAP_ROW,
-                          CELL_ATTRIBUTES(CELL_BEHAVIOR_WALL, 0) |
-                              (((s16 (*)(u32, s32, s32))MapCell_GetAttributes)(
-                                   MAPGRID_LAYER_OVERHEAD,
-                                   RING_SOUTH_GAP_COLUMN, RING_SOUTH_GAP_ROW) &
-                               CELL_ATTRIBUTE_BITS));
+                          RING_SOUTH_GAP_ROW, cell);
     Actor_LiftTargetBlock(gIzumoRuins_SecondRoomPillars);
   }
 }

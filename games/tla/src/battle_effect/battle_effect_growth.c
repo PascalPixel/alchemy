@@ -355,7 +355,7 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   DrawRectangle drawFlip;
   DrawRectangle draw;
   s32 frameCount;
-  u32 *heap;
+  struct HeapSlots *heap;
   struct BattleEffectWork *work;
   s32 i;
   s32 j;
@@ -363,8 +363,8 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   s32 start;
 
   /* FAKEMATCH(dead): heap set through its own address; as heap =
-   * (u32 *)Ram_HeapSlots. */
-  *&heap = (u32 *)Ram_HeapSlots;
+   * Ram_HeapSlots. */
+  *&heap = Ram_HeapSlots;
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   EFFECT_START_NARROW_CANVAS(BGCNT_PRIORITY(1));
@@ -376,11 +376,11 @@ void BattleEffect_RunThorn(struct BattleEffectParams *args) {
   }
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS,
                       BLITTER_TRANSPARENT);
-  draw = ((DrawRectangle *)heap)[HEAP_SLOT_RAM_CODE / sizeof(u32)];
+  draw = (DrawRectangle)heap->ramCode;
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                       EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X,
                       BLITTER_TRANSPARENT);
-  drawFlip = ((DrawRectangle *)heap)[HEAP_SLOT_RAM_CODE_PAIRED / sizeof(u32)];
+  drawFlip = (DrawRectangle)heap->ramCodePaired;
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_CLEAR, 0);
   frameCount = gGrowth_Counts[args->variant] * THORN_INTERVAL + 56;
 

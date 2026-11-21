@@ -105,7 +105,6 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   u8 *cells;
   s32 orange;
   s32 orangeBase;
-  s32 paletteBase;
   DrawRectangle draw;
 
   work = Ram_HeapSlots->battleEffect;
@@ -129,8 +128,8 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   Task_Add(BattleEffect_ProcessPendingGraphicsTransfer, TASK_PASS_VBLANK);
   circles = (s16 *)(work->sheet + TRIDENT_DISC_TABLE);
   Resource_LoadAndDecompress(RESOURCE_TORNADO_SHEET, work->sheet, 1, 0);
-  /* FAKEMATCH(temporary): offset holds the cell buffer's address for the
-   * FlashBurstSheet load; as gMapGridCellBuffer + TRIDENT_FLASH_BURST there. */
+  /* FAKEMATCH(dead): offset set to the cell buffer's address, which the disc
+   * loop below sets again before any read. */
   offset = (s32)gMapGridCellBuffer;
   Resource_LoadAndDecompress(RESOURCE_JAGGED_STREAK_SHEET,
                              work->sheet + TRIDENT_JAGGED_STREAKS, 0, 0);
@@ -138,13 +137,14 @@ void BattleEffect_RunTrident(struct BattleEffectParams *args) {
   size = 2;
   /* FAKEMATCH(dead): a test on the blitter. */
   if (draw) {
-    /* FAKEMATCH(temporary): the effect palette's id in a local. */
-    paletteBase = RESOURCE_VIOLET_PALETTE_F - 4;
+    /* FAKEMATCH(dead): i set to four below the effect palette's id, which the
+     * loop below sets to 0 before any read. */
+    i = RESOURCE_VIOLET_PALETTE_F - 4;
     cells = gMapGridCellBuffer;
-    palette = paletteBase + 4;
+    palette = RESOURCE_VIOLET_PALETTE_F;
   }
   Resource_LoadAndDecompress(RESOURCE_FLASH_BURST_SHEET,
-                             (u8 *)offset + TRIDENT_FLASH_BURST, 1, 0);
+                             gMapGridCellBuffer + TRIDENT_FLASH_BURST, 1, 0);
   offset = TRIDENT_DISC_PICTURES;
   for (i = 0; i != TRIDENT_DISC_SIZES; i++) {
     // As an integer sum, the offset first.
@@ -771,7 +771,6 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
       } else {
         struct RenderModel *model;
         void *projected;
-        s32 kind;
         s32 shade;
 
         projected = Heap_AllocEwram(1024);
@@ -781,14 +780,11 @@ void BattleEffect_RunLeapingStrike(struct BattleEffectParams *args, s32 mode) {
           work->shakeFrames = 14;
 
         // The claw, slashing until frame 45.
-        /* FAKEMATCH(temporary): the kind in a local; as MODEL_SHADED_MAX at its
-         * use. */
-        kind = MODEL_SHADED_MAX;
         texture.logWidth = 6;
         texture.logHeight = 6;
         texture.pixels = work->sheet + LEAPING_STRIKE_PICTURES;
-        model->kind = kind;
         model->mesh = gBattleEffect_SquareMesh;
+        model->kind = MODEL_SHADED_MAX;
         model->texture = &texture;
         model->vertices = projected;
         model->shade = shade;

@@ -1854,7 +1854,7 @@ void HangingVine_Swing(s32 id) {
   Actor_SelectAnimationFar(leader, ANIM_LEADER_LEAP);
   leader->motionFlags = motionFlags & ~1;
   leader->velocityY = toFIXED(4);
-  for (i = 7; i >= 0; i--) {
+  for (i = 0; i < 8; i++) {
     slot->spacing -= toFIXED(1) / 16;
     wait(1);
   }

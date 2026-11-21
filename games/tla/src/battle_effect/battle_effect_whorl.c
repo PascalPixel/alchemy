@@ -261,10 +261,11 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
       Matrix_Initialize();
       Matrix_SetLookAt(camera->eye, camera->focus);
       if (mode <= WATER_COLUMN_GALE) {
-        s32 k = 4;
+        s32 k;
 
         pos[0] = point[0] + Trig_Sin(frame * (TRIG_TURN / 32)) *
                                 TWISTING_COLUMN_DJINNI_SWAY;
+        k = 4;
         if (frame > 39) {
           k = frame - 36;
         }
@@ -273,17 +274,12 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
         if (frame > 27) {
           pos[1] = pos[1] + frame * toFIXED(4) - toFIXED(112);
         }
-        {
-          /* FAKEMATCH(temporary): out stands in for screen's address. */
-          s32 *out = screen;
-
-          pos[2] = point[2];
-          EffectPosition_ProjectPoint(pos, (struct ScreenPoint *)out);
-          blit[0](canvas,
-                  work->sheet + TWISTING_COLUMN_JUPITER_DJINN_SMALL_PICTURES,
-                  out[0] / 2 - 10, out[1] - 20, SMALL_DJINNI_WIDTH,
-                  SMALL_DJINNI_HEIGHT);
-        }
+        pos[2] = point[2];
+        EffectPosition_ProjectPoint(pos, (struct ScreenPoint *)screen);
+        blit[0](canvas,
+                work->sheet + TWISTING_COLUMN_JUPITER_DJINN_SMALL_PICTURES,
+                screen[0] / 2 - 10, screen[1] - 20, SMALL_DJINNI_WIDTH,
+                SMALL_DJINNI_HEIGHT);
       }
       if (frame > 7) {
         if (mode <= WATER_COLUMN_GALE && frame <= 47) {
@@ -384,8 +380,7 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
             r = TWISTING_COLUMN_BAND_RIPPLE;
           }
           for (i = 0; i != 2; i++) {
-            /* FAKEMATCH(temporary): the row's 0 held in a local; as 0. */
-            s32 zero = 0;
+            s32 width = TWISTING_COLUMN_BAND_WIDTH;
 
             TWISTING_COLUMN_CORNERS[j][i][0] =
                 -j * 4 + TWISTING_COLUMN_BAND_HALF_LENGTH;
@@ -393,8 +388,8 @@ void BattleEffect_RunWaterColumn(struct BattleEffectParams *args, u32 mode) {
                 (FIXEDtoINT(
                     Trig_Cos(j * (TRIG_TURN / 64) - frame * (TRIG_TURN / 32)) *
                     r)) +
-                i * TWISTING_COLUMN_BAND_WIDTH - TWISTING_COLUMN_BAND_WIDTH / 2;
-            TWISTING_COLUMN_CORNERS[j][i][2] = zero;
+                i * width - width / 2;
+            TWISTING_COLUMN_CORNERS[j][i][2] = 0;
           }
         }
       } else if (mode == WATER_COLUMN_POISON_FLOW) {

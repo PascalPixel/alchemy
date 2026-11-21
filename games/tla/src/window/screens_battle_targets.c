@@ -157,9 +157,6 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   s32 helpColumn;
   s32 helpRow;
   s32 count;
-#if TLA_PATCH_2
-  s32 *countAddress;
-#endif
   s32 i;
   s32 j;
   s32 n;
@@ -179,8 +176,7 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   targetCount = 0;
   redraw = TARGET_REDRAW_ALL;
   cursorSlot = VramCache_AllocEntry(256);
-  /* FAKEMATCH(dead): a null computed from selection. */
-  conditionWindow = (struct Window *)((u32)(u16)selection >> 16);
+  conditionWindow = NULL;
   if (spread == 0)
     spread = 1;
   if (mode == ABILITY_TARGET_ALLIES || mode == ABILITY_TARGET_SELF)
@@ -280,10 +276,6 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
     cursorTracks[0].x = actorPosition.x;
     cursorTracks[0].y = 128;
   }
-#if !TLA_PATCH_2
-  /* FAKEMATCH(barrier): an empty asm once selection and mode are dead. */
-  __asm__("" : : : "r8", "r10");
-#endif
   window = Window_Create(0, TARGET_NAME_WINDOW_ROW, DISPLAY_TILE_WIDTH, 4,
                          WINDOW_FLAG_INSTANT | WINDOW_FLAG_TEXT_CANVAS |
                              WINDOW_FLAG_OUTLINED_TEXT);
@@ -390,6 +382,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
                                                      &selectedPosition);
           if (conditionWindow != NULL)
             Window_Close(conditionWindow, 1);
+          /* FAKEMATCH(dead): cancelling updates of conditionWindow. */
+          conditionWindow++;
+          conditionWindow--;
           switch (kind) {
           case TARGET_HINT_SET_DJINNI:
 #if TLA_PATCH_2
@@ -550,10 +545,6 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
               count = 1;
             if (unit->delusion != 0)
               count++;
-#if TLA_PATCH_2
-            /* FAKEMATCH(temporary): count read back through a pointer to it. */
-            countAddress = &count;
-#endif
             if (unit->stun != 0)
               count++;
             if (unit->sleep != 0)
@@ -564,11 +555,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
               count++;
             if (unit->haunt != 0)
               count++;
-#if TLA_PATCH_2
-            if (*countAddress == 0)
-#else
-            if (count == 0)
-#endif
+            /* FAKEMATCH(dead): count read back through its own address. */
+            if (*&count == 0)
               count = 1;
             helpRow = 9 - count;
             if (helpRow <= 3)
@@ -755,6 +743,9 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
       break;
     }
     wait(1);
+    /* FAKEMATCH(dead): cancelling updates of conditionWindow. */
+    conditionWindow++;
+    conditionWindow--;
     if (redraw == 0)
       break;
   }

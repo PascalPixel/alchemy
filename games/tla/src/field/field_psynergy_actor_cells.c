@@ -124,7 +124,7 @@ void Actor_PlaceMovedBlock(void) {
     s32 level;
     s32 slot;
     s32 tag;
-    u8 flags;
+    FIXED x;
 
     /* FAKEMATCH(barrier): an empty asm on the grid index that claims to read
      * blocks. */
@@ -132,20 +132,18 @@ void Actor_PlaceMovedBlock(void) {
     shapes = &grid[index];
     key = MapGrid_GetTerrainKindFar(target->layer, target->x.fixed,
                                     target->z.fixed);
-    {
-      FIXED x = target->x.fixed;
-
-      level = MapGrid_GetTerrainHeightFar(target->layer, x, target->z.fixed);
-    }
+    /* FAKEMATCH(temporary): x, a copy of the target's x for the height
+     * read. */
+    x = target->x.fixed;
+    level = MapGrid_GetTerrainHeightFar(target->layer, x, target->z.fixed);
     slot = Actor_GetCellIndex(target);
     shapes += slot;
     tag = MapCollision_FindOrAddTag(target->layer, key,
                                     HEIGHT_STEPS(level) + BLOCK_HEIGHT_STEPS);
     ((struct ShapeCell *)shapes)->shape = tag;
     cells += slot;
-    flags = cells->attributeB;
-    target->riseBaseY = flags;
-    cells->attributeB = flags | MAP_CELL_JUMP;
+    target->riseBaseY = cells->attributeB;
+    cells->attributeB |= MAP_CELL_JUMP;
     blocks += slot;
     blocks->collisionCode = CELL_BEHAVIOR_WALL;
   }

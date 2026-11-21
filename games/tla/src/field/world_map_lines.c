@@ -140,6 +140,7 @@ void Matrix_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
       affinePc = FIXEDtoQ_8_8(MulFX(widthScale, sinYaw));
       line->v = affinePc;
       affine->pc = affinePc;
+      /* FAKEMATCH(dead): the projection's centre read through its taken address. */
       centerX = *&gProjection.centerX;
       // UB: affine coefficients can be negative, and shifting a negative
       // value left is undefined; UBFIX multiplies.
@@ -167,15 +168,13 @@ void Matrix_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
         // On odd frames the sample point shifts by half a pixel step along
         // the line and a quarter step across it, so alternate frames sample
         // between each other's texels.
-        /* FAKEMATCH(temporary): sampleOffset takes a copy of line->u for the
-         * second sum. */
         s32 sampleOffset;
 
         sampleOffset = ((originX + line->dx) >> 8) + line->v / 4 + line->u / 2;
         affine->x = sampleOffset;
+        /* FAKEMATCH(dead): sampleOffset set to line->u, never read. */
         sampleOffset = line->u;
-        affine->y =
-            ((originZ + line->dz) >> 8) + sampleOffset / 4 + line->v / 2;
+        affine->y = ((originZ + line->dz) >> 8) + line->u / 4 + line->v / 2;
       } else {
         affine->x = (originX + line->dx) >> 8;
         affine->y = (originZ + line->dz) >> 8;

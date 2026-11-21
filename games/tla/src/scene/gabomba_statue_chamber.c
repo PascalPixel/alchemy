@@ -961,10 +961,6 @@ extern u32 gGabombaStatueChamber_AkafubuPath[];
 /// Akafubu opens the passage with the Dragon's Eye and offers to retrieve the
 /// orb, and the party talks over whether to trust him.
 void GabombaStatueChamber_AkafubuOffersToHelp(void) {
-  s32 *owner;
-  s32 facing;
-  s32 angleC;
-  s32 turn;
   struct HeapSlots *heap;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -973,31 +969,21 @@ void GabombaStatueChamber_AkafubuOffersToHelp(void) {
   GabombaStatueChamber_OpenThePassage();
   MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
-  owner = (s32 *)&gMainRoutineWork;
-  owner += offsetof(struct MainRoutineWork, leaderActorId) / sizeof(s32);
-  {
-    Actor_SetPositionAndFacing(*owner, toFIXED(360), toFIXED(216),
-                               FACING_NORTHEAST);
-    Actor_SetPositionAndFacing(ACTOR_PIERS, toFIXED(376), toFIXED(216),
-                               FACING_NORTHEAST);
-  }
-  facing = FACING_NORTHWEST;
+  Actor_SetPositionAndFacing(gMainRoutineWork.leaderActorId, toFIXED(360),
+                             toFIXED(216), FACING_NORTHEAST);
+  Actor_SetPositionAndFacing(ACTOR_PIERS, toFIXED(376), toFIXED(216),
+                             FACING_NORTHEAST);
   Actor_SetPositionAndFacing(ACTOR_KRADEN, toFIXED(360), toFIXED(200), 0);
-  Actor_SetPositionAndFacing(ACTOR_JENNA, toFIXED(408), toFIXED(216), facing);
-  angleC = FACING_WEST;
-  Actor_SetPositionAndFacing(ACTOR_SHEBA, toFIXED(424), toFIXED(200), angleC);
-  {
-    Actor_SetPositionAndFacing(ACTOR_AKAFUBU, toFIXED(392), toFIXED(200),
-                               FACING_NORTH_NORTHWEST);
-  }
+  Actor_SetPositionAndFacing(ACTOR_JENNA, toFIXED(408), toFIXED(216),
+                             FACING_NORTHWEST);
+  Actor_SetPositionAndFacing(ACTOR_SHEBA, toFIXED(424), toFIXED(200),
+                             FACING_WEST);
+  Actor_SetPositionAndFacing(ACTOR_AKAFUBU, toFIXED(392), toFIXED(200),
+                             FACING_NORTH_NORTHWEST);
   heap = Ram_HeapSlots;
   System_Wait(1);
-  {
-    s32 *effect = &((struct FieldWork *)heap->fieldWork)->transition;
-
-    turn = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-    *effect = turn;
-  }
+  ((struct FieldWork *)heap->fieldWork)->transition =
+      SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   FieldEvent_Wait(40);
@@ -1007,18 +993,14 @@ void GabombaStatueChamber_AkafubuOffersToHelp(void) {
   Actor_FaceDirection(ACTOR_PIERS, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_JENNA, FACING_NORTH, 0);
   Actor_FaceDirection(ACTOR_KRADEN, FACING_NORTH_NORTHEAST, 0);
-  Actor_FaceDirection(ACTOR_SHEBA, facing, 0);
+  Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTHWEST, 0);
   Actor_SetSpeed(ACTOR_AKAFUBU, 0.8);
   Actor_WalkToAndWait(ACTOR_AKAFUBU, 392, 168);
   Event_PlaySound(SE_HIDDEN_PASSAGE_OPEN);
   GabombaStatueChamber_ShowDragonsEye();
   FieldEvent_Wait(40);
   Event_PlaySound(SE_PUSH);
-  {
-    struct Actor *guard = Actor_GetById(ACTOR_SEATED_IDOL);
-
-    guard->motionFlags = 0;
-  }
+  Actor_GetById(ACTOR_SEATED_IDOL)->motionFlags = 0;
   GabombaStatueChamber_SetPassageCells();
   Actor_SetSpeed(ACTOR_SEATED_IDOL, 0.4);
   Actor_MoveToAndWait(ACTOR_SEATED_IDOL, 424, 152);
@@ -1031,12 +1013,13 @@ void GabombaStatueChamber_AkafubuOffersToHelp(void) {
   System_Wait(1);
   Actor_SetPosition(ACTOR_AKAFUBU, 0, 0);
   System_Wait(1);
-  Actor_ShowEmoteById(ACTOR_JENNA, turn, 20);
-  Actor_FaceDirection(ACTOR_JENNA, angleC, 0);
+  Actor_ShowEmoteById(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 20);
+  Actor_FaceDirection(ACTOR_JENNA, FACING_WEST, 0);
   // "Do you think Akafubu will really return the orb to us?" Yes: "Maybe we had
   // him all wrong..." No: "I think Jenna is right. It sounds like he's..."
   FieldMessage_ShowAtActor(SPEAKER_WINDOW_ABOVE | ACTOR_JENNA, 0);
-  if (Event_AskYesNoWithActorAnimation(*owner, 0) == 0) {
+  if (Event_AskYesNoWithActorAnimation(gMainRoutineWork.leaderActorId, 0) ==
+      0) {
     Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_EAST);
     Actor_SetAnimation(ACTOR_PIERS, ANIM_NOD);
     // "Maybe we had him all wrong..."
@@ -1044,7 +1027,7 @@ void GabombaStatueChamber_AkafubuOffersToHelp(void) {
     ((struct FieldWork *)heap->fieldWork)->message++;
   } else {
     ((struct FieldWork *)heap->fieldWork)->message++;
-    Actor_FaceDirectionAndWait(ACTOR_PIERS, angleC);
+    Actor_FaceDirectionAndWait(ACTOR_PIERS, FACING_WEST);
     // "I think Jenna is right. It sounds like he's going to return what he..."
     Event_ShowMessage(SPEAKER_WINDOW_ABOVE | ACTOR_PIERS, 0);
     GabombaStatueChamber_CountAnswer();

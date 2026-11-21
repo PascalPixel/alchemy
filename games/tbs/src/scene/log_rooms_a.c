@@ -3000,10 +3000,15 @@ LogRoomsA_ChooseStopTowardFacing(struct LogRoomsAStop *node,
     angleDifference = (s16)(connectionFacing - *requestedFacing);
     if (angleDifference < 0)
       angleDifference = -angleDifference;
-    /* FAKEMATCH(volatile): the stop is tested through a volatile read. */
-    if (*(volatile u8 *)&connection->stopIndex != LOG_STOP_NONE &&
+    if (connection->stopIndex != LOG_STOP_NONE &&
         angleDifference < nearestDifference) {
       nearestDifference = angleDifference;
+      /* FAKEMATCH(dead): updates of chosenFacing that cancel out, under a test
+       * of it against the difference. */
+      if (chosenFacing != angleDifference) {
+        chosenFacing++;
+        chosenFacing--;
+      }
       stopIndex = connection->stopIndex;
       chosenFacing = (s16)connectionFacing;
     }

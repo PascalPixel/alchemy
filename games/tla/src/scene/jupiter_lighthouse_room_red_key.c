@@ -816,10 +816,8 @@ void JupiterLighthouse_StartSparkRing(const s32 *from, const s32 *to) {
   tile = Vram_Load(entry, sizeof(work->tiles), work);
   work->tile = tile;
   work->vramEntry = entry;
-  i = 0;
-  spark = work->sparks;
-  sprite = work->sprites;
-  for (; i <= ACTIVATION_SPARKS - 1; i++, sprite++, spark++) {
+  for (i = 0, spark = work->sparks, sprite = work->sprites;
+       i < ACTIVATION_SPARKS; i++, sprite++, spark++) {
     JupiterLighthouse_InitSparkSprite(sprite, 4, 4, 0,
                                       tile + (i & (ORB_PICTURES - 1)) * 2);
     sprite->oam.fullColor = 1;
@@ -828,11 +826,12 @@ void JupiterLighthouse_StartSparkRing(const s32 *from, const s32 *to) {
     sprite->depth = BattleEffect_GetObjectDepth(leader) - 1;
     spark->age = -1;
   }
+  /* FAKEMATCH(dead): a block that only places firstSlot's declaration at the
+   * store. */
   {
-    /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
-    s32 zero = 0;
+    s32 firstSlot = 0;
 
-    work->next = zero;
+    work->next = firstSlot;
   }
   Task_AddFrame(JupiterLighthouse_UpdateSparkRing, TASK_PASS_FRAME);
 }

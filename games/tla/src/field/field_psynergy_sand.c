@@ -304,7 +304,6 @@ void FieldPsynergy_EndSand(void) {
   struct FieldPsynergyParticle *particle;
   struct EffectSprite *particleSprite;
   u8 *animation;
-  struct MainRoutineWork *party;
   s32 pictureOffset;
   s32 ripple;
   s32 frame;
@@ -332,6 +331,8 @@ void FieldPsynergy_EndSand(void) {
     particle++;
   }
   FieldCamera_MoveWithinMapBounds(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
+  /* FAKEMATCH(temporary): motionFlags, a pointer standing in for
+   * owner->motionFlags's address. */
   motionFlags = &owner->motionFlags;
   *motionFlags = 0;
   /* FAKEMATCH(temporary): the mask held in a local across the two calls; as
@@ -339,8 +340,7 @@ void FieldPsynergy_EndSand(void) {
   mask = OAM_BELOW_SHAPE_OR_SIZE;
   Actor_SetPositionAndResetMotionFar(
       owner, owner->x.fixed, owner->y.fixed + toFIXED(10), owner->z.fixed);
-  party = &gMainRoutineWork;
-  Actor_SetFirstSpriteAnimationFar(owner, party->leaderActorId);
+  Actor_SetFirstSpriteAnimationFar(owner, gMainRoutineWork.leaderActorId);
   // The image's OAM shape and size: square, 32 by 32 pixels.
   ((u8 *)owner->sprite)[5] &= mask;
   mask &= ((u8 *)owner->sprite)[7];
@@ -353,6 +353,7 @@ void FieldPsynergy_EndSand(void) {
   Animation_ApplyChildValueToFirstFar(owner->sprite, SPRITE_COLOR_HIDDEN);
   wait(1);
   Animation_ApplyChildValueToFirstFar(owner->sprite, SPRITE_COLOR_NORMAL);
+  /* FAKEMATCH(dead): a once-only block round the decode, declaring source. */
   {
     void *source = ((struct Sprite *)owner->sprite)->entries[0];
 

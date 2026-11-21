@@ -2796,6 +2796,8 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   u32 frame[34];
 
   src = gBlitterTemplate;
+  /* FAKEMATCH(signature): dst, a u32 *, holds the blitter's size before it
+   * holds the allocation. */
   dst = (u32 *)BLITTER_BYTES;
   dst = HeapSlot_Alloc(slot, (s32)dst);
 
@@ -2845,9 +2847,7 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   PUT(*src++);
 
   if ((flags & COMPOSITE_CLIP_X) == 0) {
-    s32 width = 1 << widthShift;
-
-    PUT(src[0] + width - 1);
+    PUT(src[0] + (1 << widthShift) - 1);
   }
   src += 1;
   if ((flags & COMPOSITE_CLIP_X) != 0) {
@@ -3017,24 +3017,22 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   PUT(*src++);
   if ((flags & COMPOSITE_FLIP_X) != 0) {
     PUT(src[0]);
+    src += 2;
   } else {
     PUT(src[1]);
+    src += 2;
   }
-  src += 2;
-  /* FAKEMATCH(dead): an empty once-only loop. */
-  do {
-  } while (0);
-
   {
-    u32 words = (u32)runSize / 4;
-    s32 count = words * 4;
-    s32 size;
+    s32 count = (u32)runSize / 4 * 4;
 
-    /* FAKEMATCH(barrier): an empty asm that copies count into size, with
-     * words as an input. */
-    __asm__("" : "=r"(size) : "0"(count), "r"(words));
-    Dma_Set(runCopy, dst, DMA_COPY_WORDS(count / 4), REG_DMA3);
-    dst = (u32 *)((u8 *)dst + size);
+    /* FAKEMATCH(dead): the division by 4 rounded towards zero by hand, under a
+     * test never true of a count of bytes. */
+    if (count < 0)
+      count += 3;
+    Dma_Set(runCopy, dst, DMA_COPY_WORDS(count >> 2), REG_DMA3);
+    dst += (u32)runSize / 4;
+    /* FAKEMATCH(dead): count set to 0, a store nothing reads. */
+    count = 0;
   }
   PATCH(skip);
 
@@ -3046,6 +3044,7 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
 
   // Block 5, the exit, where both skips of block 3 land.
   COPY(2);
+  /* FAKEMATCH(dead): a block that only declares end at the comparison. */
   {
     const u32 *end = (const u32 *)gBattleEffect_BitOperands;
 

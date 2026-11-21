@@ -603,12 +603,6 @@ void WorldMapPicture_DrawRow(u32 column, s32 row) {
   }
 }
 
-/// Adds a cell to a column number.
-static inline s32 WorldMap_AddColumn(s32 column, s32 cell) {
-  /* FAKEMATCH(wrapper): the column added through an inline. */
-  return column + cell;
-}
-
 /// Draws one column of the world picture on BG1 as it scrolls in, 21 tiles
 /// down from a row, from the rows already decoded in the map-cell buffer.
 void WorldMapPicture_DrawColumn(s32 column, s32 row) {
@@ -618,6 +612,7 @@ void WorldMapPicture_DrawColumn(s32 column, s32 row) {
     s32 line = row + i;
     s32 cell = line;
     s32 tile;
+    s32 rowStart;
 
     if (line >= WORLD_PICTURE_TILE_ROWS)
       cell = line - WORLD_PICTURE_TILE_ROWS;
@@ -625,7 +620,10 @@ void WorldMapPicture_DrawColumn(s32 column, s32 row) {
             WORLD_PICTURE_MAP_START) %
            WORLD_PICTURE_TILES;
     cell *= PICTURE_TILES_ACROSS;
-    cell = WorldMap_AddColumn(column, cell);
+    /* FAKEMATCH(temporary): the row's first cell copied before the column is
+     * added to it; as cell = column + cell. */
+    rowStart = cell;
+    cell = column + rowStart;
     cell *= TILE_SIZE_8BPP;
     tile *= TILE_SIZE_8BPP;
     line = VRAM + WORLD_PICTURE_FIRST_TILE * TILE_SIZE_8BPP;

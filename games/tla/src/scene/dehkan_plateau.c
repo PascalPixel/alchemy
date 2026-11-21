@@ -1755,21 +1755,15 @@ extern u16 gDehkanPlateau_FallLandingCells[];
         entry = (u16 *)((u8 *)entry + offset);                                 \
         x = *entry++;                                                          \
         y = *entry++;                                                          \
-        {                                                                      \
-          /* FAKEMATCH(temporary): the copies' width of one cell held in a     \
-           * local; as 1 written at them. */                                   \
-          s32 width = 1;                                                       \
-                                                                               \
-          MapGrid_CopyCellsTo(sourceX, sourceZ, x, y, width, 1);               \
-          x = entry[0];                                                        \
-          y = entry[1];                                                        \
-          MapGrid_CopyCellsTo(columnSourceX, columnSourceZ, x, y, width, 5);   \
-          if (fall == 1)                                                       \
-            MapGrid_CopyCellsTo(67, 4, 69, 3, width, 1);                       \
-          x -= 64;                                                             \
-          y += belowOffsetZ;                                                   \
-          MapGrid_CopyCellsTo(sourceX, belowSourceZ, x, y, width, 4);          \
-        }                                                                      \
+        MapGrid_CopyCellsTo(sourceX, sourceZ, x, y, 1, 1);                     \
+        x = entry[0];                                                          \
+        y = entry[1];                                                          \
+        MapGrid_CopyCellsTo(columnSourceX, columnSourceZ, x, y, 1, 5);         \
+        if (fall == 1)                                                         \
+          MapGrid_CopyCellsTo(67, 4, 69, 3, 1, 1);                             \
+        x -= 64;                                                               \
+        y += belowOffsetZ;                                                     \
+        MapGrid_CopyCellsTo(sourceX, belowSourceZ, x, y, 1, 4);                \
         return;                                                                \
       }                                                                        \
       if (flag == FLAG_FELL_THROUGH_LAST)                                      \
@@ -1802,20 +1796,12 @@ void DehkanPlateau_InitializeMintChest(void) {
     MapGrid_CopyCellPictureIndicesRect(67, 3, 94, 28, 1, 5);
     MapGrid_CopyCellPictureIndicesRect(3, 69, 30, 93, 1, 4);
   }
-  {
-    /* FAKEMATCH(temporary): the entrance read once as a halfword into a local
-     * and its sign extended by hand; plainly, gMainRoutineWork.entrance in the
-     * test and GameFlag_Set(FLAG_FELL_THROUGH(gMainRoutineWork.entrance)). */
-    s32 entrance = *(u16 *)&gMainRoutineWork.entrance;
+  if ((u16)(gMainRoutineWork.entrance - FIRST_LANDING_ENTRANCE) <=
+      LAST_LANDING_ENTRANCE - FIRST_LANDING_ENTRANCE) {
+    s32 entrance = gMainRoutineWork.entrance;
 
-    if ((u16)(entrance - FIRST_LANDING_ENTRANCE) <=
-        LAST_LANDING_ENTRANCE - FIRST_LANDING_ENTRANCE) {
-      DehkanPlateau_ForgetFall();
-      entrance <<= 16;
-      entrance >>= 16;
-      entrance += FLAG_FELL_THROUGH_FIRST - FIRST_LANDING_ENTRANCE;
-      GameFlag_Set(entrance);
-    }
+    DehkanPlateau_ForgetFall();
+    GameFlag_Set(FLAG_FELL_THROUGH(entrance));
   }
   DehkanPlateau_DrawMintChestFallLanding();
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {

@@ -1446,11 +1446,13 @@ static void Imil_MiaSaysFarewellToApprentices(void) {
   Actor_Get(ACTOR_MEGAN)->steeringFlags &= ~ACTOR_FACES_MOTION;
   Actor_WalkToAndWait(ACTOR_MEGAN, 644, 166);
   Event_Wait(1);
-  /* FAKEMATCH(temporary): the flags set through a byte pointer. */
-  *((u8 *)Actor_Get(ACTOR_MEGAN) + offsetof(struct Actor, steeringFlags)) |=
-      ACTOR_FACES_MOTION;
-  gFieldWork->transition =
-      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+  Actor_Get(ACTOR_MEGAN)->steeringFlags |= ACTOR_FACES_MOTION;
+  /* FAKEMATCH(dead): the transition's store alone in a once-only block; as
+   * the plain store. */
+  do {
+    gFieldWork->transition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+  } while (0);
   Import_GameFlagSet(FLAG_IMIL_MIA_SAID_FAREWELL);
   GameFlag_Clear(FLAG_IMIL_JUSTIN_OFFERED_HEALING);
   Event_End();

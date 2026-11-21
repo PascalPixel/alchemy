@@ -321,13 +321,12 @@ s32 AquaRock_PickRandomSpot(struct Actor *actor) {
   struct Vector3 unused;
   s32 x;
   FIXED coordinate;
-  s32 tries, maxDistanceSquared;
+  s32 tries = 0;
+  s32 maxDistanceSquared = 256;
   FIXED distance;
   s32 dx, dz;
   u32 a, b;
 
-  tries = 0;
-  maxDistanceSquared = 256;
 again:
   tries++;
   if (tries <= 3) {
@@ -346,7 +345,7 @@ again:
     coordinate = spot.z;
     if (coordinate < 0)
       coordinate += FIXED_ONE - 1;
-    dz = FIXEDtoINT(coordinate) - (s16)actor->userValue;
+    dz = FIXEDtoINT(coordinate) - actor->userValue;
     if (dx * dx + dz * dz > maxDistanceSquared)
       goto again;
     goto found;
@@ -355,12 +354,13 @@ again:
   actor->wait = 1;
   goto end;
 found:
-  coordinate = spot.y;
-  Actor_SetMoveTarget(actor, spot.x, coordinate, spot.z);
+  Actor_SetMoveTarget(actor, spot.x, spot.y, spot.z);
 end:
-  /* FAKEMATCH(temporary): the form kept. */
+  /* FAKEMATCH(dead): x set to 0, a store nothing reads. */
   x = 0;
-  return x;
+  /* FAKEMATCH(dead): coordinate set to 0, a store nothing reads. */
+  coordinate = 0;
+  return 0;
 }
 
 /// A fish's update: its sprite turns with its facing.

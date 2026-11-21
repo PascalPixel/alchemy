@@ -341,11 +341,9 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
   struct ScreenPoint target;
   struct ModelTexture texture;
   struct RenderModel *model;
-  struct ModelTexture *tex;
   /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
   s32 zero;
   s32 burstFrame;
-  s32 yaw;
   struct Particle *spawned;
   struct Particle *particle;
   struct Particle *scatter;
@@ -454,50 +452,53 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
       }
       if (frame == 60) {
         u16 *color;
-        /* FAKEMATCH(temporary): RGB_LEVEL_MAX held in a local, set in the for;
-         * as RGB_LEVEL_MAX. */
-        s32 max;
 
         // Into the sky: the red haze, each colour's blue made its red and its
         // red its green and blue, which turns it teal.
         BattleBackground_LoadFar(BATTLE_BACKGROUND_FIXED,
                                  RESOURCE_RED_HAZE_BACKDROP, 0);
-        for (color = (u16 *)&BG_PLTT_COLOR(6, 0), i = 0, max = RGB_LEVEL_MAX;
-             i != BATTLE_BACKGROUND_COLORS; i++, color++) {
-          s32 entry = *color;
-          s32 red;
-          s32 green;
-          s32 blue;
+        color = (u16 *)&BG_PLTT_COLOR(6, 0);
+        i = 0;
+        /* FAKEMATCH(dead): a once-only block that places channelMax, the
+         * channels' top level, after color and i are set; as channelMax
+         * declared with color. */
+        {
+          s32 channelMax = RGB_LEVEL_MAX;
 
-          red = max & entry;
-          /* LEFTOVER(template): green, taken and clamped as
-           * BattleEffect_RunCoatlicue and BattleEffect_RunJudgment take all
-           * three channels in their palette loops, and left out of the colour
-           * here; as no green at all. */
-          green = RGB_GREEN((u16)entry);
-          blue = RGB_BLUE((u16)entry);
-          // DEAD: red and blue are already at most 31; the ROM keeps both
-          // compares.
-          if (red > RGB_LEVEL_MAX) {
-            red = RGB_LEVEL_MAX;
+          for (; i != BATTLE_BACKGROUND_COLORS; i++, color++) {
+            s32 entry = *color;
+            s32 red;
+            s32 green;
+            s32 blue;
+
+            red = channelMax & entry;
+            /* LEFTOVER(template): green, taken and clamped as
+             * BattleEffect_RunCoatlicue and BattleEffect_RunJudgment take all
+             * three channels in their palette loops, and left out of the colour
+             * here; as no green at all. */
+            green = RGB_GREEN((u16)entry);
+            blue = RGB_BLUE((u16)entry);
+            // DEAD: red and blue are already at most 31; the ROM keeps both
+            // compares.
+            if (red > RGB_LEVEL_MAX) {
+              red = RGB_LEVEL_MAX;
+            }
+            if (green > RGB_LEVEL_MAX) {
+              green = RGB_LEVEL_MAX;
+            }
+            if (blue > RGB_LEVEL_MAX) {
+              blue = RGB_LEVEL_MAX;
+            }
+            *color = RGB(blue, red, red);
           }
-          if (green > RGB_LEVEL_MAX) {
-            green = RGB_LEVEL_MAX;
-          }
-          if (blue > RGB_LEVEL_MAX) {
-            blue = RGB_LEVEL_MAX;
-          }
-          *color = RGB(blue, red, red);
         }
         BattleEffect_BuildRepeatingTilemap();
         gBgScroll[1].y = BATTLE_BACKGROUND_HEIGHT - BATTLE_VIEW_TOP;
         gProjection.centerY = SUMMON_PROJECTION_CENTER_Y;
         if (args->side == EFFECT_SIDE_ENEMIES) {
-          yaw = DEGtoANG(90);
-          camera->yaw = yaw;
+          camera->yaw = DEGtoANG(90);
         } else {
-          yaw = TRIG_TURN * 3 / 4;
-          camera->yaw = yaw;
+          camera->yaw = TRIG_TURN * 3 / 4;
         }
         for (i = 0; i != RISING_DRAGON_ENEMY_SPARK_COUNT; i++) {
           EXTRA_PARTICLES[i].variant = -1;
@@ -563,27 +564,26 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
         // The dragon's body, swaying.
         for (j = 0; j != SEGMENTS; j++) {
           for (i = 0; i != 2; i++) {
-            ((struct Corner *)(cells + j))[i].x =
+            (cells[j].corners + i)->x =
                 i * RISING_DRAGON_ENEMY_BODY_WIDTH +
                 (FIXEDtoINT(Trig_Sin(j * RISING_DRAGON_ENEMY_ROW_PHASE +
                                      frame * RISING_DRAGON_ENEMY_SWAY_STEP) *
                             2)) -
                 RISING_DRAGON_ENEMY_BODY_WIDTH / 2;
-            ((struct Corner *)(cells + j))[i].z = 0;
-            ((struct Corner *)(cells + j))[i].y = j * 2 - 64;
+            (cells[j].corners + i)->z = 0;
+            (cells[j].corners + i)->y = j * 2 - 64;
           }
         }
         zero = 0;
         model = Render_AllocateModelList(1);
-        tex = &texture;
         model->kind = MODEL_SHADED_MAX;
         model->shade = zero;
         model->scrollV = zero;
         model->vertices = vertices;
-        tex->logWidth = 6;
-        tex->logHeight = 5;
-        model->texture = tex;
-        tex->pixels = work->sheet;
+        model->texture = &texture;
+        texture.logWidth = 6;
+        texture.logHeight = 5;
+        texture.pixels = work->sheet;
         model->mesh = strip;
         model->scrollU = 127 & ~(frame << 2);
         Matrix_Initialize();
@@ -599,11 +599,11 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
         Matrix_Pop();
         if (frame <= 133 && (u32)(frame - 17) > 42) {
           // The dragon's head, its jaws about the target.
-          tex->logWidth = 6;
-          tex->logHeight = 6;
+          texture.logWidth = 6;
+          texture.logHeight = 6;
           model->mesh = gBattleEffect_SquareMesh;
           model->scrollU = zero;
-          tex->pixels =
+          texture.pixels =
               work->sheet + RISING_DRAGON_ENEMY_FLAME_DRAGON_HEAD_PICTURES;
           Matrix_Translate(INTtoFIXED(target.x - 124), INTtoFIXED(height - 144),
                            0);

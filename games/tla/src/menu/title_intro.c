@@ -57,7 +57,7 @@ struct TitleScrollStep {
 struct TitleScroll {
   s16 position;    ///< pixels down the picture
   s16 limit;       ///< the position this scroll stops at
-  u16 step;        ///< pixels a step, negative going back up
+  s16 step;        ///< pixels a step, negative going back up
   u8 *source;      ///< the next row of the picture to copy
   u8 *destination; ///< where in VRAM that row goes
   u16 *cursor;     ///< the map entry of the row's first tile
@@ -503,11 +503,9 @@ s32 TitleIntro_ScrollLighthouse(struct TitleScroll *s) {
   struct TitleLogoState *timers = Ram_HeapSlots->titleIntro;
   s32 i;
   s32 j;
-  s32 step;
 
-  step = s->step;
-  if ((s16)step > 0) {
-    for (i = s->position; i < s->limit; i += (s16)s->step) {
+  if (s->step > 0) {
+    for (i = s->position; i < s->limit; i += s->step) {
       if (Title_WaitOrPress(s->frames))
         goto fail;
       if (s->scroll > 0) {
@@ -542,9 +540,9 @@ s32 TitleIntro_ScrollLighthouse(struct TitleScroll *s) {
   fail:
     return 1;
   } else {
-    for (i = s->position; i > s->limit; i += (s16)step) {
-      gBgScroll[1].y += step;
-      s->scroll -= step;
+    for (i = s->position; i > s->limit; i += s->step) {
+      gBgScroll[1].y += s->step;
+      s->scroll -= s->step;
       if (s->scroll > 8) {
         s->rows--;
         if (s->rows == 0) {
@@ -562,9 +560,6 @@ s32 TitleIntro_ScrollLighthouse(struct TitleScroll *s) {
       }
       if (Title_WaitOrPress(s->frames))
         goto fail;
-      /* FAKEMATCH(volatile): the step read again through a volatile
-         pointer. */
-      step = *(volatile u16 *)&s->step;
     }
   }
 done:
@@ -837,12 +832,11 @@ s32 TitleIntro_ShowLighthouse(void) {
     goto stopped;
   scroll.limit = 216;
   scroll.step = 2;
-  /* FAKEMATCH(signature): the result kept in the tile pointer map. */
-  map = (u16 *)TitleIntro_ScrollLighthouse(&scroll);
-  if (map)
+  if (TitleIntro_ScrollLighthouse(&scroll))
     goto stopped;
-  Dma_Set(Resource_GetTableEntry(RESOURCE_INTRO_GULL_SPRITES), (void *)OBJ_PLTT,
-          DMA_COPY_WORDS(GULL_PALETTE_BYTES / 4), REG_DMA3);
+  source = Resource_GetTableEntry(RESOURCE_INTRO_GULL_SPRITES);
+  Dma_Set(source, (void *)OBJ_PLTT, DMA_COPY_WORDS(GULL_PALETTE_BYTES / 4),
+          REG_DMA3);
   logo->phase = TITLE_LOGO_GULL;
   logo->frame = -GULL_FRAME_FIELDS;
   logo->timer = 0;

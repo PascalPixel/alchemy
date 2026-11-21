@@ -84,7 +84,12 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
   u32 column;
   u32 row;
   u16 *cell;
+  /* FAKEMATCH(temporary): table holds the column offsets' address for the
+   * reads in the loop, where the loop's test reads them by name. */
   const s8 *table;
+  /* FAKEMATCH(temporary): columns, the column offsets' address on its way to
+   * table. */
+  const s8 *columns;
 
   if ((flags & PARTY_STATUS_SHOW_PP) == 0)
     flags &= ~PARTY_STATUS_SHOW_DJINN;
@@ -92,12 +97,9 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
     shift = PARTY_STATUS_DJINN_WIDTH;
     first = 0;
   }
-  {
-    const s8 *columns = gWindow_PartyColumnOffsets;
-
-    i = first;
-    table = columns;
-  }
+  columns = gWindow_PartyColumnOffsets;
+  i = first;
+  table = columns;
   if (gWindow_PartyColumnOffsets[i] >= 0) {
     do {
       column = table[i] + shift;
@@ -114,16 +116,21 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
         }
       }
       i++;
+      /* FAKEMATCH(dead): table set again to the address it holds. */
       table = gWindow_PartyColumnOffsets;
     } while (gWindow_PartyColumnOffsets[i] >= 0);
     state = work->battleMode;
   }
   {
-    /* FAKEMATCH(barrier): an empty asm copies the state into a word local. */
-    u32 shown;
+    u32 shown = state;
 
-    asm("" : "=r"(shown) : "0"(state));
+    /* FAKEMATCH(dead): state cleared after its copy, where nothing reads it. */
+    state = 0;
     if (shown) {
+      /* FAKEMATCH(dead): a test of shown that is never true, around a store
+       * to column, which the next lines set again. */
+      if (shown > 255)
+        column = 0;
       cell =
           work->tilemap[(s16)window->y + window->height - 1] + (s16)window->x;
       column = 1;

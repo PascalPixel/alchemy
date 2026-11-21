@@ -101,6 +101,8 @@ s32 Actor_UpdateWalkingControl(struct Actor *actor) {
 
     onObject = 0;
     other = (struct Actor *)Ram_HeapSlots->actors;
+    /* FAKEMATCH(temporary): the bound set after other, not where it is
+     * declared. */
     withinHalfCell = toFIXED(8) - 1;
     for (angleIndex = 0; angleIndex < ACTOR_COUNT; angleIndex++, other++) {
       FIXED delta;

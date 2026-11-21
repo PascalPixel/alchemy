@@ -1007,16 +1007,16 @@ UNUSED void Leader_SpinAway(s32 entrance) {
 /// priority while it rests.
 void ApojiiIslands_DrawCellMarkers(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
+  /* FAKEMATCH(temporary): view, a pointer standing in for map->viewX's
+   * address; as map->viewX and map->viewZ by name. */
   s32 *view = &map->viewX;
   s32 viewX = view[0] & FIELD_PIXEL_MASK;
   s32 viewZ = view[1] & FIELD_PIXEL_MASK;
   // DEAD: viewY, subtracted from both height and z, cancels in dy; the ROM
   // keeps its load and its store to the stack.
   s32 viewY = map->origin[1];
-  struct CellMarkers *table = &gApojiiIslands_CellMarkers;
-  struct VramCacheEntry *entry = &gVramCacheEntries[table->block];
-  u32 tile = entry->offset >> 5;
-  u32 offset = entry->offset;
+  u32 tile = gVramCacheEntries[gApojiiIslands_CellMarkers.block].offset >> 5;
+  u32 offset = gVramCacheEntries[gApojiiIslands_CellMarkers.block].offset;
   struct CellMarker *record;
   s32 i;
 
@@ -1025,11 +1025,10 @@ void ApojiiIslands_DrawCellMarkers(void) {
   COPY_PICTURE(1, 1);
   COPY_PICTURE(2, 2);
   COPY_PICTURE(2, 3);
-  record = table->markers;
+  record = gApojiiIslands_CellMarkers.markers;
   for (i = CELL_MARKERS - 1; i >= 0; i--, record++) {
     s32 dx, dy, height, z, palette, flip, kind;
     s32 x, y, left, top, picture;
-    u32 clear;
     u32 *attr;
 
     if (record->state == 0)
@@ -1043,30 +1042,35 @@ void ApojiiIslands_DrawCellMarkers(void) {
     else
       palette = OBJ_PALETTE(STONE_SPRITE_PALETTE) | OBJ_PRIORITY(2);
     y = FIXEDtoINT(dy);
-    clear = 0;
-    x = FIXEDtoINT(dx);
-    left = x - 8;
-    top = y - 8;
-    if ((u32)(x + 7) > 334)
-      continue;
-    if ((u32)(y + 39) > 286)
-      continue;
-    left &= OBJ_X_MASK;
-    /* FAKEMATCH(dead): a self-update of Ram_HeapSlots->mapGrid after left's
-     * mask. */
-    Ram_HeapSlots->mapGrid += 0;
-    top &= OBJ_Y_MASK;
-    attr = record->oam;
-    kind = record->kind;
-    picture = kind * MARKER_PICTURE_TILES;
-    flip = 0;
-    if (kind == 2)
-      flip = OBJ_HFLIP;
-    *attr++ = clear;
-    *attr++ = top | OBJ_X(left) | flip | OBJ_SIZE_16X16 |
-              OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-    *attr = palette | (tile + picture);
-    Oam_AddSpriteAtDepth(record->oam, 0);
+    /* FAKEMATCH(dead): a once-only block placing link, the queue word's empty
+     * link, after the palette's choice. */
+    {
+      u32 link = 0;
+
+      x = FIXEDtoINT(dx);
+      left = x - 8;
+      top = y - 8;
+      if ((u32)(x + 7) > 334)
+        continue;
+      if ((u32)(y + 39) > 286)
+        continue;
+      left &= OBJ_X_MASK;
+      /* FAKEMATCH(dead): a self-update of Ram_HeapSlots->mapGrid after left's
+       * mask. */
+      Ram_HeapSlots->mapGrid += 0;
+      top &= OBJ_Y_MASK;
+      attr = record->oam;
+      kind = record->kind;
+      picture = kind * MARKER_PICTURE_TILES;
+      flip = 0;
+      if (kind == 2)
+        flip = OBJ_HFLIP;
+      *attr++ = link;
+      *attr++ = top | OBJ_X(left) | flip | OBJ_SIZE_16X16 |
+                OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
+      *attr = palette | (tile + picture);
+      Oam_AddSpriteAtDepth(record->oam, 0);
+    }
   }
 }
 
@@ -1087,15 +1091,21 @@ void ApojiiIslands_StartCellMarkers(void) {
 /// to `level`.
 void ApojiiIslands_AddCellMarkers(u32 base, s32 level, s32 restLevel) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
-  struct MapLayer *second = &map->layers[1];
-  struct MapLayer *layer = &map->layers[0];
-  struct MapCell *cells = second->cells;
-  s32 left = layer->offsetX + map->minX;
-  s32 top = layer->offsetY + map->minZ;
+  /* FAKEMATCH(dead): layer 1's cells read through its taken address; as
+   * map->layers[1].cells. */
+  struct MapCell *cells = (&map->layers[1])->cells;
+  /* FAKEMATCH(dead): layer 0's offsets read through its taken address; as
+   * map->layers[0].offsetX and offsetY. */
+  s32 left = (&map->layers[0])->offsetX + map->minX;
+  s32 top = (&map->layers[0])->offsetY + map->minZ;
+  /* FAKEMATCH(temporary): markers, a pointer standing in for
+   * gApojiiIslands_CellMarkers's address; as the table by name. */
   struct CellMarkers *markers = &gApojiiIslands_CellMarkers;
   s32 width = FIELD_CELL(map->maxX - map->minX);
   s32 height = FIELD_CELL(map->maxZ - map->minZ);
   struct CellMarker *entry = &markers->markers[markers->count];
+  /* FAKEMATCH(temporary): slot, a pointer standing in for the marked shape's
+   * entry; as the entry written through its cast address. */
   s32 *slot = (s32 *)(gMapGridShapes + MAP_SHAPE_MARKED * 4);
   s32 origin = (FIELD_CELL(map->minZ) << 7) + FIELD_CELL(map->minX);
   struct MapCell *cell;
@@ -1121,12 +1131,13 @@ void ApojiiIslands_AddCellMarkers(u32 base, s32 level, s32 restLevel) {
             entry->state = 1;
             entry++;
             markers->count++;
-            /* FAKEMATCH(temporary): layer 0's terrain from the room's corner
-             * held in a local of its own. */
             {
+              /* FAKEMATCH(dead): layer 0's terrain from the room's corner in a
+               * local of its own, never read. */
               u8 *terrain = map->layers[0].terrainIds + origin;
 
-              terrain[(u16)x + ((u16)z << 7)] = MAP_SHAPE_MARKED;
+              (map->layers[0].terrainIds + origin)[(u16)x + ((u16)z << 7)] =
+                  MAP_SHAPE_MARKED;
             }
           }
           x = NEXT_HALFWORD(x);

@@ -513,8 +513,6 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   s32 tile;
   s32 pageIndex;
   s32 side;
-  u8 *pairMember;
-  s32 *counts;
   s32 blink;
 
   menu = Ram_HeapSlots->menuWork;
@@ -555,43 +553,35 @@ s32 DjinnMenu_ShowMemberStatus(void) {
   Text_DrawMessageAsTilesFar((s32)MsgCurrentStatus + 2, menu->statusWindow, 0,
                              16);
   side = 0;
-  /* FAKEMATCH(temporary): counts = pageCounts, the count array read through a
-   * pointer where the loop draws the page numbers. */
-  counts = pageCounts;
   while (1) {
-    // The shown side's page and page count, which a page turn changes
-    // through these two pointers.
-    s32 *selectedPage = &selectedPages[side];
-    s32 *pageCount = &pageCounts[side];
     render = (struct WindowWork *)Ram_HeapSlots->windowWork;
     pressedKeys = gInput.pressed;
     repeatedKeys = gInput.repeat;
-    pairMember = menu->pairMember;
     if (redraw) {
       render->holdTilemapUpload = 1;
       WindowSprite_PrepareForRedrawFar(menu->window);
       WindowSprite_PrepareForRedrawFar((s32)menu->secondWindow);
-      DjinnMenu_DrawStatPreview(menu->window, 0, 0, *pairMember, 0, 0,
+      DjinnMenu_DrawStatPreview(menu->window, 0, 0, menu->pairMember[0], 0, 0,
                                 DJINN_PREVIEW_NO_CHANGE, 0, 1);
-      DjinnMenu_DrawStatPreview((s32)menu->secondWindow, 0, 0, *pairMember, 0,
-                                0, DJINN_PREVIEW_NO_CHANGE,
-                                selectedPages[0] + 1, 1);
+      DjinnMenu_DrawStatPreview(
+          (s32)menu->secondWindow, 0, 0, menu->pairMember[0], 0, 0,
+          DJINN_PREVIEW_NO_CHANGE, selectedPages[0] + 1, 1);
       render->holdTilemapUpload = 0;
     }
-    if (counts[side] > 1) {
+    if (pageCounts[side] > 1) {
       window = menu->secondWindow;
-      for (pageIndex = 0; pageIndex < counts[side]; pageIndex++) {
+      for (pageIndex = 0; pageIndex < pageCounts[side]; pageIndex++) {
         tile = WINDOW_TILE('1') + pageIndex;
         if (pageIndex > 8)
           tile = WINDOW_TILE('?');
         if (pageIndex == selectedPages[side])
           tile -= BG_TILE_PALETTE(WINDOW_PALETTE - HIGHLIGHT_PALETTE);
-        Window_SetTilemapEntryFar((s32)window, tile,
-                                  window->width - counts[side] + pageIndex - 2,
-                                  -1, 0);
+        Window_SetTilemapEntryFar(
+            (s32)window, tile, window->width - pageCounts[side] + pageIndex - 2,
+            -1, 0);
       }
       Window_SetTilemapEntryFar((s32)window, PAGE_ARROW_LEFT,
-                                window->width - counts[side] - 3, -1, 0);
+                                window->width - pageCounts[side] - 3, -1, 0);
       Window_SetTilemapEntryFar((s32)window, PAGE_ARROW_RIGHT,
                                 window->width - 2, -1, 0);
       UiRender_MarkRow(render, window->y);
@@ -623,14 +613,16 @@ s32 DjinnMenu_ShowMemberStatus(void) {
       break;
     }
     if (repeatedKeys & KEY_LEFT) {
-      (*selectedPage)--;
-      *selectedPage = Menu_GetModuloOfSum(*selectedPage, *pageCount);
+      selectedPages[side]--;
+      selectedPages[side] =
+          Menu_GetModuloOfSum(selectedPages[side], pageCounts[side]);
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
       redraw = 1;
     } else if (repeatedKeys & KEY_RIGHT) {
-      (*selectedPage)++;
-      *selectedPage = Menu_GetModuloOfSum(*selectedPage, *pageCount);
+      selectedPages[side]++;
+      selectedPages[side] =
+          Menu_GetModuloOfSum(selectedPages[side], pageCounts[side]);
       Sound_PlayFar(SE_MENU_CURSOR_MOVE);
       Input_ResetKeyRepeat();
       redraw = 1;

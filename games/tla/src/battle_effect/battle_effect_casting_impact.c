@@ -705,12 +705,12 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
     }
     // Stop the caster and place the Djinni overhead.
     Actor_SetAnimationSpeedFar(caster, 0);
-    /* FAKEMATCH(temporary): vec holds djinnPos and then casterPos while each
-     * is filled. */
+    /* FAKEMATCH(dead): vec set to djinnPos, a store nothing reads, before
+     * djinnPos is filled. */
     vec = djinnPos;
-    vec[0] = caster->x;
-    vec[1] = caster->y + toFIXED(80);
-    vec[2] = caster->z;
+    djinnPos[0] = caster->x;
+    djinnPos[1] = caster->y + toFIXED(80);
+    djinnPos[2] = caster->z;
     savedVelocityX = caster->velocityX;
     savedVelocityY = caster->velocityY;
     savedVelocityZ = caster->velocityZ;
@@ -721,9 +721,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
     caster->velocityZ = 0;
     caster->acceleration = 0;
     caster->verticalMotionStrength = 0;
-    vec = &casterPos.x;
-    EffectPosition_ProjectScaledBattler(action->user, vec);
-    vec[0] = vec[0] / 2;
+    EffectPosition_ProjectScaledBattler(action->user, &casterPos);
+    casterPos.x = casterPos.x / 2;
     Sound_PlayFar(SE_POWER_UP);
 
     // Phase 1, the gathering (CASTING_IMPACT_GATHER_FRAMES).

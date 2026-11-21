@@ -292,8 +292,6 @@ void TundariaTower_OpenDoor(void) {
   s16 *choice;
   s32 x = 37;
   struct MainRoutineWork *state;
-  /* FAKEMATCH(temporary): one, 1 held in a local; as 1 at its uses. */
-  s32 one;
   s32 cell;
 
   Event_Start();
@@ -302,22 +300,21 @@ void TundariaTower_OpenDoor(void) {
   if (*choice == 3)
     x = 25;
   Event_PlaySound(SE_DOOR_OPEN);
-  one = 1;
-  MapGrid_CopyCellsTo(30, 38, x, 49, one, 2);
+  MapGrid_CopyCellsTo(30, 38, x, 49, 1, 2);
   FieldEvent_Wait(10);
-  MapGrid_CopyCellsTo(32, 38, x, 49, one, 2);
+  MapGrid_CopyCellsTo(32, 38, x, 49, 1, 2);
   FieldEvent_Wait(10);
   state = &gMainRoutineWork;
   Actor_SetSpeed(state->leaderActorId, 0.5);
   Actor_GetById(state->leaderActorId)->motionFlags = 0;
-  cell = FIELD_HALF_CELL(Actor_GetById(state->leaderActorId)->x.fixed) | one;
+  cell = FIELD_HALF_CELL(Actor_GetById(state->leaderActorId)->x.fixed) | 1;
   Actor_WalkToAndWait(state->leaderActorId, cell << 3,
-                      Actor_GetById(state->leaderActorId)->z.part[0].integer |
-                          one);
+                      FIXEDtoINT(Actor_GetById(state->leaderActorId)->z.fixed) |
+                          1);
   Event_PlaySound(SE_MAP_EXIT);
   cell = Actor_GetById(state->leaderActorId)->x.fixed;
   Actor_WalkTo(state->leaderActorId, FIELD_HALF_CELL(cell) << 3,
-               (Actor_GetById(state->leaderActorId)->z.part[0].integer | one) -
+               (FIXEDtoINT(Actor_GetById(state->leaderActorId)->z.fixed) | 1) -
                    16);
   FieldEvent_Wait(5);
   Event_FinishScreenTransition();

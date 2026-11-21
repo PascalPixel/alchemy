@@ -228,7 +228,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       s32 shortSwapped;
       s32 k;
 
-      if (swapped == mode)
+      if (swapped == -1)
         continue;
       battle = Ram_HeapSlots->battleWork;
       old = battle->partyUnits[state->swappedPlace];
@@ -283,17 +283,15 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     }
     // Flee: one COMMAND_FLEE for the party, first in the turn.
     if (mode == COMMAND_ICON_FLEE) {
-      s32 refused = Battle_RefuseFlee();
-
-      if (refused != 0)
+      if (Battle_RefuseFlee() != 0)
         continue;
       commandCount = 1;
       command = commands;
       command->unitId = actors[0];
-      forcedCount = refused;
+      forcedCount = 0;
       command->priority = FLEE_PRIORITY;
       command->command = COMMAND_FLEE;
-      command->parameter = refused;
+      command->parameter = 0;
       command->target = PLACE_PARTY;
       break;
     }
@@ -323,12 +321,11 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       unit = (struct Unit *)(s32)((s64 (*)(s32))Unit_Get)(actorId);
 #endif
       {
-        struct BattleMenuWork *navigation = BATTLE_MENU_WORK;
         struct MenuSprite *iconSprite;
 
-        navigation->commandActor = actorId;
-        navigation->commandSelection[1] = 0;
-        iconSprite = &navigation->icons[2];
+        BATTLE_MENU_WORK->commandActor = actorId;
+        BATTLE_MENU_WORK->commandSelection[1] = 0;
+        iconSprite = &BATTLE_MENU_WORK->icons[2];
         iconSprite->oam.word.attr01 =
             OBJ_SIZE_32X32 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
         iconSprite->oam.word.attr23 = 0;
@@ -342,6 +339,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     mark_visible:
       Window_MarkVisibleTextTiles();
       {
+        /* FAKEMATCH(temporary): navigation, a block's local holding the battle
+         * menu's work for two stores; as BATTLE_MENU_WORK at each. */
         struct BattleMenuWork *navigation = BATTLE_MENU_WORK;
 
         navigation->iconShown[0] = 0;
@@ -373,10 +372,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         continue;
       }
       {
-        struct BattleMenuWork *navigation = BATTLE_MENU_WORK;
-        struct MenuSprite *iconSprite = &navigation->icons[0];
+        struct MenuSprite *iconSprite = &BATTLE_MENU_WORK->icons[0];
 
-        if (navigation->timer == 0)
+        if (BATTLE_MENU_WORK->timer == 0)
           mode = COMMAND_ICON_DEFEND;
         iconSprite->oam.word.attr23 = 0;
         iconSprite->oam.word.attr01 = OBJ_SIZE_32X32 | OBJ_256_COLORS |
@@ -421,28 +419,23 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         s32 entryValue;
 
         Sound_PlayFar(SE_MENU_CONFIRM);
+        // DEAD: mode cleared before the list sets it; the ROM keeps its mov.
         mode = 0;
-        BATTLE_MENU_SET_CURSOR(mode, mode, mode);
+        BATTLE_MENU_SET_CURSOR(0, 0, 0);
       psynergy_menu:
         list = state->listAbilities;
         pick = state->listSlots;
         COMMAND_ICON_X(state) = PSYNERGY_MENU_ICON_X;
         count = 0;
-        k = 0;
-        entryValue = unit->psynergy[k].encodedAction & PSYNERGY_ABILITY_MASK;
-        if (entryValue != 0) {
-          do {
-            if (Ability_Get(entryValue)->flags & ABILITY_USABLE_IN_BATTLE) {
-              pick[count] = k;
-              list[count] = entryValue;
-              count++;
-            }
-            k++;
-            if (k == PSYNERGY_SLOTS)
-              break;
-            entryValue =
-                unit->psynergy[k].encodedAction & PSYNERGY_ABILITY_MASK;
-          } while (entryValue != 0);
+        for (k = 0; k != PSYNERGY_SLOTS &&
+                    (entryValue = unit->psynergy[k].encodedAction &
+                                  PSYNERGY_ABILITY_MASK) != 0;
+             k++) {
+          if (Ability_Get(entryValue)->flags & ABILITY_USABLE_IN_BATTLE) {
+            pick[count] = k;
+            list[count] = entryValue;
+            count++;
+          }
         }
         pick[count] = 0;
         list[count] = 0;
@@ -455,7 +448,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         cost = ability->range;
         iconSprite = &state->icons[1];
         handle = VramCache_AllocEntry(128);
-        work = (struct WindowWork *)Ram_HeapSlots->windowWork;
+        work = WINDOW_WORK;
         commandWindow = Window_Create(8, 17, 18, 3, 6);
         COMMAND_ICON_X(state) = PSYNERGY_CHOSEN_ICON_X;
         iconSprite->oam.word.attr01 =
@@ -522,8 +515,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         summon = SummonDefinition_Get(mode);
         ability = Ability_Get(summon->abilityId);
         summonIconSlot = VramCache_AllocEntry(128);
-        commandWindow = Window_Create(
-            SUMMON_WINDOW_X, 17, BATTLE_SUMMON_WINDOW_WIDTH, 3, commandKind);
+        commandWindow = Window_Create(SUMMON_WINDOW_X, 17,
+                                      BATTLE_SUMMON_WINDOW_WIDTH, 3, 6);
         n = 0;
         for (j = 0; j <= 3; j++) {
           if (summon->djinnRequired[j] > state->standbyDjinn[commandIndex][j])
@@ -667,42 +660,31 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         s32 selection;
 
         Sound_PlayFar(SE_MENU_CONFIRM);
+        // DEAD: mode cleared before the list sets it; the ROM keeps its mov.
         mode = 0;
-        BATTLE_MENU_SET_CURSOR(mode, mode, mode);
+        BATTLE_MENU_SET_CURSOR(0, 0, 0);
       item_menu:
         COMMAND_ICON_X(state) = ITEM_MENU_ICON_X;
         pick = state->listSlots;
         list = state->listAbilities;
         count = 0;
-        k = 0;
-        entryValue = unit->inventory[k];
-        if (entryValue != 0) {
-          do {
-            Item_GetDirectFar(entryValue);
-            if (Item_ClassifyUseAbility(actorId, entryValue) == 0) {
-              list[count] = entryValue;
-              pick[count++] = k;
-            }
-            k++;
-            if (k == INVENTORY_SLOTS)
-              break;
-            entryValue = unit->inventory[k];
-          } while (entryValue != 0);
+        for (k = 0;
+             k != INVENTORY_SLOTS && (entryValue = unit->inventory[k]) != 0;
+             k++) {
+          Item_GetDirectFar(entryValue);
+          if (Item_ClassifyUseAbility(actorId, entryValue) == 0) {
+            list[count] = entryValue;
+            pick[count++] = k;
+          }
         }
-        k = 0;
-        entryValue = unit->inventory[k];
-        if (entryValue != 0) {
-          do {
-            Item_GetDirectFar(entryValue);
-            if (Item_ClassifyUseAbility(actorId, entryValue) != 0) {
-              list[count] = entryValue;
-              pick[count++] = k;
-            }
-            k++;
-            if (k == INVENTORY_SLOTS)
-              break;
-            entryValue = unit->inventory[k];
-          } while (entryValue != 0);
+        for (k = 0;
+             k != INVENTORY_SLOTS && (entryValue = unit->inventory[k]) != 0;
+             k++) {
+          Item_GetDirectFar(entryValue);
+          if (Item_ClassifyUseAbility(actorId, entryValue) != 0) {
+            list[count] = entryValue;
+            pick[count++] = k;
+          }
         }
         list[count] = 0;
         mode = BattleItemMenu_Run(actorId, list, count);

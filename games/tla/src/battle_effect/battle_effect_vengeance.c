@@ -483,7 +483,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
     /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
     s32 zero;
     s32 still;
-    s32 width;
+    s32 width = 7;
 
     shift = 0;
     if (frame == 0) {
@@ -554,6 +554,7 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
     // The shears' path: still, a backswing from timer 24 and the strike at
     // 33.
     i = 0;
+    /* FAKEMATCH(temporary): still, 0 held in a local; as 0 at its uses. */
     still = 0;
     shears = (struct Shears *)work->particles;
     for (; i != 1; i++, shears++) {
@@ -628,7 +629,6 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
       if (frame > 63) {
         scale = scale - (frame - 64) * (FIXED_ONE / 128);
       }
-      width = 7;
       if (scale > 0) {
         model->shade = zero;
         model->kind = MODEL_SHADED;

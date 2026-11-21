@@ -177,8 +177,6 @@ enum CastingImpact {
 /// Murk; Cyclone Slash; Psyphon Seal; Asura; Forcible Arm; Truncheon Fist;
 /// Severe Blow.
 void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
-  void **slots;
-  void **slot;
   s32 pictureOffset;
   struct ScreenPoint casterPos;
   struct ScreenPoint targetPos;
@@ -208,10 +206,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   struct ScreenPoint projected;
   u8 *pictures;
 
-  slots = gHeapSlots + HEAP_SLOT_BATTLE_EFFECT;
-  slot = slots;
-  work = *slot++;
-  canvas = *slot;
+  work = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_EFFECT);
+  canvas = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_CANVAS);
   camera = HEAP_SLOT_BLOCK(HEAP_SLOT_CAMERA);
   sprites = HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_SHEET);
   pictures = Ram_MapGridCellBuffer;
@@ -343,6 +339,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   }
   // Stop the caster and place the Djinni overhead.
   Actor_SetAnimationSpeedFar(casterActor, 0);
+  /* FAKEMATCH(temporary): position, a pointer standing in for djinnPos's
+   * address. */
   position = &djinnPos;
   SET_POSITION(position, casterActor->x.fixed,
                casterActor->y.fixed + toFIXED(80), casterActor->z.fixed);

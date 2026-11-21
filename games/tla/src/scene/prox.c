@@ -1693,15 +1693,12 @@ s32 Scene_Initialize(void) {
         SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
     Prox_InitializeCaveHomes();
   } else if (scene == SCENE_PROX_CAVES) {
-    s32 *effect = &gFieldWork->transition;
-    s32 skip;
-    s32 value = SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+    /* FAKEMATCH(dead): the leader's 0 derived from scene; as 0. */
+    s32 object = (u32)(u16)scene >> 16;
 
-    skip = 0;
-    /* FAKEMATCH(barrier): an empty asm on skip. */
-    __asm__("" : "+r"(skip));
-    *effect = value;
-    FieldEffect_StartBlankOverlay(skip);
+    gFieldWork->transition =
+        SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_LEADER);
+    FieldEffect_StartBlankOverlay(object);
   } else {
     if (!Event_GetFlag(FLAG_MARS_BEACON_LIT))
       Event_SetFlag(FLAG_STORM_RAGING);

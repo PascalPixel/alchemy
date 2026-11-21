@@ -231,7 +231,7 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
             step = (frame - k * LOBBED_SHELLS_TARGET_FRAMES) / 3;
             if (step > LOBBED_SHELL_PICTURES - 1)
               step = LOBBED_SHELL_PICTURES - 1;
-            Projection_Point(&PARTICLES[k * LOBBED_SHELLS_SLOTS], &position);
+            Projection_Point(shot, &position);
             position.x >>= 1;
             if (step >= LOBBED_SHELL_UPRIGHT_PICTURES)
               draw[0](canvas, work->sheet + step * PICTURE_BYTES(LOBBED_SHELL),

@@ -1160,23 +1160,15 @@ extern u32 gChampaCliffCaves_ChaseToSouthScript[];
 /// Chaucha go home, and Avimander stays beaten (FLAG_CHAMPA_AVIMANDER_BEATEN).
 void ChampaCliffCaves_ObabaMournsSalamander(void) {
   const u8 *scriptA, *scriptB, *scriptC, *scriptD;
-  s32 *owner;
-  u8 *party;
   struct Actor *leader;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgMySalamanderYou);
-  /* FAKEMATCH(temporary): the leader's actor id read, here and before the
-   * party walks back to the leader, through a pointer to gMainRoutineWork
-   * moved on by the field's offset. */
-  owner = (s32 *)&gMainRoutineWork;
-  owner =
-      (s32 *)((u8 *)owner + offsetof(struct MainRoutineWork, leaderActorId));
-  Actor_SetPosition(*owner, 568, 256);
+  Actor_SetPosition(gMainRoutineWork.leaderActorId, 568, 256);
   Actor_SetPosition(ACTOR_AVIMANDER, 592, 240);
   Actor_SetAnimationById(ACTOR_AVIMANDER, 3);
-  Actor_FaceDirectionById(*owner, FACING_EAST, 0);
+  Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
   FieldCamera_MoveTo(656, CAMERA_KEEP, 248, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -1691,9 +1683,7 @@ void ChampaCliffCaves_ObabaMournsSalamander(void) {
   Actor_GetById(ACTOR_FELIX)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetSpeed(ACTOR_JENNA, 1.2);
   Actor_SetAnimationById(ACTOR_JENNA, ANIM_WALK);
-  party = (u8 *)&gMainRoutineWork;
-  owner = (s32 *)(party + offsetof(struct MainRoutineWork, leaderActorId));
-  leader = Actor_GetById(*owner);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
     Actor_SetDestinationById(ACTOR_JENNA, leader->x.part[0].integer,
                              leader->z.part[0].integer);
@@ -1701,7 +1691,7 @@ void ChampaCliffCaves_ObabaMournsSalamander(void) {
   Actor_SetPosition(ACTOR_JENNA, 0, 0);
   Actor_SetSpeed(ACTOR_SHEBA, 1.2);
   Actor_SetAnimationById(ACTOR_SHEBA, ANIM_WALK);
-  leader = Actor_GetById(*owner);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
     Actor_SetDestinationById(ACTOR_SHEBA, leader->x.part[0].integer,
                              leader->z.part[0].integer);
@@ -1709,7 +1699,7 @@ void ChampaCliffCaves_ObabaMournsSalamander(void) {
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Actor_SetSpeed(ACTOR_PIERS, 1.2);
   Actor_SetAnimationById(ACTOR_PIERS, ANIM_WALK);
-  leader = Actor_GetById(*owner);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
     Actor_SetDestinationById(ACTOR_PIERS, leader->x.part[0].integer,
                              leader->z.part[0].integer);
@@ -1717,7 +1707,7 @@ void ChampaCliffCaves_ObabaMournsSalamander(void) {
   Actor_SetPosition(ACTOR_PIERS, 0, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 1.2);
   Actor_SetAnimationById(ACTOR_KRADEN, ANIM_WALK);
-  leader = Actor_GetById(*owner);
+  leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   if (leader != 0)
     Actor_SetDestinationById(ACTOR_KRADEN, leader->x.part[0].integer,
                              leader->z.part[0].integer);

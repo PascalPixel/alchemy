@@ -131,6 +131,8 @@ void FieldPsynergy_Ply(void) {
 
   // The one in the centre.
   target = Actor_Spawn(SPRITE_WINGED_FIGURE, 0, 0, 0);
+  /* FAKEMATCH(temporary): actor, a copy of target, the figure read by both
+   * names. */
   actor = target;
   if (target != 0) {
     target->scaleY = FIXED_ONE * 7 / 10;

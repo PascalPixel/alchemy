@@ -1240,7 +1240,6 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   s32 mode = 2;
   s32 x = FIELD_CELL(leader->x.fixed);
   s32 z = FIELD_CELL(leader->z.fixed);
-  s32 value;
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
    * touches. */
   struct Vector3 unused;
@@ -1249,7 +1248,7 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
     gFieldWork->blockedSteps = FIELD_PUSH_FRAMES + 1;
     return;
   }
-  for (n = 0; n <= 5;) {
+  for (n = 0; n <= 5; n++) {
     x = toX + dx;
     z = toZ + dz;
     if (axis == 0) {
@@ -1268,7 +1267,6 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
         break;
     }
     toX = x;
-    n++;
     toZ = z;
   }
   if (fromX == toX && fromZ == toZ)
@@ -1283,8 +1281,7 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   if (dx < 0 || dz < 0)
     mode = 3;
   Actor_SelectAnimation(actor, mode);
-  Actor_SetMoveTarget(actor, FIELD_CELL_CENTER(toX), 0,
-                      z = FIELD_CELL_CENTER(toZ));
+  Actor_SetMoveTarget(actor, FIELD_CELL_CENTER(toX), 0, FIELD_CELL_CENTER(toZ));
   Event_Wait(6);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.2);
@@ -1299,22 +1296,19 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
     Sound_Play(SE_HEAVY_STOP);
   } else {
     Actor_SelectAnimation(actor, 3);
-    Actor_SetMoveTarget(actor, toFIXED(312), 0, z);
+    Actor_SetMoveTarget(actor, toFIXED(312), 0, FIELD_CELL_CENTER(toZ));
     Event_Wait(30);
     Actor_SelectAnimation(actor, 8);
     Actor_WaitForMove(actor);
-    {
-      u8 *flags = &actor->priorityFlags;
-
-      value = ACTOR_PRIORITY_UNDERFOOT;
-      *flags = value;
-    }
+    /* FAKEMATCH(dead): the flags stored through their taken address; as
+     * actor->priorityFlags. */
+    /* FAKEMATCH(temporary): mode reused to hold ACTOR_PRIORITY_UNDERFOOT for
+     * the store; as the constant stored. */
+    *&actor->priorityFlags = mode = ACTOR_PRIORITY_UNDERFOOT;
     Sound_Play(SE_STOP_EXIT_SE);
     Sound_Play(SE_LOG_FALL);
     GameFlag_Set(id + FLAG_LOG_PUSHED_BASE);
   }
-  /* FAKEMATCH(barrier): an empty asm writing value after its last use. */
-  asm volatile("" : "=r"(value));
   Event_Wait(15);
   Event_End();
   TrialRoad_BlockLogs();
@@ -3750,38 +3744,23 @@ void TrialRoad_ShowRaceMap(s32 leaderId, s32 rivalId) {
   struct TrialRoadLinkWork *work = HeapSlot_AllocEwram(
       HEAP_SLOT_TRIAL_ROAD_LINK, sizeof(struct TrialRoadLinkWork));
   void *buffer = Heap_AllocEwram(RACE_MAP_PICTURE_BYTES);
-  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
-  s32 zero;
-  s32 owner;
-  s16 *fade;
-  s16 *holdFade;
-  s32 *originX;
-  s32 *originZ;
-  s16 *vramEntry;
 
   work->leaderId = leaderId;
   work->rivalId = rivalId;
-  owner = gMainRoutineWork.leaderActorId;
-  originX = &work->originX;
-  originZ = &work->originZ;
-  fade = &work->fade;
-  holdFade = &work->holdFade;
-  vramEntry = &work->vramEntry;
-  if (leaderId == owner) {
-    *originX = toFIXED(160);
-    *originZ = toFIXED(-1632);
+  if (leaderId == gMainRoutineWork.leaderActorId) {
+    work->originX = toFIXED(160);
+    work->originZ = toFIXED(-1632);
   } else {
-    *originX = toFIXED(112);
-    *originZ = toFIXED(-1632);
+    work->originX = toFIXED(112);
+    work->originZ = toFIXED(-1632);
   }
   Actor_GetById(leaderId);
   Actor_GetById(rivalId);
-  zero = 0;
-  *fade = zero;
-  *holdFade = zero;
+  work->fade = 0;
+  work->holdFade = 0;
   Decompress_TaggedLz(gTrialRoad_RaceMapPicture, buffer);
-  *vramEntry = VramCache_FindFreeEntry();
-  VramCache_Load(*vramEntry, RACE_MAP_PICTURE_BYTES, buffer);
+  work->vramEntry = VramCache_FindFreeEntry();
+  VramCache_Load(work->vramEntry, RACE_MAP_PICTURE_BYTES, buffer);
   Task_Add(TrialRoad_DrawRaceMap, TASK_PASS_FRAME - 10);
   Heap_Release(buffer);
 }

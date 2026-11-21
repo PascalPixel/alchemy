@@ -698,10 +698,10 @@ void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
   struct MapGridCellAnimationStep *step =
       (struct MapGridCellAnimationStep *)steps;
   u32 source = step->source;
-  /* FAKEMATCH(temporary): the end test reads a copy of source, with updates
-   * that cancel out. */
+  /* FAKEMATCH(temporary): the end test reads a copy of source. */
   u32 test = source;
 
+  /* FAKEMATCH(dead): updates of source that cancel out. */
   if (step) {
     source ^= test;
     source ^= test;
@@ -723,13 +723,16 @@ void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
       step++;
       wait((u16)delay);
       source = step->source;
+      /* FAKEMATCH(dead): updates of source that cancel out. */
       if (step) {
         source++;
         source--;
       }
       {
+        /* FAKEMATCH(temporary): the loop's end test reads a copy of source. */
         u32 next = source;
 
+        /* FAKEMATCH(dead): updates of source that cancel out. */
         if (step) {
           source++;
           source--;

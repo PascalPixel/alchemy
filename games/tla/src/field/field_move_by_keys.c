@@ -146,7 +146,8 @@ s32 Actor_CrossRope(struct Actor *actor) {
   struct FieldWork *work;
 
   sprite = actor->sprite;
-  rope = *(struct RopeWork **)&Ram_HeapSlots->rope;
+  /* FAKEMATCH(dead): the rope slot read through its address. */
+  rope = *&Ram_HeapSlots->rope;
   speed = FIXED_ONE;
   collisionFlags = 0;
   actor->speedLimit = toFIXED(1) / 2;
@@ -163,7 +164,8 @@ s32 Actor_CrossRope(struct Actor *actor) {
     position.x += actor->x.fixed;
     position.y = actor->y.fixed - position.z;
     position.z = actor->z.fixed;
-    rope = *(struct RopeWork **)&Ram_HeapSlots->rope;
+    /* FAKEMATCH(dead): the rope slot read again through its address. */
+    rope = *&Ram_HeapSlots->rope;
     node = rope->nodes;
     best = NULL;
     bestDistance = ROPE_NODE_DISTANCE_NONE;
@@ -283,7 +285,8 @@ s32 Actor_CrossTightrope(struct Actor *actor) {
   } else {
     SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
     Vector_AddPolarOffset(toFIXED(8), angle, &position);
-    tightrope = *(struct TightropeWork **)&Ram_HeapSlots->tightrope;
+    /* FAKEMATCH(dead): the tightrope slot read through its address. */
+    tightrope = *&Ram_HeapSlots->tightrope;
     point = tightrope->nodes;
     best = NULL;
     bestDistance = ROPE_NODE_DISTANCE_NONE;
@@ -673,16 +676,19 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
         effect->motionFlags = 0;
         Sound_PlayFar(SE_SAND_MOVE);
         if (sprite != NULL) {
-          /* FAKEMATCH(signature): the field work read through SandTrailWork,
-           * whose priority is the low byte of a halfword; as struct FieldWork *
-           * and work->sandTrailPriority & 3. */
-          struct SandTrailWork *work = Ram_HeapSlots->fieldWork;
+          struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
           Sprite_StartAnimation(sprite, 1);
           sprite->flags = 0;
           // DEAD: overwritten by the next line; the ROM keeps its mask and OR.
           sprite->priority = 2;
-          sprite->priority = work->trailPriority & 3;
+          /* FAKEMATCH(dead): a block that only places the mask's declaration
+           * after the stores. */
+          {
+            u8 mask = 3;
+
+            sprite->priority = work->sandTrailPriority & mask;
+          }
         }
         *wakeTimer = 5;
       }

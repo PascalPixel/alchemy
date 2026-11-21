@@ -153,20 +153,23 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
     if (sprite) {
       sprite->motion = WINDOW_SPRITE_MOTION_STILL;
       sprite->kind = WINDOW_SPRITE_ICON;
-      *(s8 *)&sprite->index = VramCache_AllocEntry(128);
+      sprite->index = VramCache_AllocEntry(128);
       entry = (struct PreviewSprite *)sprite->link;
       sprite->depth = OAM_DEPTH_WINDOW;
       sprite->x = 120;
       sprite->y = 120;
-      /* FAKEMATCH(volatile): the two words stored as volatile. */
-      *(volatile u32 *)&entry->attributes =
+      *(u32 *)&entry->attributes =
           OBJ_SIZE_16X16 | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-      *(volatile u32 *)&entry->tile = 0;
-      entry->attributes.bits.x = win->x * 8 + x;
-      entry->attributes.bits.y = win->y * 8 + y;
-      /* FAKEMATCH(dead): advancing and restoring the captured pointer. */
+      *(u32 *)&entry->tile = 0;
+      /* FAKEMATCH(dead): an empty once-only loop after the two words are
+       * stored. */
+      do {
+      } while (0);
+      /* FAKEMATCH(dead): advancing and restoring the captured window. */
       win++;
       win--;
+      entry->attributes.bits.x = win->x * 8 + x;
+      entry->attributes.bits.y = win->y * 8 + y;
       entry->tile.bits.index = VramCache_Reload(
           (u8)sprite->index,
           (s32)(rising ? gDjinnMenu_ArrowUpTiles : gDjinnMenu_ArrowDownTiles));

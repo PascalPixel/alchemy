@@ -119,7 +119,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     transferWords[7] = 'T';
     missedLinkFrames = 0;
     for (;;) {
-      peerSignature = (u16 *)&gLinkPeerSignatures[battle->linkSide ^ 1];
+      peerSignature = gLinkPeerSignatures[battle->linkSide ^ 1];
       if (battle->linkPaused != 0) {
         commandCount = -1;
         state->linkTimer = 0;
@@ -171,7 +171,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     // Status: the party's Status screens, from the first party member; the
     // debug build with Start held lists the enemies instead.
     if (mode == COMMAND_ICON_STATUS) {
-      void *block;
+      u16 *block;
       s32 selection;
       s32 handle;
 
@@ -183,7 +183,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       }
       handle = BattleUnit_ListIdsFar(selection, block);
       wait(1);
-      BattleStatusScreen_Run(block, handle, *(u16 *)block);
+      BattleStatusScreen_Run(block, handle, block[0]);
       Heap_Release(block);
       continue;
     }
@@ -253,7 +253,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       // signatureHeader is the party member alone, ended by
       // BATTLE_UNIT_LIST_END: marked in the battle and highlighted in the party
       // status window.
-      signatureHeader[0] = (u16)unitId;
+      signatureHeader[0] = unitId;
       signatureHeader[1] = BATTLE_UNIT_LIST_END;
       BattleHighlight_SetModesFar(signatureHeader, 1);
       PartyStatus_HighlightMembers(signatureHeader);
@@ -338,8 +338,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         // while sealed, and its target; COMMAND_PSYNERGY with the ability as
         // parameter.
         Sound_PlayFar(SE_MENU_CONFIRM);
+        // DEAD: mode cleared before the list sets it; the ROM keeps its mov.
         mode = 0;
-        BATTLE_MENU_SET_CURSOR(mode, mode, mode);
+        BATTLE_MENU_SET_CURSOR(0, 0, 0);
       psynergy_list:
         list = state->listAbilities;
         pick = state->listSlots;
@@ -381,7 +382,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
             Resource_LoadIndexedEntryToBuffer(parameter, handle);
         state->iconShown[1] = 1;
         work->textPalette = BASIC_COLORS_PALETTE;
-        if ((s32)ability->ppCost > (s32)unit->pp) {
+        if (ability->ppCost > unit->pp) {
           Text_SetColor(TEXT_COLOR_RED);
         } else if (unit->psySeal != 0) {
           Text_SetColor(TEXT_COLOR_PINK);
@@ -601,8 +602,9 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
         // window and its action's target; COMMAND_ITEM with the place as
         // parameter.
         Sound_PlayFar(SE_MENU_CONFIRM);
+        // DEAD: mode cleared before the list sets it; the ROM keeps its mov.
         mode = 0;
-        BATTLE_MENU_SET_CURSOR(mode, mode, mode);
+        BATTLE_MENU_SET_CURSOR(0, 0, 0);
       item_list:
         state->icons[0].oam.f.x = 96;
         pick = state->listSlots;
@@ -675,7 +677,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       }
 
       Sound_PlayFar(SE_CHIME);
-      command->unitId = (u16)unitId;
+      command->unitId = unitId;
       // Draw the priority random value once, only for a nonzero agility.
       priority = unit->agi;
       if (priority != 0) {
@@ -750,7 +752,7 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
       state->timerWindow = 0;
     }
     for (;;) {
-      peerSignature = (u16 *)&gLinkPeerSignatures[linkBattle->linkSide ^ 1];
+      peerSignature = gLinkPeerSignatures[linkBattle->linkSide ^ 1];
       if (linkBattle->linkPaused != 0) {
         commandCount = -1;
         break;

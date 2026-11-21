@@ -161,6 +161,7 @@ UNUSED void BattleEffect_RunOrbitingSkulls(void) {
       screen.x += xOffset;
       if (memberFrame < 64) {
         // Default: NULL until it is pointed at the point below.
+        /* FAKEMATCH(temporary): rec, a pointer standing in for &point. */
         s32 *rec = NULL;
 
         EFFECT_VIEW_FROM_CAMERA(camera);

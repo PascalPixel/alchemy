@@ -770,7 +770,6 @@ void WorldMap_GazeIntoPond(void) {
     struct Unit *unit = Unit_Get(gMainRoutineWork.leaderActorId);
     s32 amount = (((unit->level * Random16()) << 1) >> 16) + SCOOPED_COINS + 1;
     FIXED position[3];
-    FIXED x;
 
     // "There are some coins in the shallows!"
     Message_ShowCentered((s32)MsgThereAreSome, 1);
@@ -779,15 +778,14 @@ void WorldMap_GazeIntoPond(void) {
     position[2] = actor->z.fixed;
     FieldVector_AddPolarOffset(16, actor->facing, position);
     actor = Actor_Get(ACTOR_POND_COINS);
-    x = position[0];
     if (actor == NULL) {
-      actor =
-          FieldActor_Create(SPRITE_UNSEEN_MARKER, x, position[1], position[2]);
+      actor = FieldActor_Create(SPRITE_UNSEEN_MARKER, position[0], position[1],
+                                position[2]);
       if (actor == NULL)
         return;
       work->actors[slot] = actor;
     } else {
-      actor->x.fixed = x;
+      actor->x.fixed = position[0];
       actor->y.fixed = position[1];
       actor->z.fixed = position[2];
     }
@@ -1478,11 +1476,7 @@ void WorldMap_MeetEcho(void) {
     Actor_FaceActorById(owner, ACTOR_ECHO, 0);
     Event_Wait(10);
     FieldActor_ShowEmote(owner, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-    {
-      /* FAKEMATCH(temporary): one, 1 held in a local; as 1 at its uses. */
-      s32 one = 1;
-      *(u16 *)&djinni->userValue = one;
-    }
+    djinni->userValue = 1;
     Actor_FaceActorById(ACTOR_ECHO, owner, 0);
     wait(16);
     flag = Event_GetFlag(FLAG_ALREADY_KNOWS_DJINN);

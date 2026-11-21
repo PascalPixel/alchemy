@@ -807,6 +807,9 @@ void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
       step++;
       wait((u16)delay);
       source = step->source;
+      /* FAKEMATCH(temporary): the loop's end test reads next, a copy of
+       * source, with updates before and after it that cancel out; as if
+       * (source == end). */
       if (step) {
         source++;
         source--;

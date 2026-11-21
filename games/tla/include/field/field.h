@@ -98,7 +98,7 @@ void BattleEffect_DropObjectAtAnchor(s32 actorId);
 void SuperLuckyDice_Run(void);
 void GameFlag_RefreshLureCapFar(void);
 void MapGrid_CenterOnFollowedPointFar(void);
-s32 MapGrid_GetTerrainHeightFar(u8, s32, s32);
+FIXED MapGrid_GetTerrainHeightFar(s32 layer, FIXED x, FIXED z);
 void Actor_RunRepeatedMotion(u32 objectId, s32 variant);
 s32 Actor_IsTargetUnset(struct Actor *actor);
 #ifndef OWN_Actor_SetPartAttribute

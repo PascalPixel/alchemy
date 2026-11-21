@@ -1271,8 +1271,8 @@ void AirsRockInside_BlowGust(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SE_RUSH);
-  gust = (struct Actor *)Import_ActorCreate(SPRITE_WHIRLWIND, leader->x.fixed,
-                                            leader->y.fixed, leader->z.fixed);
+  gust = Import_ActorCreate(SPRITE_WHIRLWIND, leader->x.fixed, leader->y.fixed,
+                            leader->z.fixed);
   Actor_SelectAnimation(gust, 2);
   Actor_SetSpriteFlags(gust, 0);
   gust->scaleX = FIXED_ONE * 17 / 10;
@@ -1293,9 +1293,9 @@ void AirsRockInside_BlowGust(void) {
   gust->z.fixed = TARGET(effect)->z.fixed - toFIXED(1);
   while (gust->scaleY < FIXED_ONE * 18 / 10) {
     if ((gFrameCount & 3) == 0) {
-      spark = (struct Actor *)Import_ActorCreate(
-          SPRITE_PARTICLE, TARGET(effect)->x.fixed, TARGET(effect)->y.fixed,
-          TARGET(effect)->z.fixed);
+      spark =
+          Import_ActorCreate(SPRITE_PARTICLE, TARGET(effect)->x.fixed,
+                             TARGET(effect)->y.fixed, TARGET(effect)->z.fixed);
       spark->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
       spark->motionFlags = 0;
       spark->groundHeight =
@@ -1351,6 +1351,8 @@ void AirsRockInside_BlowGust(void) {
   x = FIXEDtoINT(TARGET(effect)->x.fixed) + ((steps * dir.x) << 3);
   z = FIXEDtoINT(TARGET(effect)->z.fixed) + ((steps * dir.z) << 3);
   ((struct FieldSprite *)gust->sprite)->priority = 1;
+  /* FAKEMATCH(temporary): cell, a map cell's pair, takes the gust's pixel
+   * target; as x and z at the move target. */
   cell.x = x;
   cell.z = z;
   gust->speedLimit = toFIXED(4);

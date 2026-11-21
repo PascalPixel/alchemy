@@ -1240,7 +1240,6 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   s32 mode = 2;
   s32 x = FIELD_CELL(leader->x.fixed);
   s32 z = FIELD_CELL(leader->z.fixed);
-  s32 value;
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
    * touches. */
   struct Vector3 unused;
@@ -1304,17 +1303,19 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
     Actor_SelectAnimation(actor, 8);
     Actor_WaitForMove(actor);
     {
+      /* FAKEMATCH(temporary): the flags' address held in a local; as
+       * actor->priorityFlags. */
       u8 *flags = &actor->priorityFlags;
 
-      value = ACTOR_PRIORITY_UNDERFOOT;
-      *flags = value;
+      /* FAKEMATCH(temporary): mode reused to hold ACTOR_PRIORITY_UNDERFOOT
+       * for the store; as the constant stored. */
+      mode = ACTOR_PRIORITY_UNDERFOOT;
+      *flags = mode;
     }
     Sound_Play(SE_STOP_EXIT_SE);
     Sound_Play(SE_LOG_FALL);
     GameFlag_Set(id + FLAG_LOG_PUSHED_BASE);
   }
-  /* FAKEMATCH(barrier): an empty asm writing value after its last use. */
-  asm volatile("" : "=r"(value));
   Event_Wait(15);
   Event_End();
   TrialRoad_BlockLogs();
@@ -3750,37 +3751,23 @@ void TrialRoad_ShowRaceMap(s32 leaderId, s32 rivalId) {
   struct TrialRoadLinkWork *work = HeapSlot_AllocEwram(
       HEAP_SLOT_TRIAL_ROAD_LINK, sizeof(struct TrialRoadLinkWork));
   void *buffer = Heap_AllocEwram(RACE_MAP_PICTURE_BYTES);
-  s32 owner;
-  s16 *fade;
-  s16 *holdFade;
-  s32 *originX;
-  s32 *originZ;
-  s16 *vramEntry;
 
   work->leaderId = leaderId;
   work->rivalId = rivalId;
-  owner = gMainRoutineWork.leaderActorId;
-  originX = &work->originX;
-  originZ = &work->originZ;
-  fade = &work->fade;
-  holdFade = &work->holdFade;
-  vramEntry = &work->vramEntry;
-  if (leaderId == owner) {
-    *originX = toFIXED(160);
-    *originZ = toFIXED(-1632);
+  if (leaderId == gMainRoutineWork.leaderActorId) {
+    work->originX = toFIXED(160);
+    work->originZ = toFIXED(-1632);
   } else {
-    *originX = toFIXED(112);
-    *originZ = toFIXED(-1632);
+    work->originX = toFIXED(112);
+    work->originZ = toFIXED(-1632);
   }
   Actor_GetById(leaderId);
   Actor_GetById(rivalId);
-  /* FAKEMATCH(dead): owner set to 0, never read again. */
-  owner = 0;
-  *fade = 0;
-  *holdFade = 0;
+  work->fade = 0;
+  work->holdFade = 0;
   Decompress_TaggedLz(gTrialRoad_RaceMapPicture, buffer);
-  *vramEntry = VramCache_FindFreeEntry();
-  VramCache_Load(*vramEntry, RACE_MAP_PICTURE_BYTES, buffer);
+  work->vramEntry = VramCache_FindFreeEntry();
+  VramCache_Load(work->vramEntry, RACE_MAP_PICTURE_BYTES, buffer);
   Task_Add(TrialRoad_DrawRaceMap, TASK_PASS_FRAME - 10);
   Heap_Release(buffer);
 }

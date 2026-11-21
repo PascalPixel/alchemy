@@ -433,14 +433,9 @@ void Actor_VanishInSparks(s32 objectId) {
       }
     }
     spark = work->sparks;
-    sprite = work->sprites;
-    i = VANISH_SPARK_COUNT - 1;
-    for (; i >= 0; i--, sprite++, spark++) {
+    for (i = 0; i < VANISH_SPARK_COUNT; i++, spark++) {
       if (spark->age >= 0) {
-        struct EffectSprite *drawn = sprite;
-        /* FAKEMATCH(barrier): sprite copied to drawn through an empty asm. */
-        asm("" : "=r"(drawn) : "0"(drawn));
-
+        sprite = &work->sprites[i];
         if ((u32)spark->age < SPARK_LIFE) {
           s32 sparkAngle = spark->angle;
           FIXED radius = spark->radius;
@@ -454,11 +449,11 @@ void Actor_VanishInSparks(s32 objectId) {
           else
             sprite->depth = depth - 2;
           Camera_WorldToScreen(position);
-          drawn->x = position[0];
-          drawn->y = position[2];
-          drawn->oam.index = tiles + (spark->age & (SPARKLE_PICTURES - 1)) *
-                                         OBJ_TILES_PER_8BPP_TILE;
-          EffectSprite_Draw(drawn);
+          sprite->x = position[0];
+          sprite->y = position[2];
+          sprite->oam.index = tiles + (spark->age & (SPARKLE_PICTURES - 1)) *
+                                          OBJ_TILES_PER_8BPP_TILE;
+          EffectSprite_Draw(sprite);
           spark->angle += TRIG_TURN / 32;
           spark->radius -= toFIXED(1) / 5;
           spark->y -= toFIXED(1) / 4;

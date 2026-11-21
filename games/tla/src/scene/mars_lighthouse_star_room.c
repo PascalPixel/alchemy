@@ -779,8 +779,6 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   struct FieldSprite *sprite;
   GlyphTransfer *glyph;
   u16 *screen;
-  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
-  s32 zero;
 
   screen = (u16 *)Ram_HeapSlots->paletteFade;
   Event_Start();
@@ -846,8 +844,14 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
   Map_CopyPalette(gMainRoutineWork.mapId +
                       (SCENE_MARS_LIGHTHOUSE_JUPITER_LEDGE - SCENE_PROX),
                   screen);
-  zero = 0;
-  *screen = zero;
+  /* FAKEMATCH(dead): a once-only block that places black, the colour the
+   * palette's first entry takes, at its store; as black declared with the
+   * routine's locals. */
+  {
+    s32 black = RGB(0, 0, 0);
+
+    *screen = black;
+  }
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_Interpolate(120);
   System_Wait(160);

@@ -1755,19 +1755,15 @@ extern u16 gDehkanPlateau_FallLandingCells[];
         entry = (u16 *)((u8 *)entry + offset);                                 \
         x = *entry++;                                                          \
         y = *entry++;                                                          \
-        {                                                                      \
-          s32 width = 1;                                                       \
-                                                                               \
-          MapGrid_CopyCellsTo(sourceX, sourceZ, x, y, width, 1);               \
-          x = entry[0];                                                        \
-          y = entry[1];                                                        \
-          MapGrid_CopyCellsTo(columnSourceX, columnSourceZ, x, y, width, 5);   \
-          if (fall == 1)                                                       \
-            MapGrid_CopyCellsTo(67, 4, 69, 3, width, 1);                       \
-          x -= 64;                                                             \
-          y += belowOffsetZ;                                                   \
-          MapGrid_CopyCellsTo(sourceX, belowSourceZ, x, y, width, 4);          \
-        }                                                                      \
+        MapGrid_CopyCellsTo(sourceX, sourceZ, x, y, 1, 1);                     \
+        x = entry[0];                                                          \
+        y = entry[1];                                                          \
+        MapGrid_CopyCellsTo(columnSourceX, columnSourceZ, x, y, 1, 5);         \
+        if (fall == 1)                                                         \
+          MapGrid_CopyCellsTo(67, 4, 69, 3, 1, 1);                             \
+        x -= 64;                                                               \
+        y += belowOffsetZ;                                                     \
+        MapGrid_CopyCellsTo(sourceX, belowSourceZ, x, y, 1, 4);                \
         return;                                                                \
       }                                                                        \
       if (flag == FLAG_FELL_THROUGH_LAST)                                      \

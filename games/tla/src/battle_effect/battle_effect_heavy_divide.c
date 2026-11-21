@@ -90,7 +90,6 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
   Sound_PlayFar(SE_POWER_UP);
 
   for (frame = 0; frame != frames; frame++) {
-    /* FAKEMATCH(temporary): shade, 0 held in a local; as 0 at its use. */
     s32 shade = 0;
 
     if (frame == 0) {
@@ -612,7 +611,6 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
   for (frame = 0; frame != WYRD_CURSE_FRAMES; frame++) {
     struct RenderModel *model;
     void *vertices;
-    /* FAKEMATCH(temporary): shade, 0 held in a local; as 0 at its uses. */
     s32 shade = 0;
     s32 level;
 

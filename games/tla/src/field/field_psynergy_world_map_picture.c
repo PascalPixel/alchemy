@@ -907,8 +907,6 @@ s32 WorldPicture_Show(s32 mode) {
         Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
         zoomed ^= 1;
         if (*cursorX != 0) {
-          /* FAKEMATCH(temporary): minimum, 0 held in a local for the clamps;
-           * as 0 at its uses. */
           s32 minimum = 0;
           s32 limitX = toFIXED(272);
           s32 limitZ = toFIXED(224);

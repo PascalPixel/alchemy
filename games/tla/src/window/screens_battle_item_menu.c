@@ -84,7 +84,6 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
   s32 selectedRow;
   s32 item;
   s32 iconTile;
-  s32 pageTile;
   s32 unusableReason;
   s32 result;
   s32 i;
@@ -223,20 +222,17 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
                 i - 2,
             -1, 0);
       }
-      pageTile = -1;
       Window_SetTilemapEntry(
           window, LIST_TILE_PAGES_LEFT,
           window->width - (count + BATTLE_LIST_ROWS - 1) / BATTLE_LIST_ROWS - 3,
-          pageTile, 0);
+          -1, 0);
       Window_SetTilemapEntry(window, LIST_TILE_PAGES_RIGHT, window->width - 2,
-                             pageTile, 0);
+                             -1, 0);
       WINDOW_MARK_TILEMAP_ROW(work, (u32)((s16)window->y - 1));
     }
 
-    for (i = 0; i < iconCount; i++) {
-      iconSprite = &sprites[i];
-      Oam_AddSpriteAtDepth(iconSprite, OAM_DEPTH_WINDOW);
-    }
+    for (i = 0; i < iconCount; i++)
+      Oam_AddSpriteAtDepth(&sprites[i], OAM_DEPTH_WINDOW);
 
     MENU_PLACE_CURSOR(cursorPosition, window, selectedRow, 2, sprite);
     sprite->oam.index = VramCache_Reload(cursorHandle, gPointingHandTiles);

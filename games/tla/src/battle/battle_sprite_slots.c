@@ -73,12 +73,11 @@ s32 EnemySprite_LoadIntoSlots(s32 unitId) {
   s32 sprite;
   u8 *spriteBuffers;
 
+  // Default: nothing loaded.
   result = spritePart = 0;
   sprite = BattleSprite_GetSprite(unit->enemyId);
-  /* FAKEMATCH(dead): spritePart set again to the 0 it holds, from result. */
-  spritePart = result;
   // Once for the sprite, and again for its second part if it has one.
-  do {
+  for (spritePart = 0; spritePart <= 1; spritePart++) {
     s32 slot;
 
     // A unit with a class is no enemy: nothing is loaded and the result stays
@@ -123,7 +122,7 @@ s32 EnemySprite_LoadIntoSlots(s32 unitId) {
         sprite != SPRITE_BATTLE_DOOM_DRAGON_E &&
         sprite != SPRITE_BATTLE_DOOM_DRAGON_H)
       break;
-  } while (++spritePart <= 1);
+  }
 
   return result;
 }

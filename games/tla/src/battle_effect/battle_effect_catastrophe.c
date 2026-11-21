@@ -198,8 +198,6 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   struct Particle *burst;
   u16 *backdropColor;
   u8 *resource;
-  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
-  s32 zero;
   u8 *cellBuffer = Ram_MapCellBuffer;
   s32 span = toFIXED(8);
   s32 rowStep = 8;
@@ -365,7 +363,6 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_PARTICLE_SPRITES_A, sprites, 0, 0);
   Resource_LoadAndDecompress(RESOURCE_SWIRL_TEXTURE,
                              Ram_MapCellBuffer + CATASTROPHE_RING, 0, 0);
-  zero = 0;
   camZ = 0;
   swapped = 0;
   drift = 0;
@@ -1398,7 +1395,9 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         aerialTexture.logHeight = 7;
         aerialModel->kind = MODEL_SHADED_MAX;
         aerialModel->mesh = gBattleEffect_ColumnMesh;
-        aerialModel->shade = zero;
+        /* FAKEMATCH(dead): shade set to 0, never read again. */
+        shade = 0;
+        aerialModel->shade = 0;
         if (frame == 0) {
           p = work->particles;
           for (i = 0; i != CATASTROPHE_BOLTS; p++, i++) {

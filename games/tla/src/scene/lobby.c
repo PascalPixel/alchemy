@@ -1441,7 +1441,8 @@ s32 LinkLobby_Initialize(void) {
     } else {
       Event_ClearFlag(FLAG_MONSTER_BATTLE);
       FieldGameFlag_SetByte(FLAG_MONSTER_BATTLE_WINS, -1);
-      // score holds the row's address, then the score read through it.
+      /* FAKEMATCH(signature): score, a u32, holds a row's address and then
+       * the score read through it. */
       score = (u32)&gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK];
       MessageArgument_Push(*(u16 *)score, MESSAGE_ARGUMENT_NUMBER);
       score = *(u16 *)score;
@@ -1468,7 +1469,6 @@ s32 LinkLobby_Initialize(void) {
     Event_WaitTransitionFrames();
     LinkLobby_WriteSlotValue(LOBBY_SLOT_ALONE);
     Actor_FaceActor(ACTOR_ATTENDANT, gMainRoutineWork.leaderActorId, 0);
-    // score holds the row's address, then the score read through it.
     score = (u32)&gMainRoutineWork.linkTallies[LINK_TALLY_MONSTER_STREAK];
     MessageArgument_Push(*(u16 *)score, MESSAGE_ARGUMENT_NUMBER);
     score = *(u16 *)score;

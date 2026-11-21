@@ -341,6 +341,8 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
   struct ScreenPoint target;
   struct ModelTexture texture;
   struct RenderModel *model;
+  /* FAKEMATCH(temporary): tex, a pointer standing in for texture's own
+   * address; as texture by name. */
   struct ModelTexture *tex;
   /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
   s32 zero;

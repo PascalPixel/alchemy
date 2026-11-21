@@ -343,6 +343,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *args, s32 mode) {
   }
   // Stop the caster and place the Djinni overhead.
   Actor_SetAnimationSpeedFar(casterActor, 0);
+  /* FAKEMATCH(temporary): position, a pointer standing in for djinnPos's
+   * address. */
   position = &djinnPos;
   SET_POSITION(position, casterActor->x.fixed,
                casterActor->y.fixed + toFIXED(80), casterActor->z.fixed);

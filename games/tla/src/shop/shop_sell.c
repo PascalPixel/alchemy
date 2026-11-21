@@ -28,6 +28,9 @@ s32 Shop_ChooseMember(void) {
   shop->cursorFrames = SHOP_CURSOR_ENTER_FRAMES;
   Menu_PlaceOwnerEntryObjectsFar(listWindow, 2, 0);
   while (1) {
+    /* FAKEMATCH(dead): updates of unitId that cancel out. */
+    unitId++;
+    unitId--;
     if (redraw != 0) {
       unitId = shop->partyMemberIds[memberIndex];
       MenuCursor_Place(listWindow,
@@ -72,8 +75,6 @@ s32 Shop_ChooseMember(void) {
       wait(1);
     }
   }
-  /* FAKEMATCH(barrier): an empty asm at the loop exit. */
-  __asm__("" : : : "r8");
   ItemIconGrid_SetVisible(0);
   Menu_ReleaseEntryObjectsFar();
   Window_CloseFar(listWindow, 2);

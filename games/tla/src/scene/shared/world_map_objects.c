@@ -101,11 +101,9 @@ void WorldMap_UpdatePlacedActors(void) {
   }
   i = 0;
   next = kind;
-  /* FAKEMATCH(barrier): an empty asm on next; as no asm. */
-  asm("" : "+g"(next));
   slot = objects;
-  /* FAKEMATCH(barrier): an empty asm on leader and work; as no asm. */
-  asm("" : "+g"(leader), "+r"(work));
+  /* FAKEMATCH(barrier): an empty asm on leader and work that reads next. */
+  asm("" : "+g"(leader), "+r"(work) : "g"(next));
   while (next != 0) {
     FIXED px, pz;
 

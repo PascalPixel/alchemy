@@ -1131,6 +1131,8 @@ void GabombaStatue_ClimbDownHole(s32 x, s32 z) {
     GabombaStatue_ClimbDownHole(holeX, holeZ);                                 \
   }
 
+/// The Bone Armlet chest room's hole, walked into from the west, the east or
+/// the south.
 DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(GabombaStatue_StepIntoBoneArmletChestHole,
                                      11, 18, 20, 19, 12, 312, 180)
 
@@ -1157,6 +1159,7 @@ DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(GabombaStatue_StepIntoBoneArmletChestHole,
     GabombaStatue_ClimbDownHole(holeX, holeZ);                                 \
   }
 
+/// The Elixir chest room's hole, walked into from any side.
 DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(GabombaStatue_StepIntoElixirChestHole,
                                           29, 11, 13, 12, 28, 30, 472, 196)
 
@@ -1220,9 +1223,13 @@ void GabombaStatue_StepIntoThirdSteelHole(void) {
   GabombaStatue_ClimbDownHole(680, 208);
 }
 
+/// The turntable room's first hole, walked into from the west, the east or the
+/// south.
 DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(GabombaStatue_StepIntoFirstTurntableHole,
                                      7, 23, 25, 24, 8, 392, 112)
 
+/// The turntable room's second hole, walked into from the west, the east or
+/// the south.
 DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(GabombaStatue_StepIntoSecondTurntableHole,
                                      9, 5, 7, 6, 10, 104, 146)
 
@@ -1239,6 +1246,7 @@ void GabombaStatue_StepIntoThirdTurntableHole(void) {
   GabombaStatue_ClimbDownHole(680, 146);
 }
 
+/// The cogs room's hole, walked into from any side.
 DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(GabombaStatue_StepIntoCogsHole, 27,
                                           17, 19, 18, 26, 28, 440, 288)
 
@@ -1288,6 +1296,7 @@ void GabombaStatue_StepIntoArrowsHole(void) {
     Event_End();                                                               \
   }
 
+/// The pinions at the pinion room's gap carry the leader through to the north.
 DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(GabombaStatue_PinionsCarryLeaderNorth, 152,
                                      424)
 
@@ -1310,15 +1319,22 @@ void GabombaStatue_PinionsThrowLeaderSouth(void) {
   Event_End();
 }
 
+/// The pinions at the Elixir chest room's gap carry the leader through to the
+/// south.
 DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(
     GabombaStatue_ElixirPinionsCarryLeaderSouth, 376, 200)
 
+/// With the cogs turned back, the pinions at the Elixir chest room's gap carry
+/// the leader through to the north.
 DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(
     GabombaStatue_ElixirPinionsCarryLeaderNorth, 376, 136)
 
+/// The pinions at the cogs room's gap carry the leader through to the south.
 DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(GabombaStatue_CogsPinionsCarryLeaderSouth,
                                      440, 248)
 
+/// With the cogs turned back, the pinions at the cogs room's gap carry the
+/// leader through to the north.
 DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(GabombaStatue_CogsPinionsCarryLeaderNorth,
                                      440, 184)
 

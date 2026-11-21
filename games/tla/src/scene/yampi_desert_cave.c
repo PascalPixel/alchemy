@@ -600,9 +600,11 @@ void YampiDesertCave_TryPushLog(void) {
     Teleport_StopShimmer();                                                    \
   }
 
+/// Teleport cast on the north circle carries the party to the south circle.
 DEFINE_TELEPORT_FROM_CIRCLE(YampiDesertCave_TeleportFromNorthCircle,
                             SOUTH_CIRCLE_ENTRANCE)
 
+/// Teleport cast on the south circle carries the party to the north circle.
 DEFINE_TELEPORT_FROM_CIRCLE(YampiDesertCave_TeleportFromSouthCircle,
                             NORTH_CIRCLE_ENTRANCE)
 
@@ -615,10 +617,14 @@ DEFINE_TELEPORT_FROM_CIRCLE(YampiDesertCave_TeleportFromSouthCircle,
     }                                                                          \
   }
 
+/// Burst on the chest room's pillar breaks it for good. The pillar is taken
+/// away and `FLAG_YAMPI_DESERT_CAVE_CHEST_ROOM_PILLAR_BURST` is set.
 DEFINE_BURST_PILLAR(YampiDesertCave_BurstChestRoomPillar,
                     FLAG_YAMPI_DESERT_CAVE_CHEST_ROOM_PILLAR_BURST,
                     ACTOR_CHEST_ROOM_BURST_PILLAR)
 
+/// Burst on the pillar in Crystal's room breaks it for good. The pillar is
+/// taken away and `FLAG_YAMPI_DESERT_CAVE_CRYSTAL_ROOM_PILLAR_BURST` is set.
 DEFINE_BURST_PILLAR(YampiDesertCave_BurstCrystalRoomPillar,
                     FLAG_YAMPI_DESERT_CAVE_CRYSTAL_ROOM_PILLAR_BURST,
                     ACTOR_CRYSTAL_ROOM_BURST_PILLAR)

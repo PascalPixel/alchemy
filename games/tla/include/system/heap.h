@@ -81,13 +81,13 @@ struct HeapSlots {
   /// The palette fade that moves the BG and sprite palettes toward target
   /// colours (struct PaletteFade).
   void *paletteFade;
-  void *unusedAfterPaletteFade;   ///< no code allocates or reads this slot
-  void *lineScroll;               ///< the line scroll's work
-  void *unusedAfterLineScroll;    ///< no code allocates or reads this slot
-  void *fadeOverlay;              ///< the fade overlay's work
-  void *battleMessage;            ///< the battle message window's work
-  void *unusedAfterBattleMessage; ///< no code allocates or reads this slot
-  struct RopeWork *rope;          ///< a rope's work
+  void *unusedAfterPaletteFade;    ///< no code allocates or reads this slot
+  void *lineScroll;                ///< the line scroll's work
+  void *unusedAfterLineScroll;     ///< no code allocates or reads this slot
+  void *fadeOverlay;               ///< the fade overlay's work
+  void *battleMessage;             ///< the battle message window's work
+  void *unusedAfterBattleMessage;  ///< no code allocates or reads this slot
+  struct RopeWork *rope;           ///< a rope's work
   struct TightropeWork *tightrope; ///< a tightrope's work
   void *hangingVine;      ///< a hanging vine's work (struct HangingVineWork)
   void *battleEntryTimer; ///< the battle's entry transition timer, in frames

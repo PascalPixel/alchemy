@@ -726,12 +726,21 @@ void LemurianShip_StepOnLiftWestSide(void) {
     GameFlag_Set(id + (FLAG_FIGHTING_JELLY + (firstJelly) - (firstActor)));    \
   }
 
+/// Talking to a jelly in the room of two jellies starts a battle with it. The
+/// jelly turns to the leader and quivers, the battle cannot be run from, and
+/// its `FLAG_FIGHTING_JELLY` flag lets a win melt it into a puddle.
 DEFINE_JELLY_BATTLE(LemurianShip_FightTwoJellyRoomJelly, JELLY_TWO_JELLY_ROOM_A,
                     ACTOR_TWO_JELLY_ROOM_JELLY_A)
 
+/// Talking to a jelly in the room of six jellies starts a battle with it. The
+/// jelly turns to the leader and quivers, the battle cannot be run from, and
+/// its `FLAG_FIGHTING_JELLY` flag lets a win melt it into a puddle.
 DEFINE_JELLY_BATTLE(LemurianShip_FightSixJellyRoomJelly, JELLY_SIX_JELLY_ROOM_A,
                     ACTOR_SIX_JELLY_ROOM_JELLY_A)
 
+/// Talking to a jelly in the room of seven jellies starts a battle with it. The
+/// jelly turns to the leader and quivers, the battle cannot be run from, and
+/// its `FLAG_FIGHTING_JELLY` flag lets a win melt it into a puddle.
 DEFINE_JELLY_BATTLE(LemurianShip_FightSevenJellyRoomJelly,
                     JELLY_SEVEN_JELLY_ROOM_A, ACTOR_SEVEN_JELLY_ROOM_JELLY_A)
 

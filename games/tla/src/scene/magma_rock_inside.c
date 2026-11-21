@@ -1408,10 +1408,16 @@ void MagmaRockInside_DrainLava(void) {
     Event_SetFlag(n2);                                                         \
   }
 
+/// Burst on the first cracked pillar of the cracked pillars' room breaks it.
+/// Rocks fall round it as it crumbles and the last blast takes it away;
+/// `FLAG_INSIDE_CRACKED_PILLAR_A_BURST` is set.
 DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR(MagmaRockInside_BurstCrackedPillarA,
                                       ACTOR_CRACKED_PILLAR_A,
                                       FLAG_INSIDE_CRACKED_PILLAR_A_BURST)
 
+/// Burst on the second cracked pillar of the cracked pillars' room breaks it.
+/// Rocks fall round it as it crumbles and the last blast takes it away;
+/// `FLAG_INSIDE_CRACKED_PILLAR_B_BURST` is set.
 DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR(MagmaRockInside_BurstCrackedPillarB,
                                       ACTOR_CRACKED_PILLAR_B,
                                       FLAG_INSIDE_CRACKED_PILLAR_B_BURST)

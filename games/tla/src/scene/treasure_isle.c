@@ -488,20 +488,36 @@ void TreasureIsle_GrindSpikyRock(s32 unused, s32 frame, s32 id) {
     Event_SetFlag(FLAG_TREASURE_ISLE_BOULDER_LIFTED(n));                       \
   }
 
+/// Lift raises the first boulder of Gale's room out of the way for good. It
+/// sets `FLAG_TREASURE_ISLE_BOULDER_LIFTED(0)`.
 DEFINE_LIFT_ROCK(TreasureIsle_LiftFirstRock, 0)
 
+/// Lift raises the second boulder of Gale's room out of the way for good. It
+/// sets `FLAG_TREASURE_ISLE_BOULDER_LIFTED(1)`.
 DEFINE_LIFT_ROCK(TreasureIsle_LiftSecondRock, 1)
 
+/// Lift raises the third boulder of Gale's room out of the way for good. It
+/// sets `FLAG_TREASURE_ISLE_BOULDER_LIFTED(2)`.
 DEFINE_LIFT_ROCK(TreasureIsle_LiftThirdRock, 2)
 
+/// Lift raises the fourth boulder of Gale's room out of the way for good. It
+/// sets `FLAG_TREASURE_ISLE_BOULDER_LIFTED(3)`.
 DEFINE_LIFT_ROCK(TreasureIsle_LiftFourthRock, 3)
 
+/// Lift raises the fifth boulder of Gale's room out of the way for good. It
+/// sets `FLAG_TREASURE_ISLE_BOULDER_LIFTED(4)`.
 DEFINE_LIFT_ROCK(TreasureIsle_LiftFifthRock, 4)
 
+/// Lift raises the sixth boulder of Gale's room out of the way for good. It
+/// sets `FLAG_TREASURE_ISLE_BOULDER_LIFTED(5)`.
 DEFINE_LIFT_ROCK(TreasureIsle_LiftSixthRock, 5)
 
+/// Lift raises the seventh boulder of Gale's room out of the way for good. It
+/// sets `FLAG_TREASURE_ISLE_BOULDER_LIFTED(6)`.
 DEFINE_LIFT_ROCK(TreasureIsle_LiftSeventhRock, 6)
 
+/// Lift raises the eighth boulder of Gale's room out of the way for good. It
+/// sets `FLAG_TREASURE_ISLE_BOULDER_LIFTED(7)`.
 DEFINE_LIFT_ROCK(TreasureIsle_LiftEighthRock, 7)
 
 /// The Star Magician, the guardian of water, glows and speaks ("I am the

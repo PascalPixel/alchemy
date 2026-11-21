@@ -50,6 +50,8 @@ Evidence: Camelot: the area names in the game's text.
 
 ### Psynergy and PP
 
+![Jenna casts Fire at Felix, Piers and Sheba: fireballs rise, hang and stream into the three](https://alchemy.pascalpixel.com/tla/abilities/fire.gif)
+
 Psynergy is the game's magic. Some is cast in battle, such as Quake, Cure
 and Growth, and some on the field, such as Move, Lash and Reveal
 ([Field code](src/field/README.md#how-field-psynergy-reaches-its-target)).
@@ -80,6 +82,8 @@ Evidence: Camelot: the Status screen's labels.
 
 ### Djinn
 
+![Felix unleashes the Venus Djinni Echo in battle: he leaps at Sheba, his sword strikes in bursts of light, and she takes the damage](https://alchemy.pascalpixel.com/tla/abilities/echo.gif)
+
 Djinn are elemental creatures the party collects. One is a Djinni, several
 are Djinn. Set on a character, a Djinni raises that character's stats and
 helps decide its class: Echo, a Venus Djinni, gives 9 HP, 4 PP and 3
@@ -89,6 +93,8 @@ for a [summon](#summons) ([Game rules](src/game/README.md#djinn-and-classes)).
 Evidence: Camelot: the game's text.
 
 ### Summons
+
+![Felix summons Zagan: the screen flashes white, a beast wielding an axe charges across in streaks of fire and strikes Jenna, Sheba and Piers, lowering their Defense](https://alchemy.pascalpixel.com/tla/abilities/zagan.gif)
 
 A summon spends [Djinn](#djinn) on standby to call up an elemental being.
 The summon named Venus takes one Venus Djinni, Ramses two, Cybele three and

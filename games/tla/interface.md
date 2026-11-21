@@ -10,6 +10,8 @@ code that waits.
 
 ## Windows
 
+![A close look at a guest's window in Daila's inn, slowed while it zooms: it grows from its centre, `I hear the seafood in Madra is wonderful!` and a second page are typed, and it shrinks back into its centre](https://alchemy.pascalpixel.com/tla/guides/window/window-zoom.gif)
+
 A box is a [window](glossary.md#window). Whoever wants one asks for it
 once, then carries on or waits. It never draws it.
 
@@ -28,6 +30,8 @@ closing.
 
 ## Messages
 
+![Felix asks Daila's innkeeper for a room: the night's price filled into the line, Yes and No, `Your Coins: 500`, and No](https://alchemy.pascalpixel.com/tla/guides/window/message-blanks.gif)
+
 A piece of the game's text is a [message](glossary.md#message), and code
 asks for it by its number, never by its words. On the cartridge a message
 is packed small and has blanks in it: for a number, an item, the name the
@@ -42,6 +46,8 @@ page, and each frame after that looks for a button.
 packing and what a blank can hold.
 
 ## Menus
+
+![Felix opens the field menu in Daila: the party's HP and PP window and the four icons, the selection steps along them to Status, the Status screen opens, and B closes it back to the icons](https://alchemy.pascalpixel.com/tla/guides/menu/menus.gif)
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
@@ -79,6 +85,8 @@ a page, and the Status screen is where the order is changed, which decides
 who fights in front.
 
 ## Shops, sanctums and inns
+
+![Felix talks to the keeper of Daila's stall across the counter, buys one Herb (How many? 1) for himself, and `Your Coins` drops from 500 to 490](https://alchemy.pascalpixel.com/tla/guides/shop/shop.gif)
 
 A visit to a counter starts as an ordinary conversation. The shopkeeper's
 [event](glossary.md#event) calls the shop's code as a function and goes on

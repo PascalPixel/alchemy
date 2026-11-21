@@ -623,6 +623,9 @@ void MarsLighthouseEntrance_CrackLapisIceSheet(void) {
     }                                                                          \
   }
 
+/// Burst breaks the second ice sheet of the Teleport Lapis room, once the
+/// dragon statue's fireball has cracked it. A flash, the sheet gone and chips
+/// flying, and `FLAG_LAPIS_SECOND_SHEET_BURST` set.
 DEFINE_BURST_ICE_SHEET(MarsLighthouseEntrance_BurstLapisIceSheet, 28, 92, 8,
                        100, 92, 38, 8, ACTOR_SECOND_ICE_SHEET,
                        FLAG_LAPIS_SECOND_SHEET_BURST)
@@ -759,6 +762,9 @@ void MarsLighthouseEntrance_HideTeleportCircle(void) {
   MapGrid_CopyCellsLayered(117, 45, 4, 3, 117, 48);
 }
 
+/// Burst breaks the ice sheet of the hidden circle's room, once the west
+/// torch's fireball has cracked it. A flash, the sheet gone and chips flying,
+/// and `FLAG_HIDDEN_CIRCLE_SHEET_BURST` set.
 DEFINE_BURST_ICE_SHEET(MarsLighthouseEntrance_BurstHiddenCircleIceSheet, 12, 95,
                        6, 101, 76, 40, 5, ACTOR_HIDDEN_CIRCLE_ICE_SHEET,
                        FLAG_HIDDEN_CIRCLE_SHEET_BURST)

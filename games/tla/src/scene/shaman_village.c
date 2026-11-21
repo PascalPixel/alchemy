@@ -2517,18 +2517,30 @@ void ShamanVillage_EnterDoorA(void) {
   ShamanVillage_EnterDoor(43, 40, 8, 22, 1, 2);
 }
 
+/// Walking north into the second southwest door opens it and takes the party
+/// inside. Step trigger 5 leaves by
+/// `SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_INN_SOUTHWEST_B`.
 void ShamanVillage_EnterDoorB(void) {
   ShamanVillage_EnterDoor(43, 42, 4, 26, 1, 2);
 }
 
+/// Walking north into the first east door opens it and takes the party inside.
+/// Step trigger 6 leaves by `SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_INN_EAST_A`, only
+/// once `FLAG_SHAMAN_VILLAGE_DOORS_OPEN` is set after Moapa is beaten.
 void ShamanVillage_EnterDoorC(void) {
   ShamanVillage_EnterDoor(43, 42, 27, 21, 1, 2);
 }
 
+/// Walking north into the second east door opens it and takes the party
+/// inside. Step trigger 7 leaves by
+/// `SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_INN_EAST_B`, only once
+/// `FLAG_SHAMAN_VILLAGE_DOORS_OPEN` is set after Moapa is beaten.
 void ShamanVillage_EnterDoorD(void) {
   ShamanVillage_EnterDoor(43, 40, 28, 17, 1, 2);
 }
 
+/// Walking north into the north door opens it and takes the party inside. Step
+/// trigger 12 leaves by `SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_INN_NORTH`.
 void ShamanVillage_EnterDoorE(void) {
   ShamanVillage_EnterDoor(43, 42, 10, 8, 1, 2);
 }

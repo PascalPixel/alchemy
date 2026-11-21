@@ -522,18 +522,28 @@ void Daila_MeetAlex(void) {
     Event_End();                                                               \
   }
 
+/// Parch on the first puddle dries it up. The puddle is gone for the visit and
+/// `FLAG_DAILA_FIRST_PUDDLE_PARCHED` set.
 DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchFirstPuddle, 10, 19, 11,
                           ACTOR_FIRST_PUDDLE, FLAG_DAILA_FIRST_PUDDLE_PARCHED)
 
+/// Parch on the second puddle dries it up. The puddle is gone for the visit
+/// and `FLAG_DAILA_SECOND_PUDDLE_PARCHED` set.
 DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchSecondPuddle, 25, 20, 26,
                           ACTOR_SECOND_PUDDLE, FLAG_DAILA_SECOND_PUDDLE_PARCHED)
 
+/// Parch on the third puddle dries it up. The puddle is gone for the visit and
+/// `FLAG_DAILA_THIRD_PUDDLE_PARCHED` set.
 DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchThirdPuddle, 28, 23, 29,
                           ACTOR_THIRD_PUDDLE, FLAG_DAILA_THIRD_PUDDLE_PARCHED)
 
+/// Parch on the fourth puddle dries it up. The puddle is gone for the visit
+/// and `FLAG_DAILA_FOURTH_PUDDLE_PARCHED` set.
 DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchFourthPuddle, 17, 11, 18,
                           ACTOR_FOURTH_PUDDLE, FLAG_DAILA_FOURTH_PUDDLE_PARCHED)
 
+/// Parch on the fifth puddle dries it up. The puddle is gone for the visit and
+/// `FLAG_DAILA_FIFTH_PUDDLE_PARCHED` set.
 DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchFifthPuddle, 30, 17, 31,
                           ACTOR_FIFTH_PUDDLE, FLAG_DAILA_FIFTH_PUDDLE_PARCHED)
 
@@ -545,6 +555,9 @@ DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchFifthPuddle, 30, 17, 31,
 #else
 #define SIXTH_PUDDLE_HIDDEN (ACTOR_SIXTH_PUDDLE + 2)
 #endif
+/// Parch on the sixth puddle dries it up. Its cell dries and
+/// `FLAG_DAILA_SIXTH_PUDDLE_PARCHED` is set, but without `BUGFIX` the puddle
+/// itself stays.
 DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchSixthPuddle, 16, 23, 17,
                           SIXTH_PUDDLE_HIDDEN, FLAG_DAILA_SIXTH_PUDDLE_PARCHED)
 

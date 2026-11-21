@@ -1241,11 +1241,17 @@ void MagmaRock_BurnStatue(struct Actor *actor) {
     Event_SetFlag(n3);                                                         \
   }
 
+/// Burst on the slide's cracked pillar A, or on the cracked pillar of the
+/// Salamander Tail room's high west level, breaks it. Either sets
+/// `FLAG_CRACKED_PILLAR_A_BURST`.
 DEFINE_MAGMA_ROCK_BURST_COLUMN(MagmaRock_BurstCrackedPillarA,
                                ACTOR_CRACKED_PILLAR_A,
                                ACTOR_HIGH_WEST_CRACKED_PILLAR_A,
                                FLAG_CRACKED_PILLAR_A_BURST)
 
+/// Burst on the slide's cracked pillar B, or on the cracked pillar of the
+/// Salamander Tail room's low east level, breaks it. Either sets
+/// `FLAG_CRACKED_PILLAR_B_BURST`.
 DEFINE_MAGMA_ROCK_BURST_COLUMN(MagmaRock_BurstCrackedPillarB,
                                ACTOR_CRACKED_PILLAR_B,
                                ACTOR_LOW_EAST_CRACKED_PILLAR,
@@ -1260,14 +1266,20 @@ DEFINE_MAGMA_ROCK_BURST_COLUMN(MagmaRock_BurstCrackedPillarB,
     Event_SetFlag(n2);                                                         \
   }
 
+/// Burst on the slide's cracked pillar C breaks it. It sets
+/// `FLAG_CRACKED_PILLAR_C_BURST`.
 DEFINE_MAGMA_ROCK_BURST_STATUE_COLUMN(MagmaRock_BurstCrackedPillarC,
                                       ACTOR_CRACKED_PILLAR_C,
                                       FLAG_CRACKED_PILLAR_C_BURST)
 
+/// Burst on the slide's cracked pillar D breaks it. It sets
+/// `FLAG_CRACKED_PILLAR_D_BURST`.
 DEFINE_MAGMA_ROCK_BURST_STATUE_COLUMN(MagmaRock_BurstCrackedPillarD,
                                       ACTOR_CRACKED_PILLAR_D,
                                       FLAG_CRACKED_PILLAR_D_BURST)
 
+/// Burst on the slide's cracked pillar E breaks it. It sets
+/// `FLAG_CRACKED_PILLAR_E_BURST`.
 DEFINE_MAGMA_ROCK_BURST_STATUE_COLUMN(MagmaRock_BurstCrackedPillarE,
                                       ACTOR_CRACKED_PILLAR_E,
                                       FLAG_CRACKED_PILLAR_E_BURST)

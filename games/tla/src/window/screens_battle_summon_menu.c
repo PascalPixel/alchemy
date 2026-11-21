@@ -75,6 +75,8 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
 
   for (index = 0; index < 4; index++) {
     s32 y;
+    /* FAKEMATCH(temporary): t, 0 held in a local and then the window's y; as 0
+     * and (s16)window->y at their uses. */
     u32 t = 0;
 
     y = index * 2;

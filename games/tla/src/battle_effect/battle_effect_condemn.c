@@ -41,6 +41,8 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
   s32 drawReaper;
   s32 pictureColumn;
   s32 pictureRow;
+  /* FAKEMATCH(temporary): cells, the cell buffer's address held in a local for
+   * the crescent sheet's load. */
   u8 *cells;
   s32 frame;
 
@@ -144,6 +146,8 @@ void BattleEffect_RunCondemn(struct BattleEffectParams *args) {
     // The reaper, then from the swing its swung pose and the crescent fading,
     // each picture shown for two frames.
     if (drawReaper != 0) {
+      /* FAKEMATCH(temporary): side, the side copied into a local for the test.
+       */
       s32 side = args->side;
 
       if (side == EFFECT_SIDE_ENEMIES) {

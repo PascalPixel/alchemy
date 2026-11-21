@@ -97,11 +97,8 @@ s32 Ability_ApplyToTargets(s32 effectId, s32 sourceId, s32 targetId,
     case ABILITY_FORMULA_HEAL_HP:
       if (fixedScale == 0) {
         if (effect->element != ELEMENT_NONE) {
-          s32 elementIndex;
-
           caster = Unit_GetFar(sourceId);
-          elementIndex = effect->element;
-          elementPower = caster->element[elementIndex].power;
+          elementPower = caster->element[effect->element].power;
         } else
           elementPower = HEALING_BASE_POWER;
         amount = Battle_CalculateRecoveryFar(amount, elementPower,

@@ -1720,6 +1720,8 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
           h = 0;
         h = SARCOPHAGUS_COFFIN_HEIGHT;
         if (frame > 7) {
+          /* FAKEMATCH(temporary): t, a second count of the rows beside i; as
+           * i. */
           s32 t;
           i = 0;
           t = 0;

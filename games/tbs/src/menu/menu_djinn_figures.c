@@ -111,6 +111,8 @@ void DjinnFigures_UpdateBottomRow(void) {
       u32 projectedY = FIGURE_ORIGIN_Y - toFIXED(menu->memberY[figure]);
       s32 phase;
       s32 facing;
+      /* FAKEMATCH(temporary): rowY, the figure's y read again into a local for
+       * the facing's test. */
       s32 rowY;
 
       animation->image.priority = 0;

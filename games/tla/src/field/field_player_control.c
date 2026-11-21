@@ -100,9 +100,7 @@ s32 Actor_UpdateWalkingControl(struct Actor *actor) {
     onObject = 0;
     other = (struct Actor *)Ram_HeapSlots->actors;
     for (angleIndex = 0; angleIndex < ACTOR_COUNT; angleIndex++, other++) {
-      FIXED delta;
       FIXED dy;
-      s32 withinHalfCell = toFIXED(8) - 1;
 
       if (other->script == NULL)
         continue;
@@ -110,11 +108,8 @@ s32 Actor_UpdateWalkingControl(struct Actor *actor) {
         continue;
       if (other == actor)
         continue;
-      delta = actor->y.fixed - other->y.fixed;
-      dy = delta - toFIXED(16);
-      if (dy < 0)
-        dy = toFIXED(16) - delta;
-      if (dy > withinHalfCell)
+      dy = actor->y.fixed - other->y.fixed;
+      if (ABS(dy - toFIXED(16)) > toFIXED(8) - 1)
         continue;
       if (SAME_CELL(actor->x.fixed, other->x.fixed) &&
           SAME_CELL(actor->z.fixed, other->z.fixed))
@@ -129,9 +124,6 @@ s32 Actor_UpdateWalkingControl(struct Actor *actor) {
       goto counted;
     }
   }
-  /* FAKEMATCH(dead): a test that sets onObject to 1 when it is nonzero. */
-  if (onObject)
-    onObject = 1;
   if (gDebugMode != 0 && (gInput.held & KEY_L)) {
     // DEAD: collision is already 0 here; the ROM keeps its clearing, which
     // cross-jumping shares with clear's.

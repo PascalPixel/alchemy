@@ -248,7 +248,12 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
             // On the ground the shell stops and bursts.
             if (shot->y < 0) {
               s32 count;
+              /* FAKEMATCH(temporary): records, a pointer to
+               * gLobbedShells_Styles for the one read; as
+               * LOBBED_SHELLS_SHATTER(mode). */
               s8 *records = gLobbedShells_Styles;
+              /* FAKEMATCH(temporary): row, mode * 2 held for the one read; as
+               * mode * 2 at its use. */
               s32 row;
               s32 groupSlots = 8;
 
@@ -264,6 +269,8 @@ void BattleEffect_RunLobbedShells(struct BattleEffectParams *args, s32 mode) {
               // shards fill two.
               for (i = 0; i != count; i++) {
                 struct Particle *burst;
+                /* FAKEMATCH(temporary): group, k * 4 held for the one index;
+                 * as k * 4 at its use. */
                 s32 group = k * 4;
                 burst = &LOBBED_SHELLS_BURSTS[group * groupSlots + i];
 

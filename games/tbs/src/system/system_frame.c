@@ -250,25 +250,17 @@ void wait(s32 frames) {
       }
       CAMELOT_ASM("read the hardware stack pointer for its restore copy")
       __asm__ volatile("mov %0, sp" : "=r"(base));
-      /* FAKEMATCH(volatile): the size read again, a load apart from the test's.
-       */
-      base -= *(volatile u32 *)size;
+      /* FAKEMATCH(dead): updates of size by the new base that cancel out,
+       * before the size is read again and the copy's size by name. */
+      size += (u32)base;
+      size -= (u32)base;
+      base -= *size;
       sp = base;
       CAMELOT_ASM(
           "restore the hardware stack pointer after the proven stack copy")
       __asm__ volatile("mov sp, %0" : : "r"(sp) : "memory");
-      /* FAKEMATCH(dead): size dropped and the copy's size taken under
-       * complementary tests. */
-      size = NULL;
-      {
-        u32 *copySize = NULL;
-
-        if (sp)
-          copySize = &gSavedStackSize;
-        if (!sp)
-          copySize = &gSavedStackSize;
-        Dma_Set(gSavedStack, base, DMA_COPY_WORDS(*copySize >> 2), REG_DMA3);
-      }
+      Dma_Set(gSavedStack, base, DMA_COPY_WORDS(gSavedStackSize >> 2),
+              REG_DMA3);
       while (DMA3->control & DMA_BUSY)
         ;
       gSavedStackSize = 0;

@@ -332,6 +332,8 @@ void FieldPsynergy_EndSand(void) {
     particle++;
   }
   FieldCamera_MoveWithinMapBounds(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
+  /* FAKEMATCH(temporary): motionFlags, a pointer standing in for
+   * owner->motionFlags's address. */
   motionFlags = &owner->motionFlags;
   *motionFlags = 0;
   /* FAKEMATCH(temporary): the mask held in a local across the two calls; as
@@ -353,6 +355,7 @@ void FieldPsynergy_EndSand(void) {
   Animation_ApplyChildValueToFirstFar(owner->sprite, SPRITE_COLOR_HIDDEN);
   wait(1);
   Animation_ApplyChildValueToFirstFar(owner->sprite, SPRITE_COLOR_NORMAL);
+  /* FAKEMATCH(dead): a once-only block round the decode, declaring source. */
   {
     void *source = ((struct Sprite *)owner->sprite)->entries[0];
 

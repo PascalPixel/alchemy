@@ -195,7 +195,7 @@ extern s32 gSerialReceiveDestination;
 /// VBlank handler runs, counts it up while the link code polls it.
 extern volatile u16 gSerialReceivedSize;
 /// Each console's SerialTransferState as last received, 24 bytes each.
-extern u8 gSerialPeerPayloads[4][24];
+extern struct SerialTransferState gSerialPeerPayloads[4];
 /// The block this console sends or expects next (SERIAL_BLOCK_NUMBER_MASK):
 /// Serial_StartSend and Serial_StartReceive reset it and
 /// Serial_StepBlockTransfer, which the VBlank handler runs, steps it.

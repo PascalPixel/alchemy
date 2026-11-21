@@ -365,9 +365,9 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     cursorSprite.oam.f.x =
         (cursorPosition.x + statusWindow->x * 8 - ((gFrameCount & 4) >> 2)) +
         16;
-    cursorSprite.oam.f.y = (u8)((cursorPosition.y + statusWindow->y * 8 -
-                                 ((gFrameCount & 4) >> 2)) +
-                                16);
+    cursorSprite.oam.f.y =
+        (cursorPosition.y + statusWindow->y * 8 - ((gFrameCount & 4) >> 2)) +
+        16;
     // 8 sets attribute 1's bit 12, a sprite's horizontal flip when it is not
     // affine: the hand is mirrored.
     cursorSprite.oam.f.affineIndex = 8;

@@ -114,6 +114,8 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   s32 size;
   s32 shade;
   u8 *sprites;
+  /* FAKEMATCH(signature): cells, an s32, holds the map cell buffer's address;
+   * as u8 *. */
   s32 cells;
 
   work = Ram_HeapSlots->battleEffect;
@@ -230,6 +232,8 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           BLITTER_MAX);
       index <<= 1;
+      /* FAKEMATCH(signature): index, an s32, takes the address of the disc's
+       * entry in circles; as an s16 pointer. */
       index += (s32)circles;
       half = size >> 1;
       picture = (void *)(*(s16 *)index + cells);

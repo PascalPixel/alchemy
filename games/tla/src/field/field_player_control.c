@@ -97,16 +97,12 @@ s32 Actor_UpdateWalkingControl(struct Actor *actor) {
   SET_POSITION(&position, actor->x.fixed, actor->y.fixed, actor->z.fixed);
   Vector_AddPolarOffset(toFIXED(8), angle, &position);
   if (actor->priorityFlags & ACTOR_PRIORITY_WALKS_ON_PLATFORMS) {
-    s32 withinHalfCell;
-
     onObject = 0;
     other = (struct Actor *)Ram_HeapSlots->actors;
-    /* FAKEMATCH(temporary): the bound set after other, not where it is
-     * declared. */
-    withinHalfCell = toFIXED(8) - 1;
     for (angleIndex = 0; angleIndex < ACTOR_COUNT; angleIndex++, other++) {
       FIXED delta;
       FIXED dy;
+      s32 withinHalfCell = toFIXED(8) - 1;
 
       if (other->script == NULL)
         continue;

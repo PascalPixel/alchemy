@@ -291,8 +291,8 @@ void BattleEffect_RunParticleStreams(struct BattleEffectParams *args,
   {
     s32 savedX = gBgScroll[1].x;
     s32 savedY = gBgScroll[1].y;
-    void **slots = &gHeapSlots[HEAP_SLOT_BATTLE_BACKGROUND];
-    struct BattleBackgroundWork *view = slots[0];
+    struct BattleBackgroundWork *view =
+        HEAP_SLOT_BLOCK(HEAP_SLOT_BATTLE_BACKGROUND);
 
     gBgScroll[1].x = 0;
     gBgScroll[1].y = BATTLE_BACKGROUND_SCROLL_Y;

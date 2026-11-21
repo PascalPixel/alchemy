@@ -426,10 +426,10 @@ void BattleEffect_RunGatheringLights(struct BattleEffectParams *args,
                   BattleEffect_StartActorMotion(args->targets[k], 1, toFIXED(2),
                                                 toFIXED(2), toFIXED(2),
                                                 i * 8 + 100);
-                  /* FAKEMATCH(temporary): i tested through its copy in
-                   * spiritDistance; as (i & 1). */
-                  spiritDistance = i;
-                  if ((spiritDistance & 1) && frame != 80)
+                  /* FAKEMATCH(dead): spiritDistance set to 0, never read
+                   * again. */
+                  spiritDistance = 0;
+                  if ((i & 1) && frame != 80)
                     Sound_PlayFar(SE_HEAVY_IMPACT);
                 }
               }

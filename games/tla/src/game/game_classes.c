@@ -86,8 +86,7 @@ void Unit_CalculateBaseElements(s32 unitId,
   u32 index;
   s32 levels[ELEMENT_COUNT];
   s32 i;
-  /* FAKEMATCH(signature): the table declared without its const. */
-  extern struct ElementLevelBonus gElement_PowerResistByLevel[16];
+  extern const struct ElementLevelBonus gElement_PowerResistByLevel[16];
 
   if (state->classId == CLASS_NONE) {
     index = Enemy_GetDefinition(state->enemyId)->elementPreset;
@@ -128,7 +127,7 @@ void Unit_CalculateBaseElements(s32 unitId,
     ((s16 (*)[2])destination)[i][0] =
         gElement_PowerResistByLevel[level].power + tenths;
     ((s16 (*)[2])destination)[i][1] =
-        gElement_PowerResistByLevel[level].res + tenths;
+        (gElement_PowerResistByLevel + level)->res + tenths;
 #endif
   }
 }

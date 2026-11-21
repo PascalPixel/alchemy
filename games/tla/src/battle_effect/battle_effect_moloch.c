@@ -2796,6 +2796,8 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   u32 frame[34];
 
   src = gBlitterTemplate;
+  /* FAKEMATCH(signature): dst, a u32 *, holds the blitter's size before it
+   * holds the allocation. */
   dst = (u32 *)BLITTER_BYTES;
   dst = HeapSlot_Alloc(slot, (s32)dst);
 

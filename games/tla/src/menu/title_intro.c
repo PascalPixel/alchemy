@@ -834,10 +834,9 @@ s32 TitleIntro_ShowLighthouse(void) {
   scroll.step = 2;
   if (TitleIntro_ScrollLighthouse(&scroll))
     goto stopped;
-  /* FAKEMATCH(barrier): an empty asm that clobbers r6. */
-  asm("" : : : "r6");
-  Dma_Set(Resource_GetTableEntry(RESOURCE_INTRO_GULL_SPRITES), (void *)OBJ_PLTT,
-          DMA_COPY_WORDS(GULL_PALETTE_BYTES / 4), REG_DMA3);
+  source = Resource_GetTableEntry(RESOURCE_INTRO_GULL_SPRITES);
+  Dma_Set(source, (void *)OBJ_PLTT, DMA_COPY_WORDS(GULL_PALETTE_BYTES / 4),
+          REG_DMA3);
   logo->phase = TITLE_LOGO_GULL;
   logo->frame = -GULL_FRAME_FIELDS;
   logo->timer = 0;

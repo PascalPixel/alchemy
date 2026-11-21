@@ -395,6 +395,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, FIXED *position,
   u8 frameSlot[4];
   void *sheet;
   s32 i, frame, column, entry, sparkEntry, tiles, flying, sparkTiles;
+  s32 size;
 
   work = HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct IceWallWork));
   flying = 0;
@@ -423,12 +424,12 @@ void NorthernReaches_ShatterIceWall(s32 unused, FIXED *position,
     shard->age = 0;
     shard++;
   }
+  /* FAKEMATCH(temporary): size, the sheet's size held in a local before the
+   * sparks are allocated; as SHEET_BUFFER_SIZE at the allocation. */
+  size = SHEET_BUFFER_SIZE;
   sparks =
       Heap_AllocEwram(EXPLOSION_SPARK_COUNT * sizeof(struct ExplosionSpark));
-  /* FAKEMATCH(signature): sheet, a pointer, holds the buffer's size before it
-   * holds the buffer; as Heap_Alloc(SHEET_BUFFER_SIZE). */
-  sheet = (void *)SHEET_BUFFER_SIZE;
-  sheet = Heap_Alloc((s32)sheet);
+  sheet = Heap_Alloc(size);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FIELD_EFFECT_EXPLOSION),
                       sheet);
   sparkEntry = VramCache_FindFreeEntry();

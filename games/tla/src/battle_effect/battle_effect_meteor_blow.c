@@ -121,7 +121,6 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
   s32 billowX;
   s32 canvasX;
   s32 blank;
-  s32 clip;
   s32 offset;
   s32 frame;
   s32 arcAngle;
@@ -209,15 +208,18 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
       v->z = FIXEDtoINT(Trig_Cos(j * DEGtoANG(45)) * r);
     }
   }
-  /* FAKEMATCH(temporary): the blitter's clip flags in a local, which the
-   * dead transfer below takes as its mode; as EFFECT_CLIP_BOUNDS and
-   * CANVAS_COPY_AND_DARKEN at their uses. */
-  clip = EFFECT_CLIP_BOUNDS;
-  BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 8, 7, clip, BLITTER_MAX);
+  /* FAKEMATCH(dead): a once-only block that places clip, the blitter's clip
+   * flags, at its call; as clip declared with the routine's locals, or
+   * EFFECT_CLIP_BOUNDS at the call. */
+  {
+    s32 clip = EFFECT_CLIP_BOUNDS;
+
+    BattleEffect_BuildBlitter(HEAP_SLOT_RAM_CODE, 8, 7, clip, BLITTER_MAX);
+  }
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
   // DEAD: both fields are set again before anything reads them; the ROM keeps
   // the two stores.
-  EFFECT_SET_TRANSFER(work, clip, CANVAS_FILL_WORD(4));
+  EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_DARKEN, CANVAS_FILL_WORD(4));
   EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   Task_Add(BattleEffect_ArmMeteorBlowPaletteDma, TASK_PASS_VBLANK + 126);
   gBgScroll[1].x = 0;

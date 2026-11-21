@@ -342,6 +342,8 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
     mark_visible:
       Window_MarkVisibleTextTiles();
       {
+        /* FAKEMATCH(temporary): navigation, a block's local holding the battle
+         * menu's work for two stores; as BATTLE_MENU_WORK at each. */
         struct BattleMenuWork *navigation = BATTLE_MENU_WORK;
 
         navigation->iconShown[0] = 0;

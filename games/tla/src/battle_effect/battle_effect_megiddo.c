@@ -102,13 +102,13 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   s32 k;
   /* FAKEMATCH(temporary): 0 held in a local for the stores below; as 0. */
   s32 zero;
-  u8 *coronaCorners;
+  struct ModelVertex *coronaCorners;
   DrawRectangle blit[2];
   u8 *sprites;
   struct BattleBackgroundWork *background;
   struct BattleCamera *camera;
   s16 savedYaw;
-  u8 *flameCorners;
+  struct ModelVertex *flameCorners;
   u8 *flameMesh;
   s32 casterVerticalMotion;
   struct MotionObject *caster;
@@ -129,9 +129,6 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   s16 targetList[UNIT_MAX];
   FIXED place[4];
   s32 screen[3];
-  /* FAKEMATCH(signature): the sun sprite's two scales declared as eight
-   * bytes. */
-  u8 req[8];
   struct ModelTexture scratchTexture;
   s32 twice;
 
@@ -142,7 +139,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   camera = Ram_HeapSlots->cameraWork;
   savedYaw = 0;
   zero = 0;
-  coronaCorners = gMapGridCellBuffer;
+  coronaCorners = (struct ModelVertex *)gMapGridCellBuffer;
   transformed = MEGIDDO_TRANSFORMED;
   coronaMesh = MEGIDDO_CORONA_MESH;
   fireRing = Ram_MapCellBuffer + MEGIDDO_FIRE_RING;
@@ -154,7 +151,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE, EFFECT_CLIP_BOUNDS, BLITTER_MAX);
   blit[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
-  flameCorners = work->sheet + MEGIDDO_FLAME_CORNERS;
+  flameCorners = (struct ModelVertex *)(work->sheet + MEGIDDO_FLAME_CORNERS);
   flameMesh = work->sheet + MEGIDDO_FLAME_MESH;
   caster = BattleObject_GetFar(args->user)->object;
   x = 0;
@@ -170,8 +167,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
     s32 r = FIXEDtoINT(Trig_Sin(angle) * MEGIDDO_FLAME_RADIUS);
 
     for (m = 0; m != 2; m++) {
-      struct ModelVertex *v =
-          (struct ModelVertex *)(flameCorners + j * 8 + m * 4);
+      struct ModelVertex *v = &flameCorners[j * 2 + m];
 
       SET_POSITION(v, FIXEDtoINT(Trig_Sin(m * (TRIG_TURN / 8)) * r),
                    y + MEGIDDO_FLAME_RADIUS / 2,
@@ -262,8 +258,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
     // The corona's rim flickers a row at a time.
     for (k = 0; k != MEGIDDO_CORONA_QUADS + 1; k++) {
       for (i = 0; i != 2; i++) {
-        struct ModelVertex *v =
-            (struct ModelVertex *)(coronaCorners + k * 8 + i * 4);
+        struct ModelVertex *v = &coronaCorners[k * 2 + i];
         s32 r = MEGIDDO_CORONA_INNER_RADIUS;
 
         if (i != 1) {
@@ -273,7 +268,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         SET_POSITION(
             v, FIXEDtoINT(Trig_Sin(k * (TRIG_TURN / MEGIDDO_CORONA_QUADS)) * r),
             FIXEDtoINT(Trig_Cos(k * (TRIG_TURN / MEGIDDO_CORONA_QUADS)) * r),
-            zero);
+            0);
       }
     }
 
@@ -386,8 +381,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
     // The sun's sprite, at twice its scale, while it is on screen.
     if (frame > 1) {
       struct Sprite *obj;
-      s32 *pair;
-      s32 v;
+      FIXED req[2];
 
       if (frame > 142) {
         s32 n = frame - 143;
@@ -397,44 +391,39 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
           scale = FIXED_ONE * 3 / 4;
         }
       }
-      pair = (s32 *)req;
-      /* FAKEMATCH(dead): updates of pair that cancel out. */
-      pair += frame;
-      pair -= frame;
-      v = scale * 2;
-      pair[1] = v;
-      *(s32 *)req = v;
+      req[1] = scale * 2;
+      req[0] = scale * 2;
       place[3] = zero;
       place[1] = toFIXED(255);
       place[0] = x;
       place[2] = z;
       obj = work->sprites[0];
       obj->offsetY = 32;
-      obj->offsetX = zero;
+      obj->offsetX = 0;
       if ((u32)(place[2] + toFIXED(52)) < toFIXED(252)) {
-        Render_ApplyProjectedPlacementFar(obj, place, pair, 0);
+        Render_ApplyProjectedPlacementFar(obj, place, req, 0);
       }
     }
     /* FAKEMATCH(dead): a product nothing reads, between the two blocks that
      * test frame > 1. */
     doubled = frame * 2;
     if (frame > 1) {
-      /* FAKEMATCH(signature): the corona's texture declared as eight bytes. */
-      u8 textureBytes[8];
+      struct ModelTexture texture;
+      /* FAKEMATCH(temporary): t, a pointer standing in for the texture's own
+       * address; as texture. */
       struct ModelTexture *t;
-      s32 shade;
 
       model = Render_AllocateModelList(1);
-      t = (struct ModelTexture *)textureBytes;
+      t = &texture;
       // The corona: a 64x16 picture of the fire stripes, its sizes as powers
       // of two.
       model->kind = MODEL_SHADED_MAX;
-      /* FAKEMATCH(barrier): an empty asm that rewrites model and reads t and a
+      /* FAKEMATCH(barrier): an empty asm that rewrites model and reads a
        * zero. */
-      asm("" : "+r"(model) : "r"(t), "r"(0));
-      textureBytes[0] = 6;
+      asm("" : "+r"(model) : "r"(0));
+      t->logWidth = 6;
       model->vertices = transformed;
-      textureBytes[1] = 4;
+      t->logHeight = 4;
       model->texture = t;
       model->shade = 0;
       model->scrollV = 0;
@@ -446,11 +435,13 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
                         PICTURE_BYTES(MEGIDDO_FIRE_STRIPES);
       } while (0);
       model->mesh = coronaMesh;
+      /* FAKEMATCH(dead): a block that only places the width scale's
+       * declaration before the matrix is reset. */
       {
-        FIXED half = FIXED_ONE / 2;
+        FIXED widthScale = FIXED_ONE / 2;
 
         Matrix_Initialize();
-        Matrix_Scale(half, FIXED_ONE, half);
+        Matrix_Scale(widthScale, FIXED_ONE, widthScale);
       }
       Matrix_Translate(x - toFIXED(126), z - toFIXED(76), 0);
       Matrix_ScaleUniform(MEGIDDO_CORONA_SCALE);
@@ -460,15 +451,22 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       Render_DrawModelList(model);
 
       // The flames that wrap the sun as it falls.
+      /* FAKEMATCH(dead): updates of t that cancel out. */
+      t += frame;
+      t -= frame;
       t->logWidth = 5;
       t->logHeight = 5;
       t->pixels = work->sheet + MEGIDDO_DUST_BLOB;
       model->kind = MODEL_SHADED_ADDITIVE;
       model->mesh = flameMesh;
-      /* FAKEMATCH(temporary): shade, -24 held in a local; as -24 at its use. */
-      shade = -24;
-      model->flags = 3;
-      model->shade = shade;
+      /* FAKEMATCH(dead): a block that only places the shade's declaration
+       * before the flags' store. */
+      {
+        s32 shade = -24;
+
+        model->flags = 3;
+        model->shade = shade;
+      }
       model->scrollV = zero;
       if (frame > 142) {
         s32 n = frame - 143;

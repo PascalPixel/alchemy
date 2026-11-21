@@ -167,11 +167,6 @@ void WindowSpriteList_Move(struct WindowSpriteList *list, s32 dx, s32 dy) {
 #define WORLD_MAP_NAME_LEFT 1
 #endif
 
-#define NAME_BOX_X Ram_WorldMapNameBox[0]
-#define NAME_BOX_Y Ram_WorldMapNameBox[1]
-#define NAME_BOX_WIDTH Ram_WorldMapNameBox[2]
-#define NAME_BOX_HEIGHT Ram_WorldMapNameBox[3]
-
 #define WORLD_MAP_HIGH(value) (((s16 *)&(value))[1])
 #define WORLD_MAP_SCALE(value) ((value) * 300 / 640)
 
@@ -437,20 +432,15 @@ void WorldPicture_UpdateMarkers(void) {
         if (cursorY < 0)
           cursorY = 0;
         Text_DrawMessageFar(nearestName, work->window, cursorX, cursorY);
-        {
-          // One local carries width, then height, into the name box.
-          s32 value = width;
-          NAME_BOX_WIDTH = value;
-          value = height;
-          NAME_BOX_HEIGHT = value;
-        }
-        NAME_BOX_X = cursorX;
-        NAME_BOX_Y = cursorY;
+        work->nameBox.width = width;
+        work->nameBox.height = height;
+        work->nameBox.x = cursorX;
+        work->nameBox.y = cursorY;
       }
     }
   } else if (nearest != -1) {
-    width = NAME_BOX_WIDTH;
-    height = NAME_BOX_HEIGHT;
+    width = work->nameBox.width;
+    height = work->nameBox.height;
     if (gWorldPicture_Zoomed == 0) {
       cursorX = nearestX - WORLD_MAP_NAME_LEFT;
       cursorY = nearestY - 11;
@@ -466,14 +456,11 @@ void WorldPicture_UpdateMarkers(void) {
     }
     if (cursorY < 0)
       cursorY = 0;
-    width = cursorX - NAME_BOX_X;
-    /* FAKEMATCH(signature): the name box's y read through
-     * WorldMapAliasedHalfword, a struct that does not describe it; as
-     * NAME_BOX_Y. */
-    height = cursorY - ((struct WorldMapAliasedHalfword *)&NAME_BOX_Y)->value;
+    width = cursorX - work->nameBox.x;
+    height = cursorY - work->nameBox.y;
     WindowSpriteList_Move(work->window, width, height);
-    NAME_BOX_X = cursorX;
-    NAME_BOX_Y = cursorY;
+    work->nameBox.x = cursorX;
+    work->nameBox.y = cursorY;
   }
 
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDCNT, BLDCNT_TGT2_ALL, IO_WRITE_HALFWORD);
@@ -483,10 +470,6 @@ void WorldPicture_UpdateMarkers(void) {
   IO_WRITE_QUEUE_PUSH((u32)&REG_BLDY, 0, IO_WRITE_HALFWORD);
 }
 #undef WORLD_MAP_NAME_LEFT
-#undef NAME_BOX_X
-#undef NAME_BOX_Y
-#undef NAME_BOX_WIDTH
-#undef NAME_BOX_HEIGHT
 #undef WORLD_MAP_HIGH
 #undef WORLD_MAP_SCALE
 

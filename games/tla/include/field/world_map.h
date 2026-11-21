@@ -25,10 +25,16 @@ struct WorldMapWork {
   s32 *cursor;                        ///< the cursor the picture scrolls to
   FIXED scrollX;                      ///< the picture's scroll, 16.16 pixels
   s32 scrollZ;
-  u8 unusedAfterScrollZ[8]; ///< no code names them
-  s16 centered;             ///< nonzero draws resource 35 at the origin
-                            ///< (WorldMapPicture_Draw)
-  u16 mode;                 ///< 0 to look, nonzero to choose a destination
+  /// The box of the place name the World Picture shows, in pixels.
+  struct {
+    s16 x;
+    s16 y;
+    s16 width;
+    s16 height;
+  } nameBox;
+  s16 centered; ///< nonzero draws resource 35 at the origin
+                ///< (WorldMapPicture_Draw)
+  u16 mode;     ///< 0 to look, nonzero to choose a destination
   /// Where the nearest-place search looks from in place of the cursor, 16.16
   /// pixels, when nonzero; the field code only ever clears it.
   FIXED searchX;

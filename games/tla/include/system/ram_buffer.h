@@ -47,11 +47,6 @@
 /// pixels): the setup points it at the work's cursor.
 #define Ram_WorldMapCursor                                                     \
   FIXED_ADDRESS((s32 **), 0x0202a62c, gWorldPicture_Cursor)
-/// The shown place name's box on the world map screen (x, y, width, height,
-/// pixels). WorldPicture_UpdateMarkers reaches the four halfwords from one
-/// address by adding and subtracting their offsets, which only constants give.
-#define Ram_WorldMapNameBox                                                    \
-  FIXED_ADDRESS((s16 *), 0x0202a638, gWorldPicture_NameBox)
 /// The cursor's place when the screen opens (x, then y, 16.16 pixels).
 #define Ram_WorldMapCursorStart                                                \
   FIXED_ADDRESS((s32 *), 0x0202a64c, gWorldPicture_CursorStartX)

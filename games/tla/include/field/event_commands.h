@@ -341,13 +341,6 @@ void Party_RemoveMemberRestored(s32 owner);
 
 struct Actor;
 
-/// A halfword typed beside a word, for the FAKEMATCH that reads the name box's
-/// y in WorldPicture_UpdateMarkers; no such data exists.
-struct WorldMapAliasedHalfword {
-  s16 value;
-  s32 word; ///< never read: the word that gives the struct its alignment
-};
-
 void FieldEffect_CheckCloakTile(void);
 
 void FieldPsynergy_MarkWorldMapTilesUsed(void);

@@ -948,8 +948,6 @@ void AirsRockInside_MovePooledWhirlwind(struct Actor *shot) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 near;
-  s32 *leaderPosition;
-  s32 *shotPosition;
   FIXED speed = toFIXED(3) / 2;
 
   if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
@@ -973,15 +971,13 @@ void AirsRockInside_MovePooledWhirlwind(struct Actor *shot) {
   }
   if (shot->riseCounter == 0) {
     near = 0;
-    leaderPosition = &leader->x.fixed;
-    shotPosition = &shot->x.fixed;
     if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_KEYS) {
-      if (Position_DistanceAbove(leaderPosition, shotPosition) <=
+      if (Position_DistanceAbove(&leader->x.fixed, &shot->x.fixed) <=
               WHIRLWIND_REACH_ABOVE &&
           FIELD_CELL(leader->z.fixed) == FIELD_CELL(shot->z.fixed))
         near = 1;
     } else {
-      if (Position_FlatDistance(leaderPosition, shotPosition) <=
+      if (Position_FlatDistance(&leader->x.fixed, &shot->x.fixed) <=
               WHIRLWIND_REACH &&
           FIELD_CELL(leader->y.fixed) == FIELD_CELL(shot->y.fixed))
         near = 1;
@@ -1269,6 +1265,7 @@ void AirsRockInside_BlowGust(void) {
   struct EffectOptions leaves, dust;
   struct Cell dir, cell;
   s32 i, steps = 0, carried;
+  s32 x, z;
   s32 hit = 0;
 
   Event_Start();
@@ -1350,23 +1347,18 @@ void AirsRockInside_BlowGust(void) {
     steps += 2;
   } while (hit == 0);
   MapCell_GetAttributes(MAPGRID_LAYER_OVERHEAD, cell.x, cell.z);
-  {
-    s32 x;
-    s32 z;
-
-    steps -= 2;
-    x = FIXEDtoINT(TARGET(effect)->x.fixed) + ((steps * dir.x) << 3);
-    z = FIXEDtoINT(TARGET(effect)->z.fixed) + ((steps * dir.z) << 3);
-    ((struct FieldSprite *)gust->sprite)->priority = 1;
-    cell.x = x;
-    cell.z = z;
-    gust->speedLimit = toFIXED(4);
-    gust->acceleration = toFIXED(4);
-    Actor_SetMoveTarget(gust, INTtoFIXED(cell.x), gust->y.fixed,
-                        INTtoFIXED(cell.z));
-    FieldCamera_SetSpeedAndAcceleration(5, 5);
-    FieldCamera_MoveToFX(INTtoFIXED(x), -1, INTtoFIXED(z), 1);
-  }
+  steps -= 2;
+  x = FIXEDtoINT(TARGET(effect)->x.fixed) + ((steps * dir.x) << 3);
+  z = FIXEDtoINT(TARGET(effect)->z.fixed) + ((steps * dir.z) << 3);
+  ((struct FieldSprite *)gust->sprite)->priority = 1;
+  cell.x = x;
+  cell.z = z;
+  gust->speedLimit = toFIXED(4);
+  gust->acceleration = toFIXED(4);
+  Actor_SetMoveTarget(gust, INTtoFIXED(cell.x), gust->y.fixed,
+                      INTtoFIXED(cell.z));
+  FieldCamera_SetSpeedAndAcceleration(5, 5);
+  FieldCamera_MoveToFX(INTtoFIXED(x), -1, INTtoFIXED(z), 1);
   carried = 0;
   while (Actor_HasArrived(gust) == 0) {
     if (gMainRoutineWork.next == SCENE_AIRS_ROCK_INSIDE_ELIXIR_CHEST) {
@@ -1459,10 +1451,7 @@ void AirsRockInside_BlowGust(void) {
       }
       if ((gFrameCount & 1) == 0) {
         dust.priority = 1;
-        {
-          dust.startScaleX = dust.startScaleY =
-              (Random16() & 0xffff) + FIXED_ONE;
-        }
+        dust.startScaleX = dust.startScaleY = (Random16() & 0xffff) + FIXED_ONE;
         velocity.x = Trig_Cos((gFrameCount & 0x1ff) * (TRIG_TURN / 16)) << 1;
         velocity.y = toFIXED(1);
         velocity.z = Trig_Sin((gFrameCount & 0x1ff) * (TRIG_TURN / 16));

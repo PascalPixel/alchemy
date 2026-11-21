@@ -140,6 +140,7 @@ void Matrix_UpdateVertices(struct Vector3 *eye, struct Vector3 *target,
       affinePc = FIXEDtoQ_8_8(MulFX(widthScale, sinYaw));
       line->v = affinePc;
       affine->pc = affinePc;
+      /* FAKEMATCH(dead): the projection's centre read through its taken address. */
       centerX = *&gProjection.centerX;
       // UB: affine coefficients can be negative, and shifting a negative
       // value left is undefined; UBFIX multiplies.

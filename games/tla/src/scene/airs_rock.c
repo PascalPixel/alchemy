@@ -490,6 +490,8 @@ void AirsRock_BlowGust(void) {
   Actor_SetSpriteFlags(gust, 0);
   gust->scaleX = FIXED_ONE * 17 / 10;
   gust->scaleY = FIXED_ONE / 5;
+  /* FAKEMATCH(signature): the gust's motion flags stored through MotionView, a
+   * view of the actor. */
   ((struct MotionView *)gust)->flags = flag;
   ((struct FieldSprite *)gust->sprite)->priority =
       ((struct FieldSprite *)effect->child->sprite)->priority;

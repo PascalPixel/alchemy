@@ -1884,6 +1884,8 @@ void TileCopies_CopyTouchedCells(s32 sourceX, s32 sourceZ, s32 width,
   struct MapLayer *layer = &map->layers[layerIndex];
   s32 i;
 
+  /* FAKEMATCH(signature): gSceneLocalState typed as 1491 TouchCells before the
+   * copies. */
   for (i = 0; cell[i].x != -1; i++) {
     s32 x = cell[i].x - windowX;
     s32 z = cell[i].z - windowZ - ownerHeight;

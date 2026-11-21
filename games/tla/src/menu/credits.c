@@ -1005,6 +1005,8 @@ void EndingPicture_Scroll(void) {
       }
     }
   }
+  /* FAKEMATCH(temporary): d, the step, reused for the map's scroll in pixels;
+     as a local of its own. */
   d = FIXEDtoINT(gEndingPicture_MapScroll);
   gBgScroll[2].x = d;
   gBgScroll[3].x = d;

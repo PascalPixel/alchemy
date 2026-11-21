@@ -626,6 +626,8 @@ void WorldMapPicture_DrawColumn(s32 column, s32 row) {
     cell = column + rowStart;
     cell *= TILE_SIZE_8BPP;
     tile *= TILE_SIZE_8BPP;
+    /* FAKEMATCH(signature): line, an integer, holds the tiles' VRAM address;
+     * as the address written in the copy. */
     line = VRAM + WORLD_PICTURE_FIRST_TILE * TILE_SIZE_8BPP;
     Dma_Set(Ram_MapCellBuffer + cell, (u8 *)line + tile,
             DMA_COPY_WORDS(TILE_SIZE_8BPP / 4), REG_DMA3);

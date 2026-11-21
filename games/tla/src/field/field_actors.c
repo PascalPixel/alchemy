@@ -666,12 +666,12 @@ void ActorSystem_ResumeProjectionAndHideLayers(void) {
 /// Unused: returns 1.
 UNUSED s32 Actor_ReturnTrue(void) { return 1; }
 
-// The priority field (bits 15..14) of a cell's word.
+// The sprite priority an actor takes on the cell under a point.
 #define CELL_PRIORITY(cells, x, z)                                             \
-  (((cells)[(FIELD_CELL(z) << 7) + FIELD_CELL(x)] << 16) >> 30)
-// The layer field (bits 13..12) of a cell's word: the layer plus one.
+  ((cells)[(FIELD_CELL(z) << 7) + FIELD_CELL(x)].actorPriority)
+// The map layer an actor takes on the cell under a point, plus one.
 #define CELL_LAYER(cells, x, z)                                                \
-  (((cells)[(FIELD_CELL(z) << 7) + FIELD_CELL(x)] << 18) >> 30)
+  ((cells)[(FIELD_CELL(z) << 7) + FIELD_CELL(x)].actorLayer)
 
 /// Each frame, with the scrolling camera: places every actor's sprite on the
 /// screen.
@@ -696,7 +696,7 @@ void ActorSystem_PlaceSprites(void) {
   u8 *priorityFlags;
   s32 layer;
   u8 *terrainId;
-  u32 *cells;
+  struct MapCell *cells;
   FIXED feetZ;
   s32 objectHeight;
   FIXED probeX;
@@ -756,7 +756,7 @@ void ActorSystem_PlaceSprites(void) {
          * actor->layer's address. */
         terrainId = &actor->layer;
         layer = *terrainId & 3;
-        cells = (u32 *)map->layers[layer].cells;
+        cells = map->layers[layer].cells;
         // The sprite takes the priority of the cells under its feet: 7 pixels
         // left of its middle and 6 right where the ground is level with its
         // own, and its middle. With none, it takes the map's base priority,

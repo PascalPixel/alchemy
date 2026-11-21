@@ -584,9 +584,9 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
         work->sprites[DAEDALUS_MACHINE + i] = obj;
       } while (0);
       obj->priority = 3;
-      /* FAKEMATCH(barrier): an asm operand on i before the rocket's tiles are
-       * copied; as the copy alone. */
-      __asm__("" : "=r"(i) : "0"(i));
+      /* FAKEMATCH(dead): updates of i that cancel out. */
+      i ^= frame;
+      i ^= frame;
       Iwram_CopyWords((void *)(gVramCacheEntries[obj->slot].offset + OBJ_VRAM0),
                       DECODE_BUFFER + i * OBJ_32X32_8BPP_BYTES, 32 * 64);
       src = (const u8 *)Resource_GetTableEntry(RESOURCE_MISSILE_TILES);

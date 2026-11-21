@@ -1745,10 +1745,10 @@ extern u16 gDehkanPlateau_FallLandingCells[];
                                                                                \
     while (1) {                                                                \
       if (GameFlag_Get(flag)) {                                                \
-        u16 *entry = gDehkanPlateau_FallLandingCells;                          \
         /* FAKEMATCH(temporary): the fall's number held in a local; as         \
          * flag - FLAG_FELL_THROUGH_FIRST at its test. */                      \
         s32 fall = flag - FLAG_FELL_THROUGH_FIRST;                             \
+        u16 *entry = gDehkanPlateau_FallLandingCells;                          \
         s32 y;                                                                 \
         s32 x;                                                                 \
                                                                                \
@@ -1766,8 +1766,6 @@ extern u16 gDehkanPlateau_FallLandingCells[];
           MapGrid_CopyCellsTo(columnSourceX, columnSourceZ, x, y, width, 5);   \
           if (fall == 1)                                                       \
             MapGrid_CopyCellsTo(67, 4, 69, 3, width, 1);                       \
-          /* FAKEMATCH(barrier): an empty asm on entry. */                     \
-          asm("" : : "r"(entry));                                              \
           x -= 64;                                                             \
           y += belowOffsetZ;                                                   \
           MapGrid_CopyCellsTo(sourceX, belowSourceZ, x, y, width, 4);          \

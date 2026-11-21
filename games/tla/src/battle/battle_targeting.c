@@ -1703,8 +1703,9 @@ s32 BattleAbility_ApplyToTarget(struct BattlePlan *plan, s32 slot) {
       } else if (ability->effect == ABILITY_EFFECT_CRYSTAL) {
         maxu = (u16)target->hpMax;
         heal += (s16)maxu / 2;
-        /* FAKEMATCH(barrier): an empty asm on maxu. */
-        asm("" : "+r"(maxu));
+        /* FAKEMATCH(dead): updates of maxu that cancel out. */
+        maxu++;
+        maxu--;
       } else {
 #ifdef UBFIX
         maxu = (u16)target->hpMax;

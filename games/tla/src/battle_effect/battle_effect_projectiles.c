@@ -1017,11 +1017,14 @@ void BattleEffect_RunProjectileVolley(struct BattleEffectParams *args,
                   mode == PROJECTILE_VOLLEY_STUN_STING) {
                 // The streak lets its particle loose.
                 s32 n;
+                /* FAKEMATCH(temporary): held stands for the 0 stored. */
                 s32 held;
 
+                /* FAKEMATCH(dead): a once-only loop round the store. */
                 for (n = 0, held = 0; n != 1; n++) {
-                  /* FAKEMATCH(barrier): the asm operand. */
-                  __asm__("" : "+r"(held));
+                  /* FAKEMATCH(dead): updates of held that cancel out. */
+                  held ^= n;
+                  held ^= n;
                   PARTICLES[PROJECTILE_VOLLEY_FIRST_STREAK + j + n].variant =
                       held;
                 }

@@ -400,11 +400,10 @@ void BattleEffect_RunStatBoost(struct BattleEffectParams *args, u32 mode) {
           draw[0] = (DrawRectangle)Ram_HeapSlots->ramCode;
           EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, drawFlags, additive);
           {
-            void **slot = &Ram_HeapSlots->ramCodePaired;
+            /* FAKEMATCH(dead): slot set to NULL first, never read. */
+            void **slot = NULL;
 
-            /* FAKEMATCH(barrier): an empty asm through slot hides that it holds
-             * the heap slot's address. */
-            __asm__("" : "=r"(slot) : "0"(slot));
+            slot = &Ram_HeapSlots->ramCodePaired;
             draw[1] = (DrawRectangle)*slot;
           }
           if (mode == STAT_BOOST_IMPACT) {

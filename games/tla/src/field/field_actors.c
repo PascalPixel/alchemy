@@ -710,6 +710,8 @@ void ActorSystem_PlaceSprites(void) {
   s8 *basePriority;
 
   map = Ram_HeapSlots->mapGrid;
+  /* FAKEMATCH(temporary): view, a pointer standing in for map->viewX's
+   * address, viewZ read as view[1]. */
   view = &map->viewX;
   viewX = view[0] & FIELD_PIXEL_MASK;
   viewZ = view[1] & FIELD_PIXEL_MASK;
@@ -746,8 +748,12 @@ void ActorSystem_PlaceSprites(void) {
       screenTop = dz - actor->y.fixed;
       if (dx > -toFIXED(32) && dx < toFIXED(272) && screenTop > -toFIXED(32) &&
           screenTop < toFIXED(224) &&
+          /* FAKEMATCH(temporary): priorityFlags, a pointer standing in for
+           * actor->priorityFlags's address. */
           (priorityFlags = &actor->priorityFlags,
            !(*priorityFlags & ACTOR_PRIORITY_NOT_DRAWN))) {
+        /* FAKEMATCH(temporary): terrainId, a pointer standing in for
+         * actor->layer's address. */
         terrainId = &actor->layer;
         layer = *terrainId & 3;
         cells = (u32 *)map->layers[layer].cells;
@@ -765,6 +771,8 @@ void ActorSystem_PlaceSprites(void) {
           leftPriority = 0;
           rightPriority = 0;
           if (!(*priorityFlags & ACTOR_PRIORITY_IGNORES_RISES)) {
+            /* FAKEMATCH(temporary): basePriority, a pointer standing in for
+             * map->basePriority's address. */
             basePriority = &map->basePriority;
             priority = *basePriority;
             if (MapGrid_GetTerrainHeight(layer, probeX, feetZ) ==

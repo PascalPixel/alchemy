@@ -1007,6 +1007,8 @@ UNUSED void Leader_SpinAway(s32 entrance) {
 /// priority while it rests.
 void ApojiiIslands_DrawCellMarkers(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
+  /* FAKEMATCH(temporary): view, a pointer standing in for map->viewX's
+   * address; as map->viewX and map->viewZ by name. */
   s32 *view = &map->viewX;
   s32 viewX = view[0] & FIELD_PIXEL_MASK;
   s32 viewZ = view[1] & FIELD_PIXEL_MASK;
@@ -1043,6 +1045,7 @@ void ApojiiIslands_DrawCellMarkers(void) {
     else
       palette = OBJ_PALETTE(STONE_SPRITE_PALETTE) | OBJ_PRIORITY(2);
     y = FIXEDtoINT(dy);
+    /* FAKEMATCH(temporary): clear, 0 held in a local; as 0 at its use. */
     clear = 0;
     x = FIXEDtoINT(dx);
     left = x - 8;
@@ -1087,7 +1090,11 @@ void ApojiiIslands_StartCellMarkers(void) {
 /// to `level`.
 void ApojiiIslands_AddCellMarkers(u32 base, s32 level, s32 restLevel) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
+  /* FAKEMATCH(temporary): second, a pointer standing in for map->layers[1]'s
+   * address; as map->layers[1] by name. */
   struct MapLayer *second = &map->layers[1];
+  /* FAKEMATCH(temporary): layer, a pointer standing in for map->layers[0]'s
+   * address; as map->layers[0] by name. */
   struct MapLayer *layer = &map->layers[0];
   struct MapCell *cells = second->cells;
   s32 left = layer->offsetX + map->minX;
@@ -1096,6 +1103,8 @@ void ApojiiIslands_AddCellMarkers(u32 base, s32 level, s32 restLevel) {
   s32 width = FIELD_CELL(map->maxX - map->minX);
   s32 height = FIELD_CELL(map->maxZ - map->minZ);
   struct CellMarker *entry = &markers->markers[markers->count];
+  /* FAKEMATCH(temporary): slot, a pointer standing in for the marked shape's
+   * entry; as the entry written through its cast address. */
   s32 *slot = (s32 *)(gMapGridShapes + MAP_SHAPE_MARKED * 4);
   s32 origin = (FIELD_CELL(map->minZ) << 7) + FIELD_CELL(map->minX);
   struct MapCell *cell;

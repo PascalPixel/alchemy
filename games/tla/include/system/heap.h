@@ -24,6 +24,9 @@ struct ScreenTransitionState;
 
 /// The heap's 64 words in IWRAM (gHeapSlots, 0x03000000): the two pools' next
 /// free addresses, then each slot's block once allocated, else null.
+struct RopeWork;
+struct TightropeWork;
+
 struct HeapSlots {
   void *nextEwram;                     ///< the EWRAM pool's next free byte
   void *nextIwram;                     ///< the IWRAM pool's next free byte
@@ -84,8 +87,8 @@ struct HeapSlots {
   void *fadeOverlay;              ///< the fade overlay's work
   void *battleMessage;            ///< the battle message window's work
   void *unusedAfterBattleMessage; ///< no code allocates or reads this slot
-  void *rope;                     ///< a rope's work (struct RopeWork)
-  void *tightrope;                ///< a tightrope's work (struct TightropeWork)
+  struct RopeWork *rope;          ///< a rope's work
+  struct TightropeWork *tightrope; ///< a tightrope's work
   void *hangingVine;      ///< a hanging vine's work (struct HangingVineWork)
   void *battleEntryTimer; ///< the battle's entry transition timer, in frames
   void *titleIntro;       ///< the title intro's state

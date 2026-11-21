@@ -313,7 +313,6 @@ void Caverns_FinishMovingAngaraBlock(void) {
   s32 angle;
   u32 i;
   struct Actor *spawned;
-  u16 *blendControl;
   s32 sum;
 
   work = Ram_HeapSlots->fieldWork;
@@ -335,8 +334,7 @@ void Caverns_FinishMovingAngaraBlock(void) {
     if (kind != 0) {
       actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
       REG_BLDALPHA = BLEND_ALPHA(0, 16);
-      blendControl = (u16 *)&REG_BLDCNT;
-      *blendControl = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
+      REG_BLDCNT = BLDCNT_TGT1_OBJ | BLDCNT_TGT2_ALL;
       sum = kind + 2;
       spawned = OverlayObject_PrepareObject(
           actor->x.fixed, 0, actor->z.fixed + FIELD_CELL_ORIGIN(sum),
@@ -347,7 +345,7 @@ void Caverns_FinishMovingAngaraBlock(void) {
       actor->x.fixed = actor->y.fixed = actor->z.fixed = 0;
       Actor_Release(spawned);
       wait(1);
-      *blendControl = 0;
+      REG_BLDCNT = 0;
     } else {
       OverlayObject_WaitUntilIdle(actor);
       OverlayObject_WaitUntilIdle(actor);
@@ -379,17 +377,15 @@ void Caverns_FinishMovingAngaraBlock(void) {
     actor->motionFlags = 0;
     actor->layer = 0;
     // The velocity array is reused for the position under the actor.
-    {
-      velocity[0] = actor->x.fixed;
-      velocity[1] = actor->y.fixed - toFIXED(16);
-      velocity[2] = actor->z.fixed;
-      other = Actor_FindAtCell(velocity, 1);
-      if (other != NULL) {
-        actor->update = (ObjectUpdate)Caverns_LayerLeaderByTopBlock;
-        actor->riseCounter = 1;
-        other->riseCounter = 1;
-        GameFlag_Set(FLAG_ANGARA_BLOCK_ON_TOP);
-      }
+    velocity[0] = actor->x.fixed;
+    velocity[1] = actor->y.fixed - toFIXED(16);
+    velocity[2] = actor->z.fixed;
+    other = Actor_FindAtCell(velocity, 1);
+    if (other != NULL) {
+      actor->update = (ObjectUpdate)Caverns_LayerLeaderByTopBlock;
+      actor->riseCounter = 1;
+      other->riseCounter = 1;
+      GameFlag_Set(FLAG_ANGARA_BLOCK_ON_TOP);
     }
   }
   height = CELL_HEIGHT_STEPS(

@@ -1867,17 +1867,16 @@ s32 Scene_Initialize(void) {
       if (GameFlag_Get(FLAG_AREA_TEMP_11))
         Actor_SetPosition(ACTOR_SECOND_PILLAR, 520, 872);
       AirsRock_MoveSecondPillar();
-      {
-        /* FAKEMATCH(temporary): layer, a pointer standing in for the map work's
-         * layers[2]; as that layer by name. */
-        struct MapLayer *layer =
-            &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
-
-        layer->offsetX = toFIXED(1408);
-        layer->offsetY = toFIXED(576);
-        layer->scaleX = FIXED_ONE / 4;
-        layer->scaleY = FIXED_ONE / 4;
-      }
+      /* FAKEMATCH(dead): the third layer's offsets and scales stored through
+       * its taken address; as ...->layers[2].offsetX and the rest. */
+      (&((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2])->offsetX =
+          toFIXED(1408);
+      (&((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2])->offsetY =
+          toFIXED(576);
+      (&((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2])->scaleX =
+          FIXED_ONE / 4;
+      (&((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2])->scaleY =
+          FIXED_ONE / 4;
       MapGrid_CenterOnFollowedPoint();
       System_Wait(1);
       break;
@@ -1921,17 +1920,16 @@ s32 Scene_Initialize(void) {
         while ((s32)dma->control < 0)
           ;
         Task_AddFrame(AirsRock_DriftFog, TASK_PASS_VBLANK);
-        {
-          /* FAKEMATCH(temporary): layer, a pointer standing in for the map
-           * work's layers[2]; as that layer by name. */
-          struct MapLayer *layer =
-              &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
-
-          layer->speedX = toFIXED(0.25);
-          layer->speedY = -toFIXED(0.5);
-          layer->maskX = FOG_WRAP - 1;
-          layer->maskY = (FOG_WRAP - 1) * MAPGRID_SIZE;
-        }
+        /* FAKEMATCH(dead): the third layer's speeds and masks stored through
+         * its taken address; as ...->layers[2].speedX and the rest. */
+        (&((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2])->speedX =
+            toFIXED(0.25);
+        (&((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2])->speedY =
+            -toFIXED(0.5);
+        (&((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2])->maskX =
+            FOG_WRAP - 1;
+        (&((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2])->maskY =
+            (FOG_WRAP - 1) * MAPGRID_SIZE;
       } else {
         REG_BLDALPHA = BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
         REG_BLDCNT = BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
@@ -1947,16 +1945,17 @@ s32 Scene_Initialize(void) {
       if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
         LEADER()->z.fixed += toFIXED(16);
       Leader_Lift(-toFIXED(48));
-    case AIRS_ROCK_FUJIN_SHIELD_CHEST_FROM_AIRS_ROCK_INSIDE_VIAL_CHEST: {
-      /* FAKEMATCH(temporary): layer, a pointer standing in for the map work's
-       * layers[2]; as that layer by name. */
-      struct MapLayer *layer =
-          &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
-
-      layer->offsetX = toFIXED(1152);
-      layer->offsetY = toFIXED(800);
-      layer->scaleX = FIXED_ONE * 13 / 16;
-      layer->scaleY = FIXED_ONE * 13 / 16;
+    case AIRS_ROCK_FUJIN_SHIELD_CHEST_FROM_AIRS_ROCK_INSIDE_VIAL_CHEST:
+      /* FAKEMATCH(dead): the third layer's offsets and scales stored through
+       * its taken address; as ...->layers[2].offsetX and the rest. */
+      (&((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2])->offsetX =
+          toFIXED(1152);
+      (&((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2])->offsetY =
+          toFIXED(800);
+      (&((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2])->scaleX =
+          FIXED_ONE * 13 / 16;
+      (&((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2])->scaleY =
+          FIXED_ONE * 13 / 16;
       if (!GameFlag_Get(FLAG_AIRS_ROCK_TOP_OPENED)) {
         MapGrid_CopyCellsTo(29, 9, 62, 2, 9, 9);
         MapGrid_CopyCellAttributes(29, 9, 9, 9, 62, 2);
@@ -1979,7 +1978,6 @@ s32 Scene_Initialize(void) {
         EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
       }
       break;
-    }
     case ENTRANCE_OPEN_THE_TOP:
       MapGrid_CopyCellsTo(29, 9, 62, 2, 9, 9);
       MapGrid_CopyCellAttributes(29, 9, 9, 9, 62, 2);

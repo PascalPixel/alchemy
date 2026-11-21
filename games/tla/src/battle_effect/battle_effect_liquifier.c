@@ -122,26 +122,24 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
 
         if (step->variant >= 0 && frame >= i / 4) {
           s32 odd = i & one;
-          s32 size;
+          s32 size = odd + 5;
           s32 blend;
+          s32 twice;
+          s32 half;
           s32 j;
-          size = odd + 5;
+
           j = 0;
           /* FAKEMATCH(temporary): blend, odd * 4 held as a byte offset into
            * draw; as draw[odd]. */
           blend = odd * 4;
-
-          {
-            s32 twice = size * 2;
-            s32 half = (u32)size >> 1;
-
-            for (; j != 2; j++) {
-              (*(DrawRectangle *)((u8 *)draw + blend))(
-                  canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                  FIXED_INTEGER_PART(step->x) - half,
-                  FIXED_INTEGER_PART(step->y) - size, size, twice);
-              Particle_AdvanceWithGravity2D(step, PARTICLE_DAMPING_NONE, 0);
-            }
+          twice = size * 2;
+          half = (u32)size >> 1;
+          for (; j != 2; j++) {
+            (*(DrawRectangle *)((u8 *)draw + blend))(
+                canvas, graphics + gBattleEffect_MotePictures[size - 1],
+                FIXED_INTEGER_PART(step->x) - half,
+                FIXED_INTEGER_PART(step->y) - size, size, twice);
+            Particle_AdvanceWithGravity2D(step, PARTICLE_DAMPING_NONE, 0);
           }
           step->variant++;
         }
@@ -176,26 +174,24 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
         s32 one = 1;
         if (step->variant >= 0) {
           s32 odd = i & one;
-          s32 size;
+          s32 size = odd + 2;
           s32 blend;
+          s32 twice;
+          s32 half;
           s32 j;
-          size = odd + 2;
+
           j = 0;
           /* FAKEMATCH(temporary): blend, odd * 4 held as a byte offset into
            * draw; as draw[odd]. */
           blend = odd * 4;
-
-          {
-            s32 twice = size * 2;
-            s32 half = (u32)size >> 1;
-
-            for (; j != 4; j++) {
-              (*(DrawRectangle *)((u8 *)draw + blend))(
-                  canvas, graphics + gBattleEffect_MotePictures[size - 1],
-                  FIXED_INTEGER_PART(step->x) - half,
-                  FIXED_INTEGER_PART(step->y) - size, size, twice);
-              Particle_AdvanceWithGravity2D(step, PARTICLE_DAMPING_NONE, 0);
-            }
+          twice = size * 2;
+          half = (u32)size >> 1;
+          for (; j != 4; j++) {
+            (*(DrawRectangle *)((u8 *)draw + blend))(
+                canvas, graphics + gBattleEffect_MotePictures[size - 1],
+                FIXED_INTEGER_PART(step->x) - half,
+                FIXED_INTEGER_PART(step->y) - size, size, twice);
+            Particle_AdvanceWithGravity2D(step, PARTICLE_DAMPING_NONE, 0);
           }
           step->variant++;
         }
@@ -250,7 +246,7 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
         struct Particle *step = &work->particles[LIQUIFIER_FIRST_BEAM + i];
         s32 start = i * 2 + LIQUIFIER_STRIKE_FRAME;
 
-        if (frame >= start && frame < i * 2 + LIQUIFIER_STRIKE_FRAME + 16) {
+        if (frame >= start && frame < start + 16) {
           s32 scale;
 
           scale = FIXED_ONE * 2 - (frame - start) * (FIXED_ONE / 8);
@@ -275,11 +271,10 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
       for (i = 0; i != LIQUIFIER_BEAMS; i++) {
         struct Particle *step = &work->particles[i + LIQUIFIER_FIRST_BEAM];
         s32 age = frame - LIQUIFIER_STRIKE_FRAME - i * 2;
-        s32 back = -age;
 
         if (frame >= i * 2 + LIQUIFIER_STRIKE_FRAME &&
             frame < i * 2 + LIQUIFIER_STRIKE_FRAME + 16) {
-          s32 shade = back * 4;
+          s32 shade = -age * 4;
           s32 scale = age * (FIXED_ONE / 4);
 
           if (age > 7) {

@@ -46,7 +46,6 @@ void FieldPsynergy_UpdatePound(void) {
   struct FieldPsynergyParticle *particle;
   struct EffectSprite *sprite;
   s32 i;
-  s32 base, blue;
   s32 red, green;
   s32 *frames;
 
@@ -56,19 +55,15 @@ void FieldPsynergy_UpdatePound(void) {
     /* FAKEMATCH(temporary): the frame count read through a pointer kept across
      * the loop. */
     frames = &canvas->drawnFrames;
-    /* FAKEMATCH(temporary): base, 9 held in a local and then made 16.16; as
-     * INTtoFIXED(9) at its uses. */
-    base = 9;
-    base = INTtoFIXED(base);
-    /* FAKEMATCH(temporary): blue, RGB(0, 0, RGB_LEVEL_MAX) held in a local; as
-     * the constant at its use. */
-    blue = RGB(0, 0, RGB_LEVEL_MAX);
     // Each colour is a 32nd of a turn further along the cycle, which moves on
     // every other frame.
     for (; i < POUND_SHINE_COLORS; i++) {
-      red = Trig_Sin((INTtoFIXED(((u32)*frames >> 1) + i) + base) >> 5) *
+      FIXED phase = INTtoFIXED(9);
+      s32 blue = RGB(0, 0, RGB_LEVEL_MAX);
+
+      red = Trig_Sin((INTtoFIXED(((u32)*frames >> 1) + i) + phase) >> 5) *
             POUND_SHINE_SWING;
-      green = Trig_Sin((INTtoFIXED(((u32)*frames >> 1) + i) + base) >> 5) *
+      green = Trig_Sin((INTtoFIXED(((u32)*frames >> 1) + i) + phase) >> 5) *
               POUND_SHINE_SWING;
       red = FIXEDtoINT(red) + POUND_SHINE_MIDDLE;
       green = FIXEDtoINT(green) + POUND_SHINE_MIDDLE;

@@ -121,11 +121,10 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
         struct Particle *step = &work->particles[i];
 
         if (step->variant >= 0 && frame >= i / 4) {
-          s32 odd = i;
+          s32 odd = i & one;
           s32 size;
           s32 blend;
           s32 j;
-          odd &= one;
           size = odd + 5;
           j = 0;
           /* FAKEMATCH(temporary): blend, odd * 4 held as a byte offset into
@@ -176,11 +175,10 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
         /* FAKEMATCH(temporary): one, 1 held in a local; as 1 at its uses. */
         s32 one = 1;
         if (step->variant >= 0) {
-          s32 odd = i;
+          s32 odd = i & one;
           s32 size;
           s32 blend;
           s32 j;
-          odd &= one;
           size = odd + 2;
           j = 0;
           /* FAKEMATCH(temporary): blend, odd * 4 held as a byte offset into

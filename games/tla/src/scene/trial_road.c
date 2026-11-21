@@ -3750,8 +3750,6 @@ void TrialRoad_ShowRaceMap(s32 leaderId, s32 rivalId) {
   struct TrialRoadLinkWork *work = HeapSlot_AllocEwram(
       HEAP_SLOT_TRIAL_ROAD_LINK, sizeof(struct TrialRoadLinkWork));
   void *buffer = Heap_AllocEwram(RACE_MAP_PICTURE_BYTES);
-  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
-  s32 zero;
   s32 owner;
   s16 *fade;
   s16 *holdFade;
@@ -3776,9 +3774,10 @@ void TrialRoad_ShowRaceMap(s32 leaderId, s32 rivalId) {
   }
   Actor_GetById(leaderId);
   Actor_GetById(rivalId);
-  zero = 0;
-  *fade = zero;
-  *holdFade = zero;
+  /* FAKEMATCH(dead): owner set to 0, never read again. */
+  owner = 0;
+  *fade = 0;
+  *holdFade = 0;
   Decompress_TaggedLz(gTrialRoad_RaceMapPicture, buffer);
   *vramEntry = VramCache_FindFreeEntry();
   VramCache_Load(*vramEntry, RACE_MAP_PICTURE_BYTES, buffer);

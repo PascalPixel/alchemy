@@ -2847,9 +2847,7 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   PUT(*src++);
 
   if ((flags & COMPOSITE_CLIP_X) == 0) {
-    s32 width = 1 << widthShift;
-
-    PUT(src[0] + width - 1);
+    PUT(src[0] + (1 << widthShift) - 1);
   }
   src += 1;
   if ((flags & COMPOSITE_CLIP_X) != 0) {
@@ -3059,6 +3057,7 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
 
   // Block 5, the exit, where both skips of block 3 land.
   COPY(2);
+  /* FAKEMATCH(dead): a block that only declares end at the comparison. */
   {
     const u32 *end = (const u32 *)gBattleEffect_BitOperands;
 

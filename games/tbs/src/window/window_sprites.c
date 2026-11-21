@@ -269,7 +269,11 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
   if (x > (win->width - 2))
     return;
   if (mode == GLYPH_DRAW_PAGE_ARROW) {
+    /* FAKEMATCH(temporary): column, (u16)-2 held for the one sum; as the
+     * constant at its use. */
     s32 column = (u16)-2;
+    /* FAKEMATCH(temporary): left, a copy of win->x for the one sum; as
+     * win->x. */
     u16 left;
     out = (struct WindowSpriteCellView *)WindowSprite_AcquireFree();
     if (out == NULL)
@@ -282,6 +286,8 @@ void Window_PutGlyph(struct Window *win, u32 tile, u32 x, u32 y, s32 mode) {
     if (*slot == NO_GLYPH_RESOURCE)
       *slot = VramCache_FindFreeEntry();
     left = win->x;
+    /* FAKEMATCH(dead): win->width read through its taken address; as
+     * win->width. */
     attr->x = (left + (column + *(u16 *)&win->width)) * 8 + 4;
     // UB: row is written twice without a sequence point.
 #ifdef UBFIX

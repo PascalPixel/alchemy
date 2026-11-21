@@ -1735,6 +1735,8 @@ void BattleEffect_RunDaedalusStrike(struct BattleEffectParams *args) {
   burst = -DAEDALUS_STRIKE_SPARK_FRAME * SPARKS_PER_BURST;
   do {
     if (frame == 0) {
+      /* FAKEMATCH(temporary): the disc's x held in a local set on the first
+         frame; as toFIXED(64) at its use. */
       discX = toFIXED(64);
       rayOffset = -toFIXED(64);
       rayX = toFIXED(66);

@@ -112,31 +112,17 @@ void Actor_PlaceMovedBlock(void) {
 
   if (target != NULL) {
     struct MapWork *map = Ram_HeapSlots->mapGrid;
-    /* FAKEMATCH(temporary): the cell table read split into its byte offset and
-     * the read. */
-    s32 offset = offsetof(struct MapWork, layers[target->layer].cells);
-    u8 *grid = gMapShapeGrid;
-    struct MapCell *cells = *(struct MapCell **)((u8 *)map + offset);
+    u8 *grid = Ram_MapShapeGrid;
+    struct MapCell *cells = map->layers[target->layer].cells;
     struct MapCell *blocks = map->layers[2].cells;
-    s32 index = ((s32)cells - (s32)Ram_MapCellBuffer) >> 2;
-    u8 *shapes;
-    u32 key;
-    s32 level;
-    s32 slot;
+    u8 *shapes = &grid[((s32)cells - (s32)Ram_MapCellBuffer) >> 2];
+    u32 key = MapGrid_GetTerrainKindFar(target->layer, target->x.fixed,
+                                        target->z.fixed);
+    s32 level = MapGrid_GetTerrainHeightFar(target->layer, target->x.fixed,
+                                            target->z.fixed);
+    s32 slot = Actor_GetCellIndex(target);
     s32 tag;
-    FIXED x;
 
-    /* FAKEMATCH(barrier): an empty asm on the grid index that claims to read
-     * blocks. */
-    asm("" : "+l"(index) : "l"(blocks));
-    shapes = &grid[index];
-    key = MapGrid_GetTerrainKindFar(target->layer, target->x.fixed,
-                                    target->z.fixed);
-    /* FAKEMATCH(temporary): x, a copy of the target's x for the height
-     * read. */
-    x = target->x.fixed;
-    level = MapGrid_GetTerrainHeightFar(target->layer, x, target->z.fixed);
-    slot = Actor_GetCellIndex(target);
     shapes += slot;
     tag = MapCollision_FindOrAddTag(target->layer, key,
                                     HEIGHT_STEPS(level) + BLOCK_HEIGHT_STEPS);

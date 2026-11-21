@@ -738,6 +738,7 @@ void JupiterLighthouse_StartBeam(s32 archerId, s32 angelId, s32 side) {
   s32 largeTile;
   s32 i;
   s32 age;
+  s32 size;
 
   work->first = Actor_Get(archerId);
   work->second = Actor_Get(angelId);
@@ -758,11 +759,11 @@ void JupiterLighthouse_StartBeam(s32 archerId, s32 angelId, s32 side) {
     spark->age = age;
   }
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_GOLDEN_TRIDENT), work);
+  /* FAKEMATCH(temporary): size, the trident's size held in a local before
+   * its entry is found; as TRIDENT_BYTES at the load. */
+  size = TRIDENT_BYTES;
   largeEntry = VramCache_FindFreeEntry();
-  /* FAKEMATCH(signature): sprite, a pointer, holds the trident's size for its
-     load; as the size passed plain. */
-  sprite = (struct EffectSprite *)TRIDENT_BYTES;
-  largeTile = Vram_Load(largeEntry, (s32)sprite, work);
+  largeTile = Vram_Load(largeEntry, size, work);
   work->largeTile = largeTile;
   large = &work->large;
   FieldEffectSprite_Init(large, 30, 7, OBJ_SIZE_32X16, largeTile);

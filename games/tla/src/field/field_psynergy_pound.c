@@ -51,13 +51,11 @@ void FieldPsynergy_UpdatePound(void) {
 
   work->fading = 0;
   if (work->state == 1) {
-    i = 0;
-    /* FAKEMATCH(temporary): the frame count read through a pointer kept across
-     * the loop. */
-    frames = &canvas->drawnFrames;
     // Each colour is a 32nd of a turn further along the cycle, which moves on
     // every other frame.
-    for (; i < POUND_SHINE_COLORS; i++) {
+    /* FAKEMATCH(temporary): the frame count read through a pointer kept across
+     * the loop. */
+    for (i = 0, frames = &canvas->drawnFrames; i < POUND_SHINE_COLORS; i++) {
       FIXED phase = INTtoFIXED(9);
       s32 blue = RGB(0, 0, RGB_LEVEL_MAX);
 

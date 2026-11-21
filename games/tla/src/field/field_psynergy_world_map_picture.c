@@ -467,8 +467,9 @@ void WorldPicture_UpdateMarkers(void) {
     if (cursorY < 0)
       cursorY = 0;
     width = cursorX - NAME_BOX_X;
-    /* FAKEMATCH(temporary): the name box's y read through a pointer to a struct
-     * with an s32 member standing in for its own address. */
+    /* FAKEMATCH(signature): the name box's y read through
+     * WorldMapAliasedHalfword, a struct that does not describe it; as
+     * NAME_BOX_Y. */
     height = cursorY - ((struct WorldMapAliasedHalfword *)&NAME_BOX_Y)->value;
     WindowSpriteList_Move(work->window, width, height);
     NAME_BOX_X = cursorX;

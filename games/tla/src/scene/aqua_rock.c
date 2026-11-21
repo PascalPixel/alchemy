@@ -358,9 +358,9 @@ found:
   coordinate = spot.y;
   Actor_SetMoveTarget(actor, spot.x, coordinate, spot.z);
 end:
-  /* FAKEMATCH(temporary): the form kept. */
+  /* FAKEMATCH(dead): x set to 0, a store nothing reads. */
   x = 0;
-  return x;
+  return 0;
 }
 
 /// A fish's update: its sprite turns with its facing.

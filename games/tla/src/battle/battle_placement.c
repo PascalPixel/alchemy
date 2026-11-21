@@ -24,8 +24,8 @@ void BattleObject_Reset(struct BattleObject *actor, s32 keep) {
         ACTOR_CREATE_KIND(BATTLE_OBJECT_ACTOR_KIND), 0, 0, 0);
   else
     object = actor->object;
-  /* FAKEMATCH(temporary): centre, 0 held in a local declared in a block after
-     the creation; as 0 at its uses. */
+  /* FAKEMATCH(dead): a once-only block placing centre's declaration; as
+     centre declared with the routine's locals. */
   {
     FIXED centre = 0;
 

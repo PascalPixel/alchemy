@@ -826,8 +826,8 @@ void JupiterLighthouse_StartSparkRing(const s32 *from, const s32 *to) {
     sprite->depth = BattleEffect_GetObjectDepth(leader) - 1;
     spark->age = -1;
   }
-  /* FAKEMATCH(temporary): firstSlot, 0 held in a local declared in a block at
-   * its store; as 0 at the store. */
+  /* FAKEMATCH(dead): a block that only places firstSlot's declaration at the
+   * store. */
   {
     s32 firstSlot = 0;
 

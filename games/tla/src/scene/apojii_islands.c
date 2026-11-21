@@ -1042,9 +1042,8 @@ void ApojiiIslands_DrawCellMarkers(void) {
     else
       palette = OBJ_PALETTE(STONE_SPRITE_PALETTE) | OBJ_PRIORITY(2);
     y = FIXEDtoINT(dy);
-    /* FAKEMATCH(temporary): link, the queue word's empty link, 0 held in a
-     * local declared in a block after the palette's choice; as 0 at its store.
-     */
+    /* FAKEMATCH(dead): a once-only block placing link, the queue word's empty
+     * link, after the palette's choice. */
     {
       u32 link = 0;
 

@@ -1395,9 +1395,8 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         aerialTexture.logHeight = 7;
         aerialModel->kind = MODEL_SHADED_MAX;
         aerialModel->mesh = gBattleEffect_ColumnMesh;
-        /* FAKEMATCH(dead): shade set to 0, never read again. */
         shade = 0;
-        aerialModel->shade = 0;
+        aerialModel->shade = shade;
         if (frame == 0) {
           p = work->particles;
           for (i = 0; i != CATASTROPHE_BOLTS; p++, i++) {

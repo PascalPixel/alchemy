@@ -15,8 +15,9 @@ void Whirlwind_Update(struct Actor *self) {
     return;
   }
   Actor_SetAnimationSpeed(self, ANIMATION_STEP_NORMAL);
-  /* FAKEMATCH(signature): the s16 timer stepped as a u16; as ++self->timer. */
-  if ((++*(u16 *)&self->timer & 31) == 31)
+  /* FAKEMATCH(dead): the timer stepped through its own address; as
+   * ++self->timer. */
+  if ((++*&self->timer & 31) == 31)
     Event_PlaySound(SE_WATER_LEVEL);
   ((struct FieldSprite *)self->sprite)->priority =
       ((struct FieldSprite *)leader->sprite)->priority;
@@ -26,9 +27,8 @@ void Whirlwind_Update(struct Actor *self) {
     position[1] = self->y.fixed;
     position[2] = self->z.fixed;
     Camera_WorldToScreen(position);
-    distance = position[0];
-    if (distance <= toFIXED(DISPLAY_WIDTH + 32)) {
-      if (distance >= -toFIXED(32)) {
+    if (position[0] <= toFIXED(DISPLAY_WIDTH + 32)) {
+      if (position[0] >= -toFIXED(32)) {
         if (self->riseCounter == 0) {
           distance = leader->y.fixed - self->y.fixed;
           if (distance < 0)

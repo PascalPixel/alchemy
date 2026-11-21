@@ -426,18 +426,15 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       // The corona: a 64x16 picture of the fire stripes, its sizes as powers
       // of two.
       model->kind = MODEL_SHADED_MAX;
+      /* FAKEMATCH(barrier): an empty asm that rewrites model and reads t and a
+       * zero. */
+      asm("" : "+r"(model) : "r"(t), "r"(0));
       textureBytes[0] = 6;
       model->vertices = transformed;
       textureBytes[1] = 4;
       model->texture = t;
       model->shade = 0;
       model->scrollV = 0;
-      /* FAKEMATCH(barrier): an empty asm that reads and writes *t. */
-      asm("" : "+m"(*t));
-      /* FAKEMATCH(barrier): the second asm on *t. */
-      asm("" : "+m"(*t));
-      /* FAKEMATCH(barrier): the third asm on *t. */
-      asm("" : "+m"(*t));
       /* FAKEMATCH(dead): the pixels' store alone in a once-only block; as the
        * plain store. */
       do {
@@ -449,8 +446,6 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       {
         FIXED half = FIXED_ONE / 2;
 
-        /* FAKEMATCH(barrier): an empty asm on half. */
-        asm("" : "+r"(half));
         Matrix_Initialize();
         Matrix_Scale(half, FIXED_ONE, half);
       }

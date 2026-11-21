@@ -299,7 +299,9 @@ void FieldPsynergy_EndSand(void) {
   s32 particleTiles;
   u8 *motionFlags;
   u8 *rippled;
-
+  /* FAKEMATCH(temporary): source, the sprite's first entry held in a local for
+   * the decode; as the entry passed to the decode. */
+  void *source;
   /* FAKEMATCH(temporary): sprite, the leader's first tile, first holding the
    * picture's size for the decode and the load; as sizeof(work->picture) at
    * both. */
@@ -312,7 +314,6 @@ void FieldPsynergy_EndSand(void) {
   s32 frame;
   s32 i;
   s32 delay;
-  s32 mask;
 
   FieldPsynergy_MarkWorldMapTilesUsed();
   gMainRoutineWork.pendingThird = 0;
@@ -338,17 +339,20 @@ void FieldPsynergy_EndSand(void) {
    * owner->motionFlags's address. */
   motionFlags = &owner->motionFlags;
   *motionFlags = 0;
-  /* FAKEMATCH(temporary): the mask held in a local across the two calls; as
-   * mask = OAM_BELOW_SHAPE_OR_SIZE after them. */
-  mask = OAM_BELOW_SHAPE_OR_SIZE;
-  Actor_SetPositionAndResetMotionFar(
-      owner, owner->x.fixed, owner->y.fixed + toFIXED(10), owner->z.fixed);
-  Actor_SetFirstSpriteAnimationFar(owner, gMainRoutineWork.leaderActorId);
-  // The image's OAM shape and size: square, 32 by 32 pixels.
-  ((u8 *)owner->sprite)[5] &= mask;
-  mask &= ((u8 *)owner->sprite)[7];
-  mask |= OAM_SIZE_32X32_BYTE;
-  ((u8 *)owner->sprite)[7] = mask;
+  /* FAKEMATCH(dead): a once-only block placing mask's declaration before the
+   * two calls. */
+  {
+    s32 mask = OAM_BELOW_SHAPE_OR_SIZE;
+
+    Actor_SetPositionAndResetMotionFar(
+        owner, owner->x.fixed, owner->y.fixed + toFIXED(10), owner->z.fixed);
+    Actor_SetFirstSpriteAnimationFar(owner, gMainRoutineWork.leaderActorId);
+    // The image's OAM shape and size: square, 32 by 32 pixels.
+    ((u8 *)owner->sprite)[5] &= mask;
+    mask &= ((u8 *)owner->sprite)[7];
+    mask |= OAM_SIZE_32X32_BYTE;
+    ((u8 *)owner->sprite)[7] = mask;
+  }
   if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
     ((struct Sprite *)owner->sprite)->scale = FIXED_ONE * 3 / 4;
   owner->facing = DEGtoANG(90);
@@ -356,15 +360,9 @@ void FieldPsynergy_EndSand(void) {
   Animation_ApplyChildValueToFirstFar(owner->sprite, SPRITE_COLOR_HIDDEN);
   wait(1);
   Animation_ApplyChildValueToFirstFar(owner->sprite, SPRITE_COLOR_NORMAL);
-  /* FAKEMATCH(temporary): source, the sprite's first entry held in a local for
-   * the decode, declared in a once-only block round it; as the entry passed to
-   * the decode. */
-  {
-    void *source = ((struct Sprite *)owner->sprite)->entries[0];
-
-    sprite = sizeof(work->picture);
-    FieldPsynergy_DecodePicture(source, work->picture, sprite);
-  }
+  source = ((struct Sprite *)owner->sprite)->entries[0];
+  sprite = sizeof(work->picture);
+  FieldPsynergy_DecodePicture(source, work->picture, sprite);
   Animation_ApplyChildValueToFirstFar(owner->sprite, SPRITE_COLOR_HIDDEN);
   pictureEntry = VramCache_FindFreeEntry();
   sprite = VramCache_Load(pictureEntry, sprite, NULL);

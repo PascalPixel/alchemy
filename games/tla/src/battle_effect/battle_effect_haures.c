@@ -811,15 +811,14 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         cells = work->sheet;
         mesh = work->sheet + HAURES_SHARD_MESHES;
         if (frame == 277) {
-          s32 none;
           s32 j;
 
-          for (j = 0, none = 0; j != HAURES_SHARDS; j++) {
+          for (j = 0; j != HAURES_SHARDS; j++) {
             for (i = 0; i != HAURES_SHARD_CORNERS; i++) {
               struct ModelVertex *corner =
                   (struct ModelVertex *)cells + j * HAURES_SHARD_CORNERS + i;
 
-              corner->z = none;
+              corner->z = 0;
               corner->x = gHaures_PartPoints[j * HAURES_SHARD_ROW + i * 2 + 2] -
                           gHaures_PartPoints[j * HAURES_SHARD_ROW];
               corner->y = gHaures_PartPoints[j * HAURES_SHARD_ROW + i * 2 + 3] -
@@ -829,11 +828,11 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
             SHARD_FACE(mesh, j, 0)[2] = 2;
             SHARD_FACE(mesh, j, 1)[1] = 2;
             SHARD_FACE(mesh, j, 1)[2] = 3;
-            SHARD_FACE(mesh, j, 0)[0] = none;
-            SHARD_FACE(mesh, j, 1)[0] = none;
-            SHARD_FACE(mesh, j, 2)[0] = none;
-            SHARD_FACE(mesh, j, 2)[1] = none;
-            SHARD_FACE(mesh, j, 2)[2] = none;
+            SHARD_FACE(mesh, j, 0)[0] = 0;
+            SHARD_FACE(mesh, j, 1)[0] = 0;
+            SHARD_FACE(mesh, j, 2)[0] = 0;
+            SHARD_FACE(mesh, j, 2)[1] = 0;
+            SHARD_FACE(mesh, j, 2)[2] = 0;
           }
         }
         // DEAD: the shards are solid and draw no texture; the ROM keeps the

@@ -96,6 +96,7 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
   s32 dist;
   s32 arrived;
   s32 width = PROCNE_WHIRLWIND_WIDTH;
+  s32 footHeight = PROCNE_WHIRLWIND_FOOT_HEIGHT;
   s32 heading[8];
   s32 radius[8];
   s32 spin[8];
@@ -236,13 +237,11 @@ void BattleEffect_RunProcne(struct BattleEffectParams *args) {
     // arrives it stands two cels high.
     if (frame >= 16 && frame < PROCNE_ARRIVAL_FRAME) {
       size = frame * 2 - 32;
-      if (size > PROCNE_WHIRLWIND_FOOT_HEIGHT)
-        size = PROCNE_WHIRLWIND_FOOT_HEIGHT;
-      /* FAKEMATCH(temporary): width stands for PROCNE_WHIRLWIND_FOOT_HEIGHT,
-       * the same 48. */
+      if (size > footHeight)
+        size = footHeight;
       draw[0](canvas,
               &work->sheet[frame / 4 % 3 * PROCNE_WHIRLWIND_CEL +
-                           (width - size) * PROCNE_WHIRLWIND_WIDTH],
+                           (footHeight - size) * PROCNE_WHIRLWIND_WIDTH],
               32, 112 - size, width, size);
     }
 

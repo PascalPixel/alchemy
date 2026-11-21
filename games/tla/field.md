@@ -9,6 +9,8 @@ functions that this code asks the scene for.
 
 ## The field sequence
 
+![In Daila Felix walks up to the man by the pond and talks to him (`That tidal wave left a lot of standing water...`), then walks on](https://alchemy.pascalpixel.com/tla/guides/field/talk-walk.gif)
+
 The [field sequence](glossary.md#field-sequence) is one routine. It sets a
 scene up, then goes round one small loop until the party leaves.
 
@@ -66,6 +68,8 @@ is entered, such as a puddle frozen into a pillar of ice
 
 ## Triggers and events
 
+![Daila's healer talked to twice from across the counter: the first time she asks whether the party has time and nowhere to go, Yes, and she sends them to Master Poi; the second time she welcomes them to the sanctum](https://alchemy.pascalpixel.com/tla/guides/map/talk-twice.gif)
+
 The field code knows nothing about a guard. It asks the scene, and the
 scene's answer to "what can happen here?" is a table of
 [triggers](glossary.md#trigger). A row says what the player does (talks,
@@ -100,6 +104,8 @@ spot where the party appears, and how far the screen may scroll there.
 [Exits](src/scene/README.md#exits) shows the rows for that way out.
 
 ## Actors and actor scripts
+
+![Felix walks down into the stream in a cave of the Kandorean Temple and along it, each step in the water a splash, an actor of its own](https://alchemy.pascalpixel.com/tla/guides/field/wading.gif)
 
 Everything that moves or changes by itself is an [actor](glossary.md#actor):
 Felix, a villager, a chest, a puddle in Daila's street. A scene has room

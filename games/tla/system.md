@@ -7,6 +7,8 @@ Four ideas, and you know how the whole program hangs together.
 
 ## The main routine
 
+![Felix walks through a cave of the Kandorean Temple until a random battle starts: the battle (an Angle Worm) is fought and won, and the cave comes back with the party where it stood](https://alchemy.pascalpixel.com/tla/guides/overworld/battle-return.gif)
+
 The game is one routine that starts when the console is switched on and
 never returns. All it does is call a [sequence](glossary.md#sequence) as
 a function and, when that returns, call the next one. There are five
@@ -81,6 +83,8 @@ menu can drop the party into any scene in the game.
 trip round it, and the routine itself is `MainRoutine_Run`.
 
 ## Waiting and tasks
+
+![Felix talks to the man by the pond in Daila: a window opens at the top, the line is typed with a bobbing arrow, the next page follows, and the window closes. (No portrait: Daila's villagers have none.)](https://alchemy.pascalpixel.com/tla/guides/window/talk.gif)
 
 The game has no loop at the top that turns once a frame and calls
 everything else. Its frame loop is inside one function,

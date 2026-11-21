@@ -6,6 +6,8 @@ everyone acts, repeat until one side is beaten or the party runs.
 
 ## What goes in and what comes out
 
+![Felix walks through a cave of the Kandorean Temple until a random battle starts: the battle (an Angle Worm) is fought and won, and the cave comes back with the party where it stood](https://alchemy.pascalpixel.com/tla/guides/overworld/battle-return.gif)
+
 A battle can start two ways: a random encounter, or an
 [event](glossary.md#event) that calls for one, such as Obaba's monster in
 Champa or a Djinni that fights before it joins. Both do the same thing.
@@ -32,6 +34,8 @@ tables. Quake, Earthquake and Quake Sphere are three abilities with three
 strengths that share one picture.
 
 ## A turn
+
+![One turn against the Wild Wolf, Punch Ant and Giant Bat: Sheba and Felix attack and fell the Giant Bat, Jenna defends, the Wild Wolf uses Fatal Fang on Felix, the Punch Ant attacks Jenna, and the next menu opens](https://alchemy.pascalpixel.com/tla/guides/battle/turn-order.gif)
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"lineColor": "#9AA3AE", "edgeLabelBackground": "#FFFFFF"}, "flowchart": {"curve": "basis", "padding": 12}}}%%
@@ -80,6 +84,8 @@ where to look for anything.
 take one each.
 
 ## Rules and pictures run side by side
+
+![Felix casts Quake Sphere at Jenna, Sheba and Piers: rock pillars rise under them, throwing them up](https://alchemy.pascalpixel.com/tla/abilities/quake-sphere.gif)
 
 Watch the end of Quake: the first target flinches while the ground is still
 shaking.

@@ -50,6 +50,8 @@ Evidence: Camelot: the area names in the game's text.
 
 ### Psynergy and PP
 
+![Jenna casts Fire at Felix, Piers and Sheba: fireballs rise, hang and stream into the three](https://alchemy.pascalpixel.com/tla/abilities/fire.gif)
+
 Psynergy is the game's magic. Some is cast in battle, such as Quake, Cure
 and Growth, and some on the field, such as Move, Lash and Reveal
 ([Field code](src/field/README.md#how-field-psynergy-reaches-its-target)).

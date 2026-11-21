@@ -1039,9 +1039,10 @@ void Islets_GiveTurtle(void) {
     leader = Actor_GetById(gMainRoutineWork.leaderActorId);
     if (GameFlag_Get(FLAG_TURTLE_REFUSED) != 0) {
       Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
-      /* FAKEMATCH(temporary): the splash update kept in an actor pointer. */
+      /* FAKEMATCH(dead): a set to the splash update, never read: SPAWN sets
+       * it before its use. */
       a = (struct Actor *)Actor_EmitWadingSplashes;
-      leader->update = (ObjectUpdate)a;
+      leader->update = Actor_EmitWadingSplashes;
       Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 318, 424);
       leader->update = 0;
       Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
@@ -1055,7 +1056,7 @@ void Islets_GiveTurtle(void) {
       if (answer == 0) {
         Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_WEST);
         Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
-        leader->update = (ObjectUpdate)a;
+        leader->update = Actor_EmitWadingSplashes;
         STEP(gMainRoutineWork.leaderActorId, 302, 424);
         SPAWN(a, b, 0)
         STEP(gMainRoutineWork.leaderActorId, 318, 424);

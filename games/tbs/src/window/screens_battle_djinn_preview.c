@@ -166,9 +166,6 @@ struct Window *BattleDjinnMenu_ShowChangePreview(struct Window *win, s32 member,
       __asm__("");
       entry->attributes.bits.x = win->x * 8 + x;
       entry->attributes.bits.y = win->y * 8 + y;
-      /* FAKEMATCH(dead): advancing and restoring the captured pointer. */
-      win++;
-      win--;
       entry->tile.bits.index = VramCache_Reload(
           (u8)sprite->index,
           (s32)(rising ? gDjinnMenu_ArrowUpTiles : gDjinnMenu_ArrowDownTiles));

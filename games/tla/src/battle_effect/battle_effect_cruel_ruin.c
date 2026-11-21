@@ -1648,6 +1648,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
           // last sprite taking the one before the first's.
           if (i == CRUEL_RUIN_CANOPY_COLUMNS - 1) {
             obj = *last;
+            /* FAKEMATCH(temporary): cycle and cycleStart, the modulo by
+             * CRUEL_RUIN_CANOPY_PICTURE_COUNT written out. */
             {
               s32 cycle = phase + (CRUEL_RUIN_CANOPY_CYCLE_BIAS +
                                    CRUEL_RUIN_CANOPY_PICTURE_COUNT - 1);
@@ -1678,6 +1680,8 @@ void BattleEffect_RunCruelRuin(struct BattleEffectParams *args) {
               u = tile - cycleStart;
             }
           }
+          /* FAKEMATCH(dead): a once-only block round the tile's update,
+           * declaring v and x. */
           {
             s32 v = work->particles[row + u].variant & OBJ_TILE_MASK;
             s32 x = obj->attr.all & mask;

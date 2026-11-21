@@ -1531,10 +1531,10 @@ void BattleEffect_RunDaedalus(struct BattleEffectParams *args) {
           p->variant = radius;
           Random16();
           p->velocityZ = radius;
-          /* FAKEMATCH(volatile): velocityZ read back through a volatile view;
-           * as p->velocityZ. */
-          p->z = z - (*(volatile s32 *)&p->velocityZ * FALL_DIVE_SPREAD) -
-                 TRIG_TURN / 32;
+          /* FAKEMATCH(barrier): an empty asm that claims to change velocityZ,
+           * so it is read back; as p->velocityZ. */
+          __asm__("" : "+m"(p->velocityZ));
+          p->z = z - (p->velocityZ * FALL_DIVE_SPREAD) - TRIG_TURN / 32;
           p->velocityX = -Trig_Cos(p->z) * 8;
           p->velocityY = -Trig_Sin(p->z) * 8;
           p->x = INTtoFIXED(Random16() % 80 + 80) - p->velocityX * 24;

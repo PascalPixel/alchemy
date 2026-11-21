@@ -1109,9 +1109,10 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
 
   // The canvas and its characters are cleared for Dull's effect.
   Task_Remove(BattleEffect_ProcessPendingGraphicsTransfer);
+  /* FAKEMATCH(dead): an empty once-only loop before the release. */
+  do {
+  } while (0);
   HeapSlot_Release(HEAP_SLOT_RAM_CODE);
-  /* FAKEMATCH(barrier): an empty asm. */
-  __asm__("");
   Iwram_ClearWordsEntry((void *)BG_CHAR_BLOCK(1), size);
   Iwram_ClearWordsEntry(canvas, size);
   Task_Remove(Palette_StepFadeTransfer);

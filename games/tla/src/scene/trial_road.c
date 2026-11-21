@@ -1248,7 +1248,7 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
     gFieldWork->blockedSteps = FIELD_PUSH_FRAMES + 1;
     return;
   }
-  for (n = 0; n <= 5;) {
+  for (n = 0; n <= 5; n++) {
     x = toX + dx;
     z = toZ + dz;
     if (axis == 0) {
@@ -1267,7 +1267,6 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
         break;
     }
     toX = x;
-    n++;
     toZ = z;
   }
   if (fromX == toX && fromZ == toZ)
@@ -1282,8 +1281,7 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   if (dx < 0 || dz < 0)
     mode = 3;
   Actor_SelectAnimation(actor, mode);
-  Actor_SetMoveTarget(actor, FIELD_CELL_CENTER(toX), 0,
-                      z = FIELD_CELL_CENTER(toZ));
+  Actor_SetMoveTarget(actor, FIELD_CELL_CENTER(toX), 0, FIELD_CELL_CENTER(toZ));
   Event_Wait(6);
   Actor_SetAnimationById(gMainRoutineWork.leaderActorId, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(gMainRoutineWork.leaderActorId, 0.3, 0.2);
@@ -1298,20 +1296,15 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
     Sound_Play(SE_HEAVY_STOP);
   } else {
     Actor_SelectAnimation(actor, 3);
-    Actor_SetMoveTarget(actor, toFIXED(312), 0, z);
+    Actor_SetMoveTarget(actor, toFIXED(312), 0, FIELD_CELL_CENTER(toZ));
     Event_Wait(30);
     Actor_SelectAnimation(actor, 8);
     Actor_WaitForMove(actor);
-    {
-      /* FAKEMATCH(temporary): the flags' address held in a local; as
-       * actor->priorityFlags. */
-      u8 *flags = &actor->priorityFlags;
-
-      /* FAKEMATCH(temporary): mode reused to hold ACTOR_PRIORITY_UNDERFOOT
-       * for the store; as the constant stored. */
-      mode = ACTOR_PRIORITY_UNDERFOOT;
-      *flags = mode;
-    }
+    /* FAKEMATCH(dead): the flags stored through their taken address; as
+     * actor->priorityFlags. */
+    /* FAKEMATCH(temporary): mode reused to hold ACTOR_PRIORITY_UNDERFOOT for
+     * the store; as the constant stored. */
+    *&actor->priorityFlags = mode = ACTOR_PRIORITY_UNDERFOOT;
     Sound_Play(SE_STOP_EXIT_SE);
     Sound_Play(SE_LOG_FALL);
     GameFlag_Set(id + FLAG_LOG_PUSHED_BASE);

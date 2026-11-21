@@ -157,9 +157,6 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
   s32 helpColumn;
   s32 helpRow;
   s32 count;
-#if TLA_PATCH_2
-  s32 *countAddress;
-#endif
   s32 i;
   s32 j;
   s32 n;
@@ -550,10 +547,6 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
               count = 1;
             if (unit->delusion != 0)
               count++;
-#if TLA_PATCH_2
-            /* FAKEMATCH(temporary): count read back through a pointer to it. */
-            countAddress = &count;
-#endif
             if (unit->stun != 0)
               count++;
             if (unit->sleep != 0)
@@ -564,11 +557,8 @@ s32 BattleTarget_RunSelection(s32 selection, s32 mode, u32 spread, u32 kind) {
               count++;
             if (unit->haunt != 0)
               count++;
-#if TLA_PATCH_2
-            if (*countAddress == 0)
-#else
-            if (count == 0)
-#endif
+            /* FAKEMATCH(dead): count read back through its own address. */
+            if (*&count == 0)
               count = 1;
             helpRow = 9 - count;
             if (helpRow <= 3)

@@ -600,9 +600,11 @@ void YampiDesertCave_TryPushLog(void) {
     Teleport_StopShimmer();                                                    \
   }
 
+/// Teleport cast on the north circle carries the party to the south circle.
 DEFINE_TELEPORT_FROM_CIRCLE(YampiDesertCave_TeleportFromNorthCircle,
                             SOUTH_CIRCLE_ENTRANCE)
 
+/// Teleport cast on the south circle carries the party to the north circle.
 DEFINE_TELEPORT_FROM_CIRCLE(YampiDesertCave_TeleportFromSouthCircle,
                             NORTH_CIRCLE_ENTRANCE)
 

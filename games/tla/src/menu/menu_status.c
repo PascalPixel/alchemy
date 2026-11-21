@@ -95,19 +95,17 @@ s32 StatusScreen_SelectMember(s32 slot);
 /// -1.
 s32 PartyMemberChooser_Run(void) {
   struct StatusScreenWork *work = Ram_HeapSlots->menuWork;
-  s32 finished = 0;
+  // Default: result is set for real before it is read.
   s32 result = 0;
 
-  /* FAKEMATCH(dead): StatusScreen_RunPages's loop over its steps, with its
-   * first step alone: it runs once. */
-  while (!finished) {
-    work->selectedSlots[0] = finished;
-    if (StatusScreen_SelectMember(0) == -1)
+  do {
+    work->selectedSlots[0] = 0;
+    if (StatusScreen_SelectMember(0) == -1) {
       result = -1;
-    else
-      result = work->selectedIds[0];
-    finished = 1;
-  }
+      break;
+    }
+    result = work->selectedIds[0];
+  } while (0);
   return result;
 }
 

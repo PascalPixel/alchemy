@@ -876,6 +876,8 @@ prompt:
       if (prizeIndex < result * SPRING_MEDAL_PRIZES_PER_RING +
                            SPRING_MEDAL_PRIZES_PER_RING) {
         do {
+          /* FAKEMATCH(temporary): weight, the prize's weight held for the one
+           * sum; as the weight added directly. */
           s8 weight = *(routine->holdings.prizeWeights + prizeIndex);
 
           totalWeight += weight;

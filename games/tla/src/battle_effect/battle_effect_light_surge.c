@@ -84,11 +84,11 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   s32 angle;
   s32 z;
   s32 turn;
-  void *picture;
   s32 half;
   s32 index;
   s16 *entry;
-  s32 left;
+  /* FAKEMATCH(temporary): out, a second pointer holding &screen, taken from
+   * pos in one arm and as &screen in the other. */
   struct ScreenPoint *out;
   s32 growth;
   u32 scale;
@@ -114,9 +114,7 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   s32 size;
   s32 shade;
   u8 *sprites;
-  /* FAKEMATCH(signature): cells, an s32, holds the map cell buffer's address;
-   * as u8 *. */
-  s32 cells;
+  u8 *cells;
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
@@ -137,12 +135,14 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
 
   // The discs' quarters, packed in the map cell buffer; the sheet's start
   // keeps where each lies.
-  cells = (s32)gMapGridCellBuffer;
+  cells = gMapGridCellBuffer;
   circles = (s16 *)work->sheet;
   offset = 0;
   size = 2;
   for (i = 0; i != SURGE_CIRCLES; i++) {
-    BattleEffect_DrawShadedCircles((u8 *)(offset + cells), size, FIXED_ONE);
+    // As an integer sum, the offset first.
+    BattleEffect_DrawShadedCircles((u8 *)(offset + (s32)cells), size,
+                                   FIXED_ONE);
     circles[i] = offset;
     offset += (i * 2 + 3) * size / 2;
     size += 2;
@@ -154,7 +154,9 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
   /* FAKEMATCH(dead): the texture's address, computed as center's address
    * less 8. */
   vertices = (struct ProjectedVertex *)((s32)&center - 8);
-  for (pos = &screen; frame != LIGHT_SURGE_FRAMES; frame++) {
+  /* FAKEMATCH(temporary): pos holds &screen. */
+  pos = &screen;
+  for (; frame != LIGHT_SURGE_FRAMES; frame++) {
     if (frame == LIGHT_SURGE_DAMAGE_FRAME) {
       EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
     }
@@ -232,32 +234,29 @@ void BattleEffect_RunLightSurge(struct BattleEffectParams *args) {
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED, EFFECT_CLIP_BOUNDS,
                           BLITTER_MAX);
       index <<= 1;
-      /* FAKEMATCH(signature): index, an s32, takes the address of the disc's
-       * entry in circles; as an s16 pointer. */
-      index += (s32)circles;
+      // The entry's and each picture's address as an integer sum, the offset
+      // first.
+      entry = (s16 *)(index + (s32)circles);
       half = size >> 1;
-      picture = (void *)(*(s16 *)index + cells);
-      entry = (s16 *)index;
-      left = x - half;
-      index = y - size;
-      ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(canvas, picture, left,
-                                                    index, half, size);
+      ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
+          canvas, (void *)(*entry + (s32)cells), x - half, y - size, half,
+          size);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                           EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_X, BLITTER_MAX);
       ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
-          canvas, (void *)(*entry + cells), x, index, half, size);
+          canvas, (void *)(*entry + (s32)cells), x, y - size, half, size);
       HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       if (i >= SURGE_FIRST_GLOW) {
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP_Y, BLITTER_MAX);
         ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
-            canvas, (void *)(*entry + cells), x - half, y, half, size);
+            canvas, (void *)(*entry + (s32)cells), x - half, y, half, size);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
         EFFECT_LOAD_BLITTER(HEAP_SLOT_RAM_CODE_PAIRED,
                             EFFECT_CLIP_BOUNDS | COMPOSITE_FLIP, BLITTER_MAX);
         ((DrawRectangle)Ram_HeapSlots->ramCodePaired)(
-            canvas, (void *)(*entry + cells), x, y, half, size);
+            canvas, (void *)(*entry + (s32)cells), x, y, half, size);
         HeapSlot_Release(HEAP_SLOT_RAM_CODE_PAIRED);
       }
     }

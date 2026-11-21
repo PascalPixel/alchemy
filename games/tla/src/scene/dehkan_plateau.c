@@ -1800,20 +1800,12 @@ void DehkanPlateau_InitializeMintChest(void) {
     MapGrid_CopyCellPictureIndicesRect(67, 3, 94, 28, 1, 5);
     MapGrid_CopyCellPictureIndicesRect(3, 69, 30, 93, 1, 4);
   }
-  {
-    /* FAKEMATCH(temporary): the entrance read once as a halfword into a local
-     * and its sign extended by hand; plainly, gMainRoutineWork.entrance in the
-     * test and GameFlag_Set(FLAG_FELL_THROUGH(gMainRoutineWork.entrance)). */
-    s32 entrance = *(u16 *)&gMainRoutineWork.entrance;
+  if ((u16)(gMainRoutineWork.entrance - FIRST_LANDING_ENTRANCE) <=
+      LAST_LANDING_ENTRANCE - FIRST_LANDING_ENTRANCE) {
+    s32 entrance = gMainRoutineWork.entrance;
 
-    if ((u16)(entrance - FIRST_LANDING_ENTRANCE) <=
-        LAST_LANDING_ENTRANCE - FIRST_LANDING_ENTRANCE) {
-      DehkanPlateau_ForgetFall();
-      entrance <<= 16;
-      entrance >>= 16;
-      entrance += FLAG_FELL_THROUGH_FIRST - FIRST_LANDING_ENTRANCE;
-      GameFlag_Set(entrance);
-    }
+    DehkanPlateau_ForgetFall();
+    GameFlag_Set(FLAG_FELL_THROUGH(entrance));
   }
   DehkanPlateau_DrawMintChestFallLanding();
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {

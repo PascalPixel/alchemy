@@ -861,14 +861,14 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
     actor->speedLimit = toFIXED(2);
     actor->acceleration = toFIXED(1);
     FieldActor_SetMoveTarget(actor, 672, 0, 160);
-    FieldActor_WaitForMove((s32)*slot);
+    FieldActor_WaitForMove(*slot);
     Event_PlaySound(SE_CLICK);
     actor = *slot;
     actor->acceleration = toFIXED(1) / 2;
     actor->velocityY = toFIXED(4);
     actor->speedLimit = toFIXED(1);
     FieldActor_SetMoveTarget(actor, 664, 0, 158);
-    FieldActor_WaitForMove((s32)*slot);
+    FieldActor_WaitForMove(*slot);
   }
   FieldEvent_Wait(20);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);

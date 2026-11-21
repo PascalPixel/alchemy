@@ -760,7 +760,8 @@ void JupiterLighthouse_StartBeam(s32 archerId, s32 angelId, s32 side) {
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_GOLDEN_TRIDENT), work);
   largeEntry = VramCache_FindFreeEntry();
   {
-    /* FAKEMATCH(temporary): sprite also holds the size. */
+    /* FAKEMATCH(signature): sprite, a pointer, holds the trident's size for
+     * its load; as the size passed plain. */
     sprite = (struct EffectSprite *)TRIDENT_BYTES;
     largeTile = Vram_Load(largeEntry, (s32)sprite, work);
   }

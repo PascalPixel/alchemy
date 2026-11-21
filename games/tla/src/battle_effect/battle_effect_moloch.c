@@ -3019,14 +3019,11 @@ s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
   PUT(*src++);
   if ((flags & COMPOSITE_FLIP_X) != 0) {
     PUT(src[0]);
+    src += 2;
   } else {
     PUT(src[1]);
+    src += 2;
   }
-  src += 2;
-  /* FAKEMATCH(dead): an empty once-only loop. */
-  do {
-  } while (0);
-
   {
     s32 count = (u32)runSize / 4 * 4;
     s32 size;

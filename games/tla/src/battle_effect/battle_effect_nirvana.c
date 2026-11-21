@@ -121,12 +121,6 @@ void BattleEffect_RunNirvana(struct BattleEffectParams *args) {
   EFFECT_FINISH_CANVAS_ONE_BLITTER();
 }
 
-/// The pixel half of a 16.16 fixed-point value.
-static inline s16 *Fixed_Halves(FIXED *value) {
-  /* FAKEMATCH(wrapper): the halves read through this inline. */
-  return (s16 *)value;
-}
-
 #define STONE_JUSTICE_ROCKS 21
 #define STONE_JUSTICE_FRAMES 107
 /// The frame the rocks are hurled at the target and the battle background
@@ -222,15 +216,17 @@ void BattleEffect_RunStoneJustice(struct BattleEffectParams *args) {
     for (i = 0; i != STONE_JUSTICE_ROCKS; i++) {
       s32 cell;
       u32 width;
+      s32 left;
+      s32 top;
 
       rock = &work->particles[i];
       cell = (i % 5) * 3 + rock->velocityZ / STONE_JUSTICE_SPIN_STEP % 3;
       width = gSpire_ShardWidths[cell];
+      left = FIXED_INTEGER_PART(rock->x) - width / 2 + scrollX;
+      top = FIXED_INTEGER_PART(rock->y) - gSpire_ShardHeights[cell] / 2;
       blit(canvas,
            work->sheet + gSpire_ShardPictures[cell] + BOULDER_SHARD_PICTURES,
-           Fixed_Halves(&rock->x)[1] - width / 2 + scrollX,
-           Fixed_Halves(&rock->y)[1] - gSpire_ShardHeights[cell] / 2, width,
-           gSpire_ShardHeights[cell]);
+           left, top, width, gSpire_ShardHeights[cell]);
       if (rock->variant == 0) {
         if (args->side == EFFECT_SIDE_ENEMIES) {
           if (targetPosition.x >

@@ -911,24 +911,25 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
     if (frame == 0) {
       struct ModelVertex *head;
       s32 row;
+      s32 radius;
 
       yaw = 0;
-      /* FAKEMATCH(signature): vertices, a pointer, holds WIND_FUNNEL_RADIUS
-       * through casts; as an s32 radius of its own. */
+      /* FAKEMATCH(temporary): radius, WIND_FUNNEL_RADIUS held in a local set
+       * in both arms; as the constant at its use. */
       if (mode == WIND_FUNNEL_WAFT) {
         x = WAFT_FUNNEL_HEIGHT;
-        vertices = (u8 *)WIND_FUNNEL_RADIUS;
+        radius = WIND_FUNNEL_RADIUS;
       } else {
         x = AROMA_FUNNEL_HEIGHT;
-        vertices = (u8 *)WIND_FUNNEL_RADIUS;
+        radius = WIND_FUNNEL_RADIUS;
       }
       for (i = 0; i != WIND_FUNNEL_SEGMENTS; i++) {
         row = i * 8;
         for (k = 0; k != 2; k++) {
-          head = (struct ModelVertex *)((u8 *)gMapGridCellBuffer + row) + k;
+          head = (struct ModelVertex *)(gMapGridCellBuffer + row) + k;
           head->y = -(x + k * WIND_FUNNEL_BAND);
           head->x = 0;
-          head->z = (s32)vertices;
+          head->z = radius;
         }
       }
       Sound_PlayFar(SE_WIND_FUNNEL);
@@ -1023,8 +1024,8 @@ void BattleEffect_RunWindFunnel(struct BattleEffectParams *args, s32 mode) {
 
     Matrix_Initialize();
     Matrix_SetLookAt(camera->eye, camera->focus);
-    model = Render_AllocateModelList(1);
     vertices = WIND_FUNNEL_VERTICES;
+    model = Render_AllocateModelList(1);
     shade = 0;
     if (frame <= 15) {
       shade = frame * 4 + MODEL_SHADE_INVISIBLE;

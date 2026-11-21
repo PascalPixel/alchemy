@@ -1478,11 +1478,7 @@ void WorldMap_MeetEcho(void) {
     Actor_FaceActorById(owner, ACTOR_ECHO, 0);
     Event_Wait(10);
     FieldActor_ShowEmote(owner, EMOTE_IN_FRONT | EMOTE_QUESTION, 60);
-    {
-      /* FAKEMATCH(temporary): one, 1 held in a local; as 1 at its uses. */
-      s32 one = 1;
-      *(u16 *)&djinni->userValue = one;
-    }
+    djinni->userValue = 1;
     Actor_FaceActorById(ACTOR_ECHO, owner, 0);
     wait(16);
     flag = Event_GetFlag(FLAG_ALREADY_KNOWS_DJINN);

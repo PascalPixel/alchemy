@@ -129,6 +129,8 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
   s16 targetList[UNIT_MAX];
   FIXED place[4];
   s32 screen[3];
+  /* FAKEMATCH(signature): the sun sprite's two scales declared as eight
+   * bytes. */
   u8 req[8];
   struct ModelTexture scratchTexture;
   s32 twice;
@@ -417,6 +419,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
      * test frame > 1. */
     doubled = frame * 2;
     if (frame > 1) {
+      /* FAKEMATCH(signature): the corona's texture declared as eight bytes. */
       u8 textureBytes[8];
       struct ModelTexture *t;
       s32 shade;
@@ -462,6 +465,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       t->pixels = work->sheet + MEGIDDO_DUST_BLOB;
       model->kind = MODEL_SHADED_ADDITIVE;
       model->mesh = flameMesh;
+      /* FAKEMATCH(temporary): shade, -24 held in a local; as -24 at its use. */
       shade = -24;
       model->flags = 3;
       model->shade = shade;

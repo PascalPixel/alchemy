@@ -108,6 +108,8 @@ s32 BattleItemMenu_Run(s32 member, u16 *entries, s32 count) {
 
   for (i = 0; i < BATTLE_LIST_ROWS; i++) {
     s32 y;
+    /* FAKEMATCH(temporary): t, 0 held for the icon's attr23 word and then
+     * reused for the window's y. */
     u32 t = 0;
 
     y = i * 2;

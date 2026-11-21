@@ -696,14 +696,13 @@ extern s32 gAnemosInnerSanctum_PlateOffsets[][2];
 void AnemosInnerSanctum_LightSymbol(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
-  /* FAKEMATCH(volatile): the blend weights held in a volatile local. */
-  volatile u16 alpha = REG_BLDALPHA;
+  u16 alpha;
   s32 x, z;
-  s32 targetX = 0;
-  s32 targetY = 0;
-  s16 type = work->stepTrigger - TRIGGER_VENUS_SYMBOL + SPRITE_VENUS_DJINNI;
-  s16 trigger = work->stepTrigger;
-  s32 index = trigger - TRIGGER_VENUS_SYMBOL;
+  s32 targetX;
+  s32 targetY;
+  s16 type;
+  s16 trigger;
+  s32 index;
   s32 base;
   u8 count;
   s32 palette;
@@ -711,11 +710,13 @@ void AnemosInnerSanctum_LightSymbol(void) {
   s32 i;
   u8 last;
   struct Actor *djinni;
-  u8 found[20];
-  u8 order[20];
-  struct Vector3 from;
-  struct Vector3 to;
 
+  Io_Read16(&REG_BLDALPHA, &alpha);
+  targetX = 0;
+  targetY = 0;
+  type = work->stepTrigger - TRIGGER_VENUS_SYMBOL + SPRITE_VENUS_DJINNI;
+  trigger = work->stepTrigger;
+  index = trigger - TRIGGER_VENUS_SYMBOL;
   x = ((index & 1) << 8) + 408;
   base = 0;
   count = 0;
@@ -763,159 +764,171 @@ void AnemosInnerSanctum_LightSymbol(void) {
     break;
   }
 
-  for (i = (u16)base; i != (u16)base + DJINNI_SPARE_FIRST; i++) {
-    if (GameFlag_Get(i)) {
-      found[count] = i - base;
-      count++;
+  /* FAKEMATCH(dead): a block that only declares the Djinn lists and the line's
+   * ends after the blend weights, so they take the frame below them. */
+  {
+    u8 found[20];
+    u8 order[20];
+    struct Vector3 from;
+    struct Vector3 to;
+
+    for (i = (u16)base; i != (u16)base + DJINNI_SPARE_FIRST; i++) {
+      if (GameFlag_Get(i)) {
+        found[count] = i - base;
+        count++;
+      }
     }
-  }
-  if (count == 0)
-    return;
+    if (count == 0)
+      return;
 
-  Event_Start();
-  FieldEvent_ResolvePendingActions(0);
-  Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
-  FieldCamera_SetSpeed(0.8);
-  Actor_WalkTo(gMainRoutineWork.leaderActorId, x, z);
-  FieldCamera_MoveToFX(INTtoFIXED(x), -1, INTtoFIXED(z), 1);
-  FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
-  Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
-  Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
-  djinni = (FieldActor_Create((u16)type, leader->x.fixed,
-                              leader->y.fixed + toFIXED(8), leader->z.fixed));
-  djinni->motionFlags = 0;
-  djinni->scaleY = FIXED_ONE / 10;
-  djinni->scaleX = FIXED_ONE / 10;
-  Actor_SetSpriteFlags((s32)djinni, 0);
-  Actor_StartScript(djinni, gAnemosInnerSanctum_DjinniRisesScript);
-  Actor_SetBlendMode(djinni, 1);
-  PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
-  PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
-  PaletteFade_Interpolate(60);
-  BlendScript_Suspend();
-  alpha = alpha & BLEND_ALPHA_TOP_MASK;
-  REG_BLDALPHA = BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
-  cellX = x >> 4;
-  cellZ = z >> 4;
-  column = cellX;
-  row = cellZ;
-  MapGrid_CopyCellsTo(MIDDLE_LAYER_COLUMN + cellX - 1,
-                      cellZ - 3 + LIT_PICTURE_ROWS,
-                      MIDDLE_LAYER_COLUMN + cellX - 1, cellZ - 3, 3, 5);
-  for (i = 0; i != alpha; i++) {
-    REG_BLDALPHA = BLEND_ALPHA(i, BLEND_WEIGHT_MAX);
-    System_Wait(8);
-  }
-  BlendScript_Resume();
-  Event_PlaySound(SE_GLITTER);
-  FieldEvent_Wait(48);
-
-  last = count - 1;
-  for (i = 0; i != count; i++) {
-    s32 pick = Random16();
-    pick &= last;
-
-    order[i] = found[pick];
-    found[pick] = found[last];
-    last--;
-  }
-  for (i = 0; i != count;) {
-    s32 slot;
-
-    from.x = leader->x.fixed + INTtoFIXED(Random16() & 31) - toFIXED(16);
-    from.y = leader->y.fixed + INTtoFIXED(Random16() & 15) + toFIXED(8);
-    from.z = leader->z.fixed + INTtoFIXED(Random16() & 15) - toFIXED(8);
-    slot = order[i];
-    to.x =
-        leader->x.fixed + INTtoFIXED(gAnemosInnerSanctum_PlateOffsets[slot][0]);
-    to.y = leader->y.fixed;
-    to.z =
-        leader->z.fixed + INTtoFIXED(gAnemosInnerSanctum_PlateOffsets[slot][1]);
-    AnemosInnerSanctum_SendSpark(&from, &to, palette);
-    if (i & 1)
-      Event_PlaySound(SE_SPARKS);
-    i++;
-    FieldEvent_Wait(8);
-  }
-
-  if (count != DJINNI_SPARE_FIRST) {
-    FieldEvent_Wait(96);
-    Actor_StartScript(djinni, gAnemosInnerSanctum_DjinniSinksScript);
-    BlendScript_Suspend();
-    alpha = REG_BLDALPHA & BLEND_ALPHA_TOP_MASK;
-    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
+    Event_Start();
+    FieldEvent_ResolvePendingActions(0);
+    Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
+    FieldCamera_SetSpeed(0.8);
+    Actor_WalkTo(gMainRoutineWork.leaderActorId, x, z);
+    FieldCamera_MoveToFX(INTtoFIXED(x), -1, INTtoFIXED(z), 1);
+    FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
+    Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
+    Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_LEADER_ARMS_RAISED);
+    djinni = (FieldActor_Create((u16)type, leader->x.fixed,
+                                leader->y.fixed + toFIXED(8), leader->z.fixed));
+    djinni->motionFlags = 0;
+    djinni->scaleY = FIXED_ONE / 10;
+    djinni->scaleX = FIXED_ONE / 10;
+    Actor_SetSpriteFlags((s32)djinni, 0);
+    Actor_StartScript(djinni, gAnemosInnerSanctum_DjinniRisesScript);
+    Actor_SetBlendMode(djinni, 1);
+    PaletteFade_ApplySource(PALETTE_TINT_NONE, PALETTES_ALL);
+    PaletteFade_ApplyTarget(PALETTE_TINT_WARM, PALETTES_BG);
     PaletteFade_Interpolate(60);
-    for (i = alpha; i != 0;) {
+    BlendScript_Suspend();
+    alpha = alpha & BLEND_ALPHA_TOP_MASK;
+    REG_BLDALPHA = BLEND_ALPHA(0, BLEND_WEIGHT_MAX);
+    cellX = x >> 4;
+    cellZ = z >> 4;
+    column = cellX;
+    row = cellZ;
+    MapGrid_CopyCellsTo(MIDDLE_LAYER_COLUMN + cellX - 1,
+                        cellZ - 3 + LIT_PICTURE_ROWS,
+                        MIDDLE_LAYER_COLUMN + cellX - 1, cellZ - 3, 3, 5);
+    for (i = 0; i != alpha; i++) {
       REG_BLDALPHA = BLEND_ALPHA(i, BLEND_WEIGHT_MAX);
-      i--;
       System_Wait(8);
     }
-    for (i = 0; i != count;) {
-      s32 slot = order[i];
-
-      i++;
-      MapGrid_CopyCellsTo(
-          MIDDLE_LAYER_COLUMN, 0,
-          FIELD_CELL(leader->x.fixed +
-                     INTtoFIXED(gAnemosInnerSanctum_PlateOffsets[slot][0])) +
-              MIDDLE_LAYER_COLUMN,
-          FIELD_CELL(leader->z.fixed +
-                     INTtoFIXED(gAnemosInnerSanctum_PlateOffsets[slot][1])),
-          1, 1);
-    }
-    MapGrid_CopyCellsTo(MIDDLE_LAYER_COLUMN, 0,
-                        MIDDLE_LAYER_COLUMN + column - 1, row - 3, 3, 5);
     BlendScript_Resume();
-    Event_WaitTransitionFrames();
-  } else {
-    Event_SetFlag((s16)work->stepTrigger - TRIGGER_VENUS_SYMBOL +
-                  FLAG_ANEMOS_VENUS_TORCH_LIT);
-    Actor_StartScript(djinni, gAnemosInnerSanctum_DjinniSinksScript);
-    FieldEvent_Wait(60);
-    FieldCamera_SetSpeed(4);
-    FieldCamera_MoveTo(536, CAMERA_KEEP, 120, 1);
+    Event_PlaySound(SE_GLITTER);
+    FieldEvent_Wait(48);
+
+    last = count - 1;
+    for (i = 0; i != count; i++) {
+      s32 pick = Random16();
+      pick &= last;
+
+      order[i] = found[pick];
+      found[pick] = found[last];
+      last--;
+    }
+    for (i = 0; i != count;) {
+      s32 slot;
+
+      from.x = leader->x.fixed + INTtoFIXED(Random16() & 31) - toFIXED(16);
+      from.y = leader->y.fixed + INTtoFIXED(Random16() & 15) + toFIXED(8);
+      from.z = leader->z.fixed + INTtoFIXED(Random16() & 15) - toFIXED(8);
+      slot = order[i];
+      to.x = leader->x.fixed +
+             INTtoFIXED(gAnemosInnerSanctum_PlateOffsets[slot][0]);
+      to.y = leader->y.fixed;
+      to.z = leader->z.fixed +
+             INTtoFIXED(gAnemosInnerSanctum_PlateOffsets[slot][1]);
+      AnemosInnerSanctum_SendSpark(&from, &to, palette);
+      if (i & 1)
+        Event_PlaySound(SE_SPARKS);
+      i++;
+      FieldEvent_Wait(8);
+    }
+
+    if (count != DJINNI_SPARE_FIRST) {
+      FieldEvent_Wait(96);
+      Actor_StartScript(djinni, gAnemosInnerSanctum_DjinniSinksScript);
+      BlendScript_Suspend();
+      alpha = REG_BLDALPHA & BLEND_ALPHA_TOP_MASK;
+      PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
+      PaletteFade_Interpolate(60);
+      for (i = alpha; i != 0;) {
+        REG_BLDALPHA = BLEND_ALPHA(i, BLEND_WEIGHT_MAX);
+        i--;
+        System_Wait(8);
+      }
+      for (i = 0; i != count;) {
+        s32 slot = order[i];
+
+        i++;
+        MapGrid_CopyCellsTo(
+            MIDDLE_LAYER_COLUMN, 0,
+            FIELD_CELL(leader->x.fixed +
+                       INTtoFIXED(gAnemosInnerSanctum_PlateOffsets[slot][0])) +
+                MIDDLE_LAYER_COLUMN,
+            FIELD_CELL(leader->z.fixed +
+                       INTtoFIXED(gAnemosInnerSanctum_PlateOffsets[slot][1])),
+            1, 1);
+      }
+      MapGrid_CopyCellsTo(MIDDLE_LAYER_COLUMN, 0,
+                          MIDDLE_LAYER_COLUMN + column - 1, row - 3, 3, 5);
+      BlendScript_Resume();
+      Event_WaitTransitionFrames();
+    } else {
+      Event_SetFlag((s16)work->stepTrigger - TRIGGER_VENUS_SYMBOL +
+                    FLAG_ANEMOS_VENUS_TORCH_LIT);
+      Actor_StartScript(djinni, gAnemosInnerSanctum_DjinniSinksScript);
+      FieldEvent_Wait(60);
+      FieldCamera_SetSpeed(4);
+      FieldCamera_MoveTo(536, CAMERA_KEEP, 120, 1);
+      FieldCamera_WaitForArrival();
+      Event_PlaySound(SE_SHIMMER);
+      {
+        FIXED ringX = INTtoFIXED(targetX);
+        FIXED ringY = INTtoFIXED(targetY);
+
+        AnemosInnerSanctum_SparkRing(ringX, ringY, palette,
+                                     TRIG_TURN * 8 / 256);
+        FieldEvent_Wait(10);
+        AnemosInnerSanctum_SparkRing(ringX, ringY, palette,
+                                     TRIG_TURN * 9 / 256);
+        FieldEvent_Wait(10);
+        AnemosInnerSanctum_SparkRing(ringX, ringY, palette,
+                                     TRIG_TURN * 10 / 256);
+      }
+      FieldEvent_Wait(12);
+      System_Wait(16);
+      PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
+      PaletteFade_Interpolate(1);
+      System_Wait(1);
+      PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
+      PaletteFade_Interpolate(32);
+      Event_PlaySound(SE_FLASH);
+      AnemosInnerSanctum_LightTorch(targetX, targetY, palette);
+      FieldEvent_Wait(80);
+      if (GameFlag_Get(FLAG_ANEMOS_VENUS_TORCH_LIT) &&
+          GameFlag_Get(FLAG_ANEMOS_MERCURY_TORCH_LIT) &&
+          GameFlag_Get(FLAG_ANEMOS_MARS_TORCH_LIT) &&
+          GameFlag_Get(FLAG_ANEMOS_JUPITER_TORCH_LIT)) {
+        Event_SetFlag(FLAG_ANEMOS_NORTH_DOOR_OPEN);
+        Event_PlaySound(SE_THUMP);
+        MapGrid_CopyCellsTo(52, 7, 33, 7, 1, 2);
+        System_Wait(5);
+        MapGrid_CopyCellsTo(54, 7, 33, 7, 1, 2);
+        MapGrid_SetCellHeight(toFIXED(536), toFIXED(136), 0, 0);
+        System_Wait(60);
+      }
+    }
+
+    Actor_Release(djinni);
+    Event_SetFlag(FLAG_SCENE_TEMP_00);
+    EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
     FieldCamera_WaitForArrival();
-    Event_PlaySound(SE_SHIMMER);
-    {
-      FIXED ringX = INTtoFIXED(targetX);
-      FIXED ringY = INTtoFIXED(targetY);
-
-      AnemosInnerSanctum_SparkRing(ringX, ringY, palette, TRIG_TURN * 8 / 256);
-      FieldEvent_Wait(10);
-      AnemosInnerSanctum_SparkRing(ringX, ringY, palette, TRIG_TURN * 9 / 256);
-      FieldEvent_Wait(10);
-      AnemosInnerSanctum_SparkRing(ringX, ringY, palette, TRIG_TURN * 10 / 256);
-    }
-    FieldEvent_Wait(12);
-    System_Wait(16);
-    PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
-    PaletteFade_Interpolate(1);
-    System_Wait(1);
-    PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
-    PaletteFade_Interpolate(32);
-    Event_PlaySound(SE_FLASH);
-    AnemosInnerSanctum_LightTorch(targetX, targetY, palette);
-    FieldEvent_Wait(80);
-    if (GameFlag_Get(FLAG_ANEMOS_VENUS_TORCH_LIT) &&
-        GameFlag_Get(FLAG_ANEMOS_MERCURY_TORCH_LIT) &&
-        GameFlag_Get(FLAG_ANEMOS_MARS_TORCH_LIT) &&
-        GameFlag_Get(FLAG_ANEMOS_JUPITER_TORCH_LIT)) {
-      Event_SetFlag(FLAG_ANEMOS_NORTH_DOOR_OPEN);
-      Event_PlaySound(SE_THUMP);
-      MapGrid_CopyCellsTo(52, 7, 33, 7, 1, 2);
-      System_Wait(5);
-      MapGrid_CopyCellsTo(54, 7, 33, 7, 1, 2);
-      MapGrid_SetCellHeight(toFIXED(536), toFIXED(136), 0, 0);
-      System_Wait(60);
-    }
+    FieldEvent_Wait(60);
+    Event_End();
   }
-
-  Actor_Release(djinni);
-  Event_SetFlag(FLAG_SCENE_TEMP_00);
-  EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
-  FieldCamera_WaitForArrival();
-  FieldEvent_Wait(60);
-  Event_End();
 }
 
 /// Stepping off a symbol onto the floor between them lets the symbols be

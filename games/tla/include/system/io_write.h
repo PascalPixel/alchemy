@@ -20,9 +20,10 @@
 /// shape.
 #define Io_Write8(v, reg) Io_Write16(v, reg)
 
-// An expression macro (the name is ours) at six sites, the saved background
-// controls of the battle's mosaic fade and the blend level of Gaia Rock's
-// slate: the variable is reached through its address.
+// An expression macro (the name is ours) at seven sites, the saved background
+// controls of the battle's mosaic fade, the blend level of Gaia Rock's slate
+// and the blend weights of Anemos Inner Sanctum's symbol: the variable is
+// reached through its address.
 /// Reads a 16-bit register or memory location into a variable.
 #define Io_Read16(reg, variable) (*(variable) = *(reg))
 

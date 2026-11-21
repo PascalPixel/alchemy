@@ -185,7 +185,7 @@ extern s32 gSerialReceiveDestination;
 // volatile: Serial_StepBlockTransfer, which the VBlank handler runs, counts it
 // up while the link code outside the interrupt polls it, so it is no device.
 extern volatile u16 gSerialReceivedSize;
-extern u8 gSerialPeerPayloads[4][24];
+extern struct SerialTransferState gSerialPeerPayloads[4];
 // volatile: Serial_StartSend and Serial_StartReceive reset it while
 // Serial_StepBlockTransfer, which the VBlank handler runs, steps it, so it is
 // no device.

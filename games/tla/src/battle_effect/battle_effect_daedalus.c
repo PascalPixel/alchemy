@@ -1709,9 +1709,8 @@ void BattleEffect_RunDaedalusStrike(struct BattleEffectParams *args) {
   struct Particle *spark;
   s32 mask;
   FIXED discX;
-  s32 rayOffset;
-  FIXED rayX;
-  FIXED discY;
+  FIXED rayX = toFIXED(66);
+  FIXED discY = toFIXED(80);
 
   canvas = Ram_HeapSlots->battleCanvas;
   work = Ram_HeapSlots->battleEffect;
@@ -1738,9 +1737,6 @@ void BattleEffect_RunDaedalusStrike(struct BattleEffectParams *args) {
       /* FAKEMATCH(temporary): the disc's x held in a local set on the first
          frame; as toFIXED(64) at its use. */
       discX = toFIXED(64);
-      rayOffset = -toFIXED(64);
-      rayX = toFIXED(66);
-      discY = toFIXED(80);
       EFFECT_SET_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
       Iwram_CopyWordsEntry((void *)BG_PLTT,
                            Resource_GetTableEntry(RESOURCE_ORANGE_PALETTE_B),
@@ -1910,8 +1906,8 @@ void BattleEffect_RunDaedalusStrike(struct BattleEffectParams *args) {
 
           Matrix_Initialize();
           k = i & 3;
-          Matrix_Translate(INTtoFIXED(k * 2) + rayX + rayOffset,
-                           discY - INTtoFIXED(k + 2) + rayOffset, 0);
+          Matrix_Translate(INTtoFIXED(k * 2) + rayX - toFIXED(64),
+                           discY - INTtoFIXED(k + 2) - toFIXED(64), 0);
           Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE);
           Matrix_RotateZ(ray->x);
           Matrix_Scale(Trig_Sin(ray->variant *

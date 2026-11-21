@@ -337,11 +337,10 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
     cursorPosition.x = cursor.column * 8;
     cursorPosition.y = cursor.row * 8;
 
-    // The party member's battle figure: its battle object's first sprite
-    // record, as a 64x64, 256-colour sprite at (172, 56).
+    // The party member's battle figure: its battle object's sprite image's
+    // tiles, as a 64x64, 256-colour sprite at (172, 56).
     {
-      struct MenuSprite *figure =
-          (struct MenuSprite *)GetBattleObjectSlotFar(member)->actor->sprite;
+      struct Sprite *figure = GetBattleObjectSlotFar(member)->actor->sprite;
 
       figureSprite.oam.word.attr01 =
           OBJ_SIZE_64X64 | OBJ_256_COLORS | OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
@@ -350,7 +349,7 @@ s32 BattleStatusScreen_Run(u16 *list, s32 listCount, s32 member) {
       /* FAKEMATCH(barrier): an empty asm. */
       __asm__("");
 #endif
-      figureSprite.oam.f.tile = figure->oam.f.tile;
+      figureSprite.oam.f.tile = figure->image.tile;
       figureSprite.oam.f.x = 172;
       figureSprite.oam.f.y = 56;
       Oam_AddSpriteAtDepth(&figureSprite, OAM_DEPTH_WINDOW);

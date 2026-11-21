@@ -374,15 +374,13 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
   s32 (*mul)(s32 a, s32 b);
 
   // Copy the dot-product routine to the stack and call it there.
-  {
-    mul = Iwram_MulFX;
-    /* FAKEMATCH(barrier): an empty asm sets dot to code, clobbers r3, r9. */
-    asm("" : "=r"(dot) : "0"((Dot3Fn)code) : "r3", "r9");
-    divide = Iwram_UnsignedDivideEntry;
-    /* FAKEMATCH(barrier): an empty asm on divide, reads dot, clobbers r1. */
-    asm("" : "+r"(divide) : "r"(dot) : "r1");
-    Dma_Set(RelocatedInnerProduct, code, DMA_COPY_WORDS(8), REG_DMA3);
-  }
+  mul = Iwram_MulFX;
+  /* FAKEMATCH(barrier): an empty asm sets dot to code, clobbers r3, r9. */
+  asm("" : "=r"(dot) : "0"((Dot3Fn)code) : "r3", "r9");
+  divide = Iwram_UnsignedDivideEntry;
+  /* FAKEMATCH(barrier): an empty asm on divide, reads dot, clobbers r1. */
+  asm("" : "+r"(divide) : "r"(dot) : "r1");
+  Dma_Set(RelocatedInnerProduct, code, DMA_COPY_WORDS(8), REG_DMA3);
 
   // The view axis d, pointing from the target back to the eye, normalized:
   // its length in whole pixels, and FIXED_ONE over it, negated.
@@ -393,19 +391,19 @@ void Matrix_BuildLookAt(FIXED *eye, FIXED *target, FIXED *out) {
       Iwram_Sqrt(dot(dx >> 8, dx >> 8, dy >> 8, dy >> 8, dz >> 8, dz >> 8));
   scale = divide(dividend, length) >> RECIPROCAL_SHIFT;
   scale = -scale;
-  /* FAKEMATCH(dead): the normalization in a once-only block. */
-  do {
-    dx = mul(dx, scale);
-    dy = mul(dy, scale);
-    dz = mul(dz, scale);
-    uz = -dx;
-  } while (0);
+  dx = mul(dx, scale);
+  dy = mul(dy, scale);
+  dz = mul(dz, scale);
+  uz = -dx;
 
-  // Normalize the horizontal axis u = (dz, 0, -dx).
-  levelSquared = FIXED_ONE - mul(dy, dy);
-  scale = FIXED_ONE;
-  if (levelSquared > 0)
+  // Normalize the horizontal axis u = (dz, 0, -dx), unless d is vertical.
+  do {
+    levelSquared = FIXED_ONE - mul(dy, dy);
+    scale = FIXED_ONE;
+    if (levelSquared <= 0)
+      break;
     scale = divide(dividend, Math_SqrtFX(levelSquared)) << 1;
+  } while (0);
   ux = mul(dz, scale);
   uz = mul(uz, scale);
 

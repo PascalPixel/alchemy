@@ -122,11 +122,15 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
     state = work->battleMode;
   }
   {
-    /* FAKEMATCH(barrier): an empty asm copies the state into a word local. */
-    u32 shown;
+    u32 shown = state;
 
-    asm("" : "=r"(shown) : "0"(state));
+    /* FAKEMATCH(dead): state cleared after its copy, where nothing reads it. */
+    state = 0;
     if (shown) {
+      /* FAKEMATCH(dead): a test of shown that is never true, around a store
+       * to column, which the next lines set again. */
+      if (shown > 255)
+        column = 0;
       cell =
           work->tilemap[(s16)window->y + window->height - 1] + (s16)window->x;
       column = 1;

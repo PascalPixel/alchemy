@@ -15,6 +15,7 @@ void Whirlwind_Update(struct Actor *self) {
     return;
   }
   Actor_SetAnimationSpeed(self, ANIMATION_STEP_NORMAL);
+  /* FAKEMATCH(signature): the s16 timer stepped as a u16; as ++self->timer. */
   if ((++*(u16 *)&self->timer & 31) == 31)
     Event_PlaySound(SE_WATER_LEVEL);
   ((struct FieldSprite *)self->sprite)->priority =

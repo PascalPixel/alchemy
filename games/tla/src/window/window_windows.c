@@ -596,7 +596,7 @@ s32 Text_ClearCanvas(void) {
 }
 
 /// Fills the text canvas with the window background colour (4).
-void Text_FillCanvasBackground(void) {
+s32 Text_FillCanvasBackground(void) {
   return Iwram_FillWords(TEXT_CANVAS_VRAM, TEXT_CANVAS_SIZE,
                          TEXT_CANVAS_BACKGROUND_WORD);
 }

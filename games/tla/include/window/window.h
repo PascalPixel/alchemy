@@ -470,7 +470,7 @@ void FileList_PlacePartySprites(void);
 /// name entry screen and the talk choices.
 extern const u8 gPointingHandTiles[];
 
-void Text_FillCanvasBackground(void);
+s32 Text_FillCanvasBackground(void);
 
 void PartyStatus_OpenAndWait(void);
 

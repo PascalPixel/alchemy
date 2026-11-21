@@ -139,8 +139,6 @@ s32 BattleSummonMenu_Run(s32 unusedA, s32 unusedB, const u8 *standby) {
       work->holdTilemapUpload = 1;
       {
         s32 x = (s16)window->x + 1;
-        /* FAKEMATCH(barrier): an empty asm on x. */
-        asm("" : "=r"(x) : "0"(x));
         Window_HighlightRect(x, (s16)window->y + drawnRow * 2 + 1,
                              window->width - 2, 1, WINDOW_PALETTE);
       }

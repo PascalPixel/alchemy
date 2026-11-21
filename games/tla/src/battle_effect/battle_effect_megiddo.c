@@ -387,7 +387,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
     if (frame > 1) {
       struct Sprite *obj;
       s32 *pair;
-      s32 v = 0; // Default: set before it is read.
+      s32 v;
 
       if (frame > 142) {
         s32 n = frame - 143;
@@ -472,10 +472,9 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       model->scrollV = zero;
       if (frame > 142) {
         s32 n = frame - 143;
-        // Default: scroll, angle and tilt are each set before they are read.
-        s32 scroll = 0;
-        s32 angle = 0;
-        s32 tilt = 0;
+        s32 scroll;
+        s32 angle;
+        s32 tilt;
 
         if (n > MEGIDDO_FALL_TILT_FRAMES) {
           n = MEGIDDO_FALL_TILT_FRAMES;

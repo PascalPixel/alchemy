@@ -51,8 +51,8 @@ extern s16 gFileScreen_ExtraCodeProgress;
 extern s16 gFileScreen_CodeHeld;
 extern s32 gFileScreen_ExtraCodeHeld;
 extern u32 gFileScreen_PasswordMembers[];
-extern u32 gFileScreen_PasswordFlags[];
-extern u32 gFileScreen_PasswordKeyItems[];
+extern u16 gFileScreen_PasswordFlags[];
+extern u16 gFileScreen_PasswordKeyItems[];
 extern u16 gFileScreen_PasswordStackItems[];
 
 // Edition-specific text and window layout values.
@@ -1082,14 +1082,14 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
   }
 
   for (i = 0; i != 6; i++) {
-    if (GameFlag_Get(((const u16 *)gFileScreen_PasswordFlags)[i])) {
+    if (GameFlag_Get(gFileScreen_PasswordFlags[i])) {
       flagBits |= 1 << i;
     }
   }
 
   for (i = 0; i != 4; i++) {
-    struct PasswordMember *member = (struct PasswordMember *)Unit_Get(
-        ((const struct { s32 id[4]; } *)gFileScreen_PasswordMembers)->id[i]);
+    struct PasswordMember *member =
+        (struct PasswordMember *)Unit_Get(gFileScreen_PasswordMembers[i]);
     struct PasswordStats *stats = &member->stats;
 
     if (stats->baseHp > UNIT_CHARACTER_HP_MAX) {
@@ -1139,7 +1139,7 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
       u16 item = member->inventory[j] & INVENTORY_ITEM_ID_MASK;
 
       for (k = 0; k != 8; k++) {
-        if (item == ((const u16 *)gFileScreen_PasswordKeyItems)[k]) {
+        if (item == gFileScreen_PasswordKeyItems[k]) {
           keyItemBits |= 1 << k;
         }
       }
@@ -1151,8 +1151,8 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     outputIndex = PASSWORD_ITEMS_BYTE;
     bitOffset = 0;
     for (i = 0; i != 4; i++) {
-      struct PasswordMember *member = (struct PasswordMember *)Unit_Get(
-          ((const struct { s32 id[4]; } *)gFileScreen_PasswordMembers)->id[i]);
+      struct PasswordMember *member =
+          (struct PasswordMember *)Unit_Get(gFileScreen_PasswordMembers[i]);
 
       for (n = 0; n != INVENTORY_SLOTS; n++) {
         u16 item;
@@ -1174,8 +1174,8 @@ static s32 FileScreen_PackPasswordData(s32 unused, s32 mode, u8 *out) {
     outputIndex = PASSWORD_QUANTITIES_BYTE;
     bitOffset = -1;
     for (i = 0; i != 4; i++) {
-      struct PasswordMember *member = (struct PasswordMember *)Unit_Get(
-          ((const struct { s32 id[4]; } *)gFileScreen_PasswordMembers)->id[i]);
+      struct PasswordMember *member =
+          (struct PasswordMember *)Unit_Get(gFileScreen_PasswordMembers[i]);
       s32 m;
 
       for (m = 0; m != PASSWORD_STACK_ITEMS; m++) {
@@ -1372,22 +1372,20 @@ u32 gFileScreen_PasswordMembers[] = {
     ISAAC, GARET, IVAN, MIA,
 };
 
-/// The six story flags of the password's PASSWORD_FLAGS_BYTE, as halfwords in
-/// pairs, bits 0 to 5.
-u32 gFileScreen_PasswordFlags[] = {
-    FLAG_DODONPA_LOCKED_UP | FLAG_WON_COLOSSO << 16,
-    FLAG_HSU_RESCUED_WITHOUT_PARTY | FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED << 16,
-    FLAG_VISITED_SICK_DORA | FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES << 16,
+/// The six story flags of the password's PASSWORD_FLAGS_BYTE, bits 0 to 5.
+ALIGNED(4) u16 gFileScreen_PasswordFlags[] = {
+    FLAG_DODONPA_LOCKED_UP, FLAG_WON_COLOSSO,
+    FLAG_HSU_RESCUED_WITHOUT_PARTY, FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED,
+    FLAG_VISITED_SICK_DORA, FLAG_VAULT_WARNED_OF_ESCAPED_THIEVES,
 };
 
-/// The eight Psynergy items, ITEM_ORB_OF_FORCE to ITEM_CATCH_BEADS (as
-/// halfwords in pairs), which Silver and Bronze record in
-/// PASSWORD_KEY_ITEMS_BYTE.
-u32 gFileScreen_PasswordKeyItems[] = {
-    ITEM_ORB_OF_FORCE | ITEM_DOUSE_DROP << 16,
-    ITEM_FROST_JEWEL | ITEM_LIFTING_GEM << 16,
-    ITEM_HALT_GEM | ITEM_CLOAK_BALL << 16,
-    ITEM_CARRY_STONE | ITEM_CATCH_BEADS << 16,
+/// The eight Psynergy items, ITEM_ORB_OF_FORCE to ITEM_CATCH_BEADS, which
+/// Silver and Bronze record in PASSWORD_KEY_ITEMS_BYTE.
+ALIGNED(4) u16 gFileScreen_PasswordKeyItems[] = {
+    ITEM_ORB_OF_FORCE, ITEM_DOUSE_DROP,
+    ITEM_FROST_JEWEL, ITEM_LIFTING_GEM,
+    ITEM_HALT_GEM, ITEM_CLOAK_BALL,
+    ITEM_CARRY_STONE, ITEM_CATCH_BEADS,
 };
 
 /// The items whose quantity a Gold password keeps for each party member.

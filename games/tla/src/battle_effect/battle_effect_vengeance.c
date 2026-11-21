@@ -479,9 +479,6 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
     s32 phase;
     s32 scale;
     s32 timer;
-    /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
-    s32 zero;
-    s32 still;
     s32 width = 7;
 
     shift = 0;
@@ -553,148 +550,157 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
     // The shears' path: still, a backswing from timer 24 and the strike at
     // 33.
     i = 0;
-    /* FAKEMATCH(temporary): still, 0 held in a local; as 0 at its uses. */
-    still = 0;
-    shears = (struct Shears *)work->particles;
-    for (; i != 1; i++, shears++) {
-      if (++shears->timer <= 0) {
-        continue;
-      }
-      if (shears->timer == 1) {
-        shears->velocityX = still;
-        shears->velocityY = still;
-      }
-      if (shears->timer == 24) {
-        shears->velocityX = -toFIXED(4);
-        shears->velocityY = toFIXED(8);
-      }
-      if (shears->timer == 33) {
-        shears->velocityX = toFIXED(4);
-        shears->velocityY = -toFIXED(8);
-        work->shakeFrames = 4;
-        speed = 0;
-        Sound_PlayFar(SE_IMPACT);
-        BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
-                                 POSE_DAMAGE, 0, 8);
-      }
-      if (shears->timer == 35) {
-        shears->velocityX = still;
-        shears->velocityY = still;
-      }
-      // From frame 64 they tumble away, turning faster each frame.
-      if (frame > 63) {
-        s32 tumble = (frame - 64) * (TRIG_TURN / 512);
+    /* FAKEMATCH(dead): a once-only block placing still's declaration after
+     * i is set. */
+    {
+      s32 still = 0;
 
-        shears->velocityY -= toFIXED(1) / 4;
-        if (tumble > TRIG_TURN / 64) {
-          tumble = TRIG_TURN / 64;
+      shears = (struct Shears *)work->particles;
+      for (; i != 1; i++, shears++) {
+        if (++shears->timer <= 0) {
+          continue;
         }
-        shears->roll -= tumble;
-      }
-      if (shears->timer > 8) {
-        if (args->side == EFFECT_SIDE_ENEMIES) {
-          shears->x += shears->velocityX;
-        } else {
-          shears->x -= shears->velocityX;
+        if (shears->timer == 1) {
+          shears->velocityX = still;
+          shears->velocityY = still;
         }
-        shears->y += shears->velocityY;
+        if (shears->timer == 24) {
+          shears->velocityX = -toFIXED(4);
+          shears->velocityY = toFIXED(8);
+        }
+        if (shears->timer == 33) {
+          shears->velocityX = toFIXED(4);
+          shears->velocityY = -toFIXED(8);
+          work->shakeFrames = 4;
+          speed = 0;
+          Sound_PlayFar(SE_IMPACT);
+          BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
+                                   POSE_DAMAGE, 0, 8);
+        }
+        if (shears->timer == 35) {
+          shears->velocityX = still;
+          shears->velocityY = still;
+        }
+        // From frame 64 they tumble away, turning faster each frame.
+        if (frame > 63) {
+          s32 tumble = (frame - 64) * (TRIG_TURN / 512);
+
+          shears->velocityY -= toFIXED(1) / 4;
+          if (tumble > TRIG_TURN / 64) {
+            tumble = TRIG_TURN / 64;
+          }
+          shears->roll -= tumble;
+        }
+        if (shears->timer > 8) {
+          if (args->side == EFFECT_SIDE_ENEMIES) {
+            shears->x += shears->velocityX;
+          } else {
+            shears->x -= shears->velocityX;
+          }
+          shears->y += shears->velocityY;
+        }
       }
     }
 
     vertices = Heap_AllocEwram(32);
     model = Render_AllocateModelList(1);
-    zero = 0;
-    phase = frame - LIFE_SHEAR_SNIP_FRAME;
-    if (phase == -4) {
-      Sound_PlayFar(SE_POWER_UP);
-    }
-    if (phase == 0) {
-      EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
-      work->shakeFrames = 12;
-      BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
-                               POSE_DAMAGE, 0, 8);
-      Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
-                           CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
-      BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
-    }
-    // The blades close from frame 44, shut just after the snip, and part a
-    // little again.
-    timer = work->particles[0].variant;
-    if ((u32)(frame - 44) <= 13) {
-      work->particles[0].velocityZ++;
-    }
-    if (timer >= 0) {
-      scale = LIFE_SHEAR_SHEARS_SCALE;
-      if (frame > 63) {
-        scale = scale - (frame - 64) * (FIXED_ONE / 128);
-      }
-      if (scale > 0) {
-        model->shade = zero;
-        model->kind = MODEL_SHADED;
-        model->vertices = vertices;
-        model->texture = &texture;
-        Matrix_Initialize();
-        Matrix_Translate(work->particles[0].x + INTtoFIXED(shift),
-                         work->particles[0].y, 0);
-        if (args->side == EFFECT_SIDE_PARTY) {
-          Matrix_RotateY(DEGtoANG(180));
-        }
-        Matrix_RotateZ(work->particles[0].z);
-        Matrix_ScaleUniform(scale);
-        texture.logHeight = 5;
-        texture.pixels = LIFE_SHEAR_ORANGE_BLADE;
-        texture.logWidth = width;
-        model->mesh = gLifeShear_OrangeBladeMesh;
-        Matrix_Push();
-        Matrix_RotateZ(
-            (Trig_Sin(work->particles[0].velocityZ * (TRIG_TURN / 32)) >> 3) -
-            DEGtoANG(45));
-        Render_TransformVertices(gLifeShear_BladeCorners, vertices, 4);
-        Render_DrawModelList(model);
-        Matrix_Pop();
-        model->mesh = gLifeShear_PaleBladeMesh;
-        texture.logWidth = width;
-        texture.logHeight = 6;
-        texture.pixels = LIFE_SHEAR_PALE_BLADE;
-        Matrix_RotateZ(
-            DEGtoANG(45) -
-            (Trig_Sin(work->particles[0].velocityZ * (TRIG_TURN / 32)) >> 3));
-        Matrix_Scale(FIXED_ONE, 90000, FIXED_ONE);
-        Render_TransformVertices(gLifeShear_BladeCorners, vertices, 4);
-        Render_DrawModelList(model);
-      }
+    /* FAKEMATCH(dead): a once-only block placing shade's declaration after
+     * the allocation. */
+    {
+      s32 shade = 0;
 
-      // The flash: four flames, long and short in turn, shrinking over eight
-      // frames.
-      if ((u32)phase <= 7) {
-        scale = LIFE_SHEAR_FLASH_SCALE -
-                (frame - LIFE_SHEAR_SNIP_FRAME) * (FIXED_ONE / 8);
-        Matrix_Initialize();
-        if (args->side == EFFECT_SIDE_ENEMIES) {
-          Matrix_Translate(-toFIXED(16), 0, 0);
-        } else {
-          Matrix_Translate(toFIXED(16), 0, 0);
+      phase = frame - LIFE_SHEAR_SNIP_FRAME;
+      if (phase == -4) {
+        Sound_PlayFar(SE_POWER_UP);
+      }
+      if (phase == 0) {
+        EFFECT_SHOW_DAMAGE(SE_HEAVY_IMPACT);
+        work->shakeFrames = 12;
+        BattleEffect_TintBattler(args->targets[0], SPRITE_COLOR_WHITE,
+                                 POSE_DAMAGE, 0, 8);
+        Iwram_FillWordsEntry(canvas, CANVAS_BYTES,
+                             CANVAS_FILL_WORD(CANVAS_LEVEL_BRIGHTEST));
+        BattleMotion_ApplyKnockbackFar(args->targets[0], KNOCKBACK_HURL);
+      }
+      // The blades close from frame 44, shut just after the snip, and part a
+      // little again.
+      timer = work->particles[0].variant;
+      if ((u32)(frame - 44) <= 13) {
+        work->particles[0].velocityZ++;
+      }
+      if (timer >= 0) {
+        scale = LIFE_SHEAR_SHEARS_SCALE;
+        if (frame > 63) {
+          scale = scale - (frame - 64) * (FIXED_ONE / 128);
         }
-        Matrix_Scale(scale, scale, scale);
-        if (args->side == EFFECT_SIDE_PARTY) {
-          Matrix_RotateY(DEGtoANG(180));
-        }
-        model->kind = MODEL_SHADED_MAX;
-        model->mesh = gBattleEffect_SmallSquareMeshReversed;
-        texture.logWidth = 5;
-        texture.logHeight = 5;
-        texture.pixels = LIFE_SHEAR_FLAME;
-        for (i = 0; i != 4; i++) {
+        if (scale > 0) {
+          model->shade = shade;
+          model->kind = MODEL_SHADED;
+          model->vertices = vertices;
+          model->texture = &texture;
+          Matrix_Initialize();
+          Matrix_Translate(work->particles[0].x + INTtoFIXED(shift),
+                           work->particles[0].y, 0);
+          if (args->side == EFFECT_SIDE_PARTY) {
+            Matrix_RotateY(DEGtoANG(180));
+          }
+          Matrix_RotateZ(work->particles[0].z);
+          Matrix_ScaleUniform(scale);
+          texture.logHeight = 5;
+          texture.pixels = LIFE_SHEAR_ORANGE_BLADE;
+          texture.logWidth = width;
+          model->mesh = gLifeShear_OrangeBladeMesh;
           Matrix_Push();
-          Matrix_RotateZ(i * (DEGtoANG(90)) + LIFE_SHEAR_FLASH_ANGLE);
-          Matrix_Scale(FIXED_ONE / 4,
-                       (i & 1) * (FIXED_ONE / 2) + FIXED_ONE * 3 / 4,
-                       FIXED_ONE / 2);
-          Matrix_ScaleUniform(FIXED_ONE);
-          Render_TransformVertices(gBattleEffect_StandingSquareCorners,
-                                   vertices, 4);
+          Matrix_RotateZ(
+              (Trig_Sin(work->particles[0].velocityZ * (TRIG_TURN / 32)) >> 3) -
+              DEGtoANG(45));
+          Render_TransformVertices(gLifeShear_BladeCorners, vertices, 4);
           Render_DrawModelList(model);
           Matrix_Pop();
+          model->mesh = gLifeShear_PaleBladeMesh;
+          texture.logWidth = width;
+          texture.logHeight = 6;
+          texture.pixels = LIFE_SHEAR_PALE_BLADE;
+          Matrix_RotateZ(
+              DEGtoANG(45) -
+              (Trig_Sin(work->particles[0].velocityZ * (TRIG_TURN / 32)) >> 3));
+          Matrix_Scale(FIXED_ONE, 90000, FIXED_ONE);
+          Render_TransformVertices(gLifeShear_BladeCorners, vertices, 4);
+          Render_DrawModelList(model);
+        }
+
+        // The flash: four flames, long and short in turn, shrinking over eight
+        // frames.
+        if ((u32)phase <= 7) {
+          scale = LIFE_SHEAR_FLASH_SCALE -
+                  (frame - LIFE_SHEAR_SNIP_FRAME) * (FIXED_ONE / 8);
+          Matrix_Initialize();
+          if (args->side == EFFECT_SIDE_ENEMIES) {
+            Matrix_Translate(-toFIXED(16), 0, 0);
+          } else {
+            Matrix_Translate(toFIXED(16), 0, 0);
+          }
+          Matrix_Scale(scale, scale, scale);
+          if (args->side == EFFECT_SIDE_PARTY) {
+            Matrix_RotateY(DEGtoANG(180));
+          }
+          model->kind = MODEL_SHADED_MAX;
+          model->mesh = gBattleEffect_SmallSquareMeshReversed;
+          texture.logWidth = 5;
+          texture.logHeight = 5;
+          texture.pixels = LIFE_SHEAR_FLAME;
+          for (i = 0; i != 4; i++) {
+            Matrix_Push();
+            Matrix_RotateZ(i * (DEGtoANG(90)) + LIFE_SHEAR_FLASH_ANGLE);
+            Matrix_Scale(FIXED_ONE / 4,
+                         (i & 1) * (FIXED_ONE / 2) + FIXED_ONE * 3 / 4,
+                         FIXED_ONE / 2);
+            Matrix_ScaleUniform(FIXED_ONE);
+            Render_TransformVertices(gBattleEffect_StandingSquareCorners,
+                                     vertices, 4);
+            Render_DrawModelList(model);
+            Matrix_Pop();
+          }
         }
       }
     }

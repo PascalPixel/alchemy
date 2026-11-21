@@ -55,9 +55,6 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
   void *vertices;
   s32 i;
   s32 k;
-  /* FAKEMATCH(temporary): zero, one constant in a local set before the loop;
-   * as 0 at its uses. */
-  s32 zero;
 
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
@@ -91,9 +88,11 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
     frames = STRONG_HIT_FRAMES;
   }
   Sound_PlayFar(SE_POWER_UP);
-  zero = 0;
 
   for (frame = 0; frame != frames; frame++) {
+    /* FAKEMATCH(temporary): shade, 0 held in a local; as 0 at its use. */
+    s32 shade = 0;
+
     if (frame == 0) {
       /* FAKEMATCH(temporary): the target and the point it is projected to in
        * locals; as args->targets[0] and &hit. */
@@ -137,7 +136,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
     model->kind = MODEL_SHADED;
     model->texture = &texture;
     model->vertices = vertices;
-    model->shade = zero;
+    model->shade = shade;
     if (mode == HEAVY_BLOW_HEAVY_DIVIDE) {
       s32 size;
       s32 angle;
@@ -220,7 +219,7 @@ void BattleEffect_RunHeavyBlow(struct BattleEffectParams *args, s32 mode) {
                                          (FIXED_ONE / STRONG_HIT_FLIGHT_FRAMES);
           work->particles[i].velocityY =
               (target.y - source.y) * (FIXED_ONE / STRONG_HIT_FLIGHT_FRAMES);
-          work->particles[i].z = zero;
+          work->particles[i].z = 0;
           if (args->side == EFFECT_SIDE_ENEMIES) {
             work->particles[i].velocityZ = -(TRIG_TURN / 16);
           } else {
@@ -528,9 +527,6 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
    * frame reserves and never touches; as one DrawRectangle. */
   DrawRectangle draw[2];
   s32 frame;
-  /* FAKEMATCH(temporary): zero, one constant in a local set before the loop;
-   * as 0 at its uses. */
-  s32 zero;
   u8 *sprites;
   void *caster;
   struct BattleEffectWork *work;
@@ -574,12 +570,11 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
     s32 x;
     s32 half;
     s32 offset;
-    s32 (*clear)(void *destination, s32 size) = Iwram_ClearWordsEntry;
 
     size = width / 2;
     half = size / 2;
-    clear(work->sheet + WYRD_CURSE_GLOW,
-          WYRD_CURSE_GLOW_SIZE * WYRD_CURSE_GLOW_SIZE * 2);
+    Iwram_ClearWords(work->sheet + WYRD_CURSE_GLOW,
+                     WYRD_CURSE_GLOW_SIZE * WYRD_CURSE_GLOW_SIZE * 2);
     BattleEffect_DrawShadedCircles(work->sheet, size, FIXED_ONE);
     y = 0;
     offset = 0;
@@ -614,11 +609,11 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
   Resource_LoadAndDecompress(RESOURCE_BURNING_SKULL_SHEET,
                              work->sheet + WYRD_CURSE_SKULL_PICTURES, 0, 0);
 
-  zero = 0;
   for (frame = 0; frame != WYRD_CURSE_FRAMES; frame++) {
     struct RenderModel *model;
     void *vertices;
-
+    /* FAKEMATCH(temporary): shade, 0 held in a local; as 0 at its uses. */
+    s32 shade = 0;
     s32 level;
 
     if (frame == 0) {
@@ -640,7 +635,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
 
         glow->x = INTtoFIXED(screen.x / 2);
         glow->y = toFIXED(WYRD_CURSE_GROUND_Y);
-        glow->variant = zero;
+        glow->variant = 0;
       }
     }
 
@@ -679,7 +674,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
     model->mesh = gBattleEffect_SmallSquareMeshReversed;
     model->texture = &texture;
     model->vertices = vertices;
-    model->shade = zero;
+    model->shade = shade;
 
     // The glow gathers what the landed drops bring.
     {
@@ -722,7 +717,7 @@ void BattleEffect_RunWyrdCurse(struct BattleEffectParams *args) {
       if (frame > i * 4 + WYRD_CURSE_RISE_FRAME) {
         FIXED skullScale = FIXED_ONE * 3125 / 8192;
 
-        model->shade = zero;
+        model->shade = shade;
         texture.pixels = work->sheet + WYRD_CURSE_SKULL_PICTURES +
                          (i % 2) * PICTURE_BYTES(BURNING_SKULL);
         Matrix_Initialize();
@@ -985,11 +980,11 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
   struct ScreenPoint position;
   struct Particle *streak;
   struct Particle *puff;
-  s32 size;
+  s32 size = CANVAS_VIEW_BYTES;
+  s32 offsetX;
   s32 frame;
   s32 i;
 
-  size = CANVAS_VIEW_BYTES;
   work = Ram_HeapSlots->battleEffect;
   canvas = Ram_HeapSlots->battleCanvas;
   BattleEffect_StartCanvasLayer(BGCNT_PRIORITY(1));
@@ -1001,11 +996,8 @@ void BattleEffect_RunHurricane(struct BattleEffectParams *args) {
                        SHEET_PALETTE_BYTES);
   EFFECT_START_TRANSFER(work, CANVAS_COPY_AND_FADE, CANVAS_FADE_HALF);
   EffectPosition_ProjectBattler(args->targets[0], &position);
-  {
-    s32 x = 64 - position.x;
-
-    REG_BG2X = x << 8;
-  }
+  offsetX = CANVAS_SIZE / 2 - position.x;
+  REG_BG2X = offsetX << 8;
 
   Iwram_ClearWordsEntry(work->sheet, PICTURE_BYTES(HURRICANE_STREAK));
   for (i = 0; i != HURRICANE_STREAK_HEIGHT; i++) {

@@ -149,7 +149,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
       chosen = PsynergyMenu_SelectPartySlot(0);
       cancelled = -1;
       /* FAKEMATCH(dead): the test written as an XOR. */
-      if (((u32)chosen ^ (u32)cancelled) == 0) {
+      if ((chosen ^ cancelled) == 0) {
         done = 1;
         useResult = cancelled;
       }

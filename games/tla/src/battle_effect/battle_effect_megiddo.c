@@ -396,8 +396,9 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
         }
       }
       pair = (s32 *)req;
-      /* FAKEMATCH(barrier): an empty asm on pair. */
-      asm("" : "+r"(pair));
+      /* FAKEMATCH(dead): updates of pair that cancel out. */
+      pair += frame;
+      pair -= frame;
       v = scale * 2;
       pair[1] = v;
       *(s32 *)req = v;

@@ -15,26 +15,27 @@
 /// ATTACK_EFFECT_WAVE for Ivan, Mia and Sheba, as their gBattleSprites rows
 /// give, any other none.
 s32 BattleUnit_GetPartyAttackEffect(s32 characterId) {
-  /* FAKEMATCH(temporary): the character copied to id, so that characterId
-     carries the effect. */
-  s32 id = characterId;
+  s32 effect;
 
-  characterId = 0;
-  switch (id) {
+  /* FAKEMATCH(dead): effect set to characterId, a store the next line
+   * overwrites. */
+  effect = characterId;
+  effect = 0;
+  switch (characterId) {
   case ISAAC:
   case GARET:
   case FELIX:
   case JENNA:
   case PIERS:
-    characterId = EFFECT_BY_ID_RANGE | ATTACK_EFFECT_SLASH;
+    effect = EFFECT_BY_ID_RANGE | ATTACK_EFFECT_SLASH;
     break;
   case IVAN:
   case MIA:
   case SHEBA:
-    characterId = EFFECT_BY_ID_RANGE | ATTACK_EFFECT_WAVE;
+    effect = EFFECT_BY_ID_RANGE | ATTACK_EFFECT_WAVE;
     break;
   }
-  return characterId;
+  return effect;
 }
 
 /// Called by Battle_Run at the start of every turn; does nothing.

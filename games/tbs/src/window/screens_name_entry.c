@@ -275,10 +275,10 @@ s32 NameEntry_EditMemberName(s32 member) {
   Text_DrawStringInWindow(gNameEntry_EndKeyLabel, keyboardWindow, 144, 40);
 #endif
   Window_DrawDividerLine(keyboardWindow, 18, 0, 18, 7);
-  work->dirty = textDirty;
+  work->dirty = 1;
   // A zero byte before editedName, as in the Japanese entry, where it is the
   // letter before the first; nothing here reads it.
-  text[0] = result;
+  text[0] = 0;
   {
     s32 i;
 
@@ -539,10 +539,10 @@ s32 NameEntry_EditMemberName(s32 member) {
   Portrait_OpenWindow(Portrait_GetForSpeaker(member), 0, 3, 1);
   Window_CopyTilemapRegion(keyboardWindow, gNameEntry_KeyboardTilemap);
   Window_DrawDividerLine(keyboardWindow, 18, 0, 18, 12);
-  work->dirty = textDirty;
+  work->dirty = 1;
   // A zero byte before editedName: the letter before the first, which
   // NameEntry_AcceptsMark reads when a voicing mark is entered first.
-  text[0] = result;
+  text[0] = 0;
   {
     s32 i;
 

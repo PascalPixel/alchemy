@@ -1096,6 +1096,9 @@ void SeaOfTime_RemoveRock(s32 x, s32 z, s32 actor) {
     Event_End();                                                               \
   }
 
+/// Grind on the first rock of the north part clears it from the sea.
+/// `SeaOfTime_RemoveRock` opens its cells, and `FLAG_ROCK_A_CLEARED` keeps it
+/// from being placed again.
 DEFINE_GRIND_ROCK(SeaOfTime_GrindFirstRock, ACTOR_ROCK_A, FLAG_ROCK_A_CLEARED)
 
 DEFINE_GRIND_ROCK(SeaOfTime_GrindSecondRock, ACTOR_ROCK_B, FLAG_ROCK_B_CLEARED)
@@ -1106,6 +1109,9 @@ DEFINE_GRIND_ROCK(SeaOfTime_GrindFourthRock, ACTOR_ROCK_D, FLAG_ROCK_D_CLEARED)
 
 DEFINE_GRIND_ROCK(SeaOfTime_GrindFifthRock, ACTOR_ROCK_E, FLAG_ROCK_E_CLEARED)
 
+/// Grind on the last rock, the one in the south part, clears it from the sea.
+/// `SeaOfTime_RemoveRock` opens its cells, and `FLAG_LAST_ROCK_CLEARED` keeps
+/// it from being placed again.
 DEFINE_GRIND_ROCK(SeaOfTime_GrindLastRock, ACTOR_ROCK_A, FLAG_LAST_ROCK_CLEARED)
 
 #define DEFINE_LEAVE_BY_EXIT(name, exit)                                       \

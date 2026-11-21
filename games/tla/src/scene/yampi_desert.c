@@ -531,6 +531,8 @@ void YampiDesert_PoundBlitzStake(s32 mode, s32 count) {
     }                                                                          \
   }
 
+/// Pound sinks one of the Psynergy Stone's room's stakes. As it sinks, the
+/// camera follows the King Scorpion buried in the sand until it stops roaming.
 DEFINE_POUND_STAKE_STOPPING_SCORPION(YampiDesert_PoundPsynergyStoneStake,
                                      gYampiDesertPsynergyStoneStakes)
 
@@ -539,6 +541,9 @@ void YampiDesert_PoundBlowMaceChestStake(s32 mode, s32 count) {
   Pound_SinkTarget(gYampiDesertBlowMaceChestStakes, mode, count);
 }
 
+/// Pound sinks one of the King Scorpion's room's stakes. As it sinks, until
+/// the King Scorpion is cornered, the camera follows it under the sand until it
+/// stops roaming.
 DEFINE_POUND_STAKE_STOPPING_SCORPION(YampiDesert_PoundKingScorpionStake,
                                      gYampiDesertKingScorpionStakes)
 

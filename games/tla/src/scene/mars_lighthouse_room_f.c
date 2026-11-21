@@ -642,12 +642,21 @@ void MarsLighthouseRoomF_PushPipe(void) {
     }                                                                          \
   }
 
+/// Burst on the Mars tower's west wall breaks it open. It sets
+/// `FLAG_WEST_WALL_BURST`, and the room is drawn with the wall broken whenever
+/// the party enters it again.
 DEFINE_BURST_WALL(MarsLighthouseRoomF_BurstWestWall, 10, 74,
                   FLAG_WEST_WALL_BURST)
 
+/// Burst on the Mars tower's east wall breaks it open. It sets
+/// `FLAG_EAST_WALL_BURST`, and the room is drawn with the wall broken whenever
+/// the party enters it again.
 DEFINE_BURST_WALL(MarsLighthouseRoomF_BurstEastWall, 18, 82,
                   FLAG_EAST_WALL_BURST)
 
+/// Burst on the Mars tower's center wall breaks it open. It sets
+/// `FLAG_CENTER_WALL_BURST`, and the room is drawn with the wall broken
+/// whenever the party enters it again.
 DEFINE_BURST_WALL(MarsLighthouseRoomF_BurstCenterWall, 14, 78,
                   FLAG_CENTER_WALL_BURST)
 

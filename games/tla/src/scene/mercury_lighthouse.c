@@ -125,23 +125,17 @@ void Actor_StartScript(struct Actor *actor, const void *script);
 /// lighthouse, and it counts the frames in gMercuryLighthouse_GlintFrames.
 void MercuryLighthouse_SpawnGlints(void) {
   struct Actor *actor;
-  struct FieldSprite *sprite;
-  s32 phase;
-  FIXED x;
-  FIXED z;
 
   Actor_SetSpritePriority(ACTOR_BOY, 3);
   Actor_SetSpritePriority(ACTOR_GIRL, 3);
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
-  phase = gFrameCount & 15;
-  if (phase == 0) {
-    actor = ((struct Actor *)Import_ActorCreate(SPRITE_GLINT, 0, 0, 0));
+  if ((gFrameCount & 15) == 0) {
+    actor = Import_ActorCreate(SPRITE_GLINT, 0, 0, 0);
     if (actor != NULL) {
-      sprite = actor->sprite;
-      x = Random16() * 40 + toFIXED(812);
-      /* FAKEMATCH(temporary): z is built before the motion flag and x are
-       * stored. */
-      z = toFIXED(696);
+      struct FieldSprite *sprite = actor->sprite;
+      FIXED x = Random16() * 40 + toFIXED(812);
+      FIXED z = toFIXED(696);
+
       actor->motionFlags = 0;
       actor->x.fixed = x;
       actor->y.fixed = toFIXED(160);

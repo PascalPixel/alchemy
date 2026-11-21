@@ -355,6 +355,7 @@ again:
   actor->wait = 1;
   goto end;
 found:
+  /* FAKEMATCH(temporary): spot.y passed through coordinate; as spot.y. */
   coordinate = spot.y;
   Actor_SetMoveTarget(actor, spot.x, coordinate, spot.z);
 end:

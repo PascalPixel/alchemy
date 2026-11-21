@@ -322,7 +322,7 @@ s32 AquaRock_PickRandomSpot(struct Actor *actor) {
   s32 x;
   FIXED coordinate;
   s32 tries = 0;
-  s32 maxDistanceSquared = 256;
+  s32 maxDistanceSquared = 16 * 16;
   FIXED distance;
   s32 dx, dz;
   u32 a, b;

@@ -128,6 +128,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
           odd &= one;
           size = odd + 5;
           j = 0;
+          /* FAKEMATCH(temporary): blend, odd * 4 held as a byte offset into
+           * draw; as draw[odd]. */
           blend = odd * 4;
 
           {
@@ -181,6 +183,8 @@ void BattleEffect_RunLiquifier(struct BattleEffectParams *args) {
           odd &= one;
           size = odd + 2;
           j = 0;
+          /* FAKEMATCH(temporary): blend, odd * 4 held as a byte offset into
+           * draw; as draw[odd]. */
           blend = odd * 4;
 
           {

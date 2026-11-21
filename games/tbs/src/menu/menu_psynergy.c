@@ -140,6 +140,7 @@ s32 PsynergyMenu_RunSteps(s32 *outMember, s32 *unused, s32 *outAction) {
     switch (step) {
     // Choose whose Psynergy to look at.
     case PSYNERGY_STEP_MEMBER: {
+      /* FAKEMATCH(temporary): cancelled, -1 held in an s8 local. */
       s8 cancelled;
       s32 chosen;
 

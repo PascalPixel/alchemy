@@ -130,9 +130,8 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, FIXED steps) {
   s32 total;
   s32 sum;
   s32 pick;
+  s32 formation;
   s32 i;
-  /* FAKEMATCH(barrier): an empty asm reading pick before it is set. */
-  asm("" : : "l"(pick));
 
   work = Ram_HeapSlots->fieldWork;
   // UB: FLAG_IGNORE_ENCOUNTER_CHECKS reaches the draw without setting entry.
@@ -195,9 +194,9 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, FIXED steps) {
     if (pick < 0)
       break;
   }
-  sum = (u16)entry->formations[i];
+  formation = (u16)entry->formations[i];
   BattleEffect_SelectBattleCue(zone, i);
-  return sum;
+  return formation;
 }
 
 /// Rolls a random battle on the encounter zone of the ground underfoot.

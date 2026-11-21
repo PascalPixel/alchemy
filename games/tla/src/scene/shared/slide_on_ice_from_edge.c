@@ -108,14 +108,11 @@ retry:
           goto blocked;
       }
     }
-    /* FAKEMATCH(dead): the form kept; as q set once, at the head of the loop.
-     */
-    q = position;
-    targetX = q[0];
-    targetZ = q[2];
+    targetX = position[0];
+    targetZ = position[2];
     actor->speedLimit = toFIXED(2);
     actor->acceleration = toFIXED(1) / 10;
-    Actor_SetMoveTarget(actor, q[0], q[1], q[2]);
+    Actor_SetMoveTarget(actor, position[0], position[1], position[2]);
     for (i = 0;
          i <= 179 && Actor_HasArrived(actor) == 0 && gSlideOnIce_Stopped == 0;
          i++)

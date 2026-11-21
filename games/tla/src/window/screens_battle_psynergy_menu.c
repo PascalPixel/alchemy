@@ -79,12 +79,9 @@ s32 BattlePsynergyMenu_Run(s32 unitId, u16 *actions, s32 count) {
     u32 t = 0;
 
     y = i * 2;
-    /* FAKEMATCH(dead): an empty once-only block after the row. */
-    do {
-    } while (0);
     iconSprite = &sprites[i];
     sprites[i].oam.word.attr01 = OBJ_SIZE_16X16;
-    sprites[i].oam.word.attr23 = t;
+    Io_Write32(t, &iconSprite->oam.word.attr23);
     iconSprite->oam.f.x = (s16)window->x * 8 + 8;
     t = (s16)window->y;
     iconSprite->oam.f.y = (y + t) * 8 + 4;

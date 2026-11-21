@@ -1029,7 +1029,6 @@ void ApojiiIslands_DrawCellMarkers(void) {
   for (i = CELL_MARKERS - 1; i >= 0; i--, record++) {
     s32 dx, dy, height, z, palette, flip, kind;
     s32 x, y, left, top, picture;
-    u32 clear;
     u32 *attr;
 
     if (record->state == 0)
@@ -1043,31 +1042,35 @@ void ApojiiIslands_DrawCellMarkers(void) {
     else
       palette = OBJ_PALETTE(STONE_SPRITE_PALETTE) | OBJ_PRIORITY(2);
     y = FIXEDtoINT(dy);
-    /* FAKEMATCH(temporary): clear, 0 held in a local; as 0 at its use. */
-    clear = 0;
-    x = FIXEDtoINT(dx);
-    left = x - 8;
-    top = y - 8;
-    if ((u32)(x + 7) > 334)
-      continue;
-    if ((u32)(y + 39) > 286)
-      continue;
-    left &= OBJ_X_MASK;
-    /* FAKEMATCH(dead): a self-update of Ram_HeapSlots->mapGrid after left's
-     * mask. */
-    Ram_HeapSlots->mapGrid += 0;
-    top &= OBJ_Y_MASK;
-    attr = record->oam;
-    kind = record->kind;
-    picture = kind * MARKER_PICTURE_TILES;
-    flip = 0;
-    if (kind == 2)
-      flip = OBJ_HFLIP;
-    *attr++ = clear;
-    *attr++ = top | OBJ_X(left) | flip | OBJ_SIZE_16X16 |
-              OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
-    *attr = palette | (tile + picture);
-    Oam_AddSpriteAtDepth(record->oam, 0);
+    /* FAKEMATCH(dead): a once-only block placing link, the queue word's empty
+     * link, after the palette's choice. */
+    {
+      u32 link = 0;
+
+      x = FIXEDtoINT(dx);
+      left = x - 8;
+      top = y - 8;
+      if ((u32)(x + 7) > 334)
+        continue;
+      if ((u32)(y + 39) > 286)
+        continue;
+      left &= OBJ_X_MASK;
+      /* FAKEMATCH(dead): a self-update of Ram_HeapSlots->mapGrid after left's
+       * mask. */
+      Ram_HeapSlots->mapGrid += 0;
+      top &= OBJ_Y_MASK;
+      attr = record->oam;
+      kind = record->kind;
+      picture = kind * MARKER_PICTURE_TILES;
+      flip = 0;
+      if (kind == 2)
+        flip = OBJ_HFLIP;
+      *attr++ = link;
+      *attr++ = top | OBJ_X(left) | flip | OBJ_SIZE_16X16 |
+                OBJ_MODE(OBJ_MODE_SEMI_TRANSPARENT);
+      *attr = palette | (tile + picture);
+      Oam_AddSpriteAtDepth(record->oam, 0);
+    }
   }
 }
 

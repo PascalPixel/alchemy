@@ -935,7 +935,7 @@ void EndingPicture_Scroll(void) {
   s32 i;
 
   if (gEndingPicture_FadeFrames < ENDING_PICTURE_FADE_FRAMES) {
-    s32 t = (s16)++gEndingPicture_FadeFrames / 4;
+    s32 t = ++gEndingPicture_FadeFrames / 4;
     s32 alpha;
 
     if (gEndingPicture_Block & 1) {
@@ -958,7 +958,7 @@ void EndingPicture_Scroll(void) {
   }
   {
     /* FAKEMATCH(temporary): the scroll read through a pointer to it. */
-    s32 *word = &gEndingPicture_Scroll;
+    volatile s32 *word = &gEndingPicture_Scroll;
     FIXED target = toFIXED(gEndingPicture_Row);
 
     scroll = *word;

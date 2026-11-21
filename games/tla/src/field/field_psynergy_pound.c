@@ -56,8 +56,12 @@ void FieldPsynergy_UpdatePound(void) {
     /* FAKEMATCH(temporary): the frame count read through a pointer kept across
      * the loop. */
     frames = &canvas->drawnFrames;
+    /* FAKEMATCH(temporary): base, 9 held in a local and then made 16.16; as
+     * INTtoFIXED(9) at its uses. */
     base = 9;
     base = INTtoFIXED(base);
+    /* FAKEMATCH(temporary): blue, RGB(0, 0, RGB_LEVEL_MAX) held in a local; as
+     * the constant at its use. */
     blue = RGB(0, 0, RGB_LEVEL_MAX);
     // Each colour is a 32nd of a turn further along the cycle, which moves on
     // every other frame.

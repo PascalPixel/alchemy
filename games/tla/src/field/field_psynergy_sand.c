@@ -304,7 +304,6 @@ void FieldPsynergy_EndSand(void) {
   struct FieldPsynergyParticle *particle;
   struct EffectSprite *particleSprite;
   u8 *animation;
-  struct MainRoutineWork *party;
   s32 pictureOffset;
   s32 ripple;
   s32 frame;
@@ -341,8 +340,7 @@ void FieldPsynergy_EndSand(void) {
   mask = OAM_BELOW_SHAPE_OR_SIZE;
   Actor_SetPositionAndResetMotionFar(
       owner, owner->x.fixed, owner->y.fixed + toFIXED(10), owner->z.fixed);
-  party = &gMainRoutineWork;
-  Actor_SetFirstSpriteAnimationFar(owner, party->leaderActorId);
+  Actor_SetFirstSpriteAnimationFar(owner, gMainRoutineWork.leaderActorId);
   // The image's OAM shape and size: square, 32 by 32 pixels.
   ((u8 *)owner->sprite)[5] &= mask;
   mask &= ((u8 *)owner->sprite)[7];

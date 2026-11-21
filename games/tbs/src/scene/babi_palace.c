@@ -1399,7 +1399,7 @@ static void BabiPalace_WakeAfterFinals(void) {
 /// Arriving after Colosso, the party finds Iodem and Babi have been waiting for
 /// it.
 static void BabiPalace_MeetBabiAfterColosso(void) {
-  Sound_Play(MUS_BABI);
+  Sound_Play(MUS_BABIS_THEME);
   Event_Start();
   Event_SetMessageId(MsgTolbiWaitingCompanions);
   Event_StartScreenTransition();

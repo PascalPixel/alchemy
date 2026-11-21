@@ -2288,7 +2288,7 @@ s32 Scene_Initialize(void) {
       s32 found;
 
       if (!Test(FLAG_SERPENT_SLAIN)) {
-        Sound_Play(MUS_FLAME_DRAGONS);
+        Sound_Play(MUS_BATTLE_WITH_FLAME_DRAGON);
         found = FieldPartyInventory_FindMember(ITEM_DANCING_IDOL);
         if (found != -1) {
           s32 flag;

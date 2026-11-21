@@ -354,7 +354,7 @@ static void Sanctum_AskQuestAgain(void) {
         PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
         PaletteFade_StartInterpolation(120);
         Event_Wait(120);
-        Sound_Play(MUS_INN);
+        Sound_Play(MUS_OVERNIGHT_AT_THE_INN);
         Sound_WaitForBgmRestore();
         GameFlag_Set(FLAG_SANCTUM_QUEST_ACCEPTED);
         Import_EventSetExitRequest(SANCTUM_TO_VALE_PLAZA);
@@ -1098,7 +1098,7 @@ static void Sanctum_AskToAcceptQuest(void) {
     PaletteFade_ApplyTarget(RGB(0, 0, 0), PALETTES_ALL);
     PaletteFade_StartInterpolation(120);
     Event_Wait(120);
-    Sound_Play(MUS_INN);
+    Sound_Play(MUS_OVERNIGHT_AT_THE_INN);
     Sound_WaitForBgmRestore();
     GameFlag_Set(FLAG_SANCTUM_QUEST_ACCEPTED);
     Import_EventSetExitRequest(SANCTUM_TO_VALE_PLAZA);
@@ -1195,7 +1195,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   FieldCamera_SetSpeed(0.4);
   FieldCamera_MoveTo(192, CAMERA_KEEP, 104, 1);
   Event_Wait(120);
-  Sound_Play(MUS_FOREST);
+  Sound_Play(MUS_FOREST_THEME);
   Event_PlaySound(SE_MATERIALIZE);
   // The Wise One enters while the healer's afterimages appear.
   Actor_SetPosition(ACTOR_WISE_ONE, 200, 8);
@@ -1244,7 +1244,7 @@ static void Sanctum_ReceiveWiseOnesMission(void) {
   Event_Wait(120);
   Sanctum_HideHealerAfterimage();
   Actor_SetAnimation(ACTOR_HEALER, ANIM_STAND);
-  Sound_Play(MUS_TOWN_IN_TROUBLE);
+  Sound_Play(MUS_AN_UNSETTLING_FEELING);
   Event_Wait(60);
   Actor_RunRepeatedMotion(ACTOR_HEALER, 2);
   Event_Wait(20);

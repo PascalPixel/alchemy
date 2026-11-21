@@ -505,7 +505,7 @@ void JupiterLighthouse_HealTarget(s32 actorId, s32 target) {
   BattleEffect_SetObjectUpdateMode(Actor_Get(actorId), 2);
   Event_PlaySound(SE_ASCEND);
   System_Wait(50);
-  Event_PlaySound(MUS_REVIVE);
+  Event_PlaySound(MUS_RECOVERING_AFTER_COMBAT);
   for (frame = 0; frame < 120; frame++) {
     {
       struct Actor *actor = Actor_Get(target);

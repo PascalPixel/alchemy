@@ -99,8 +99,8 @@ s32 ColossoMenu_Choose(s32 unused) {
   return row;
 }
 
-/// Shows that a Djinni joined a party member while the join jingle (MUS_JOINED)
-/// plays, until it ends or A, B, L or R is pressed.
+/// Shows that a Djinni joined a party member while the join jingle
+/// (MUS_A_NEW_ALLY) plays, until it ends or A, B, L or R is pressed.
 void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   struct WindowWork *work = WINDOW_WORK;
   s32 speaker;
@@ -137,7 +137,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   JOINED_QUEUE_TEXT(
       window, Message_DecodeAndClearArguments(element + MsgVenusDjinnJoined),
       36, 2, cleared);
-  Sound_PlayFar(MUS_JOINED);
+  Sound_PlayFar(MUS_A_NEW_ALLY);
   do {
     Oam_AddSpriteAtDepth(entry, OAM_DEPTH_FRONT - 5);
     wait(1);
@@ -162,7 +162,7 @@ s32 Party_GetMemberPortraitSprite(u32 index) {
 }
 
 /// Shows that a party member joined the party while the join jingle
-/// (MUS_JOINED) plays, until it ends or A, B, L or R is pressed.
+/// (MUS_A_NEW_ALLY) plays, until it ends or A, B, L or R is pressed.
 void Party_ShowJoinedMessage(s32 member) {
   struct WindowWork *work = WINDOW_WORK;
   struct Window *window = NULL;
@@ -189,7 +189,7 @@ void Party_ShowJoinedMessage(s32 member) {
     MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
     JOINED_QUEUE_TEXT(window, Message_DecodeAndClearArguments(MsgJoinedParty),
                       36, 2, 0);
-    Sound_PlayFar(MUS_JOINED);
+    Sound_PlayFar(MUS_A_NEW_ALLY);
     do {
       Oam_AddSpriteAtDepth(entry, OAM_DEPTH_FRONT - 5);
       wait(1);
@@ -202,7 +202,7 @@ void Party_ShowJoinedMessage(s32 member) {
 }
 
 /// Shows that two party members joined the party while the join jingle
-/// (MUS_JOINED) plays, until it ends or A, B, L or R is pressed.
+/// (MUS_A_NEW_ALLY) plays, until it ends or A, B, L or R is pressed.
 void Party_ShowPairJoinedMessage(s32 first, s32 second) {
   struct WindowWork *work = WINDOW_WORK;
   struct Window *window;
@@ -258,7 +258,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     JOINED_QUEUE_TEXT(
         window, Message_DecodeAndClearArguments(MsgPairJoinedParty), 68, 2, 0);
 
-    Sound_PlayFar(MUS_JOINED);
+    Sound_PlayFar(MUS_A_NEW_ALLY);
 
     do {
       Oam_AddSpriteAtDepth(firstEntry, OAM_DEPTH_FRONT - 5);

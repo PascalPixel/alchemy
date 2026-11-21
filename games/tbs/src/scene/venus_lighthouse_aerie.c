@@ -165,8 +165,8 @@ enum {
 ///
 /// They work by the scene's field music rules (gScene_MusicRules,
 /// field/scene_rules.s). The music is MUS_SILENCE before the first battle,
-/// MUS_BABI once the first has begun and MUS_ELEMENTAL_STARS once the second
-/// has.
+/// MUS_BABIS_THEME once the first has begun and MUS_ELEMENTAL_STARS once the
+/// second has.
 ///
 /// VenusLighthouseFirstFloor and VenusLighthouseFourthFloor, in the same
 /// area, keep their Psynergy Stones in the same two flags, which no one goes
@@ -611,7 +611,7 @@ static void VenusLighthouseAerie_OverhearSaturosAndMenardi(void) {
   Event_Wait(20);
   VenusLighthouseAerie_FaceActor(ACTOR_SATUROS, FACING_NORTH_NORTHEAST);
   Actor_RunRepeatedMotion(ACTOR_SATUROS, 1);
-  Sound_Play(MUS_OMINOUS);
+  Sound_Play(MUS_CHANCE_MEETING_WITH_SWORN_ENEMIES);
   // "With the second beacon lit, only two will remain."
   VenusLighthouseAerie_ShowMessage(SPEAKER_PORTRAIT_RIGHT | ACTOR_SATUROS);
   Actor_SetAnimation(ACTOR_MENARDI, ANIM_SHAKE_HEAD);
@@ -1224,7 +1224,7 @@ static void VenusLighthouseAerie_ConfrontSaturosAndMenardi(void) {
   Actor_FaceDirection(ACTOR_SATUROS, FACING_NORTH_NORTHWEST, 80);
   Actor_FaceDirection(ACTOR_MENARDI, FACING_EAST, 0);
   Actor_FaceDirection(ACTOR_SATUROS, FACING_EAST, 40);
-  Sound_Play(MUS_CONFRONTATION);
+  Sound_Play(MUS_THE_SLEEPING_TREASURE_OF_ALTMILLER_CAVE);
   // "Whatever do you mean?"
   VenusLighthouseAerie_ShowMessage(ACTOR_SATUROS);
   Actor_FaceDirection(ACTOR_FELIX, FACING_SOUTH_SOUTHEAST, 0);
@@ -1751,7 +1751,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(16, 16, 12), PALETTES_ALL);
   PaletteFade_Interpolate(120);
   wait(120);
-  Sound_Play(MUS_ERUPTION);
+  Sound_Play(MUS_MOUNT_ALEPH_ERUPTS);
   MapGrid_SetShake(2, 2, 1);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_ALL);
   PaletteFade_Interpolate(120);
@@ -1960,7 +1960,7 @@ static void VenusLighthouseAerie_CombineSaturosAndMenardi(void) {
   }
   Sound_Play(SE_POWER_UP);
   Actor_Jump(ACTOR_IVAN, 6, 20);
-  Sound_Play(MUS_FUSION_DRAGON_BATTLE);
+  Sound_Play(MUS_BATTLE_WITH_THE_FUSION_DRAGON);
   // "Their Psynergy is overflowing!"
   VenusLighthouseAerie_ShowMessage(ACTOR_IVAN);
   Actor_SetAnimation(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
@@ -2446,7 +2446,7 @@ static void VenusLighthouseAerie_DiscussSaturosAndMenardiDefeat(void) {
   FieldCamera_MoveTo(252, 0, 190, 1);
   FieldCamera_WaitForMove();
   Event_Wait(40);
-  Sound_Play(MUS_DANGER);
+  Sound_Play(MUS_DUNGEON_THEME);
   Actor_SetAttachedEffect(ACTOR_FELIX,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   // "Did you finish them?"
@@ -2883,7 +2883,7 @@ static void VenusLighthouseAerie_PlayShebasFall(void) {
   Event_Wait(120);
   // "!!!"
   VenusLighthouseAerie_ShowMessage(ACTOR_PARTY_LEADER);
-  Sound_Play(MUS_FELIX_LEAPS_AFTER_SHEBA);
+  Sound_Play(MUS_FELIXS_RESOLVE);
   FieldCamera_SetSpeed(4);
   FieldCamera_MoveTo(342, 32, 212, 1);
   FieldCamera_WaitForMove();

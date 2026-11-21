@@ -984,7 +984,7 @@ void Kibombo_AkafubuOffersCrystal(void) {
   Task_Add(Kibombo_FlickerCeremonyFires, TASK_PASS_FRAME);
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
   Event_ShowMessageAndWait(ACTOR_AKAFUBU, 0);
-  Sound_Play(MUS_KIBOMBO);
+  Sound_Play(MUS_RITUALS);
   Kibombo_EndOffering();
   Event_Wait(160);
   Event_ShowMessageThenWait(ACTOR_AKAFUBU, 0, 80);
@@ -1021,7 +1021,7 @@ void Kibombo_AkafubuOffersCrystal(void) {
   Event_Wait(20);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_BELOW | ACTOR_AKAFUBU, 0);
   Sound_Play(SE_BOSS_ROAR);
-  Sound_Play(MUS_KIBOMBO);
+  Sound_Play(MUS_RITUALS);
   Kibombo_CrowdBows();
   Event_Wait(80);
   FieldCamera_MoveTo(88, 32, 392, 1);
@@ -2612,7 +2612,7 @@ void Kibombo_CeremonyStarts(void) {
   Actor_FaceDirection(ACTOR_AKAFUBU, FACING_SOUTH_SOUTHEAST, 20);
   // "All of you, pray in the depths of your hearts for my success!"
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_AKAFUBU, 0);
-  Sound_Play(MUS_KIBOMBO);
+  Sound_Play(MUS_RITUALS);
   GameFlag_Set(FLAG_GABOMBA_CEREMONY_UNDER_WAY);
   Sound_Play(SE_BOSS_ROAR);
   Actor_GetById(ACTOR_WARRIOR_A)->velocityY = toFIXED(4);
@@ -2701,7 +2701,7 @@ void Kibombo_PresentOrbToGabomba(void) {
   FieldTask_AddFrame(Kibombo_FlickerCeremonyFires, TASK_PASS_FRAME);
   // "O Great Gabomba! Please accept this, our humble gift!"
   Event_ShowMessageAndWait(ACTOR_AKAFUBU, 0);
-  Sound_Play(MUS_KIBOMBO);
+  Sound_Play(MUS_RITUALS);
   Kibombo_EndOffering();
   Event_Wait(160);
   // "Please, Great Gabomba! Accept this jewel!"
@@ -2770,7 +2770,7 @@ void Kibombo_GabombaNotPleased(void) {
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBU, FACING_SOUTH_SOUTHEAST);
   Event_ShowMessageAndWait(SPEAKER_WINDOW_ABOVE | ACTOR_AKAFUBU, 0);
   GameFlag_Clear(FLAG_GABOMBA_MUSIC_SILENCED);
-  Sound_Play(MUS_KIBOMBO);
+  Sound_Play(MUS_RITUALS);
   Event_Wait(80);
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);

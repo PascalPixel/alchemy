@@ -1752,7 +1752,7 @@ void Contigo_TheReunion(void) {
   Actor_Stop(ACTOR_IVAN);
   Actor_Stop(ACTOR_HAMMA);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-  Sound_Play(MUS_WORLD_MAP_REUNITED);
+  Sound_Play(MUS_JOURNEY_TO_SAVE_THE_WORLD);
   Event_Wait(20);
   Actor_SetAnimationAndWait(ACTOR_ISAAC, ANIM_NOD);
   Event_SetMessageId((s32)MsgGladYouKeptYourPromise);
@@ -2017,7 +2017,7 @@ void Contigo_TheReunion(void) {
   Actor_Stop(ACTOR_GARET);
   Actor_Stop(ACTOR_MIA);
   Actor_Stop(ACTOR_IVAN);
-  Sound_Play(MUS_REUNION);
+  Sound_Play(MUS_REUNITING_WITH_HAMA);
   Actor_SetAnimationAndWait(ACTOR_HAMMA, ANIM_NOD);
   // "Hello again..."
   Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
@@ -2714,11 +2714,11 @@ void Contigo_InitializeLuckyDice(void) {
     Event_WaitTransitionFrames();
     if (coinChange > 0) {
       if (coinChange >= LUCKY_DICE_LARGE_WIN)
-        Sound_Play(MUS_JINGLE_LARGE);
+        Sound_Play(MUS_SUPER_LUCKY);
       else if (coinChange >= LUCKY_DICE_MEDIUM_WIN)
-        Sound_Play(MUS_JINGLE_MEDIUM);
+        Sound_Play(MUS_VERY_LUCKY);
       else
-        Sound_Play(MUS_JINGLE_SMALL);
+        Sound_Play(MUS_LUCKY);
       Event_Wait(20);
       Event_SetMessageId(COINS_WON_MESSAGE);
       MessageArgument_Push(coinChange, MESSAGE_ARGUMENT_NUMBER);
@@ -2740,11 +2740,11 @@ void Contigo_InitializeLuckyDice(void) {
     Event_WaitTransitionFrames();
     if (coinChange > 0) {
       if (coinChange >= LUCKY_DICE_LARGE_WIN)
-        Sound_Play(MUS_JINGLE_LARGE);
+        Sound_Play(MUS_SUPER_LUCKY);
       else if (coinChange >= LUCKY_DICE_MEDIUM_WIN)
-        Sound_Play(MUS_JINGLE_MEDIUM);
+        Sound_Play(MUS_VERY_LUCKY);
       else
-        Sound_Play(MUS_JINGLE_SMALL);
+        Sound_Play(MUS_LUCKY);
       Event_Wait(20);
       Event_SetMessageId(COINS_WON_MESSAGE);
       MessageArgument_Push(coinChange, MESSAGE_ARGUMENT_NUMBER);

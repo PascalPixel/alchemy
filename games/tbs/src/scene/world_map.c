@@ -1591,14 +1591,14 @@ static void WorldMap_MeetFlint(void) {
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
   listened:
     MessageArgument_Push(ABILITY_DJINNI_FIRST, MESSAGE_ARGUMENT_ABILITY);
-    Sound_Play(MUS_JOINED);
+    Sound_Play(MUS_A_NEW_ALLY);
     count = MsgWorldMapAbilityVenusDjinni;
     Message_ShowCentered(count++, 3);
     Event_SetMessageId(count);
     Actor_Jump(ACTOR_VENUS_DJINNI, 2, 20);
     // "..., the Venus Djinni, is now Isaac's ally!"
     Event_ShowMessage(ACTOR_VENUS_DJINNI, 0);
-    Sound_Play(MUS_DJINN_LESSON);
+    Sound_Play(MUS_TRY_YOUR_LUCK);
     WorldMap_ExplainSettingDjinn();
     WorldMap_Unfreeze();
     return;
@@ -1670,7 +1670,7 @@ static void WorldMap_MeetFlint(void) {
   WorldMap_Unfreeze();
   Djinn_JoinParty(ACTOR_VENUS_DJINNI, ELEMENT_VENUS,
                   DJINNI_INDEX(DJINNI_FLINT));
-  Sound_Play(MUS_WORLD_MAP);
+  Sound_Play(MUS_A_LONG_JOURNEY);
   Event_End();
   GameFlag_Clear(FLAG_DJINN_LESSON);
   GameFlag_Clear(FLAG_DJINN_LESSON_PART_A);

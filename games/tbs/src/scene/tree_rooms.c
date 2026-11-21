@@ -464,7 +464,7 @@ static void TreeRooms_FightTret(void) {
   Event_SetMessageId(MsgTretHmHrooom);
   // "Hm HROOOM!!!"
   Event_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 20);
-  Sound_Play(MUS_CONFRONTATION);
+  Sound_Play(MUS_THE_SLEEPING_TREASURE_OF_ALTMILLER_CAVE);
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 1);
   Actor_SetSpeed(ACTOR_GARET, 1);
   Actor_SetSpeed(ACTOR_IVAN, 1);
@@ -594,7 +594,7 @@ static void TreeRooms_PlayPostBattleConversation(void) {
   Event_Wait(40);
   TreeRooms_ChangeFace(TRET_FACE_CHANGE_OPEN_EYES);
   Event_Wait(60);
-  Sound_Play(MUS_FOREST);
+  Sound_Play(MUS_FOREST_THEME);
   TreeRooms_ChangeFace(TRET_FACE_CHANGE_BLINK);
   FieldEvent_ShowMessageThenWait(TREE_ROOMS_SPEAKER(ACTOR_SECOND_TRET), 0, 20);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_QUESTION, 0);

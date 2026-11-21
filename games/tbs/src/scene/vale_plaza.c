@@ -1117,7 +1117,7 @@ static void ValePlaza_MeetSurvivingTravelers(void) {
   Event_ShowMessage(ACTOR_FIRST_TRAVELER, 0);
   // The ominous music starts; the camera rises to the travelers and the second
   // traveler walks in.
-  Sound_Play(MUS_OMINOUS);
+  Sound_Play(MUS_CHANCE_MEETING_WITH_SWORN_ENEMIES);
   camera->motionFlags = 0;
   FieldCamera_SetSpeed(3);
   FieldCamera_MoveTo(109, 176, 281, 1);

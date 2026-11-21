@@ -396,7 +396,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   Event_Wait(10);
   Sound_Play(SE_STAR_BOUNCE);
   Event_Wait(40);
-  Sound_Play(MUS_GABOMBA_STATUE);
+  Sound_Play(MUS_INSIDE_THE_GABOMBA_STATUE);
   Event_Wait(40);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTHEAST, 0);
   Actor_FaceDirectionAndWait(ACTOR_CHAMBER_KRADEN, FACING_NORTH_NORTHWEST);

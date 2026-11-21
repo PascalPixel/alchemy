@@ -28,8 +28,8 @@ struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,
                                     s32 y, u16 *spacing, s32 flags);
 #endif
 
-/// Shows that a Djinni joined a party member while the join jingle (MUS_JOINED)
-/// plays, until it ends or A, B, L or R is pressed.
+/// Shows that a Djinni joined a party member while the join jingle
+/// (MUS_A_NEW_ALLY) plays, until it ends or A, B, L or R is pressed.
 void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   s32 name;
@@ -79,7 +79,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
     Message_Start(window, text, 36, 2, cleared);
 #endif
 
-    Sound_PlayFar(MUS_JOINED);
+    Sound_PlayFar(MUS_A_NEW_ALLY);
 
     do {
       Oam_AddSpriteAtDepth(entry, OAM_DEPTH_FRONT - 5);
@@ -102,7 +102,7 @@ s32 Party_GetMemberPortraitSprite(u32 index) {
 }
 
 /// Shows that a party member joined the party while the join jingle
-/// (MUS_JOINED) plays, until it ends or A, B, L or R is pressed.
+/// (MUS_A_NEW_ALLY) plays, until it ends or A, B, L or R is pressed.
 void Party_ShowJoinedMessage(s32 member) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   struct Window *window = NULL;
@@ -134,7 +134,7 @@ void Party_ShowJoinedMessage(s32 member) {
 #else
     Message_Start(window, Message_DecodeMode1((s32)MsgJoinedParty), 36, 2, 0);
 #endif
-    Sound_PlayFar(MUS_JOINED);
+    Sound_PlayFar(MUS_A_NEW_ALLY);
     do {
       Oam_AddSpriteAtDepth(entry, OAM_DEPTH_FRONT - 5);
       wait(1);
@@ -147,7 +147,7 @@ void Party_ShowJoinedMessage(s32 member) {
 }
 
 /// Shows that two party members joined the party while the join jingle
-/// (MUS_JOINED) plays, until it ends or A, B, L or R is pressed.
+/// (MUS_A_NEW_ALLY) plays, until it ends or A, B, L or R is pressed.
 void Party_ShowPairJoinedMessage(s32 first, s32 second) {
   struct WindowWork *work = (struct WindowWork *)Ram_HeapSlots->windowWork;
   struct Window *window;
@@ -201,7 +201,7 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
                   0);
 #endif
 
-    Sound_PlayFar(MUS_JOINED);
+    Sound_PlayFar(MUS_A_NEW_ALLY);
 
     do {
       Oam_AddSpriteAtDepth(firstEntry, OAM_DEPTH_FRONT - 5);
@@ -263,7 +263,7 @@ void Summon_ShowLearnedMessage(s32 summon) {
 #else
   Message_Start(window, entries, 0, 2, 0);
 #endif
-  Sound_PlayFar(MUS_JOINED);
+  Sound_PlayFar(MUS_A_NEW_ALLY);
   do
     wait(1);
   while (Sound_GetBgmRestoreDelayFar() != 0 &&

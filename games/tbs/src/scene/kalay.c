@@ -643,7 +643,7 @@ static void Kalay_WatchTourGroupDeparture(void) {
     Message_SetVoiceFromActor(ACTOR_HEAD_GUIDE);
     // "OK! Are we all listening? Let's stop right here."
     FieldMessage_ShowCentered(MsgKalayOkListeningLets, 1, 0);
-    Sound_Play(MUS_DJINN_LESSON);
+    Sound_Play(MUS_TRY_YOUR_LUCK);
     Event_Wait(10);
     Actor_RunRepeatedMotion(ACTOR_PARTY_LEADER, 2);
     if (work->stepTrigger == 9) {

@@ -1591,7 +1591,7 @@ void WorldMap_MeetEcho(void) {
     Event_ShowMessageAndWait(ACTOR_ECHO, 0);
   joined:
     MessageArgument_Push(ABILITY_ECHO, MESSAGE_ARGUMENT_ABILITY);
-    Sound_Play(MUS_JOINED);
+    Sound_Play(MUS_A_NEW_ALLY);
     FieldMessage_Show(TUTORIAL_MESSAGE(MsgTheVenusDjinni), 3);
     Event_SetMessageId(TUTORIAL_MESSAGE(MsgTheVenusDjinni + 1));
     Actor_Jump(ACTOR_ECHO, 2, 20);
@@ -1599,7 +1599,7 @@ void WorldMap_MeetEcho(void) {
     if (Event_AskYesNoWithActorAnimation(owner, 0) == 1)
       goto refused;
     if (Event_GetFlag(FLAG_ALREADY_KNOWS_DJINN))
-      Sound_Play(MUS_SONG_GAME);
+      Sound_Play(MUS_CHILDRENS_SONG);
     else
       Sound_Play(MUS_BRIGGS_STEALS_SHIP);
     goto tutorial;
@@ -1926,7 +1926,7 @@ void WorldMap_DriftNorthOfContinent(void) {
   Event_ShowMessage(gMainRoutineWork.leaderActorId, 0);
   // "Oh... This can't be good."
   Event_ShowMessage(ACTOR_IDEJIMA_KRADEN, 0);
-  Event_PlaySound(MUS_SHIP_DRIFTS);
+  Event_PlaySound(MUS_FATED_CONNECTION_WITH_SWORN_ENEMIES);
   WorldMap_ReloadPendingAreaGraphics();
   FieldCamera_SetSpeed(4);
   FieldCamera_MoveTo(10303, CAMERA_KEEP, 7820, 1);

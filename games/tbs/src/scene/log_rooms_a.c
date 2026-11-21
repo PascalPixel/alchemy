@@ -943,7 +943,7 @@ static void LogRoomsA_MeetIvan(void) {
     Event_Wait(40);
     Scene_EndMindRead();
     Event_SetMessageId(MsgVaultDoPossessStrangePowers);
-    Sound_Play(MUS_IVAN);
+    Sound_Play(MUS_WIND_ADEPTS);
     Event_Wait(30);
     LogRoomsA_PlayAnimationAndWait(ACTOR_IVAN, ANIM_NOD, 30);
     LogRoomsA_ShowMessageAndWait(ACTOR_IVAN, 30);
@@ -990,7 +990,7 @@ static void LogRoomsA_MeetIvan(void) {
     Event_OpenMessage(ACTOR_IVAN, 0);
   } else {
     // Asked again: "Would you really? Would you help me find the rod?"
-    Sound_Play(MUS_IVAN);
+    Sound_Play(MUS_WIND_ADEPTS);
     Event_SetMessageId(MsgVaultWouldReallyWouldHelpMe);
     // "Would you really? Would you help me find the rod?"
     Event_OpenMessage(ACTOR_IVAN, 0);
@@ -1264,7 +1264,7 @@ static void LogRoomsA_FreeVillagerAndFightThieves(void) {
   // The ominous music starts as the thieves' leader appears at the ladder
   // and says "Looks like we've been found out!"; everyone turns to him.
   Actor_SetPosition(ACTOR_THIEF_LEADER, 744, 408);
-  Sound_Play(MUS_OMINOUS);
+  Sound_Play(MUS_CHANCE_MEETING_WITH_SWORN_ENEMIES);
   LogRoomsA_ShowMessageAndWait(ACTOR_THIEF_LEADER, 20);
   Actor_StartRepeatedMotion(ACTOR_PARTY_LEADER, 1);
   Actor_StartRepeatedMotion(ACTOR_GARET, 1);
@@ -3234,7 +3234,7 @@ static void LogRoomsA_StartActorStops(void) {
   // routine sets or reads it; the ROM keeps the call that clears it.
   Event_ClearFlag(FLAG_SYSTEM_LAST);
   Event_End();
-  Sound_Play(MUS_DJINN_LESSON);
+  Sound_Play(MUS_TRY_YOUR_LUCK);
 }
 
 // clang-format off

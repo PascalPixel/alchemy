@@ -420,7 +420,7 @@ void MarsLighthouseStarRoom_WakeFlameDragons(void) {
   FieldActor_Jump(gMainRoutineWork.leaderActorId, 4, 10);
   Actor_SetDestinationOffset(gMainRoutineWork.leaderActorId, 0, 16);
   FieldActor_Jump(gMainRoutineWork.leaderActorId, 6, 20);
-  Event_PlaySound(MUS_FLAME_DRAGONS);
+  Event_PlaySound(MUS_BATTLE_WITH_FLAME_DRAGON);
   Actor_SetAnimation(ACTOR_AGATIO_DRAGON, 2);
   Actor_SetAnimation(ACTOR_KARST_DRAGON, 2);
   FieldEvent_Wait(24);

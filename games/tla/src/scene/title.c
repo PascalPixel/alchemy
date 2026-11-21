@@ -96,7 +96,7 @@ s32 Scene_Initialize(void) {
     return 0;
   }
   if (gMainRoutineWork.entrance == TITLE_CREDITS) {
-    Event_PlaySound(MUS_ENDING);
+    Event_PlaySound(MUS_THE_BROKEN_SEAL);
     // "Ages ago, or so the stories / tell, the power of Alchemy..."
     Credits_Run(1);
     Event_PlaySound(SOUND_FADE_OUT_BGM);
@@ -114,7 +114,7 @@ s32 Scene_Initialize(void) {
       Title_ShowNintendoLogo(0);
       Title_ShowCamelotLogo(0);
       if (Save_ScanFileSummaries() > 0) {
-        Event_PlaySound(MUS_TITLE);
+        Event_PlaySound(MUS_MAIN_THEME_TITLE);
         TitleIntro_Run(1);
         if (Title_ShowIntro(1) == 0) {
           Event_PlaySound(SOUND_FADE_OUT_BGM);
@@ -133,7 +133,7 @@ s32 Scene_Initialize(void) {
     Event_SetDestination(SCENE_CLEAR, 1);
   } else {
     if (gMainRoutineWork.entrance == TITLE_PROLOGUE) {
-      Event_PlaySound(MUS_TITLE);
+      Event_PlaySound(MUS_MAIN_THEME_TITLE);
       TitleIntro_Run(0);
       FieldWindowColor_Apply(gMainRoutineWork.windowHue,
                              gMainRoutineWork.windowBrightness);

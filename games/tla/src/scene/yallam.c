@@ -1542,7 +1542,7 @@ void Yallam_ShowSongGame(void) {
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 316, 896);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 344, 912);
   Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_NORTH);
-  Event_PlaySound(MUS_SONG_GAME);
+  Event_PlaySound(MUS_CHILDRENS_SONG);
   Actor_FaceDirectionAndWait(ACTOR_SONG_LEADER, FACING_NORTH);
   // "If you want to go to the stars, if you want to go to the stars."
   Event_ShowMessage(ACTOR_SONG_LEADER, 0);

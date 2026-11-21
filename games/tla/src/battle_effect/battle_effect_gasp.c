@@ -216,7 +216,7 @@ void BattleEffect_RunGaspFamily(struct BattleEffectParams *args, s32 mode) {
                                1, 1);
     Resource_LoadAndDecompress(RESOURCE_MUSIC_NOTE_SHEET, work->sheet, 0, 0);
     frames = 80;
-    Sound_PlayFar(MUS_CURE);
+    Sound_PlayFar(MUS_POISON_CURED);
   } else if (mode == GASP_MODE_BEAT_DANCE) {
     Resource_LoadAndDecompress(RESOURCE_MUSIC_NOTE_SHEET, work->sheet, 0, 0);
     LOAD_BG_PALETTE(RESOURCE_MARS_DJINN_SMALL_SHEET);

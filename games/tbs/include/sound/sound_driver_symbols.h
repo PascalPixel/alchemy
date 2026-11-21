@@ -61,7 +61,7 @@ enum SoundReverbCode {
   /// over: most music and the Battle Arena.
   SOUND_REVERB_NORMAL,
   /// An eighth of the mix and a quarter of the old samples carry over:
-  /// MUS_TITLE, MUS_ENDING_LOGO and MUS_ENDING.
+  /// MUS_MAIN_THEME_TITLE, MUS_TO_BE_CONTINUED and MUS_THE_BROKEN_SEAL_ENDING.
   SOUND_REVERB_LONG,
   /// Nothing carries over, the mix buffer is cleared: a link battle.
   SOUND_REVERB_NONE

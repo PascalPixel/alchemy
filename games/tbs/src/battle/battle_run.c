@@ -126,12 +126,12 @@ s32 Battle_Run(s32 enemyGroup) {
   if (cue != 0) {
     Sound_PlayFar(cue);
     if (GameFlag_GetFar(FLAG_LINK_BATTLE) != 0) {
-      Sound_PlayFar(MUS_BOULDER_CHASE);
+      Sound_PlayFar(MUS_TEST_YOUR_SKILLS);
       Sound_LoadReverbCode(SOUND_REVERB_NONE);
     }
   } else {
-    Sound_PlayFar(MUS_SATUROS_BATTLE);
-    Sound_PlayFar(MUS_COLOSSO_BATTLE);
+    Sound_PlayFar(MUS_SWORN_ENEMIES_STAND_IN_YOUR_WAY);
+    Sound_PlayFar(MUS_COLOSSEUM_FINALS);
   }
 
   // The units, the windows and the background.
@@ -305,7 +305,7 @@ party_lost:
   // "X goes down in defeat..." for a lone party member, else "X's party has
   // been defeated!".
   Battle_ClearSerialTransferPayload();
-  Sound_PlayFar(MUS_DEFEAT);
+  Sound_PlayFar(MUS_DEFEATED);
   MessageArgument_ClearAllFar();
   MessageArgument_PushFar(gMainRoutineWork.party[0], MESSAGE_ARGUMENT_ACTOR);
   if (BattleParty_PrepareMembers(0) == 1)

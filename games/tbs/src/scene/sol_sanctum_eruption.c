@@ -1049,7 +1049,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   Event_Wait(10);
 
   // A violent tremor throws them aside.
-  Sound_Play(MUS_DANGER);
+  Sound_Play(MUS_DUNGEON_THEME);
   SolSanctumEruption_SetMaterializationTint(1, 4, 0);
   sparkles->stopped = 0;
   MapGrid_SetShake(5, 5, 1);
@@ -1448,7 +1448,7 @@ static void SolSanctumEruption_PlayWiseOneRescue(void) {
   SolSanctumEruption_DrawFirstCollapseTiles(0);
   MapGrid_SetShake(1, 1, 1);
   Sound_Play(SE_TREMOR);
-  Sound_Play(MUS_ERUPTION);
+  Sound_Play(MUS_MOUNT_ALEPH_ERUPTS);
   MapGrid_SetShake(4, 4, 1);
   PaletteFade_ApplyTarget(PALETTE_TINT_CUSTOM | RGB(30, 12, 4), PALETTES_BG);
   PaletteFade_StartInterpolation(20);

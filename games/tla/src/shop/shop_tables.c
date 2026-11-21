@@ -320,10 +320,10 @@ const struct ForgeRecipe gForge_Recipes[] = {
 
 /// The tune each service's burst plays.
 const s8 gSanctum_ServiceTunes[4] = {
-    [SANCTUM_SERVICE_REVIVE] = MUS_REVIVE,
-    [SANCTUM_SERVICE_CURE_POISON] = MUS_CURE,
-    [SANCTUM_SERVICE_REPEL_EVIL] = MUS_REPEL_EVIL,
-    [SANCTUM_SERVICE_REMOVE_CURSE] = MUS_REMOVE_CURSE,
+    [SANCTUM_SERVICE_REVIVE] = MUS_RECOVERING_AFTER_COMBAT,
+    [SANCTUM_SERVICE_CURE_POISON] = MUS_POISON_CURED,
+    [SANCTUM_SERVICE_REPEL_EVIL] = MUS_EXORCISED,
+    [SANCTUM_SERVICE_REMOVE_CURSE] = MUS_CURSE_LIFTED,
 };
 
 /// The coins a night costs each living guest, by inn: Daila, Madra, Alhafra,

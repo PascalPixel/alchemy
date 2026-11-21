@@ -240,7 +240,7 @@
 /// Set while the party sails the ship on the World Map: world_map.c sets it as
 /// the party boards, and the main routine keeps it while an actor other than
 /// the leader is the one events control (MainRoutineWork.ownerOverride). The
-/// World Map takes MUS_LEMURIAN_SHIP while it is set.
+/// World Map takes MUS_TO_THE_OPEN_SEA while it is set.
 #define FLAG_SAILING 0x176
 /// With FLAG_DJINN_LESSON set, this and FLAG_DJINN_LESSON_PART_B choose the
 /// part of the lesson the Djinn menu plays.

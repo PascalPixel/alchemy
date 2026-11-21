@@ -973,7 +973,7 @@ void LuckyDice_Run(void) {
           }
           Text_DrawNumberInWindowFar(gMainRoutineWork.coins, DICE_COIN_DIGITS,
                                      (s32)sprites->coinsWindow, 0, 0);
-          Sound_PlayFar(MUS_JINGLE_LARGE);
+          Sound_PlayFar(MUS_SUPER_LUCKY);
         } else {
           pairCount = 0;
           for (index = 0; index != 3; index++) {
@@ -997,7 +997,7 @@ void LuckyDice_Run(void) {
                                        (s32)sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = DICE_FLASH_FRAMES;
             resultKind = DICE_RESULT_TWO_PAIR;
-            Sound_PlayFar(MUS_JINGLE_SMALL);
+            Sound_PlayFar(MUS_LUCKY);
           }
           if (pairCount == 3) {
             winnings = bet * 3;
@@ -1005,7 +1005,7 @@ void LuckyDice_Run(void) {
                                        (s32)sprites->coinsWindow, 0, 0);
             flashTimer[Random16() & 1] = DICE_FLASH_FRAMES;
             resultKind = DICE_RESULT_TRIPLE;
-            Sound_PlayFar(MUS_JINGLE_MEDIUM);
+            Sound_PlayFar(MUS_VERY_LUCKY);
           }
         }
       }

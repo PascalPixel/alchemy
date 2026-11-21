@@ -1027,7 +1027,7 @@ void GabombaStatue_HearTheOffering(void) {
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_BLUE_ORB_STATUE),
                             SPRITE_COLOR_NORMAL);
   System_Wait(8);
-  Event_PlaySound(MUS_KIBOMBO);
+  Event_PlaySound(MUS_RITUALS);
   result = GabombaStatue_RunCharges(ACTOR_CHARGE_A, 1);
   ObjectTable_Snapshot();
   gFieldWork->transition =
@@ -1976,7 +1976,7 @@ void GabombaStatue_WatchTheChargesStick(void) {
   Actor_SetScript(ACTOR_JENNA, gGabombaStatue_LookNorthAndWestScript);
   Actor_SetScript(ACTOR_SHEBA, gGabombaStatue_LookNorthAndWestScript);
   Actor_SetScript(ACTOR_KRADEN, gGabombaStatue_LookNorthAndWestScript);
-  Event_PlaySound(MUS_KIBOMBO);
+  Event_PlaySound(MUS_RITUALS);
   GabombaStatue_RunCharges(ACTOR_CHARGE_A, 0);
   FieldEvent_Wait(80);
   Event_SetFlag(FLAG_GABOMBA_MUSIC_SILENCED);

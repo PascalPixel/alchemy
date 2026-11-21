@@ -4,14 +4,16 @@
 /// @file
 /// Sound ids, one for each row of gSongTable (sound/song_table.s) in order:
 /// MUS_ ids are music and jingles, SE_ ids sound effects, as their sequences in
-/// sound/songs are named. A row of the empty song (Sound_EmptySong), which
-/// plays nothing, has no name, and the next named row's number is written after
-/// it. A sequence with no name yet keeps its number as its placeholder: those
-/// the game plays say where, and no code, table or actor script plays the rest.
-/// Four rows are controls no sound plays from. Sound_Play tests the controls
-/// first, then the ranges: from SOUND_SE_FIRST to SOUND_SE_END on the player
-/// its gSongTable row names, from SOUND_JINGLE_FIRST jingles, music otherwise
-/// (sound_driver_symbols.h).
+/// sound/songs are named. Music takes the title of its track where the two are
+/// matched (MUS_TO_THE_OPEN_SEA), the titles as Miketendo64's track guide
+/// lists them, and otherwise the place or moment it is the music of (MUS_PROX).
+/// A row of the empty song (Sound_EmptySong), which plays nothing, has no name,
+/// and the next named row's number is written after it. A sequence with no name
+/// yet keeps its number as its placeholder: those the game plays say where, and
+/// no code, table or actor script plays the rest. Four rows are controls no
+/// sound plays from. Sound_Play tests the controls first, then the ranges: from
+/// SOUND_SE_FIRST to SOUND_SE_END on the player its gSongTable row names, from
+/// SOUND_JINGLE_FIRST jingles, music otherwise (sound_driver_symbols.h).
 
 enum SoundId {
   /// A song of no tracks: scenes play it to silence the music, and the music
@@ -31,25 +33,25 @@ enum SoundId {
   MUS_APOJII_ISLANDS,
   /// Izumo's field music once FLAG_SERPENT_SLAIN is set, when the town
   /// celebrates.
-  MUS_IZUMO_CELEBRATION,
+  MUS_IZUMO_FESTIVAL,
   /// The field music of Izumo and the Izumo Ruins.
   MUS_IZUMO,
   /// Plays as the party learns who the Doom Dragon was, at Mars Lighthouse's
   /// aerie (MarsLighthouseAerie_FindWhoTheDragonWas).
-  MUS_DOOM_DRAGON_REVEALED,
+  MUS_THE_WISE_ONES_TRAP,
   /// The field music of the Kandorean Temple's first seven rooms.
-  MUS_KANDOREAN_TEMPLE,
+  MUS_KANDOREAN_TEMPLE_CAVES,
   /// The field music of Naribwe, the Kibombo Mountains and Kibombo's first
   /// three scenes.
-  MUS_NARIBWE,
-  /// The field music of Kibombo's fourth and fifth scenes.
   MUS_KIBOMBO,
+  /// The field music of Kibombo's fourth and fifth scenes.
+  MUS_RITUALS,
   /// The field music of Lemuria and Ancient Lemuria.
   MUS_LEMURIA,
   /// The field music of Madra, Mikasalla and Hesperia Settlement.
   MUS_MADRA,
   /// The field music of Kalt Island, one islet and a Champa house.
-  MUS_KALT_ISLAND,
+  MUS_ISLANDS,
   /// The field music of Garoh.
   MUS_GAROH,
   /// The field music of Yallam and a Mikasalla house.
@@ -57,10 +59,11 @@ enum SoundId {
   /// Plays as Yallam's children start their song game ("If you want to go to
   /// the stars..."), and as Echo is met on the World Map once
   /// FLAG_ALREADY_KNOWS_DJINN is set.
-  MUS_SONG_GAME,
-  /// MUS_SONG_GAME's tune arranged on four tracks for its eight; only the link
+  MUS_CHILDRENS_SONG,
+  /// MUS_CHILDRENS_SONG's tune arranged on four tracks for its eight; only the
+  /// link
   /// lobby's song request plays it.
-  MUS_SONG_GAME_SHORT,
+  MUS_CHILDRENS_SONG_SHORT,
   /// The field music of Air's Rock.
   MUS_AIRS_ROCK = 20,
   /// The field music of Aqua Rock.
@@ -70,11 +73,11 @@ enum SoundId {
   MUS_MADRA_CATACOMBS,
   /// The field music of the Shrine of the Sea God, Shaman Village Cave and the
   /// Indra, Osenia, Atteka and Angara Caverns.
-  MUS_SHRINE_OF_THE_SEA_GOD,
+  MUS_CAVERNS,
   /// The field music of Gaia Rock.
   MUS_GAIA_ROCK,
   /// The field music of the Gabomba Statue.
-  MUS_GABOMBA_STATUE,
+  MUS_INSIDE_THE_GABOMBA_STATUE,
   /// The field music of Jupiter Lighthouse.
   MUS_JUPITER_LIGHTHOUSE,
   /// The field music of Magma Rock.
@@ -107,21 +110,21 @@ enum SoundId {
   MUS_ALEX,
   /// The title intro's music at power-on, when a save file exists, and before a
   /// new game's intro (the title's Scene_Initialize).
-  MUS_TITLE,
+  MUS_MAIN_THEME_TITLE,
   /// The field music of the Lemurian Ship and the Northern Reaches, and of the
   /// World Map once FLAG_SAILING is set.
-  MUS_LEMURIAN_SHIP,
+  MUS_TO_THE_OPEN_SEA,
   /// The field music of the World Map, Osenia Cliffs, Gondowan Cliffs and
   /// Atteka Inlet.
-  MUS_WORLD_MAP,
-  /// MUS_WORLD_MAP's places once FLAG_REUNITED is set.
-  MUS_WORLD_MAP_REUNITED,
+  MUS_A_JOURNEY_AROUND_THE_WORLD,
+  /// MUS_A_JOURNEY_AROUND_THE_WORLD's places once FLAG_REUNITED is set.
+  MUS_JOURNEY_TO_SAVE_THE_WORLD,
   /// The music of the Staff Credit scene.
   MUS_STAFF_CREDIT,
   /// The battle music when Jenna is in the front row without Felix or Isaac.
-  MUS_JENNA_BATTLE = 49,
+  MUS_BATTLE_JENNA = 49,
   /// The battle music: the usual one, and with Felix in the front row.
-  MUS_BATTLE,
+  MUS_BATTLE_THE_LOST_AGE,
   /// Battle music gEncounter_BattleMusic gives Briggs's battle on his ship at
   /// Eastern Alhafra (encounter table 10, slot 1) and encounter table 13's
   /// slots 0 to 4.
@@ -130,46 +133,47 @@ enum SoundId {
   /// (LemurianShip_FightAquaHydra).
   MUS_AQUA_HYDRA,
   /// Plays as Karst and Agatio wake as the Flame Dragons in the Mars Star room.
-  MUS_FLAME_DRAGONS,
+  MUS_BATTLE_WITH_FLAME_DRAGON,
   /// Battle music of the Doom Dragon at Mars Lighthouse's aerie (encounter
   /// table 102, slot 1).
-  MUS_DOOM_DRAGON_BATTLE,
-  /// The Broken Seal's MUS_BOULDER_CHASE, note for note: after a link battle's
+  MUS_BATTLE_WITH_DOOM_DRAGON,
+  /// The Broken Seal's MUS_TEST_YOUR_SKILLS, note for note: after a link
+  /// battle's
   /// own music (Battle_Run), and at Super Lucky Dice's results past the second
   /// kind (SuperLuckyDice_Run).
-  MUS_BOULDER_CHASE,
+  MUS_TEST_YOUR_SKILLS,
   /// The battle music at sea, while the Lemurian Ship is the actor events move
   /// (ownerOverride) and it does not fly.
-  MUS_SHIP_BATTLE,
+  MUS_BATTLE_ON_THE_SEA,
   /// Battle music of Karst and Agatio at Jupiter Lighthouse's beacon (encounter
   /// table 13, slot 7, and slots 5 and 6); its tune is MUS_KARST_AND_AGATIO's.
-  MUS_KARST_AND_AGATIO_BATTLE,
+  MUS_BATTLE_WITH_KARST_AND_AGATIO,
   /// The battle is won.
   MUS_VICTORY,
   /// The party falls in battle.
-  MUS_DEFEAT,
-  /// The Broken Seal's MUS_IVAN, note for note.
-  MUS_IVAN,
+  MUS_DEFEATED,
+  /// The Broken Seal's MUS_WIND_ADEPTS, note for note.
+  MUS_WIND_ADEPTS,
   /// Plays as the ship drifts north of the continent on the World Map
   /// (WorldMap_DriftNorthOfContinent).
-  MUS_SHIP_DRIFTS,
+  MUS_FATED_CONNECTION_WITH_SWORN_ENEMIES,
   /// The field music of Prox.
   MUS_PROX,
   /// Plays as the Jupiter Star lights Jupiter Lighthouse's beacon, and as the
   /// Golden Sun rises at Mars Lighthouse's aerie.
-  MUS_BEACON_LIT,
-  /// Unused: The Broken Seal's MUS_TITLE_AFTER_PROLOGUE, note for note.
+  MUS_ALCHEMY_UNLEASHED,
+  /// Unused: The Broken Seal's MUS_THE_PASSAGE_OF_TIME, note for note.
   MUS_UNUSED_TITLE_AFTER_PROLOGUE,
   /// The field music of the Sea of Time.
   MUS_SEA_OF_TIME,
   /// The Epilogue's music after its first lines.
   MUS_EPILOGUE = 67,
   /// The staff credits' music (the title's entrance 8, Credits_Run).
-  MUS_ENDING,
-  /// Unused: The Broken Seal's MUS_TITLE, note for note.
+  MUS_THE_BROKEN_SEAL,
+  /// Unused: The Broken Seal's MUS_MAIN_THEME_TITLE, note for note.
   MUS_UNUSED_TITLE = 70,
   /// Plays as a password is entered in the Clear scene (Clear_EnterPassword).
-  MUS_PASSWORD,
+  MUS_PASSWORD_ENTRY,
   /// The field music of the Mercury Lighthouse scene and one way into the Mars
   /// Lighthouse aerie.
   MUS_MERCURY_LIGHTHOUSE,
@@ -177,7 +181,7 @@ enum SoundId {
   MUS_EPILOGUE_VILLAGERS,
   /// The music of the Clear scene, area "(Clear data)", where data is
   /// transferred.
-  MUS_CLEAR,
+  MUS_THE_ADVENTURE_RESUMES,
   /// The title held without its prompt: after the prologue (the title's
   /// entrance 3), and as the logo shows after the ending (entrance 10).
   MUS_TITLE_AFTER_PROLOGUE,
@@ -192,29 +196,29 @@ enum SoundId {
   /// A puzzle is solved, such as Aqua Rock's and the lighthouses'.
   MUS_PUZZLE_SOLVED,
   /// Someone joins the party.
-  MUS_JOINED,
+  MUS_A_NEW_ALLY,
   /// A unit is revived.
-  MUS_REVIVE,
+  MUS_RECOVERING_AFTER_COMBAT,
   /// Treasure is found.
   MUS_TREASURE_FOUND,
   /// A unit is cured.
-  MUS_CURE,
+  MUS_POISON_CURED,
   /// The game is saved.
   MUS_SAVED,
   /// A night at an inn.
-  MUS_INN,
+  MUS_OVERNIGHT_AT_THE_INN,
   /// A sanctum removes a curse.
-  MUS_REMOVE_CURSE,
+  MUS_CURSE_LIFTED,
   /// A sanctum repels evil.
-  MUS_REPEL_EVIL,
+  MUS_EXORCISED,
   /// A unit levels up, among a battle's spoils.
   MUS_LEVEL_UP,
   /// Lucky Dice's and Contigo's smallest prize.
-  MUS_JINGLE_SMALL = 91,
+  MUS_LUCKY = 91,
   /// Lucky Dice's and Contigo's middle prize.
-  MUS_JINGLE_MEDIUM,
+  MUS_VERY_LUCKY,
   /// Lucky Dice's, Lucky Wheels' and Contigo's largest prize.
-  MUS_JINGLE_LARGE,
+  MUS_SUPER_LUCKY,
   /// MUS_SILENCE's song of no tracks, on the jingle player; nothing plays it.
   MUS_UNUSED_SILENCE_JINGLE = 95,
   SE_BELL = 100,
@@ -719,26 +723,27 @@ enum SoundId {
   SE_UNUSED_WADE_SHORT,
   /// Played as an actor wades through water.
   SE_WADE,
-  /// The Broken Seal's MUS_VALE, note for note.
-  MUS_VALE = 700,
+  /// The Broken Seal's MUS_VILLAGE_THEME, note for note.
+  MUS_VILLAGE_THEME = 700,
   /// The field music of Gondowan Settlement.
   MUS_GONDOWAN_SETTLEMENT,
-  /// The Broken Seal's MUS_TOWN_IN_TROUBLE, note for note.
-  MUS_TOWN_IN_TROUBLE,
+  /// The Broken Seal's MUS_AN_UNSETTLING_FEELING, note for note.
+  MUS_AN_UNSETTLING_FEELING,
   /// The field music of Lemuria's palace scene.
-  MUS_LEMURIA_PALACE,
-  /// The Broken Seal's MUS_TRET_TREE, note for note.
-  MUS_TRET_TREE,
+  MUS_LEMURIAN_PALACE,
+  /// The Broken Seal's MUS_SINKING_INTO_SORROW, note for note.
+  MUS_SINKING_INTO_SORROW,
   /// The reunion of the two parties in Contigo (Contigo_TheReunion).
-  MUS_REUNION,
-  /// The Broken Seal's MUS_KALAY, note for note.
-  MUS_KALAY,
-  /// The Broken Seal's MUS_COLOSSO_INTRO, note for note.
+  MUS_REUNITING_WITH_HAMA,
+  /// The Broken Seal's MUS_PORT_TOWN_THEME, note for note.
+  MUS_PORT_TOWN_THEME,
+  /// The Broken Seal's MUS_TRIAL_ROAD, note for note; MUS_TRIAL_ROAD here is
+  /// another tune, so this one keeps its older name.
   MUS_COLOSSO_INTRO,
-  /// The Broken Seal's MUS_COLOSSO, note for note.
-  MUS_COLOSSO,
+  /// The Broken Seal's MUS_COLOSSEUM, note for note.
+  MUS_COLOSSEUM,
   /// The field music of Lemuria's spring scene and the Link Lobby.
-  MUS_LEMURIA_SPRING,
+  MUS_TRY_YOUR_LUCK,
   /// The Broken Seal's MUS_TOLBI, note for note.
   MUS_TOLBI,
   /// The field music of the Anemos Inner Sanctum.
@@ -748,14 +753,15 @@ enum SoundId {
   /// The Broken Seal's MUS_ELEMENTAL_STARS, note for note; Mt. Aleph's summit
   /// plays it.
   MUS_ELEMENTAL_STARS,
-  /// The Broken Seal's MUS_DANGER; only the link lobby's song request plays it.
-  MUS_DANGER,
+  /// The Broken Seal's MUS_DUNGEON_THEME; only the link lobby's song request
+  /// plays it.
+  MUS_DUNGEON_THEME,
   /// The field music of Suhalla Gate and the Yampi Desert Cave.
   MUS_SUHALLA_GATE,
   /// The field music of the Yampi Desert.
   MUS_YAMPI_DESERT,
-  /// The Broken Seal's MUS_SUHALLA, note for note.
-  MUS_SUHALLA,
+  /// The Broken Seal's MUS_REMOTE_VILLAGE, note for note.
+  MUS_REMOTE_VILLAGE,
   /// The field music of the Venus Lighthouse entrance scene, where the game
   /// opens.
   MUS_VENUS_LIGHTHOUSE_ENTRANCE,
@@ -763,31 +769,31 @@ enum SoundId {
   MUS_DEHKAN_PLATEAU,
   /// The field music of the Gabomba Catacombs.
   MUS_GABOMBA_CATACOMBS,
-  /// The Broken Seal's MUS_BABI, note for note.
-  MUS_BABI,
-  /// The Broken Seal's MUS_TOLBI_BOUND_SHIP, note for note.
-  MUS_TOLBI_BOUND_SHIP = 741,
+  /// The Broken Seal's MUS_BABIS_THEME, note for note.
+  MUS_BABIS_THEME,
+  /// The Broken Seal's MUS_SET_SAIL_ON_THE_KARAGOL_SEA, note for note.
+  MUS_SET_SAIL_ON_THE_KARAGOL_SEA = 741,
   /// The field music of Idejima, and of the World Map from one entrance.
   MUS_IDEJIMA,
   /// The field music of Venus Lighthouse.
   MUS_VENUS_LIGHTHOUSE,
   /// The battle music when Isaac is in the front row and Felix is not.
-  MUS_ISAAC_BATTLE = 750,
-  /// The Broken Seal's MUS_SATUROS_BATTLE, the battle music
+  MUS_BATTLE_THE_BROKEN_SEAL = 750,
+  /// The Broken Seal's MUS_SWORN_ENEMIES_STAND_IN_YOUR_WAY, the battle music
   /// gEncounter_BattleMusic gives encounter table 103's slot 0.
-  MUS_SATUROS_BATTLE,
-  /// The Broken Seal's MUS_BOSS_BATTLE, note for note.
-  MUS_BOSS_BATTLE,
-  /// The Broken Seal's MUS_SATUROS_AND_MENARDI_BATTLE, the battle music
+  MUS_BATTLE_WITH_STAR_MAGICIAN,
+  /// The Broken Seal's MUS_BATTLING_A_POWERFUL_FOE, note for note.
+  MUS_BATTLE_WITH_VALUKAR,
+  /// The Broken Seal's MUS_BATTLE_WITH_SATUROS_AND_MENARDI, the battle music
   /// gEncounter_BattleMusic gives encounter table 103's slot 2.
-  MUS_SATUROS_AND_MENARDI_BATTLE,
-  /// The Broken Seal's MUS_FUSION_DRAGON_BATTLE, the battle music
+  MUS_BATTLE_WITH_SENTINEL,
+  /// The Broken Seal's MUS_BATTLE_WITH_THE_FUSION_DRAGON, the battle music
   /// gEncounter_BattleMusic gives the Shadow's battle at the Anemos Inner
   /// Sanctum's entrance (encounter table 103, slot 3).
-  MUS_FUSION_DRAGON_BATTLE,
-  /// The Broken Seal's MUS_ENDING_LOGO, note for note, on the song table's last
-  /// row; nothing in this game plays it.
-  MUS_ENDING_LOGO = 799
+  MUS_BATTLE_WITH_DULLAHAN,
+  /// The Broken Seal's MUS_TO_BE_CONTINUED, note for note, on the song
+  /// table's last row; nothing in this game plays it.
+  MUS_TO_BE_CONTINUED = 799
 };
 
 /// The first voice: the first blip of the animals'.

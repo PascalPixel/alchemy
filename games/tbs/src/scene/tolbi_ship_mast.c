@@ -37,11 +37,11 @@
 /// - The attacks. TOLBI_SHIP_MAST_FROM_WORLD_MAP_FIRST_ATTACK is "Avast!
 ///   Monsters sighted!", as three monsters appear where a sparkle twinkles and
 ///   close in (FLAG_TOLBI_SHIP_MONSTERS_SIGHTED, which plays
-///   MUS_CONFRONTATION). Then comes Sean's "Monsters!" after a bird swoops at
-///   the lookout (TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK). Last is a
-///   monster dropping in beside the lookout
-///   (TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK). Each leads below or to the
-///   deck.
+///   MUS_THE_SLEEPING_TREASURE_OF_ALTMILLER_CAVE). Then comes Sean's
+///   "Monsters!" after a bird swoops at the lookout
+///   (TOLBI_SHIP_MAST_FROM_WORLD_MAP_SECOND_ATTACK). Last is a monster dropping
+///   in beside the lookout (TOLBI_SHIP_MAST_FROM_WORLD_MAP_THIRD_ATTACK). Each
+///   leads below or to the deck.
 /// - Land. At TOLBI_SHIP_MAST_FROM_WORLD_MAP_LAND_HO the seven birds
 ///   (ACTOR_FIRST_BIRD) fly away before "Land ho!". The rowing values of the
 ///   passengers chosen to row (gTolbiShipMast_PassengerRowValues) decide where
@@ -476,7 +476,7 @@ static void TolbiShipMast_RunAvastEvent(void) {
   gTolbiShipMast_CameraCenter[1] = sparkleY;
   Actor_SetScript(ACTOR_SPARKLE, gTolbiShipMast_FollowCameraActions);
   Event_Wait(20);
-  Sound_Play(MUS_CONFRONTATION);
+  Sound_Play(MUS_THE_SLEEPING_TREASURE_OF_ALTMILLER_CAVE);
   GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   Actor_Stop(ACTOR_LOOKOUT);
   wait(1);
@@ -634,7 +634,7 @@ static void TolbiShipMast_ShowMonsters(void) {
   // The lookout jumps, the monsters' theme plays, and Sean cries out.
   Actor_Jump(ACTOR_LOOKOUT, 4, 20);
   Actor_Jump(ACTOR_LOOKOUT, 6, 40);
-  Sound_Play(MUS_CONFRONTATION);
+  Sound_Play(MUS_THE_SLEEPING_TREASURE_OF_ALTMILLER_CAVE);
   GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   Event_SetMessageId(MsgTolbiShipMonstersExclaimed);
   // "Monsters!"
@@ -719,7 +719,7 @@ static void TolbiShipMast_RunMonsterLanding(void) {
   wait(1);
   Actor_RunRepeatedMotion(ACTOR_LOOKOUT, 1);
   Actor_FaceDirection(ACTOR_LOOKOUT, FACING_SOUTH_SOUTHEAST, 0);
-  Sound_Play(MUS_CONFRONTATION);
+  Sound_Play(MUS_THE_SLEEPING_TREASURE_OF_ALTMILLER_CAVE);
   GameFlag_Set(FLAG_TOLBI_SHIP_MONSTERS_SIGHTED);
   // ACTOR_LANDING_MONSTER_SHADOW grows for 32 frames before
   // ACTOR_LANDING_MONSTER is placed above it.

@@ -1002,7 +1002,7 @@ void ShamanVillage_TellFortune(void) {
       gFieldWork->message++;
       // "Well, you caught me in a good mood... I'll do it!"
       Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);
-      Event_PlaySound(MUS_KIBOMBO);
+      Event_PlaySound(MUS_RITUALS);
       Actor_SetAnimation(ACTOR_FORTUNE_TELLER, 5);
       // "Hoolabaloo!"
       Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);

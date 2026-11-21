@@ -1817,7 +1817,7 @@ static void LunpaFortress_FindHammet(void) {
     Actor_ShowEmote(ACTOR_TOADONPA_HAMMET, EMOTE_IN_FRONT | EMOTE_EXCLAMATION,
                     0);
     Event_Wait(110);
-    Sound_Play(MUS_IVAN);
+    Sound_Play(MUS_WIND_ADEPTS);
     Event_SetMessageId(messageBase + 3);
     // "Ivan, is that you?"
     Event_ShowMessage(ACTOR_TOADONPA_HAMMET, 0);
@@ -1880,7 +1880,7 @@ static void LunpaFortress_FindHammet(void) {
     Actor_FaceDirection(ACTOR_MIA, FACING_SOUTH, 0);
     Actor_FaceActor(ACTOR_TOADONPA_HAMMET, ACTOR_TOADONPA_DODONPA, 0);
     Event_Wait(30);
-    Sound_Play(MUS_OMINOUS);
+    Sound_Play(MUS_CHANCE_MEETING_WITH_SWORN_ENEMIES);
     FieldCamera_SetSpeed(2);
     FieldCamera_MoveToActorById(ACTOR_TOADONPA_DODONPA, 1);
     FieldCamera_WaitForMove();
@@ -1991,7 +1991,7 @@ static void LunpaFortress_FindHammet(void) {
     Actor_SetDestinationOffset(ACTOR_TOADONPA_DODONPA, 8, -8);
     Actor_FaceActor(ACTOR_TOADONPA_DODONPA, ACTOR_TOADONPA_BOSS, 0);
     LunpaFortress_ActivateLeverTrap();
-    Sound_Play(MUS_BOSS_BATTLE);
+    Sound_Play(MUS_BATTLING_A_POWERFUL_FOE);
     Event_SetMessageId(messageBase + 23);
     // "This little trap here marks the end of your good fortune!"
     Event_ShowMessage(ACTOR_TOADONPA_DODONPA, 0);
@@ -2427,7 +2427,7 @@ static void LunpaFortress_DonpaJudgesDodonpa(void) {
   FieldCamera_MoveTo(456, CAMERA_KEEP, 240, 1);
   Actor_StartRepeatedMotion(ACTOR_TOADONPA_DODONPA, 1);
   Event_Wait(60);
-  Sound_Play(MUS_COLOSSO);
+  Sound_Play(MUS_COLOSSEUM);
   // Donpa takes charge and orders his son to remain imprisoned.
   donpaMessage = MsgLunpaDad;
   Event_SetMessageId(donpaMessage);

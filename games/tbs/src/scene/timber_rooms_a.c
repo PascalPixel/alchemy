@@ -221,7 +221,7 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
   struct Actor *leader;
   GameFlag_Set(FLAG_IODEM_MET_WOUNDED_SOLDIERS);
   if (GameFlag_Get(FLAG_BABI_LIGHTHOUSE_IODEM_ARRIVED) == 0) {
-    Sound_Play(MUS_BABI);
+    Sound_Play(MUS_BABIS_THEME);
     Event_Start();
     FieldCamera_MoveTo(368, CAMERA_KEEP, 104, 1);
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 368, 160);
@@ -505,7 +505,7 @@ static void TimberRoomsA_IodemQuestionsWoundedSoldiers(void) {
     Event_Wait(20);
     Actor_SetAnimationAndWait(ACTOR_IODEM, ANIM_NOD);
     Event_Wait(30);
-    Sound_Play(MUS_BABI);
+    Sound_Play(MUS_BABIS_THEME);
     Actor_SetSpeed(ACTOR_IODEM, 1.2);
     Actor_SetAnimation(ACTOR_IODEM, ANIM_WALK);
     // Iodem walks into the leader and is hidden: he travels in the party.

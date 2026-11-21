@@ -26,7 +26,7 @@
 /// its music and plays until the player quits. Returns 0.
 s32 LuckyDice_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
-  Sound_PlayFar(MUS_DJINN_LESSON);
+  Sound_PlayFar(MUS_TRY_YOUR_LUCK);
   LuckyDice_Run();
   return 0;
 }
@@ -984,7 +984,7 @@ void LuckyDice_Run(void) {
           Text_DrawNumberInWindowFar(gMainRoutineWork.holdings.coins,
                                      DICE_COIN_DIGITS, sprites->coinsWindow, 0,
                                      0);
-          Sound_PlayFar(MUS_JINGLE_LARGE);
+          Sound_PlayFar(MUS_SUPER_LUCKY);
         } else {
           pairCount = 0;
           for (index = 0; index != DICE_RESULT_COUNT - 1; index++) {
@@ -1010,7 +1010,7 @@ void LuckyDice_Run(void) {
                                        0, 0);
             flashTimer[Random16() & 1] = DICE_FLASH_FRAMES;
             resultKind = DICE_RESULT_TWO_PAIR;
-            Sound_PlayFar(MUS_JINGLE_SMALL);
+            Sound_PlayFar(MUS_LUCKY);
           }
           if (pairCount == 3) {
             winnings = bet * 3;
@@ -1019,7 +1019,7 @@ void LuckyDice_Run(void) {
                                        0, 0);
             flashTimer[Random16() & 1] = DICE_FLASH_FRAMES;
             resultKind = DICE_RESULT_TRIPLE;
-            Sound_PlayFar(MUS_JINGLE_MEDIUM);
+            Sound_PlayFar(MUS_VERY_LUCKY);
           }
         }
       }

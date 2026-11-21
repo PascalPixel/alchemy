@@ -888,7 +888,7 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
     Actor_SetPosition(ACTOR_BABI, x, z);
   }
   actor->sprite->flags = 0;
-  Sound_Play(MUS_BABI);
+  Sound_Play(MUS_BABIS_THEME);
   Actor_SetSpeed(ACTOR_BABI, 0.8);
   Actor_WalkByAndWait(ACTOR_BABI, 32, 32);
   Actor_FaceDirection(ACTOR_BABI, FACING_SOUTH, 0);
@@ -1589,7 +1589,7 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   s32 line;
 
   GameFlag_Set(FLAG_MET_INVISIBLE_BABI);
-  Sound_Play(MUS_CAVE);
+  Sound_Play(MUS_CAVE_THEME);
   Event_Start();
   Field_EndBusyAndReveal();
   Event_SetMessageId(MsgAltmillerSee);

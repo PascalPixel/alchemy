@@ -67,9 +67,9 @@ static void Colosso_ShowOpeningLettering(s32 match) {
   Event_WaitTransitionFrames();
   gColosso_LetteringTitle[LETTERING_TITLE_HOLD] = match * FRAMES_PER_SECOND;
   Event_Wait(30);
-  // The 1st to 3rd Match play MUS_JINGLE_SMALL, MUS_JINGLE_MEDIUM and
-  // MUS_JINGLE_LARGE.
-  Sound_Play(match + (MUS_JINGLE_SMALL - COLOSSO_PICTURE_MATCH_TITLE_FIRST));
+  // The 1st to 3rd Match play MUS_LUCKY, MUS_VERY_LUCKY and
+  // MUS_SUPER_LUCKY.
+  Sound_Play(match + (MUS_LUCKY - COLOSSO_PICTURE_MATCH_TITLE_FIRST));
   Colosso_LoadLettering(match);
   Colosso_StartLettering(COLOSSO_SHAPE_TITLE, 0);
   Event_Wait(120);
@@ -118,16 +118,16 @@ static void Colosso_ShowMatchResult(s32 result) {
       (result < 0 ? -result : result) * FRAMES_PER_SECOND;
   if (result < 0) {
     Event_Wait(30);
-    Sound_Play(MUS_INN);
+    Sound_Play(MUS_OVERNIGHT_AT_THE_INN);
     Colosso_LoadLettering(COLOSSO_PICTURE_WIN_LOSE_FOR_LOSS);
     COLOSSO_START_LETTERING(COLOSSO_SHAPE_RESULT, 1);
     Event_Wait(-result * FRAMES_PER_SECOND + FRAMES_PER_SECOND);
     loser = ACTOR_PARTY_LEADER;
   } else {
     Event_Wait(30);
-    // The 1st to 3rd match play MUS_JINGLE_SMALL, MUS_JINGLE_MEDIUM and
-    // MUS_JINGLE_LARGE.
-    Sound_Play(result + (MUS_JINGLE_SMALL - 1));
+    // The 1st to 3rd match play MUS_LUCKY, MUS_VERY_LUCKY and
+    // MUS_SUPER_LUCKY.
+    Sound_Play(result + (MUS_LUCKY - 1));
     Colosso_LoadLettering(COLOSSO_PICTURE_WIN_LOSE);
     COLOSSO_START_LETTERING(COLOSSO_SHAPE_RESULT, 0);
     Event_Wait(result * FRAMES_PER_SECOND + FRAMES_PER_SECOND);

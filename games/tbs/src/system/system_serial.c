@@ -649,7 +649,7 @@ void SerialTest_Run(void) {
   s32 n;
   s32 delay;
 
-  Sound_PlayFar(MUS_PALACE);
+  Sound_PlayFar(MUS_PALACE_THEME);
   Serial_Initialize();
   // Row 16, columns 0 to 19: the received tiles in WINDOW_PALETTE.
   n = LINK_TEST_TILES - 1;

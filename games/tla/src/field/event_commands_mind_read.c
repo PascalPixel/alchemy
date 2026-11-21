@@ -1646,7 +1646,7 @@ void FieldPsynergy_Ply(void) {
 
   // Sparks.
   Actor_SetSpriteColorModeFar(actor, SPRITE_COLOR_NORMAL);
-  Sound_PlayFar(MUS_CURE);
+  Sound_PlayFar(MUS_POISON_CURED);
   if (actor != 0) {
     target->update = (ObjectUpdate)FieldEffect_RunSparkEmitter;
     target->timer = 0;

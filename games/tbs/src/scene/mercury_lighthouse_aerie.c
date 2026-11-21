@@ -604,7 +604,7 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_FELIX, 1);
   Event_Wait(20);
-  Sound_Play(MUS_OMINOUS);
+  Sound_Play(MUS_CHANCE_MEETING_WITH_SWORN_ENEMIES);
   // "So it's you, Isaac!"
   Event_ShowMessageThenWait(ACTOR_FELIX, 0, 20);
   Actor_RunRepeatedMotion(ACTOR_MENARDI, 1);
@@ -981,7 +981,7 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Actor_ShowEmote(ACTOR_MIA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   // "That voice! Could it be?"
   Event_ShowMessageThenWait(ACTOR_MIA, 0, 30);
-  Sound_Play(MUS_CONFRONTATION);
+  Sound_Play(MUS_THE_SLEEPING_TREASURE_OF_ALTMILLER_CAVE);
   FieldCamera_SetSpeed(0.8);
   FieldCamera_GetActor()->motionFlags = 0;
   FieldCamera_MoveTo(336, CAMERA_KEEP, 168, 1);

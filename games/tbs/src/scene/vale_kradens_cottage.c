@@ -626,7 +626,7 @@ static void ValeKradensCottage_MeetSaturosAndMenardi(void) {
   FieldCamera_MoveTo(215, CAMERA_KEEP, 345, 1);
   FieldCamera_WaitForMove();
   Event_Wait(20);
-  Sound_Play(MUS_OMINOUS);
+  Sound_Play(MUS_CHANCE_MEETING_WITH_SWORN_ENEMIES);
 
   // Saturos and Menardi talk of the elders and of using Kraden, stubborn
   // and cunning as he is.

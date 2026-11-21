@@ -283,7 +283,7 @@ s32 FieldSequence_Run(void) {
               Actor_SelectAnimationFar(leader, ANIM_LEADER_FALL_ON_FACE);
             else
               Actor_SelectAnimationFar(leader, ANIM_COLLAPSE);
-            Sound_PlayFar(MUS_DEFEAT);
+            Sound_PlayFar(MUS_DEFEATED);
             FieldMessage_ShowFar((s32)MsgFieldPartyAnnihilated,
                                  FIELD_MESSAGE_ZOOM);
             unit = Unit_Get(*leaderId);

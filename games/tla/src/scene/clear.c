@@ -1171,7 +1171,7 @@ s32 Clear_EnterPassword(void) {
   mode = IconMenu_ChooseSendOption(RESOURCE_LAYOUT_PASSWORD_LEVEL);
   if (mode == -1)
     return -1;
-  Sound_Play(MUS_PASSWORD);
+  Sound_Play(MUS_PASSWORD_ENTRY);
   cursor = 0;
   column = 0;
   row = 0;
@@ -1401,7 +1401,7 @@ s32 Clear_EnterPassword(void) {
             Window_Close(grid, 2);
             Window_Close(window, 2);
             WindowColor_Apply(party->windowHue, party->windowBrightness);
-            Sound_Play(MUS_CLEAR);
+            Sound_Play(MUS_THE_ADVENTURE_RESUMES);
             System_Wait(6);
             NameEntry_EditMemberName(0);
             StatusScreen_Run();
@@ -1437,7 +1437,7 @@ s32 Clear_EnterPassword(void) {
             Sound_Play(SE_MENU_CANCEL);
             Window_Close(grid, 2);
             Window_Close(window, 2);
-            Sound_Play(MUS_CLEAR);
+            Sound_Play(MUS_THE_ADVENTURE_RESUMES);
             return -1;
           }
         }

@@ -438,11 +438,11 @@ s32 Scene_Initialize(void) {
       coinChange = gMainRoutineWork.holdings.coins - sLuckyDiceCoinsBefore;
       if (coinChange > 0) {
         if (coinChange >= LUCKY_DICE_LARGE_WIN) {
-          Sound_Play(MUS_JINGLE_LARGE);
+          Sound_Play(MUS_SUPER_LUCKY);
         } else if (coinChange >= LUCKY_DICE_MEDIUM_WIN) {
-          Sound_Play(MUS_JINGLE_MEDIUM);
+          Sound_Play(MUS_VERY_LUCKY);
         } else {
-          Sound_Play(MUS_JINGLE_SMALL);
+          Sound_Play(MUS_LUCKY);
         }
         Event_Wait(20);
         Event_SetMessageId(MsgTolbiYaWonNumber);
@@ -859,7 +859,7 @@ prompt:
     if (choice == SPRING_TOSS_COIN) {
       if (result != 4) {
         Party_AdjustCoins(TOLBI_SPRING_COIN_PRIZE(result));
-        Sound_Play(MUS_JINGLE_SMALL);
+        Sound_Play(MUS_LUCKY);
         MessageArgument_Push(TOLBI_SPRING_COIN_PRIZE(result),
                              MESSAGE_ARGUMENT_NUMBER);
         Event_SetMessageId(MsgTolbiWonNumberCoin);

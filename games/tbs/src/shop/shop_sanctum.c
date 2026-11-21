@@ -429,10 +429,10 @@ void Sanctum_UpdateBurst(void) {
 
 /// The tune each service's burst plays.
 static const s8 sSanctumServiceCues[4] = {
-    [SANCTUM_SERVICE_REVIVE] = MUS_REVIVE,
-    [SANCTUM_SERVICE_CURE_POISON] = MUS_CURE,
-    [SANCTUM_SERVICE_REPEL_EVIL] = MUS_REPEL_EVIL,
-    [SANCTUM_SERVICE_REMOVE_CURSE] = MUS_REMOVE_CURSE,
+    [SANCTUM_SERVICE_REVIVE] = MUS_RECOVERING_AFTER_COMBAT,
+    [SANCTUM_SERVICE_CURE_POISON] = MUS_POISON_CURED,
+    [SANCTUM_SERVICE_REPEL_EVIL] = MUS_EXORCISED,
+    [SANCTUM_SERVICE_REMOVE_CURSE] = MUS_CURSE_LIFTED,
 };
 
 /// Plays the service's burst on a party member's icon: its tune, the colours

@@ -67,7 +67,7 @@ s32 Scene_Initialize(void) {
   // press.
   if (gMainRoutineWork.entrance == TITLE_FROM_WORLD_MAP) {
     Actor_Get(gMainRoutineWork.leaderActorId)->motionFlags = 0;
-    Sound_Play(MUS_ENDING_LOGO);
+    Sound_Play(MUS_TO_BE_CONTINUED);
     Title_RevealScreen(0);
     wait(120);
     for (waitFrames = 0; waitFrames < 3600 && gKeysPressed == 0; waitFrames++)
@@ -76,7 +76,7 @@ s32 Scene_Initialize(void) {
     return 0;
   }
   if (gMainRoutineWork.entrance == TITLE_FROM_LEMURIAN_SHIP) {
-    Sound_Play(MUS_ENDING);
+    Sound_Play(MUS_THE_BROKEN_SEAL_ENDING);
     // The credits: Credits_Run, through the scroll far-call
     // table.
     Import_CreditsRun(0);
@@ -101,7 +101,7 @@ s32 Scene_Initialize(void) {
       Import_TitleShowCamelotLogo(0);
       // With no save file (or no backup memory) there is no title intro.
       if (Save_ScanFileSummaries() > 0) {
-        Sound_Play(MUS_TITLE);
+        Sound_Play(MUS_MAIN_THEME_TITLE);
         // Title_ShowIntro with its prompt returns 0 when a minute passes
         // without A or Start: fade out and start again from the logos.
         if (Title_ShowIntro(1) == 0) {
@@ -124,7 +124,7 @@ s32 Scene_Initialize(void) {
     Event_SetDestination(SCENE_FILE_SCREEN, FILE_SCREEN_FROM_SANCTUM);
   } else {
     // The intro without its prompt holds the title five seconds.
-    Sound_Play(MUS_TITLE_AFTER_PROLOGUE);
+    Sound_Play(MUS_THE_PASSAGE_OF_TIME);
     Title_ShowIntro(0);
     Party_EndChildhood();
     Event_SetDestination(SCENE_VALE, VALE_FROM_TITLE);

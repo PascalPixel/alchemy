@@ -234,11 +234,11 @@ s32 Battle_Run(s32 enemyGroup) {
   if (cue != 0) {
     Sound_PlayFar(cue);
     if (GameFlag_Get(FLAG_LINK_BATTLE) != 0) {
-      Sound_PlayFar(MUS_BOULDER_CHASE);
+      Sound_PlayFar(MUS_TEST_YOUR_SKILLS);
       Sound_LoadReverbCode(SOUND_REVERB_NONE);
     }
   } else {
-    Sound_PlayFar(MUS_BATTLE);
+    Sound_PlayFar(MUS_BATTLE_THE_LOST_AGE);
   }
 
   BattleUnit_Collect();
@@ -452,7 +452,7 @@ party_lost:
        enemyGroup != FORMATION_KARST_AND_AGATIO_B) &&
       enemyGroup != FORMATION_KARST_AND_AGATIO_VS_ISAAC) {
     if (enemyGroup != FORMATION_KARST_AND_AGATIO_C) {
-      Sound_PlayFar(MUS_DEFEAT);
+      Sound_PlayFar(MUS_DEFEATED);
       MessageArgument_ClearAllFar();
       if (BattleParty_PrepareMembers(0) == 1)
         BattleMessage_ShowAndWaitFar((s32)MsgGoesDownInDefeat);

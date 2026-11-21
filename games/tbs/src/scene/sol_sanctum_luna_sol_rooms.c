@@ -388,7 +388,7 @@ static void SolSanctumLunaSolRooms_KradenFindsHeartOfSanctum(void) {
     Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 288, 232);
     Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
     Event_Wait(20);
-    Sound_Play(MUS_FOREST);
+    Sound_Play(MUS_FOREST_THEME);
     Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 0);
     // Kraden hurries out of the leader to the symbol on the floor.
     leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -1052,7 +1052,7 @@ static void SolSanctumLunaSolRooms_KradenSeesLunaPictureChange(void) {
 /// Sol Sanctum: Kraden notices that the symbol on the floor has changed from
 /// Sol to Luna.
 static void SolSanctumLunaSolRooms_DiscussFloorSymbolChangingToLuna(void) {
-  Sound_Play(MUS_FOREST);
+  Sound_Play(MUS_FOREST_THEME);
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 376, 184);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STILL);
   Actor_SetPosition(ACTOR_KRADEN, 376, 184);

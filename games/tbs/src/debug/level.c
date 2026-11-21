@@ -182,13 +182,13 @@ static void IncreaseItemAndLevel_RunLevelEditor(void) {
     // Start or Select adds five levels, A one.
     if ((gKeysPressed & KEY_START) != 0 || (gKeysPressed & KEY_SELECT) != 0) {
       IncreaseItemAndLevel_AdjustPartyLevels(5);
-      Sound_Play(MUS_JINGLE_LARGE);
+      Sound_Play(MUS_SUPER_LUCKY);
       redraw = 1;
     }
 
     if ((gKeysPressed & KEY_A) != 0) {
       IncreaseItemAndLevel_AdjustPartyLevels(1);
-      Sound_Play(MUS_JINGLE_SMALL);
+      Sound_Play(MUS_LUCKY);
       redraw = 1;
     }
 

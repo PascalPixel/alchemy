@@ -91,10 +91,11 @@ void Sound_Play(s32 id) {
     if (id == gCurrentBgm)
       return;
     gCurrentBgm = id;
-    Sound_LoadReverbCode(
-        (id == MUS_TITLE || id == MUS_ENDING_LOGO || id == MUS_ENDING)
-            ? SOUND_REVERB_LONG
-            : SOUND_REVERB_NORMAL);
+    Sound_LoadReverbCode((id == MUS_MAIN_THEME_TITLE ||
+                          id == MUS_TO_BE_CONTINUED ||
+                          id == MUS_THE_BROKEN_SEAL_ENDING)
+                             ? SOUND_REVERB_LONG
+                             : SOUND_REVERB_NORMAL);
     m4aSongNumStart(id);
     // A silent start fades the new music in over 64 VBlanks.
     if (flags & SOUND_FLAG_FADE_IN)
@@ -312,11 +313,11 @@ void Sound_WaitForBgmRestore(void) {
 }
 
 /// Unused: returns the reverb code Sound_Play gives music `command`:
-/// SOUND_REVERB_LONG for MUS_ENDING, MUS_TITLE and MUS_ENDING_LOGO,
-/// SOUND_REVERB_NORMAL for the rest.
+/// SOUND_REVERB_LONG for MUS_THE_BROKEN_SEAL_ENDING, MUS_MAIN_THEME_TITLE and
+/// MUS_TO_BE_CONTINUED, SOUND_REVERB_NORMAL for the rest.
 UNUSED s32 Sound_GetReverbCode(s32 command) {
-  if (command == MUS_TITLE || command == MUS_ENDING_LOGO ||
-      command == MUS_ENDING)
+  if (command == MUS_MAIN_THEME_TITLE || command == MUS_TO_BE_CONTINUED ||
+      command == MUS_THE_BROKEN_SEAL_ENDING)
     return SOUND_REVERB_LONG;
   return SOUND_REVERB_NORMAL;
 }

@@ -1041,7 +1041,7 @@ void SuperLuckyDice_Run(void) {
         Sound_PlayFar(SE_CURSE);
       if (timer == 40) {
         if ((u32)resultKind > SUPER_LUCKY_DICE_RESULT_WIN)
-          Sound_PlayFar(MUS_BOULDER_CHASE);
+          Sound_PlayFar(MUS_TEST_YOUR_SKILLS);
         else if (jingle != -1)
           Sound_PlayFar(jingle);
         jingle = -1;
@@ -1054,19 +1054,19 @@ void SuperLuckyDice_Run(void) {
           resultKind = SuperLuckyDice_ScoreDice(numbers);
           switch (resultKind) {
           case SUPER_LUCKY_DICE_RESULT_PERFECT:
-            jingle = MUS_JINGLE_LARGE;
+            jingle = MUS_SUPER_LUCKY;
             multiplier = SUPER_LUCKY_DICE_PERFECT_PAYOUT;
             break;
           case SUPER_LUCKY_DICE_RESULT_ONE_PAIR:
-            jingle = MUS_JINGLE_SMALL;
+            jingle = MUS_LUCKY;
             multiplier = SUPER_LUCKY_DICE_ONE_PAIR_PAYOUT;
             break;
           case SUPER_LUCKY_DICE_RESULT_TWO_PAIR:
-            jingle = MUS_JINGLE_MEDIUM;
+            jingle = MUS_VERY_LUCKY;
             multiplier = SUPER_LUCKY_DICE_TWO_PAIR_PAYOUT;
             break;
           case SUPER_LUCKY_DICE_RESULT_TRIPLE:
-            jingle = MUS_JINGLE_SMALL;
+            jingle = MUS_LUCKY;
             multiplier = SUPER_LUCKY_DICE_TRIPLE_PAYOUT;
             break;
           }
@@ -1078,11 +1078,11 @@ void SuperLuckyDice_Run(void) {
         }
         if (resultKind == SUPER_LUCKY_DICE_RESULT_WIN) {
           if (hiLoGame <= 3)
-            jingle = MUS_JINGLE_SMALL;
+            jingle = MUS_LUCKY;
           if (hiLoGame == 4)
-            jingle = MUS_JINGLE_MEDIUM;
+            jingle = MUS_VERY_LUCKY;
           if (hiLoGame == DICE_FINAL_GAME)
-            jingle = MUS_JINGLE_LARGE;
+            jingle = MUS_SUPER_LUCKY;
         }
       }
       if (resultKind == SUPER_LUCKY_DICE_RESULT_LOSE ? timer == 90

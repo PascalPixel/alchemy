@@ -189,7 +189,7 @@ s32 FieldSequence_Run(s32 entrance) {
               } else {
                 Actor_SelectAnimationFar(actor, ANIM_COLLAPSE);
               }
-              Sound_PlayFar(MUS_DEFEAT);
+              Sound_PlayFar(MUS_DEFEATED);
               FieldMessage_ShowFar(MsgFieldPartyAnnihilated,
                                    FIELD_MESSAGE_ZOOM);
               vitals = Unit_GetFar(gMainRoutineWork.leaderActorId);

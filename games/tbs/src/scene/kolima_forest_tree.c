@@ -472,7 +472,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Event_Wait(40);
   KolimaForestTree_ChangeFace(ACTOR_INVISIBLE_TRET, FACE_CHANGE_OPEN_EYES);
   Event_Wait(40);
-  Sound_Play(MUS_COLOSSO_INTRO);
+  Sound_Play(MUS_TRIAL_ROAD);
   // Tret and Laurel discover that their powers have returned.
   Event_SetMessageId(MsgKolimaFeelGreatPowerSpreadingThrough);
   // "I feel a great power spreading through me..."
@@ -743,7 +743,7 @@ static void KolimaForestTree_RestoreTret(void) {
   Event_ShowMessageThenWait(SPEAKER_WINDOW_ABOVE | ACTOR_LAUREL, 0, 10);
   Actor_SetAnimationAndWait(ACTOR_PARTY_LEADER, ANIM_NOD);
   GameFlag_Set(FLAG_KOLIMA_CURSE_LIFTED);
-  Sound_Play(MUS_TOWN);
+  Sound_Play(MUS_TOWN_THEME);
   KolimaForestTree_ReplaceInventoryItem(ITEM_HERMES_WATER, ITEM_EMPTY_BOTTLE);
 }
 

@@ -8,9 +8,10 @@
 /// plays nothing, has no name, and the next named row's number is written
 /// after it. A sequence with no name yet keeps its number as its placeholder:
 /// no code or table in the game plays one, by name or by number, and only the
-/// sound test (SoundTest_Run), which nothing calls, can start it. Music is
-/// named by the place or moment the player knows it from, or by what it sounds
-/// like where it marks many moments (MUS_OMINOUS); a sound effect by what it
+/// sound test (SoundTest_Run), which nothing calls, can start it. Music takes
+/// the title of its track where the two are matched (MUS_A_LONG_JOURNEY), the
+/// titles as Miketendo64's track guide lists them, and otherwise the place or
+/// moment the player knows it from (MUS_DUNGEON); a sound effect by what it
 /// sounds like or the moment it marks. Three rows are controls no sound plays
 /// from. Sound_Play tests the controls SOUND_FADE_OUT_BGM and
 /// SOUND_FADE_OUT_ACTION_SE first, then the ranges: from SOUND_SE_FIRST on the
@@ -20,39 +21,40 @@
 enum SoundId {
   /// Field music of Vale, of Vault, and of Altin once
   /// FLAG_HYDROS_STATUES_DEFEATED is set.
-  MUS_VALE,
+  MUS_VILLAGE_THEME,
   /// Field music of Lunpa, the Lunpa Fortress Gates and the Vault jail; of
   /// Bilibin, the Bilibin Barricade, Kolima, Kolima Bridge, Kolima Forest and
   /// the Tret Tree once FLAG_KOLIMA_CURSE_LIFTED is set; of Tolbi and the
   /// Colosseum entrance after the Colosso (FLAG_COLOSSO_OVER); and of Lalivero
   /// once FLAG_VENUS_LIGHTHOUSE_PARTY_RETURNED is set. It also plays as Tret is
   /// restored.
-  MUS_TOWN,
+  MUS_TOWN_THEME,
   /// Field music of Bilibin, the Bilibin Barricade, Kolima, Kolima Bridge, the
   /// Kolima tunnel, Imil and Lalivero, and of Vale and the Sanctum once Mt.
   /// Aleph has erupted (FLAG_SOL_SANCTUM_ERUPTED). It also plays as the Wise
   /// One gives the party its mission.
-  MUS_TOWN_IN_TROUBLE,
+  MUS_AN_UNSETTLING_FEELING,
   /// Field music of McCoy's Palace, Hammet Palace, the Colosseum's halls and
   /// Vale's inn from one entrance; the debug link test plays it too
   /// (SerialTest_Run).
-  MUS_PALACE,
+  MUS_PALACE_THEME,
   /// Field music of the Tret Tree and of Altin.
-  MUS_TRET_TREE,
+  MUS_SINKING_INTO_SORROW,
   /// Field music of Fuchin Temple, Xian and Lama Temple.
-  MUS_FUCHIN_TEMPLE,
+  MUS_TEMPLE_THEME,
   /// Field music of Kalay, the Kalay docks and the Tolbi docks.
-  MUS_KALAY,
+  MUS_PORT_TOWN_THEME,
   /// Field music at the start of each Colosso match, and as Tret is restored.
-  MUS_COLOSSO_INTRO,
+  MUS_TRIAL_ROAD,
   /// Field music of the Colosso matches, and as Donpa judges Dodonpa in the
   /// Lunpa Fortress.
-  MUS_COLOSSO,
+  MUS_COLOSSEUM,
   /// The world map's music during the Djinn lesson (FLAG_DJINN_LESSON) and as
   /// Flint is met; it also plays as the Vault thieves are chased, as the tour
   /// group leaves Kalay, and in Lucky Dice and Lucky Wheels.
-  MUS_DJINN_LESSON,
-  /// Field music of Tolbi before the Colosso; afterwards Tolbi plays MUS_TOWN.
+  MUS_TRY_YOUR_LUCK,
+  /// Field music of Tolbi before the Colosso; afterwards Tolbi plays
+  /// MUS_TOWN_THEME.
   MUS_TOLBI,
   /// Not a sound: fades the music out over 112 VBlanks, once.
   SOUND_FADE_OUT_BGM = 17,
@@ -65,7 +67,7 @@ enum SoundId {
   /// Field music of Kolima Forest, Mogall Forest, and of the Tret Tree once
   /// FLAG_TRET_DEFEATED is set; it also plays as Kolima is cursed, as Kraden
   /// finds the heart of Sol Sanctum, and after the battle with Tret.
-  MUS_FOREST,
+  MUS_FOREST_THEME,
   /// Field music of Sol Sanctum's Elemental Star room, Mercury Lighthouse's
   /// aerie, the Lemurian ship, Venus Lighthouse's aerie once its second battle
   /// has begun (FLAG_AERIE_SECOND_BATTLE_BEGUN in venus_lighthouse_aerie.c),
@@ -75,16 +77,16 @@ enum SoundId {
   /// stormy night's monster is fought (FLAG_VALE_STORM_MONSTER_FOUGHT); it also
   /// plays as the Wise One rescues the party in Sol Sanctum and after Saturos
   /// and Menardi's defeat.
-  MUS_DANGER,
+  MUS_DUNGEON_THEME,
   /// Field music of the caves: Goma Cave, Bilibin Cave, Imil Falls Cave, Vale
   /// Cave, Vault Cave, West Lunpa Cave, the Kalay Tunnel, Gondowan Cave and the
   /// Suhalla Gate.
-  MUS_CAVE,
+  MUS_CAVE_THEME,
   /// Field music of the deserts: Lamakan Desert and Suhalla Desert.
-  MUS_DESERT,
+  MUS_DESERT_THEME,
   /// Field music of Suhalla, and of Imil once Saturos is beaten at Mercury
   /// Lighthouse (FLAG_SATUROS_BEATEN_AT_MERCURY).
-  MUS_SUHALLA,
+  MUS_REMOTE_VILLAGE,
   /// Field music of Mercury Lighthouse and the Venus Lighthouse entry.
   MUS_MERCURY_LIGHTHOUSE,
   /// Field music of Fuchin Falls Cave, Crossbone Isle's cave, Babi Lighthouse
@@ -96,23 +98,23 @@ enum SoundId {
   /// plays as Alex appears at Mercury Lighthouse, in the fight with Tret, on
   /// the ship's mast, and as Saturos and Menardi are confronted at Venus
   /// Lighthouse.
-  MUS_CONFRONTATION,
+  MUS_THE_SLEEPING_TREASURE_OF_ALTMILLER_CAVE,
   /// Plays as Babi is restored in Altmiller Cave and invites the party to
   /// Tolbi, and as he meets it after the Colosso; also as Iodem, Babi's
   /// general, questions the wounded soldiers in Suhalla, and as the field music
   /// of Venus Lighthouse's aerie once its first battle has begun
   /// (FLAG_AERIE_FIRST_BATTLE_BEGUN in venus_lighthouse_aerie.c).
-  MUS_BABI,
+  MUS_BABIS_THEME,
   /// Unused: nothing in the game plays it; TRACKS_ALL names it among the
-  /// songs of nine or more tracks.
+  /// songs of nine or more tracks. Its tune is The Lost Age's title music.
   MUS_UNUSED = 40,
   /// Field music of the Tolbi-bound ship, and of the world map reached from
   /// seven of its entrances.
-  MUS_TOLBI_BOUND_SHIP,
+  MUS_SET_SAIL_ON_THE_KARAGOL_SEA,
   /// Field music of the world map, and of Goma Cave's entrance, the Bilibin
   /// Cave entrance, the Alpine Crossing, Crossbone Isle, the Gondowan Passage
   /// and the Kalay Tunnel entrance; it also plays after Flint is met.
-  MUS_WORLD_MAP,
+  MUS_A_LONG_JOURNEY,
   /// Field music of Venus Lighthouse, but for its entry and its aerie.
   MUS_VENUS_LIGHTHOUSE,
   /// The music of every battle gEncounter_BattleMusic lists no other music for.
@@ -121,41 +123,41 @@ enum SoundId {
   /// Woman who catch Isaac in Vale's plaza (ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT,
   /// slot 4) and Saturos at Mercury Lighthouse's aerie
   /// (ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, slot 2); Battle_Run plays it, then
-  /// MUS_COLOSSO_BATTLE, for a battle with no music of its own.
-  MUS_SATUROS_BATTLE,
+  /// MUS_COLOSSEUM_FINALS, for a battle with no music of its own.
+  MUS_SWORN_ENEMIES_STAND_IN_YOUR_WAY,
   /// Battle music gEncounter_BattleMusic gives the guardians and bosses: Tret,
   /// the Killer Ape, the Hydros Statue, the Manticore, the Kraken, Toadonpa,
   /// the Storm and Tempest Lizards, and the monsters guarding Crossbone Isle's
   /// floors; it also plays as Dodonpa pulls the lever that springs the trap in
   /// the Lunpa Fortress.
-  MUS_BOSS_BATTLE,
+  MUS_BATTLING_A_POWERFUL_FOE,
   /// Battle music gEncounter_BattleMusic gives Saturos and Menardi's first
   /// battle at Venus Lighthouse's aerie (ENCOUNTER_ZONE_SCRIPTED, slot 1) and
   /// Deadbeard (ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS, slot 5).
-  MUS_SATUROS_AND_MENARDI_BATTLE,
+  MUS_BATTLE_WITH_SATUROS_AND_MENARDI,
   /// Battle music of the Fusion Dragon, the aerie's second battle
   /// (ENCOUNTER_ZONE_SCRIPTED, slot 0); it also plays as Saturos and Menardi
   /// fuse at Venus Lighthouse's aerie.
-  MUS_FUSION_DRAGON_BATTLE,
+  MUS_BATTLE_WITH_THE_FUSION_DRAGON,
   /// Plays as the boulder chases the party down Altin Peak, and after a link
   /// battle's own music (Battle_Run).
-  MUS_BOULDER_CHASE,
+  MUS_TEST_YOUR_SKILLS,
   /// Plays when a battle is won (Battle_Run), except during the Djinn lesson
   /// (FLAG_DJINN_LESSON).
   MUS_VICTORY = 58,
   /// Plays when the whole party falls: defeated in battle, before "goes down in
   /// defeat" or "party has been defeated", or felled on the field by poison or
   /// hazardous ground.
-  MUS_DEFEAT,
+  MUS_DEFEATED,
   /// Plays as Ivan is met in Vault, and as the party finds Ivan's master Hammet
   /// in the Lunpa Fortress.
-  MUS_IVAN,
+  MUS_WIND_ADEPTS,
   /// Ominous music that plays outside battle as villains appear: Saturos and
   /// Menardi in Vale's plaza, at Kraden's cottage, in the Elemental Star room
   /// and at the aeries of Mercury Lighthouse and Venus Lighthouse; the thieves
   /// in the loft of Vault's inn; and Dodonpa in the Lunpa Fortress, as he comes
   /// to free Toadonpa on the party.
-  MUS_OMINOUS,
+  MUS_CHANCE_MEETING_WITH_SWORN_ENEMIES,
   /// Plays as Sheba hangs from the edge of Venus Lighthouse's aerie, from
   /// Felix's cry until it fades as she slips
   /// (VenusLighthouseAerie_TryToPreventFall).
@@ -163,17 +165,17 @@ enum SoundId {
   /// Field music of Sol Sanctum once Mt. Aleph has erupted
   /// (FLAG_SOL_SANCTUM_ERUPTED) and of the eruption event; it also plays as the
   /// Tolbi-bound ship rocks and as Saturos and Menardi combine.
-  MUS_ERUPTION,
+  MUS_MOUNT_ALEPH_ERUPTS,
   /// The Title's music as the intro holds the title, without its prompt, after
   /// the prologue and before Vale three years later (the title's
   /// Scene_Initialize).
-  MUS_TITLE_AFTER_PROLOGUE,
+  MUS_THE_PASSAGE_OF_TIME,
   /// The ending's music: the Lemurian ship sailing away (LemurianShip_SetSail)
   /// and the staff credits that follow (the title's Scene_Initialize).
-  MUS_ENDING = 67,
+  MUS_THE_BROKEN_SEAL_ENDING = 67,
   /// The title intro's music at power-on, when a save file exists, with its
   /// "Press Start" prompt (the title's Scene_Initialize).
-  MUS_TITLE = 70,
+  MUS_MAIN_THEME_TITLE = 70,
   /// A row of the song table that holds the empty song (dummy_song_header), so
   /// nothing plays; only the debug battle message viewer starts it, to silence
   /// the music.
@@ -181,40 +183,40 @@ enum SoundId {
   /// Plays once Felix has leapt after Sheba from Venus Lighthouse's aerie, as
   /// the party watches and resolves to escape
   /// (VenusLighthouseAerie_PlayShebasFall).
-  MUS_FELIX_LEAPS_AFTER_SHEBA,
+  MUS_FELIXS_RESOLVE,
   /// The File Screen's music, and the field music of the Sanctum.
-  MUS_FILE_SCREEN = 74,
+  MUS_SETTING_OFF = 74,
   /// The music of the Golden Sun logo shown after Jenna and Kraden's closing
   /// event on the world map, until a key is pressed (the title's entrance 10).
-  MUS_ENDING_LOGO,
+  MUS_TO_BE_CONTINUED,
   /// Battle music gEncounter_BattleMusic gives the battles that end the Colosso
   /// finals' matches (ENCOUNTER_ZONE_COLOSSO); Battle_Run plays it after
-  /// MUS_SATUROS_BATTLE for a battle with no music of its own.
-  MUS_COLOSSO_BATTLE,
+  /// MUS_SWORN_ENEMIES_STAND_IN_YOUR_WAY for a battle with no music of its own.
+  MUS_COLOSSEUM_FINALS,
   /// The jingle as a puzzle is solved: Altmiller Cave's rock turned, the
   /// Lemurian ship raised, the Vault Cave switches, and the West Lunpa Cave
   /// gate frozen open.
   MUS_PUZZLE_SOLVED = 80,
   /// The jingle as a Djinni or a new party member joins the party, Flint
   /// included.
-  MUS_JOINED,
+  MUS_A_NEW_ALLY,
   /// The jingle of Revive, used from the menu or bought at a Sanctum.
-  MUS_REVIVE,
+  MUS_RECOVERING_AFTER_COMBAT,
   /// The jingle as an item is found or given, Psynergy learned, a Colosso prize
   /// taken, the Hermes' Water bottle filled, or an Elemental Star taken.
   MUS_TREASURE_FOUND,
   /// The jingle of Cure Poison, used from the menu or bought at a Sanctum, and
   /// of Ply's field effect on its target.
-  MUS_CURE,
+  MUS_POISON_CURED,
   /// The jingle as a save is written, or a link battle's results are saved.
   MUS_SAVED,
   /// The jingle of the inn as the party sleeps (Inn_PlaySleep); also a lost
   /// Colosso match, and the Sanctum as the party is asked to take on the quest.
-  MUS_INN,
+  MUS_OVERNIGHT_AT_THE_INN,
   /// The jingle of a Sanctum's Remove Curse.
-  MUS_REMOVE_CURSE,
+  MUS_CURSE_LIFTED,
   /// The jingle of a Sanctum's Repel Evil.
-  MUS_REPEL_EVIL,
+  MUS_EXORCISED,
   /// The jingle as a party member levels up after a battle, and as a Colosso
   /// round begins.
   MUS_LEVEL_UP,
@@ -224,14 +226,14 @@ enum SoundId {
   /// as the stat items (Ability_PlayUseAnimation).
   /// The row before it is the empty song: Colosso_ShowMatchResult plays this
   /// one minus 1 plus the match's result, which lands there for a result of 0.
-  MUS_JINGLE_SMALL = 91,
+  MUS_LUCKY = 91,
   /// The middle prize jingle: three pairs in Lucky Dice, a Tolbi Spring prize
   /// of 5,000 coins or more, and a cleared Colosseum trial.
-  MUS_JINGLE_MEDIUM,
+  MUS_VERY_LUCKY,
   /// The largest prize jingle: four of a kind in Lucky Dice, a Lucky Wheels
   /// win, a Tolbi Spring prize over 19,999 coins, and five levels from the
   /// debug level editor.
-  MUS_JINGLE_LARGE,
+  MUS_SUPER_LUCKY,
   /// Unused: a song of no tracks, as MUS_SILENCE is, on the jingles' player;
   /// nothing plays it.
   MUS_UNUSED_SILENCE_JINGLE = 95,

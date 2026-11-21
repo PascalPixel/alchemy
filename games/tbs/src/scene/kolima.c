@@ -829,7 +829,7 @@ static void Kolima_WitnessForestCurse(void) {
   gFallingEffectState = KOLIMA_DUST_CLOSING;
   Task_AddFrame(Kolima_UpdateCurseDust, TASK_PASS_FRAME);
   Event_Wait(180);
-  Sound_Play(MUS_FOREST);
+  Sound_Play(MUS_FOREST_THEME);
   Kolima_ShowMessageAndWait(ACTOR_GARET, 80);
   Kolima_ShowMessageAndWait(ACTOR_IVAN, 40);
   Actor_SetAttachedEffect(ACTOR_PARTY_LEADER,
@@ -1114,7 +1114,7 @@ static void Kolima_WitnessForestCurse(void) {
     gFieldWork->message++;
   }
   Event_ShowMessage(ACTOR_GARET, 0);
-  Sound_Play(MUS_FOREST);
+  Sound_Play(MUS_FOREST_THEME);
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(24, 16, 24), PALETTES_BG);
   PaletteFade_StartInterpolation(60);
   wait(60);

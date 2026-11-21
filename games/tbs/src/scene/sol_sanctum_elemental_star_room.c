@@ -560,7 +560,7 @@ static void SolSanctumElementalStarRoom_DemandElementalStars(void) {
   s32 frame;
   struct Sprite *sprite;
 
-  Sound_Play(MUS_OMINOUS);
+  Sound_Play(MUS_CHANCE_MEETING_WITH_SWORN_ENEMIES);
   Actor_SetAnimation(ACTOR_SATUROS, ANIM_SHAKE_HEAD);
   Event_SetMessageId(MsgSolSanctumLooksLikeTheyveSpottedUs);
   SolSanctumElementalStarRoom_ShowMessageAndWait(ACTOR_SATUROS, 10);

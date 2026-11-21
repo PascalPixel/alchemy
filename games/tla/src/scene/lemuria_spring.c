@@ -484,7 +484,7 @@ s32 LemuriaSpring_RunSpringGame(void) {
     if (choice == SPRING_TOSS_COIN) {
       if (result != TOSS_RING_MISSED) {
         Party_AdjustCoins(gLemuriaSpring_CoinPrizes[result]);
-        Event_PlaySound(MUS_JINGLE_SMALL);
+        Event_PlaySound(MUS_LUCKY);
         MessageArgument_Push(gLemuriaSpring_CoinPrizes[result],
                              MESSAGE_ARGUMENT_NUMBER);
         Event_SetMessageId((s32)MsgLemuriaSpringYouWonCoin);

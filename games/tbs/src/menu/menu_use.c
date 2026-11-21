@@ -345,13 +345,13 @@ void Ability_PlayUseAnimation(s32 action) {
     targetType = actionDefinition->effect;
     switch (targetType) {
     case ABILITY_EFFECT_REVIVE:
-      Sound_PlayReturnOne(MUS_REVIVE);
+      Sound_PlayReturnOne(MUS_RECOVERING_AFTER_COMBAT);
       return;
     case ABILITY_EFFECT_CURE_POISON:
-      Sound_PlayReturnOne(MUS_CURE);
+      Sound_PlayReturnOne(MUS_POISON_CURED);
       return;
     default:
-      Sound_PlayReturnOne(MUS_JINGLE_SMALL);
+      Sound_PlayReturnOne(MUS_LUCKY);
 
     // The HP and PP restores no ability has (ability_table.c).
     case ABILITY_EFFECT_RESTORE_HP:

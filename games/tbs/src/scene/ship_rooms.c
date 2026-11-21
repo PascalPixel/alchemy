@@ -3799,7 +3799,7 @@ static void ShipRooms_NoticeShipRocking(void) {
   MapGrid_SetShake(2, 2, 1);
   Event_Wait(10);
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
-  Sound_Play(MUS_ERUPTION);
+  Sound_Play(MUS_MOUNT_ALEPH_ERUPTS);
   GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
   Actor_SetAttachedEffect(ACTOR_MIA,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);

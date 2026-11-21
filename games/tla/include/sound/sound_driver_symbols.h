@@ -34,7 +34,7 @@ enum SoundControl {
   /// Sounds from here to SOUND_SE_END, but for the two fades, each play on the
   /// player gSongTable names for them.
   SOUND_SE_FIRST = SE_BELL,
-  SOUND_SE_END = MUS_VALE ///< sounds from here on are music again
+  SOUND_SE_END = MUS_VILLAGE_THEME ///< sounds from here on are music again
 };
 
 /// The music players by their row in gMPlayTable

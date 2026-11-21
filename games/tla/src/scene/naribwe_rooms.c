@@ -381,7 +381,7 @@ void NaribweRooms_ReadFortune(void) {
   PaletteFade_ApplyTarget(PALETTE_TINT_BLEND | RGB(13, 8, 9), PALETTES_BG);
   PaletteFade_Interpolate(30);
   FieldEvent_Wait(120);
-  Event_PlaySound(MUS_KIBOMBO);
+  Event_PlaySound(MUS_RITUALS);
   Actor_SetAnimation(ACTOR_FORTUNE_TELLER, ANIM_FORTUNE_TELLER_DANCE);
   Actor_WaitForAnimationChange(ACTOR_FORTUNE_TELLER);
   DANCE_TO(664);
@@ -397,7 +397,7 @@ void NaribweRooms_ReadFortune(void) {
   FieldActor_Jump(ACTOR_FORTUNE_TELLER, 4, 30);
   Actor_SetAnimation(ACTOR_FORTUNE_TELLER, ANIM_FORTUNE_TELLER_DANCE);
   Actor_SetAnimation(ACTOR_FORTUNE_TELLER, ANIM_STILL);
-  Event_PlaySound(MUS_KIBOMBO);
+  Event_PlaySound(MUS_RITUALS);
   PaletteFade_ApplyTarget(PALETTE_TINT_NONE, PALETTES_BG);
   PaletteFade_Interpolate(30);
   Actor_SetPosition(ACTOR_SMOKE_CLOUD, 672, 104);
@@ -415,7 +415,7 @@ void NaribweRooms_ReadFortune(void) {
   Actor_ShowEmote(gMainRoutineWork.leaderActorId, EMOTE_IN_FRONT | EMOTE_WINCE,
                   0);
   FieldEvent_Wait(60);
-  Event_PlaySound(MUS_NARIBWE);
+  Event_PlaySound(MUS_KIBOMBO);
   Actor_ShowEmote(ACTOR_FORTUNE_TELLER, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 60);
   // "I see..."
   Event_ShowMessage(ACTOR_FORTUNE_TELLER, 0);

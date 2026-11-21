@@ -636,7 +636,7 @@ void BattleEffect_RunBurstShower(struct BattleEffectParams *args, u32 mode) {
       if (frame == 4) {
         if (mode == BURST_SHOWER_MODE_FUGUE ||
             mode == BURST_SHOWER_MODE_DJINNFEST)
-          Sound_PlayFar(MUS_JINGLE_MEDIUM);
+          Sound_PlayFar(MUS_VERY_LUCKY);
         else
           Sound_PlayFar(SE_WHOOSH);
       }

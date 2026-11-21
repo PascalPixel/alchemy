@@ -963,7 +963,7 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   Sound_Play(SE_TREMOR);
   MapGrid_SetShake(1, 1, 1);
   Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_WINCE, 80);
-  Sound_Play(MUS_BOULDER_CHASE);
+  Sound_Play(MUS_TEST_YOUR_SKILLS);
   MapGrid_SetShake(1, 3, 1);
   Actor_SetSpritePriority(ACTOR_FALLING_BOULDER, 0);
   Actor_SetSpritePriority(ACTOR_PARTY_LEADER, 0);

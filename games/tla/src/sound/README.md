@@ -23,8 +23,10 @@ whatever is playing, or fade out the effects of one or two players. Every
 sound has a name in [sounds.h](../../include/sounds.h), one for each row
 of the song table; a row of the empty song, which plays nothing, has none.
 A sound whose notes are The Broken Seal's own takes that game's name (the
-message voices, `SE_BELL`, `MUS_VALE`), a tune is named for the place it
-is the music of (`MUS_MADRA`) or the moment it marks (`MUS_INN`), an effect
+message voices, `SE_BELL`, `MUS_VILLAGE_THEME`), a tune takes the title of
+its track where the two are matched
+(`MUS_TO_THE_OPEN_SEA`) and otherwise the place it is the music of
+(`MUS_PROX`) or the moment it marks (`MUS_SAVED`), an effect
 for what it plays with (`SE_DOLL_PLACED`), and the rest keep their number,
 `SE_119`, until something names them. A sound that repeats another's
 notes higher, lower or on another voice is named for it

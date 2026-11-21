@@ -720,12 +720,12 @@ void ShopTest_RunLevelEditor(void) {
     wait(1);
     if ((gInput.pressed & KEY_START) || (gInput.pressed & KEY_SELECT)) {
       ShopTest_AdjustPartyLevels(5);
-      Sound_Play(MUS_JINGLE_LARGE);
+      Sound_Play(MUS_SUPER_LUCKY);
       redraw = 1;
     }
     if (gInput.pressed & KEY_A) {
       ShopTest_AdjustPartyLevels(1);
-      Sound_Play(MUS_JINGLE_SMALL);
+      Sound_Play(MUS_LUCKY);
       redraw = 1;
     }
     if (gInput.pressed & KEY_B)

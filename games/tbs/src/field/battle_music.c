@@ -10,17 +10,17 @@
 /// Battle music: which battles have music of their own
 /// (Encounter_SelectBattleMusic).
 const u16 gEncounter_BattleMusic[35] = {
-    ENCOUNTER_BATTLE_MUSIC(MUS_FUSION_DRAGON_BATTLE),
+    ENCOUNTER_BATTLE_MUSIC(MUS_BATTLE_WITH_THE_FUSION_DRAGON),
     // The Fusion Dragon, Venus Lighthouse's aerie.
     ENCOUNTER_KEY(ENCOUNTER_ZONE_SCRIPTED, 0),
 
-    ENCOUNTER_BATTLE_MUSIC(MUS_SATUROS_AND_MENARDI_BATTLE),
+    ENCOUNTER_BATTLE_MUSIC(MUS_BATTLE_WITH_SATUROS_AND_MENARDI),
     // Saturos and Menardi, Venus Lighthouse's aerie.
     ENCOUNTER_KEY(ENCOUNTER_ZONE_SCRIPTED, 1),
     // Deadbeard, on the Pirate Ship.
     ENCOUNTER_KEY(ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS, 5),
 
-    ENCOUNTER_BATTLE_MUSIC(MUS_BOSS_BATTLE),
+    ENCOUNTER_BATTLE_MUSIC(MUS_BATTLING_A_POWERFUL_FOE),
     // Tret, in Tret Tree.
     ENCOUNTER_KEY(ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, 0),
     // The Killer Ape, in Mogall Forest.
@@ -52,7 +52,7 @@ const u16 gEncounter_BattleMusic[35] = {
     ENCOUNTER_KEY(ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS, 3),
     ENCOUNTER_KEY(ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS, 4),
 
-    ENCOUNTER_BATTLE_MUSIC(MUS_COLOSSO_BATTLE),
+    ENCOUNTER_BATTLE_MUSIC(MUS_COLOSSEUM_FINALS),
     // The Colosso finals: Azart with and without the Iron Shield, Satrage with
     // and without the Chain Mail, Navampa with and without the Claymore.
     ENCOUNTER_KEY(ENCOUNTER_ZONE_COLOSSO, 0),
@@ -62,7 +62,7 @@ const u16 gEncounter_BattleMusic[35] = {
     ENCOUNTER_KEY(ENCOUNTER_ZONE_COLOSSO, 4),
     ENCOUNTER_KEY(ENCOUNTER_ZONE_COLOSSO, 5),
 
-    ENCOUNTER_BATTLE_MUSIC(MUS_SATUROS_BATTLE),
+    ENCOUNTER_BATTLE_MUSIC(MUS_SWORN_ENEMIES_STAND_IN_YOUR_WAY),
     // The Mystery Man and Mystery Woman, in Vale's plaza.
     ENCOUNTER_KEY(ENCOUNTER_ZONE_SCRIPTED_VALE_VAULT, 4),
     // Saturos, at Mercury Lighthouse's aerie.

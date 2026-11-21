@@ -311,8 +311,8 @@ s32 Item_PlayUseAnimation(s32 item) {
 /// Plays the sound of action used from the menu, and returns at once: no
 /// animation is drawn and nothing waits. The HP and PP healing formulas play
 /// SE_RECOVERY, HP healing twice; otherwise the HP and PP restores and drains
-/// play nothing, revival MUS_REVIVE, curing poison MUS_CURE, and every other
-/// effect MUS_JINGLE_SMALL.
+/// play nothing, revival MUS_RECOVERING_AFTER_COMBAT, curing poison
+/// MUS_POISON_CURED, and every other effect MUS_LUCKY.
 s32 Ability_PlayUseAnimation(s32 action) {
   s32 animationType;
   u32 targetType;
@@ -335,13 +335,13 @@ s32 Ability_PlayUseAnimation(s32 action) {
     targetType = actionDefinition->effect;
     switch (targetType) {
     case ABILITY_EFFECT_REVIVE:
-      Sound_PlayReturnOne(MUS_REVIVE);
+      Sound_PlayReturnOne(MUS_RECOVERING_AFTER_COMBAT);
       return;
     case ABILITY_EFFECT_CURE_POISON:
-      Sound_PlayReturnOne(MUS_CURE);
+      Sound_PlayReturnOne(MUS_POISON_CURED);
       return;
     default:
-      Sound_PlayReturnOne(MUS_JINGLE_SMALL);
+      Sound_PlayReturnOne(MUS_LUCKY);
 
     // The HP and PP restores no ability has (ability_table.c).
     case ABILITY_EFFECT_RESTORE_HP:

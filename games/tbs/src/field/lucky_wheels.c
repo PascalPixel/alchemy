@@ -71,7 +71,7 @@
 s32 LuckyWheels_Start(void) {
   REG_DISPCNT = DISPCNT_OBJ_1D_MAP;
   gRandomSeed = gMainRoutineWork.playTime;
-  Sound_PlayFar(MUS_DJINN_LESSON);
+  Sound_PlayFar(MUS_TRY_YOUR_LUCK);
   LuckyWheels_Run();
   return 0;
 }
@@ -731,7 +731,7 @@ void LuckyWheels_Update(void) {
       objMode = 0;
       if (work->timer == LUCKY_WHEELS_WIN_PAUSE) {
         work->state = LUCKY_WHEELS_SHOWING_WIN;
-        Sound_PlayFar(MUS_JINGLE_LARGE);
+        Sound_PlayFar(MUS_SUPER_LUCKY);
         work->timer = 0;
         REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;
         REG_BLDALPHA = BLEND_ALPHA(16, 16);

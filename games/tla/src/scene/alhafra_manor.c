@@ -547,7 +547,7 @@ void AlhafraManor_BriggsEscapes(void) {
   Actor_ShowEmote(ACTOR_JAIL_GUARD, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN, 30);
   // "Briggs destroyed the prison and escaped with his pirates!"
   Event_ShowMessageThenWait(ACTOR_JAIL_GUARD, 0, 10);
-  Sound_Play(MUS_JENNA_BATTLE);
+  Sound_Play(MUS_BATTLE_JENNA);
   Actor_ShowEmoteById(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmoteById(ACTOR_FELIX, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmoteById(ACTOR_PIERS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);

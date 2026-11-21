@@ -929,9 +929,9 @@
 /// it.
 #define FLAG_TOLBI_SHIP_AT_ISLAND 0x8a0
 /// The lookout has sighted the monsters of one of the ship's attacks, and the
-/// ship's area plays MUS_CONFRONTATION, the monsters' theme, instead of
-/// MUS_TOLBI_BOUND_SHIP. It is cleared when the party fights them on the rowing
-/// deck.
+/// ship's area plays MUS_THE_SLEEPING_TREASURE_OF_ALTMILLER_CAVE, the monsters'
+/// theme, instead of MUS_SET_SAIL_ON_THE_KARAGOL_SEA. It is cleared when the
+/// party fights them on the rowing deck.
 #define FLAG_TOLBI_SHIP_MONSTERS_SIGHTED 0x8f0
 /// At anchor off the island, the party has agreed to Sean and Ouranos' request
 /// to scout it for monsters, so the tour group can know whether it is safe to
@@ -1041,12 +1041,13 @@
 #define FLAG_VALE_STORM_FIRST_MONSTER_FOUGHT 0x87d
 #define FLAG_VALE_STORM_SECOND_MONSTER_FOUGHT 0x87e
 /// A monster was fought on the stormy night: Vale's music changes to
-/// MUS_DANGER.
+/// MUS_DUNGEON_THEME.
 #define FLAG_VALE_STORM_MONSTER_FOUGHT 0x900
 /// Set as the prologue ends, three years after the stormy night
 /// (Party_EndChildhood); nothing clears it. While it is set Vale's field music
-/// is MUS_VALE, ahead of the MUS_DANGER that FLAG_VALE_STORM_MONSTER_FOUGHT
-/// chose (the music rules in field/scene_rules.s).
+/// is MUS_VILLAGE_THEME, ahead of the MUS_DUNGEON_THEME that
+/// FLAG_VALE_STORM_MONSTER_FOUGHT chose (the music rules in
+/// field/scene_rules.s).
 #define FLAG_VALE_THREE_YEARS_LATER 0x901
 /// The jar's Elixir by the cottage; after Kalay it is searchable only from the
 /// third patch.

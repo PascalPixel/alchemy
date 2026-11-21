@@ -647,7 +647,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
                               PALETTES_ALL);
       PaletteFade_Interpolate(16);
       System_Wait(16);
-      Event_PlaySound(MUS_BEACON_LIT);
+      Event_PlaySound(MUS_ALCHEMY_UNLEASHED);
       System_Wait(180);
       PaletteFade_ApplyTarget(RGB_WHITE, PALETTES_ALL);
       PaletteFade_Interpolate(60);

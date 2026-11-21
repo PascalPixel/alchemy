@@ -541,7 +541,7 @@ static void LemurianShip_SetSail(void) {
   // The ship sails east and the curtains close: the sea's layer scrolls
   // faster while the gangway's north piece moves off with the ship, and the
   // camera follows.
-  Sound_Play(MUS_ENDING);
+  Sound_Play(MUS_THE_BROKEN_SEAL_ENDING);
   Sound_SetBgmTempo(SOUND_TEMPO_SCALE_NORMAL * 15 / 16);
   Curtain_Start();
   Event_Wait(LEMURIAN_SHIP_DEPARTURE_DELAY_FRAMES);

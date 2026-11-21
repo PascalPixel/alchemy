@@ -1409,7 +1409,7 @@ void MarsLighthouseAerie_FindWhoTheDragonWas(void) {
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
   // "It wasn't just the dragon you killed..."
   Event_ShowMessage(ACTOR_KRADEN, 0);
-  Event_PlaySound(MUS_DOOM_DRAGON_REVEALED);
+  Event_PlaySound(MUS_THE_WISE_ONES_TRAP);
   Actor_SetAttachedEffect(ACTOR_GARET_STAND_IN,
                           ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);
   FieldEvent_Wait(20);
@@ -2587,7 +2587,7 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
     actor->scaleX += FIXED_ONE / 64;
     System_Wait(1);
   }
-  Event_PlaySound(MUS_BEACON_LIT);
+  Event_PlaySound(MUS_ALCHEMY_UNLEASHED);
   Actor_SetScript(ACTOR_BEAM_BOTTOM,
                   gMarsLighthouseAerie_WatchGoldenSunRiseScript);
   FieldEvent_Wait(80);

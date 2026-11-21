@@ -73,7 +73,7 @@ sounding note together, with a little echo.
 
 The songs and samples are ordinary files you can open, in
 [`games/tbs/sound`](../../sound): each song is a MIDI file, such as
-`songs/mus_vale.mid`, and each sample a WAV.
+`songs/mus_village_theme.mid`, and each sample a WAV.
 
 ## Where the code is
 

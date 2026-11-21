@@ -454,9 +454,9 @@ s32 Party_IsInFrontRow(s32 owner) {
 /// Chooses the battle music for slot of zone (gMainRoutineWork.battleMusic): a
 /// key takes the song listed last before it in gEncounter_BattleMusic, and a
 /// link battle (FLAG_LINK_BATTLE) keeps the music playing. With no song found,
-/// it is MUS_SHIP_BATTLE on the ship before it flies, else by the front row:
-/// MUS_BATTLE with Felix, MUS_ISAAC_BATTLE with Isaac, MUS_JENNA_BATTLE with
-/// Jenna, or MUS_BATTLE.
+/// it is MUS_BATTLE_ON_THE_SEA on the ship before it flies, else by the front
+/// row: MUS_BATTLE_THE_LOST_AGE with Felix, MUS_BATTLE_THE_BROKEN_SEAL with
+/// Isaac, MUS_BATTLE_JENNA with Jenna, or MUS_BATTLE_THE_LOST_AGE.
 void BattleEffect_SelectBattleCue(s32 zone, s32 slot) {
   s16 key = (zone << 4) + slot;
   const s16 *table = gEncounter_BattleMusic;
@@ -478,15 +478,15 @@ void BattleEffect_SelectBattleCue(s32 zone, s32 slot) {
   }
   if (music == 0) {
     if (gMainRoutineWork.ownerOverride != 0 && !GameFlag_Get(FLAG_SHIP_FLIES))
-      music = MUS_SHIP_BATTLE;
+      music = MUS_BATTLE_ON_THE_SEA;
     else if (Party_IsInFrontRow(FELIX))
-      music = MUS_BATTLE;
+      music = MUS_BATTLE_THE_LOST_AGE;
     else if (Party_IsInFrontRow(ISAAC))
-      music = MUS_ISAAC_BATTLE;
+      music = MUS_BATTLE_THE_BROKEN_SEAL;
     else if (Party_IsInFrontRow(JENNA))
-      music = MUS_JENNA_BATTLE;
+      music = MUS_BATTLE_JENNA;
     else
-      music = MUS_BATTLE;
+      music = MUS_BATTLE_THE_LOST_AGE;
   }
   gMainRoutineWork.battleMusic = music;
 }

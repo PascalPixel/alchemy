@@ -439,7 +439,7 @@ void NorthernReaches_ShatterIceWall(s32 unused, FIXED *position,
   timer = &sparks->age;
   for (i = EXPLOSION_SPARK_COUNT - 1; i >= 0; i--) {
     *timer = -(Random16() << 5 >> 16);
-    timer += 4;
+    timer += sizeof(struct ExplosionSpark) / sizeof(*timer);
   }
   Dma_Set(Field_ExplosionPalette,
           (void *)&OBJ_PLTT_COLOR(EXPLOSION_SPARK_PALETTE, 0),

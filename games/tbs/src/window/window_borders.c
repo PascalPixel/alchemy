@@ -51,11 +51,12 @@ loop:
                              window->previousWidth, window->previousHeight);
       Window_DrawZoomBorder(window, 1);
       window->zoomStage++;
-      /* FAKEMATCH(temporary): the flag through a local. */
+      /* FAKEMATCH(dead): a once-only block that places allBands, the dirty
+       * bit that uploads every band, at its store; as state->dirty = 1. */
       {
-        u8 dirty = 1;
+        u8 allBands = 1;
 
-        state->dirty = dirty;
+        state->dirty = allBands;
       }
     } else {
       Window_EraseBorderRect(window->previousX, window->previousY,

@@ -293,6 +293,8 @@ void *Glyph_AddBlankSprite(struct Window *window, s32 character, s32 x, s32 y) {
       (x + (spacingX >> 1) + window->x * 8 + GLYPH_SPRITE_OFFSET_X) |
       GLYPH_SPRITE_SIZE;
   ((u16 *)&output->sprite.oam)[2] = work->glyphTiles + index;
+  /* FAKEMATCH(temporary): sprite holds &output->sprite for the two reads of
+   * its position; as output->sprite.oam.x and .y. */
   sprite = &output->sprite;
   output->depth = OAM_DEPTH_FRONT - 2;
   output->x = sprite->oam.x;

@@ -441,8 +441,6 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
   FIXED womanX;
   FIXED womanY;
   s32 speed;
-  struct ScreenPoint *position;
-  s32 shift;
   s32 frame;
   void *vertices;
   struct RenderModel *model;
@@ -473,10 +471,11 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
   womanX = 0;
   womanY = 0;
   speed = 0;
-  EffectPosition_ProjectScaledBattler(args->targets[0], position = &target);
+  EffectPosition_ProjectScaledBattler(args->targets[0], &target);
 
   for (frame = 0; frame != LIFE_SHEAR_FRAMES; frame++) {
     s32 x;
+    s32 shift;
     s32 phase;
     s32 scale;
     s32 timer;
@@ -501,10 +500,10 @@ void BattleEffect_RunLifeShear(struct BattleEffectParams *args) {
       work->particles[0].variant = 0;
       womanY = toFIXED(24);
       if (args->side == EFFECT_SIDE_ENEMIES) {
-        womanX = INTtoFIXED(position->x + 176);
+        womanX = INTtoFIXED(target.x + 176);
         speed = toFIXED(15);
       } else {
-        womanX = INTtoFIXED(position->x - 304);
+        womanX = INTtoFIXED(target.x - 304);
         speed = -toFIXED(15);
       }
     }

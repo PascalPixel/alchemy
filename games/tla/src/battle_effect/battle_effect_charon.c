@@ -401,20 +401,22 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
         struct {
           u16 value;
         } mask;
-        s32 *timer;
+        /* FAKEMATCH(temporary): tumble, a pointer to each particle's variant
+         * stepped a particle at a time; as a particle pointer walked. */
+        s32 *tumble;
         u32 *b;
         u32 *a;
 
         for (i = 0, hidden = OBJ_X(DISPLAY_WIDTH) + DISPLAY_HEIGHT,
             mask.value = OBJ_PALETTE(CHARON_SHARD_PALETTE),
-            timer = &CHARON_PARTICLES[0].variant,
+            tumble = &CHARON_PARTICLES[0].variant,
             b = (u32 *)(REVEAL_BUFFER + 4), a = OAM_BUFFER;
              i != CHARON_HIDDEN_SPRITES; i++) {
           s32 t;
 
           *a = hidden;
-          t = *timer;
-          timer += 7;
+          t = *tumble;
+          tumble += sizeof(struct Particle) / sizeof(*tumble);
           *b =
               tiles[t / (CHARON_SHARD_TURN / CHARON_SHARD_FRAMES)] | mask.value;
           b += 2;

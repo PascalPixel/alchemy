@@ -709,6 +709,8 @@ void MapGrid_PlayMapEdit(u16 *steps, s32 destinationX, u32 destinationY) {
   if (test != MAPGRID_ANIMATION_STEPS_END) {
     u32 end = MAPGRID_ANIMATION_STEPS_END;
     // Each step's rectangle and delay, read a step at a time beside it.
+    /* FAKEMATCH(temporary): rectangle, a pointer to the step's y stepped a
+     * step at a time beside step. */
     s16 *rectangle = (s16 *)(steps + 1);
 
     while (1) {

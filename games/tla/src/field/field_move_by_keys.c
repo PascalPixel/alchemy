@@ -423,6 +423,8 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
   s32 cellZ;
   s32 angleIndex;
   s32 count;
+  /* FAKEMATCH(temporary): wakeTimer, a pointer to actor->wakeTimer; as the
+   * field by name. */
   u8 *wakeTimer;
   struct Actor *effect;
   struct PlayerSprite *sprite;

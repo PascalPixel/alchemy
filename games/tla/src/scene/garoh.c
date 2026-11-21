@@ -214,8 +214,7 @@ void Garoh_WaveHypnosSwordChestLayer(void) {
 
   if (gFieldWork->revealActive == 0) {
     u32 frame;
-    s32 z, a, b;
-    s32 stepA, stepB; // the two waves' angles a line
+    s32 z;
     s32 i;
     volatile u16 *dma;
 
@@ -226,23 +225,28 @@ void Garoh_WaveHypnosSwordChestLayer(void) {
     asm("" : "+r"(i), "+r"(line) : "r"(line));
     z = FIXEDtoINT(layer->y);
     x = FIXEDtoINT(layer->x);
-    /* FAKEMATCH(temporary): each wave's step held in a local; as the
-       constants. */
-    stepA = TRIG_TURN * 51 / 256;
-    stepB = TRIG_TURN * 153 / 2048;
-    a = z * stepA + frame * (TRIG_TURN / 64);
-    b = z * stepB - frame * (TRIG_TURN / 64);
-    for (; i != DISPLAY_HEIGHT;) {
-      s32 s1 = sine(a);
-      s32 s2 = sine(b);
+    /* FAKEMATCH(dead): a once-only block that places the two waves' steps
+     * and angles around the loop; as them declared with z. */
+    {
+      // The two waves: their angles at the top line, and the steps each line
+      // turns them on by.
+      s32 stepA = TRIG_TURN * 51 / 256;
+      s32 stepB = TRIG_TURN * 153 / 2048;
+      s32 a = z * stepA + frame * (TRIG_TURN / 64);
+      s32 b = z * stepB - frame * (TRIG_TURN / 64);
 
-      i++;
-      /* FAKEMATCH(dead): a store to z, which nothing reads again. */
-      if (i == 300 || x == 300)
-        z = 0;
-      *line++ = FIXEDtoINT((s1 * 3 + s2 * 7) >> 3) + x;
-      a += stepA;
-      b += stepB;
+      for (; i != DISPLAY_HEIGHT;) {
+        s32 s1 = sine(a);
+        s32 s2 = sine(b);
+
+        i++;
+        /* FAKEMATCH(dead): a store to z, which nothing reads again. */
+        if (i == 300 || x == 300)
+          z = 0;
+        *line++ = FIXEDtoINT((s1 * 3 + s2 * 7) >> 3) + x;
+        a += stepA;
+        b += stepB;
+      }
     }
     line = gGaroh_WaveLines;
     REG_BG2HOFS = line[0];

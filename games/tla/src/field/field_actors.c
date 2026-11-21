@@ -735,7 +735,7 @@ void ActorSystem_PlaceSprites(void) {
         continue;
       if (kind != ACTOR_SPRITE_ONE)
         continue;
-      if ((u16)system->suspended != 0 && !(actor->retainSpriteCache & 1)) {
+      if (system->suspended != 0 && !(actor->retainSpriteCache & 1)) {
         struct PlacedSprite *frozen = actor->sprite;
 
         VramCache_ReleaseVram(frozen->slot);

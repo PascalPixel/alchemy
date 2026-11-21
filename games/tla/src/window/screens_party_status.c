@@ -122,6 +122,8 @@ void Window_DrawColumnBorders(struct Window *window, u32 flags) {
     state = work->battleMode;
   }
   {
+    /* FAKEMATCH(temporary): shown, a copy of state for the bottom edge's
+     * tests; as state. */
     u32 shown = state;
 
     /* FAKEMATCH(dead): state cleared after its copy, where nothing reads it. */

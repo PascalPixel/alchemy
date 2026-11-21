@@ -209,8 +209,11 @@ s32 DebugBrowser_Portraits(void) {
   s32 glyph;
   s32 tile;
   s32 slot;
+  /* FAKEMATCH(temporary): cancelKey, KEY_B held in a local across the loop. */
   s32 cancelKey;
   s32 palette = PORTRAIT_PALETTE + 1;
+  /* FAKEMATCH(temporary): slotOffset, the second portrait slot's offset held
+   * in a local and added to work through a byte pointer. */
   u32 slotOffset = offsetof(struct WindowWork, portraitSprites[1]);
 
   work = (struct WindowWork *)Ram_HeapSlots->windowWork;

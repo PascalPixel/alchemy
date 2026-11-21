@@ -1740,6 +1740,8 @@ void SuperLuckyDice_Run(void) {
       s32 zero = 0;
 
       scaleX = spriteDepth[index] / 4 + DICE_NEAREST_SCALE;
+      /* FAKEMATCH(dead): the matrix's elements stored through their taken
+       * addresses; as plain stores. */
       *&affineA = scaleX;
       *&affineB = zero;
       *&affineC = zero;

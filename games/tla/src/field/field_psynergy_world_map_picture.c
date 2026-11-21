@@ -467,8 +467,9 @@ void WorldPicture_UpdateMarkers(void) {
     if (cursorY < 0)
       cursorY = 0;
     width = cursorX - NAME_BOX_X;
-    /* FAKEMATCH(temporary): the name box's y read through a pointer to a struct
-     * with an s32 member standing in for its own address. */
+    /* FAKEMATCH(signature): the name box's y read through
+     * WorldMapAliasedHalfword, a struct that does not describe it; as
+     * NAME_BOX_Y. */
     height = cursorY - ((struct WorldMapAliasedHalfword *)&NAME_BOX_Y)->value;
     WindowSpriteList_Move(work->window, width, height);
     NAME_BOX_X = cursorX;
@@ -626,9 +627,12 @@ void WorldMapPicture_DrawColumn(s32 column, s32 row) {
     cell = column + rowStart;
     cell *= TILE_SIZE_8BPP;
     tile *= TILE_SIZE_8BPP;
-    line = VRAM + WORLD_PICTURE_FIRST_TILE * TILE_SIZE_8BPP;
-    Dma_Set(Ram_MapCellBuffer + cell, (u8 *)line + tile,
+    Dma_Set(Ram_MapCellBuffer + cell,
+            (u8 *)(VRAM + WORLD_PICTURE_FIRST_TILE * TILE_SIZE_8BPP) + tile,
             DMA_COPY_WORDS(TILE_SIZE_8BPP / 4), REG_DMA3);
+    /* FAKEMATCH(dead): line set to 0 at the step's end, where nothing reads
+     * it; as no store. */
+    line = 0;
   }
 }
 
@@ -762,10 +766,6 @@ s32 WorldPicture_Show(s32 mode) {
   s32 *cursorZ;
   s32 *scrollX;
   s32 *scrollZ;
-  /* FAKEMATCH(temporary): zero, 0 held in a local; as 0 at its uses. */
-  s32 zero;
-  s32 limitX;
-  s32 limitZ;
   s32 value;
   struct WorldMapChoice *choice = &gWorldPictureChoice;
   struct MainRoutineWork *routine = &gMainRoutineWork;
@@ -907,25 +907,28 @@ s32 WorldPicture_Show(s32 mode) {
         Io_Write16(DISPCNT_OBJ_1D_MAP, &REG_DISPCNT);
         zoomed ^= 1;
         if (*cursorX != 0) {
+          /* FAKEMATCH(temporary): minimum, 0 held in a local for the clamps;
+           * as 0 at its uses. */
+          s32 minimum = 0;
+          s32 limitX = toFIXED(272);
+          s32 limitZ = toFIXED(224);
+
           work->x = *cursorX;
           work->z = *cursorZ;
-          zero = 0;
-          limitX = toFIXED(272);
-          limitZ = toFIXED(224);
           scrollX = &gWorldPicture_ScrollX;
           *scrollX = work->x - toFIXED(120);
           scrollZ = &gWorldPicture_ScrollY;
           *scrollZ = work->z - toFIXED(80);
           value = *scrollX;
-          if (value < 0) {
-            *scrollX = zero;
+          if (value < minimum) {
+            *scrollX = minimum;
             value = *scrollX;
           }
           if (value > limitX)
             *scrollX = limitX;
           value = *scrollZ;
-          if (value < 0) {
-            *scrollZ = zero;
+          if (value < minimum) {
+            *scrollZ = minimum;
             value = *scrollZ;
           }
           if (value > limitZ)

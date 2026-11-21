@@ -425,8 +425,8 @@ void NorthernReaches_ShatterIceWall(s32 unused, FIXED *position,
   }
   sparks =
       Heap_AllocEwram(EXPLOSION_SPARK_COUNT * sizeof(struct ExplosionSpark));
-  /* FAKEMATCH(temporary): the size held in the local that then takes the
-   * buffer. */
+  /* FAKEMATCH(signature): sheet, a pointer, holds the buffer's size before it
+   * holds the buffer; as Heap_Alloc(SHEET_BUFFER_SIZE). */
   sheet = (void *)SHEET_BUFFER_SIZE;
   sheet = Heap_Alloc((s32)sheet);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_FIELD_EFFECT_EXPLOSION),
@@ -434,10 +434,12 @@ void NorthernReaches_ShatterIceWall(s32 unused, FIXED *position,
   sparkEntry = VramCache_FindFreeEntry();
   sparkTiles = VramCache_Load(sparkEntry, 1024, sheet);
   Heap_Release(sheet);
+  /* FAKEMATCH(temporary): timer, a pointer to each spark's age stepped a spark
+   * at a time; as a spark pointer walked. */
   timer = &sparks->age;
   for (i = EXPLOSION_SPARK_COUNT - 1; i >= 0; i--) {
     *timer = -(Random16() << 5 >> 16);
-    timer += 4;
+    timer += sizeof(struct ExplosionSpark) / sizeof(*timer);
   }
   Dma_Set(Field_ExplosionPalette,
           (void *)&OBJ_PLTT_COLOR(EXPLOSION_SPARK_PALETTE, 0),

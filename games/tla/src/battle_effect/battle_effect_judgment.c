@@ -379,9 +379,9 @@ void BattleEffect_RunJudgment(struct BattleEffectParams *args) {
         flag = 1;
       }
       if (frame >= JUDGMENT_BEAM_FRAME && frame <= JUDGMENT_BEAM_FRAME + 8) {
-        /* FAKEMATCH(temporary): the step taken through a local assigned twice.
-         */
-        addB = addR = addG = step = (step = 304 - frame * 2);
+        /* FAKEMATCH(dead): step assigned to itself as it is set. */
+        step = step = 304 - frame * 2;
+        addB = addR = addG = step;
         flag = 1;
       }
       if (flag == 1) {

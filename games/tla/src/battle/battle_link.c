@@ -183,9 +183,9 @@ s32 LinkBattle_WaitSync(void) {
   if (battle->isLink != 0) {
     u32 other = battle->linkSide ^ 1;
 
-    // gLinkPeerSignatures[other]: a peer's payload holds four bytes before
-    // its signature.
-    peer = (u16 *)(gSerialPeerPayloads[other] + 4);
+    // gLinkPeerSignatures[other]: the signature starts a peer's payload, after
+    // its record's four bytes of block state.
+    peer = (u16 *)gSerialPeerPayloads[other].payload;
     signature = (u16 *)gSerialTransfer.payload;
     if (battle->linkPaused == 0) {
       // The other console is in step once its second pair reads "EC".

@@ -22,12 +22,6 @@
 /// party's PP is fully restored!"
 #define PSYNERGY_STONE_PP 1999
 
-/// A field of a container's ContainerRow, from the place its row would have
-/// were the rows counted from actor 0: they count from FIELD_TREASURE_ACTOR.
-#define CONTAINER_FIELD(rowOfId, field)                                        \
-  (*(s16 *)((rowOfId) - FIELD_TREASURE_ACTOR * sizeof(struct ContainerRow) +   \
-            offsetof(struct ContainerRow, field)))
-
 /// The encounter zone whose slots hold the Mimics' formations; slots from 8
 /// go on in the next zone.
 #define ENCOUNTER_ZONE_MIMIC 104
@@ -221,21 +215,19 @@ s32 Scene_TalkToActor(s32 id) {
     if (id != SCOOPED_ITEM_ACTOR) {
       row = SceneItem_GetRows();
       if (row != NULL) {
-        u8 *rowOfId = (u8 *)row + id * sizeof(struct ContainerRow);
+        /* FAKEMATCH(temporary): p, each field's address in turn, read
+         * through; as row[id - FIELD_TREASURE_ACTOR].type and the rest. */
         s16 *p;
 
-        /* FAKEMATCH(temporary): each field read through the byte pointer
-           rowOfId and p; as row[id - FIELD_TREASURE_ACTOR].type and the rest.
-         */
-        p = &CONTAINER_FIELD(rowOfId, type);
+        p = &row[id - FIELD_TREASURE_ACTOR].type;
         type = *p;
         index = id;
         found = 1;
-        p = &CONTAINER_FIELD(rowOfId, point);
+        p = &row[id - FIELD_TREASURE_ACTOR].point;
         point = *p;
-        p = &CONTAINER_FIELD(rowOfId, flag);
+        p = &row[id - FIELD_TREASURE_ACTOR].flag;
         flag = *p;
-        p = &CONTAINER_FIELD(rowOfId, contents);
+        p = &row[id - FIELD_TREASURE_ACTOR].contents;
         contents = *p;
       }
     } else {

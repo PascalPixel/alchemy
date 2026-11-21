@@ -621,7 +621,7 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
   u32 matrix;
   u32 size;
 
-  if ((u16)Ram_HeapSlots->actorSystem->suspended == 0) {
+  if (Ram_HeapSlots->actorSystem->suspended == 0) {
     z = Render_ProjectPoint(point, screen);
     if (screen[2] != 0 &&
         (u32)(screen[0] + PROJECTED_MARGIN) <=

@@ -253,11 +253,12 @@ s32 Entrance_PlayArrival(void) {
 }
 
 /// An EXIT_STYLE_HIDDEN_LAYER exit: gives the leader's sprite a second part,
-/// sprite 268, a band over the top 8 rows of its 32 by 32 picture, drawn in
-/// SPRITE_COLOR_HIDDEN.
+/// SPRITE_HIDDEN_LAYER, a band over the top 8 rows of its 32 by 32 picture,
+/// drawn in SPRITE_COLOR_HIDDEN.
 void Exit_AddHiddenLeaderLayer(void) {
   struct Actor *actor = Actor_Lookup(gMainRoutineWork.leaderActorId);
-  struct SpriteAnimation *layer = Sprite_AddAnimationFar(actor->sprite, 268);
+  struct SpriteAnimation *layer =
+      Sprite_AddAnimationFar(actor->sprite, SPRITE_HIDDEN_LAYER);
 
   layer->colorMode = SPRITE_COLOR_HIDDEN;
 }

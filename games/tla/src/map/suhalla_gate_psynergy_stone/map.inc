@@ -33,7 +33,7 @@ Field_SuhallaGatePsynergyStone:
 	.incbin "games/tla/src/map/suhalla_gate_psynergy_stone/scene.scene.lz"
 	.global Tileset_SuhallaGatePsynergyStonePalette
 Tileset_SuhallaGatePsynergyStonePalette:
-	.incbin "games/tla/src/graphics/tileset/suhalla_gate_psynergy_stone/pal_42.gbapal.lz"
+	.incbin "games/tla/src/graphics/tileset/suhalla_gate_psynergy_stone/palette.gbapal.lz"
 	.byte 0x1f, 0x44	@ PACKER: left in the buffer by Field_SuhallaGate3+0x1b6
 	.global Tileset_SuhallaGatePsynergyStoneTilesA
 Tileset_SuhallaGatePsynergyStoneTilesA:

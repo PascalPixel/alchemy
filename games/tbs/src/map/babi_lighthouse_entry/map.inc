@@ -36,7 +36,7 @@ Field_BabiLighthouseEntry:
 Tileset_PaletteBabiLighthouseEntry:
 	.incbin "games/tbs/src/graphics/tileset/palettes/babi_lighthouse_entry.gbapal.lz"
 	.byte 0x32	@ PACKER: left in the buffer by Field_BabiLighthouseEntry+0x173
-	.global Tileset_Palette45
-Tileset_Palette45:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_45.gbapal.lz"
+	.global Tileset_PaletteBabiLighthouseLuff
+Tileset_PaletteBabiLighthouseLuff:
+	.incbin "games/tbs/src/graphics/tileset/palettes/babi_lighthouse_luff.gbapal.lz"
 	.balign 4, 0

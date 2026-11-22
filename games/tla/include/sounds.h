@@ -245,7 +245,8 @@ enum SoundId {
   SE_TOLBI_SPRING_TOSS_PROMPT,
   SE_ITEM_REMOVE,
   SE_FOOTSTEP,
-  SE_119,
+  /// SE_FOOTSTEP's two notes far lower on its voice; nothing plays it.
+  SE_UNUSED_FOOTSTEP_LOW,
   SE_120,
   SE_SCUFFLE,
   /// Gasp fleeing the party on the Trial Road (TrialRoad_GaspFlees), after
@@ -347,8 +348,9 @@ enum SoundId {
   SE_WARP,
   /// Played as a face over one of Gaia Rock's altars shakes and slides aside,
   /// at Zagan's frame 32 as it gallops in its blaze (BattleEffect_RunZagan),
-  /// and as Megiddo's sun starts to fall (BattleEffect_RunMegiddo).
-  SE_191,
+  /// and as Megiddo's sun starts to fall (BattleEffect_RunMegiddo):
+  /// SE_TABLET_RISE's note nine semitones higher.
+  SE_TABLET_RISE_HIGH,
   /// Shriek's and Harpy's cry as their streaks set out
   /// (BattleEffect_RunStreakVolley, mode 1): SE_SPARKS's notes on voice 25; The
   /// Broken Seal's row 192 note for note.
@@ -403,7 +405,7 @@ enum SoundId {
   SE_224,
   /// Played as Moloch's white cloud starts billowing up from the ground under
   /// the falling flakes, at its frame 90 (BattleEffect_RunMoloch).
-  SE_225,
+  SE_CLOUD_BILLOWS,
   SE_LOG_PUSH,
   SE_TOPPLE,
   SE_SPARKLING_PASSAGE,

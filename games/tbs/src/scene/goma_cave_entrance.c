@@ -1,42 +1,31 @@
 /// @file
-/// Goma Cave Entrance (SceneId_GomaCaveEntrance), the mouth of the cave in
-/// the Goma Range between Vault and Bilibin, where Ivan joins the party.
+/// Goma Cave Entrance (SceneId_GomaCaveEntrance), the foot of the cliffs in
+/// the Goma Range between Vault and Bilibin, where Ivan joins the party. The
+/// cave's mouth is high on a column of rock beside a waterfall, hidden behind
+/// tall ivy, with a stump caught in ivy in front of it.
 ///
-/// A stump caught in ivy (ACTOR_STUMP, held by ACTOR_STUMP_IVY) blocks the
-/// way on. Until FLAG_GOMA_CAVE_IVAN_JOINED is set, Move on it runs
-/// GomaCaveEntrance_IvanJoins. Garet says their Psynergy can't free it.
-/// Only once the thieves in Vault are jailed (FLAG_VAULT_THIEVES_JAILED) does
-/// Ivan walk up, blow the ivy off with Whirlwind and join with the Shaman's
-/// Rod equipped.
+/// The party comes in from the World Map at the bottom of the map, crosses the
+/// river on a stump sunk in it (ACTOR_SUNKEN_STUMP) and climbs the cliffs. On
+/// the way a stone pillar stands by a ladder at the foot of a cliff: walked
+/// into or moved with Move, it slides a step at a time, blocking the ladder
+/// while it stands in front of it (FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP
+/// and _TWO_STEPS). Higher up, Move pulls the second pillar off its ledge
+/// into the gap beside it, where its top makes a bridge
+/// (FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE).
 ///
-/// The ivy is never the player's target (ACTOR_NOT_TARGETED), so that event
-/// is the only way past it.
+/// On the column by the cave, Move on the ivy-bound stump makes Garet say
+/// their Psynergy can't free it. Once the thieves in Vault are jailed
+/// (FLAG_VAULT_THIEVES_JAILED), Ivan comes up instead, blows the ivy off with
+/// Whirlwind and joins the party with the Shaman's Rod
+/// (FLAG_GOMA_CAVE_IVAN_JOINED). Move then sends the stump leaping off the
+/// column into the pool under the waterfall, where it sinks until only its top
+/// shows and can be jumped across (FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED).
+/// Whirlwind on the tall ivy blows it away for good and opens the cave's mouth
+/// (FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY).
 ///
-/// After it, Move runs GomaCaveEntrance_MoveStump, which sends the stump
-/// leaping out of the way once it stands on column 11. It lands in the pool
-/// under the waterfall and sinks until only its top shows, a stepping stone
-/// beside ACTOR_SUNKEN_STUMP (FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED; its render,
-/// places/goma-cave-entrance_goma-cave-entrance-stump-moved/map-0.png).
-///
-/// The two stone pillars and a second ivy are puzzles on the way.
-///
-/// - The west pillar is pushed by walking into it or moved with Move. It
-///   stands on one of three columns, which two flags record
-///   (FLAG_GOMA_CAVE_ENTRANCE_WEST_PILLAR_ONE_STEP and _TWO_STEPS).
-/// - The east pillar, moved with Move to its last column, settles into the
-///   floor so it can be walked over
-///   (FLAG_GOMA_CAVE_ENTRANCE_EAST_PILLAR_IN_PLACE).
-/// - Whirlwind blows the second ivy away for good
-///   (FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY). Its actor placement row is
-///   then skipped, though it keeps its actor id.
-///
-/// Scene_Initialize blocks Retreat and puts everything back as these flags
-/// say: the stump where it landed, the pillars on their columns and the map
-/// grid cells that go with them.
-///
-/// GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_STREAM leads into Goma Cave
-/// (SceneId_GomaCaveStream) and GOMA_CAVE_ENTRANCE_TO_WORLD_MAP out to the
-/// World Map.
+/// Retreat does not work here. GOMA_CAVE_ENTRANCE_TO_GOMA_CAVE_STREAM leads
+/// into Goma Cave (SceneId_GomaCaveStream) and GOMA_CAVE_ENTRANCE_TO_WORLD_MAP
+/// out to the World Map.
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -73,12 +62,14 @@ extern struct Trigger gGomaCaveEntranceTriggers[];
 /// Garet's and Ivan's rows go to their party slots, and the rows after them
 /// number from ACTOR_FIRST_PLACED.
 enum GomaCaveEntranceActorId {
-  /// The stump caught in ivy that blocks the way on.
+  /// The stump caught in ivy in front of the cave's mouth.
   ACTOR_STUMP = ACTOR_FIRST_PLACED,
+  /// The pillar by the ladder at the foot of a cliff.
   ACTOR_WEST_PILLAR,
+  /// The pillar on the ledge that Move pulls into the gap beside it.
   ACTOR_EAST_PILLAR,
-  /// A second stump, always sunk until only its top shows, that the party
-  /// walks over.
+  /// A second stump, sunk in the river until only its top shows, that the
+  /// party crosses on.
   ACTOR_SUNKEN_STUMP,
   /// Unused: two Move hands and a third stump, placed at the map's origin
   /// outside the camera's bounds.
@@ -90,6 +81,7 @@ enum GomaCaveEntranceActorId {
   ACTOR_UNUSED_STUMP,
   /// The ivy holding the stump, until Ivan blows it away.
   ACTOR_STUMP_IVY,
+  /// The tall ivy over the cave's mouth.
   ACTOR_IVY
 };
 
@@ -118,8 +110,13 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gGomaCaveEntranceActorPlacements;
 }
 
-/// Move on the west pillar at Goma Cave Entrance, and after each push: the
-/// pillar stands on one of three columns.
+/// Isaac casts Move on the pillar by the ladder at the foot of the cliff, and
+/// each push of it ends here: in front of the ladder, cell (16, 18), it blocks
+/// the climb, and to either side of it the ladder climbs the cliff again.
+///
+/// The ladder's two cells are copied from a spare stretch of the map: climbing
+/// cells, or flat ground while the pillar stands there. The flags keep the
+/// pillar's place for the next visit.
 static void GomaCaveEntrance_MoveWestPillar(void) {
   s32 column;
 
@@ -137,8 +134,9 @@ static void GomaCaveEntrance_MoveWestPillar(void) {
   }
 }
 
-/// Move on the east pillar at Goma Cave Entrance: once it reaches column 23 it
-/// settles into the floor and can be walked over.
+/// Isaac casts Move on the pillar on the ledge across the gap: pulled west
+/// into the gap, cell (23, 17), it drops in until its top is level with the
+/// ground, and Isaac can walk across it.
 static void GomaCaveEntrance_MoveEastPillar(void) {
   s32 column;
 
@@ -153,13 +151,12 @@ static void GomaCaveEntrance_MoveEastPillar(void) {
   }
 }
 
-/// The step triggers that push the west pillar east, from its west side, and
-/// west, from its east side.
+/// The cells beside the pillar by the ladder from which walking into it
+/// pushes it east, from its west side, and west, from its east side.
 enum { TRIGGER_PUSH_WEST_PILLAR_EAST = 5, TRIGGER_PUSH_WEST_PILLAR_WEST = 6 };
 
-/// Walking into the west pillar at Goma Cave Entrance from the west
-/// (TRIGGER_PUSH_WEST_PILLAR_EAST) or the east (TRIGGER_PUSH_WEST_PILLAR_WEST):
-/// the leader leans on it and pushes it one step.
+/// Isaac walks into the pillar by the ladder from the west or the east, leans
+/// on it and pushes it one step.
 static void GomaCaveEntrance_PushWestPillar(void) {
   struct FieldWork *work;
   s32 offsetX;
@@ -191,8 +188,8 @@ UNUSED static void GomaCaveEntrance_NoOpA(void) {}
 
 UNUSED static void GomaCaveEntrance_NoOpB(void) {}
 
-/// Whirlwind on the second ivy at Goma Cave Entrance: it is blown away for
-/// good.
+/// Isaac casts Whirlwind on the tall ivy over the cave's mouth: it is blown
+/// away for good, and the way into the cave is open.
 static void GomaCaveEntrance_BlowAwayIvy(void) {
   Event_Start();
   GameFlag_Set(FLAG_GOMA_CAVE_ENTRANCE_IVY_BLOWN_AWAY);
@@ -203,7 +200,9 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gGomaCaveEntranceTriggers;
 }
 
-/// Sets up Goma Cave Entrance.
+/// Sets up Goma Cave Entrance as the party arrives: Retreat is barred, the
+/// waterfall's sound plays, and the stump, the pillars and the cells that go
+/// with them are where the party left them.
 s32 Scene_Initialize(void) {
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
   Event_Wait(10);
@@ -258,9 +257,10 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// Move on the stump at Goma Cave Entrance while the ivy holds it: Garet says
-/// their Psynergy is not strong enough, and once the thieves in Vault are
-/// jailed Ivan comes, blows the ivy off and joins the party.
+/// Isaac casts Move on the ivy-bound stump in front of the cave's mouth. Garet
+/// shakes his head: "It's no use. Our Psynergy isn't strong enough to free
+/// that stump." Once the thieves in Vault are jailed, Ivan comes up from
+/// the east instead, blows the ivy off with Whirlwind and joins the party.
 static void GomaCaveEntrance_IvanJoins(void) {
   struct Actor *leader;
 
@@ -475,8 +475,12 @@ static void GomaCaveEntrance_IvanJoins(void) {
   }
 }
 
-/// Move on the freed stump at Goma Cave Entrance: from column 11 it spins,
-/// leaps away and lies where it lands (FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED).
+/// Isaac casts Move on the freed stump in front of the cave's mouth: pushed
+/// west to the column's edge, it tips, leaps spinning into the pool under the
+/// waterfall with a crash and a splash, and sinks until only its top shows
+/// (FLAG_GOMA_CAVE_ENTRANCE_STUMP_MOVED).
+///
+/// The cells by the pool become squares Isaac can jump across on it.
 static void GomaCaveEntrance_MoveStump(void) {
   s32 column;
 
@@ -507,8 +511,7 @@ static void GomaCaveEntrance_WhirlwindOnStumpIvy(void) {
   FieldPsynergy_StopCasterUpdate();
 }
 
-/// The leaping stump's update routine turns its sprite a fixed amount per
-/// frame.
+/// Spins the leaping stump a little each frame.
 static void GomaCaveEntrance_SpinStump(struct Actor *actor) {
   struct Sprite *state = actor->sprite;
   s32 v = state->rotation - TRIG_TURN / 32;
@@ -518,7 +521,8 @@ static void GomaCaveEntrance_SpinStump(struct Actor *actor) {
 
 #include "shared/actor_wait_below_height.c"
 
-/// The stump leaps out of the way and sinks in the pool.
+/// The stump tips over the column's edge, leaps spinning into the pool, lands
+/// with a shake and a ring of dust, bounces once and sinks with a splash.
 static void GomaCaveEntrance_LeapStump(s32 stumpId) {
   struct Vector3 dir;
   struct EffectOptions params;

@@ -32,11 +32,11 @@ Field_ProxHouses:
 .LField_ProxHouses_SCENE:
 	.incbin "games/tla/src/map/prox_houses/scene.scene.lz"
 	.balign 4, 0
-	.global Tileset_PaletteProx4A
-Tileset_PaletteProx4A:
-	.incbin "games/tla/src/graphics/tileset/palettes/prox_4_a.gbapal.lz"
+	.global Tileset_PaletteMadraRoomsCavernHomes
+Tileset_PaletteMadraRoomsCavernHomes:
+	.incbin "games/tla/src/graphics/tileset/palettes/madra_rooms_cavern_homes.gbapal.lz"
 	.byte 0x0f	@ PACKER: left in the buffer by Field_ProxHouses+0x1b7
-	.global Tileset_PaletteProx4B
-Tileset_PaletteProx4B:
-	.incbin "games/tla/src/graphics/tileset/palettes/prox_4_b.gbapal.lz"
-	.byte 0xb4	@ PACKER: left in the buffer by Tileset_PaletteProx4A+0x187
+	.global Tileset_PaletteMikasallaRoomsSanctum
+Tileset_PaletteMikasallaRoomsSanctum:
+	.incbin "games/tla/src/graphics/tileset/palettes/mikasalla_rooms_sanctum.gbapal.lz"
+	.byte 0xb4	@ PACKER: left in the buffer by Tileset_PaletteMadraRoomsCavernHomes+0x187

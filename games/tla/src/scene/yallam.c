@@ -394,10 +394,14 @@ void Yallam_UncoverCaveHole(void) {
 
 /// Cyclone cast by the weeds on the ledge below the shops' doors (cells
 /// (15, 22) and (16, 22)) scatters them; nothing lies under them.
-// XXX: the eastern of the two weeds south of the Sanctum's door (cell
-// (27, 14) on the raised ground) also runs this, which would scatter the weeds
-// below the shops and leave that pair standing; a recording of Cyclone cast
-// there would settle what the player sees.
+/// The eastern of the two weeds south of the Sanctum's door (cell (27, 14) of
+/// the raised ground's layer) also runs this. Cast there, Cyclone still
+/// scatters that pair and shows the Antidote under them
+/// (Yallam_UncoverAntidote).
+// XXX: whether that cast also scatters the weeds below the shops, out of
+// sight; a recording of Cyclone from cell (27, 15) of layer 1 that then walks
+// to the shops' ledge (the villagers below the pair stopped this one) would
+// settle it.
 void Yallam_ScatterWeedsBelowShops(void) {
   FieldTileCopies_CopyTouchedCells(67, 25, 2, 1, 79, 22, 1);
 }

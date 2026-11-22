@@ -4,45 +4,47 @@
 ///
 /// Each opens off one of the nine floors the cave descends through
 /// (crossbone_isle.c), as the other five do
-/// (crossbone_isle_stepping_stones.c). All three take the area name Crossbone
-/// Isle Cave. In the order the party meets them:
+/// (crossbone_isle_stepping_stones.c). The party comes in by the floor's east
+/// door and the room is the way across to its west door. All three take the
+/// area name Crossbone Isle Cave. In the order the party meets them:
 ///
-/// - SceneId_CrossboneIsleKeys, off the third floor, a room of locked doors.
-///   Four Blue Keys lie about it until Catch takes them, and a Red Key shows
-///   only while Reveal lasts.
+/// - The room of keys (SceneId_CrossboneIsleKeys), off the third floor: a
+///   pit full of square stone posts, with a walkway along its north wall.
+///   Four blue doors in a row along the walkway lead to four small rooms with
+///   a chest each: 333 coins, the Fairy Ring, a Cookie and a Smoke Bomb, west
+///   to east. A red door on a ledge west of the pit is the way on to the
+///   floor's west door.
 ///
-///   Walking into one of the four blue doors in a row with a Blue Key opens
-///   it and uses the key up (four flags from
-///   FLAG_CROSSBONE_ISLE_FIRST_BLUE_DOOR_OPEN). The Red Key opens the red
-///   door beyond them (FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN).
+///   Four Blue Keys lie on top of posts out of reach, and Catch pulls each
+///   one in. Walking up to a blue door with a Blue Key opens it and uses the
+///   key up. From the walkway in front of the fourth door Isaac can hop down
+///   onto the posts, and Reveal there shows a hidden post with the Red Key
+///   on it, which Catch takes too. The Red Key opens the red door the same
+///   way. The keys taken and the doors opened stay so on later visits.
 ///
-///   The keys taken and the doors opened are restored on entry.
+/// - The statue room (SceneId_CrossboneIsleStatues), off the fourth floor: a
+///   dark hall where five statues of a robed woman stand in circles of light
+///   round braziers.
 ///
-/// - SceneId_CrossboneIsleStatues, off the fourth, where five statues of a
-///   robed woman wait, lit in circles by braziers in the dark.
+///   The statue in the north-east, the one on the narrow walk in the west
+///   and the one in the middle each guard the few tiles in front of them.
+///   Stepping onto those tiles makes the statue glide onto Isaac with a thud
+///   and shove him back south, then glide home, unless Cloak hides him. The
+///   two statues in the alcoves on the south walkway near the east door slide
+///   sideways to stay in front of Isaac as he walks past, so that he cannot
+///   get by them. Halt stops a statue where it is, and while Reveal lasts the
+///   darkness lifts from the whole hall.
 ///
-///   As the leader crosses each one's stretch of the room, it glides out onto
-///   him and pushes him back south unless he is hidden by Cloak, then goes
-///   back home (FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER while one is after
-///   him).
+/// - Bane's room (SceneId_CrossboneIsleBane), off the sixth floor, where
+///   Bane, a Venus Djinni, waits at the west end of the ledge along the back
+///   wall. Five stone pillars to push or shift with Move, the ladders and a
+///   puddle that Frost freezes into a pillar of ice make the way across the
+///   room. A chest on one pillar holds the Demon Axe.
 ///
-///   Halt stops one where it stands, and Reveal clears the translucent layer
-///   over the room while it lasts.
-///
-///   The first, second and fifth statues start from per-frame checks of the
-///   leader's cell. The third and fourth start from step triggers in the
-///   three cells around their homes and the three south of them.
-///
-/// - SceneId_CrossboneIsleBane, off the sixth, where Bane, a Venus Djinni,
-///   hides. Five pillars to push or move with Move, a ladder and a puddle
-///   that Frost freezes into a pillar of ice make a way across the room.
-///
-///   The first three times the party comes near, Bane flees, the third time
-///   to the room's last corner (FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE to
-///   _LAST_ESCAPE). There it runs to whichever spot the leader steps toward
-///   unless Halt holds it.
-///
-///   Talked to while Halt holds it, Bane joins the party.
+///   The first two times Isaac comes near, Bane runs off along the room. The
+///   third time it flees to a ledge in the south-east with three spikes on
+///   it, and there it keeps running round the spikes away from him until
+///   Halt holds it still. Talked to while it is held, Bane joins the party.
 
 #include "ability_ids.h"
 #include "djinn_ids.h"
@@ -90,8 +92,8 @@ extern s32 gCrossboneIsleKeys_IconTimer;
 // Map-section temp flags: Scene_Arrive clears FLAG_AREA_TEMP_FIRST to
 // FLAG_AREA_TEMP_LAST when the party enters another area, and other areas use
 // the numbers for their own.
-/// CrossboneIsleBane's third stone pillar has come down to two cells high or
-/// less.
+/// Bane's room: the pillar on the raised platform in the south-west has been
+/// pushed off it and stands lower down.
 #define FLAG_CROSSBONE_ISLE_THIRD_PILLAR_LOWERED FLAG_AREA_TEMP_00
 
 #if TBS_PATCH_1
@@ -109,11 +111,11 @@ static void CrossboneIsleKeys_InitializeKeys(void);
 static void CrossboneIsleKeys_InitializeStatues(void);
 static void CrossboneIsleKeys_InitializeBane(void);
 
-/// CrossboneIsleKeys's placed actors, numbered in the order of
+/// The room of keys' placed actors, numbered in the order of
 /// gCrossboneIsleKeysRoomActorPlacements.
 ///
-/// They are the keys, drawn as their item icons (Colosso_ShowItemIcon) until
-/// Catch takes them.
+/// They are the keys, each drawn as its item's icon on top of a stone post
+/// (Colosso_ShowItemIcon) until Catch takes it.
 enum CrossboneIsleKeysActorId {
   ACTOR_FIRST_BLUE_KEY = ACTOR_FIRST_PLACED,
   ACTOR_SECOND_BLUE_KEY,
@@ -123,50 +125,126 @@ enum CrossboneIsleKeysActorId {
   ACTOR_RED_KEY
 };
 
-/// CrossboneIsleStatues's placed actors, numbered in the order of
+/// The statue room's placed actors, numbered in the order of
 /// gCrossboneIsleStatuesActorPlacements.
 ///
-/// They are the five statues that pursue the leader, all of one sprite. Each
-/// waits at its home for the leader to cross its stretch of the room.
+/// They are the five statues of a robed woman, all of one sprite, each
+/// waiting at its home in a circle of light.
 enum CrossboneIsleStatuesActorId {
+  /// In the north-east, beside the chest with the Storm Gear.
   ACTOR_FIRST_STATUE = ACTOR_FIRST_PLACED,
+  /// On the narrow walk between two dark pits in the west.
   ACTOR_SECOND_STATUE,
+  /// In the west alcove of the south walkway, barring the way north to the
+  /// chest with the Sleep Bomb.
   ACTOR_THIRD_STATUE,
+  /// In the east alcove of the south walkway.
   ACTOR_FOURTH_STATUE,
+  /// In the middle of the hall, south of the chest with 444 coins.
   ACTOR_FIFTH_STATUE
 };
 
-/// The events CrossboneIsleStatues's per-frame checks raise when the
-/// leader crosses the first, second or fifth pursuer's stretch of the room.
+/// The events the statue room's per-frame checks raise when Isaac steps onto
+/// the tiles in front of the first, second or fifth statue.
 ///
-/// The third and fourth chases start from step triggers instead.
+/// The third and fourth statues answer cells of their own instead
+/// (CrossboneIsleStatuesCellBehavior).
 enum CrossboneIsleStatuesRaisedTrigger {
   RAISED_FIRST_CHASE = 91,
   RAISED_SECOND_CHASE = 92,
   RAISED_FIFTH_CHASE = 96
 };
 
-/// CrossboneIsleBane's placed actors, numbered in the order of
+/// Bane's room's placed actors, numbered in the order of
 /// gCrossboneIsleBaneActorPlacements.
 enum CrossboneIsleBaneActorId {
-  /// The five pillars, in Goma Cave's pillar sprite, pushed by walking into
-  /// them or with Move.
+  /// The five stone pillars, in Goma Cave's pillar sprite, pushed by walking
+  /// into them or with Move. The first stands on the low ledge in the
+  /// north-west, below where Bane first waits, at the top of a short ladder.
   ACTOR_FIRST_PILLAR = ACTOR_FIRST_PLACED,
+  /// In the channel between two rows of spikes in the middle of the room,
+  /// with the Demon Axe's chest on top.
   ACTOR_SECOND_PILLAR,
+  /// On the raised platform in the south-west.
   ACTOR_THIRD_PILLAR,
+  /// The west one of the two side by side in the south-east, by the east
+  /// doorway.
   ACTOR_FOURTH_PILLAR,
+  /// The east one of the two.
   ACTOR_FIFTH_PILLAR,
-  /// Frozen by Frost into a pillar of ice.
+  /// The puddle between two spikes in the south-west, frozen by Frost into a
+  /// pillar of ice.
   ACTOR_PUDDLE,
   /// The chest on top of the second pillar, holding the Demon Axe.
   ///
-  /// It is drawn in the sprite of McCoy's Palace's chests. It follows the
-  /// pillar until the pillar reaches the ladder, where the chest's examine
-  /// trigger, TREASURE_SPOT_DEMON_AXE, takes its place. It is drawn open once
-  /// FLAG_CROSSBONE_ISLE_DEMON_AXE is set.
+  /// It is drawn in the sprite of McCoy's Palace's chests. It rides on the
+  /// pillar until the pillar reaches the top of its channel, by the ladders,
+  /// where the chest's examine trigger, TREASURE_SPOT_DEMON_AXE, takes its
+  /// place. It is drawn open once FLAG_CROSSBONE_ISLE_DEMON_AXE is set.
   ACTOR_SECOND_PILLAR_CHEST,
   /// Bane, a Venus Djinni, until it is caught.
   ACTOR_BANE
+};
+
+/// The room of keys' cells that run its events, from
+/// crossbone_isle_keys_and_bane's map.txt.
+enum CrossboneIsleKeysCellBehavior {
+  /// In front of the red door, cell (6, 52).
+  CELL_BEHAVIOR_KEYS_RED_DOOR = 50,
+  /// In front of each blue door on the walkway, west to east: cells (13, 43),
+  /// (17, 43), (21, 43) and (25, 43).
+  CELL_BEHAVIOR_KEYS_FIRST_BLUE_DOOR = 51,
+  CELL_BEHAVIOR_KEYS_SECOND_BLUE_DOOR = 52,
+  CELL_BEHAVIOR_KEYS_THIRD_BLUE_DOOR = 53,
+  CELL_BEHAVIOR_KEYS_FOURTH_BLUE_DOOR = 54
+};
+
+/// The statue room's cells that run the third and fourth statues' events,
+/// from crossbone_isle_statues's map.txt.
+enum CrossboneIsleStatuesCellBehavior {
+  /// The rug in front of the third statue's alcove, cells (15..17, 23).
+  CELL_BEHAVIOR_STATUES_BEFORE_THIRD_STATUE = 53,
+  /// The rug in front of the fourth statue's alcove, cells (20..22, 23).
+  CELL_BEHAVIOR_STATUES_BEFORE_FOURTH_STATUE = 54,
+  /// The third statue's alcove, cells (15..17, 22).
+  CELL_BEHAVIOR_STATUES_THIRD_ALCOVE = 61,
+  /// The fourth statue's alcove, cells (20..22, 22).
+  CELL_BEHAVIOR_STATUES_FOURTH_ALCOVE = 62
+};
+
+/// Bane's room's cells that run its events, from
+/// crossbone_isle_keys_and_bane's map.txt (the room is the east half of the
+/// map the room of keys shares).
+enum CrossboneIsleBaneCellBehavior {
+  /// On the back ledge, cell (40, 41).
+  CELL_BEHAVIOR_BANE_FIRST_ESCAPE = 20,
+  /// In the passage down the west side, cell (36, 46).
+  CELL_BEHAVIOR_BANE_SECOND_ESCAPE = 21,
+  /// On the back ledge towards its east end, cell (51, 41).
+  CELL_BEHAVIOR_BANE_LAST_ESCAPE = 22,
+  /// The first of the twelve cells round the three spikes on the south-east
+  /// ledge, (50..55, 51..54), one for each row of
+  /// gCrossboneIsleKeys_BaneWalkTargets.
+  CELL_BEHAVIOR_BANE_CORNER_FIRST = 30,
+  /// The south-west platform and the floor below it, where the third pillar
+  /// is pushed.
+  CELL_BEHAVIOR_BANE_THIRD_PILLAR = 50,
+  /// The first pillar's cell and those it is pushed through: the low ledge
+  /// in the north-west, (36..41, 42), and the short ladder at (38, 41..43).
+  CELL_BEHAVIOR_BANE_FIRST_PILLAR = 51,
+  /// The spiked channel the second pillar is pushed up, (44..46, 43..49).
+  CELL_BEHAVIOR_BANE_SECOND_PILLAR = 52,
+  /// The row the fourth and fifth pillars are pushed along, (48..52, 55).
+  CELL_BEHAVIOR_BANE_FOURTH_PILLAR = 53,
+  /// The south edge of the south-west platform, cell (38, 54).
+  CELL_BEHAVIOR_BANE_THIRD_PILLAR_EDGE = 54,
+  /// The foot and top of the two ladders down from the back ledge, either
+  /// side of the spiked channel: (42, 41..42) and (48, 41..42).
+  CELL_BEHAVIOR_BANE_LADDER = 60,
+  /// West of the first pillar's home, cell (37, 42).
+  CELL_BEHAVIOR_BANE_WEST_OF_FIRST_PILLAR = 61,
+  /// East of the first pillar's home, cell (39, 42).
+  CELL_BEHAVIOR_BANE_EAST_OF_FIRST_PILLAR = 70
 };
 
 enum { PASSAGE_INDEX_MASK = 0xff, PASSAGE_PLAY_OPENING = 0x100 };
@@ -175,27 +253,28 @@ enum { PASSAGE_INDEX_MASK = 0xff, PASSAGE_PLAY_OPENING = 0x100 };
 /// where the second pillar stands.
 #define TREASURE_SPOT_DEMON_AXE (TREASURE_SPOT_FIRST_ID + 7)
 
-/// The step triggers round the corner where Bane keeps away from the leader,
-/// one for each row of gCrossboneIsleKeys_BaneWalkTargets.
-#define BANE_CORNER_FIRST_STEP 30
-
+/// Bane's room: Frost has frozen the puddle into a pillar of ice.
 #define FLAG_CROSSBONE_ISLE_BANE_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
-/// CrossboneIsleBane: the chest on the second pillar has reached the ladder.
+/// Bane's room: the chest on the second pillar has reached the top of the
+/// spiked channel, by the ladders.
 #define FLAG_CROSSBONE_ISLE_BANE_CHEST_AT_LADDER FLAG_SCENE_TEMP_06
-/// CrossboneIsleBane: the leader last looked east from the ladder, which gives
-/// the ladder cell its other cell behaviors.
-#define FLAG_CROSSBONE_ISLE_BANE_LOOKED_EAST FLAG_SCENE_TEMP_07
-// The Move events of CrossboneIsleBane's pillars also test FLAG_SCENE_TEMP_01
-// and 03 to 05, which nothing sets.
-/// CrossboneIsleStatues: a statue is after the leader.
+/// Bane's room: Isaac last left a ladder by hopping east off it, rather than
+/// climbing up it. While it is set, the chest's cell at the top of the spiked
+/// channel, (45, 43), answers the Demon Axe's examine trigger.
+#define FLAG_CROSSBONE_ISLE_BANE_JUMPED_EAST_FROM_LADDER FLAG_SCENE_TEMP_07
+// The Move events of Bane's room's pillars also test FLAG_SCENE_TEMP_01 and
+// 03 to 05, which nothing sets.
+/// The statue room: a statue is after Isaac.
 #define FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER FLAG_SCENE_TEMP_20
 
-/// Publishes the next raised-event trigger.
+/// Raises an event for the trigger table to run on the next frame.
 static inline void MapLocalState_StoreStep(s16 *field, s32 step) {
   *field = step;
 }
 
-/// Lifts the first pillar and clears the terrain beneath its column.
+/// Stands the first pillar on the low ledge in the north-west, in the given
+/// column, and makes its top ground level with the back ledge, so that Isaac
+/// can walk onto it from there.
 static inline void LiftPillar(s32 column, u8 motionFlags) {
   MapGrid_CopyCellAttributes(61, 36, 1, 1, column, 42);
   Actor_Get(ACTOR_FIRST_PILLAR)->motionFlags = motionFlags;
@@ -204,8 +283,8 @@ static inline void LiftPillar(s32 column, u8 motionFlags) {
 
 #include "shared/staged_actor.c"
 
-/// Talking to Bane in CrossboneIsleBane while Halt holds it
-/// (TRIGGER_TALK_HALTED): Bane, a Venus Djinni, joins the party.
+/// Talking to Bane on the spiked ledge in the south-east of Bane's room while
+/// Halt holds it still: Bane, a Venus Djinni, joins the party.
 static void CrossboneIsleKeys_BaneJoins(void) {
   Djinn_JoinParty(ACTOR_BANE, ELEMENT_VENUS, DJINNI_INDEX(DJINNI_BANE));
 }
@@ -247,11 +326,15 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gCrossboneIsleKeysActorPlacementsOther;
 }
 
-/// Halt on a pursuer in CrossboneIsleStatues: nothing beyond the
-/// field Psynergy itself, which keeps it from stepping out.
+/// Halt on one of the five statues in the statue room: the statue stops
+/// where it is, wrapped in Halt's light, and while it lasts Isaac can walk
+/// past it.
+///
+/// The event itself does nothing: Halt's own effect holds the statue, and
+/// each statue's chase checks gMainRoutineWork.haltedActor before it moves.
 static void CrossboneIsleKeys_HaltPursuer(void) {}
 
-/// Turn the Djinni toward the party leader each frame.
+/// Keeps Bane turned toward Isaac on the spiked ledge, every frame.
 static UNREAD_RESULT
 CrossboneIsleKeys_FaceBaneTowardLeader(struct Actor *actor) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
@@ -261,8 +344,12 @@ CrossboneIsleKeys_FaceBaneTowardLeader(struct Actor *actor) {
   RETURN_UNREAD(0);
 }
 
-/// In CrossboneIsleBane, the first time the party comes near
-/// (step trigger 20): Bane notices them and hops away.
+/// Bane runs off the first time Isaac comes along the back ledge towards it,
+/// at cell (40, 41).
+///
+/// The camera pans over to Bane at the ledge's west end. It turns with a
+/// start and hops down off the back ledge onto the low ledge below, beside the
+/// first pillar, then turns to face south.
 static void CrossboneIsleKeys_BaneFirstEscape(void) {
   if (Event_GetFlag(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE) == 0) {
     GameFlag_Set(FLAG_CROSSBONE_ISLE_BANE_FIRST_ESCAPE);
@@ -284,8 +371,14 @@ static void CrossboneIsleKeys_BaneFirstEscape(void) {
   }
 }
 
-/// In CrossboneIsleBane, coming near again (step trigger 21): Bane flees a
-/// second time.
+/// Bane runs off again when Isaac comes up the passage down the west side of
+/// the room towards it, at cell (36, 46).
+///
+/// The camera pans to Bane on the low ledge. It hops back up onto the back
+/// ledge and dashes east along it to the far end. It lands there with a
+/// thud that shakes the room (SE_BANE_ESCAPE) and is left tipped over,
+/// squashing and stretching over and over
+/// (gCrossboneIsleKeys_BaneSquashScript).
 static void CrossboneIsleKeys_BaneSecondEscape(void) {
   struct Actor *spinningDjinni;
 
@@ -335,8 +428,14 @@ static void CrossboneIsleKeys_BaneSecondEscape(void) {
   }
 }
 
-/// In CrossboneIsleBane, the third time (step trigger 22): Bane flees to the
-/// room's last corner.
+/// Bane flees a third time when Isaac comes east along the back ledge to it,
+/// at cell (51, 41), and this time it runs to the ledge with three spikes in
+/// the south-east.
+///
+/// It rights itself, hops down off the east end of the back ledge and
+/// scurries south down the east side out of sight, wobbling from side to
+/// side, to its last spot north of the spikes. From then on it keeps
+/// turning to face Isaac (CrossboneIsleKeys_FaceBaneTowardLeader).
 static void CrossboneIsleKeys_BaneLastEscape(void) {
   struct Actor *djinni;
 
@@ -383,9 +482,13 @@ static void CrossboneIsleKeys_BaneLastEscape(void) {
   }
 }
 
-/// In CrossboneIsleBane, stepping on the step triggers around Bane's
-/// corner (30 to 41): Bane runs to the matching spot, as fast as the leader,
-/// unless Halt holds it.
+/// Bane keeps the three spikes on the south-east ledge between itself and
+/// Isaac: whenever he steps onto one of the twelve cells round them, cells
+/// (50..55, 51..54), it runs as fast as he walks to the spot across from
+/// him, unless Halt holds it.
+///
+/// Each cell's behaviour, less CELL_BEHAVIOR_BANE_CORNER_FIRST, picks Bane's
+/// spot from gCrossboneIsleKeys_BaneWalkTargets.
 static void CrossboneIsleKeys_BaneKeepsAway(void) {
   struct Actor *djinni;
   s32 target;
@@ -399,14 +502,15 @@ static void CrossboneIsleKeys_BaneKeepsAway(void) {
       djinni->speedLimit = Actor_Get(ACTOR_PARTY_LEADER)->speedLimit;
       djinni = Actor_Get(ACTOR_BANE);
       djinni->acceleration = Actor_Get(ACTOR_PARTY_LEADER)->speedLimit;
-      target -= BANE_CORNER_FIRST_STEP;
+      target -= CELL_BEHAVIOR_BANE_CORNER_FIRST;
       Actor_WalkTo(ACTOR_BANE, gCrossboneIsleKeys_BaneWalkTargets[target][0],
                    gCrossboneIsleKeys_BaneWalkTargets[target][1]);
     }
   }
 }
 
-/// Halt on Bane in CrossboneIsleBane: it freezes in place.
+/// Halt on Bane in Bane's room: it stops still where it is, and Isaac can
+/// walk up and talk to it.
 static void CrossboneIsleKeys_HaltBane(void) {
   Event_Start();
   Actor_SetAnimation(ACTOR_BANE, ANIM_STILL);
@@ -428,14 +532,23 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gCrossboneIsleKeysTriggersOther;
 }
 
-/// Unused: pressing south on the walkway cell in front of CrossboneIsleKeys's
-/// third or fourth blue door jumps the leader over the pit onto the post two
-/// cells south, at (21, 45) or (25, 45) (Field_TryJumpForward).
+/// Unused: pushing south on the walkway in front of the third or fourth blue
+/// door in the room of keys would hop Isaac down onto the stone post two
+/// cells south, at cell (21, 45) or (25, 45).
+///
+/// Its trigger rows come after the plain step rows for the same cells, which
+/// answer first and make the same hop themselves
+/// (CrossboneIsleKeys_OpenThirdBlueDoor).
 static void CrossboneIsleKeys_UnusedJumpOntoPost(void) {
   Field_TryJumpForward();
 }
 
-/// Opens the selected blue door, playing its opening when asked.
+/// Opens a blue door in the room of keys, numbered 0 to 3 from the west, so
+/// that the doorway leads through to its chest.
+///
+/// With PASSAGE_PLAY_OPENING the door grinds open as the floor shakes, a
+/// half-open picture first; without it, as when the party comes back in, the
+/// door is simply drawn open.
 static void CrossboneIsleKeys_OpenBlueDoor(s32 passageInfo) {
   s32 columnOffset = (passageInfo & PASSAGE_INDEX_MASK) * 4;
   s32 cellColumn = columnOffset + 77;
@@ -453,7 +566,8 @@ static void CrossboneIsleKeys_OpenBlueDoor(s32 passageInfo) {
   MapGrid_CopyCellAttributes(attributeColumn, 40, 1, 1, attributeColumn, 42);
 }
 
-/// Opens the red door, playing its opening when asked.
+/// Opens the red door on the ledge west of the pit, playing its grinding
+/// opening with PASSAGE_PLAY_OPENING as a blue door's.
 static void CrossboneIsleKeys_OpenRedDoor(s32 passageInfo) {
   if ((passageInfo & PASSAGE_PLAY_OPENING) != 0) {
     Sound_Play(SE_GATE_MOVE);
@@ -467,8 +581,12 @@ static void CrossboneIsleKeys_OpenRedDoor(s32 passageInfo) {
   MapGrid_CopyCellAttributes(6, 49, 1, 1, 6, 51);
 }
 
-/// Facing CrossboneIsleKeys's red door with the Red Key (step trigger
-/// 50): the door rumbles open, and the key is used up.
+/// Walking up to the red door on the ledge west of the pit with the Red Key,
+/// at cell (6, 52), opens it: it grinds open as the floor shakes, and the key
+/// is used up.
+///
+/// Without the key, or facing any other way, nothing happens. Through the
+/// door the way leads on to the floor's west door.
 static void CrossboneIsleKeys_UseRedKey(void) {
   if (Actor_Get(ACTOR_PARTY_LEADER)->facing == FACING_NORTH) {
     if (Event_GetFlag(FLAG_CROSSBONE_ISLE_RED_DOOR_OPEN) == 0) {
@@ -481,8 +599,11 @@ static void CrossboneIsleKeys_UseRedKey(void) {
   }
 }
 
-/// Facing a blue door with a Blue Key: the door rumbles open, and the key is
-/// used up.
+/// Walking up to a blue door with a Blue Key, numbered 0 to 3 from the west,
+/// opens it: it grinds open as the floor shakes, and one Blue Key is used up.
+///
+/// Without a key, facing any other way, or once the door is open, nothing
+/// happens.
 static void CrossboneIsleKeys_UseBlueKey(s32 doorIndex) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 flag;
@@ -502,18 +623,26 @@ static void CrossboneIsleKeys_UseBlueKey(s32 doorIndex) {
   PartyInventory_Remove(ITEM_BLUE_KEY);
 }
 
-/// Touching CrossboneIsleKeys's first blue door (step trigger 51).
+/// Walking up to the westmost blue door on the walkway along the pit's north
+/// wall, at cell (13, 43), opens it with a Blue Key, showing the chest with
+/// 333 coins behind it.
 static void CrossboneIsleKeys_OpenFirstBlueDoor(void) {
   CrossboneIsleKeys_UseBlueKey(0);
 }
 
-/// Touching CrossboneIsleKeys's second blue door (step trigger 52).
+/// Walking up to the second blue door from the west on the walkway, at cell
+/// (17, 43), opens it with a Blue Key, showing the chest with the Fairy Ring
+/// behind it.
 static void CrossboneIsleKeys_OpenSecondBlueDoor(void) {
   CrossboneIsleKeys_UseBlueKey(1);
 }
 
-/// Touching CrossboneIsleKeys's third blue door (step trigger 53, the walkway
-/// cell in front of it).
+/// Walking up to the third blue door from the west on the walkway, at cell
+/// (21, 43), opens it with a Blue Key, showing the chest with the Cookie
+/// behind it.
+///
+/// Pushing south from the same spot hops Isaac down off the walkway onto the
+/// stone post two cells south, at cell (21, 45).
 static void CrossboneIsleKeys_OpenThirdBlueDoor(void) {
   s16 *blockedSteps;
   s32 resetSteps = 0;
@@ -528,8 +657,12 @@ static void CrossboneIsleKeys_OpenThirdBlueDoor(void) {
   }
 }
 
-/// Touching CrossboneIsleKeys's fourth blue door (step trigger 54, the walkway
-/// cell in front of it).
+/// Walking up to the eastmost blue door on the walkway, at cell (25, 43),
+/// opens it with a Blue Key, showing the chest with the Smoke Bomb behind it.
+///
+/// Pushing south from the same spot hops Isaac down off the walkway onto the
+/// stone post two cells south, at cell (25, 45), the way to where the Red
+/// Key is hidden.
 static void CrossboneIsleKeys_OpenFourthBlueDoor(void) {
   s16 *blockedSteps;
   s32 resetSteps = 0;
@@ -544,8 +677,14 @@ static void CrossboneIsleKeys_OpenFourthBlueDoor(void) {
   }
 }
 
-/// Reveal in CrossboneIsleKeys: the hidden Red Key appears on its
-/// cell.
+/// Reveal in the room of keys shows a hidden stone post, with the Red Key on
+/// top, three cells south of the post below the fourth blue door, at cell
+/// (25, 48).
+///
+/// The post is copied there, picture and cells, from the one at (25, 45),
+/// and the key is put on it unless the party already has it. It appears
+/// wherever in the room Reveal is cast, but is only seen when Isaac is near
+/// it, as from the post below the fourth blue door.
 static void CrossboneIsleKeys_ShowRedKey(void) {
   MapGrid_CopyCells(25, 45, 1, 2, 25, 48);
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_RED_KEY) == 0)
@@ -553,15 +692,16 @@ static void CrossboneIsleKeys_ShowRedKey(void) {
   Event_Wait(1);
 }
 
-/// Reveal wears off in CrossboneIsleKeys: the Red Key's cell is
-/// hidden again.
+/// When Reveal wears off in the room of keys, the hidden post south of the
+/// fourth blue door vanishes again, at cell (25, 48), and so does the Red
+/// Key if it is still on it.
 static void CrossboneIsleKeys_HideRedKey(void) {
   MapGrid_CopyCells(24, 48, 1, 2, 25, 48);
   Actor_SetPosition(ACTOR_RED_KEY, 8, 8);
 }
 
-/// Collects the selected key, hides its actor and remembers it was
-/// taken.
+/// Gives the party a key that Catch has pulled in: "Isaac got the Blue Key."
+/// (or the Red Key), and the key's icon is gone from its post for good.
 static inline void CrossboneIsleKeys_CollectKey(s32 actorId, s32 itemId,
                                                 s32 collectedFlag) {
   Item_ShowFound(itemId, 3);
@@ -571,37 +711,45 @@ static inline void CrossboneIsleKeys_CollectKey(s32 actorId, s32 itemId,
   GameFlag_Set(collectedFlag);
 }
 
-/// Catch on CrossboneIsleKeys's first Blue Key: the party gets it.
+/// Catch on the Blue Key on the post just north of where Isaac comes into
+/// the pit from the east door: a hand of light reaches out and pulls the key
+/// to him.
 static void CrossboneIsleKeys_CatchFirstBlueKey(void) {
   CrossboneIsleKeys_CollectKey(ACTOR_FIRST_BLUE_KEY, ITEM_BLUE_KEY,
                                FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY);
 }
 
-/// Catch on CrossboneIsleKeys's second Blue Key: the party gets it.
+/// Catch on the Blue Key on a post in the middle of the pit: a hand of light
+/// pulls it to Isaac.
 static void CrossboneIsleKeys_CatchSecondBlueKey(void) {
   CrossboneIsleKeys_CollectKey(ACTOR_SECOND_BLUE_KEY, ITEM_BLUE_KEY,
                                FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 1);
 }
 
-/// Catch on CrossboneIsleKeys's third Blue Key: the party gets it.
+/// Catch on the Blue Key on a post in the north of the pit, below the
+/// walkway: a hand of light pulls it to Isaac.
 static void CrossboneIsleKeys_CatchThirdBlueKey(void) {
   CrossboneIsleKeys_CollectKey(ACTOR_THIRD_BLUE_KEY, ITEM_BLUE_KEY,
                                FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 2);
 }
 
-/// Catch on CrossboneIsleKeys's fourth Blue Key: the party gets it.
+/// Catch on the Blue Key on a post in the south of the pit, east of the
+/// middle: a hand of light pulls it to Isaac.
 static void CrossboneIsleKeys_CatchFourthBlueKey(void) {
   CrossboneIsleKeys_CollectKey(ACTOR_FOURTH_BLUE_KEY, ITEM_BLUE_KEY,
                                FLAG_CROSSBONE_ISLE_FIRST_BLUE_KEY + 3);
 }
 
-/// Catch on CrossboneIsleKeys's revealed Red Key: the party gets it.
+/// Catch on the Red Key, on the hidden post Reveal shows south of the
+/// fourth blue door: a hand of light pulls it to Isaac.
 static void CrossboneIsleKeys_CatchRedKey(void) {
   CrossboneIsleKeys_CollectKey(ACTOR_RED_KEY, ITEM_RED_KEY,
                                FLAG_CROSSBONE_ISLE_RED_KEY);
 }
 
-/// Starts the first chase when an uncloaked leader enters its area.
+/// Watches, every frame, for Isaac on the tiles just south of the statue in
+/// the north-east, cells (21..23, 10..11), and sets it on him unless Cloak
+/// hides him, Halt holds the statue or another statue is already after him.
 static void CrossboneIsleKeys_CheckFirstPursuerTrigger(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 column = leader->x.fixed / toFIXED(16);
@@ -617,8 +765,13 @@ static void CrossboneIsleKeys_CheckFirstPursuerTrigger(void) {
   }
 }
 
-/// Raised in CrossboneIsleStatues (RAISED_FIRST_CHASE): the first statue
-/// glides onto the leader and pushes him back south, then glides home.
+/// The statue in the north-east of the statue room glides down onto Isaac
+/// when he steps onto the tiles in front of it, with a thud, shoves him back
+/// south and glides home again.
+///
+/// CrossboneIsleKeys_CheckFirstPursuerTrigger raises it. Isaac is pushed 24
+/// pixels south, and the statue follows him CROSSBONE_PURSUER_STEP_Z pixels
+/// before it turns back.
 static void CrossboneIsleKeys_FirstStatuePushesLeaderBack(void) {
   struct Actor *leader;
 
@@ -643,7 +796,9 @@ static void CrossboneIsleKeys_FirstStatuePushesLeaderBack(void) {
   GameFlag_Clear(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER);
 }
 
-/// Starts the second chase when the leader enters column ten.
+/// Watches, every frame, for Isaac on the narrow walk below the statue in the
+/// west, cells (10, 16..18), and sets it on him unless Cloak hides him, Halt
+/// holds the statue or another statue is already after him.
 static void CrossboneIsleKeys_CheckSecondPursuerTrigger(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 column = leader->x.fixed / toFIXED(16);
@@ -659,8 +814,11 @@ static void CrossboneIsleKeys_CheckSecondPursuerTrigger(void) {
   }
 }
 
-/// Raised in CrossboneIsleStatues (RAISED_SECOND_CHASE): the second statue
-/// glides onto the leader and pushes him back south, then glides home.
+/// The statue on the narrow walk between the dark pits in the west of the
+/// statue room glides down onto Isaac as he comes north up the walk, with a
+/// thud, shoves him back south and glides home again.
+///
+/// CrossboneIsleKeys_CheckSecondPursuerTrigger raises it.
 static void CrossboneIsleKeys_SecondStatuePushesLeaderBack(void) {
   struct Actor *leader;
 
@@ -685,7 +843,11 @@ static void CrossboneIsleKeys_SecondStatuePushesLeaderBack(void) {
   GameFlag_Clear(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER);
 }
 
-/// Moves a pursuer to the leader column and remembers its last column.
+/// Slides the third or fourth statue (0 or 1) along its alcove with a thud
+/// to stand right in front of Isaac's column, unless Halt holds it, and
+/// nudges him 8 pixels south if he has got into the alcove's row.
+///
+/// gCrossboneIsleKeys_SlotColumns keeps the column each statue stands in.
 static void CrossboneIsleKeys_TrackPursuerColumn(s32 pursuerIndex) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 column = leader->x.fixed / toFIXED(16);
@@ -709,26 +871,34 @@ static void CrossboneIsleKeys_TrackPursuerColumn(s32 pursuerIndex) {
   Actor_WaitForMoveById(ACTOR_PARTY_LEADER);
 }
 
-/// Touching step trigger 53 in CrossboneIsleStatues: the third pursuer keeps
-/// to the leader's column.
+/// As Isaac walks along the rug in front of the third statue, in the west
+/// alcove of the statue room's south walkway, cells (15..17, 23), the statue
+/// slides sideways to stay right in front of him, barring the way north to
+/// the chest with the Sleep Bomb.
+///
+/// Halt on the statue while it stands to one side lets him walk past.
 static void CrossboneIsleKeys_ThirdStatueShadowsLeader(void) {
   CrossboneIsleKeys_TrackPursuerColumn(0);
 }
 
-/// Touching step trigger 54 in CrossboneIsleStatues: the fourth pursuer
-/// keeps to the leader's column.
+/// As Isaac walks along the rug in front of the fourth statue, in the east
+/// alcove of the statue room's south walkway, cells (20..22, 23), the statue
+/// slides sideways to stay right in front of him and bar the way north.
+///
+/// Halt on the statue while it stands to one side lets him walk past.
 static void CrossboneIsleKeys_FourthStatueShadowsLeader(void) {
   CrossboneIsleKeys_TrackPursuerColumn(1);
 }
 
-/// Unused: tracks the fifth pursuer's column; nothing calls it.
+/// Unused: would make the fifth statue slide to stay in front of Isaac as
+/// the third and fourth do; nothing calls it.
 UNUSED static void CrossboneIsleKeys_TrackFifthPursuerColumn(void) {
   CrossboneIsleKeys_TrackPursuerColumn(2);
 }
 
-/// Touching step trigger 61 in CrossboneIsleStatues: unless Halt holds it,
-/// the third statue glides onto the leader and pushes him back south, then
-/// glides home.
+/// Stepping into the third statue's alcove on the south walkway, cells
+/// (15..17, 22), while Halt does not hold the statue, makes it glide onto
+/// Isaac with a thud, shove him back south and glide home again.
 static void CrossboneIsleKeys_ThirdStatuePushesLeaderBack(void) {
   struct Actor *leader;
 
@@ -755,9 +925,10 @@ static void CrossboneIsleKeys_ThirdStatuePushesLeaderBack(void) {
   }
 }
 
-/// Touching step trigger 62 in CrossboneIsleStatues: unless Halt holds it,
-/// the fourth statue lines up with the leader's column, glides onto him and
-/// pushes him back south, then glides home.
+/// Stepping into the fourth statue's alcove on the south walkway, cells
+/// (20..22, 22), while Halt does not hold the statue, makes it shuffle half
+/// a cell towards Isaac, glide onto him with a thud, shove him back south
+/// and glide home again.
 static void CrossboneIsleKeys_FourthStatuePushesLeaderBack(void) {
   struct Actor *leader;
 
@@ -793,7 +964,10 @@ static void CrossboneIsleKeys_FourthStatuePushesLeaderBack(void) {
   }
 }
 
-/// Starts the fifth chase when the leader enters column nineteen.
+/// Watches, every frame, for Isaac on the two tiles just south of the statue
+/// in the middle of the hall, cells (19, 15..16), and sets it on him unless
+/// Cloak hides him, Halt holds the statue or another statue is already after
+/// him.
 static void CrossboneIsleKeys_CheckFifthPursuerTrigger(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 column = leader->x.fixed / toFIXED(16);
@@ -809,8 +983,11 @@ static void CrossboneIsleKeys_CheckFifthPursuerTrigger(void) {
   }
 }
 
-/// Raised in CrossboneIsleStatues (RAISED_FIFTH_CHASE): the fifth statue
-/// glides onto the leader and pushes him back south, then glides home.
+/// The statue in the middle of the statue room glides down onto Isaac when
+/// he steps onto the tiles in front of it, with a thud, shoves him back
+/// south and glides home again.
+///
+/// CrossboneIsleKeys_CheckFifthPursuerTrigger raises it.
 static void CrossboneIsleKeys_FifthStatuePushesLeaderBack(void) {
   struct Actor *leader;
 
@@ -834,25 +1011,38 @@ static void CrossboneIsleKeys_FifthStatuePushesLeaderBack(void) {
   GameFlag_Clear(FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER);
 }
 
-/// Reveal in CrossboneIsleStatues: the translucent layer over the room
-/// vanishes while it lasts.
+/// Reveal in the statue room lifts the darkness: while it lasts the whole
+/// hall shows evenly in Reveal's grey, not only the circles of light round
+/// the braziers.
+///
+/// The darkness is a background layer laid over the room, half see-through
+/// (CrossboneIsleKeys_InitializeStatues). Reveal's blend counts that layer
+/// for nothing and the room under it for 13 sixteenths, so the hall shows
+/// whole and a little dim.
 static void CrossboneIsleKeys_CastRevealInStatueRoom(void) {
   u16 value = BLEND_ALPHA(0, 13);
 
   REG_BLDALPHA = value;
 }
 
-/// Reveal wears off in CrossboneIsleStatues: the translucent layer
-/// returns.
+/// When Reveal wears off in the statue room, the darkness falls over the hall
+/// again outside the circles of light.
 static void CrossboneIsleKeys_RevealEndsInStatueRoom(void) {
   u16 value = BLEND_ALPHA(7, 6);
 
   REG_BLDALPHA = value;
 }
 
-/// At CrossboneIsleBane's ladder by the second pillar (step trigger 60): the
-/// leader climbs up or down, looks ahead to the east, or pushes the first
-/// pillar from the floor to the west.
+/// At either of the two ladders down from the back ledge of Bane's room, by
+/// the spiked channel in the middle, cells (42, 41..42) and (48, 41..42),
+/// Isaac climbs up with Up and down with Down, and with Right hops east off
+/// the ladder.
+///
+/// Hopping east from the west ladder, over the wall beside it, lands him on the
+/// little ledge at the top of the spiked channel, by the Demon Axe's chest once
+/// the second pillar has brought it there. Pushing west from the foot of the
+/// west ladder pushes the first pillar back west if it has been pushed up to
+/// it; from higher up the ladder he hops west instead.
 static void CrossboneIsleKeys_UseLadder(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   u16 facing = leader->facing;
@@ -866,7 +1056,7 @@ static void CrossboneIsleKeys_UseLadder(void) {
                                    destinationRow);
       }
     }
-    GameFlag_Clear(FLAG_CROSSBONE_ISLE_BANE_LOOKED_EAST);
+    GameFlag_Clear(FLAG_CROSSBONE_ISLE_BANE_JUMPED_EAST_FROM_LADDER);
     Field_ClimbUp();
   } else if (facing == FACING_SOUTH) {
     Field_ClimbDown();
@@ -879,7 +1069,7 @@ static void CrossboneIsleKeys_UseLadder(void) {
                                    destinationRow);
       }
     }
-    GameFlag_Set(FLAG_CROSSBONE_ISLE_BANE_LOOKED_EAST);
+    GameFlag_Set(FLAG_CROSSBONE_ISLE_BANE_JUMPED_EAST_FROM_LADDER);
     Field_TryJumpForward();
   } else if (facing == FACING_WEST) {
     if (leader->y.fixed == 0) {
@@ -893,8 +1083,9 @@ static void CrossboneIsleKeys_UseLadder(void) {
 /// Unused: an empty function nothing refers to.
 UNUSED static void CrossboneIsleKeys_UnusedNoOpB(void) {}
 
-/// Frost on CrossboneIsleBane's puddle: it freezes into a pillar of
-/// ice the party can stand on.
+/// Frost on the puddle between the two spikes in the south-west of Bane's
+/// room freezes it into a pillar of ice, which Isaac can hop onto and across
+/// like a stepping stone, at cell (40, 55).
 static void CrossboneIsleKeys_FreezePuddle(void) {
   struct Actor *puddle = Actor_Get(ACTOR_PUDDLE);
 
@@ -909,19 +1100,21 @@ static void CrossboneIsleKeys_FreezePuddle(void) {
   GameFlag_Set(FLAG_CROSSBONE_ISLE_BANE_PUDDLE_FROZEN);
 }
 
-/// Walking into CrossboneIsleBane's first pillar from the ladder side
-/// (step trigger 70): facing east, look ahead; otherwise push the pillar.
-static void CrossboneIsleKeys_LookAheadOrPushFirstPillar(void) {
+/// Just east of the first pillar's home on the low ledge in the north-west
+/// of Bane's room, at cell (39, 42), pushing east hops Isaac east off the
+/// ledge; pushing west into the pillar pushes it.
+static void CrossboneIsleKeys_JumpEastOrPushFirstPillar(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
-  if (leader->facing == 0) {
+  if (leader->facing == FACING_EAST) {
     Field_TryJumpForward();
   } else {
     CrossboneIsleKeys_PushFirstPillar();
   }
 }
 
-/// Restores the first pillar row before applying its current footprint.
+/// Lays the low ledge in the north-west as it is with the first pillar gone,
+/// before the pillar's own cell is laid where it stands.
 static void CrossboneIsleKeys_RestoreFirstPillarTerrain(void) {
   MapGrid_CopyCellAttributes(57, 42, 1, 1, 40, 42);
   MapGrid_CopyCellAttributes(57, 42, 1, 1, 41, 42);
@@ -931,26 +1124,35 @@ static void CrossboneIsleKeys_RestoreFirstPillarTerrain(void) {
   Actor_Get(ACTOR_FIRST_PILLAR)->motionFlags = ACTOR_FOLLOWS_TERRAIN;
 }
 
-/// Restores support under the first pillar at the eastern cell.
+/// The first pillar stands in the gap's east cell, at the foot of the west
+/// ladder, cell (42, 42): its top raises the ladder's foot to the low
+/// ledge's height.
 static void CrossboneIsleKeys_RestoreEastUnderfootCell(void) {
   MapGrid_CopyCellAttributes(58, 41, 1, 1, 42, 42);
   Actor_Get(ACTOR_FIRST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 }
 
-/// Restores support under the first pillar at the middle cell.
+/// The first pillar stands in the middle of the gap, cell (41, 42): its top
+/// is a square Isaac can hop across.
 static void CrossboneIsleKeys_RestoreMiddleUnderfootCell(void) {
   MapGrid_CopyCellAttributes(44, 42, 1, 1, 41, 42);
   Actor_Get(ACTOR_FIRST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 }
 
-/// Restores support under the first pillar at the western cell.
+/// The first pillar stands in the gap's west cell, cell (40, 42), its top
+/// level with the low ledge, which it lengthens by a cell.
 static void CrossboneIsleKeys_RestoreWestUnderfootCell(void) {
   MapGrid_CopyCellAttributes(39, 42, 1, 1, 40, 42);
   Actor_Get(ACTOR_FIRST_PILLAR)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
 }
 
-/// Move on CrossboneIsleBane's first pillar: its support cells are
-/// rebuilt from its height and column.
+/// Move on the first pillar, on the low ledge in the north-west of Bane's
+/// room, slides it along the ledge; the cells under it follow it.
+///
+/// Pushed east off the ledge, it drops into the gap between the ledge and
+/// the west ladder, and its top makes a step there. On the ledge, at the top
+/// of the short ladder at column 38, its top is level with the back ledge.
+/// The pushes and the room's setting up call this too, to lay its cells.
 static void CrossboneIsleKeys_MoveFirstPillar(void) {
   struct Actor *actor = Actor_Get(ACTOR_FIRST_PILLAR);
   FIXED x = actor->x.fixed;
@@ -978,7 +1180,11 @@ static void CrossboneIsleKeys_MoveFirstPillar(void) {
   }
 }
 
-/// Pushing CrossboneIsleBane's first pillar (step trigger 51).
+/// Walking into the first pillar on the low ledge in the north-west of
+/// Bane's room pushes it a cell along the ledge.
+///
+/// Once the pillar has left the top of the short ladder at column 38,
+/// pushing north or south there climbs the ladder instead.
 static void CrossboneIsleKeys_PushFirstPillar(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   struct Actor *pillar = Actor_Get(ACTOR_FIRST_PILLAR);
@@ -1003,11 +1209,12 @@ static void CrossboneIsleKeys_PushFirstPillar(void) {
   CrossboneIsleKeys_MoveFirstPillar();
 }
 
-/// Leaves the chest where the second pillar has reached the ladder.
+/// Leaves the Demon Axe's chest on the second pillar at the top of the
+/// spiked channel, where the chest's examine trigger takes its place.
 static void CrossboneIsleKeys_ReleaseSecondPillarChest(void) {
   Task_Remove(CrossboneIsleKeys_FollowSecondPillar);
   Actor_SetPosition(ACTOR_SECOND_PILLAR_CHEST, 0, 0);
-  if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_LOOKED_EAST) != 0) {
+  if (GameFlag_Get(FLAG_CROSSBONE_ISLE_BANE_JUMPED_EAST_FROM_LADDER) != 0) {
     MapGrid_CopyCellAttributes(58, 36, 1, 1, 45, 43);
   } else {
     MapGrid_CopyCellAttributes(46, 43, 1, 1, 45, 43);
@@ -1016,8 +1223,10 @@ static void CrossboneIsleKeys_ReleaseSecondPillarChest(void) {
   GameFlag_Set(FLAG_CROSSBONE_ISLE_BANE_CHEST_AT_LADDER);
 }
 
-/// Move on CrossboneIsleBane's second pillar: the chest on top of it stays
-/// at the ladder cell once the pillar reaches it.
+/// Move on the second pillar, in the spiked channel in the middle of Bane's
+/// room, slides it with the Demon Axe's chest riding on top; once it reaches
+/// the top of the channel by the ladders, cell (45, 43), it stays there and
+/// the chest can be opened from beside it.
 static void CrossboneIsleKeys_MoveSecondPillar(void) {
   struct Actor *pillar = Actor_Get(ACTOR_SECOND_PILLAR);
   s32 column = pillar->x.fixed / toFIXED(16);
@@ -1028,32 +1237,40 @@ static void CrossboneIsleKeys_MoveSecondPillar(void) {
   }
 }
 
-/// Pushing CrossboneIsleBane's second pillar (step trigger 52).
+/// Walking into the second pillar, at the foot of the spiked channel in the
+/// middle of Bane's room, pushes it a cell north up the channel towards the
+/// back of the room, carrying the Demon Axe's chest on top.
 static void CrossboneIsleKeys_PushSecondPillar(void) {
   PushedActor_AdvancePair();
   CrossboneIsleKeys_MoveSecondPillar();
 }
 
-/// Restores the terrain at both ends of the third pillar row.
+/// Lays the floor along the south of the south-west platform as it is with
+/// no pillar at either end, cells (38, 55) and (42, 55).
 static void CrossboneIsleKeys_RestoreThirdPillarTerrain(void) {
   MapGrid_CopyCellAttributes(38, 56, 1, 1, 38, 55);
   MapGrid_CopyCellAttributes(42, 56, 1, 1, 42, 55);
 }
 
-/// Restores the third pillar support at the western end.
+/// The third pillar has come down at the west end of the floor below its
+/// platform, cell (38, 55): its top becomes a square Isaac can hop across.
 static void CrossboneIsleKeys_RestoreThirdPillarWestCell(void) {
   MapGrid_CopyCellAttributes(40, 54, 1, 1, 38, 55);
   Actor_Get(ACTOR_THIRD_PILLAR)->motionFlags = 0;
 }
 
-/// Restores the third pillar support at the eastern end.
+/// The third pillar has come down at the east end of the floor below its
+/// platform, cell (42, 55): its top becomes a square Isaac can hop across.
 static void CrossboneIsleKeys_RestoreThirdPillarEastCell(void) {
   MapGrid_CopyCellAttributes(40, 54, 1, 1, 42, 55);
   Actor_Get(ACTOR_THIRD_PILLAR)->motionFlags = 0;
 }
 
-/// Move on CrossboneIsleBane's third pillar: its support is rebuilt
-/// from its height and destination.
+/// Move on the third pillar, on the raised platform in the south-west of
+/// Bane's room, slides it; pushed off the platform's south edge it drops to
+/// the floor below, and its top becomes a stepping stone beside the puddle.
+///
+/// The pushes and the room's setting up call this too, to lay its cells.
 static void CrossboneIsleKeys_MoveThirdPillar(void) {
   struct Actor *pillar = Actor_Get(ACTOR_THIRD_PILLAR);
   s32 heightCells = pillar->y.fixed / toFIXED(16);
@@ -1077,15 +1294,18 @@ static void CrossboneIsleKeys_MoveThirdPillar(void) {
   }
 }
 
-/// Pushing CrossboneIsleBane's third pillar (step trigger 50).
+/// Walking into the third pillar, on the raised platform in the south-west
+/// of Bane's room or on the floor below it, pushes it a cell.
 static void CrossboneIsleKeys_PushThirdPillar(void) {
   CrossboneIsleKeys_RestoreThirdPillarTerrain();
   PushedActor_AdvancePair();
   CrossboneIsleKeys_MoveThirdPillar();
 }
 
-/// Walking into CrossboneIsleBane's third pillar (step trigger 54): facing
-/// south, the leader jumps down past it; otherwise the pillar is pushed.
+/// At the south edge of the raised platform in the south-west of Bane's room,
+/// cell (38, 54), pushing south jumps Isaac down off the platform to the
+/// floor below in a puff of dust; pushing any other way pushes the third
+/// pillar.
 static void CrossboneIsleKeys_TouchThirdPillar(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
@@ -1096,7 +1316,8 @@ static void CrossboneIsleKeys_TouchThirdPillar(void) {
   }
 }
 
-/// Clears the support row before repainting the fourth and fifth pillars.
+/// Lays the row the fourth and fifth pillars are pushed along, cells
+/// (49..52, 55), as plain floor.
 static void CrossboneIsleKeys_RestoreFourthAndFifthPillarTerrain(void) {
   MapGrid_CopyCellAttributes(48, 55, 1, 1, 49, 55);
   MapGrid_CopyCellAttributes(48, 55, 1, 1, 50, 55);
@@ -1104,7 +1325,8 @@ static void CrossboneIsleKeys_RestoreFourthAndFifthPillarTerrain(void) {
   MapGrid_CopyCellAttributes(48, 55, 1, 1, 52, 55);
 }
 
-/// Places support cells beneath the fourth and fifth pillars.
+/// Makes the tops of the fourth and fifth pillars squares Isaac can hop
+/// across, wherever along their row they stand.
 static void CrossboneIsleKeys_RepaintFourthAndFifthPillarCells(void) {
   struct Actor *pillar;
   s32 column;
@@ -1119,34 +1341,40 @@ static void CrossboneIsleKeys_RepaintFourthAndFifthPillarCells(void) {
   MapGrid_CopyCellAttributes(53, 55, 1, 1, column, 55);
 }
 
-/// Move on CrossboneIsleBane's fourth pillar: the support row it
-/// shares with the fifth is refreshed.
+/// Move on the west one of the two pillars by the east doorway of Bane's
+/// room slides it along the south row; its top stays a stepping stone.
 static void CrossboneIsleKeys_MoveFourthPillar(void) {
   CrossboneIsleKeys_RepaintFourthAndFifthPillarCells();
 }
 
-/// Pushing CrossboneIsleBane's fourth pillar (step trigger 53).
-static void CrossboneIsleKeys_PushFourthPillar(void) {
+/// Walking into either of the two pillars by the east doorway of Bane's room
+/// pushes it along the south row, cells (48..52, 55), and its top stays a
+/// stepping stone wherever it stops.
+///
+/// The push moves whichever pillar Isaac walks into
+/// (PushedActor_AdvancePair).
+static void CrossboneIsleKeys_PushFourthOrFifthPillar(void) {
   CrossboneIsleKeys_RestoreFourthAndFifthPillarTerrain();
   PushedActor_AdvancePair();
   CrossboneIsleKeys_MoveFourthPillar();
 }
 
-/// Move on CrossboneIsleBane's fifth pillar: the support row it shares
-/// with the fourth is refreshed.
+/// Move on the east one of the two pillars by the east doorway of Bane's
+/// room slides it along the south row; its top stays a stepping stone.
 static void CrossboneIsleKeys_MoveFifthPillar(void) {
   CrossboneIsleKeys_RepaintFourthAndFifthPillarCells();
 }
 
-/// Unused: a task that moves the fifth pillar and refreshes its terrain;
-/// nothing calls it.
+/// Unused: the same push as CrossboneIsleKeys_PushFourthOrFifthPillar's,
+/// written for the fifth pillar; nothing refers to it.
 UNUSED static void CrossboneIsleKeys_PushFifthPillar(void) {
   CrossboneIsleKeys_RestoreFourthAndFifthPillarTerrain();
   PushedActor_AdvancePair();
   CrossboneIsleKeys_MoveFifthPillar();
 }
 
-/// Keeps the chest on top of the second pillar as the pillar moves.
+/// Keeps the Demon Axe's chest on top of the second pillar as it moves,
+/// every frame.
 static void CrossboneIsleKeys_FollowSecondPillar(void) {
   struct Actor *target = Actor_Get(ACTOR_SECOND_PILLAR_CHEST);
   struct Actor *source = Actor_Get(ACTOR_SECOND_PILLAR);
@@ -1156,7 +1384,8 @@ static void CrossboneIsleKeys_FollowSecondPillar(void) {
   target->z.fixed = source->z.fixed + toFIXED(1);
 }
 
-/// Puts the chest's examine trigger where the second pillar stands.
+/// Puts the Demon Axe chest's examine trigger where the second pillar
+/// stands.
 static void CrossboneIsleKeys_PositionSecondPillarMarker(void) {
   struct Actor *frame = Actor_Get(ACTOR_SECOND_PILLAR);
 
@@ -1164,7 +1393,8 @@ static void CrossboneIsleKeys_PositionSecondPillarMarker(void) {
                                 frame->z.fixed + toFIXED(1));
 }
 
-/// Chooses pillar drawing priorities from the leader height and row.
+/// Draws the pillars in front of Isaac or behind him, every frame, by how
+/// high he stands and, for the third, how far south he is.
 static void CrossboneIsleKeys_UpdatePillarPriorities(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   u8 priority;
@@ -1190,8 +1420,8 @@ static void CrossboneIsleKeys_UpdatePillarPriorities(void) {
 }
 
 /// Sets up whichever of the three rooms the party enters: the keys and doors
-/// of CrossboneIsleKeys, the pursuers of CrossboneIsleStatues,
-/// or the pillars and Bane of CrossboneIsleBane.
+/// of the room of keys, the statues of the statue room, or the pillars and
+/// Bane of Bane's room.
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -1255,7 +1485,8 @@ UNUSED static void CrossboneIsleKeys_UnusedRedrawKeyActors(void) {
 
 #include "shared/colosso_item_icon.c"
 
-/// Restores collected keys and already opened passages.
+/// Puts each key not yet taken on its post, and draws open the doors already
+/// opened.
 static void CrossboneIsleKeys_InitializeKeys(void) {
   wait(1);
   Colosso_ShowItemIcon(ACTOR_RED_KEY, ITEM_RED_KEY);
@@ -1292,7 +1523,9 @@ static void CrossboneIsleKeys_InitializeKeys(void) {
   }
 }
 
-/// Configures the pursuers, their chase triggers and blending.
+/// Makes the first four statues solid and draws all five a little narrower,
+/// starts the watches for Isaac in front of the first, second and fifth, and
+/// lays the darkness over the hall, half see-through.
 static void CrossboneIsleKeys_InitializeStatues(void) {
   Actor_Get(ACTOR_FIRST_STATUE)->collisionFlags = ACTOR_SOLID;
   Actor_Get(ACTOR_SECOND_STATUE)->collisionFlags = ACTOR_SOLID;
@@ -1313,7 +1546,11 @@ static void CrossboneIsleKeys_InitializeStatues(void) {
   Io_Write16(BLEND_ALPHA(7, 6), &REG_BLDALPHA);
 }
 
-/// Restores movable pillars, terrain and the Djinni escape progress.
+/// Lays the cells under each pillar where it stands, refreezes the puddle if
+/// Frost froze it since the party came in, and puts Bane where its last
+/// escape left it:
+/// at the west end of the back ledge, on the low ledge below it, at the east
+/// end of the back ledge, or on the spiked ledge in the south-east.
 static void CrossboneIsleKeys_InitializeBane(void) {
   struct Actor *djinni;
 
@@ -1389,8 +1626,10 @@ s32 gCrossboneIsleKeys_BaneSquashScript[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// Where Bane runs from each step trigger round its corner, from
-/// BANE_CORNER_FIRST_STEP on, in pixels.
+/// Where Bane runs to, in pixels, when Isaac steps onto each of the twelve
+/// cells round the three spikes on the south-east ledge, from
+/// CELL_BEHAVIOR_BANE_CORNER_FIRST on: always the spot across the spikes
+/// from him.
 s32 gCrossboneIsleKeys_BaneWalkTargets[][2] = {
     { 888, 856 },
     { 872, 856 },
@@ -1509,14 +1748,14 @@ struct Trigger gCrossboneIsleKeysRoomTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_THIRD_BLUE_KEY, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_CatchThirdBlueKey) },
     { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_FOURTH_BLUE_KEY, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_CatchFourthBlueKey) },
     { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_RED_KEY, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_CatchRedKey) },
-    { TRIGGER_STEP, 50, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_UseRedKey) },
-    { TRIGGER_STEP, 51, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_OpenFirstBlueDoor) },
-    { TRIGGER_STEP, 52, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_OpenSecondBlueDoor) },
-    { TRIGGER_STEP, 53, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_OpenThirdBlueDoor) },
-    { TRIGGER_STEP, 54, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_OpenFourthBlueDoor) },
-    // Unused: the plain step trigger rows above answer codes 53 and 54 first.
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 53, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_UnusedJumpOntoPost) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 54, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_UnusedJumpOntoPost) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_KEYS_RED_DOOR, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_UseRedKey) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_KEYS_FIRST_BLUE_DOOR, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_OpenFirstBlueDoor) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_KEYS_SECOND_BLUE_DOOR, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_OpenSecondBlueDoor) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_KEYS_THIRD_BLUE_DOOR, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_OpenThirdBlueDoor) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_KEYS_FOURTH_BLUE_DOOR, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_OpenFourthBlueDoor) },
+    // Unused: the plain step rows above answer the same cells first.
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_KEYS_THIRD_BLUE_DOOR, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_UnusedJumpOntoPost) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_KEYS_FOURTH_BLUE_DOOR, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_UnusedJumpOntoPost) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_CROSSBONE_ISLE_KEYS_333_COINS, FIND_COINS(333) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_CROSSBONE_ISLE_KEYS_FAIRY_RING, FIND_ITEM(ITEM_FAIRY_RING) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_CROSSBONE_ISLE_KEYS_COOKIE, FIND_ITEM(ITEM_COOKIE) },
@@ -1527,10 +1766,10 @@ struct Trigger gCrossboneIsleKeysRoomTriggers[] = {
 struct Trigger gCrossboneIsleStatuesTriggers[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_STATUES_TO_CROSSBONE_ISLE_FOURTH_FLOOR_EAST },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_STATUES_TO_CROSSBONE_ISLE_FOURTH_FLOOR_WEST },
-    { TRIGGER_STEP, 53, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_ThirdStatueShadowsLeader) },
-    { TRIGGER_STEP, 54, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_FourthStatueShadowsLeader) },
-    { TRIGGER_STEP, 61, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_ThirdStatuePushesLeaderBack) },
-    { TRIGGER_STEP, 62, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_FourthStatuePushesLeaderBack) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_STATUES_BEFORE_THIRD_STATUE, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_ThirdStatueShadowsLeader) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_STATUES_BEFORE_FOURTH_STATUE, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_FourthStatueShadowsLeader) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_STATUES_THIRD_ALCOVE, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_ThirdStatuePushesLeaderBack) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_STATUES_FOURTH_ALCOVE, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_FourthStatuePushesLeaderBack) },
     { TRIGGER_RAISED, RAISED_FIFTH_CHASE, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_FifthStatuePushesLeaderBack) },
     { TRIGGER_RAISED, RAISED_SECOND_CHASE, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_SecondStatuePushesLeaderBack) },
     { TRIGGER_RAISED, RAISED_FIRST_CHASE, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_FirstStatuePushesLeaderBack) },
@@ -1554,54 +1793,57 @@ struct Trigger gCrossboneIsleBaneTriggers[] = {
      CROSSBONE_ISLE_BANE_TO_CROSSBONE_ISLE_SIXTH_FLOOR_EAST},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS,
      CROSSBONE_ISLE_BANE_TO_CROSSBONE_ISLE_SIXTH_FLOOR_WEST},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 50, CONDITION_ALWAYS,
-     EVENT(CrossboneIsleKeys_PushThirdPillar)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 51, CONDITION_ALWAYS,
-     EVENT(CrossboneIsleKeys_PushFirstPillar)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 52, CONDITION_ALWAYS,
-     EVENT(CrossboneIsleKeys_PushSecondPillar)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 53, CONDITION_ALWAYS,
-     EVENT(CrossboneIsleKeys_PushFourthPillar)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_BANE_THIRD_PILLAR,
+     CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_PushThirdPillar)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_BANE_FIRST_PILLAR,
+     CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_PushFirstPillar)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_BANE_SECOND_PILLAR,
+     CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_PushSecondPillar)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_BANE_FOURTH_PILLAR,
+     CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_PushFourthOrFifthPillar)},
 #if TBS_PATCH_1
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 61, CONDITION_ALWAYS,
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
+     CELL_BEHAVIOR_BANE_WEST_OF_FIRST_PILLAR, CONDITION_ALWAYS,
      EVENT(CrossboneIsleKeys_PushFirstPillar)},
 #endif
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 54, CONDITION_ALWAYS,
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
+     CELL_BEHAVIOR_BANE_THIRD_PILLAR_EDGE, CONDITION_ALWAYS,
      EVENT(CrossboneIsleKeys_TouchThirdPillar)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 60, CONDITION_ALWAYS,
-     EVENT(CrossboneIsleKeys_UseLadder)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 70, CONDITION_ALWAYS,
-     EVENT(CrossboneIsleKeys_LookAheadOrPushFirstPillar)},
-    {TRIGGER_STEP, 20, FLAG_DJINNI(DJINNI_BANE),
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_BANE_LADDER,
+     CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_UseLadder)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
+     CELL_BEHAVIOR_BANE_EAST_OF_FIRST_PILLAR, CONDITION_ALWAYS,
+     EVENT(CrossboneIsleKeys_JumpEastOrPushFirstPillar)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BANE_FIRST_ESCAPE, FLAG_DJINNI(DJINNI_BANE),
      EVENT(CrossboneIsleKeys_BaneFirstEscape)},
-    {TRIGGER_STEP, 21, FLAG_DJINNI(DJINNI_BANE),
+    {TRIGGER_STEP, CELL_BEHAVIOR_BANE_SECOND_ESCAPE, FLAG_DJINNI(DJINNI_BANE),
      EVENT(CrossboneIsleKeys_BaneSecondEscape)},
-    {TRIGGER_STEP, 22, FLAG_DJINNI(DJINNI_BANE),
+    {TRIGGER_STEP, CELL_BEHAVIOR_BANE_LAST_ESCAPE, FLAG_DJINNI(DJINNI_BANE),
      EVENT(CrossboneIsleKeys_BaneLastEscape)},
-    {TRIGGER_STEP, BANE_CORNER_FIRST_STEP, FLAG_DJINNI(DJINNI_BANE),
+    {TRIGGER_STEP, CELL_BEHAVIOR_BANE_CORNER_FIRST, FLAG_DJINNI(DJINNI_BANE),
      EVENT(CrossboneIsleKeys_BaneKeepsAway)},
-    {TRIGGER_STEP, BANE_CORNER_FIRST_STEP + 1, FLAG_DJINNI(DJINNI_BANE),
-     EVENT(CrossboneIsleKeys_BaneKeepsAway)},
-    {TRIGGER_STEP, BANE_CORNER_FIRST_STEP + 2, FLAG_DJINNI(DJINNI_BANE),
-     EVENT(CrossboneIsleKeys_BaneKeepsAway)},
-    {TRIGGER_STEP, BANE_CORNER_FIRST_STEP + 3, FLAG_DJINNI(DJINNI_BANE),
-     EVENT(CrossboneIsleKeys_BaneKeepsAway)},
-    {TRIGGER_STEP, BANE_CORNER_FIRST_STEP + 4, FLAG_DJINNI(DJINNI_BANE),
-     EVENT(CrossboneIsleKeys_BaneKeepsAway)},
-    {TRIGGER_STEP, BANE_CORNER_FIRST_STEP + 5, FLAG_DJINNI(DJINNI_BANE),
-     EVENT(CrossboneIsleKeys_BaneKeepsAway)},
-    {TRIGGER_STEP, BANE_CORNER_FIRST_STEP + 6, FLAG_DJINNI(DJINNI_BANE),
-     EVENT(CrossboneIsleKeys_BaneKeepsAway)},
-    {TRIGGER_STEP, BANE_CORNER_FIRST_STEP + 7, FLAG_DJINNI(DJINNI_BANE),
-     EVENT(CrossboneIsleKeys_BaneKeepsAway)},
-    {TRIGGER_STEP, BANE_CORNER_FIRST_STEP + 8, FLAG_DJINNI(DJINNI_BANE),
-     EVENT(CrossboneIsleKeys_BaneKeepsAway)},
-    {TRIGGER_STEP, BANE_CORNER_FIRST_STEP + 9, FLAG_DJINNI(DJINNI_BANE),
-     EVENT(CrossboneIsleKeys_BaneKeepsAway)},
-    {TRIGGER_STEP, BANE_CORNER_FIRST_STEP + 10, FLAG_DJINNI(DJINNI_BANE),
-     EVENT(CrossboneIsleKeys_BaneKeepsAway)},
-    {TRIGGER_STEP, BANE_CORNER_FIRST_STEP + 11, FLAG_DJINNI(DJINNI_BANE),
-     EVENT(CrossboneIsleKeys_BaneKeepsAway)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BANE_CORNER_FIRST + 1,
+     FLAG_DJINNI(DJINNI_BANE), EVENT(CrossboneIsleKeys_BaneKeepsAway)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BANE_CORNER_FIRST + 2,
+     FLAG_DJINNI(DJINNI_BANE), EVENT(CrossboneIsleKeys_BaneKeepsAway)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BANE_CORNER_FIRST + 3,
+     FLAG_DJINNI(DJINNI_BANE), EVENT(CrossboneIsleKeys_BaneKeepsAway)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BANE_CORNER_FIRST + 4,
+     FLAG_DJINNI(DJINNI_BANE), EVENT(CrossboneIsleKeys_BaneKeepsAway)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BANE_CORNER_FIRST + 5,
+     FLAG_DJINNI(DJINNI_BANE), EVENT(CrossboneIsleKeys_BaneKeepsAway)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BANE_CORNER_FIRST + 6,
+     FLAG_DJINNI(DJINNI_BANE), EVENT(CrossboneIsleKeys_BaneKeepsAway)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BANE_CORNER_FIRST + 7,
+     FLAG_DJINNI(DJINNI_BANE), EVENT(CrossboneIsleKeys_BaneKeepsAway)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BANE_CORNER_FIRST + 8,
+     FLAG_DJINNI(DJINNI_BANE), EVENT(CrossboneIsleKeys_BaneKeepsAway)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BANE_CORNER_FIRST + 9,
+     FLAG_DJINNI(DJINNI_BANE), EVENT(CrossboneIsleKeys_BaneKeepsAway)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BANE_CORNER_FIRST + 10,
+     FLAG_DJINNI(DJINNI_BANE), EVENT(CrossboneIsleKeys_BaneKeepsAway)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BANE_CORNER_FIRST + 11,
+     FLAG_DJINNI(DJINNI_BANE), EVENT(CrossboneIsleKeys_BaneKeepsAway)},
     {TRIGGER_TALK_HALTED, ACTOR_BANE, CONDITION_ALWAYS,
      EVENT(CrossboneIsleKeys_BaneJoins)},
     {PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_BANE, CONDITION_ALWAYS,

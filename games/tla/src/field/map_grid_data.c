@@ -393,8 +393,8 @@ const OperandFunc gActorScript_OperandHandlerTable[41] = {
 
 // clang-format off
 const struct MapResources gMaps[] = {
-    {0, 1, {2, 3, 4}, 5}, // map_000
-    {0, 1, {2, 3, 4}, 5}, // map_000
+    {0, 1, {2, 3, 4}, 5}, // empty_map
+    {0, 1, {2, 3, 4}, 5}, // empty_map
     {6, 7, {8, 9, 10}, 11}, // lobby
     {12, 13, {14, 15, 16}, 17}, // venus_lighthouse_entrance
     {18, 19, {20, 21, 22}, 23}, // venus_lighthouse
@@ -669,8 +669,8 @@ const struct MapResources gMaps[] = {
     {841, 835, {836, 837, 838}, 839}, // mars_lighthouse_jupiter_tower
     {842, 835, {836, 837, 838}, 839}, // mars_lighthouse_venus_tower
     {843, 844, {779, 845, 781}, 846}, // mars_lighthouse_aerie
-    {847, 844, {779, 780, 781}, 848}, // mars_lighthouse_room_m_6
-    {849, 850, {836, 851, 838}, 852}, // mars_lighthouse_room_m_1
+    {847, 844, {779, 780, 781}, 848}, // mars_lighthouse_room_m_flame
+    {849, 850, {836, 851, 838}, 852}, // mars_lighthouse_room_m_inscriptions
     {853, 835, {836, 837, 838}, 839}, // mars_lighthouse_entrance_fugue
     {854, 835, {836, 837, 838}, 839}, // mars_lighthouse_entrance_teleport_lapis
     {855, 835, {836, 837, 838}, 839}, // mars_lighthouse_entrance_balm
@@ -680,7 +680,7 @@ const struct MapResources gMaps[] = {
     {859, 835, {836, 837, 838}, 839}, // mars_lighthouse_star_room
     {860, 844, {779, 780, 781}, 861}, // mars_lighthouse_mercury_ledge
     {862, 844, {779, 780, 781}, 861}, // mars_lighthouse_jupiter_ledge
-    {863, 844, {779, 780, 781}, 861}, // mars_lighthouse_room_m_4
+    {863, 844, {779, 780, 781}, 861}, // mars_lighthouse_room_m_alastors_hood_chest
     {864, 844, {779, 780, 781}, 861}, // mars_lighthouse_venus_ledge
     {831, 865, {779, 780, 781}, 833}, // mars_lighthouse_outside
     {834, 866, {836, 837, 838}, 839}, // mars_lighthouse_mars_tower
@@ -688,8 +688,8 @@ const struct MapResources gMaps[] = {
     {841, 866, {836, 837, 838}, 839}, // mars_lighthouse_jupiter_tower
     {842, 866, {836, 837, 838}, 839}, // mars_lighthouse_venus_tower
     {843, 867, {779, 780, 781}, 846}, // mars_lighthouse_aerie
-    {847, 868, {779, 780, 781}, 848}, // mars_lighthouse_room_m_6
-    {849, 869, {836, 837, 838}, 852}, // mars_lighthouse_room_m_1
+    {847, 868, {779, 780, 781}, 848}, // mars_lighthouse_room_m_flame
+    {849, 869, {836, 837, 838}, 852}, // mars_lighthouse_room_m_inscriptions
     {853, 866, {836, 837, 838}, 839}, // mars_lighthouse_entrance_fugue
     {854, 866, {836, 837, 838}, 839}, // mars_lighthouse_entrance_teleport_lapis
     {855, 866, {836, 837, 838}, 839}, // mars_lighthouse_entrance_balm
@@ -699,7 +699,7 @@ const struct MapResources gMaps[] = {
     {859, 866, {836, 837, 838}, 839}, // mars_lighthouse_star_room
     {860, 867, {779, 780, 781}, 861}, // mars_lighthouse_mercury_ledge
     {862, 867, {779, 780, 781}, 861}, // mars_lighthouse_jupiter_ledge
-    {863, 867, {779, 780, 781}, 861}, // mars_lighthouse_room_m_4
+    {863, 867, {779, 780, 781}, 861}, // mars_lighthouse_room_m_alastors_hood_chest
     {864, 867, {779, 780, 781}, 861}, // mars_lighthouse_venus_ledge
     {870, 871, {872, 873, 874}, 875}, // mercury_lighthouse
     {876, 877, {878, 879, 880}, 881}, // treasure_isle_entrance
@@ -715,7 +715,7 @@ const struct MapResources gMaps[] = {
     {915, 916, {878, 879, 880}, 881}, // caverns_angara
     {917, 918, {919, 920, 921}, 922}, // mt_aleph_summit
     {923, 924, {925, 926, 927}, 928}, // map_290
-    {929, 930, {931, 932, 933}, 934}, // r60d
+    {929, 930, {931, 932, 933}, 934}, // psynergy_test
     {935, 936, {937, 938, 939}, 940}, // shop_test
     {941, 942, {943, 944, 945}, 946}, // test_0
     {947, 948, {949, 950, 951}, 952}, // test_1

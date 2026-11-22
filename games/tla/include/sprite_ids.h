@@ -9,7 +9,7 @@
 /// Sprite ids, one for each row of the sprite table (sprite/sprites.tsv) in
 /// order. A party member's field sprite shares its character number, so the
 /// field draws a character id as its sprite. A row whose sheet keeps its
-/// number (spr_009.png) has no name here; the next named row's number is
+/// number (spr_013.png) has no name here; the next named row's number is
 /// written after it.
 enum SpriteId {
   SPRITE_ISAAC,
@@ -280,8 +280,11 @@ enum SpriteId {
   SPRITE_PSYNERGY_STONE,
   SPRITE_BLANK_32,
   SPRITE_DOORWAY,
+  /// The band an EXIT_STYLE_HIDDEN_LAYER exit adds over the top of the leader's
+  /// sprite (Exit_AddHiddenLeaderLayer).
+  SPRITE_HIDDEN_LAYER,
   /// Rings that widen and fade on water, as Taopo Swamp's splashes end.
-  SPRITE_SPLASH_RING = 269,
+  SPRITE_SPLASH_RING,
   SPRITE_FOOTPRINTS,
   SPRITE_GOLDEN_RINGS,
   SPRITE_STONE_PILLAR,
@@ -345,7 +348,9 @@ enum SpriteId {
   SPRITE_STONE_DOOR_HALF,
   SPRITE_FALLEN_COLUMN_NORTH_SOUTH,
   SPRITE_FALLEN_COLUMN_WEST_EAST,
-  SPRITE_ORANGE_PILLAR = 334,
+  /// A purple post with a glowing top, along Atteka Inlet's shore.
+  SPRITE_GLOWING_POST,
+  SPRITE_ORANGE_PILLAR,
   SPRITE_FLAME_PILLAR,
   SPRITE_LADY_STATUE,
   SPRITE_UNSEEN_BLOCK,
@@ -367,7 +372,10 @@ enum SpriteId {
   SPRITE_SCOOP_HAND,
   SPRITE_BROWN_BOULDER,
   SPRITE_GREY_BOULDER,
-  SPRITE_BLUE_COG = 357,
+  /// The puffs of sand the leader as sand leaves behind as he moves
+  /// (Actor_MoveAsSand, Actor_MoveAsSandOnWorldMap).
+  SPRITE_SAND_PUFF,
+  SPRITE_BLUE_COG,
   SPRITE_GREEN_COG,
   SPRITE_RED_COG,
   SPRITE_BLUE_PILLAR,
@@ -390,9 +398,12 @@ enum SpriteId {
   SPRITE_SEATED_IDOL,
   SPRITE_CARVED_FACE,
   SPRITE_WIND_STATUE,
+  /// The yellow stone head with red eyes that bursts out under Felix at Gaia
+  /// Rock.
+  SPRITE_STONE_HEAD,
   /// The grey cap with a yellow slit on top of a Magma Rock statue, which its
   /// flame column raises.
-  SPRITE_STATUE_CAP = 379,
+  SPRITE_STATUE_CAP,
   SPRITE_MOAI,
   /// The water a Moai pours from its mouth once Douse fills it, a pool and a
   /// stream added to its sprite (AquaRockInside_SetMoaiFace).
@@ -409,8 +420,11 @@ enum SpriteId {
   SPRITE_STONE_FACE_PILLAR_HALF_A,
   SPRITE_STONE_FACE_PILLAR,
   SPRITE_STONE_FACE_PILLAR_HALF_B,
+  /// Gaia Rock's arrow plant, a sprig whose leaf swells into an arrowhead
+  /// pointing one of four ways.
+  SPRITE_ARROW_PLANT,
   /// The Gabomba statue's eye: ringed with light, then plain.
-  SPRITE_GABOMBA_EYE = 395,
+  SPRITE_GABOMBA_EYE,
   /// The Gabomba statue's tongue, stretching out and drawing back.
   SPRITE_GABOMBA_TONGUE,
   SPRITE_DOLL,
@@ -424,17 +438,28 @@ enum SpriteId {
   SPRITE_ORANGE_BIRD,
   SPRITE_STAKE,
   SPRITE_TIGHTROPE_POST,
-  SPRITE_STONE_COLUMN = 409,
+  /// A stone column, cracked, then crumbled to a stump of rubble.
+  SPRITE_CRUMBLING_STONE_COLUMN,
+  SPRITE_STONE_COLUMN,
   SPRITE_EXCLAMATION_BUBBLE,
-  SPRITE_FIREBALL = 412,
+  /// A block of the Gabomba statue's channel, which the energy charge runs
+  /// over.
+  SPRITE_CHANNEL_BLOCK,
+  SPRITE_FIREBALL,
   SPRITE_DRAGON_STATUE,
   SPRITE_DRAGON_HEAD,
-  SPRITE_ROBED_STATUE = 416,
+  /// A white dragon head seen from the side, a Mars Lighthouse flame thrower.
+  SPRITE_DRAGON_HEAD_SIDE,
+  SPRITE_ROBED_STATUE,
   SPRITE_MARS_TORCH_LIT = 418,
   SPRITE_MARS_TORCH,
   SPRITE_CANNON,
   SPRITE_LOHO_CANNON,
-  SPRITE_SEA_ROCK = 424,
+  /// A wooden frame of the Wings of Anemos, lying by the geoglyph.
+  SPRITE_WING_FRAME,
+  /// A metal feather of the Wings of Anemos, lying by the geoglyph.
+  SPRITE_METAL_FEATHER,
+  SPRITE_SEA_ROCK,
   SPRITE_STONE_BASIN,
   SPRITE_STONE_BLOCK = 428,
   SPRITE_COILED_DRAGON_STATUE,
@@ -446,7 +471,16 @@ enum SpriteId {
   SPRITE_WORLD_MAP_ISLAND,
   /// A white gloved hand pointing down at something.
   SPRITE_POINTING_HAND,
-  SPRITE_WORLD_MAP_VILLAGE = 438,
+  /// The right eye of the stone face's lit picture (SPRITE_STONE_FACE_LIT),
+  /// glowing green.
+  SPRITE_STONE_FACE_RIGHT_EYE,
+  /// The left eye of the stone face's lit picture (SPRITE_STONE_FACE_LIT),
+  /// glowing green.
+  SPRITE_STONE_FACE_LEFT_EYE,
+  /// SPRITE_STONE_FACE's third picture alone: the great stone face with its
+  /// eyes lit green.
+  SPRITE_STONE_FACE_LIT,
+  SPRITE_WORLD_MAP_VILLAGE,
   SPRITE_WORLD_MAP_TOWN,
   SPRITE_WORLD_MAP_STUMP_VILLAGE,
   SPRITE_WORLD_MAP_SNOWY_VILLAGE,
@@ -670,7 +704,9 @@ enum SpriteId {
   SPRITE_MOLOCH,
   SPRITE_ULYSSES,
   SPRITE_MEGAERA,
-  SPRITE_ZAGAN = 658,
+  /// A sword of Megaera's summon (BattleEffect_RunMegaera).
+  SPRITE_MEGAERA_SWORD,
+  SPRITE_ZAGAN,
   SPRITE_HAURES,
   SPRITE_HAURES_FLAME,
   SPRITE_HAURES_DOT,
@@ -695,13 +731,15 @@ enum SpriteId {
   SPRITE_CRESCENT,
   SPRITE_LETTER_Z,
   SPRITE_BOOKSHELF,
-  SPRITE_SNOWFLAKE = 681,
+  /// A loose part of the Wings of Anemos, lying by the geoglyph.
+  SPRITE_WING_PART,
+  SPRITE_SNOWFLAKE,
   SPRITE_KEY,
   SPRITE_JAIL_KEY,
   SPRITE_SANDSTORM,
-  /// Moapa's battle shadow (BattleObject_Make): spr_685.png's three pictures
-  /// put the battle shadow's ellipse right of centre, left of it and centred,
-  /// where SPRITE_BATTLE_SHADOW's one picture has it centred.
+  /// Moapa's battle shadow (BattleObject_Make): moapa_shadow.png's three
+  /// pictures put the battle shadow's ellipse right of centre, left of it and
+  /// centred, where SPRITE_BATTLE_SHADOW's one picture has it centred.
   SPRITE_MOAPA_SHADOW,
   SPRITE_BATTLE_SHADOW = 686,
   SPRITE_BATTLE_SHADOW_NARROW,

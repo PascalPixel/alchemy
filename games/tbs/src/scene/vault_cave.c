@@ -1,75 +1,53 @@
 /// @file
-/// Vault Cave's overlay, which holds three rooms, each a scene of its own and
-/// all named Vault Cave (SceneId_VaultCavePassage, SceneId_VaultCaveVambrace
-/// and SceneId_VaultCaveMouth, area 31).
+/// Vault Cave, the optional cave under Vault that the party can explore once
+/// it comes back to the town (SceneId_VaultRevisit), with the Vambrace in a
+/// chest and Sap, the Venus Djinni, waiting outside its far end. Its three
+/// parts are scenes of their own, all named Vault Cave (area 31).
 ///
-/// The cave opens off Vault as the party finds it on its return
-/// (SceneId_VaultRevisit). That scene's exits
-/// VAULT_REVISIT_TO_VAULT_CAVE_PASSAGE and VAULT_REVISIT_TO_VAULT_CAVE_MOUTH
-/// lead in, through the hidden passage the dog shows and through a cave mouth
-/// in the town's northeast cliff.
+/// The way in is the passage Reveal uncovers among Vault's six gravestones,
+/// where the dog jumps once given a Bone; a ladder leads down from it. The
+/// way out is a cave mouth in the town's north-east cliff, above which the
+/// bell sent Sap.
 ///
-/// No story flag is read here and no one speaks. The cave is a side trip of
-/// puzzles for Move, Frost and Whirlwind, and only "The door is tightly
-/// locked." and "Isaac flipped the switch." are shown.
+/// The cave is a side trip of puzzles for Move, Frost and Whirlwind. No one
+/// speaks, and the only messages are "The door is tightly locked." and "Isaac
+/// flipped the switch."
 ///
-/// - Vault Cave (SceneId_VaultCavePassage), the way in from the hidden passage.
-///   VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT is the foot of the ladder down from
-///   that passage. A region there takes VAULT_CAVE_PASSAGE_TO_VAULT_REVISIT
-///   back out to Vault (VAULT_REVISIT_FROM_VAULT_CAVE_PASSAGE), and Retreat
-///   also leads there (Scene_Initialize). Searching the switch flips it
-///   (VaultCave_FlipSwitch, FLAG_VAULT_CAVE_SWITCH_FLIPPED). The switch
-///   turns, the cave rumbles and shakes for eight seconds, and its map changes
-///   as it fades (VaultCave_RunRumble). The change reaches
-///   SceneId_VaultCaveVambrace too. Arriving in its northern room
-///   (VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_NORTH,
-///   VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_MOUTH_NORTH,
-///   VAULT_CAVE_VAMBRACE_NORTH_FROM_FROST_ROOM and
-///   VAULT_CAVE_VAMBRACE_NORTH_FROM_WEST), Scene_Initialize draws it closed
-///   until the switch is flipped and opens its cells after. Arriving down the
-///   ladder clears the flag again, so the switch is reset each time the party
-///   comes in from Vault. Arriving in the pool room
-///   (VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_EAST,
-///   VAULT_CAVE_PASSAGE_FROM_VAULT_CAVE_VAMBRACE_SOUTHEAST,
-///   VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_NORTH_WEST,
-///   VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_CHEST and
-///   VAULT_CAVE_PASSAGE_WATER_ROOM_FROM_NORTH_EAST) redraws the flipped switch
-///   and its changed cells. The room's chest is a mimic (FIND_MIMIC, slot 3 of
-///   ENCOUNTER_ZONE_MIMIC).
-/// - Vault Cave (SceneId_VaultCaveVambrace). In its southern room a pillar
-///   (ACTOR_SOUTHERN_PILLAR) goes onto its switch by pushing
-///   (VaultCave_PushSouthernPillar) or Move (VaultCave_MoveSouthernPillar).
-///   Once it rests there the puzzle chime plays and the switch opens the way
-///   (FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH). In the puddle room, six drops of
-///   water (ACTOR_FIRST_WATER_DROP and the five after it) fall at random, one
-///   every 64 frames, over six puddles (ACTOR_WEST_UPPER_PUDDLE to
-///   ACTOR_FAR_EAST_PUDDLE) that Frost freezes. A frozen puddle changes its
-///   map cell, and a drop falling onto it stops 32 pixels up instead of
-///   reaching the floor (VaultCave_UpdateFrostControlledFallingActors). While
-///   the leader is 16 pixels or more above the floor, the puddles are drawn
-///   beneath him. The six frozen states are
-///   FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN to
-///   FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN, read by index. The room's entry
-///   code freezes again every puddle whose flag is set. Whirlwind blows away
-///   ivy (ACTOR_IVY) for as long as the party stays in the cave
-///   (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY, an area flag). A chest holds the
-///   Vambrace.
-/// - Vault Cave (SceneId_VaultCaveMouth). In its northern room four water drops
-///   (ACTOR_FIRST_TIMED_WATER_DROP and the three after it) fall on a fixed
-///   schedule (gVaultCave_ScheduleFrames) while the party pushes or Moves a
-///   pillar (ACTOR_NORTHERN_PILLAR) onto its switch
-///   (FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH). A water drop that lands on that
-///   pillar marks it struck (FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK,
-///   SE_DUST_PUFF). A struck pillar no longer opens the switch until the room
-///   is entered again. VAULT_CAVE_MOUTH_TO_VAULT_REVISIT leads out to Vault
-///   (VAULT_REVISIT_FROM_VAULT_CAVE_MOUTH).
+/// - SceneId_VaultCavePassage holds the foot of the ladder from Vault
+///   (VAULT_CAVE_PASSAGE_FROM_VAULT_REVISIT; Retreat leads there too). Its
+///   right-hand branch ends at a chest that is a Mimic (FIND_MIMIC). Its pool
+///   room has a switch on a ledge: flipping it shakes the cave and drains the
+///   pool (VaultCave_FlipSwitch, FLAG_VAULT_CAVE_SWITCH_FLIPPED), and the
+///   water runs down into the floor of the northern room of
+///   SceneId_VaultCaveVambrace, which Scene_Initialize draws dry until then.
+///   Coming down the ladder from Vault again resets the switch.
+/// - SceneId_VaultCaveVambrace is up the left-hand branch. In the room of two
+///   burning torches, Isaac pushes or Moves the west torch east onto the tile
+///   with a fire crest (VaultCave_PushSouthernPillar,
+///   VaultCave_MoveSouthernPillar): the puzzle chime plays and the wooden gate
+///   beyond opens (FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH). North of it is the
+///   room of six puddles, where drops of water fall from the ceiling one at a
+///   time. Frost freezes a puddle into a tall ice pillar whose top Isaac can
+///   leap across, and frozen pillars make a way over the room; a drop landing
+///   on one stops on its top. The walkthrough's
+///   advice is to freeze all but the far east one. Up on the room's ledge,
+///   Whirlwind blows away the ivy over the way to the Vambrace's chest
+///   (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY, kept while the party stays in the cave).
+/// - SceneId_VaultCaveMouth leads out to the cave mouth
+///   (VAULT_CAVE_MOUTH_TO_VAULT_REVISIT). In its room of three torches, Isaac
+///   must get the lower burning torch north onto the fire crest below the
+///   wooden gate, past the unlit torch in the way, while drops of water fall
+///   on a fixed beat (gVaultCave_ScheduleFrames). A drop that lands on the
+///   burning torch puts its flame out (FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK),
+///   and an unlit torch opens nothing until the room is entered again and the
+///   flame comes back.
 ///
 /// Each room has a door that only says it is locked
 /// (VaultCave_ShowLockedDoor).
 ///
-/// The pushes share VaultCave_PushPillarAhead, which moves the pillar the
-/// leader faces one cell unless another actor or the terrain is in the way.
-/// The water drops run as tasks started by Scene_Initialize.
+/// The pushes share VaultCave_PushPillarAhead, which moves the torch the
+/// leader faces one cell unless another actor or the rock is in the way. The
+/// water drops run as tasks started by Scene_Initialize.
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -130,11 +108,13 @@ static void VaultCave_SpawnPuffs(struct Actor *source);
 
 /// The cell behaviors of the cells the events answer.
 enum VaultCaveCellBehavior {
-  /// The switch SceneId_VaultCavePassage flips.
+  /// The switch on the ledge in the pool room: cell (28, 29).
   CELL_BEHAVIOR_VAULT_CAVE_SWITCH = 20,
-  /// The cells of SceneId_VaultCaveMouth's northern pillar, pushed.
+  /// The floor of the room of three torches, where Isaac pushes them: cells
+  /// (12, 14) to (20, 17) and the crest's cell (16, 12).
   CELL_BEHAVIOR_VAULT_CAVE_NORTHERN_PILLAR = 50,
-  /// The cells of SceneId_VaultCaveVambrace's southern pillar, pushed.
+  /// The floor of the room of two torches, where Isaac pushes them: cells
+  /// (10, 55) to (16, 55) and the rows either side.
   CELL_BEHAVIOR_VAULT_CAVE_SOUTHERN_PILLAR = 60,
   CELL_BEHAVIOR_VAULT_CAVE_LOCKED_DOOR = 99,
   CELL_BEHAVIOR_VAULT_CAVE_CHEST = 100
@@ -151,8 +131,9 @@ enum {
   FLAG_VAULT_CAVE_EAST_UPPER_PUDDLE_FROZEN = FLAG_SCENE_TEMP_03,
   FLAG_VAULT_CAVE_EAST_LOWER_PUDDLE_FROZEN = FLAG_SCENE_TEMP_04,
   FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN = FLAG_SCENE_TEMP_05,
-  /// A water drop struck the northern pillar before it reached its switch. The
-  /// drop's cell matched the pillar's (VaultCave_ResetFallingActorAtActorCell).
+  /// A drop of water has put out the flame of the lower torch in the room of
+  /// three torches. The drop's cell matched the torch's
+  /// (VaultCave_ResetFallingActorAtActorCell).
   FLAG_VAULT_CAVE_NORTH_PILLAR_STRUCK = FLAG_SCENE_TEMP_07,
   /// Whirlwind has blown the ivy away.
   FLAG_VAULT_CAVE_IVY_BLOWN_AWAY = FLAG_AREA_TEMP_00
@@ -167,46 +148,48 @@ enum FlamePillarAnimation {
 /// The actors of SceneId_VaultCaveVambrace, numbering the rows of
 /// gVaultCaveVambrace_ActorPlacements.
 enum VaultCaveVambraceActorId {
-  /// A pillar, drawn as ACTOR_SOUTHERN_PILLAR is, two cells east of the
-  /// southern switch. It is drawn underfoot when the party arrives by
-  /// VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_SOUTH or
+  /// The burning torch beside the wooden gate in the room of two torches, two
+  /// cells east of the fire crest. It is drawn underfoot when the party
+  /// arrives by VAULT_CAVE_VAMBRACE_FROM_VAULT_CAVE_PASSAGE_SOUTH or
   /// VAULT_CAVE_VAMBRACE_SOUTH_FROM_FROST_ROOM.
   ACTOR_PILLAR_EAST_OF_SOUTHERN_SWITCH = ACTOR_FIRST_PLACED,
-  /// Pushed or Moved onto the southern switch, map cell (15, 54).
+  /// The west torch, which goes onto the fire crest at cell (15, 54).
   ACTOR_SOUTHERN_PILLAR,
-  /// The first of six water drops that fall at random, one every 64 frames
+  /// The first of six drops of water that fall at random, one every 64 frames
   /// (VaultCave_UpdateFrostControlledFallingActors). VaultCave_SpawnPuffs also
   /// uses their sprite for the puffs where one lands.
   ACTOR_FIRST_WATER_DROP,
-  /// The six puddles under the water drops, in their order and in the order of
-  /// their flags (FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN to
-  /// FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN). They are drawn as the puddle that
-  /// Frost freezes into an ice pillar in bilibin_cave.c. Frozen, a puddle stops
-  /// a water drop 32 pixels up.
+  /// The six puddles under the drops, in their order and in the order of their
+  /// flags (FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN to
+  /// FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN). Frost freezes each into an ice
+  /// pillar, as in bilibin_cave.c, and a drop landing on one stops on its top,
+  /// 32 pixels up.
   ACTOR_WEST_UPPER_PUDDLE = ACTOR_FIRST_WATER_DROP + 6,
   ACTOR_WEST_LOWER_PUDDLE,
   ACTOR_INNER_WEST_LOWER_PUDDLE,
   ACTOR_EAST_UPPER_PUDDLE,
   ACTOR_EAST_LOWER_PUDDLE,
   ACTOR_FAR_EAST_PUDDLE,
-  /// Ivy (SPRITE_IVY), as in bilibin.c, drawn half as tall again. It is placed
-  /// until Whirlwind blows it away (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY).
+  /// The ivy on the ledge above the room of six puddles, over the way to the
+  /// Vambrace's chest (SPRITE_IVY, as in bilibin.c, drawn half as tall again).
+  /// It is placed until Whirlwind blows it away
+  /// (FLAG_VAULT_CAVE_IVY_BLOWN_AWAY).
   ACTOR_IVY
 };
 
 /// The actors of SceneId_VaultCaveMouth, numbering the rows of
-/// gVaultCaveMouth_ActorPlacements. The northern switch is map cell (16,
-/// 12).
+/// gVaultCaveMouth_ActorPlacements. The fire crest in the room of three
+/// torches is map cell (16, 12).
 enum VaultCaveMouthActorId {
-  /// A pillar two cells east of the northern switch.
+  /// The burning torch beside the wooden gate, two cells east of the fire
+  /// crest.
   ACTOR_PILLAR_EAST_OF_NORTHERN_SWITCH = ACTOR_FIRST_PLACED,
-  /// A pillar two cells south of the northern switch, which Move leaves where
-  /// it is (VaultCave_IgnoreMove).
+  /// The unlit torch two cells south of the fire crest, in the way.
   ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH,
-  /// Pushed or Moved onto the northern switch.
+  /// The lower burning torch, which goes onto the fire crest.
   ACTOR_NORTHERN_PILLAR,
-  /// The first of four water drops, in the same sprite, that fall on a fixed
-  /// schedule (VaultCave_UpdateTimedFallingActors).
+  /// The first of four drops of water that fall on a fixed schedule
+  /// (VaultCave_UpdateTimedFallingActors).
   ACTOR_FIRST_TIMED_WATER_DROP
 };
 
@@ -245,7 +228,7 @@ const u32 *Scene_GetExits(void) {
   return gVaultCave_FallbackExits;
 }
 
-/// Selects the pillars, water drops, puddles and ivy of the room.
+/// Selects the torches, drops of water, puddles and ivy of the room.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
@@ -284,8 +267,8 @@ static struct Actor *VaultCave_FindCollidableActorAtCell(s32 column, s32 row) {
   return NULL;
 }
 
-/// Pushes the faced pillar one cell unless another actor or terrain
-/// blocks it.
+/// Pushes the torch Isaac faces one cell, unless another torch or the rock is
+/// in the way.
 static void VaultCave_PushPillarAhead(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   s32 direction = FACING_INDEX(leader->facing);
@@ -357,13 +340,13 @@ static void VaultCave_PushPillarAhead(void) {
   Actor_SelectAnimation(leader, ANIM_STAND);
 }
 
-/// Whirlwind blows the ivy away.
+/// Whirlwind on the ivy on the ledge above the room of six puddles blows it
+/// away, opening the way to the Vambrace's chest.
 static void VaultCave_UseWhirlwind(void) {
   GameFlag_Set(FLAG_VAULT_CAVE_IVY_BLOWN_AWAY);
 }
 
-/// In any room of Vault Cave, searching the locked door only says so.
-/// "The door is tightly locked."
+/// Searching a locked door in Vault Cave: "The door is tightly locked."
 static void VaultCave_ShowLockedDoor(void) {
   FieldMessage_Show(MSGNO(MsgFieldDoorTightlyLocked), 1);
 }
@@ -385,7 +368,8 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gVaultCave_FallbackTriggers;
 }
 
-/// Whether the southern pillar stands on its switch.
+/// Whether the west torch of the room of two torches stands on the fire
+/// crest.
 static s32 VaultCave_IsSouthernPillarOnSwitch(void) {
   struct Actor *pillar = Actor_Get(ACTOR_SOUTHERN_PILLAR);
   s32 row = pillar->z.fixed / toFIXED(16);
@@ -397,7 +381,8 @@ static s32 VaultCave_IsSouthernPillarOnSwitch(void) {
   return 0;
 }
 
-/// Finishes the southern switch only after the pillar reaches its target cell.
+/// Once the torch is on the fire crest, plays the puzzle chime and opens the
+/// wooden gate.
 static inline void VaultCave_CompleteSouthernSwitch(void) {
   if (VaultCave_IsSouthernPillarOnSwitch() != 0) {
     GameFlag_Set(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH);
@@ -406,7 +391,10 @@ static inline void VaultCave_CompleteSouthernSwitch(void) {
   }
 }
 
-/// In VaultCaveVambrace's southern room, the party pushes the southern pillar.
+/// In the room of two burning torches, up the left-hand branch, Isaac pushes a
+/// torch a cell. Once the west torch reaches the tile with the fire crest
+/// (cell (15, 54)), the puzzle chime plays and the wooden gate north of it
+/// opens.
 static void VaultCave_PushSouthernPillar(void) {
   if (Event_GetFlag(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) == 0) {
     VaultCave_PushPillarAhead();
@@ -414,15 +402,17 @@ static void VaultCave_PushSouthernPillar(void) {
   }
 }
 
-/// Restores the map cells and attributes of the completed southern switch.
+/// Draws the room of two torches' wooden gate open and lets the party through
+/// it.
 static void VaultCave_ApplySouthernSwitchCells(void) {
   MapGrid_CopyCells(87, 50, 2, 4, 80, 50);
   MapGrid_CopyCells(23, 52, 1, 2, 16, 52);
   MapGrid_CopyCellAttributes(16, 52, 1, 1, 16, 53);
 }
 
-/// In VaultCaveVambrace's southern room, Move on the southern pillar, with the
-/// same switch check.
+/// In the room of two burning torches, Isaac uses Move on the west torch: a
+/// great hand slides it a cell, and if that puts it on the fire crest the
+/// puzzle chime plays and the wooden gate opens.
 static void VaultCave_MoveSouthernPillar(void) {
   if (Event_GetFlag(FLAG_VAULT_CAVE_SOUTH_PILLAR_ON_SWITCH) == 0) {
     VaultCave_CompleteSouthernSwitch();
@@ -431,14 +421,16 @@ static void VaultCave_MoveSouthernPillar(void) {
 
 static void UNUSED VaultCave_UnusedNoOp(void) {}
 
-/// Restores the map cells and attributes of the completed northern switch.
+/// Draws the room of three torches' wooden gate open and lets the party
+/// through it.
 static void VaultCave_ApplyNorthernSwitchCells(void) {
   MapGrid_CopyCells(90, 9, 2, 3, 80, 9);
   MapGrid_CopyCells(27, 10, 1, 2, 17, 10);
   MapGrid_CopyCellAttributes(17, 10, 1, 1, 17, 11);
 }
 
-/// Whether the northern pillar stands on its switch.
+/// Whether the lower torch of the room of three torches stands on the fire
+/// crest.
 static s32 VaultCave_IsNorthernPillarOnSwitch(void) {
   struct Actor *pillar = Actor_Get(ACTOR_NORTHERN_PILLAR);
   s32 row = pillar->z.fixed / toFIXED(16);
@@ -450,7 +442,8 @@ static s32 VaultCave_IsNorthernPillarOnSwitch(void) {
   return 0;
 }
 
-/// The northern switch also waits until the falling-actor guard is clear.
+/// Opens the gate only for a torch on the fire crest whose flame no drop has
+/// put out.
 static inline void VaultCave_CompleteNorthernSwitch(void) {
   if (GameFlag_Get(FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH) == 0) {
     if (VaultCave_IsNorthernPillarOnSwitch() != 0) {
@@ -463,24 +456,32 @@ static inline void VaultCave_CompleteNorthernSwitch(void) {
   }
 }
 
-/// In VaultCaveMouth's northern room, the party pushes the northern pillar.
-/// It opens its switch only if no water drop has struck it.
+/// In the room of three torches, on the way to the cave mouth, Isaac pushes a
+/// torch a cell. If the lower torch reaches the fire crest below the wooden
+/// gate (cell (16, 12)) still burning, the puzzle chime plays and the gate
+/// opens; if a drop of water has put its flame out, nothing happens.
 static void VaultCave_PushNorthernPillar(void) {
   VaultCave_PushPillarAhead();
   VaultCave_CompleteNorthernSwitch();
 }
 
-/// In VaultCaveMouth's northern room, Move on
-/// ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH does nothing.
-static void VaultCave_IgnoreMove(void) {}
+/// In the room of three torches, Isaac uses Move on the unlit torch just south
+/// of the fire crest. The great hand slides it a cell like any torch, even onto
+/// the crest, but an unlit torch opens nothing.
+///
+/// The event itself is empty: Move does the sliding.
+static void VaultCave_MoveUnlitTorch(void) {}
 
-/// In VaultCaveMouth's northern room, Move on the northern pillar, with the
-/// same switch check.
+/// In the room of three torches, Isaac uses Move on the lower burning torch: a
+/// great hand slides it a cell, and if that puts it on the fire crest still
+/// burning, the puzzle chime plays and the wooden gate opens.
 static void VaultCave_MoveNorthernPillar(void) {
   VaultCave_CompleteNorthernSwitch();
 }
 
-/// Frost freezes the upper western puddle.
+/// In the room of six puddles, Isaac casts Frost on the north-west puddle
+/// (cell (23, 32)), and it freezes into a tall ice pillar whose top Isaac can
+/// leap across.
 static void VaultCave_FreezeWestUpperPuddle(void) {
   struct Actor *target = Actor_Get(ACTOR_WEST_UPPER_PUDDLE);
 
@@ -494,8 +495,9 @@ static void VaultCave_FreezeWestUpperPuddle(void) {
   GameFlag_Set(FLAG_VAULT_CAVE_WEST_UPPER_PUDDLE_FROZEN);
 }
 
-/// In VaultCaveVambrace's puddle room, Frost on the lower western puddle, as on
-/// the upper one.
+/// In the room of six puddles, Isaac casts Frost on the south-west puddle
+/// (cell (23, 34)), and it freezes into a tall ice pillar whose top Isaac can
+/// leap across.
 static void VaultCave_FreezeWestLowerPuddle(void) {
   struct Actor *target = Actor_Get(ACTOR_WEST_LOWER_PUDDLE);
 
@@ -509,7 +511,9 @@ static void VaultCave_FreezeWestLowerPuddle(void) {
   GameFlag_Set(FLAG_VAULT_CAVE_WEST_LOWER_PUDDLE_FROZEN);
 }
 
-/// In VaultCaveVambrace's puddle room, Frost on the inner lower western puddle.
+/// In the room of six puddles, Isaac casts Frost on the puddle just east of
+/// the south-west one (cell (24, 34)), and it freezes into a tall ice pillar
+/// whose top Isaac can leap across.
 static void VaultCave_FreezeInnerWestLowerPuddle(void) {
   struct Actor *target = Actor_Get(ACTOR_INNER_WEST_LOWER_PUDDLE);
 
@@ -523,7 +527,9 @@ static void VaultCave_FreezeInnerWestLowerPuddle(void) {
   GameFlag_Set(FLAG_VAULT_CAVE_INNER_WEST_LOWER_PUDDLE_FROZEN);
 }
 
-/// In VaultCaveVambrace's puddle room, Frost on the upper eastern puddle.
+/// In the room of six puddles, Isaac casts Frost on the north-east puddle
+/// (cell (26, 32)), and it freezes into a tall ice pillar whose top Isaac can
+/// leap across.
 static void VaultCave_FreezeEastUpperPuddle(void) {
   struct Actor *target = Actor_Get(ACTOR_EAST_UPPER_PUDDLE);
 
@@ -539,7 +545,9 @@ static void VaultCave_FreezeEastUpperPuddle(void) {
   GameFlag_Set(FLAG_VAULT_CAVE_EAST_UPPER_PUDDLE_FROZEN);
 }
 
-/// In VaultCaveVambrace's puddle room, Frost on the lower eastern puddle.
+/// In the room of six puddles, Isaac casts Frost on the south-east puddle
+/// (cell (26, 34)), and it freezes into a tall ice pillar whose top Isaac can
+/// leap across.
 static void VaultCave_FreezeEastLowerPuddle(void) {
   struct Actor *target = Actor_Get(ACTOR_EAST_LOWER_PUDDLE);
 
@@ -555,7 +563,9 @@ static void VaultCave_FreezeEastLowerPuddle(void) {
   GameFlag_Set(FLAG_VAULT_CAVE_EAST_LOWER_PUDDLE_FROZEN);
 }
 
-/// In VaultCaveVambrace's puddle room, Frost on the far eastern puddle.
+/// In the room of six puddles, Isaac casts Frost on the far east puddle (cell
+/// (28, 33)), and it freezes into a tall ice pillar whose top Isaac can leap
+/// across. The walkthrough's advice is to leave this one unfrozen.
 static void VaultCave_FreezeFarEastPuddle(void) {
   struct Actor *target = Actor_Get(ACTOR_FAR_EAST_PUDDLE);
 
@@ -571,7 +581,7 @@ static void VaultCave_FreezeFarEastPuddle(void) {
   GameFlag_Set(FLAG_VAULT_CAVE_FAR_EAST_PUDDLE_FROZEN);
 }
 
-/// Changes the puddles' draw priorities when the leader is above them.
+/// Keeps the ice pillars drawn under Isaac while he is up on top of one.
 static void VaultCave_UpdatePuddlePriorities(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
@@ -606,8 +616,8 @@ static void VaultCave_UseAutomaticFrostPriorities(void) {
   }
 }
 
-/// Moves the third layer of the map grid through its phases, then fades the
-/// mechanism's final map state.
+/// The cave rumbles and shakes for eight seconds while the pool's water
+/// churns, then the water fades away and the drained pool is drawn.
 static void VaultCave_RunRumble(void) {
   struct MapGridLayerScroll *layer =
       &((struct MapGridScrollWork *)gMapGridWork[0])->layers[2];
@@ -659,8 +669,13 @@ static void VaultCave_RunRumble(void) {
   Event_End();
 }
 
-/// In VaultCavePassage's pool room, searching the switch flips it.
-/// "Isaac flipped the switch."
+/// Isaac flips the switch on the ledge in the pool room (cell (28, 29)).
+/// "Isaac flipped the switch." The cave rumbles and shakes, and the pool
+/// drains away. Its water floods the floor of a room below, which the
+/// walkthrough warns cuts off the way back.
+///
+/// The switch can be flipped once each time the party comes down the ladder
+/// from Vault.
 static void VaultCave_FlipSwitch(void) {
   s32 destinationColumn;
 
@@ -683,7 +698,8 @@ static void VaultCave_FlipSwitch(void) {
   }
 }
 
-/// Resets a low water drop sharing the subject's cell and reports a hit.
+/// Whether a drop of water about to land is over the given actor's cell; if so,
+/// the drop is sent back up to fall again.
 static s32 VaultCave_ResetFallingActorAtActorCell(s32 subjectActorId) {
   struct Actor *subject = Actor_Get(subjectActorId);
   s32 fallingIndex;
@@ -712,7 +728,9 @@ static s32 VaultCave_ResetFallingActorAtActorCell(s32 subjectActorId) {
   return 0;
 }
 
-/// Drops four actors on a repeating schedule and handles their landings.
+/// In the room of three torches, lets the four drops of water fall on their
+/// fixed beat, splashing where they land and putting out the lower torch's
+/// flame if one lands on it.
 static void VaultCave_UpdateTimedFallingActors(void) {
   s32 fallingIndex;
   struct Actor *fallingActor;
@@ -762,8 +780,8 @@ static void VaultCave_UpdateTimedFallingActors(void) {
   }
 }
 
-/// Drops a random actor every 64 frames, with reset height set by its puddle
-/// (frozen or not).
+/// In the room of six puddles, lets a drop of water chosen at random fall every
+/// 64 frames, onto its puddle or onto the top of its ice pillar.
 static void VaultCave_UpdateFrostControlledFallingActors(void) {
   s32 fallingIndex;
   struct Actor *fallingActor;
@@ -821,7 +839,7 @@ static void VaultCave_OffsetActorRadially(struct Actor *actor, s32 radius,
                              destination[2]);
 }
 
-/// Spawns up to four short-lived puffs around a landing actor.
+/// Splashes up to four little drops around a drop of water where it lands.
 static void VaultCave_SpawnPuffs(struct Actor *source) {
   struct Actor *puff;
   s32 puffIndex;
@@ -843,7 +861,7 @@ static void VaultCave_SpawnPuffs(struct Actor *source) {
   }
 }
 
-/// Initializes six water drops and starts their Frost-controlled updater.
+/// Readies the room of six puddles' drops of water and starts them falling.
 static void VaultCave_StartFrostControlledFalls(void) {
   s32 actorSlot = ACTOR_FIRST_WATER_DROP;
   s32 remaining = 5;
@@ -863,7 +881,7 @@ static void VaultCave_StartFrostControlledFalls(void) {
   Task_AddFrame(VaultCave_UpdateFrostControlledFallingActors, TASK_PASS_FRAME);
 }
 
-/// Initializes four water drops and starts their timed updater.
+/// Readies the room of three torches' drops of water and starts them falling.
 static void VaultCave_StartTimedFalls(void) {
   s32 actorSlot = ACTOR_FIRST_TIMED_WATER_DROP;
   s32 fallingIndex = 0;
@@ -1267,7 +1285,7 @@ struct Trigger gVaultCaveMouth_Triggers[] = {
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 6, CONDITION_ALWAYS, VAULT_CAVE_MOUTH_TO_VAULT_CAVE_VAMBRACE_NORTH },
     { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_VAULT_CAVE_NORTHERN_PILLAR, CONDITION_ALWAYS, EVENT(VaultCave_PushNorthernPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_NORTHERN_PILLAR, FLAG_VAULT_CAVE_NORTH_PILLAR_ON_SWITCH, EVENT(VaultCave_MoveNorthernPillar) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH, CONDITION_ALWAYS, EVENT(VaultCave_IgnoreMove) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_SOUTH_OF_NORTHERN_SWITCH, CONDITION_ALWAYS, EVENT(VaultCave_MoveUnlitTorch) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VAULT_CAVE_LOCKED_DOOR, CONDITION_ALWAYS, EVENT(VaultCave_ShowLockedDoor) },
     { TRIGGER_TABLE_END },
 };

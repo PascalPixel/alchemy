@@ -30,7 +30,7 @@ Field_ShopTest:
 	.incbin "games/tla/src/map/lobby/blend.script.lz"
 	.balign 4, 0
 .LField_ShopTest_SCENE:
-	.incbin "games/tla/src/map/map_000/scene.scene.lz"
+	.incbin "games/tla/src/map/empty_map/scene.scene.lz"
 	.balign 4, 0
 	.global Tileset_ShopTestPalette
 Tileset_ShopTestPalette:

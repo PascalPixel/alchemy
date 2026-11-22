@@ -1,87 +1,72 @@
 /// @file
-/// Crossbone Isle, an island reached from the World Map, and the main line of
-/// the cave beneath it, in three areas by their area names: Crossbone
-/// Isle, Crossbone Isle Cave and the Pirate Ship.
+/// Crossbone Isle, the island of puzzles off the coast that the party can
+/// reach from the World Map, and the cave beneath it that winds down nine
+/// floors to Deadbeard's Pirate Ship. Its area names are Crossbone Isle,
+/// Crossbone Isle Cave and the Pirate Ship. No one here speaks.
 ///
-/// No one on the island speaks. It is a run of Psynergy puzzles and battles
-/// that ends with Deadbeard on the Pirate Ship. Its scenes are met in this
-/// order:
+/// In the order the party meets them:
 ///
-/// - Crossbone Isle (SceneId_CrossboneIsle), the island itself, reached from
-///   the World Map (WORLD_MAP_TO_CROSSBONE_ISLE; CROSSBONE_ISLE_TO_WORLD_MAP
-///   leads back to it).
+/// - Crossbone Isle (SceneId_CrossboneIsle), the island. The party lands at
+///   the south (WORLD_MAP_TO_CROSSBONE_ISLE) and walks west to the foot of a
+///   cliff, where Growth on three sprouts, one on each ledge, grows the vines
+///   that climb it to the top. They stay grown only until the party leaves
+///   the island. Catch takes a Nut from the tree by the waterfall. From the
+///   top, slides lead back down: one to the chest with a coin, one to a log
+///   that has to be pushed aside to reach the chest with the Mint, and one to
+///   a clump of ivy at the foot of the cliff. Whirlwind blows that ivy away for
+///   good and uncovers the mouth of the cave
+///   (CROSSBONE_ISLE_TO_CROSSBONE_ISLE_CAVE_ENTRANCE). A second clump, on the
+///   top ledge beside the third vine, hides nothing.
 ///
-///   Whirlwind blows two ivies away for good. Their flags start at
-///   FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY, and the first ivy also opens
-///   a cell. The second's and a fourth's triggers are unused.
-///
-///   Growth grows three plants so they can be crossed, for this visit only.
-///   Their flags start at FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN, and the
-///   first plant's trigger is unused.
-///
-///   Two logs can be pushed, and a Nut circles until Catch takes it
-///   (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).
-///
-///   CROSSBONE_ISLE_TO_CROSSBONE_ISLE_CAVE_ENTRANCE leads down into the cave.
-///
-/// - Crossbone Isle Cave (SceneId_CrossboneIsleCaveEntrance), the cave's mouth,
-///   with only its two exits.
+/// - Crossbone Isle Cave (SceneId_CrossboneIsleCaveEntrance), the winding
+///   path lit by torches that leads from the cave's mouth down to the first
+///   floor.
 ///
 /// - Crossbone Isle Cave (SceneId_CrossboneIsleFirstFloor to
-///   SceneId_CrossboneIsleNinthFloor), the nine floors the cave descends
-///   through, all on one layout. Each is entered from the east
-///   (FLOOR_FROM_PREVIOUS_ROOM) and left to the west
-///   (FLOOR_TO_NEXT_ROOM).
+///   SceneId_CrossboneIsleNinthFloor), the nine floors, each a hall like the
+///   last. The party comes in at the east end (FLOOR_FROM_PREVIOUS_ROOM) and
+///   leaves down the stairs at the west end (FLOOR_TO_NEXT_ROOM). The middle
+///   of the hall is two raised ledges with a gap between them, each with a
+///   door in the north wall into the floor's side room, and the side room is
+///   the way across. The first time the party walks into the east door
+///   (CrossboneIsle_OpenEastDoor), the monsters behind it attack, a group of
+///   ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS on the first four floors and
+///   of ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS on the next five. Back from
+///   the battle the door opens and the party walks in, and from then on it
+///   simply opens. On the west ledge, at the edge of the gap, stands a stone
+///   pillar: pushed east, it drops into the gap and makes a step across it
+///   for good, so the way back east no longer needs the side room. On the
+///   first floor the chest in front of the west door is a Mimic.
 ///
-///   Every floor numbers its doors alike, and scene_exits.h names them floor
-///   by floor (CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_CAVE_ENTRANCE
-///   and CROSSBONE_ISLE_FIRST_FLOOR_TO_CROSSBONE_ISLE_SECOND_FLOOR in the
-///   first).
-///
-///   Each floor has two doors in its north wall into a side room of its own.
-///   The first time the party walks into the east door
-///   (CrossboneIsle_OpenEastDoor), the monsters behind it attack. They are
-///   ENCOUNTER_ZONE_CROSSBONE_ISLE_FIRST_GUARDS for the first four floors and
-///   ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS for the next five, one group
-///   per floor.
-///
-///   Back from the battle (ENTRANCE_AFTER_BATTLE) the door opens and the
-///   party walks through. From then on it simply opens, with one flag per
-///   floor from FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED. The
-///   west door always opens.
-///
-///   Between the doors stands a pillar. Pushed or moved with Move to column
-///   40, it sinks into the floor and opens the passage, with one flag per
-///   floor from FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED.
-///
-///   On the first floor a chest is a Mimic
-///   (FLAG_CROSSBONE_ISLE_FIRST_FLOOR_MIMIC_BEATEN once beaten).
-///
-///   The side rooms of the first eight floors are in
+///   scene_exits.h names each floor's doors floor by floor
+///   (CROSSBONE_ISLE_FIRST_FLOOR_FROM_CROSSBONE_ISLE_CAVE_ENTRANCE and
+///   CROSSBONE_ISLE_FIRST_FLOOR_TO_CROSSBONE_ISLE_SECOND_FLOOR on the first),
+///   and the side rooms of the first eight floors are in
 ///   crossbone_isle_stepping_stones.c and crossbone_isle_keys.c.
 ///
-/// - Crossbone Isle Cave (SceneId_CrossboneIsleFloatingLogs), the ninth floor's
-///   side room, with twelve logs floating on green water. Walking along a log
-///   rides it, the leader on board, until another log or the shore stops it.
-///   Riding the logs, and hopping from log to log, leads to the room's four
-///   chests.
+/// - Crossbone Isle Cave (SceneId_CrossboneIsleFloatingLogs), the ninth
+///   floor's side room: two pools of green water with twelve logs floating on
+///   them. Walking onto a log and on along it rolls the log across the pool
+///   with Isaac on top, until the far shore or another log stops it, and he
+///   hops from log to log or ashore over a cell of water. The logs lead to
+///   four chests: 999 coins on the island in the east pool, a Sleep Bomb in
+///   the alcove north of the east pool, a Water of Life on the ledge between
+///   the pools, and the Muramasa in the alcove north of the west pool.
 ///
 /// - Crossbone Isle Cave (SceneId_CrossboneIslePier), the ledge past the ninth
 ///   floor where a wooden pier leads out to the Pirate Ship.
 ///
-/// - Pirate Ship (SceneId_PirateShip), at the end. Stepping on step trigger 10
-///   (CrossboneIsle_FightDeadbeard) sets off the battle with Deadbeard, the
-///   sixth group of ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS.
+/// - Pirate Ship (SceneId_PirateShip), at the bottom. The first chest, at the
+///   foot of the ladder in the middle of the deck, is a Mimic. Climbing the
+///   west stairs onto the raised foredeck sets off the battle with Deadbeard
+///   (CrossboneIsle_FightDeadbeard). Once he is beaten, a chest with the Demon
+///   Mail stands on the foredeck behind where the battle began.
 ///
-///   When the party comes back (ENTRANCE_AFTER_BATTLE),
-///   FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED is set and a chest with the Demon
-///   Mail appears. A second chest is a Mimic (FLAG_PIRATE_SHIP_MIMIC_BEATEN
-///   once beaten).
-///
-/// Scene_Initialize restores each scene as its flags say: the ivy and plants
-/// on the island, the floors' sunk pillars, the Mimics until they are beaten
-/// and the chest Deadbeard leaves. The floating logs start at their places on
-/// every visit, their cells laid under them (CrossboneIsle_PlaceLogs).
+/// Scene_Initialize restores each scene as its flags say: the ivy and the
+/// vines on the island, each floor's pillar in its gap, the Mimics until they
+/// are beaten and the chest Deadbeard leaves. The floating logs start in their
+/// places on every visit, their cells laid under them
+/// (CrossboneIsle_PlaceLogs).
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -129,50 +114,90 @@ extern struct Trigger gCrossboneIsle_PirateShipTriggers[];
 /// Crossbone Isle's placed actors, numbered in the order of
 /// gCrossboneIsle_IsleActorPlacements.
 enum CrossboneIsleActorId {
-  /// The Nut that circles over the island until Catch takes it
+  /// The Nut up in the tree by the waterfall, until Catch takes it
   /// (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).
   ACTOR_ISLE_NUT = ACTOR_FIRST_PLACED,
-  /// The two logs a push rolls (CrossboneIsle_PushIsleLog).
+  /// The two logs lying on the grass below the cliffs, which Isaac pushes by
+  /// walking into them (CrossboneIsle_PushIsleLog): the west one at the foot
+  /// of the cliff the vines climb, the east one in front of the chest with
+  /// the Mint.
   ACTOR_FIRST_ISLE_LOG,
-  /// The four plants Growth grows. Once grown, a plant can be crossed for the
-  /// rest of the visit (four flags from FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN).
-  /// The first is placed at the map's origin, off stage
-  /// (CrossboneIsle_UnusedGrowFirstPlant).
+  /// The four sprouts Growth grows into vines, one flag each from
+  /// FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN. The second, third and fourth stand
+  /// one above the other on the west cliff: at its foot, on its first ledge
+  /// and on the ledge above. The first is placed at the map's origin, off
+  /// stage (CrossboneIsle_UnusedGrowFirstPlant).
   ACTOR_FIRST_PLANT = ACTOR_FIRST_ISLE_LOG + 2,
-  /// The ivy Whirlwind blows away, one flag each from
-  /// FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY.
-  ///
-  /// Only three rows place one, and the second is at the map's origin, off
-  /// stage (CrossboneIsle_UnusedBlowAwaySecondIvy). The fourth ivy's trigger
-  /// and CrossboneIsle_RestoreIvy name ACTOR_FIRST_IVY + 3, which the table
-  /// leaves unplaced.
+  /// The clumps of ivy Whirlwind blows away, one flag each from
+  /// FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY: the first over the cave's mouth
+  /// at the foot of the cliff, the third on the top ledge beside the highest
+  /// vine. The second is placed at the map's origin, off stage
+  /// (CrossboneIsle_UnusedBlowAwaySecondIvy), and the fourth, which its
+  /// trigger and CrossboneIsle_RestoreIvy name, is not placed at all.
   ACTOR_FIRST_IVY = ACTOR_FIRST_PLANT + 4
 };
 
-/// Growth has grown Crossbone Isle's first plant, until the party leaves the
-/// island's map. Four scene temp flags run from this one, one a plant.
+/// Growth has grown Crossbone Isle's first sprout, until the party leaves the
+/// island. Four scene temp flags run from this one, one a sprout.
 enum { FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN = FLAG_SCENE_TEMP_40 };
 
+/// Crossbone Isle's cells beside its two logs, where walking into a log pushes
+/// it (CrossboneIsle_PushIsleLog).
+enum {
+  /// Beside the east log, in front of the chest with the Mint: cells (23, 22),
+  /// (20, 26), (21, 26) and (23, 26).
+  CELL_BEHAVIOR_CROSSBONE_ISLE_BESIDE_EAST_LOG = 10,
+  /// Beside the west log at the foot of the cliff: cells (8, 23) to (10, 23),
+  /// (7, 26), (8, 26) and (10, 26).
+  CELL_BEHAVIOR_CROSSBONE_ISLE_BESIDE_WEST_LOG = 20
+};
+
 /// The twelve floating logs of the ninth floor's side room
-/// (SceneId_CrossboneIsleFloatingLogs), lettered A to L.
+/// (SceneId_CrossboneIsleFloatingLogs), lettered A to L in the order of
+/// gCrossboneIsle_FloatingLogsActorPlacements. Each is given by the place it
+/// starts in on every visit, with its middle cell.
 ///
-/// They are lettered in the order of
-/// gCrossboneIsle_FloatingLogsActorPlacements, and each is given with the way
-/// it lies and its pool. A log lying west-east rides north and south, and one
-/// lying north-south rides east and west.
+/// A log lying west-east rolls north and south, and one lying north-south
+/// rolls east and west. Where the ways of two logs cross, one rolled into the
+/// other's way stops it, so the order the logs are rolled in decides where
+/// each can go.
 enum CrossboneIsleFloatingLogsActorId {
-  ACTOR_LOG_A = ACTOR_FIRST_PLACED, ///< west-east, east pool
-  ACTOR_LOG_B,                      ///< west-east, west pool
-  ACTOR_LOG_C,                      ///< west-east, east pool
-  ACTOR_LOG_D,                      ///< north-south, east pool
-  ACTOR_LOG_E,                      ///< north-south, east pool
-  ACTOR_LOG_F,                      ///< north-south, east pool
-  ACTOR_LOG_G,                      ///< north-south, west pool
-  ACTOR_LOG_H,                      ///< north-south, east pool
-  ACTOR_LOG_I,                      ///< north-south, west pool
-  ACTOR_LOG_J,                      ///< west-east, west pool
-  ACTOR_LOG_K,                      ///< west-east, west pool
-  ACTOR_LOG_L                       ///< north-south, west pool
+  /// The east pool's south-west log, lying west-east at (25, 19). It rolls
+  /// north up the pool's west side, below the alcove with the Sleep Bomb.
+  ACTOR_LOG_A = ACTOR_FIRST_PLACED,
+  /// The east one of the west pool's three south logs, lying west-east at
+  /// (10, 19).
+  ACTOR_LOG_B,
+  /// The east pool's log south-east of the island, lying west-east at
+  /// (32, 18). It rolls north up the middle of the pool's east half.
+  ACTOR_LOG_C,
+  /// The east pool's south-east log, lying north-south along the east shore at
+  /// (36, 17). It rolls west to the island.
+  ACTOR_LOG_D,
+  /// The east pool's middle log, lying north-south east of the island at
+  /// (34, 12). It rolls west to the pool's west side.
+  ACTOR_LOG_E,
+  /// The east pool's north-east log, lying north-south at (36, 8). It rolls
+  /// west along the pool's north edge.
+  ACTOR_LOG_F,
+  /// The middle one of the west pool's three side logs, lying north-south
+  /// along its east shore at (13, 13).
+  ACTOR_LOG_G,
+  /// The east pool's north-west log, lying north-south at (24, 8). It rolls
+  /// east along the pool's north edge.
+  ACTOR_LOG_H,
+  /// The north one of the west pool's three side logs, lying north-south
+  /// along its east shore at (13, 10).
+  ACTOR_LOG_I,
+  /// The west one of the west pool's three south logs, lying west-east at
+  /// (4, 19), in the bay at the pool's south-west.
+  ACTOR_LOG_J,
+  /// The middle one of the west pool's three south logs, lying west-east at
+  /// (7, 19).
+  ACTOR_LOG_K,
+  /// The south one of the west pool's three side logs, lying north-south
+  /// along its east shore at (13, 16).
+  ACTOR_LOG_L
 };
 
 /// The line each floating log rides along that another can lie across: the
@@ -192,9 +217,11 @@ enum {
 #define LIES_ACROSS(position, line)                                            \
   ((position) >= (line) - 1 && (position) <= (line) + 1)
 
-/// The cell behaviour under each floating log: stepping on settles it, walking
-/// along it rides it, and walking against its side hops the leader over
-/// (gCrossboneIsle_FloatingLogsTriggers).
+/// The cell behaviour under each floating log: stepping on it sets the log
+/// bobbing, walking on along it rolls it, and walking off its side hops Isaac
+/// over a cell of water (gCrossboneIsle_FloatingLogsTriggers). The cells are
+/// stored in rows 30 to 32 of the room's map.txt and laid under the logs on
+/// every visit (CrossboneIsle_PlaceLogs).
 enum {
   CELL_BEHAVIOR_CROSSBONE_ISLE_LOG_A = 21,
   CELL_BEHAVIOR_CROSSBONE_ISLE_LOG_C = 22,
@@ -210,9 +237,30 @@ enum {
   CELL_BEHAVIOR_CROSSBONE_ISLE_LOG_I = 36
 };
 
+/// The floating-logs room's shore cells where walking off the edge hops Isaac
+/// over a cell of water onto a log beyond
+/// (gCrossboneIsle_FloatingLogsTriggers).
+enum {
+  /// The east shores of both pools: cells (14, 8) to (14, 19) beside the west
+  /// pool's side logs, and (37, 7) to (37, 18) beside the east pool's.
+  CELL_BEHAVIOR_CROSSBONE_ISLE_SHORE_HOP_WEST = 40,
+  /// The west pool's west shore: the ledge at (5, 9) to (5, 14) and the bay's
+  /// shore at (2, 15) to (2, 19).
+  CELL_BEHAVIOR_CROSSBONE_ISLE_SHORE_HOP_EAST = 41,
+  /// The west pool's north shore, (6, 8) to (8, 8).
+  CELL_BEHAVIOR_CROSSBONE_ISLE_SHORE_HOP_SOUTH = 42,
+  /// The west pool's south shore, (3, 20) to (13, 20).
+  CELL_BEHAVIOR_CROSSBONE_ISLE_SHORE_HOP_NORTH = 43
+};
+
+/// The cell on a floor's west ledge just west of the stone pillar, (38, 10),
+/// from which walking east pushes it (CrossboneIsle_PushPillar).
+enum { CELL_BEHAVIOR_CROSSBONE_ISLE_WEST_OF_PILLAR = 20 };
+
 /// The nine floors' one placed actor (gCrossboneIsle_FloorActorPlacements).
 enum CrossboneIsleFloorActorId {
-  /// The pillar between the doors that sinks into the floor at column 40.
+  /// The stone pillar on the west ledge, at the edge of the gap between the
+  /// ledges, that drops into the gap when pushed east.
   ACTOR_SINKING_PILLAR = ACTOR_FIRST_PLACED
 };
 
@@ -246,6 +294,18 @@ enum {
 /// (CrossboneIsle_OpenEastDoor). On the Pirate Ship it is after Deadbeard
 /// (CrossboneIsle_FightDeadbeard).
 enum { ENTRANCE_AFTER_BATTLE = 5 };
+
+/// The Pirate Ship's step cells.
+enum {
+  /// The top of the west stairs up to the raised foredeck, cell (11, 34),
+  /// where the battle with Deadbeard starts (CrossboneIsle_FightDeadbeard).
+  CELL_BEHAVIOR_PIRATE_SHIP_TOP_OF_WEST_STAIRS = 10,
+  /// Cell (15, 40), beside the Mimic's chest at the foot of the ladder, from
+  /// which walking south hops Isaac across the hole in the deck
+  /// (CrossboneIsle_HopSouth). Scene_Initialize lays it from the stored cell
+  /// at (0, 2) only while the Mimic is unbeaten.
+  CELL_BEHAVIOR_PIRATE_SHIP_BESIDE_MIMIC = 20
+};
 
 /// The treasure spots of the chests that come and go, which their examine
 /// triggers answer to.
@@ -326,7 +386,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 #include "shared/field_effect_advance.c"
 
-/// Puffs a ring of dust out from a floor's pillar as it sinks.
+/// Puffs a ring of dust out from a floor's pillar as it lands in the gap.
 static void CrossboneIsle_SpawnPillarMovedBurst(s32 actorId) {
   struct Actor *actor;
   struct Vector3 velocity;
@@ -353,7 +413,14 @@ static void CrossboneIsle_SpawnPillarMovedBurst(s32 actorId) {
   }
 }
 
-/// Stepping on step trigger 10 on the Pirate Ship: Deadbeard attacks.
+/// Climbing the west stairs onto the Pirate Ship's raised foredeck, to cell
+/// (11, 34), sets off the battle with Deadbeard.
+///
+/// He is the sixth group of ENCOUNTER_ZONE_CROSSBONE_ISLE_LAST_GUARDS, and the
+/// battle brings the party back to ENTRANCE_AFTER_BATTLE on the foredeck,
+/// where Scene_Initialize sets FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED and puts
+/// the chest with the Demon Mail before them. The trigger row stops answering
+/// once that flag is set.
 static void CrossboneIsle_FightDeadbeard(void) {
   Event_Start();
   Event_SetAfterBattleDestination(gMainRoutineWork.next, ENTRANCE_AFTER_BATTLE);
@@ -384,8 +451,11 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gCrossboneIsle_FloorTriggers;
 }
 
-/// Catch on the Nut circling on Crossbone Isle: the party gets it
-/// (FLAG_CROSSBONE_ISLE_NUT_CAUGHT).
+/// Catch on the Nut up in the tree by the waterfall on Crossbone Isle: the
+/// hand of Catch pulls it down to Isaac and "Isaac got a Nut."
+///
+/// Scene_CatchNut gives the Nut and sets FLAG_CROSSBONE_ISLE_NUT_CAUGHT, which
+/// keeps it from being placed again.
 static void CrossboneIsle_CatchNut(void) {
   Scene_CatchNut(ACTOR_ISLE_NUT, FLAG_CROSSBONE_ISLE_NUT_CAUGHT);
 }
@@ -474,7 +544,7 @@ s32 Scene_Initialize(void) {
     Scene_FloatNut(ACTOR_ISLE_NUT);
     return 0;
   }
-  // The nine floors share their door battle, sunk pillar and return entrance.
+  // The nine floors share their door battle, pillar and return entrance.
   first = SCENE_CROSSBONE_ISLE_FIRST_FLOOR;
   if (current == first) {
     if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_FLOOR_MIMIC_BEATEN) == 0) {
@@ -495,8 +565,9 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// On a floor of Crossbone Isle Cave whose pillar has been sunk, it stays sunk
-/// in its place.
+/// On a floor of Crossbone Isle Cave whose pillar has already been pushed into
+/// the gap between the ledges, it stands there again, its top a step across
+/// (cell (40, 10)).
 static void CrossboneIsle_RestorePillar(void) {
   struct Actor *actor;
   s32 cleared;
@@ -518,8 +589,14 @@ static void CrossboneIsle_RestorePillar(void) {
   }
 }
 
-/// Move on a floor's pillar in Crossbone Isle Cave, and after each push: at
-/// column 40 the pillar sinks.
+/// Move on the stone pillar on a floor's west ledge, and every push of it: once
+/// it reaches the gap between the ledges (cell (40, 10)), it drops into the
+/// gap in a ring of dust, and its top stays there as a step Isaac hops across.
+///
+/// Anywhere else nothing more happens. The pillar's cell takes the jump-across
+/// cell at (42, 10) (CELL_BEHAVIOR_JUMP_FORWARD), and one flag per floor from
+/// FLAG_CROSSBONE_ISLE_FIRST_PASSAGE_OPENED keeps it there. In every edition
+/// but the Japanese, a pillar already in the gap does not drop again.
 static void CrossboneIsle_MovePillar(void) {
   struct Actor *pillar;
   s32 column;
@@ -558,8 +635,10 @@ static void CrossboneIsle_MovePillar(void) {
                 SCENE_CROSSBONE_ISLE_FIRST_FLOOR));
 }
 
-/// Walking into a floor's pillar in Crossbone Isle Cave (step trigger 20): push
-/// it a step.
+/// Walking east into the stone pillar on a floor's west ledge, from cell
+/// (38, 10), pushes it one cell east, over the edge of the gap.
+///
+/// CrossboneIsle_MovePillar then drops it into the gap.
 static void CrossboneIsle_PushPillar(void) {
   Event_Start();
   PushedActor_AdvancePair();
@@ -567,16 +646,20 @@ static void CrossboneIsle_PushPillar(void) {
   CrossboneIsle_MovePillar();
 }
 
-/// Walking north into a floor's west door in Crossbone Isle Cave
-/// (step trigger 4): it opens, and the party goes through to the side room.
+/// Walking north into the door on a floor's west ledge (cell (37, 9)) opens it
+/// with a rumble, and the party goes through into the floor's side room.
 static void CrossboneIsle_OpenWestDoor(void) {
   MapGrid_PlayMapEdit(gCrossboneIsle_DoorOpens, 37, 7);
   Sound_Play(SE_STONE_RUMBLE);
   Import_EventSetExitRequest(FLOOR_TO_SIDE_ROOM_WEST);
 }
 
-/// Walking north into a floor's east door in Crossbone Isle Cave
-/// (step trigger 3): the monsters behind it attack, once.
+/// Walking north into the door on a floor's east ledge (cell (44, 9)): the
+/// first time, the monsters behind it attack; after that it opens with a
+/// rumble and the party goes through into the floor's side room.
+///
+/// The battle brings the party back to ENTRANCE_AFTER_BATTLE, in front of the
+/// door (CrossboneIsle_OpenEastDoorAfterBattle).
 static void CrossboneIsle_OpenEastDoor(void) {
   if (GameFlag_Get(gMainRoutineWork.next +
                    (FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED -
@@ -633,8 +716,12 @@ static void CrossboneIsle_OpenEastDoor(void) {
   }
 }
 
-/// Back from the battle at a floor's east door
-/// (ENTRANCE_AFTER_BATTLE): the door opens, and the party walks through.
+/// Back from the battle at a floor's east door, the door opens and Isaac walks
+/// in through it to the side room.
+///
+/// It sets the floor's flag from
+/// FLAG_CROSSBONE_ISLE_FIRST_EAST_DOOR_MONSTERS_DEFEATED, so the monsters do
+/// not come again.
 static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
   Event_Start();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.4);
@@ -650,8 +737,9 @@ static void CrossboneIsle_OpenEastDoorAfterBattle(void) {
   Event_End();
 }
 
-/// Growth on one of Crossbone Isle's plants: it stops blocking the way, shows
-/// grown and opens the cell at pixel (x, z) to climbing.
+/// Growth on one of Crossbone Isle's sprouts: it no longer stops the party,
+/// its vine stands grown, and the cell at pixel (x, z) becomes the vine's
+/// foot, climbed with Up or Down held (CELL_BEHAVIOR_CLIMB).
 static inline void CrossboneIsle_GrowPlant(s32 actorId, s32 plant, s32 x,
                                            s32 z) {
   struct Actor *actor = Actor_Get(ACTOR_FIRST_PLANT + plant);
@@ -664,26 +752,41 @@ static inline void CrossboneIsle_GrowPlant(s32 actorId, s32 plant, s32 x,
                             CELL_BEHAVIOR_CLIMB);
 }
 
-/// Unused: Growth on Crossbone Isle's first plant would grow it and let the
-/// party climb at (304, 368).
+/// Unused: Growth on Crossbone Isle's first sprout would grow its vine and
+/// make cell (19, 23) climbable.
+///
+/// The sprout is placed at the map's origin, out of anyone's reach, so its
+/// trigger never runs. Scene_Initialize still restores its vine if its flag
+/// were set.
 static void CrossboneIsle_UnusedGrowFirstPlant(s32 actorId) {
   CrossboneIsle_GrowPlant(actorId, 0, 304, 368);
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN);
 }
 
-/// Growth on Crossbone Isle's second plant.
+/// Growth on the sprout at the foot of Crossbone Isle's west cliff, cell
+/// (5, 23), grows a vine up the cliff face to its first ledge.
+///
+/// The vine lasts until the party leaves the island.
 static void CrossboneIsle_GrowSecondPlant(s32 actorId) {
   CrossboneIsle_GrowPlant(actorId, 1, 80, 368);
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 1);
 }
 
-/// Growth on Crossbone Isle's third plant.
+/// Growth on the sprout on the first ledge of Crossbone Isle's west cliff,
+/// cell (6, 21), grows a vine from there up to the next ledge.
+///
+/// The vine lasts until the party leaves the island.
 static void CrossboneIsle_GrowThirdPlant(s32 actorId) {
   CrossboneIsle_GrowPlant(actorId, 2, 96, 336);
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 2);
 }
 
-/// Growth on Crossbone Isle's fourth plant, which opens two cells.
+/// Growth on the sprout on the upper ledge of Crossbone Isle's west cliff,
+/// cell (9, 20), grows the last vine, up to the top of the cliff.
+///
+/// The vine's foot is made climbable twice: at (9, 20), and at (47, 20), the
+/// same place in the copy of the cliff's top drawn over it, 38 columns over in
+/// map.txt. The vine lasts until the party leaves the island.
 static void CrossboneIsle_GrowFourthPlant(s32 actorId) {
   FIXED eastX = toFIXED(752);
   FIXED eastZ = toFIXED(320);
@@ -693,36 +796,49 @@ static void CrossboneIsle_GrowFourthPlant(s32 actorId) {
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_PLANT_GROWN + 3);
 }
 
-/// Whirlwind on Crossbone Isle's first ivy: it is blown away for good, and
-/// its cell opens.
+/// Whirlwind on the clump of ivy at the foot of Crossbone Isle's west cliff
+/// blows it away for good, uncovering the mouth of the cave behind it at
+/// cell (8, 21).
+///
+/// The mouth's cell takes the stored cell at (0, 0), the exit into
+/// CrossboneIsleCaveEntrance, and FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY
+/// keeps it open (CrossboneIsle_RestoreIvy).
 static void CrossboneIsle_BlowAwayFirstIvy(void) {
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY);
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 8, 21);
 }
 
-/// Unused: Whirlwind on Crossbone Isle's second ivy would blow it away for
-/// good.
+/// Unused: Whirlwind on Crossbone Isle's second clump of ivy would blow it away
+/// for good.
+///
+/// The ivy is placed at the map's origin, out of anyone's reach, so its
+/// trigger never runs.
 static void CrossboneIsle_UnusedBlowAwaySecondIvy(void) {
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1);
 }
 
-/// Whirlwind on Crossbone Isle's third ivy.
+/// Whirlwind on the clump of ivy on the top ledge of Crossbone Isle's west
+/// cliff, beside the last vine, blows it away for good; nothing is hidden
+/// behind it.
 static void CrossboneIsle_BlowAwayThirdIvy(void) {
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2);
 }
 
-/// Unused: Whirlwind on Crossbone Isle's fourth ivy would blow it away for
-/// good.
+/// Unused: Whirlwind on a fourth clump of ivy on Crossbone Isle would blow it
+/// away for good.
+///
+/// No fourth clump is placed, so its trigger never runs.
 static void CrossboneIsle_UnusedBlowAwayFourthIvy(void) {
   GameFlag_Set(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3);
 }
 
-/// On Crossbone Isle, ivy blown away stays gone; the rest stands tall.
+/// On Crossbone Isle, ivy Whirlwind has blown away stays gone, and the cave
+/// mouth behind the first stays open; the others are stretched to stand tall.
 static void CrossboneIsle_RestoreIvy(void) {
   struct Actor *actor;
 
-  // The cells CrossboneIsle_BlowAwayFirstIvy copies as it sets the flag,
-  // redrawn on arrival.
+  // The cave mouth CrossboneIsle_BlowAwayFirstIvy opens, opened again on
+  // arrival.
   if (GameFlag_Get(FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY) != 0) {
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 8, 21);
     Actor_SetPosition(ACTOR_FIRST_IVY, 968, 968);
@@ -752,8 +868,9 @@ static void CrossboneIsle_RestoreIvy(void) {
   }
 }
 
-/// Walking into one of Crossbone Isle's two logs: push it if the cell beyond
-/// is clear.
+/// Walking into one of the two logs on Crossbone Isle's grass pushes it along,
+/// if the ground beyond is clear: the west one at the foot of the cliff, or the
+/// east one, which lies in front of the chest with the Mint.
 static void CrossboneIsle_PushIsleLog(void) {
   struct PushedActorProbe probe;
 
@@ -764,8 +881,9 @@ static void CrossboneIsle_PushIsleLog(void) {
   Event_End();
 }
 
-/// Rides log actorId one leg, dx and dz pixels, with the leader walking
-/// backwards on it to the cell it stops at.
+/// Rolls log actorId one leg, dx and dz pixels, with Isaac walking backwards on
+/// top of it to the cell it stops at. The log rolls with a sound and stops with
+/// another.
 static void CrossboneIsle_RideLog(s32 actorId, s32 dx, s32 dz) {
   struct Actor *leader;
   struct Actor *log;
@@ -803,9 +921,9 @@ static void CrossboneIsle_RideLog(s32 actorId, s32 dx, s32 dz) {
   Event_End();
 }
 
-/// Lays a log lying west-east under the leader's feet: the three cells it
-/// covers take the stored cells at (sourceColumn, sourceRow). Its cell
-/// behaviour is passed and not used.
+/// Lays the cells of a log lying west-east under it, so that it can be walked
+/// on: the three cells it covers take the stored cells at
+/// (sourceColumn, sourceRow). Its cell behaviour is passed and not used.
 static void CrossboneIsle_PlaceWestEastLog(s32 actorId, s32 sourceColumn,
                                            s32 sourceRow, s32 cellBehavior) {
   struct Actor *actor = Actor_Get(actorId);
@@ -841,14 +959,14 @@ static void CrossboneIsle_PlaceNorthSouthLog(s32 actorId, s32 sourceColumn,
   }
 }
 
-/// Stepping onto a log dips it under the leader's step, from the start.
+/// Starts a floating log bobbing under Isaac's step, from the beginning.
 static void CrossboneIsle_SettleLog(int actorId) {
   Actor_SetAnimation(actorId, FLOATING_LOG_ANIMATION_FLOAT);
   Actor_SetAnimation(actorId, FLOATING_LOG_ANIMATION_SETTLE);
 }
 
-/// Lays the twelve floating logs of CrossboneIsleFloatingLogs under the
-/// leader's feet.
+/// Lays the cells of the floating-logs room's twelve logs under them, in their
+/// starting places.
 static void CrossboneIsle_PlaceLogs(void) {
   CrossboneIsle_PlaceWestEastLog(ACTOR_LOG_A, 17, 30,
                                  CELL_BEHAVIOR_CROSSBONE_ISLE_LOG_A);
@@ -876,64 +994,82 @@ static void CrossboneIsle_PlaceLogs(void) {
                                    CELL_BEHAVIOR_CROSSBONE_ISLE_LOG_I);
 }
 
-// Crossbone Isle Cave (CrossboneIsleFloatingLogs), the ninth floor's side room:
-// its twelve floating logs. Stepping onto a log settles it. Walking along one
-// rides it that way, a leg at a time, until another log lying across its way
-// or the shore stops it; walking against a log's side hops the leader 32 pixels
-// if the landing is clear.
-
+/// Stepping onto the east pool's south-west log sets it bobbing in the water
+/// under Isaac.
 static void CrossboneIsle_StepOnLogA(void) {
   CrossboneIsle_SettleLog(ACTOR_LOG_A);
 }
 
+/// Stepping onto the east pool's log south-east of the island sets it bobbing
+/// in the water under Isaac.
 static void CrossboneIsle_StepOnLogC(void) {
   CrossboneIsle_SettleLog(ACTOR_LOG_C);
 }
 
+/// Stepping onto the east pool's south-east log, by the east shore, sets it
+/// bobbing in the water under Isaac.
 static void CrossboneIsle_StepOnLogD(void) {
   CrossboneIsle_SettleLog(ACTOR_LOG_D);
 }
 
+/// Stepping onto the east pool's middle log sets it bobbing in the water under
+/// Isaac.
 static void CrossboneIsle_StepOnLogE(void) {
   CrossboneIsle_SettleLog(ACTOR_LOG_E);
 }
 
+/// Stepping onto the east pool's north-east log sets it bobbing in the water
+/// under Isaac.
 static void CrossboneIsle_StepOnLogF(void) {
   CrossboneIsle_SettleLog(ACTOR_LOG_F);
 }
 
+/// Stepping onto the east pool's north-west log sets it bobbing in the water
+/// under Isaac.
 static void CrossboneIsle_StepOnLogH(void) {
   CrossboneIsle_SettleLog(ACTOR_LOG_H);
 }
 
+/// Stepping onto the west one of the west pool's three south logs sets it
+/// bobbing in the water under Isaac.
 static void CrossboneIsle_StepOnLogJ(void) {
   CrossboneIsle_SettleLog(ACTOR_LOG_J);
 }
 
+/// Stepping onto the middle one of the west pool's three south logs sets it
+/// bobbing in the water under Isaac.
 static void CrossboneIsle_StepOnLogK(void) {
   CrossboneIsle_SettleLog(ACTOR_LOG_K);
 }
 
+/// Stepping onto the east one of the west pool's three south logs sets it
+/// bobbing in the water under Isaac.
 static void CrossboneIsle_StepOnLogB(void) {
   CrossboneIsle_SettleLog(ACTOR_LOG_B);
 }
 
+/// Stepping onto the south one of the west pool's three side logs sets it
+/// bobbing in the water under Isaac.
 static void CrossboneIsle_StepOnLogL(void) {
   CrossboneIsle_SettleLog(ACTOR_LOG_L);
 }
 
+/// Stepping onto the middle one of the west pool's three side logs sets it
+/// bobbing in the water under Isaac.
 static void CrossboneIsle_StepOnLogG(void) {
   CrossboneIsle_SettleLog(ACTOR_LOG_G);
 }
 
+/// Stepping onto the north one of the west pool's three side logs sets it
+/// bobbing in the water under Isaac.
 static void CrossboneIsle_StepOnLogI(void) {
   CrossboneIsle_SettleLog(ACTOR_LOG_I);
 }
 
-/// Hops the leader 32 pixels the way he faces, from log to log or onto the
-/// shore, if nothing is in the way there, and returns 1 if he hopped. The
-/// Japanese edition hops to `requested`, the others to the middle of the cell
-/// 32 pixels ahead.
+/// Isaac springs and leaps two cells the way he faces, over a cell of water
+/// from log to log or between a log and the shore, if he can land there, and
+/// it returns 1 if he hopped. The Japanese edition aims at `requested`, the
+/// others at the middle of the cell 32 pixels ahead.
 static s32 CrossboneIsle_TryHop(struct Actor *actor,
                                 struct FieldPosition *requested) {
   s32 savedMotionFlags = actor->motionFlags;
@@ -982,7 +1118,9 @@ static s32 CrossboneIsle_TryHop(struct Actor *actor,
   return 0;
 }
 
-/// Walking north against a log's side.
+/// Walking north off the side of a floating log, or off the west pool's south
+/// shore, with a cell of water ahead, hops Isaac over it onto the log or shore
+/// beyond, if there is one to land on.
 static s32 CrossboneIsle_HopNorth(void) {
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   struct FieldPosition destination;
@@ -993,7 +1131,10 @@ static s32 CrossboneIsle_HopNorth(void) {
   return CrossboneIsle_TryHop(actor, &destination);
 }
 
-/// Walking south against a log's side, or at the Pirate Ship's step trigger 20.
+/// Walking south off the side of a floating log, or off the west pool's north
+/// shore, with a cell of water ahead, hops Isaac over it onto the log or shore
+/// beyond; on the Pirate Ship, walking south from beside the Mimic's chest
+/// hops him across the hole in the deck.
 static s32 CrossboneIsle_HopSouth(void) {
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   struct FieldPosition destination;
@@ -1004,7 +1145,9 @@ static s32 CrossboneIsle_HopSouth(void) {
   return CrossboneIsle_TryHop(actor, &destination);
 }
 
-/// Walking west against a log's side.
+/// Walking west off the side of a floating log, or off the east shore of
+/// either pool, with a cell of water ahead, hops Isaac over it onto the log or
+/// shore beyond, if there is one to land on.
 static s32 CrossboneIsle_HopWest(void) {
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   struct FieldPosition destination;
@@ -1015,7 +1158,9 @@ static s32 CrossboneIsle_HopWest(void) {
   return CrossboneIsle_TryHop(actor, &destination);
 }
 
-/// Walking east against a log's side.
+/// Walking east off the side of a floating log, or off the west pool's west
+/// shore, with a cell of water ahead, hops Isaac over it onto the log or shore
+/// beyond, if there is one to land on.
 static s32 CrossboneIsle_HopEast(void) {
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   struct FieldPosition destination;
@@ -1026,8 +1171,9 @@ static s32 CrossboneIsle_HopEast(void) {
   return CrossboneIsle_TryHop(actor, &destination);
 }
 
-/// Moves a log lying west-east from row `row` to the row it now lies on: its
-/// three cells are copied there, and the ones it left cleared.
+/// Moves the cells of a log lying west-east from row `row` to the row it now
+/// lies on, and turns the ones it left back into water that cannot be walked
+/// on (the stored wall cells at (0, 0)).
 static inline void CrossboneIsle_MoveWestEastLogCells(s32 actorId, s32 column,
                                                       s32 row) {
   wait(2);
@@ -1056,8 +1202,13 @@ static inline void CrossboneIsle_MoveNorthSouthLogCells(s32 actorId, s32 column,
   MapGrid_CopyCellAttributes(0, 0, 1, 3, column, row - 1);
 }
 
-/// Walking north on log A rides it to the north shore, stopping short of log E
-/// or log H where either lies across its way; on the shore, the leader hops.
+/// Walking north along the east pool's south-west log rolls it north up the
+/// pool's west side, with Isaac on top, to the north edge below the alcove
+/// with the Sleep Bomb; there, walking on north hops him ashore.
+///
+/// The log stops short of the north-west log while that one lies across its
+/// way, as it does at first, and short of the middle log if that has been
+/// rolled west across it.
 static void CrossboneIsle_RideLogANorth(void) {
   s32 column = FIELD_CELL(Actor_Get(ACTOR_LOG_A)->x.fixed);
   s32 row = FIELD_CELL(Actor_Get(ACTOR_LOG_A)->z.fixed);
@@ -1095,8 +1246,11 @@ static void CrossboneIsle_RideLogANorth(void) {
   CrossboneIsle_MoveWestEastLogCells(ACTOR_LOG_A, column, row);
 }
 
-/// Walking south on log A rides it back to the south shore, stopping short of
-/// log E where it lies across its way.
+/// Walking south along the east pool's south-west log rolls it back down the
+/// pool's west side, with Isaac on top, to the south shore.
+///
+/// It stops short of the middle log if that has been rolled west across its
+/// way.
 static void CrossboneIsle_RideLogASouth(void) {
   s32 column = FIELD_CELL(Actor_Get(ACTOR_LOG_A)->x.fixed);
   s32 row = FIELD_CELL(Actor_Get(ACTOR_LOG_A)->z.fixed);
@@ -1122,8 +1276,11 @@ static void CrossboneIsle_RideLogASouth(void) {
   CrossboneIsle_MoveWestEastLogCells(ACTOR_LOG_A, column, row);
 }
 
-/// Walking north on log C rides it to the north shore, stopping short of log F
-/// or log H where either lies across its way.
+/// Walking north along the east pool's log south-east of the island rolls it
+/// north up the pool, with Isaac on top, to the north edge.
+///
+/// While the north-west or the north-east log lies across its way at the
+/// north edge, it stops short of it.
 static void CrossboneIsle_RideLogCNorth(void) {
   s32 column = FIELD_CELL(Actor_Get(ACTOR_LOG_C)->x.fixed);
   s32 row = FIELD_CELL(Actor_Get(ACTOR_LOG_C)->z.fixed);
@@ -1153,7 +1310,8 @@ static void CrossboneIsle_RideLogCNorth(void) {
   CrossboneIsle_MoveWestEastLogCells(ACTOR_LOG_C, column, row);
 }
 
-/// Walking south on log C rides it back to the south shore.
+/// Walking south along the east pool's log south-east of the island rolls it
+/// back south, with Isaac on top, to where it started.
 static void CrossboneIsle_RideLogCSouth(void) {
   s32 column = FIELD_CELL(Actor_Get(ACTOR_LOG_C)->x.fixed);
   s32 row = FIELD_CELL(Actor_Get(ACTOR_LOG_C)->z.fixed);
@@ -1169,8 +1327,11 @@ static void CrossboneIsle_RideLogCSouth(void) {
   }
 }
 
-/// Walking west on log D rides it west, stopping short of log C where it lies
-/// across its way.
+/// Walking west along the east pool's south-east log rolls it west from the
+/// east shore, with Isaac on top, to the island.
+///
+/// While the log south-east of the island is in its starting place, it lies
+/// across the way and stops this one short of it.
 static void CrossboneIsle_RideLogDWest(void) {
   s32 column = FIELD_CELL(Actor_Get(ACTOR_LOG_D)->x.fixed);
   s32 row = FIELD_CELL(Actor_Get(ACTOR_LOG_D)->z.fixed);
@@ -1192,8 +1353,11 @@ static void CrossboneIsle_RideLogDWest(void) {
   }
 }
 
-/// Walking east on log D rides it back east, stopping short of log C where it
-/// lies across its way.
+/// Walking east along the east pool's south-east log rolls it back east, with
+/// Isaac on top, to the east shore.
+///
+/// From the island it cannot move while the log south-east of the island is
+/// back in its starting place.
 static void CrossboneIsle_RideLogDEast(void) {
   s32 column = FIELD_CELL(Actor_Get(ACTOR_LOG_D)->x.fixed);
   s32 row = FIELD_CELL(Actor_Get(ACTOR_LOG_D)->z.fixed);
@@ -1211,7 +1375,8 @@ static void CrossboneIsle_RideLogDEast(void) {
   }
 }
 
-/// Walking west on log E rides it to the pool's west side.
+/// Walking west along the east pool's middle log rolls it west past the north
+/// side of the island, with Isaac on top, to the pool's west side.
 static void CrossboneIsle_RideLogEWest(void) {
   s32 column = FIELD_CELL(Actor_Get(ACTOR_LOG_E)->x.fixed);
   s32 row = FIELD_CELL(Actor_Get(ACTOR_LOG_E)->z.fixed);
@@ -1228,7 +1393,8 @@ static void CrossboneIsle_RideLogEWest(void) {
   CrossboneIsle_MoveNorthSouthLogCells(ACTOR_LOG_E, column, row);
 }
 
-/// Walking east on log E rides it back to the pool's east side.
+/// Walking east along the east pool's middle log rolls it east, with Isaac on
+/// top, to the pool's east shore.
 static void CrossboneIsle_RideLogEEast(void) {
   s32 column = FIELD_CELL(Actor_Get(ACTOR_LOG_E)->x.fixed);
   s32 row = FIELD_CELL(Actor_Get(ACTOR_LOG_E)->z.fixed);
@@ -1244,8 +1410,11 @@ static void CrossboneIsle_RideLogEEast(void) {
   CrossboneIsle_MoveNorthSouthLogCells(ACTOR_LOG_E, column, row);
 }
 
-/// Walking west on log F rides it west, stopping short of log H or log C where
-/// either lies across its way.
+/// Walking west along the east pool's north-east log rolls it west along the
+/// pool's north edge, with Isaac on top, to the north-west log.
+///
+/// It stops sooner where the north-west log has been rolled east, or the log
+/// from south-east of the island has been rolled up to the north edge.
 static void CrossboneIsle_RideLogFWest(void) {
   s32 column = FIELD_CELL(Actor_Get(ACTOR_LOG_F)->x.fixed);
   s32 row = FIELD_CELL(Actor_Get(ACTOR_LOG_F)->z.fixed);
@@ -1295,7 +1464,8 @@ static void CrossboneIsle_RideLogFWest(void) {
   CrossboneIsle_MoveNorthSouthLogCells(ACTOR_LOG_F, column, row);
 }
 
-/// Walking east on log F rides it back to the pool's east side.
+/// Walking east along the east pool's north-east log rolls it back east along
+/// the north edge, with Isaac on top, to the north-east corner.
 static void CrossboneIsle_RideLogFEast(void) {
   s32 column = FIELD_CELL(Actor_Get(ACTOR_LOG_F)->x.fixed);
   s32 row = FIELD_CELL(Actor_Get(ACTOR_LOG_F)->z.fixed);
@@ -1317,8 +1487,11 @@ static void CrossboneIsle_RideLogFEast(void) {
   CrossboneIsle_MoveNorthSouthLogCells(ACTOR_LOG_F, column, row);
 }
 
-/// Walking west on log H rides it back to the pool's west side, stopping short
-/// of log C or log A where either lies across its way.
+/// Walking west along the east pool's north-west log rolls it back west along
+/// the north edge, with Isaac on top, to the north-west corner.
+///
+/// It stops short of the log from south-east of the island or the south-west
+/// log if either has been rolled up to the north edge.
 static void CrossboneIsle_RideLogHWest(void) {
   s32 column = FIELD_CELL(Actor_Get(ACTOR_LOG_H)->x.fixed);
   s32 row = FIELD_CELL(Actor_Get(ACTOR_LOG_H)->z.fixed);
@@ -1352,8 +1525,12 @@ static void CrossboneIsle_RideLogHWest(void) {
   CrossboneIsle_MoveNorthSouthLogCells(ACTOR_LOG_H, column, row);
 }
 
-/// Walking east on log H rides it east, stopping short of log C or log F where
-/// either lies across its way.
+/// Walking east along the east pool's north-west log rolls it east along the
+/// north edge, with Isaac on top, toward the north-east corner.
+///
+/// It stops short of the north-east log, wherever that has been rolled, or of
+/// the log from south-east of the island if that has been rolled up to the
+/// north edge.
 static void CrossboneIsle_RideLogHEast(void) {
   s32 column = FIELD_CELL(Actor_Get(ACTOR_LOG_H)->x.fixed);
   s32 row = FIELD_CELL(Actor_Get(ACTOR_LOG_H)->z.fixed);
@@ -1401,8 +1578,11 @@ static void CrossboneIsle_RideLogHEast(void) {
   CrossboneIsle_MoveNorthSouthLogCells(ACTOR_LOG_H, column, row);
 }
 
-/// Walking north on log J rides it north, stopping short of log L where it lies
-/// across its way.
+/// Walking north along the west one of the west pool's three south logs rolls
+/// it north up the bay at the pool's south-west, with Isaac on top.
+///
+/// It stops short of the south side log if that has been rolled west into the
+/// bay.
 static void CrossboneIsle_RideLogJNorth(void) {
   s32 column = FIELD_CELL(Actor_Get(ACTOR_LOG_J)->x.fixed);
   s32 row = FIELD_CELL(Actor_Get(ACTOR_LOG_J)->z.fixed);
@@ -1425,7 +1605,8 @@ static void CrossboneIsle_RideLogJNorth(void) {
   CrossboneIsle_MoveWestEastLogCells(ACTOR_LOG_J, column, row);
 }
 
-/// Walking south on log J rides it back to the south shore.
+/// Walking south along the west one of the west pool's three south logs rolls
+/// it back south, with Isaac on top, to the south shore.
 static void CrossboneIsle_RideLogJSouth(void) {
   s32 column = FIELD_CELL(Actor_Get(ACTOR_LOG_J)->x.fixed);
   s32 row = FIELD_CELL(Actor_Get(ACTOR_LOG_J)->z.fixed);
@@ -1440,8 +1621,11 @@ static void CrossboneIsle_RideLogJSouth(void) {
   CrossboneIsle_MoveWestEastLogCells(ACTOR_LOG_J, column, row);
 }
 
-/// Walking north on log K rides it north, stopping short of log L, log G or
-/// log I where one lies across its way.
+/// Walking north along the middle one of the west pool's three south logs
+/// rolls it north up the pool, with Isaac on top, to the north shore.
+///
+/// It stops short of the first of the pool's side logs that has been rolled
+/// west across its way.
 static void CrossboneIsle_RideLogKNorth(void) {
   s32 column;
   s32 row;
@@ -1513,8 +1697,11 @@ static void CrossboneIsle_RideLogKNorth(void) {
   MapGrid_CopyCellAttributes(0, 0, 3, 1, column - 1, row);
 }
 
-/// Walking south on log K rides it back to the south shore, stopping short of
-/// log G or log L where either lies across its way.
+/// Walking south along the middle one of the west pool's three south logs
+/// rolls it back south, with Isaac on top, to the south shore.
+///
+/// It stops short of the middle or south side log if either has been rolled
+/// west across its way.
 static void CrossboneIsle_RideLogKSouth(void) {
   s32 column;
   s32 row;
@@ -1570,8 +1757,11 @@ static void CrossboneIsle_RideLogKSouth(void) {
   MapGrid_CopyCellAttributes(0, 0, 3, 1, column - 1, row);
 }
 
-/// Walking north on log B rides it north, stopping short of log L, log G or
-/// log I where one lies across its way.
+/// Walking north along the east one of the west pool's three south logs rolls
+/// it north up the pool, with Isaac on top, to the north shore.
+///
+/// It stops short of the first of the pool's side logs that has been rolled
+/// west across its way.
 static void CrossboneIsle_RideLogBNorth(void) {
   s32 column;
   s32 row;
@@ -1644,8 +1834,11 @@ static void CrossboneIsle_RideLogBNorth(void) {
   MapGrid_CopyCellAttributes(0, 0, 3, 1, column - 1, row);
 }
 
-/// Walking south on log B rides it back to the south shore, stopping short of
-/// log I, log G or log L where one lies across its way.
+/// Walking south along the east one of the west pool's three south logs rolls
+/// it back south, with Isaac on top, to the south shore.
+///
+/// It stops short of the first of the pool's side logs that has been rolled
+/// west across its way.
 static void CrossboneIsle_RideLogBSouth(void) {
   s32 column;
   s32 row;
@@ -1707,8 +1900,11 @@ static void CrossboneIsle_RideLogBSouth(void) {
   MapGrid_CopyCellAttributes(0, 0, 3, 1, column - 1, row);
 }
 
-/// Walking west on log L rides it west, stopping short of log B, log K or
-/// log J where one lies across its way.
+/// Walking west along the south one of the west pool's three side logs rolls
+/// it west across the pool, with Isaac on top, into the bay at its south-west.
+///
+/// It stops short of the first of the pool's south logs that has been rolled
+/// north across its way.
 static void CrossboneIsle_RideLogLWest(void) {
   s32 column;
   s32 row;
@@ -1779,8 +1975,11 @@ static void CrossboneIsle_RideLogLWest(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 3, column, row - 1);
 }
 
-/// Walking east on log L rides it back east, stopping short of log K or log B
-/// where either lies across its way.
+/// Walking east along the south one of the west pool's three side logs rolls
+/// it back east, with Isaac on top, to the pool's east shore.
+///
+/// It stops short of the middle or east south log if either has been rolled
+/// north across its way.
 static void CrossboneIsle_RideLogLEast(void) {
   s32 column;
   s32 row;
@@ -1832,8 +2031,11 @@ static void CrossboneIsle_RideLogLEast(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 3, column, row - 1);
 }
 
-/// Walking west on log G rides it west, stopping short of log B or log K where
-/// either lies across its way.
+/// Walking west along the middle one of the west pool's three side logs rolls
+/// it west across the pool, with Isaac on top, to its west side.
+///
+/// It stops short of the east or middle south log if either has been rolled
+/// north across its way.
 static void CrossboneIsle_RideLogGWest(void) {
   s32 column;
   s32 row;
@@ -1886,8 +2088,11 @@ static void CrossboneIsle_RideLogGWest(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 3, column, footprintRow);
 }
 
-/// Walking east on log G rides it back east, stopping short of log B or log K
-/// where either lies across its way.
+/// Walking east along the middle one of the west pool's three side logs rolls
+/// it back east, with Isaac on top, to the pool's east shore.
+///
+/// It stops short of the east or middle south log if either has been rolled
+/// north across its way.
 static void CrossboneIsle_RideLogGEast(void) {
   s32 column;
   s32 row;
@@ -1933,8 +2138,11 @@ static void CrossboneIsle_RideLogGEast(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 3, column, footprintRow);
 }
 
-/// Walking west on log I rides it west, stopping short of log B or log K where
-/// either lies across its way.
+/// Walking west along the north one of the west pool's three side logs rolls
+/// it west across the north of the pool, with Isaac on top, to its west side.
+///
+/// It stops short of the east or middle south log if either has been rolled
+/// north across its way.
 static void CrossboneIsle_RideLogIWest(void) {
   s32 column;
   s32 row;
@@ -1984,8 +2192,11 @@ static void CrossboneIsle_RideLogIWest(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 3, column, footprintRow);
 }
 
-/// Walking east on log I rides it back east, stopping short of log B where it
-/// lies across its way.
+/// Walking east along the north one of the west pool's three side logs rolls
+/// it back east, with Isaac on top, to the pool's east shore.
+///
+/// It stops short of the east south log if that has been rolled north across
+/// its way.
 static void CrossboneIsle_RideLogIEast(void) {
   s32 column;
   s32 row;
@@ -2212,19 +2423,19 @@ struct ActorPlacement gCrossboneIsle_FloorActorPlacements[] = {
 };
 
 struct Trigger gCrossboneIsle_FloorTriggers[] = {
-    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, FLOOR_TO_PREVIOUS_ROOM },
-    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, FLOOR_TO_NEXT_ROOM },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(CrossboneIsle_OpenEastDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(CrossboneIsle_OpenWestDoor) },
-    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 20, CONDITION_ALWAYS, EVENT(CrossboneIsle_PushPillar) },
+    { TRIGGER_EXIT, FLOOR_TO_PREVIOUS_ROOM, CONDITION_ALWAYS, FLOOR_TO_PREVIOUS_ROOM },
+    { TRIGGER_EXIT, FLOOR_TO_NEXT_ROOM, CONDITION_ALWAYS, FLOOR_TO_NEXT_ROOM },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), FLOOR_TO_SIDE_ROOM_EAST, CONDITION_ALWAYS, EVENT(CrossboneIsle_OpenEastDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), FLOOR_TO_SIDE_ROOM_WEST, CONDITION_ALWAYS, EVENT(CrossboneIsle_OpenWestDoor) },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_CROSSBONE_ISLE_WEST_OF_PILLAR, CONDITION_ALWAYS, EVENT(CrossboneIsle_PushPillar) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SINKING_PILLAR, CONDITION_ALWAYS, EVENT(CrossboneIsle_MovePillar) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), TREASURE_SPOT_CROSSBONE_ISLE_FIRST_FLOOR_MIMIC, FLAG_CROSSBONE_ISLE_FIRST_FLOOR_MIMIC_BEATEN, FIND_MIMIC | 4 },
     { TRIGGER_TABLE_END },
 };
 
 struct Trigger gCrossboneIsle_CaveEntranceTriggers[] = {
-    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_CAVE_ENTRANCE_TO_CROSSBONE_ISLE },
-    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_CAVE_ENTRANCE_TO_CROSSBONE_ISLE_FIRST_FLOOR },
+    { TRIGGER_EXIT, CROSSBONE_ISLE_CAVE_ENTRANCE_TO_CROSSBONE_ISLE, CONDITION_ALWAYS, CROSSBONE_ISLE_CAVE_ENTRANCE_TO_CROSSBONE_ISLE },
+    { TRIGGER_EXIT, CROSSBONE_ISLE_CAVE_ENTRANCE_TO_CROSSBONE_ISLE_FIRST_FLOOR, CONDITION_ALWAYS, CROSSBONE_ISLE_CAVE_ENTRANCE_TO_CROSSBONE_ISLE_FIRST_FLOOR },
     { TRIGGER_TABLE_END },
 };
 
@@ -2238,10 +2449,10 @@ struct Trigger gCrossboneIsle_IsleTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY + 1, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 1, EVENT(CrossboneIsle_UnusedBlowAwaySecondIvy) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY + 2, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 2, EVENT(CrossboneIsle_BlowAwayThirdIvy) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY + 3, FLAG_CROSSBONE_ISLE_FIRST_IVY_BLOWN_AWAY + 3, EVENT(CrossboneIsle_UnusedBlowAwayFourthIvy) },
-    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_TO_WORLD_MAP },
-    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_TO_CROSSBONE_ISLE_CAVE_ENTRANCE },
-    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 20, CONDITION_ALWAYS, EVENT(CrossboneIsle_PushIsleLog) },
-    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 10, CONDITION_ALWAYS, EVENT(CrossboneIsle_PushIsleLog) },
+    { TRIGGER_EXIT, CROSSBONE_ISLE_TO_WORLD_MAP, CONDITION_ALWAYS, CROSSBONE_ISLE_TO_WORLD_MAP },
+    { TRIGGER_EXIT, CROSSBONE_ISLE_TO_CROSSBONE_ISLE_CAVE_ENTRANCE, CONDITION_ALWAYS, CROSSBONE_ISLE_TO_CROSSBONE_ISLE_CAVE_ENTRANCE },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_CROSSBONE_ISLE_BESIDE_WEST_LOG, CONDITION_ALWAYS, EVENT(CrossboneIsle_PushIsleLog) },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_CROSSBONE_ISLE_BESIDE_EAST_LOG, CONDITION_ALWAYS, EVENT(CrossboneIsle_PushIsleLog) },
     { EXAMINE_CHEST_FACING(FACING_WEST), TREASURE_SPOT_CROSSBONE_ISLE_COIN, FLAG_CROSSBONE_ISLE_COIN, FIND_COINS(1) },
     { EXAMINE_CHEST_FACING(FACING_NORTH), TREASURE_SPOT_CROSSBONE_ISLE_COIN, FLAG_CROSSBONE_ISLE_COIN, FIND_COINS(1) },
     { EXAMINE_CHEST_FACING(FACING_NORTHWEST), TREASURE_SPOT_CROSSBONE_ISLE_COIN, FLAG_CROSSBONE_ISLE_COIN, FIND_COINS(1) },
@@ -2252,12 +2463,12 @@ struct Trigger gCrossboneIsle_IsleTriggers[] = {
 };
 
 struct Trigger gCrossboneIsle_FloatingLogsTriggers[] = {
-    { TRIGGER_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_FLOATING_LOGS_TO_CROSSBONE_ISLE_NINTH_FLOOR_EAST },
-    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_FLOATING_LOGS_TO_CROSSBONE_ISLE_NINTH_FLOOR_WEST },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 40, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopWest) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 41, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopEast) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 42, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopSouth) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 43, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopNorth) },
+    { TRIGGER_EXIT, CROSSBONE_ISLE_FLOATING_LOGS_TO_CROSSBONE_ISLE_NINTH_FLOOR_EAST, CONDITION_ALWAYS, CROSSBONE_ISLE_FLOATING_LOGS_TO_CROSSBONE_ISLE_NINTH_FLOOR_EAST },
+    { TRIGGER_EXIT, CROSSBONE_ISLE_FLOATING_LOGS_TO_CROSSBONE_ISLE_NINTH_FLOOR_WEST, CONDITION_ALWAYS, CROSSBONE_ISLE_FLOATING_LOGS_TO_CROSSBONE_ISLE_NINTH_FLOOR_WEST },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_CROSSBONE_ISLE_SHORE_HOP_WEST, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopWest) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_CROSSBONE_ISLE_SHORE_HOP_EAST, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopEast) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_CROSSBONE_ISLE_SHORE_HOP_SOUTH, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopSouth) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_CROSSBONE_ISLE_SHORE_HOP_NORTH, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopNorth) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_CROSSBONE_ISLE_LOG_A, CONDITION_ALWAYS, EVENT(CrossboneIsle_RideLogANorth) },
     { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_CROSSBONE_ISLE_LOG_A, CONDITION_ALWAYS, EVENT(CrossboneIsle_RideLogASouth) },
     { STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_CROSSBONE_ISLE_LOG_A, CONDITION_ALWAYS, EVENT(CrossboneIsle_HopEast) },
@@ -2327,17 +2538,21 @@ struct Trigger gCrossboneIsle_FloatingLogsTriggers[] = {
 // clang-format on
 
 struct Trigger gCrossboneIsle_PierTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS,
-     CROSSBONE_ISLE_PIER_TO_CROSSBONE_ISLE_NINTH_FLOOR},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_PIER_TO_PIRATE_SHIP},
+    {TRIGGER_EXIT, CROSSBONE_ISLE_PIER_TO_CROSSBONE_ISLE_NINTH_FLOOR,
+     CONDITION_ALWAYS, CROSSBONE_ISLE_PIER_TO_CROSSBONE_ISLE_NINTH_FLOOR},
+    {TRIGGER_EXIT, CROSSBONE_ISLE_PIER_TO_PIRATE_SHIP, CONDITION_ALWAYS,
+     CROSSBONE_ISLE_PIER_TO_PIRATE_SHIP},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gCrossboneIsle_PirateShipTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, PIRATE_SHIP_TO_CROSSBONE_ISLE_PIER},
-    {TRIGGER_STEP, 10, FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED,
+    {TRIGGER_EXIT, PIRATE_SHIP_TO_CROSSBONE_ISLE_PIER, CONDITION_ALWAYS,
+     PIRATE_SHIP_TO_CROSSBONE_ISLE_PIER},
+    {TRIGGER_STEP, CELL_BEHAVIOR_PIRATE_SHIP_TOP_OF_WEST_STAIRS,
+     FLAG_CROSSBONE_ISLE_DEADBEARD_DEFEATED,
      EVENT(CrossboneIsle_FightDeadbeard)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH),
+     CELL_BEHAVIOR_PIRATE_SHIP_BESIDE_MIMIC, CONDITION_ALWAYS,
      EVENT(CrossboneIsle_HopSouth)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), TREASURE_SPOT_PIRATE_SHIP_DEMON_MAIL,
      FLAG_PIRATE_SHIP_DEMON_MAIL, FIND_ITEM(ITEM_DEMON_MAIL)},

@@ -1677,7 +1677,7 @@ void GaiaRockInside_PlaceDollOnFirstAltar(void) {
   Actor_SetAnimation(ACTOR_FIRST_ALTAR_WEST_FACE, 3);
   Actor_SetAnimation(ACTOR_FIRST_ALTAR_EAST_FACE, 3);
   FieldEvent_Wait(40);
-  Event_PlaySound(SE_191);
+  Event_PlaySound(SE_TABLET_RISE_HIGH);
   if (!Event_GetFlag(FLAG_FIRST_ALTAR_FACES_MOVED)) {
     for (i = 0; i < FACE_TREMBLE_FRAMES; i++) {
       westFace->velocityY = Random16();
@@ -1756,7 +1756,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
   Event_Wait(30);
   Actor_SetAnimationById(ACTOR_WEST_FACE, 3);
   Event_Wait(40);
-  Sound_Play(SE_191);
+  Sound_Play(SE_TABLET_RISE_HIGH);
   if (!GameFlag_Get(FLAG_WEST_ALTAR_SUNBEAM)) {
     for (i = 0; i < FACE_TREMBLE_FRAMES; i++) {
       actor->velocityY = Random16();
@@ -1852,7 +1852,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
   Event_Wait(30);
   Actor_SetAnimationById(ACTOR_EAST_FACE, 3);
   Event_Wait(40);
-  Sound_Play(SE_191);
+  Sound_Play(SE_TABLET_RISE_HIGH);
   if (!GameFlag_Get(FLAG_EAST_ALTAR_SUNBEAM)) {
     for (i = 0; i < FACE_TREMBLE_FRAMES; i++) {
       actor->velocityY = Random16();
@@ -1949,7 +1949,7 @@ void GaiaRockInside_PlaceDollOnAltarAltar(void) {
   Event_Wait(30);
   Actor_SetAnimationById(ACTOR_ALTAR_FACE, 3);
   Event_Wait(40);
-  Sound_Play(SE_191);
+  Sound_Play(SE_TABLET_RISE_HIGH);
   if (!GameFlag_Get(FLAG_ALTAR_ROOM_SUNBEAM)) {
     for (i = 0; i < FACE_TREMBLE_FRAMES; i++) {
       actor->velocityY = Random16();
@@ -2052,10 +2052,10 @@ s32 GaiaRockInside_RecordStumpSpots(void) {
 /// reaches its west trap hold, drawn at cell (24, 37) (cell (24, 101) of the
 /// wall's overhead layer): a yellow stone head with red eyes bursts out of the
 /// wall under him in a shower of rocks, he flails, and he is left standing on
-/// it, no longer climbing (GaiaRockInside_StoneHeadBurstsOut).
+/// it, no longer climbing (GaiaRockInside_StoneHeadBurstsOut). Unlike at the
+/// stone faces outside, he does not fall to the floor: he stays standing up
+/// there beside the head.
 void GaiaRockInside_ClimbOntoWestStoneHead(void) {
-  // XXX: the recording ends there; whether he then falls to the floor, as the
-  // outside's stone faces make him, would take a recording that runs on.
   GaiaRockInside_StoneHeadBurstsOut(ACTOR_STATUE_A, FLAG_STATUE_A_RISEN);
 }
 
@@ -3927,7 +3927,7 @@ s32 gGaiaRockInside_SusaFeedsSerpentScript[] = {
 };
 
 struct ActorPlacement gGaiaRockInside_Placements[] = {
-    ACTOR_PLACEMENT(394, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 104, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_ARROW_PLANT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 104, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -3983,9 +3983,9 @@ struct ActorPlacement gGaiaRockInside_AltarActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_DEMON_MASK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 400, 0, 368, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_ALTAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 336, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_SPROUTING_LEAVES, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 680, 0, 648, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(378, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(378, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(378, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_HEAD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_HEAD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_HEAD, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_DOLL, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_ALTAR, CONDITION_ALWAYS, (s32)gGaiaRockInside_IdleScript, 704, 0, 384, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_GANGWAY, CONDITION_ALWAYS, (s32)gGaiaRockInside_IdleScript, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),

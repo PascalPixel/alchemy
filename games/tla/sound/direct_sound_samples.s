@@ -240,9 +240,9 @@ Sound_WaveStatueRise:
 	.global Sound_WaveSpinAway
 Sound_WaveSpinAway:
 	.incbin "games/tla/sound/direct_sound_samples/spin_away.pcm8.bin"
-	.global Sound_Wave69
-Sound_Wave69:
-	.incbin "games/tla/sound/direct_sound_samples/wave_69.pcm8.bin"
+	.global Sound_WaveBirdCall
+Sound_WaveBirdCall:
+	.incbin "games/tla/sound/direct_sound_samples/bird_call.pcm8.bin"
 	.global Sound_WaveWade
 Sound_WaveWade:
 	.incbin "games/tla/sound/direct_sound_samples/wade.pcm8.bin"

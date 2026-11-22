@@ -8,26 +8,26 @@ LuckyDice_Board:
 	.global LuckyDice_Sprites
 LuckyDice_Sprites:
 	.ifeq EDITION_INTERNATIONAL
-	.incbin "games/tbs/src/graphics/lucky_dice/sprites_1_ja.gbapal"
+	.incbin "games/tbs/src/graphics/lucky_dice/rolling_die_ja.gbapal"
 	.incbin "games/tbs/src/graphics/lucky_dice/sprites_ja.parts.lz"
 	.else
 	.ifdef TBS_EDITION_DE
-	.incbin "games/tbs/src/graphics/lucky_dice/sprites_1_de.gbapal"
+	.incbin "games/tbs/src/graphics/lucky_dice/rolling_die_de.gbapal"
 	.incbin "games/tbs/src/graphics/lucky_dice/sprites_de.parts.lz"
 	.else
 	.ifdef TBS_EDITION_ES
-	.incbin "games/tbs/src/graphics/lucky_dice/sprites_1_es.gbapal"
+	.incbin "games/tbs/src/graphics/lucky_dice/rolling_die_es.gbapal"
 	.incbin "games/tbs/src/graphics/lucky_dice/sprites_es.parts.lz"
 	.else
 	.ifdef TBS_EDITION_FR
-	.incbin "games/tbs/src/graphics/lucky_dice/sprites_1_fr.gbapal"
+	.incbin "games/tbs/src/graphics/lucky_dice/rolling_die_fr.gbapal"
 	.incbin "games/tbs/src/graphics/lucky_dice/sprites_fr.parts.lz"
 	.else
 	.ifdef TBS_EDITION_IT
-	.incbin "games/tbs/src/graphics/lucky_dice/sprites_1_it.gbapal"
+	.incbin "games/tbs/src/graphics/lucky_dice/rolling_die_it.gbapal"
 	.incbin "games/tbs/src/graphics/lucky_dice/sprites_it.parts.lz"
 	.else
-	.incbin "games/tbs/src/graphics/lucky_dice/sprites_1.gbapal"
+	.incbin "games/tbs/src/graphics/lucky_dice/rolling_die.gbapal"
 	.incbin "games/tbs/src/graphics/lucky_dice/sprites.parts.lz"
 	.endif
 	.endif

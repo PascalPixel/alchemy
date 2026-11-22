@@ -1,6 +1,7 @@
 /// @file
-/// Vault, before and after the thieves are caught: the doorway to the Sanctum,
-/// which opens in two frames as the leader walks into it facing north. Both
+/// Vault, before and after the thieves are caught: the Sanctum's double door
+/// in the cliff in the west of town, which opens in two frames as the leader
+/// walks into it facing north. Both
 /// scenes give that exit one number, so the shared code names it
 /// VAULT_TO_SANCTUM.
 
@@ -21,8 +22,9 @@ static inline void Vault_DrawDoorway(s32 sourceColumn) {
                       VAULT_DOOR_HALF_SIZE);
 }
 
-/// Walking north into CELL_BEHAVIOR_VAULT_SANCTUM_DOORWAY opens the doorway to
-/// the Sanctum. The leader passes behind the doorframe through the exit.
+/// Isaac walks up to the Sanctum's wooden double door, in the cliff in the west
+/// of Vault (cells (3, 18) and (4, 18)). It thumps open and he goes into the
+/// Sanctum, vanishing into the doorway as he walks in.
 static void Vault_OpenDoorwayAndEnter(void) {
   struct Actor *actor = Actor_GetById(ACTOR_PARTY_LEADER);
   struct Sprite *sprite = actor->sprite;

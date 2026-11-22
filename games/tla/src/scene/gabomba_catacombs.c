@@ -244,9 +244,11 @@ void GabombaCatacombs_UncoverEastTeleportStone(void) {
 
 /// Cyclone on the teleport stone in the patch of weeds in the south of the
 /// first cave, cell (13, 24), whirls Felix down into the cave below, to its
-/// south. Unlike the other two stones', no picture is redrawn here.
-// XXX: whether the south stone already shows once its weeds are scattered;
-// a render of Cyclone cast beside cell (13, 24) would settle it.
+/// south. Unlike the other two stones, this one is never hidden: it lies bare
+/// among the weeds from the start, so no picture is redrawn here. The cast
+/// scatters leaves, the whirlwind carries Felix onto the stone and spins him
+/// down through it, and he lands on the path above the ladder in the cave
+/// below; the weeds around the stone stay.
 void GabombaCatacombs_TakeSouthTeleportStone(void) {
   Import_EventSetExitRequest(
       GABOMBA_CATACOMBS_TELEPORTERS_TO_GABOMBA_CATACOMBS_MUD_SOUTH);

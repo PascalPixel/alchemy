@@ -4,14 +4,14 @@
 @ The three icon bases
 	.global gIcon_BasePointerTable
 gIcon_BasePointerTable:
-	.4byte Icon_Base0, Icon_Base1, Icon_Base2
+	.4byte Icon_CommandFrame, Icon_CommandFrameRed, Icon_ItemFrame
 	.4byte -1
-Icon_Base0:
-	.incbin "games/tbs/src/graphics/ui/marks/base_0.icon4"
-Icon_Base1:
-	.incbin "games/tbs/src/graphics/ui/marks/base_1.icon4"
-Icon_Base2:
-	.incbin "games/tbs/src/graphics/ui/marks/base_2.icon4"
+Icon_CommandFrame:
+	.incbin "games/tbs/src/graphics/ui/marks/command_frame.icon4"
+Icon_CommandFrameRed:
+	.incbin "games/tbs/src/graphics/ui/marks/command_frame_red.icon4"
+Icon_ItemFrame:
+	.incbin "games/tbs/src/graphics/ui/marks/item_frame.icon4"
 	.balign 4, 0
 
 @ The equipped, cross and phi marks

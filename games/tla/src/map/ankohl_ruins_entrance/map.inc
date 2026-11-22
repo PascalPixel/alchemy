@@ -29,14 +29,14 @@ Field_AnkohlRuinsEntrance:
 .LField_AnkohlRuinsEntrance_SCENE:
 	.incbin "games/tla/src/map/ankohl_ruins_entrance/scene.scene.lz"
 	.balign 4, 0
-	.global Tileset_PaletteAnkohlRuins7A
-Tileset_PaletteAnkohlRuins7A:
-	.incbin "games/tla/src/graphics/tileset/palettes/ankohl_ruins_7_a.gbapal.lz"
+	.global Tileset_PaletteAnkohlRuinsEntrance
+Tileset_PaletteAnkohlRuinsEntrance:
+	.incbin "games/tla/src/graphics/tileset/palettes/ankohl_ruins_entrance.gbapal.lz"
 	.byte 0x58, 0xf9	@ PACKER: left in the buffer by Field_AnkohlRuinsEntrance+0x102
-	.global Tileset_PaletteAnkohlRuins7B
-Tileset_PaletteAnkohlRuins7B:
-	.incbin "games/tla/src/graphics/tileset/palettes/ankohl_ruins_7_b.gbapal.lz"
+	.global Tileset_PaletteShrineOfTheSeaGodRightProng
+Tileset_PaletteShrineOfTheSeaGodRightProng:
+	.incbin "games/tla/src/graphics/tileset/palettes/shrine_of_the_sea_god_right_prong.gbapal.lz"
 	.byte 0x05, 0x08	@ PACKER: unused post-stream residue; Decompress_TaggedLz uses decoded RAM and output length; writer unknown
-	.global Tileset_PaletteAnkohlRuins7C
-Tileset_PaletteAnkohlRuins7C:
-	.incbin "games/tla/src/graphics/tileset/palettes/ankohl_ruins_7_c.gbapal.lz"
+	.global Tileset_PaletteLemurianShipTiller
+Tileset_PaletteLemurianShipTiller:
+	.incbin "games/tla/src/graphics/tileset/palettes/lemurian_ship_tiller.gbapal.lz"

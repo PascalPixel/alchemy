@@ -218,12 +218,12 @@ void JupiterLighthouse_StepOnLowerCrackedTile(s32 arg) {
 }
 
 /// Felix steps on a cracked tile in the cracked hall: it cracks, and at the
-/// second step it gives way and the party falls to the room below. On the two
-/// tiles under the hall's south ledge, cells (18, 34) and (8, 39), he is drawn
-/// behind the ledge (`FieldActor_SetSpritePriority`) as he falls.
+/// second step it gives way and the party falls to the room below. Two of the
+/// tiles lie just north of the great white wind-face statues carved into the
+/// hall's walls, cell (18, 34) against the east wall and cell (8, 39) against
+/// the west; on those he is drawn behind the statue's head
+/// (`FieldActor_SetSpritePriority`) as he sinks through the hole.
 void JupiterLighthouse_StepOnUpperCrackedTile(s32 arg) {
-  // XXX: which ledge cells (18, 34) and (8, 39) sit under; a recording of a
-  // fall through either would settle it.
   struct Actor *leader;
   s32 x;
   s32 z;

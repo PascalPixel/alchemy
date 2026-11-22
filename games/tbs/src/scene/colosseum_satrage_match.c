@@ -5,14 +5,17 @@
 ///
 /// Isaac has won the first match, and Satrage is the fourth-ranked warrior.
 ///
-/// It works as Colosseum Final 1 does (colosseum_azart_match.c), and is reached
-/// by the Colosseum's west passage. The stages run from east to west, through
-/// the Mini-Maze, the shifting floor stage, the Log-Rolling Stage, The Wall and
-/// the Board Walk.
+/// It works as Colosseum Final 1 does (colosseum_azart_match.c). The stages
+/// run from east to west, one after another: the Mini-Maze, where Isaac starts
+/// among three stone pillars; the shifting floor stage, four lifts across a
+/// channel of water; the Log-Rolling Stage, two logs to ride across a pool;
+/// The Wall, a high stone wall to climb, with a row of stone posts at its foot;
+/// and the Board Walk, a pool whose logs lie across the way, with a channel of
+/// white platforms along its south edge. The arena is in the far west.
 ///
 /// Isaac comes here three times, each at its own entrance.
-/// Scene_Initialize restores the stages from their temporary
-/// flags (FLAG_OBSTACLE_KNOCKED_DOWN to FLAG_WALL_PILLAR_MOVED, and the
+/// Scene_Initialize restores what the friends changed on the stages from their
+/// temporary flags (FLAG_LOG_KNOCKED_DOWN to FLAG_WALL_PILLAR_MOVED, and the
 /// Mini-Maze pillars' columns from FLAG_MINI_MAZE_FIRST_PILLAR_COLUMN). Then
 /// it sets up the visit its entrance stands for.
 ///
@@ -20,14 +23,15 @@
 ///   (ColosseumSatrageMatch_IntroduceSecondFinals). The guide only greets the
 ///   party, since the first finals match's guide explained the rules. The five
 ///   stages' attendants describe their stages and offer a place for each
-///   friend to cheer. The guide then sends Isaac back to the west passage
+///   friend to cheer. The guide then sends Isaac back into the Colosseum
 ///   (COLOSSEUM_SATRAGE_MATCH_TO_COLOSSEUM_SOUTH).
 /// - COLOSSEUM_SATRAGE_MATCH_FROM_COLOSSEUM_EAST, `Lend a Hand`. Garet, Ivan
 ///   and Mia in turn may use Psynergy on the stages. Move shifts the
-///   Mini-Maze's stone pillars and the stone pillar by The Wall. Halt stops the
-///   lifts' operator and with him the shifting floor. Frost freezes two puddles
-///   on the Log-Rolling Stage. Growth grows a plant up The Wall. Force knocks
-///   a log down onto the Board Walk. After Mia,
+///   Mini-Maze's stone pillars and the stone pillar at the foot of The Wall.
+///   Halt stops the lifts' operator and with him the shifting floor. Frost
+///   freezes the Log-Rolling Stage's two puddles into pillars of ice. Growth
+///   grows the sprout at the foot of The Wall into a vine. Force knocks the
+///   tall log by the Board Walk's channel over into the water. After Mia,
 ///   COLOSSEUM_SATRAGE_MATCH_LEND_A_HAND_TO_RACE starts the race.
 /// - COLOSSEUM_SATRAGE_MATCH_RACE_FROM_LEND_A_HAND, the race against Satrage,
 ///   who follows a recorded path, after the lettering `The 2nd Match` and a
@@ -41,19 +45,17 @@
 /// FLAG_COLOSSO_SECOND_MATCH_WON.
 ///
 /// A loss returns to COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_LOST, and
-/// COLOSSEUM_SATRAGE_MATCH_TO_BABI_PALACE wakes the party in Babi's Palace from
-/// what it takes for a dream.
+/// COLOSSEUM_SATRAGE_MATCH_TO_BABI_PALACE wakes the party in Babi's Palace,
+/// where Isaac's friends tell him he was only dreaming of the finals.
 ///
 /// The shifting floor's four lifts run on every visit until Halt stops them
 /// (ColosseumSatrageMatch_UpdateLifts). Every
-/// COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_FRAMES the phase flips. In one phase all
-/// four lifts are lined up across the water. In the other, two are up and two
-/// down, by turns.
-///
-/// Each frame the task copies cell behaviors into row 13 from column 58 and
-/// into cell (58, 11). It makes one pair of copies by phase once the last lift
-/// has stopped, another while it moves. Each copied cell is a wall, a jump
-/// across or open ground, as the lifts line up or part.
+/// COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_FRAMES they change places: for a while
+/// all four stand in a line across the channel, cells (58, 13) to (64, 13),
+/// and Isaac can hop from one to the next; then the first and third slide
+/// north and the second and fourth south, and the line is broken. Only while
+/// they stand still in a line are their cells squares to hop onto
+/// (CELL_BEHAVIOR_JUMP_FORWARD); otherwise they are walls.
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -225,27 +227,30 @@ static void Colosso_PushActorAhead(void);
 enum ColosseumSatrageMatchActorId {
   /// Satrage, racing Isaac to the arena.
   ACTOR_OPPONENT = ACTOR_FIRST_PLACED,
-  /// The Board Walk's two stone pillars, on which Move does nothing.
+  /// The Board Walk's two stone pillars, on the ledge along the north edge of
+  /// its pool. The eastern one stands before the narrow channel that holds a
+  /// chest. Move does nothing to them.
   ACTOR_BOARD_WALK_WEST_PILLAR,
   ACTOR_BOARD_WALK_EAST_PILLAR,
-  /// The stone pillar by The Wall, pushed or moved with Move.
+  /// The stone pillar on the ledge at the foot of The Wall, beside the chest
+  /// holding a Smoke Bomb.
   ACTOR_WALL_PILLAR,
-  /// The Mini-Maze's three stone pillars, pushed or moved with Move.
-  /// Scene_Initialize stands them west to east, at columns 73,
-  /// 76 and 79, until they have been moved.
+  /// The Mini-Maze's three stone pillars, in a row along the stage's south
+  /// edge where the race starts, which Move shifts. Scene_Initialize stands
+  /// them west to east at columns 73, 76 and 79 until they have been moved.
   ACTOR_MINI_MAZE_FIRST_PILLAR,
-  /// The Board Walk's two logs, the western and the eastern, in the room of its
-  /// stone pillars
-  /// (https://alchemy.pascalpixel.com/places/colosseum-satrage-match/map-1.png).
-  /// A third, ACTOR_ROLLING_LOG_CENTER, is placed at (0, 0) and never moved
-  /// there. ColosseumSatrageMatch_UnusedRollCenterLogNorth, its South twin and
-  /// its row in the collision rebuild remain for it.
+  /// The Board Walk's two logs, the western and the eastern, lying north to
+  /// south in its pool below the stone pillars' ledge. A third,
+  /// ACTOR_ROLLING_LOG_CENTER, is placed at (0, 0) and never moved there.
+  /// ColosseumSatrageMatch_UnusedRollCenterLogNorth, its South twin and its row
+  /// in the collision rebuild remain for it.
   ACTOR_ROLLING_LOG_WEST = ACTOR_MINI_MAZE_FIRST_PILLAR + 3,
   ACTOR_ROLLING_LOG_EAST,
   ACTOR_ROLLING_LOG_CENTER,
-  /// The log Force strikes to knock ACTOR_FALLING_LOG down.
+  /// What Force is cast at to knock ACTOR_FALLING_LOG over: the tall log's
+  /// place, at the east end of the Board Walk's channel.
   ACTOR_FORCE_TARGET,
-  /// The plant Growth grows up The Wall.
+  /// The sprout at the foot of The Wall, which Growth grows into a vine.
   ACTOR_GROWTH_PLANT,
   /// The Log-Rolling Stage's two puddles, which Frost freezes. They are drawn
   /// as the puddle Frost freezes in Lunpa (lunpa.h's SPRITE_PUDDLE).
@@ -261,7 +266,8 @@ enum ColosseumSatrageMatchActorId {
   /// Board Walk's south edge, drawn underfoot. Nothing but
   /// Scene_Initialize touches them.
   ACTOR_BOARD_WALK_FIRST_PLATFORM,
-  /// Knocked down onto the Board Walk by Force on ACTOR_FORCE_TARGET.
+  /// The tall log standing on end at the east end of the Board Walk's
+  /// channel, which Force on ACTOR_FORCE_TARGET knocks over into the water.
   ACTOR_FALLING_LOG = ACTOR_BOARD_WALK_FIRST_PLATFORM + 4,
   /// A young man with fair hair who works the shifting floor stage's lifts.
   ACTOR_LIFT_OPERATOR,
@@ -287,13 +293,12 @@ enum ColosseumSatrageMatchActorId {
 ///
 /// Scene_Initialize restores them.
 enum {
-  FLAG_OBSTACLE_KNOCKED_DOWN =
-      FLAG_AREA_TEMP_30,                       ///< by Force, on the Board Walk
-  FLAG_WEST_TARGET_FROZEN = FLAG_AREA_TEMP_31, ///< by Frost
-  FLAG_EAST_TARGET_FROZEN = FLAG_AREA_TEMP_32, ///< by Frost
+  FLAG_LOG_KNOCKED_DOWN = FLAG_AREA_TEMP_30,   ///< by Force, on the Board Walk
+  FLAG_WEST_PUDDLE_FROZEN = FLAG_AREA_TEMP_31, ///< by Frost
+  FLAG_EAST_PUDDLE_FROZEN = FLAG_AREA_TEMP_32, ///< by Frost
   FLAG_PLANT_GROWN = FLAG_AREA_TEMP_33,        ///< by Growth, up The Wall
   FLAG_LIFTS_HALTED = FLAG_AREA_TEMP_34, ///< by Halt on ACTOR_LIFT_OPERATOR
-  /// The stone pillar by The Wall stands at column 36.
+  /// The stone pillar at the foot of The Wall stands a cell east of the chest.
   FLAG_WALL_PILLAR_MOVED = FLAG_AREA_TEMP_35,
   /// The bytes of flags that keep the Mini-Maze's three pillars' columns.
   FLAG_MINI_MAZE_FIRST_PILLAR_COLUMN = FLAG_AREA_TEMP_40,
@@ -306,6 +311,34 @@ enum FallingLogAnimation {
   FALLING_LOG_ANIMATION_STANDING = 3, ///< standing on end
   /// Lying across the water, bobbing.
   FALLING_LOG_ANIMATION_FALLEN = 4
+};
+
+/// The cell behaviours the stages' step triggers answer.
+enum ColosseumSatrageMatchCellBehavior {
+  /// The ledge at the foot of The Wall, cell (37, 16), a cell east of where
+  /// Move leaves the stone pillar.
+  CELL_BEHAVIOR_WALL_LEDGE = 20,
+  /// The Board Walk's ledge either side of its two stone pillars, cells
+  /// (13, 10) to (17, 10) and (21, 10) to (24, 10).
+  CELL_BEHAVIOR_BOARD_WALK_LEDGE = 21,
+  /// Under the Log-Rolling Stage's logs, three cells each, moved with them.
+  CELL_BEHAVIOR_RIDING_LOG = 22,
+  /// Beside the Board Walk's western log: east of it where it starts, cells
+  /// (17, 11) and (17, 14), and west of it once rolled, in column 13.
+  CELL_BEHAVIOR_WEST_LOG_EAST_SIDE = 24,
+  CELL_BEHAVIOR_WEST_LOG_WEST_SIDE = 25,
+  /// A second ledge cell for the stone pillar at The Wall. No cell of the map
+  /// holds it.
+  CELL_BEHAVIOR_WALL_LEDGE_UNUSED = 26,
+  /// Beside the Board Walk's eastern log: west of it once rolled, in column
+  /// 21, and east of it where it starts, in column 25.
+  CELL_BEHAVIOR_EAST_LOG_WEST_SIDE = 27,
+  CELL_BEHAVIOR_EAST_LOG_EAST_SIDE = 28,
+  /// The top of the stone post at the foot of The Wall just west of the
+  /// sprout, cell (31, 16).
+  CELL_BEHAVIOR_WALL_POST = 30,
+  /// The east edge of the arena, cells (8, 13) to (8, 18).
+  CELL_BEHAVIOR_ARENA = 50
 };
 
 const struct SceneEntrance *Scene_GetEntrances(void) {
@@ -322,13 +355,31 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gColosseumSatrageMatchActorPlacements;
 }
 
-/// Move on the Board Walk's two stone pillars does nothing.
+/// Move on either of the Board Walk's two stone pillars, on the ledge along
+/// the north edge of its pool, does nothing.
 static void ColosseumSatrageMatch_IgnoreMove(void) {}
 
-/// Walking into a stone pillar pushes it.
-static void ColosseumSatrageMatch_PushPillar(void) { Colosso_PushActorAhead(); }
+/// Walking along the Board Walk's ledge, on the north edge of its pool, into
+/// one of its two stone pillars pushes the pillar a cell further along, if
+/// nothing stands beyond it.
+///
+/// Pushed from either side, neither pillar moves when tried, so the eastern
+/// one keeps closed the narrow channel north of it that leads to a chest
+/// holding a Nut, cell (23, 7).
+static void ColosseumSatrageMatch_PushBoardWalkPillar(void) {
+  Colosso_PushActorAhead();
+}
 
-/// Move on the stone pillar by The Wall, and each push, keeps where it stands.
+/// Move on the stone pillar at the foot of The Wall slides it a cell east,
+/// away from the chest holding a Smoke Bomb, on the ledge at cell (35, 16).
+///
+/// After Move and after each push, FLAG_WALL_PILLAR_MOVED records whether the
+/// pillar stands in WALL_PILLAR_MOVED_COLUMN, and cell (35, 77) is opened or
+/// walled to match. Scene_Initialize opens that cell again for the race but
+/// does not move the pillar: it is back beside the chest, as a probe of the
+/// race with the flag set shows. XXX: what cell (35, 77) opens on The Wall; a
+/// render of the race with FLAG_WALL_PILLAR_MOVED set, Isaac climbing at
+/// column 35, would settle it.
 static void ColosseumSatrageMatch_MoveWallPillar(void) {
   s32 column;
   s32 row;
@@ -347,15 +398,27 @@ static void ColosseumSatrageMatch_MoveWallPillar(void) {
   }
 }
 
-/// Walking into the stone pillar by The Wall (step triggers 20 and 26) pushes
-/// it, then updates its cell.
+/// Walking west along the ledge at the foot of The Wall, from cell (37, 16),
+/// pushes the stone pillar back a cell west, beside the chest, when Move has
+/// left it in the next cell.
+///
+/// With the pillar in its first place the next cell is empty and nothing
+/// happens.
 static void ColosseumSatrageMatch_PushWallPillar(void) {
   Colosso_PushActorAhead();
   ColosseumSatrageMatch_MoveWallPillar();
 }
 
-/// Move on a stone pillar in the Mini-Maze, and each push, keeps where the
-/// pillars stand.
+/// Move on one of the three stone pillars along the Mini-Maze's south edge,
+/// where the race starts, slides it a cell. The walkthrough's advice is for
+/// Garet to move the middle one, to save Isaac time.
+///
+/// Each pillar's top is a square to hop onto (CELL_BEHAVIOR_JUMP_FORWARD), and
+/// its column is kept in a byte of flags so that the pillars stand where Move
+/// left them in the race. The cell a pillar leaves keeps its square until the
+/// scene is entered again. The first copy puts back the Board Walk's log cells
+/// as the map had them, without the logs' own rows; nothing rolls those logs
+/// before the race.
 static void ColosseumSatrageMatch_MoveMiniMazePillar(void) {
   s32 column;
 
@@ -374,16 +437,21 @@ static void ColosseumSatrageMatch_MoveMiniMazePillar(void) {
   MapGrid_CopyCellAttributes(71, 16, 1, 1, column, 16);
 }
 
-/// Force on the target over the Board Walk, before the Psynergy plays, gives
-/// the Psynergy its child mode.
-static void ColosseumSatrageMatch_PrepareForce(void) {
+/// Nothing visible happens when Force is cast at the tall log by the Board
+/// Walk's channel, just before the fist flies. The scene sets the Psynergy's
+/// `childMode`, so that the fist does not shove the log 16 pixels away as it
+/// shoves what else it hits, and the log topples from where it stands
+/// (ColosseumSatrageMatch_KnockDownLog).
+static void ColosseumSatrageMatch_KeepLogStillForForce(void) {
   u8 *effectWork = gFieldEffectWork;
 
   ((struct FieldEffectWork *)effectWork)->childMode = 1;
 }
 
-/// Force on the target over the Board Walk knocks the obstacle down.
-static void ColosseumSatrageMatch_KnockDownObstacle(void) {
+/// Force on the tall log standing at the east end of the Board Walk's channel
+/// knocks it over west into the water, where it lies beside the white
+/// platforms as one more step across, cell (20, 16), on the way to the arena.
+static void ColosseumSatrageMatch_KnockDownLog(void) {
   struct Actor *obstacle;
   s32 fallFrames;
   s32 rotationStep;
@@ -393,7 +461,7 @@ static void ColosseumSatrageMatch_KnockDownObstacle(void) {
 
   obstacle = Actor_Get(ACTOR_FALLING_LOG);
   sprite = obstacle->sprite;
-  Event_SetFlag(FLAG_OBSTACLE_KNOCKED_DOWN);
+  Event_SetFlag(FLAG_LOG_KNOCKED_DOWN);
   obstacle->acceleration = toFIXED(1) / 10;
   obstacle->speedLimit = toFIXED(6) / 5;
   Sound_Play(SE_TOPPLE);
@@ -424,42 +492,46 @@ static void ColosseumSatrageMatch_KnockDownObstacle(void) {
   MapGrid_CopyCellAttributes(20, 80, 1, 1, 21, 80);
 }
 
-/// Frost on the Log-Rolling Stage's western target freezes it and opens its
-/// crossing (FLAG_WEST_TARGET_FROZEN).
-static void ColosseumSatrageMatch_FreezeWestTarget(void) {
-  GameFlag_Set(FLAG_WEST_TARGET_FROZEN);
+/// Frost on the western of the Log-Rolling Stage's two puddles, cell (44, 17),
+/// freezes it into a pillar of ice, a square Isaac can hop onto
+/// (FLAG_WEST_PUDDLE_FROZEN). The walkthrough names this one the useful one.
+static void ColosseumSatrageMatch_FreezeWestPuddle(void) {
+  GameFlag_Set(FLAG_WEST_PUDDLE_FROZEN);
   Actor_Get(ACTOR_PUDDLE_WEST)->motionFlags = 0;
   MapGrid_CopyCellAttributes(46, 17, 1, 1, 44, 17);
 }
 
-/// Frost on the Log-Rolling Stage's eastern target freezes it and opens its
-/// crossing (FLAG_EAST_TARGET_FROZEN).
-static void ColosseumSatrageMatch_FreezeEastTarget(void) {
-  GameFlag_Set(FLAG_EAST_TARGET_FROZEN);
+/// Frost on the eastern of the Log-Rolling Stage's two puddles, cell (50, 17),
+/// freezes it into a pillar of ice, a square Isaac can hop onto
+/// (FLAG_EAST_PUDDLE_FROZEN).
+static void ColosseumSatrageMatch_FreezeEastPuddle(void) {
+  GameFlag_Set(FLAG_EAST_PUDDLE_FROZEN);
   Actor_Get(ACTOR_PUDDLE_EAST)->motionFlags = 0;
   MapGrid_CopyCellAttributes(46, 17, 1, 1, 50, 17);
 }
 
-/// Growth on the plant by The Wall grows it into a strip that can be climbed
-/// (FLAG_PLANT_GROWN).
+/// Growth on the sprout at the foot of The Wall, cell (32, 16), grows it into a
+/// vine up the wall that can be climbed (FLAG_PLANT_GROWN).
 static void ColosseumSatrageMatch_GrowPlant(void) {
   GameFlag_Set(FLAG_PLANT_GROWN);
   MapGrid_CopyCellAttributes(32, 37, 1, 4, 32, 77);
 }
 
-/// The selected actor jumps down off the ledge by an obstacle.
-static void ColosseumSatrageMatch_JumpDownLedge(void) {
+/// Walking south off the top of the stone post just west of the sprout at the
+/// foot of The Wall, cell (31, 16), Isaac jumps down to the ground below.
+static void ColosseumSatrageMatch_JumpDownFromPost(void) {
   FieldActor_JumpDownLedge(gMainRoutineWork.leaderActorId, 6, 0);
 }
 
-/// Walking west into the obstacle at step trigger 30 in Colosseum Final 2
-/// makes the leader jump forward where he can (Field_TryJumpForward).
-static void ColosseumSatrageMatch_JumpWestFromLedge(void) {
+/// Walking west off the top of the stone post just west of the sprout at the
+/// foot of The Wall, cell (31, 16), Isaac hops across to the next post west.
+static void ColosseumSatrageMatch_HopWestFromPost(void) {
   Field_TryJumpForward();
 }
 
-/// Carries a riding log and the leader on it by the offset, to the middle of
-/// their cells: the leader walks backwards as the log rolls under them.
+/// Rolls one of the Log-Rolling Stage's logs across the water by the offset,
+/// with Isaac on top walking backwards as it turns under him, and stops both
+/// in the middle of their cells.
 static void ColosseumSatrageMatch_MoveRidingLog(s32 logId, s32 offsetX,
                                                 s32 offsetZ) {
   struct Actor *rider;
@@ -512,8 +584,9 @@ static void ColosseumSatrageMatch_MoveRidingLog(s32 logId, s32 offsetX,
   Event_End();
 }
 
-/// Standing on one of the Log-Rolling Stage's logs (step trigger 22) carries
-/// the rider across the water the way the player holds.
+/// Standing on one of the Log-Rolling Stage's two logs and holding Left or
+/// Right rolls it four cells across the pool with Isaac on top, towards the
+/// far bank: west from its east end, east from its west end.
 static void ColosseumSatrageMatch_RideLog(void) {
   struct Actor *rider = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 column = FIELD_CELL(rider->x.fixed);
@@ -543,7 +616,8 @@ static void ColosseumSatrageMatch_RideLog(void) {
   }
 }
 
-/// Rolls a log to half-cell coordinates while its rider follows halfway.
+/// Isaac leans on one of the Board Walk's logs and it rolls to a place given
+/// in half cells, with Isaac walking after it half the way.
 static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
                                                 s32 halfCellZ) {
   s32 pusher = gMainRoutineWork.leaderActorId;
@@ -593,8 +667,8 @@ static void ColosseumSatrageMatch_RollLogToCell(s32 logId, s32 halfCellX,
   Event_End();
 }
 
-/// Rebuilds the cell behaviors under the three rolling logs at their
-/// positions.
+/// Walls off the cells under the Board Walk's logs where they now lie, after
+/// putting back the stage's cells as the map had them.
 static void ColosseumSatrageMatch_UpdateRollingLogCollision(void) {
   s32 cell;
 
@@ -610,28 +684,29 @@ static void ColosseumSatrageMatch_UpdateRollingLogCollision(void) {
   MapGrid_CopyCellAttributes(13, 28, 4, 1, 18, cell);
 }
 
-/// Walking west into the Board Walk's western log rolls it west.
+/// Walking west into the Board Walk's western log, from beside it at cell
+/// (17, 11) or (17, 14), rolls it two cells west.
 static void ColosseumSatrageMatch_RollWestLogWest(void) {
   ColosseumSatrageMatch_RollLogToCell(ACTOR_ROLLING_LOG_WEST, 29, 26);
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
-/// Walking east into the Board Walk's western log (step trigger 25) rolls it
-/// east.
+/// Walking east into the Board Walk's western log from column 13, once it has
+/// been rolled west, rolls it back two cells east.
 static void ColosseumSatrageMatch_RollWestLogEast(void) {
   ColosseumSatrageMatch_RollLogToCell(ACTOR_ROLLING_LOG_WEST, 33, 26);
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
-/// Walking west into the Board Walk's eastern log (step trigger 28) rolls it
-/// west.
+/// Walking west into the Board Walk's eastern log, from beside it in column
+/// 25, rolls it two cells west, as the attendant shows on the tour.
 static void ColosseumSatrageMatch_RollEastLogWest(void) {
   ColosseumSatrageMatch_RollLogToCell(ACTOR_ROLLING_LOG_EAST, 45, 26);
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
-/// Walking east into the Board Walk's eastern log (step trigger 27) rolls it
-/// east.
+/// Walking east into the Board Walk's eastern log from column 21, once it has
+/// been rolled west, rolls it back two cells east.
 static void ColosseumSatrageMatch_RollEastLogEast(void) {
   ColosseumSatrageMatch_RollLogToCell(ACTOR_ROLLING_LOG_EAST, 49, 26);
   ColosseumSatrageMatch_UpdateRollingLogCollision();
@@ -656,7 +731,10 @@ static UNUSED void ColosseumSatrageMatch_UnusedRollCenterLogSouth(void) {
   ColosseumSatrageMatch_UpdateRollingLogCollision();
 }
 
-/// The shifting floor's task carries the selected actor on the lifts.
+/// Each frame while the shifting floor runs, carries Isaac north or south with
+/// the lift he stands on, swaps the lifts between a line across the channel
+/// and their broken pattern every COLOSSEUM_SATRAGE_MATCH_LIFT_CYCLE_FRAMES,
+/// and makes their cells squares to hop onto only while they stand in line.
 static void ColosseumSatrageMatch_UpdateLifts(void) {
   s32 liftId;
   struct Actor *rider;
@@ -757,7 +835,8 @@ static void ColosseumSatrageMatch_UpdateLifts(void) {
   }
 }
 
-/// Stops the moving-lift task and restores its starting row.
+/// Stops the shifting floor and lines its four lifts up across the channel,
+/// for the attendant's demonstration.
 static void ColosseumSatrageMatch_ResetLifts(void) {
   gColosseumSatrageMatch_LiftTimer = 0;
   gColosseumSatrageMatch_LiftsApart = 0;
@@ -769,7 +848,7 @@ static void ColosseumSatrageMatch_ResetLifts(void) {
   Actor_SetAnimation(ACTOR_LIFT_OPERATOR, 10);
 }
 
-/// Starts the moving-lift task and releases its pause flag.
+/// Starts the shifting floor's lifts moving again.
 static void ColosseumSatrageMatch_StartLifts(void) {
   Task_AddFrame(ColosseumSatrageMatch_UpdateLifts, TASK_PASS_FRAME + 5);
   GameFlag_Clear(FLAG_FIELD_HANDLING_REQUESTS);
@@ -794,8 +873,9 @@ static void ColosseumSatrageMatch_WaitForLiftsLinedUp(void) {
   }
 }
 
-/// Halt on the shifting floor's lift operator stops the lifts and leaves a
-/// crossing (FLAG_LIFTS_HALTED).
+/// Halt on the young man who works the shifting floor's lifts freezes him, and
+/// the lifts stop in a line across the channel for Isaac to hop over
+/// (FLAG_LIFTS_HALTED).
 static void ColosseumSatrageMatch_HaltLifts(void) {
   FieldPsynergy_HaltActor(ACTOR_LIFT_OPERATOR);
   GameFlag_Set(FLAG_LIFTS_HALTED);
@@ -813,8 +893,9 @@ static void ColosseumSatrageMatch_HaltLifts(void) {
   MapGrid_CopyCellAttributes(57, 11, 1, 1, 58, 11);
 }
 
-/// Reaching Colosseum Final 2's arena, the leader takes a prize and fights
-/// Satrage.
+/// Reaching the arena at the west end, cells (8, 13) to (8, 18), Isaac takes
+/// the Chain Mail if he is first and the Cotton Shirt if not, waits for
+/// Satrage, and the two nod and fight.
 static void ColosseumSatrageMatch_ReachArena(void) {
   s32 opponentFirst;
   s32 i;
@@ -854,7 +935,8 @@ static void ColosseumSatrageMatch_ReachArena(void) {
   GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
 }
 
-/// Returns Colosseum Final 2's obstacle interactions and attendant dialogue.
+/// Returns Colosseum Final 2's stages, chests, Psynergy targets and
+/// attendants.
 const struct Trigger *Scene_GetTriggers(void) {
   return gColosseumSatrageMatchTriggers;
 }
@@ -914,7 +996,7 @@ s32 Scene_Initialize(void) {
     actor->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
   }
   Actor_Get(ACTOR_FORCE_TARGET)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
-  if (GameFlag_Get(FLAG_OBSTACLE_KNOCKED_DOWN)) {
+  if (GameFlag_Get(FLAG_LOG_KNOCKED_DOWN)) {
     actor = Actor_Get(ACTOR_FALLING_LOG);
     actor->x.fixed = toFIXED(336);
     actor->y.fixed = -toFIXED(8);
@@ -937,13 +1019,13 @@ s32 Scene_Initialize(void) {
     Actor_SetAnimation(ACTOR_GROWTH_PLANT, ANIM_SHAKE_HEAD);
     MapGrid_CopyCellAttributes(32, 37, 1, 4, 32, 77);
   }
-  if (GameFlag_Get(FLAG_WEST_TARGET_FROZEN)) {
+  if (GameFlag_Get(FLAG_WEST_PUDDLE_FROZEN)) {
     Actor_Get(ACTOR_PUDDLE_WEST)->motionFlags = 0;
     Actor_Get(ACTOR_PUDDLE_WEST)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetAnimation(ACTOR_PUDDLE_WEST, PUDDLE_ANIMATION_PILLAR);
     MapGrid_CopyCellAttributes(46, 17, 1, 1, 44, 17);
   }
-  if (GameFlag_Get(FLAG_EAST_TARGET_FROZEN)) {
+  if (GameFlag_Get(FLAG_EAST_PUDDLE_FROZEN)) {
     Actor_Get(ACTOR_PUDDLE_EAST)->motionFlags = 0;
     Actor_Get(ACTOR_PUDDLE_EAST)->priorityFlags = ACTOR_PRIORITY_UNDERFOOT;
     Actor_SetAnimation(ACTOR_PUDDLE_EAST, PUDDLE_ANIMATION_PILLAR);
@@ -1656,24 +1738,24 @@ s32 gColosseumSatrageMatch_LiftsApart = 0;
 u32 gColosseumSatrageMatch_LiftTimer = 0;
 
 struct Trigger gColosseumSatrageMatchTriggers[] = {
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 30, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_JumpDownLedge) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 30, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_JumpWestFromLedge) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 28, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_RollEastLogWest) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 27, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_RollEastLogEast) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 24, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_RollWestLogWest) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 25, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_RollWestLogEast) },
-    { STEP_TRIGGER_WALKING, 22, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_RideLog) },
-    { STEP_TRIGGER_WALKING, 21, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_PushPillar) },
-    { STEP_TRIGGER_WALKING, 20, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_PushWallPillar) },
-    { STEP_TRIGGER_WALKING, 26, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_PushWallPillar) },
-    { TRIGGER_STEP, 50, FLAG_COLOSSEUM_ARENA_CLOSED, EVENT(ColosseumSatrageMatch_ReachArena) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_WALL_POST, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_JumpDownFromPost) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_WALL_POST, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_HopWestFromPost) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_EAST_LOG_EAST_SIDE, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_RollEastLogWest) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_EAST_LOG_WEST_SIDE, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_RollEastLogEast) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_WEST_LOG_EAST_SIDE, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_RollWestLogWest) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_WEST_LOG_WEST_SIDE, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_RollWestLogEast) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_RIDING_LOG, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_RideLog) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_BOARD_WALK_LEDGE, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_PushBoardWalkPillar) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_WALL_LEDGE, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_PushWallPillar) },
+    { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_WALL_LEDGE_UNUSED, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_PushWallPillar) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_ARENA, FLAG_COLOSSEUM_ARENA_CLOSED, EVENT(ColosseumSatrageMatch_ReachArena) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_AREA_TEMP_38, FIND_ITEM(ITEM_NUT) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | FACING_WEST, 102, FLAG_COLOSSEUM_SATRAGE_MATCH_SMOKE_BOMB_CHEST_OPENED, FIND_ITEM(ITEM_SMOKE_BOMB) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 104, FLAG_AREA_TEMP_3B, FIND_ITEM(ITEM_NUT) },
-    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_ACTS), ACTOR_PUDDLE_WEST, FLAG_WEST_TARGET_FROZEN, EVENT(ColosseumSatrageMatch_FreezeWestTarget) },
-    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_ACTS), ACTOR_PUDDLE_EAST, FLAG_EAST_TARGET_FROZEN, EVENT(ColosseumSatrageMatch_FreezeEastTarget) },
-    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FORCE_TARGET, FLAG_OBSTACLE_KNOCKED_DOWN, EVENT(ColosseumSatrageMatch_PrepareForce) },
-    { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_FORCE_TARGET, FLAG_OBSTACLE_KNOCKED_DOWN, EVENT(ColosseumSatrageMatch_KnockDownObstacle) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_ACTS), ACTOR_PUDDLE_WEST, FLAG_WEST_PUDDLE_FROZEN, EVENT(ColosseumSatrageMatch_FreezeWestPuddle) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_ACTS), ACTOR_PUDDLE_EAST, FLAG_EAST_PUDDLE_FROZEN, EVENT(ColosseumSatrageMatch_FreezeEastPuddle) },
+    { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FORCE_TARGET, FLAG_LOG_KNOCKED_DOWN, EVENT(ColosseumSatrageMatch_KeepLogStillForForce) },
+    { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_FORCE_TARGET, FLAG_LOG_KNOCKED_DOWN, EVENT(ColosseumSatrageMatch_KnockDownLog) },
     { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_GROWTH_PLANT, FLAG_PLANT_GROWN, EVENT(ColosseumSatrageMatch_GrowPlant) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_BOARD_WALK_WEST_PILLAR, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_IgnoreMove) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_BOARD_WALK_EAST_PILLAR, CONDITION_ALWAYS, EVENT(ColosseumSatrageMatch_IgnoreMove) },

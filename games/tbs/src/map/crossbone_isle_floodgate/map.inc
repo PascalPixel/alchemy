@@ -33,8 +33,8 @@ Field_CrossboneIsleFloodgate:
 Tileset_PaletteCrossboneIsleFloodgate:
 	.incbin "games/tbs/src/graphics/tileset/palettes/crossbone_isle_floodgate.gbapal.lz"
 	.byte 0x53	@ PACKER: left in the buffer by Field_CrossboneIsleFloodgate+0x12b
-	.global Tileset_Palette18
-Tileset_Palette18:
-	.incbin "games/tbs/src/graphics/tileset/palettes/pal_18.gbapal.lz"
+	.global Tileset_PaletteCrossboneIsleBane
+Tileset_PaletteCrossboneIsleBane:
+	.incbin "games/tbs/src/graphics/tileset/palettes/crossbone_isle_bane.gbapal.lz"
 	.byte 0x00, 0x00, 0x38	@ PACKER: unused post-stream residue; MapGrid_LoadMap copies decoded palette RAM; writer unknown
 	.balign 4, 0

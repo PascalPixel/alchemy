@@ -630,7 +630,7 @@ Resource_DirectoryTable:
 	resource PurpleBeastSprites, Monster_PurpleBeastSprites
 	resource RedWarriorSprites, Monster_RedWarriorSprites
 	resource SwordGirlSprites, Monster_SwordGirlSprites
-	resource EmptyMap, Field_Map000
+	resource EmptyMap, Field_EmptyMap
 	resource , Resource_Data26D
 	resource , Resource_Data26E
 	resource , Resource_Data26F
@@ -1245,9 +1245,9 @@ Resource_DirectoryTable:
 	resource , Field_AnkohlRuinsFaceHalves
 	resource , Field_AnkohlRuinsSandDoors
 	resource , Field_AnkohlRuinsEntrance
-	resource , Tileset_PaletteAnkohlRuins7A
-	resource , Tileset_PaletteAnkohlRuins7B
-	resource , Tileset_PaletteAnkohlRuins7C
+	resource , Tileset_PaletteAnkohlRuinsEntrance
+	resource , Tileset_PaletteShrineOfTheSeaGodRightProng
+	resource , Tileset_PaletteLemurianShipTiller
 	resource , Field_LemuriaEntrance
 	resource , Tileset_PaletteLemuriaEntrance
 	resource , Field_Lemuria
@@ -1459,8 +1459,8 @@ Resource_DirectoryTable:
 	resource , Field_ProxMold
 	resource , Tileset_PaletteProxMold
 	resource , Field_ProxHouses
-	resource , Tileset_PaletteProx4A
-	resource , Tileset_PaletteProx4B
+	resource , Tileset_PaletteMadraRoomsCavernHomes
+	resource , Tileset_PaletteMikasallaRoomsSanctum
 	resource , Field_MarsLighthouseOutside
 	resource , Tileset_MarsLighthouseOutsidePalette
 	resource , Tileset_MarsLighthouseOutsideTilesA
@@ -1477,12 +1477,12 @@ Resource_DirectoryTable:
 	resource , Tileset_MarsLighthouseAeriePalette
 	resource , Tileset_MarsLighthouseAerieTilesA
 	resource , Tileset_MarsLighthouseAerieTilesB
-	resource , Field_MarsLighthouseRoomM6
-	resource , Tileset_MarsLighthouseRoomM6TilesD
-	resource , Field_MarsLighthouseRoomM1
-	resource , Tileset_MarsLighthouseRoomM1Palette
-	resource , Tileset_MarsLighthouseRoomM1TilesA
-	resource , Tileset_MarsLighthouseRoomM1TilesB
+	resource , Field_MarsLighthouseRoomMFlame
+	resource , Tileset_MarsLighthouseRoomMFlameTilesD
+	resource , Field_MarsLighthouseRoomMInscriptions
+	resource , Tileset_MarsLighthouseRoomMInscriptionsPalette
+	resource , Tileset_MarsLighthouseRoomMInscriptionsTilesA
+	resource , Tileset_MarsLighthouseRoomMInscriptionsTilesB
 	resource , Field_MarsLighthouseEntranceFugue
 	resource , Field_MarsLighthouseEntranceTeleportLapis
 	resource , Field_MarsLighthouseEntranceBalm
@@ -1493,13 +1493,13 @@ Resource_DirectoryTable:
 	resource , Field_MarsLighthouseMercuryLedge
 	resource , Tileset_MarsLighthouseMercuryLedgeTilesD
 	resource , Field_MarsLighthouseJupiterLedge
-	resource , Field_MarsLighthouseRoomM4
+	resource , Field_MarsLighthouseRoomMAlastorsHoodChest
 	resource , Field_MarsLighthouseVenusLedge
-	resource , Tileset_PaletteMarsLighthouseRoomM5A
-	resource , Tileset_PaletteMarsLighthouseRoomM5B
-	resource , Tileset_PaletteMarsLighthouseRoomM5C
-	resource , Tileset_PaletteMarsLighthouseRoomM5D
-	resource , Tileset_PaletteMarsLighthouseRoomM5E
+	resource , Tileset_PaletteMarsLighthouseOutsideThawed
+	resource , Tileset_PaletteMarsLighthouseMarsTowerThawed
+	resource , Tileset_PaletteMarsLighthouseAerieThawed
+	resource , Tileset_PaletteMarsLighthouseRoomMFlameThawed
+	resource , Tileset_PaletteMarsLighthouseRoomMInscriptionsThawed
 	resource , Field_MercuryLighthouse
 	resource , Tileset_MercuryLighthousePalette
 	resource , Tileset_MercuryLighthouseTilesA
@@ -1559,12 +1559,12 @@ Resource_DirectoryTable:
 	resource , Tileset_Set119TilesB
 	resource , Tileset_Set119TilesC
 	resource , Tileset_Set119TilesD
-	resource , Resource_Data60D
-	resource , Tileset_R60dPalette
-	resource , Tileset_R60dTilesA
-	resource , Tileset_R60dTilesB
-	resource , Tileset_R60dTilesC
-	resource , Tileset_R60dTilesD
+	resource , Field_PsynergyTest
+	resource , Tileset_PsynergyTestPalette
+	resource , Tileset_PsynergyTestTilesA
+	resource , Tileset_PsynergyTestTilesB
+	resource , Tileset_PsynergyTestTilesC
+	resource , Tileset_PsynergyTestTilesD
 	resource , Field_ShopTest
 	resource , Tileset_ShopTestPalette
 	resource , Tileset_ShopTestTilesA

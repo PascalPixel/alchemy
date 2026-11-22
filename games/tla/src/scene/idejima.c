@@ -134,7 +134,7 @@ void Idejima_WakeSheba(void);
 void Idejima_CatchUpWithFelix(void);
 void Idejima_WonderWhereAlexHasGone(void);
 void Party_RestoreHpPp(s32 a);
-void Actor_MoveToObject();
+void Actor_PlaceOnActor();
 /// Counts the answer just given (Event_CountAnswerFar).
 void Idejima_CountAnswer();
 
@@ -612,7 +612,7 @@ void Idejima_WonderWhereAlexHasGone(void) {
   FieldCamera_MoveTo(108, CAMERA_KEEP, 720, 1);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 86, 712);
-  Actor_MoveToObject(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
   System_Wait(1);
   Actor_SetSpeed(ACTOR_KRADEN, 0.8);
   Actor_WalkToAndWait(ACTOR_KRADEN, 104, 712);
@@ -640,8 +640,8 @@ void Idejima_WonderWhereAlexHasGone(void) {
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
   // "He might have gone to look for a ship."
   Event_ShowMessage(ACTOR_KRADEN, 0);
-  Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
   System_Wait(1);
   Actor_SetSpeed(ACTOR_SHEBA, 0.8);
   Actor_SetSpeed(ACTOR_JENNA, 0.8);
@@ -961,7 +961,7 @@ void Idejima_BreakAwayFromGondowan(void) {
   Actor_WalkToAndWait(ACTOR_JENNA, 204, 196);
   Actor_WalkToAndWait(ACTOR_JENNA, 208, 218);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
-  Actor_MoveToObject(ACTOR_KRADEN, ACTOR_JENNA);
+  Actor_PlaceOnActor(ACTOR_KRADEN, ACTOR_JENNA);
   System_Wait(1);
   Actor_SetSpeed(ACTOR_KRADEN, 0.8);
   Actor_WalkToAndWait(ACTOR_KRADEN, 186, 216);

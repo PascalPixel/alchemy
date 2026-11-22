@@ -48,7 +48,7 @@ s32 Field_UsePsynergy(u32 code) {
     return 0;
   }
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-    if (abilityId == ABILITY_REVEAL || abilityId == ABILITY_RING) {
+    if (abilityId == ABILITY_REVEAL || abilityId == ABILITY_MAGNET) {
       // "<Psynergy>!!! ...Nothing happened."
       PSYNERGY_MESSAGE(userId, abilityId, MsgKey0dbb);
       return 0;

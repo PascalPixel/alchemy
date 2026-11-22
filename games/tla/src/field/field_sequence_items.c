@@ -22,8 +22,8 @@ void Event_RunMessage(s32 actor, s32 message) {
 void Event_ResolveAllPendingActions(void) { Event_ResolvePendingActions(0); }
 
 /// Ends the lasting Psynergy and runs their end events: Reveal unless skip bit
-/// 0 is set, the ring of light (ABILITY_RING) unless bit 1, and Sand, while the
-/// party is sand (gMainRoutineWork.pendingThird), unless bit 2.
+/// 0 is set, the ring of light (ABILITY_MAGNET) unless bit 1, and Sand, while
+/// the party is sand (gMainRoutineWork.sandActive), unless bit 2.
 void Event_ResolvePendingActions(s32 skip) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -31,8 +31,8 @@ void Event_ResolvePendingActions(s32 skip) {
   if (work->revealActive != 0 && !(skip & 1))
     Field_RunPsynergyEndEvents(ABILITY_REVEAL | ACT_PACKED);
   if (work->ringActive != 0 && !(skip & 2))
-    Field_RunPsynergyEndEvents(ABILITY_RING | ACT_PACKED);
-  if (gMainRoutineWork.pendingThird != 0 && !(skip & 4))
+    Field_RunPsynergyEndEvents(ABILITY_MAGNET | ACT_PACKED);
+  if (gMainRoutineWork.sandActive != 0 && !(skip & 4))
     Field_RunPsynergyEndEvents(ABILITY_SAND | ACT_PACKED);
 }
 
@@ -50,13 +50,13 @@ s32 Party_GetLeaderActor(void) {
 }
 
 /// Returns 1 when itemId answers filter: the item itself, ITEM_FILTER_ANY any
-/// item, or ITEM_FILTER_EQUIPMENT any weapon, armor, shield or helm; else 0.
+/// item, or ITEM_FILTER_HEAVY any weapon, armor, shield or helm; else 0.
 s32 Item_MatchesFilter(s32 filter, s32 itemId) {
   if (filter == itemId)
     return 1;
   if (filter == ITEM_FILTER_ANY)
     return 1;
-  if (filter == ITEM_FILTER_EQUIPMENT &&
+  if (filter == ITEM_FILTER_HEAVY &&
       (u32)(Item_GetDirectFar(itemId)->type - ITEM_TYPE_WEAPON) <=
           ITEM_TYPE_HELM - ITEM_TYPE_WEAPON)
     return 1;

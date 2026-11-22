@@ -82,7 +82,7 @@ void Actor_UpdateAllMotion(void) {
       arrivedAtTarget = 0;
 #endif
       // Steer in the XZ plane towards the target, or brake.
-      if (actor->targetX != TARGET_UNSET) {
+      if (actor->targetX != ACTOR_NO_TARGET) {
         dx = (actor->targetX - x) / FIXED_ONE;
         dz = (actor->targetZ - z) / FIXED_ONE;
         distance = toFIXED(Iwram_Sqrt(dx * dx + dz * dz));
@@ -176,9 +176,9 @@ void Actor_UpdateAllMotion(void) {
           actor->velocityY = 0;
         }
       }
-      actor->targetX = TARGET_UNSET;
-      actor->targetY = TARGET_UNSET;
-      actor->targetZ = TARGET_UNSET;
+      actor->targetX = ACTOR_NO_TARGET;
+      actor->targetY = ACTOR_NO_TARGET;
+      actor->targetZ = ACTOR_NO_TARGET;
       actor->arrivalAxis = 0;
     }
     SET_ACTOR_POSITION(actor, x, y, z);
@@ -218,9 +218,9 @@ s32 ActorScript_WaitForArrival(struct Actor *interpreter) {
 
   if (actor->refused > SCRIPT_BLOCKED_MOVE_FRAMES - 1) {
     actor->refused = 0;
-    actor->targetX = TARGET_UNSET;
-    actor->targetY = TARGET_UNSET;
-    actor->targetZ = TARGET_UNSET;
+    actor->targetX = ACTOR_NO_TARGET;
+    actor->targetY = ACTOR_NO_TARGET;
+    actor->targetZ = ACTOR_NO_TARGET;
     actor->arrivalAxis = 0;
     interpreter->scriptCursor++;
     return 1;
@@ -622,9 +622,9 @@ s32 FieldCamera_FollowLeaderInBounds(struct Actor *interpreter) {
     x = leader->x.fixed;
     y = leader->y.fixed;
     z = leader->z.fixed;
-    camera->targetX = TARGET_UNSET;
-    camera->targetY = TARGET_UNSET;
-    camera->targetZ = TARGET_UNSET;
+    camera->targetX = ACTOR_NO_TARGET;
+    camera->targetY = ACTOR_NO_TARGET;
+    camera->targetZ = ACTOR_NO_TARGET;
     if (x < minX)
       x = minX;
     if (z < minZ)
@@ -728,9 +728,9 @@ s32 FieldCamera_FollowWatchedInBounds(struct Actor *camera) {
     x = leader->x.fixed;
     y = leader->y.fixed;
     z = leader->z.fixed;
-    camera->targetX = TARGET_UNSET;
-    camera->targetY = TARGET_UNSET;
-    camera->targetZ = TARGET_UNSET;
+    camera->targetX = ACTOR_NO_TARGET;
+    camera->targetY = ACTOR_NO_TARGET;
+    camera->targetZ = ACTOR_NO_TARGET;
     if (x < minX)
       x = minX;
     if (z < minZ)
@@ -1352,9 +1352,9 @@ s32 Actor_UpdateHoverControl(struct Actor *actor) {
   }
 
   if (collision != 0) {
-    actor->targetX = TARGET_UNSET;
-    actor->targetY = TARGET_UNSET;
-    actor->targetZ = TARGET_UNSET;
+    actor->targetX = ACTOR_NO_TARGET;
+    actor->targetY = ACTOR_NO_TARGET;
+    actor->targetZ = ACTOR_NO_TARGET;
     if (collision & PLAYER_STEP_BLOCKED) {
       s32 difference;
 

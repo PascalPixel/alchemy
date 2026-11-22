@@ -51,9 +51,9 @@ void Actor_RollAndCrumble(struct Actor *actor) {
     FieldVector_AddPolarOffset(8, actor->facing, &position);
     if (MapGrid_GetCellAttributeLowNibbleOrBump(0, position.x, position.z) ==
         TERRAIN_ROUNDED_SQUARE) {
-      actor->targetZ = TARGET_UNSET;
-      actor->targetY = TARGET_UNSET;
-      actor->targetX = TARGET_UNSET;
+      actor->targetZ = ACTOR_NO_TARGET;
+      actor->targetY = ACTOR_NO_TARGET;
+      actor->targetX = ACTOR_NO_TARGET;
       actor->acceleration = toFIXED(1) / 4;
       actor->timer = 1;
       Event_PlaySound(SE_CRASH);

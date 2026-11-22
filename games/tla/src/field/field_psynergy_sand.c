@@ -284,7 +284,7 @@ struct PendingEvent;
 /// Gives an actor's first sprite layer another sprite's animations.
 void Actor_SetFirstSpriteAnimationFar(struct Actor *actor, s32 index);
 /// Sets a sprite's first layer to a SpriteColorMode and redraws it.
-void Animation_ApplyChildValueToFirstFar(void *animation, s32 value);
+void Sprite_SetFirstAnimationColorModeFar(void *animation, s32 value);
 
 /// Ends Sand: the leader rises out of the ground in a spray of grains and takes
 /// its own sprite back; on sand, the place's Sand event then runs.
@@ -316,7 +316,7 @@ void FieldPsynergy_EndSand(void) {
   s32 delay;
 
   FieldPsynergy_MarkWorldMapTilesUsed();
-  gMainRoutineWork.pendingThird = 0;
+  gMainRoutineWork.sandActive = 0;
   Actor_SetOthersPaused(owner, 1, 0);
   Task_Remove(FieldPsynergy_WatchSandGround);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_DUST_PUFF_A), work);
@@ -357,13 +357,13 @@ void FieldPsynergy_EndSand(void) {
     ((struct Sprite *)owner->sprite)->scale = FIXED_ONE * 3 / 4;
   owner->facing = DEGtoANG(90);
   Actor_SelectAnimationFar(owner, 0);
-  Animation_ApplyChildValueToFirstFar(owner->sprite, SPRITE_COLOR_HIDDEN);
+  Sprite_SetFirstAnimationColorModeFar(owner->sprite, SPRITE_COLOR_HIDDEN);
   wait(1);
-  Animation_ApplyChildValueToFirstFar(owner->sprite, SPRITE_COLOR_NORMAL);
+  Sprite_SetFirstAnimationColorModeFar(owner->sprite, SPRITE_COLOR_NORMAL);
   source = ((struct Sprite *)owner->sprite)->entries[0];
   sprite = sizeof(work->picture);
   FieldPsynergy_DecodePicture(source, work->picture, sprite);
-  Animation_ApplyChildValueToFirstFar(owner->sprite, SPRITE_COLOR_HIDDEN);
+  Sprite_SetFirstAnimationColorModeFar(owner->sprite, SPRITE_COLOR_HIDDEN);
   pictureEntry = VramCache_FindFreeEntry();
   sprite = VramCache_Load(pictureEntry, sprite, NULL);
   Sand_InitLeaderSprite(&work->leader, sprite);
@@ -386,7 +386,7 @@ void FieldPsynergy_EndSand(void) {
     }
     if (frame == 66) {
       Actor_SelectAnimationFar(owner, 1);
-      Animation_ApplyChildValueToFirstFar(owner->sprite, SPRITE_COLOR_NORMAL);
+      Sprite_SetFirstAnimationColorModeFar(owner->sprite, SPRITE_COLOR_NORMAL);
       Actor_SetSpriteFlagsFar(Actor_GetById(effect->firstActorId),
                               SPRITE_FLAG_SHADOW);
       FieldCamera_FollowActor(effect->firstActorId, 1);
@@ -514,7 +514,8 @@ void FieldPsynergy_Sand(void) {
         particle++;
       }
       if (frame == 16)
-        Animation_ApplyChildValueToFirstFar(owner->sprite, SPRITE_COLOR_HIDDEN);
+        Sprite_SetFirstAnimationColorModeFar(owner->sprite,
+                                             SPRITE_COLOR_HIDDEN);
       if (frame == 45)
         Sound_PlayFar(SE_WHOOSH);
       if (frame == 60) {
@@ -529,7 +530,8 @@ void FieldPsynergy_Sand(void) {
         *motionFlags = savedFlags;
       }
       if (frame == 61)
-        Animation_ApplyChildValueToFirstFar(owner->sprite, SPRITE_COLOR_NORMAL);
+        Sprite_SetFirstAnimationColorModeFar(owner->sprite,
+                                             SPRITE_COLOR_NORMAL);
       wait(1);
     }
     if (event->mode == ACTOR_SYSTEM_WORLD_MAP)
@@ -539,7 +541,7 @@ void FieldPsynergy_Sand(void) {
     owner->timer = 0;
     owner->userValue = 0;
     event->sandTrailPriority = 3;
-    gMainRoutineWork.pendingThird = 1;
+    gMainRoutineWork.sandActive = 1;
     if (event->standing == 0)
       Task_Add(FieldPsynergy_WatchSandGround, TASK_PASS_FRAME);
     Actor_SetOthersPaused(owner, 0, ANIMATION_STEP_NORMAL);

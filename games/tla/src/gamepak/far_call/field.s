@@ -85,7 +85,7 @@ FarCall_FieldTable:
 	export WorldMap_LoadAreaGraphicsFar, WorldMap_LoadAreaGraphics
 	export Actor_SetSpriteColorModeFar, Actor_SetSpriteColorMode
 	export Sprite_SetAnimationColorModesFar, Sprite_SetAnimationColorModes
-	export Animation_ApplyChildValueToFirstFar, Animation_ApplyChildValueToFirst
+	export Sprite_SetFirstAnimationColorModeFar, Sprite_SetFirstAnimationColorMode
 	export Actor_SetSpritePriorityDirectFar, Actor_SetSpritePriorityDirect
 	export ActorScript_CheckOverlapFar, ActorScript_CheckOverlap
 	export MapGrid_SetShownLayersFar, MapGrid_SetShownLayers

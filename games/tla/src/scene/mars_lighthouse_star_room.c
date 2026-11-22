@@ -449,7 +449,7 @@ void MarsLighthouseStarRoom_WakeFlameDragons(void) {
 }
 
 void Event_End();
-void Actor_MoveToObject();
+void Actor_PlaceOnActor();
 void Scene_PlayMusic();
 extern u8 MsgMarsLighthouseStarRoomWhyWhyAmILying[];
 extern s32 gMarsLighthouseStarRoom_LightRiseScript[];
@@ -500,8 +500,8 @@ void MarsLighthouseStarRoom_WakeAfterBattle(void) {
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_KARST), SPRITE_COLOR_WHITE);
   FieldEvent_Wait(20);
   Event_PlaySound(SE_WARP);
-  Actor_MoveToObject(ACTOR_AGATIO_LIGHT, ACTOR_AGATIO_DRAGON);
-  Actor_MoveToObject(ACTOR_KARST_LIGHT, ACTOR_KARST_DRAGON);
+  Actor_PlaceOnActor(ACTOR_AGATIO_LIGHT, ACTOR_AGATIO_DRAGON);
+  Actor_PlaceOnActor(ACTOR_KARST_LIGHT, ACTOR_KARST_DRAGON);
   System_Wait(1);
   Actor_SetScript(ACTOR_AGATIO_DRAGON,
                   (s32)&gMarsLighthouseStarRoom_AgatioDragonShrinkScript);

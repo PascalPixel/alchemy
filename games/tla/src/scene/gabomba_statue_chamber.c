@@ -38,7 +38,7 @@ void FieldPsynergy_RunHandler(s32 type);
 
 #include "field/field_sequence_event.h"
 
-void Actor_MoveToObject(s32 actor, s32 target);
+void Actor_PlaceOnActor(s32 actor, s32 target);
 
 void GabombaStatueChamber_DropIntoHole(s32 x, s32 z);
 
@@ -228,7 +228,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
   Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 358, 108);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTHEAST, 0);
-  Actor_MoveToObject(ACTOR_CHAMBER_KRADEN, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_CHAMBER_KRADEN, gMainRoutineWork.leaderActorId);
   wait(1);
   Actor_SetSpeed(ACTOR_CHAMBER_KRADEN, 0.8);
   Actor_WalkToAndWait(ACTOR_CHAMBER_KRADEN, 364, 124);
@@ -259,7 +259,7 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   actor = Actor_Get(ACTOR_WITCH_DOCTOR);
   actor->facing = Actor_Get(ACTOR_CHAMBER_AKAFUBU)->facing;
   wait(1);
-  Actor_MoveToObject(ACTOR_WITCH_DOCTOR, ACTOR_CHAMBER_AKAFUBU);
+  Actor_PlaceOnActor(ACTOR_WITCH_DOCTOR, ACTOR_CHAMBER_AKAFUBU);
   Actor_SetPosition(ACTOR_CHAMBER_AKAFUBU, 0, 0);
   Sound_Play(SE_CHIME);
   Actor_SetAnimationById(ACTOR_WITCH_DOCTOR, 5);

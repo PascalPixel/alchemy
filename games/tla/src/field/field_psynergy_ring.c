@@ -142,13 +142,13 @@ void FieldPsynergy_UpdateRing(void) {
   if (event->ringTimerRunning != 0 && event->ringFrames != 0)
     event->ringFrames--;
   if (event->ringFrames == 0)
-    event->psynergy = ABILITY_RING | ACT_PACKED;
+    event->psynergy = ABILITY_MAGNET | ACT_PACKED;
 }
 
 /// The Ring: a ring of light is drawn round the caster among rising
 /// sparkles, then motes twinkle on it as it sways; FieldPsynergy_UpdateRing
-/// keeps it for RING_FRAMES frames, then cue ABILITY_RING | ACT_PACKED ends it
-/// (FieldPsynergy_EndRing). Cast again while it lasts, it only starts its
+/// keeps it for RING_FRAMES frames, then cue ABILITY_MAGNET | ACT_PACKED ends
+/// it (FieldPsynergy_EndRing). Cast again while it lasts, it only starts its
 /// frames again.
 void FieldPsynergy_Ring(void) {
   struct RingWork *work =

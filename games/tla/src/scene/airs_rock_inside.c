@@ -2656,7 +2656,7 @@ void AirsRockInside_ShebaLearnsReveal(s32 tabletId, s32 shebaId) {
 
 #include "text/msg_ids.h"
 
-s32 Actor_MoveToObject();
+s32 Actor_PlaceOnActor();
 
 /// Checking the tablet shows its message; the first time
 /// (FLAG_REVEAL_TABLET_READ) Sheba learns Reveal, as Magma Rock's tablet does
@@ -2678,7 +2678,7 @@ void AirsRockInside_ReadRevealTablet(void) {
     Actor_SetSpeedFX(gMainRoutineWork.leaderActorId, toFIXED(7) / 10,
                      toFIXED(7) / 20);
     Actor_SetSpeedFX(ACTOR_SHEBA, toFIXED(7) / 10, toFIXED(7) / 20);
-    Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
+    Actor_PlaceOnActor(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
     FieldEvent_Wait(1);
     Actor_WalkTo(gMainRoutineWork.leaderActorId, 256, 136);
     Actor_WalkToById(ACTOR_SHEBA, 272, 136);

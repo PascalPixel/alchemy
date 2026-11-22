@@ -12,8 +12,8 @@
 	.endm
 
 	.section .rodata
-	.global gScene_CueRuleTable
-gScene_CueRuleTable:
+	.global gScene_MusicRules
+gScene_MusicRules:
 	area_music AREA_CLEAR_DATA, -1, -1, MUS_THE_ADVENTURE_RESUMES
 	area_music AREA_WORLD_MAP, 64, -1, MUS_ALEX
 	area_music AREA_WORLD_MAP, 78, -1, SOUND_KEEP_BGM

@@ -322,7 +322,7 @@ s32 Scene_TalkToActor(s32 id) {
           work->encounter =
               Encounter_GetFormationAtSlot(ENCOUNTER_ZONE_MIMIC, contents);
         gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
-        BattleEffect_SelectBattleCue(ENCOUNTER_ZONE_MIMIC, contents);
+        Encounter_SelectBattleMusic(ENCOUNTER_ZONE_MIMIC, contents);
         Sound_PlayFar(gMainRoutineWork.battleMusic);
         FieldMessage_ShowFar((s32)&MsgChestWasMimic, FIELD_MESSAGE_ZOOM);
       } else {
@@ -558,7 +558,7 @@ s32 Scene_RunStepTriggerOrExit(s32 value) {
 
 /// Runs the push cell the leader pushes against (attributes, its cell's
 /// attribute bits) once it has pushed for more than FIELD_PUSH_FRAMES, idle
-/// while gMainRoutineWork.pendingThird is set: a MAP_CELL_LEDGE with KEY_DOWN
+/// while gMainRoutineWork.sandActive is set: a MAP_CELL_LEDGE with KEY_DOWN
 /// held jumps down it, a MAP_CELL_JUMP jumps forward, a MAP_CELL_CLIMBABLE
 /// climbs down or up by the key held, and a MAP_CELL_PUSH pushes the actor
 /// ahead, running the
@@ -571,7 +571,7 @@ s32 Field_RunPushCell(s32 attributes) {
   s32 target;
   s32 result;
 
-  if (gMainRoutineWork.pendingThird != 0)
+  if (gMainRoutineWork.sandActive != 0)
     return 0;
   if ((attributes & MAP_CELL_LEDGE) && work->blockedSteps > FIELD_PUSH_FRAMES &&
       (work->heldKeys & KEY_DOWN)) {

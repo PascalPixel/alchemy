@@ -1186,7 +1186,7 @@ const struct AbilityDefinition gAbilityDefinitions[] = {
         .ppCost = 1,
     },
     // Ma????
-    [ABILITY_RING] = {
+    [ABILITY_MAGNET] = {
         .flags = ABILITY_FORMULA_NO_POWER,
         .icon = 170,
         .fieldPsynergy = FIELD_PSYNERGY_RING,

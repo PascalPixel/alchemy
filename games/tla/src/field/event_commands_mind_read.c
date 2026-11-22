@@ -195,7 +195,7 @@ void FieldEffect_ReleaseOnArrival(struct Actor *target) {
   s32 ty;
 
   tx = target->targetX;
-  if (tx == TARGET_UNSET) {
+  if (tx == ACTOR_NO_TARGET) {
     ty = target->targetY;
     if ((ty == tx) && (target->targetZ == ty)) {
       Actor_StartScriptFar((struct Actor *)target,

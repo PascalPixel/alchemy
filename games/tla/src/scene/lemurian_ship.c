@@ -254,7 +254,7 @@ void Event_WaitTransitionFrames(void);
 void FlagBlock_PlaceAll(const void *script);
 void Event_StartScreenTransition(void);
 
-void Actor_MoveToObject(s32 actor, s32 target);
+void Actor_PlaceOnActor(s32 actor, s32 target);
 
 /// The cabin doors (gLemurianShip_Doors).
 #define CABIN_DOOR_COUNT 10
@@ -1138,10 +1138,10 @@ void LemurianShip_SetBlackCrystal(void) {
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 808, 208);
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(808, CAMERA_KEEP, 176, 1);
-  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_ENGINE_ROOM_KRADEN, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_ENGINE_ROOM_KRADEN, gMainRoutineWork.leaderActorId);
   wait(1);
   Actor_SetSpeed(ACTOR_PIERS, 0.8);
   Actor_SetSpeed(ACTOR_SHEBA, 0.8);

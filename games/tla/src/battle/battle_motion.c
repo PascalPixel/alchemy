@@ -248,19 +248,19 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
 
   x1 = first->targetX;
   second = secondSlot->object;
-  if (x1 == TARGET_UNSET) {
+  if (x1 == ACTOR_NO_TARGET) {
     x1 = first->x;
   }
   z1 = first->targetZ;
-  if (z1 == TARGET_UNSET) {
+  if (z1 == ACTOR_NO_TARGET) {
     z1 = first->z;
   }
   x2 = second->targetX;
-  if (x2 == TARGET_UNSET) {
+  if (x2 == ACTOR_NO_TARGET) {
     x2 = second->x;
   }
   z2 = second->targetZ;
-  if (z2 == TARGET_UNSET) {
+  if (z2 == ACTOR_NO_TARGET) {
     z2 = second->z;
   }
 

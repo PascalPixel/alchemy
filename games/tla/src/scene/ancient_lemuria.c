@@ -391,7 +391,7 @@ s32 Scene_PrepareMap(void) {
 /// A step trigger at the ledge: the leader jumps forward if the way is clear.
 void AncientLemuria_JumpForward(void) { Field_TryJumpForward(); }
 
-void Actor_MoveToObject();
+void Actor_PlaceOnActor();
 
 /// The two Lemurians who saw the Psynergy come out, wonder whether the party
 /// are the ones who defeated Poseidon and, seeing Piers, hurry back into the
@@ -503,7 +503,7 @@ void AncientLemuria_MeetTheLemurians(void) {
   Event_Wait(10);
   // "King Hydros has decreed that Lemuria must be kept safe from dangerous..."
   Event_ShowMessageThenWait(ACTOR_LEMURIAN, 0, 10);
-  Actor_MoveToObject(ACTOR_PIERS, ACTOR_FELIX);
+  Actor_PlaceOnActor(ACTOR_PIERS, ACTOR_FELIX);
   Actor_GetById(ACTOR_PIERS)->scaleX = 0;
   // "You say that we are dangerous, but do you include me as well?"
   Event_ShowMessageThenWait(ACTOR_PIERS, 0, 10);

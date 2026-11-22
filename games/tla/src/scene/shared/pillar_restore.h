@@ -17,10 +17,10 @@ UNUSED void MagmaRockInside_RestorePillars(u16 *list) {
   s32 index;
   u8 *grid = gMapShapeGrid; /* the shape grid, read once */
 
-  Actor_MoveToObject(ACTOR_PILLAR_STAND_IN, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_CRACKED_PILLAR_SPRITE,
+  Actor_PlaceOnActor(ACTOR_PILLAR_STAND_IN, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_CRACKED_PILLAR_SPRITE,
                      gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_WHOLE_PILLAR_SPRITE, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_WHOLE_PILLAR_SPRITE, gMainRoutineWork.leaderActorId);
   System_Wait(1);
   Pillar_TakeOutOfPlay(ACTOR_PILLAR_STAND_IN);
   Pillar_TakeOutOfPlay(ACTOR_CRACKED_PILLAR_SPRITE);

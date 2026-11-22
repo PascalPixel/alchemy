@@ -302,7 +302,7 @@ void Inn_CheckIn(s32 inn, s32 keeper);
 void Actor_Release(struct Actor *actor);
 void Rope_Initialize(void);
 void Rope_Place(s32 index, s32 flag, s32 post, s32 otherPost);
-void Actor_MoveToObject(s32 actorId, s32 target);
+void Actor_PlaceOnActor(s32 actorId, s32 target);
 void InventorySnapshot_Save(void);
 
 void ShamanVillage_BlowAwaySand(void);
@@ -1392,8 +1392,8 @@ void ShamanVillage_MeetMoapa(void) {
   }
   Actor_SetSpeed(ACTOR_MOAPA, 0.4);
   Actor_WalkToAndWait(ACTOR_MOAPA, 120, 208);
-  Actor_MoveToObject(ACTOR_WEST_KNIGHT, ACTOR_MOAPA);
-  Actor_MoveToObject(ACTOR_EAST_KNIGHT, ACTOR_MOAPA);
+  Actor_PlaceOnActor(ACTOR_WEST_KNIGHT, ACTOR_MOAPA);
+  Actor_PlaceOnActor(ACTOR_EAST_KNIGHT, ACTOR_MOAPA);
   wait(1);
   Actor_SetSpeed(ACTOR_WEST_KNIGHT, 0.8);
   Actor_SetSpeed(ACTOR_EAST_KNIGHT, 0.8);
@@ -1505,10 +1505,10 @@ void ShamanVillage_ShowShamansRod(void) {
     Actor_Release(rod);
   Actor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, angle);
-  Actor_MoveToObject(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
   wait(1);
   Actor_SetSpeed(ACTOR_KRADEN, 1.6);
   Actor_SetSpeed(ACTOR_PIERS, 1.6);
@@ -2141,11 +2141,11 @@ void ShamanVillage_ShebaClearsSand(void) {
   FieldCamera_MoveTo(168, CAMERA_KEEP, 528, 1);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 168, 536);
-  Actor_MoveToObject(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
   wait(1);
   Actor_FaceDirection(ACTOR_SHEBA, FACING_NORTH, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 1);

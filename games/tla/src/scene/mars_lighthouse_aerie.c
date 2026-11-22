@@ -468,7 +468,7 @@ void MarsLighthouseAerie_StopLookingAround(s32 id) {
 }
 
 s32 Actor_ReleaseById();
-s32 Actor_MoveToObject();
+s32 Actor_PlaceOnActor();
 extern s32 gMarsLighthouseAerie_JennaApproachScript[];
 extern s32 gMarsLighthouseAerie_ShebaApproachScript[];
 extern s32 gMarsLighthouseAerie_PiersApproachScript[];
@@ -516,12 +516,12 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 504, 320);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
-  Actor_MoveToObject(ACTOR_ISAAC, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_ISAAC, gMainRoutineWork.leaderActorId);
   System_Wait(1);
   Actor_SetSpeed(ACTOR_ISAAC, 1.6);
   Actor_WalkToAndWait(ACTOR_ISAAC, 520, 320);
   Actor_FaceDirection(ACTOR_ISAAC, FACING_NORTH, 0);
-  Actor_MoveToObject(ACTOR_GARET, ACTOR_ISAAC);
+  Actor_PlaceOnActor(ACTOR_GARET, ACTOR_ISAAC);
   System_Wait(1);
   Actor_SetSpeed(ACTOR_GARET, 1.6);
   Actor_WalkToAndWait(ACTOR_GARET, 536, 320);
@@ -530,7 +530,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   Actor_FaceDirection(ACTOR_GARET, FACING_NORTH, 0);
   // "Who said that!?"
   Event_ShowMessage(ACTOR_GARET, 0);
-  Actor_MoveToObject(ACTOR_MIA, ACTOR_GARET);
+  Actor_PlaceOnActor(ACTOR_MIA, ACTOR_GARET);
   System_Wait(1);
   Actor_SetSpeed(ACTOR_MIA, 1.6);
   Actor_WalkToAndWait(ACTOR_MIA, 544, 328);
@@ -543,11 +543,11 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   actor->update = (ObjectUpdate)MarsLighthouseAerie_LookAround;
   MarsLighthouseAerie_StartLookingAround(ACTOR_GARET);
   MarsLighthouseAerie_StartLookingAround(ACTOR_MIA);
-  Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_IVAN, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_IVAN, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
   System_Wait(1);
   Actor_SetSpeed(ACTOR_JENNA, 1.6);
   Actor_SetSpeed(ACTOR_SHEBA, 1.6);

@@ -43,7 +43,7 @@ enum { GLOW_DEPTH = 58 };
 
 void AnemosInnerSanctumEntrance_PlaceBlocks(void);
 void AnemosInnerSanctumEntrance_SetLightPicture(u16 value);
-void Actor_MoveToObject(s32 id, s32 a);
+void Actor_PlaceOnActor(s32 id, s32 a);
 void Field_TryJumpForward(void);
 #include "field/field.h"
 #include "field/event_inline.h"
@@ -183,7 +183,7 @@ void AnemosInnerSanctumEntrance_GlowRises(void) {
   Actor_SetSpriteColor(Actor_GetById(ACTOR_LIGHT), SPRITE_COLOR_WHITE);
   Event_Wait(20);
   Sound_Play(SE_WARP);
-  Actor_MoveToObject(ACTOR_LIGHT, ACTOR_SHADOW);
+  Actor_PlaceOnActor(ACTOR_LIGHT, ACTOR_SHADOW);
   wait(1);
   Actor_SetMovementTypeById(ACTOR_SHADOW,
                             gAnemosInnerSanctumEntrance_ShadowScript);

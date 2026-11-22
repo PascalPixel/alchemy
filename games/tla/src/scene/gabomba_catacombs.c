@@ -490,7 +490,7 @@ s32 GabombaCatacombs_ShrinkGlow(struct Actor *actor) {
 }
 
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
-void Actor_MoveToObject(s32 actorId, s32 target);
+void Actor_PlaceOnActor(s32 actorId, s32 target);
 
 #define TALK()                                                                 \
   EventMessage_ShowCentered((s16)((union EventLine *)&work->message)->line++,  \
@@ -539,7 +539,7 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   TALK();
   Actor_SetDestinationById(gMainRoutineWork.leaderActorId, 166, 188);
   Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
   speed = toFIXED(1);
   kraden->speedLimit = speed;
   Actor_SetDestinationById(ACTOR_KRADEN, 184, 188);

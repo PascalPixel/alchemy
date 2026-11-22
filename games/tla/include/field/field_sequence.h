@@ -56,18 +56,18 @@ enum WindowTransitionMode {
 
 /// A rule choosing a scene's field music, ended by id -1: a scene or an area
 /// (byScene), an entrance (-1 for any), a flag that must be set (-1 for none)
-/// and the song.
-struct SceneCueRule {
+/// and the music.
+struct MapMusicRule {
   s16 id;
   s16 entrance : 15;
   u16 byScene : 1;
   s16 flag;
-  s16 cue;
+  s16 music;
 };
 
 /// A rule naming the area a scene is in, ended by id -1: a scene or an area
 /// (useSceneId), an entrance (-1 for any) and the area name's index.
-struct SceneAreaNameRule {
+struct AreaNameRule {
   s16 id;
   s16 entrance : 15;
   u16 useSceneId : 1;

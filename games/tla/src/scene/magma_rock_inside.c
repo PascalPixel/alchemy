@@ -2152,7 +2152,7 @@ void MagmaRockInside_LearnBlaze(s32 tabletId, s32 learnerId) {
   wait(1);
 }
 
-s32 Actor_MoveToObject();
+s32 Actor_PlaceOnActor();
 
 /// Reading the Blaze tablet shows its inscription; the first time, Jenna
 /// learns Blaze from it.
@@ -2169,7 +2169,7 @@ void MagmaRockInside_ReadBlazeTablet(void) {
     gFieldWork->message++;
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.7);
     Actor_SetSpeed(ACTOR_JENNA, 0.7);
-    Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
+    Actor_PlaceOnActor(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
     FieldEvent_Wait(1);
     Actor_WalkTo(gMainRoutineWork.leaderActorId, 256, 136);
     Actor_WalkTo(ACTOR_JENNA, 272, 136);

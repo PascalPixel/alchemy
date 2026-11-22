@@ -96,7 +96,7 @@ struct Actor *FieldCamera_GetActor(void);
 void Camera_SetSpeedParameters(FIXED speed, FIXED acceleration);
 void Actor_SetSpeedParameters(s32 actorId, FIXED speed, FIXED acceleration);
 void Actor_WalkToAndWaitById(s32 actorId, s32 x, s32 z);
-void Actor_MoveToObject(s32 actorId, s32 target);
+void Actor_PlaceOnActor(s32 actorId, s32 target);
 void Actor_SetMovementTypeById(s32 actorId, const void *callback);
 void Actor_SetMovementTypeAndWaitById(s32 actorId, const void *callback);
 s32 Event_AskYesNoWithActorAnimation(s32 actorId, s32 flags);
@@ -767,9 +767,9 @@ void Kibombo_MeetPiers(void) {
   Event_SetMessageId((s32)MsgWhWhoAre);
   // "Wh-Who are you?!?"
   Event_ShowMessageAndWait(ACTOR_PIERS, 0);
-  Actor_MoveToObject(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
   wait(1);
   Actor_SetSpritePriority(ACTOR_KRADEN, 2);
   Actor_SetSpritePriority(ACTOR_JENNA, 2);
@@ -1088,7 +1088,7 @@ void Kibombo_PiersRefusesToLeave(void) {
   }
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
   Actor_SetSpritePriority(ACTOR_PIERS, ((struct FieldSprite *)Actor_GetById(
                                             gMainRoutineWork.leaderActorId)
                                             ->sprite)
@@ -1474,10 +1474,10 @@ void Kibombo_DeadEndByTheStatue(void) {
   Actor_SetSpeed(ACTOR_SHEBA, 0.8);
   Actor_SetSpeed(ACTOR_KRADEN, 0.8);
   Actor_SetSpeed(ACTOR_PIERS, 0.8);
-  Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
   wait(1);
   Actor_SetMovementTypeById(ACTOR_JENNA, gKibombo_JennaAtDeadEndScript);
   Actor_SetMovementTypeById(ACTOR_SHEBA, gKibombo_ShebaAtDeadEndScript);

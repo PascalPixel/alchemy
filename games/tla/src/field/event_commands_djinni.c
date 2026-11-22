@@ -172,9 +172,9 @@ void Djinn_RunBattleStartHop(s32 djinniId) {
   djinni->velocityX = 0;
   djinni->velocityZ = 0;
   djinni->velocityY = 0;
-  djinni->targetX = TARGET_UNSET;
-  djinni->targetZ = TARGET_UNSET;
-  djinni->targetY = TARGET_UNSET;
+  djinni->targetX = ACTOR_NO_TARGET;
+  djinni->targetZ = ACTOR_NO_TARGET;
+  djinni->targetY = ACTOR_NO_TARGET;
   Actor_SelectAnimationFar(djinni, ANIM_STILL);
   ((struct Sprite *)djinni->sprite)->image.priority = 2;
 #if TLA_PATCH_1

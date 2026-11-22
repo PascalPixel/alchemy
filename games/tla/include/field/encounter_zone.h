@@ -7,7 +7,7 @@
 
 #include "types.h"
 
-/// An encounter zone, a row of gEncounter_EnemyGroupTable: its rate, the level
+/// An encounter zone, a row of gEncounterZones: its rate, the level
 /// it is made for, and the formations that can appear with their chances.
 struct EncounterZone {
   /// The base encounter rate; 0 for a zone with no random encounters.

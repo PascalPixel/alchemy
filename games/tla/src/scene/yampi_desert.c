@@ -1609,7 +1609,7 @@ void YampiDesert_ClearRaisedEvent(void) {
 s32 YampiDesert_HasArrived(struct Actor *actor) {
   s32 x = actor->targetX;
 
-  if (x == TARGET_UNSET && actor->targetZ == x)
+  if (x == ACTOR_NO_TARGET && actor->targetZ == x)
     return 1;
   return 0;
 }

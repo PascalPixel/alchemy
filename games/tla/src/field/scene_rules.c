@@ -298,7 +298,7 @@ const s32 gScene_BattleBackgroundRules[] = {
     0,
 };
 
-/// The battle music by encounter (BattleEffect_SelectBattleCue): each
+/// The battle music by encounter (Encounter_SelectBattleMusic): each
 /// encounter takes the song listed last before it; the search stops at the
 /// battle's key or at the end (0), so a battle not listed takes the last
 /// song, 0, for which the function chooses music of its own.

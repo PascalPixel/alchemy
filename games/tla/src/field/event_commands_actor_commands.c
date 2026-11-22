@@ -19,9 +19,9 @@ void Actor_ClearDestinationAndStand(u32 actorId) {
   struct Actor *actor = Actor_Lookup(actorId);
 
   if (actor != NULL) {
-    actor->targetX = TARGET_UNSET;
-    actor->targetY = TARGET_UNSET;
-    actor->targetZ = TARGET_UNSET;
+    actor->targetX = ACTOR_NO_TARGET;
+    actor->targetY = ACTOR_NO_TARGET;
+    actor->targetZ = ACTOR_NO_TARGET;
     Actor_StartIdleFar(actor);
     Actor_SelectAnimationFar(actor, ANIM_STAND);
   }

@@ -444,7 +444,7 @@ void JupiterLighthouse_PulseBeacon(void) {
   }
 }
 
-s32 Actor_MoveToObject();
+s32 Actor_PlaceOnActor();
 s32 PartyInventory_Remove(s32 item_id);
 
 extern s32 gJupiterLighthouse_BeamOpenScript[];
@@ -525,7 +525,7 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
         star->velocityY = toFIXED(8);
         FieldActor_SetMoveTarget(star, 512, 128, 294);
         FieldActor_SetMoveTargetFX(shadow, toFIXED(512), -1, toFIXED(294));
-        Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
+        Actor_PlaceOnActor(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
         System_Wait(1);
         Actor_SetSpeed(ACTOR_PIERS, 0.8);
         Actor_WalkBy(ACTOR_PIERS, 12, 0);
@@ -548,9 +548,9 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
         FieldEvent_Wait(60);
         *flags = 0;
         shadow->x.fixed = 0;
-        shadow->targetX = TARGET_UNSET;
-        shadow->targetY = TARGET_UNSET;
-        shadow->targetZ = TARGET_UNSET;
+        shadow->targetX = ACTOR_NO_TARGET;
+        shadow->targetY = ACTOR_NO_TARGET;
+        shadow->targetZ = ACTOR_NO_TARGET;
 
         shadow->y.fixed = 0;
         shadow->z.fixed = 0;
@@ -565,9 +565,9 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
         FieldActor_SetMoveTarget(star, 512, 92, 264);
         FieldActor_WaitForMove(star);
         star->x.fixed = 0;
-        star->targetX = TARGET_UNSET;
-        star->targetY = TARGET_UNSET;
-        star->targetZ = TARGET_UNSET;
+        star->targetX = ACTOR_NO_TARGET;
+        star->targetY = ACTOR_NO_TARGET;
+        star->targetZ = ACTOR_NO_TARGET;
         star->y.fixed = 0;
         star->z.fixed = 0;
         star->velocityX = 0;

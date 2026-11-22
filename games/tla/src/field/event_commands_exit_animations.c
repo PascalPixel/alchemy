@@ -126,8 +126,8 @@ void Exit_PrepareActorAnimation(s32 id, s32 side) {
     actor->z.fixed = (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(16);
     actor->velocityX = cleared;
     actor->velocityZ = cleared;
-    actor->targetX = TARGET_UNSET;
-    actor->targetZ = TARGET_UNSET;
+    actor->targetX = ACTOR_NO_TARGET;
+    actor->targetZ = ACTOR_NO_TARGET;
     Actor_SelectAnimationFar(actor, animation);
     wait(18);
   }
@@ -158,8 +158,8 @@ void Exit_PrepareAnimation(s32 animation) {
     actor->z.fixed = (actor->z.fixed & FIELD_CELL_MASK) + toFIXED(16);
     actor->velocityX = cleared;
     actor->velocityZ = cleared;
-    actor->targetX = TARGET_UNSET;
-    actor->targetZ = TARGET_UNSET;
+    actor->targetX = ACTOR_NO_TARGET;
+    actor->targetZ = ACTOR_NO_TARGET;
     Actor_SelectAnimationFar(actor, animation);
     wait(18);
   }

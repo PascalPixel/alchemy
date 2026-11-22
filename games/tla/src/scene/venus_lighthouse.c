@@ -321,8 +321,8 @@ UNUSED void PushedActor_AdvancePair(void) {
   pillar->z.fixed = targetPosition.z;
   pillar->velocityX = transitionBusy;
   pillar->velocityZ = transitionBusy;
-  leader->targetX = TARGET_UNSET;
-  leader->targetZ = TARGET_UNSET;
+  leader->targetX = ACTOR_NO_TARGET;
+  leader->targetZ = ACTOR_NO_TARGET;
   leader->velocityX = transitionBusy;
   leader->velocityZ = transitionBusy;
   leader->x.fixed = INTtoFIXED(leader->x.part[0].integer);

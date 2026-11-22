@@ -43,7 +43,7 @@ s32 FlagEntries_GetValue(s32 flag) {
 
 /// Chooses the current scene's encounter zones, one for each kind of ground the
 /// party can stand on (gFieldWork->encounterZones, read by
-/// Encounter_RollTerrain), from the first rule matching the scene and entrance.
+/// Encounter_RollMapStep), from the first rule matching the scene and entrance.
 void Encounter_SelectMapZones(s32 useRules) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 sceneId = gMainRoutineWork.next;
@@ -136,7 +136,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, FIXED steps) {
   work = Ram_HeapSlots->fieldWork;
   // UB: FLAG_IGNORE_ENCOUNTER_CHECKS reaches the draw without setting entry.
 #ifdef UBFIX
-  entry = gEncounter_EnemyGroupTable + zone;
+  entry = gEncounterZones + zone;
 #endif
   if (GameFlag_Get(FLAG_IGNORE_ENCOUNTER_CHECKS) == 0) {
     if (GameFlag_Get(FLAG_NO_ENCOUNTERS) != 0 ||
@@ -146,7 +146,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, FIXED steps) {
       return 0;
     if (gMainRoutineWork.cloaked != 0)
       return 0;
-    entry = gEncounter_EnemyGroupTable + zone;
+    entry = gEncounterZones + zone;
     rate = entry->rate;
     if (rate == 0)
       return 0;
@@ -195,7 +195,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, FIXED steps) {
       break;
   }
   formation = (u16)entry->formations[i];
-  BattleEffect_SelectBattleCue(zone, i);
+  Encounter_SelectBattleMusic(zone, i);
   return formation;
 }
 
@@ -203,7 +203,7 @@ s32 Encounter_CountStepsAndSelectFormation(s32 zone, FIXED steps) {
 /// terrain: the ground, an index into work->encounterZones: 0 for ordinary
 /// ground, 1 for a MAP_CELL_SECOND_ZONE cell. steps: the step weight, passed on
 /// to Encounter_CountStepsAndSelectFormation.
-s32 Encounter_RollTerrain(u32 terrain, FIXED steps) {
+s32 Encounter_RollMapStep(u32 terrain, FIXED steps) {
   u8 *zone = gFieldWork->encounterZones;
 
   return Encounter_CountStepsAndSelectFormation(zone[terrain], steps);
@@ -218,7 +218,7 @@ s32 Encounter_RollWorldMap(s32 pos, FIXED steps) {
 
 /// Returns the formation in slot (0 to 7) of zone.
 u16 Encounter_GetFormationAtSlot(s32 zone, s32 slot) {
-  return gEncounter_EnemyGroupTable[zone].formations[slot];
+  return gEncounterZones[zone].formations[slot];
 }
 
 /// Returns the formation of Djinni battle djinni, which the table gives as a
@@ -243,7 +243,7 @@ void Scene_ChooseMusic(void) {
   s16 sceneId = gMainRoutineWork.next;
   s16 entrance = gMainRoutineWork.entrance;
   s16 group = gMainRoutineWork.area;
-  const struct SceneCueRule *rule = gScene_CueRuleTable;
+  const struct MapMusicRule *rule = gScene_MusicRules;
 
   for (; rule->id != -1; rule++) {
     if (rule->byScene) {
@@ -253,7 +253,7 @@ void Scene_ChooseMusic(void) {
         continue;
       if (rule->flag != -1 && GameFlag_Get(rule->flag) == 0)
         continue;
-      music = rule->cue;
+      music = rule->music;
       break;
     } else {
       if (rule->id != group)
@@ -262,7 +262,7 @@ void Scene_ChooseMusic(void) {
         continue;
       if (rule->flag != -1 && GameFlag_Get(rule->flag) == 0)
         continue;
-      music = rule->cue;
+      music = rule->music;
       break;
     }
   }
@@ -273,7 +273,7 @@ void Scene_ChooseMusic(void) {
 /// Returns the area name of sceneId and entrance, from the first rule matching
 /// the scene or its area; 0, the Title's name, when none does.
 s32 Area_GetNameIndex(s32 sceneId, s32 entrance) {
-  const struct SceneAreaNameRule *rule = gScene_AreaNameRules;
+  const struct AreaNameRule *rule = gArea_NameRules;
   s32 name = 0;
   s32 area = Scene_GetArea(sceneId);
 
@@ -457,7 +457,7 @@ s32 Party_IsInFrontRow(s32 owner) {
 /// it is MUS_BATTLE_ON_THE_SEA on the ship before it flies, else by the front
 /// row: MUS_BATTLE_THE_LOST_AGE with Felix, MUS_BATTLE_THE_BROKEN_SEAL with
 /// Isaac, MUS_BATTLE_JENNA with Jenna, or MUS_BATTLE_THE_LOST_AGE.
-void BattleEffect_SelectBattleCue(s32 zone, s32 slot) {
+void Encounter_SelectBattleMusic(s32 zone, s32 slot) {
   s16 key = (zone << 4) + slot;
   const s16 *table = gEncounter_BattleMusic;
   u16 music;

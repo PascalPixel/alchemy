@@ -64,8 +64,8 @@ void MagmaRockInside_PushBlockOnto(void) {
   next->z.fixed = dst.z;
   next->velocityX = 0;
   next->velocityZ = 0;
-  lead->targetX = TARGET_UNSET;
-  lead->targetZ = TARGET_UNSET;
+  lead->targetX = ACTOR_NO_TARGET;
+  lead->targetZ = ACTOR_NO_TARGET;
   lead->velocityX = 0;
   lead->velocityZ = 0;
   lead->x.fixed = INTtoFIXED(lead->x.part[0].integer);

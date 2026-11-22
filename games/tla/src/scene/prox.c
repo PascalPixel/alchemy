@@ -852,7 +852,7 @@ void Prox_DecideToGoToLighthouse(void) {
   Prox_EndEvent();
 }
 
-s32 Actor_MoveToObject();
+s32 Actor_PlaceOnActor();
 extern s32 gProx_IsaacStepsUpToPuelle[];
 
 /// The party climbs to Puelle's house: the elder knows Felix, and Puelle tells
@@ -880,8 +880,8 @@ void Prox_MeetPuelle(void) {
   Event_ShowMessage(ACTOR_PUELLE, 0);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 144, 154);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_NORTH, 0);
-  Actor_MoveToObject(ACTOR_MOLD_KRADEN, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_ISAAC, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_MOLD_KRADEN, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_ISAAC, gMainRoutineWork.leaderActorId);
   System_Wait(1);
   Actor_FaceDirection(ACTOR_CLANSMAN_FEELING_HELPLESS, FACING_NORTH_NORTHWEST,
                       0);
@@ -1860,7 +1860,7 @@ void Prox_InitializeCaveHomes(void) {
   Task_AddFrame(Prox_MatchCaveHomesPriority, TASK_PASS_FRAME);
 }
 
-s32 Actor_MoveToObject();
+s32 Actor_PlaceOnActor();
 extern s32 gProx_IsaacStepsForward[];
 extern s32 gProx_RightFileWalksSouth[];
 extern s32 gProx_GaretWalksSouth[];
@@ -1891,8 +1891,8 @@ void Prox_SayFarewell(void) {
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
     Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 136, 196);
     Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
-    Actor_MoveToObject(ACTOR_ISAAC, gMainRoutineWork.leaderActorId);
-    Actor_MoveToObject(ACTOR_SOUTH_GATE_KRADEN, gMainRoutineWork.leaderActorId);
+    Actor_PlaceOnActor(ACTOR_ISAAC, gMainRoutineWork.leaderActorId);
+    Actor_PlaceOnActor(ACTOR_SOUTH_GATE_KRADEN, gMainRoutineWork.leaderActorId);
     System_Wait(1);
     Actor_SetSpeed(ACTOR_ISAAC, 0.8);
     Actor_SetSpeed(ACTOR_SOUTH_GATE_KRADEN, 0.8);

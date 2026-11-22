@@ -38,7 +38,7 @@ FarCall_OverworldTable:
 	export Actor_SetHorizontalPositionWithTerrainFar, Actor_SetHorizontalPositionWithTerrain
 	export Actor_SetHorizontalPositionAndAngleWithTerrainFar, Actor_SetHorizontalPositionAndAngleWithTerrain
 	export Actor_SetPositionWithTerrainFar, Actor_SetPositionWithTerrain
-	export Actor_MoveToObjectFar, Actor_MoveToObject
+	export Actor_PlaceOnActorFar, Actor_PlaceOnActor
 	export Actor_SetAnimationByIdFar, Actor_SetAnimationById
 	export Actor_SetAnimationSpeedByIdFar, Actor_SetAnimationSpeedById
 	export Actor_SetAnimationAndWaitFar, Actor_SetAnimationAndWait
@@ -135,7 +135,7 @@ FarCall_OverworldTable:
 	export TreasureSpot_ShowOpenedFar, TreasureSpot_ShowOpened
 	export TreasureSpot_SetActorPositionFar, TreasureSpot_SetActorPosition
 	export ObjectEvent_RemoveFar, ObjectEvent_Remove
-	export Leader_StepAwayFromNearbyActorFar, Leader_StepAwayFromNearbyActor
+	export TreasureSpot_MoveLeaderAwayFar, TreasureSpot_MoveLeaderAway
 	export Actor_SetWideSpriteFar, Actor_SetWideSprite
 	export Actor_ReturnHomeFar, Actor_ReturnHome
 	export WorldMap_FreezeFar, WorldMap_Freeze
@@ -281,9 +281,9 @@ FarCall_OverworldTable:
 	export Actor_ArriveInRingFar, Actor_ArriveInRing
 	export BattleEffect_DropObjectAtAnchorFar, BattleEffect_DropObjectAtAnchor
 	export Event_ShowMessageAndOfferScoopFar, Event_ShowMessageAndOfferScoop
-	export BattleEffect_FillOverlayTilesFar, BattleEffect_FillOverlayTiles
+	export FadeOverlay_FillTilesFar, FadeOverlay_FillTiles
 	export EffectSprite_InitWithFadeOverlayFar, EffectSprite_InitWithFadeOverlay
-	export BattleEffect_DrawSpriteAtWorldPositionFar, BattleEffect_DrawSpriteAtWorldPosition
+	export EffectSprite_DrawAtWorldXYZFar, EffectSprite_DrawAtWorldXYZ
 	.global EffectSprite_InitWithFadeOverlayBlendedFar
 	.thumb_func
 EffectSprite_InitWithFadeOverlayBlendedFar:

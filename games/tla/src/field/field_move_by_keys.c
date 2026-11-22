@@ -112,9 +112,9 @@ s32 Actor_MoveByKeys(struct Actor *actor) {
   }
   Actor_SelectAnimation(actor, animation);
   if (collisionFlags != 0) {
-    actor->targetX = TARGET_UNSET;
-    actor->targetY = TARGET_UNSET;
-    actor->targetZ = TARGET_UNSET;
+    actor->targetX = ACTOR_NO_TARGET;
+    actor->targetY = ACTOR_NO_TARGET;
+    actor->targetZ = ACTOR_NO_TARGET;
     actor->velocityX = 0;
     actor->velocityY = 0;
     actor->velocityZ = 0;
@@ -232,9 +232,9 @@ done:
   Actor_SelectAnimation(actor, ANIM_LEADER_CROSS_ROPE);
   Actor_SetAnimationSpeed(actor, animationSpeed);
   if (collisionFlags != 0) {
-    actor->targetX = TARGET_UNSET;
-    actor->targetY = TARGET_UNSET;
-    actor->targetZ = TARGET_UNSET;
+    actor->targetX = ACTOR_NO_TARGET;
+    actor->targetY = ACTOR_NO_TARGET;
+    actor->targetZ = ACTOR_NO_TARGET;
     actor->velocityX = 0;
     actor->velocityY = 0;
     actor->velocityZ = 0;
@@ -343,9 +343,9 @@ s32 Actor_CrossTightrope(struct Actor *actor) {
   Actor_SetAnimationSpeed(actor, 8);
   sprite->offsetY = 4;
   if (collisionFlags != 0) {
-    actor->targetX = TARGET_UNSET;
-    actor->targetY = TARGET_UNSET;
-    actor->targetZ = TARGET_UNSET;
+    actor->targetX = ACTOR_NO_TARGET;
+    actor->targetY = ACTOR_NO_TARGET;
+    actor->targetZ = ACTOR_NO_TARGET;
     actor->velocityX = 0;
     actor->velocityY = 0;
     actor->velocityZ = 0;
@@ -438,7 +438,7 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
   groundAhead =
       MapGrid_GetTerrainHeight(actor->layer, cellX, cellZ - toFIXED(16));
   if (actor->timer != 0) {
-    if (actor->targetX != TARGET_UNSET)
+    if (actor->targetX != ACTOR_NO_TARGET)
       goto done;
     actor->timer = 0;
     actor->groundHeight = groundHere;
@@ -490,9 +490,9 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
       }
     }
     if (collision != 0) {
-      actor->targetX = TARGET_UNSET;
-      actor->targetY = TARGET_UNSET;
-      actor->targetZ = TARGET_UNSET;
+      actor->targetX = ACTOR_NO_TARGET;
+      actor->targetY = ACTOR_NO_TARGET;
+      actor->targetZ = ACTOR_NO_TARGET;
       actor->velocityX = 0;
       actor->velocityZ = 0;
     } else {
@@ -632,9 +632,9 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
     }
     Actor_SelectAnimation(actor, 1);
     if (collision != 0) {
-      actor->targetX = TARGET_UNSET;
-      actor->targetY = TARGET_UNSET;
-      actor->targetZ = TARGET_UNSET;
+      actor->targetX = ACTOR_NO_TARGET;
+      actor->targetY = ACTOR_NO_TARGET;
+      actor->targetZ = ACTOR_NO_TARGET;
       actor->velocityX = 0;
       actor->velocityZ = 0;
       if (collision & PLAYER_STEP_BLOCKED) {
@@ -805,9 +805,9 @@ update_object:
   Actor_SelectAnimation(actor, 1);
 
   if (collision != 0) {
-    actor->targetX = TARGET_UNSET;
-    actor->targetY = TARGET_UNSET;
-    actor->targetZ = TARGET_UNSET;
+    actor->targetX = ACTOR_NO_TARGET;
+    actor->targetY = ACTOR_NO_TARGET;
+    actor->targetZ = ACTOR_NO_TARGET;
     actor->velocityX = 0;
     actor->velocityZ = 0;
     if ((collision & PLAYER_STEP_BLOCKED) != 0) {

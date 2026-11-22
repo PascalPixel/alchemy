@@ -629,7 +629,7 @@ void WorldMap_LeaveShip(void) {
   }
 }
 
-void Actor_MoveToObject(s32 actor, s32 target);
+void Actor_PlaceOnActor(s32 actor, s32 target);
 
 /// Going aboard from the map: the ship's position is kept in gMainRoutineWork
 /// for the way back.
@@ -685,7 +685,7 @@ void WorldMap_RefuseToRunAway(void) {
     FieldEvent_ResolvePendingActions(0);
     if (Event_GetFlag(FLAG_JENNA_POINTED_TO_CONTIGO)) {
       FieldEffect_ScheduleRatioTransition(FIXED_ONE * 7 / 5, 6);
-      Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
+      Actor_PlaceOnActor(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
       System_Wait(1);
       Actor_WalkToAndWait(ACTOR_JENNA, (x << 4) + 24, (z << 4) - 12);
       Actor_FaceDirection(ACTOR_JENNA, southwest, 0);
@@ -704,7 +704,7 @@ void WorldMap_RefuseToRunAway(void) {
       s32 besideZ;
 
       FieldEffect_ScheduleRatioTransition(FIXED_ONE * 7 / 5, 6);
-      Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
+      Actor_PlaceOnActor(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
       System_Wait(1);
       x <<= 4;
       besideZ = (z << 4) - 12;
@@ -1608,7 +1608,7 @@ void WorldMap_MeetEcho(void) {
   Event_ResolvePendingActions(0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_MoveToObject(ACTOR_ECHO, owner);
+  Actor_PlaceOnActor(ACTOR_ECHO, owner);
   djinni->velocityY = toFIXED(10);
   FieldActor_SetMoveTargetFX(djinni, x, 0, z);
   Event_Wait(30);

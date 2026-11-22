@@ -133,8 +133,8 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 void Actor_CycleSpriteColors(void);
 void FlagBlock_ApplyFlags(const void *data);
 void Actor_TakeLeaderLayer(void);
-void BattleEffect_DrawSpriteAtWorldPosition(struct EffectSprite *sprite, s32 x,
-                                            s32 y, s32 z);
+void EffectSprite_DrawAtWorldXYZ(struct EffectSprite *sprite, s32 x, s32 y,
+                                 s32 z);
 
 void AlhafranCave_SetUpCave(void);
 void AlhafranCave_SetUpJail(void);
@@ -256,9 +256,8 @@ void AlhafranCave_CheckUpperLevel(void) {
 s32 AlhafranCave_DrawCrateSprite(void) {
   struct Actor *actor = Actor_Get(ACTOR_CRATE);
 
-  BattleEffect_DrawSpriteAtWorldPosition(
-      &gAlhafranCave_CrateSprite, actor->x.fixed, actor->y.fixed + toFIXED(28),
-      actor->z.fixed);
+  EffectSprite_DrawAtWorldXYZ(&gAlhafranCave_CrateSprite, actor->x.fixed,
+                              actor->y.fixed + toFIXED(28), actor->z.fixed);
   return 0;
 }
 
@@ -387,7 +386,7 @@ void AlhafranCave_SetUpJail(void) {
   Actor_Get(ACTOR_CRATE)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
   FieldEffect_StartBlankOverlay(0);
   crate = &gAlhafranCave_CrateSprite;
-  BattleEffect_FillOverlayTiles(0);
+  FadeOverlay_FillTiles(0);
   Call4((void (*)())EffectSprite_InitWithFadeOverlay, (s32)crate, 8, 15,
         OBJ_SIZE_16X16);
   FieldTask_AddFrame(AlhafranCave_DrawCrateSprite, TASK_PASS_FRAME);

@@ -1,7 +1,7 @@
 /// @file
 /// The 110 encounter zones, by zone number: each zone's rate, level,
 /// formations and their weights. A field zone's comment gives its area name
-/// (gScene_AreaNameRules) and the scenes and entrances that take it
+/// (gArea_NameRules) and the scenes and entrances that take it
 /// (gScene_EncounterRules); a World Map zone's, its encounter regions and
 /// the battle environments that take it (gWorldMap_EncounterRules); a Djinni
 /// zone's, the Djinn whose battles it holds (gEncounter_AreaEntryTable).
@@ -9,7 +9,7 @@
 #include "field/encounter_zone.h"
 
 // clang-format off
-const struct EncounterZone gEncounter_EnemyGroupTable[] = {
+const struct EncounterZone gEncounterZones[] = {
     // None: a ground whose zone is 0 has no random battles
     {0},
     // Djinni battles: DJINNI_FLINT to DJINNI_SALT

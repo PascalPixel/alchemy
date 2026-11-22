@@ -348,7 +348,7 @@ void MadraCatacombs_UnlockWithRuinKey(void) {
   Event_End();
 }
 
-void Actor_MoveToObject(s32 id, s32 value);
+void Actor_PlaceOnActor(s32 id, s32 value);
 void Rope_Initialize(void);
 void FlagBlock_PlaceAll(const void *data);
 void Actor_PlaceBlocks(const void *data);
@@ -484,7 +484,7 @@ void MadraCatacombs_LightFlames(void) {
   Actor_SetPosition(ACTOR_FIRST_EAST_FLARE, 184, 138);
   for (i = 0; i < FLARES_PER_SIDE * 2; i++) {
     Actor_SetAnimation(actor, 0);
-    Actor_MoveToObject(actor, target);
+    Actor_PlaceOnActor(actor, target);
     target++;
     actor++;
   }

@@ -18,7 +18,7 @@ void Field_RequestBattleFromEncounterTable(s32 row, s32 column) {
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
     Encounter_ResolveWorldMapZoneAndBackdrop(
         &Actor_Lookup(Party_GetLeaderActor())->x.fixed);
-  BattleEffect_SelectBattleCue(row, column);
+  Encounter_SelectBattleMusic(row, column);
 }
 
 /// The low bits of Field_RequestDjinnBattle's flags: the Djinni's actor.
@@ -56,7 +56,7 @@ void Field_RequestDjinnBattle(u32 flags, u32 djinn) {
   if (work->mode == ACTOR_SYSTEM_WORLD_MAP)
     Encounter_ResolveWorldMapZoneAndBackdrop(
         &Actor_Lookup(Party_GetLeaderActor())->x.fixed);
-  BattleEffect_SelectBattleCue(0, 0);
+  Encounter_SelectBattleMusic(0, 0);
 }
 
 #undef DJINN_ACTOR_MASK

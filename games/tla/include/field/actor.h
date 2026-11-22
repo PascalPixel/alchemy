@@ -28,7 +28,7 @@ enum ScreenTransitionStyle {
 #define SCENE_TRANSITION_VARIANT(transition) ((transition) & 0xff)
 
 /// Actor.targetX, targetY and targetZ when it has no movement target.
-#define TARGET_UNSET ((s32)0x80000000)
+#define ACTOR_NO_TARGET ((s32)0x80000000)
 
 /// The actor id that ends a list of actors, or of rows that start with one.
 #define ACTOR_LIST_END 65535
@@ -141,9 +141,9 @@ struct Actor {
   /// Added toward the target each frame, or taken off the speed when there is
   /// none, in 16.16 fixed-point pixels per frame.
   FIXED acceleration;
-  FIXED targetX; ///< 16.16 fixed-point pixels; TARGET_UNSET when unset
-  FIXED targetY; ///< 16.16 fixed-point pixels; TARGET_UNSET when unset
-  FIXED targetZ; ///< 16.16 fixed-point pixels; TARGET_UNSET when unset
+  FIXED targetX; ///< 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset
+  FIXED targetY; ///< 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset
+  FIXED targetZ; ///< 16.16 fixed-point pixels; ACTOR_NO_TARGET when unset
   /// The share of its falling speed kept as it bounces on landing, 16.16
   /// fixed point.
   FIXED bounce;

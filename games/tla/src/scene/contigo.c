@@ -258,7 +258,7 @@ enum ContigoGeoglyphActorId {
 
 struct Actor;
 
-void Actor_MoveToObject(s32 actor, s32 target);
+void Actor_PlaceOnActor(s32 actor, s32 target);
 void FieldCamera_WaitForArrival(void);
 void Party_AddIsaacsParty(void);
 void Contigo_OfferLuckyWheels(s32 mode);
@@ -1733,10 +1733,10 @@ void Contigo_TheReunion(void) {
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 160, 382);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 0);
-  Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
   wait(1);
   Actor_SetSpeed(ACTOR_JENNA, 0.8);
   Actor_SetSpeed(ACTOR_PIERS, 0.8);
@@ -2269,7 +2269,7 @@ void Contigo_ReturnToNewHome(void) {
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
     Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 158, 394);
     Actor_FaceDirection(ACTOR_HAMMA, FACING_SOUTH_SOUTHWEST, 0);
-    Actor_MoveToObject(ACTOR_IVAN, gMainRoutineWork.leaderActorId);
+    Actor_PlaceOnActor(ACTOR_IVAN, gMainRoutineWork.leaderActorId);
     wait(1);
     Actor_SetSpeed(ACTOR_IVAN, 0.8);
     Actor_WalkToAndWaitById(ACTOR_IVAN, 144, 374);
@@ -2316,7 +2316,7 @@ void Contigo_ReturnToNewHome(void) {
     FieldActor_ShowEmote(ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_SWEAT_DROP, 20);
     // "Our world is falling into ruin..."
     Event_ShowMessageAndWait(ACTOR_HAMMA, 0);
-    Actor_MoveToObject(ACTOR_ISAAC, gMainRoutineWork.leaderActorId);
+    Actor_PlaceOnActor(ACTOR_ISAAC, gMainRoutineWork.leaderActorId);
     wait(1);
     FieldActor_ShowEmote(ACTOR_ISAAC, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Actor_SetSpeed(ACTOR_ISAAC, 1.2);
@@ -2326,7 +2326,7 @@ void Contigo_ReturnToNewHome(void) {
     Event_ShowMessageAndWait(ACTOR_ISAAC, 0);
     FieldActor_ShowEmote(ACTOR_HAMMA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
     Actor_FaceDirection(ACTOR_HAMMA, FACING_SOUTH_SOUTHEAST, 0);
-    Actor_MoveToObject(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
+    Actor_PlaceOnActor(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
     wait(1);
     Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
     Actor_SetMovementTypeById(gMainRoutineWork.leaderActorId,

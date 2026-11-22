@@ -61,9 +61,9 @@ void Actor_ResetTargetsAndVelocity(u32 actorId) {
   if (actor != NULL) {
     actor->steeringFlags |= ACTOR_FACES_MOTION;
     Actor_StartIdleFar(actor);
-    actor->targetX = TARGET_UNSET;
-    actor->targetY = TARGET_UNSET;
-    actor->targetZ = TARGET_UNSET;
+    actor->targetX = ACTOR_NO_TARGET;
+    actor->targetY = ACTOR_NO_TARGET;
+    actor->targetZ = ACTOR_NO_TARGET;
     SET_VELOCITY(actor, 0, 0, 0);
     actor->arrivalAxis = 0;
   }
@@ -234,7 +234,7 @@ void Actor_LaunchFromLeader(s32 actorId, s32 xOffset, s32 zOffset, s32 action) {
 
   if (actor != NULL) {
     Actor_SetSpeedParameters(actorId, toFIXED(4) / 5, toFIXED(2) / 5);
-    Actor_MoveToObject(actorId, gMainRoutineWork.leaderActorId);
+    Actor_PlaceOnActor(actorId, gMainRoutineWork.leaderActorId);
     Actor_SetPositionAndResetMotionFar(actor, actor->x.fixed, actor->y.fixed,
                                        actor->z.fixed - toFIXED(1));
     actor->paused = 0;
@@ -325,7 +325,7 @@ void Actor_SetPositionWithTerrain(u32 actorId, FIXED x, FIXED y, FIXED z) {
 
 /// Puts the first actor where the second stands, at rest, on the same ground
 /// height.
-void Actor_MoveToObject(u32 actorId, u32 otherId) {
+void Actor_PlaceOnActor(u32 actorId, u32 otherId) {
   struct Actor *actor = Actor_Lookup(actorId);
   struct Actor *other = Actor_Lookup(otherId);
 

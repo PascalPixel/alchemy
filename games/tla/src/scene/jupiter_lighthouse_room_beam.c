@@ -104,7 +104,7 @@ void LightSprites_InitB(void);
 
 void LightSprites_Add(s32 id, s32 value);
 
-void BattleEffect_FillOverlayTiles(s32 a);
+void FadeOverlay_FillTiles(s32 a);
 
 void JupiterLighthouse_LoadPalettes(s32 mode);
 
@@ -196,7 +196,7 @@ void JupiterLighthouse_SetLayerCellsByLeader(void) {
 
 /// A task: draws the glow over the Cyclone pad in use.
 void JupiterLighthouse_DrawGlow(void) {
-  BattleEffect_DrawSpriteAtWorldPosition(
+  EffectSprite_DrawAtWorldXYZ(
       (s32)&gJupiterLighthouse_GlowSprite, gJupiterLighthouse_GlowPosition[0],
       gJupiterLighthouse_GlowPosition[1], gJupiterLighthouse_GlowPosition[2]);
 }
@@ -558,7 +558,7 @@ s32 Scene_Initialize(void) {
   FieldActor_SetSpritePriority(ACTOR_NORTHEAST_STATUE, 3);
   Io_Write16(BLDCNT_TGT1_BG1 | BLDCNT_TGT1_BG2 | BLDCNT_TGT2_ALL, &REG_BLDCNT);
   Io_Write16(BLEND_ALPHA(0, 16), &REG_BLDALPHA);
-  BattleEffect_FillOverlayTiles(0);
+  FadeOverlay_FillTiles(0);
   Call4((void (*)())EffectSprite_InitWithFadeOverlayBlended,
         (s32)&gJupiterLighthouse_GlowSprite, 0, 0, OBJ_SIZE_32X32);
   JupiterLighthouse_SetLayerCellsByLeader();

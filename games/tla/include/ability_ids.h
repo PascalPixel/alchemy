@@ -155,7 +155,7 @@ enum AbilityId {
   /// Cast only from the debug shortcut grid. The text names it only "Ma????"
   /// and its icon is a horseshoe magnet; cast in the field, it draws a ring of
   /// light round the caster.
-  ABILITY_RING,
+  ABILITY_MAGNET,
   ABILITY_TELEPORT,
   /// Cast only from the debug shortcut grid. The text names it only "A??" and
   /// its icon is a bow and arrow; cast in the field, a bow looses a flaming

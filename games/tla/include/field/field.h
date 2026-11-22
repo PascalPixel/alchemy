@@ -77,7 +77,7 @@ void FieldPsynergy_FinishMindRead(void);
 void FieldPsynergy_Dispatch(void);
 void FieldPsynergy_LoadResources(s32 action, s32 flags);
 void FieldPsynergy_Run(void);
-void BattleEffect_SelectBattleCue(s32 row, s32 column);
+void Encounter_SelectBattleMusic(s32 row, s32 column);
 void FieldPsynergy_SetupActorPair(s32 actor, s32 target);
 s32 PaletteFade_StartInterpolationFar(s32);
 s32 BattleMotion_ProjectScaledPositionFar(s32, s32 *);
@@ -664,7 +664,7 @@ struct Actor *Field_GetPartyActor(void);
 s32 Actor_GetTriggerCellAheadOfCurrent(void);
 u32 Stream_ReadU16(u8 **cursor);
 s16 Stream_ReadS16(u8 **cursor);
-void BattleMap_ApplySceneEntranceView(void);
+void Field_ApplyEntrance(void);
 
 void PaletteEditor_Run(void);
 

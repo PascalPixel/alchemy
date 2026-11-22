@@ -1694,7 +1694,7 @@ void MagmaRock_LandLeader(void) {
     actor->velocityY = 0;
     actor->groundHeight = height;
     actor->y.fixed = height;
-    actor->targetY = TARGET_UNSET;
+    actor->targetY = ACTOR_NO_TARGET;
     EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
   }
 }
@@ -2181,7 +2181,7 @@ UNUSED void MagmaRock_CrumblePillar(struct MagmaRockCrumblingPillar *entry,
 
 #include "shared/pillar_take_out_of_play.c"
 
-void Actor_MoveToObject(s32 id, s32 owner);
+void Actor_PlaceOnActor(s32 id, s32 owner);
 
 #include "shared/pillar_restore.h"
 

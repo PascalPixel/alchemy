@@ -715,7 +715,7 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
 
 /// Sets the colour mode (enum SpriteColorMode) of the sprite's first sprite
 /// animation and has it drawn again.
-void Animation_ApplyChildValueToFirst(struct Sprite *sprite, u32 colorMode) {
+void Sprite_SetFirstAnimationColorMode(struct Sprite *sprite, u32 colorMode) {
   if (sprite != NULL) {
     sprite->entries[0]->colorMode = colorMode;
     sprite->dirty = 1;

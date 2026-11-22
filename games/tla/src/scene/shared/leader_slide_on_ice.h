@@ -26,8 +26,8 @@ top:
   Leader_StopIfPending();
   actor->speedLimit = toFIXED(1);
   actor->acceleration = toFIXED(1) / 2;
-  actor->targetX = TARGET_UNSET;
-  actor->targetZ = TARGET_UNSET;
+  actor->targetX = ACTOR_NO_TARGET;
+  actor->targetZ = ACTOR_NO_TARGET;
   actor->velocityX = 0;
   actor->velocityZ = 0;
   position = &probe;

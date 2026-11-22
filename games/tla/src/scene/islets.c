@@ -285,7 +285,7 @@ void PushTarget_Push(struct PushTarget target);
 void Islets_PlayFootsteps(void);
 void Islets_RideOnLonesomeGeorge(struct Actor *actor);
 void Actor_EmitWadingSplashes(struct Actor *actor);
-void Actor_MoveToObject(s32 actorId, s32 target);
+void Actor_PlaceOnActor(s32 actorId, s32 target);
 void FieldPsynergy_StopMindReadWave(void);
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
@@ -1792,7 +1792,7 @@ void Islets_ArriveBackAtIsland(void) {
   struct Actor *owner = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *actor = Actor_Get(ACTOR_LONESOME_GEORGE);
 
-  Actor_MoveToObject(ACTOR_LONESOME_GEORGE, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_LONESOME_GEORGE, gMainRoutineWork.leaderActorId);
   Actor_SetPosition(ACTOR_LIL_TURTLE, 273, 520);
   System_Wait(1);
   actor->facing = FACING_NORTH;
@@ -1847,7 +1847,7 @@ void Islets_ArriveAtSecretSpot(void) {
   struct Actor *guide = Actor_Get(ACTOR_LONESOME_GEORGE);
   u8 *done;
 
-  Actor_MoveToObject(ACTOR_LONESOME_GEORGE, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_LONESOME_GEORGE, gMainRoutineWork.leaderActorId);
   Actor_SetPosition(ACTOR_LIL_TURTLE, 240, 540);
   System_Wait(1);
   guide->facing = FACING_SOUTH;

@@ -687,7 +687,7 @@ void LemurianShipDeck_FreezePuddle(void) {
   FlagBlock_ApplyFlags(gLemurianShipDeck_Puddles);
 }
 
-void Actor_MoveToObject(s32 id, s32 target);
+void Actor_PlaceOnActor(s32 id, s32 target);
 
 /// Stepping toward the gangway before Piers is back aboard: on the third step
 /// Kraden tires of waiting and goes to find a ship the party can use.
@@ -702,7 +702,7 @@ void LemurianShipDeck_KradenGoesToFindShip(void) {
   if (Event_GetFlag(FLAG_SCENE_TEMP_11)) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
-    Actor_MoveToObject(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
+    Actor_PlaceOnActor(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
     System_Wait(1);
     Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
     Actor_SetSpeed(ACTOR_KRADEN, 0.8);
@@ -794,7 +794,7 @@ void LemurianShipDeck_ReturnToShip(void) {
     return;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
   System_Wait(1);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_EAST, 0);
   Actor_SetSpeed(ACTOR_PIERS, 1.6);

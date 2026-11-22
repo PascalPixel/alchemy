@@ -44,7 +44,7 @@ struct Actor;
 struct MotionObject;
 struct FieldParticle;
 struct Actor;
-struct SceneAreaNameRule;
+struct AreaNameRule;
 
 extern const s8 gBattleEffect_RandomChildValues[];
 extern const s8 gBattlePlacement_StepPairs[];
@@ -120,7 +120,7 @@ struct PaletteFade;
 struct BattleObject;
 struct Actor;
 struct PendingEvent;
-struct SceneCueRule;
+struct MapMusicRule;
 struct WorldMapWork;
 
 /// The 32x16 spark the swelling arcs over a caster are drawn with

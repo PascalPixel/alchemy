@@ -1406,6 +1406,10 @@ struct MeshVertex;
 #define COATLICUE_RINGS 4
 #define COATLICUE_FLASHES 3
 #define COATLICUE_GLOWS 3
+/// As it shines the fire ring brightens COATLICUE_FLASH_SHADE_STEP a frame
+/// from COATLICUE_FLASH_SHADE, to its full light from its fourth frame.
+#define COATLICUE_FLASH_SHADE (-56)
+#define COATLICUE_FLASH_SHADE_STEP 16
 #define COATLICUE_COILS 2
 /// Each coil leans forward by COATLICUE_COIL_TILT as it starts, the second at
 /// COATLICUE_SECOND_COIL_START, and leans back COATLICUE_COIL_TILT_SPEED a
@@ -2129,7 +2133,7 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
             s = FIXED_ONE * 5 / 4 - d * (FIXED_ONE / 8);
             texture.pixels = cellBuffer;
             model->kind = MODEL_SHADED_ADDITIVE;
-            sh = d * 16 - 56;
+            sh = d * COATLICUE_FLASH_SHADE_STEP + COATLICUE_FLASH_SHADE;
             if (sh > 0) {
               sh = 0;
             }
@@ -2292,9 +2296,11 @@ void BattleEffect_RunCoatlicue(struct BattleEffectParams *args) {
     Sprite_DestroyFar(work->sprites[i]);
   }
   Palette_LoadBasicSpriteColors();
-  Dma_Set((const void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(5, 0),
+  Dma_Set((const void *)OBJ_PLTT,
+          (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
           DMA_COPY_HALFWORDS(PALETTE_COLORS), REG_DMA3);
-  BG_PLTT_COLOR(5, 14) = BG_PLTT_COLOR(15, 4);
+  BG_PLTT_COLOR(BASIC_COLORS_PALETTE, TEXT_BACKGROUND_COLOR) =
+      BG_PLTT_COLOR(WINDOW_PALETTE, WINDOW_BACKGROUND_COLOR);
   BattleEffect_SelectLivingTargets(work->args);
   wait(1);
   Task_Remove(BattleEffect_ArmPaletteHBlankDma);

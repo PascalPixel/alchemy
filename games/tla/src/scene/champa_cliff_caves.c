@@ -1,12 +1,20 @@
 /// @file
-/// The caves in Champa's cliff, four scenes of this overlay: the homes of
-/// Briggs's sailors and their families, Briggs's own, and the forge room of
-/// his grandmother Obaba. Obaba waits for her grandson
-/// (ChampaCliffCaves_ObabaAsksForBriggs); once he is home she sends her
-/// salamander, grown into Avimander, against the party
-/// (ChampaCliffCaves_FightAvimander), learns after its defeat what Briggs has
-/// done (ChampaCliffCaves_ObabaMournsSalamander), and forges the three prongs
-/// into the Trident (ChampaCliffCaves_ObabaForgesTrident).
+/// The caves in Champa's cliff, where the sailors and their families live, in
+/// four scenes of this overlay climbing the cliff level by level: the lowest
+/// caves, entered from the village by the mouth Briggs's sailors watch
+/// (SceneId_ChampaCliffCavesBriggs); the homes above them
+/// (ChampaCliffCavesHouses); the level with Obaba's door and Briggs's home
+/// (ChampaCliffCavesObaba); and at the top Obaba's forge room
+/// (ChampaCliffCavesAvimander). Before Briggs is home, knocking at Obaba's
+/// door only brings her out to ask after her grandson
+/// (ChampaCliffCaves_ObabaAsksForBriggs). Once he has fled up here from
+/// Felix, walking into the forge room finds Briggs with her, and she throws
+/// her salamander into the forge to come out as Avimander
+/// (ChampaCliffCaves_FightAvimander). Beaten, she hears what Briggs has done
+/// (ChampaCliffCaves_ObabaMournsSalamander), and afterwards forges the three
+/// prongs the party brings her into the Trident of Ankohl
+/// (ChampaCliffCaves_ObabaForgesTrident), which Reveal's path across the pit
+/// reaches (ChampaCliffCaves_RevealPath).
 #include "field/field_sequence.h"
 #include "field/event_inline.h"
 #include "resource_ids.h"
@@ -197,13 +205,6 @@ void ChampaCliffCaves_LoadGlow(void);
 void ChampaCliffCaves_DrawForgeFire(void);
 void ChampaCliffCaves_LoadColumn(void);
 
-void ChampaCliffCaves_ObabaAsksForBriggs(void);
-
-void ChampaCliffCaves_RevealPath(void);
-
-void ChampaCliffCaves_HidePath(void);
-void ChampaCliffCaves_FightAvimander(void);
-
 extern s16 gChampaCliffCaves_OpenDoorFrames[];
 extern s16 gChampaCliffCaves_CloseDoorFrames[];
 
@@ -272,8 +273,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gChampaCliffCaves_BriggsPlacements;
 }
 
-/// Stepping into a door: it opens, the leader walks through and the scene
-/// leaves by the exit given.
+/// Walking into a door in the cliff caves: it opens with a sound, Felix walks
+/// through and the screen goes to the room behind it.
 void ChampaCliffCaves_OpenDoorAndEnter(const struct DoorEdit *edit, s32 door,
                                        s32 mode) {
   s32 id;
@@ -297,14 +298,18 @@ void ChampaCliffCaves_OpenDoorAndEnter(const struct DoorEdit *edit, s32 door,
   Event_End();
 }
 
-/// Stepping into Obaba's door once Avimander is beaten: it opens and the
-/// leader walks through.
+/// Walking north into Obaba's door (cell (11, 26)) once Avimander is beaten
+/// opens it, and Felix walks into the home behind it, where Briggs lies in
+/// bed.
 void ChampaCliffCaves_EnterDoor(s32 door) {
   ChampaCliffCaves_OpenDoorAndEnter(&gChampaCliffCaves_OpenDoor, door, 0);
 }
 
-/// Knocking at Obaba's door before Briggs is home: she comes out, asks whether
-/// her grandson has returned, and goes back in.
+/// Walking into or knocking at Obaba's door, at the west end of its passage
+/// (cells (11, 25) and (11, 26)), before Avimander is beaten: Felix steps up
+/// beside it and she opens it, asks "Has my grandson returned? Has my Briggs
+/// come home?", answers the yes ("You lie!") or the no, and shuts herself in
+/// again.
 void ChampaCliffCaves_ObabaAsksForBriggs(void) {
   const struct DoorEdit *edit;
   s32 msg;
@@ -342,8 +347,9 @@ void ChampaCliffCaves_ObabaAsksForBriggs(void) {
   Sound_Play(SE_DOOR_OPEN);
 }
 
-/// A villager at a door asks whether the party wants to come in, and answers
-/// the choice.
+/// Talking to the woman standing in the doorway of her home at the west end of
+/// the lowest caves, once Briggs is back: "What, you want to come in?" A yes
+/// gets "As if! I'm a nice girl...", a no "You're wasting my time."
 void ChampaCliffCaves_AskToComeIn(s32 actor) {
   Event_SetMessageId((s32)MsgWhatYouWant);
   // "What, you want to come in?" Yes: "As if! I'm a nice girl..." No: "Yeah?
@@ -359,8 +365,9 @@ void ChampaCliffCaves_AskToComeIn(s32 actor) {
   Event_ShowMessageAndWait(actor, 0);
 }
 
-/// One of Briggs's sailors gives in ("I'll go back to Alhafra...but only if
-/// Briggs is going") and keeps watching the leader.
+/// Talking to the second of the two sailors on the east side of the lowest
+/// caves, once Briggs is back: he gives in ("I'll go back to
+/// Alhafra...but only if Briggs is going") and keeps his eyes on Felix.
 void ChampaCliffCaves_SailorSurrenders(s32 actorId) {
   struct Actor *actor;
 
@@ -371,8 +378,9 @@ void ChampaCliffCaves_SailorSurrenders(s32 actorId) {
   Actor_WatchActor(actor, Actor_GetById(gMainRoutineWork.leaderActorId));
 }
 
-/// One of Briggs's sailors at Obaba's forge tells the party to leave him alone,
-/// turns away and squashes and stretches for ever.
+/// Talking to the sailor in Obaba's forge room, once Briggs is back: "Aw, come
+/// on! I'm not doing anything! Leave me alone!", and he turns his back on the
+/// party, squashing and stretching from then on (MOVEMENT_TYPE_SQUASH).
 void ChampaCliffCaves_SailorTurnsAway(s32 actor) {
   Event_SetMessageId((s32)MsgAwComeOn);
   // "Aw, come on! I'm not doing anything! Leave me alone!"
@@ -381,9 +389,9 @@ void ChampaCliffCaves_SailorTurnsAway(s32 actor) {
   Actor_SetMovementType(Actor_GetById(actor), MOVEMENT_TYPE_SQUASH);
 }
 
-/// Reveal in Obaba's forge room shows the path hidden across the pit: the
-/// revealed cells, kept further down the map, are copied there with their
-/// attributes.
+/// Reveal in Obaba's forge room shows a path hidden across the forge pit,
+/// north to the forged Trident floating over it. The path's cells, kept
+/// further down the map, are copied there with their behaviours.
 void ChampaCliffCaves_RevealPath(void) {
   MapGrid_CopyCellPictureCellsRect(41, 97, 1, FORGE_PATH_CELLS,
                                    FORGE_PATH_CELL_X, 77);
@@ -415,8 +423,8 @@ void ChampaCliffCaves_HidePath(void) {
 
 extern struct Trigger gChampaCliffCaves_BriggsTriggers[];
 
-/// Picks up the forged Trident floating over Obaba's forge pit, reached by the
-/// path Reveal shows.
+/// Talking to the forged Trident floating over Obaba's forge pit, reached by
+/// the path Reveal shows, takes it.
 void ChampaCliffCaves_PickUpTrident(s32 a) {
   Event_PickUpItem(a, ITEM_TRIDENT, FLAG_TRIDENT_TAKEN);
 }
@@ -476,8 +484,8 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// The leader walks to Obaba, holds up the given item over the counter and
-/// steps back.
+/// Felix walks up to Obaba's counter, holds the prong up over it, leaves it
+/// there and steps back.
 void ChampaCliffCaves_HandPieceToObaba(s32 actor) {
   Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 648, 200);
   Actor_FaceDirectionAndRefreshById(gMainRoutineWork.leaderActorId,
@@ -498,8 +506,8 @@ void ChampaCliffCaves_HandPieceToObaba(s32 actor) {
   Event_Wait(10);
 }
 
-/// Obaba steps up to take the item from the counter, and unless she is to forge
-/// it steps back.
+/// Obaba steps up to her counter and takes the prong from it, and unless she
+/// is to forge it at once steps back.
 void ChampaCliffCaves_ObabaStepsForward(s32 value) {
   Actor_SetSpeed(ACTOR_OBABA, 0.8);
   Actor_GetById(ACTOR_OBABA)->steeringFlags &= ~ACTOR_FACES_MOTION;
@@ -522,8 +530,8 @@ void ChampaCliffCaves_ObabaStepsForward(s32 value) {
   }
 }
 
-/// Fades the forge pit's five colours from one set to another over the given
-/// number of frames, a step a frame.
+/// The forge pit's glow changes colour, its five colours fading from one set to
+/// another over the given number of frames, a step a frame.
 void ChampaCliffCaves_FadeColors(u16 *from, u16 *to, s32 frames) {
   s32 step;
 
@@ -902,9 +910,13 @@ DEFINE_CHAMPA_CLIFF_CAVES_GROW(ChampaCliffCaves_GrowThrownSlowly,
 
 #define PALETTE ((u16 *)&BG_PLTT_COLOR(0, 0))
 
-/// Entering Obaba's forge room: Briggs stops the party and Obaba asks Felix to
-/// back down; refused, she throws her salamander into her forge, whose pit
-/// turns fiery, and it comes out as Avimander to fight.
+/// Walking east into Obaba's forge room from the passage (cells (36, 12) to
+/// (36, 18)) once Briggs has fled up here: "Hold it right there!" Briggs
+/// stops the party, and Obaba, for her great-grandson Eoleo's sake, tells Felix
+/// he had better leave; if he will not, she throws her salamander into the
+/// forge, whose pit turns fiery, and it climbs out grown into Avimander to
+/// fight. Coming back after a defeat, Briggs greets the party with "Back for
+/// more?".
 void ChampaCliffCaves_FightAvimander(void) {
   u16 dark[FORGE_COLORS];
   u16 fiery[FORGE_COLORS];
@@ -1114,8 +1126,9 @@ void ChampaCliffCaves_FightAvimander(void) {
   Event_End();
 }
 
-/// After losing to Avimander: Briggs asks Felix whether he has learned his
-/// lesson, Obaba scolds, and the party is sent back.
+/// Coming to after losing to Avimander, in the forge room: Briggs asks Felix
+/// whether he has learned his lesson, Obaba scolds, and the party is sent back
+/// down the passage.
 void ChampaCliffCaves_AskIfBriggsLearned(void) {
   struct FieldWork *work;
 
@@ -1154,10 +1167,11 @@ extern u32 gChampaCliffCaves_ChaseToEastScript[];
 extern u32 gChampaCliffCaves_ChaseToWestScript[];
 extern u32 gChampaCliffCaves_ChaseToSouthScript[];
 
-/// After beating Avimander: Obaba mourns her salamander ("My salamander!
-/// You... beat my salamander...") and leaves Briggs to fight for himself, the
-/// party tells her he is a pirate, Chaucha comes to tell why, Briggs and
-/// Chaucha go home, and Avimander stays beaten (FLAG_CHAMPA_AVIMANDER_BEATEN).
+/// After the party beats Avimander, in the forge room: Obaba mourns her
+/// salamander ("My salamander! You... beat my salamander...") and leaves
+/// Briggs to fight for himself, the party tells her he is a pirate, Chaucha
+/// comes to tell why he did it, and Briggs and Chaucha go home
+/// (FLAG_CHAMPA_AVIMANDER_BEATEN).
 void ChampaCliffCaves_ObabaMournsSalamander(void) {
   const u8 *scriptA, *scriptB, *scriptC, *scriptD;
   struct Actor *leader;
@@ -1728,8 +1742,8 @@ struct FlashWork {
 /// pictures.
 enum { FLASH_PALETTE = 15, FLASH_PICTURE_TILES = 16 * 16 / 64 };
 
-/// An actor vanishes in an explosion: it spins (mode 0) or not, is hidden, and
-/// the explosion plays over it, twice the size in mode 1; then the actor is
+/// Someone or something vanishes in a burst: it spins (`mode` 0) or not, is
+/// hidden, and the burst plays over it, twice the size in mode 1; then it is
 /// taken off the map.
 void ChampaCliffCaves_StartFlash(s32 id, s32 mode) {
   struct FlashWork *work =
@@ -1873,11 +1887,12 @@ void ChampaCliffCaves_LoadColumn(void) {
 /// had the frame before.
 #define FIRE_HEIGHT_SCALE(widthScale) ((widthScale) * 31 / 40)
 
-/// Cycles the forge fire's 32 colours through waves of green and blue, a 32nd
-/// of a turn apart, the first sixteen to colours 111 down to 96 and the rest
-/// to 239 down to 224; places the glow's and the column's sprites at the
-/// fire's spot with their scales; and sets the height each is drawn at the
-/// next frame (FIRE_HEIGHT_SCALE).
+/// Each frame while Obaba's forge burns, its fire shimmers and pulses: the
+/// fire's 32 colours ripple through waves of green and blue, a 32nd of a turn
+/// apart (the first sixteen onto colours 111 down to 96, the rest onto 239
+/// down to 224); the glow's and the column's sprites are placed at the fire's
+/// spot at their sizes; and each one's height is set to trail its width
+/// (FIRE_HEIGHT_SCALE).
 void ChampaCliffCaves_DrawForgeFire(void) {
   struct ChampaCliffCavesWork *work = Ram_HeapSlots->menuWork;
   s32 position[3];

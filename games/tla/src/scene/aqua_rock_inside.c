@@ -1,12 +1,20 @@
 
 /// @file
-/// Aqua Rock's inside, the island south of the Apojii Islands, in the rooms of
-/// this overlay: rapids and falls the party runs against or rides, vents that
-/// blow until a pillar is Moved over them (Vent_Puff), Moai that lower
-/// the water, puddles to Frost, Water Stones to Douse and a tightrope. At its
-/// heart Piers reads the tablet and learns Parch
-/// (AquaRockInside_ReadParchTablet); the Mercury Djinni Steam waits in one of
-/// its rooms (AquaRockInside_FightSteam).
+/// Aqua Rock's inner rooms, inside the rock on the island south of the Apojii
+/// Islands, which Felix enters from the rock's outer slopes. The file holds ten
+/// rooms, most of them several screens, and their water puzzles. A grey Moai
+/// that Douse fills pours water and floods its room, lifting the yellow
+/// stepping blocks; a stone pillar Moved before a Moai's mouth stops it and the
+/// water sinks. Vents blow Felix off their ledge until Move sets a pillar in
+/// front of them. A Water Stone, the big blue drop, sends a stream along the
+/// blocks when Douse is cast on it. There are puddles to Frost, a tightrope, a
+/// Psynergy Stone, and in the Vial chest's room a waterfall that carries Felix
+/// back up to the slopes. Setting the Aquarius Stone in the empty column of the
+/// great pool's room opens a causeway and a gold door in the dais at its heart,
+/// which lead to the tablet where Piers learns Parch
+/// (AquaRockInside_ReadParchTablet). With Parch, Felix can dry the pool by the
+/// sunken Rusty Sword chest and stop the Moai whose stream hides Steam, the
+/// Mercury Djinni (AquaRockInside_FightSteam).
 
 #include "system/task.h"
 #include "types.h"
@@ -117,10 +125,9 @@ void Field_TryJumpForward(void);
 void AquaRockInside_SpawnSplash(struct Actor *actor);
 s32 Actor_EmitMist(struct Actor *actor);
 
-void AquaRockInside_LowerSpring(void);
+void AquaRockInside_DrainStream(void);
 s32 AquaRockInside_BlockCellUnder(s32 id, s32 value);
-void AquaRockInside_SetPillarCellLow(void);
-void AquaRockInside_ReadParchTablet(void);
+void AquaRockInside_SetPillarCellJumpableInWater(void);
 void AquaRockInside_AddMoaiWater(s32 id);
 void AquaRockInside_DrawPillars(void);
 void AquaRockInside_SetPillarsHeight(s32 value);
@@ -208,37 +215,10 @@ struct Actor;
 void AquaRockInside_WaitToLand(struct Actor *actor);
 
 void Leader_RiseFromWater(void);
-void AquaRockInside_FinishPushingRock(s32 a, s32 b);
 void AquaRockInside_StartPillars(void);
 void AquaRockInside_AddSpouts(u32 first, s32 level, s32 baseLevel);
 void AquaRockInside_ShowAquariusStone(void);
 void AquaRockInside_AddPillar(s32 id, s32 kind, s32 height);
-void AquaRockInside_ParchPool(void);
-
-void AquaRockInside_JumpForward(void);
-
-void AquaRockInside_ParchSpring(void);
-
-void AquaRockInside_SpringDries(void);
-void AquaRockInside_UseAquariusStone(void);
-void AquaRockInside_CheckColumn(void);
-
-void AquaRockInside_DouseAquariusStoneWaterStone(void);
-
-void AquaRockInside_SetPillarCellHigh(void);
-
-void AquaRockInside_DouseRustySwordChestWaterStone(void);
-
-void AquaRockInside_DouseCrystalPowderChestWaterStone(void);
-
-void AquaRockInside_StartPushingRock(void);
-void AquaRockInside_CheckPsynergyStone(void);
-void AquaRockInside_DouseTearStoneWaterStone(void);
-void AquaRockInside_ParchLastPool(void);
-void AquaRockInside_WalkToParchTablet(void);
-void AquaRockInside_ReadTabletFacingWest(void);
-void AquaRockInside_ReadTabletFacingEast(void);
-void AquaRockInside_FlowWithStream(void);
 
 void FieldEffect_StartBlankOverlay();
 void Tightrope_Place();
@@ -248,13 +228,13 @@ void Tightrope_Place();
 /// How far the water rises or falls when a Moai fills, in pixels.
 #define WATER_LEVEL_STEP 32
 
-/// Aqua Rock's lasting flags. The Water of Life room's vents, covered by its
-/// west and east pillars (AquaRockInside_PlacePillarOverVent).
-#define FLAG_AQUA_ROCK_WEST_VENT_COVERED 0x95a
-#define FLAG_AQUA_ROCK_EAST_VENT_COVERED 0x95b
-/// The pillar Moved off the ledge in Steam's room, fallen before the Moai.
-#define FLAG_AQUA_ROCK_PILLAR_DROPPED_BY_MOAI 0x95c
-/// The Aquarius Stone set in the column, which drains the spring.
+/// Aqua Rock's lasting flags. The Water of Life chest's room's west and east
+/// stone pillars, each Moved into its gap (AquaRockInside_SetPillarInGap).
+#define FLAG_AQUA_ROCK_WEST_PILLAR_SET 0x95a
+#define FLAG_AQUA_ROCK_EAST_PILLAR_SET 0x95b
+/// The stone pillar of Steam's room, pushed off its ledge to the floor below.
+#define FLAG_AQUA_ROCK_STEAM_ROOM_PILLAR_DROPPED 0x95c
+/// The Aquarius Stone set in the column of the great pool's room.
 #define FLAG_AQUA_ROCK_AQUARIUS_STONE_SET 0x95d
 /// Douse on the Water Stones: the streams they turn, as each room's
 /// AquaRockInside_AdvanceStreams leaves them.
@@ -272,13 +252,14 @@ void Tightrope_Place();
 #define FLAG_WATER_OF_LIFE_CHEST_WEST_MOAI_FILLED FLAG_SCENE_TEMP_31
 /// Frost on the Water of Life chest's room's puddle.
 #define FLAG_WATER_OF_LIFE_CHEST_PUDDLE_FROZEN FLAG_SCENE_TEMP_50
-/// Parch on Steam's room's spring: it has drained away.
-#define FLAG_STEAM_ROOM_SPRING_DRAINED FLAG_SCENE_TEMP_40
+/// Parch on the Moai of Steam's room: its stream has drained away.
+#define FLAG_STEAM_ROOM_STREAM_DRAINED FLAG_SCENE_TEMP_40
 /// Douse on the Rusty Sword chest's room's Moai, and then on its Water Stone.
 #define FLAG_RUSTY_SWORD_CHEST_MOAI_FILLED FLAG_SCENE_TEMP_49
 #define FLAG_RUSTY_SWORD_CHEST_WATER_STONE_DOUSED FLAG_SCENE_TEMP_48
-/// Move on the pillar by the Vial chest's room's falls.
-#define FLAG_VIAL_CHEST_FALLS_PILLAR_MOVED FLAG_SCENE_TEMP_38
+/// Move on the pillar before the Vial chest's room's Moai, which stops its
+/// water.
+#define FLAG_VIAL_CHEST_MOAI_BLOCKED FLAG_SCENE_TEMP_38
 /// Frost on each of the Vial chest's room's three puddles.
 #define FLAG_VIAL_CHEST_PUDDLE_A_FROZEN FLAG_SCENE_TEMP_51
 #define FLAG_VIAL_CHEST_PUDDLE_B_FROZEN FLAG_SCENE_TEMP_52
@@ -289,13 +270,15 @@ void Tightrope_Place();
 /// The Parch tablet's room's water has sunk and left its last pool, until
 /// Parch dries it.
 #define FLAG_PARCH_TABLET_POOL_LEFT FLAG_AREA_TEMP_49
-/// The trigger of the cells of Steam's room's spring: Parch on them, then
-/// raised to drain it.
-#define TRIGGER_STEAM_ROOM_SPRING 88
-/// The step triggers of the rapids' west and east channels, in the Crystal
-/// Powder and Vial chests' rooms; a pillar Moved into a channel dams it.
-#define TRIGGER_RAPIDS_WEST 77
-#define TRIGGER_RAPIDS_EAST 78
+/// The cell of the mouth of the Moai of Steam's room, cell (48, 15): Parch on
+/// it, then raised to drain the stream.
+#define TRIGGER_STEAM_ROOM_MOAI 88
+/// The cells in front of the west and east vents of the Crystal Powder and
+/// Vial chests' rooms, where the gust blows Felix off the ledge
+/// (AquaRockInside_StepIntoVentGust); a stone pillar Moved in front of a vent
+/// shields them.
+#define TRIGGER_WEST_VENT_GUST 77
+#define TRIGGER_EAST_VENT_GUST 78
 
 /// The Vial chest's room's doorways at the north end of its upper passages,
 /// where the party comes out after leaving its lower floor by the south edge
@@ -329,21 +312,22 @@ enum AquaRockInsideCollisionCode {
 /// (SPRITE_MOAI) that Douse fills, so that the water rises, or a
 /// Water Stone (SPRITE_WATER_DROP_LARGE, a tear-shaped rock) that Douse sets
 /// spouting, which turns the streams; a stone pillar (SPRITE_STONE_PILLAR)
-/// Moved over a vent, and the water pillars (SPRITE_YELLOW_BLOCK)
-/// AquaRockInside_AddPillar raises.
+/// Moved in front of a vent or a Moai or into a gap, and the water pillars
+/// topped by yellow blocks (SPRITE_YELLOW_BLOCK) AquaRockInside_AddPillar
+/// raises.
 enum AquaRockInsideWaterOfLifeChestActorId {
   ACTOR_WATER_OF_LIFE_CHEST_EAST_MOAI = ACTOR_FIRST_PLACED,
   ACTOR_WATER_OF_LIFE_CHEST_WEST_MOAI,
-  ACTOR_WATER_OF_LIFE_CHEST_WEST_VENT_PILLAR,
-  ACTOR_WATER_OF_LIFE_CHEST_EAST_VENT_PILLAR,
-  /// The pillar the water lifts (AquaRockInside_SetPillarHeight).
-  ACTOR_WATER_OF_LIFE_CHEST_WATER_PILLAR,
+  ACTOR_WATER_OF_LIFE_CHEST_WEST_PILLAR,
+  ACTOR_WATER_OF_LIFE_CHEST_EAST_PILLAR,
+  /// The small blue rock the water lifts (AquaRockInside_SetPillarHeight).
+  ACTOR_WATER_OF_LIFE_CHEST_BLUE_ROCK,
   ACTOR_WATER_OF_LIFE_CHEST_PUDDLE
 };
 
 enum AquaRockInsideSteamActorId {
   ACTOR_STEAM_ROOM_MOAI = ACTOR_FIRST_PLACED,
-  /// The pillar Moved before the Moai (AquaRockInside_MovePillarBeforeMoai).
+  /// The pillar pushed off its ledge (AquaRockInside_PushPillarOffLedge).
   ACTOR_STEAM_ROOM_PILLAR,
   /// The Mercury Djinni Steam (SPRITE_MERCURY_DJINNI).
   ACTOR_STEAM
@@ -376,13 +360,13 @@ enum AquaRockInsideCrystalPowderChestActorId {
 };
 
 enum AquaRockInsideVialChestActorId {
-  /// The pillar Moved to the falls (AquaRockInside_MovePillarByFalls).
-  ACTOR_VIAL_CHEST_FALLS_PILLAR = ACTOR_FIRST_PLACED,
+  /// The pillar Moved before the Moai (AquaRockInside_BlockMoaiWithPillar).
+  ACTOR_VIAL_CHEST_MOAI_PILLAR = ACTOR_FIRST_PLACED,
   ACTOR_VIAL_CHEST_MOAI,
-  /// The two pillars pushed into the rapids (AquaRockInside_StepIntoRapids).
-  ACTOR_VIAL_CHEST_RAPIDS_PILLAR_A,
-  ACTOR_VIAL_CHEST_RAPIDS_PILLAR_B,
-  /// A hidden actor that splashes under the falls
+  /// The two pillars beside the vents (AquaRockInside_StepIntoVentGust).
+  ACTOR_VIAL_CHEST_WEST_VENT_PILLAR,
+  ACTOR_VIAL_CHEST_EAST_VENT_PILLAR,
+  /// A hidden actor that splashes at the foot of the waterfall
   /// (AquaRockInside_SplashBeneath).
   ACTOR_VIAL_CHEST_SPLASH,
   /// The three puddles Frost freezes (AquaRockInside_FreezeRoomPuddle).
@@ -422,7 +406,9 @@ enum AquaRockInsideParchTabletActorId {
   ACTOR_PARCH_TABLET = ACTOR_PARCH_TABLET_FIRST_WATER_PILLAR + 6
 };
 
-/// The battle with Steam, the Mercury Djinni of this room.
+/// Talking to Steam, the Mercury Djinni standing at the head of the stream
+/// before the Moai of Steam's room, starts a battle with it. Felix reaches it
+/// once Parch has dried the stream (AquaRockInside_SteamRoomStreamDrains).
 void AquaRockInside_FightSteam(void) {
   Field_RequestDjinnBattle(ACTOR_STEAM, DJINNI_STEAM);
 }
@@ -471,13 +457,17 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gAquaRockInside_Placements;
 }
 
-/// A pillar Moved onto its vent in the Water of Life's room: the west pillar at
-/// row 12, the east one at column 51. It stops there a pixel up and covers the
-/// vent for good; the west one also redraws the two cells it blocks.
-void AquaRockInside_PlacePillarOverVent(s32 unused, s32 id) {
+/// Moving or pushing one of the two stone pillars of the Water of Life chest's
+/// room into its gap: the west pillar north along the dotted track to the round
+/// hole at its end (cell (9, 12)), the east one two squares east into its gap
+/// among the yellow stepping blocks (column 51). There it settles a pixel lower
+/// and stays for good, making the shortcut the walkthrough speaks of; with the
+/// west one in place, its square and cell (13, 12) become places Felix hops
+/// across (MAP_CELL_JUMP).
+void AquaRockInside_SetPillarInGap(s32 unused, s32 id) {
   struct Actor *actor = Actor_Get(id);
 
-  if (id == ACTOR_WATER_OF_LIFE_CHEST_WEST_VENT_PILLAR) {
+  if (id == ACTOR_WATER_OF_LIFE_CHEST_WEST_PILLAR) {
     s32 row = FIELD_CELL(actor->z.fixed);
 
     if (row == 12) {
@@ -487,11 +477,11 @@ void AquaRockInside_PlacePillarOverVent(s32 unused, s32 id) {
 
         actor->y.fixed += step;
       }
-      Event_SetFlag(FLAG_AQUA_ROCK_WEST_VENT_COVERED);
+      Event_SetFlag(FLAG_AQUA_ROCK_WEST_PILLAR_SET);
       MapGrid_CopyCellAttributes(0, 12, 1, 1, 9, row);
       MapGrid_CopyCellAttributes(0, 12, 1, 1, 13, row);
     }
-  } else if (id == ACTOR_WATER_OF_LIFE_CHEST_EAST_VENT_PILLAR) {
+  } else if (id == ACTOR_WATER_OF_LIFE_CHEST_EAST_PILLAR) {
     if (FIELD_CELL(actor->x.fixed) == 51) {
       actor->motionFlags = 0;
       {
@@ -499,16 +489,22 @@ void AquaRockInside_PlacePillarOverVent(s32 unused, s32 id) {
 
         actor->y.fixed += step;
       }
-      Event_SetFlag(FLAG_AQUA_ROCK_EAST_VENT_COVERED);
+      Event_SetFlag(FLAG_AQUA_ROCK_EAST_PILLAR_SET);
     }
   }
 }
 
-/// Lets the leader jump forward off a ledge.
+/// Walking forward at the edge of a gap in the water hops Felix across onto
+/// the yellow block beyond: at the foot of the vents' ledge in the Crystal
+/// Powder chest's room (cells (17, 24) and (19, 24)), at the east stone
+/// pillar's squares in the Water of Life chest's room (cells (49, 13) and
+/// (50, 13)) and at two spots of the Rusty Sword chest's room (cells (12, 44)
+/// and (20, 44)). The field's Field_TryJumpForward finds the block to land on.
 void AquaRockInside_JumpForward(void) { Field_TryJumpForward(); }
 
-/// Douse on the Water of Life chest's room's east Moai: it fills, the water and
-/// the pillars rise, and the water pillar beside it rises too.
+/// Douse on the grey east Moai of the Water of Life chest's room: it turns
+/// green and pours water from its mouth, the room floods, and the yellow
+/// stepping blocks and the small blue rock rise with the water.
 void AquaRockInside_DouseWaterOfLifeChestEastMoai(s32 unused, s32 id) {
   struct MapLayer *layer =
       &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[1];
@@ -523,8 +519,7 @@ void AquaRockInside_DouseWaterOfLifeChestEastMoai(s32 unused, s32 id) {
   Map_LoadCellsAndShapes();
   MapGrid_CenterOnFollowedPoint();
   column =
-      FIELD_CELL(Actor_Get(ACTOR_WATER_OF_LIFE_CHEST_WATER_PILLAR)->x.fixed) -
-      42;
+      FIELD_CELL(Actor_Get(ACTOR_WATER_OF_LIFE_CHEST_BLUE_ROCK)->x.fixed) - 42;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Event_PlaySound(SE_RISE_WITH_SPARKS_HIGH);
@@ -542,8 +537,8 @@ void AquaRockInside_DouseWaterOfLifeChestEastMoai(s32 unused, s32 id) {
   Event_SetFlag(FLAG_WATER_OF_LIFE_CHEST_EAST_MOAI_FILLED);
 }
 
-/// Douse on the Water of Life chest's room's west Moai: it fills and the water
-/// and the pillars rise.
+/// Douse on the grey west Moai of the Water of Life chest's room: it pours
+/// water from its mouth, the room floods and the yellow stepping blocks rise.
 void AquaRockInside_DouseWaterOfLifeChestWestMoai(s32 unused, s32 id) {
   struct MapLayer *layer =
       &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[1];
@@ -567,10 +562,14 @@ void AquaRockInside_DouseWaterOfLifeChestWestMoai(s32 unused, s32 id) {
   Event_SetFlag(FLAG_WATER_OF_LIFE_CHEST_WEST_MOAI_FILLED);
 }
 
-/// Unused: does nothing.
+/// Nothing more happens when Felix uses Move on the small blue rock of the
+/// Water of Life chest's room: Move slides it as it slides a pillar, and the
+/// trigger's routine adds nothing.
 void AquaRockInside_DoNothing(void) {}
 
-/// Frost on the Water of Life chest's room's puddle: it freezes into a step.
+/// Frost on the puddle of the Water of Life chest's room, at cell (43, 44),
+/// freezes it, and Felix can hop across it (MAP_CELL_JUMP): the walkthrough's
+/// first way through the room's puzzle.
 void AquaRockInside_FreezePuddle(void) {
   MapGrid_CopyCellAttributes(41, 42, 1, 1, 43, 44);
   Event_SetFlag(FLAG_WATER_OF_LIFE_CHEST_PUDDLE_FROZEN);
@@ -589,8 +588,11 @@ void AquaRockInside_WaitToLand(struct Actor *actor) {
 }
 #endif
 
-/// Move on Steam's room's pillar to column 39: it drops before the Moai.
-void AquaRockInside_MovePillarBeforeMoai(s32 unused, s32 id) {
+/// Moving or pushing the stone pillar of Steam's room east off the edge of its
+/// ledge (column 39) drops it to the floor below, onto the round mark there;
+/// in patch 1 it lands with a thump. Its square becomes one Felix hops across
+/// (MAP_CELL_JUMP).
+void AquaRockInside_PushPillarOffLedge(s32 unused, s32 id) {
   struct Actor *actor = Actor_Get(id);
   s32 x;
 
@@ -601,13 +603,13 @@ void AquaRockInside_MovePillarBeforeMoai(s32 unused, s32 id) {
       actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
       System_Wait(15);
       actor->motionFlags = 0;
-      Event_SetFlag(FLAG_AQUA_ROCK_PILLAR_DROPPED_BY_MOAI);
+      Event_SetFlag(FLAG_AQUA_ROCK_STEAM_ROOM_PILLAR_DROPPED);
       MapGrid_CopyCellAttributes(41, 9, 1, 1, x, id);
 #else
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
       AquaRockInside_WaitToLand(actor);
-      Event_SetFlag(FLAG_AQUA_ROCK_PILLAR_DROPPED_BY_MOAI);
+      Event_SetFlag(FLAG_AQUA_ROCK_STEAM_ROOM_PILLAR_DROPPED);
       MapGrid_CopyCellAttributes(41, 9, 1, 1, x, id);
       Event_End();
 #endif
@@ -615,19 +617,20 @@ void AquaRockInside_MovePillarBeforeMoai(s32 unused, s32 id) {
   }
 }
 
-/// Parch on Steam's room's spring: the Moai dries and the spring is set to
-/// drain.
-void AquaRockInside_ParchSpring(void) {
+/// Parch on the Moai of Steam's room, at its mouth (cell (48, 15)): the Moai
+/// turns grey and stops pouring, and the stream it fed starts to drain
+/// (AquaRockInside_SteamRoomStreamDrains, which raising the trigger runs).
+void AquaRockInside_ParchSteamRoomMoai(void) {
   Actor_SetAnimation(ACTOR_STEAM_ROOM_MOAI, 4);
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_STEAM_ROOM_MOAI),
                             SPRITE_COLOR_GREY);
   MapGrid_CopyCells(123, 15, 5, 3, 110, 15);
-  gFieldWork->raisedTrigger = TRIGGER_STEAM_ROOM_SPRING;
+  gFieldWork->raisedTrigger = TRIGGER_STEAM_ROOM_MOAI;
 }
 
-/// Each frame while the spring drains: its level falls a step and its cells
-/// follow, until it is dry.
-void AquaRockInside_LowerSpring(void) {
+/// Each frame while a stream drains: its level falls a step and the water's
+/// pictures follow it down from the Moai, until the bed is dry.
+void AquaRockInside_DrainStream(void) {
   s32 count = gAquaRockInside_SpringLevel - 1;
   s32 row;
 
@@ -635,11 +638,13 @@ void AquaRockInside_LowerSpring(void) {
   row = count / 8;
   MapGrid_CopyCells((count & 1) * 5 + 118, 47 - row, 5, 2, 110, 47 - row);
   if (gAquaRockInside_SpringLevel == 0)
-    FieldTask_Remove(AquaRockInside_LowerSpring);
+    FieldTask_Remove(AquaRockInside_DrainStream);
 }
 
-/// The spring drains away and the camera follows it down.
-void AquaRockInside_SpringDries(void) {
+/// After Parch on its Moai, the stream of Steam's room drains away: Felix
+/// faces south and the camera follows the water down the stream's bed to its
+/// far end, then the bed (cells (46, 16) to (50, 47)) becomes dry ground.
+void AquaRockInside_SteamRoomStreamDrains(void) {
   s32 priority;
 
   Event_Start();
@@ -647,13 +652,13 @@ void AquaRockInside_SpringDries(void) {
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);
   Event_PlaySound(SE_RISE_WITH_SPARKS_LOW);
   priority = TASK_PASS_FRAME;
-  FieldTask_AddFrame(AquaRockInside_LowerSpring, priority);
+  FieldTask_AddFrame(AquaRockInside_DrainStream, priority);
   FieldCamera_SetSpeedAndAcceleration(2.5, 0.25);
   FieldCamera_MoveTo(776, CAMERA_KEEP, 648, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(30);
   Event_End();
-  Event_SetFlag(FLAG_STEAM_ROOM_SPRING_DRAINED);
+  Event_SetFlag(FLAG_STEAM_ROOM_STREAM_DRAINED);
   MapGrid_CopyCellAttributes(59, 16, 5, 32, 46, 16);
 }
 
@@ -677,15 +682,18 @@ void AquaRockInside_ShowAquariusStone(void) {
   object->y.fixed = toFIXED(24);
 }
 
-/// The draining spring's pictures, from full to dry.
+/// The great pool's pictures as it drains, from full to dry.
 #define SPRING_LEVELS 16
 
-/// Where on the map each of the spring's pictures is drawn: a column and a
+/// Where on the map each of the pool's pictures is taken from: a column and a
 /// row for each.
 extern u8 gAquaRockInside_SpringLevelCells[SPRING_LEVELS * 2];
 
-/// The Aquarius Stone set in the column: the ground shakes, the spring drains
-/// and the way opens.
+/// Using the Aquarius Stone on the empty column at the south of the great
+/// pool's room sets it there. The music fades, the ground shakes harder and
+/// harder, and as the camera pans north to the dais in the middle of the pool
+/// the water falls away to leave a causeway and a gold door in the dais; a
+/// jingle plays once the shaking stops.
 void AquaRockInside_UseAquariusStone(void) {
   s32 priority;
   s32 i;
@@ -704,8 +712,11 @@ void AquaRockInside_UseAquariusStone(void) {
   FieldEvent_Wait(20);
   MapGrid_SetShake(1, 3, 1);
   FieldEvent_Wait(40);
+  // XXX: AquaRockInside_DrainStream rewrites cells (110, 16) to (114, 47), as
+  // in Steam's room; what they are in this room's map is unsettled. A
+  // recording of this event (the recorder cannot use an item) would settle it.
   priority = TASK_PASS_FRAME;
-  FieldTask_AddFrame(AquaRockInside_LowerSpring, priority);
+  FieldTask_AddFrame(AquaRockInside_DrainStream, priority);
   FieldCamera_SetSpeedAndAcceleration(2.5, 0.25);
   FieldCamera_MoveTo(312, CAMERA_KEEP, 504, 1);
   Event_PlaySound(SE_SCATTER);
@@ -737,9 +748,9 @@ void AquaRockInside_UseAquariusStone(void) {
   Event_SetFlag(FLAG_ITEM_USED_UP);
 }
 
-/// Walking into the gold door under the stairs, once the Aquarius Stone is set:
-/// it opens with a thump and the leader walks through, by `exit`, to the Parch
-/// tablet's room.
+/// Walking into the gold door in the dais of the great pool's room, once the
+/// Aquarius Stone is set (cell (19, 31)): it opens with a thump and Felix walks
+/// through, by `exit`, to the Parch tablet's room.
 void AquaRockInside_OpenDoorToTablet(s32 exit) {
   s32 width = 1;
   s32 height = 2;
@@ -764,8 +775,10 @@ void AquaRockInside_OpenDoorToTablet(s32 exit) {
   FieldEvent_SetExitRequest(exit);
 }
 
-/// Checking the column: before the Aquarius Stone is set, a hint, and the field
-/// menu opens if the party holds the stone; after, the stone named.
+/// Checking the empty column at the south of the great pool's room: "It's a
+/// column with a spot where you can place something.", and the field menu
+/// opens if the party holds the Aquarius Stone. Once the stone is set, the
+/// message is "You placed the Aquarius Stone."
 void AquaRockInside_CheckColumn(void) {
   s32 seen;
   const u8 *message;
@@ -787,8 +800,8 @@ void AquaRockInside_CheckColumn(void) {
   Event_End();
 }
 
-/// Douse on the Aquarius Stone's room's Water Stone: two streams run six cells
-/// on.
+/// Douse on the Water Stone on the dais of the great pool's room: two streams
+/// of sparkles run east and west from it along the yellow blocks, six squares.
 void AquaRockInside_DouseAquariusStoneWaterStone(void) {
   s32 i;
 
@@ -802,7 +815,8 @@ void AquaRockInside_DouseAquariusStoneWaterStone(void) {
   Event_SetFlag(FLAG_AQUA_ROCK_AQUARIUS_STONE_WATER_STONE_DOUSED);
 }
 
-/// Parch on the Rusty Sword chest's room's pool: it dries, for good.
+/// Parch on the pool around the sunken Rusty Sword chest dries it for good,
+/// leaving the chest within reach.
 void AquaRockInside_ParchPool(void) {
   MapGrid_CopyCellsLayered(106, 14, 14, 13, 81, 14);
   MapGrid_CopyCellsLayered(44, 78, 14, 12, 17, 78);
@@ -826,35 +840,40 @@ s32 AquaRockInside_BlockCellUnder(s32 id, s32 value) {
   }
 }
 
-/// The cell under the Rusty Sword chest's room's first water pillar, at its
-/// lowest.
-void AquaRockInside_SetPillarCellLow(void) {
+/// Nothing visible happens when the Moai of the Rusty Sword chest's room's
+/// puzzle has filled: the square under the water pillar Felix can Move takes
+/// MAP_CELL_JUMP and MAP_CELL_WATER, a square to hop across in the water.
+void AquaRockInside_SetPillarCellJumpableInWater(void) {
   struct Actor *actor = Actor_Get(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_A);
 
   MapGrid_CopyCellAttributes(64, 43, 1, 1, FIELD_CELL(actor->x.fixed),
                              FIELD_CELL(actor->z.fixed));
 }
 
-/// The cell under the Rusty Sword chest's room's first water pillar, halfway.
-void AquaRockInside_SetPillarCellMiddle(void) {
+/// Nothing visible happens when the water pillar Felix can Move in the Rusty
+/// Sword chest's room's puzzle comes to rest: its new square becomes one he
+/// hops across (MAP_CELL_JUMP).
+void AquaRockInside_SetPillarCellJumpable(void) {
   struct Actor *actor = Actor_Get(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_A);
 
   MapGrid_CopyCellAttributes(64, 42, 1, 1, FIELD_CELL(actor->x.fixed),
                              FIELD_CELL(actor->z.fixed));
 }
 
-/// The cell under the Rusty Sword chest's room's first water pillar, at its
-/// highest.
-void AquaRockInside_SetPillarCellHigh(void) {
+/// Nothing visible happens as Felix starts to Move or push the water pillar of
+/// the Rusty Sword chest's room's puzzle: the square it leaves takes
+/// MAP_CELL_PUSH, as the ground a pushed thing slides over does.
+void AquaRockInside_SetPillarCellPushable(void) {
   struct Actor *actor = Actor_Get(ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_A);
 
   MapGrid_CopyCellAttributes(64, 41, 1, 1, FIELD_CELL(actor->x.fixed),
                              FIELD_CELL(actor->z.fixed));
 }
 
-/// Douse on the Rusty Sword chest's room's Water Stone, once the water has
-/// risen: the stream runs, turned by the pillar, and reaching its goal stays
-/// turned.
+/// Douse on the Water Stone of the Rusty Sword chest's room's puzzle, once its
+/// Moai has flooded the room: the stream runs along the water pillars, turned
+/// by the one Felix has Moved, and if it reaches its goal it stays turned for
+/// good. Before the Moai fills, nothing happens.
 void AquaRockInside_DouseRustySwordChestWaterStone(void) {
   s32 i;
   s32 result;
@@ -873,8 +892,9 @@ void AquaRockInside_DouseRustySwordChestWaterStone(void) {
   }
 }
 
-/// Douse on the Rusty Sword chest's room's Moai: it fills and the water rises
-/// a level, and the stream can be turned.
+/// Douse on the grey Moai of the Rusty Sword chest's room's puzzle: it turns
+/// blue and pours water from its mouth, and the room floods around the water
+/// pillars, so that the Water Stone's stream can run.
 void AquaRockInside_DouseRustySwordChestMoai(s32 unused, s32 id) {
   struct MapLayer *layer =
       &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[1];
@@ -895,19 +915,22 @@ void AquaRockInside_DouseRustySwordChestMoai(s32 unused, s32 id) {
     System_Wait(4);
   }
   Event_End();
-  AquaRockInside_SetPillarCellLow();
+  AquaRockInside_SetPillarCellJumpableInWater();
   Event_SetFlag(FLAG_RUSTY_SWORD_CHEST_MOAI_FILLED);
 }
 
-/// The leader jumps down a ledge.
+/// Felix jumps down the ledge he faces.
 void AquaRockInside_JumpDownLedge() {
   Actor_JumpDownLedge(gMainRoutineWork.leaderActorId, 6, 0);
   Event_End();
 }
 
-/// Stepping into the rapids, unless a pillar dams them: the current sweeps the
-/// leader south to the ledge, and over it.
-void AquaRockInside_StepIntoRapids(s32 trigger) {
+/// Stepping in front of a vent in the Vial or Crystal Powder chest's room
+/// (cells (9, 34) and (13, 34) in the first, (17, 22) and (19, 22) in the
+/// second, with the squares south of them): its gust blows Felix south,
+/// spinning, to the edge of the ledge and over it. A stone pillar Moved in
+/// front of the vent shields him, and nothing happens.
+void AquaRockInside_StepIntoVentGust(s32 trigger) {
   s32 clear = 1;
   struct Actor *actor;
   struct Vector3 target;
@@ -917,17 +940,17 @@ void AquaRockInside_StepIntoRapids(s32 trigger) {
     s32 column =
         FIELD_CELL(Actor_Get(ACTOR_CRYSTAL_POWDER_CHEST_PILLAR)->x.fixed);
 
-    if (trigger == TRIGGER_RAPIDS_WEST && column == 17)
+    if (trigger == TRIGGER_WEST_VENT_GUST && column == 17)
       clear = 0;
-    if (trigger == TRIGGER_RAPIDS_EAST && column == 19)
+    if (trigger == TRIGGER_EAST_VENT_GUST && column == 19)
       clear = 0;
   }
   if (gMainRoutineWork.next == SCENE_AQUA_ROCK_INSIDE_VIAL_CHEST) {
-    if (trigger == TRIGGER_RAPIDS_WEST &&
-        FIELD_CELL(Actor_Get(ACTOR_VIAL_CHEST_RAPIDS_PILLAR_A)->x.fixed) == 9)
+    if (trigger == TRIGGER_WEST_VENT_GUST &&
+        FIELD_CELL(Actor_Get(ACTOR_VIAL_CHEST_WEST_VENT_PILLAR)->x.fixed) == 9)
       clear = 0;
-    if (trigger == TRIGGER_RAPIDS_EAST &&
-        FIELD_CELL(Actor_Get(ACTOR_VIAL_CHEST_RAPIDS_PILLAR_B)->x.fixed) == 13)
+    if (trigger == TRIGGER_EAST_VENT_GUST &&
+        FIELD_CELL(Actor_Get(ACTOR_VIAL_CHEST_EAST_VENT_PILLAR)->x.fixed) == 13)
       clear = 0;
   }
   if (clear == 0)
@@ -970,8 +993,8 @@ void AquaRockInside_StepIntoRapids(s32 trigger) {
   }
 }
 
-/// Douse on the Crystal Powder chest's room's Water Stone: its stream runs five
-/// cells on.
+/// Douse on the Water Stone of the Crystal Powder chest's room: a stream of
+/// sparkles runs west from it along the yellow blocks, five squares.
 void AquaRockInside_DouseCrystalPowderChestWaterStone(void) {
   s32 i;
 
@@ -984,7 +1007,10 @@ void AquaRockInside_DouseCrystalPowderChestWaterStone(void) {
   Event_SetFlag(FLAG_AQUA_ROCK_CRYSTAL_POWDER_WATER_STONE_DOUSED);
 }
 
-/// The leader spins down the falls and leaves by `value`.
+/// Stepping into the foot of the waterfall in the Vial chest's room, at the
+/// north end of its pool (cell (10, 10)): Felix tumbles, turns blue with his
+/// arms raised and is carried up out of sight, and comes out by `value` in the
+/// Mist Sabre chest's room on Aqua Rock's slopes.
 void AquaRockInside_RideFalls(s32 value) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   FIXED speed;
@@ -1009,6 +1035,9 @@ void AquaRockInside_RideFalls(s32 value) {
       Event_FinishScreenTransition();
     speed += toFIXED(1) / 4;
     actor->y.fixed += speed;
+    // XXX (no evidence): the splashes are made at the third puddle's place,
+    // away from the waterfall; whether the waterfall's own splash actor
+    // (ACTOR_VIAL_CHEST_SPLASH) was meant, nothing in reach settles.
     if ((i & 7) == 0)
       AquaRockInside_SpawnSplash(Actor_Get(ACTOR_VIAL_CHEST_PUDDLE_C));
     System_Wait(1);
@@ -1017,9 +1046,10 @@ void AquaRockInside_RideFalls(s32 value) {
   FieldEvent_SetExitRequest(value);
 }
 
-/// Move on the Vial chest's room's pillar to column 49: the Moai fills, the
-/// water falls a level and the puddles show.
-void AquaRockInside_MovePillarByFalls(s32 unused, s32 id) {
+/// Moving the stone pillar of the Vial chest's room in front of the green
+/// Moai's mouth (column 49) stops its water: the pool below sinks a level and
+/// three puddles are left on its floor for Frost.
+void AquaRockInside_BlockMoaiWithPillar(s32 unused, s32 id) {
   struct Actor *actor = Actor_GetById(id);
 
   if (FIELD_CELL(actor->x.fixed) == 49) {
@@ -1060,12 +1090,12 @@ void AquaRockInside_MovePillarByFalls(s32 unused, s32 id) {
     MapGrid_CopyCellsLayered(105, 105, 12, 13, 105, 41);
     BlendScript_Resume();
     Event_End();
-    Event_SetFlag(FLAG_VIAL_CHEST_FALLS_PILLAR_MOVED);
+    Event_SetFlag(FLAG_VIAL_CHEST_MOAI_BLOCKED);
   }
 }
 
-/// Frost on one of the Vial chest's room's three puddles: it freezes into a
-/// step.
+/// Frost on one of the three puddles left in the Vial chest's room's sunken
+/// pool freezes it, and Felix can hop across it (MAP_CELL_JUMP).
 void AquaRockInside_FreezeRoomPuddle(s32 unused, s32 id) {
   if ((u32)(id - ACTOR_VIAL_CHEST_PUDDLE_A) <= 2) {
     struct Actor *actor = Actor_Get(id);
@@ -1078,16 +1108,20 @@ void AquaRockInside_FreezeRoomPuddle(s32 unused, s32 id) {
   }
 }
 
-/// Before pushing the Vial chest's room's rocks: their row's cells open.
-void AquaRockInside_StartPushingRock(void) {
+/// Nothing visible happens as Felix starts to Move or push one of the stone
+/// pillars beside the vents of the Vial chest's room: the ground along their
+/// row (row 34) takes MAP_CELL_PUSH, keeping the vents' gusts, so the pillar
+/// can slide in front of a vent.
+void AquaRockInside_FreeVentPillars(void) {
   MapGrid_CopyCellAttributes(8, 63, 7, 1, 8, 34);
 }
 
-/// When either pillar pushed into the Vial's rapids arrives, stops both and
-/// redraws row 33 at each one's column, so the rapids flow around them.
-void AquaRockInside_FinishPushingRock(s32 unused, s32 id) {
-  if ((u32)(id - ACTOR_VIAL_CHEST_RAPIDS_PILLAR_A) <= 1) {
-    struct Actor *actor = Actor_Get(ACTOR_VIAL_CHEST_RAPIDS_PILLAR_A);
+/// When either stone pillar beside the vents of the Vial chest's room comes to
+/// rest, nothing visible happens: both stop, and the square under each loses
+/// the gust and becomes one Felix hops across (MAP_CELL_JUMP).
+void AquaRockInside_SettleVentPillars(s32 unused, s32 id) {
+  if ((u32)(id - ACTOR_VIAL_CHEST_WEST_VENT_PILLAR) <= 1) {
+    struct Actor *actor = Actor_Get(ACTOR_VIAL_CHEST_WEST_VENT_PILLAR);
 
     actor->motionFlags = 0;
     {
@@ -1095,7 +1129,7 @@ void AquaRockInside_FinishPushingRock(s32 unused, s32 id) {
 
       MapGrid_CopyCellAttributes(8, row, 1, 1, FIELD_CELL(actor->x.fixed), 34);
     }
-    actor = Actor_Get(ACTOR_VIAL_CHEST_RAPIDS_PILLAR_B);
+    actor = Actor_Get(ACTOR_VIAL_CHEST_EAST_VENT_PILLAR);
     actor->motionFlags = 0;
     {
       s32 row = 33;
@@ -1117,7 +1151,8 @@ void AquaRockInside_WaitToRise(struct Actor *actor) {
   }
 }
 
-/// Checking the Psynergy Stone: the party's PP is restored.
+/// Checking the big Psynergy Stone in the middle of its cave (cell (12, 13)):
+/// "Everyone's PP was replenished!"
 void AquaRockInside_CheckPsynergyStone(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1130,7 +1165,9 @@ void AquaRockInside_CheckPsynergyStone(void) {
   Event_End();
 }
 
-/// Move on the Tear Stone's room's pillar: its cells follow it.
+/// Move on the west of the two stone pillars at the south of the Tear Stone's
+/// room (row 39): the ground follows it, the two pillars' starting squares
+/// going back to floor and its new square taking the pillar's.
 void AquaRockInside_MovePuzzlePillar(s32 unused, s32 id) {
   struct Actor *actor = Actor_Get(id);
 
@@ -1138,8 +1175,10 @@ void AquaRockInside_MovePuzzlePillar(s32 unused, s32 id) {
   MapGrid_CopyCellAttributes(23, 39, 1, 1, FIELD_CELL(actor->x.fixed), 39);
 }
 
-/// Douse on the Tear Stone's room's Water Stone, once the water has risen:
-/// three pillars turn the stream, and reaching its goal it stays turned.
+/// Douse on the Water Stone of the Tear Stone's room's puzzle, once its Moai
+/// has flooded the room: the stream runs along the water pillars, turned by
+/// the three Felix can Move, and if it reaches its goal it stays turned for
+/// good. Before the Moai fills, nothing happens.
 void AquaRockInside_DouseTearStoneWaterStone(void) {
   s32 i;
   s32 result;
@@ -1162,7 +1201,8 @@ void AquaRockInside_DouseTearStoneWaterStone(void) {
   }
 }
 
-/// Douse on the Tear Stone's room's Moai: it fills and the water rises.
+/// Douse on the grey Moai of the Tear Stone's room's puzzle: it turns blue and
+/// pours water from its mouth, and the room floods around the water pillars.
 void AquaRockInside_DouseTearStoneMoai(s32 unused, s32 id) {
   struct MapLayer *layer =
       &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[1];
@@ -1189,7 +1229,9 @@ void AquaRockInside_DouseTearStoneMoai(s32 unused, s32 id) {
 /// frames each, as the water starts to sink.
 enum { POOL_FLICKERS = 15 };
 
-/// After Parch is learned, the water in the tablet's room sinks with a tremor.
+/// Once Piers has learned Parch, the ground trembles and the water round the
+/// tablet's dais sinks away, but a pool is left on the steps before the
+/// tablet, which keeps Felix from leaving until Parch dries it.
 void AquaRockInside_WaterSinks(void) {
   struct MapLayer *layer =
       &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[1];
@@ -1222,7 +1264,8 @@ void AquaRockInside_WaterSinks(void) {
   Event_SetFlag(FLAG_PARCH_TABLET_POOL_LEFT);
 }
 
-/// Parch on the Parch tablet's room's pool: it dries.
+/// Parch on the pool left on the steps before the Parch tablet dries it, and
+/// the way out of the room is open.
 void AquaRockInside_ParchLastPool(void) {
   MapGrid_CopyCellsLayered(70, 8, 7, 6, 77, 8);
   MapGrid_CopyCellAttributes(38, 17, 7, 6, 13, 9);
@@ -1429,8 +1472,12 @@ void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
 
 void Actor_PlaceOnActor();
 
-/// Reading the Parch tablet: Piers reads it and learns Parch, the water drains,
-/// and he leaves the party's side; afterwards only its text.
+/// Reading the tablet from its south side: "Wielder of Water's strength... Lay
+/// your hands upon this stone." Piers steps out of the party ("Water's
+/// strength, huh? That sounds like my sort of thing"), touches it, rises in a
+/// glow and learns Parch. The water then sinks, leaving a pool on the steps;
+/// Piers wonders what went wrong, decides their power is being tested, and
+/// walks back into Felix. Once Parch is learned only the tablet's words show.
 void AquaRockInside_ReadParchTablet(void) {
   struct Actor *actor;
 
@@ -1509,8 +1556,9 @@ void AquaRockInside_ReadParchTablet(void) {
   Event_End();
 }
 
-/// Stepping up to the Parch tablet: the leader walks to it and reads it, or
-/// once Parch is learned only its text.
+/// Checking the Parch tablet from its north side: Felix walks round to the
+/// front and reads it (AquaRockInside_ReadParchTablet), or once Parch is
+/// learned only its words show.
 void AquaRockInside_WalkToParchTablet(void) {
   if (Event_GetFlag(FLAG_PIERS_LEARNED_PARCH)) {
     Event_Start();
@@ -1543,10 +1591,12 @@ void AquaRockInside_WalkToParchTablet(void) {
     }                                                                          \
   }
 
-/// Reading the Parch tablet from its east side.
+/// Checking the Parch tablet from its east side: Felix steps round to the front
+/// and reads it.
 DEFINE_AQUA_ROCK_INSIDE_READ_TABLET(AquaRockInside_ReadTabletFacingWest, 280)
 
-/// Reading the Parch tablet from its west side.
+/// Checking the Parch tablet from its west side: Felix steps round to the front
+/// and reads it.
 DEFINE_AQUA_ROCK_INSIDE_READ_TABLET(AquaRockInside_ReadTabletFacingEast, 248)
 
 extern struct Trigger gAquaRockInside_Triggers[];
@@ -1627,7 +1677,9 @@ void AquaRockInside_SplashBeneath(struct Actor *actor) {
   }
 }
 
-/// Arriving through the water from above: the leader drops through and lands.
+/// Arriving in the Vial chest's room down its waterfall from the Mist Sabre
+/// chest's room: Felix, tinted blue, drops spinning into the pool at the
+/// waterfall's foot, splashes and comes to stand on the yellow block there.
 void AquaRockInside_FallThroughWater(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   u8 *flags = &actor->motionFlags;
@@ -1714,7 +1766,7 @@ s32 Scene_Initialize(void) {
           SPRITE_COLOR_GREY);
     }
   } else if (scene == SCENE_AQUA_ROCK_INSIDE_STEAM) {
-    if (GameFlag_Get(FLAG_STEAM_ROOM_SPRING_DRAINED)) {
+    if (GameFlag_Get(FLAG_STEAM_ROOM_STREAM_DRAINED)) {
       MapGrid_CopyCellsLayered(118, 15, 5, 32, 110, 15);
       MapGrid_CopyCellAttributes(59, 16, 5, 32, 46, 16);
       FieldActor_SetSpriteColor(Actor_GetById(ACTOR_STEAM_ROOM_MOAI),
@@ -1725,7 +1777,7 @@ s32 Scene_Initialize(void) {
     }
     actor = Actor_GetById(ACTOR_STEAM_ROOM_PILLAR);
     actor->motionFlags = 0;
-    if (GameFlag_Get(FLAG_AQUA_ROCK_PILLAR_DROPPED_BY_MOAI)) {
+    if (GameFlag_Get(FLAG_AQUA_ROCK_STEAM_ROOM_PILLAR_DROPPED)) {
       Actor_SetPosition(ACTOR_STEAM_ROOM_PILLAR, 632, 152);
       MapGrid_CopyCellAttributes(41, 9, 1, 1, 39, 9);
       actor->y.fixed = 0;
@@ -1745,7 +1797,7 @@ s32 Scene_Initialize(void) {
                                   SPRITE_COLOR_BRG);
         AquaRockInside_AddMoaiWater(ACTOR_RUSTY_SWORD_CHEST_MOAI);
         Actor_SetAnimation(ACTOR_RUSTY_SWORD_CHEST_MOAI, 3);
-        AquaRockInside_SetPillarCellLow();
+        AquaRockInside_SetPillarCellJumpableInWater();
       } else {
         FieldActor_SetSpriteColor(Actor_GetById(ACTOR_RUSTY_SWORD_CHEST_MOAI),
                                   SPRITE_COLOR_GREY);
@@ -1774,9 +1826,9 @@ s32 Scene_Initialize(void) {
                                 gAquaRockInside_VialChestVentPillars,
                                 AquaRockInside_UpdateVents);
       Scene_QueueMusic(SE_AMBIENT_WATER);
-      AquaRockInside_FinishPushingRock(0, ACTOR_VIAL_CHEST_RAPIDS_PILLAR_A);
+      AquaRockInside_SettleVentPillars(0, ACTOR_VIAL_CHEST_WEST_VENT_PILLAR);
     }
-    if (!GameFlag_Get(FLAG_VIAL_CHEST_FALLS_PILLAR_MOVED)) {
+    if (!GameFlag_Get(FLAG_VIAL_CHEST_MOAI_BLOCKED)) {
       AquaRockInside_AddMoaiWater(ACTOR_VIAL_CHEST_MOAI);
       Actor_SetAnimation(ACTOR_VIAL_CHEST_MOAI, 3);
     }
@@ -1826,8 +1878,8 @@ void Tightrope_Initialize();
 /// Aqua Rock's map preparation: for each room and entrance it sets the water
 /// level, places the statues and boulders the flags have moved, opens or
 /// closes the cells around them, and in the rooms whose water drains it shows
-/// the drained state once its flag is set. The Vial's room puts its puddles out
-/// of sight (x and z cleared) until its pillar has fallen by the falls.
+/// the drained state once its flag is set. The Vial chest's room puts its
+/// puddles out of sight (x and z cleared) until a pillar has stopped its Moai.
 s32 Scene_PrepareMap(void) {
   s32 scene = gMainRoutineWork.next;
   s32 entrance = gMainRoutineWork.entrance;
@@ -1843,7 +1895,7 @@ s32 Scene_PrepareMap(void) {
     if ((u32)(entrance - 3) <= 1 || entrance == 6 || entrance == 8) {
       AquaRockInside_AddSpouts(COLLISION_STREAM_BEND, 0, -2);
     } else if (entrance == 5 || entrance == 7) {
-      actor = Actor_GetById(ACTOR_WATER_OF_LIFE_CHEST_WATER_PILLAR);
+      actor = Actor_GetById(ACTOR_WATER_OF_LIFE_CHEST_BLUE_ROCK);
       actor->motionFlags = 0;
       actor->groundHeight = 0;
       actor->y.fixed = 0;
@@ -1859,7 +1911,7 @@ s32 Scene_PrepareMap(void) {
         AquaRockInside_AddSpouts(COLLISION_STREAM_BEND, 0, 0);
       } else {
         AquaRockInside_AddSpouts(COLLISION_STREAM_BEND, 4, 0);
-        actor = Actor_GetById(ACTOR_WATER_OF_LIFE_CHEST_WATER_PILLAR);
+        actor = Actor_GetById(ACTOR_WATER_OF_LIFE_CHEST_BLUE_ROCK);
         AquaRockInside_SetPillarHeight(FIELD_CELL(actor->x.fixed) - 42, 0);
       }
       if (GameFlag_Get(FLAG_WATER_OF_LIFE_CHEST_PUDDLE_FROZEN)) {
@@ -1875,13 +1927,13 @@ s32 Scene_PrepareMap(void) {
         AquaRockInside_AddSpouts(COLLISION_STREAM_BEND, 4, 0);
       }
     }
-    if (GameFlag_Get(FLAG_AQUA_ROCK_WEST_VENT_COVERED)) {
-      Actor_SetPosition(ACTOR_WATER_OF_LIFE_CHEST_WEST_VENT_PILLAR, 184, 200);
+    if (GameFlag_Get(FLAG_AQUA_ROCK_WEST_PILLAR_SET)) {
+      Actor_SetPosition(ACTOR_WATER_OF_LIFE_CHEST_WEST_PILLAR, 184, 200);
       MapGrid_CopyCellAttributes(0, 12, 1, 1, 9, 12);
       MapGrid_CopyCellAttributes(0, 12, 1, 1, 13, 12);
     }
-    if (GameFlag_Get(FLAG_AQUA_ROCK_EAST_VENT_COVERED)) {
-      Actor_SetPosition(ACTOR_WATER_OF_LIFE_CHEST_EAST_VENT_PILLAR, 824, 216);
+    if (GameFlag_Get(FLAG_AQUA_ROCK_EAST_PILLAR_SET)) {
+      Actor_SetPosition(ACTOR_WATER_OF_LIFE_CHEST_EAST_PILLAR, 824, 216);
     }
   } else if (scene == SCENE_AQUA_ROCK_INSIDE_STEAM) {
     if ((u32)(entrance - 1) <= 1) {
@@ -1931,7 +1983,7 @@ s32 Scene_PrepareMap(void) {
         map = Ram_HeapSlots->mapGrid;
         MapGrid_CopyCellsLayered(64, 64, 16, 13, 71, 39);
         MapGrid_CopyCellAttributes(71, 39, 16, 15, 7, 39);
-        AquaRockInside_SetPillarCellMiddle();
+        AquaRockInside_SetPillarCellJumpable();
         map->enabled[2] = 1;
         SET_BG1CNT_PRIORITY(1);
       } else if (Event_GetFlag(
@@ -1989,7 +2041,7 @@ s32 Scene_PrepareMap(void) {
             AQUA_ROCK_INSIDE_VIAL_CHEST_FROM_AQUA_ROCK_INSIDE_CRYSTAL_POWDER_CHEST_SOUTH) {
       AquaRockInside_AddSpouts(COLLISION_STREAM_BEND, 0, -2);
     }
-    if (!GameFlag_Get(FLAG_VIAL_CHEST_FALLS_PILLAR_MOVED)) {
+    if (!GameFlag_Get(FLAG_VIAL_CHEST_MOAI_BLOCKED)) {
       for (hiddenPuddle = ACTOR_VIAL_CHEST_PUDDLE_A;
            hiddenPuddle <= ACTOR_VIAL_CHEST_PUDDLE_C; hiddenPuddle++) {
         actor = Actor_GetById(hiddenPuddle);
@@ -2121,8 +2173,11 @@ void AquaRockInside_SpawnSplash(struct Actor *actor) {
 
 #include "shared/actor_emit_water_drop.h"
 
-/// Each frame in a stream: the current carries the leader south, splashing, and
-/// off a ledge he drops with the water.
+/// While Felix wades in the stream of Steam's room or the Tear Stone's room,
+/// the current carries him south, splashing, until something blocks him; where
+/// the stream pours off a ledge he sits and drops with the water. The routine
+/// is the slopes' AquaRock_FlowWithStream, whose test for Aqua Rock's Moai room
+/// never holds in these rooms.
 void AquaRockInside_FlowWithStream(void) {
   struct Actor *center;
   s32 id;
@@ -2185,8 +2240,8 @@ void AquaRockInside_FlowWithStream(void) {
 
 #include "shared/actor_show_parts.h"
 
-/// Unused: the leader spins round, sinking, with splashes at the Vial chest
-/// room's third puddle, and leaves by `entrance`.
+/// Unused: the leader spins round, sinking, with splashes at the place of the
+/// Vial chest's room's third puddle, and leaves by `entrance`.
 UNUSED void Leader_SpinAway(s32 entrance) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 i;
@@ -2732,7 +2787,7 @@ UNUSED void Vent_SetGust(s32 index, s32 value) {
 // clang-format off
 #include "shared/field_effect_duration_scripts.c"
 
-/// The cell blocks the spring's levels copy, x then z.
+/// Where each of the great pool's pictures lies in the map, x then z.
 u8 gAquaRockInside_SpringLevelCells[SPRING_LEVELS * 2] = {67, 66, 75, 66, 83, 66, 91, 66, 99, 66, 107, 66, 115, 66, 67, 81, 75, 81, 83, 81, 91, 81, 99, 81, 107, 81, 115, 81, 67, 96, 75, 96};
 
 /// A spark's script.
@@ -2800,7 +2855,7 @@ s32 gAquaRockInside_PiersSettleScript[] = {
     SC_END,
 };
 
-/// A splash's script under the falls.
+/// A splash's script at the foot of the waterfall.
 u32 gAquaRockInside_SplashScript[] = {
     SC_WAIT(1),
     SC_LOOP(30, SC_TOP),
@@ -2821,7 +2876,7 @@ u16 gAquaRockInside_VialChestVents[] = {
     152, 536, 2, 216, 536, 2, 0,
 };
 u16 gAquaRockInside_VialChestVentPillars[] ALIGNED(4) = {
-    ACTOR_VIAL_CHEST_RAPIDS_PILLAR_A, ACTOR_VIAL_CHEST_RAPIDS_PILLAR_B, 0, 0,
+    ACTOR_VIAL_CHEST_WEST_VENT_PILLAR, ACTOR_VIAL_CHEST_EAST_VENT_PILLAR, 0, 0,
 };
 
 /// A splash's script in a stream.
@@ -2843,11 +2898,6 @@ u32 gWaterDropScript[] = {
 #undef EFFECT_SPRITE_PRIORITY
 #undef DEFINE_AQUA_ROCK_INSIDE_READ_TABLET
 #undef SET_BG1CNT_PRIORITY
-
-void AquaRockInside_FightSteam(void);
-void AquaRockInside_FreezePuddle(void);
-void AquaRockInside_SetPillarCellMiddle(void);
-void AquaRockInside_ReadParchTablet(void);
 
 // clang-format off
 /// A vent's puff's rise.
@@ -3083,17 +3133,17 @@ LATE_DATA struct Trigger gAquaRockInside_WaterOfLifeChestTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 50, CONDITION_ALWAYS, EVENT(AquaRockInside_JumpForward)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 50, CONDITION_ALWAYS, EVENT(AquaRockInside_JumpForward)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 51, CONDITION_ALWAYS, EVENT(AquaRockInside_JumpForward)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WATER_OF_LIFE_CHEST_WEST_VENT_PILLAR, FLAG_AQUA_ROCK_WEST_VENT_COVERED, EVENT(AquaRockInside_PlacePillarOverVent)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WATER_OF_LIFE_CHEST_EAST_VENT_PILLAR, FLAG_AQUA_ROCK_EAST_VENT_COVERED, EVENT(AquaRockInside_PlacePillarOverVent)},
-    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_PlacePillarOverVent)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WATER_OF_LIFE_CHEST_WEST_PILLAR, FLAG_AQUA_ROCK_WEST_PILLAR_SET, EVENT(AquaRockInside_SetPillarInGap)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WATER_OF_LIFE_CHEST_EAST_PILLAR, FLAG_AQUA_ROCK_EAST_PILLAR_SET, EVENT(AquaRockInside_SetPillarInGap)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_SetPillarInGap)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_WATER_OF_LIFE_CHEST_EAST_MOAI, FLAG_WATER_OF_LIFE_CHEST_EAST_MOAI_FILLED, EVENT(AquaRockInside_DouseWaterOfLifeChestEastMoai)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_WATER_OF_LIFE_CHEST_WEST_MOAI, FLAG_WATER_OF_LIFE_CHEST_WEST_MOAI_FILLED, EVENT(AquaRockInside_DouseWaterOfLifeChestWestMoai)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WATER_OF_LIFE_CHEST_WATER_PILLAR, CONDITION_ALWAYS, (s32)((u8 *)AquaRockInside_DoNothing + 1)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_WATER_OF_LIFE_CHEST_BLUE_ROCK, CONDITION_ALWAYS, (s32)((u8 *)AquaRockInside_DoNothing + 1)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_WATER_OF_LIFE_CHEST_PUDDLE, FLAG_WATER_OF_LIFE_CHEST_PUDDLE_FROZEN, EVENT(AquaRockInside_FreezePuddle)},
     {TRIGGER_TABLE_END},
 };
 
-/// The spring's level, 256 when full.
+/// The level of a draining stream (AquaRockInside_DrainStream), 256 when full.
 LATE_DATA s32 gAquaRockInside_SpringLevel = 256;
 
 /// Steam's room's triggers.
@@ -3109,10 +3159,10 @@ LATE_DATA struct Trigger gAquaRockInside_SteamTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(AquaRockInside_FlowWithStream)},
     {TRIGGER_TALK, ACTOR_STEAM, CONDITION_ALWAYS, EVENT(AquaRockInside_FightSteam)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STEAM_ROOM_PILLAR, FLAG_AQUA_ROCK_PILLAR_DROPPED_BY_MOAI, EVENT(AquaRockInside_MovePillarBeforeMoai)},
-    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_MovePillarBeforeMoai)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), TRIGGER_STEAM_ROOM_SPRING, FLAG_STEAM_ROOM_SPRING_DRAINED, EVENT(AquaRockInside_ParchSpring)},
-    {TRIGGER_RAISED, TRIGGER_STEAM_ROOM_SPRING, FLAG_STEAM_ROOM_SPRING_DRAINED, EVENT(AquaRockInside_SpringDries)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STEAM_ROOM_PILLAR, FLAG_AQUA_ROCK_STEAM_ROOM_PILLAR_DROPPED, EVENT(AquaRockInside_PushPillarOffLedge)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_PushPillarOffLedge)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), TRIGGER_STEAM_ROOM_MOAI, FLAG_STEAM_ROOM_STREAM_DRAINED, EVENT(AquaRockInside_ParchSteamRoomMoai)},
+    {TRIGGER_RAISED, TRIGGER_STEAM_ROOM_MOAI, FLAG_STEAM_ROOM_STREAM_DRAINED, EVENT(AquaRockInside_SteamRoomStreamDrains)},
     {TRIGGER_TABLE_END},
 };
 
@@ -3144,10 +3194,10 @@ LATE_DATA struct Trigger gAquaRockInside_RustySwordChestTriggers[] = {
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS, 9},
     {STEP_TRIGGER_WALKING, 55, CONDITION_ALWAYS, EVENT(AquaRockInside_JumpForward)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_A, CONDITION_ALWAYS, EVENT(AquaRockInside_SetPillarCellHigh)},
-    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_SetPillarCellHigh)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_A, CONDITION_ALWAYS, EVENT(AquaRockInside_SetPillarCellMiddle)},
-    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_SetPillarCellMiddle)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_A, CONDITION_ALWAYS, EVENT(AquaRockInside_SetPillarCellPushable)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_SetPillarCellPushable)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_RUSTY_SWORD_CHEST_WATER_PILLAR_A, CONDITION_ALWAYS, EVENT(AquaRockInside_SetPillarCellJumpable)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_SetPillarCellJumpable)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 50, FLAG_AQUA_ROCK_RUSTY_SWORD_CHEST_POOL_PARCHED, EVENT(AquaRockInside_ParchPool)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_RUSTY_SWORD_CHEST_WATER_STONE, FLAG_AQUA_ROCK_RUSTY_SWORD_CHEST_STREAMS_TURNED, EVENT(AquaRockInside_DouseRustySwordChestWaterStone)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_RUSTY_SWORD_CHEST_MOAI, FLAG_RUSTY_SWORD_CHEST_MOAI_FILLED, EVENT(AquaRockInside_DouseRustySwordChestMoai)},
@@ -3167,8 +3217,8 @@ LATE_DATA struct Trigger gAquaRockInside_CrystalPowderChestTriggers[] = {
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {TRIGGER_STEP, TRIGGER_RAPIDS_WEST, CONDITION_ALWAYS, EVENT(AquaRockInside_StepIntoRapids)},
-    {TRIGGER_STEP, TRIGGER_RAPIDS_EAST, CONDITION_ALWAYS, EVENT(AquaRockInside_StepIntoRapids)},
+    {TRIGGER_STEP, TRIGGER_WEST_VENT_GUST, CONDITION_ALWAYS, EVENT(AquaRockInside_StepIntoVentGust)},
+    {TRIGGER_STEP, TRIGGER_EAST_VENT_GUST, CONDITION_ALWAYS, EVENT(AquaRockInside_StepIntoVentGust)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 70, CONDITION_ALWAYS, EVENT(AquaRockInside_JumpForward)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CRYSTAL_POWDER_CHEST_PILLAR, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_CRYSTAL_POWDER_CHEST_WATER_STONE, FLAG_AQUA_ROCK_CRYSTAL_POWDER_WATER_STONE_DOUSED, EVENT(AquaRockInside_DouseCrystalPowderChestWaterStone)},
@@ -3190,18 +3240,18 @@ LATE_DATA struct Trigger gAquaRockInside_VialChestTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 12, CONDITION_ALWAYS, 12},
     {TRIGGER_STEP, 13, CONDITION_ALWAYS, EVENT(AquaRockInside_RideFalls)},
-    {TRIGGER_STEP, TRIGGER_RAPIDS_WEST, CONDITION_ALWAYS, EVENT(AquaRockInside_StepIntoRapids)},
-    {TRIGGER_STEP, TRIGGER_RAPIDS_EAST, CONDITION_ALWAYS, EVENT(AquaRockInside_StepIntoRapids)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_VIAL_CHEST_FALLS_PILLAR, FLAG_VIAL_CHEST_FALLS_PILLAR_MOVED, EVENT(AquaRockInside_MovePillarByFalls)},
+    {TRIGGER_STEP, TRIGGER_WEST_VENT_GUST, CONDITION_ALWAYS, EVENT(AquaRockInside_StepIntoVentGust)},
+    {TRIGGER_STEP, TRIGGER_EAST_VENT_GUST, CONDITION_ALWAYS, EVENT(AquaRockInside_StepIntoVentGust)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_VIAL_CHEST_MOAI_PILLAR, FLAG_VIAL_CHEST_MOAI_BLOCKED, EVENT(AquaRockInside_BlockMoaiWithPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_VIAL_CHEST_PUDDLE_A, FLAG_VIAL_CHEST_PUDDLE_A_FROZEN, EVENT(AquaRockInside_FreezeRoomPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_VIAL_CHEST_PUDDLE_B, FLAG_VIAL_CHEST_PUDDLE_B_FROZEN, EVENT(AquaRockInside_FreezeRoomPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_VIAL_CHEST_PUDDLE_C, FLAG_VIAL_CHEST_PUDDLE_C_FROZEN, EVENT(AquaRockInside_FreezeRoomPuddle)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_VIAL_CHEST_RAPIDS_PILLAR_A, CONDITION_ALWAYS, EVENT(AquaRockInside_StartPushingRock)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_VIAL_CHEST_RAPIDS_PILLAR_B, CONDITION_ALWAYS, EVENT(AquaRockInside_StartPushingRock)},
-    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_StartPushingRock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_VIAL_CHEST_RAPIDS_PILLAR_A, CONDITION_ALWAYS, EVENT(AquaRockInside_FinishPushingRock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_VIAL_CHEST_RAPIDS_PILLAR_B, CONDITION_ALWAYS, EVENT(AquaRockInside_FinishPushingRock)},
-    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_FinishPushingRock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_VIAL_CHEST_WEST_VENT_PILLAR, CONDITION_ALWAYS, EVENT(AquaRockInside_FreeVentPillars)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_VIAL_CHEST_EAST_VENT_PILLAR, CONDITION_ALWAYS, EVENT(AquaRockInside_FreeVentPillars)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_FreeVentPillars)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_VIAL_CHEST_WEST_VENT_PILLAR, CONDITION_ALWAYS, EVENT(AquaRockInside_SettleVentPillars)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_VIAL_CHEST_EAST_VENT_PILLAR, CONDITION_ALWAYS, EVENT(AquaRockInside_SettleVentPillars)},
+    {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AquaRockInside_SettleVentPillars)},
     {TRIGGER_TABLE_END},
 };
 

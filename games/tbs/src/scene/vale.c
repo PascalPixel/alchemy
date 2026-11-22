@@ -1,91 +1,90 @@
 /// @file
-/// SceneId_Vale, Isaac's village by day, outside the houses, holds the door of
-/// Isaac's house, the houses of Garet's family and of Jenna's grandparents, the
-/// Sanctum and the paths out to Mt. Aleph and Kraden's cottage.
+/// Vale by day (SceneId_Vale), Isaac's village at the foot of Mt. Aleph,
+/// outside the houses. A river runs down it from a waterfall in the north. In
+/// the north are the Sanctum, a small stone shrine, and west of it the path to
+/// the steps up Mt. Aleph. Isaac's house stands in the middle, east of the
+/// river, with a ladder against its front; Garet's house is north-east of it,
+/// below the cliff where Garet's training stone stands in his sister's
+/// flowers. Two ways lead west out of the village to Kraden's cottage, and
+/// puppies play in the southern one. In the south are the house of Jenna's
+/// grandparents, a house on the west bank wrecked by the storm with its door
+/// knocked off its hinges, the rope bridge across the river, and the way east
+/// to the plaza.
 ///
 /// The actor placements and triggers come in three sets, chosen by the story
-/// flags. They are before the party leaves Vale, after it has left
-/// (FLAG_VALE_PARTY_LEFT) and back from Kalay (FLAG_KALAY_REACHED).
-/// VALE_FROM_TITLE has a set of its own.
+/// flags: before the party leaves Vale, after it has left
+/// (FLAG_VALE_PARTY_LEFT) and back from Kalay (FLAG_KALAY_REACHED). The
+/// opening (VALE_FROM_TITLE) has a set of its own.
 ///
 /// In story order:
 ///
 /// - The day the story begins, three years after the storm (cottage_rooms_b.c),
-///   which took Jenna's family and Isaac's father, Kyle. The game opens at
-///   VALE_FROM_TITLE with Vale_MendingTheRoof. Under the caption
-///   "Three years later...", Isaac is mending the roof of his house while Dora,
-///   his mother, calls up to him. Garet, who will travel with him, trains his
-///   Psynergy nearby. Jenna comes by, and the two speak of that day before
-///   going to fetch Isaac to go to Kraden's. VALE_TO_ROOF_MENDED brings the
-///   party back in at VALE_FROM_ROOF_MENDED, where Vale_RoofMended plays once
-///   (area flag FLAG_VALE_ROOF_MENDED_EVENT_PLAYED). Dora praises the roof,
-///   remembers Kyle, and sends the three off on their climb of Mt. Aleph with
-///   Kraden, the scholar who teaches them Alchemy (FLAG_VALE_ROOF_JUST_MENDED).
-///   For the rest of that visit Dora frets about the hole clumsy Garet left.
+///   which took Jenna's family and Isaac's father, Kyle. The game opens with
+///   Vale_MendingTheRoof. Under the caption "Three years later...", Isaac is
+///   mending the roof of his house while Dora, his mother, calls up to him.
+///   Garet, who will travel with him, trains his Psynergy on his training
+///   stone. Jenna comes up from the south, and the two speak of that day before
+///   going to fetch Isaac to go to Kraden's. The party comes back in front of
+///   Isaac's house (VALE_FROM_ROOF_MENDED), where Vale_RoofMended plays once.
+///   Dora praises the roof and remembers Kyle, and Jenna and Garet tell her
+///   they are going up Mt. Aleph with Kraden, the scholar who teaches them
+///   Alchemy. For the rest of that visit Dora frets about the hole clumsy
+///   Garet left.
 /// - Vale before the party leaves. Until Kraden has planned the visit to Sol
-///   Sanctum (FLAG_SANCTUM_VISIT_PLANNED), Jenna stops Isaac on the path to Mt.
-///   Aleph. A bearded man in a long robe jumps out to warn him against sneaking
-///   up the sacred peak (FLAG_VALE_WARNED_AGAINST_MT_ALEPH). He then keeps
-///   watching him, asking again whenever he comes near (cell behaviors 51 to
-///   53). Three puppies (from ACTOR_FIRST_PUPPY) play. Walking up to them from
-///   either side (cell behaviors 20 and 21) sets them barking, until the party
-///   has met Saturos and Menardi, of the strangers staying at the inn
-///   (FLAG_MET_SATUROS_AND_MENARDI). Then the setup removes them. Villagers
-///   talk of the mayor, Garet's grandfather, and of not going beyond Kraden's
-///   cottage. Garet's sister scolds him, and Dora says Isaac can fix the hole
+///   Sanctum (FLAG_SANCTUM_VISIT_PLANNED), Jenna turns Isaac back at the steps
+///   up Mt. Aleph. The first time Isaac takes the path there, a bearded man in
+///   a long robe jumps out from the trees by the river to warn him against
+///   sneaking up the sacred peak. He then walks a beat in front of the Sanctum
+///   and along the path, and drives Isaac back whenever he catches him on it.
+///   Three puppies play in the southern way to Kraden's cottage. Walking up to
+///   them from either side sets them barking and Isaac turns back, until the
+///   party has met Saturos and Menardi, two of the strangers staying at the
+///   inn; then the puppies are gone. Villagers talk of the mayor, Garet's
+///   grandfather, and of not going beyond Kraden's cottage. Garet's sister
+///   scolds him for crushing her flowers, and Dora says Isaac can fix the hole
 ///   later.
 /// - After the party has left Vale (FLAG_VALE_PARTY_LEFT), Dora will not open
 ///   the door of Isaac's house to him ("My Isaac would keep his promise... Go
 ///   away."). The villagers speak of the tremors and of Kraden, who has not
 ///   come back.
-/// - Back from Kalay (FLAG_KALAY_REACHED), Garet meets his sister (area flag
-///   FLAG_VALE_GARET_MET_SISTER) and asks one of his family to protect it while
-///   he is gone (FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY). A young man asks
-///   whether Jenna is back (FLAG_VALE_ASKED_IF_JENNA_IS_BACK), another feels a
-///   tremor, another asks about the lack of travellers since the eruption
-///   (FLAG_VALE_ASKED_ABOUT_TRAVELERS). Isaac's house opens again, and Dora
-///   lies ill inside (cottage_rooms_b.c).
+/// - Back from Kalay (FLAG_KALAY_REACHED), Garet meets his sister by the
+///   training stone and asks his little brother to protect the family while he
+///   is gone. A young man asks whether Jenna is back, a woman feels another
+///   tremor, and a man wonders why no travellers have come since the eruption.
+///   Isaac's house opens again, and Dora lies ill inside (cottage_rooms_b.c).
 ///
-/// Every set has these:
+/// In every set Catch takes the Nut from the tree on the ledge by the river
+/// above the wrecked house (FLAG_VALE_NUT_CAUGHT), Isaac can push or Move
+/// Garet's training stone a cell east or west, and he can climb the ladder onto
+/// the roof of his house. The game also changes cells as Isaac steps on and off
+/// the ladder's top and the rope bridges, which the player does not see
+/// (FLAG_VALE_ON_ROOF and FLAG_VALE_ON_BRIDGE). After a battle
+/// (FLAG_KEEP_PARTY_POSITION) the setup puts both back as they were.
 ///
-/// - A Nut to catch with Catch (FLAG_VALE_NUT_CAUGHT; ACTOR_NUT, or
-///   ACTOR_NUT_AFTER_KALAY).
-/// - A pillar to push or Move, whose column the setup restores from
-///   FLAG_VALE_PILLAR_IN_WEST_COLUMN, _IN_MIDDLE_COLUMN and _IN_EAST_COLUMN.
-/// - A ladder up onto the roof of Isaac's house, climbed on cell behaviors 100
-///   and 101 (FLAG_VALE_ON_ROOF while on the roof).
-/// - Cells of the bridge over the river that change while the leader is on it
-///   (FLAG_VALE_ON_BRIDGE).
+/// The ways out:
 ///
-/// After a battle (FLAG_KEEP_PARTY_POSITION) the setup restores both the roof's
-/// and the bridge's cells.
-///
-/// The exits:
-///
-/// - VALE_TO_SOL_ENTRANCE goes up Mt. Aleph to Sol Entrance
+/// - The steps in the north-west go up Mt. Aleph to Sol Sanctum's door
 ///   (SceneId_SolEntrance).
-/// - VALE_TO_VALE_PLAZA goes to SceneId_ValePlaza.
-/// - VALE_TO_VALE_KRADENS_COTTAGE_NORTH and VALE_TO_VALE_KRADENS_COTTAGE_SOUTH
-///   go to SceneId_ValeKradensCottage.
-/// - The doors VALE_TO_COTTAGE_ROOMS_A_EAST, VALE_TO_COTTAGE_ROOMS_A_SOUTH,
-///   VALE_TO_COTTAGE_ROOMS_A_NORTH, VALE_TO_COTTAGE_ROOMS_A_WEST and
-///   VALE_TO_COTTAGE_ROOMS_A_NORTH_WEST_BANK_DOOR lead into the houses
-///   (SceneId_CottageRoomsA, cottage_rooms_a.c).
-/// - VALE_TO_COTTAGE_ROOMS_B leads into Isaac's house (SceneId_CottageRoomsB).
-/// - VALE_TO_SANCTUM leads into SceneId_Sanctum.
+/// - Two ways out at the west edge lead to the part of Vale around Kraden's
+///   cottage (SceneId_ValeKradensCottage), and one at the east edge in the
+///   south to the plaza with the Psynergy Stone (SceneId_ValePlaza).
+/// - The doors of Garet's house, the house north-west of Isaac's, the house of
+///   Jenna's grandparents and the house south of theirs lead into the rooms of
+///   SceneId_CottageRoomsA (cottage_rooms_a.c), and the door of Isaac's house
+///   into SceneId_CottageRoomsB.
+/// - The Sanctum's door leads into SceneId_Sanctum.
 ///
 /// Two events no table reaches remain. They are Vale_UnusedRoofMended, a copy
-/// of the roof's end, and Vale_UnusedWaterBurstsByTheRiver, which sets area
-/// flag FLAG_VALE_UNUSED_WATER_BURST_SEEN.
+/// of the roof's end, and Vale_UnusedWaterBurstsByTheRiver.
 ///
-/// FLAG_VALE_MT_ALEPH_GUARD_PAUSED pauses the man who watches Isaac while a
-/// menu is open. The TBS_PATCH_4 editions also set Dora's sprite priority
-/// before Kalay.
+/// The man guarding Mt. Aleph stands still while a menu is open
+/// (Vale_SynchronizeAlephGuardPause). The TBS_PATCH_4 editions also set Dora's
+/// sprite priority before Kalay.
 ///
-/// In the opening Garet trains his Psynergy on the pillar. His sprite flashes
-/// white, then cycles through its colour modes with sparks about him. Meanwhile
-/// the hand of Move (ACTOR_OPENING_MOVE_HAND) pushes the pillar west and sheds
-/// sparkles, and the pillar cycles its colour modes too.
+/// In the opening Garet trains his Psynergy on his training stone. His sprite
+/// flashes white, then cycles through its colour modes with sparks about him.
+/// Meanwhile the hand of Move pushes the stone west and sheds sparkles, and
+/// the stone cycles its colour modes too.
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -145,10 +144,10 @@ extern u16 gVale_GrandparentsDoorOpens[];
 extern u16 gVale_WestHouseDoorOpens[];
 extern s32 gVale_FirstWarningLeaderPath[];
 extern s32 gVale_FirstWarningGuardPath[];
-extern s32 gVale_LeaderFromWestPath[];
-extern s32 gVale_GuardFromFirstPausePath[];
-extern s32 gVale_LeaderPushedBackPath[];
-extern s32 gVale_GuardFromSecondPausePath[];
+extern s32 gVale_LeaderRunsBackFromThePath[];
+extern s32 gVale_GuardComesDownThePath[];
+extern s32 gVale_LeaderRunsBackBeforeTheDoor[];
+extern s32 gVale_GuardStepsBeforeTheDoor[];
 
 extern struct Trigger gVale_TriggersAfterKalay[];
 extern s32 gVale_JennaWalksToTheHouse[];
@@ -170,9 +169,9 @@ extern s32 gVale_JennaWalksToTheHouse[];
 #define VALE_DORA_Z 889
 #endif
 
-/// Where the pillar stands in the west of the three columns it can be pushed to
-/// below the cliff (cells 22 to 24 of row 36), two pixels east of each cell's
-/// middle.
+/// Where Garet's training stone stands in the west of the three cells it can
+/// be pushed between below the cliff, (22, 36) to (24, 36), two pixels east of
+/// each cell's middle.
 #define PILLAR_WEST_X 362
 #define PILLAR_MIDDLE_X 378 ///< in the middle column
 #define PILLAR_EAST_X 394   ///< in the east column
@@ -201,7 +200,7 @@ static void Vale_VanishMoveHand(struct Actor *emitter);
 static void Actor_SetTargetPositionFromMagnitudeAngle(struct Actor *actor,
                                                       s32 magnitude, s32 angle);
 static void Vale_MovePillarBelowCliff(void);
-static void Vale_PlayStepSound(void);
+static void Vale_PlayPsynergySparkleSound(void);
 static void Vale_SynchronizeAlephGuardPause(void);
 static void Vale_SetPillarPriorityByLeaderHeight(void);
 static void Vale_FlashActorAndSpawnEffects(struct Actor *actor);
@@ -248,10 +247,9 @@ enum ValeActorId {
   /// "You're in trouble now, Garet... Your sister's really mad!" After the
   /// party has left, "Please take care of my brother, Isaac."
   ACTOR_GARETS_BROTHER,
-  /// SPRITE_STONE_PILLAR, as Goma Cave's pillars. It is pushed
-  /// (Vale_PushPillar) or moved with Move. Its column is kept in
-  /// FLAG_VALE_PILLAR_IN_WEST_COLUMN, _IN_MIDDLE_COLUMN and _IN_EAST_COLUMN
-  /// (Vale_MovePillarBelowCliff).
+  /// Garet's training stone, a stone pillar below the cliff north of his
+  /// house, which crushed his sister's flowers. Isaac pushes it
+  /// (Vale_PushPillar) or moves it with Move (Vale_MovePillarBelowCliff).
   ACTOR_PILLAR,
   ACTOR_DORA, ///< Isaac's mother
   /// A man with long brown hair and a beard in a long robe. He jumps out to
@@ -325,6 +323,73 @@ enum ValeOpeningActorId {
   ACTOR_OPENING_MOVE_HAND
 };
 
+/// What Vale's cells do when Isaac steps on them, walks into them or searches
+/// them, by the trigger rows that answer them.
+enum ValeCellBehavior {
+  /// The Sanctum's door: cells (15, 27) and (16, 27).
+  CELL_BEHAVIOR_VALE_SANCTUM_DOOR = 1,
+  /// The steps up Mt. Aleph in the north-west: cells (5, 16) to (8, 16).
+  CELL_BEHAVIOR_VALE_STEPS_UP_MT_ALEPH,
+  /// The northern way west to Kraden's cottage: cells (0, 38) to (0, 40).
+  CELL_BEHAVIOR_VALE_NORTH_WAY_TO_KRADEN,
+  /// The southern way west, where the puppies play: (0, 49) and (0, 50).
+  CELL_BEHAVIOR_VALE_SOUTH_WAY_TO_KRADEN,
+  /// The way east to the plaza, in the south: cells (29, 86) and (29, 87).
+  CELL_BEHAVIOR_VALE_WAY_TO_THE_PLAZA,
+  /// The door of Garet's house: cell (25, 46).
+  CELL_BEHAVIOR_VALE_GARETS_DOOR,
+  /// The door of the house north-west of Isaac's: cell (16, 51).
+  CELL_BEHAVIOR_VALE_NORTHWEST_HOUSE_DOOR,
+  /// The door of Isaac's house: cell (21, 56).
+  CELL_BEHAVIOR_VALE_ISAACS_DOOR,
+  /// The door of Jenna's grandparents' house: cell (20, 71).
+  CELL_BEHAVIOR_VALE_GRANDPARENTS_DOOR,
+  /// The door of the house south of theirs: cell (23, 78).
+  CELL_BEHAVIOR_VALE_SOUTH_HOUSE_DOOR,
+  /// Unused: no cell carries it.
+  CELL_BEHAVIOR_VALE_UNUSED_WRECKED_HOUSE_DOOR,
+  /// A cell beyond each end of the rope bridges, a step from the river.
+  CELL_BEHAVIOR_VALE_OFF_BRIDGE = 14,
+  /// The cells at each end of the rope bridges.
+  CELL_BEHAVIOR_VALE_ONTO_BRIDGE,
+  /// North of the puppies: cells (1, 47) to (5, 47) and (1, 48).
+  CELL_BEHAVIOR_VALE_NORTH_OF_PUPPIES = 20,
+  /// South of the puppies: cells (3, 53) and (4, 53).
+  CELL_BEHAVIOR_VALE_SOUTH_OF_PUPPIES,
+  /// The stuck door of the wrecked house on the west bank: cell (6, 74).
+  CELL_BEHAVIOR_VALE_WRECKED_HOUSE_DOOR = 24,
+  /// West of Garet's training stone, pushing it east.
+  CELL_BEHAVIOR_VALE_WEST_OF_TRAINING_STONE = 30,
+  /// East of Garet's training stone, pushing it west.
+  CELL_BEHAVIOR_VALE_EAST_OF_TRAINING_STONE,
+  /// The north end of the path up the Sanctum's west side: cell (10, 23).
+  CELL_BEHAVIOR_VALE_GUARD_JUMPS_OUT = 50,
+  /// The path up the Sanctum's west side: cells (11, 23) to (13, 27), and
+  /// (12, 30) and (13, 30) south of its foot.
+  CELL_BEHAVIOR_VALE_PATH_UP_MT_ALEPH,
+  /// The corner west of the Sanctum's front: cells (14, 28) and (14, 29).
+  CELL_BEHAVIOR_VALE_BESIDE_THE_SANCTUM,
+  /// The foot of the path: cells (12, 28) to (13, 29).
+  CELL_BEHAVIOR_VALE_FOOT_OF_THE_PATH,
+  /// The foot of the ladder against Isaac's house: cell (24, 55).
+  CELL_BEHAVIOR_VALE_LADDER_FOOT = 100,
+  /// The top of the ladder, on the roof: cell (24, 53) once the roof's cells
+  /// are in.
+  CELL_BEHAVIOR_VALE_LADDER_TOP
+};
+
+/// Which stretch of his beat the man guarding Mt. Aleph is on, kept in his
+/// SW_TIMER (gVale_AlephGuardPatrolRoute). He catches Isaac sneaking only on
+/// the first two.
+enum ValeGuardBeat {
+  /// Up and down the path along the Sanctum's west side.
+  GUARD_ON_THE_PATH = 1,
+  /// Along the front of the Sanctum, past its door.
+  GUARD_BEFORE_THE_SANCTUM,
+  /// Up the Sanctum's east side, behind it.
+  GUARD_BEHIND_THE_SANCTUM
+};
+
 /// The leader's animation of hammering on the roof, beyond enum
 /// ActorAnimation's.
 enum { ANIM_HAMMER = 11 };
@@ -375,8 +440,8 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gVale_Exits; }
 
-/// Places the villagers for the story so far, or for the roof repair
-/// (VALE_FROM_TITLE).
+/// Places the villagers for the story so far, or for the game's opening, when
+/// Isaac is mending the roof (VALE_FROM_TITLE).
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.entrance == VALE_FROM_TITLE)
     return gVale_RepairActorPlacements;
@@ -387,18 +452,27 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gVale_ActorPlacements;
 }
 
-/// Catch on the Nut in Vale gives it to the party.
+/// Catch on the Nut in the tree on the ledge by the river, above the house the
+/// storm wrecked on the west bank, plucks it from the tree, and Isaac holds it
+/// up and gets it.
+///
+/// The Nut hangs at cell (9, 63) and floats in it until FLAG_VALE_NUT_CAUGHT
+/// is set (Scene_FloatNut, Scene_CatchNut).
 static void Vale_CatchNut(void) {
   Scene_CatchNut(ACTOR_NUT, FLAG_VALE_NUT_CAUGHT);
 }
 
-/// The same Nut after Kalay, where it is ACTOR_NUT_AFTER_KALAY.
+/// Back from Kalay, Catch on the Nut in the tree on the ledge by the river,
+/// above the wrecked house on the west bank, plucks it from the tree for Isaac,
+/// if he did not take it before.
+///
+/// The placements back from Kalay number the Nut ACTOR_NUT_AFTER_KALAY.
 static void Vale_CatchNutAfterKalay(void) {
   Scene_CatchNut(ACTOR_NUT_AFTER_KALAY, FLAG_VALE_NUT_CAUGHT);
 }
 
-/// Vale's triggers for the story so far: before leaving, after leaving, or
-/// back from Kalay.
+/// Vale's triggers for the story so far: before the party leaves, after it has
+/// left, or back from Kalay.
 const struct Trigger *Scene_GetTriggers(void) {
   if (GameFlag_Get(FLAG_KALAY_REACHED) != 0)
     return gVale_TriggersAfterKalay;
@@ -407,8 +481,9 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gVale_Triggers;
 }
 
-/// A little girl in Vale (ACTOR_GIRL_JEALOUS_OF_GARET) asks about the mayor
-/// before the party leaves, and speaks of the tremors after.
+/// A little girl with orange pigtails, west of Garet's training stone, tells
+/// Garet she is jealous that his grandpa is the mayor and asks whether Isaac
+/// is too. After the party has left she speaks of the tremors.
 static void Vale_TalkAboutTheMayorAndTremors(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
@@ -426,8 +501,12 @@ static void Vale_TalkAboutTheMayorAndTremors(void) {
   Event_End();
 }
 
-/// A woman in Vale (ACTOR_WOMAN_ON_THE_WAY_TO_KRADEN) asks whether Isaac is
-/// going to Kraden's cottage and warns him not to go beyond it.
+/// A woman with fair hair at the northern way west to Kraden's cottage asks
+/// whether Isaac needs to go past, and warns him not to go beyond Kraden's
+/// cottage. After the party has left she says Kraden still has not come back.
+///
+/// She asks only the first time (FLAG_VALE_ASKED_IF_GOING_TO_KRADEN), and
+/// after that gives the warning alone.
 static void Vale_WarnAboutGoingBeyondKradensCottage(void) {
   s32 asked = FLAG_VALE_ASKED_IF_GOING_TO_KRADEN;
 
@@ -455,8 +534,9 @@ static void Vale_WarnAboutGoingBeyondKradensCottage(void) {
   Event_End();
 }
 
-/// Garet's sister scolds him in Vale. Afterwards she only threatens him.
-/// "Garet, you make me so mad sometimes!"
+/// Garet's sister, by his training stone, scolds him: "Your training stone
+/// crushed my flowers!" Afterwards she only threatens him with what will
+/// happen tonight.
 static void Vale_ArgueWithGaretsSister(void) {
   Event_Start();
   if (Event_GetFlag(FLAG_VALE_GARET_TOLD_OFF_FOR_FLOWERS) == 0) {
@@ -484,8 +564,10 @@ static void Vale_ArgueWithGaretsSister(void) {
   Event_End();
 }
 
-/// Talking to Dora in Vale before the party leaves has her speak of the hole in
-/// the roof.
+/// Dora, by the door of Isaac's house, speaks of the hole in the roof before
+/// the party leaves. On the morning the roof was mended she frets about the
+/// hole clumsy Garet left; later she says it won't rain for some time, so
+/// Isaac can fix it later.
 static void Vale_DoraTalksAboutTheHole(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VALE_ROOF_JUST_MENDED) != 0) {
@@ -497,8 +579,12 @@ static void Vale_DoraTalksAboutTheHole(void) {
   Event_End();
 }
 
-/// Back from Kalay, a young man in Vale (ACTOR_YOUNG_MAN_ASKING_FOR_JENNA)
-/// asks whether Jenna is back.
+/// Back from Kalay, the young man by the river in the south of Vale asks Isaac
+/// whether Jenna is back yet, and makes him promise to bring her home.
+///
+/// Mind Read plays the same the first time. After he has asked
+/// (FLAG_VALE_ASKED_IF_JENNA_IS_BACK), talking gives his plea alone and Mind
+/// Read a thought of his.
 static void Vale_AskWhetherJennaHasReturned(void) {
   Event_Start();
   Actor_FaceEachOther(ACTOR_PARTY_LEADER, ACTOR_YOUNG_MAN_ASKING_FOR_JENNA, 20);
@@ -509,8 +595,8 @@ static void Vale_AskWhetherJennaHasReturned(void) {
   Event_End();
 }
 
-/// Back from Kalay, a woman in Vale (ACTOR_WOMAN_FEELING_TREMORS) feels
-/// another tremor, and the view shakes.
+/// Back from Kalay, a woman in a green dress cries out as the ground shakes:
+/// "Aghh! I felt another one!" The tremors keep her awake at night.
 static void Vale_FeelAnotherTremor(void) {
   Event_Start();
   MapGrid_SetShake(3, 3, 1);
@@ -525,8 +611,12 @@ static void Vale_FeelAnotherTremor(void) {
   Event_End();
 }
 
-/// A burly grey-haired man asks about the lack of travellers since the
-/// eruption.
+/// Back from Kalay, a burly grey-haired man wonders why no travellers have
+/// come since the eruption, and asks whether Isaac knows. "Yes" tells him the
+/// bridge to the south was ruined.
+///
+/// Talking to him always plays this. Mind Read plays it too until he has asked
+/// (FLAG_VALE_ASKED_ABOUT_TRAVELERS), and then reads a thought of his.
 static void Vale_AskAboutTheLackOfTravelers(void) {
   Event_Start();
   Actor_RunRepeatedMotion(ACTOR_MAN_MISSING_TRAVELERS, 2);
@@ -541,22 +631,38 @@ static void Vale_AskAboutTheLackOfTravelers(void) {
   Event_End();
 }
 
-/// Walking onto the bridge in Vale (cell behavior 15) changes its cells' cell
-/// behaviors, remembered in FLAG_VALE_ON_BRIDGE.
+/// Nothing visible happens as Isaac steps up to either end of the rope bridge
+/// across the river in the south of Vale, at cells (8, 85) to (8, 88) on the
+/// west bank or (18, 84) to (18, 87) on the east. The game lays the bridge's
+/// planks into the cells over the river, so that he can walk across it.
+///
+/// Until then the cells under that bridge are the river's, which he cannot
+/// walk on. The planks are copied from the bridge's own layer, cells (40, 84)
+/// to (46, 87) of the map, onto cells (10, 84) to (16, 87), and
+/// FLAG_VALE_ON_BRIDGE keeps them there after a battle. The ends of the rope
+/// bridge west of Isaac's house, cells (5, 56) to (5, 57) and (13, 56) to
+/// (13, 57), run this too, though that bridge is always open.
 static void Vale_StepOntoBridge(void) {
   GameFlag_Set(FLAG_VALE_ON_BRIDGE);
   MapGrid_CopyCellAttributes(40, 84, 7, 4, 10, 84);
 }
 
-/// Walking off the bridge in Vale (cell behavior 14) restores its cells' cell
-/// behaviors.
+/// Nothing visible happens as Isaac steps off either end of the rope bridge
+/// across the river in the south of Vale, a cell further from the river than
+/// Vale_StepOntoBridge's cells. The game puts the river's cells back under the
+/// bridge.
+///
+/// The river's cells are kept below the bridge's own, at cells (40, 89) to
+/// (46, 92) of the map. The ends of the bridge west of Isaac's house run this
+/// too.
 static void Vale_StepOffBridge(void) {
   GameFlag_Clear(FLAG_VALE_ON_BRIDGE);
   MapGrid_CopyCellAttributes(40, 89, 7, 4, 10, 84);
 }
 
-/// The door of Vale Sanctum (cell behavior 1) opens, the leader walks in, and
-/// VALE_TO_SANCTUM leads into the Sanctum.
+/// Walking into the door of the Sanctum, the small stone shrine in the north
+/// of Vale, at cells (15, 27) and (16, 27), opens it with a thump, and Isaac
+/// walks inside.
 static void Vale_EnterSanctum(void) {
   Sound_Play(SE_THUMP);
   MapGrid_AnimateCells(gVale_SanctumDoorOpens, 45, 11);
@@ -564,8 +670,13 @@ static void Vale_EnterSanctum(void) {
   Import_EventSetExitRequest(VALE_TO_SANCTUM);
 }
 
-/// On the path to Mt. Aleph in Vale (cell behavior 2), Jenna stops Isaac until
-/// Kraden has planned the visit (FLAG_SANCTUM_VISIT_PLANNED).
+/// Climbing the steps up Mt. Aleph in the north-west of Vale, cells (5, 16) to
+/// (8, 16), takes Isaac up to Sol Sanctum's door, once Kraden has planned the
+/// visit. Before that, Jenna steps out to turn him back
+/// (Vale_JennaSaysKradenIsWaiting).
+///
+/// Kraden plans the visit in his cottage (FLAG_SANCTUM_VISIT_PLANNED,
+/// vale_kradens_cottage.c).
 static void Vale_ApproachMtAleph(void) {
   if (GameFlag_Get(FLAG_SANCTUM_VISIT_PLANNED) == 0) {
     Vale_JennaSaysKradenIsWaiting();
@@ -575,28 +686,34 @@ static void Vale_ApproachMtAleph(void) {
   }
 }
 
-/// Cell behavior 3 in Vale takes the northern way out to
-/// SceneId_ValeKradensCottage.
+/// Walking out of Vale by the northern of its two ways west, cells (0, 38) to
+/// (0, 40), takes Isaac on to the part of the village around Kraden's
+/// cottage.
 static void Vale_ExitToValeKradensCottageNorth(void) {
   Sound_Play(SE_MAP_EXIT);
   Import_EventSetExitRequest(VALE_TO_VALE_KRADENS_COTTAGE_NORTH);
 }
 
-/// Cell behavior 4 in Vale takes the southern way out to
-/// SceneId_ValeKradensCottage.
+/// Walking out of Vale by the southern of its two ways west, where the puppies
+/// play, cells (0, 49) and (0, 50), takes Isaac on to the part of the village
+/// around Kraden's cottage.
 static void Vale_ExitToValeKradensCottageSouth(void) {
   Sound_Play(SE_MAP_EXIT);
   Import_EventSetExitRequest(VALE_TO_VALE_KRADENS_COTTAGE_SOUTH);
 }
 
-/// Cell behavior 5 in Vale takes the way out to SceneId_ValePlaza.
+/// Walking out of Vale by the path at its east edge in the south, cells
+/// (29, 86) and (29, 87), takes Isaac on to the plaza with the Psynergy Stone
+/// and the town gate.
 static void Vale_ExitToValePlaza(void) {
   Sound_Play(SE_MAP_EXIT);
   Import_EventSetExitRequest(VALE_TO_VALE_PLAZA);
 }
 
-/// The door of the house of Garet's family in Vale (cell behavior 6) opens, and
-/// VALE_TO_COTTAGE_ROOMS_A_EAST leads in.
+/// Walking into the door of Garet's house, north-east of Isaac's, at cell
+/// (25, 46), opens it, and Isaac walks in to Garet's family.
+///
+/// The door opens with the same pictures as Isaac's (gVale_IsaacsDoorOpens).
 static void Vale_EnterGaretsHouse(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_IsaacsDoorOpens, 54, 32);
@@ -604,9 +721,9 @@ static void Vale_EnterGaretsHouse(void) {
   Import_EventSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_EAST);
 }
 
-/// A house door in Vale (cell behavior 7) opens, and
-/// VALE_TO_COTTAGE_ROOMS_A_SOUTH leads in, to the room CottageRoomsA enters
-/// from COTTAGE_ROOMS_A_FROM_VALE_SOUTH.
+/// Walking into the door of the house just north-west of Isaac's, at cell
+/// (16, 51), opens it, and Isaac walks in to the villagers who talk of Kraden
+/// and his visitors.
 static void Vale_EnterCottageRoomsA(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_GrandparentsDoorOpens, 45, 39);
@@ -614,8 +731,10 @@ static void Vale_EnterCottageRoomsA(void) {
   Import_EventSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_SOUTH);
 }
 
-/// At the door of Isaac's house in Vale (cell behavior 8), Dora will not open
-/// after the party has left and before Kalay.
+/// Walking into the door of Isaac's house, at cell (21, 56), opens it, and he
+/// walks in. After the party has left Vale and until it is back from Kalay,
+/// Dora will not open it: she asks who is there, and does not believe it is
+/// her Isaac.
 static void Vale_EnterIsaacsHouse(void) {
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0 &&
       GameFlag_Get(FLAG_KALAY_REACHED) == 0) {
@@ -642,8 +761,8 @@ static void Vale_EnterIsaacsHouse(void) {
   }
 }
 
-/// The door of the house of Jenna's grandparents in Vale (cell behavior 9)
-/// opens, and VALE_TO_COTTAGE_ROOMS_A_NORTH leads in.
+/// Walking into the door of the house of Jenna's grandparents, in the south of
+/// Vale east of the river, at cell (20, 71), opens it, and Isaac walks in.
 static void Vale_EnterJennasGrandparentsHouse(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_GrandparentsDoorOpens, 49, 69);
@@ -651,9 +770,12 @@ static void Vale_EnterJennasGrandparentsHouse(void) {
   Import_EventSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_NORTH);
 }
 
-/// A house door in Vale (cell behavior 10) opens, and
-/// VALE_TO_COTTAGE_ROOMS_A_WEST leads in, to the room CottageRoomsA enters from
-/// COTTAGE_ROOMS_A_FROM_VALE_WEST.
+/// Walking into the door of the house south of Jenna's grandparents', at cell
+/// (23, 78), opens it, and Isaac walks in to the young man who dreams of
+/// seeing the world.
+///
+/// The room is the one cottage_rooms_a.c enters from
+/// COTTAGE_ROOMS_A_FROM_VALE_WEST, after its place on that map.
 static void Vale_EnterCottageRoomsAWest(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_WestHouseDoorOpens, 52, 76);
@@ -661,10 +783,14 @@ static void Vale_EnterCottageRoomsAWest(void) {
   Import_EventSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_WEST);
 }
 
-/// Unused: its row answers cell behavior 11, which no cell of Vale's layout
-/// (map/vale_prologue, the stormy night's too) carries, as
-/// ValePrologue_UnusedLeaveToCottageRoomsAWestByWestBankDoor in
-/// vale_prologue.c.
+/// Unused: walking into the door of the house the storm wrecked on the west
+/// bank would have opened it and taken Isaac into the house of Jenna's
+/// grandparents.
+///
+/// No cell of Vale's map, by day or on the stormy night, carries its cell
+/// behaviour, and that door's own cell answers Vale_SearchTheLockedDoor
+/// instead. vale_prologue.c keeps the same unused door
+/// (ValePrologue_UnusedLeaveToCottageRoomsAWestByWestBankDoor).
 static void Vale_UnusedEnterJennasGrandparentsHouseByWestBankDoor(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_AnimateCells(gVale_IsaacsDoorOpens, 35, 74);
@@ -672,8 +798,12 @@ static void Vale_UnusedEnterJennasGrandparentsHouseByWestBankDoor(void) {
   Import_EventSetExitRequest(VALE_TO_COTTAGE_ROOMS_A_NORTH_WEST_BANK_DOOR);
 }
 
-/// On the path to Mt. Aleph in Vale, before the visit is planned, Jenna comes
-/// out to remind Isaac that Kraden is waiting, and he turns back.
+/// At the foot of the steps up Mt. Aleph, before Kraden has planned the visit,
+/// Jenna steps out of Isaac and tells him "Kraden is waiting for us." He nods,
+/// she steps back in, and he walks back down off the steps.
+///
+/// Jenna is put where Isaac stands, as the party is drawn as its leader alone,
+/// and walks out from there (Scene_WalkIntoLeader takes her back).
 static void Vale_JennaSaysKradenIsWaiting(void) {
   struct Actor *leader;
   struct Actor *jenna;
@@ -709,9 +839,15 @@ static void Vale_JennaSaysKradenIsWaiting(void) {
   Event_End();
 }
 
-/// Until the party has met Saturos and Menardi, the puppies in Vale (cell
-/// behavior 20) bark, the camera pans down to them and back, and the leader
-/// turns away.
+/// Walking towards the puppies in the southern way west out of Vale from the
+/// ledge north of them, cells (1, 47) to (5, 47) and (1, 48), sets them
+/// barking. The view slides south to show them at play below, a message reads
+/// "There are some puppies playing over there. We should let them be.", and
+/// the view comes back before Isaac walks away north.
+///
+/// Once the party has met Saturos and Menardi the puppies are gone, and
+/// nothing happens here. The view follows a point of its own, moved 2 pixels
+/// a frame for 40 frames, while Isaac stands still.
 static void Vale_WatchThePuppies(void) {
   struct MapGridScrollWork *grid;
   s32 *savedOrigin;
@@ -757,8 +893,14 @@ static void Vale_WatchThePuppies(void) {
   }
 }
 
-/// The puppies in Vale from the other side (cell behavior 21) do the same
-/// barking, without the camera pan.
+/// Walking up to the puppies in the southern way west out of Vale from the
+/// south, at cells (3, 53) and (4, 53), sets them barking. A message reads
+/// "There are some puppies playing over there. We should let them be." and
+/// Isaac walks back south.
+///
+/// The view stays on him, as the puppies are already in sight from this side.
+/// Once the party has met Saturos and Menardi the puppies are gone, and
+/// nothing happens here.
 static void Vale_TurnBackFromThePuppies(void) {
   s32 msg;
 
@@ -778,7 +920,13 @@ static void Vale_TurnBackFromThePuppies(void) {
   }
 }
 
-/// Cell behavior 100 in Vale is at the foot of the ladder beside Isaac's house.
+/// Walking north into the foot of the ladder against the front of Isaac's
+/// house, east of his door, at cell (24, 55), climbs him up the ladder and over
+/// the eaves onto the roof.
+///
+/// The roof's cells are copied in from cells (49, 53) to (56, 56) of the map
+/// onto cells (20, 50) to (27, 53), so that he can walk on it, and
+/// FLAG_VALE_ON_ROOF keeps them there after a battle.
 static void Vale_ClimbLadderOntoRoof(void) {
   Event_Start();
   MapGrid_CopyCellAttributes(49, 53, 8, 4, 20, 50);
@@ -788,7 +936,11 @@ static void Vale_ClimbLadderOntoRoof(void) {
   Event_End();
 }
 
-/// Cell behavior 101 in Vale is at the top of the ladder beside Isaac's house.
+/// Walking south off the roof of Isaac's house at the top of the ladder,
+/// cell (24, 53) once he is on the roof, climbs him down the ladder to the
+/// ground in front of the house.
+///
+/// The ground's cells come back from cells (49, 46) to (56, 49) of the map.
 static void Vale_ClimbDownFromRoof(void) {
   Event_Start();
   Vale_ClimbDownRoofLadder(ACTOR_PARTY_LEADER, ANIM_LEADER_CLIMB_DOWN_FROM_TOP,
@@ -798,8 +950,14 @@ static void Vale_ClimbDownFromRoof(void) {
   Event_End();
 }
 
-/// A bearded man in a long robe in Vale (ACTOR_MAN_GUARDING_MT_ALEPH, cell
-/// behavior 50) jumps out in front of Isaac, then keeps watching him.
+/// The first time Isaac takes the path up the Sanctum's west side towards the
+/// steps up Mt. Aleph, at its north end (cell (10, 23)), a bearded man in a
+/// long robe jumps out from the trees by the river and drives him back to the
+/// Sanctum's door. "You're not planning on sneaking up to Mt. Aleph, are you?"
+///
+/// From then on the man walks his beat (gVale_AlephGuardPatrolRoute) and
+/// watches for Isaac on the path (Vale_CatchSneakingOnThePath and the two after
+/// it). FLAG_VALE_WARNED_AGAINST_MT_ALEPH keeps this from playing again.
 static void Vale_WarnAgainstSneakingUpMtAleph(void) {
   struct Actor *guard;
 
@@ -849,18 +1007,29 @@ static void Vale_WarnAgainstSneakingUpMtAleph(void) {
   Event_End();
 }
 
-/// Repeats the warning when the man reaches the first pause.
-static void Vale_RepeatMtAlephWarningFromFirstApproach(void) {
+/// Walking up the path along the Sanctum's west side, cells (11, 23) to
+/// (13, 27), or just south of its foot, cells (12, 30) and (13, 30), while the
+/// man guarding Mt. Aleph is on that path catches Isaac: he runs back to the
+/// Sanctum's door, the man follows him down, and asks again whether he is
+/// sneaking up Mt. Aleph.
+///
+/// While the man is in front of the Sanctum or behind it, Isaac walks on
+/// unseen.
+static void Vale_CatchSneakingOnThePath(void) {
   struct Actor *guard = Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH);
   if (GameFlag_Get(FLAG_VALE_WARNED_AGAINST_MT_ALEPH) != 0) {
-    if (guard->timer == 1) {
-      Vale_AskAboutSneakingToAleph(gVale_LeaderFromWestPath,
-                                   gVale_GuardFromFirstPausePath);
+    if (guard->timer == GUARD_ON_THE_PATH) {
+      Vale_AskAboutSneakingToAleph(gVale_LeaderRunsBackFromThePath,
+                                   gVale_GuardComesDownThePath);
     }
   }
 }
 
-/// Asks about the Aleph detour, then resumes each actor's response actions.
+/// The man guarding Mt. Aleph catches Isaac sneaking: both start, Isaac
+/// winces and runs back by `leaderActions`, the man follows him by
+/// `guardActions` to stand before the Sanctum's door, and asks "You're not
+/// planning on sneaking up to Mt. Aleph, are you?" before going back to his
+/// beat.
 static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
                                          const s32 *guardActions) {
   const s32 *replyActions;
@@ -899,29 +1068,36 @@ static void Vale_AskAboutSneakingToAleph(const s32 *leaderActions,
   Event_End();
 }
 
-/// Repeats the warning when the man reaches the second pause.
-static void Vale_RepeatMtAlephWarningFromSecondApproach(void) {
+/// Stepping into the corner just west of the Sanctum's front, cells (14, 28)
+/// and (14, 29), while the man guarding Mt. Aleph stands or walks in front of
+/// the Sanctum catches Isaac: he runs back before the Sanctum's door, and the
+/// man steps up to him and asks again whether he is sneaking up Mt. Aleph.
+static void Vale_CatchSneakingBesideTheSanctum(void) {
   struct Actor *guard = Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH);
   if (GameFlag_Get(FLAG_VALE_WARNED_AGAINST_MT_ALEPH) != 0) {
-    if (guard->timer == 2) {
-      Vale_AskAboutSneakingToAleph(gVale_LeaderPushedBackPath,
-                                   gVale_GuardFromSecondPausePath);
+    if (guard->timer == GUARD_BEFORE_THE_SANCTUM) {
+      Vale_AskAboutSneakingToAleph(gVale_LeaderRunsBackBeforeTheDoor,
+                                   gVale_GuardStepsBeforeTheDoor);
     }
   }
 }
 
-/// Chooses the warning approach matching the man's current pause.
-static void Vale_RepeatMtAlephWarningAtEitherPause(void) {
+/// Stepping onto the foot of the path along the Sanctum's west side, cells
+/// (12, 28) to (13, 29), while the man guarding Mt. Aleph is on the path or in
+/// front of the Sanctum catches Isaac: he runs back before the Sanctum's door,
+/// and the man comes to him and asks again whether he is sneaking up Mt.
+/// Aleph.
+static void Vale_CatchSneakingAtThePathsFoot(void) {
   struct Actor *guard = Actor_Get(ACTOR_MAN_GUARDING_MT_ALEPH);
   if (GameFlag_Get(FLAG_VALE_WARNED_AGAINST_MT_ALEPH) != 0) {
-    s32 pause;
-    pause = guard->timer;
-    if (pause == 1) {
-      Vale_AskAboutSneakingToAleph(gVale_LeaderPushedBackPath,
-                                   gVale_GuardFromFirstPausePath);
-    } else if (pause == 2) {
-      Vale_AskAboutSneakingToAleph(gVale_LeaderPushedBackPath,
-                                   gVale_GuardFromSecondPausePath);
+    s32 stretch;
+    stretch = guard->timer;
+    if (stretch == GUARD_ON_THE_PATH) {
+      Vale_AskAboutSneakingToAleph(gVale_LeaderRunsBackBeforeTheDoor,
+                                   gVale_GuardComesDownThePath);
+    } else if (stretch == GUARD_BEFORE_THE_SANCTUM) {
+      Vale_AskAboutSneakingToAleph(gVale_LeaderRunsBackBeforeTheDoor,
+                                   gVale_GuardStepsBeforeTheDoor);
     }
   }
 }
@@ -1499,8 +1675,17 @@ UNUSED static void Vale_UnusedRoofMended(void) {
   Event_End();
 }
 
-/// Vale's setup plays the roof mending (VALE_FROM_TITLE) or its end
-/// (VALE_FROM_ROOF_MENDED, once).
+/// Sets Vale up as the party arrives. Arriving from the title, the game's
+/// opening plays, with Isaac mending the roof; arriving back in front of his
+/// house after it, the end of that morning plays once.
+///
+/// Otherwise the setup floats the Nut in its tree until it is caught, stands
+/// Garet's training stone in its column, sends the puppies away once the
+/// party has met Saturos and Menardi, starts the man guarding Mt. Aleph on his
+/// beat once he has warned Isaac, and after a battle puts back the roof's and
+/// the bridge's cells. After the party has left and until it is back from
+/// Kalay, Dora stands inside Isaac's house shrunk to nothing, so that she can
+/// answer through the door (Vale_EnterIsaacsHouse).
 s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 set;
@@ -1628,7 +1813,11 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// Back from Kalay, Garet meets his sister in Vale.
+/// Back from Kalay, talking to Garet's sister by his training stone, or
+/// reading her mind, brings Garet out to her. "It's been a while..." She
+/// admits she was worried about him, and is sorry he is leaving again.
+///
+/// FLAG_VALE_GARET_MET_SISTER keeps this from playing twice.
 static void Vale_GaretMeetsHisSister(void) {
   struct Actor *actor;
   s32 msg;
@@ -1718,8 +1907,12 @@ static void Vale_GaretMeetsHisSister(void) {
   Event_End();
 }
 
-/// Back from Kalay, Garet asks one of his family in Vale
-/// (ACTOR_GARETS_BROTHER_AFTER_KALAY) to protect it while he is gone.
+/// Back from Kalay, talking to Garet's little brother west of the door of
+/// Garet's house, or reading his mind, brings Garet out to him. The boy
+/// wonders that they are back already, and Garet tells him to protect the
+/// family while he is gone.
+///
+/// FLAG_VALE_GARET_ASKED_TO_PROTECT_FAMILY keeps this from playing twice.
 static void Vale_GaretAsksToProtectFamily(void) {
   struct Actor *actor;
 
@@ -1941,8 +2134,15 @@ static void Vale_PlaceOrHideBoards(s32 first, u32 count, s32 mode) {
   }
 }
 
-/// Arriving by VALE_FROM_TITLE, the game's opening in Vale, finds Isaac mending
-/// the roof of his house.
+/// The game's opening, three years after the storm: Isaac is mending the roof
+/// of his house while Dora calls up to him, "Isaac! Haven't you finished
+/// mending the roof yet?" Jenna comes up from the south past them, finds Garet
+/// training his Psynergy on his training stone, and the two talk before
+/// setting off to fetch Isaac.
+///
+/// It plays as Vale is set up from the title (VALE_FROM_TITLE), and ends by
+/// taking the party back in front of Isaac's house (VALE_TO_ROOF_MENDED),
+/// where Vale_RoofMended goes on.
 static void Vale_MendingTheRoof(void) {
   u32 i;
   // Default: NULL until the first board is fetched.
@@ -2263,9 +2463,15 @@ static void Vale_MendingTheRoof(void) {
   Event_End();
 }
 
-/// Arriving by VALE_FROM_ROOF_MENDED after the opening, in Vale, has Dora
-/// praise the mended roof, remember Kyle, and send Isaac, Garet and Jenna off
-/// to Mt. Aleph with Kraden. "Good job, Isaac. You patched it nicely."
+/// The end of the opening, on the roof of Isaac's house: Isaac lifts the last
+/// boards into place with his Psynergy, and Dora climbs the ladder to see.
+/// "Good job, Isaac. You patched it nicely." She remembers Kyle. Jenna and
+/// Garet climb up too and tell her they are going up Mt. Aleph with Kraden,
+/// and at last they all climb back down.
+///
+/// It plays once, as Vale is set up from VALE_FROM_ROOF_MENDED
+/// (FLAG_VALE_ROOF_MENDED_EVENT_PLAYED), and sets FLAG_VALE_ROOF_JUST_MENDED
+/// for the rest of the visit.
 static void Vale_RoofMended(void) {
   struct Actor *leader;
   struct Actor *actor;
@@ -2336,7 +2542,7 @@ static void Vale_RoofMended(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_WEST, 40);
   Scene_StartEventPsynergy();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_CAST_PSYNERGY);
-  Task_AddFrame(Vale_PlayStepSound, TASK_PASS_FRAME);
+  Task_AddFrame(Vale_PlayPsynergySparkleSound, TASK_PASS_FRAME);
   for (i = 0; i < 40; i++) {
     Vale_FlashActorAndSpawnEffects(leader);
     wait(1);
@@ -2352,7 +2558,7 @@ static void Vale_RoofMended(void) {
   Event_Wait(20);
   Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  Task_Remove(Vale_PlayStepSound);
+  Task_Remove(Vale_PlayPsynergySparkleSound);
   Task_Remove(Vale_UpdateLeaderPaletteAndEffects);
   Task_Remove(Vale_CycleFirstBoardPalette);
   wait(1);
@@ -2374,7 +2580,7 @@ static void Vale_RoofMended(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 40);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_EAST, 20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_CAST_PSYNERGY);
-  Task_AddFrame(Vale_PlayStepSound, TASK_PASS_FRAME);
+  Task_AddFrame(Vale_PlayPsynergySparkleSound, TASK_PASS_FRAME);
   for (i = 0; i < 40; i++) {
     Vale_FlashActorAndSpawnEffects(leader);
     wait(1);
@@ -2389,7 +2595,7 @@ static void Vale_RoofMended(void) {
   Event_Wait(20);
   Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  Task_Remove(Vale_PlayStepSound);
+  Task_Remove(Vale_PlayPsynergySparkleSound);
   Task_Remove(Vale_UpdateLeaderPaletteAndEffects);
   Task_Remove(Vale_CycleSecondBoardPalette);
   wait(1);
@@ -2412,7 +2618,7 @@ static void Vale_RoofMended(void) {
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 30);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH_NORTHEAST, 20);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_CAST_PSYNERGY);
-  Task_AddFrame(Vale_PlayStepSound, TASK_PASS_FRAME);
+  Task_AddFrame(Vale_PlayPsynergySparkleSound, TASK_PASS_FRAME);
   for (i = 0; i < 40; i++) {
     Vale_FlashActorAndSpawnEffects(leader);
     wait(1);
@@ -2427,7 +2633,7 @@ static void Vale_RoofMended(void) {
   Event_Wait(20);
   Actor_Get(ACTOR_PARTY_LEADER)->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  Task_Remove(Vale_PlayStepSound);
+  Task_Remove(Vale_PlayPsynergySparkleSound);
   Task_Remove(Vale_UpdateLeaderPaletteAndEffects);
   Task_Remove(Vale_CycleThirdBoardPalette);
   wait(1);
@@ -2875,33 +3081,36 @@ static void Vale_RoofMended(void) {
 
 #include "shared/event_psynergy.c"
 
-/// Cycles palettes on Garet and periodically spawns attached effects.
+/// Garet using his Psynergy on his training stone in the opening: his colours
+/// shift and sparks fly about him (Vale_CycleActorPaletteAndSpawnEffects).
 static void Vale_UpdateGaretPaletteAndEffects(void) {
   Vale_CycleActorPaletteAndSpawnEffects(Actor_Get(ACTOR_GARET));
 }
 
-/// Cycles the leader palette and periodically spawns attached effects.
+/// Isaac using his Psynergy on the roof's boards at the end of the opening: his
+/// colours shift and sparks fly about him.
 static void Vale_UpdateLeaderPaletteAndEffects(void) {
   Vale_CycleActorPaletteAndSpawnEffects(Actor_Get(ACTOR_PARTY_LEADER));
 }
 
-/// Cycles the pillar's colour modes while Garet's Psynergy moves it in the
+/// Garet's training stone shifting colours while his Psynergy moves it in the
 /// opening.
 static void Vale_CycleOpeningPillarPalette(void) {
   Vale_CycleActorPalette(Actor_Get(ACTOR_OPENING_PILLAR));
 }
 
-/// Cycles the first board palette while its repair effect runs.
+/// The first board shifting colours while Isaac's Psynergy lifts it onto the
+/// roof.
 static void Vale_CycleFirstBoardPalette(void) {
   Vale_CycleActorPalette(Actor_Get(ACTOR_FIRST_BOARD));
 }
 
-/// Cycles the second board palette while its repair effect runs.
+/// The second board shifting colours while Isaac's Psynergy lifts it.
 static void Vale_CycleSecondBoardPalette(void) {
   Vale_CycleActorPalette(Actor_Get(ACTOR_SECOND_BOARD));
 }
 
-/// Cycles the third board's palette while its repair effect runs.
+/// The third board shifting colours while Isaac's Psynergy lifts it.
 static void Vale_CycleThirdBoardPalette(void) {
   Vale_CycleActorPalette(Actor_Get(ACTOR_THIRD_BOARD));
 }
@@ -3050,7 +3259,13 @@ static void Vale_VanishMoveHand(struct Actor *emitter) {
 DEFINE_SET_TARGET_POSITION_FROM_MAGNITUDE_ANGLE(static,
                                                 FieldActor_SetMoveTargetFX)
 
-/// Pushing the pillar in Vale (cell behaviors 30 and 31) moves it a cell.
+/// Walking into Garet's training stone, below the cliff north of his house,
+/// pushes it a cell: east from its west side, cells (22, 36) to (23, 36), or
+/// west from its east side, cells (24, 36) to (25, 36). It moves only between
+/// cells (22, 36) and (24, 36).
+///
+/// The push itself is the shared one (PushedActor_AdvancePair), and
+/// Vale_MovePillarBelowCliff then settles the cells under it.
 static void Vale_PushPillar(void) {
 #if !TBS_PATCH_1
   // DEAD: the Japanese edition looks the pillar up and drops it; the ROM keeps
@@ -3065,7 +3280,17 @@ static void Vale_PushPillar(void) {
   Vale_MovePillarBelowCliff();
 }
 
-/// Records where the pillar now stands and blocks its cell.
+/// Move on Garet's training stone, below the cliff north of his house, pushes
+/// it a cell east or west with the hand of Move, between cells (22, 36) and
+/// (24, 36).
+///
+/// The Psynergy moves the stone; this event then settles the row under it, as
+/// it does after a push and when Vale is set up. The cells either side of the
+/// stone push it, and its own cell is one Isaac jumps across
+/// (CELL_BEHAVIOR_JUMP_FORWARD), as the cell west of the row is. The row's
+/// cells are copied from cells (17, 0) to (19, 0) of the map and the stone's
+/// own from cell (17, 1), and its column is kept in
+/// FLAG_VALE_PILLAR_IN_WEST_COLUMN, _IN_MIDDLE_COLUMN or _IN_EAST_COLUMN.
 static void Vale_MovePillarBelowCliff(void) {
   struct Actor *actor;
   s32 column;
@@ -3095,19 +3320,25 @@ static void Vale_MovePillarBelowCliff(void) {
 
 /// The task that plays SE_PSYNERGY_SPARKLE every 16 frames while Isaac's
 /// Psynergy lifts a board at the roof's end.
-static void Vale_PlayStepSound(void) {
+static void Vale_PlayPsynergySparkleSound(void) {
   if ((gFrameCount & 15) == 0)
     Sound_Play(SE_PSYNERGY_SPARKLE);
 }
 
-/// Searching a locked door in Vale (cell behavior 24).
+/// Searching the door of the house the storm wrecked, on the west bank in the
+/// south of Vale, at cell (6, 74), finds it stuck: "The door won't open. The
+/// force of the impact must have knocked it off its hinges."
 static void Vale_SearchTheLockedDoor(void) {
   Event_Start();
   FieldMessage_Show(MsgValeDoorWontOpen, 1);
   Event_End();
 }
 
-/// Pauses the man guarding Mt. Aleph while the corresponding event flag is set.
+/// Keeps the man guarding Mt. Aleph standing still while a menu is open, and
+/// lets him walk on when it closes.
+///
+/// It runs every frame from Vale's setup, before the party leaves, and
+/// FLAG_VALE_MT_ALEPH_GUARD_PAUSED remembers that it stopped him.
 static void Vale_SynchronizeAlephGuardPause(void) {
   s32 pauseFlag;
 
@@ -3125,7 +3356,11 @@ static void Vale_SynchronizeAlephGuardPause(void) {
   }
 }
 
-/// Keeps the raised pillar's priority in step with the leader's height.
+/// Draws Garet's training stone under Isaac while he is up on the cliff above
+/// it, and in front of him or behind as usual while he is down beside it.
+///
+/// It runs every frame. Isaac is above the stone when his height is over 200;
+/// the stone's foot is at height 192.
 static void Vale_SetPillarPriorityByLeaderHeight(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   struct Actor *pillar;
@@ -3177,18 +3412,19 @@ static void Vale_CycleActorPalette(struct Actor *actor) {
 
 // clang-format off
 
-/// The man guarding Mt. Aleph walks his beat below the path once he has warned
-/// Isaac, looking about at each stop. SW_TIMER says which stretch he is on,
-/// 1 to 3, of which the warning scripts act on the two pauses, 1 and 2.
+/// The beat the man guarding Mt. Aleph walks once he has warned Isaac, looking
+/// about at each stop: east along the front of the Sanctum and up behind it,
+/// back before its door, then west and up the path along its west side, and
+/// back. SW_TIMER says which stretch of it he is on (enum ValeGuardBeat).
 s32 gVale_AlephGuardPatrolRoute[] = {
     SC_SPEED(0.5),
     SC_ACCELERATION(0.25),
-    SC_SET(SW_TIMER, 2),
+    SC_SET(SW_TIMER, GUARD_BEFORE_THE_SANCTUM),
     SC_LABEL(1),
     SC_ANIMATION(ANIM_WALK),
     SC_MOVE(296, 0, 456),
     SC_SYNC,
-    SC_SET(SW_TIMER, 3),
+    SC_SET(SW_TIMER, GUARD_BEHIND_THE_SANCTUM),
     SC_MOVE(296, 0, 420),
     SC_SYNC,
     SC_ANIMATION(ANIM_STAND),
@@ -3208,7 +3444,7 @@ s32 gVale_AlephGuardPatrolRoute[] = {
     SC_ANIMATION(ANIM_WALK),
     SC_MOVE(296, 0, 456),
     SC_SYNC,
-    SC_SET(SW_TIMER, 2),
+    SC_SET(SW_TIMER, GUARD_BEFORE_THE_SANCTUM),
     SC_MOVE(256, 0, 456),
     SC_SYNC,
     SC_ANIMATION(ANIM_STAND),
@@ -3220,7 +3456,7 @@ s32 gVale_AlephGuardPatrolRoute[] = {
     SC_ANIMATION(ANIM_WALK),
     SC_MOVE(212, 0, 456),
     SC_SYNC,
-    SC_SET(SW_TIMER, 1),
+    SC_SET(SW_TIMER, GUARD_ON_THE_PATH),
     SC_MOVE(212, 0, 388),
     SC_SYNC,
     SC_ANIMATION(ANIM_STAND),
@@ -3249,7 +3485,7 @@ s32 gVale_AlephGuardPatrolRoute[] = {
     SC_ANIMATION(ANIM_WALK),
     SC_MOVE(212, 0, 456),
     SC_SYNC,
-    SC_SET(SW_TIMER, 2),
+    SC_SET(SW_TIMER, GUARD_BEFORE_THE_SANCTUM),
     SC_MOVE(256, 0, 456),
     SC_SYNC,
     SC_ANIMATION(ANIM_STAND),
@@ -3529,32 +3765,32 @@ struct Trigger gVale_Triggers[] = {
     { TRIGGER_TALK, ACTOR_GARETS_BROTHER, CONDITION_ALWAYS, MSGNO(MsgValeYoureInTroubleNowGaretYour) },
     { TRIGGER_TALK, ACTOR_DORA, CONDITION_ALWAYS, EVENT(Vale_DoraTalksAboutTheHole) },
     { TRIGGER_TALK, ACTOR_MAN_GUARDING_MT_ALEPH, CONDITION_ALWAYS, MSGNO(MsgValeMtAlephIsASacredPeak) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(Vale_EnterSanctum) },
-    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Vale_ApproachMtAleph) },
-    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Vale_ExitToValeKradensCottageNorth) },
-    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Vale_ExitToValeKradensCottageSouth) },
-    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Vale_ExitToValePlaza) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(Vale_EnterGaretsHouse) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(Vale_EnterCottageRoomsA) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(Vale_EnterIsaacsHouse) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(Vale_EnterJennasGrandparentsHouse) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(Vale_EnterCottageRoomsAWest) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT(Vale_UnusedEnterJennasGrandparentsHouseByWestBankDoor) },
-    { TRIGGER_STEP, 15, CONDITION_ALWAYS, EVENT(Vale_StepOntoBridge) },
-    { TRIGGER_STEP, 14, CONDITION_ALWAYS, EVENT(Vale_StepOffBridge) },
-    { TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(Vale_WatchThePuppies) },
-    { TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Vale_TurnBackFromThePuppies) },
-    { TRIGGER_STEP, 50, FLAG_VALE_WARNED_AGAINST_MT_ALEPH, EVENT(Vale_WarnAgainstSneakingUpMtAleph) },
-    { TRIGGER_STEP, 51, CONDITION_ALWAYS, EVENT(Vale_RepeatMtAlephWarningFromFirstApproach) },
-    { TRIGGER_STEP, 52, CONDITION_ALWAYS, EVENT(Vale_RepeatMtAlephWarningFromSecondApproach) },
-    { TRIGGER_STEP, 53, CONDITION_ALWAYS, EVENT(Vale_RepeatMtAlephWarningAtEitherPause) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT(Vale_ClimbLadderOntoRoof) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT(Vale_ClimbDownFromRoof) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VALE_SANCTUM_DOOR, CONDITION_ALWAYS, EVENT(Vale_EnterSanctum) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_STEPS_UP_MT_ALEPH, CONDITION_ALWAYS, EVENT(Vale_ApproachMtAleph) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_NORTH_WAY_TO_KRADEN, CONDITION_ALWAYS, EVENT(Vale_ExitToValeKradensCottageNorth) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_SOUTH_WAY_TO_KRADEN, CONDITION_ALWAYS, EVENT(Vale_ExitToValeKradensCottageSouth) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_WAY_TO_THE_PLAZA, CONDITION_ALWAYS, EVENT(Vale_ExitToValePlaza) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VALE_GARETS_DOOR, CONDITION_ALWAYS, EVENT(Vale_EnterGaretsHouse) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VALE_NORTHWEST_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(Vale_EnterCottageRoomsA) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VALE_ISAACS_DOOR, CONDITION_ALWAYS, EVENT(Vale_EnterIsaacsHouse) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VALE_GRANDPARENTS_DOOR, CONDITION_ALWAYS, EVENT(Vale_EnterJennasGrandparentsHouse) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VALE_SOUTH_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(Vale_EnterCottageRoomsAWest) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VALE_UNUSED_WRECKED_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(Vale_UnusedEnterJennasGrandparentsHouseByWestBankDoor) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_ONTO_BRIDGE, CONDITION_ALWAYS, EVENT(Vale_StepOntoBridge) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_OFF_BRIDGE, CONDITION_ALWAYS, EVENT(Vale_StepOffBridge) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_NORTH_OF_PUPPIES, CONDITION_ALWAYS, EVENT(Vale_WatchThePuppies) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_SOUTH_OF_PUPPIES, CONDITION_ALWAYS, EVENT(Vale_TurnBackFromThePuppies) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_GUARD_JUMPS_OUT, FLAG_VALE_WARNED_AGAINST_MT_ALEPH, EVENT(Vale_WarnAgainstSneakingUpMtAleph) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_PATH_UP_MT_ALEPH, CONDITION_ALWAYS, EVENT(Vale_CatchSneakingOnThePath) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_BESIDE_THE_SANCTUM, CONDITION_ALWAYS, EVENT(Vale_CatchSneakingBesideTheSanctum) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_FOOT_OF_THE_PATH, CONDITION_ALWAYS, EVENT(Vale_CatchSneakingAtThePathsFoot) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VALE_LADDER_FOOT, CONDITION_ALWAYS, EVENT(Vale_ClimbLadderOntoRoof) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_VALE_LADDER_TOP, CONDITION_ALWAYS, EVENT(Vale_ClimbDownFromRoof) },
     { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_NUT, FLAG_VALE_NUT_CAUGHT, EVENT(Vale_CatchNut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR, CONDITION_ALWAYS, EVENT(Vale_MovePillarBelowCliff) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT(Vale_PushPillar) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT(Vale_PushPillar) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 24, CONDITION_ALWAYS, EVENT(Vale_SearchTheLockedDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_VALE_WEST_OF_TRAINING_STONE, CONDITION_ALWAYS, EVENT(Vale_PushPillar) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_VALE_EAST_OF_TRAINING_STONE, CONDITION_ALWAYS, EVENT(Vale_PushPillar) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VALE_WRECKED_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(Vale_SearchTheLockedDoor) },
     { TRIGGER_TABLE_END },
 };
 
@@ -3579,32 +3815,32 @@ struct Trigger gVale_TriggersAfterLeaving[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_ALEPHS_PURITY, CONDITION_ALWAYS, MSGNO(MsgValeICantBelieveAnyoneWouldClimb) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_JEALOUS_OF_GARET, CONDITION_ALWAYS, MSGNO(MsgValeIJustDontFeelSafeKnowing) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_KEEPING_VALE_HIDDEN, CONDITION_ALWAYS, MSGNO(MsgValeThePeopleOfValeWillNever) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(Vale_EnterSanctum) },
-    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Vale_ApproachMtAleph) },
-    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Vale_ExitToValeKradensCottageNorth) },
-    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Vale_ExitToValeKradensCottageSouth) },
-    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Vale_ExitToValePlaza) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(Vale_EnterGaretsHouse) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(Vale_EnterCottageRoomsA) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(Vale_EnterIsaacsHouse) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(Vale_EnterJennasGrandparentsHouse) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(Vale_EnterCottageRoomsAWest) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT(Vale_UnusedEnterJennasGrandparentsHouseByWestBankDoor) },
-    { TRIGGER_STEP, 15, CONDITION_ALWAYS, EVENT(Vale_StepOntoBridge) },
-    { TRIGGER_STEP, 14, CONDITION_ALWAYS, EVENT(Vale_StepOffBridge) },
-    { TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(Vale_WatchThePuppies) },
-    { TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Vale_TurnBackFromThePuppies) },
-    { TRIGGER_STEP, 50, FLAG_VALE_WARNED_AGAINST_MT_ALEPH, EVENT(Vale_WarnAgainstSneakingUpMtAleph) },
-    { TRIGGER_STEP, 51, CONDITION_ALWAYS, EVENT(Vale_RepeatMtAlephWarningFromFirstApproach) },
-    { TRIGGER_STEP, 52, CONDITION_ALWAYS, EVENT(Vale_RepeatMtAlephWarningFromSecondApproach) },
-    { TRIGGER_STEP, 53, CONDITION_ALWAYS, EVENT(Vale_RepeatMtAlephWarningAtEitherPause) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT(Vale_ClimbLadderOntoRoof) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT(Vale_ClimbDownFromRoof) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VALE_SANCTUM_DOOR, CONDITION_ALWAYS, EVENT(Vale_EnterSanctum) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_STEPS_UP_MT_ALEPH, CONDITION_ALWAYS, EVENT(Vale_ApproachMtAleph) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_NORTH_WAY_TO_KRADEN, CONDITION_ALWAYS, EVENT(Vale_ExitToValeKradensCottageNorth) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_SOUTH_WAY_TO_KRADEN, CONDITION_ALWAYS, EVENT(Vale_ExitToValeKradensCottageSouth) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_WAY_TO_THE_PLAZA, CONDITION_ALWAYS, EVENT(Vale_ExitToValePlaza) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VALE_GARETS_DOOR, CONDITION_ALWAYS, EVENT(Vale_EnterGaretsHouse) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VALE_NORTHWEST_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(Vale_EnterCottageRoomsA) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VALE_ISAACS_DOOR, CONDITION_ALWAYS, EVENT(Vale_EnterIsaacsHouse) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VALE_GRANDPARENTS_DOOR, CONDITION_ALWAYS, EVENT(Vale_EnterJennasGrandparentsHouse) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VALE_SOUTH_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(Vale_EnterCottageRoomsAWest) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VALE_UNUSED_WRECKED_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(Vale_UnusedEnterJennasGrandparentsHouseByWestBankDoor) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_ONTO_BRIDGE, CONDITION_ALWAYS, EVENT(Vale_StepOntoBridge) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_OFF_BRIDGE, CONDITION_ALWAYS, EVENT(Vale_StepOffBridge) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_NORTH_OF_PUPPIES, CONDITION_ALWAYS, EVENT(Vale_WatchThePuppies) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_SOUTH_OF_PUPPIES, CONDITION_ALWAYS, EVENT(Vale_TurnBackFromThePuppies) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_GUARD_JUMPS_OUT, FLAG_VALE_WARNED_AGAINST_MT_ALEPH, EVENT(Vale_WarnAgainstSneakingUpMtAleph) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_PATH_UP_MT_ALEPH, CONDITION_ALWAYS, EVENT(Vale_CatchSneakingOnThePath) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_BESIDE_THE_SANCTUM, CONDITION_ALWAYS, EVENT(Vale_CatchSneakingBesideTheSanctum) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_FOOT_OF_THE_PATH, CONDITION_ALWAYS, EVENT(Vale_CatchSneakingAtThePathsFoot) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VALE_LADDER_FOOT, CONDITION_ALWAYS, EVENT(Vale_ClimbLadderOntoRoof) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_VALE_LADDER_TOP, CONDITION_ALWAYS, EVENT(Vale_ClimbDownFromRoof) },
     { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_NUT, FLAG_VALE_NUT_CAUGHT, EVENT(Vale_CatchNut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR, CONDITION_ALWAYS, EVENT(Vale_MovePillarBelowCliff) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT(Vale_PushPillar) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT(Vale_PushPillar) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 24, CONDITION_ALWAYS, EVENT(Vale_SearchTheLockedDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_VALE_WEST_OF_TRAINING_STONE, CONDITION_ALWAYS, EVENT(Vale_PushPillar) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_VALE_EAST_OF_TRAINING_STONE, CONDITION_ALWAYS, EVENT(Vale_PushPillar) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VALE_WRECKED_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(Vale_SearchTheLockedDoor) },
     { TRIGGER_TABLE_END },
 };
 
@@ -3632,26 +3868,26 @@ struct Trigger gVale_TriggersAfterKalay[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_DOUBTING_SAFETY, CONDITION_ALWAYS, MSGNO(MsgValeTheSmokeFromMtAlephIsnt) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_MAN_MISSING_TRAVELERS, FLAG_VALE_ASKED_ABOUT_TRAVELERS, EVENT(Vale_AskAboutTheLackOfTravelers) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_MISSING_TRAVELERS, CONDITION_ALWAYS, MSGNO(MsgValeHavingNoTravelersIsNoFun) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(Vale_EnterSanctum) },
-    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Vale_ApproachMtAleph) },
-    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Vale_ExitToValeKradensCottageNorth) },
-    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Vale_ExitToValeKradensCottageSouth) },
-    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Vale_ExitToValePlaza) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(Vale_EnterGaretsHouse) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(Vale_EnterCottageRoomsA) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(Vale_EnterIsaacsHouse) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(Vale_EnterJennasGrandparentsHouse) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(Vale_EnterCottageRoomsAWest) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT(Vale_UnusedEnterJennasGrandparentsHouseByWestBankDoor) },
-    { TRIGGER_STEP, 15, CONDITION_ALWAYS, EVENT(Vale_StepOntoBridge) },
-    { TRIGGER_STEP, 14, CONDITION_ALWAYS, EVENT(Vale_StepOffBridge) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 100, CONDITION_ALWAYS, EVENT(Vale_ClimbLadderOntoRoof) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 101, CONDITION_ALWAYS, EVENT(Vale_ClimbDownFromRoof) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VALE_SANCTUM_DOOR, CONDITION_ALWAYS, EVENT(Vale_EnterSanctum) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_STEPS_UP_MT_ALEPH, CONDITION_ALWAYS, EVENT(Vale_ApproachMtAleph) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_NORTH_WAY_TO_KRADEN, CONDITION_ALWAYS, EVENT(Vale_ExitToValeKradensCottageNorth) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_SOUTH_WAY_TO_KRADEN, CONDITION_ALWAYS, EVENT(Vale_ExitToValeKradensCottageSouth) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_WAY_TO_THE_PLAZA, CONDITION_ALWAYS, EVENT(Vale_ExitToValePlaza) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VALE_GARETS_DOOR, CONDITION_ALWAYS, EVENT(Vale_EnterGaretsHouse) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VALE_NORTHWEST_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(Vale_EnterCottageRoomsA) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VALE_ISAACS_DOOR, CONDITION_ALWAYS, EVENT(Vale_EnterIsaacsHouse) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VALE_GRANDPARENTS_DOOR, CONDITION_ALWAYS, EVENT(Vale_EnterJennasGrandparentsHouse) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VALE_SOUTH_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(Vale_EnterCottageRoomsAWest) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VALE_UNUSED_WRECKED_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(Vale_UnusedEnterJennasGrandparentsHouseByWestBankDoor) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_ONTO_BRIDGE, CONDITION_ALWAYS, EVENT(Vale_StepOntoBridge) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_OFF_BRIDGE, CONDITION_ALWAYS, EVENT(Vale_StepOffBridge) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VALE_LADDER_FOOT, CONDITION_ALWAYS, EVENT(Vale_ClimbLadderOntoRoof) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_VALE_LADDER_TOP, CONDITION_ALWAYS, EVENT(Vale_ClimbDownFromRoof) },
     { PSYNERGY_ON_ACTOR(ABILITY_CATCH), ACTOR_NUT_AFTER_KALAY, FLAG_VALE_NUT_CAUGHT, EVENT(Vale_CatchNutAfterKalay) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_AFTER_KALAY, CONDITION_ALWAYS, EVENT(Vale_MovePillarBelowCliff) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 30, CONDITION_ALWAYS, EVENT(Vale_PushPillar) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT(Vale_PushPillar) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 24, CONDITION_ALWAYS, EVENT(Vale_SearchTheLockedDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_VALE_WEST_OF_TRAINING_STONE, CONDITION_ALWAYS, EVENT(Vale_PushPillar) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_VALE_EAST_OF_TRAINING_STONE, CONDITION_ALWAYS, EVENT(Vale_PushPillar) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VALE_WRECKED_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(Vale_SearchTheLockedDoor) },
     { TRIGGER_TABLE_END },
 };
 // clang-format on
@@ -3686,9 +3922,9 @@ u16 gVale_WestHouseDoorOpens[] = {
     MAPGRID_ANIMATION_STEPS_END,
 };
 
-// The man guarding Mt. Aleph drives Isaac back down the path: at the first
-// warning (Vale_WarnAgainstSneakingUpMtAleph), and again from the west
-// or from either of the guard's pauses (Vale_AskAboutSneakingToAleph).
+// The man guarding Mt. Aleph drives Isaac back down the path to the Sanctum's
+// door: at the first warning (Vale_WarnAgainstSneakingUpMtAleph), and each
+// time he catches him on it again (Vale_AskAboutSneakingToAleph).
 
 s32 gVale_FirstWarningLeaderPath[] = {
     SC_ANIMATION(ANIM_LEADER_RUN),
@@ -3714,18 +3950,25 @@ s32 gVale_FirstWarningGuardPath[] = {
     SC_END,
 };
 
-s32 gVale_LeaderFromWestPath[] = {
-    SC_SPEED(2),     SC_ACCELERATION(2),
-    SC_ANIMATION(5), SC_MOVE(224, 0, 458),
-    SC_SYNC,         SC_MOVE(256, 0, 458),
-    SC_SYNC,         SC_MOVE(256, 0, 474),
-    SC_SYNC,         SC_ANIMATION(ANIM_STAND),
-    SC_WAIT(5),      SC_SET(SW_FACING, FACING_NORTHWEST),
-    SC_WAIT(5),      SC_SET(SW_FACING, FACING_NORTH),
+s32 gVale_LeaderRunsBackFromThePath[] = {
+    SC_SPEED(2),
+    SC_ACCELERATION(2),
+    SC_ANIMATION(ANIM_LEADER_RUN),
+    SC_MOVE(224, 0, 458),
+    SC_SYNC,
+    SC_MOVE(256, 0, 458),
+    SC_SYNC,
+    SC_MOVE(256, 0, 474),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_NORTHWEST),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_NORTH),
     SC_END,
 };
 
-s32 gVale_GuardFromFirstPausePath[] = {
+s32 gVale_GuardComesDownThePath[] = {
     SC_SPEED(1.5),
     SC_ACCELERATION(1),
     SC_ANIMATION(ANIM_WALK),
@@ -3741,17 +3984,23 @@ s32 gVale_GuardFromFirstPausePath[] = {
     SC_END,
 };
 
-s32 gVale_LeaderPushedBackPath[] = {
-    SC_SPEED(2),     SC_ACCELERATION(2),
-    SC_ANIMATION(5), SC_MOVE(256, 0, 458),
-    SC_SYNC,         SC_MOVE(256, 0, 474),
-    SC_SYNC,         SC_ANIMATION(ANIM_STAND),
-    SC_WAIT(5),      SC_SET(SW_FACING, FACING_NORTHWEST),
-    SC_WAIT(5),      SC_SET(SW_FACING, FACING_NORTH),
+s32 gVale_LeaderRunsBackBeforeTheDoor[] = {
+    SC_SPEED(2),
+    SC_ACCELERATION(2),
+    SC_ANIMATION(ANIM_LEADER_RUN),
+    SC_MOVE(256, 0, 458),
+    SC_SYNC,
+    SC_MOVE(256, 0, 474),
+    SC_SYNC,
+    SC_ANIMATION(ANIM_STAND),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_NORTHWEST),
+    SC_WAIT(5),
+    SC_SET(SW_FACING, FACING_NORTH),
     SC_END,
 };
 
-s32 gVale_GuardFromSecondPausePath[] = {
+s32 gVale_GuardStepsBeforeTheDoor[] = {
     SC_SPEED(1.5),
     SC_ACCELERATION(1),
     SC_ANIMATION(ANIM_WALK),

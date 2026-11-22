@@ -1,19 +1,22 @@
 /// @file
-/// Suhalla Gate and Gateway Cave, the pass Babi's soldiers guard on the way
-/// from the Suhalla Desert to Babi Lighthouse.
+/// Suhalla Gate and Gateway Cave, the rocky pass Babi's soldiers guard on the
+/// way from the Suhalla Desert to Lalivero and Venus Lighthouse.
 ///
 /// Three scenes share this overlay, in the order the pass is crossed:
 ///
-/// - SuhallaGateCheckpoint (SceneId_SuhallaGateCheckpoint, area name Suhalla
-///   Gate): the gate itself, with the house beside it (Gate to Suhalla,
-///   rock_rooms.c). It is entered from the World Map from the south and from
-///   the east, each into its own part of the map. Two soldiers keep the
-///   passage north.
-/// - SuhallaGateDew (SceneId_SuhallaGateDew, area name Suhalla Gate): beyond
-///   the passage, in a west part and an east part, with Dew, a Mercury
-///   Djinni, and a chest.
-/// - Gateway Cave (SceneId_GatewayCave, area name Gateway Cave): two caves out
-///   onto the World Map, with a Psynergy Stone.
+/// - SuhallaGateCheckpoint (area name Suhalla Gate): the gate itself, a
+///   palisade of logs across the path north from the desert, with a house
+///   in the cliff just past it (rock_rooms.c). The same map holds, in its
+///   own part to the east, the pass's way out toward Venus Lighthouse. Two
+///   soldiers keep the gate.
+/// - SuhallaGateDew (area name Suhalla Gate): the cliffs beyond the gate, a
+///   west part and an east part joined by a path. In the west part the first
+///   slide down leads to a chest with a Mint; in the east part the third
+///   slide from the west leads down to Dew, the Mercury Djinni, and green
+///   vines climb back up the cliffs.
+/// - Gateway Cave (area name Gateway Cave): a cave entered from the cliffs'
+///   east part, two rooms that lead out onto the World Map, with a Psynergy
+///   Stone.
 ///
 /// One exit table serves the three scenes. The other getters choose by
 /// gMainRoutineWork.next, and SuhallaGateCheckpoint's actor placements
@@ -21,17 +24,17 @@
 /// not otherwise named.
 ///
 /// Before Babi's audience after Colosso the guards turn the party away for want
-/// of travel papers. Cell behavior 10 before the passage brings them
-/// together in front of it (SuhallaGate_GuardsBlockPassage).
+/// of travel papers: stepping up to the gate (cells (7, 26) to (9, 27)) brings
+/// them together in front of its opening (SuhallaGate_GuardsBlockPassage).
 ///
-/// After the audience they lie wounded, and a third soldier lies east of the
-/// gate. Iodem, who travels with the party, has an actor out of sight. Cell
-/// behavior 10 then plays SuhallaGate_IodemQuestionsGuards once
-/// (FLAG_SUHALLA_GATE_ATTACK_SEEN), after which a defeat returns the party to
-/// the house beside the gate.
+/// After the audience the party comes with Iodem and finds them lying wounded
+/// before the gate, and a third soldier lying on the path out toward Venus
+/// Lighthouse. Iodem's actor waits out of sight. Stepping up to the gate then
+/// plays SuhallaGate_IodemQuestionsGuards once (FLAG_SUHALLA_GATE_ATTACK_SEEN),
+/// after which a defeat returns the party to the house past the gate.
 ///
-/// The third soldier, talked to or read, warns of the attack on Venus
-/// Lighthouse and vanishes for good (SuhallaGate_SoldierVanishes,
+/// The third soldier, talked to or read, gasps that Venus Lighthouse was
+/// attacked and fades away for good (SuhallaGate_SoldierVanishes,
 /// FLAG_SUHALLA_GATE_SOLDIER_VANISHED).
 ///
 /// Scene_Initialize remembers which side of the gate the party came in by
@@ -87,6 +90,11 @@ extern struct Trigger gGatewayCaveTriggers[];
 /// another area.
 #define FLAG_GATEWAY_CAVE_PSYNERGY_STONE FLAG_AREA_TEMP_50
 
+/// The cells before Suhalla Gate, (7, 26) to (9, 27), where the guards block
+/// the way or Iodem finds them wounded. The other cells' behaviors are the
+/// numbers of the exits they lead to.
+enum SuhallaGateCellBehavior { CELL_BEHAVIOR_SUHALLA_GATE_APPROACH = 10 };
+
 #if TBS_PATCH_3
 #define SUHALLA_GATE_RETREAT_MAP(currentMap) (SCENE_SUHALLA_GATE_CHECKPOINT)
 #else
@@ -97,13 +105,15 @@ extern struct Trigger gGatewayCaveTriggers[];
 /// the order of gSuhallaGateCheckpointActorPlacements and, after Babi's
 /// audience, of gSuhallaGateCheckpointActorPlacementsAfterAudience.
 enum SuhallaGateCheckpointActorId {
-  /// The two of Babi's soldiers who keep the passage north, standing before
-  /// Babi's audience and lying wounded after it.
+  /// The two of Babi's soldiers who keep the gate, standing before Babi's
+  /// audience and lying wounded after it. The west guard says only those with
+  /// travel papers may pass, and later asks the party to send help from Babi
+  /// Lighthouse.
   ACTOR_WEST_GUARD = ACTOR_FIRST_PLACED,
   /// Asks whether the party wants to go to Babi Lighthouse.
   ACTOR_EAST_GUARD,
-  /// After Babi's audience, the soldier east of the gate who tells of the
-  /// attack on Venus Lighthouse and vanishes.
+  /// After Babi's audience, the soldier lying on the path out toward Venus
+  /// Lighthouse, who tells of the attack on it and vanishes.
   ACTOR_VANISHING_SOLDIER,
   /// After Babi's audience, out of sight until SuhallaGate_IodemQuestionsGuards
   /// brings him out of the party.
@@ -113,8 +123,8 @@ enum SuhallaGateCheckpointActorId {
 /// The actors of the second scene (SuhallaGateDew), numbered in the order
 /// of gSuhallaGateDewActorPlacements.
 enum SuhallaGateDewActorId {
-  /// Five sprouts (SPRITE_SPROUT, the sprout Growth grows in Suhalla), each
-  /// drawn in the frame Scene_Initialize gives it.
+  /// Five green vines up the cliffs, drawn with the sprout Growth grows
+  /// (SPRITE_SPROUT), three fully grown and two half grown.
   ACTOR_FIRST_SPROUT = ACTOR_FIRST_PLACED,
   /// A Mercury Djinni.
   ACTOR_DEW = ACTOR_FIRST_SPROUT + 5,
@@ -123,8 +133,8 @@ enum SuhallaGateDewActorId {
   ACTOR_UNPLACED = ACTOR_FIRST_PLACED + 7
 };
 
-/// In Suhalla Gate's second scene (SceneId_SuhallaGateDew), talking to Dew, a
-/// Mercury Djinni, starts its battle.
+/// Talking to Dew, the Mercury Djinni at the foot of the third slide in the
+/// cliffs' east part beyond Suhalla Gate (cell (16, 55)), starts its battle.
 static void SuhallaGate_FightDew(void) {
   Field_RequestDjinnBattle(ACTOR_DEW, DJINNI_DEW);
 }
@@ -145,7 +155,8 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gSuhallaGateExits; }
 
-/// Suhalla Gate's guards, or Dew and the second scene's sprouts.
+/// Suhalla Gate's guards, standing or wounded, or Dew and the vines of the
+/// cliffs beyond.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 sceneId = gMainRoutineWork.next;
 
@@ -161,9 +172,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gSuhallaGateActorPlacementsOther;
 }
 
-/// The events of Suhalla Gate's second scene (SceneId_SuhallaGateDew), of
-/// Gateway Cave (SceneId_GatewayCave), or of the gate itself
-/// (SceneId_SuhallaGateCheckpoint) for any other scene.
+/// The events of the cliffs beyond the gate, of Gateway Cave, or of the gate
+/// itself for any other scene.
 const struct Trigger *Scene_GetTriggers(void) {
   s16 sceneId = gMainRoutineWork.next;
 
@@ -176,7 +186,9 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gSuhallaGateTriggersOther;
 }
 
-/// Sets up whichever of the pass's scenes is entered.
+/// Sets up whichever of the pass's scenes is entered: after the attack a defeat
+/// leads back to the house past the gate, the gate remembers which way the
+/// party came in, and the cliffs' vines are drawn grown.
 s32 Scene_Initialize(void) {
   s32 sceneId;
 
@@ -237,8 +249,8 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// In Suhalla Gate (SceneId_SuhallaGateCheckpoint), walking north into the door
-/// of the house beside it takes the party inside.
+/// Walking north into the door in the cliff just past Suhalla Gate (cell
+/// (8, 18)) opens it and takes the party into the house.
 static void SuhallaGate_EnterHouse(void) {
   s32 exitTrigger;
 
@@ -253,7 +265,10 @@ static void SuhallaGate_EnterHouse(void) {
   Import_EventSetExitRequest(exitTrigger);
 }
 
-/// The party leaves the checkpoint for the World Map.
+/// Walking off Suhalla Gate's map, south down the path to the desert or east
+/// toward Venus Lighthouse, leaves for the World Map.
+///
+/// The gate forgets which way the party came in.
 static void SuhallaGate_LeaveForWorldMap(void) {
   s16 exitTrigger = gFieldWork->stepTrigger;
 
@@ -263,8 +278,12 @@ static void SuhallaGate_LeaveForWorldMap(void) {
   Import_EventSetExitRequest(exitTrigger);
 }
 
-/// In Suhalla Gate (SceneId_SuhallaGateCheckpoint) before Babi's audience, the
-/// two guards block the passage north each time the party nears it.
+/// Before Babi's audience, stepping up to Suhalla Gate (cells (7, 26) to
+/// (9, 27)) makes the two guards, who stand either side of its opening, step
+/// together in front of it and face the party, blocking the way north.
+///
+/// Then the trigger cells at (7, 26), (8, 26) and (7, 27) take the attributes
+/// of their neighbours.
 static void SuhallaGate_GuardsBlockPassage(void) {
   Event_Start();
   Actor_SetSpeed(ACTOR_WEST_GUARD, 1);
@@ -284,8 +303,12 @@ static void SuhallaGate_GuardsBlockPassage(void) {
   Event_End();
 }
 
-/// In Suhalla Gate (SceneId_SuhallaGateCheckpoint) after Babi's audience, Iodem
-/// steps out of the party and demands to know what happened.
+/// After Babi's audience, stepping up to Suhalla Gate (cells (7, 26) to
+/// (9, 27)) finds the two guards lying wounded before it; Iodem steps out
+/// of the party and demands to know what happened.
+///
+/// They tell of a strange group with no papers and strange powers, Iodem
+/// says it must have been Felix, and the guards send the party on after them.
 static void SuhallaGate_IodemQuestionsGuards(void) {
   struct Actor *leader;
 
@@ -407,7 +430,11 @@ static void SuhallaGate_IodemQuestionsGuards(void) {
   Event_End();
 }
 
-/// In Suhalla Gate (SceneId_SuhallaGateCheckpoint), talking to the east guard.
+/// Talking to the east guard at Suhalla Gate: before Babi's audience he asks
+/// whether the party wants to go to Babi Lighthouse, and a yes gets a demand
+/// for travel papers, a no a scoff. After it, lying wounded, he says it is a
+/// pity a Colosso victor should end up like this and swears to settle the
+/// score.
 static void SuhallaGate_TalkToEastGuard(void) {
   Event_Start();
 
@@ -436,7 +463,9 @@ static void SuhallaGate_TalkToEastGuard(void) {
 /// hidden, then fast ones, two and two.
 enum { SOLDIER_SLOW_BLINKS = 6, SOLDIER_FAST_BLINKS = 12 };
 
-/// The soldier east of the gate gasps out a warning and vanishes.
+/// The wounded soldier on the path out toward Venus Lighthouse, talked to or
+/// read with Mind Read, gasps that Venus Lighthouse was attacked by strange
+/// wanderers, then blinks out and is gone (cell (29, 19)).
 static void SuhallaGate_SoldierVanishes(void) {
   unsigned int beat;
 
@@ -634,13 +663,13 @@ struct ActorPlacement gSuhallaGateCheckpointActorPlacementsAfterAudience[] = {
 };
 
 struct Trigger gSuhallaGateTriggersOther[] = {
-    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(SuhallaGate_LeaveForWorldMap) },
-    { TRIGGER_EXIT, 2, CONDITION_ALWAYS, SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_WEST },
-    { TRIGGER_EXIT, 4, CONDITION_ALWAYS, SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_EAST },
-    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(SuhallaGate_LeaveForWorldMap) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(SuhallaGate_EnterHouse) },
-    { TRIGGER_STEP, 10, FLAG_BABI_SPOKE_AFTER_COLOSSO, EVENT(SuhallaGate_GuardsBlockPassage) },
-    { TRIGGER_STEP, 10, FLAG_SUHALLA_GATE_ATTACK_SEEN, EVENT(SuhallaGate_IodemQuestionsGuards) },
+    { TRIGGER_STEP, SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_SOUTH, CONDITION_ALWAYS, EVENT(SuhallaGate_LeaveForWorldMap) },
+    { TRIGGER_EXIT, SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_WEST, CONDITION_ALWAYS, SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_WEST },
+    { TRIGGER_EXIT, SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_EAST, CONDITION_ALWAYS, SUHALLA_GATE_CHECKPOINT_TO_SUHALLA_GATE_DEW_EAST },
+    { TRIGGER_STEP, SUHALLA_GATE_CHECKPOINT_TO_WORLD_MAP_EAST, CONDITION_ALWAYS, EVENT(SuhallaGate_LeaveForWorldMap) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), SUHALLA_GATE_CHECKPOINT_TO_ROCK_ROOMS, CONDITION_ALWAYS, EVENT(SuhallaGate_EnterHouse) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_SUHALLA_GATE_APPROACH, FLAG_BABI_SPOKE_AFTER_COLOSSO, EVENT(SuhallaGate_GuardsBlockPassage) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_SUHALLA_GATE_APPROACH, FLAG_SUHALLA_GATE_ATTACK_SEEN, EVENT(SuhallaGate_IodemQuestionsGuards) },
     { TRIGGER_TALK, ACTOR_WEST_GUARD, FLAG_SUHALLA_GATE_ATTACK_SEEN, MSGNO(MsgSuhallaTravelPapersRequired) },
     { TRIGGER_TALK, ACTOR_WEST_GUARD, CONDITION_ALWAYS, MSGNO(MsgSuhallaSendHelpFromTower) },
     { TRIGGER_TALK, ACTOR_EAST_GUARD, CONDITION_ALWAYS, EVENT(SuhallaGate_TalkToEastGuard) },
@@ -655,13 +684,16 @@ struct Trigger gSuhallaGateTriggersOther[] = {
 // clang-format on
 
 struct Trigger gSuhallaGateDewTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS,
-     SUHALLA_GATE_DEW_TO_SUHALLA_GATE_CHECKPOINT_WEST},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, SUHALLA_GATE_DEW_WEST_TO_EAST},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, SUHALLA_GATE_DEW_EAST_TO_WEST},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS,
-     SUHALLA_GATE_DEW_TO_SUHALLA_GATE_CHECKPOINT_EAST},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, SUHALLA_GATE_DEW_TO_GATEWAY_CAVE},
+    {TRIGGER_EXIT, SUHALLA_GATE_DEW_TO_SUHALLA_GATE_CHECKPOINT_WEST,
+     CONDITION_ALWAYS, SUHALLA_GATE_DEW_TO_SUHALLA_GATE_CHECKPOINT_WEST},
+    {TRIGGER_EXIT, SUHALLA_GATE_DEW_WEST_TO_EAST, CONDITION_ALWAYS,
+     SUHALLA_GATE_DEW_WEST_TO_EAST},
+    {TRIGGER_EXIT, SUHALLA_GATE_DEW_EAST_TO_WEST, CONDITION_ALWAYS,
+     SUHALLA_GATE_DEW_EAST_TO_WEST},
+    {TRIGGER_EXIT, SUHALLA_GATE_DEW_TO_SUHALLA_GATE_CHECKPOINT_EAST,
+     CONDITION_ALWAYS, SUHALLA_GATE_DEW_TO_SUHALLA_GATE_CHECKPOINT_EAST},
+    {TRIGGER_EXIT, SUHALLA_GATE_DEW_TO_GATEWAY_CAVE, CONDITION_ALWAYS,
+     SUHALLA_GATE_DEW_TO_GATEWAY_CAVE},
     {TRIGGER_TALK, ACTOR_DEW, CONDITION_ALWAYS, EVENT(SuhallaGate_FightDew)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | FACING_NORTH, 100,
      FLAG_SUHALLA_GATE_MINT, FIND_ITEM(ITEM_MINT)},
@@ -673,12 +705,14 @@ struct Trigger gSuhallaGateDewTriggers[] = {
 };
 
 struct Trigger gGatewayCaveTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, GATEWAY_CAVE_TO_SUHALLA_GATE_DEW},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS,
-     GATEWAY_CAVE_NORTH_TO_SOUTH},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS,
-     GATEWAY_CAVE_SOUTH_TO_NORTH},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, GATEWAY_CAVE_TO_WORLD_MAP},
+    {TRIGGER_EXIT, GATEWAY_CAVE_TO_SUHALLA_GATE_DEW, CONDITION_ALWAYS,
+     GATEWAY_CAVE_TO_SUHALLA_GATE_DEW},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, GATEWAY_CAVE_NORTH_TO_SOUTH,
+     CONDITION_ALWAYS, GATEWAY_CAVE_NORTH_TO_SOUTH},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, GATEWAY_CAVE_SOUTH_TO_NORTH,
+     CONDITION_ALWAYS, GATEWAY_CAVE_SOUTH_TO_NORTH},
+    {TRIGGER_EXIT, GATEWAY_CAVE_TO_WORLD_MAP, CONDITION_ALWAYS,
+     GATEWAY_CAVE_TO_WORLD_MAP},
     {EXAMINE_TRIGGER(EXAMINE_SILENT), 100, FLAG_GATEWAY_CAVE_PSYNERGY_STONE,
      FIND_PSYNERGY_STONE},
     {TRIGGER_TABLE_END},

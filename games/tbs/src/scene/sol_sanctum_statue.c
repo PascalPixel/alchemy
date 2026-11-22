@@ -111,9 +111,8 @@ extern s32 gSolSanctumStatue_ScrollOffset;
 
 /// The cell behaviors the step triggers answer.
 ///
-/// They are the jump spots, the four seal statues' and the center statue's
-/// cells. The beam statues' rows answer the behaviors of the cells each can
-/// stand in, 20 to 29.
+/// They are the jump spots and the four seal statues' and the center statue's
+/// cells; the beam statues' tracks follow in their own enum.
 enum SolSanctumStatueCellBehavior {
   CELL_BEHAVIOR_SOL_SANCTUM_STATUE_NORTHWEST_STATUE = 5,
   CELL_BEHAVIOR_SOL_SANCTUM_STATUE_NORTHEAST_STATUE = 6,
@@ -126,12 +125,41 @@ enum SolSanctumStatueCellBehavior {
   CELL_BEHAVIOR_SOL_SANCTUM_STATUE_CENTER_STATUE = 32
 };
 
+/// The cells of the beam statues' tracks, where Isaac stands to push them.
+///
+/// Each track runs north from the statue's start, cells (13, 7) to (13, 10)
+/// for the left statue and (22, 7) to (22, 10) for the right, with one more
+/// cell beside its top on the outer side. From the top the statue is pushed
+/// inward to stand beside the sun-disc statue.
+enum SolSanctumStatueBeamTrack {
+  CELL_BEHAVIOR_SOL_SANCTUM_STATUE_LEFT_TRACK_OUTSIDE_TOP = 20,
+  CELL_BEHAVIOR_SOL_SANCTUM_STATUE_LEFT_TRACK_TOP,
+  CELL_BEHAVIOR_SOL_SANCTUM_STATUE_LEFT_TRACK_SECOND,
+  CELL_BEHAVIOR_SOL_SANCTUM_STATUE_LEFT_TRACK_THIRD,
+  CELL_BEHAVIOR_SOL_SANCTUM_STATUE_LEFT_TRACK_BOTTOM,
+  CELL_BEHAVIOR_SOL_SANCTUM_STATUE_RIGHT_TRACK_OUTSIDE_TOP,
+  CELL_BEHAVIOR_SOL_SANCTUM_STATUE_RIGHT_TRACK_TOP,
+  CELL_BEHAVIOR_SOL_SANCTUM_STATUE_RIGHT_TRACK_SECOND,
+  CELL_BEHAVIOR_SOL_SANCTUM_STATUE_RIGHT_TRACK_THIRD,
+  CELL_BEHAVIOR_SOL_SANCTUM_STATUE_RIGHT_TRACK_BOTTOM
+};
+
 // Scene flags, cleared on every ordinary arrival:
 // - FLAG_SOL_SANCTUM_CENTER_HOLE_OPEN: both beams have opened the hole in the
 //   floor; until then, Move on the center statue first walks the leader clear
 //   of it.
 
 static void SolSanctumStatue_InitializeScrollingSprites(void);
+/// Isaac uses Move to draw the sun-disc statue one cell south from its place
+/// at the north of the west hall (cells (17, 7) and (18, 7)). Once both beam
+/// statues shine on it, it slides on south into the hole that has opened in
+/// the sun on the floor and settles in it with a grinding of stone; the
+/// room shakes hard, settles, and "Something clicked!" From then on the seals
+/// in the east hall stay open.
+///
+/// With the beams not both shining, the statue only moves the one cell, and if
+/// Isaac stood in its way he first steps back south of it. A beam completing
+/// the pair runs this too, dropping a statue Move has already brought down.
 static void SolSanctumStatue_CenterStatueMoved(void);
 static void SolSanctumStatue_PushStatue(s32 statueId, s32 statueColumn,
                                         s32 statueRow, s32 leaderColumn,
@@ -935,36 +963,40 @@ static void SolSanctumStatue_InitializeScrollingSprites(void) {
   Task_AddFrame(SolSanctumStatue_UpdateScrollingSprites, TASK_PASS_FRAME);
 }
 
-/// Moving the northwest statue with Move opens its seal when it stands on it.
+/// Isaac moves the northwest statue of the east hall with Move; if it now
+/// stands on its seal (cell (31, 9)), the seal opens.
 static void SolSanctumStatue_NorthwestStatueMoved(void) {
   if (SolSanctumStatue_IsActorAtCell(ACTOR_NORTHWEST_STATUE, 31, 9) != 0) {
     SolSanctumStatue_OpenNorthwestSeal();
   }
 }
 
-/// Moving the northeast statue with Move opens its seal when it stands on it.
+/// Isaac moves the northeast statue of the east hall with Move; if it now
+/// stands on its seal (cell (40, 9)), the seal opens.
 static void SolSanctumStatue_NortheastStatueMoved(void) {
   if (SolSanctumStatue_IsActorAtCell(ACTOR_NORTHEAST_STATUE, 40, 9) != 0) {
     SolSanctumStatue_OpenNortheastSeal();
   }
 }
 
-/// Moving the southwest statue with Move opens its seal when it stands on it.
+/// Isaac moves the southwest statue of the east hall with Move; if it now
+/// stands on its seal (cell (31, 12)), the seal opens.
 static void SolSanctumStatue_SouthwestStatueMoved(void) {
   if (SolSanctumStatue_IsActorAtCell(ACTOR_SOUTHWEST_STATUE, 31, 12) != 0) {
     SolSanctumStatue_OpenSouthwestSeal();
   }
 }
 
-/// Moving the southeast statue with Move opens its seal when it stands on it.
+/// Isaac moves the southeast statue of the east hall with Move; if it now
+/// stands on its seal (cell (40, 12)), the seal opens.
 static void SolSanctumStatue_SoutheastStatueMoved(void) {
   if (SolSanctumStatue_IsActorAtCell(ACTOR_SOUTHEAST_STATUE, 40, 12) != 0) {
     SolSanctumStatue_OpenSoutheastSeal();
   }
 }
 
-/// Moving the left beam statue with Move frees its cell, and in front of the
-/// center it shines its beam.
+/// Isaac moves the left beam statue with Move; once it stands beside the
+/// sun-disc statue (cell (14, 7)), it shines its beam on it.
 static void SolSanctumStatue_LeftBeamStatueMoved(void) {
   Field_SetCellBehaviorAt(2, 208, 112, 0);
   if (SolSanctumStatue_IsActorAtCell(ACTOR_LEFT_BEAM_STATUE, 14, 7) != 0) {
@@ -972,7 +1004,8 @@ static void SolSanctumStatue_LeftBeamStatueMoved(void) {
   }
 }
 
-/// Moving the right beam statue with Move does as the left one.
+/// Isaac moves the right beam statue with Move; once it stands beside the
+/// sun-disc statue (cell (21, 7)), it shines its beam on it.
 static void SolSanctumStatue_RightBeamStatueMoved(void) {
   Field_SetCellBehaviorAt(2, 352, 112, 0);
   if (SolSanctumStatue_IsActorAtCell(ACTOR_RIGHT_BEAM_STATUE, 21, 7) != 0) {
@@ -980,8 +1013,11 @@ static void SolSanctumStatue_RightBeamStatueMoved(void) {
   }
 }
 
-/// Starting Move beside the center statue blocks its cells while the leader
-/// stands in their row.
+/// Nothing visible happens as Isaac starts to cast Move on the sun-disc statue
+/// while standing right below it (cells (17, 8) and (18, 8)). The game makes
+/// the two cells he stands on walls for the cast, so that Move cannot draw the
+/// statue south on top of him; SolSanctumStatue_CenterStatueMoved opens them
+/// again when the cast ends.
 static void SolSanctumStatue_PrepareMoveOnCenterStatue(void) {
   s32 column;
 
@@ -994,8 +1030,11 @@ static void SolSanctumStatue_PrepareMoveOnCenterStatue(void) {
   }
 }
 
-/// Starting Move beside the left beam statue blocks its cell while the leader
-/// stands beside it.
+/// Nothing visible happens as Isaac starts to cast Move on the left beam
+/// statue while standing at the top of its track or just east of it (cells
+/// (13, 7) and (14, 7)). The game makes the track's top cell, (13, 7), a wall
+/// for the cast, so that Move cannot bring the statue up into it there;
+/// SolSanctumStatue_LeftBeamStatueMoved opens it again when the cast ends.
 static void SolSanctumStatue_PrepareMoveOnLeftBeamStatue(void) {
   s32 column = FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->x.fixed);
   s32 row = FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->z.fixed);
@@ -1005,8 +1044,11 @@ static void SolSanctumStatue_PrepareMoveOnLeftBeamStatue(void) {
   }
 }
 
-/// Starting Move beside the right beam statue does as the left one, on
-/// ACTOR_RIGHT_BEAM_STATUE.
+/// Nothing visible happens as Isaac starts to cast Move on the right beam
+/// statue while standing at the top of its track or just west of it (cells
+/// (21, 7) and (22, 7)). The game makes the track's top cell, (22, 7), a wall
+/// for the cast, so that Move cannot bring the statue up into it there;
+/// SolSanctumStatue_RightBeamStatueMoved opens it again when the cast ends.
 static void SolSanctumStatue_PrepareMoveOnRightBeamStatue(void) {
   s32 column = FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->x.fixed);
   s32 row = FIELD_CELL(Actor_Get(ACTOR_PARTY_LEADER)->z.fixed);
@@ -1016,8 +1058,7 @@ static void SolSanctumStatue_PrepareMoveOnRightBeamStatue(void) {
   }
 }
 
-/// Moving the center statue with Move, or a beam completing the pair, drops
-/// the statue into the floor.
+// The sun-disc statue's Move and drop, described at its declaration above.
 static void SolSanctumStatue_CenterStatueMoved(void) {
   struct Actor *statue;
   FIXED statueZ;
@@ -1096,8 +1137,8 @@ static void SolSanctumStatue_CenterStatueMoved(void) {
   }
 }
 
-/// Walking into the center statue from the south makes the leader push it
-/// north.
+/// Isaac walks north into the sun-disc statue once Move has drawn it a cell
+/// south, and pushes it back to its place.
 static void SolSanctumStatue_PushCenterStatueNorth(void) {
   struct Actor *movingActor;
 
@@ -1121,25 +1162,29 @@ static void SolSanctumStatue_PushCenterStatueNorth(void) {
   }
 }
 
-/// Walking into the northwest statue makes the leader push it onto its seal.
+/// Isaac walks into the northwest statue of the east hall and pushes it onto
+/// its seal (cell (31, 9)), which opens.
 static void SolSanctumStatue_PushNorthwestStatue(void) {
   SolSanctumStatue_PushStatue(ACTOR_NORTHWEST_STATUE, 31, 9, 30, 9);
   SolSanctumStatue_OpenNorthwestSeal();
 }
 
-/// Walking into the northeast statue makes the leader push it onto its seal.
+/// Isaac walks into the northeast statue of the east hall and pushes it onto
+/// its seal (cell (40, 9)), which opens.
 static void SolSanctumStatue_PushNortheastStatue(void) {
   SolSanctumStatue_PushStatue(ACTOR_NORTHEAST_STATUE, 40, 9, 41, 9);
   SolSanctumStatue_OpenNortheastSeal();
 }
 
-/// Walking into the southwest statue makes the leader push it onto its seal.
+/// Isaac walks into the southwest statue of the east hall and pushes it onto
+/// its seal (cell (31, 12)), which opens.
 static void SolSanctumStatue_PushSouthwestStatue(void) {
   SolSanctumStatue_PushStatue(ACTOR_SOUTHWEST_STATUE, 31, 12, 30, 12);
   SolSanctumStatue_OpenSouthwestSeal();
 }
 
-/// Walking into the southeast statue makes the leader push it onto its seal.
+/// Isaac walks into the southeast statue of the east hall and pushes it onto
+/// its seal (cell (40, 12)), which opens.
 static void SolSanctumStatue_PushSoutheastStatue(void) {
   SolSanctumStatue_PushStatue(ACTOR_SOUTHEAST_STATUE, 40, 12, 41, 12);
   SolSanctumStatue_OpenSoutheastSeal();
@@ -1572,34 +1617,44 @@ struct Trigger gSolSanctumStatue_Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_RIGHT_BEAM_STATUE,
      FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
      EVENT(SolSanctumStatue_RightBeamStatueMoved)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 20,
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST),
+     CELL_BEHAVIOR_SOL_SANCTUM_STATUE_LEFT_TRACK_OUTSIDE_TOP,
      FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
      EVENT(SolSanctumStatue_PushLeftBeamStatueEast)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 21,
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST),
+     CELL_BEHAVIOR_SOL_SANCTUM_STATUE_LEFT_TRACK_TOP,
      FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
      EVENT(SolSanctumStatue_PushLeftBeamStatueEast)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 21,
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH),
+     CELL_BEHAVIOR_SOL_SANCTUM_STATUE_LEFT_TRACK_TOP,
      FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
      EVENT(SolSanctumStatue_PushLeftBeamStatueSouth)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 23,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     CELL_BEHAVIOR_SOL_SANCTUM_STATUE_LEFT_TRACK_THIRD,
      FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
      EVENT(SolSanctumStatue_PushLeftBeamStatueNorth)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 24,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     CELL_BEHAVIOR_SOL_SANCTUM_STATUE_LEFT_TRACK_BOTTOM,
      FLAG_SOL_SANCTUM_LEFT_BEAM_SHINING,
      EVENT(SolSanctumStatue_PushLeftBeamStatueNorth)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 25,
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST),
+     CELL_BEHAVIOR_SOL_SANCTUM_STATUE_RIGHT_TRACK_OUTSIDE_TOP,
      FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
      EVENT(SolSanctumStatue_PushRightBeamStatueWest)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 26,
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST),
+     CELL_BEHAVIOR_SOL_SANCTUM_STATUE_RIGHT_TRACK_TOP,
      FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
      EVENT(SolSanctumStatue_PushRightBeamStatueWest)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 26,
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH),
+     CELL_BEHAVIOR_SOL_SANCTUM_STATUE_RIGHT_TRACK_TOP,
      FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
      EVENT(SolSanctumStatue_PushRightBeamStatueSouth)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 28,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     CELL_BEHAVIOR_SOL_SANCTUM_STATUE_RIGHT_TRACK_THIRD,
      FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
      EVENT(SolSanctumStatue_PushRightBeamStatueNorth)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 29,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     CELL_BEHAVIOR_SOL_SANCTUM_STATUE_RIGHT_TRACK_BOTTOM,
      FLAG_SOL_SANCTUM_RIGHT_BEAM_SHINING,
      EVENT(SolSanctumStatue_PushRightBeamStatueNorth)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),

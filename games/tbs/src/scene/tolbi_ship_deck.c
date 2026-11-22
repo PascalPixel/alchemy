@@ -6,6 +6,13 @@
 /// The ship's other scenes are its mast (tolbi_ship_mast.c) and below decks
 /// (ship_rooms.c).
 ///
+/// The deck runs north and south. At its north end a ladder climbs to a carved
+/// door, the way to the passengers' hold; a small stairway in the middle of
+/// the deck leads down, walking west, to the hold of crates and barrels; and
+/// the door of the cabin at the south end is the captain's quarters. At Kalay
+/// a gangplank on the east side leads back to the dock, and at Tolbi one on
+/// the west side leads ashore.
+///
 /// The voyage's stage, read from its flags, chooses the deck's actor
 /// placements and events. The stages are:
 ///
@@ -246,7 +253,8 @@ enum TolbiShipDeckActorId {
   ///
   /// They belong to TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_MONSTERS_BOARD
   /// (gTolbiShipDeck_MonstersBoardActorPlacements). They leap aboard and go
-  /// below by the first door, where gShipRooms_FirstAttackMonsters places
+  /// below by the carved door at the north end, where
+  /// gShipRooms_FirstAttackMonsters places
   /// them.
   ACTOR_SEA_FIRST_ATTACK_MONSTER,
   /// Four monsters of one sprite that hover by the deck.
@@ -325,14 +333,19 @@ enum TolbiShipDeckActorId {
 /// ActorAnimation.
 enum { ANIM_LYING_FLAT = 5 };
 
-/// The deck's step triggers at Kalay, beside the ways below, whose cell
-/// behaviors carry the numbers of their exits (TolbiShipDeck_GoBelow).
+/// The cells of the deck at Kalay that start the scenes with the crew. The
+/// ways below are cells numbered as their exits instead
+/// (TolbiShipDeck_GoBelow).
 enum TolbiShipDeckCellBehavior {
-  /// Beside the crew, where they talk over the delay.
+  /// The deck beside the stairway in the middle and south-east of it, cells
+  /// (12, 39) to (15, 46), where Isaac comes upon the crew talking over the
+  /// delay.
   CELL_BEHAVIOR_TOLBI_SHIP_DECK_BY_CREW = 10,
-  /// East of the second door, which the crewman slipped through.
-  CELL_BEHAVIOR_TOLBI_SHIP_DECK_EAST_OF_DOOR = 11,
-  CELL_BEHAVIOR_TOLBI_SHIP_DECK_WEST_OF_DOOR = 12
+  /// Beside the door of the cabin at the south end, which the crewman slipped
+  /// through: west of it, cells (12, 50) and (12, 51)...
+  CELL_BEHAVIOR_TOLBI_SHIP_DECK_WEST_OF_CABIN_DOOR = 11,
+  /// ...and east of it, cells (14, 50) and (14, 51).
+  CELL_BEHAVIOR_TOLBI_SHIP_DECK_EAST_OF_CABIN_DOOR = 12
 };
 
 #include "shared/actor_pulse.c"
@@ -691,7 +704,12 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gTolbiShipDeckTriggers;
 }
 
-/// Talking to ACTOR_KALAY_CREW_MEMBER on deck at Kalay.
+/// At Kalay, the sailor in a yellow bandana beside the tour guide, south-east
+/// on deck, snaps that they will sail when the replacement ship arrives.
+///
+/// While the two warriors are off at the captain's quarters he frets
+/// `Somebody stop them...`, and once the anchor charm is back he says they
+/// ought to leave soon, though the passengers may not want to row.
 static void TolbiShipDeck_TalkToCrewMember(void) {
   struct Actor *crewMember;
   s32 frames;
@@ -724,7 +742,12 @@ static void TolbiShipDeck_TalkToCrewMember(void) {
   Event_End();
 }
 
-/// The tour guide on deck at Kalay talks about the ship's delay.
+/// At Kalay, the tour guide with a pack, south-east on deck, complains that
+/// Colosso will start without his group.
+///
+/// While the two warriors are off at the captain's quarters he frets that
+/// they can't be planning a mutiny, and once the anchor charm is back he says
+/// the passengers will have to promise to row.
 static void TolbiShipDeck_TalkToTourGuide(void) {
   struct Actor *guide;
   s32 frames;
@@ -757,8 +780,11 @@ static void TolbiShipDeck_TalkToTourGuide(void) {
   Event_End();
 }
 
-/// At Tolbi, ACTOR_ARRIVED_ASKS_ABOUT_COLOSSO asks whether the party is
-/// headed for Colosso too.
+/// At Tolbi, the sailor in a blue bandana by the gangplank, on the west side
+/// of the deck, asks whether Isaac is headed for Colosso too.
+///
+/// Yes, and he says most people are at this time of year; no, and he calls
+/// Isaac strange, like the group of six they ferried across a while back.
 static void TolbiShipDeck_AskHeadedForColosso(void) {
   Event_Start();
   Event_SetMessageId(MsgTolbiShipHeadedColosso);
@@ -769,7 +795,8 @@ static void TolbiShipDeck_AskHeadedForColosso(void) {
   Event_End();
 }
 
-/// Opens the first door to below deck, once a visit.
+/// The carved door up the ladder at the north end of the deck swings open,
+/// once a visit.
 static void TolbiShipDeck_OpenFirstDoor(void) {
   if (Event_GetFlag(FLAG_TOLBI_SHIP_DECK_PASSENGER_HOLD_DOOR_OPEN) == 0) {
     Sound_Play(SE_DOOR_OPEN);
@@ -778,7 +805,8 @@ static void TolbiShipDeck_OpenFirstDoor(void) {
   }
 }
 
-/// Opens the second door to below deck, once a visit.
+/// The door of the cabin at the south end of the deck swings open, once a
+/// visit.
 static void TolbiShipDeck_OpenSecondDoor(void) {
   if (Event_GetFlag(FLAG_TOLBI_SHIP_DECK_CAPTAINS_QUARTERS_DOOR_OPEN) == 0) {
     Sound_Play(SE_DOOR_OPEN);
@@ -787,8 +815,13 @@ static void TolbiShipDeck_OpenSecondDoor(void) {
   }
 }
 
-/// Walking into one of the ways below deck, whose cell behaviors are
-/// numbered as their exits.
+/// Isaac goes below: through the carved door up the ladder at the north end
+/// of the deck (cell (13, 37)), down the small stairway in the
+/// middle of the deck, walking west (cell (13, 41)), or through the door of
+/// the cabin at the south end (cell (13, 50)), the captain's quarters.
+///
+/// A door swings open and he walks into it; the stairway plays the exit sound.
+/// Each cell's behaviour is its exit's number, which the trigger rows name.
 static void TolbiShipDeck_GoBelow(void) {
   s32 throughDoor;
   struct FieldWork *work;
@@ -817,8 +850,12 @@ static void TolbiShipDeck_GoBelow(void) {
 }
 
 #if TBS_PATCH_2
-/// In the German, Spanish, French and Italian editions cell behavior 2 is a
-/// plain step trigger.
+/// In the German, Spanish, French and Italian editions, Isaac goes down the
+/// small stairway in the middle of the deck (cell (13, 41)) as soon as he steps
+/// onto it facing west, walked to its middle first; elsewhere he has to keep
+/// walking west on it.
+///
+/// There the stairway is a plain step trigger, and this checks his facing.
 static void TolbiShipDeck_GoBelowWhileFacingWest(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
@@ -831,7 +868,13 @@ static void TolbiShipDeck_GoBelowWhileFacingWest(void) {
 }
 #endif
 
-/// The captain decides to set sail without the replacement ship.
+/// At Kalay, once the tour group has gone, walking past the stairway in the
+/// middle of the deck brings the camera round to the captain, Kaja and the
+/// crewman in a blue bandana talking over the late replacement ship.
+///
+/// The captain will sail trusting his anchor charm. Kaja goes off, the captain
+/// steps aside, and the crewman slips through the door of the cabin at the
+/// south end.
 static void TolbiShipDeck_WatchCrewDecideToSail(void) {
   if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
     Event_Start();
@@ -945,9 +988,13 @@ static void TolbiShipDeck_WatchCrewDecideToSail(void) {
   }
 }
 
-/// On deck at Kalay, the crewman comes out as the party approaches from the
-/// east side of the door (CELL_BEHAVIOR_TOLBI_SHIP_DECK_EAST_OF_DOOR).
-static void TolbiShipDeck_CatchCrewmanFromEast(void) {
+/// At Kalay, when Isaac comes up to the door of the cabin at the south end
+/// from the west (cells (12, 50) and (12, 51)), the crewman in a blue bandana
+/// bursts out, says `I didn't do anything...`, sidles away east and runs off
+/// up that side of the deck.
+///
+/// He is next found at the far north end of the deck.
+static void TolbiShipDeck_CatchCrewmanFromWest(void) {
   if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0) {
       Event_Start();
@@ -978,9 +1025,14 @@ static void TolbiShipDeck_CatchCrewmanFromEast(void) {
   }
 }
 
-/// The same, approaching from the west side
-/// (CELL_BEHAVIOR_TOLBI_SHIP_DECK_WEST_OF_DOOR).
-static void TolbiShipDeck_CatchCrewmanFromWest(void) {
+/// At Kalay, when Isaac comes up to the door of the cabin at the south end
+/// from the east (cells (14, 50) and (14, 51)), the crewman in a blue bandana
+/// bursts out, says `I didn't do anything...`, sidles away west and runs off
+/// up that side of the deck.
+///
+/// He is next found at the far north end of the deck, as when caught from the
+/// west.
+static void TolbiShipDeck_CatchCrewmanFromEast(void) {
   if (GameFlag_Get(FLAG_KALAY_COLOSSO_TOUR_LEFT) != 0) {
     if (GameFlag_Get(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0) {
       Event_Start();
@@ -1011,7 +1063,9 @@ static void TolbiShipDeck_CatchCrewmanFromWest(void) {
   }
 }
 
-/// The start both of those share.
+/// The camera moves down to the cabin door, which opens, and the crewman steps
+/// out, shakes his head and starts at the sight of Isaac. Both ways of
+/// catching him start this way.
 static void TolbiShipDeck_ConfrontCrewman(void) {
   FieldCamera_SetSpeed(1.6);
   FieldCamera_MoveTo(216, CAMERA_KEEP, 824, 1);
@@ -1278,9 +1332,9 @@ static void TolbiShipDeck_SetUpAtAnchor(void) {
   Event_End();
 }
 
-/// Setting sail from Kalay before the party is on deck, Kaja
-/// (ACTOR_KALAY_KAJA) brings word to ACTOR_KALAY_CREW_MEMBER that all is
-/// ready.
+/// Setting sail from Kalay before the party is on deck, Kaja comes up through
+/// the carved door at the north end and tells the sailor in a yellow bandana
+/// that all is ready.
 static void TolbiShipDeck_DepartFromKalay(void) {
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -1303,8 +1357,9 @@ static void TolbiShipDeck_DepartFromKalay(void) {
                                           ACTOR_KALAY_CREW_MEMBER);
 }
 
-/// On later departures, with the party aboard, Kaja brings word to
-/// ACTOR_SEA_CREW_MEMBER.
+/// On later departures, with the party aboard, Kaja comes up through the
+/// carved door at the north end and tells the sailor in a yellow bandana that
+/// all is ready.
 static void TolbiShipDeck_DepartWithParty(void) {
   Event_Start();
   Event_AppendActorPlacements(
@@ -1331,8 +1386,9 @@ static void TolbiShipDeck_DepartWithParty(void) {
                                           ACTOR_SEA_CREW_MEMBER);
 }
 
-/// The messenger comes up through the first door to report, and the crew
-/// member waiting there calls the ship ready.
+/// The messenger comes up through the carved door at the north end and nods,
+/// and the sailor waiting beside it jumps and calls `Preparations...
+/// Ready!`.
 static void TolbiShipDeck_AnnouncePreparationsReady(s32 messenger,
                                                     s32 crewMember) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -2687,7 +2743,7 @@ const s32 gTolbiShipDeck_SquashAndStretchActions[] = {
 };
 
 /// A first-attack monster runs in, leaps over the rail onto the deck and
-/// goes below by the first door.
+/// goes below by the carved door at the north end.
 ///
 /// It is used at TOLBI_SHIP_DECK_FROM_SHIP_ROOMS_MONSTERS_BOARD.
 const s32 gTolbiShipDeck_MonsterLeapsAboardActions[] = {
@@ -2820,7 +2876,8 @@ const s32 gTolbiShipDeck_SwellActions[] = {
     SC_END,
 };
 
-/// A monster on deck goes below by the first door and is hidden.
+/// A monster on deck goes below by the carved door at the north end and is
+/// hidden.
 const s32 gTolbiShipDeck_MonsterGoesBelowActions[] = {
     SC_MOVE(216, 0, 586),
     SC_SYNC,
@@ -2855,7 +2912,7 @@ const s32 gTolbiShipDeck_RowerLeavesActions[] = {
 };
 
 /// Back from the island, Sean, Ouranos and the tour guide go below by the
-/// first door, one after another.
+/// carved door at the north end, one after another.
 const s32 gTolbiShipDeck_GoBelowActions[] = {
     SC_ANIMATION(ANIM_WALK),
     SC_MOVE(186, 0, 604),
@@ -3262,8 +3319,8 @@ const struct Trigger gTolbiShipDeckTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_KALAY_PASSENGER_KARAGOL, FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED, MSGNO(MsgTolbiShipDeckThoseGuysSeemPrettySureOf) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_KALAY_PASSENGER_KARAGOL, CONDITION_ALWAYS, MSGNO(MsgTolbiShipDeckUsHelpWithTheRowingGet) },
     { TRIGGER_STEP, CELL_BEHAVIOR_TOLBI_SHIP_DECK_BY_CREW, FLAG_TOLBI_SHIP_CREW_WONDERED_AT_DELAY, EVENT(TolbiShipDeck_WatchCrewDecideToSail) },
-    { TRIGGER_STEP, CELL_BEHAVIOR_TOLBI_SHIP_DECK_EAST_OF_DOOR, FLAG_TOLBI_SHIP_CREWMAN_CAUGHT, EVENT(TolbiShipDeck_CatchCrewmanFromEast) },
-    { TRIGGER_STEP, CELL_BEHAVIOR_TOLBI_SHIP_DECK_WEST_OF_DOOR, FLAG_TOLBI_SHIP_CREWMAN_CAUGHT, EVENT(TolbiShipDeck_CatchCrewmanFromWest) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_TOLBI_SHIP_DECK_WEST_OF_CABIN_DOOR, FLAG_TOLBI_SHIP_CREWMAN_CAUGHT, EVENT(TolbiShipDeck_CatchCrewmanFromWest) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_TOLBI_SHIP_DECK_EAST_OF_CABIN_DOOR, FLAG_TOLBI_SHIP_CREWMAN_CAUGHT, EVENT(TolbiShipDeck_CatchCrewmanFromEast) },
     { TRIGGER_TABLE_END },
 };
 

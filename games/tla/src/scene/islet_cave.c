@@ -1,13 +1,23 @@
 /// @file
-/// The Islet Cave, in the rooms of this overlay: logs the party rides across
-/// its water (IsletCave_RideLog), the Venus Djinni Meld and the Mercury Djinni
-/// Serac at the end of their rides (IsletCave_FightMeld, IsletCave_FightSerac),
-/// and the cycling colours of its water (IsletCave_StartSlowPaletteCycle).
-/// Teleport carries the party in by its circles
-/// (IsletCave_TeleportToFirstCircle), each corridor is darker than the last
-/// (IsletCave_DarkenPalette), Tremor shakes Serac out
-/// (IsletCave_TremorRevealsSerac), and at the end the Sentinel waits
-/// (IsletCave_SentinelAwaits).
+/// The Islet Cave, which the lonely turtle on the Sea of Time Islet opens once
+/// he has Li'l Turtle for a friend. Its three maps are all here.
+///
+/// The halls (SCENE_ISLET_CAVE_MELD): stairs come down from the islet into a
+/// small south room, and more stairs lead down from it into the west hall, a
+/// lake with an island holding a Teleport circle. Golden logs float in the
+/// water and carry Felix across as he walks onto them (IsletCave_RideLog): one
+/// from the island to the west shore and the Turtle Boots chest, one across
+/// the north of the lake to the ledge of the Rusty Staff chest, four that
+/// cross the east hall's long channel in pairs, and a seventh that carries him
+/// all the way up that channel to Meld, a Venus Djinni.
+///
+/// With Teleport, the island's circle sends the party to a second circle on a
+/// ledge at the north of the lake, behind which a doorway leads into five
+/// corridors (SCENE_ISLET_CAVE_SERAC), each darker and bluer than the last
+/// (IsletCave_DarkenPalette). Serac, a Mercury Djinni, hides in the winged
+/// statue of the second corridor until Tremor shakes him out. The fifth
+/// corridor's door opens on the Sentinel's room (SCENE_ISLET_CAVE_SENTINEL),
+/// where the Sentinel guards the Catastrophe tablet.
 
 #include "flags.h"
 #include "djinn_ids.h"
@@ -38,7 +48,7 @@
 #include "shared/tables.h"
 #include "field/actor_script.h"
 
-void IsletCave_TeleportIn(void);
+void IsletCave_ArriveWhirling(void);
 
 s32 List_CountEntries(u16 *list);
 
@@ -50,9 +60,9 @@ void IsletCave_FightMeld(void);
 
 void IsletCave_FightSerac(void);
 
-void IsletCave_TeleportToFirstCircle(void);
+void IsletCave_TeleportToNorthCircle(void);
 
-void IsletCave_TeleportToSecondCircle(void);
+void IsletCave_TeleportToIslandCircle(void);
 
 void IsletCave_OpenDoorAndEnter(void);
 
@@ -105,9 +115,9 @@ void Teleport_PlaySparks(void);
 void FieldEffect_StartBlankOverlay(s32 mode);
 void PaletteFade_PackTarget(void);
 
-/// Records the four palette lists, writes each listed palette entry from its
-/// red, green and blue, then copies the BG and OBJ palettes into the palette
-/// fade's source and starts the blend.
+/// Gives the Teleport circles their colours and keeps the lists for their
+/// shimmer, then saves the palettes as the fade's source. Arriving in the cave
+/// by Teleport, the party then arrives whirling on a circle.
 void Palette_SetColors(u16 *slots, u16 *colours, u16 *cycleColours,
                        u16 *cycleSlots) {
   struct PaletteFade *fade = Ram_HeapSlots->paletteFade;
@@ -128,12 +138,13 @@ void Palette_SetColors(u16 *slots, u16 *colours, u16 *cycleColours,
           DMA_COPY_WORDS(112), REG_DMA3);
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 0);
   if (gMainRoutineWork.teleportState == 2)
-    IsletCave_TeleportIn();
+    IsletCave_ArriveWhirling();
 }
 
-/// Starts the water's colours cycling, slowly at first: the first step waits
-/// 16 frames, and each step after waits a frame less, down to two.
-void IsletCave_StartSlowPaletteCycle(void) {
+/// Starts the Teleport circle's shimmer at its slow pace, as Teleport is cast:
+/// its colours run round it, the first step after 16 frames, each after a
+/// frame less, down to two.
+void IsletCave_StartShimmer(void) {
   gPaletteCycleIndex = 0;
   gPaletteCycleLength = List_CountEntries(gPaletteSlots);
   gPaletteCycleDelay = 15;
@@ -142,15 +153,15 @@ void IsletCave_StartSlowPaletteCycle(void) {
   Task_Add(PaletteCycle_Fade, TASK_PASS_FRAME);
 }
 
-/// Stops the water's colours cycling, and sets the next screen transition to a
-/// fade of the backdrop.
-void IsletCave_StopPaletteCycle(void) {
+/// Stops the circle's shimmer, leaving the next transition a backdrop fade.
+void IsletCave_StopShimmer(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Task_Remove(PaletteCycle_Fade);
 }
 
-/// Starts the water's colours cycling at full speed, a step every two frames.
-void IsletCave_StartFastPaletteCycle(void) {
+/// Starts the circle's shimmer at a step every two frames, as the party
+/// arrives.
+void IsletCave_StartFastShimmer(void) {
   gPaletteCycleIndex = 0;
   gPaletteCycleLength = List_CountEntries(gPaletteSlots);
   gPaletteCycleDelay = 2;
@@ -163,9 +174,10 @@ void IsletCave_StartFastPaletteCycle(void) {
 
 #include "shared/palette_cycle_fade.h"
 
-/// Arriving by Teleport: the water's colours spin fast while the whirl plays,
-/// then settle.
-void IsletCave_TeleportIn(void) {
+/// The party arrives in the cave by Teleport from another place: the cave
+/// fades in grey while the circle shimmers and the whirl plays, then its
+/// colours come back.
+void IsletCave_ArriveWhirling(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 saved;
 
@@ -175,10 +187,10 @@ void IsletCave_TeleportIn(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  IsletCave_StartFastPaletteCycle();
+  IsletCave_StartFastShimmer();
   Teleport_PlayWhirl();
   wait(40);
-  IsletCave_StopPaletteCycle();
+  IsletCave_StopShimmer();
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 1);
   PaletteFade_StartInterpolation(16);
   wait(16);
@@ -192,21 +204,22 @@ void IsletCave_TeleportIn(void) {
 
 #include "text/msg_ids.h"
 
-/// Meld, the Djinni waiting in this room.
+/// Meld, the Djinni on the ledge at the north end of the east hall.
 enum { ACTOR_MELD = 15 };
 
-/// Talking to the Djinni at the end of the logs starts the battle with Meld, a
-/// Venus Djinni.
+/// Talking to Meld, the Venus Djinni on the ledge the seventh log carries
+/// Felix up to at the north end of the east hall, starts a battle with him.
 void IsletCave_FightMeld(void) {
   Field_RequestDjinnBattle(ACTOR_MELD, DJINNI_MELD);
   return;
 }
 
-/// Serac, the Djinni waiting in this room, and the winged statue Tremor shakes
-/// him out of.
+/// Serac, the Djinni hiding in the second corridor, and the winged statue
+/// Tremor shakes him out of.
 enum { ACTOR_WINGED_STATUE = 8, ACTOR_SERAC = 9 };
 
-/// The Sentinel and the first of the ten fires around it.
+/// The Sentinel, and the first of the ten small fires burning in pairs down
+/// both sides of its room.
 enum { ACTOR_SENTINEL = 8, ACTOR_FIRST_FIRE = 9 };
 
 /// Set once the Sentinel is beaten, as the party comes back to its room.
@@ -216,17 +229,35 @@ enum { ACTOR_SENTINEL = 8, ACTOR_FIRST_FIRE = 9 };
 /// once he is caught or has run off to hide: the statue then stays still.
 #define FLAG_SERAC_REVEALED FLAG_SCENE_TEMP_30
 
-/// The Sentinel's room's entrance the battle with it returns the party to.
+/// Where the battle with the Sentinel puts the party back in its room: the
+/// spot it stood on.
 enum { ENTRANCE_AFTER_SENTINEL_BATTLE = 2 };
 
-/// Talking to Serac once Tremor has shaken him out starts the battle with him,
-/// a Mercury Djinni.
+/// The cells Teleport answers on: the west hall's two circles.
+enum { CELL_BEHAVIOR_ISLAND_CIRCLE = 50, CELL_BEHAVIOR_NORTH_CIRCLE = 51 };
+
+/// The stone doors at the north ends of the five corridors: each door's cell
+/// behaviour is the exit it leaves by.
+enum {
+  EXIT_FIRST_CORRIDOR_DOOR = 2,
+  EXIT_SECOND_CORRIDOR_DOOR = 4,
+  EXIT_THIRD_CORRIDOR_DOOR = 6,
+  EXIT_FOURTH_CORRIDOR_DOOR = 8,
+  EXIT_FIFTH_CORRIDOR_DOOR = 10
+};
+
+/// The ground just before the Sentinel, where walking up to it wakes it.
+enum { CELL_BEHAVIOR_BEFORE_SENTINEL = 10 };
+
+/// Talking to Serac, the Mercury Djinni Tremor has shaken out of the winged
+/// statue in the second corridor, starts a battle with him.
 void IsletCave_FightSerac(void) {
   Field_RequestDjinnBattle(ACTOR_SERAC, DJINNI_SERAC);
   return;
 }
 
-/// The fires' script's last call: clears the actor's sprite flags.
+/// The last step of each fire's script in the Sentinel's room: clears its
+/// sprite flags.
 s32 IsletCave_ClearScriptedActorSpriteFlags(struct Actor *actor) {
   Actor_SetSpriteFlags(actor, 0);
   return 0;
@@ -262,43 +293,44 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern struct ActorPlacement gIsletCave_Placements[];
-extern struct ActorPlacement gIsletCave_Room1Placements[];
-extern struct ActorPlacement gIsletCave_Room2Placements[];
-extern struct Trigger gIsletCave_Triggers[];
-extern struct Trigger gIsletCave_Room2Triggers[];
-extern struct Trigger gIsletCave_Room3Triggers[];
+extern struct ActorPlacement gIsletCave_SentinelRoomPlacements[];
+extern struct ActorPlacement gIsletCave_HallPlacements[];
+extern struct ActorPlacement gIsletCave_CorridorPlacements[];
+extern struct Trigger gIsletCave_HallTriggers[];
+extern struct Trigger gIsletCave_CorridorTriggers[];
+extern struct Trigger gIsletCave_SentinelRoomTriggers[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_ISLET_CAVE_MELD)
-    return gIsletCave_Room1Placements;
+    return gIsletCave_HallPlacements;
   if (scene == SCENE_ISLET_CAVE_SERAC)
-    return gIsletCave_Room2Placements;
-  return gIsletCave_Placements;
+    return gIsletCave_CorridorPlacements;
+  return gIsletCave_SentinelRoomPlacements;
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
   if (scene == SCENE_ISLET_CAVE_SERAC)
-    return gIsletCave_Room2Triggers;
+    return gIsletCave_CorridorTriggers;
   if (scene == SCENE_ISLET_CAVE_SENTINEL)
-    return gIsletCave_Room3Triggers;
-  return gIsletCave_Triggers;
+    return gIsletCave_SentinelRoomTriggers;
+  return gIsletCave_HallTriggers;
 }
 
-/// The end of a Teleport onto one of the circles: the water spins fast while
-/// the whirl plays, then the colours settle and the leader is shown again.
+/// The end of a Teleport between the two circles: the circle shimmers while
+/// the sparks whirl in, then the cave's colours come back and Felix is shown
+/// on it.
 void IsletCave_FinishTeleport(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 effect = work->transition;
 
-  IsletCave_StartFastPaletteCycle();
+  IsletCave_StartFastShimmer();
   Teleport_PlayWhirl();
   wait(40);
-  IsletCave_StopPaletteCycle();
+  IsletCave_StopShimmer();
   PaletteFade_SetTarget(PALETTE_TINT_NONE, 1);
   PaletteFade_StartInterpolation(16);
   wait(16);
@@ -308,11 +340,11 @@ void IsletCave_FinishTeleport(void) {
   work->transition = effect;
 }
 
-/// Teleport cast on a circle: the sparks rise, and after 40 frames the leader
-/// stands at (x, z).
+/// Teleport cast on a circle: the cave turns grey, the circle shimmers and
+/// sparks carry Felix off, and he comes down on the other circle at (x, z).
 #define DEFINE_ISLET_CAVE_ARRIVE_AT(name, x, z)                                \
   void name(void) {                                                            \
-    IsletCave_StartSlowPaletteCycle();                                         \
+    IsletCave_StartShimmer();                                                  \
     Teleport_PlaySparks();                                                     \
                                                                                \
     gMainRoutineWork.teleportState = 1;                                        \
@@ -322,18 +354,26 @@ void IsletCave_FinishTeleport(void) {
     IsletCave_FinishTeleport();                                                \
   }
 
-/// Teleport cast where it answers carries the leader to the first circle.
-DEFINE_ISLET_CAVE_ARRIVE_AT(IsletCave_TeleportToFirstCircle, 232, 136)
+/// Teleport cast on the circle on the west hall's island (cells (14, 29) to
+/// (15, 30)) carries Felix to the circle on the ledge at the north of the lake,
+/// whose doorway leads to the corridors. The cave turns grey, sparks whirl
+/// round him and he is gone; the view slides north and he comes down in a
+/// whirl of sparks on the other circle, and the colours come back.
+DEFINE_ISLET_CAVE_ARRIVE_AT(IsletCave_TeleportToNorthCircle, 232, 136)
 
-/// Teleport cast where it answers carries the leader to the second circle.
-DEFINE_ISLET_CAVE_ARRIVE_AT(IsletCave_TeleportToSecondCircle, 240, 480)
+/// Teleport cast on the circle on the ledge at the north of the west hall's
+/// lake (cells (13, 7) to (15, 9)) carries Felix back south to the circle on
+/// the island, the way he came, with the same grey and sparks.
+DEFINE_ISLET_CAVE_ARRIVE_AT(IsletCave_TeleportToIslandCircle, 240, 480)
 
 /// One level of a palette fade's colour channel, which holds its 0 to 31
 /// shifted up 10 bits: also the scale that leaves a colour as it is.
 #define FADE_CHANNEL_LEVEL (1 << 10)
 
-/// Darkens the palette by the scale given, out of FADE_CHANNEL_LEVEL: each
-/// corridor is darker than the last.
+/// Darkens the room by the scale given, out of FADE_CHANNEL_LEVEL, so that
+/// each corridor is darker than the last. Through the bug below only the reds
+/// and greens dim, so the deeper corridors and the Sentinel's room look bluer
+/// as well as darker.
 void IsletCave_DarkenPalette(s32 scale) {
   struct PaletteFade *fade = Ram_HeapSlots->paletteFade;
   u16 *source = fade->palette;
@@ -378,8 +418,12 @@ extern struct MapGridCellAnimation gIsletCave_Doors[];
 /// The last of the actor ids the scene's placed actors take.
 #define LAST_PLACED_ACTOR 63
 
-/// Walking north into one of the Serac room's doors: everything stops, the
-/// door opens and the leader walks through it to the next corridor.
+/// Walking north into the grey stone door at the north end of a corridor
+/// opens it: everything stops, the door slides open, Felix steps into the
+/// dark doorway, and the next corridor comes up with him at its south end.
+/// The fifth corridor's door leads to the Sentinel's room. The doors are at
+/// cells (8, 6), (20, 6), (32, 6), (43, 6) and (54, 6), each cell's behaviour
+/// the exit it leaves by.
 void IsletCave_OpenDoorAndEnter(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u32 i;
@@ -418,9 +462,11 @@ extern u16 gIsletCave_CycleColors[];
 extern u16 gIsletCave_CycleSlots[];
 extern s32 gIsletCave_TremorTargetScript[];
 
-/// Sets up the room being entered: the logs where their flags left them and the
-/// water's colours, the Sentinel gone once beaten, or Serac hidden in the
-/// winged statue until Tremor; the corridors darken a step a room.
+/// Sets up the map being entered: in the halls, the logs where the party left
+/// them and the Teleport circles' colours; in the Sentinel's room, the
+/// Sentinel gone once beaten; in the corridors, Serac hidden in the winged
+/// statue until Tremor. The corridors darken an eighth at a time from the
+/// third, and the Sentinel's room is as dark as the fifth.
 s32 Scene_Initialize(void) {
   s32 dim;
 
@@ -463,10 +509,13 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// The logs floating in the cave's water, in the order the scene places them:
-/// two in the west hall's water, four in the east hall's and the seventh across
-/// the east hall's south end. The first six are three cells tall and drift east
-/// and west, the seventh is three cells wide and drifts north and south.
+/// The golden logs floating in the halls' water. The first lies between the
+/// Teleport circle's island and the west shore, the second at the north of the
+/// west hall's lake, and the third to sixth in pairs at the sides of the east
+/// hall's channel, the third and fourth at its north end and the fifth and
+/// sixth halfway down. These six lie north to south and float east and west.
+/// The seventh lies west to east across the channel's south end and floats
+/// north and south.
 enum {
   ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
   ACTOR_SECOND_LOG,
@@ -477,8 +526,9 @@ enum {
   ACTOR_SEVENTH_LOG
 };
 
-/// The cell behaviour under each log, whose step triggers settle it and ride
-/// it (gIsletCave_Triggers).
+/// The cells under each log, which IsletCave_PlaceLogs copies in under it from
+/// the map's top row: stepping onto them dips the log, and walking on across
+/// them rides it.
 enum {
   CELL_BEHAVIOR_ISLET_CAVE_FIRST_LOG = 20,
   CELL_BEHAVIOR_ISLET_CAVE_SECOND_LOG,
@@ -489,12 +539,14 @@ enum {
   CELL_BEHAVIOR_ISLET_CAVE_SEVENTH_LOG
 };
 
-/// Set while a log lies across the water from where it is placed, until the
-/// party leaves the cave's map: IsletCave_PlaceLogs then places it there.
+/// Set while a log lies at the far side of its water from where it starts, so
+/// that it is still there when the party comes back into the hall;
+/// IsletCave_PlaceLogs reads them. They are scene flags, so every log is back
+/// at its start once the party has left the cave.
 ///
-/// The fourth log is the odd one: its west ride, away from its start, clears
-/// its flag as the ride back does, so the room's next entry places that log
-/// back at its start, its cells with it.
+/// The fourth log is the odd one: its ride west, away from its start, clears
+/// its flag as the ride back does, so the next time the party comes into the
+/// east hall that log is back at the channel's east side.
 enum {
   FLAG_ISLET_CAVE_FIRST_LOG_MOVED = FLAG_SCENE_TEMP_80,
   FLAG_ISLET_CAVE_SECOND_LOG_MOVED = FLAG_SCENE_TEMP_81,
@@ -505,10 +557,10 @@ enum {
   FLAG_ISLET_CAVE_SEVENTH_LOG_MOVED = FLAG_SCENE_TEMP_86
 };
 
-/// Places a log three cells wide that drifts north and south: at (x, z) if its
-/// flag says it has drifted, under the party, then draws its footprint from
-/// the stored cells at (sourceColumn, sourceRow); its cell behaviour is passed
-/// and not used.
+/// Places a log lying west to east, three cells wide: at (x, z) if its flag
+/// says it is at the far side, then copies its cells in under it from the
+/// stored row at (sourceColumn, sourceRow). Its cell behaviour is passed and
+/// not used.
 void IsletCave_PlaceWestEastLog(s32 actorId, s32 sourceColumn, s32 sourceRow,
                                 s32 x, s32 z, s32 cellBehavior, s32 flag) {
   struct Actor *actor = Actor_GetById(actorId);
@@ -524,8 +576,8 @@ void IsletCave_PlaceWestEastLog(s32 actorId, s32 sourceColumn, s32 sourceRow,
   }
 }
 
-/// As IsletCave_PlaceWestEastLog, for a log three cells tall that drifts east
-/// and west.
+/// As IsletCave_PlaceWestEastLog, for a log lying north to south, three cells
+/// tall.
 void IsletCave_PlaceNorthSouthLog(s32 actorId, s32 sourceColumn, s32 sourceRow,
                                   s32 x, s32 z, s32 cellBehavior, s32 flag) {
   struct Actor *actor;
@@ -542,15 +594,17 @@ void IsletCave_PlaceNorthSouthLog(s32 actorId, s32 sourceColumn, s32 sourceRow,
   }
 }
 
-/// Stepping onto a log dips it under the leader's step: it is set back to
-/// floating first, so the dip plays from its start.
+/// Stepping onto a log plays its dip under Felix's step, set back to floating
+/// first so that the dip plays from its start.
 void IsletCave_SettleLog(s32 actorId) {
+  // XXX: how the dip looks on screen; a moment recording that starts on the
+  // frame Felix steps onto a log would settle it.
   Actor_SetAnimationById(actorId, FLOATING_LOG_ANIMATION_FLOAT);
   Actor_SetAnimationById(actorId, FLOATING_LOG_ANIMATION_SETTLE);
   return;
 }
 
-/// Places the seven logs on the water where their flags left them.
+/// Places the seven logs where the party left them, each with its cells.
 void IsletCave_PlaceLogs(void) {
   IsletCave_PlaceNorthSouthLog(ACTOR_FIRST_LOG, 27, 0, 136, 504,
                                CELL_BEHAVIOR_ISLET_CAVE_FIRST_LOG,
@@ -576,50 +630,58 @@ void IsletCave_PlaceLogs(void) {
   return;
 }
 
-/// Stepping onto the first log.
+/// Stepping onto the first log, between the Teleport circle's island and the
+/// west shore of the west hall, plays the log's dip under Felix's step.
 void IsletCave_SettleFirstLog(void) {
   IsletCave_SettleLog(ACTOR_FIRST_LOG);
   return;
 }
 
-/// Stepping onto the second log.
+/// Stepping onto the second log, at the north of the west hall's lake, plays
+/// the log's dip under Felix's step.
 void IsletCave_SettleSecondLog(void) {
   IsletCave_SettleLog(ACTOR_SECOND_LOG);
   return;
 }
 
-/// Stepping onto the third log.
+/// Stepping onto the third log, at the north end of the east hall's channel,
+/// plays the log's dip under Felix's step.
 void IsletCave_SettleThirdLog(void) {
   IsletCave_SettleLog(ACTOR_THIRD_LOG);
   return;
 }
 
-/// Stepping onto the fourth log.
+/// Stepping onto the fourth log, at the north end of the east hall's channel,
+/// plays the log's dip under Felix's step.
 void IsletCave_SettleFourthLog(void) {
   IsletCave_SettleLog(ACTOR_FOURTH_LOG);
   return;
 }
 
-/// Stepping onto the fifth log.
+/// Stepping onto the fifth log, halfway down the east hall's channel, plays the
+/// log's dip under Felix's step.
 void IsletCave_SettleFifthLog(void) {
   IsletCave_SettleLog(ACTOR_FIFTH_LOG);
   return;
 }
 
-/// Stepping onto the sixth log.
+/// Stepping onto the sixth log, halfway down the east hall's channel, plays the
+/// log's dip under Felix's step.
 void IsletCave_SettleSixthLog(void) {
   IsletCave_SettleLog(ACTOR_SIXTH_LOG);
   return;
 }
 
-/// Stepping onto the seventh log.
+/// Stepping onto the seventh log, which lies across the east hall's channel,
+/// plays the log's dip under Felix's step.
 void IsletCave_SettleSeventhLog(void) {
   IsletCave_SettleLog(ACTOR_SEVENTH_LOG);
   return;
 }
 
-/// Rides log actorId one stage, `dx` and `dz` pixels, with the leader walking
-/// backwards on it to the cell it stops at.
+/// Rides a log one stage, `dx` and `dz` pixels, carrying Felix with it: the
+/// log rolls over as it floats, he treads on top facing back the way he came,
+/// and it settles where it stops.
 void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
   struct Actor *leader;
   struct Actor *actor;
@@ -653,8 +715,8 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
   Event_End();
 }
 
-/// Rides log `logId` `dx` pixels across the water and moves its footprint with
-/// it, then sets or clears its flag (`flagCall`) to say where it lies.
+/// Rides log `logId` `dx` pixels across the water and moves its cells with it,
+/// then sets or clears its flag (`flagCall`) to say which side it lies at.
 #define DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(name, logId, dx, flagCall, flag)     \
   void name(void) {                                                            \
     s32 fromX = Actor_GetById(logId)->x.fixed;                                 \
@@ -670,18 +732,24 @@ void IsletCave_RideLog(s32 actorId, s32 dx, s32 dz) {
     flagCall(flag);                                                            \
   }
 
-/// Walking east onto the first log rides it east across the water.
+/// Walking east from the west shore of the west hall, by the Turtle Boots
+/// chest, onto the first log (cells (8, 30) to (8, 32)) floats it two cells
+/// east with Felix aboard, back to the Teleport circle's island.
 DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFirstLogEast, ACTOR_FIRST_LOG,
                                   32, GameFlag_Clear,
                                   FLAG_ISLET_CAVE_FIRST_LOG_MOVED)
 
-/// Walking west onto the first log rides it west across the water.
+/// Walking west from the Teleport circle's island onto the first log (cells
+/// (10, 30) to (10, 32)) floats it two cells west with Felix aboard, across to
+/// the west shore and the Turtle Boots chest.
 DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFirstLogWest, ACTOR_FIRST_LOG,
                                   -32, GameFlag_Set,
                                   FLAG_ISLET_CAVE_FIRST_LOG_MOVED)
 
-/// Walking east onto the second log rides it east across the water, in
-/// two stages.
+/// Walking east from the little ledge of the Rusty Staff chest, at the west of
+/// the west hall's lake, onto the second log (cells (8, 13) to (8, 15)) floats
+/// it 13 cells east with Felix aboard, with a stop halfway, back to the ledge
+/// where the passage from the east hall comes in.
 void IsletCave_RideSecondLogEast(void) {
   FIXED fromX = Actor_GetById(ACTOR_SECOND_LOG)->x.fixed;
   FIXED fromZ = Actor_GetById(ACTOR_SECOND_LOG)->z.fixed;
@@ -698,8 +766,11 @@ void IsletCave_RideSecondLogEast(void) {
   GameFlag_Clear(FLAG_ISLET_CAVE_SECOND_LOG_MOVED);
 }
 
-/// Walking west onto the second log rides it west across the water, in
-/// two stages.
+/// Walking west from the ledge at the east of the west hall's lake, where the
+/// passage from the east hall's north-west comes in, onto the second log (cells
+/// (21, 13) to (21, 15)) floats it 13 cells west with Felix aboard, with a stop
+/// halfway, across the north of the lake to the little ledge of the Rusty Staff
+/// chest.
 void IsletCave_RideSecondLogWest(void) {
   FIXED fromX = Actor_GetById(ACTOR_SECOND_LOG)->x.fixed;
   FIXED fromZ = Actor_GetById(ACTOR_SECOND_LOG)->z.fixed;
@@ -716,48 +787,68 @@ void IsletCave_RideSecondLogWest(void) {
   GameFlag_Set(FLAG_ISLET_CAVE_SECOND_LOG_MOVED);
 }
 
-/// Walking east onto the third log rides it east across the water.
+/// Walking east from the ledge at the north-west of the east hall onto the
+/// third log (cells (48, 8) to (48, 10)) floats it five cells east with Felix
+/// aboard, across the channel to its narrow east bank.
 DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideThirdLogEast, ACTOR_THIRD_LOG,
                                   80, GameFlag_Set,
                                   FLAG_ISLET_CAVE_THIRD_LOG_MOVED)
 
-/// Walking west onto the third log rides it west across the water.
+/// Walking west from the east hall's narrow east bank onto the third log (cells
+/// (53, 8) to (53, 10)) floats it five cells west with Felix aboard, back to
+/// the ledge at the channel's north-west.
 DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideThirdLogWest, ACTOR_THIRD_LOG,
                                   -80, GameFlag_Clear,
                                   FLAG_ISLET_CAVE_THIRD_LOG_MOVED)
 
-/// Walking east onto the fourth log rides it east across the water.
+/// Walking east from the ledge at the north-west of the east hall onto the
+/// fourth log (cells (49, 8) to (49, 10)) floats it five cells east with Felix
+/// aboard, back across the channel to its narrow east bank.
 DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFourthLogEast, ACTOR_FOURTH_LOG,
                                   80, GameFlag_Clear,
                                   FLAG_ISLET_CAVE_FOURTH_LOG_MOVED)
 
-/// Walking west onto the fourth log rides it west across the water.
+/// Walking west from the east hall's narrow east bank onto the fourth log
+/// (cells (54, 8) to (54, 10)) floats it five cells west with Felix aboard,
+/// across the channel to the ledge at its north-west, where the passage to the
+/// west hall's north leaves.
 DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFourthLogWest, ACTOR_FOURTH_LOG,
                                   -80, GameFlag_Clear,
                                   FLAG_ISLET_CAVE_FOURTH_LOG_MOVED)
 
-/// Walking east onto the fifth log rides it east across the water.
+/// Walking east from the east hall's south-west shore, where the passage from
+/// the west hall comes in, onto the fifth log (cells (48, 22) to (48, 24))
+/// floats it five cells east with Felix aboard, across the channel to its east
+/// bank.
 DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFifthLogEast, ACTOR_FIFTH_LOG,
                                   80, GameFlag_Set,
                                   FLAG_ISLET_CAVE_FIFTH_LOG_MOVED)
 
-/// Walking west onto the fifth log rides it west across the water.
+/// Walking west from the east hall's east bank onto the fifth log (cells (53,
+/// 22) to (53, 24)) floats it five cells west with Felix aboard, back to the
+/// south-west shore.
 DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideFifthLogWest, ACTOR_FIFTH_LOG,
                                   -80, GameFlag_Clear,
                                   FLAG_ISLET_CAVE_FIFTH_LOG_MOVED)
 
-/// Walking east onto the sixth log rides it east across the water.
+/// Walking east from the east hall's south-west shore onto the sixth log (cells
+/// (49, 22) to (49, 24)) floats it five cells east with Felix aboard, back
+/// across the channel to its east bank.
 DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideSixthLogEast, ACTOR_SIXTH_LOG,
                                   80, GameFlag_Clear,
                                   FLAG_ISLET_CAVE_SIXTH_LOG_MOVED)
 
-/// Walking west onto the sixth log rides it west across the water.
+/// Walking west from the east hall's east bank onto the sixth log (cells (54,
+/// 22) to (54, 24)) floats it five cells west with Felix aboard, across the
+/// channel to the south-west shore.
 DEFINE_ISLET_CAVE_RIDE_LOG_ACROSS(IsletCave_RideSixthLogWest, ACTOR_SIXTH_LOG,
                                   -80, GameFlag_Set,
                                   FLAG_ISLET_CAVE_SIXTH_LOG_MOVED)
 
-/// Walking north onto the seventh log rides it north across the water, in
-/// three stages.
+/// Walking north from the ledge at the south end of the east hall onto the
+/// seventh log (cells (50, 29) to (52, 29)) floats it 22 cells north up the
+/// channel with Felix aboard, past the other logs, stopping twice on the way,
+/// to the foot of Meld's ledge.
 void IsletCave_RideSeventhLogNorth(void) {
   FIXED fromX = Actor_GetById(ACTOR_SEVENTH_LOG)->x.fixed;
   s32 column = fromX;
@@ -778,8 +869,10 @@ void IsletCave_RideSeventhLogNorth(void) {
   GameFlag_Set(FLAG_ISLET_CAVE_SEVENTH_LOG_MOVED);
 }
 
-/// Walking south onto the seventh log rides it south across the water, in
-/// three stages.
+/// Walking south from Meld's ledge at the north end of the east hall onto the
+/// seventh log (cells (50, 7) to (52, 7)) floats it 22 cells south down the
+/// channel with Felix aboard, stopping twice on the way, back to the ledge at
+/// the channel's south end.
 void IsletCave_RideSeventhLogSouth(void) {
   FIXED fromX = Actor_GetById(ACTOR_SEVENTH_LOG)->x.fixed;
   s32 column = fromX;
@@ -799,8 +892,12 @@ void IsletCave_RideSeventhLogSouth(void) {
   GameFlag_Clear(FLAG_ISLET_CAVE_SEVENTH_LOG_MOVED);
 }
 
-/// At the end of the corridors the guardian of wind is summoned and the
-/// Sentinel fights.
+/// Walking up the Sentinel's room to the great armoured warrior at its north
+/// end (cells (9, 11) to (13, 13), the ground just before it) wakes it. It
+/// springs twice, the room glows warm, and it says across the screen "I am the
+/// guardian of wind. If you would claim my power, you must prove your worth."
+/// Then it comes at Felix and a battle with it starts, one the party cannot run
+/// from. Beating it leaves the Catastrophe tablet free behind its spot.
 void IsletCave_SentinelAwaits(void) {
   s32 cue;
   struct Actor *actor;
@@ -831,8 +928,10 @@ void IsletCave_SentinelAwaits(void) {
   Event_End();
 }
 
-/// Tremor on the winged statue shakes Serac out: he leaps from it and lands in
-/// the corridor beside the leader, and the statue stops.
+/// Tremor cast on the winged statue that rocks and hops on its pillar at the
+/// west side of the second corridor shakes Serac out. The Mercury Djinni leaps
+/// from the statue and lands in the corridor beside Felix, and the statue
+/// stands still. While Serac hides, nothing marks him but the rocking statue.
 void IsletCave_TremorRevealsSerac(void) {
   if (!Event_GetFlag(FLAG_SERAC_REVEALED)) {
     struct Actor *actor = Actor_GetById(ACTOR_SERAC);
@@ -918,7 +1017,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gIsletCave_Placements[] = {
+struct ActorPlacement gIsletCave_SentinelRoomPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_SENTINEL, FLAG_SENTINEL_DEFEATED, (s32)gIsletCave_SentinelScript, 184, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkFireScript, 152, 0, 144, FACING_NORTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_FIRE, CONDITION_ALWAYS, (s32)gIsletCave_ShrunkFireScript, 216, 0, 144, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),
@@ -933,7 +1032,7 @@ struct ActorPlacement gIsletCave_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gIsletCave_Room1Placements[] = {
+struct ActorPlacement gIsletCave_HallPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7, 168, 0, 504, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7, 344, 0, 232, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_FLOATING_LOG_NORTH_SOUTH, CONDITION_ALWAYS, 7, 776, 0, 152, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -945,13 +1044,13 @@ struct ActorPlacement gIsletCave_Room1Placements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gIsletCave_Room2Placements[] = {
+struct ActorPlacement gIsletCave_CorridorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_WINGED_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 184, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_MERCURY_DJINNI, FLAG_DJINNI(DJINNI_SERAC), MOVEMENT_TYPE_STAND, 336, 0, 184, FACING_SOUTH, TALK_FACING_PARTY, 0),
     {SCENE_TABLE_END},
 };
 
-struct Trigger gIsletCave_Triggers[] = {
+struct Trigger gIsletCave_HallTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},
@@ -982,30 +1081,30 @@ struct Trigger gIsletCave_Triggers[] = {
     {TRIGGER_STEP, CELL_BEHAVIOR_ISLET_CAVE_SIXTH_LOG, CONDITION_ALWAYS, EVENT(IsletCave_SettleSixthLog)},
     {TRIGGER_STEP, CELL_BEHAVIOR_ISLET_CAVE_SEVENTH_LOG, CONDITION_ALWAYS, EVENT(IsletCave_SettleSeventhLog)},
     {TRIGGER_TALK, ACTOR_MELD, CONDITION_ALWAYS, EVENT(IsletCave_FightMeld)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 50, CONDITION_ALWAYS, EVENT(IsletCave_TeleportToFirstCircle)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 51, CONDITION_ALWAYS, EVENT(IsletCave_TeleportToSecondCircle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), CELL_BEHAVIOR_ISLAND_CIRCLE, CONDITION_ALWAYS, EVENT(IsletCave_TeleportToNorthCircle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), CELL_BEHAVIOR_NORTH_CIRCLE, CONDITION_ALWAYS, EVENT(IsletCave_TeleportToIslandCircle)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gIsletCave_Room2Triggers[] = {
+struct Trigger gIsletCave_CorridorTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(IsletCave_OpenDoorAndEnter)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(IsletCave_OpenDoorAndEnter)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(IsletCave_OpenDoorAndEnter)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(IsletCave_OpenDoorAndEnter)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(IsletCave_OpenDoorAndEnter)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), EXIT_FIRST_CORRIDOR_DOOR, CONDITION_ALWAYS, EVENT(IsletCave_OpenDoorAndEnter)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), EXIT_SECOND_CORRIDOR_DOOR, CONDITION_ALWAYS, EVENT(IsletCave_OpenDoorAndEnter)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), EXIT_THIRD_CORRIDOR_DOOR, CONDITION_ALWAYS, EVENT(IsletCave_OpenDoorAndEnter)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), EXIT_FOURTH_CORRIDOR_DOOR, CONDITION_ALWAYS, EVENT(IsletCave_OpenDoorAndEnter)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), EXIT_FIFTH_CORRIDOR_DOOR, CONDITION_ALWAYS, EVENT(IsletCave_OpenDoorAndEnter)},
     {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), ACTOR_WINGED_STATUE, FLAG_SERAC_REVEALED, EVENT(IsletCave_TremorRevealsSerac)},
     {TRIGGER_TALK, ACTOR_SERAC, CONDITION_ALWAYS, EVENT(IsletCave_FightSerac)},
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gIsletCave_Room3Triggers[] = {
+struct Trigger gIsletCave_SentinelRoomTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_STEP, 10, FLAG_SENTINEL_DEFEATED, EVENT(IsletCave_SentinelAwaits)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BEFORE_SENTINEL, FLAG_SENTINEL_DEFEATED, EVENT(IsletCave_SentinelAwaits)},
     {TRIGGER_TABLE_END},
 };
 

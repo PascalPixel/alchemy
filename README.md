@@ -57,6 +57,14 @@ It builds the following ROMs:
 | French   | `42f3b262c16cfc5bde1fa2b25016fb74046de1b3` | `f14855c0f8c87a95cc52189e8e3b2bd9df186322` |
 | Italian  | `ca45e04b26b2f040ac63e679a459d21869f5f28d` | `57f1d005666b81645e55412658427e27099c5907` |
 
+## Contributing
+
+Issues and pull requests are welcome. If something is wrong, badly named or hard to find, [open an issue](https://github.com/PascalPixel/alchemy/issues); if you know the fix, send it.
+
+A pull request keeps every ROM identical to the original: `make -j8 compare-editions` prints OK for all twelve, and `make modern` and `make test` pass. Work from your own ROMs, this repository and public documentation, and from nothing else: no other project’s Golden Sun work and no leaked code. Please don’t attach ROMs, original or modified.
+
+Mods and new features live in your own repository, built on Alchemy. This one stays the original games, so that everything made from it starts from the same known place.
+
 ## Acknowledgements
 
 _Golden Sun_, its characters, music, art and original code were made by Camelot Software Planning and published by Nintendo. Alchemy is an unofficial fan project, and neither company is involved with it or endorses it.

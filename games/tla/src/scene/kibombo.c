@@ -116,10 +116,10 @@ void PaletteFade_SetTarget(s32 a, s32 b);
 void Kibombo_InitializeVillage(void);
 s32 Kibombo_ClampColor(s32 value);
 void Kibombo_FlashSprite(struct Actor *actor);
-void Kibombo_UncoverFirstMark(void);
-void Kibombo_UncoverSecondMark(void);
-void Kibombo_UncoverThirdMark(void);
-void Kibombo_UncoverFourthMark(void);
+void Kibombo_UncoverNorthMark(void);
+void Kibombo_UncoverSouthMark(void);
+void Kibombo_UncoverWestMark(void);
+void Kibombo_UncoverEastMark(void);
 void Kibombo_PiersHasForgottenParty(void);
 void Kibombo_PiersTakesPartyForEnemies(void);
 void Kibombo_AkafubuOffersCrystal(void);
@@ -201,16 +201,16 @@ enum KibomboFireColor {
 /// apart, turns to whoever talks to him and speaks, as his father does, of
 /// the days after the ceremony.
 #define FLAG_KIBOMBO_LEFT_HOME_OF_AKAFUBU 0x8ee
-/// For this visit: each of the four marks uncovered, and the one Scoop is
-/// uncovering.
-#define FLAG_FIRST_MARK_UNCOVERED FLAG_SCENE_TEMP_04
-#define FLAG_SECOND_MARK_UNCOVERED FLAG_SCENE_TEMP_05
-#define FLAG_THIRD_MARK_UNCOVERED FLAG_SCENE_TEMP_06
-#define FLAG_FOURTH_MARK_UNCOVERED FLAG_SCENE_TEMP_07
-#define FLAG_SCOOPING_FIRST_MARK FLAG_SCENE_TEMP_20
-#define FLAG_SCOOPING_SECOND_MARK FLAG_SCENE_TEMP_21
-#define FLAG_SCOOPING_THIRD_MARK FLAG_SCENE_TEMP_22
-#define FLAG_SCOOPING_FOURTH_MARK FLAG_SCENE_TEMP_23
+/// For this visit: each of the four marks at the dead end by the statue
+/// uncovered, and the one Scoop is uncovering.
+#define FLAG_NORTH_MARK_UNCOVERED FLAG_SCENE_TEMP_04
+#define FLAG_SOUTH_MARK_UNCOVERED FLAG_SCENE_TEMP_05
+#define FLAG_WEST_MARK_UNCOVERED FLAG_SCENE_TEMP_06
+#define FLAG_EAST_MARK_UNCOVERED FLAG_SCENE_TEMP_07
+#define FLAG_SCOOPING_NORTH_MARK FLAG_SCENE_TEMP_20
+#define FLAG_SCOOPING_SOUTH_MARK FLAG_SCENE_TEMP_21
+#define FLAG_SCOOPING_WEST_MARK FLAG_SCENE_TEMP_22
+#define FLAG_SCOOPING_EAST_MARK FLAG_SCENE_TEMP_23
 /// For this visit: the room's unseen blocks drawn (Kibombo_RestoreBlocks).
 #define FLAG_KIBOMBO_BLOCKS_SHOWN FLAG_SCENE_TEMP_00
 /// For this visit: the puddle frozen into a pillar (gKibombo_FrozenPuddle). On
@@ -656,73 +656,84 @@ void Kibombo_HideBlocks(void) {
 
 #include "shared/actors_set_hidden.c"
 
-/// Frost on the puddle freezes it into a pillar.
+/// Felix casts Frost on the puddle: it freezes into a pillar of ice to jump
+/// onto.
 void Kibombo_FreezePuddle(void) { FlagBlock_ApplyFlags(gKibombo_FrozenPuddle); }
 
-/// Draws the vent by the statue uncovered and lets the party into it.
+/// Shows the vent by the statue uncovered, cell (23, 18), and lets the party
+/// climb down into it.
 void Kibombo_UncoverVent(void) {
   MapGrid_CopyCellPictureIndicesRect(34, 33, 23, 18, 1, 1);
   MapGrid_CopyCellAttributes(34, 33, 1, 1, 23, 18);
   GameFlag_Set(FLAG_KIBOMBO_VENT_UNCOVERED);
 }
 
-/// Scoop on the vent's cell: once the dig is done (mode 1), uncovers it.
+/// Felix casts Scoop on the patch of ground on the statue's grounds, cell
+/// (23, 18), which the party passed on the way to the dead end: once the dig
+/// is done (`mode` 1), the vent under it is uncovered, the way into the
+/// Gabomba Statue.
 void Kibombo_ScoopVent(s32 mode) {
   if (mode == 1)
     Kibombo_UncoverVent();
 }
 
-/// Uncovers the first of the four marks at the dead end by the statue, as
-/// Scoop does.
-void Kibombo_UncoverFirstMark(void) {
+/// Uncovers the north one of the four marks at the dead end by the statue,
+/// cell (16, 7), as Scoop does.
+void Kibombo_UncoverNorthMark(void) {
   MapGrid_CopyCellPictureIndicesRect(36, 34, 16, 7, 1, 1);
   MapGrid_CopyCellAttributes(36, 34, 1, 1, 16, 7);
-  GameFlag_Set(FLAG_FIRST_MARK_UNCOVERED);
+  GameFlag_Set(FLAG_NORTH_MARK_UNCOVERED);
 }
 
-/// Scoop on the first mark: once the dig is done (mode 1), uncovers it.
-void Kibombo_ScoopFirstMark(s32 mode) {
+/// Felix casts Scoop on the north mark at the dead end by the statue, cell
+/// (16, 7), one of four in a diamond on the ground there: once the dig is done
+/// (`mode` 1), the mark is dug out.
+void Kibombo_ScoopNorthMark(s32 mode) {
   if (mode == 1)
-    Kibombo_UncoverFirstMark();
+    Kibombo_UncoverNorthMark();
 }
 
-/// Uncovers the second of the four marks.
-void Kibombo_UncoverSecondMark(void) {
+/// Uncovers the south mark, cell (16, 11).
+void Kibombo_UncoverSouthMark(void) {
   MapGrid_CopyCellPictureIndicesRect(38, 34, 16, 11, 1, 1);
   MapGrid_CopyCellAttributes(38, 34, 1, 1, 16, 11);
-  GameFlag_Set(FLAG_SECOND_MARK_UNCOVERED);
+  GameFlag_Set(FLAG_SOUTH_MARK_UNCOVERED);
 }
 
-/// Scoop on the second mark: once the dig is done (mode 1), uncovers it.
-void Kibombo_ScoopSecondMark(s32 mode) {
+/// Felix casts Scoop on the south mark at the dead end by the statue, cell
+/// (16, 11), the one Kraden first tells him to dig: once the dig is done
+/// (`mode` 1), the mark is dug out.
+void Kibombo_ScoopSouthMark(s32 mode) {
   if (mode == 1)
-    Kibombo_UncoverSecondMark();
+    Kibombo_UncoverSouthMark();
 }
 
-/// Uncovers the third of the four marks.
-void Kibombo_UncoverThirdMark(void) {
+/// Uncovers the west mark, cell (14, 9).
+void Kibombo_UncoverWestMark(void) {
   MapGrid_CopyCellPictureIndicesRect(36, 36, 14, 9, 1, 1);
   MapGrid_CopyCellAttributes(36, 36, 1, 1, 14, 9);
-  GameFlag_Set(FLAG_THIRD_MARK_UNCOVERED);
+  GameFlag_Set(FLAG_WEST_MARK_UNCOVERED);
 }
 
-/// Scoop on the third mark: once the dig is done (mode 1), uncovers it.
-void Kibombo_ScoopThirdMark(s32 mode) {
+/// Felix casts Scoop on the west mark at the dead end by the statue, cell
+/// (14, 9): once the dig is done (`mode` 1), the mark is dug out.
+void Kibombo_ScoopWestMark(s32 mode) {
   if (mode == 1)
-    Kibombo_UncoverThirdMark();
+    Kibombo_UncoverWestMark();
 }
 
-/// Uncovers the fourth of the four marks.
-void Kibombo_UncoverFourthMark(void) {
+/// Uncovers the east mark, cell (18, 9).
+void Kibombo_UncoverEastMark(void) {
   MapGrid_CopyCellPictureIndicesRect(38, 36, 18, 9, 1, 1);
   MapGrid_CopyCellAttributes(38, 36, 1, 1, 18, 9);
-  GameFlag_Set(FLAG_FOURTH_MARK_UNCOVERED);
+  GameFlag_Set(FLAG_EAST_MARK_UNCOVERED);
 }
 
-/// Scoop on the fourth mark: once the dig is done (mode 1), uncovers it.
-void Kibombo_ScoopFourthMark(s32 mode) {
+/// Felix casts Scoop on the east mark at the dead end by the statue, cell
+/// (18, 9): once the dig is done (`mode` 1), the mark is dug out.
+void Kibombo_ScoopEastMark(s32 mode) {
   if (mode == 1)
-    Kibombo_UncoverFourthMark();
+    Kibombo_UncoverEastMark();
 }
 
 /// Move on the pillar Piers cannot reach: it drops into place with a thump, and
@@ -1595,9 +1606,9 @@ ask:
     FieldMessage_ShowAtActor(ACTOR_KRADEN, 0);
     goto ask;
   }
-  Event_SetFlag(FLAG_SCOOPING_SECOND_MARK);
+  Event_SetFlag(FLAG_SCOOPING_SOUTH_MARK);
   Kibombo_CastScoop();
-  GameFlag_Clear(FLAG_SCOOPING_SECOND_MARK);
+  GameFlag_Clear(FLAG_SCOOPING_SOUTH_MARK);
   Actor_ShowEmote(gMainRoutineWork.leaderActorId,
                   EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_ShowEmote(ACTOR_JENNA, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
@@ -1627,19 +1638,19 @@ ask:
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 280, 120);
   Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_WEST);
-  Event_SetFlag(FLAG_SCOOPING_FIRST_MARK);
+  Event_SetFlag(FLAG_SCOOPING_NORTH_MARK);
   Kibombo_CastScoop();
-  GameFlag_Clear(FLAG_SCOOPING_FIRST_MARK);
+  GameFlag_Clear(FLAG_SCOOPING_NORTH_MARK);
   Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 232, 142);
   Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
-  Event_SetFlag(FLAG_SCOOPING_THIRD_MARK);
+  Event_SetFlag(FLAG_SCOOPING_WEST_MARK);
   Kibombo_CastScoop();
-  GameFlag_Clear(FLAG_SCOOPING_THIRD_MARK);
+  GameFlag_Clear(FLAG_SCOOPING_WEST_MARK);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 296, 142);
   Actor_FaceDirectionAndWait(gMainRoutineWork.leaderActorId, FACING_SOUTH);
-  Event_SetFlag(FLAG_SCOOPING_FOURTH_MARK);
+  Event_SetFlag(FLAG_SCOOPING_EAST_MARK);
   Kibombo_CastScoop();
-  GameFlag_Clear(FLAG_SCOOPING_FOURTH_MARK);
+  GameFlag_Clear(FLAG_SCOOPING_EAST_MARK);
   FieldCamera_MoveTo(268, CAMERA_KEEP, 188, 1);
   Actor_WalkToAndWaitById(gMainRoutineWork.leaderActorId, 284, 188);
   Actor_FaceDirection(gMainRoutineWork.leaderActorId, FACING_WEST, 10);
@@ -1741,15 +1752,21 @@ ask:
   Event_End();
 }
 
-/// A step in the village: the blank overlay's marks follow the leader.
+/// Nothing visible happens as Felix steps onto the ring of cells (19, 7) to
+/// (21, 10) among the painted poles in the north of the village; the ground
+/// mask's two marks (`FadeOverlayWork`) start following him.
 void Kibombo_OverlayFollowsLeader(void) {
+  // XXX: what the ground mask's marks show by the poles, if anything; a
+  // recording of Felix walking round cells (20, 8) and (20, 9) would settle it.
   struct FadeOverlayWork *work = Ram_HeapSlots->fadeOverlay;
 
   work->actor =
       (struct FadeActor *)Actor_GetById(gMainRoutineWork.leaderActorId);
 }
 
-/// A step in the village: the blank overlay's marks stop following him.
+/// Nothing visible happens as Felix steps onto cell (20, 8) or (20, 9), in the
+/// middle of that ring among the painted poles; the ground mask's marks stop
+/// following him.
 void Kibombo_OverlayStopsFollowing(void) {
   struct FadeOverlayWork *work = Ram_HeapSlots->fadeOverlay;
 
@@ -2331,14 +2348,14 @@ void Kibombo_UncoverMarkUnderLeader(void) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
   if (work->stage != 0) {
-    if (GameFlag_Get(FLAG_SCOOPING_FIRST_MARK))
-      Kibombo_UncoverFirstMark();
-    else if (GameFlag_Get(FLAG_SCOOPING_SECOND_MARK))
-      Kibombo_UncoverSecondMark();
-    else if (GameFlag_Get(FLAG_SCOOPING_THIRD_MARK))
-      Kibombo_UncoverThirdMark();
-    else if (GameFlag_Get(FLAG_SCOOPING_FOURTH_MARK))
-      Kibombo_UncoverFourthMark();
+    if (GameFlag_Get(FLAG_SCOOPING_NORTH_MARK))
+      Kibombo_UncoverNorthMark();
+    else if (GameFlag_Get(FLAG_SCOOPING_SOUTH_MARK))
+      Kibombo_UncoverSouthMark();
+    else if (GameFlag_Get(FLAG_SCOOPING_WEST_MARK))
+      Kibombo_UncoverWestMark();
+    else if (GameFlag_Get(FLAG_SCOOPING_EAST_MARK))
+      Kibombo_UncoverEastMark();
   }
 }
 
@@ -2366,8 +2383,11 @@ void Kibombo_StopFireFlicker(void) {
     Task_Remove(Kibombo_FlickerStatueFires);
 }
 
-/// A step on an exit: the fires stop flickering and the scene leaves by the
-/// step's exit.
+/// Felix walks off the village or the statue's grounds by one of their ways
+/// out on the ceremony night: the village's south edge to the world map, its
+/// north and north-west paths up to the statue's grounds, or the grounds'
+/// south and south-west paths back down. The torches stop flickering, the exit
+/// sound plays and the screen closes.
 void Kibombo_LeaveRoom(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -2381,7 +2401,9 @@ void Kibombo_LeaveRoom(void) {
   Import_EventSetExitRequest(work->stepTrigger);
 }
 
-/// As Kibombo_LeaveRoom, with the leader's window transition.
+/// Felix walks into the Gabomba Statue's mouth on the statue's grounds, cell
+/// (16, 19): the screen closes in on him and he goes inside, the torches
+/// going still as he leaves.
 void Kibombo_LeaveRoomFading(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -2489,7 +2511,8 @@ DEFINE_KIBOMBO_STEP_WHEN_HELD(Kibombo_StepOntoSecondLadder, 38, 23, 25, 24, 39,
 DEFINE_KIBOMBO_STEP_WHEN_HELD(Kibombo_StepOntoThirdLadder, 54, 42, 44, 43, 55,
                               696, 864)
 
-/// Stepping into the uncovered vent: the leader climbs down its ladder.
+/// Felix walks south into the uncovered vent on the statue's grounds, cell
+/// (23, 17): he climbs down its ladder into the Gabomba Statue.
 void Kibombo_EnterVent(void) {
   if (GameFlag_Get(FLAG_KIBOMBO_FIRES_FLICKER))
     Kibombo_StopFireFlicker();
@@ -3358,14 +3381,14 @@ void Kibombo_InitializeStatueGrounds(void) {
       ACTOR_PRIORITY_IGNORES_RISES;
   if (GameFlag_Get(FLAG_KIBOMBO_VENT_UNCOVERED))
     Kibombo_UncoverVent();
-  if (GameFlag_Get(FLAG_FIRST_MARK_UNCOVERED))
-    Kibombo_UncoverFirstMark();
-  if (GameFlag_Get(FLAG_SECOND_MARK_UNCOVERED))
-    Kibombo_UncoverSecondMark();
-  if (GameFlag_Get(FLAG_THIRD_MARK_UNCOVERED))
-    Kibombo_UncoverThirdMark();
-  if (GameFlag_Get(FLAG_FOURTH_MARK_UNCOVERED))
-    Kibombo_UncoverFourthMark();
+  if (GameFlag_Get(FLAG_NORTH_MARK_UNCOVERED))
+    Kibombo_UncoverNorthMark();
+  if (GameFlag_Get(FLAG_SOUTH_MARK_UNCOVERED))
+    Kibombo_UncoverSouthMark();
+  if (GameFlag_Get(FLAG_WEST_MARK_UNCOVERED))
+    Kibombo_UncoverWestMark();
+  if (GameFlag_Get(FLAG_EAST_MARK_UNCOVERED))
+    Kibombo_UncoverEastMark();
   Actor_DisableById(ACTOR_STATUE_LEFT_EYE);
   Actor_DisableById(ACTOR_STATUE_RIGHT_EYE);
   Actor_DisableById(ACTOR_STATUE_TONGUE);
@@ -3588,7 +3611,10 @@ void Kibombo_InitializeHouses(void) {
     GameFlag_Set(FLAG_KIBOMBO_LEFT_HOME_OF_AKAFUBU);
 }
 
-/// A jump spot's step: the leader jumps forward.
+/// Felix walks north from cell (19, 8), among the painted poles in the north
+/// of the village, or west from cell (25, 27), on the ledge by the puddle in
+/// the south east: he jumps forward over the cell ahead, where there is
+/// somewhere to land.
 void Kibombo_JumpForward(void) { Field_TryJumpForward(); }
 
 void Kibombo_AskAboutFewerWarriors(void);
@@ -3614,6 +3640,8 @@ void Kibombo_OverlayStopsFollowing(void);
 
 // clang-format off
 u32 gKibombo_EmberScript[] = {
+  // XXX: what each jump crosses (a pole top, a gap, a roof); a recording of
+  // Felix walking into each cell would settle it.
     SC_WAIT(28),
     SC_SET(SW_HOOK, 0),
     SC_WAIT(1),
@@ -4235,13 +4263,13 @@ struct Trigger gKibombo_StatueGroundsTriggers[] = {
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 10,
      FLAG_KIBOMBO_VENT_UNCOVERED, EVENT(Kibombo_ScoopVent)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 11,
-     FLAG_FIRST_MARK_UNCOVERED, EVENT(Kibombo_ScoopFirstMark)},
+     FLAG_NORTH_MARK_UNCOVERED, EVENT(Kibombo_ScoopNorthMark)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 12,
-     FLAG_SECOND_MARK_UNCOVERED, EVENT(Kibombo_ScoopSecondMark)},
+     FLAG_SOUTH_MARK_UNCOVERED, EVENT(Kibombo_ScoopSouthMark)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 13,
-     FLAG_THIRD_MARK_UNCOVERED, EVENT(Kibombo_ScoopThirdMark)},
+     FLAG_WEST_MARK_UNCOVERED, EVENT(Kibombo_ScoopWestMark)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 14,
-     FLAG_FOURTH_MARK_UNCOVERED, EVENT(Kibombo_ScoopFourthMark)},
+     FLAG_EAST_MARK_UNCOVERED, EVENT(Kibombo_ScoopEastMark)},
     {TRIGGER_TABLE_END},
 };
 
@@ -4264,13 +4292,13 @@ struct Trigger gKibombo_StatueGroundsCeremonyTriggers[] = {
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 10,
      FLAG_KIBOMBO_VENT_UNCOVERED, EVENT(Kibombo_ScoopVent)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 11,
-     FLAG_FIRST_MARK_UNCOVERED, EVENT(Kibombo_ScoopFirstMark)},
+     FLAG_NORTH_MARK_UNCOVERED, EVENT(Kibombo_ScoopNorthMark)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 12,
-     FLAG_SECOND_MARK_UNCOVERED, EVENT(Kibombo_ScoopSecondMark)},
+     FLAG_SOUTH_MARK_UNCOVERED, EVENT(Kibombo_ScoopSouthMark)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 13,
-     FLAG_THIRD_MARK_UNCOVERED, EVENT(Kibombo_ScoopThirdMark)},
+     FLAG_WEST_MARK_UNCOVERED, EVENT(Kibombo_ScoopWestMark)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 14,
-     FLAG_FOURTH_MARK_UNCOVERED, EVENT(Kibombo_ScoopFourthMark)},
+     FLAG_EAST_MARK_UNCOVERED, EVENT(Kibombo_ScoopEastMark)},
     {TRIGGER_STEP, 20, FLAG_KIBOMBO_PIERS_MET, EVENT(Kibombo_MeetPiers)},
     {TRIGGER_STEP, 22, FLAG_KIBOMBO_PIERS_WITH_PARTY,
      EVENT(Kibombo_PiersThanksParty)},

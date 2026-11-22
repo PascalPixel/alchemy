@@ -56,6 +56,15 @@ enum HazardMode {
 /// Djinni's number (Field_RequestDjinnBattle).
 #define DJINNI_BATTLE_EVENT_FIRST 300
 
+/// gMainRoutineWork.difficulty: the level chosen on starting again from a
+/// cleared game.
+enum Difficulty {
+  DIFFICULTY_NORMAL = 0, ///< "Play on Normal level? (Default difficulty)"
+  /// "Play on EASY level? (Characters start at Lost Age Clear Data levels)"
+  DIFFICULTY_EASY = 1,
+  DIFFICULTY_HARD = 2 ///< "Play on HARD level? (Monsters are stronger)"
+};
+
 /// gMainRoutineWork, the state a save file keeps: play time, coins, the scene
 /// and the leader's position, the active party and the options.
 struct MainRoutineWork {
@@ -204,9 +213,7 @@ struct MainRoutineWork {
   /// (MainRoutineWork_InitializeDefaults): 1 when a file on the cartridge had
   /// been cleared. Nothing reads it back.
   u8 clearedFileAtStart;
-  /// The level chosen on starting again from a cleared game: 1 Easy, 2 Hard,
-  /// 0 Normal.
-  u8 difficulty;
+  u8 difficulty; ///< the level chosen from a cleared game (Difficulty)
   u8 unusedAfterDifficulty[4]; ///< no code names it
   /// The Broken Seal's coins, kept from the data transfer (DataTransfer_Apply)
   /// until Isaac's party joins and Party_AddIsaacsParty adds them.

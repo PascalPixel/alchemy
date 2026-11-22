@@ -197,10 +197,6 @@ void BattleEffect_RunMadZephyr(struct BattleEffectParams *args) {
 /// The bite's stages after the tornado sheet: BeamImage for a slash,
 /// TwelveModeImage otherwise.
 #define TARGET_STRIKE_BITE_PICTURES 3200
-/// The canvas row the fangs' pictures start at.
-#define TARGET_STRIKE_BITE_Y 56
-#define TARGET_STRIKE_BITE_WIDTH 18
-#define TARGET_STRIKE_BITE_HEIGHT 48
 
 /// Strikes the first target with slashes or a bite of closing fangs, with the
 /// extras its style's flags choose (enum TargetStrikeStyle): smoke, motes that

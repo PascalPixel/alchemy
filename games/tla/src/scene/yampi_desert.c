@@ -2076,7 +2076,8 @@ void YampiDesert_LandAndFightKingScorpion(void) {
   Event_SetAfterBattleDestination(
       SCENE_YAMPI_DESERT_SCORPION_PIT,
       YAMPI_DESERT_SCORPION_PIT_AFTER_KING_SCORPION_BATTLE);
-  Field_RequestBattleFromEncounterTable(10, 0);
+  Field_RequestBattleFromEncounterTable(
+      ENCOUNTER_ZONE_SCRIPTED_YAMPI_DESERT_ALHAFRA, 0);
 }
 
 /// Clears the scorpion's sand ripple and runs the entered room's setup; the
@@ -2389,7 +2390,7 @@ void YampiDesert_SetUpScorpionPit(void) {
     Actor_SetPosition(ACTOR_GEYSER, 232, 200);
   }
   Geyser_Start(0, GEYSER_FIRST_TERRAIN);
-  Geyser_Add(0, ACTOR_GEYSER, 0, 0, 64);
+  Geyser_Add(0, ACTOR_GEYSER, 0, 0, GEYSER_MAX_HEIGHT);
   wait(10);
 }
 

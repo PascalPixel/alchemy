@@ -305,6 +305,12 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define EFFECT_DRAW_PICTURE(draw, canvas, sheet, name, x, y)                   \
   (draw)(canvas, (sheet) + (name), x, y, name##_WIDTH, name##_HEIGHT)
 
+/// A bite's half pictures (TwelveModeImage's closing fangs, each drawn beside
+/// its mirror): the canvas row they start at, and their size.
+#define TARGET_STRIKE_BITE_Y 56
+#define TARGET_STRIKE_BITE_WIDTH 18
+#define TARGET_STRIKE_BITE_HEIGHT 48
+
 /// The battle background's picture as BG1 shows it from BG character block 2,
 /// one byte a pixel.
 #define BATTLE_BACKGROUND_WIDTH 256

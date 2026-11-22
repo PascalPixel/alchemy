@@ -2340,17 +2340,6 @@ void BattleEffect_StepVector3(struct Particle *particle, s32 damping,
 
 #include "shared/particle_update_falling.h"
 
-/// The falling rocks' work: their tiles, 64 rocks and their sprites, in a
-/// ring that next walks round.
-struct RockWork {
-  u8 tiles[1280];
-  struct Rock rocks[64];
-  struct EffectSprite sprites[64];
-  s16 next;
-  u16 tileBase;
-  s16 resource;
-};
-
 /// Spawns count rocks around (x, y, z), each pushed out at a random angle and
 /// thrown up and out along it.
 #include "shared/rock_spawn.h"

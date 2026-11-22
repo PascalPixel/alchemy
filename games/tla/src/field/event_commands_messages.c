@@ -136,13 +136,13 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
       Text_GetMessageSizeAltFar(message, &left, &top, &width, &height);
       message = -1;
       if (top > y)
-        portraitTop = top - 5;
+        portraitTop = top - PORTRAIT_WINDOW_TILES;
       else
         portraitTop = top + height;
       if (portraitTop < 0)
         portraitTop = top + height;
-      else if (portraitTop + 5 > DISPLAY_TILE_HEIGHT - 1)
-        portraitTop = top - 5;
+      else if (portraitTop + PORTRAIT_WINDOW_TILES > DISPLAY_TILE_HEIGHT - 1)
+        portraitTop = top - PORTRAIT_WINDOW_TILES;
       if (top < portraitTop) {
         s32 lines = height;
 

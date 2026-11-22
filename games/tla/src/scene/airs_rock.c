@@ -1098,9 +1098,6 @@ void AirsRock_MoveWhirlwind(struct Actor *shot) {
   }
 }
 
-/// A statue breathes a whirlwind every this many frames.
-#define WHIRLWIND_BREATH_FRAMES 240
-
 /// A statue's update: while no Psynergy, menu or item is in use it counts
 /// frames, and every WHIRLWIND_BREATH_FRAMES breathes a whirlwind
 /// (AirsRock_MoveWhirlwind) 8 pixels ahead of it with a puff of dust, with a
@@ -1444,10 +1441,6 @@ void AirsRock_DriftFog(void) {
           (volatile u32 *)channel);
 }
 
-/// The screen line under the whirlwind's picture, which starts at the top of
-/// the screen: its foot, where the twister rock stands.
-#define WHIRLWIND_FOOT_LINE (WHIRLWIND_MAP_HEIGHT * 8)
-
 /// As the fog lifts: each line of the great whirlwind sways and scatters the
 /// more the higher it stands above its foot, while the fog's lines ripple and
 /// its blend breathes as in AirsRock_DriftFog.
@@ -1465,17 +1458,18 @@ void AirsRock_LiftFog(void) {
     spread = (DISPLAY_HEIGHT - i) >> 2;
     wave = Math_Sin((i + (u8)gFrameCount) << 8);
     // Swayed by up to half the line's height above the foot, less 4, and
-    // jittered by up to a quarter of the lines below; a line swung past 56
-    // pixels one way or 64 the other is pulled back by as much.
-    value = (Iwram_MulFX(wave, (WHIRLWIND_FOOT_LINE - i) * (FIXED_ONE / 64)) >>
-             11) -
-            4;
+    // jittered by up to a quarter of the lines below; a line swung past
+    // WAVE_SCROLL_MAX or WAVE_SCROLL_MIN is pulled back by as much.
+    value =
+        (Iwram_MulFX(wave, (WAVE_SCROLL_CALM_LINE - i) * (FIXED_ONE / 64)) >>
+         11) -
+        4;
     line[0] = value;
     line[0] += Random16() % (spread * 2) - spread;
-    if (line[0] > 56)
-      line[0] -= 56;
-    else if (line[0] < -64)
-      line[0] += 64;
+    if (line[0] > WAVE_SCROLL_MAX)
+      line[0] -= WAVE_SCROLL_MAX;
+    else if (line[0] < WAVE_SCROLL_MIN)
+      line[0] -= WAVE_SCROLL_MIN;
     line[1] = 0;
     value = wave + FIXEDtoINT(layer->y);
     line[2] = FIXEDtoINT(layer->x) + (value >> FOG_RIPPLE_SHIFT);

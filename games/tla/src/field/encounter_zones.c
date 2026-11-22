@@ -57,7 +57,7 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {49, 50, 51, 52, 53, 637},
         .weights = {10, 10, 10, 10, 10, 10},
     },
-    // zone 10
+    // ENCOUNTER_ZONE_SCRIPTED_YAMPI_DESERT_ALHAFRA
     {
         .formations = {55, 56},
         .weights = {10, 10},
@@ -693,7 +693,7 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {621, 622, 623, 624, 625, 626, 627, 628},
         .weights = {10, 10, 10, 10, 20, 20, 20, 20},
     },
-    // zone 102
+    // ENCOUNTER_ZONE_SCRIPTED
     {
         .formations = {77, 78, 635, 636, 638},
         .weights = {10, 10, 10, 10, 10},

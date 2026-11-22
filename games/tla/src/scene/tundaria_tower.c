@@ -1504,17 +1504,6 @@ void TundariaTower_SetLeaderCellShape(s32 level, s32 layer) {
 
 #include "shared/particle_update_falling.h"
 
-/// The falling rocks' work: their tiles, the rocks and their sprites, in a ring
-/// that next walks round.
-struct RockWork {
-  u8 tiles[1280];
-  struct Rock rocks[ROCK_COUNT];
-  struct EffectSprite sprites[ROCK_COUNT];
-  s16 next;
-  u16 tileBase;
-  s16 resource;
-};
-
 // Spawns count rocks around (x, y, z), each pushed out at a random angle and
 // thrown up and out along it.
 #include "shared/rock_spawn.h"

@@ -474,7 +474,7 @@ top:
             WindowColor_Apply(party->windowHue, party->windowBrightness);
             RESTORE_SAVE_IMAGE()
             ClearData_Apply(TRANSFERRED_SAVE);
-            party->difficulty = 1;
+            party->difficulty = DIFFICULTY_EASY;
           }
           goto leave;
         }
@@ -485,7 +485,7 @@ top:
       Message_CloseFinishedWindows();
       if (i == YES) {
         Event_SetFlag(FLAG_HARD_LEVEL);
-        gMainRoutineWork.difficulty = 2;
+        gMainRoutineWork.difficulty = DIFFICULTY_HARD;
         goto leave;
       }
       // "Play on Normal level? (Default difficulty)"

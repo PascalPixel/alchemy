@@ -458,7 +458,7 @@ void ShamanVillageCave_MeetGladiators(void) {
       SCENE_SHAMAN_VILLAGE_CAVE, SHAMAN_VILLAGE_CAVE_AFTER_BEATING_GLADIATORS);
   Event_SetDefeatDestination(SCENE_SHAMAN_VILLAGE_CAVE,
                              SHAMAN_VILLAGE_CAVE_AFTER_LOSING_TO_GLADIATORS);
-  Field_RequestBattleFromEncounterTable(102, 2);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 2);
 }
 
 /// Talking to a gladiator starts the rematch.
@@ -470,7 +470,7 @@ void ShamanVillageCave_FightGladiators(void) {
       SCENE_SHAMAN_VILLAGE_CAVE, SHAMAN_VILLAGE_CAVE_AFTER_BEATING_GLADIATORS);
   Event_SetDefeatDestination(SCENE_SHAMAN_VILLAGE_CAVE,
                              SHAMAN_VILLAGE_CAVE_AFTER_LOSING_TO_GLADIATORS);
-  Field_RequestBattleFromEncounterTable(102, 2);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 2);
 }
 
 /// Back in the cave after losing the rematch, the gladiators crow over the

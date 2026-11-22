@@ -166,9 +166,6 @@ struct Geyser {
   struct Actor *rider; ///< the platform at its top, which the leader rides
 };
 
-/// The pixels the cliffs' geyser rises to.
-#define GEYSER_MAX_HEIGHT 64
-
 /// The geysers' work, kept in the inventory snapshot's spare room.
 struct GeyserWork {
   s16 entry;        ///< the VRAM cache entry holding the column's tiles

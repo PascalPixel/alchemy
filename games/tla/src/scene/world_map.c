@@ -1130,7 +1130,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Event_SetDefeatDestination(SCENE_WORLD_MAP, WORLD_MAP_BANDIT_LOST);
     WorldMap_ReloadPendingAreaGraphics();
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-    Field_RequestBattleFromEncounterTable(102, 3);
+    Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 3);
   } else if (entrance == WORLD_MAP_BANDIT_LOST) {
     Event_ClearFlag(FLAG_BANDIT_ON_WORLD_MAP);
     facingSouth = FACING_SOUTH;

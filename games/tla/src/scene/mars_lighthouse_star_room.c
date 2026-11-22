@@ -445,7 +445,7 @@ void MarsLighthouseStarRoom_WakeFlameDragons(void) {
       (s32)&SceneId_MarsLighthouseStarRoom,
       MARS_LIGHTHOUSE_STAR_ROOM_AFTER_FLAME_DRAGONS_BATTLE);
   gMainRoutineWork.battleBackground = SCENE_GONDOWAN_CLIFFS_HIDEOUT;
-  Field_RequestBattleFromEncounterTable(102, 0);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 0);
 }
 
 void Event_End();

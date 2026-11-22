@@ -1241,7 +1241,7 @@ void MarsLighthouseAerie_FaceDoomDragon(void) {
   work->battleType = BATTLE_TYPE_NO_ESCAPE;
   FieldEvent_SetAfterBattleDestination(SCENE_MARS_LIGHTHOUSE_AERIE,
                                        ENTRANCE_DRAGON_BEATEN);
-  Field_RequestBattleFromEncounterTable(102, 1);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 1);
   return;
 }
 

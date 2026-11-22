@@ -602,4 +602,8 @@ enum MessageWindowOption {
   MESSAGE_WINDOW_FIXED_X = 32        ///< WINDOW_FLAG_FIXED_X
 };
 
+/// Portrait_OpenWindow's window is PORTRAIT_WINDOW_TILES tiles square, a tile
+/// wider while minds are read.
+#define PORTRAIT_WINDOW_TILES 5
+
 #endif

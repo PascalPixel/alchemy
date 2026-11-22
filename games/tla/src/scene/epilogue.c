@@ -141,9 +141,6 @@ struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
 /// and set an option bit that Message_OpenWindow never reads.
 #define EPILOGUE_WINDOW_OPTIONS 4
 
-/// Portrait_OpenWindow's window is 5 tiles square.
-#define PORTRAIT_WINDOW_TILES 5
-
 /// Opens the epilogue's message window at tile (x, y) and, unless the speaker
 /// has EPILOGUE_NO_PORTRAIT, the speaker's portrait at tile (portraitX,
 /// portraitY) with its frame round it; in mode 2, which Epilogue_ShowLine

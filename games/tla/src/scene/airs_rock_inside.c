@@ -884,9 +884,9 @@ void AirsRockInside_MoveWhirlwind(struct Actor *shot) {
 }
 
 /// A woken statue's update: while no menu, Psynergy or item is in use it counts
-/// frames in its timer, and every 240th breathes a new whirlwind 8 pixels ahead
-/// of it, with a puff of dust below and a flare unless the leader is riding
-/// one.
+/// frames in its timer, and every WHIRLWIND_BREATH_FRAMES breathes a new
+/// whirlwind 8 pixels ahead of it, with a puff of dust below and a flare unless
+/// the leader is riding one.
 void AirsRockInside_StatueBreathesWhirlwind(struct Actor *actor) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *shot;
@@ -896,7 +896,7 @@ void AirsRockInside_StatueBreathesWhirlwind(struct Actor *actor) {
   if (work->psynergy != 0 || work->fieldMenu != 0 || work->pauseMenu != 0 ||
       work->item != 0)
     return;
-  if (actor->timer == 240) {
+  if (actor->timer == WHIRLWIND_BREATH_FRAMES) {
     if (!GameFlag_Get(FLAG_RIDING_WHIRLWIND))
       Actor_PlaySoundInView(actor, SE_FLAME_FLARE);
     if (actor->facing == FACING_NORTH) {
@@ -929,7 +929,7 @@ void AirsRockInside_StatueBreathesWhirlwind(struct Actor *actor) {
 }
 
 /// Wakes a statue unless the party keeps its place: it breathes its first
-/// whirlwind once its timer reaches 240.
+/// whirlwind once its timer reaches WHIRLWIND_BREATH_FRAMES.
 void AirsRockInside_WakeStatue(struct Actor *actor, s16 timer, u8 value) {
   if (!GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
     actor->steeringFlags = 0;
@@ -1019,7 +1019,7 @@ void AirsRockInside_StatueBreathesPooledWhirlwind(struct Actor *actor) {
   // three calls.
   for (i = 0; i != 3;)
     Actor_GetById(ACTOR_HALL_FIRST_WHIRLWIND + i++);
-  if (actor->timer == 240) {
+  if (actor->timer == WHIRLWIND_BREATH_FRAMES) {
     shot = 0;
     if (!GameFlag_Get(FLAG_RIDING_WHIRLWIND))
       Actor_PlaySoundInView(actor, SE_FLAME_FLARE);

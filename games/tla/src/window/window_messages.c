@@ -797,10 +797,12 @@ struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
   portraitY = -4;
   portraitX = portraitY;
   if (work->mindRead != 0) {
-    window = Window_Create(x, y, 6, 5, WINDOW_FLAG_INSTANT);
+    window = Window_Create(x, y, PORTRAIT_WINDOW_TILES + 1,
+                           PORTRAIT_WINDOW_TILES, WINDOW_FLAG_INSTANT);
     portraitX = 0;
   } else {
-    window = Window_Create(x, y, 5, 5, WINDOW_FLAG_INSTANT);
+    window = Window_Create(x, y, PORTRAIT_WINDOW_TILES, PORTRAIT_WINDOW_TILES,
+                           WINDOW_FLAG_INSTANT);
   }
   if (window != 0) {
     Portrait_Create(speaker, portraitOption, -1, window, portraitX, portraitY);

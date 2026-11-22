@@ -2352,17 +2352,6 @@ void BattleEffect_StepVector3(struct Particle *particle, s32 damping,
 
 #include "shared/particle_update_falling.h"
 
-/// The falling rocks' work: their tiles, the rocks and their sprites, in a ring
-/// that next walks round.
-struct RockWork {
-  u8 tiles[1280];
-  struct Rock rocks[ROCK_COUNT];
-  struct EffectSprite sprites[ROCK_COUNT];
-  s16 next;
-  u16 tileBase;
-  s16 resource;
-};
-
 /// Drops count rocks from (x, y, z), each flung out at a random angle.
 void MagmaRock_DropRocks(s32 x, s32 y, s32 z, s32 count) {
   struct RockWork *work;
@@ -2414,7 +2403,7 @@ void MagmaRock_StartFallingRocks(void) {
   Import_DecompressTaggedLz(Resource_GetTableEntry(RESOURCE_FALLING_ROCK),
                             work);
   entry = VramCache_FindFreeEntry();
-  tile = Vram_Load(entry, 1280, work);
+  tile = Vram_Load(entry, sizeof(work->tiles), work);
   work->tileBase = tile;
   work->resource = entry;
   rock = work->rocks;

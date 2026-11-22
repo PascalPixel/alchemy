@@ -582,14 +582,15 @@ UNUSED static void ColosseumAzartMatch_SetCourseFlag(void) {
 /// Reaching Colosseum Final 1's arena, the leader takes a prize and fights
 /// Azart.
 static void ColosseumAzartMatch_ReachArena(void) {
-  s32 approach;
-  s32 n;
-  s32 base = 0;
+  s32 opponentFirst;
+  s32 i;
+  s32 opponentFirstSlot = 0;
   Colosso_NoOp();
   Event_Start();
-  approach = Colosso_TakePrize(ITEM_IRON_SHIELD, ITEM_PADDED_GLOVES);
+  opponentFirst = Colosso_TakePrize(ITEM_IRON_SHIELD, ITEM_PADDED_GLOVES);
   Colosso_WaitForOpponentToFinish();
-  for (n = 0; n < 10; n++) {
+  // Up to ten waits of 300 frames while the opponent holds up his prize.
+  for (i = 0; i < 10; i++) {
     Actor_WaitForScriptEndById(ACTOR_OPPONENT);
   }
   Actor_SetSpeed(ACTOR_OPPONENT, 1);
@@ -610,7 +611,7 @@ static void ColosseumAzartMatch_ReachArena(void) {
   Actor_SetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_FIGHTING_STANCE);
   Event_Wait(10);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_COLOSSO,
-                                        base - approach + 1);
+                                        opponentFirstSlot - opponentFirst + 1);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Event_SetAfterBattleDestination(SCENE_COLOSSEUM_AZART_MATCH,
                                   COLOSSEUM_AZART_MATCH_AFTER_MATCH_WON);

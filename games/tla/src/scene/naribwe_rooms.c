@@ -1,22 +1,18 @@
 /// @file
-/// Naribwe's rooms (SceneId_NaribweRooms), the houses behind the village's
-/// five doors, each a room of one sheet:
+/// The insides of Naribwe's huts, behind the village's five doors.
 ///
-/// - the northwest house (NARIBWE_ROOMS_TO_NARIBWE_NORTHWEST), whose back door
-///   leads into the west house (NARIBWE_ROOMS_TO_NARIBWE_WEST) by exits 6 and
-///   7;
-/// - the shop (NARIBWE_ROOMS_TO_NARIBWE_SOUTHWEST), its weapon and armor
-///   merchants side by side behind one mat;
-/// - the inn (NARIBWE_ROOMS_TO_NARIBWE_SOUTHEAST);
-/// - the fortune-teller's house (NARIBWE_ROOMS_TO_NARIBWE_NORTHEAST), where
-///   for 20 coins he reads an item the party sets on his table: a weapon for
-///   the foe ahead, a piece of armor for a Djinni still to be found, a prong
-///   of the Trident for the prong still missing, the Trident for the beast it
-///   was forged against, a Psynergy item for the next power to gain, and
-///   anything else for the path to follow.
+/// The northwest hut's back door leads into the hut beside it, whose own door
+/// opens on the fenced back yard. The southwest hut is the shop, its weapon and
+/// armor merchants side by side behind one mat, and the southeast hut the inn.
+/// At the top of the village is the fortune-teller's hut, where for 20 coins he
+/// reads an item the party sets on his table: a weapon for the foe ahead, a
+/// piece of armor for a Djinni still to be found, a prong of the Trident for
+/// the prong still missing, the Trident for the beast it was forged against, a
+/// Psynergy item for the next power to gain, and anything else for the path to
+/// follow.
 ///
-/// Once Gabomba's message is carried (FLAG_GABOMBA_MESSAGE_CARRIED) the
-/// villagers have other things to say (gNaribweRooms_TriggersOnReturn).
+/// Once Piers has carried Gabomba's message (`FLAG_GABOMBA_MESSAGE_CARRIED`)
+/// the villagers have other things to say (`gNaribweRooms_TriggersOnReturn`).
 
 #include "flags.h"
 #include "ability_ids.h"
@@ -48,8 +44,7 @@
 #include "item_ids.h"
 #include "text/msg_ids.h"
 
-/// The placed actors, numbering the rows of gActorPlacements from
-/// ACTOR_FIRST_PLACED.
+/// The placed actors, numbering the rows of `gActorPlacements`.
 enum NaribweRoomsActorId {
   /// "The fortune-teller lives at the highest house in Naribwe..."
   ACTOR_BOY_DIRECTING_TO_THE_FORTUNE_TELLER = ACTOR_FIRST_PLACED,
@@ -80,7 +75,7 @@ enum NaribweRoomsActorId {
   ACTOR_SMOKE_CLOUD
 };
 
-/// SPRITE_FORTUNE_TELLER's dance: arms spread with his staff, the staff raised
+/// The fortune-teller's dance: arms spread with his staff, the staff raised
 /// high, then a crouch, over and over.
 #define ANIM_FORTUNE_TELLER_DANCE 5
 
@@ -112,7 +107,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-/// "The items that one carries are filled with one's hopes and desires."
+/// Felix casts Mind Read on the fortune-teller across his table, in his hut at
+/// the top of Naribwe: "The items that one carries are filled with one's hopes
+/// and desires..."
 s32 NaribweRooms_MindReadFortuneTeller(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -123,8 +120,9 @@ s32 NaribweRooms_MindReadFortuneTeller(void) {
   return 0;
 }
 
-/// Once Gabomba's message is carried: "Items placed before me are filled with
-/// the desires of those who..."
+/// Felix casts Mind Read on the fortune-teller across his table once Piers has
+/// carried Gabomba's message: "Items placed before me are filled with the
+/// desires of those who..."
 s32 NaribweRooms_MindReadFortuneTellerOnReturn(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -141,14 +139,15 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gNaribweRooms_Triggers;
 }
 
-/// Naribwe's shops, as Shop_Run numbers them.
+/// Naribwe's shops, as `Shop_Run` numbers them.
 enum { SHOP_NARIBWE_WEAPONS = 14, SHOP_NARIBWE_ARMOR = 15 };
 
-/// Naribwe's inn, as Inn_CheckIn numbers the inns.
+/// Naribwe's inn, as `Inn_CheckIn` numbers the inns.
 enum { NARIBWE_INN = 5 };
 
-/// The weapon merchant sells across the counter; from anywhere else he advises
-/// taking a weapon to the fortune-teller.
+/// Felix talks to the weapon merchant behind the swords in Naribwe's shop:
+/// across the mat, he can buy; from elsewhere the merchant advises taking a
+/// weapon to the fortune-teller.
 void NaribweRooms_TalkToWeaponMerchant(s32 speaker) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
@@ -164,9 +163,9 @@ void NaribweRooms_TalkToWeaponMerchant(s32 speaker) {
   }
 }
 
-/// The weapon merchant once Gabomba's message is carried: across the counter he
-/// sells; from anywhere else he sends out-of-town customers to the
-/// fortune-teller.
+/// Felix talks to the weapon merchant in Naribwe's shop once Piers has carried
+/// Gabomba's message: across the mat, he can buy; from elsewhere the merchant
+/// sends out-of-town customers to the fortune-teller.
 void NaribweRooms_TalkToWeaponMerchantOnReturn(s32 speaker) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
@@ -182,7 +181,8 @@ void NaribweRooms_TalkToWeaponMerchantOnReturn(s32 speaker) {
   }
 }
 
-/// The armor merchant sells across the counter; from anywhere else he advises
+/// Felix talks to the armor merchant behind the helms and shields in Naribwe's
+/// shop: across the mat, he can buy; from elsewhere the merchant advises
 /// visiting the fortune-teller while in the village.
 void NaribweRooms_TalkToArmorMerchant(s32 speaker) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
@@ -200,9 +200,9 @@ void NaribweRooms_TalkToArmorMerchant(s32 speaker) {
   }
 }
 
-/// The armor merchant once Gabomba's message is carried: across the counter he
-/// sells; from anywhere else he sends the party to the fortune-teller for
-/// anything it wishes to know.
+/// Felix talks to the armor merchant in Naribwe's shop once Piers has carried
+/// Gabomba's message: across the mat, he can buy; from elsewhere the merchant
+/// sends the party to the fortune-teller for anything it wishes to know.
 void NaribweRooms_TalkToArmorMerchantOnReturn(s32 speaker) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
@@ -218,8 +218,8 @@ void NaribweRooms_TalkToArmorMerchantOnReturn(s32 speaker) {
   }
 }
 
-/// The innkeeper opens the inn across the counter; from anywhere else she talks
-/// of the village's cooking.
+/// Felix talks to the woman behind the counter of Naribwe's inn: across it, he
+/// can stay the night; from elsewhere she talks of the village's cooking.
 void NaribweRooms_TalkToInnkeeper(s32 speaker) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
@@ -235,9 +235,9 @@ void NaribweRooms_TalkToInnkeeper(s32 speaker) {
   }
 }
 
-/// The innkeeper once Gabomba's message is carried: across the counter she
-/// opens the inn; from anywhere else she sees too many travelers to remember
-/// Piers.
+/// Felix talks to the innkeeper once Piers has carried Gabomba's message:
+/// across the counter, he can stay the night; from elsewhere she sees too many
+/// travelers to remember Piers.
 void NaribweRooms_TalkToInnkeeperOnReturn(s32 speaker) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
@@ -253,8 +253,9 @@ void NaribweRooms_TalkToInnkeeperOnReturn(s32 speaker) {
   }
 }
 
-/// The fortune-teller, talked to across his table, offers a reading for 20
-/// coins; a No to either question sends the party back.
+/// Felix talks to the fortune-teller across his table, in his hut at the top of
+/// Naribwe: he offers a reading for 20 coins, and a No to either question ends
+/// it.
 void NaribweRooms_TalkToFortuneTeller(void) {
   u8 *message;
 

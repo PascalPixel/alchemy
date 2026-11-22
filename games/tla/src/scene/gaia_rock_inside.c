@@ -239,7 +239,7 @@ enum {
   ACTOR_ALTAR = 9,
   ACTOR_HANGING_VINE = 10,
   /// The three stone heads that burst out of the wall of handholds under Felix
-  /// (GaiaRockInside_StatueRisesUnderLeader).
+  /// (GaiaRockInside_StoneHeadBurstsOut).
   ACTOR_STATUE_A = 11,
   ACTOR_STATUE_B = 12,
   ACTOR_STATUE_C = 13,
@@ -2052,24 +2052,24 @@ s32 GaiaRockInside_RecordStumpSpots(void) {
 /// reaches its west trap hold, drawn at cell (24, 37) (cell (24, 101) of the
 /// wall's overhead layer): a yellow stone head with red eyes bursts out of the
 /// wall under him in a shower of rocks, he flails, and he is left standing on
-/// it, no longer climbing (GaiaRockInside_StatueRisesUnderLeader).
+/// it, no longer climbing (GaiaRockInside_StoneHeadBurstsOut).
 void GaiaRockInside_ClimbOntoWestStoneHead(void) {
   // XXX: the recording ends there; whether he then falls to the floor, as the
   // outside's stone faces make him, would take a recording that runs on.
-  GaiaRockInside_StatueRisesUnderLeader(ACTOR_STATUE_A, FLAG_STATUE_A_RISEN);
+  GaiaRockInside_StoneHeadBurstsOut(ACTOR_STATUE_A, FLAG_STATUE_A_RISEN);
 }
 
 /// As GaiaRockInside_ClimbOntoWestStoneHead, for the middle trap hold, a
 /// little lower and to the east: drawn at cell (28, 39), cell (28, 103) of the
 /// overhead layer.
 void GaiaRockInside_ClimbOntoMiddleStoneHead(void) {
-  GaiaRockInside_StatueRisesUnderLeader(ACTOR_STATUE_B, FLAG_STATUE_B_RISEN);
+  GaiaRockInside_StoneHeadBurstsOut(ACTOR_STATUE_B, FLAG_STATUE_B_RISEN);
 }
 
 /// As GaiaRockInside_ClimbOntoWestStoneHead, for the east trap hold: drawn at
 /// cell (35, 39), cell (35, 103) of the overhead layer.
 void GaiaRockInside_ClimbOntoEastStoneHead(void) {
-  GaiaRockInside_StatueRisesUnderLeader(ACTOR_STATUE_C, FLAG_STATUE_C_RISEN);
+  GaiaRockInside_StoneHeadBurstsOut(ACTOR_STATUE_C, FLAG_STATUE_C_RISEN);
 }
 
 extern struct Trigger gGaiaRockInside_Triggers[];
@@ -3482,7 +3482,7 @@ extern u32 gGaiaRockInside_FlyingRockScript[];
 /// of rocks as the screen shakes. He flails, drops onto whatever is under him,
 /// the view settles on him, and he is left walking rather than climbing; flag
 /// then keeps the head out.
-void GaiaRockInside_StatueRisesUnderLeader(s32 id, s32 flag) {
+void GaiaRockInside_StoneHeadBurstsOut(s32 id, s32 flag) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 gravity = leader->gravity;
   struct Actor *pillar;

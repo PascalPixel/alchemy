@@ -1,9 +1,20 @@
 /// @file
-/// Magma Rock's inside, the volcano's heart: the statues whose fire, once Burst
-/// wakes them, sets great stone faces pouring lava into its rooms, the
-/// platforms that ride the lava and the floor switches whose gates drain it,
-/// the pillars pushed into it, Fury the Djinni, and deep inside the tablet
-/// where Jenna learns Blaze and the flames Blaze moves.
+/// Magma Rock's inside, the rooms in the volcano that the great blast on its
+/// top opened. Three halls are each watched by a great stone face: Burst on
+/// the small statue beside it makes the statue spit a fireball into the face,
+/// whose eyes light red as it pours lava over the hall's floor, and a floor
+/// switch beside a grated gate lets the lava drain away again. While the lava
+/// is up, platforms float round it and Felix leaps from its edge onto them, or
+/// onto the pillars he has pushed into it. A Mars Djinni left over from the
+/// first journey may wait in the entrance hall's south, Fury waits in its own
+/// room, and the Lucky Medal, Mist Potion, Salamander Tail and Golem Core lie
+/// in chests. Deep inside, stepping onto an islet in the lava sets off a rock
+/// that bursts out of it, throwing burning rocks and flames round the room; a
+/// crest on the stone wall there opens into a stairway to a sea of lava crossed
+/// on stepping stones, where Jenna learns Blaze at the tablet. Blaze then
+/// carries a flame to a torch to sink the pillar on the way out, and back in
+/// the ember stone's room carries the fallen flames to the two torches that let
+/// the party reach the stone and take the Magma Ball from it.
 
 #include "sprite_ids.h"
 #include "graphics/palette_buffers.h"
@@ -80,9 +91,10 @@ static __inline__ struct Actor *Create(s32 kind, s32 x, s32 y, s32 z) {
 #include "shared/tables.h"
 #include "shared/tundaria_tower.h"
 
-// The lava rises in three parts of the volcano, each when a statue's fire is
-// Burst into its lava fall, and drains when the floor switch beside it is
-// pressed; the flags hold the state until the party leaves Magma Rock.
+// The lava rises in three parts of the volcano, each when a statue's fireball
+// strikes the great stone face there, and drains when a floor switch by that
+// part's gate is pressed; the flags hold the state until the party comes back
+// in from outside.
 #define FLAG_ENTRANCE_FLOODED FLAG_AREA_TEMP_00
 #define FLAG_FURY_FLOODED FLAG_AREA_TEMP_01
 #define FLAG_LOWER_ROOMS_FLOODED FLAG_AREA_TEMP_02
@@ -105,20 +117,51 @@ static __inline__ struct Actor *Create(s32 kind, s32 x, s32 y, s32 z) {
 #define FLAG_ROCKS_RELEASED 0x9f8
 #define FLAG_MAGMA_BALL_TAKEN 0x9f9
 #define FLAG_BLAZE_LEARNED 0x9fa
-// The Blaze tablet's room: a marker cell the leader stops on raises the trigger
-// STEP_CELL_TRIGGER_BASE plus its number, and its flag keeps it lit.
+// The Blaze tablet's room: a stone on the way to the tablet that the map's
+// upper layer numbers raises the trigger STEP_CELL_TRIGGER_BASE plus its number
+// when Felix stops on it, and its flag keeps the stone behind it raised.
 #define FLAG_ANY_MARKER_LIT FLAG_SCENE_TEMP_00
 #define FLAG_MARKER_LIT(marker) (FLAG_SCENE_TEMP_00 + (marker))
 enum { STEP_CELL_TRIGGER_BASE = 200 };
+
+/// The cell behaviours the rooms' maps mark their spots with, which the
+/// trigger tables answer. A room may use a number in its own sense.
+enum MagmaRockInsideCellBehavior {
+  /// A floor switch beside a lava gate; the Golem Core's room has a second.
+  CELL_FLOOR_SWITCH = 30,
+  CELL_SECOND_FLOOR_SWITCH = 31,
+  /// The ember stone's room: the islets in the lava that set the stone off,
+  /// and the stone where it lands.
+  CELL_ERUPTION_ISLET = 30,
+  CELL_EMBER_STONE = 31,
+  /// The Blaze tablet, read from any side.
+  CELL_BLAZE_TABLET = 30,
+  /// The cell before a fire-spitting statue that Burst is cast at.
+  CELL_STATUE = 50,
+  CELL_LOWER_WEST_STATUE = 51,
+  CELL_LOWER_EAST_STATUE = 52,
+  /// The lava's edge, where Felix leaps onto what stands in the lava; the
+  /// cracked pillars' room's two pillars stand on edge cells of their own.
+  CELL_LAVA_EDGE = 70,
+  CELL_CRACKED_PILLAR_A = 71,
+  CELL_CRACKED_PILLAR_B = 72,
+  CELL_LAVA_EDGE_NORTH = 73, ///< leapt from walking north
+  CELL_LAVA_EDGE_WEST = 75,  ///< leapt from walking west
+  CELL_LAVA_EDGE_EAST = 78,  ///< the far side of the Lucky Medal room's lava
+  /// The Blaze tablet room's stepping stones, two pictures of them in turn.
+  CELL_STEPPING_STONE_A = 80,
+  CELL_STEPPING_STONE_B = 81
+};
 
 /// The room past the Lucky Medal's chest: one lava platform.
 enum MagmaRockInsideLuckyMedalChestActorId {
   ACTOR_LUCKY_MEDAL_PLATFORM = ACTOR_FIRST_PLACED
 };
 
-/// The entrance: the statue whose fire floods it, the columns standing in the
-/// lava, the pillar pushed into it, an unseen marker on its floor switch and
-/// the Mars Djinni Fire19.
+/// The entrance hall: the small statue whose fireball sets the great face
+/// flooding it, the row of columns standing across its lava, the pillar pushed
+/// into that row, an unseen marker on its floor switch and the Mars Djinni
+/// "Fire19".
 enum MagmaRockInsideEntranceActorId {
   ACTOR_STATUE = ACTOR_FIRST_PLACED,
   ACTOR_COLUMN_A,
@@ -129,7 +172,7 @@ enum MagmaRockInsideEntranceActorId {
   ACTOR_COLUMN_F,
   ACTOR_ENTRANCE_PILLAR,
   ACTOR_ENTRANCE_SWITCH_MARKER,
-  ACTOR_FIRE19 ///< the spare Mars Djinni "Fire19"
+  ACTOR_FIRE19 ///< the Mars Djinni left over from the first journey
 };
 
 /// Fury's room: the statue, an unseen marker on its floor switch, two lava
@@ -211,14 +254,14 @@ enum MagmaRockInsideEmberStoneActorId {
 #define FLAG_TORCH_LIT(flame)                                                  \
   ((flame) - ACTOR_WEST_TORCH_FLAME + FLAG_WEST_TORCH_LIT)
 
-/// Blaze on a torch: its flame, set on it at a sixteenth of its size, grows by
-/// a sixteenth FLAME_GROW_STEPS times, 5 frames apart; then the pillar it
-/// lowers sinks PILLAR_SINK_DEPTH pixels into the floor, a pixel every 5
-/// frames, as deep as the ember stone room's sunken pillars stand.
+/// A torch Blaze lights: its flame starts a sixteenth of its size and grows by
+/// a sixteenth FLAME_GROW_STEPS times, 5 frames apart; then the pillar the
+/// torches guard sinks PILLAR_SINK_DEPTH pixels into the floor, a pixel every
+/// 5 frames, as deep as the ember stone room's sunken pillars stand.
 enum { FLAME_GROW_STEPS = 16 };
 
-/// The quarter turn a facing lies in, as the leader faces a switch or a pillar:
-/// an eighth of a turn added, then this kept.
+/// The quarter turn a facing lies in, as Felix faces a switch or the lava: an
+/// eighth of a turn added, then this kept.
 #define FACING_QUARTER_MASK (TRIG_TURN - DEGtoANG(90))
 
 /// What MagmaRockInside_RaiseLava and MagmaRockInside_DrainLava keep while the
@@ -230,8 +273,9 @@ enum { LAVA_ALREADY_UP = 212 };
 /// pillars' room starts at this word, the third corner, across from the first.
 enum { PLATFORM_PATH_THIRD_CORNER = 10 };
 
-/// The Blaze tablet's room: the tablet, the pillar its torch lowers, the flame
-/// Blaze moves and the torch's flame.
+/// The Blaze tablet's room: the tablet, and on the ledge in the lava's
+/// south-west the pillar in the way out, the flame burning in the west bowl
+/// beside it, which Blaze carries, and the flame of the east bowl it lights.
 enum MagmaRockInsideBlazeTabletActorId {
   ACTOR_BLAZE_TABLET = ACTOR_FIRST_PLACED,
   ACTOR_TORCH_PILLAR,
@@ -337,40 +381,6 @@ void MagmaRockInside_InitRockSprite(struct EffectSprite *sprite, s32 width,
 
 void Particle_UpdateFalling(void);
 
-void MagmaRockInside_FightFury(void);
-
-void MagmaRockInside_StartPushingPillar(void);
-void MagmaRockInside_FinishPushingPillar(void);
-void MagmaRockInside_LeapOverLava(void);
-
-void MagmaRockInside_DrainLava(void);
-
-void MagmaRockInside_ReleaseRocks(void);
-void MagmaRockInside_TakeFlame(void);
-
-void MagmaRockInside_GrowFlame(void);
-
-void MagmaRockInside_PutOutFlames(void);
-
-void MagmaRockInside_ExamineEmberStone(void);
-
-void MagmaRockInside_StampStepCell(void);
-
-void MagmaRockInside_StampOtherStepCell(void);
-
-void MagmaRockInside_StepOnMarker(void);
-
-/// MagmaRockInside_LightTorch for the Blaze tablet room's torch.
-void MagmaRockInside_LightTabletTorch(void);
-void MagmaRockInside_GrowTabletFlame(void);
-void MagmaRockInside_PutOutTabletFlame(void);
-void MagmaRockInside_ReadBlazeTablet(void);
-void MagmaRockInside_ReadBlazeTabletFromWest(void);
-/// MagmaRockInside_ReadBlazeTabletFromWest from the tablet's east side.
-void MagmaRockInside_ReadBlazeTabletFromEast(void);
-/// MagmaRockInside_ReadBlazeTabletFromWest from the tablet's south side.
-void MagmaRockInside_ReadBlazeTabletFromSouth(void);
-
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 
@@ -414,12 +424,18 @@ s32 MagmaRockInside_SetCollisionRect(u32 layer, u32 x, u32 y, u32 width,
   return 0;
 }
 
-/// Talking to Fury starts its battle.
+/// Talking to Fury, the Mars Djinni on the ledge just west of the north doorway
+/// into its room's east hall, starts a battle with it.
 void MagmaRockInside_FightFury(void) {
   Field_RequestDjinnBattle(ACTOR_FURY, DJINNI_FURY);
 }
 
-/// The lost Mars Djinni joins the party.
+/// Talking to the Mars Djinni in the entrance hall's south (it stands at cell
+/// (18, 31)) makes it join the party. It is the Djinni the text calls
+/// "Fire19", kept for one of The Broken Seal's Mars Djinn the party never
+/// found there; the walkthrough says such a Djinni may wait here.
+// XXX: which Djinni's name and picture the player meets; a save carried over
+// from The Broken Seal, missing a Mars Djinni, would settle it.
 void MagmaRockInside_MeetDjinni(void) {
   Djinn_JoinParty(ACTOR_FIRE19, DJINNI_FIRE19 / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_FIRE19));
@@ -470,10 +486,10 @@ s32 MagmaRockInside_SwapCells(u32 layer, s32 x, s32 y, s32 value) {
   return old;
 }
 
-/// For each id of a list ended by ACTOR_LIST_END: clears the pillar's mark and,
+/// For each pillar of a list ended by ACTOR_LIST_END: clears its mark and,
 /// where it stands on a climbable cell (MAP_CELL_CLIMBABLE, as draining the
-/// lava leaves its cell), blocks the cells ahead of and behind it and sets the
-/// mark.
+/// lava leaves its cell), walls off the cells north and south of it and sets
+/// the mark.
 void MagmaRockInside_MarkBlockCells(u16 *ids) {
   struct Actor *actor;
   u8 *blocked;
@@ -526,9 +542,9 @@ void MagmaRockInside_PausePlatform(struct Actor *actor) {
 void Actor_StartScript();
 s32 GameFlag_Get();
 
-/// Sets a lava platform afloat: raised and running its path script while flag
-/// (the lava) is set, sunk under it otherwise; its update holds it during
-/// menus.
+/// Sets a white lava platform afloat: risen and running round its path while
+/// flag (its part's lava) is set, sunk under the floor otherwise; its update
+/// holds it still during menus.
 void MagmaRockInside_StartLavaPlatform(s32 id, s32 *path, s16 flag) {
   struct Actor *platform;
   s32 risen;
@@ -574,7 +590,7 @@ extern struct ActorPlacement gMagmaRockInside_BlazeTabletPlacements[];
 
 extern s16 gMagmaRockInside_SalamanderTailChestPillars[];
 
-/// The placed actors of the current room.
+/// The placed actors of the room the party is in.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
@@ -597,7 +613,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gMagmaRockInside_Placements;
 }
 
-/// When a pillar starts to be pushed: frees the cells it blocked.
+/// Nothing visible happens as Felix starts to push one of the yellow-topped
+/// stone pillars, whether by walking into it or with Move; the game frees the
+/// cells it walled off, so that it can slide.
 void MagmaRockInside_StartPushingPillar(void) {
   struct FieldWork *work;
   s16 scene;
@@ -617,8 +635,14 @@ void MagmaRockInside_StartPushingPillar(void) {
   MagmaRockInside_ClearBlockCells(work->movedBlock);
 }
 
-/// When a pushed pillar comes to rest: blocks its cells again and puts it on
-/// the layer of the ground it rests on.
+/// A yellow-topped stone pillar Felix has pushed comes to rest a cell further
+/// on. Pushed off the ledge in the Salamander Tail's room or the ember stone's,
+/// it drops with a thud, into the lava when it is up, sinking until only its
+/// top shows. Once a pillar reaches its place its flag keeps it there when the
+/// party comes back: the entrance hall's pushed north into the row of columns
+/// (row 16 of the map), Fury's room's at row 41, the cracked pillars' room's
+/// three at column 21, the Salamander Tail room's at columns 47 and 57 and the
+/// ember stone room's at column 43.
 void MagmaRockInside_FinishPushingPillar(void) {
   struct Actor *actor = gFieldWork->movedBlock;
   s32 scene;
@@ -721,8 +745,9 @@ void MagmaRockInside_FinishPushingPillar(void) {
 /// The overlay's import veneer to BattleEffect_StopMainActor.
 s32 Import_BattleEffectStopMainActor(void);
 
-/// Plays Burst from the leader at an actor, outside the trigger table: as the
-/// statue's fire lands.
+/// Plays Burst from Felix at an actor, as when he casts it, for a statue's
+/// fireball that strikes one: in the cracked pillars' room, the pillar it hits
+/// breaks as if Burst had been cast at it.
 void MagmaRockInside_PlayBurst(u16 value) {
   struct MainRoutineWork *party;
 
@@ -740,8 +765,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-/// A statue's flying fire's update: it trails an ember every fourth frame, a
-/// few pixels to either side, and whooshes every sixteenth.
+/// A statue's fireball's update as it flies: it trails an ember every fourth
+/// frame, a few pixels to either side, and whooshes every sixteenth.
 void MagmaRockInside_TrailEmbers(struct Actor *actor) {
   struct EffectOptions options;
   u32 frame = gFrameCount;
@@ -763,7 +788,8 @@ void MagmaRockInside_TrailEmbers(struct Actor *actor) {
       &options);
 }
 
-/// Tints an actor red on the frames its mask picks.
+/// A statue's update while Burst is cast at it: it blinks red on the frames
+/// its mask picks.
 void MagmaRockInside_FlashStatue(struct Actor *actor) {
   if (gFrameCount & actor->flashMask)
     FieldActor_SetSpriteColor(actor, SPRITE_COLOR_RED_TINT);
@@ -771,9 +797,9 @@ void MagmaRockInside_FlashStatue(struct Actor *actor) {
     FieldActor_SetSpriteColor(actor, SPRITE_COLOR_NORMAL);
 }
 
-/// Looks up the cell under the field Psynergy in an (actor, cell, value) table
-/// ended by ACTOR_LIST_END: on a match, makes the row's actor the target and
-/// returns its value.
+/// Looks up the cell Burst is cast at in an (actor, cell, value) table ended by
+/// ACTOR_LIST_END: on a match, makes the row's statue the target and returns
+/// its value.
 s32 MagmaRockInside_FindStatue(u16 *table) {
   struct FieldEffectWork *watch = Ram_HeapSlots->fieldEffectWork;
   s32 result = 0;
@@ -793,7 +819,9 @@ s32 MagmaRockInside_FindStatue(u16 *table) {
   return result;
 }
 
-/// Before Burst acts on a cell: finishes the actions the field has pending.
+/// Nothing visible happens as Felix starts casting Burst at a fire-spitting
+/// statue; the game finishes what the field still had pending, so that the
+/// cast and the statue's fire play undisturbed.
 void MagmaRockInside_ResolveBeforeBurst(void) {
   Event_ResolvePendingActions(0);
 }
@@ -803,10 +831,11 @@ extern s16 gMagmaRockInside_CrackedPillarsStatues[];
 
 void MagmaRockInside_FlashStatue(struct Actor *actor);
 
-/// Burst on a statue's cell: at each small explosion (stage 2) and at the last
-/// blast (stage 3) it finds the statue in the room's table (the cracked
-/// pillars' room has its own) and sets it blinking red
-/// (MagmaRockInside_FlashStatue), faster at the last blast.
+/// As Felix casts Burst at the small statue beside a great stone face, the
+/// statue blinks red, slowly through the small explosions and faster at the
+/// last blast. In the entrance hall the statue's cell is (26, 12); in Fury's
+/// room (20, 15); the cracked pillars' room has three, at (12, 12), (20, 33)
+/// and (30, 33), and its own table.
 void MagmaRockInside_TargetStatue(s32 stage) {
   u16 *table;
   struct FieldEffectWork *watch = Ram_HeapSlots->fieldEffectWork;
@@ -838,8 +867,8 @@ void MagmaRockInside_TargetStatue(s32 stage) {
   }
 }
 
-/// An ember's update: moves it by its velocity, kept in bounce, gravity and
-/// riseBaseY, and slows it by an eighth.
+/// An ember's update as a statue's fireball bursts: moves it by its velocity,
+/// kept in bounce, gravity and riseBaseY, and slows it by an eighth.
 void MagmaRockInside_DriftAndSlow(struct Actor *actor) {
   s32 dx, dy, dz;
 
@@ -865,12 +894,15 @@ static __inline__ struct Actor *Import_ActorCreate_(s32 kind, s32 x, s32 y,
   return (struct Actor *)Import_ActorCreate(kind, x, y, z);
 }
 
-/// The frames a statue's fire bursts where it lands, throwing out an ember
+/// The frames a statue's fireball bursts where it lands, throwing out an ember
 /// every other frame.
 enum { FIRE_BURST_FRAMES = 16 };
 
-/// A statue's fire flies ahead until it meets a wall, lava or an actor: it
-/// bursts there, floods the room in lava, or plays Burst on the actor.
+/// A statue's fireball flies the way the statue faces, the camera following,
+/// until it meets the edge of the fire's reach, a great stone face or
+/// something standing in its path. It bursts against the edge or a stone
+/// pillar; against a face it sets the face pouring lava
+/// (MagmaRockInside_RaiseLava); against anything else it plays Burst there.
 void MagmaRockInside_FireFromStatue(struct Actor *source) {
   struct Actor *flame = Import_ActorCreate_(SPRITE_FLAME_PUFF, source->x.fixed,
                                             source->y.fixed, source->z.fixed);
@@ -976,8 +1008,10 @@ hit:
 
 void MagmaRockInside_EndFallingRocks(void);
 
-/// After Burst on a statue: it flashes white and fires its flame
-/// (MagmaRockInside_FireFromStatue).
+/// Once Felix's Burst on the small statue beside a great stone face is over,
+/// the statue flashes white and spits a fireball the way it faces. In the
+/// three halls with a face the fireball strikes it, and the face's eyes light
+/// red as it pours lava over the floor (MagmaRockInside_FireFromStatue).
 void MagmaRockInside_FireStatue(void) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   struct Actor *actor;
@@ -1004,9 +1038,10 @@ enum {
   CRACKED_PILLAR_CRUMBLE_FRAME = 178
 };
 
-/// Burst on a cracked pillar: rocks fall round it while Burst lasts, one at
-/// each small explosion (stage 2) and eight at the last blast (stage 3), which
-/// also takes the pillar away; meanwhile the pillar crumbles.
+/// Burst on one of the tall cracked pillars: rocks fall round it while Burst
+/// lasts, one at each small explosion and eight at the last blast, which also
+/// takes the pillar away, leaving a cloud of dust; meanwhile the pillar
+/// crumbles.
 void MagmaRockInside_BurstCrackedPillar(s32 stage, s32 cue) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
@@ -1033,9 +1068,13 @@ void MagmaRockInside_BurstCrackedPillar(s32 stage, s32 cue) {
     Actor_SelectAnimation(work->child, CRACKED_PILLAR_ANIMATION_CRUMBLE);
 }
 
-/// Stepping onto a cell at the lava's edge: with something standing in the lava
-/// a cell ahead, a sunken column or pillar or a lava platform, the leader
-/// springs onto it, keeping pace with it as it moves.
+/// Felix walks to the lava's edge where something stands in the lava two cells
+/// ahead, a white platform, a column or a pillar pushed in, and springs across
+/// onto it, keeping pace with a platform as it moves. Such edges are on both
+/// sides of the Lucky Medal room's lava, at cells (44, 39) and (50, 39), and
+/// along the lava in Fury's room, the cracked pillars' room and, once its lava
+/// is up, the Salamander Tail's room. Where nothing stands there, nothing
+/// happens.
 void MagmaRockInside_LeapOverLava(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *target;
@@ -1083,11 +1122,14 @@ void MagmaRockInside_LeapOverLava(void) {
 
 extern s32 gMagmaRockInside_FlameEmberScript[];
 
-/// The bursts of flame, 8 frames apart, as a statue's fire strikes a lava fall.
+/// The bursts of flame, 8 frames apart, as a statue's fireball strikes a great
+/// stone face.
 enum { LAVA_FALL_FLAME_BURSTS = 16 };
 
-/// A statue's fire Burst into a lava fall: the fall bursts into flame and
-/// pours, the lava rises over the room's floor, and the room is flooded.
+/// A statue's fireball strikes the great stone face: the screen shakes as
+/// flames burst over the face, it roars and its eyes light red, lava pours
+/// from its mouth and spreads over the hall's floor until the hall is flooded.
+/// When the lava is already up, the face only flares and pours again.
 void MagmaRockInside_RaiseLava(void) {
   s32 srcX = 0;
   s32 srcZ = 0;
@@ -1248,10 +1290,12 @@ void MagmaRockInside_RaiseLava(void) {
     MagmaRockInside_SetLowerRoomsFlooded();
 }
 
-/// The floor switch beside a lava gate: the leader stands on it and presses it,
-/// the gate opens, and if the lava was up it pours out through the gate, embers
-/// rising as the lava fall dries and the lava fades away. Then the gate closes
-/// and the leader steps back off the switch.
+/// Felix steps onto the small floor switch beside a grated gate and presses it
+/// down: the ground shakes and the gate lifts. If the lava is up it pours out
+/// through the gate, embers rising as it fades from the floor; then the gate
+/// drops shut and he steps back off the switch. The switches are at cell
+/// (19, 27) in the entrance hall, (32, 21) in Fury's room, and (47, 13) and
+/// (49, 42) in the Golem Core's room, which drain the lower rooms.
 void MagmaRockInside_DrainLava(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   u32 facing = (leader->facing + DEGtoANG(45)) & FACING_QUARTER_MASK;
@@ -1408,22 +1452,24 @@ void MagmaRockInside_DrainLava(void) {
     Event_SetFlag(n2);                                                         \
   }
 
-/// Burst on the first cracked pillar of the cracked pillars' room breaks it.
-/// Rocks fall round it as it crumbles and the last blast takes it away;
-/// `FLAG_INSIDE_CRACKED_PILLAR_A_BURST` is set.
+/// Burst cast at the tall cracked pillar east of the cracked pillars' room's
+/// north statue (cell (17, 12)) breaks it: rocks fall round it as it crumbles
+/// and the last blast leaves only dust. The statue's own fireball breaks it
+/// the same way. `FLAG_INSIDE_CRACKED_PILLAR_A_BURST` keeps it gone.
 DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR(MagmaRockInside_BurstCrackedPillarA,
                                       ACTOR_CRACKED_PILLAR_A,
                                       FLAG_INSIDE_CRACKED_PILLAR_A_BURST)
 
-/// Burst on the second cracked pillar of the cracked pillars' room breaks it.
-/// Rocks fall round it as it crumbles and the last blast takes it away;
-/// `FLAG_INSIDE_CRACKED_PILLAR_B_BURST` is set.
+/// Burst cast at the cracked pillars' room's other tall cracked pillar (cells
+/// (19, 14) and (24, 16)) breaks it: rocks fall round it as it crumbles and the
+/// last blast leaves only dust. `FLAG_INSIDE_CRACKED_PILLAR_B_BURST` keeps it
+/// gone.
 DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR(MagmaRockInside_BurstCrackedPillarB,
                                       ACTOR_CRACKED_PILLAR_B,
                                       FLAG_INSIDE_CRACKED_PILLAR_B_BURST)
 
-/// A thrown rock's or flame's update: it trails smoking embers every other
-/// frame for 64 frames.
+/// The update of a rock or flame the ember stone throws: it trails smoking
+/// embers every other frame for 64 frames.
 void MagmaRockInside_SmokeEmber(struct Actor *actor) {
   if (++actor->timer > 64)
     actor->update = NULL;
@@ -1444,8 +1490,8 @@ void MagmaRockInside_SmokeEmber(struct Actor *actor) {
 
 extern s32 gMagmaRockInside_FlameEmberScript[];
 
-/// Throws a fallen rock or flame from the ember stone's place to (x, z) in
-/// pixels, smoking as it flies (MagmaRockInside_SmokeEmber).
+/// Throws a rock or flame up out of the lava where the ember stone lies, to
+/// land at (x, z) in pixels, smoking as it flies (MagmaRockInside_SmokeEmber).
 static __inline__ void Arrive(s32 id, s32 x, s32 z) {
   Actor_SetPosition(id, 776, 248);
   Actor_SetDestination(id, x, z);
@@ -1455,8 +1501,12 @@ static __inline__ void Arrive(s32 id, s32 x, s32 z) {
   Actor_GetById(id)->update = MagmaRockInside_SmokeEmber;
 }
 
-/// The ember stone's room shakes, and the fallen rocks and flames burst out of
-/// the stone and land around it.
+/// The first time Felix hops onto the islet in the lava at cell (45, 19), in
+/// the ember stone's room east of the torches' ledge, the room shakes and the
+/// camera turns to the lava: embers spout and pound, four rocks and four
+/// flames are thrown out to land on the islets round the spot, and last
+/// the ember stone itself, a glowing red rock, lands on an islet to the west.
+/// `FLAG_ROCKS_RELEASED` keeps them there.
 void MagmaRockInside_ReleaseRocks(void) {
   FIXED position[3];
   struct EffectOptions options;
@@ -1528,9 +1578,10 @@ void MagmaRockInside_ReleaseRocks(void) {
   Event_End();
 }
 
-/// Before Blaze reaches the east torch: a long spray, and, unless the torch is
-/// lit, its flame set on it hidden and small, ready to grow
-/// (MagmaRockInside_GrowFlame).
+/// Felix casts Blaze at one of the flames the ember stone threw into the lava:
+/// Blaze sprays far, and unless the east torch on the ledge west of the lava is
+/// already lit, a small hidden flame waits on it, which grows if the spray
+/// reaches it (MagmaRockInside_GrowFlame).
 void MagmaRockInside_TakeFlame(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -1553,14 +1604,20 @@ void MagmaRockInside_TakeFlame(void) {
     }                                                                          \
   }
 
+/// Felix casts Blaze at the east torch's flame on the ledge west of the ember
+/// stone's lava: unless the west torch beside it is lit, a small hidden flame
+/// waits on it, which grows if the spray reaches it
+/// (MagmaRockInside_GrowFlame).
 DEFINE_MAGMA_ROCK_INSIDE_LIGHT_TORCH(MagmaRockInside_LightTorch,
                                      FLAG_WEST_TORCH_LIT,
                                      ACTOR_WEST_TORCH_FLAME, 600, 312)
 
 struct Actor;
 
-/// Blaze on a torch: its flame swells over 80 frames and the torch's flag is
-/// set; once both torches are lit the pillar between them sinks.
+/// Blaze's spray reaches a torch on the ledge west of the ember stone's lava,
+/// and its flame grows until it burns full. Once both torches burn, the ground
+/// rumbles, the camera turns to the stone pillar between them, and it sinks
+/// into the floor, opening the doorway behind it (cell (38, 18)).
 void MagmaRockInside_GrowFlame(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *object;
@@ -1616,8 +1673,9 @@ void MagmaRockInside_GrowFlame(void) {
   }
 }
 
-/// When the Psynergy hits no torch: the unlit torches' flames are taken away
-/// again.
+/// Nothing visible happens when Blaze, cast at a flame in the ember stone's
+/// room, reaches no torch; the game takes away the hidden flames it had set
+/// waiting on the unlit torches.
 void MagmaRockInside_PutOutFlames(void) {
   if (gFieldWork->psynergyHitObject == -1) {
     if (!Event_GetFlag(FLAG_EAST_TORCH_LIT))
@@ -1627,7 +1685,10 @@ void MagmaRockInside_PutOutFlames(void) {
   }
 }
 
-/// Examining the ember stone: the party may take the Magma Ball from it.
+/// Examining the ember stone, the red rock the eruption threw onto an islet in
+/// the lava (cell (43, 14)): "There's something burning like an ember within
+/// the stone." Answering yes, Felix takes the Magma Ball from it, if someone
+/// in the party can carry it.
 void MagmaRockInside_ExamineEmberStone(void) {
   const u8 *message;
 
@@ -1651,8 +1712,10 @@ void MagmaRockInside_ExamineEmberStone(void) {
   Event_End();
 }
 
-/// The stairs open step by step, and the leader walks down them and leaves by
-/// exit 1.
+/// Walking north into the stone wall under its golden crest, at the end of the
+/// sunken pillars' path in the ember stone room's west (cell (15, 21)), opens a
+/// stairway in it step by step, and Felix walks in and on to the Blaze
+/// tablet's room.
 void MagmaRockInside_OpenStairs(void) {
   s32 width = 1;
   s32 height = 2;
@@ -1678,9 +1741,10 @@ void MagmaRockInside_OpenStairs(void) {
   Event_End();
 }
 
-/// A frame task: once the leader stops on a new cell, redraws the last marker
-/// cell and, in the Blaze tablet's room, raises the trigger of a marker cell
-/// (STEP_CELL_TRIGGER_BASE plus its number).
+/// A frame task: once Felix stops on a new cell, puts back the picture of the
+/// stepping stone he left and, in the Blaze tablet's room, raises the trigger
+/// of that stone if the map's upper layer numbers it (STEP_CELL_TRIGGER_BASE
+/// plus its number, MagmaRockInside_StepOnMarker).
 void MagmaRockInside_TrackStepCell(void) {
   struct Actor *actor = Actor_Get(FieldParty_GetLeaderActor());
   s32 x = FIELD_CELL(actor->x.fixed);
@@ -1712,17 +1776,20 @@ void MagmaRockInside_TrackStepCell(void) {
   }
 }
 
-/// Starts watching the cells the leader steps on in the Blaze tablet's room
-/// (MagmaRockInside_TrackStepCell).
+/// Starts watching the stepping stones Felix walks on in the Blaze tablet's
+/// room (MagmaRockInside_TrackStepCell).
 void MagmaRockInside_StartStepCells(void) {
   gMagmaRockInside_LastStepCell = -1;
   FieldTask_AddFrame(MagmaRockInside_TrackStepCell, TASK_PASS_FRAME);
 }
 
-/// Saves the 1 by 2 cells 64 columns across from the controlled object at
-/// (73, 72) and stamps the cells kept at (70, 72) in their place, once per
-/// cell; AirsRockInside_StampWideCellUnderLeader is the same with another
-/// source.
+/// Nothing seems to happen as Felix steps onto one of the stepping stones that
+/// cross the Blaze tablet room's lava, but he is seen standing on top of it:
+/// the game saves the stone's picture under him (to cell (73, 72)) and draws
+/// the picture kept at (70, 72) in its place, until he leaves it
+/// (MagmaRockInside_TrackStepCell). The stones of this picture alternate with
+/// the other kind along each row (MagmaRockInside_StampOtherStepCell), as Air's
+/// Rock's do (AirsRockInside_StampWideCellUnderLeader).
 void MagmaRockInside_StampStepCell(void) {
   struct Actor *actor = Actor_Get(FieldParty_GetLeaderActor());
   s32 x = FIELD_CELL(actor->x.fixed);
@@ -1744,7 +1811,9 @@ void MagmaRockInside_StampStepCell(void) {
   }
 }
 
-/// As MagmaRockInside_StampStepCell, stamping the cells kept at (71, 72).
+/// Nothing seems to happen as Felix steps onto a stepping stone of the other
+/// kind in the Blaze tablet room's lava, but he is seen standing on top of it:
+/// as MagmaRockInside_StampStepCell, drawing the picture kept at (71, 72).
 void MagmaRockInside_StampOtherStepCell(void) {
   struct Actor *actor = Actor_Get(FieldParty_GetLeaderActor());
   s32 x = FIELD_CELL(actor->x.fixed);
@@ -1766,8 +1835,9 @@ void MagmaRockInside_StampOtherStepCell(void) {
   }
 }
 
-/// Fades a passage open at (x, z), in pixels, through an object window, then
-/// copies its open cells into place.
+/// A stone post fades into view at (x, z), in pixels, in the line of stepping
+/// stones that leads to the Blaze tablet, drawn through an object window, and
+/// the cell under it is walled off.
 void MagmaRockInside_OpenFlamePassage(s32 x, s32 z) {
   struct Actor *actor;
   s32 i;
@@ -1803,10 +1873,16 @@ void MagmaRockInside_OpenFlamePassage(s32 x, s32 z) {
   REG_DISPCNT &= ~DISPCNT_OBJWIN_ON;
 }
 
-/// The leader stops on a marker cell of the Blaze tablet's room: on cells 1 and
-/// 7 it only opens the flame passage again once a marker is lit; on any other
-/// it stamps the cell, opens the passage at the marker's row and lights the
-/// marker.
+/// Each time Felix steps on from one of the numbered stones in the line of
+/// stepping stones running north from the Blaze tablet room's entrance to the
+/// tablet (column 16 of the map), a stone post fades in behind him with a
+/// drip, walling off the way he came: the first at the entrance's own
+/// walkway, the next ones two cells further north each. Retreat is barred in
+/// this room too, so the party leaves by the way Blaze opens
+/// (MagmaRockInside_GrowTabletFlame). The flags keep the posts raised.
+// XXX: which stones the upper layer numbers, and which number the walkway's
+// post answers; a recording of the walk from the entrance to the tablet would
+// settle it.
 void MagmaRockInside_StepOnMarker(void) {
   struct FieldWork *work = gFieldWork;
   struct Actor *leader;
@@ -1831,12 +1907,19 @@ void MagmaRockInside_StepOnMarker(void) {
   }
 }
 
+/// Felix casts Blaze at the flame in the west bowl on the ledge in the Blaze
+/// tablet room's south-west: unless the east bowl beside it is lit, a small
+/// hidden flame waits on it, which grows if the spray reaches it
+/// (MagmaRockInside_GrowTabletFlame).
 DEFINE_MAGMA_ROCK_INSIDE_LIGHT_TORCH(MagmaRockInside_LightTabletTorch,
                                      FLAG_TABLET_TORCH_LIT, ACTOR_TORCH_FLAME,
                                      136, 360)
 
-/// Blaze on the Blaze tablet room's torch: its flame swells over 80 frames, the
-/// torch's flag is set and the pillar beside it sinks.
+/// Blaze's spray reaches the east bowl on the Blaze tablet room's south-west
+/// ledge, and its flame grows until it burns full; the ground rumbles, the
+/// camera turns to the stone pillar between the bowls, and it sinks into the
+/// floor until its top is a stepping stone across the lava (cell (7, 21)),
+/// the way out of the room.
 void MagmaRockInside_GrowTabletFlame(void) {
   struct Actor *object;
   struct Actor *actor;
@@ -1888,7 +1971,9 @@ void MagmaRockInside_GrowTabletFlame(void) {
   Event_End();
 }
 
-/// MagmaRockInside_PutOutFlames for the Blaze tablet room's torch.
+/// Nothing visible happens when Blaze, cast at the flame on the Blaze tablet
+/// room's south-west ledge, does not reach the east bowl; the game takes away
+/// the hidden flame it had set waiting there.
 void MagmaRockInside_PutOutTabletFlame(void) {
   if (gFieldWork->psynergyHitObject == -1) {
     if (!Event_GetFlag(FLAG_TABLET_TORCH_LIT))
@@ -1896,8 +1981,8 @@ void MagmaRockInside_PutOutTabletFlame(void) {
   }
 }
 
-/// Leaves a small red spark behind an orbiting spark
-/// (MagmaRockInside_OrbitParent).
+/// Leaves a small red spark behind a spark circling in to Jenna as she learns
+/// Blaze (MagmaRockInside_OrbitParent).
 void MagmaRockInside_SpawnSpark(struct Actor *source) {
   struct Actor *actor = Create(SPRITE_PARTICLE, source->x.fixed,
                                source->y.fixed, source->z.fixed);
@@ -2012,9 +2097,11 @@ extern s32 gMagmaRockInside_OrbitScript[];
 extern s32 gMagmaRockInside_TabletSettleScript[];
 extern s32 gMagmaRockInside_JennaSettleScript[];
 
-/// The Blaze tablet's lesson: the tablet lifts, shooting sparks up, sparks
-/// circle in to the one who learns and rise round her as she lifts too, and
-/// the screen flashes white.
+/// The Blaze tablet's lesson: the music fades, the ground shakes and the
+/// screen takes on a warm tint as the tablet lifts, blinking and shooting
+/// sparks up; red sparks circle in to the one who learns and rise round her as
+/// she lifts too, the screen flashes white, and both settle back as the music
+/// returns.
 void MagmaRockInside_LearnBlaze(s32 tabletId, s32 learnerId) {
   struct Actor *tablet = Actor_GetById(tabletId);
   struct Actor *learner = Actor_GetById(learnerId);
@@ -2154,8 +2241,12 @@ void MagmaRockInside_LearnBlaze(s32 tabletId, s32 learnerId) {
 
 s32 Actor_PlaceOnActor();
 
-/// Reading the Blaze tablet shows its inscription; the first time, Jenna
-/// learns Blaze from it.
+/// Felix reads the Blaze tablet from the south: "Wielder of Flame's strength,
+/// Lay your hands upon this stone." The first time, Jenna steps out beside him
+/// ("Flame's strength? Hey, that must mean it's finally my turn!"), he nods and
+/// steps back, she lays her hands on the tablet and learns Blaze, and after
+/// they nod to each other she walks back into the party. Once Blaze is
+/// learned, only the inscription is shown.
 void MagmaRockInside_ReadBlazeTablet(void) {
   struct Actor *actor;
 
@@ -2224,9 +2315,11 @@ void MagmaRockInside_ReadBlazeTablet(void) {
   }
 }
 
-/// Reading the Blaze tablet from its west side: the leader walks round to it
-/// and reads it, or once Blaze is learned only its inscription is shown.
-void MagmaRockInside_ReadBlazeTabletFromWest(void) {
+/// Felix reads the Blaze tablet from behind, on its north side: the first time
+/// he walks round its west side to the front and it is read there
+/// (MagmaRockInside_ReadBlazeTablet); once Blaze is learned only its
+/// inscription is shown.
+void MagmaRockInside_ReadBlazeTabletFromNorth(void) {
   if (Event_GetFlag(FLAG_BLAZE_LEARNED)) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -2258,11 +2351,17 @@ void MagmaRockInside_ReadBlazeTabletFromWest(void) {
     }                                                                          \
   }
 
+/// Felix reads the Blaze tablet from its east side: the first time he steps
+/// round to the front and it is read there (MagmaRockInside_ReadBlazeTablet);
+/// once Blaze is learned only its inscription is shown.
 DEFINE_MAGMA_ROCK_INSIDE_READ_TABLET_FROM(
     MagmaRockInside_ReadBlazeTabletFromEast, 280)
 
+/// Felix reads the Blaze tablet from its west side: the first time he steps
+/// round to the front and it is read there (MagmaRockInside_ReadBlazeTablet);
+/// once Blaze is learned only its inscription is shown.
 DEFINE_MAGMA_ROCK_INSIDE_READ_TABLET_FROM(
-    MagmaRockInside_ReadBlazeTabletFromSouth, 248)
+    MagmaRockInside_ReadBlazeTabletFromWest, 248)
 
 extern struct Trigger gMagmaRockInside_Triggers[];
 extern struct Trigger gMagmaRockInside_EntranceTriggers[];
@@ -2295,8 +2394,8 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gMagmaRockInside_Triggers;
 }
 
-/// Floods the entrance: sets its flag, swaps in the lava and sinks its columns
-/// and pillar.
+/// The entrance hall as flooded: its flag set, the cell at (15, 13) no longer
+/// climbable, and its columns and pillar shown standing in the lava.
 void MagmaRockInside_SetEntranceFlooded(void) {
   s32 i;
 
@@ -2307,7 +2406,9 @@ void MagmaRockInside_SetEntranceFlooded(void) {
   Actor_SetAnimation(ACTOR_ENTRANCE_PILLAR, 4);
 }
 
-/// Floods Fury's room: sets its flag, swaps in the lava and sinks its pillar.
+/// Fury's room as flooded: its flag set, the cells at (24, 15) and (9, 16) no
+/// longer climbable, and its pillar shown standing in the lava; from the
+/// cracked pillars' room, only the cell at (26, 14).
 void MagmaRockInside_SetFuryFlooded(void) {
   Event_SetFlag(FLAG_FURY_FLOODED);
   if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_INSIDE_FURY) {
@@ -2319,8 +2420,10 @@ void MagmaRockInside_SetFuryFlooded(void) {
   }
 }
 
-/// Floods the lower rooms: sets their flag and, in the cracked pillars' room,
-/// sets its lava platforms afloat.
+/// The lower rooms as flooded: their flag set and, in the cracked pillars'
+/// room, its eight white platforms afloat in pairs, each pair's second starting
+/// across the square from the first, and its three pillars and column shown
+/// standing in the lava.
 void MagmaRockInside_SetLowerRoomsFlooded(void) {
   Event_SetFlag(FLAG_LOWER_ROOMS_FLOODED);
   if (gMainRoutineWork.next == SCENE_MAGMA_ROCK_INSIDE_CRACKED_PILLARS) {
@@ -2366,9 +2469,9 @@ void MagmaRockInside_SetLowerRoomsFlooded(void) {
   }
 }
 
-/// Sets an actor's drawing order against the leader: from the cells under it,
-/// unless the leader stands at its height and not in front of it, when it goes
-/// to priority 3.
+/// The entrance hall pillar's update: its drawing order comes from the cells
+/// under it, except while Felix stands at its height and not in front of it,
+/// when it is drawn at the lowest priority.
 void MagmaRockInside_LayerWithLeader(struct Actor *arg) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   struct Actor *actor;
@@ -2394,7 +2497,8 @@ void MagmaRockInside_LayerWithLeader(struct Actor *arg) {
 
 #undef DEFINE_MAGMA_ROCK_INSIDE_BURST_PILLAR
 
-// Magma Rock's inside: its crumbling pillars and traps.
+// Magma Rock's inside: the crumbling pillars and floors of its outside, unused
+// here.
 
 void Tightrope_Initialize(void);
 
@@ -2418,8 +2522,8 @@ s32 MagmaRockInside_SwapCells(u32 layer, s32 x, s32 y, s32 value);
     REG_BLDCNT = BLDCNT_TGT1_BG2 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL;      \
   }
 
-/// Stands an actor 20 pixels up, falling, as a platform others may stand on:
-/// the unseen markers on the floor switches.
+/// Stands an unseen marker 20 pixels up on a floor switch, falling, as a
+/// platform Felix stands on.
 static __inline__ void Raise(s32 id) {
   struct Actor *actor = Actor_GetById(id);
 
@@ -2708,9 +2812,9 @@ s32 MapCollision_FindOrAddTag(s32 unused, s32 key, s32 value);
 
 #include "shared/traps_check.h"
 
-/// A crumbling pillar named in the (actor, flag) table gives way with a shake,
-/// rubble and a thump.
-void MagmaRockInside_CrumblePillar(const void *data, s32 id) {
+/// Unused: a crumbling pillar named in the (actor, flag) table gives way with a
+/// shake, rubble and a thump, as on Magma Rock's outside.
+UNUSED void MagmaRockInside_CrumblePillar(const void *data, s32 id) {
   const struct TrapEntry *entry = data;
   struct Actor *actor = Actor_Get(id);
   s32 flag;
@@ -2761,9 +2865,10 @@ void MagmaRockInside_TakePlaceOf(struct Actor *actor, struct Actor *target) {
   FieldActor_SetPositionAndResetMotion(target, 0, 0, 0);
 }
 
-/// Stepping onto a crumbling floor: the first time it shakes and cracks, the
-/// second time it gives way with the leader.
-void MagmaRockInside_StepOnTrap(const u16 *table) {
+/// Unused: stepping onto a crumbling floor, as on Magma Rock's outside: the
+/// first time it shakes and cracks, the second time it gives way with the
+/// leader.
+UNUSED void MagmaRockInside_StepOnTrap(const u16 *table) {
   struct Actor *leader;
   struct Actor *partner;
   struct Actor *trap;
@@ -2989,14 +3094,6 @@ void MagmaRockInside_EndFallingRocks(void) {
   HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
-void MagmaRockInside_MeetDjinni(void);
-void MagmaRockInside_ResolveBeforeBurst(void);
-void MagmaRockInside_FireStatue(void);
-/// Before Blaze reaches the west torch: unless it is lit, its flame set on it
-/// hidden and small, ready to grow (MagmaRockInside_GrowFlame).
-void MagmaRockInside_LightTorch(void);
-void MagmaRockInside_OpenStairs(void);
-
 extern u32 gFieldEffect_LongScript[];
 
 // clang-format off
@@ -3055,8 +3152,8 @@ s32 gMagmaRockInside_FuryEastPlatformPath[] = {
     SC_END,
 };
 
-/// The cracked pillars' room's west lava platform, entered by its first eight
-/// entrances: round a rectangle.
+/// The west lava platform of the cracked pillars' room's upper hall, which
+/// floods with Fury's room: round a rectangle.
 s32 gMagmaRockInside_CrackedPillarsWestPlatformPath[] = {
     SC_MOVE(184, 16, 232), SC_SYNC,
     SC_MOVE(280, 16, 232), SC_SYNC,
@@ -3066,8 +3163,8 @@ s32 gMagmaRockInside_CrackedPillarsWestPlatformPath[] = {
     SC_END,
 };
 
-/// The cracked pillars' room's east lava platform, entered by its first eight
-/// entrances: round a rectangle.
+/// The east lava platform of the cracked pillars' room's upper hall, which
+/// floods with Fury's room: round a rectangle.
 s32 gMagmaRockInside_CrackedPillarsEastPlatformPath[] = {
     SC_MOVE(472, 16, 296), SC_SYNC,
     SC_MOVE(424, 16, 296), SC_SYNC,
@@ -3153,9 +3250,10 @@ s16 gMagmaRockInside_EntrancePillars[] = {
     ACTOR_ENTRANCE_PILLAR, -1,
 };
 
-/// The statues Burst can fire, as (actor, cell behavior, unused) rows ended by -1.
+/// The statue Burst wakes in the entrance hall and in Fury's room, as (actor,
+/// the cell Burst is cast at, unused) rows ended by -1.
 ALIGNED(4) s16 gMagmaRockInside_Statues[] = {
-    ACTOR_STATUE, 50, -1, -1,
+    ACTOR_STATUE, CELL_STATUE, -1, -1,
 };
 
 /// The pillars Move pushes in Fury's room, ended by -1.
@@ -3163,11 +3261,12 @@ s16 gMagmaRockInside_FuryPillars[] = {
     ACTOR_FURY_PILLAR, -1,
 };
 
-/// The statues of the cracked pillars' room by cell: actor, cell code and value, ended by -1 (MagmaRock_FindStatue).
+/// The cracked pillars' room's three statues, as (actor, the cell Burst is cast
+/// at, unused) rows ended by -1 (MagmaRockInside_FindStatue).
 s16 gMagmaRockInside_CrackedPillarsStatues[] = {
-    ACTOR_STATUE, 50, -1,
-    ACTOR_LOWER_WEST_STATUE, 51, -1,
-    ACTOR_LOWER_EAST_STATUE, 52, -1,
+    ACTOR_STATUE, CELL_STATUE, -1,
+    ACTOR_LOWER_WEST_STATUE, CELL_LOWER_WEST_STATUE, -1,
+    ACTOR_LOWER_EAST_STATUE, CELL_LOWER_EAST_STATUE, -1,
     -1,
 };
 
@@ -3363,7 +3462,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-/// The actors placed in the rooms inside with no table of their own.
+/// The actors placed in the Lucky Medal's room: its one white platform.
 struct ActorPlacement gMagmaRockInside_Placements[] = {
     {SPRITE_WHITE_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 1, 0, 0, FACING_NORTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_AT_SCENE_POINT},
     {SCENE_TABLE_END},
@@ -3472,6 +3571,7 @@ struct ActorPlacement gMagmaRockInside_BlazeTabletPlacements[] = {
 };
 // clang-format on
 
+/// The triggers of the Lucky Medal's room.
 struct Trigger gMagmaRockInside_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -3481,9 +3581,9 @@ struct Trigger gMagmaRockInside_Triggers[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 8, CONDITION_ALWAYS, 8},
-    {STEP_TRIGGER_WALKING, 70, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING, CELL_LAVA_EDGE, CONDITION_ALWAYS,
      EVENT(MagmaRockInside_LeapOverLava)},
-    {STEP_TRIGGER_WALKING, 78, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING, CELL_LAVA_EDGE_EAST, CONDITION_ALWAYS,
      EVENT(MagmaRockInside_LeapOverLava)},
     {TRIGGER_TABLE_END},
 };
@@ -3498,7 +3598,8 @@ struct Trigger gMagmaRockInside_EntranceTriggers[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(MagmaRockInside_DrainLava)},
+    {TRIGGER_STEP, CELL_FLOOR_SWITCH, CONDITION_ALWAYS,
+     EVENT(MagmaRockInside_DrainLava)},
     {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_FIRE19, CONDITION_ALWAYS,
      EVENT(MagmaRockInside_MeetDjinni)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS,
@@ -3510,12 +3611,12 @@ struct Trigger gMagmaRockInside_EntranceTriggers[] = {
      EVENT(MagmaRockInside_StartPushingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ENTRANCE_PILLAR,
      FLAG_ENTRANCE_PILLAR_PUSHED, EVENT(MagmaRockInside_FinishPushingPillar)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST), 50,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST), CELL_STATUE,
      CONDITION_ALWAYS, EVENT(MagmaRockInside_ResolveBeforeBurst)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 50,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), CELL_STATUE,
      CONDITION_ALWAYS, EVENT(MagmaRockInside_TargetStatue)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_AFTER_CAST), 50,
-     CONDITION_ALWAYS, EVENT(MagmaRockInside_FireStatue)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_AFTER_CAST),
+     CELL_STATUE, CONDITION_ALWAYS, EVENT(MagmaRockInside_FireStatue)},
     {TRIGGER_TABLE_END},
 };
 
@@ -3532,8 +3633,9 @@ struct Trigger gMagmaRockInside_FuryTriggers[] = {
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(MagmaRockInside_DrainLava)},
-    {STEP_TRIGGER_WALKING, 70, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_FLOOR_SWITCH, CONDITION_ALWAYS,
+     EVENT(MagmaRockInside_DrainLava)},
+    {STEP_TRIGGER_WALKING, CELL_LAVA_EDGE, CONDITION_ALWAYS,
      EVENT(MagmaRockInside_LeapOverLava)},
     {TRIGGER_TALK, ACTOR_FURY, CONDITION_ALWAYS,
      EVENT(MagmaRockInside_FightFury)},
@@ -3546,12 +3648,12 @@ struct Trigger gMagmaRockInside_FuryTriggers[] = {
      EVENT(MagmaRockInside_StartPushingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FURY_PILLAR,
      FLAG_FURY_PILLAR_PUSHED, EVENT(MagmaRockInside_FinishPushingPillar)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST), 50,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST), CELL_STATUE,
      CONDITION_ALWAYS, EVENT(MagmaRockInside_ResolveBeforeBurst)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 50,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), CELL_STATUE,
      CONDITION_ALWAYS, EVENT(MagmaRockInside_TargetStatue)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_AFTER_CAST), 50,
-     CONDITION_ALWAYS, EVENT(MagmaRockInside_FireStatue)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_AFTER_CAST),
+     CELL_STATUE, CONDITION_ALWAYS, EVENT(MagmaRockInside_FireStatue)},
     {TRIGGER_TABLE_END},
 };
 
@@ -3571,16 +3673,16 @@ struct Trigger gMagmaRockInside_CrackedPillarsTriggers[] = {
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
-    {STEP_TRIGGER_WALKING, 70, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING, CELL_LAVA_EDGE, CONDITION_ALWAYS,
      EVENT(MagmaRockInside_LeapOverLava)},
-    {STEP_TRIGGER_WALKING, 71, IF_FLAG_SET(FLAG_FURY_FLOODED),
+    {STEP_TRIGGER_WALKING, CELL_CRACKED_PILLAR_A,
+     IF_FLAG_SET(FLAG_FURY_FLOODED), EVENT(MagmaRockInside_LeapOverLava)},
+    {STEP_TRIGGER_WALKING, CELL_CRACKED_PILLAR_B, CONDITION_ALWAYS,
      EVENT(MagmaRockInside_LeapOverLava)},
-    {STEP_TRIGGER_WALKING, 72, CONDITION_ALWAYS,
-     EVENT(MagmaRockInside_LeapOverLava)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 73, CONDITION_ALWAYS,
-     EVENT(MagmaRockInside_LeapOverLava)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 75, CONDITION_ALWAYS,
-     EVENT(MagmaRockInside_LeapOverLava)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_LAVA_EDGE_NORTH,
+     CONDITION_ALWAYS, EVENT(MagmaRockInside_LeapOverLava)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_LAVA_EDGE_WEST,
+     CONDITION_ALWAYS, EVENT(MagmaRockInside_LeapOverLava)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS,
      EVENT(MagmaRockInside_StartPushingPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS,
@@ -3600,32 +3702,38 @@ struct Trigger gMagmaRockInside_CrackedPillarsTriggers[] = {
      EVENT(MagmaRockInside_StartPushingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_C, FLAG_PILLAR_C_PUSHED,
      EVENT(MagmaRockInside_FinishPushingPillar)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 71,
-     FLAG_INSIDE_CRACKED_PILLAR_A_BURST,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
+     CELL_CRACKED_PILLAR_A, FLAG_INSIDE_CRACKED_PILLAR_A_BURST,
      EVENT(MagmaRockInside_BurstCrackedPillarA)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 72,
-     FLAG_INSIDE_CRACKED_PILLAR_B_BURST,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
+     CELL_CRACKED_PILLAR_B, FLAG_INSIDE_CRACKED_PILLAR_B_BURST,
      EVENT(MagmaRockInside_BurstCrackedPillarB)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST), 50,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST), CELL_STATUE,
      CONDITION_ALWAYS, EVENT(MagmaRockInside_ResolveBeforeBurst)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 50,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), CELL_STATUE,
      FLAG_FIRE_BURST_PLAYING, EVENT(MagmaRockInside_TargetStatue)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 50,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), CELL_STATUE,
      CONDITION_ALWAYS, EVENT(MagmaRockInside_BurstCrackedPillarA)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_AFTER_CAST), 50,
-     CONDITION_ALWAYS, EVENT(MagmaRockInside_FireStatue)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST), 51,
-     CONDITION_ALWAYS, EVENT(MagmaRockInside_ResolveBeforeBurst)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 51,
-     CONDITION_ALWAYS, EVENT(MagmaRockInside_TargetStatue)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_AFTER_CAST), 51,
-     CONDITION_ALWAYS, EVENT(MagmaRockInside_FireStatue)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST), 52,
-     CONDITION_ALWAYS, EVENT(MagmaRockInside_ResolveBeforeBurst)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 52,
-     CONDITION_ALWAYS, EVENT(MagmaRockInside_TargetStatue)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_AFTER_CAST), 52,
-     CONDITION_ALWAYS, EVENT(MagmaRockInside_FireStatue)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_AFTER_CAST),
+     CELL_STATUE, CONDITION_ALWAYS, EVENT(MagmaRockInside_FireStatue)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST),
+     CELL_LOWER_WEST_STATUE, CONDITION_ALWAYS,
+     EVENT(MagmaRockInside_ResolveBeforeBurst)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
+     CELL_LOWER_WEST_STATUE, CONDITION_ALWAYS,
+     EVENT(MagmaRockInside_TargetStatue)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_AFTER_CAST),
+     CELL_LOWER_WEST_STATUE, CONDITION_ALWAYS,
+     EVENT(MagmaRockInside_FireStatue)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST),
+     CELL_LOWER_EAST_STATUE, CONDITION_ALWAYS,
+     EVENT(MagmaRockInside_ResolveBeforeBurst)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
+     CELL_LOWER_EAST_STATUE, CONDITION_ALWAYS,
+     EVENT(MagmaRockInside_TargetStatue)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_AFTER_CAST),
+     CELL_LOWER_EAST_STATUE, CONDITION_ALWAYS,
+     EVENT(MagmaRockInside_FireStatue)},
     {TRIGGER_TABLE_END},
 };
 
@@ -3641,8 +3749,10 @@ struct Trigger gMagmaRockInside_GolemCoreChestTriggers[] = {
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
-    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(MagmaRockInside_DrainLava)},
-    {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(MagmaRockInside_DrainLava)},
+    {TRIGGER_STEP, CELL_FLOOR_SWITCH, CONDITION_ALWAYS,
+     EVENT(MagmaRockInside_DrainLava)},
+    {TRIGGER_STEP, CELL_SECOND_FLOOR_SWITCH, CONDITION_ALWAYS,
+     EVENT(MagmaRockInside_DrainLava)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_HANGING_CHAIN_A,
      CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_HANGING_CHAIN_B,
@@ -3671,7 +3781,8 @@ struct Trigger gMagmaRockInside_SalamanderTailChestTriggers[] = {
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
     {TRIGGER_EXIT, 18, CONDITION_ALWAYS, 18},
     {TRIGGER_EXIT, 19, CONDITION_ALWAYS, 19},
-    {STEP_TRIGGER_WALKING, 70, IF_FLAG_SET(FLAG_LOWER_ROOMS_FLOODED),
+    {STEP_TRIGGER_WALKING, CELL_LAVA_EDGE,
+     IF_FLAG_SET(FLAG_LOWER_ROOMS_FLOODED),
      EVENT(MagmaRockInside_LeapOverLava)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS,
      EVENT(MagmaRockInside_StartPushingPillar)},
@@ -3692,8 +3803,9 @@ struct Trigger gMagmaRockInside_SalamanderTailChestTriggers[] = {
 
 /// The triggers of the ember stone's room.
 struct Trigger gMagmaRockInside_EmberStoneTriggers[] = {
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,
-     EVENT(MagmaRockInside_OpenStairs)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     MAGMA_ROCK_INSIDE_EMBER_STONE_TO_MAGMA_ROCK_INSIDE_BLAZE_TABLET,
+     CONDITION_ALWAYS, EVENT(MagmaRockInside_OpenStairs)},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
@@ -3704,9 +3816,9 @@ struct Trigger gMagmaRockInside_EmberStoneTriggers[] = {
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {TRIGGER_STEP, 30, FLAG_ROCKS_RELEASED,
+    {TRIGGER_STEP, CELL_ERUPTION_ISLET, FLAG_ROCKS_RELEASED,
      EVENT(MagmaRockInside_ReleaseRocks)},
-    {TRIGGER_EXAMINE, 31, FLAG_MAGMA_BALL_TAKEN,
+    {TRIGGER_EXAMINE, CELL_EMBER_STONE, FLAG_MAGMA_BALL_TAKEN,
      EVENT(MagmaRockInside_ExamineEmberStone)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS,
      EVENT(MagmaRockInside_StartPushingPillar)},
@@ -3756,26 +3868,27 @@ s32 gMagmaRockInside_LastStepCell = -1;
 /// The triggers of the Blaze tablet's room.
 struct Trigger gMagmaRockInside_BlazeTabletTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(MagmaRockInside_StampStepCell)},
-    {TRIGGER_STEP, 81, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_STEPPING_STONE_A, CONDITION_ALWAYS,
+     EVENT(MagmaRockInside_StampStepCell)},
+    {TRIGGER_STEP, CELL_STEPPING_STONE_B, CONDITION_ALWAYS,
      EVENT(MagmaRockInside_StampOtherStepCell)},
-    {EXAMINE_TRIGGER_FACING(FACING_NORTH), 30, CONDITION_ALWAYS,
+    {EXAMINE_TRIGGER_FACING(FACING_NORTH), CELL_BLAZE_TABLET, CONDITION_ALWAYS,
      EVENT(MagmaRockInside_ReadBlazeTablet)},
-    {EXAMINE_TRIGGER_FACING(FACING_SOUTH), 30, CONDITION_ALWAYS,
-     EVENT(MagmaRockInside_ReadBlazeTabletFromWest)},
-    {EXAMINE_TRIGGER_FACING(FACING_WEST), 30, CONDITION_ALWAYS,
+    {EXAMINE_TRIGGER_FACING(FACING_SOUTH), CELL_BLAZE_TABLET, CONDITION_ALWAYS,
+     EVENT(MagmaRockInside_ReadBlazeTabletFromNorth)},
+    {EXAMINE_TRIGGER_FACING(FACING_WEST), CELL_BLAZE_TABLET, CONDITION_ALWAYS,
      EVENT(MagmaRockInside_ReadBlazeTabletFromEast)},
-    {EXAMINE_TRIGGER_FACING(FACING_EAST), 30, CONDITION_ALWAYS,
-     EVENT(MagmaRockInside_ReadBlazeTabletFromSouth)},
-    {TRIGGER_RAISED, 202, CONDITION_ALWAYS,
+    {EXAMINE_TRIGGER_FACING(FACING_EAST), CELL_BLAZE_TABLET, CONDITION_ALWAYS,
+     EVENT(MagmaRockInside_ReadBlazeTabletFromWest)},
+    {TRIGGER_RAISED, STEP_CELL_TRIGGER_BASE + 2, CONDITION_ALWAYS,
      EVENT(MagmaRockInside_StepOnMarker)},
-    {TRIGGER_RAISED, 203, CONDITION_ALWAYS,
+    {TRIGGER_RAISED, STEP_CELL_TRIGGER_BASE + 3, CONDITION_ALWAYS,
      EVENT(MagmaRockInside_StepOnMarker)},
-    {TRIGGER_RAISED, 204, CONDITION_ALWAYS,
+    {TRIGGER_RAISED, STEP_CELL_TRIGGER_BASE + 4, CONDITION_ALWAYS,
      EVENT(MagmaRockInside_StepOnMarker)},
-    {TRIGGER_RAISED, 205, CONDITION_ALWAYS,
+    {TRIGGER_RAISED, STEP_CELL_TRIGGER_BASE + 5, CONDITION_ALWAYS,
      EVENT(MagmaRockInside_StepOnMarker)},
-    {TRIGGER_RAISED, 206, CONDITION_ALWAYS,
+    {TRIGGER_RAISED, STEP_CELL_TRIGGER_BASE + 6, CONDITION_ALWAYS,
      EVENT(MagmaRockInside_StepOnMarker)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_SOURCE_FLAME, CONDITION_ALWAYS,

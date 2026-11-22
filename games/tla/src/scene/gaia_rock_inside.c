@@ -2052,10 +2052,10 @@ s32 GaiaRockInside_RecordStumpSpots(void) {
 /// reaches its west trap hold, drawn at cell (24, 37) (cell (24, 101) of the
 /// wall's overhead layer): a yellow stone head with red eyes bursts out of the
 /// wall under him in a shower of rocks, he flails, and he is left standing on
-/// it, no longer climbing (GaiaRockInside_StoneHeadBurstsOut).
+/// it, no longer climbing (GaiaRockInside_StoneHeadBurstsOut). Unlike at the
+/// stone faces outside, he does not fall to the floor: he stays standing up
+/// there beside the head.
 void GaiaRockInside_ClimbOntoWestStoneHead(void) {
-  // XXX: the recording ends there; whether he then falls to the floor, as the
-  // outside's stone faces make him, would take a recording that runs on.
   GaiaRockInside_StoneHeadBurstsOut(ACTOR_STATUE_A, FLAG_STATUE_A_RISEN);
 }
 

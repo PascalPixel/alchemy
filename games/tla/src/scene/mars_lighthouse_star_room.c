@@ -150,13 +150,12 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 /// Felix casts Blaze at the burning torch on the east stand before the frozen
-/// dragons, and its jet of flame comes out long and fast.
+/// dragons, and its jet of flame comes out long and fast. Cast westward from
+/// beside it, the jet runs through the torch and on across the floor to the
+/// unlit torch on the west stand, which flashes white and gives off sparks.
 ///
 /// The cast sets `blazeLongSpray`, which gives Blaze its long jet in place of
 /// the short one; every cast clears it again as it starts.
-// XXX: whether the long jet is what carries the flame across to the unlit
-// torch on the west stand; a recording of Blaze cast westward from east of the
-// burning torch would settle it (the recorder casts it eastward, at nothing).
 void MarsLighthouseStarRoom_StartBlazeOnEastTorch(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 

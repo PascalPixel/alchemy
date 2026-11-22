@@ -240,10 +240,9 @@ void AlhafranCave_LowerBridgeCells(void) {
   MapGrid_SetCellHeight(toFIXED(336), toFIXED(384), 0, 0);
 }
 
-/// Felix casts Sand in the cave and sinks into the floor as a mound of sand;
-/// the game sets how the mound is layered against the cave's walls.
-// XXX: what goes wrong without it; a recording of Sand cast beside the
-// cave's walls would settle it.
+/// Felix casts Sand in the cave: the world turns grey and he sinks into the
+/// floor as a mound of sand. The game draws the mound's sand trail at
+/// priority 2 here rather than the usual 3.
 void AlhafranCave_CastSand(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 

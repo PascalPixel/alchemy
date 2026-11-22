@@ -1,8 +1,20 @@
 /// @file
-/// The cave by the Shaman Village: weeds Whirlwind scatters, a pillar Move
-/// pushes into a gap, boulders Lift raises, a puddle Frost freezes, Eddy the
-/// Mercury Djinni who hops away from the party, and in a linked game the three
-/// gladiators Isaac beat at Colosso.
+/// The Shaman Village Cave, on the way east from Hesperia to the Shaman
+/// Village. It has three rooms. The first, entered from the world map at its
+/// south, has three passages in its north wall. The back room behind them has
+/// raised ledges with four round boulders standing in the gaps between them,
+/// and Eddy, the Mercury Djinni, on the ledge in the middle. The pillar room,
+/// east of it, has the cave's east mouth.
+///
+/// On the first visit, Whirlwind clears the weeds off the first room's west
+/// wall, Felix climbs to the west passage, crosses the back room to the pillar
+/// room and Moves the stone pillar two cells east into the gap in its ledge,
+/// which makes a short cut. Once Isaac has joined, with Lift, the party lifts
+/// the boulders, freezes the puddle and clears the back room's weeds to climb
+/// up to Eddy, who can no longer hop away once the third boulder is up. In a
+/// game carried over from a The Broken Seal save that won Colosso, Satrage,
+/// Azart and Navampa, the gladiators Isaac beat there, catch the party in the
+/// first room for a rematch, and give up a Golden Shirt when they lose.
 #include "djinn_ids.h"
 #include "edition.h"
 #include "fixed_math.h"
@@ -33,13 +45,12 @@
 #include "system/system.h"
 #include "text/msg_ids.h"
 
-/// Set once Move has pushed the stone pillar into the gap at column 38.
+/// Set once Move has pushed the stone pillar into the gap in the pillar room's
+/// ledge, at cell (38, 19).
 #define FLAG_SHAMAN_VILLAGE_CAVE_PILLAR_DROPPED 0x9a8
-/// Set once Whirlwind has scattered the first clump of weeds
-/// (ACTOR_FIRST_WEEDS).
+/// Set once Whirlwind has scattered the weeds on the first room's west wall.
 #define FLAG_SHAMAN_VILLAGE_CAVE_FIRST_WEEDS_SCATTERED 0x9a9
-/// Set once Whirlwind has scattered the second clump of weeds
-/// (ACTOR_SECOND_WEEDS).
+/// Set once Whirlwind has scattered the weeds in the back room.
 #define FLAG_SHAMAN_VILLAGE_CAVE_SECOND_WEEDS_SCATTERED 0x9aa
 /// Set as the gladiators from Colosso find the party: "I found Isaac!"
 #define FLAG_SHAMAN_VILLAGE_CAVE_FOUND_BY_GLADIATORS 0xa70
@@ -49,11 +60,13 @@
 #define FLAG_SHAMAN_VILLAGE_CAVE_BEAT_GLADIATORS 0xa72
 /// Set while the Golden Shirt the beaten gladiators leave lies in the cave.
 #define FLAG_SHAMAN_VILLAGE_CAVE_GOLDEN_SHIRT_LEFT 0xa73
-/// Set as Lift raises boulder n (0 to 3) of the second room; while boulders 1
-/// and 2 stand, the party can jump across onto them.
+/// Set as Lift raises one of the back room's four boulders, n counting from 0
+/// in the west. While the second or third stands in its gap, the party can jump
+/// across the gap in the ledges above it; lifted, it fills the gap and there is
+/// no jump.
 #define FLAG_SHAMAN_VILLAGE_CAVE_BOULDER_LIFTED(n) (FLAG_SCENE_TEMP_00 + (n))
-/// Set once Eddy, its hop south ended by the lifted third boulder, has winced
-/// at the party.
+/// Set once Eddy, its way south blocked by the lifted third boulder, has
+/// winced at the party.
 #define FLAG_SHAMAN_VILLAGE_CAVE_EDDY_CORNERED FLAG_SCENE_TEMP_04
 /// Set once Eddy has been fought or has joined: it no longer hops away from the
 /// party.
@@ -61,13 +74,65 @@
 /// Set as the battle with Eddy begins: back in the cave, Eddy stands on the
 /// ledge between the third and fourth boulders.
 #define FLAG_SHAMAN_VILLAGE_CAVE_EDDY_FOUGHT FLAG_SCENE_TEMP_06
-/// Set once Frost has frozen the puddle into a pillar of ice.
+/// Set once Frost has frozen the back room's puddle into a pillar of ice.
 #define FLAG_SHAMAN_VILLAGE_CAVE_PUDDLE_FROZEN FLAG_AREA_TEMP_02
 
-/// Where the gladiators' battle returns the party: beaten them, or lost.
+/// The cave's ways between its rooms. Each passage's cell, and the cell at
+/// each room's edge, holds the number of the exit it leads by.
+enum ShamanVillageCaveExit {
+  /// The first room's west passage, cell (2, 6), at the top of the wall the
+  /// first weeds cover: to the back room's west end.
+  EXIT_WEST_PASSAGE = 2,
+  /// The first room's middle passage, cell (12, 8): to the middle of the back
+  /// room.
+  EXIT_MIDDLE_PASSAGE = 3,
+  /// The first room's east passage, cell (22, 14): to the pillar room's floor.
+  EXIT_EAST_PASSAGE = 4,
+  /// The back room's west end, cell (4, 59): back below the west passage.
+  EXIT_BACK_ROOM_WEST = 5,
+  /// The back room's middle, cell (14, 59): back below the middle passage.
+  EXIT_BACK_ROOM_MIDDLE = 6,
+  /// The back room's east end, cell (26, 55): to the pillar room's ledge.
+  EXIT_BACK_ROOM_EAST = 7,
+  /// The passage behind the pillar room's ledge, cell (33, 18): to the back
+  /// room's east end.
+  EXIT_PILLAR_ROOM_PASSAGE = 8,
+  /// The pillar room's floor, cell (31, 25): back below the east passage.
+  EXIT_PILLAR_ROOM_FLOOR = 9
+};
+
+/// Where the party comes in: from another room, or back from the gladiators'
+/// battle, having beaten them or lost.
 enum ShamanVillageCaveEntrance {
-  SHAMAN_VILLAGE_CAVE_AFTER_BEATING_GLADIATORS = 20,
-  SHAMAN_VILLAGE_CAVE_AFTER_LOSING_TO_GLADIATORS = 21
+  ENTRANCE_BELOW_WEST_PASSAGE = 2,
+  ENTRANCE_BELOW_MIDDLE_PASSAGE = 3,
+  ENTRANCE_BELOW_EAST_PASSAGE = 4,
+  ENTRANCE_BACK_ROOM_WEST = 5,
+  ENTRANCE_BACK_ROOM_MIDDLE = 6,
+  ENTRANCE_BACK_ROOM_EAST = 7,
+  ENTRANCE_PILLAR_ROOM_LEDGE = 8,
+  ENTRANCE_PILLAR_ROOM_FLOOR = 9,
+  ENTRANCE_AFTER_BEATING_GLADIATORS = 20,
+  ENTRANCE_AFTER_LOSING_TO_GLADIATORS = 21
+};
+
+/// The cells that run the cave's other events.
+enum ShamanVillageCaveCell {
+  /// West of the gap in the back room's ledges above the second boulder, cell
+  /// (12, 50), walking east.
+  GAP_ABOVE_SECOND_BOULDER_WEST_CELL = 41,
+  /// East of that gap, cell (14, 50), walking west.
+  GAP_ABOVE_SECOND_BOULDER_EAST_CELL = 42,
+  /// West of the gap above the third boulder, cell (17, 49), walking east.
+  GAP_ABOVE_THIRD_BOULDER_WEST_CELL = 43,
+  /// East of that gap, cell (19, 49), walking west.
+  GAP_ABOVE_THIRD_BOULDER_EAST_CELL = 44,
+  /// Close to Eddy on its ledge: cells (16, 45), (20, 45), (16, 49), (20, 49)
+  /// and (15, 50).
+  NEAR_EDDY_CELL = 50,
+  /// Halfway up the first room, cells (12, 14) and (13, 14), where the
+  /// gladiators catch the party.
+  GLADIATORS_AMBUSH_CELL = 100
 };
 
 void Message_CloseFinishedWindows(void);
@@ -75,20 +140,22 @@ void Message_CloseFinishedWindows(void);
 /// The cave's actors, numbering the rows of gActorPlacements.
 enum ShamanVillageCaveActorId {
   /// The weeds Whirlwind scatters from the wall below the first room's west
-  /// passage, over the holds that climb it (SPRITE_IVY).
+  /// passage, over the steps that climb it (SPRITE_IVY).
   ACTOR_FIRST_WEEDS = ACTOR_FIRST_PLACED,
   /// A round boulder placed in the map's top left corner, above every room's
   /// view; nothing moves it.
   ACTOR_HIDDEN_BOULDER,
-  /// The second clump of weeds, in the second room.
+  /// The second clump of weeds, on a wall in the back room, over the steps up
+  /// toward Eddy.
   ACTOR_SECOND_WEEDS,
-  /// Four round boulders standing in the gaps between the second room's
-  /// ledges (SPRITE_ROUND_BOULDER).
+  /// Four round boulders standing in the gaps between the back room's ledges,
+  /// west to east (SPRITE_ROUND_BOULDER).
   ACTOR_FIRST_BOULDER,
   ACTOR_LAST_BOULDER = ACTOR_FIRST_BOULDER + 3,
-  /// The pillar Move pushes (SPRITE_STONE_PILLAR).
+  /// The stone pillar on the pillar room's ledge, which Move pushes
+  /// (SPRITE_STONE_PILLAR).
   ACTOR_PILLAR,
-  /// The puddle Frost freezes (SPRITE_PUDDLE).
+  /// The puddle Frost freezes, on the back room's west side (SPRITE_PUDDLE).
   ACTOR_PUDDLE,
   /// Eddy, the Mercury Djinni, placed until it joins
   /// (FLAG_DJINNI(DJINNI_EDDY)).
@@ -121,8 +188,12 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/// Whirlwind scatters one of the two clumps of weeds for good, opening the cell
-/// behind it.
+/// Whirlwind blows a clump of weeds away for good: the one on the first room's
+/// west wall, cell (2, 8), uncovering the steps up to the west passage, or the
+/// one on the back room's wall, cell (14, 38), uncovering the steps up toward
+/// Eddy. The leaves flying are the field's own Whirlwind; here the clump's flag
+/// is set and its cell made climbable, copied from a spare climbable cell at
+/// the map's west edge.
 void ShamanVillageCave_ScatterWeeds(s32 unused, s32 weeds) {
   if (weeds == ACTOR_FIRST_WEEDS) {
     Event_SetFlag(FLAG_SHAMAN_VILLAGE_CAVE_FIRST_WEEDS_SCATTERED);
@@ -134,8 +205,8 @@ void ShamanVillageCave_ScatterWeeds(s32 unused, s32 weeds) {
   }
 }
 
-/// The pillar falls until it lands, or for a second, and stands in the gap
-/// without its shadow.
+/// The stone pillar drops into the gap in the ledge until it lands on the floor
+/// below, or for a second at most, and stands there without its shadow.
 void ShamanVillageCave_DropPillarIntoGap(s32 id) {
   struct Actor *actor = Actor_Get(id);
   s32 frames = 60;
@@ -152,13 +223,20 @@ void ShamanVillageCave_DropPillarIntoGap(s32 id) {
   actor->motionFlags = 0;
 }
 
-/// Move on the stone pillar: its old cells open first.
+/// Nothing visible happens as Move takes hold of the stone pillar in the pillar
+/// room. Before the push, the game walls in the pillar's lane along the ledge,
+/// to its north, south and west, so that it can only travel east; the walls
+/// are a spare ring of wall cells copied over the ledge's cells (35, 18) to
+/// (38, 20) on the map's middle layer (columns 99 to 102), and come down again
+/// in ShamanVillageCave_FinishMovingPillar.
 void ShamanVillageCave_StartMovingPillar(void) {
   MapGrid_CopyCellAttributes(99, 10, 4, 3, 99, 18);
 }
 
-/// Pushed two spots to column 38, the pillar drops into the gap there and makes
-/// the shortcut (FLAG_SHAMAN_VILLAGE_CAVE_PILLAR_DROPPED).
+/// Each push of the stone pillar ends here. Pushed two cells east, to the gap
+/// in the pillar room's ledge at cell (38, 19), it drops into the gap and
+/// stays, its top level with the ledge, and the party can hop across on it: the
+/// short cut. Either way the walls round its lane come down again.
 void ShamanVillageCave_FinishMovingPillar(s32 unused, s32 id) {
   struct Actor *actor = Actor_Get(id);
   s32 x = FIELD_CELL(actor->x.fixed);
@@ -172,7 +250,8 @@ void ShamanVillageCave_FinishMovingPillar(s32 unused, s32 id) {
   MapGrid_CopyCellAttributes(99, 6, 4, 3, 99, 18);
 }
 
-/// Frost freezes the puddle into a pillar of ice.
+/// Frost freezes the puddle on the back room's west side, cell (6, 42), into a
+/// tall pillar of ice, whose top the party can hop across on.
 void ShamanVillageCave_FreezePuddle(void) {
   struct Actor *actor = Actor_Get(ACTOR_PUDDLE);
 
@@ -182,11 +261,12 @@ void ShamanVillageCave_FreezePuddle(void) {
   MapGrid_CopyCellAttributes(8, 42, 1, 1, 6, 42);
 }
 
-/// Eddy, the Mercury Djinni, hops away from the leader who comes near on its
-/// side of the third boulder's column: two cells south (north when the leader
-/// is south of it), four cells east or west away from the leader, the last
-/// three in a leap, and back. Once the third boulder is lifted, its first hop
-/// south is its last: it lands, steps west, jumps, backs away and winces.
+/// Eddy, the Mercury Djinni on the ledge in the middle of the back room, hops
+/// away from the leader who comes near it on its side of the third boulder's
+/// column: two cells south (north when the leader is south of it), four cells
+/// east or west away from the leader, the last three in a leap, and back. Once
+/// the third boulder is lifted, its first hop south is its last: it lands,
+/// steps west, jumps, backs away and winces, cornered.
 void ShamanVillageCave_EddyFlees(void) {
   struct Actor *actor = Actor_GetById(ACTOR_EDDY);
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -251,15 +331,16 @@ void ShamanVillageCave_EddyFlees(void) {
   Event_End();
 }
 
-/// Talking to Eddy, the Mercury Djinni, starts its battle.
+/// Talking to Eddy, the Mercury Djinni, once the party has cornered it, starts
+/// its battle.
 void ShamanVillageCave_FightEddy(void) {
   Event_SetFlag(FLAG_SHAMAN_VILLAGE_CAVE_EDDY_STOPS_FLEEING);
   Event_SetFlag(FLAG_SHAMAN_VILLAGE_CAVE_EDDY_FOUGHT);
   Event_RequestDjinnBattle(ACTOR_EDDY, DJINNI_EDDY);
 }
 
-/// The call gShamanVillageCave_WeedsScript makes: the weeds cast no shadow, are
-/// drawn at priority 2 and stand still.
+/// The weeds' set-up, called by their script: they cast no shadow, stand still,
+/// and are drawn at priority 2, the priority of the cave's walls.
 s32 ShamanVillageCave_SetUpWeeds(struct Actor *actor) {
   Actor_SetSpriteFlags(actor, 0);
   ((struct FieldSprite *)actor->sprite)->priority = 2;
@@ -271,29 +352,38 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-/// Lift raises the first boulder.
+/// Lift raises the leftmost of the back room's four boulders, cell (8, 50), out
+/// of its gap, one of the steps on the way up to Eddy. Like each of the four,
+/// it stays up until the party leaves the cave.
 void ShamanVillageCave_LiftFirstBoulder(void) {
   Event_SetFlag(FLAG_SHAMAN_VILLAGE_CAVE_BOULDER_LIFTED(0));
 }
 
-/// Lift raises the second boulder.
+/// Lift raises the second boulder from the west in the back room, cell
+/// (13, 50), out of its gap. Up in the gap, it stops the jump across the gap in
+/// the ledges above (ShamanVillageCave_JumpForward).
 void ShamanVillageCave_LiftSecondBoulder(void) {
   Event_SetFlag(FLAG_SHAMAN_VILLAGE_CAVE_BOULDER_LIFTED(1));
 }
 
-/// Lift raises the third boulder.
+/// Lift raises the third boulder from the west in the back room, cell (18, 49),
+/// reached from behind once the fourth is up. Up in the gap beside Eddy's
+/// ledge, it cuts off Eddy's way south: the next time it hops south, it is
+/// cornered.
 void ShamanVillageCave_LiftThirdBoulder(void) {
   Event_SetFlag(FLAG_SHAMAN_VILLAGE_CAVE_BOULDER_LIFTED(2));
 }
 
-/// Lift raises the fourth boulder.
+/// Lift raises the rightmost of the back room's four boulders, cell (22, 49),
+/// opening the way behind it to the third.
 void ShamanVillageCave_LiftFourthBoulder(void) {
   Event_SetFlag(FLAG_SHAMAN_VILLAGE_CAVE_BOULDER_LIFTED(3));
 }
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-/// The Golden Shirt the gladiators leave goes to the party, if there is room.
+/// Talking to the Golden Shirt the gladiators leave on the first room's floor
+/// picks it up, if there is room.
 void ShamanVillageCave_TakeGoldenShirt(void) {
   s32 result;
 
@@ -306,7 +396,8 @@ void ShamanVillageCave_TakeGoldenShirt(void) {
   Event_End();
 }
 
-/// The three gladiators stand where their rematch left them.
+/// The three gladiators stand in the first room, where their rematch left
+/// them.
 void ShamanVillageCave_PlaceGladiators(void) {
   s32 angle;
 
@@ -328,8 +419,10 @@ void ShamanVillageCave_PlaceGoldenShirt(void) {
   Event_SetFlag(FLAG_SHAMAN_VILLAGE_CAVE_GOLDEN_SHIRT_LEFT);
 }
 
-/// When The Broken Seal's save had won Colosso, the three gladiators Isaac beat
-/// there find the party once he has joined it, and challenge it.
+/// Walking halfway up the first room, cells (12, 14) and (13, 14), once Isaac
+/// has joined, in a game carried over from a The Broken Seal save that won
+/// Colosso: Satrage, Azart and Navampa, the gladiators Isaac beat there, come
+/// out of the middle passage, call the win a cheat and fight the party.
 void ShamanVillageCave_MeetGladiators(void) {
   s32 angle;
 
@@ -454,22 +547,23 @@ void ShamanVillageCave_MeetGladiators(void) {
   Actor_SetDestinationOffset(ACTOR_SATRAGE, -16, 24);
   FieldActor_WaitForMoveById(ACTOR_SATRAGE);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
-  FieldEvent_SetAfterBattleDestination(
-      SCENE_SHAMAN_VILLAGE_CAVE, SHAMAN_VILLAGE_CAVE_AFTER_BEATING_GLADIATORS);
+  FieldEvent_SetAfterBattleDestination(SCENE_SHAMAN_VILLAGE_CAVE,
+                                       ENTRANCE_AFTER_BEATING_GLADIATORS);
   Event_SetDefeatDestination(SCENE_SHAMAN_VILLAGE_CAVE,
-                             SHAMAN_VILLAGE_CAVE_AFTER_LOSING_TO_GLADIATORS);
+                             ENTRANCE_AFTER_LOSING_TO_GLADIATORS);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 2);
 }
 
-/// Talking to a gladiator starts the rematch.
+/// Talking to any of the three gladiators, who wait in the first room after
+/// beating the party, starts the rematch.
 void ShamanVillageCave_FightGladiators(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   Battle_SetType(BATTLE_TYPE_NO_ESCAPE);
-  FieldEvent_SetAfterBattleDestination(
-      SCENE_SHAMAN_VILLAGE_CAVE, SHAMAN_VILLAGE_CAVE_AFTER_BEATING_GLADIATORS);
+  FieldEvent_SetAfterBattleDestination(SCENE_SHAMAN_VILLAGE_CAVE,
+                                       ENTRANCE_AFTER_BEATING_GLADIATORS);
   Event_SetDefeatDestination(SCENE_SHAMAN_VILLAGE_CAVE,
-                             SHAMAN_VILLAGE_CAVE_AFTER_LOSING_TO_GLADIATORS);
+                             ENTRANCE_AFTER_LOSING_TO_GLADIATORS);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 2);
 }
 
@@ -650,8 +744,13 @@ void ShamanVillageCave_BeatGladiators(void) {
   Event_End();
 }
 
-/// The party goes through a passage in the rock: everyone stops and the screen
-/// fades.
+/// Walking north into one of the dark passages in the rock, Felix steps in and
+/// the screen wipes to the room it leads to. The first room has three, at the
+/// top of its west wall, cell (2, 6), to the back room's west end; in the
+/// middle, cell (12, 8), to the back room's middle; and in the east, cell
+/// (22, 14), to the pillar room's floor. The fourth, behind the pillar room's
+/// ledge at cell (33, 18), leads back to the back room's east end. Everyone on
+/// stage stops as he goes.
 void ShamanVillageCave_EnterPassage(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor;
@@ -713,19 +812,16 @@ s32 Scene_Initialize(void) {
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_AZART), 0);
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_NAVAMPA), 2);
   if ((!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
-       (gMainRoutineWork.entrance ==
-            SHAMAN_VILLAGE_CAVE_AFTER_BEATING_GLADIATORS ||
-        gMainRoutineWork.entrance ==
-            SHAMAN_VILLAGE_CAVE_AFTER_LOSING_TO_GLADIATORS)) ||
+       (gMainRoutineWork.entrance == ENTRANCE_AFTER_BEATING_GLADIATORS ||
+        gMainRoutineWork.entrance == ENTRANCE_AFTER_LOSING_TO_GLADIATORS)) ||
       Event_GetFlag(FLAG_SHAMAN_VILLAGE_CAVE_LOST_TO_GLADIATORS)) {
     ShamanVillageCave_PlaceGladiators();
     if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
-        gMainRoutineWork.entrance ==
-            SHAMAN_VILLAGE_CAVE_AFTER_BEATING_GLADIATORS) {
+        gMainRoutineWork.entrance == ENTRANCE_AFTER_BEATING_GLADIATORS) {
       ShamanVillageCave_BeatGladiators();
     } else if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION) &&
                gMainRoutineWork.entrance ==
-                   SHAMAN_VILLAGE_CAVE_AFTER_LOSING_TO_GLADIATORS) {
+                   ENTRANCE_AFTER_LOSING_TO_GLADIATORS) {
       Event_SetFlag(FLAG_SHAMAN_VILLAGE_CAVE_LOST_TO_GLADIATORS);
       ShamanVillageCave_LoseToGladiators();
     }
@@ -750,7 +846,10 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-/// The leader jumps across the gap ahead if there is ground to land on.
+/// Walking east or west against the gap in the back room's ledges above the
+/// second or third boulder (cells (12, 50) and (14, 50), (17, 49) and
+/// (19, 49)), the leader jumps across it, while that boulder still stands in
+/// the gap below.
 void ShamanVillageCave_JumpForward(void) { Field_TryJumpForward(); }
 
 #include "shared/scene_entrances_default.c"
@@ -759,14 +858,22 @@ u32 gSceneExits[] = {
     SCENE_EXITS(ShamanVillageCave),
     SCENE_EXIT_UNLESS(SHAMAN_VILLAGE_CAVE_TO_WORLD_MAP_WEST, WorldMap,
                       WORLD_MAP_FROM_SHAMAN_VILLAGE_CAVE_WEST, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, ShamanVillageCave, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, ShamanVillageCave, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, ShamanVillageCave, 9, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, ShamanVillageCave, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, ShamanVillageCave, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, ShamanVillageCave, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, ShamanVillageCave, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, ShamanVillageCave, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(EXIT_WEST_PASSAGE, ShamanVillageCave,
+                      ENTRANCE_BACK_ROOM_WEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(EXIT_MIDDLE_PASSAGE, ShamanVillageCave,
+                      ENTRANCE_BACK_ROOM_MIDDLE, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(EXIT_EAST_PASSAGE, ShamanVillageCave,
+                      ENTRANCE_PILLAR_ROOM_FLOOR, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(EXIT_BACK_ROOM_WEST, ShamanVillageCave,
+                      ENTRANCE_BELOW_WEST_PASSAGE, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(EXIT_BACK_ROOM_MIDDLE, ShamanVillageCave,
+                      ENTRANCE_BELOW_MIDDLE_PASSAGE, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(EXIT_BACK_ROOM_EAST, ShamanVillageCave,
+                      ENTRANCE_PILLAR_ROOM_LEDGE, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(EXIT_PILLAR_ROOM_PASSAGE, ShamanVillageCave,
+                      ENTRANCE_BACK_ROOM_EAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(EXIT_PILLAR_ROOM_FLOOR, ShamanVillageCave,
+                      ENTRANCE_BELOW_EAST_PASSAGE, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(SHAMAN_VILLAGE_CAVE_TO_WORLD_MAP_EAST, WorldMap,
                       WORLD_MAP_FROM_SHAMAN_VILLAGE_CAVE_EAST, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
@@ -808,22 +915,22 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {STEP_TRIGGER_FACING(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(ShamanVillageCave_EnterPassage)},
-    {STEP_TRIGGER_FACING(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(ShamanVillageCave_EnterPassage)},
-    {STEP_TRIGGER_FACING(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(ShamanVillageCave_EnterPassage)},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {STEP_TRIGGER_FACING(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(ShamanVillageCave_EnterPassage)},
-    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
-    {TRIGGER_STEP, 50, FLAG_SHAMAN_VILLAGE_CAVE_EDDY_STOPS_FLEEING, EVENT(ShamanVillageCave_EddyFlees)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 41, FLAG_SHAMAN_VILLAGE_CAVE_BOULDER_LIFTED(1), EVENT(ShamanVillageCave_JumpForward)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 42, FLAG_SHAMAN_VILLAGE_CAVE_BOULDER_LIFTED(1), EVENT(ShamanVillageCave_JumpForward)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 43, FLAG_SHAMAN_VILLAGE_CAVE_BOULDER_LIFTED(2), EVENT(ShamanVillageCave_JumpForward)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 44, FLAG_SHAMAN_VILLAGE_CAVE_BOULDER_LIFTED(2), EVENT(ShamanVillageCave_JumpForward)},
-    {TRIGGER_STEP, 100, FLAG_SHAMAN_VILLAGE_CAVE_FOUND_BY_GLADIATORS, EVENT(ShamanVillageCave_MeetGladiators)},
+    {TRIGGER_EXIT, SHAMAN_VILLAGE_CAVE_TO_WORLD_MAP_WEST, CONDITION_ALWAYS, SHAMAN_VILLAGE_CAVE_TO_WORLD_MAP_WEST},
+    {STEP_TRIGGER_FACING(FACING_NORTH), EXIT_WEST_PASSAGE, CONDITION_ALWAYS, EVENT(ShamanVillageCave_EnterPassage)},
+    {STEP_TRIGGER_FACING(FACING_NORTH), EXIT_MIDDLE_PASSAGE, CONDITION_ALWAYS, EVENT(ShamanVillageCave_EnterPassage)},
+    {STEP_TRIGGER_FACING(FACING_NORTH), EXIT_EAST_PASSAGE, CONDITION_ALWAYS, EVENT(ShamanVillageCave_EnterPassage)},
+    {TRIGGER_EXIT, EXIT_BACK_ROOM_WEST, CONDITION_ALWAYS, EXIT_BACK_ROOM_WEST},
+    {TRIGGER_EXIT, EXIT_BACK_ROOM_MIDDLE, CONDITION_ALWAYS, EXIT_BACK_ROOM_MIDDLE},
+    {TRIGGER_EXIT, EXIT_BACK_ROOM_EAST, CONDITION_ALWAYS, EXIT_BACK_ROOM_EAST},
+    {STEP_TRIGGER_FACING(FACING_NORTH), EXIT_PILLAR_ROOM_PASSAGE, CONDITION_ALWAYS, EVENT(ShamanVillageCave_EnterPassage)},
+    {TRIGGER_EXIT, EXIT_PILLAR_ROOM_FLOOR, CONDITION_ALWAYS, EXIT_PILLAR_ROOM_FLOOR},
+    {TRIGGER_EXIT, SHAMAN_VILLAGE_CAVE_TO_WORLD_MAP_EAST, CONDITION_ALWAYS, SHAMAN_VILLAGE_CAVE_TO_WORLD_MAP_EAST},
+    {TRIGGER_STEP, NEAR_EDDY_CELL, FLAG_SHAMAN_VILLAGE_CAVE_EDDY_STOPS_FLEEING, EVENT(ShamanVillageCave_EddyFlees)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), GAP_ABOVE_SECOND_BOULDER_WEST_CELL, FLAG_SHAMAN_VILLAGE_CAVE_BOULDER_LIFTED(1), EVENT(ShamanVillageCave_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), GAP_ABOVE_SECOND_BOULDER_EAST_CELL, FLAG_SHAMAN_VILLAGE_CAVE_BOULDER_LIFTED(1), EVENT(ShamanVillageCave_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), GAP_ABOVE_THIRD_BOULDER_WEST_CELL, FLAG_SHAMAN_VILLAGE_CAVE_BOULDER_LIFTED(2), EVENT(ShamanVillageCave_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), GAP_ABOVE_THIRD_BOULDER_EAST_CELL, FLAG_SHAMAN_VILLAGE_CAVE_BOULDER_LIFTED(2), EVENT(ShamanVillageCave_JumpForward)},
+    {TRIGGER_STEP, GLADIATORS_AMBUSH_CELL, FLAG_SHAMAN_VILLAGE_CAVE_FOUND_BY_GLADIATORS, EVENT(ShamanVillageCave_MeetGladiators)},
     {TRIGGER_TALK, ACTOR_EDDY, CONDITION_ALWAYS, EVENT(ShamanVillageCave_FightEddy)},
     {TRIGGER_TALK, ACTOR_SATRAGE, CONDITION_ALWAYS, EVENT(ShamanVillageCave_FightGladiators)},
     {TRIGGER_TALK, ACTOR_AZART, CONDITION_ALWAYS, EVENT(ShamanVillageCave_FightGladiators)},
@@ -842,7 +949,8 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// The beaten gladiators walk out of the cave, one after another.
+/// The beaten gladiators walk off south through the first room, one after
+/// another.
 u32 gShamanVillageCave_GladiatorLeaves[] = {
     SC_ANIMATION(2),
     SC_MOVE_XZ(232, 227),

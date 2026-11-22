@@ -50557,7 +50557,7 @@ msgstr ""
 "jamais tu ne pourras franchir\n"
 "les frontières de mon c¾ur.{end_wait}"
 
-msgctxt "MsgJennaWait"
+msgctxt "MsgFelixWait"
 msgid "09588"
 msgstr "{actor_name:5}, attends!{end_wait}"
 

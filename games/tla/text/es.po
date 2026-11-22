@@ -50407,7 +50407,7 @@ msgstr ""
 "pero eres incapaz de\n"
 "leer mi corazón.{end_wait}"
 
-msgctxt "MsgJennaWait"
+msgctxt "MsgFelixWait"
 msgid "09595"
 msgstr "¡{actor_name:5}, espera!{end_wait}"
 

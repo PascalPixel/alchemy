@@ -49874,7 +49874,7 @@ msgstr ""
 "わたしのこころをのぞくのは\n"
 "あなたでは ムリですわよ。{end_wait}"
 
-msgctxt "MsgJennaWait"
+msgctxt "MsgFelixWait"
 msgid "09438"
 msgstr "まってくれ {actor_name:5}!{end_wait}"
 

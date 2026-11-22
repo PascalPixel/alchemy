@@ -139,7 +139,7 @@ extern u8 MsgSeeThisRingOf[];
 extern u8 MsgLadyUzumeAnd[];
 extern u8 MsgWouldYouBe[];
 extern u8 MsgTheLegendSays[];
-extern u8 MsgJennaWait[];
+extern u8 MsgFelixWait[];
 extern u8 MsgThisTokenIsn[];
 extern u8 MsgTheMisalignedStone[];
 
@@ -511,7 +511,7 @@ void Izumo_StopThePartyToThankThem(void) {
   GameFlag_Set(FLAG_STOPPED_TO_THANK_THE_PARTY);
   Event_Start();
   Event_ResolvePendingActions(0);
-  Event_SetMessageId(MsgJennaWait);
+  Event_SetMessageId(MsgFelixWait);
   Actor_WalkToById(gMainRoutineWork.leaderActorId, 200, 264);
   Actor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   // "Felix, wait!"

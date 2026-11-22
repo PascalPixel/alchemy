@@ -52995,7 +52995,7 @@ msgstr ""
 "Du kannst meine Gedanken sehen,\n"
 "aber nicht in mein Herz blicken!{end_wait}"
 
-msgctxt "MsgJennaWait"
+msgctxt "MsgFelixWait"
 msgid "09631"
 msgstr "{actor_name:5}, warte!{end_wait}"
 

@@ -1,8 +1,23 @@
 /// @file
-/// Garoh, the village under Air's Rock whose people, its protectors, say there
-/// are no werewolves while one prowls its paths at night, in five rooms and a
-/// house that share this overlay (SceneId_Garoh to SceneId_GarohWerewolfCave,
-/// SceneId_GarohRoomsSanctum).
+/// Garoh, the village of werewolves that guards Air's Rock, in five scenes that
+/// share this overlay: the way up from the world map (SceneId_GarohBlocks),
+/// the path up to the village (SceneId_GarohHypnosSwordChest, whose chest
+/// holds the Hypnos Sword), the village itself (SceneId_Garoh), the tunnels
+/// under its houses (SceneId_GarohTunnels) and the cave behind the rock by the
+/// sanctum (SceneId_GarohWerewolfCave).
+///
+/// The party first comes on a night of the full moon. Climbing the way up,
+/// the light turns to evening and then to night (Garoh_CrossLowerTwilightLine,
+/// Garoh_CrossUpperTwilightLine); on the path a werewolf howls and runs past
+/// into the village (Garoh_WerewolfRunsPast). The hooded villagers say there
+/// are no werewolves, and by the sanctum an old werewolf peers out of the big
+/// grey rock and hides again (Garoh_WerewolfPeersFromCave). With Reveal from
+/// Air's Rock the party opens the rock, follows the little werewolf into the
+/// cave (Garoh_FollowWerewolfIntoCave) and is surrounded by the werewolves,
+/// whose elder Maha tells them to come back later
+/// (Garoh_WerewolvesRevealThemselves). By day the villagers show their faces,
+/// and Maha tells the werewolves' legend and gives the party Ether
+/// (Garoh_MahaTellsTheLegend).
 #include "../field/actor_set_sprite_priority.c"
 
 #include "../field/field_effect_move.c"
@@ -26,11 +41,11 @@ void Actor_PlaceBlocks(const void *data);
 void Actor_LiftTargetBlock(const void *data);
 void Actor_PlaceMovedBlock(void);
 
-void Garoh_RaisePillar(s32 id, struct Actor *actor);
-void Garoh_RaiseFirstPillarOnCell(void);
-void Garoh_RaiseSecondPillarOnCell(void);
+void Garoh_SinkPillar(s32 id, struct Actor *actor);
+void Garoh_SinkFirstPillarOnCell(void);
+void Garoh_SinkSecondPillarOnCell(void);
 void Garoh_CheckThirdPillar(void);
-void Garoh_RaiseFourthPillarOnCell(void);
+void Garoh_SinkFourthPillarOnCell(void);
 void Garoh_ScatterDustRing(s32 id);
 #include "field/event_inline.h"
 #include "field/map_grid.h"
@@ -88,8 +103,8 @@ void Garoh_HideCaveEntrance(void);
 void Garoh_RestoreBlocksDark(void);
 void Garoh_HideTunnelPassage(void);
 void Garoh_HideCavePassage(void);
-void Garoh_CrossWestEdge(void);
-void Garoh_CrossEastEdge(void);
+void Garoh_CrossLowerTwilightLine(void);
+void Garoh_CrossUpperTwilightLine(void);
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_LongScript[];
 extern s32 gGaroh_ShrunkSpriteScript[];
@@ -122,7 +137,7 @@ enum GarohVillageActorId {
   ACTOR_CAVE_ENTRANCE
 };
 
-/// The werewolf's path and the cave beneath the village
+/// The path up to the village and the werewolves' cave
 /// (SceneId_GarohHypnosSwordChest and SceneId_GarohWerewolfCave), numbering the
 /// rows of gGaroh_WerewolfCaveActorPlacements; GarohHypnosSwordChest places the
 /// werewolf and Kraden on the same rows.
@@ -138,8 +153,8 @@ enum GarohWerewolfActorId {
   ACTOR_FIRE_B
 };
 
-/// The werewolf's path's tightrope posts: Jenna, Sheba and Piers take their
-/// own numbers, so the posts follow the werewolf and Kraden.
+/// The tightrope posts on the path up to the village: Jenna, Sheba and Piers
+/// take their own numbers, so the posts follow the werewolf and Kraden.
 enum {
   ACTOR_PATH_TIGHTROPE_POST_A = ACTOR_FIRST_PLACED + 2,
   ACTOR_PATH_TIGHTROPE_POST_B
@@ -147,12 +162,31 @@ enum {
 
 /// The stone pillars on the way up to the village (SceneId_GarohBlocks),
 /// numbering the rows of gGaroh_BlocksActorPlacements: Move or a push takes
-/// each onto the cell where it rises.
+/// each onto the slot where it sinks.
 enum GarohBlocksActorId {
   ACTOR_FIRST_PILLAR = ACTOR_FIRST_PLACED,
   ACTOR_SECOND_PILLAR,
   ACTOR_THIRD_PILLAR,
   ACTOR_FOURTH_PILLAR
+};
+
+/// The cells the step and examine triggers answer, by their behaviour in each
+/// scene's map. A door's or an opening's behaviour is the exit it leaves by.
+enum GarohCellBehavior {
+  /// The village: east of the sanctum's door, cell (20, 16).
+  CELL_BEHAVIOR_BY_SANCTUM_DOOR = 20,
+  /// The village: the well, cells (19..20, 18..19).
+  CELL_BEHAVIOR_GAROH_WELL = 200,
+  /// The path up to the village: across it at cells (9..11, 19).
+  CELL_BEHAVIOR_WEREWOLF_RUNS_PAST = 30,
+  /// The way up: where the light turns to evening, cell (13, 26), and to
+  /// night, cell (16, 22).
+  CELL_BEHAVIOR_LOWER_TWILIGHT_LINE = 20,
+  CELL_BEHAVIOR_UPPER_TWILIGHT_LINE = 21,
+  /// The werewolves' cave: below the cleft, cells (17..18, 49), and below
+  /// where Maha stands, cells (19..21, 15).
+  CELL_BEHAVIOR_CAVE_MOUTH = 30,
+  CELL_BEHAVIOR_BELOW_MAHA = 31
 };
 
 /// Story flags of the werewolves' secret, in the order the party meets them.
@@ -163,32 +197,32 @@ enum GarohBlocksActorId {
 #define FLAG_GAROH_HEARD_MAHA 0x91f
 /// For this visit to the area: the old werewolf has peered from the cave,
 /// the little werewolf has thanked the party, and the way up is in the
-/// evening's light, between its two edges.
+/// evening's light, between its two lines.
 #define FLAG_WEREWOLF_PEERED_OUT FLAG_AREA_TEMP_20
 #define FLAG_LITTLE_WEREWOLF_THANKED FLAG_AREA_TEMP_01
 #define FLAG_EVENING FLAG_AREA_TEMP_18
-/// The way up: the pillars raised on their cells, and the rope Lashed.
-#define FLAG_FIRST_PILLAR_RAISED FLAG_SCENE_TEMP_01
-#define FLAG_SECOND_PILLAR_RAISED FLAG_SCENE_TEMP_02
+/// The way up: the pillars sunk into their slots, and the rope Lashed.
+#define FLAG_FIRST_PILLAR_SUNK FLAG_SCENE_TEMP_01
+#define FLAG_SECOND_PILLAR_SUNK FLAG_SCENE_TEMP_02
 #define FLAG_GAROH_ROPE_LASHED FLAG_SCENE_TEMP_03
-#define FLAG_FOURTH_PILLAR_RAISED FLAG_SCENE_TEMP_04
-/// The edges of the way up's evening, where it begins and where the night or
-/// the day does, crossed since the party came in.
-#define FLAG_CROSSED_WEST_EDGE FLAG_SCENE_TEMP_10
-#define FLAG_CROSSED_EAST_EDGE FLAG_SCENE_TEMP_11
+#define FLAG_FOURTH_PILLAR_SUNK FLAG_SCENE_TEMP_04
+/// The two lines on the way up where the light changes, crossed since the
+/// party came in.
+#define FLAG_CROSSED_LOWER_TWILIGHT_LINE FLAG_SCENE_TEMP_10
+#define FLAG_CROSSED_UPPER_TWILIGHT_LINE FLAG_SCENE_TEMP_11
 
 /// The houses' lit windows, colour 14 of BG palette 1, kept white when the
 /// village darkens for the night.
 #define WINDOW_LIGHT 14
 
-/// The werewolf's path's way in that no exit uses: by night it tints the path
-/// purple rather than warm and dark.
+/// The way into the path up to the village that no exit uses: by night it tints
+/// the path purple rather than warm and dark.
 #define ENTRANCE_PATH_PURPLE_NIGHT 12
 
 /// The steps in which the Ether grows from two fifths of its size to full.
 #define ETHER_GROW_STEPS 20
 
-/// By day the werewolf's path's second layer takes the first's scale and
+/// By day the path up to the village's second layer takes the first's scale and
 /// wrap.
 void Garoh_MatchSecondLayer(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
@@ -201,8 +235,8 @@ void Garoh_MatchSecondLayer(void) {
   to->maskY = from->maskY;
 }
 
-/// By night the werewolf's path's second layer ripples: each line is offset by
-/// two sines of the frame count, handed to an HBlank DMA.
+/// By night the second map layer of the path up to the village ripples: each
+/// line is offset by two sines of the frame count, handed to an HBlank DMA.
 void Garoh_WaveHypnosSwordChestLayer(void) {
   s32 x;
   // The sine routine itself, called at the address Trig_Sin's far call
@@ -325,8 +359,14 @@ const void *Scene_GetActorPlacements(void) {
   return gGaroh_ActorPlacements;
 }
 
-/// Stepping into a door: every placed actor stops, the door opens and the
-/// leader walks through, leaving by the step trigger's exit.
+/// Walking north into the door of one of Garoh's round houses, or of the
+/// sanctum, opens it and Felix walks inside, while the villagers stand still:
+/// the young werewolf's family's home at cell (14, 23), the old couple's at
+/// (8, 14), the weapons and armor shop's wide door at (10, 24), the inn at
+/// (21, 25) and the sanctum's tall door at (14, 15).
+///
+/// The door's cell behaviour is the exit it leaves by, which also picks its
+/// opening frames from `gGaroh_Doors`.
 void Garoh_OpenDoorAndEnter(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 index;
@@ -364,7 +404,9 @@ void Garoh_OpenDoorAndEnter(void) {
   Event_End();
 }
 
-/// "So, uh...you say you saw a werewolf?"
+/// Talking at night to the hooded villager outside the young werewolf's
+/// family's home: "So, uh...you say you saw a werewolf?" Yes gets "Don't be
+/// ridiculous... There's no such thing as werewolves!"; No gets its own reply.
 void Garoh_AskIfSawWerewolf(s32 actor) {
   s32 msg = (s32)MsgGarohSoUhYouSayYou;
 
@@ -381,7 +423,9 @@ void Garoh_AskIfSawWerewolf(s32 actor) {
   Event_ShowMessage(actor, 0);
 }
 
-/// "Don't you love the sight of the full moon?"
+/// Talking at night to the hooded villager outside the Item Shopkeeper's
+/// house: "Don't you love the sight of the full moon?" Yes gets "Yes, I
+/// agree... But it brings me grief."; No gets its own reply.
 void Garoh_AskAboutFullMoon(s32 actor) {
   s32 msg = (s32)MsgGarohDontYouLoveTheSight;
 
@@ -398,8 +442,10 @@ void Garoh_AskAboutFullMoon(s32 actor) {
   Event_ShowMessage(actor, 0);
 }
 
-/// By day: "Maha said that you were the only outsiders we could share our
-/// secret with..."
+/// Talking by day to the woman in green south-west of the well, the villager
+/// who warned strangers off at night: "Maha said that you were the only
+/// outsiders we could share our secret with...", and she asks whether it
+/// bothers them that everyone here is a werewolf.
 void Garoh_AskAboutSecret(s32 actor) {
   s32 msg = (s32)MsgGarohMahaSaidThatYouWere;
 
@@ -416,7 +462,9 @@ void Garoh_AskAboutSecret(s32 actor) {
   Event_ShowMessage(actor, 0);
 }
 
-/// By day: "Awoooooh!" and no need to hide it any more.
+/// Talking by day to the grey-haired man west of the well, who claimed at
+/// night to be calling his dog: he howls "Awoooooh!" and is glad he no longer
+/// has to hide it.
 void Garoh_HowlOutLoud(s32 actor) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -428,7 +476,12 @@ void Garoh_HowlOutLoud(s32 actor) {
   Event_End();
 }
 
-/// "Gaaaroooooo!" ... "I was just calling my dog."
+/// Talking at night to the hooded villager west of the well: he howls
+/// "Gaaaroooooo!", catches himself ("Gah! Whoops...") and says he was just
+/// calling his dog.
+// XXX: nothing in Garoh sets the area flag that would cut him to the howl
+// alone; another scene of the area may, which a search of its flag would
+// settle.
 void Garoh_HowlForDog(s32 actor) {
   s32 flag;
   s32 msg;
@@ -450,8 +503,10 @@ void Garoh_HowlForDog(s32 actor) {
   Event_End();
 }
 
-/// By day: "Hey, it's you guys! Thanks for last night!" from the little
-/// werewolf of the cave.
+/// Talking by day to the fair-haired boy running about by the sanctum, or
+/// reading his mind the first time: "Hey, it's you guys! Thanks for last
+/// night!", and he explains he was the little werewolf in the cave. Later he
+/// says he is the reason the village no longer needs its hoods.
 void Garoh_LittleWerewolfThanks(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -481,8 +536,11 @@ void Garoh_LittleWerewolfThanks(void) {
   Event_End();
 }
 
-/// By the Sanctum, the first night: the old werewolf opens the cave's entrance
-/// by Reveal, sees the party ("What!? Outsiders, here?") and hides again.
+/// Walking past the sanctum's door at night before meeting the werewolves,
+/// cell (20, 16): the camera looks up at the big grey rock on the ledge above,
+/// an old grey-maned werewolf opens it with Reveal and steps out, cries
+/// "What!? Outsiders, here?" and slips back inside, the rock closing behind
+/// him. Once a visit.
 void Garoh_WerewolfPeersFromCave(void) {
   s32 flag;
   s32 facing;
@@ -557,8 +615,10 @@ extern struct Trigger gGaroh_WerewolfCaveTriggers[];
 
 extern s32 gGaroh_HowlFrames;
 
-/// Stepping into an opening Reveal has shown: the cave's entrance by the
-/// Sanctum leads down into it, and the passage in the cave on.
+/// Walking north into an opening Reveal has shown takes the party through it:
+/// the cleft at the foot of the big grey rock north-east of the sanctum, cell
+/// (22, 11), leads down into the werewolves' cave, and the passage behind the
+/// round grey rock in the cave leads on.
 void Garoh_EnterOpening(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
@@ -569,8 +629,9 @@ void Garoh_EnterOpening(void) {
   FieldEvent_SetExitRequest(event->stepTrigger);
 }
 
-/// In the cave: the werewolves gather the first night, and Maha tells the
-/// legend once the secret is shared.
+/// Walking north to cells (19..21, 15) of the werewolves' cave, below where
+/// Maha stands: the first night the werewolves surround the party, and by day
+/// Maha is waiting there to tell the legend.
 void Garoh_MeetInTheCave(void) {
   if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED)) {
     if (!Flag_IsSet(FLAG_GAROH_MET_WEREWOLVES))
@@ -604,7 +665,7 @@ const void *Scene_GetTriggers(void) {
 /// A howl comes each time the night's frames under this mask are 0.
 #define HOWL_PERIOD_MASK 0x3ff
 
-/// A howl every 1,024 frames while it is night.
+/// A wolf howls in the distance every 1,024 frames while it is night.
 void Garoh_HowlAtNight(void) {
   if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED) && Flag_IsSet(FLAG_GAROH_NIGHT)) {
     gGaroh_HowlFrames++;
@@ -615,9 +676,10 @@ void Garoh_HowlAtNight(void) {
 
 void Garoh_InitializeHypnosSwordChest(void);
 
-/// Sets up the room being entered: the cave's lamps and Maha once he has told
-/// the legend, the village by night or day, the werewolf's path, or the way
-/// up, which also makes the sanctum the place a defeat returns the party to.
+/// Sets up the scene being entered: the cave's lamps, and Maha once he has
+/// told the legend; the village by night or day; the path up to the village;
+/// or the way up, which also makes the sanctum the place a defeat returns the
+/// party to once they have reached the village.
 s32 Scene_Initialize(void) {
   struct FieldWork *work;
 
@@ -661,8 +723,9 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// The village: night colours, or by day the cells of the opened cave
-/// entrance.
+/// The village: by night darkened, its windows lit and the wolves howling;
+/// by day the cleft in the big grey rock and the cave's other ways stand
+/// open.
 void Garoh_InitializeVillage(void) {
   FieldTask_AddFrame(Garoh_HowlAtNight, TASK_PASS_FRAME);
   gFieldWork->transition = 0;
@@ -703,8 +766,8 @@ void Garoh_InitializeVillage(void) {
   }
 }
 
-/// The werewolf's path: the tightrope strung, and by night its colours and
-/// the rippling layer, by day the opened cells.
+/// The path up to the village: the tightrope strung, and by night its dark
+/// colours and rippling water, by day its hidden ways open.
 void Garoh_InitializeHypnosSwordChest(void) {
   Task_AddFrame(Garoh_HowlAtNight, TASK_PASS_FRAME);
   Tightrope_Initialize();
@@ -733,8 +796,9 @@ void Garoh_InitializeHypnosSwordChest(void) {
 
 extern s16 gGaroh_Pillars[];
 
-/// The way up from the World Map: the pillars Move, Lash and a push place, in
-/// the evening's or the night's light once the party has crossed into it.
+/// The way up from the world map: the four stone pillars where they were
+/// left, in the evening's or the night's light once the party has climbed
+/// into it.
 void Garoh_InitializeBlocks(void) {
   FieldTask_AddFrame(Garoh_HowlAtNight, TASK_PASS_FRAME);
   if (Flag_IsSet(FLAG_GAROH_NIGHT)) {
@@ -748,14 +812,19 @@ void Garoh_InitializeBlocks(void) {
   Event_WaitTransitionFrames();
 }
 
-/// Move lifts the pillar it is cast on.
+/// Nothing visible happens as Felix starts casting Move on one of the stone
+/// pillars on the way up; the game lifts the pillar off the map's cells so
+/// that Move can slide it.
 void Garoh_LiftPillar(void) { Actor_LiftTargetBlock(gGaroh_Pillars); }
 
-/// Move lifts the pillar it is cast on, from the cells a push reaches.
+/// Nothing visible happens as Felix starts pushing one of the stone pillars on
+/// the way up; as with Move, the game first lifts the pillar off the map's
+/// cells so that it can slide.
 void Garoh_LiftPushedPillar(void) { Actor_LiftTargetBlock(gGaroh_Pillars); }
 
-/// A block left on its cell rises with a whoosh and a ring of dust.
-void Garoh_RaisePillar(s32 id, struct Actor *actor) {
+/// A pillar set down on its slot sinks 32 pixels into the ground with a whoosh
+/// and a ring of dust.
+void Garoh_SinkPillar(s32 id, struct Actor *actor) {
   s32 i;
   s32 saved;
 
@@ -779,101 +848,124 @@ void Garoh_RaisePillar(s32 id, struct Actor *actor) {
     raw = actor->z.fixed;                                                      \
     z = FIELD_CELL(raw);                                                       \
     if (!Flag_IsSet(flag) && x == cellX && z == cellZ) {                       \
-      Garoh_RaisePillar(actorId, actor);                                       \
+      Garoh_SinkPillar(actorId, actor);                                        \
       Flag_Set(flag);                                                          \
     }                                                                          \
   }
 
-/// The first pillar rises once it stands on its cell.
-DEFINE_GAROH_TRIGGER_AT_CELL(Garoh_RaiseFirstPillarOnCell, ACTOR_FIRST_PILLAR,
-                             FLAG_FIRST_PILLAR_RAISED, 10, 29)
+/// The first pillar sinks once it stands on cell (10, 29), one west of where it
+/// starts.
+DEFINE_GAROH_TRIGGER_AT_CELL(Garoh_SinkFirstPillarOnCell, ACTOR_FIRST_PILLAR,
+                             FLAG_FIRST_PILLAR_SUNK, 10, 29)
 
-/// The second pillar rises once it stands on its cell.
-DEFINE_GAROH_TRIGGER_AT_CELL(Garoh_RaiseSecondPillarOnCell, ACTOR_SECOND_PILLAR,
-                             FLAG_SECOND_PILLAR_RAISED, 15, 28)
+/// The second pillar sinks once it stands on cell (15, 28), one east of where
+/// it starts.
+DEFINE_GAROH_TRIGGER_AT_CELL(Garoh_SinkSecondPillarOnCell, ACTOR_SECOND_PILLAR,
+                             FLAG_SECOND_PILLAR_SUNK, 15, 28)
 
-/// The third pillar has no cell to rise on: its check reads the pillar and the
-/// rope's flag and does nothing.
+/// The third pillar has no slot to sink into: its check reads the pillar and
+/// the rope's flag and does nothing.
 void Garoh_CheckThirdPillar(void) {
   Actor_Get(ACTOR_THIRD_PILLAR);
   Flag_IsSet(FLAG_GAROH_ROPE_LASHED);
 }
 
-/// The fourth pillar rises once it stands on its cell.
-void Garoh_RaiseFourthPillarOnCell(void) {
+/// The fourth pillar sinks once it stands on cell (15, 25), one south of where
+/// it starts.
+void Garoh_SinkFourthPillarOnCell(void) {
   struct Actor *actor = Actor_Get(ACTOR_FOURTH_PILLAR);
   s32 x = FIELD_CELL(actor->x.fixed);
   s32 z = FIELD_CELL(actor->z.fixed);
 
-  if (!Flag_IsSet(FLAG_FOURTH_PILLAR_RAISED) && x == 15 && z == 25) {
-    Garoh_RaisePillar(ACTOR_FOURTH_PILLAR, actor);
-    Flag_Set(FLAG_FOURTH_PILLAR_RAISED);
+  if (!Flag_IsSet(FLAG_FOURTH_PILLAR_SUNK) && x == 15 && z == 25) {
+    Garoh_SinkPillar(ACTOR_FOURTH_PILLAR, actor);
+    Flag_Set(FLAG_FOURTH_PILLAR_SUNK);
   }
 }
 
-/// Move sets the first pillar down, and it rises if it is on its cell.
+/// Move on the first stone pillar, on the lowest ledge of the way up at cell
+/// (11, 29): slid one cell west, onto cell (10, 29), it drops off the ledge and
+/// sinks into the ground with a whoosh and a ring of dust.
+// XXX: what the sunk pillars open; a render of the way up with them sunk,
+// walking from the world map to the path, would settle it.
 void Garoh_PlaceFirstPillar(void) {
   Actor_PlaceMovedBlock();
-  Garoh_RaiseFirstPillarOnCell();
+  Garoh_SinkFirstPillarOnCell();
 }
 
-/// Move sets the second pillar down, and it rises if it is on its cell.
+/// Move on the second stone pillar, east of the first at cell (14, 28): slid
+/// one cell east, onto cell (15, 28), it sinks into the ground with a whoosh
+/// and a ring of dust.
 void Garoh_PlaceSecondPillar(void) {
   Actor_PlaceMovedBlock();
-  Garoh_RaiseSecondPillarOnCell();
+  Garoh_SinkSecondPillarOnCell();
 }
 
-/// Move sets the third pillar down.
+/// Move on the third stone pillar, on the ledge above at cell (10, 24): it
+/// slides where Move sends it, and has no slot to sink into.
 void Garoh_PlaceThirdPillar(void) {
   Actor_PlaceMovedBlock();
   Garoh_CheckThirdPillar();
 }
 
-/// Move sets the fourth pillar down, and it rises if it is on its cell.
+/// Move on the fourth stone pillar, east of the third at cell (15, 24): slid
+/// one cell south, onto cell (15, 25), it sinks into the ground with a whoosh
+/// and a ring of dust.
 void Garoh_PlaceFourthPillar(void) {
   Actor_PlaceMovedBlock();
-  Garoh_RaiseFourthPillarOnCell();
+  Garoh_SinkFourthPillarOnCell();
 }
 
-/// A pushed pillar comes to rest: each pillar on its cell rises.
+/// Pushing a stone pillar on the way up sinks it just as Move does when it
+/// comes to rest on its slot: the first on cell (10, 29), the second on
+/// (15, 28), the fourth on (15, 25).
+///
+/// The push rows answer only while the first pillar has not sunk.
 void Garoh_PlacePushedPillar(void) {
   Actor_PlaceMovedBlock();
-  Garoh_RaiseFirstPillarOnCell();
-  Garoh_RaiseSecondPillarOnCell();
+  Garoh_SinkFirstPillarOnCell();
+  Garoh_SinkSecondPillarOnCell();
   Garoh_CheckThirdPillar();
-  Garoh_RaiseFourthPillarOnCell();
+  Garoh_SinkFourthPillarOnCell();
 }
 
-/// Reveal opens the cave's entrance by the Sanctum.
+/// Reveal in the village shows the cleft at the foot of the big grey rock
+/// north-east of the sanctum, cell (22, 11), as a way in.
 void Garoh_RevealCaveEntrance(void) {
   MapGrid_CopyCellsTo(98, 8, 86, 8, 1, 2);
   MapGrid_CopyCellAttributes(34, 9, 1, 1, 22, 11);
 }
 
-/// Reveal opens the passage into the tunnels.
+/// Reveal in the tunnels shows a hidden passage at cells (11, 33..35).
 void Garoh_RevealTunnelPassage(void) {
   MapGrid_CopyCellsTo(25, 47, 11, 33, 1, 3);
   MapGrid_CopyCellAttributes(25, 47, 1, 1, 11, 33);
 }
 
-/// Reveal opens the passage into the cave.
+/// Reveal in the werewolves' cave shows a passage through the round grey rock
+/// in its middle, cells (19..21, 5..7).
 void Garoh_RevealCavePassage(void) {
   MapGrid_CopyCellsTo(44, 5, 19, 5, 3, 3);
   MapGrid_CopyCellsTo(108, 5, 83, 5, 3, 2);
   MapGrid_CopyCellAttributes(44, 5, 3, 3, 19, 5);
 }
 
-/// Reveal wearing off closes the cave's entrance by the Sanctum again.
+/// Reveal wearing off in the village hides the cleft in the big grey rock
+/// again.
 void Garoh_HideCaveEntrance(void) {
   MapGrid_CopyCellsTo(102, 8, 86, 8, 1, 2);
   MapGrid_CopyCellAttributes(22, 10, 1, 1, 22, 11);
 }
 
-/// Whether it is night in Garoh.
+/// Nothing visible happens when Reveal wears off on the path up to the
+/// village: the game only checks whether it is night in Garoh, and does
+/// nothing with the answer.
+// XXX: whether the path's night colours come back after Reveal there; a
+// render casting Reveal on the path at night would settle it.
 s32 Garoh_IsNight(void) { return Flag_IsSet(FLAG_GAROH_NIGHT); }
 
-/// Reveal wearing off in the way up: the evening's or the night's light comes
-/// back.
+/// Reveal wearing off on the way up brings back the evening's or the night's
+/// light.
 void Garoh_RestoreBlocksDark(void) {
   if (Flag_IsSet(FLAG_GAROH_NIGHT)) {
     if (Flag_IsSet(FLAG_EVENING))
@@ -884,26 +976,29 @@ void Garoh_RestoreBlocksDark(void) {
   }
 }
 
-/// Reveal wearing off closes the passage into the tunnels again.
+/// Reveal wearing off in the tunnels hides their passage again.
 void Garoh_HideTunnelPassage(void) {
   MapGrid_CopyCellsTo(8, 30, 11, 33, 1, 3);
   MapGrid_CopyCellAttributes(8, 30, 1, 1, 11, 33);
 }
 
-/// Reveal wearing off closes the passage into the cave again.
+/// Reveal wearing off in the werewolves' cave closes the round grey rock
+/// again.
 void Garoh_HideCavePassage(void) {
   MapGrid_CopyCellsTo(39, 5, 19, 5, 3, 3);
   MapGrid_CopyCellsTo(103, 5, 83, 5, 3, 2);
   MapGrid_CopyCellAttributes(39, 5, 3, 3, 19, 5);
 }
 
-/// Crossing the evening's west edge on the way up: from the World Map the
-/// evening begins, from the path the day comes back.
-void Garoh_CrossWestEdge(void) {
+/// Climbing the way up from the world map before the werewolves' secret is
+/// shared, the step onto cell (13, 26), the lower of its two lines, turns the
+/// daylight to a golden evening; coming down from the path, the same step
+/// brings the daylight back. Once a visit.
+void Garoh_CrossLowerTwilightLine(void) {
   struct FieldWork *work;
 
   if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED)) {
-    Flag_Set(FLAG_CROSSED_WEST_EDGE);
+    Flag_Set(FLAG_CROSSED_LOWER_TWILIGHT_LINE);
     if (gMainRoutineWork.entrance == GAROH_BLOCKS_FROM_WORLD_MAP) {
       PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
       Flag_Set(FLAG_GAROH_NIGHT);
@@ -919,13 +1014,15 @@ void Garoh_CrossWestEdge(void) {
   }
 }
 
-/// Crossing the evening's east edge on the way up: from the path the evening
-/// begins, from the World Map the night falls.
-void Garoh_CrossEastEdge(void) {
+/// Climbing on up past cell (16, 22), the upper of the way up's two lines,
+/// the evening darkens into night; coming down from the path, the same step
+/// turns the night to evening. Once a visit, before the werewolves' secret is
+/// shared.
+void Garoh_CrossUpperTwilightLine(void) {
   struct FieldWork *work;
 
   if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED)) {
-    Flag_Set(FLAG_CROSSED_EAST_EDGE);
+    Flag_Set(FLAG_CROSSED_UPPER_TWILIGHT_LINE);
     if (gMainRoutineWork.entrance ==
         GAROH_BLOCKS_FROM_GAROH_HYPNOS_SWORD_CHEST) {
       PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
@@ -983,7 +1080,8 @@ void Garoh_ScatterDustRing(s32 objectId) {
 
 extern u32 gGaroh_QuestionMarkScript[];
 
-/// Lash ties the rope between the third and fourth pillars.
+/// Unused: Lash ties a rope between the third and fourth stone pillars on the
+/// way up; no trigger runs it.
 void Garoh_LashRope(void) {
   Rope_Lash(1, ACTOR_THIRD_PILLAR, ACTOR_FOURTH_PILLAR);
   Flag_Set(FLAG_GAROH_ROPE_LASHED);
@@ -1085,8 +1183,10 @@ static inline s32 Garoh_PathStep(s32 from, s32 to, s32 i) {
 /// past: across the screen, and up and down it.
 enum { WEAVE_ACROSS = 12, WEAVE_DOWN = 7 };
 
-/// The first night: a werewolf howls ("Gaaaroooooo!") and runs along the path
-/// back into the village.
+/// Walking up the path to the village the first night, cells (9..11, 19): a
+/// werewolf howls "Gaaaroooooo!" and bounds down the path past the pond and
+/// off into the village, and Kraden explains to the startled party what a
+/// werewolf is.
 void Garoh_WerewolfRunsPast(void) {
   struct Actor *werewolf;
   s32 i;
@@ -1450,8 +1550,10 @@ void Garoh_WerewolfRunsPast(void) {
   Event_End();
 }
 
-/// Into the cave: "Look! It's that werewolf!", the little werewolf, which
-/// runs deeper in.
+/// Coming down into the werewolves' cave through the cleft by the sanctum,
+/// cells (17..18, 49): a howl echoes, the little werewolf from the path comes
+/// into sight, Kraden cries "Look! It's that werewolf!", and it looks around
+/// and runs off deeper into the cave; Kraden wants to follow it.
 void Garoh_FollowWerewolfIntoCave(void) {
   Event_SetFlag(FLAG_GAROH_FOLLOWED_WEREWOLF);
   Event_Start();
@@ -1553,8 +1655,9 @@ void Garoh_FollowWerewolfIntoCave(void) {
   Event_End();
 }
 
-/// "Where could that werewolf have gone?" The werewolves surround the party and
-/// Maha speaks with it.
+/// The first night in the werewolves' cave, at cells (19..21, 15): Kraden
+/// wonders where the werewolf went, the werewolves surround the party, and
+/// their elder Maha speaks with them and tells them to come back later.
 void Garoh_WerewolvesRevealThemselves(void) {
   Event_SetFlag(FLAG_GAROH_MET_WEREWOLVES);
   Event_Start();
@@ -2040,8 +2143,9 @@ void Garoh_WerewolvesRevealThemselves(void) {
   Event_End();
 }
 
-/// By day: "Ah, you came... I've been waiting for you." Maha tells of the
-/// werewolves' legend and Mt. Aleph.
+/// By day in the werewolves' cave, at cells (19..21, 15): "Ah, you came...
+/// I've been waiting for you." Maha tells the werewolves' legend and of
+/// Mt. Aleph, and gives the party the Jupiter Djinni Ether.
 void Garoh_MahaTellsTheLegend(void) {
   s32 frames;
   FIXED total;
@@ -2935,25 +3039,28 @@ struct Trigger gGaroh_Triggers[] = {
 // clang-format on
 
 struct Trigger gGaroh_VillageTriggers[] = {
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     GAROH_TO_GAROH_ROOMS_HOUSES_SOUTHEAST, CONDITION_ALWAYS,
      EVENT(Garoh_OpenDoorAndEnter)},
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 2, CONDITION_ALWAYS, 2},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     GAROH_TO_GAROH_ROOMS_HOUSES_NORTHWEST, CONDITION_ALWAYS,
      EVENT(Garoh_OpenDoorAndEnter)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     GAROH_TO_GAROH_ROOMS_HOUSES_SOUTHWEST, CONDITION_ALWAYS,
      EVENT(Garoh_OpenDoorAndEnter)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS,
-     EVENT(Garoh_OpenDoorAndEnter)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS,
-     EVENT(Garoh_OpenDoorAndEnter)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), GAROH_TO_GAROH_ROOMS_HOUSES_EAST,
+     CONDITION_ALWAYS, EVENT(Garoh_OpenDoorAndEnter)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), GAROH_TO_GAROH_ROOMS_SANCTUM,
+     CONDITION_ALWAYS, EVENT(Garoh_OpenDoorAndEnter)},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {STEP_TRIGGER_FACING(FACING_NORTH), 12, CONDITION_ALWAYS,
-     EVENT(Garoh_EnterOpening)},
-    {TRIGGER_STEP, 20, FLAG_GAROH_MET_WEREWOLVES,
+    {STEP_TRIGGER_FACING(FACING_NORTH), GAROH_TO_GAROH_WEREWOLF_CAVE,
+     CONDITION_ALWAYS, EVENT(Garoh_EnterOpening)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BY_SANCTUM_DOOR, FLAG_GAROH_MET_WEREWOLVES,
      EVENT(Garoh_WerewolfPeersFromCave)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(Garoh_AskIfSawWerewolf)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgGarohGoodEveningForgiveMeFor)},
@@ -2975,30 +3082,33 @@ struct Trigger gGaroh_VillageTriggers[] = {
      CONDITION_ALWAYS, EVENT(Garoh_RevealCaveEntrance)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
      CONDITION_ALWAYS, EVENT(Garoh_HideCaveEntrance)},
-    {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS,
+    {EXAMINE_TRIGGER(EXAMINE_WELL), CELL_BEHAVIOR_GAROH_WELL, CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgGarohMehISawTheSilhouette))},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gGaroh_VillageDayTriggers[] = {
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     GAROH_TO_GAROH_ROOMS_HOUSES_SOUTHEAST, CONDITION_ALWAYS,
      EVENT(Garoh_OpenDoorAndEnter)},
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 2, CONDITION_ALWAYS, 2},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     GAROH_TO_GAROH_ROOMS_HOUSES_NORTHWEST, CONDITION_ALWAYS,
      EVENT(Garoh_OpenDoorAndEnter)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     GAROH_TO_GAROH_ROOMS_HOUSES_SOUTHWEST, CONDITION_ALWAYS,
      EVENT(Garoh_OpenDoorAndEnter)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS,
-     EVENT(Garoh_OpenDoorAndEnter)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS,
-     EVENT(Garoh_OpenDoorAndEnter)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), GAROH_TO_GAROH_ROOMS_HOUSES_EAST,
+     CONDITION_ALWAYS, EVENT(Garoh_OpenDoorAndEnter)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), GAROH_TO_GAROH_ROOMS_SANCTUM,
+     CONDITION_ALWAYS, EVENT(Garoh_OpenDoorAndEnter)},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {STEP_TRIGGER_FACING(FACING_NORTH), 12, CONDITION_ALWAYS,
-     EVENT(Garoh_EnterOpening)},
+    {STEP_TRIGGER_FACING(FACING_NORTH), GAROH_TO_GAROH_WEREWOLF_CAVE,
+     CONDITION_ALWAYS, EVENT(Garoh_EnterOpening)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgGarohIHearTellFromMaster)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgGaroh16)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, EVENT(Garoh_HowlOutLoud)},
@@ -3023,7 +3133,7 @@ struct Trigger gGaroh_VillageDayTriggers[] = {
      CONDITION_ALWAYS, EVENT(Garoh_RevealCaveEntrance)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
      CONDITION_ALWAYS, EVENT(Garoh_HideCaveEntrance)},
-    {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS,
+    {EXAMINE_TRIGGER(EXAMINE_WELL), CELL_BEHAVIOR_GAROH_WELL, CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgGarohMehISawTheSilhouette))},
     {TRIGGER_TABLE_END},
 };
@@ -3032,7 +3142,8 @@ struct Trigger gGaroh_HypnosSwordChestTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_STEP, 30, FLAG_GAROH_SAW_WEREWOLF, EVENT(Garoh_WerewolfRunsPast)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_WEREWOLF_RUNS_PAST, FLAG_GAROH_SAW_WEREWOLF,
+     EVENT(Garoh_WerewolfRunsPast)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
      CONDITION_ALWAYS, EVENT(Garoh_IsNight)},
     {TRIGGER_TABLE_END},
@@ -3043,27 +3154,28 @@ struct Trigger gGaroh_HypnosSwordChestTriggers[] = {
 struct Trigger gGaroh_BlocksTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, 20, FLAG_CROSSED_WEST_EDGE, EVENT(Garoh_CrossWestEdge)},
-    {TRIGGER_STEP, 21, FLAG_CROSSED_EAST_EDGE, EVENT(Garoh_CrossEastEdge)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_LOWER_TWILIGHT_LINE,
+     FLAG_CROSSED_LOWER_TWILIGHT_LINE, EVENT(Garoh_CrossLowerTwilightLine)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_UPPER_TWILIGHT_LINE,
+     FLAG_CROSSED_UPPER_TWILIGHT_LINE, EVENT(Garoh_CrossUpperTwilightLine)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
-     ACTOR_FIRST_PILLAR, FLAG_FIRST_PILLAR_RAISED, EVENT(Garoh_LiftPillar)},
+     ACTOR_FIRST_PILLAR, FLAG_FIRST_PILLAR_SUNK, EVENT(Garoh_LiftPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR,
-     FLAG_FIRST_PILLAR_RAISED, EVENT(Garoh_PlaceFirstPillar)},
+     FLAG_FIRST_PILLAR_SUNK, EVENT(Garoh_PlaceFirstPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
-     ACTOR_SECOND_PILLAR, FLAG_SECOND_PILLAR_RAISED, EVENT(Garoh_LiftPillar)},
+     ACTOR_SECOND_PILLAR, FLAG_SECOND_PILLAR_SUNK, EVENT(Garoh_LiftPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_PILLAR,
-     FLAG_SECOND_PILLAR_RAISED, EVENT(Garoh_PlaceSecondPillar)},
+     FLAG_SECOND_PILLAR_SUNK, EVENT(Garoh_PlaceSecondPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_THIRD_PILLAR, FLAG_GAROH_ROPE_LASHED, EVENT(Garoh_LiftPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_THIRD_PILLAR,
      FLAG_GAROH_ROPE_LASHED, EVENT(Garoh_PlaceThirdPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
-     ACTOR_FOURTH_PILLAR, FLAG_FOURTH_PILLAR_RAISED, EVENT(Garoh_LiftPillar)},
+     ACTOR_FOURTH_PILLAR, FLAG_FOURTH_PILLAR_SUNK, EVENT(Garoh_LiftPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FOURTH_PILLAR,
-     FLAG_FOURTH_PILLAR_RAISED, EVENT(Garoh_PlaceFourthPillar)},
-    {TRIGGER_PUSH, 0, FLAG_FIRST_PILLAR_RAISED, EVENT(Garoh_LiftPushedPillar)},
-    {TRIGGER_PUSHED, 0, FLAG_FIRST_PILLAR_RAISED,
-     EVENT(Garoh_PlacePushedPillar)},
+     FLAG_FOURTH_PILLAR_SUNK, EVENT(Garoh_PlaceFourthPillar)},
+    {TRIGGER_PUSH, 0, FLAG_FIRST_PILLAR_SUNK, EVENT(Garoh_LiftPushedPillar)},
+    {TRIGGER_PUSHED, 0, FLAG_FIRST_PILLAR_SUNK, EVENT(Garoh_PlacePushedPillar)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
      CONDITION_ALWAYS, EVENT(Garoh_RestoreBlocksDark)},
 };
@@ -3097,9 +3209,10 @@ struct Trigger gGaroh_WerewolfCaveTriggers[] = {
      EVENT(Garoh_EnterOpening)},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 10, CONDITION_ALWAYS, 10},
-    {TRIGGER_STEP, 30, FLAG_GAROH_FOLLOWED_WEREWOLF,
+    {TRIGGER_STEP, CELL_BEHAVIOR_CAVE_MOUTH, FLAG_GAROH_FOLLOWED_WEREWOLF,
      EVENT(Garoh_FollowWerewolfIntoCave)},
-    {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(Garoh_MeetInTheCave)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BELOW_MAHA, CONDITION_ALWAYS,
+     EVENT(Garoh_MeetInTheCave)},
     {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgGarohTakeCareInYourTravels)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
      MSGNO(MsgGarohIWishThatIWere)},

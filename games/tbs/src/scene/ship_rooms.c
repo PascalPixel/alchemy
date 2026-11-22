@@ -1,101 +1,58 @@
 /// @file
-/// Ship rooms (SceneId_ShipRooms), a sheet of rooms drawn as a ship's cabins,
-/// all of them below the decks of the Tolbi-bound Ship.
+/// Ship rooms (SceneId_ShipRooms): the rooms below the decks of the
+/// Tolbi-bound Ship, on its voyage across the Karagol Sea from Kalay to Tolbi.
+/// The deck and the mast are tolbi_ship_deck.c and the mast's own scene; the
+/// voyage moves between all three.
 ///
-/// It is one of the ship's three scenes on its voyage from Kalay to Tolbi, told
-/// in tolbi_ship_deck.c.
+/// The map is four rooms, one camera box each:
 ///
-/// The map is four rooms, each a camera box of the entrance table, whose
-/// entrances are named by room:
+/// - The passengers' room, the hold where the Colosso tour group waits, down
+///   the stairs from the deck. A ladder behind a railing on its west side goes
+///   down to the rowing deck, a travelling Healer stands in its south-east
+///   corner, and a barrel beside the stairs holds 23 coins.
+/// - The cargo hold, down its own stairs in the middle of the ship, where a
+///   barrel holds a Lucky Medal.
+/// - The rowing deck under the passengers' room: eight oarsmen in red
+///   bandanas at their seats, two by two, a drummer keeping time and a
+///   crewman.
+/// - The captain's cabin, where a jar holds a Nut.
 ///
-/// - The passengers' hold (SHIP_ROOMS_PASSENGER_HOLD_FROM_TOLBI_SHIP_DECK and
-///   the others named for it).
-/// - The cargo hold (SHIP_ROOMS_CRATE_HOLD_FROM_TOLBI_SHIP_DECK).
-/// - The rowing deck where the oarsmen row (the SHIP_ROOMS_ROWING_DECK
-///   entrances and SHIP_ROOMS_FROM_WORLD_MAP).
-/// - The captain's quarters (the SHIP_ROOMS_CAPTAINS_ROOM entrances).
+/// In story order:
 ///
-/// Three exits lead up to the deck. They are
-/// SHIP_ROOMS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK from the hold,
-/// SHIP_ROOMS_CRATE_HOLD_TO_TOLBI_SHIP_DECK from the cargo hold and
-/// SHIP_ROOMS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK from the captain's quarters.
-/// SHIP_ROOMS_PASSENGER_HOLD_TO_ROWING_DECK and
-/// SHIP_ROOMS_ROWING_DECK_TO_PASSENGER_HOLD join the hold and the rowing deck.
+/// - At Kalay the ship waits for its relief from Tolbi. Walking into the
+///   passengers' room once the tour group is aboard, Isaac overhears Ouranos,
+///   a huge warrior bound for Colosso who "can't stand water", threaten to go
+///   ashore; he and his friend Sean storm off to make the captain sail
+///   (ShipRooms_WatchWarriorsStormOff). If Isaac has not yet overheard the
+///   captain, Kaja and a crewman talk over the delay on deck, he hears it on
+///   stepping into the cabin (ShipRooms_WatchCrewWonderAtDelay). With the
+///   warriors there, the captain agrees to sail, then finds his lucky anchor
+///   charm gone and will not leave without it
+///   (ShipRooms_DiscussLaunchingWithoutAnchor). The crewman hid it on top of
+///   the mast. Giving the Anchor Charm back (ShipRooms_ReturnLuckyAnchor) gets
+///   Isaac's party asked to guard the oarsmen, and on the rowing deck Kaja
+///   tells them the ship sails without its relief.
+/// - The voyage: the captain raises the charm and casts off, Kaja calls the
+///   oarsmen to row, and three times monsters come aboard and attack the
+///   rowing deck. Isaac fights them there, and after each battle an oarsman
+///   lies hurt, so Isaac must ask a passenger in the passengers' room to row
+///   in his place. Each answers in his or her own way, and whoever agrees
+///   follows Isaac down to the empty seat. Kaja warns that the two teams of
+///   rowers must be balanced; the choices decide whether the ship keeps its
+///   course.
+/// - The Kraken: the ship rocks badly, and the crew calls Isaac up on deck to
+///   fight a huge sea monster.
+/// - If the rowers were badly chosen the ship strays off course to an island,
+///   Crossbone Isle, and waits there while the tour group argues about going
+///   ashore. Back on board, Kaja has the left and right teams change sides and
+///   the ship sets off for Tolbi.
+/// - A defeat at sea brings the party back to the passengers' room with the
+///   voyage's flags cleared, to start the crossing over.
 ///
-/// The actor placements and triggers are chosen by the room and the voyage's
-/// stage. Most of the voyage's events play here, at the entrances from
-/// SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_CAST_OFF on, through the
-/// shared operations of ShipRooms_RunEventCommand. In story order:
-///
-/// - At Kalay, while the ship waits for its replacement from Tolbi. Once the
-///   tour group has left Kalay (FLAG_KALAY_COLOSSO_TOUR_LEFT), walking into the
-///   hold (CELL_BEHAVIOR_SHIP_ROOMS_HOLD_WARRIORS) has Ouranos, a warrior bound
-///   for Colosso who "can't stand water", threaten to go ashore. He and his
-///   friend Sean go to make the captain sail
-///   (FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN). The crew's talk of the delay
-///   plays here (CELL_BEHAVIOR_SHIP_ROOMS_QUARTERS_CREW) if it has not on deck.
-///   In the captain's quarters the warriors and passengers press the captain,
-///   who has just decided to sail (FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL).
-///   Ouranos and Sean offer to guard the deck with Kaja, and Sean thinks of the
-///   young warriors among the passengers. Then the captain finds his lucky
-///   anchor charm gone and will not sail without it. Giving him the Anchor
-///   Charm, found on the mast, plays ShipRooms_ReturnLuckyAnchor. Sean names
-///   the party to guard the oarsmen, and the party agrees
-///   (FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED).
-/// - Setting sail: on the rowing deck Kaja tells the oarsmen they sail without
-///   the replacement (FLAG_TOLBI_SHIP_SAILING_WITHOUT_REPLACEMENT). The party
-///   guards them below while he, Ouranos and Sean guard the deck. If an oarsman
-///   falls, the party must choose a passenger to row in his place, keeping the
-///   two teams balanced. After the deck and the mast, the captain casts off in
-///   the captain's quarters
-///   (SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_CAST_OFF, raising the
-///   charm). A passenger is called to the oars
-///   (SHIP_ROOMS_PASSENGER_HOLD_FROM_CAPTAINS_ROOM_CALL_TO_OARS) and the rowing
-///   deck rows (SHIP_ROOMS_ROWING_DECK_FROM_PASSENGER_HOLD_ROWING), which leads
-///   to the World Map for the next leg.
-/// - The attacks, each called by the lookout on the mast or the deck. Before
-///   the first, the captain in the captain's quarters hears of monsters
-///   (SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_MAST_MONSTERS) and turns the
-///   ship (SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_TURN). Then monsters
-///   are belowdecks (SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_FIRST_ATTACK
-///   and the second and third attacks'). While they are belowdecks the stairs
-///   are barred (FLAG_TOLBI_SHIP_MONSTERS_BELOWDECKS) and the leader is turned
-///   back from them. Talking to a monster on the rowing deck fights it (the
-///   first, second or third slot of the Tolbi ship's scripted battles, by the
-///   attack). The party returns to
-///   SHIP_ROOMS_ROWING_DECK_AFTER_FIRST_ATTACK_BATTLE or the second or third
-///   attack's, which record the attack fought off
-///   (FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF, _SECOND_ATTACK_FOUGHT_OFF and
-///   _THIRD_ATTACK_FOUGHT_OFF) and leave an oarsman hurt. The party then
-///   chooses a passenger in the hold to row. The attacks fought off number the
-///   seat being filled, and each seat has a group of nine flags, one for each
-///   passenger (FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS and the rest). The passenger
-///   follows the party (FLAG_TOLBI_SHIP_ROWER_CHOSEN) to the rowing deck
-///   (SHIP_ROOMS_ROWING_DECK_FROM_PASSENGER_HOLD), where Kaja takes them on.
-///   Each passenger answers being asked in their own way, and their rowing
-///   values on the mast decide the course.
-/// - The Kraken: SHIP_ROOMS_FROM_WORLD_MAP, the ship rocking,
-///   "there's a huge sea monster on the ship!"
-///   (FLAG_TOLBI_SHIP_KRAKEN_ON_DECK shakes the event until it is defeated on
-///   deck).
-/// - The island: off course, a short event in the captain's quarters
-///   (SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_ISLAND) leads by the World
-///   Map (SHIP_ROOMS_TO_WORLD_MAP) to
-///   SHIP_ROOMS_ROWING_DECK_FROM_WORLD_MAP_ISLAND. There the rowers rest at the
-///   island (FLAG_TOLBI_SHIP_AT_ISLAND) and the hold and captain's quarters
-///   have their own talk. Back from it,
-///   SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SWITCH_TEAMS has Kaja switch
-///   the left and right teams, the left team's timing having taken the ship off
-///   course, and the ship sets off for Tolbi.
-/// - SHIP_ROOMS_PASSENGER_HOLD_AFTER_DEFEAT, where a defeat at sea returns. It
-///   clears the voyage's flags from FLAG_TOLBI_SHIP_SAILING_WITHOUT_REPLACEMENT
-///   to _KRAKEN_DEFEATED and the rowers chosen, sets
-///   FLAG_TOLBI_SHIP_DEFEATED_AT_SEA and leads up to the deck
-///   (SHIP_ROOMS_PASSENGER_HOLD_TO_TOLBI_SHIP_DECK), so the voyage starts over.
-///
-/// A travelling healer opens a Sanctum in the hold. At Tolbi
-/// (FLAG_TOLBI_SHIP_REACHED_TOLBI) the captain's quarters and the hold have
-/// their own actor placements.
+/// Which actors stand in each room, and which talk and search rows they have,
+/// depend on the room entered and the stage of the voyage. The cutscenes are
+/// played from Scene_Initialize by the entrance the other ship scenes send the
+/// party in by, and share the operations of ShipRooms_RunEventCommand.
 
 #include "ability_ids.h"
 #include "item_ids.h"
@@ -385,15 +342,21 @@ enum ShipRoomsAnimation {
 /// The step triggers and searched containers below decks whose subjects are
 /// more than an exit.
 enum ShipRoomsCellBehavior {
-  /// The rowing deck's stairs up to the hold, barred while monsters are
-  /// belowdecks.
+  /// The rowing deck's stairs up to the passengers' room, cell (27, 8), barred
+  /// while monsters are aboard.
   CELL_BEHAVIOR_SHIP_ROOMS_ROWING_DECK_STAIRS = 4,
-  /// In the captain's quarters, where the crew's talk of the delay plays.
+  /// Just inside the captain's cabin door, cells (28, 42), (29, 42), (27, 43)
+  /// and (29, 43), where the crew's talk of the delay plays.
   CELL_BEHAVIOR_SHIP_ROOMS_QUARTERS_CREW = 10,
-  /// Inside the hold, where Ouranos threatens to go ashore.
+  /// Across the passengers' room north of the stairs, cells (9..11, 32), where
+  /// Ouranos threatens to go ashore.
   CELL_BEHAVIOR_SHIP_ROOMS_HOLD_WARRIORS = 11,
+  /// The cargo hold's barrel holding a Lucky Medal, cell (10, 19).
   CELL_BEHAVIOR_SHIP_ROOMS_CRATE_HOLD_BARREL = 100,
+  /// The barrel beside the passengers' room stairs holding 23 coins, cell
+  /// (9, 35).
   CELL_BEHAVIOR_SHIP_ROOMS_HOLD_BARREL = 101,
+  /// The jar in the captain's cabin holding a Nut, cell (26, 40).
   CELL_BEHAVIOR_SHIP_ROOMS_QUARTERS_JAR = 102
 };
 
@@ -840,7 +803,15 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gShipRooms_TriggersOther;
 }
 
-/// The crewman asks whether the party wants to see the captain too.
+/// The crewman in the blue bandana, in the captain's cabin at Kalay, asks "Now
+/// what? You want to see the captain too?" once Ouranos and Sean have stormed
+/// in; a yes plays ShipRooms_DiscussLaunchingWithoutAnchor.
+///
+/// Before then he says "But we can't send the ship out without hiring some
+/// warriors," and once the captain has decided to sail, "If the ship from Tolbi
+/// had come, I'd feel differently... Hmmm... I wonder where that anchor charm
+/// went." A no gets "Well, you don't have any business here then. Off with you
+/// now!"
 static void ShipRooms_TalkToCaptainsQuartersCrewman(void) {
   Event_Start();
   Field_EndBusyAndReveal();
@@ -870,8 +841,10 @@ static void ShipRooms_TalkToCaptainsQuartersCrewman(void) {
   Event_End();
 }
 
-/// Sean, in the captain's quarters, asks whether the party came to ask the
-/// captain to set sail.
+/// Sean, in the captain's cabin while the charm is lost, asks "You came to ask
+/// the captain to set sail, right?" A yes gets "If we had worked together, we'd
+/// be out at sea right now..."; a no, "Heh heh... In that case, why don't you
+/// take a tour of the ship?"
 static void ShipRooms_TalkToSeanInCaptainsQuarters(void) {
   Event_Start();
   Event_SetMessageId(MsgTolbiShipYouCameAskCaptainSet);
@@ -882,7 +855,16 @@ static void ShipRooms_TalkToSeanInCaptainsQuarters(void) {
   Event_End();
 }
 
-/// The captain, who speaks by the voyage's stage.
+/// The captain, an old man with a white beard in his cabin, says "It's too
+/// late to hire mercenaries now... There's no time" at first, and "Oh, of all
+/// the bad luck...losing my lucky charm! This ship can't leave until we find
+/// it!" once it is lost.
+///
+/// If Isaac is carrying the Anchor Charm by then, the field menu opens so that
+/// he can hand it over. With the charm back he says "We don't know what might
+/// happen before we arrive. Be ready for anything," and after the first attack
+/// he asks "An oarsman was injured?", shakes his head and says "There's no time
+/// to worry. We must escape the waters of the Karagol!"
 static void ShipRooms_TalkToCaptain(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_TOLBI_SHIP_FIRST_ATTACK_FOUGHT_OFF) != 0) {
@@ -912,7 +894,16 @@ static void ShipRooms_TalkToCaptain(void) {
   Event_End();
 }
 
-/// A passenger in the hold while the ship waits.
+/// The woman with a sword, a passenger in the passengers' room at Kalay, says
+/// "The longer we sit here, the more time we have to think..." until the
+/// Anchor Charm is back.
+///
+/// Then she says "These proud warriors are not going to like being told to
+/// row," and asks Isaac "What do you think? You guys wanna trade jobs?" A yes
+/// gets "You look so scary... You say you want to trade, but it's not that
+/// easy," and she turns away: "I see. Sure, why don't you take over the
+/// rowing." A no gets "I figured you'd say that. Fine. Rowing is fine with
+/// me."
 static void ShipRooms_TalkToWaitingWarrior(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
@@ -939,8 +930,12 @@ static void ShipRooms_TalkToWaitingWarrior(void) {
   Event_End();
 }
 
-/// Another waiting passenger, once the party has agreed to protect the ship,
-/// asks whether it will row.
+/// The woman with fair hair, a passenger in the passengers' room at Kalay,
+/// admires "a whole bunch of really muscular men on the floor below", and once
+/// the Anchor Charm is back asks Isaac "Are you going to row?"
+///
+/// A yes gets "Hmmm. So, you have to row, even though you're a fighter, huh?";
+/// a no, "Oh. Helping to protect the ship suits you better, doesn't it?"
 static void ShipRooms_TalkToWaitingMuscleAdmirer(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_TOLBI_SHIP_ANCHOR_CHARM_RETURNED) != 0) {
@@ -990,22 +985,43 @@ static void ShipRooms_TalkToWaitingMuscleAdmirer(void) {
                        FLAG_TOLBI_SHIP_FIRST_SEAT_ROWERS + (passenger));       \
   }
 
-/// The head guide in the hold under sail.
+/// Isaac asks the tour guide, the man with a pack in the passengers' room, to
+/// row after an attack, and he wails "Nooooo! You're not going to make me row,
+/// are you?"
+///
+/// A yes gets "I've never done much physical labor, but if I must, then I guess
+/// I must," and he follows Isaac. A no gets "I'm just a businessman. I'm not
+/// strong enough to be of any use." Once someone else has been chosen, the
+/// chosen one steps out beside Isaac and the guide says "Looks like you've been
+/// chosen to help row, doesn't it? So, get on with the rowing!"
 static void ShipRooms_AskHeadGuideToRow(void) {
   TOLBI_SHIP_ASK_TO_ROW(ACTOR_SEA_HOLD_HEAD_GUIDE,
                         MsgTolbiShipLooksLikeYouveBeenChosen,
                         MsgTolbiShipNoooooNotGoing, PASSENGER_HEAD_GUIDE);
 }
 
-/// The sweating passenger in the hold under sail.
+/// Isaac asks the chef in the passengers' room to row after an attack: "You...
+/// You must be joking. You want me to row?"
+///
+/// A yes gets "You jerk! What do you have against me?", and he follows Isaac. A
+/// no gets "Ye-Yeah. Besides, a spatula suits me better than an oar." Once
+/// someone else has been chosen he laughs, "Ha ha ha! Chosen to be an oarsman,
+/// huh?"
 static void ShipRooms_AskSweatingPassengerToRow(void) {
   TOLBI_SHIP_ASK_TO_ROW(ACTOR_SEA_HOLD_SWEATING_PASSENGER,
                         MsgTolbiShipHaHaHaChosenOarsman,
                         MsgTolbiShipJokingWantRow, PASSENGER_SWEATING);
 }
 
-/// The lady in the hold under sail, who is too seasick to talk once the ship
-/// is at anchor.
+/// Isaac asks the young woman in green in the passengers' room to row after an
+/// attack: "Don't tell me you're going to ask a lady to row?"
+///
+/// A yes gets "What? I don't believe this. You're evil! A monster! I won't
+/// forget this!", and she follows Isaac. A no gets "You startled me, sir. Don't
+/// frighten me like that!" Once someone else has been chosen she says "So you
+/// finally picked someone, didn't you? Show your stuff!" Off the island she
+/// is seasick: she trembles and says "I don't feel so well.. Don't talk to
+/// me..."
 static void ShipRooms_AskLadyToRow(void) {
   if (GameFlag_Get(FLAG_TOLBI_SHIP_AT_ISLAND) != 0) {
     Event_Start();
@@ -1023,7 +1039,15 @@ static void ShipRooms_AskLadyToRow(void) {
   }
 }
 
-/// The stared-at passenger is asked to row, as the others are.
+/// Isaac asks the bald, muscular man in the passengers' room to row after an
+/// attack, and he flinches: "What? Ohhhh, noooo... Are you going to make me
+/// row?"
+///
+/// A yes gets "Huh? You DO want me to row? Okay, okay. I'm going already...",
+/// and he follows Isaac. A no gets "What? You're not going to pick me? You
+/// really are a nice guy!" Once someone else has been chosen he says "It gives
+/// me chills to think that could have been me." The steps are the other
+/// passengers' (TOLBI_SHIP_ASK_TO_ROW), written out with a flinch first.
 static void ShipRooms_AskStaredAtPassengerToRow(void) {
   s32 rowerId;
 
@@ -1061,7 +1085,13 @@ static void ShipRooms_AskStaredAtPassengerToRow(void) {
   Event_End();
 }
 
-/// The second guide in the hold under sail, written out in full as well.
+/// Isaac asks the tour's other guide, in the passengers' room, to row after an
+/// attack. He laughs, "Ha ha ha. Rowing, right? Feel free to choose whomever
+/// you like," then starts: "What? Me? You must be joking! Really?"
+///
+/// A yes gets "Awwwww! Oh, this is just too much to handle," and he follows
+/// Isaac. A no gets "Phew! Don't frighten me like that!" Once someone else has
+/// been chosen he says "Hey, Isaac. You've got a good eye!"
 static void ShipRooms_AskSecondGuideToRow(void) {
   s32 rowerId;
 
@@ -1104,28 +1134,55 @@ static void ShipRooms_AskSecondGuideToRow(void) {
   Event_End();
 }
 
-/// The warrior in the hold under sail.
+/// Isaac asks the woman with a sword in the passengers' room to row after an
+/// attack: "Hey! You're not thinking of making me an oarsman, are you?"
+///
+/// A yes gets "Grrr... I can't believe this guy is actually choosing me...",
+/// and she follows Isaac. A no gets "Heh-heh! Not picking me is a smart choice,
+/// buddy." Once someone else has been chosen she says "That's who you picked to
+/// be an oarsman? Good choice! ...Looks very...oarsmanly."
 static void ShipRooms_AskWarriorToRow(void) {
   TOLBI_SHIP_ASK_TO_ROW(ACTOR_SEA_HOLD_WARRIOR,
                         MsgTolbiShipThatsWhoYouPickedOarsman,
                         MsgTolbiShipNotThinkingMaking, PASSENGER_WARRIOR);
 }
 
-/// The ticket grumbler in the hold under sail.
+/// Isaac asks the young man with brown hair in the passengers' room, who
+/// grumbled about the price of the tickets, to row after an attack: "What? Me?
+/// An oarsman? Give me a break! Seriously?"
+///
+/// A yes gets "Oh, you are serious... Fine! I'll do it...", and he follows
+/// Isaac. A no gets "Hahhh... You scared me so bad, my heart nearly stopped!"
+/// Once someone else has been chosen he says "If you've chosen an oarsman,
+/// let's get to rowing!"
 static void ShipRooms_AskTicketGrumblerToRow(void) {
   TOLBI_SHIP_ASK_TO_ROW(
       ACTOR_SEA_HOLD_TICKET_GRUMBLER, MsgTolbiShipIfYouveChosenOarsmanLets,
       MsgTolbiShipOarsmanGiveBreak, PASSENGER_TICKET_GRUMBLER);
 }
 
-/// The muscle admirer in the hold under sail.
+/// Isaac asks the woman with fair hair in the passengers' room, who admired
+/// the oarsmen's muscles, to row after an attack: "That poor oarsman. I feel so
+/// sorry for him. What? You want me to take his place?"
+///
+/// A yes gets "How can you ask a young lady to take his place? It's not
+/// fair!!!", and she follows Isaac. A no gets "That's right... You can't ask a
+/// proper lady to do such a filthy job!" Once someone else has been chosen she
+/// says "You've been chosen as an oarsman? Aye, now that's an honor!"
 static void ShipRooms_AskMuscleAdmirerToRow(void) {
   TOLBI_SHIP_ASK_TO_ROW(ACTOR_SEA_HOLD_MUSCLE_ADMIRER,
                         MsgTolbiShipYouveBeenChosenAsOarsman,
                         MsgTolbiShipPoorOarsmanFeel, PASSENGER_MUSCLE_ADMIRER);
 }
 
-/// The old man in the hold under sail.
+/// Isaac asks the old man with a cane in the passengers' room to row after an
+/// attack: "Out of all these people, you're asking a frail old man like me to
+/// row?"
+///
+/// A yes gets "You'll regret this when I collapse from exhaustion or
+/// something!", and he follows Isaac. A no gets "Th... That's right... Nobody
+/// would ever choose me." Once someone else has been chosen he asks "Ho ho! Is
+/// that person going to get us to Tolbi?"
 static void ShipRooms_AskOldManToRow(void) {
   TOLBI_SHIP_ASK_TO_ROW(ACTOR_SEA_HOLD_OLD_MAN, MsgTolbiShipHoHoPersonGoingGet,
                         MsgTolbiShipPeopleAskingFrail, PASSENGER_OLD_MAN);
@@ -1262,8 +1319,8 @@ static s32 ShipRooms_GetChosenOarsman(void) {
   return ShipRooms_FindFirstSetFlag(seat, 1);
 }
 
-/// What a passenger at the oars says, or thinks under Mind Read, by the seat
-/// they were chosen for.
+/// What a passenger at the oars says, or thinks under Mind Read, while the
+/// Kraken is on deck, by the seat they were chosen for.
 ///
 /// That is the first seat's line, the second's, or a later one's. The
 /// TalkTo...AtOars and Read...MindAtOars functions are this, or
@@ -1290,8 +1347,14 @@ static s32 ShipRooms_GetChosenOarsman(void) {
   Event_ShowMessage(actorId, 0);                                               \
   Event_End()
 
-/// The head guide at the oars, who says Kaja's men are worried, monsters are
-/// everywhere, or the ship is starting to list.
+/// The tour guide, rowing while the Kraken is on deck, says "That thing has
+/// Kaja and his men worried. It's going to be a tough fight" if he was the
+/// first passenger chosen.
+///
+/// Chosen second he says "Monsters everywhere, and I'm stuck rowing... I
+/// should have stayed home!", and chosen third, "The ship is starting to
+/// list... If we don't do something, she'll sink!" Every passenger at the oars
+/// but the two women in green and fair hair says the same three lines.
 static void ShipRooms_TalkToHeadGuideAtOars(void) {
   TOLBI_SHIP_ROWER_LINE_BY_SEAT(PASSENGER_HEAD_GUIDE, ACTOR_ROWING_HEAD_GUIDE,
                                 MsgTolbiShipThingHasKajaHisMen,
@@ -1299,7 +1362,10 @@ static void ShipRooms_TalkToHeadGuideAtOars(void) {
                                 MsgTolbiShipShipStartingListIfWe);
 }
 
-/// The second guide at the oars, as the head guide.
+/// The tour's other guide, rowing while the Kraken is on deck, says "That thing
+/// has Kaja and his men worried..." if he was chosen first, "Monsters
+/// everywhere, and I'm stuck rowing..." if second, and "The ship is starting to
+/// list..." if third, as the tour guide does.
 static void ShipRooms_TalkToSecondGuideAtOars(void) {
   TOLBI_SHIP_ROWER_LINE_BY_SEAT(PASSENGER_SECOND_GUIDE,
                                 ACTOR_ROWING_SECOND_GUIDE,
@@ -1308,7 +1374,10 @@ static void ShipRooms_TalkToSecondGuideAtOars(void) {
                                 MsgTolbiShipShipStartingListIfWe);
 }
 
-/// The sweating passenger at the oars, as the head guide.
+/// The chef, rowing while the Kraken is on deck, says "That thing has Kaja and
+/// his men worried..." if he was chosen first, "Monsters everywhere, and I'm
+/// stuck rowing..." if second, and "The ship is starting to list..." if third,
+/// as the tour guide does.
 static void ShipRooms_TalkToSweatingPassengerAtOars(void) {
   TOLBI_SHIP_ROWER_LINE_BY_SEAT(PASSENGER_SWEATING,
                                 ACTOR_ROWING_SWEATING_PASSENGER,
@@ -1317,14 +1386,20 @@ static void ShipRooms_TalkToSweatingPassengerAtOars(void) {
                                 MsgTolbiShipShipStartingListIfWe);
 }
 
-/// The lady at the oars asks how many monsters are out there.
+/// The young woman in green, rowing while the Kraken is on deck, asks "How many
+/// monsters are out there?" if she was the first passenger chosen, and
+/// otherwise grumbles "Another monster? This isn't the first-class passage I
+/// paid for!"
 static void ShipRooms_TalkToLadyAtOars(void) {
   TOLBI_SHIP_ROWER_LINE_FIRST_OR_LATER(
       PASSENGER_LADY, ACTOR_ROWING_LADY, MsgTolbiShipHowManyMonstersOutThere,
       MsgTolbiShipAnotherMonsterIsntFirstClass);
 }
 
-/// The stared-at passenger at the oars, as the head guide.
+/// The bald, muscular man, rowing while the Kraken is on deck, says "That thing
+/// has Kaja and his men worried..." if he was chosen first, "Monsters
+/// everywhere, and I'm stuck rowing..." if second, and "The ship is starting to
+/// list..." if third, as the tour guide does.
 static void ShipRooms_TalkToStaredAtPassengerAtOars(void) {
   TOLBI_SHIP_ROWER_LINE_BY_SEAT(PASSENGER_STARED_AT,
                                 ACTOR_ROWING_STARED_AT_PASSENGER,
@@ -1333,7 +1408,10 @@ static void ShipRooms_TalkToStaredAtPassengerAtOars(void) {
                                 MsgTolbiShipShipStartingListIfWe);
 }
 
-/// The warrior at the oars, as the head guide.
+/// The woman with a sword, rowing while the Kraken is on deck, says "That thing
+/// has Kaja and his men worried..." if she was chosen first, "Monsters
+/// everywhere, and I'm stuck rowing..." if second, and "The ship is starting to
+/// list..." if third, as the tour guide does.
 static void ShipRooms_TalkToWarriorAtOars(void) {
   TOLBI_SHIP_ROWER_LINE_BY_SEAT(PASSENGER_WARRIOR, ACTOR_ROWING_WARRIOR,
                                 MsgTolbiShipThingHasKajaHisMen,
@@ -1341,7 +1419,10 @@ static void ShipRooms_TalkToWarriorAtOars(void) {
                                 MsgTolbiShipShipStartingListIfWe);
 }
 
-/// The ticket grumbler at the oars, as the head guide.
+/// The young man with brown hair, rowing while the Kraken is on deck, says
+/// "That thing has Kaja and his men worried..." if he was chosen first,
+/// "Monsters everywhere, and I'm stuck rowing..." if second, and "The ship is
+/// starting to list..." if third, as the tour guide does.
 static void ShipRooms_TalkToTicketGrumblerAtOars(void) {
   TOLBI_SHIP_ROWER_LINE_BY_SEAT(PASSENGER_TICKET_GRUMBLER,
                                 ACTOR_ROWING_TICKET_GRUMBLER,
@@ -1350,7 +1431,10 @@ static void ShipRooms_TalkToTicketGrumblerAtOars(void) {
                                 MsgTolbiShipShipStartingListIfWe);
 }
 
-/// The muscle admirer at the oars, as the lady.
+/// The woman with fair hair, rowing while the Kraken is on deck, asks "How
+/// many monsters are out there?" if she was the first passenger chosen, and
+/// otherwise grumbles "Another monster? This isn't the first-class passage I
+/// paid for!", as the woman in green does.
 static void ShipRooms_TalkToMuscleAdmirerAtOars(void) {
   TOLBI_SHIP_ROWER_LINE_FIRST_OR_LATER(
       PASSENGER_MUSCLE_ADMIRER, ACTOR_ROWING_MUSCLE_ADMIRER,
@@ -1358,7 +1442,14 @@ static void ShipRooms_TalkToMuscleAdmirerAtOars(void) {
       MsgTolbiShipAnotherMonsterIsntFirstClass);
 }
 
-/// Mind Read on the head guide at the oars.
+/// Mind Read on the tour guide, rowing while the Kraken is on deck, hears "I
+/// don't care what it takes, just hurry up and slay that beast!" if he was the
+/// first passenger chosen.
+///
+/// Chosen second he thinks "If those monsters come back...go teach 'em another
+/// lesson!", and chosen third, "The boat's rocking so much. I'm certain we're
+/// doomed!" Every passenger at the oars but the two women in green and fair
+/// hair thinks the same three thoughts.
 static void ShipRooms_ReadHeadGuideMindAtOars(void) {
   TOLBI_SHIP_ROWER_LINE_BY_SEAT(PASSENGER_HEAD_GUIDE, ACTOR_ROWING_HEAD_GUIDE,
                                 MsgTolbiShipDontCareTakesJustHurry,
@@ -1366,7 +1457,11 @@ static void ShipRooms_ReadHeadGuideMindAtOars(void) {
                                 MsgTolbiShipBoatsRockingMuchImCertain);
 }
 
-/// Mind Read on the second guide at the oars, as on the head guide.
+/// Mind Read on the tour's other guide at the oars, while the Kraken is on
+/// deck, hears "I don't care what it takes, just hurry up and slay that
+/// beast!", "If those monsters come back...go teach 'em another lesson!" or
+/// "The boat's rocking so much. I'm certain we're doomed!", by whether he was
+/// chosen first, second or third.
 static void ShipRooms_ReadSecondGuideMindAtOars(void) {
   TOLBI_SHIP_ROWER_LINE_BY_SEAT(
       PASSENGER_SECOND_GUIDE, ACTOR_ROWING_SECOND_GUIDE,
@@ -1374,7 +1469,11 @@ static void ShipRooms_ReadSecondGuideMindAtOars(void) {
       MsgTolbiShipBoatsRockingMuchImCertain);
 }
 
-/// Mind Read on the sweating passenger at the oars, as on the head guide.
+/// Mind Read on the chef at the oars, while the Kraken is on deck, hears "I
+/// don't care what it takes, just hurry up and slay that beast!", "If those
+/// monsters come back...go teach 'em another lesson!" or "The boat's rocking so
+/// much. I'm certain we're doomed!", by whether he was chosen first, second or
+/// third.
 static void ShipRooms_ReadSweatingPassengerMindAtOars(void) {
   TOLBI_SHIP_ROWER_LINE_BY_SEAT(
       PASSENGER_SWEATING, ACTOR_ROWING_SWEATING_PASSENGER,
@@ -1382,15 +1481,21 @@ static void ShipRooms_ReadSweatingPassengerMindAtOars(void) {
       MsgTolbiShipBoatsRockingMuchImCertain);
 }
 
-/// Mind Read on the lady at the oars, who thinks there are so many monsters at
-/// sea.
+/// Mind Read on the young woman in green at the oars, while the Kraken is on
+/// deck, hears "I had no idea there were so many monsters out at sea..." if
+/// she was the first passenger chosen, and otherwise "We're surrounded by
+/// monsters, and still there's no sign of land!"
 static void ShipRooms_ReadLadyMindAtOars(void) {
   TOLBI_SHIP_ROWER_LINE_FIRST_OR_LATER(
       PASSENGER_LADY, ACTOR_ROWING_LADY, MsgTolbiShipHadIdeaThereWereMany,
       MsgTolbiShipWereSurroundedByMonstersStill);
 }
 
-/// Mind Read on the stared-at passenger at the oars, as on the head guide.
+/// Mind Read on the bald, muscular man at the oars, while the Kraken is on
+/// deck, hears "I don't care what it takes, just hurry up and slay that
+/// beast!", "If those monsters come back...go teach 'em another lesson!" or
+/// "The boat's rocking so much. I'm certain we're doomed!", by whether he was
+/// chosen first, second or third.
 static void ShipRooms_ReadStaredAtPassengerMindAtOars(void) {
   TOLBI_SHIP_ROWER_LINE_BY_SEAT(
       PASSENGER_STARED_AT, ACTOR_ROWING_STARED_AT_PASSENGER,
@@ -1398,7 +1503,11 @@ static void ShipRooms_ReadStaredAtPassengerMindAtOars(void) {
       MsgTolbiShipBoatsRockingMuchImCertain);
 }
 
-/// Mind Read on the warrior at the oars, as on the head guide.
+/// Mind Read on the woman with a sword at the oars, while the Kraken is on
+/// deck, hears "I don't care what it takes, just hurry up and slay that
+/// beast!", "If those monsters come back...go teach 'em another lesson!" or
+/// "The boat's rocking so much. I'm certain we're doomed!", by whether she was
+/// chosen first, second or third.
 static void ShipRooms_ReadWarriorMindAtOars(void) {
   TOLBI_SHIP_ROWER_LINE_BY_SEAT(PASSENGER_WARRIOR, ACTOR_ROWING_WARRIOR,
                                 MsgTolbiShipDontCareTakesJustHurry,
@@ -1406,7 +1515,11 @@ static void ShipRooms_ReadWarriorMindAtOars(void) {
                                 MsgTolbiShipBoatsRockingMuchImCertain);
 }
 
-/// Mind Read on the ticket grumbler at the oars, as on the head guide.
+/// Mind Read on the young man with brown hair at the oars, while the Kraken is
+/// on deck, hears "I don't care what it takes, just hurry up and slay that
+/// beast!", "If those monsters come back...go teach 'em another lesson!" or
+/// "The boat's rocking so much. I'm certain we're doomed!", by whether he was
+/// chosen first, second or third.
 static void ShipRooms_ReadTicketGrumblerMindAtOars(void) {
   TOLBI_SHIP_ROWER_LINE_BY_SEAT(
       PASSENGER_TICKET_GRUMBLER, ACTOR_ROWING_TICKET_GRUMBLER,
@@ -1414,7 +1527,10 @@ static void ShipRooms_ReadTicketGrumblerMindAtOars(void) {
       MsgTolbiShipBoatsRockingMuchImCertain);
 }
 
-/// Mind Read on the muscle admirer at the oars, as on the lady.
+/// Mind Read on the woman with fair hair at the oars, while the Kraken is on
+/// deck, hears "I had no idea there were so many monsters out at sea..." if
+/// she was the first passenger chosen, and otherwise "We're surrounded by
+/// monsters, and still there's no sign of land!"
 static void ShipRooms_ReadMuscleAdmirerMindAtOars(void) {
   TOLBI_SHIP_ROWER_LINE_FIRST_OR_LATER(
       PASSENGER_MUSCLE_ADMIRER, ACTOR_ROWING_MUSCLE_ADMIRER,
@@ -1442,7 +1558,15 @@ static void ShipRooms_AskToRow(s32 speaker, s32 question, s32 seatFlag) {
   Event_End();
 }
 
-/// The travelling healer in the hold.
+/// The travelling Healer, the bearded man in a long robe in the south-east
+/// corner of the passengers' room, opens his Sanctum when Isaac faces him from
+/// the west.
+///
+/// Spoken to from any other side, he says "I'm spreading goodwill wherever I
+/// travel" at Kalay, "The ship's crew is ready for anything, and I'll be right
+/// here for them. Ask the others to do the rowing" once the voyage is under
+/// way, "I hate arguing..." off the island and "It is good that the ship has
+/// arrived safely" at Tolbi.
 static void ShipRooms_TalkToHealer(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
@@ -1476,9 +1600,14 @@ static void ShipRooms_TalkToHealer(void) {
   }
 }
 
-/// Talking to one of the monsters on the rowing deck
-/// (ACTOR_ROWING_FIRST_MONSTER and the two after it) starts the battle with
-/// them.
+/// Isaac walks up to one of the monsters floating over the rowing deck after
+/// an attack and talks to it, and the battle starts: three Man o' Wars the
+/// first time, a Lizard Fighter and two Rabid Bats the second, a Virago and
+/// two Man o' Wars the third.
+///
+/// The battle is the Tolbi ship's encounter table's first, second or third
+/// scripted battle, and afterwards the party comes back to the rowing deck for
+/// ShipRooms_EndFirstAttack or the one after it.
 static void ShipRooms_FightRowingDeckMonsters(void) {
   Event_Start();
   Field_EndBusyAndReveal();
@@ -1504,8 +1633,9 @@ static void ShipRooms_FightRowingDeckMonsters(void) {
   Event_End();
 }
 
-/// While the monsters are belowdecks, a crewman calls the leader back from the
-/// stairs: "Where are you going, Isaac? Slay the beasts and save my mates!"
+/// Walking onto the stairs up from the rowing deck (cell (27, 8)) while
+/// monsters are aboard has the crewman call "Where are you going, Isaac? Slay
+/// the beasts and save my mates!", and Isaac walks back off the stairs.
 static void ShipRooms_CallLeaderBackToBeasts(void) {
   if (GameFlag_Get(FLAG_TOLBI_SHIP_MONSTERS_BELOWDECKS) != 0) {
     Event_Start();
@@ -1519,8 +1649,15 @@ static void ShipRooms_CallLeaderBackToBeasts(void) {
   }
 }
 
-/// Below decks at Kalay, once the warriors have gone to the captain
-/// (CELL_BEHAVIOR_SHIP_ROOMS_QUARTERS_CREW): the crew wonders at the delay.
+/// Stepping inside the door of the captain's cabin at Kalay (cells (28, 42),
+/// (29, 42), (27, 43) and (29, 43)) after Ouranos and Sean have gone there,
+/// Isaac hears the captain, the crewman and Kaja talk of the delay, if he has
+/// not heard it on deck already.
+///
+/// "I wonder what could have happened," the captain says of the ship from
+/// Tolbi. Kaja says the oarsmen are fearless, but if monsters appear at sea he
+/// can't handle them alone; the captain can let no one but Kaja fight, since
+/// the oarsmen will have their hands full: "Hmmm. What to do..." It plays once.
 static void ShipRooms_WatchCrewWonderAtDelay(void) {
   if (GameFlag_Get(FLAG_TOLBI_SHIP_WARRIORS_SEEK_CAPTAIN) == 0)
     return;
@@ -1554,9 +1691,15 @@ static void ShipRooms_WatchCrewWonderAtDelay(void) {
   Event_End();
 }
 
-/// In the hold at Kalay, once the tour group has left Kalay
-/// (CELL_BEHAVIOR_SHIP_ROOMS_HOLD_WARRIORS): Ouranos threatens to go ashore if
-/// the ship doesn't sail.
+/// Walking north into the passengers' room at Kalay (cells (9..11, 32)) once
+/// the tour group is aboard, Isaac overhears Ouranos threaten "If we aren't
+/// going to set sail right away, I'm going to go ashore!"
+///
+/// The tour's other guide begs him to be patient. Sean explains that his
+/// friend Ouranos, huge as he is, can't stand water, and the two decide to go
+/// to the captain's quarters and make him set sail, ignoring the guide's "I
+/// don't want any violence!" They march out, the guide hurries after them, and
+/// it plays once.
 static void ShipRooms_WatchWarriorsStormOff(void) {
   s32 guideSpeaker;
   s32 seanSpeaker;
@@ -1685,8 +1828,16 @@ static void ShipRooms_WatchWarriorsStormOff(void) {
   Event_End();
 }
 
-/// In the captain's quarters at Kalay: the passengers press the captain to
-/// launch.
+/// Ouranos, Sean and the tour's other guide press the captain in his cabin to
+/// set sail, and he finds his lucky anchor charm gone; it plays when Isaac
+/// tells the crewman he wants to see the captain too.
+///
+/// Kaja, angry, says they can't sail in this dangerous sea, but the captain has
+/// just decided to sail. Kaja tells of monsters never before seen in the
+/// Karagol, Ouranos and Sean offer to guard the deck, and Sean remembers some
+/// young warriors among the passengers. Then the captain finds the anchor gone
+/// and refuses to leave without it, the crewman mutters "(Maybe we shouldn't
+/// have taken it.)", and Kaja sends the party out: "This ship goes nowhere!!"
 static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
   s32 seanSpeech;
   s32 ouranosSpeech;
@@ -1946,8 +2097,14 @@ static void ShipRooms_DiscussLaunchingWithoutAnchor(void) {
   GameFlag_Set(FLAG_TOLBI_SHIP_CAPTAIN_DECIDED_TO_SAIL);
 }
 
-/// In the captain's quarters at Kalay, using the Anchor Charm on the captain:
-/// he has his lucky anchor back.
+/// Isaac gives the captain the Anchor Charm from the top of the mast: "Hey!
+/// It's my lucky anchor!" Then the captain asks the party to guard the
+/// oarsmen.
+///
+/// Sean names the party as the young warriors he had in mind, and Isaac agrees
+/// to help (a no only gets him talked round). Then passengers must promise to
+/// row if an oarsman falls, which the tour's guide calls crazy, and the captain
+/// asks Isaac's name before sending everyone to their stations.
 static void ShipRooms_ReturnLuckyAnchor(void) {
   struct Actor *actor;
   s32 captainSpeech;
@@ -2551,8 +2708,12 @@ static void ShipRooms_PlaceFoundActors(s32 gated) {
   }
 }
 
-/// On the rowing deck, once the charm is back: Kaja tells the oarsmen the ship
-/// sails without its replacement.
+/// On the rowing deck, once the charm is back, Kaja tells the oarsmen "Our
+/// replacement never arrived, but we're shoving off just the same."
+///
+/// He, Ouranos and Sean will guard the deck and Isaac's party the oarsmen. If
+/// an oarsman falls, Isaac is to choose a passenger and bring him down,
+/// keeping the two teams of rowers balanced: "Right. You have your orders."
 static void ShipRooms_AskForReplacementOarsmen(void) {
   struct Actor *actor;
 
@@ -2679,7 +2840,8 @@ static void ShipRooms_AskForReplacementOarsmen(void) {
   GameFlag_Set(FLAG_TOLBI_SHIP_SAILING_WITHOUT_REPLACEMENT);
 }
 
-/// Raises the anchor charm and announces the ship's first departure.
+/// In his cabin the captain walks up to the Anchor Charm, which swells and
+/// shrinks as he raises it, and calls "All right. Cast off!"
 static void ShipRooms_CastOff(void) {
   struct Actor *anchorCharm;
 
@@ -2710,7 +2872,8 @@ static void ShipRooms_CastOff(void) {
       SHIP_ROOMS_CAPTAINS_ROOM_TO_PASSENGER_HOLD_CALL_TO_OARS, 0);
 }
 
-/// Announces departure after a replacement rower has joined the crew.
+/// After a new rower has taken his seat, the captain calls from his cabin "All
+/// right, we're off!"
 static void ShipRooms_AnnounceDeparture(void) {
   Event_Start();
   ShipRooms_RunEventCommand(SHIP_SETUP_CAPTAINS_QUARTERS, 1, 1);
@@ -2724,7 +2887,8 @@ static void ShipRooms_AnnounceDeparture(void) {
       SHIP_ROOMS_CAPTAINS_ROOM_TO_PASSENGER_HOLD_CALL_TO_OARS, 0);
 }
 
-/// Kaja comes into the hold and calls the first passenger to the rowing deck.
+/// Kaja comes into the passengers' room as the ship casts off and calls "Row
+/// those oars!"
 static void ShipRooms_KajaCallsToOars(void) {
   Event_Start();
   ShipRooms_RunEventCommand(SHIP_RESET_CAMERA, 0, 0);
@@ -2746,8 +2910,8 @@ static void ShipRooms_KajaCallsToOars(void) {
                             SHIP_ROOMS_PASSENGER_HOLD_TO_ROWING_DECK_ROWING, 0);
 }
 
-/// Kaja comes into the hold and calls a replacement rower back to the rowing
-/// deck.
+/// Kaja comes into the passengers' room when the ship sets off again with its
+/// new rower and calls "Row those oars!"
 static void ShipRooms_KajaCallsReplacementToOars(void) {
   Event_Start();
   Actor_SetPosition(ACTOR_PARTY_LEADER, 0, 0);
@@ -2768,7 +2932,8 @@ static void ShipRooms_KajaCallsReplacementToOars(void) {
                             SHIP_ROOMS_PASSENGER_HOLD_TO_ROWING_DECK_ROWING, 0);
 }
 
-/// Restores the rowing deck for the current set of selected passengers.
+/// The oarsmen and the passengers chosen row to the drum, and the ship sails
+/// on across the World Map to its next attack, the Kraken or land.
 static void ShipRooms_ShowRowing(void) {
   Event_Start();
   Actor_SetAnimation(ACTOR_ROWING_DRUMMER, ANIM_DRUMMER_HOLD_DRUM);
@@ -2822,7 +2987,9 @@ static void ShipRooms_ShowRowing(void) {
   }
 }
 
-/// Asks the crew about the monsters before returning belowdecks.
+/// The lookout calls down into the captain's cabin "Avast! Monsters
+/// sighted!" "Monsters?" "Aye, Captain! Sea monsters!", and the party goes up
+/// on deck.
 static void ShipRooms_AskAboutMonsters(void) {
   Event_Start();
   ShipRooms_RunEventCommand(SHIP_SETUP_CAPTAINS_QUARTERS, 1, 1);
@@ -2838,7 +3005,9 @@ static void ShipRooms_AskAboutMonsters(void) {
       SHIP_ROOMS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK_SEA_MONSTERS, 0);
 }
 
-/// Announces the ship's next turn and returns control to the rowing deck.
+/// Told to turn the rudder hard to starboard, the captain answers from his
+/// cabin "All right, I'm turning!", and the scene goes back up on deck as the
+/// monsters board.
 static void ShipRooms_AnnounceTurn(void) {
   Event_Start();
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
@@ -2853,7 +3022,9 @@ static void ShipRooms_AnnounceTurn(void) {
       SHIP_ROOMS_CAPTAINS_ROOM_TO_TOLBI_SHIP_DECK_MONSTERS_BOARD, 0);
 }
 
-/// Stages the first monster encounter with the original rowers.
+/// Monsters are on the rowing deck in the first attack: three floating
+/// monsters beside the seats and an oarsman down, before ShipRooms_
+/// ReportMonstersBelowdecks.
 static void ShipRooms_StartFirstAttack(void) {
   const s32 *entryScript;
 
@@ -2877,7 +3048,8 @@ static void ShipRooms_StartFirstAttack(void) {
   Event_End();
 }
 
-/// Restores the original rowers after the first monster attack.
+/// Back on the rowing deck after the first battle: the monsters are gone, and
+/// Kaja finds an oarsman hurt (ShipRooms_FindOarsmanMissing).
 static void ShipRooms_EndFirstAttack(void) {
   Event_Start();
   ShipRooms_RunEventCommand(SHIP_RESET_CAMERA, 1, 0);
@@ -2890,7 +3062,13 @@ static void ShipRooms_EndFirstAttack(void) {
   Event_End();
 }
 
-/// Introduces the selected passenger and leads them to the open rowing seat.
+/// Back on the rowing deck after choosing a rower, Kaja greets Isaac, "Isaac,
+/// you're back! And you brought an oarsman with you!", and the passenger
+/// takes the empty seat.
+///
+/// Coming down without one gets "Hey! Where's the replacement for our injured
+/// oarsman?... I'm sorry, but you're going to have to choose someone!", and
+/// Isaac is sent back up to the passengers' room.
 static void ShipRooms_IntroduceReplacementOarsman(s32 seat) {
   s32 rowerId;
   struct Actor *actor;
@@ -3518,7 +3696,8 @@ static void ShipRooms_HideSelectedPassenger(s32 actorId, s32 firstFlag) {
   } while (i < PASSENGER_COUNT);
 }
 
-/// Stages the next monster encounter with one replacement rower.
+/// Monsters are on the rowing deck in the second attack, the first passenger
+/// chosen trembling at the oars.
 static void ShipRooms_StartSecondAttack(void) {
   s32 firstRower;
   const s32 *rowerScript;
@@ -3543,7 +3722,10 @@ static void ShipRooms_StartSecondAttack(void) {
   Event_End();
 }
 
-/// Gathers the party after the crew reports monsters belowdecks.
+/// An oarsman cries "Monsters belowdecks!", Garet, Ivan and Mia run up beside
+/// Isaac, and the crewman begs "Isaac! Take care of these beasts and save my
+/// mates!" The three fall in behind Isaac, and the stairs up stay barred until
+/// the monsters are beaten.
 static void ShipRooms_ReportMonstersBelowdecks(void) {
   struct Actor *actor;
   s32 message;
@@ -3703,7 +3885,8 @@ static void ShipRooms_FindOarsmanMissing(void) {
   Import_EventSetExitRequest(SHIP_ROOMS_ROWING_DECK_TO_PASSENGER_HOLD);
 }
 
-/// Restores one replacement rower after the next monster attack.
+/// Back on the rowing deck after the second battle, with the first rower
+/// chosen in his seat, Kaja finds another oarsman hurt.
 static void ShipRooms_EndSecondAttack(void) {
   s32 firstRower = ShipRooms_FindFirstSetFlag(0, 0);
 
@@ -3719,7 +3902,8 @@ static void ShipRooms_EndSecondAttack(void) {
   Event_End();
 }
 
-/// Stages the next monster encounter with two replacement rowers.
+/// Monsters are on the rowing deck in the third attack, with two of the
+/// passengers chosen at the oars.
 static void ShipRooms_StartThirdAttack(void) {
   s32 secondRower;
   s32 firstRower;
@@ -3749,7 +3933,8 @@ static void ShipRooms_StartThirdAttack(void) {
   Event_End();
 }
 
-/// Restores two replacement rowers after the next monster attack.
+/// Back on the rowing deck after the third battle, Kaja finds another oarsman
+/// hurt.
 static void ShipRooms_EndThirdAttack(void) {
   s32 firstRower = ShipRooms_FindFirstSetFlag(0, 0);
   s32 secondRower = ShipRooms_FindFirstSetFlag(1, 0);
@@ -3767,7 +3952,13 @@ static void ShipRooms_EndThirdAttack(void) {
   Event_End();
 }
 
-/// SHIP_ROOMS_FROM_WORLD_MAP, on the rowing deck: the ship rocks.
+/// The ship rocks badly as it sails on, and Mia wonders "I wonder what's
+/// wrong... The ship shouldn't be rocking this badly."
+///
+/// Kaja runs down calling Isaac up on deck, "there's a huge sea monster on the
+/// ship!", Garet says "Let's go bag us some sea monsters," and the party falls
+/// in behind Isaac. The ship shakes now and then while the Kraken is on deck
+/// (ShipRooms_ShakeWhileKrakenOnDeck).
 static void ShipRooms_NoticeShipRocking(void) {
   s32 secondRower;
   s32 thirdRower;
@@ -3910,8 +4101,9 @@ static void ShipRooms_ShakeWhileKrakenOnDeck(void) {
   }
 }
 
-/// SHIP_ROOMS_CAPTAINS_ROOM_FROM_TOLBI_SHIP_DECK_ISLAND, in the captain's
-/// quarters, after the ship has come off course.
+/// A glimpse of the captain's cabin, Kaja beside the captain, once the ship
+/// has come off course, before it sails on across the World Map to the
+/// island.
 static void ShipRooms_ShowCaptainsQuartersBeforeIsland(void) {
   Event_Start();
   ShipRooms_RunEventCommand(SHIP_SETUP_CAPTAINS_QUARTERS, 1, 0);
@@ -3937,8 +4129,12 @@ enum IslandReaction {
   ISLAND_REACTION_GUIDE
 };
 
-/// SHIP_ROOMS_ROWING_DECK_FROM_WORLD_MAP_ISLAND, on the rowing deck at the
-/// island.
+/// Kaja comes down to the rowing deck: "We've reached the island! Rowers,
+/// rest those weary arms!"
+///
+/// The passengers at the oars ask whether this is Tolbi, Kaja admits the ship
+/// went off course and stopped to get its bearings, and the oarsmen go out to
+/// take their break.
 static void ShipRooms_ReachIsland(void) {
   s32 fourthRower;
   s32 secondRower;
@@ -4067,9 +4263,12 @@ static void ShipRooms_ReachIsland(void) {
   Event_End();
 }
 
-/// SHIP_ROOMS_ROWING_DECK_FROM_TOLBI_SHIP_DECK_SWITCH_TEAMS, on the rowing deck
-/// back from the island: Kaja has the passengers at the oars switch the left
-/// and right teams, the left team's timing having taken the ship off course.
+/// Back from the island, Kaja has the rowers change sides: "Sorry, everyone,
+/// but we need to switch the left and right teams! We've strayed off course
+/// because the left team's timing is off."
+///
+/// The passengers chosen swap seats, and the ship sets off one last time for
+/// Tolbi.
 static void ShipRooms_SwitchLeftAndRightTeams(void) {
   s32 firstRower;
   s32 fourthRower;

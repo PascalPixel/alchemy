@@ -274,7 +274,7 @@ void MarsLighthouseStarRoom_EastFireballCracksIce(void) {
 void MarsLighthouseStarRoom_ClearDragonIce(void);
 
 /// Felix casts Burst on the cracked ice the Flame Dragons sleep in, cells
-/// (41, 12) to (43, 12): a flash, the ice gone, chips flying, and the dragons
+/// (41, 14) to (43, 14): a flash, the ice gone, chips flying, and the dragons
 /// wake.
 void MarsLighthouseStarRoom_BurstIce(s32 phase, s32 frame) {
   if (phase == 1) {
@@ -767,7 +767,7 @@ void MarsLighthouseStarRoom_LayDownAdept(s32 id) {
 }
 
 /// Felix examines the great dragon head on the north wall of the dragon hall,
-/// cell (42, 6): "There's a space for you to place something." Then the field
+/// cell (42, 8): "There's a space for you to place something." Then the field
 /// menu opens, for the party to choose what to place.
 void MarsLighthouseStarRoom_ExamineStatue(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;

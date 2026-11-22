@@ -1,7 +1,10 @@
 /// @file
-/// Lemuria's spring: the party drinks from it to restore its HP and PP, and
-/// tosses coins or Lucky Medals into it as in Tolbi's spring game, past the
-/// moving obstacles, for coins or for items.
+/// The Spring of Lemuria, up in the middle of the town past the man who offers
+/// the test of luck. The party drinks from it to restore its HP and PP, and
+/// from the step between its two signs tosses coins or Lucky Medals into it,
+/// past the turtles and crabs that swim there, as in Tolbi's spring game: what
+/// lands in its rings wins coins or items, and the first medal in the middle
+/// wins the summon Eclipse.
 
 #include "battle/battle.h"
 #include "field/map_grid.h"
@@ -190,7 +193,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-/// The party drinks from the spring and its HP and PP are restored.
+/// Felix checks the rim of the spring, any of its edges round the pool, before
+/// the target has been shown this visit: "Felix and the others drank of the
+/// spring. Their HP and PP were fully replenished!"
 void LemuriaSpring_DrinkFromSpring(void) {
   // "Felix and the others drank of the spring. Their HP and PP were fully..."
   Message_ShowCentered((s32)MsgAndTheOthers, 1);
@@ -222,8 +227,10 @@ void LemuriaSpring_RiseAndFadeIn(void) {
   }
 }
 
-/// Searching the water lets the party toss a coin or a Lucky Medal into it.
-/// The first time in the visit, the water fades to show the target first.
+/// Felix checks the water from the step at the south of the spring, between the
+/// two signs, cell (7, 8) or (7, 10): he turns his back to the spring to toss a
+/// coin or a Lucky Medal into it. The first time each visit, the
+/// spring's water first fades to show the target of rings at its bottom.
 void LemuriaSpring_TossCoin(void) {
   s32 actor = gMainRoutineWork.leaderActorId;
 
@@ -1214,9 +1221,6 @@ s32 LemuriaSpring_RunToss(s32 tossKind) {
   }
   return gLemuriaSpring_TossResult;
 }
-
-void LemuriaSpring_DrinkFromSpring(void);
-void LemuriaSpring_TossCoin(void);
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 288, 0, 454, FACING_NORTH, 0, -1, -1, -1, -1, 0},

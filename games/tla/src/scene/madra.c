@@ -1,12 +1,16 @@
 /// @file
-/// Madra, the walled port town of eastern Gondowan where Felix first arrives
-/// after the plateaus: guards inspect the party at the gate after Champa's
-/// pirates raided the town for Briggs, Piers sits in its jail, and its elder
-/// grants passage over the drawbridge to Osenia. A hole in the north-east
-/// corner, kept by a worker until the inspection is over, leads down into the
-/// catacombs. When Felix returns with Piers the hole is sealed, Karst and
-/// Agatio arrive (Madra_MeetKarst), and the town takes other placements and
-/// triggers.
+/// Madra, the walled town of eastern Gondowan that Felix reaches over the
+/// Dehkan Plateau. Briggs's Champa pirates have just raided it to free their
+/// leader, so the two guards at the south gate stop the party and look it
+/// over before letting it in. Outside the wall in the north-east corner is the
+/// hole the Champa dug, with a ladder down into the catacombs; a worker in it
+/// turns Felix away until the guards have let him in. Piers is held in the jail
+/// on the west side, and coming out of it after he has made his shaft of ice,
+/// Felix is granted passage to Osenia by Milady. Once Briggs is caught the
+/// Kibombo have raided the town in turn, the hole is being sealed and the
+/// guards question the party again. When Felix brings Piers home the hole is
+/// filled in, and leaving the mayor's house after the welcome the mayor gives
+/// him the Cyclone Chip and Karst, come looking for Menardi, confronts him.
 
 #include "flags.h"
 #include "sprite_ids.h"
@@ -36,14 +40,14 @@
 #include "field/field_sequence.h"
 #include "text/msg_ids.h"
 
-/// Set once the worker has popped up out of the hole for this visit.
+/// Set once the worker has popped up out of the Champa's hole on this visit.
 #define FLAG_MADRA_WORKER_SEEN_AT_HOLE FLAG_SCENE_TEMP_80
-/// Set once the leader has told the worker he is coming through the hole.
+/// Set once Felix has told the worker he is coming through the hole.
 #define FLAG_MADRA_TOLD_WORKER_COMING_THROUGH FLAG_SCENE_TEMP_81
 /// Set once the boy has asked the party about the Champa boat, or about
-/// Briggs; he no longer turns to face the leader first.
+/// Briggs; he no longer turns to face Felix first.
 #define FLAG_MADRA_BOY_HAS_ASKED FLAG_AREA_TEMP_00
-/// Set once the leader has told the boatman that Jenna is with him.
+/// Set once Felix has told the boat owner that Jenna is with him.
 #define FLAG_MADRA_TOLD_OF_JENNA FLAG_AREA_TEMP_01
 /// Set as the guards let the party go after questioning it about the
 /// Kibombo's raid.
@@ -55,12 +59,12 @@
 #define FLAG_MADRA_KARST_CALLED_FOR_MENARDI FLAG_SCENE_TEMP_0F
 
 /// The town's placed actors, by the rows of gMadra_Placements, the first
-/// visit's: Kraden follows the party as ACTOR_KRADEN, and the lady and her
-/// guard come out of the jail.
+/// visit's: Kraden, out of sight, steps out from behind Felix at the gate, and
+/// Milady and her guard wait out of sight until they hurry to the jail.
 enum MadraActorId {
   /// The townsfolk, each named for what they talk of on the first visit; their
-  /// lines change once the Kibombo raid (FLAG_BRIGGS_CAUGHT) and again when
-  /// the party returns with Piers.
+  /// lines change once the Kibombo have raided the town (FLAG_BRIGGS_CAUGHT)
+  /// and again when the party returns with Piers.
   ACTOR_YOUNG_MAN_ON_THE_ELDER = ACTOR_FIRST_PLACED,
   ACTOR_YOUNG_WOMAN_ON_THE_DISASTERS,
   ACTOR_OLD_MAN_ON_THE_WAVE,
@@ -85,7 +89,7 @@ enum MadraActorId {
   /// The guards who stop the party at the gate.
   ACTOR_GATE_GUARD,
   ACTOR_SECOND_GATE_GUARD,
-  /// The worker who pops up out of the hole into the catacombs.
+  /// The worker who pops up out of the Champa's hole into the catacombs.
   ACTOR_HOLE_WORKER,
   /// The two who saw the shaft of ice in the jail, there once Piers has used
   /// Frost.
@@ -112,8 +116,8 @@ enum MadraActorId {
 enum MadraOnReturnActorId {
   ACTOR_KARST = ACTOR_LADY,
   ACTOR_MAYOR,
-  /// A man with a pack who wanders by the gate asking whether the Kibombo
-  /// scare the party.
+  /// A man with a pack who wanders in front of the jail, asking whether the
+  /// Kibombo scare the party.
   ACTOR_MAN_AFRAID_OF_THE_KIBOMBO
 };
 
@@ -129,20 +133,6 @@ extern struct Trigger gMadra_TriggersBeforeRaid[];
 extern struct Trigger gMadra_TriggersAfterRaid[];
 extern struct Trigger gMadra_TriggersOnReturn[];
 
-void Madra_AskComingThroughHole(void);
-
-void Madra_AskComingThroughSealedHole(void);
-void Madra_MindReadKarst(void);
-
-void Madra_KarstCallsForMenardi(void);
-
-void Madra_WorkerBlocksSealedHole(void);
-
-void Madra_AskAboutBriggs(void);
-
-void Madra_MindReadBriggsFan(void);
-
-void Madra_InspectPartyAtGate(void);
 extern s16 gMadra_DoorOpening[];
 extern s16 gMadra_CavernHomeDoorOpening[];
 
@@ -162,9 +152,18 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 extern struct MapGridCellAnimation gMadra_Doors[];
 
-/// The party leader walks into one of Madra's doors. Everyone stops, the door
-/// opens with its cell animation (gMadra_Doors), and the leader walks in and
-/// leaves by the exit of the door's number.
+/// Felix walks up to one of Madra's doors: it opens with a door's sound, he
+/// steps through and the screen fades to the room inside. The doors are the
+/// left cavern home's two in the cliff at the top of town, the mayor's house on
+/// the north-west, the two of the inn (its ground floor and its upstairs), the
+/// house of the couple wary of Gondowan by the south-west corner, the mushroom
+/// couple's house and the house east of it, and the round sanctum by the south
+/// wall. The jail's doorway on the west side is a plain exit, with no door to
+/// open.
+///
+/// Each door cell's step trigger is the number of the exit it leads by, and
+/// `gMadra_Doors` holds, at that number less one, the cells that redraw the
+/// door open. Everyone else on the map stops while Felix walks in.
 void Madra_EnterDoor(void) {
   struct FieldWork *work;
   struct Actor *actor;
@@ -200,11 +199,13 @@ void Madra_EnterDoor(void) {
   Event_End();
 }
 
-/// Madra's shops, as Shop_Run numbers them.
+/// Madra's shops under the market tents, as Shop_Run numbers them.
 enum { SHOP_MADRA_WEAPONS = 4, SHOP_MADRA_ARMOR = 5, SHOP_MADRA_ITEMS = 6 };
 
-/// Madra's weapon merchant sells across the counter (stock row 4). Spoken to
-/// from elsewhere, she talks of the raid, then of the Kibombo's weapons.
+/// Talking to the weapon merchant, the bald man in red at the east tent of the
+/// market, from across his counter opens his shop. Spoken to from any other
+/// side he talks of the merchants fighting off the Champa, and later of the
+/// strange weapons the Kibombo left behind.
 void Madra_TalkToWeaponMerchant(s32 arg) {
   if (FACING_NEAREST_CARDINAL(
           Actor_GetById(gMainRoutineWork.leaderActorId)->facing) ==
@@ -222,8 +223,10 @@ void Madra_TalkToWeaponMerchant(s32 arg) {
   Event_ShowMessage(ACTOR_WEAPON_MERCHANT, 0);
 }
 
-/// Madra's armor merchant sells across the counter (stock row 5), and otherwise
-/// talks of the Champa and the Kibombo.
+/// Talking to the armor merchant, the young man in green at the middle tent of
+/// the market, from across his counter opens his shop. From any other side he
+/// moans of a bone bruise from the fighting, and later talks of the pirates and
+/// the Kibombo.
 void Madra_TalkToArmorMerchant(s32 arg) {
   if (FACING_NEAREST_CARDINAL(
           Actor_GetById(gMainRoutineWork.leaderActorId)->facing) ==
@@ -241,8 +244,11 @@ void Madra_TalkToArmorMerchant(s32 arg) {
   Event_ShowMessage(ACTOR_ARMOR_MERCHANT, 0);
 }
 
-/// Madra's item merchant sells across the counter (stock row 6), and otherwise
-/// talks of her sister, hurt in the Champa's attack, and of Shin.
+/// Talking to whoever keeps the west tent of the market from across the
+/// counter opens the item shop. Spoken to from any other side, at first the
+/// merchant's sister, keeping the tent, says the merchant was hurt in the
+/// Champa's attack; once Briggs is caught the merchant is back, healed, and
+/// later worries about her boyfriend Shin.
 void Madra_TalkToItemMerchant(s32 arg) {
   if (FACING_NEAREST_CARDINAL(
           Actor_GetById(gMainRoutineWork.leaderActorId)->facing) ==
@@ -260,8 +266,8 @@ void Madra_TalkToItemMerchant(s32 arg) {
   Event_ShowMessage(arg, 0);
 }
 
-/// Karst, told the party does not know her sister, sends it off.
-/// "If you don't know my sister, then I have nothing to say to you."
+/// Karst, told the party does not know her sister, shakes her head and sends
+/// it off: "If you don't know my sister, then I have nothing to say to you."
 void Madra_KarstSendsPartyAway(void) {
   Event_SetMessageId((s32)&MsgMadraIfYouDontKnow);
   Actor_SetAnimationAndWait(ACTOR_KARST, ANIM_SHAKE_HEAD);
@@ -270,9 +276,10 @@ void Madra_KarstSendsPartyAway(void) {
   Event_ShowMessageThenWait(ACTOR_KARST, 0, 10);
 }
 
-/// Karst, waiting near the mayor's house, asks twice whether the party has seen
-/// her sister.
-/// "Have you by chance seen a girl named Menardi?"
+/// Talking to Karst, the red-haired woman outside the mayor's house when Felix
+/// brings Piers home: she asks whether the party has seen a girl named Menardi.
+/// Answering yes, and yes again when she asks whether her sister is dead, makes
+/// her threaten the party; either no sends it away.
 void Madra_KarstAsksAboutMenardi(void) {
   Event_SetMessageId(MsgMadraHaveYouByChanceSeen);
   // "Have you by chance seen a girl named Menardi?"
@@ -304,9 +311,9 @@ void MapGrid_PlayMapEdit(const void *data, s32 a, s32 b);
 void Actor_SetHorizontalPositionAndAngleWithTerrain(s32 id, s32 x, s32 y,
                                                     s32 z);
 
-/// Karst feels the party's Mind Read.
-/// "Using Psynergy on me? Are you so dense that you don't know when to be
-/// afraid?"
+/// Casting Mind Read on Karst outside the mayor's house: she feels it, smiles
+/// and asks whether the party is too dense to be afraid, then tells it to leave
+/// her to her thoughts.
 void Madra_MindReadKarst(void) {
   Event_SetMessageId((s32)MsgMadraUsingPsynergyOnMe);
   Actor_RunRepeatedMotion(ACTOR_KARST, 2);
@@ -320,9 +327,10 @@ void Madra_MindReadKarst(void) {
   Event_ShowMessageThenWait(ACTOR_KARST, 0, 10);
 }
 
-/// Stepping near the mayor's house the first time on the return with Piers, the
-/// party hears Karst call for her sister.
-/// "Where could Menardi have gone? Where are you, my sister?"
+/// Walking towards the mayor's house along the path east of it (cells (13, 17)
+/// to (13, 19)) when Felix brings Piers home, the party hears Karst, standing
+/// just east of the path, call for her sister: "Where could Menardi have gone?
+/// Where are you, my sister?" She calls once a visit.
 void Madra_KarstCallsForMenardi(void) {
   if (Event_GetFlag(FLAG_MADRA_KARST_CALLED_FOR_MENARDI) == 0) {
     Event_Start();
@@ -336,8 +344,10 @@ void Madra_KarstCallsForMenardi(void) {
   }
 }
 
-/// "Everyone here in Madra is afraid of the Kibombo now. Do they scare you,
-/// too?"
+/// Talking to the man with a pack who wanders in front of the jail when Felix
+/// brings Piers home: "Everyone here in Madra is afraid of the Kibombo now. Do
+/// they scare you, too?" Either way he says their smoke signals have since
+/// announced a truce.
 void Madra_AskAfraidOfKibombo(s32 actor) {
   s32 msg = (s32)&MsgMadraEveryoneHereInMadra;
 
@@ -353,9 +363,10 @@ void Madra_AskAfraidOfKibombo(s32 actor) {
   Event_ShowMessage(actor, 0);
 }
 
-/// The worker at the hole into the catacombs asks whether the party is coming
-/// through, and sends it back while they work.
-/// "You comin' through here?"
+/// The worker in the Champa's hole outside the north-east wall asks "You comin'
+/// through here?", and whatever Felix answers, tells him nobody can come
+/// through while they work and he must enter Madra through the front gates.
+/// Once told yes, he says only that.
 void Madra_AskComingThroughHole(void) {
   s32 msg;
 
@@ -381,8 +392,9 @@ void Madra_AskComingThroughHole(void) {
   Event_ShowMessage(ACTOR_HOLE_WORKER, 0);
 }
 
-/// After the raid the worker is sealing the hole, and asks again.
-/// "Oh, uh... You coming through?"
+/// Once the Kibombo have raided Madra, the worker in the Champa's hole asks
+/// "Oh, uh... You coming through?", and whatever Felix answers, says they are
+/// sealing the hole up and sends him round to the main gates.
 void Madra_AskComingThroughSealedHole(void) {
   s32 msg;
 
@@ -409,14 +421,17 @@ void Madra_AskComingThroughSealedHole(void) {
 }
 
 /// Places an actor facing an angle, the angle taken as the u16 an actor's
-/// facing is; the hole's four placements, named by us.
+/// facing is.
 static inline void Madra_PlaceFacing(s32 actorId, s32 x, s32 z, u16 facing) {
   Actor_SetPositionAndFacing(actorId, x, z, facing);
 }
 
-/// The worker pops up out of the hole the first time the party steps on it,
-/// until the gate inspection is over (FLAG_MADRA_GATE_INSPECTED); afterwards
-/// the hole leads down into the catacombs.
+/// Felix steps into the hole the Champa dug among the flowers outside the town
+/// wall in the north-east corner (cell (46, 15)). Once the guards at the gate
+/// have let the party in, the ladder in it takes him down into the catacombs.
+/// Before that, the first time on a visit, a worker pops his head up out of
+/// the hole, Felix hops back out of his way, and the worker turns him away
+/// (Madra_AskComingThroughHole); later steps that visit do nothing.
 void Madra_WorkerBlocksHole(void) {
   if (Event_GetFlag(FLAG_MADRA_GATE_INSPECTED)) {
     Event_PlaySound(SE_MAP_EXIT);
@@ -438,7 +453,11 @@ void Madra_WorkerBlocksHole(void) {
   }
 }
 
-/// After the raid, the worker pops up out of the hole he is sealing.
+/// Once the Kibombo have raided Madra, stepping into the Champa's hole (cell
+/// (46, 15)) the first time on a visit makes the worker pop up out of it again,
+/// Felix hops back, and the worker says they are sealing it
+/// (Madra_AskComingThroughSealedHole). Later steps that visit do nothing, and
+/// the hole no longer leads down.
 void Madra_WorkerBlocksSealedHole(void) {
   if (!Event_GetFlag(FLAG_MADRA_WORKER_SEEN_AT_HOLE)) {
     Event_Start();
@@ -465,24 +484,28 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gMadra_TriggersBeforeRaid;
 }
 
-/// Gives the hole the Champa dug the cells of solid ground.
+/// Makes the cells around the Champa's hole, (45, 14) to (47, 16), plain
+/// ground, copied from spare cells at (109, 14), so that stepping there no
+/// longer runs anything.
 void Madra_SealHoleCells(void) {
   MapGrid_CopyCellAttributes(109, 14, 3, 3, 45, 14);
 }
 
-/// On the return with Piers the hole is sealed: its picture and its cells are
-/// drawn closed.
+/// When Felix brings Piers home the Champa's hole is filled in: a mound of
+/// earth is drawn where the ladder was, copied from spare cells at (51, 10),
+/// and its cells become plain ground.
 void Madra_SealHole(void) {
   MapGrid_CopyCellsLayered(51, 10, 3, 3, 45, 10);
   Madra_SealHoleCells();
 }
 
-/// Sets up the town as the party enters: the worker at the hole, the two who
-/// saw the shaft of ice and Karst are there or not by the story so far; then
-/// coming out of the jail the lady grants passage to Osenia
-/// (Madra_GrantPassageToOsenia), and on the return, coming out of the
-/// north-west house, the party is met once by the mayor and Karst
-/// (Madra_MeetKarst).
+/// Sets up the town as the party enters: the hole is filled in once Felix
+/// brings Piers home; otherwise the worker stands down in it, out of sight
+/// unless he has already popped up this visit, and the two who saw the shaft of
+/// ice are gone once Briggs is caught. Coming out of the jail Felix is granted
+/// passage to Osenia (Madra_GrantPassageToOsenia), and on the return, coming
+/// out of the mayor's house after the farewell, he is met once by the mayor and
+/// Karst (Madra_MeetKarst).
 s32 Scene_Initialize(void) {
   struct Actor *actor;
 
@@ -530,7 +553,9 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// "Was I just dreaming when that shaft of ice appeared?"
+/// Talking to the strongman outside the jail who saw Piers raise his shaft of
+/// ice: "Was I just dreaming when that shaft of ice appeared?" Told yes, he is
+/// relieved; told no, he hopes Felix is joking.
 void Madra_AskAboutIceShaft(s32 actor) {
   s32 msg;
 
@@ -563,8 +588,9 @@ void Madra_AskAboutIceShaft(s32 actor) {
 #define BRIGGS_FAN_SPEAKER ACTOR_FIRST_PLACED
 #endif
 
-/// A boy asks whether the party came over the Dehkan Plateau and saw the Champa
-/// boat, or, once Briggs is caught, whether Felix is the one who beat him.
+/// Talking to the boy in a blue shirt beside the round sanctum: he asks whether
+/// the party came over the Dehkan Plateau and saw the boat grounded near the
+/// cave, or, once Briggs is caught, whether Felix is the one who beat him up.
 void Madra_AskAboutBriggs(void) {
   s32 msg;
 
@@ -604,9 +630,10 @@ void Madra_AskAboutBriggs(void) {
   Event_End();
 }
 
-/// Mind Read on the boy before he has asked anything: in place of his thoughts
-/// he asks his question as Madra_AskAboutBriggs does, starting at the party
-/// first while Briggs is free.
+/// Casting Mind Read on the boy beside the sanctum before he has asked his
+/// question makes him ask it aloud, as talking to him does
+/// (Madra_AskAboutBriggs); while Briggs is free he starts, an exclamation mark
+/// over his head, and turns to Felix first.
 void Madra_MindReadBriggsFan(void) {
   s32 msg, x, z;
 
@@ -650,7 +677,11 @@ void Madra_MindReadBriggsFan(void) {
   Event_End();
 }
 
-/// "Is there by any chance a girl named Jenna with you?"
+/// Talking to the auburn-haired boat owner south-east of the jail when Felix
+/// brings Piers home: she asks whether a girl named Jenna is with him. Told
+/// yes, she says the four weatherworn travellers with the amazing ship must
+/// have been looking for them; told no, she asks him to let Jenna know Isaac
+/// is looking for her, and asks again next time.
 void Madra_AskAboutJenna(void) {
   s32 flags;
 
@@ -692,8 +723,11 @@ void FieldMessage_Show(s32 message, s32 position);
 void FieldCamera_FollowActor(s32 id, s32 mode);
 void Actor_SetSpriteColor(struct Actor *actor, s32 attribute);
 
-/// The two gate guards stop the party, Kraden answers them, and the second
-/// guard checks the party over before letting it through.
+/// The first time Felix walks north into the south gate (cells (29, 26) and
+/// (30, 26)), the two guards stop the party: "You there! Hold your ground!"
+/// Kraden asks what the trouble is, one guard walks round the party looking it
+/// over, and they agree it is not the Champa, who raided the town to free
+/// Briggs, and let it pass.
 void Madra_InspectPartyAtGate(void) {
   struct Actor *actor;
 
@@ -844,10 +878,11 @@ void Madra_InspectPartyAtGate(void) {
   Event_End();
 }
 
-/// Coming out of the jail once Piers has used Frost (FLAG_PIERS_INTERROGATED),
-/// the party meets the lady and her guard, who fear Piers has escaped; she asks
-/// whether the party is going to Osenia and grants it passage over the
-/// drawbridge (FLAG_OSENIA_PASSAGE_GRANTED).
+/// Coming out of the jail after seeing Piers raise his shaft of ice, Felix
+/// meets Milady and her guard, who hurry up crying "Has Piers escaped!?"; she
+/// asks whether the party is going to Osenia and grants it passage over the
+/// drawbridge. It runs once (FLAG_PIERS_INTERROGATED, then
+/// FLAG_OSENIA_PASSAGE_GRANTED).
 void Madra_GrantPassageToOsenia(void) {
   if (!GameFlag_Get(FLAG_PIERS_INTERROGATED))
     return;
@@ -1029,8 +1064,10 @@ void Madra_GrantPassageToOsenia(void) {
   Event_End();
 }
 
-/// After the Kibombo's raid the gate guards stop the party again and question
-/// it, Kraden answering, before letting it go.
+/// Once the Kibombo have raided Madra, the first time Felix walks north into
+/// the south gate (cells (29, 26) and (30, 26)) a guard cries "Hey! You lot!
+/// Hold it right there!", but the other says the party could not be involved,
+/// and with Kraden's answers they let it go.
 void Madra_StopPartyAfterRaid(void) {
   struct Actor *actor;
 
@@ -1202,9 +1239,11 @@ void Madra_StopPartyAfterRaid(void) {
     Event_Wait(frames);                                                        \
   } while (0)
 
-/// On the party's return the mayor stops Felix to give him the Cyclone Chip he
-/// promised for mending the boat (or, with no room for it, puts it in a pot),
-/// and Karst comes in at the gate looking for Menardi.
+/// Coming out of the mayor's house after Piers's farewell, Felix hears the
+/// mayor call "Felix, wait!" and is given the Cyclone Chip promised for the
+/// boat (with no room for it, the mayor sets it down beside his house to be
+/// picked up later). Then Karst, hearing Felix's name, confronts the party
+/// about Menardi, learns of Isaac and swears to have her revenge.
 void Madra_MeetKarst(void) {
   struct Actor *actor;
   FIXED x = toFIXED(153);
@@ -1741,12 +1780,16 @@ void Madra_MeetKarst(void) {
 }
 #undef SET_MODE
 
-/// Stepping past the gate once the party has been let in: the inspection is not
-/// run again.
+/// Nothing visible happens when Felix walks south out through the gate (cells
+/// (29, 25) and (30, 25)) without having been inspected; the game marks the
+/// inspection done, so that the guards do not stop him on the cells south of
+/// it.
 void Madra_SkipGateInspection(void) { GameFlag_Set(FLAG_MADRA_GATE_INSPECTED); }
 
-/// Stepping past the gate guards once they have questioned the party after the
-/// raid.
+/// Nothing visible happens when Felix walks south out through the gate (cells
+/// (29, 25) and (30, 25)) after the Kibombo's raid without having been
+/// questioned; the game marks the questioning done, so that the guards do not
+/// stop him on the cells south of it.
 void Madra_SkipRaidQuestioning(void) {
   GameFlag_Set(FLAG_MADRA_RAID_QUESTIONING_DONE);
 }
@@ -1756,8 +1799,8 @@ void Madra_SkipRaidQuestioning(void) {
 /// Madra's map has one.
 enum { CELL_BEHAVIOR_MADRA_EAST_LADDERS_LAST = 34 };
 
-/// The leader, already beside a ladder top, turns north, steps onto the rungs
-/// and climbs down out of sight to the catacombs' east or west ladders, by the
+/// Felix, already beside a ladder top, turns north, steps onto the rungs and
+/// climbs down out of sight to the catacombs' east or west ladders, by the
 /// ladder top's step trigger. Only the unused routines below call it.
 void Madra_ClimbDownLadder(void) {
   s32 next;
@@ -1781,8 +1824,8 @@ void Madra_ClimbDownLadder(void) {
   Event_End();
 }
 
-/// Unused: the leader steps up to a ladder top from its west side and climbs
-/// down; no trigger runs it.
+/// Unused: Felix steps up to a ladder top from its west side and climbs down;
+/// no trigger runs it.
 UNUSED void Madra_StepOntoLadderFacingEast(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1791,8 +1834,8 @@ UNUSED void Madra_StepOntoLadderFacingEast(void) {
   Madra_ClimbDownLadder();
 }
 
-/// Unused: the leader steps up to a ladder top from its east side and climbs
-/// down; no trigger runs it.
+/// Unused: Felix steps up to a ladder top from its east side and climbs down;
+/// no trigger runs it.
 UNUSED void Madra_StepOntoLadderFacingWest(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1808,12 +1851,6 @@ UNUSED void Madra_TurnAndClimbDownLadder(void) {
   Actor_FaceDirection(ACTOR_FELIX, FACING_NORTH, 0);
   Madra_ClimbDownLadder();
 }
-
-void Madra_EnterDoor(void);
-void Madra_KarstAsksAboutMenardi(void);
-void Madra_WorkerBlocksHole(void);
-void Madra_AskAboutJenna(void);
-void Madra_StopPartyAfterRaid(void);
 
 #include "shared/scene_entrances_default.c"
 

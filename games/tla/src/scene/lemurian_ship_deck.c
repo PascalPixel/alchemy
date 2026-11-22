@@ -1,8 +1,18 @@
 /// @file
-/// The Lemurian ship's deck, in two scenes: the deck at the tiller, where the
-/// crew takes its places as the leader sails (Room1), and the deck where the
-/// party sights a ship, reaches Piers' ship, sets the Black Crystal back in it
-/// and sets out for Madra (Room2).
+/// The Lemurian ship, in two scenes: the East Indra Shore, where the ship lies
+/// moored below the cliffs (SceneId_LemurianShipMainDeck), and its deck at the
+/// tiller once it sails (SceneId_LemurianShipTiller).
+///
+/// The party first comes down the sandy path to the shore before the ceremony
+/// at the Gabomba Statue, and Kraden takes the ship for Menardi's, drifted
+/// there with no orb to sail it. A puddle on the path west of the ship freezes
+/// with Frost into a pillar of ice to the wooden box on the ledge. Back with
+/// Piers after the ceremony, he agrees on the shore to take the party to
+/// Lemuria once he has seen the mayor of Madra; boarding by the rope ladder on
+/// the ship's side, he holds the Black Crystal up to the cabin door, which
+/// opens, and leads the way down to the engine (lemurian_ship.c). At sea the
+/// deck by the tiller plays Piers teaching Felix to sail, and later the party's
+/// talk after a whirlpool of the Sea of Time throws the ship back.
 
 #include "battle/battle.h"
 #include "graphics/palette_buffers.h"
@@ -52,9 +62,37 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 /// The deck's actors, by the rows of both of its actor placement tables;
 /// Jenna's, Sheba's and Piers' rows go to their party slots.
 enum {
-  ACTOR_PUDDLE = ACTOR_FIRST_PLACED, ///< SPRITE_PUDDLE, the deck's puddle
+  ACTOR_PUDDLE =
+      ACTOR_FIRST_PLACED, ///< SPRITE_PUDDLE, on the path west of the ship
   ACTOR_KRADEN
 };
+
+/// The shore's cells, as map.txt has them; the cabin door's step cells are the
+/// exit to the cabins and leave by it.
+enum LemurianShipDeckCellBehavior {
+  /// The head of the sandy path down to the shore, cells (14, 4) to (19, 4).
+  CELL_BEHAVIOR_HEAD_OF_PATH = 10,
+  /// The row below it, cells (12, 5) to (21, 5).
+  CELL_BEHAVIOR_TOP_OF_SHORE,
+  /// The shallows at the foot of the rope ladder on the ship's side, cell
+  /// (27, 27).
+  CELL_BEHAVIOR_FOOT_OF_LADDER,
+  /// The cabin door's face, cell (22, 24), which Felix checks.
+  CELL_BEHAVIOR_CABIN_DOOR = 14,
+  /// The deck east of the cabin door, cells (72, 25) and (72, 26).
+  CELL_BEHAVIOR_EAST_OF_DOOR,
+  /// The cells either side of those, (71, 25), (73, 25), (71, 26) and
+  /// (73, 26).
+  CELL_BEHAVIOR_BESIDE_EAST_OF_DOOR
+};
+
+#define FLAG_PUDDLE_FROZEN FLAG_SCENE_TEMP_00 ///< Frost froze the path's puddle
+#define FLAG_CABIN_DOOR_OPEN FLAG_SCENE_TEMP_01 ///< Piers opened it this visit
+/// Felix's first and second steps east of the cabin door, while Kraden waits.
+#define FLAG_FIRST_STEP_EAST_OF_DOOR FLAG_SCENE_TEMP_10
+#define FLAG_SECOND_STEP_EAST_OF_DOOR FLAG_SCENE_TEMP_11
+/// Felix stands east of the cabin door; stepping beside it clears this.
+#define FLAG_STANDING_EAST_OF_DOOR FLAG_SCENE_TEMP_12
 
 extern struct ActorPlacement gLemurianShipDeck_Placements[];
 extern struct ActorPlacement gLemurianShipDeck_TillerPlacements[];
@@ -67,8 +105,12 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gLemurianShipDeck_Placements;
 }
 
-/// Once Piers is back on his ship, the leader goes through the cabin door, the
-/// door opening first unless it already has (FLAG_SCENE_TEMP_01).
+/// Felix walks north into the cabin door on the ship's deck, cell (22, 25),
+/// once Piers has opened it: he steps into the doorway and the screen closes on
+/// the cabins below. Before then nothing happens.
+///
+/// If the door is not yet open on this visit (`FLAG_CABIN_DOOR_OPEN`), it
+/// swings open first. Every placed actor stops where it is.
 void LemurianShipDeck_EnterCabin(void) {
   if (Event_GetFlag(FLAG_PIERS_BACK_ON_HIS_SHIP)) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -84,7 +126,7 @@ void LemurianShipDeck_EnterCabin(void) {
         actor->y.fixed = toFIXED(32);
       }
     }
-    if (!Event_GetFlag(FLAG_SCENE_TEMP_01)) {
+    if (!Event_GetFlag(FLAG_CABIN_DOOR_OPEN)) {
       Event_PlaySound(SE_DOOR_OPEN);
       MapGrid_CopyCellsTo(51, 38, 70, 22, 1, 2);
     }
@@ -111,7 +153,8 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gLemurianShipDeck_Triggers;
 }
 
-/// The cabin door, examined before Piers is back aboard: it is held closed.
+/// Felix checks the cabin door on the ship's deck, cell (22, 24), before Piers
+/// has come aboard: "The door is held closed by a powerful force."
 void LemurianShipDeck_TryHeldDoor(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -149,8 +192,11 @@ void TilesetAnim_Resume(s32 channelIndex);
 #define MAIN_DECK_ARRIVAL_ENTRANCE 99
 enum { HULL_BAND_FIRST_ANIMATION = 13, HULL_BAND_SECOND_ANIMATION };
 
-/// Arriving by MAIN_DECK_ARRIVAL_ENTRANCE: the screen opens and the band along
-/// the hull lights in two steps.
+/// The party arrives on the shore by MAIN_DECK_ARRIVAL_ENTRANCE: the screen
+/// opens and the blue band along the ship's hull lights up in two steps.
+///
+/// XXX: which scene leads here by entrance 99 and when; a search of the exit
+/// tables for it, and a recording, would settle it.
 void LemurianShipDeck_ShowArrival(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -233,14 +279,18 @@ void LemurianShipDeck_RotateHullBandColors(void);
 void LemurianShipDeck_HoldOnToTiller(void);
 
 /// Places an actor facing an angle, the angle taken as the u16 an actor's
-/// facing is; the helper, our name, Madra's and Loho's placements use too.
+/// facing is, as Madra's and Loho's scenes also place them.
 static inline void LemurianShipDeck_PlaceFacing(s32 id, s32 x, s32 z,
                                                 u16 facing) {
   Actor_SetPositionAndFacing(id, x, z, facing);
 }
 
-/// The scene run from entrance 10: the crew takes its places on deck and the
-/// leader is asked to take the tiller; it ends by setting FLAG_SHIP_SAILABLE.
+/// The first time the ship sails, on the deck by the tiller: Piers tells Felix,
+/// "Take the tiller, Felix!", the party talks over where to go (Felix's
+/// answer to Piers's wish to see Vale changes Kraden's reply), and Kraden ends,
+/// "To the open sea, Felix!" The player then steers the ship on the world map.
+///
+/// It runs from entrance 10 and sets FLAG_SHIP_SAILABLE.
 void LemurianShipDeck_TakeTheTiller(void) {
   s32 turn;
 
@@ -392,9 +442,13 @@ static inline void RunToFelix(s32 id) {
   Actor_SetPosition(id, 0, 0);
 }
 
-/// The scene run from entrance 20: the camera frames actors 4 to 9 around the
-/// spot, two callbacks start the bobbing, and after the exchange of looks and
-/// emotes the four actors run to actor 4.
+/// The first time a whirlpool of the Sea of Time throws the ship back, the
+/// party stands round Felix at the tiller as the deck rocks: Sheba cries "Hold
+/// on to that tiller!", Piers admits he has never had to find his way back
+/// into Lemuria, and Kraden says they will need a way past the currents. The
+/// others then run to Felix and the ship is back on the world map.
+///
+/// It runs from entrance 20; the waves scroll and the deck bobs throughout.
 void LemurianShipDeck_HoldOnToTiller(void) {
 #if !TLA_PATCH_2
   /* FAKEMATCH(dead): a call that never runs. */
@@ -522,8 +576,8 @@ void LemurianShipDeck_HoldOnToTiller(void) {
   FieldEvent_SetExitRequest(1);
 }
 
-/// The deck at the tiller (SCENE_LEMURIAN_SHIP_TILLER): the colour rotations,
-/// and the tiller scenes of entrances 10 and 20.
+/// The deck by the tiller (SCENE_LEMURIAN_SHIP_TILLER): the surf and the band
+/// along the hull shimmer, and entrances 10 and 20 play their scenes.
 void LemurianShipDeck_SetUpTillerDeck(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
@@ -567,9 +621,15 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-/// Before the message of the Gabomba is carried, the crew sights Menardi's ship
-/// from the deck and the leader is asked about it; either way it is sighted
-/// once only (FLAG_MENARDIS_SHIP_SEEN).
+/// The first time Felix comes down the sandy path to the East Indra Shore,
+/// cells (14, 4) to (19, 4), before the ceremony at the Gabomba Statue: the
+/// party gathers, Kraden cries "Look... It's Menardi's ship!", and the view
+/// pans over the moored ship to its dragon prow and back. Felix answers whether
+/// it could have drifted here; either way they agree they cannot sail it
+/// without the orb Saturos had.
+///
+/// Coming later, after the ceremony, only marks the ship seen
+/// (`FLAG_MENARDIS_SHIP_SEEN`).
 void LemurianShipDeck_SightMenardisShip(void) {
   s32 answer;
   s32 owner;
@@ -682,24 +742,33 @@ void LemurianShipDeck_SightMenardisShip(void) {
   Event_SetFlag(FLAG_MENARDIS_SHIP_SEEN);
 }
 
-/// Frost freezes the deck's puddle (FLAG_SCENE_TEMP_00).
+/// Felix casts Frost on the puddle on the path west of the ship: it freezes
+/// into a pillar of ice to jump across to the wooden box on the ledge, with
+/// its Cookie.
 void LemurianShipDeck_FreezePuddle(void) {
   FlagBlock_ApplyFlags(gLemurianShipDeck_Puddles);
 }
 
 void Actor_PlaceOnActor(s32 id, s32 target);
 
-/// Stepping toward the gangway before Piers is back aboard: on the third step
-/// Kraden tires of waiting and goes to find a ship the party can use.
+/// Felix steps onto the deck just east of the cabin door, cells (72, 25) and
+/// (72, 26), before Piers has come aboard. The first two times nothing visible
+/// happens; the third time Kraden comes out, walks east and says, "Well,
+/// there's no point in hanging around here all day. Let's go see about finding
+/// ourselves a ship we can use.", and goes back into the party.
+///
+/// A step counts only after Felix has stepped beside those cells
+/// (LemurianShipDeck_StepBesideEastOfDoor). The scene's temporary flags count
+/// the steps, and FLAG_KRADEN_WENT_TO_FIND_A_SHIP ends it for good.
 void LemurianShipDeck_KradenGoesToFindShip(void) {
   struct Actor *actor;
 
-  if (Event_GetFlag(FLAG_SCENE_TEMP_12))
+  if (Event_GetFlag(FLAG_STANDING_EAST_OF_DOOR))
     return;
   if (Event_GetFlag(FLAG_KRADEN_WENT_TO_FIND_A_SHIP))
     return;
-  Event_SetFlag(FLAG_SCENE_TEMP_12);
-  if (Event_GetFlag(FLAG_SCENE_TEMP_11)) {
+  Event_SetFlag(FLAG_STANDING_EAST_OF_DOOR);
+  if (Event_GetFlag(FLAG_SECOND_STEP_EAST_OF_DOOR)) {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
     Actor_PlaceOnActor(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
@@ -720,23 +789,24 @@ void LemurianShipDeck_KradenGoesToFindShip(void) {
     Actor_SetPosition(ACTOR_KRADEN, 0, 0);
     Event_SetFlag(FLAG_KRADEN_WENT_TO_FIND_A_SHIP);
     Event_End();
-  } else if (Event_GetFlag(FLAG_SCENE_TEMP_10)) {
-    Event_SetFlag(FLAG_SCENE_TEMP_11);
+  } else if (Event_GetFlag(FLAG_FIRST_STEP_EAST_OF_DOOR)) {
+    Event_SetFlag(FLAG_SECOND_STEP_EAST_OF_DOOR);
   } else {
-    Event_SetFlag(FLAG_SCENE_TEMP_10);
+    Event_SetFlag(FLAG_FIRST_STEP_EAST_OF_DOOR);
   }
 }
 
-/// Stepping back off the gangway lets Kraden's next step toward leaving count
-/// again (FLAG_SCENE_TEMP_12).
-void LemurianShipDeck_StepBackFromGangway(void) {
-  GameFlag_Clear(FLAG_SCENE_TEMP_12);
+/// Nothing visible happens as Felix steps beside the cells east of the cabin
+/// door, before Piers has come aboard; his next step back onto them counts
+/// toward Kraden's going to find a ship.
+void LemurianShipDeck_StepBesideEastOfDoor(void) {
+  GameFlag_Clear(FLAG_STANDING_EAST_OF_DOOR);
 }
 
 void Actor_StartScript(struct Actor *actor, const void *data);
 
-/// A task: a sparkle rises from around the Black Crystal toward the ship's
-/// core.
+/// A task: as Piers opens the cabin door, sparkles drift in from around the
+/// Black Crystal toward it.
 void LemurianShipDeck_EmitSparkle(void) {
   s32 position[3];
   struct Actor *actor;
@@ -780,9 +850,13 @@ struct Actor *LemurianShipDeck_CreateBlackCrystal(void) {
   return actor;
 }
 
-/// Once Piers is in the party, the first time: "At last, I'm back on my ship."
-/// He opens the cabin door (FLAG_SCENE_TEMP_01) and leads the way belowdecks
-/// (FLAG_PIERS_BACK_ON_HIS_SHIP).
+/// The first time Felix comes to the cabin door on the ship's deck, cell
+/// (22, 25), with Piers in the party: Piers jumps for joy, "At last, I'm back
+/// on my ship.", holds up the Black Crystal before the door, and as light
+/// gathers the screen glows red and flashes white and the door opens. "To set
+/// sail, we must go down to the power chamber belowdecks."
+///
+/// It sets FLAG_PIERS_BACK_ON_HIS_SHIP.
 void LemurianShipDeck_ReturnToShip(void) {
   struct Actor *handle;
   void (*func)(void);
@@ -834,7 +908,7 @@ void LemurianShipDeck_ReturnToShip(void) {
   PaletteFade_Interpolate(20);
   FieldEvent_Wait(20);
   MapGrid_CopyCellsTo(51, 38, 70, 22, 1, 2);
-  Event_SetFlag(FLAG_SCENE_TEMP_01);
+  Event_SetFlag(FLAG_CABIN_DOOR_OPEN);
   FieldTask_Remove(func);
   if (handle != 0)
     Actor_Release(handle);
@@ -859,10 +933,14 @@ void LemurianShipDeck_ReturnToShip(void) {
   Event_End();
 }
 
-/// Once the message of the Gabomba is carried, until Madra welcomes Piers home:
-/// Piers reaches his ship, the crew asks him to take them to Lemuria, the
-/// leader answers two prompts, and Piers agrees
-/// (FLAG_PIERS_SETTING_SAIL).
+/// Felix comes down the sandy path to the shore, cells (12, 5) to (21, 5),
+/// with Piers after the ceremony at the Gabomba Statue: "My ship! At long
+/// last... I have returned to my ship." Kraden asks him to take the party to
+/// Lemuria, and after Felix's two answers Piers agrees: "I will take you to
+/// Lemuria." He then asks to stop in Madra first to tell the mayor he has his
+/// orb back.
+///
+/// It runs until the farewells in Madra and sets FLAG_PIERS_SETTING_SAIL.
 void LemurianShipDeck_ReachPiersShip(void) {
   if (Event_GetFlag(FLAG_GABOMBA_MESSAGE_CARRIED) == 0)
     return;
@@ -1150,8 +1228,10 @@ void LemurianShipDeck_EmitSplash(struct Actor *actor) {
   }
 }
 
-/// With Piers in the party, before Madra has welcomed him home: "Then let's
-/// waste no time! We should set out for Madra at once!"
+/// Felix wades to the foot of the rope ladder on the ship's side, cell
+/// (27, 27), with Piers in the party before the farewells in Madra: Piers
+/// splashes out beside him, "Then let's waste no time! We should set out for
+/// Madra at once!", and rejoins the party.
 void LemurianShipDeck_SetOutForMadra(void) {
   if (Event_GetFlag(FLAG_IN_PARTY(ACTOR_PIERS))) {
     struct Actor *actor;
@@ -1188,12 +1268,13 @@ void LemurianShipDeck_SetOutForMadra(void) {
 }
 
 // clang-format off
-/// The deck's puddle, by actor id and flag.
+/// The puddle on the path west of the ship, by actor id and flag.
 s16 gLemurianShipDeck_Puddles[] = {
-    ACTOR_PUDDLE, FLAG_SCENE_TEMP_00, -1, 0,
+    ACTOR_PUDDLE, FLAG_PUDDLE_FROZEN, -1, 0,
 };
 
-/// The crew walking off the deck after Piers agrees to sail for Lemuria.
+/// The party walking off across the shore, into Felix's party, once Piers has
+/// agreed to sail for Lemuria.
 s32 gLemurianShipDeck_ReachPiersShipScript[] = {
     SC_ANIMATION(2),
     SC_MOVE(263, 0, 176),
@@ -1205,7 +1286,8 @@ s32 gLemurianShipDeck_ReachPiersShipScript[] = {
     SC_END,
 };
 
-/// The crew following Piers belowdecks.
+/// Felix stepping back from the cabin door and turning to watch Piers open
+/// it.
 s32 gLemurianShipDeck_ReturnToShipScript[] = {
     SC_ANIMATION(2),
     SC_MOVE(368, 0, 448),
@@ -1221,7 +1303,7 @@ s32 gLemurianShipDeck_ReturnToShipScript[] = {
     SC_END,
 };
 
-/// The first of the crew looking about the deck.
+/// Jenna looking about the deck as the ship first sails.
 s32 gLemurianShipDeck_FirstCrewLooksAround[] = {                                                               
       SC_SET(SW_FACING, FACING_SOUTH),     SC_WAIT(30),                        
       SC_SET(SW_FACING, FACING_SOUTHWEST), SC_WAIT(50),                        
@@ -1230,7 +1312,7 @@ s32 gLemurianShipDeck_FirstCrewLooksAround[] = {
       SC_LOOP(SC_FOREVER, SC_TOP),                                             
   };
 
-/// The second of the crew looking about the deck.
+/// Sheba looking about the deck as the ship first sails.
 s32 gLemurianShipDeck_SecondCrewLooksAround[] = {
     SC_SET(SW_FACING, FACING_EAST),
     SC_WAIT(50),
@@ -1239,7 +1321,7 @@ s32 gLemurianShipDeck_SecondCrewLooksAround[] = {
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// The third of the crew looking about the deck.
+/// Kraden looking about the deck as the ship first sails.
 s32 gLemurianShipDeck_ThirdCrewLooksAround[] = {
     SC_SET(SW_FACING, FACING_NORTH_NORTHEAST),
     SC_WAIT(70),
@@ -1266,7 +1348,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-/// The main deck's actors.
+/// The East Indra Shore's actors.
 struct ActorPlacement gLemurianShipDeck_Placements[] = {
     ACTOR_PLACEMENT(SPRITE_PUDDLE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 136, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_KRADEN, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -1291,17 +1373,17 @@ struct Trigger gLemurianShipDeck_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// The main deck's triggers.
+/// The East Indra Shore's triggers.
 struct Trigger gLemurianShipDeck_MainDeckTriggers[] = {
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(LemurianShipDeck_EnterCabin)},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, 10, FLAG_MENARDIS_SHIP_SEEN, EVENT(LemurianShipDeck_SightMenardisShip)},
-    {TRIGGER_STEP, 11, FLAG_PIERS_SETTING_SAIL, EVENT(LemurianShipDeck_ReachPiersShip)},
-    {TRIGGER_STEP, 12, FLAG_MADRA_FAREWELL_SAID, EVENT(LemurianShipDeck_SetOutForMadra)},
-    {TRIGGER_STEP, 1, FLAG_PIERS_BACK_ON_HIS_SHIP, EVENT(LemurianShipDeck_ReturnToShip)},
-    {TRIGGER_EXAMINE, 14, FLAG_PIERS_BACK_ON_HIS_SHIP, EVENT(LemurianShipDeck_TryHeldDoor)},
-    {TRIGGER_STEP, 15, FLAG_PIERS_BACK_ON_HIS_SHIP, EVENT(LemurianShipDeck_KradenGoesToFindShip)},
-    {TRIGGER_STEP, 16, FLAG_PIERS_BACK_ON_HIS_SHIP, EVENT(LemurianShipDeck_StepBackFromGangway)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), LEMURIAN_SHIP_MAIN_DECK_TO_LEMURIAN_SHIP_CABINS, CONDITION_ALWAYS, EVENT(LemurianShipDeck_EnterCabin)},
+    {TRIGGER_EXIT, LEMURIAN_SHIP_MAIN_DECK_TO_WORLD_MAP_NORTH, CONDITION_ALWAYS, LEMURIAN_SHIP_MAIN_DECK_TO_WORLD_MAP_NORTH},
+    {TRIGGER_STEP, CELL_BEHAVIOR_HEAD_OF_PATH, FLAG_MENARDIS_SHIP_SEEN, EVENT(LemurianShipDeck_SightMenardisShip)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_TOP_OF_SHORE, FLAG_PIERS_SETTING_SAIL, EVENT(LemurianShipDeck_ReachPiersShip)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_FOOT_OF_LADDER, FLAG_MADRA_FAREWELL_SAID, EVENT(LemurianShipDeck_SetOutForMadra)},
+    {TRIGGER_STEP, LEMURIAN_SHIP_MAIN_DECK_TO_LEMURIAN_SHIP_CABINS, FLAG_PIERS_BACK_ON_HIS_SHIP, EVENT(LemurianShipDeck_ReturnToShip)},
+    {TRIGGER_EXAMINE, CELL_BEHAVIOR_CABIN_DOOR, FLAG_PIERS_BACK_ON_HIS_SHIP, EVENT(LemurianShipDeck_TryHeldDoor)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_EAST_OF_DOOR, FLAG_PIERS_BACK_ON_HIS_SHIP, EVENT(LemurianShipDeck_KradenGoesToFindShip)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BESIDE_EAST_OF_DOOR, FLAG_PIERS_BACK_ON_HIS_SHIP, EVENT(LemurianShipDeck_StepBesideEastOfDoor)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE, FLAG_SCENE_TEMP_00, EVENT(LemurianShipDeck_FreezePuddle)},
     {TRIGGER_TABLE_END},
 };

@@ -1,11 +1,27 @@
 /// @file
-/// Magma Rock's outside, the climb up the volcano to its way in, in three
-/// scenes on this overlay: the slide (SceneId_MagmaRockSlide), the Salamander
-/// Tail room's four levels and the statue room (SceneId_MagmaRockStatue). Burst
-/// wakes the statues, which fire at cracked pillars or raise a column of flame
-/// that lifts the leader on their cap; fireballs fly between pairs of
-/// statues across the walls he climbs; Move pushes pillars, Growth grows vines,
-/// and pillars crumble underfoot.
+/// Magma Rock's outside: the climb up the mountain across the river from
+/// Naribwe, past yellow statues that answer Burst, to the great fire on its
+/// top that hides the way down into it. Felix comes here for a Magma Ball to
+/// load Loho's cannon.
+///
+/// At the foot (the slide, `SceneId_MagmaRockSlide`) Lift moves a boulder off
+/// the path, and the cave mouth above it, between two statues throwing a
+/// fireball back and forth, leads a little way inside. Felix then climbs the
+/// wall by the cave mouth. Burst on the statue on the ledge above makes it
+/// spit a fireball that breaks a cracked pillar; pushing two stone pillars
+/// opens the climb, and Burst on the statue further west makes its cap rise
+/// on a column of flame, carrying Felix up to the next ledge.
+///
+/// The cliff above (`SceneId_MagmaRockSalamanderTailChest`, with the Salamander
+/// Tail's chest) is four screens on one map, which the code calls levels and
+/// tells apart by the entrance Felix came in by: the low east and low west
+/// halves of the cliff, then the high west and high east halves above them.
+/// Growth grows vines up its walls, Lash ties a rope, two cracked pillars
+/// crumble under Felix's feet, more statues spit fire or lift him, and on the
+/// high east wall three pairs of statues throw fireballs that knock him off it.
+/// At the top (`SceneId_MagmaRockStatue`) Burst on the statue east of the great
+/// fire makes it spit a fireball into the fire, and the blast opens the way
+/// into Magma Rock.
 #include "resource_ids.h"
 #include "../field/actor_set_sprite_priority.c"
 
@@ -58,8 +74,8 @@
 #include "text/msg_ids.h"
 
 // Each pushed pillar's flag keeps it where it was pushed: two on the slide,
-// one on each of the Salamander Tail room's high west, high east and low west
-// levels and two on its low east level.
+// one on each of the cliff's high west, high east and low west levels and two
+// on its low east level.
 #define FLAG_SLIDE_PILLAR_A_PUSHED 0x8d5
 #define FLAG_SLIDE_PILLAR_B_PUSHED 0x8d6
 #define FLAG_HIGH_WEST_PILLAR_B_PUSHED 0x8d7
@@ -67,7 +83,7 @@
 #define FLAG_LOW_WEST_PILLAR_PUSHED 0x8d9
 #define FLAG_LOW_EAST_PILLAR_A_PUSHED 0x8da
 #define FLAG_LOW_EAST_PILLAR_B_PUSHED 0x8db
-/// The statue room's great fire is put out and the rocks round it scattered,
+/// The top's great fire is put out and the rocks round it scattered,
 /// which opens the way into Magma Rock (MagmaRock_ScatterEmbers).
 #define FLAG_WAY_IN_BLASTED 0x8dc
 // Set as Burst breaks each cracked pillar, until the scene is left.
@@ -81,38 +97,41 @@
 // first's is FLAG_CRACKED_PILLAR_A_BURST's too.
 #define FLAG_CRUMBLING_PILLAR_A_CRACKED FLAG_SCENE_TEMP_00
 #define FLAG_CRUMBLING_PILLAR_B_CRACKED FLAG_SCENE_TEMP_02
-// Set once the cave door's cell has run (MagmaRock_EnterCave), so that it waits
-// until the leader steps onto it again by himself (MagmaRock_ResetCaveDoor).
+// Set once Felix has been on the cave mouth's cell (MagmaRock_EnterCave), so
+// that when the game moves him onto it he is not sent straight in; his next
+// step there by himself clears it (MagmaRock_ResetCaveDoor).
 #define FLAG_CAVE_DOOR_USED FLAG_SCENE_TEMP_F8
-// Set while the high west level's statue answers Burst, from the leader's step
-// beside it (MagmaRock_ReadyHighWestStatue) to his step away.
+// Set while Felix stands just behind the high west level's statue, the one
+// place Burst can wake it from (MagmaRock_ReadyHighWestStatue).
 #define FLAG_HIGH_WEST_STATUE_READY FLAG_SCENE_TEMP_12
-// Set while a fireball knocks the leader off the wall
+// Set while a fireball knocks Felix off the high east wall
 // (MagmaRock_KnockLeaderOffWall); the fireballs stop whooshing meanwhile.
 #define FLAG_LEADER_KNOCKED_DOWN FLAG_SCENE_TEMP_60
-// The Salamander Tail room's low east level: each vine Growth has grown there.
+// The cliff's low east level: each vine Growth has grown there.
 #define FLAG_VINE_A_GROWN FLAG_SCENE_TEMP_50
 #define FLAG_VINE_B_GROWN FLAG_SCENE_TEMP_51
 #define FLAG_VINE_C_GROWN FLAG_SCENE_TEMP_52
 // Its low west level: the rope Lash ties between the two posts.
 #define FLAG_LOW_WEST_ROPE_LASHED FLAG_SCENE_TEMP_50
 
-/// The Salamander Tail room's four levels, by the last entrance of each: two
-/// high levels, west and east, then two low levels below them, west and east.
+/// The cliff's four levels, by the last entrance of each: its high west and
+/// high east halves, then the low west and low east halves below them. They
+/// share one map, but to the player each is a screen of its own, with its own
+/// placed actors and triggers, left by climbing a wall off its top or foot.
 /// From the slide the party climbs onto the low east level, and the high east
-/// level's wall leads up to the statue room.
+/// level's wall leads up to the top.
 enum MagmaRockSalamanderTailLevel {
   SALAMANDER_TAIL_HIGH_WEST_LAST_ENTRANCE = 3,
   SALAMANDER_TAIL_HIGH_EAST_LAST_ENTRANCE = 8,
   SALAMANDER_TAIL_LOW_WEST_LAST_ENTRANCE = 12
 };
 
-/// The Salamander Tail room's entrances from within the scene, by the level
-/// each opens onto and the level it leads from; scene_exits.h names those from
-/// the slide and the statue room. Two walls lead up from the low west level to
-/// the high west level, A the western, and one from the low east level to the
-/// high east level; a path leads from the high west level to the high east, and
-/// two from the low west level to the low east.
+/// The cliff's entrances from within the scene, by the level each opens onto
+/// and the level it leads from; scene_exits.h names those from the slide and
+/// the top. Two walls lead up from the low west level to the high west level, A
+/// the western, and one from the low east level to the high east level; a path
+/// leads from the high west level to the high east, and two from the low west
+/// level to the low east.
 enum MagmaRockSalamanderTailEntrance {
   ENTRANCE_HIGH_WEST_FROM_BELOW_A = 1,
   ENTRANCE_HIGH_WEST_FROM_BELOW_B,
@@ -128,37 +147,49 @@ enum MagmaRockSalamanderTailEntrance {
   ENTRANCE_LOW_EAST_FROM_LOW_WEST_B
 };
 
-/// The collision codes the scene's triggers answer, each room its own.
+/// The cell behaviours the scene's triggers answer. The three maps and the
+/// cliff's four levels each read them their own way, so one number can stand
+/// for two places. Cells on raised ground hold their behaviour some rows south
+/// of where they show on screen.
 enum MagmaRockCellBehavior {
-  /// The slide's door into the cave, which the leader walks through.
+  /// The cave mouth above the slide's four cracked pillars, cell (16, 28).
   CELL_BEHAVIOR_MAGMA_ROCK_CAVE_DOOR = 2,
-  /// The tops of the high west level's crumbling pillars.
+  /// The tops of the high west level's two crumbling pillars, cells (15, 29)
+  /// and (17, 29).
   CELL_BEHAVIOR_MAGMA_ROCK_CRUMBLING_PILLAR = 20,
-  /// A statue Burst makes fire (MagmaRock_FireStatue): the slide's, the high
-  /// west level's while it is ready, and the low east level's first.
+  /// A statue that spits a fireball once Burst wakes it
+  /// (MagmaRock_FireStatue): the slide's, at cell (25, 25), the high west
+  /// level's while Felix stands behind it, and the low east level's upper one,
+  /// at cell (48, 39).
   CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE = 30,
-  /// The low east level's second firing statue.
+  /// The low east level's lower statue that spits fire, cell (52, 40).
   CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE_B = 31,
   /// The cracked pillars Burst breaks, lettered as the events that break
-  /// them: A to E on the slide, A on the high west level and B on the low east
-  /// level.
+  /// them: on the slide A to D in front of the cave mouth, cells (15, 31),
+  /// (17, 31), (14, 34) and (18, 34), and E on the ledge above, cell (20, 25);
+  /// on the cliff A on the high west level, cell (22, 34), and B on the low
+  /// east level, cell (42, 39).
   CELL_BEHAVIOR_MAGMA_ROCK_CRACKED_PILLAR_A = 31,
   CELL_BEHAVIOR_MAGMA_ROCK_CRACKED_PILLAR_B,
   CELL_BEHAVIOR_MAGMA_ROCK_CRACKED_PILLAR_C,
   CELL_BEHAVIOR_MAGMA_ROCK_CRACKED_PILLAR_D,
   CELL_BEHAVIOR_MAGMA_ROCK_CRACKED_PILLAR_E,
-  /// Where walking into the low west level's or the low east level's pillar
-  /// pushes it.
+  /// Where walking into a stone pillar pushes it: west of the low west level's
+  /// pillar, cell (14, 36), and east of the low east level's, cells (37, 38)
+  /// to (40, 38).
   CELL_BEHAVIOR_MAGMA_ROCK_PILLAR_PUSH = 40,
-  /// A statue Burst lights, whose flame column raises its cap
-  /// (MagmaRock_IgniteStatue): a level's first and second.
+  /// A statue whose grey cap rides up on a column of flame a while after
+  /// Burst wakes it (MagmaRock_IgniteStatue), a level's first and second: the
+  /// slide's at cell (9, 25), the high east level's at cells (54, 33) and
+  /// (58, 34), the low west level's at (6, 38) and (26, 41) and the low east
+  /// level's at (44, 39).
   CELL_BEHAVIOR_MAGMA_ROCK_COLUMN_STATUE_A = 50,
   CELL_BEHAVIOR_MAGMA_ROCK_COLUMN_STATUE_B = 51,
-  /// The high west level's cell beside its statue, which readies it, and the
-  /// cell past that, which resets it.
+  /// On the high west level, the cell just behind its statue, cell (15, 34),
+  /// and the one behind that, cell (14, 34).
   CELL_BEHAVIOR_MAGMA_ROCK_BESIDE_HIGH_WEST_STATUE = 50,
   CELL_BEHAVIOR_MAGMA_ROCK_PAST_HIGH_WEST_STATUE = 51,
-  /// The statue room's statue, which Burst makes fire at the great fire.
+  /// The statue east of the great fire on the top, cell (50, 22).
   CELL_BEHAVIOR_MAGMA_ROCK_STATUE_ROOM_STATUE = 50
 };
 
@@ -181,9 +212,12 @@ enum { TRIGGER_FIREBALL_HITS_LEADER = 200 };
 /// away.
 #define PILLAR_CRUMBLE_FRAME 178
 
-/// The slide: its two pushed pillars, the statue whose flame column raises its
-/// cap, the statue that fires, the pair of statues a fireball flies between,
-/// and its cracked pillars, lettered as the events that break them.
+/// The slide: its two stone pillars, the statue on the west of the upper
+/// ledge whose cap rides up on a column of flame, the statue on the east of it
+/// that spits fire, the pair of statues on either side of the cave mouth with
+/// a fireball flying between them, and its cracked pillars, lettered as the
+/// events that break them: E on the upper ledge, A to D in front of the cave
+/// mouth.
 enum MagmaRockSlideActorId {
   ACTOR_SLIDE_PILLAR_A = ACTOR_FIRST_PLACED,
   ACTOR_SLIDE_COLUMN_STATUE,
@@ -201,9 +235,9 @@ enum MagmaRockSlideActorId {
   ACTOR_SLIDE_FIREBALL ///< drawn as SPRITE_FLAME_PUFF, flying between the pair
 };
 
-/// The Salamander Tail room's high west level: two pushed pillars, the
-/// crumbling pillars, the tightrope's posts, and the statue that fires at the
-/// cracked pillar.
+/// The cliff's high west level: two stone pillars to push, the two crumbling
+/// pillars, the tightrope's posts, and the statue that spits fire at the
+/// cracked pillar east of it.
 enum MagmaRockSalamanderTailHighWestActorId {
   ACTOR_HIGH_WEST_PILLAR_A = ACTOR_FIRST_PLACED,
   ACTOR_CRUMBLING_PILLAR_A,
@@ -215,9 +249,10 @@ enum MagmaRockSalamanderTailHighWestActorId {
   ACTOR_HIGH_WEST_PILLAR_B
 };
 
-/// Its high east level: three pairs of statues raised to three heights on the
-/// wall, a fireball flying between each pair, two statues whose flame
-/// columns raise their caps, and a pushed pillar.
+/// Its high east level: three pairs of statues facing each other across the
+/// wall Felix climbs, one above another, with a fireball flying between each
+/// pair, two statues whose caps ride up on columns of flame, and a stone
+/// pillar to push.
 enum MagmaRockSalamanderTailHighEastActorId {
   ACTOR_STATUE_PAIR_A_WEST = ACTOR_FIRST_PLACED,
   ACTOR_STATUE_PAIR_A_EAST,
@@ -235,8 +270,8 @@ enum MagmaRockSalamanderTailHighEastActorId {
   ACTOR_FIREBALL_C
 };
 
-/// Its low west level: a pushed pillar, two statues whose flame columns raise
-/// their caps, and the rope's posts.
+/// Its low west level: a stone pillar to push, two statues whose caps ride up
+/// on columns of flame, and the posts Lash ties the rope between.
 enum MagmaRockSalamanderTailLowWestActorId {
   ACTOR_LOW_WEST_PILLAR = ACTOR_FIRST_PLACED,
   ACTOR_LOW_WEST_COLUMN_STATUE_A,
@@ -247,8 +282,9 @@ enum MagmaRockSalamanderTailLowWestActorId {
   ACTOR_LOW_WEST_ROPE_EAST_POST
 };
 
-/// Its low east level: two pushed pillars, the cracked pillar, two statues that
-/// fire and one whose flame column raises its cap.
+/// Its low east level: two stone pillars to push, the cracked pillar, two
+/// statues that spit fire, one whose cap rides up on a column of flame, and
+/// three sprouts.
 enum MagmaRockSalamanderTailLowEastActorId {
   ACTOR_LOW_EAST_PILLAR_A = ACTOR_FIRST_PLACED,
   ACTOR_LOW_EAST_PILLAR_B,
@@ -262,8 +298,8 @@ enum MagmaRockSalamanderTailLowEastActorId {
   ACTOR_LOW_EAST_SPROUT_C
 };
 
-/// The statue room: the great fire before the way in, and the statue that
-/// fires at it.
+/// The top: the great fire before the way in, and the statue east of it that
+/// spits fire at it.
 enum MagmaRockStatueActorId {
   ACTOR_GREAT_FIRE = ACTOR_FIRST_PLACED,
   ACTOR_STATUE_ROOM_STATUE
@@ -417,9 +453,17 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 void Actor_LiftTargetBlock(s16 *table);
 
-/// As a pillar starts to be pushed, by Move or by walking into it: takes it out
-/// of the map and closes the passages it opened.
+/// Nothing visible happens as Felix starts to push one of the striped stone
+/// pillars, with Move or by walking into it; the push itself is the field's.
+/// The game first takes the pillar out of the map, so that its cell is plain
+/// ground under it as it slides. On the slide and on the low west and low east
+/// levels it also clears the walls the map's upper layer keeps along the
+/// pillars' paths (copied from spare cells off the screen), so that the pillar
+/// can slide along them; MagmaRock_FinishPushingPillar puts them back.
 void MagmaRock_StartPushingPillar(void) {
+  // XXX: what the upper layer's walls along the pillars' paths stop while no
+  // pillar moves; walking the leader along the slide's pillars before and after
+  // a push would settle it.
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
@@ -456,9 +500,16 @@ void Actor_PlaceMovedBlock();
 /// The overlay's veneer to Event_End.
 s32 MagmaRock_EndEvent();
 
-/// Once a pillar has been pushed: puts it back into the map where it stands,
-/// opens the passages it opens there, and sets its flag on the cell it is
-/// pushed to.
+/// A striped stone pillar comes to rest after a push, and stands in the way
+/// again where it stopped. One that has reached the place the climb needs
+/// stays there when the party comes back: on the slide the pillar on the
+/// statues' ledge pushed west out of the way, to cell (15, 25), and the one on
+/// the ledge above pushed east, to cell (16, 22), before the climb to the
+/// cliff; on the cliff the high west level's second pillar at cell (27, 33),
+/// the high east level's at (55, 35), the low west level's at (16, 36), and
+/// the low east level's two at (40, 37) and (35, 38). The game stands the
+/// pillar in the map again, puts back the upper layer's walls
+/// MagmaRock_StartPushingPillar cleared, and sets the pillar's flag.
 s32 MagmaRock_FinishPushingPillar(void) {
   struct Actor *pillar = gFieldWork->movedBlock;
   s32 x, z;
@@ -518,8 +569,8 @@ s32 MagmaRock_FinishPushingPillar(void) {
 /// target.
 void Import_FieldPsynergySetupActorPair(s32 owner, u16 value);
 
-/// Plays Burst from the leader at an actor, outside the trigger table: as the
-/// statue's fire lands.
+/// Plays Burst from the leader at an actor, outside the trigger table: the
+/// explosion a statue's fireball makes where it lands.
 void MagmaRock_PlayBurst(u16 value) {
   struct MainRoutineWork *party;
 
@@ -533,9 +584,9 @@ void MagmaRock_PlayBurst(u16 value) {
 
 extern s32 gMagmaRock_FlameEmberScript[];
 
-/// A statue's update when a fireball reaches it: it throws embers and
-/// flashes red, faster and then white, and after 144 frames sends the
-/// fireball back.
+/// A statue's update when the fireball of its pair reaches it: it throws
+/// embers and blinks red, faster and faster, flashes white, and after 144
+/// frames spits the fireball back.
 void MagmaRock_ThrowEmbers(struct Actor *actor) {
   struct Actor *linked = actor->watchedActor;
   s16 *timer = &actor->timer;
@@ -594,8 +645,8 @@ void MagmaRock_ThrowEmbers(struct Actor *actor) {
 void Actor_PlaySoundInView(struct Actor *actor, s32 value);
 
 /// The update of a fireball or a statue's fire: every fourth frame it leaves
-/// an ember near it, drifting along z, and every sixteenth it whooshes, unless
-/// it has just knocked the leader down.
+/// an ember near it, drifting a little north or south, and every sixteenth it
+/// whooshes, unless one has just knocked Felix down.
 void MagmaRock_LeaveEmbers(struct Actor *actor) {
   u32 frame = gFrameCount;
 
@@ -622,9 +673,8 @@ void MagmaRock_LeaveEmbers(struct Actor *actor) {
 FIXED Trig_Cos(s32 angle);
 
 /// A fireball's update: it flies toward the other statue of its pair leaving
-/// embers; running into the leader raises TRIGGER_FIREBALL_HITS_LEADER and
-/// takes it away, and reaching the statue hands it over
-/// (MagmaRock_ThrowEmbers).
+/// embers; running into Felix raises TRIGGER_FIREBALL_HITS_LEADER and takes it
+/// away, and reaching the statue hands it over (MagmaRock_ThrowEmbers).
 void MagmaRock_MoveFireball(struct Actor *actor) {
   FIXED step;
   struct Actor *partner;
@@ -664,7 +714,7 @@ void MagmaRock_MoveFireball(struct Actor *actor) {
 }
 
 /// Unless the party keeps its place: sets a fireball on one statue of its
-/// pair, given by side, facing the other, and starts it rolling.
+/// pair, given by side, facing the other, and starts it flying.
 void MagmaRock_PlaceFireball(u16 id, s16 first, s16 side) {
   struct Actor *actor = Actor_Get(id);
   struct Actor *a;
@@ -711,7 +761,8 @@ void MagmaRock_PlaceFireball(u16 id, s16 first, s16 side) {
   *flags = 0;
 }
 
-/// A targeted statue's update: blinks red on the frames its mask picks.
+/// The update of a statue Burst is going off at: it blinks red on the frames
+/// its mask picks.
 void MagmaRock_FlashStatue(struct Actor *actor) {
   if (gFrameCount & actor->flashMask)
     FieldActor_SetSpriteColor(actor, SPRITE_COLOR_RED_TINT);
@@ -719,9 +770,9 @@ void MagmaRock_FlashStatue(struct Actor *actor) {
     FieldActor_SetSpriteColor(actor, SPRITE_COLOR_NORMAL);
 }
 
-/// A lit statue's update, counting down from 1,024 while no menu, Psynergy or
-/// item is in use: it blinks red quickly, then slowly from 528, and from 400 it
-/// burns (MagmaRock_BurnStatue).
+/// The update of a statue Burst has woken, counting down from 1,024 while no
+/// menu, Psynergy or item is in use: it blinks red quickly, then slowly from
+/// 528, and from 400 it burns (MagmaRock_BurnStatue).
 void MagmaRock_WarnStatue(struct Actor *actor) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -786,10 +837,14 @@ s32 MagmaRock_LookUpCellStatue(s32 x, s32 z, u16 *table) {
   return result;
 }
 
-/// As Burst acts on a statue's cell: finds the statue in the room's table and
-/// blinks it red (MagmaRock_FlashStatue), every fourth frame while Burst's
-/// explosions shake the ground (BURST_STAGE_SMALL_BLAST) and every other one at
-/// its last blast (BURST_STAGE_GREAT_BLAST).
+/// Felix casts Burst at one of the yellow statues, and it glows red while the
+/// explosions go off round it, blinking faster at the last blast. The game
+/// finds the statue by its cell in the room's table (MagmaRock_FindStatue) and
+/// blinks it (MagmaRock_FlashStatue), every fourth frame while the explosions
+/// shake the ground (BURST_STAGE_SMALL_BLAST) and every other one at the last
+/// blast (BURST_STAGE_GREAT_BLAST).
+/// The statue then fires (MagmaRock_FireStatue) or lights
+/// (MagmaRock_IgniteStatue).
 void MagmaRock_TargetStatue(s32 stage) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   s16 *table = gMagmaRock_SlideStatues;
@@ -841,9 +896,11 @@ void Actor_Release(struct Actor *actor);
 s32 MagmaRock_EndEvent(void);
 void FieldCamera_WaitForArrival(void);
 
-/// A statue's fire flies ahead until it meets the edge of its way, a stone
-/// pillar or another actor: it bursts into embers there, or plays Burst on the
-/// actor.
+/// A statue's fireball flies straight ahead, the camera following it, until it
+/// meets the edge of its ledge, a striped stone pillar or anything else
+/// standing in its way: at the edge or a stone pillar it bursts into embers,
+/// and on anything else it explodes as Burst does (MagmaRock_PlayBurst). Then
+/// the camera goes back to Felix.
 s32 MagmaRock_FireFromStatue(struct Actor *source) {
   FIXED position[3];
   struct EffectOptions options;
@@ -955,9 +1012,14 @@ hit:
   return MagmaRock_EndEvent();
 }
 
-/// After Burst on a statue: it flashes white and fires
-/// (MagmaRock_FireFromStatue).
+/// After Felix's Burst, the yellow statue he cast it at flashes white and spits
+/// a fireball straight ahead: on the slide's statues' ledge and the high west
+/// level at the cracked pillar beyond it, which the fireball's blast breaks,
+/// and on the top at the great fire. The fireball's flight is
+/// MagmaRock_FireFromStatue's.
 void MagmaRock_FireStatue(void) {
+  // XXX: what the low east level's lower statue (cell (52, 40)) fires at; Burst
+  // on it in a render of that level would settle it.
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   struct Actor *actor;
 
@@ -974,8 +1036,11 @@ void MagmaRock_FireStatue(void) {
   MagmaRock_EndEvent();
 }
 
-/// After Burst on a statue that raises a flame column: it warns and then burns
-/// (MagmaRock_WarnStatue).
+/// After Felix's Burst, a yellow statue with a grey cap blinks red for about
+/// ten seconds, faster at first; then fire bursts from it and its cap rides up
+/// on a column of flame for about five seconds, carrying Felix up to the ledge
+/// above if he is standing on it, before it sinks again. The game only starts
+/// the statue's countdown (MagmaRock_WarnStatue, then MagmaRock_BurnStatue).
 void MagmaRock_IgniteStatue(void) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   struct Actor *actor;
@@ -988,12 +1053,15 @@ void MagmaRock_IgniteStatue(void) {
   MagmaRock_EndEvent();
 }
 
-/// Burst on a statue or a cracked pillar: rocks fall round it while Burst
-/// lasts, one a frame while its explosions shake the ground
-/// (BURST_STAGE_SMALL_BLAST) and eight at its last blast
-/// (BURST_STAGE_GREAT_BLAST), which also takes the target away; a cracked
-/// pillar crumbles meanwhile (PILLAR_CRUMBLE_FRAME).
+/// Burst goes off at a cracked pillar: rocks fly up round it while the
+/// explosions shake the ground, the pillar crumbles to a stump, and the last
+/// blast takes it away. Rocks are thrown one a frame during the shaking
+/// (BURST_STAGE_SMALL_BLAST) and eight at the last blast
+/// (BURST_STAGE_GREAT_BLAST), which moves the target out of the scene; the
+/// stump is the pillar's animation from PILLAR_CRUMBLE_FRAME.
 void MagmaRock_BurstStatue(s32 stage, s32 frame) {
+  // XXX: what the rows that run this on a statue that spits fire show; a render
+  // of a fireball landing on such a statue would settle it.
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
   if (frame == 0)
@@ -1223,8 +1291,8 @@ void MagmaRock_BurnStatue(struct Actor *actor) {
     actor->timer++;
 }
 
-/// Burst on a cracked pillar of the slide or the Salamander Tail room's high
-/// west level: the pillar breaks (MagmaRock_BurstStatue) and its flag is set.
+/// Burst at a cracked pillar on the slide or on the cliff: the pillar breaks
+/// (MagmaRock_BurstStatue) and its flag keeps it gone until the party leaves.
 #define DEFINE_MAGMA_ROCK_BURST_COLUMN(name, n1, n2, n3)                       \
   void name(s32 stage, s32 frame) {                                            \
     struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;             \
@@ -1242,16 +1310,18 @@ void MagmaRock_BurnStatue(struct Actor *actor) {
     Event_SetFlag(n3);                                                         \
   }
 
-/// Burst on the slide's cracked pillar A, or on the cracked pillar of the
-/// Salamander Tail room's high west level, breaks it. Either sets
-/// `FLAG_CRACKED_PILLAR_A_BURST`.
+/// Burst breaks the north-west one of the four cracked pillars in front of the
+/// slide's cave mouth (cell (15, 31)), or the cracked pillar on the cliff's
+/// high west level (cell (22, 34)) as its statue's fireball lands on it.
+/// Either sets `FLAG_CRACKED_PILLAR_A_BURST`.
 DEFINE_MAGMA_ROCK_BURST_COLUMN(MagmaRock_BurstCrackedPillarA,
                                ACTOR_CRACKED_PILLAR_A,
                                ACTOR_HIGH_WEST_CRACKED_PILLAR_A,
                                FLAG_CRACKED_PILLAR_A_BURST)
 
-/// Burst on the slide's cracked pillar B, or on the cracked pillar of the
-/// Salamander Tail room's low east level, breaks it. Either sets
+/// Burst breaks the north-east one of the four cracked pillars in front of the
+/// slide's cave mouth (cell (17, 31)), or the cracked pillar on the cliff's low
+/// east level (cell (42, 39)) as its statue's fireball lands on it. Either sets
 /// `FLAG_CRACKED_PILLAR_B_BURST`.
 DEFINE_MAGMA_ROCK_BURST_COLUMN(MagmaRock_BurstCrackedPillarB,
                                ACTOR_CRACKED_PILLAR_B,
@@ -1267,35 +1337,46 @@ DEFINE_MAGMA_ROCK_BURST_COLUMN(MagmaRock_BurstCrackedPillarB,
     Event_SetFlag(n2);                                                         \
   }
 
-/// Burst on the slide's cracked pillar C breaks it. It sets
-/// `FLAG_CRACKED_PILLAR_C_BURST`.
+/// Burst breaks the south-west one of the four cracked pillars in front of the
+/// slide's cave mouth (cell (14, 34)). It sets `FLAG_CRACKED_PILLAR_C_BURST`.
 DEFINE_MAGMA_ROCK_BURST_STATUE_COLUMN(MagmaRock_BurstCrackedPillarC,
                                       ACTOR_CRACKED_PILLAR_C,
                                       FLAG_CRACKED_PILLAR_C_BURST)
 
-/// Burst on the slide's cracked pillar D breaks it. It sets
-/// `FLAG_CRACKED_PILLAR_D_BURST`.
+/// Burst breaks the south-east one of the four cracked pillars in front of the
+/// slide's cave mouth (cell (18, 34)). It sets `FLAG_CRACKED_PILLAR_D_BURST`.
 DEFINE_MAGMA_ROCK_BURST_STATUE_COLUMN(MagmaRock_BurstCrackedPillarD,
                                       ACTOR_CRACKED_PILLAR_D,
                                       FLAG_CRACKED_PILLAR_D_BURST)
 
-/// Burst on the slide's cracked pillar E breaks it. It sets
+/// The fireball of the statue at the east end of the slide's upper ledge
+/// lands on the cracked pillar west of it (cell (20, 25)), and the blast breaks
+/// the pillar, opening the climb up to the ledge where it stood. It sets
 /// `FLAG_CRACKED_PILLAR_E_BURST`.
 DEFINE_MAGMA_ROCK_BURST_STATUE_COLUMN(MagmaRock_BurstCrackedPillarE,
                                       ACTOR_CRACKED_PILLAR_E,
                                       FLAG_CRACKED_PILLAR_E_BURST)
 
-/// Stepping onto the cave door's cell by himself lets it take the leader in
-/// again.
+/// Nothing visible happens when Felix, after the game has moved him onto the
+/// cave mouth above the slide's cracked pillars (cell (16, 28)), takes a step
+/// of his own there. The game clears `FLAG_CAVE_DOOR_USED`, so that walking
+/// north into the cave takes him back inside from then on
+/// (MagmaRock_EnterCave).
 void MagmaRock_ResetCaveDoor(void) {
+  // XXX: whether coming out of the cave is the move that leaves the flag set;
+  // a render of the arrival by
+  // MAGMA_ROCK_SLIDE_FROM_MAGMA_ROCK_INSIDE_EMBER_STONE would settle it.
   struct MainRoutineWork *party = &gMainRoutineWork;
 
   if (party->movementMode != LEADER_MOVEMENT_KEYS)
     Event_ClearFlag(FLAG_CAVE_DOOR_USED);
 }
 
-/// Walking north onto the cave door's cell, unless something else moves him:
-/// the leader walks into the cave, into Magma Rock.
+/// Felix walks north into the dark cave mouth above the slide's cracked
+/// pillars (cell (16, 28)) and goes inside Magma Rock, to the room of the Ember
+/// Stone. The game walks him a step further in, plays the exit sound and
+/// leaves; when the game rather than the player moved him onto the cell, it
+/// only sets `FLAG_CAVE_DOOR_USED`.
 void MagmaRock_EnterCave(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
@@ -1313,24 +1394,35 @@ void MagmaRock_EnterCave(void) {
   Event_SetFlag(FLAG_CAVE_DOOR_USED);
 }
 
-/// Before Burst acts on a cell: finishes the actions the field has pending.
+/// Nothing visible happens as Felix begins to cast Burst at one of the yellow
+/// statues; the game settles whatever the field has pending before the
+/// statue's own events run (MagmaRock_TargetStatue).
 void MagmaRock_ResolveBeforeBurst(void) { Event_ResolvePendingActions(0); }
 
-/// Stepping onto the high west level's crumbling pillars
+/// Felix comes down on one of the two dark pillars on the cliff's high west
+/// level (cells (15, 29) and (17, 29)) without hopping straight on: the first
+/// time it cracks with a flash and a puff of dust, the second time it crumbles
+/// under him and he drops with it to the ground below
 /// (MagmaRock_StepOnCrumblingPillar).
 void MagmaRock_CheckCrumblingPillars(void) {
   MagmaRock_StepOnCrumblingPillar(gMagmaRock_CrumblingPillars);
 }
 
-/// Stepping beside the high west level's statue readies it: its cell answers
-/// Burst as a firing statue's.
+/// Nothing visible happens when Felix steps onto the cell just behind the
+/// yellow statue on the cliff's high west level (cell (15, 34)); from then on
+/// Burst cast at the statue wakes it, so that it spits a fireball east at the
+/// cracked pillar. The game makes the statue's cell answer Burst as a statue
+/// that spits fire, and sets `FLAG_HIGH_WEST_STATUE_READY`.
 void MagmaRock_ReadyHighWestStatue(void) {
   Field_SetCellBehaviorAt(MAPGRID_LAYER_GROUND, toFIXED(264), toFIXED(552),
                           CELL_BEHAVIOR_MAGMA_ROCK_FIRING_STATUE);
   Event_SetFlag(FLAG_HIGH_WEST_STATUE_READY);
 }
 
-/// Stepping away from it resets it: its cell is plain ground again.
+/// Nothing visible happens when Felix steps a cell further west from behind
+/// the high west level's yellow statue (cell (14, 34)); Burst no longer wakes
+/// the statue until he steps back behind it. The game makes the statue's cell
+/// plain ground again and clears `FLAG_HIGH_WEST_STATUE_READY`.
 void MagmaRock_ResetHighWestStatue(void) {
   Field_SetCellBehaviorAt(MAPGRID_LAYER_GROUND, toFIXED(264), toFIXED(552),
                           CELL_BEHAVIOR_NORMAL);
@@ -1340,8 +1432,9 @@ void MagmaRock_ResetHighWestStatue(void) {
 void Actor_SetAnimationSpeedById(s32 id, s32 action);
 void FieldCamera_WaitForArrival(void);
 
-/// A fireball knocks the leader off the wall: he turns grey among dark puffs,
-/// falls to the ground with a thump that shakes it, and shakes his head.
+/// A fireball flying between a pair of yellow statues on the cliff's high east
+/// wall hits Felix as he climbs: he turns grey among dark puffs, falls to the
+/// foot of the wall with a thump that shakes the ground, and shakes his head.
 void MagmaRock_KnockLeaderOffWall(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct EffectOptions options;
@@ -1419,8 +1512,12 @@ void MagmaRock_KnockLeaderOffWall(void) {
 void MagmaRockInside_ClearBlockCells(struct Actor *actor);
 void MagmaRockInside_PushBlockOnto(void);
 
-/// Walking east into the low west level's pillar pushes it onto the cell
-/// beyond, and sets its flag on the cell it was pushed to.
+/// Felix walks east into the striped stone pillar on the cliff's low west level
+/// from cell (14, 36) and pushes it a cell east, to cell (16, 36), where it
+/// stays when the party comes back. The game takes the pillar out of the map,
+/// clears the upper layer's walls along its path for the push
+/// (MagmaRockInside_PushBlockOnto), puts them back and stands it in the map
+/// again.
 void MagmaRock_PushPillarEast(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 position[3];
@@ -1454,8 +1551,12 @@ void MagmaRock_PushPillarEast(void) {
     Event_SetFlag(FLAG_LOW_WEST_PILLAR_PUSHED);
 }
 
-/// Walking west into the low east level's pillar pushes it onto the cell
-/// beyond, and sets its flag on the cell it was pushed to.
+/// Felix walks west into the striped stone pillar beside the cracked pillar on
+/// the cliff's low east level, from any of cells (37, 38) to (40, 38), and
+/// pushes it a cell west along a grey track; after four pushes it stands on the
+/// grey square at the track's end, cell (35, 38), and stays there when the
+/// party comes back. The game moves the pillar as MagmaRock_PushPillarEast
+/// does.
 void MagmaRock_PushPillarWest(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 position[3];
@@ -1489,26 +1590,35 @@ void MagmaRock_PushPillarWest(void) {
     Event_SetFlag(FLAG_LOW_EAST_PILLAR_B_PUSHED);
 }
 
-/// Growth on the low east level's first sprout: its vine grows up the wall.
+/// Growth on the west one of the two sprouts on the north-east ledge of the
+/// cliff's low east level (cell (59, 39)) grows a vine up the wall above it.
+/// The game opens the three cells of wall above the sprout for climbing and
+/// sets `FLAG_VINE_A_GROWN`.
 void MagmaRock_GrowVineA(void) {
   MapGrid_CopyCellAttributes(121, 48, 1, 3, 123, 48);
   Event_SetFlag(FLAG_VINE_A_GROWN);
 }
 
-/// Growth on the low east level's second sprout: its vine grows up the wall.
+/// Growth on the east one of the two sprouts on the north-east ledge of the
+/// cliff's low east level (cell (61, 39)) grows a vine up the wall above it.
+/// The game opens the three cells of wall above the sprout for climbing and
+/// sets `FLAG_VINE_B_GROWN`.
 void MagmaRock_GrowVineB(void) {
   MapGrid_CopyCellAttributes(121, 48, 1, 3, 125, 48);
   Event_SetFlag(FLAG_VINE_B_GROWN);
 }
 
-/// Growth on the low east level's third sprout: its vine grows up the wall.
+/// Growth on the sprout on the path where Felix comes up from the slide, on
+/// the cliff's low east level (cell (45, 41)), grows a vine up the wall above
+/// it. The game opens the three cells of wall above the sprout for climbing and
+/// sets `FLAG_VINE_C_GROWN`.
 void MagmaRock_GrowVineC(void) {
   MapGrid_CopyCellAttributes(108, 56, 1, 3, 109, 56);
   Event_SetFlag(FLAG_VINE_C_GROWN);
 }
 
-/// The blast at the great fire: four large flame puffs scatter round (x, z),
-/// and the way in is open for good.
+/// Four large flame puffs scatter round (x, z) in the blast at the great fire,
+/// and the way in stays open for good.
 void MagmaRock_ScatterEmbers(s32 x, s32 z) {
   struct EffectOptions config;
   s32 position[3];
@@ -1542,10 +1652,12 @@ void MagmaRock_FlashTarget(struct Actor *actor) {
     FieldActor_SetSpriteColor(actor, SPRITE_COLOR_NORMAL);
 }
 
-/// Burst on the great fire, as the statue's fire hits it: it blinks white, and
-/// flame puffs scatter and rocks fall while the explosions shake the ground
-/// (BURST_STAGE_SMALL_BLAST); at the last blast (BURST_STAGE_GREAT_BLAST) the
-/// fire goes out and the rocks round it scatter, opening the way in.
+/// The statue's fireball explodes on the great fire on the top of Magma Rock:
+/// the fire blinks white as flame puffs scatter and rocks fly while the
+/// explosions shake the ground, and at the last blast the fire is gone and the
+/// rocks round it lie scattered, opening the way down into Magma Rock (cells
+/// (42, 17) to (46, 24)). The game copies the open ground and its pictures over
+/// those cells from spare ones below the room.
 void MagmaRock_BlastWayIn(s32 stage, s32 frame) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
@@ -1619,9 +1731,9 @@ FIXED Trig_Cos(s32 angle);
 void FieldEffect_AdvanceMotion();
 void MapGrid_CenterOnFollowedPoint(void);
 
-/// Arriving from the statue room's east side
-/// (MAGMA_ROCK_SALAMANDER_TAIL_CHEST_FROM_MAGMA_ROCK_STATUE_EAST_A): the leader
-/// drops in from 130 pixels up and lands with a thump in a ring of dust.
+/// Felix arrives on the cliff's high east level by dropping from the top
+/// (MAGMA_ROCK_SALAMANDER_TAIL_CHEST_FROM_MAGMA_ROCK_STATUE_EAST_A): he falls
+/// in from 130 pixels up, lands with a thump in a ring of dust and leans back.
 void MagmaRock_LaunchLeader(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct EffectOptions options;
@@ -1745,7 +1857,8 @@ static inline void BuildParts(struct Actor *anchor) {
   AttachPart(parts[0], anchor, 3);
 }
 
-/// On entry: rebuilds the flame column of a statue whose cap was riding one.
+/// On entry: rebuilds the flame column under a statue's cap that was riding
+/// one when Felix left.
 void MagmaRock_RebuildFlameParts(u16 id) {
   if (Actor_Get(id)->update != MagmaRock_RaiseFlameTop)
     return;
@@ -2071,8 +2184,9 @@ void MagmaRock_RestoreCrumblingPillars(const u16 *table) {
 
 void MagmaRock_SpawnDustRing(void);
 
-/// Stepping onto a crumbling pillar: the first time it cracks, the second time
-/// it gives way with the leader.
+/// Felix on a crumbling pillar: the first time it cracks with a flash, the
+/// second time it crumbles and he drops with it, landing with a thump in a ring
+/// of dust.
 void MagmaRock_StepOnCrumblingPillar(u16 *list) {
   struct Actor *leader;
   struct Actor *target;
@@ -2281,7 +2395,8 @@ void Actor_StartScript(struct Actor *actor, const s32 *script);
 
 #include "shared/rubble_scatter.c"
 
-/// Throws a ring of dust clouds out from the leader as a pillar lands.
+/// Throws a ring of dust clouds out from Felix as he lands with a crumbled
+/// pillar.
 void MagmaRock_SpawnDustRing(void) {
   struct Actor *leader;
   struct FieldEffect *effect;
@@ -2431,8 +2546,6 @@ void MagmaRock_EndFallingRocks(void) {
   HeapSlot_Release(HEAP_SLOT_MENU);
 }
 
-void MagmaRock_StartPushingPillar(void);
-
 // clang-format off
 #include "shared/field_effect_duration_scripts.c"
 
@@ -2472,8 +2585,7 @@ s16 gMagmaRock_SlideStatues[] = {
     -1,
 };
 
-/// The pillars Move pushes on the Salamander Tail room's high west level, ended
-/// by -1.
+/// The pillars Move pushes on the cliff's high west level, ended by -1.
 s16 gMagmaRock_SalamanderTailHighWestPillars[] = {
     ACTOR_HIGH_WEST_PILLAR_A, ACTOR_HIGH_WEST_PILLAR_B, -1,
 };
@@ -2529,7 +2641,7 @@ s16 gMagmaRock_SalamanderTailLowEastStatues[] = {
     -1,
 };
 
-/// The statue room's statue, as gMagmaRock_SlideStatues.
+/// The statue on the top, as gMagmaRock_SlideStatues.
 s16 gMagmaRock_StatueStatues[] = {
     ACTOR_STATUE_ROOM_STATUE, CELL_BEHAVIOR_MAGMA_ROCK_STATUE_ROOM_STATUE, -1,
     -1, 0,
@@ -2562,7 +2674,7 @@ s16 gMagmaRock_Regions[] = {
     -1, 0, 0, 0, 0, 0, 0, 0,
 };
 
-/// The exit regions of the Salamander Tail room.
+/// The exit regions of the cliff.
 s16 gMagmaRock_SalamanderTailRegions[] = {
     272, 56, 576, 288, 72, 592, -1, 1,
     352, 40, 560, 368, 56, 576, -1, 2,
@@ -2577,7 +2689,7 @@ s16 gMagmaRock_SalamanderTailRegions[] = {
     -1, 0, 0, 0, 0, 0, 0, 0,
 };
 
-/// The exit regions of the statue room.
+/// The exit regions of the top.
 s16 gMagmaRock_StatueRegions[] = {
     240, -56, 448, 256, -40, 464, -1, 1,
     384, -56, 448, 400, -40, 464, -1, 2,
@@ -2636,7 +2748,7 @@ struct ActorPlacement gMagmaRock_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-/// The actors placed in the Salamander Tail room's high west level.
+/// The actors placed in the cliff's high west level.
 struct ActorPlacement gMagmaRock_SalamanderTailHighWestPlacements[] = {
     {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 1, 1, 0, 0, FACING_NORTH, 2, 2},
     {SPRITE_BURST_PILLAR, CONDITION_ALWAYS, 1, 2, 0, 0, FACING_NORTH, 2, 2},
@@ -2649,7 +2761,7 @@ struct ActorPlacement gMagmaRock_SalamanderTailHighWestPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-/// The actors placed in the Salamander Tail room's high east level.
+/// The actors placed in the cliff's high east level.
 struct ActorPlacement gMagmaRock_SalamanderTailHighEastPlacements[] = {
     {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 7, 9, 0, 0, FACING_EAST, 2, 2},
     {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 7, 10, 0, 0, FACING_WEST, 2, 2},
@@ -2668,7 +2780,7 @@ struct ActorPlacement gMagmaRock_SalamanderTailHighEastPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-/// The actors placed in the Salamander Tail room's low west level.
+/// The actors placed in the cliff's low west level.
 struct ActorPlacement gMagmaRock_SalamanderTailLowWestPlacements[] = {
     {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 1, 14, 0, 0, FACING_NORTH, 2, 2},
     {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 1, 15, 0, 0, FACING_SOUTH, 2, 2},
@@ -2680,7 +2792,7 @@ struct ActorPlacement gMagmaRock_SalamanderTailLowWestPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-/// The actors placed in the Salamander Tail room's low east level.
+/// The actors placed in the cliff's low east level.
 struct ActorPlacement gMagmaRock_SalamanderTailLowEastPlacements[] = {
     {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 1, 19, 0, 0, FACING_NORTH, 2, 2},
     {SPRITE_STONE_PILLAR, CONDITION_ALWAYS, 1, 20, 0, 0, FACING_NORTH, 2, 2},
@@ -2696,7 +2808,7 @@ struct ActorPlacement gMagmaRock_SalamanderTailLowEastPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-/// The actors placed in the statue room.
+/// The actors placed on the top.
 struct ActorPlacement gMagmaRock_StatuePlacements[] = {
     {384, CONDITION_ALWAYS, 7, 1, 0, 0, FACING_NORTH, 2, 2},
     {SPRITE_WIND_STATUE, CONDITION_ALWAYS, 7, 2, 0, 0, FACING_WEST, 2, 2},
@@ -2764,7 +2876,7 @@ struct Trigger gMagmaRock_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// The triggers of the Salamander Tail room's high west level.
+/// The triggers of the cliff's high west level.
 struct Trigger gMagmaRock_SalamanderTailHighWestTriggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_MAGMA_ROCK_CRUMBLING_PILLAR,
@@ -2803,7 +2915,7 @@ struct Trigger gMagmaRock_SalamanderTailHighWestTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// The triggers of the Salamander Tail room's high east level.
+/// The triggers of the cliff's high east level.
 struct Trigger gMagmaRock_SalamanderTailHighEastTriggers[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(MagmaRock_StartPushingPillar)},
@@ -2836,7 +2948,7 @@ struct Trigger gMagmaRock_SalamanderTailHighEastTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// The triggers of the Salamander Tail room's low west level.
+/// The triggers of the cliff's low west level.
 struct Trigger gMagmaRock_SalamanderTailLowWestTriggers[] = {
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
@@ -2875,7 +2987,7 @@ struct Trigger gMagmaRock_SalamanderTailLowWestTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// The triggers of the Salamander Tail room's low east level.
+/// The triggers of the cliff's low east level.
 struct Trigger gMagmaRock_SalamanderTailLowEastTriggers[] = {
     {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
@@ -2939,7 +3051,7 @@ struct Trigger gMagmaRock_SalamanderTailLowEastTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// The triggers of the statue room.
+/// The triggers of the top.
 struct Trigger gMagmaRock_StatueTriggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST),

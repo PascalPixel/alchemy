@@ -108,12 +108,6 @@ void LemuriaRooms_PiersVisitsUncle(void);
 extern struct SceneRegion gSceneRegions[];
 extern u32 gLemuriaRooms_QuestionMarkScript[];
 
-void LemuriaRooms_AskFromBeyondSeaOfTime(s32 actorId);
-
-void LemuriaRooms_NoticeMindRead(s32 unused, s32 actorId);
-
-void LemuriaRooms_LeavePiersToMourn(void);
-
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
 const struct SceneRegion *Scene_GetExitRegions(void) { return gSceneRegions; }
@@ -176,8 +170,8 @@ void LemuriaRooms_MindReadPiersUncle(s32 unused, s32 id) {
   }
 }
 
-/// A senator asks whether the party came from beyond the Sea of Time, and
-/// scorns either answer.
+/// In the hall of the House of the Senate, an old senator asks whether the
+/// party came from beyond the Sea of Time, and scorns either answer.
 void LemuriaRooms_AskFromBeyondSeaOfTime(s32 actorId) {
 
   Event_SetMessageId((s32)MsgLemuriaInteriorsAreYouWarriorsFromBeyond);
@@ -197,8 +191,8 @@ void LemuriaRooms_AskFromBeyondSeaOfTime(s32 actorId) {
   return;
 }
 
-/// A senator offers to tell of the draughts that kept Lemurians long-lived, and
-/// tells of them either way.
+/// In a room behind the Senate hall's arches, a senator offers to tell of the
+/// draughts that kept Lemurians long-lived, and tells of them either way.
 void LemuriaRooms_AskAboutDraughts(s32 actorId) {
 
   Event_SetMessageId((s32)MsgLemuriaInteriorsDoYouSeekToKnow);
@@ -1501,10 +1495,6 @@ void LemuriaRooms_MeetLunpa(void) {
   Actor_SetPosition(ACTOR_SHEBA, 0, 0);
   Event_End();
 }
-
-void LemuriaRooms_TalkToPiersUncle(s32 actorId);
-void LemuriaRooms_MindReadPiersUncle(s32 unused, s32 id);
-void LemuriaRooms_AskAboutDraughts(s32 actorId);
 
 #include "shared/scene_entrances_default.c"
 

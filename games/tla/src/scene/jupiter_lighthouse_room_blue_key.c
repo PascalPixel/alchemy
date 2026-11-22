@@ -1,10 +1,20 @@
 /// @file
-/// The first room of Jupiter Lighthouse's left tower, behind its archer statue.
-/// The leader pushes five fallen columns about (JupiterLighthouse_PushColumn),
-/// Move drops the pillar into a gap in the floor
-/// (JupiterLighthouse_FinishMovingPillar), and cracked tiles give way under a
-/// second step (JupiterLighthouse_StepOnCrackedTile) to the floor below. Stairs
-/// lead on to room m and back to the hall below the aerie.
+/// The lower rooms of Jupiter Lighthouse's left tower. Past the entrance with
+/// its stone archer statue pointing east, the easy chest in the back room is a
+/// Mimic. Up the right passage, five blue fallen columns, two lying north to
+/// south and three west to east, wall in the Blue Key, which lies on the floor
+/// where no one can walk to it: Felix pushes the columns, each sliding as far
+/// as it will go (JupiterLighthouse_PushColumn), and gets the key only by
+/// falling onto it from the room above. That room, drawn west of the columns
+/// on the same map, holds the 306 Coins' chest and the Mist Potion's. Its
+/// cracked tiles take one step and give way under the next, dropping the party
+/// into the column room below (JupiterLighthouse_StepOnCrackedTile). The lone
+/// tile at cell (11, 9), cracked already and over the key, gives way at once,
+/// and can only be reached by dropping in from the cracked floor room further
+/// up. Move pushes its standing pillar one cell west
+/// into the gap in the floor at cell (6, 14), where it sinks level with the
+/// floor for Felix to cross on the way round to the Mist Potion
+/// (JupiterLighthouse_FinishMovingPillar).
 
 #include "shared/tables.h"
 #include "flags.h"
@@ -46,24 +56,30 @@
 #include "fixed_math.h"
 #include "field/actor_script.h"
 
-/// Set once Move has dropped the pillar into the gap in the floor; cleared as
-/// the party comes back unless the party comes back from a battle
-/// (FLAG_KEEP_PARTY_POSITION).
+/// Set once Move has dropped the pillar into the gap in the floor; cleared
+/// whenever the party comes into the scene, except back from a battle
+/// (FLAG_KEEP_PARTY_POSITION), so the pillar stands again.
 #define FLAG_PILLAR_IN_GAP 0xa18
 
-/// The room's statues, pillar and columns, numbering the rows of
+/// The rooms' statues, pillar and columns, numbering the rows of
 /// gActorPlacements.
 enum JupiterLighthouseLeftTowerActorId {
   ACTOR_ARCHER_STATUE = ACTOR_FIRST_PLACED,
   ACTOR_WINGED_STATUE,
   ACTOR_PILLAR,
-  /// The first of the five fallen columns the leader pushes, two lying north
-  /// to south and three west to east.
+  /// The first of the five blue fallen columns round the Blue Key, two lying
+  /// north to south and three west to east.
   ACTOR_FIRST_COLUMN
 };
 
-/// The cell of the gap in the floor that the pillar drops into.
+/// The cell of the gap in the upper room's floor that the pillar drops into.
 enum { PILLAR_GAP_X = 6, PILLAR_GAP_Z = 14 };
+/// The room's own cell behaviors.
+enum JupiterLighthouseRoomBlueKeyCellBehavior {
+  /// The floor round the blue fallen columns, cells (23, 8) to (37, 15), where
+  /// walking into a column pushes it.
+  CELL_BEHAVIOR_BESIDE_COLUMNS = 30
+};
 /// The frames the dropped pillar is given to land.
 #define PILLAR_LANDING_FRAMES 30
 
@@ -115,15 +131,16 @@ struct PushTarget {
 s32 PushTarget_FindSlide(struct PushTarget *target);
 void PushTarget_PushFill(struct PushTarget target);
 
-/// A cracked tile under the leader: as it gives way the party falls to the
-/// floor below.
+/// Felix steps on a cracked tile in the room above the columns. The first step
+/// only cracks it further; on the second it gives way and the party falls
+/// through into the column room below.
 void JupiterLighthouse_StepOnCrackedTile(void) {
   if (CrackedTile_Step())
     FieldEvent_SetExitRequest(THROUGH_CRACKED_TILE);
 }
 
-/// The leader pushes a column: it slides as far as it can
-/// (PushTarget_FindSlide).
+/// Felix walks into one of the blue fallen columns round the Blue Key and
+/// pushes it: it slides until something stops it (PushTarget_FindSlide).
 void JupiterLighthouse_PushColumn(void) {
   struct PushTarget target;
 
@@ -131,11 +148,15 @@ void JupiterLighthouse_PushColumn(void) {
     PushTarget_PushFill(target);
 }
 
-/// Move takes hold of the pillar: nothing to do in this room.
+/// Nothing visible happens as Move takes hold of the standing pillar in the
+/// room above the columns; unlike the other rooms with a pillar to Move, this
+/// one needs no cells changed before the push.
 void JupiterLighthouse_StartMovingPillar(void) {}
 
-/// The pillar moved into the gap drops in with a thud: once it has landed it
-/// stays there, level with the floor, and the leader can jump onto it.
+/// The standing pillar in the room above the columns, Moved one cell west into
+/// the gap in the floor at cell (6, 14), drops in with a heavy thud and sinks
+/// level with the floor, so that Felix can hop across the gap on top of it.
+/// Moved anywhere else, it simply stands where it is put.
 void JupiterLighthouse_FinishMovingPillar(s32 unused, s32 id) {
   struct Actor *actor = Actor_Get(id);
   s32 i;
@@ -164,9 +185,11 @@ const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 s32 PushTarget_FillFootprint(s32 id);
 
-/// Sets up the room as the party enters: the window in, the archer statue at
-/// three quarters size, the five columns fixed in their cells, the cracked
-/// tiles, and the landing of a fall from above. Returns 0.
+/// Sets up the rooms as the party enters: the archer statue at three quarters
+/// size, the five columns blocking their cells, the cracked tiles, and the
+/// landing when the party has dropped through a crack, into the column room
+/// from the room above it, or into that room from the cracked floor room.
+/// Returns 0.
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -583,7 +606,7 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {STEP_TRIGGER_WALKING, 30, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PushColumn)},
+    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_BESIDE_COLUMNS, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PushColumn)},
     {TRIGGER_STEP, CELL_BEHAVIOR_CRACKED_TILE, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnCrackedTile)},
     {TRIGGER_STEP, CELL_BEHAVIOR_CRACKED_TILE + 1, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnCrackedTile)},
     {TRIGGER_STEP, CELL_BEHAVIOR_CRACKED_TILE + 2, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StepOnCrackedTile)},

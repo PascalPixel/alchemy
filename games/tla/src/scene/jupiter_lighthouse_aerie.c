@@ -286,16 +286,21 @@ void JupiterLighthouse_ShootAtRightAngel(void) {
   Event_End();
 }
 
-/// Move lifts a path block: the cell it leaves drops to the ledge's height.
+/// Move (or a push) takes hold of the block on the ledge by an archer statue:
+/// the cell it leaves drops back to the ledge's height.
 void JupiterLighthouse_LiftPathBlock(s32 unused, s32 actorId) {
   struct Actor *actor = Actor_Get(actorId);
 
   MapGrid_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, LEDGE_HEIGHT);
 }
 
-/// A path block set down: in its side's gap it lights the path to the archer,
-/// which shoots at its angel; elsewhere its cell stands as high as its top.
-/// Once both angels are energized the lid is off.
+/// Move sets down the block on the ledge by the archer statue at the west or
+/// east end of the aerie. Pushed into the gap at the end of the archer's path
+/// (cell (6, 12) in the west, (57, 12) in the east), it drops in with a heavy
+/// thud, the path lights up, and the archer shoots at the angel on its side of
+/// the well, which rises and lifts its half of the lid; once both angels have
+/// risen the lid is off the well. Set down anywhere else, the block stands in
+/// Felix's way.
 void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
   struct Actor *actor = Actor_Get(id);
   s32 i;

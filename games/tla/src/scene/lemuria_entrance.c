@@ -1,7 +1,10 @@
 /// @file
-/// The way into Lemuria from its dock: a rock Grind breaks up, two ways on to
-/// the city, and the ship's harbor, where Sheba asks Piers his age as they
-/// sail out.
+/// The channels among the cliffs where the party's ship comes into Lemuria. In
+/// the north-east is the harbor of moored Lemurian ships, whose quay is the
+/// way ashore to the city. In the north-west a brown rock blocks the channel
+/// until Grind breaks it up; past it the channel runs south to a second quay,
+/// by two moored boats, the way ashore to another part of the ruins. Sailing
+/// out after the audience with King Hydros, Sheba asks Piers how old he is.
 
 #include "flags.h"
 #include "types.h"
@@ -28,6 +31,7 @@
 #include "graphics/uiflow.h"
 #include "field/actor_script.h"
 #include "text/msg_ids.h"
+#include "scene_exits.h"
 
 extern s32 gLemuriaEntrance_ShipSailsOut[];
 /// The way in's actors, by the rows of gActorPlacements.
@@ -47,7 +51,8 @@ enum {
   ACTOR_MOORED_SHIP_D,
   ACTOR_MOORED_SHIP_E,
   ACTOR_MOORED_SHIP_F,
-  ACTOR_ROCK ///< the tall rock in the way, which Grind breaks up
+  ACTOR_ROCK ///< the brown rock in the north-west channel, which Grind breaks
+             ///< up
 };
 
 /// Who speaks a line of LemuriaEntrance_ShebaAsksPiersAge: the party by
@@ -64,7 +69,7 @@ void LemuriaEntrance_ShebaAsksPiersAge(void);
 
 extern s32 gLemuriaEntrance_ShipAtRest[];
 
-/// Grind has broken up the rock in the way.
+/// Grind has broken up the brown rock in the north-west channel.
 #define FLAG_ROCK_GROUND_AWAY 0x909
 
 void Text_GetMessageSize(s32 id, s32 *a, s32 *b, s32 *c, s32 *d);
@@ -87,9 +92,11 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-/// The party leaves the harbor for Lemuria by its first way in, clearing
-/// FLAG_LEMURIA_OTHER_WAY_IN.
-void LemuriaEntrance_LeaveByExit3(s32 exit) {
+/// The ship sails up to the quay in the harbor of moored Lemurian ships, in the
+/// north-east, and the party goes ashore on Lemuria's dock, the way to the
+/// city. Clearing FLAG_LEMURIA_OTHER_WAY_IN makes the dock's ways lead back
+/// here and on towards the city.
+void LemuriaEntrance_LandAtHarbor(s32 exit) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   party->ownerOverride = 0;
   Event_ClearFlag(FLAG_LEMURIA_OTHER_WAY_IN);
@@ -102,9 +109,11 @@ void LemuriaEntrance_LeaveByExit3(s32 exit) {
   FieldEvent_SetExitRequest(exit);
 }
 
-/// The party leaves for Lemuria by its other way in
-/// (FLAG_LEMURIA_OTHER_WAY_IN).
-void LemuriaEntrance_LeaveByExit5(s32 exit) {
+/// The ship sails up to the quay by the two moored boats, at the south end of
+/// the channel past the rock Grind breaks up, and the party goes ashore on
+/// Lemuria's dock. Setting FLAG_LEMURIA_OTHER_WAY_IN makes the dock's ways
+/// lead back to this quay and on to the other part of the ruins.
+void LemuriaEntrance_LandAtSouthQuay(s32 exit) {
   struct MainRoutineWork *party = &gMainRoutineWork;
   party->ownerOverride = 0;
   Event_SetFlag(FLAG_LEMURIA_OTHER_WAY_IN);
@@ -117,7 +126,8 @@ void LemuriaEntrance_LeaveByExit5(s32 exit) {
   FieldEvent_SetExitRequest(exit);
 }
 
-/// Grind breaks up the rock in the way, for good (FLAG_ROCK_GROUND_AWAY).
+/// Felix casts Grind on the brown rock in the north-west channel: it breaks up
+/// and is gone for good, opening the way south to the second quay.
 void LemuriaEntrance_GrindRock(void) {
   Event_SetFlag(FLAG_ROCK_GROUND_AWAY);
   Actor_SetPosition(ACTOR_ROCK, 0, 0);
@@ -126,8 +136,7 @@ void LemuriaEntrance_GrindRock(void) {
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
 /// Unused: once FLAG_TRANSFERRED_DJINN_FIRST is set, the party boards the ship
-/// and sails it (render mode 6); otherwise the leader takes control again.
-/// Nothing calls it.
+/// and takes the helm; otherwise Felix walks on as before. Nothing calls it.
 UNUSED void LemuriaEntrance_BoardShip(void) {
   if (Event_GetFlag(FLAG_TRANSFERRED_DJINN_FIRST) != 0) {
     Event_Start();
@@ -179,7 +188,8 @@ s32 Scene_Initialize(void) {
     gMainRoutineWork.ownerOverride = 1;
     Event_SetDestination(SCENE_LEMURIA_ENTRANCE, 1);
   }
-  if (gMainRoutineWork.entrance == 3 || gMainRoutineWork.entrance == 5) {
+  if (gMainRoutineWork.entrance == LEMURIA_ENTRANCE_FROM_LEMURIA_DOCK_NORTH ||
+      gMainRoutineWork.entrance == LEMURIA_ENTRANCE_FROM_LEMURIA_DOCK_SOUTH) {
     gMainRoutineWork.leaderActorId = ACTOR_SHIP;
     gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
     Event_StartScreenTransition();
@@ -187,7 +197,7 @@ s32 Scene_Initialize(void) {
     gMainRoutineWork.leaderActorId = ACTOR_FELIX;
     gFieldWork->transition = effect;
   }
-  if (gMainRoutineWork.entrance == 3 &&
+  if (gMainRoutineWork.entrance == LEMURIA_ENTRANCE_FROM_LEMURIA_DOCK_NORTH &&
       Event_GetFlag(FLAG_SHEBA_TO_ASK_PIERS_AGE)) {
     Event_ClearFlag(FLAG_SHEBA_TO_ASK_PIERS_AGE);
     LemuriaEntrance_ShebaAsksPiersAge();
@@ -235,8 +245,10 @@ void LemuriaEntrance_ShowLineWithPortrait(s32 speaker, s32 frames) {
   Message_CloseFinishedWindows();
 }
 
-/// As the ship sails out of the harbor, Sheba asks Piers how old he really is.
-/// "Umm... Piers?"
+/// Coming back aboard after the audience with King Hydros, the ship sails out
+/// of the harbor and through the channels while Sheba asks Piers how old he
+/// really is, "Umm... Piers?", and Piers will not say. Then the ship is out on
+/// the sea.
 void LemuriaEntrance_ShebaAsksPiersAge(void) {
   struct FieldWork *work;
   u8 saved;
@@ -277,7 +289,7 @@ void LemuriaEntrance_ShebaAsksPiersAge(void) {
   work->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
-  FieldEvent_SetExitRequest(1);
+  FieldEvent_SetExitRequest(LEMURIA_ENTRANCE_TO_WORLD_MAP);
   gMainRoutineWork.messageSpeed = saved;
   Event_End();
 }
@@ -373,11 +385,14 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, LEMURIA_ENTRANCE_TO_WORLD_MAP, CONDITION_ALWAYS,
+     LEMURIA_ENTRANCE_TO_WORLD_MAP},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(LemuriaEntrance_LeaveByExit3)},
-    {TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(LemuriaEntrance_LeaveByExit5)},
+    {TRIGGER_STEP, LEMURIA_ENTRANCE_TO_LEMURIA_DOCK_NORTH, CONDITION_ALWAYS,
+     EVENT(LemuriaEntrance_LandAtHarbor)},
+    {TRIGGER_STEP, LEMURIA_ENTRANCE_TO_LEMURIA_DOCK_SOUTH, CONDITION_ALWAYS,
+     EVENT(LemuriaEntrance_LandAtSouthQuay)},
     {PSYNERGY_ON_ACTOR(ABILITY_GRIND), ACTOR_ROCK, CONDITION_ALWAYS,
      EVENT(LemuriaEntrance_GrindRock)},
     {TRIGGER_TABLE_END},

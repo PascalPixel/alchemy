@@ -1,6 +1,11 @@
 /// @file
-/// Lemuria's palace, where King Hydros and his council receive the party and
-/// show it two maps, the ancient world and the one Lunpa had.
+/// Lemuria's palace. From the city's avenue the party comes into the entrance
+/// hall, whose west door opens on a room of dressers and whose east door opens
+/// on the barracks. The palace's upper door leads to the throne room, where a
+/// guard stops Felix before King Hydros; then the king, Lunpa and Lord
+/// Conservato receive the party and show it two glowing maps, the ancient
+/// world and the one Lunpa had. A bedroom, entered from the top of the city,
+/// has a door to a small room with a painting.
 
 #include "flags.h"
 #include "shared/tables.h"
@@ -60,13 +65,17 @@ enum LemuriaPalaceActorId {
   ACTOR_KRADEN
 };
 
-/// The doors the leader opens by walking into them, by their exits: the hall's
-/// west and east doors, and the inner door of the north-east room.
+/// The doors Felix opens by walking into them, by their exits: the entrance
+/// hall's west and east doors, and the door in the north wall of the bedroom.
 enum LemuriaPalaceDoorExit {
   EXIT_WEST_DOOR = 2,
   EXIT_EAST_DOOR = 3,
-  EXIT_INNER_DOOR = 16,
+  EXIT_BEDROOM_DOOR = 16,
 };
+
+/// The cells before the throne where the guard stops Felix
+/// (LemuriaPalace_MeetKingHydros).
+enum { CELL_BEHAVIOR_BEFORE_THRONE = 20 };
 
 /// The glow palette: every sixth frame its rotating colours move along by one,
 /// and every four frames its glow colour takes the next of GLOW_STEPS steps.
@@ -86,7 +95,7 @@ enum LemuriaPalaceDoorExit {
 #define MAP_BLEND_STEPS 28
 
 extern struct MapGridCellAnimation gLemuriaPalace_Doors[];
-extern struct MapGridCellAnimation gLemuriaPalace_InnerDoor;
+extern struct MapGridCellAnimation gLemuriaPalace_BedroomDoor;
 
 void LemuriaPalace_DrawMaps(void);
 
@@ -119,7 +128,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-/// A palace door opens with its cell animation and the leader walks through it.
+/// A palace door opens and Felix walks through it, lined up with it, as the
+/// screen closes.
 void LemuriaPalace_OpenDoorAndEnter(const struct MapGridCellAnimation *door,
                                     s32 exit, s32 unused) {
   Event_Start();
@@ -137,14 +147,18 @@ void LemuriaPalace_OpenDoorAndEnter(const struct MapGridCellAnimation *door,
   Event_End();
 }
 
-/// The leader walks into one of the palace's doors, by its exit.
+/// Felix walks north into one of the palace's doors: it opens and he goes
+/// through. The entrance hall's west door, cell (5, 23), leads to a room of
+/// dressers where an old woman stands; its east door, cell (30, 23), to the
+/// barracks with their beds and barrel; and the door in the north wall of the
+/// bedroom, cell (56, 4), to a small room with a painting.
 void LemuriaPalace_EnterDoor(s32 exit) {
   const struct MapGridCellAnimation *door = gLemuriaPalace_Doors;
 
   if (exit == EXIT_EAST_DOOR)
     door++;
-  if (exit == EXIT_INNER_DOOR)
-    door = &gLemuriaPalace_InnerDoor;
+  if (exit == EXIT_BEDROOM_DOOR)
+    door = &gLemuriaPalace_BedroomDoor;
   LemuriaPalace_OpenDoorAndEnter(door, exit, 0);
 }
 
@@ -362,10 +376,11 @@ void LemuriaPalace_FadeMapsOut(void) {
 
 void Event_Start();
 
-/// In the palace the party is stopped by a guard, then brought before King
-/// Hydros and his council, who have been waiting for the warriors Piers spoke
-/// of.
-/// "You are Lord Felix, correct?"
+/// Felix walks up the throne room towards King Hydros, cells (53, 35) and
+/// (54, 35), the first time: the guard steps in front of him, "You are Lord
+/// Felix, correct?" Answered no, the guard sends the party back. Answered yes,
+/// he steps aside, and King Hydros and his council receive the warriors Piers
+/// spoke of.
 s32 LemuriaPalace_MeetKingHydros(s32 a0, s32 a1, s32 a2, s32 a3) {
   s32 answer, frame, framesLeft;
   struct Actor *target;
@@ -1249,14 +1264,15 @@ u16 gLemuriaPalace_DoorOpening[] = {
     MAPGRID_ANIMATION_STEPS_END,
 };
 
-/// The palace's two doors' openings, at their places on the map grid.
+/// The openings of the entrance hall's west and east doors, at their places on
+/// the map grid.
 struct MapGridCellAnimation gLemuriaPalace_Doors[] = {
     {gLemuriaPalace_DoorOpening, 5, 23},
     {gLemuriaPalace_DoorOpening, 30, 23},
 };
 
-/// The palace's inner door opening, at its place on the map grid.
-struct MapGridCellAnimation gLemuriaPalace_InnerDoor = {
+/// The opening of the bedroom's north door, at its place on the map grid.
+struct MapGridCellAnimation gLemuriaPalace_BedroomDoor = {
     gLemuriaPalace_DoorOpening, 56, 4};
 
 struct Trigger gSceneEvents[] = {
@@ -1275,9 +1291,9 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), EXIT_INNER_DOOR, CONDITION_ALWAYS, EVENT(LemuriaPalace_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), EXIT_BEDROOM_DOOR, CONDITION_ALWAYS, EVENT(LemuriaPalace_EnterDoor)},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
-    {TRIGGER_STEP, 20, FLAG_MET_KING_HYDROS, EVENT(LemuriaPalace_MeetKingHydros)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BEFORE_THRONE, FLAG_MET_KING_HYDROS, EVENT(LemuriaPalace_MeetKingHydros)},
     {TRIGGER_TALK, ACTOR_GIRL_WAITING_ON_THE_KING, IF_FLAG_SET(FLAG_MET_KING_HYDROS), MSGNO(MsgLemuriaPalaceLordConservatoSeemedVeryAngry)},
     {TRIGGER_TALK, ACTOR_WOMAN_SHOWING_THE_WAY, IF_FLAG_SET(FLAG_MET_KING_HYDROS), MSGNO(MsgLemuriaPalaceBothLordConservatoAndKing)},
     {TRIGGER_TALK, ACTOR_MAN_ON_THE_KINGS_MOOD, IF_FLAG_SET(FLAG_MET_KING_HYDROS), MSGNO(MsgLemuriaPalaceMaybeOnceYouHaveLeft)},

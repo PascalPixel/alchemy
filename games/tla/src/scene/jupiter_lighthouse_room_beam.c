@@ -1,13 +1,19 @@
 /// @file
-/// Jupiter Lighthouse's beam room. In the middle of its floor a beam of light,
-/// circled by particles, carries a leader who Hovers into it up to the room of
-/// locked doors (JupiterLighthouse_RideTheBeam). Cyclone on a pad whirls the
-/// leader up onto the ledge or back down (JupiterLighthouse_CycloneLiftsLeader,
-/// JupiterLighthouse_CycloneDropsLeader). The energy block pushed off the east
-/// ledge into the gap below lights the path to the Hover pad
-/// (JupiterLighthouse_DropEnergyBlock). In the north half, once the lighthouse
-/// is activated, four of the five grey blocks hover over their sockets, and
-/// the fifth, Moved onto the empty one, rises to hover with them
+/// Jupiter Lighthouse's central room, and north of it the room of the five
+/// grey blocks. In the middle of the central room a beam of light rises from a
+/// purple pedestal between four winged statues, pink sparks circling it. Felix
+/// comes back here from the east ledge: he pushes the energy block off the
+/// ledge, drops after it and pushes it into the gap at the head of the path at
+/// cell (20, 39), and the path lights up to a purple Hover pad
+/// (JupiterLighthouse_DropEnergyBlock). Hovering from there, he floats west
+/// into the beam, which carries him up to the room of the locked doors
+/// (JupiterLighthouse_RideTheBeam). Two purple Cyclone pads by the doorway
+/// north of the beam whirl him up onto the high ledge, towards the stairs, or
+/// back down (JupiterLighthouse_CycloneLiftsLeader,
+/// JupiterLighthouse_CycloneDropsLeader). In the north room, once the
+/// lighthouse is activated, four of the five grey blocks hover over their
+/// sockets, and the rightmost, Moved one cell west onto the empty socket, rises
+/// to join them as a bridge to the room's east side
 /// (JupiterLighthouse_RaiseSocketBlock).
 #include "flags.h"
 #include "battle/battle.h"
@@ -84,13 +90,15 @@ enum JupiterLighthouseRoomBeamActorId {
 #define BEAM_ROOM_EMPTY_SOCKET_CELL_Z 6
 /// The room's own cell behaviors.
 enum JupiterLighthouseRoomBeamCellBehavior {
-  /// The beam floor's east doorway, whose cell answers exit 4 (to the north
-  /// half's east end).
-  CELL_BEHAVIOR_JUPITER_LIGHTHOUSE_EAST_DOORWAY = 4
+  /// The central room's east doorway, whose cell answers exit 4 (to the north
+  /// room's east end).
+  CELL_BEHAVIOR_JUPITER_LIGHTHOUSE_EAST_DOORWAY = 4,
+  /// The beam's floor, cells (12, 40) to (14, 42).
+  CELL_BEHAVIOR_BEAM = 20
 };
 /// The north half's west end, where the beam floor's west doorway leads.
 #define ENTRANCE_NORTH_HALF_WEST 3
-/// The particles that circle the beam.
+/// The pink sparks that circle the beam.
 #define BEAM_PARTICLES 22
 /// The steps the beam lifts a leader, 3 pixels every other frame, before the
 /// room of locked doors takes over.
@@ -132,8 +140,10 @@ s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 
 void Leader_CenterInCell(void);
 
-/// The step triggers the Cyclone pads raise (FieldWork.raisedTrigger): up onto
-/// the ledge from the west or east pad, or down from it.
+/// The Cyclone pads' cells, which are also the triggers their Psynergy raises
+/// (FieldWork.raisedTrigger): the west pad at cell (9, 36) and the east one at
+/// cell (16, 35), with Felix below the ledge or (as copied in for the ledge's
+/// layer) on it.
 enum {
   TRIGGER_CYCLONE_UP_WEST = 30,
   TRIGGER_CYCLONE_UP_EAST,
@@ -170,9 +180,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-/// Sets the two Cyclone pads' cells by the layer the leader is on: with him on
-/// the ledge (layer 1) Cyclone carries him down from them, below it lifts him
-/// up.
+/// Lets Cyclone on either pad take Felix the other way from where he stands:
+/// on the high ledge it carries him down, below it lifts him up.
 void JupiterLighthouse_SetLayerCellsByLeader(void) {
   struct Actor *actor;
 
@@ -201,8 +210,9 @@ void JupiterLighthouse_DrawGlow(void) {
       gJupiterLighthouse_GlowPosition[1], gJupiterLighthouse_GlowPosition[2]);
 }
 
-/// Cyclone on a pad on the ledge (`kind` is its trigger, west or east) whirls
-/// the leader down to the floor below, the pad glowing.
+/// Felix casts Cyclone standing on a purple pad up on the high ledge north of
+/// the beam (`kind` says the west or east pad): he sinks, and a whirlwind spins
+/// him down to the pad on the floor below.
 void JupiterLighthouse_CycloneDropsLeader(s32 kind) {
   s32 owner = gMainRoutineWork.leaderActorId;
   struct Actor *leader = Actor_Get(owner);
@@ -263,8 +273,11 @@ void JupiterLighthouse_CycloneDropsLeader(s32 kind) {
   Event_End();
 }
 
-/// Cyclone on a pad below the ledge (`kind` is its trigger, west or east)
-/// whirls the leader up onto the ledge, 144 pixels up, the pad glowing.
+/// Felix casts Cyclone standing on a purple pad north of the beam's winged
+/// statues, the west one at cell (9, 36) or the east one at cell (16, 35)
+/// (`kind` says which): a whirlwind spins him up the wall, the camera rising
+/// with him, and he vanishes into it and reappears small on the pad on the
+/// high ledge 144 pixels above, growing back to his size.
 void JupiterLighthouse_CycloneLiftsLeader(s32 kind) {
   s32 owner = gMainRoutineWork.leaderActorId;
   struct Actor *leader = Actor_Get(owner);
@@ -343,7 +356,8 @@ void JupiterLighthouse_CycloneLiftsLeader(s32 kind) {
   Event_End();
 }
 
-/// Cyclone on the west pad below the ledge: the leader is whirled up
+/// Felix casts Cyclone on the west pad below the ledge, cell (9, 36). Nothing
+/// is seen yet; the whirlwind that lifts him follows
 /// (JupiterLighthouse_CycloneLiftsLeader).
 void JupiterLighthouse_CycloneUpOnWestPad(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
@@ -353,7 +367,8 @@ void JupiterLighthouse_CycloneUpOnWestPad(void) {
   effect->childOption = 1;
 }
 
-/// Cyclone on the east pad below the ledge: the leader is whirled up.
+/// Felix casts Cyclone on the east pad below the ledge, cell (16, 35). Nothing
+/// is seen yet; the whirlwind that lifts him follows.
 void JupiterLighthouse_CycloneUpOnEastPad(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
@@ -362,19 +377,23 @@ void JupiterLighthouse_CycloneUpOnEastPad(void) {
   effect->childOption = 1;
 }
 
-/// Cyclone on the west pad on the ledge: the leader is whirled down
+/// Felix casts Cyclone on the west pad up on the ledge. Nothing is seen yet;
+/// the whirlwind that takes him down follows
 /// (JupiterLighthouse_CycloneDropsLeader).
 void JupiterLighthouse_CycloneDownOnWestPad(void) {
   gFieldWork->raisedTrigger = TRIGGER_CYCLONE_DOWN_WEST;
 }
 
-/// Cyclone on the east pad on the ledge: the leader is whirled down.
+/// Felix casts Cyclone on the east pad up on the ledge. Nothing is seen yet;
+/// the whirlwind that takes him down follows.
 void JupiterLighthouse_CycloneDownOnEastPad(void) {
   gFieldWork->raisedTrigger = TRIGGER_CYCLONE_DOWN_EAST;
 }
 
-/// A leader who reaches the beam hovering, 32 pixels up or more, is drawn into
-/// it and carried up, spinning, to the room of locked doors.
+/// Felix floats into the beam of light in the middle of the room while
+/// Hovering, over cells (12, 40) to (14, 42): he is drawn to its centre and
+/// rises up it, spinning, to the room of the locked doors. Walking onto the
+/// beam's floor without Hover (less than 32 pixels up) does nothing.
 void JupiterLighthouse_RideTheBeam(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 i;
@@ -400,17 +419,20 @@ void JupiterLighthouse_RideTheBeam(void) {
   }
 }
 
-/// Move takes hold of the energy block: it stops falling and it and the leader
-/// are drawn at priority 1.
+/// Nothing visible happens as Felix starts to push the energy block on the east
+/// ledge, by walking into it or with Move. The block stops following the
+/// ground while it slides, and it and Felix are raised a step in the sprites'
+/// drawing order (`FieldActor_SetSpritePriority`) for the push.
 void JupiterLighthouse_PushEnergyBlock(s32 unused, s32 id) {
   Actor_Get(id)->motionFlags = 0;
   FieldActor_SetSpritePriority(id, 1);
   FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
 }
 
-/// The energy block lands with a thump once pushed off its ledge; landed in the
-/// gap, it fills it and the path below lights up to the Hover pad in three
-/// steps.
+/// The energy block lands with a thump when Felix pushes it off the east
+/// ledge. Pushed on into the gap at the head of the path below, cell (20, 39),
+/// it fills the gap and the path lights up a stretch at a time, with a sound
+/// each, down to the purple Hover pad at its end, cell (21, 41).
 void JupiterLighthouse_DropEnergyBlock(s32 unused, s32 id) {
   struct Actor *actor = Actor_Get(id);
   struct MainRoutineWork *party;
@@ -459,13 +481,16 @@ void JupiterLighthouse_DropEnergyBlock(s32 unused, s32 id) {
   }
 }
 
-/// Move takes hold of the fifth grey block: it is drawn at priority 2.
+/// Nothing visible happens as Move takes hold of the rightmost of the five
+/// grey blocks in the north room; its sprite's drawing order is set
+/// (`Actor_SetSpritePriority`) for the slide onto the empty socket.
 void JupiterLighthouse_MoveSocketBlock(s32 unused, s32 id) {
   Actor_SetSpritePriority(id, 2);
 }
 
-/// The fifth grey block, Moved onto the empty socket once the lighthouse is
-/// activated, rises to hover with the others.
+/// The rightmost grey block in the north room, Moved one cell west onto the
+/// empty socket at cell (18, 6) once the lighthouse is activated, rises to
+/// hover in line with the other four, a bridge to the room's east side.
 void JupiterLighthouse_RaiseSocketBlock(s32 unused, s32 id) {
   struct Actor *actor = Actor_Get(id);
   s32 frame;
@@ -483,8 +508,9 @@ void JupiterLighthouse_RaiseSocketBlock(s32 unused, s32 id) {
   }
 }
 
-/// Hover starts: while the leader hovers, the beam floor's east doorway is a
-/// wall.
+/// Nothing visible happens when Felix starts to Hover anywhere in the room;
+/// the central room's east doorway, cell (21, 37), is walled off while he
+/// floats, so that he cannot drift out through it.
 void JupiterLighthouse_StartHover(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
@@ -493,7 +519,8 @@ void JupiterLighthouse_StartHover(void) {
                                  MAPGRID_LAYER_GROUND, CELL_BEHAVIOR_WALL);
 }
 
-/// Hover ends: the east doorway leads out again.
+/// Nothing visible happens when Felix's Hover ends; the central room's east
+/// doorway leads out again.
 void JupiterLighthouse_EndHover(void) {
   MapGrid_SetCellBehavior(toFIXED(336), toFIXED(592), MAPGRID_LAYER_GROUND,
                           CELL_BEHAVIOR_JUPITER_LIGHTHOUSE_EAST_DOORWAY);
@@ -501,7 +528,7 @@ void JupiterLighthouse_EndHover(void) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-/// A particle's update: it circles the beam at its own speed, rising until it
+/// A spark's update: it circles the beam at its own speed, rising until it
 /// reaches the top and starts again from the floor, in front of the beam on
 /// the near half of the circle and behind it on the far half.
 void JupiterLighthouse_CircleTheBeam(struct Actor *actor) {
@@ -524,8 +551,8 @@ void JupiterLighthouse_CircleTheBeam(struct Actor *actor) {
   actor->userValue++;
 }
 
-/// Places the particles round the beam, each circling it at a random speed and
-/// radius, each risen five frames' climb above the one before.
+/// Places the pink sparks round the beam, each circling it at a random speed
+/// and radius, each risen five frames' climb above the one before.
 void JupiterLighthouse_SpawnBeamParticles(void) {
   s32 i;
   s32 phase;
@@ -546,9 +573,9 @@ void JupiterLighthouse_SpawnBeamParticles(void) {
   }
 }
 
-/// Sets up the room: the beam and its particles, the energy block (lit until it
-/// lies in its gap) and the grey blocks, hovering once the lighthouse is
-/// activated.
+/// Sets up the room: the beam and its sparks, the energy block (glowing until
+/// it lies in its gap, then gone into it with the path lit) and the grey
+/// blocks, hovering once the lighthouse is activated.
 s32 Scene_Initialize(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -747,15 +774,15 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RideTheBeam)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneUpOnWestPad)},
-    {TRIGGER_RAISED, 30, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneLiftsLeader)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 31, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneUpOnEastPad)},
-    {TRIGGER_RAISED, 31, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneLiftsLeader)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 32, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneDownOnWestPad)},
-    {TRIGGER_RAISED, 32, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneDropsLeader)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 33, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneDownOnEastPad)},
-    {TRIGGER_RAISED, 33, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneDropsLeader)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BEAM, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RideTheBeam)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), TRIGGER_CYCLONE_UP_WEST, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneUpOnWestPad)},
+    {TRIGGER_RAISED, TRIGGER_CYCLONE_UP_WEST, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneLiftsLeader)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), TRIGGER_CYCLONE_UP_EAST, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneUpOnEastPad)},
+    {TRIGGER_RAISED, TRIGGER_CYCLONE_UP_EAST, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneLiftsLeader)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), TRIGGER_CYCLONE_DOWN_WEST, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneDownOnWestPad)},
+    {TRIGGER_RAISED, TRIGGER_CYCLONE_DOWN_WEST, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneDropsLeader)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), TRIGGER_CYCLONE_DOWN_EAST, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneDownOnEastPad)},
+    {TRIGGER_RAISED, TRIGGER_CYCLONE_DOWN_EAST, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneDropsLeader)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_ENERGY_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PushEnergyBlock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ENERGY_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_DropEnergyBlock)},
     {TRIGGER_PUSH, 35, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PushEnergyBlock)},

@@ -152,9 +152,9 @@ enum {
 /// (GabombaStatue_DrawCogCells) carry the leader with it, and the cells past a
 /// cog's ends hop him across to the next.
 enum GabombaStatueCellBehavior {
-  CELL_BEHAVIOR_FIRST_HOLE = 1,
-  CELL_BEHAVIOR_SECOND_HOLE,
-  CELL_BEHAVIOR_THIRD_HOLE,
+  CELL_BEHAVIOR_FIRST_LADDER_DOWN = 1,
+  CELL_BEHAVIOR_SECOND_LADDER_DOWN,
+  CELL_BEHAVIOR_THIRD_LADDER_DOWN,
   CELL_BEHAVIOR_PINION_GAP = 10,
   CELL_BEHAVIOR_PINION_GAP_TURNED_BACK,
   CELL_BEHAVIOR_MOUSE = 77, ///< where the mouse pops up
@@ -1106,7 +1106,7 @@ const u8 *Scene_GetTriggers(void) {
 /// Felix walks to the top of the ladder at x, z, turns his back and climbs
 /// down it, and the screen closes on him as he leaves for the room below by
 /// the ladder's exit.
-void GabombaStatue_ClimbDownHole(s32 x, s32 z) {
+void GabombaStatue_ClimbDownLadder(s32 x, s32 z) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
 
@@ -1148,15 +1148,15 @@ void GabombaStatue_ClimbDownHole(s32 x, s32 z) {
                (gInput.held & KEY_UP) == 0) {                                  \
       return;                                                                  \
     }                                                                          \
-    GabombaStatue_ClimbDownHole(holeX, holeZ);                                 \
+    GabombaStatue_ClimbDownLadder(holeX, holeZ);                               \
   }
 
 /// Felix climbs down the ladder in the north of the room of corridors, where
 /// the Mimic and the Bone Armlet's chest are, at cell (19, 11), back to the
 /// hall of pinions below, when he walks into it from the west, the east or the
 /// south.
-DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(GabombaStatue_StepIntoBoneArmletChestHole,
-                                     11, 18, 20, 19, 12, 312, 180)
+DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(
+    GabombaStatue_ClimbDownBoneArmletChestLadder, 11, 18, 20, 19, 12, 312, 180)
 
 /// The same for a ladder down with a square to walk in from on each of its
 /// four sides.
@@ -1179,19 +1179,19 @@ DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(GabombaStatue_StepIntoBoneArmletChestHole,
       if (x == eastColumn && (gInput.held & KEY_LEFT) == 0)                    \
         return;                                                                \
     }                                                                          \
-    GabombaStatue_ClimbDownHole(holeX, holeZ);                                 \
+    GabombaStatue_ClimbDownLadder(holeX, holeZ);                               \
   }
 
 /// Felix climbs down the ladder in the north of the room of the rope, the
 /// stakes and the flashing cog, at cell (29, 12), back to the room of
 /// corridors below, when he walks into it from any side.
-DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(GabombaStatue_StepIntoElixirChestHole,
-                                          29, 11, 13, 12, 28, 30, 472, 196)
+DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(
+    GabombaStatue_ClimbDownElixirChestLadder, 29, 11, 13, 12, 28, 30, 472, 196)
 
 /// Felix climbs down the ladder in the north-east of Steel's room, at cell
 /// (33, 7), to the north-east of the room of the rope and the flashing cog
 /// below, when he walks into it from the west or the south.
-void GabombaStatue_StepIntoFirstSteelHole(void) {
+void GabombaStatue_ClimbDownSteelNortheastLadder(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = FIELD_CELL(leader->x.fixed);
   s32 z = FIELD_CELL(leader->z.fixed);
@@ -1202,13 +1202,13 @@ void GabombaStatue_StepIntoFirstSteelHole(void) {
   } else if (x == 33 && z == 8 && (gInput.held & KEY_UP) == 0) {
     return;
   }
-  GabombaStatue_ClimbDownHole(536, 112);
+  GabombaStatue_ClimbDownLadder(536, 112);
 }
 
 /// Felix climbs down the ladder in the west of Steel's room, at cell (6, 13),
 /// to the west of the room of the rope and the flashing cog below, when he
 /// walks into it from any side.
-void GabombaStatue_StepIntoSecondSteelHole(void) {
+void GabombaStatue_ClimbDownSteelWestLadder(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = FIELD_CELL(leader->x.fixed);
   s32 z = FIELD_CELL(leader->z.fixed);
@@ -1224,13 +1224,13 @@ void GabombaStatue_StepIntoSecondSteelHole(void) {
     if (z == 14 && (gInput.held & KEY_UP) == 0)
       return;
   }
-  GabombaStatue_ClimbDownHole(104, 208);
+  GabombaStatue_ClimbDownLadder(104, 208);
 }
 
 /// Felix climbs down the ladder in the east of Steel's room, at cell (42, 13),
 /// to the east of the room of the rope and the flashing cog below, when he
 /// walks into it from the north, the west or the south.
-void GabombaStatue_StepIntoThirdSteelHole(void) {
+void GabombaStatue_ClimbDownSteelEastLadder(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = FIELD_CELL(leader->x.fixed);
   s32 z = FIELD_CELL(leader->z.fixed);
@@ -1250,25 +1250,25 @@ void GabombaStatue_StepIntoThirdSteelHole(void) {
 #endif
     return;
   }
-  GabombaStatue_ClimbDownHole(680, 208);
+  GabombaStatue_ClimbDownLadder(680, 208);
 }
 
 /// Felix climbs down the ladder in the north of the mouse's room, at cell
 /// (24, 7), to Steel's room below, when he walks into it from the west, the
 /// east or the south.
-DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(GabombaStatue_StepIntoFirstTurntableHole,
-                                     7, 23, 25, 24, 8, 392, 112)
+DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(
+    GabombaStatue_ClimbDownTurntableNorthLadder, 7, 23, 25, 24, 8, 392, 112)
 
 /// Felix climbs down the ladder in the west of the mouse's room, at cell
 /// (6, 9), to the west of Steel's room below, when he walks into it from the
 /// west, the east or the south.
-DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(GabombaStatue_StepIntoSecondTurntableHole,
+DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(GabombaStatue_ClimbDownTurntableWestLadder,
                                      9, 5, 7, 6, 10, 104, 146)
 
 /// Felix climbs down the ladder in the east of the mouse's room, beside its
 /// east blue cog at cell (42, 9), to the east of Steel's room below, when he
 /// walks into it from the east or the south.
-void GabombaStatue_StepIntoThirdTurntableHole(void) {
+void GabombaStatue_ClimbDownTurntableEastLadder(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = FIELD_CELL(leader->x.fixed);
   s32 z = FIELD_CELL(leader->z.fixed);
@@ -1277,19 +1277,19 @@ void GabombaStatue_StepIntoThirdTurntableHole(void) {
     return;
   if (x == 43 && z == 9 && (gInput.held & KEY_LEFT) == 0)
     return;
-  GabombaStatue_ClimbDownHole(680, 146);
+  GabombaStatue_ClimbDownLadder(680, 146);
 }
 
 /// Felix climbs down the ladder in the middle of the room below the small
 /// idol's chamber, at cell (27, 18), back to the mouse's room, when he walks
 /// into it from any side.
-DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(GabombaStatue_StepIntoCogsHole, 27,
+DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(GabombaStatue_ClimbDownCogsLadder, 27,
                                           17, 19, 18, 26, 28, 440, 288)
 
 /// Felix climbs down the ladder in the north-east of the room of the arrow
 /// panels, at cell (29, 9), back to the small idol's chamber below, when he
 /// walks into it from the west or the south.
-void GabombaStatue_StepIntoArrowsHole(void) {
+void GabombaStatue_ClimbDownArrowsLadder(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = FIELD_CELL(actor->x.fixed);
   s32 z = FIELD_CELL(actor->z.fixed);
@@ -4272,12 +4272,12 @@ LATE_DATA s8 gGabombaStatue_RopeStopSteps[] = {
 };
 
 LATE_DATA struct Trigger gGabombaStatue_BoneArmletChestTriggers[] = {
-    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_FIRST_HOLE, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoBoneArmletChestHole)},
+    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_FIRST_LADDER_DOWN, CONDITION_ALWAYS, EVENT(GabombaStatue_ClimbDownBoneArmletChestLadder)},
     {TRIGGER_TABLE_END},
 };
 
 LATE_DATA struct Trigger gGabombaStatue_ElixirChestTriggers[] = {
-    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_FIRST_HOLE, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoElixirChestHole)},
+    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_FIRST_LADDER_DOWN, CONDITION_ALWAYS, EVENT(GabombaStatue_ClimbDownElixirChestLadder)},
     {TRIGGER_STEP, CELL_BEHAVIOR_PINION_GAP, CONDITION_ALWAYS, EVENT(GabombaStatue_ElixirPinionsCarryLeaderSouth)},
     {TRIGGER_STEP, CELL_BEHAVIOR_PINION_GAP_TURNED_BACK, CONDITION_ALWAYS, EVENT(GabombaStatue_ElixirPinionsCarryLeaderNorth)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_FIRST_ROPE_POST_A, FLAG_GABOMBA_FIRST_ROPE_TIED, EVENT(GabombaStatue_LashRope)},
@@ -4289,9 +4289,9 @@ LATE_DATA struct Trigger gGabombaStatue_ElixirChestTriggers[] = {
 };
 
 LATE_DATA struct Trigger gGabombaStatue_SteelTriggers[] = {
-    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_FIRST_HOLE, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoFirstSteelHole)},
-    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_SECOND_HOLE, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoSecondSteelHole)},
-    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_THIRD_HOLE, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoThirdSteelHole)},
+    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_FIRST_LADDER_DOWN, CONDITION_ALWAYS, EVENT(GabombaStatue_ClimbDownSteelNortheastLadder)},
+    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_SECOND_LADDER_DOWN, CONDITION_ALWAYS, EVENT(GabombaStatue_ClimbDownSteelWestLadder)},
+    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_THIRD_LADDER_DOWN, CONDITION_ALWAYS, EVENT(GabombaStatue_ClimbDownSteelEastLadder)},
     {TRIGGER_STEP, CELL_BEHAVIOR_GREEN_COG, CONDITION_ALWAYS, EVENT(GabombaStatue_TurnWithCog)},
     {TRIGGER_STEP, CELL_BEHAVIOR_BLUE_COG, CONDITION_ALWAYS, EVENT(GabombaStatue_RideBlueCog)},
     {TRIGGER_STEP, CELL_BEHAVIOR_RED_COG, CONDITION_ALWAYS, EVENT(GabombaStatue_RideSlidingCog)},
@@ -4306,9 +4306,9 @@ LATE_DATA struct Trigger gGabombaStatue_SteelTriggers[] = {
 };
 
 LATE_DATA struct Trigger gGabombaStatue_TurntableTriggers[] = {
-    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_FIRST_HOLE, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoFirstTurntableHole)},
-    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_SECOND_HOLE, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoSecondTurntableHole)},
-    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_THIRD_HOLE, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoThirdTurntableHole)},
+    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_FIRST_LADDER_DOWN, CONDITION_ALWAYS, EVENT(GabombaStatue_ClimbDownTurntableNorthLadder)},
+    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_SECOND_LADDER_DOWN, CONDITION_ALWAYS, EVENT(GabombaStatue_ClimbDownTurntableWestLadder)},
+    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_THIRD_LADDER_DOWN, CONDITION_ALWAYS, EVENT(GabombaStatue_ClimbDownTurntableEastLadder)},
     {TRIGGER_STEP, CELL_BEHAVIOR_GREEN_COG, CONDITION_ALWAYS, EVENT(GabombaStatue_TurnWithCog)},
     {TRIGGER_STEP, CELL_BEHAVIOR_BLUE_COG, CONDITION_ALWAYS, EVENT(GabombaStatue_RideBlueCog)},
     {TRIGGER_STEP, CELL_BEHAVIOR_RED_COG, CONDITION_ALWAYS, EVENT(GabombaStatue_RideSlidingCog)},
@@ -4322,7 +4322,7 @@ LATE_DATA struct Trigger gGabombaStatue_TurntableTriggers[] = {
 };
 
 LATE_DATA struct Trigger gGabombaStatue_CogsTriggers[] = {
-    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_FIRST_HOLE, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoCogsHole)},
+    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_FIRST_LADDER_DOWN, CONDITION_ALWAYS, EVENT(GabombaStatue_ClimbDownCogsLadder)},
     {TRIGGER_STEP, CELL_BEHAVIOR_GREEN_COG, CONDITION_ALWAYS, EVENT(GabombaStatue_TurnWithCog)},
     {TRIGGER_STEP, CELL_BEHAVIOR_BLUE_COG, CONDITION_ALWAYS, EVENT(GabombaStatue_RideBlueCog)},
     {TRIGGER_STEP, CELL_BEHAVIOR_RED_COG, CONDITION_ALWAYS, EVENT(GabombaStatue_RideSlidingCog)},
@@ -4338,7 +4338,7 @@ LATE_DATA struct Trigger gGabombaStatue_CogsTriggers[] = {
 };
 
 LATE_DATA struct Trigger gGabombaStatue_ArrowsTriggers[] = {
-    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_FIRST_HOLE, CONDITION_ALWAYS, EVENT(GabombaStatue_StepIntoArrowsHole)},
+    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_FIRST_LADDER_DOWN, CONDITION_ALWAYS, EVENT(GabombaStatue_ClimbDownArrowsLadder)},
     {TRIGGER_STEP, CELL_BEHAVIOR_AROUND_LEFT_ARROW, CONDITION_ALWAYS, EVENT(GabombaStatue_ReleaseLeftArrowPanel)},
     {TRIGGER_STEP, CELL_BEHAVIOR_LEFT_ARROW, CONDITION_ALWAYS, EVENT(GabombaStatue_PressLeftArrowPanel)},
     {TRIGGER_STEP, CELL_BEHAVIOR_AROUND_RIGHT_ARROW, CONDITION_ALWAYS, EVENT(GabombaStatue_ReleaseRightArrowPanel)},

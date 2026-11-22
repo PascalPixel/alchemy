@@ -26,20 +26,20 @@ void GabombaStatue_HopAcrossNorthOrSouth(void);
 
 void GabombaStatue_HearTheOffering(void);
 
-void GabombaStatue_StepIntoBoneArmletChestHole(void);
+void GabombaStatue_ClimbDownBoneArmletChestLadder(void);
 
-void GabombaStatue_StepIntoElixirChestHole(void);
+void GabombaStatue_ClimbDownElixirChestLadder(void);
 
-void GabombaStatue_StepIntoFirstSteelHole(void);
+void GabombaStatue_ClimbDownSteelNortheastLadder(void);
 
-void GabombaStatue_StepIntoThirdSteelHole(void);
-void GabombaStatue_StepIntoFirstTurntableHole(void);
+void GabombaStatue_ClimbDownSteelEastLadder(void);
+void GabombaStatue_ClimbDownTurntableNorthLadder(void);
 
-void GabombaStatue_StepIntoSecondTurntableHole(void);
+void GabombaStatue_ClimbDownTurntableWestLadder(void);
 
-void GabombaStatue_StepIntoCogsHole(void);
+void GabombaStatue_ClimbDownCogsLadder(void);
 
-void GabombaStatue_StepIntoArrowsHole(void);
+void GabombaStatue_ClimbDownArrowsLadder(void);
 
 void GabombaStatue_PinionsThrowLeaderSouth(void);
 void GabombaStatue_CogsTurnBack(void);
@@ -107,7 +107,7 @@ void Actors_SetDrawn(s32 show, s32 first, u32 count);
 
 void GabombaStatue_LandFromFall(void);
 
-void GabombaStatue_ClimbDownHole(s32 x, s32 z);
+void GabombaStatue_ClimbDownLadder(s32 x, s32 z);
 
 s32 GabombaStatue_GetClock(void);
 extern u32 gGabombaStatue_CogShapes[];

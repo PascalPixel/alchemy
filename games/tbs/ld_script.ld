@@ -668,9 +668,9 @@ SECTIONS
         "*/games/tbs/src/gamepak/far_call/sprite.o"(.text .rodata .data .padding)
         "*/games/tbs/src/system/sprite_metadata.o"(.text)
         "*/games/tbs/src/graphics/sprite/sprites.o"(.rodata)
-        "*/games/tbs/src/graphics/sprite/self_pointers_0.o"(.rodata)
+        "*/games/tbs/src/graphics/sprite/self_pointers_after_first_block.o"(.rodata)
         "*/games/tbs/src/graphics/sprite/sprites.o"(.rodata.a)
-        "*/games/tbs/src/graphics/sprite/self_pointers_1.o"(.rodata)
+        "*/games/tbs/src/graphics/sprite/self_pointers_after_second_block.o"(.rodata)
         "*/games/tbs/src/graphics/sprite/sprites.o"(.rodata.b)
         . = ABSOLUTE(ROM_SHIFT + RESOURCE_DIRECTORY_START);
         "*/games/tbs/src/gamepak/resource_directory.o"(.text .padding)

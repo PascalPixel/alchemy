@@ -1,15 +1,18 @@
 /// @file
-/// Alhafra, the port town of Osenia across the Yampi Desert, where the tidal
-/// wave broke the mast of the town's only sailboat. Its events follow the
-/// story: Madra's mayor and his party arrive hunting Briggs
-/// (Alhafra_MadransArrive) while one of Briggs's pirates runs to warn the crew
-/// (Alhafra_PirateSeesMadrasMayor); once Briggs is caught, bread for a hungry
-/// boy (Alhafra_GiveBreadToHungryBoy) gets his father to let the party into the
-/// cave under the mayor's manor (Alhafra_FatherLetsPartyToCave), and the
-/// getters pick later tables once the mast is cleared and once the ship has
-/// gone (FLAG_ALHAFRA_SHIP_GONE). Frost freezes the puddles of seawater
-/// (Alhafra_FreezePuddle), and the doors open as the leader walks into them
-/// (Alhafra_EnterDoor).
+/// Alhafra, the port town of Osenia north of the Yampi Desert, where the
+/// tidal wave wrecked every ship but one sailboat, whose mast it broke.
+///
+/// As Felix comes into town, the mayor and elder of Madra and their soldiers
+/// arrive behind him, hunting Briggs, and ask the way to Alhafra's mayor
+/// (Alhafra_MadransArrive); one of Briggs's pirates, watching the road by a
+/// wall, sees the mayor of Madra and runs off to warn his crew
+/// (Alhafra_PirateSeesMadrasMayor). Once Briggs is caught, the hungry boy
+/// too weak to move eats the party's Large Bread (Alhafra_GiveBreadToHungryBoy)
+/// and his father, at the back way into the cave by the mayor's home, lets
+/// the party pass (Alhafra_FatherLetsPartyToCave). Frost freezes the puddles
+/// of seawater, Reveal finds the Psy Crystal chest among the gravestones,
+/// and the townsfolk change once the mast is cleared and again once Briggs
+/// has stolen the ship (FLAG_ALHAFRA_SHIP_GONE).
 
 #include "system/main_routine_work.h"
 #include "battle/battle.h"
@@ -220,8 +223,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gAlhafra_ActorPlacements;
 }
 
-/// Stepping into a door: it opens, the leader walks through and the scene
-/// leaves by the exit given.
+/// A door of the town opens as Felix walks into it, he walks
+/// through, and the screen wipes to the room behind it (AlhafraRooms, the
+/// jail, the cave or the manor, by the exit given).
 void Alhafra_OpenDoorAndEnter(struct MapGridCellAnimation *step, s32 countdown,
                               s32 unused) {
   Event_Start();
@@ -239,8 +243,13 @@ void Alhafra_OpenDoorAndEnter(struct MapGridCellAnimation *step, s32 countdown,
   Event_End();
 }
 
-/// Walking into one of the town's doors: it opens and the leader goes
-/// through to the exit of the same number.
+/// Felix walks north into one of the town's doors: the houses' and the inn's,
+/// the jail's, the back way into the cave by the mayor's home, or the
+/// manor's. The door opens, he walks in, and the screen wipes to the room
+/// inside (Alhafra_OpenDoorAndEnter).
+///
+/// Each door's cell behaviour is the number of the exit it leads by, and of
+/// its row of gAlhafra_Doors.
 void Alhafra_EnterDoor(s32 index) {
   struct MapGridCellAnimation *table = gAlhafra_Doors;
 
@@ -264,12 +273,14 @@ enum AlhafraCellBehavior {
   CELL_BEHAVIOR_PIRATE_RUNS_OFF
 };
 
-/// Talking to the weapon merchant across his counter opens his shop.
+/// Felix talks to the weapon merchant across his counter, and the shop
+/// opens.
 void Alhafra_OpenWeaponShop(s32 keeperId) {
   Shop_Run(SHOP_ALHAFRA_WEAPONS, keeperId);
 }
 
-/// Talking to the armor merchant across his counter opens his shop.
+/// Felix talks to the armor merchant across his counter, and the shop
+/// opens.
 void Alhafra_OpenArmorShop(s32 keeperId) {
   Shop_Run(SHOP_ALHAFRA_ARMOR, keeperId);
 }
@@ -350,12 +361,16 @@ void Alhafra_PirateRunsToWarnTheCrew(void) {
   Alhafra_PirateSeesMadrasMayor(PIRATE_STEPPED_PAST);
 }
 
-/// Passing the pirate's wall: he is drawn behind it.
+/// Nothing visible happens as Felix walks past the wall where Briggs's pirate
+/// keeps watch (cells (10, 44) to (11, 45)); the game sets the pirate to be
+/// drawn behind the wall from where Felix now stands.
 void Alhafra_DrawPirateBehind(void) {
   FieldActor_SetSpritePriority(ACTOR_PIRATE, 2);
 }
 
-/// Coming back past it: he is drawn in front of it again.
+/// Nothing visible happens as Felix walks back past the pirate's wall, south
+/// of it (cells (12, 46) and (12, 47)); the game sets the pirate to be drawn
+/// in front of the wall again.
 void Alhafra_DrawPirateInFront(void) {
   FieldActor_SetSpritePriority(ACTOR_PIRATE, 3);
 }
@@ -363,7 +378,8 @@ void Alhafra_DrawPirateInFront(void) {
 s32 FlagBlock_ApplyFlags();
 extern s16 gAlhafra_Puddles[];
 
-/// Frost on one of the town's puddles freezes it into a pillar.
+/// Felix casts Frost on one of the three puddles of seawater the tidal wave
+/// left in town, and it freezes into a pillar of ice.
 void Alhafra_FreezePuddle(s32 unused, s32 actorId) {
   FlagBlock_ApplyFlags((s32)gAlhafra_Puddles);
   Actor_GetById(actorId)->priorityFlags = 0;
@@ -565,12 +581,16 @@ void Alhafra_FatherLetsPartyToCave(s32 actor) {
   }
 }
 
-/// Reveal shows the Psy Crystal chest's hidden spot.
+/// Felix casts Reveal in town; while it lasts, the hidden Psy Crystal chest
+/// among the six gravestones can be found.
+// XXX: what Reveal shows at the gravestones; a recording of Reveal cast
+// beside them would settle it.
 void Alhafra_RevealTreasureSpot(void) {
   TreasureSpot_SetPosition(ACTOR_PSY_CRYSTAL_CHEST, toFIXED(184), toFIXED(552));
 }
 
-/// As Reveal fades, the spot hides again.
+/// Nothing visible: as Reveal fades, the Psy Crystal chest's spot is hidden
+/// again.
 void Alhafra_HideTreasureSpot(void) {
   TreasureSpot_SetPosition(ACTOR_PSY_CRYSTAL_CHEST, -1, -1);
 }

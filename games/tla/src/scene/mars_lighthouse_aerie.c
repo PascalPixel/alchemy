@@ -1,9 +1,9 @@
 /// @file
 /// Mars Lighthouse's aerie, at the top of the last lighthouse: the party faces
 /// the Doom Dragon (MarsLighthouseAerie_FaceDoomDragon) and learns who the
-/// dragon was (MarsLighthouseAerie_FindWhoTheDragonWas), the parents it held
-/// speak to their children (MarsLighthouseAerie_TalkToJennasMother and its
-/// siblings), and the beacon is lit with the Mars Star
+/// dragon was (MarsLighthouseAerie_FindWhoTheDragonWas), the three it was speak
+/// to the party as they lie dying (MarsLighthouseAerie_TalkToJennasMother and
+/// the talks after it), and the beacon is lit with the Mars Star
 /// (MarsLighthouseAerie_LightBeacon) before the Golden Sun rises
 /// (MarsLighthouseAerie_WatchGoldenSunRise).
 ///
@@ -82,6 +82,24 @@ enum {
   ACTOR_DOOM_DRAGON,
   ACTOR_WISE_ONE,
   ACTOR_KRADEN
+};
+
+/// The cell behaviours the aerie's map marks its spots with, which its
+/// trigger table answers.
+enum MarsLighthouseAerieCellBehavior {
+  /// The landing the party reaches the aerie on, where Teleport takes them
+  /// back down.
+  CELL_TELEPORT_LANDING = 1,
+  /// The spot before the unlit beacon, where the voice speaks before the
+  /// battle.
+  CELL_BEFORE_BEACON = 10,
+  /// Where Kraden stops Felix, west and east of the three as they lie dying.
+  CELL_KRADEN_STOPS_WEST = 20,
+  CELL_KRADEN_STOPS_EAST = 21,
+  /// At the beacon, where the voice asks for the Mars Star, and the ring of
+  /// cells round it that let it ask again.
+  CELL_AT_BEACON = 22,
+  CELL_ROUND_BEACON = 23
 };
 
 /// The entrances the aerie's own events arrive by.
@@ -485,8 +503,9 @@ extern s32 gMarsLighthouseAerie_IvanReadyScript[];
 extern s32 gMarsLighthouseAerie_MiaReadyScript[];
 extern s32 gMarsLighthouseAerie_GaretReadyScript[];
 
-/// The party reaches the beacon in the storm, and the voice calls them
-/// betrayers before the Doom Dragon's battle.
+/// The party walks up to the unlit beacon in the storm (cells (32, 20) to
+/// (34, 20)), and the voice calls them betrayers before the Doom Dragon's
+/// battle.
 void MarsLighthouseAerie_FaceDoomDragon(void) {
   struct MainRoutineWork *work;
   u16 *textColor;
@@ -1923,7 +1942,6 @@ void Orb_SpawnRising(void) {
 
 #include "../field/actor_park_record.c"
 
-void MarsLighthouseAerie_HaltIvan(void);
 void FieldCamera_WaitForArrival();
 void Teleport_PlayWhirl(void);
 void Actor_Release(struct Actor *actor);
@@ -2715,8 +2733,13 @@ void MarsLighthouseAerie_WatchGoldenSunRise(void) {
   return;
 }
 
-/// Kraden holds the leader back from the parents and sends him toward the
-/// beacon.
+/// Before the beacon is lit, Felix walks away west from the three as they lie
+/// dying, and Kraden turns to him: "Do not let your sadness overwhelm you,
+/// Felix! Go! Once the beacon has been ignited, you can mourn..." Felix walks
+/// to the spot south-west of them, (480, 348).
+// XXX: where the cells that set it off lie on screen (map.txt behaviour 20, at
+// (45, 53) and (46, 53) in the map's grid); a recording from the beacon's
+// entrance with Felix walking about would settle it.
 void MarsLighthouseAerie_HoldBackFromParents(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2730,7 +2753,12 @@ void MarsLighthouseAerie_HoldBackFromParents(void) {
   Event_End();
 }
 
-/// As MarsLighthouseAerie_HoldBackFromParents, from the other side.
+/// Before the beacon is lit, Felix walks away east from the three as they lie
+/// dying, and Kraden turns to him: "Do not let your sadness overwhelm you,
+/// Felix! Go! Once the beacon has been ignited, you can mourn..." Felix walks
+/// to the spot south-east of them, (544, 348).
+// XXX: as for MarsLighthouseAerie_HoldBackFromParents, map.txt behaviour 21,
+// at (49, 53) and (50, 53).
 void MarsLighthouseAerie_HoldBackFromParentsAgain(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2744,7 +2772,9 @@ void MarsLighthouseAerie_HoldBackFromParentsAgain(void) {
   Event_End();
 }
 
-/// At the beacon: "Will you cast in the Mars Star?" Yes lights it.
+/// Felix steps up to the beacon, and the voice asks: "Will you cast in the Mars
+/// Star?" Yes lights the beacon (MarsLighthouseAerie_LightBeacon); no leaves
+/// it to be asked again once he steps back.
 void MarsLighthouseAerie_OfferToCastMarsStar(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2765,7 +2795,8 @@ void MarsLighthouseAerie_OfferToCastMarsStar(void) {
   Event_End();
 }
 
-/// Stepping back from the beacon: the voice will ask again.
+/// Nothing visible happens as Felix steps back from the beacon without casting
+/// in the Mars Star; the game lets the voice ask again when he steps up.
 void MarsLighthouseAerie_ClearCastOffer(void) {
   GameFlag_Clear(FLAG_ASKED_FOR_MARS_STAR);
 }
@@ -3026,10 +3057,6 @@ void MarsLighthouseAerie_StartRisingRings(struct Actor *actor,
 void MarsLighthouseAerie_EndRisingRings(struct Actor *actor) {
   actor->riseCounter = 1;
 }
-
-void Scene_LeaveByExit(void);
-void MarsLighthouseAerie_FaceDoomDragon(void);
-void MarsLighthouseAerie_HaltKyle(void);
 
 // clang-format off
 /// The rings' tiles: half a ring of light, 32 by 16 pixels of 16 colours,
@@ -3497,8 +3524,8 @@ struct ActorPlacement gMarsLighthouseAerie_BeaconPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 1, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit)},
-    {TRIGGER_STEP, 10, FLAG_MARS_BEACON_LIT, EVENT(MarsLighthouseAerie_FaceDoomDragon)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), CELL_TELEPORT_LANDING, CONDITION_ALWAYS, EVENT(Scene_LeaveByExit)},
+    {TRIGGER_STEP, CELL_BEFORE_BEACON, FLAG_MARS_BEACON_LIT, EVENT(MarsLighthouseAerie_FaceDoomDragon)},
     {TRIGGER_TALK, ACTOR_ISAAC, CONDITION_ALWAYS, MSGNO(MsgMarsLighthouseAerieOurQuestIsAlmostOver)},
     {TRIGGER_TALK, ACTOR_GARET, CONDITION_ALWAYS, MSGNO(MsgMarsLighthouseAerieIWishICouldConsole)},
     {TRIGGER_TALK, ACTOR_MIA, CONDITION_ALWAYS, MSGNO(MsgMarsLighthouseAerieIfAlexSetThisAll)},
@@ -3519,10 +3546,10 @@ struct Trigger gSceneEvents[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_KYLE_TALK_SPOT, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_HaltKyle)},
     {PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_JENNAS_FATHER_TALK_SPOT, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_HaltJennasFather)},
 #endif
-    {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_HoldBackFromParents)},
-    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_HoldBackFromParentsAgain)},
-    {TRIGGER_STEP, 22, FLAG_ASKED_FOR_MARS_STAR, EVENT(MarsLighthouseAerie_OfferToCastMarsStar)},
-    {TRIGGER_STEP, 23, IF_FLAG_SET(FLAG_ASKED_FOR_MARS_STAR), EVENT(MarsLighthouseAerie_ClearCastOffer)},
+    {TRIGGER_STEP, CELL_KRADEN_STOPS_WEST, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_HoldBackFromParents)},
+    {TRIGGER_STEP, CELL_KRADEN_STOPS_EAST, CONDITION_ALWAYS, EVENT(MarsLighthouseAerie_HoldBackFromParentsAgain)},
+    {TRIGGER_STEP, CELL_AT_BEACON, FLAG_ASKED_FOR_MARS_STAR, EVENT(MarsLighthouseAerie_OfferToCastMarsStar)},
+    {TRIGGER_STEP, CELL_ROUND_BEACON, IF_FLAG_SET(FLAG_ASKED_FOR_MARS_STAR), EVENT(MarsLighthouseAerie_ClearCastOffer)},
     {TRIGGER_TABLE_END},
 };
 

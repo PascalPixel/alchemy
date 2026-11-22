@@ -17,10 +17,11 @@
 ///
 /// Five doors lead indoors: the inn in the north-west (its door at cell
 /// (8, 9)), the Sanctum's arched double door in the north, inside a ring of
-/// water (cell (15, 7)), and three houses along the south. Each opens as the
-/// leader walks north into it (Suhalla_EnterDoor, Suhalla_EnterSanctumDoor).
-/// Their cell behaviors are their exits' numbers (SUHALLA_TO_INN to
-/// SUHALLA_TO_HOUSE_EAST).
+/// water (cell (15, 7)), and along the south the shop (cell (5, 18)), the old
+/// couple's house (cell (13, 17)) and the house in the south-east corner
+/// (cell (18, 18)). Each opens as the leader walks north into it
+/// (Suhalla_EnterDoor, Suhalla_EnterSanctumDoor). Their cell behaviors are
+/// their exits' numbers (SUHALLA_TO_INN to SUHALLA_TO_HOUSE_EAST).
 ///
 /// The village's west, north and east edges lead out onto the World Map, and
 /// the desert's sandstorms drop a caught party outside it
@@ -193,8 +194,8 @@ static void Suhalla_GrowSprout(void) {
   GameFlag_Set(FLAG_SUHALLA_SPROUT_GROWN);
 }
 
-/// Walking north into the door of the inn or of one of the three houses along
-/// Suhalla's south side opens it and takes the party inside.
+/// Walking north into the door of the inn, or of the shop or one of the two
+/// houses along Suhalla's south side, opens it and takes the party inside.
 ///
 /// The door is drawn open, the leader walks a step in, and the scene leaves by
 /// the exit numbered as the door's cell behavior.

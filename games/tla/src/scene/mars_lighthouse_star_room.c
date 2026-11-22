@@ -157,7 +157,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 // XXX: whether the long jet is what carries the flame across to the unlit
 // torch on the west stand; a recording of Blaze cast westward from east of the
 // burning torch would settle it (the recorder casts it eastward, at nothing).
-void MarsLighthouseStarRoom_StartBlazeOnStatue(void) {
+void MarsLighthouseStarRoom_StartBlazeOnEastTorch(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
   event->blazeLongSpray = 1;
@@ -165,13 +165,13 @@ void MarsLighthouseStarRoom_StartBlazeOnStatue(void) {
 
 /// Blaze's flame reaches the unlit torch on the west stand before the frozen
 /// dragons, which sends out the two sparkles that launch the fireballs.
-void MarsLighthouseStarRoom_BlazeStatue(void) {
+void MarsLighthouseStarRoom_BlazeWestTorch(void) {
   MarsLighthouseStarRoom_ShootFireballs();
 }
 
 /// Nothing happens when Blaze ends at the west torch; the sparkles and
 /// fireballs go on alone.
-void MarsLighthouseStarRoom_EndBlazeOnStatue(void) {}
+void MarsLighthouseStarRoom_EndBlazeOnWestTorch(void) {}
 
 FIXED Trig_Cos(s32 angle);
 void Actor_SetupScriptedPart(struct Actor *actor, s32 priority);
@@ -1778,13 +1778,13 @@ struct Trigger gSceneEvents[] = {
      IF_FLAG_SET(FLAG_FLAME_DRAGONS_BEATEN), EVENT(Fireball_CarryLeader)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_EAST_TORCH, CONDITION_ALWAYS,
-     EVENT(MarsLighthouseStarRoom_StartBlazeOnStatue)},
+     EVENT(MarsLighthouseStarRoom_StartBlazeOnEastTorch)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_HITS),
      ACTOR_WEST_TORCH, CONDITION_ALWAYS,
-     EVENT(MarsLighthouseStarRoom_BlazeStatue)},
+     EVENT(MarsLighthouseStarRoom_BlazeWestTorch)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END),
      ACTOR_WEST_TORCH, CONDITION_ALWAYS,
-     (u32)(MarsLighthouseStarRoom_EndBlazeOnStatue)},
+     (u32)(MarsLighthouseStarRoom_EndBlazeOnWestTorch)},
     {TRIGGER_RAISED, DRAGONS_WAKE_TRIGGER, CONDITION_ALWAYS,
      EVENT(MarsLighthouseStarRoom_WakeFlameDragons)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),

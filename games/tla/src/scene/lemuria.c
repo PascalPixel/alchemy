@@ -536,7 +536,7 @@ void Lemuria_TryStuckDoor(void) {
   struct Actor *actor;
 
   if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed > toFIXED(96) ||
-      Event_GetFlag(FLAG_TOLD_OF_PIERS_MOTHER)) {
+      Event_GetFlag(FLAG_MET_LUNPA)) {
     gFieldWork->fieldMenu = 1;
     return;
   }
@@ -788,17 +788,17 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(ACTOR_MAN_AT_THE_SPRING, 440, 1048);
   }
   if (Event_GetFlag(FLAG_LEMURIA_CITY_ADMIRED) &&
-      !Event_GetFlag(FLAG_TOLD_OF_PIERS_MOTHER)) {
+      !Event_GetFlag(FLAG_MET_LUNPA)) {
     Actor_SetPosition(ACTOR_WEST_PALACE_GUARD, 456, 520);
     Actor_SetPosition(ACTOR_EAST_PALACE_GUARD, 472, 520);
   }
-  if (!Event_GetFlag(FLAG_TOLD_OF_PIERS_MOTHER)) {
+  if (!Event_GetFlag(FLAG_MET_LUNPA)) {
     Actor_SetPosition(ACTOR_GIRL_ON_LUNPA, 0, 0);
   } else {
     Actor_Get(ACTOR_GIRL_ON_LUNPA)->update = Lemuria_TakeLeaderLayer;
   }
   if (Event_GetFlag(FLAG_PIERS_AT_MOTHERS_GRAVE) &&
-      !Event_GetFlag(FLAG_TOLD_OF_PIERS_MOTHER)) {
+      !Event_GetFlag(FLAG_MET_LUNPA)) {
     Actor_SetPosition(ACTOR_PIERS, 56, 1016);
     Actor_SetAnimation(ACTOR_PIERS, 9);
   }
@@ -1429,7 +1429,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, LEMURIA_TO_LEMURIA_ROOMS_EAST_B, CONDITION_ALWAYS,
      LEMURIA_TO_LEMURIA_ROOMS_EAST_B},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), LEMURIA_TO_LEMURIA_ROOMS_EAST_C,
-     IF_FLAG_SET(FLAG_TOLD_OF_PIERS_MOTHER), EVENT(Lemuria_EnterDoor)},
+     IF_FLAG_SET(FLAG_MET_LUNPA), EVENT(Lemuria_EnterDoor)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), LEMURIA_TO_LEMURIA_PALACE_SOUTH,
      CONDITION_ALWAYS, EVENT(Lemuria_EnterDoor)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
@@ -1502,17 +1502,14 @@ struct Trigger gSceneEvents[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_PALACE_GUARD,
      IF_FLAG_SET(FLAG_MET_KING_HYDROS),
      MSGNO(MsgLemuriaHowCouldLordConservatoExpect)},
-    {TRIGGER_TALK, ACTOR_WEST_PALACE_GUARD,
-     IF_FLAG_SET(FLAG_TOLD_OF_PIERS_MOTHER), MSGNO(MsgLemuriaKingHydrosAwaits)},
-    {TRIGGER_TALK, ACTOR_EAST_PALACE_GUARD,
-     IF_FLAG_SET(FLAG_TOLD_OF_PIERS_MOTHER),
+    {TRIGGER_TALK, ACTOR_WEST_PALACE_GUARD, IF_FLAG_SET(FLAG_MET_LUNPA),
+     MSGNO(MsgLemuriaKingHydrosAwaits)},
+    {TRIGGER_TALK, ACTOR_EAST_PALACE_GUARD, IF_FLAG_SET(FLAG_MET_LUNPA),
      MSGNO(MsgLemuriaHisHighnessKingHasInstructed)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WEST_PALACE_GUARD,
-     IF_FLAG_SET(FLAG_TOLD_OF_PIERS_MOTHER),
-     MSGNO(MsgLemuriaTheyAreClearlyUsingPsynergy)},
+     IF_FLAG_SET(FLAG_MET_LUNPA), MSGNO(MsgLemuriaTheyAreClearlyUsingPsynergy)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_EAST_PALACE_GUARD,
-     IF_FLAG_SET(FLAG_TOLD_OF_PIERS_MOTHER),
-     MSGNO(MsgLemuriaWhatDoesHisHighnessHave)},
+     IF_FLAG_SET(FLAG_MET_LUNPA), MSGNO(MsgLemuriaWhatDoesHisHighnessHave)},
     {TRIGGER_TALK, ACTOR_WEST_PALACE_GUARD, CONDITION_ALWAYS,
      MSGNO(MsgLemuriaKingIsHoldingCounsel)},
     {TRIGGER_TALK, ACTOR_EAST_PALACE_GUARD, CONDITION_ALWAYS,

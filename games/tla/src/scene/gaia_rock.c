@@ -121,7 +121,7 @@ struct Actor;
 extern struct SceneRegion gGaiaRock_SusaExitRegions[];
 extern struct SceneRegion gGaiaRock_StatueSpotsExitRegions[];
 
-void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag);
+void GaiaRock_StoneFaceBurstsOut(s32 id, s32 flag);
 
 extern struct ActorPlacement gGaiaRock_Placements[];
 extern struct ActorPlacement gGaiaRock_SusaActorPlacements[];
@@ -177,24 +177,24 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// climbing; the walkthrough says he then falls all the way down. A recording
 /// that runs on past the event would show the fall.
 void GaiaRock_ClimbOntoLowestStoneFace(void) {
-  GaiaRock_StatueRisesUnderLeader(ACTOR_FIRST_RISING_STATUE,
-                                  FLAG_FIRST_STATUE_RISEN);
+  GaiaRock_StoneFaceBurstsOut(ACTOR_FIRST_RISING_STATUE,
+                              FLAG_FIRST_STATUE_RISEN);
 }
 
 /// As GaiaRock_ClimbOntoLowestStoneFace, for the middle trap hold, a little
 /// higher and to the east: cell (113, 42) of the overhead layer, drawn at
 /// (49, 42).
 void GaiaRock_ClimbOntoMiddleStoneFace(void) {
-  GaiaRock_StatueRisesUnderLeader(ACTOR_SECOND_RISING_STATUE,
-                                  FLAG_SECOND_STATUE_RISEN);
+  GaiaRock_StoneFaceBurstsOut(ACTOR_SECOND_RISING_STATUE,
+                              FLAG_SECOND_STATUE_RISEN);
 }
 
 /// As GaiaRock_ClimbOntoLowestStoneFace, for the highest trap hold, a little
 /// west of the middle one: cell (112, 33) of the overhead layer, drawn at (48,
 /// 33).
 void GaiaRock_ClimbOntoHighestStoneFace(void) {
-  GaiaRock_StatueRisesUnderLeader(ACTOR_THIRD_RISING_STATUE,
-                                  FLAG_THIRD_STATUE_RISEN);
+  GaiaRock_StoneFaceBurstsOut(ACTOR_THIRD_RISING_STATUE,
+                              FLAG_THIRD_STATUE_RISEN);
 }
 
 #if !TLA_PATCH_1
@@ -717,7 +717,7 @@ void GaiaRock_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
 /// of stones as the screen shakes. He flails, drops onto whatever ground is
 /// under him, the view settles on him, and he is left walking rather than
 /// climbing; flag then keeps the face out.
-void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag) {
+void GaiaRock_StoneFaceBurstsOut(s32 id, s32 flag) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 gravity = leader->gravity;
   struct Actor *statue;

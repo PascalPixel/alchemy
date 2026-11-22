@@ -269,7 +269,7 @@ s32 Scene_Initialize(void) {
     Actor_GetById(ACTOR_PIERS_UNCLE)->facing = FACING_SOUTH_SOUTHEAST;
     wait(1);
   }
-  if (Event_GetFlag(FLAG_TOLD_OF_PIERS_MOTHER))
+  if (Event_GetFlag(FLAG_MET_LUNPA))
     Actor_SetPosition(ACTOR_LUNPA, 0, 0);
   return 0;
 }
@@ -865,7 +865,7 @@ void LemuriaRooms_MeetLunpa(void) {
   struct Actor *target;
   s32 result;
 
-  Event_SetFlag(FLAG_TOLD_OF_PIERS_MOTHER);
+  Event_SetFlag(FLAG_MET_LUNPA);
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgLemuriaInteriorsHonestlyImAmazedThatAnyone);
@@ -1580,8 +1580,8 @@ struct Trigger gSceneEvents[] = {
      LEMURIA_ROOMS_TO_LEMURIA_EAST_C},
     {TRIGGER_STEP, CELL_BEHAVIOR_UNCLES_DOORWAY, FLAG_PIERS_AT_MOTHERS_GRAVE,
      EVENT(LemuriaRooms_LeavePiersToMourn)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_FOOT_OF_LUNPAS_STAIRS,
-     FLAG_TOLD_OF_PIERS_MOTHER, EVENT(LemuriaRooms_MeetLunpa)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_FOOT_OF_LUNPAS_STAIRS, FLAG_MET_LUNPA,
+     EVENT(LemuriaRooms_MeetLunpa)},
     {TRIGGER_TALK, ACTOR_GIRL_WHO_NEVER_LEFT, CONDITION_ALWAYS,
      MSGNO(MsgLemuriaInteriorsIHaveNeverBeenOutside)},
     {TRIGGER_TALK, ACTOR_WOMAN_AWAITING_PIERS_TALES, CONDITION_ALWAYS,

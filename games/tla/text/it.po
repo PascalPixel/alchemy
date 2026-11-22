@@ -50260,7 +50260,7 @@ msgstr ""
 "ma non puoi scrutare\n"
 "il mio cuore.{end_wait}"
 
-msgctxt "MsgJennaWait"
+msgctxt "MsgFelixWait"
 msgid "09588"
 msgstr "{actor_name:5}, aspetta!{end_wait}"
 

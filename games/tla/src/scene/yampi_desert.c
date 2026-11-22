@@ -1,13 +1,25 @@
 /// @file
 /// The Yampi Desert, between southern Osenia and Alhafra: twelve rooms on one
 /// overlay (SceneId_YampiDesertGuardianRingChest to
-/// SceneId_YampiDesertBlowMaceChest). Travelers from Madra chasing Briggs rest
-/// at its spring; Pound sinks its stakes and Sand slips past them; the King
-/// Scorpion moves under the sand through the Psynergy Stone's room and its own,
-/// is stirred out by Pound and cornered between stakes, and drags the leader
-/// down into its pit, where it is fought for the Scoop Gem and a geyser
-/// carries the party out. Reveal shows a hint in the rocks and a hidden spot,
-/// and two chests' rooms have streams of flowing sand.
+/// SceneId_YampiDesertBlowMaceChest). In the first room Pound sinks the wooden
+/// stake before the Guardian Ring's chest. In the second, travelers from Madra
+/// chasing Briggs rest by the spring, beside a sand puddle that hides a ladder.
+/// In Blitz's room the stakes are Pounded into the sand or walked across on
+/// their tops, to the Antidote's chest and up to Blitz. Past the Psynergy
+/// Stone the King Scorpion moves under the sand: Pound on a stake makes it
+/// burst out and flee north, twice, until the stakes of the trap corner it in
+/// the ring of rocks at the north of its room. Walking up to it, Felix is
+/// dragged down with it by its Scoop into its pit and fights it for the Scoop
+/// Gem; Scoop between the pit's four rocks then opens a geyser out. Back at the
+/// spring, Scoop opens the ladder, whose cave leads up to a ledge over the
+/// travelers, who then find their way north; the next room hides 315 coins in
+/// a sand puddle, and the cave beyond it, all slides of flowing sand, holds the
+/// Hard Nut and the Blow Mace. In the long room after it Reveal changes two
+/// rings of rocks, one to a hint and one to the Lucky Medal's chest, and Lash
+/// ties the rope to the Trainer's Whip's chest; Reveal also brings out a
+/// Psynergy Stone in the room that leads on from there to the World Map.
+/// Sand lets Felix travel under the sand, past rocks and standing stakes, in
+/// most of the rooms.
 #include "djinn_ids.h"
 #include "fixed_math.h"
 #include "flags.h"
@@ -89,7 +101,7 @@
 #define FLAG_YAMPI_DESERT_BLOCKS_SHOWN FLAG_SCENE_TEMP_0D
 /// Set once Lash has tied the Trainer's Whip chest's room's rope.
 #define FLAG_YAMPI_DESERT_ROPE_TIED FLAG_SCENE_TEMP_0C
-/// Set once Scoop has dug up the treasure pit's room's treasure pit.
+/// Set once Scoop has dug up the 315 coins in the room north of the spring.
 #define FLAG_YAMPI_DESERT_TREASURE_PIT_DUG_UP FLAG_AREA_TEMP_02
 
 extern u16 gYampiDesertGuardianRingChestStakes[];
@@ -116,6 +128,30 @@ enum YampiDesertCellBehavior {
   CELL_BEHAVIOR_YAMPI_DESERT_FLOW_WEST = 12,
   CELL_BEHAVIOR_YAMPI_DESERT_FLOW_EAST = 13,
   CELL_BEHAVIOR_YAMPI_DESERT_RISE = 20
+};
+
+/// The cells the rooms' trigger tables answer, by the behaviour each room's
+/// map gives them.
+enum YampiDesertCell {
+  /// The rooms with stakes: stepping from the high ground beside the stakes,
+  /// and back down off them.
+  CELL_ONTO_STAKE_TOPS = 11,
+  CELL_OFF_STAKE_TOPS = 10,
+  /// The spring's room: the ring of cells round the sand puddle, the puddle
+  /// that hides the ladder, and the ledge over the spring.
+  CELL_AROUND_LADDER_PUDDLE = 5,
+  CELL_LADDER_PUDDLE = 10,
+  CELL_LEDGE_OVER_SPRING = 15,
+  /// The room north of the spring: the sand puddle over the 315 coins.
+  CELL_COINS_PUDDLE = 12,
+  /// The King Scorpion's room: before the ring of rocks of the trap.
+  CELL_BEFORE_TRAP = 10,
+  /// The King Scorpion's pit: the sand between its four rocks.
+  CELL_BETWEEN_FOUR_ROCKS = 10,
+  /// The Trainer's Whip's chest's room: the inner and outer corner of the
+  /// flowing sand by the invisible blocks.
+  CELL_FLOW_CORNER_INSIDE = 7,
+  CELL_FLOW_CORNER_OUTSIDE = 8
 };
 
 void Actor_SetWideSprite(s32 actor, s32 value);
@@ -163,7 +199,7 @@ static inline void YampiDesert_PlaceRope(s32 index, s32 flag, s32 post,
   Rope_Place(index, flag, post, otherPost);
 }
 
-/// Scoop's dig at a treasure pit: the hidden actor comes up and the pit's flag
+/// Scoop's dig at a buried item: the hidden item comes up and its flag
 /// is set.
 static inline void YampiDesert_ReturnHome(s32 mode, s32 actorId, s32 flag) {
   Actor_ReturnHome(mode, actorId, flag);
@@ -241,8 +277,9 @@ enum YampiDesertScorpionPitActorId {
   ACTOR_GEYSER
 };
 
-/// The room's first treasure spot: the hint in the rocks, the medal's spot, the
-/// pit's find.
+/// The room's hidden item: the Lucky Medal's chest in the Trainer's Whip's
+/// chest's room, the Psynergy Stone of the room after it, and the 315 coins
+/// under the sand puddle north of the spring.
 enum { ACTOR_HIDDEN_TREASURE = FIELD_TREASURE_ACTOR };
 
 /// The Blow Mace chest's room's actors after its stake
@@ -308,7 +345,7 @@ void YampiDesert_RevealRockHint(void);
 
 void YampiDesert_HideRockHint(void);
 
-void YampiDesert_RevealMedalSpot(void);
+void YampiDesert_RevealPsynergyStone(void);
 
 void YampiDesert_ShowBlocks(void);
 
@@ -326,7 +363,8 @@ extern struct SceneEntrance gYampiDesertSpringCaveEntrances[];
 extern s16 gYampiDesertScorpionPitExitRegions[];
 extern s16 gYampiDesertSpringCaveExitRegions[];
 
-/// Talking to Blitz, the Jupiter Djinni, starts its battle.
+/// Talking to Blitz, the Jupiter Djinni at the top of the cliff in its room,
+/// starts its battle.
 void YampiDesert_FightBlitz(void) {
   Field_RequestDjinnBattle(ACTOR_BLITZ, DJINNI_BLITZ);
 }
@@ -390,8 +428,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gYampiDesert_Placements;
 }
 
-/// Scoop on the treasure pit's room's treasure pit digs it up.
-void YampiDesert_ScoopTreasurePit(s32 mode) {
+/// Scoop on the sand puddle on the east side of the room north of the spring
+/// (cell (24, 23)) digs up 315 coins: "Felix got 315 coins."
+void YampiDesert_DigUpCoins(s32 mode) {
   YampiDesert_ReturnHome(mode, ACTOR_HIDDEN_TREASURE,
                          FLAG_YAMPI_DESERT_TREASURE_PIT_DUG_UP);
 }
@@ -503,7 +542,8 @@ void YampiDesert_TalkToElder(void) {
   Event_End();
 }
 
-/// Reads the sign: north to Alhafra, south to Air's Rock.
+/// The sign in the Trainer's Whip chest's room reads: north to Alhafra, south
+/// to Air's Rock, with a warning about what lies beyond.
 void YampiDesert_ReadSign(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -512,12 +552,17 @@ void YampiDesert_ReadSign(void) {
   Event_End();
 }
 
-/// Pound sinks one of the Guardian Ring chest's room's stakes.
+/// Pound on one of the wooden stakes of the desert's first room hammers it down
+/// into the sand; the one before the Guardian Ring's chest in the south-east
+/// corner opens the way to it.
 void YampiDesert_PoundGuardianRingChestStake(s32 mode, s32 count) {
   Pound_SinkTarget(gYampiDesertGuardianRingChestStakes, mode, count);
 }
 
-/// Pound sinks one of Blitz's room's stakes.
+/// Pound on one of the wooden stakes in Blitz's room hammers it down into the
+/// sand. The last one stands before the climbable wall that leads up to Blitz;
+/// the one below the Antidote's chest is best left standing, as its top is the
+/// way across.
 void YampiDesert_PoundBlitzStake(s32 mode, s32 count) {
   Pound_SinkTarget(gYampiDesertBlitzStakes, mode, count);
 }
@@ -531,24 +576,31 @@ void YampiDesert_PoundBlitzStake(s32 mode, s32 count) {
     }                                                                          \
   }
 
-/// Pound sinks one of the Psynergy Stone's room's stakes. As it sinks, the
-/// camera follows the King Scorpion buried in the sand until it stops roaming.
+/// Pound on one of the wooden stakes in the Psynergy Stone's room hammers it
+/// down into the sand. While the King Scorpion still roams under the sand,
+/// the camera then follows the ripple of sand over it until it stops.
 DEFINE_POUND_STAKE_STOPPING_SCORPION(YampiDesert_PoundPsynergyStoneStake,
                                      gYampiDesertPsynergyStoneStakes)
 
-/// Pound sinks the Blow Mace chest's room's stake.
+/// Pound on the wooden stake that blocks the way to the Blow Mace's chest, in
+/// the cave of sand slides, hammers it down into the sand.
 void YampiDesert_PoundBlowMaceChestStake(s32 mode, s32 count) {
   Pound_SinkTarget(gYampiDesertBlowMaceChestStakes, mode, count);
 }
 
-/// Pound sinks one of the King Scorpion's room's stakes. As it sinks, until
-/// the King Scorpion is cornered, the camera follows it under the sand until it
-/// stops roaming.
+/// Pound on one of the wooden stakes in the King Scorpion's room hammers it
+/// down into the sand. Until the King Scorpion is cornered, the camera then
+/// follows the ripple of sand over it until it stops.
 DEFINE_POUND_STAKE_STOPPING_SCORPION(YampiDesert_PoundKingScorpionStake,
                                      gYampiDesertKingScorpionStakes)
 
-/// Stepping up onto the tops of the stakes Pound has not sunk: their cells
-/// rise to the leader's height and can be walked on.
+/// Nothing visible happens when Felix steps from the high ground onto the
+/// cells beside the stakes in Blitz's room, the Psynergy Stone's or the King
+/// Scorpion's; the game makes the tops of the stakes still standing into
+/// squares he hops across at his height, so that a row of standing stakes is a
+/// way over the sand.
+/// Each stake's cell gives up its wall and takes the hop flag, and its height
+/// rises by four steps.
 void YampiDesert_StepOntoStakeTops(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   u16 *list = NULL;
@@ -588,7 +640,8 @@ void YampiDesert_StepOntoStakeTops(void) {
   GameFlag_Set(FLAG_YAMPI_DESERT_ON_STAKE_TOPS);
 }
 
-/// Stepping down off the stakes' tops: the standing stakes block the way again.
+/// Nothing visible happens when Felix steps back down off the stakes' tops; the
+/// game makes the standing stakes walls again at ground level.
 void YampiDesert_StepOffStakeTops(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   u16 *list = NULL;
@@ -655,8 +708,11 @@ void YampiDesert_OpenStakeCells(u16 *list) {
   }
 }
 
-/// Sand sinks the leader into the overhead layer, where the sunk stakes are
-/// walls.
+/// As Sand melts Felix into the sand, so that he can travel under it past
+/// rocks and standing stakes, the stakes Pound has hammered down still bar his
+/// way underground.
+/// He moves on the map's top layer while sunk, and each sunk stake's cell
+/// there is made a wall.
 void YampiDesert_CastSand(void) {
   s16 scene;
 
@@ -672,7 +728,8 @@ void YampiDesert_CastSand(void) {
     YampiDesert_BlockPoundedStakes(gYampiDesertKingScorpionStakes);
 }
 
-/// The leader rises out of the sand.
+/// As Sand ends and Felix rises out of the sand, the sunk stakes' cells are
+/// sand again under him.
 void YampiDesert_EndSand(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s16 scene;
@@ -689,7 +746,9 @@ void YampiDesert_EndSand(void) {
     YampiDesert_OpenStakeCells(gYampiDesertKingScorpionStakes);
 }
 
-/// The camera follows the buried King Scorpion until it stops roaming.
+/// After a stake is Pounded while the King Scorpion roams under the sand,
+/// the camera follows the ripple of sand over it until it stops, then
+/// returns to Felix.
 void YampiDesert_WatchScorpionStop(void) {
   s16 scene;
 
@@ -746,8 +805,9 @@ void YampiDesert_BurstSand(s32 x, s32 y, s32 z) {
   }
 }
 
-/// Pound on a stake of the Psynergy Stone's room: the King Scorpion moving
-/// under the sand bursts out and flees into its own room.
+/// When the King Scorpion, roaming under the sand of the Psynergy Stone's room,
+/// stops against the stake Pound has hammered down, it bursts out of the sand
+/// with a spray, scuttles east and burrows away into the next room.
 void YampiDesert_StirScorpion(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -783,8 +843,9 @@ void YampiDesert_StirScorpion(void) {
   Event_End();
 }
 
-/// As YampiDesert_StirScorpion, in the King Scorpion's room, where it flees
-/// north.
+/// When the King Scorpion, roaming under the sand of the south part of its
+/// own room, stops against the stake Pound has hammered down, it bursts out of
+/// the sand with a spray and scuttles north, burrowing away towards the trap.
 void YampiDesert_StirScorpionAgain(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -820,8 +881,9 @@ void YampiDesert_StirScorpionAgain(void) {
   Event_End();
 }
 
-/// Pounded out of the sand, the King Scorpion runs north into the trap and is
-/// cornered there.
+/// When the stakes of the trap have shut the King Scorpion's way, the camera
+/// follows its ripple of sand north into the ring of rocks at the north end of
+/// its room, where it stops, cornered.
 void YampiDesert_CornerScorpion(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -873,8 +935,11 @@ void YampiDesert_RaiseSandCloud(void) {
   MapGrid_CopyCellPictureIndicesRect(74, 71, 77, 9, 3, 3);
 }
 
-/// The trapped scorpion uses Scoop, the leader falls with it, and the King
-/// Scorpion's battle begins.
+/// Walking up to the cornered King Scorpion in the ring of rocks at the north
+/// of its room (cell (14, 13)): its ripple of sand pulses, Felix stops with a
+/// question mark, and the scorpion bursts out before him and uses Scoop. Felix
+/// staggers back, raises his arms and sinks into the hole with it, and they
+/// drop into its pit below, where its battle begins.
 void YampiDesert_TrapKingScorpion(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *scorpion =
@@ -970,8 +1035,10 @@ void YampiDesert_TrapKingScorpion(void) {
       YAMPI_DESERT_KING_SCORPION_TO_YAMPI_DESERT_SCORPION_PIT);
 }
 
-/// Scoop on the sand pit between the four rocks.
-void YampiDesert_ScoopCenterPit(s32 mode) {
+/// Scoop on the sand between the four rocks in the middle of the King
+/// Scorpion's pit (cell (14, 12)) opens a geyser there, a column of water that
+/// rises and falls and carries the party up and out of the pit.
+void YampiDesert_OpenGeyser(s32 mode) {
   struct Actor *actor;
   s32 height;
 
@@ -999,7 +1066,13 @@ s32 YampiDesert_CellCenter(s32 cell) {
                                            INTtoFIXED(x_), INTtoFIXED(z_));    \
   }
 
-/// Reveal shows the hint in the rocks of the Trainer's Whip chest's room.
+/// Reveal cast in the long room of the Trainer's Whip's chest changes two
+/// rings of rocks while it lasts: the first (cells (15, 40) to (19, 45)) into
+/// a hint, and the second (cells (36, 25) to (40, 29)) to show the Lucky
+/// Medal's chest in its middle. If Felix stands where a rock now appears, he
+/// is moved to the nearest open cell.
+// XXX: what the hint in the first ring shows; a recording of Reveal cast by
+// those rocks would settle it.
 void YampiDesert_RevealRockHint(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *actor = Actor_GetById(ACTOR_HIDDEN_TREASURE);
@@ -1042,7 +1115,9 @@ void YampiDesert_RevealRockHint(void) {
                                            INTtoFIXED(z));                     \
   }
 
-/// As Reveal fades, the Trainer's Whip chest's room's hint is hidden again.
+/// As Reveal fades in the Trainer's Whip's chest's room, both rings of rocks
+/// go back as they were and the Lucky Medal's chest is hidden again; Felix is
+/// moved off any cell a rock returns to.
 void YampiDesert_HideRockHint(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 column = FIELD_CELL(leader->x.fixed);
@@ -1066,8 +1141,13 @@ void YampiDesert_HideRockHint(void) {
   }
 }
 
-/// Reveal shows the hidden spot of the medal spot's room.
-void YampiDesert_RevealMedalSpot(void) {
+/// Reveal cast in the room that leads on from the Trainer's Whip's chest's room
+/// to the World Map brings out a hidden Psynergy Stone at cell (18, 15),
+/// moving Felix a cell south if he stands on its spot.
+// XXX: whether the stone stays to be touched once Reveal fades
+// (YampiDesert_HidePsynergyStone puts it away); a recording of Reveal cast
+// there would show it.
+void YampiDesert_RevealPsynergyStone(void) {
   struct Actor *actor = Actor_GetById(ACTOR_HIDDEN_TREASURE);
   struct Actor *leader;
 
@@ -1082,20 +1162,22 @@ void YampiDesert_RevealMedalSpot(void) {
   }
 }
 
-/// As Reveal fades, the medal spot's room's hidden spot is covered again.
-void YampiDesert_HideMedalSpot(void) {
+/// As Reveal fades, the hidden Psynergy Stone of the room that leads on to the
+/// World Map is put away again.
+void YampiDesert_HidePsynergyStone(void) {
   if (Actor_GetById(ACTOR_HIDDEN_TREASURE))
     Actor_SetPosition(ACTOR_HIDDEN_TREASURE, 0, 0);
 }
 
-/// Opens the sand pit over the ladder by the spring.
+/// Opens the hole over the ladder in the spring's sand puddle.
 void YampiDesert_OpenLadderPit(void) {
   MapGrid_CopyCellPictureIndicesRect(64, 64, 72, 32, 1, 1);
   Map_CopyCellAttributeRect(64, 64, 1, 1, 8, 32);
   Map_CopyCellAttributeRect(64, 64, 1, 1, 8, 96);
 }
 
-/// Scoop on the sand pit that hides the ladder.
+/// Scoop on the oddly shaped sand puddle at the south of the travelers'
+/// spring's room (cell (8, 32)) digs it out to show a ladder going down.
 void YampiDesert_ScoopLadderPit(s32 mode) {
   if (mode == 1) {
     YampiDesert_OpenLadderPit();
@@ -1116,13 +1198,21 @@ void YampiDesert_SetBlocksShown(s32 show) {
                         ACTOR_BLOW_MACE_CHEST_ROOM_FIRST_BLOCK + 1);
 }
 
-/// Shows the room's unseen blocks.
+/// Nothing visible happens when Felix steps onto the sand round the corner of
+/// the flowing sand in the Trainer's Whip's chest's room (cells (48, 23) to
+/// (51, 23) and (48, 24) to (48, 26)); the game puts two invisible blocks in
+/// place at cells (51, 26) and (51, 27).
+// XXX: which way the blocks stop Felix from going, and why only from outside
+// the corner; a recording of walking there would settle it.
 void YampiDesert_ShowBlocks(void) {
   YampiDesert_SetBlocksShown(1);
   GameFlag_Set(FLAG_YAMPI_DESERT_BLOCKS_SHOWN);
 }
 
-/// Hides the room's unseen blocks.
+/// Nothing visible happens when Felix steps onto the inner corner of the
+/// flowing sand in the Trainer's Whip's chest's room (cells (49, 24) to
+/// (51, 24) and (49, 25)); the game takes the two invisible blocks at cells
+/// (51, 26) and (51, 27) away.
 void YampiDesert_HideBlocks(void) {
   YampiDesert_SetBlocksShown(0);
   GameFlag_Clear(FLAG_YAMPI_DESERT_BLOCKS_SHOWN);
@@ -1134,8 +1224,10 @@ extern u32 gYampiDesert_MayorRunsAhead[];
 extern u32 gYampiDesert_TravelersFollow[];
 extern u32 gYampiDesert_LastTravelersFollow[];
 
-/// From the ledge, the party is seen by the travelers at the spring below, who
-/// find their way through.
+/// Stepping out onto the ledge above the travelers' spring (cells (15, 12)
+/// and (16, 12)), the party is seen from below: "Hey! Look! Up there!" The
+/// travelers wonder how they got up there, the mayor finds the way, and they
+/// all run off along it.
 void YampiDesert_TravelersLookUp(s32 p0) {
   struct MainRoutineWork *state;
 
@@ -1979,7 +2071,9 @@ void YampiDesert_ClimbDownLadder(struct Actor *actor, s32 x, s32 z, s32 exit) {
   Import_EventSetExitRequest(exit);
 }
 
-/// Climbing down the ladder Scoop has dug up, into the cave under the spring.
+/// Walking into the hole Scoop has dug in the sand puddle at the south of the
+/// spring's room (cell (8, 32)), holding the pad towards it, Felix climbs down
+/// its ladder, facing north, into the cave under the spring.
 void YampiDesert_ClimbRevealedLadder(void) {
   struct Actor *actor;
   s32 x;
@@ -2007,8 +2101,8 @@ void YampiDesert_ClimbRevealedLadder(void) {
   }
 }
 
-/// Climbs down from the small chamber of the cave under the spring to the
-/// cave below.
+/// Walking north into the ladder of the small chamber of the cave under the
+/// spring, Felix climbs down it to the cave below.
 void YampiDesert_ClimbDownSpringCaveLadder(void) {
   YampiDesert_ClimbDownLadder(Actor_GetById(gMainRoutineWork.leaderActorId),
                               408, 432, 2);
@@ -2274,7 +2368,7 @@ void YampiDesert_SetUpKingScorpion(void) {
   }
 }
 
-/// Sets up the treasure pit's room: its treasure stays hidden until it is dug
+/// Sets up the room north of the spring: its 315 coins stay hidden until dug
 /// up.
 void YampiDesert_SetUpTreasurePit(void) {
   FieldEffect_StartBlankOverlay(0);
@@ -2327,7 +2421,8 @@ void YampiDesert_SetUpTrainersWhipChest(void) {
 #endif
 }
 
-/// Sets up the medal spot's room, and the way in it was entered by.
+/// Sets up the room of the hidden Psynergy Stone, and the way in it was entered
+/// by.
 void YampiDesert_SetUpMedalSpot(void) {
   if (Actor_GetById(ACTOR_HIDDEN_TREASURE) != 0)
     Actor_SetPosition(ACTOR_HIDDEN_TREASURE, 0, 0);
@@ -2691,7 +2786,7 @@ void YampiDesert_FightBlitz(void);
 void YampiDesert_TalkToTraveler(void);
 void YampiDesert_TalkToElderAboutWay(void);
 void YampiDesert_StepOntoStakeTops(void);
-void YampiDesert_HideMedalSpot(void);
+void YampiDesert_HidePsynergyStone(void);
 void YampiDesert_HideBlocks(void);
 
 LATE_DATA const s32 *gFieldEffect_DurationScripts[] = {
@@ -3029,10 +3124,10 @@ LATE_DATA struct Trigger gYampiDesertSpringTriggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {STEP_TRIGGER_WALKING, 5, CONDITION_ALWAYS, EVENT(YampiDesert_ClimbRevealedLadder)},
+    {STEP_TRIGGER_WALKING, CELL_AROUND_LADDER_PUDDLE, CONDITION_ALWAYS, EVENT(YampiDesert_ClimbRevealedLadder)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_EndSand)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 10, FLAG_YAMPI_DESERT_LADDER_DUG_UP, EVENT(YampiDesert_ScoopLadderPit)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), CELL_LADDER_PUDDLE, FLAG_YAMPI_DESERT_LADDER_DUG_UP, EVENT(YampiDesert_ScoopLadderPit)},
     {TRIGGER_TALK, ACTOR_TRAVELER_FOLLOWING_THE_PIRATES, FLAG_YAMPI_DESERT_TRAVELERS_MET, EVENT(YampiDesert_TalkToTraveler)},
     {TRIGGER_TALK, ACTOR_TRAVELER_FOLLOWING_THE_PIRATES, CONDITION_ALWAYS, MSGNO(MsgAtLastWe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRAVELER_FOLLOWING_THE_PIRATES, FLAG_YAMPI_DESERT_TRAVELERS_MET, MSGNO(MsgBriggsAndThe)},
@@ -3063,7 +3158,7 @@ LATE_DATA struct Trigger gYampiDesertSpringTriggers[] = {
     {TRIGGER_TALK, ACTOR_MAYOR, CONDITION_ALWAYS, MSGNO(MsgIfWeRemain)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAYOR, FLAG_YAMPI_DESERT_TRAVELERS_MET, MSGNO(MsgMyFatherS)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAYOR, CONDITION_ALWAYS, MSGNO(MsgHoooICan)},
-    {TRIGGER_STEP, 15, FLAG_YAMPI_DESERT_TRAVELERS_MET, EVENT(YampiDesert_TravelersLookUp)},
+    {TRIGGER_STEP, CELL_LEDGE_OVER_SPRING, FLAG_YAMPI_DESERT_TRAVELERS_MET, EVENT(YampiDesert_TravelersLookUp)},
     {TRIGGER_TABLE_END},
 };
 
@@ -3082,8 +3177,8 @@ LATE_DATA struct Trigger gYampiDesertBlitzTriggers[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(8), FLAG_YAMPI_DESERT_STAKE_POUNDED(8), EVENT(YampiDesert_PoundBlitzStake)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(9), FLAG_YAMPI_DESERT_STAKE_POUNDED(9), EVENT(YampiDesert_PoundBlitzStake)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(10), FLAG_YAMPI_DESERT_STAKE_POUNDED(10), EVENT(YampiDesert_PoundBlitzStake)},
-    {TRIGGER_STEP, 11, FLAG_YAMPI_DESERT_ON_STAKE_TOPS, EVENT(YampiDesert_StepOntoStakeTops)},
-    {TRIGGER_STEP, 10, IF_FLAG_SET(FLAG_YAMPI_DESERT_ON_STAKE_TOPS), EVENT(YampiDesert_StepOffStakeTops)},
+    {TRIGGER_STEP, CELL_ONTO_STAKE_TOPS, FLAG_YAMPI_DESERT_ON_STAKE_TOPS, EVENT(YampiDesert_StepOntoStakeTops)},
+    {TRIGGER_STEP, CELL_OFF_STAKE_TOPS, IF_FLAG_SET(FLAG_YAMPI_DESERT_ON_STAKE_TOPS), EVENT(YampiDesert_StepOffStakeTops)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_EndSand)},
     {TRIGGER_TALK, ACTOR_BLITZ, CONDITION_ALWAYS, EVENT(YampiDesert_FightBlitz)},
@@ -3100,8 +3195,8 @@ LATE_DATA struct Trigger gYampiDesertPsynergyStoneTriggers[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(1), FLAG_YAMPI_DESERT_STAKE_POUNDED(1), EVENT(YampiDesert_PoundPsynergyStoneStake)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(2), FLAG_YAMPI_DESERT_STAKE_POUNDED(2), EVENT(YampiDesert_PoundPsynergyStoneStake)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), STAKE(3), FLAG_YAMPI_DESERT_STAKE_POUNDED(3), EVENT(YampiDesert_PoundPsynergyStoneStake)},
-    {TRIGGER_STEP, 11, FLAG_YAMPI_DESERT_ON_STAKE_TOPS, EVENT(YampiDesert_StepOntoStakeTops)},
-    {TRIGGER_STEP, 10, IF_FLAG_SET(FLAG_YAMPI_DESERT_ON_STAKE_TOPS), EVENT(YampiDesert_StepOffStakeTops)},
+    {TRIGGER_STEP, CELL_ONTO_STAKE_TOPS, FLAG_YAMPI_DESERT_ON_STAKE_TOPS, EVENT(YampiDesert_StepOntoStakeTops)},
+    {TRIGGER_STEP, CELL_OFF_STAKE_TOPS, IF_FLAG_SET(FLAG_YAMPI_DESERT_ON_STAKE_TOPS), EVENT(YampiDesert_StepOffStakeTops)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_EndSand)},
     {TRIGGER_RAISED, RAISED_WATCH_SCORPION_STOP, CONDITION_ALWAYS, EVENT(YampiDesert_WatchScorpionStop)},
@@ -3122,17 +3217,17 @@ LATE_DATA struct Trigger gYampiDesertKingScorpionTriggers[] = {
     {TRIGGER_RAISED, RAISED_WATCH_SCORPION_STOP, FLAG_YAMPI_DESERT_SCORPION_CORNERED, EVENT(YampiDesert_WatchScorpionStop)},
     {TRIGGER_RAISED, RAISED_STIR_SCORPION_AGAIN, CONDITION_ALWAYS, EVENT(YampiDesert_StirScorpionAgain)},
     {TRIGGER_RAISED, RAISED_CORNER_SCORPION, CONDITION_ALWAYS, EVENT(YampiDesert_CornerScorpion)},
-    {TRIGGER_STEP, 10, FLAG_KING_SCORPION_BEATEN, EVENT(YampiDesert_TrapKingScorpion)},
+    {TRIGGER_STEP, CELL_BEFORE_TRAP, FLAG_KING_SCORPION_BEATEN, EVENT(YampiDesert_TrapKingScorpion)},
     {TRIGGER_TABLE_END},
 };
 
-/// The treasure pit's triggers.
+/// The triggers of the room north of the spring, with the 315 coins.
 LATE_DATA struct Trigger gYampiDesertTreasurePitTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_EndSand)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 12, FLAG_YAMPI_DESERT_TREASURE_PIT_DUG_UP, EVENT(YampiDesert_ScoopTreasurePit)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), CELL_COINS_PUDDLE, FLAG_YAMPI_DESERT_TREASURE_PIT_DUG_UP, EVENT(YampiDesert_DigUpCoins)},
     {TRIGGER_TABLE_END},
 };
 
@@ -3157,17 +3252,17 @@ LATE_DATA struct Trigger gYampiDesertTrainersWhipChestTriggers[] = {
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(YampiDesert_RevealRockHint)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_HideRockHint)},
     {TRIGGER_TALK, ACTOR_SIGN, CONDITION_ALWAYS, EVENT(YampiDesert_ReadSign)},
-    {TRIGGER_STEP, 7, IF_FLAG_SET(FLAG_YAMPI_DESERT_BLOCKS_SHOWN), EVENT(YampiDesert_HideBlocks)},
-    {TRIGGER_STEP, 8, FLAG_YAMPI_DESERT_BLOCKS_SHOWN, EVENT(YampiDesert_ShowBlocks)},
+    {TRIGGER_STEP, CELL_FLOW_CORNER_INSIDE, IF_FLAG_SET(FLAG_YAMPI_DESERT_BLOCKS_SHOWN), EVENT(YampiDesert_HideBlocks)},
+    {TRIGGER_STEP, CELL_FLOW_CORNER_OUTSIDE, FLAG_YAMPI_DESERT_BLOCKS_SHOWN, EVENT(YampiDesert_ShowBlocks)},
     {TRIGGER_TABLE_END},
 };
 
-/// The medal spot's room's triggers.
+/// The triggers of the room of the hidden Psynergy Stone.
 LATE_DATA struct Trigger gYampiDesertMedalSpotTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(YampiDesert_RevealMedalSpot)},
-    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_HideMedalSpot)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(YampiDesert_RevealPsynergyStone)},
+    {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_HidePsynergyStone)},
     {TRIGGER_TABLE_END},
 };
 
@@ -3175,7 +3270,7 @@ LATE_DATA struct Trigger gYampiDesertMedalSpotTriggers[] = {
 LATE_DATA struct Trigger gYampiDesertScorpionPitTriggers[] = {
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_EndSand)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 10, FLAG_YAMPI_DESERT_ROCK_PIT_DUG_UP, EVENT(YampiDesert_ScoopCenterPit)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), CELL_BETWEEN_FOUR_ROCKS, FLAG_YAMPI_DESERT_ROCK_PIT_DUG_UP, EVENT(YampiDesert_OpenGeyser)},
     {TRIGGER_TABLE_END},
 };
 

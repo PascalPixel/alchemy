@@ -511,7 +511,7 @@ void DailaRooms_TalkCaughtPracticing(void) {
   Event_End();
 }
 
-#include "shared/scene_raise_held_actor.h"
+#include "shared/scene_freeze_puddle_into_pillar.h"
 
 void ItemDisplay_ShowPicture(struct Actor *actor, s32 mode);
 void Actor_StartIdle(struct Actor *actor);
@@ -1092,9 +1092,9 @@ struct Trigger gDailaRooms_SanctumEventsOnceTaviIsRescued[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_SOUTH_OF_PUDDLE, CONDITION_ALWAYS, EVENT(DailaRooms_JumpForward)},
     {TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT(DailaRooms_TalkToHealerOnceTaviIsRescued)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsBoringVillage)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE, FLAG_DAILA_SANCTUARY_PUDDLE_FROZEN_FIRST + 0, EVENT(Scene_RaiseHeldActor)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SECOND_PUDDLE, FLAG_DAILA_SANCTUARY_PUDDLE_FROZEN_FIRST + 1, EVENT(Scene_RaiseHeldActor)},
-    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_THIRD_PUDDLE, FLAG_DAILA_SANCTUARY_PUDDLE_FROZEN_FIRST + 2, EVENT(Scene_RaiseHeldActor)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE, FLAG_DAILA_SANCTUARY_PUDDLE_FROZEN_FIRST + 0, EVENT(Scene_FreezePuddleIntoPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SECOND_PUDDLE, FLAG_DAILA_SANCTUARY_PUDDLE_FROZEN_FIRST + 1, EVENT(Scene_FreezePuddleIntoPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_THIRD_PUDDLE, FLAG_DAILA_SANCTUARY_PUDDLE_FROZEN_FIRST + 2, EVENT(Scene_FreezePuddleIntoPillar)},
     {TRIGGER_EXAMINE, CELL_SEA_GODS_TEAR, FLAG_SEA_GODS_TEAR_TAKEN, EVENT(DailaRooms_TakeSeaGodsTear)},
     {TRIGGER_TABLE_END},
 };

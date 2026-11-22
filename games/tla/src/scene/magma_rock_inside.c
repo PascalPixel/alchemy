@@ -2708,7 +2708,7 @@ s32 MapCollision_FindOrAddTag(s32 unused, s32 key, s32 value);
 // leader onto the ground under it.
 #include "shared/pillar_restore_raised.h"
 
-#include "shared/traps_check.h"
+#include "shared/leader_check_crumbling_step.h"
 
 /// A crumbling pillar named in the (actor, flag) table gives way with a shake,
 /// rubble and a thump.

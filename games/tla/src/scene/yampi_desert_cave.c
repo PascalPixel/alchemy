@@ -93,6 +93,19 @@ enum YampiDesertCaveTeleportCircle {
   SOUTH_CIRCLE_ENTRANCE = 10
 };
 
+/// The cells the rooms' trigger tables answer, by the behaviour the maps give
+/// them: round the logs, the Water of Life chest room's pillar Burst breaks,
+/// the stretch of sand in Crystal's room the ripple races over (cells (46, 14)
+/// on, which Burst and Scoop both answer on), before Valukar, and over the
+/// buried Mythril Silver.
+enum YampiDesertCaveCell {
+  CELL_AROUND_LOG = 42,
+  CELL_BURST_PILLAR = 33,
+  CELL_RIPPLE_SAND = 33,
+  CELL_BEFORE_VALUKAR = 52,
+  CELL_MYTHRIL_SILVER = 100
+};
+
 /// Valukar's room's actors (SceneId_YampiDesertCaveGuardian).
 enum YampiDesertCaveGuardianActorId {
   /// The stone pillar Move pushes (SPRITE_STONE_PILLAR).
@@ -144,7 +157,8 @@ void YampiDesertCave_FightCrystal(void);
 
 void YampiDesertCave_WonderAtRipple(void);
 
-/// The leader pushes the log ahead, if it can slide.
+/// Walking against one of the logs lying in the inner cave or in Crystal's
+/// room pushes it, and it rolls on until it meets a wall or another log.
 void YampiDesertCave_TryPushLog(void);
 
 void YampiDesertCave_TeleportFromNorthCircle(void);
@@ -549,14 +563,16 @@ void YampiDesertCave_PlaceStakes(const u16 *list) {
 
 #include "shared/actor_set_cell_open.h"
 
-/// Talking to Crystal, the Venus Djinni Scoop dug up, starts its battle.
+/// Talking to Crystal, the Venus Djinni Scoop has dug out of the sand, starts
+/// its battle.
 void YampiDesertCave_FightCrystal(void) {
   Event_SetFlag(FLAG_YAMPI_DESERT_CAVE_CRYSTAL_DUG_UP);
   Event_RequestDjinnBattle(ACTOR_CRYSTAL, DJINNI_CRYSTAL);
   return;
 }
 
-/// Talking to the ripple racing through the sand only puzzles the leader.
+/// Talking to the ripple racing through the sand of Crystal's room only puts a
+/// question mark over Felix's head.
 void YampiDesertCave_WonderAtRipple(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -600,11 +616,15 @@ void YampiDesertCave_TryPushLog(void) {
     Teleport_StopShimmer();                                                    \
   }
 
-/// Teleport cast on the north circle carries the party to the south circle.
+/// Teleport cast on the pale carved circle in the small round chamber at the
+/// north of the cave's first room (cells (14, 7) to (17, 9)) makes the circle
+/// shimmer and carries the party to the circle in the inner cave.
 DEFINE_TELEPORT_FROM_CIRCLE(YampiDesertCave_TeleportFromNorthCircle,
                             SOUTH_CIRCLE_ENTRANCE)
 
-/// Teleport cast on the south circle carries the party to the north circle.
+/// Teleport cast on the carved circle in the inner cave (cells (21, 56) to
+/// (24, 58)) makes it shimmer and carries the party back to the circle in the
+/// small chamber of the cave's first room, near the Water of Life's chest.
 DEFINE_TELEPORT_FROM_CIRCLE(YampiDesertCave_TeleportFromSouthCircle,
                             NORTH_CIRCLE_ENTRANCE)
 
@@ -695,7 +715,8 @@ void YampiDesertCave_FinishMovingPillar(s32 unused, s32 id) {
   }
 }
 
-/// Sand: the leader sinks into the sand and the rooms' sand-only cells open.
+/// As Sand melts Felix into the sand, the ways only a sunk Felix can take open
+/// in the Water of Life chest's room and in Crystal's room.
 void YampiDesertCave_CastSand(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->layer = MAPGRID_LAYER_OVERHEAD;
   if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST) {
@@ -712,7 +733,7 @@ void YampiDesertCave_CastSand(void) {
   }
 }
 
-/// Sand fades: the leader rises and the cells close again.
+/// As Sand fades and Felix rises out of the sand, those ways close again.
 void YampiDesertCave_EndSand(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->layer = MAPGRID_LAYER_GROUND;
   if (gMainRoutineWork.next == SCENE_YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST)
@@ -724,7 +745,8 @@ void YampiDesertCave_EndSand(void) {
   }
 }
 
-/// Pound sinks the stake in Crystal's room and opens its cell.
+/// Pound on the wooden stake in Crystal's room hammers it into the ground and
+/// opens the way past it.
 void YampiDesertCave_PoundStake(s32 mode, s32 count) {
   Pound_SinkTarget(gYampiDesertCaveCrystalStakes, mode, count);
   MapGrid_CopyCellAttributes(47, 12, 1, 1, 46, 12);
@@ -750,8 +772,11 @@ void YampiDesertCave_MoveSandRipple(void) {
   }
 }
 
-/// Scoop on the ripple's cell stops it (mode 1) and digs up Crystal, who
-/// drops to the ground (mode 2).
+/// Scoop cast right beside the ripple racing through the sand of Crystal's
+/// room stops it and digs up Crystal, the Venus Djinni, who drops to the
+/// ground.
+/// The ripple is stopped as Scoop acts (mode 1) and Crystal set down as it
+/// ends (mode 2).
 void YampiDesertCave_ScoopDjinni(s32 mode) {
   s32 index =
       (((s32)GameFlag_GetByte(FLAG_BYTE_YAMPI_DESERT_CAVE_RIPPLE_STEP)) /
@@ -799,8 +824,10 @@ void YampiDesertCave_ScoopDjinni(s32 mode) {
   }
 }
 
-/// Valukar, the guardian of fire, speaks in a warm glow and comes at the
-/// leader, and its battle begins; there is no escape from it.
+/// Stepping up to Valukar in his chamber (cells (11, 11) to (13, 11)), the
+/// screen glows warm as he says "I am the guardian of fire. If you want my
+/// power, prove yourself in my crucible of flame.", then he comes at Felix and
+/// his battle begins, one the party cannot run from.
 void YampiDesertCave_MeetGuardianOfFire(void) {
   struct Actor *leader;
 
@@ -830,7 +857,9 @@ void YampiDesertCave_MeetGuardianOfFire(void) {
                                         HIDDEN_BOSS_VALUKAR);
 }
 
-/// Scoop on its cell digs up the Mythril Silver buried in Valukar's room.
+/// Scoop at the west end of a passage in the part of the inner cave below
+/// Valukar's chamber (cell (5, 38)) digs up the Mythril Silver: "Felix got
+/// some Mythril Silver."
 void YampiDesertCave_DigUpMythrilSilver(s32 mode) {
   Event_DigUpTreasure(mode, ACTOR_MYTHRIL_SILVER,
                       FLAG_YAMPI_DESERT_CAVE_MYTHRIL_SILVER_DUG_UP);
@@ -1143,10 +1172,10 @@ struct Trigger gYampiDesertCave_Triggers[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {STEP_TRIGGER_WALKING, 42, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING, CELL_AROUND_LOG, CONDITION_ALWAYS,
      EVENT(YampiDesertCave_TryPushLog)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 33,
-     FLAG_YAMPI_DESERT_CAVE_CHEST_ROOM_PILLAR_BURST,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
+     CELL_BURST_PILLAR, FLAG_YAMPI_DESERT_CAVE_CHEST_ROOM_PILLAR_BURST,
      EVENT(YampiDesertCave_BurstChestRoomPillar)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST),
      NORTH_CIRCLE_CELLS, CONDITION_ALWAYS,
@@ -1170,7 +1199,7 @@ struct Trigger gYampiDesertCaveGuardianTriggers[] = {
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 17, CONDITION_ALWAYS, 17},
-    {TRIGGER_STEP, 52, FLAG_VALUKAR_BEATEN,
+    {TRIGGER_STEP, CELL_BEFORE_VALUKAR, FLAG_VALUKAR_BEATEN,
      EVENT(YampiDesertCave_MeetGuardianOfFire)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_GUARDIAN_ROOM_PILLAR, FLAG_YAMPI_DESERT_CAVE_GUARDIAN_PILLAR_MOVED,
@@ -1182,8 +1211,8 @@ struct Trigger gYampiDesertCaveGuardianTriggers[] = {
      CONDITION_ALWAYS, EVENT(YampiDesertCave_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
      EVENT(YampiDesertCave_EndSand)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 100,
-     FLAG_YAMPI_DESERT_CAVE_MYTHRIL_SILVER_DUG_UP,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS),
+     CELL_MYTHRIL_SILVER, FLAG_YAMPI_DESERT_CAVE_MYTHRIL_SILVER_DUG_UP,
      EVENT(YampiDesertCave_DigUpMythrilSilver)},
     {TRIGGER_TABLE_END},
 };
@@ -1208,10 +1237,10 @@ struct Trigger gYampiDesertCaveCrystalTriggers[] = {
      EVENT(YampiDesertCave_WonderAtRipple)},
     {TRIGGER_TALK, ACTOR_CRYSTAL, CONDITION_ALWAYS,
      EVENT(YampiDesertCave_FightCrystal)},
-    {STEP_TRIGGER_WALKING, 42, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING, CELL_AROUND_LOG, CONDITION_ALWAYS,
      EVENT(YampiDesertCave_TryPushLog)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 33,
-     FLAG_YAMPI_DESERT_CAVE_CRYSTAL_ROOM_PILLAR_BURST,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
+     CELL_RIPPLE_SAND, FLAG_YAMPI_DESERT_CAVE_CRYSTAL_ROOM_PILLAR_BURST,
      EVENT(YampiDesertCave_BurstCrystalRoomPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_EAST_PILLAR, FLAG_YAMPI_DESERT_CAVE_EAST_PILLAR_MOVED,
@@ -1235,8 +1264,8 @@ struct Trigger gYampiDesertCaveCrystalTriggers[] = {
      CONDITION_ALWAYS, EVENT(YampiDesertCave_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
      EVENT(YampiDesertCave_EndSand)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 33,
-     IF_FLAG_SET(FLAG_YAMPI_DESERT_CAVE_RIPPLE_RUNNING),
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS),
+     CELL_RIPPLE_SAND, IF_FLAG_SET(FLAG_YAMPI_DESERT_CAVE_RIPPLE_RUNNING),
      EVENT(YampiDesertCave_ScoopDjinni)},
     {TRIGGER_TABLE_END},
 };

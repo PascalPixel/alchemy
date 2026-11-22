@@ -4,8 +4,9 @@
 #ifndef ALCHEMY_GAIA_ROCK_H
 #define ALCHEMY_GAIA_ROCK_H
 
-/// The rocks (SPRITE_ROCK) that burst out as a statue rises under the leader
-/// (GaiaRock_StatueRisesUnderLeader and GaiaRockInside_StatueRisesUnderLeader).
+/// The rocks (SPRITE_ROCK) that burst out with a stone face from the wall under
+/// the leader (GaiaRock_StoneFaceBurstsOut and
+/// GaiaRockInside_StoneHeadBurstsOut).
 #define STATUE_ROCKS 16
 
 #endif

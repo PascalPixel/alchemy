@@ -465,7 +465,7 @@ void BattleEffect_RunMegaera(struct BattleEffectParams *args) {
       position.y = toFIXED(72);
       velocity.x = toFIXED(9);
       velocity.y = -toFIXED(2);
-      BattleEffect_SpawnObjects(MEGAERA_SWORDS, 657, 2);
+      BattleEffect_SpawnObjects(MEGAERA_SWORDS, SPRITE_MEGAERA_SWORD, 2);
     }
     if (frame == MEGAERA_SWOOP_FRAME) {
       Sprite_DestroyFar(work->sprites[0]);

@@ -667,8 +667,8 @@ s32 Actor_MoveAsSand(struct Actor *actor) {
     // While the leader moves, a puff of sand is left behind every fifth
     // frame.
     if (actor->wakeTimer == 0 && collision == 0) {
-      effect = Actor_Create(WORLD_MAP_SPRITE_WAKE, actor->x.fixed,
-                            actor->y.fixed, actor->z.fixed - toFIXED(2));
+      effect = Actor_Create(SPRITE_SAND_PUFF, actor->x.fixed, actor->y.fixed,
+                            actor->z.fixed - toFIXED(2));
       if (effect != NULL) {
         effect->groundHeight = actor->groundHeight;
         sprite = effect->sprite;
@@ -706,8 +706,8 @@ done:
 /// (the Sand Psynergy). Moves the object on the world map by the direction pad
 /// at a fixed pace (faster while L repeats), trying six turned headings when
 /// the way is blocked, as Actor_MoveOnWorldMap does; records the held keys in
-/// the event work and leaves a puff of sand (WORLD_MAP_SPRITE_WAKE, as the
-/// ship's wake) behind it every fifth frame it moves.
+/// the event work and leaves a puff of sand (SPRITE_SAND_PUFF) behind it every
+/// fifth frame it moves.
 s32 Actor_MoveAsSandOnWorldMap(struct Actor *actor) {
   struct FieldPosition position;
   struct FieldPosition leftPosition;
@@ -854,7 +854,7 @@ update_object:
       playerSprite->secondLayer->priority = 9;
   }
   if (actor->wakeTimer == 0 && collision == 0) {
-    ripple = Actor_Create(WORLD_MAP_SPRITE_WAKE, actor->x.fixed, actor->y.fixed,
+    ripple = Actor_Create(SPRITE_SAND_PUFF, actor->x.fixed, actor->y.fixed,
                           actor->z.fixed - toFIXED(2));
     if (ripple != NULL) {
       ripple->groundHeight = actor->groundHeight;

@@ -773,10 +773,6 @@ void FieldPsynergy_EndReveal(void) {
   }
 }
 
-/// Gaia Rock's arrow plant, a sprig whose leaf swells into an arrowhead
-/// pointing one of four ways.
-#define SPRITE_ARROW_PLANT 394
-
 /// Growth cast on a target: the burst of particles, then the target takes its
 /// grown animation and the underfoot priority, with SE_RECOVERY. Sprouting
 /// leaves (SPRITE_SPROUTING_LEAVES) instead drop five vines round the

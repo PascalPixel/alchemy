@@ -1359,10 +1359,9 @@ static void ValePrologue_UnusedGaretJoinsIsaac(void) {
 /// and turns him back.
 /// "We shouldn't go north... that'll take us toward Mt. Aleph."
 ///
-/// XXX: it then redraws the riverbank and breaks the west door of the house
-/// on the river's west bank, as ValePrologue_RebuildRiverbank does once the
-/// Boulder has passed; whether that shows before the Boulder falls would be
-/// settled by walking to the riverbank after the warning in the running game.
+/// Garet steps out from behind Isaac, faces him, then turns south: "The plaza
+/// is over that way. We need to head south." He falls back in behind, and
+/// Isaac walks back from the steps.
 static void ValePrologue_WarnAboutMtAleph(void) {
   struct Actor *initialLeader;
 

@@ -155,8 +155,8 @@ struct LuckyDiceSprites {
 /// on either the dice or the table... it's called a pair, and you don't win or
 /// lose anything. Two pair doubles your money. Triple matches triple your
 /// money. Four of a kind is perfect, and you win five times your bet."
-/// Every result has its lettering (aim_hand_and_results.png: "Perfect!!!", "Triple!",
-/// "Two Pair!" and "One Pair!"), numbered from 0.
+/// Every result has its lettering (aim_hand_and_results.png: "Perfect!!!",
+/// "Triple!", "Two Pair!" and "One Pair!"), numbered from 0.
 enum LuckyDiceResult {
   DICE_RESULT_NONE = -1, ///< no two numbers alike: the bet is lost
   DICE_RESULT_PERFECT,   ///< all four alike: DICE_PERFECT_PAYOUT times the bet

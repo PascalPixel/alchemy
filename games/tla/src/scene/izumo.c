@@ -1,6 +1,6 @@
 /// @file
 /// Izumo, the village of houses on stilts on the far eastern island of the
-/// Eastern Sea, where Kushinada is to be offered to the Serpent of Mt. Mikage
+/// Eastern Sea. Kushinada is to be offered there to the Serpent of Mt. Mikage
 /// (Gaia Rock). A river winds through it. Susa and Lady Uzume's house stands
 /// in the north, Kushinada's in the north-west, the inn and the shop in the
 /// west and the Sanctum on the raised ground in the east.

@@ -1,16 +1,18 @@
 /// @file
-/// Garoh's houses, in three scenes that share this overlay: the inn, where
-/// the Weapons Vendor and the Armor Vendor keep their counters
-/// (SceneId_GarohRoomsHouses), the house of the Item Shopkeeper
-/// (SceneId_GarohRoomsShop) and the sanctum
-/// (SceneId_GarohRoomsSanctum).
+/// Inside Garoh's houses, in three scenes that share this overlay. The first
+/// (SceneId_GarohRoomsHouses) holds four round houses side by side: the home
+/// of the young werewolf's family, the old couple's home, the weapons and armor
+/// shop, and the inn. The second is the Item Shopkeeper's house
+/// (SceneId_GarohRoomsShop) and the third the sanctum
+/// (SceneId_GarohRoomsSanctum). Stairs in some of the houses lead down into the
+/// tunnels under the village.
 ///
 /// Garoh is first seen on a night of the full moon (FLAG_GAROH_NIGHT), when
-/// its people hide that they are werewolves: the merchants sell only claws and
-/// fangs, and two travelers who failed Air's Rock sleep at the inn. After the
-/// night with Maha the party wakes at the inn (GarohRooms_WakeAtInn,
-/// entrance 99), the secret is shared (FLAG_GAROH_SECRET_SHARED) and the
-/// rooms take their morning tables.
+/// its people hide that they are werewolves: the weapons and armor shop sells
+/// only claws and fangs, and two travelers who climbed Air's Rock for nothing
+/// lie asleep at the inn. After the night with Maha the party wakes at the inn
+/// and is told the stay is on the house (GarohRooms_WakeAtInn); from then on
+/// it is day (FLAG_GAROH_SECRET_SHARED) and everyone talks openly.
 
 #include "battle/battle.h"
 #include "field/field_sequence.h"
@@ -37,7 +39,8 @@
 /// The morning after a night at the inn (GarohRooms_WakeAtInn).
 enum { ENTRANCE_WAKE_AT_INN = 99 };
 
-/// The inn's actors, numbering the rows of gGarohRooms_InnActorPlacements.
+/// The actors of the four houses, numbering the rows of
+/// gGarohRooms_InnActorPlacements.
 enum GarohInnActorId {
   /// The father of the young werewolf who led the party to Maha. His event is
   /// GarohRooms_AskWhatTheWanderersSeek.
@@ -51,18 +54,15 @@ enum GarohInnActorId {
   ACTOR_WEAPONS_VENDOR,
   ACTOR_ARMOR_VENDOR,
   ACTOR_INNKEEPER, ///< GarohRooms_TalkToInnkeeper checks the party in
-  /// The one who greets the party the morning after.
+  /// The woman beside him, who greets the party the morning after.
   ACTOR_INN_WORKER,
   /// A traveler who climbed Air's Rock and found nothing, asleep at night.
   ACTOR_DISAPPOINTED_TRAVELER,
   /// His companion, still puzzling over the rock that would not spin.
   ACTOR_STUBBORN_TRAVELER,
-  /// Unseen markers (SPRITE_UNSEEN_MARKER, which draws nothing) on the beds the
-  /// two travelers sleep in at night, taken away in the morning; talking to
-  /// them wakes the travelers. The inn at night (render guide moment,
-  /// MOMENT_SET=FLAG_GAROH_NIGHT MOMENT_PLACE=64,5 MOMENT_STAND=320,390
-  /// MOMENT_ACTORS=19,20) shows no light falling through the windows and the
-  /// two travelers asleep in their beds, and neither marker adds a pixel to it.
+  /// Unseen markers on the two beds the travelers sleep in at night, so that
+  /// talking to a bed, or reading its sleeper's mind, reaches the traveler
+  /// lying in it; they are taken away in the morning.
   ACTOR_DISAPPOINTED_TRAVELERS_BED,
   ACTOR_STUBBORN_TRAVELERS_BED
 };
@@ -78,6 +78,21 @@ enum GarohHouseActorId {
 
 /// The Sanctum's priest, its one actor.
 enum GarohSanctumActorId { ACTOR_PRIEST = ACTOR_FIRST_PLACED };
+
+/// The stoves, by their cells' behaviour in the map, each with something
+/// different cooking on it.
+enum GarohRoomsCellBehavior {
+  /// Bug larvae frying, in the young werewolf's family's home.
+  CELL_BEHAVIOR_LARVAE_STOVE = 209,
+  /// Lamb on the bone, at the inn.
+  CELL_BEHAVIOR_LAMB_STOVE,
+  /// Lobster grilled in the shell, in the Item Shopkeeper's house.
+  CELL_BEHAVIOR_LOBSTER_STOVE,
+  /// Newts on skewers, in the old couple's home.
+  CELL_BEHAVIOR_NEWT_STOVE,
+  /// A pot of strange plants, in the weapons and armor shop.
+  CELL_BEHAVIOR_PLANT_POT_STOVE
+};
 
 extern struct ActorPlacement gGarohRooms_NoActorPlacements[];
 extern struct ActorPlacement gGarohRooms_InnActorPlacements[];
@@ -130,8 +145,10 @@ enum { SHOP_GAROH_WEAPONS = 10, SHOP_GAROH_ARMOR = 11, SHOP_GAROH_ITEMS = 12 };
 /// Garoh's inn, as Inn_CheckIn numbers the inns.
 enum { GAROH_INN = 3 };
 
-/// The Weapons Vendor: across the counter, once the secret is shared, his
-/// shop; else what he says.
+/// Talking to the Weapons Vendor, the bald man in red behind the counter of
+/// the weapons and armor shop. By day, from in front of the counter, his shop
+/// opens; at night he is sorry, but on nights of the full moon they only sell
+/// claws and fangs.
 void GarohRooms_TalkToWeaponsVendor(s32 actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
@@ -153,8 +170,9 @@ void GarohRooms_TalkToWeaponsVendor(s32 actor) {
   }
 }
 
-/// The Armor Vendor: across the counter, once the secret is shared, his
-/// shop; else what he says.
+/// Talking to the Armor Vendor, the man with the orange beard beside the
+/// Weapons Vendor. By day, from in front of the counter, his shop opens; at
+/// night he only says it is unfortunate they came on a night of the full moon.
 void GarohRooms_TalkToArmorVendor(s32 actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
@@ -174,8 +192,9 @@ void GarohRooms_TalkToArmorVendor(s32 actor) {
   }
 }
 
-/// The Item Shopkeeper: across the counter, his shop, night or day; else his
-/// talk, at night a question about the way the party came.
+/// Talking to the Item Shopkeeper, the woman with a ponytail in her house:
+/// from in front of the counter her shop opens, night or day. From anywhere
+/// else she talks; at night she asks whether the party came from Alhafra.
 void GarohRooms_TalkToItemShopkeeper(s32 actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
@@ -207,7 +226,8 @@ void GarohRooms_TalkToItemShopkeeper(s32 actor) {
   }
 }
 
-/// The innkeeper: across the counter, the inn; else what he says.
+/// Talking to the innkeeper behind the inn's counter: from in front of it he
+/// offers a night's stay, and from elsewhere he only chats.
 void GarohRooms_TalkToInnkeeper(s32 actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
@@ -227,8 +247,9 @@ void GarohRooms_TalkToInnkeeper(s32 actor) {
   }
 }
 
-/// The priest turns to the leader: across the counter, the Sanctum; else what
-/// he says. He then faces south again.
+/// Talking to the priest in Garoh's sanctum: he turns to Felix, and from in
+/// front of his counter offers the sanctum's services; from elsewhere he only
+/// chats. He then faces south again.
 void GarohRooms_TalkToPriest(void) {
   s16 facing;
 
@@ -251,8 +272,9 @@ void GarohRooms_TalkToPriest(void) {
   Actor_FaceDirection(ACTOR_PRIEST, FACING_SOUTH, 0);
 }
 
-/// The young werewolf's father asks the party, at night, what they are
-/// looking for, and then whether they are searching for werewolves.
+/// Talking at night to the young werewolf's father, the man with brown hair
+/// pacing his family's home: "Good evening, wanderers! Are you looking for
+/// something?", and then whether they are searching for werewolves.
 void GarohRooms_AskWhatTheWanderersSeek(s32 actor) {
   s32 message;
 
@@ -286,7 +308,10 @@ void GarohRooms_AskWhatTheWanderersSeek(s32 actor) {
   Event_End();
 }
 
-/// Talking to the disappointed traveler, asleep at night.
+/// Talking to the disappointed traveler, one of the two warriors in golden
+/// helmets at the inn. At night, asleep in his bed, he mumbles "What a
+/// waste... Just a big rock..."; by day he grumbles that the wolves were
+/// noisy again last night.
 void GarohRooms_TalkToDisappointedTraveler(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -301,7 +326,9 @@ void GarohRooms_TalkToDisappointedTraveler(void) {
   Event_End();
 }
 
-/// Talking to the stubborn traveler, asleep at night.
+/// Talking to the stubborn traveler, the other warrior in a golden helmet at
+/// the inn. At night, asleep in his bed, he mumbles "Whirlwind? Wind
+/// Stone?"; by day he wants to stay and try climbing Air's Rock once more.
 void GarohRooms_TalkToStubbornTraveler(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -316,7 +343,9 @@ void GarohRooms_TalkToStubbornTraveler(void) {
   Event_End();
 }
 
-/// Mind Read on the disappointed traveler.
+/// Mind Read on the disappointed traveler at the inn. At night he is bitter
+/// that he climbed all over that stupid rock for nothing; by day he is
+/// scared of wolves and keeps indoors at night.
 void GarohRooms_ReadDisappointedTravelersMind(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -331,7 +360,9 @@ void GarohRooms_ReadDisappointedTravelersMind(void) {
   Event_End();
 }
 
-/// Mind Read on the stubborn traveler.
+/// Mind Read on the stubborn traveler at the inn. At night he wonders how he
+/// was supposed to make so huge a rock spin; by day he thinks a lever would
+/// do it.
 void GarohRooms_ReadStubbornTravelersMind(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -346,8 +377,9 @@ void GarohRooms_ReadStubbornTravelersMind(void) {
   Event_End();
 }
 
-/// The Reveal seeker asks whether the party learned Reveal, once
-/// (FLAG_GAROH_ASKED_ABOUT_REVEAL).
+/// Talking by day to the old man with a cane in the old couple's home, the
+/// first time: "You... Is it true that you learned Reveal?", with an answer
+/// for Yes and one for No.
 void GarohRooms_AskAboutReveal(void) {
   s32 message = (s32)MsgGarohInteriorsYouIsItTrueThat;
 
@@ -394,8 +426,8 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gGarohRooms_DoorTriggers;
 }
 
-/// The map grid layers the rooms show at night (MapGrid_SetShownLayers): BG1
-/// and BG3.
+/// The map layers the rooms show at night (MapGrid_SetShownLayers), which
+/// leave out the light falling through the windows.
 #define GAROH_ROOMS_NIGHT_LAYERS (DISPCNT_BG1_ON | DISPCNT_BG3_ON)
 
 /// Sets up the room being entered: the travelers in their beds at night, or
@@ -453,8 +485,10 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// The morning after the night with Maha: the party wakes at the inn, the
-/// secret is shared, and the inn's people say the stay is on the house.
+/// The morning after the night with Maha, at the inn: "Felix and party stayed
+/// the night at the inn.", the woman at the counter says they did not sleep
+/// much, and the innkeeper says Master Maha told them all about the party,
+/// the bill is on them, and bids them farewell.
 void GarohRooms_WakeAtInn(void) {
   GameFlag_Set(FLAG_GAROH_SECRET_SHARED);
   Event_Start();
@@ -598,13 +632,15 @@ struct Trigger gGarohRooms_InnNightTriggers[] = {
      CONDITION_ALWAYS, EVENT(GarohRooms_ReadDisappointedTravelersMind)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUBBORN_TRAVELERS_BED,
      CONDITION_ALWAYS, EVENT(GarohRooms_ReadStubbornTravelersMind)},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 209, CONDITION_ALWAYS,
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_LARVAE_STOVE,
+     CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgGarohInteriorsEeeeewTheyreFryingUpBug))},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 210, CONDITION_ALWAYS,
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_LAMB_STOVE, CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgGarohInteriorsItsLambOnTheBone))},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 212, CONDITION_ALWAYS,
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_NEWT_STOVE, CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgGarohInteriorsNewtsSkeweredOverAnOpen))},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 213, CONDITION_ALWAYS,
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_PLANT_POT_STOVE,
+     CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgGarohInteriorsThereAreLotsOfStrange))},
     {TRIGGER_TABLE_END},
 };
@@ -633,7 +669,8 @@ struct Trigger gGarohRooms_HouseNightTriggers[] = {
      EVENT(GarohRooms_TalkToItemShopkeeper)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_SHOPKEEPER,
      CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsINeverChangeMyStock)},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 211, CONDITION_ALWAYS,
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_LOBSTER_STOVE,
+     CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgGarohInteriorsHuhWhatIsThatLobster))},
     {TRIGGER_TABLE_END},
 };
@@ -708,13 +745,15 @@ struct Trigger gGarohRooms_InnMorningTriggers[] = {
      CONDITION_ALWAYS, EVENT(GarohRooms_ReadDisappointedTravelersMind)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUBBORN_TRAVELER,
      CONDITION_ALWAYS, EVENT(GarohRooms_ReadStubbornTravelersMind)},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 209, CONDITION_ALWAYS,
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_LARVAE_STOVE,
+     CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgGarohInteriorsEeeeewTheyreFryingUpBug))},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 210, CONDITION_ALWAYS,
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_LAMB_STOVE, CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgGarohInteriorsItsLambOnTheBone))},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 212, CONDITION_ALWAYS,
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_NEWT_STOVE, CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgGarohInteriorsNewtsSkeweredOverAnOpen))},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 213, CONDITION_ALWAYS,
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_PLANT_POT_STOVE,
+     CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgGarohInteriorsThereAreLotsOfStrange))},
     {TRIGGER_TABLE_END},
 };
@@ -743,7 +782,8 @@ struct Trigger gGarohRooms_HouseMorningTriggers[] = {
      EVENT(GarohRooms_TalkToItemShopkeeper)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_SHOPKEEPER,
      CONDITION_ALWAYS, MSGNO(MsgGarohInteriorsIHeardThatOneThats)},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 211, CONDITION_ALWAYS,
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_LOBSTER_STOVE,
+     CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgGarohInteriorsHuhWhatIsThatLobster))},
     {TRIGGER_TABLE_END},
 };

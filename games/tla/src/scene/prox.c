@@ -1233,8 +1233,10 @@ void Prox_MoldHidesInSnow(void) {
   FieldActor_SetSpritePriority(ACTOR_MOLD, 2);
   actor = Actor_Get(ACTOR_MOLD);
   actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
-  // XXX: what these copies change in the pile's pictures at the river's head; a
-  // render of the river's head with FLAG_MOLD_HID_IN_SNOW set would settle it.
+  // The snow pile moves: the upper layer's cells (69, 3) and (69, 8), kept 45
+  // columns east of (24, 3) and (24, 8), lose the round pile on the ledge
+  // atop the cliff and gain a low mound on the frozen river at the cliff's
+  // foot, the pile Scoop digs Mold out of (Prox_ScoopUpMold).
   MapGrid_CopyCellsTo(72, 3, 69, 3, 3, 3);
   MapGrid_CopyCellsTo(48, 36, 69, 8, 3, 2);
   MapGrid_CopyCellAttributes(72, 13, 1, 3, 70, 20);

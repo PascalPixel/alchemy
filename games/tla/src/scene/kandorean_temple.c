@@ -4,17 +4,21 @@
 /// SceneId_KandoreanTemplePoi).
 ///
 /// Its gate is shut for the meditation (KandoreanTemple_StartGate): Kraden
-/// spots a suspicious wall and the party finds a hidden way in through a cave
+/// spots a suspicious wall, and Whirlwind on the bush in the courtyard's north
+/// west corner opens a hidden way in through a cave of shallow water
 /// (KandoreanTemple_FindTheHiddenPassage). Inside, Poi tests three students
 /// (KandoreanTemple_TestTheStudents), and the party follows the one who can
-/// levitate through the temple's trials: a stream whose current pushes the
-/// leader along, two vents whose covers rise on columns of water unless a
-/// pillar holds them down (KandoreanTemple_RunWestVent,
-/// KandoreanTemple_RunEastVent), the lifts those columns push up into the room
-/// above, a pot boiling over a hot floor, and three Chestbeaters
-/// (KandoreanTemple_FightChestbeaters). Poi then gives the party the Lash
-/// Pebble (KandoreanTemple_ReceiveLash), and Lash reaches Fog, the Mercury
-/// Djinni (KandoreanTemple_FightFog).
+/// levitate, through the door below Poi's statue, into the caverns of his
+/// trials: the Mimic's chest, the student who gave up, a sheet of water whose
+/// current pushes Felix south (KandoreanTemple_PushAlongTheCurrent), two vents
+/// whose round covers rise on gushing columns unless the pillar holds them down
+/// (KandoreanTemple_RunWestVent, KandoreanTemple_RunEastVent), the lifts those
+/// columns push up into the room above, and its shaft the pillar there can
+/// block; then a pot boiling over a hot floor, and three Chestbeaters
+/// (KandoreanTemple_FightChestbeaters), after which a ladder comes down to
+/// Poi's hall. Poi gives the party the Lash Pebble
+/// (KandoreanTemple_ReceiveLash), and Lash ties the rope across to Fog, the
+/// Mercury Djinni (KandoreanTemple_FightFog).
 
 #include "field/actor.h"
 #include "scene/event_layer.h"
@@ -191,6 +195,47 @@ enum {
   KANDOREAN_TEMPLE_POI_THROUGH_THE_CAVE = 14
 };
 
+/// The rooms' own cell behaviors, named by room.
+enum KandoreanTempleCellBehavior {
+  /// The lift room's shaft, cells (43, 10) to (43, 13).
+  CELL_BEHAVIOR_SHAFT = 10,
+  /// The west and east lifts while risen, cells (27, 12) and (37, 14).
+  CELL_BEHAVIOR_WEST_LIFT = 12,
+  CELL_BEHAVIOR_EAST_LIFT,
+  /// The Chestbeaters' room: the cells west, south and east of the hot floor
+  /// under the pot, (19, 29), (20, 30) and (21, 29), and the floor before the
+  /// Chestbeaters, (19, 12) to (21, 12).
+  CELL_BEHAVIOR_WEST_OF_HOT_FLOOR = 10,
+  CELL_BEHAVIOR_SOUTH_OF_HOT_FLOOR,
+  CELL_BEHAVIOR_EAST_OF_HOT_FLOOR,
+  CELL_BEHAVIOR_BEFORE_CHESTBEATERS = 6,
+  /// The vent room's covers while risen, which carry Felix up.
+  CELL_BEHAVIOR_WEST_VENT_COVER = 20,
+  CELL_BEHAVIOR_EAST_VENT_COVER,
+  /// The room of the current: the sheet of water the current runs through.
+  CELL_BEHAVIOR_CURRENT = 10,
+  /// Fog's room: behind and beside the rope's posts.
+  CELL_BEHAVIOR_BEHIND_POST = 10,
+  CELL_BEHAVIOR_BESIDE_POST,
+  /// The courtyard: the well, cells (25, 17) to (26, 18); the west wall
+  /// Kraden suspects, (5, 15) and (6, 15); the temple's door, (17, 25) and
+  /// (18, 25); and the five clumps of weeds Cyclone scatters.
+  CELL_BEHAVIOR_COURTYARD_WELL = 6,
+  CELL_BEHAVIOR_SUSPICIOUS_WALL = 20,
+  CELL_BEHAVIOR_TEMPLE_DOOR = 10,
+  CELL_BEHAVIOR_FIRST_WEED_CLUMP = 30,
+  CELL_BEHAVIOR_SECOND_WEED_CLUMP,
+  CELL_BEHAVIOR_THIRD_WEED_CLUMP,
+  CELL_BEHAVIOR_FOURTH_WEED_CLUMP,
+  CELL_BEHAVIOR_FIFTH_WEED_CLUMP,
+  /// Poi's hall: round the opening down to the Chestbeaters' room, cells
+  /// (9, 5), (11, 5) and (10, 6); before the door below Poi's statue, (24, 40)
+  /// and (25, 40); and Poi's table with the Lash Pebble, (25, 21).
+  CELL_BEHAVIOR_BY_THE_LADDER = 8,
+  CELL_BEHAVIOR_CAVE_DOOR,
+  CELL_BEHAVIOR_POIS_TABLE = 16
+};
+
 /// The Chestbeaters' room's entrance after their battle, which no exit leads
 /// to: the party is back before the north wall, and the ladder comes down.
 enum { ENTRANCE_AFTER_CHESTBEATER_BATTLE = 3 };
@@ -216,8 +261,8 @@ enum {
   FLAG_SOUTH_ROPE_TIED = FLAG_SCENE_TEMP_0F,
   /// The north rope of Poi's room is tied across.
   FLAG_NORTH_ROPE_TIED = FLAG_SCENE_TEMP_10,
-  /// The lift room's pillar blocks the shaft of steam, so stepping over it no
-  /// longer sinks the leader into the steam.
+  /// The lift room's pillar blocks the shaft, so stepping over it no longer
+  /// sinks Felix into it.
   FLAG_PILLAR_BLOCKS_SHAFT = FLAG_SCENE_TEMP_11,
   /// The door to the cave below Poi's statue, or the passage by the gate's
   /// well, is open.
@@ -280,7 +325,7 @@ static __inline__ struct Actor *KandoreanTemple_CreateActor(s32 type, FIXED x,
 #define FLAG_LASH_RECEIVED 0x84a
 #define FLAG_LADDER_LOWERED 0x92d
 
-/// The map work as the stream and steam rooms write it: MapWork.groundEffects
+/// The map work as the two water rooms write it: MapWork.groundEffects
 /// as its two fields, the footprints and the kind of wading, which they set
 /// to 1.
 struct MapWorkGroundEffects {
@@ -445,8 +490,9 @@ void *Scene_GetActorPlacements(void) {
   return gKandoreanTemple_Placements;
 }
 
-/// By the gate, until the hidden passage is found, Kraden walks up to the
-/// leader and points out the suspicious wall.
+/// Felix walks past the courtyard's west wall, cells (5, 15) and (6, 15),
+/// before the hidden passage is found: Kraden walks up beside him and says the
+/// wall looks rather suspicious, and the two nod.
 void KandoreanTemple_KradenSuspectsTheWall(void) {
   struct Actor *actor;
 
@@ -484,7 +530,7 @@ extern struct Trigger gKandoreanTemple_LiftRoomEvents[];
 extern struct Trigger gKandoreanTemple_ChestbeaterRoomEvents[];
 extern struct Trigger gKandoreanTemple_VentRoomEvents[];
 extern struct Trigger gKandoreanTemple_StreamRoomEvents[];
-extern struct Trigger gKandoreanTemple_SteamRoomEvents[];
+extern struct Trigger gKandoreanTemple_CurrentRoomEvents[];
 extern struct Trigger gKandoreanTemple_FogRoomEvents[];
 extern struct Trigger gKandoreanTemple_GateEvents[];
 extern struct Trigger gKandoreanTemple_PoisRoomEvents[];
@@ -504,7 +550,7 @@ void *Scene_GetTriggers(void) {
   if (scene == SCENE_KANDOREAN_TEMPLE_STREAM)
     return gKandoreanTemple_StreamRoomEvents;
   if (scene == SCENE_KANDOREAN_TEMPLE_STEAM)
-    return gKandoreanTemple_SteamRoomEvents;
+    return gKandoreanTemple_CurrentRoomEvents;
   if (scene == SCENE_KANDOREAN_TEMPLE_FOG)
     return gKandoreanTemple_FogRoomEvents;
   if (scene == SCENE_KANDOREAN_TEMPLE_GATE)
@@ -572,8 +618,9 @@ void KandoreanTemple_SpawnSplashRing(struct Actor *actor) {
   }
 }
 
-/// The stream's current pushes the leader south, with a splash at its feet
-/// every eight frames.
+/// Felix wades into the sheet of water that pours south from the waterfall in
+/// the room of the current, any of its cells: the current pushes him south,
+/// splashing at his feet, unless he runs against it.
 void KandoreanTemple_PushAlongTheCurrent(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *splash;
@@ -1518,7 +1565,8 @@ void KandoreanTemple_ReadPoisSign(void) {
   Event_End();
 }
 
-/// Tries the temple's locked door.
+/// Felix checks the temple's door in the middle of the courtyard, cells
+/// (17, 25) and (18, 25), before it is open: "The door is tightly locked."
 void KandoreanTemple_TryTheLockedDoor(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1589,8 +1637,10 @@ void KandoreanTemple_ReadTheGuard(void) {
   KandoreanTemple_TellOfTheMeditation();
 }
 
-/// Climbs down the well by the gate, when the leader pushes toward it.
-void KandoreanTemple_ClimbDownTheWell(void) {
+/// Felix pushes towards the opening in the floor of Poi's hall, cell (10, 5),
+/// from beside or below it: he climbs down the ladder into the Chestbeaters'
+/// room.
+void KandoreanTemple_ClimbDownTheLadder(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 x = FIELD_CELL(leader->x.fixed);
   s32 z = FIELD_CELL(leader->z.fixed);
@@ -1632,8 +1682,9 @@ void KandoreanTemple_OpenTheCaveDoor(void) {
   GameFlag_Set(FLAG_CAVE_DOOR_OPEN);
 }
 
-/// The leader walks up to the door below Poi's statue, opening it if it is
-/// shut, and goes through into the cave.
+/// Felix walks north into the door below Poi's statue, cells (24, 40) and
+/// (25, 40): it opens with a thump if it is shut, and he goes through into the
+/// caverns of the trials.
 void KandoreanTemple_EnterTheCave(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1655,8 +1706,11 @@ void KandoreanTemple_EnterTheCave(void) {
   Import_EventSetExitRequest(KANDOREAN_TEMPLE_POI_TO_KANDOREAN_TEMPLE_MIMIC);
 }
 
-/// The leader squeezes north into the crack in the wall.
-void KandoreanTemple_SlipIntoTheCrack(void) {
+/// Felix walks south into the stone well in the courtyard's east side, cells
+/// (25, 17) to (26, 18): he climbs down into it, to the passageway at its
+/// bottom that examining the well tells of, and comes out in the east end of
+/// the cave of shallow water.
+void KandoreanTemple_ClimbDownTheWell(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   u32 frame;
 
@@ -1684,13 +1738,14 @@ void KandoreanTemple_SlipIntoTheCrack(void) {
       KANDOREAN_TEMPLE_GATE_TO_KANDOREAN_TEMPLE_STREAM_EAST);
 }
 
-/// Move lifts the lift room's pillar.
+/// Move takes hold of the pillar in the lift room, or Felix pushes it.
 void KandoreanTemple_StartMovingBlock(void) {
   Actor_LiftTargetBlock(gKandoreanTemple_BlockActors);
 }
 
-/// Sets the lift room's pillar down, and notes whether it blocks the shaft of
-/// steam.
+/// The pillar in the lift room comes to rest; pushed east as far as column
+/// 43, over the shaft at cells (43, 10) to (43, 13), it blocks the shaft, and
+/// Felix can walk across without sinking into it.
 void KandoreanTemple_FinishMovingBlock(void) {
   s32 x = FIELD_CELL(Actor_GetById(ACTOR_LIFT_ROOM_PILLAR)->x.fixed);
 
@@ -1703,7 +1758,8 @@ void KandoreanTemple_FinishMovingBlock(void) {
     MapGrid_CopyCellAttributes(39, 0, 1, 1, 39, 10);
 }
 
-/// Move lifts the vent room's pillar, noting whether it leaves a vent's cover.
+/// Move takes hold of the pillar in the vent room, or Felix pushes it; lifted
+/// off a vent's cover, that vent is free to blow again.
 void KandoreanTemple_StartMovingPillar(void) {
   if ((u32)(FIELD_CELL(Actor_GetById(ACTOR_VENT_ROOM_PILLAR)->x.fixed) - 15) >
       6)
@@ -1712,8 +1768,9 @@ void KandoreanTemple_StartMovingPillar(void) {
   Actor_LiftTargetBlock(gKandoreanTemple_PillarActors);
 }
 
-/// Sets the vent room's pillar down, and notes which cover, if either, it
-/// weighs down.
+/// The pillar in the vent room comes to rest. On the west vent's round cover,
+/// cell (13, 13), or the east one's, cell (23, 15), it weighs that vent down,
+/// and the other vent's column rises higher, up to the lift room.
 void KandoreanTemple_FinishMovingPillar(void) {
   struct Actor *actor = Actor_GetById(ACTOR_VENT_ROOM_PILLAR);
   s32 x = FIELD_CELL(actor->x.fixed);
@@ -1732,15 +1789,17 @@ void KandoreanTemple_FinishMovingPillar(void) {
   GameFlag_Clear(FLAG_PILLAR_MOVING);
 }
 
-/// Move lifts the pot of boiling water.
+/// Move takes hold of the pot boiling over the hot floor in the Chestbeaters'
+/// room.
 void KandoreanTemple_StartMovingPot(void) {
   GameFlag_Clear(FLAG_POT_PUSHED_WEST);
   GameFlag_Clear(FLAG_POT_PUSHED_EAST);
   Actor_LiftTargetBlock(gKandoreanTemple_PillarActors);
 }
 
-/// Sets the pot down; chucked to the west or east of its place, it is out of
-/// the way and the floor it covered cools.
+/// The pot of boiling water, chucked one cell west or east by Move, lands out
+/// of the way, and the floor round where it stood, cells (19, 28) to (21, 30),
+/// stops burning.
 void KandoreanTemple_FinishMovingPot(void) {
   s32 x = FIELD_CELL(Actor_GetById(ACTOR_BOILING_POT)->x.fixed);
 
@@ -1756,7 +1815,9 @@ void KandoreanTemple_FinishMovingPot(void) {
   }
 }
 
-/// Stepping onto the hot floor, the leader jumps back with a yelp.
+/// Felix walks onto the hot floor under the pot of boiling water, from the
+/// west, south or east of it: he jumps back with a start, his sprite flushed
+/// red.
 void KandoreanTemple_TouchTheHotFloor(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
@@ -1894,14 +1955,17 @@ void KandoreanTemple_ReceiveLash(void) {
   Event_End();
 }
 
-/// Stepping behind a rope's post, the leader is drawn behind it.
+/// Nothing visible happens as Felix steps behind a post of the rope across to
+/// Fog; he is drawn behind the post (`Actor_SetSpritePriority`) while he is
+/// there.
 void KandoreanTemple_StepBehindThePost(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
 }
 
-/// Stepping out from behind a rope's post, the leader is drawn in front again.
+/// Nothing visible happens as Felix steps out from behind the rope's post; he
+/// is drawn in front of it again.
 void KandoreanTemple_StepOutFromThePost(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags &=
       ~ACTOR_PRIORITY_IGNORES_RISES;
@@ -1909,7 +1973,9 @@ void KandoreanTemple_StepOutFromThePost(void) {
       ACTOR_PRIORITY_AUTOMATIC;
 }
 
-/// Coming up to the Chestbeaters, the three leap down and their battle starts.
+/// Felix walks up to the Chestbeaters at the north end of their room, cells
+/// (19, 12) to (21, 12): the three leap down at him with a cry and their
+/// battle starts.
 void KandoreanTemple_FightChestbeaters(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1938,27 +2004,37 @@ void KandoreanTemple_FightChestbeaters(void) {
   Event_End();
 }
 
-/// Cyclone blows away the first of five patches by the gate.
+/// Felix casts Cyclone over the first of the five clumps of weeds in the
+/// courtyard before the temple, at cells (13, 14) to (14, 15): leaves whirl up
+/// and the clump is gone.
 void KandoreanTemple_CycloneFirstPatch(void) {
   FieldTileCopies_CopyTouchedCells(76, 0, 2, 2, 73, 14, 1);
 }
 
-/// Cyclone blows away the second of five patches by the gate.
+/// Felix casts Cyclone over the second of the five clumps of weeds in the
+/// courtyard before the temple, at cell (15, 16): leaves whirl up and the clump
+/// is gone.
 void KandoreanTemple_CycloneSecondPatch(void) {
   FieldTileCopies_CopyTouchedCells(76, 0, 1, 1, 75, 16, 1);
 }
 
-/// Cyclone blows away the third of five patches by the gate.
+/// Felix casts Cyclone over the third of the five clumps of weeds in the
+/// courtyard before the temple, at cell (14, 18): leaves whirl up and the clump
+/// is gone.
 void KandoreanTemple_CycloneThirdPatch(void) {
   FieldTileCopies_CopyTouchedCells(76, 0, 1, 1, 74, 18, 1);
 }
 
-/// Cyclone blows away the fourth of five patches by the gate.
+/// Felix casts Cyclone over the fourth of the five clumps of weeds in the
+/// courtyard before the temple, at cell (20, 18): leaves whirl up and the clump
+/// is gone.
 void KandoreanTemple_CycloneFourthPatch(void) {
   FieldTileCopies_CopyTouchedCells(76, 0, 1, 1, 80, 18, 1);
 }
 
-/// Cyclone blows away the fifth of five patches by the gate.
+/// Felix casts Cyclone over the fifth of the five clumps of weeds in the
+/// courtyard before the temple, at cell (27, 15): leaves whirl up and the clump
+/// is gone.
 void KandoreanTemple_CycloneFifthPatch(void) {
   FieldTileCopies_CopyTouchedCells(76, 0, 1, 1, 87, 15, 1);
 }
@@ -1981,7 +2057,7 @@ s32 Scene_Initialize(void) {
   else if (scene == SCENE_KANDOREAN_TEMPLE_STREAM)
     KandoreanTemple_StartStreamRoom();
   else if (scene == SCENE_KANDOREAN_TEMPLE_STEAM)
-    KandoreanTemple_StartSteamRoom();
+    KandoreanTemple_StartCurrentRoom();
   else if (scene == SCENE_KANDOREAN_TEMPLE_FOG)
     KandoreanTemple_StartFogRoom();
   else if (scene == SCENE_KANDOREAN_TEMPLE_GATE)
@@ -2182,8 +2258,8 @@ void KandoreanTemple_StartVentRoom(void) {
 // The Kandorean Temple's events, from the vents' rides to Poi's test, and its
 // tables.
 
-/// The leader drops into the vent room from above and lands in a puff of dust
-/// that shakes the screen.
+/// Felix drops into the vent room from the lift room's shaft above and lands in
+/// a puff of dust that shakes the screen.
 void KandoreanTemple_LandFromAbove(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct EffectOptions options;
@@ -2329,8 +2405,9 @@ void KandoreanTemple_ArriveOnWestVent(void) {
   Event_End();
 }
 
-/// Coming down the east lift from the room above: as
-/// KandoreanTemple_ArriveOnWestVent, on the east vent.
+/// Coming down the east lift from the room above: the party arrives atop the
+/// east vent's cover, raised high on its column, and sinks with it to the
+/// ground.
 void KandoreanTemple_ArriveOnEastVent(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *cover = Actor_GetById(ACTOR_EAST_VENT_COVER);
@@ -2401,7 +2478,8 @@ void KandoreanTemple_ArriveOnEastVent(void) {
   Event_End();
 }
 
-/// The leader rises out of the room on the steam.
+/// Felix rises out of the vent room on a vent's column, the screen closing in
+/// on him.
 void KandoreanTemple_LeaveBySteam(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -2412,21 +2490,25 @@ void KandoreanTemple_LeaveBySteam(void) {
   Event_WaitTransitionFrames();
 }
 
-/// Rises on the west vent's steam to the room above.
+/// Felix rides the west vent's round cover as its column lifts it, up through
+/// the ceiling to the west lift in the room above.
 void KandoreanTemple_LeaveByWestVent(void) {
   KandoreanTemple_LeaveBySteam();
   Import_EventSetExitRequest(
       KANDOREAN_TEMPLE_PILLAR_TO_KANDOREAN_TEMPLE_LIFTS_WEST_LIFT);
 }
 
-/// Rises on the east vent's steam to the room above.
+/// Felix rides the east vent's round cover as its column lifts it, up through
+/// the ceiling to the east lift in the room above.
 void KandoreanTemple_LeaveByEastVent(void) {
   KandoreanTemple_LeaveBySteam();
   Import_EventSetExitRequest(
       KANDOREAN_TEMPLE_PILLAR_TO_KANDOREAN_TEMPLE_LIFTS_EAST_LIFT);
 }
 
-/// The leader slips into the lift room's shaft of steam and is carried away.
+/// Felix steps onto the lift room's shaft, cells (43, 10) to (43, 13), while
+/// the pillar does not block it: he slips back, throws up his arms and sinks
+/// out of sight, dropping into the vent room below.
 void KandoreanTemple_SinkIntoTheSteam(void) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   u32 frame;
@@ -2475,7 +2557,7 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
       KANDOREAN_TEMPLE_LIFTS_TO_KANDOREAN_TEMPLE_PILLAR_SHAFT);
 }
 
-/// The leader rises into view on a lift while its column grows under it.
+/// Felix rises into view on a lift while its column grows under it.
 #define DEFINE_KANDOREAN_TEMPLE_RISE(name, liftId, columnId, x, z, liftZ,      \
                                      cellX, cellZ, timer)                      \
   void name(void) {                                                            \
@@ -2525,20 +2607,22 @@ void KandoreanTemple_SinkIntoTheSteam(void) {
     Event_End();                                                               \
   }
 
-/// Arriving on the west lift from the vent room below: the party rises into the
-/// room on it as its column grows beneath, and the lift's cycle goes on from
-/// LIFT_RISEN.
+/// Arriving on the west lift, cell (27, 12), from the vent room below: Felix
+/// rises into the room on it as its column grows beneath, and the lift's cycle
+/// goes on from LIFT_RISEN.
 DEFINE_KANDOREAN_TEMPLE_RISE(KandoreanTemple_ArriveOnWestLift, ACTOR_WEST_LIFT,
                              ACTOR_WEST_LIFT_COLUMN, 440, 200, 204, 27, 12,
                              gKandoreanTemple_WestTimer)
 
-/// As KandoreanTemple_ArriveOnWestLift, for the east lift.
+/// Arriving on the east lift, cell (37, 14), from the vent room below: Felix
+/// rises into the room on it as its column grows beneath.
 DEFINE_KANDOREAN_TEMPLE_RISE(KandoreanTemple_ArriveOnEastLift, ACTOR_EAST_LIFT,
                              ACTOR_EAST_LIFT_COLUMN, 600, 232, 236, 37, 14,
                              gKandoreanTemple_EastTimer)
 
-/// The west lift sinks out of sight with the leader on it, down its column to
-/// the west vent in the room below.
+/// Felix steps onto the west lift in the lift room, cell (27, 12), while it
+/// stands risen: it sinks out of sight with him, down its column to the west
+/// vent in the room below.
 void KandoreanTemple_RideWestLiftDown(void) {
   struct Actor *actor = Actor_GetById(ACTOR_WEST_LIFT);
 
@@ -2559,7 +2643,9 @@ void KandoreanTemple_RideWestLiftDown(void) {
       KANDOREAN_TEMPLE_LIFTS_TO_KANDOREAN_TEMPLE_PILLAR_WEST_LIFT);
 }
 
-/// As KandoreanTemple_RideWestLiftDown, on the east lift.
+/// Felix steps onto the east lift in the lift room, cell (37, 14), while it
+/// stands risen: it sinks out of sight with him, down its column to the east
+/// vent in the room below.
 void KandoreanTemple_RideEastLiftDown(void) {
   struct Actor *actor = Actor_GetById(ACTOR_EAST_LIFT);
 
@@ -2580,8 +2666,8 @@ void KandoreanTemple_RideEastLiftDown(void) {
       KANDOREAN_TEMPLE_LIFTS_TO_KANDOREAN_TEMPLE_PILLAR_EAST_LIFT);
 }
 
-/// Sets up the stream room, where the party wades and the current of steam
-/// pushes it.
+/// Sets up the cave of shallow water behind the bush by the gate, where the
+/// party wades.
 void KandoreanTemple_StartStreamRoom(void) {
   struct MapWorkGroundEffects *map =
       (struct MapWorkGroundEffects *)Ram_HeapSlots->mapGrid;
@@ -2598,8 +2684,8 @@ void KandoreanTemple_StartStreamRoom(void) {
 #endif
 }
 
-/// Sets up the steam room, with the rush of its steam.
-void KandoreanTemple_StartSteamRoom(void) {
+/// Sets up the room of the current, with the rush of its water.
+void KandoreanTemple_StartCurrentRoom(void) {
   struct MapWorkGroundEffects *map =
       (struct MapWorkGroundEffects *)Ram_HeapSlots->mapGrid;
 
@@ -3659,9 +3745,9 @@ struct Trigger gKandoreanTemple_LiftRoomEvents[] = {
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(KandoreanTemple_FinishMovingBlock)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_LIFT_ROOM_PILLAR, CONDITION_ALWAYS, EVENT(KandoreanTemple_StartMovingBlock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LIFT_ROOM_PILLAR, CONDITION_ALWAYS, EVENT(KandoreanTemple_FinishMovingBlock)},
-    {TRIGGER_STEP, 10, FLAG_PILLAR_BLOCKS_SHAFT, EVENT(KandoreanTemple_SinkIntoTheSteam)},
-    {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(KandoreanTemple_RideWestLiftDown)},
-    {TRIGGER_STEP, 13, CONDITION_ALWAYS, EVENT(KandoreanTemple_RideEastLiftDown)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_SHAFT, FLAG_PILLAR_BLOCKS_SHAFT, EVENT(KandoreanTemple_SinkIntoTheSteam)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_WEST_LIFT, CONDITION_ALWAYS, EVENT(KandoreanTemple_RideWestLiftDown)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_EAST_LIFT, CONDITION_ALWAYS, EVENT(KandoreanTemple_RideEastLiftDown)},
     {TRIGGER_TABLE_END},
 };
 
@@ -3677,11 +3763,11 @@ struct Trigger gKandoreanTemple_ChestbeaterRoomEvents[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_BOILING_POT, FLAG_POT_MOVED, EVENT(KandoreanTemple_StartMovingPot)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_BOILING_POT, FLAG_POT_MOVED, EVENT(KandoreanTemple_FinishMovingPot)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 10, FLAG_POT_MOVED, EVENT(KandoreanTemple_TouchTheHotFloor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 11, FLAG_POT_MOVED, EVENT(KandoreanTemple_TouchTheHotFloor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 12, FLAG_POT_MOVED, EVENT(KandoreanTemple_TouchTheHotFloor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_WEST_OF_HOT_FLOOR, FLAG_POT_MOVED, EVENT(KandoreanTemple_TouchTheHotFloor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_SOUTH_OF_HOT_FLOOR, FLAG_POT_MOVED, EVENT(KandoreanTemple_TouchTheHotFloor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_EAST_OF_HOT_FLOOR, FLAG_POT_MOVED, EVENT(KandoreanTemple_TouchTheHotFloor)},
     {TRIGGER_TALK, ACTOR_POIS_SIGN, CONDITION_ALWAYS, EVENT(KandoreanTemple_ReadPoisSign)},
-    {TRIGGER_STEP, 6, FLAG_LADDER_LOWERED, EVENT(KandoreanTemple_FightChestbeaters)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BEFORE_CHESTBEATERS, FLAG_LADDER_LOWERED, EVENT(KandoreanTemple_FightChestbeaters)},
     {TRIGGER_TABLE_END},
 };
 
@@ -3692,8 +3778,8 @@ struct Trigger gKandoreanTemple_VentRoomEvents[] = {
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(KandoreanTemple_FinishMovingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_VENT_ROOM_PILLAR, CONDITION_ALWAYS, EVENT(KandoreanTemple_StartMovingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_VENT_ROOM_PILLAR, CONDITION_ALWAYS, EVENT(KandoreanTemple_FinishMovingPillar)},
-    {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(KandoreanTemple_LeaveByWestVent)},
-    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(KandoreanTemple_LeaveByEastVent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_WEST_VENT_COVER, CONDITION_ALWAYS, EVENT(KandoreanTemple_LeaveByWestVent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_EAST_VENT_COVER, CONDITION_ALWAYS, EVENT(KandoreanTemple_LeaveByEastVent)},
     {TRIGGER_TABLE_END},
 };
 
@@ -3703,10 +3789,10 @@ struct Trigger gKandoreanTemple_StreamRoomEvents[] = {
 };
 // clang-format on
 
-struct Trigger gKandoreanTemple_SteamRoomEvents[] = {
+struct Trigger gKandoreanTemple_CurrentRoomEvents[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, 10, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT, CONDITION_ALWAYS,
      EVENT(KandoreanTemple_PushAlongTheCurrent)},
     {TRIGGER_TABLE_END},
 };
@@ -3720,14 +3806,14 @@ struct Trigger gKandoreanTemple_FogRoomEvents[] = {
      0},
     {TRIGGER_TALK, ACTOR_FOG, CONDITION_ALWAYS,
      EVENT(KandoreanTemple_FightFog)},
-    {TRIGGER_STEP, 10, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_BEHIND_POST, CONDITION_ALWAYS,
      EVENT(KandoreanTemple_StepBehindThePost)},
-    {TRIGGER_STEP, 11, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_BESIDE_POST, CONDITION_ALWAYS,
      EVENT(KandoreanTemple_StepOutFromThePost)},
     {TRIGGER_TALK, ACTOR_STUDENT_WHO_GAVE_UP, CONDITION_ALWAYS,
      MSGNO(MsgFieldItSeemsIMayNotHave)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
-     MSGNO(MsgFieldIsItReallyPossibleForAnyone)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUDENT_WHO_GAVE_UP,
+     CONDITION_ALWAYS, MSGNO(MsgFieldIsItReallyPossibleForAnyone)},
     {TRIGGER_TABLE_END},
 };
 
@@ -3735,62 +3821,73 @@ struct Trigger gKandoreanTemple_GateEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 3, CONDITION_ALWAYS, 3},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 6, CONDITION_ALWAYS,
-     EVENT(KandoreanTemple_SlipIntoTheCrack)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_COURTYARD_WELL,
+     CONDITION_ALWAYS, EVENT(KandoreanTemple_ClimbDownTheWell)},
     {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgKandoreanTemplePassageInTheWell))},
-    {TRIGGER_STEP, 20, FLAG_KRADEN_SAW_THE_WALL,
+    {TRIGGER_STEP, CELL_BEHAVIOR_SUSPICIOUS_WALL, FLAG_KRADEN_SAW_THE_WALL,
      EVENT(KandoreanTemple_KradenSuspectsTheWall)},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 4, FLAG_WELL_PASSAGE_OPEN,
      EVENT(KandoreanTemple_OpenTheWellPassage)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, FLAG_WELL_PASSAGE_OPEN,
      EVENT(KandoreanTemple_OpenTheWellPassage)},
-    {TRIGGER_EXAMINE, 10, CONDITION_ALWAYS,
+    {TRIGGER_EXAMINE, CELL_BEHAVIOR_TEMPLE_DOOR, CONDITION_ALWAYS,
      EVENT(KandoreanTemple_TryTheLockedDoor)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WEEDS_OVER_THE_CAVE,
      CONDITION_ALWAYS, EVENT(KandoreanTemple_FindTheHiddenPassage)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30,
-     CONDITION_ALWAYS, EVENT(KandoreanTemple_CycloneFirstPatch)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 31,
-     CONDITION_ALWAYS, EVENT(KandoreanTemple_CycloneSecondPatch)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 32,
-     CONDITION_ALWAYS, EVENT(KandoreanTemple_CycloneThirdPatch)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 33,
-     CONDITION_ALWAYS, EVENT(KandoreanTemple_CycloneFourthPatch)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 34,
-     CONDITION_ALWAYS, EVENT(KandoreanTemple_CycloneFifthPatch)},
-    {TRIGGER_TALK, 9, CONDITION_ALWAYS, EVENT(KandoreanTemple_AskAboutPoi)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_FIRST_WEED_CLUMP, CONDITION_ALWAYS,
+     EVENT(KandoreanTemple_CycloneFirstPatch)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_SECOND_WEED_CLUMP, CONDITION_ALWAYS,
+     EVENT(KandoreanTemple_CycloneSecondPatch)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_THIRD_WEED_CLUMP, CONDITION_ALWAYS,
+     EVENT(KandoreanTemple_CycloneThirdPatch)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_FOURTH_WEED_CLUMP, CONDITION_ALWAYS,
+     EVENT(KandoreanTemple_CycloneFourthPatch)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_FIFTH_WEED_CLUMP, CONDITION_ALWAYS,
+     EVENT(KandoreanTemple_CycloneFifthPatch)},
+    {TRIGGER_TALK, ACTOR_STUDENT_ASKING_ABOUT_POI, CONDITION_ALWAYS,
+     EVENT(KandoreanTemple_AskAboutPoi)},
+    {TRIGGER_TALK, ACTOR_STUDENT_ON_GUARD_DUTY, CONDITION_ALWAYS,
      EVENT(KandoreanTemple_TellOfTheMeditation)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9 | TRIGGER_SUBJECT_OWN_EFFECT,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
+     ACTOR_STUDENT_ASKING_ABOUT_POI | TRIGGER_SUBJECT_OWN_EFFECT,
      FLAG_ASKED_ABOUT_POI, EVENT(KandoreanTemple_ReadTheGateStudent)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 9, CONDITION_ALWAYS,
-     MSGNO(MsgFieldIDoNotUnderstandMasterPoi)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10 | TRIGGER_SUBJECT_OWN_EFFECT,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUDENT_ASKING_ABOUT_POI,
+     CONDITION_ALWAYS, MSGNO(MsgFieldIDoNotUnderstandMasterPoi)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
+     ACTOR_STUDENT_ON_GUARD_DUTY | TRIGGER_SUBJECT_OWN_EFFECT,
      FLAG_TOLD_OF_THE_MEDITATION, EVENT(KandoreanTemple_ReadTheGuard)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
-     MSGNO(MsgFieldIWasHopingToHearMaster)},
-    {TRIGGER_TALK, 11, FLAG_MET_POI, MSGNO(MsgFieldIHopeToEnterTheTemple)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS,
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUDENT_ON_GUARD_DUTY,
+     CONDITION_ALWAYS, MSGNO(MsgFieldIWasHopingToHearMaster)},
+    {TRIGGER_TALK, ACTOR_STUDENT_WARY_OF_OUTSIDERS, FLAG_MET_POI,
+     MSGNO(MsgFieldIHopeToEnterTheTemple)},
+    {TRIGGER_TALK, ACTOR_STUDENT_WARY_OF_OUTSIDERS, CONDITION_ALWAYS,
      MSGNO(MsgFieldHeyWhatsAnOutsiderDoingOn)},
-    {TRIGGER_TALK, 12, FLAG_MET_POI,
+    {TRIGGER_TALK, ACTOR_STUDENT_ON_THE_FAILED_TEST, FLAG_MET_POI,
      MSGNO(MsgFieldPleaseDontBreakMyConcentrationI)},
-    {TRIGGER_TALK, 12, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_STUDENT_ON_THE_FAILED_TEST, CONDITION_ALWAYS,
      MSGNO(MsgFieldLooksLikeNoneOfOurBrothers)},
-    {TRIGGER_TALK, 13, FLAG_MET_POI, MSGNO(MsgFieldIAmNotJustMeditatingI)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgFieldSomedayImGoingToBeA)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, FLAG_MET_POI,
-     MSGNO(MsgFieldIStillCantBelieveThatThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
-     MSGNO(MsgFieldGahIKeptMyEyesShut)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, FLAG_MET_POI,
-     MSGNO(MsgFieldMyMindIsEmptyMyBody)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 12, CONDITION_ALWAYS,
-     MSGNO(MsgFieldIveBeenMeditatingAllDayBut)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, FLAG_MET_POI,
-     MSGNO(MsgFieldEmptyTheMindToLightenThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
-     MSGNO(MsgFieldWheneverTheMasterGoesToTown)},
+    {TRIGGER_TALK, ACTOR_STUDENT_WHO_WOULD_BE_A_MONK, FLAG_MET_POI,
+     MSGNO(MsgFieldIAmNotJustMeditatingI)},
+    {TRIGGER_TALK, ACTOR_STUDENT_WHO_WOULD_BE_A_MONK, CONDITION_ALWAYS,
+     MSGNO(MsgFieldSomedayImGoingToBeA)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUDENT_WARY_OF_OUTSIDERS,
+     FLAG_MET_POI, MSGNO(MsgFieldIStillCantBelieveThatThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUDENT_WARY_OF_OUTSIDERS,
+     CONDITION_ALWAYS, MSGNO(MsgFieldGahIKeptMyEyesShut)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUDENT_ON_THE_FAILED_TEST,
+     FLAG_MET_POI, MSGNO(MsgFieldMyMindIsEmptyMyBody)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUDENT_ON_THE_FAILED_TEST,
+     CONDITION_ALWAYS, MSGNO(MsgFieldIveBeenMeditatingAllDayBut)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUDENT_WHO_WOULD_BE_A_MONK,
+     FLAG_MET_POI, MSGNO(MsgFieldEmptyTheMindToLightenThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STUDENT_WHO_WOULD_BE_A_MONK,
+     CONDITION_ALWAYS, MSGNO(MsgFieldWheneverTheMasterGoesToTown)},
     {TRIGGER_TABLE_END},
 };
 
@@ -3803,8 +3900,8 @@ struct Trigger gKandoreanTemple_PoisRoomEvents[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {STEP_TRIGGER_WALKING, 8, CONDITION_ALWAYS, EVENT(KandoreanTemple_ClimbDownTheWell)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(KandoreanTemple_EnterTheCave)},
+    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_BY_THE_LADDER, CONDITION_ALWAYS, EVENT(KandoreanTemple_ClimbDownTheLadder)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_CAVE_DOOR, CONDITION_ALWAYS, EVENT(KandoreanTemple_EnterTheCave)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_SOUTH_ROPE_WEST_POST, FLAG_SOUTH_ROPE_TIED, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_NORTH_ROPE_EAST_POST, FLAG_NORTH_ROPE_TIED, 0},
     {TRIGGER_TALK, ACTOR_FIRST_TESTED_STUDENT, FLAG_MET_POI, MSGNO(MsgFieldHeWentInBeforeMeWhat)},
@@ -3817,7 +3914,7 @@ struct Trigger gKandoreanTemple_PoisRoomEvents[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_TESTED_STUDENT, FLAG_MET_POI, MSGNO(MsgFieldArrghIWasSoCloseI)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SECOND_TESTED_STUDENT, CONDITION_ALWAYS, MSGNO(MsgFieldIKnewItItShouldHave)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_THIRD_TESTED_STUDENT, CONDITION_ALWAYS, MSGNO(MsgFieldBeforeIPassedOutISaw)},
-    {TRIGGER_EXAMINE, 16, FLAG_LASH_RECEIVED, EVENT(KandoreanTemple_ReceiveLash)},
+    {TRIGGER_EXAMINE, CELL_BEHAVIOR_POIS_TABLE, FLAG_LASH_RECEIVED, EVENT(KandoreanTemple_ReceiveLash)},
     {TRIGGER_TALK, ACTOR_POI, FLAG_LASH_RECEIVED, MSGNO(MsgFieldTakeThePowerOfLashIt)},
     {TRIGGER_TALK, ACTOR_POI, CONDITION_ALWAYS, MSGNO(MsgFieldIfYouWishToPracticeThese)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_POI, CONDITION_ALWAYS, MSGNO(MsgFieldHoHoIFeelTheStrength)},

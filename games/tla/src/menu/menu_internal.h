@@ -184,7 +184,6 @@ enum DjinnCompareOperation {
 #include "battle/battle_type.h"
 #include "battle/battle_system.h"
 #include "graphics/display_transition.h"
-#include "field/a9_motion.h"
 #include "battle/battle_effect.h"
 #include "menu/djinn_menu.h"
 #include "menu/select.h"
@@ -192,6 +191,8 @@ enum DjinnCompareOperation {
 #include "graphics/vram_tab.h"
 #include "window/item_icon.h"
 
+void Menu_PlaceEntryActorInGrid(struct WindowSprite *icon, s32 index,
+                                s32 originX, s32 originY, s32 columns);
 void PsynergyMenu_PositionMemberEntry(struct WindowSprite **icons, s32 index,
                                       s32 x, s32 y, s32 columns);
 void ItemMenu_PlaceIcon(struct WindowSprite **icons, s32 index, s32 x, s32 y,

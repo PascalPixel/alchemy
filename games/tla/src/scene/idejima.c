@@ -12,15 +12,16 @@
 ///   the island (Idejima_FindFelixAndSheba, entrance 12).
 /// - Sheba wakes, land comes in sight, and a tidal wave carries the island
 ///   onto it (Idejima_RideTheTidalWave, entrance 13).
-/// - Felix wakes on the shore of the new continent (Idejima_FelixWakes), with
-///   Jenna, Sheba and Kraden still lying where the wave left them
-///   (Idejima_LayDownTheOthers). Each wakes when he looks at them
-///   (Idejima_WakeKraden, Idejima_WakeJenna, Idejima_WakeSheba), or runs after
-///   him if he heads off without them (Idejima_CatchUpWithFelix). Once all
-///   three have joined, they wonder where Alex has gone
-///   (Idejima_WonderWhereAlexHasGone).
+/// - Felix wakes on the grass of the island, now run aground on the coast of
+///   Indra near Daila (Idejima_FelixWakes), with Jenna, Sheba and Kraden still
+///   lying where the wave left them (Idejima_LayDownTheOthers). Each wakes when
+///   he talks to them (Idejima_WakeKraden, Idejima_WakeJenna,
+///   Idejima_WakeSheba), or runs after him if he heads west without them
+///   (Idejima_CatchUpWithFelix). Once all three have joined, they wonder where
+///   Alex has gone (Idejima_WonderWhereAlexHasGone), and the island's west edge
+///   leads out onto the world map.
 ///
-/// While the island drifts, BG3's rows sway in a sine wave
+/// While the island drifts, the sea around it ripples
 /// (Idejima_UpdateWaveLines, Idejima_ApplyWaveLines).
 
 #include "battle/battle.h"
@@ -62,15 +63,17 @@
 /// Idejima_CatchUpWithFelix, so the next one to catch up finds him there.
 #define FLAG_IDEJIMA_LEADER_WALKED_BACK FLAG_SCENE_TEMP_00
 
-/// The entrances the triggers are chosen by: two out of the door on the hill,
-/// and two onto the shore, the second of which is taken after a load.
+/// The entrances the triggers are chosen by: two at the foot of the mountain,
+/// where only the unseen door answers, and the two of the island run aground.
 enum IdejimaEntrance {
-  /// Out of the door at (184, 168), whose one trigger is the door.
+  /// At the foot of the mountain, cell (11, 10), with the unseen door north.
+  // XXX: what enters by entrance 1; no exit table or event names it.
   ENTRANCE_FROM_DOOR = 1,
-  /// The shore of the new continent, where Felix wakes.
+  /// The island run aground, where Felix wakes after the tidal wave.
   ENTRANCE_WAKE = 2,
   ENTRANCE_FROM_DOOR_AGAIN = 3,
-  ENTRANCE_WAKE_AGAIN = 4,
+  /// Back onto the island from the world map, at its west edge.
+  ENTRANCE_BACK_FROM_WORLD_MAP = 4,
   /// The story's three scenes before the shore, each played on arriving by
   /// its own entrance (Scene_Initialize).
   ENTRANCE_BREAK_AWAY = 11,
@@ -78,14 +81,31 @@ enum IdejimaEntrance {
   ENTRANCE_RIDE_THE_TIDAL_WAVE = 13
 };
 
-/// The door on the hill, which leads back out at ENTRANCE_FROM_DOOR_AGAIN.
+/// The unseen door, which leads back out at ENTRANCE_FROM_DOOR_AGAIN.
 enum { EXIT_DOOR = 3 };
+
+/// The cells the triggers answer, by their behaviour in the map.
+enum IdejimaCellBehavior {
+  /// The unseen door at the foot of the mountain, cell (11, 10).
+  CELL_BEHAVIOR_DOOR = 3,
+  /// The line across the grass at (5..6, 44..47), where the party talks about
+  /// Alex.
+  CELL_BEHAVIOR_WHERE_ALEX_WENT = 8,
+  /// The line across the grass at (8..10, 44..47), east of it, where the
+  /// sleepers catch up with Felix.
+  CELL_BEHAVIOR_CATCH_UP = 9,
+  /// Stamped under Kraden, Jenna and Sheba where each lies asleep, from the
+  /// spare cells at (38..39, 32..34).
+  CELL_BEHAVIOR_BY_KRADEN = 10,
+  CELL_BEHAVIOR_BY_JENNA,
+  CELL_BEHAVIOR_BY_SHEBA
+};
 
 /// The scene's placed actors, numbering the rows of gIdejimaPlacements; its
 /// rows of Jenna's and Sheba's sprites place ACTOR_JENNA and ACTOR_SHEBA.
 enum IdejimaActorId {
   ACTOR_KRADEN = ACTOR_FIRST_PLACED,
-  /// Menardi's ship, beached at the tip of the peninsula.
+  /// Menardi's ship, moored in a cove of the peninsula.
   ACTOR_SHIP,
   ACTOR_ALEX,
   /// An actor with no picture that speaks the lines no one says, above Felix
@@ -156,15 +176,14 @@ const struct Trigger *Scene_GetTriggers(void) {
   case ENTRANCE_FROM_DOOR_AGAIN:
     return gIdejimaEventsFromDoor;
   case ENTRANCE_WAKE:
-  case ENTRANCE_WAKE_AGAIN:
+  case ENTRANCE_BACK_FROM_WORLD_MAP:
     return gIdejimaEventsWake;
   default:
     return gIdejimaEvents;
   }
 }
 
-/// Stands a sleeper up where it lay: its standing animation, upright and 12
-/// pixels to the west, with a hop.
+/// Stands a sleeper up where it lay, with a little hop.
 void Idejima_GetUp(s32 id) {
   struct Actor *actor = Actor_Get(id);
 
@@ -179,8 +198,9 @@ void Idejima_GetUp(s32 id) {
   System_Wait(40);
 }
 
-/// Felix looks at the sleeping Kraden, who groans awake, marvels that the wave
-/// carried them to the continent and joins the party.
+/// Talking to Kraden, asleep on the grass north-east of where Felix woke, or
+/// reading his mind: he groans awake, marvels that the wave carried them to
+/// solid land and joins the party.
 void Idejima_WakeKraden(void) {
   s32 message;
   struct Actor *actor;
@@ -247,8 +267,9 @@ void Idejima_WakeKraden(void) {
   Event_End();
 }
 
-/// Felix looks at the sleeping Jenna, who wakes, asks whether he has checked on
-/// the others and joins the party.
+/// Talking to Jenna, asleep on the grass west of where Felix woke, or reading
+/// her mind: she wakes, asks whether he has checked on the others and joins
+/// the party.
 void Idejima_WakeJenna(void) {
   struct Actor *actor;
   struct Actor *leader;
@@ -317,8 +338,8 @@ void Idejima_WakeJenna(void) {
   Event_End();
 }
 
-/// Felix looks at the sleeping Sheba, who wakes, wonders where they are and
-/// joins the party.
+/// Talking to Sheba, asleep on the grass north-west of where Felix woke: she
+/// wakes, wonders where they are and joins the party.
 void Idejima_WakeSheba(void) {
   struct Actor *leader;
 
@@ -377,8 +398,13 @@ void Idejima_WakeSheba(void) {
   Event_End();
 }
 
-/// Stepping onto the door cell (behavior 3) while facing north plays the
-/// door's sound and leaves by EXIT_DOOR.
+/// Walking north onto the bare grass at the foot of the mountain, cell
+/// (11, 10), plays a door's sound and leaves through a door that is not drawn,
+/// to come straight back out on the same spot.
+///
+/// Only entrances 1 and 3 answer this cell, and the door itself is the only
+/// way the game enters by 3, so a player who arrives with the story never
+/// meets it.
 void Idejima_EnterDoor(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -397,8 +423,10 @@ void Idejima_WalkLeaderBack(void) {
   }
 }
 
-/// Felix heading off the shore without the others: each one still asleep wakes
-/// in turn, runs after him, scolds him for leaving them and joins the party.
+/// Walking west across the grass towards the island's edge, cells
+/// (8..10, 44..47), while any of the others is still asleep: Felix is walked
+/// back a little, and each sleeper in turn wakes, runs after him, scolds him
+/// for leaving them behind and joins the party.
 void Idejima_CatchUpWithFelix(void) {
   struct Actor *leader;
 
@@ -600,9 +628,9 @@ void Idejima_CatchUpWithFelix(void) {
   }
 }
 
-/// With all four together, the party wonders where Alex has gone, decides to
-/// follow him to the Great Western Sea, and asks Sheba why she travels with
-/// them.
+/// Walking on west, cells (5..6, 44..47), with all four together: Kraden
+/// wonders where Alex has gone, the party decides to follow him to the Great
+/// Western Sea, and they ask Sheba why she travels with them.
 void Idejima_WonderWhereAlexHasGone(void) {
   const u8 *script;
 
@@ -1619,8 +1647,9 @@ void FelixWake_WaitForButton(void) {
   FelixWake_EndStep();
 }
 
-/// Felix wakes on the shore, a step at each button, and is asked whether he
-/// wants to check himself for injuries.
+/// Felix wakes on the grass, stirring a little more at each button, gets up
+/// and is asked "Do you want to check yourself for injuries?"; Yes has him
+/// check his arms and then his legs, No has him walk about a bit.
 void Idejima_FelixWakes(void) {
   s32 answer;
   s32 leader;
@@ -1720,9 +1749,10 @@ void Idejima_FelixWakes(void) {
   FelixWake_EndStep();
 }
 
-/// Starts the wave scroll, then runs the cutscene of the entrance taken: the
-/// shore of the new continent (2 and 4, which also make a Daila room the
-/// place a defeat returns the party to), or one of the story's three before it.
+/// Starts the sea's ripple, then runs what the entrance taken calls for: the
+/// island run aground (after the tidal wave, or back from the world map, both
+/// making Daila's sanctum the place a defeat returns the party to), or one of
+/// the story's three cutscenes before it.
 s32 Scene_Initialize(void) {
   s32 entrance;
 
@@ -1738,7 +1768,7 @@ s32 Scene_Initialize(void) {
   case ENTRANCE_WAKE:
     if (Event_GetFlag(FLAG_KEEP_PARTY_POSITION) == 0)
       Party_RestoreHpPp(1);
-  case ENTRANCE_WAKE_AGAIN: {
+  case ENTRANCE_BACK_FROM_WORLD_MAP: {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
     party->restartScene = SCENE_DAILA_ROOMS_SANCTUM;
@@ -1774,8 +1804,8 @@ UNUSED void Idejima_LieDown(s32 id) {
   ((struct FieldSprite *)actor->sprite)->rotation = DEGtoANG(270);
 }
 
-/// Lays Kraden, Jenna and Sheba wherever they have not yet woken, and wakes
-/// Felix the first time.
+/// Lays each of Kraden, Jenna and Sheba who has not yet joined asleep on the
+/// grass where the wave left them, and wakes Felix the first time.
 void Idejima_LayDownTheOthers(void) {
   s32 flag;
 
@@ -2040,26 +2070,30 @@ struct Trigger gIdejimaEvents[] = {
 };
 
 struct Trigger gIdejimaEventsFromDoor[] = {
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
-     EVENT(Idejima_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_DOOR,
+     CONDITION_ALWAYS, EVENT(Idejima_EnterDoor)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gIdejimaEventsWake[] = {
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXAMINE, 10, FLAG_IDEJIMA_KRADEN_JOINED,
+    {TRIGGER_EXIT, IDEJIMA_TO_WORLD_MAP_SOUTHWEST, CONDITION_ALWAYS,
+     IDEJIMA_TO_WORLD_MAP_SOUTHWEST},
+    {TRIGGER_EXAMINE, CELL_BEHAVIOR_BY_KRADEN, FLAG_IDEJIMA_KRADEN_JOINED,
      EVENT(Idejima_WakeKraden)},
-    {TRIGGER_EXAMINE, 11, FLAG_IDEJIMA_JENNA_JOINED, EVENT(Idejima_WakeJenna)},
-    {TRIGGER_EXAMINE, 12, FLAG_IDEJIMA_SHEBA_JOINED, EVENT(Idejima_WakeSheba)},
+    {TRIGGER_EXAMINE, CELL_BEHAVIOR_BY_JENNA, FLAG_IDEJIMA_JENNA_JOINED,
+     EVENT(Idejima_WakeJenna)},
+    {TRIGGER_EXAMINE, CELL_BEHAVIOR_BY_SHEBA, FLAG_IDEJIMA_SHEBA_JOINED,
+     EVENT(Idejima_WakeSheba)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
      ACTOR_KRADEN | TRIGGER_SUBJECT_OWN_EFFECT, CONDITION_ALWAYS,
      EVENT(Idejima_WakeKraden)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ),
      ACTOR_JENNA | TRIGGER_SUBJECT_OWN_EFFECT, CONDITION_ALWAYS,
      EVENT(Idejima_WakeJenna)},
-    {TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(Idejima_CatchUpWithFelix)},
-    {TRIGGER_STEP, 8, FLAG_IDEJIMA_ASKED_WHERE_ALEX_WENT,
-     EVENT(Idejima_WonderWhereAlexHasGone)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CATCH_UP, CONDITION_ALWAYS,
+     EVENT(Idejima_CatchUpWithFelix)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_WHERE_ALEX_WENT,
+     FLAG_IDEJIMA_ASKED_WHERE_ALEX_WENT, EVENT(Idejima_WonderWhereAlexHasGone)},
     {TRIGGER_TABLE_END},
 };
 

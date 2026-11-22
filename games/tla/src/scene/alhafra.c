@@ -582,10 +582,10 @@ void Alhafra_FatherLetsPartyToCave(s32 actor) {
   }
 }
 
-/// Felix casts Reveal in town; while it lasts, the hidden Psy Crystal chest
-/// among the six gravestones can be found.
-// XXX: what Reveal shows at the gravestones; a recording of Reveal cast
-// beside them would settle it.
+/// Felix casts Reveal in town: in the grey world Reveal shows, a red
+/// treasure chest stands in the middle of the six gravestones by the
+/// cliff, the hidden Psy Crystal chest, which can be opened while it
+/// lasts.
 void Alhafra_RevealTreasureSpot(void) {
   TreasureSpot_SetPosition(ACTOR_PSY_CRYSTAL_CHEST, toFIXED(184), toFIXED(552));
 }

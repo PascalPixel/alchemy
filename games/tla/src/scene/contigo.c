@@ -1391,17 +1391,14 @@ void Contigo_ScoopForSalt(void) {
   }
 }
 
-/// Reveal cast anywhere at the geoglyph or the Sanctum's front shows the
-/// Sanctum's middle door, at the head of its main steps, standing open, and
-/// while Reveal lasts walking north into it (cells (48, 19) and (49, 19))
-/// leads inside, on the way to the Dragon Skin's chest. The open door is the
-/// picture the unused Contigo_EnterSanctumMiddleDoor would open it with; the
-/// doorway's exit cells are kept out of reach at the top of the map, (48, 1),
-/// and copied into place.
+/// Felix casts Reveal anywhere at the geoglyph or the Sanctum's front: the
+/// carved wall at the head of the Sanctum's main steps shows as a dark open
+/// doorway, its middle door, and while Reveal lasts walking north into it
+/// (cells (48, 19) and (49, 19)) leads inside, on the way to the Dragon Skin's
+/// chest. The open door is the picture the unused
+/// Contigo_EnterSanctumMiddleDoor would open it with; the doorway's exit cells
+/// are kept out of reach at the top of the map, (48, 1), and copied into place.
 void Contigo_RevealMiddleDoor(void) {
-  // XXX: whether the middle door is seen standing open under Reveal; a
-  // recording with Felix casting at the foot of the middle steps would settle
-  // it (the recorder casts from the west steps, outside Reveal's circle).
   MapGrid_CopyCellsTo(27, 4, 48, 12, 1, 2);
   MapGrid_CopyCellPictureIndicesRect(27, 6, 49, 12, 1, 2);
   MapGrid_CopyCellAttributes(48, 1, 2, 1, 48, 19);
@@ -1694,9 +1691,9 @@ void Contigo_OfferSuperLuckyDice(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if ((u32)gMainRoutineWork.coins < price) {
-    // XXX: this line is shown at the Lucky Dice attendant, who stands in the
-    // next tent; a render with fewer coins than the price would show where
-    // its box appears.
+    // Shown at the Lucky Dice attendant, who stands in the next tent: the box
+    // opens at the top of the screen as his welcome does, a little further
+    // right.
     Event_SetMessageId((s32)MsgContigoSorryPalButYouveGotta);
     // "Sorry, pal, but you've gotta have more coins to play."
     FieldMessage_ShowAtActor(ACTOR_LUCKY_DICE_ATTENDANT, 0);

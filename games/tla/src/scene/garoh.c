@@ -478,10 +478,9 @@ void Garoh_HowlOutLoud(s32 actor) {
 
 /// Talking at night to the hooded villager west of the well: he howls
 /// "Gaaaroooooo!", catches himself ("Gah! Whoops...") and says he was just
-/// calling his dog.
-// XXX: nothing in Garoh sets the area flag that would cut him to the howl
-// alone; another scene of the area may, which a search of its flag would
-// settle.
+/// calling his dog. His code would cut him to the howl alone once
+/// FLAG_AREA_TEMP_00 is set, but nothing in Garoh, its paths, tunnels, cave or
+/// rooms sets that flag, so the player always hears all three lines.
 void Garoh_HowlForDog(s32 actor) {
   s32 flag;
   s32 msg;
@@ -885,9 +884,11 @@ void Garoh_SinkFourthPillarOnCell(void) {
 
 /// Move on the first stone pillar, on the lowest ledge of the way up at cell
 /// (11, 29): slid one cell west, onto cell (10, 29), it drops off the ledge and
-/// sinks into the ground with a whoosh and a ring of dust.
-// XXX: what the sunk pillars open; a render of the way up with them sunk,
-// walking from the world map to the path, would settle it.
+/// sinks into the ground with a whoosh and a ring of dust until its top is
+/// level with the ledge, so that Felix can walk west off the ledge onto it.
+// XXX: where the step onto the first pillar's top leads on to, and what the
+// other sunk pillars open; a recording of Felix walking on from its top (west
+// or south, the recorder's walk stopped there) would settle it.
 void Garoh_PlaceFirstPillar(void) {
   Actor_PlaceMovedBlock();
   Garoh_SinkFirstPillarOnCell();
@@ -961,7 +962,9 @@ void Garoh_HideCaveEntrance(void) {
 /// village: the game only checks whether it is night in Garoh, and does
 /// nothing with the answer.
 // XXX: whether the path's night colours come back after Reveal there; a
-// render casting Reveal on the path at night would settle it.
+// render casting Reveal on the path at night would settle it (staged with
+// FLAG_GAROH_NIGHT set, the path still showed its day colours before the cast,
+// the flag not set in time for Garoh_InitializeHypnosSwordChest).
 s32 Garoh_IsNight(void) { return Flag_IsSet(FLAG_GAROH_NIGHT); }
 
 /// Reveal wearing off on the way up brings back the evening's or the night's

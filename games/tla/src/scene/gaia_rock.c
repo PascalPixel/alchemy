@@ -169,13 +169,10 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Climbing the great wall of handholds, Felix reaches the lowest of its three
 /// trap holds, near the middle of the wall: a stone face bursts out of the
 /// rock under him in a shower of stones, and he flails and loses his hold on
-/// the wall. The hold is cell (111, 50) of the wall's overhead layer, drawn at
-/// (47, 50); the face stays out, and the hold is solid rock, until the party
-/// enters another area.
-///
-/// XXX: the recording ends with Felix standing on the face, no longer
-/// climbing; the walkthrough says he then falls all the way down. A recording
-/// that runs on past the event would show the fall.
+/// the wall: he is left standing on the face, and when the player climbs on he
+/// drops off it, facing out, down the wall to its foot. The hold is cell
+/// (111, 50) of the wall's overhead layer, drawn at (47, 50); the face stays
+/// out, and the hold is solid rock, until the party enters another area.
 void GaiaRock_ClimbOntoLowestStoneFace(void) {
   GaiaRock_StoneFaceBurstsOut(ACTOR_FIRST_RISING_STATUE,
                               FLAG_FIRST_STATUE_RISEN);

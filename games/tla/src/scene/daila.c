@@ -618,7 +618,7 @@ DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchSixthPuddle, 16, 23, 17,
 
 void Actor_SetWideSprite(s32 actor, s32 flag);
 
-#include "shared/scene_raise_held_actor.h"
+#include "shared/scene_freeze_puddle_into_pillar.h"
 
 s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -1084,17 +1084,17 @@ struct Trigger gDailaTriggers[] = {
      CELL_SIXTH_PUDDLE, FLAG_DAILA_SIXTH_PUDDLE_PARCHED,
      EVENT(Daila_ParchSixthPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE,
-     FLAG_DAILA_PUDDLE_FROZEN_FIRST + 0, EVENT(Scene_RaiseHeldActor)},
+     FLAG_DAILA_PUDDLE_FROZEN_FIRST + 0, EVENT(Scene_FreezePuddleIntoPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SECOND_PUDDLE,
-     FLAG_DAILA_PUDDLE_FROZEN_FIRST + 1, EVENT(Scene_RaiseHeldActor)},
+     FLAG_DAILA_PUDDLE_FROZEN_FIRST + 1, EVENT(Scene_FreezePuddleIntoPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_THIRD_PUDDLE,
-     FLAG_DAILA_PUDDLE_FROZEN_FIRST + 2, EVENT(Scene_RaiseHeldActor)},
+     FLAG_DAILA_PUDDLE_FROZEN_FIRST + 2, EVENT(Scene_FreezePuddleIntoPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FOURTH_PUDDLE,
-     FLAG_DAILA_PUDDLE_FROZEN_FIRST + 3, EVENT(Scene_RaiseHeldActor)},
+     FLAG_DAILA_PUDDLE_FROZEN_FIRST + 3, EVENT(Scene_FreezePuddleIntoPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIFTH_PUDDLE,
-     FLAG_DAILA_PUDDLE_FROZEN_FIRST + 4, EVENT(Scene_RaiseHeldActor)},
+     FLAG_DAILA_PUDDLE_FROZEN_FIRST + 4, EVENT(Scene_FreezePuddleIntoPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SIXTH_PUDDLE,
-     FLAG_DAILA_PUDDLE_FROZEN_FIRST + 5, EVENT(Scene_RaiseHeldActor)},
+     FLAG_DAILA_PUDDLE_FROZEN_FIRST + 5, EVENT(Scene_FreezePuddleIntoPillar)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS),
      CELL_BURIED_PSY_CRYSTAL, FLAG_DAILA_PSY_CRYSTAL_DUG,
      EVENT(Daila_DigUpPsyCrystal)},

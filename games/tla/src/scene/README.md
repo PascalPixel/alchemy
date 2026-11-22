@@ -112,7 +112,7 @@ and what runs.
 {TRIGGER_TALK, ACTOR_WEAPONS_VENDOR, CONDITION_ALWAYS,
  EVENT(GarohRooms_TalkToWeaponsVendor)},
 {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIFTH_PUDDLE,
- FLAG_DAILA_PUDDLE_FROZEN_FIRST + 4, EVENT(Scene_RaiseHeldActor)},
+ FLAG_DAILA_PUDDLE_FROZEN_FIRST + 4, EVENT(Scene_FreezePuddleIntoPillar)},
 ```
 
 What runs can be an event, or a bare message for a villager with one line.
@@ -215,7 +215,7 @@ scene includes where its copy sits (The Broken Seal writes its shared code
 as `.c` files). Daila's pillars of ice raise their actor with one:
 
 ```c
-#include "shared/scene_raise_held_actor.h"
+#include "shared/scene_freeze_puddle_into_pillar.h"
 ```
 
 A family of routines that works on one kind of thing keeps one set of

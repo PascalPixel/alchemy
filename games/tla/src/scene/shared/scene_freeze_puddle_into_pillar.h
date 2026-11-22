@@ -1,6 +1,7 @@
-/// Frost freezes one of Daila's puddles into a pillar of ice, which then takes
-/// its priority from its cell and is no longer drawn underfoot.
-void Scene_RaiseHeldActor(void) {
+/// Frost freezes one of the puddles in Daila's streets or its sanctuary into a
+/// pillar of ice, which then takes its priority from its cell and is no longer
+/// drawn underfoot.
+void Scene_FreezePuddleIntoPillar(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *pillar;
   s32 flags;

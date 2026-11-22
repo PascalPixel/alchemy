@@ -74,11 +74,11 @@ void Rope_Lash(s32 a, s32 b, s32 c);
 #endif
 
 /// Felix casts Lash at the lower of the two bare rope posts in the northeast of
-/// the Osenia Cliffs, and a rope ties itself from it to the post on the higher
-/// ground beside it, so the party can cross to the Pirate's Sword. It stays
-/// tied until the party leaves.
-// XXX: how the rope looks once tied and where crossing it leads; a recording
-// would settle it, but the recorder cannot walk Felix to the low post.
+/// the Osenia Cliffs, the one on the wooden landing in the water, and a rope
+/// flies from it up to the post on the clifftop to the north-east and ties
+/// itself taut between them. Felix walks up it as a tightrope onto the
+/// clifftop, on the way to the Pirate's Sword. It stays tied until the party
+/// leaves.
 void OseniaCliffs_LashRope(void) {
   Rope_Lash(1, ACTOR_THIRD_ROPE_POST, ACTOR_FOURTH_ROPE_POST);
   Event_SetFlag(FLAG_OSENIA_CLIFFS_ROPE_LASHED);

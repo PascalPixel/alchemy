@@ -163,7 +163,12 @@ enum GondowanCaveActorId {
 /// in.
 #define PILLAR_DROP_COLUMN 43
 
+/// Move on the tall pillar beside the crevice in the east cave, and each push
+/// of it: once it reaches the crevice (cell (43, 17)) it drops into the water
+/// at its foot with a splash and stays there, clearing the way to the edge.
 static void GondowanCave_MovePillar(void);
+/// The actor spins in place, leaps off the ledge and lands with a shake and a
+/// ring of dust, then hops on into the water with a splash and floats there.
 static void GondowanCave_LeapIntoWater(s32 actorId);
 
 #include "shared/field_effect_create.c"
@@ -434,9 +439,6 @@ static inline void GondowanCave_PlaceDroppedPillar(s32 animation) {
   Actor_SetAnimation(ACTOR_DROPPED_PILLAR, animation);
 }
 
-/// Move on the tall pillar beside the crevice in the east cave, and each push
-/// of it: once it reaches the crevice (cell (43, 17)) it drops into the water
-/// at its foot with a splash and stays there, clearing the way to the edge.
 static void GondowanCave_MovePillar(void) {
   Event_Start();
   if (FIELD_CELL(Actor_Get(ACTOR_PILLAR)->x.fixed) >= PILLAR_DROP_COLUMN) {
@@ -474,8 +476,6 @@ static void GondowanCave_WaitToLand(struct Actor *actor, s32 height) {
   }
 }
 
-/// The actor spins in place, leaps off the ledge and lands with a shake and a
-/// ring of dust, then hops on into the water with a splash and floats there.
 static void GondowanCave_LeapIntoWater(s32 actorId) {
   struct Actor *actor;
   u32 stepIndex;

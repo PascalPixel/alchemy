@@ -1,62 +1,45 @@
 /// @file
-/// Lamakan Desert (SceneId_LamakanDesertEast to SceneId_LamakanDesertCave):
-/// four scenes that are all Lamakan Desert in the game's area names and share
-/// one trigger table, built around a heat gauge and the secrets Reveal
-/// uncovers.
+/// Lamakan Desert, south of Lama Temple: four scenes that share one trigger
+/// table, built around a heat gauge and the secrets Reveal uncovers.
 ///
-/// The heat is a count of steps on hazard ground
-/// (gMainRoutineWork.hazardSteps). Scene_Initialize sets a limit of HEAT_LIMIT
-/// on every scene, at which the party loses a quarter of its HP. On all but
-/// LamakanDesertCave it starts the heat gauge, a thermometer down the screen's
-/// left edge (HeatGauge_Draw).
+/// The party crosses it from the east. The first screen
+/// (SceneId_LamakanDesertEast) is entered from the World Map in its south-east
+/// corner and leads north. The second, the widest (SceneId_LamakanDesertSmog),
+/// is scattered with rings of rocks, cacti and skeletons, and hides Smog, a
+/// Jupiter Djinni; it leads out west. The third
+/// (SceneId_LamakanDesertManticore) has rivers of sand that carry the party
+/// south, with sandfalls at their heads. Behind two of them lie passages into a
+/// cave (SceneId_LamakanDesertCave): the east and south ones into a small
+/// cavern, and the north-west one, which the Manticore guards, into a corridor
+/// that leads out west to the World Map. The cave has no heat gauge.
 ///
-/// Each moving frame on the sand adds a step (HeatGauge_CountStep,
-/// CELL_BEHAVIOR_LAMAKAN_DESERT_SAND and the treasure spots' cells,
-/// TREASURE_SPOT_VULCAN_AXE to TREASURE_SPOT_MINT).
+/// Walking on the sand fills a thermometer down the screen's left edge
+/// (HeatGauge_Draw), faster on the run. As it passes a quarter, a half and
+/// three quarters, Garet, Ivan or Mia complains of the heat
+/// (LamakanDesert_ComplainAboutHeat); when it is full, the party loses a
+/// quarter of its HP and it starts again. The steps are counted in
+/// gMainRoutineWork.hazardSteps against HEAT_LIMIT.
 ///
-/// As the gauge passes a quarter, a half and three quarters, Garet, Ivan or Mia
-/// complains of the heat (LamakanDesert_ComplainAboutHeat). For that,
-/// HeatGauge_RaiseQuarterTriggers sets FLAG_HEAT_QUARTER to
-/// FLAG_HEAT_THREE_QUARTERS and raises LAMAKAN_DESERT_RAISED_HEAT_QUARTER to
-/// LAMAKAN_DESERT_RAISED_HEAT_THREE_QUARTERS.
+/// Most rings of rocks hide something only Reveal shows: an oasis, an Ant
+/// Lion's pit, a chest or a Psynergy Stone, and in the second screen Smog.
+/// On entry each hidden patch of the map is saved aside and covered with
+/// plain sand under a shimmering heat haze (Reveal_HideSecrets); Reveal brings
+/// them back and stills the haze (Reveal_ShowSecrets) until it wears off. The
+/// oases and the pits are there only while Reveal shines, as the monks of Lama
+/// Temple warn: `Reveal will help you find oases to cool you against the
+/// heat.` Stepping into an oasis, Isaac hops in and bathes until the heat has
+/// drained (LamakanDesert_BatheInOasis); stepping by a pit, he is pulled into
+/// it and an Ant Lion attacks (LamakanDesert_FallIntoPit).
 ///
-/// Stepping into an oasis (CELL_BEHAVIOR_LAMAKAN_DESERT_OASIS), the leader hops
-/// into the middle of the nearest one and bathes until the heat has drained
-/// (LamakanDesert_BatheInOasis), and a running Reveal ends.
+/// In the third screen Reveal also parts the sandfalls over the passages, and
+/// shows the Manticore standing in the north-west one. Until it is beaten
+/// (FLAG_LAMAKAN_MANTICORE_BEATEN), coming near makes it roar and lunge at
+/// Isaac (LamakanDesert_MeetManticore), and talking to it starts its battle.
 ///
-/// Entry saves the patches of the map grid that hold the desert's secrets and
-/// hides them under a shimmering heat haze (Reveal_HideSecrets). The secrets
-/// are the oases, the Ant Lions' pits, the Manticore, Smog, a Jupiter Djinni,
-/// and the chests and Psynergy Stones.
-///
-/// Reveal brings them back and stops the haze (Reveal_ShowSecrets) until it
-/// wears off. The oases' and pits' cells exist only while Reveal shines, as the
-/// monks of Lama Temple warn: `Reveal will help you find oases to cool you
-/// against the heat.`
-///
-/// Stepping by a pit (CELL_BEHAVIOR_LAMAKAN_DESERT_PIT) pulls the leader into
-/// it for a battle with an Ant Lion (LamakanDesert_FallIntoPit). Slopes of sand
-/// (CELL_BEHAVIOR_LAMAKAN_DESERT_SLOPE) carry the leader south
-/// (LamakanDesert_SlipDownSand).
-///
-/// In LamakanDesertManticore, Reveal also parts the sandfalls over two passages
-/// into LamakanDesertCave (LAMAKAN_DESERT_MANTICORE_TO_LAMAKAN_DESERT_CAVE_EAST
-/// and _WEST). Until it is beaten (FLAG_LAMAKAN_MANTICORE_BEATEN), the
-/// Manticore guards the west one: it rises out of the sand as the leader comes
-/// near (CELL_BEHAVIOR_LAMAKAN_DESERT_MANTICORE, LamakanDesert_MeetManticore).
-/// Talking to it starts its battle, which ends at LamakanDesertManticore's
-/// LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE, and arriving there marks it
-/// beaten.
-///
-/// LamakanDesertEast's LAMAKAN_DESERT_EAST_TO_WORLD_MAP and LamakanDesertCave's
-/// LAMAKAN_DESERT_CAVE_TO_WORLD_MAP lead out onto the World Map.
-/// LamakanDesertCave, a cave, has no heat gauge.
-///
-/// CELL_BEHAVIOR_LAMAKAN_DESERT_TO_WORLD_MAP takes
-/// LAMAKAN_DESERT_CAVE_TO_WORLD_MAP. Leaving that way while Hsu is still
-/// trapped (FLAG_HSU_RESCUED clear) sets FLAG_HSU_RESCUED and
-/// FLAG_HSU_RESCUED_WITHOUT_PARTY, which lacquer_rooms_b.c reads to have Feizhi
-/// thank Master Hama alone.
+/// Leaving the corridor for the World Map while Hsu is still trapped at the
+/// Alpine Crossing (FLAG_HSU_RESCUED clear) frees him without the party: it
+/// sets FLAG_HSU_RESCUED and FLAG_HSU_RESCUED_WITHOUT_PARTY, and in Xian
+/// Feizhi then thanks Master Hama alone (lacquer_rooms_b.c).
 
 #include "ability_ids.h"
 #include "djinn_ids.h"
@@ -184,10 +167,11 @@ enum LamakanDesertCellBehavior {
       22, ///< by an Ant Lion's pit, under Reveal too
   CELL_BEHAVIOR_LAMAKAN_DESERT_SLOPE =
       30, ///< sand that carries the leader south
-  /// The cave's way out onto the World Map, at its west entrance.
+  /// The way out of the corridor behind the Manticore onto the World Map, at
+  /// its west end, cell (8, 19).
   CELL_BEHAVIOR_LAMAKAN_DESERT_TO_WORLD_MAP = 9,
-  /// LamakanDesertManticore's ground before the passage the Manticore guards,
-  /// once Reveal has parted the sandfall over it.
+  /// The sand before the north-west passage of the third screen, which the
+  /// Manticore guards, once Reveal has parted the sandfall over it.
   CELL_BEHAVIOR_LAMAKAN_DESERT_MANTICORE = 40
 };
 
@@ -313,8 +297,8 @@ enum LamakanDesertTreasureSpot {
 #include "shared/field_effect_create.c"
 #include "shared/field_effect_spawn.c"
 
-/// In LamakanDesertSmog, talking to Smog, whom Reveal uncovers, adds the
-/// Jupiter Djinni to the party.
+/// Talking to Smog, the Jupiter Djinni Reveal uncovers in a ring of rocks east
+/// of the middle of Lamakan Desert's second screen, makes it join the party.
 static void LamakanDesert_TalkToSmog(void) {
   Djinn_JoinParty(ACTOR_SMOG, ELEMENT_JUPITER, DJINNI_INDEX(DJINNI_SMOG));
 }
@@ -396,9 +380,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gLamakanDesertActorPlacementsOther;
 }
 
-/// In LamakanDesertCave, the way out onto the World Map
-/// (CELL_BEHAVIOR_LAMAKAN_DESERT_TO_WORLD_MAP) takes
-/// LAMAKAN_DESERT_CAVE_TO_WORLD_MAP.
+/// Walking out of the west end of the cave corridor behind the Manticore (cell
+/// (8, 19)) leaves Lamakan Desert for the World Map. If Hsu is still trapped
+/// at the Alpine Crossing, he is freed without the party from then on.
 static void LamakanDesert_LeaveForTheWorldMap(void) {
   Event_Start();
   if (Event_GetFlag(FLAG_HSU_RESCUED) == 0) {
@@ -523,8 +507,8 @@ static UNREAD_RESULT Reveal_ShowSecrets(void) {
     Actor_SetPosition(ACTOR_SMOG, 648, 408);
   } else if (gMainRoutineWork.next == SCENE_LAMAKAN_DESERT_MANTICORE) {
     // The three secrets come back from their spare patches. The sandfalls
-    // part and the slopes lead into the passages; before the west one the
-    // Manticore rises (CELL_BEHAVIOR_LAMAKAN_DESERT_MANTICORE), and a wall
+    // part and the slopes lead into the passages; in the west one the
+    // Manticore stands (CELL_BEHAVIOR_LAMAKAN_DESERT_MANTICORE), and a wall
     // closes it until the Manticore is beaten.
     MapGrid_CopyCells(64, 124, 4, 4, 8, 14);
     MapGrid_CopyCells(68, 124, 4, 4, 6, 18);
@@ -550,9 +534,10 @@ static UNREAD_RESULT Reveal_ShowSecrets(void) {
   }
 }
 
-/// The party fights the Manticore. In LamakanDesertManticore, talking to the
-/// Manticore starts its battle, which returns the party to
-/// LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE.
+/// Talking to the Manticore before the north-west passage of Lamakan Desert's
+/// third screen makes it rear up and starts the battle. Afterwards the party
+/// stands where it fought, below the opened passage, and the Manticore is gone
+/// for good (LAMAKAN_DESERT_MANTICORE_AFTER_FIGHT_MANTICORE).
 static void LamakanDesert_FightManticore(void) {
   Actor_RunRepeatedMotion(ACTOR_MANTICORE, 2);
   Event_SetAfterBattleDestination(
@@ -563,7 +548,8 @@ static void LamakanDesert_FightManticore(void) {
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 5);
 }
 
-/// Garet, Ivan or Mia complains about the heat.
+/// As Lamakan Desert's heat gauge passes a quarter, a half and three quarters,
+/// Garet, Ivan or Mia, picked at random, complains of the heat.
 static void LamakanDesert_ComplainAboutHeat(s32 mark) {
   s32 tries;
   s32 flag;
@@ -646,11 +632,10 @@ static s32 LamakanDesert_PixelsToOasis(const s32 *position, const s32 *oasis) {
   return Iwram_Sqrt(squaredDeltaX + squaredDeltaZ);
 }
 
-/// In Lamakan Desert, stepping into an oasis
-/// (CELL_BEHAVIOR_LAMAKAN_DESERT_OASIS), which only Reveal shows, the leader
-/// hops into the middle of the nearest of the map's oases. He bathes with a
-/// heart over his head while the gauge drains 5 steps a frame, for at least a
-/// second, then hops out.
+/// Stepping into an oasis in Lamakan Desert, which only Reveal shows in its
+/// ring of rocks, Isaac hops into the middle of the pool and bathes with a
+/// heart over his head while the heat gauge drains, for at least a second, then
+/// hops out.
 static void LamakanDesert_BatheInOasis(void) {
   struct FieldWork *work;
   s32 frames;
@@ -784,9 +769,10 @@ static void LamakanDesert_BatheInOasis(void) {
   HeatGauge_SetHeld(0);
 }
 
-/// In Lamakan Desert, walking on sand (CELL_BEHAVIOR_LAMAKAN_DESERT_SAND and
-/// the treasure spots' cells) adds a step of heat each moving frame and kicks
-/// up dust, faster on the run.
+/// Walking on Lamakan Desert's sand fills the heat gauge and kicks up little
+/// puffs of dust at Isaac's feet, bigger and more often on the run. Every frame
+/// he moves adds a step of heat, running or not; on the rivers of sand it adds
+/// heat without the dust.
 static void HeatGauge_CountStep(void) {
   struct Actor *actor;
   struct FieldWork *work;
@@ -843,9 +829,9 @@ static void HeatGauge_CountStep(void) {
 /// pit starts from, farther than any pit can be.
 #define PIT_SEARCH_DISTANCE (1 << 20)
 
-/// In Lamakan Desert, stepping near a hidden pit
-/// (CELL_BEHAVIOR_LAMAKAN_DESERT_PIT), the leader looks at the nearest pit and
-/// is pulled backwards into it, and a battle with an Ant Lion begins.
+/// Stepping beside an Ant Lion's pit in Lamakan Desert, which only Reveal
+/// shows in its ring of rocks, Isaac turns his back to it and is dragged
+/// backwards into it in a spray of sand, and an Ant Lion attacks.
 static void LamakanDesert_FallIntoPit(void) {
   struct Actor *leader;
   struct Actor *pit;
@@ -914,8 +900,10 @@ static void LamakanDesert_FallIntoPit(void) {
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 4);
 }
 
-/// In Lamakan Desert, on a slope of sand (CELL_BEHAVIOR_LAMAKAN_DESERT_SLOPE),
-/// the sand carries the leader south 1.5 pixels a frame.
+/// On a river of sand in Lamakan Desert's third screen, the sand carries Isaac
+/// south, about a cell every ten frames, in a spray of sand, until something
+/// stops him. Where the river drops over a ledge, he gives a start and leaps
+/// down.
 static void LamakanDesert_SlipDownSand(void) {
   struct Actor *center;
   s32 id;
@@ -988,8 +976,11 @@ static void LamakanDesert_SlipDownSand(void) {
   actor->z.fixed += toFIXED(3) / 2;
 }
 
-/// In LamakanDesertManticore, on CELL_BEHAVIOR_LAMAKAN_DESERT_MANTICORE, the
-/// leader stops and backs away as the Manticore rises out of the sand.
+/// Coming near the north-west passage of Lamakan Desert's third screen, once
+/// Reveal has parted its sandfall and shown the Manticore standing in it,
+/// Isaac stops short, startled, and backs away as the Manticore roars, lunges
+/// at him and settles back. It happens each time until the Manticore is
+/// beaten.
 static void LamakanDesert_MeetManticore(void) {
   struct FieldWork *work = gFieldWork;
   struct FieldPosition backward;
@@ -1045,8 +1036,8 @@ static void LamakanDesert_MeetManticore(void) {
   HeatGauge_SetHeld(0);
 }
 
-/// Entering Lamakan Desert sets the heat's limit, HEAT_LIMIT steps, and starts
-/// the heat gauge on all but LamakanDesertCave.
+/// Entering Lamakan Desert sets the heat's limit, HEAT_LIMIT steps, hides the
+/// desert's secrets, and shows the heat gauge everywhere but in the cave.
 s32 Scene_Initialize(void) {
   gMainRoutineWork.hazardLimit = HEAT_LIMIT;
   gMainRoutineWork.hazardMode = HAZARD_COUNT_ON_CELLS;

@@ -1659,7 +1659,7 @@ void SuperLuckyDice_Run(void) {
       s32 y;
 
       die = &dice->particles[drawOrder[index]];
-      Render_ProjectPoint(die, screen);
+      Matrix_ProjectPoint(die, screen);
       if (screen[2] < DICE_NEAREST_DEPTH)
         screen[2] = DICE_NEAREST_DEPTH;
       if (screen[2] > DICE_FARTHEST_DEPTH)
@@ -1697,7 +1697,7 @@ void SuperLuckyDice_Run(void) {
         groundPoint[0] = die->x;
         groundPoint[1] = 0;
         groundPoint[2] = die->z;
-        Render_ProjectPoint(groundPoint, screen);
+        Matrix_ProjectPoint(groundPoint, screen);
         if (screen[2] < DICE_NEAREST_DEPTH)
           screen[2] = DICE_NEAREST_DEPTH;
         if (screen[2] > DICE_FARTHEST_DEPTH)

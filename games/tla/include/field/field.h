@@ -127,7 +127,7 @@ void Render_ApplyProjectedPlacement(struct Sprite *sprite, s32 *position,
 /// order; its shadow takes two slots behind.
 #define PLACEMENT_IMAGE_DEPTH 62
 
-s32 Render_ProjectPoint(const void *point, s32 *screen);
+s32 Matrix_ProjectPoint(const void *point, s32 *screen);
 void Scene_SetArrivalFlags(s32 unused);
 s32 Message_OpenWindowFar(s32 message, s32 x, s32 y, s32 packed);
 void AreaNameWindow_HideFar(void);

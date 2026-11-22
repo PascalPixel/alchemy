@@ -554,7 +554,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       for (i = 0; i != ARRAY_COUNT(work->particles); i++, p++) {
         s32 size = 1;
 
-        Render_ProjectPoint(p, screen);
+        Matrix_ProjectPoint(p, screen);
         blit[0](canvas, sprites + gBattleEffect_MotePictures[size - 1],
                 screen[0], screen[1], size, 4);
         p->y -= 2;

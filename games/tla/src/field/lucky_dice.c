@@ -739,7 +739,7 @@ void LuckyDice_Run(void) {
       s32 dieY;
 
       rollingDie = &diceWork->particles[drawOrder[index]];
-      Render_ProjectPoint(rollingDie, screen);
+      Matrix_ProjectPoint(rollingDie, screen);
       if (screen[2] < DICE_NEAREST_DEPTH) {
         screen[2] = DICE_NEAREST_DEPTH;
       }
@@ -770,7 +770,7 @@ void LuckyDice_Run(void) {
     // While aiming, a marker under each die.
     if (state == LUCKY_DICE_AIM) {
       for (index = 0; index != DICE_COUNT; index++) {
-        Render_ProjectPoint(&diceWork->particles[index], screen);
+        Matrix_ProjectPoint(&diceWork->particles[index], screen);
         x = screen[0] -
             8 * AFFINE_SCALE_ONE /
                 (spriteDepth[drawOrder[index]] / 2 + DICE_NEAREST_SCALE);
@@ -798,7 +798,7 @@ void LuckyDice_Run(void) {
       groundPoint[0] = rollingDie->x;
       groundPoint[1] = 0;
       groundPoint[2] = rollingDie->z;
-      Render_ProjectPoint(groundPoint, screen);
+      Matrix_ProjectPoint(groundPoint, screen);
       // A shadow shrinks as its die rises.
       depth = screen[2];
       if (depth < DICE_NEAREST_DEPTH) {

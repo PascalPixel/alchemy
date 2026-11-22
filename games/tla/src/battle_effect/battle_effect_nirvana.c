@@ -728,7 +728,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
       world[0] = target->x;
       world[1] = 0;
       world[2] = target->z;
-      Render_ProjectPoint(world, &screen);
+      Matrix_ProjectPoint(world, &screen);
       if (screen.x <= 63) {
         screen.x = 64;
       }
@@ -763,7 +763,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
             continue;
           }
           picture = p->variant / 6;
-          Render_ProjectPoint(p, &point);
+          Matrix_ProjectPoint(p, &point);
           Particle_AdvanceWithGravity3D(p, 60, toFIXED(1) / 8);
           x = point.x - CLOUD_PUFF_WIDTH / 2;
           y = point.y - CLOUD_PUFF_HEIGHT / 2;
@@ -778,7 +778,7 @@ void BattleEffect_RunSerac(struct BattleEffectParams *args) {
         point.x = target->x;
         point.y = toFIXED(60) - frame * toFIXED(2);
         point.depth = target->z + (Trig_Sin(frame * (TRIG_TURN / 128)) << 5);
-        Render_ProjectPoint(&point, &dropScreen);
+        Matrix_ProjectPoint(&point, &dropScreen);
         blitters[1](canvas, work->sheet + SERAC_MERCURY_DJINN_PICTURES,
                     dropScreen.x - 20, dropScreen.y - 30, DJINNI_WIDTH,
                     DJINNI_HEIGHT);

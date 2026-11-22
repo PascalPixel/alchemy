@@ -1142,7 +1142,7 @@ s32 Inn_RoomPrice(s32 innId);
 void Palette_LoadBasicSpriteColors(void);
 u32 Random16(void);
 void ReleaseBattleObjectRecordsFar(s32 actor);
-s32 Render_ProjectPoint(const void *point, s32 *screen);
+s32 Matrix_ProjectPoint(const void *point, s32 *screen);
 void Matrix_TranslateVector(const FIXED *pos);
 void Matrix_Translate(FIXED x, FIXED y, FIXED z);
 void Matrix_ScaleVector(FIXED *scale);

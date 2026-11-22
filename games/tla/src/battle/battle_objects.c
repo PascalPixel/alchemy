@@ -607,7 +607,7 @@ s32 BattleMotion_ProjectPosition(s32 id, s32 *projected) {
     out = projected;
     position[1] = object->y;
     position[2] = object->z;
-    scaled = Render_ProjectPoint(position, out);
+    scaled = Matrix_ProjectPoint(position, out);
   }
   (void)Iwram_MulFX(scaled, record->scale);
   return 0;

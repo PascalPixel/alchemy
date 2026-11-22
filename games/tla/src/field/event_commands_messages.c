@@ -59,7 +59,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
   if (work->fastForward == 0) {
     if (actor != 0) {
       if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-        Render_ProjectPoint(&actor->x.fixed, pos);
+        Matrix_ProjectPoint(&actor->x.fixed, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
         found = 1;
@@ -76,7 +76,7 @@ s32 FieldMessage_ShowAtActor(s32 localId, s32 unused) {
       sprite = localId;
       actor = Actor_Lookup(Party_GetLeaderActor());
       if (work->mode == ACTOR_SYSTEM_WORLD_MAP) {
-        Render_ProjectPoint(&actor->x.fixed, pos);
+        Matrix_ProjectPoint(&actor->x.fixed, pos);
         x = pos[0] >> 3;
         y = pos[1] >> 3;
         found = 1;

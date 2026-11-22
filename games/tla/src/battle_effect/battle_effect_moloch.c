@@ -3075,7 +3075,7 @@ void Render_TransformVertices(const void *corners, void *vertices, s32 count) {
   Heap_Release(routine);
 }
 
-/// Projects count model vertices through Render_ProjectPoint into screen
+/// Projects count model vertices through Matrix_ProjectPoint into screen
 /// coordinates.
 void Render_ProjectVertices(struct ModelVertex *vertices,
                             struct ProjectedVertex *screen, s32 count) {
@@ -3084,7 +3084,7 @@ void Render_ProjectVertices(struct ModelVertex *vertices,
   for (; count != 0; count--) {
     SET_VECTOR(point, INTtoFIXED(vertices->x), INTtoFIXED(vertices->y),
                INTtoFIXED(vertices->z));
-    Render_ProjectPoint(point, point);
+    Matrix_ProjectPoint(point, point);
     screen->x = point[0];
     screen->y = point[1];
     screen->depth = point[2];

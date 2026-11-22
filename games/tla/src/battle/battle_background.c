@@ -297,7 +297,7 @@ UNUSED void BattleCamera_SetViewAtDepth(s32 x, s32 depth, s32 y) {
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   Matrix_Initialize();
   Matrix_SetLookAt(scene->eye, pos);
-  Render_ProjectPoint(sourceBounds, measuredBounds);
+  Matrix_ProjectPoint(sourceBounds, measuredBounds);
 
   BattleCamera_SetRange(
       toFIXED(BATTLE_PROJECTION_CENTER_X), toFIXED(BATTLE_PROJECTION_CENTER_Y),
@@ -348,7 +348,7 @@ void BattleCamera_SetView(s32 x, s32 depth, s32 y, s32 zoom) {
   gProjection.centerY = BATTLE_PROJECTION_CENTER_Y;
   Matrix_Initialize();
   Matrix_SetLookAt(scene->eye, pos);
-  Render_ProjectPoint(sourceBounds, measuredBounds);
+  Matrix_ProjectPoint(sourceBounds, measuredBounds);
 
   BattleCamera_SetRange(
       toFIXED(BATTLE_PROJECTION_CENTER_X), toFIXED(BATTLE_PROJECTION_CENTER_Y),

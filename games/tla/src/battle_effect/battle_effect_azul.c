@@ -844,10 +844,10 @@ UNUSED void EffectPosition_AdvanceWithGravity2D(struct Particle *step,
 }
 
 /// Projects a 16.16 point onto the screen through the current transform, 16
-/// pixels higher; returns Render_ProjectPoint's result.
+/// pixels higher; returns Matrix_ProjectPoint's result.
 s32 EffectPosition_ProjectPoint(const void *point,
                                 struct ScreenPoint *position) {
-  s32 result = Render_ProjectPoint(point, ScreenPoint_Coordinates(position));
+  s32 result = Matrix_ProjectPoint(point, ScreenPoint_Coordinates(position));
   position->y -= 16;
   return result;
 }

@@ -6,7 +6,7 @@
 #include "fixed_math.h"
 #include "system/projection.h"
 
-/// A point in view space, and where Render_ProjectPoint puts it on the screen.
+/// A point in view space, and where Matrix_ProjectPoint puts it on the screen.
 struct ProjectedPoint {
   s32 x;
   s32 y;
@@ -25,7 +25,7 @@ struct ProjectedPoint {
 /// reciprocal of a 16.16 divisor.
 #define RECIPROCAL_SHIFT 15
 
-/// Render_ProjectPoint's depth drops its low PROJECTION_DEPTH_SHIFT bits,
+/// Matrix_ProjectPoint's depth drops its low PROJECTION_DEPTH_SHIFT bits,
 /// and the focal length gains the rest of FIXED_ONE's, so that the focal
 /// length over the depth comes out in 16.16 within 32 bits.
 #define PROJECTION_DEPTH_SHIFT 11
@@ -350,9 +350,6 @@ void Matrix_RotateTranslateScale(s32 *angles, FIXED *position, FIXED *scale) {
 /// Square root of a 16.16 fixed-point value, in 16.16. The square root of
 /// the raw value is the result in 8.8, so the low eight bits are always 0.
 #define Math_SqrtFX(v) (Iwram_Sqrt(v) << 8)
-/// Matrix_BuildLookAt's dot product, a Thumb entry and its ARM code: eight
-/// words it copies onto its stack to run.
-#define RelocatedInnerProduct Math_InnerProductCode
 
 /// Builds in `out` the camera matrix of an eye at `eye` looking at `target`.
 /// The camera's sideways axis is kept level (no Y component).
@@ -481,7 +478,7 @@ void Projection_Set(u32 focal, u32 nearDepth, u32 farDepth) {
 /// Transforms `point` by gCurrentMatrix and projects it onto the screen into
 /// `screen`, returning the scale at its depth; a point outside the near and far
 /// depths keeps its view coordinates and returns 0.
-s32 Render_ProjectPoint(const void *point, struct ProjectedPoint *screen) {
+s32 Matrix_ProjectPoint(const void *point, struct ProjectedPoint *screen) {
   struct ProjectedPoint view;
   struct Projection *projection;
   s32 depth;
@@ -517,4 +514,3 @@ s32 Render_ProjectPoint(const void *point, struct ProjectedPoint *screen) {
 #undef PROJECTION_DEPTH_SHIFT
 #undef COS
 #undef Math_SqrtFX
-#undef RelocatedInnerProduct

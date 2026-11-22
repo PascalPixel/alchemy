@@ -12,8 +12,8 @@
 @ never run.
 .syntax unified
 	.thumb
-	.global Math_InnerProductCode
-Math_InnerProductCode:
+	.global RelocatedInnerProduct
+RelocatedInnerProduct:
 	.global Math_InnerProduct
 	.thumb_func
 Math_InnerProduct:

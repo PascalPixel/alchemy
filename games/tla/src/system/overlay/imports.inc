@@ -44,7 +44,7 @@
 	export Oam_AddSpriteAtDepth, Oam_AddSpriteAtDepthClampedFar
 	export Oam_AddSpriteAtDepthClamped, Oam_AddSpriteAtDepthClampedFar
 	export Window_LoadGraphics, Window_LoadGraphicsFar
-	export Render_ProjectPoint, Render_ProjectPointFar
+	export Matrix_ProjectPoint, Matrix_ProjectPointFar
 	export Resource_GetTableEntry, Resource_GetTableEntryFar
 	export ScreenFade_ToWhite, ScreenFade_ToWhiteFar
 	export Resource_ReservedNoOp, Resource_ReservedNoOpFar

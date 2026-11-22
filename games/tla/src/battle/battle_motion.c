@@ -306,7 +306,7 @@ s32 BattleMotion_ProjectScaledPosition(s32 slot, s32 *screen) {
   UNUSED s32 unused[3];
 
   BattleCamera_ApplyTransform();
-  scale = Iwram_MulFX(Render_ProjectPoint(&object->x, screen), record->scale);
+  scale = Iwram_MulFX(Matrix_ProjectPoint(&object->x, screen), record->scale);
   screen[1] -= Iwram_MulFX(scale, FIXEDtoINT(BattleUnit_GetEffectHeight(slot)));
   return 0;
 }
@@ -320,7 +320,7 @@ s32 BattleMotion_ProjectConditionalPosition(s32 slot, s32 *screen) {
   FIXED scale;
 
   BattleCamera_ApplyTransform();
-  scale = Iwram_MulFX(Render_ProjectPoint(&object->x, screen), record->scale);
+  scale = Iwram_MulFX(Matrix_ProjectPoint(&object->x, screen), record->scale);
   if (BattleSprite_IsSmall(Unit_Get(slot)->enemyId) != 0)
     screen[1] -= Iwram_MulFX(scale, EFFECT_HEIGHT_SMALL);
   else

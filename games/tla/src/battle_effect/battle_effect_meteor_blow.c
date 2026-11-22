@@ -407,7 +407,7 @@ void BattleEffect_RunMeteorBlow(struct BattleEffectParams *args) {
           point[0] = FIXED_INTEGER_PART(s->x);
           point[1] = FIXED_INTEGER_PART(s->y);
           point[2] = FIXED_INTEGER_PART(s->z);
-          Render_ProjectPoint(point, screen);
+          Matrix_ProjectPoint(point, screen);
           if (screen[2] > 0) {
             if (kind == METEOR_BLOW_PIXEL_STAR) {
               blit[0](gMapGridCellBuffer,

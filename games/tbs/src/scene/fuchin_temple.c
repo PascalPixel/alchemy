@@ -9,13 +9,16 @@
 /// Two scenes hold four areas, by their area names. In each, story flags
 /// pick where the people stand and which event plays on entry.
 ///
-/// - Fuchin Temple (SceneId_FuchinTempleGrounds), outside the temple, reached
-///   from the World Map (FUCHIN_TEMPLE_GROUNDS_FROM_WORLD_MAP). A defeat
-///   anywhere here returns the party to FUCHIN_TEMPLE_GROUNDS_AFTER_DEFEAT, in
-///   front of the traveling healer.
+/// - Fuchin Temple (SceneId_FuchinTempleGrounds), outside: a path from the
+///   World Map in the south (FUCHIN_TEMPLE_GROUNDS_FROM_WORLD_MAP) climbs
+///   beside a pool and waterfall to the temple, a blue-roofed hall at the top,
+///   with a traveling healer by its door and a Psynergy Stone to its east. A
+///   defeat anywhere here returns the party to
+///   FUCHIN_TEMPLE_GROUNDS_AFTER_DEFEAT, in front of the healer.
 ///
-///   The monk beneath the falls guards the waterfall grotto. Once Nyunpa has
-///   set his test (FLAG_NYUNPA_TEST_ACCEPTED) he leaps aside
+///   A monk stands on a tall stump in the pool, in front of the falls,
+///   guarding the grotto behind them. Once Nyunpa has set his test
+///   (FLAG_NYUNPA_TEST_ACCEPTED) the monk leaps aside to the next stump
 ///   (FLAG_FUCHIN_FALLS_GROTTO_OPENED), and the grotto leads into Fuchin Falls
 ///   Cave (FUCHIN_TEMPLE_GROUNDS_TO_FUCHIN_FALLS_CAVE_ENTRANCE).
 ///
@@ -26,7 +29,8 @@
 ///   lacquer. Each is a camera box of its own, chosen by the entrance the
 ///   party comes in by. In story order, by the exits that lead in:
 ///   - Fuchin Temple (by LACQUER_ROOMS_A_FROM_FUCHIN_TEMPLE_GROUNDS or the
-///     default entrance), inside, where Nyunpa meditates.
+///     default entrance), inside, where Nyunpa meditates on a dais with the
+///     sign of yin and yang.
 ///     - Mind Read on him offers the test (FuchinTemple_NyunpaOffersTest,
 ///       again after FLAG_FUCHIN_TEMPLE_NYUNPA_TEST_DECLINED).
 ///     - Back with the Orb, Scene_Initialize plays his lesson on Ki
@@ -38,10 +42,10 @@
 ///     The area-name rules give the name Xian only at
 ///     LACQUER_ROOMS_A_FEHS_SCHOOL_FROM_XIAN, and Scene_Initialize hides the
 ///     name at both.
-///     - Force from the line fells the training tree
-///       (FuchinTemple_ForceTree). The first time, Feizhi and Feh come out
-///       and she leaves to find Hsu (FLAG_FEIZHI_WENT_TO_HSU), which unlocks
-///       LACQUER_ROOMS_A_FEHS_SCHOOL_TO_HOUSE.
+///     - Force from the white line on the floor fells the tree trunk the
+///       students train on (FuchinTemple_ForceTree). The first time, Feizhi and
+///       Feh come out and she leaves to find Hsu (FLAG_FEIZHI_WENT_TO_HSU),
+///       which unlocks LACQUER_ROOMS_A_FEHS_SCHOOL_TO_HOUSE.
 ///     - Feh then waits to see Isaac's Chi (FLAG_FEH_WAITS_TO_SEE_CHI, or
 ///       FLAG_FEH_CHI_DEMONSTRATION_DECLINED after two refusals). Seeing the
 ///       tree fall from the line, he names it Ki (FLAG_FEH_SAW_KI).
@@ -99,6 +103,25 @@ extern struct Trigger gFuchinTempleGroundsTriggers[];
 extern struct Trigger gFuchinTempleTriggers[];
 extern struct Trigger gFuchinTempleTriggersFromLamaTemple[];
 extern s32 gFuchinTemple_ShotScript[];
+
+/// The cells outside the temple and in its rooms that run events.
+enum {
+  /// Outside: the temple's door.
+  CELL_BEHAVIOR_FUCHIN_TEMPLE_DOOR = 2,
+  /// Outside: the falls behind the monk's stump, the way into the grotto.
+  CELL_BEHAVIOR_FUCHIN_FALLS_GROTTO = 3,
+  /// Outside: the stump beside the monk, set only on the way out of the
+  /// grotto with the Orb of Force.
+  CELL_BEHAVIOR_FUCHIN_FALLS_MONK_ASKS = 5,
+  /// Inside: the temple's south door.
+  CELL_BEHAVIOR_FUCHIN_TEMPLE_SOUTH_DOOR = 1,
+  /// Inside: the lattice door to Feh's house.
+  CELL_BEHAVIOR_FEHS_SCHOOL_HOUSE_DOOR = 3,
+  /// Inside: the cells east and south of the school's tree trunk.
+  CELL_BEHAVIOR_FEHS_SCHOOL_TREE_EAST_SOUTH = 10,
+  /// Inside: the cells west and north of the school's tree trunk.
+  CELL_BEHAVIOR_FEHS_SCHOOL_TREE_WEST_NORTH = 11
+};
 
 // Fuchin Temple's area temp flags last until the party enters another area.
 
@@ -261,8 +284,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gFuchinTempleActorPlacements;
 }
 
-/// Talking to the young man from Kolima at Fuchin Temple
-/// (FuchinTempleGrounds): he asks how the party got here.
+/// Isaac talks to the young man from Kolima on the path below the temple: he
+/// asks how the party got here, and whether the bridge is open.
 static void FuchinTemple_YoungManFromKolimaAsksAboutBridge(void) {
   Event_Start();
   Event_SetMessageId(MsgXianHowDidGetHereBridge);
@@ -279,9 +302,10 @@ static void FuchinTemple_YoungManFromKolimaAsksAboutBridge(void) {
   Event_End();
 }
 
-/// Talking to the boy monk (ACTOR_ADMIRING_BOY_MONK) at Fuchin Temple
-/// (FuchinTempleGrounds): he speaks of the one seeking enlightenment, with up
-/// to two more questions.
+/// Isaac talks to the boy monk who admires Nyunpa, below the temple: "Isn't it
+/// noble of him to try to save the world...", with up to two more questions.
+/// Once Nyunpa has died enlightened, he wonders whether he is watching over
+/// them.
 static void FuchinTemple_BoyMonkSpeaksOfNyunpa(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_NYUNPA_ENLIGHTENED) != 0) {
@@ -308,9 +332,10 @@ static void FuchinTemple_BoyMonkSpeaksOfNyunpa(void) {
   }
 }
 
-/// Talking to the monk beneath the falls at Fuchin Temple (FuchinTempleGrounds)
-/// once Nyunpa has set the test (FLAG_NYUNPA_TEST_ACCEPTED): he lets the party
-/// pass (FLAG_FUCHIN_FALLS_GROTTO_OPENED).
+/// Isaac talks to the monk on the stump in front of the falls once Nyunpa has
+/// set the test: "I have already heard of your test from Master Nyunpa. You
+/// may enter." He leaps aside onto the next stump with a splash, opening the
+/// way into the grotto (FLAG_FUCHIN_FALLS_GROTTO_OPENED).
 static void FuchinTemple_MonkLetsPartyIntoGrotto(void) {
   struct Actor *monk;
   struct EffectOptions options;
@@ -320,7 +345,7 @@ static void FuchinTemple_MonkLetsPartyIntoGrotto(void) {
   Event_SetMessageId(MsgXianAlreadyHeardTest);
   // "I have already heard of your test from Master Nyunpa. You..."
   Event_ShowMessageThenWait(ACTOR_FALLS_MONK, 0, 20);
-  // The monk leaps aside and lands in a puff of dust.
+  // The monk leaps aside and lands in a splash.
   Actor_WalkToAndWait(ACTOR_PARTY_LEADER, 168, 392);
   Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
   Sound_Play(SE_WATER);
@@ -347,7 +372,13 @@ static void FuchinTemple_MonkLetsPartyIntoGrotto(void) {
   Event_End();
 }
 
-/// Isaac comes back out of the grotto with the Orb of Force.
+/// Coming back out from behind the falls with the Orb of Force, Isaac hops
+/// onto the stump beside the monk, cell (10, 24), and the monk asks: "Young
+/// master, did you complete the test?" Either way he sends him up to the
+/// temple, where Master Nyunpa is waiting.
+///
+/// The cell is only set for this on the way out of the grotto
+/// (Scene_Initialize), and turned back into a plain stepping stone here.
 static void FuchinTemple_MonkAsksWhetherTestIsDone(void) {
   Event_Start();
   GameFlag_Set(FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST);
@@ -377,8 +408,9 @@ static void FuchinTemple_MonkAsksWhetherTestIsDone(void) {
   Event_End();
 }
 
-/// Reading Nyunpa's mind inside Fuchin Temple (LacquerRoomsA), or
-/// talking to him after a refusal: he offers the test of the grotto.
+/// Isaac reads Nyunpa's mind as he meditates in the temple, or talks to him
+/// after turning the test down: Nyunpa offers him the test of the grotto
+/// beneath the falls.
 static void FuchinTemple_NyunpaOffersTest(void) {
   s32 alreadyDeclinedTrial;
 
@@ -507,8 +539,8 @@ static void FuchinTemple_NyunpaOffersTest(void) {
   Event_End();
 }
 
-/// Reading Nyunpa's mind inside Fuchin Temple once the test is accepted: he
-/// notices.
+/// Isaac reads Nyunpa's mind again once the test is accepted, and Nyunpa
+/// notices: "You enjoy reading the minds of others, do you not?"
 static void FuchinTemple_NyunpaFeelsMindRead(void) {
   Event_Start();
   Event_SetMessageId(MsgXianEnjoyReadingMindsOthersDo);
@@ -519,9 +551,8 @@ static void FuchinTemple_NyunpaFeelsMindRead(void) {
   Event_End();
 }
 
-/// Talking to the student at the door of Master Feh's school in Xian
-/// (ACTOR_WELCOMING_STUDENT): the student asks whether the party came to
-/// watch.
+/// Isaac talks to the young man by the door of Master Feh's school in Xian:
+/// "This is Master Feh's school... You came to watch?"
 static void FuchinTemple_StudentWelcomesToSchool(void) {
   Event_Start();
   Event_SetMessageId(MsgXianMasterFehsSchoolCameWatch);
@@ -532,8 +563,9 @@ static void FuchinTemple_StudentWelcomesToSchool(void) {
   Event_End();
 }
 
-/// Talking to the student who practices jumping in Master Feh's school in Xian:
-/// he lands, talks about jumping (or Lama Temple, or Hsu), then jumps on.
+/// Isaac talks to the student jumping up and down in Master Feh's school: he
+/// lands, talks about jumping (later of Lama Temple, or of Hsu), then jumps
+/// on.
 static void FuchinTemple_TalkToJumpingStudent(void) {
   Event_Start();
 
@@ -571,9 +603,9 @@ static void FuchinTemple_TalkToJumpingStudent(void) {
   Event_End();
 }
 
-/// Talking to the student by the training tree in Master Feh's school in Xian
-/// (ACTOR_TREE_STUDENT): the student asks whether the party still wishes to
-/// see Master Feh.
+/// Isaac talks to the student by the tree trunk in Master Feh's school: "Master
+/// Feh is very busy. Do you still wish to see him?" Yes has him point out the
+/// line to stand on and use Chi from.
 static void FuchinTemple_StudentAsksAboutFeh(void) {
   Event_Start();
   Event_SetMessageId(MsgXianMasterFehVeryBusyDo);
@@ -584,16 +616,17 @@ static void FuchinTemple_StudentAsksAboutFeh(void) {
   Event_End();
 }
 
-/// The training tree's sprite rotation in sixteenths of a turn (FACING_STEP)
-/// as it falls sideways: it stands at TREE_STANDING_STEP and lies a quarter
-/// turn to either side.
+/// The tree trunk's tilt in sixteenths of a turn (FACING_STEP) as it falls
+/// sideways: it stands at TREE_STANDING_STEP and lies a quarter turn to either
+/// side.
 enum {
   TREE_STANDING_STEP = DEGtoANG(180) / FACING_STEP,
   TREE_FALLEN_WEST_STEP = DEGtoANG(90) / FACING_STEP,
   TREE_FALLEN_EAST_STEP = DEGtoANG(270) / FACING_STEP
 };
 
-/// Rotates the training tree through its westward arc and scatters particles.
+/// The tree trunk topples to the west, faster as it goes, and lands with a
+/// thud and a puff of dust.
 static void FuchinTemple_KnockTreeDownWest(void) {
   struct Actor *tree = Actor_Get(ACTOR_TRAINING_TREE);
   u32 turnStep;
@@ -623,8 +656,8 @@ static void FuchinTemple_KnockTreeDownWest(void) {
                     0, 0);
 }
 
-/// Rotates the training tree through the opposite arc and reverses its
-/// horizontal scale.
+/// The tree trunk topples to the east, faster as it goes, and lands with a
+/// thud and a puff of dust.
 static void FuchinTemple_KnockTreeDownEast(void) {
   struct Actor *tree;
   u32 turnStep;
@@ -653,7 +686,8 @@ static void FuchinTemple_KnockTreeDownEast(void) {
                     0, 0, 0);
 }
 
-/// Slides the training tree north in four steps, then scatters particles.
+/// The tree trunk rocks north and falls over that way, with a thud and a puff
+/// of dust.
 static void FuchinTemple_KnockTreeDownNorth(void) {
   struct Actor *tree = Actor_Get(ACTOR_TRAINING_TREE);
   u32 stepIndex = 0;
@@ -683,7 +717,8 @@ static void FuchinTemple_KnockTreeDownNorth(void) {
   }
 }
 
-/// Slides the training tree south in four steps before the final displacement.
+/// The tree trunk rocks south and falls over that way, with a thud and a puff
+/// of dust.
 static void FuchinTemple_KnockTreeDownSouth(void) {
   struct Actor *tree;
   u32 stepIndex;
@@ -719,7 +754,8 @@ static void FuchinTemple_KnockTreeDownSouth(void) {
                     0);
 }
 
-/// Routes the student around the tree according to the leader's facing.
+/// The student by the tree walks round to the fallen trunk, on the side away
+/// from Isaac.
 static void FuchinTemple_StudentWalksAroundTree(void) {
   u16 leaderFacing;
 
@@ -754,7 +790,7 @@ enum FuchinTempleChiRule {
 };
 
 /// The student by the tree explains the rules, as `mode`, an enum
-/// FuchinTempleChiRule, says.
+/// FuchinTempleChiRule, says, and sets the trunk up again.
 static void FuchinTemple_StudentExplainsChiRules(s32 mode) {
   s32 rulesMessage;
 
@@ -797,8 +833,8 @@ static void FuchinTemple_StudentExplainsChiRules(s32 mode) {
   Actor_FaceDirection(ACTOR_TREE_STUDENT, FACING_SOUTHEAST, 30);
 }
 
-/// The students see the tree fall, Feh doubts it came from the line, and the
-/// student sets the tree up again.
+/// The students see the tree trunk fall, Feh will not count it because it was
+/// not done from the line, and the student sets the trunk up again.
 static void FuchinTemple_StudentsSeeTreeFall(void) {
   struct Actor *tree;
 
@@ -854,8 +890,9 @@ static void FuchinTemple_StudentsSeeTreeFall(void) {
   GameFlag_Set(FLAG_FUCHIN_TEMPLE_FEH_SCHOOL_SAW_TREE_FALL);
 }
 
-/// Move on the training tree in Master Feh's school in Xian: it topples, and
-/// the students react.
+/// Isaac casts Move on the tree trunk in Master Feh's school: it topples, and
+/// the student by it says that was not Chi, or Feh will not count it because
+/// it was not done from the line.
 static void FuchinTemple_MoveTree(void) {
   Event_Start();
 
@@ -875,8 +912,9 @@ static void FuchinTemple_MoveTree(void) {
   Event_End();
 }
 
-/// Walking into the training tree in Master Feh's school in Xian: Isaac pushes
-/// it over by hand.
+/// Isaac walks into the tree trunk in Master Feh's school and pushes it over
+/// by hand: "You cannot push it with your hands. Attack it with Chi." The
+/// student by it sets it up again.
 static void FuchinTemple_PushTreeByHand(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   u16 facing;
@@ -902,7 +940,10 @@ static void FuchinTemple_PushTreeByHand(void) {
   Event_End();
 }
 
-/// Force on the training tree in Master Feh's school in Xian: it topples.
+/// Isaac casts Force on the tree trunk in Master Feh's school and it topples.
+/// Cast from behind the white line on the floor, the first time, Feizhi and
+/// Feh come out; with Feh waiting to see it, he names it Ki. Cast from nearer,
+/// the students will not count it.
 static void FuchinTemple_ForceTree(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   u16 facing;
@@ -945,7 +986,9 @@ static void FuchinTemple_ForceTree(void) {
   Event_End();
 }
 
-/// The first time the tree falls from the line, a student runs for Master Feh.
+/// The first time the trunk falls to Force from the line, a student runs to
+/// Feh's door, Feh and his daughter Feizhi come out arguing over her visions,
+/// and she leaves alone to find Hsu.
 static void FuchinTemple_FeizhiLeavesForHsu(void) {
   struct Actor *actor;
 
@@ -1235,8 +1278,8 @@ static void FuchinTemple_FeizhiLeavesForHsu(void) {
   Actor_SetScript(ACTOR_JUMPING_STUDENT, gFuchinTemple_JumpingStudentScript);
 }
 
-/// Talking to Feh in his school in Xian after the party declined: he asks again
-/// to see Isaac's Chi.
+/// Isaac talks to Feh in his school after turning him down: "Warrior, will you
+/// show me your Chi?"
 static void FuchinTemple_FehAsksToSeeChi(void) {
   Event_Start();
   Event_SetMessageId(MsgXianWarriorWillShowMeYour);
@@ -1257,8 +1300,9 @@ static void FuchinTemple_FehAsksToSeeChi(void) {
   }
 }
 
-/// The tree falls from the line with Feh watching, but Feh sees that it is not
-/// Chi.
+/// The trunk falls to Force from the line with Feh watching, and Feh sees that
+/// it is not Chi but Fuchin's Ki: energy focused from the mind
+/// (FLAG_FEH_SAW_KI).
 static void FuchinTemple_FehSeesChi(void) {
   struct Actor *actor;
 
@@ -1481,8 +1525,9 @@ static void FuchinTemple_FehSeesChi(void) {
   GameFlag_Set(FLAG_FEH_SAW_KI);
 }
 
-/// Talking to a student (ACTOR_PUNCHING_STUDENT) in Master Feh's school in
-/// Xian once Hsu is known to be trapped: the student asks about the flood.
+/// Isaac talks to the student practising punches in Master Feh's school once
+/// Hsu is known to be trapped: "Water monsters flooded Altin. Did you defeat
+/// them, warrior?"
 static void FuchinTemple_StudentAsksAboutAltin(void) {
   Event_Start();
   Event_SetMessageId(MsgXianWaterMonstersFloodedAltinDid);
@@ -1493,8 +1538,9 @@ static void FuchinTemple_StudentAsksAboutAltin(void) {
   Event_End();
 }
 
-/// Walking north into the door Feh and Feizhi came out of, in Master Feh's
-/// school in Xian (step trigger 3): it is locked until Feizhi has left.
+/// Isaac walks north into the lattice door Feh and Feizhi came out of, in the
+/// east of the school: "It is locked." until Feizhi has left; then it opens
+/// and he walks through into Feh's house.
 static void FuchinTemple_OpenLockedDoor(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_FEIZHI_WENT_TO_HSU) == 0 &&
@@ -1513,8 +1559,9 @@ static void FuchinTemple_OpenLockedDoor(void) {
   }
 }
 
-/// Talking to the healer at Fuchin Temple (FuchinTempleGrounds): he heals, or
-/// speaks of his travels.
+/// Isaac talks to the traveling healer by the temple door: from the south he
+/// offers his healing, as a Sanctum does; from any other side he says he is
+/// traveling the world to spread good will.
 static void FuchinTemple_TalkToHealer(void) {
   u32 facing;
 
@@ -1532,8 +1579,8 @@ static void FuchinTemple_TalkToHealer(void) {
   Event_End();
 }
 
-/// Reading Nyunpa's mind inside Fuchin Temple once he is enlightened: he
-/// entrusts the world to Isaac.
+/// Isaac reads the withered Nyunpa's mind once he has died enlightened:
+/// "Isaac... Is that you...? I am...counting on you... to bring..."
 static void FuchinTemple_ReadNyunpasLastWish(void) {
   Event_Start();
   Actor_RunRepeatedMotion(ACTOR_NYUNPA, 2);
@@ -1555,8 +1602,8 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gFuchinTempleTriggers;
 }
 
-/// Emits a falling drop of spray beside the leader during the grotto entrance
-/// fade, and flickers the leader as he walks in behind the falls.
+/// Drops spray over Isaac as he walks in behind the falls, and makes him
+/// flicker.
 static void FuchinTemple_SpawnGrottoEntryParticle(void) {
   struct EffectOptions options;
   struct Actor *leader;
@@ -1616,9 +1663,9 @@ static UNUSED void FuchinTemple_HopLeaderByOffset(s32 offsetX, s32 offsetZ) {
   Event_End();
 }
 
-/// Stepping into the waterfall grotto's entrance at Fuchin Temple
-/// (FuchinTempleGrounds, step trigger 3): spray falls over Isaac as the screen
-/// fades, and he enters Fuchin Falls Cave.
+/// Isaac steps from the monk's stump into the falls, cell (10, 21): spray
+/// falls over him and he flickers out of sight as the screen fades, into
+/// Fuchin Falls Cave.
 static void FuchinTemple_EnterWaterfallGrotto(void) {
   TaskFunc particleTask;
 
@@ -1641,16 +1688,15 @@ static void FuchinTemple_EnterWaterfallGrotto(void) {
   Event_End();
 }
 
-/// Stepping south onto step trigger 1 inside Fuchin Temple (LacquerRoomsA):
-/// the party leaves by LACQUER_ROOMS_A_TO_FUCHIN_TEMPLE_GROUNDS, out to
-/// FuchinTempleGrounds.
+/// Walking out through the temple's south door, Isaac leaves Nyunpa's hall for
+/// the grounds outside.
 static void FuchinTemple_LeaveTemple(void) {
   Sound_Play(SE_MAP_EXIT);
   Import_EventSetExitRequest(LACQUER_ROOMS_A_TO_FUCHIN_TEMPLE_GROUNDS);
 }
 
-/// Walking north into the temple door at Fuchin Temple (FuchinTempleGrounds,
-/// step trigger 2): it opens, and Isaac walks inside, where Nyunpa meditates.
+/// Isaac walks north into the temple's door, cell (18, 18): it opens with a
+/// thump, and he walks inside, where Nyunpa meditates.
 static void FuchinTemple_EnterTemple(void) {
   Event_Start();
   Sound_Play(SE_THUMP);
@@ -1665,8 +1711,10 @@ static void FuchinTemple_EnterTemple(void) {
   Event_End();
 }
 
-/// Back inside Fuchin Temple from the grotto with the Orb of Force
-/// (FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND), Nyunpa praises Isaac.
+/// Back in the temple with the Orb of Force, Isaac walks up to Nyunpa, who
+/// praises him, names the power he has gained Ki, which the western world
+/// calls Force, and tells him to use it to find his way through Mogall
+/// Forest (FLAG_NYUNPA_TAUGHT_FORCE).
 static void FuchinTemple_NyunpaTeachesKi(void) {
   Event_Start();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
@@ -1781,8 +1829,10 @@ static void FuchinTemple_NyunpaTeachesKi(void) {
   Event_End();
 }
 
-/// Entering Master Hama's room in Lama Temple the first time, the party is
-/// greeted.
+/// The first time the party enters Master Hama's room in Lama Temple, the boy
+/// monk asks them to be quiet while she meditates. Hama teaches Ivan Reveal,
+/// Feizhi bursts in to say Hsu is in danger, and the two leave to free him
+/// (FLAG_XIAN_HEARD_HSU_TRAPPED).
 static void FuchinTemple_RunHamasRevealLesson(void) {
   struct Actor *leader;
 
@@ -2817,9 +2867,9 @@ struct ActorPlacement gFuchinTempleActorPlacementsFromLamaTemple[] = {
 
 struct Trigger gFuchinTempleGroundsTriggers[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, FUCHIN_TEMPLE_GROUNDS_TO_WORLD_MAP },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(FuchinTemple_EnterTemple) },
-    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(FuchinTemple_EnterWaterfallGrotto) },
-    { TRIGGER_STEP, 5, FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST, EVENT(FuchinTemple_MonkAsksWhetherTestIsDone) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_FUCHIN_TEMPLE_DOOR, CONDITION_ALWAYS, EVENT(FuchinTemple_EnterTemple) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_FUCHIN_FALLS_GROTTO, CONDITION_ALWAYS, EVENT(FuchinTemple_EnterWaterfallGrotto) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_FUCHIN_FALLS_MONK_ASKS, FLAG_FUCHIN_FALLS_MONK_ASKED_ABOUT_TEST, EVENT(FuchinTemple_MonkAsksWhetherTestIsDone) },
     { TRIGGER_TALK, ACTOR_YOUNG_MAN_FROM_KOLIMA, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleTheFuchinTempleIsAPleasant) },
     { TRIGGER_TALK, ACTOR_FALLS_MONK, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleOhIsaacWhatTookYouSo) },
     { TRIGGER_TALK, ACTOR_BOY_MONK_READING_OMENS, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTempleAhhhMasterNyunpaHeHasPassed) },
@@ -2856,9 +2906,9 @@ struct Trigger gFuchinTempleGroundsTriggers[] = {
 };
 
 struct Trigger gFuchinTempleTriggers[] = {
-    { STEP_TRIGGER_FACING(FACING_SOUTH), 1, CONDITION_ALWAYS, EVENT(FuchinTemple_LeaveTemple) },
+    { STEP_TRIGGER_FACING(FACING_SOUTH), CELL_BEHAVIOR_FUCHIN_TEMPLE_SOUTH_DOOR, CONDITION_ALWAYS, EVENT(FuchinTemple_LeaveTemple) },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, LACQUER_ROOMS_A_FEHS_SCHOOL_TO_XIAN },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(FuchinTemple_OpenLockedDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_FEHS_SCHOOL_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(FuchinTemple_OpenLockedDoor) },
     { TRIGGER_TALK, ACTOR_NYUNPA, IF_FLAG_SET(FLAG_NYUNPA_ENLIGHTENED), MSGNO(MsgFuchinTemple) },
     { TRIGGER_TALK, ACTOR_NYUNPA, IF_FLAG_SET(FLAG_NYUNPA_TAUGHT_FORCE), MSGNO(MsgFuchinTempleUseThisEnergyToFindThe) },
     { TRIGGER_TALK, ACTOR_NYUNPA, IF_FLAG_SET(FLAG_NYUNPA_TEST_ACCEPTED), MSGNO(MsgFuchinTempleSpeakToTheMonkStandingBeneath) },
@@ -2938,10 +2988,10 @@ struct Trigger gFuchinTempleTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WATCHING_STUDENT, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleGreatKickKickFromTheHip) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TREE_STUDENT, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleYouAreTheWarriorsWhoCame) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MESSENGER_STUDENT, CONDITION_ALWAYS, MSGNO(MsgFuchinTempleMasterFehIsTalkingWithFeizhi) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 10, CONDITION_ALWAYS, EVENT(FuchinTemple_PushTreeByHand) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(FuchinTemple_PushTreeByHand) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT(FuchinTemple_PushTreeByHand) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT(FuchinTemple_PushTreeByHand) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_FEHS_SCHOOL_TREE_EAST_SOUTH, CONDITION_ALWAYS, EVENT(FuchinTemple_PushTreeByHand) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_FEHS_SCHOOL_TREE_EAST_SOUTH, CONDITION_ALWAYS, EVENT(FuchinTemple_PushTreeByHand) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_FEHS_SCHOOL_TREE_WEST_NORTH, CONDITION_ALWAYS, EVENT(FuchinTemple_PushTreeByHand) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_FEHS_SCHOOL_TREE_WEST_NORTH, CONDITION_ALWAYS, EVENT(FuchinTemple_PushTreeByHand) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TRAINING_TREE, CONDITION_ALWAYS, EVENT(FuchinTemple_MoveTree) },
     { PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_TRAINING_TREE_TARGET, CONDITION_ALWAYS, EVENT(FuchinTemple_ForceTree) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), 100, FLAG_FUCHIN_TEMPLE_ANTIDOTE_BARREL, FIND_ITEM(ITEM_ANTIDOTE) },

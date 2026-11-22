@@ -1,14 +1,16 @@
 /// @file
-/// Briggs's ship at Alhafra's eastern harbour: the room the party boards
-/// into, the rooms down its stairs, and a back room behind a tall crate. Below,
-/// the party overhears Briggs and his mate learn that Madra's mayor has come
-/// (EasternAlhafraShip_MayorArrives) and fights his crew; after the battle
-/// Briggs is caught and the mayors of Madra and Alhafra settle his fate and his
-/// ship's (EasternAlhafraShip_BriggsIsCaught). His wife Chaucha and their baby
-/// Eoleo then stay aboard, where Eoleo lifts a vase of flowers with Psynergy
-/// (EasternAlhafraShip_EoleoLifts). Move or a push shifts the tall crate from
-/// the back room's door, and Tremor knocks Large Bread down from the crates
-/// stacked inside (EasternAlhafraShip_KnockDownTheBread).
+/// Briggs's ship at Alhafra's eastern harbour: the cabin the party enters from
+/// the deck, the rooms down its stairs, and a back room behind a tall crate.
+/// Below, the party overhears Briggs and his mate learn that Madra's mayor has
+/// come (EasternAlhafraShip_MayorArrives) and fights Briggs and a Sea Fighter;
+/// after the battle Briggs gives himself up and the mayors of Madra and
+/// Alhafra settle his fate and his ship's (EasternAlhafraShip_BriggsIsCaught).
+/// His wife Chaucha and their baby Eoleo then stay aboard, where Eoleo lifts a
+/// vase of flowers with Psynergy (EasternAlhafraShip_EoleoLifts). Move or a
+/// push shifts the tall crate from the doorway to the back room, and Tremor
+/// knocks the Large Bread down from the crates stacked inside
+/// (EasternAlhafraShip_KnockDownTheBread): given to the crying boy in
+/// Alhafra, it has his father let the party into the Alhafran Cave.
 
 #include "shared/tables.h"
 #include "battle/battle.h"
@@ -98,8 +100,6 @@ void EasternAlhafraShip_BriggsIsCaught(void);
 extern u32 gEasternAlhafraShip_BriggsRunsScript[];
 extern s32 gEasternAlhafraShip_MateRunsScript[];
 
-void EasternAlhafraShip_KnockDownTheBread(void);
-
 void Event_PickUpItem();
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
@@ -112,11 +112,14 @@ s32 Scene_GetActorPlacements(void) {
   return (s32)gEasternAlhafraShip_ActorPlacements;
 }
 
-/// As the tall crate is pushed or Moved: nothing to do.
+/// Nothing visible happens as Felix begins to push or Move the tall crate in
+/// front of the back room's door; the push or Move goes on as anywhere else.
 void EasternAlhafraShip_StartMovingCrate(void) {}
 
-/// Once the tall crate (id) stops: on cell (24, 40) it is off the back room's
-/// door, back on (23, 40) it is not.
+/// Felix pushes or Moves the tall crate standing against the north wall below
+/// the stairs. Shifted east to cell (24, 40), it uncovers a dark doorway in
+/// the wall to the back room, and stays aside when the party comes back;
+/// shifted back west to (23, 40), it covers the doorway again.
 void EasternAlhafraShip_FinishMovingCrate(s32 unused, s32 id) {
   struct Actor *actor = Actor_GetById(id);
   s32 x = FIELD_CELL(actor->x.fixed);
@@ -128,8 +131,9 @@ void EasternAlhafraShip_FinishMovingCrate(s32 unused, s32 id) {
     GameFlag_Clear(FLAG_CRATE_MOVED);
 }
 
-/// Tremor on the stacked crates: the leader hops back as they shift down beside
-/// the crate under them, and the Large Bread falls to the floor.
+/// Felix casts Tremor on the stacked crates in the back room: he hops back as
+/// they shift down beside the crate under them, and the Large Bread on top
+/// falls to the floor, where he can pick it up.
 void EasternAlhafraShip_KnockDownTheBread(void) {
   GameFlag_Set(FLAG_BREAD_KNOCKED_DOWN);
   Actor_GetById(gMainRoutineWork.leaderActorId)->velocityY = toFIXED(6);
@@ -149,14 +153,18 @@ void EasternAlhafraShip_KnockDownTheBread(void) {
   return;
 }
 
-/// Picking up the Large Bread.
+/// Felix picks up the Large Bread that Tremor knocked to the floor of the back
+/// room.
 void EasternAlhafraShip_TakeTheBread(s32 id) {
   Event_PickUpItem(id, ITEM_LARGE_BREAD, FLAG_BREAD_TAKEN);
   return;
 }
 
-/// Talking to Eoleo: the baby lifts the vase of flowers with Psynergy and
-/// drops it; the first time, his mother remarks on it.
+/// Felix talks to the baby Eoleo, who stays aboard with his mother Chaucha
+/// once Briggs is caught: "Goo goo ga ga!" He lifts the vase of flowers beside
+/// him with Psynergy and drops it with a splash. The first time, Chaucha says
+/// he only lately started doing that. The screen is tinted toward yellow
+/// (`Field_StartColorTransition`) while he holds the vase up.
 void EasternAlhafraShip_EoleoLifts(s32 id) {
   struct Actor *actor = Actor_GetById(ACTOR_VASE);
   u8 *flags;
@@ -307,9 +315,10 @@ void EasternAlhafraShip_PopQuestionMarks(s32 id) {
 
 extern u32 gEasternAlhafraShip_LeaveUpTheStairsScript[];
 
-/// Down the stairs the party overhears Briggs and his mate: Madra's mayor has
+/// Walking down from the foot of the stairs (cells (28, 24) and (29, 24)) on
+/// the first visit, the party overhears Briggs and his mate: Madra's mayor has
 /// come to Alhafra after them. Jenna's outburst gives the party away, and
-/// Briggs's crew fights it.
+/// Briggs and a Sea Fighter of his crew fight it.
 void EasternAlhafraShip_MayorArrives(void) {
   struct MapWork *map;
   s32 result;

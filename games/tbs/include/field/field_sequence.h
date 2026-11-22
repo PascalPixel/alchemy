@@ -1,6 +1,11 @@
 #ifndef ALCHEMY_FIELD_SEQUENCE_H
 #define ALCHEMY_FIELD_SEQUENCE_H
 
+/// @file
+/// What the field sequence's object (field_sequence.c) defines for the code
+/// outside it: encounters, the field's actors, the leader's walking, the
+/// scene's triggers, treasure spots, screen transitions and the palette fade.
+
 #include "types.h"
 #include "fixed_math.h"
 #include "field/field_particle.h"
@@ -178,6 +183,7 @@ void FieldPsynergy_Carry(void);
 //--------------------------------------------------------------------------
 // The map's treasure spots (chests and Psynergy Stones)
 //--------------------------------------------------------------------------
+/// The most treasure spots a map places.
 #define TREASURE_SPOT_MAX 10
 /// The ids a treasure spot's trigger answers to; the map's list of spots
 /// ends at column and row 255.

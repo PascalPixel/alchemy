@@ -115,12 +115,12 @@ const struct MapResources gMaps[] = {
     {372, 373, {374, 375, 376}, 377}, // ship_rooms
     {378, 379, {358, 359, 16}, 360}, // tolbi_docks
     {380, 381, {14, 15, 16}, 17}, // crossbone_isle
-    {382, 383, {384, 385, 386}, 387}, // map_108
+    {382, 383, {384, 385, 386}, 387}, // babi_lighthouse_rooms
     {388, 389, {256, 257, 258}, 259}, // crossbone_isle_ice_pillars
-    {390, 391, {256, 257, 258}, 259}, // map_110
+    {390, 391, {256, 257, 258}, 259}, // crossbone_isle_keys_and_bane
     {392, 393, {256, 257, 258}, 259}, // crossbone_isle_statues
     {394, 395, {210, 211, 212}, 213}, // crossbone_isle_floodgate
-    {390, 396, {256, 257, 258}, 259}, // map_110
+    {390, 396, {256, 257, 258}, 259}, // crossbone_isle_keys_and_bane
     {397, 398, {384, 385, 386}, 387}, // crossbone_isle_stacked_pillars
     {399, 400, {146, 125, 162}, 148}, // crossbone_isle_dragon_statue
     {401, 402, {146, 125, 162}, 148}, // crossbone_isle_floating_logs
@@ -167,7 +167,7 @@ const struct MapResources gMaps[] = {
     {496, 497, {256, 257, 258}, 259}, // tunnel_ruins_great_statue
     {498, 497, {256, 257, 258}, 259}, // tunnel_ruins_lady_statues
     {499, 500, {384, 385, 386}, 387}, // babi_lighthouse_entry
-    {382, 501, {384, 385, 386}, 387}, // map_108
+    {382, 501, {384, 385, 386}, 387}, // babi_lighthouse_rooms
     {502, 503, {146, 125, 237}, 148}, // babi_lighthouse_stone_door
     {504, 505, {481, 482, 483}, 484}, // lalivero
     {506, 507, {487, 488, 489}, 490}, // timber_rooms_b

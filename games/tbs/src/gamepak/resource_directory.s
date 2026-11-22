@@ -238,12 +238,12 @@ Resource_DirectoryTable:
 	tileset ShipRooms, ABCD, ShipRooms
 	recolor TolbiDocks, TolbiDocks
 	recolor CrossboneIsle, CrossboneIsle
-	tileset Map108, ABCD, Map108
+	tileset BabiLighthouse, ABCD, BabiLighthouseRooms
 	recolor CrossboneIsleIcePillars, CrossboneIsleIcePillars
-	recolor 15, Map110
+	recolor CrossboneIsleKeys, CrossboneIsleKeysAndBane
 	recolor CrossboneIsleStatues, CrossboneIsleStatues
 	recolor CrossboneIsleFloodgate, CrossboneIsleFloodgate
-	resource , Tileset_Palette18
+	resource , Tileset_PaletteCrossboneIsleBane
 	recolor CrossboneIsleStackedPillars, CrossboneIsleStackedPillars
 	recolor CrossboneIsleDragonStatue, CrossboneIsleDragonStatue
 	recolor CrossboneIsleFloatingLogs, CrossboneIsleFloatingLogs
@@ -280,7 +280,7 @@ Resource_DirectoryTable:
 	recolor GatewayCave, SuhallaGateDew, GatewayCave
 	recolor TunnelRuins, TunnelRuinsGreatStatue
 	recolor BabiLighthouseEntry, TunnelRuinsLadyStatues, BabiLighthouseEntry
-	resource , Tileset_Palette45
+	resource , Tileset_PaletteBabiLighthouseLuff
 	recolor BabiLighthouseStoneDoor, BabiLighthouseStoneDoor
 	recolor Lalivero, Lalivero
 	recolor TimberRooms, TimberRoomsB

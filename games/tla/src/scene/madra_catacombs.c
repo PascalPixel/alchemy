@@ -1,10 +1,17 @@
 /// @file
-/// The Madra Catacombs, under the town: a ladder room entered from Madra's two
-/// ladders, the tunnel the Champa dug, the deserted village with its pillars,
-/// rope, puddle and the door Reveal opens, the room whose bookshelf Tremor
-/// shakes until a chest falls into the room below, and the tablet room whose
-/// red double door the Ruin Key opens, lighting its flames before Moloch's
-/// tablet. Once FLAG_BRIGGS_CAUGHT is set the Champa's way in is blocked.
+/// The Madra Catacombs, a deserted village in a cave under the town. Madra's
+/// two ladders, the one inside the walls and the one in the Champa's hole,
+/// come down into a small ladder room, and the tunnel the Champa dug runs from
+/// there to the village. On the first visit Felix comes in along the tunnel's
+/// upper path, Moves a pillar off a ledge into a pit to cross it, and takes the
+/// Tremor Bit from the village's broken building. Once Briggs is caught that
+/// way is blocked off, and the village is reached from the south, through a
+/// golden door whose push button only Reveal shows. Inside, Frost freezes a
+/// puddle, Move shifts two pillars to climb by, Lash ties a rope across, and
+/// Tremor rocks a bookshelf on the building's upper floor until the chest on
+/// top falls through to the floor below; it holds the Ruin Key, which opens the
+/// red double door down the stairs, lighting the braziers before Moloch's
+/// tablet.
 
 #include "flags.h"
 #include "sprite_ids.h"
@@ -43,15 +50,15 @@
 /// is nudged once each time it comes upright.
 #define FLAG_BOOKSHELF_LEANING FLAG_SCENE_TEMP_04
 
-/// Set once the pillar Move pushed onto cell (40, 13) has dropped into the
-/// deserted village's hole and filled it.
+/// Set once the pillar Move pushed onto cell (40, 13) has dropped into the pit
+/// in the village's northern ledge and filled it.
 #define FLAG_MADRA_CATACOMBS_HOLE_FILLED 0x8c8
-/// Set once the Ruin Key has opened the tablet room's double door; its flames
-/// burn from then on.
+/// Set once the Ruin Key has opened the red double door before Moloch's
+/// tablet; its braziers burn from then on.
 #define FLAG_MADRA_CATACOMBS_TABLET_DOOR_OPEN 0x8c9
-/// Set once Move has left the village's second pillar on cell (44, 26).
+/// Set once Move has left the village's plain stone pillar on cell (44, 26).
 #define FLAG_MADRA_CATACOMBS_PILLAR_PLACED 0x8ca
-/// Set once the button Reveal shows has opened the village's golden door.
+/// Set once the push button Reveal shows has opened the village's golden door.
 #define FLAG_MADRA_CATACOMBS_VILLAGE_DOOR_OPEN 0x8cb
 /// Set once Tremor has shaken the chest off the bookshelf into the room below.
 #define FLAG_MADRA_CATACOMBS_CHEST_FELL 0x8cc
@@ -67,9 +74,9 @@ enum MadraCatacombsVillageActorId {
   /// The posts at the two ends of the rope Lash makes taut.
   ACTOR_VILLAGE_ROPE_LOW_POST,
   ACTOR_VILLAGE_ROPE_HIGH_POST,
-  /// The pillar Move pushes into the hole.
+  /// The pillar on the northern ledge that Move pushes into the pit.
   ACTOR_HOLE_PILLAR = ACTOR_FIRST_PLACED + 3,
-  /// The pillar Move pushes onto cell (44, 26).
+  /// The plain stone pillar Move pushes onto cell (44, 26).
   ACTOR_PUSHED_PILLAR,
   /// The puddle Frost freezes into a pillar.
   ACTOR_VILLAGE_PUDDLE,
@@ -88,12 +95,14 @@ enum MadraCatacombsTunnelActorId {
   ACTOR_MAN_ON_THE_CHAMPAS_CAVE
 };
 
-/// The flames that flare up down each side of the tablet room.
+/// The braziers that flare up down each side of the hall before Moloch's
+/// tablet.
 #define FLARES_PER_SIDE 5
 
-/// The tablet room's actors: the two halves of the red double door, the
-/// flames that flare up down each side as it opens, nearest the door last, and
-/// an unseen marker that stands on each flame once they burn.
+/// The tablet hall's actors: the two halves of the red double door, the
+/// brazier flames that flare up down each side as it opens, numbered from the
+/// tablet down to the door, and an unseen marker that stands on each flame once
+/// they burn.
 enum MadraCatacombsTabletRoomActorId {
   ACTOR_LEFT_DOOR = ACTOR_FIRST_PLACED,
   ACTOR_RIGHT_DOOR,
@@ -102,8 +111,8 @@ enum MadraCatacombsTabletRoomActorId {
   ACTOR_FIRST_FLAME_MARKER = ACTOR_FIRST_EAST_FLARE + FLARES_PER_SIDE
 };
 
-/// The bookshelf room's bookshelf, and the chest on it that Tremor shakes off;
-/// the room below places the fallen chest.
+/// The bookshelf on the broken building's upper floor, and the chest on top of
+/// it that Tremor shakes off; the room below places the fallen chest.
 enum MadraCatacombsBookshelfActorId {
   ACTOR_BOOKSHELF = ACTOR_FIRST_PLACED,
   ACTOR_SHELF_CHEST = 64,
@@ -161,8 +170,8 @@ s32 Leader_CanPushObjectAhead(void);
 
 void MadraCatacombs_RockChestWithBookshelf(void);
 
-/// Arriving in the catacombs' village by a way the Champa have since blocked:
-/// the leader leaves again.
+/// Arriving in the village from the Champa tunnel's west end once that way is
+/// blocked off: Felix vanishes and the screen fades back to the tunnel.
 void MadraCatacombs_LeaveBlockedVillage(void);
 
 void Rope_Place(s32 index, s32 flag, s32 post, s32 otherPost);
@@ -236,7 +245,9 @@ const struct Trigger *Scene_GetTriggers(void) {
 void Actor_LiftTargetBlock(const void *data);
 void FlagBlock_ApplyFlags(const void *data);
 
-/// Examining a locked door: "The door won't budge. ...Must be locked."
+/// Examining the red double door at the foot of the hall before Moloch's tablet
+/// (cells (9, 22) and (10, 22)) before the Ruin Key has opened it: "The door
+/// won't budge. ...Must be locked."
 void MadraCatacombs_TryLockedDoor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -250,8 +261,10 @@ void MadraCatacombs_TryLockedDoor(void) {
 
 #include "shared/actor_drop_and_wait.h"
 
-/// The pillar Move pushes onto cell (40, 13) drops into the hole there, which
-/// it fills for good.
+/// Felix Moves the pillar on the village's northern ledge one cell east, off
+/// the edge (onto cell (40, 13)): it drops into the pit there and fills it,
+/// its top level with the ledge, so the party can walk across. It stays there
+/// for good. A push that leaves it anywhere else does nothing.
 void MadraCatacombs_DropPillarIntoHole(void) {
   struct Actor *actor = Actor_GetById(ACTOR_HOLE_PILLAR);
   s32 z;
@@ -269,12 +282,16 @@ void MadraCatacombs_DropPillarIntoHole(void) {
   }
 }
 
-/// When Move takes hold of the second pillar: the cells it blocked are freed.
+/// Nothing visible happens as Move takes hold of the plain stone pillar east of
+/// the village's middle; the game frees the ground it stood on, so that
+/// it can slide.
 void MadraCatacombs_StartMovingPushedPillar(void) {
   Actor_LiftTargetBlock(gMadraCatacombs_PushedPillar);
 }
 
-/// The second pillar, moved onto cell (44, 26), stays there.
+/// Felix Moves the plain stone pillar east of the village's middle; once it is
+/// one cell east, on cell (44, 26), it stays there on later visits, a stepping
+/// stone to jump across from the upper level.
 void MadraCatacombs_FinishMovingPushedPillar(void) {
   struct Actor *actor = Actor_GetById(ACTOR_PUSHED_PILLAR);
 
@@ -283,8 +300,9 @@ void MadraCatacombs_FinishMovingPushedPillar(void) {
     Event_SetFlag(FLAG_MADRA_CATACOMBS_PILLAR_PLACED);
 }
 
-/// Frost on a puddle: it freezes into a pillar, its flag set
-/// (FlagBlock_ApplyFlags).
+/// Felix casts Frost on the puddle just east of the broken building's south
+/// doorway: it freezes into a pillar of ice Felix can jump onto, until the
+/// party leaves the catacombs.
 void MadraCatacombs_FreezePuddle(void) {
   FlagBlock_ApplyFlags(gMadraCatacombs_Puddles);
 }
@@ -292,8 +310,11 @@ void MadraCatacombs_FreezePuddle(void) {
 void FieldCamera_WaitForArrival(void);
 void MadraCatacombs_LightFlames(void);
 
-/// The Ruin Key opens the double door, which slides apart, and the
-/// room beyond lights up.
+/// Felix uses the Ruin Key at the red double door down the stairs (cells (9,
+/// 22) and (10, 22)): the two halves rumble apart, the camera climbs the hall
+/// beyond to Moloch's tablet, and the braziers down both sides flare up in
+/// pairs from the door upwards, the two great pairs by the tablet last. The
+/// key is used up.
 void MadraCatacombs_UnlockWithRuinKey(void) {
   struct Actor *left = Actor_GetById(ACTOR_LEFT_DOOR);
   struct Actor *right = Actor_GetById(ACTOR_RIGHT_DOOR);
@@ -352,14 +373,16 @@ void Actor_PlaceOnActor(s32 id, s32 value);
 void Rope_Initialize(void);
 void FlagBlock_PlaceAll(const void *data);
 void Actor_PlaceBlocks(const void *data);
-/// The vine-covered pillar settles where Move left it, its cells raised; on
-/// cell (35, 17) it stays there.
+/// The vine-covered pillar becomes ground to stand on where Move left it; on
+/// cell (35, 17) it stays there on later visits.
 void MadraCatacombs_SettleVinePillar(struct Actor *actor);
-/// Arriving in the Champa tunnel by a way the Champa have since blocked: the
-/// leader leaves again.
+/// Coming up into the far end of the Champa tunnel's upper path (cell (51,
+/// 13)) once that way is blocked off: Felix vanishes and the screen fades back
+/// the way he came.
 void MadraCatacombs_LeaveBlockedTunnel(void);
 
-/// Reveal shows the push button by the golden door, pressed in once the door
+/// Casting Reveal in the village shows a push button in the wall just east of
+/// the golden door on the south side (cell (36, 38)), pressed in once the door
 /// has opened.
 void MadraCatacombs_RevealButton(void) {
   if (Event_GetFlag(FLAG_MADRA_CATACOMBS_VILLAGE_DOOR_OPEN) != 0)
@@ -369,15 +392,16 @@ void MadraCatacombs_RevealButton(void) {
   Event_SetFlag(FLAG_MADRA_CATACOMBS_BUTTON_REVEALED);
 }
 
-/// As Reveal fades: the push button is hidden again.
+/// As Reveal wears off, the push button by the golden door disappears.
 void MadraCatacombs_HideButton(void) {
   MapGrid_CopyCellsTo(70, 63, 36, 38, 1, 2);
   Event_ClearFlag(FLAG_MADRA_CATACOMBS_BUTTON_REVEALED);
 }
 
-/// Examining the wall by the golden door: once Reveal shows the push button
-/// there, the button is pressed and the door opens; otherwise the inscription
-/// reads "Look upon me with eyes of truth... Then the door will open..."
+/// Examining the wall just east of the golden door on the village's south side
+/// (cell (36, 39)) reads "Look upon me with eyes of truth... Then the door will
+/// open..." While Reveal shows the push button there, Felix presses it instead:
+/// it rattles in, and the golden door slides open with a thump and stays open.
 void MadraCatacombs_HearEyesOfTruth(void) {
   if (Event_GetFlag(FLAG_MADRA_CATACOMBS_BUTTON_REVEALED) != 0 &&
       Event_GetFlag(FLAG_MADRA_CATACOMBS_VILLAGE_DOOR_OPEN) == 0) {
@@ -405,8 +429,11 @@ void MadraCatacombs_HearEyesOfTruth(void) {
   }
 }
 
-/// Tremor shakes the bookshelf; once the chest on it has rocked past its edge
-/// it falls through to the room below.
+/// Felix casts Tremor on the bookshelf in the bedroom behind the west door of
+/// the small hall on the broken building's upper floor: it rocks, and the red
+/// chest on top creeps west each time it rights itself. Once the chest is far
+/// enough over the edge it falls with a puff of dust, through the floor to the
+/// room below, where it waits with the Ruin Key.
 void MadraCatacombs_ShakeBookshelf(void) {
   struct Actor *actor;
   FIXED x;
@@ -433,8 +460,8 @@ void MadraCatacombs_SettleVinePillar(struct Actor *actor) {
     Event_SetFlag(FLAG_MADRA_CATACOMBS_VINE_PILLAR_PLACED);
 }
 
-/// Walking into the vine-covered pillar while holding it with Move pushes it a
-/// cell on.
+/// Walking east into the vine-covered pillar from cell (33, 17) while Move
+/// holds it pushes it a cell on.
 void MadraCatacombs_PushVinePillar(void) {
   struct Actor *actor;
 
@@ -447,8 +474,9 @@ void MadraCatacombs_PushVinePillar(void) {
   }
 }
 
-/// When Move takes hold of the vine-covered pillar: its raised cells are
-/// lowered.
+/// Nothing visible happens as Move takes hold of the vine-covered pillar north
+/// of the village's middle; the game lowers the ground it made, so that it can
+/// slide.
 void MadraCatacombs_StartMovingVinePillar(void) {
   Pillar_LowerHeldCells(gMadraCatacombs_VinePillar);
 }
@@ -456,8 +484,9 @@ void MadraCatacombs_StartMovingVinePillar(void) {
 void MadraCatacombs_OpenDoorAndEnter(s32 sourceX, s32 sourceZ, s32 x, s32 z,
                                      s32 width, s32 height);
 
-/// When the vine-covered pillar comes to rest after Move: settles it where it
-/// stopped (MadraCatacombs_SettleVinePillar).
+/// Felix Moves the vine-covered pillar north of the village's middle; where it
+/// comes to rest becomes ground to stand on, so he can climb its vines to the
+/// upper level, and one cell east, on cell (35, 17), it stays on later visits.
 void MadraCatacombs_FinishMovingVinePillar(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -465,8 +494,9 @@ void MadraCatacombs_FinishMovingVinePillar(void) {
     MadraCatacombs_SettleVinePillar(work->movedBlock);
 }
 
-/// The tablet room's flames, lit: the flares stand in their two rows and a
-/// marker goes to stand on each.
+/// The braziers down the hall before Moloch's tablet burn: each flame stands
+/// in its place, a marker stands on each, and the doorway can be walked
+/// through.
 void MadraCatacombs_LightFlames(void) {
   u32 i;
   s32 target = ACTOR_FIRST_WEST_FLARE;
@@ -492,9 +522,9 @@ void MadraCatacombs_LightFlames(void) {
   wait(1);
 }
 
-/// The chest on the bookshelf tilts as the bookshelf rocks, and each time the
-/// bookshelf comes upright again it nudges the chest two pixels west with a
-/// hop.
+/// The red chest on the bookshelf tilts as the bookshelf rocks, and each time
+/// the bookshelf comes upright again the chest hops two pixels west with a
+/// scrape.
 void MadraCatacombs_RockChestWithBookshelf(void) {
   struct Actor *bookshelf = Actor_GetById(ACTOR_BOOKSHELF);
   struct Actor *chest = Actor_GetById(ACTOR_SHELF_CHEST);
@@ -511,8 +541,13 @@ void MadraCatacombs_RockChestWithBookshelf(void) {
     Event_SetFlag(FLAG_BOOKSHELF_LEANING);
 }
 
-/// The leader steps to the middle of a door, walks in and leaves by the exit
-/// the step trigger names.
+/// Felix walks north into one of the dark doorways of the village's broken
+/// building, or the opening on its east side: he steps to its middle, walks in
+/// growing smaller, and the screen closes to the room beyond. The doorway at
+/// cell (17, 20) leads to the small hall of the upper floor, the one at (18,
+/// 22) is the main entrance into the ground floor's hall, the one at (21, 17)
+/// opens into the east room with the stairs down to the red double door, and
+/// the opening at (54, 18) leads into the Champa tunnel.
 void MadraCatacombs_EnterDoor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
@@ -540,8 +575,8 @@ void MadraCatacombs_EnterDoor(void) {
 }
 
 /// A door opens, its open picture copied over it from (sourceX, sourceZ), and
-/// the leader walks through: a stone door two cells wide slides with a thump, a
-/// door one cell wide opens as the leader steps to its middle.
+/// Felix walks through: a stone door two cells wide slides with a thump, a door
+/// one cell wide opens as he steps to its middle.
 void MadraCatacombs_OpenDoorAndEnter(s32 sourceX, s32 sourceZ, s32 x, s32 z,
                                      s32 width, s32 height) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -575,28 +610,37 @@ void MadraCatacombs_OpenDoorAndEnter(s32 sourceX, s32 sourceZ, s32 x, s32 z,
   Import_EventSetExitRequest(work->stepTrigger);
 }
 
-/// The stone door, two cells wide, slides open and the leader goes through.
+/// Felix walks north up the purple carpet of the broken building's main hall
+/// into the golden stone door at its end (cells (14, 33) and (15, 33)): it
+/// slides open and he goes through to the room beyond, where the chest from
+/// the bookshelf falls.
 void MadraCatacombs_OpenStoneDoor(void) {
   MadraCatacombs_OpenDoorAndEnter(78, 29, 78, 31, 2, 2);
 }
 
-/// The bookshelf room's west door opens and the leader goes through.
+/// Felix walks into the west door of the small hall on the broken building's
+/// upper floor (cell (45, 5)): it opens and he goes through to the bedroom with
+/// the bookshelf.
 void MadraCatacombs_OpenBookshelfRoomWestDoor(void) {
   MadraCatacombs_OpenDoorAndEnter(109, 1, 109, 3, 1, 2);
 }
 
-/// The bookshelf room's east door opens and the leader goes through.
+/// Felix walks into the east door of the small hall on the broken building's
+/// upper floor (cell (54, 5)): it opens and he goes through to the bedroom with
+/// the broken floor.
 void MadraCatacombs_OpenBookshelfRoomEastDoor(void) {
   MadraCatacombs_OpenDoorAndEnter(118, 1, 118, 3, 1, 2);
 }
 
-/// The tablet room's door opens and the leader goes through.
+/// Felix walks into the door in the north-west corner of the small room over
+/// the drop (cell (28, 33)): it opens and he goes through to the narrow passage
+/// with a red chest.
 void MadraCatacombs_OpenTabletRoomDoor(void) {
   MadraCatacombs_OpenDoorAndEnter(92, 29, 92, 31, 1, 2);
 }
 
-/// Arriving by a way the Champa have since blocked, the leader fades out and
-/// leaves by `exit`.
+/// Arriving by a way that is blocked off once Briggs is caught, Felix vanishes
+/// and the screen fades out to `exit`.
 #define DEFINE_LEAVE_BLOCKED_WAY(name, exit)                                   \
   void name(void) {                                                            \
     Event_Start();                                                             \
@@ -635,9 +679,9 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// Sets up the catacombs' village: its rope, the pillars Move has placed, the
-/// frozen puddle, the opened golden door and, once Briggs is caught, its
-/// blocked way.
+/// Sets up the deserted village: its rope, the pillars Move has placed, the
+/// frozen puddle, the opened golden door and, once Briggs is caught, the
+/// Champa tunnel's way in blocked off.
 void MadraCatacombs_SetUpVillage(void) {
   Event_ClearFlag(FLAG_MADRA_CATACOMBS_BUTTON_REVEALED);
   Actor_SetSpritePriority(ACTOR_VILLAGE_CHEST, 3);
@@ -674,8 +718,8 @@ void MadraCatacombs_SetUpVillage(void) {
   }
 }
 
-/// Sets up the Champa tunnel: its rope and, once Briggs is caught, its blocked
-/// way.
+/// Sets up the Champa tunnel: its rope and, once Briggs is caught, the way on
+/// to the village blocked off and the man who marvels at the cave gone.
 void MadraCatacombs_SetUpChampaTunnel(void) {
   Rope_Initialize();
   FieldRope_Place(0, FLAG_TUNNEL_ROPE_TIED, ACTOR_TUNNEL_ROPE_EAST_POST,
@@ -692,15 +736,15 @@ void MadraCatacombs_SetUpChampaTunnel(void) {
   }
 }
 
-/// Sets up the stone door's room, below the bookshelf: the fallen chest is
-/// there only once it has fallen.
+/// Sets up the broken building's ground floor, below the bookshelf: the chest
+/// with the Ruin Key is there only once Tremor has shaken it down.
 void MadraCatacombs_SetUpStoneDoorRoom(void) {
   if (Event_GetFlag(FLAG_MADRA_CATACOMBS_CHEST_FELL) == 0)
     Actor_SetPosition(ACTOR_FALLEN_CHEST, 0, 0);
 }
 
-/// Sets up the bookshelf room: the shaken chest stands on top of its shelf
-/// until it has fallen.
+/// Sets up the broken building's upper floor: the red chest stands on top of
+/// the bookshelf until Tremor has shaken it down.
 void MadraCatacombs_SetUpBookshelfRoom(void) {
   struct Actor *actor;
 
@@ -717,9 +761,10 @@ void MadraCatacombs_SetUpBookshelfRoom(void) {
   }
 }
 
-/// Mirrors the door's right half and stands both halves on the ground; once
-/// the Ruin Key has opened it they stand 12 pixels apart (already so when the
-/// party comes back from a battle) and the flames burn.
+/// Sets up the hall before Moloch's tablet: the red double door's two halves
+/// stand closed; once the Ruin Key has opened it they stand 12 pixels apart
+/// (already so when the party comes back from a battle) and the braziers
+/// burn.
 void MadraCatacombs_SetUpTabletRoom(void) {
   struct Actor *left = Actor_GetById(ACTOR_LEFT_DOOR);
   struct Actor *right = Actor_GetById(ACTOR_RIGHT_DOOR);
@@ -740,7 +785,7 @@ void MadraCatacombs_SetUpTabletRoom(void) {
 }
 
 // clang-format off
-/// The leader's actor script for walking north through an opened door, growing
+/// Felix's actor script for walking north through an opened door, growing
 /// smaller as he goes.
 s32 gMadraCatacombs_WalkThroughDoor[] = {                                                               
       SC_SET(SW_MOTION, 0),                                                    
@@ -752,7 +797,7 @@ s32 gMadraCatacombs_WalkThroughDoor[] = {
       SC_END,                                                                  
   };
 
-/// A tablet room flame's actor script as it flares up.
+/// A brazier's flame's actor script as it flares up.
 s32 gMadraCatacombs_FlameFlaresUp[] = {
     SC_SET(SW_SCALE_X, FIXED_ONE / 16),
     SC_SET(SW_SCALE_Y, FIXED_ONE / 16),
@@ -771,7 +816,7 @@ s32 gMadraCatacombs_FlameFlaresUp[] = {
     SC_END,
 };
 
-/// The great flame's actor script as it flares up.
+/// The actor script of the great braziers by Moloch's tablet as they flare up.
 s32 gMadraCatacombs_GreatFlameFlaresUp[] = {
     SC_SET(SW_SCALE_X, FIXED_ONE / 16),
     SC_SET(SW_SCALE_Y, FIXED_ONE / 16),
@@ -796,12 +841,12 @@ s32 gMadraCatacombs_GreatFlameFlaresUp[] = {
     SC_END,
 };
 
-/// The second pillar Move pushes, ended by -1.
+/// The plain stone pillar Move pushes, ended by -1.
 s16 gMadraCatacombs_PushedPillar[] = {
     ACTOR_PUSHED_PILLAR, -1,
 };
 
-/// The puddles Frost freezes into pillars, each with its flag.
+/// The puddle Frost freezes into a pillar, with its flag.
 s16 gMadraCatacombs_Puddles[] = {
     ACTOR_VILLAGE_PUDDLE, FLAG_VILLAGE_PUDDLE_FROZEN, -1,
 };

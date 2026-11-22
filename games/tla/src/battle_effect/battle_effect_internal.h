@@ -92,7 +92,7 @@ struct ElementStreaksWork {
   s32 halvePending; ///< the streaks are drawn: halve the canvas into VRAM
   /// Frames of the background's fade left (BattleEffect_DimBackgroundStep).
   s32 fadeFrames;
-  s32 fadeStep; ///< the fade's steps so far, CANVAS_FADE_STEP each
+  s32 fadeStep; ///< the fade's steps so far, BACKGROUND_LEVEL_STEP each
 };
 
 /// An EffectSprite as Cruel Ruin reads its OAM attribute 2: its tile, priority
@@ -328,8 +328,6 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define BG1_CLEAR_TILE 1023
 /// BG character block 2's first tile, counted from BG1's character base.
 #define BG1_BLOCK2_FIRST_TILE (2 * BG_CHAR_SIZE / TILE_SIZE_8BPP)
-/// One step of the battle background's fade, a sixtieth of the full colour.
-#define CANVAS_FADE_STEP (FIXED_ONE / 60)
 /// The bytes of one 16-colour palette.
 #define PALETTE_BANK_BYTES 32
 /// A word of two palette entries, both `color`, to fill a palette a word at a

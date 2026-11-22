@@ -4,6 +4,7 @@
 /// @file
 /// GRAPHICS
 
+#include "fixed_math.h"
 #include "types.h"
 #include "resource_ids.h"
 #include "edition.h"
@@ -177,9 +178,9 @@ extern const u8 gTitle_PromptTiles[];
 
 /// Each main font glyph's width in pixels, from the space (32) on.
 extern const u8 gFont_GlyphWidths[];
-/// The eight scales, in 1/65536, that WindowSprite_Pulse pulses the
-/// settings menu's selected icon through.
-extern const s32 gWindowSprite_PulseScales[];
+/// The eight scales WindowSprite_Pulse pulses the settings menu's selected icon
+/// through.
+extern const FIXED gWindowSprite_PulseScales[];
 /// Eight offsets, 0 to 3 and back, that make the name entry screen's caret
 /// circle: the x offset leads the y offset by five steps.
 extern const s8 gNameEntry_CaretWave[];

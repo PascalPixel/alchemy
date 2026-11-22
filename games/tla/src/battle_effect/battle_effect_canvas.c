@@ -1441,7 +1441,7 @@ void Palette_StepFadeTransfer(void) {
 
     (*step)++;
     ColorBuffer_ScaleFar(battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
-                         FIXED_ONE - *step * CANVAS_FADE_STEP,
+                         FIXED_ONE - *step * BACKGROUND_LEVEL_STEP,
                          BATTLE_BACKGROUND_COLORS);
     (*framesLeft)--;
   }

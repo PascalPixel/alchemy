@@ -848,9 +848,6 @@ s32 Battle_CollectPartyCommands(struct BattleAction *commands, u16 *actors,
 #define PULSE_OVERHANG_LINES(scale)                                            \
   ((((scale) - Q_8_8(1)) * 32 + 255) / 512 + 1)
 
-/// A WIN_RANGE value's end, its low byte: the window's right edge.
-#define WIN_RANGE_END_MASK 0xff
-
 /// Draws the icon menu's icons, a task of the icon menus (IconMenu_Open). Each
 /// icon is a 32x32, 256-colour sprite, and one at x 0 is not drawn; the
 /// selected one pulses, double-size, between 1.19 and 1.31 times its size, in
@@ -1769,4 +1766,3 @@ UNUSED void DebugSceneSelect_Schedule(void) {
 #undef ICON_ROW_LINES
 #undef PULSE_OVERHANG_X
 #undef PULSE_OVERHANG_LINES
-#undef WIN_RANGE_END_MASK

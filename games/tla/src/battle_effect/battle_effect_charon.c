@@ -1504,7 +1504,7 @@ void BattleEffect_RunCharon(struct BattleEffectParams *arg) {
       // fade leaves it.
       ColorBuffer_ScaleFar(battle->palette, (u16 *)&BG_PLTT_COLOR(6, 0),
                            FIXED_ONE -
-                               BACKGROUND_DARKEN_FRAMES * CANVAS_FADE_STEP,
+                               BACKGROUND_DARKEN_FRAMES * BACKGROUND_LEVEL_STEP,
                            BATTLE_BACKGROUND_COLORS);
       for (i = 0; i != arg->targetCount; i++) {
         struct Actor *actor = BattleObject_GetFar(arg->targets[i])->object;

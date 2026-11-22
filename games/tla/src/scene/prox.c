@@ -1,14 +1,24 @@
 /// @file
-/// Prox, Felix's home in the frozen north, where the clan of Puelle lives in
-/// poverty in the shadow of the Mars Lighthouse, in six rooms that share this
-/// overlay (SceneId_ProxSouthGate to SceneId_ProxCaves).
+/// Prox, Felix's home in the frozen north, where Puelle's clan lives in
+/// poverty in the shadow of the Mars Lighthouse. Six scenes share this
+/// overlay: the south gate, the lower village, the upper village to its north,
+/// the insides of the houses, the basements and cave rooms under them, and the
+/// Sanctum.
 ///
-/// While the lighthouse is unlit a storm rages over the village. Up the
-/// riverbed the Venus Djinni Mold bolts into the snow until Scoop digs it out;
-/// in the upper village the party overhears the talk of freeing Felix's
-/// parents and meets Puelle. After the ending the storm is over, the children
-/// play chase, the people give thanks for the beacon and the party says its
-/// farewell at the south gate before the credits.
+/// The party reaches Prox once the ship's cannon has broken the ice wall in the
+/// Northern Reaches, and a storm rages over the village until the lighthouse
+/// is lit. In the lower village the inn is the house on the left just inside
+/// the south entrance, the shop is in a cave room behind the small door in the
+/// east cliff, and the Sanctum is behind the wide wooden door in the west
+/// cliff. On the frozen river by the upper village's wooden bridge, the Venus
+/// Djinni Mold runs off and hides in a pile of snow at the river's head until
+/// Scoop digs him out. Beside the upper house two warriors are overheard
+/// saying they cannot find Felix's parents, and at the top of the west path
+/// Puelle, the elder and the clan argue over going to the lighthouse, then
+/// meet Felix. After the ending the storm is
+/// over: the clan thanks the party in the big north-west house, the children
+/// play chase outside the igloo, and the families say farewell at the south
+/// gate before the credits.
 #include "sprite_ids.h"
 #include "graphics/palette_buffers.h"
 #include "resource_ids.h"
@@ -60,9 +70,9 @@
 #include "scene/falling_rocks.h"
 #include "scene/scene.h"
 
-/// The south gate on the farewell, by the rows of
-/// gProx_SouthGateFarewellPlacements; the party's rows go to their party
-/// slots.
+/// The people at the south gate for the farewell after the ending, numbering
+/// the rows of `gProx_SouthGateFarewellPlacements`; the party's rows go to
+/// their party slots.
 enum ProxSouthGateActorId {
   /// Isaac's father. "Don't worry, Son. I'm sure Dora's doing fine."
   ACTOR_KYLE = ACTOR_FIRST_PLACED,
@@ -73,8 +83,9 @@ enum ProxSouthGateActorId {
   ACTOR_SOUTH_GATE_KRADEN
 };
 
-/// The village, by the rows of gProx_TownPlacements. Each villager is named
-/// for what they talk of while the lighthouse is unlit.
+/// The people of the lower village, numbering the rows of
+/// `gProx_TownPlacements`. Each villager is named for what they talk of while
+/// the lighthouse is unlit.
 enum ProxTownActorId {
   /// "Felix! Welcome back to Prox! It looks like only Mars Lighthouse still
   /// needs..."
@@ -94,9 +105,9 @@ enum ProxTownActorId {
   ACTOR_VILLAGER_SENSING_FELIXS_POWER,
   /// "Once the final lighthouse is lit, the winds should weaken."
   ACTOR_VILLAGER_ON_THE_WINDS,
-  /// The three children of Prox_TalkToPlayingChild,
-  /// Prox_TalkToChildWhoMissesRunning and Prox_TalkToTrainingChild, who play
-  /// chase once the beacon is lit.
+  /// The three children of `Prox_TalkToPlayingChild`,
+  /// `Prox_TalkToChildWhoMissesRunning` and `Prox_TalkToTrainingChild`, who
+  /// play chase outside the igloo once the beacon is lit.
   ACTOR_PLAYING_CHILD,
   ACTOR_CHILD_WHO_MISSES_RUNNING,
   ACTOR_TRAINING_CHILD,
@@ -107,11 +118,12 @@ enum ProxTownActorId {
   ACTOR_TOWN_CRATE
 };
 
-/// The upper village, by the rows of gProx_MoldPlacements and
-/// gProx_MoldPlacementsOnceLit; Isaac's row goes to his party slot.
+/// The people of the upper village, numbering the rows of
+/// `gProx_MoldPlacements` and `gProx_MoldPlacementsOnceLit`; Isaac's row goes
+/// to his party slot.
 enum ProxMoldActorId {
-  /// The two warriors Puelle ordered to free Felix's parents. "Puelle
-  /// ordered me to set your parents free."
+  /// The two warriors Puelle ordered to free Felix's parents, who stand beside
+  /// the upper house. "Puelle ordered me to set your parents free."
   ACTOR_WARRIOR_SENT_FOR_PARENTS = ACTOR_FIRST_PLACED,
   ACTOR_WARRIOR_SEARCHING_FOR_PARENTS,
   ACTOR_PUELLE,
@@ -135,9 +147,9 @@ enum ProxMoldActorId {
   ACTOR_MOLD
 };
 
-/// The houses, by the rows of gProx_HousesPlacements and
-/// gProx_HousesPlacementsOnceLit; Isaac's and Jenna's rows go to their party
-/// slots.
+/// The people inside the houses and the igloo, numbering the rows of
+/// `gProx_HousesPlacements` and `gProx_HousesPlacementsOnceLit`; Isaac's and
+/// Jenna's rows go to their party slots.
 enum ProxHousesActorId {
   /// "The rift at Mars Lighthouse gets wider every day."
   ACTOR_VILLAGER_ON_THE_WIDENING_RIFT = ACTOR_FIRST_PLACED,
@@ -156,7 +168,8 @@ enum ProxHousesActorId {
   ACTOR_OLD_MAN_ON_THE_EMISSARIES,
   /// "Vale's elders were stubborn..."
   ACTOR_VILLAGER_ON_VALES_ELDERS,
-  ACTOR_VILLAGER_ON_IGLOOS, ///< Prox_AskAboutIgloos
+  /// The boy inside the igloo who asks Felix whether he likes igloos.
+  ACTOR_VILLAGER_ON_IGLOOS,
   /// "The wind is so cold and bitter that we decided to hide out inside..."
   ACTOR_CHILD_HIDING_FROM_THE_WIND,
   /// "My parents told me that it would do me good to get some fresh air..."
@@ -170,40 +183,72 @@ enum ProxHousesActorId {
   /// "Don't forget, Felix, your mother and father are staying in the north
   /// end..."
   ACTOR_VILLAGER_POINTING_TO_PARENTS,
-  ACTOR_VILLAGER_ON_FELIXS_PARENTS, ///< Prox_TalkAboutParents
+  /// The innkeeper behind the inn's counter.
+  ACTOR_INNKEEPER,
   /// "Your mother knows that you're strong and healthy..."
   ACTOR_VILLAGER_ON_FELIXS_MOTHER,
-  /// The Djinni the game's text calls Water19, which joins in
-  /// Prox_MercuryDjinniJoins.
+  /// The Mercury Djinni in the upper house, which the game's text calls
+  /// Water19.
   ACTOR_MERCURY_DJINNI,
   ACTOR_HOUSES_PUELLE,
   ACTOR_HOUSES_ELDER,
   ACTOR_HOUSES_KRADEN
 };
 
-/// The cave homes, by the rows of gProx_CaveHomesPlacements and
-/// gProx_CaveHomesPlacementsOnceLit.
+/// The people of the basements and the shop's cave room, numbering the rows
+/// of `gProx_CaveHomesPlacements` and `gProx_CaveHomesPlacementsOnceLit`.
 enum ProxCaveHomesActorId {
   /// "Prox originally flourished because concerned Adepts lit the fires..."
   ACTOR_VILLAGER_ON_PROXS_PURPOSE = ACTOR_FIRST_PLACED,
   /// "When you left Prox, you were so young that you could barely lift a
   /// sword..."
   ACTOR_VILLAGER_REMEMBERING_YOUNG_FELIX,
-  ACTOR_VILLAGER_PRAISING_FELIX, ///< Prox_PraiseReturnedWarrior
+  /// The shopkeeper, the old woman behind the counter in the cave room
+  /// reached by the small door in the east cliff.
+  ACTOR_SHOPKEEPER,
   /// "Think of your old grandma's cooking every now and then..."
   ACTOR_OLD_WOMAN_ON_HER_COOKING
 };
 
-/// The caves: one old man, who fears for Weyard (Prox_FearForWeyard).
-enum ProxCavesActorId { ACTOR_OLD_MAN_FEARING_FOR_WEYARD = ACTOR_FIRST_PLACED };
+/// The Sanctum: one old man, the healer behind its lectern.
+enum ProxCavesActorId { ACTOR_HEALER = ACTOR_FIRST_PLACED };
 
 #define FLAG_SAID_FAREWELL 0x9cc
 #define FLAG_MOLD_HID_IN_SNOW 0xa2d
-/// The door the mayor's men came out of stays open.
+/// The door of the upper house, which the warrior comes out of, stays open.
 #define FLAG_DOOR_LEFT_OPEN FLAG_SCENE_TEMP_00
 /// Set while the Mars Lighthouse is unlit: rain and storm over the village.
 #define FLAG_STORM_RAGING FLAG_SCENE_TEMP_01
 #define FLAG_DIG_SPOT_SCOOPED FLAG_AREA_TEMP_00
+
+/// The cells the trigger tables answer, other than doors and exits, whose
+/// cells carry the number of the exit they leave by.
+enum ProxCellBehavior {
+  /// Upper village: the cell of the snow pile Mold hides in, kept at cell
+  /// (25, 2) and copied onto the pile at (25, 9) while Scoop is cast.
+  CELL_BEHAVIOR_MOLD_SNOW_PILE = 8,
+  /// Upper village: the frozen river beside Mold, where he stands at cell
+  /// (25, 20). The river's upper layer keeps these cells 45 columns east, at
+  /// (70, 20) to (70, 22).
+  CELL_BEHAVIOR_BESIDE_MOLD = 9,
+  /// Upper village: the ice of the frozen river between the cliff and the
+  /// wooden bridge, cells (22, 7) to (36, 21), and its upper layer's at
+  /// (67, 11) to (73, 20).
+  CELL_BEHAVIOR_ICE = 10,
+  /// South gate: cells (8, 9) and (9, 9), a few steps south of the way into
+  /// the village.
+  CELL_BEHAVIOR_FAREWELL = 10,
+  /// Upper village: cells (36, 20) to (37, 22), east of the upper house's
+  /// door.
+  CELL_BEHAVIOR_BESIDE_UPPER_HOUSE = 11,
+  /// Upper village: cells (7, 16) to (9, 16), partway up the west path.
+  CELL_BEHAVIOR_WEST_PATH = 12,
+  /// Upper village: cells (7, 8) to (8, 10), at the top of the west path by
+  /// Puelle.
+  CELL_BEHAVIOR_BEFORE_PUELLE = 13,
+  /// Lower village: the hidden spot east of the igloo, cell (40, 21).
+  CELL_BEHAVIOR_DARK_MATTER = 100
+};
 
 extern void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 extern const s32 *gFieldEffect_DurationScripts[];
@@ -221,13 +266,17 @@ void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
    } *)(base))                                                                 \
        ->v)
 
-/// Mold, the Venus Djinni, joins the party.
+/// Mold, just dug out of the snow pile at the head of the frozen river,
+/// joins the party: "Felix found the Venus Djinni Mold!" It runs as soon as
+/// `Prox_ScoopUpMold` has set it off, while the lighthouse is still unlit.
 void Prox_MoldJoins(void) {
   Djinn_JoinParty(ACTOR_MOLD, DJINNI_MOLD / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_MOLD));
 }
 
-/// The Mercury Djinni kept in the house joins the party.
+/// Felix talks to the Mercury Djinni in the upper house, the one Puelle's
+/// warrior comes out of, and it joins the party. The walkthrough lists it as a
+/// Djinni from the first game that the player never caught there.
 void Prox_MercuryDjinniJoins(void) {
   Djinn_JoinParty(ACTOR_MERCURY_DJINNI, DJINNI_WATER19 / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_WATER19));
@@ -256,20 +305,22 @@ extern s32 gProx_KradenStepsUpToPuelle[];
 extern s32 gProx_StepBackFromPuelle[];
 extern s32 gProx_EnterDoorScript[];
 
-/// The lower village: after the ending its three children play chase.
+/// Sets up the lower village: after the ending, its three children play chase
+/// outside the igloo.
 void Prox_InitializeTown(void);
 
 void Prox_InitializeMold(void);
 
-/// The houses: the thanks for the beacon on the first visit after the ending.
+/// Sets up the houses: on the arrival from the Mars Lighthouse after the
+/// ending, the clan's thanks in the big north-west house.
 void Prox_InitializeHouses(void);
 
-/// The basements: the leader comes down their stairs.
+/// Sets up the basements: arriving from a house, Felix comes down its stairs.
 void Prox_InitializeCaveHomes(void);
 extern s32 gProx_FirstChildRuns[];
 extern s32 gProx_SecondChildRuns[];
 extern s32 gProx_ThirdChildRuns[];
-/// The leader comes down the stairs into a basement.
+/// Felix comes down the stairs from a house into its basement.
 void Prox_ComeDownStairs(s32 westOrSouth);
 extern s32 gProx_KradenStepsForward[];
 extern s32 gProx_SecondParentWalksSouth[];
@@ -284,9 +335,9 @@ void Particle_UpdateFalling(void);
 
 void Prox_MercuryDjinniJoins(void);
 
-void Prox_PraiseReturnedWarrior(void);
+void Prox_TalkToShopkeeper(void);
 
-void Prox_FearForWeyard(void);
+void Prox_TalkToHealer(void);
 void Prox_TalkToPlayingChild(void);
 
 void Prox_TalkToTrainingChild(void);
@@ -297,33 +348,47 @@ void Prox_DecideToGoToLighthouse(void);
 
 void Prox_MeetPuelle(void);
 
-/// Touched, Mold bolts up the riverbed and hides under a pile of snow.
+/// Felix walks up to Mold, who stands on the frozen river just south of the
+/// wooden bridge in the upper village, and Mold bolts away north under the
+/// bridge and up the river. There is a thud, the ground shakes, a cry is heard,
+/// and Felix is left with "...". Mold has hidden in the pile of snow at the
+/// river's head, where Scoop will find him.
 void Prox_MoldHidesInSnow(void);
 
-/// Scoop on the pile of snow digs Mold out again.
+/// Felix casts Scoop on the pile of snow at the head of the frozen river in
+/// the upper village, cell (25, 9), and digs Mold out: the Djinni hops up and
+/// turns to him.
 void Prox_ScoopUpMold(void);
 void Prox_StartScoop(void);
 void Prox_EndScoop(void);
 
-void Prox_OpenHouseDoorA(void);
+void Prox_EnterInn(void);
 
-void Prox_OpenHouseDoorB(void);
-void Prox_OpenHouseDoorC(void);
-void Prox_OpenHouseDoorD(void);
+void Prox_EnterSouthHouse(void);
+void Prox_EnterWestHouse(void);
+void Prox_EnterNorthwestHouse(void);
 
-void Prox_OpenHouseDoorE(void);
+void Prox_EnterEastHouse(void);
 
-void Prox_OpenCavesDoor(void);
+void Prox_EnterSanctum(void);
 
-void Prox_OpenUpperHouseDoor(void);
-/// The leader climbs the stairs out of a basement.
+void Prox_EnterUpperHouse(void);
+/// Felix walks north onto the stairs in one of the three basements and climbs
+/// up into the house above it: the east house, the big north-west house, or
+/// the inn.
 void Prox_ClimbStairs(void);
 void Prox_SayFarewell(void);
+
+/// Felix steps onto the frozen river in the upper village, between the cliff
+/// and the wooden bridge, and slides on the way he was going, cell by cell,
+/// until a wall, a rise in the ground, a person or the end of the ice stops
+/// him.
 void Leader_SlideOnIce(void);
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 
-/// Smoke rises from the village's chimneys while the storm is over.
+/// After the ending, with the storm over, smoke rises from the chimneys of the
+/// lower village's houses and of the upper house.
 void Prox_SmokeFromChimneys(void);
 
 /// The sixteenth of a turn a heading points into, as a mask.
@@ -487,7 +552,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
    } *)(base))                                                                 \
        ->v)
 
-/// Scoop on the half-buried Dark Matter at (648, 344) digs it up.
+/// Felix casts Scoop on the hidden spot just east of the igloo, past its
+/// fence among the snowy rocks, cell (40, 21), and digs up Dark Matter:
+/// "Felix got some Dark Matter."
 void Prox_ScoopUpDarkMatter(s32 mode) {
   Event_DigUpTreasure(mode, FIELD_TREASURE_ACTOR, FLAG_DIG_SPOT_SCOOPED);
 }
@@ -515,7 +582,8 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// The overlay's call to Event_End.
 s32 Prox_EndEvent();
 
-/// "Felix! You like igloos, right?"
+/// The boy inside the igloo asks Felix whether he likes igloos. Either way, the
+/// boy says the children built it to have something to do in the cold.
 void Prox_AskAboutIgloos(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -532,12 +600,14 @@ enum { SHOP_PROX = 31 };
 /// Prox's inn, as Inn_CheckIn numbers the inns.
 enum { PROX_INN = 14 };
 
-/// The innkeeper: across the counter, the inn; from anywhere else, news of
-/// Felix's parents, who went away worried about him.
-void Prox_TalkAboutParents(void) {
+/// Felix talks to the innkeeper behind the inn's counter. From across the
+/// counter, facing north, he is offered a room; from anywhere else he hears
+/// that his parents have gone away, worried about him, or after the ending
+/// how the earthquake shook the inn when the beacon was lit.
+void Prox_TalkToInnkeeper(void) {
 
   if (Leader_IsFacingNorth()) {
-    Inn_CheckIn(PROX_INN, ACTOR_VILLAGER_ON_FELIXS_PARENTS);
+    Inn_CheckIn(PROX_INN, ACTOR_INNKEEPER);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -546,19 +616,22 @@ void Prox_TalkAboutParents(void) {
     } else {
       FieldEvent_SetMessageId((s32)MsgProxFelixYourParentsHaveGone);
     }
-    Event_ShowMessage(ACTOR_VILLAGER_ON_FELIXS_PARENTS, 0);
+    Event_ShowMessage(ACTOR_INNKEEPER, 0);
     Prox_EndEvent();
   }
 }
 
 s32 Shop_Run();
 
-/// The shopkeeper: across the counter, the shop; from anywhere else, praise for
-/// how Felix has grown, or for his foster grandmother once the beacon is lit.
-void Prox_PraiseReturnedWarrior(void) {
+/// Felix talks to the shopkeeper, the old woman behind the counter in the cave
+/// room behind the small door in the east cliff. From across the counter,
+/// facing north, she opens the shop; from anywhere else she marvels at the
+/// strong warrior he has become, or after the ending says his foster
+/// grandmother always knew he would return.
+void Prox_TalkToShopkeeper(void) {
 
   if (Leader_IsFacingNorth()) {
-    Shop_Run(SHOP_PROX, ACTOR_VILLAGER_PRAISING_FELIX);
+    Shop_Run(SHOP_PROX, ACTOR_SHOPKEEPER);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -567,19 +640,22 @@ void Prox_PraiseReturnedWarrior(void) {
     } else {
       FieldEvent_SetMessageId((s32)MsgProxYouGoAwayForLittle);
     }
-    Event_ShowMessage(ACTOR_VILLAGER_PRAISING_FELIX, 0);
+    Event_ShowMessage(ACTOR_SHOPKEEPER, 0);
     Prox_EndEvent();
   }
 }
 
 s32 Sanctum_Run();
 
-/// The old man of the caves keeps the sanctum: across the counter he heals;
-/// from anywhere else he speaks of Agatio and Karst, or of the lit lighthouse.
-void Prox_FearForWeyard(void) {
+/// Felix talks to the healer, the old man behind the lectern in the Sanctum
+/// behind the wide wooden door in the west cliff. From in front of the
+/// lectern, facing north, he offers the Sanctum's services; from anywhere else
+/// he speaks of Agatio and Karst going to the Mars Lighthouse, or after the
+/// ending fears for Weyard.
+void Prox_TalkToHealer(void) {
 
   if (Leader_IsFacingNorth()) {
-    Sanctum_Run(ACTOR_OLD_MAN_FEARING_FOR_WEYARD);
+    Sanctum_Run(ACTOR_HEALER);
   } else {
     Event_Start();
     FieldEvent_ResolvePendingActions(0);
@@ -588,14 +664,15 @@ void Prox_FearForWeyard(void) {
     } else {
       FieldEvent_SetMessageId((s32)MsgProxIHearAgatioAndKarst);
     }
-    Event_ShowMessage(ACTOR_OLD_MAN_FEARING_FOR_WEYARD, 0);
+    Event_ShowMessage(ACTOR_HEALER, 0);
     Prox_EndEvent();
   }
 }
 
-/// The child playing chase, held still while spoken to: faces the leader to say
-/// what fun it is to play outside, or under Mind Read is glad to be out of the
-/// igloo; then turns back and plays on.
+/// After the ending, Felix stops one of the three children playing chase
+/// outside the igloo, the first boy. Spoken to, he turns and cries how much fun
+/// it is to play outside now it has stopped snowing; under Mind Read he is glad
+/// not to have to play in the igloo any more. Then he runs on.
 void Prox_TalkToPlayingChild(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_Get(ACTOR_PLAYING_CHILD);
@@ -618,8 +695,9 @@ void Prox_TalkToPlayingChild(void) {
   Prox_EndEvent();
 }
 
-/// The child who misses running, held still while spoken to: misses running
-/// around outside, or under Mind Read thinks how unreal the blizzard was.
+/// After the ending, Felix stops the girl playing chase outside the igloo.
+/// Spoken to, she turns and says how she missed running around outside; under
+/// Mind Read she thinks how unreal the blizzard was. Then she runs on.
 void Prox_TalkToChildWhoMissesRunning(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_Get(ACTOR_CHILD_WHO_MISSES_RUNNING);
@@ -643,8 +721,10 @@ void Prox_TalkToChildWhoMissesRunning(void) {
   Prox_EndEvent();
 }
 
-/// The training child, held still while spoken to: must train hard to be a
-/// warrior like Felix, or under Mind Read thinks snow makes better exercise.
+/// After the ending, Felix stops the second boy playing chase outside the
+/// igloo. Spoken to, he turns and says he must train hard to be a great warrior
+/// like Felix; under Mind Read he thinks running in the snow is better
+/// exercise. Then he runs on.
 void Prox_TalkToTrainingChild(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_Get(ACTOR_TRAINING_CHILD);
@@ -667,8 +747,11 @@ void Prox_TalkToTrainingChild(void) {
   Prox_EndEvent();
 }
 
-/// While the lighthouse is unlit: a warrior comes out of the upper house and is
-/// sent off to find word of Felix's parents, a scene the party overhears.
+/// Felix comes up to the upper house in the upper village, at cells (36, 20)
+/// to (37, 22) just east of its door, while the lighthouse is unlit. The door
+/// opens, a warrior comes out to the one waiting outside, and Felix overhears
+/// them: they cannot find his parents anywhere in the village, and Puelle will
+/// be upset, as he ordered them freed when Felix returned. The door stays open.
 void Prox_SearchForParents(void) {
   s32 lit = Event_GetFlag(FLAG_MARS_BEACON_LIT);
 
@@ -736,8 +819,11 @@ void Prox_SearchForParents(void) {
 
 void FieldCamera_WaitForArrival(void);
 
-/// Puelle decides the clan cannot wait for Agatio any longer and must go to the
-/// Mars Lighthouse; the clansmen start at his words.
+/// Felix walks partway up the west path in the upper village, cells (7, 16) to
+/// (9, 16), and the camera moves up to its top, where Puelle tells the clan
+/// they cannot wait for Agatio any longer and he will go to the Mars
+/// Lighthouse himself. The clansmen beg to go in his stead, the elder forbids
+/// them all, and Puelle is left to wait for a miracle.
 void Prox_DecideToGoToLighthouse(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -855,8 +941,12 @@ void Prox_DecideToGoToLighthouse(void) {
 s32 Actor_PlaceOnActor();
 extern s32 gProx_IsaacStepsUpToPuelle[];
 
-/// The party climbs to Puelle's house: the elder knows Felix, and Puelle tells
-/// of his parents and the lighthouse.
+/// Felix reaches the top of the west path in the upper village, cells (7, 8)
+/// to (8, 10), and walks up to Puelle and the elder before the clan. The elder
+/// knows him at once; Kraden and Isaac introduce themselves, Puelle names
+/// Isaac as the one Agatio said killed Saturos and Menardi, and Isaac and
+/// Kraden tell how it happened. Talk turns to Agatio and Karst, who have the
+/// Mars Star now, and to the lighthouse.
 void Prox_MeetPuelle(void) {
   u32 i;
   s32 result;
@@ -1143,6 +1233,8 @@ void Prox_MoldHidesInSnow(void) {
   FieldActor_SetSpritePriority(ACTOR_MOLD, 2);
   actor = Actor_Get(ACTOR_MOLD);
   actor->priorityFlags |= ACTOR_PRIORITY_AUTOMATIC;
+  // XXX: what these copies change in the pile's pictures at the river's head; a
+  // render of the river's head with FLAG_MOLD_HID_IN_SNOW set would settle it.
   MapGrid_CopyCellsTo(72, 3, 69, 3, 3, 3);
   MapGrid_CopyCellsTo(48, 36, 69, 8, 3, 2);
   MapGrid_CopyCellAttributes(72, 13, 1, 3, 70, 20);
@@ -1150,7 +1242,7 @@ void Prox_MoldHidesInSnow(void) {
   Prox_EndEvent();
 }
 
-/// The raised trigger Prox_ScoopUpMold leaves for Prox_MoldJoins.
+/// The raised trigger `Prox_ScoopUpMold` leaves for `Prox_MoldJoins`.
 enum ProxRaisedTrigger { RAISED_MOLD_JOINS = 200 };
 
 void Prox_ScoopUpMold(void) {
@@ -1170,15 +1262,19 @@ void Prox_ScoopUpMold(void) {
   }
 }
 
-/// Scoop cast in the upper village: cell (25, 9)'s collision is opened while it
-/// is cast.
+/// Nothing visible happens when Felix starts to cast Scoop facing a wall in
+/// the upper village. The game quietly turns the snow pile at the head of the
+/// frozen river, cell (25, 9), from a wall into Mold's hiding place for the
+/// length of the cast, so that Scoop aimed at the pile can find him.
 void Prox_StartScoop(void) { MapGrid_CopyCellAttributes(25, 2, 1, 1, 25, 9); }
 
-/// After the Scoop, the dug ground's collision is filled back in.
+/// Nothing visible happens when Scoop's cast ends in the upper village: the
+/// snow pile at the head of the frozen river, cell (25, 9), is a wall again,
+/// as Felix found it.
 void Prox_EndScoop(void) { MapGrid_CopyCellAttributes(25, 3, 1, 1, 25, 9); }
 
-/// Drifts a chimney's smoke sideways ever faster, raises and widens it, and
-/// releases it when its frames run out.
+/// Each frame, a puff of chimney smoke drifts sideways ever faster, rises and
+/// spreads, until its frames run out and it is gone.
 void Prox_RiseSmoke(struct Actor *actor) {
   actor->x.fixed += actor->timer << 8;
   actor->y.fixed += toFIXED(1) / 2;
@@ -1230,9 +1326,13 @@ void Prox_SmokeFromChimneys(void) {
   }
 }
 
-/// Goes in at a door: opens it (a double door thumps) unless it was left open,
-/// steps the leader to the middle of a single door, walks in and takes the
-/// exit.
+/// Felix walks into a door: it opens (the Sanctum's wide door with a thump)
+/// unless it was left open, he steps to the middle of a single door, walks in,
+/// growing smaller as he passes the doorway, and the screen fades.
+///
+/// The open door is drawn by copying its picture over the door's cells, from
+/// `sourceX`, `sourceY` to `x`, `y`, `width` by `height` cells; the copies sit
+/// on the map's upper layer, 45 columns east of the cells Felix walks on.
 void Prox_EnterDoor(s32 sourceX, s32 sourceY, s32 x, s32 y, s32 width,
                     s32 height) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -1269,30 +1369,37 @@ void Prox_EnterDoor(s32 sourceX, s32 sourceY, s32 x, s32 y, s32 width,
   FieldEvent_SetExitRequest(work->stepTrigger);
 }
 
-/// The first of the village's house doors. Each door here is opened by
-/// Prox_EnterDoor from its picture in the map.
-void Prox_OpenHouseDoorA(void) { Prox_EnterDoor(48, 39, 57, 26, 1, 2); }
+/// Felix walks north into the door of the inn, the house on the left just
+/// inside the south entrance of the lower village, cell (12, 28).
+void Prox_EnterInn(void) { Prox_EnterDoor(48, 39, 57, 26, 1, 2); }
 
-/// The second of the village's house doors.
-void Prox_OpenHouseDoorB(void) { Prox_EnterDoor(49, 39, 65, 24, 1, 2); }
+/// Felix walks north into the door of the house east of the inn, cell
+/// (20, 26).
+void Prox_EnterSouthHouse(void) { Prox_EnterDoor(49, 39, 65, 24, 1, 2); }
 
-/// The third of the village's house doors.
-void Prox_OpenHouseDoorC(void) { Prox_EnterDoor(50, 39, 56, 19, 1, 2); }
+/// Felix walks north into the door of the house north of the inn, on the west
+/// side of the lower village, cell (11, 21).
+void Prox_EnterWestHouse(void) { Prox_EnterDoor(50, 39, 56, 19, 1, 2); }
 
-/// The fourth of the village's house doors.
-void Prox_OpenHouseDoorD(void) { Prox_EnterDoor(51, 39, 61, 13, 1, 2); }
+/// Felix walks north into the door of the big house in the north-west of the
+/// lower village, cell (16, 15).
+void Prox_EnterNorthwestHouse(void) { Prox_EnterDoor(51, 39, 61, 13, 1, 2); }
 
-/// The fifth of the village's house doors.
-void Prox_OpenHouseDoorE(void) { Prox_EnterDoor(51, 39, 80, 16, 1, 2); }
+/// Felix walks north into the door of the house in the east of the lower
+/// village, north of the igloo, cell (35, 18).
+void Prox_EnterEastHouse(void) { Prox_EnterDoor(51, 39, 80, 16, 1, 2); }
 
-/// The caves' double door.
-void Prox_OpenCavesDoor(void) { Prox_EnterDoor(52, 39, 50, 9, 2, 2); }
+/// Felix walks north into the wide wooden door in the west cliff of the lower
+/// village, cells (5, 13) and (6, 13), and enters the Sanctum.
+void Prox_EnterSanctum(void) { Prox_EnterDoor(52, 39, 50, 9, 2, 2); }
 
-/// The door into the cave homes.
-void Prox_OpenCaveHomesDoor(void) { Prox_EnterDoor(87, 2, 80, 7, 1, 2); }
+/// Felix walks north into the small door in the east cliff of the lower
+/// village, cell (35, 11), and enters the cave room where the shop is.
+void Prox_EnterShopCave(void) { Prox_EnterDoor(87, 2, 80, 7, 1, 2); }
 
-/// The upper house's door, which the warrior leaves open.
-void Prox_OpenUpperHouseDoor(void) { Prox_EnterDoor(89, 0, 77, 16, 1, 2); }
+/// Felix walks north into the door of the upper house in the upper village,
+/// cell (32, 22), which stands open once the warrior has come out of it.
+void Prox_EnterUpperHouse(void) { Prox_EnterDoor(89, 0, 77, 16, 1, 2); }
 
 void Prox_ClimbStairs(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -1323,8 +1430,9 @@ void Prox_ClimbStairs(void) {
   FieldEvent_SetExitRequest(stairsExit);
 }
 
-/// Arrives down the stairs into the cave homes: the leader appears beside the
-/// stairs (westOrSouth for the west and south ones), steps down and walks on.
+/// Felix comes down the stairs from a house into its basement: he appears on
+/// the stairs, steps down and walks a few steps on. `westOrSouth` is set for
+/// the stairs under the big north-west house and the inn.
 void Prox_ComeDownStairs(s32 westOrSouth) {
   struct Actor *actor;
 
@@ -1368,8 +1476,13 @@ void Prox_ComeDownStairs(s32 westOrSouth) {
 void FieldCamera_WaitForArrival(void);
 s32 Prox_EndEvent();
 
-/// After the ending, in the houses: the clan thanks the party for the beacon,
-/// Isaac and Kraden catch up, and Jenna is told the party is leaving.
+/// After the ending, the party arrives from the Mars Lighthouse in the big
+/// north-west house, where Felix, Isaac and Kraden stand before Puelle and the
+/// elder. The elder thanks them for lighting the beacon; talk turns to the
+/// Golden Sun forming over Mt. Aleph, and to how the beacon's Psynergy saved
+/// Felix's parents. Then Jenna calls for Isaac to hurry up, Isaac asks Felix
+/// whether to tell her they are leaving now, a child runs out of the house,
+/// and Isaac and Kraden take their leave and rejoin Felix.
 void Prox_GiveThanksForBeacon(void) {
   s32 answer;
   struct Actor *leader;
@@ -1775,8 +1888,10 @@ void Prox_InitializeTown(void) {
                             SPRITE_COLOR_HIDDEN);
 }
 
-/// Sets up the north of the village: the warrior and the upper house's door by
-/// the overheard talk, Puelle's facing, and Mold's snow dug out or not.
+/// Sets up the upper village. While the lighthouse is unlit, the warrior from
+/// the upper house is there only once Felix has overheard the two warriors,
+/// the house's door stays open, and Puelle faces away once the clan has argued.
+/// Mold stays hidden in his snow pile once he has run into it.
 void Prox_InitializeMold(void) {
   struct Actor *actor;
 
@@ -1813,7 +1928,8 @@ void Prox_InitializeMold(void) {
   }
 }
 
-/// Each frame, draws the hiding child at the leader's sprite priority.
+/// Each frame, draws the child hiding from the wind in the igloo in front of or
+/// behind things as Felix is.
 void Prox_MatchHousesPriority(void) {
   struct Actor *actor;
 
@@ -1833,15 +1949,15 @@ void Prox_InitializeHouses(void) {
   }
 }
 
-/// Each frame, draws two of the cave homes' villagers at the leader's sprite
-/// priority.
+/// Each frame, draws two of the basements' people in front of or behind things
+/// as Felix is.
 void Prox_MatchCaveHomesPriority(void) {
   s32 variant =
       ((struct FieldSprite *)Actor_Get(gMainRoutineWork.leaderActorId)->sprite)
           ->priority;
 
   FieldActor_SetSpritePriority(ACTOR_VILLAGER_ON_PROXS_PURPOSE, variant);
-  FieldActor_SetSpritePriority(ACTOR_VILLAGER_PRAISING_FELIX, variant);
+  FieldActor_SetSpritePriority(ACTOR_SHOPKEEPER, variant);
 }
 
 void Prox_InitializeCaveHomes(void) {
@@ -1867,8 +1983,11 @@ extern s32 gProx_GaretWalksSouth[];
 extern s32 gProx_IsaacWalksSouth[];
 extern s32 gProx_GaretRunsAhead[];
 
-/// After the thanks, at the south gate: the families say their farewells and
-/// the party leaves Prox for the credits.
+/// After the thanks in the big north-west house, Felix walks south through the
+/// south gate, cells (8, 9) and (9, 9), where everyone is waiting. Jenna asks
+/// what took him so long, the families and both parties say their farewells,
+/// Felix, Isaac and Kraden wave goodbye, and the picture dims and fades to
+/// black for the credits.
 void Prox_SayFarewell(void) {
   u32 i;
 
@@ -2392,7 +2511,7 @@ UNUSED void Prox_EndFallingRocks(void) {
 
 void Prox_MoldJoins(void);
 void Prox_AskAboutIgloos(void);
-void Prox_TalkAboutParents(void);
+void Prox_TalkToInnkeeper(void);
 void Prox_TalkToChildWhoMissesRunning(void);
 
 extern u32 gFieldEffect_LongScript[];
@@ -2707,24 +2826,24 @@ struct Trigger gProx_Triggers[] = {
 };
 
 struct Trigger gProx_SouthGateTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, 10, FLAG_SAID_FAREWELL, EVENT(Prox_SayFarewell)},
+    {TRIGGER_EXIT, PROX_SOUTH_GATE_TO_WORLD_MAP, CONDITION_ALWAYS, PROX_SOUTH_GATE_TO_WORLD_MAP},
+    {TRIGGER_EXIT, PROX_SOUTH_GATE_TO_PROX, CONDITION_ALWAYS, PROX_SOUTH_GATE_TO_PROX},
+    {TRIGGER_STEP, CELL_BEHAVIOR_FAREWELL, FLAG_SAID_FAREWELL, EVENT(Prox_SayFarewell)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gProx_TownTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(Prox_OpenHouseDoorA)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(Prox_OpenHouseDoorB)},
-    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 4, CONDITION_ALWAYS, 4},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT(Prox_OpenHouseDoorC)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(Prox_OpenHouseDoorD)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(Prox_OpenHouseDoorE)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(Prox_OpenCavesDoor)},
-    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(Prox_OpenCaveHomesDoor)},
-    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
+    {TRIGGER_EXIT, PROX_TO_PROX_SOUTH_GATE, CONDITION_ALWAYS, PROX_TO_PROX_SOUTH_GATE},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), PROX_TO_PROX_HOUSES_SOUTHWEST, CONDITION_ALWAYS, EVENT(Prox_EnterInn)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), PROX_TO_PROX_HOUSES_SOUTH, CONDITION_ALWAYS, EVENT(Prox_EnterSouthHouse)},
+    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, PROX_TO_PROX_HOUSES_EAST_A, CONDITION_ALWAYS, PROX_TO_PROX_HOUSES_EAST_A},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), PROX_TO_PROX_HOUSES_WEST, CONDITION_ALWAYS, EVENT(Prox_EnterWestHouse)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), PROX_TO_PROX_HOUSES_NORTHWEST, CONDITION_ALWAYS, EVENT(Prox_EnterNorthwestHouse)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), PROX_TO_PROX_HOUSES_EAST_B, CONDITION_ALWAYS, EVENT(Prox_EnterEastHouse)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), PROX_TO_PROX_CAVES, CONDITION_ALWAYS, EVENT(Prox_EnterSanctum)},
+    {TRIGGER_EXIT, PROX_TO_PROX_MOLD_EAST, CONDITION_ALWAYS, PROX_TO_PROX_MOLD_EAST},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), PROX_TO_PROX_CAVE_HOMES, CONDITION_ALWAYS, EVENT(Prox_EnterShopCave)},
+    {TRIGGER_EXIT, PROX_TO_PROX_MOLD_WEST, CONDITION_ALWAYS, PROX_TO_PROX_MOLD_WEST},
     {TRIGGER_TALK, ACTOR_VILLAGER_WELCOMING_FELIX, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxFelixWelcomeBackToProx)},
     {TRIGGER_TALK, ACTOR_VILLAGER_WELCOMING_FELIX, CONDITION_ALWAYS, MSGNO(MsgProxThankYouForLightingFires)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_WELCOMING_FELIX, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxAgatioAndKarstToldMe)},
@@ -2763,25 +2882,25 @@ struct Trigger gProx_TownTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD_WHO_MISSES_RUNNING, CONDITION_ALWAYS, EVENT(Prox_TalkToChildWhoMissesRunning)},
     {TRIGGER_TALK, ACTOR_TRAINING_CHILD, CONDITION_ALWAYS, EVENT(Prox_TalkToTrainingChild)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRAINING_CHILD, CONDITION_ALWAYS, EVENT(Prox_TalkToTrainingChild)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 100, FLAG_DIG_SPOT_SCOOPED, EVENT(Prox_ScoopUpDarkMatter)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_DARK_MATTER, FLAG_DIG_SPOT_SCOOPED, EVENT(Prox_ScoopUpDarkMatter)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_BOULDER, CONDITION_ALWAYS, 0},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gProx_MoldTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(Prox_OpenUpperHouseDoor)},
-    {TRIGGER_STEP, 9, FLAG_MOLD_HID_IN_SNOW, EVENT(Prox_MoldHidesInSnow)},
-    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Leader_SlideOnIce)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_BEFORE_CAST), 255, CONDITION_ALWAYS, EVENT(Prox_StartScoop)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_AFTER_CAST), 255, CONDITION_ALWAYS, EVENT(Prox_EndScoop)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 8, CONDITION_ALWAYS, EVENT(Prox_ScoopUpMold)},
+    {TRIGGER_EXIT, PROX_MOLD_TO_PROX_WEST, CONDITION_ALWAYS, PROX_MOLD_TO_PROX_WEST},
+    {TRIGGER_EXIT, PROX_MOLD_TO_PROX_EAST, CONDITION_ALWAYS, PROX_MOLD_TO_PROX_EAST},
+    {TRIGGER_EXIT, PROX_MOLD_TO_WORLD_MAP, CONDITION_ALWAYS, PROX_MOLD_TO_WORLD_MAP},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), PROX_MOLD_TO_PROX_HOUSES, CONDITION_ALWAYS, EVENT(Prox_EnterUpperHouse)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BESIDE_MOLD, FLAG_MOLD_HID_IN_SNOW, EVENT(Prox_MoldHidesInSnow)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_ICE, CONDITION_ALWAYS, EVENT(Leader_SlideOnIce)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_BEFORE_CAST), CELL_BEHAVIOR_WALL, CONDITION_ALWAYS, EVENT(Prox_StartScoop)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_AFTER_CAST), CELL_BEHAVIOR_WALL, CONDITION_ALWAYS, EVENT(Prox_EndScoop)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_MOLD_SNOW_PILE, CONDITION_ALWAYS, EVENT(Prox_ScoopUpMold)},
     {TRIGGER_RAISED, RAISED_MOLD_JOINS, FLAG_MARS_BEACON_LIT, EVENT(Prox_MoldJoins)},
-    {TRIGGER_STEP, 11, FLAG_HEARD_OF_PARENTS, EVENT(Prox_SearchForParents)},
-    {TRIGGER_STEP, 12, FLAG_CLAN_SPOKE_OF_LIGHTHOUSE, EVENT(Prox_DecideToGoToLighthouse)},
-    {TRIGGER_STEP, 13, FLAG_MET_PUELLE, EVENT(Prox_MeetPuelle)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BESIDE_UPPER_HOUSE, FLAG_HEARD_OF_PARENTS, EVENT(Prox_SearchForParents)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_WEST_PATH, FLAG_CLAN_SPOKE_OF_LIGHTHOUSE, EVENT(Prox_DecideToGoToLighthouse)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BEFORE_PUELLE, FLAG_MET_PUELLE, EVENT(Prox_MeetPuelle)},
     {TRIGGER_TALK, ACTOR_WARRIOR_SENT_FOR_PARENTS, CONDITION_ALWAYS, MSGNO(MsgProxPuelleOrderedMeToSet)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARRIOR_SENT_FOR_PARENTS, CONDITION_ALWAYS, MSGNO(MsgProxPuelleWantedToSetFelixs)},
     {TRIGGER_TALK, ACTOR_WARRIOR_SEARCHING_FOR_PARENTS, CONDITION_ALWAYS, MSGNO(MsgProxFelixTookTroubleOfComing)},
@@ -2818,16 +2937,16 @@ struct Trigger gProx_MoldTriggers[] = {
 };
 
 struct Trigger gProx_HousesTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, PROX_HOUSES_TO_PROX_SOUTH, CONDITION_ALWAYS, PROX_HOUSES_TO_PROX_SOUTH},
+    {TRIGGER_EXIT, PROX_HOUSES_TO_PROX_EAST_B, CONDITION_ALWAYS, PROX_HOUSES_TO_PROX_EAST_B},
+    {TRIGGER_EXIT, PROX_HOUSES_TO_PROX_CAVE_HOMES_NORTH, CONDITION_ALWAYS, PROX_HOUSES_TO_PROX_CAVE_HOMES_NORTH},
+    {TRIGGER_EXIT, PROX_HOUSES_TO_PROX_WEST, CONDITION_ALWAYS, PROX_HOUSES_TO_PROX_WEST},
+    {TRIGGER_EXIT, PROX_HOUSES_TO_PROX_NORTHWEST, CONDITION_ALWAYS, PROX_HOUSES_TO_PROX_NORTHWEST},
+    {TRIGGER_EXIT, PROX_HOUSES_TO_PROX_CAVE_HOMES_WEST, CONDITION_ALWAYS, PROX_HOUSES_TO_PROX_CAVE_HOMES_WEST},
+    {TRIGGER_EXIT, PROX_HOUSES_TO_PROX_MOLD, CONDITION_ALWAYS, PROX_HOUSES_TO_PROX_MOLD},
+    {TRIGGER_EXIT, PROX_HOUSES_TO_PROX_SOUTHWEST, CONDITION_ALWAYS, PROX_HOUSES_TO_PROX_SOUTHWEST},
+    {TRIGGER_EXIT, PROX_HOUSES_TO_PROX_CAVE_HOMES_SOUTH, CONDITION_ALWAYS, PROX_HOUSES_TO_PROX_CAVE_HOMES_SOUTH},
+    {TRIGGER_EXIT, PROX_HOUSES_TO_PROX_EAST_A, CONDITION_ALWAYS, PROX_HOUSES_TO_PROX_EAST_A},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_THE_WIDENING_RIFT, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxRiftAtMarsLighthouseGets)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_THE_WIDENING_RIFT, CONDITION_ALWAYS, MSGNO(MsgProxIThinkRiftToNorth)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_THE_WIDENING_RIFT, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxIThoughtProxWould)},
@@ -2880,9 +2999,9 @@ struct Trigger gProx_HousesTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HOUSES_PUELLE, CONDITION_ALWAYS, MSGNO(MsgProxWeMayHaveUnderestimatedPower)},
     {TRIGGER_TALK, ACTOR_HOUSES_ELDER, CONDITION_ALWAYS, MSGNO(MsgProxYourBodyHasAbsorbedGreat)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HOUSES_ELDER, CONDITION_ALWAYS, MSGNO(MsgProxPowerToReviveDead)},
-    {TRIGGER_TALK, ACTOR_VILLAGER_ON_FELIXS_PARENTS, CONDITION_ALWAYS, EVENT(Prox_TalkAboutParents)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_FELIXS_PARENTS, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxFelixsParentsWereWorriedAbout)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_FELIXS_PARENTS, CONDITION_ALWAYS, MSGNO(MsgProxWellNeverBeAble)},
+    {TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(Prox_TalkToInnkeeper)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxFelixsParentsWereWorriedAbout)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgProxWellNeverBeAble)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_FELIXS_MOTHER, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxYourMotherKnowsThatYoure)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_FELIXS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgProxAfterThatEarthquakeIFeel)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_FELIXS_MOTHER, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxFelixsParentsWereSoWorried)},
@@ -2896,10 +3015,10 @@ struct Trigger gProx_HousesTriggers[] = {
 };
 
 struct Trigger gProx_CaveHomesTriggers[] = {
-    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK | FACING_NORTH, 6, CONDITION_ALWAYS, EVENT(Prox_ClimbStairs)},
-    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK | FACING_NORTH, 7, CONDITION_ALWAYS, EVENT(Prox_ClimbStairs)},
-    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK | FACING_NORTH, 8, CONDITION_ALWAYS, EVENT(Prox_ClimbStairs)},
-    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
+    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK | FACING_NORTH, PROX_CAVE_HOMES_TO_PROX_HOUSES_NORTH, CONDITION_ALWAYS, EVENT(Prox_ClimbStairs)},
+    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK | FACING_NORTH, PROX_CAVE_HOMES_TO_PROX_HOUSES_WEST, CONDITION_ALWAYS, EVENT(Prox_ClimbStairs)},
+    {STEP_TRIGGER_WALKING | STEP_TRIGGER_FLAG_QUICK | FACING_NORTH, PROX_CAVE_HOMES_TO_PROX_HOUSES_SOUTH, CONDITION_ALWAYS, EVENT(Prox_ClimbStairs)},
+    {TRIGGER_EXIT, PROX_CAVE_HOMES_TO_PROX, CONDITION_ALWAYS, PROX_CAVE_HOMES_TO_PROX},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_PROXS_PURPOSE, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxProxOriginallyFlourishedBecauseConcerned)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ON_PROXS_PURPOSE, CONDITION_ALWAYS, MSGNO(MsgProxIveBeenToldThatLighting)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_ON_PROXS_PURPOSE, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxWhenLighthousesWereAllExtinguished)},
@@ -2908,9 +3027,9 @@ struct Trigger gProx_CaveHomesTriggers[] = {
     {TRIGGER_TALK, ACTOR_VILLAGER_REMEMBERING_YOUNG_FELIX, CONDITION_ALWAYS, MSGNO(MsgProxThankYouSoMuchFelix)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_REMEMBERING_YOUNG_FELIX, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxWhatHasHeGoneThrough)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_REMEMBERING_YOUNG_FELIX, CONDITION_ALWAYS, MSGNO(MsgProxINeverImaginedThatLittle)},
-    {TRIGGER_TALK, ACTOR_VILLAGER_PRAISING_FELIX, CONDITION_ALWAYS, EVENT(Prox_PraiseReturnedWarrior)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PRAISING_FELIX, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxFelixLooksSoConfident)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VILLAGER_PRAISING_FELIX, CONDITION_ALWAYS, MSGNO(MsgProxItsTooBadFelixCant)},
+    {TRIGGER_TALK, ACTOR_SHOPKEEPER, CONDITION_ALWAYS, EVENT(Prox_TalkToShopkeeper)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SHOPKEEPER, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxFelixLooksSoConfident)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SHOPKEEPER, CONDITION_ALWAYS, MSGNO(MsgProxItsTooBadFelixCant)},
     {TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_HER_COOKING, CONDITION_ALWAYS, MSGNO(MsgProxThinkOfYourOldGrandmas)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_HER_COOKING, CONDITION_ALWAYS, MSGNO(MsgProxImSoSadFelixDoesnt)},
     {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgProxThoseBoilingVegetablesLookLike))},
@@ -2921,10 +3040,10 @@ struct Trigger gProx_CaveHomesTriggers[] = {
 };
 
 struct Trigger gProx_CavesTriggers[] = {
-    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_TALK, ACTOR_OLD_MAN_FEARING_FOR_WEYARD, CONDITION_ALWAYS, EVENT(Prox_FearForWeyard)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_FEARING_FOR_WEYARD, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxTheseCatastrophesAreResult)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_FEARING_FOR_WEYARD, CONDITION_ALWAYS, MSGNO(MsgProxLighthousesAreGoingToRestore)},
+    {TRIGGER_EXIT, PROX_CAVES_TO_PROX, CONDITION_ALWAYS, PROX_CAVES_TO_PROX},
+    {TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT(Prox_TalkToHealer)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, FLAG_MARS_BEACON_LIT, MSGNO(MsgProxTheseCatastrophesAreResult)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgProxLighthousesAreGoingToRestore)},
     {TRIGGER_TABLE_END},
 };
 

@@ -1,7 +1,14 @@
 /// @file
-/// Naribwe, the village south of Kibombo where a fortune teller reads the
-/// party's items, Whirlwind scatters the weeds over the back yard's ladder and
-/// Reveal clears the rock pile over the Unicorn Ring's chest.
+/// Naribwe, the desert village south of the Kibombo Mountains.
+///
+/// A fire burns in a ring of stones in the middle of the village. The inn is
+/// the southeast hut, the weapon and armor shop the southwest one, and the
+/// fortune-teller's hut stands at the top of the village between two burning
+/// braziers, where for 20 coins he reads an item. Through the northwest houses
+/// is a back yard, where Whirlwind blows away the ivy over a ladder up to a
+/// ledge of totem poles, and Reveal there shows the Unicorn Ring's chest under
+/// a rock pile. Once Piers has carried Gabomba's message, the villagers talk of
+/// the smoke over the Kibombo Mountains.
 
 #include "types.h"
 #include "sprite_ids.h"
@@ -34,14 +41,13 @@
 /// Naribwe, by the rows of the village's placements (the same before and
 /// after the return from Kibombo); the last row goes to Isaac's party slot.
 enum NaribweActorId {
-  /// The fire in the ring of stones in the village's middle.
+  /// The fire in the ring of stones in the middle of the village.
   ACTOR_BONFIRE = ACTOR_FIRST_PLACED,
   /// The burning braziers either side of the fortune teller's hut.
   ACTOR_WEST_BRAZIER,
   ACTOR_EAST_BRAZIER,
-  /// Unseen actors raised 24 pixels over the braziers
-  /// (gNaribwe_HoldOverBrazier):
-  /// the exclamation bubble's sheet, whose animation 0 draws nothing.
+  /// Unseen actors held 24 pixels over the braziers: the exclamation bubble's
+  /// sheet, whose first animation draws nothing.
   ACTOR_OVER_WEST_BRAZIER,
   ACTOR_OVER_EAST_BRAZIER,
   /// "Don't tell me you just came back from Kibombo!"
@@ -57,7 +63,8 @@ enum NaribweActorId {
   ACTOR_OLD_MAN_ON_OEIA,
   /// "Can you tell me where you have come from?"
   ACTOR_WOMAN_ASKING_WHERE_FROM,
-  ACTOR_BOY_ASKING_OF_KIBOMBO, ///< Naribwe_AskGoingToKibombo
+  /// "You don't plan on going to Kibombo, do you, mister?"
+  ACTOR_BOY_ASKING_OF_KIBOMBO,
   /// "On the far side of the river lies a huge mountain we call Magma Rock."
   ACTOR_VILLAGER_ON_MAGMA_ROCK,
   /// "Ouch... Some big brute came through here looking for a woman named
@@ -66,10 +73,10 @@ enum NaribweActorId {
   /// The item stall's keeper: "No one can see the future. Absolutely no one.
   /// Except for our fortune-teller."
   ACTOR_ITEM_SHOPKEEPER,
-  /// The weeds over the back yard's ladder, which Whirlwind scatters.
+  /// The ivy over the back yard's ladder, which Whirlwind blows away.
   ACTOR_WEEDS,
   /// The post Lash throws the rope from, and the rope's unseen end up on the
-  /// ledge (Rope_Place).
+  /// ledge.
   ACTOR_ROPE_POST,
   ACTOR_ROPE_END,
   /// "I am but a humble pilgrim..."
@@ -81,15 +88,14 @@ enum NaribweActorId {
 /// The Unicorn Ring's chest: the village's second scene item.
 #define ACTOR_UNICORN_RING_CHEST (FIELD_TREASURE_ACTOR + 1)
 
-/// An entrance no exit leads to, which lights the large fire and the torches
-/// with no villagers about, and makes Blaze on the fire a long spray.
+/// An entrance no exit leads to: the village with no villagers about, where
+/// Blaze on the fire throws its long jet of flame.
 #define NARIBWE_FIRE_LIT_ENTRANCE 10
 #include "shared/tables.h"
 
 extern u32 gSceneExits[];
 
-/// A door of Naribwe: the cell animation that opens it and the cell it plays
-/// at.
+/// A door of Naribwe: how it opens, drawn over its cells, and where.
 struct WarpEntry {
   const void *script;
   u16 x;
@@ -104,7 +110,6 @@ void Rope_Initialize(void);
 void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 void Shop_Run(s32 a, s32 b);
 void Sanctum_Run(s32 a);
-void Naribwe_HideChest(void);
 
 extern struct ActorPlacement gNaribwe_Placements[];
 extern struct ActorPlacement gNaribwe_FireLitPlacements[];
@@ -127,9 +132,12 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gNaribwe_Placements;
 }
 
-/// Before Blaze is cast on the central fire, the event work notes whether the
-/// party came in by NARIBWE_FIRE_LIT_ENTRANCE, which makes the cast a long
-/// spray.
+/// Felix casts Blaze at the fire in the ring of stones in the middle of the
+/// village, and its jet of flame shoots up short, as anywhere else.
+///
+/// Before the cast, `blazeLongSpray` is set only when the party came in by
+/// `NARIBWE_FIRE_LIT_ENTRANCE`, which no exit leads to; there the jet shoots
+/// up long.
 void Naribwe_PrepareBlaze(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s8 *flag;
@@ -146,9 +154,10 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gNaribwe_Triggers;
 }
 
-/// "The Kibombo went on an expedition to the east, but they've already
-/// returned." Asked once (FLAG_ASKED_ABOUT_EXPEDITION); afterwards the villager
-/// talks of Akafubu.
+/// The woman in a purple skirt just southwest of the fire tells Felix: "The
+/// Kibombo went on an expedition to the east, but they've already returned,"
+/// and asks him something. Once he has answered Yes, she says instead that the
+/// Kibombo never move in such numbers without orders.
 void Naribwe_AskAboutKibomboExpedition(void) {
   s32 msg;
 
@@ -183,8 +192,10 @@ void Naribwe_AskAboutKibomboExpedition(void) {
 #define AFTER_WHERE_FROM_SPEAKER ACTOR_WOMAN_ON_THE_KIBOMBO_EXPEDITION
 #endif
 
-/// "Can you tell me where you have come from?" Asked once
-/// (FLAG_ASKED_WHERE_FROM).
+/// The old woman in a headband east of the fire asks Felix: "Can you tell me
+/// where you have come from?" She asks it again every time, because of a bug
+/// (below); the line she was to say after, that it is always hot in Naribwe,
+/// is never heard from her.
 void Naribwe_AskWhereFrom(void) {
   s32 msg;
 
@@ -207,7 +218,8 @@ void Naribwe_AskWhereFrom(void) {
   }
 }
 
-/// "You don't plan on going to Kibombo, do you, mister?"
+/// The boy with black hair just north of the fire asks Felix: "You don't plan
+/// on going to Kibombo, do you, mister?"
 void Naribwe_AskGoingToKibombo(void) {
   s32 msg = (s32)MsgNaribweYouDontPlanOnGoing;
 
@@ -226,8 +238,10 @@ void Naribwe_AskGoingToKibombo(void) {
 /// Naribwe's shops, as Shop_Run numbers them.
 enum { SHOP_NARIBWE_ITEMS = 16 };
 
-/// "No one can see the future. Absolutely no one. Except for our
-/// fortune-teller."
+/// Felix talks to the woman in a teal headband at the item stall in the south
+/// of the village: facing her from the east, across her stall, he can shop;
+/// from elsewhere she says: "No one can see the future. Absolutely no one.
+/// Except for our fortune-teller."
 void Naribwe_PraiseFortuneTeller(s32 actor) {
   if (FACING_NEAREST_CARDINAL(
           Actor_GetById(gMainRoutineWork.leaderActorId)->facing) ==
@@ -243,9 +257,9 @@ void Naribwe_PraiseFortuneTeller(s32 actor) {
   Event_End();
 }
 
-/// The item shopkeeper once Gabomba's message is carried: across the counter,
-/// the shop; from anywhere else, strangers should visit the fortune-teller's
-/// hut.
+/// Felix talks to the woman at the item stall once Piers has carried Gabomba's
+/// message: across her stall, he can shop; from elsewhere she says strangers
+/// should visit the fortune-teller's hut.
 void Naribwe_PraiseFortuneTellerOnReturn(s32 actor) {
   if (FACING_NEAREST_CARDINAL(
           Actor_GetById(gMainRoutineWork.leaderActorId)->facing) ==
@@ -261,6 +275,8 @@ void Naribwe_PraiseFortuneTellerOnReturn(s32 actor) {
   Event_End();
 }
 
+/// Felix talks to the pilgrim in white below the fortune-teller's hut: facing
+/// him from the south, he can use the Sanctum; from elsewhere the pilgrim says:
 /// "I am but a humble pilgrim, serving the greater good in the heart of
 /// Gondowan."
 void Naribwe_TalkToPilgrim(s32 actor) {
@@ -278,8 +294,9 @@ void Naribwe_TalkToPilgrim(s32 actor) {
   Event_End();
 }
 
-/// The pilgrim once Gabomba's message is carried: across the counter, the
-/// sanctum; from anywhere else, how cold it grows to the south.
+/// Felix talks to the pilgrim below the fortune-teller's hut once Piers has
+/// carried Gabomba's message: from the south, he can use the Sanctum; from
+/// elsewhere the pilgrim says how cold it grows to the south.
 void Naribwe_TalkToPilgrimOnReturn(s32 actor) {
   if (FACING_NEAREST_CARDINAL(
           Actor_GetById(gMainRoutineWork.leaderActorId)->facing) ==
@@ -295,8 +312,12 @@ void Naribwe_TalkToPilgrimOnReturn(s32 actor) {
   Event_End();
 }
 
-/// The party leader walks into one of Naribwe's doors, which opens with its
-/// cell animation, and leaves by the exit of the door's number.
+/// Felix walks north into the door of the inn, the southeast hut, at cell
+/// (18, 23), or of the fortune-teller's hut at the top of the village, at
+/// cell (21, 8): everyone stops, the door opens, and he goes in.
+///
+/// Each door's cell carries the number of the exit it leaves by; the other
+/// three houses' doorways are plain exits.
 void Naribwe_EnterDoor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s16 *trigger;
@@ -317,7 +338,7 @@ void Naribwe_EnterDoor(void) {
   trigger = &work->stepTrigger;
   index = *trigger;
   Event_PlaySound(SE_DOOR_OPEN);
-  index -= 4;
+  index -= NARIBWE_TO_NARIBWE_ROOMS_SOUTHEAST;
   MapGrid_AnimateCells(gNaribwe_Doors[index].script, gNaribwe_Doors[index].x,
                        gNaribwe_Doors[index].z);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.5);
@@ -329,8 +350,9 @@ void Naribwe_EnterDoor(void) {
   Event_End();
 }
 
-/// Whirlwind scatters the weeds in the back yard, uncovering the ladder
-/// (FLAG_WEEDS_SCATTERED).
+/// Felix casts Whirlwind at the ivy in the back yard behind the northwest
+/// houses: the leaves blow away and the ladder up to the ledge of totem poles
+/// shows. The ivy stays gone until the party leaves the village.
 void Naribwe_ScatterWeeds(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -348,14 +370,17 @@ UNUSED void Naribwe_SetRopeWork(void) {
   work->targetZ = ACTOR_ROPE_END;
 }
 
-/// Reveal clears the rock pile and shows the Unicorn Ring's chest under it.
+/// Felix casts Reveal anywhere in the village: on the ledge of totem poles
+/// above the back yard, the rock pile is gone and the Unicorn Ring's chest
+/// shows in its place.
 void Naribwe_RevealChest(void) {
   Actor_SetPosition(ACTOR_ROCK_PILE, 0, 0);
   TreasureSpot_SetPosition(ACTOR_UNICORN_RING_CHEST, toFIXED(104),
                            toFIXED(104));
 }
 
-/// Hides the Unicorn Ring's chest under the rock pile until Reveal clears it.
+/// The Unicorn Ring's chest stays hidden under the rock pile on the ledge of
+/// totem poles, as the village opens and again as Reveal wears off.
 void Naribwe_HideChest(void) {
   TreasureSpot_SetActorPosition(ACTOR_UNICORN_RING_CHEST, 0, 0);
   Actor_SetPosition(ACTOR_ROCK_PILE, 104, 104);
@@ -383,26 +408,11 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 // Naribwe's data: its scripts, door, placements and triggers.
 
-void Naribwe_PrepareBlaze(void);
-void Naribwe_AskAboutKibomboExpedition(void);
-
-void Naribwe_AskWhereFrom(void);
-
-void Naribwe_AskGoingToKibombo(void);
-
-void Naribwe_EnterDoor(void);
-
-void Naribwe_ScatterWeeds(void);
-
-void Naribwe_RevealChest(void);
-
 extern s32 gNaribwe_BrazierBurns[];
 extern s32 gNaribwe_HoldOverBrazier[];
 
 extern s32 gNaribwe_WeedsAnimation[];
 extern s16 gNaribwe_DoorOpening[];
-
-void Naribwe_HideChest(void);
 
 /// The village's placements, the same before and after the return with Piers.
 #define DEFINE_NARIBWE_PLACEMENTS(name)                                        \
@@ -496,12 +506,12 @@ s32 gNaribwe_WeedsAnimation[] = {
     SC_END,
 };
 
-/// The cell animation of the village's doors.
+/// How the inn's and the fortune-teller's doors open.
 s16 gNaribwe_DoorOpening[] = {
     8, 42, 1, 2, 6, -1,
 };
 
-/// The village's doors that open with a cell animation as the party walks
+/// The inn's door and the fortune-teller's, which open as the party walks
 /// through.
 struct WarpEntry gNaribwe_Doors[] = {
     {gNaribwe_DoorOpening, 18, 51},
@@ -543,9 +553,11 @@ struct Trigger gNaribwe_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, NARIBWE_TO_NARIBWE_ROOMS_NORTHWEST},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, NARIBWE_TO_NARIBWE_ROOMS_WEST},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, NARIBWE_TO_NARIBWE_ROOMS_SOUTHWEST},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     NARIBWE_TO_NARIBWE_ROOMS_SOUTHEAST, CONDITION_ALWAYS,
      EVENT(Naribwe_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     NARIBWE_TO_NARIBWE_ROOMS_NORTHEAST, CONDITION_ALWAYS,
      EVENT(Naribwe_EnterDoor)},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, NARIBWE_TO_WORLD_MAP_SOUTH},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, NARIBWE_TO_WORLD_MAP_NORTH},
@@ -596,8 +608,8 @@ struct Trigger gNaribwe_Triggers[] = {
      MSGNO(MsgNaribweAnywhereICanDoSome)},
     {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgNaribweTheresOnlyLittleBit))},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 8,
-     CONDITION_ALWAYS, EVENT(Naribwe_PrepareBlaze)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST),
+     ACTOR_BONFIRE, CONDITION_ALWAYS, EVENT(Naribwe_PrepareBlaze)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WEEDS, FLAG_WEEDS_SCATTERED,
      EVENT(Naribwe_ScatterWeeds)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST, FLAG_NARIBWE_ROPE_TIED,
@@ -613,9 +625,11 @@ struct Trigger gNaribwe_TriggersOnReturn[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, NARIBWE_TO_NARIBWE_ROOMS_NORTHWEST},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, NARIBWE_TO_NARIBWE_ROOMS_WEST},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, NARIBWE_TO_NARIBWE_ROOMS_SOUTHWEST},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     NARIBWE_TO_NARIBWE_ROOMS_SOUTHEAST, CONDITION_ALWAYS,
      EVENT(Naribwe_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     NARIBWE_TO_NARIBWE_ROOMS_NORTHEAST, CONDITION_ALWAYS,
      EVENT(Naribwe_EnterDoor)},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, NARIBWE_TO_WORLD_MAP_SOUTH},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, NARIBWE_TO_WORLD_MAP_NORTH},
@@ -666,8 +680,8 @@ struct Trigger gNaribwe_TriggersOnReturn[] = {
      MSGNO(MsgNaribweColdOfTundariaStiflesVirtually)},
     {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgNaribweTheresOnlyLittleBit))},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST), 8,
-     CONDITION_ALWAYS, EVENT(Naribwe_PrepareBlaze)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST),
+     ACTOR_BONFIRE, CONDITION_ALWAYS, EVENT(Naribwe_PrepareBlaze)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WEEDS, FLAG_WEEDS_SCATTERED,
      EVENT(Naribwe_ScatterWeeds)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST, FLAG_NARIBWE_ROPE_TIED,

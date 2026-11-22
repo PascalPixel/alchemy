@@ -1,6 +1,12 @@
 /// @file
-/// Mikasalla's houses: the inn, where Galahad waits in a linked game, and, as a
-/// second scene, the sanctums of Mikasalla, the Apojii Islands and Yallam.
+/// Mikasalla's houses and, as a second scene, the sanctums of Mikasalla, the
+/// Apojii Islands and Yallam.
+///
+/// Behind the village's doors are the inn (the northeast door), where Galahad
+/// waits in a linked game, the general store (northwest), the house of an old
+/// man who keeps trying to climb Air's Rock (east) and the house of the family
+/// of the explorer who founded the village (southwest). The same scene holds
+/// the old couple's house on the East Tundaria Islet.
 
 #include "shared/tables.h"
 #include "sprite_ids.h"
@@ -59,9 +65,9 @@ enum MikasallaRoomsActorId {
   ACTOR_GALAHAD
 };
 
-/// The sanctums (MikasallaRoomsSanctum): Mikasalla's, by entrance 1, and
-/// those of the Apojii Islands, by entrance 5, and Yallam, by entrance 4, which
-/// this scene also holds; by the rows of gMikasallaRooms_SanctumPlacements.
+/// The sanctums: Mikasalla's, and those of the Apojii Islands and Yallam,
+/// which this scene also holds; by the rows of
+/// `gMikasallaRooms_SanctumPlacements`.
 enum MikasallaRoomsSanctumActorId {
   /// The healers of Mikasalla's and the Apojii Islands' sanctums.
   ACTOR_MIKASALLA_HEALER = ACTOR_FIRST_PLACED,
@@ -77,7 +83,7 @@ enum MikasallaRoomsSanctumActorId {
   ACTOR_APOJII_COUNTER
 };
 
-/// Mikasalla's shop and inn, as Shop_Run and Inn_CheckIn number them.
+/// Mikasalla's shop and inn, as `Shop_Run` and `Inn_CheckIn` number them.
 enum { SHOP_MIKASALLA = 13, MIKASALLA_INN = 4 };
 
 extern struct ActorPlacement gMikasallaRooms_HousesPlacements[];
@@ -104,8 +110,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gMikasallaRooms_HousesPlacements;
 }
 
-/// Mind Read on Mikasalla's sanctum counter: the healer wonders about
-/// werewolves beyond Garoh.
+/// Felix casts Mind Read on the counter of Mikasalla's Sanctum and reads the
+/// healer behind it: "I wonder if there are werewolves beyond those in
+/// Garoh..."
 s32 MikasallaRooms_ReadHealersMind(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -116,8 +123,9 @@ s32 MikasallaRooms_ReadHealersMind(void) {
   return 0;
 }
 
-/// Mind Read on the Apojii sanctum's counter: the healer thinks of the
-/// islanders' complaints.
+/// Felix casts Mind Read on the counter of the Apojii Islands' Sanctum and
+/// reads the healer behind it: "Whenever visitors come out, the islanders start
+/// to complain..."
 s32 MikasallaRooms_ReadApojiiHealersMind(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -137,7 +145,10 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 void Sanctum_Run();
 
-/// "Hey, mister! Are you an explorer?"
+/// The boy in a blue shirt in the explorer's family's house, behind the
+/// village's southwest door, asks Felix: "Hey, mister! Are you an explorer?"
+/// Yes, and he wants to be one too someday; no, and he says his grandpa
+/// travelled the whole world.
 void MikasallaRooms_AskAreYouExplorer(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -158,8 +169,9 @@ void MikasallaRooms_AskAreYouExplorer(void) {
   Event_End();
 }
 
-/// Mikasalla's general storekeeper sells across the counter, and otherwise says
-/// the shop now sells armor and weapons too.
+/// Felix talks to the woman behind the counter of Mikasalla's general store:
+/// facing her across it, he can shop; from elsewhere she says the shop used to
+/// sell only items.
 void MikasallaRooms_TalkToGeneralStorekeeper(s32 speaker) {
   u16 facing;
 
@@ -174,8 +186,9 @@ void MikasallaRooms_TalkToGeneralStorekeeper(s32 speaker) {
   }
 }
 
-/// Mikasalla's innkeeper takes the party in across the counter, and otherwise
-/// bids it rest.
+/// Felix talks to the woman in a pink apron behind the inn's counter: facing
+/// her across it, he can stay the night; from elsewhere she bids the party
+/// rest its feet.
 void MikasallaRooms_TalkToInnkeeper(s32 speaker) {
   u16 facing;
 
@@ -193,8 +206,9 @@ void MikasallaRooms_TalkToInnkeeper(s32 speaker) {
   }
 }
 
-/// Mikasalla's healer offers the Sanctum across the counter, and otherwise asks
-/// whether the party has been to Garoh.
+/// Felix talks to the healer of Mikasalla's Sanctum: across the counter, he
+/// can use the Sanctum; from elsewhere the healer asks whether he has been to
+/// Garoh.
 void MikasallaRooms_TalkToHealer(s32 speaker) {
   u16 facing;
 
@@ -221,8 +235,9 @@ void MikasallaRooms_TalkToHealer(s32 speaker) {
   }
 }
 
-/// The Apojii Islands' healer offers the Sanctum across the counter, and
-/// otherwise talks of the little island.
+/// Felix talks to the healer of the Apojii Islands' Sanctum: across the
+/// counter, he can use the Sanctum; from elsewhere the healer says the little
+/// island must seem boring to him.
 void MikasallaRooms_TalkToApojiiHealer(s32 speaker) {
   u16 facing;
 
@@ -240,8 +255,8 @@ void MikasallaRooms_TalkToApojiiHealer(s32 speaker) {
   }
 }
 
-/// Yallam's healer offers the Sanctum across the counter, and otherwise talks
-/// of the far-off shores.
+/// Felix talks to the healer of Yallam's Sanctum: across the counter, he can
+/// use the Sanctum; from elsewhere the healer talks of the far-off shores.
 void MikasallaRooms_TalkToYallamHealer(s32 speaker) {
   u16 facing;
 
@@ -308,8 +323,9 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 void MikasallaRooms_MeetGalahad(void);
 
-/// Galahad, in the inn in a linked game, tells of Isaac's enemies once he has
-/// met the party.
+/// Felix talks to Galahad, the warrior in a golden helmet in Mikasalla's inn
+/// in a linked game: the first time, he introduces himself; after that, he
+/// says Isaac's enemies are gathering.
 void MikasallaRooms_TalkToGalahad(void) {
   if (Event_GetFlag(FLAG_MIKASALLA_GALAHAD_MET)) {
     FieldEvent_SetMessageId(
@@ -322,8 +338,8 @@ void MikasallaRooms_TalkToGalahad(void) {
   }
 }
 
-/// Mind Read on Galahad: before he has met the party he introduces himself;
-/// after, he fears for Isaac.
+/// Felix casts Mind Read on Galahad in Mikasalla's inn: before they have met,
+/// Galahad introduces himself; after, he fears for Isaac.
 void MikasallaRooms_MindReadGalahad(void) {
   if (!Event_GetFlag(FLAG_MIKASALLA_GALAHAD_MET)) {
     MikasallaRooms_MeetGalahad();

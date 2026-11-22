@@ -1,23 +1,27 @@
 /// @file
-/// Mars Lighthouse's lower floors, inside its gates, in the rooms of this
-/// overlay: ice cones Pound flattens (MarsLighthouseEntrance_PoundIceCone),
-/// ice sheets that burst and ice to Grind (MarsLighthouseEntrance_GrindIce),
-/// floors of ice the leader slides across
-/// (MarsLighthouseEntrance_RideFireball), flame throwers whose flames knock the
-/// leader back (FlameThrowers_Start, Flame_UpdateForward), a statue pushed into
-/// the flames (MarsLighthouseEntrance_PushStatueIntoFlames) and the teleporters
-/// on (MarsLighthouseEntrance_Teleport). The Mars Djinni Fugue and the Mercury
-/// Djinni Balm fight here (MarsLighthouseEntrance_FightFugue,
-/// MarsLighthouseEntrance_FightBalm).
+/// The Mars Lighthouse from its doors up to the dragons' hall: the steps
+/// outside in the storm and the frozen lower floors inside, in seven scenes
+/// that share this overlay.
 ///
-/// Outside the gates (room 1) the storm rains. In the first hall (room 2) Grind
-/// on a shaft of ice cracks the ice sheet a floor below (room 3), which Burst
-/// then breaks; there the flames are blocked with a statue, a dragon statue
-/// Blazed shoots a fireball that cracks another sheet, and the first
-/// teleport circle waits. Past the black ice (room 4) a second dragon statue
-/// fires at the ice (room 5), where Reveal shows a hidden circle. In room 6 a
-/// dragon face wakes and moves left while the party crosses the ice ahead of
-/// it; cracked floors (room 7) drop the leader to the floor below.
+/// Felix climbs the ladders outside in the rain to the doors. Inside is the
+/// main hall, a maze of ice cones that Pound hammers flat, with arched
+/// doorways along its north wall. Up the stairs from one of them, at a dead
+/// end, a shaft of ice pokes through the floor: Grind on it sends a crack down
+/// into the ice wall in the small room east of the main hall, and Burst then
+/// blows that wall away. Behind it a room holds a teleport circle, and west of
+/// that a chamber of dragon heads breathes fire down at the floor until a
+/// white dragon statue, pushed all the way east, blocks the last of them.
+/// Past black ice where Felix slides until something stops him, white urn
+/// torches lit by Blaze send fireballs that crack a sheet of ice for Burst and
+/// melt the ice in their path, and Reveal shows a hidden circle in a room of
+/// stone posts. Balm, the Mercury Djinni, waits at the end of a black ice
+/// slide, and the Teleport Lapis lies in a chest on a ledge above the first
+/// room's circle. Teleport from the hidden circle leads on to the Valkyrie
+/// Mail rooms, where a dragon face wakes and crawls west breathing fire while
+/// Felix crosses the ice ahead of it, and holes in the floor drop him to the
+/// dragons' hall; the jumping puzzle round the Sol Blade chest has cracked
+/// tiles that do the same. Last of all, Blaze at the main hall's westernmost
+/// torch cracks its big sheet of ice, on the way to the Mars Djinni Fugue.
 
 #include "flags.h"
 #include "graphics/palette_buffers.h"
@@ -88,15 +92,34 @@
 #define FLAG_HIDDEN_CIRCLE_SHEET_SHOWN FLAG_SCENE_TEMP_32
 #define FLAG_DRAGON_FACE_AWAKE FLAG_SCENE_TEMP_34
 
-/// The teleport circles that lead within one room, each the collision code of
-/// its circle's cells, its exit and the entrance on it: the Teleport Lapis
-/// room's south and north circles, and the Valkyrie Mail room's north and
-/// south ones. Each circle sends the leader to the other of its room.
+/// The teleport circles that lead within one scene, each the cell behaviour
+/// of its circle, the exit Teleport takes from it and the entrance on it. In
+/// the Teleport Lapis rooms the south circle is the one behind the burst ice
+/// wall and the north circle the one by the Teleport Lapis chest; in the
+/// Valkyrie Mail rooms the north circle is in the room by the long hall and
+/// the south one below it, by a dragon head on the wall. Each circle sends
+/// the party to the other of its pair.
 enum MarsLighthouseEntranceTeleportCircle {
   LAPIS_SOUTH_CIRCLE = 17,
   LAPIS_NORTH_CIRCLE = 18,
   VALKYRIE_NORTH_CIRCLE = 12,
   VALKYRIE_SOUTH_CIRCLE = 13
+};
+
+/// The other cell behaviours this overlay's trigger rows answer, besides the
+/// circles' and the holes' (a hole's behaviour is the exit Felix drops
+/// through). Black ice Felix slides across; the Sol Blade room's cracked
+/// tiles, of which those with MAP_CELL_FLOOR_HOLE give way, and its pillar
+/// tops; the cell at the head of the Valkyrie Mail rooms' slide that wakes
+/// the dragon face; the ice wall Grind cracks and the sheet over the lower
+/// passage, and the main hall's big sheet of ice, each answering Burst.
+enum {
+  CELL_BEHAVIOR_BLACK_ICE = 30,
+  CELL_BEHAVIOR_CRACKED_ICE_TILE = 31,
+  CELL_BEHAVIOR_PILLAR_TOP = 35,
+  CELL_BEHAVIOR_WAKE_DRAGON_FACE = 35,
+  CELL_BEHAVIOR_CRACKED_ICE_WALL = 80,
+  CELL_BEHAVIOR_BIG_ICE_SHEET = 81
 };
 
 /// Entrances within a room that the set-up reads: Balm's room's at the north
@@ -110,17 +133,16 @@ enum {
   VALKYRIE_NORTH_FROM_MIDDLE_WEST = 11
 };
 
-/// The attribute bit that makes a floor cell here a hole the leader drops
-/// through to the room below; the field reads it elsewhere as
-/// MAP_CELL_CLIMBABLE.
+/// The attribute bit that makes a floor cell here a hole Felix drops through
+/// to the room below; the field reads it elsewhere as MAP_CELL_CLIMBABLE.
 #define MAP_CELL_FLOOR_HOLE MAP_CELL_CLIMBABLE
 
-/// The frames the leader takes to shrink and sink out of sight through a hole.
+/// The frames Felix takes to shrink and sink out of sight through a hole.
 #define SINK_FRAMES 40
 
-/// The cell columns where Move sets the dragon statue in the flames' way:
-/// under the Teleport Lapis room's eastern flame thrower, and under the
-/// Valkyrie Mail room's.
+/// The cell columns where a pushed white dragon statue stands in the flames'
+/// way: under the last dragon head at the east end of the flame chamber, and
+/// under the dragon head on the wall of the Valkyrie Mail rooms' urn torch.
 enum { LAPIS_STATUE_BLOCKING_COLUMN = 20, VALKYRIE_STATUE_BLOCKING_COLUMN = 5 };
 
 /// The cell columns Balm's room's dragon statue stops in on the black ice:
@@ -128,9 +150,9 @@ enum { LAPIS_STATUE_BLOCKING_COLUMN = 20, VALKYRIE_STATUE_BLOCKING_COLUMN = 5 };
 /// and pushed east from there, from where it slides back.
 enum { ICE_STATUE_PUSHED_WEST_COLUMN = 11, ICE_STATUE_PUSHED_EAST_COLUMN = 10 };
 
-/// The first hall (Fugue's room): two ice cones, the first placed out of sight
-/// at the map's corner, the shaft of ice Grind cracks (an unseen marker on it)
-/// and Fugue.
+/// The rooms up the main hall's doorways (Fugue's scene): two ice cones, the
+/// first placed out of sight at the map's corner, the shaft of ice Grind
+/// cracks (an unseen marker on it) and Fugue.
 enum MarsLighthouseEntranceFugueActorId {
   ACTOR_FUGUE_ICE_CONE_A = ACTOR_FIRST_PLACED,
   ACTOR_FUGUE_ICE_CONE_B,
@@ -138,10 +160,12 @@ enum MarsLighthouseEntranceFugueActorId {
   ACTOR_FUGUE
 };
 
-/// The Teleport Lapis room: the dragon statue Move pushes into the flames, four
-/// flame throwers, the torches (one lit in the same place as an unlit one, each
-/// shown by whether the lighthouse is thawed), two ice cones, the first placed
-/// out of sight at the map's corner, and the two ice sheets.
+/// The main hall and the rooms behind it (the Teleport Lapis scene): the
+/// white dragon statue pushed into the flames, the flame chamber's four dragon
+/// heads, the urn torches at the main hall's west end (one lit in the same
+/// place as an unlit one, each shown by whether the lighthouse has thawed),
+/// two ice cones, the first placed out of sight at the map's corner, and the
+/// two ice sheets.
 enum MarsLighthouseEntranceTeleportLapisActorId {
   ACTOR_PUSHED_STATUE = ACTOR_FIRST_PLACED,
   ACTOR_LAPIS_FLAME_THROWER_A,
@@ -156,12 +180,15 @@ enum MarsLighthouseEntranceTeleportLapisActorId {
   ACTOR_ICE_SHEET,
   ACTOR_UNLIT_TORCH,
   ACTOR_SECOND_ICE_SHEET,
-  ACTOR_LAPIS_SPARKLE, ///< the sparkle that leaves the lit torch
-  ACTOR_LAPIS_FIREBALL ///< the fireball the sparkle sets rolling
+  ACTOR_LAPIS_SPARKLE,  ///< the sparkle that leaves the lit torch
+  ACTOR_LAPIS_FIREBALL, ///< the fireball the sparkle sets rolling
+  /// The Teleport Lapis chest, the first actor its map's chests make.
+  ACTOR_TELEPORT_LAPIS_CHEST = 64
 };
 
-/// Balm's room: a flame thrower and the torch its flames light, two dragon
-/// statues, five ice cones and Balm.
+/// Balm's rooms: the dragon head and the urn torch its flames light, which
+/// sends fireballs down the corridor of ice cones, the two white dragon
+/// statues beside the doorway onto the black ice, five ice cones and Balm.
 enum MarsLighthouseEntranceBalmActorId {
   ACTOR_BALM_FLAME_THROWER = ACTOR_FIRST_PLACED,
   ACTOR_BALM_TORCH,
@@ -178,8 +205,8 @@ enum MarsLighthouseEntranceBalmActorId {
   ACTOR_BALM_FIREBALL        ///< the fireball the sparkle sets rolling
 };
 
-/// The hidden circle's room: a lit torch and a torch Blaze sends a fireball
-/// from on each side, and the ice sheet the fireball cracks.
+/// The hidden circle's rooms: on each side a lit urn torch and the urn torch
+/// Blaze sends a fireball from, and the ice sheet the west fireball cracks.
 enum MarsLighthouseEntranceHiddenCircleActorId {
   ACTOR_WEST_LIT_TORCH = ACTOR_FIRST_PLACED,
   ACTOR_WEST_TORCH,
@@ -190,9 +217,10 @@ enum MarsLighthouseEntranceHiddenCircleActorId {
   ACTOR_HIDDEN_CIRCLE_FIREBALL ///< the fireball the sparkle sets rolling
 };
 
-/// The Valkyrie Mail room: the dragon statue pushed into the flames, the upper
-/// flame thrower and its torch, the dragon face that wakes and the torch below
-/// it, six ice cones, and the sparkle and fireball a torch sends.
+/// The Valkyrie Mail rooms: the white dragon statue pushed into the flames,
+/// the dragon head on the wall and its urn torch, the dragon face that wakes
+/// and the torch below it, six ice cones, and the sparkle and fireball a torch
+/// sends.
 enum MarsLighthouseEntranceValkyrieMailChestActorId {
   ACTOR_UPPER_FLAME_THROWER = ACTOR_FIRST_PLACED + 1,
   ACTOR_UPPER_TORCH,
@@ -211,18 +239,21 @@ extern u8 gInventorySnapshot[];
 
 void Actor_SetSpriteColorMode(struct Actor *actor, s32 value);
 
-/// A torch or statue starts with its sprite flags clear.
+/// An urn torch starts with its sprite flags clear.
 s32 MarsLighthouseEntrance_SetUpStatue(struct Actor *actor) {
   Actor_SetSpriteFlags(actor, 0);
   return 0;
 }
 
-/// Talking to Fugue starts its battle.
+/// Talking to the Mars Djinni Fugue, east of the shaft of ice in the room at
+/// the dead end up the main hall's stairs, from its east or south side,
+/// starts the battle with it.
 void MarsLighthouseEntrance_FightFugue(void) {
   Field_RequestDjinnBattle(ACTOR_FUGUE, DJINNI_FUGUE);
 }
 
-/// Talking to Balm starts its battle.
+/// Talking to the Mercury Djinni Balm, at the west end of the black ice below
+/// the two white dragon statues, starts the battle with it.
 void MarsLighthouseEntrance_FightBalm(void) {
   Field_RequestDjinnBattle(ACTOR_BALM, DJINNI_BALM);
 }
@@ -242,7 +273,8 @@ extern struct ActorPlacement gMarsLighthouseEntrance_HiddenCirclePlacements[];
 extern struct ActorPlacement gMarsLighthouseEntrance_ValkyriePlacements[];
 extern struct ActorPlacement gMarsLighthouseEntrance_SolBladePlacements[];
 
-/// Moved to its left end, the dragon face sends no more flames.
+/// The waking dragon face in the Valkyrie Mail rooms' long hall has crawled
+/// to its west end and stops breathing fire.
 s32 MarsLighthouseEntrance_DryDragonFace(void) {
   Ride_SetEntryState(0, FLAME_THROWER_DRY | 1);
   return 0;
@@ -368,8 +400,8 @@ void MarsLighthouseEntrance_SetIceConeCells(struct Actor *actor) {
 }
 
 /// Places the ice cones of a list ended by ACTOR_LIST_END, each row three
-/// halfwords: the cone, its first pose and the flag set once Pound has
-/// flattened it, which picks between the poses.
+/// halfwords: the cone, its standing pose and the flag set once Pound has
+/// flattened it, which picks the flattened pose after it.
 void MarsLighthouseEntrance_PlaceIceCones(u16 *table) {
   u16 *row;
   struct FieldActor *object;
@@ -392,10 +424,10 @@ void MarsLighthouseEntrance_PlaceIceCones(u16 *table) {
   }
 }
 
-/// One step of Pound on an ice cone: through step 7 the cone shrinks and a
-/// chip of ice (SPRITE_BLUE_CRYSTAL) flies off it, lower each step; in mode 1
-/// it is flattened, its flag set, its cells cleared
-/// (MarsLighthouseEntrance_SetIceConeCells) and the cone taken away.
+/// One blow of Pound's hammer on an ice cone: for the first eight the cone
+/// grows shorter and a chip of blue ice flies off it, lower each time; when
+/// Pound is done the cone is gone, its flag set and its cells cleared
+/// (MarsLighthouseEntrance_SetIceConeCells), so Felix can walk over the spot.
 void MarsLighthouseEntrance_PoundIceCone(s32 mode, s32 index) {
   struct FieldEffectWork *holder = Ram_HeapSlots->fieldEffectWork;
   struct Actor *actor = Actor_Get(holder->secondActorId);
@@ -424,14 +456,19 @@ void MarsLighthouseEntrance_PoundIceCone(s32 mode, s32 index) {
   }
 }
 
-/// Pound's trigger on an ice cone: its two arguments passed on as they come.
+/// Felix casts Pound on one of the ice cones that stand on the lighthouse's
+/// frozen floors (one up the main hall's stairs, one in the main hall, five in
+/// the corridor of Balm's rooms, six in the Valkyrie Mail rooms' long hall): a
+/// great hammer beats it down into the floor, chips of ice flying, until it is
+/// gone and the way is clear. Each blow comes here with the phase and its
+/// count, and MarsLighthouseEntrance_PoundIceCone does the work.
 void MarsLighthouseEntrance_StartPoundIceCone(s32 mode, s32 index) {
   MarsLighthouseEntrance_PoundIceCone(mode, index);
 }
 
 extern u32 gMarsLighthouseEntrance_IceChipScript[];
 
-/// Throws chips of ice from an actor as its ice cracks or breaks.
+/// Throws six chips of ice from an actor as its ice cracks or breaks.
 void MarsLighthouseEntrance_ScatterIceChips(s32 id) {
   struct Actor *source = Actor_Get(id);
   s32 i;
@@ -465,7 +502,11 @@ void MarsLighthouseEntrance_ScatterIceChips(s32 id) {
   }
 }
 
-/// Grind on the shaft of ice: the crack runs to the ice sheet a floor below.
+/// Felix casts Grind on the shaft of ice poking up through the floor of the
+/// dead-end room up the main hall's stairs: it crumbles away in bursts of ice
+/// chips, and the scene cuts to the small room east of the main hall below,
+/// where the floor shakes and a crack runs through the ice wall, ready for
+/// Burst, before Felix is brought back.
 void MarsLighthouseEntrance_GrindIce(void) {
   s32 x;
   s32 count;
@@ -485,7 +526,9 @@ void MarsLighthouseEntrance_GrindIce(void) {
       MARS_LIGHTHOUSE_ENTRANCE_FUGUE_TO_MARS_LIGHTHOUSE_ENTRANCE_TELEPORT_LAPIS_EAST_B);
 }
 
-/// Examining the shaft of ice.
+/// Felix examines the shaft of ice in the dead-end room up the main hall's
+/// stairs: "Felix checked the ice." and "A shaft of ice is poking up through
+/// the floor."
 void MarsLighthouseEntrance_CheckIce(void) {
   // "Felix checked the ice."
   FieldMessage_Show((s32)MsgMarsLighthouseEntranceCheckedIce,
@@ -496,8 +539,11 @@ void MarsLighthouseEntrance_CheckIce(void) {
   gFieldWork->fieldMenu = 1;
 }
 
-/// Teleport on the circle: the first time the camera follows the leader across;
-/// after, the leader leaves at once.
+/// Felix casts Teleport on the north circle, beside the Teleport Lapis chest:
+/// the screen turns grey, sparks swirl round him and he appears on the south
+/// circle in the room behind the burst ice wall. The first time, the game
+/// moves him and the camera there itself; after that it takes the exit
+/// between the two circles.
 void MarsLighthouseEntrance_Teleport(void) {
   if (!Flag_IsSet(FLAG_TELEPORTED_ONCE)) {
     Teleport_StartShimmer();
@@ -528,8 +574,10 @@ void MarsLighthouseEntrance_Teleport(void) {
   }
 }
 
-/// Teleport on the circle in the Teleport Lapis room.
-void MarsLighthouseEntrance_TeleportFromLapis(void) {
+/// Felix casts Teleport on the south circle, in the room behind the burst
+/// ice wall: in a swirl of sparks he appears on the north circle, on the
+/// ledge beside the Teleport Lapis chest.
+void MarsLighthouseEntrance_TeleportFromLapisSouthCircle(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
   gMainRoutineWork.teleportState = 2;
@@ -538,8 +586,9 @@ void MarsLighthouseEntrance_TeleportFromLapis(void) {
   Teleport_StopShimmer();
 }
 
-/// Burst on the cracked ice sheet: a flash, the sheet gone, chips
-/// flying (FLAG_LAPIS_SHEET_BURST).
+/// Felix casts Burst on the cracked ice wall in the small room east of the
+/// main hall (cells (51, 41) to (53, 41)): it blows apart in fiery blasts,
+/// chips of ice flying, and the arched doorway behind it is clear.
 void MarsLighthouseEntrance_BurstIceSheet(s32 state, s32 frame) {
   if (state == 1) {
     Event_PlaySound(SE_FLASH);
@@ -558,12 +607,14 @@ void MarsLighthouseEntrance_BurstIceSheet(s32 state, s32 frame) {
   }
 }
 
-/// Blaze on the dragon statue: it shoots a fireball at the ice sheet.
+/// Felix casts Blaze at the urn torch at the west end of the main hall: a
+/// fireball sets off east along the hall toward the big sheet of ice.
 void MarsLighthouseEntrance_BlazeLapisStatue(void) {
   MarsLighthouseEntrance_ShootFireballAtLapisIceSheet();
 }
 
-/// The camera follows the fireball to the ice sheet it cracks.
+/// As the fireball from the main hall's west torch rolls east, the camera
+/// follows it along the hall to the sheet of ice it cracks and holds there.
 void MarsLighthouseEntrance_WatchFireballCrackIce(void) {
   gFieldWork->psynergy = 0;
   Flag_Clear(FLAG_MENU_OPEN);
@@ -581,7 +632,7 @@ void MarsLighthouseEntrance_WatchFireballCrackIce(void) {
   Event_End();
 }
 
-/// Draws the Teleport Lapis room's second ice sheet cracked, on both floors.
+/// Draws the main hall's big sheet of ice cracked, on both floors.
 void MarsLighthouseEntrance_DrawLapisCrackedSheet(void) {
   MapGrid_CopyCellAttributes(14, 55, 14, 3, 14, 41);
   MapGrid_CopyCellsLayered(64, 64, 14, 3, 78, 41);
@@ -590,7 +641,8 @@ void MarsLighthouseEntrance_DrawLapisCrackedSheet(void) {
   MapGrid_CopyCellAttributes(64, 64, 14, 3, 14, 105);
 }
 
-/// The fireball reaches the ice sheet and cracks it.
+/// The fireball from the main hall's west torch reaches the big sheet of ice
+/// and cracks it, with a crack of ice.
 void MarsLighthouseEntrance_CrackLapisIceSheet(void) {
   struct Actor *actor = Actor_Get(ACTOR_SECOND_ICE_SHEET);
 
@@ -623,15 +675,18 @@ void MarsLighthouseEntrance_CrackLapisIceSheet(void) {
     }                                                                          \
   }
 
-/// Burst breaks the second ice sheet of the Teleport Lapis room, once the
-/// dragon statue's fireball has cracked it. A flash, the sheet gone and chips
-/// flying, and `FLAG_LAPIS_SECOND_SHEET_BURST` set.
+/// Felix casts Burst on the big sheet of ice in the east of the main hall
+/// (cells (29, 43) and (30, 43)), once the west torch's fireball has cracked
+/// it: it blows apart in fiery blasts and the way past it is clear.
 DEFINE_BURST_ICE_SHEET(MarsLighthouseEntrance_BurstLapisIceSheet, 28, 92, 8,
                        100, 92, 38, 8, ACTOR_SECOND_ICE_SHEET,
                        FLAG_LAPIS_SECOND_SHEET_BURST)
 
-/// Move on the dragon statue: pushed under the eastern flame thrower it blocks
-/// the flames (FLAG_LAPIS_STATUE_BLOCKS_FLAMES).
+/// Each time Felix pushes or Moves the white dragon statue along the flame
+/// chamber, west of the room behind the burst ice wall, the game checks where
+/// it stands. Once it is under the last dragon head at the chamber's east end
+/// (cell (20, 7)), it settles a pixel south into the head's flames, blocks
+/// them, and stays there from then on.
 void MarsLighthouseEntrance_PushStatueIntoFlames(s32 unused, s32 id) {
   if (id == ACTOR_PUSHED_STATUE) {
     struct Actor *actor = Actor_Get(ACTOR_PUSHED_STATUE);
@@ -645,12 +700,17 @@ void MarsLighthouseEntrance_PushStatueIntoFlames(s32 unused, s32 id) {
   }
 }
 
-/// Beside the chest, Retreat is blocked.
+/// Felix examines the Teleport Lapis chest, on the ledge above the north
+/// circle; besides the chest opening as usual, Retreat stops working, and
+/// casting it answers "Retreat... It doesn't work here."
+// XXX: when Retreat works again (on leaving the room, or on the next scene
+// start); a render that casts Retreat after leaving the ledge would settle it.
 void MarsLighthouseEntrance_BlockRetreatAtChest(void) {
   GameFlag_Set(FLAG_RETREAT_BLOCKED);
 }
 
-/// Teleport on the circle in Balm's room.
+/// Felix casts Teleport on the circle in the room of the Orihalcon chest: in a
+/// swirl of sparks he appears on the hidden circle among the stone posts.
 void MarsLighthouseEntrance_TeleportFromBalm(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
@@ -661,9 +721,10 @@ void MarsLighthouseEntrance_TeleportFromBalm(void) {
   Teleport_StopShimmer();
 }
 
-/// Move sends the statue sliding over the black ice to its far end: west to
-/// x 152 once pushed west off its place, and east back to it, x 200, once
-/// pushed east from there.
+/// Felix Moves the west one of the two white dragon statues beside the
+/// doorway onto Balm's black ice: pushed west, it slides along the ice to the
+/// wall (x 152), where it will stop Felix's own slides; pushed east from
+/// there, it slides back to its place by the doorway (x 200).
 void MarsLighthouseEntrance_SlideStatueOnIce(s32 unused, s32 id) {
   struct Actor *actor = Actor_Get(id);
 
@@ -681,16 +742,17 @@ void MarsLighthouseEntrance_SlideStatueOnIce(s32 unused, s32 id) {
   }
 }
 
-/// Blaze on the west torch of the hidden circle's room: the camera turns to
-/// the ice sheet as the torch's fireball sets off for it.
+/// Felix casts Blaze at the urn torch at the west end of the room beyond the
+/// first black ice: the camera moves to the torch as it sends a fireball east
+/// toward the sheet of ice over the lower passage.
 void MarsLighthouseEntrance_BlazeHiddenCircleWestStatue(void) {
   FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(88, CAMERA_KEEP, 696, 1);
   MarsLighthouseEntrance_ShootFireballAtHiddenCircleIceSheet();
 }
 
-/// The camera holds on the hidden circle's ice sheet while the fireball
-/// cracks it.
+/// The camera holds for two seconds on the sheet of ice the west torch's
+/// fireball cracks.
 void MarsLighthouseEntrance_WatchFireballCrackHiddenCircleIce(void) {
   gFieldWork->psynergy = 0;
   Flag_Clear(FLAG_MENU_OPEN);
@@ -702,8 +764,9 @@ void MarsLighthouseEntrance_WatchFireballCrackHiddenCircleIce(void) {
   Event_End();
 }
 
-/// The fireball reaches the hidden circle's ice sheet, which cracks and shows,
-/// unless it has burst already.
+/// The west torch's fireball reaches the sheet of ice before the hidden
+/// circle's rooms, which cracks with a crack of ice, unless Burst has broken it
+/// already.
 void MarsLighthouseEntrance_CrackHiddenCircleIceSheet(void) {
   struct Actor *actor = Actor_Get(ACTOR_HIDDEN_CIRCLE_ICE_SHEET);
 
@@ -716,13 +779,15 @@ void MarsLighthouseEntrance_CrackHiddenCircleIceSheet(void) {
   }
 }
 
-/// Blaze on the east torch of the hidden circle's room: its fireball rolls
+/// Felix casts Blaze at the urn torch under the great carved dragon face in
+/// the right-hand room of ice cones: the torch sends a fireball rolling south
 /// through the ice.
 void MarsLighthouseEntrance_BlazeHiddenCircleEastStatue(void) {
   MarsLighthouseEntrance_ShootFireballThroughIce();
 }
 
-/// The camera follows the fireball as it melts the ice in its path.
+/// The camera follows the east torch's fireball south as it melts the ice in
+/// its path, and holds on the cleared way.
 void MarsLighthouseEntrance_WatchFireballMeltIce(void) {
   gFieldWork->psynergy = 0;
   Flag_Clear(FLAG_MENU_OPEN);
@@ -739,7 +804,9 @@ void MarsLighthouseEntrance_WatchFireballMeltIce(void) {
   Event_End();
 }
 
-/// Teleport on the hidden circle Reveal shows.
+/// Felix casts Teleport on the hidden circle among the stone posts: in a
+/// swirl of sparks he appears on the circle in the room of the Orihalcon
+/// chest.
 void MarsLighthouseEntrance_TeleportFromHiddenCircle(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
@@ -750,26 +817,29 @@ void MarsLighthouseEntrance_TeleportFromHiddenCircle(void) {
   Teleport_StopShimmer();
 }
 
-/// Reveal shows the hidden teleport circle.
+/// While Felix's Reveal lasts, the teleport circle hidden in the floor among
+/// the room's six stone posts shows (cells (53, 48) to (56, 50)).
 void MarsLighthouseEntrance_RevealTeleportCircle(void) {
   MapGrid_CopyCells(53, 30, 4, 3, 53, 48);
   MapGrid_CopyCellsLayered(117, 30, 4, 3, 117, 48);
 }
 
-/// Covers the teleport circle that Reveal has not shown.
+/// As Reveal fades, the hidden teleport circle among the stone posts is
+/// covered again.
 void MarsLighthouseEntrance_HideTeleportCircle(void) {
   MapGrid_CopyCells(53, 40, 4, 3, 53, 48);
   MapGrid_CopyCellsLayered(117, 45, 4, 3, 117, 48);
 }
 
-/// Burst breaks the ice sheet of the hidden circle's room, once the west
-/// torch's fireball has cracked it. A flash, the sheet gone and chips flying,
-/// and `FLAG_HIDDEN_CIRCLE_SHEET_BURST` set.
+/// Felix casts Burst on the sheet of ice the west torch's fireball cracked
+/// (cells (14, 42) and (15, 42)): it blows apart in fiery blasts and the
+/// lower passage is open.
 DEFINE_BURST_ICE_SHEET(MarsLighthouseEntrance_BurstHiddenCircleIceSheet, 12, 95,
                        6, 101, 76, 40, 5, ACTOR_HIDDEN_CIRCLE_ICE_SHEET,
                        FLAG_HIDDEN_CIRCLE_SHEET_BURST)
 
-/// The fireball melts the ice in its path and opens the way south.
+/// The east torch's fireball melts the ice in its path and opens the way
+/// south to the doorway.
 void MarsLighthouseEntrance_MeltIceInPath(void) {
   MapGrid_CopyCellAttributes(35, 11, 3, 6, 53, 11);
   MapGrid_CopyCellsLayered(35, 75, 3, 6, 117, 11);
@@ -777,12 +847,15 @@ void MarsLighthouseEntrance_MeltIceInPath(void) {
   Flag_Set(FLAG_HIDDEN_CIRCLE_ICE_MELTED);
 }
 
-/// The fireball has passed: the cells of its row are cleared.
+/// The fireball in the Valkyrie Mail rooms' long hall has passed: the cells
+/// of its row are cleared.
 void MarsLighthouseEntrance_ClearFireballRow(void) {
   MapGrid_CopyCellAttributes(25, 9, 11, 3, 26, 9);
 }
 
-/// Teleport on the west circle of the Valkyrie Mail room.
+/// Felix casts Teleport on the north circle of the Valkyrie Mail rooms
+/// (cells (12, 25) to (15, 27)): in a swirl of sparks he appears on the south
+/// circle in the room below, by the dragon head on its west wall.
 void MarsLighthouseEntrance_TeleportFromValkyrieNorth(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
@@ -792,7 +865,9 @@ void MarsLighthouseEntrance_TeleportFromValkyrieNorth(void) {
   Teleport_StopShimmer();
 }
 
-/// Teleport on the east circle of the Valkyrie Mail room.
+/// Felix casts Teleport on the south circle of the Valkyrie Mail rooms
+/// (cells (11, 44) to (14, 46)), by the dragon head on its west wall: in a
+/// swirl of sparks he appears on the north circle.
 void MarsLighthouseEntrance_TeleportFromValkyrieSouth(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
@@ -802,8 +877,10 @@ void MarsLighthouseEntrance_TeleportFromValkyrieSouth(void) {
   Teleport_StopShimmer();
 }
 
-/// Move on the dragon statue: pushed under the flame thrower it blocks the
-/// flames (FLAG_VALKYRIE_STATUE_BLOCKS_FLAMES).
+/// Felix Moves the white dragon statue on the ledge at the west of the south
+/// circle's room: pushed one cell east (cell (5, 43)), it stands
+/// under the small dragon head on the wall and blocks the flames it breathes
+/// at the urn torch, and stays there from then on.
 void MarsLighthouseEntrance_PushStatueIntoValkyrieFlames(s32 unused, s32 id) {
   if (id == ACTOR_PUSHED_STATUE) {
     struct Actor *actor = Actor_Get(ACTOR_PUSHED_STATUE);
@@ -816,8 +893,8 @@ void MarsLighthouseEntrance_PushStatueIntoValkyrieFlames(s32 unused, s32 id) {
   }
 }
 
-/// Each frame of a fall through the floor: the mask sprite is drawn over the
-/// leader's cell, so that he sinks out of sight through the hole.
+/// Each frame of a fall through the floor: the mask sprite is drawn over
+/// Felix's cell, so that he sinks out of sight through the hole.
 void MarsLighthouseEntrance_DrawHoleMask(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
@@ -849,9 +926,9 @@ void MarsLighthouseEntrance_DrawHoleMask(void) {
   Oam_AddSpriteAtDepthClamped(gMarsLighthouseEntrance_HoleMaskSprite, depth);
 }
 
-/// Masks the leader's sprite as he drops through the floor: a sprite of colour
-/// 1 in a VRAM block of its own, drawn each frame in the OBJ window over his
-/// cell (MarsLighthouseEntrance_DrawHoleMask).
+/// Hides Felix's sprite below the floor as he drops through it: a sprite of
+/// colour 1 in a VRAM block of its own, drawn each frame in the OBJ window
+/// over his cell (MarsLighthouseEntrance_DrawHoleMask).
 void MarsLighthouseEntrance_StartHoleMask(void) {
   u32 *buffer = Heap_Alloc(HOLE_MASK_BYTES);
   u32 *word = buffer;
@@ -875,9 +952,12 @@ void MarsLighthouseEntrance_StartHoleMask(void) {
     REG_WINOUT = winout;                                                       \
   } while (0)
 
-/// The leader drops through a hole in the floor to the room below: startled,
-/// he raises his arms and shrinks and sinks out of sight (SINK_FRAMES) before
-/// the screen goes.
+/// Felix walks onto one of the purple holes on the upper floor of the
+/// Valkyrie Mail rooms (cells (15, 43) to (16, 46) east of the south circle,
+/// and (54, 8) to (55, 11) in the long hall): startled, he raises his arms and
+/// sinks out of sight, the screen closes in on him, and he drops into a room
+/// of the dragons' hall below, landing in a puff of dust. The cell's behaviour
+/// is the exit he takes.
 void MarsLighthouseEntrance_FallIntoHole(s32 arg) {
   struct Actor *actor;
   struct MapWork *map;
@@ -942,7 +1022,13 @@ extern struct Trigger gMarsLighthouseEntrance_HiddenCircleTriggers[];
 extern struct Trigger gMarsLighthouseEntrance_ValkyrieTriggers[];
 extern struct Trigger gMarsLighthouseEntrance_SolBladeTriggers[];
 
-/// The dragon face wakes and begins its slow way left, breathing fire.
+/// Felix steps onto cell (52, 8) in the Valkyrie Mail rooms' long hall, at
+/// the head of the slide down the ice: with a click the dragon face at the
+/// hall's east end wakes and begins its slow crawl west breathing fire, and
+/// the game can no longer be saved. Felix has to cross the ice ahead of it.
+// XXX: what happens if the face reaches the hall's west end before Felix is
+// through (the walkthrough says a great fireball sends him back to the start);
+// a render that waits there would settle it.
 void MarsLighthouseEntrance_WakeDragonFace(void) {
   Event_PlaySound(SE_BUTTON_PRESS);
   Flag_Set(FLAG_NO_PLACE_TO_SAVE);
@@ -952,8 +1038,8 @@ void MarsLighthouseEntrance_WakeDragonFace(void) {
   Flag_Set(FLAG_DRAGON_FACE_AWAKE);
 }
 
-/// From the ice's edge the leader slides on, and on while a fireball carries
-/// him.
+/// Stepping onto the black ice in the Valkyrie Mail rooms' long hall, Felix
+/// slides on across it; if a fireball has hit him he rides along with it.
 void MarsLighthouseEntrance_SlideFromEdge(void) {
   Leader_SlideOnIceFromEdge();
   MarsLighthouseEntrance_SlideIfRiding();
@@ -961,7 +1047,9 @@ void MarsLighthouseEntrance_SlideFromEdge(void) {
 
 void GameFlag_SetByte(s32 flag, s32 value);
 
-/// The leader drops through a cracked floor tile.
+/// Felix drops through a cracked tile of the Sol Blade room: startled, he
+/// raises his arms and sinks out of sight, and lands in the room below. The
+/// cell he fell through is kept, so the landing room can place him under it.
 void MarsLighthouseEntrance_FallThroughCrack(const struct MapCell *cell) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   FIXED z = leader->z.fixed;
@@ -1009,13 +1097,19 @@ void MarsLighthouseEntrance_FallThroughCrack(const struct MapCell *cell) {
       MARS_LIGHTHOUSE_ENTRANCE_SOL_BLADE_CHEST_TO_MARS_LIGHTHOUSE_STAR_ROOM_NORTHWEST_B);
 }
 
-/// At the ice's edge: the leader jumps forward if he can, or slides on.
+/// Felix walks onto one of the pillar tops of the Sol Blade room's jumping
+/// puzzle (cells (13, 28), (7, 30), (11, 34), (8, 36) and (14, 37)): he hops
+/// on across the gap the way he is walking where there is somewhere to land,
+/// and otherwise slides on as on ice.
 void MarsLighthouseEntrance_JumpOrSlide(void) {
   Field_TryJumpForward();
   Leader_SlideOnIceAhead();
 }
 
-/// Stepping on a cracked floor cell, the leader falls through it.
+/// Felix steps on one of the pale cracked tiles among the pillar tops of the
+/// Sol Blade room (on its upper floor, cells (8, 29) to (14, 38)): those that
+/// give way drop him through to the room below, as
+/// MarsLighthouseEntrance_FallThroughCrack shows; the others hold.
 void MarsLighthouseEntrance_CheckCrackedFloor(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MainRoutineWork *party = &gMainRoutineWork;
@@ -1059,7 +1153,8 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 extern u32 gMarsLighthouseEntrance_DragonFireOn[];
 
-/// The dragon face breathes fire for a while and stops, in turn.
+/// The dragon face at the west end of the long hall breathes fire for a
+/// second and stops for four, in turn.
 void MarsLighthouseEntrance_PulseDragonFire(void) {
   s16 *state = &gMarsLighthouseEntrance_DragonFireOn;
 
@@ -1078,7 +1173,8 @@ void MarsLighthouseEntrance_PulseDragonFire(void) {
     gMarsLighthouseEntrance_DragonFireTimer = 0;
 }
 
-/// Each frame the waking dragon face flickers: tinted on one frame in eight.
+/// Each frame the waking dragon face flickers: tinted red for two frames in
+/// eight.
 void MarsLighthouseEntrance_FlickerDragonFace(struct Actor *actor) {
   switch (gFrameCount & 7) {
   case 0:
@@ -1090,7 +1186,8 @@ void MarsLighthouseEntrance_FlickerDragonFace(struct Actor *actor) {
   }
 }
 
-/// An ice cone the dragon face reaches spins and flies off.
+/// An ice cone the dragon face's fireball reaches spins and flies off east,
+/// shrinking.
 void MarsLighthouseEntrance_FlingIceCone(struct Actor *actor) {
   struct FieldSprite *sprite = actor->sprite;
 
@@ -1118,7 +1215,7 @@ void MarsLighthouseEntrance_WaitForDragonFace(struct Actor *actor) {
   actor->update = (ObjectUpdate)MarsLighthouseEntrance_FlingIceCone;
 }
 
-/// Each frame, while a fireball carries the leader, his slide on the ice is
+/// Each frame, while a fireball carries Felix, his slide on the ice is
 /// stopped.
 void MarsLighthouseEntrance_StopSlideWhileRiding(void) {
   if (Ride_IsActive())
@@ -1359,41 +1456,46 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-/// The flames reach their stop: the upper torch's fireball sets off.
+/// The flames of the Valkyrie Mail rooms' dragon head reach the urn torch
+/// below it, and its fireball sets off east.
 void MarsLighthouseEntrance_ShootValkyrieUpperFireball(void) {
   Actor_Attach(ACTOR_UPPER_TORCH, ACTOR_VALKYRIE_SPARKLE,
                ACTOR_VALKYRIE_FIREBALL, FACING_EAST,
                gMarsLighthouseEntrance_ValkyrieUpperFireballPath);
 }
 
-/// The flames reach their stop: the lower torch's fireball sets off.
+/// The flames reach the urn torch at the west end of the long hall, and its
+/// fireball sets off east along the hall.
 void MarsLighthouseEntrance_ShootValkyrieLowerFireball(void) {
   Actor_Attach(ACTOR_LOWER_TORCH, ACTOR_VALKYRIE_SPARKLE,
                ACTOR_VALKYRIE_FIREBALL, FACING_EAST,
                gMarsLighthouseEntrance_ValkyrieLowerFireballPath);
 }
 
-/// The flames reach the torch in Balm's room: its fireball sets off south.
+/// The dragon head's flames reach the urn torch at the head of the corridor
+/// of ice cones in Balm's rooms, and its fireball sets off south down it.
 void MarsLighthouseEntrance_ShootBalmFireball(void) {
   Actor_Attach(ACTOR_BALM_TORCH, ACTOR_BALM_SPARKLE, ACTOR_BALM_FIREBALL,
                FACING_SOUTH, gMarsLighthouseEntrance_BalmFireballPath);
 }
 
-/// The west torch's fireball sets off for the hidden circle's ice sheet.
+/// The west urn torch's fireball sets off east for the sheet of ice.
 void MarsLighthouseEntrance_ShootFireballAtHiddenCircleIceSheet(void) {
   Actor_Attach(ACTOR_WEST_TORCH, ACTOR_HIDDEN_CIRCLE_SPARKLE,
                ACTOR_HIDDEN_CIRCLE_FIREBALL, FACING_EAST,
                gMarsLighthouseEntrance_FireballToHiddenCircleIceSheet);
 }
 
-/// The east torch's fireball sets off south through the ice.
+/// The urn torch under the dragon face sends its fireball south through the
+/// ice.
 void MarsLighthouseEntrance_ShootFireballThroughIce(void) {
   Actor_Attach(ACTOR_EAST_TORCH, ACTOR_HIDDEN_CIRCLE_SPARKLE,
                ACTOR_HIDDEN_CIRCLE_FIREBALL, FACING_SOUTH,
                gMarsLighthouseEntrance_FireballThroughIce);
 }
 
-/// The torch's fireball sets off for the Teleport Lapis room's ice sheet.
+/// The main hall's west torch sends its fireball east for the big sheet of
+/// ice.
 void MarsLighthouseEntrance_ShootFireballAtLapisIceSheet(void) {
   Actor_Attach(ACTOR_LAPIS_TORCH_A, ACTOR_LAPIS_SPARKLE, ACTOR_LAPIS_FIREBALL,
                FACING_EAST, gMarsLighthouseEntrance_FireballToLapisIceSheet);
@@ -1515,16 +1617,16 @@ extern u8 gInventorySnapshot[];
 
 #include "shared/leader_knock_back.c"
 
-/// Hit by the flames, the leader is knocked back.
+/// Hit by the flames, Felix is knocked back.
 void MarsLighthouseEntrance_KnockBackIfHit(void) {
   if (RIDE_WORK->active)
     Leader_KnockBack();
 }
 
-/// A rolling fireball has hit the leader (STEP_TRIGGER_FIREBALL_HIT): he takes
-/// fall damage, sits blinking on the floor and is carried along with the
-/// fireball (FlameHitWork.car) until it stops, held at a cell's centre over
-/// rounded ground.
+/// A rolling fireball hits Felix in Balm's corridor of ice cones or the
+/// Valkyrie Mail rooms: the party takes damage, and he sits blinking on the
+/// fireball and is carried along with it until it stops (FlameHitWork.car),
+/// kept to a cell's centre over rounded ground.
 int MarsLighthouseEntrance_RideFireball(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct FlameHitWork *ride;
@@ -1583,8 +1685,10 @@ int MarsLighthouseEntrance_RideFireball(void) {
 #endif
 }
 
-/// While a flame or fireball has hit the leader, he is carried along
-/// (MarsLighthouseEntrance_RideFireball); returns whether he was.
+/// Stepping onto the south circle of the Valkyrie Mail rooms while a fireball
+/// has hit him, Felix is carried along with it
+/// (MarsLighthouseEntrance_RideFireball); otherwise nothing happens. The
+/// slide from the ice's edge asks the same, ignoring the answer.
 s32 MarsLighthouseEntrance_SlideIfRiding(void) {
   if (RIDE_WORK->active) {
     MarsLighthouseEntrance_RideFireball();
@@ -1593,7 +1697,7 @@ s32 MarsLighthouseEntrance_SlideIfRiding(void) {
   return 0;
 }
 
-/// Whether a flame or fireball has hit the leader.
+/// Whether a flame or fireball has hit Felix.
 s32 Ride_IsActive(void) { return RIDE_WORK->active; }
 
 extern u32 gCrumbs_Script[];
@@ -1754,7 +1858,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
 
 #include "shared/cracked_tile_crack.h"
 
-/// A cracked tile gives way under the leader, who drops through it.
+/// A cracked tile gives way under Felix, who drops through it.
 void CrackedTile_Fall(struct CellTarget *table, struct CellTargetEntry *entry) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x;
@@ -1807,7 +1911,7 @@ void CrackedTile_Fall(struct CellTarget *table, struct CellTargetEntry *entry) {
 #undef CELL_PUSH_SLOT_ENTRY
 void Teleport_PlayWhirl(void);
 
-/// The leader lands from the floor above in a puff of dust.
+/// Felix lands from the floor above in a puff of dust.
 void MarsLighthouseEntrance_LandFromCrack(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct EffectOptions options;
@@ -2416,14 +2520,6 @@ struct ActorPlacement gMarsLighthouseEntrance_FuguePlacements[] = {
     {SCENE_TABLE_END},
 };
 
-void MarsLighthouseEntrance_FightFugue(void);
-void MarsLighthouseEntrance_FightBalm(void);
-void MarsLighthouseEntrance_GrindIce(void);
-void MarsLighthouseEntrance_TeleportFromLapis(void);
-void MarsLighthouseEntrance_WatchFireballCrackIce(void);
-void MarsLighthouseEntrance_JumpOrSlide(void);
-void MarsLighthouseEntrance_CheckCrackedFloor(void);
-
 // clang-format off
 struct ActorPlacement gMarsLighthouseEntrance_LapisPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_DRAGON_STATUE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2574,20 +2670,22 @@ struct Trigger gMarsLighthouseEntrance_LapisTriggers[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS),
      ACTOR_LAPIS_ICE_CONE_B, FLAG_SCENE_TEMP_03,
      EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 17,
-     CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_TeleportFromLapis)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 18,
-     CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_Teleport)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST),
+     LAPIS_SOUTH_CIRCLE, CONDITION_ALWAYS,
+     EVENT(MarsLighthouseEntrance_TeleportFromLapisSouthCircle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST),
+     LAPIS_NORTH_CIRCLE, CONDITION_ALWAYS,
+     EVENT(MarsLighthouseEntrance_Teleport)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PUSHED_STATUE,
      FLAG_LAPIS_STATUE_BLOCKS_FLAMES,
      EVENT(MarsLighthouseEntrance_PushStatueIntoFlames)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS,
      EVENT(MarsLighthouseEntrance_PushStatueIntoFlames)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 80,
-     IF_FLAG_SET(FLAG_LAPIS_SHEET_CRACKED),
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_CRACKED_ICE_WALL, IF_FLAG_SET(FLAG_LAPIS_SHEET_CRACKED),
      EVENT(MarsLighthouseEntrance_BurstIceSheet)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 81,
-     IF_FLAG_SET(FLAG_LAPIS_SECOND_SHEET_SHOWN),
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_BIG_ICE_SHEET, IF_FLAG_SET(FLAG_LAPIS_SECOND_SHEET_SHOWN),
      EVENT(MarsLighthouseEntrance_BurstLapisIceSheet)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_LIT_TORCH, CONDITION_ALWAYS, 0},
@@ -2597,7 +2695,7 @@ struct Trigger gMarsLighthouseEntrance_LapisTriggers[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END),
      ACTOR_LAPIS_TORCH_A, CONDITION_ALWAYS,
      EVENT(MarsLighthouseEntrance_WatchFireballCrackIce)},
-    {TRIGGER_TALK, 64, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_TELEPORT_LAPIS_CHEST, CONDITION_ALWAYS,
      EVENT(MarsLighthouseEntrance_BlockRetreatAtChest)},
     {TRIGGER_TABLE_END},
 };
@@ -2618,7 +2716,8 @@ struct Trigger gMarsLighthouseEntrance_BalmTriggers[] = {
     {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 16, CONDITION_ALWAYS, 16},
-    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Leader_SlideOnIce)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BLACK_ICE, CONDITION_ALWAYS,
+     EVENT(Leader_SlideOnIce)},
     {TRIGGER_STEP, STEP_TRIGGER_FIREBALL_HIT, CONDITION_ALWAYS,
      EVENT(MarsLighthouseEntrance_RideFireball)},
     {TRIGGER_TALK, ACTOR_BALM, CONDITION_ALWAYS,
@@ -2643,7 +2742,8 @@ struct Trigger gMarsLighthouseEntrance_BalmTriggers[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS),
      ACTOR_BALM_ICE_CONE_E, FLAG_SCENE_TEMP_08,
      EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 14,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST),
+     MARS_LIGHTHOUSE_ENTRANCE_BALM_TO_MARS_LIGHTHOUSE_ENTRANCE_HIDDEN_CIRCLE_NORTH_B,
      CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_TeleportFromBalm)},
     {TRIGGER_TABLE_END},
 };
@@ -2662,7 +2762,8 @@ struct Trigger gMarsLighthouseEntrance_HiddenCircleTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
     {TRIGGER_EXIT, 13, CONDITION_ALWAYS, 13},
-    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Leader_SlideOnIce)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BLACK_ICE, CONDITION_ALWAYS,
+     EVENT(Leader_SlideOnIce)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_WEST_LIT_TORCH, CONDITION_ALWAYS, 0},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_HITS),
@@ -2679,10 +2780,12 @@ struct Trigger gMarsLighthouseEntrance_HiddenCircleTriggers[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END),
      ACTOR_EAST_TORCH, CONDITION_ALWAYS,
      EVENT(MarsLighthouseEntrance_WatchFireballMeltIce)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 80,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_CRACKED_ICE_WALL,
      IF_FLAG_SET(FLAG_HIDDEN_CIRCLE_SHEET_SHOWN),
      EVENT(MarsLighthouseEntrance_BurstHiddenCircleIceSheet)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 14,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST),
+     MARS_LIGHTHOUSE_ENTRANCE_HIDDEN_CIRCLE_TO_MARS_LIGHTHOUSE_ENTRANCE_BALM_NORTH_B,
      CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_TeleportFromHiddenCircle)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_RevealTeleportCircle)},
@@ -2704,17 +2807,19 @@ struct Trigger gMarsLighthouseEntrance_ValkyrieTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
     {TRIGGER_EXIT | EXIT_STYLE_HIDDEN_LAYER, 15, CONDITION_ALWAYS, 15},
-    {TRIGGER_STEP, 9, CONDITION_ALWAYS,
-     EVENT(MarsLighthouseEntrance_FallIntoHole)},
-    {TRIGGER_STEP, 16, CONDITION_ALWAYS,
-     EVENT(MarsLighthouseEntrance_FallIntoHole)},
-    {TRIGGER_STEP, 35, FLAG_DRAGON_FACE_AWAKE,
+    {TRIGGER_STEP,
+     MARS_LIGHTHOUSE_ENTRANCE_VALKYRIE_MAIL_CHEST_TO_MARS_LIGHTHOUSE_STAR_ROOM_EAST,
+     CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_FallIntoHole)},
+    {TRIGGER_STEP,
+     MARS_LIGHTHOUSE_ENTRANCE_VALKYRIE_MAIL_CHEST_TO_MARS_LIGHTHOUSE_STAR_ROOM_WEST,
+     CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_FallIntoHole)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_WAKE_DRAGON_FACE, FLAG_DRAGON_FACE_AWAKE,
      EVENT(MarsLighthouseEntrance_WakeDragonFace)},
-    {TRIGGER_STEP, 30, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_BLACK_ICE, CONDITION_ALWAYS,
      EVENT(MarsLighthouseEntrance_SlideFromEdge)},
     {TRIGGER_STEP, STEP_TRIGGER_FIREBALL_HIT, CONDITION_ALWAYS,
      EVENT(MarsLighthouseEntrance_RideFireball)},
-    {TRIGGER_STEP, 13, CONDITION_ALWAYS,
+    {TRIGGER_STEP, VALKYRIE_SOUTH_CIRCLE, CONDITION_ALWAYS,
      EVENT(MarsLighthouseEntrance_SlideIfRiding)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS),
      ACTOR_VALKYRIE_ICE_CONE_A, FLAG_SCENE_TEMP_10,
@@ -2734,10 +2839,12 @@ struct Trigger gMarsLighthouseEntrance_ValkyrieTriggers[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS),
      ACTOR_VALKYRIE_ICE_CONE_F, FLAG_SCENE_TEMP_15,
      EVENT(MarsLighthouseEntrance_StartPoundIceCone)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 12,
-     CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_TeleportFromValkyrieNorth)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 13,
-     CONDITION_ALWAYS, EVENT(MarsLighthouseEntrance_TeleportFromValkyrieSouth)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST),
+     VALKYRIE_NORTH_CIRCLE, CONDITION_ALWAYS,
+     EVENT(MarsLighthouseEntrance_TeleportFromValkyrieNorth)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST),
+     VALKYRIE_SOUTH_CIRCLE, CONDITION_ALWAYS,
+     EVENT(MarsLighthouseEntrance_TeleportFromValkyrieSouth)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PUSHED_STATUE,
      FLAG_VALKYRIE_STATUE_BLOCKS_FLAMES,
      EVENT(MarsLighthouseEntrance_PushStatueIntoValkyrieFlames)},
@@ -2761,10 +2868,11 @@ struct Trigger gMarsLighthouseEntrance_SolBladeTriggers[] = {
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
-    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(Leader_SlideOnIce)},
-    {TRIGGER_STEP, 31, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_BLACK_ICE, CONDITION_ALWAYS,
+     EVENT(Leader_SlideOnIce)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_CRACKED_ICE_TILE, CONDITION_ALWAYS,
      EVENT(MarsLighthouseEntrance_CheckCrackedFloor)},
-    {STEP_TRIGGER_WALKING, 35, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_PILLAR_TOP, CONDITION_ALWAYS,
      EVENT(MarsLighthouseEntrance_JumpOrSlide)},
     {TRIGGER_TABLE_END},
 };

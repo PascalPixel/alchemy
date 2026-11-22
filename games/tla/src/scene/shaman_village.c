@@ -1,8 +1,18 @@
 /// @file
-/// The Shaman Village, whose people will not talk to outsiders: Moapa, shown
-/// the Shaman's Rod, sends the party to Trial Road, where Sheba's Whirlwind
-/// clears the sand before the race to the summit; its houses, inn, shop and
-/// sanctum, Aroma the Djinni, and the lettering that counts the race down.
+/// Shaman Village, in the middle of Hesperia, whose people will not talk to
+/// outsiders by Moapa's order; only the priest in the sanctum, in the cave on
+/// the east side, does. At Moapa's door in the north-west he and his Knights
+/// come out and send the party away, until it shows him the Shaman's Rod; then
+/// he sets it his test at the foot of Trial Road, north of the village. There
+/// Sheba's Whirlwind on the purple twister rock blows the sand away, Moapa
+/// tells the legend of Yegelos and Hoabna and the trial's rules, and after a
+/// count of 3, 2, 1 and `GO` the party and Moapa race up the road by its left
+/// and right paths. Once he is beaten the village's other doors and its tents
+/// open: the general store, a family's tent, and the fortune-teller's in the
+/// north-east, where Move drops a pillar into a gap on the way to Aroma, the
+/// Jupiter Djinni, and the rope Lash ties across the river by Moapa's house
+/// leads on. Growth's vine north-west of the inn climbs to the Spirit Gloves'
+/// chest.
 #include "djinn_ids.h"
 #include "edition.h"
 #include "fixed_math.h"
@@ -56,9 +66,9 @@
 
 #include "../field/actor_set_sprite_priority.c"
 
-/// The trial grounds' actors (SceneId_ShamanVillageTrialGrounds), numbering the
-/// rows of gShamanVillageTrialGroundsActorPlacements; Moapa, his Knights and
-/// Kraden keep the same rows in the village's table
+/// The people and things at the foot of Trial Road, numbering the rows of
+/// gShamanVillageTrialGroundsActorPlacements; Moapa, his Knights and Kraden
+/// keep the same rows in the village's table
 /// (gShamanVillageVillageActorPlacements).
 enum ShamanVillageTrialActorId {
   /// The six torches about the start of Trial Road (SPRITE_TORCH).
@@ -75,8 +85,8 @@ enum ShamanVillageTrialActorId {
   ACTOR_KRADEN
 };
 
-/// Moapa in his house (SceneId_ShamanVillageInn), the fourth row of
-/// gShamanVillageInnActorPlacements, with the counter and the innkeeper after.
+/// Moapa at home, the fourth row of gShamanVillageInnActorPlacements (the
+/// village's houses and inn), with the inn's counter and its innkeeper after.
 enum ShamanVillageInnActorId {
   ACTOR_MOAPA_AT_HOME = ACTOR_FIRST_PLACED + 3,
   ACTOR_INN_COUNTER,
@@ -95,40 +105,44 @@ enum {
   ACTOR_CHEF
 };
 
-/// The village's shaman who asks the party to look over the mountain.
+/// The villager who asks whether the party has looked over the mountain.
 #define ACTOR_MOUNTAIN_SIDE_SHAMAN (ACTOR_FIRST_PLACED + 5)
-/// The girl who wanders below the cave's mouth, and the sprout Growth grows
-/// into a vine, both drawn at the leader's sprite priority.
+/// The girl who wanders below the mouth of the sanctum's cave, and the sprout
+/// north-west of the inn that Growth grows into a vine, both drawn at the
+/// leader's sprite priority.
 #define ACTOR_GIRL_BELOW_THE_CAVE (ACTOR_FIRST_PLACED + 6)
 #define ACTOR_SPROUT (ACTOR_FIRST_PLACED + 13)
-/// The posts of the village's rope, which Lash ties: one on the path, the
-/// other up on the cliff to the east.
+/// The posts of the village's rope across the river by Moapa's house, which
+/// Lash ties: one west of the river, at cell (11, 13), the other east of it,
+/// at cell (17, 13).
 enum {
   ACTOR_VILLAGE_ROPE_POST = ACTOR_FIRST_PLACED + 11,
   ACTOR_CLIFF_ROPE_POST
 };
-/// The sanctum's two shamans after the priest, there once Moapa is beaten.
+/// The sanctum's two villagers after the priest, there once Moapa is beaten.
 enum {
   ACTOR_SANCTUM_SHAMAN_A = ACTOR_FIRST_PLACED + 1,
   ACTOR_SANCTUM_SHAMAN_B
 };
 
-/// The general store's keeper (SceneId_ShamanVillageShop).
+/// The general store's keeper, in the west tent.
 #define ACTOR_GENERAL_STOREKEEPER (ACTOR_FIRST_PLACED + 4)
-/// The sanctum's priest (SceneId_ShamanVillageSanctum).
+/// The sanctum's priest, behind the counter in the cave.
 #define ACTOR_PRIEST ACTOR_FIRST_PLACED
-/// Aroma's room (SceneId_ShamanVillageAroma): the pillar Move drops, the
-/// fortune-teller and her flame, and Aroma, the Jupiter Djinni.
+/// The north-east of the village, around the fortune-teller's tent: the
+/// pillar Move drops into the gap, the fortune-teller and her fire, and Aroma,
+/// the Jupiter Djinni, on the ledge east of the tent.
 #define ACTOR_AROMA_ROOM_PILLAR (ACTOR_FIRST_PLACED + 6)
-/// The small flame before the fortune-teller, which flares as she hops.
+/// The small fire before the fortune-teller, which flares as she hops.
 #define ACTOR_FORTUNE_TELLERS_FLAME (ACTOR_FIRST_PLACED + 8)
 #define ACTOR_FORTUNE_TELLER (ACTOR_FIRST_PLACED + 9)
 #define ACTOR_AROMA (ACTOR_FIRST_PLACED + 10)
 
 /// Set as the party comes back from beating Moapa: the village's locked doors
-/// and its way north open.
+/// and tents open.
 #define FLAG_SHAMAN_VILLAGE_DOORS_OPEN 0x94d
-/// Set once Move has dropped the pillar in Aroma's room into place as a bridge.
+/// Set once Move has dropped the pillar by the fortune-teller's tent into the
+/// gap.
 #define FLAG_SHAMAN_VILLAGE_PILLAR_BRIDGE_DROPPED 0x94e
 /// Set once Moapa has told the party the rules of the trial: the Shaman's Rod
 /// and eight pieces of equipment.
@@ -138,9 +152,9 @@ enum {
 #define FLAG_SHAMAN_VILLAGE_MOAPA_KNOWS_NAMES 0x9ed
 /// Set once the fortune-teller has read the party's fortune, for this visit.
 #define FLAG_SHAMAN_VILLAGE_FORTUNE_TOLD FLAG_AREA_TEMP_01
-/// Set once Lash has tied the village's rope.
+/// Set once Lash has tied the rope across the river by Moapa's house.
 #define FLAG_SHAMAN_VILLAGE_ROPE_TIED FLAG_SCENE_TEMP_04
-/// Set once Growth has grown the village's vine.
+/// Set once Growth has grown the vine north-west of the inn.
 #define FLAG_SHAMAN_VILLAGE_VINE_GROWN FLAG_SCENE_TEMP_05
 /// Set once the party has shown the Shaman's Rod
 /// (ShamanVillage_ShowShamansRod): Moapa's door stays open.
@@ -148,17 +162,43 @@ enum {
 /// Set once the party has asked to hear Moapa's explanation again: he gives
 /// only its rules.
 #define FLAG_SHAMAN_VILLAGE_EXPLANATION_AGAIN FLAG_SCENE_TEMP_00
-/// Set once Moapa has accepted the party's challenge, until the leader steps
-/// back from the trial: the trial's step trigger then offers to give up.
+/// Set once Moapa has accepted the party's challenge, until Felix steps back
+/// from the trial: walking back to Moapa then has him offer to let the party
+/// give up.
 #define FLAG_SHAMAN_VILLAGE_CHALLENGE_ACCEPTED FLAG_SCENE_TEMP_01
-/// Set once the fortune-teller has called out to the leader, for this visit.
+/// Set once the fortune-teller has called out to Felix, for this visit.
 #define FLAG_SHAMAN_VILLAGE_FORTUNE_TELLER_CALLED_OUT FLAG_SCENE_TEMP_03
+
+/// The cells that run an event; the village's door cells hold instead the
+/// numbers of the exits they lead by.
+enum ShamanVillageCell {
+  /// At the foot of Trial Road, cells (9, 21) to (11, 21), on the way up to
+  /// Moapa.
+  BEFORE_MOAPA_CELL = 10,
+  /// At the foot of Trial Road, the left path up, cells (10, 13) to (12, 13).
+  LEFT_PATH_CELL = 11,
+  /// The right path up, cells (15, 13) to (17, 13).
+  RIGHT_PATH_CELL = 12,
+  /// The sign at the gate of Trial Road, cell (13, 6).
+  TRIAL_ROAD_SIGN_CELL = 10,
+  /// Before the fire in front of the fortune-teller's tent, cells (37, 19)
+  /// and (37, 20).
+  FORTUNE_TELLERS_FIRE_CELL = 11,
+  /// Before the door of a house, where pressing A while Moapa is unbeaten
+  /// says it is locked.
+  LOCKED_DOOR_CELL = 20,
+  /// Before Moapa's door, cell (7, 11).
+  MOAPAS_DOOR_CELL = 21,
+  /// Before the entrance of a tent, closed while Moapa is unbeaten: cells
+  /// (13, 24) and (17, 28) in the village, (37, 14) in the north-east.
+  CLOSED_TENT_CELL = 22
+};
 
 #include "../field/field_effect_move.c"
 
 struct ItemDefinition;
 
-/// The whirlwind's swirl, BG0's scroll for each line of the screen.
+/// The whirlwind's swirl: how far each line of its picture is shifted.
 s16 gShamanVillage_WaveLines[DISPLAY_HEIGHT] BSS_DATA ALIGNED(16);
 s16 gShamanVillage_LetteringScaleFrames BSS_DATA;
 s16 gShamanVillage_LetteringTileOffset BSS_DATA ALIGNED(4);
@@ -323,7 +363,9 @@ extern struct SceneEntrance gShamanVillage_Entrances[];
 extern struct SceneEntrance gShamanVillageShopEntrances[];
 extern struct SceneEntrance gShamanVillageSanctumEntrances[];
 
-/// Talking to Aroma in the fortune-teller's room: the Jupiter Djinni joins.
+/// Felix talks to Aroma, the Jupiter Djinni on the ledge east of the
+/// fortune-teller's tent, and it joins the party: "Felix found the Jupiter
+/// Djinni Aroma!"
 void ShamanVillage_MeetAroma(void) {
   Djinn_JoinParty(ACTOR_AROMA, DJINNI_AROMA / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_AROMA));
@@ -374,7 +416,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gShamanVillage_Placements;
 }
 
-/// The whirlwind's swirl: BG0's lines waver as a jittered sine wave.
+/// The whirlwind's swirl: its lines waver from side to side, as a jittered
+/// sine wave.
 #define WAVE_SCROLL ShamanVillage_WaveWhirlwindLines
 #define WAVE_SCROLL_LINES gShamanVillage_WaveLines
 #include "../field/field_effect_wave_scroll.c"
@@ -397,7 +440,7 @@ void ShamanVillage_DriftSandLayer(void) {
   }
 }
 
-/// The sand mound's update while Whirlwind blows: its colour flickers.
+/// The twister rock while Whirlwind blows: it flickers blue.
 void ShamanVillage_FlickerRock(struct Actor *actor) {
   s32 bit = (((u32)gFrameCount & 3) >> actor->flickerShift) & 1;
 
@@ -458,10 +501,10 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        const struct EffectOptions *options);
 void ShamanVillage_DriftSandLayer(void);
 
-/// Whirlwind on the sand mound, from ShamanVillage_CastWhirlwindOnSand: the
-/// mound flickers and sheds sparks, the whirlwind swirls up over it in a rush
-/// of wind that shakes the ground, sand grains fly about it, and the sand
-/// mound's cells are cleared from the trial grounds' map.
+/// Sheba's Whirlwind at the foot of Trial Road: the purple twister rock
+/// flickers blue and sheds sparks, a whirlwind swirls up over it in a rush of
+/// wind that shakes the ground, sand flies about it, and the sand is gone from
+/// the ground.
 void ShamanVillage_BlowAwaySand(void) {
   u16 *buffer;
   u16 *cell;
@@ -702,8 +745,10 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 #include "shared/scene_show_entrance_locked.h"
 
-/// The closed entrance before Moapa is beaten: "The entrance is closed. You
-/// probably shouldn't go in."
+/// Before Moapa is beaten, Felix tries the entrance of one of the village's
+/// tents, the general store in the west (cell (13, 24)), the family's in the
+/// east (cell (17, 28)) or the fortune-teller's in the north-east: "The
+/// entrance is closed. You probably shouldn't go in."
 void ShamanVillage_StopAtClosedEntrance(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -712,7 +757,8 @@ void ShamanVillage_StopAtClosedEntrance(void) {
   Event_End();
 }
 
-/// The sign before Trial Road: "None may enter without permission from Moapa."
+/// Felix reads the sign at the gate of Trial Road, between its two torches:
+/// "Trial Road. None may enter without permission from Moapa."
 void ShamanVillage_ReadTrialRoadSign(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -721,7 +767,9 @@ void ShamanVillage_ReadTrialRoadSign(void) {
   Event_End();
 }
 
-/// The east Knight offers Moapa's explanation again; asked, Moapa gives it.
+/// Talking to the east Knight at the foot of Trial Road: "Do you need to hear
+/// Moapa's explanation again?" Yes, and Felix steps up to Moapa, who gives it
+/// again; no, and the Knight tells the party to forget the Hover Jade.
 void ShamanVillage_TalkToEastKnight(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -751,7 +799,10 @@ void ShamanVillage_TalkToEastKnight(void) {
   Event_End();
 }
 
-/// The west Knight offers Moapa's explanation again; asked, Moapa gives it.
+/// Talking to the west Knight at the foot of Trial Road: "Do you need to hear
+/// Moapa's explanation again?" Yes, and Felix steps up to Moapa, who gives it
+/// again; no, and the Knight says his people are not free while the party
+/// stays.
 void ShamanVillage_TalkToWestKnight(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -779,8 +830,9 @@ void ShamanVillage_TalkToWestKnight(void) {
   Event_End();
 }
 
-/// Moapa in the village: "Then what are you standing around for? Get out of
-/// town!"
+/// Talking to Moapa at his door: "What's wrong? Nothing to say? Then what are
+/// you standing around for? Get out of town!" The menu then opens, as if he
+/// were waiting to be shown something.
 void ShamanVillage_TellOutsidersToLeave(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -793,8 +845,9 @@ void ShamanVillage_TellOutsidersToLeave(void) {
   Event_End();
 }
 
-/// The east Knight in the village, before Moapa is beaten, warns of Moapa's
-/// power.
+/// Talking to the east Knight at Moapa's door before Moapa is beaten: "If you
+/// anger Moapa, you'll be in for a little taste of his awesome power", and the
+/// menu opens.
 void ShamanVillage_WarnOfMoapasPower(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -807,8 +860,9 @@ void ShamanVillage_WarnOfMoapasPower(void) {
   Event_End();
 }
 
-/// The west Knight in the village, before Moapa is beaten, sends the party to
-/// Moapa.
+/// Talking to the west Knight at Moapa's door before Moapa is beaten: "If
+/// there's something you want to say, say it to Moapa, not to us", and the
+/// menu opens.
 void ShamanVillage_SendToMoapa(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -821,7 +875,7 @@ void ShamanVillage_SendToMoapa(void) {
   Event_End();
 }
 
-/// Whether the leader faces the counter, north: the innkeeper, priest and
+/// Whether Felix faces the counter, north: the innkeeper, priest and
 /// storekeeper serve only across it.
 s32 ShamanVillage_IsFacingCounter(void) {
   u16 turn;
@@ -839,14 +893,18 @@ s32 ShamanVillage_IsFacingCounter(void) {
 u32 Inn_QuoteRoomPrice(s32 shop);
 void Inn_PlaySleep(s32 roomPrice);
 
-/// The Shaman Village's shops, as Shop_Run numbers them.
+/// The general store, as Shop_Run numbers the shops.
 enum { SHOP_SHAMAN_VILLAGE = 29 };
 
 /// The Shaman Village's inn, as Inn_CheckIn numbers the inns.
 enum { SHAMAN_VILLAGE_INN = 11 };
 
-/// Across the counter the inn's card asks for coins until Moapa is beaten, and
-/// the innkeeper serves after.
+/// Felix talks to the innkeeper across the inn's counter. Before Moapa is
+/// beaten the innkeeper says nothing, and a card on the counter reads "Put ...
+/// coins on the counter, and you can stay." Paying, the party sleeps; without
+/// the coins, the card says to leave. After, the innkeeper serves as any
+/// inn's does. From beside the counter he says only "... ...", or after Moapa
+/// is beaten asks whether they have traveled far.
 void ShamanVillage_TalkToInnkeeper(void) {
   if (Event_GetFlag(FLAG_MOAPA_BEATEN)) {
     if (ShamanVillage_IsFacingCounter()) {
@@ -895,8 +953,11 @@ void ShamanVillage_TalkToInnkeeper(void) {
   }
 }
 
-/// Across the counter the sanctum; elsewhere the priest talks only once Moapa
-/// is beaten.
+/// Felix talks to the priest across the counter of the sanctum in the cave,
+/// and the sanctum serves the party, as it does before Moapa is beaten too.
+/// From beside the counter the priest says that nobody in town will talk to
+/// them, by a law of the Shaman tribe, or once Moapa is beaten: "You beat
+/// Moapa? Incredible!"
 void ShamanVillage_TalkToPriest(void) {
   if (ShamanVillage_IsFacingCounter()) {
     Sanctum_Run(8);
@@ -913,8 +974,8 @@ void ShamanVillage_TalkToPriest(void) {
   }
 }
 
-/// The shaman by the mountain asks whether the party has looked over its other
-/// side, for the spring only Hoabna could find.
+/// Talking to the villager by the mountain: has the party looked over its
+/// other side, for the spring only Hoabna could find?
 void ShamanVillage_AskAboutOtherSide(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -923,7 +984,9 @@ void ShamanVillage_AskAboutOtherSide(void) {
   Event_End();
 }
 
-/// After the battle Moapa asks the party's names once, and then remembers them.
+/// Talking to Moapa at home after the battle: he asks the party's names once,
+/// "Felix, Jenna, Sheba, and Piers. I shall remember those names", and after
+/// that greets Felix as the hero of Contigo.
 void ShamanVillage_TalkToMoapa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -949,7 +1012,9 @@ void ShamanVillage_TalkToMoapa(void) {
   Event_End();
 }
 
-/// Across the counter the general store; elsewhere a welcome for the hero.
+/// Felix talks to the storekeeper across the counter in the general store's
+/// tent, and the shop opens. From beside the counter: "Everyone is depressed
+/// that Moapa lost his big fight. They should be glad the hero came!"
 void ShamanVillage_TalkToGeneralStorekeeper(void) {
   if (ShamanVillage_IsFacingCounter()) {
     Shop_Run(SHOP_SHAMAN_VILLAGE, ACTOR_GENERAL_STOREKEEPER);
@@ -963,7 +1028,7 @@ void ShamanVillage_TalkToGeneralStorekeeper(void) {
   }
 }
 
-/// The fortune-teller hops with a splash, and the flame before her flares.
+/// The fortune-teller hops with a splash, and the fire before her flares.
 void ShamanVillage_HopFortuneTeller(void) {
   Actor_Stop(ACTOR_FORTUNE_TELLER);
   wait(1);
@@ -974,8 +1039,12 @@ void ShamanVillage_HopFortuneTeller(void) {
                          gShamanVillage_HopFortuneTellerScript);
 }
 
-/// The fortune-teller reads the party's fortune once a visit to the
-/// area.
+/// Talking to the fortune-teller at the fire before her tent in the
+/// north-east: "So, you'd like to hear your fortune, would you?" Yes, and she
+/// chants "Hoolabaloo! Ballabahoo! Hoolabaloola!", hopping by the fire, and
+/// warns the party not to go south; once Jupiter Lighthouse is lit she chants
+/// otherwise and warns against north by northeast. She tells it once a visit;
+/// after, she only repeats the warning.
 void ShamanVillage_TellFortune(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1035,9 +1104,11 @@ void ShamanVillage_TellFortune(void) {
   Event_End();
 }
 
-/// Moapa explains Trial Road at its foot: the legend of Yegelos and Hoabna and
-/// the trial's rules (only the rules when asked again), then the Knights leave
-/// for the road and the party goes up after them.
+/// Felix first walks up to Moapa at the foot of Trial Road, and Moapa
+/// explains it, the camera looking up the road: the legend of Yegelos and
+/// Hoabna, who raced to the summit and fought there, and the trial's rules
+/// (only the rules when asked again). Then the Knights leave up the road and
+/// the screen fades.
 void ShamanVillage_ExplainTrialRules(void) {
   if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_EXPLANATION_AGAIN)) {
     Event_SetMessageId((s32)MsgShamanTrialRulesAreSimple);
@@ -1116,8 +1187,10 @@ void ShamanVillage_ExplainTrialRules(void) {
       SHAMAN_VILLAGE_TRIAL_GROUNDS_TO_TRIAL_ROAD_STAGES_D);
 }
 
-/// Back at the trial's start with the challenge accepted, Moapa asks whether
-/// the party gives up; yes sends the leader away.
+/// Felix walks back to Moapa at the foot of Trial Road with the challenge
+/// accepted: "Have you decided to give up this foolishness once and for
+/// all?" Yes, and Felix walks away and the challenge is off; no, and he is
+/// told to choose a road.
 void ShamanVillage_OfferToGiveUp(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1152,8 +1225,10 @@ void ShamanVillage_OfferToGiveUp(void) {
   Event_End();
 }
 
-/// At the trial's start, Moapa asks whether the party challenges him, offers
-/// his explanation again, and checks the party for the trial.
+/// Felix walks up to Moapa at the foot of Trial Road once the rules are
+/// heard: "Do you want to challenge me on Trial Road?" Yes, and Moapa offers
+/// his explanation again; declined, he checks the party has the Shaman's Rod
+/// and the equipment the trial needs. No, and Felix steps back.
 void ShamanVillage_ChallengeMoapa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1195,7 +1270,9 @@ void ShamanVillage_ChallengeMoapa(void) {
 extern u32 gShamanVillage_WalkToLeftStartScript[];
 extern u32 gShamanVillage_WalkToRightStartScript[];
 
-/// The leader takes the left path and Moapa the right, after the countdown.
+/// Felix steps onto the left path up Trial Road (cells (10, 13) to (12, 13)):
+/// the Knights go to Moapa, who takes the right path, "On the count of
+/// three, the challenge begins!", the countdown, and the race starts.
 void ShamanVillage_TakeLeftPath(void) {
   struct Actor *owner;
   struct Actor *shaman;
@@ -1266,7 +1343,9 @@ void ShamanVillage_TakeLeftPath(void) {
       SHAMAN_VILLAGE_TRIAL_GROUNDS_TO_TRIAL_ROAD_STAGES_E);
 }
 
-/// The leader takes the right path and Moapa the left, after the countdown.
+/// Felix steps onto the right path up Trial Road (cells (15, 13) to
+/// (17, 13)): the Knights go to Moapa, who takes the left path, "On the count
+/// of three, the challenge begins!", the countdown, and the race starts.
 void ShamanVillage_TakeRightPath(void) {
   struct Actor *owner;
   struct Actor *shaman;
@@ -1337,14 +1416,16 @@ void ShamanVillage_TakeRightPath(void) {
       SHAMAN_VILLAGE_TRIAL_GROUNDS_TO_TRIAL_ROAD_STAGES_F);
 }
 
-/// The cell Move drops the pillar into as a bridge, and the cell whose
-/// attributes it then takes.
+/// The gap west of the pillar by the fortune-teller's tent, cell (32, 11),
+/// which the pillar fills, and the ground beside it whose cell it then
+/// copies.
 #define PILLAR_BRIDGE_CELL_X 32
 #define PILLAR_BRIDGE_CELL_Z 11
 #define PILLAR_BRIDGE_ATTRIBUTES_CELL_X 30
 
-/// Move on the pillar to PILLAR_BRIDGE_CELL_X, PILLAR_BRIDGE_CELL_Z: it drops
-/// into place as a bridge.
+/// Felix moves the stone pillar on the ledge west of the fortune-teller's
+/// tent into the gap beside it (cell (32, 11)): it drops in with a thump and
+/// fills the gap, so the party can walk across.
 void ShamanVillage_DropPillar(void) {
   struct Actor *actor =
       ((struct Actor *)Actor_GetById(ACTOR_AROMA_ROOM_PILLAR));
@@ -1369,8 +1450,12 @@ void ShamanVillage_DropPillar(void) {
   }
 }
 
-/// At Moapa's door before the party has met him: Moapa and his Knights come
-/// out, and the party is told to leave.
+/// Felix walks up to (or presses A at) Moapa's door, under the horned skull
+/// in the north-west of the village, before meeting him: the door opens,
+/// Felix hops back, and Moapa and his two Knights come out. "This is my house.
+/// If you're looking for Moapa, here I am. Back up. Give me some room." Felix
+/// backs down the steps; strangers are not welcome, and "If there's something
+/// you want to say, hurry up and say it."
 void ShamanVillage_MeetMoapa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1440,9 +1525,9 @@ void ShamanVillage_MeetMoapa(void) {
 #include "shared/drift_spawn.c"
 
 /// The Shaman Village's events after Moapa's house: the rod, the trial's
-/// rules and paths, the race's lettering, and each room's set-up and tables.
+/// rules and paths, the race's lettering, and each place's set-up and tables.
 
-/// The Shaman's Rod (item 65) drawn as an actor over the leader.
+/// The Shaman's Rod's icon, held up over Felix's head.
 struct Actor *ShamanVillage_CreateRodIcon(void) {
   struct Actor *actor = ((struct Actor *)Import_ActorCreate(
       SPRITE_UNSEEN_MARKER, toFIXED(120), toFIXED(64), toFIXED(264)));
@@ -1471,9 +1556,10 @@ struct Actor *ShamanVillage_CreateRodIcon(void) {
 extern u32 gShamanVillage_JennaStandsByRodScript[];
 extern u32 gShamanVillage_EastKnightLeavesHouseScript[];
 
-/// The Shaman's Rod shown to Moapa: he knows it but will not give up the Hover
-/// Jade, and at a Knight's word sets the party the test of the sand; they
-/// leave his door open.
+/// Felix shows Moapa the Shaman's Rod at his door, holding it up: Moapa knows
+/// it but will not give up the Hover Jade to the party, and at a
+/// Knight's word sets them a test at the foot of Trial Road. He leaves his
+/// door open.
 void ShamanVillage_ShowShamansRod(void) {
   struct Actor *rod;
   struct Actor *actor;
@@ -1694,7 +1780,8 @@ void ShamanVillage_ShowShamansRod(void) {
   Event_End();
 }
 
-/// Any other item shown to Moapa.
+/// Felix shows Moapa any other item: "If you're here offering charity, I
+/// won't have it... Or did you want to show me something?"
 void ShamanVillage_ShowItemToMoapa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1724,7 +1811,8 @@ void ShamanVillage_ShowItemToEastKnight(void) {
   Event_End();
 }
 
-/// Stepping into the fortune-teller's tent once Moapa is beaten: she calls out
+/// Felix walks up to the fire before the fortune-teller's tent in the
+/// north-east (cell (37, 19)) once Moapa is beaten: she calls out
 /// "Hoolabaloo!" and hops, once a visit.
 void ShamanVillage_FortuneTellerCallsOut(void) {
   if (Event_GetFlag(FLAG_MOAPA_BEATEN)) {
@@ -1743,13 +1831,14 @@ void ShamanVillage_FortuneTellerCallsOut(void) {
   }
 }
 
-/// Growth on the sprout: its cells become climbable.
+/// Felix casts Growth on the sprout north-west of the inn (cell (2, 18)), and
+/// it grows into a vine he can climb, up to the Spirit Gloves' chest.
 void ShamanVillage_GrowVine(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 2, 2, 17);
   Event_SetFlag(FLAG_SHAMAN_VILLAGE_VINE_GROWN);
 }
 
-/// The leader walks back from the trial's start, and the challenge is off.
+/// Felix walks back from Moapa, and the challenge is off.
 void ShamanVillage_StepBackFromTrial(void) {
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 1.6);
   FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
@@ -2470,11 +2559,12 @@ void ShamanVillage_CastWhirlwindOnSand(void) {
   Actor_SetSpritePriority(ACTOR_SHEBA, 2);
 }
 
-/// Opens a door by copying its open picture (width by height cells from
-/// sourceX, sourceY to destinationX, destinationY), with a thump for a door two
-/// cells wide and SE_DOOR_OPEN for one; through a door one cell wide the leader
-/// first steps to the middle of its cell, faces north and walks in, and the
-/// party leaves by the step trigger it stood on.
+/// Felix walks into a house's door: it opens (its open picture copied, width
+/// by height cells from sourceX, sourceY to destinationX, destinationY), with
+/// a thump for a door two cells wide and SE_DOOR_OPEN for one; through a door
+/// one cell wide Felix first steps to the middle of its cell and faces north.
+/// He walks in, the screen fades, and the party leaves by the exit whose
+/// number the cell he stood on holds.
 void ShamanVillage_EnterDoor(s32 sourceX, s32 sourceY, s32 destinationX,
                              s32 destinationY, s32 width, s32 height) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -2511,42 +2601,41 @@ void ShamanVillage_EnterDoor(s32 sourceX, s32 sourceY, s32 destinationX,
   Import_EventSetExitRequest(work->stepTrigger);
 }
 
-/// The village's houses' doors, each opened by ShamanVillage_EnterDoor.
-///@{
-void ShamanVillage_EnterDoorA(void) {
+/// Felix walks north into the inn's door, beside the INN sign in the south-west
+/// of the village (cell (8, 26)), and goes in to the innkeeper's counter.
+void ShamanVillage_EnterInn(void) {
   ShamanVillage_EnterDoor(43, 40, 8, 22, 1, 2);
 }
 
-/// Walking north into the second southwest door opens it and takes the party
-/// inside. Step trigger 5 leaves by
-/// `SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_INN_SOUTHWEST_B`.
-void ShamanVillage_EnterDoorB(void) {
+/// Felix walks north into the door of the house in the far south-west of the
+/// village (cell (4, 28)) and goes in.
+void ShamanVillage_EnterSouthwestHouse(void) {
   ShamanVillage_EnterDoor(43, 42, 4, 26, 1, 2);
 }
 
-/// Walking north into the first east door opens it and takes the party inside.
-/// Step trigger 6 leaves by `SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_INN_EAST_A`, only
-/// once `FLAG_SHAMAN_VILLAGE_DOORS_OPEN` is set after Moapa is beaten.
-void ShamanVillage_EnterDoorC(void) {
+/// Once Moapa is beaten, Felix walks north into the door of the lower of the
+/// two houses on the village's east side (cell (27, 25)) and goes in to a
+/// room with beds. Before, the door is locked.
+void ShamanVillage_EnterLowerEastHouse(void) {
   ShamanVillage_EnterDoor(43, 42, 27, 21, 1, 2);
 }
 
-/// Walking north into the second east door opens it and takes the party
-/// inside. Step trigger 7 leaves by
-/// `SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_INN_EAST_B`, only once
-/// `FLAG_SHAMAN_VILLAGE_DOORS_OPEN` is set after Moapa is beaten.
-void ShamanVillage_EnterDoorD(void) {
+/// Once Moapa is beaten, Felix walks north into the door of the upper of the
+/// two houses on the village's east side (cell (28, 23)) and goes in; the
+/// walkthrough's way to Aroma climbs its stairs and out to the north-east.
+/// Before, the door is locked.
+void ShamanVillage_EnterUpperEastHouse(void) {
   ShamanVillage_EnterDoor(43, 40, 28, 17, 1, 2);
 }
 
-/// Walking north into the north door opens it and takes the party inside. Step
-/// trigger 12 leaves by `SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_INN_NORTH`.
-void ShamanVillage_EnterDoorE(void) {
+/// Felix walks north into the door just east of Moapa's, by the river (cell
+/// (10, 12)), and goes in to a room with beds.
+void ShamanVillage_EnterRiversideHouse(void) {
   ShamanVillage_EnterDoor(43, 42, 10, 8, 1, 2);
 }
-///@}
 
-/// Moapa's door, left open once the party has shown the Shaman's Rod, is walked
+/// Felix walks north into Moapa's door, under the horned skull, once he has
+/// met Moapa: left open since the party showed the Shaman's Rod, it is walked
 /// through at once; until then it opens as the other doors do.
 void ShamanVillage_EnterMoapasHouse(void) {
   if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_MOAPAS_DOOR_OPEN)) {
@@ -2561,7 +2650,8 @@ void ShamanVillage_EnterMoapasHouse(void) {
   }
 }
 
-/// Back at Trial Road's foot, Moapa offers the trial again.
+/// Coming back down to the foot of Trial Road during the trial, Moapa offers
+/// it again.
 void ShamanVillage_RestartTrial(void) {
   s32 angle;
 
@@ -2640,9 +2730,8 @@ void ShamanVillage_RestartTrial(void) {
   Event_End();
 }
 
-/// Coming back from Trial Road by
-/// SHAMAN_VILLAGE_TRIAL_GROUNDS_FROM_TRIAL_ROAD_STAGES_C, Moapa suggests the
-/// party quit.
+/// Coming back down to the foot of Trial Road by one way from the road, Moapa
+/// says it would be wise of the party to quit, and Felix steps back.
 void ShamanVillage_SuggestQuitting(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -2664,7 +2753,7 @@ void ShamanVillage_SuggestQuitting(void) {
   Event_End();
 }
 
-/// Sets up the room being entered. Returns 0.
+/// Sets up the place being entered. Returns 0.
 s32 Scene_Initialize(void) {
   s32 scene = gMainRoutineWork.next;
 
@@ -2683,10 +2772,8 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// The trial grounds: the sand cleared, or Moapa and his Knights waiting by
-/// the twister rock; the torches lit; the trial offered again or quitting
-/// suggested on coming back from Trial Road; and Moapa and his Knights gone
-/// once he is beaten.
+/// The foot of Trial Road: the sand gone, or Moapa and his Knights waiting
+/// by the twister rock.
 void ShamanVillage_SetUpTrialGrounds(void) {
   if (Event_GetFlag(FLAG_SHAMAN_VILLAGE_SAND_CLEARED)) {
     MapGrid_CopyCellsTo(47, 19, 38, 19, 9, 11);
@@ -2726,9 +2813,13 @@ void ShamanVillage_SetUpTrialGrounds(void) {
   }
 }
 
-/// The fortune-teller's room: the torches lit, the pillar bridge in place once
-/// Move has dropped it, and the fortune-teller there only once the village's
-/// doors are open.
+/// The north-east of the village and the gate of Trial Road: the torches lit,
+/// the pillar in the gap once Move has dropped it, and the fortune-teller and
+/// her tent's entrance there only once Moapa is beaten. Once the Shaman's Rod
+/// is shown, the three cells from (12, 6) take those of the row above them.
+// XXX: what that change at the gate of Trial Road looks like or allows; a
+// probe of the gate with FLAG_SHAMAN_VILLAGE_SHAMANS_ROD_SHOWN set and clear
+// would settle it.
 void ShamanVillage_SetUpAromaRoom(void) {
   struct Actor *actor;
 
@@ -2829,9 +2920,10 @@ void ShamanVillage_BlowChimneySmoke(void) {
 DEFINE_LEADER_LAYER_TASK(ShamanVillage_LayerVillageActors, ACTOR_SPROUT,
                          ACTOR_GIRL_BELOW_THE_CAVE)
 
-/// The village: Moapa and his Knights where the story leaves them, the doors
-/// opened, the rope and the vine, and the chimneys' smoke blended over the
-/// houses.
+/// The village: Moapa and his Knights at his door once met, until the
+/// Shaman's Rod is shown, and the Knights alone there once he is beaten; his
+/// door left open; the tents' entrances open once he is beaten; the rope, the
+/// vine, and smoke from the two chimneys.
 void ShamanVillage_SetUpVillage(void) {
   if (!Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     if (Event_GetFlag(FLAG_MOAPA_BEATEN)) {
@@ -2865,9 +2957,9 @@ void ShamanVillage_SetUpVillage(void) {
   FieldTask_AddFrame(ShamanVillage_BlowChimneySmoke, TASK_PASS_FRAME);
 }
 
-/// The houses: Moapa and his household as the story leaves them; coming back
-/// from Moapa's battle restores the party's HP and PP before the leader gets up
-/// and walks on, and the first way back sets Moapa beaten.
+/// The houses: Moapa and his household as the story leaves them. Brought back
+/// from the battle with Moapa, the party wakes in a bed with its HP and PP
+/// restored and Felix gets up and walks on; the first time sets Moapa beaten.
 void ShamanVillage_SetUpInn(void) {
   u32 i;
 
@@ -2929,7 +3021,7 @@ void ShamanVillage_SetUpInn(void) {
 DEFINE_LEADER_LAYER_TASK(ShamanVillage_LayerSanctumActors,
                          ACTOR_SANCTUM_SHAMAN_A, ACTOR_SANCTUM_SHAMAN_B)
 
-/// The sanctum: its two shamans there only once Moapa is beaten.
+/// The sanctum: its two villagers there only once Moapa is beaten.
 void ShamanVillage_SetUpSanctum(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -2957,7 +3049,8 @@ s16 gShamanVillage_LetteringDigitScript[] = {
     LETTERING_END,
 };
 
-/// Unused: the scripts of modes 3 and 1, which nothing in this overlay starts.
+/// Unused: the scripts of the WIN or LOSE and the match title shapes, which
+/// the village never starts.
 s16 gShamanVillage_LetteringLoseScript[] = {
     LETTERING_SCALE, 128, 1,
     LETTERING_FADE, 0, 1,
@@ -3490,13 +3583,16 @@ struct Trigger gShamanVillageTrialGroundsTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND),
      ACTOR_TWISTER_ROCK | TRIGGER_SUBJECT_OWN_EFFECT,
      FLAG_SHAMAN_VILLAGE_SAND_CLEARED, 0},
-    {TRIGGER_STEP, 10, FLAG_SHAMAN_VILLAGE_TRIAL_RULES_HEARD,
+    {TRIGGER_STEP, BEFORE_MOAPA_CELL, FLAG_SHAMAN_VILLAGE_TRIAL_RULES_HEARD,
      EVENT(ShamanVillage_ExplainTrialRules)},
-    {TRIGGER_STEP, 10, FLAG_SHAMAN_VILLAGE_CHALLENGE_ACCEPTED,
+    {TRIGGER_STEP, BEFORE_MOAPA_CELL, FLAG_SHAMAN_VILLAGE_CHALLENGE_ACCEPTED,
      EVENT(ShamanVillage_ChallengeMoapa)},
-    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(ShamanVillage_OfferToGiveUp)},
-    {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(ShamanVillage_TakeLeftPath)},
-    {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(ShamanVillage_TakeRightPath)},
+    {TRIGGER_STEP, BEFORE_MOAPA_CELL, CONDITION_ALWAYS,
+     EVENT(ShamanVillage_OfferToGiveUp)},
+    {TRIGGER_STEP, LEFT_PATH_CELL, CONDITION_ALWAYS,
+     EVENT(ShamanVillage_TakeLeftPath)},
+    {TRIGGER_STEP, RIGHT_PATH_CELL, CONDITION_ALWAYS,
+     EVENT(ShamanVillage_TakeRightPath)},
     {TRIGGER_TALK, ACTOR_MOAPA, FLAG_SHAMAN_VILLAGE_SAND_CLEARED,
      MSGNO(MsgShamanYegelosSandChallenge)},
     {TRIGGER_TALK, ACTOR_MOAPA, CONDITION_ALWAYS,
@@ -3539,11 +3635,12 @@ struct Trigger gShamanVillageAromaRoomTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_AROMA_ROOM_PILLAR,
      FLAG_SHAMAN_VILLAGE_PILLAR_BRIDGE_DROPPED,
      EVENT(ShamanVillage_DropPillar)},
-    {EXAMINE_TRIGGER_FACING(FACING_NORTH), 22, FLAG_SHAMAN_VILLAGE_DOORS_OPEN,
-     EVENT(ShamanVillage_StopAtClosedEntrance)},
-    {TRIGGER_EXAMINE, 10, CONDITION_ALWAYS,
+    {EXAMINE_TRIGGER_FACING(FACING_NORTH), CLOSED_TENT_CELL,
+     FLAG_SHAMAN_VILLAGE_DOORS_OPEN, EVENT(ShamanVillage_StopAtClosedEntrance)},
+    {TRIGGER_EXAMINE, TRIAL_ROAD_SIGN_CELL, CONDITION_ALWAYS,
      EVENT(ShamanVillage_ReadTrialRoadSign)},
-    {TRIGGER_STEP, 11, FLAG_SHAMAN_VILLAGE_FORTUNE_TELLER_CALLED_OUT,
+    {TRIGGER_STEP, FORTUNE_TELLERS_FIRE_CELL,
+     FLAG_SHAMAN_VILLAGE_FORTUNE_TELLER_CALLED_OUT,
      EVENT(ShamanVillage_FortuneTellerCallsOut)},
     {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_FORTUNE_TELLER, CONDITION_ALWAYS,
      EVENT(ShamanVillage_TellFortune)},
@@ -3568,39 +3665,46 @@ struct Trigger gShamanVillageVillageTriggers[] = {
     {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK |
          TRIGGER_FLAG_FACING | FACING_NORTH,
      3, IF_FLAG_SET(FLAG_SHAMAN_VILLAGE_DOORS_OPEN), 3},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS,
-     EVENT(ShamanVillage_EnterDoorA)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS,
-     EVENT(ShamanVillage_EnterDoorB)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_INN_SOUTHWEST_A, CONDITION_ALWAYS,
+     EVENT(ShamanVillage_EnterInn)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_INN_SOUTHWEST_B, CONDITION_ALWAYS,
+     EVENT(ShamanVillage_EnterSouthwestHouse)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_INN_EAST_A,
      IF_FLAG_SET(FLAG_SHAMAN_VILLAGE_DOORS_OPEN),
-     EVENT(ShamanVillage_EnterDoorC)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7,
+     EVENT(ShamanVillage_EnterLowerEastHouse)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_INN_EAST_B,
      IF_FLAG_SET(FLAG_SHAMAN_VILLAGE_DOORS_OPEN),
-     EVENT(ShamanVillage_EnterDoorD)},
+     EVENT(ShamanVillage_EnterUpperEastHouse)},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK |
          TRIGGER_FLAG_FACING | FACING_NORTH,
      10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS,
-     EVENT(ShamanVillage_EnterDoorE)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 13, FLAG_SHAMAN_VILLAGE_MOAPA_MET,
-     EVENT(ShamanVillage_MeetMoapa)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_INN_NORTH, CONDITION_ALWAYS,
+     EVENT(ShamanVillage_EnterRiversideHouse)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_INN_NORTHWEST,
+     FLAG_SHAMAN_VILLAGE_MOAPA_MET, EVENT(ShamanVillage_MeetMoapa)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_INN_NORTHWEST, CONDITION_ALWAYS,
      EVENT(ShamanVillage_EnterMoapasHouse)},
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_VILLAGE_ROPE_POST,
      FLAG_SHAMAN_VILLAGE_ROPE_TIED, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT,
      FLAG_SHAMAN_VILLAGE_VINE_GROWN, EVENT(ShamanVillage_GrowVine)},
-    {EXAMINE_TRIGGER_FACING(FACING_NORTH), 20, FLAG_SHAMAN_VILLAGE_DOORS_OPEN,
-     EVENT(Scene_ShowEntranceLocked)},
-    {EXAMINE_TRIGGER_FACING(FACING_NORTH), 22, FLAG_SHAMAN_VILLAGE_DOORS_OPEN,
-     EVENT(ShamanVillage_StopAtClosedEntrance)},
-    {EXAMINE_TRIGGER_FACING(FACING_NORTH), 21, FLAG_SHAMAN_VILLAGE_MOAPA_MET,
-     EVENT(ShamanVillage_MeetMoapa)},
+    {EXAMINE_TRIGGER_FACING(FACING_NORTH), LOCKED_DOOR_CELL,
+     FLAG_SHAMAN_VILLAGE_DOORS_OPEN, EVENT(Scene_ShowEntranceLocked)},
+    {EXAMINE_TRIGGER_FACING(FACING_NORTH), CLOSED_TENT_CELL,
+     FLAG_SHAMAN_VILLAGE_DOORS_OPEN, EVENT(ShamanVillage_StopAtClosedEntrance)},
+    {EXAMINE_TRIGGER_FACING(FACING_NORTH), MOAPAS_DOOR_CELL,
+     FLAG_SHAMAN_VILLAGE_MOAPA_MET, EVENT(ShamanVillage_MeetMoapa)},
     {TRIGGER_TALK, 8, FLAG_MOAPA_BEATEN, MSGNO(MsgShamanSilentVillager)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS,
      MSGNO(MsgShamanMoapaImpressedByChallenge)},

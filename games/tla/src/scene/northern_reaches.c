@@ -1,6 +1,12 @@
 /// @file
-/// The Northern Reaches, where an ice wall blocks the ship's way to Prox until
-/// Felix fires the Magma Ball at it from a safe distance.
+/// The Northern Reaches, the icy sea where a great wall of ice blocks the
+/// ship's way north to Prox.
+///
+/// Sailing up to the wall before the ship carries the cannon from Loho, the
+/// crew calls Kraden to see it. With the cannon aboard, Kraden says to use it
+/// and to take the ship between the two blocks of ice before the wall for
+/// shelter. There, Felix fires the Magma Ball, the wall bursts in fire
+/// and is gone, and the ship sails off north.
 
 #include "shared/tables.h"
 #include "field/field_sprite.h"
@@ -46,6 +52,16 @@
 /// The crew has talked the ice wall over.
 #define FLAG_ICE_WALL_DISCUSSED 0x90c
 
+/// The cells of the sea before the ice wall that start its events: a row
+/// close under the wall, (90, 11) to (96, 11); the gap between the two blocks
+/// of ice, (92, 13) and (93, 13); and a row further south, (89, 15) to
+/// (91, 15).
+enum {
+  CELL_UNDER_ICE_WALL = 22,
+  CELL_BETWEEN_ICE_BLOCKS = 21,
+  CELL_SOUTH_OF_ICE_WALL = 20
+};
+
 /// Ways in that no exit reaches.
 enum {
   /// Unused: the party below the ice wall, drawn already gone.
@@ -55,7 +71,7 @@ enum {
   ENTRANCE_ABOARD_SHIP_WITH_CANNON = 90
 };
 
-/// The Northern Reaches, by the rows of gActorPlacements; the rows for
+/// The Northern Reaches, by the rows of `gActorPlacements`; the rows for
 /// Jenna, Sheba and Piers go to their party slots.
 enum NorthernReachesActorId {
   /// The party's ship, placed blank; it sails off north once the wall is gone.
@@ -98,7 +114,7 @@ struct ExplosionSpark {
 };
 
 /// The wall breaks into 54 shards, nine columns of six, and the explosion's
-/// sparks (EXPLOSION_SPARK_COUNT, scene/scene.h) fly about it.
+/// sparks (`EXPLOSION_SPARK_COUNT`) fly about it.
 #define ICE_SHARD_COUNT 54
 /// How long a shard flies, in frames.
 #define ICE_SHARD_FRAMES 60
@@ -113,8 +129,8 @@ struct IceWallWork {
   struct IceShard shards[ICE_SHARD_COUNT];
 };
 
-/// The ship's script call: drops its sprite's shadow (clearing its sprite
-/// flags) and puts it on the middle layer.
+/// The ship's script call: drops its sprite's shadow and puts it on the middle
+/// layer.
 s32 NorthernReaches_DropShipShadow(struct Actor *actor) {
   ((struct FieldSprite *)actor->sprite)->flags = 0;
   actor->layer = MAPGRID_LAYER_MIDDLE;
@@ -131,8 +147,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-/// Draws the ice wall gone: its pictures and its cells, as the Magma Ball
-/// leaves it and on every later visit (FLAG_ICE_WALL_SHATTERED).
+/// Draws the ice wall gone, as the Magma Ball leaves it and on every later
+/// visit.
 void NorthernReaches_ClearIceWall(void) {
   MapGrid_CopyCellsLayered(47, 9, 9, 4, 25, 9);
   MapGrid_CopyCellsLayered(47, 69, 9, 10, 25, 69);
@@ -140,9 +156,10 @@ void NorthernReaches_ClearIceWall(void) {
   return;
 }
 
-/// The first time the ship nears the ice wall, once a visit, the crew calls
-/// Kraden to see it.
-/// "Kraden, come look at this... There's a huge ice wall blocking our path..."
+/// The ship sails up to the ice wall, cells (90, 11) to (96, 11), before it
+/// carries the cannon: Jenna calls "Kraden, come look at this... There's a huge
+/// ice wall blocking our path," and Kraden says they will go no farther unless
+/// they do something about it. Once a visit.
 void NorthernReaches_SightIceWall(void) {
   if (Event_GetFlag(FLAG_ICE_WALL_SIGHTED) != 0)
     return;
@@ -160,8 +177,10 @@ void NorthernReaches_SightIceWall(void) {
   Event_End();
 }
 
-/// The crew gathers at the bow to talk the ice wall over, once
-/// (FLAG_ICE_WALL_DISCUSSED).
+/// The ship, carrying the cannon, sails north toward the ice wall, cells
+/// (89, 15) to (91, 15): the view turns to the wall, and Kraden says to use the
+/// cannon they got in Loho and to take the ship between the two blocks of ice
+/// before it for shelter. Only once.
 void NorthernReaches_DiscussIceWall(void) {
   if (Event_GetFlag(FLAG_ICE_WALL_DISCUSSED) != 0)
     return;
@@ -207,10 +226,13 @@ void NorthernReaches_DiscussIceWall(void) {
 /// frames.
 #define SHIP_SHRINK_STEPS 20
 
-/// At a safe distance the crew asks Felix to fire the Magma Ball at the ice
-/// wall; if he is ready the ship backs off, fires, and the wall shatters (flag
-/// FLAG_ICE_WALL_SHATTERED).
-/// "We should be safe if we fire from this distance."
+/// The ship, carrying the cannon, comes between the two blocks of ice before
+/// the ice wall, cell (92, 13) or (93, 13). Piers says they should be safe
+/// firing from here, and Kraden asks Felix to aim at the wall and fire when
+/// ready. With a Yes the ship jolts back as the cannon fires, the Magma Ball
+/// flies into the wall, which bursts in flames and white light and is gone,
+/// and after the crew's cheers the ship sails off north. With a No it pulls
+/// back to try again.
 void NorthernReaches_FireMagmaBall(void) {
   FIXED from[3];
   struct Actor *ship;
@@ -553,11 +575,13 @@ struct Trigger gSceneEvents[] = {
      NORTHERN_REACHES_TO_WORLD_MAP_SOUTH},
     {TRIGGER_EXIT, NORTHERN_REACHES_TO_WORLD_MAP_NORTH, CONDITION_ALWAYS,
      NORTHERN_REACHES_TO_WORLD_MAP_NORTH},
-    {TRIGGER_STEP, 20, IF_FLAG_SET(FLAG_SHIP_CARRIES_CANNON),
+    {TRIGGER_STEP, CELL_SOUTH_OF_ICE_WALL,
+     IF_FLAG_SET(FLAG_SHIP_CARRIES_CANNON),
      EVENT(NorthernReaches_DiscussIceWall)},
-    {TRIGGER_STEP, 21, IF_FLAG_SET(FLAG_SHIP_CARRIES_CANNON),
+    {TRIGGER_STEP, CELL_BETWEEN_ICE_BLOCKS,
+     IF_FLAG_SET(FLAG_SHIP_CARRIES_CANNON),
      EVENT(NorthernReaches_FireMagmaBall)},
-    {TRIGGER_STEP, 22, FLAG_SHIP_CARRIES_CANNON,
+    {TRIGGER_STEP, CELL_UNDER_ICE_WALL, FLAG_SHIP_CARRIES_CANNON,
      EVENT(NorthernReaches_SightIceWall)},
     {TRIGGER_TABLE_END},
 };

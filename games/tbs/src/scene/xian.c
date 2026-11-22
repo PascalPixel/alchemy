@@ -5,48 +5,49 @@
 /// room of the Fuchin Temple overlay, fuchin_temple.c. That overlay is
 /// LacquerRoomsA, which XIAN_TO_LACQUER_ROOMS_A_FEHS_SCHOOL leads into.
 ///
-/// The village's talk turns on FLAG_XIAN_HEARD_HSU_TRAPPED, which Master Hama's
-/// Reveal lesson at Lama Temple sets. Every villager's talk and Mind Read has
-/// a row for each side of it.
+/// Xian is the village of silk and kung fu beyond Mogall Forest. The party
+/// comes in from the World Map at the south end and may pass straight through
+/// to Altin, but there is a Djinni to win here first.
 ///
-/// After the news, three villagers also stand differently. Scene_Initialize
-/// turns ACTOR_BOY_ON_SILK_CLOTHES west and stands the kung fu student where
-/// her strike leaves her. Scene_GetActorPlacements turns
-/// ACTOR_MUSCULAR_MAN_ON_DISASTERS to face the party.
+/// What the villagers say turns on the news that Hsu is trapped
+/// (FLAG_XIAN_HEARD_HSU_TRAPPED), which Master Hama's Reveal lesson at Lama
+/// Temple brings. Every villager's talk and Mind Read has a row for each side
+/// of it. After the news the small boy looks west, the kung fu student stands
+/// where her strike leaves her, and the muscular man turns to face the party.
 ///
-/// Feizhi stands by the village's south exit from FLAG_FEIZHI_WENT_TO_HSU,
-/// which is set in fuchin_temple.c. She stays until she has found the road
-/// blocked at Alpine Crossing (FLAG_FEIZHI_SAW_ROCKSLIDE) or Xian has heard
-/// the news.
+/// Once Feizhi has left Master Feh's school to look for Hsu
+/// (FLAG_FEIZHI_WENT_TO_HSU, fuchin_temple.c) she waits by the village's south
+/// way out, looking for someone to take her west. She is gone once she has
+/// found the road blocked at Alpine Crossing (FLAG_FEIZHI_SAW_ROCKSLIDE) or
+/// Xian has heard the news.
 ///
-/// Two small events run on scene flags, which last until the party next enters
-/// a scene other than by returning from a battle:
-/// - the water carrier walks her round (gXian_WaterCarrierRoute). Spoken to on
-///   its eastern part, she spills her water (FLAG_XIAN_WATER_SPILLED). A
-///   puddle spreads at her feet, and she walks back for more. The puddle's
-///   cell takes a cell behavior that walking into jumps the leader over it
-///   (Xian_JumpOverSpilledWater). Frost freezes the puddle
-///   (FLAG_XIAN_SPILLED_WATER_FROZEN) into ice that can be stood on. A leader
-///   who stands in her way for two seconds makes her raise
-///   RAISED_CARRIER_BLOCKED (Xian_WatchWaterCarrierPath), and both walk back
-///   to the start of her round.
-/// - the kung fu student, a little girl, shows her strike on the tree before
-///   her once (FLAG_XIAN_STRIKE_SHOWN). Force on the tree makes it jump on
-///   its own, to her surprise, and FLAG_XIAN_TREE_JUMPED picks her second
-///   line.
+/// A woman carries water along the street below the waterfall, from the pool
+/// at its west end, cell (17, 14), to the door of the east house at its east
+/// end, cell (26, 13), and back. Spoken to on the eastern part of her round she
+/// spills her water, and a puddle spreads at her feet that Isaac must hop over.
+/// Spilled at the east end, by the wall, Frost freezes it into an ice pillar
+/// that Isaac climbs onto the ledge where Mist, a Mercury Djinni, waits at
+/// cell (28, 20); Mist joins when spoken to. Standing in her way at the west
+/// end for two seconds makes her march Isaac back to the pool.
 ///
-/// Mist, a Mercury Djinni, waits in the village until she joins, which she does
-/// when spoken to.
+/// The kung fu student, a little girl by the bridge north of the mulberry
+/// orchard, shows her strike on the post before her once, and Force on the
+/// post makes it jump on its own, to her surprise.
 ///
-/// A jar holds a Lucky Medal.
+/// The spilled water and the student's strike last until the party next
+/// enters a scene other than by returning from a battle.
+///
+/// A jar by the mulberry orchard, at cell (10, 22), holds a Lucky Medal.
 ///
 /// The village's doors and where they lead:
-/// - Five doors lead into the houses, shops and inn (SceneId_LacquerRoomsB,
-///   XIAN_TO_HOUSE to XIAN_TO_WEAPON_AND_ARMOR_SHOP).
-/// - XIAN_TO_SANCTUM leads into Xian Sanctum, its sliding door playing
-///   SE_THUMP.
-/// - XIAN_TO_LACQUER_ROOMS_A_FEHS_SCHOOL leads into Master Feh's school.
-/// - XIAN_TO_WORLD_MAP leads out to the World Map.
+/// - Five doors lead into the houses, shops and inn (SceneId_LacquerRoomsB):
+///   the house at cell (21, 20), the north and east houses on the water
+///   carrier's street at cells (23, 13) and (26, 13), the inn at (25, 26) and
+///   the weapon and armor shop at (13, 11).
+/// - The Sanctum's sliding door at cells (10, 13) and (11, 13) leads into Xian
+///   Sanctum.
+/// - The door at cell (24, 11) leads into Master Feh's school.
+/// - The road south at cells (23, 32) and (24, 32) leads out to the World Map.
 ///
 /// Coming back from the school (XIAN_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) or the
 /// Sanctum (XIAN_FROM_SANCTUM_WEST) clears FLAG_SHOW_AREA_NAME, so the name is
@@ -145,6 +146,17 @@ enum XianActorId {
 /// for XIAN_CARRIER_BLOCKED_FRAMES.
 enum XianRaisedTrigger { RAISED_CARRIER_BLOCKED = 200 };
 
+/// Xian's own cell behaviors. The doors' cells carry the numbers of their
+/// exits, so their rows of gXian_Triggers name them by the exit.
+enum XianCellBehavior {
+  /// The water carrier's street, cells (19, 14) to (27, 14), and the cells
+  /// beside it, where Isaac hops over the spilled water.
+  CELL_BEHAVIOR_XIAN_WATER_STREET = 20,
+  /// The cell north of the street between the north and east houses' doors,
+  /// cell (25, 13), from which Isaac hops south over the spilled water.
+  CELL_BEHAVIOR_XIAN_WATER_STREET_NORTH = 21
+};
+
 enum { XIAN_CARRIER_BLOCKED_FRAMES = 120 };
 
 /// The water carrier's round (gXian_WaterCarrierRoute) runs along map row 14
@@ -160,8 +172,7 @@ static void Xian_MistJoins(void) {
   Djinn_JoinParty(ACTOR_MIST, ELEMENT_MERCURY, DJINNI_INDEX(DJINNI_MIST));
 }
 
-/// Draws the frozen puddle under the leader while the leader stands on top of
-/// it.
+/// Keeps the ice pillar drawn under Isaac while he stands on top of it.
 static void Xian_UpdateFrozenPuddleLayer(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   if (leader->y.part[0].integer > 31) {
@@ -171,14 +182,14 @@ static void Xian_UpdateFrozenPuddleLayer(void) {
   }
 }
 
-/// Rotates the training tree during the student's strike and Force animation.
+/// Spins the post as it jumps, under the student's strike or Force.
 static void Xian_RotateTrainingTree(void) {
   struct Actor *tree = Actor_Get(ACTOR_TRAINING_TREE);
   struct Sprite *sprite = tree->sprite;
   sprite->rotation += TRIG_TURN * 5 / 64;
 }
 
-/// Emits particles beside the student every fourth frame.
+/// Leaves a trail of blue after-images behind the student as she leaps.
 static void Xian_SpawnTrainingParticles(void) {
   struct Actor *student = Actor_Get(ACTOR_KUNG_FU_STUDENT);
 
@@ -249,7 +260,10 @@ static s32 Xian_UpdateCarrierTracking(struct Actor *actor, struct Actor *target,
   return isTracking;
 }
 
-/// Ask the carrier to move after the leader blocks her route for two seconds.
+/// The water carrier's update: she stops and looks at Isaac when he stands in
+/// front of her, and when he has stood in her way at the west end of her
+/// round, cells (17, 14) and (18, 14), for two seconds on her way back, she
+/// raises RAISED_CARRIER_BLOCKED.
 static UNREAD_RESULT Xian_WatchWaterCarrierPath(struct Actor *updated) {
   struct Actor *leader;
   s32 near = 0;
@@ -290,8 +304,8 @@ const struct SceneExitRegion *Scene_GetExitRegions(void) { return NULL; }
 
 const u32 *Scene_GetExits(void) { return gXian_Exits; }
 
-/// Once Xian has heard Hsu is trapped, ACTOR_MUSCULAR_MAN_ON_DISASTERS turns
-/// to face the party.
+/// Once Xian has heard Hsu is trapped, the muscular man turns to face the party
+/// when spoken to.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (GameFlag_Get(FLAG_XIAN_HEARD_HSU_TRAPPED) != 0)
     gXian_ActorPlacements[ACTOR_MUSCULAR_MAN_ON_DISASTERS - ACTOR_FIRST_PLACED]
@@ -311,7 +325,15 @@ static void Xian_AskAboutYoungWarriors(void) {
   Event_End();
 }
 
-/// Talking to the water carrier in Xian.
+/// Talking to the water carrier on the eastern part of her round makes her
+/// spill her water: a puddle spreads at her feet, she cries "What are you
+/// doing! You made me spill my water!" and walks back to the pool for more.
+///
+/// Near the pool, or once her water is spilled, she only says "Do not speak to
+/// me. I might spill my water." or "Now I must get water again." If Isaac is
+/// on the street with her, he first steps up beside her, and he steps back out
+/// of her way before she leaves. The puddle's cell takes a blocking cell
+/// behavior copied from the map's store at cell (16, 16).
 static void Xian_TalkToWaterCarrier(void) {
   struct Actor *puddle;
   struct Actor *carrier;
@@ -446,16 +468,22 @@ static void Xian_TalkToWaterCarrier(void) {
   Event_End();
 }
 
-/// Frost on the spilled water in Xian, before it freezes, draws the puddle in
-/// front while the leader stands north of it.
+/// When Isaac starts casting Frost on the spilled water from north of the
+/// street, the puddle is brought to the front drawing layer before it freezes.
 static void Xian_UpdatePuddlePriority(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
+  // XXX: what this changes on screen; a recording of Frost cast from a
+  // doorstep north of the street, with the water spilled below, would settle
+  // it.
   if (FIELD_CELL(leader->z.fixed) < CARRIER_ROUTE_ROW)
     Actor_SetSpritePriority(ACTOR_SPILLED_WATER, 1);
 }
 
-/// Frost freezes the spilled water in Xian. The puddle turns to ice the
-/// leader can stand on, and there is nothing left to jump over.
+/// Frost on the spilled water in Xian freezes the puddle into an ice pillar.
+/// Isaac can climb onto it, and from the one at the street's east end onto the
+/// ledge where Mist waits; there is nothing left to hop over.
+///
+/// The pillar's cell takes the raised cell stored at cell (3, 17).
 static void Xian_FreezeSpilledWater(void) {
   struct Actor *puddle;
   FIXED puddleX;
@@ -473,7 +501,10 @@ static void Xian_FreezeSpilledWater(void) {
   Event_End();
 }
 
-/// Talking to the kung fu student in Xian.
+/// Talking to the kung fu student by the bridge the first time, she cries
+/// "Hoo-whaaa... Hachaaa!", Isaac steps back, and she leaps west in a blur of
+/// after-images and strikes the post, which jumps spinning into the air and
+/// drops back. "Heh heh heh..." After that she only boasts of her kung fu.
 static void Xian_TalkToKungFuStudent(void) {
   s32 demonstrationSeen;
   FIXED reboundVelocity;
@@ -579,8 +610,9 @@ static void Xian_TalkToFeizhi(void) {
   Event_End();
 }
 
-/// Walking into the spilled water in Xian before it is frozen makes the
-/// leader jump two cells over it, where nothing stands in the way.
+/// Walking into the spilled water in Xian before it is frozen, along the
+/// street or south from the doorsteps above it, makes Isaac hop over it,
+/// landing two cells on if nothing stands there.
 static void Xian_JumpOverSpilledWater(void) {
   s32 savedMotionFlags;
   struct Actor *leader;
@@ -630,7 +662,8 @@ static void Xian_WalkThroughExit(s32 exitNumber) {
   Import_EventSetExitRequest(exitNumber);
 }
 
-/// Walking north into one of Xian's doors opens it, and the party goes in.
+/// Walking north into one of Xian's doors opens it with a creak, or the
+/// Sanctum's sliding door with a thump, and the party goes in.
 static void Xian_OpenDoorAndLeave(void) {
   struct FieldWork *work = gFieldWork;
 
@@ -673,8 +706,10 @@ static void Xian_OpenDoorAndLeave(void) {
   Event_End();
 }
 
-/// Force on the training tree in Xian makes it jump, and the student cries
-/// out.
+/// Force on the post the kung fu student strikes makes it jump into the air
+/// spinning and drop back, and she cries "Wha-Wha-What happened? The tree
+/// jumped on its own!" Each time after that: "...It jumped again... I am too
+/// tired..."
 static void Xian_StrikeTrainingTreeWithForce(void) {
   TaskFunc rotate;
 
@@ -707,9 +742,10 @@ static void Xian_StrikeTrainingTreeWithForce(void) {
   Event_End();
 }
 
-/// Raised in Xian when the leader has stood in the water carrier's way for two
-/// seconds.
-static void Xian_MoveAsideForWaterCarrier(void) {
+/// Standing in the water carrier's way at the west end of her round for two
+/// seconds makes her angry: she marches back to the pool with Isaac before
+/// her, he winces, and she starts her round again.
+static void Xian_WaterCarrierStartsRoundAgain(void) {
   Event_Start();
   Actor_SetMovementTypeById(ACTOR_WOMAN_CARRYING_WATER, MOVEMENT_TYPE_STAND);
   Actor_Get(ACTOR_WOMAN_CARRYING_WATER)->update = 0;
@@ -737,8 +773,8 @@ static void Xian_MoveAsideForWaterCarrier(void) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gXian_Triggers; }
 
-/// Queues and plays SE_AMBIENT_WIND and sets up the village as the story and
-/// this visit left it.
+/// Plays the village's wind and sets up the village as the story and this
+/// visit left it.
 s32 Scene_Initialize(void) {
   struct Actor *actor;
   u32 crateIndex;
@@ -818,8 +854,9 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-/// The water carrier's round: from (280, 232) east to (424, 232), up to
-/// (424, 216) and back, pausing at each end.
+/// The water carrier's round: from the pool at the street's west end, cell
+/// (17, 14), east to cell (26, 14), up to the east house's door and back,
+/// pausing at each end.
 s32 gXian_WaterCarrierRoute[] = {
     SC_SPEED(0.4),
     SC_ACCELERATION(0.1),
@@ -850,7 +887,7 @@ s32 gXian_WaterCarrierRoute[] = {
     SC_END,
 };
 
-/// The struck tree jumps 32 pixels and drops back.
+/// The struck post jumps 32 pixels into the air and drops back.
 s32 gXian_TrainingTreeJump[] = {
     SC_SET(SW_SNAP, 0),
     SC_SPEED(3),
@@ -986,18 +1023,18 @@ struct ActorPlacement gXian_ActorPlacements[] = {
 };
 
 struct Trigger gXian_Triggers[] = {
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(Xian_OpenDoorAndLeave) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(Xian_OpenDoorAndLeave) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(Xian_OpenDoorAndLeave) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(Xian_OpenDoorAndLeave) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT(Xian_OpenDoorAndLeave) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(Xian_OpenDoorAndLeave) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(Xian_OpenDoorAndLeave) },
-    { TRIGGER_EXIT, 8, CONDITION_ALWAYS, XIAN_TO_WORLD_MAP },
-    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 20, FLAG_XIAN_SPILLED_WATER_FROZEN, EVENT(Xian_JumpOverSpilledWater) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 21, FLAG_XIAN_SPILLED_WATER_FROZEN, EVENT(Xian_JumpOverSpilledWater) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 2, FLAG_XIAN_SPILLED_WATER_FROZEN, EVENT(Xian_JumpOverSpilledWater) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 3, FLAG_XIAN_SPILLED_WATER_FROZEN, EVENT(Xian_JumpOverSpilledWater) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), XIAN_TO_HOUSE, CONDITION_ALWAYS, EVENT(Xian_OpenDoorAndLeave) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), XIAN_TO_HOUSE_NORTH, CONDITION_ALWAYS, EVENT(Xian_OpenDoorAndLeave) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), XIAN_TO_LACQUER_ROOMS_B_EAST, CONDITION_ALWAYS, EVENT(Xian_OpenDoorAndLeave) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), XIAN_TO_INN, CONDITION_ALWAYS, EVENT(Xian_OpenDoorAndLeave) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), XIAN_TO_WEAPON_AND_ARMOR_SHOP, CONDITION_ALWAYS, EVENT(Xian_OpenDoorAndLeave) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), XIAN_TO_SANCTUM, CONDITION_ALWAYS, EVENT(Xian_OpenDoorAndLeave) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), XIAN_TO_LACQUER_ROOMS_A_FEHS_SCHOOL, CONDITION_ALWAYS, EVENT(Xian_OpenDoorAndLeave) },
+    { TRIGGER_EXIT, XIAN_TO_WORLD_MAP, CONDITION_ALWAYS, XIAN_TO_WORLD_MAP },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_XIAN_WATER_STREET, FLAG_XIAN_SPILLED_WATER_FROZEN, EVENT(Xian_JumpOverSpilledWater) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_XIAN_WATER_STREET_NORTH, FLAG_XIAN_SPILLED_WATER_FROZEN, EVENT(Xian_JumpOverSpilledWater) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), XIAN_TO_HOUSE_NORTH, FLAG_XIAN_SPILLED_WATER_FROZEN, EVENT(Xian_JumpOverSpilledWater) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), XIAN_TO_LACQUER_ROOMS_B_EAST, FLAG_XIAN_SPILLED_WATER_FROZEN, EVENT(Xian_JumpOverSpilledWater) },
     { TRIGGER_TALK, ACTOR_YOUNG_MAN_WELCOMING_TRAVELERS, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianThisIsXianTravelersAreWelcome) },
     { TRIGGER_TALK, ACTOR_WOMAN_ON_YOUNG_WARRIORS, FLAG_XIAN_HEARD_HSU_TRAPPED, EVENT(Xian_AskAboutYoungWarriors) },
     { TRIGGER_TALK, ACTOR_MAN_ON_KINU, FLAG_XIAN_HEARD_HSU_TRAPPED, MSGNO(MsgXianXianIsTheVillageOfKinu) },
@@ -1044,7 +1081,7 @@ struct Trigger gXian_Triggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FEIZHI, CONDITION_ALWAYS, MSGNO(MsgXianWhereAreTheMerchantsNoOne) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), 101, FLAG_XIAN_LUCKY_MEDAL_JAR, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { TRIGGER_TALK, ACTOR_MIST, CONDITION_ALWAYS, EVENT(Xian_MistJoins) },
-    { TRIGGER_RAISED, RAISED_CARRIER_BLOCKED, CONDITION_ALWAYS, EVENT(Xian_MoveAsideForWaterCarrier) },
+    { TRIGGER_RAISED, RAISED_CARRIER_BLOCKED, CONDITION_ALWAYS, EVENT(Xian_WaterCarrierStartsRoundAgain) },
     { TRIGGER_TABLE_END },
 };
 // clang-format on

@@ -9,8 +9,9 @@
 /// - The stormy night of the prologue (FLAG_VALE_STORM), when the villagers
 ///   have gathered in the plaza here. Isaac and Garet come from the river
 ///   (Vale, SceneId_ValePrologue, by VALE_PROLOGUE_TO_VALE_PLAZA), where
-///   Felix has fallen in. Walking up to the villagers (cell behavior 20)
-///   plays ValePlaza_SentToAidElders. Garet's grandfather, the mayor, sends
+///   Felix has fallen in. Walking east toward the villagers gathered by the
+///   Psynergy Stone's pond (cells (10, 47..53)) plays
+///   ValePlaza_SentToAidElders. Garet's grandfather, the mayor, sends
 ///   two strongmen to aid the elders holding the Boulder. Then he sends Isaac
 ///   and Garet back to show Jenna and a strongman whose Psynergy the Psynergy
 ///   Stone has restored the way to the river
@@ -49,27 +50,32 @@
 ///   The hut's owner finds the stone gone, leaving a hole in his roof
 ///   (ValePlaza_PsynergyStoneIsGone), and a door in the north-east opens.
 ///
-/// The Psynergy Stone (an examine trigger on cell behavior 100) restores
-/// the party's PP at every time but the farewell.
+/// Searching the Psynergy Stone, a purple crystal on a rock in the pond in the
+/// middle of the plaza (cell (13, 44)), restores the party's PP at every time
+/// but the farewell.
 ///
-/// The ivy in three places (ACTOR_FIRST_IVY to ACTOR_THIRD_IVY) can be blown
-/// away with Whirlwind, each one's flag keeping it gone.
+/// Three clumps of ivy grow against the cliffs: one behind the shop, hiding
+/// the mouth of a small cave, one at the foot of the same cliff a little east
+/// of it, and one on the cliff behind the inn. Whirlwind blows each away for
+/// good.
 ///
 /// The ways out of the scene:
 ///
-/// - The doors lead into the houses (SceneId_CottageRoomsA) and into the inn
-///   and the forge (SceneId_CottageRoomsB).
-/// - The path west leads to the village (SceneId_Vale) or, on the stormy
-///   night, back to the storm's scene (SceneId_ValePrologue).
-/// - The exit row of cell behavior 11 leads to VALE_PLAZA_TO_CHEST_CAVE, a
-///   small cave with a chest at its far end.
+/// - Six doors lead into three houses and the shop (SceneId_CottageRoomsA),
+///   and into the forge and the inn (SceneId_CottageRoomsB). A seventh, a
+///   doorway in the north-east, opens only once the party is back from Kalay.
+/// - The path off the west edge, at cells (0, 20..21), leads to the rest of
+///   the village (SceneId_Vale) or, on the stormy night, back to the storm's
+///   scene (SceneId_ValePrologue).
+/// - The town gate at the south edge, cells (12..14, 54), leads out to the
+///   World Map once the party has set out.
+/// - Behind the ivy that hides it, the cave's mouth at cell (11, 28) leads into
+///   a small cave with a chest at its far end, which holds a Power Bread.
 ///
 /// The cave is drawn on Goma Cave's map (SceneId_GomaCaveStream,
 /// GOMA_CAVE_STREAM_CHEST_CAVE_FROM_VALE_PLAZA), walled off from the rest of
-/// it, and no other way leads in or out. Behavior 11 lies on one cell,
-/// (11, 28), in every state of the map. That is the cell north of where the
-/// party comes back out (VALE_PLAZA_FROM_CHEST_CAVE, at (186, 474)), so that
-/// way back is the way in.
+/// it, and no other way leads in or out. The party comes back out one cell
+/// south of the mouth (VALE_PLAZA_FROM_CHEST_CAVE, at (186, 474)).
 ///
 /// Three debug entrances are in no entrance table and no exit leads to them:
 ///
@@ -167,14 +173,32 @@ extern u16 gValePlaza_DoorOpens[];
 /// Isaac it is gone.
 #define FLAG_VALE_PSYNERGY_STONE_GONE_TOLD FLAG_AREA_TEMP_06
 
+/// The cells the plaza's triggers answer, besides its doors, whose behavior is
+/// their exit's number.
+enum ValePlazaCellBehavior {
+  /// The town gate at the plaza's south edge, cells (12..14, 54).
+  CELL_BEHAVIOR_VALE_PLAZA_TOWN_GATE = 8,
+  /// The path off the plaza's west edge, cells (0, 20..21).
+  CELL_BEHAVIOR_VALE_PLAZA_WEST_PATH,
+  /// On the stormy night, the line west of the Psynergy Stone's pond where the
+  /// villagers gather, cells (10, 47..53).
+  CELL_BEHAVIOR_VALE_PLAZA_GATHERED_VILLAGERS = 20,
+  /// The Psynergy Stone, cell (13, 44).
+  CELL_BEHAVIOR_VALE_PLAZA_PSYNERGY_STONE = 100
+};
+
 /// Each actor placement table numbers its own rows from ACTOR_FIRST_PLACED,
 /// Garet keeping his own party slot. The same people stand in several tables
 /// under other numbers. The three ivy actors come first in every table.
 enum ValePlazaActorId {
   /// Ivy, drawn half as tall again. It is the sprite of the ivy that holds the
   /// stump in goma_cave_entrance.c ("It looks like it's trapped in the ivy.").
+  /// This clump grows on the cliff behind the shop and hides the small cave's
+  /// mouth.
   ACTOR_FIRST_IVY = ACTOR_FIRST_PLACED,
+  /// At the foot of the cliff behind the shop, a little east of the first.
   ACTOR_SECOND_IVY,
+  /// On the cliff behind the inn, by its chimney.
   ACTOR_THIRD_IVY
 };
 
@@ -406,7 +430,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// give it (field_sequence_triggers.c).
 #define PP_RESTORED_BY_STONE 999
 
-/// In Vale, searching the Psynergy Stone restores the party's PP.
+/// Searching the Psynergy Stone in the middle of Vale's plaza restores the
+/// party's PP.
 static void ValePlaza_UsePsynergyStone(void) {
   Event_Start();
   FieldMessage_Show(MsgValeCheckedThePsynergyStone, 1);
@@ -437,8 +462,10 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gValePlaza_Triggers;
 }
 
-/// A burly grey-haired man asks whether Isaac meditates each day. He means on
-/// Mt. Aleph, and he stands in Vale on the day the story begins.
+/// A burly grey-haired man standing on the shore in front of the Psynergy
+/// Stone asks whether
+/// Isaac meditates each day. He means on Mt. Aleph, and he stands there on the
+/// day the story begins.
 static void ValePlaza_AskAboutMeditation(void) {
   Event_Start();
   Event_SetMessageId(MsgValeMeditateOnMtAlephDaily);
@@ -450,8 +477,8 @@ static void ValePlaza_AskAboutMeditation(void) {
   Event_End();
 }
 
-/// A woman in a green dress recalls the difficult time three years ago. She
-/// asks Isaac about it, in Vale on the day the story begins.
+/// A woman in a green dress, by the door of the inn, recalls the difficult time
+/// three years ago and asks Isaac about it, on the day the story begins.
 static void ValePlaza_RecallThreeYearsAgo(void) {
   Event_Start();
   Event_SetMessageId(MsgValeADifficultTimeThreeYears);
@@ -463,7 +490,8 @@ static void ValePlaza_RecallThreeYearsAgo(void) {
   Event_End();
 }
 
-/// A small boy asks whether the travelers went to meet the mayor.
+/// A small boy playing below the shop asks whether the travelers went to meet
+/// the mayor.
 static void ValePlaza_AskAboutTheTravelers(void) {
   Event_Start();
   Event_SetMessageId(MsgValeDidTheTravelersMeetThe);
@@ -479,7 +507,8 @@ static void ValePlaza_AskAboutTheTravelers(void) {
 /// this many frames.
 #define TREMOR_STEP_FRAMES 10
 
-/// In Vale before the party sets out, a strongman shows Isaac his Psynergy and
+/// A strongman south-east of the Psynergy Stone's pond, near the town gate,
+/// shows Isaac his Psynergy and
 /// shakes the ground.
 static void ValePlaza_DemonstratePsynergy(void) {
   u32 frame;
@@ -657,7 +686,8 @@ static void ValePlaza_BoyLiftsSmallRock(void) {
   Event_End();
 }
 
-/// A little girl tells Isaac which way Jenna went.
+/// On the stormy night, a little girl in the crowd tells Isaac which way Jenna
+/// went.
 static void ValePlaza_TalkAboutHelping(void) {
   Event_Start();
   Actor_FaceEachOther(ACTOR_STORM_GIRL_WHO_SAW_JENNA, ACTOR_PARTY_LEADER, 10);
@@ -687,7 +717,8 @@ static void ValePlaza_WelcomeIsaacHome(void) {
   Event_End();
 }
 
-/// The old man searching the ground says the Psynergy Stone is gone.
+/// Back from Kalay, the hut's owner, searching the ground, says the Psynergy
+/// Stone that fell on his hut is gone.
 static void ValePlaza_PsynergyStoneIsGone(void) {
   struct Actor *actor = Actor_Get(ACTOR_AFTER_KALAY_HUT_OWNER);
   Event_Start();
@@ -726,19 +757,20 @@ static inline void ValePlaza_OpenDoorAndWalkThrough(s32 cellX, s32 cellZ, s32 x,
   Actor_WalkTo(ACTOR_PARTY_LEADER, x, z);
 }
 
-// Vale's doors here: walking north into cell behavior n opens door n and
-// takes exit n (Vale_RequestBackdropExit), into the houses
+// The plaza's doors: walking north into a door's cell opens it and takes the
+// exit of the cell's number (Vale_RequestBackdropExit), into the houses
 // (SceneId_CottageRoomsA) or the inn and the forge (SceneId_CottageRoomsB).
 
-/// In Vale, opens the northwest door, into a house (SceneId_CottageRoomsA,
-/// COTTAGE_ROOMS_A_FROM_VALE_PLAZA_EAST).
+/// Isaac opens the door of the house at the top of the plaza (cell (15, 18))
+/// and walks in (SceneId_CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_EAST).
 static void ValePlaza_OpenNorthwestDoor(void) {
   ValePlaza_OpenDoorAndWalkThrough(44, 7, 248, 279);
   Vale_RequestBackdropExit(VALE_PLAZA_TO_COTTAGE_ROOMS_A_EAST);
 }
 
-/// In Vale back from Kalay, opens the northeast doorway in two stages and walks
-/// into the second forge room (SceneId_CottageRoomsB,
+/// Back from Kalay, Isaac opens the doorway in the north-east of the plaza
+/// (cells (21..22, 19)) with a thump and walks into a room of sacks and crates
+/// with weapons on its wall (SceneId_CottageRoomsB,
 /// COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHEAST).
 static void ValePlaza_OpenNortheastDoor(void) {
   Sound_Play(SE_THUMP);
@@ -752,50 +784,55 @@ static void ValePlaza_OpenNortheastDoor(void) {
   Vale_RequestBackdropExit(VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTH);
 }
 
-/// In Vale, enters through the western door of the middle row of houses
-/// (SceneId_CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH).
+/// Isaac opens the door of the western house of the middle row (cell
+/// (14, 26)) and walks in (SceneId_CottageRoomsA,
+/// COTTAGE_ROOMS_A_FROM_VALE_PLAZA_NORTH).
 static void ValePlaza_OpenMiddleWestDoor(void) {
   ValePlaza_OpenDoorAndWalkThrough(43, 15, 230, 407);
   Vale_RequestBackdropExit(VALE_PLAZA_TO_COTTAGE_ROOMS_A_NORTH);
 }
 
-/// In Vale, enters through the eastern door of the middle row of houses
-/// (SceneId_CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH).
+/// Isaac opens the door of the eastern house of the middle row (cell
+/// (23, 27)) and walks in (SceneId_CottageRoomsA,
+/// COTTAGE_ROOMS_A_FROM_VALE_PLAZA_SOUTH).
 static void ValePlaza_OpenMiddleEastDoor(void) {
   ValePlaza_OpenDoorAndWalkThrough(52, 18, 374, 419);
   Vale_RequestBackdropExit(VALE_PLAZA_TO_COTTAGE_ROOMS_A_SOUTH);
 }
 
-/// In Vale, opens the southwest door, into Vale's shops
-/// (SceneId_CottageRoomsA, COTTAGE_ROOMS_A_FROM_VALE_PLAZA_WEST).
+/// Isaac opens the door of the shop, under its sign of a potion and a sword
+/// (cell (12, 35)), and walks in (SceneId_CottageRoomsA,
+/// COTTAGE_ROOMS_A_FROM_VALE_PLAZA_WEST).
 static void ValePlaza_OpenSouthwestDoor(void) {
   ValePlaza_OpenDoorAndWalkThrough(41, 32, 200, 546);
   Vale_RequestBackdropExit(VALE_PLAZA_TO_COTTAGE_ROOMS_A_WEST);
 }
 
-/// In Vale, opens the door at the west edge, into the forge
-/// (SceneId_CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHWEST).
+/// Isaac opens the door of the forge at the plaza's west edge (cell (6, 39))
+/// and walks in (SceneId_CottageRoomsB,
+/// COTTAGE_ROOMS_B_FROM_VALE_PLAZA_NORTHWEST).
 static void ValePlaza_OpenWestEdgeDoor(void) {
   ValePlaza_OpenDoorAndWalkThrough(35, 36, 102, 611);
   Vale_RequestBackdropExit(VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTHWEST);
 }
 
-/// In Vale, opens the southeast door, into the inn
+/// Isaac opens the door of the inn (cell (22, 42)) and walks in
 /// (SceneId_CottageRoomsB, COTTAGE_ROOMS_B_FROM_VALE_PLAZA_WEST).
 static void ValePlaza_OpenSoutheastDoor(void) {
   ValePlaza_OpenDoorAndWalkThrough(51, 39, 358, 670);
   Vale_RequestBackdropExit(VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTH);
 }
 
-/// In Vale on the stormy night, leaves by the west passage, back to the storm's
-/// scene.
+/// On the stormy night, Isaac leaves the plaza by the path off its west edge
+/// (cells (0, 20..21)), back to the river and the rest of the village.
 static void ValePlaza_LeaveThroughWestPassage(void) {
   Sound_Play(SE_MAP_EXIT);
   Vale_RequestBackdropExit(VALE_PLAZA_TO_VALE);
 }
 
-/// In Vale, leaves by the town gate for the World Map, once the party has
-/// begun its journey.
+/// Walking out through the town gate at the plaza's south edge (cells (12..14,
+/// 54)) leads to the World Map, once the party has set out on its journey.
+/// Until then the gate does not lead out.
 static void ValePlaza_LeaveThroughTownGate(void) {
   if (GameFlag_Get(FLAG_VALE_PARTY_LEFT) != 0) {
     Sound_Play(SE_MAP_EXIT);
@@ -803,17 +840,19 @@ static void ValePlaza_LeaveThroughTownGate(void) {
   }
 }
 
-/// In Vale, Whirlwind blows ACTOR_FIRST_IVY away.
+/// Whirlwind on the ivy on the cliff behind the shop blows it away, uncovering
+/// the mouth of the small cave with the Power Bread.
 static void ValePlaza_BlowAwayFirstIvy(void) {
   GameFlag_Set((FLAG_VALE_FIRST_IVY_BLOWN_AWAY));
 }
 
-/// In Vale, Whirlwind blows ACTOR_SECOND_IVY away.
+/// Whirlwind on the ivy at the foot of the cliff behind the shop, east of the
+/// cave's ivy, blows it away.
 static void ValePlaza_BlowAwaySecondIvy(void) {
   GameFlag_Set((FLAG_VALE_SECOND_IVY_BLOWN_AWAY));
 }
 
-/// In Vale, Whirlwind blows ACTOR_THIRD_IVY away.
+/// Whirlwind on the ivy on the cliff behind the inn blows it away.
 static void ValePlaza_BlowAwayThirdIvy(void) {
   GameFlag_Set((FLAG_VALE_THIRD_IVY_BLOWN_AWAY));
 }
@@ -931,7 +970,9 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// The mayor sends help to the elders and the boys back to the river.
+/// On the stormy night, as Isaac and Garet walk toward the villagers gathered
+/// by the Psynergy Stone's pond (cells (10, 47..53)), Garet's grandfather, the
+/// mayor, sends help to the elders and the boys back to the river.
 static void ValePlaza_SentToAidElders(void) {
   s32 skipReply = 0;
 
@@ -2414,19 +2455,19 @@ struct Trigger gValePlaza_Triggers[] = {
     { TRIGGER_TALK, ACTOR_STRONGMAN_SHOWING_PSYNERGY, CONDITION_ALWAYS, EVENT(ValePlaza_DemonstratePsynergy) },
     { TRIGGER_TALK, ACTOR_STRONGMAN_WALK_TO_RECOVER, CONDITION_ALWAYS, MSGNO(MsgValeWalkToRecoverPsynergy) },
     { TRIGGER_TALK, ACTOR_HUT_OWNER, CONDITION_ALWAYS, MSGNO(MsgValeFoodStoredForWinter) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(ValePlaza_OpenNorthwestDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(ValePlaza_OpenMiddleWestDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(ValePlaza_OpenMiddleEastDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT(ValePlaza_OpenSouthwestDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(ValePlaza_OpenWestEdgeDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(ValePlaza_OpenSoutheastDoor) },
-    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(ValePlaza_LeaveThroughTownGate) },
-    { TRIGGER_EXIT, 9, CONDITION_ALWAYS, VALE_PLAZA_TO_VALE },
-    { TRIGGER_EXIT, 11, CONDITION_ALWAYS, VALE_PLAZA_TO_CHEST_CAVE },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), VALE_PLAZA_TO_COTTAGE_ROOMS_A_EAST, CONDITION_ALWAYS, EVENT(ValePlaza_OpenNorthwestDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), VALE_PLAZA_TO_COTTAGE_ROOMS_A_NORTH, CONDITION_ALWAYS, EVENT(ValePlaza_OpenMiddleWestDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), VALE_PLAZA_TO_COTTAGE_ROOMS_A_SOUTH, CONDITION_ALWAYS, EVENT(ValePlaza_OpenMiddleEastDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), VALE_PLAZA_TO_COTTAGE_ROOMS_A_WEST, CONDITION_ALWAYS, EVENT(ValePlaza_OpenSouthwestDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTHWEST, CONDITION_ALWAYS, EVENT(ValePlaza_OpenWestEdgeDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTH, CONDITION_ALWAYS, EVENT(ValePlaza_OpenSoutheastDoor) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_PLAZA_TOWN_GATE, CONDITION_ALWAYS, EVENT(ValePlaza_LeaveThroughTownGate) },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_VALE_PLAZA_WEST_PATH, CONDITION_ALWAYS, VALE_PLAZA_TO_VALE },
+    { TRIGGER_EXIT, VALE_PLAZA_TO_CHEST_CAVE, CONDITION_ALWAYS, VALE_PLAZA_TO_CHEST_CAVE },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY, (FLAG_VALE_FIRST_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwayFirstIvy) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_SECOND_IVY, (FLAG_VALE_SECOND_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwaySecondIvy) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_THIRD_IVY, (FLAG_VALE_THIRD_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwayThirdIvy) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 100, CONDITION_ALWAYS, EVENT(ValePlaza_UsePsynergyStone) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VALE_PLAZA_PSYNERGY_STONE, CONDITION_ALWAYS, EVENT(ValePlaza_UsePsynergyStone) },
     { TRIGGER_TABLE_END },
 };
 
@@ -2438,15 +2479,15 @@ struct Trigger gValePlaza_StormTriggers[] = {
     { TRIGGER_TALK, ACTOR_STORM_ROCK_LIFTING_BOY, CONDITION_ALWAYS, EVENT(ValePlaza_BoyLiftsSmallRock) },
     { TRIGGER_TALK, ACTOR_STORM_GIRL_WHO_SAW_JENNA, CONDITION_ALWAYS, EVENT(ValePlaza_TalkAboutHelping) },
     { TRIGGER_TALK, ACTOR_STORM_GARETS_GRANDFATHER, CONDITION_ALWAYS, MSGNO(MsgValeRaceAgainstTime) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(ValePlaza_OpenNorthwestDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(ValePlaza_OpenMiddleWestDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(ValePlaza_OpenMiddleEastDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT(ValePlaza_OpenSouthwestDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(ValePlaza_OpenWestEdgeDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(ValePlaza_OpenSoutheastDoor) },
-    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(ValePlaza_LeaveThroughWestPassage) },
-    { TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(ValePlaza_SentToAidElders) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 100, CONDITION_ALWAYS, EVENT(ValePlaza_UsePsynergyStone) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), VALE_PLAZA_TO_COTTAGE_ROOMS_A_EAST, CONDITION_ALWAYS, EVENT(ValePlaza_OpenNorthwestDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), VALE_PLAZA_TO_COTTAGE_ROOMS_A_NORTH, CONDITION_ALWAYS, EVENT(ValePlaza_OpenMiddleWestDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), VALE_PLAZA_TO_COTTAGE_ROOMS_A_SOUTH, CONDITION_ALWAYS, EVENT(ValePlaza_OpenMiddleEastDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), VALE_PLAZA_TO_COTTAGE_ROOMS_A_WEST, CONDITION_ALWAYS, EVENT(ValePlaza_OpenSouthwestDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTHWEST, CONDITION_ALWAYS, EVENT(ValePlaza_OpenWestEdgeDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTH, CONDITION_ALWAYS, EVENT(ValePlaza_OpenSoutheastDoor) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_PLAZA_WEST_PATH, CONDITION_ALWAYS, EVENT(ValePlaza_LeaveThroughWestPassage) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_PLAZA_GATHERED_VILLAGERS, CONDITION_ALWAYS, EVENT(ValePlaza_SentToAidElders) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VALE_PLAZA_PSYNERGY_STONE, CONDITION_ALWAYS, EVENT(ValePlaza_UsePsynergyStone) },
     { TRIGGER_TABLE_END },
 };
 
@@ -2477,19 +2518,19 @@ struct Trigger gValePlaza_TriggersAfterLeaving[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_SHOWING_PSYNERGY, CONDITION_ALWAYS, MSGNO(MsgValeComeBackAlive) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_STRONGMAN_WALK_TO_RECOVER, CONDITION_ALWAYS, MSGNO(MsgValeRecoverPsynergyByWalking) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HUT_OWNER, CONDITION_ALWAYS, MSGNO(MsgValeStonesReplenishPsynergy) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(ValePlaza_OpenNorthwestDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(ValePlaza_OpenMiddleWestDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(ValePlaza_OpenMiddleEastDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT(ValePlaza_OpenSouthwestDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(ValePlaza_OpenWestEdgeDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(ValePlaza_OpenSoutheastDoor) },
-    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(ValePlaza_LeaveThroughTownGate) },
-    { TRIGGER_EXIT, 9, CONDITION_ALWAYS, VALE_PLAZA_TO_VALE },
-    { TRIGGER_EXIT, 11, CONDITION_ALWAYS, VALE_PLAZA_TO_CHEST_CAVE },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), VALE_PLAZA_TO_COTTAGE_ROOMS_A_EAST, CONDITION_ALWAYS, EVENT(ValePlaza_OpenNorthwestDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), VALE_PLAZA_TO_COTTAGE_ROOMS_A_NORTH, CONDITION_ALWAYS, EVENT(ValePlaza_OpenMiddleWestDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), VALE_PLAZA_TO_COTTAGE_ROOMS_A_SOUTH, CONDITION_ALWAYS, EVENT(ValePlaza_OpenMiddleEastDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), VALE_PLAZA_TO_COTTAGE_ROOMS_A_WEST, CONDITION_ALWAYS, EVENT(ValePlaza_OpenSouthwestDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTHWEST, CONDITION_ALWAYS, EVENT(ValePlaza_OpenWestEdgeDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTH, CONDITION_ALWAYS, EVENT(ValePlaza_OpenSoutheastDoor) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_PLAZA_TOWN_GATE, CONDITION_ALWAYS, EVENT(ValePlaza_LeaveThroughTownGate) },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_VALE_PLAZA_WEST_PATH, CONDITION_ALWAYS, VALE_PLAZA_TO_VALE },
+    { TRIGGER_EXIT, VALE_PLAZA_TO_CHEST_CAVE, CONDITION_ALWAYS, VALE_PLAZA_TO_CHEST_CAVE },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY, (FLAG_VALE_FIRST_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwayFirstIvy) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_SECOND_IVY, (FLAG_VALE_SECOND_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwaySecondIvy) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_THIRD_IVY, (FLAG_VALE_THIRD_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwayThirdIvy) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 100, CONDITION_ALWAYS, EVENT(ValePlaza_UsePsynergyStone) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VALE_PLAZA_PSYNERGY_STONE, CONDITION_ALWAYS, EVENT(ValePlaza_UsePsynergyStone) },
     { TRIGGER_TABLE_END },
 };
 
@@ -2517,20 +2558,20 @@ struct Trigger gValePlaza_TriggersAfterKalay[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_AFTER_KALAY_STRONGMAN_ON_CRACK, CONDITION_ALWAYS, MSGNO(MsgValeCrackWidening) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_AFTER_KALAY_HUT_OWNER, FLAG_VALE_PSYNERGY_STONE_GONE_TOLD, EVENT(ValePlaza_PsynergyStoneIsGone) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_AFTER_KALAY_HUT_OWNER, CONDITION_ALWAYS, MSGNO(MsgValeEruptionTooMuchForPeople) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(ValePlaza_OpenNorthwestDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(ValePlaza_OpenNortheastDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(ValePlaza_OpenMiddleWestDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(ValePlaza_OpenMiddleEastDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT(ValePlaza_OpenSouthwestDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(ValePlaza_OpenWestEdgeDoor) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(ValePlaza_OpenSoutheastDoor) },
-    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(ValePlaza_LeaveThroughTownGate) },
-    { TRIGGER_EXIT, 9, CONDITION_ALWAYS, VALE_PLAZA_TO_VALE },
-    { TRIGGER_EXIT, 11, CONDITION_ALWAYS, VALE_PLAZA_TO_CHEST_CAVE },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), VALE_PLAZA_TO_COTTAGE_ROOMS_A_EAST, CONDITION_ALWAYS, EVENT(ValePlaza_OpenNorthwestDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTH, CONDITION_ALWAYS, EVENT(ValePlaza_OpenNortheastDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), VALE_PLAZA_TO_COTTAGE_ROOMS_A_NORTH, CONDITION_ALWAYS, EVENT(ValePlaza_OpenMiddleWestDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), VALE_PLAZA_TO_COTTAGE_ROOMS_A_SOUTH, CONDITION_ALWAYS, EVENT(ValePlaza_OpenMiddleEastDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), VALE_PLAZA_TO_COTTAGE_ROOMS_A_WEST, CONDITION_ALWAYS, EVENT(ValePlaza_OpenSouthwestDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), VALE_PLAZA_TO_COTTAGE_ROOMS_B_NORTHWEST, CONDITION_ALWAYS, EVENT(ValePlaza_OpenWestEdgeDoor) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), VALE_PLAZA_TO_COTTAGE_ROOMS_B_SOUTH, CONDITION_ALWAYS, EVENT(ValePlaza_OpenSoutheastDoor) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VALE_PLAZA_TOWN_GATE, CONDITION_ALWAYS, EVENT(ValePlaza_LeaveThroughTownGate) },
+    { TRIGGER_EXIT, CELL_BEHAVIOR_VALE_PLAZA_WEST_PATH, CONDITION_ALWAYS, VALE_PLAZA_TO_VALE },
+    { TRIGGER_EXIT, VALE_PLAZA_TO_CHEST_CAVE, CONDITION_ALWAYS, VALE_PLAZA_TO_CHEST_CAVE },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_IVY, (FLAG_VALE_FIRST_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwayFirstIvy) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_SECOND_IVY, (FLAG_VALE_SECOND_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwaySecondIvy) },
     { PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_THIRD_IVY, (FLAG_VALE_THIRD_IVY_BLOWN_AWAY), EVENT(ValePlaza_BlowAwayThirdIvy) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 100, CONDITION_ALWAYS, EVENT(ValePlaza_UsePsynergyStone) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_VALE_PLAZA_PSYNERGY_STONE, CONDITION_ALWAYS, EVENT(ValePlaza_UsePsynergyStone) },
     { TRIGGER_TABLE_END },
 };
 

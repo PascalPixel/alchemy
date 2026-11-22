@@ -34,16 +34,27 @@
 /// it out: it leaps onto the cliff top above the cave mouth beyond the tree.
 /// It joins only in the later scene.
 ///
-/// The well rumbles with water and a wooden box holds a Nut.
+/// The well in the south-west rumbles with water, and the wooden box beside
+/// the mayor's house in the north-west holds a Nut.
+///
+/// The town lies on terraces. Its paths leave north, past the bell tower, and
+/// south, under the rope bridge in the south-east. The mayor's house is the
+/// big house in the north-west, with the jail's iron door in the cliff below
+/// it and the Sanctum's double door further south in the same cliff. The inn
+/// stands in the middle, a ladder against its west wall up to the hole a
+/// fiery rock burnt in its roof. East of it are a house, the weapon and armor
+/// shop's door in the cliff under the bell tower, the item shop's door in the
+/// cliff further east, and the house by the rope bridge. Six gravestones
+/// stand south of the inn, where the dog sits.
 ///
 /// The doors open with an animation (gVault_*DoorCells). They lead into the
 /// houses, shops and inn (SceneId_LogRoomsA), the jail (SceneId_StoneRooms)
 /// and the Vault Sanctum (VAULT_TO_SANCTUM). The cell behaviors the events
 /// answer are enum VaultCellBehavior (vault.h).
 ///
-/// The rope bridge in the town's south-east spans a path that runs under it.
-/// Stepping onto either end of it or off its west end switches the cells
-/// beneath it between the deck and the path (shared/vault_toggle.c).
+/// The rope bridge in the town's south-east spans the path that runs south
+/// under it. Stepping onto either end of it or off its west end switches the
+/// cells beneath it between the deck and the path (shared/vault_toggle.c).
 
 #include "scene/vault.h"
 #include "ability_ids.h"
@@ -98,37 +109,42 @@ enum { VAULT_DRIFT_RATE = toFIXED(1) / 10 };
 
 /// The townspeople, named by what they say.
 enum {
-  /// A young man.
+  /// A young man with brown hair outside the house in the east, by the rope
+  /// bridge. "Welcome to Vault, the town at the heart of Angara."
   ACTOR_WELCOMING_YOUNG_MAN = 8,
-  /// A woman with fair hair who asks about the eruption.
+  /// A woman with fair hair who asks about the eruption, east of the six
+  /// gravestones.
   ACTOR_ERUPTION_WITNESS = 9,
-  /// A woman.
+  /// A woman in a green dress who wanders north of the inn.
   ACTOR_WOMAN_ON_STEALING = 11,
-  /// A burly grey-haired man.
+  /// A burly grey-haired man up on the bell tower, beside the bell.
   ACTOR_VILLAGER_ON_HAMMET = 10,
-  /// An old man with a cane.
+  /// An old man with a cane, east of the jail's door.
   ACTOR_OLD_MAN_ON_HAMMETS_SERVANT = 12,
-  /// An old woman.
+  /// An old woman who wanders east of the inn's door.
   ACTOR_OLD_WOMAN_ON_THE_TRAVELERS = 13,
   /// The two children who walk round the well, half a circle apart
   /// (gVault_BoyRoundTheWellRoute, gVault_GirlRoundTheWellRoute).
   ACTOR_BOY_ROUND_THE_WELL = 14,
   ACTOR_GIRL_ROUND_THE_WELL = 15,
-  /// A stocky, muscular man.
+  /// A stocky, muscular man who wanders near the west end of the rope bridge.
   ACTOR_STRONGMAN_ON_WATCH = 16,
   /// One of the three thieves, drawn with long purple hair as in the loft,
-  /// standing outside until the party confronts them
+  /// standing beside the Sanctum's door until the party confronts them
   /// (FLAG_VAULT_THIEVES_ATTACKED).
   ACTOR_THIEF_IN_TOWN = 17,
-  /// A bearded man in a long robe.
+  /// A bearded man in a long robe beside the Sanctum's door.
   ACTOR_STRANDED_TRAVELER = 18,
+  /// The dog that sits among the six gravestones.
   ACTOR_VAULT_DOG = 19,
-  /// A young man who fixes the roof himself, and is later found tied up in the
-  /// inn's loft.
+  /// A young man at the foot of the ladder against the inn's west wall, who
+  /// is meant to fix the roof and is later found tied up in the inn's loft.
   ACTOR_YOUNG_MAN_FIXING_THE_ROOF = 20,
-  /// A woman who walks about looking for ACTOR_YOUNG_MAN_FIXING_THE_ROOF.
+  /// A woman with fair hair who paces in front of the inn's west end, looking
+  /// for ACTOR_YOUNG_MAN_FIXING_THE_ROOF.
   ACTOR_WOMAN_WANTING_THE_ROOF_FIXED = 21,
-  /// Sap, a Venus Djinni, hiding until the bell calls it.
+  /// Sap, a Venus Djinni, hiding in the tree east of the bell tower until the
+  /// bell calls it.
   ACTOR_SAP = 23
 };
 
@@ -141,9 +157,9 @@ static void Vault_FaceActorAndWait(s32 actorId, s32 other, s32 delay);
 
 #include "shared/vault_nearby.c"
 
-/// The woman wanting the roof fixed walks about looking for the man who should
-/// be fixing it and stops to face the leader when near, or while a conversation
-/// holds the field.
+/// The woman wanting the roof fixed paces in front of the inn looking for the
+/// man who should be fixing it, and stops when Isaac comes up in front of her,
+/// or while he talks to someone or reads a mind.
 static UNREAD_RESULT Vault_UpdateWomanWantingRoofFixed(struct Actor *woman) {
   struct WindowWork *window = (struct WindowWork *)gWindowWork[0];
   struct FieldWork *field = gFieldWork;
@@ -184,8 +200,14 @@ static int Vault_GetIvanVenusDjinnCount(void) {
 
 #include "shared/vault_djinn.c"
 
-/// Leaving Vault by either gate, Ivan stays behind if he is helping search
-/// for the rod and the thieves are free.
+/// While Ivan is helping look for the rod, leaving Vault by the path north,
+/// past the bell tower (cells (13, 7) and (14, 7)), or the path south, under
+/// the rope bridge (cells (24, 30) and (25, 30)), Ivan steps out of the party
+/// and stays behind. "Are you leaving? I'm still worried about the rod, so
+/// I'll just wait here until you two return."
+///
+/// Before he joins, or once the thieves are jailed, the party simply leaves.
+/// If Ivan holds Flint, he gives it back to Isaac first.
 static void Vault_IvanStaysBehind(void) {
   struct Actor *actor;
   struct FieldWork *work;
@@ -235,7 +257,8 @@ static void Vault_IvanStaysBehind(void) {
   Event_End();
 }
 
-/// In Vault, Isaac peers into the well and hears water rumbling down there.
+/// Isaac peers into the well in the south-west of Vault (cells (7, 24) to
+/// (8, 25)): "You can hear water rumbling down there."
 static void Vault_PeerIntoWell(void) {
   Event_Start();
   FieldMessage_Show(MsgFieldPeeredWell, 1);
@@ -257,8 +280,9 @@ static inline void Vault_AskYesNoAndShowAnswer(s32 speaker) {
   Event_ShowMessage(speaker, 0);
 }
 
-/// In Vault while the rod is missing, a townsperson asks about the eruption.
-/// "Wasn't the eruption of Mt. Aleph incredible?"
+/// While the rod is missing, the fair-haired woman east of the six gravestones
+/// asks, "Wasn't the eruption of Mt. Aleph incredible?", and answers Isaac's
+/// yes or no.
 static void Vault_AskAboutEruption(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultWasntEruptionMtAlephIncredible);
@@ -272,8 +296,9 @@ static void Vault_AskAboutEruption(void) {
   Event_End();
 }
 
-/// In Vault while the rod is missing, a townsperson says travelers left town
-/// in a big hurry, and asks whether the party saw them.
+/// While the rod is missing, the old woman east of the inn's door says some
+/// travelers left in a big hurry, as if on the run, and asks whether the party
+/// saw them coming in.
 static void Vault_AskAboutFleeingTravelers(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultThoseTravelersLeftInBig);
@@ -284,8 +309,8 @@ static void Vault_AskAboutFleeingTravelers(void) {
   Event_End();
 }
 
-/// In Vault, one of the thieves loitering in town asks whether the party
-/// accuses them.
+/// The purple-haired thief standing beside the Sanctum's door asks, "Are you
+/// accusing us of stealing Hammet's treasured Shaman's Rod?"
 static void Vault_ThiefDeniesStealing(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultAccusingUsStealingHammetsTreasured);
@@ -294,7 +319,8 @@ static void Vault_ThiefDeniesStealing(void) {
   Event_End();
 }
 
-/// A stranded traveler asks whether the party is off on an adventure.
+/// While the rod is missing, the robed traveler beside the Sanctum's door
+/// asks, "Hmm, off on an adventure, are you?"
 static void Vault_AskAboutAdventure(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultOffOnAdventure);
@@ -303,8 +329,8 @@ static void Vault_AskAboutAdventure(void) {
   Event_End();
 }
 
-/// A townsperson says some folks got robbed in the chaos of the eruption.
-/// She says it while the rod is missing.
+/// While the rod is missing, the woman in green north of the inn stops and
+/// says some folks got robbed during the chaos of the eruption.
 static void Vault_TalkOfStealingInEruption(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultGuessFolksGot);
@@ -312,8 +338,8 @@ static void Vault_TalkOfStealingInEruption(void) {
   Event_End();
 }
 
-/// In Vault while the rod is missing, the strongman on watch speaks. Nobody
-/// steals on his watch, so the thieves must be from out of town.
+/// While the rod is missing, the strongman by the rope bridge stops and says
+/// nobody steals on his watch, so the thieves must be from out of town.
 static void Vault_StrongmanOnWatchSuspectsOutsiders(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultNobodysStealingAnything);
@@ -321,7 +347,8 @@ static void Vault_StrongmanOnWatchSuspectsOutsiders(void) {
   Event_End();
 }
 
-/// In Vault while the rod is missing, the dog stops and barks.
+/// While the rod is missing, the dog among the six gravestones turns to Isaac
+/// and barks. "Ruff! Rrruff!!"
 static void Vault_TalkToDog(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultRuffRrruff);
@@ -331,7 +358,7 @@ static void Vault_TalkToDog(void) {
   Event_End();
 }
 
-/// In Vault while the rod is missing, the boy round the well stops. Poor Ivan
+/// While the rod is missing, the boy walking round the well stops: poor Ivan
 /// was left at the mayor's to look for the stolen rod.
 static void Vault_PityIvan(void) {
   struct Actor *actor = Actor_Get(ACTOR_BOY_ROUND_THE_WELL);
@@ -349,8 +376,8 @@ static void Vault_PityIvan(void) {
   actor->timer &= VILLAGER_IS_BOY;
 }
 
-/// In Vault while the rod is missing, the girl round the well stops. Hammet's
-/// caravan left as soon as the eruption stopped.
+/// While the rod is missing, the girl walking round the well stops: Master
+/// Hammet's caravan left town as soon as the eruption stopped.
 static void Vault_TalkOfHammetsCaravan(void) {
   struct Actor *actor = Actor_Get(ACTOR_GIRL_ROUND_THE_WELL);
   s16 savedFacing = actor->facing;
@@ -367,8 +394,9 @@ static void Vault_TalkOfHammetsCaravan(void) {
   actor->timer &= VILLAGER_IS_BOY;
 }
 
-/// In Vault, once the suspects' minds are read, the woman wanting the roof
-/// fixed speaks.
+/// Once the suspects' minds are read, the woman pacing in front of the inn
+/// turns to Isaac, cross, and says the young man should be fixing the roof
+/// but she can't find him anywhere; he's probably slacking off again.
 static void Vault_LookForManFixingRoof(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultFixingRoofCant);
@@ -392,8 +420,8 @@ static void Vault_ShowStandingActorMessage(s32 actorId) {
 
 #include "shared/vault_talk.c"
 
-/// The welcoming young man asks whether the party is leaving again.
-/// He asks after the thieves are jailed. "So, you're hitting the road again?"
+/// Once the thieves are jailed, the young man outside the house in the east
+/// asks, "So, you're hitting the road again?"
 static void Vault_AskAboutLeavingAgain(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultYoureHittingRoadAgain);
@@ -402,7 +430,7 @@ static void Vault_AskAboutLeavingAgain(void) {
   Event_End();
 }
 
-/// In Vault after the thieves are jailed, a townsperson praises their capture.
+/// Once the thieves are jailed, the woman in green north of the inn says,
 /// "It's great that you caught those thieves!"
 static void Vault_PraiseThievesCapture(void) {
   Event_Start();
@@ -411,7 +439,9 @@ static void Vault_PraiseThievesCapture(void) {
   Event_End();
 }
 
-/// An old man talks about Ivan, Hammet's servant.
+/// Once the thieves are jailed, the old man east of the jail's door says that
+/// Hammet's servant, Ivan, went out to Lunpa. With Ivan in the party: "I see,
+/// Ivan... I guess it was impossible to rescue Master Hammet."
 static void Vault_TalkAboutIvan(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultTalkingAboutHammetsServantIvan);
@@ -422,8 +452,9 @@ static void Vault_TalkAboutIvan(void) {
   Event_End();
 }
 
-/// In Vault after the thieves are jailed, a townsperson says the eruption
-/// devastated the roads.
+/// Once the thieves are jailed, the old woman east of the inn's door says the
+/// eruption devastated roads throughout Angara, and the way to Kalay waits
+/// on the southern bridge's repair.
 static void Vault_TalkOfDamagedRoads(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultEruptionDevastatedRoads);
@@ -431,7 +462,9 @@ static void Vault_TalkOfDamagedRoads(void) {
   Event_End();
 }
 
-/// The boy round the well asks after Ivan.
+/// Once the thieves are jailed, the boy walking round the well asks, "Ivan
+/// didn't go to Lunpa all alone, did he?" With Ivan in the party he laughs
+/// that he shouldn't have worried, and asks when Ivan joined up with Isaac.
 static void Vault_AskWhetherIvanWentToLunpa(void) {
   struct Actor *actor = Actor_Get(ACTOR_BOY_ROUND_THE_WELL);
   s16 savedFacing = actor->facing;
@@ -450,8 +483,8 @@ static void Vault_AskWhetherIvanWentToLunpa(void) {
   actor->timer &= VILLAGER_IS_BOY;
 }
 
-/// In Vault after the thieves are jailed, the girl round the well speaks.
-/// Everyone is grateful the party captured the thieves.
+/// Once the thieves are jailed, the girl walking round the well stops: everyone
+/// is grateful the party captured the thieves.
 static void Vault_ThankForCapturingThieves(void) {
   struct Actor *actor = Actor_Get(ACTOR_GIRL_ROUND_THE_WELL);
   s16 savedFacing = actor->facing;
@@ -468,7 +501,7 @@ static void Vault_ThankForCapturingThieves(void) {
   actor->timer &= VILLAGER_IS_BOY;
 }
 
-/// In Vault after the thieves are jailed, the strongman on watch asks about the
+/// Once the thieves are jailed, the strongman by the rope bridge asks about the
 /// prisoners. "Those men you captured... They're in jail now?"
 static void Vault_AskAboutPrisoners(void) {
   Event_Start();
@@ -479,8 +512,8 @@ static void Vault_AskAboutPrisoners(void) {
   Event_End();
 }
 
-/// In Vault after the thieves are jailed, the traveler asks who captured the
-/// thieves.
+/// Once the thieves are jailed, the robed traveler beside the Sanctum's door
+/// asks, "Are you the ones who captured the thieves?"
 static void Vault_AskWhoCapturedThieves(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultOnesWhoCapturedThieves);
@@ -489,7 +522,9 @@ static void Vault_AskWhoCapturedThieves(void) {
   Event_End();
 }
 
-/// In Vault after the thieves are jailed, the dog barks.
+/// Once the thieves are jailed, the dog south of the six gravestones barks.
+/// "Ruff! Rrruff!!" If Isaac carries a Bone and the dog has not yet shown
+/// its spot, the item menu opens so that he can give it one.
 static void Vault_TalkToDogAfterCapture(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultRuffRrruffAfterCapture);
@@ -504,7 +539,9 @@ static void Vault_TalkToDogAfterCapture(void) {
   Event_End();
 }
 
-/// The young man fixing the roof thanks the party before it leaves.
+/// Once the thieves are jailed, the young man back at the foot of the inn's
+/// ladder nods and thanks the party for the other day, and will pray for
+/// their safety.
 static void Vault_ThankBeforeDeparture(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultThankForOtherDayLeaving);
@@ -516,8 +553,10 @@ static void Vault_ThankBeforeDeparture(void) {
   Event_End();
 }
 
-/// In Vault, Mind Read on a townsperson. Stealing during an eruption is
-/// unforgivable, or how should the prisoners be punished?
+/// Mind Read on the woman in green north of the inn: no man should steal
+/// during the panic of an eruption, it's unforgivable. Once the thieves are
+/// jailed she wonders how to punish them: "Public humiliation? Or perhaps a
+/// beating!"
 static void Vault_ReadMindOnStealing(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0)
@@ -528,7 +567,10 @@ static void Vault_ReadMindOnStealing(void) {
   Event_End();
 }
 
-/// In Vault, Mind Read on a townsperson.
+/// Mind Read on the old woman east of the inn's door: that group of travelers
+/// was a strange bunch, seemingly heading for the north-eastern Goma Range.
+/// Once the thieves are jailed she thinks that, with the road out, the only
+/// way on is the cave in the Goma Range.
 static void Vault_ReadMindOnTravelers(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0) {
@@ -540,7 +582,10 @@ static void Vault_ReadMindOnTravelers(void) {
   Event_End();
 }
 
-/// In Vault, Mind Read on the boy round the well.
+/// Mind Read on the boy walking round the well: "I bet it was those three
+/// creeps at the inn who stole the rod." Once the thieves are jailed he
+/// wonders where Ivan went all by himself, or, with Ivan in the party, "But
+/// when did they join Ivan?"
 static void Vault_ReadMindOnIvan(void) {
   Actor_Get(ACTOR_BOY_ROUND_THE_WELL)->timer |= VILLAGER_TALKED_TO;
   Event_Start();
@@ -556,8 +601,9 @@ static void Vault_ReadMindOnIvan(void) {
   Actor_Get(ACTOR_BOY_ROUND_THE_WELL)->timer &= VILLAGER_IS_BOY;
 }
 
-/// In Vault, Mind Read on the girl round the well. Riches can't save you from
-/// a volcano, or the party must be stronger than they look.
+/// Mind Read on the girl walking round the well: it doesn't matter how rich
+/// you are if it can't save you from a volcano. Once the thieves are jailed,
+/// the party must be stronger than they look.
 static void Vault_ReadMindOnWealth(void) {
   Actor_Get(ACTOR_GIRL_ROUND_THE_WELL)->timer |= VILLAGER_TALKED_TO;
   Event_Start();
@@ -570,8 +616,8 @@ static void Vault_ReadMindOnWealth(void) {
   Actor_Get(ACTOR_GIRL_ROUND_THE_WELL)->timer &= VILLAGER_IS_BOY;
 }
 
-/// In Vault, Mind Read on the strongman on watch. Everyone knows the three at
-/// the inn stole the rod, or he feels much better with them behind bars.
+/// Mind Read on the strongman by the rope bridge: everyone knows the three at
+/// the inn stole the rod. Once the thieves are jailed he feels much better.
 static void Vault_ReadMindOnSuspects(void) {
   Event_Start();
   if (GameFlag_Get(FLAG_VAULT_THIEVES_JAILED) == 0)
@@ -582,7 +628,11 @@ static void Vault_ReadMindOnSuspects(void) {
   Event_End();
 }
 
-/// In Vault, Mind Read on the dog.
+/// Mind Read on the dog among the six gravestones. While the rod is missing:
+/// "Stealing in the midst of a volcanic eruption... Humans value money more
+/// than they value their own lives." Once the thieves are jailed: "If you
+/// bring me a bone, I'll tell you something useful." Once it has had one: "A
+/// careful search will reveal a passage leading underground nearby."
 static void Vault_ReadDogMind(void) {
   struct Actor *actor = Actor_Get(ACTOR_VAULT_DOG);
   actor->paused = 1;
@@ -601,8 +651,8 @@ static void Vault_ReadDogMind(void) {
   actor->paused = 0;
 }
 
-/// In Vault, Mind Read on the woman wanting the roof fixed. That sneak is
-/// wasting time instead of fixing the roof.
+/// Mind Read on the woman pacing in front of the inn: "That sneak... He's just
+/// wasting time instead of fixing the roof!"
 static void Vault_ReadWomanWantingTheRoofFixedMind(void) {
   Event_Start();
   Event_SetMessageId(MsgVaultSneakWastingTime);
@@ -620,29 +670,36 @@ static void Vault_WalkThroughExit(s32 x, s32 y, s32 continuation) {
   Import_EventSetExitRequest(continuation);
 }
 
-/// The door of the gem owner's house opens and the party walks in.
+/// Isaac opens the door of the house in the east, by the rope bridge (cell
+/// (25, 21)), the gem owner's, and goes in.
 static void Vault_EnterGemOwnersHouse(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gVault_GemOwnersHouseDoorCells, 56, 19);
   Vault_WalkThroughExit(408, 320, VAULT_TO_LOG_ROOMS_A_EAST_SOUTHEAST);
 }
 
-/// The door of a child's home opens and the party walks in.
+/// Isaac opens the door of the house east of the inn (cell (19, 20)), a
+/// child's home, and goes in.
 static void Vault_EnterChildsHouse(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gVault_ChildsHouseDoorCells, 50, 18);
   Vault_WalkThroughExit(312, 304, VAULT_TO_LOG_ROOMS_A_SOUTHEAST);
 }
 
-/// The inn's door opens and the party walks in.
+/// Isaac opens the inn's door, in the middle of town (cell (13, 19)), and
+/// goes in.
 static void Vault_EnterInn(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gVault_InnDoorCells, 44, 17);
   Vault_WalkThroughExit(216, 288, VAULT_TO_LOG_ROOMS_A_SOUTHWEST);
 }
 
-/// In Vault, the door VAULT_TO_LOG_ROOMS_A_EAST opens into the item shop, an
-/// old couple's home too.
+/// Isaac opens the item shop's door, under the jar sign in the cliff in the
+/// east of town (cell (23, 15)), and goes in. The shop is an old couple's
+/// home too.
+///
+/// He vanishes into the doorway as he walks in: the leader is drawn behind
+/// the cliff from the door's first step.
 static void Vault_EnterItemShop(void) {
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   struct Sprite *sprite = actor->sprite;
@@ -655,8 +712,9 @@ static void Vault_EnterItemShop(void) {
   Vault_WalkThroughExit(376, 224, VAULT_TO_LOG_ROOMS_A_EAST);
 }
 
-/// The weapon and armor shop's door opens and the party walks in.
-/// It's VAULT_TO_LOG_ROOMS_A_NORTH_NORTHEAST, entered as the item shop is.
+/// Isaac opens the weapon and armor shop's door, under the sword sign in the
+/// cliff below the bell tower (cell (18, 12)), and goes in, as at the item
+/// shop.
 static void Vault_EnterWeaponAndArmorShop(void) {
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   struct Sprite *sprite = actor->sprite;
@@ -669,8 +727,8 @@ static void Vault_EnterWeaponAndArmorShop(void) {
   Vault_WalkThroughExit(296, 176, VAULT_TO_LOG_ROOMS_A_NORTH_NORTHEAST);
 }
 
-/// In Vault, the door VAULT_TO_LOG_ROOMS_A_NORTHWEST opens into the
-/// mayor's house, where Ivan waits.
+/// Isaac opens the door of the mayor's house, the big house in the town's
+/// north-west (cell (7, 10)), and goes in. Ivan waits there before he joins.
 static void Vault_EnterMayorsHouse(void) {
   Sound_Play(SE_DOOR_OPEN);
   MapGrid_PlayMapEdit(gVault_MayorsHouseDoorCells, 38, 6);
@@ -679,8 +737,11 @@ static void Vault_EnterMayorsHouse(void) {
 
 #include "shared/vault_map_cells.c"
 
-/// In Vault, the jail door opens and the party walks in, drawn behind the
-/// doorway (VAULT_TO_STONE_ROOMS, the jail's STONE_ROOMS_FROM_VAULT).
+/// Isaac opens the jail's grey iron door, in the cliff below the mayor's house
+/// (cell (4, 11)), and walks into the jail, a stone room of cells behind
+/// bars.
+///
+/// He vanishes into the doorway as he goes, as at the shops.
 static void Vault_EnterJail(void) {
   struct Actor *actor = Actor_Get(ACTOR_PARTY_LEADER);
   struct Sprite *sprite = actor->sprite;
@@ -693,9 +754,13 @@ static void Vault_EnterJail(void) {
   Vault_WalkThroughExit(72, 160, VAULT_TO_STONE_ROOMS);
 }
 
-/// In Vault, the party walks through a doorless entrance into the room with
-/// the crate (VAULT_TO_LOG_ROOMS_A_WEST).
-static void Vault_EnterPassage(void) {
+/// Isaac climbs the ladder against the inn's west wall to the hole in its
+/// roof (cell (9, 16) at the top) and goes in, into the inn's loft, the room
+/// with the crate (VAULT_TO_LOG_ROOMS_A_WEST).
+///
+/// The young man who should be fixing the roof stands at the ladder's foot
+/// until the suspects' minds have been read.
+static void Vault_ClimbIntoInnLoft(void) {
   Sound_Play(SE_MAP_EXIT);
   Vault_WalkThroughExit(152, 264, VAULT_TO_LOG_ROOMS_A_WEST);
 }
@@ -722,7 +787,10 @@ static void Vault_JumpActorToAndWait(s32 actorId, s32 x, s32 z,
   actor->gravity = toFIXED(1);
 }
 
-/// In Vault, Isaac rings the bell.
+/// Up on the bell tower, Isaac rings the bell (cell (17, 8)). The first time
+/// since the party came in by a path, Sap the Venus Djinni pops up, startled,
+/// on top of the tree east of the tower, hops twice and leaps away north-east
+/// onto the cliff top above the cave mouth.
 static void Vault_RingBell(void) {
   Event_Start();
   Sound_Play(SE_BELL);
@@ -743,7 +811,8 @@ static void Vault_RingBell(void) {
   Event_End();
 }
 
-/// Given a Bone, the dog runs to the hidden passage and jumps there.
+/// Given a Bone, the dog runs into the middle of the six gravestones and jumps
+/// there three times, where Reveal later finds the way down to Vault Cave.
 static void Vault_GiveBoneToDog(void) {
   PartyInventory_Discard(ITEM_BONE);
   Event_Start();
@@ -766,7 +835,9 @@ static void Vault_GiveBoneToDog(void) {
   Event_End();
 }
 
-/// Arriving in Vault, the setup puts everyone where the story has them.
+/// Arriving in Vault puts everyone where the story has them. Coming back in by
+/// either path, or out of the Sanctum, while Ivan waits in town, he greets the
+/// party, "Welcome back, you two! Let's go find the rod!", and joins again.
 s32 Scene_Initialize(void) {
   s32 suspectsMindRead;
   struct Actor *actor;
@@ -1000,8 +1071,9 @@ const s32 *gFieldEffect_DurationScripts[] = {
 };
 
 /// ACTOR_WOMAN_WANTING_THE_ROOF_FIXED's search for the young man fixing the
-/// roof. She walks to one end of her path and the other, looking west and
-/// east at each, for as long as the party stays on the map.
+/// roof, in front of the inn's west end. She walks to one end of her two-cell
+/// path and the other, looks west and east, then shakes her head, for as long
+/// as the party stays on the map.
 s32 gVault_WomanWantingTheRoofFixedRoute[] = {
     SC_SPEED(0.4),
     SC_ACCELERATION(0.2),
@@ -1203,7 +1275,7 @@ struct Trigger gVault_Triggers[] = {
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VAULT_MAYORS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(Vault_EnterMayorsHouse) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VAULT_SANCTUM_DOORWAY, CONDITION_ALWAYS, EVENT(Vault_OpenDoorwayAndEnter) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VAULT_DOOR_TO_JAIL, CONDITION_ALWAYS, EVENT(Vault_EnterJail) },
-    { TRIGGER_STEP, CELL_BEHAVIOR_VAULT_WEST_ENTRANCE, CONDITION_ALWAYS, EVENT(Vault_EnterPassage) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VAULT_WEST_ENTRANCE, CONDITION_ALWAYS, EVENT(Vault_ClimbIntoInnLoft) },
     { TRIGGER_TALK, ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgVaultWelcomeToVaultTheTownAt) },
     { TRIGGER_TALK, ACTOR_ERUPTION_WITNESS, CONDITION_ALWAYS, EVENT(Vault_AskAboutEruption) },
     { TRIGGER_TALK, ACTOR_VILLAGER_ON_HAMMET, CONDITION_ALWAYS, MSGNO(MsgVaultMasterHammetAWealthyLandownerAnd) },
@@ -1251,7 +1323,7 @@ struct Trigger gVault_TriggersAfterThieves[] = {
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VAULT_MAYORS_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(Vault_EnterMayorsHouse) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VAULT_SANCTUM_DOORWAY, CONDITION_ALWAYS, EVENT(Vault_OpenDoorwayAndEnter) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_VAULT_DOOR_TO_JAIL, CONDITION_ALWAYS, EVENT(Vault_EnterJail) },
-    { TRIGGER_STEP, CELL_BEHAVIOR_VAULT_WEST_ENTRANCE, CONDITION_ALWAYS, EVENT(Vault_EnterPassage) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_VAULT_WEST_ENTRANCE, CONDITION_ALWAYS, EVENT(Vault_ClimbIntoInnLoft) },
     { TRIGGER_TALK, ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, EVENT(Vault_AskAboutLeavingAgain) },
     { TRIGGER_TALK, ACTOR_ERUPTION_WITNESS, CONDITION_ALWAYS, MSGNO(MsgVaultSmokeIsStillRisingFromMt) },
     { TRIGGER_TALK, ACTOR_VILLAGER_ON_HAMMET, CONDITION_ALWAYS, MSGNO(MsgVaultMasterHammetTheWealthyMerchantI) },

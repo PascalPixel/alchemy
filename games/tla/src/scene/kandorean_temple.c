@@ -18,7 +18,9 @@
 /// (KandoreanTemple_FightChestbeaters), after which a ladder comes down to
 /// Poi's hall. Poi gives the party the Lash Pebble
 /// (KandoreanTemple_ReceiveLash), and Lash ties the rope across to Fog, the
-/// Mercury Djinni (KandoreanTemple_FightFog).
+/// Mercury Djinni (KandoreanTemple_FightFog). Once Poi has met the party, the
+/// temple's door in the courtyard opens as Felix walks up to it
+/// (KandoreanTemple_OpenTheTempleDoor).
 
 #include "field/actor.h"
 #include "scene/event_layer.h"
@@ -217,10 +219,15 @@ enum KandoreanTempleCellBehavior {
   /// Fog's room: behind and beside the rope's posts.
   CELL_BEHAVIOR_BEHIND_POST = 10,
   CELL_BEHAVIOR_BESIDE_POST,
-  /// The courtyard: the well, cells (25, 17) to (26, 18); the west wall
+  /// The courtyard: the cells just inside and just before the temple's door,
+  /// kept at (2, 0) and (2, 2) in the rock of the top left corner and laid at
+  /// (17, 24) and (17, 26) once Poi has been met; the well, cells (25, 17) to
+  /// (26, 18); the west wall
   /// Kraden suspects, (5, 15) and (6, 15); the temple's door, (17, 25) and
   /// (18, 25); and the five clumps of weeds Cyclone scatters.
-  CELL_BEHAVIOR_COURTYARD_WELL = 6,
+  CELL_BEHAVIOR_INSIDE_TEMPLE_DOOR = 4,
+  CELL_BEHAVIOR_BEFORE_TEMPLE_DOOR,
+  CELL_BEHAVIOR_COURTYARD_WELL,
   CELL_BEHAVIOR_SUSPICIOUS_WALL = 20,
   CELL_BEHAVIOR_TEMPLE_DOOR = 10,
   CELL_BEHAVIOR_FIRST_WEED_CLUMP = 30,
@@ -264,10 +271,10 @@ enum {
   /// The lift room's pillar blocks the shaft, so stepping over it no longer
   /// sinks Felix into it.
   FLAG_PILLAR_BLOCKS_SHAFT = FLAG_SCENE_TEMP_11,
-  /// The door to the cave below Poi's statue, or the passage by the gate's
-  /// well, is open.
+  /// The door to the cave below Poi's statue, or the temple's door in the
+  /// courtyard, is open.
   FLAG_CAVE_DOOR_OPEN = FLAG_SCENE_TEMP_12,
-  FLAG_WELL_PASSAGE_OPEN = FLAG_SCENE_TEMP_12,
+  FLAG_TEMPLE_DOOR_OPEN = FLAG_SCENE_TEMP_12,
   /// Kraden has pointed out the suspicious wall by the gate on this visit.
   FLAG_KRADEN_SAW_THE_WALL = FLAG_SCENE_TEMP_30,
   /// Where the vent room's pillar stands, which also decides which of the lift
@@ -1837,15 +1844,18 @@ void KandoreanTemple_TouchTheHotFloor(void) {
   Event_End();
 }
 
-/// Opens the passage by the gate's well.
-void KandoreanTemple_OpenTheWellPassage(void) {
+/// Once Felix has met Poi, the temple's wooden door in the middle of the
+/// courtyard swings open with a thump as he walks up to it, from the courtyard
+/// (cell (17, 26)) or from inside (cell (17, 24)). Its cells, (17, 25) and
+/// (18, 25), stop answering "The door is tightly locked." and let him through.
+void KandoreanTemple_OpenTheTempleDoor(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Sound_Play(SE_THUMP);
   MapGrid_CopyCellPictureIndicesRect(77, 33, 77, 24, 2, 2);
   MapGrid_CopyCellAttributes(32, 30, 2, 1, 17, 25);
   wait(10);
-  GameFlag_Set(FLAG_WELL_PASSAGE_OPEN);
+  GameFlag_Set(FLAG_TEMPLE_DOOR_OPEN);
   Event_End();
 }
 
@@ -2723,8 +2733,10 @@ void KandoreanTemple_StartMeditating(s32 id, s32 delay) {
   Actor_SetMovementTypeById(id, gKandoreanTemple_MeditateScript);
 }
 
-/// Sets up the temple gate: the students meditating or standing by, the opened
-/// well passage, and Kraden.
+/// Sets up the temple gate: the weeds over the hidden passage gone once
+/// Whirlwind has scattered them, the students meditating or, once Poi has been
+/// met, standing by with the cells that open the temple's door laid before it,
+/// the door open if it was opened this visit, and Kraden.
 void KandoreanTemple_StartGate(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (GameFlag_Get(FLAG_HIDDEN_PASSAGE_FOUND)) {
@@ -2753,7 +2765,7 @@ void KandoreanTemple_StartGate(void) {
     KandoreanTemple_StartMeditating(ACTOR_STUDENT_ON_THE_FAILED_TEST, 240);
     KandoreanTemple_StartMeditating(ACTOR_STUDENT_WHO_WOULD_BE_A_MONK, 480);
   }
-  if (GameFlag_Get(FLAG_WELL_PASSAGE_OPEN)) {
+  if (GameFlag_Get(FLAG_TEMPLE_DOOR_OPEN)) {
     MapGrid_CopyCellPictureIndicesRect(77, 33, 77, 24, 2, 2);
     MapGrid_CopyCellAttributes(32, 30, 2, 1, 17, 25);
   }
@@ -3827,10 +3839,10 @@ struct Trigger gKandoreanTemple_GateEvents[] = {
      FIND_MESSAGE(MSGNO(MsgKandoreanTemplePassageInTheWell))},
     {TRIGGER_STEP, CELL_BEHAVIOR_SUSPICIOUS_WALL, FLAG_KRADEN_SAW_THE_WALL,
      EVENT(KandoreanTemple_KradenSuspectsTheWall)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 4, FLAG_WELL_PASSAGE_OPEN,
-     EVENT(KandoreanTemple_OpenTheWellPassage)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, FLAG_WELL_PASSAGE_OPEN,
-     EVENT(KandoreanTemple_OpenTheWellPassage)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_INSIDE_TEMPLE_DOOR,
+     FLAG_TEMPLE_DOOR_OPEN, EVENT(KandoreanTemple_OpenTheTempleDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_BEFORE_TEMPLE_DOOR,
+     FLAG_TEMPLE_DOOR_OPEN, EVENT(KandoreanTemple_OpenTheTempleDoor)},
     {TRIGGER_EXAMINE, CELL_BEHAVIOR_TEMPLE_DOOR, CONDITION_ALWAYS,
      EVENT(KandoreanTemple_TryTheLockedDoor)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WEEDS_OVER_THE_CAVE,

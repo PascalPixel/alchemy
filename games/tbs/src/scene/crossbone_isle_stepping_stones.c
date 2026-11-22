@@ -12,36 +12,43 @@
 /// Each is a puzzle with four chests, and all five take the area name
 /// Crossbone Isle Cave. In the order the party meets them:
 ///
-/// - SceneId_CrossboneIsleSteppingStones, off the first floor: stepping stones
-///   over a pit. Walking into a pillar jumps two cells across it where the
-///   cells allow, and otherwise pushes it
-///   (CrossboneIsleSteppingStones_JumpOrPushPillar).
+/// - SceneId_CrossboneIsleSteppingStones, off the first floor: raised squares
+///   over a pit, with four stone pillars on them. Walking into a pillar jumps
+///   Isaac across it where there is a square to land on, and otherwise pushes
+///   it (CrossboneIsleSteppingStones_JumpOrPushPillar), so the pillars are
+///   moved until a line of squares leads to each chest and to the far door.
 ///
-/// - SceneId_CrossboneIsleIcePillars, off the second floor: pillars of ice to
-///   push, standing and lying across a floor of spikes.
+/// - SceneId_CrossboneIsleIcePillars, off the second floor: columns lying
+///   north to south and east to west, pushed by walking into them until the
+///   way to the Mystery Blade's chest is clear.
 ///
 /// - SceneId_CrossboneIsleFloodgate, off the fifth floor: a cave with a stream
-///   and a floodgate across it, and seven logs to roll.
+///   and a floodgate across it, and logs to roll.
 ///
-///   The switch beside the floodgate
+///   Searching the switch beside the floodgate
 ///   (CrossboneIsleSteppingStones_FlipWaterSwitch) closes it, so the water
-///   backs up and floats the logs higher, or opens it to drain them back
-///   down. The water level lasts only while the party stays
+///   backs up and the logs float higher, or opens it to drain them back down.
+///   The water level lasts only while the party stays
 ///   (FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED, kept through a battle).
 ///
 /// - SceneId_CrossboneIsleStackedPillars, off the seventh floor, a cave of
-///   cliffs and ladders. It has four pillars that Move and Carry shift, a
-///   ladder, and pillars to jump across. The four pillars settle after every
-///   push, and the cells they stand on follow them
-///   (CrossboneIsleSteppingStones_MovePillar).
+///   cliffs, ladders and brown pits. Its square pillars are shifted with Move
+///   and lifted onto ledges with Carry, and one can stand on another; each
+///   settles after every push (CrossboneIsleSteppingStones_MovePillar). Pushed
+///   off a cliff, a pillar drops out of play.
 ///
-/// - SceneId_CrossboneIsleDragonStatue, off the eighth floor, by a dragon
-///   statue: three puddles that Frost freezes into pillars of ice.
+/// - SceneId_CrossboneIsleDragonStatue, off the eighth floor, below a stone
+///   dragon: two logs, a small boulder and three puddles that Frost freezes
+///   into pillars of ice.
 ///
-///   Frost on the third makes the pillar in it rise and melts a frozen second
-///   puddle. The third freezes only if the leader was not standing on it.
+///   The puddles are by the west ladder, by the east ladder, and in front of
+///   the dragon under a white platform. Frost on that one lifts the platform
+///   on a pillar of ice, and the dragon breathes fire on the puddle by the
+///   east ladder, melting its ice. It freezes only if Isaac was not standing
+///   in it.
 ///
-///   A boulder moved with Move sinks into place at SINKING_BOULDER_COLUMN.
+///   Move pushes the small boulder below the logs east until it settles into
+///   the floor two steps along, for good.
 ///
 /// The other three side rooms are in crossbone_isle_keys.c, and the ninth
 /// floor's in crossbone_isle.c.
@@ -108,53 +115,55 @@ extern struct Trigger gCrossboneIsleDragonStatueTriggers[];
 /// The placed actors, numbered in the order of each room's actor
 /// placements (Scene_GetActorPlacements).
 enum CrossboneIsleSteppingStonesActorId {
-  /// The pillars of CrossboneIsleSteppingStones (four, SPRITE_STONE_PILLAR),
-  /// CrossboneIsleIcePillars (five) and CrossboneIsleStackedPillars (four,
-  /// SPRITE_SPIRAL_PILLAR), the only actors those rooms place.
+  /// The pillars of the first floor's side room (four, SPRITE_STONE_PILLAR),
+  /// the second floor's side room (five) and the seventh floor's side room
+  /// (four, SPRITE_SPIRAL_PILLAR), the only actors those rooms place.
   ACTOR_FIRST_PILLAR = ACTOR_FIRST_PLACED,
   /// The logs, SPRITE_LOG_NORTH_SOUTH and SPRITE_LOG_WEST_EAST as Kolima
-  /// Forest's. There are eight in CrossboneIsleFloodgate, where the seven
-  /// after the first float on the raised water, and two in
-  /// CrossboneIsleDragonStatue.
+  /// Forest's. There are eight in the floodgate room, where the seven
+  /// after the first float on the raised water, and two in the dragon
+  /// statue's room.
   ACTOR_FIRST_LOG = ACTOR_FIRST_PLACED,
-  /// CrossboneIsleDragonStatue's boulder for Move, SPRITE_TURNING_ROCK, which
+  /// The dragon statue's room's boulder for Move, SPRITE_TURNING_ROCK, which
   /// sinks into place at SINKING_BOULDER_COLUMN.
   ACTOR_SINKING_BOULDER = ACTOR_FIRST_LOG + 2,
-  /// CrossboneIsleDragonStatue's three puddles, SPRITE_PUDDLE, which Frost
-  /// freezes into pillars of ice.
+  /// The dragon statue's room's three puddles, SPRITE_PUDDLE, which Frost
+  /// freezes into pillars of ice: by the west ladder, by the east ladder, and
+  /// in front of the stone dragon.
   ACTOR_FIRST_PUDDLE,
   ACTOR_SECOND_PUDDLE,
   ACTOR_THIRD_PUDDLE,
-  /// The pillar in CrossboneIsleDragonStatue's third puddle,
-  /// SPRITE_WHITE_PLATFORM, which rises 32 pixels as Frost freezes the puddle.
+  /// The white platform in the puddle in front of the stone dragon,
+  /// SPRITE_WHITE_PLATFORM, which a pillar of ice lifts two steps as Frost
+  /// freezes the puddle.
   ACTOR_RISING_PILLAR,
-  /// CrossboneIsleFloodgate's water, SPRITE_SPLASH, raised behind the closed
+  /// The floodgate room's water, SPRITE_SPLASH, raised behind the closed
   /// floodgate.
   ACTOR_WATER = ACTOR_FIRST_LOG + 8
 };
 
-/// CrossboneIsleFloodgate: the water has been raised.
+/// The floodgate room: the water has been raised.
 #define FLAG_CROSSBONE_ISLE_FLOODGATE_WATER_RAISED FLAG_SCENE_TEMP_00
-/// CrossboneIsleStackedPillars: the first pillar has another pushed on top of
+/// The seventh floor's side room: the first pillar has another pushed on top of
 /// it, so Move and Carry leave it be. The four pillars' flags follow from this
 /// one.
 #define FLAG_CROSSBONE_ISLE_STACKED_PILLARS_FIRST_PILLAR_UNDER_ANOTHER         \
   FLAG_SCENE_TEMP_00
-/// CrossboneIsleDragonStatue: the first puddle is frozen. The second's and
+/// The dragon statue's room: the first puddle is frozen. The second's and
 /// third's flags follow from this one.
 #define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_FIRST_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
-/// CrossboneIsleDragonStatue: the leader stood on the third puddle when Frost
+/// The dragon statue's room: the leader stood on the third puddle when Frost
 /// began, so it stays unfrozen.
 #define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_LEADER_ON_THIRD_PUDDLE               \
   FLAG_SCENE_TEMP_03
-/// CrossboneIsleDragonStatue: the boulder Move pushes has sunk into place at
+/// The dragon statue's room: the boulder Move pushes has sunk into place at
 /// SINKING_BOULDER_COLUMN.
 #define FLAG_CROSSBONE_ISLE_DRAGON_STATUE_BOULDER_SUNK FLAG_SCENE_TEMP_04
 
-/// The map column where CrossboneIsleDragonStatue's boulder sinks into place.
+/// The map column where the dragon statue's room's boulder sinks into place.
 #define SINKING_BOULDER_COLUMN 16
 
-/// CrossboneIsleStackedPillars's own cell behaviors, on layer 2: where a
+/// The seventh floor's side room's own cell behaviors, on layer 2: where a
 /// pillar pushed onto one falls down the cliff, and where it sinks into the
 /// floor. Either way it then leaves play.
 enum {
@@ -162,7 +171,19 @@ enum {
   CELL_BEHAVIOR_STACKED_PILLARS_SINK = 51
 };
 
-/// While CrossboneIsleFloodgate's water changes level, the background maps
+/// The seventh floor's side room's cells that run events as Isaac walks: among
+/// the pillars, at the ladders, on the lowest floor and where he leaves it.
+enum {
+  CELL_BEHAVIOR_STACKED_PILLARS_PILLARS = 30,
+  CELL_BEHAVIOR_STACKED_PILLARS_LADDER = 31,
+  CELL_BEHAVIOR_STACKED_PILLARS_LOWEST_FLOOR = 40,
+  CELL_BEHAVIOR_STACKED_PILLARS_LEAVE_LOWEST_FLOOR = 41
+};
+
+/// The floodgate room's switch, searched to flip it.
+enum { CELL_BEHAVIOR_FLOODGATE_SWITCH = 20 };
+
+/// While the floodgate room's water changes level, the background maps
 /// hold the stream in its other level twelve cell rows below where they show
 /// it (MapGrid_DrawCellPanel's rows 19 and 31), and the top
 /// WATER_DISSOLVE_LINES lines of the screen show it scrolled down to there,
@@ -306,7 +327,7 @@ static s32 CrossboneIsleSteppingStones_QueryCoveredCells(
   return 1;
 }
 
-/// Floats one of CrossboneIsleFloodgate's logs on the raised water: it bobs
+/// Floats one of the floodgate room's logs on the raised water: it bobs
 /// under the leader's feet, and its cells are redrawn as a floating log lying
 /// across or along the room as it does.
 static s32 CrossboneIsleSteppingStones_FloatLog(s32 actorId) {
@@ -339,7 +360,7 @@ static s32 CrossboneIsleSteppingStones_FloatLog(s32 actorId) {
   return 1;
 }
 
-/// Floats CrossboneIsleFloodgate's seven logs on the raised water.
+/// Floats the floodgate room's seven logs on the raised water.
 static inline void CrossboneIsleSteppingStones_FloatLogs(void) {
   CrossboneIsleSteppingStones_FloatLog(ACTOR_FIRST_LOG + 1);
   CrossboneIsleSteppingStones_FloatLog(ACTOR_FIRST_LOG + 2);
@@ -350,7 +371,7 @@ static inline void CrossboneIsleSteppingStones_FloatLogs(void) {
   CrossboneIsleSteppingStones_FloatLog(ACTOR_FIRST_LOG + 7);
 }
 
-/// Strands one of CrossboneIsleFloodgate's logs on the floor as the water
+/// Strands one of the floodgate room's logs on the floor as the water
 /// drains: the cells under it are restored from the map and walled off, and it
 /// lies still.
 static s32 CrossboneIsleSteppingStones_StrandLog(s32 actorId) {
@@ -625,7 +646,7 @@ CrossboneIsleSteppingStones_UpdateDampedParticle(struct Actor *actor) {
 }
 
 /// Sets the actor's sprite to the colour mode (enum SpriteColorMode) in
-/// the low four bits of its timer.
+/// The low four bits of its timer.
 static s32
 CrossboneIsleSteppingStones_SetSpriteColorFromTimer(struct Actor *actor) {
   Actor_SetSpriteColor(actor, actor->timer & 15);
@@ -676,8 +697,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gCrossboneIsleSteppingStonesActorPlacementsOther;
 }
 
-/// Walking into a pillar in CrossboneIsleSteppingStones: jump two cells across
-/// it where the cells allow, otherwise push it.
+/// Isaac walks into one of the stone pillars on the raised squares of the
+/// first floor's side room: he jumps across it if there is a square beyond to
+/// land on, and otherwise pushes it a step.
 static void CrossboneIsleSteppingStones_JumpOrPushPillar(void) {
   Event_Start();
   if (CrossboneIsleSteppingStones_TryJumpAcrossPillar() == 0)
@@ -685,8 +707,9 @@ static void CrossboneIsleSteppingStones_JumpOrPushPillar(void) {
   Event_End();
 }
 
-/// Walking into a pillar in CrossboneIsleIcePillars, or a log in
-/// CrossboneIsleFloodgate: push it if the cell beyond is clear.
+/// Isaac walks into one of the lying columns of the second floor's side room,
+/// or a log in the fifth floor's room of the floodgate, and pushes it if the
+/// way beyond is clear.
 static void CrossboneIsleSteppingStones_PushPillar(void) {
   struct PushedActorProbe out;
 
@@ -705,7 +728,7 @@ struct PillarPlacement {
   union CrossboneIslePillarCell cell;
 };
 
-/// Where one of CrossboneIsleStackedPillars's pillars stands, the ground cell
+/// Where one of the seventh floor's side room's pillars stands, the ground cell
 /// saved under it and its flag of standing under another pillar.
 struct PillarSlot {
   s32 x; ///< 16-pixel map cells
@@ -760,7 +783,7 @@ static void CrossboneIsleSteppingStones_PrepareWaterScroll(void) {
   other[2].y += WATER_PANEL_SCROLL_Y;
 }
 
-/// CrossboneIsleFloodgate's water changes level: over 100 frames, more and
+/// The floodgate room's water changes level: over 100 frames, more and
 /// more of the top lines show the stream at its other level, then the map
 /// takes it.
 static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
@@ -803,7 +826,10 @@ static void CrossboneIsleSteppingStones_AnimateWaterLevel(void) {
   wait(30);
 }
 
-/// Searching the switch beside CrossboneIsleFloodgate's floodgate flips it.
+/// Isaac searches the switch beside the floodgate in the fifth floor's side
+/// room: "Isaac flipped the switch." With the gate open it shuts, spray bursts
+/// at its foot, the water rises behind it and the logs float up; with it shut,
+/// it opens, the water drains and the logs settle on the stream bed.
 static void CrossboneIsleSteppingStones_FlipWaterSwitch(void) {
   s32 waterRaised;
 
@@ -1009,9 +1035,13 @@ static void CrossboneIsleSteppingStones_SortPillarActors(void) {
   }
 }
 
-/// Move or Carry on one of CrossboneIsleStackedPillars's pillars, and after
-/// each push there: the pillars settle, and the cells they stand on follow
-/// them.
+/// Isaac casts Move or Carry on one of the square pillars of the seventh
+/// floor's side room, and after each push there: each pillar settles where it
+/// now stands, on the floor, on a ledge or on another pillar, or drops off a
+/// cliff edge and is gone.
+///
+/// The cells under each pillar are saved and redrawn as it moves, so the
+/// pillar tops can be walked and jumped on.
 static void CrossboneIsleSteppingStones_MovePillar(void) {
   u32 id;
   struct Actor *actor;
@@ -1094,8 +1124,9 @@ static void CrossboneIsleSteppingStones_MovePillar(void) {
   CrossboneIsleSteppingStones_SortPillarActors();
 }
 
-/// Walking into a pillar in CrossboneIsleStackedPillars: jump across if
-/// possible, otherwise push it, and the pillars settle.
+/// Isaac walks into a square pillar in the seventh floor's side room: he jumps
+/// across it if there is somewhere to land, and otherwise pushes it, and the
+/// pillars settle.
 static void CrossboneIsleSteppingStones_JumpOrPushStackedPillar(void) {
   Event_Start();
 #if TBS_PATCH_3
@@ -1115,11 +1146,12 @@ static void CrossboneIsleSteppingStones_JumpOrPushStackedPillar(void) {
   Event_End();
 }
 
-/// Walking north at CrossboneIsleStackedPillars's ladder: climb up.
+/// Isaac walks north into a ladder in the seventh floor's side room and climbs
+/// up it.
 static void CrossboneIsleSteppingStones_ClimbUp(void) { Field_ClimbUp(); }
 
-/// Walking south at CrossboneIsleStackedPillars's ladder: push the pillar
-/// below, jump, or climb down.
+/// Isaac walks south at the top of a ladder in the seventh floor's side room:
+/// he pushes a pillar standing below him, jumps across one, or climbs down.
 static void CrossboneIsleSteppingStones_PushOrClimbDown(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   struct FieldPosition position;
@@ -1134,16 +1166,24 @@ static void CrossboneIsleSteppingStones_PushOrClimbDown(void) {
   }
 }
 
-/// Stepping on step trigger 40 in CrossboneIsleStackedPillars: the fade overlay
-/// follows the leader, and the leader's rise counter starts.
+/// Nothing visible happens when Isaac walks onto the lowest floor of the
+/// seventh floor's side room, among the brown pits, for example cell (54, 15)
+/// in its north east. The game starts the fade overlay on him, which draws
+/// semi-transparent marks at his sides wherever the ground beside him rises
+/// above his feet, and sets his `riseCounter`.
+///
+/// XXX: what the marks hide on this floor; a render of Isaac walking past a
+/// raised edge here, with the overlay and without, would settle it.
 static void CrossboneIsleSteppingStones_StartRising(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
   gFadeOverlayWork->actor = leader;
   leader->riseCounter = 1;
 }
 
-/// Stepping on step trigger 41 in CrossboneIsleStackedPillars: the overlay lets
-/// the leader go, and the rise counter stops.
+/// Nothing visible happens when Isaac leaves the lowest floor of the seventh
+/// floor's side room at cell (33, 27), below the west ladders, or cell
+/// (54, 14) in the north east. The fade overlay lets him go and his
+/// `riseCounter` is cleared.
 static void CrossboneIsleSteppingStones_StopRising(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
@@ -1166,8 +1206,8 @@ CrossboneIsleSteppingStones_UpdateFrozenPuddlePriority(struct Actor *actor) {
   RETURN_UNREAD(0);
 }
 
-/// Frost has frozen a puddle in CrossboneIsleDragonStatue into a pillar of ice:
-/// its flag is set, its cell takes a pillar's attributes and it shines
+/// A puddle in the dragon statue's room has frozen into a pillar of ice: it
+/// shines, and its cell becomes a pillar top Isaac can jump onto
 /// (gCrossboneIsleSteppingStones_IceShineScript).
 static void CrossboneIsleSteppingStones_FreezePuddle(s32 id) {
   struct Actor *actor;
@@ -1188,19 +1228,22 @@ static void CrossboneIsleSteppingStones_FreezePuddle(s32 id) {
   Event_End();
 }
 
-/// Frost on the first puddle in CrossboneIsleDragonStatue: it freezes into a
-/// pillar of ice.
+/// Isaac casts Frost on the puddle by the west ladder of the dragon statue's
+/// room, cell (8, 13): it freezes into a pillar of ice.
 static void CrossboneIsleSteppingStones_FreezeFirstPuddle(void) {
   CrossboneIsleSteppingStones_FreezePuddle(ACTOR_FIRST_PUDDLE);
 }
 
-/// Frost on the second puddle in CrossboneIsleDragonStatue.
+/// Isaac casts Frost on the puddle by the east ladder of the dragon statue's
+/// room, cell (18, 13): it freezes into a pillar of ice, until the dragon's
+/// fire melts it.
 static void CrossboneIsleSteppingStones_FreezeSecondPuddle(void) {
   CrossboneIsleSteppingStones_FreezePuddle(ACTOR_SECOND_PUDDLE);
 }
 
-/// Frost begins on the third puddle in CrossboneIsleDragonStatue: note whether
-/// the leader stands on it.
+/// Isaac starts casting Frost on the puddle under the white platform in front
+/// of the stone dragon. Nothing visible happens yet; the game notes whether he
+/// is standing in the puddle, which then stays unfrozen.
 static void CrossboneIsleSteppingStones_FrostStartsOnThirdPuddle(void) {
   struct Actor *leader;
   struct Actor *puddle;
@@ -1218,8 +1261,8 @@ static void CrossboneIsleSteppingStones_FrostStartsOnThirdPuddle(void) {
   }
 }
 
-/// Later in the same Frost in CrossboneIsleDragonStatue: the third puddle
-/// shrinks back, and the pillar in it (ACTOR_RISING_PILLAR) rises 32 pixels.
+/// As Frost takes hold of the puddle in front of the stone dragon, a pillar of
+/// ice grows in it and lifts the white platform two steps up.
 static void CrossboneIsleSteppingStones_FrostRaisesPillar(void) {
   struct Actor *pillar;
 
@@ -1236,7 +1279,8 @@ static void CrossboneIsleSteppingStones_FrostRaisesPillar(void) {
   MapGrid_CopyCellAttributes(20, 14, 1, 1, 22, 16);
 }
 
-/// Emits growing, rotating particles while Frost freezes the third puddle.
+/// The stone dragon's fire: flames burst from beside it towards the puddle by
+/// The east ladder, with a whoosh.
 static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
   struct EffectOptions options;
   s32 velocityX;
@@ -1270,8 +1314,8 @@ static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
       &options);
 }
 
-/// Every eight frames, a white particle rises from somewhere on the melting
-/// puddle.
+/// Steam rises from the melting ice by the east ladder: a white puff every
+/// eight frames.
 static UNREAD_RESULT
 CrossboneIsleSteppingStones_SpawnMeltParticle(struct Actor *actor) {
   struct EffectOptions options;
@@ -1300,8 +1344,10 @@ CrossboneIsleSteppingStones_SpawnMeltParticle(struct Actor *actor) {
   RETURN_UNREAD(0);
 }
 
-/// Frost ends on the third puddle in CrossboneIsleDragonStatue: it freezes,
-/// unless the leader stood on it.
+/// Isaac's Frost freezes the puddle in front of the stone dragon, unless he
+/// stood in it. The view moves up to the dragon, which breathes fire at the
+/// puddle by the east ladder; if that puddle is frozen, its ice melts away in
+/// steam, so it can be frozen again.
 static void CrossboneIsleSteppingStones_FreezeThirdPuddle(void) {
   s32 set;
 
@@ -1346,8 +1392,9 @@ static void CrossboneIsleSteppingStones_FreezeThirdPuddle(void) {
   }
 }
 
-/// Move begins on CrossboneIsleDragonStatue's sinking boulder: its cell is
-/// cleared.
+/// Nothing visible happens as Isaac starts casting Move on the small boulder
+/// below the logs in the dragon statue's room; the game clears the boulder's
+/// cell so that it can move.
 static void CrossboneIsleSteppingStones_StartMovingSinkingBoulder(void) {
   struct Actor *boulder = Actor_Get(ACTOR_SINKING_BOULDER);
   s32 x;
@@ -1362,9 +1409,10 @@ static void CrossboneIsleSteppingStones_StartMovingSinkingBoulder(void) {
   Event_End();
 }
 
-/// Move on CrossboneIsleDragonStatue's sinking boulder, and after each push:
-/// once it reaches SINKING_BOULDER_COLUMN it sinks two pixels into place for
-/// good.
+/// Isaac moves the small boulder below the logs in the dragon statue's room a
+/// step, with Move or by walking into it. Two steps east of where it starts,
+/// in column SINKING_BOULDER_COLUMN, it settles into the floor with a thud and
+/// stays there for good.
 static void CrossboneIsleSteppingStones_MoveSinkingBoulder(void) {
   struct Actor *boulder;
   s32 alreadyLowered;
@@ -1389,8 +1437,8 @@ static void CrossboneIsleSteppingStones_MoveSinkingBoulder(void) {
   Event_End();
 }
 
-/// Walking into CrossboneIsleDragonStatue's sinking boulder: push it if the
-/// cell beyond is clear.
+/// Isaac walks into the small boulder below the logs in the dragon statue's
+/// room and pushes it a step if the way beyond is clear.
 static void CrossboneIsleSteppingStones_PushSinkingBoulder(void) {
   struct PushedActorProbe probe;
 
@@ -1610,7 +1658,7 @@ const s32 *gFieldEffect_DurationScripts[] = {
 };
 
 /// The shine on a pillar of ice Frost has made of a puddle in
-/// CrossboneIsleDragonStatue.
+/// The dragon statue's room.
 ///
 /// The timer carries a colour mode to
 /// CrossboneIsleSteppingStones_SetSpriteColorFromTimer, with green and blue
@@ -1831,19 +1879,19 @@ struct Trigger gCrossboneIsleFloodgateTriggers[] = {
     { EXAMINE_CHEST_FACING(FACING_NORTHEAST), 101, FLAG_CROSSBONE_ISLE_FLOODGATE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 102, FLAG_CROSSBONE_ISLE_FLOODGATE_POTION, FIND_ITEM(ITEM_POTION) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 103, FLAG_CROSSBONE_ISLE_FLOODGATE_NINJA_GARB, FIND_ITEM(ITEM_NINJA_GARB) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 20, CONDITION_ALWAYS, EVENT(CrossboneIsleSteppingStones_FlipWaterSwitch) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_FLOODGATE_SWITCH, CONDITION_ALWAYS, EVENT(CrossboneIsleSteppingStones_FlipWaterSwitch) },
     { TRIGGER_TABLE_END },
 };
 
 struct Trigger gCrossboneIsleStackedPillarsTriggers[] = {
     { TRIGGER_EXIT, 1, CONDITION_ALWAYS, CROSSBONE_ISLE_STACKED_PILLARS_TO_CROSSBONE_ISLE_SEVENTH_FLOOR_EAST },
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_STACKED_PILLARS_TO_CROSSBONE_ISLE_SEVENTH_FLOOR_WEST },
-    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 30, CONDITION_ALWAYS, EVENT(CrossboneIsleSteppingStones_JumpOrPushStackedPillar) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 31, CONDITION_ALWAYS, EVENT(CrossboneIsleSteppingStones_ClimbUp) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 31, CONDITION_ALWAYS, EVENT(CrossboneIsleSteppingStones_PushOrClimbDown) },
-    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 31, CONDITION_ALWAYS, EVENT(CrossboneIsleSteppingStones_JumpOrPushStackedPillar) },
-    { TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(CrossboneIsleSteppingStones_StartRising) },
-    { TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(CrossboneIsleSteppingStones_StopRising) },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_STACKED_PILLARS_PILLARS, CONDITION_ALWAYS, EVENT(CrossboneIsleSteppingStones_JumpOrPushStackedPillar) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_STACKED_PILLARS_LADDER, CONDITION_ALWAYS, EVENT(CrossboneIsleSteppingStones_ClimbUp) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_STACKED_PILLARS_LADDER, CONDITION_ALWAYS, EVENT(CrossboneIsleSteppingStones_PushOrClimbDown) },
+    { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_STACKED_PILLARS_LADDER, CONDITION_ALWAYS, EVENT(CrossboneIsleSteppingStones_JumpOrPushStackedPillar) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_STACKED_PILLARS_LOWEST_FLOOR, CONDITION_ALWAYS, EVENT(CrossboneIsleSteppingStones_StartRising) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_STACKED_PILLARS_LEAVE_LOWEST_FLOOR, CONDITION_ALWAYS, EVENT(CrossboneIsleSteppingStones_StopRising) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_777_COINS, FIND_COINS(777) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { EXAMINE_CHEST_FACING(FACING_EAST), 102, FLAG_CROSSBONE_ISLE_STACKED_PILLARS_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL) },

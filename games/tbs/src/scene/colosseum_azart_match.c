@@ -195,11 +195,11 @@ enum {
   ACTOR_ROCK_A = 9,
   ACTOR_ROCK_B = 10,
   ACTOR_ROCK_C = 11,
-  /// Pushed west to let water into the Pipeworks. A pipe section, drawn as
-  /// mercury_lighthouse.c's ACTOR_THIRD_PIPE.
+  /// A loose length of pipe, pushed west to let water into the Pipeworks'
+  /// channel. It is drawn as mercury_lighthouse.c's ACTOR_THIRD_PIPE.
   ACTOR_PIPEWORKS_PIPE = 12,
-  /// The Pipeworks' two pipes, which rise and sink against each other as
-  /// water fills one, like scales.
+  /// The white pans hanging under the Pipeworks' two water pipes, which rise
+  /// and sink against each other as water fills one, like scales.
   ACTOR_PIPE_WEST = 13,
   ACTOR_PIPE_EAST = 14,
   /// The plant Growth grows into a vine before the Broken Bridge.
@@ -319,8 +319,15 @@ static void ColosseumAzartMatch_WaitForBridgeOpening(void) {
     wait(1);
 }
 
-/// Move on a rock in the Rock Challenge, and each push, settles the rocks.
-static void ColosseumAzartMatch_SettleRocks(void) {
+/// Move on one of the stone pillars in the Rock Challenge, the first stage,
+/// slides it a cell, which can clear the way or give the racers a step.
+///
+/// The same work follows every push. Once the first pillar has come down to
+/// the low ground, level with its floor, it is drawn under the party and its
+/// top becomes a square to hop across. The second pillar's top is always such
+/// a square, and the column it stands in is kept in FLAG_SECOND_ROCK_COLUMN,
+/// so that a friend's Move during Lend a Hand still holds for the race.
+static void ColosseumAzartMatch_UpdateRockCells(void) {
   struct Actor *actor;
   FIXED blocked;
 
@@ -351,19 +358,25 @@ static void ColosseumAzartMatch_SettleRocks(void) {
   }
 }
 
-/// Walking into a rock in the Rock Challenge pushes it one cell.
+/// Walking into a stone pillar in the Rock Challenge pushes it a cell, with
+/// Isaac leaning on it, if nothing is in the way.
 static void ColosseumAzartMatch_PushRock(void) {
   Colosso_PushActorAhead();
-  ColosseumAzartMatch_SettleRocks();
+  ColosseumAzartMatch_UpdateRockCells();
 }
 
-/// Growth on the plant before the Broken Bridge makes it grow.
+/// Growth on the sprout before the Broken Bridge, the third stage, grows it
+/// into a vine up the wall beside the bridge's scaffold (cell (47, 12)), a
+/// shortcut up to the bridge.
 static void ColosseumAzartMatch_GrowPlant(void) {
   MapGrid_CopyCellAttributes(47, 24, 1, 1, 47, 12);
   GameFlag_Set(FLAG_PLANT_GROWN);
 }
 
-/// Douse on the Pipeworks' west pipe fills it.
+/// Douse on the white pan under the Pipeworks' west pipe, the second stage,
+/// fills it with water. The camera moves over, the full pan sinks and the one
+/// under the east pipe rises, as the attendant says the pipes form a kind of
+/// scale, and the way on to the next stage opens (cell (41, 12)).
 static void ColosseumAzartMatch_DousePipe(void) {
   struct Actor *actor;
 
@@ -500,7 +513,11 @@ static inline void ColosseumAzartMatch_AnimatePipeworksWater(void) {
   MapGrid_CopyCells(100, 29, 1, 3, 34, 38);
 }
 
-/// Walking west into the Pipeworks' pillar pushes it.
+/// Walking west into the loose length of pipe in the Pipeworks pushes it three
+/// cells west, under the spout, and the camera follows it. Water then runs
+/// down into the channel, and if the pans have not tipped already, the west
+/// pan fills and sinks and the east one rises, opening the way on
+/// (cell (41, 12)).
 static void ColosseumAzartMatch_PushPipeworksPillar(void) {
   s32 leaderId;
   struct Actor *leader;
@@ -620,9 +637,11 @@ static void ColosseumAzartMatch_ReachArena(void) {
   GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
 }
 
-/// Walking into something in the Rock Challenge (step trigger 90) pushes a
-/// rock, and checks anything else.
-static void ColosseumAzartMatch_PushRockOrCheckAhead(void) {
+/// Walking on from the east edge of the Rock Challenge's raised square (cell
+/// (22, 12)) pushes the stone pillar ahead if there is one. With no pillar
+/// there, Isaac hops forward across the gap where there is somewhere to land,
+/// and otherwise nothing happens.
+static void ColosseumAzartMatch_PushRockOrHopAcross(void) {
   if (Colosso_FindActorAhead() == 0) {
     Field_TryJumpForward();
   } else {
@@ -1305,7 +1324,7 @@ struct ActorPlacement gColosseumAzartMatch_ActorPlacements[] = {
 u32 gColosseumAzartMatch_Countdown = 0;
 
 struct Trigger gColosseumAzartMatch_Triggers[] = {
-    { STEP_TRIGGER_WALKING, 90, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_PushRockOrCheckAhead) },
+    { STEP_TRIGGER_WALKING, 90, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_PushRockOrHopAcross) },
     { STEP_TRIGGER_WALKING, 10, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_PushRock) },
     { STEP_TRIGGER_WALKING, 11, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_PushRock) },
     { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 12, FLAG_PIPEWORKS_PIPE_PUSHED, EVENT(ColosseumAzartMatch_PushPipeworksPillar) },
@@ -1317,9 +1336,9 @@ struct Trigger gColosseumAzartMatch_Triggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_AREA_TEMP_08, FIND_ITEM(ITEM_NUT) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_COLOSSEUM_AZART_MATCH_OIL_DROP_CHEST_OPENED, FIND_ITEM(ITEM_OIL_DROP) },
     { EXAMINE_TRIGGER(EXAMINE_CHEST) | TRIGGER_FLAG_FACING | FACING_WEST, 103, FLAG_AREA_TEMP_0A, FIND_ITEM(ITEM_NUT) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROCK_A, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_SettleRocks) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROCK_B, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_SettleRocks) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROCK_C, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_SettleRocks) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROCK_A, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_UpdateRockCells) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROCK_B, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_UpdateRockCells) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROCK_C, CONDITION_ALWAYS, EVENT(ColosseumAzartMatch_UpdateRockCells) },
     { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_GROWTH_PLANT, FLAG_PLANT_GROWN, EVENT(ColosseumAzartMatch_GrowPlant) },
     { PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_PIPE_WEST, FLAG_PIPES_MOVED, EVENT(ColosseumAzartMatch_DousePipe) },
     { TRIGGER_TALK, ACTOR_GUIDE, CONDITION_ALWAYS, EVENT(Colosso_AskReadyToRace) },

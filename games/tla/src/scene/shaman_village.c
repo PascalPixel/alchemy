@@ -2816,11 +2816,11 @@ void ShamanVillage_SetUpTrialGrounds(void) {
 
 /// The north-east of the village and the gate of Trial Road: the torches lit,
 /// the pillar in the gap once Move has dropped it, and the fortune-teller and
-/// her tent's entrance there only once Moapa is beaten. Once the Shaman's Rod
-/// is shown, the three cells from (12, 6) take those of the row above them.
-// XXX: what that change at the gate of Trial Road looks like or allows; a
-// probe of the gate with FLAG_SHAMAN_VILLAGE_SHAMANS_ROD_SHOWN set and clear
-// would settle it.
+/// her tent's entrance there only once Moapa is beaten. Until the Shaman's Rod
+/// is shown, a wooden gate with a notice on it stands between the torches at
+/// the foot of Trial Road; once it is shown the gate is gone and the way
+/// north between the torches is open (the three cells from (12, 6) take those
+/// of the row above them).
 void ShamanVillage_SetUpNorthEnd(void) {
   struct Actor *actor;
 

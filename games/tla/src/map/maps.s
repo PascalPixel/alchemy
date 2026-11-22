@@ -182,7 +182,7 @@
 	.include "games/tla/src/map/champa_cliff_caves_obaba/map.inc"
 	.include "games/tla/src/map/champa_cliff_caves_avimander/map.inc"
 	.include "games/tla/src/map/champa_sanctum/map.inc"
-	.include "games/tla/src/map/sea_of_time_whirlpool/map.inc"
+	.include "games/tla/src/map/sea_of_time_swirls/map.inc"
 	.include "games/tla/src/map/sea_of_time_to_lemuria/map.inc"
 	.include "games/tla/src/map/lemurian_ship_tiller/map.inc"
 	.include "games/tla/src/map/ankohl_ruins_stone_faces/map.inc"

@@ -1221,12 +1221,12 @@ Resource_DirectoryTable:
 	resource , Field_ChampaCliffCavesAvimander
 	resource , Field_ChampaSanctum
 	resource , Tileset_PaletteChampaSanctum
-	resource , Field_SeaOfTimeWhirlpool
-	resource , Tileset_SeaOfTimeWhirlpoolPalette
-	resource , Tileset_SeaOfTimeWhirlpoolTilesA
-	resource , Tileset_SeaOfTimeWhirlpoolTilesB
-	resource , Tileset_SeaOfTimeWhirlpoolTilesC
-	resource , Tileset_SeaOfTimeWhirlpoolTilesD
+	resource , Field_SeaOfTimeSwirls
+	resource , Tileset_SeaOfTimeSwirlsPalette
+	resource , Tileset_SeaOfTimeSwirlsTilesA
+	resource , Tileset_SeaOfTimeSwirlsTilesB
+	resource , Tileset_SeaOfTimeSwirlsTilesC
+	resource , Tileset_SeaOfTimeSwirlsTilesD
 	resource , Field_SeaOfTimeToLemuria
 	resource , Tileset_SeaOfTimeToLemuriaPalette
 	resource , Tileset_SeaOfTimeToLemuriaTilesA

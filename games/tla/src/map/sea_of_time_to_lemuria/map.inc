@@ -24,10 +24,10 @@ Field_SeaOfTimeToLemuria:
 	.incbin "games/tla/src/map/sea_of_time_to_lemuria/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_SeaOfTimeToLemuria_ANIMATION:
-	.incbin "games/tla/src/map/sea_of_time_whirlpool/animation.script.lz"
+	.incbin "games/tla/src/map/sea_of_time_swirls/animation.script.lz"
 	.balign 4, 0
 .LField_SeaOfTimeToLemuria_BLEND:
-	.incbin "games/tla/src/map/sea_of_time_whirlpool/blend.script.lz"
+	.incbin "games/tla/src/map/sea_of_time_swirls/blend.script.lz"
 	.balign 4, 0
 .LField_SeaOfTimeToLemuria_SCENE:
 	.incbin "games/tla/src/map/sea_of_time_to_lemuria/scene.scene.lz"

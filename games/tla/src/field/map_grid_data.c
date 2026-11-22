@@ -576,7 +576,7 @@ const struct MapResources gMaps[] = {
     {587, 581, {582, 583, 584}, 585}, // champa_cliff_caves_obaba
     {588, 581, {582, 583, 584}, 585}, // champa_cliff_caves_avimander
     {589, 590, {225, 226, 227}, 228}, // champa_sanctum
-    {591, 592, {593, 594, 595}, 596}, // sea_of_time_whirlpool
+    {591, 592, {593, 594, 595}, 596}, // sea_of_time_swirls
     {597, 598, {599, 600, 601}, 602}, // sea_of_time_to_lemuria
     {603, 430, {604, 605, 606}, 607}, // lemurian_ship_tiller
     {608, 609, {97, 98, 99}, 100}, // ankohl_ruins_stone_faces

@@ -144,8 +144,8 @@ extern char SceneId_Alhafra;
 #define SCENE_ALHAFRA ((s32)&SceneId_Alhafra)
 extern char SceneId_AlhafraRooms;
 #define SCENE_ALHAFRA_ROOMS ((s32)&SceneId_AlhafraRooms)
-extern char SceneId_SeaOfTimeWhirlpool;
-#define SCENE_SEA_OF_TIME_WHIRLPOOL ((s32)&SceneId_SeaOfTimeWhirlpool)
+extern char SceneId_SeaOfTimeSwirls;
+#define SCENE_SEA_OF_TIME_SWIRLS ((s32)&SceneId_SeaOfTimeSwirls)
 extern char SceneId_SeaOfTimeToLemuria;
 #define SCENE_SEA_OF_TIME_TO_LEMURIA ((s32)&SceneId_SeaOfTimeToLemuria)
 extern char SceneId_LemuriaEntrance;

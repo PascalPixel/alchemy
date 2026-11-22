@@ -278,8 +278,25 @@ enum {
   ACTOR_FLAME,
   ACTOR_ROPE_POST_A,
   ACTOR_ROPE_POST_B,
-  /// "It looks like there are fewer warriors in Kibombo now, huh?"
-  ACTOR_WOMAN_NOTING_FEWER_WARRIORS = 15,
+  /// By day, the villagers, each named for what they say: a small child,
+  /// "Akafubu has finally completed his ceremony...", and the woman, "It looks
+  /// like there are fewer warriors in Kibombo now, huh?"
+  ACTOR_CHILD_GLAD_OF_THE_CALM,
+  ACTOR_WOMAN_NOTING_FEWER_WARRIORS,
+  /// "The Great Gabomba's mouth will remain open until Akafubu has earned the
+  /// gift of the Gabomba."
+  ACTOR_MAN_ON_THE_OPEN_MOUTH,
+  /// "Now that the ceremony is over, I feel a touch depressed."
+  ACTOR_WOMAN_MISSING_THE_CEREMONY,
+  /// "I couldn't for the life of me figure out how our warriors got to Indra
+  /// without a boat."
+  ACTOR_OLD_MAN_PUZZLED_BY_INDRA,
+  /// "Oh... I smell something delectable."
+  ACTOR_OLD_WOMAN_SMELLING_MEAT,
+  /// "Good ol' meat... I love meat."
+  ACTOR_BOY_WHO_LOVES_MEAT,
+  /// "We get to eat normal animals again!"
+  ACTOR_GIRL_TIRED_OF_MONSTERS,
   ACTOR_GATE_GUARD_A = 22,
   ACTOR_GATE_GUARD_B,
   ACTOR_SIGNAL_FIRE = 25,
@@ -301,28 +318,80 @@ enum {
   ACTOR_FATHER_OF_AKAFUBU = 9,
   ACTOR_KRADEN_AT_HOME = 10,
   /// "Are you going to head to western Gondowan?"
-  ACTOR_WOMAN_ASKING_ABOUT_THE_WEST = 12,
-  ACTOR_MAN_WITH_ACHING_BACK = 16,
-  ACTOR_WEAPON_SHOPKEEPER = 20,
-  ACTOR_ARMOR_SHOPKEEPER = 21,
-  ACTOR_ITEM_SHOPKEEPER = 22,
-  ACTOR_INNKEEPER = 23,
-  ACTOR_HEALER = 25,
+  /// The other villagers at home, each named for what they say: "I have heard
+  /// that if you head west from southern Gondowan, you'll see the Eastern
+  /// Sea."
+  ACTOR_CHILD_ON_THE_EASTERN_SEA = 11,
+  ACTOR_WOMAN_ASKING_ABOUT_THE_WEST,
+  /// "You can see Atteka from the bridge in western Gondowan."
+  ACTOR_BOY_WHO_HEARD_OF_ATTEKA,
+  /// "If you are looking for treasure, look west of the river."
+  ACTOR_MAN_ON_TREASURE_WEST,
+  /// "Each year, when the rains stop, our warriors look for treasure in the
+  /// belly of the continent."
+  ACTOR_WOMAN_ON_THE_TREASURE_HUNTS,
+  /// The old man lying in bed, his back aching since the ceremony.
+  ACTOR_MAN_WITH_ACHING_BACK,
+  /// "As soon as Akafubu became our recognized witch doctor, he became so much
+  /// nicer."
+  ACTOR_OLD_WOMAN_ON_A_KINDER_AKAFUBU,
+  /// Two warriors at home: "Many in Gondowan fear the might of the Kibombo
+  /// warriors." and "We think it is time to inform other villages..."
+  ACTOR_WARRIOR_NOT_TO_BE_FEARED,
+  ACTOR_WARRIOR_TO_TELL_THE_VILLAGES,
+  ACTOR_WEAPON_SHOPKEEPER,
+  ACTOR_ARMOR_SHOPKEEPER,
+  ACTOR_ITEM_SHOPKEEPER,
+  ACTOR_INNKEEPER,
+  /// "I can't remember how long it's been since we've had any guests."
+  ACTOR_INN_WORKER,
+  ACTOR_HEALER,
   /// Two unseen blocks in the inn's back doorway, hidden as the room opens
   /// (Kibombo_HideInnBlocks).
-  ACTOR_INN_FIRST_BLOCK = 26,
-  ACTOR_INN_SECOND_BLOCK
+  ACTOR_INN_FIRST_BLOCK,
+  ACTOR_INN_SECOND_BLOCK,
+  /// An unseen marker on the bed where the man with the aching back lies,
+  /// which answers for him from that side.
+  ACTOR_ACHING_BACK_BEDSIDE
 };
 
 /// The village by day: "This is a signal fire. We use these to send messages
 /// to neighboring..."
 enum { ACTOR_SIGNAL_FIRE_KEEPER = 24 };
 
-/// The village on the ceremony night: in the crowd, those who move or leave
-/// once Akafubu has been offered help, and the healer who talks of the foreign
-/// ceremony.
+/// The village on the ceremony night: the crowd in the square, each named for
+/// what they say before Akafubu has asked the party's help; some move or leave
+/// once he has. Last, the healer who talks of the foreign ceremony.
 enum {
-  ACTOR_GIRL_WHO_HOPES = 21,
+  /// "During the last ceremony, Akafubu made the jewel float in the air..."
+  ACTOR_MAN_WHO_SAW_THE_JEWEL_FLOAT = 14,
+  /// "Akafubu looks really confident tonight."
+  ACTOR_MAN_SURE_OF_AKAFUBU,
+  /// "Akafubu is attempting the ceremony again tonight. Oeia performed the
+  /// same..."
+  ACTOR_OLD_MAN_RECALLING_OEIA,
+  /// "Is making the jewel float with the power of his mind all there is to
+  /// it?"
+  ACTOR_WOMAN_DOUBTING_THE_JEWEL,
+  /// "Akafubu has tried this before, but he has always failed."
+  ACTOR_WOMAN_RECALLING_HIS_FAILURES,
+  /// "Akafubu blames his failures on the jewel he originally used."
+  ACTOR_OLD_WOMAN_ON_THE_JEWEL,
+  /// "Akafubu's ceremony is set to begin soon."
+  ACTOR_BOY_KEPT_AWAKE,
+  ACTOR_GIRL_WHO_HOPES,
+  /// "When the Gabomba is angered, his eyes glow with rage and fire shoots
+  /// out of his mouth."
+  ACTOR_WOMAN_WARNING_OF_ANGER,
+  /// "He who is the witch doctor of Kibombo holds the most revered office in
+  /// our whole town."
+  ACTOR_OLD_MAN_ON_THE_OFFICE,
+  /// "If the Great Gabomba's mouth doesn't open, Akafubu must not yet be a
+  /// true witch doctor."
+  ACTOR_OLD_WOMAN_WATCHING_THE_MOUTH,
+  /// "If the Great Gabomba likes the jewel, his mouth will open and his tongue
+  /// will stick out."
+  ACTOR_MAN_WHO_KNOWS_THE_SIGN,
   ACTOR_WOMAN_NO_PUSHING = 26,
   ACTOR_AFRAID_MAN,
   ACTOR_MAN_WHO_KNEW_OEIA,
@@ -359,6 +428,12 @@ enum KibomboCellBehavior {
   CELL_BEHAVIOR_BY_PIERS = 20,
   CELL_BEHAVIOR_WAY_TO_DEAD_END,
   CELL_BEHAVIOR_BY_PIERS_WAITING,
+  /// The houses: the cells beside the three ladders down, each the number of
+  /// the exit it leads by: in the item shop's upper room, from Akafubu's home
+  /// to the Sanctum, and in the upper room with two beds.
+  CELL_BEHAVIOR_ITEM_SHOP_LADDER = 7,
+  CELL_BEHAVIOR_AKAFUBUS_LADDER = 9,
+  CELL_BEHAVIOR_TWO_BEDS_LADDER = 13,
   /// The Sanctum: the counter before the healer, cell (23, 22).
   CELL_BEHAVIOR_SANCTUM_COUNTER = 24
 };
@@ -697,6 +772,10 @@ void Kibombo_HideBlocks(void) {
 /// onto.
 void Kibombo_FreezePuddle(void) { FlagBlock_ApplyFlags(gKibombo_FrozenPuddle); }
 
+/// Scoop runs its event every frame of the dig, passing this stage on the
+/// frame the ground opens.
+enum { SCOOP_STAGE_DUG = 1 };
+
 /// Shows the vent by the statue uncovered, cell (23, 18), and lets the party
 /// climb down into it.
 void Kibombo_UncoverVent(void) {
@@ -706,11 +785,11 @@ void Kibombo_UncoverVent(void) {
 }
 
 /// Felix casts Scoop on the patch of ground on the statue's grounds, cell
-/// (23, 18), which the party passed on the way to the dead end: once the dig
-/// is done (`mode` 1), the vent under it is uncovered, the way into the
-/// Gabomba Statue.
-void Kibombo_ScoopVent(s32 mode) {
-  if (mode == 1)
+/// (23, 18), which the party passed on the way to the dead end: as the dig
+/// opens the ground, the vent under it is uncovered, the way into the Gabomba
+/// Statue.
+void Kibombo_ScoopVent(s32 stage) {
+  if (stage == SCOOP_STAGE_DUG)
     Kibombo_UncoverVent();
 }
 
@@ -723,10 +802,10 @@ void Kibombo_UncoverNorthMark(void) {
 }
 
 /// Felix casts Scoop on the north mark at the dead end by the statue, cell
-/// (16, 7), one of four in a diamond on the ground there: once the dig is done
-/// (`mode` 1), the mark is dug out.
-void Kibombo_ScoopNorthMark(s32 mode) {
-  if (mode == 1)
+/// (16, 7), one of four in a diamond on the ground there: as the dig opens the
+/// ground, the mark is dug out.
+void Kibombo_ScoopNorthMark(s32 stage) {
+  if (stage == SCOOP_STAGE_DUG)
     Kibombo_UncoverNorthMark();
 }
 
@@ -738,10 +817,10 @@ void Kibombo_UncoverSouthMark(void) {
 }
 
 /// Felix casts Scoop on the south mark at the dead end by the statue, cell
-/// (16, 11), the one Kraden first tells him to dig: once the dig is done
-/// (`mode` 1), the mark is dug out.
-void Kibombo_ScoopSouthMark(s32 mode) {
-  if (mode == 1)
+/// (16, 11), the one Kraden first tells him to dig: as the dig opens the
+/// ground, the mark is dug out.
+void Kibombo_ScoopSouthMark(s32 stage) {
+  if (stage == SCOOP_STAGE_DUG)
     Kibombo_UncoverSouthMark();
 }
 
@@ -753,9 +832,9 @@ void Kibombo_UncoverWestMark(void) {
 }
 
 /// Felix casts Scoop on the west mark at the dead end by the statue, cell
-/// (14, 9): once the dig is done (`mode` 1), the mark is dug out.
-void Kibombo_ScoopWestMark(s32 mode) {
-  if (mode == 1)
+/// (14, 9): as the dig opens the ground, the mark is dug out.
+void Kibombo_ScoopWestMark(s32 stage) {
+  if (stage == SCOOP_STAGE_DUG)
     Kibombo_UncoverWestMark();
 }
 
@@ -767,9 +846,9 @@ void Kibombo_UncoverEastMark(void) {
 }
 
 /// Felix casts Scoop on the east mark at the dead end by the statue, cell
-/// (18, 9): once the dig is done (`mode` 1), the mark is dug out.
-void Kibombo_ScoopEastMark(s32 mode) {
-  if (mode == 1)
+/// (18, 9): as the dig opens the ground, the mark is dug out.
+void Kibombo_ScoopEastMark(s32 stage) {
+  if (stage == SCOOP_STAGE_DUG)
     Kibombo_UncoverEastMark();
 }
 
@@ -2605,7 +2684,8 @@ void Kibombo_GazeAtStatue(void) {
 /// goes dark and returns to the grounds.
 ///
 /// XXX: what the second and third views, around (584, 248) and (248, 536),
-/// show; a recording from the face's entrance 10 would settle it.
+/// show; a recording of the statue's face as the grounds hand over to it
+/// would settle it.
 void Kibombo_StatueFlashes(void) {
   Sound_Play(SE_POWER_UP);
   PaletteFade_ApplyTarget(RGB_WHITE, 0);
@@ -3353,10 +3433,11 @@ void Kibombo_InitializeVillageByDay(void) {
 struct Unit *Unit_Get(u32 unitId);
 
 /// The village on the ceremony night: the signal fire's flame is raised, and
-/// arriving by entrance 19 with Piers in the party, he is healed and stays
-/// behind. The fires' colours are kept for their flicker, the candlesticks lit
-/// and, once Akafubu has offered his help, the ceremony's actors moved; the
-/// screen fades in with the village fires flickering.
+/// when the party starts again before the healer after a defeat with Piers
+/// along, he is healed and stays behind. The fires' colours are kept for their
+/// flicker, the candlesticks lit and, once Akafubu has offered his help, the
+/// ceremony's actors moved; the screen fades in with the village fires
+/// flickering.
 void Kibombo_InitializeCeremony(void) {
   struct Actor *actor = Actor_GetById(ACTOR_FLAME);
   struct Unit *unit;
@@ -3598,8 +3679,9 @@ void Kibombo_InitializeStatueGroundsCeremony(void) {
   }
 }
 
-/// Before the statue's face: from entrance 10 its flashes, from 11 the gaze
-/// into its fires, otherwise its fires flicker.
+/// Before the statue's face: brought here from the grounds as the Great Gabomba
+/// answers, its three flashes; brought here for the close look during the
+/// ceremony, the gaze into its fires; otherwise its fires flicker.
 void Kibombo_InitializeStatueFace(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -4127,8 +4209,10 @@ struct Trigger gKibombo_Triggers[] = {
 };
 
 struct Trigger gKibombo_VillageTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, KIBOMBO_TO_WORLD_MAP, CONDITION_ALWAYS,
+     KIBOMBO_TO_WORLD_MAP},
+    {TRIGGER_EXIT, KIBOMBO_TO_KIBOMBO_STATUE_GROUNDS_EAST, CONDITION_ALWAYS,
+     KIBOMBO_TO_KIBOMBO_STATUE_GROUNDS_EAST},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
      KIBOMBO_TO_KIBOMBO_HOUSES_NORTHWEST, CONDITION_ALWAYS,
      EVENT(Kibombo_EnterDoor)},
@@ -4145,8 +4229,10 @@ struct Trigger gKibombo_VillageTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
      KIBOMBO_TO_KIBOMBO_HOUSES_SOUTHEAST, CONDITION_ALWAYS,
      EVENT(Kibombo_EnterDoor)},
-    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, KIBOMBO_TO_KIBOMBO_STATUE_GROUNDS_WEST_A, CONDITION_ALWAYS,
+     KIBOMBO_TO_KIBOMBO_STATUE_GROUNDS_WEST_A},
+    {TRIGGER_EXIT, KIBOMBO_TO_KIBOMBO_STATUE_GROUNDS_WEST_B, CONDITION_ALWAYS,
+     KIBOMBO_TO_KIBOMBO_STATUE_GROUNDS_WEST_B},
     {TRIGGER_STEP, CELL_BEHAVIOR_POLE_RING, CONDITION_ALWAYS,
      EVENT(Kibombo_OverlayFollowsLeader)},
     {TRIGGER_STEP, CELL_BEHAVIOR_MIDDLE_OF_POLE_RING, CONDITION_ALWAYS,
@@ -4162,31 +4248,38 @@ struct Trigger gKibombo_VillageTriggers[] = {
      CONDITION_ALWAYS, EVENT(Kibombo_JumpForward)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_FLAME, CONDITION_ALWAYS, 0},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgAkafubuHasFinally)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
-     MSGNO(MsgEveryoneWasTerribly)},
+    {TRIGGER_TALK, ACTOR_CHILD_GLAD_OF_THE_CALM, CONDITION_ALWAYS,
+     MSGNO(MsgAkafubuHasFinally)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD_GLAD_OF_THE_CALM,
+     CONDITION_ALWAYS, MSGNO(MsgEveryoneWasTerribly)},
     {TRIGGER_TALK, ACTOR_WOMAN_NOTING_FEWER_WARRIORS, CONDITION_ALWAYS,
      EVENT(Kibombo_AskAboutFewerWarriors)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_NOTING_FEWER_WARRIORS,
      CONDITION_ALWAYS, MSGNO(MsgCoveringOurWarriors)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTheGreatGabomba)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
-     MSGNO(MsgIWantTo)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgNowThatThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
-     MSGNO(MsgNowThatTheWitch)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgICouldnT)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
-     MSGNO(MsgBecauseKibomboLies)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgOhISmell)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
-     MSGNO(MsgYouDonTThink)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgGoodOlMeat)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
-     MSGNO(MsgGulpTheSmell)},
-    {TRIGGER_TALK, 21, CONDITION_ALWAYS, MSGNO(MsgWeGetTo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 21, CONDITION_ALWAYS,
-     MSGNO(MsgLatelyTheMonsters)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_THE_OPEN_MOUTH, CONDITION_ALWAYS,
+     MSGNO(MsgTheGreatGabomba)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_THE_OPEN_MOUTH,
+     CONDITION_ALWAYS, MSGNO(MsgIWantTo)},
+    {TRIGGER_TALK, ACTOR_WOMAN_MISSING_THE_CEREMONY, CONDITION_ALWAYS,
+     MSGNO(MsgNowThatThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_MISSING_THE_CEREMONY,
+     CONDITION_ALWAYS, MSGNO(MsgNowThatTheWitch)},
+    {TRIGGER_TALK, ACTOR_OLD_MAN_PUZZLED_BY_INDRA, CONDITION_ALWAYS,
+     MSGNO(MsgICouldnT)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_PUZZLED_BY_INDRA,
+     CONDITION_ALWAYS, MSGNO(MsgBecauseKibomboLies)},
+    {TRIGGER_TALK, ACTOR_OLD_WOMAN_SMELLING_MEAT, CONDITION_ALWAYS,
+     MSGNO(MsgOhISmell)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_SMELLING_MEAT,
+     CONDITION_ALWAYS, MSGNO(MsgYouDonTThink)},
+    {TRIGGER_TALK, ACTOR_BOY_WHO_LOVES_MEAT, CONDITION_ALWAYS,
+     MSGNO(MsgGoodOlMeat)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_WHO_LOVES_MEAT,
+     CONDITION_ALWAYS, MSGNO(MsgGulpTheSmell)},
+    {TRIGGER_TALK, ACTOR_GIRL_TIRED_OF_MONSTERS, CONDITION_ALWAYS,
+     MSGNO(MsgWeGetTo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_TIRED_OF_MONSTERS,
+     CONDITION_ALWAYS, MSGNO(MsgLatelyTheMonsters)},
     {TRIGGER_TALK, ACTOR_GATE_GUARD_A, CONDITION_ALWAYS,
      EVENT(Kibombo_AskAboutRevenge)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GATE_GUARD_A, CONDITION_ALWAYS,
@@ -4240,18 +4333,22 @@ struct Trigger gKibombo_CeremonyTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
      CELL_BEHAVIOR_JUMP_NORTH_AMONG_POLES, CONDITION_ALWAYS,
      EVENT(Kibombo_JumpForward)},
-    {TRIGGER_TALK, 20, FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgAkafubuSCeremony)},
-    {TRIGGER_TALK, 20, CONDITION_ALWAYS, MSGNO(MsgTheyToldMe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, FLAG_AKAFUBU_OFFERED_HELP,
-     MSGNO(MsgItSStrange)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 20, CONDITION_ALWAYS,
-     MSGNO(MsgAsLongAsThis)},
-    {TRIGGER_TALK, 14, FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgDuringTheLast)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgAkafubuHasBeen)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, FLAG_AKAFUBU_OFFERED_HELP,
-     MSGNO(MsgTheGreatGabombaIs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
-     MSGNO(MsgWhatSTaking)},
+    {TRIGGER_TALK, ACTOR_BOY_KEPT_AWAKE, FLAG_AKAFUBU_OFFERED_HELP,
+     MSGNO(MsgAkafubuSCeremony)},
+    {TRIGGER_TALK, ACTOR_BOY_KEPT_AWAKE, CONDITION_ALWAYS,
+     MSGNO(MsgTheyToldMe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_KEPT_AWAKE,
+     FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgItSStrange)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_KEPT_AWAKE,
+     CONDITION_ALWAYS, MSGNO(MsgAsLongAsThis)},
+    {TRIGGER_TALK, ACTOR_MAN_WHO_SAW_THE_JEWEL_FLOAT, FLAG_AKAFUBU_OFFERED_HELP,
+     MSGNO(MsgDuringTheLast)},
+    {TRIGGER_TALK, ACTOR_MAN_WHO_SAW_THE_JEWEL_FLOAT, CONDITION_ALWAYS,
+     MSGNO(MsgAkafubuHasBeen)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_WHO_SAW_THE_JEWEL_FLOAT,
+     FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgTheGreatGabombaIs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_WHO_SAW_THE_JEWEL_FLOAT,
+     CONDITION_ALWAYS, MSGNO(MsgWhatSTaking)},
     {TRIGGER_TALK, ACTOR_AFRAID_MAN, CONDITION_ALWAYS, MSGNO(MsgIMAfraid)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_AFRAID_MAN, CONDITION_ALWAYS,
      MSGNO(MsgWhenHeFails)},
@@ -4263,69 +4360,86 @@ struct Trigger gKibombo_CeremonyTriggers[] = {
      FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgIfTheGreat)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_WHO_HOPES,
      CONDITION_ALWAYS, MSGNO(MsgAmIGoing)},
-    {TRIGGER_TALK, 17, FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgIsMakingThe)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgOnceTheCeremony)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, FLAG_AKAFUBU_OFFERED_HELP,
-     MSGNO(MsgHeSFailed)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
-     MSGNO(MsgKibomboWasSo)},
-    {TRIGGER_TALK, 22, FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgWhenTheGabomba)},
-    {TRIGGER_TALK, 22, CONDITION_ALWAYS, MSGNO(MsgLastTimeAkafubu)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, FLAG_AKAFUBU_OFFERED_HELP,
-     MSGNO(MsgIHopeAkafubu)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 22, CONDITION_ALWAYS,
-     MSGNO(MsgAkafubuSAlways)},
+    {TRIGGER_TALK, ACTOR_WOMAN_DOUBTING_THE_JEWEL, FLAG_AKAFUBU_OFFERED_HELP,
+     MSGNO(MsgIsMakingThe)},
+    {TRIGGER_TALK, ACTOR_WOMAN_DOUBTING_THE_JEWEL, CONDITION_ALWAYS,
+     MSGNO(MsgOnceTheCeremony)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_DOUBTING_THE_JEWEL,
+     FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgHeSFailed)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_DOUBTING_THE_JEWEL,
+     CONDITION_ALWAYS, MSGNO(MsgKibomboWasSo)},
+    {TRIGGER_TALK, ACTOR_WOMAN_WARNING_OF_ANGER, FLAG_AKAFUBU_OFFERED_HELP,
+     MSGNO(MsgWhenTheGabomba)},
+    {TRIGGER_TALK, ACTOR_WOMAN_WARNING_OF_ANGER, CONDITION_ALWAYS,
+     MSGNO(MsgLastTimeAkafubu)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_WARNING_OF_ANGER,
+     FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgIHopeAkafubu)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_WARNING_OF_ANGER,
+     CONDITION_ALWAYS, MSGNO(MsgAkafubuSAlways)},
     {TRIGGER_TALK, ACTOR_MAN_WHO_KNEW_OEIA, CONDITION_ALWAYS,
      MSGNO(MsgAkafubuWasA)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_WHO_KNEW_OEIA,
      CONDITION_ALWAYS, MSGNO(MsgAkafubuHasNot)},
-    {TRIGGER_TALK, 15, FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgAkafubuLooksReally)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgIThinkAkafubu)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, FLAG_AKAFUBU_OFFERED_HELP,
-     MSGNO(MsgHeTravelsTo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
-     MSGNO(MsgAkafubuIsObsessed)},
-    {TRIGGER_TALK, 25, FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgIfTheGreatGabomba)},
-    {TRIGGER_TALK, 25, CONDITION_ALWAYS, MSGNO(MsgIBelieveIn)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, FLAG_AKAFUBU_OFFERED_HELP,
-     MSGNO(MsgIfTheGreatGabombaActually)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 25, CONDITION_ALWAYS,
-     MSGNO(MsgAkafubuAndOeia)},
-    {TRIGGER_TALK, 18, FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgAkafubuHasTried)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgWhatDonT)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, FLAG_AKAFUBU_OFFERED_HELP,
-     MSGNO(MsgAsAChildAkafubu)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
-     MSGNO(MsgIMSoFar)},
+    {TRIGGER_TALK, ACTOR_MAN_SURE_OF_AKAFUBU, FLAG_AKAFUBU_OFFERED_HELP,
+     MSGNO(MsgAkafubuLooksReally)},
+    {TRIGGER_TALK, ACTOR_MAN_SURE_OF_AKAFUBU, CONDITION_ALWAYS,
+     MSGNO(MsgIThinkAkafubu)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_SURE_OF_AKAFUBU,
+     FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgHeTravelsTo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_SURE_OF_AKAFUBU,
+     CONDITION_ALWAYS, MSGNO(MsgAkafubuIsObsessed)},
+    {TRIGGER_TALK, ACTOR_MAN_WHO_KNOWS_THE_SIGN, FLAG_AKAFUBU_OFFERED_HELP,
+     MSGNO(MsgIfTheGreatGabomba)},
+    {TRIGGER_TALK, ACTOR_MAN_WHO_KNOWS_THE_SIGN, CONDITION_ALWAYS,
+     MSGNO(MsgIBelieveIn)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_WHO_KNOWS_THE_SIGN,
+     FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgIfTheGreatGabombaActually)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_WHO_KNOWS_THE_SIGN,
+     CONDITION_ALWAYS, MSGNO(MsgAkafubuAndOeia)},
+    {TRIGGER_TALK, ACTOR_WOMAN_RECALLING_HIS_FAILURES,
+     FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgAkafubuHasTried)},
+    {TRIGGER_TALK, ACTOR_WOMAN_RECALLING_HIS_FAILURES, CONDITION_ALWAYS,
+     MSGNO(MsgWhatDonT)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_RECALLING_HIS_FAILURES,
+     FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgAsAChildAkafubu)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_RECALLING_HIS_FAILURES,
+     CONDITION_ALWAYS, MSGNO(MsgIMSoFar)},
     {TRIGGER_TALK, ACTOR_WOMAN_NO_PUSHING, CONDITION_ALWAYS,
      MSGNO(MsgHeyNoPushing)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_NO_PUSHING,
      CONDITION_ALWAYS, MSGNO(MsgThereAreSo)},
-    {TRIGGER_TALK, 16, FLAG_AKAFUBU_OFFERED_HELP,
+    {TRIGGER_TALK, ACTOR_OLD_MAN_RECALLING_OEIA, FLAG_AKAFUBU_OFFERED_HELP,
      MSGNO(MsgAkafubuIsAttempting)},
-    {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgTonightSeemsTo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, FLAG_AKAFUBU_OFFERED_HELP,
-     MSGNO(MsgOeiaSSudden)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 16, CONDITION_ALWAYS,
-     MSGNO(MsgWillTheGreat)},
-    {TRIGGER_TALK, 23, FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgHeWhoIs)},
-    {TRIGGER_TALK, 23, CONDITION_ALWAYS, MSGNO(MsgOeiaSDeath)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, FLAG_AKAFUBU_OFFERED_HELP,
-     MSGNO(MsgIfOnlyOeia)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 23, CONDITION_ALWAYS,
-     MSGNO(MsgISuspectAkafubu)},
-    {TRIGGER_TALK, 19, FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgAkafubuBlamesHis)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgTheySayThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, FLAG_AKAFUBU_OFFERED_HELP,
-     MSGNO(MsgTheyAttackedSome)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
-     MSGNO(MsgTheyReSaying)},
-    {TRIGGER_TALK, 24, FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgIfTheGreatGabombaS)},
-    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgAkafubuSeesThe)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, FLAG_AKAFUBU_OFFERED_HELP,
-     MSGNO(MsgIFeelSo)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
-     MSGNO(MsgIReallyWonder)},
+    {TRIGGER_TALK, ACTOR_OLD_MAN_RECALLING_OEIA, CONDITION_ALWAYS,
+     MSGNO(MsgTonightSeemsTo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_RECALLING_OEIA,
+     FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgOeiaSSudden)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_RECALLING_OEIA,
+     CONDITION_ALWAYS, MSGNO(MsgWillTheGreat)},
+    {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_OFFICE, FLAG_AKAFUBU_OFFERED_HELP,
+     MSGNO(MsgHeWhoIs)},
+    {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_OFFICE, CONDITION_ALWAYS,
+     MSGNO(MsgOeiaSDeath)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_OFFICE,
+     FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgIfOnlyOeia)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_OFFICE,
+     CONDITION_ALWAYS, MSGNO(MsgISuspectAkafubu)},
+    {TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_THE_JEWEL, FLAG_AKAFUBU_OFFERED_HELP,
+     MSGNO(MsgAkafubuBlamesHis)},
+    {TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_THE_JEWEL, CONDITION_ALWAYS,
+     MSGNO(MsgTheySayThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_THE_JEWEL,
+     FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgTheyAttackedSome)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_THE_JEWEL,
+     CONDITION_ALWAYS, MSGNO(MsgTheyReSaying)},
+    {TRIGGER_TALK, ACTOR_OLD_WOMAN_WATCHING_THE_MOUTH,
+     FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgIfTheGreatGabombaS)},
+    {TRIGGER_TALK, ACTOR_OLD_WOMAN_WATCHING_THE_MOUTH, CONDITION_ALWAYS,
+     MSGNO(MsgAkafubuSeesThe)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_WATCHING_THE_MOUTH,
+     FLAG_AKAFUBU_OFFERED_HELP, MSGNO(MsgIFeelSo)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_WATCHING_THE_MOUTH,
+     CONDITION_ALWAYS, MSGNO(MsgIReallyWonder)},
     {TRIGGER_TALK, ACTOR_HEALER_ON_THE_CEREMONY, CONDITION_ALWAYS,
      EVENT(Kibombo_TalkForeignCeremony)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER_ON_THE_CEREMONY,
@@ -4445,21 +4559,27 @@ struct Trigger gKibombo_StatueGroundsCeremonyTriggers[] = {
 };
 
 struct Trigger gKibombo_HousesTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, KIBOMBO_HOUSES_TO_KIBOMBO_NORTHWEST, CONDITION_ALWAYS,
+     KIBOMBO_HOUSES_TO_KIBOMBO_NORTHWEST},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {STEP_TRIGGER_WALKING, 7, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, KIBOMBO_HOUSES_TO_KIBOMBO_WEST, CONDITION_ALWAYS,
+     KIBOMBO_HOUSES_TO_KIBOMBO_WEST},
+    {TRIGGER_EXIT, KIBOMBO_HOUSES_TO_KIBOMBO_EAST, CONDITION_ALWAYS,
+     KIBOMBO_HOUSES_TO_KIBOMBO_EAST},
+    {TRIGGER_EXIT, KIBOMBO_HOUSES_TO_KIBOMBO_NORTHEAST, CONDITION_ALWAYS,
+     KIBOMBO_HOUSES_TO_KIBOMBO_NORTHEAST},
+    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_ITEM_SHOP_LADDER, CONDITION_ALWAYS,
      EVENT(Kibombo_StepOntoFirstLadder)},
-    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {STEP_TRIGGER_WALKING, 9, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, KIBOMBO_HOUSES_TO_KIBOMBO_SOUTHWEST, CONDITION_ALWAYS,
+     KIBOMBO_HOUSES_TO_KIBOMBO_SOUTHWEST},
+    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_AKAFUBUS_LADDER, CONDITION_ALWAYS,
      EVENT(Kibombo_StepOntoSecondLadder)},
-    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
+    {TRIGGER_EXIT, KIBOMBO_HOUSES_TO_KIBOMBO_SOUTHEAST, CONDITION_ALWAYS,
+     KIBOMBO_HOUSES_TO_KIBOMBO_SOUTHEAST},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {STEP_TRIGGER_WALKING, 13, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_TWO_BEDS_LADDER, CONDITION_ALWAYS,
      EVENT(Kibombo_StepOntoThirdLadder)},
     {TRIGGER_TALK, ACTOR_AKAFUBU_AT_HOME, FLAG_KIBOMBO_LEFT_HOME_OF_AKAFUBU,
      MSGNO(MsgIMGoing)},
@@ -4472,38 +4592,46 @@ struct Trigger gKibombo_HousesTriggers[] = {
      MSGNO(MsgMySonHasBeen)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FATHER_OF_AKAFUBU,
      CONDITION_ALWAYS, MSGNO(MsgAfterHeBecame)},
-    {TRIGGER_TALK, 11, CONDITION_ALWAYS, MSGNO(MsgIHaveHeard)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 11, CONDITION_ALWAYS,
-     MSGNO(MsgIKnowI)},
+    {TRIGGER_TALK, ACTOR_CHILD_ON_THE_EASTERN_SEA, CONDITION_ALWAYS,
+     MSGNO(MsgIHaveHeard)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHILD_ON_THE_EASTERN_SEA,
+     CONDITION_ALWAYS, MSGNO(MsgIKnowI)},
     {TRIGGER_TALK, ACTOR_WOMAN_ASKING_ABOUT_THE_WEST, CONDITION_ALWAYS,
      EVENT(Kibombo_AskGoingWest)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ASKING_ABOUT_THE_WEST,
      CONDITION_ALWAYS, MSGNO(MsgCrossingTheRiver)},
-    {TRIGGER_TALK, 13, CONDITION_ALWAYS, MSGNO(MsgYouCanSee)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 13, CONDITION_ALWAYS,
-     MSGNO(MsgIfIM)},
-    {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgIfYouAreLooking)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 14, CONDITION_ALWAYS,
-     MSGNO(MsgSureOurLegends)},
-    {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgEachYearWhen)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 15, CONDITION_ALWAYS,
-     MSGNO(MsgIWonderWhatOeia)},
+    {TRIGGER_TALK, ACTOR_BOY_WHO_HEARD_OF_ATTEKA, CONDITION_ALWAYS,
+     MSGNO(MsgYouCanSee)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_WHO_HEARD_OF_ATTEKA,
+     CONDITION_ALWAYS, MSGNO(MsgIfIM)},
+    {TRIGGER_TALK, ACTOR_MAN_ON_TREASURE_WEST, CONDITION_ALWAYS,
+     MSGNO(MsgIfYouAreLooking)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_TREASURE_WEST,
+     CONDITION_ALWAYS, MSGNO(MsgSureOurLegends)},
+    {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_TREASURE_HUNTS, CONDITION_ALWAYS,
+     MSGNO(MsgEachYearWhen)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_TREASURE_HUNTS,
+     CONDITION_ALWAYS, MSGNO(MsgIWonderWhatOeia)},
     {TRIGGER_TALK, ACTOR_MAN_WITH_ACHING_BACK, CONDITION_ALWAYS,
      EVENT(Kibombo_TalkAchingBack)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_WITH_ACHING_BACK,
      CONDITION_ALWAYS, EVENT(Kibombo_ReadMindNeverAgain)},
-    {TRIGGER_TALK, 28, CONDITION_ALWAYS, EVENT(Kibombo_TalkAchingBack)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 28, CONDITION_ALWAYS,
-     EVENT(Kibombo_ReadMindNeverAgain)},
-    {TRIGGER_TALK, 17, CONDITION_ALWAYS, MSGNO(MsgAsSoonAs)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 17, CONDITION_ALWAYS,
-     MSGNO(MsgAkafubuGetsSo)},
-    {TRIGGER_TALK, 18, CONDITION_ALWAYS, MSGNO(MsgManyInGondowan)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 18, CONDITION_ALWAYS,
-     MSGNO(MsgItWonT)},
-    {TRIGGER_TALK, 19, CONDITION_ALWAYS, MSGNO(MsgWeThinkIt)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 19, CONDITION_ALWAYS,
-     MSGNO(MsgIAmAMighty)},
+    {TRIGGER_TALK, ACTOR_ACHING_BACK_BEDSIDE, CONDITION_ALWAYS,
+     EVENT(Kibombo_TalkAchingBack)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ACHING_BACK_BEDSIDE,
+     CONDITION_ALWAYS, EVENT(Kibombo_ReadMindNeverAgain)},
+    {TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_A_KINDER_AKAFUBU, CONDITION_ALWAYS,
+     MSGNO(MsgAsSoonAs)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_A_KINDER_AKAFUBU,
+     CONDITION_ALWAYS, MSGNO(MsgAkafubuGetsSo)},
+    {TRIGGER_TALK, ACTOR_WARRIOR_NOT_TO_BE_FEARED, CONDITION_ALWAYS,
+     MSGNO(MsgManyInGondowan)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARRIOR_NOT_TO_BE_FEARED,
+     CONDITION_ALWAYS, MSGNO(MsgItWonT)},
+    {TRIGGER_TALK, ACTOR_WARRIOR_TO_TELL_THE_VILLAGES, CONDITION_ALWAYS,
+     MSGNO(MsgWeThinkIt)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WARRIOR_TO_TELL_THE_VILLAGES,
+     CONDITION_ALWAYS, MSGNO(MsgIAmAMighty)},
     {TRIGGER_TALK, ACTOR_WEAPON_SHOPKEEPER, CONDITION_ALWAYS,
      EVENT(Kibombo_OpenWeaponShop)},
     {TRIGGER_EXAMINE, ACTOR_WEAPON_SHOPKEEPER, CONDITION_ALWAYS,
@@ -4527,8 +4655,8 @@ struct Trigger gKibombo_HousesTriggers[] = {
      EVENT(Kibombo_OpenInn)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS,
      MSGNO(MsgThatBedMakes)},
-    {TRIGGER_TALK, 24, CONDITION_ALWAYS, MSGNO(MsgICanTRemember)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 24, CONDITION_ALWAYS,
+    {TRIGGER_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgICanTRemember)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS,
      MSGNO(MsgILoveKibombo)},
     {TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT(Kibombo_OpenSanctum)},
     {TRIGGER_EXAMINE, CELL_BEHAVIOR_SANCTUM_COUNTER, CONDITION_ALWAYS,

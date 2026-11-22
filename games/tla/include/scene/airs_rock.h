@@ -50,7 +50,7 @@ void AirsRock_MoveFirstPillar(void);
 
 void AirsRock_MoveThirdPillar(void);
 
-void AirsRock_ClimbLedge(void);
+void AirsRock_DropOffLedge(void);
 void AirsRock_StartWhirlwind(void);
 void AirsRock_TakeOverWhirlwind(void);
 

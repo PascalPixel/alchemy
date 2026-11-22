@@ -383,7 +383,7 @@ void AirsRock_MoveThirdPillar(void) {
 /// two pillars (cell (33, 55), on the second level): he hops over the edge,
 /// lowers himself a little way down the rock face, lets go and drops to the
 /// ledge below.
-void AirsRock_ClimbLedge(void) {
+void AirsRock_DropOffLedge(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   FIXED z = leader->z.fixed;
   u32 i;
@@ -1694,7 +1694,7 @@ extern s32 gAirsRock_LeaderLevel;
 /// of the ledges below the fog, the game swaps in the cells of the ledges in
 /// front of the two pillars for the level he is on, since the ledges of all
 /// four levels are drawn over the same rows of the map. On the second level
-/// they hold the edge he drops off (AirsRock_ClimbLedge).
+/// they hold the edge he drops off (AirsRock_DropOffLedge).
 void AirsRock_SetLedgeCellsByLevel(void) {
   struct Actor *actor = Actor_Get(FieldParty_GetLeaderActor());
   s32 level;
@@ -2266,7 +2266,7 @@ struct Trigger gAirsRock_FujinShieldChestTriggers[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 6, CONDITION_ALWAYS, 14},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS, EVENT(AirsRock_ClimbLedge)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 20, CONDITION_ALWAYS, EVENT(AirsRock_DropOffLedge)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR, CONDITION_ALWAYS, EVENT(AirsRock_MoveFirstPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_PILLAR, CONDITION_ALWAYS, EVENT(AirsRock_MoveSecondPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_THIRD_PILLAR, FLAG_AIRS_ROCK_THIRD_PILLAR_MOVED, EVENT(AirsRock_MoveThirdPillar)},

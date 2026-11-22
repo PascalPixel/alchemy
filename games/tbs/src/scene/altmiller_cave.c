@@ -1,63 +1,68 @@
 /// @file
-/// Altmiller Cave, where the party finds Babi while Tolbi searches for him
-/// during Colosso (babi_palace.c). Its six scenes share this overlay and the
-/// area name Altmiller Cave:
+/// Altmiller Cave, north of Tolbi, where the party finds Babi while all of
+/// Tolbi searches for him during Colosso (babi_palace.c). Its six scenes share
+/// this overlay and the area name Altmiller Cave. In the order the party goes
+/// through them:
 ///
-/// - AltmillerCaveEntrance (SceneId_AltmillerCaveEntrance): the dark passage in
-///   from the World Map and the chamber beyond it.
-/// - AltmillerCaveBabi (SceneId_AltmillerCaveBabi): the invisible Babi, who
-///   asks for his draught (AltmillerCave_MeetInvisibleBabi) and drinks it
-///   (AltmillerCave_RestoreBabiAndInviteParty), and a chest that is a Mimic.
-/// - AltmillerCaveVialChest (SceneId_AltmillerCaveVialChest) and
-///   AltmillerCaveCookieChest (SceneId_AltmillerCaveCookieChest): a chest each.
-/// - AltmillerCaveSquall (SceneId_AltmillerCaveSquall): Squall, a Jupiter
-///   Djinni, three fallen columns to push, a stone pillar for Move and a puddle
-///   for Frost.
-/// - AltmillerCaveDraught (SceneId_AltmillerCaveDraught): three more fallen
-///   columns, the rock puzzle (AltmillerCave_TurnRock) and the chest that holds
-///   the Mystic Draught behind the wall the puzzle opens.
+/// - The winding passage in from the cave mouth (`AltmillerCaveEntrance`). It
+///   grows darker in steps as the party walks in, until only a circle of light
+///   around them is bright. At its end a hole leads into a small chamber, where
+///   a torch burns beside the doorway down.
+/// - The big dark room below (`AltmillerCaveBabi`). Near its middle an old man
+///   lies on the floor, seen only as a white outline: the invisible Babi
+///   (AltmillerCave_MeetInvisibleBabi). He asks the party to fetch his draught
+///   from the bottom of the cave and tells them the order of the five rocks'
+///   colors. The chest on the room's east side is a Mimic.
+/// - Two dark rooms with a chest each: the Vial (`AltmillerCaveVialChest`)
+///   and, further down, the Cookie (`AltmillerCaveCookieChest`).
+/// - Between them, a lit hall with a brick floor (`AltmillerCaveSquall`):
+///   three fallen columns to push, a puddle Frost turns into an ice pillar to
+///   stop them, Squall, a Jupiter Djinni, in the north-west corner, and a
+///   stone pillar on a ledge to push into the pit before the way on.
+/// - The lit rooms at the bottom (`AltmillerCaveDraught`): a hall of three more
+///   fallen columns, the room of the five rocks (AltmillerCave_TurnRock), and
+///   behind the wall the rocks open, the Mystic Draught's chest on a stone
+///   table.
 ///
-/// The rooms share one entrance table and one exit table, and the other getters
-/// choose by gMainRoutineWork.next. Scene_Initialize sends an entry
+/// Back in Babi's room with the draught, the party watches him drink it and
+/// appear, and two men from Tolbi come to take him home
+/// (AltmillerCave_RestoreBabiAndInviteParty). Saving him (FLAG_BABI_SAVED) is
+/// the story flag the rest of Tolbi waits on. Everything else the cave
+/// remembers is kept in scene temp flags and gSceneLocalState, so the puzzles
+/// start over on every ordinary arrival.
+///
+/// The rooms share one entrance table and one exit table, and the other
+/// getters choose by gMainRoutineWork.next. Scene_Initialize sends an entry
 /// from outside the cave (entrance 0) to the room's first entrance, darkens the
 /// dark rooms and puts back what the party has done.
 ///
-/// Saving Babi (FLAG_BABI_SAVED) is the story flag the rest of Tolbi waits on.
-/// The overlay's own state is in scene temp flags and gSceneLocalState, so it
-/// starts over on every ordinary arrival.
+/// The darkness is BG1 laid over the rest (ALTMILLER_CAVE_DARKNESS_BLEND), and
+/// the light around the party is a display window, an ellipse around the
+/// leader inside which the layers are drawn differently
+/// (AltmillerCave_InitializeDarkness). In the dark rooms BG1 covers everything
+/// outside the light, so the room is black there but for the glow of
+/// the torches on its walls, and inside it BG1 only dims the ground.
 ///
-/// Every room but the two lit ones is dark (FLAG_ALTMILLER_CAVE_DARK). BG1 is
-/// blended over the rest (ALTMILLER_CAVE_DARKNESS_BLEND). The light around the
-/// party is a display window, an ellipse around the leader inside which the
-/// layers are drawn differently (AltmillerCave_InitializeDarkness). In an
-/// evenly dark room BG1 covers everything outside it and is only blended inside
-/// it.
+/// The passage in darkens by steps instead
+/// (FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS). Six kinds of cell along it each set
+/// a darkness level, kept in the cave's state: at the mouth the passage is
+/// fully lit, and five lines further in each make everything outside the light
+/// a little dimmer (AltmillerCave_ApplyFadeBlend). Where one level meets the
+/// next a cell of each lies side by side, so the level is always that of the
+/// last cell stepped on, whichever way the party walks.
 ///
-/// AltmillerCaveEntrance darkens by steps instead
-/// (FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS). Step triggers 60 to 65 each set a
-/// level, kept in struct AltmillerCaveState, from the lightest at the mouth to
-/// the darkest by the inner chamber. This room blends outside the light, while
-/// BG1 is left out inside it.
-///
-/// AltmillerCave_ApplyFadeBlend gives BG1 no weight and the layers under it 16
-/// sixteenths at level 0, two fewer at each level after, down to 6 at level 5.
-/// Where one level meets the next, a cell of each lies side by side. So the
-/// level is that of the cell the leader last stepped on, in either direction.
-///
-/// Reveal lights a dark room while it lasts and shows the rocks' colours
+/// Reveal lights the passage in while it lasts and shows the rocks' colors
 /// (AltmillerCave_StartReveal, AltmillerCave_EndReveal).
 ///
 /// The rock puzzle keeps the rounds matched, its state and the light at the top
-/// in struct AltmillerCaveState.
-///
-/// Turning the leftmost rock and then the rightmost brings out the ring of five
-/// lights. The ring spins (AltmillerCave_SpinLights, a task) and stops with one
-/// light at the top. Turning that light's rock spins it on to a different
-/// light.
-///
-/// A wrong rock puts the lights away. The third match bursts the wall
-/// (AltmillerCave_ReleaseWallBurst). Coming up to the rocks from the pillar
-/// cave (ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE) starts the puzzle over.
+/// in the cave's state. Turning the leftmost rock and then the rightmost brings
+/// out a ring of five lights above the rocks. The ring spins
+/// (AltmillerCave_SpinLights, a task) and stops with one light at the top.
+/// Turning that light's rock spins it on to a different light. A wrong rock
+/// puts the lights away. The third match bursts the wall behind the rocks open
+/// (AltmillerCave_ReleaseWallBurst). Coming up to the rocks from the hall of
+/// fallen columns (ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE) starts the
+/// puzzle over.
 
 #include "ability_ids.h"
 #include "djinn_ids.h"
@@ -111,13 +116,13 @@ extern struct Trigger gAltmillerCave_SquallTriggers[];
 extern struct Trigger gAltmillerCave_CookieChestTriggers[];
 extern struct Trigger gAltmillerCave_DraughtTriggers[];
 
-/// AltmillerCaveBabi's actors: Babi while invisible and once seen, and
-/// the two men from Tolbi who come looking for him.
+/// The actors of Babi's room: Babi while invisible and once seen, and the two
+/// men from Tolbi who come looking for him.
 enum {
-  /// Babi's second sheet, SPRITE_INVISIBLE_BABI. It is the old man with long
-  /// pink hair and a cane, standing unseen in the cave.
+  /// Babi while invisible (SPRITE_INVISIBLE_BABI), seen only as a white
+  /// outline lying on the floor near the middle of his room.
   ACTOR_INVISIBLE_BABI = 8,
-  /// SPRITE_BABI, the same old man once seen.
+  /// SPRITE_BABI, the same old man once he has drunk the draught.
   ACTOR_BABI = 9,
   /// Their sprite is a helmeted soldier carrying a torch
   /// (SPRITE_SOLDIER_WITH_TORCH).
@@ -125,18 +130,18 @@ enum {
   ACTOR_SECOND_SOLDIER = 11
 };
 
-/// AltmillerCaveSquall and AltmillerCaveDraught place first the three fallen
-/// columns the party pushes. AltmillerCaveSquall then places a puddle, a pillar
-/// for Move and Squall, a Jupiter Djinni.
+/// Squall's hall and the hall at the bottom place first the three fallen
+/// columns the party pushes. Squall's hall then places its puddle, the stone
+/// pillar on the ledge and Squall, a Jupiter Djinni.
 enum {
-  ACTOR_FIRST_OBSTACLE = 8,
+  ACTOR_FIRST_FALLEN_COLUMN = 8,
   ACTOR_SQUALL_ROOM_PUDDLE = 11,
   ACTOR_SQUALL_ROOM_PILLAR = 12,
   ACTOR_SQUALL = 13
 };
 
-/// AltmillerCaveDraught: the five coloured lights and the five rocks, each in
-/// Babi's order, the rocks left to right.
+/// The rock room: the five colored lights and the five rocks, each in Babi's
+/// order, the rocks left to right.
 enum {
   ACTOR_FIRST_LIGHT = 11,
   ACTOR_BLUE_LIGHT = ACTOR_FIRST_LIGHT,
@@ -167,22 +172,68 @@ enum {
 
 /// The scene temp flags the cave keeps.
 enum {
-  /// The cave is dark. It is set on entry everywhere but AltmillerCaveSquall
-  /// and AltmillerCaveDraught.
+  /// The room is dark. It is set on entry everywhere but Squall's hall and the
+  /// lit rooms at the bottom.
   FLAG_ALTMILLER_CAVE_DARK = FLAG_SCENE_TEMP_00,
-  /// AltmillerCaveEntrance darkens by steps as the party walks in.
+  /// The passage in from the cave mouth darkens by steps as the party walks in.
   FLAG_ALTMILLER_CAVE_DARKENS_BY_STEPS = FLAG_SCENE_TEMP_01,
-  /// Frost has frozen AltmillerCaveSquall's puddle.
+  /// Frost has turned the puddle in Squall's hall into an ice pillar.
   FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN = FLAG_SCENE_TEMP_11,
-  /// AltmillerCaveSquall's pillar stands where Move opens the passage.
+  /// The stone pillar in Squall's hall has dropped into the pit before the way
+  /// on. Only the first patch on keeps it: the pit's cell is then filled again
+  /// when the party comes back, though the pillar is drawn back on its ledge
+  /// either way.
   FLAG_ALTMILLER_CAVE_PILLAR_IN_PLACE = FLAG_SCENE_TEMP_12
+};
+
+/// The cell behaviors the rooms' trigger tables answer, besides their exits,
+/// whose cells carry the exit's own number. Each is a cell of the map named
+/// here.
+enum AltmillerCaveTriggerCell {
+  /// The passage in: the first bend north of the cave mouth, on the mouth's
+  /// side, cells (27, 19) to (27, 21). The passage is fully lit.
+  CELL_BEHAVIOR_ALTMILLER_CAVE_FULL_LIGHT = 60,
+  /// Each further line across the passage, on its far side: the first bend
+  /// (cells (28, 19) and (28, 20)) and the way north (cell (26, 10)).
+  CELL_BEHAVIOR_ALTMILLER_CAVE_DARKNESS_1 = 61,
+  /// North up the passage (cell (26, 9)), and where it turns west along the
+  /// north wall (cells (18, 4) and (18, 5)).
+  CELL_BEHAVIOR_ALTMILLER_CAVE_DARKNESS_2 = 62,
+  /// Along the north wall (cells (17, 4) and (17, 5)), and where the passage
+  /// turns south in the north-west (cells (7, 8) and (7, 9)).
+  CELL_BEHAVIOR_ALTMILLER_CAVE_DARKNESS_3 = 63,
+  /// The north-west turn (cells (6, 8) and (6, 9)), and down the west side
+  /// (cells (7, 20) to (9, 20)).
+  CELL_BEHAVIOR_ALTMILLER_CAVE_DARKNESS_4 = 64,
+  /// The last stretch before the hole into the torch-lit chamber, cells (8, 21)
+  /// to (10, 21).
+  CELL_BEHAVIOR_ALTMILLER_CAVE_DARKNESS_5 = 65,
+  /// Babi's room: the floor just west of where he lies, on the way to the
+  /// stairs down, cells (11, 9) to (13, 9).
+  CELL_BEHAVIOR_ALTMILLER_CAVE_BESIDE_BABI = 19,
+  /// The floor of the fallen columns: in Squall's hall cells (19, 11) to
+  /// (26, 19), and in the hall at the bottom cells (23, 24) to (27, 32).
+  CELL_BEHAVIOR_ALTMILLER_CAVE_DRAUGHT_COLUMN_FLOOR = 70,
+  CELL_BEHAVIOR_ALTMILLER_CAVE_SQUALL_COLUMN_FLOOR = 71,
+  /// Squall's hall: the four cells around the puddle at (23, 17), north,
+  /// east, south and west of it.
+  CELL_BEHAVIOR_ALTMILLER_CAVE_NORTH_OF_PUDDLE = 72,
+  CELL_BEHAVIOR_ALTMILLER_CAVE_EAST_OF_PUDDLE = 73,
+  CELL_BEHAVIOR_ALTMILLER_CAVE_SOUTH_OF_PUDDLE = 74,
+  CELL_BEHAVIOR_ALTMILLER_CAVE_WEST_OF_PUDDLE = 75,
+  /// Squall's hall: the ledge just west of the stone pillar, cell (28, 20).
+  CELL_BEHAVIOR_ALTMILLER_CAVE_WEST_OF_PILLAR = 77,
+  /// The chest in each room that has one: the Mimic in Babi's room (cell
+  /// (28, 36)), the Vial (cell (25, 13)), the Cookie (cell (12, 8)) and the
+  /// Mystic Draught on its table (cell (11, 7)).
+  CELL_BEHAVIOR_ALTMILLER_CAVE_CHEST = 100
 };
 
 /// The darkness: BG1 blended over every layer, at the weights
 /// BLEND_ALPHA gives each level.
 #define ALTMILLER_CAVE_DARKNESS_BLEND                                          \
   (BLDCNT_TGT1_BG1 | BLDCNT_EFFECT_BLEND | BLDCNT_TGT2_ALL)
-/// A dark room's weights, which AltmillerCaveEntrance's levels do not use.
+/// A dark room's weights, which the passage's levels do not use.
 #define ALTMILLER_CAVE_DARK_ALPHA BLEND_ALPHA(4, 12)
 
 // The light around the party is a window, an ellipse a little taller than
@@ -192,7 +243,7 @@ enum {
 #define ALTMILLER_CAVE_LIGHT_STEPS 5
 /// The light's progress once Babi is found: wide enough to fill the screen.
 #define ALTMILLER_CAVE_LIGHT_FULL 32
-/// Inside the light where AltmillerCaveEntrance darkens by steps: every layer
+/// Inside the light where the passage darkens by steps: every layer
 /// but BG1, with no blend, so the party's surroundings show at full
 /// brightness.
 #define ALTMILLER_CAVE_STEPS_LIGHT_WININ                                       \
@@ -213,9 +264,8 @@ enum {
 
 static void AltmillerCave_ReleaseWallBurst(void);
 
-/// The ring of five lights above AltmillerCaveDraught's rocks as it spins to
-/// its next light. Angles are 16-bit turns, and the light at the top is the
-/// chosen one.
+/// The ring of five lights above the rocks as it spins to its next light.
+/// Angles are 16-bit turns, and the light at the top is the chosen one.
 struct LightWheel {
   s16 phase;
   s16 frames;
@@ -249,13 +299,13 @@ enum {
 /// The pieces the wall bursts into (AltmillerCave_ReleaseWallBurst).
 enum { WALL_BURST_PIECES = 24 };
 
-/// The cave's own state, bytes of gSceneLocalState: AltmillerCaveDraught's
-/// rock puzzle and AltmillerCaveEntrance's darkness.
+/// The cave's own state, bytes of gSceneLocalState: the rock puzzle and the
+/// passage's darkness.
 enum {
   CAVE_ROUNDS_MATCHED = 0, ///< the rounds of lights matched, up to three
   CAVE_PUZZLE = 1,         ///< the rock puzzle's state
   CAVE_CHOSEN_LIGHT = 2,   ///< the light the ring stops with at the top, 0 to 4
-  CAVE_DARKNESS = 4        ///< AltmillerCaveEntrance's darkness level, 0 to 5
+  CAVE_DARKNESS = 4        ///< the passage's darkness level, 0 to 5
 };
 
 /// A byte of the cave's state; the chosen light and the darkness are signed.
@@ -284,8 +334,8 @@ struct LightWheel gAltmillerCave_LightWheelState
 
 #include "shared/staged_actor.c"
 
-/// Talking to the Djinni in AltmillerCaveSquall starts the battle with Squall,
-/// a Jupiter Djinni.
+/// Talking to Squall, the Jupiter Djinni in the north-west corner of the hall
+/// of fallen columns, starts a battle with it.
 static void AltmillerCave_StartDjinnBattle(void) {
   Field_RequestDjinnBattle(ACTOR_SQUALL, DJINNI_SQUALL);
 }
@@ -314,8 +364,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gAltmillerCave_ActorPlacementsOther;
 }
 
-/// Darkens AltmillerCaveEntrance to its current level. The brighter blend is at
-/// level 0, and each level is one step darker.
+/// Darkens the passage in to its current level: everything outside the light
+/// around the party is drawn at its full brightness at level 0, and two
+/// sixteenths dimmer at each level after, down to six sixteenths at level 5.
 static void AltmillerCave_ApplyFadeBlend(void) {
   s8 level = CAVE_SIGNED_STATE(CAVE_DARKNESS);
 
@@ -335,8 +386,8 @@ static void AltmillerCave_ApplyFadeBlend(void) {
   }
 }
 
-/// Keeps AltmillerCaveEntrance's darkness level, and shows it unless Reveal is
-/// lighting the room.
+/// Keeps the passage's darkness level, and shows it unless Reveal is lighting
+/// the passage.
 static void AltmillerCave_SetFadeLevel(s32 level) {
   struct FieldWork *work = gFieldWork;
 
@@ -346,43 +397,52 @@ static void AltmillerCave_SetFadeLevel(s32 level) {
   }
 }
 
-/// Crossing the first darkness boundary sets the cave's lightest level.
+/// Walking back toward the cave mouth past the first bend north of it (cells
+/// (27, 19) to (27, 21)) lifts the darkness: the passage is as bright as at the
+/// mouth again.
 static void AltmillerCave_DarkenToLevel0(void) {
   AltmillerCave_SetFadeLevel(0);
 }
 
-/// Crossing the second darkness boundary (step trigger 61) sets darkness level
-/// 1.
+/// Everything outside the light around the party grows a little darker as
+/// Isaac walks on east from the first bend north of the cave mouth (cells
+/// (28, 19) and (28, 20)), or comes back down the passage from the north (cell
+/// (26, 10)).
 static void AltmillerCave_DarkenToLevel1(void) {
   AltmillerCave_SetFadeLevel(1);
 }
 
-/// Crossing the third darkness boundary (step trigger 62) sets darkness
-/// level 2.
+/// The passage grows darker again as Isaac walks on north up it (cell
+/// (26, 9)), or comes back east along the north wall (cells (18, 4) and
+/// (18, 5)).
 static void AltmillerCave_DarkenToLevel2(void) {
   AltmillerCave_SetFadeLevel(2);
 }
 
-/// Crossing the fourth darkness boundary (step trigger 63) sets darkness level
-/// 3.
+/// The passage grows darker again as Isaac walks on west along the cave's
+/// north wall (cells (17, 4) and (17, 5)), or comes back from the north-west
+/// turn (cells (7, 8) and (7, 9)).
 static void AltmillerCave_DarkenToLevel3(void) {
   AltmillerCave_SetFadeLevel(3);
 }
 
-/// Crossing the fifth darkness boundary (step trigger 64) sets darkness
-/// level 4.
+/// The passage grows darker again as Isaac turns south at its north-west end
+/// (cells (6, 8) and (6, 9)), or comes back up the west side (cells (7, 20) to
+/// (9, 20)).
 static void AltmillerCave_DarkenToLevel4(void) {
   AltmillerCave_SetFadeLevel(4);
 }
 
-/// Crossing the sixth darkness boundary (step trigger 65) sets darkness
-/// level 5.
+/// The passage is at its darkest, only the light around the party bright, as
+/// Isaac walks down the west side into the last stretch before the small
+/// torch-lit chamber (cells (8, 21) to (10, 21)).
 static void AltmillerCave_DarkenToLevel5(void) {
   AltmillerCave_SetFadeLevel(5);
 }
 
-/// Darkens the cave on entry. AltmillerCaveEntrance darkens by its levels, the
-/// other dark rooms evenly.
+/// Darkens the room on entry, with the light around the party. The passage in
+/// darkens by its levels, the other dark rooms evenly, black outside the
+/// light.
 static void AltmillerCave_InitializeDarkness(void) {
   struct FieldWork *work = gFieldWork;
   struct ScreenTransitionState *state;
@@ -405,8 +465,10 @@ static void AltmillerCave_InitializeDarkness(void) {
   Io_Write16(ALTMILLER_CAVE_DARK_ALPHA, &REG_BLDALPHA);
 }
 
-/// Reveal's light starts. AltmillerCaveEntrance is lit and
-/// AltmillerCaveDraught's rocks show their colors.
+/// Casting Reveal in the passage in lights the whole passage while Reveal
+/// lasts, and in the rock room at the bottom of the cave shows each of the five
+/// rocks in its color. The rocks are blue, green, white, yellow and red from
+/// the left, the order Babi gives.
 static void AltmillerCave_StartReveal(void) {
   if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_ENTRANCE) {
     Io_Write16(BLEND_ALPHA(0, 16), &REG_BLDALPHA);
@@ -420,8 +482,8 @@ static void AltmillerCave_StartReveal(void) {
   }
 }
 
-/// Reveal's light ends. The cave darkens again and AltmillerCaveDraught's rocks
-/// lose their colors.
+/// When Reveal wears off, a dark room goes dark again around the light, and the
+/// five rocks in the rock room turn back to plain grey.
 static void AltmillerCave_EndReveal(void) {
   struct FieldEffectWork *effectWork =
       (struct FieldEffectWork *)gFieldEffectWork;
@@ -439,8 +501,9 @@ static void AltmillerCave_EndReveal(void) {
   }
 }
 
-/// Retreat's first phase. The Psynergy's first actor faces south, and it is
-/// copied into a new actor for the Psynergy to use.
+/// Casting Retreat in the dark rooms of the cave first turns Isaac to face the
+/// screen, then lets the spell carry the party out. Retreat plays on a copy of
+/// him made after the turn, and the leader himself stops updating.
 static void AltmillerCave_StartRetreat(void) {
   struct FieldEffectWork *effectWork;
   struct Actor *original;
@@ -462,8 +525,11 @@ static void AltmillerCave_StartRetreat(void) {
   }
 }
 
-/// Runs after Move on AltmillerCaveSquall's pillar.
-static void AltmillerCave_UpdateMovedObstacle(void) {
+/// Once the stone pillar on the ledge in Squall's hall has been pushed east
+/// over the edge, with Move or by hand, it drops into the pit below (cell
+/// (30, 20)), and its top fills the gap so the party can cross to the way on.
+/// Pushed anywhere else, nothing more happens.
+static void AltmillerCave_DropPillarIntoPit(void) {
   struct Actor *actor = Actor_Get(ACTOR_SQUALL_ROOM_PILLAR);
 
   if (FIELD_CELL(actor->x.fixed) == 30 && FIELD_CELL(actor->z.fixed) == 20) {
@@ -477,15 +543,16 @@ static void AltmillerCave_UpdateMovedObstacle(void) {
   }
 }
 
-/// Walking east into AltmillerCaveSquall's pillar pushes it a cell.
-static void AltmillerCave_AdvanceObstacleAndCheckPassage(void) {
+/// Walking east into the stone pillar on the ledge in Squall's hall, from cell
+/// (28, 20), pushes it a cell and over the edge into the pit.
+static void AltmillerCave_PushPillar(void) {
   PushedActor_AdvancePair();
-  AltmillerCave_UpdateMovedObstacle();
+  AltmillerCave_DropPillarIntoPit();
 }
 
-/// Frost's first phase on AltmillerCaveSquall's puddle notes whether its place
-/// is blocked, which keeps it from freezing.
-static void AltmillerCave_CheckFrostTargetCollision(void) {
+/// Before Frost is cast on the puddle in Squall's hall, the game checks whether
+/// anything stands on it. If so, nothing freezes.
+static void AltmillerCave_CheckPuddleCovered(void) {
   struct FieldEffectWork *effectWork =
       (struct FieldEffectWork *)gFieldEffectWork;
   struct Actor *target = Actor_Get(ACTOR_SQUALL_ROOM_PUDDLE);
@@ -500,8 +567,10 @@ static void AltmillerCave_CheckFrostTargetCollision(void) {
   }
 }
 
-/// Frost on AltmillerCaveSquall's puddle, unless blocked, freezes it. Its cell
-/// takes the frozen attributes kept at (76, 16).
+/// Frost on the puddle in Squall's hall (cell (23, 17)) turns it into a pillar
+/// of ice. A fallen column pushed toward it stops against it, which is how the
+/// party wedges the columns out of the way to reach Squall. The puddle's cell
+/// becomes a wall, copied from a spare cell of the map.
 static void AltmillerCave_FreezePuddle(void) {
   struct FieldEffectWork *effectWork =
       (struct FieldEffectWork *)gFieldEffectWork;
@@ -520,9 +589,10 @@ static void AltmillerCave_FreezePuddle(void) {
   }
 }
 
-/// Walking into AltmillerCaveSquall's puddle while it is not frozen makes the
-/// leader hop 32 pixels over it, if the landing is clear.
-static void AltmillerCave_HopSelectedActor(void) {
+/// Pushing against the puddle in Squall's hall from any side (cells (23, 16),
+/// (24, 17), (23, 18) and (22, 17)) makes Isaac hop over it, if the ground two
+/// cells on is clear. Once the puddle is frozen he can no longer hop it.
+static void AltmillerCave_HopOverPuddle(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 motionFlags = actor->motionFlags;
   union {
@@ -560,7 +630,8 @@ static void AltmillerCave_HopSelectedActor(void) {
   }
 }
 
-/// Walking into one of the three fallen columns pushes it, if there is room.
+/// Walking into one of the three fallen columns in Squall's hall or the hall at
+/// the bottom of the cave pushes it along the floor, if there is room.
 static void AltmillerCave_PushFallenColumn(void) {
   struct PushedActorProbe probe;
 
@@ -658,8 +729,13 @@ static void AltmillerCave_SpinLights(void) {
   gAltmillerCave_LightWheel->frames++;
 }
 
-/// Talking to one of AltmillerCaveDraught's rocks rotates it. "Isaac rotated
-/// the rock."
+/// Pressing A at one of the five rocks in the rock room at the bottom of the
+/// cave turns it: "Isaac rotated the rock." A chime says it was the right
+/// rock and an error sound the wrong one. The leftmost and then the rightmost
+/// bring out the ring of five lights on the wall above the middle rock; after
+/// that, the rock of the light at the top spins the ring on, and the third such
+/// match makes the ground shake, the ring spiral into nothing and the wall
+/// behind the rocks burst open.
 static void AltmillerCave_TurnRock(s32 rock) {
   u8 *puzzle;
   struct LightWheel *wheel;
@@ -817,7 +893,11 @@ static inline void AltmillerCave_FacePartyNorth(void) {
   Actor_FaceDirection(ACTOR_IVAN, FACING_NORTH, 0);
 }
 
-/// Babi drinks the Mystic Draught and appears, startling the party.
+/// Talking to the invisible Babi in his room, or reading his mind, once the
+/// party has the Mystic Draught: he drinks it and appears. Ivan reads his mind
+/// and learns who he is, Lord Babi of Tolbi. Two men from Tolbi arrive with
+/// torches to take him home, and he asks the party to enter Colosso's finals.
+/// They decide whether to.
 static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   struct ScreenTransitionState *state;
   struct Actor *actor;
@@ -1134,8 +1214,8 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_OpenMessage(ACTOR_BABI, 0);
   Event_SetMessageId(MsgAltmillerBabi);
   Event_AskYesNoWithActorAnimation(ACTOR_PARTY_LEADER, 0);
-  // The cave brightens as two men from Tolbi arrive: "Babi!" The light
-  // widens to fill the screen and BG1 fades out.
+  // The room brightens as two men from Tolbi arrive: "Babi!" The light
+  // widens to fill the screen and the darkness (BG1) fades out.
   state = gScreenTransitionWork;
   state->value = ALTMILLER_CAVE_LIGHT_FULL;
   for (eva = 0, evb = BLEND_WEIGHT_MAX; eva <= BLEND_WEIGHT_MAX; eva++, evb--) {
@@ -1579,8 +1659,10 @@ static void AltmillerCave_RestoreBabiAndInviteParty(void) {
   Event_End();
 }
 
-/// The invisible Babi asks the party to bring his draught from deep in the
-/// cave.
+/// Talking to the white outline lying on the floor near the middle of Babi's
+/// room, or reading its mind with Mind Read, the first time: the invisible
+/// Babi, too weak to move, asks the party to bring his draught from deep in
+/// the cave and tells them the order of the rocks' colors.
 static void AltmillerCave_MeetInvisibleBabi(void) {
   struct Actor *leader;
   s32 line;
@@ -1897,8 +1979,8 @@ static void AltmillerCave_MeetInvisibleBabi(void) {
   Event_End();
 }
 
-/// Babi asks whether the party forgot the order of the rock colors, and tells
-/// it again.
+/// Talking to the invisible Babi again before the draught is found: he asks
+/// whether the party forgot the order of the rock colors, and tells it again.
 static void AltmillerCave_RepeatRockOrder(void) {
   s32 question;
 
@@ -1921,7 +2003,9 @@ static void AltmillerCave_RepeatRockOrder(void) {
   Event_End();
 }
 
-/// Babi calls the party back and says where the draught is. "Wait... The
+/// As the party walks away from the invisible Babi toward the stairs down in
+/// the north-west of his room (cells (11, 9) to (13, 9)), he calls them back
+/// once: "Wait..." Isaac turns, and Babi tells where the draught is: "The
 /// draught is... on a table behind the door."
 static void AltmillerCave_BabiCallsPartyBack(void) {
   if (GameFlag_Get(FLAG_MET_INVISIBLE_BABI) == 0)
@@ -1967,8 +2051,8 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gAltmillerCave_TriggersOther;
 }
 
-/// Update routine of AltmillerCaveDraught's obstacles. They are drawn on the
-/// leader's sprite priority.
+/// Update routine of the fallen columns in the hall at the bottom of the cave:
+/// each is drawn at the leader's own sprite priority.
 static void AltmillerCave_MatchLeaderPriority(struct Actor *actor) {
   if (actor != NULL) {
     actor->priorityFlags = 0;
@@ -1979,12 +2063,14 @@ static void AltmillerCave_MatchLeaderPriority(struct Actor *actor) {
 
 /// Walls off the cells the three fallen columns stand on.
 static inline void AltmillerCave_BlockFallenColumnCells(void) {
-  Scene_RedrawActorFootprint(ACTOR_FIRST_OBSTACLE);
-  Scene_RedrawActorFootprint(ACTOR_FIRST_OBSTACLE + 1);
-  Scene_RedrawActorFootprint(ACTOR_FIRST_OBSTACLE + 2);
+  Scene_RedrawActorFootprint(ACTOR_FIRST_FALLEN_COLUMN);
+  Scene_RedrawActorFootprint(ACTOR_FIRST_FALLEN_COLUMN + 1);
+  Scene_RedrawActorFootprint(ACTOR_FIRST_FALLEN_COLUMN + 2);
 }
 
-/// Sets up the room being entered. Returns 0.
+/// Sets up the room being entered: darkness, the ice pillar in Squall's hall
+/// as the party left it, Babi still lying there or gone, and in the
+/// rock room the rocks and lights as far as the puzzle got. Returns 0.
 s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 i;
@@ -2050,7 +2136,7 @@ s32 Scene_Initialize(void) {
     }
     Actor_SetSpriteFlags(Actor_Get(ACTOR_SQUALL_ROOM_PUDDLE), 0);
 #if TBS_PATCH_1
-    // The cells AltmillerCave_UpdateMovedObstacle copies as it sets the flag,
+    // The cells AltmillerCave_DropPillarIntoPit copies as it sets the flag,
     // redrawn on arrival.
     if (GameFlag_Get(FLAG_ALTMILLER_CAVE_PILLAR_IN_PLACE)) {
       MapGrid_CopyCellAttributes(30, 20, 1, 1, 32, 20);
@@ -2060,15 +2146,16 @@ s32 Scene_Initialize(void) {
   if (gMainRoutineWork.next == SCENE_ALTMILLER_CAVE_DRAUGHT) {
     GameFlag_Clear(FLAG_ALTMILLER_CAVE_DARK);
     AltmillerCave_BlockFallenColumnCells();
-    Actor_Get(ACTOR_FIRST_OBSTACLE)->update = AltmillerCave_MatchLeaderPriority;
-    Actor_Get(ACTOR_FIRST_OBSTACLE + 1)->update =
+    Actor_Get(ACTOR_FIRST_FALLEN_COLUMN)->update =
+        AltmillerCave_MatchLeaderPriority;
+    Actor_Get(ACTOR_FIRST_FALLEN_COLUMN + 1)->update =
         AltmillerCave_MatchLeaderPriority;
     // UB: the last is stored through a word view of the routine pointer.
 #ifdef UBFIX
-    Actor_Get(ACTOR_FIRST_OBSTACLE + 2)->update =
+    Actor_Get(ACTOR_FIRST_FALLEN_COLUMN + 2)->update =
         AltmillerCave_MatchLeaderPriority;
 #else
-    *(s32 *)&Actor_Get(ACTOR_FIRST_OBSTACLE + 2)->update =
+    *(s32 *)&Actor_Get(ACTOR_FIRST_FALLEN_COLUMN + 2)->update =
         (s32)AltmillerCave_MatchLeaderPriority;
 #endif
     // Coming up to the rocks (ALTMILLER_CAVE_DRAUGHT_ROCKS_FROM_PILLAR_CAVE)
@@ -2126,7 +2213,8 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// Update routine of a piece of the burst wall.
+/// Update routine of a piece of the burst wall. It flies from the wall's center
+/// to a random point 120 pixels away, then starts again from the center.
 static void AltmillerCave_UpdateWallFragment(struct FieldParticle *fragment) {
   FIXED position[3];
 
@@ -2158,8 +2246,10 @@ static void AltmillerCave_UpdateWallFragment(struct FieldParticle *fragment) {
   }
 }
 
-/// The wall bursts. Its WALL_BURST_PIECES pieces fly out from the ring's
-/// center, the wall's cells open to the passage, and the shaking calms.
+/// The wall above the middle rock bursts open. Pieces of rock fly out from
+/// where the ring was, with heavy thuds, the wall becomes an opening into the
+/// Mystic Draught's room, and the shaking calms. While the WALL_BURST_PIECES
+/// pieces fly, the field's colors are tinted (Shop_SaveAndTintFieldPalette).
 static void AltmillerCave_ReleaseWallBurst(void) {
   struct FieldEffectWork *effectWork;
   struct Vector3 position;
@@ -2387,7 +2477,7 @@ u32 gAltmillerCave_PulseScales[] = {
     11 * FIXED_ONE / 10,
 };
 
-/// The two men from Tolbi walk in to Babi.
+/// The two men from Tolbi walk in to Babi from the south.
 s32 gAltmillerCave_GuardsArrivePath[] = {
     SC_ANIMATION(ANIM_WALK),
     SC_MOVE_BY(0, 0, -32),
@@ -2443,16 +2533,16 @@ s32 gAltmillerCave_BabiLeavePath[] = {
 
 // clang-format off
 struct Trigger gAltmillerCave_TriggersOther[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TO_WORLD_MAP},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TO_TORCH_CHAMBER},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TORCH_CHAMBER_TO_PASSAGE},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 4, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TO_ALTMILLER_CAVE_BABI},
-    {TRIGGER_STEP, 60, CONDITION_ALWAYS, EVENT(AltmillerCave_DarkenToLevel0)},
-    {TRIGGER_STEP, 61, CONDITION_ALWAYS, EVENT(AltmillerCave_DarkenToLevel1)},
-    {TRIGGER_STEP, 62, CONDITION_ALWAYS, EVENT(AltmillerCave_DarkenToLevel2)},
-    {TRIGGER_STEP, 63, CONDITION_ALWAYS, EVENT(AltmillerCave_DarkenToLevel3)},
-    {TRIGGER_STEP, 64, CONDITION_ALWAYS, EVENT(AltmillerCave_DarkenToLevel4)},
-    {TRIGGER_STEP, 65, CONDITION_ALWAYS, EVENT(AltmillerCave_DarkenToLevel5)},
+    {TRIGGER_EXIT, ALTMILLER_CAVE_ENTRANCE_TO_WORLD_MAP, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TO_WORLD_MAP},
+    {TRIGGER_EXIT, ALTMILLER_CAVE_ENTRANCE_TO_TORCH_CHAMBER, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TO_TORCH_CHAMBER},
+    {TRIGGER_EXIT, ALTMILLER_CAVE_ENTRANCE_TORCH_CHAMBER_TO_PASSAGE, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TORCH_CHAMBER_TO_PASSAGE},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, ALTMILLER_CAVE_ENTRANCE_TO_ALTMILLER_CAVE_BABI, CONDITION_ALWAYS, ALTMILLER_CAVE_ENTRANCE_TO_ALTMILLER_CAVE_BABI},
+    {TRIGGER_STEP, CELL_BEHAVIOR_ALTMILLER_CAVE_FULL_LIGHT, CONDITION_ALWAYS, EVENT(AltmillerCave_DarkenToLevel0)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_ALTMILLER_CAVE_DARKNESS_1, CONDITION_ALWAYS, EVENT(AltmillerCave_DarkenToLevel1)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_ALTMILLER_CAVE_DARKNESS_2, CONDITION_ALWAYS, EVENT(AltmillerCave_DarkenToLevel2)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_ALTMILLER_CAVE_DARKNESS_3, CONDITION_ALWAYS, EVENT(AltmillerCave_DarkenToLevel3)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_ALTMILLER_CAVE_DARKNESS_4, CONDITION_ALWAYS, EVENT(AltmillerCave_DarkenToLevel4)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_ALTMILLER_CAVE_DARKNESS_5, CONDITION_ALWAYS, EVENT(AltmillerCave_DarkenToLevel5)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS,
         EVENT(AltmillerCave_StartReveal)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
@@ -2462,12 +2552,12 @@ struct Trigger gAltmillerCave_TriggersOther[] = {
 };
 
 struct Trigger gAltmillerCave_BabiTriggers[] = {
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 10, CONDITION_ALWAYS, ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_ENTRANCE},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 11, CONDITION_ALWAYS, ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_VIAL_CHEST},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_ENTRANCE, CONDITION_ALWAYS, ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_ENTRANCE},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_VIAL_CHEST, CONDITION_ALWAYS, ALTMILLER_CAVE_BABI_TO_ALTMILLER_CAVE_VIAL_CHEST},
     {TRIGGER_TALK, ACTOR_INVISIBLE_BABI, FLAG_MET_INVISIBLE_BABI, EVENT(AltmillerCave_MeetInvisibleBabi)},
     {TRIGGER_TALK, ACTOR_INVISIBLE_BABI, FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT, EVENT(AltmillerCave_RepeatRockOrder)},
     {TRIGGER_TALK, ACTOR_INVISIBLE_BABI, FLAG_BABI_SAVED, EVENT(AltmillerCave_RestoreBabiAndInviteParty)},
-    {TRIGGER_STEP, 19, FLAG_BABI_CALLED_PARTY_BACK, EVENT(AltmillerCave_BabiCallsPartyBack)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_ALTMILLER_CAVE_BESIDE_BABI, FLAG_BABI_CALLED_PARTY_BACK, EVENT(AltmillerCave_BabiCallsPartyBack)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_INVISIBLE_BABI, FLAG_MET_INVISIBLE_BABI,
         EVENT(AltmillerCave_MeetInvisibleBabi)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INVISIBLE_BABI, FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT, MSGNO(MsgAltmillerNeedDraught)},
@@ -2476,56 +2566,61 @@ struct Trigger gAltmillerCave_BabiTriggers[] = {
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
         EVENT(AltmillerCave_EndReveal)},
     {PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT(AltmillerCave_StartRetreat)},
-    {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_ALTMILLER_CAVE_MIMIC_BEATEN, FIND_MIMIC | 5},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_ALTMILLER_CAVE_CHEST, FLAG_ALTMILLER_CAVE_MIMIC_BEATEN, FIND_MIMIC | 5},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAltmillerCave_VialChestTriggers[] = {
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 20, CONDITION_ALWAYS, ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_BABI},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 21, CONDITION_ALWAYS, ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_SQUALL},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_BABI, CONDITION_ALWAYS, ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_BABI},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_SQUALL, CONDITION_ALWAYS, ALTMILLER_CAVE_VIAL_CHEST_TO_ALTMILLER_CAVE_SQUALL},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
         EVENT(AltmillerCave_EndReveal)},
     {PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT(AltmillerCave_StartRetreat)},
-    {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_ALTMILLER_CAVE_VIAL, FIND_ITEM(ITEM_VIAL)},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_ALTMILLER_CAVE_CHEST, FLAG_ALTMILLER_CAVE_VIAL, FIND_ITEM(ITEM_VIAL)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAltmillerCave_SquallTriggers[] = {
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 30, CONDITION_ALWAYS, ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_VIAL_CHEST},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 31, CONDITION_ALWAYS, ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_COOKIE_CHEST},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 72, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT(AltmillerCave_HopSelectedActor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 73, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT(AltmillerCave_HopSelectedActor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 74, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT(AltmillerCave_HopSelectedActor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 75, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT(AltmillerCave_HopSelectedActor)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 71, CONDITION_ALWAYS, EVENT(AltmillerCave_PushFallenColumn)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 77, CONDITION_ALWAYS, EVENT(AltmillerCave_AdvanceObstacleAndCheckPassage)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SQUALL_ROOM_PILLAR, CONDITION_ALWAYS, EVENT(AltmillerCave_UpdateMovedObstacle)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_SQUALL_ROOM_PUDDLE, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT(AltmillerCave_CheckFrostTargetCollision)},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_VIAL_CHEST, CONDITION_ALWAYS, ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_VIAL_CHEST},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_COOKIE_CHEST, CONDITION_ALWAYS, ALTMILLER_CAVE_SQUALL_TO_ALTMILLER_CAVE_COOKIE_CHEST},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_ALTMILLER_CAVE_NORTH_OF_PUDDLE, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT(AltmillerCave_HopOverPuddle)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_ALTMILLER_CAVE_EAST_OF_PUDDLE, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT(AltmillerCave_HopOverPuddle)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_ALTMILLER_CAVE_SOUTH_OF_PUDDLE, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT(AltmillerCave_HopOverPuddle)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_ALTMILLER_CAVE_WEST_OF_PUDDLE, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT(AltmillerCave_HopOverPuddle)},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, CELL_BEHAVIOR_ALTMILLER_CAVE_SQUALL_COLUMN_FLOOR, CONDITION_ALWAYS, EVENT(AltmillerCave_PushFallenColumn)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_ALTMILLER_CAVE_WEST_OF_PILLAR, CONDITION_ALWAYS, EVENT(AltmillerCave_PushPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SQUALL_ROOM_PILLAR, CONDITION_ALWAYS, EVENT(AltmillerCave_DropPillarIntoPit)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_FROST, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_SQUALL_ROOM_PUDDLE, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT(AltmillerCave_CheckPuddleCovered)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SQUALL_ROOM_PUDDLE, FLAG_ALTMILLER_CAVE_PUDDLE_FROZEN, EVENT(AltmillerCave_FreezePuddle)},
     {TRIGGER_TALK, ACTOR_SQUALL, CONDITION_ALWAYS, EVENT(AltmillerCave_StartDjinnBattle)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAltmillerCave_CookieChestTriggers[] = {
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 40, CONDITION_ALWAYS, ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_SQUALL},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 41, CONDITION_ALWAYS, ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_DRAUGHT},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_SQUALL, CONDITION_ALWAYS, ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_SQUALL},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_DRAUGHT, CONDITION_ALWAYS, ALTMILLER_CAVE_COOKIE_CHEST_TO_ALTMILLER_CAVE_DRAUGHT},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
         EVENT(AltmillerCave_EndReveal)},
     {PSYNERGY_ANYWHERE(ABILITY_RETREAT, PSYNERGY_PHASE_BEFORE_CAST), 0, CONDITION_ALWAYS, EVENT(AltmillerCave_StartRetreat)},
-    {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_ALTMILLER_CAVE_COOKIE, FIND_ITEM(ITEM_COOKIE)},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_ALTMILLER_CAVE_CHEST, FLAG_ALTMILLER_CAVE_COOKIE, FIND_ITEM(ITEM_COOKIE)},
     {TRIGGER_TABLE_END},
 };
 // clang-format on
 
 struct Trigger gAltmillerCave_DraughtTriggers[] = {
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 50, CONDITION_ALWAYS,
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP,
+     ALTMILLER_CAVE_DRAUGHT_TO_ALTMILLER_CAVE_COOKIE_CHEST, CONDITION_ALWAYS,
      ALTMILLER_CAVE_DRAUGHT_TO_ALTMILLER_CAVE_COOKIE_CHEST},
-    {TRIGGER_EXIT, 51, CONDITION_ALWAYS, ALTMILLER_CAVE_DRAUGHT_TO_ROCKS},
-    {TRIGGER_EXIT, 52, CONDITION_ALWAYS,
-     ALTMILLER_CAVE_DRAUGHT_ROCKS_TO_PILLAR_CAVE},
-    {TRIGGER_EXIT, 53, CONDITION_ALWAYS, ALTMILLER_CAVE_DRAUGHT_ROCKS_TO_CHEST},
-    {TRIGGER_EXIT, 54, CONDITION_ALWAYS, ALTMILLER_CAVE_DRAUGHT_CHEST_TO_ROCKS},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 70, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, ALTMILLER_CAVE_DRAUGHT_TO_ROCKS, CONDITION_ALWAYS,
+     ALTMILLER_CAVE_DRAUGHT_TO_ROCKS},
+    {TRIGGER_EXIT, ALTMILLER_CAVE_DRAUGHT_ROCKS_TO_PILLAR_CAVE,
+     CONDITION_ALWAYS, ALTMILLER_CAVE_DRAUGHT_ROCKS_TO_PILLAR_CAVE},
+    {TRIGGER_EXIT, ALTMILLER_CAVE_DRAUGHT_ROCKS_TO_CHEST, CONDITION_ALWAYS,
+     ALTMILLER_CAVE_DRAUGHT_ROCKS_TO_CHEST},
+    {TRIGGER_EXIT, ALTMILLER_CAVE_DRAUGHT_CHEST_TO_ROCKS, CONDITION_ALWAYS,
+     ALTMILLER_CAVE_DRAUGHT_CHEST_TO_ROCKS},
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
+     CELL_BEHAVIOR_ALTMILLER_CAVE_DRAUGHT_COLUMN_FLOOR, CONDITION_ALWAYS,
      EVENT(AltmillerCave_PushFallenColumn)},
     {TRIGGER_TALK, ACTOR_BLUE_ROCK, CONDITION_ALWAYS,
      EVENT(AltmillerCave_TurnRock)},
@@ -2537,8 +2632,8 @@ struct Trigger gAltmillerCave_DraughtTriggers[] = {
      EVENT(AltmillerCave_TurnRock)},
     {TRIGGER_TALK, ACTOR_RED_ROCK, CONDITION_ALWAYS,
      EVENT(AltmillerCave_TurnRock)},
-    {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT,
-     FIND_ITEM(ITEM_MYSTIC_DRAUGHT)},
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), CELL_BEHAVIOR_ALTMILLER_CAVE_CHEST,
+     FLAG_ALTMILLER_CAVE_MYSTIC_DRAUGHT, FIND_ITEM(ITEM_MYSTIC_DRAUGHT)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(AltmillerCave_StartReveal)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,

@@ -1,8 +1,15 @@
 /// @file
-/// Alhafra's houses, inn and sanctum, whose people are taking in their
-/// neighbors after the tidal wave. Their tables follow the story: before Briggs
-/// is caught, after (FLAG_BRIGGS_CAUGHT), and once the boat's mast is cleared
-/// (FLAG_ALHAFRA_MAST_CLEARED).
+/// Inside Alhafra's houses, inn, shop and Sanctum, whose people are taking
+/// in neighbors who lost their homes to the tidal wave.
+///
+/// The first time Felix walks into the inn's upstairs room he finds Alex
+/// there, also waiting for a boat; in the crowded house an old couple of
+/// houseguests send the lady of the house for tea. After Briggs is caught
+/// Alex asks about it, and once the boat's mast is cleared and Alex has gone,
+/// a game carried over from Golden Sun in which Isaac beat Deadbeard has two
+/// sailors in his room telling how Isaac picked Crossbone Isle clean. The
+/// people's tables change at those two points (FLAG_BRIGGS_CAUGHT and
+/// FLAG_ALHAFRA_MAST_CLEARED).
 
 #include "system/main_routine_work.h"
 #include "field/field_sequence_event.h"
@@ -131,9 +138,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-/// Stepping into Alhafra's inn the first time: Felix walks up to Alex, who
-/// says he too is resting here while he looks for a boat
-/// (FLAG_ALHAFRA_MET_ALEX).
+/// The first time Felix walks into the inn's upstairs room (cells (28, 19)
+/// to (28, 21)), he walks up to Alex, who says the town's only boat has been
+/// sold and that he too is resting here while he looks for one.
 void AlhafraRooms_MeetAlex(void) {
   Event_SetFlag(FLAG_ALHAFRA_MET_ALEX);
   Event_Start();
@@ -181,7 +188,8 @@ enum { SHOP_ALHAFRA_ITEMS = 9 };
 /// Alhafra's inn, as Inn_CheckIn numbers the inns.
 enum { ALHAFRA_INN = 2 };
 
-/// The merchant: across the counter, his shop; else what he says.
+/// Felix talks to the item merchant: across his counter, the shop opens;
+/// from anywhere else he asks Felix not to mention the tidal wave.
 void AlhafraRooms_TalkToItemMerchant(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
@@ -194,7 +202,8 @@ void AlhafraRooms_TalkToItemMerchant(s32 actor) {
   }
 }
 
-/// The innkeeper: across the counter, the inn; else what he says.
+/// Felix talks to the innkeeper: across his counter, the inn; from anywhere
+/// else he tells of the townsfolk who lost their homes.
 void AlhafraRooms_TalkToInnkeeper(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
@@ -207,7 +216,8 @@ void AlhafraRooms_TalkToInnkeeper(s32 actor) {
   }
 }
 
-/// The priest: across the counter, the Sanctum; else what he says.
+/// Felix talks to the priest: across his counter, the Sanctum; from anywhere
+/// else he tells of a terrible village in the middle of Osenia.
 void AlhafraRooms_TalkToPriest(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
@@ -220,7 +230,8 @@ void AlhafraRooms_TalkToPriest(s32 actor) {
   }
 }
 
-/// The lady of the house, worn out by her houseguests.
+/// Felix talks to the lady of the house, who scowls, worn out by her
+/// houseguests.
 void AlhafraRooms_TalkToHostess(s32 actor) {
   Actor_ShowEmote(actor, EMOTE_IN_FRONT | EMOTE_SCOWL, 30);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriorsAughWithAllTheseDemanding);
@@ -228,8 +239,9 @@ void AlhafraRooms_TalkToHostess(s32 actor) {
   Event_ShowMessage(actor, 0);
 }
 
-/// The old couple who lost their house in the wave ask the lady of the house
-/// for tea, once.
+/// The first time Felix talks to the old houseguest, or reads his mind, he
+/// steps up to the old couple, who ask the lady of the house for tea; she
+/// tells them to fix it themselves.
 void AlhafraRooms_GuestsAskForTea(void) {
   Event_SetFlag(FLAG_GUESTS_ASKED_FOR_TEA);
   Event_Start();
@@ -283,7 +295,8 @@ void AlhafraRooms_GuestsAskForTea(void) {
   Event_End();
 }
 
-/// The old houseguest, put out by the lady of the house.
+/// Felix talks to the old houseguest, who grumbles that the lady of the
+/// house is no lady at all.
 void AlhafraRooms_TalkToDemandingGuest(s32 actor) {
   Actor_FaceEachOther(actor, gMainRoutineWork.leaderActorId, 0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriorsWellISayItSeems);
@@ -292,7 +305,7 @@ void AlhafraRooms_TalkToDemandingGuest(s32 actor) {
   Actor_FaceDirection(ACTOR_DEMANDING_GUEST, FACING_SOUTH_SOUTHEAST, 0);
 }
 
-/// Mind Read on Alex: he turns to the party and asks them to stop.
+/// Felix casts Mind Read on Alex, who turns to him and asks him to stop.
 void AlhafraRooms_ReadAlexsMind(s32 unused, s32 actor) {
   Actor_FaceEachOther(actor, gMainRoutineWork.leaderActorId, 0);
   FieldEvent_SetMessageId((s32)MsgAlhafraInteriorsReallyIDoWishYou);
@@ -301,8 +314,9 @@ void AlhafraRooms_ReadAlexsMind(s32 unused, s32 actor) {
   Actor_FaceDirection(actor, FACING_NORTHEAST, 0);
 }
 
-/// The master of the house tells that the town has started rebuilding,
-/// once.
+/// The first time Felix talks to the master of the house, he tells that the
+/// town has started repairing the houses, and smiles that his guests will
+/// soon be gone.
 void AlhafraRooms_HostTellsOfRepairs(s32 actor) {
   Event_SetFlag(FLAG_HOST_TOLD_OF_REPAIRS);
   FieldEvent_SetMessageId(
@@ -315,7 +329,8 @@ void AlhafraRooms_HostTellsOfRepairs(s32 actor) {
   Event_ShowMessage(actor, 0);
 }
 
-/// Alex asks whether the party caught Briggs.
+/// Felix talks to Alex after Briggs is caught, and Alex asks whether it was
+/// he who caught him.
 void AlhafraRooms_AlexHearsOfBriggs(s32 actor) {
   s32 msg = (s32)MsgAlhafraInteriorsSoIHearYouCaught;
 
@@ -349,14 +364,17 @@ s32 EffectSprite_DrawAtWorldXYZ(struct EffectSprite *sprite, s32 x, s32 y,
 void EffectSprite_InitWithFadeOverlay(struct EffectSprite *sprite, s32 pivotX,
                                       s32 pivotY, u32 attributes);
 
-/// The first guest's update: draws its extra sprite 12 pixels above it.
+/// The old houseguest's update: draws a second sprite of his 12 pixels above
+/// him.
+// XXX: what the second sprite shows; a close render of the couple with the
+// sprite drawn and without would settle it.
 s32 AlhafraRooms_DrawFirstGuestSprite(struct Actor *guest) {
   EffectSprite_DrawAtWorldXYZ(&gAlhafraRooms_FirstGuestSprite, guest->x.fixed,
                               guest->y.fixed + toFIXED(12), guest->z.fixed);
   return 0;
 }
 
-/// The second guest's update: draws its extra sprite 8 pixels above it.
+/// His wife's: the same, 8 pixels above her.
 s32 AlhafraRooms_DrawSecondGuestSprite(struct Actor *guest) {
   EffectSprite_DrawAtWorldXYZ(&gAlhafraRooms_SecondGuestSprite, guest->x.fixed,
                               guest->y.fixed + toFIXED(8), guest->z.fixed);
@@ -368,8 +386,8 @@ s32 AlhafraRooms_DrawSecondGuestSprite(struct Actor *guest) {
 #if TLA_PATCH_1
 void FadeOverlay_FillTiles(s32 mode);
 
-/// Sets up the houses: the guests' extra sprites, and once the mast is cleared
-/// the two sailors in Alex's room.
+/// Sets up the houses: the old couple's second sprites, and once the mast is
+/// cleared the two sailors in Alex's room.
 s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Actor_Get(ACTOR_INNKEEPER)->collisionFlags |= ACTOR_NEAR_TALK;
@@ -415,7 +433,7 @@ s32 Scene_Initialize(void) {
 #else
 void FadeOverlay_FillTiles(s32 mode);
 
-/// Sets up the houses and the guests' extra sprites.
+/// Sets up the houses and the old couple's second sprites.
 s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   Actor_Get(ACTOR_INNKEEPER)->collisionFlags |= ACTOR_NEAR_TALK;
@@ -456,9 +474,15 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 extern u32 gAlhafraRooms_TravelersWalkOffScript[];
 
-/// The two sailors in Alex's room tell that Isaac picked Crossbone Isle clean,
-/// then walk off, once (FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE), while
-/// FLAG_ISAAC_CLEARED_CROSSBONE_ISLE is set.
+/// In a game carried over from Golden Sun in which Isaac beat Deadbeard, Felix
+/// walks into Alex's old room upstairs in the inn after the mast is cleared
+/// (cells (31, 19) to (31, 22)) and overhears two sailors: Isaac picked
+/// Crossbone Isle clean and beat its ghost pirate, so he is their leader now.
+/// They walk out past Felix, and it happens once.
+///
+/// It runs while FLAG_ISAAC_CLEARED_CROSSBONE_ISLE is set and sets
+/// FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE; outside the Japanese edition, only
+/// when Felix came in from the east of the map (FLAG_SCENE_TEMP_00).
 void AlhafraRooms_OverhearCrossboneIsleTale(void) {
 
   if (Event_GetFlag(FLAG_ALHAFRA_HEARD_OF_CROSSBONE_ISLE)) {

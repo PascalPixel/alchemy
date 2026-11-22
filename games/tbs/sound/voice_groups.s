@@ -16,7 +16,7 @@ Sound_BgmVoices:
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
-	voice 0x00, 60, 0, 0, Sound_Wave00, 255, 0, 255, 165
+	voice 0x00, 60, 0, 0, Sound_WaveCelesta, 255, 0, 255, 165
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
@@ -32,7 +32,7 @@ Sound_BgmVoices:
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
-	voice 0x00, 60, 0, 0, Sound_Wave01, 255, 0, 255, 165
+	voice 0x00, 60, 0, 0, Sound_WaveNylonGuitar, 255, 0, 255, 165
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
@@ -41,8 +41,8 @@ Sound_BgmVoices:
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
-	voice 0x00, 60, 0, 0, Sound_Wave02, 255, 0, 255, 165
-	voice 0x0b, 60, 0, 0, Sound_CgbWave8, 0, 2, 3, 3
+	voice 0x00, 60, 0, 0, Sound_WaveFingerBass, 255, 0, 255, 165
+	voice 0x0b, 60, 0, 0, Sound_CgbWavePickBass, 0, 2, 3, 3
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
@@ -53,37 +53,37 @@ Sound_BgmVoices:
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
-	voice 0x00, 60, 0, 0, Sound_Wave03, 255, 0, 255, 165
-	voice 0x00, 60, 0, 0, Sound_Wave04, 255, 0, 255, 165
-	voice 0x00, 60, 0, 0, Sound_Wave05, 255, 0, 255, 165
-	voice 0x00, 60, 0, 0, Sound_Wave06, 255, 0, 255, 216
+	voice 0x00, 60, 0, 0, Sound_WavePizzicatoStrings, 255, 0, 255, 165
+	voice 0x00, 60, 0, 0, Sound_WaveHarp, 255, 0, 255, 165
+	voice 0x00, 60, 0, 0, Sound_WaveTimpani, 255, 0, 255, 165
+	voice 0x00, 60, 0, 0, Sound_WaveStrings, 255, 0, 255, 216
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
-	voice 0x00, 60, 0, 0, Sound_Wave07, 255, 0, 255, 165
+	voice 0x00, 60, 0, 0, Sound_WaveChoir, 255, 0, 255, 165
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
-	voice 0x00, 60, 0, 0, Sound_Wave08, 255, 0, 255, 165
-	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
-	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
-	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
-	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
-	voice 0x00, 60, 0, 0, Sound_Wave09, 255, 0, 255, 165
+	voice 0x00, 60, 0, 0, Sound_WaveTrumpet, 255, 0, 255, 165
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x00, 60, 0, 0, Sound_WaveBrass, 255, 0, 255, 165
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
-	voice 0x00, 60, 0, 0, Sound_Wave10, 255, 0, 255, 165
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
-	voice 0x00, 60, 0, 0, Sound_Wave11, 255, 0, 255, 165
-	voice 0x00, 60, 0, 0, Sound_Wave12, 255, 0, 255, 165
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
-	voice 0x00, 60, 0, 0, Sound_Wave13, 255, 0, 255, 165
+	voice 0x00, 60, 0, 0, Sound_WaveOboe, 255, 0, 255, 165
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x00, 60, 0, 0, Sound_WavePiccolo, 255, 0, 255, 165
+	voice 0x00, 60, 0, 0, Sound_WaveFlute, 255, 0, 255, 165
+	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
+	voice 0x00, 60, 0, 0, Sound_WavePanFlute, 255, 0, 255, 165
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
@@ -137,22 +137,22 @@ Sound_BgmVoices:
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x80, 0, 0, 0, Sound_DrumVoices - 36 * 12, 0, 0, 0, 0
 Sound_DrumVoices:
-	voice 0x08, 60, 0, 192, Sound_Wave14, 255, 0, 255, 216
-	voice 0x08, 60, 0, 192, Sound_Wave14, 255, 0, 255, 216
-	voice 0x08, 60, 0, 192, Sound_Wave15, 255, 0, 255, 216
-	voice 0x08, 60, 0, 192, Sound_Wave15, 255, 0, 255, 216
-	voice 0x08, 60, 0, 192, Sound_Wave15, 255, 0, 255, 216
-	voice 0x00, 55, 0, 160, Sound_Wave16, 255, 0, 255, 216
-	voice 0x08, 60, 0, 192, Sound_Wave17, 255, 0, 255, 216
-	voice 0x08, 60, 0, 192, Sound_Wave16, 255, 0, 255, 216
-	voice 0x08, 60, 0, 192, Sound_Wave16, 255, 0, 255, 216
-	voice 0x08, 60, 0, 192, Sound_Wave16, 255, 0, 255, 216
-	voice 0x08, 60, 0, 192, Sound_Wave16, 255, 0, 255, 216
-	voice 0x08, 60, 0, 192, Sound_Wave16, 255, 0, 255, 216
-	voice 0x00, 65, 0, 224, Sound_Wave16, 255, 0, 255, 216
-	voice 0x08, 60, 0, 192, Sound_Wave18, 255, 0, 255, 216
-	voice 0x08, 60, 0, 192, Sound_Wave18, 255, 0, 255, 216
-	voice 0x08, 60, 0, 192, Sound_Wave19, 255, 0, 255, 216
+	voice 0x08, 60, 0, 192, Sound_WaveBassDrum, 255, 0, 255, 216
+	voice 0x08, 60, 0, 192, Sound_WaveBassDrum, 255, 0, 255, 216
+	voice 0x08, 60, 0, 192, Sound_WaveSnare, 255, 0, 255, 216
+	voice 0x08, 60, 0, 192, Sound_WaveSnare, 255, 0, 255, 216
+	voice 0x08, 60, 0, 192, Sound_WaveSnare, 255, 0, 255, 216
+	voice 0x00, 55, 0, 160, Sound_WaveTom, 255, 0, 255, 216
+	voice 0x08, 60, 0, 192, Sound_WaveClosedHiHat, 255, 0, 255, 216
+	voice 0x08, 60, 0, 192, Sound_WaveTom, 255, 0, 255, 216
+	voice 0x08, 60, 0, 192, Sound_WaveTom, 255, 0, 255, 216
+	voice 0x08, 60, 0, 192, Sound_WaveTom, 255, 0, 255, 216
+	voice 0x08, 60, 0, 192, Sound_WaveTom, 255, 0, 255, 216
+	voice 0x08, 60, 0, 192, Sound_WaveTom, 255, 0, 255, 216
+	voice 0x00, 65, 0, 224, Sound_WaveTom, 255, 0, 255, 216
+	voice 0x08, 60, 0, 192, Sound_WaveCrashCymbal, 255, 0, 255, 216
+	voice 0x08, 60, 0, 192, Sound_WaveCrashCymbal, 255, 0, 255, 216
+	voice 0x08, 60, 0, 192, Sound_WaveRideCymbal, 255, 0, 255, 216
 
 	.global Sound_SeVoices
 Sound_SeVoices:
@@ -197,7 +197,7 @@ Sound_SeVoices:
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x09, 60, 0, 0, 2, 1, 6, 0, 6
-	voice 0x0b, 60, 0, 0, Sound_CgbWave7, 0, 4, 0, 2
+	voice 0x0b, 60, 0, 0, Sound_CgbWaveSquare, 0, 4, 0, 2
 	voice 0x0c, 60, 0, 0, 0, 2, 7, 10, 7
 	voice 0x0c, 60, 0, 0, 0, 0, 7, 4, 3
 	voice 0x0c, 60, 0, 0, 0, 5, 2, 6, 6
@@ -206,16 +206,16 @@ Sound_SeVoices:
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
-	voice 0x00, 60, 0, 0, Sound_Wave20, 255, 0, 255, 0
-	voice 0x00, 60, 0, 0, Sound_Wave21, 255, 0, 255, 204
-	voice 0x00, 60, 0, 0, Sound_Wave22, 255, 0, 255, 216
-	voice 0x00, 60, 0, 0, Sound_Wave23, 255, 0, 255, 216
-	voice 0x00, 60, 0, 0, Sound_Wave24, 255, 0, 255, 216
-	voice 0x00, 60, 0, 0, Sound_Wave25, 255, 0, 255, 188
+	voice 0x00, 60, 0, 0, Sound_WaveSwitch, 255, 0, 255, 0
+	voice 0x00, 60, 0, 0, Sound_WaveRumble, 255, 0, 255, 204
+	voice 0x00, 60, 0, 0, Sound_WaveCrash, 255, 0, 255, 216
+	voice 0x00, 60, 0, 0, Sound_WavePsynergySparkle, 255, 0, 255, 216
+	voice 0x00, 60, 0, 0, Sound_WaveRoar, 255, 0, 255, 216
+	voice 0x00, 60, 0, 0, Sound_WaveThunder, 255, 0, 255, 188
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
-	voice 0x00, 60, 0, 0, Sound_Wave26, 255, 0, 255, 204
-	voice 0x00, 60, 0, 0, Sound_Wave27, 255, 0, 255, 204
-	voice 0x00, 60, 0, 0, Sound_Wave28, 255, 188, 154, 226
+	voice 0x00, 60, 0, 0, Sound_WaveCurse, 255, 0, 255, 204
+	voice 0x00, 60, 0, 0, Sound_WaveBoom, 255, 0, 255, 204
+	voice 0x00, 60, 0, 0, Sound_WaveBell, 255, 188, 154, 226
 	voice 0x00, 60, 0, 0, Sound_SynthPulse2, 64, 232, 0, 232
 	voice 0x00, 60, 0, 0, Sound_SynthPulse2, 64, 232, 0, 195
 	voice 0x00, 60, 0, 0, Sound_SynthPulse2, 64, 232, 0, 0
@@ -226,9 +226,9 @@ Sound_SeVoices:
 	voice 0x00, 60, 0, 0, Sound_SynthPulse0, 64, 232, 0, 0
 	voice 0x00, 60, 0, 0, Sound_SynthPulse1, 64, 0, 255, 0
 	voice 0x00, 60, 0, 0, Sound_SynthPulse0, 64, 0, 255, 0
-	voice 0x00, 60, 0, 0, Sound_Wave29, 255, 0, 255, 204
-	voice 0x00, 60, 0, 0, Sound_Wave30, 255, 242, 28, 165
-	voice 0x00, 60, 0, 0, Sound_Wave31, 255, 0, 255, 226
+	voice 0x00, 60, 0, 0, Sound_WaveDrip, 255, 0, 255, 204
+	voice 0x00, 60, 0, 0, Sound_WaveChime, 255, 242, 28, 165
+	voice 0x00, 60, 0, 0, Sound_WaveColossoLettering, 255, 0, 255, 226
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0

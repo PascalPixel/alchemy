@@ -18,48 +18,48 @@
 
 	.section .rodata
 	.balign 4
-	.global Sound_Wave00
-Sound_Wave00:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_00.pcm8.bin"
-	.global Sound_Wave01
-Sound_Wave01:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_01.pcm8.bin"
-	.global Sound_Wave02
-Sound_Wave02:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_02.pcm8.bin"
-	.global Sound_Wave03
-Sound_Wave03:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_03.pcm8.bin"
-	.global Sound_Wave04
-Sound_Wave04:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_04.pcm8.bin"
-	.global Sound_Wave05
-Sound_Wave05:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_05.pcm8.bin"
-	.global Sound_Wave06
-Sound_Wave06:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_06.pcm8.bin"
-	.global Sound_Wave07
-Sound_Wave07:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_07.pcm8.bin"
-	.global Sound_Wave08
-Sound_Wave08:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_08.pcm8.bin"
-	.global Sound_Wave09
-Sound_Wave09:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_09.pcm8.bin"
-	.global Sound_Wave10
-Sound_Wave10:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_10.pcm8.bin"
-	.global Sound_Wave11
-Sound_Wave11:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_11.pcm8.bin"
-	.global Sound_Wave12
-Sound_Wave12:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_12.pcm8.bin"
-	.global Sound_Wave13
-Sound_Wave13:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_13.pcm8.bin"
+	.global Sound_WaveCelesta
+Sound_WaveCelesta:
+	.incbin "games/tbs/sound/direct_sound_samples/celesta.pcm8.bin"
+	.global Sound_WaveNylonGuitar
+Sound_WaveNylonGuitar:
+	.incbin "games/tbs/sound/direct_sound_samples/nylon_guitar.pcm8.bin"
+	.global Sound_WaveFingerBass
+Sound_WaveFingerBass:
+	.incbin "games/tbs/sound/direct_sound_samples/finger_bass.pcm8.bin"
+	.global Sound_WavePizzicatoStrings
+Sound_WavePizzicatoStrings:
+	.incbin "games/tbs/sound/direct_sound_samples/pizzicato_strings.pcm8.bin"
+	.global Sound_WaveHarp
+Sound_WaveHarp:
+	.incbin "games/tbs/sound/direct_sound_samples/harp.pcm8.bin"
+	.global Sound_WaveTimpani
+Sound_WaveTimpani:
+	.incbin "games/tbs/sound/direct_sound_samples/timpani.pcm8.bin"
+	.global Sound_WaveStrings
+Sound_WaveStrings:
+	.incbin "games/tbs/sound/direct_sound_samples/strings.pcm8.bin"
+	.global Sound_WaveChoir
+Sound_WaveChoir:
+	.incbin "games/tbs/sound/direct_sound_samples/choir.pcm8.bin"
+	.global Sound_WaveTrumpet
+Sound_WaveTrumpet:
+	.incbin "games/tbs/sound/direct_sound_samples/trumpet.pcm8.bin"
+	.global Sound_WaveBrass
+Sound_WaveBrass:
+	.incbin "games/tbs/sound/direct_sound_samples/brass.pcm8.bin"
+	.global Sound_WaveOboe
+Sound_WaveOboe:
+	.incbin "games/tbs/sound/direct_sound_samples/oboe.pcm8.bin"
+	.global Sound_WavePiccolo
+Sound_WavePiccolo:
+	.incbin "games/tbs/sound/direct_sound_samples/piccolo.pcm8.bin"
+	.global Sound_WaveFlute
+Sound_WaveFlute:
+	.incbin "games/tbs/sound/direct_sound_samples/flute.pcm8.bin"
+	.global Sound_WavePanFlute
+Sound_WavePanFlute:
+	.incbin "games/tbs/sound/direct_sound_samples/pan_flute.pcm8.bin"
 	.global Sound_SynthPulse0
 Sound_SynthPulse0:
 	synth_pulse 0x10, 0xf0, 0xe0, 0x80
@@ -75,57 +75,57 @@ Sound_SynthSaw:
 	.global Sound_SynthTriangle
 Sound_SynthTriangle:
 	synth_triangle
-	.global Sound_Wave14
-Sound_Wave14:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_14.pcm8.bin"
-	.global Sound_Wave15
-Sound_Wave15:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_15.pcm8.bin"
-	.global Sound_Wave16
-Sound_Wave16:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_16.pcm8.bin"
-	.global Sound_Wave17
-Sound_Wave17:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_17.pcm8.bin"
-	.global Sound_Wave18
-Sound_Wave18:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_18.pcm8.bin"
-	.global Sound_Wave19
-Sound_Wave19:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_19.pcm8.bin"
-	.global Sound_Wave20
-Sound_Wave20:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_20.pcm8.bin"
-	.global Sound_Wave21
-Sound_Wave21:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_21.pcm8.bin"
-	.global Sound_Wave22
-Sound_Wave22:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_22.pcm8.bin"
-	.global Sound_Wave23
-Sound_Wave23:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_23.pcm8.bin"
-	.global Sound_Wave24
-Sound_Wave24:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_24.pcm8.bin"
-	.global Sound_Wave25
-Sound_Wave25:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_25.pcm8.bin"
-	.global Sound_Wave26
-Sound_Wave26:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_26.pcm8.bin"
-	.global Sound_Wave27
-Sound_Wave27:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_27.pcm8.bin"
-	.global Sound_Wave28
-Sound_Wave28:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_28.pcm8.bin"
-	.global Sound_Wave29
-Sound_Wave29:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_29.pcm8.bin"
-	.global Sound_Wave30
-Sound_Wave30:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_30.pcm8.bin"
-	.global Sound_Wave31
-Sound_Wave31:
-	.incbin "games/tbs/sound/direct_sound_samples/wave_31.pcm8.bin"
+	.global Sound_WaveBassDrum
+Sound_WaveBassDrum:
+	.incbin "games/tbs/sound/direct_sound_samples/bass_drum.pcm8.bin"
+	.global Sound_WaveSnare
+Sound_WaveSnare:
+	.incbin "games/tbs/sound/direct_sound_samples/snare.pcm8.bin"
+	.global Sound_WaveTom
+Sound_WaveTom:
+	.incbin "games/tbs/sound/direct_sound_samples/tom.pcm8.bin"
+	.global Sound_WaveClosedHiHat
+Sound_WaveClosedHiHat:
+	.incbin "games/tbs/sound/direct_sound_samples/closed_hi_hat.pcm8.bin"
+	.global Sound_WaveCrashCymbal
+Sound_WaveCrashCymbal:
+	.incbin "games/tbs/sound/direct_sound_samples/crash_cymbal.pcm8.bin"
+	.global Sound_WaveRideCymbal
+Sound_WaveRideCymbal:
+	.incbin "games/tbs/sound/direct_sound_samples/ride_cymbal.pcm8.bin"
+	.global Sound_WaveSwitch
+Sound_WaveSwitch:
+	.incbin "games/tbs/sound/direct_sound_samples/switch.pcm8.bin"
+	.global Sound_WaveRumble
+Sound_WaveRumble:
+	.incbin "games/tbs/sound/direct_sound_samples/rumble.pcm8.bin"
+	.global Sound_WaveCrash
+Sound_WaveCrash:
+	.incbin "games/tbs/sound/direct_sound_samples/crash.pcm8.bin"
+	.global Sound_WavePsynergySparkle
+Sound_WavePsynergySparkle:
+	.incbin "games/tbs/sound/direct_sound_samples/psynergy_sparkle.pcm8.bin"
+	.global Sound_WaveRoar
+Sound_WaveRoar:
+	.incbin "games/tbs/sound/direct_sound_samples/roar.pcm8.bin"
+	.global Sound_WaveThunder
+Sound_WaveThunder:
+	.incbin "games/tbs/sound/direct_sound_samples/thunder.pcm8.bin"
+	.global Sound_WaveCurse
+Sound_WaveCurse:
+	.incbin "games/tbs/sound/direct_sound_samples/curse.pcm8.bin"
+	.global Sound_WaveBoom
+Sound_WaveBoom:
+	.incbin "games/tbs/sound/direct_sound_samples/boom.pcm8.bin"
+	.global Sound_WaveBell
+Sound_WaveBell:
+	.incbin "games/tbs/sound/direct_sound_samples/bell.pcm8.bin"
+	.global Sound_WaveDrip
+Sound_WaveDrip:
+	.incbin "games/tbs/sound/direct_sound_samples/drip.pcm8.bin"
+	.global Sound_WaveChime
+Sound_WaveChime:
+	.incbin "games/tbs/sound/direct_sound_samples/chime.pcm8.bin"
+	.global Sound_WaveColossoLettering
+Sound_WaveColossoLettering:
+	.incbin "games/tbs/sound/direct_sound_samples/colosso_lettering.pcm8.bin"

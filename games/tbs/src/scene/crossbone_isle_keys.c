@@ -186,7 +186,8 @@ enum CrossboneIsleBaneActorId {
   ACTOR_BANE
 };
 
-/// The room of keys' cells that run its events, from map_110's map.txt.
+/// The room of keys' cells that run its events, from
+/// crossbone_isle_keys_and_bane's map.txt.
 enum CrossboneIsleKeysCellBehavior {
   /// In front of the red door, cell (6, 52).
   CELL_BEHAVIOR_KEYS_RED_DOOR = 50,
@@ -211,8 +212,9 @@ enum CrossboneIsleStatuesCellBehavior {
   CELL_BEHAVIOR_STATUES_FOURTH_ALCOVE = 62
 };
 
-/// Bane's room's cells that run its events, from map_110's map.txt (the room
-/// is the east half of the map the room of keys shares).
+/// Bane's room's cells that run its events, from
+/// crossbone_isle_keys_and_bane's map.txt (the room is the east half of the
+/// map the room of keys shares).
 enum CrossboneIsleBaneCellBehavior {
   /// On the back ledge, cell (40, 41).
   CELL_BEHAVIOR_BANE_FIRST_ESCAPE = 20,

@@ -4,6 +4,7 @@
 #include "fixed_math.h"
 #include "types.h"
 #include "static_assert.h"
+#include "system/io_reg.h"
 #include "battle/battle_type.h"
 #include "battle/battle_event.h"
 #include "system/ram_buffer.h"
@@ -52,6 +53,10 @@ enum { BATTLE_ACTION_CAPACITY = 20 };
 
 /// The battle background's colours, BG palettes 6 to 13.
 #define BATTLE_BACKGROUND_COLORS (8 * PALETTE_COLORS)
+/// The battle background's darkening step (BattleBackground_SetPaletteLevel,
+/// BattleBackground_Load, the element glow and the battle effects' fades): each
+/// level takes a sixtieth of the full 16.16 brightness, so level 60 is black.
+#define BACKGROUND_LEVEL_STEP (FIXED_ONE / 60)
 
 struct Window;
 
@@ -122,10 +127,11 @@ struct BattleWork {
   u8 placement[16];  ///< each unit's index in slots; 0xff for none
   struct BattleObject slots[14];
   struct BattleActionRecord
-      actions[BATTLE_ACTION_CAPACITY]; ///< the actions chosen for the turn
-  u8 unusedAfterActions[292];          ///< no code names it
-  struct BattleSpoils spoils;          ///< what the battle has won so far
-  u16 palette[128]; ///< the backdrop's colours, before scaling
+      actions[BATTLE_ACTION_CAPACITY];   ///< the actions chosen for the turn
+  u8 unusedAfterActions[292];            ///< no code names it
+  struct BattleSpoils spoils;            ///< what the battle has won so far
+  u16 palette[BATTLE_BACKGROUND_COLORS]; ///< the backdrop's colours, before
+                                         ///< scaling
   FIXED brightness; ///< the backdrop's brightness, 16.16, FIXED_ONE full
   /// Its first halfword is the battle background passed to the palette fade.
   u16 background;              ///< the battle background's id

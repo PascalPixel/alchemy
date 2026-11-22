@@ -3,14 +3,16 @@
 /// to Idejima, while Alex holds back the soldiers behind them. Its three rooms
 /// share this overlay:
 ///
-/// - The road past the gate (SceneId_SuhallaGateHouse), where a Ruffian spots
-///   the two and fights them (SuhallaGate_RuffianSpotsParty).
+/// - The road past the gate (SceneId_SuhallaGateHouse), coming from the Venus
+///   Lighthouse in the east, where a Ruffian spots the two and fights them
+///   (SuhallaGate_RuffianSpotsParty), and a door in the rock at its west end
+///   leads on to the cliffs.
 /// - The cliffs (SceneId_SuhallaGateAmbush), whose two vines lead down to the
 ///   crevice where three Ruffians wait in ambush
 ///   (SuhallaGate_RuffiansAmbushParty).
 /// - The cave beyond the crevice (SceneId_SuhallaGatePsynergyStone), where a
-///   Punch Ant hops out at the two before the Psynergy Stone
-///   (SuhallaGate_PunchAntHopsFromWest), and whose far end leads to Idejima.
+///   Punch Ant jumps out at the two on the way to the Psynergy Stone
+///   (SuhallaGate_PunchAntJumpsOut), and whose far end leads to Idejima.
 ///
 /// Every battle sends the party back to ENTRANCE_AFTER_SUHALLA_GATE_BATTLE in
 /// its room, and a lost one to the Venus Lighthouse's entrance
@@ -49,8 +51,7 @@
 /// Set once Kraden has talked over the Punch Ant's battle; the cave's Punch Ant
 /// then stays away.
 #define FLAG_SUHALLA_GATE_PUNCH_ANT_BEATEN 0x896
-/// Set once the chest in the cliffs room (cell behavior 100) has given its
-/// Mint.
+/// Set once the chest on the cliffs, at cell (10, 22), has given its Mint.
 #define FLAG_SUHALLA_GATE_MINT 0xfb4
 
 /// The entrance each room's battle sends the party back to, 99 in each of the
@@ -86,6 +87,28 @@ enum SuhallaGateCaveActorId {
 /// grown.
 enum { SPROUT_ANIMATION_HALF_GROWN = 3, SPROUT_ANIMATION_GROWN = 4 };
 
+/// The cells that run the rooms' events.
+enum SuhallaGateCell {
+  /// The door in the rock at the road's west end, cell (8, 18), holding the
+  /// number of the exit it leads by.
+  ROAD_DOOR_CELL = 3,
+  /// The road's cells (29, 21), (30, 21) and (30, 22), where the Ruffian
+  /// spots the party.
+  RUFFIAN_SPOTS_PARTY_CELL = 20,
+  /// Unused: no cell of the road's map holds it.
+  ROAD_UNUSED_CELL = 12,
+  /// On the cliffs, cells (31, 54), (32, 54) and (31, 55), away from the
+  /// crevice, where Kraden calls Jenna back.
+  KRADEN_POINTS_THE_WAY_CELL = 21,
+  /// The cliffs' chest, cell (10, 22).
+  CLIFFS_CHEST_CELL = 100,
+  /// On the way to the Psynergy Stone, cells (31, 26) to (33, 29), where the
+  /// Punch Ant jumps out.
+  PUNCH_ANT_CELL = 22,
+  /// Unused: no cell of the cave's map holds it.
+  CAVE_UNUSED_CELL = 23
+};
+
 void SuhallaGate_AfterPunchAntBattle(void);
 void Actor_FallOverById(s32 id, u32 angle);
 void Actor_FallOverWithAnimationById(s32 id, u32 angle, s32 animation);
@@ -101,8 +124,9 @@ extern struct Trigger gSuhallaGate_RoadTriggers[];
 extern struct Trigger gSuhallaGate_CliffsTriggers[];
 extern struct Trigger gSuhallaGate_CaveTriggers[];
 
-/// Unused: a battle with the Djinni Dew, from the west Ruffian; the row before
-/// this one's in gSuhallaGate_CliffsTriggers answers talking to him first.
+/// Unused: talking to the west Ruffian at the crevice would start a battle with
+/// the Djinni Dew, but his own line, "Maybe I should have eaten a bigger
+/// breakfast.", always answers first.
 void SuhallaGate_FightDew(void) {
   Field_RequestDjinnBattle(ACTOR_WEST_RUFFIAN, DJINNI_DEW);
 }
@@ -213,8 +237,12 @@ UNUSED void SuhallaGate_OpenCliffsCell(void) {
   Event_SetFlag(FLAG_SHIP_SAILABLE);
 }
 
-/// Opens the door the leader walks into and walks actor 0 through it, as The
-/// Broken Seal's doors walk their leader, actor 0 there; here Jenna leads.
+/// Walking into the door in the rock at the road's west end, cell (8, 18), the
+/// door opens and the screen fades out with the leader still
+/// standing before it; the party comes out on the cliffs. The code walks
+/// `ACTOR_ISAAC` in through the doorway, as The Broken Seal's doors walk their
+/// leader, but here Jenna leads and Isaac is not on stage, so nobody is seen to
+/// go in.
 void SuhallaGate_EnterHouse(void) {
   s32 value = gFieldWork->stepTrigger;
 
@@ -229,7 +257,8 @@ void SuhallaGate_EnterHouse(void) {
   Import_EventSetExitRequest(value);
 }
 
-/// Felix becomes the leader again as Jenna and Kraden leave for Idejima.
+/// Walking out of the cave's far end, cell (41, 39), Jenna and Kraden leave for
+/// Idejima, and Felix becomes the leader again.
 void SuhallaGate_LeaveForIdejima(void) {
   s32 value = gFieldWork->stepTrigger;
 
@@ -240,7 +269,9 @@ void SuhallaGate_LeaveForIdejima(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// The road's Ruffian spots Jenna and Kraden and fights them.
+/// Walking west along the road, cells (29, 21) to (30, 22), Jenna and Kraden
+/// are spotted by a Ruffian: "Waahhh! It's them!" He looks for Alex, decides he
+/// can handle "some girl and her grandpa", and fights them.
 void SuhallaGate_RuffianSpotsParty(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -277,7 +308,9 @@ void SuhallaGate_RuffianSpotsParty(void) {
   Event_End();
 }
 
-/// Three Ruffians who waited at the crevice step out and fight Jenna and
+/// Trying to enter the crevice below the cliffs' vines, cell (38, 57), Jenna
+/// steps up to it and backs away as three Ruffians step out of it one by one:
+/// "Ha! That was a good idea, waiting here for 'em!" Then they fight her and
 /// Kraden.
 void SuhallaGate_RuffiansAmbushParty(void) {
   struct MainRoutineWork *work;
@@ -325,7 +358,7 @@ void SuhallaGate_RuffiansAmbushParty(void) {
   Event_End();
 }
 
-/// The Punch Ant leaps at the leader and its battle begins.
+/// The Punch Ant leaps at Jenna and its battle begins.
 void SuhallaGate_FightPunchAnt(void) {
   struct Actor *owner;
 
@@ -343,9 +376,10 @@ void SuhallaGate_FightPunchAnt(void) {
   Field_RequestBattleFromEncounterTable(9, 3);
   Event_End();
 }
-/// The Punch Ant springs out and hops at the party, from either side of the
-/// cave's path.
-void SuhallaGate_PunchAntHopsFromWest(void) {
+/// On the way to the Psynergy Stone, cells (31, 26) to (33, 29), a Punch Ant
+/// jumps out from the south-west; Jenna turns to it with a start, and it hops
+/// up to her and attacks.
+void SuhallaGate_PunchAntJumpsOut(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_SetPosition(ACTOR_PUNCH_ANT, 472, 480);
@@ -369,10 +403,10 @@ void SuhallaGate_PunchAntHopsFromWest(void) {
   SuhallaGate_FightPunchAnt();
 }
 
-/// Unused: as SuhallaGate_PunchAntHopsFromWest, the leader stepping aside first
-/// and the ant hopping further east; its trigger answers cell behavior 23,
-/// which no cell of the cave's map has.
-void SuhallaGate_PunchAntHopsFromEast(void) {
+/// Unused: the Punch Ant would jump out as in SuhallaGate_PunchAntJumpsOut,
+/// but with Jenna first stepping aside and the ant hopping further east after
+/// her; no spot in the cave sets it off.
+void SuhallaGate_PunchAntJumpsOutAsLeaderStepsAside(void) {
   s32 emote, frames;
 
   Event_Start();
@@ -402,8 +436,8 @@ void SuhallaGate_PunchAntHopsFromEast(void) {
   SuhallaGate_FightPunchAnt();
 }
 
-/// Back from the Punch Ant's battle, Kraden talks it over and goes back into
-/// the party.
+/// Back from the Punch Ant's battle, Kraden finds the fight invigorating: "My!
+/// That was invigorating!" Then he falls in behind Jenna again.
 void SuhallaGate_AfterPunchAntBattle(void) {
   struct Actor *leader;
 
@@ -437,8 +471,9 @@ void SuhallaGate_AfterPunchAntBattle(void) {
   Event_End();
 }
 
-/// Kraden jumps out from behind the leader to point the way down to the cave,
-/// and the leader steps back.
+/// Walking onto cells (31, 54), (32, 54) or (31, 55) on the cliffs, away from
+/// the crevice, Kraden jumps out of the party beside Jenna: "Not that way,
+/// Jenna! The meeting spot is down this way." She steps back east.
 void SuhallaGate_PointToMeetingSpot(void) {
   struct Actor *leader;
 
@@ -605,12 +640,13 @@ struct Trigger gSuhallaGate_RoadTriggers[] = {
      SUHALLA_GATE_HOUSE_TO_SUHALLA_GATE_AMBUSH_B},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS,
      SUHALLA_GATE_HOUSE_TO_VENUS_LIGHTHOUSE_ENTRANCE_EAST},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), ROAD_DOOR_CELL, CONDITION_ALWAYS,
      EVENT(SuhallaGate_EnterHouse)},
-    {TRIGGER_STEP, 20, FLAG_SUHALLA_GATE_RUFFIAN_BEATEN,
+    {TRIGGER_STEP, RUFFIAN_SPOTS_PARTY_CELL, FLAG_SUHALLA_GATE_RUFFIAN_BEATEN,
      EVENT(SuhallaGate_RuffianSpotsParty)},
-    // Unused: no cell of the road's map has behavior 12.
-    {TRIGGER_STEP, 12, CONDITION_ALWAYS, EVENT(SuhallaGate_PointToMeetingSpot)},
+    // Unused: no cell of the road's map runs it.
+    {TRIGGER_STEP, ROAD_UNUSED_CELL, CONDITION_ALWAYS,
+     EVENT(SuhallaGate_PointToMeetingSpot)},
     {TRIGGER_TALK, ACTOR_ROAD_RUFFIAN, CONDITION_ALWAYS,
      MSGNO(MsgOoooogMaybeI)},
     {TRIGGER_TABLE_END},
@@ -628,7 +664,8 @@ struct Trigger gSuhallaGate_CliffsTriggers[] = {
      EVENT(SuhallaGate_RuffiansAmbushParty)},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS,
      SUHALLA_GATE_AMBUSH_TO_SUHALLA_GATE_PSYNERGY_STONE},
-    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(SuhallaGate_PointToMeetingSpot)},
+    {TRIGGER_STEP, KRADEN_POINTS_THE_WAY_CELL, CONDITION_ALWAYS,
+     EVENT(SuhallaGate_PointToMeetingSpot)},
     {TRIGGER_TALK, ACTOR_WEST_RUFFIAN, CONDITION_ALWAYS,
      MSGNO(MsgMaybeIShould)},
     {TRIGGER_TALK, ACTOR_MIDDLE_RUFFIAN, CONDITION_ALWAYS,
@@ -636,7 +673,7 @@ struct Trigger gSuhallaGate_CliffsTriggers[] = {
     {TRIGGER_TALK, ACTOR_EAST_RUFFIAN, CONDITION_ALWAYS, MSGNO(MsgOhManThere)},
     {TRIGGER_TALK, ACTOR_WEST_RUFFIAN, CONDITION_ALWAYS,
      EVENT(SuhallaGate_FightDew)},
-    {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_SUHALLA_GATE_MINT,
+    {EXAMINE_TRIGGER(EXAMINE_CHEST), CLIFFS_CHEST_CELL, FLAG_SUHALLA_GATE_MINT,
      FIND_ITEM(ITEM_MINT)},
     {TRIGGER_TABLE_END},
 };
@@ -646,10 +683,11 @@ struct Trigger gSuhallaGate_CaveTriggers[] = {
      SUHALLA_GATE_PSYNERGY_STONE_TO_SUHALLA_GATE_AMBUSH},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(SuhallaGate_LeaveForIdejima)},
-    {TRIGGER_STEP, 22, FLAG_SUHALLA_GATE_PUNCH_ANT_BEATEN,
-     EVENT(SuhallaGate_PunchAntHopsFromWest)},
-    {TRIGGER_STEP, 23, FLAG_SUHALLA_GATE_PUNCH_ANT_BEATEN,
-     EVENT(SuhallaGate_PunchAntHopsFromEast)},
+    {TRIGGER_STEP, SUHALLA_GATE_PSYNERGY_STONE_TO_IDEJIMA, CONDITION_ALWAYS,
+     EVENT(SuhallaGate_LeaveForIdejima)},
+    {TRIGGER_STEP, PUNCH_ANT_CELL, FLAG_SUHALLA_GATE_PUNCH_ANT_BEATEN,
+     EVENT(SuhallaGate_PunchAntJumpsOut)},
+    {TRIGGER_STEP, CAVE_UNUSED_CELL, FLAG_SUHALLA_GATE_PUNCH_ANT_BEATEN,
+     EVENT(SuhallaGate_PunchAntJumpsOutAsLeaderStepsAside)},
     {TRIGGER_TABLE_END},
 };

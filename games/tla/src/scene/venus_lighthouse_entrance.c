@@ -6,8 +6,9 @@
 /// - Two birds land below the door (VenusLighthouseEntrance_BirdsLand) and fly
 ///   off as the party walks past (VenusLighthouseEntrance_BirdsFlyOff).
 /// - Tolbi's soldiers and the workmen of Lalivero close in. Alex arrives, sends
-///   Jenna and Kraden west to Idejima, hurls two soldiers skyward with Psynergy
-///   and drives the rest off (VenusLighthouseEntrance_SoldiersAmbushParty).
+///   Jenna and Kraden west to Idejima, throws two soldiers skyward on columns
+///   of water and drives the rest off
+///   (VenusLighthouseEntrance_SoldiersAmbushParty).
 /// - On the road west a Ruffian left to wait for backup fights the two
 ///   (VenusLighthouseEntrance_RuffianWaitsForBackup). A lost battle in the
 ///   prologue wakes them by the door, with Alex come back for them
@@ -71,6 +72,19 @@ enum VenusLighthouseEntranceEntrance {
   ENTRANCE_AFTER_RUFFIAN_BATTLE = 99
 };
 
+/// The map cells the step triggers answer, by the behaviour the map gives
+/// them: the row before the lighthouse door, either side of it (cells (17, 7)
+/// to (29, 7)), where the birds take off; the path below the door, cells
+/// (21, 15) to (25, 15), where the soldiers close in; the road west, cells
+/// (5, 14) to (5, 18), where the Ruffian waits; and the way east, cells
+/// (28, 24) to (28, 29), where Kraden turns Jenna back.
+enum VenusLighthouseEntranceCell {
+  CELL_BESIDE_DOOR = 9,
+  CELL_BELOW_DOOR = 10,
+  CELL_ROAD_WEST = 11,
+  CELL_WAY_EAST = 12
+};
+
 /// The scene's placed actors, in the rows of gActorPlacements.
 enum VenusLighthouseEntranceActorId {
   ACTOR_KRADEN = ACTOR_FIRST_PLACED,
@@ -110,8 +124,9 @@ extern u32 gVenusLighthouseEntrance_BirdLands[];
 void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
                                       s32 *position);
 
-/// Each frame of the water column: it rises, holds, hurls the actor off the
-/// top of the screen, sinks, and its puddle dries away as the ground shakes.
+/// Each frame of the column of water: it rises, holds, hurls the soldier off
+/// the top of the screen, sinks, and its puddle dries away as the ground
+/// shakes.
 void VenusLighthouseEntrance_UpdateBlastColumn(void);
 /// Each frame, draws and moves the dust puffs still playing.
 void VenusLighthouseEntrance_UpdateDust(void);
@@ -153,8 +168,12 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-/// Alex's Psynergy: the screen tints blue while he gathers power, and the
-/// actor is blasted skyward on a column of water.
+/// Talking to the soldier in front of the three in a row, before the ambush:
+/// the screen turns blue, a column of water rises under him and throws him
+/// up off the top of the screen, as Alex's Psynergy does in the ambush, and
+/// the colours come back. XXX: whether Jenna can reach him before stepping
+/// below the door starts the ambush; a play from the lighthouse door would
+/// settle it.
 void VenusLighthouseEntrance_BlastActorWithPsynergy(void *object) {
   Field_StartColorTransition(8, RGB(4, 4, 16));
   BattleEffect_StartArcEffect();
@@ -176,7 +195,10 @@ void VenusLighthouseEntrance_KickUpDust(struct Actor *actor) {
     Event_PlaySound(SE_CHEST_CLOSE);
 }
 
-/// Talked to, a soldier runs 96 pixels out and back, kicking up dust.
+/// Talking to the soldier captain, before the ambush: he dashes off
+/// north-east a few steps and back again, kicking up a trail of dust with a
+/// scuffing sound. XXX: whether Jenna can reach him before stepping below the
+/// door starts the ambush; a play from the lighthouse door would settle it.
 void VenusLighthouseEntrance_RunAndKickUpDust(s32 actorId) {
   struct Actor *actor = Actor_Get(actorId);
 
@@ -268,8 +290,8 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 s32 Actor_StartScript();
 
-/// The two birds fly down and land below the door as the party first comes out
-/// of the lighthouse.
+/// As Jenna and Kraden first come out of the lighthouse, two birds fly down
+/// and land below the door.
 void VenusLighthouseEntrance_BirdsLand(void) {
   struct Actor *westBird;
   struct Actor *eastBird;
@@ -313,7 +335,8 @@ void VenusLighthouseEntrance_BirdsLand(void) {
 
 extern u32 gVenusLighthouseEntrance_BirdFlies[];
 
-/// The birds take off as the party walks past them.
+/// Walking past the lighthouse door, cells (17, 7) to (29, 7), the birds
+/// take off and fly away.
 void VenusLighthouseEntrance_BirdsFlyOff(void) {
   struct Actor *westBird;
   struct Actor *eastBird;
@@ -343,9 +366,11 @@ void VenusLighthouseEntrance_BirdsFlyOff(void) {
   Event_End();
 }
 
-/// Tolbi's soldiers and the workmen of Lalivero ambush Jenna and Kraden. Alex
-/// arrives, tells them to meet him at Idejima, hurls two soldiers skyward and
-/// sends the workmen running, then follows the last soldiers to Lalivero.
+/// Walking down the path below the lighthouse door, cells (21, 15) to
+/// (25, 15): Tolbi's soldiers and the workmen of Lalivero close in on Jenna
+/// and Kraden. Alex arrives, tells them to meet him at Idejima, throws two
+/// soldiers skyward on columns of water and sends the workmen running, then
+/// follows the last soldiers to Lalivero.
 void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   struct Actor *workman;
   struct Actor *actor;
@@ -1019,8 +1044,8 @@ void VenusLighthouseEntrance_SoldiersAmbushParty(void) {
   Event_End();
 }
 
-/// The Ruffian left to wait for backup sees that Alex is not with the two, and
-/// fights them.
+/// On the road west, cells (5, 14) to (5, 18), the Ruffian left to wait for
+/// backup sees that Alex is not with Jenna and Kraden, and fights them.
 void VenusLighthouseEntrance_RuffianWaitsForBackup(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1073,7 +1098,9 @@ void VenusLighthouseEntrance_RuffianWaitsForBackup(void) {
   Event_End();
 }
 
-/// Kraden jumps out from behind Jenna to send her west, and she steps back.
+/// Heading east, cells (28, 24) to (28, 29), Kraden jumps out from behind
+/// Jenna: "Not that way, Jenna! The meeting spot is west of here." She steps
+/// back.
 void VenusLighthouseEntrance_PointToMeetingSpot(void) {
   struct Actor *actor;
 
@@ -1228,7 +1255,7 @@ void VenusLighthouseEntrance_WakeUp(void) {
 #define BLAST_PICTURE_TILES SPRITE_TILES_8BPP(16, 16)
 
 /// The rising column's work, kept in Ram_HeapSlots' menu runtime while it
-/// plays: its pictures, its pieces of earth, the actor it lifts and the
+/// plays: its pictures, its pieces of water, the soldier it lifts and the
 /// blast's effect actor.
 struct BlastColumnWork {
   u8 pictures[1024]; ///< decompressed, then loaded into the VRAM cache
@@ -1387,8 +1414,8 @@ void VenusLighthouseEntrance_UpdateBlastColumn(void) {
 
 s32 BattleEffect_GetObjectDepth(struct Actor *actor);
 
-/// A column of rising earth lifts an actor, holds it, then hurls it off the
-/// top of the screen, and the ground shakes as the column sinks.
+/// A column of water rises under a soldier, holds him up, then hurls him off
+/// the top of the screen, and the ground shakes as the column sinks.
 void VenusLighthouseEntrance_BlastActorSkyward(s32 id) {
   struct BlastColumnWork *work =
       HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct BlastColumnWork));
@@ -1593,13 +1620,13 @@ struct ActorPlacement gActorPlacements[] = {
 struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, 9, FLAG_VENUS_LIGHTHOUSE_BIRDS_FLEW_OFF,
+    {TRIGGER_STEP, CELL_BESIDE_DOOR, FLAG_VENUS_LIGHTHOUSE_BIRDS_FLEW_OFF,
      EVENT(VenusLighthouseEntrance_BirdsFlyOff)},
-    {TRIGGER_STEP, 10, FLAG_VENUS_LIGHTHOUSE_AMBUSH_SEEN,
+    {TRIGGER_STEP, CELL_BELOW_DOOR, FLAG_VENUS_LIGHTHOUSE_AMBUSH_SEEN,
      EVENT(VenusLighthouseEntrance_SoldiersAmbushParty)},
-    {TRIGGER_STEP, 11, FLAG_VENUS_LIGHTHOUSE_RUFFIAN_BEATEN,
+    {TRIGGER_STEP, CELL_ROAD_WEST, FLAG_VENUS_LIGHTHOUSE_RUFFIAN_BEATEN,
      EVENT(VenusLighthouseEntrance_RuffianWaitsForBackup)},
-    {TRIGGER_STEP, 12, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_WAY_EAST, CONDITION_ALWAYS,
      EVENT(VenusLighthouseEntrance_PointToMeetingSpot)},
     {TRIGGER_TALK, ACTOR_WAITING_RUFFIAN, CONDITION_ALWAYS,
      MSGNO(MsgUggghICan)},

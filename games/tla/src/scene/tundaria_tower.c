@@ -1,16 +1,19 @@
 /// @file
-/// Tundaria Tower, the frozen tower that holds the Center Prong, in seven rooms
+/// Tundaria Tower, the frozen tower that holds the Center Prong, in seven maps
 /// that share this overlay (SceneId_TundariaTowerEntrance to
 /// SceneId_TundariaTowerBurstBrooch).
 ///
-/// In the Center Prong's hall Parch dries the water left and right of the
-/// doors, and the Center Prong lies frozen in a crystal that only Burst
-/// breaks. The floors above are crossed by sliding on black ice; Pound
-/// flattens the ice columns and Move slides the pillars, and the Mars Djinni
-/// Reflux waits in a room of his own at the end of one sliding puzzle. In the
-/// room of pillars Reveal shows a way through an icy wall, and Burst breaks
-/// the wall of ice that mirrors the leader; outside, in the Burst Brooch's
-/// room, Burst on the wall's brown part brings its rocks down.
+/// In the first hall the middle way leads to an ice crystal with something
+/// frozen inside, and Parch dries the pools left and right of it, uncovering a
+/// door in each. The right door leads to fields of black ice to slide across
+/// and up to a hall with three ways: Pound flattens the ice columns on the left
+/// way for its chests, a black ice slide on the lower way drops to the sliding
+/// puzzle where the Mars Djinni Reflux appears, and the right way leads to a
+/// room where Pound and Move set two pillars against a ledge to climb. Beyond
+/// it Reveal opens a way through an icy wall, and outside Felix finds the Burst
+/// Brooch; Burst on the brown part of the outer wall brings its rocks down for
+/// a shortcut. With Burst the crystal breaks to free the Center Prong, and the
+/// icy wall at the end of the left door's way breaks to reach four more chests.
 #include "djinn_ids.h"
 #include "fixed_math.h"
 #include "flags.h"
@@ -80,10 +83,17 @@ void TundariaTower_StartEffectScript(struct FieldEffect *effect,
 #define ACTOR_FALLEN_CENTER_PRONG 68
 /// Reflux, the Mars Djinni (SceneId_TundariaTowerReflux).
 #define ACTOR_REFLUX ACTOR_FIRST_PLACED
-/// The two pillars Lift sets on the ledge (SceneId_TundariaTowerLiftPillars),
-/// the second first in the table.
+/// The two stone pillars on the ledge in the room of pillars
+/// (SceneId_TundariaTowerLiftPillars), which Move pulls down and a push sets
+/// against the ledge as steps; the second is first in the table. The two that
+/// slide over the ice there, and the ice columns before them.
 #define ACTOR_SECOND_LEDGE_PILLAR (ACTOR_FIRST_PLACED + 4)
 #define ACTOR_FIRST_LEDGE_PILLAR (ACTOR_FIRST_PLACED + 5)
+#define ACTOR_FIRST_SLIDING_PILLAR (ACTOR_FIRST_PLACED + 3)
+#define ACTOR_SECOND_SLIDING_PILLAR (ACTOR_FIRST_PLACED + 6)
+#define ACTOR_FIRST_ICE_COLUMN ACTOR_FIRST_PLACED
+/// The stone pillar in the Burst Brooch's room.
+#define ACTOR_BROOCH_ROOM_PILLAR ACTOR_FIRST_PLACED
 
 /// The entrances Scene_Initialize sets up apart: the crystal's chamber of the
 /// Center Prong's rooms, and where the party lands from the slides.
@@ -111,13 +121,15 @@ enum {
 #define FLAG_FIRST_LEDGE_PILLAR_SET 0x947
 /// Burst opened the brown wall outside, in the Burst Brooch's room.
 #define FLAG_BROWN_WALL_BURST 0x948
-/// Burst broke the wall of ice that mirrors the leader in the room of pillars.
+/// Burst broke the icy wall at the end of the left door's way, in the room
+/// whose ice floor reflects Felix.
 #define FLAG_MIRROR_WALL_BURST 0x94b
 #define FLAG_REFLUX_APPEARED FLAG_SCENE_TEMP_00
 #define FLAG_FIGHTING_REFLUX FLAG_SCENE_TEMP_01
 /// The first of four: Pound flattened ice column n.
 #define FLAG_ICE_COLUMN_POUNDED FLAG_SCENE_TEMP_00
-/// Reveal shows the hidden way through the icy wall in the room of pillars.
+/// Reveal shows the hidden way through the icy wall at the dead end beyond the
+/// room of pillars.
 #define FLAG_HIDDEN_WAY_REVEALED FLAG_SCENE_TEMP_12
 
 /// How far a standing ice column's top rises over the ground under it, in
@@ -141,7 +153,21 @@ enum TundariaTowerCellBehavior {
   /// (TundariaTower_BurstBrownWall).
   CELL_BEHAVIOR_TUNDARIA_TOWER_BROWN_WALL = 50,
   /// The step on which Reflux appears (TundariaTower_RefluxAppears).
-  CELL_BEHAVIOR_TUNDARIA_TOWER_REFLUX_APPEARS = 51
+  CELL_BEHAVIOR_TUNDARIA_TOWER_REFLUX_APPEARS = 51,
+  /// The first hall's doors behind the left and right pools, each the number
+  /// of the exit it leads through (TundariaTower_OpenDoor).
+  CELL_BEHAVIOR_TUNDARIA_TOWER_LEFT_DOOR = 3,
+  CELL_BEHAVIOR_TUNDARIA_TOWER_RIGHT_DOOR = 4,
+  /// The first hall's left and right pools, which Parch dries.
+  CELL_BEHAVIOR_TUNDARIA_TOWER_LEFT_POOL = 50,
+  CELL_BEHAVIOR_TUNDARIA_TOWER_RIGHT_POOL = 51,
+  /// The crystal holding the Center Prong, and the icy wall Burst breaks at
+  /// the end of the left door's way.
+  CELL_BEHAVIOR_TUNDARIA_TOWER_CRYSTAL = 52,
+  CELL_BEHAVIOR_TUNDARIA_TOWER_ICY_WALL = 52,
+  /// The top of the black ice slide down to Reflux's sliding puzzle
+  /// (TundariaTower_JumpDownSlide).
+  CELL_BEHAVIOR_TUNDARIA_TOWER_SLIDE_TOP = 11
 };
 
 void TundariaTower_AdvanceIceChip(union FieldObject *object);
@@ -162,7 +188,8 @@ extern struct Trigger gTundariaTowerIceColumnsTriggers[];
 extern struct Trigger gTundariaTowerLiftPillarsTriggers[];
 extern struct Trigger gTundariaTowerBurstBroochTriggers[];
 
-/// Talking to Reflux starts its battle.
+/// Talking to Reflux, once he has hopped down before the party, starts his
+/// battle.
 void TundariaTower_FightReflux(void) {
   GameFlag_Set(FLAG_FIGHTING_REFLUX);
   Event_RequestDjinnBattle(ACTOR_REFLUX, DJINNI_REFLUX);
@@ -176,10 +203,10 @@ void TundariaTower_FightReflux(void) {
 
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 terrain, s32 height);
 
-/// Sets the cell under an ice column by its Pound flag, kept in its timer:
-/// standing, the cell is raised ICE_COLUMN_HEIGHT_STEPS, walled and marked
-/// MAP_CELL_JUMP, and the column drawn at sprite priority 2; pounded flat, the
-/// cell is cleared and lowered back and the column drawn at priority 3.
+/// Makes the ground under an ice column match it, by its Pound flag (kept in
+/// its timer): a standing column blocks the way and Felix can jump onto its
+/// top, ICE_COLUMN_HEIGHT_STEPS up; one pounded flat is walked over and drawn
+/// beneath him.
 void TundariaTower_SetColumnCell(struct Actor *actor) {
   s32 x = FIELD_CELL(actor->x.fixed);
   s32 z = FIELD_CELL(actor->z.fixed);
@@ -268,7 +295,8 @@ const struct Trigger *Scene_GetActorPlacements(void) {
   return (const struct Trigger *)gTundariaTowerCenterProngActorPlacements;
 }
 
-/// Parch dries the water left of the first hall's doors.
+/// Parch on the pool left of the first hall's middle way dries it, uncovering
+/// a green door in the wall behind it.
 void TundariaTower_ParchLeftWater(void) {
   Event_Start();
   MapGrid_CopyCellAttributes(19, 55, 7, 8, 24, 46);
@@ -277,7 +305,8 @@ void TundariaTower_ParchLeftWater(void) {
   Event_End();
 }
 
-/// Parch dries the water right of the doors.
+/// Parch on the pool right of the first hall's middle way dries it,
+/// uncovering a door in the wall behind it.
 void TundariaTower_ParchRightWater(void) {
   Event_Start();
   MapGrid_CopyCellAttributes(37, 55, 7, 8, 32, 46);
@@ -286,7 +315,9 @@ void TundariaTower_ParchRightWater(void) {
   Event_End();
 }
 
-/// A door opens and the leader walks through it.
+/// Walking north into the door behind one of the first hall's dried pools
+/// opens it, and Felix walks through: the left door leads to the way that
+/// ends at an icy wall, the right one to the black ice fields.
 void TundariaTower_OpenDoor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s16 *choice;
@@ -334,8 +365,8 @@ void TundariaTower_AdvanceIceChip(union FieldObject *object) {
   object->effect.velocity.y -= toFIXED(3) / 10;
 }
 
-/// Scatters chips of ice (SPRITE_BLUE_CRYSTAL) around a position, each turned
-/// at random and thrown off to fall under TundariaTower_AdvanceIceChip.
+/// Throws chips of ice (SPRITE_BLUE_CRYSTAL) off a point, each turned at
+/// random, to fall under TundariaTower_AdvanceIceChip.
 void TundariaTower_ScatterIceChips(struct Vector3 *position, s32 count,
                                    FIXED scale) {
   struct EffectOptions options;
@@ -369,7 +400,8 @@ void TundariaTower_ScatterIceChips(struct Vector3 *position, s32 count,
   }
 }
 
-/// Burst on the crystal: it cracks and throws off chips of ice.
+/// Burst on the ice crystal in the Center Prong's chamber, cell (21, 23): it
+/// cracks and throws off chips of ice.
 void TundariaTower_BurstCrystal(s32 step) {
   struct Vector3 position;
 
@@ -414,7 +446,8 @@ void TundariaTower_SparkleCenterProng(struct Actor *actor) {
   }
 }
 
-/// The crystal breaks and the Center Prong drops to the floor, glinting.
+/// As Burst ends, the crystal is broken and the Center Prong drops from it to
+/// the floor, where it glints until Felix picks it up.
 void TundariaTower_FreeCenterProng(void) {
   struct Actor *actor = Actor_GetById(ACTOR_FROZEN_CENTER_PRONG);
 
@@ -432,7 +465,10 @@ void TundariaTower_FreeCenterProng(void) {
   Event_End();
 }
 
-/// "There's something inside the cracked ice..."
+/// Searching the ice crystal in the Center Prong's chamber, cell (21, 23),
+/// says "There's something inside the cracked ice...". XXX: once Felix has the
+/// Burst Brooch the field menu then opens, presumably to cast Burst on it; a
+/// render with the Brooch would settle what shows.
 void TundariaTower_ExamineCrystal(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -445,13 +481,15 @@ void TundariaTower_ExamineCrystal(void) {
   Event_End();
 }
 
-/// Stepping onto black ice sets the leader sliding.
+/// Stepping onto black ice sets Felix sliding straight on until something
+/// stops him.
 void TundariaTower_SlideOnIce(void) { Leader_SlideOnIce(); }
 
 extern s32 gTundariaTower_RefluxHops[];
 
-/// Reflux appears in a flash and a splash, hops down before the party and
-/// waits.
+/// Sliding onto cell (21, 33) in Reflux's sliding puzzle: the screen flashes
+/// white with a splash and a shake, and Reflux hops down before the party and
+/// waits to be talked to.
 void TundariaTower_RefluxAppears(void) {
   struct Actor *actor = Actor_GetById(ACTOR_REFLUX);
 
@@ -479,9 +517,8 @@ void TundariaTower_RefluxAppears(void) {
   Event_End();
 }
 
-/// Pound on an ice column: for its first eight steps chips fly off and it
-/// shrinks, and in the last phase its flag is set and it lies flat in the
-/// floor.
+/// Pound on an ice column: chips of ice fly off as it is squashed, and it
+/// ends flat in the floor, to be walked over.
 void TundariaTower_ShrinkIceColumn(s32 phase, s32 step) {
   struct EffectOptions options;
   struct FieldEffectWork *effectWork = Ram_HeapSlots->fieldEffectWork;
@@ -518,13 +555,15 @@ void TundariaTower_ShrinkIceColumn(s32 phase, s32 step) {
   }
 }
 
-/// Pound flattens an ice column into the floor.
+/// Pound on one of the ice columns, on the hall's left way or in the room of
+/// pillars, flattens it into the floor.
 void TundariaTower_PoundIceColumn(s32 phase, s32 step) {
   TundariaTower_ShrinkIceColumn(phase, step);
 }
 
-/// The leader jumps onto the black ice slide and goes down it to the room
-/// below.
+/// Stepping onto the top of the black ice slide on the lower way from the
+/// hall of three ways, cell (19, 57): Felix leans back, then runs and goes
+/// down the slide to Reflux's sliding puzzle.
 void TundariaTower_JumpDownSlide(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
@@ -551,9 +590,11 @@ void TundariaTower_JumpDownSlide(void) {
   Event_End();
 }
 
-/// Before Move or a push, lifts the pillar out of the map; in the room of
-/// pillars it keeps the cell it started from in its timer.
-void TundariaTower_LiftPillar(void) {
+/// Nothing visible happens as Felix starts to push or Move a stone pillar in
+/// the room of pillars or the Burst Brooch's room. The game takes the pillar
+/// off the map grid and, in the room of pillars, remembers the cell it
+/// started from, so that Move can send it on sliding the same way.
+void TundariaTower_BeginPillarMove(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
 
@@ -569,8 +610,9 @@ void TundariaTower_LiftPillar(void) {
   }
 }
 
-/// Move sends a pillar sliding on over the ice, a cell at a time, until a cell
-/// that is not ice stops it.
+/// Move on one of the two stone pillars on the ice in the room of pillars
+/// sends it sliding on, a cell at a time, until the ice ends or a wall stops
+/// it, the camera following.
 void TundariaTower_SlidePillar(s32 unused, s32 actorArg) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor;
@@ -603,8 +645,9 @@ void TundariaTower_SlidePillar(s32 unused, s32 actorArg) {
   Event_End();
 }
 
-/// A pushed pillar off the edge of its ledge drops to the floor below; in the
-/// room of pillars the two set against the ledge open its climb.
+/// A pillar pushed or Moved off the edge of a ledge drops to the floor below
+/// with a thump. In the room of pillars the two pillars from the ledge, set
+/// one beside the other at its foot, make the steps up it.
 void TundariaTower_SetDownPillar(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *actor;
@@ -634,8 +677,9 @@ void TundariaTower_SetDownPillar(void) {
   Event_End();
 }
 
-/// Reveal fades: the hidden way through the icy wall closes again, and a leader
-/// standing in its gap is put out of it on the side he faces.
+/// When Reveal wears off, the way through the icy wall at the dead end beyond
+/// the room of pillars closes again; Felix, if he stands in it, is put out on
+/// the side he faces.
 void TundariaTower_EndRevealHiddenWay(void) {
   BlendScript_Resume();
   GameFlag_Clear(FLAG_HIDDEN_WAY_REVEALED);
@@ -655,7 +699,8 @@ void TundariaTower_EndRevealHiddenWay(void) {
   }
 }
 
-/// Reveal shows the hidden way through the icy wall at the dead end.
+/// Reveal at the icy wall at the dead end beyond the room of pillars shows a
+/// way through it, cells (53, 37) to (55, 39).
 void TundariaTower_RevealHiddenWay(void) {
   BlendScript_Suspend();
   GameFlag_Set(FLAG_HIDDEN_WAY_REVEALED);
@@ -671,11 +716,13 @@ void TundariaTower_RevealHiddenWay(void) {
   }
 }
 
-/// The edge of a slide stops the leader.
+/// Nothing visible happens at the cells where the ice ends in the room of
+/// pillars; the game stops Felix sliding there.
 void TundariaTower_StopSliding(void) { Event_ResolvePendingActions(0); }
 
-/// Burst on the wall of ice that mirrors the leader in the room of pillars:
-/// chips of ice fly and it breaks open.
+/// Burst on the icy wall at the end of the left door's way, cell (7, 35), in
+/// the room whose ice floor reflects Felix: chips of ice fly and it breaks
+/// open onto the rooms of chests beyond.
 void TundariaTower_BurstMirrorWall(s32 step) {
   struct Vector3 position;
 
@@ -701,13 +748,15 @@ void TundariaTower_BurstMirrorWall(s32 step) {
   }
 }
 
-/// Before Psynergy acts on a pillar, finishes what the leader was doing.
+/// Nothing visible happens as Felix starts to cast Move on a sliding pillar
+/// or Burst on the icy wall; the game first stops whatever he was doing,
+/// such as sliding.
 void TundariaTower_ResolveBeforePsynergy(void) {
   Event_ResolvePendingActions(0);
 }
 
-/// Burst on the brown part of the outside wall in the Burst Brooch's room: its
-/// rocks fall as it breaks open.
+/// Burst on the brown part of the outer wall in the Burst Brooch's room, from
+/// the ground below it: rocks fall as it breaks open into a shortcut.
 void TundariaTower_BurstBrownWall(s32 shake, s32 frame) {
   if (frame == 0) {
     TundariaTower_StartFallingRocks();
@@ -744,7 +793,9 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gTundariaTowerCenterProngTriggers;
 }
 
-/// The leader's reflection in the ice, mirrored across the room's line.
+/// Felix's reflection in the ice floor of two rooms, the one before the icy
+/// wall Burst breaks and the one before the icy wall Reveal opens, mirrored
+/// across the floor's edge.
 void TundariaTower_ReflectLeader(struct Actor *actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Sprite *leaderSprite = leader->sprite;
@@ -829,7 +880,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-/// The party drops in from the slide above and lands in a puff of dust.
+/// At the foot of a black ice slide, Felix drops in from above and lands in a
+/// puff of dust with a thump that shakes the screen.
 void TundariaTower_LandFromSlide(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct EffectOptions options;
@@ -889,7 +941,8 @@ void TundariaTower_LandFromSlide(void) {
 }
 
 /// Each frame in the Burst Brooch's room, the cell before the brown wall
-/// answers Burst only while the leader stands on the floor.
+/// answers Burst only while Felix stands on the ground below it, not on the
+/// ladders above.
 void TundariaTower_UpdateBrownWallCell(void) {
   if (FIELD_HALF_CELL(Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed) !=
       0)
@@ -1552,7 +1605,7 @@ void TundariaTower_FightReflux(void);
 void TundariaTower_OpenDoor(void);
 void TundariaTower_FreeCenterProng(void);
 void TundariaTower_JumpDownSlide(void);
-void TundariaTower_LiftPillar(void);
+void TundariaTower_BeginPillarMove(void);
 
 // clang-format off
 #include "shared/field_effect_duration_scripts.c"
@@ -1739,9 +1792,11 @@ struct Trigger gTundariaTowerEntranceTriggers[] = {
 struct Trigger gTundariaTowerCenterProngTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     CELL_BEHAVIOR_TUNDARIA_TOWER_LEFT_DOOR, CONDITION_ALWAYS,
      EVENT(TundariaTower_OpenDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     CELL_BEHAVIOR_TUNDARIA_TOWER_RIGHT_DOOR, CONDITION_ALWAYS,
      EVENT(TundariaTower_OpenDoor)},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
@@ -1757,16 +1812,20 @@ struct Trigger gTundariaTowerCenterProngTriggers[] = {
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},
     {TRIGGER_EXIT, 18, CONDITION_ALWAYS, 18},
-    {TRIGGER_EXAMINE, 52, CONDITION_ALWAYS,
+    {TRIGGER_EXAMINE, CELL_BEHAVIOR_TUNDARIA_TOWER_CRYSTAL, CONDITION_ALWAYS,
      EVENT(TundariaTower_ExamineCrystal)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 50,
-     FLAG_LEFT_WATER_PARCHED, EVENT(TundariaTower_ParchLeftWater)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 51,
-     FLAG_RIGHT_WATER_PARCHED, EVENT(TundariaTower_ParchRightWater)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 52,
-     FLAG_CRYSTAL_BROKEN, EVENT(TundariaTower_BurstCrystal)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_AFTER_CAST), 52,
-     FLAG_CRYSTAL_BROKEN, EVENT(TundariaTower_FreeCenterProng)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_TUNDARIA_TOWER_LEFT_POOL, FLAG_LEFT_WATER_PARCHED,
+     EVENT(TundariaTower_ParchLeftWater)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_TUNDARIA_TOWER_RIGHT_POOL, FLAG_RIGHT_WATER_PARCHED,
+     EVENT(TundariaTower_ParchRightWater)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_TUNDARIA_TOWER_CRYSTAL, FLAG_CRYSTAL_BROKEN,
+     EVENT(TundariaTower_BurstCrystal)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_AFTER_CAST),
+     CELL_BEHAVIOR_TUNDARIA_TOWER_CRYSTAL, FLAG_CRYSTAL_BROKEN,
+     EVENT(TundariaTower_FreeCenterProng)},
     {TRIGGER_TABLE_END},
 };
 
@@ -1799,7 +1858,8 @@ struct Trigger gTundariaTowerRefluxTriggers[] = {
      EVENT(TundariaTower_SlideOnIce)},
     {TRIGGER_STEP, CELL_BEHAVIOR_TUNDARIA_TOWER_REFLUX_APPEARS,
      FLAG_REFLUX_APPEARED, EVENT(TundariaTower_RefluxAppears)},
-    {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(TundariaTower_FightReflux)},
+    {TRIGGER_TALK, ACTOR_REFLUX, CONDITION_ALWAYS,
+     EVENT(TundariaTower_FightReflux)},
     {TRIGGER_TABLE_END},
 };
 
@@ -1814,17 +1874,22 @@ struct Trigger gTundariaTowerIceColumnsTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 8, CONDITION_ALWAYS, 8},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 10, CONDITION_ALWAYS, 10},
-    {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(TundariaTower_JumpDownSlide)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_TUNDARIA_TOWER_SLIDE_TOP, CONDITION_ALWAYS,
+     EVENT(TundariaTower_JumpDownSlide)},
     {TRIGGER_STEP, CELL_BEHAVIOR_TUNDARIA_TOWER_ICE, CONDITION_ALWAYS,
      EVENT(TundariaTower_SlideOnIce)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 8,
-     FLAG_ICE_COLUMN_POUNDED, EVENT(TundariaTower_PoundIceColumn)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 9,
-     FLAG_ICE_COLUMN_POUNDED + 1, EVENT(TundariaTower_PoundIceColumn)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 10,
-     FLAG_ICE_COLUMN_POUNDED + 2, EVENT(TundariaTower_PoundIceColumn)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 11,
-     FLAG_ICE_COLUMN_POUNDED + 3, EVENT(TundariaTower_PoundIceColumn)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS),
+     ACTOR_FIRST_ICE_COLUMN, FLAG_ICE_COLUMN_POUNDED,
+     EVENT(TundariaTower_PoundIceColumn)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS),
+     ACTOR_FIRST_ICE_COLUMN + 1, FLAG_ICE_COLUMN_POUNDED + 1,
+     EVENT(TundariaTower_PoundIceColumn)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS),
+     ACTOR_FIRST_ICE_COLUMN + 2, FLAG_ICE_COLUMN_POUNDED + 2,
+     EVENT(TundariaTower_PoundIceColumn)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS),
+     ACTOR_FIRST_ICE_COLUMN + 3, FLAG_ICE_COLUMN_POUNDED + 3,
+     EVENT(TundariaTower_PoundIceColumn)},
     {TRIGGER_TABLE_END},
 };
 
@@ -1840,51 +1905,65 @@ struct Trigger gTundariaTowerLiftPillarsTriggers[] = {
     {TRIGGER_EXIT, 30, CONDITION_ALWAYS, 10},
     {TRIGGER_STEP, CELL_BEHAVIOR_TUNDARIA_TOWER_SLIDE_END, CONDITION_ALWAYS,
      EVENT(TundariaTower_StopSliding)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 8,
-     FLAG_ICE_COLUMN_POUNDED, EVENT(TundariaTower_PoundIceColumn)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 9,
-     FLAG_ICE_COLUMN_POUNDED + 1, EVENT(TundariaTower_PoundIceColumn)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), 10,
-     FLAG_ICE_COLUMN_POUNDED + 2, EVENT(TundariaTower_PoundIceColumn)},
-    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(TundariaTower_LiftPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS),
+     ACTOR_FIRST_ICE_COLUMN, FLAG_ICE_COLUMN_POUNDED,
+     EVENT(TundariaTower_PoundIceColumn)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS),
+     ACTOR_FIRST_ICE_COLUMN + 1, FLAG_ICE_COLUMN_POUNDED + 1,
+     EVENT(TundariaTower_PoundIceColumn)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS),
+     ACTOR_FIRST_ICE_COLUMN + 2, FLAG_ICE_COLUMN_POUNDED + 2,
+     EVENT(TundariaTower_PoundIceColumn)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(TundariaTower_BeginPillarMove)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(TundariaTower_SetDownPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_FIRST), 11,
-     CONDITION_ALWAYS, EVENT(TundariaTower_ResolveBeforePsynergy)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 11,
-     CONDITION_ALWAYS, EVENT(TundariaTower_LiftPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_ACTS), 11,
-     CONDITION_ALWAYS, EVENT(TundariaTower_SlidePillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 12,
-     FLAG_SECOND_LEDGE_PILLAR_SET, EVENT(TundariaTower_LiftPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, FLAG_SECOND_LEDGE_PILLAR_SET,
-     EVENT(TundariaTower_SetDownPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 13,
-     FLAG_FIRST_LEDGE_PILLAR_SET, EVENT(TundariaTower_LiftPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 13, FLAG_FIRST_LEDGE_PILLAR_SET,
-     EVENT(TundariaTower_SetDownPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_FIRST), 14,
-     CONDITION_ALWAYS, EVENT(TundariaTower_ResolveBeforePsynergy)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 14,
-     CONDITION_ALWAYS, EVENT(TundariaTower_LiftPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_ACTS), 14,
-     CONDITION_ALWAYS, EVENT(TundariaTower_SlidePillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_FIRST),
+     ACTOR_FIRST_SLIDING_PILLAR, CONDITION_ALWAYS,
+     EVENT(TundariaTower_ResolveBeforePsynergy)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
+     ACTOR_FIRST_SLIDING_PILLAR, CONDITION_ALWAYS,
+     EVENT(TundariaTower_BeginPillarMove)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_ACTS),
+     ACTOR_FIRST_SLIDING_PILLAR, CONDITION_ALWAYS,
+     EVENT(TundariaTower_SlidePillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
+     ACTOR_SECOND_LEDGE_PILLAR, FLAG_SECOND_LEDGE_PILLAR_SET,
+     EVENT(TundariaTower_BeginPillarMove)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_LEDGE_PILLAR,
+     FLAG_SECOND_LEDGE_PILLAR_SET, EVENT(TundariaTower_SetDownPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
+     ACTOR_FIRST_LEDGE_PILLAR, FLAG_FIRST_LEDGE_PILLAR_SET,
+     EVENT(TundariaTower_BeginPillarMove)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_LEDGE_PILLAR,
+     FLAG_FIRST_LEDGE_PILLAR_SET, EVENT(TundariaTower_SetDownPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_FIRST),
+     ACTOR_SECOND_SLIDING_PILLAR, CONDITION_ALWAYS,
+     EVENT(TundariaTower_ResolveBeforePsynergy)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
+     ACTOR_SECOND_SLIDING_PILLAR, CONDITION_ALWAYS,
+     EVENT(TundariaTower_BeginPillarMove)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_ACTS),
+     ACTOR_SECOND_SLIDING_PILLAR, CONDITION_ALWAYS,
+     EVENT(TundariaTower_SlidePillar)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(TundariaTower_RevealHiddenWay)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
      CONDITION_ALWAYS, EVENT(TundariaTower_EndRevealHiddenWay)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST), 52,
-     CONDITION_ALWAYS, EVENT(TundariaTower_ResolveBeforePsynergy)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 52,
-     FLAG_MIRROR_WALL_BURST, EVENT(TundariaTower_BurstMirrorWall)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_FIRST),
+     CELL_BEHAVIOR_TUNDARIA_TOWER_ICY_WALL, CONDITION_ALWAYS,
+     EVENT(TundariaTower_ResolveBeforePsynergy)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_TUNDARIA_TOWER_ICY_WALL, FLAG_MIRROR_WALL_BURST,
+     EVENT(TundariaTower_BurstMirrorWall)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gTundariaTowerBurstBroochTriggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 8,
-     CONDITION_ALWAYS, EVENT(TundariaTower_LiftPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 8, CONDITION_ALWAYS,
-     EVENT(TundariaTower_SetDownPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
+     ACTOR_BROOCH_ROOM_PILLAR, CONDITION_ALWAYS,
+     EVENT(TundariaTower_BeginPillarMove)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_BROOCH_ROOM_PILLAR,
+     CONDITION_ALWAYS, EVENT(TundariaTower_SetDownPillar)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
      CELL_BEHAVIOR_TUNDARIA_TOWER_BROWN_WALL, FLAG_BROWN_WALL_BURST,
      EVENT(TundariaTower_BurstBrownWall)},

@@ -414,7 +414,7 @@ s32 FieldYesNo_Ask(s32 atBottom) { return YesNoMenu_RunFar(atBottom, 0, 0, 0); }
 s32 Event_PickUpItem(s32 actor, s32 item, s32 flag) {
   if (PartyInventory_FindRoomFar(item) < 0) {
     Actor_GetById(actor)->scaleX = 0;
-    ItemDisplay_ShowItem(item, 3);
+    ItemDisplay_ShowItem(item, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
     MessageArgument_PushFar(item, MESSAGE_ARGUMENT_ITEM);
     // "Felix found <item>."
     FieldMessage_ShowFar((s32)&MsgFoundItem, FIELD_MESSAGE_ZOOM);
@@ -426,7 +426,7 @@ s32 Event_PickUpItem(s32 actor, s32 item, s32 flag) {
     return -1;
   }
   Actor_SetHorizontalPositionWithTerrain(actor, 0, 0);
-  ItemDisplay_ShowItem(item, 3);
+  ItemDisplay_ShowItem(item, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
   PartyInventory_GiveItem(item, 0);
   if (flag != -1)
     GameFlag_Set(flag);

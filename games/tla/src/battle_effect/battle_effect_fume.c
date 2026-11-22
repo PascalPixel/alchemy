@@ -239,7 +239,7 @@ void BattleEffect_RunFume(struct BattleEffectParams *args) {
           texture.logHeight = 5;
           texture.pixels = work->sheet;
           model->mesh = mesh;
-          model->scrollU = 127 & ~(frame << 3);
+          model->scrollU = TEXTURE_SCROLL_MASK & ~(frame << 3);
           Matrix_Initialize();
           Matrix_Translate(INTtoFIXED(caster.x / 2 - CANVAS_SIZE / 2),
                            INTtoFIXED(caster.y) - toFIXED(64), 0);

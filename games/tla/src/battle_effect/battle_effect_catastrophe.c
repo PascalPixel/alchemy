@@ -1687,7 +1687,7 @@ void BattleEffect_RunCatastrophe(struct BattleEffectParams *args) {
         sweepTexture.logHeight = 5;
         sweepTexture.pixels = work->sheet;
         sweepModel->mesh = strip;
-        sweepModel->scrollU = (frame << 3) & 127;
+        sweepModel->scrollU = (frame << 3) & TEXTURE_SCROLL_MASK;
         Matrix_Initialize();
         Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
         a = frame * CATASTROPHE_SWEEP_WAVE;

@@ -167,7 +167,7 @@ void Sound_SetFixedSampleFreq(u32 mode) {
   samples = SOUND_FIXED_SAMPLES_PER_VBLANK;
   work->pcmSamplesPerVBlank = samples;
   // Half the rate's reciprocal in 24-bit fixed point, as SampleFreqSet's.
-  work->rateStep = (1 << 23) / SOUND_FIXED_RATE;
+  work->rateStep = SOUND_RATE_STEP_ONE / 2 / SOUND_FIXED_RATE;
   control = 0;
   Io_Write16(control, &REG_TM0CNT_H);
   // Timer 0 overflows twice a sample: half a VBlank's cycles over its samples.

@@ -675,7 +675,7 @@ void JupiterLighthouse_JumpOrPushBlock(void) {
   s32 z;
   s32 facing;
 
-  facing = (leader->facing + DEGtoANG(45)) & 0xc000;
+  facing = (leader->facing + DEGtoANG(45)) & TRIG_TURN * 3 / 4;
   position[0] = leader->x.fixed;
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed;

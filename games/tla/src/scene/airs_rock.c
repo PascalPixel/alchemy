@@ -1,7 +1,19 @@
 /// @file
-/// Air's Rock's slopes, outside the rock in Osenia, in the rooms of this
-/// overlay: the Wind Stones Whirlwind strengthens, the walls and ledges of the
-/// climb, and the way into the rock itself (airs_rock_inside.c).
+/// Air's Rock, the great purple rock in the desert south of Yampi, climbed
+/// from outside over three screens before the way inside opens.
+///
+/// On the first, where the party arrives, Felix casts Whirlwind on the Wind
+/// Stones to blow away the barriers of sand and rock on the paths, then on
+/// the huge twister-shaped rock at the foot of the cliff, whose great
+/// whirlwind blows the mud off the wall above it so that it can be climbed.
+/// The second is the cliff: statues breathe little whirlwinds that carry
+/// Felix along and up it, pillars pushed or moved over gaps close them, a
+/// puddle Frost turns into a pillar, and a golden door low on the cliff leads
+/// into the rock's great hall. The third holds the ledges below the fog,
+/// where the party climbs down level by level and rides the statues'
+/// whirlwinds back up, the fog Whirlwind lifts from the wall above, and the
+/// top, where Whirlwind on the last twister rock calls down lightning on a
+/// pile of rocks and opens the way in (airs_rock_inside.c).
 
 #include "system/task.h"
 #include "field/field_sequence.h"
@@ -25,8 +37,8 @@
 #include "graphics/palette_buffers.h"
 #include "macros.h"
 
-/// Set once Move has left the second room's first pillar on its ledge, cell
-/// (16, 43).
+/// Set once the first of the cliff's pillars has dropped into its gap, by the
+/// golden door, cell (16, 43).
 #define FLAG_AIRS_ROCK_PILLAR_PLACED_FIRST 0x85f
 /// As FLAG_AIRS_ROCK_PILLAR_PLACED_FIRST, the second, cell (45, 45).
 #define FLAG_AIRS_ROCK_PILLAR_PLACED_SECOND 0x860
@@ -36,7 +48,7 @@
 #define FLAG_AIRS_ROCK_PILLAR_PLACED_FOURTH 0x862
 /// As FLAG_AIRS_ROCK_PILLAR_PLACED_FIRST, the fifth, cell (49, 18).
 #define FLAG_AIRS_ROCK_PILLAR_PLACED_FIFTH 0x887
-/// Set once Move has pushed the first room's third pillar into place
+/// Set once Move has pushed the pillar in the fog into its gap
 /// (AirsRock_MoveThirdPillar).
 #define FLAG_AIRS_ROCK_THIRD_PILLAR_MOVED 0x879
 
@@ -83,7 +95,7 @@ enum AirsRockEntranceActorId {
   ACTOR_THIRD_SLOPE_STATUE,
   ACTOR_FOURTH_SLOPE_STATUE,
   ///@}
-  /// The pillars Move leaves on the ledges, each with its
+  /// The pillars that drop into the cliff's gaps, each with its
   /// FLAG_AIRS_ROCK_PILLAR_PLACED_ flag.
   ACTOR_FIRST_LEDGE_PILLAR,
   ACTOR_SECOND_LEDGE_PILLAR,
@@ -111,7 +123,7 @@ enum AirsRockFujinShieldChestActorId {
   ACTOR_FIRST_BREATHING_STATUE = ACTOR_FIRST_PLACED,
   ACTOR_SECOND_BREATHING_STATUE,
   ///@}
-  /// The pillars AirsRock_MoveFirstPillar and the next two watch.
+  /// The left and right of the two pillars on the ledges below the fog.
   ///@{
   ACTOR_FIRST_PILLAR,
   ACTOR_SECOND_PILLAR,
@@ -263,7 +275,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gAirsRock_FujinShieldChestPlacements;
 }
 
-/// Examining a Wind Stone shows its warning.
+/// Felix reads a Wind Stone on the first screen: "Beware the Wind Stones."
+/// and its warning that the stones magnify the wind.
 void AirsRock_ExamineWindStone(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -275,7 +288,9 @@ void AirsRock_ExamineWindStone(void) {
 
 s32 TilesetAnim_Resume();
 
-/// Walking into the rock's door: it opens and the leader goes inside.
+/// Felix walks north into the golden door low on the cliff, beside the first
+/// pillar's gap (cell (19, 43)): the door slides open, he walks in and the
+/// screen wipes to the great hall inside Air's Rock.
 void AirsRock_EnterTheRock(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -294,8 +309,10 @@ void AirsRock_EnterTheRock(void) {
   Event_End();
 }
 
-/// Move on the first pillar: on column 31 it sets FLAG_AREA_TEMP_10, elsewhere
-/// clears it.
+/// Felix casts Move on the left of the two pillars on the ledges below the
+/// fog. Nothing more happens on screen than the move itself; the game
+/// remembers whether it now stands one cell west of where it started
+/// (column 31), so that it is still there when the party comes back.
 void AirsRock_MoveFirstPillar(void) {
   struct Actor *actor;
 
@@ -310,10 +327,17 @@ void AirsRock_MoveFirstPillar(void) {
   Event_End();
 }
 
-/// Move on the second pillar: on column 32 it sets FLAG_AREA_TEMP_11 and two
-/// cells take the low attribute byte of cell (70, 67) with no mark; elsewhere
-/// the flag clears and they are marked CELL_MARK_BLOCKED. With the leader 208
-/// to 215 pixels up the cell's attributes are copied over as well.
+/// Felix casts Move on the right of the two pillars on the ledges below the
+/// fog. Moved one cell west, beside the other, it leaves the ledge where it
+/// stood (cell (33, 54)) open to walk on, and the game remembers it there;
+/// anywhere else that cell stays closed.
+///
+/// The ledge's cell is changed in the copy of it kept for the level it is on
+/// (AirsRock_SetLedgeCellsByLevel) and, while Felix stands on that level, in
+/// the map itself.
+// XXX: what crossing cell (33, 54) lets the party reach (the walkthrough's
+// "jump over the gap"?); a recording of Move on the right pillar from the
+// ledges' second level would settle it.
 void AirsRock_MoveSecondPillar(void) {
   struct Actor *actor;
   struct Actor *leader;
@@ -340,7 +364,9 @@ void AirsRock_MoveSecondPillar(void) {
   Event_End();
 }
 
-/// Move on the third pillar: set down at x 184 to 191 it stays moved.
+/// Felix casts Move on the pillar in the fog: pushed one cell east into the
+/// gap (cell (11, 17)), it stays there for good, a way across the gap and a
+/// shortcut back.
 void AirsRock_MoveThirdPillar(void) {
   struct Actor *actor;
 
@@ -353,8 +379,10 @@ void AirsRock_MoveThirdPillar(void) {
   Event_End();
 }
 
-/// The leader springs 12 pixels onto the ledge, climbs 28 pixels up it over 14
-/// frames facing the wall, then jumps 16 pixels on and lands.
+/// Felix walks south off the edge of the ledges below the fog, in front of the
+/// two pillars (cell (33, 55), on the second level): he hops over the edge,
+/// lowers himself a little way down the rock face, lets go and drops to the
+/// ledge below.
 void AirsRock_ClimbLedge(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   FIXED z = leader->z.fixed;
@@ -399,11 +427,16 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gAirsRock_FujinShieldChestTriggers;
 }
 
-/// Whirlwind on a Wind Stone or the twister rock: the scene's own effect runs
-/// in place of Whirlwind's (AirsRock_TakeOverWhirlwind).
+/// Nothing visible happens of its own as Felix starts casting Whirlwind on a
+/// Wind Stone or a twister rock; the game clears what is pending so that the
+/// cast can go on to the stone's or rock's own whirlwind
+/// (AirsRock_TakeOverWhirlwind).
 void AirsRock_StartWhirlwind(void) { Event_ResolvePendingActions(0); }
 
-/// Tells Whirlwind's effect that the scene runs its own.
+/// Nothing visible happens of its own as Felix casts Whirlwind on a Wind
+/// Stone or a twister rock; the game tells Whirlwind to leave out its usual
+/// little whirlwind, so that what follows is the stone's or the rock's own
+/// (AirsRock_BlowGust and the rest).
 void AirsRock_TakeOverWhirlwind(void) {
   ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->childOption = 1;
 }
@@ -463,15 +496,16 @@ void AirsRock_FlickerTarget(struct Actor *actor) {
 
 extern s16 gAirsRock_GustTargets[][4];
 
-/// Whirlwind on a target in Air's Rock: a whirlwind rises from the
-/// target and grows, shedding sparks every fourth frame while the target
-/// flickers; then it travels in the leader's facing, two cells a step, until
-/// MapCell_GetAttributes finds a cell with something on it, scattering glints
-/// as it goes. With nothing there it fades with a whoosh; otherwise it stops
-/// one and a half cells short and blows the thing found along, copying its
-/// cells each fourth frame, and sets that thing's flag
-/// (FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN + hit - 1). Then the gust
-/// shrinks and rises away over 8 frames.
+/// Felix casts Whirlwind on one of the five Wind Stones on the first screen:
+/// a whirlwind rises from the stone, which flickers as it grows, then blows
+/// off the way Felix faces, sparkling as it goes. If a barrier of sand or
+/// rocks stands in its path it blows it away for good, opening the path;
+/// with nothing in its path it fades at the next wall with a whoosh.
+///
+/// The gust looks ahead with MapCell_GetAttributes for a cell marked as one
+/// of the barriers of gAirsRock_GustTargets, stops a cell and a half short
+/// of it, sweeps the barrier's cells away and sets its flag, counted from
+/// FLAG_AIRS_ROCK_FIRST_BARRIER_BLOWN.
 void AirsRock_BlowGust(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldEffectWork *effect = Ram_HeapSlots->fieldEffectWork;
@@ -691,8 +725,10 @@ void AirsRock_SwirlDust(struct Actor *actor) {
 /// column 6.
 #define WHIRLWIND_MAP_ROW_OFFSET 15
 
-/// Whirlwind on the twister rock by the wall: a great whirlwind rises from it
-/// and blows the mud from the wall, so it can be climbed.
+/// Felix casts Whirlwind on the huge twister-shaped rock below the cliff on
+/// the first screen: it glows, the view pans north to the wall caked in
+/// mud, and a great whirlwind rises and blows the mud away, baring the
+/// holds that climb it. The rock turns grey, spent.
 void AirsRock_WhirlwindClearsWall(void) {
   struct MainRoutineWork *work;
   u16 *buffer = Heap_Alloc(2 * WHIRLWIND_TILE_ROW_SIZE);
@@ -858,8 +894,11 @@ void AirsRock_WhirlwindClearsWall(void) {
   Event_End();
 }
 
-/// The leader rides a statue's whirlwind along its path until it fades, landing
-/// where it ends.
+/// Felix is caught by one of the little whirlwinds the cliff's statues
+/// breathe: he spins round on top of it as it carries him along, and where
+/// it fades he jumps off. On a whirlwind blowing up the cliff, he has a
+/// moment to hold Up, Left or Right and choose which way to leap onto the
+/// ledge at its top; otherwise he drops off where it ends.
 void AirsRock_RideWhirlwind(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *ride = leader->watchedActor;
@@ -1143,7 +1182,9 @@ void AirsRock_StatueBreathesWhirlwind(struct Actor *actor) {
   actor->timer++;
 }
 
-/// Before a push or Move on a pillar: lifts it and frees the cells beside it.
+/// Nothing visible happens as Felix starts to push one of the cliff's
+/// pillars, or casts Move on one; the game takes it off the cells it was
+/// closing so that it can slide.
 void AirsRock_LiftPillar(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -1151,8 +1192,9 @@ void AirsRock_LiftPillar(void) {
   Blocks_UnmarkCells(work->movedBlock);
 }
 
-/// After it: a pillar left over a gap drops into it with a thump, closing the
-/// gap, and sets its flag.
+/// Once Felix has pushed or moved one of the cliff's pillars: if it now
+/// stands over a gap it drops into it with a thump, closing the gap so the
+/// party can walk over it, and it stays there for good.
 void AirsRock_PlacePillar(void) {
   struct Actor *actor = gFieldWork->movedBlock;
   s32 x, z;
@@ -1188,7 +1230,8 @@ void AirsRock_PlacePillar(void) {
 
 s32 FlagBlock_ApplyFlags();
 
-/// Frost on the puddle freezes it into a pillar.
+/// Felix casts Frost on the puddle on the cliff and it freezes into a pillar
+/// of ice.
 void AirsRock_FreezePuddle(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1254,10 +1297,11 @@ void AirsRock_CrumbleRock(s32 x, s32 z) {
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 }
 
-/// Whirlwind on the twister rock at the top: it glows, the light turns yellow,
-/// lightning strikes the pile of rocks below it twice and they crumble with a
-/// crash (AirsRock_CrumbleRock), opening the way on; sets
-/// FLAG_AIRS_ROCK_TOP_OPENED.
+/// Felix casts Whirlwind on the twister rock at the top of Air's Rock: it
+/// glows, the light turns yellow, lightning strikes the pile of rocks in the
+/// hollow below it twice and they crumble with a crash and a flash
+/// (AirsRock_CrumbleRock), clearing the way to the doorway into the rock. The
+/// rock turns grey, spent.
 void AirsRock_WhirlwindOpensTheTop(void) {
   u16 *buffer = Heap_Alloc(LIGHTNING_TILES * TILE_SIZE_4BPP);
   u16 *cell;
@@ -1409,8 +1453,8 @@ void AirsRock_WhirlwindOpensTheTop(void) {
 /// A fog line's ripple: a sine shifted down to at most 8 pixels either way.
 #define FOG_RIPPLE_SHIFT 13
 
-/// The fog: its blend breathes between FOG_WEIGHT and half that while its lines
-/// ripple.
+/// The fog over the wall drifts, thickening and thinning between FOG_WEIGHT
+/// and half that while its lines ripple.
 void AirsRock_DriftFog(void) {
   struct MapLayer *layer =
       &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
@@ -1441,9 +1485,9 @@ void AirsRock_DriftFog(void) {
           (volatile u32 *)channel);
 }
 
-/// As the fog lifts: each line of the great whirlwind sways and scatters the
-/// more the higher it stands above its foot, while the fog's lines ripple and
-/// its blend breathes as in AirsRock_DriftFog.
+/// As the fog lifts, the great whirlwind sways and scatters the more the
+/// higher it stands above its foot, while the fog ripples and thickens and
+/// thins as in AirsRock_DriftFog.
 void AirsRock_LiftFog(void) {
   struct MapLayer *layer =
       &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
@@ -1494,8 +1538,10 @@ void AirsRock_LiftFog(void) {
           (volatile u32 *)channel);
 }
 
-/// Whirlwind on the twister rock in the fog: a great whirlwind rises from it
-/// and the fog lifts (AirsRock_LiftFog) for good.
+/// Felix casts Whirlwind on the twister rock at the foot of the foggy wall:
+/// a great whirlwind rises from it and the fog lifts (AirsRock_LiftFog) for
+/// good, so that the wall can be climbed out of it. The rock turns grey,
+/// spent.
 void AirsRock_WhirlwindClearsFog(void) {
   u16 *buffer = Heap_Alloc(2 * WHIRLWIND_TILE_ROW_SIZE);
   struct MapLayer *fog = &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
@@ -1644,8 +1690,11 @@ extern s32 gAirsRock_LeaderLevel;
 /// The climb's levels are this many pixels apart.
 #define CLIMB_LEVEL_HEIGHT 112
 
-/// Sets the ledge's cells for the height the leader climbs to, one of four
-/// levels.
+/// Nothing visible happens: as Felix climbs or drops between the four levels
+/// of the ledges below the fog, the game swaps in the cells of the ledges in
+/// front of the two pillars for the level he is on, since the ledges of all
+/// four levels are drawn over the same rows of the map. On the second level
+/// they hold the edge he drops off (AirsRock_ClimbLedge).
 void AirsRock_SetLedgeCellsByLevel(void) {
   struct Actor *actor = Actor_Get(FieldParty_GetLeaderActor());
   s32 level;

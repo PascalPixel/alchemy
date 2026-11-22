@@ -1,16 +1,24 @@
 /// @file
-/// The Dehkan Plateau, the cliffs and caves of Indra between Daila and the East
-/// Indra Shore, in seven rooms that share this overlay. Its floors are cracked:
-/// the first step on a crack opens it, the next drops the leader through to the
-/// cave below (DehkanPlateau_StepOnCrack), and each room puts back the cracks
-/// its flags remember (DehkanPlateau_RestoreFullMetalVestChestCracks). Gray
-/// crumbling pillars crack under the leader and crumble at his next step
-/// (CrumblingPillar_Step), and the Mars Djinni Cannon runs ahead of the party
-/// room by room, cracking floors and pillars and casting Pound
-/// (DehkanPlateau_CannonCracksPillars), until a fall lands the leader beside
-/// it and it drops the Pound Cube (DehkanPlateau_CannonDropsPoundCube);
-/// cornered at last once the party Pounds the stake before it into the
-/// ground, it fights (DehkanPlateau_FightCannon).
+/// The Dehkan Plateau, the cliffs and caves Felix crosses after Daila on his
+/// way south to Madra, in six scenes that share this overlay, each of several
+/// screens.
+///
+/// Its ground is cracked: the first step on a crack cracks it open, and the
+/// next drops Felix through to the caves below (DehkanPlateau_StepOnCrack),
+/// from which stairs lead back up. Gray pillars stand in the gaps; each holds
+/// Felix once and crumbles at his next step (CrumblingPillar_Step). Stone
+/// pillars are Moved or pushed into the gaps to bridge them.
+///
+/// In story order: the first stretch, where the cracks begin and a chest with
+/// the Full Metal Vest stands on a ledge reached from the caves; the stretch of
+/// gray pillars with the Themis Axe's chest, where the Mars Djinni Cannon is
+/// first seen and runs off over the cracks; the stretch of the rope bridge and
+/// tightropes, where he Pounds a stake out of his way and cracks two pillars as
+/// he leaps across them; the caves below the cracks, with the Mint's chest; the
+/// cave Felix falls into beside Cannon, who drops the Pound Cube in his fright
+/// (DehkanPlateau_CannonDropsPoundCube); and Cannon's own cave, where he is
+/// cornered once Felix Pounds the stake in his way into the ground, and
+/// fights (DehkanPlateau_FightCannon).
 
 #include "types.h"
 #include "macros.h"
@@ -54,16 +62,19 @@
 #include "system/task.h"
 #include "scene/gabomba_statue.h"
 
-/// Cannon's flight across the plateau, a flag for each stage, room by room.
-#define FLAG_CANNON_FLED_OVER_CRACKS 0x86c ///< room 2, over the cracked floor
-#define FLAG_CANNON_FLED_EAST 0x86d        ///< room 2, out to the east
-#define FLAG_CANNON_LEAPT_AWAY 0x86e       ///< room 3, over the first gap
-#define FLAG_CANNON_POUNDED_STAKE 0x86f    ///< room 3, Pounding a stake down
-#define FLAG_CANNON_CRACKED_PILLARS 0x870  ///< room 3, cracking two pillars
-/// Room 5: Cannon drops the Pound Cube, and the party takes it.
+/// Cannon's flight across the plateau, a flag for each stage: over the cracks
+/// and out east in the Themis Axe's stretch, then along the rope bridge, past
+/// the stake he Pounds and over the two pillars he cracks.
+#define FLAG_CANNON_FLED_OVER_CRACKS 0x86c
+#define FLAG_CANNON_FLED_EAST 0x86d
+#define FLAG_CANNON_LEAPT_AWAY 0x86e
+#define FLAG_CANNON_POUNDED_STAKE 0x86f
+#define FLAG_CANNON_CRACKED_PILLARS 0x870
+/// The Pound Cube's cave: Cannon drops the Pound Cube, and the party takes it.
 #define FLAG_CANNON_DROPPED_POUND_CUBE 0x871
 #define FLAG_POUND_CUBE_TAKEN 0x878
-/// The pillars Moved into place in rooms 2 and 3.
+/// The pillars Moved into place in the Themis Axe's and rope bridge's
+/// stretches.
 #define FLAG_THEMIS_AXE_CHEST_PILLAR_PLACED 0x840
 #define FLAG_TIGHTROPES_SECOND_PILLAR_PLACED 0x841
 
@@ -74,7 +85,7 @@
 // nothing, but while they are drawn the leader among them shows in front of
 // the cliff there (DehkanPlateau_SetBlocksShown). Chests number from 64.
 
-/// The first room, where cracks drop the party to the caves below.
+/// The first stretch, where cracks drop the party to the caves below.
 enum DehkanPlateauFullMetalVestChestActorId {
   ACTOR_FULL_METAL_VEST_CHEST_FIRST_CRUMBLING_PILLAR = ACTOR_FIRST_PLACED,
   ACTOR_FULL_METAL_VEST_CHEST_STAKE = ACTOR_FIRST_PLACED + 3,
@@ -84,7 +95,8 @@ enum DehkanPlateauFullMetalVestChestActorId {
   ACTOR_FULL_METAL_VEST_CHEST = 64
 };
 
-/// The second room, where Cannon is first seen and flees over the cracks.
+/// The Themis Axe's stretch, where Cannon is first seen and flees over the
+/// cracks.
 enum DehkanPlateauThemisAxeChestActorId {
   ACTOR_THEMIS_AXE_CHEST_FIRST_CRUMBLING_PILLAR = ACTOR_FIRST_PLACED + 3,
   ACTOR_THEMIS_AXE_CHEST_STAKE = ACTOR_FIRST_PLACED + 14,
@@ -94,8 +106,8 @@ enum DehkanPlateauThemisAxeChestActorId {
   ACTOR_THEMIS_AXE_CHEST_FIRST_BLOCK
 };
 
-/// The third room, of tightropes, a rope to Lash and the crumbling pillars
-/// Cannon leaps across.
+/// The rope bridge's stretch, of tightropes, a rope to Lash and the crumbling
+/// pillars Cannon leaps across.
 enum DehkanPlateauTightropesActorId {
   /// The posts at the ends of the two tightropes, and of the rope, whose low
   /// post Lash ties it from.
@@ -122,19 +134,19 @@ enum DehkanPlateauTightropesActorId {
   ACTOR_TIGHTROPES_FIRST_BLOCK
 };
 
-/// The fourth room, a passage.
+/// The caves below the cracks, with the Mint's chest.
 enum DehkanPlateauMintChestActorId {
   ACTOR_MINT_CHEST_FIRST_BLOCK = ACTOR_FIRST_PLACED
 };
 
-/// The fifth room, where a fall lands the leader beside Cannon and he drops
-/// the Pound Cube.
+/// The Pound Cube's cave, where a fall lands the leader beside Cannon and he
+/// drops the Pound Cube.
 enum DehkanPlateauPoundCubeActorId {
   ACTOR_POUND_CUBE_STAKE = ACTOR_FIRST_PLACED,
   ACTOR_POUND_CUBE_CANNON
 };
 
-/// The sixth room, where Cannon is cornered behind the stake and
+/// Cannon's cave, where Cannon is cornered behind the stake and
 /// fights.
 enum DehkanPlateauCannonActorId {
   ACTOR_CANNON_ROOM_STAKE = ACTOR_FIRST_PLACED,
@@ -157,7 +169,7 @@ enum {
 #define FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN FLAG_SCENE_TEMP_00
 /// The leader stands on the crack he has just opened; set until he steps off.
 #define FLAG_STANDING_ON_OPENED_CRACK FLAG_SCENE_TEMP_01
-/// Room 6's stake's cell holds the attributes
+/// Cannon's cave's stake's cell holds the attributes
 /// DehkanPlateau_EnterLowerPath gives it while the leader is on the lower path.
 #define FLAG_STAKE_CELL_CHANGED FLAG_SCENE_TEMP_02
 /// Each room's stake Pounded into the ground, by its list's flag.
@@ -165,13 +177,14 @@ enum {
 #define FLAG_THEMIS_AXE_CHEST_STAKE_POUNDED FLAG_SCENE_TEMP_04
 #define FLAG_TIGHTROPES_STAKE_POUNDED FLAG_SCENE_TEMP_05
 #define FLAG_POUND_CUBE_STAKE_POUNDED FLAG_SCENE_TEMP_06
-/// Room 6's stake, Pounded into the ground so Cannon is cornered.
+/// Cannon's cave's stake, Pounded into the ground so Cannon is cornered.
 #define FLAG_CANNON_ROOM_STAKE_POUNDED FLAG_SCENE_TEMP_07
-/// Room 3's rope, tied by Lash from its low post to its high one.
+/// The rope bridge's stretch's rope, tied by Lash from its low post to its high
+/// one.
 #define FLAG_TIGHTROPES_ROPE_LASHED FLAG_SCENE_TEMP_08
-/// Cannon met in room 6 on this visit, or already in the party.
+/// Cannon met in Cannon's cave on this visit, or already in the party.
 #define FLAG_CANNON_MET FLAG_SCENE_TEMP_09
-/// The first room's stone pillar, Moved into the gap, where it stays.
+/// The first stretch's stone pillar, Moved into the gap, where it stays.
 #define FLAG_FULL_METAL_VEST_CHEST_PILLAR_IN_GAP FLAG_AREA_TEMP_01
 /// A room's crumbling pillars, two flags to a pillar in its list's order: the
 /// first set once it cracks, the next once it crumbles (CrumblingPillar_Step).
@@ -200,11 +213,11 @@ enum {
 #define TRIGGER_THEMIS_AXE_CHEST_FIRST_CRACK 14
 #define TRIGGER_TIGHTROPES_FIRST_CRACK 12
 #define TRIGGER_POUND_CUBE_FIRST_CRACK 18
-/// The fifth room's crack Cannon Pounds the leader through, its sixth.
+/// The Pound Cube's cave's crack Cannon Pounds the leader through, its sixth.
 #define TRIGGER_POUND_CUBE_CANNON_CRACK (TRIGGER_POUND_CUBE_FIRST_CRACK + 5)
-/// The third room's step code that runs DehkanPlateau_StepOnTightropesPillars
-/// on walking west, which a vine pillar pushed beside the crumbling pillars
-/// takes.
+/// The rope bridge's stretch's step code that runs
+/// DehkanPlateau_StepOnTightropesPillars on walking west, which a vine pillar
+/// pushed beside the crumbling pillars takes.
 #define TRIGGER_TIGHTROPES_PILLARS_WEST 11
 
 /// The frames the leader takes to sink through a crack.
@@ -218,8 +231,8 @@ enum {
   POUND_CUBE_CRACKS = 16
 };
 
-/// The fifth room's two cracks that have another just south of them, the next
-/// in its list; once both are open, the hole drawn below is JOINED_HOLE of
+/// The Pound Cube's cave's two cracks that have another just south of them, the
+/// next in its list; once both are open, the hole drawn below is JOINED_HOLE of
 /// gDehkanPlateau_PoundCubeHolePictures in place of its own.
 enum {
   POUND_CUBE_WEST_UPPER_CRACK = 0,
@@ -275,7 +288,7 @@ extern s16 gDehkanPlateau_CannonStakes[];
 extern s16 gDehkanPlateau_ThemisAxeChestMovablePillars[];
 extern s16 gDehkanPlateau_TightropesMovablePillars[];
 
-/// Talking to Cannon once he is cornered: the Djinni battle.
+/// Talking to Cannon in his cave starts the battle with him.
 void DehkanPlateau_FightCannon(void) {
   GameFlag_Set(FLAG_CANNON_MET);
   Field_RequestDjinnBattle(ACTOR_CANNON, DJINNI_CANNON);
@@ -338,14 +351,14 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gDehkanPlateau_Triggers;
 }
 
-/// Stepping onto one of the first room's crumbling pillars: the first step
-/// cracks it, the next crumbles it under the leader.
+/// Felix steps onto one of the three gray pillars of the first stretch: the
+/// first step cracks it, and the next crumbles it under him.
 void DehkanPlateau_StepOnFullMetalVestChestPillars(void) {
   CrumblingPillar_Step(gDehkanPlateau_FullMetalVestChestCrumblingPillars);
 }
 
-/// Gives the cells of four of room 2's crumbling pillars, while each stands,
-/// the attributes of cell (0, 0).
+/// Gives the cells of four of the Themis Axe's stretch's crumbling pillars,
+/// while each stands, the attributes of cell (0, 0).
 void DehkanPlateau_SetThemisAxeChestStandingPillarCells(void) {
   if (GameFlag_Get(FLAG_PILLAR_CRUMBLED(1)) == 0)
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 9, 18);
@@ -357,8 +370,9 @@ void DehkanPlateau_SetThemisAxeChestStandingPillarCells(void) {
     MapGrid_CopyCellAttributes(0, 0, 1, 1, 16, 28);
 }
 
-/// Stepping onto one of the second room's crumbling pillars; on the low ones
-/// the leader is drawn behind the ledge.
+/// Felix steps onto one of the gray pillars of the Themis Axe's stretch, which
+/// cracks and then crumbles as in the first; on the low ones he is drawn
+/// behind the ledge.
 void DehkanPlateau_StepOnThemisAxeChestPillars(void) {
   FIXED y;
 
@@ -373,7 +387,8 @@ void DehkanPlateau_StepOnThemisAxeChestPillars(void) {
   }
 }
 
-/// The same for two of room 3's crumbling pillars, from cell (63, 0).
+/// The same for two of the rope bridge's stretch's crumbling pillars, from cell
+/// (63, 0).
 void DehkanPlateau_SetTightropesStandingPillarCells(void) {
   if (GameFlag_Get(FLAG_PILLAR_CRUMBLED(1)) == 0)
     MapGrid_CopyCellAttributes(63, 0, 1, 1, 50, 20);
@@ -381,8 +396,8 @@ void DehkanPlateau_SetTightropesStandingPillarCells(void) {
     MapGrid_CopyCellAttributes(63, 0, 1, 1, 52, 20);
 }
 
-/// Stepping onto one of the third room's crumbling pillars; below the ledge the
-/// leader is drawn behind it.
+/// Felix steps onto one of the gray pillars of the rope bridge's stretch, which
+/// cracks and then crumbles; below the ledge he is drawn behind it.
 void DehkanPlateau_StepOnTightropesPillars(void) {
   CrumblingPillar_Step(gDehkanPlateau_TightropesCrumblingPillars);
   DehkanPlateau_SetTightropesStandingPillarCells();
@@ -393,8 +408,9 @@ void DehkanPlateau_StepOnTightropesPillars(void) {
   }
 }
 
-/// Stepping onto the sixth room's crumbling pillar; from up on it the leader is
-/// off the lower path.
+/// Felix steps onto the gray pillar in Cannon's cave, which cracks and then
+/// crumbles; once he is up on it he no longer counts as on the cave's lower
+/// floor (DehkanPlateau_LeaveLowerPath).
 void DehkanPlateau_StepOnCannonPillar(void) {
   FIXED y;
 
@@ -424,13 +440,23 @@ void DehkanPlateau_SetBlocksShown(s32 show) {
                     CANNON_ROOM_BLOCK_COUNT);
 }
 
-/// Draws the room's unseen blocks again, and notes them shown.
+/// Nothing visible happens when Felix steps onto the cells that run this, at
+/// the foot of a cliff in five of the rooms (in the first, the column of cells
+/// (34, 45) to (34, 50)): the game starts drawing the room's unseen blocks, and
+/// notes them shown. The blocks are clear squares beside the cliff that decide
+/// whether Felix is drawn in front of it or behind it there.
+// XXX: which of the two the blocks give, and where each room's cells lie on
+// screen; a recording of Felix walking past the cliff both ways would settle
+// it (the recorder cannot reach the cells).
 void DehkanPlateau_ShowBlocks(void) {
   DehkanPlateau_SetBlocksShown(1);
   GameFlag_Set(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN);
 }
 
-/// Stops drawing the room's unseen blocks.
+/// Nothing visible happens when Felix steps onto the cells beside those of
+/// DehkanPlateau_ShowBlocks (in the first stretch, (35, 45) to (35, 50)) while
+/// the blocks are drawn: the game stops drawing them, so that Felix is drawn on
+/// the other side of the cliff there again.
 void DehkanPlateau_HideBlocks(void) {
   DehkanPlateau_SetBlocksShown(0);
   GameFlag_Clear(FLAG_DEHKAN_PLATEAU_BLOCKS_SHOWN);
@@ -438,35 +464,40 @@ void DehkanPlateau_HideBlocks(void) {
 
 #include "shared/actors_set_hidden.c"
 
-/// Pound on the first room's stake: it sinks into the ground.
+/// Pound on the stake in the first stretch sinks it into the ground.
 void DehkanPlateau_PoundFullMetalVestChestStake(s32 a, s32 b) {
   Pound_SinkTarget(gDehkanPlateau_FullMetalVestChestStakes, a, b);
 }
 
-/// Pound on the second room's stake.
+/// Pound on the stake in the Themis Axe's stretch sinks it into the ground.
 void DehkanPlateau_PoundThemisAxeChestStake(s32 a, s32 b) {
   Pound_SinkTarget(gDehkanPlateau_ThemisAxeChestStakes, a, b);
 }
 
-/// Pound on the third room's stake.
+/// Pound on the stake by the rope bridge, if Cannon has not already sunk it,
+/// sinks it into the ground.
 void DehkanPlateau_PoundTightropesStake(s32 a, s32 b) {
   Pound_SinkTarget(gDehkanPlateau_TightropesStakes, a, b);
 }
 
-/// Pound on the fifth room's stake.
+/// Pound on the stake in the cave where Cannon drops the Pound Cube sinks it
+/// into the ground.
 void DehkanPlateau_PoundPoundCubeStake(s32 a, s32 b) {
   Pound_SinkTarget(gDehkanPlateau_PoundCubeStakes, a, b);
 }
 
-/// Pound on the sixth room's stake, which corners Cannon.
+/// Pound on the stake in Cannon's cave, from the lower floor below his ledge,
+/// sinks it into the ground: with it gone Cannon has nothing to leap onto and
+/// is cornered.
 void DehkanPlateau_PoundCannonStake(s32 a, s32 b) {
   Pound_SinkTarget(gDehkanPlateau_CannonStakes, a, b);
 }
 
 #include "shared/actor_drop_and_wait.h"
 
-/// Move on the first room's stone pillar: once it stands at the gap's edge it
-/// drops in and stays (FLAG_FULL_METAL_VEST_CHEST_PILLAR_IN_GAP).
+/// Moved or pushed to the gap's edge in the first stretch, the stone pillar
+/// drops into the gap and stays there, bridging it
+/// (FLAG_FULL_METAL_VEST_CHEST_PILLAR_IN_GAP).
 void DehkanPlateau_DropFullMetalVestChestPillarIntoGap(void) {
   struct Actor *actor = Actor_GetById(ACTOR_FULL_METAL_VEST_CHEST_PILLAR);
   s32 x;
@@ -482,13 +513,14 @@ void DehkanPlateau_DropFullMetalVestChestPillarIntoGap(void) {
   }
 }
 
-/// Move takes hold of the second room's stone pillar.
+/// Move takes hold of the Themis Axe's stretch's stone pillar.
 void DehkanPlateau_LiftThemisAxeChestPillar(void) {
   Actor_LiftTargetBlock(gDehkanPlateau_ThemisAxeChestMovablePillars);
 }
 
-/// Move lets go of the second room's stone pillar: at the gap it drops in for
-/// good (FLAG_THEMIS_AXE_CHEST_PILLAR_PLACED).
+/// Moved or pushed to the gap's edge in the Themis Axe's stretch, the stone
+/// pillar drops into the gap for good, bridging it
+/// (FLAG_THEMIS_AXE_CHEST_PILLAR_PLACED).
 void DehkanPlateau_PlaceThemisAxeChestPillar(void) {
   struct Actor *actor = Actor_GetById(ACTOR_THEMIS_AXE_CHEST_PILLAR);
   s32 x = FIELD_CELL(actor->x.fixed);
@@ -506,12 +538,13 @@ void DehkanPlateau_PlaceThemisAxeChestPillar(void) {
   }
 }
 
-/// Move takes hold of the third room's stone pillar.
+/// Move takes hold of the rope bridge's stretch's stone pillar.
 void DehkanPlateau_LiftTightropesPillar(void) {
   Actor_LiftTargetBlock(gDehkanPlateau_TightropesMovablePillars);
 }
 
-/// Move lets go of the third room's stone pillar: at the gap it drops in.
+/// Moved or pushed to the gap's edge on the raised ground of the rope
+/// bridge's stretch, the stone pillar drops into the gap below.
 void DehkanPlateau_PlaceTightropesPillar(void) {
   struct Actor *actor = Actor_GetById(ACTOR_TIGHTROPES_PILLAR);
   s32 x = FIELD_CELL(actor->x.fixed);
@@ -531,8 +564,8 @@ void DehkanPlateau_PlaceTightropesPillar(void) {
   }
 }
 
-/// Puts the third room's second stone pillar a column west, off the vine it
-/// stood before, with the cells that let it be walked over and the vine
+/// Puts the rope bridge's stretch's second stone pillar a column west, off the
+/// vine it stood before, with the cells that let it be walked over and the vine
 /// climbed.
 void DehkanPlateau_SetTightropesSecondPillarInPlace(void) {
   Actor_SetPosition(ACTOR_TIGHTROPES_SECOND_PILLAR, 600, 536);
@@ -542,15 +575,15 @@ void DehkanPlateau_SetTightropesSecondPillarInPlace(void) {
   GameFlag_Set(FLAG_TIGHTROPES_SECOND_PILLAR_PLACED);
 }
 
-/// Move on the third room's second stone pillar: a column west, it settles
-/// there.
+/// Move on the rope bridge's stretch's second stone pillar: a column west, it
+/// settles there.
 void DehkanPlateau_MoveTightropesSecondPillar(void) {
   if (FIELD_CELL(Actor_GetById(ACTOR_TIGHTROPES_SECOND_PILLAR)->x.fixed) == 37)
     DehkanPlateau_SetTightropesSecondPillarInPlace();
 }
 
-/// Walking west into the third room's second stone pillar pushes it a column
-/// west.
+/// Walking west into the rope bridge's stretch's second stone pillar pushes it
+/// a column west.
 void DehkanPlateau_PushTightropesSecondPillar(void) {
   u8 *flags;
 
@@ -616,8 +649,8 @@ void DehkanPlateau_ForgetFall(void) {
       DehkanPlateau_ForgetFall();                                              \
   }
 
-/// Restores the first room's fourteen cracks: on a return the opened ones are
-/// drawn open, otherwise each listed crack starts its flag.
+/// Restores the first stretch's fourteen cracks: on a return the opened ones
+/// are drawn open, otherwise each listed crack starts its flag.
 DEFINE_DEHKAN_PLATEAU_RESTORE_CRACKS(
     DehkanPlateau_RestoreFullMetalVestChestCracks,
     gDehkanPlateau_FullMetalVestChestCracks, FULL_METAL_VEST_CHEST_CRACKS,
@@ -626,7 +659,7 @@ DEFINE_DEHKAN_PLATEAU_RESTORE_CRACKS(
 extern u16 gDehkanPlateau_ThemisAxeChestCrackPictures[];
 extern u16 gDehkanPlateau_ThemisAxeChestCracks[][6];
 
-/// Restores the second room's eight cracks, as the first room's.
+/// Restores the Themis Axe's stretch's eight cracks, as the first stretch's.
 DEFINE_DEHKAN_PLATEAU_RESTORE_CRACKS(DehkanPlateau_RestoreThemisAxeChestCracks,
                                      gDehkanPlateau_ThemisAxeChestCracks,
                                      THEMIS_AXE_CHEST_CRACKS,
@@ -635,14 +668,14 @@ DEFINE_DEHKAN_PLATEAU_RESTORE_CRACKS(DehkanPlateau_RestoreThemisAxeChestCracks,
 extern u16 gDehkanPlateau_TightropesCrackPictures[];
 extern u16 gDehkanPlateau_TightropesCracks[][6];
 
-/// Restores the third room's six cracks, as the first room's.
+/// Restores the rope bridge's stretch's six cracks, as the first stretch's.
 DEFINE_DEHKAN_PLATEAU_RESTORE_CRACKS(DehkanPlateau_RestoreTightropesCracks,
                                      gDehkanPlateau_TightropesCracks,
                                      TIGHTROPES_CRACKS,
                                      gDehkanPlateau_TightropesCrackPictures)
 
-/// As the other rooms' (DEFINE_DEHKAN_PLATEAU_RESTORE_CRACKS) for the fifth
-/// room's sixteen cracks.
+/// As the other rooms' (DEFINE_DEHKAN_PLATEAU_RESTORE_CRACKS) for the Pound
+/// Cube's cave's sixteen cracks.
 void DehkanPlateau_RestorePoundCubeCracks(void) {
   u16 *record = &gDehkanPlateau_PoundCubeCracks[0][0];
   s32 flag = FLAG_CRACK_OPENED_FIRST;
@@ -672,9 +705,11 @@ void DehkanPlateau_RestorePoundCubeCracks(void) {
 s32 gDehkanPlateau_CrackZ BSS_DATA;
 s32 gDehkanPlateau_CrackX BSS_DATA;
 
-/// Stepping onto a crack in rooms 1, 2, 3 and 5: the leader is set in the
-/// middle of its cell; an open crack gives way and he sinks through it to the
-/// cave below, by the exit of its step code, while a whole one cracks open.
+/// Felix steps onto a crack in one of the three stretches outside or in the
+/// Pound Cube's cave, and is set in the middle of its cell. A whole crack
+/// cracks open under him with a rattle. One already open gives way: he raises
+/// his arms and sinks through it, the screen closes in on him, and he drops
+/// into the cave below, by the exit of the crack's number.
 void DehkanPlateau_StepOnCrack(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -866,8 +901,8 @@ void DehkanPlateau_StepOnCrack(void) {
   }
 }
 
-/// The third and fifth rooms' task: once the leader steps off the crack he
-/// opened, it can be stepped on again.
+/// The rope bridge's stretch's and the Pound Cube's cave's task: once the
+/// leader steps off the crack he opened, it can be stepped on again.
 void DehkanPlateau_ForgetCrackOnLeaving(void) {
   struct Actor *actor;
 
@@ -892,7 +927,7 @@ void DehkanPlateau_RestoreBlocks(void) {
   }
 }
 
-/// Hides the first room's unseen blocks as it opens.
+/// Hides the first stretch's unseen blocks as it opens.
 void DehkanPlateau_HideFullMetalVestChestBlocks(void) {
   u32 i;
 
@@ -901,7 +936,7 @@ void DehkanPlateau_HideFullMetalVestChestBlocks(void) {
   DehkanPlateau_RestoreBlocks();
 }
 
-/// Hides the second room's unseen blocks as it opens.
+/// Hides the Themis Axe's stretch's unseen blocks as it opens.
 void DehkanPlateau_HideThemisAxeChestBlocks(void) {
   u32 i;
 
@@ -910,7 +945,7 @@ void DehkanPlateau_HideThemisAxeChestBlocks(void) {
   DehkanPlateau_RestoreBlocks();
 }
 
-/// Hides the third room's unseen blocks as it opens.
+/// Hides the rope bridge's stretch's unseen blocks as it opens.
 void DehkanPlateau_HideTightropesBlocks(void) {
   u32 i;
 
@@ -919,7 +954,7 @@ void DehkanPlateau_HideTightropesBlocks(void) {
   DehkanPlateau_RestoreBlocks();
 }
 
-/// Hides the fourth room's unseen blocks as it opens.
+/// Hides the unseen blocks of the caves below the cracks as they open.
 void DehkanPlateau_HideMintChestBlocks(void) {
   u32 i;
 
@@ -928,7 +963,7 @@ void DehkanPlateau_HideMintChestBlocks(void) {
   DehkanPlateau_RestoreBlocks();
 }
 
-/// Hides the sixth room's unseen blocks as it opens.
+/// Hides Cannon's cave's unseen blocks as it opens.
 void DehkanPlateau_HideCannonBlocks(void) {
   u32 i;
 
@@ -937,9 +972,9 @@ void DehkanPlateau_HideCannonBlocks(void) {
   DehkanPlateau_RestoreBlocks();
 }
 
-/// Sets the cells under a vine pillar of the third room once it is pushed or
-/// Moved: off the ledge at column 12 it drops to the ground below, and at
-/// columns 18, 54 and 55 it bridges the way.
+/// Sets the cells under a vine pillar of the rope bridge's stretch once it is
+/// pushed or Moved: off the ledge at column 12 it drops to the ground below,
+/// and at columns 18, 54 and 55 it bridges the way.
 void DehkanPlateau_PlaceVinePillar(struct Actor *actor) {
   s32 x;
   struct MapCell *cell;
@@ -971,7 +1006,8 @@ void DehkanPlateau_PlaceVinePillar(struct Actor *actor) {
 
 extern s16 gDehkanPlateau_TightropesVinePillars[];
 
-/// Walking into one of the third room's vine pillars pushes it a cell on.
+/// Walking into one of the rope bridge's stretch's vine pillars pushes it a
+/// cell on.
 void DehkanPlateau_PushVinePillar(void) {
   struct Actor *actor;
 
@@ -984,12 +1020,12 @@ void DehkanPlateau_PushVinePillar(void) {
   }
 }
 
-/// Move takes hold of one of the third room's vine pillars.
+/// Move takes hold of one of the rope bridge's stretch's vine pillars.
 void DehkanPlateau_LiftTightropesVinePillar(void) {
   Pillar_LowerHeldCells(gDehkanPlateau_TightropesVinePillars);
 }
 
-/// Move lets go of one of the third room's vine pillars.
+/// Move lets go of one of the rope bridge's stretch's vine pillars.
 void DehkanPlateau_FinishMovingVinePillar(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *active;
@@ -999,9 +1035,14 @@ void DehkanPlateau_FinishMovingVinePillar(void) {
     DehkanPlateau_PlaceVinePillar(active);
 }
 
-/// Stepping onto room 6's lower path before its stake is Pounded holds
-/// the stake still and gives its cell the attributes of cell (51, 12);
-/// stepping off the path puts the cell back.
+/// Nothing visible happens when Felix steps onto the lower floor of Cannon's
+/// cave, below the ledge (cells (43, 16) to (43, 18)), before the stake is
+/// Pounded. The game holds the stake still and gives the stake's cell (47, 12)
+/// the attributes of the gray pillar's (51, 12); stepping off the lower floor
+/// puts the cell back.
+// XXX: what the change does for Felix down there; a recording of him walking
+// to the stake from the vine with and without it would settle it (the
+// recorder cannot reach the cells).
 void DehkanPlateau_EnterLowerPath(void) {
   s32 set = GameFlag_Get(FLAG_CANNON_ROOM_STAKE_POUNDED);
 
@@ -1012,7 +1053,9 @@ void DehkanPlateau_EnterLowerPath(void) {
   }
 }
 
-/// Stepping off the sixth room's lower path puts the stake's cell back.
+/// Nothing visible happens when Felix steps off the lower floor of Cannon's
+/// cave (cells (44, 16) to (44, 18), or (52, 15) to (54, 15)) before the stake
+/// is Pounded: the game gives the stake's cell back its own attributes.
 void DehkanPlateau_LeaveLowerPath(void) {
   if (GameFlag_Get(FLAG_CANNON_ROOM_STAKE_POUNDED) == 0) {
     MapGrid_CopyCellAttributes(48, 11, 1, 1, 47, 12);
@@ -1039,8 +1082,11 @@ static __inline__ void Actor_PlaceFacing(s32 id, FIXED x, FIXED z, u16 angle) {
   Actor_SetHorizontalPositionAndAngleWithTerrain(id, x, z, angle);
 }
 
-/// In the second room Cannon is first seen and flees from the party over the
-/// cracked floor, which gives way behind him.
+/// Felix comes up into the cracked field of the Themis Axe's stretch (cells
+/// (39, 13) to (41, 14)) and sees the Mars Djinni Cannon for the first time:
+/// the view pans north to him, he starts, and he runs north across the cracks,
+/// cracking one open and breaking through another into a hole, before he hops
+/// off to the east.
 void DehkanPlateau_CannonFleesOverCracks(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1070,7 +1116,9 @@ void DehkanPlateau_CannonFleesOverCracks(void) {
   Event_End();
 }
 
-/// In the second room Cannon runs off out to the east.
+/// Felix reaches the east end of the Themis Axe's stretch (cells (56, 13) to
+/// (59, 13)): the view pans to Cannon by the cliff's edge, who starts and runs
+/// off east out of sight.
 void DehkanPlateau_CannonFleesEast(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1092,7 +1140,9 @@ void DehkanPlateau_CannonFleesEast(void) {
   Event_End();
 }
 
-/// In the third room Cannon leaps away over the first gap.
+/// Felix comes to the west end of the rope bridge (cells (6, 6) and (7, 6)):
+/// Cannon, standing on the bridge, starts at the sight of him, leaps along it
+/// and runs off east across.
 void DehkanPlateau_CannonLeapsAway(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1118,7 +1168,10 @@ void DehkanPlateau_CannonLeapsAway(void) {
   Event_End();
 }
 
-/// In the third room Cannon casts Pound on the stake to get by.
+/// Felix comes near Cannon east of the rope bridge (cell (23, 6), or from the
+/// south at (25, 16) to (27, 17)): Cannon starts, casts Pound on the stake in
+/// his way so that a great fist drives it into the ground, and runs on south
+/// over it, cracking open a crack behind him.
 void DehkanPlateau_CannonPoundsPillar(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1151,8 +1204,8 @@ void DehkanPlateau_CannonPoundsPillar(void) {
   Event_End();
 }
 
-/// The task of Cannon's Pound in the third room: the stake sinks, and
-/// once the Psynergy ends it is down for good.
+/// The task of Cannon's Pound in the rope bridge's stretch: the stake sinks,
+/// and once the Psynergy ends it is down for good.
 void DehkanPlateau_SinkPoundedStake(void) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   struct Actor *actor = Actor_GetById(ACTOR_TIGHTROPES_STAKE);
@@ -1169,7 +1222,7 @@ void DehkanPlateau_SinkPoundedStake(void) {
   }
 }
 
-/// Cannon casts Pound on the third room's stake.
+/// Cannon casts Pound on the rope bridge's stretch's stake.
 void DehkanPlateau_CannonCastsPound(void) {
   FieldPsynergy_LoadResources(ABILITY_POUND, 1);
   FieldTask_AddFrame(DehkanPlateau_SinkPoundedStake, TASK_PASS_FRAME);
@@ -1237,8 +1290,10 @@ void DehkanPlateau_CrackPillar(s32 id, s32 center, s32 flag) {
   Event_Wait(20);
 }
 
-/// In the third room Cannon leaps across the crumbling pillars, cracking two of
-/// them as he lands.
+/// Felix follows Cannon to the gray pillars east of the rope bridge (cells
+/// (36, 12) to (36, 16), (35, 16) and (35, 17)): Cannon starts, leaps across
+/// the pillars, cracking two as he lands on them, and runs off north over a
+/// crack, which opens into a hole as he goes, and he is gone.
 void DehkanPlateau_CannonCracksPillars(void) {
   struct Actor *actor;
 
@@ -1312,8 +1367,10 @@ void DehkanPlateau_CannonCracksPillars(void) {
   Event_End();
 }
 
-/// In the fifth room Cannon Pounds the leader through the floor to the cave
-/// below.
+/// Felix steps onto the crack south of where the Pound Cube lies, in the cave
+/// where Cannon drops it (cell (15, 8)), before he has fallen in beside Cannon:
+/// Cannon starts and casts Pound on him, a great fist slams down, and Felix
+/// sinks through the floor and lands in Cannon's cave below.
 void DehkanPlateau_CannonPoundsLeaderThrough(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   u32 i;
@@ -1368,7 +1425,7 @@ void DehkanPlateau_PoundLeaderThrough(void) {
   }
 }
 
-/// Cannon casts Pound on the leader in the fifth room.
+/// Cannon casts Pound on the leader in the Pound Cube's cave.
 void DehkanPlateau_CannonCastsPoundOnLeader(void) {
   FieldPsynergy_LoadResources(ABILITY_POUND, 1);
   FieldTask_AddFrame(DehkanPlateau_PoundLeaderThrough, TASK_PASS_FRAME);
@@ -1381,8 +1438,9 @@ void DehkanPlateau_CannonCastsPoundOnLeader(void) {
   FieldPsynergy_End();
 }
 
-/// The leader lands beside Cannon in the fifth room; startled, he drops the
-/// Pound Cube and flees.
+/// Felix falls through a crack in the north of the rope bridge's stretch and
+/// lands beside Cannon in the cave below; both bounce apart, Cannon drops the
+/// Pound Cube in his fright, glares at Felix and runs off north.
 void DehkanPlateau_CannonDropsPoundCube(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *helper = Actor_GetById(ACTOR_POUND_CUBE_CANNON);
@@ -1439,8 +1497,9 @@ void DehkanPlateau_CannonDropsPoundCube(void) {
   Event_End();
 }
 
-/// Meeting Cannon in the sixth room while the stake stands: he leaps
-/// over the last crumbling pillar, cracking it, and waits on the far side.
+/// While the stake stands, Cannon sees Felix coming along the ledge, leaps
+/// onto the stake, then onto the gray pillar beyond it, which flashes and
+/// cracks under him, and on to the far ledge, where he waits.
 void DehkanPlateau_CannonCracksLastPillar(void) {
   struct Actor *actor;
 
@@ -1479,8 +1538,8 @@ void DehkanPlateau_CannonCracksLastPillar(void) {
   Event_End();
 }
 
-/// Meeting Cannon in the sixth room once the stake is down: he finds
-/// himself cornered and turns to fight.
+/// Once the stake is down, Cannon sees Felix coming and finds he has nowhere
+/// to leap: he looks about him and turns to face Felix.
 void DehkanPlateau_CannonCornered(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1497,7 +1556,10 @@ void DehkanPlateau_CannonCornered(void) {
   Event_End();
 }
 
-/// Stepping toward Cannon in the sixth room, cornered or not.
+/// Felix walks east along the ledge toward Cannon in his cave (cells (43, 12)
+/// and (43, 13)), once a visit. While the stake stands Cannon leaps away over
+/// the stake and the gray pillar, cracking it; once Felix has Pounded the stake
+/// into the ground Cannon is cornered and turns to face him.
 void DehkanPlateau_MeetCannon(void) {
   if (GameFlag_Get(FLAG_CANNON_ROOM_STAKE_POUNDED) != 0)
     DehkanPlateau_CannonCornered();
@@ -1506,12 +1568,14 @@ void DehkanPlateau_MeetCannon(void) {
   GameFlag_Set(FLAG_CANNON_MET);
 }
 
-/// Picking up the Pound Cube Cannon dropped.
+/// Felix examines the Pound Cube where Cannon dropped it, north of the crack
+/// Cannon Pounds him through (cell (15, 5)), and takes it.
 void DehkanPlateau_TakePoundCube(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if (gDehkanPlateau_PoundCube != 0)
-    ItemDisplay_ShowPicture(gDehkanPlateau_PoundCube, 3);
+    ItemDisplay_ShowPicture(gDehkanPlateau_PoundCube,
+                            ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
   PartyInventory_GiveItem(ITEM_POUND_CUBE, 0);
   if (gDehkanPlateau_PoundCube != 0)
     Actor_Release(gDehkanPlateau_PoundCube);
@@ -1520,7 +1584,11 @@ void DehkanPlateau_TakePoundCube(void) {
   Event_End();
 }
 
-/// A room's exit: the leader walks out and the screen changes.
+/// Felix walks into a cave mouth in the cliff of the first stretch (map cell
+/// (84, 21)) or of the Themis Axe's stretch (cell (113, 12)): the exit sound
+/// plays, the screen fades to black, and he comes out in the caves below the
+/// cracks. Both cells are on the upper level, which map.txt keeps from column
+/// 64.
 void DehkanPlateau_LeaveRoom(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -1552,8 +1620,9 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// The first room's task: draws the chest on the ledge at the leader's sprite
-/// priority each frame, so it stays in front of or behind him with the ground.
+/// The first stretch's task: draws the chest on the ledge at the leader's
+/// sprite priority each frame, so it stays in front of or behind him with the
+/// ground.
 void DehkanPlateau_KeepPriorityWithLeader(void) {
   Actor_SetSpritePriority(
       ACTOR_FULL_METAL_VEST_CHEST,
@@ -1562,7 +1631,7 @@ void DehkanPlateau_KeepPriorityWithLeader(void) {
           ->priority);
 }
 
-/// Sets up the first room: its pillars, the stone pillar already in the gap,
+/// Sets up the first stretch: its pillars, the stone pillar already in the gap,
 /// its cracks and unseen blocks, and the chest's task.
 void DehkanPlateau_InitializeFullMetalVestChest(void) {
   CrumblingPillar_Place(gDehkanPlateau_FullMetalVestChestCrumblingPillars);
@@ -1586,8 +1655,8 @@ void DehkanPlateau_InitializeFullMetalVestChest(void) {
   }
 }
 
-/// Sets up the second room: its crumbling pillars, stake and stone pillar,
-/// its cracks, and Cannon as far as he has fled.
+/// Sets up the Themis Axe's stretch: its crumbling pillars, stake and stone
+/// pillar, its cracks, and Cannon as far as he has fled.
 void DehkanPlateau_InitializeThemisAxeChest(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
@@ -1629,9 +1698,9 @@ void DehkanPlateau_InitializeThemisAxeChest(void) {
 void DehkanPlateau_ForgetCrackOnLeaving(void);
 void Tightrope_Initialize(void);
 
-/// Sets up the third room: its tightropes and the rope to Lash, its stone, vine
-/// and stakes and crumbling pillars, its cracks, and Cannon as far as he has
-/// gone.
+/// Sets up the rope bridge's stretch: its tightropes and the rope to Lash, its
+/// stone, vine and stakes and crumbling pillars, its cracks, and Cannon as far
+/// as he has gone.
 void DehkanPlateau_InitializeTightropes(void) {
   struct Actor *actor;
   FIXED zero, value;
@@ -1773,17 +1842,17 @@ extern u16 gDehkanPlateau_FallLandingCells[];
     }                                                                          \
   }
 
-/// Draws, in the fourth room, the cells where the party landed under the crack
-/// it fell through.
+/// Draws, in the caves below the cracks, the cells where the party landed under
+/// the crack it fell through.
 DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG(DehkanPlateau_DrawMintChestFallLanding, 3,
                                     8, 67, 3, 66, 69)
 
-/// Draws, in the fifth room, the cells where the party landed under the crack
-/// it fell through.
+/// Draws, in the Pound Cube's cave, the cells where the party landed under the
+/// crack it fell through.
 DEFINE_DEHKAN_PLATEAU_PLACE_BY_FLAG(DehkanPlateau_DrawPoundCubeFallLanding, 13,
                                     5, 77, 0, 65, 65)
 
-/// Sets up the fourth room, below the cracks: the floor Cannon opened, and the
+/// Sets up the caves below the cracks: the floor Cannon opened, and the
 /// landing of a fall.
 void DehkanPlateau_InitializeMintChest(void) {
   gFieldWork->transition =
@@ -1812,7 +1881,8 @@ void DehkanPlateau_InitializeMintChest(void) {
   }
 }
 
-/// The leader drops in from the crack above, landing in a ring of dust.
+/// Felix drops in from the crack above in a shaft of light, landing in a ring
+/// of dust.
 void DehkanPlateau_LandFromFall(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct EffectOptions options;
@@ -1873,8 +1943,8 @@ void DehkanPlateau_LandFromFall(void) {
   Event_End();
 }
 
-/// Sets up the fifth room: the Pound Cube where Cannon dropped it, its cracks,
-/// and the landing of a fall, beside Cannon the first time.
+/// Sets up the Pound Cube's cave: the Pound Cube where Cannon dropped it, its
+/// cracks, and the landing of a fall, beside Cannon the first time.
 void DehkanPlateau_InitializePoundCube(void) {
   struct Actor *owner = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 entrance;
@@ -1943,7 +2013,7 @@ void DehkanPlateau_CreatePoundCube(void) {
   }
 }
 
-/// Sets up the sixth room: its stake and crumbling pillar, Cannon met
+/// Sets up Cannon's cave: its stake and crumbling pillar, Cannon met
 /// already if he is in the party, and the landing of a fall.
 void DehkanPlateau_InitializeCannon(void) {
   gFieldWork->transition =
@@ -2072,7 +2142,7 @@ s16 gDehkanPlateau_TightropesMovablePillars[] = {
     ACTOR_TIGHTROPES_PILLAR, ACTOR_LIST_END,
 };
 
-/// The third room's vine pillars.
+/// The rope bridge's stretch's vine pillars.
 s16 gDehkanPlateau_TightropesVinePillars[] = {
     ACTOR_TIGHTROPES_FIRST_VINE_PILLAR,  ACTOR_TIGHTROPES_SECOND_VINE_PILLAR,
     ACTOR_TIGHTROPES_THIRD_VINE_PILLAR,  ACTOR_TIGHTROPES_FOURTH_VINE_PILLAR,

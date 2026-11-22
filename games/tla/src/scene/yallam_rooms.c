@@ -522,7 +522,7 @@ void YallamRooms_TalkToSunshinesWife(s32 actor) {
       Event_SetMessageId(message + 4);
       // "OK, here you go!"
       Event_ShowMessage(actor, 0);
-      ItemDisplay_ShowItem(item, 3);
+      ItemDisplay_ShowItem(item, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
       Party_GiveItem(item, 0);
       Forge_SetItem(0);
       Party_AdjustCoins(-price);

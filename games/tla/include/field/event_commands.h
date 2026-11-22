@@ -168,6 +168,13 @@ void FieldPsynergy_Blaze(void);
 void FieldPsynergy_Sand(void);
 
 void FieldPsynergy_Burst(void);
+/// The stage Burst passes its target's event each frame (BurstWork.shake).
+enum BurstStage {
+  BURST_STAGE_QUIET,       ///< no explosion this frame
+  BURST_STAGE_DYING_DOWN,  ///< the great blast dying down
+  BURST_STAGE_SMALL_BLAST, ///< a small explosion shakes the ground
+  BURST_STAGE_GREAT_BLAST  ///< the last and largest blast
+};
 
 void FieldPsynergy_Pound(void);
 
@@ -324,6 +331,10 @@ void Field_RequestBattleFromEncounterTable(s32 zone, s32 slot);
 /// one slot per stage door the party reached first (slots 0 to 4), then Karst
 /// and Agatio's three battles on Jupiter Lighthouse's aerie (slots 5 to 7).
 #define ENCOUNTER_TABLE_MOAPA 13
+/// The World Map's encounter zone of region 1's beach, shallows and grassland,
+/// which the Psynergy test room's battles also take (slot 0, one or two Giant
+/// Bats).
+#define ENCOUNTER_ZONE_WORLD_MAP_BEACH_AND_GRASSLAND 14
 
 /// The event battles: the Flame Dragons in Mars Lighthouse (slot 0), the Doom
 /// Dragon on its aerie (1), the gladiators in the Shaman Village Cave (2), the

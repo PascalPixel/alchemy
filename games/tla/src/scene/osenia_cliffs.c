@@ -1,9 +1,12 @@
 /// @file
 /// The Osenia Cliffs, across the Madra Drawbridge, where the wreck of a Champa
-/// ship lies on the shore and three people from Madra look it over.
+/// ship lies on the shore and three people from Madra look it over until Piers
+/// has carried Gabomba's message.
 ///
-/// Four rope posts make two ropes. The first is tied as the scene starts; the
-/// party ties the second with Lash (OseniaCliffs_LashRope).
+/// The party hops across the wreckage to the exit on the east side. A rope
+/// already stretches between two posts near the villagers; in the northeast,
+/// two more posts stand bare until Felix ties a rope between them with Lash, on
+/// the way to the Pirate's Sword.
 
 #include "system/task.h"
 #include "sprite_ids.h"
@@ -43,15 +46,15 @@ void OseniaCliffs_CyclePalette(void);
 /// visit.
 #define FLAG_OSENIA_CLIFFS_ROPE_LASHED FLAG_SCENE_TEMP_03
 
-/// The actors, numbering the rows of gActorPlacements.
+/// The actors, numbering the rows of `gActorPlacements`.
 enum OseniaCliffsActorId {
   ACTOR_VILLAGER_CHAMPA_BOAT = ACTOR_FIRST_PLACED,
   ACTOR_VILLAGER_NOT_CHAMPA,
   ACTOR_VILLAGER_WAVE_DAMAGE,
-  /// The posts of the first rope, tied as the scene starts.
+  /// The posts of the rope near the villagers, tied from the start.
   ACTOR_FIRST_ROPE_POST,
   ACTOR_SECOND_ROPE_POST,
-  /// The posts of the rope the party ties with Lash.
+  /// The posts in the northeast, low and high, that Lash ties a rope between.
   ACTOR_THIRD_ROPE_POST,
   ACTOR_FOURTH_ROPE_POST
 };
@@ -70,8 +73,12 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 void Rope_Lash(s32 a, s32 b, s32 c);
 #endif
 
-/// The party lashes the second rope, from post ACTOR_THIRD_ROPE_POST to
-/// ACTOR_FOURTH_ROPE_POST, and it stays tied for the rest of the visit.
+/// Felix casts Lash at the lower of the two bare rope posts in the northeast of
+/// the Osenia Cliffs, and a rope ties itself from it to the post on the higher
+/// ground beside it, so the party can cross to the Pirate's Sword. It stays
+/// tied until the party leaves.
+// XXX: how the rope looks once tied and where crossing it leads; a recording
+// would settle it, but the recorder cannot walk Felix to the low post.
 void OseniaCliffs_LashRope(void) {
   Rope_Lash(1, ACTOR_THIRD_ROPE_POST, ACTOR_FOURTH_ROPE_POST);
   Event_SetFlag(FLAG_OSENIA_CLIFFS_ROPE_LASHED);
@@ -110,9 +117,9 @@ s32 Scene_Initialize(void) {
 #define CYCLE_SOURCE_COLORS 8
 #define SHORELINE_PALETTE 6
 
-/// The palette cycle Scene_Initialize schedules: every 16 frames it copies four
-/// of CYCLE_SOURCE_PALETTE's eight colours, starting one further each time, to
-/// colours 1 to 4 of SHORELINE_PALETTE.
+/// The sea shimmers where it meets the foot of the cliffs: every 16 frames,
+/// four of `CYCLE_SOURCE_PALETTE`'s eight colours, starting one further each
+/// time, are copied to colours 1 to 4 of `SHORELINE_PALETTE`.
 void OseniaCliffs_CyclePalette(void) {
   if ((gFrameCount & 15) == 0) {
     volatile u16 *colors;

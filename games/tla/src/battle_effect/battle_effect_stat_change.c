@@ -604,9 +604,6 @@ void BattleEffect_RunWeaken(struct BattleEffectParams *args) {
   BattleEffect_RunStatReduction(args, STAT_REDUCTION_WEAKEN);
 }
 
-/// The level copy `copy` of the shard pictures is capped at, 7 lower than the
-/// one before.
-#define STAT_REDUCTION_SHARD_CAP(copy) (CANVAS_LEVEL_BRIGHTEST + 1 - (copy) * 7)
 /// Each target throws STAT_REDUCTION_TARGET_SHARDS shards from its own run of
 /// STAT_REDUCTION_TARGET_PARTICLES particles, STAT_REDUCTION_TARGET_DELAY
 /// frames after the target before it.
@@ -648,14 +645,11 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
   Resource_LoadAndDecompress(RESOURCE_PALETTE_RAMP_IMAGE,
                              work->sheet + STAT_REDUCTION_SHARD_PICTURES, 0, 0);
 
-  for (i = 1; i != STAT_REDUCTION_SHARD_COPIES; i++) {
+  for (i = 1; i != DIMMED_COPIES; i++) {
     for (j = 0; j != STAT_REDUCTION_SHARD_BYTES; j++) {
       s32 level = work->sheet[STAT_REDUCTION_SHARD_PICTURES + j];
 
-      if (level > STAT_REDUCTION_SHARD_CAP(i))
-        level = STAT_REDUCTION_SHARD_CAP(i);
-      if (level < 0)
-        level = 0;
+      EFFECT_CAP_LEVEL(level, DIMMED_COPY_CAP(i));
       work->sheet[STAT_REDUCTION_SHARD_PICTURES +
                   i * STAT_REDUCTION_SHARD_BYTES + j] = level;
     }
@@ -758,8 +752,8 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
           level = 0;
           if (frame - j * STAT_REDUCTION_TARGET_DELAY > 28) {
             level = (targetFrame - 24) / 4;
-            if (level > STAT_REDUCTION_SHARD_COPIES - 1)
-              level = STAT_REDUCTION_SHARD_COPIES - 1;
+            if (level > DIMMED_COPIES - 1)
+              level = DIMMED_COPIES - 1;
           }
           for (i = 0; i != STAT_REDUCTION_TARGET_SHARDS; i++) {
             struct Particle *shard =
@@ -802,7 +796,6 @@ void BattleEffect_RunStatReduction(struct BattleEffectParams *args, s32 mode) {
 #undef STAT_BOOST_FLARE_DEPTH_FAR
 #undef STAT_BOOST_DJINNI_SWAY
 #undef STAT_BOOST_PARTY_CANVAS_X
-#undef STAT_REDUCTION_SHARD_CAP
 #undef STAT_REDUCTION_TARGET_PARTICLES
 #undef STAT_REDUCTION_TARGET_SHARDS
 #undef STAT_REDUCTION_TARGET_DELAY

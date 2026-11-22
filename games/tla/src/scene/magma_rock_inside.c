@@ -849,7 +849,7 @@ void MagmaRockInside_TargetStatue(s32 stage) {
   } else if (scene == SCENE_MAGMA_ROCK_INSIDE_CRACKED_PILLARS) {
     table = gMagmaRockInside_CrackedPillarsStatues;
   }
-  if (stage == 2) {
+  if (stage == BURST_STAGE_SMALL_BLAST) {
     struct Actor *actor;
 
     MagmaRockInside_FindStatue(table);
@@ -857,7 +857,7 @@ void MagmaRockInside_TargetStatue(s32 stage) {
     actor->flashMask = 4;
     actor->update = (ObjectUpdate)MagmaRockInside_FlashStatue;
   }
-  if (stage == 3) {
+  if (stage == BURST_STAGE_GREAT_BLAST) {
     struct Actor *actor;
 
     MagmaRockInside_FindStatue(table);
@@ -1047,13 +1047,13 @@ void MagmaRockInside_BurstCrackedPillar(s32 stage, s32 cue) {
 
   if (cue == 0)
     MagmaRockInside_StartFallingRocks();
-  if (stage == 2) {
+  if (stage == BURST_STAGE_SMALL_BLAST) {
     struct Actor *actor = work->child;
 
     MagmaRockInside_DropRocks(actor->x.fixed, actor->y.fixed + toFIXED(15),
                               actor->z.fixed, 1);
   }
-  if (stage == 3) {
+  if (stage == BURST_STAGE_GREAT_BLAST) {
     struct Actor *actor = work->child;
     struct Actor *target;
 
@@ -1705,7 +1705,8 @@ void MagmaRockInside_ExamineEmberStone(void) {
       Event_End();
       return;
     }
-    ItemDisplay_ShowItem(ITEM_MAGMA_BALL, 3);
+    ItemDisplay_ShowItem(ITEM_MAGMA_BALL,
+                         ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
     Actor_SetAnimation(ACTOR_EMBER_STONE, 2);
     Event_SetFlag(FLAG_MAGMA_BALL_TAKEN);
   }

@@ -792,7 +792,7 @@ void Window_SetRectPalette(s32 x, s32 y, s32 width, s32 height, s32 palette) {
         do {
           u32 tile = *entry;
 
-          if ((tile / BG_TILE_PALETTE(1) & 0xf) == WINDOW_PALETTE) {
+          if (BG_TILE_PALETTE_OF(tile) == WINDOW_PALETTE) {
             tile &= ~BG_TILE_PALETTE(0xf);
             tile |= palette;
             *entry = tile;

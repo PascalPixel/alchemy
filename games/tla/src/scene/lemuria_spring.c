@@ -36,6 +36,7 @@
 #include "system/input.h"
 #include "field/actor.h"
 #include "field/call.h"
+#include "field/field_sequence.h"
 #include "system/iwram_call.h"
 #include "system/vector3.h"
 #include "system/task.h"
@@ -604,7 +605,8 @@ void LemuriaSpring_GivePrize(s32 item) {
     Actor_SetPosition(ACTOR_LEMURIA_SPRING_SUMMON_TABLET, 0, 0);
     FieldActor_SetAnimation(gMainRoutineWork.leaderActorId, ANIM_STAND);
   } else {
-    Call2(ItemDisplay_ShowItem, item, 3);
+    Call2(ItemDisplay_ShowItem, item,
+          ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
     Party_GiveItem(item, 0);
     FieldEvent_Wait(20);
   }

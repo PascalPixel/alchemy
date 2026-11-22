@@ -192,26 +192,23 @@ done:
 /// The shop and sanctum message browsers: talking to ACTOR_MESSAGE_BROWSER
 /// from each side.
 void PsynergyTest_BrowseWeaponShopMessages(void) {
-  PsynergyTest_BrowseMessageRange((s32)MsgWeaponShopWelcome,
-                                  MsgArmorShopWelcome - MsgWeaponShopWelcome);
+  PsynergyTest_BrowseMessageRange((s32)MsgWeaponShopWelcome, SHOP_MESSAGES);
 }
 
 /// Browses the armor shop's messages.
 void PsynergyTest_BrowseArmorShopMessages(void) {
-  PsynergyTest_BrowseMessageRange((s32)MsgArmorShopWelcome,
-                                  MsgArmorShopWelcome - MsgWeaponShopWelcome);
+  PsynergyTest_BrowseMessageRange((s32)MsgArmorShopWelcome, SHOP_MESSAGES);
 }
 
 /// Browses the item shop's messages.
 void PsynergyTest_BrowseItemShopMessages(void) {
-  PsynergyTest_BrowseMessageRange((s32)MsgItemShopWelcome,
-                                  MsgArmorShopWelcome - MsgWeaponShopWelcome);
+  PsynergyTest_BrowseMessageRange((s32)MsgItemShopWelcome, SHOP_MESSAGES);
 }
 
 /// Browses the Sanctum's messages.
 void PsynergyTest_BrowseSanctumMessages(void) {
   PsynergyTest_BrowseMessageRange((s32)MsgWelcomeWearyWanderers,
-                                  MsgRightWhenI - MsgWelcomeWearyWanderers);
+                                  SANCTUM_MESSAGES);
 }
 
 /// The shops: talking to ACTOR_SHOPKEEPER from each side opens Daila's weapon,
@@ -235,7 +232,7 @@ void PsynergyTest_OpenItemShop(s32 keeper) {
 void PsynergyTest_OpenGeneralStore(s32 keeper) { Shop_Run(SHOP_IZUMO, keeper); }
 
 /// Opens Daila's inn.
-void PsynergyTest_OpenInn(s32 keeper) { Inn_CheckIn(0, keeper); }
+void PsynergyTest_OpenInn(s32 keeper) { Inn_CheckIn(DAILA_INN, keeper); }
 
 /// The event for talking to ACTOR_FALLEN_MAN, which does nothing.
 void PsynergyTest_IgnoreTalk(void) {}
@@ -451,12 +448,13 @@ void PsynergyTest_ArriveInRing(void) {
 }
 
 /// Cyclone at the patch's top left leaf: a Mad Plant leaps at the leader, and a
-/// battle with no escape starts, encounter zone 14's first formation, one or
-/// two Giant Bats.
+/// battle with no escape starts, ENCOUNTER_ZONE_WORLD_MAP_BEACH_AND_GRASSLAND's
+/// first formation, one or two Giant Bats.
 void PsynergyTest_FightMadPlant(void) {
   Import_DebugMadPlantLeap(SPRITE_MAD_PLANT, 40, 168);
   gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
-  Field_RequestBattleFromEncounterTable(14, 0);
+  Field_RequestBattleFromEncounterTable(
+      ENCOUNTER_ZONE_WORLD_MAP_BEACH_AND_GRASSLAND, 0);
 }
 
 /// The four Scoop spots, the grass patches set corner to corner east of the
@@ -482,7 +480,8 @@ void PsynergyTest_DigUpWickedMace(s32 mode) {
 /// The Scoop spot that raises a statue, then a battle.
 void PsynergyTest_DigUpStatue(s32 mode) {
   Event_SetFlag(FLAG_STATUE_DUG);
-  PsynergyTest_RaiseStatue(mode, 216, 216, 14, 0);
+  PsynergyTest_RaiseStatue(mode, 216, 216,
+                           ENCOUNTER_ZONE_WORLD_MAP_BEACH_AND_GRASSLAND, 0);
 }
 
 /// Talking to the Wicked Mace picks it up.

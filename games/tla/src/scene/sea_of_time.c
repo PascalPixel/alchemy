@@ -1,14 +1,21 @@
 /// @file
-/// The Sea of Time, the sea before Lemuria, where Yepp's songs tell the way:
-/// currents carry the ship (SeaOfTime_RideCurrent), swirls turn it
-/// (SeaOfTime_CircleSwirl) and channels sweep it along
-/// (SeaOfTime_FollowChannel), a whirlpool draws it down
-/// (SeaOfTime_SinkIntoWhirlpool) and the sea sweeps it back
-/// (SeaOfTime_SweptBack). Running round a trunk enough times starts the waves
-/// (SeaOfTime_CountLaps, SeaOfTime_StartWaves), which still the channels until
-/// they stop. Past them Poseidon rises (SeaOfTime_FacePoseidon); once he is
-/// beaten, rocks rise out of the sea (SeaOfTime_Open) for Grind to clear
-/// (SeaOfTime_GrindFirstRock to SeaOfTime_GrindLastRock).
+/// The Sea of Time, the purple sea the Lemurian ship must cross to reach
+/// Lemuria, in two scenes: the great sea of swirls the ship sails into from
+/// the world map, and the last stretch before Lemuria, where Poseidon waits.
+///
+/// The great sea is full of swirls, each a ring of current round a dark eye
+/// that turns the ship round and round, and of rapids, straight channels of
+/// striped water that carry the ship along. Some run off the edge of the sea
+/// and sweep the ship out of it: the first time back aboard the Lemurian ship,
+/// where the party talks over how to find the way, later straight out to the
+/// world map. The way is in Yepp's songs, which the children of Yallam sing:
+/// pass so many swirls, then sail round a trunk, one of the little volcanoes
+/// in the sea, two or three times the same way round until stars rise about
+/// it. Then come the waves: the sea's patterns go still, and until the waves
+/// stop the channels carry nothing. Bands of rough water in the north turn the
+/// ship back south. The sea's north-west corner leads to the last stretch,
+/// where Poseidon rises from the sea. Once he is beaten, four rocks rise out
+/// of the water for Grind, and the way north to Lemuria is open.
 
 #include "sprite_ids.h"
 #include "graphics/palette_buffers.h"
@@ -101,8 +108,8 @@ extern s32 gSeaOfTime_ShipRests[];
 s32 Actor_HasArrived(struct Actor *actor);
 u16 gSeaOfTime_RippleLines[DISPLAY_HEIGHT] BSS_DATA ALIGNED(16);
 
-/// The ship's script: clears its sprite's flags and puts it on the middle
-/// layer.
+/// When the Lemurian ship is placed, puts it on the sea's own layer with its
+/// sprite's flags cleared.
 s32 SeaOfTime_ResetAnimationFrame(struct Actor *actor) {
   ((struct FieldSprite *)actor->sprite)->flags = 0;
   actor->layer = MAPGRID_LAYER_MIDDLE;
@@ -156,14 +163,16 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern struct ActorPlacement gSeaOfTime_WhirlpoolPlacements[];
 
-/// The party's ship: placed blank, it wears the ship's sheet
-/// (SPRITE_WINGED_SHIP) on the water, and the currents, the swirl and the
-/// whirlpool move it.
+/// The Lemurian ship the party sails, and the rocks that rise in the last
+/// stretch. The ship's row places it blank, and it wears the ship's sheet
+/// (`SPRITE_WINGED_SHIP`) on the water.
 enum {
   ACTOR_SHIP = ACTOR_FIRST_PLACED,
-  /// The rocks (SPRITE_SEA_ROCK) that rise out of the north part once Poseidon
-  /// is beaten, for Grind to clear; rock C is never placed, and rock A also
-  /// stands in the south part, under its own flag (FLAG_LAST_ROCK_CLEARED).
+  /// The grey rocks that rise out of the last stretch's north part once
+  /// Poseidon is beaten, for Grind to clear: A on cells (10, 11) to (11, 12),
+  /// B on (18, 8) to (19, 9), D on (23, 13) to (24, 14) and E on (29, 9) to
+  /// (30, 10). Rock C is never placed. In the south part, rock A's row stands
+  /// for one more rock, on (44, 42) to (45, 43), under its own flag.
   ACTOR_ROCK_A,
   ACTOR_ROCK_B,
   ACTOR_ROCK_C,
@@ -181,29 +190,36 @@ enum {
   FLAG_LAST_ROCK_CLEARED
 };
 
-/// While the waves run (SeaOfTime_StartWaves), the channels and the lap cells
-/// do not answer.
+/// Set while the waves run, from the stars over a trunk until the sea's
+/// patterns come back; meanwhile the channels carry nothing and no laps are
+/// counted.
 #define FLAG_WAVES_RUNNING FLAG_SCENE_TEMP_00
-/// Set the first time the sea sweeps the ship back, onto the Lemurian ship's
-/// tiller; later sweeps land on the world map. Facing Poseidon sets it too.
+/// Set the first time a channel sweeps the ship out of the sea, which puts the
+/// party back aboard the Lemurian ship; later sweeps land on the world map.
+/// Facing Poseidon sets it too.
 #define FLAG_SWEPT_BACK_ONCE 0x8dd
 
-/// The cell behaviors the Sea of Time's triggers answer: currents that carry
-/// the ship one way (eight headings), the swirl (which way it turns), the
-/// whirlpool, the channels (four headings), the cell that sweeps the ship back,
-/// and the lap cells round each trunk (LAP_CELLS) that count the ship's laps.
+/// The kinds of water the ship sails over. A swirl is six cells square: a
+/// ring of eight 2 by 2 squares of current, each named for where it lies on
+/// the ring, round a 2 by 2 eye that turns clockwise or counterclockwise.
+/// Rough water turns the ship back; a channel carries it straight on, east,
+/// south, west or north; the cells at the sea's edge where the channels run
+/// out sweep it out of the sea; and the eight 2 by 2 lap squares round each
+/// trunk, numbered in order round it from `CELL_BEHAVIOR_LAP_FIRST`, count its
+/// laps. The sea's cells sit on its own layer, which the map keeps 64 columns
+/// east of the ground's; the cells named below are the ground's.
 enum SeaOfTimeCellBehavior {
-  CELL_BEHAVIOR_CURRENT_NORTH = 30,
-  CELL_BEHAVIOR_CURRENT_NORTHWEST,
-  CELL_BEHAVIOR_CURRENT_WEST,
-  CELL_BEHAVIOR_CURRENT_SOUTHWEST,
-  CELL_BEHAVIOR_CURRENT_SOUTH,
-  CELL_BEHAVIOR_CURRENT_SOUTHEAST,
-  CELL_BEHAVIOR_CURRENT_EAST,
-  CELL_BEHAVIOR_CURRENT_NORTHEAST,
+  CELL_BEHAVIOR_SWIRL_RING_SOUTH = 30,
+  CELL_BEHAVIOR_SWIRL_RING_SOUTHEAST,
+  CELL_BEHAVIOR_SWIRL_RING_EAST,
+  CELL_BEHAVIOR_SWIRL_RING_NORTHEAST,
+  CELL_BEHAVIOR_SWIRL_RING_NORTH,
+  CELL_BEHAVIOR_SWIRL_RING_NORTHWEST,
+  CELL_BEHAVIOR_SWIRL_RING_WEST,
+  CELL_BEHAVIOR_SWIRL_RING_SOUTHWEST,
   CELL_BEHAVIOR_SWIRL_COUNTERCLOCKWISE = 40,
   CELL_BEHAVIOR_SWIRL_CLOCKWISE,
-  CELL_BEHAVIOR_WHIRLPOOL = 44,
+  CELL_BEHAVIOR_ROUGH_WATER = 44,
   CELL_BEHAVIOR_CHANNEL_EAST,
   CELL_BEHAVIOR_CHANNEL_SOUTH,
   CELL_BEHAVIOR_CHANNEL_WEST,
@@ -212,22 +228,26 @@ enum SeaOfTimeCellBehavior {
   CELL_BEHAVIOR_LAP_FIRST
 };
 
-/// The raised triggers of the waves: the laps counted, and the waves ended.
+/// The raised triggers of the waves: the laps round a trunk are done, and the
+/// waves are over.
 enum SeaOfTimeRaisedTrigger { RAISED_START_WAVES = 200, RAISED_STOP_WAVES };
 
-/// SeaOfTimeToLemuria's step triggers: the cells where Poseidon is met, and in
-/// the south part, the ways off its west and east edges.
+/// The last stretch's step triggers: in the north part, cells (20, 18) to
+/// (23, 20), where the ship meets Poseidon; in the south part, the way off its
+/// west edge to the world map and the way off its east edge back north.
 enum {
   TRIGGER_TO_WORLD_MAP = 1,
   TRIGGER_BACK_NORTH = 2,
   TRIGGER_BEFORE_POSEIDON = 5
 };
-/// SeaOfTimeToLemuria's north part: entrances 1 to NORTH_PART_LAST_ENTRANCE;
-/// the last is where the ship waits after Poseidon's battle. The south part's
-/// way back north is its exit 5.
+/// The last stretch's north part is reached by entrances 1 to
+/// `NORTH_PART_LAST_ENTRANCE`; the last is where the ship waits after
+/// Poseidon's battle. The north part's way down to the south part, at its west
+/// edge, is its exit 2, and the south part's way back north is its exit 5.
 enum {
   NORTH_PART_LAST_ENTRANCE = 4,
   ENTRANCE_AFTER_POSEIDON = 4,
+  EXIT_TO_SOUTH_PART = 2,
   EXIT_BACK_NORTH = 5
 };
 
@@ -238,16 +258,17 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 /// The 32-pixel square, two cells across, that a 16.16 coordinate lies in, and
-/// a square's corner: the swirls and currents turn the ship about such squares.
+/// a square's corner: a swirl's eye is one such square, and its ring the eight
+/// round it.
 #define SWIRL_SQUARE(coordinate) ((coordinate) >> 21)
 #define SWIRL_SQUARE_CORNER(square) ((square) << 21)
 #define SWIRL_SQUARE_ORIGIN(coordinate)                                        \
   SWIRL_SQUARE_CORNER(SWIRL_SQUARE(coordinate))
-/// How far from the middle of the square a current carries it toward the ship
-/// may drift, in pixels, before the current pulls it in.
+/// How far, in pixels, the ship may drift from a swirl's eye before the ring's
+/// current pulls it back in.
 #define CURRENT_HOLD_DISTANCE 46
 /// How far either side of the ship its spray is thrown, in pixels: by a
-/// current, and by a channel or the whirlpool.
+/// swirl's ring, and by a channel or rough water.
 #define CURRENT_SPRAY_REACH 10
 #define CHANNEL_SPRAY_REACH 12
 /// n quarter turns as an angle, DEGtoANG(90) apiece.
@@ -266,9 +287,11 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 #define WAVE_BLUE 23
 /// The frames between the sea's colour steps while the waves run.
 #define WAVES_COLOR_STEP_FRAMES 360
-/// The background colour whose red pulses while the waves are still, between
-/// PULSE_RED_MIN and full.
+/// The background colour whose red pulses while no waves run, between
+/// `PULSE_RED_MIN` and full.
 #define PULSE_COLOR BG_PLTT_COLOR(0, 15)
+// XXX: what on screen this colour lights; a render of the great sea with
+// PULSE_COLOR forced to black would show it.
 #define PULSE_RED_MIN 18
 /// The ripple's sine shifted down to a swing of two pixels each way.
 #define RIPPLE_SHIFT 15
@@ -282,8 +305,10 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 #define PUFF_SPREAD 32
 #define BIG_PUFFS 16
 
-/// In a swirl the ship is drawn to the middle of its 32-pixel square and turned
-/// about it, one way or the other by the swirl's cell.
+/// The Lemurian ship sails into the dark eye of a swirl, and the swirl pulls it
+/// into the very middle and spins it round there, clockwise or
+/// counterclockwise as the swirl turns, until the player steers it out. Each
+/// eye is 2 by 2 cells, such as cells (48, 6) to (49, 7).
 void SeaOfTime_CircleSwirl(void) {
   struct Actor *actor = Actor_GetById(ACTOR_SHIP);
   s32 turn[1];
@@ -328,8 +353,13 @@ void SeaOfTime_CircleSwirl(void) {
   }
 }
 
-/// A current carries the ship toward the next square in its heading and turns
-/// it about that square's middle, throwing up spray on both sides as it goes.
+/// The Lemurian ship sails into the ring of current round a swirl's eye, and
+/// the current carries it round the eye, clockwise or counterclockwise as the
+/// swirl turns, with a rushing sound and white spray thrown up on both sides. A
+/// ship that drifts too far out is pulled back toward the eye.
+///
+/// Each ring cell's name says where it lies about the eye, so the eye is one
+/// 32-pixel square (`SWIRL_SQUARE`) the other way.
 void SeaOfTime_RideCurrent(void) {
   struct FieldWork *work = (struct FieldWork *)Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_GetById(ACTOR_SHIP);
@@ -356,35 +386,35 @@ void SeaOfTime_RideCurrent(void) {
   FIXED pz;
 
   switch (work->stepTrigger) {
-  case CELL_BEHAVIOR_CURRENT_NORTH:
+  case CELL_BEHAVIOR_SWIRL_RING_SOUTH:
     center.x = 0;
     center.z = -1;
     break;
-  case CELL_BEHAVIOR_CURRENT_WEST:
+  case CELL_BEHAVIOR_SWIRL_RING_EAST:
     center.x = -1;
     center.z = 0;
     break;
-  case CELL_BEHAVIOR_CURRENT_SOUTH:
+  case CELL_BEHAVIOR_SWIRL_RING_NORTH:
     center.x = 0;
     center.z = 1;
     break;
-  case CELL_BEHAVIOR_CURRENT_EAST:
+  case CELL_BEHAVIOR_SWIRL_RING_WEST:
     center.x = 1;
     center.z = 0;
     break;
-  case CELL_BEHAVIOR_CURRENT_NORTHWEST:
+  case CELL_BEHAVIOR_SWIRL_RING_SOUTHEAST:
     center.x = -1;
     center.z = -1;
     break;
-  case CELL_BEHAVIOR_CURRENT_SOUTHWEST:
+  case CELL_BEHAVIOR_SWIRL_RING_NORTHEAST:
     center.x = -1;
     center.z = 1;
     break;
-  case CELL_BEHAVIOR_CURRENT_SOUTHEAST:
+  case CELL_BEHAVIOR_SWIRL_RING_NORTHWEST:
     center.x = 1;
     center.z = 1;
     break;
-  case CELL_BEHAVIOR_CURRENT_NORTHEAST:
+  case CELL_BEHAVIOR_SWIRL_RING_SOUTHWEST:
     center.x = 1;
     center.z = -1;
     break;
@@ -482,8 +512,11 @@ void SeaOfTime_RideCurrent(void) {
   }
 }
 
-/// A channel carries the ship straight along its run of cells, in its heading,
-/// throwing up spray from both its sides every fourth frame.
+/// The Lemurian ship sails onto a channel, a straight strip of striped rushing
+/// water, and is carried fast along it to its end, east, south, west or
+/// north, spray flying from both sides. Some channels run off the edge of the
+/// sea, where it is swept out. While the waves run, the channels carry
+/// nothing.
 void SeaOfTime_FollowChannel(void) {
   FIXED pos[4];
   struct EffectOptions spark;
@@ -587,19 +620,25 @@ extern u16 gSeaOfTime_LastLapCell;
 extern struct Spots gSeaOfTime_LapSpots;
 extern u8 gSeaOfTime_LapsNeeded[];
 
-/// The lap cells round each trunk, in order round it.
+/// The lap squares round each trunk, in order round it.
 #define LAP_CELLS 8
-/// The frames the ship may take from one lap cell to the next before its count
-/// starts again.
+/// The frames the ship may take from one lap square to the next before its
+/// count starts again.
 #define LAP_STEP_FRAMES 50
-/// The steps round after which sparkles rise about the trunk, somewhere in a
-/// SPARKLE_SPREAD-pixel square.
+/// The squares round after which stars rise about the trunk, somewhere in a
+/// `SPARKLE_SPREAD`-pixel square.
 #define LAP_STEPS_BEFORE_SPARKLES 3
 #define SPARKLE_SPREAD 32
 
-/// Counts the ship's steps round a trunk's lap cells, one way round: past
-/// LAP_STEPS_BEFORE_SPARKLES, sparkles rise about the trunk, and at the trunk's
-/// count (two laps or three) the waves start.
+/// The Lemurian ship sails round one of the trunks, the little volcanoes in the
+/// great sea, and keeps going the same way round. Soon stars rise glittering
+/// about the trunk, and after two laps or three, as the trunk needs, the waves
+/// start. Turning back or dawdling starts the count again.
+///
+/// Each of the trunk's eight lap squares counts one step when the ship enters
+/// it from the one before, within `LAP_STEP_FRAMES`; the trunks, numbered on
+/// the ground layer, need `gSeaOfTime_LapsNeeded` steps. The trunk on cells
+/// (4, 8) to (9, 13), by the way to the last stretch, is one of them.
 void SeaOfTime_CountLaps(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_GetById(ACTOR_SHIP);
@@ -687,9 +726,9 @@ void SeaOfTime_CountLaps(void) {
 /// The frames the waves run.
 #define WAVES_FRAMES 120
 
-/// A task while the waves run: ends them WAVES_FRAMES after they start, and
-/// keeps their start, the sea's colour step and the frame count for the scene's
-/// next visit.
+/// While the waves run, ends them `WAVES_FRAMES` after the sea has gone still,
+/// and keeps their start, the sea's colour step and the frame count in case
+/// the scene is left and entered again.
 void SeaOfTime_TimeWaves(void) {
   u32 *state = gSceneState;
 
@@ -702,10 +741,14 @@ void SeaOfTime_TimeWaves(void) {
 
 extern u32 gSeaOfTime_WaveState;
 
-/// The waves start: the sea's colours but the last fade toward the waves'
-/// colour, a step a channel every 10 frames, and the sea's colour cycle slows
-/// to a step every WAVES_COLOR_STEP_FRAMES; SeaOfTime_TimeWaves's task ends
-/// them.
+/// The waves start once the ship has circled a trunk enough times: with a
+/// rising sound, the stripes and swirls in the water fade over a few seconds
+/// until the sea lies flat, and the channels stop carrying the ship. They last
+/// two seconds once the sea is still.
+///
+/// The sea's colours step toward one colour (`WAVE_RED`, `WAVE_GREEN`,
+/// `WAVE_BLUE`) every 10 frames, and its colour cycle slows to a step every
+/// `WAVES_COLOR_STEP_FRAMES`; `SeaOfTime_TimeWaves` ends them.
 void SeaOfTime_StartWaves(void) {
   volatile u16 *palette;
   s32 changed;
@@ -763,8 +806,11 @@ void SeaOfTime_StartWaves(void) {
 
 struct SavedColors gSeaOfTime_SavedColors BSS_DATA;
 
-/// The waves stop: the sea's colours fade back to their saved colours, a step a
-/// channel every 10 frames, and the channels and lap cells answer again.
+/// The waves stop: with a higher sound the stripes and swirls come back into
+/// the water over a few seconds, and the channels carry the ship again.
+///
+/// The sea's colours step back to the ones saved on arrival every 10
+/// frames.
 void SeaOfTime_StopWaves(void) {
   s32 changed;
   volatile u16 *palette;
@@ -832,9 +878,11 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-/// The whirlpool draws the ship 8 pixels south, throwing up spray from both its
-/// sides every fourth frame until it is there.
-void SeaOfTime_SinkIntoWhirlpool(void) {
+/// The Lemurian ship sails into the rough water of the great sea's north, the
+/// band along the north edge at cells (46, 1) to (61, 3) or the one at (18, 8)
+/// to (35, 9), and the water pushes it back south a little, spray flying
+/// from both sides, every time it tries.
+void SeaOfTime_PushBackInRoughWater(void) {
   FIXED sides[4];
   struct EffectOptions options;
   struct Actor *actor;
@@ -900,8 +948,11 @@ void SeaOfTime_SinkIntoWhirlpool(void) {
   Event_End();
 }
 
-/// The sea sweeps the ship back out of the whirlpool's sea: onto the Lemurian
-/// ship's tiller the first time, onto the world map after.
+/// A channel runs the Lemurian ship off the edge of the great sea, at cells
+/// (16, 63), (32, 63) or (48, 63) in the south or (62, 16) in the east, and the
+/// screen fades. The first time the party finds itself back aboard the ship,
+/// talking over how to find the way; after that the ship comes out on the
+/// world map.
 void SeaOfTime_SweptBack(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -916,8 +967,8 @@ void SeaOfTime_SweptBack(void) {
   Event_End();
 }
 
-/// Poseidon's update: every other frame, water thrown up 16 pixels south of
-/// him, at a random place across his width.
+/// Each frame Poseidon stands over the sea, water splashes up at his feet,
+/// every other frame somewhere across his width.
 void SeaOfTime_UpdateWater(struct Actor *actor) {
   struct EffectOptions spark;
   s32 even = gFrameCount & 1;
@@ -936,11 +987,12 @@ void SeaOfTime_UpdateWater(struct Actor *actor) {
   }
 }
 
-/// Sailing to where Poseidon waits, before he is beaten: the ship sails up, the
-/// sea's colours fade back from the waves' colour, the shower of water bursts
-/// over the sea, faster and faster, and Poseidon rises out of it throwing up
-/// water; his battle starts, with no escape, and the party comes back at
-/// ENTRANCE_AFTER_POSEIDON.
+/// The Lemurian ship sails up the last stretch to cells (20, 18) to (23, 20),
+/// and Poseidon is met: the ship sails north on its own as the camera rises,
+/// the music stops, the water goes flat and its patterns slowly return, a
+/// shower of water bursts over the sea, faster and faster, and Poseidon rises
+/// out of it. His battle starts at once, with no running away, and after it
+/// the ship is back here, at `ENTRANCE_AFTER_POSEIDON`.
 void SeaOfTime_FacePoseidon(void) {
   volatile u16 fill;
   struct EffectOptions burst;
@@ -1072,7 +1124,8 @@ void SeaOfTime_FacePoseidon(void) {
   Event_End();
 }
 
-/// Grind clears a rock: its 2 by 2 cells open and its actor is put away.
+/// A rock Grind has broken is gone from the sea, and the ship can sail over its
+/// 2 by 2 cells.
 void SeaOfTime_RemoveRock(s32 x, s32 z, s32 actor) {
   s32 cx = FIELD_CELL(x);
   s32 cz = FIELD_CELL(z);
@@ -1096,9 +1149,10 @@ void SeaOfTime_RemoveRock(s32 x, s32 z, s32 actor) {
     Event_End();                                                               \
   }
 
-/// Grind on the first rock of the north part clears it from the sea.
-/// `SeaOfTime_RemoveRock` opens its cells, and `FLAG_ROCK_A_CLEARED` keeps it
-/// from being placed again.
+/// Felix casts Grind on one of the rocks that rose in the last stretch's north
+/// part after Poseidon's battle, the one on cells (10, 11) to (11, 12), and it
+/// is gone for good. The other rocks, on (18, 8), (23, 13) and (29, 9), have
+/// events of their own, made the same way.
 DEFINE_GRIND_ROCK(SeaOfTime_GrindFirstRock, ACTOR_ROCK_A, FLAG_ROCK_A_CLEARED)
 
 DEFINE_GRIND_ROCK(SeaOfTime_GrindSecondRock, ACTOR_ROCK_B, FLAG_ROCK_B_CLEARED)
@@ -1109,9 +1163,8 @@ DEFINE_GRIND_ROCK(SeaOfTime_GrindFourthRock, ACTOR_ROCK_D, FLAG_ROCK_D_CLEARED)
 
 DEFINE_GRIND_ROCK(SeaOfTime_GrindFifthRock, ACTOR_ROCK_E, FLAG_ROCK_E_CLEARED)
 
-/// Grind on the last rock, the one in the south part, clears it from the sea.
-/// `SeaOfTime_RemoveRock` opens its cells, and `FLAG_LAST_ROCK_CLEARED` keeps
-/// it from being placed again.
+/// Felix casts Grind on the rock in the last stretch's south part, on cells
+/// (44, 42) to (45, 43), and it is gone for good.
 DEFINE_GRIND_ROCK(SeaOfTime_GrindLastRock, ACTOR_ROCK_A, FLAG_LAST_ROCK_CLEARED)
 
 #define DEFINE_LEAVE_BY_EXIT(name, exit)                                       \
@@ -1124,11 +1177,13 @@ DEFINE_GRIND_ROCK(SeaOfTime_GrindLastRock, ACTOR_ROCK_A, FLAG_LAST_ROCK_CLEARED)
     Event_End();                                                               \
   }
 
-/// Sailing off the south part's west edge: out to the world map.
+/// The Lemurian ship sails off the west edge of the last stretch's south part,
+/// cells (1, 45) to (3, 50), and the screen fades to the world map.
 DEFINE_LEAVE_BY_EXIT(SeaOfTime_LeaveForWorldMap,
                      SEA_OF_TIME_TO_LEMURIA_TO_WORLD_MAP_NORTHEAST)
 
-/// Sailing off the south part's east edge: back to the north part.
+/// The Lemurian ship sails off the east edge of the last stretch's south part,
+/// cells (55, 44) and (55, 45), and the screen fades to its north part.
 DEFINE_LEAVE_BY_EXIT(SeaOfTime_ReturnNorth, EXIT_BACK_NORTH)
 
 const struct Trigger *Scene_GetTriggers(void) {
@@ -1139,10 +1194,13 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gSeaOfTime_SouthPartTriggers;
 }
 
-/// The Sea of Time's frame callback: turns the sea's colours round a step at
-/// its pace and the flowing water's every other frame, pulses PULSE_COLOR's red
-/// (dimming it as the waves start and brightening it as they stop), copies the
-/// palette and ripples the layer's horizontal scroll line by line.
+/// Each frame, keeps the Sea of Time moving: the swirls turn and the channels'
+/// stripes flow as their colours are cycled, one colour's red pulses (fading
+/// out as the waves start and back as they stop), and the whole sea ripples
+/// sideways line by line.
+///
+/// The swirls' colours turn a step at the pace `gSeaOfTime_WaveState` sets and
+/// the channels' every other frame.
 void SeaOfTime_AnimateSea(void) {
   u16 *line = gSeaOfTime_RippleLines;
   struct MapLayer *layer =
@@ -1231,7 +1289,9 @@ void SeaOfTime_AnimateSea(void) {
 /// The frames a rock takes to grow to its height out of the sea.
 #define ROCK_RISE_FRAMES 10
 
-/// Places a rock (x and z in 8-pixel steps) and walls off its 2 by 2 cells.
+/// Puts a rock in the last stretch, which the ship cannot sail through. `x`
+/// and `z` count half cells of 8 pixels, from the map's top left, and the
+/// rock covers the 2 by 2 cells round that point.
 void SeaOfTime_PlaceRock(s32 x, s32 z, s32 actor) {
   Actor_GetById(actor)->collisionFlags |= ACTOR_NEAR_PSYNERGY;
   Actor_SetPositionFX(actor, FIELD_HALF_CELL_ORIGIN(x) + toFIXED(8),
@@ -1248,8 +1308,8 @@ void SeaOfTime_PlaceRock(s32 x, s32 z, s32 actor) {
                               CELL_BEHAVIOR_WALL << 8);
 }
 
-/// A rock rises out of the sea: the camera goes to it, the screen shakes, water
-/// splashes and the rock grows up out of it.
+/// A rock rises out of the sea: the camera goes to it, the screen shakes with
+/// a clatter, water splashes and the rock grows up out of the splash.
 void SeaOfTime_RaiseRock(s32 x, s32 z, s32 actor) {
   struct EffectOptions spark;
   FIXED px;
@@ -1281,9 +1341,10 @@ void SeaOfTime_RaiseRock(s32 x, s32 z, s32 actor) {
   Event_Wait(20);
 }
 
-/// After Poseidon's battle: he stands over the sea, four rocks rise out of it,
-/// the shower of water bursts over him until he is gone, the sea's colours
-/// fade to the waves' colour, and the sea is opened (FLAG_SEA_OF_TIME_OPENED).
+/// After Poseidon's battle, back in the last stretch, Poseidon stands over the
+/// sea. Four rocks rise out of the water one by one, a shower of water bursts
+/// over him until he is gone, the sea's patterns fade away for good, the music
+/// comes back, and the way north to Lemuria is open.
 void SeaOfTime_Open(void) {
   struct Actor *actor;
   u32 i;
@@ -1409,10 +1470,12 @@ void SeaOfTime_Open(void) {
   Event_End();
 }
 
-/// In the whirlpool's sea, saves the sea's colours and, with the waves running,
-/// restores their state and colour; before Lemuria, once the sea is opened,
-/// places the rocks Grind has not cleared and takes PULSE_COLOR's red away, or
-/// after Poseidon's battle opens the sea; then starts the frame callback.
+/// Sets up the sea. In the great sea, the sea's colours are saved, and if the
+/// waves were running when the party left, they are still running. In the
+/// last stretch's north part, once Poseidon is beaten, the rocks Grind has not
+/// broken are back and the pulsing red is gone; on the arrival from his battle,
+/// the sea opens (`SeaOfTime_Open`). In its south part the last rock is placed
+/// until it is broken.
 s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   if (gMainRoutineWork.next == SCENE_SEA_OF_TIME_WHIRLPOOL) {
@@ -1575,32 +1638,34 @@ volatile u32 gSeaOfTime_WaveStartFrame = 0;
 u32 gSeaOfTime_WaveState = 0;
 
 struct Trigger gSeaOfTime_WhirlpoolTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, SEA_OF_TIME_WHIRLPOOL_TO_WORLD_MAP, CONDITION_ALWAYS,
+     SEA_OF_TIME_WHIRLPOOL_TO_WORLD_MAP},
+    {TRIGGER_EXIT, SEA_OF_TIME_WHIRLPOOL_TO_SEA_OF_TIME_TO_LEMURIA,
+     CONDITION_ALWAYS, SEA_OF_TIME_WHIRLPOOL_TO_SEA_OF_TIME_TO_LEMURIA},
     {TRIGGER_STEP, CELL_BEHAVIOR_SWEPT_BACK, CONDITION_ALWAYS,
      EVENT(SeaOfTime_SweptBack)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_NORTH, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_SWIRL_RING_SOUTH, CONDITION_ALWAYS,
      EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_NORTHWEST, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_SWIRL_RING_SOUTHEAST, CONDITION_ALWAYS,
      EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_WEST, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_SWIRL_RING_EAST, CONDITION_ALWAYS,
      EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_SOUTHWEST, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_SWIRL_RING_NORTHEAST, CONDITION_ALWAYS,
      EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_SOUTH, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_SWIRL_RING_NORTH, CONDITION_ALWAYS,
      EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_SOUTHEAST, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_SWIRL_RING_NORTHWEST, CONDITION_ALWAYS,
      EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_EAST, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_SWIRL_RING_WEST, CONDITION_ALWAYS,
      EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_NORTHEAST, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_SWIRL_RING_SOUTHWEST, CONDITION_ALWAYS,
      EVENT(SeaOfTime_RideCurrent)},
     {TRIGGER_STEP, CELL_BEHAVIOR_SWIRL_COUNTERCLOCKWISE, CONDITION_ALWAYS,
      EVENT(SeaOfTime_CircleSwirl)},
     {TRIGGER_STEP, CELL_BEHAVIOR_SWIRL_CLOCKWISE, CONDITION_ALWAYS,
      EVENT(SeaOfTime_CircleSwirl)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_WHIRLPOOL, CONDITION_ALWAYS,
-     EVENT(SeaOfTime_SinkIntoWhirlpool)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_ROUGH_WATER, CONDITION_ALWAYS,
+     EVENT(SeaOfTime_PushBackInRoughWater)},
     {TRIGGER_STEP, CELL_BEHAVIOR_CHANNEL_EAST, FLAG_WAVES_RUNNING,
      EVENT(SeaOfTime_FollowChannel)},
     {TRIGGER_STEP, CELL_BEHAVIOR_CHANNEL_SOUTH, FLAG_WAVES_RUNNING,
@@ -1633,26 +1698,28 @@ struct Trigger gSeaOfTime_WhirlpoolTriggers[] = {
 };
 
 struct Trigger gSeaOfTime_NorthPartTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
+    {TRIGGER_EXIT, SEA_OF_TIME_TO_LEMURIA_TO_SEA_OF_TIME_WHIRLPOOL,
+     CONDITION_ALWAYS, SEA_OF_TIME_TO_LEMURIA_TO_SEA_OF_TIME_WHIRLPOOL},
+    {TRIGGER_EXIT, EXIT_TO_SOUTH_PART, CONDITION_ALWAYS, EXIT_TO_SOUTH_PART},
+    {TRIGGER_EXIT, SEA_OF_TIME_TO_LEMURIA_TO_WORLD_MAP_NORTH, CONDITION_ALWAYS,
+     SEA_OF_TIME_TO_LEMURIA_TO_WORLD_MAP_NORTH},
     {TRIGGER_STEP, TRIGGER_BEFORE_POSEIDON, FLAG_SEA_OF_TIME_OPENED,
      EVENT(SeaOfTime_FacePoseidon)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_NORTH, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_SWIRL_RING_SOUTH, CONDITION_ALWAYS,
      EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_NORTHWEST, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_SWIRL_RING_SOUTHEAST, CONDITION_ALWAYS,
      EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_WEST, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_SWIRL_RING_EAST, CONDITION_ALWAYS,
      EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_SOUTHWEST, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_SWIRL_RING_NORTHEAST, CONDITION_ALWAYS,
      EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_SOUTH, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_SWIRL_RING_NORTH, CONDITION_ALWAYS,
      EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_SOUTHEAST, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_SWIRL_RING_NORTHWEST, CONDITION_ALWAYS,
      EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_EAST, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_SWIRL_RING_WEST, CONDITION_ALWAYS,
      EVENT(SeaOfTime_RideCurrent)},
-    {TRIGGER_STEP, CELL_BEHAVIOR_CURRENT_NORTHEAST, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_SWIRL_RING_SOUTHWEST, CONDITION_ALWAYS,
      EVENT(SeaOfTime_RideCurrent)},
     {TRIGGER_STEP, CELL_BEHAVIOR_CHANNEL_NORTH, CONDITION_ALWAYS,
      EVENT(SeaOfTime_FollowChannel)},

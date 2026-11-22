@@ -86,6 +86,8 @@ enum DisplayControl {
 /// A REG_WINxH or REG_WINxV value: the window covers start up to, but not
 /// including, end.
 #define WIN_RANGE(start, end) (((start) << 8) | (end))
+/// A WIN_RANGE value's end, its low byte: the window's right or bottom edge.
+#define WIN_RANGE_END_MASK 0xff
 #define REG_WININ (*(volatile u16 *)0x04000048)  ///< what windows 0 and 1 show
 #define REG_WINOUT (*(volatile u16 *)0x0400004a) ///< what the rest shows
 
@@ -471,6 +473,8 @@ enum KeyMask {
 #define TILE_PAIR_STEP ((u32)2 << 16 | 2)
 /// A screen block entry's 16-colour palette, in its top four bits.
 #define BG_TILE_PALETTE(n) ((n) << 12)
+/// The palette a map entry draws its tile with, 0 to 15.
+#define BG_TILE_PALETTE_OF(entry) (((entry) >> 12) & 0xf)
 /// A word of eight 4-bit pixels, all colour `color`: one row of a 16-colour
 /// tile.
 #define PIXELS_4BPP(color) ((color) * 0x11111111u)

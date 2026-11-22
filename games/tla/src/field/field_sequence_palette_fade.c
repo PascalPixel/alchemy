@@ -8,12 +8,6 @@
 #define COLOR_MAX 448
 #define COLOR_HALF 224
 #define COLOR_CHANNEL_COUNT (COLOR_MAX * 3)
-/// PALETTE_TINT_SEPIA's shade is a colour's R + G + B over this, 0 to 9.
-#define SEPIA_SHADE_DIVISOR 10
-/// PALETTE_TINT_CUSTOM gives each channel the brightness 2R + 4G + B times the
-/// tint's level over this, so white reaches full level under a tint level of
-/// 14.
-#define CUSTOM_TINT_DIVISOR 96
 
 /// Sets each colour channel of step to the amount to add each frame for source
 /// to reach target in frames frames; with frames 0 or less step is left as it
@@ -162,8 +156,7 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
         dst += 3;
       }
       break;
-    case PALETTE_TINT_SEPIA: // the brightness, red stronger, within 8 to
-                             // 28
+    case PALETTE_TINT_SEPIA: // the brightness, red stronger
       for (i = 0; i < colorCount; i++) {
         color = *src++;
         red = RGB_RED(color);
@@ -173,18 +166,18 @@ void PaletteFade_Build(u32 mode, u16 *src, u16 *dst, s32 half) {
         red = color * 4 + 5;
         blue = color * 3 + 5;
         green = blue;
-        if (red < 8)
-          red = 8;
-        if (green < 8)
-          green = 8;
-        if (blue < 8)
-          blue = 8;
-        if (red > 28)
-          red = 28;
-        if (green > 28)
-          green = 28;
-        if (blue > 28)
-          blue = 28;
+        if (red < SEPIA_LEVEL_MIN)
+          red = SEPIA_LEVEL_MIN;
+        if (green < SEPIA_LEVEL_MIN)
+          green = SEPIA_LEVEL_MIN;
+        if (blue < SEPIA_LEVEL_MIN)
+          blue = SEPIA_LEVEL_MIN;
+        if (red > SEPIA_LEVEL_MAX)
+          red = SEPIA_LEVEL_MAX;
+        if (green > SEPIA_LEVEL_MAX)
+          green = SEPIA_LEVEL_MAX;
+        if (blue > SEPIA_LEVEL_MAX)
+          blue = SEPIA_LEVEL_MAX;
         *dst++ = gFieldEffect_ChannelCurveLight[blue];
         *dst++ = gFieldEffect_ChannelCurveLight[green];
         *dst++ = gFieldEffect_ChannelCurveLight[red];
@@ -535,5 +528,3 @@ s32 PaletteFade_ClampShiftedComponent(s32 value) {
 #undef COLOR_MAX
 #undef COLOR_HALF
 #undef COLOR_CHANNEL_COUNT
-#undef SEPIA_SHADE_DIVISOR
-#undef CUSTOM_TINT_DIVISOR

@@ -1,27 +1,30 @@
 /// @file
-/// The Mars Lighthouse's four towers, one room each in this overlay, each
-/// reached from the central hall by its ledge in the rain and each coming out
-/// on the beacon ledge where its element's flame is lit. Every tower has its
-/// flame throwers, the white dragon heads whose flames knock the leader back,
-/// and the fireballs its torches shoot.
+/// The Mars Lighthouse's four towers, one scene each in this overlay. Each is
+/// reached from the central hall by its ledge in the rain and comes out on
+/// the beacon ledge where its element's flame is lit. Every tower has white
+/// dragon heads on its walls whose flames knock Felix back, and white urn
+/// torches that, once fire reaches them, send a fireball rolling.
 ///
-/// The Mars tower (SceneId_MarsLighthouseMarsTower): Burst breaks the cracked
-/// walls; a button sets a flame thrower moving until its flame lights a torch,
-/// and Blaze from the torch reaches the one below, whose fireball cracks the
-/// center wall for Burst. In its pipe room, pushed pipes turn the fire from
-/// one pipe's end to another until the way is clear.
+/// The Mars tower: Burst breaks its cracked walls. Stepping on a button in
+/// the lava sets a dragon head sliding along the north wall until its flame
+/// lights an urn torch; Blaze at that torch carries on to the one below,
+/// whose fireball cracks the centre wall for Burst. In its pipe room, pipes
+/// pushed into line turn the fire from one dragon head to another until the
+/// way is clear.
 ///
-/// The Mercury tower (F2): frozen puddles and pushed pipes mend the pipeline
-/// until no fire burns at the pipes' ends; then Blaze lights a flame thrower
-/// whose flame reaches a torch, and its fireball melts the icebergs.
+/// The Mercury tower: across black ice, frozen puddles and pushed pipes mend
+/// the pipeline until no fire bursts from the pipes' ends; then Blaze lights
+/// a dragon head whose flame reaches an urn torch, and its fireball melts the
+/// icebergs.
 ///
-/// The Jupiter tower (F3): Cyclone's circles carry the party from ledge to
-/// ledge, Move drops a block to bridge a gap and pushes a statue into the
-/// flames, Reveal shows the stepping stones, and a hole drops the party below.
+/// The Jupiter tower: Cyclone on its circles lifts the party from room to
+/// room, Move drops a block to bridge a gap and pushes a white dragon statue
+/// into the flames of the big room, Reveal shows stepping stones, and a hole
+/// drops the party back to the first hall.
 ///
-/// The Venus tower (F4): gaps jumped and filled with stones Carry lifts, a
-/// statue pushed off a ledge, a tightrope, and statues that hide flame
-/// throwers or the way on.
+/// The Venus tower: gaps jumped and filled with stones Carry lifts, a robed
+/// statue pushed off a ledge, a tightrope, and statues that hide dragon heads
+/// or the way on.
 
 #include "flags.h"
 #include "sprite_ids.h"
@@ -110,7 +113,7 @@ enum {
   VENUS_TOWER_LOWER_DOORWAY = 15
 };
 
-/// The Mars tower (F1). Its first rooms: the flame thrower the button sets
+/// The Mars tower. Its first rooms: the flame thrower the button sets
 /// moving, the torch its flame lights (two actors, lit and unlit), the torch
 /// below it that shoots at the center wall, its glint and fireball, and the
 /// unseen point at the wall's foot. Its pipe room: two pipes that can be
@@ -134,7 +137,7 @@ enum {
   ACTOR_PIPE_STATUE
 };
 
-/// The Mercury tower (F2): three pushable pipes, two puddles for Frost, the
+/// The Mercury tower: three pushable pipes, two puddles for Frost, the
 /// unseen points at the pipes' ends where the fire bursts out, the flame
 /// thrower Blaze lights, the torch the mended pipeline lights (lit and unlit),
 /// and the torch that shoots at the icebergs, with its glint and fireball.
@@ -155,7 +158,7 @@ enum {
   ACTOR_ICEBERG_FIREBALL = 22 ///< the fireball the glint sets rolling
 };
 
-/// The Jupiter tower (F3): its flame throwers, the purple block Move drops into
+/// The Jupiter tower: its flame throwers, the purple block Move drops into
 /// the gap, the white dragon statue Move pushes into the flames, and the torch
 /// above the great carved dragon, with its glint and fireball.
 enum {
@@ -170,7 +173,7 @@ enum {
   ACTOR_DROP_FIREBALL = 16 ///< the fireball that drops where the glint stops
 };
 
-/// The Venus tower (F4): the tightrope's posts, the three stones Carry lifts,
+/// The Venus tower: the tightrope's posts, the three stones Carry lifts,
 /// its flame throwers, the robed stone statue pushed off the ledge, the
 /// statues before the two doorways, which stand aside once moved, the five that
 /// hide flame throwers, and those three hidden flame throwers.
@@ -226,11 +229,8 @@ void Leader_PushObjectAhead(void);
 void Actor_SetBlendMode(struct Actor *actor, u32 value);
 FIXED Trig_Cos(s32 angle);
 
-void MarsLighthouseRoomF_MoveVenusStatueOffLedge(s32 unused, s32 id);
 void Actor_SetupScriptedPart(struct Actor *actor, s32 part);
 void MarsLighthouseRoomF_FillGapsWithStones(void);
-void MarsLighthouseRoomF_RouteFireThroughPipes(void);
-void MarsLighthouseRoomF_ScatterRubble(s32 id);
 void MarsLighthouseRoomF_ShootFireballAtWall(void);
 
 #include "shared/jupiter_lighthouse_aerie.h"
@@ -284,47 +284,6 @@ void Ride_SpawnLandingForward();
 
 void Ride_SpawnLandingBackward();
 void FlameThrowers_Puff(void);
-void MarsLighthouseRoomF_StartBlazeOnTorch(void);
-
-void MarsLighthouseRoomF_JumpGap(void);
-
-void MarsLighthouseRoomF_PushStoneAlongLedge(void);
-
-void MarsLighthouseRoomF_PushVenusStatueOffLedge(void);
-
-void MarsLighthouseRoomF_PushPipe(void);
-
-void MarsLighthouseRoomF_PressButton(void);
-
-void MarsLighthouseRoomF_BlazeTorch(void);
-
-void MarsLighthouseRoomF_CycloneToExit2(void);
-
-void MarsLighthouseRoomF_CycloneToExit3(void);
-
-void MarsLighthouseRoomF_CycloneToExit4(void);
-
-void MarsLighthouseRoomF_CycloneToExit7(void);
-
-void MarsLighthouseRoomF_CycloneToExit9(void);
-
-void MarsLighthouseRoomF_CycloneToExit11(void);
-
-void MarsLighthouseRoomF_CycloneToExit13(void);
-
-void MarsLighthouseRoomF_CycloneToExit14(void);
-
-void MarsLighthouseRoomF_RevealSteppingStones(void);
-
-void MarsLighthouseRoomF_FallIntoHole(void);
-
-void MarsLighthouseRoomF_WatchFlameThrower(void);
-
-void MarsLighthouseRoomF_PushPipeOrJump(void);
-
-s32 Fireball_CarryLeader(void);
-
-void Leader_SlideOnIce(void);
 
 extern u32 gMarsLighthouseRoomF_MercuryFlameThrowerRoute[];
 
@@ -421,17 +380,21 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gMarsLighthouseRoomF_Placements;
 }
 
-/// Blaze is about to be cast at a torch: its jet is the faster, longer one
-/// (BLAZE_LONG_SPRAY), which carries on to what stands beyond. Each cast starts
-/// with the field work's blazeLongSpray clear.
+/// Nothing visible happens yet when Felix casts Blaze at the lit urn torch of
+/// the Mars tower or the Mercury tower; the game only makes this cast's jet
+/// the faster, longer one (BLAZE_LONG_SPRAY), so that it carries past the
+/// torch to the torch or dragon head beyond. Each cast starts with the field
+/// work's `blazeLongSpray` clear.
 void MarsLighthouseRoomF_StartBlazeOnTorch(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
   event->blazeLongSpray = 1;
 }
 
-/// Walking east or west at a gap in the Venus tower: across it, unless one of
-/// the stones is in the way, which the leader pushes instead.
+/// Walking east or west at one of the gaps along the ledge in the Venus
+/// tower's first hall (cells (37, 8), (39, 8), (42, 8) and (44, 8)), Felix
+/// hops across it, unless one of the grey stones stands in his way, which he
+/// pushes instead.
 void MarsLighthouseRoomF_JumpGapOrPushStone(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   u32 facing = actor->facing;
@@ -461,13 +424,15 @@ void MarsLighthouseRoomF_JumpGapOrPushStone(void) {
     Leader_PushObjectAhead();
 }
 
-/// Walking west at a gap: across it.
+/// Walking west from cell (38, 11) in the Venus tower's first hall, Felix
+/// hops across the gap before him.
 void MarsLighthouseRoomF_JumpGap(void) { Field_TryJumpForward(); }
 
 #if TLA_PATCH_1
 
-/// Pushing a stone along the ledge: from patch 1 it moves only while no other
-/// stone stands beyond it.
+/// Walking into a grey stone on cell (38, 11) of the Venus tower's first
+/// hall, Felix pushes it along the ledge; from patch 1 it moves only while no
+/// other stone stands beyond it.
 void MarsLighthouseRoomF_PushStoneAlongLedge(void) {
   s32 position[3];
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
@@ -494,15 +459,17 @@ void MarsLighthouseRoomF_PushStoneAlongLedge(void) {
 
 #else
 
-/// Pushing a stone along the ledge: it moves.
+/// Walking into a grey stone on cell (38, 11) of the Venus tower's first
+/// hall, Felix pushes it along the ledge.
 void MarsLighthouseRoomF_PushStoneAlongLedge(void) { Leader_PushObjectAhead(); }
 
 #endif
 
 extern s16 gMarsLighthouseRoomF_StatueFlameThrowers[];
 
-/// Move brings the statue east to cell x 50, off the ledge's end, and it drops
-/// to the floor below.
+/// Felix Moves the robed statue on the Venus tower's upper ledge: once it
+/// reaches the ledge's east end (cell column 50), it drops off to the floor
+/// below, where it stays.
 void MarsLighthouseRoomF_MoveVenusStatueOffLedge(s32 unused, s32 id) {
   struct Actor *actor = Actor_Get(id);
 
@@ -512,8 +479,9 @@ void MarsLighthouseRoomF_MoveVenusStatueOffLedge(s32 unused, s32 id) {
   }
 }
 
-/// Pushed east to cell x 50, off the ledge's end, the statue drops to the floor
-/// below.
+/// Walking east into the robed statue on the Venus tower's upper ledge (from
+/// cell (48, 19)), Felix pushes it; once it reaches the ledge's east end (cell
+/// column 50), it drops off to the floor below, where it stays.
 void MarsLighthouseRoomF_PushVenusStatueOffLedge(void) {
   struct Actor *actor = Actor_Get(ACTOR_PUSHED_STATUE);
 
@@ -524,14 +492,17 @@ void MarsLighthouseRoomF_PushVenusStatueOffLedge(void) {
   }
 }
 
-/// A push or Move starts on the first stone: it leaves the ground's height.
+/// Nothing visible happens as a push or Move of the first grey stone starts;
+/// the game frees it from the ground's height so that it can slide over the
+/// gaps.
 void MarsLighthouseRoomF_StartMovingStone(s32 unused, s32 id) {
   if (id == ACTOR_FIRST_STONE)
     Actor_Get(ACTOR_FIRST_STONE)->motionFlags = 0;
 }
 
-/// A push or Move ends: the statue may now drop off the ledge, and the first
-/// stone settles (from patch 1, into a gap it fills).
+/// When a push or Move ends, the robed statue drops if it is at the ledge's
+/// end, and the first grey stone settles back onto the ground (from patch 1,
+/// into a gap it fills, which Felix can then walk over).
 void MarsLighthouseRoomF_StopMovingStone(s32 unused, s32 id) {
   if (id == ACTOR_PUSHED_STATUE) {
     MarsLighthouseRoomF_MoveVenusStatueOffLedge(unused, ACTOR_PUSHED_STATUE);
@@ -544,7 +515,8 @@ void MarsLighthouseRoomF_StopMovingStone(s32 unused, s32 id) {
   }
 }
 
-/// Move on one of the trap statues: the flame thrower under it shows.
+/// Felix Moves one of the five trap statues of the Venus tower: as it slides
+/// aside, a dragon head that was hidden behind it shows and breathes fire.
 void MarsLighthouseRoomF_UncoverFlameThrower(s32 unused, s32 id) {
   struct Actor *actor = Actor_Get(id);
   s32 kind;
@@ -554,7 +526,7 @@ void MarsLighthouseRoomF_UncoverFlameThrower(s32 unused, s32 id) {
                       (INTtoFIXED(actor->homeZ)) - toFIXED(8));
 }
 
-/// Moved back to where it stood, the statue covers its flame thrower again.
+/// Moved back to where it stood, a trap statue hides its dragon head again.
 void MarsLighthouseRoomF_CoverFlameThrower(s32 unused, s32 id) {
   struct Actor *actor = Actor_Get(id);
   const s16 *table;
@@ -571,8 +543,8 @@ void MarsLighthouseRoomF_CoverFlameThrower(s32 unused, s32 id) {
 }
 
 #if TLA_PATCH_1 /* From patch 1. */
-/// From patch 1: the gaps at cells 38 and 43 (and 47 for the first stone) are
-/// floor wherever a stone fills them.
+/// From patch 1: the gaps at cells (38, 8) and (43, 8), and (47, 8) for the
+/// first stone, are floor wherever a stone fills them.
 void MarsLighthouseRoomF_FillGapsWithStones(void) {
   struct Actor *actor;
   s32 id;
@@ -604,8 +576,8 @@ void MarsLighthouseRoomF_FillGapsWithStones(void) {
 }
 #endif
 
-/// Where the two pipes stand decides which of the pipe room's flame throwers
-/// burn.
+/// Where the two pipes stand decides which of the pipe room's dragon heads
+/// breathe fire and which pipe ends spout it.
 void MarsLighthouseRoomF_RouteFireThroughPipes(void) {
   if (FIELD_CELL(Actor_Get(ACTOR_MARS_PIPE_A)->z.fixed) == 14) {
     Ride_SetEntry(0, FLAME_THROWER_DRY | 1);
@@ -623,7 +595,11 @@ void MarsLighthouseRoomF_RouteFireThroughPipes(void) {
   }
 }
 
-/// Walking into a pipe: it is pushed, and the fire takes its new way.
+/// Walking into one of the two pipes in the Mars tower's pipe room (the cells
+/// round them, (7, 12) to (10, 16) and (4, 20) to (7, 23)), Felix pushes it
+/// along, and the fire takes its new way: a pipe pushed into line feeds a
+/// dragon head, and one pushed out of line leaves its fire spouting from the
+/// open end.
 void MarsLighthouseRoomF_PushPipe(void) {
   struct PushTarget box;
 
@@ -642,33 +618,34 @@ void MarsLighthouseRoomF_PushPipe(void) {
     }                                                                          \
   }
 
-/// Burst on the Mars tower's west wall breaks it open. It sets
-/// `FLAG_WEST_WALL_BURST`, and the room is drawn with the wall broken whenever
-/// the party enters it again.
+/// Felix casts Burst on the cracked west wall at the start of the Mars tower
+/// (cell (11, 52)): the wall breaks open, and stays broken.
 DEFINE_BURST_WALL(MarsLighthouseRoomF_BurstWestWall, 10, 74,
                   FLAG_WEST_WALL_BURST)
 
-/// Burst on the Mars tower's east wall breaks it open. It sets
-/// `FLAG_EAST_WALL_BURST`, and the room is drawn with the wall broken whenever
-/// the party enters it again.
+/// Felix casts Burst on the cracked east wall at the start of the Mars tower
+/// (cell (19, 52)): the wall breaks open, and stays broken.
 DEFINE_BURST_WALL(MarsLighthouseRoomF_BurstEastWall, 18, 82,
                   FLAG_EAST_WALL_BURST)
 
-/// Burst on the Mars tower's center wall breaks it open. It sets
-/// `FLAG_CENTER_WALL_BURST`, and the room is drawn with the wall broken
-/// whenever the party enters it again.
+/// Felix casts Burst on the centre wall at the start of the Mars tower, once
+/// the urn torch's fireball has cracked it (cell (15, 52)): the wall breaks
+/// open, and stays broken.
 DEFINE_BURST_WALL(MarsLighthouseRoomF_BurstCenterWall, 14, 78,
                   FLAG_CENTER_WALL_BURST)
 
-/// The button in the Mars tower: its flame thrower starts on its way.
+/// Felix steps on the button in the corner of the lava room of the Mars
+/// tower (cell (6, 36)): with a click, the dragon head on the north wall
+/// starts sliding east and west along it, breathing fire down at the lava,
+/// until its flame lights the urn torch.
 void MarsLighthouseRoomF_PressButton(void) {
   Event_PlaySound(SE_BUTTON_PRESS);
   Ride_SetEntry(0, FLAME_FORWARD | 3);
   Event_SetFlag(FLAG_BUTTON_PRESSED);
 }
 
-/// The moving flame thrower's flame reaches the unlit torch, which is lit from
-/// now on.
+/// The sliding dragon head's flame reaches the unlit urn torch in the Mars
+/// tower, which flares up with a whoosh and stays lit from now on.
 void MarsLighthouseRoomF_LightTorch(void) {
   struct Actor *actor = Actor_Get(ACTOR_MARS_TORCH);
 
@@ -678,7 +655,8 @@ void MarsLighthouseRoomF_LightTorch(void) {
   Event_PlaySound(SE_WHOOSH);
 }
 
-/// Blaze from the lit torch reaches the one below, which shoots at the center
+/// Felix's long Blaze from the lit urn torch in the Mars tower reaches the
+/// torch below it, which sends a fireball rolling south toward the centre
 /// wall.
 void MarsLighthouseRoomF_BlazeTorch(void) {
   MarsLighthouseRoomF_ShootFireballAtWall();
@@ -690,7 +668,7 @@ extern u32 gMarsLighthouseRoomF_RubbleScriptB[];
 /// The pieces of wall MarsLighthouseRoomF_ScatterRubble throws.
 #define RUBBLE_PIECES 12
 
-/// Pieces of wall burst from an actor and bounce away.
+/// Twelve pieces of wall burst from an actor and bounce away.
 void MarsLighthouseRoomF_ScatterRubble(s32 id) {
   struct Actor *origin = Actor_Get(id);
   s32 i;
@@ -731,7 +709,8 @@ void MarsLighthouseRoomF_ScatterRubble(s32 id) {
   }
 }
 
-/// The camera follows the fireball down to the center wall and back.
+/// The camera follows the fireball from the Mars tower's lower torch south
+/// to the centre wall and holds there for two seconds.
 void MarsLighthouseRoomF_WatchFireballCrackWall(void) {
   gFieldWork->psynergy = 0;
   Event_ClearFlag(FLAG_MENU_OPEN);
@@ -749,7 +728,8 @@ void MarsLighthouseRoomF_WatchFireballCrackWall(void) {
   Event_End();
 }
 
-/// The fireball cracks the center wall for Burst, unless it is broken.
+/// The fireball cracks the Mars tower's centre wall, ready for Burst, with
+/// pieces of wall flying, unless Burst has broken it already.
 void MarsLighthouseRoomF_CrackCenterWall(s32 burst) {
   if (!Flag_IsSet(FLAG_CENTER_WALL_BURST)) {
     MapGrid_CopyCells(29, 60, 3, 4, 14, 50);
@@ -760,57 +740,84 @@ void MarsLighthouseRoomF_CrackCenterWall(s32 burst) {
   }
 }
 
-/// Cyclone on one of the Jupiter tower's circles carries the party to the
-/// circle the exit of the same number leads to.
+/// Felix casts Cyclone on the west circle of the Jupiter tower's first hall
+/// (cell (3, 57)): a whirlwind lifts the party spinning and sets them down on
+/// the circle of the small room at the foot of the long corridor. Each circle
+/// of the Jupiter tower has its own exit, of the number its cells carry.
 void MarsLighthouseRoomF_CycloneToExit2(void) { Import_EventSetExitRequest(2); }
 
-/// Cyclone carries the party through exit 3.
+/// Felix casts Cyclone on the circle of the small room at the foot of the long
+/// corridor (cell (34, 16)): a whirlwind lifts the party spinning and sets them
+/// down on the west circle of the first hall.
 void MarsLighthouseRoomF_CycloneToExit3(void) { Import_EventSetExitRequest(3); }
 
-/// Cyclone carries the party through exit 4.
+/// Felix casts Cyclone on the east circle of the Jupiter tower's first hall
+/// (cell (21, 57)): a whirlwind lifts the party spinning and sets them down on
+/// the first circle of the narrow room.
 void MarsLighthouseRoomF_CycloneToExit4(void) { Import_EventSetExitRequest(4); }
 
-/// Cyclone carries the party through exit 5.
+/// Felix casts Cyclone on the first circle of the narrow room (cell (41, 40)):
+/// a whirlwind lifts the party spinning and sets them down on the east circle
+/// of the first hall.
 void MarsLighthouseRoomF_CycloneToExit5(void) { Import_EventSetExitRequest(5); }
 
-/// Cyclone carries the party through exit 6.
+/// Felix casts Cyclone on the east circle at the head of the long corridor
+/// (cell (37, 5)): a whirlwind lifts the party spinning and sets them down in
+/// the south-west of the big room of the white dragon statue.
 void MarsLighthouseRoomF_CycloneToExit6(void) { Import_EventSetExitRequest(6); }
 
-/// Cyclone carries the party through exit 7.
+/// Felix casts Cyclone on the west circle at the head of the long corridor
+/// (cell (32, 5)): a whirlwind lifts the party spinning and sets them down in
+/// the far west of the big room.
 void MarsLighthouseRoomF_CycloneToExit7(void) { Import_EventSetExitRequest(7); }
 
-/// Cyclone carries the party through exit 8.
+/// Felix casts Cyclone on the raised circle in the middle of the big room
+/// (cell (18, 24)): a whirlwind lifts the party spinning and
+/// sets them down on the first circle of the room with two circles.
 void MarsLighthouseRoomF_CycloneToExit8(void) { Import_EventSetExitRequest(8); }
 
-/// Cyclone carries the party through exit 9.
+/// Felix casts Cyclone on the first circle of the room with two circles (cell
+/// (31, 60)): a whirlwind lifts the party spinning and sets them down on the
+/// raised circle in the middle of the big room.
 void MarsLighthouseRoomF_CycloneToExit9(void) { Import_EventSetExitRequest(9); }
 
-/// Cyclone carries the party through exit 10.
+/// Felix casts Cyclone on the second circle of the room with two circles (cell
+/// (36, 57)): a whirlwind lifts the party spinning and sets them down on a
+/// ledge in the north-east of the big room.
 void MarsLighthouseRoomF_CycloneToExit10(void) {
   Import_EventSetExitRequest(10);
 }
 
-/// Cyclone carries the party through exit 11.
+/// Felix casts Cyclone on the circle at the east of the big room (cell (24,
+/// 19)): a whirlwind lifts the party spinning and sets them down on the second
+/// circle of the narrow room.
 void MarsLighthouseRoomF_CycloneToExit11(void) {
   Import_EventSetExitRequest(11);
 }
 
-/// Cyclone carries the party through exit 12.
+/// Felix casts Cyclone on the second circle of the narrow room (cell (43, 29)):
+/// a whirlwind lifts the party spinning and sets them down on the circle at the
+/// east of the big room.
 void MarsLighthouseRoomF_CycloneToExit12(void) {
   Import_EventSetExitRequest(12);
 }
 
-/// Cyclone carries the party through exit 13.
+/// Felix casts Cyclone on the circle west of the big room's middle (cell
+/// (13, 14)): a whirlwind lifts the party spinning and
+/// sets them down on the circle under the great carved dragon.
 void MarsLighthouseRoomF_CycloneToExit13(void) {
   Import_EventSetExitRequest(13);
 }
 
-/// Cyclone carries the party through exit 14.
+/// Felix casts Cyclone on the circle under the great carved dragon (cell (54,
+/// 12)): a whirlwind lifts the party spinning and sets them down on the circle
+/// west of the big room's middle.
 void MarsLighthouseRoomF_CycloneToExit14(void) {
   Import_EventSetExitRequest(14);
 }
 
-/// Moved to cell x 13, the block drops into the gap and bridges it.
+/// Felix Moves the purple block in the Jupiter tower: once it reaches cell
+/// column 13 it drops into the gap with a thud, bridging it for good.
 void MarsLighthouseRoomF_DropBlock(s32 unused, s32 id) {
   struct Actor *actor = Actor_Get(id);
 
@@ -835,28 +842,33 @@ void MarsLighthouseRoomF_DropBlock(s32 unused, s32 id) {
   }
 }
 
-/// Moved to cell x 7, the statue blocks the flames in the big room.
+/// Felix Moves the white dragon statue in the Jupiter tower's big room: once
+/// it stands at cell column 7, under the dragon head, it blocks the flames,
+/// and stays there.
 void MarsLighthouseRoomF_MoveJupiterStatueIntoFlames(s32 unused, s32 id) {
   if (FIELD_CELL(Actor_Get(id)->x.fixed) == 7)
     Flag_Set(FLAG_JUPITER_STATUE_BLOCKS_FLAMES);
 }
 
-/// Reveal shows the stepping stones to the right.
+/// While Felix's Reveal lasts in the Jupiter tower, the hidden stepping
+/// stones show, the secret way east.
 void MarsLighthouseRoomF_RevealSteppingStones(void) {
   MapGrid_CopyCells(17, 24, 3, 1, 17, 13);
   MapGrid_CopyCellAttributes(20, 24, 1, 1, 18, 77);
   MapGrid_CopyCells(62, 20, 1, 2, 54, 20);
 }
 
-/// Reveal fades: the stones are hidden again.
+/// As Reveal fades, the Jupiter tower's stepping stones are hidden again.
 void MarsLighthouseRoomF_HideSteppingStones(void) {
   MapGrid_CopyCells(17, 25, 3, 1, 17, 13);
   MapGrid_CopyCellAttributes(20, 25, 1, 1, 18, 77);
   MapGrid_CopyCells(62, 22, 1, 2, 54, 20);
 }
 
-/// The leader sinks into the hole with a puff of dust and drops to the floor
-/// below.
+/// Felix steps into the hole in the floor of the room under the great carved
+/// dragon in the Jupiter tower (cells (52, 19) to (56, 22)): he raises his
+/// arms, sinks out of sight with a puff of dust, and drops back to the
+/// tower's first hall.
 void MarsLighthouseRoomF_FallIntoHole(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 frame;
@@ -882,9 +894,10 @@ void MarsLighthouseRoomF_FallIntoHole(void) {
   FieldEvent_SetExitRequest(JUPITER_TOWER_THROUGH_HOLE);
 }
 
-/// Where the three pipes stand decides which flame throwers burn; with all
-/// three in line none does, and the first time the camera shows the torch the
-/// pipeline lights.
+/// Where the Mercury tower's three pipes stand decides which open pipe end
+/// spouts fire; with all three in line none does, and the first time that
+/// happens the camera pans north to show the pipeline mended and the tower
+/// is loaded afresh.
 void MarsLighthouseRoomF_RouteFireThroughPipeline(void) {
   Ride_SetEntry(2, FLAME_THROWER_DRY | 1);
   Ride_SetEntry(1, FLAME_THROWER_DRY | 1);
@@ -913,14 +926,17 @@ void MarsLighthouseRoomF_RouteFireThroughPipeline(void) {
   }
 }
 
-/// Blaze reaches the flame thrower, which starts burning.
+/// Felix's long Blaze from the lit urn torch in the Mercury tower reaches the
+/// dragon head beyond it, which starts breathing fire, and the camera begins
+/// to move south.
 void MarsLighthouseRoomF_LightFlameThrower(void) {
   Ride_SetEntry(3, FLAME_FORWARD | 3);
   FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(184, CAMERA_KEEP, 560, 1);
 }
 
-/// The camera follows the flame thrower's flame.
+/// The camera follows the Mercury tower's newly lit dragon head's flame south
+/// toward the urn torch by the icebergs.
 void MarsLighthouseRoomF_WatchFlameThrower(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -938,8 +954,10 @@ void MarsLighthouseRoomF_WatchFlameThrower(void) {
   Event_End();
 }
 
-/// Walking into a pipe: it is pushed, and a puddle a flame now reaches thaws;
-/// with no pipe there, across the gap ahead if there is ground beyond.
+/// Walking into one of the three pipes of the Mercury tower's pipe room (the
+/// cells round them, about (34, 7) to (40, 10)), Felix pushes it along; a
+/// frozen puddle the fire now reaches melts back into water. Where no pipe
+/// stands he hops across the gap ahead, if there is ground beyond.
 void MarsLighthouseRoomF_PushPipeOrJump(void) {
   struct PushTarget box;
 
@@ -1006,7 +1024,7 @@ extern struct Trigger gMarsLighthouseRoomF_JupiterTowerTriggers[];
 extern struct Trigger gMarsLighthouseRoomF_MercuryTowerTriggers[];
 void Leader_SlideOnIceFromEdge(void);
 
-/// Frost turns a puddle into a pillar of ice that blocks the way.
+/// Frost turns a puddle into a pillar of ice that blocks the fire's way.
 void MarsLighthouseRoomF_FreezePuddle(s32 id) {
   struct Actor *actor = Actor_Get(id);
   struct MapWork *map = Ram_HeapSlots->mapGrid;
@@ -1049,13 +1067,20 @@ void MarsLighthouseRoomF_MeltPuddle(s32 id) {
     }                                                                          \
   }
 
+/// Felix casts Frost on the upper right puddle of the Mercury tower's pipe
+/// room: it rises into a pillar of ice, unless fire is spouting onto it, which
+/// melts it at once.
 DEFINE_FROST_PUDDLE(MarsLighthouseRoomF_FrostUpperPuddle,
                     FLAG_UPPER_PUDDLE_FROZEN, 2)
 
+/// Felix casts Frost on the centre puddle of the Mercury tower's pipe room:
+/// it rises into a pillar of ice, unless fire is spouting onto it, which melts
+/// it at once.
 DEFINE_FROST_PUDDLE(MarsLighthouseRoomF_FrostCenterPuddle,
                     FLAG_CENTER_PUDDLE_FROZEN, 0)
 
-/// The fireball melts the icebergs in its way.
+/// The fireball from the Mercury tower's lower urn torch melts the icebergs
+/// in its way, opening the path over the black ice.
 void MarsLighthouseRoomF_MeltIcebergs(void) {
   Flag_Set(FLAG_ICEBERGS_MELTED);
   MapGrid_CopyCellAttributes(24, 38, 3, 9, 10, 38);
@@ -1084,8 +1109,7 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gMarsLighthouseRoomF_Triggers;
 }
 
-/// Each frame in the Mercury tower: a hit by the flames stops the leader's
-/// slide.
+/// Each frame in the Mercury tower: a hit by the flames stops Felix's slide.
 void MarsLighthouseRoomF_StopSlideWhileHit(void) {
   if (MarsLighthouseRoomF_IsSliding())
     Leader_SetSlideStopped(1);
@@ -1321,13 +1345,15 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-/// The torch below the lit one shoots its fireball at the center wall.
+/// The Mars tower's lower urn torch sends its fireball south at the centre
+/// wall.
 void MarsLighthouseRoomF_ShootFireballAtWall(void) {
   Actor_Attach(ACTOR_WALL_TORCH, ACTOR_WALL_SPARKLE, ACTOR_WALL_FIREBALL,
                FACING_SOUTH, gMarsLighthouseRoomF_FireballToWall);
 }
 
-/// The flame reaches the torch, which shoots its fireball at the icebergs.
+/// The dragon head's flame reaches the Mercury tower's lower urn torch, which
+/// sends its fireball south at the icebergs.
 void MarsLighthouseRoomF_ShootFireballAtIcebergs(void) {
   Actor_Attach(ACTOR_ICEBERG_TORCH, ACTOR_ICEBERG_SPARKLE,
                ACTOR_ICEBERG_FIREBALL, FACING_SOUTH,
@@ -1335,7 +1361,8 @@ void MarsLighthouseRoomF_ShootFireballAtIcebergs(void) {
   Ride_SetEntry(3, FLAME_SPARK | 3);
 }
 
-/// The flame reaches the torch, whose fireball drops to the floor below.
+/// The flame reaches the Jupiter tower's urn torch above the great carved
+/// dragon, whose fireball drops to the floor below.
 void MarsLighthouseRoomF_DropFireball(void) {
   Actor_Attach(ACTOR_DROP_TORCH, ACTOR_DROP_SPARKLE, ACTOR_DROP_FIREBALL,
                FACING_SOUTH, gMarsLighthouseRoomF_FireballDrop);
@@ -1476,7 +1503,7 @@ UNUSED s32 Ride_GetCounter(void) { return RIDE_WORK->counter; }
 
 #include "shared/leader_knock_back.c"
 
-/// Hit by the flames, the leader is knocked back.
+/// Hit by the flames, Felix is knocked back.
 void MarsLighthouseRoomF_KnockBackIfHit(void) {
   if (RIDE_WORK->active)
     Leader_KnockBack();
@@ -1484,8 +1511,9 @@ void MarsLighthouseRoomF_KnockBackIfHit(void) {
 
 void ScreenTransition_Start(s32 mode, s32 frames);
 
-/// Hit by a rolling fireball (STEP_TRIGGER_FIREBALL_HIT): the leader is hurt,
-/// blinks, and is carried along with it until it stops.
+/// A rolling fireball hits Felix in the Jupiter tower: the party takes
+/// damage, and he sits blinking on the fireball and is carried along with it
+/// until it stops.
 s32 Fireball_CarryLeader(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct FlameHitWork *ride;
@@ -1546,7 +1574,7 @@ s32 Fireball_CarryLeader(void) {
 
 #include "shared/ride_if_active.h"
 
-/// Whether the leader has been hit.
+/// Whether Felix has been hit by the flames.
 s32 MarsLighthouseRoomF_IsSliding(void) { return RIDE_WORK->active; }
 
 extern u32 gCrumbs_Script[];
@@ -2188,8 +2216,6 @@ s8 gPushFootprints[][4] = {
 
 #undef MapLayer
 
-void MarsLighthouseRoomF_JumpGapOrPushStone(void);
-void MarsLighthouseRoomF_FillGapsWithStones(void);
 // The stones fill the gaps from patch 1; before it, their rows run nothing.
 #if !TLA_PATCH_1
 #define MARS_LIGHTHOUSE_ROOM_F_FILL_GAPS_WITH_STONES 0
@@ -2197,14 +2223,6 @@ void MarsLighthouseRoomF_FillGapsWithStones(void);
 #define MARS_LIGHTHOUSE_ROOM_F_FILL_GAPS_WITH_STONES                           \
   ((s32)MarsLighthouseRoomF_FillGapsWithStones)
 #endif
-void MarsLighthouseRoomF_WatchFireballCrackWall(void);
-void MarsLighthouseRoomF_CycloneToExit5(void);
-void MarsLighthouseRoomF_CycloneToExit6(void);
-void MarsLighthouseRoomF_CycloneToExit8(void);
-void MarsLighthouseRoomF_CycloneToExit10(void);
-void MarsLighthouseRoomF_CycloneToExit12(void);
-void MarsLighthouseRoomF_HideSteppingStones(void);
-void MarsLighthouseRoomF_LightFlameThrower(void);
 
 LATE_DATA struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 192, 0, 192, FACING_WEST, 0, -1, -1, -1, -1, 0},

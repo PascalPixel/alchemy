@@ -1133,9 +1133,9 @@
 /// Set as Piers leaves the party to visit his mother's grave
 /// (LemuriaRooms_LeavePiersToMourn); Lemuria reads it too.
 #define FLAG_PIERS_AT_MOTHERS_GRAVE 0x966
-/// Set once Sheba has told why Piers is not with the party
-/// (LemuriaRooms_AskWherePiersIs); Lemuria reads it too.
-#define FLAG_TOLD_OF_PIERS_MOTHER 0x969
+/// Set as Lunpa comes to meet the party at the foot of his stairs
+/// (LemuriaRooms_MeetLunpa); Lemuria reads it too.
+#define FLAG_MET_LUNPA 0x969
 /// Set as the guard takes Felix in to King Hydros and his council; Lemuria's
 /// palace door is then locked while the senate meets.
 #define FLAG_MET_KING_HYDROS 0x96a

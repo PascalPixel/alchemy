@@ -1,9 +1,16 @@
 /// @file
-/// Four small places the ship reaches, sharing one overlay: the Gondowan
-/// Settlement (rooms 1 to 3), whose bush Cyclone cuts to a stair; the Hesperia
-/// Settlement (4 to 6), with its vine, crate and Tinder; Kalt Island (7 and 8),
-/// with its apple, frozen river and Gel; and SW Atteka Islet (9 and 10), whose
-/// pillar and crate go over the falls, and its boulder and Jupiter Djinni.
+/// Four small places the ship can put in at, sharing one overlay, each with its
+/// houses. In Gondowan Settlement, below Magma Rock, Cyclone blows away the
+/// leftmost bush to uncover a ladder down to a cave with Star Dust. Hesperia
+/// Settlement is built into a cliff: Growth turns its sprout into a vine, the
+/// crate on top of the wall is pushed down to make a step up to Tinder, and a
+/// hole beside a palm on the wall top leads down into a room below. On Kalt
+/// Island Catch takes the apple out of the snowy trees, the frozen river slides
+/// Felix along, Lash ties a rope across it, and Gel waits by the house. On SW
+/// Atteka Islet, by the falls at the edge of the world, the pillar pushed into
+/// the river stops the crate sent down the falls, and once the boulder is
+/// lifted a Jupiter Djinni the party lacks from The Broken Seal waits among the
+/// posts in the river.
 #include "sprite_ids.h"
 #include "system/task.h"
 #include "field/actor_script.h"
@@ -55,43 +62,89 @@
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #include "../field/field_effect_spawn.c"
 
-/// Kalt Island's rope, tied by Lash, for this visit.
+/// Kalt Island's rope across the frozen river, tied by Lash, for this visit.
 #define FLAG_KALT_ROPE_TIED FLAG_SCENE_TEMP_03
-/// Kalt Island: set by a step onto a cell of step code 10 and cleared by one
-/// onto code 11; while it is set, the ice's cells (code 20) start no slide
-/// (Leader_SlideOnIce).
+/// Kalt Island: set by a step onto cell (5, 12), the top of the climb on the
+/// frozen river's west bank, and cleared by one onto cell (5, 13) below it;
+/// while it is set the river's ice slides no one (Leader_SlideOnIce).
 #define FLAG_ICE_SLIDES_STOPPED FLAG_SCENE_TEMP_01
-/// SW Atteka Islet: the pillar has sunk into the river at (11, 12), and river
-/// stone K stands in its place.
+/// SW Atteka Islet: the pillar has been pushed into the river at cell (11, 12),
+/// and its top stands in the water like the river's other posts.
 #define FLAG_PILLAR_SUNK FLAG_SCENE_TEMP_04
-/// SW Atteka Islet: the crate has gone down the falls onto the sunk pillar and
-/// rests there.
+/// SW Atteka Islet: the crate has gone down the falls and stuck against the
+/// sunk pillar, making the path to the Dragon Skin's chest.
 #define FLAG_FALLS_CRATE_AT_REST FLAG_SCENE_TEMP_05
 /// SW Atteka Islet: the crate has gone down the falls with no pillar to stop
 /// it, and is lost.
 #define FLAG_FALLS_CRATE_LOST FLAG_SCENE_TEMP_06
-/// SW Atteka Islet: the crate, moved off the grass's south edge at (16, 12),
-/// has dropped 64 pixels down the cliff there.
+/// SW Atteka Islet: the crate, moved onto cell (16, 12) at the grass's south
+/// edge, has dropped down the cliff there.
 #define FLAG_FALLS_CRATE_DROPPED FLAG_SCENE_TEMP_07
 /// SW Atteka Islet: Lift has raised the boulder.
 #define FLAG_BOULDER_LIFTED FLAG_SCENE_TEMP_08
-/// Hesperia Settlement: the party walks along the top of the wall.
+/// Hesperia Settlement: Felix has stepped on cell (13, 11) and walks by the
+/// wall top's cells (Settlements_StepOntoWall).
 #define FLAG_ON_WALL FLAG_SCENE_TEMP_20
-/// Hesperia Settlement: the crate has dropped off the wall.
+/// Hesperia Settlement: the crate has been pushed down off the wall.
 #define FLAG_WALL_CRATE_DROPPED FLAG_SCENE_TEMP_21
-/// Hesperia Settlement: the crate has dropped off the wall at (16, 15), the
-/// wall's whole height, to the ground below.
+/// Hesperia Settlement: the crate has been pushed off the wall at cell
+/// (16, 15), the wall's whole height, to the ground below.
 #define FLAG_WALL_CRATE_ON_GROUND FLAG_SCENE_TEMP_05
-/// Hesperia Settlement: the crate, dropped onto the step at (12, 15), has been
-/// pushed east off it to the ground at (13, 15).
+/// Hesperia Settlement: the crate, pushed down onto the step at cell (12, 15),
+/// has been pushed east off it to the ground at cell (13, 15).
 #define FLAG_WALL_CRATE_OFF_STEP FLAG_SCENE_TEMP_04
-/// Hesperia Settlement: Growth has made the sprout a vine.
+/// Hesperia Settlement: Growth has made the sprout below the west cliff a
+/// vine.
 #define FLAG_VINE_GROWN FLAG_SCENE_TEMP_30
 
-/// The bush on the Gondowan Settlement's stairs is cut.
-#define FLAG_STAIRS_BUSH_CUT 0xa60
+/// The bush over the ladder hole in the west of Gondowan Settlement is blown
+/// away.
+#define FLAG_LADDER_BUSH_CUT 0xa60
 
-/// The Gondowan Settlement, by the rows of
+/// Gondowan Settlement's cells that run an event. The two beside the ladder
+/// hole are the numbers of the exits they lead down by.
+enum GondowanSettlementCell {
+  /// Cell (5, 16), north of the hole.
+  GONDOWAN_LADDER_HOLE_NORTH = 3,
+  /// Cell (4, 17), west of the hole.
+  GONDOWAN_LADDER_HOLE_WEST = 4,
+  /// The leafy bushes west of the village, such as cell (7, 15).
+  GONDOWAN_BUSH = 10,
+  /// The leftmost bush, at cell (5, 17), over the ladder hole.
+  GONDOWAN_LADDER_BUSH = 11
+};
+
+/// Hesperia Settlement's cells that run an event. The door and the three
+/// sides of the ladder hole are the numbers of the exits they lead by.
+enum HesperiaSettlementCell {
+  /// Cell (23, 16), before the door in the cliff east of Tinder's ledge.
+  HESPERIA_HOUSE_DOOR = 2,
+  /// Cell (23, 12), north of the hole beside the palm on the wall top.
+  HESPERIA_LADDER_HOLE_NORTH = 3,
+  /// Cell (22, 13), west of the hole.
+  HESPERIA_LADDER_HOLE_WEST = 4,
+  /// Cell (24, 13), east of the hole.
+  HESPERIA_LADDER_HOLE_EAST = 5,
+  /// Cell (13, 11), on the stairs in the cliff west of the wall, where Felix
+  /// comes onto the wall top's cells.
+  HESPERIA_ONTO_WALL = 34,
+  /// Cell (10, 9), further along the stairs, where he leaves them.
+  HESPERIA_OFF_WALL = 35
+};
+
+/// Kalt Island's cells that run an event.
+enum KaltIslandCell {
+  /// Cell (14, 18), before the house's door (its exit's number).
+  KALT_HOUSE_DOOR = 2,
+  /// Cell (5, 12), the top of the climb on the frozen river's west bank.
+  KALT_ICE_SLIDES_OFF = 10,
+  /// Cell (5, 13), below it.
+  KALT_ICE_SLIDES_ON = 11,
+  /// The frozen river's ice.
+  KALT_ICE = 20
+};
+
+/// The people of Gondowan Settlement, by the rows of
 /// gSettlements_GondowanSettlementPlacements.
 enum GondowanSettlementActorId {
   ACTOR_MAN_ON_THE_RIDDLE_OF_THE_ROCK = ACTOR_FIRST_PLACED,
@@ -108,7 +161,7 @@ enum GondowanSettlementHousesActorId {
 /// gSettlements_HesperiaSettlementPlacements.
 enum HesperiaSettlementActorId {
   ACTOR_HESPERIA_MAN = ACTOR_FIRST_PLACED,
-  ACTOR_SPROUT, ///< grown into a vine (Settlements_GrowVine)
+  ACTOR_SPROUT, ///< below the west cliff, grown into a vine by Growth
   ACTOR_WALL_CRATE,
   ACTOR_TINDER
 };
@@ -123,11 +176,11 @@ enum HesperiaSettlementHousesActorId {
 
 /// Kalt Island, by the rows of gSettlements_KaltIslandPlacements.
 enum KaltIslandActorId {
-  /// The two posts of the rope Lash ties.
+  /// The two posts on either bank of the frozen river, tied by Lash.
   ACTOR_ROPE_POST_A = ACTOR_FIRST_PLACED,
   ACTOR_ROPE_POST_B,
   ACTOR_GEL,
-  ACTOR_APPLE ///< Settlements_CatchApple
+  ACTOR_APPLE ///< in the snowy trees west of the river, taken by Catch
 };
 
 /// Kalt Island's houses.
@@ -141,9 +194,10 @@ enum KaltIslandHousesActorId {
 /// SW Atteka Islet, by the rows of gSettlements_AttekaIsletPlacements.
 enum AttekaIsletActorId {
   ACTOR_ISLANDER = ACTOR_FIRST_PLACED,
-  ACTOR_PILLAR,      ///< moved over the falls (Settlements_MovePillar)
-  ACTOR_FALLS_CRATE, ///< moved over the falls (Settlements_MoveCrate)
-  /// The eleven stones of the river, alike, bobbing in the current.
+  ACTOR_PILLAR,      ///< on the grass by the river, pushed into it
+  ACTOR_FALLS_CRATE, ///< by the tent, pushed down the falls
+  /// The stone posts standing in the river, alike, bobbing in the current; the
+  /// last is kept out of sight until the pillar sinks in its place.
   ACTOR_RIVER_STONE_A,
   ACTOR_RIVER_STONE_B,
   ACTOR_RIVER_STONE_C,
@@ -155,9 +209,9 @@ enum AttekaIsletActorId {
   ACTOR_RIVER_STONE_I,
   ACTOR_RIVER_STONE_J,
   ACTOR_RIVER_STONE_K,
-  ACTOR_BOULDER, ///< raised by Lift
-  /// The Djinni the game's text calls Wind19 (FLAG_DJINNI(DJINNI_WIND19)),
-  /// met in Settlements_MeetLostJupiterDjinni.
+  ACTOR_BOULDER, ///< on the grass above the river's posts, raised by Lift
+  /// The Jupiter Djinni among the posts in the river, standing for whichever
+  /// of The Broken Seal's Jupiter Djinn the party lacks.
   ACTOR_JUPITER_DJINNI
 };
 
@@ -213,9 +267,9 @@ void Leader_StopIfPending(void);
 void Settlements_MeetTinder(void);
 
 void Settlements_CatchApple(void);
-void Settlements_CutLeftBush(void);
+void Settlements_CutBushes(void);
 
-void Settlements_CutStairsBush(void);
+void Settlements_CutLadderBush(void);
 
 void Settlements_StepOntoLadderFromEast(void);
 
@@ -229,7 +283,7 @@ void Settlements_LashRope(void);
 
 void Settlements_UnblockFallsObjects(void);
 
-void Settlements_BlockFallsObject(void);
+void Settlements_StartPushingFallsObject(void);
 
 void Settlements_MoveCrate(void);
 
@@ -246,9 +300,8 @@ extern u32 gFieldEffect_MediumScript[];
 extern s32 gSettlements_BobScript[];
 extern s32 gSettlements_CrateBobScript[];
 
-/// The apple's sprite as Kalt Island sets it up: the high bytes of its OAM
-/// attributes 0 and 2, its VRAM block and its state, laid out as struct
-/// FieldSprite has them.
+/// The apple's sprite as Kalt Island sets it up: the parts of struct
+/// FieldSprite it changes.
 struct OrbitSprite {
   u8 beforeShape[5];
   u8 affine : 2;
@@ -320,26 +373,31 @@ void Settlements_SpawnDustRing(s32 actorId);
 
 void Settlements_MovePillar(void);
 
-/// Gel, the Mercury Djinni on Kalt Island, joins the party.
+/// Felix talks to Gel, the Mercury Djinni in the snow east of Kalt Island's
+/// house, and Gel joins the party: "Felix found the Mercury Djinni Gel!"
 void Settlements_MeetGel(void) {
   Djinn_JoinParty(ACTOR_GEL, DJINNI_GEL / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_GEL));
 }
 
-/// Tinder, the Mars Djinni in Hesperia Settlement, joins the party.
+/// Felix talks to Tinder, the Mars Djinni on the ledge below Hesperia
+/// Settlement's wall, and Tinder joins the party: "Felix found the Mars Djinni
+/// Tinder!"
 void Settlements_MeetTinder(void) {
   Djinn_JoinParty(ACTOR_TINDER, DJINNI_TINDER / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_TINDER));
 }
 
-/// The Jupiter Djinni the game's text calls Wind19, on SW Atteka Islet, joins
-/// the party.
+/// Felix talks to the Jupiter Djinni among the posts in SW Atteka Islet's
+/// river, west of the boulder Lift moves, and it joins the party. It is
+/// whichever of The Broken Seal's seven Jupiter Djinn the party did not bring;
+/// with none missing, it is not there at all.
 void Settlements_MeetLostJupiterDjinni(void) {
   Djinn_JoinParty(ACTOR_JUPITER_DJINNI, DJINNI_WIND19 / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_WIND19));
 }
 
-/// A script call: draws the actor without its sprite flags.
+/// A script call: clears the actor's sprite flags.
 s32 Settlements_ClearSpriteFlags(struct Actor *actor) {
   Actor_SetSpriteFlags(actor, 0);
   return 0;
@@ -395,8 +453,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gSettlements_Placements;
 }
 
-/// The apple floating on Kalt Island is taken: it is put away and the party
-/// receives an Apple.
+/// Felix casts Catch on the apple floating in the snowy trees west of Kalt
+/// Island's frozen river; the hand brings it to him, he holds it up, and
+/// "Felix got an Apple."
 void Settlements_CatchApple(void) {
   s32 mode;
 
@@ -410,8 +469,10 @@ void Settlements_CatchApple(void) {
   Event_End();
 }
 
-/// Asks whether the party has come about the riddle of the rock, and answers
-/// either way.
+/// Talking to the man wandering in front of the houses of Gondowan Settlement:
+/// "Don't tell me, you're here to solve the riddle of the rock!" Yes, and he
+/// warns that even the warriors who make it back barely survive; no, and he
+/// says to steer clear of the mountain.
 void Settlements_WarnOfRiddleOfRock(s32 actor) {
   s32 msg = (s32)MsgSettlementsDontTellMeYoureHere;
 
@@ -428,14 +489,17 @@ void Settlements_WarnOfRiddleOfRock(s32 actor) {
   Event_ShowMessage(actor, 0);
 }
 
-/// Cyclone clears the bush on the left of Gondowan Settlement.
-void Settlements_CutLeftBush(void) {
+/// Felix casts Cyclone on the leafy bushes west of Gondowan Settlement's
+/// houses (cell (7, 15) and the rest), and the ones the whirlwind reaches are
+/// blown away and stay gone.
+void Settlements_CutBushes(void) {
   FieldTileCopies_CopyTouchedCells(5, 70, 9, 7, 5, 43, 1);
 }
 
-/// Cyclone clears the bush on the stairs of Gondowan Settlement: the leader
-/// standing on it hops off, and the stairs open.
-void Settlements_CutStairsBush(void) {
+/// Felix casts Cyclone on the leftmost bush west of Gondowan Settlement (cell
+/// (5, 17)), and blowing it away uncovers a hole with a ladder down to a cave.
+/// Had he been standing on the bush, he hops off it to the south first.
+void Settlements_CutLadderBush(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = FIELD_CELL(actor->x.fixed);
   s32 z = FIELD_CELL(actor->z.fixed);
@@ -447,11 +511,11 @@ void Settlements_CutStairsBush(void) {
   TileCopies_CopyTouchedCells(5, 70, 9, 7, 5, 43, 1);
   MapGrid_CopyCellsTo(4, 25, 5, 17, 1, 1);
   MapGrid_CopyCellAttributes(4, 25, 1, 1, 5, 17);
-  Event_SetFlag(FLAG_STAIRS_BUSH_CUT);
+  Event_SetFlag(FLAG_LADDER_BUSH_CUT);
 }
 
-/// The leader climbs down the ladder: steps onto its top, turns and climbs down
-/// out of the scene.
+/// Felix steps onto the ladder's top, faces north and climbs down it, and the
+/// scene changes to the place below.
 void Settlements_ClimbDownLadder(void) {
   s32 next = gFieldWork->stepTrigger;
 
@@ -472,7 +536,10 @@ void Settlements_ClimbDownLadder(void) {
   Event_End();
 }
 
-/// The leader steps onto the ladder from the west and climbs down.
+/// Felix walks east onto the ladder hole on Hesperia Settlement's wall top,
+/// beside the palm (cell (22, 13)), or onto the hole Cyclone uncovered in
+/// Gondowan Settlement (cell (4, 17)), and climbs down: in Hesperia into a
+/// room with beds below, in Gondowan into the cave with the Star Dust.
 void Settlements_StepOntoLadderFromWest(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -481,7 +548,9 @@ void Settlements_StepOntoLadderFromWest(void) {
   Settlements_ClimbDownLadder();
 }
 
-/// The leader steps onto the ladder from the east and climbs down.
+/// Felix walks west onto the ladder hole beside the palm on Hesperia
+/// Settlement's wall top (cell (24, 13)) and climbs down into the room with
+/// beds below.
 void Settlements_StepOntoLadderFromEast(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -490,7 +559,9 @@ void Settlements_StepOntoLadderFromEast(void) {
   Settlements_ClimbDownLadder();
 }
 
-/// The leader turns north on the ladder and climbs down.
+/// Felix walks south onto the ladder hole beside the palm on Hesperia
+/// Settlement's wall top (cell (23, 12)), or onto the hole Cyclone uncovered
+/// in Gondowan Settlement (cell (5, 16)), turns to face north and climbs down.
 void Settlements_TurnAndClimbDownLadder(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -498,7 +569,9 @@ void Settlements_TurnAndClimbDownLadder(void) {
   Settlements_ClimbDownLadder();
 }
 
-/// Growth makes Hesperia Settlement's sprout a vine the party can climb.
+/// Felix casts Growth on the sprout below Hesperia Settlement's west cliff,
+/// and it grows into a vine he can climb (its cell, (3, 15), becomes
+/// climbable).
 void Settlements_GrowVine(void) {
   MapGrid_CopyCellAttributes(0, 3, 1, 1, 3, 15);
   Event_SetFlag(FLAG_VINE_GROWN);
@@ -536,8 +609,8 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gSettlements_Triggers;
 }
 
-/// Drifts a chimney's puff sideways ever faster, raises and widens it, and
-/// releases it when its frames run out.
+/// A puff of chimney smoke each frame: it drifts sideways ever faster, rises
+/// and grows, and is gone when its frames run out.
 void Settlements_DriftSmoke(struct Actor *actor) {
   s32 step;
 
@@ -553,7 +626,7 @@ void Settlements_DriftSmoke(struct Actor *actor) {
     Actor_Release(actor);
 }
 
-/// Adds one puff of chimney smoke, as Prox's roofs do.
+/// Adds one white puff of chimney smoke, as Prox's roofs do.
 void Settlements_SpawnSmoke(s32 x, s32 y, s32 z) {
   struct Actor *actor = FieldActor_Create(SPRITE_DUST_CLOUD, x, y, z);
 
@@ -574,15 +647,15 @@ void Settlements_SpawnSmoke(s32 x, s32 y, s32 z) {
   }
 }
 
-/// A task on Kalt Island: a puff from the chimney every 64 frames.
+/// A task on Kalt Island: a puff from the house's chimney every 64 frames.
 void Settlements_PuffChimneySmoke(void) {
   if ((gFrameCount & 63) == 0)
     Settlements_SpawnSmoke(toFIXED(248), toFIXED(48), toFIXED(256));
 }
 
-/// The apple's callback, each frame: it sways up to two pixels either side of
-/// its spot and dips up to two pixels below it, at a random pace, as The Broken
-/// Seal's Nut floats.
+/// The apple each frame: it sways up to two pixels either side of its spot and
+/// dips up to two pixels below it, at a random pace, as The Broken Seal's Nut
+/// floats.
 s32 Settlements_FloatApple(struct OrbitObject *apple) {
   struct FieldSprite *sprite = (struct FieldSprite *)apple->sprite;
   FIXED dip = Math_Sin(apple->orbitAngle) * 2;
@@ -601,8 +674,8 @@ void Rope_Place(s32 index, s32 flag, s32 post, s32 otherPost);
 
 #include "shared/field_rope_place.c"
 
-/// Sets up Kalt Island: the blend, the chimney smoke, the rope between its
-/// posts, and the apple floating, its icon drawn, until it is taken.
+/// Sets up Kalt Island: the see-through sprites, the chimney smoke, the rope
+/// if it is tied, and, until it is taken, the apple floating in the trees.
 void Settlements_SetUpKaltIsland(void) {
   struct OrbitObject *actor;
   struct OrbitSprite *sprite;
@@ -715,7 +788,7 @@ s32 Scene_PrepareMap(void) {
 #endif
   }
   if (gMainRoutineWork.next == SCENE_GONDOWAN_SETTLEMENT) {
-    if (Event_GetFlag(FLAG_STAIRS_BUSH_CUT)) {
+    if (Event_GetFlag(FLAG_LADDER_BUSH_CUT)) {
       MapGrid_CopyCellsTo(5, 46, 5, 47, 1, 1);
       MapGrid_CopyCellsTo(4, 25, 5, 17, 1, 1);
       MapGrid_CopyCellAttributes(4, 25, 1, 1, 5, 17);
@@ -724,20 +797,31 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-/// Stops Kalt Island's ice from sliding the leader.
+/// Nothing visible happens when Felix climbs onto cell (5, 12), the top of
+/// the climbable cells on Kalt Island's frozen river's west bank; from then
+/// on the ice no longer slides him, until he comes back down past cell
+/// (5, 13).
+// XXX: where the climb leads, whether to the rope's west post at cell (7, 12)
+// so that Felix can cross over the ice on the rope; a recording of the ice
+// route the walkthrough gives (LDRULURULURULDL), then the climb, would settle
+// it.
 void Settlements_StopIceSlides(void) { GameFlag_Set(FLAG_ICE_SLIDES_STOPPED); }
 
-/// Lets Kalt Island's ice slide the leader again.
+/// Nothing visible happens when Felix climbs down onto cell (5, 13) on Kalt
+/// Island's frozen river's west bank; the ice slides him again.
 void Settlements_ResumeIceSlides(void) {
   GameFlag_Clear(FLAG_ICE_SLIDES_STOPPED);
 }
 
-/// A step onto Kalt Island's ice slides the leader across it.
+/// Felix steps onto Kalt Island's frozen river and slides along the ice in the
+/// way he was walking until he stops against a bank.
 void Settlements_StepOnIceSlide(void) { Leader_SlideOnIce(); }
 
-/// Goes into a settlement's cave: the placed actors stop, the door opens and
-/// the leader walks in.
-void Settlements_EnterCave(void) {
+/// Felix walks north into a house's door: the door in the cliff east of
+/// Tinder's ledge in Hesperia Settlement (cell (23, 16)), or the door of Kalt
+/// Island's house (cell (14, 18)). The people outside stop, the door opens,
+/// and he walks in as the screen fades.
+void Settlements_EnterHouse(void) {
   u32 i;
 
   Event_Start();
@@ -763,7 +847,8 @@ void Settlements_EnterCave(void) {
   Event_End();
 }
 
-/// Lash ties the rope between Kalt Island's two posts.
+/// Felix casts Lash on the post at the west end of Kalt Island's rope, and
+/// the rope is tied across the frozen river to the post on its east bank.
 void Settlements_LashRope(void) {
   Rope_Lash(1, ACTOR_ROPE_POST_A, ACTOR_ROPE_POST_B);
   Event_SetFlag(FLAG_KALT_ROPE_TIED);
@@ -771,8 +856,8 @@ void Settlements_LashRope(void) {
 
 extern s32 gSettlements_WaterColorFrame;
 
-/// A task on SW Atteka Islet: rotates the four colours of the falls' water in
-/// BG palette 3 every 8 frames.
+/// A task on SW Atteka Islet: the falls' water runs, its four colours moving
+/// along by one every 8 frames.
 void Settlements_CycleWaterColors(void) {
   struct FieldWork *work = (struct FieldWork *)Ram_HeapSlots->fieldWork;
   s32 *frame;
@@ -816,8 +901,8 @@ void Settlements_CycleWaterColors(void) {
   gSettlements_WaterColorFrame++;
 }
 
-/// Starts SW Atteka Islet's falls: the water's colours, its sound and the
-/// hblank split of its scroll.
+/// Starts SW Atteka Islet's falls: the running colours of the water, the sound
+/// of water, and the split of the screen that Scroll_HBlank draws.
 void Settlements_StartWaterfall(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_NOISE);
@@ -826,8 +911,9 @@ void Settlements_StartWaterfall(void) {
   Scroll_StartHBlank();
 }
 
-/// The hblank split: above the line Scroll_StartHBlank sets, BG1 scrolls by one
-/// value and blending is off; below it, by the other, with BG1 blended.
+/// Each line of the screen as it is drawn: above the line Layer_TrackScroll
+/// sets, background layer BG1 keeps to the map and is drawn solid; below it,
+/// the layer drifts sideways with time and is drawn see-through.
 void Scroll_HBlank(void) {
   if (REG_VCOUNT < gSettlements_WaterfallLine) {
     Io_Write16(gSettlements_WaterfallScrollAbove, &REG_BG1HOFS);
@@ -839,7 +925,8 @@ void Scroll_HBlank(void) {
   }
 }
 
-/// Follows the third map layer's scroll.
+/// Each frame: where Scroll_HBlank's line falls on screen, from the third map
+/// layer's scroll, and how far BG1 is scrolled above and below it.
 void Layer_TrackScroll(void) {
   struct MapLayer *layer =
       &((struct MapWork *)Ram_HeapSlots->mapGrid)->layers[2];
@@ -853,14 +940,16 @@ void Layer_TrackScroll(void) {
 
 #include "shared/scroll_start_hblank.h"
 
-/// Lifts the block a pushed pillar or crate leaves on SW Atteka Islet.
+/// Nothing visible happens as Felix casts Move on SW Atteka Islet's pillar or
+/// crate; the game frees the cell it stands on so it can move.
 void Settlements_UnblockFallsObjects(void) {
   Actor_LiftTargetBlock(gSettlements_FallsObjects);
 }
 
-/// Pushing a pillar or crate on SW Atteka Islet: the leader is drawn above it
-/// and its block is lifted.
-void Settlements_BlockFallsObject(void) {
+/// Nothing visible happens as Felix starts to push SW Atteka Islet's pillar
+/// or crate; the game frees the cell it stands on and keeps Felix drawn in
+/// front of it.
+void Settlements_StartPushingFallsObject(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_UNDERFOOT;
   Actor_LiftTargetBlock(gSettlements_FallsObjects);
@@ -868,8 +957,9 @@ void Settlements_BlockFallsObject(void) {
 
 void Settlements_SplashCrate(s32 id);
 
-/// A pillar pushed into the river at (11, 12) sinks, and river stone K takes
-/// its place in the stream.
+/// The pillar pushed off the grass into SW Atteka Islet's river (cell
+/// (11, 12)) sinks with a splash until only its top shows, a post like the
+/// others in the water, which the crate can later stop against.
 void Settlements_SinkPillar(void) {
   struct Actor *actor = Actor_GetById(ACTOR_PILLAR);
   s32 column = FIELD_CELL(actor->x.fixed);
@@ -892,7 +982,7 @@ void Settlements_SinkPillar(void) {
   }
 }
 
-/// Sinks object 2 pixels a frame for the given frames, counting in i.
+/// Sinks actor 2 pixels a frame for the given frames, counting in i.
 #define SINK(frames)                                                           \
   i = (frames);                                                                \
   do {                                                                         \
@@ -901,9 +991,12 @@ void Settlements_SinkPillar(void) {
     i--;                                                                       \
   } while (i > 0)
 
-/// A crate pushed into the falls at (11, 9) sinks, slides down the falls and is
-/// lost, or once the pillar has sunk comes to rest below; off the edge at
-/// (16, 12) it drops down the cliff.
+/// The crate pushed into the river above SW Atteka Islet's falls (cell
+/// (11, 9)) sinks in with a splash, drifts to the edge and goes down the falls
+/// with the camera watching. With the pillar sunk below, it sticks against it
+/// and makes the path to the Dragon Skin's chest; without, it is swept away
+/// and lost for this visit. Pushed off the grass's south edge at cell (16, 12)
+/// instead, it drops down the cliff.
 void Settlements_SlideCrateDownFalls(void) {
   struct Actor *actor = Actor_GetById(ACTOR_FALLS_CRATE);
   s32 column = FIELD_CELL(actor->x.fixed);
@@ -960,22 +1053,23 @@ void Settlements_SlideCrateDownFalls(void) {
   }
 }
 
-/// A pillar on SW Atteka Islet has been pushed: placed, and sunk if in the
-/// river.
+/// Felix moves SW Atteka Islet's pillar with Move; moved into the river, it
+/// sinks.
 void Settlements_MovePillar(void) {
   Actor_PlaceMovedBlock();
   Settlements_SinkPillar();
 }
 
-/// A crate on SW Atteka Islet has been pushed: placed, and down the falls if
-/// there.
+/// Felix moves SW Atteka Islet's crate with Move; moved into the river above
+/// the falls, it goes down them.
 void Settlements_MoveCrate(void) {
   Actor_PlaceMovedBlock();
   Settlements_SlideCrateDownFalls();
 }
 
-/// Something has been pushed on SW Atteka Islet: placed, then sunk or sent down
-/// the falls by where it stands.
+/// Felix pushes SW Atteka Islet's pillar or crate one cell: the pillar pushed
+/// into the river sinks, and the crate pushed into the river above the falls
+/// goes down them.
 void Settlements_PushIntoFalls(void) {
   Actor_PlaceMovedBlock();
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags -=
@@ -984,21 +1078,24 @@ void Settlements_PushIntoFalls(void) {
   Settlements_SlideCrateDownFalls();
 }
 
-/// Keeps the collision of the wall's two 10 by 10 stretches before the crate
-/// moves.
+/// Keeps the cells of Hesperia Settlement's wall before its crate moves.
 void Settlements_SaveWallCells(void) {
   MapGrid_CopyCellAttributes(11, 73, 10, 10, 64, 0);
   MapGrid_CopyCellAttributes(42, 73, 10, 10, 64, 10);
 }
 
-/// Gives the wall's two stretches their kept collision back.
+/// Gives Hesperia Settlement's wall its kept cells back.
 void Settlements_RestoreWallCells(void) {
   MapGrid_CopyCellAttributes(64, 0, 10, 10, 11, 73);
   MapGrid_CopyCellAttributes(64, 10, 10, 10, 42, 73);
 }
 
-/// Onto Hesperia Settlement's wall: its collision is switched for walking along
-/// the top until the party steps off.
+/// Nothing visible happens when Felix steps on cell (13, 11), on the stairs in
+/// the cliff west of Hesperia Settlement's wall; the game swaps in the wall
+/// top's cells until he steps on cell (10, 9). Until the crate is pushed off
+/// the wall it is done again when he comes back after a battle there.
+// XXX: what the swapped cells let Felix do on the wall top; a recording of
+// him climbing the stairs and walking along the wall would settle it.
 void Settlements_StepOntoWall(void) {
   if (!Event_GetFlag(FLAG_WALL_CRATE_DROPPED) && !Event_GetFlag(FLAG_ON_WALL)) {
     MapGrid_CopyCellAttributes(11, 73, 10, 10, 64, 50);
@@ -1008,7 +1105,9 @@ void Settlements_StepOntoWall(void) {
   }
 }
 
-/// Off Hesperia Settlement's wall: its stretches take their own collision back.
+/// Nothing visible happens when Felix steps on cell (10, 9), at the other end
+/// of the stairs west of Hesperia Settlement's wall; the wall's own cells come
+/// back.
 void Settlements_StepOffWall(void) {
   if (Event_GetFlag(FLAG_ON_WALL)) {
     MapGrid_CopyCellAttributes(64, 50, 10, 10, 11, 73);
@@ -1017,7 +1116,9 @@ void Settlements_StepOffWall(void) {
   }
 }
 
-/// Pushing Hesperia Settlement's crate: its cells open by where it stands.
+/// Nothing visible happens as Felix starts to move or push the crate on
+/// Hesperia Settlement's wall; the game frees the cells where it may go, by
+/// where it stands.
 void Settlements_UnblockCrate(void) {
   struct Actor *actor = Actor_Get(ACTOR_WALL_CRATE);
   s32 x = FIELD_CELL(actor->x.fixed);
@@ -1041,10 +1142,13 @@ void Settlements_UnblockCrate(void) {
 
 extern s32 gSettlements_CrateDropScript[];
 
-/// Hesperia Settlement's crate pushed off the wall's south edge drops to the
-/// ground below it in a ring of dust: 64 pixels onto the steps at (12, 15) and
-/// (19, 15), where Tinder, not yet met, is startled away; 96 to the ground at
-/// (16, 15); and from the step at (12, 15) east to the ground at (13, 15).
+/// Hesperia Settlement's crate pushed off the south edge of the wall drops
+/// with the camera following it and lands in a ring of dust: through the
+/// leftmost gap onto the step at cell (12, 15), from there east to the ground
+/// at cell (13, 15) (the way the walkthrough takes, leaving a step up the wall
+/// to Tinder), at cell (16, 15) the wall's whole height to the ground, or onto
+/// Tinder's ledge at cell (19, 15), where Tinder, not yet met, is gone for
+/// this visit.
 void Settlements_DropCrate(void) {
   struct Actor *actor;
   s32 column;
@@ -1099,8 +1203,8 @@ void Settlements_DropCrate(void) {
   Event_End();
 }
 
-/// Hesperia Settlement's crate has been pushed: placed, the wall's collision
-/// restored, and dropped if it went over the edge.
+/// Felix has moved or pushed the crate on Hesperia Settlement's wall; pushed
+/// over the edge, it drops.
 void Settlements_BlockCrate(void) {
   Actor_PlaceMovedBlock();
   Settlements_RestoreWallCells();
@@ -1109,7 +1213,7 @@ void Settlements_BlockCrate(void) {
 
 extern s32 gSettlements_SmokeScript[];
 
-/// Water sprays up where an actor goes into the water.
+/// Water splashes up where the pillar or crate goes into the river.
 void Settlements_SplashCrate(s32 id) {
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
    * touches. */
@@ -1139,7 +1243,7 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-/// Puffs a ring of dust out from an actor as it lands.
+/// Puffs a ring of dust out from the crate as it lands.
 void Settlements_SpawnDustRing(s32 actorId) {
   struct Actor *actor;
   struct Vector3 velocity;
@@ -1165,7 +1269,9 @@ void Settlements_SpawnDustRing(s32 actorId) {
   }
 }
 
-/// Lift raises SW Atteka Islet's boulder.
+/// Felix casts Lift on the round boulder on SW Atteka Islet's grass above the
+/// river, and the hands raise it up out of the way, opening the way to the
+/// posts in the river and the Jupiter Djinni.
 void Settlements_LiftBoulder(void) { GameFlag_Set(FLAG_BOULDER_LIFTED); }
 
 extern s16 gSlideOnIce_SteerAngles[];
@@ -1190,7 +1296,7 @@ s32 Field_CheckSpheresOverlap(FIXED *a, s32 aRadius, FIXED *b, s32 bRadius);
 
 #include "shared/slide_on_ice_from_edge.c"
 
-/// Stops or restarts the leader's slide on the ice (Leader_SlideOnIce).
+/// Stops or restarts Felix's slide on the ice (Leader_SlideOnIce).
 void Settlements_SetSlideStopped(s32 value) { gSlideOnIce_Stopped = value; }
 
 #include "shared/leader_slide_on_ice_ahead.h"
@@ -1199,7 +1305,7 @@ void Settlements_MeetGel(void);
 void Settlements_MeetLostJupiterDjinni(void);
 void Settlements_StepOntoLadderFromWest(void);
 void Settlements_GrowVine(void);
-void Settlements_EnterCave(void);
+void Settlements_EnterHouse(void);
 void Settlements_PushIntoFalls(void);
 
 extern u32 gFieldEffect_LongScript[];
@@ -1383,10 +1489,10 @@ struct Trigger gSettlements_Triggers[] = {
 struct Trigger gSettlements_GondowanSettlementTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 3, CONDITION_ALWAYS,
-     EVENT(Settlements_TurnAndClimbDownLadder)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 4, CONDITION_ALWAYS,
-     EVENT(Settlements_StepOntoLadderFromWest)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), GONDOWAN_LADDER_HOLE_NORTH,
+     CONDITION_ALWAYS, EVENT(Settlements_TurnAndClimbDownLadder)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), GONDOWAN_LADDER_HOLE_WEST,
+     CONDITION_ALWAYS, EVENT(Settlements_StepOntoLadderFromWest)},
     {TRIGGER_TALK, ACTOR_MAN_ON_THE_RIDDLE_OF_THE_ROCK, CONDITION_ALWAYS,
      EVENT(Settlements_WarnOfRiddleOfRock)},
     {TRIGGER_TALK, ACTOR_GONDOWAN_BOY, CONDITION_ALWAYS,
@@ -1395,10 +1501,10 @@ struct Trigger gSettlements_GondowanSettlementTriggers[] = {
      CONDITION_ALWAYS, MSGNO(MsgSettlementsMountainIsCalledMagmaRock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GONDOWAN_BOY, CONDITION_ALWAYS,
      MSGNO(MsgSettlementsExplosionsWithinMagmaRock)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 10,
-     CONDITION_ALWAYS, EVENT(Settlements_CutLeftBush)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 11,
-     CONDITION_ALWAYS, EVENT(Settlements_CutStairsBush)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     GONDOWAN_BUSH, CONDITION_ALWAYS, EVENT(Settlements_CutBushes)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     GONDOWAN_LADDER_BUSH, CONDITION_ALWAYS, EVENT(Settlements_CutLadderBush)},
     {TRIGGER_TABLE_END},
 };
 
@@ -1413,17 +1519,18 @@ struct Trigger gSettlements_GondowanSettlementHousesTriggers[] = {
 
 struct Trigger gSettlements_HesperiaSettlementTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
-     EVENT(Settlements_EnterCave)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 3, CONDITION_ALWAYS,
-     EVENT(Settlements_TurnAndClimbDownLadder)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 4, CONDITION_ALWAYS,
-     EVENT(Settlements_StepOntoLadderFromWest)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 5, CONDITION_ALWAYS,
-     EVENT(Settlements_StepOntoLadderFromEast)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), HESPERIA_HOUSE_DOOR,
+     CONDITION_ALWAYS, EVENT(Settlements_EnterHouse)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), HESPERIA_LADDER_HOLE_NORTH,
+     CONDITION_ALWAYS, EVENT(Settlements_TurnAndClimbDownLadder)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), HESPERIA_LADDER_HOLE_WEST,
+     CONDITION_ALWAYS, EVENT(Settlements_StepOntoLadderFromWest)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), HESPERIA_LADDER_HOLE_EAST,
+     CONDITION_ALWAYS, EVENT(Settlements_StepOntoLadderFromEast)},
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_STEP, 34, FLAG_ON_WALL, EVENT(Settlements_StepOntoWall)},
-    {TRIGGER_STEP, 35, IF_FLAG_SET(FLAG_ON_WALL),
+    {TRIGGER_STEP, HESPERIA_ONTO_WALL, FLAG_ON_WALL,
+     EVENT(Settlements_StepOntoWall)},
+    {TRIGGER_STEP, HESPERIA_OFF_WALL, IF_FLAG_SET(FLAG_ON_WALL),
      EVENT(Settlements_StepOffWall)},
     {TRIGGER_TALK, ACTOR_HESPERIA_MAN, CONDITION_ALWAYS,
      MSGNO(MsgSettlementsYouMustBeVeryBrave)},
@@ -1459,11 +1566,13 @@ struct Trigger gSettlements_HesperiaSettlementHousesTriggers[] = {
 
 struct Trigger gSettlements_KaltIslandTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
-     EVENT(Settlements_EnterCave)},
-    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(Settlements_StopIceSlides)},
-    {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(Settlements_ResumeIceSlides)},
-    {TRIGGER_STEP, 20, FLAG_ICE_SLIDES_STOPPED,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), KALT_HOUSE_DOOR, CONDITION_ALWAYS,
+     EVENT(Settlements_EnterHouse)},
+    {TRIGGER_STEP, KALT_ICE_SLIDES_OFF, CONDITION_ALWAYS,
+     EVENT(Settlements_StopIceSlides)},
+    {TRIGGER_STEP, KALT_ICE_SLIDES_ON, CONDITION_ALWAYS,
+     EVENT(Settlements_ResumeIceSlides)},
+    {TRIGGER_STEP, KALT_ICE, FLAG_ICE_SLIDES_STOPPED,
      EVENT(Settlements_StepOnIceSlide)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST_A, FLAG_KALT_ROPE_TIED,
      EVENT(Settlements_LashRope)},
@@ -1506,7 +1615,8 @@ struct Trigger gSettlements_AttekaIsletTriggers[] = {
      EVENT(Settlements_UnblockFallsObjects)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FALLS_CRATE,
      FLAG_FALLS_CRATE_AT_REST, EVENT(Settlements_MoveCrate)},
-    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(Settlements_BlockFallsObject)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS,
+     EVENT(Settlements_StartPushingFallsObject)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(Settlements_PushIntoFalls)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_BOULDER, FLAG_BOULDER_LIFTED,
      EVENT(Settlements_LiftBoulder)},

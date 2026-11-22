@@ -1067,12 +1067,12 @@ s32 YampiDesert_CellCenter(s32 cell) {
   }
 
 /// Reveal cast in the long room of the Trainer's Whip's chest changes two
-/// rings of rocks while it lasts: the first (cells (15, 40) to (19, 45)) into
-/// a hint, and the second (cells (36, 25) to (40, 29)) to show the Lucky
-/// Medal's chest in its middle. If Felix stands where a rock now appears, he
-/// is moved to the nearest open cell.
-// XXX: what the hint in the first ring shows; a recording of Reveal cast by
-// those rocks would settle it.
+/// rings of rocks while it lasts: the first (cells (15, 40) to (19, 45)), three
+/// rows of three rocks, shifts into an arrow of rocks pointing north-west (a
+/// row along the top, a short column down its west end and a line running
+/// down to the south-east from their corner), and the second (cells (36, 25)
+/// to (40, 29)) shows the Lucky Medal's chest in its middle. If Felix stands
+/// where a rock now appears, he is moved to the nearest open cell.
 void YampiDesert_RevealRockHint(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *actor = Actor_GetById(ACTOR_HIDDEN_TREASURE);
@@ -1143,10 +1143,9 @@ void YampiDesert_HideRockHint(void) {
 
 /// Reveal cast in the room that leads on from the Trainer's Whip's chest's room
 /// to the World Map brings out a hidden Psynergy Stone at cell (18, 15),
-/// moving Felix a cell south if he stands on its spot.
-// XXX: whether the stone stays to be touched once Reveal fades
-// (YampiDesert_HidePsynergyStone puts it away); a recording of Reveal cast
-// there would show it.
+/// moving Felix a cell south if he stands on its spot. Once Reveal fades the
+/// stone is gone again (YampiDesert_HidePsynergyStone), so it has to be
+/// touched while Reveal lasts.
 void YampiDesert_RevealPsynergyStone(void) {
   struct Actor *actor = Actor_GetById(ACTOR_HIDDEN_TREASURE);
   struct Actor *leader;

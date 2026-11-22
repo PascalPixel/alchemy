@@ -1,58 +1,36 @@
 /// @file
-/// Babi's Palace in Tolbi, two scenes under the area name Babi's Palace that
-/// share this overlay and one exit table:
+/// Babi's Palace in Tolbi, and the court before its door. From the town, the
+/// party crosses the court, past two guards and a well, to the palace's double
+/// door. Inside, the entrance hall has Babi's statue at its north end and
+/// stairs up on either side to the two doors of the big bedroom, where guests
+/// and Colosso's warriors sleep in four beds. From the hall a passage runs
+/// north between two doors, the soldiers' room's and the room west of it, to a
+/// crossroads with a red carpet. Its halls lead west and east to the stairs
+/// down to Babi's scholars, to the tunnel into the colosseum's stands and to
+/// the landing outside the room where Sheba is kept, and north to Babi's
+/// throne room, with Babi's own bedroom beyond.
 ///
-/// - SceneId_BabiPalaceEntrance, the court between the town and the palace
-///   door, with two guards and a well. Its door opens by a cell animation
-///   (gBabiPalace_DoorCells, BabiPalace_LeaveThroughAnimatedDoor).
-/// - SceneId_BabiPalace, the palace's rooms on one map, joined by exits into
-///   the same map and by doors that open by the map's tileset animations
-///   (enum BabiPalaceDoorAnimation, BabiPalace_LeaveThroughDoor). One door
-///   leads to Babi's scholars (BABI_PALACE_TO_COTTAGE_ROOMS_B, held by
-///   cottage_rooms_b.c) and one into the Colosseum Tunnel
-///   (BABI_PALACE_TO_COLOSSEUM_TUNNEL).
+/// While Babi is missing, the attendant in the big bedroom offers the party the
+/// beds, and walking up the passage to the red carpet the party overhears Iodem
+/// and two soldiers back from Altmiller Cave, where Babi has slipped away
+/// before. Sheba, held hostage so that Lalivero builds Babi's lighthouse,
+/// wonders when she will see her homeland, and notices the first Mind Read on
+/// her.
 ///
-/// Each scene has three actor placement tables and three trigger tables.
-/// Scene_GetActorPlacements and Scene_GetTriggers choose between them by two
-/// story flags. The three times are while Babi is missing, during the finals
-/// (FLAG_BABI_SAVED, set when the party saves him in Altmiller Cave) and after
-/// Colosso (FLAG_COLOSSO_OVER).
+/// Once the party has saved Babi in Altmiller Cave the finals of Colosso are
+/// set: a guard outside passes on Babi's word that he waits at the colosseum,
+/// and the attendant offers the beds again. A match lost in the finals, or the
+/// last one fought, brings the party back to wake in the big bedroom. After
+/// Colosso, Babi and Iodem wait in the throne room: Babi gives the Lure Cap to
+/// the winner, tells of Lemuria and its draught, asks the party to sail there
+/// for him once Venus Lighthouse is dealt with, and sends Iodem to meet them at
+/// Gondowan Passage. In Babi's bedroom afterwards the Cloak Ball on show is his
+/// to lend.
 ///
-/// The people inside stand in all three under other actor ids, so each table
-/// has its own actor id enum.
-///
-/// While Babi is missing, the attendant shows the party four beds
-/// (BabiPalace_ShowBeds). A search then sleeps in them
-/// (BabiPalace_RestInPalaceBeds), with a talk the first night
-/// (FLAG_BABI_PALACE_FIRST_NIGHT).
-///
-/// Stepping beside Iodem (CELL_BEHAVIOR_BABI_PALACE_BESIDE_IODEM) plays
-/// BabiPalace_HearSoldiersReport once. Its flag is FLAG_IODEM_HEARD_SOLDIERS,
-/// and the rows for Iodem and his soldiers place no one once it is set.
-///
-/// Sheba notices the first Mind Read on her (BabiPalace_ReadShebasMind,
-/// FLAG_SHEBA_NOTICED_MIND_READ).
-///
-/// During the finals the guards outside pass on Babi's word once
-/// (BabiPalace_PassOnBabisWord, FLAG_BABI_PALACE_GUARD_GAVE_WORD) and the
-/// attendant offers a rest (BabiPalace_OfferRest).
-///
-/// The finals send the party back here by two entrances.
-/// Scene_Initialize answers them by restoring the party and its
-/// inventory (BabiPalace_RestorePartyAndInventory) and playing a waking in the
-/// big bedroom. A lost first or second match comes in by
-/// BABI_PALACE_FROM_COLOSSEUM_AZART_MATCH (BabiPalace_WakeFromFinalsDream). The
-/// third match comes in by BABI_PALACE_FROM_COLOSSEUM_NAVAMPA_MATCH
-/// (BabiPalace_WakeAfterFinals).
-///
-/// After Colosso, entering the throne room by
-/// BABI_PALACE_MEETING_ROOM_FROM_CARPET_ROOM the first time plays Babi's
-/// audience (BabiPalace_MeetBabiAfterColosso, FLAG_BABI_SPOKE_AFTER_COLOSSO).
-/// It gives the victor's prize when FLAG_WON_COLOSSO is set, and ends with Babi
-/// sending Iodem with the party, to meet at Gondowan Passage.
-///
-/// The Cloak Ball on show is an actor drawn from the item's icon until the
-/// party takes it (BabiPalace_OfferCloakBall, FLAG_BABI_PALACE_CLOAK_BALL).
+/// The code: the court (SceneId_BabiPalaceEntrance) and the palace's rooms on
+/// one map (SceneId_BabiPalace) share this overlay and one exit table, and each
+/// chooses one of three actor and trigger tables by FLAG_BABI_SAVED and
+/// FLAG_COLOSSO_OVER.
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -242,13 +220,32 @@ enum BabiPalaceBedAnimation {
 /// Cell behaviors the triggers answer besides the exits, whose cell
 /// behaviors are their exits' numbers.
 enum BabiPalaceCellBehavior {
-  /// The cells beside Iodem, while Babi is missing
-  /// (BabiPalace_HearSoldiersReport).
-  CELL_BEHAVIOR_BABI_PALACE_BESIDE_IODEM = 60,
+  /// The passage up to the red carpet, cells (32, 26) and (33, 26), where the
+  /// party overhears Iodem while Babi is missing.
+  CELL_BEHAVIOR_BABI_PALACE_PASSAGE_TO_CARPET = 60,
   /// The big bedroom's four beds, searched to sleep.
   CELL_BEHAVIOR_BABI_PALACE_BEDS = 70,
-  /// The well outside the palace.
-  CELL_BEHAVIOR_BABI_PALACE_WELL = 90
+  /// The well in the court, south-west of the palace door.
+  CELL_BEHAVIOR_BABI_PALACE_WELL = 90,
+  /// The shelf at the north wall of the big bedroom, cells (24, 3) and (25, 3):
+  /// "The armor looks heavy."
+  CELL_BEHAVIOR_BABI_PALACE_ARMOR_SHELF = 200,
+  /// The shelf in the room west of the soldiers' room, (9, 18) and (10, 18):
+  /// "There's nothing in there."
+  CELL_BEHAVIOR_BABI_PALACE_EMPTY_SHELF = 201,
+  /// The shelf in the soldiers' room, (55, 18) and (56, 18), with a headband
+  /// on it.
+  CELL_BEHAVIOR_BABI_PALACE_HEADBAND_SHELF = 202,
+  /// The big bedroom's bookcase, (6, 3) and (7, 3): "The Heart of the..."
+  CELL_BEHAVIOR_BABI_PALACE_BIG_BEDROOM_BOOKCASE = 203,
+  /// The bookcase in the room west of the soldiers' room, (12, 18) and (13,
+  /// 18), with a notebook of records.
+  CELL_BEHAVIOR_BABI_PALACE_NOTEBOOK_BOOKCASE = 204,
+  /// The soldiers' room's bookcase, (58, 18) and (59, 18): "Become a Macho Man
+  /// in..."
+  CELL_BEHAVIOR_BABI_PALACE_SOLDIERS_BOOKCASE = 205,
+  /// The bookcase in Babi's bedroom, (58, 33) and (59, 33), with Babi's diary.
+  CELL_BEHAVIOR_BABI_PALACE_DIARY_BOOKCASE = 206
 };
 
 static inline void BabiPalace_CloseDoors(void) {
@@ -319,13 +316,18 @@ static inline void BabiPalace_ShowQuestionAnswer(s32 actorId, s32 question) {
   Event_ShowMessage(actorId, 0);
 }
 
-/// An old man with a cane asks whether the party ran into Babi's soldiers.
+/// While Babi is missing, the old man with a cane in the entrance hall asks
+/// "Did you run into any of Babi's soldiers in Town?"; No gets him grumbling
+/// that he told them to search every nook and cranny.
 static void BabiPalace_AskAboutSoldiers(s32 actorId) {
   BabiPalace_ShowQuestionAnswer(actorId, MsgTolbiRunBabisSoldiers);
 }
 
-/// The attendant leads the party to the beds when spoken to before Babi's
-/// rescue.
+/// While Babi is missing, the attendant in the big bedroom, the woman with
+/// fair hair by its west wall, says there are just enough beds for everybody
+/// and walks over to them. Talking to her there, she offers the four beds
+/// ("Will you be going right to sleep?"), and from then on a search of a bed
+/// lets the party sleep in it.
 static void BabiPalace_ShowBeds(s32 actorId) {
   s16 roundedFacing;
   s32 facingOrMessage;
@@ -382,7 +384,8 @@ static void BabiPalace_ShowBeds(s32 actorId) {
   Event_End();
 }
 
-/// The attendant offers the party a rest when spoken to during the finals.
+/// During the finals, the attendant in the big bedroom asks whether the party
+/// came to rest before its match, and the beds are open to it again.
 static void BabiPalace_OfferRest(s32 actorId) {
   s32 question;
 
@@ -420,7 +423,10 @@ static void BabiPalace_OfferRest(s32 actorId) {
   Event_End();
 }
 
-/// A warrior asks whether the party is entering Colosso.
+/// While Babi is missing, the warrior in a golden helmet by the table at the
+/// north of the big bedroom asks "Are you planning to enter Colosso?". A Yes
+/// makes him wince and send the party to the colosseum; a No has him take it
+/// for another injured warrior.
 static void BabiPalace_AskAboutColosso(s32 actorId) {
   s32 question = MsgTolbiPlanningEnterColosso;
 
@@ -439,7 +445,9 @@ static void BabiPalace_AskAboutColosso(s32 actorId) {
   Event_ShowMessage(actorId, 0);
 }
 
-/// A warrior with indigestion gives up on entering Colosso.
+/// While Babi is missing, the warrior in a golden helmet by the big bedroom's
+/// east wall tries to shrug off his indigestion to enter Colosso, and
+/// gives up: "It's no use! My stomach really hurts!"
 static void BabiPalace_TalkToWarriorWithIndigestion(s32 actorId) {
   struct Actor *actor;
   const s32 *indigestionScript;
@@ -480,8 +488,10 @@ static void BabiPalace_TalkToWarriorWithIndigestion(s32 actorId) {
   Event_End();
 }
 
-/// Mind Read on Sheba in the palace, while Babi is missing, reads that she
-/// cannot escape to Lalivero alone.
+/// Mind Read on Sheba in her room, while Babi is missing, reads that even if
+/// she escaped the palace her power could not get her home to Lalivero. The
+/// first time, she turns with a start ("Did you just..."), then shakes her
+/// head: "No, it is nothing."
 static void BabiPalace_ReadShebasMind(s32 casterId, s32 actorId) {
   Event_Start();
   Event_SetMessageId(MsgTolbiEvenIfEscapedBabiPalace);
@@ -505,18 +515,22 @@ static void BabiPalace_ReadShebasMind(s32 casterId, s32 actorId) {
   Event_End();
 }
 
-/// The same old man, after Colosso, asks whether the party has met with Babi.
+/// After Colosso, the old man with a cane in the entrance hall asks whether the
+/// party has met with Babi.
 static void BabiPalace_AskAboutMeetingBabi(s32 actorId) {
   BabiPalace_ShowQuestionAnswer(actorId, MsgTolbiMeetBabi);
 }
 
-/// A young man asks whether the party is going back east already.
+/// After Colosso, the young man with brown hair in the room west of the
+/// soldiers' room asks "So, you're all from the eastern shores of the Karagol
+/// Sea, huh?".
 static void BabiPalace_AskAboutEasternShores(s32 actorId) {
   BabiPalace_ShowQuestionAnswer(actorId, MsgTolbiEasternShoresKaragol);
 }
 
-/// When the party takes the Cloak Ball on show after Colosso, Babi asks whether
-/// it wants it, and lends it for the quest if it does.
+/// After Colosso, picking up the Cloak Ball on show beside Babi's bed: "You
+/// found the Cloak Ball." From his bed Babi asks whether Isaac desires it, and
+/// on a Yes lends it for the quest. On a No he asks to leave it alone.
 static void BabiPalace_OfferCloakBall(void) {
   s32 msg;
 
@@ -554,8 +568,9 @@ static void BabiPalace_OfferCloakBall(void) {
   }
 }
 
-/// Waking after resting before the finals, the leader has dreamt of fighting in
-/// them. The others tease, and the party sets off for the colosseum.
+/// Losing the first or second match of the finals, Isaac wakes in a bed of the
+/// big bedroom: he only dreamt of fighting in them. The others tease him, and
+/// the party sets off for the colosseum.
 static void BabiPalace_WakeFromFinalsDream(void) {
   Event_Start();
   Event_SetMessageId(MsgTolbiGetUp);
@@ -686,8 +701,10 @@ static void BabiPalace_WakeFromFinalsDream(void) {
   Event_End();
 }
 
-/// Searching the beds sends the party to bed, talking it over the first night.
-/// "Would you like to sleep now?"
+/// Searching one of the four beds in the big bedroom, once the attendant has
+/// offered them, asks "Would you like to sleep now?". The first night the
+/// party talks things over before it sleeps; later nights it sleeps as at an
+/// inn.
 static void BabiPalace_RestInPalaceBeds(void) {
   s16 roundedFacing;
   u16 facing;
@@ -843,8 +860,12 @@ static void BabiPalace_RestInPalaceBeds(void) {
   Event_End();
 }
 
-/// Walking past Iodem while Babi is missing, the party hears his soldiers
-/// report.
+/// While Babi is missing, walking north up the passage towards the red carpet,
+/// cell (32, 26) or (33, 26), Isaac stops short of the carpet as Iodem walks in
+/// from the west hall and two soldiers hurry up to him, back from Altmiller
+/// Cave: Babi has been gone since
+/// last night, and he has slipped into that cave before. Iodem then leaves for
+/// the colosseum in Babi's stead. It plays once.
 static void BabiPalace_HearSoldiersReport(void) {
   GameFlag_Set(FLAG_IODEM_HEARD_SOLDIERS);
   Event_Start();
@@ -1150,8 +1171,9 @@ static void BabiPalace_HearSoldiersReport(void) {
   ((WININ_WIN0_ALL & ~WININ_WIN0_CLR) | (WININ_WIN1_ALL & ~WININ_WIN1_CLR))
 #define WAKE_WINDOW_OPEN 31
 
-/// Waking in the palace after the finals, the leader has slept long after
-/// fighting to the end. Babi wants to see the party.
+/// After the last match of the finals, Isaac wakes in a bed of the big bedroom,
+/// having slept long after fighting to the end, and the others tell him Babi
+/// wants to see the party.
 static void BabiPalace_WakeAfterFinals(void) {
   s32 step;
   s32 pick;
@@ -1396,8 +1418,11 @@ static void BabiPalace_WakeAfterFinals(void) {
   Event_End();
 }
 
-/// Arriving after Colosso, the party finds Iodem and Babi have been waiting for
-/// it.
+/// After Colosso, the first time the party goes through the throne room's door
+/// north of the red carpet, Babi and Iodem are waiting. Iodem hands the winner
+/// the Lure Cap; Babi tells of Lemuria and the draught that has kept him alive,
+/// asks the party to sail there for him once its business at Venus Lighthouse
+/// is done, and sends Iodem with them, to meet at Gondowan Passage.
 static void BabiPalace_MeetBabiAfterColosso(void) {
   Sound_Play(MUS_BABIS_THEME);
   Event_Start();
@@ -2440,8 +2465,16 @@ static void BabiPalace_MeetBabiAfterColosso(void) {
   Event_End();
 }
 
-/// Walking north into one of the palace's doors opens it (SE_DOOR_OPEN), and
-/// the leader walks through.
+/// Walking north into one of the palace's wooden doors opens it with the sound
+/// of a door, and Isaac walks through. The doors are the big bedroom's two, up
+/// the stairs on either side of Babi's statue, cells (36, 3) and (59, 3); the
+/// throne room's, north of the red carpet, (32, 18) and (33, 18); the two at
+/// the south end of the passage up to the carpet, into the room west of the
+/// soldiers' room (29, 31) and into the soldiers' room (36, 31); Babi's
+/// bedroom's off its landing, (28, 50); and Sheba's, off hers, (5, 34).
+///
+/// Each door opens by its own tileset animation (enum BabiPalaceDoorAnimation);
+/// the cell behaviour is the exit's number.
 static void BabiPalace_LeaveThroughDoor(void) {
   struct FieldWork *work;
 
@@ -2471,8 +2504,8 @@ static void BabiPalace_LeaveThroughDoor(void) {
   Event_End();
 }
 
-/// Walking north into the palace's door from outside opens it, and the leader
-/// goes in.
+/// Walking north into the palace's door between the two guards, cell (12, 15),
+/// opens it and Isaac goes in.
 static void BabiPalace_LeaveThroughAnimatedDoor(void) {
   Event_Start();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
@@ -2484,7 +2517,10 @@ static void BabiPalace_LeaveThroughAnimatedDoor(void) {
   Event_End();
 }
 
-/// A guard outside the palace during the finals passes on Babi's word.
+/// During the finals, talking to either guard at the palace door the first time
+/// brings Isaac before them: "You're Isaac, aren't you?" Either answer ends
+/// with Babi's word that he waits for the party at the colosseum, though No
+/// first has the guards confer and decide it was him all the same.
 static void BabiPalace_PassOnBabisWord(void) {
   s32 question;
   GameFlag_Set(FLAG_BABI_PALACE_GUARD_GAVE_WORD);
@@ -2535,8 +2571,9 @@ static void BabiPalace_PassOnBabisWord(void) {
   Event_End();
 }
 
-/// The other guard thanks the party for saving Babi once, then sends it to
-/// the colosseum.
+/// During the finals, the guard on the west side of the palace door thanks
+/// Isaac once for saving Babi, then reminds him that Babi waits at the
+/// colosseum.
 static void BabiPalace_ThankForSavingBabi(void) {
   if (Event_GetFlag(FLAG_BABI_PALACE_GUARD_THANKED_PARTY) == 0) {
     GameFlag_Set(FLAG_BABI_PALACE_GUARD_THANKED_PARTY);
@@ -2550,7 +2587,9 @@ static void BabiPalace_ThankForSavingBabi(void) {
   }
 }
 
-/// A guard asks whether the party is leaving like the other warriors.
+/// After Colosso, the guard on the west side of the palace door says all the
+/// warriors who stayed in the palace have left, and asks whether the party is
+/// going too.
 static void BabiPalace_AskAboutRemainingWarriors(s32 actorId) {
   s32 question = MsgTolbiWarriorsWhoStayed;
 
@@ -2568,8 +2607,8 @@ static void BabiPalace_AskAboutRemainingWarriors(s32 actorId) {
   }
 }
 
-/// Searching the well outside the palace. "It's filled with fresh, clean
-/// water."
+/// Searching the well in the court, south-west of the palace door at cell (6,
+/// 19): "It's filled with fresh, clean water."
 static void BabiPalace_ExamineWell(void) {
   Event_Start();
   FieldMessage_Show(MsgFieldPeeredWell, 1);
@@ -2958,7 +2997,7 @@ struct Trigger gBabiPalace_TriggersBabiMissing[] = {
     { TRIGGER_EXIT, 43, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_LANDING_TO_CARPET_ROOM },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), BABI_PALACE_SHEBAS_LANDING_TO_SHEBAS_ROOM, CONDITION_ALWAYS, EVENT(BabiPalace_LeaveThroughDoor) },
     { TRIGGER_EXIT, 45, CONDITION_ALWAYS, BABI_PALACE_SHEBAS_ROOM_TO_SHEBAS_LANDING },
-    { TRIGGER_STEP, CELL_BEHAVIOR_BABI_PALACE_BESIDE_IODEM, FLAG_IODEM_HEARD_SOLDIERS, EVENT(BabiPalace_HearSoldiersReport) },
+    { TRIGGER_STEP, CELL_BEHAVIOR_BABI_PALACE_PASSAGE_TO_CARPET, FLAG_IODEM_HEARD_SOLDIERS, EVENT(BabiPalace_HearSoldiersReport) },
     { TRIGGER_TALK, ACTOR_ASKING_ABOUT_BABIS_SOLDIERS, CONDITION_ALWAYS, EVENT(BabiPalace_AskAboutSoldiers) },
     { TRIGGER_TALK, ACTOR_HURRYING_WARRIORS_ALONG, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIfYoureEnteringColossoHurryAlong) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ASKING_ABOUT_BABIS_SOLDIERS, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIWonderHowDiligentlyBabisSoldiers) },
@@ -2986,13 +3025,13 @@ struct Trigger gBabiPalace_TriggersBabiMissing[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_IN_SHEBAS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorIsNotPermittedToLeave) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SHEBA, CONDITION_ALWAYS, EVENT(BabiPalace_ReadShebasMind) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_BABI_PALACE_BEDS, IF_FLAG_SET(FLAG_BABI_PALACE_BEDS_OPEN), EVENT(BabiPalace_RestInPalaceBeds) },
-    { EXAMINE_TRIGGER(EXAMINE_SHELF), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheArmorLooksHeavyItLooks)) },
-    { EXAMINE_TRIGGER(EXAMINE_SHELF), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresNothingInThereItsCompletely)) },
-    { EXAMINE_TRIGGER(EXAMINE_SHELF), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresAHeadbandItSaysNever)) },
-    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresABookEntitledTheHeart)) },
-    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresANotebookThatShowsThe)) },
-    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresABookEntitledBecomeA)) },
-    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceHeyItsBabisDiaryItReads)) },
+    { EXAMINE_TRIGGER(EXAMINE_SHELF), CELL_BEHAVIOR_BABI_PALACE_ARMOR_SHELF, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheArmorLooksHeavyItLooks)) },
+    { EXAMINE_TRIGGER(EXAMINE_SHELF), CELL_BEHAVIOR_BABI_PALACE_EMPTY_SHELF, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresNothingInThereItsCompletely)) },
+    { EXAMINE_TRIGGER(EXAMINE_SHELF), CELL_BEHAVIOR_BABI_PALACE_HEADBAND_SHELF, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresAHeadbandItSaysNever)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_BABI_PALACE_BIG_BEDROOM_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresABookEntitledTheHeart)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_BABI_PALACE_NOTEBOOK_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresANotebookThatShowsThe)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_BABI_PALACE_SOLDIERS_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresABookEntitledBecomeA)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_BABI_PALACE_DIARY_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceHeyItsBabisDiaryItReads)) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), 100, FLAG_BABI_PALACE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { TRIGGER_TABLE_END },
 };
@@ -3052,13 +3091,13 @@ struct Trigger gBabiPalace_TriggersFinals[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FINALS_OLD_WOMAN_IN_SHEBAS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceActorIsAGoodGirlBut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIDontHaveTheLeastInterest) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_BABI_PALACE_BEDS, IF_FLAG_SET(FLAG_BABI_PALACE_FINALS_BEDS_OPEN), EVENT(BabiPalace_RestInPalaceBeds) },
-    { EXAMINE_TRIGGER(EXAMINE_SHELF), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheArmorLooksHeavyItLooks)) },
-    { EXAMINE_TRIGGER(EXAMINE_SHELF), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresNothingInThereItsCompletely)) },
-    { EXAMINE_TRIGGER(EXAMINE_SHELF), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresAHeadbandItSaysNever)) },
-    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresABookEntitledTheHeart)) },
-    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresANotebookThatShowsThe)) },
-    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresABookEntitledBecomeA)) },
-    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceHeyItsBabisDiaryItReads)) },
+    { EXAMINE_TRIGGER(EXAMINE_SHELF), CELL_BEHAVIOR_BABI_PALACE_ARMOR_SHELF, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheArmorLooksHeavyItLooks)) },
+    { EXAMINE_TRIGGER(EXAMINE_SHELF), CELL_BEHAVIOR_BABI_PALACE_EMPTY_SHELF, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresNothingInThereItsCompletely)) },
+    { EXAMINE_TRIGGER(EXAMINE_SHELF), CELL_BEHAVIOR_BABI_PALACE_HEADBAND_SHELF, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresAHeadbandItSaysNever)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_BABI_PALACE_BIG_BEDROOM_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresABookEntitledTheHeart)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_BABI_PALACE_NOTEBOOK_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresANotebookThatShowsThe)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_BABI_PALACE_SOLDIERS_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresABookEntitledBecomeA)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_BABI_PALACE_DIARY_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceHeyItsBabisDiaryItReads)) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), 100, FLAG_BABI_PALACE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { TRIGGER_TABLE_END },
 };
@@ -3127,13 +3166,13 @@ struct Trigger gBabiPalace_TriggersAfterColosso[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_AFTER_COLOSSO_SORRY_FOR_SHEBA, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceItSeemedOnlyNaturalThatActor) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_AFTER_COLOSSO_OLD_WOMAN_IN_SHEBAS_ROOM, CONDITION_ALWAYS, MSGNO(MsgBabiPalaceIAmSoRelievedActorHas) },
     { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_BABI_PALACE_BEDS, CONDITION_ALWAYS, EVENT(BabiPalace_RestInPalaceBeds) },
-    { EXAMINE_TRIGGER(EXAMINE_SHELF), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheArmorLooksHeavyItLooks)) },
-    { EXAMINE_TRIGGER(EXAMINE_SHELF), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresNothingInThereItsCompletely)) },
-    { EXAMINE_TRIGGER(EXAMINE_SHELF), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresAHeadbandItSaysNever)) },
-    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 203, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresABookEntitledTheHeart)) },
-    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 204, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresANotebookThatShowsThe)) },
-    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 205, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresABookEntitledBecomeA)) },
-    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 206, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceHeyItsBabisDiaryItReads)) },
+    { EXAMINE_TRIGGER(EXAMINE_SHELF), CELL_BEHAVIOR_BABI_PALACE_ARMOR_SHELF, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheArmorLooksHeavyItLooks)) },
+    { EXAMINE_TRIGGER(EXAMINE_SHELF), CELL_BEHAVIOR_BABI_PALACE_EMPTY_SHELF, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresNothingInThereItsCompletely)) },
+    { EXAMINE_TRIGGER(EXAMINE_SHELF), CELL_BEHAVIOR_BABI_PALACE_HEADBAND_SHELF, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresAHeadbandItSaysNever)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_BABI_PALACE_BIG_BEDROOM_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresABookEntitledTheHeart)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_BABI_PALACE_NOTEBOOK_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresANotebookThatShowsThe)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_BABI_PALACE_SOLDIERS_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceTheresABookEntitledBecomeA)) },
+    { EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_BABI_PALACE_DIARY_BOOKCASE, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgBabiPalaceHeyItsBabisDiaryItReads)) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), 100, FLAG_BABI_PALACE_LUCKY_MEDAL, FIND_ITEM(ITEM_LUCKY_MEDAL) },
     { TRIGGER_TABLE_END },
 };

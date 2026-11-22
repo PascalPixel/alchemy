@@ -1,92 +1,65 @@
 /// @file
-/// Altin Peak, the mine below Altin that its villagers and the Alpine
-/// Crossing's signpost call Altin Mine.
+/// Altin Peak, the mine under Altin that the villagers and the Alpine
+/// Crossing's signpost call Altin Mine. Its rooms are eleven scenes, all
+/// named Altin Peak, except that the international editions name the south
+/// entrance the Alpine Crossing when the party comes in from there.
 ///
-/// It is eleven scenes, SceneId_AltinPeakFirstWaterBeast to
-/// SceneId_AltinPeakWestExit, whose area name is Altin Peak. There is one
-/// exception. The international editions call AltinPeakSouthEntrance the Alpine
-/// Crossing when the party comes in from there
-/// (ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_WEST and
-/// ALTIN_PEAK_SOUTH_ENTRANCE_FROM_ALPINE_CROSSING_EAST).
+/// Altin is flooded because water beasts are spitting water in the mine. They
+/// look just like Altin's guardian statues, and their battles call each one a
+/// Living Statue. Each beast Isaac beats lowers the water a step, in the mine
+/// and in the village (FLAG_ALTIN_MINE_FIRST_DRAIN to _THIRD_DRAIN). The party
+/// goes down three times, each time by another doorway of Altin. Before any of
+/// that, the passage Move opens behind Altin's first guardian statue leads to
+/// a small cave with the Psy Crystal's chest, a corner of Spritz's room's map.
 ///
-/// Each scene is a room of the mine. The getters pick each room's tables by
-/// gMainRoutineWork.next, and all the rooms share one exit table.
-/// Scene_Initialize calls the setup of the room being entered
-/// (AltinPeak_RestoreFirstWaterBeastRoom and so on), which puts back what the
-/// party has already done there.
+/// First, through the doorway in Altin's west cliff, the party follows the
+/// beast it saw spitting by the village into its cave. When the party walks up
+/// the passage to it, it hops into the cave, freezes the puddle in the gap
+/// between two ledges with Frost and hops across the ice. When Isaac climbs
+/// the ladder onto the east ledge, it hops off west and settles there to spit.
+/// Talking to it, or reading its mind, starts the battle. Back from it, Isaac
+/// gets the Frost Jewel and the water drains away; from then on Frost freezes
+/// the mine's puddles into ice pillars to hop across. A pillar stays frozen
+/// only until the party leaves its room.
 ///
-/// Altin's doorways lead down into AltinPeakFirstWaterBeast,
-/// AltinPeakSouthEntrance, AltinPeakSpritz and AltinPeakJunction.
+/// Second, through the rail tunnel in the north cliff, the rails lead to the
+/// second beast's lake. Isaac flips the switch so its arrow points east and
+/// rides the mine cart to the beast. After it the water drains from the south
+/// entrance's flooded chamber, which leads on to the pool cave: a switch, a
+/// Mimic in a chest, and a puddle to freeze on the way to the third beast's
+/// room. There a frozen puddle and a cart ride reach the Dragon
+/// Shield, and the switch and another ride lead to the beast. The third drain
+/// empties the pool and the rest of Altin.
 ///
-/// The mine is flooded, and a water beast waits in AltinPeakFirstWaterBeast,
-/// AltinPeakSecondWaterBeast and AltinPeakThirdWaterBeast. It is
-/// SPRITE_WATER_BEAST, drawn with its green and blue swapped
-/// (SPRITE_COLOR_RBG).
+/// Last, through the doorway in the middle of the village, the party passes
+/// the Lucky Medal's chest and comes to the big room where Spritz, a Mercury
+/// Djinni, waits. Isaac moves the stone pillar there and freezes three puddles
+/// into a path, and a switch and the mine cart take him to Spritz. The way
+/// out of that room leads past many small rocks to a narrow passage that ends
+/// at a sign: "Watch for falling rocks! Do not strike the wall! Rocks may
+/// fall!" Garet strikes the wall anyway, or Isaac uses Force on it, and a
+/// boulder chases Isaac down the winding path and crashes into the old doorway
+/// at its foot. A ladder there now goes down to a room of ruins buried in the
+/// mine, where the Hydros Statue wakes and fights the party. When it is beaten,
+/// the statue sinks into the floor and the chest behind it holds the Lifting
+/// Gem, whose Lift frees Hsu at the Alpine Crossing
+/// (alpine_crossing_lama_temple.c). In the mine, Lift raises the round boulders
+/// of the lake room's side chamber (by the Cookie's chest), the junction and
+/// the west exit; the field does that alone, and their rows run no event of
+/// this file's.
 ///
-/// In AltinPeakFirstWaterBeast the first one shows the way. When the party
-/// steps near it (step trigger 10, AltinPeak_ShowFirstBeastRoute) it cries out,
-/// hops around the room, freezes the second puddle with Frost and hops across.
-/// When the party steps near it again (step trigger 11) it hops back and
-/// settles down to spit.
+/// The south entrance also opens onto the Alpine Crossing, and the west exit
+/// onto the World Map.
 ///
-/// Talking to a beast, or reading its mind, starts its battle. The party comes
-/// back to the room by ENTRANCE_AFTER_BATTLE, where the room's setup runs a
-/// drain. The water layer sinks and flickers away (AltinPeak_DrainFirstWater
-/// and the two after it). FLAG_ALTIN_MINE_FIRST_DRAIN to _THIRD_DRAIN remember
-/// the three drains, and Altin's code reads them to lower the water in the
-/// village too.
-///
-/// Back from the first battle, in AltinPeakFirstWaterBeast, the party finds the
-/// Frost Jewel before the water drains. From then on Frost freezes the mine's
-/// puddles into ice pillars to stand on. Scene temp flags keep them frozen only
-/// within one visit.
-///
-/// AltinPeakSouthEntrance's water stands until the second drain and
-/// AltinPeakPool's until the third.
-///
-/// The rooms between are built from a few mechanisms:
-///
-/// - Mine carts the party rides by talking to one (AltinPeak_RollCart). They
-///   roll along the turns their route's cells mark.
-/// - Floor switches in AltinPeakSecondWaterBeast, AltinPeakThirdWaterBeast,
-///   AltinPeakPool and AltinPeakSpritz. Each is remembered by an area temp flag
-///   (FLAG_ALTIN_PEAK_SECOND_WATER_BEAST_ROOM_SWITCH and the three after it)
-///   and redrawn on entry.
-/// - A stone pillar in AltinPeakSpritz that Move or a push slides along.
-///
-/// Spritz, a Mercury Djinni, waits in AltinPeakSpritz too, placed until it has
-/// joined. Talking to it starts its battle.
-///
-/// In AltinPeakFallingRocks a sign warns `Watch for falling rocks! Do not
-/// strike the wall! Rocks may fall!` at what looks like a dead end. While the
-/// party has no Orb of Force, Garet steps out and strikes the wall anyway. With
-/// the Orb, Force does the same (AltinPeak_ForceLogOver). Either way a boulder
-/// rolls after the leader down the path and crashes into the wall at the
-/// bottom, leaving rubble (FLAG_ALTIN_PEAK_BOULDER_FALLEN).
-///
-/// AltinPeakHydrosStatue, at the bottom, is a tiled room of carved stone, part
-/// of ruins buried in the mine. Stepping toward its guardian statue
-/// (AltinPeak_StartHydrosBattle) wakes it and starts the battle with the Hydros
-/// statues.
-///
-/// Back from it (FLAG_HYDROS_STATUES_DEFEATED, which Altin's villagers read),
-/// Garet, Ivan and Mia step out and talk. The statue sinks into the floor, and
-/// a chest behind it holds the Lifting Gem.
-///
-/// The gem's Lift frees Hsu at the Alpine Crossing
-/// (alpine_crossing_lama_temple.c). In the mine the boulders of
-/// AltinPeakSecondWaterBeast, AltinPeakJunction and AltinPeakWestExit have Lift
-/// rows that run nothing of their own.
-///
-/// AltinPeakSouthEntrance opens onto the Alpine Crossing
-/// (ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_WEST and
-/// ALTIN_PEAK_SOUTH_ENTRANCE_TO_ALPINE_CROSSING_EAST) and AltinPeakWestExit
-/// onto the World Map (ALTIN_PEAK_WEST_EXIT_TO_WORLD_MAP).
-///
-/// The falling boulder is SPRITE_ROCK, and its shadow is a SPRITE_BLANK_LARGE
-/// actor. Its pieces in the crash are SPRITE_ROCK again, scaled down
-/// (AltinPeak_SpawnDebris). The beasts' spray is SPRITE_DUST_PUFF recoloured,
-/// as in Altin.
+/// For the programmer: every room's tables are picked by gMainRoutineWork.next,
+/// all the rooms share one exit table, and Scene_Initialize calls the setup of
+/// the room being entered (AltinPeak_RestoreFirstWaterBeastRoom and so on),
+/// which puts back what the party has already done there. A beast is
+/// SPRITE_WATER_BEAST drawn with its green and blue swapped (SPRITE_COLOR_RBG),
+/// and its spray is SPRITE_DUST_PUFF recoloured, as in Altin. The falling
+/// boulder is SPRITE_ROCK with a SPRITE_BLANK_LARGE actor for its shadow, and
+/// its pieces in the crash are SPRITE_ROCK again, scaled down
+/// (AltinPeak_SpawnDebris).
 
 #include "ability_ids.h"
 #include "djinn_ids.h"
@@ -189,13 +162,41 @@ extern struct Trigger gAltinPeak_WestExitTriggers[];
 extern s32 gAltinPeak_RumbleFrames;
 extern FIXED gAltinPeak_CartSpeeds[];
 
-// The rooms' floor switches, each set once flipped from its first position;
-// they are area temp flags, kept until the party leaves the mine.
+// The rail switches by the forks, each set once flipped from its first
+// position; they are area temp flags, kept until the party leaves the mine.
 
 #define FLAG_ALTIN_PEAK_SECOND_WATER_BEAST_ROOM_SWITCH FLAG_AREA_TEMP_23
 #define FLAG_ALTIN_PEAK_THIRD_WATER_BEAST_ROOM_SWITCH FLAG_AREA_TEMP_25
 #define FLAG_ALTIN_PEAK_POOL_ROOM_SWITCH FLAG_AREA_TEMP_26
 #define FLAG_ALTIN_PEAK_SPRITZ_ROOM_SWITCH FLAG_AREA_TEMP_27
+
+/// The cell behaviours the rooms' trigger tables answer, besides their exits
+/// and chests. Each is a cell of the map named here.
+enum AltinPeakTriggerCell {
+  /// The first water beast's cave: the passage just south of the beast, cells
+  /// (17, 24) to (19, 24).
+  CELL_BEHAVIOR_ALTIN_PEAK_BEFORE_FIRST_BEAST = 10,
+  /// The first water beast's cave: the east ledge at the edge of the gap,
+  /// cells (21, 13) and (21, 14).
+  CELL_BEHAVIOR_ALTIN_PEAK_EAST_LEDGE_BY_GAP = 11,
+  /// The lake room: the switch by the fork below the torch, cell (24, 13).
+  CELL_BEHAVIOR_ALTIN_PEAK_LAKE_SWITCH = 83,
+  /// The switch of the third water beast's room (cell (11, 7)), the pool cave
+  /// (cell (16, 31)) and Spritz's room (cell (29, 20)).
+  CELL_BEHAVIOR_ALTIN_PEAK_SWITCH = 50,
+  /// Spritz's room: the top of the ladder down to the stone pillar, cells
+  /// (25, 18) to (27, 19).
+  CELL_BEHAVIOR_ALTIN_PEAK_LADDER_TOP = 10,
+  /// Spritz's room: the foot of that ladder, cells (25, 20) to (27, 21).
+  CELL_BEHAVIOR_ALTIN_PEAK_LADDER_FOOT = 11,
+  /// Spritz's room: west of the stone pillar's first place, cell (23, 26).
+  CELL_BEHAVIOR_ALTIN_PEAK_WEST_OF_PILLAR = 12,
+  /// The falling-rock sign, cell (49, 6).
+  CELL_BEHAVIOR_ALTIN_PEAK_FALLING_ROCK_SIGN = 12,
+  /// The Hydros statue's room: the top of the steps before the statue, cells
+  /// (19, 7) to (21, 7).
+  CELL_BEHAVIOR_ALTIN_PEAK_BEFORE_HYDROS_STATUE = 10
+};
 
 static void AltinPeak_RunBoulderChase(s32 boulderDelay);
 static void AltinPeak_RestoreFirstWaterBeastRoom(void);
@@ -223,21 +224,23 @@ static void AltinPeak_MarkActorTerrainCell(s32 actorId);
 static void AltinPeak_RollCart(s32 id, s32 heading);
 static void AltinPeak_StartPaletteAnimation(void);
 
-/// Each room's water beast fight returns the party to ENTRANCE_AFTER_BATTLE.
+/// Each water beast's battle and the Hydros Statue's return the party to its
+/// room by ENTRANCE_AFTER_BATTLE, where the room's setup plays what follows.
 ///
 /// ENTRANCE_ROOM_START stands at the way in of each water beast's room and the
 /// Hydros statue's, and the statue room's setup lands the party there as it
-/// does from AltinPeakFallingRocks. Unused: no exit or event leads to it.
+/// does from the falling-rocks passage. Unused: no exit or event leads to it.
 enum { ENTRANCE_ROOM_START = 98, ENTRANCE_AFTER_BATTLE = 99 };
 
 /// The rooms' actors, from their actor placements.
 ///
-/// AltinPeakSecondWaterBeast, AltinPeakThirdWaterBeast, AltinPeakPool and
-/// AltinPeakSpritz place the mine cart the party rides first.
+/// The lake room, the third water beast's room, the pool cave and Spritz's
+/// room place their mine cart first.
 enum { ACTOR_CART = ACTOR_FIRST_PLACED };
 
-/// AltinPeakFirstWaterBeast: a puddle that appears with the first drain, a
-/// second puddle and the water beast.
+/// The first water beast's cave: the puddle that appears by the west ladder
+/// when the water drains, the puddle in the gap between the ledges, and the
+/// beast.
 enum {
   ACTOR_FIRST_WATER_BEAST_ROOM_PUDDLE = ACTOR_FIRST_PLACED,
   ACTOR_FIRST_WATER_BEAST_ROOM_SECOND_PUDDLE,
@@ -266,8 +269,8 @@ enum {
   /// boxes, so the player never sees it, and no trigger names it.
   ///
   /// The boxes are gAltinPeak_SpritzEntrances'. One ends at z 568, the one
-  /// below it at x 384. The boulder stands almost where AltinPeakJunction
-  /// places its own boulder, (536, 636).
+  /// below it at x 384. The boulder stands almost where the junction places
+  /// its own boulder, (536, 636).
   ACTOR_UNUSED_SPRITZ_ROOM_BOULDER,
   /// The Mercury Djinni, placed until it has joined.
   ACTOR_SPRITZ = 14
@@ -275,8 +278,9 @@ enum {
 
 enum { ACTOR_JUNCTION_ROOM_BOULDER = ACTOR_FIRST_PLACED };
 
-/// AltinPeakFallingRocks: the boulder that falls and its shadow, the log that
-/// topples as it comes down, the actor Force is cast on, and the sign.
+/// The falling-rocks passage: the boulder that falls and its shadow, the log
+/// standing upright at the dead end, which topples as the boulder comes down,
+/// the wall Force is cast on, and the sign.
 enum {
   ACTOR_FALLING_BOULDER = ACTOR_FIRST_PLACED,
   ACTOR_BOULDER_SHADOW,
@@ -285,12 +289,13 @@ enum {
   /// SPRITE_BLANK, at the dead end's wall.
   ACTOR_WALL,
   /// The falling-rock sign, drawn with the sprite of Lalivero's sign and the
-  /// Kolima Forest floodgate's (SPRITE_SIGNPOST). It is read by searching cell
-  /// behavior 12 (AltinPeak_ReadFallingRockSign).
+  /// Kolima Forest floodgate's (SPRITE_SIGNPOST). It is read by searching its
+  /// cell, CELL_BEHAVIOR_ALTIN_PEAK_FALLING_ROCK_SIGN
+  /// (AltinPeak_ReadFallingRockSign).
   ACTOR_FALLING_ROCK_SIGN
 };
 
-/// AltinPeakHydrosStatue: the guardian statue and its shadow.
+/// The Hydros statue's room: the statue on its dais and its shadow.
 enum { ACTOR_STATUE = ACTOR_FIRST_PLACED, ACTOR_STATUE_SHADOW };
 
 enum {
@@ -303,24 +308,24 @@ enum {
 enum {
   /// Frost has frozen the room's first puddle.
   FLAG_ALTIN_PEAK_PUDDLE_FROZEN = FLAG_SCENE_TEMP_00,
-  /// Frost has frozen AltinPeakFirstWaterBeast's second puddle or
-  /// AltinPeakSpritz's second.
+  /// Frost has frozen the puddle in the gap of the first water beast's cave,
+  /// or the second puddle of Spritz's room.
   FLAG_ALTIN_PEAK_SECOND_PUDDLE_FROZEN = FLAG_SCENE_TEMP_01,
-  /// Frost has frozen AltinPeakSpritz's third puddle.
+  /// Frost has frozen the third puddle of Spritz's room.
   FLAG_ALTIN_PEAK_THIRD_PUDDLE_FROZEN = FLAG_SCENE_TEMP_04,
-  /// Garet has come out to look at AltinPeakFallingRocks's falling-rock sign.
+  /// Garet has come out at the falling-rock sign and struck the wall.
   FLAG_ALTIN_PEAK_GARET_WATCHING_ROCKS = FLAG_SCENE_TEMP_05
 };
 
-/// Talking to the Djinni in AltinPeakSpritz starts the battle with Spritz, a
-/// Mercury Djinni.
+/// Talking to Spritz, the Mercury Djinni waiting in its big room of the mine,
+/// starts its battle; beaten, it joins the party.
 static void AltinPeak_TalkToDjinni(void) {
   Field_RequestDjinnBattle(ACTOR_SPRITZ, DJINNI_SPRITZ);
 }
 
 #include "shared/actor_facing.c"
 
-/// Update routine of AltinPeakFallingRocks's boulder shadow: it stays under the
+/// Update routine of the falling boulder's shadow: it stays under the
 /// boulder, on the ground 12 pixels down, while the boulder bounces.
 static UNREAD_RESULT AltinPeak_ShadowFollowBoulder(struct Actor *follower) {
   struct Actor *actor = Actor_Get(ACTOR_FALLING_BOULDER);
@@ -388,7 +393,8 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
   return gAltinPeak_EntrancesOther;
 }
 
-/// AltinPeakFallingRocks and AltinPeakHydrosStatue have regions.
+/// The falling-rocks passage and the Hydros statue's room have exit regions,
+/// round the ladder between them.
 const struct SceneExitRegion *Scene_GetExitRegions(void) {
   s16 sceneId = gMainRoutineWork.next;
 
@@ -440,7 +446,11 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// A 16.16 height shifted down to whole quarter pixels.
 enum { QUARTER_PIXEL_SHIFT = 14 };
 
-/// Talking to a mine cart makes the party leader jump into it.
+/// Isaac jumps into a mine cart when he talks to it, and it rolls him along
+/// the rails until the end of its line, where he jumps out to the south.
+///
+/// The ride itself is AltinPeak_RollCart; its turns are cells of the map, so
+/// a switch changes where it goes.
 static void AltinPeak_RideCart(s32 cartId) {
   struct Actor *cart;
   struct Actor *leader;
@@ -478,7 +488,8 @@ static void AltinPeak_RideCart(s32 cartId) {
   Scene_PlayQueuedMusic();
 }
 
-/// The party fights the first water beast.
+/// Talking to the first water beast, or reading its mind, starts its battle
+/// (a Living Statue), wherever it stands in its cave.
 static void AltinPeak_FightFirstWaterBeast(void) {
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Event_SetAfterBattleDestination(SCENE_ALTIN_PEAK_FIRST_WATER_BEAST,
@@ -487,8 +498,8 @@ static void AltinPeak_FightFirstWaterBeast(void) {
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 2);
 }
 
-/// The party fights the second water beast. It starts and ends as the first
-/// one's does, from its own room.
+/// Talking to the second water beast at the lake, or reading its mind, starts
+/// its battle, as the first one's does.
 static void AltinPeak_FightSecondWaterBeast(void) {
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Event_SetAfterBattleDestination(SCENE_ALTIN_PEAK_SECOND_WATER_BEAST,
@@ -497,8 +508,8 @@ static void AltinPeak_FightSecondWaterBeast(void) {
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 2);
 }
 
-/// The party fights the third water beast. It starts and ends as the first
-/// one's does, from its own room.
+/// Talking to the third water beast, or reading its mind, starts its battle,
+/// as the first one's does.
 static void AltinPeak_FightThirdWaterBeast(void) {
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Event_SetAfterBattleDestination(SCENE_ALTIN_PEAK_THIRD_WATER_BEAST,
@@ -507,7 +518,15 @@ static void AltinPeak_FightThirdWaterBeast(void) {
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 2);
 }
 
-/// Move on AltinPeakSpritz's pillar settles the cells under it.
+/// Move on the stone pillar in Spritz's room, in the channel below the ladder
+/// (first at cell (25, 26)), slides it a cell, and its top becomes a square
+/// Isaac can hop onto, a step of the path he makes there with the frozen
+/// puddle beside it.
+///
+/// The field's Move slides the pillar; this event runs after it, and the
+/// room's setup and AltinPeak_PushSpritzRoomPillar call it too. It puts back
+/// the floor of both cells the pillar can stand on, then gives the one it
+/// stands on the hop square kept at cell (0, 0).
 static void AltinPeak_SettleSpritzRoomPillar(void) {
   struct Actor *pillar = Actor_Get(ACTOR_SPRITZ_ROOM_PILLAR);
 
@@ -528,7 +547,12 @@ static void AltinPeak_SettleSpritzRoomPillar(void) {
   }
 }
 
-/// Frost on a puddle freezes it into an ice pillar the party can stand on.
+/// Frost on the puddle by the west ladder of the first water beast's cave
+/// (cell (9, 13)), which appears when the water drains, freezes it into an
+/// ice pillar against the ledge, whose top Isaac can hop onto.
+///
+/// The puddle's cell takes the hop square kept at cell (7, 13), and the
+/// pillar is raised 32 pixels and drawn under the party.
 static void AltinPeak_FreezeFirstWaterBeastRoomPuddle(void) {
   struct Actor *puddle;
 
@@ -542,8 +566,13 @@ static void AltinPeak_FreezeFirstWaterBeastRoomPuddle(void) {
   GameFlag_Set(FLAG_ALTIN_PEAK_PUDDLE_FROZEN);
 }
 
-/// Frost on AltinPeakFirstWaterBeast's second puddle, three cells across. The
-/// cells take the ice's attributes and the ice is left to fall to the ground.
+/// Frost on the puddle in the gap between the two ledges of the first water
+/// beast's cave (cells (17, 13) to (19, 13)) freezes it into an ice pillar in
+/// the gap again, after the drain has taken the beast's own ice away.
+///
+/// The three cells of the gap take the ones kept at cells (29, 1) to (31, 1),
+/// a hop square between two plain cells, and the ice is left to fall to the
+/// gap's floor.
 static void AltinPeak_FreezeFirstWaterBeastRoomSecondPuddle(void) {
   struct Actor *puddle;
 
@@ -555,7 +584,9 @@ static void AltinPeak_FreezeFirstWaterBeastRoomSecondPuddle(void) {
   GameFlag_Set(FLAG_ALTIN_PEAK_SECOND_PUDDLE_FROZEN);
 }
 
-/// Frost on AltinPeakSpritz's first puddle.
+/// Frost on the puddle beside the stone pillar in Spritz's room (cell (26,
+/// 26)) freezes it into an ice pillar whose top Isaac can hop onto, the rest
+/// of the path across the channel below the ladder.
 static void AltinPeak_FreezeSpritzRoomPuddle(void) {
   struct Actor *puddle;
 
@@ -569,7 +600,9 @@ static void AltinPeak_FreezeSpritzRoomPuddle(void) {
   GameFlag_Set(FLAG_ALTIN_PEAK_PUDDLE_FROZEN);
 }
 
-/// Frost on AltinPeakThirdWaterBeast's puddle.
+/// Frost on the puddle in the middle of the third water beast's room (cell
+/// (25, 13)), in the low channel between the ledges, freezes it into an ice
+/// pillar whose top Isaac can hop onto.
 static void AltinPeak_FreezeThirdWaterBeastRoomPuddle(void) {
   struct Actor *puddle;
 
@@ -583,7 +616,9 @@ static void AltinPeak_FreezeThirdWaterBeastRoomPuddle(void) {
   GameFlag_Set(FLAG_ALTIN_PEAK_PUDDLE_FROZEN);
 }
 
-/// Frost on AltinPeakPool's puddle.
+/// Frost on the puddle on the way to the third water beast's room, in the
+/// pool cave's south-east part (cell (43, 41)), freezes it into an ice pillar
+/// whose top Isaac can hop onto.
 static void AltinPeak_FreezePoolRoomPuddle(void) {
   struct Actor *puddle;
 
@@ -597,8 +632,12 @@ static void AltinPeak_FreezePoolRoomPuddle(void) {
   GameFlag_Set(FLAG_ALTIN_PEAK_PUDDLE_FROZEN);
 }
 
-/// Frost on AltinPeakSpritz's second puddle. Its cell takes the map's cell
-/// (1, 0), a jump spot too, standing higher than the first puddle's.
+/// Frost on the puddle between the two torches in the north-west of Spritz's
+/// room (cell (17, 10)) freezes it into an ice pillar whose top Isaac can hop
+/// onto, on the way out of the room.
+///
+/// Its cell takes the hop square kept at cell (1, 0), of another ground shape
+/// than the one the first puddle takes at cell (0, 0).
 static void AltinPeak_FreezeSpritzRoomSecondPuddle(void) {
   struct Actor *puddle;
 
@@ -612,7 +651,9 @@ static void AltinPeak_FreezeSpritzRoomSecondPuddle(void) {
   GameFlag_Set(FLAG_ALTIN_PEAK_SECOND_PUDDLE_FROZEN);
 }
 
-/// Frost on AltinPeakSpritz's third puddle.
+/// Frost on the puddle north of the rails at the top of the ladder in
+/// Spritz's room (cell (26, 15)) freezes it into an ice pillar whose top
+/// Isaac can hop onto.
 static void AltinPeak_FreezeSpritzRoomThirdPuddle(void) {
   struct Actor *puddle;
 
@@ -655,7 +696,13 @@ static inline void AltinPeak_FlickerWaterAway(void) {
 /// The pixels the water layer sinks in a drain, one every fourth frame.
 enum { DRAIN_SINK_PIXELS = 24 };
 
-/// The first drain, after the Frost Jewel is found.
+/// The first drain, after the Frost Jewel is found: with a rumble the water of
+/// the first water beast's cave sinks, flickers and is gone, and a new puddle
+/// grows by the west ladder as it goes.
+///
+/// The water is the overhead map layer, scrolled down a pixel at a time; the
+/// two cells under the west ladder (3, 14) and (3, 15) then take their dry
+/// form from cell (0, 0).
 static void AltinPeak_DrainFirstWater(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   struct MapGridLayerScroll *water;
@@ -681,8 +728,11 @@ static void AltinPeak_DrainFirstWater(void) {
   GameFlag_Set(FLAG_ALTIN_MINE_FIRST_DRAIN);
 }
 
-/// The second drain is the same sinking and flicker over the cells the water
-/// leaves behind, which then take their dry form.
+/// The second drain, after the beast at the lake: the water sinks and flickers
+/// away in the same way.
+///
+/// The cells (77, 28) to (92, 31) take the pictures kept at (93, 41) while the
+/// water goes, and their dry form, kept at (77, 41), once it has gone.
 static void AltinPeak_DrainSecondWater(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   struct MapGridLayerScroll *water;
@@ -702,7 +752,12 @@ static void AltinPeak_DrainSecondWater(void) {
   GameFlag_Set(FLAG_ALTIN_MINE_SECOND_DRAIN);
 }
 
-/// The third drain, likewise.
+/// The third drain, after the third beast: the same sinking and flicker, which
+/// empties the last of the mine's water.
+///
+/// The cells round (103, 17) take the pictures kept at (111, 31) and nearby
+/// while the water goes, and their dry form, kept at (103, 14), once it has
+/// gone.
 static void AltinPeak_DrainThirdWater(void) {
   struct MapGridScrollWork *grid = gMapGridWork[0];
   struct MapGridLayerScroll *water;
@@ -724,8 +779,13 @@ static void AltinPeak_DrainThirdWater(void) {
   GameFlag_Set(FLAG_ALTIN_MINE_THIRD_DRAIN);
 }
 
-/// Flips AltinPeakSecondWaterBeast's switch to its other position, redrawing it
-/// and changing the cell its position opens or closes.
+/// Turns the arrow of the lake room's switch to point the other way and sends
+/// the mine cart down the other branch of the fork below it.
+///
+/// The arrow is the pair of cells (24, 11) and (24, 12), redrawn from cells
+/// (0, 1) or (2, 1). The fork's turn is the cart route's cell (24, 16) on the
+/// overhead layer (row 80 of the grid), set to turn right or left from cell
+/// (0, 0) or (2, 0) (CELL_BEHAVIOR_ALTIN_PEAK_CART_TURN_RIGHT or _LEFT).
 static void AltinPeak_ToggleSecondWaterBeastRoomSwitchCells(void) {
   if (Event_GetFlag(FLAG_ALTIN_PEAK_SECOND_WATER_BEAST_ROOM_SWITCH) != 0) {
     MapGrid_CopyCellAttributes(2, 0, 1, 1, 24, 80);
@@ -738,8 +798,12 @@ static void AltinPeak_ToggleSecondWaterBeastRoomSwitchCells(void) {
   }
 }
 
-/// Searching AltinPeakSecondWaterBeast's switch flips it. "You flipped the
-/// switch."
+/// Searching the switch by the torch in the lake room (cell (24, 13)) flips
+/// it: "Isaac flipped the switch." Its red arrow, first pointing west over
+/// the fork below it, turns east, and the mine cart takes the other branch.
+///
+/// The walkthrough's way to the second beast is to make the arrow point east
+/// and then ride the cart.
 static void AltinPeak_FlipSecondWaterBeastRoomSwitch(void) {
   Event_Start();
   FieldMessage_Show(MsgFieldFlippedSwitch, 1);
@@ -750,7 +814,12 @@ static void AltinPeak_FlipSecondWaterBeastRoomSwitch(void) {
   Event_End();
 }
 
-/// Flips AltinPeakThirdWaterBeast's switch, the same way.
+/// Turns the arrow of the third water beast's room's switch and the fork's
+/// turn, as AltinPeak_ToggleSecondWaterBeastRoomSwitchCells does.
+///
+/// The arrow is cells (11, 4) and (11, 5), redrawn from (48, 32) or (49, 32),
+/// and the turn is the route's cell (11, 9) (row 73), from (12, 72) or (10,
+/// 72).
 static void AltinPeak_ToggleThirdWaterBeastRoomSwitchCells(void) {
   if (Event_GetFlag(FLAG_ALTIN_PEAK_THIRD_WATER_BEAST_ROOM_SWITCH) != 0) {
     MapGrid_CopyCellAttributes(12, 72, 1, 1, 11, 73);
@@ -763,7 +832,10 @@ static void AltinPeak_ToggleThirdWaterBeastRoomSwitchCells(void) {
   }
 }
 
-/// Searching AltinPeakThirdWaterBeast's switch flips it.
+/// Searching the switch on the small ledge by the torch at the top of the
+/// third water beast's room (cell (11, 7)) flips it: "Isaac flipped the
+/// switch." Its red arrow over the fork below turns from west to east, or
+/// back, and the mine cart takes the other branch.
 static void AltinPeak_FlipThirdWaterBeastRoomSwitch(void) {
   Event_Start();
   FieldMessage_Show(MsgFieldFlippedSwitch, 1);
@@ -774,7 +846,13 @@ static void AltinPeak_FlipThirdWaterBeastRoomSwitch(void) {
   Event_End();
 }
 
-/// Searching AltinPeakPool's switch flips it.
+/// Searching the switch below the fork in the north of the pool cave (cell
+/// (16, 31)) flips it: "Isaac flipped the switch." Its red arrow turns from
+/// east to west, or back, and the mine cart takes the other branch.
+///
+/// The arrow is cells (16, 28) and (16, 29), redrawn from (46, 29) or (47,
+/// 29), and the turn is the route's cell (16, 28) (row 92), from (17, 93) or
+/// (15, 93).
 static void AltinPeak_FlipPoolRoomSwitch(void) {
   Event_Start();
   FieldMessage_Show(MsgFieldFlippedSwitch, 1);
@@ -793,7 +871,13 @@ static void AltinPeak_FlipPoolRoomSwitch(void) {
   Event_End();
 }
 
-/// Searching AltinPeakSpritz's switch flips it.
+/// Searching the switch east of the ladder's top in Spritz's room (cell (29,
+/// 20)) flips it: "Isaac flipped the switch." Its red arrow by the fork turns
+/// from east to west, or back, and the mine cart takes the other branch.
+///
+/// The arrow is cells (29, 17) and (29, 18), redrawn from (46, 28) or (47,
+/// 28), and the turn is the route's cell (29, 17) (row 81), from (30, 82) or
+/// (28, 82).
 static void AltinPeak_FlipSpritzRoomSwitch(void) {
   Event_Start();
   FieldMessage_Show(MsgFieldFlippedSwitch, 1);
@@ -812,19 +896,30 @@ static void AltinPeak_FlipSpritzRoomSwitch(void) {
   Event_End();
 }
 
-/// Stepping onto AltinPeakSpritz's pillar draws it under the party leader.
+/// Nothing visible happens when Isaac steps onto the top of the ladder down to
+/// the stone pillar in Spritz's room (cells (25, 18) to (27, 19)); the game
+/// only has the pillar drawn beneath him while he is up there.
+///
+/// It sets the pillar's ACTOR_PRIORITY_UNDERFOOT;
+/// AltinPeak_RestorePillarAutomaticPriority clears it at the ladder's foot.
 static void AltinPeak_PlacePillarUnderLeader(void) {
   Actor_Get(ACTOR_SPRITZ_ROOM_PILLAR)->priorityFlags =
       ACTOR_PRIORITY_AUTOMATIC | ACTOR_PRIORITY_UNDERFOOT;
 }
 
-/// Stepping off AltinPeakSpritz's pillar lets it sort against the leader again.
+/// Nothing visible happens when Isaac steps onto the foot of the ladder down
+/// to the stone pillar in Spritz's room (cells (25, 20) to (27, 21)); the
+/// game draws the pillar in front of or behind him by where each stands
+/// again, as before he climbed up.
 static void AltinPeak_RestorePillarAutomaticPriority(void) {
   Actor_Get(ACTOR_SPRITZ_ROOM_PILLAR)->priorityFlags = ACTOR_PRIORITY_AUTOMATIC;
 }
 
-/// Walking east into AltinPeakSpritz's pillar pushes it one cell along with a
-/// scrape. The leader follows it and its cells are settled as after Move.
+/// Walking east into the stone pillar in Spritz's room from cell (23, 26),
+/// after Move has slid it a cell west, pushes it back with a scrape to where
+/// it first stood, Isaac following behind it.
+///
+/// Its cells are then set as after Move (AltinPeak_SettleSpritzRoomPillar).
 static void AltinPeak_PushSpritzRoomPillar(void) {
   Event_Start();
   MapGrid_CopyCellAttributes(24, 27, 2, 1, 24, 26);
@@ -841,7 +936,13 @@ static void AltinPeak_PushSpritzRoomPillar(void) {
   Event_End();
 }
 
-/// Force on AltinPeakFallingRocks's wall topples the log by it.
+/// Force on the wall at the dead end of the falling-rocks passage, past the
+/// sign, sends the upright log standing there rocking and toppling over, and a
+/// boulder drops and chases Isaac down the winding path.
+///
+/// The Force row is on the blank actor at the wall, and needs the boulder not
+/// to have fallen yet. The log is rocked to each side and then falls with its
+/// sprite turning, before AltinPeak_RunBoulderChase.
 static void AltinPeak_ForceLogOver(void) {
   struct Actor *actor;
   struct Sprite *sprite;
@@ -912,7 +1013,15 @@ static void AltinPeak_ForceLogOver(void) {
   Event_End();
 }
 
-/// AltinPeakFallingRocks's rockfall.
+/// The rockfall in the falling-rocks passage: Isaac looks up at the rumble, a
+/// boulder drops beside the toppled log, and he runs down the winding path
+/// ahead of it to the clearing at the bottom, where it crashes into the old
+/// doorway in a shower of rocks and opens the way down. If Garet struck the
+/// wall, he waits at the bottom and comes back to rejoin Isaac.
+///
+/// boulderDelay is the frames Isaac's start is given over the boulder's. The
+/// doorway's cells from (43, 35) take the broken ones kept from (25, 35), and
+/// FLAG_ALTIN_PEAK_BOULDER_FALLEN keeps them on later visits.
 static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   struct Actor *leader;
   struct Actor *boulder;
@@ -1054,8 +1163,15 @@ static void AltinPeak_RunBoulderChase(s32 boulderDelay) {
   GameFlag_Set(FLAG_ALTIN_PEAK_BOULDER_FALLEN);
 }
 
-/// Searching AltinPeakFallingRocks's sign, which can bring the rockfall. `Watch
-/// for falling rocks! Do not strike the wall! Rocks may fall!`
+/// Reading the sign at the dead end of the falling-rocks passage (cell (49,
+/// 6)) says "Watch for falling rocks! Do not strike the wall! Rocks may
+/// fall!". Without the Orb of Force, Garet then steps out: "Tch! We came this
+/// deep into the mine just to find a dead end!" He strikes the wall, the cave
+/// rumbles, and he shouts "...I have a bad feeling about this. Run, Isaac!
+/// Now!" and runs off down the path before the boulder comes.
+///
+/// Once the boulder has fallen, or with the Orb of Force, the sign is only
+/// read, and Force on the wall brings the rockfall (AltinPeak_ForceLogOver).
 static void AltinPeak_ReadFallingRockSign(void) {
   struct Actor *actor;
   s32 message;
@@ -1137,8 +1253,8 @@ static void AltinPeak_ReadFallingRockSign(void) {
   Event_End();
 }
 
-/// AltinPeakFirstWaterBeast has its own triggers once the first drain has
-/// lowered its water.
+/// The first water beast's cave changes its triggers once the first drain has
+/// lowered its water: the beast is gone and its two puddles can be frozen.
 const struct Trigger *Scene_GetTriggers(void) {
   const struct Trigger *table;
 
@@ -1221,8 +1337,15 @@ static inline void AltinPeak_PlayLandingShake(s32 amplitude, s32 holdFrames) {
   MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
 }
 
-/// Stepping near AltinPeakFirstWaterBeast's water beast the first time makes it
-/// show the way.
+/// Walking up the passage to the water beast in its cave (cells (17, 24) to
+/// (19, 24)) makes it show the way: it cries out, hops north into the cave to
+/// the gap between the two ledges, freezes the puddle in the gap with Frost,
+/// hops round by the east ledge and across the ice to the west ledge, and
+/// cries again.
+///
+/// It happens once (FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN). The beast then
+/// keeps turning to face Isaac. The ice stays a square to hop on, at cell (18,
+/// 13), so Isaac can follow it across.
 static void AltinPeak_ShowFirstBeastRoute(void) {
   struct Actor *beast;
   struct Actor *leader;
@@ -1254,7 +1377,7 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_NORTH_NORTHWEST, 20);
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_WEST, 40);
-  // Demonstrate Frost between the hopping sections.
+  // It freezes the puddle in the gap before hopping across it.
   AltinPeak_BeastFreezesSecondPuddle();
   Event_Wait(40);
   Actor_FaceDirection(ACTOR_FIRST_WATER_BEAST, FACING_SOUTH_SOUTHWEST, 20);
@@ -1339,9 +1462,14 @@ static void AltinPeak_ShowFirstBeastRoute(void) {
   Event_End();
 }
 
-/// When the party steps near the beast again, it hops back over the ice and
-/// settles down, spitting water.
-static void AltinPeak_ShowSecondBeastRoute(void) {
+/// When Isaac reaches the east ledge at the edge of the gap (cells (21, 13)
+/// and (21, 14)), the water beast across the ice cries out, hops away to the
+/// west end of its ledge and settles there to spit water east.
+///
+/// It happens once (FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN), and the beast
+/// spits there until its battle. The view stays on it for one to two
+/// seconds, less if a button is pressed, before going back to Isaac.
+static void AltinPeak_FirstBeastHopsAway(void) {
   struct Actor *actor;
   u32 waitedFrames;
 
@@ -1421,8 +1549,8 @@ static void AltinPeak_ShowSecondBeastRoute(void) {
   Event_End();
 }
 
-/// Sets up the room being entered, with puzzles already solved and the water
-/// levels already lowered. Returns 0.
+/// Sets up the room being entered, with what the party has done there put
+/// back and its water as low as the drains have left it. Returns 0.
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -1448,7 +1576,9 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// Sets up AltinPeakFirstWaterBeast.
+/// Sets up the first water beast's cave: back from its battle, the Frost
+/// Jewel and the drain; before the drain, the beast where it last went; after
+/// it, the two puddles, frozen if Frost has frozen them on this visit.
 static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
   struct Actor *actor;
   struct MapGridScrollWork *grid;
@@ -1529,7 +1659,9 @@ static void AltinPeak_RestoreFirstWaterBeastRoom(void) {
   }
 }
 
-/// Sets up AltinPeakSecondWaterBeast.
+/// Sets up the lake room: back from its battle, the drain; before it, the
+/// beast spitting water at the lake; and the switch's arrow and the fork as
+/// last flipped.
 static void AltinPeak_RestoreSecondWaterBeastRoom(void) {
   if (GameFlag_Get(FLAG_ALTIN_MINE_SECOND_DRAIN) != 0) {
     ((struct MapGridScrollWork *)gMapGridWork[0])->flags &= ~DISPCNT_BG1_ON;
@@ -1559,7 +1691,8 @@ static void AltinPeak_RestoreSecondWaterBeastRoom(void) {
   }
 }
 
-/// Sets up AltinPeakSouthEntrance.
+/// Sets up the south entrance: its flooded chamber dries with the second
+/// drain, and coming in from the Alpine Crossing shows no area name.
 static void AltinPeak_RestoreSouthEntranceRoom(void) {
   if (GameFlag_Get(FLAG_ALTIN_MINE_SECOND_DRAIN) != 0) {
     ((struct MapGridScrollWork *)gMapGridWork[0])->flags &= ~DISPCNT_BG1_ON;
@@ -1575,7 +1708,8 @@ static void AltinPeak_RestoreSouthEntranceRoom(void) {
   }
 }
 
-/// Sets up AltinPeakThirdWaterBeast.
+/// Sets up the third water beast's room: back from its battle, the drain;
+/// before it, the beast spitting water; the frozen puddle; and the switch.
 static void AltinPeak_RestoreThirdWaterBeastRoom(void) {
   if (GameFlag_Get(FLAG_ALTIN_MINE_THIRD_DRAIN) != 0) {
     ((struct MapGridScrollWork *)gMapGridWork[0])->flags &= ~DISPCNT_BG1_ON;
@@ -1612,7 +1746,9 @@ static void AltinPeak_RestoreThirdWaterBeastRoom(void) {
   }
 }
 
-/// Sets up AltinPeakPool.
+/// Sets up the pool cave: the mine cart waiting at (358, 104) when the party
+/// comes back up from the south-west part, the frozen puddle, the pool gone
+/// after the third drain, and the switch.
 static void AltinPeak_RestorePoolRoom(void) {
   struct Actor *pillar;
 
@@ -1644,8 +1780,8 @@ static void AltinPeak_RestorePoolRoom(void) {
   }
 }
 
-/// Sets up AltinPeakSpritz. The pillar, the three frozen puddles and the switch
-/// are restored.
+/// Sets up Spritz's room: the stone pillar where it stands, the three puddles
+/// frozen on this visit, and the switch.
 static void AltinPeak_RestoreSpritzRoom(void) {
   struct Actor *actor;
 
@@ -1692,7 +1828,10 @@ static void AltinPeak_RestoreSpritzRoom(void) {
   }
 }
 
-/// Sets up AltinPeakFallingRocks.
+/// Sets up the falling-rocks passage: the upright log and the sign, and once
+/// the boulder has fallen, the log lying toppled and the doorway broken open.
+/// Climbing up the ladder from the Hydros statue's room, Isaac comes up out
+/// of the hole.
 static void AltinPeak_RestoreFallingRocksRoom(void) {
   struct Actor *actor;
 
@@ -1731,8 +1870,8 @@ static void AltinPeak_RestoreFallingRocksRoom(void) {
   }
 }
 
-/// Sets up AltinPeakHydrosStatue. The guardian statue stands until the Hydros
-/// statues are beaten. After their battle the party talks it over.
+/// Sets up the Hydros statue's room: the statue stands on its dais until it is
+/// beaten, and back from its battle the party talks it over.
 static void AltinPeak_RestoreHydrosStatueRoom(void) {
   s32 statuesDefeated;
   struct Actor *leader;
@@ -1764,7 +1903,8 @@ static void AltinPeak_RestoreHydrosStatueRoom(void) {
   }
 }
 
-/// Sets up AltinPeakWestExit.
+/// Sets up the west exit: coming back out of the Vial's chest room, the
+/// stone pillar stands a cell west of its first place, at (184, 328).
 static void AltinPeak_RestoreWestExitRoom(void) {
   Actor_SetSpriteFlags(Actor_Get(ACTOR_WEST_EXIT_ROOM_PILLAR), 0);
   if (gMainRoutineWork.entrance ==
@@ -1886,10 +2026,15 @@ static void AltinPeak_SpawnDebris(void) {
   }
 }
 
-/// The frozen second puddle's glint.
+/// The glint of the ice the first beast leaves in the gap of its cave.
 DEFINE_FROST_GLINT(static, Actor_SetSpriteColor)
 
-/// AltinPeakFirstWaterBeast's water beast casts Frost on the second puddle.
+/// The first water beast casts Frost on the puddle in the gap of its cave, the
+/// screen turning red as when the party casts it, and the puddle freezes into
+/// an ice pillar.
+///
+/// The beast's colours are set back to its green and blue swapped after each
+/// step of the cast.
 static void AltinPeak_BeastFreezesSecondPuddle(void) {
   FieldPsynergy_LoadResources(ABILITY_FROST, 1);
   FieldPsynergy_SetupActorPair(ACTOR_FIRST_WATER_BEAST,
@@ -1905,8 +2050,9 @@ static void AltinPeak_BeastFreezesSecondPuddle(void) {
   Actor_SetSpriteColorById(ACTOR_FIRST_WATER_BEAST, SPRITE_COLOR_RBG);
 }
 
-/// Back from AltinPeakFirstWaterBeast's beast battle, the beast is gone and the
-/// party finds the Frost Jewel.
+/// Back from the first water beast's battle, on the west ledge where it last
+/// stood: the beast is gone, "Isaac got the Frost Jewel.", and the view moves
+/// over the cave as the water drains away (AltinPeak_DrainFirstWater).
 static void AltinPeak_AwardFrostJewelAndDrain(void) {
   struct Actor *leader;
 
@@ -1935,8 +2081,9 @@ static void AltinPeak_AwardFrostJewelAndDrain(void) {
   Event_End();
 }
 
-/// Back from AltinPeakSecondWaterBeast's beast battle, the beast is gone and
-/// the mine cart waits at (328, 424).
+/// Back from the second water beast's battle: the beast is gone, the mine
+/// cart waits where its ride ended, at (328, 424), the switch is back in its
+/// first position, and the water drains (AltinPeak_DrainSecondWater).
 static void AltinPeak_DrainAfterSecondBeast(void) {
   Event_Start();
   Actor_SetPosition(ACTOR_SECOND_WATER_BEAST, 0, 0);
@@ -1955,8 +2102,9 @@ static void AltinPeak_DrainAfterSecondBeast(void) {
   Event_End();
 }
 
-/// Back from AltinPeakThirdWaterBeast's beast battle, the same way, with the
-/// third drain.
+/// Back from the third water beast's battle, the same way: the beast is gone,
+/// the cart waits at (488, 138), the switch is back in its first position, and
+/// the last water drains (AltinPeak_DrainThirdWater).
 static void AltinPeak_DrainAfterThirdBeast(void) {
   Event_Start();
   Actor_SetPosition(ACTOR_THIRD_WATER_BEAST, 0, 0);
@@ -1984,7 +2132,10 @@ static void AltinPeak_PlayHydrosRumble(void) {
   }
 }
 
-/// Stepping toward AltinPeakHydrosStatue's guardian statue wakes it.
+/// Climbing the steps onto the dais before the guardian statue in the ruins'
+/// room (cells (19, 7) to (21, 7)) wakes the Hydros Statue: Isaac walks up to
+/// it, it roars and slides toward him with the floor rumbling, and its battle
+/// starts.
 static void AltinPeak_StartHydrosBattle(void) {
   Event_Start();
   FieldCamera_SetSpeed(0.6);
@@ -2010,7 +2161,8 @@ static void AltinPeak_StartHydrosBattle(void) {
       ENCOUNTER_ZONE_SCRIPTED_MOGALL_ALTIN_LAMAKAN, 3);
 }
 
-/// Task while the statue sinks. It flickers every other frame.
+/// Task while the statue sinks. It flickers white and grey, every other
+/// frame.
 static void AltinPeak_FlickerStatue(void) {
   if (((gFrameCount >> 1) & 1) != 0) {
     Actor_SetSpriteColorById(ACTOR_STATUE, SPRITE_COLOR_WHITE);
@@ -2019,7 +2171,12 @@ static void AltinPeak_FlickerStatue(void) {
   }
 }
 
-/// Back from the Hydros statues' battle, Garet, Ivan and Mia step out.
+/// Back from the Hydros Statue's battle, Garet, Ivan and Mia step out beside
+/// Isaac on the dais. "We did it, Isaac! We beat the last water beast!" Ivan
+/// wonders why Altin's guardian statues turned into monsters, and Mia says
+/// they were made long, long ago. The statue flashes white and sinks into the
+/// floor, Ivan spots a treasure chest behind it, and Garet says they should
+/// check it.
 static void AltinPeak_CelebrateHydrosVictory(void) {
   struct Actor *leader;
   struct FieldWork *work;
@@ -2157,8 +2314,9 @@ UNUSED static void AltinPeak_RequestPsynergy(void) {
   gFieldWork->psynergy = FIELD_PSYNERGY(FELIX, ABILITY_FROST);
 }
 
-/// Task in AltinPeakSpritz. While the leader stands higher than 48 pixels the
-/// second pillar is drawn under the party and the third further back.
+/// Task in Spritz's room: while Isaac stands higher than 48 pixels, the ice
+/// pillar of the north-west puddle is drawn under the party and the one north
+/// of the rails further back.
 static void AltinPeak_UpdateFrostPillarPriority(void) {
   if (Actor_Get(ACTOR_PARTY_LEADER)->y.fixed > toFIXED(48)) {
     Actor_Get(ACTOR_SPRITZ_ROOM_SECOND_PUDDLE)->priorityFlags |=
@@ -2169,7 +2327,8 @@ static void AltinPeak_UpdateFrostPillarPriority(void) {
   }
 }
 
-/// Makes a puddle walkable to the actor checks and marks its map cell.
+/// Lets the party pass through a puddle's actor and makes its map cell a wall
+/// instead, until Frost gives the cell a hop square.
 static void AltinPeak_MarkActorTerrainCell(s32 actorId) {
   struct Actor *actor;
 
@@ -2180,8 +2339,8 @@ static void AltinPeak_MarkActorTerrainCell(s32 actorId) {
                             CELL_BEHAVIOR_WALL);
 }
 
-/// The mine cart reaches the end of its run. It settles in the middle of its
-/// cell and the party leader jumps off it to the south.
+/// The mine cart reaches the end of its line with a crunch: it settles in the
+/// middle of its cell and Isaac jumps out of it to the south.
 static void AltinPeak_StopCartAndJumpOff(struct Actor *actor) {
   s32 x;
   s32 z;
@@ -2343,7 +2502,8 @@ static void AltinPeak_AdvanceCart(struct Actor *actor) {
   }
 }
 
-/// The cell behaviors that mark the mine cart's route, on map layer 2.
+/// The cell behaviours that mark the mine cart's route, on the overhead layer
+/// (map rows 64 and up): its turns, a countdown before a turn, and its stop.
 enum AltinPeakCellBehavior {
   CELL_BEHAVIOR_ALTIN_PEAK_CART_COUNTDOWN =
       96, ///< AltinPeak_StartCartCountdown
@@ -2353,7 +2513,13 @@ enum AltinPeakCellBehavior {
   CELL_BEHAVIOR_ALTIN_PEAK_CART_STOP = 99
 };
 
-/// Rolls the mine cart the party leader rides.
+/// Rolls the mine cart Isaac rides, the view following it, from where it
+/// stands along the rails until its stop.
+///
+/// heading is the way it sets off, or -1 for the way it faces; if no rail
+/// leads that way, the next quarter turns are tried. Each frame it reads the
+/// route's cell under it (AltinPeakCellBehavior) and rolls faster downhill
+/// (gAltinPeak_CartSpeeds).
 static void AltinPeak_RollCart(s32 id, s32 heading) {
   struct Actor *actor = Actor_Get(id);
   struct Actor *leader = Actor_Lookup(gMainRoutineWork.leaderActorId);
@@ -2462,13 +2628,14 @@ s8 gAltinPeak_PaletteScript[] = {
     -1,
 };
 
-/// AltinPeakFirstWaterBeast's beast keeps turning to face the party leader.
+/// The first water beast keeps turning to face Isaac.
 s32 gAltinPeak_FaceLeaderScript[] = {
     SC_CALL(Scene_TurnTowardTarget),
     SC_LOOP(SC_FOREVER, SC_TOP),
 };
 
-/// The new puddle grows to full size over 108 frames.
+/// The puddle that appears by the west ladder as the first drain lowers the
+/// water grows to full size over 108 frames.
 s32 gAltinPeak_PuddleGrowScript[] = {
     SC_ADD(SW_SCALE_X, 546),
     SC_ADD(SW_SCALE_Y, 546),
@@ -2477,8 +2644,8 @@ s32 gAltinPeak_PuddleGrowScript[] = {
     SC_END,
 };
 
-/// AltinPeakFallingRocks's boulder rolls straight down the path, and marks its
-/// arrival.
+/// The falling boulder rolls straight down the passage, over the bends Isaac
+/// runs round, and marks its arrival.
 s32 gAltinPeak_BoulderPath[] = {
     SC_MOVE(786, 0, 220),
     SC_SYNC,
@@ -2594,7 +2761,7 @@ s32 gAltinPeak_MiaScript[] = {
     SC_END,
 };
 
-/// The guardian statue and its shadow flatten into the floor over 60 frames.
+/// The Hydros statue and its shadow flatten into the floor over 60 frames.
 s32 gAltinPeak_StatueSinkScript[] = {
     SC_ADD(SW_SCALE_X, 128),
     SC_ADD(SW_SCALE_Y, -1024),
@@ -2896,8 +3063,8 @@ struct Trigger gAltinPeak_TriggersOther[] = {
 
 struct Trigger gAltinPeak_FirstWaterBeastTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, ALTIN_PEAK_FIRST_WATER_BEAST_TO_ALTIN},
-    {TRIGGER_STEP, 10, FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN, EVENT(AltinPeak_ShowFirstBeastRoute)},
-    {TRIGGER_STEP, 11, FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN, EVENT(AltinPeak_ShowSecondBeastRoute)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_ALTIN_PEAK_BEFORE_FIRST_BEAST, FLAG_ALTIN_PEAK_FIRST_BEAST_ROUTE_SEEN, EVENT(AltinPeak_ShowFirstBeastRoute)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_ALTIN_PEAK_EAST_LEDGE_BY_GAP, FLAG_ALTIN_PEAK_SECOND_BEAST_ROUTE_SEEN, EVENT(AltinPeak_FirstBeastHopsAway)},
     {TRIGGER_TALK, ACTOR_FIRST_WATER_BEAST, CONDITION_ALWAYS, EVENT(AltinPeak_FightFirstWaterBeast)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), PSYNERGY_EVENT_PLAYS_CAST | ACTOR_FIRST_WATER_BEAST, CONDITION_ALWAYS,
         EVENT(AltinPeak_FightFirstWaterBeast)},
@@ -2927,13 +3094,13 @@ struct Trigger gAltinPeak_SecondWaterBeastTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), PSYNERGY_EVENT_PLAYS_CAST | ACTOR_SECOND_WATER_BEAST, CONDITION_ALWAYS,
         EVENT(AltinPeak_FightSecondWaterBeast)},
     {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_SECOND_WATER_BEAST_ROOM_BOULDER, CONDITION_ALWAYS, 0},
-    {EXAMINE_TRIGGER(EXAMINE_SILENT), 83, CONDITION_ALWAYS, EVENT(AltinPeak_FlipSecondWaterBeastRoomSwitch)},
+    {EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_ALTIN_PEAK_LAKE_SWITCH, CONDITION_ALWAYS, EVENT(AltinPeak_FlipSecondWaterBeastRoomSwitch)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_ALTIN_PEAK_COOKIE, FIND_ITEM(ITEM_COOKIE)},
     {TRIGGER_TABLE_END},
     // Unused: two rows past the end marker, which no lookup reaches: a second
-    // ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE exit and a chest on
-    // trigger 100 holding a Herb under FLAG_ALTIN_PEAK_UNUSED_HERB, the spot
-    // where the Cookie chest above already stands.
+    // ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE exit and a chest
+    // holding a Herb under FLAG_ALTIN_PEAK_UNUSED_HERB, at the spot where the
+    // Cookie's chest above already stands.
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, ALTIN_PEAK_SECOND_WATER_BEAST_CHEST_ROOM_TO_LAKE},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_ALTIN_PEAK_UNUSED_HERB, FIND_ITEM(ITEM_HERB)},
     {TRIGGER_TABLE_END},
@@ -2957,7 +3124,7 @@ struct Trigger gAltinPeak_ThirdWaterBeastTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), PSYNERGY_EVENT_PLAYS_CAST | ACTOR_THIRD_WATER_BEAST, CONDITION_ALWAYS,
         EVENT(AltinPeak_FightThirdWaterBeast)},
     {TRIGGER_TALK, ACTOR_CART, CONDITION_ALWAYS, EVENT(AltinPeak_RideCart)},
-    {EXAMINE_TRIGGER(EXAMINE_SILENT), 50, CONDITION_ALWAYS, EVENT(AltinPeak_FlipThirdWaterBeastRoomSwitch)},
+    {EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_ALTIN_PEAK_SWITCH, CONDITION_ALWAYS, EVENT(AltinPeak_FlipThirdWaterBeastRoomSwitch)},
     // The Dragon Shield's chest opens only from its west side.
     {EXAMINE_CHEST_FACING(FACING_SOUTHEAST), 100, FLAG_ALTIN_PEAK_DRAGON_SHIELD, FIND_ITEM(ITEM_DRAGON_SHIELD)},
     {EXAMINE_CHEST_FACING(FACING_EAST), 100, FLAG_ALTIN_PEAK_DRAGON_SHIELD, FIND_ITEM(ITEM_DRAGON_SHIELD)},
@@ -2974,7 +3141,7 @@ struct Trigger gAltinPeak_PoolTriggers[] = {
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, ALTIN_PEAK_POOL_TO_ALTIN_PEAK_THIRD_WATER_BEAST},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_POOL_ROOM_PUDDLE, FLAG_ALTIN_PEAK_PUDDLE_FROZEN, EVENT(AltinPeak_FreezePoolRoomPuddle)},
     {TRIGGER_TALK, ACTOR_CART, CONDITION_ALWAYS, EVENT(AltinPeak_RideCart)},
-    {EXAMINE_TRIGGER(EXAMINE_SILENT), 50, CONDITION_ALWAYS, EVENT(AltinPeak_FlipPoolRoomSwitch)},
+    {EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_ALTIN_PEAK_SWITCH, CONDITION_ALWAYS, EVENT(AltinPeak_FlipPoolRoomSwitch)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_ALTIN_PEAK_POOL_MIMIC_BEATEN, FIND_MIMIC | 2},
     {TRIGGER_TABLE_END},
 };
@@ -2986,11 +3153,11 @@ struct Trigger gAltinPeak_SpritzTriggers[] = {
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 101, FLAG_ALTIN_PEAK_PSY_CRYSTAL, FIND_ITEM(ITEM_PSY_CRYSTAL)},
     {TRIGGER_TALK, ACTOR_SPRITZ, CONDITION_ALWAYS, EVENT(AltinPeak_TalkToDjinni)},
     {TRIGGER_TALK, ACTOR_CART, CONDITION_ALWAYS, EVENT(AltinPeak_RideCart)},
-    {EXAMINE_TRIGGER(EXAMINE_SILENT), 50, CONDITION_ALWAYS, EVENT(AltinPeak_FlipSpritzRoomSwitch)},
-    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(AltinPeak_PlacePillarUnderLeader)},
-    {TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(AltinPeak_RestorePillarAutomaticPriority)},
+    {EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_ALTIN_PEAK_SWITCH, CONDITION_ALWAYS, EVENT(AltinPeak_FlipSpritzRoomSwitch)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_ALTIN_PEAK_LADDER_TOP, CONDITION_ALWAYS, EVENT(AltinPeak_PlacePillarUnderLeader)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_ALTIN_PEAK_LADDER_FOOT, CONDITION_ALWAYS, EVENT(AltinPeak_RestorePillarAutomaticPriority)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SPRITZ_ROOM_PILLAR, CONDITION_ALWAYS, EVENT(AltinPeak_SettleSpritzRoomPillar)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 12, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_ALTIN_PEAK_WEST_OF_PILLAR, CONDITION_ALWAYS,
         EVENT(AltinPeak_PushSpritzRoomPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SPRITZ_ROOM_PUDDLE, FLAG_ALTIN_PEAK_PUDDLE_FROZEN, EVENT(AltinPeak_FreezeSpritzRoomPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SPRITZ_ROOM_SECOND_PUDDLE, FLAG_ALTIN_PEAK_SECOND_PUDDLE_FROZEN,
@@ -3027,7 +3194,8 @@ struct Trigger gAltinPeak_FallingRocksTriggers[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, ALTIN_PEAK_FALLING_ROCKS_EAST_TO_WEST},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS,
      ALTIN_PEAK_FALLING_ROCKS_TO_ALTIN_PEAK_JUNCTION_NORTH},
-    {EXAMINE_TRIGGER(EXAMINE_SILENT), 12, CONDITION_ALWAYS,
+    {EXAMINE_TRIGGER(EXAMINE_SILENT),
+     CELL_BEHAVIOR_ALTIN_PEAK_FALLING_ROCK_SIGN, CONDITION_ALWAYS,
      EVENT(AltinPeak_ReadFallingRockSign)},
     {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_WALL,
      FLAG_ALTIN_PEAK_BOULDER_FALLEN, EVENT(AltinPeak_ForceLogOver)},
@@ -3035,8 +3203,8 @@ struct Trigger gAltinPeak_FallingRocksTriggers[] = {
 };
 
 struct Trigger gAltinPeak_HydrosStatueTriggers[] = {
-    {TRIGGER_STEP, 10, FLAG_HYDROS_STATUES_DEFEATED,
-     EVENT(AltinPeak_StartHydrosBattle)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_ALTIN_PEAK_BEFORE_HYDROS_STATUE,
+     FLAG_HYDROS_STATUES_DEFEATED, EVENT(AltinPeak_StartHydrosBattle)},
     {EXAMINE_TRIGGER(EXAMINE_CHEST), 100, FLAG_ALTIN_PEAK_LIFTING_GEM,
      FIND_ITEM(ITEM_LIFTING_GEM)},
     {TRIGGER_TABLE_END},

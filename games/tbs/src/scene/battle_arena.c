@@ -1,6 +1,19 @@
 /// @file
-/// The Battle Arena overlay: starting linked and monster battles, the exchange
-/// of the two parties, the attendant and the records of wins.
+/// The Battle Arena, the hall Isaac walks into when Battle is chosen on the
+/// File Screen with a save that has a Djinni. He comes in from the south, up a
+/// short passage. Talking to the attendant behind the west counter arranges a
+/// battle: with a monster when no second Game Boy Advance answers, or over the
+/// link cable with a friend. Stepping onto the diamond mark in the middle of
+/// the hall then sends the party through the iron gate in the north wall into
+/// the arena. Afterwards the party is back here: the muscleman behind the east
+/// counter keeps the linked battles' record and the old man beside the gate
+/// the monster battles', and the board over the gate shows the longest run of
+/// linked wins. A healer in the room up the east stairs offers a Sanctum's
+/// services, Garet, Ivan, Mia and Jenna wait in that room, and visitors in the
+/// hall and the room up the west stairs talk about the rules.
+///
+/// Most of the code is the link: the two consoles publish where each player
+/// stands in the arranging, and trade their parties before the battle.
 
 #include "flags.h"
 #include "stddef.h"
@@ -26,6 +39,14 @@
 #include "window/screens.h"
 #include "window/window.h"
 #include "text/msg_ids.h"
+
+/// The cells of the hall that start an event when stepped on.
+enum BattleArenaCellBehavior {
+  /// The passage out to the south, cell (13, 19).
+  CELL_BEHAVIOR_BATTLE_ARENA_WAY_OUT = 1,
+  /// The diamond mark in the middle of the hall, cell (13, 12).
+  CELL_BEHAVIOR_BATTLE_ARENA_CIRCLE = 10,
+};
 
 s32 Scene_Initialize(void);
 extern u8 gBattleArena_SlotColumns[];
@@ -405,9 +426,14 @@ static UNREAD_RESULT BattleArena_WatchOpponent(void) {
 /// LOBBY_ASK_AGAIN_CALLS. It is cleared on every arrival.
 u32 gBattleArenaCallFrames;
 
-/// LOBBY_EVENT_ASK_TO_PARTICIPATE: the attendant asks the player into the
-/// circle once both consoles agree, and again after LOBBY_ASK_AGAIN_CALLS
-/// calls.
+/// Once both linked players have agreed to a battle, the attendant behind the
+/// west counter calls out "If you want to participate, please step into the
+/// circle!", and calls it again now and then while the player keeps her
+/// waiting.
+///
+/// `BattleArena_WatchOpponent` raises it (LOBBY_EVENT_ASK_TO_PARTICIPATE) while
+/// both have agreed, and every LOBBY_ASK_AGAIN_CALLS calls the flag that keeps
+/// her quiet is cleared.
 ///
 /// Returns the flag's value when FLAG_BATTLE_ARENA_ENTERING_BATTLE or
 /// FLAG_BATTLE_ARENA_ATTENDANT_ASKED is set and nothing is shown. The path that
@@ -439,7 +465,12 @@ static s32 BattleArena_AskToParticipate(void) {
 #endif
 }
 
-/// LOBBY_EVENT_DISCONNECTED: the attendant says the link was disconnected.
+/// When the link cable's connection is lost while a linked battle is being
+/// arranged, the attendant behind the west counter says "The link was
+/// disconnected.", and the arranging starts over.
+///
+/// `BattleArena_WatchOpponent` and `BattleArena_EnterBattle` raise it
+/// (LOBBY_EVENT_DISCONNECTED).
 static s32 BattleArena_ReportLinkDisconnected(void) {
   struct FieldWork *work = gFieldWork;
 
@@ -793,7 +824,15 @@ check:
   return result;
 }
 
-/// Step trigger 10, the circle: starts the battle.
+/// Stepping onto the diamond mark in the middle of the hall, cell (13, 12),
+/// once a battle is arranged starts it. For a monster battle the attendant says
+/// "Good luck!" and Isaac walks north through the iron gate, which lifts, into
+/// the arena. For a linked battle "Awaiting your opponent..." shows until the
+/// friend steps onto the mark too, and Isaac walks slowly
+/// to the gate while the two parties are traded over the cable.
+///
+/// Before a battle is arranged, nothing happens on the mark. A lost link or a
+/// failed trade walks him back out and lets the attendant say so.
 static s32 BattleArena_EnterBattle(void) {
   struct FieldWork *work;
   s32 failed;
@@ -947,7 +986,12 @@ static s32 BattleArena_EnterBattle(void) {
 #endif
 }
 
-/// Talking to ACTOR_ATTENDANT, who arranges a battle.
+/// Talking to the attendant, the woman behind the west counter, arranges a
+/// battle. With no second Game Boy Advance on the cable she says "You do not
+/// have an opponent. Would you like to battle a monster?", and Yes sends the
+/// party to the diamond mark. With a friend linked she explains the Battle
+/// Arena once, then offers to ask the friend for a battle, or to accept the
+/// friend's request.
 static s32 BattleArena_ChooseBattleMode(void) {
   // UB: returns no value, so its result is whatever the last call returned.
 
@@ -1058,7 +1102,11 @@ static s32 BattleArena_ChooseBattleMode(void) {
 #endif
 }
 
-/// Talking to ACTOR_LINKED_WINS_TELLER, who reports the linked battles won.
+/// Talking to the muscleman behind the east counter gives the linked battles'
+/// record. From the front of the counter he tells the linked battles won in
+/// all; from the side, the ones won in a row, and points to the board over the
+/// gate for the best run. Before any linked battle he only says he will tell
+/// the player once the linked finals are over.
 static s32 BattleArena_TellLinkedWins(s32 actorId) {
   u32 facing = Actor_Get(ACTOR_PARTY_LEADER)->facing;
   u16 *tally;
@@ -1099,7 +1147,13 @@ static s32 BattleArena_TellLinkedWins(s32 actorId) {
   return 0;
 #endif
 }
-/// Talking to ACTOR_DEBUG_HELPER loads a debug parameter set.
+/// A developers' leftover: the white-bearded man in green stands south of the
+/// hall's wall, where the player can never walk. Talking to him shows "Choose
+/// your parameters here." and a number picked with Left and Right; A loads that
+/// numbered set of levels and equipment for testing (`DebugParameterSet_Load`)
+/// and B gives up. The muscleman behind the east counter answers: "The settings
+/// are made. The rest is up to you.", "There's no such parameter. Ask Mr.
+/// Sugimoto." or "What is this, just a tease?".
 static s32 BattleArena_ChooseDebugParameterSet(s32 actorId) {
   struct Window *window;
   s32 setIndex;
@@ -1162,8 +1216,8 @@ static s32 BattleArena_ChooseDebugParameterSet(s32 actorId) {
 #endif
 }
 
-/// Talking to ACTOR_HEALER, who serves as a Sanctum's healer
-/// (Sanctum_Run).
+/// Talking to the healer in the tall hat, in the room up the east stairs,
+/// offers a Sanctum's services, the same as in any town (`Sanctum_Run`).
 static s32 BattleArena_OpenSanctum(s32 actorId) {
   Event_Start();
   Sanctum_Run(actorId);
@@ -1200,10 +1254,18 @@ static s32 BattleArena_PartyContains(s32 memberId) {
   return 0;
 }
 
-/// UNUSED: the original empty Battle Arena callback.
+/// UNUSED: an empty routine the Battle Arena's code keeps.
 UNUSED static void State_NoOp(void) {}
 
-/// Talking to Garet, Ivan, Mia or Jenna in the Battle Arena.
+/// Talking to Garet, Ivan, Mia or Jenna in the room up the east stairs gets a
+/// line about the coming battle that depends on who will fight it. Those in the
+/// party cheer ("I can't wait, Isaac! Let's go get 'em!"), one left out asks
+/// whether Isaac means to fight alone or to sit out, and after a linked battle
+/// each speaks of the win or the loss, whether they fought or watched.
+///
+/// The linked battle takes only the first three of the party
+/// (`BattleArena_PartyContains`). The line is the speaker's own in each list,
+/// one message after the other for Garet, Ivan, Mia and Jenna.
 static s32 BattleArena_TalkByProgress(s32 actorId) {
   s32 messageBase = MsgLobbyCantWaitLets;
   s32 isaacPresent = BattleArena_PartyContains(ISAAC);
@@ -1241,8 +1303,10 @@ static s32 BattleArena_TalkByProgress(s32 actorId) {
 #endif
 }
 
-/// Step trigger 1, the way out: stops the link, loads the normal reverb code
-/// and goes back to the File Screen (its entrance FILE_SCREEN_FROM_SANCTUM).
+/// Walking south out of the hall, down the passage he came in by, cell (13,
+/// 19), leaves the Battle Arena and goes back to the File Screen.
+///
+/// The link is stopped and the sound's normal echo restored first.
 static s32 BattleArena_LeaveArena(void) {
   Serial_RemoveIrqHandlers();
   Sound_LoadReverbCode(SOUND_REVERB_NORMAL);
@@ -1255,7 +1319,12 @@ static s32 BattleArena_LeaveArena(void) {
 // UB: the handlers below return no value, so their result is whatever
 // Event_End returned.
 
-/// Talking to one of three visitors.
+/// Talking to one of three visitors speaks of the Battle Arena: the swordsman
+/// in the room up the west stairs is a traveling warrior who warns not to
+/// underestimate the monsters, the old man with a cane there says up to three
+/// allies fight in the linked finals, and the old woman beside him wonders if
+/// this is the arena the old man dreamed of. After a linked battle each praises
+/// the win or consoles the loss.
 static s32 BattleArena_TalkToVisitor(s32 actorId) {
   s32 message;
   s32 step = 0;
@@ -1284,8 +1353,10 @@ static s32 BattleArena_TalkToVisitor(s32 actorId) {
 #endif
 }
 
-/// Talking to ACTOR_PARTY_ORDER_VISITOR, who alternates between two
-/// explanations by FLAG_BATTLE_ARENA_PARTY_ORDER_NEXT.
+/// Talking to the fair-haired boy on the west side of the hall gives two tips
+/// in turn. First, up to three allies can fight in the linked finals, so with
+/// four in the party the rightmost has to pass; then, the party's order can be
+/// changed in the status screen.
 static s32 BattleArena_ExplainPartyOrder(s32 actorId) {
   s32 message;
 
@@ -1310,8 +1381,9 @@ static s32 BattleArena_ExplainPartyOrder(s32 actorId) {
 #endif
 }
 
-/// Talking to ACTOR_MONSTER_WINS_TELLER, who reports the most monster battles
-/// won in a row (tally 2), or before any, that the speaker will count them.
+/// Talking to the old man with a cane beside the gate gives the most monster
+/// battles won in a row ("You've won 3 consecutive Monster Battles."), or
+/// before any, that he will be counting the player's victories.
 static s32 BattleArena_ReportMonsterRecord(s32 actorId) {
 
   Event_Start();
@@ -1333,7 +1405,8 @@ static s32 BattleArena_ReportMonsterRecord(s32 actorId) {
 
 u8 *Scene_GetTriggers(void) { return (u8 *)gBattleArenaTriggers; }
 
-/// Saves the battle results between saving and saved messages.
+/// Saves the file after a linked battle, between "Saving battle results." and
+/// "Battle results were saved.".
 static s32 BattleArena_SaveBattleResults(void) {
   struct Window *window;
 
@@ -1355,8 +1428,9 @@ static s32 BattleArena_SaveBattleResults(void) {
 #endif
 }
 
-/// The same with the monster battle messages, after a monster series that set
-/// a new record.
+/// Saves the file after a series of monster battles that set a new record,
+/// between "Saving Monster Battle results." and "Monster Battle results were
+/// saved.".
 static s32 BattleArena_SaveMonsterBattleResults(void) {
   // See BattleArena_SaveBattleResults for the measured shared-helper trial.
   struct Window *window;
@@ -1379,9 +1453,9 @@ static s32 BattleArena_SaveMonsterBattleResults(void) {
 #endif
 }
 
-/// Shows value, at most WALL_BOARD_MAX, on the wall board. The digits' pictures
-/// stand in map column 27, digit d in row d; the ones go to (16, 8) and the
-/// higher digits to their left.
+/// Shows value, at most WALL_BOARD_MAX, on the board over the gate, cells (14,
+/// 8) to (16, 8). The digits' pictures stand in map column 27, digit d in row
+/// d.
 static s32 BattleArena_DrawThreeDigitValue(s32 value) {
   s32 digit;
 
@@ -1397,8 +1471,13 @@ static s32 BattleArena_DrawThreeDigitValue(s32 value) {
 #endif
 }
 
-/// The overlay's initialize entry, run on every arrival. It settles the battle
-/// that brought the party here and restarts the Battle Arena's polling.
+/// Each time the party comes into the hall, from the File Screen or back from
+/// the arena, the battle that brought it here is settled. After a monster
+/// battle won, the attendant offers the next monster ("Not bad! Would you like
+/// to fight the next monster?"), with ever higher praise; No, or a loss, ends
+/// the series with the number won, and a new record is saved. A linked battle
+/// is counted, the board over the gate updated and the file saved. From the
+/// File Screen the link is started.
 s32 Scene_Initialize(void) {
   s32 i;
   struct FieldWork *work;
@@ -1764,8 +1843,10 @@ struct Trigger gBattleArenaTriggers[] = {
      MSGNO(MsgFieldAllTheWarriorsAreImpressiveSo)},
     {TRIGGER_TALK, ACTOR_WARY_VISITOR, CONDITION_ALWAYS,
      MSGNO(MsgFieldICouldEnterButIdJust)},
-    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(BattleArena_EnterBattle)},
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(BattleArena_LeaveArena)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BATTLE_ARENA_CIRCLE, CONDITION_ALWAYS,
+     EVENT(BattleArena_EnterBattle)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BATTLE_ARENA_WAY_OUT, CONDITION_ALWAYS,
+     EVENT(BattleArena_LeaveArena)},
     {TRIGGER_RAISED, LOBBY_EVENT_ASK_TO_PARTICIPATE, CONDITION_ALWAYS,
      EVENT(BattleArena_AskToParticipate)},
     {TRIGGER_RAISED, LOBBY_EVENT_DISCONNECTED, CONDITION_ALWAYS,

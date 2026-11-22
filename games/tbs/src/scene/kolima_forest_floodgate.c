@@ -1,33 +1,36 @@
 /// @file
-/// Kolima Forest (SceneId_KolimaForestFloodgate), the fourth of the forest's
-/// five scenes, between SceneId_KolimaForestCliff and the scene where Tret
-/// stands (SceneId_KolimaForestTree).
+/// Kolima Forest's pool above the floodgate (SceneId_KolimaForestFloodgate),
+/// the fourth of the forest's five screens. The party comes in from the cliffs
+/// to the west (SceneId_KolimaForestCliff) and goes on by the path north to
+/// Tret (SceneId_KolimaForestTree).
 ///
-/// A Floodgate Switch (CELL_BEHAVIOR_KOLIMA_FOREST_FLOODGATE_SWITCH), beside a
-/// sign that reads "Do not touch Floodgate Switch!", raises and lowers the
-/// river. With the water high the logs float (26 pixels up) and can be rolled
-/// along it. With it low they lie on the riverbed.
+/// A river pool fills most of the screen, with five logs floating on it. At
+/// the bottom of the screen, by the floodgate and a sign that reads "Do not
+/// touch Floodgate Switch!", the Floodgate Switch drains the pool and fills it
+/// again. Drained, the pool is a grassy riverbed with the logs lying on it,
+/// and walking into a log rolls it ahead until it hits something. Filled, the
+/// logs float where they were left, and Isaac hops across them from log to
+/// log; from the north bank he can jump out onto one. Rolled into the right
+/// places, they make a way across to the chest with a Fur Coat on the
+/// north-east bank. A lone upright log on the grass west of the pool slides
+/// two cells west, or back east, when walked into. The forest keeps its cursed
+/// colours until Tret lifts the curse (FLAG_KOLIMA_CURSE_LIFTED).
 ///
-/// A short log slides between two places, the leader can jump south across a
-/// gap (step trigger 10), and a chest holds a Fur Coat. The forest keeps its
-/// cursed colours until Tret lifts the curse (FLAG_KOLIMA_CURSE_LIFTED).
-///
-/// The water level, the short log's place and each log's cells are kept in
+/// The water level, the bank log's place and where each log lies are kept in
 /// gSceneLocalState (gKolimaForestFloodgate_WaterHigh,
-/// gKolimaForestFloodgate_ShortLogWest and gKolimaForestFloodgate_Logs), so
+/// gKolimaForestFloodgate_BankLogWest and gKolimaForestFloodgate_Logs), so
 /// they survive a battle.
 ///
-/// Under each log KolimaForestFloodgate_MarkLogCells writes
-/// CELL_BEHAVIOR_JUMP_FORWARD while the water is high, so the leader jumps
-/// across the floating logs. It writes CELL_BEHAVIOR_WALL while it is low and
-/// after a roll, which KolimaForestFloodgate_CheckLogFits also treats as taken.
+/// The cells under a log are CELL_BEHAVIOR_JUMP_FORWARD while it floats, which
+/// is what makes the leader hop across it, and CELL_BEHAVIOR_WALL while it
+/// lies on the riverbed (KolimaForestFloodgate_MarkLogCells), which
+/// KolimaForestFloodgate_CheckLogFits also treats as taken.
 ///
-/// Flipping the switch from high water opens the floodgate. The water churns
-/// through it (SPLASH_ANIMATION_CHURN, SE_WATER_DRAIN), and the river at the
-/// top of the screen changes line by line, at random, to its riverbed.
-/// Flipping it back drops the gate in one burst of spray
-/// (SPLASH_ANIMATION_BURST) and the river fills again the same way
-/// (places/kolima-forest-floodgate/events/KolimaForestFloodgate_FlipFloodgateSwitch.gif).
+/// Flipping the switch while the pool is full lifts the floodgate: water
+/// churns out through it (SPLASH_ANIMATION_CHURN, SE_WATER_DRAIN) and the pool
+/// turns to riverbed a line at a time, at random. Flipping it back drops the
+/// gate in a burst of spray (SPLASH_ANIMATION_BURST) and the water comes back
+/// the same way.
 
 #include "flags.h"
 #include "item_ids.h"
@@ -57,8 +60,8 @@
 u8 gKolimaForestFloodgate_UnusedBeforeRecords[8] BSS_DATA;
 /// The bend's logs in gSceneLocalState from byte 4, so they survive a battle.
 struct FloodgateLog *gKolimaForestFloodgate_Logs BSS_DATA;
-/// The short log's place in gSceneLocalState's first halfword: 1 west, 0 east.
-u16 *gKolimaForestFloodgate_ShortLogWest BSS_DATA;
+/// The bank log's place in gSceneLocalState's first halfword: 1 west, 0 east.
+u16 *gKolimaForestFloodgate_BankLogWest BSS_DATA;
 /// The bend's water level in gSceneLocalState's second halfword: 1 high (the
 /// logs float), 0 low; the floodgate switch flips it.
 s16 *gKolimaForestFloodgate_WaterHigh BSS_DATA;
@@ -112,8 +115,9 @@ extern struct Trigger gKolimaForestFloodgateTriggers[];
 /// The actors, numbering gKolimaForestFloodgateActorPlacements'
 /// rows from ACTOR_FIRST_PLACED.
 enum {
-  /// A short log that slides between x 72 and x 104.
-  ACTOR_SHORT_LOG = ACTOR_FIRST_PLACED,
+  /// The upright log on the grass west of the pool, which slides between
+  /// cell columns 4 and 6.
+  ACTOR_BANK_LOG = ACTOR_FIRST_PLACED,
   /// The water at the floodgate, which bursts as it opens and churns as it
   /// closes.
   ACTOR_FLOODGATE_SPRAY,
@@ -133,28 +137,38 @@ enum {
 /// The last screen line of the river, the lines that change to its new level.
 #define RIVER_LAST_LINE 53
 
-/// The cell behavior of the Floodgate Switch's cell, which a search flips.
+/// The cells this screen gives a meaning of its own.
 enum KolimaForestFloodgateCellBehavior {
-  CELL_BEHAVIOR_KOLIMA_FOREST_FLOODGATE_SWITCH = 9
+  /// The Floodgate Switch's cell, which a search flips.
+  CELL_BEHAVIOR_KOLIMA_FOREST_FLOODGATE_SWITCH = 9,
+  /// The north bank's edge at cell (10, 7), where the leader jumps out onto
+  /// a floating log; the full pool's cells alone have it.
+  CELL_BEHAVIOR_KOLIMA_FOREST_NORTH_BANK_JUMP = 10,
+  /// The drained pool's riverbed, where walking into a log rolls it.
+  CELL_BEHAVIOR_KOLIMA_FOREST_RIVERBED = 11,
+  /// West and east of the bank log, cells (3, 9) to (3, 12) and (7, 9) to
+  /// (7, 12), where walking into it shoves it.
+  CELL_BEHAVIOR_KOLIMA_FOREST_WEST_OF_BANK_LOG = 12,
+  CELL_BEHAVIOR_KOLIMA_FOREST_EAST_OF_BANK_LOG = 13
 };
 
-static void KolimaForestFloodgate_MarkShortLogCells(void);
+static void KolimaForestFloodgate_MarkBankLogCells(void);
 static void KolimaForestFloodgate_CreateLogs(struct FloodgateLog *log);
 static void KolimaForestFloodgate_RollLog(struct FloodgateLog *logs);
 
-/// Where the party enters, from SceneId_KolimaForestCliff and from
-/// SceneId_KolimaForestTree.
+/// The party comes in from the cliffs to the west or down the path from Tret
+/// to the north.
 const struct SceneEntrance *Scene_GetEntrances(void) {
   return gKolimaForestFloodgateEntrances;
 }
 
 const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-/// The ways back (SceneId_KolimaForestCliff) and on to Tret
-/// (SceneId_KolimaForestTree).
+/// The ways back west to the cliffs (SceneId_KolimaForestCliff) and north to
+/// Tret (SceneId_KolimaForestTree).
 const u32 *Scene_GetExits(void) { return gKolimaForestFloodgateExits; }
 
-/// The short log, the switch and the sign.
+/// The bank log, the floodgate's spray and the sign.
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gKolimaForestFloodgateActorPlacements;
 }
@@ -164,33 +178,39 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gKolimaForestFloodgateTriggers;
 }
 
-/// In Kolima Forest (SceneId_KolimaForestFloodgate), walking into a log rolls
-/// it ahead, and the cells of the logs are marked again where they now lie.
+/// With the pool above Kolima Forest's floodgate drained, walking into a log on
+/// the riverbed rolls it ahead until it meets the bank or another log, with
+/// the view following it, and it stays where it stops. Walking anywhere on the
+/// riverbed runs this, but only a log right ahead of Isaac moves; the riverbed
+/// is then given back its own cells and the logs' cells made solid where they
+/// now lie.
 static void KolimaForestFloodgate_PushLog(void) {
   KolimaForestFloodgate_RollLog(gKolimaForestFloodgate_Logs);
   MapGrid_CopyCellAttributes(0, 64, 32, 32, 0, 0);
   KolimaForestFloodgate_MarkLogCells(gKolimaForestFloodgate_Logs,
                                      CELL_BEHAVIOR_WALL);
-  KolimaForestFloodgate_MarkShortLogCells();
+  KolimaForestFloodgate_MarkBankLogCells();
 }
 
-/// In Kolima Forest (SceneId_KolimaForestFloodgate), walking south into the gap
-/// (step trigger 10) makes the leader jump across.
+/// With the pool above Kolima Forest's floodgate full, walking south off the
+/// north bank at cell (10, 7) jumps Isaac two cells out onto a floating log,
+/// when one lies there; over open water he does not jump.
 static void KolimaForestFloodgate_JumpSouth(void) { Field_TryJumpForward(); }
 
 #include "shared/map_grid_panel.c"
 
-/// Gives the short log's column of cells its cell behavior: column 4 at the
-/// west place, column 6 at the east.
-static void KolimaForestFloodgate_MarkShortLogCells(void) {
-  if ((s16)*gKolimaForestFloodgate_ShortLogWest == 1) {
+/// Makes the bank log's four cells solid: column 4 at its west place, column 6
+/// at its east, rows 9 to 12.
+static void KolimaForestFloodgate_MarkBankLogCells(void) {
+  if ((s16)*gKolimaForestFloodgate_BankLogWest == 1) {
     MapGrid_CopyCellAttributes(0, 0, 1, 4, 4, 9);
   } else {
     MapGrid_CopyCellAttributes(0, 0, 1, 4, 6, 9);
   }
 }
 
-/// Draws the river at its level and sets each log to match.
+/// Draws the pool full or drained and each log floating on it or lying on the
+/// riverbed, and gives the pool the cells of that level.
 static void KolimaForestFloodgate_DrawWaterLevel(void) {
   struct Actor *piece;
   struct FloodgateLog *record = gKolimaForestFloodgate_Logs;
@@ -248,7 +268,7 @@ static void KolimaForestFloodgate_DrawWaterLevel(void) {
                                        CELL_BEHAVIOR_WALL);
   }
 
-  KolimaForestFloodgate_MarkShortLogCells();
+  KolimaForestFloodgate_MarkBankLogCells();
 }
 
 /// HBlank callback: gives each line of the river, with a chance of
@@ -287,8 +307,12 @@ static void KolimaForestFloodgate_CaptureNewLevelScroll(void) {
   newLevel[2].y += NEW_LEVEL_OFFSET;
 }
 
-/// In Kolima Forest (SceneId_KolimaForestFloodgate), searching the Floodgate
-/// Switch flips it. "Isaac flipped the switch."
+/// Searching the Floodgate Switch, on the bank by Kolima Forest's floodgate
+/// west of the sign (cell (19, 28)), flips it: "Isaac flipped the switch." The
+/// view moves to the gate. If the pool is full, the gate lifts with water
+/// churning out below it and the pool drains away a line at a time; if it is
+/// drained, the gate drops shut in a burst of spray and the pool fills again
+/// the same way.
 static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
   s32 nextPercent;
 
@@ -388,55 +412,57 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
   Event_End();
 }
 
-/// In Kolima Forest (SceneId_KolimaForestFloodgate), walking west into the
-/// short log makes the leader shove it west to x 72.
-static void KolimaForestFloodgate_PushShortLogWest(void) {
+/// Walking west into the upright log on the grass west of Kolima Forest's pool,
+/// from its east side (cells (7, 9) to (7, 12)), shoves it two cells west, to
+/// column 4, with Isaac following it a step.
+static void KolimaForestFloodgate_PushBankLogWest(void) {
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Event_Wait(6);
   Sound_Play(SE_HEAVY_MOVE);
-  Actor_SetSpeedAndAcceleration(ACTOR_SHORT_LOG, 0.5, 0.2);
-  Actor_SetAnimation(ACTOR_SHORT_LOG, 2);
-  Actor_SetDestination(ACTOR_SHORT_LOG, 72, 176);
+  Actor_SetSpeedAndAcceleration(ACTOR_BANK_LOG, 0.5, 0.2);
+  Actor_SetAnimation(ACTOR_BANK_LOG, 2);
+  Actor_SetDestination(ACTOR_BANK_LOG, 72, 176);
   Event_Wait(6);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 0.3, 0.2);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, -8, 0);
   Event_Wait(24);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  Actor_WaitForMoveById(ACTOR_SHORT_LOG);
-  Actor_SetAnimation(ACTOR_SHORT_LOG, 1);
+  Actor_WaitForMoveById(ACTOR_BANK_LOG);
+  Actor_SetAnimation(ACTOR_BANK_LOG, 1);
   Sound_Play(SE_STOP_ACTION_SE);
   Sound_Play(SE_HEAVY_STOP);
   MapGrid_CopyCellAttributes(5, 9, 1, 4, 6, 9);
   MapGrid_CopyCellAttributes(0, 0, 1, 4, 4, 9);
-  *gKolimaForestFloodgate_ShortLogWest = 1;
+  *gKolimaForestFloodgate_BankLogWest = 1;
   Event_End();
 }
 
-/// In Kolima Forest (SceneId_KolimaForestFloodgate), walking east into the
-/// short log makes the leader shove it east to x 104.
-static void KolimaForestFloodgate_PushShortLogEast(void) {
+/// Walking east into the upright log on the grass west of Kolima Forest's pool,
+/// from its west side (cells (3, 9) to (3, 12)), shoves it two cells east, back
+/// to column 6, with Isaac following it a step.
+static void KolimaForestFloodgate_PushBankLogEast(void) {
   Event_Start();
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_PUSH);
   Event_Wait(6);
   Sound_Play(SE_HEAVY_MOVE);
-  Actor_SetSpeedAndAcceleration(ACTOR_SHORT_LOG, 0.5, 0.2);
-  Actor_SetAnimation(ACTOR_SHORT_LOG, 2);
-  Actor_SetDestination(ACTOR_SHORT_LOG, 104, 176);
+  Actor_SetSpeedAndAcceleration(ACTOR_BANK_LOG, 0.5, 0.2);
+  Actor_SetAnimation(ACTOR_BANK_LOG, 2);
+  Actor_SetDestination(ACTOR_BANK_LOG, 104, 176);
   Event_Wait(6);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
   Actor_SetSpeedAndAcceleration(ACTOR_PARTY_LEADER, 0.3, 0.2);
   Actor_SetDestinationOffset(ACTOR_PARTY_LEADER, 8, 0);
   Event_Wait(24);
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_STAND);
-  Actor_WaitForMoveById(ACTOR_SHORT_LOG);
-  Actor_SetAnimation(ACTOR_SHORT_LOG, 1);
+  Actor_WaitForMoveById(ACTOR_BANK_LOG);
+  Actor_SetAnimation(ACTOR_BANK_LOG, 1);
   Sound_Play(SE_STOP_ACTION_SE);
   Sound_Play(SE_HEAVY_STOP);
   MapGrid_CopyCellAttributes(5, 9, 1, 4, 4, 9);
   MapGrid_CopyCellAttributes(0, 0, 1, 4, 6, 9);
-  *gKolimaForestFloodgate_ShortLogWest = 0;
+  *gKolimaForestFloodgate_BankLogWest = 0;
   Event_End();
 }
 
@@ -444,11 +470,12 @@ static void KolimaForestFloodgate_PushShortLogEast(void) {
 /// lose 1 / FLOODGATE_CURSE_DIVISOR of themselves (KolimaPalette_Curse).
 #define FLOODGATE_CURSE_DIVISOR 4
 
-/// Sets up the logs and the river's level on entry.
+/// Sets up the pool on entry: full, with the logs where they start, on a fresh
+/// visit, and as the party left it after a battle.
 s32 Scene_Initialize(void) {
   struct Actor *actor;
 
-  gKolimaForestFloodgate_ShortLogWest = (u16 *)gSceneLocalState;
+  gKolimaForestFloodgate_BankLogWest = (u16 *)gSceneLocalState;
   gKolimaForestFloodgate_WaterHigh = (s16 *)gSceneLocalState + 1;
   // The return flag and water level occupy the first two halfwords.
   gKolimaForestFloodgate_Logs =
@@ -459,7 +486,7 @@ s32 Scene_Initialize(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0) {
     Dma_Set(gKolimaForestFloodgate_DefaultLogs, gKolimaForestFloodgate_Logs,
             DMA_COPY_WORDS(18), REG_DMA3);
-    *gKolimaForestFloodgate_ShortLogWest = 0;
+    *gKolimaForestFloodgate_BankLogWest = 0;
     *gKolimaForestFloodgate_WaterHigh = 1;
   }
   KolimaForestFloodgate_CreateLogs(gKolimaForestFloodgate_Logs);
@@ -701,14 +728,18 @@ struct Trigger gKolimaForestFloodgateTriggers[] = {
      KOLIMA_FOREST_FLOODGATE_TO_KOLIMA_FOREST_CLIFF},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS,
      KOLIMA_FOREST_FLOODGATE_TO_KOLIMA_FOREST_TREE},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH),
+     CELL_BEHAVIOR_KOLIMA_FOREST_NORTH_BANK_JUMP, CONDITION_ALWAYS,
      EVENT(KolimaForestFloodgate_JumpSouth)},
-    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, 11, CONDITION_ALWAYS,
+    {TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING,
+     CELL_BEHAVIOR_KOLIMA_FOREST_RIVERBED, CONDITION_ALWAYS,
      EVENT(KolimaForestFloodgate_PushLog)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 13, CONDITION_ALWAYS,
-     EVENT(KolimaForestFloodgate_PushShortLogWest)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 12, CONDITION_ALWAYS,
-     EVENT(KolimaForestFloodgate_PushShortLogEast)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST),
+     CELL_BEHAVIOR_KOLIMA_FOREST_EAST_OF_BANK_LOG, CONDITION_ALWAYS,
+     EVENT(KolimaForestFloodgate_PushBankLogWest)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST),
+     CELL_BEHAVIOR_KOLIMA_FOREST_WEST_OF_BANK_LOG, CONDITION_ALWAYS,
+     EVENT(KolimaForestFloodgate_PushBankLogEast)},
     {TRIGGER_TALK, ACTOR_SIGN, CONDITION_ALWAYS,
      MSGNO(MsgKolimaDoNotTouchFloodgate)},
     {EXAMINE_TRIGGER(EXAMINE_SILENT),

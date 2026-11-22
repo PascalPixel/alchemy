@@ -1,64 +1,53 @@
 /// @file
 /// Altin, the mining village north of the Alpine Crossing, in two scenes that
-/// share this overlay and the area name Altin.
+/// share this overlay and the area name Altin: the village outdoors
+/// (SceneId_Altin), and its inn, shops and houses (SceneId_CottageRoomsD), a
+/// sheet of rooms each in its own camera box. The getters pick each scene's
+/// tables by gMainRoutineWork.next, and both share one exit table. A third,
+/// empty set of tables serves any other scene.
 ///
-/// SceneId_Altin is the village outdoors. SceneId_CottageRoomsD is a sheet of
-/// rooms drawn as cottages, all of them Altin's. They are its houses, shops and
-/// inn, entered by the village's doors (COTTAGE_ROOMS_D_FROM_ALTIN_NORTHWEST to
-/// COTTAGE_ROOMS_D_FROM_ALTIN_SOUTHWEST).
+/// When the party comes in from the World Map on the east, the village is under
+/// water. Since the day the gems fell from the sky, water beasts have flooded
+/// it, and one still spits water at the houses from the village's west edge.
+/// Walking up to it (Altin_ScareOffBeast) makes it stop, cry out and hop away
+/// into the mine for good. Its spray and sound start in Altin_ApplyWaterLevel,
+/// and it is drawn with its green and blue swapped (SPRITE_COLOR_RBG).
 ///
-/// The getters pick each scene's tables by gMainRoutineWork.next, and both
-/// share one exit table. A third, empty set of tables serves any other scene.
+/// The water goes down as the party beats the beasts in the mine below, which
+/// the area names call Altin Peak (altin_peak.c). Each beaten beast opens a
+/// drain (FLAG_ALTIN_MINE_FIRST_DRAIN to _THIRD_DRAIN), and the village shows
+/// three stages: the water dropped once, twice, or drained (the second and
+/// third drains both). Scene_Initialize turns the drains into three scene temp
+/// flags, and Altin_ApplyWaterLevel copies that stage's picture of the village,
+/// with its cells, over the map and leaves out whoever would be standing in the
+/// water.
 ///
-/// The village is flooded by the water beasts of its mine. The area names call
-/// the mine's scenes Altin Peak (altin_peak.c). Two things in Altin's code
-/// follow the party's work down there.
+/// As the water drops, three villagers come home one by one, the two families
+/// sheltering in the inn's Room One and Room Two go home, and the shops open
+/// again: the item shop after the first drop, the armor shop after the second,
+/// and the weapon shop, whose owner waits in the inn, once the village is
+/// drained. Until then the armor and item merchants wait outside above the
+/// flood.
 ///
-/// The first is the water. It drops in three stages with the three drains the
-/// party opens by beating the mine's water beasts (FLAG_ALTIN_MINE_FIRST_DRAIN
-/// to _THIRD_DRAIN). Scene_Initialize turns them into three scene temp flags,
-/// the water dropped once, twice, or drained (the second and third drains
-/// both). Altin_ApplyWaterLevel copies the layout area for that level over the
-/// village, with its cell behaviors, and leaves out whoever would be standing
-/// in the water.
+/// Every villager has two sets of lines and thoughts, before and after
+/// FLAG_HYDROS_STATUES_DEFEATED, when the party has beaten the hydros statues
+/// at the bottom of the mine. The row that needs the flag clear comes first in
+/// each table, so the first row that matches picks the time.
 ///
-/// The second is what people say. Every villager has two sets of lines and
-/// thoughts, before and after FLAG_HYDROS_STATUES_DEFEATED, which says whether
-/// the party has beaten the hydros statues at the bottom of the mine. The row
-/// that needs the flag clear comes first in each table, so the first row that
-/// matches picks the time.
+/// Walking into a door (Altin_EnterDoor) leads into the inn, under its sign on
+/// the north-west ledge; the Sanctum, by the wide double door in the cliff
+/// below the stone statue; the item shop, by its small door in the east cliff;
+/// the armor shop, the house with a round red sign; the weapon shop, by the
+/// door with a sword sign at the south; or one of three family houses. Three
+/// doorways lead down into the mine (Altin_WalkIntoMine): the rail tunnel in
+/// the north cliff, the doorway in the middle of the village where the rails
+/// run south, and one in the west cliff by the water beast. The stone statue on
+/// the top ledge stands in front of a fourth way in, until Move shifts it aside
+/// (Altin_CheckStatueMoved). Coming back out of the Sanctum, the area name is
+/// not shown again.
 ///
-/// In the village (Altin), three villagers come home one by one as the water
-/// drops. The armor and item merchants wait outside their flooded shops until
-/// theirs dry. The item merchant's dries after the first drop, the armor
-/// merchant's after the second.
-///
-/// A water beast spits water at the houses. It is drawn with its green and blue
-/// swapped (SPRITE_COLOR_RBG), and its sound and its spray
-/// (Altin_InitializeSpew) run from Altin_ApplyWaterLevel. When the party steps
-/// near it (Altin_ScareOffBeast) it stops, cries out and hops away into the
-/// flood for good (FLAG_ALTIN_WATER_BEAST_LEFT).
-///
-/// Doors lead into CottageRoomsD and into the Altin Sanctum (ALTIN_TO_SANCTUM).
-/// They are step triggers 2 to 9, run by Altin_EnterDoor, each leaving by the
-/// exit of its number. The Sanctum's wide door is redrawn by hand. Coming back
-/// out of the Sanctum (ALTIN_FROM_SANCTUM) the area name is not shown again.
-///
-/// Three doorways (step triggers 10 to 12, Altin_WalkIntoMine) and the
-/// exit ALTIN_TO_ALTIN_PEAK_SPRITZ lead into the mine, to Altin Peak's
-/// AltinPeakFirstWaterBeast, AltinPeakSouthEntrance, AltinPeakJunction and
-/// AltinPeakSpritz.
-///
-/// The stone statue that Move pushes to STONE_STATUE_MOVED_COLUMN stays there
-/// (FLAG_ALTIN_STATUE_MOVED).
-///
-/// Inside, in Cottage rooms D (CottageRoomsD), two families shelter in the
-/// inn's Room One and Room Two, as the game calls them. The first and the
-/// second drop send them home (CottageRoomsD_PlaceSheltering). The weapon
-/// merchant waits in the inn until the water has drained.
-///
-/// Each merchant opens across the counter once the shop has dried, and a cook
-/// from Xian paces between his pots (gCottageRoomsD_CookScript).
+/// In the inn a cook from Xian paces between his pots
+/// (gCottageRoomsD_CookScript).
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -133,11 +122,11 @@ enum AltinVillageActorId {
   ACTOR_OLD_MAN_ROCK_FLUSHED_OUT,
   /// The beast spewing water at the houses until FLAG_ALTIN_WATER_BEAST_LEFT.
   ACTOR_WATER_BEAST,
-  /// SPRITE_STONE_STATUE, which Move pushes to STONE_STATUE_MOVED_COLUMN
-  /// (Altin_CheckStatueMoved).
+  /// The stone statue on the top ledge, in front of the passage into the
+  /// mine that Move uncovers (Altin_CheckStatueMoved).
   ACTOR_STONE_STATUE,
-  /// The armor and item merchants, waiting outside while their shops are
-  /// under water.
+  /// The armor merchant on the west ledge and the item merchant on the ledge
+  /// east of the Sanctum, waiting while their shops are under water.
   ACTOR_FLOODED_ARMOR_MERCHANT,
   ACTOR_FLOODED_ITEM_MERCHANT,
   /// Three crates placed with SPRITE_CRATE. Altin_ApplyWaterLevel hides them
@@ -202,19 +191,70 @@ enum { SHOP_ALTIN_WEAPONS = 19, SHOP_ALTIN_ARMOR = 20, SHOP_ALTIN_ITEMS = 21 };
 /// Altin's inn, as Inn_CheckIn numbers the inns.
 enum { ALTIN_INN = 6 };
 
-/// The cell behaviors Altin's triggers answer.
+/// The cell behaviors Altin's triggers answer. A door's or doorway's is the
+/// exit it leaves by.
 enum AltinCellBehavior {
-  /// The doors' step triggers are numbered from 2 in the village's triggers,
-  /// and each takes the exit of its own number.
-  CELL_BEHAVIOR_ALTIN_FIRST_DOOR = 2,
-  CELL_BEHAVIOR_ALTIN_NEAR_BEAST = 20
+  /// The road out to the World Map at the east edge.
+  CELL_BEHAVIOR_ALTIN_EAST_ROAD = ALTIN_TO_WORLD_MAP,
+  /// The inn's door, under its sign on the north-west ledge.
+  CELL_BEHAVIOR_ALTIN_INN_DOOR = ALTIN_TO_COTTAGE_ROOMS_D_SOUTHWEST,
+  /// The Sanctum's wide double door, in the cliff below the stone statue.
+  CELL_BEHAVIOR_ALTIN_SANCTUM_DOOR = ALTIN_TO_SANCTUM,
+  /// The door of the house on the east side, the Room One family's home.
+  CELL_BEHAVIOR_ALTIN_EAST_HOUSE_DOOR = ALTIN_TO_COTTAGE_ROOMS_D_NORTHWEST,
+  /// The door in the cliff north-west of the armor shop, the Room Two
+  /// family's home.
+  CELL_BEHAVIOR_ALTIN_CLIFF_HOUSE_DOOR = ALTIN_TO_COTTAGE_ROOMS_D_NORTH,
+  /// The door of the house by the rails at the south, the kissing girl's
+  /// home.
+  CELL_BEHAVIOR_ALTIN_SOUTH_HOUSE_DOOR = ALTIN_TO_COTTAGE_ROOMS_D_NORTHEAST,
+  /// The item shop's small door in the east cliff.
+  CELL_BEHAVIOR_ALTIN_ITEM_SHOP_DOOR = ALTIN_TO_COTTAGE_ROOMS_D_SOUTHEAST,
+  /// The door of the armor shop, the house with a round red sign.
+  CELL_BEHAVIOR_ALTIN_ARMOR_SHOP_DOOR = ALTIN_TO_COTTAGE_ROOMS_D_EAST,
+  /// The weapon shop's door with a sword sign, at the south.
+  CELL_BEHAVIOR_ALTIN_WEAPON_SHOP_DOOR = ALTIN_TO_COTTAGE_ROOMS_D_WEST,
+  /// The doorway into the mine in the west cliff, by the water beast.
+  CELL_BEHAVIOR_ALTIN_WEST_MINE_DOORWAY = ALTIN_TO_ALTIN_PEAK_FIRST_WATER_BEAST,
+  /// The rail tunnel into the mine in the north cliff.
+  CELL_BEHAVIOR_ALTIN_RAIL_TUNNEL = ALTIN_TO_ALTIN_PEAK_SOUTH_ENTRANCE,
+  /// The doorway into the mine in the middle of the village, where the rails
+  /// run south.
+  CELL_BEHAVIOR_ALTIN_MIDDLE_MINE_DOORWAY = ALTIN_TO_ALTIN_PEAK_JUNCTION,
+  /// The passage behind the stone statue.
+  CELL_BEHAVIOR_ALTIN_PASSAGE_BEHIND_STATUE = ALTIN_TO_ALTIN_PEAK_SPRITZ,
+  /// The ground beside the water beast, on the west edge.
+  CELL_BEHAVIOR_ALTIN_NEAR_BEAST = 20,
+  /// The doors are numbered in a row from the inn's.
+  CELL_BEHAVIOR_ALTIN_FIRST_DOOR = CELL_BEHAVIOR_ALTIN_INN_DOOR
+};
+
+/// The cell behaviors of the rooms' barrels, bed, pots and bookcase.
+enum CottageRoomsDCellBehavior {
+  /// A barrel in the Room One family's house.
+  CELL_BEHAVIOR_COTTAGE_ROOMS_D_NUT_BARREL = 100,
+  /// A barrel in the weapon shop.
+  CELL_BEHAVIOR_COTTAGE_ROOMS_D_COINS_BARREL = 101,
+  /// A bed upstairs in the inn.
+  CELL_BEHAVIOR_COTTAGE_ROOMS_D_SLEEP_BOMB_BED = 102,
+  /// The rusted pots in the Room Two family's house.
+  CELL_BEHAVIOR_COTTAGE_ROOMS_D_RUSTED_POTS = 200,
+  /// The cook's roast beef in the inn.
+  CELL_BEHAVIOR_COTTAGE_ROOMS_D_ROAST_BEEF = 201,
+  /// The cook's shrimp in the inn.
+  CELL_BEHAVIOR_COTTAGE_ROOMS_D_SHRIMP = 202,
+  /// The bookcase in the inn.
+  CELL_BEHAVIOR_COTTAGE_ROOMS_D_BOOKCASE = 203
 };
 
 /// The doors of the village, by their index in gAltin_Doors.
 enum {
   /// The Sanctum's door, which leads to SANCTUM_FROM_ALTIN.
-  DOOR_SANCTUM = ALTIN_TO_SANCTUM - CELL_BEHAVIOR_ALTIN_FIRST_DOOR,
-  DOOR_STRAIGHT_IN = ALTIN_TO_COTTAGE_ROOMS_D_EAST -
+  DOOR_SANCTUM = CELL_BEHAVIOR_ALTIN_SANCTUM_DOOR -
+      CELL_BEHAVIOR_ALTIN_FIRST_DOOR,
+  /// The armor shop's door, where Isaac is only lined up with the doorway
+  /// before the screen fades, not walked into it.
+  DOOR_ARMOR_SHOP = CELL_BEHAVIOR_ALTIN_ARMOR_SHOP_DOOR -
       CELL_BEHAVIOR_ALTIN_FIRST_DOOR
 };
 
@@ -303,7 +343,9 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gAltin_NoTriggers;
 }
 
-/// A bald strong man asks whether this is the party's first visit.
+/// The bald strong man by the east entrance asks whether this is the party's
+/// first visit to Altin, and tells how the flood has changed it. Once the
+/// hydros statues are beaten he only thanks them.
 static void Altin_AskAboutFirstVisit(void) {
   Event_Start();
   Event_SetMessageId(MsgAltinYourFirstTimeVisitAltin);
@@ -325,8 +367,8 @@ static void Altin_AskAboutFirstVisit(void) {
   Event_End();
 }
 
-/// A strong man asks whether the slain hydros creatures gushed water. He's in
-/// Altin's village once the hydros statues are beaten.
+/// Once the hydros statues are beaten, the strong man near the east entrance
+/// asks whether water gushed out of them when the party slew them.
 static void Altin_AskAboutHydros(void) {
   Event_Start();
   Event_SetMessageId(MsgAltinDidSeeWaterGushingOut);
@@ -337,7 +379,11 @@ static void Altin_AskAboutHydros(void) {
   Event_End();
 }
 
-/// An old woman in Altin's village.
+/// The old woman on the west ledge complains that nobody can drink the water
+/// the monsters spew. While the water beast is still there, the camera pans
+/// south to it spitting water and back before she shakes her head. Once the
+/// hydros statues are beaten, she asks instead whether the party defeated the
+/// water beasts.
 static void Altin_TalkToThirstyOldWoman(void) {
   struct Actor *beast;
   struct Actor *leader;
@@ -380,8 +426,9 @@ static void Altin_TalkToThirstyOldWoman(void) {
   Event_End();
 }
 
-/// An old man asks whether the party really found ruins deep in the mine. He's
-/// in Altin's village once the hydros statues are beaten.
+/// Once the hydros statues are beaten, the old man who wanders the middle of
+/// the village, back home since the water drained, asks whether the party
+/// really found ancient ruins at the bottom of the mine.
 static void Altin_AskAboutRuins(void) {
   Event_Start();
   Event_SetMessageId(MsgAltinTrueFoundAncientRuinsIn);
@@ -392,7 +439,9 @@ static void Altin_AskAboutRuins(void) {
   Event_End();
 }
 
-/// A woman asks whether the party is who the girl from Xian was looking for.
+/// Once the hydros statues are beaten, the woman of the Room One family, back
+/// in their house on the east side, asks whether the party are the young
+/// warriors a girl from Xian was asking about.
 static void CottageRoomsD_AskAboutXianGirl(void) {
   Event_Start();
   Event_SetMessageId(MsgAltinGirlFromXianWasAsking);
@@ -403,7 +452,10 @@ static void CottageRoomsD_AskAboutXianGirl(void) {
   Event_End();
 }
 
-/// An old man points the party to the bottom of the mine.
+/// After the second drop, until the hydros statues are beaten, the old man of
+/// the Room Two family, back in their house in the cliff, asks whether the
+/// party is finding a way west through the mountains, and says a passage
+/// should lead west at the bottom of the mine.
 static void CottageRoomsD_AskAboutWayWest(void) {
   Event_Start();
   Event_SetMessageId(MsgAltinTryingFindYourWayWest);
@@ -414,7 +466,9 @@ static void CottageRoomsD_AskAboutWayWest(void) {
   Event_End();
 }
 
-/// A little girl thanks the leader with a kiss.
+/// Once the hydros statues are beaten, the little girl in the house by the
+/// rails asks whether the party defeated the monsters, and thanks Isaac with a
+/// kiss either way.
 static void CottageRoomsD_AskAboutMonsters(void) {
   Event_Start();
   Event_SetMessageId(MsgAltinDefeatedThoseMonstersDidnt);
@@ -425,8 +479,8 @@ static void CottageRoomsD_AskAboutMonsters(void) {
   Event_End();
 }
 
-/// A man at the inn asks whether the remaining beasts are deep below. He's
-/// staying at Altin's inn once the hydros statues are beaten.
+/// Once the hydros statues are beaten, the man still staying upstairs in the
+/// inn asks whether the few beasts left in the mine are deep down.
 static void CottageRoomsD_AskAboutMineBeasts(void) {
   Event_Start();
   Event_SetMessageId(MsgAltinThereFewBeastsInMine);
@@ -437,7 +491,7 @@ static void CottageRoomsD_AskAboutMineBeasts(void) {
   Event_End();
 }
 
-/// Returns whether the party leader faces north, toward a shop counter.
+/// Returns whether Isaac faces north, across a counter.
 static s32 Altin_LeaderFacesCounter(void) {
   struct Actor *leader = Actor_Get(ACTOR_PARTY_LEADER);
 
@@ -447,8 +501,11 @@ static s32 Altin_LeaderFacesCounter(void) {
   return 0;
 }
 
-/// Altin's weapon merchant waits in the inn until the water drains, and cannot
-/// sell.
+/// Until the village is drained, the weapon merchant waits in the inn and only
+/// asks whether the party wants weapons. Then he is back in the weapon shop by
+/// the sword sign and sells when spoken to across his counter; from the side
+/// he is glad to open up shop again, or, once the hydros statues are beaten,
+/// tells the party to find the passage west in the mine.
 static void CottageRoomsD_TalkToWeaponMerchant(void) {
   if (GameFlag_Get(FLAG_ALTIN_WATER_DRAINED) == 0) {
     Event_Start();
@@ -476,7 +533,12 @@ static void CottageRoomsD_TalkToWeaponMerchant(void) {
   Event_End();
 }
 
-/// Altin's armor merchant speaks in either scene.
+/// Until the second drop, the armor merchant waits on the west ledge beside
+/// his flooded shop, saying his store is submerged. After it he sells from the
+/// counter in the armor shop, the house with the round red sign, when spoken
+/// to across it; from the side he is glad to sell armor again, or, once the
+/// hydros statues are beaten, asks if the party isn't impressed by his
+/// selection.
 static void Altin_TalkToArmorMerchant(void) {
   if (GameFlag_Get(FLAG_ALTIN_WATER_DROPPED_TWICE) == 0) {
     Event_Start();
@@ -501,7 +563,11 @@ static void Altin_TalkToArmorMerchant(void) {
   Event_End();
 }
 
-/// Altin's item merchant works the same way, and reopens after the first drop.
+/// Until the first drop, the item merchant waits on the ledge east of the
+/// Sanctum, afraid her goods are soaked. After it she sells from the counter
+/// in the item shop, behind the small door in the east cliff, when spoken to
+/// across it; from the side she says none of her goods were damaged, or, once
+/// the hydros statues are beaten, that the girl from Xian bought a lot.
 static void Altin_TalkToItemMerchant(void) {
   if (GameFlag_Get(FLAG_ALTIN_WATER_DROPPED_ONCE) == 0) {
     Event_Start();
@@ -526,7 +592,9 @@ static void Altin_TalkToItemMerchant(void) {
   Event_End();
 }
 
-/// Altin's innkeeper opens the inn when spoken to across the counter.
+/// The innkeeper lets the party stay when spoken to across his counter. From
+/// the side he says they got a little damp but are doing okay, or, once the
+/// hydros statues are beaten, points them to a small temple west of the mine.
 static void CottageRoomsD_TalkToInnkeeper(void) {
   if (ALTIN_FACES_COUNTER(Actor_Get(ACTOR_PARTY_LEADER)->facing)) {
     Inn_CheckIn(ALTIN_INN, ACTOR_INNKEEPER);
@@ -550,7 +618,13 @@ static void CottageRoomsD_TalkToInnkeeper(void) {
   Event_End();
 }
 
-/// The party leader walks north into one of the doors of Altin's village.
+/// Walking north into one of the village's doors opens it, and Isaac walks in
+/// as the screen fades: the inn's under its sign (cell (10, 13)), the
+/// Sanctum's wide double door, which slides open (cells (20, 12) and
+/// (21, 12)), the item shop's in the east cliff (cell (28, 13)), the armor
+/// shop's (cell (11, 25)), the weapon shop's (cell (10, 27)), and the three
+/// houses': on the east side (cell (26, 21)), in the cliff north-west of the
+/// armor shop (cell (8, 19)), and by the rails at the south (cell (17, 25)).
 static void Altin_EnterDoor(void) {
   u32 actorId;
   struct FieldWork *work;
@@ -590,7 +664,7 @@ static void Altin_EnterDoor(void) {
     // (ALTIN_FROM_COTTAGE_ROOMS_D_NORTH), so that doorway is drawn open here
     // (a render with this copy made on entry shows the open doorway).
     if (doorIndex ==
-        ALTIN_TO_COTTAGE_ROOMS_D_NORTH - CELL_BEHAVIOR_ALTIN_FIRST_DOOR) {
+        CELL_BEHAVIOR_ALTIN_CLIFF_HOUSE_DOOR - CELL_BEHAVIOR_ALTIN_FIRST_DOOR) {
       MapGrid_CopyCellsTo(33, 42, 8, 17, 1, 2);
     }
     MapGrid_AnimateCells(gAltin_Doors[doorIndex].steps, column, row);
@@ -600,7 +674,7 @@ static void Altin_EnterDoor(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags = 0;
   Actor_SetAnimation(ACTOR_PARTY_LEADER, ANIM_WALK);
-  if (doorIndex == DOOR_STRAIGHT_IN) {
+  if (doorIndex == DOOR_ARMOR_SHOP) {
     Actor_CenterAndWalk(ACTOR_PARTY_LEADER, 2, 0);
   } else {
     if (doorIndex != DOOR_SANCTUM) {
@@ -617,8 +691,11 @@ static void Altin_EnterDoor(void) {
   Event_End();
 }
 
-/// The leader walks out through one of the doorways of Altin's village that
-/// lead into the mine, on walking north into it.
+/// Walking north into one of the three doorways down into the mine plays the
+/// exit sound, and Isaac walks into the dark: the rail tunnel in the north
+/// cliff (cell (16, 13)), the doorway in the middle of the village where the
+/// rails run south (cell (20, 16)), or the one in the west cliff by the water
+/// beast (cell (1, 28)).
 static void Altin_WalkIntoMine(void) {
   struct FieldWork *work;
 
@@ -672,7 +749,8 @@ static void Altin_BeastHop(struct Actor *actor) {
     beast->timer = 0;
 }
 
-/// The water beast hops away across the flood and dives in with a splash.
+/// The water beast hops along the shore into the mine doorway in the west
+/// cliff (cell (1, 28)) and is gone with a splash.
 static void Altin_BeastHopAway(void) {
   struct Actor *beast;
 
@@ -693,8 +771,10 @@ static void Altin_BeastHopAway(void) {
   Actor_SetAnimation(ACTOR_WATER_BEAST, ANIM_STAND);
 }
 
-/// After Move, remembers whether the stone statue now stands in
-/// STONE_STATUE_MOVED_COLUMN, the spot it is pushed to.
+/// Move on the stone statue on the top ledge shifts it one cell east (to cell
+/// (22, 10)), uncovering the passage into the mine behind it. The game
+/// remembers whether it now stands there (FLAG_ALTIN_STATUE_MOVED), so it is
+/// still moved when the party comes back.
 static void Altin_CheckStatueMoved(void) {
   struct Actor *statue = Actor_Get(ACTOR_STONE_STATUE);
 
@@ -734,7 +814,8 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// Sets up Altin's village (Altin).
+/// Sets up the village at its water level: that stage's picture and cells, the
+/// villagers who are home, and the water beast while it is still there.
 static void Altin_ApplyWaterLevel(void) {
   struct Actor *leader;
 
@@ -798,7 +879,9 @@ static void Altin_ApplyWaterLevel(void) {
   wait(1);
 }
 
-/// Sets up inside Altin's buildings (CottageRoomsD).
+/// Sets up the rooms: until the first drop the Room One family shelter in the
+/// inn, until the second the Room Two family, and until the village is drained
+/// the weapon merchant waits there too.
 static void CottageRoomsD_PlaceSheltering(void) {
   struct Actor *actor;
 
@@ -883,7 +966,10 @@ static void Altin_BeastSpewWater(void) {
   }
 }
 
-/// The party scares off the water beast by stepping near it in Altin's village.
+/// Walking down the west ledge to the ground above the water beast (cell
+/// (4, 26)) startles it: the camera goes to it, it stops spitting water, cries
+/// out, and hops away into the mine doorway beside it with a splash, for good.
+/// The old woman on the ledge shakes her head.
 static void Altin_ScareOffBeast(void) {
   Event_Start();
   FieldCamera_SetSpeed(0.4);
@@ -998,9 +1084,9 @@ struct SceneEntrance gCottageRoomsD_Entrances[] = {
      FACING_NORTH, 0, 635, 280, 845, 556, 0},
     {COTTAGE_ROOMS_D_FROM_ALTIN_SOUTHWEST, CONDITION_ALWAYS, 80, 0, 864,
      FACING_NORTH, 0, 16, 638, 432, 912, 0},
-    {ALTIN_FROM_COTTAGE_ROOMS_D_EAST, CONDITION_ALWAYS, 68, 0, 728,
+    {COTTAGE_ROOMS_D_INN_FROM_INN_UPSTAIRS, CONDITION_ALWAYS, 68, 0, 728,
      FACING_SOUTH, 0, 16, 638, 432, 912, 0},
-    {ALTIN_FROM_COTTAGE_ROOMS_D_WEST, CONDITION_ALWAYS, 690, 0, 732,
+    {COTTAGE_ROOMS_D_INN_UPSTAIRS_FROM_INN, CONDITION_ALWAYS, 690, 0, 732,
      FACING_SOUTH, 0, 480, 626, 896, 882, 0},
     {SCENE_TABLE_END},
 };
@@ -1144,27 +1230,19 @@ struct Trigger gAltin_NoTriggers[] = {
 };
 
 struct Trigger gAltin_Triggers[] = {
-    {STEP_TRIGGER_FACING(FACING_NORTH), 10, CONDITION_ALWAYS, EVENT(Altin_WalkIntoMine)},
-    {STEP_TRIGGER_FACING(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT(Altin_WalkIntoMine)},
-    {STEP_TRIGGER_FACING(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT(Altin_WalkIntoMine)},
-    {TRIGGER_EXIT, 13, CONDITION_ALWAYS, ALTIN_TO_ALTIN_PEAK_SPRITZ},
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, ALTIN_TO_WORLD_MAP},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
-        EVENT(Altin_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
-        EVENT(Altin_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS,
-        EVENT(Altin_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS,
-        EVENT(Altin_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS,
-        EVENT(Altin_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS,
-        EVENT(Altin_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS,
-        EVENT(Altin_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS,
-        EVENT(Altin_EnterDoor)},
+    {STEP_TRIGGER_FACING(FACING_NORTH), CELL_BEHAVIOR_ALTIN_WEST_MINE_DOORWAY, CONDITION_ALWAYS, EVENT(Altin_WalkIntoMine)},
+    {STEP_TRIGGER_FACING(FACING_NORTH), CELL_BEHAVIOR_ALTIN_RAIL_TUNNEL, CONDITION_ALWAYS, EVENT(Altin_WalkIntoMine)},
+    {STEP_TRIGGER_FACING(FACING_NORTH), CELL_BEHAVIOR_ALTIN_MIDDLE_MINE_DOORWAY, CONDITION_ALWAYS, EVENT(Altin_WalkIntoMine)},
+    {TRIGGER_EXIT, CELL_BEHAVIOR_ALTIN_PASSAGE_BEHIND_STATUE, CONDITION_ALWAYS, ALTIN_TO_ALTIN_PEAK_SPRITZ},
+    {TRIGGER_EXIT, CELL_BEHAVIOR_ALTIN_EAST_ROAD, CONDITION_ALWAYS, ALTIN_TO_WORLD_MAP},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_ALTIN_INN_DOOR, CONDITION_ALWAYS, EVENT(Altin_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_ALTIN_SANCTUM_DOOR, CONDITION_ALWAYS, EVENT(Altin_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_ALTIN_EAST_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(Altin_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_ALTIN_CLIFF_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(Altin_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_ALTIN_SOUTH_HOUSE_DOOR, CONDITION_ALWAYS, EVENT(Altin_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_ALTIN_ITEM_SHOP_DOOR, CONDITION_ALWAYS, EVENT(Altin_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_ALTIN_ARMOR_SHOP_DOOR, CONDITION_ALWAYS, EVENT(Altin_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_ALTIN_WEAPON_SHOP_DOOR, CONDITION_ALWAYS, EVENT(Altin_EnterDoor)},
     {TRIGGER_TALK, ACTOR_GREETING_STRONGMAN, FLAG_HYDROS_STATUES_DEFEATED, EVENT(Altin_AskAboutFirstVisit)},
     {TRIGGER_TALK, ACTOR_GREETING_STRONGMAN, CONDITION_ALWAYS, MSGNO(MsgAltinThankYouSoMuchForDefeating)},
     {TRIGGER_TALK, ACTOR_CURIOUS_STRONGMAN, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinHowCanThoseCreaturesSpitUp)},
@@ -1231,15 +1309,15 @@ struct Trigger gAltin_Triggers[] = {
 };
 
 struct Trigger gCottageRoomsD_Triggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_NORTHWEST},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_NORTH},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_NORTHEAST},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_WEST},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_SOUTHEAST},
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_EAST},
-    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_SOUTHWEST},
-    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, COTTAGE_ROOMS_D_INN_TO_INN_UPSTAIRS},
-    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, COTTAGE_ROOMS_D_INN_UPSTAIRS_TO_INN},
+    {TRIGGER_EXIT, COTTAGE_ROOMS_D_TO_ALTIN_NORTHWEST, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_NORTHWEST},
+    {TRIGGER_EXIT, COTTAGE_ROOMS_D_TO_ALTIN_NORTH, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_NORTH},
+    {TRIGGER_EXIT, COTTAGE_ROOMS_D_TO_ALTIN_NORTHEAST, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_NORTHEAST},
+    {TRIGGER_EXIT, COTTAGE_ROOMS_D_TO_ALTIN_WEST, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_WEST},
+    {TRIGGER_EXIT, COTTAGE_ROOMS_D_TO_ALTIN_SOUTHEAST, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_SOUTHEAST},
+    {TRIGGER_EXIT, COTTAGE_ROOMS_D_TO_ALTIN_EAST, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_EAST},
+    {TRIGGER_EXIT, COTTAGE_ROOMS_D_TO_ALTIN_SOUTHWEST, CONDITION_ALWAYS, COTTAGE_ROOMS_D_TO_ALTIN_SOUTHWEST},
+    {TRIGGER_EXIT, COTTAGE_ROOMS_D_INN_TO_INN_UPSTAIRS, CONDITION_ALWAYS, COTTAGE_ROOMS_D_INN_TO_INN_UPSTAIRS},
+    {TRIGGER_EXIT, COTTAGE_ROOMS_D_INN_UPSTAIRS_TO_INN, CONDITION_ALWAYS, COTTAGE_ROOMS_D_INN_UPSTAIRS_TO_INN},
     {TRIGGER_TALK, ACTOR_ROOM_ONE_GUEST, FLAG_ALTIN_WATER_DROPPED_ONCE, MSGNO(MsgAltinNoMatterWhatHappensIdNever)},
     {TRIGGER_TALK, ACTOR_ROOM_ONE_GUEST, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinOhNoTheWholeHouseIs)},
     {TRIGGER_TALK, ACTOR_ROOM_ONE_GUEST, CONDITION_ALWAYS, MSGNO(MsgAltinIHearThatSilkRoadIs)},
@@ -1324,16 +1402,16 @@ struct Trigger gCottageRoomsD_Triggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_WAITING_TO_GO_HOME, FLAG_HYDROS_STATUES_DEFEATED, MSGNO(MsgAltinItLooksLikeTheWaterHas)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_WAITING_TO_GO_HOME, CONDITION_ALWAYS,
         MSGNO(MsgAltinItWillTakeSomeTimeBefore)},
-    {EXAMINE_TRIGGER(EXAMINE_BARREL), 100, FLAG_ALTIN_NUT, FIND_ITEM(ITEM_NUT)},
-    {EXAMINE_TRIGGER(EXAMINE_BARREL), 101, FLAG_ALTIN_COINS, FIND_COINS(9)},
-    {EXAMINE_TRIGGER(EXAMINE_BED), 102, FLAG_ALTIN_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB)},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS,
+    {EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_COTTAGE_ROOMS_D_NUT_BARREL, FLAG_ALTIN_NUT, FIND_ITEM(ITEM_NUT)},
+    {EXAMINE_TRIGGER(EXAMINE_BARREL), CELL_BEHAVIOR_COTTAGE_ROOMS_D_COINS_BARREL, FLAG_ALTIN_COINS, FIND_COINS(9)},
+    {EXAMINE_TRIGGER(EXAMINE_BED), CELL_BEHAVIOR_COTTAGE_ROOMS_D_SLEEP_BOMB_BED, FLAG_ALTIN_SLEEP_BOMB, FIND_ITEM(ITEM_SLEEP_BOMB)},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_COTTAGE_ROOMS_D_RUSTED_POTS, CONDITION_ALWAYS,
         FIND_MESSAGE(MSGNO(MsgAltinThePotsAndPansAreRusted))},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 201, CONDITION_ALWAYS,
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_COTTAGE_ROOMS_D_ROAST_BEEF, CONDITION_ALWAYS,
         FIND_MESSAGE(MSGNO(MsgAltinHeIsMakingRoastBeefEven))},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 202, CONDITION_ALWAYS,
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_COTTAGE_ROOMS_D_SHRIMP, CONDITION_ALWAYS,
         FIND_MESSAGE(MSGNO(MsgAltinHeIsMakingShrimpInA))},
-    {EXAMINE_TRIGGER(EXAMINE_BOOKCASE), 203, CONDITION_ALWAYS,
+    {EXAMINE_TRIGGER(EXAMINE_BOOKCASE), CELL_BEHAVIOR_COTTAGE_ROOMS_D_BOOKCASE, CONDITION_ALWAYS,
         FIND_MESSAGE(MSGNO(MsgAltinThereIsABookTitledAltin))},
     {TRIGGER_TABLE_END},
 };
@@ -1385,7 +1463,8 @@ u16 gAltin_NortheastDoorCells[] = {
     MAPGRID_ANIMATION_STEPS_END,
 };
 
-/// Each door step trigger's opening picture and cell, from step trigger 2.
+/// Each door's opening pictures and the cell they are drawn at, in the order of
+/// the doors' cell behaviors from the inn's.
 struct MapGridCellAnimation gAltin_Doors[] = {
     {gAltin_SouthwestDoorCells, 41, 5},  {gAltin_SanctumDoorCells, 51, 6},
     {gAltin_NorthwestDoorCells, 57, 17}, {gAltin_NorthAndWestDoorCells, 39, 17},

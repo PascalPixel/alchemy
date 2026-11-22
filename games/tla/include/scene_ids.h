@@ -76,15 +76,16 @@ extern char SceneId_YampiDesertPsynergyStone;
   ((s32)&SceneId_YampiDesertPsynergyStone)
 extern char SceneId_YampiDesertKingScorpion;
 #define SCENE_YAMPI_DESERT_KING_SCORPION ((s32)&SceneId_YampiDesertKingScorpion)
-extern char SceneId_YampiDesertTreasurePit;
-#define SCENE_YAMPI_DESERT_TREASURE_PIT ((s32)&SceneId_YampiDesertTreasurePit)
+extern char SceneId_YampiDesertCoinsPuddle;
+#define SCENE_YAMPI_DESERT_COINS_PUDDLE ((s32)&SceneId_YampiDesertCoinsPuddle)
 extern char SceneId_YampiDesertSandPass;
 #define SCENE_YAMPI_DESERT_SAND_PASS ((s32)&SceneId_YampiDesertSandPass)
 extern char SceneId_YampiDesertTrainersWhipChest;
 #define SCENE_YAMPI_DESERT_TRAINERS_WHIP_CHEST                                 \
   ((s32)&SceneId_YampiDesertTrainersWhipChest)
-extern char SceneId_YampiDesertMedalSpot;
-#define SCENE_YAMPI_DESERT_MEDAL_SPOT ((s32)&SceneId_YampiDesertMedalSpot)
+extern char SceneId_YampiDesertHiddenPsynergyStone;
+#define SCENE_YAMPI_DESERT_HIDDEN_PSYNERGY_STONE                               \
+  ((s32)&SceneId_YampiDesertHiddenPsynergyStone)
 extern char SceneId_YampiDesertScorpionPit;
 #define SCENE_YAMPI_DESERT_SCORPION_PIT ((s32)&SceneId_YampiDesertScorpionPit)
 extern char SceneId_YampiDesertSpringCave;

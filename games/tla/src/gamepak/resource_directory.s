@@ -882,10 +882,10 @@ Resource_DirectoryTable:
 	resource , Field_YampiDesertBlitz
 	resource , Field_YampiDesertPsynergyStone
 	resource , Field_YampiDesertKingScorpion
-	resource , Field_YampiDesertTreasurePit
+	resource , Field_YampiDesertCoinsPuddle
 	resource , Field_YampiDesertSandPass
 	resource , Field_YampiDesertTrainersWhipChest
-	resource , Field_YampiDesertMedalSpot
+	resource , Field_YampiDesertHiddenPsynergyStone
 	resource , Field_YampiDesertScorpionPit
 	resource , Field_YampiDesertSpringCave
 	resource , Field_YampiDesertBlowMaceChest

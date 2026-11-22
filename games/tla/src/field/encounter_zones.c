@@ -203,14 +203,14 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {311, 312, 313, 314, 315, 316, 317, 318},
         .weights = {20, 20, 10, 10, 10, 5, 5},
     },
-    // Yampi Desert: SceneId_YampiDesertPsynergyStone, SceneId_YampiDesertTreasurePit, SceneId_YampiDesertSpringCave, SceneId_YampiDesertBlowMaceChest
+    // Yampi Desert: SceneId_YampiDesertPsynergyStone, SceneId_YampiDesertCoinsPuddle, SceneId_YampiDesertSpringCave, SceneId_YampiDesertBlowMaceChest
     {
         .rate = 60,
         .level = 9,
         .formations = {311, 312, 313, 314, 315, 316, 317, 318},
         .weights = {10, 10, 20, 20, 10, 10, 5, 5},
     },
-    // Yampi Desert: SceneId_YampiDesertSandPass, SceneId_YampiDesertTrainersWhipChest, SceneId_YampiDesertMedalSpot
+    // Yampi Desert: SceneId_YampiDesertSandPass, SceneId_YampiDesertTrainersWhipChest, SceneId_YampiDesertHiddenPsynergyStone
     {
         .rate = 60,
         .level = 9,

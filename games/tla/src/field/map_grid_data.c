@@ -461,10 +461,10 @@ const struct MapResources gMaps[] = {
     {249, 243, {244, 245, 246}, 247}, // yampi_desert_blitz
     {250, 243, {244, 245, 246}, 247}, // yampi_desert_psynergy_stone
     {251, 243, {244, 245, 246}, 247}, // yampi_desert_king_scorpion
-    {252, 243, {244, 245, 246}, 247}, // yampi_desert_treasure_pit
+    {252, 243, {244, 245, 246}, 247}, // yampi_desert_coins_puddle
     {253, 243, {244, 245, 246}, 247}, // yampi_desert_sand_pass
     {254, 243, {244, 245, 246}, 247}, // yampi_desert_trainers_whip_chest
-    {255, 243, {244, 245, 246}, 247}, // yampi_desert_medal_spot
+    {255, 243, {244, 245, 246}, 247}, // yampi_desert_hidden_psynergy_stone
     {256, 243, {244, 245, 246}, 247}, // yampi_desert_scorpion_pit
     {257, 243, {244, 245, 246}, 247}, // yampi_desert_spring_cave
     {258, 243, {244, 245, 246}, 247}, // yampi_desert_blow_mace_chest

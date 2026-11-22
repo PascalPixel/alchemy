@@ -47,10 +47,10 @@ gScene_EncounterRules:
 	encounter_rule YampiDesertGuardianRingChest, -1, -1, 31, 0
 	encounter_rule YampiDesertBlitz, -1, -1, 31, 0
 	encounter_rule YampiDesertPsynergyStone, -1, -1, 32, 0
-	encounter_rule YampiDesertTreasurePit, -1, -1, 32, 0
+	encounter_rule YampiDesertCoinsPuddle, -1, -1, 32, 0
 	encounter_rule YampiDesertSandPass, -1, -1, 33, 0
 	encounter_rule YampiDesertTrainersWhipChest, -1, -1, 33, 0
-	encounter_rule YampiDesertMedalSpot, -1, -1, 33, 0
+	encounter_rule YampiDesertHiddenPsynergyStone, -1, -1, 33, 0
 	encounter_rule YampiDesertSpringCave, -1, -1, 32, 0
 	encounter_rule YampiDesertBlowMaceChest, -1, -1, 32, 0
 	encounter_rule AirsRockStormBrandChest, -1, -1, 34, 0

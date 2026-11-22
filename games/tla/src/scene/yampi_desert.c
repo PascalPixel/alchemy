@@ -102,7 +102,7 @@
 /// Set once Lash has tied the Trainer's Whip chest's room's rope.
 #define FLAG_YAMPI_DESERT_ROPE_TIED FLAG_SCENE_TEMP_0C
 /// Set once Scoop has dug up the 315 coins in the room north of the spring.
-#define FLAG_YAMPI_DESERT_TREASURE_PIT_DUG_UP FLAG_AREA_TEMP_02
+#define FLAG_YAMPI_DESERT_COINS_PUDDLE_DUG_UP FLAG_AREA_TEMP_02
 
 extern u16 gYampiDesertGuardianRingChestStakes[];
 extern u16 gYampiDesertBlitzStakes[];
@@ -311,10 +311,10 @@ void YampiDesert_SetUpBlitz(void);
 void YampiDesert_SetUpPsynergyStone(void);
 void YampiDesert_SetUpKingScorpion(void);
 
-void YampiDesert_SetUpTreasurePit(void);
+void YampiDesert_SetUpCoinsPuddle(void);
 
 void YampiDesert_SetUpTrainersWhipChest(void);
-void YampiDesert_SetUpMedalSpot(void);
+void YampiDesert_SetUpHiddenPsynergyStone(void);
 void YampiDesert_SetUpScorpionPit(void);
 void YampiDesert_SetUpSpringCave(void);
 void YampiDesert_SetUpBlowMaceChest(void);
@@ -432,7 +432,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// (cell (24, 23)) digs up 315 coins: "Felix got 315 coins."
 void YampiDesert_DigUpCoins(s32 mode) {
   YampiDesert_ReturnHome(mode, ACTOR_HIDDEN_TREASURE,
-                         FLAG_YAMPI_DESERT_TREASURE_PIT_DUG_UP);
+                         FLAG_YAMPI_DESERT_COINS_PUDDLE_DUG_UP);
 }
 
 extern struct Trigger gYampiDesert_Triggers[];
@@ -441,10 +441,10 @@ extern struct Trigger gYampiDesertSpringTriggers[];
 extern struct Trigger gYampiDesertBlitzTriggers[];
 extern struct Trigger gYampiDesertPsynergyStoneTriggers[];
 extern struct Trigger gYampiDesertKingScorpionTriggers[];
-extern struct Trigger gYampiDesertTreasurePitTriggers[];
+extern struct Trigger gYampiDesertCoinsPuddleTriggers[];
 extern struct Trigger gYampiDesertSandPassTriggers[];
 extern struct Trigger gYampiDesertTrainersWhipChestTriggers[];
-extern struct Trigger gYampiDesertMedalSpotTriggers[];
+extern struct Trigger gYampiDesertHiddenPsynergyStoneTriggers[];
 extern struct Trigger gYampiDesertScorpionPitTriggers[];
 extern struct Trigger gYampiDesertSpringCaveTriggers[];
 extern struct Trigger gYampiDesertBlowMaceChestTriggers[];
@@ -463,14 +463,14 @@ const struct Trigger *Scene_GetTriggers(void) {
     return gYampiDesertPsynergyStoneTriggers;
   if (scene == SCENE_YAMPI_DESERT_KING_SCORPION)
     return gYampiDesertKingScorpionTriggers;
-  if (scene == SCENE_YAMPI_DESERT_TREASURE_PIT)
-    return gYampiDesertTreasurePitTriggers;
+  if (scene == SCENE_YAMPI_DESERT_COINS_PUDDLE)
+    return gYampiDesertCoinsPuddleTriggers;
   if (scene == SCENE_YAMPI_DESERT_SAND_PASS)
     return gYampiDesertSandPassTriggers;
   if (scene == SCENE_YAMPI_DESERT_TRAINERS_WHIP_CHEST)
     return gYampiDesertTrainersWhipChestTriggers;
-  if (scene == SCENE_YAMPI_DESERT_MEDAL_SPOT)
-    return gYampiDesertMedalSpotTriggers;
+  if (scene == SCENE_YAMPI_DESERT_HIDDEN_PSYNERGY_STONE)
+    return gYampiDesertHiddenPsynergyStoneTriggers;
   if (scene == SCENE_YAMPI_DESERT_SCORPION_PIT)
     return gYampiDesertScorpionPitTriggers;
   if (scene == SCENE_YAMPI_DESERT_SPRING_CAVE)
@@ -2192,12 +2192,12 @@ s32 Scene_Initialize(void) {
     YampiDesert_SetUpPsynergyStone();
   else if (scene == SCENE_YAMPI_DESERT_KING_SCORPION)
     YampiDesert_SetUpKingScorpion();
-  else if (scene == SCENE_YAMPI_DESERT_TREASURE_PIT)
-    YampiDesert_SetUpTreasurePit();
+  else if (scene == SCENE_YAMPI_DESERT_COINS_PUDDLE)
+    YampiDesert_SetUpCoinsPuddle();
   else if (scene == SCENE_YAMPI_DESERT_TRAINERS_WHIP_CHEST)
     YampiDesert_SetUpTrainersWhipChest();
-  else if (scene == SCENE_YAMPI_DESERT_MEDAL_SPOT)
-    YampiDesert_SetUpMedalSpot();
+  else if (scene == SCENE_YAMPI_DESERT_HIDDEN_PSYNERGY_STONE)
+    YampiDesert_SetUpHiddenPsynergyStone();
   else if (scene == SCENE_YAMPI_DESERT_SCORPION_PIT)
     YampiDesert_SetUpScorpionPit();
   else if (scene == SCENE_YAMPI_DESERT_SPRING_CAVE)
@@ -2218,7 +2218,7 @@ void YampiDesert_SetUpGuardianRingChest(void) {
       YAMPI_DESERT_GUARDIAN_RING_CHEST_FROM_WORLD_MAP) {
     GameFlag_Set(FLAG_YAMPI_DESERT_ENTERED_BY_GUARDIAN_RING_CHEST);
     GameFlag_Clear(FLAG_YAMPI_DESERT_ENTERED_BY_TRAINERS_WHIP_CHEST);
-    GameFlag_Clear(FLAG_YAMPI_DESERT_ENTERED_BY_MEDAL_SPOT);
+    GameFlag_Clear(FLAG_YAMPI_DESERT_ENTERED_BY_HIDDEN_PSYNERGY_STONE);
   }
 }
 
@@ -2370,9 +2370,9 @@ void YampiDesert_SetUpKingScorpion(void) {
 
 /// Sets up the room north of the spring: its 315 coins stay hidden until dug
 /// up.
-void YampiDesert_SetUpTreasurePit(void) {
+void YampiDesert_SetUpCoinsPuddle(void) {
   FieldEffect_StartBlankOverlay(0);
-  if (GameFlag_Get(FLAG_YAMPI_DESERT_TREASURE_PIT_DUG_UP) == 0)
+  if (GameFlag_Get(FLAG_YAMPI_DESERT_COINS_PUDDLE_DUG_UP) == 0)
     Actor_SetWideSprite(ACTOR_HIDDEN_TREASURE, 0);
 }
 
@@ -2399,7 +2399,7 @@ void YampiDesert_SetUpTrainersWhipChest(void) {
       YAMPI_DESERT_TRAINERS_WHIP_CHEST_FROM_WORLD_MAP) {
     GameFlag_Clear(FLAG_YAMPI_DESERT_ENTERED_BY_GUARDIAN_RING_CHEST);
     GameFlag_Set(FLAG_YAMPI_DESERT_ENTERED_BY_TRAINERS_WHIP_CHEST);
-    GameFlag_Clear(FLAG_YAMPI_DESERT_ENTERED_BY_MEDAL_SPOT);
+    GameFlag_Clear(FLAG_YAMPI_DESERT_ENTERED_BY_HIDDEN_PSYNERGY_STONE);
   }
 #if TLA_PATCH_1
   else if (
@@ -2413,9 +2413,11 @@ void YampiDesert_SetUpTrainersWhipChest(void) {
       gMainRoutineWork.retreatScene = SCENE_YAMPI_DESERT_TRAINERS_WHIP_CHEST;
       gMainRoutineWork.retreatEntrance =
           YAMPI_DESERT_TRAINERS_WHIP_CHEST_FROM_WORLD_MAP;
-    } else if (GameFlag_Get(FLAG_YAMPI_DESERT_ENTERED_BY_MEDAL_SPOT)) {
-      gMainRoutineWork.retreatScene = SCENE_YAMPI_DESERT_MEDAL_SPOT;
-      gMainRoutineWork.retreatEntrance = YAMPI_DESERT_MEDAL_SPOT_FROM_WORLD_MAP;
+    } else if (GameFlag_Get(
+                   FLAG_YAMPI_DESERT_ENTERED_BY_HIDDEN_PSYNERGY_STONE)) {
+      gMainRoutineWork.retreatScene = SCENE_YAMPI_DESERT_HIDDEN_PSYNERGY_STONE;
+      gMainRoutineWork.retreatEntrance =
+          YAMPI_DESERT_HIDDEN_PSYNERGY_STONE_FROM_WORLD_MAP;
     }
   }
 #endif
@@ -2423,13 +2425,14 @@ void YampiDesert_SetUpTrainersWhipChest(void) {
 
 /// Sets up the room of the hidden Psynergy Stone, and the way in it was entered
 /// by.
-void YampiDesert_SetUpMedalSpot(void) {
+void YampiDesert_SetUpHiddenPsynergyStone(void) {
   if (Actor_GetById(ACTOR_HIDDEN_TREASURE) != 0)
     Actor_SetPosition(ACTOR_HIDDEN_TREASURE, 0, 0);
-  if (gMainRoutineWork.entrance == YAMPI_DESERT_MEDAL_SPOT_FROM_WORLD_MAP) {
+  if (gMainRoutineWork.entrance ==
+      YAMPI_DESERT_HIDDEN_PSYNERGY_STONE_FROM_WORLD_MAP) {
     GameFlag_Clear(FLAG_YAMPI_DESERT_ENTERED_BY_GUARDIAN_RING_CHEST);
     GameFlag_Clear(FLAG_YAMPI_DESERT_ENTERED_BY_TRAINERS_WHIP_CHEST);
-    GameFlag_Set(FLAG_YAMPI_DESERT_ENTERED_BY_MEDAL_SPOT);
+    GameFlag_Set(FLAG_YAMPI_DESERT_ENTERED_BY_HIDDEN_PSYNERGY_STONE);
   }
 }
 
@@ -2931,7 +2934,7 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(YAMPI_DESERT_GUARDIAN_RING_CHEST_TO_YAMPI_DESERT_SPRING, YampiDesertSpring, YAMPI_DESERT_SPRING_FROM_YAMPI_DESERT_GUARDIAN_RING_CHEST),
     SCENE_EXITS(YampiDesertSpring),
     SCENE_EXIT(YAMPI_DESERT_SPRING_TO_YAMPI_DESERT_GUARDIAN_RING_CHEST, YampiDesertGuardianRingChest, YAMPI_DESERT_GUARDIAN_RING_CHEST_FROM_YAMPI_DESERT_SPRING),
-    SCENE_EXIT(YAMPI_DESERT_SPRING_TO_YAMPI_DESERT_TREASURE_PIT, YampiDesertTreasurePit, YAMPI_DESERT_TREASURE_PIT_FROM_YAMPI_DESERT_SPRING),
+    SCENE_EXIT(YAMPI_DESERT_SPRING_TO_YAMPI_DESERT_COINS_PUDDLE, YampiDesertCoinsPuddle, YAMPI_DESERT_COINS_PUDDLE_FROM_YAMPI_DESERT_SPRING),
     SCENE_EXIT(YAMPI_DESERT_SPRING_TO_YAMPI_DESERT_SPRING_CAVE_NORTH, YampiDesertSpringCave, YAMPI_DESERT_SPRING_CAVE_FROM_YAMPI_DESERT_SPRING_NORTH),
     SCENE_EXIT(YAMPI_DESERT_SPRING_TO_YAMPI_DESERT_BLITZ, YampiDesertBlitz, YAMPI_DESERT_BLITZ_FROM_YAMPI_DESERT_SPRING),
     SCENE_EXIT(YAMPI_DESERT_SPRING_TO_YAMPI_DESERT_SPRING_CAVE_SOUTH, YampiDesertSpringCave, YAMPI_DESERT_SPRING_CAVE_FROM_YAMPI_DESERT_SPRING_SOUTH),
@@ -2948,20 +2951,20 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(2, YampiDesertKingScorpion, 3),
     SCENE_EXIT(3, YampiDesertKingScorpion, 2),
     SCENE_EXIT(YAMPI_DESERT_KING_SCORPION_TO_YAMPI_DESERT_SCORPION_PIT, YampiDesertScorpionPit, YAMPI_DESERT_SCORPION_PIT_FROM_YAMPI_DESERT_KING_SCORPION),
-    SCENE_EXITS(YampiDesertTreasurePit),
-    SCENE_EXIT(YAMPI_DESERT_TREASURE_PIT_TO_YAMPI_DESERT_SPRING, YampiDesertSpring, YAMPI_DESERT_SPRING_FROM_YAMPI_DESERT_TREASURE_PIT),
-    SCENE_EXIT(YAMPI_DESERT_TREASURE_PIT_TO_YAMPI_DESERT_BLOW_MACE_CHEST, YampiDesertBlowMaceChest, YAMPI_DESERT_BLOW_MACE_CHEST_FROM_YAMPI_DESERT_TREASURE_PIT),
+    SCENE_EXITS(YampiDesertCoinsPuddle),
+    SCENE_EXIT(YAMPI_DESERT_COINS_PUDDLE_TO_YAMPI_DESERT_SPRING, YampiDesertSpring, YAMPI_DESERT_SPRING_FROM_YAMPI_DESERT_COINS_PUDDLE),
+    SCENE_EXIT(YAMPI_DESERT_COINS_PUDDLE_TO_YAMPI_DESERT_BLOW_MACE_CHEST, YampiDesertBlowMaceChest, YAMPI_DESERT_BLOW_MACE_CHEST_FROM_YAMPI_DESERT_COINS_PUDDLE),
     SCENE_EXITS(YampiDesertSandPass),
     SCENE_EXIT(YAMPI_DESERT_SAND_PASS_TO_YAMPI_DESERT_BLOW_MACE_CHEST, YampiDesertBlowMaceChest, YAMPI_DESERT_BLOW_MACE_CHEST_FROM_YAMPI_DESERT_SAND_PASS),
     SCENE_EXIT(YAMPI_DESERT_SAND_PASS_TO_YAMPI_DESERT_TRAINERS_WHIP_CHEST, YampiDesertTrainersWhipChest, YAMPI_DESERT_TRAINERS_WHIP_CHEST_FROM_YAMPI_DESERT_SAND_PASS),
     SCENE_EXITS(YampiDesertTrainersWhipChest),
     SCENE_EXIT(YAMPI_DESERT_TRAINERS_WHIP_CHEST_TO_YAMPI_DESERT_SAND_PASS, YampiDesertSandPass, YAMPI_DESERT_SAND_PASS_FROM_YAMPI_DESERT_TRAINERS_WHIP_CHEST),
     SCENE_EXIT(YAMPI_DESERT_TRAINERS_WHIP_CHEST_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_YAMPI_DESERT_TRAINERS_WHIP_CHEST),
-    SCENE_EXIT(YAMPI_DESERT_TRAINERS_WHIP_CHEST_TO_YAMPI_DESERT_MEDAL_SPOT, YampiDesertMedalSpot, YAMPI_DESERT_MEDAL_SPOT_FROM_YAMPI_DESERT_TRAINERS_WHIP_CHEST),
+    SCENE_EXIT(YAMPI_DESERT_TRAINERS_WHIP_CHEST_TO_YAMPI_DESERT_HIDDEN_PSYNERGY_STONE, YampiDesertHiddenPsynergyStone, YAMPI_DESERT_HIDDEN_PSYNERGY_STONE_FROM_YAMPI_DESERT_TRAINERS_WHIP_CHEST),
     SCENE_EXIT(YAMPI_DESERT_TRAINERS_WHIP_CHEST_TO_YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST, YampiDesertCaveWaterOfLifeChest, YAMPI_DESERT_CAVE_WATER_OF_LIFE_CHEST_FROM_YAMPI_DESERT_TRAINERS_WHIP_CHEST),
-    SCENE_EXITS(YampiDesertMedalSpot),
-    SCENE_EXIT(YAMPI_DESERT_MEDAL_SPOT_TO_YAMPI_DESERT_TRAINERS_WHIP_CHEST, YampiDesertTrainersWhipChest, YAMPI_DESERT_TRAINERS_WHIP_CHEST_FROM_YAMPI_DESERT_MEDAL_SPOT),
-    SCENE_EXIT(YAMPI_DESERT_MEDAL_SPOT_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_YAMPI_DESERT_MEDAL_SPOT),
+    SCENE_EXITS(YampiDesertHiddenPsynergyStone),
+    SCENE_EXIT(YAMPI_DESERT_HIDDEN_PSYNERGY_STONE_TO_YAMPI_DESERT_TRAINERS_WHIP_CHEST, YampiDesertTrainersWhipChest, YAMPI_DESERT_TRAINERS_WHIP_CHEST_FROM_YAMPI_DESERT_HIDDEN_PSYNERGY_STONE),
+    SCENE_EXIT(YAMPI_DESERT_HIDDEN_PSYNERGY_STONE_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_YAMPI_DESERT_HIDDEN_PSYNERGY_STONE),
     SCENE_EXITS(YampiDesertScorpionPit),
     SCENE_EXIT(YAMPI_DESERT_SCORPION_PIT_TO_YAMPI_DESERT_KING_SCORPION, YampiDesertKingScorpion, YAMPI_DESERT_KING_SCORPION_FROM_YAMPI_DESERT_SCORPION_PIT),
     SCENE_EXITS(YampiDesertSpringCave),
@@ -2970,7 +2973,7 @@ LATE_DATA u32 gSceneExits[] = {
     SCENE_EXIT(YAMPI_DESERT_SPRING_CAVE_TO_YAMPI_DESERT_SPRING_SOUTH, YampiDesertSpring, YAMPI_DESERT_SPRING_FROM_YAMPI_DESERT_SPRING_CAVE_SOUTH),
     SCENE_EXIT(4, YampiDesertSpringCave, 2),
     SCENE_EXITS(YampiDesertBlowMaceChest),
-    SCENE_EXIT(YAMPI_DESERT_BLOW_MACE_CHEST_TO_YAMPI_DESERT_TREASURE_PIT, YampiDesertTreasurePit, YAMPI_DESERT_TREASURE_PIT_FROM_YAMPI_DESERT_BLOW_MACE_CHEST),
+    SCENE_EXIT(YAMPI_DESERT_BLOW_MACE_CHEST_TO_YAMPI_DESERT_COINS_PUDDLE, YampiDesertCoinsPuddle, YAMPI_DESERT_COINS_PUDDLE_FROM_YAMPI_DESERT_BLOW_MACE_CHEST),
     SCENE_EXIT(YAMPI_DESERT_BLOW_MACE_CHEST_TO_YAMPI_DESERT_SAND_PASS, YampiDesertSandPass, YAMPI_DESERT_SAND_PASS_FROM_YAMPI_DESERT_BLOW_MACE_CHEST),
     SCENE_EXITS_END,
 };
@@ -3222,12 +3225,12 @@ LATE_DATA struct Trigger gYampiDesertKingScorpionTriggers[] = {
 };
 
 /// The triggers of the room north of the spring, with the 315 coins.
-LATE_DATA struct Trigger gYampiDesertTreasurePitTriggers[] = {
+LATE_DATA struct Trigger gYampiDesertCoinsPuddleTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(YampiDesert_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(YampiDesert_EndSand)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), CELL_COINS_PUDDLE, FLAG_YAMPI_DESERT_TREASURE_PIT_DUG_UP, EVENT(YampiDesert_DigUpCoins)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), CELL_COINS_PUDDLE, FLAG_YAMPI_DESERT_COINS_PUDDLE_DUG_UP, EVENT(YampiDesert_DigUpCoins)},
     {TRIGGER_TABLE_END},
 };
 
@@ -3258,7 +3261,7 @@ LATE_DATA struct Trigger gYampiDesertTrainersWhipChestTriggers[] = {
 };
 
 /// The triggers of the room of the hidden Psynergy Stone.
-LATE_DATA struct Trigger gYampiDesertMedalSpotTriggers[] = {
+LATE_DATA struct Trigger gYampiDesertHiddenPsynergyStoneTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(YampiDesert_RevealPsynergyStone)},

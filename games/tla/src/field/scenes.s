@@ -92,10 +92,10 @@ gScenes:
 	scene YampiDesertBlitz, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 65, 1
 	scene YampiDesertPsynergyStone, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 66, 1
 	scene YampiDesertKingScorpion, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 67, 1
-	scene YampiDesertTreasurePit, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 68, 1
+	scene YampiDesertCoinsPuddle, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 68, 1
 	scene YampiDesertSandPass, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 69, 1
 	scene YampiDesertTrainersWhipChest, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 70, 1
-	scene YampiDesertMedalSpot, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 71, 1
+	scene YampiDesertHiddenPsynergyStone, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 71, 1
 	scene YampiDesertScorpionPit, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 72, 1
 	scene YampiDesertSpringCave, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 73, 1
 	scene YampiDesertBlowMaceChest, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 74, 1

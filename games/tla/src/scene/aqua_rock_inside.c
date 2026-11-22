@@ -713,8 +713,12 @@ void AquaRockInside_UseAquariusStone(void) {
   MapGrid_SetShake(1, 3, 1);
   FieldEvent_Wait(40);
   // XXX: AquaRockInside_DrainStream rewrites cells (110, 16) to (114, 47), as
-  // in Steam's room; what they are in this room's map is unsettled. A
-  // recording of this event (the recorder cannot use an item) would settle it.
+  // in Steam's room; what they are in this room's map is unsettled. The
+  // recorder now plays this event (started directly, --give AQUARIUS_STONE):
+  // the camera pans to the dais, the water falls away either side of the
+  // causeway and the gold door shows, but nothing on screen marks which of it
+  // those cells are; a picture of the map with them marked, before and after,
+  // would settle it.
   priority = TASK_PASS_FRAME;
   FieldTask_AddFrame(AquaRockInside_DrainStream, priority);
   FieldCamera_SetSpeedAndAcceleration(2.5, 0.25);

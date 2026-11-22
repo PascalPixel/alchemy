@@ -466,9 +466,12 @@ void TundariaTower_FreeCenterProng(void) {
 }
 
 /// Searching the ice crystal in the Center Prong's chamber, cell (21, 23),
-/// says "There's something inside the cracked ice...". XXX: once Felix has the
-/// Burst Brooch the field menu then opens, presumably to cast Burst on it; a
-/// render with the Brooch would settle what shows.
+/// says "There's something inside the cracked ice...". XXX: once
+/// FLAG_TUNDARIA_TOWER_BURST_BROOCH is set the event also sets the field work's
+/// `fieldMenu`; a render with the flag set and the Brooch given shows no menu
+/// after the message (control returns 15 frames sooner), so what it opens is
+/// unseen; a recording that holds no key after the message and shows the menu
+/// screens would settle it.
 void TundariaTower_ExamineCrystal(void) {
   Event_Start();
   Event_ResolvePendingActions(0);

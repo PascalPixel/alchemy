@@ -36,4 +36,4 @@ Tileset_TundariaTowerEntrancePalette:
 	.global Tileset_TundariaTowerEntranceTilesA
 Tileset_TundariaTowerEntranceTilesA:
 	.incbin "games/tla/src/graphics/tileset/tundaria_tower_entrance/tiles_a.4bpp.mtf"
-	.byte 0xf8, 0x61	@ PACKER: left in the buffer by Field_TundariaTowerLiftPillars+0xfbe
+	.byte 0xf8, 0x61	@ PACKER: left in the buffer by Field_TundariaTowerPillarPuzzle+0xfbe

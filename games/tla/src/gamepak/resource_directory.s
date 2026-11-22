@@ -1284,7 +1284,7 @@ Resource_DirectoryTable:
 	resource , Tileset_PaletteTundariaTowerReflux
 	resource , Field_TundariaTowerIceColumns
 	resource , Tileset_PaletteTundariaTower5
-	resource , Field_TundariaTowerLiftPillars
+	resource , Field_TundariaTowerPillarPuzzle
 	resource , Tileset_PaletteTundariaTower6
 	resource , Field_TundariaTowerEntrance
 	resource , Tileset_TundariaTowerEntrancePalette

@@ -324,9 +324,9 @@ extern char SceneId_TundariaTowerReflux;
 #define SCENE_TUNDARIA_TOWER_REFLUX ((s32)&SceneId_TundariaTowerReflux)
 extern char SceneId_TundariaTowerIceColumns;
 #define SCENE_TUNDARIA_TOWER_ICE_COLUMNS ((s32)&SceneId_TundariaTowerIceColumns)
-extern char SceneId_TundariaTowerLiftPillars;
-#define SCENE_TUNDARIA_TOWER_LIFT_PILLARS                                      \
-  ((s32)&SceneId_TundariaTowerLiftPillars)
+extern char SceneId_TundariaTowerPillarPuzzle;
+#define SCENE_TUNDARIA_TOWER_PILLAR_PUZZLE                                     \
+  ((s32)&SceneId_TundariaTowerPillarPuzzle)
 extern char SceneId_TundariaTowerBurstBrooch;
 #define SCENE_TUNDARIA_TOWER_BURST_BROOCH                                      \
   ((s32)&SceneId_TundariaTowerBurstBrooch)

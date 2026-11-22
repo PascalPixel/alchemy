@@ -598,7 +598,7 @@ const struct MapResources gMaps[] = {
     {648, 649, {97, 98, 99}, 100}, // tundaria_tower_ice_slide
     {650, 651, {97, 98, 99}, 100}, // tundaria_tower_reflux
     {652, 653, {97, 98, 99}, 100}, // tundaria_tower_ice_columns
-    {654, 655, {97, 98, 99}, 100}, // tundaria_tower_lift_pillars
+    {654, 655, {97, 98, 99}, 100}, // tundaria_tower_pillar_puzzle
     {656, 657, {103, 104, 658}, 106}, // tundaria_tower_entrance
     {659, 660, {103, 104, 658}, 106}, // tundaria_tower_burst_brooch
     {661, 662, {663, 664, 665}, 666}, // gondowan_settlement_cave

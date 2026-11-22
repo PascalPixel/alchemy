@@ -231,7 +231,7 @@ gScenes:
 	scene TundariaTowerIceSlide, 0x68f, AREA_TUNDARIA_TOWER, SCENE_TYPE_OTHER, 202, 0
 	scene TundariaTowerReflux, 0x68f, AREA_TUNDARIA_TOWER, SCENE_TYPE_OTHER, 203, 0
 	scene TundariaTowerIceColumns, 0x68f, AREA_TUNDARIA_TOWER, SCENE_TYPE_OTHER, 204, 0
-	scene TundariaTowerLiftPillars, 0x68f, AREA_TUNDARIA_TOWER, SCENE_TYPE_OTHER, 205, 0
+	scene TundariaTowerPillarPuzzle, 0x68f, AREA_TUNDARIA_TOWER, SCENE_TYPE_OTHER, 205, 0
 	scene TundariaTowerBurstBrooch, 0x68f, AREA_TUNDARIA_TOWER, SCENE_TYPE_OTHER, 207, 0
 	scene GondowanSettlement, 0x690, AREA_GONDOWAN_SETTLEMENT, SCENE_TYPE_TOWN, 210, 1
 	scene GondowanSettlementHouses, 0x690, AREA_GONDOWAN_SETTLEMENT, SCENE_TYPE_TOWN, 99, 0

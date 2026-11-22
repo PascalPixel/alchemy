@@ -201,7 +201,7 @@
 	.include "games/tla/src/map/tundaria_tower_ice_slide/map.inc"
 	.include "games/tla/src/map/tundaria_tower_reflux/map.inc"
 	.include "games/tla/src/map/tundaria_tower_ice_columns/map.inc"
-	.include "games/tla/src/map/tundaria_tower_lift_pillars/map.inc"
+	.include "games/tla/src/map/tundaria_tower_pillar_puzzle/map.inc"
 	.include "games/tla/src/map/tundaria_tower_entrance/map.inc"
 	.include "games/tla/src/map/tundaria_tower_burst_brooch/map.inc"
 	.include "games/tla/src/map/gondowan_settlement_cave/map.inc"

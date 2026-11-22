@@ -150,7 +150,7 @@ gScene_EncounterRules:
 	encounter_rule TundariaTowerIceSlide, -1, -1, 74, 0
 	encounter_rule TundariaTowerReflux, -1, -1, 75, 0
 	encounter_rule TundariaTowerIceColumns, -1, -1, 75, 0
-	encounter_rule TundariaTowerLiftPillars, -1, -1, 76, 0
+	encounter_rule TundariaTowerPillarPuzzle, -1, -1, 76, 0
 	encounter_rule JupiterLighthouseBasementTeleporters, -1, -1, 82, 0
 	encounter_rule JupiterLighthouseRoomGateButton, -1, -1, 82, 0
 	encounter_rule JupiterLighthouseRoomBeam, -1, -1, 82, 0

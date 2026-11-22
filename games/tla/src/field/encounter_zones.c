@@ -511,7 +511,7 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {451, 452, 453, 454, 455, 456, 457, 458},
         .weights = {5, 5, 10, 20, 20, 15, 10, 5},
     },
-    // Tundaria Tower: SceneId_TundariaTowerLiftPillars
+    // Tundaria Tower: SceneId_TundariaTowerPillarPuzzle
     {
         .rate = 50,
         .level = 26,

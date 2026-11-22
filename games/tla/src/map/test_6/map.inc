@@ -12,7 +12,7 @@ Field_Test6:
 	map_block Field_Test6
 	map_block Field_Test6, .LField_Test6_SCENE
 .LField_Test6_CELL_PICTURES:
-	.incbin "games/tla/src/map/map_000/cell_pictures.delta0.lz"
+	.incbin "games/tla/src/map/empty_map/cell_pictures.delta0.lz"
 	.balign 4, 0
 .LField_Test6_SHAPES:
 	.incbin "games/tla/src/map/anemos_inner_sanctum_guardian/shapes.table.lz"
@@ -24,7 +24,7 @@ Field_Test6:
 	.incbin "games/tla/src/map/anemos_inner_sanctum_guardian/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Test6_SCENE:
-	.incbin "games/tla/src/map/map_000/scene.scene.lz"
+	.incbin "games/tla/src/map/empty_map/scene.scene.lz"
 	.balign 4, 0
 	.global Resource_Data63E
 Resource_Data63E:

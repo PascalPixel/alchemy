@@ -12,7 +12,7 @@ Field_Test1:
 	map_block Field_Test1
 	map_block Field_Test1, .LField_Test1_SCENE
 .LField_Test1_CELL_PICTURES:
-	.incbin "games/tla/src/map/map_000/cell_pictures.delta0.lz"
+	.incbin "games/tla/src/map/empty_map/cell_pictures.delta0.lz"
 	.balign 4, 0
 .LField_Test1_SHAPES:
 	.incbin "games/tla/src/map/madra_rooms_cavern_homes/shapes.table.lz"
@@ -24,7 +24,7 @@ Field_Test1:
 	.incbin "games/tla/src/map/test_1/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Test1_SCENE:
-	.incbin "games/tla/src/map/map_000/scene.scene.lz"
+	.incbin "games/tla/src/map/empty_map/scene.scene.lz"
 	.balign 4, 0
 	.global Resource_Data620
 Resource_Data620:

@@ -34,7 +34,7 @@ Field_VenusLighthouse:
 	.balign 4, 0
 	.global Tileset_VenusLighthousePalette
 Tileset_VenusLighthousePalette:
-	.incbin "games/tla/src/graphics/tileset/venus_lighthouse/pal_50.gbapal.lz"
+	.incbin "games/tla/src/graphics/tileset/venus_lighthouse/palette.gbapal.lz"
 	.global Tileset_VenusLighthouseTilesA
 Tileset_VenusLighthouseTilesA:
 	.incbin "games/tla/src/graphics/tileset/venus_lighthouse/tiles_a.4bpp.mtf"

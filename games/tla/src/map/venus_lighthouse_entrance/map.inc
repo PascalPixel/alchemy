@@ -34,7 +34,7 @@ Field_VenusLighthouseEntrance:
 	.balign 4, 0
 	.global Tileset_VenusLighthouseEntrancePalette
 Tileset_VenusLighthouseEntrancePalette:
-	.incbin "games/tla/src/graphics/tileset/venus_lighthouse_entrance/pal_49.gbapal.lz"
+	.incbin "games/tla/src/graphics/tileset/venus_lighthouse_entrance/palette.gbapal.lz"
 	.byte 0x24, 0x04	@ PACKER: left in the buffer by Field_VenusLighthouseEntrance+0x106
 	.global Tileset_VenusLighthouseEntranceTilesA
 Tileset_VenusLighthouseEntranceTilesA:

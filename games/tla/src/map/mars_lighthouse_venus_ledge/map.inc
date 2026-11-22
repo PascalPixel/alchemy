@@ -28,23 +28,23 @@ Field_MarsLighthouseVenusLedge:
 	.balign 4, 0
 .LField_MarsLighthouseVenusLedge_SCENE:
 	.incbin "games/tla/src/map/mars_lighthouse_venus_ledge/scene.scene.lz"
-	.global Tileset_PaletteMarsLighthouseRoomM5A
-Tileset_PaletteMarsLighthouseRoomM5A:
-	.incbin "games/tla/src/graphics/tileset/palettes/mars_lighthouse_room_m_5_a.gbapal.lz"
+	.global Tileset_PaletteMarsLighthouseOutsideThawed
+Tileset_PaletteMarsLighthouseOutsideThawed:
+	.incbin "games/tla/src/graphics/tileset/palettes/mars_lighthouse_outside_thawed.gbapal.lz"
 	.byte 0x95, 0xe2, 0xb5	@ PACKER: left in the buffer by Field_MarsLighthouseVenusLedge+0x129
-	.global Tileset_PaletteMarsLighthouseRoomM5B
-Tileset_PaletteMarsLighthouseRoomM5B:
-	.incbin "games/tla/src/graphics/tileset/palettes/mars_lighthouse_room_m_5_b.gbapal.lz"
+	.global Tileset_PaletteMarsLighthouseMarsTowerThawed
+Tileset_PaletteMarsLighthouseMarsTowerThawed:
+	.incbin "games/tla/src/graphics/tileset/palettes/mars_lighthouse_mars_tower_thawed.gbapal.lz"
 	.byte 0x81	@ PACKER: left in the buffer by Field_MarsLighthouseVenusLedge+0x177
-	.global Tileset_PaletteMarsLighthouseRoomM5C
-Tileset_PaletteMarsLighthouseRoomM5C:
-	.incbin "games/tla/src/graphics/tileset/palettes/mars_lighthouse_room_m_5_c.gbapal.lz"
-	.byte 0x00, 0x81	@ PACKER: left in the buffer by Tileset_PaletteMarsLighthouseRoomM5B+0x176
-	.global Tileset_PaletteMarsLighthouseRoomM5D
-Tileset_PaletteMarsLighthouseRoomM5D:
-	.incbin "games/tla/src/graphics/tileset/palettes/mars_lighthouse_room_m_5_d.gbapal.lz"
+	.global Tileset_PaletteMarsLighthouseAerieThawed
+Tileset_PaletteMarsLighthouseAerieThawed:
+	.incbin "games/tla/src/graphics/tileset/palettes/mars_lighthouse_aerie_thawed.gbapal.lz"
+	.byte 0x00, 0x81	@ PACKER: left in the buffer by Tileset_PaletteMarsLighthouseMarsTowerThawed+0x176
+	.global Tileset_PaletteMarsLighthouseRoomMFlameThawed
+Tileset_PaletteMarsLighthouseRoomMFlameThawed:
+	.incbin "games/tla/src/graphics/tileset/palettes/mars_lighthouse_room_m_flame_thawed.gbapal.lz"
 	.balign 4, 0	@ PACKER: zero fill, not an earlier stream's bytes
-	.global Tileset_PaletteMarsLighthouseRoomM5E
-Tileset_PaletteMarsLighthouseRoomM5E:
-	.incbin "games/tla/src/graphics/tileset/palettes/mars_lighthouse_room_m_5_e.gbapal.lz"
-	.byte 0x17	@ PACKER: left in the buffer by Tileset_PaletteMarsLighthouseRoomM5D+0x18f
+	.global Tileset_PaletteMarsLighthouseRoomMInscriptionsThawed
+Tileset_PaletteMarsLighthouseRoomMInscriptionsThawed:
+	.incbin "games/tla/src/graphics/tileset/palettes/mars_lighthouse_room_m_inscriptions_thawed.gbapal.lz"
+	.byte 0x17	@ PACKER: left in the buffer by Tileset_PaletteMarsLighthouseRoomMFlameThawed+0x18f

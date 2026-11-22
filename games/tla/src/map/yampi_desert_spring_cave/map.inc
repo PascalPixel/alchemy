@@ -30,5 +30,5 @@ Field_YampiDesertSpringCave:
 	.incbin "games/tla/src/map/yampi_desert_guardian_ring_chest/blend.script.lz"
 	.balign 4, 0
 .LField_YampiDesertSpringCave_SCENE:
-	.incbin "games/tla/src/map/map_000/scene.scene.lz"
+	.incbin "games/tla/src/map/empty_map/scene.scene.lz"
 	.balign 4, 0

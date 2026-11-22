@@ -30,11 +30,11 @@ Field_SuhallaGateRoad:
 	.incbin "games/tla/src/map/lobby/blend.script.lz"
 	.balign 4, 0
 .LField_SuhallaGateRoad_SCENE:
-	.incbin "games/tla/src/map/map_000/scene.scene.lz"
+	.incbin "games/tla/src/map/empty_map/scene.scene.lz"
 	.balign 4, 0
 	.global Tileset_SuhallaGateRoadPalette
 Tileset_SuhallaGateRoadPalette:
-	.incbin "games/tla/src/graphics/tileset/suhalla_gate_road/pal_41.gbapal.lz"
+	.incbin "games/tla/src/graphics/tileset/suhalla_gate_road/palette.gbapal.lz"
 	.byte 0x71, 0xc0, 0x05	@ PACKER: left in the buffer by Field_SuhallaGate1+0x171
 	.global Tileset_SuhallaGateRoadTilesA
 Tileset_SuhallaGateRoadTilesA:

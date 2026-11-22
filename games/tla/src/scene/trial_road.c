@@ -186,12 +186,12 @@ enum TrialRoadStageActorId {
   ACTOR_FIRST_STAGE_PIECE
 };
 
-/// The log stage's three logs (gTrialRoad_LogStagePlacements): the upper and
-/// lower logs lie north to south and roll east or west, and the east log lies
-/// across them and rolls north or south. Kraden, at the summit
-/// (gTrialRoad_SummitPlacements), after Moapa.
+/// Kraden, at the summit (gTrialRoad_SummitPlacements), after Moapa.
 #define ACTOR_KRADEN (ACTOR_MOAPA + 1)
 
+/// The log stage's three logs (gTrialRoad_LogStagePlacements): the upper and
+/// lower logs lie north to south and roll east or west, and the east log lies
+/// across them and rolls north or south.
 enum TrialRoadLogStageActorId {
   ACTOR_UPPER_LOG = ACTOR_FIRST_STAGE_PIECE + 1,
   ACTOR_LOWER_LOG,
@@ -250,6 +250,23 @@ enum { ACTOR_SAND_STAGE_IVY = ACTOR_FIRST_STAGE_PIECE + 2 };
 /// Gasp, alone in his room (gTrialRoad_GaspPlacements).
 enum { ACTOR_GASP = ACTOR_FIRST_PLACED };
 
+/// The round boulder on the ledge of the cave beyond the summit, which Lift
+/// raises (gTrialRoad_CaveRockPlacements).
+enum { ACTOR_CAVE_ROCK = ACTOR_FIRST_PLACED };
+
+/// The two parts of the cave beyond the summit, each way between them leading
+/// in by the entrance on its far side: the west cave, where the summit's
+/// passage comes in and the boulder sits on its ledge, and the east passage
+/// north to Gasp's pool.
+enum {
+  TRIAL_ROAD_CAVE_ROCK_TO_EAST_PASSAGE = 1,
+  TRIAL_ROAD_CAVE_ROCK_TO_WEST_CAVE = 2
+};
+enum {
+  TRIAL_ROAD_CAVE_ROCK_WEST_CAVE_FROM_EAST_PASSAGE = 1,
+  TRIAL_ROAD_CAVE_ROCK_EAST_PASSAGE_FROM_WEST_CAVE = 2
+};
+
 /// The fountain stage's five vents (gTrialRoad_FountainStagePlacements): three
 /// in a row west to east, and two south of them.
 enum TrialRoadFountainStageActorId {
@@ -260,12 +277,19 @@ enum TrialRoadFountainStageActorId {
   ACTOR_SOUTHEAST_VENT
 };
 
-/// The entrances the code tests. The Shaman Village enters the first stage by
-/// its left or right path; the summit returns to the last stage the same way;
-/// while Moapa explains the trial's rules (ShamanVillage_ExplainTrialRules),
-/// TRIAL_ROAD_RULES deals a course and TRIAL_ROAD_RULES_COURSE shows it. The
-/// summit is entered again after the battle with Moapa, won or lost.
+/// The stage room's entrances. Every stage is the same room redrawn: the
+/// stairs down at a stage's foot lead in at the top of the stage below, and
+/// the door at its top in at the foot of the next. The Shaman Village enters
+/// the first stage by its left or right path; the summit returns to the last
+/// stage the same way; while Moapa explains the trial's rules
+/// (ShamanVillage_ExplainTrialRules), TRIAL_ROAD_RULES deals a course and
+/// TRIAL_ROAD_RULES_COURSE shows it. The summit is entered again after the
+/// battle with Moapa, won or lost.
 enum TrialRoadEntrance {
+  TRIAL_ROAD_STAGE_FOOT_LEFT = 1,
+  TRIAL_ROAD_STAGE_FOOT_RIGHT = 2,
+  TRIAL_ROAD_STAGE_TOP_LEFT = 3,
+  TRIAL_ROAD_STAGE_TOP_RIGHT = 4,
   TRIAL_ROAD_SUMMIT_AFTER_WIN = 4,
   TRIAL_ROAD_SUMMIT_AFTER_DEFEAT = 5,
   TRIAL_ROAD_FROM_VILLAGE_LEFT = 31,
@@ -4170,10 +4194,10 @@ LAST_DATA struct SceneEntrance gSceneEntrances[] = {
 
 LAST_DATA u32 gSceneExits[] = {
     SCENE_EXITS(TrialRoadStages),
-    SCENE_EXIT(1, TrialRoadStages, 3),
-    SCENE_EXIT(2, TrialRoadStages, 4),
-    SCENE_EXIT(3, TrialRoadStages, 1),
-    SCENE_EXIT(4, TrialRoadStages, 2),
+    SCENE_EXIT(CELL_LEFT_PATH_STAIRS_DOWN, TrialRoadStages, TRIAL_ROAD_STAGE_TOP_LEFT),
+    SCENE_EXIT(CELL_RIGHT_PATH_STAIRS_DOWN, TrialRoadStages, TRIAL_ROAD_STAGE_TOP_RIGHT),
+    SCENE_EXIT(CELL_LEFT_PATH_DOOR, TrialRoadStages, TRIAL_ROAD_STAGE_FOOT_LEFT),
+    SCENE_EXIT(CELL_RIGHT_PATH_DOOR, TrialRoadStages, TRIAL_ROAD_STAGE_FOOT_RIGHT),
     SCENE_EXIT(TRIAL_ROAD_STAGES_TO_SHAMAN_VILLAGE_TRIAL_GROUNDS_A, ShamanVillageTrialGrounds, SHAMAN_VILLAGE_TRIAL_GROUNDS_FROM_TRIAL_ROAD_STAGES_A),
     SCENE_EXIT(TRIAL_ROAD_STAGES_TO_SHAMAN_VILLAGE_TRIAL_GROUNDS_B, ShamanVillageTrialGrounds, SHAMAN_VILLAGE_TRIAL_GROUNDS_FROM_TRIAL_ROAD_STAGES_B),
     SCENE_EXIT(TRIAL_ROAD_STAGES_TO_TRIAL_ROAD_SUMMIT_WEST_A, TrialRoadSummit, TRIAL_ROAD_SUMMIT_FROM_TRIAL_ROAD_STAGES_WEST),
@@ -4181,8 +4205,8 @@ LAST_DATA u32 gSceneExits[] = {
     SCENE_EXIT(TRIAL_ROAD_STAGES_TO_SHAMAN_VILLAGE_TRIAL_GROUNDS_C, ShamanVillageTrialGrounds, SHAMAN_VILLAGE_TRIAL_GROUNDS_FROM_TRIAL_ROAD_STAGES_C),
     SCENE_EXIT(TRIAL_ROAD_STAGES_TO_SHAMAN_VILLAGE_TRIAL_GROUNDS_D, ShamanVillageTrialGrounds, SHAMAN_VILLAGE_TRIAL_GROUNDS_FROM_TRIAL_ROAD_STAGES_E),
     SCENE_EXITS(TrialRoadCaveRock),
-    SCENE_EXIT(1, TrialRoadCaveRock, 2),
-    SCENE_EXIT(2, TrialRoadCaveRock, 1),
+    SCENE_EXIT(TRIAL_ROAD_CAVE_ROCK_TO_EAST_PASSAGE, TrialRoadCaveRock, TRIAL_ROAD_CAVE_ROCK_EAST_PASSAGE_FROM_WEST_CAVE),
+    SCENE_EXIT(TRIAL_ROAD_CAVE_ROCK_TO_WEST_CAVE, TrialRoadCaveRock, TRIAL_ROAD_CAVE_ROCK_WEST_CAVE_FROM_EAST_PASSAGE),
     SCENE_EXIT(TRIAL_ROAD_CAVE_ROCK_TO_TRIAL_ROAD_SUMMIT, TrialRoadSummit, TRIAL_ROAD_SUMMIT_FROM_TRIAL_ROAD_CAVE_ROCK),
     SCENE_EXIT(TRIAL_ROAD_CAVE_ROCK_TO_TRIAL_ROAD_GASP, TrialRoadGasp, TRIAL_ROAD_GASP_FROM_TRIAL_ROAD_CAVE_ROCK),
     SCENE_EXITS(TrialRoadGasp),
@@ -4813,17 +4837,22 @@ LAST_DATA struct Trigger gTrialRoad_SandStageTriggers[] = {
 };
 
 LAST_DATA struct Trigger gTrialRoad_CaveRockTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), 8, FLAG_CAVE_ROCK_LIFTED,
+    {TRIGGER_EXIT, TRIAL_ROAD_CAVE_ROCK_TO_EAST_PASSAGE, CONDITION_ALWAYS,
+     TRIAL_ROAD_CAVE_ROCK_TO_EAST_PASSAGE},
+    {TRIGGER_EXIT, TRIAL_ROAD_CAVE_ROCK_TO_WEST_CAVE, CONDITION_ALWAYS,
+     TRIAL_ROAD_CAVE_ROCK_TO_WEST_CAVE},
+    {TRIGGER_EXIT, TRIAL_ROAD_CAVE_ROCK_TO_TRIAL_ROAD_SUMMIT, CONDITION_ALWAYS,
+     TRIAL_ROAD_CAVE_ROCK_TO_TRIAL_ROAD_SUMMIT},
+    {TRIGGER_EXIT, TRIAL_ROAD_CAVE_ROCK_TO_TRIAL_ROAD_GASP, CONDITION_ALWAYS,
+     TRIAL_ROAD_CAVE_ROCK_TO_TRIAL_ROAD_GASP},
+    {PSYNERGY_ON_ACTOR(ABILITY_LIFT), ACTOR_CAVE_ROCK, FLAG_CAVE_ROCK_LIFTED,
      EVENT(TrialRoad_LiftCaveRock)},
     {TRIGGER_TABLE_END},
 };
 
 LAST_DATA struct Trigger gTrialRoad_GaspTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, TRIAL_ROAD_GASP_TO_TRIAL_ROAD_CAVE_ROCK, CONDITION_ALWAYS,
+     TRIAL_ROAD_GASP_TO_TRIAL_ROAD_CAVE_ROCK},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_WEEDS,
      CONDITION_ALWAYS, EVENT(TrialRoad_ScatterWeeds)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
@@ -4846,11 +4875,16 @@ LAST_DATA struct Trigger gTrialRoad_SummitTriggers[] = {
     {TRIGGER_STEP, CELL_RIGHT_PATH_SUMMIT,
      IF_FLAG_SET(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT),
      EVENT(TrialRoad_ChallengeMoapa)},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 10, FLAG_TRIAL_ROAD_PEAK_PILLAR_PLACED,
-     EVENT(TrialRoad_SetSummitPillar)},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN,
+     TRIAL_ROAD_SUMMIT_TO_TRIAL_ROAD_STAGES_WEST, CONDITION_ALWAYS,
+     TRIAL_ROAD_SUMMIT_TO_TRIAL_ROAD_STAGES_WEST},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN,
+     TRIAL_ROAD_SUMMIT_TO_TRIAL_ROAD_STAGES_EAST, CONDITION_ALWAYS,
+     TRIAL_ROAD_SUMMIT_TO_TRIAL_ROAD_STAGES_EAST},
+    {TRIGGER_EXIT, TRIAL_ROAD_SUMMIT_TO_TRIAL_ROAD_CAVE_ROCK, CONDITION_ALWAYS,
+     TRIAL_ROAD_SUMMIT_TO_TRIAL_ROAD_CAVE_ROCK},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PEAK_PILLAR,
+     FLAG_TRIAL_ROAD_PEAK_PILLAR_PLACED, EVENT(TrialRoad_SetSummitPillar)},
     {TRIGGER_PUSHED, 0, FLAG_TRIAL_ROAD_PEAK_PILLAR_PLACED,
      EVENT(TrialRoad_SetSummitPillar)},
     {TRIGGER_TABLE_END},

@@ -89,12 +89,12 @@
 #include "enemy_ids.h"
 #include "item_ids.h"
 
-/// BattleEnemy_ClaimNameLetter returns the letter in NAME_LETTER_MASK, with
-/// NAME_LETTER_FIRST_TOO set for the second enemy of a class: its callers then
+/// BattleEnemy_ClaimNameLetter returns the letter in ENEMY_LETTER_MASK, with
+/// ENEMY_LETTER_FIRST_TOO set for the second enemy of a class: its callers then
 /// give the first one its letter too (BattleEnemy_LetterFirstOfKind) before
 /// passing the letter to BattleUnit_SetFar.
-#define NAME_LETTER_FIRST_TOO 0x8000
-#define NAME_LETTER_MASK 0x7fff
+#define ENEMY_LETTER_FIRST_TOO 0x8000
+#define ENEMY_LETTER_MASK 0x7fff
 
 /// A list place code's side bit, set for the enemies' list, and its place in
 /// the list (Battle_GetUnitAtPlace): PLACE_ENEMY is PLACE_PARTY with the side
@@ -344,8 +344,6 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y);
 /// The battle background's colours: BG palettes 6 to 13, filled from
 /// BattleWork.palette, darkened or not.
 #define BATTLE_BG_PALETTE ((u16 *)&BG_PLTT_COLOR(6, 0))
-/// The colours in BATTLE_BG_PALETTE, eight palettes of 16.
-#define BATTLE_BG_PALETTE_COLORS (8 * 16)
 
 /// The battle background's darkening step (BattleBackground_SetPaletteLevel,
 /// BattleBackground_Load, the element glow): each level takes a sixtieth from

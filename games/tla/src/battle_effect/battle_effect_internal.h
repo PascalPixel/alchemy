@@ -311,8 +311,6 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define BATTLE_BACKGROUND_HEIGHT 120
 #define BATTLE_BACKGROUND_BYTES                                                \
   (BATTLE_BACKGROUND_WIDTH * BATTLE_BACKGROUND_HEIGHT)
-/// The battle background's colours, BG palettes 6 to 13.
-#define BATTLE_BACKGROUND_COLORS (8 * PALETTE_COLORS)
 /// A background's scroll (struct BgScroll) is a halfword: a negative scroll is
 /// held BG_SCROLL_WRAP above itself, and read back by taking it away.
 #define BG_SCROLL_WRAP (1 << 16)

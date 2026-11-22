@@ -31,9 +31,9 @@
 /// tiles, 32 to a row.
 #define BACKGROUND_UPPER_HALF_LINES 64
 
-/// A battle background resource: its BATTLE_BG_PALETTE_COLORS colours, then
+/// A battle background resource: its BATTLE_BACKGROUND_COLORS colours, then
 /// its packed picture.
-#define BACKGROUND_PALETTE_BYTES (BATTLE_BG_PALETTE_COLORS * 2)
+#define BACKGROUND_PALETTE_BYTES (BATTLE_BACKGROUND_COLORS * 2)
 
 /// The fixed background's sideways pan in 8.8 pixels while the zoom is below
 /// 1; from 1 on it moves three 8.8 pixels a step of the camera's yaw, so the
@@ -52,12 +52,12 @@ void BattleBackground_SetPaletteLevel(s32 unused, s32 level) {
 
   if (level == 0) {
     Dma_Set(palette, (void *)BATTLE_BG_PALETTE,
-            DMA_COPY_HALFWORDS(BATTLE_BG_PALETTE_COLORS), REG_DMA3);
+            DMA_COPY_HALFWORDS(BATTLE_BACKGROUND_COLORS), REG_DMA3);
   } else {
     ColorBuffer_Scale(palette, BATTLE_BG_PALETTE,
                       screen->brightness =
                           FIXED_ONE - level * BACKGROUND_LEVEL_STEP,
-                      BATTLE_BG_PALETTE_COLORS);
+                      BATTLE_BACKGROUND_COLORS);
   }
   Irq_Unlock(&ime);
 }
@@ -88,7 +88,7 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
     battle = Ram_HeapSlots->battleWork;
     palette = battle->palette;
     Dma_Set(palette, (void *)BATTLE_BG_PALETTE,
-            DMA_COPY_HALFWORDS(BATTLE_BG_PALETTE_COLORS), REG_DMA3);
+            DMA_COPY_HALFWORDS(BATTLE_BACKGROUND_COLORS), REG_DMA3);
   } else if (fade != 0) {
     struct BattleWork *battle;
     u16 *source;
@@ -99,7 +99,7 @@ void BattleBackground_SetMode(s32 mode, s32 value, s32 fade) {
     source = battle->palette;
     destination = BATTLE_BG_PALETTE;
 
-    for (i = 0; i != BATTLE_BG_PALETTE_COLORS; i++) {
+    for (i = 0; i != BATTLE_BACKGROUND_COLORS; i++) {
       s32 red = RGB_RED(source[i]);
       s32 green = RGB_GREEN(source[i]);
       s32 blue = RGB_BLUE(source[i]);
@@ -159,7 +159,7 @@ void BattleBackground_Load(s32 mode, s32 resource, s32 level) {
     ColorBuffer_Scale(palette, BATTLE_BG_PALETTE,
                       session->brightness =
                           FIXED_ONE - level * BACKGROUND_LEVEL_STEP,
-                      BATTLE_BG_PALETTE_COLORS);
+                      BATTLE_BACKGROUND_COLORS);
   if (session->keepBackdropPalette == 0) {
     Dma_Set((void *)OBJ_PLTT, (void *)&BG_PLTT_COLOR(BASIC_COLORS_PALETTE, 0),
             DMA_COPY_HALFWORDS(16), REG_DMA3);
@@ -984,7 +984,7 @@ void ElementGlow_Play(s32 unitId, s32 element, s32 mode, s32 variant) {
         ColorBuffer_Scale(session->palette, BATTLE_BG_PALETTE,
                           *brightness =
                               FIXED_ONE - frame * BACKGROUND_LEVEL_STEP,
-                          BATTLE_BG_PALETTE_COLORS);
+                          BATTLE_BACKGROUND_COLORS);
       BattleMotion_ProjectScaledPosition(unitId, (s32 *)pos);
       work->originX = (STAR_FIELD_CENTER - pos->x) << 8;
       work->originY = (STAR_FIELD_CENTER - pos->y) << 8;

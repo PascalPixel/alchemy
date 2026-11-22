@@ -1,12 +1,28 @@
 /// @file
-/// The Gabomba Catacombs, under the Gabomba Statue, in the rooms of this
-/// overlay: stones hidden under weeds that carry the party a level down once
-/// Cyclone clears them, and the Venus Djinni Mud, who fights
-/// (GabombaCatacombs_FightMud).
+/// The Gabomba Catacombs, the caves below the Gabomba Statue, which Felix
+/// reaches by the ladder down from inside the statue once Piers can cast
+/// Frost. Each cave is a room of this overlay.
+///
+/// The ladder comes down at the north-east of the first cave, where three
+/// stones lie hidden under the weeds. Cyclone on one uncovers it, and a
+/// whirlwind carries Felix down into the cave below, each stone to its own
+/// spot. There the Venus Djinni Mud waits in plain sight and fights
+/// (GabombaCatacombs_FightMud); stairs lead back up to the first cave, and a
+/// way on leads into the cave of the hidden wall. In that cave Cyclone on the
+/// big patch of weeds in the east uncovers a Mint. In the west it scatters a
+/// cross of five weeds from a puddle, and Frost freezes the puddle into a
+/// pillar Felix hops across to a dead end ringed by six more weeds over
+/// puddles; Reveal there shows the passage on to the stairs down. In the
+/// stream cave below, the shallow water pushes Felix south as he wades, and
+/// Cyclone and Frost make a second pillar on the way to the stairs on the
+/// rock in the middle. They climb to the last cave, where Cyclone on the
+/// weeds wakes the first Mad Plant, and where the Great Gabomba, speaking
+/// through the idol at the top, gives the party the Tomegathericon
+/// (GabombaCatacombs_GabombaBestowsPower).
 
 #include "flags.h"
-/// Set as the Great Gabomba bestows its power
-/// (GabombaCatacombs_GabombaBestowsPower).
+/// Set once the Great Gabomba has given the party its power, the
+/// Tomegathericon (GabombaCatacombs_GabombaBestowsPower).
 #define FLAG_GABOMBA_BESTOWED_POWER 0x9ce
 #include "djinn_ids.h"
 #include "shared/tables.h"
@@ -42,7 +58,7 @@ void Event_End(void);
 
 extern u32 gGabombaCatacombs_SplashScript[];
 
-/// A Mad Plant of the given sprite leaps at the leader from (x, z).
+/// A Mad Plant of the given sprite leaps out at Felix from (x, z) and attacks.
 static __inline__ void GabombaCatacombs_MadPlantLeaps(s32 sprite, s32 x,
                                                       s32 z) {
   MadPlant_LeapAtLeader(sprite, x, z);
@@ -71,6 +87,7 @@ void Actor_DepartInRing(s32 id);
   (FIELD_CELL((leader)->x.fixed) == (cellX) &&                                 \
    FIELD_CELL((leader)->z.fixed) == (cellZ))
 
+/// Takes control from the player and starts Felix's hop off a square.
 #define LEADER_HOP()                                                           \
   do {                                                                         \
     Event_Start();                                                             \
@@ -79,12 +96,14 @@ void Actor_DepartInRing(s32 id);
                             ATTACHED_EFFECT_IN_FRONT | ATTACHED_EFFECT_ONCE);  \
   } while (0)
 
-/// Mud, the Djinni waiting in this room.
+/// Mud, the Djinni waiting in the cave below the teleport stones.
 enum { ACTOR_MUD = ACTOR_FIRST_PLACED };
 
-/// The hidden wall's seven puddles under the weeds Cyclone clears, the
-/// stream's puddle, and the Tomegathericon's room: the seated idol the Great
-/// Gabomba speaks through, and Kraden.
+/// The hidden wall's cave's seven puddles under the weeds Cyclone scatters
+/// (the first under the cross of five weeds in the west, the rest in the ring
+/// of six at the dead end below the hidden wall), the stream cave's puddle,
+/// and the last cave's seated idol the Great Gabomba speaks through, and
+/// Kraden.
 enum {
   ACTOR_FIRST_PUDDLE = ACTOR_FIRST_PLACED,
   ACTOR_SECOND_PUDDLE,
@@ -107,44 +126,89 @@ enum { ACTOR_SEATED_IDOL = ACTOR_FIRST_PLACED, ACTOR_KRADEN };
 #define FLAG_GABOMBA_CATACOMBS_SEVENTH_PUDDLE_FROZEN FLAG_SCENE_TEMP_06
 #define FLAG_GABOMBA_CATACOMBS_STREAM_PUDDLE_FROZEN FLAG_SCENE_TEMP_00
 
-/// Talking to Mud starts its battle.
+/// The map cells the caves' trigger rows answer, by what lies on them.
+enum GabombaCatacombsCellBehavior {
+  /// The first cave: its weeds, and the three teleport stones hidden in its
+  /// west, east and south patches of weeds.
+  CELL_BEHAVIOR_TELEPORTERS_WEEDS = 41,
+  CELL_BEHAVIOR_WEST_TELEPORT_STONE = 43,
+  CELL_BEHAVIOR_EAST_TELEPORT_STONE = 44,
+  CELL_BEHAVIOR_SOUTH_TELEPORT_STONE = 45,
+  /// The hidden wall's cave: the big patch of weeds in the east and the
+  /// square in it where the Mint lies, the cross of five weeds in the west
+  /// and the puddle under it, and the six puddles of the ring at the dead
+  /// end.
+  CELL_BEHAVIOR_MINT_PATCH_WEEDS = 40,
+  CELL_BEHAVIOR_CROSS_WEEDS = 41,
+  CELL_BEHAVIOR_FIRST_PUDDLE = 42,
+  CELL_BEHAVIOR_SECOND_PUDDLE,
+  CELL_BEHAVIOR_THIRD_PUDDLE,
+  CELL_BEHAVIOR_FOURTH_PUDDLE,
+  CELL_BEHAVIOR_FIFTH_PUDDLE,
+  CELL_BEHAVIOR_SIXTH_PUDDLE,
+  CELL_BEHAVIOR_SEVENTH_PUDDLE,
+  CELL_BEHAVIOR_MINT = 49,
+  /// The stream cave: the weeds by the stairs up, the column of weeds over
+  /// the puddle in the west and the puddle itself, the weeds in the north,
+  /// and the water of the stream.
+  CELL_BEHAVIOR_STAIRS_WEEDS = 40,
+  CELL_BEHAVIOR_PUDDLE_WEEDS = 41,
+  CELL_BEHAVIOR_STREAM_PUDDLE = 42,
+  CELL_BEHAVIOR_NORTH_WEEDS = 43,
+  CELL_BEHAVIOR_STREAM = 50,
+  /// The last cave: its clump of weeds and the square in it where the Mad
+  /// Plant hides, and the square in front of the idol.
+  CELL_BEHAVIOR_MAD_PLANT_WEEDS = 30,
+  CELL_BEHAVIOR_MAD_PLANT = 31,
+  CELL_BEHAVIOR_BEFORE_THE_IDOL = 40
+};
+
+/// Talking to Mud, the Venus Djinni waiting in plain sight in the cave below
+/// the teleport stones, starts its battle.
 void GabombaCatacombs_FightMud(void) {
   Field_RequestDjinnBattle(ACTOR_MUD, DJINNI_MUD);
 }
 
-/// Cyclone on the weeds of the teleport stones' room.
+/// Cyclone scatters the weeds of the first cave, below the ladder.
 void GabombaCatacombs_ScatterTeleportersWeeds(void) {
   FieldCyclone_CopyTouchedCells(7, 63, 1, 16, 16, 57, 63);
 }
 
-/// Cyclone on the weeds by the statue in the hidden wall's room.
+/// Cyclone scatters the big patch of weeds in the east of the hidden wall's
+/// cave, around cell (24, 17).
 void GabombaCatacombs_ScatterHiddenWallWeeds(void) {
   FieldCyclone_CopyTouchedCells(22, 15, 0, 5, 5, 63, 52);
 }
 
-/// Cyclone on the small weeds of the hidden wall's room.
+/// Cyclone scatters the cross of five weeds in the west of the hidden wall's
+/// cave, around cell (8, 23).
 void GabombaCatacombs_ScatterHiddenWallSmallWeeds(void) {
   FieldCyclone_CopyTouchedCells(7, 22, 0, 3, 3, 56, 58);
 }
 
-/// Cyclone on the stream room's weeds.
+/// Cyclone scatters the weeds by the stairs up from the stream cave, around
+/// cell (46, 26).
 void GabombaCatacombs_ScatterStreamWeeds(void) {
   FieldCyclone_CopyTouchedCells(44, 25, 0, 4, 3, 66, 57);
 }
 
-/// Cyclone on the stream room's wide weeds.
+/// Cyclone scatters the column of weeds over the puddle in the west of the
+/// stream cave, cells (16, 14) to (19, 20).
 void GabombaCatacombs_ScatterStreamWideWeeds(void) {
   FieldCyclone_CopyTouchedCells(16, 13, 0, 4, 8, 61, 52);
 }
 
-/// Cyclone on the stream room's small weeds.
+/// Cyclone scatters the weeds in the north of the stream cave, at cell
+/// (22, 10).
 void GabombaCatacombs_ScatterStreamSmallWeeds(void) {
   FieldCyclone_CopyTouchedCells(21, 9, 0, 2, 2, 57, 52);
 }
 
-/// Cyclone on the weeds before the statue: until it is taken, the Mint hidden
-/// there shows, and the leader hops a cell east off its spot.
-void GabombaCatacombs_ScatterWeedsByTheStatue(void) {
+/// Cyclone on the big patch of weeds in the east of the hidden wall's cave
+/// uncovers the Mint hidden at cell (24, 21), in the middle of the patch's
+/// south edge. Until the Mint is taken, its treasure is put on that square, and
+/// if Felix stands there he hops a square east off it.
+void GabombaCatacombs_UncoverMint(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   FieldCyclone_CopyTouchedCells(22, 15, 0, 5, 5, 63, 52);
@@ -160,30 +224,37 @@ void GabombaCatacombs_ScatterWeedsByTheStatue(void) {
   }
 }
 
-/// Cyclone on the weeds uncovers the first teleport stone, which carries the
-/// party a level down.
-void GabombaCatacombs_UncoverFirstTeleportStone(void) {
+/// Cyclone on the patch of weeds in the west of the first cave uncovers the
+/// teleport stone at cell (10, 15), and a whirlwind carries Felix down into
+/// the cave below, west of Mud.
+void GabombaCatacombs_UncoverWestTeleportStone(void) {
   MapGrid_CopyCellsLayered(51, 83, 3, 1, 9, 65);
   Import_EventSetExitRequest(
       GABOMBA_CATACOMBS_TELEPORTERS_TO_GABOMBA_CATACOMBS_MUD_WEST);
 }
 
-/// Cyclone on the weeds uncovers the second teleport stone, which carries
-/// the party a level down.
-void GabombaCatacombs_UncoverSecondTeleportStone(void) {
+/// Cyclone on the patch of weeds in the east of the first cave uncovers the
+/// teleport stone at cell (19, 16), and a whirlwind carries Felix down into
+/// the cave below, to its east.
+void GabombaCatacombs_UncoverEastTeleportStone(void) {
   MapGrid_CopyCellsLayered(51, 83, 3, 1, 18, 66);
   Import_EventSetExitRequest(
       GABOMBA_CATACOMBS_TELEPORTERS_TO_GABOMBA_CATACOMBS_MUD_EAST);
 }
 
-/// Cyclone on the third teleport stone carries the party a level down.
-void GabombaCatacombs_TakeThirdTeleportStone(void) {
+/// Cyclone on the teleport stone in the patch of weeds in the south of the
+/// first cave, cell (13, 24), whirls Felix down into the cave below, to its
+/// south. Unlike the other two stones', no picture is redrawn here.
+// XXX: whether the south stone already shows once its weeds are scattered;
+// a render of Cyclone cast beside cell (13, 24) would settle it.
+void GabombaCatacombs_TakeSouthTeleportStone(void) {
   Import_EventSetExitRequest(
       GABOMBA_CATACOMBS_TELEPORTERS_TO_GABOMBA_CATACOMBS_MUD_SOUTH);
 }
 
-/// Cyclone on the weeds over the first puddle uncovers it, hopping the
-/// leader off it if he stands there.
+/// Cyclone on the middle of the cross of five weeds in the west of the hidden
+/// wall's cave, cell (8, 23), shows the puddle under it. If Felix stands on
+/// the puddle's square, he hops a square east off it.
 void GabombaCatacombs_UncoverFirstPuddle(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
@@ -198,8 +269,9 @@ void GabombaCatacombs_UncoverFirstPuddle(void) {
   }
 }
 
-/// Cyclone on the weeds over the second puddle uncovers it, hopping the
-/// leader off it if he stands there.
+/// Cyclone on the weeds in the north-east of the ring of six weeds at the dead
+/// end below the hidden wall, cell (8, 15), shows the puddle under them. If
+/// Felix stands on the puddle's square, he hops a square east off it.
 void GabombaCatacombs_UncoverSecondPuddle(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
@@ -214,8 +286,9 @@ void GabombaCatacombs_UncoverSecondPuddle(void) {
   }
 }
 
-/// Cyclone on the weeds over the third puddle uncovers it, hopping the leader
-/// off it westward if he stands there.
+/// Cyclone on the weeds in the east of the ring of six weeds at the dead end
+/// below the hidden wall, cell (9, 16), shows the puddle under them. If Felix
+/// stands on the puddle's square, he hops a square west off it.
 void GabombaCatacombs_UncoverThirdPuddle(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
@@ -233,8 +306,9 @@ void GabombaCatacombs_UncoverThirdPuddle(void) {
   }
 }
 
-/// Cyclone on the weeds over the fourth puddle uncovers it, hopping the
-/// leader off it if he stands there.
+/// Cyclone on the weeds in the south-east of the ring of six weeds at the dead
+/// end below the hidden wall, cell (8, 17), shows the puddle under them. If
+/// Felix stands on the puddle's square, he hops a square east off it.
 void GabombaCatacombs_UncoverFourthPuddle(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
@@ -249,8 +323,9 @@ void GabombaCatacombs_UncoverFourthPuddle(void) {
   }
 }
 
-/// Cyclone on the weeds over the fifth puddle uncovers it, hopping the
-/// leader off it if he stands there.
+/// Cyclone on the weeds in the south-west of the ring of six weeds at the dead
+/// end below the hidden wall, cell (6, 17), shows the puddle under them. If
+/// Felix stands on the puddle's square, he hops a square east off it.
 void GabombaCatacombs_UncoverFifthPuddle(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
@@ -265,8 +340,9 @@ void GabombaCatacombs_UncoverFifthPuddle(void) {
   }
 }
 
-/// Cyclone on the weeds over the sixth puddle uncovers it, hopping the
-/// leader off it if he stands there.
+/// Cyclone on the weeds in the west of the ring of six weeds at the dead end
+/// below the hidden wall, cell (5, 16), shows the puddle under them. If Felix
+/// stands on the puddle's square, he hops a square east off it.
 void GabombaCatacombs_UncoverSixthPuddle(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
@@ -281,8 +357,9 @@ void GabombaCatacombs_UncoverSixthPuddle(void) {
   }
 }
 
-/// Cyclone on the weeds over the seventh puddle uncovers it, hopping the
-/// leader off it if he stands there.
+/// Cyclone on the weeds in the north-west of the ring of six weeds at the dead
+/// end below the hidden wall, cell (6, 15), shows the puddle under them. If
+/// Felix stands on the puddle's square, he hops a square east off it.
 void GabombaCatacombs_UncoverSeventhPuddle(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
@@ -297,8 +374,9 @@ void GabombaCatacombs_UncoverSeventhPuddle(void) {
   }
 }
 
-/// Cyclone on the weeds over the stream's puddle uncovers it, hopping the
-/// leader off it northward if he stands there.
+/// Cyclone on the column of weeds in the west of the stream cave shows the
+/// puddle under them at cell (17, 18). If Felix stands on the puddle's
+/// square, he hops a square north off it.
 void GabombaCatacombs_UncoverStreamPuddle(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
@@ -316,12 +394,14 @@ void GabombaCatacombs_UncoverStreamPuddle(void) {
   }
 }
 
-/// Cyclone on the weeds of the Tomegathericon's room.
+/// Cyclone scatters the clump of weeds in the south-west of the last cave.
 void GabombaCatacombs_ScatterTomegathericonWeeds(void) {
   FieldCyclone_CopyTouchedCells(7, 23, 0, 4, 5, 60, 56);
 }
 
-/// Cyclone on the last weeds: a Mad Plant hides there, and attacks.
+/// Cyclone on the clump of weeds in the south-west of the last cave, at
+/// cell (10, 26), wakes the first Mad Plant, which leaps out at Felix and
+/// fights; the party cannot run. Once it is beaten it does not come back.
 void GabombaCatacombs_UncoverMadPlant(void) {
   FieldCyclone_CopyTouchedCells(7, 23, 0, 4, 5, 60, 56);
   if (GameFlag_Get(FLAG_MAD_PLANT(0)) == 0) {
@@ -332,20 +412,24 @@ void GabombaCatacombs_UncoverMadPlant(void) {
   }
 }
 
-/// Reveal shows the hidden wall's passage.
+/// Reveal at the dead end below the hidden wall shows a passage through the
+/// wall north of the ring of weeds, cells (7, 11) to (7, 14), on to the stairs
+/// down to the stream cave.
 void GabombaCatacombs_RevealWall(void) {
   MapGrid_CopyCellPictureCellsRect(0, 0, 1, 2, 7, 11);
   Map_CopyCellAttributeRect(2, 4, 1, 1, 7, 14);
 }
 
-/// As Reveal fades, the hidden wall's passage is hidden again.
+/// As Reveal wears off, the wall north of the ring of weeds closes again.
 void GabombaCatacombs_HideWall(void) {
   MapGrid_CopyCellPictureCellsRect(1, 0, 1, 2, 7, 11);
   Map_CopyCellAttributeRect(2, 5, 1, 1, 7, 14);
 }
 
-/// Frost on the first puddle freezes it into a pillar, which blocks its
-/// cell.
+/// Frost on the puddle in the cross of weeds in the west of the hidden wall's
+/// cave, cell (8, 23), freezes it into an ice pillar. Its square becomes one
+/// Felix hops onto, like the squares on either side, so he can hop across
+/// to the dead end below the hidden wall.
 void GabombaCatacombs_FreezeFirstPuddle(void) {
   struct Actor *actor = Actor_GetById(ACTOR_FIRST_PUDDLE);
 
@@ -355,8 +439,12 @@ void GabombaCatacombs_FreezeFirstPuddle(void) {
   MapGrid_CopyCellAttributes(6, 23, 1, 1, 8, 23);
 }
 
-/// Frost on the second puddle freezes it into a pillar, which blocks its
-/// cell.
+/// Frost on the puddle in the north-east of the ring of six weeds at the dead
+/// end below the hidden wall, cell (8, 15), freezes it into an ice pillar. The
+/// ring's pillars, unlike the cross's, do not become squares to hop onto: each
+/// takes the plain attributes of cell (0, 4).
+// XXX: what the ring's puddles and pillars are for; the walkthrough passes
+// them by, and a play of the ring with its pillars frozen would settle it.
 void GabombaCatacombs_FreezeSecondPuddle(void) {
   struct Actor *actor = Actor_GetById(ACTOR_SECOND_PUDDLE);
 
@@ -366,8 +454,8 @@ void GabombaCatacombs_FreezeSecondPuddle(void) {
   MapGrid_CopyCellAttributes(0, 4, 1, 1, 8, 15);
 }
 
-/// Frost on the third puddle freezes it into a pillar, which blocks its
-/// cell.
+/// Frost on the puddle in the east of the ring of six weeds at the dead end
+/// below the hidden wall, cell (9, 16), freezes it into an ice pillar.
 void GabombaCatacombs_FreezeThirdPuddle(void) {
   struct Actor *actor = Actor_GetById(ACTOR_THIRD_PUDDLE);
 
@@ -377,8 +465,8 @@ void GabombaCatacombs_FreezeThirdPuddle(void) {
   MapGrid_CopyCellAttributes(0, 4, 1, 1, 9, 16);
 }
 
-/// Frost on the fourth puddle freezes it into a pillar, which blocks its
-/// cell.
+/// Frost on the puddle in the south-east of the ring of six weeds at the dead
+/// end below the hidden wall, cell (8, 17), freezes it into an ice pillar.
 void GabombaCatacombs_FreezeFourthPuddle(void) {
   struct Actor *actor = Actor_GetById(ACTOR_FOURTH_PUDDLE);
 
@@ -388,8 +476,8 @@ void GabombaCatacombs_FreezeFourthPuddle(void) {
   MapGrid_CopyCellAttributes(0, 4, 1, 1, 8, 17);
 }
 
-/// Frost on the fifth puddle freezes it into a pillar, which blocks its
-/// cell.
+/// Frost on the puddle in the south-west of the ring of six weeds at the dead
+/// end below the hidden wall, cell (6, 17), freezes it into an ice pillar.
 void GabombaCatacombs_FreezeFifthPuddle(void) {
   struct Actor *actor = Actor_GetById(ACTOR_FIFTH_PUDDLE);
 
@@ -399,8 +487,8 @@ void GabombaCatacombs_FreezeFifthPuddle(void) {
   MapGrid_CopyCellAttributes(0, 4, 1, 1, 6, 17);
 }
 
-/// Frost on the sixth puddle freezes it into a pillar, which blocks its
-/// cell.
+/// Frost on the puddle in the west of the ring of six weeds at the dead end
+/// below the hidden wall, cell (5, 16), freezes it into an ice pillar.
 void GabombaCatacombs_FreezeSixthPuddle(void) {
   struct Actor *actor = Actor_GetById(ACTOR_SIXTH_PUDDLE);
 
@@ -410,8 +498,8 @@ void GabombaCatacombs_FreezeSixthPuddle(void) {
   MapGrid_CopyCellAttributes(0, 4, 1, 1, 5, 16);
 }
 
-/// Frost on the seventh puddle freezes it into a pillar, which blocks its
-/// cell.
+/// Frost on the puddle in the north-west of the ring of six weeds at the dead
+/// end below the hidden wall, cell (6, 15), freezes it into an ice pillar.
 void GabombaCatacombs_FreezeSeventhPuddle(void) {
   struct Actor *actor = Actor_GetById(ACTOR_SEVENTH_PUDDLE);
 
@@ -421,8 +509,10 @@ void GabombaCatacombs_FreezeSeventhPuddle(void) {
   MapGrid_CopyCellAttributes(0, 4, 1, 1, 6, 15);
 }
 
-/// Frost on the stream puddle freezes it into a pillar, which blocks its
-/// cell.
+/// Frost on the puddle in the west of the stream cave, cell (17, 18), freezes
+/// it into an ice pillar. Its square becomes one Felix hops onto, like the
+/// squares on either side, on the way to the stairs on the rock in the
+/// middle.
 void GabombaCatacombs_FreezeStreamPuddle(void) {
   struct Actor *actor = Actor_GetById(ACTOR_STREAM_PUDDLE);
 
@@ -432,7 +522,8 @@ void GabombaCatacombs_FreezeStreamPuddle(void) {
   MapGrid_CopyCellAttributes(15, 18, 1, 1, 17, 18);
 }
 
-/// Moves the leader and camera along z by dz when nothing is in the way.
+/// The stream carries Felix, and the view with him, dz further south, unless
+/// a wall or post lies just south of him or diagonally ahead.
 void GabombaCatacombs_DriftWithStream(struct Actor *actor, s32 dz) {
   struct Actor *camera;
   struct FieldPosition position;
@@ -462,8 +553,9 @@ void GabombaCatacombs_DriftWithStream(struct Actor *actor, s32 dz) {
   }
 }
 
-/// Walking in the stream: a splash rises every eighth frame and the water
-/// pushes the leader along.
+/// Wading in the shallow stream that runs south through the stream cave,
+/// Felix splashes, with the sound of wading, every eighth frame, and the
+/// water pushes him slowly south.
 void GabombaCatacombs_WadeStream(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *splash;
@@ -482,7 +574,8 @@ void GabombaCatacombs_WadeStream(void) {
   GabombaCatacombs_DriftWithStream(leader, toFIXED(17) / 20);
 }
 
-/// Each frame, shrinks the glow by a twentieth of its full size.
+/// The flash of light about the Tomegathericon as it appears on the idol's
+/// lap: each frame it shrinks by a twentieth of its full size.
 s32 GabombaCatacombs_ShrinkGlow(struct Actor *actor) {
   actor->scaleX -= FIXED_ONE / 20;
   actor->scaleY -= FIXED_ONE / 20;
@@ -496,8 +589,14 @@ void Actor_PlaceOnActor(s32 actorId, s32 target);
   EventMessage_ShowCentered((s16)((union EventLine *)&work->message)->line++,  \
                             0, -3)
 
-/// At the end of the catacombs the Great Gabomba speaks: "By reaching this
-/// place, you have proven your power."
+/// When Felix steps in front of the idol at the top of the last cave, between
+/// the two candlesticks, the cave darkens and the Great Gabomba speaks
+/// through the idol: "By reaching this place, you have proven your power."
+/// The Tomegathericon appears in a flash on the idol's lap. Kraden steps out
+/// beside Felix and worries that they have wronged Akafubu, and the Gabomba
+/// gives the power on the condition that they never tell Akafubu. Kraden
+/// agrees, the Gabomba goes back to sleep, and the light returns with the
+/// book still on the idol's lap.
 void GabombaCatacombs_GabombaBestowsPower(void) {
   struct Actor *kraden = Actor_GetById(ACTOR_KRADEN);
   struct Actor *treasure = Actor_GetById(FIELD_TREASURE_ACTOR);
@@ -607,8 +706,8 @@ void GabombaCatacombs_GabombaBestowsPower(void) {
   Event_End();
 }
 
-/// The seated idol: once the Great Gabomba has shown it, the party takes the
-/// Tomegathericon.
+/// Talking to the idol at the top of the last cave, once the Tomegathericon
+/// lies on its lap, takes the book.
 void GabombaCatacombs_TalkToStatue(void) {
   struct Actor *actor = Actor_GetById(FIELD_TREASURE_ACTOR);
 
@@ -806,53 +905,77 @@ struct Trigger gGabombaCatacombs_Triggers[] = {
 };
 
 struct Trigger gGabombaCatacombs_TeleportersTriggers[] = {
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 41,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ScatterTeleportersWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 43,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_UncoverFirstTeleportStone)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 44,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_UncoverSecondTeleportStone)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 45,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_TakeThirdTeleportStone)},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN,
+     GABOMBA_CATACOMBS_TELEPORTERS_TO_GABOMBA_CATACOMBS_MUD_NORTHEAST,
+     CONDITION_ALWAYS,
+     GABOMBA_CATACOMBS_TELEPORTERS_TO_GABOMBA_CATACOMBS_MUD_NORTHEAST},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_TELEPORTERS_WEEDS, CONDITION_ALWAYS,
+     EVENT(GabombaCatacombs_ScatterTeleportersWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_WEST_TELEPORT_STONE, CONDITION_ALWAYS,
+     EVENT(GabombaCatacombs_UncoverWestTeleportStone)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_EAST_TELEPORT_STONE, CONDITION_ALWAYS,
+     EVENT(GabombaCatacombs_UncoverEastTeleportStone)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_SOUTH_TELEPORT_STONE, CONDITION_ALWAYS,
+     EVENT(GabombaCatacombs_TakeSouthTeleportStone)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gGabombaCatacombs_MudTriggers[] = {
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP,
+     GABOMBA_CATACOMBS_MUD_TO_GABOMBA_CATACOMBS_TELEPORTERS_NORTHEAST,
+     CONDITION_ALWAYS,
+     GABOMBA_CATACOMBS_MUD_TO_GABOMBA_CATACOMBS_TELEPORTERS_NORTHEAST},
+    {TRIGGER_EXIT, GABOMBA_CATACOMBS_MUD_TO_GABOMBA_CATACOMBS_HIDDEN_WALL,
+     CONDITION_ALWAYS, GABOMBA_CATACOMBS_MUD_TO_GABOMBA_CATACOMBS_HIDDEN_WALL},
     {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_MUD, CONDITION_ALWAYS,
      EVENT(GabombaCatacombs_FightMud)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gGabombaCatacombs_HiddenWallTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
+    {TRIGGER_EXIT, GABOMBA_CATACOMBS_HIDDEN_WALL_TO_GABOMBA_CATACOMBS_MUD,
+     CONDITION_ALWAYS, GABOMBA_CATACOMBS_HIDDEN_WALL_TO_GABOMBA_CATACOMBS_MUD},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN,
+     GABOMBA_CATACOMBS_HIDDEN_WALL_TO_GABOMBA_CATACOMBS_STREAM,
+     CONDITION_ALWAYS,
+     GABOMBA_CATACOMBS_HIDDEN_WALL_TO_GABOMBA_CATACOMBS_STREAM},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(GabombaCatacombs_RevealWall)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
      CONDITION_ALWAYS, EVENT(GabombaCatacombs_HideWall)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 40,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ScatterHiddenWallWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 41,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ScatterHiddenWallSmallWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 42,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_UncoverFirstPuddle)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 43,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_UncoverSecondPuddle)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 44,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_UncoverThirdPuddle)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 45,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_UncoverFourthPuddle)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 46,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_UncoverFifthPuddle)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 47,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_UncoverSixthPuddle)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 48,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_UncoverSeventhPuddle)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 49,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ScatterWeedsByTheStatue)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_MINT_PATCH_WEEDS, CONDITION_ALWAYS,
+     EVENT(GabombaCatacombs_ScatterHiddenWallWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_CROSS_WEEDS, CONDITION_ALWAYS,
+     EVENT(GabombaCatacombs_ScatterHiddenWallSmallWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_FIRST_PUDDLE, CONDITION_ALWAYS,
+     EVENT(GabombaCatacombs_UncoverFirstPuddle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_SECOND_PUDDLE, CONDITION_ALWAYS,
+     EVENT(GabombaCatacombs_UncoverSecondPuddle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_THIRD_PUDDLE, CONDITION_ALWAYS,
+     EVENT(GabombaCatacombs_UncoverThirdPuddle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_FOURTH_PUDDLE, CONDITION_ALWAYS,
+     EVENT(GabombaCatacombs_UncoverFourthPuddle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_FIFTH_PUDDLE, CONDITION_ALWAYS,
+     EVENT(GabombaCatacombs_UncoverFifthPuddle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_SIXTH_PUDDLE, CONDITION_ALWAYS,
+     EVENT(GabombaCatacombs_UncoverSixthPuddle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_SEVENTH_PUDDLE, CONDITION_ALWAYS,
+     EVENT(GabombaCatacombs_UncoverSeventhPuddle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_MINT, CONDITION_ALWAYS, EVENT(GabombaCatacombs_UncoverMint)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE,
      FLAG_GABOMBA_CATACOMBS_FIRST_PUDDLE_FROZEN,
      EVENT(GabombaCatacombs_FreezeFirstPuddle)},
@@ -878,30 +1001,46 @@ struct Trigger gGabombaCatacombs_HiddenWallTriggers[] = {
 };
 
 struct Trigger gGabombaCatacombs_TomegathericonTriggers[] = {
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_STEP, 40, FLAG_GABOMBA_BESTOWED_POWER,
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN,
+     GABOMBA_CATACOMBS_TOMEGATHERICON_TO_GABOMBA_CATACOMBS_STREAM,
+     CONDITION_ALWAYS,
+     GABOMBA_CATACOMBS_TOMEGATHERICON_TO_GABOMBA_CATACOMBS_STREAM},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BEFORE_THE_IDOL, FLAG_GABOMBA_BESTOWED_POWER,
      EVENT(GabombaCatacombs_GabombaBestowsPower)},
     {TRIGGER_TALK, ACTOR_SEATED_IDOL, FLAG_TOMEGATHERICON_TAKEN,
      EVENT(GabombaCatacombs_TalkToStatue)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ScatterTomegathericonWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 31,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_UncoverMadPlant)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_MAD_PLANT_WEEDS, CONDITION_ALWAYS,
+     EVENT(GabombaCatacombs_ScatterTomegathericonWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_MAD_PLANT, CONDITION_ALWAYS,
+     EVENT(GabombaCatacombs_UncoverMadPlant)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gGabombaCatacombs_StreamTriggers[] = {
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 40,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ScatterStreamWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 41,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ScatterStreamWideWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 43,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_ScatterStreamSmallWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 42,
-     CONDITION_ALWAYS, EVENT(GabombaCatacombs_UncoverStreamPuddle)},
-    {TRIGGER_STEP, 50, CONDITION_ALWAYS, EVENT(GabombaCatacombs_WadeStream)},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP,
+     GABOMBA_CATACOMBS_STREAM_TO_GABOMBA_CATACOMBS_HIDDEN_WALL,
+     CONDITION_ALWAYS,
+     GABOMBA_CATACOMBS_STREAM_TO_GABOMBA_CATACOMBS_HIDDEN_WALL},
+    {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP,
+     GABOMBA_CATACOMBS_STREAM_TO_GABOMBA_CATACOMBS_TOMEGATHERICON,
+     CONDITION_ALWAYS,
+     GABOMBA_CATACOMBS_STREAM_TO_GABOMBA_CATACOMBS_TOMEGATHERICON},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_STAIRS_WEEDS, CONDITION_ALWAYS,
+     EVENT(GabombaCatacombs_ScatterStreamWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_PUDDLE_WEEDS, CONDITION_ALWAYS,
+     EVENT(GabombaCatacombs_ScatterStreamWideWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_NORTH_WEEDS, CONDITION_ALWAYS,
+     EVENT(GabombaCatacombs_ScatterStreamSmallWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_STREAM_PUDDLE, CONDITION_ALWAYS,
+     EVENT(GabombaCatacombs_UncoverStreamPuddle)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_STREAM, CONDITION_ALWAYS,
+     EVENT(GabombaCatacombs_WadeStream)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_STREAM_PUDDLE,
      FLAG_GABOMBA_CATACOMBS_STREAM_PUDDLE_FROZEN,
      EVENT(GabombaCatacombs_FreezeStreamPuddle)},

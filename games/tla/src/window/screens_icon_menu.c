@@ -1296,9 +1296,10 @@ s32 Menu_AnimateSelectionToEntry(s32 start, s32 command) {
 /// Continue, Copy and Erase for one or two files (starting on Continue); no New
 /// Game or Copy with three; with every file cleared no Continue, and only Erase
 /// with three such files; then Battle and Update when they are enabled.
-/// Returns the action chosen, 0 New Game to 5 Update, by its position; with
-/// Battle off, the action after Erase is Update's. With no files it returns 0
-/// at once, and -1 when cancelled or the backup memory cannot be read.
+/// Returns the action chosen (enum FileAction) by its position; with Battle
+/// off, the action after Erase is Update's. With no files it returns
+/// SAVE_ACTION_NEW_GAME at once, and -1 when cancelled or the backup memory
+/// cannot be read.
 s32 FileList_SelectAction(void) {
   s32 fileState;
   s32 result;
@@ -1311,7 +1312,7 @@ s32 FileList_SelectAction(void) {
   if (fileState < 0)
     return -1;
   if (fileState == 0)
-    return 0;
+    return SAVE_ACTION_NEW_GAME;
   if (fileState == SAVE_FILE_COUNT)
     group = 1;
   else if (fileState == SAVE_SCAN_ALL_CLEARED + SAVE_FILE_COUNT)
@@ -1340,8 +1341,8 @@ s32 FileList_SelectAction(void) {
 
     result = gMenu_SaveSlotActionByPosition[result + (twice + group) * 2];
   }
-  if (gTitleBattleOptionEnabled == 0 && result == 4)
-    result = 5;
+  if (gTitleBattleOptionEnabled == 0 && result == SAVE_ACTION_BATTLE)
+    result = SAVE_ACTION_UPDATE;
   return result;
 }
 

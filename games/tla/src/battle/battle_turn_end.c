@@ -185,11 +185,6 @@ s32 BattleUnit_CountDownSleep(s32 unitId) {
   return 0;
 }
 
-/// Unit.psySeal's low three bits, Bind's turns left; Luff's seal above them
-/// loses PSY_SEAL_LUFF_TURN a turn.
-#define PSY_SEAL_BIND_MASK 7
-#define PSY_SEAL_LUFF_TURN 8
-
 /// Counts down both seals in Unit.psySeal and returns 1 when the last
 /// ends; only Bind's, once Luff's is gone, may end early.
 s32 BattleUnit_CountDownPsynergySeal(s32 unitId) {

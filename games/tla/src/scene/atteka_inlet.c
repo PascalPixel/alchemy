@@ -1,14 +1,21 @@
 /// @file
-/// Atteka Inlet, where the party's ship lies on the southern continent, in two
-/// scenes that share this overlay: the harbor with the ship
-/// (SceneId_AttekaInlet) and the shore beside it (SceneId_AttekaInletGeode).
-/// Kraden asks whether to set sail (AttekaInlet_AskKradenToSetSail). After
-/// Jupiter Lighthouse the shipwrights stop the party to see their handiwork fly
-/// (AttekaInlet_ShipwrightsStopTheParty), Hamma shows the ship's new wings
-/// (AttekaInlet_HammaShowsTheWings), and in a game linked with The Broken Seal
-/// a messenger brings Master Hammet's gift
-/// (AttekaInlet_HammetsMessengerArrives). Cyclone scatters the shore's weeds
-/// and uncovers Geode, a Venus Djinni (AttekaInlet_CycloneUncoversGeode).
+/// Atteka Inlet, where Felix ties up the Lemurian ship on the way to Contigo,
+/// in two scenes that share this overlay: the harbor, a sandy beach where the
+/// ship lies and the Wings of Anemos wait on their trestles
+/// (SceneId_AttekaInlet), and the grassy heights above it, with a house, the
+/// path north towards Contigo and the way west out to the world map
+/// (SceneId_AttekaInletGeode). On the deck, walking towards the ship's wheel
+/// brings Kraden up to ask whether to set sail
+/// (AttekaInlet_KradenAsksToSetSail). Cyclone on the bush beside the round
+/// boulder on the heights uncovers Geode, a Venus Djinni
+/// (AttekaInlet_CycloneUncoversGeode), and on eight other clumps of weeds only
+/// scatters them. Once Isaac's party has joined Felix at Contigo, two
+/// shipwrights block the way west, wanting to see their handiwork fly
+/// (AttekaInlet_ShipwrightsStopTheParty); Hamma waits at the foot of the
+/// gangplank to show the ship its new wings (AttekaInlet_HammaShowsTheWings);
+/// and in a game linked with The Broken Seal, a messenger runs up the
+/// gangplank with Master Hammet's gift for Isaac
+/// (AttekaInlet_HammetsMessengerArrives).
 
 #include "flags.h"
 #include "djinn_ids.h"
@@ -50,13 +57,13 @@ extern struct ActorPlacement gAttekaInlet_ActorPlacements[];
 extern struct ActorPlacement gAttekaInlet_HarborActorPlacements[];
 extern struct ActorPlacement gAttekaInlet_HarborActorPlacementsOnceWinged[];
 extern struct ActorPlacement gAttekaInlet_HarborActorPlacementsOnceSetOut[];
-extern struct ActorPlacement gAttekaInlet_ShoreActorPlacementsOnceWinged[];
-extern struct ActorPlacement gAttekaInlet_ShoreActorPlacements[];
+extern struct ActorPlacement gAttekaInlet_HeightsActorPlacementsOnceWinged[];
+extern struct ActorPlacement gAttekaInlet_HeightsActorPlacements[];
 extern struct Trigger gAttekaInlet_Triggers[];
-extern struct Trigger gAttekaInlet_ShoreTriggers[];
+extern struct Trigger gAttekaInlet_HeightsTriggers[];
 void AttekaInlet_HammetsMessengerArrives(void);
 void AttekaInlet_SetUpTheHarbor(void);
-void AttekaInlet_SetUpTheShore(void);
+void AttekaInlet_SetUpTheHeights(void);
 
 /// The harbor's people, numbering gAttekaInlet_HarborActorPlacements and
 /// the tables after it.
@@ -98,14 +105,14 @@ enum AttekaInletHarborActorId {
   ACTOR_HAMMETS_MESSENGER
 };
 
-/// The shore beside the harbor (gAttekaInlet_ShoreActorPlacements).
-enum AttekaInletShoreActorId {
+/// The heights above the harbor (gAttekaInlet_HeightsActorPlacements).
+enum AttekaInletHeightsActorId {
   /// "All of our myths and legends have taught us that the sea is a
   /// dangerous, fearsome power. But on the day the ship left, the sea was so
   /// calm and romantic looking..."
   ACTOR_WOMAN_ON_THE_CALM_SEA = ACTOR_FIRST_PLACED,
-  /// The shipwrights who stop the party at the pier: "Where do you think
-  /// you're going?"
+  /// The shipwrights who stop the party on its way west out of the inlet:
+  /// "Where do you think you're going?"
   ///@{
   ACTOR_SHIPWRIGHT,
   ACTOR_SECOND_SHIPWRIGHT,
@@ -113,7 +120,7 @@ enum AttekaInletShoreActorId {
   /// "We sent everyone back to the village so that their hopes would not impair
   /// your flight."
   ACTOR_MAN_WHO_SENT_EVERYONE_BACK,
-  /// The round boulder Lift cannot lift.
+  /// The round boulder in front of Geode's bush, which Lift raises.
   ACTOR_ROUND_BOULDER = ACTOR_FIRST_PLACED + 5,
   /// Geode, the Venus Djinni Cyclone uncovers.
   ACTOR_GEODE
@@ -123,7 +130,9 @@ enum AttekaInletShoreActorId {
 /// he comes.
 #define ACTOR_HAMMETS_GIFT_CHEST 65
 
-/// Geode, the Venus Djinni uncovered on the shore, joins the party.
+/// Talking to Geode, facing east towards him where Cyclone uncovered him by the
+/// round boulder, makes him hop to the leader and join the party, the screen
+/// washing green as he does.
 void AttekaInlet_GeodeJoins(void) {
   Djinn_JoinParty(ACTOR_GEODE, DJINNI_GEODE / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_GEODE));
@@ -148,8 +157,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   }
   if (scene == SCENE_ATTEKA_INLET_GEODE) {
     if (GameFlag_Get(FLAG_REUNITED_AT_CONTIGO))
-      return gAttekaInlet_ShoreActorPlacementsOnceWinged;
-    return gAttekaInlet_ShoreActorPlacements;
+      return gAttekaInlet_HeightsActorPlacementsOnceWinged;
+    return gAttekaInlet_HeightsActorPlacements;
   }
   return gAttekaInlet_ActorPlacements;
 }
@@ -162,16 +171,22 @@ const struct Trigger *Scene_GetTriggers(void) {
   if (scene == SCENE_ATTEKA_INLET)
     return gAttekaInlet_HarborTriggers;
   if (scene == SCENE_ATTEKA_INLET_GEODE)
-    return gAttekaInlet_ShoreTriggers;
+    return gAttekaInlet_HeightsTriggers;
   return gAttekaInlet_Triggers;
 }
 
-/// Kraden asks whether to set out: a yes boards the ship, with its wings once
-/// the parties are reunited (FLAG_SHIP_FLIES, FLAG_SET_OUT_WITH_WINGS); a no is
-/// counted and he walks back to the leader.
+/// Talking to Kraden on the deck has him ask "Felix, are we setting off now?":
+/// yes sails the ship out of the inlet onto the world map, no has him say
+/// "Please don't rush on my account" and walk back into the leader.
+/// Once the parties have met again at Contigo, setting out takes the wings
+/// along (FLAG_SHIP_FLIES, FLAG_SET_OUT_WITH_WINGS).
 void AttekaInlet_AskKradenToSetSail(void) {
   struct Actor *actor;
 
+  // XXX: Kraden is placed nowhere on the harbor's stage outside
+  // AttekaInlet_KradenAsksToSetSail, which sends him away again, so when the
+  // player can talk to him is open; a render of the deck after that event, or
+  // another routine placing ACTOR_KRADEN, would settle it.
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId(MsgAreWeSetting);
@@ -206,8 +221,12 @@ void AttekaInlet_AskKradenToSetSail(void) {
   }
 }
 
-/// After the reunion, until the ship sets out with its wings, two shipwrights
-/// jump in to stop the party at the pier.
+/// Walking west across the heights towards the way out to the world map (cells
+/// (5, 18) to (6, 20)), once Isaac's party has joined Felix and before the ship
+/// has flown, two shipwrights jump up from below: "Where do you think you're
+/// going?" They want to see their handiwork take flight, and stay standing in
+/// the way, so the party can only leave by the ship. Walls copied onto the
+/// cells beside them (`Map_CopyCellAttributeRect`) close the path for good.
 void AttekaInlet_ShipwrightsStopTheParty(void) {
   if (GameFlag_Get(FLAG_REUNITED_AT_CONTIGO) &&
       !GameFlag_Get(FLAG_SET_OUT_WITH_WINGS)) {
@@ -262,7 +281,10 @@ void AttekaInlet_ShipwrightsStopTheParty(void) {
   }
 }
 
-/// After the reunion, Hamma greets the party at the ship and shows the wings.
+/// Stepping off the gangplank onto the grass below the ship (cells (31, 24) to
+/// (34, 24)), once Isaac's party has joined Felix, has Hamma greet them, "I've
+/// been waiting for you, Felix", while the camera looks over the ship and its
+/// new wings; she tells them to raise it with Hover and set sail.
 void AttekaInlet_HammaShowsTheWings(void) {
   if (GameFlag_Get(FLAG_REUNITED_AT_CONTIGO)) {
     Event_Start();
@@ -342,8 +364,11 @@ void AttekaInlet_HammaShowsTheWings(void) {
 
 void Actor_PlaceOnActor(s32 id, s32 target);
 
-/// Kraden comes to the party leader and asks whether to set out, as in
-/// AttekaInlet_AskKradenToSetSail; after a no the leader steps back.
+/// Walking east along the deck towards the ship's wheel (cell (34, 16)) brings
+/// Kraden out from the party to ask "Felix, are we setting off now?": yes sails
+/// the ship out of the inlet onto the world map, no sends him back into the
+/// party and Felix a step south, off the spot, so that Kraden asks again each
+/// time he comes back to it.
 void AttekaInlet_KradenAsksToSetSail(void) {
   struct Actor *actor;
 
@@ -388,8 +413,9 @@ void AttekaInlet_KradenAsksToSetSail(void) {
   }
 }
 
-/// With Dodonpa locked up in The Broken Seal's data and the wings shown, Master
-/// Hammet's messenger comes, once.
+/// Stepping onto the deck at the head of the gangplank (cell (32, 20)) after
+/// Hamma has shown the wings, in a game whose Broken Seal data has Dodonpa
+/// locked up, brings Master Hammet's messenger running after the party, once.
 void AttekaInlet_CheckForHammetsMessenger(void) {
   if (GameFlag_Get(FLAG_TRANSFERRED_DODONPA_LOCKED_UP) &&
       GameFlag_Get(FLAG_HAMMA_SHOWED_THE_WINGS) &&
@@ -397,8 +423,10 @@ void AttekaInlet_CheckForHammetsMessenger(void) {
     AttekaInlet_HammetsMessengerArrives();
 }
 
-/// Cyclone on the shore's weeds by Geode: they are scattered and, unless the
-/// party has him, Geode hops out, the leader stepping aside if he stood there.
+/// Cyclone on the bush beside the round boulder, below the cliff on the
+/// heights (cell (7, 23)), blows its leaves away and, unless the party has him
+/// already, Geode hops out of it; a leader standing in the bush hops aside to
+/// the west first.
 void AttekaInlet_CycloneUncoversGeode(void) {
   struct Actor *actor;
   s32 moved;
@@ -425,54 +453,64 @@ void AttekaInlet_CycloneUncoversGeode(void) {
   }
 }
 
-/// Cyclone on one of the shore's nine weeds scatters it.
+/// Cyclone on the westmost clump of weeds on the heights, south-west of the two
+/// pillars on the path north (cell (4, 14)), scatters it.
 void AttekaInlet_CycloneFirstWeeds(void) {
   FieldTileCopies_CopyTouchedCells(9, 23, 1, 1, 4, 10, 0);
 }
 
-/// Cyclone on one of the shore's nine weeds scatters it.
+/// Cyclone on the clump of weeds just north-east of the westmost one, west of
+/// the two pillars on the path north (cell (6, 13)), scatters it.
 void AttekaInlet_CycloneSecondWeeds(void) {
   FieldTileCopies_CopyTouchedCells(9, 23, 1, 1, 6, 9, 0);
 }
 
-/// Cyclone on one of the shore's nine weeds scatters it.
+/// Cyclone on the clump of weeds just north-west of the west pillar on the
+/// path north (cell (6, 10)), scatters it.
 void AttekaInlet_CycloneThirdWeeds(void) {
   FieldTileCopies_CopyTouchedCells(9, 23, 1, 1, 6, 6, 0);
 }
 
-/// Cyclone on one of the shore's nine weeds scatters it.
+/// Cyclone on the clump of weeds just north-east of the east pillar on the
+/// path north (cell (12, 10)), scatters it.
 void AttekaInlet_CycloneFourthWeeds(void) {
   FieldTileCopies_CopyTouchedCells(12, 5, 1, 1, 12, 6, 0);
 }
 
-/// Cyclone on one of the shore's nine weeds scatters it.
+/// Cyclone on the clump of weeds east of the east pillar on the path north
+/// (cell (13, 11)), scatters it.
 void AttekaInlet_CycloneFifthWeeds(void) {
   FieldTileCopies_CopyTouchedCells(9, 23, 1, 1, 13, 7, 0);
 }
 
-/// Cyclone on one of the shore's nine weeds scatters it.
+/// Cyclone on the clump of weeds north-east of the east pillar, by the cliff's
+/// edge (cell (14, 10)), scatters it.
 void AttekaInlet_CycloneSixthWeeds(void) {
   FieldTileCopies_CopyTouchedCells(9, 23, 1, 1, 14, 6, 0);
 }
 
-/// Cyclone on one of the shore's nine weeds scatters it.
+/// Cyclone on the west clump of the three on the clifftop above the house
+/// (cell (21, 10)) scatters it.
 void AttekaInlet_CycloneSeventhWeeds(void) {
   FieldTileCopies_CopyTouchedCells(9, 23, 1, 1, 21, 6, 0);
 }
 
-/// Cyclone on one of the shore's nine weeds scatters it.
+/// Cyclone on the middle clump of the three on the clifftop above the house
+/// (cell (22, 10)) scatters it.
 void AttekaInlet_CycloneEighthWeeds(void) {
   FieldTileCopies_CopyTouchedCells(9, 23, 1, 1, 22, 6, 0);
 }
 
-/// Cyclone on one of the shore's nine weeds scatters it.
+/// Cyclone on the east clump of the three on the clifftop above the house
+/// (cell (23, 11)) scatters it.
 void AttekaInlet_CycloneNinthWeeds(void) {
   FieldTileCopies_CopyTouchedCells(9, 23, 1, 1, 23, 7, 0);
 }
 
-/// Master Hammet's messenger runs up with the gift he was to bring Isaac and
-/// leaves it in a chest; Hamma tells how Hammet sent it in thanks
-/// (FLAG_HAMMETS_GIFT_DELIVERED).
+/// Master Hammet's messenger runs up the gangplank calling "Hey, wait!", sets
+/// down a chest with the gift he was to bring Isaac and runs off again; Hamma
+/// tells how Hammet, hurt that Isaac never came back to Kalay, sent it in
+/// thanks (FLAG_HAMMETS_GIFT_DELIVERED).
 void AttekaInlet_HammetsMessengerArrives(void) {
   s32 angle;
 
@@ -540,8 +578,10 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Event_End();
 }
 
-/// Each frame in the harbor: the boy by the wings and two of the glowing posts
-/// take the leader's sprite priority.
+/// Nothing visible happens: each frame in the harbor, the boy by the wings and
+/// two of the glowing posts are layered with the leader, so that he passes in
+/// front of or behind them as he does the scenery around them. Each takes the
+/// leader's sprite priority.
 void AttekaInlet_ShareLeadersPriority(void) {
   s32 variant =
       ((struct FieldSprite *)Actor_GetById(gMainRoutineWork.leaderActorId)
@@ -553,9 +593,10 @@ void AttekaInlet_ShareLeadersPriority(void) {
   Actor_SetSpritePriority(ACTOR_GLOWING_POST_C, variant);
 }
 
-/// Each frame on the shore: the round boulder takes the leader's sprite
+/// Nothing visible happens: each frame on the heights, the round boulder is
+/// layered with the leader, as the harbor's posts are, by taking his sprite
 /// priority.
-void AttekaInlet_ShareLeadersPriorityWithRock(void) {
+void AttekaInlet_ShareLeadersPriorityWithBoulder(void) {
   Actor_SetSpritePriority(
       ACTOR_ROUND_BOULDER,
       ((struct FieldSprite *)Actor_GetById(gMainRoutineWork.leaderActorId)
@@ -588,8 +629,9 @@ void AttekaInlet_RotateHullBandAndSurfColors(void) {
   }
 }
 
-/// Stepping into a door: it opens, the leader walks through and the scene
-/// leaves by the exit given.
+/// Walking north into the door of the cabin on the ship's main deck (cell
+/// (27, 18)) opens it; Felix walks in and the screen fades out to the cabins
+/// below. The exit taken is the one the door's cell names.
 void AttekaInlet_OpenDoorAndEnter(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -612,7 +654,7 @@ s32 Scene_Initialize(void) {
   if (scene == SCENE_ATTEKA_INLET)
     AttekaInlet_SetUpTheHarbor();
   else if (scene == SCENE_ATTEKA_INLET_GEODE)
-    AttekaInlet_SetUpTheShore();
+    AttekaInlet_SetUpTheHeights();
   return 0;
 }
 
@@ -629,9 +671,10 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-/// The harbor on entry: the ship is here, the hull's band and the surf turn
-/// their colours, Hammet's chest hides until his gift comes, and the robed men
-/// and Hamma stand by the wings until the ship has set out with them.
+/// The harbor on entry: the ship is moored here, the waves along its hull and
+/// the surf on the beach move, Hammet's chest stays hidden until his messenger
+/// brings it, and once the ship has its wings the four robed men and Hamma
+/// stand watching the party until it has set out.
 void AttekaInlet_SetUpTheHarbor(void) {
   struct MapWorkGroundEffects *map =
       (struct MapWorkGroundEffects *)Ram_HeapSlots->mapGrid;
@@ -667,10 +710,11 @@ void AttekaInlet_SetUpTheHarbor(void) {
   }
 }
 
-/// The shore on entry: the shipwrights and the robed man leave once the ship
-/// has set out with its wings, or block the pier once they have stopped the
-/// party; Geode stands out once uncovered.
-void AttekaInlet_SetUpTheShore(void) {
+/// The heights on entry: the shipwrights and the robed man are gone once the
+/// ship has flown, and until then, once they have stopped the party, the
+/// shipwrights stand blocking the way west; Geode stands by the round boulder
+/// once uncovered, until he joins.
+void AttekaInlet_SetUpTheHeights(void) {
   if (gMainRoutineWork.entrance == ATTEKA_INLET_GEODE_FROM_CONTIGO_SHOPS)
     GameFlag_Clear(FLAG_SHOW_AREA_NAME);
   if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS)) {
@@ -690,7 +734,7 @@ void AttekaInlet_SetUpTheShore(void) {
   }
   if (GameFlag_Get(FLAG_GEODE_UNCOVERED))
     Actor_SetPosition(ACTOR_GEODE, 120, 376);
-  Task_Add(AttekaInlet_ShareLeadersPriorityWithRock, TASK_PASS_FRAME);
+  Task_Add(AttekaInlet_ShareLeadersPriorityWithBoulder, TASK_PASS_FRAME);
 }
 
 struct SceneEntrance gSceneEntrances[] = {
@@ -842,8 +886,8 @@ struct ActorPlacement gAttekaInlet_HarborActorPlacementsOnceSetOut[] = {
     {SCENE_TABLE_END},
 };
 
-/// The shore's actors once the ship has its wings.
-struct ActorPlacement gAttekaInlet_ShoreActorPlacementsOnceWinged[] = {
+/// The heights' actors once the ship has its wings.
+struct ActorPlacement gAttekaInlet_HeightsActorPlacementsOnceWinged[] = {
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS,
                     MOVEMENT_TYPE_WANDER_NEAR, 264, 0, 352, FACING_WEST,
                     TALK_FACING_PARTY, 0),
@@ -867,8 +911,8 @@ struct ActorPlacement gAttekaInlet_ShoreActorPlacementsOnceWinged[] = {
     {SCENE_TABLE_END},
 };
 
-/// The shore's actors, in AttekaInletShoreActorId's order.
-struct ActorPlacement gAttekaInlet_ShoreActorPlacements[] = {
+/// The heights' actors, in AttekaInletHeightsActorId's order.
+struct ActorPlacement gAttekaInlet_HeightsActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS,
                     MOVEMENT_TYPE_WANDER_NEAR, 0, 0, 0, FACING_WEST,
                     TALK_FACING_PARTY, 0),
@@ -897,7 +941,8 @@ struct Trigger gAttekaInlet_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// The harbor's exits, door, talks and the messenger's check.
+/// The harbor's exits, the cabin door, Hamma's and Kraden's spots, talks and
+/// the messenger's check.
 struct Trigger gAttekaInlet_HarborTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,
      EVENT(AttekaInlet_OpenDoorAndEnter)},
@@ -976,8 +1021,9 @@ struct Trigger gAttekaInlet_HarborTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// The shore's exits, talks, Geode and Cyclone on its weeds.
-struct Trigger gAttekaInlet_ShoreTriggers[] = {
+/// The heights' exits, the shipwrights' spot, talks, Geode and Cyclone on its
+/// weeds.
+struct Trigger gAttekaInlet_HeightsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 3, CONDITION_ALWAYS, 3},

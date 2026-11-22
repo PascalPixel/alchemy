@@ -1,9 +1,18 @@
 /// @file
-/// Trial Road, the mountain path above the Shaman Village where the party races
-/// Moapa to the summit: four stages dealt from eight puzzle rooms, a left and a
-/// right path through each, the blue chests that open each stage's door for
-/// the weight of the party's equipment, and the battle at the peak; after the
-/// race, the summit's cave and pools and Gasp the Djinni.
+/// Trial Road, the mountain path above the Shaman Village where Moapa tests
+/// the party before he will hand over the Hover Jade. Felix races Moapa and his
+/// two knights up four stages, by the left path or the right. Each stage is
+/// one of eight puzzle rooms (logs to roll, stakes to Pound, ivy to blow away,
+/// frozen puddles, crumbling pillars, fountains, a sand stream), dealt in an
+/// order that depends on the letters of the leader's name. At the top of each
+/// stage the switch in front of the door opens the blue chests beside it, and
+/// the door opens once each open chest holds a piece of the party's
+/// equipment: one chest, or two when Moapa got there first. A button at the
+/// top offers to give up. Moapa's party waits at the summit, or arrives after
+/// the party, and fights them for the Jade. Long after, Hover on the summit's
+/// purple tile reaches a cave whose rock Lift raises, and beyond it a pool
+/// with weeds hiding a Mad Plant, a hidden tile Reveal shows, an Elixir chest
+/// and Gasp the Djinni, who moves opposite to Felix.
 #include "djinn_ids.h"
 #include "fixed_math.h"
 #include "flags.h"
@@ -53,22 +62,85 @@
 #include "window/window.h"
 #include "text/msg_ids.h"
 
+/// The map cells the trigger tables answer, by the behaviour the map gives
+/// them. The race's frame, the same in every stage: the stairs at the foot of
+/// each path and the door at its top, the give-up buttons and the switches
+/// before the doors (west and east of the map's middle), each with the ring of
+/// cells around it that steps off it.
+enum TrialRoadCell {
+  CELL_LEFT_PATH_STAIRS_DOWN = 1,
+  CELL_RIGHT_PATH_STAIRS_DOWN = 2,
+  CELL_LEFT_PATH_DOOR = 3,
+  CELL_RIGHT_PATH_DOOR = 4,
+  CELL_AROUND_WEST_GIVE_UP_BUTTON = 10,
+  CELL_WEST_GIVE_UP_BUTTON = 11,
+  CELL_AROUND_EAST_GIVE_UP_BUTTON = 20,
+  CELL_EAST_GIVE_UP_BUTTON = 21,
+  CELL_AROUND_WEST_SWITCH = 30,
+  CELL_WEST_SWITCH = 31,
+  CELL_AROUND_EAST_SWITCH = 40,
+  CELL_EAST_SWITCH = 41,
+  // The pillar stage: the south edge of the upper ledge, over the gap a
+  // pillar can be pushed into, and the edge beside it.
+  CELL_PILLAR_STAGE_GAP = 51,
+  CELL_PILLAR_STAGE_LEDGE = 52,
+  // The torch stage: north and south of each pillar of ice.
+  CELL_ICE_PILLAR_SIDE = 33,
+  // The ivy stage's ledge, jumped from southward.
+  CELL_IVY_STAGE_LEDGE = 33,
+  // The Pound stage's four stakes, and the ground the pillars stand on.
+  CELL_WEST_STAKE = 50,
+  CELL_INNER_WEST_STAKE = 51,
+  CELL_INNER_EAST_STAKE = 52,
+  CELL_EAST_STAKE = 53,
+  CELL_STAKE_GROUND = 60,
+  // The crumbling stage: its ledge, the cells beside the cracked pillars, and
+  // the pillars themselves.
+  CELL_CRUMBLING_STAGE_LEDGE = 33,
+  CELL_BESIDE_CRUMBLING_PILLAR = 34,
+  CELL_WEST_CRUMBLING_PILLAR = 50,
+  CELL_EAST_CRUMBLING_PILLAR = 51,
+  // The log stage: its ledge over the water, the rows the upper and lower logs
+  // roll along, and the two ends of the east log's track.
+  CELL_LOG_STAGE_LEDGE = 33,
+  CELL_UPPER_LOG_ROWS = 50,
+  CELL_LOWER_LOG_ROWS = 51,
+  CELL_EAST_LOG_NORTH_END = 52,
+  CELL_EAST_LOG_SOUTH_END = 53,
+  // The fountain stage: the column the block can stand in, and the three
+  // buried vents.
+  CELL_BLOCK_TRACK = 33,
+  CELL_WEST_VENT = 50,
+  CELL_MIDDLE_VENT = 51,
+  CELL_EAST_VENT = 52,
+  // The sand stage's stream.
+  CELL_STREAM = 50,
+  // Gasp's pool: the weeds, and the clump hiding the Mad Plant.
+  CELL_WEEDS = 33,
+  CELL_WEEDS_HIDING_MAD_PLANT = 34,
+  // The summit: in front of each doorway from the stages, and the cells
+  // that bring on Moapa.
+  CELL_SUMMIT_DOORWAY = 33,
+  CELL_LEFT_PATH_SUMMIT = 40,
+  CELL_RIGHT_PATH_SUMMIT = 41,
+};
+
 /// Trial Road's Mad Plant, the last of the five hidden in weeds: its
 /// FLAG_MAD_PLANT and its column of ENCOUNTER_TABLE_MAD_PLANTS.
 #define MAD_PLANT_TRIAL_ROAD 4
-/// Set once Move has pushed the peak's pillar into column 8, where it stays.
+/// Set once the summit's stone pillar has been moved one cell east, into
+/// column 8 of the map, where it stays.
 #define FLAG_TRIAL_ROAD_PEAK_PILLAR_PLACED 0x9fc
 
-/// Set while the leader stands on the pillars' tops
-/// (TrialRoad_CheckLeaderOnPillars).
+/// Set while Felix stands up on the pillar stage's upper ledge or a pillar's
+/// top (TrialRoad_CheckLeaderOnPillars).
 #define FLAG_LEADER_ON_PILLARS FLAG_SCENE_TEMP_08
-/// Set once a step at a stage's foot has offered to give up; stepping away
-/// clears it.
+/// Set once the give-up button has asked; stepping off it clears it.
 #define FLAG_GIVE_UP_ASKED FLAG_SCENE_TEMP_81
 /// Set once both blue chests hold their items and the leader's door opens.
 #define FLAG_STAGE_DOOR_OPEN FLAG_SCENE_TEMP_82
-/// Set once the leader reaches the door at a stage's end and the blue chests
-/// open (TrialRoad_OpenChests).
+/// Set once Felix has stood on the switch at the top of the stage and the
+/// blue chests have opened (TrialRoad_OpenChests).
 #define FLAG_STAGE_CHESTS_OPENED FLAG_SCENE_TEMP_84
 /// Set while the inner blue chest stands open for an item.
 #define FLAG_INNER_CHEST_OPEN FLAG_SCENE_TEMP_85
@@ -77,7 +149,8 @@
 #define FLAG_OUTER_CHEST_OPEN FLAG_SCENE_TEMP_86
 /// Set once Lift has raised the rock at the summit cave's mouth.
 #define FLAG_CAVE_ROCK_LIFTED FLAG_SCENE_TEMP_89
-/// Set once Gasp has hopped away from the leader to his own spot.
+/// Set once Gasp has stopped mirroring Felix and hopped away to where he can
+/// be talked to.
 #define FLAG_GASP_FLED FLAG_SCENE_TEMP_88
 /// Set once Whirlwind has blown away the ivy on the pillar stage's pillar C,
 /// on the Pound stage's pillar B, and on the sand stage's cliff.
@@ -91,9 +164,9 @@
 /// sunk; clear the other way round.
 #define FLAG_EAST_STAKE_RAISED FLAG_AREA_TEMP_37
 /// The four stages' flags, from FLAG_AREA_TEMP_81: each set once Moapa reached
-/// that stage's door before the leader.
+/// that stage's door before Felix.
 #define FLAG_RIVAL_FIRST_AT_DOOR_BASE FLAG_AREA_TEMP_81
-/// Set once the leader climbs to the peak ahead of Moapa.
+/// Set once Felix climbs to the summit ahead of Moapa.
 #define FLAG_PARTY_FIRST_AT_PEAK FLAG_AREA_TEMP_85
 
 #include "shared/trial_road.h"
@@ -113,9 +186,10 @@ enum TrialRoadStageActorId {
   ACTOR_FIRST_STAGE_PIECE
 };
 
-/// The log stage's three logs (gTrialRoad_LogStagePlacements): two rolling
-/// east and west, upper and lower, and one rolling north and south east of
-/// them. Kraden, at the summit (gTrialRoad_SummitPlacements), after Moapa.
+/// The log stage's three logs (gTrialRoad_LogStagePlacements): the upper and
+/// lower logs lie north to south and roll east or west, and the east log lies
+/// across them and rolls north or south. Kraden, at the summit
+/// (gTrialRoad_SummitPlacements), after Moapa.
 #define ACTOR_KRADEN (ACTOR_MOAPA + 1)
 
 enum TrialRoadLogStageActorId {
@@ -124,8 +198,9 @@ enum TrialRoadLogStageActorId {
   ACTOR_EAST_LOG
 };
 
-/// The Pound stage's four stakes (gTrialRoad_PoundStagePlacements), west to
-/// east, in two pairs: pounding one raises its partner.
+/// The Pound stage's four cone-shaped stakes (gTrialRoad_PoundStagePlacements),
+/// west to east at cells (13, 26), (15, 26), (17, 26) and (19, 26), in two
+/// pairs: driving one down raises its partner.
 enum TrialRoadPoundStageActorId {
   ACTOR_WEST_STAKE = ACTOR_FIRST_STAGE_PIECE + 3,
   ACTOR_INNER_WEST_STAKE,
@@ -139,8 +214,9 @@ enum TrialRoadCrumblingStageActorId {
   ACTOR_EAST_CRUMBLING_PILLAR
 };
 
-/// The pillars most stages stand from ACTOR_FIRST_STAGE_PIECE: five, or six
-/// where the torch stage's carry torches; the log stage has one, the block.
+/// The stone pillars most stages stand from ACTOR_FIRST_STAGE_PIECE: five, or
+/// six in the torch and Pound stages; the log and fountain stages have one,
+/// the block.
 enum TrialRoadPillarActorId {
   ACTOR_PILLAR_A = ACTOR_FIRST_STAGE_PIECE,
   ACTOR_PILLAR_B,
@@ -151,7 +227,7 @@ enum TrialRoadPillarActorId {
 };
 
 /// The torch stage's two torches burning on stands, after its six pillars
-/// (gTrialRoad_TorchStagePlacements): pushed beside a pillar of ice, a torch
+/// (gTrialRoad_TorchStagePlacements): pushed next to a frozen puddle, a torch
 /// melts it.
 enum TrialRoadTorchStageActorId {
   ACTOR_WEST_TORCH = ACTOR_FIRST_STAGE_PIECE + 6,
@@ -186,10 +262,9 @@ enum TrialRoadFountainStageActorId {
 
 /// The entrances the code tests. The Shaman Village enters the first stage by
 /// its left or right path; the summit returns to the last stage the same way;
-/// while the elder explains the trial's rules
-/// (ShamanVillage_ExplainTrialRules), TRIAL_ROAD_RULES deals a course and
-/// TRIAL_ROAD_RULES_COURSE shows its traps. The summit is entered again after
-/// the battle with Moapa, won or lost.
+/// while Moapa explains the trial's rules (ShamanVillage_ExplainTrialRules),
+/// TRIAL_ROAD_RULES deals a course and TRIAL_ROAD_RULES_COURSE shows it. The
+/// summit is entered again after the battle with Moapa, won or lost.
 enum TrialRoadEntrance {
   TRIAL_ROAD_SUMMIT_AFTER_WIN = 4,
   TRIAL_ROAD_SUMMIT_AFTER_DEFEAT = 5,
@@ -204,8 +279,9 @@ enum TrialRoadEntrance {
 /// The sand stage's two tightrope posts (gTrialRoad_SandStagePlacements).
 enum { ACTOR_WEST_POST = ACTOR_FIRST_STAGE_PIECE, ACTOR_EAST_POST };
 
-/// The torch stage's pillars C to F are frozen puddles; each one's flag,
-/// FLAG_SCENE_TEMP_14 to FLAG_SCENE_TEMP_17, is set once it has melted.
+/// The torch stage's pillars C to F are frozen puddles, pillars of ice; each
+/// one's flag, FLAG_SCENE_TEMP_14 to FLAG_SCENE_TEMP_17, is set once a torch
+/// has melted it to a puddle.
 #define FLAG_PUDDLE_MELTED_BASE (FLAG_SCENE_TEMP_14 - ACTOR_PILLAR_C)
 /// The ivy pillar stage's two ivies; each one's flag, FLAG_AREA_TEMP_27 and
 /// FLAG_AREA_TEMP_28, is set once Whirlwind has blown it away.
@@ -218,7 +294,8 @@ enum { ACTOR_WEST_POST = ACTOR_FIRST_STAGE_PIECE, ACTOR_EAST_POST };
 /// set once each has been uncovered.
 #define FLAG_VENT_UNCOVERED_BASE (FLAG_AREA_TEMP_63 - ACTOR_WEST_VENT)
 
-/// A piece the party cannot push: a pillar ivy holds down, or a log.
+/// A piece Felix cannot push: a pillar ivy holds down, a frozen puddle, a
+/// stake, or a log (logs roll by their own events).
 /// Leader_CanPushObjectAhead refuses a target with this byte set.
 #define PUSH_BLOCKED(object) *(u8 *)&object->riseCounter
 /// The height in pixels of a pillar's top (TrialRoad_AddPillarTop) above the
@@ -252,7 +329,8 @@ extern struct ActorPlacement gTrialRoad_GaspPlacements[];
 extern struct ActorPlacement gTrialRoad_SummitPlacements[];
 extern s32 gTrialRoad_StagesPlacements[];
 
-/// Sets an actor on the ground two pixels up, still, and half again as tall.
+/// The script of each clump of ivy: it sits on the ground at the foot of its
+/// pillar or cliff, drawn half again as tall as its picture.
 s32 TrialRoad_SettleOnGround(struct Actor *actor) {
   s32 height =
       Map_GetTerrainHeight(0, actor->x.fixed, actor->z.fixed) + toFIXED(2);
@@ -280,7 +358,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 }
 
 /// Whether Moapa is ahead in the race: by the stages each has cleared, then by
-/// who reached the last door first; on a tie, fallback.
+/// who reached the switch at the top of this stage first; on a tie, fallback.
 s32 TrialRoad_RivalIsAhead(s32 fallback) {
   struct TrialRoadState *state = gTrialRoadState;
 
@@ -298,8 +376,10 @@ s32 TrialRoad_RivalIsAhead(s32 fallback) {
 s32 TrialRoad_OfferToGiveUp(void);
 void Actor_SetSpriteColorMode(struct Actor *actor, u32 mode);
 
-/// Taking the stairs at a stage's foot or top, with the race's rules: while the
-/// party's equipment is held, the first stairs offer to give up.
+/// Walking down the stairs at the foot of a stage, or through the open door at
+/// its top. Down from the first stage during the race, Felix is asked whether
+/// he gives up, and stays if he does not; up through the fourth door, he
+/// climbs to the summit.
 void TrialRoad_TakeStairs(s32 direction) {
   struct TrialRoadState *state = gTrialRoadState;
 
@@ -485,10 +565,7 @@ void TrialRoad_ScatterWeeds(void);
 
 void TrialRoad_ScatterWeedsHidingMadPlant(void);
 
-/// Shows the pools' hidden tiles.
 void TrialRoad_RevealPoolTiles(void);
-
-/// Hides the pools' tiles again.
 void TrialRoad_HidePoolTiles(void);
 
 void TrialRoad_ChallengeMoapa(void);
@@ -560,7 +637,7 @@ void Map_CopyRawCellsRect(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f);
 
 void TrialRoad_ShowRaceMap(s32 leaderId, s32 rivalId);
 
-/// Opens the door at the end of the leader's stage, on his side of the road.
+/// Opens the door at the top of Felix's stage.
 void TrialRoad_OpenLeaderDoor(s32 side, s32 phase);
 
 extern u32 gTrialRoad_LeftKnightEntersScript[];
@@ -615,13 +692,19 @@ void TrialRoad_UpdateFountains(void);
     }                                                                          \
   }
 
-/// Opens the door at the end of the leader's stage, on his side of the road.
+/// Opens the door at the top of Felix's stage: the door at cell (23, 3) on the
+/// left path, (9, 3) on the right, is redrawn open and its doorway leads on.
 DEFINE_TRIAL_ROAD_OPEN_DOOR(TrialRoad_OpenLeaderDoor, 23, 57, 0, 9, 43, 1)
 
-/// Opens the door at the end of Moapa's stage, on his side of the road.
+/// Opens the door at the top of Moapa's stage, beside Felix's: cell (28, 3)
+/// when Felix took the left path, (4, 3) when he took the right.
 DEFINE_TRIAL_ROAD_OPEN_DOOR(TrialRoad_OpenRivalDoor, 28, 62, 1, 4, 38, 0)
 
-/// A step at a stage's foot asks; giving up takes the party back to the start.
+/// Stepping on the give-up button at the top of a stage during the race
+/// (cell (12, 8) on the left path, (20, 8) on the right) asks "Do you want to
+/// give up?". Felix walks onto the button's middle and faces south; answering
+/// Yes, he leans back with a drop of sweat, gets the party's equipment back
+/// and is sent down to the Shaman Village's trial grounds.
 s32 TrialRoad_OfferToGiveUp(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -660,12 +743,14 @@ s32 TrialRoad_OfferToGiveUp(void) {
   return 0;
 }
 
-/// Stepping away from the stairs lets the offer to give up be asked again.
+/// Nothing visible happens when Felix steps off the give-up button; the game
+/// lets the button ask again next time he steps on it.
 void TrialRoad_ClearGiveUpAsked(void) { GameFlag_Clear(FLAG_GIVE_UP_ASKED); }
 
-/// The leader reaches the door at a stage's end: the blue chests open
-/// (FLAG_INNER_CHEST_OPEN and FLAG_OUTER_CHEST_OPEN), the outer one only when
-/// the rival arrived first and twice the weight is due.
+/// Standing on the switch in front of the door at the top of a stage (cell
+/// (22, 9) on the left path, (10, 9) on the right) opens the blue chest
+/// beside the door, and the second chest too when Moapa got there
+/// first ("it will take twice the weight to open the doors").
 void TrialRoad_OpenChests(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct TrialRoadState *state = gTrialRoadState;
@@ -700,10 +785,10 @@ void TrialRoad_OpenChests(void) {
   Event_End();
 }
 
-/// Puts an item in the chest the leader faces: "{protagonist} put {actor}'s
-/// {item} in the chest." (MsgTrialRoadStoredItem), and the chest closes. Once
-/// both chests are closed the leader's door opens (FLAG_STAGE_DOOR_OPEN).
-/// Then the item leaves the owner's slot.
+/// Choosing a piece of equipment for an open blue chest puts it inside, and
+/// the message names its owner and the item ("Felix put ...'s ... in the
+/// chest."). The chest shuts, and once every open chest is shut the door
+/// beside them opens. The item is taken from its owner's inventory.
 void TrialRoad_PutItemInChest(s32 item, s32 owner, s32 slot) {
   s32 chest = Field_FindNearbyTalkTarget(Party_GetLeaderActor());
   struct TrialRoadState *state = gTrialRoadState;
@@ -730,7 +815,9 @@ void TrialRoad_PutItemInChest(s32 item, s32 owner, s32 slot) {
   Event_End();
 }
 
-/// Searching a blue chest before its door is open tells what it wants.
+/// Searching a blue chest before the switch has opened it says "The chest
+/// won't open. There's something keeping it shut tight." Once it stands open,
+/// Felix is asked "Place this item in the chest?", and Yes opens the item menu.
 void TrialRoad_ExamineChest(s32 id) {
   s32 flag;
 
@@ -753,10 +840,12 @@ void TrialRoad_ExamineChest(s32 id) {
   }
 }
 
-/// Does nothing: the step past the chests needs no event.
-void TrialRoad_StepPastChests(void) {}
+/// Nothing happens when Felix walks around the switch once the chests have
+/// opened.
+void TrialRoad_StepOffSwitch(void) {}
 
-/// Marks the cell under the actor as a gap to jump onto (MAP_CELL_JUMP).
+/// Lets Felix jump onto the top of the pillar standing at the actor's cell
+/// (MAP_CELL_JUMP).
 void TrialRoad_SetJumpCellUnder(s32 id) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *actor = Actor_GetById(id);
@@ -773,7 +862,7 @@ void TrialRoad_SetJumpCellUnder(s32 id) {
   }
 }
 
-/// Clears the jump mark from the cell under the actor.
+/// Stops Felix jumping onto the cell the actor is leaving.
 void TrialRoad_ClearJumpCellUnder(s32 id) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *actor = Actor_GetById(id);
@@ -789,7 +878,7 @@ void TrialRoad_ClearJumpCellUnder(s32 id) {
   }
 }
 
-/// A pillar top's update: it stays on its pillar at the pillar's lift.
+/// Keeps an invisible pillar top on its pillar, so many pixels above it.
 s32 TrialRoad_FollowPillar(struct Actor *actor) {
   struct Actor *owner = actor->watchedActor;
 
@@ -802,7 +891,7 @@ s32 TrialRoad_FollowPillar(struct Actor *actor) {
 
 extern s32 gTrialRoad_PillarTopScript[];
 
-/// Puts an invisible top on the pillar for the leader to stand on.
+/// Puts an invisible top on the pillar for Felix to stand on.
 void TrialRoad_AddPillarTop(s32 id) {
   struct Actor *owner = Actor_GetById(id);
   struct Actor *actor;
@@ -847,25 +936,29 @@ void TrialRoad_SetPillarTopLift(s32 id, s32 value) {
       onFoot(id);                                                              \
   }
 
-/// As a pillar starts to move, its old cell loses its jump mark.
+/// Nothing visible happens as a pillar starts to slide; Felix can no longer
+/// jump onto the place it is leaving.
 DEFINE_TRIAL_ROAD_ON_FOOT(TrialRoad_ClearJumpUnderPushedPillar,
                           TrialRoad_ClearJumpCellUnder)
 
-/// Once a pillar has moved, its new cell is a gap to jump onto.
+/// Nothing visible happens as a pushed or Moved pillar stops; Felix can now
+/// jump onto its top where it stands.
 DEFINE_TRIAL_ROAD_ON_FOOT(TrialRoad_SetJumpUnderPushedPillar,
                           TrialRoad_SetJumpCellUnder)
 
-/// Whirlwind blows the ivy off the pillar stage's pillar, which can then be
-/// pushed.
+/// Whirlwind on the ivy at the foot of the pillar stage's overgrown pillar,
+/// at cell (15, 24), blows it away, and the pillar can then be pushed.
 void TrialRoad_BlowAwayPillarStageIvy(void) {
   PUSH_BLOCKED(Actor_GetById(ACTOR_PILLAR_C)) = 0;
   Event_SetFlag(FLAG_PILLAR_STAGE_IVY_BLOWN_AWAY);
 }
 
-/// The leader jumps across, if he can.
+/// Walking off the edge of a ledge or pillar top toward another one jumps
+/// Felix across, when there is somewhere to land.
 void TrialRoad_JumpForward(void) { Field_TryJumpForward(); }
 
-/// Opens the cell where the actor stands.
+/// Lets Felix walk into the vent where the actor stands, now that it is dug
+/// out.
 void TrialRoad_OpenVentCell(s32 id) {
   struct Actor *actor = Actor_GetById(id);
 
@@ -874,7 +967,8 @@ void TrialRoad_OpenVentCell(s32 id) {
                              FIELD_CELL(actor->z.fixed));
 }
 
-/// Sets FLAG_LEADER_ON_PILLARS while the leader stands on the pillars' tops.
+/// Keeps note, each frame, of whether Felix is up on the pillar stage's upper
+/// ledge or a pillar's top, 32 pixels up (FLAG_LEADER_ON_PILLARS).
 void TrialRoad_CheckLeaderOnPillars(void) {
   FIXED y = Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed;
 
@@ -884,7 +978,9 @@ void TrialRoad_CheckLeaderOnPillars(void) {
     Event_ClearFlag(FLAG_LEADER_ON_PILLARS);
 }
 
-/// Jumps across the gap when the pillar fills it, else drops down the ledge.
+/// Walking south off the pillar stage's upper ledge, beside the vine, jumps
+/// Felix across the gap when the pillar beneath has been pushed into it (row
+/// 23 of the map); otherwise he hops down to the ground in a puff of dust.
 void TrialRoad_JumpAcrossGap(void) {
   if (FIELD_CELL(Actor_GetById(ACTOR_PILLAR_B)->z.fixed) == 23)
     Field_TryJumpForward();
@@ -892,15 +988,17 @@ void TrialRoad_JumpAcrossGap(void) {
     Actor_JumpDownLedge(gMainRoutineWork.leaderActorId, ANIM_LEADER_SPRING, 0);
 }
 
-/// As one of the torch stage's two stone pillars starts to move, its old cell
-/// loses its jump mark.
+/// Nothing visible happens as one of the torch stage's two stone pillars
+/// starts to slide; Felix can no longer jump onto the place it is leaving.
 void TrialRoad_ClearJumpUnderTorchStagePillar(s32 a, s32 id) {
   if ((u32)(id - ACTOR_PILLAR_A) <= ACTOR_PILLAR_B - ACTOR_PILLAR_A)
     TrialRoad_ClearJumpCellUnder(id);
 }
 
-/// A stone pillar pushed in the torch stage marks its new cell to jump onto; a
-/// torch pushed beside a pillar of ice melts it.
+/// Pushing a torch against one of the torch stage's two pillars of ice, at
+/// cells (13, 27) and (19, 27), melts it to a puddle Felix can jump across.
+/// A stone pillar pushed in the torch stage can be jumped onto where it
+/// stops.
 void TrialRoad_MeltIceBesideTorch(s32 a, s32 id) {
   s32 x;
 
@@ -934,14 +1032,16 @@ void TrialRoad_MeltIceBesideTorch(s32 a, s32 id) {
   }
 }
 
-/// The leader jumps across a melted puddle.
+/// Walking north or south into a melted puddle in the torch stage jumps Felix
+/// across it; a frozen one stops him.
 void TrialRoad_JumpMeltedPuddle(void) {
   if (Event_GetFlag(Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId) +
                     FLAG_PUDDLE_MELTED_BASE))
     Field_TryJumpForward();
 }
 
-/// Frost freezes a melted puddle into a pillar again.
+/// Frost on a melted puddle in the torch stage freezes it into a pillar of ice
+/// again, which Felix can stand on.
 void TrialRoad_FreezePuddle(s32 a, s32 id) {
   struct Actor *actor = Actor_GetById(id);
 
@@ -951,13 +1051,14 @@ void TrialRoad_FreezePuddle(s32 a, s32 id) {
     actor->priorityFlags &= ~ACTOR_PRIORITY_UNDERFOOT;
 }
 
-/// Whirlwind blows the ivy off a pillar, which can then be pushed.
+/// Whirlwind on the ivy at the foot of one of the two overgrown pillars in
+/// the ivy stage blows it away, and the pillar can then be pushed or Moved.
 void TrialRoad_BlowAwayIvy(s32 a, s32 id) {
   PUSH_BLOCKED(Actor_GetById(id - (ACTOR_IVY_A - ACTOR_PILLAR_A))) = 0;
   Event_SetFlag(id + FLAG_IVY_BLOWN_AWAY_BASE);
 }
 
-/// Lowers a stake into the ground, its top with it.
+/// Sinks a stake into the ground, so that Felix walks over it.
 void TrialRoad_LowerStake(s32 id) {
   struct Actor *actor = Actor_GetById(id);
 
@@ -969,7 +1070,7 @@ void TrialRoad_LowerStake(s32 id) {
   }
 }
 
-/// Raises a stake out of the ground, its top with it.
+/// Raises a stake out of the ground, solid, its top 16 pixels up.
 void TrialRoad_RaiseStake(s32 id) {
   struct Actor *actor = Actor_GetById(id);
 
@@ -981,7 +1082,8 @@ void TrialRoad_RaiseStake(s32 id) {
   }
 }
 
-/// Whirlwind blows the ivy off the Pound stage's pillar.
+/// Whirlwind on the ivy at the foot of the Pound stage's middle pillar, at
+/// cell (16, 28), blows it away, and the pillar can then be pushed.
 void TrialRoad_BlowAwayPoundStageIvy(void) {
   PUSH_BLOCKED(Actor_GetById(ACTOR_PILLAR_B)) = 0;
   Event_SetFlag(FLAG_POUND_STAGE_IVY_BLOWN_AWAY);
@@ -991,8 +1093,9 @@ void TrialRoad_BlowAwayPoundStageIvy(void) {
 /// down: they go in pairs.
 extern s8 gTrialRoad_PoundPartners[4];
 
-/// Marks each stake whose partner has a pillar pushed onto it: stepping onto
-/// such a stake cannot raise its partner (TrialRoad_StepOntoStake).
+/// After Move or a push, notes each stake whose partner has a pillar standing
+/// on it: stepping on that stake can no longer raise the partner
+/// (TrialRoad_StepOntoStake).
 void TrialRoad_CheckStakesCovered(s32 a, s32 b) {
   s32 id;
 
@@ -1015,8 +1118,9 @@ void TrialRoad_CheckStakesCovered(s32 a, s32 b) {
   }
 }
 
-/// Pound drives a stake down and raises its partner
-/// (gTrialRoad_PoundPartners).
+/// Pound on a raised stake in the Pound stage squashes it into the ground and
+/// pops its partner up (gTrialRoad_PoundPartners); Felix, standing where the
+/// partner rises, is thrown up onto it.
 void TrialRoad_PoundStake(s32 id, s32 phase, s32 frame) {
   s32 other = gTrialRoad_PoundPartners[(id - ACTOR_WEST_STAKE) & 3];
   struct Actor *actor = Actor_GetById(id);
@@ -1061,27 +1165,33 @@ void TrialRoad_PoundStake(s32 id, s32 phase, s32 frame) {
     partner->scaleY = FIXED_ONE;
 }
 
-/// Pound on the west stake.
+/// Pound on the west stake, cell (13, 26), drives it down and raises the inner
+/// west stake.
 void TrialRoad_PoundWestStake(s32 phase, s32 frame) {
   TrialRoad_PoundStake(ACTOR_WEST_STAKE, phase, frame);
 }
 
-/// Pound on the inner west stake.
+/// Pound on the inner west stake, cell (15, 26), drives it down and raises
+/// the west stake.
 void TrialRoad_PoundInnerWestStake(s32 phase, s32 frame) {
   TrialRoad_PoundStake(ACTOR_INNER_WEST_STAKE, phase, frame);
 }
 
-/// Pound on the inner east stake.
+/// Pound on the inner east stake, cell (17, 26), drives it down and raises
+/// the east stake.
 void TrialRoad_PoundInnerEastStake(s32 phase, s32 frame) {
   TrialRoad_PoundStake(ACTOR_INNER_EAST_STAKE, phase, frame);
 }
 
-/// Pound on the east stake.
+/// Pound on the east stake, cell (19, 26), drives it down and raises the
+/// inner east stake.
 void TrialRoad_PoundEastStake(s32 phase, s32 frame) {
   TrialRoad_PoundStake(ACTOR_EAST_STAKE, phase, frame);
 }
 
-/// Stepping onto a raised stake of a pair sinks it and raises its partner.
+/// Stepping onto a raised stake in the Pound stage sinks it slowly under
+/// Felix's weight while its partner grows out of the ground, unless a pillar
+/// stands on the partner.
 void TrialRoad_StepOntoStake(s32 id, s32 other, s32 flag, s32 side) {
   struct Actor *actor = Actor_GetById(id);
   struct Actor *partner = Actor_GetById(other);
@@ -1136,7 +1246,8 @@ void TrialRoad_StepOntoEastStake(void) {
                           FLAG_EAST_STAKE_RAISED, 0);
 }
 
-/// Jumps onto a pillar from a raised one, else pushes the pillar ahead.
+/// Walking into a pillar or stake in the Pound stage: from a raised top Felix
+/// jumps onto it, and from the ground he pushes it, if it can be pushed.
 void TrialRoad_LandOnPillar(void) {
   FIXED y = Actor_GetById(gMainRoutineWork.leaderActorId)->y.fixed;
 
@@ -1148,28 +1259,30 @@ void TrialRoad_LandOnPillar(void) {
   }
 }
 
-/// Each step checks the crumbling pillars under the leader.
+/// Hopping onto one of the crumbling stage's two cracked pillars, from the
+/// east or the west: the first time it flashes, and the second time it
+/// crumbles under Felix and drops him to the ground.
 void TrialRoad_CheckCrumblingPillars(void) {
   MagmaRockInside_CheckCrumblingStep(gTrialRoad_CrumblingPillars);
 }
 
-/// Burst crumbles the west crumbling pillar.
+/// Burst on the crumbling stage's west cracked pillar crumbles it away.
 void TrialRoad_CrumbleWestPillar(s32 phase) {
   if (phase == 3)
     TrialRoad_CrumblePillar(gTrialRoad_CrumblingPillars,
                             ACTOR_WEST_CRUMBLING_PILLAR);
 }
 
-/// Burst crumbles the east crumbling pillar.
+/// Burst on the crumbling stage's east cracked pillar crumbles it away.
 void TrialRoad_CrumbleEastPillar(s32 phase) {
   if (phase == 3)
     TrialRoad_CrumblePillar(gTrialRoad_CrumblingPillars,
                             ACTOR_EAST_CRUMBLING_PILLAR);
 }
 
-/// Walls off the three cells through an object's cell on layers 0 and 2
-/// (CELL_BEHAVIOR_WALL): the column above and below it in mode 0, the row
-/// beside it otherwise.
+/// Makes a log solid where it lies: its own cell and the two beside it along
+/// its length, north and south of it in mode 0, east and west otherwise
+/// (CELL_BEHAVIOR_WALL on the ground and the upper level).
 void TrialRoad_BlockLogCells(s32 id, s32 mode) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct Actor *actor = Actor_GetById(id);
@@ -1199,7 +1312,8 @@ void TrialRoad_BlockLogCells(s32 id, s32 mode) {
   }
 }
 
-/// Makes the logs' cells walls where they lie.
+/// Makes the three logs solid where they lie, and lets Felix jump east across
+/// a log that has fallen into the water.
 void TrialRoad_BlockLogs(void) {
   MapGrid_CopyCellAttributes(11, 64, 11, 8, 11, 22);
   MapGrid_CopyCellAttributes(79, 64, 11, 8, 79, 22);
@@ -1212,7 +1326,8 @@ void TrialRoad_BlockLogs(void) {
     MapGrid_CopyCellAttributes(0, 48, 1, 3, 19, 26);
 }
 
-/// Whether a log rolling to the cell is stopped by the block or a wall.
+/// Whether a log rolling into the cell is stopped there by the block or a
+/// wall.
 s32 TrialRoad_IsLogBlocked(s32 x, s32 z) {
   struct Actor *actor = Actor_GetById(ACTOR_PILLAR_A);
   struct MapWork *map = Ram_HeapSlots->mapGrid;
@@ -1228,7 +1343,10 @@ s32 TrialRoad_IsLogBlocked(s32 x, s32 z) {
   return IsZero(value ^ CELL_BEHAVIOR_WALL);
 }
 
-/// Pushes a log, which rolls on until something stops it.
+/// Felix leans on a log in the log stage and it rolls, up to six cells, until
+/// the block or a wall stops it. Rolled east past column 17 of the map, it
+/// rolls on to the edge and falls into the water, where it stays and Felix
+/// can jump across it.
 void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   struct Actor *actor = Actor_GetById(id);
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -1314,37 +1432,38 @@ void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis) {
   TrialRoad_BlockLogs();
 }
 
-/// Pushes the upper log west.
+/// Walking west into the upper log rolls it west.
 void TrialRoad_PushUpperLogWest(void) {
   TrialRoad_PushLog(ACTOR_UPPER_LOG, -1, 0, 0);
 }
 
-/// Pushes the upper log east.
+/// Walking east into the upper log rolls it east.
 void TrialRoad_PushUpperLogEast(void) {
   TrialRoad_PushLog(ACTOR_UPPER_LOG, 1, 0, 0);
 }
 
-/// Pushes the lower log west.
+/// Walking west into the lower log rolls it west.
 void TrialRoad_PushLowerLogWest(void) {
   TrialRoad_PushLog(ACTOR_LOWER_LOG, -1, 0, 0);
 }
 
-/// Pushes the lower log east.
+/// Walking east into the lower log rolls it east.
 void TrialRoad_PushLowerLogEast(void) {
   TrialRoad_PushLog(ACTOR_LOWER_LOG, 1, 0, 0);
 }
 
-/// Pushes the east log north.
+/// Walking north into the east log rolls it north.
 void TrialRoad_PushEastLogNorth(void) {
   TrialRoad_PushLog(ACTOR_EAST_LOG, 0, -1, 1);
 }
 
-/// Pushes the east log south.
+/// Walking south into the east log rolls it south.
 void TrialRoad_PushEastLogSouth(void) {
   TrialRoad_PushLog(ACTOR_EAST_LOG, 0, 1, 1);
 }
 
-/// Climbing, the leader climbs down; else he pushes the east log south.
+/// Pressing south at the north end of the east log's track: if Felix is
+/// climbing there he climbs down, and on foot he rolls the east log south.
 void TrialRoad_PushEastLogSouthOrClimbDown(void) {
   struct MainRoutineWork *party = &gMainRoutineWork;
 
@@ -1354,8 +1473,10 @@ void TrialRoad_PushEastLogSouthOrClimbDown(void) {
     TrialRoad_PushLog(ACTOR_EAST_LOG, 0, 1, 1);
 }
 
-/// Scoop uncovers a vent at its thirtieth frame: the vent is set on the
-/// ground at its own place (its timer and user value) and its cell opens.
+/// Scoop over one of the fountain stage's three buried vents, at cells
+/// (13, 23), (16, 23) and (19, 23), digs it out: the vent shows in the
+/// ground, Felix can step onto it, and its fountain rises and falls with the
+/// others.
 void TrialRoad_UncoverVent(s32 id, s32 phase, s32 frame) {
   if (frame == 30) {
     struct Actor *actor = Actor_GetById(id);
@@ -1371,22 +1492,23 @@ void TrialRoad_UncoverVent(s32 id, s32 phase, s32 frame) {
   }
 }
 
-/// Scoop uncovers the west vent.
+/// Scoop over the west vent digs it out.
 void TrialRoad_UncoverWestVent(s32 phase, s32 frame) {
   TrialRoad_UncoverVent(ACTOR_WEST_VENT, phase, frame);
 }
 
-/// Scoop uncovers the middle vent.
+/// Scoop over the middle vent digs it out.
 void TrialRoad_UncoverMiddleVent(s32 phase, s32 frame) {
   TrialRoad_UncoverVent(ACTOR_MIDDLE_VENT, phase, frame);
 }
 
-/// Scoop uncovers the east vent.
+/// Scoop over the east vent digs it out.
 void TrialRoad_UncoverEastVent(s32 phase, s32 frame) {
   TrialRoad_UncoverVent(ACTOR_EAST_VENT, phase, frame);
 }
 
-/// Lifts the leader onto the block when he stands on its cell.
+/// Stepping onto the fountain stage's block from above leaves Felix standing
+/// on its top, 32 pixels up, rather than inside it.
 void TrialRoad_StandOnBlock(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *block = Actor_GetById(ACTOR_PILLAR_A);
@@ -1400,18 +1522,21 @@ void TrialRoad_StandOnBlock(void) {
   }
 }
 
-/// While Sand is cast, the leader moves on layer 2.
+/// Sand at the sand stage lets Felix, sunk into the ground, go up the stream
+/// that would otherwise carry him back. The game moves him onto the map's
+/// upper level for as long as he stays sunk.
 void TrialRoad_StartSand(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->layer = MAPGRID_LAYER_OVERHEAD;
 }
 
-/// As Sand fades, the leader moves on layer 0 again.
+/// When Felix rises out of the sand at the sand stage, he walks on the ground
+/// level again.
 void TrialRoad_EndSand(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->layer = MAPGRID_LAYER_GROUND;
 }
 
-/// Whirlwind blows the ivy off the sand stage's cliff, and the cell it covered
-/// opens.
+/// Whirlwind on the ivy on the sand stage's cliff blows it away and uncovers
+/// the vine behind it, cell (19, 21), which Felix can then climb.
 void TrialRoad_BlowAwaySandStageIvy(void) {
   MapGrid_CopyCellAttributes(12, 21, 1, 1, 19, 21);
   Event_SetFlag(FLAG_SAND_STAGE_IVY_BLOWN_AWAY);
@@ -1434,7 +1559,8 @@ extern const s32 *gFieldEffect_DurationScripts[];
 
 #include "../field/field_effect_advance_motion_priority.c"
 
-/// In the stream the leader drifts south, throwing spray.
+/// Walking in the sand stage's stream carries Felix south a pixel a frame,
+/// throwing up spray, unless he is sunk with Sand.
 void TrialRoad_DriftWithStream(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct EffectOptions options;
@@ -1460,15 +1586,18 @@ void TrialRoad_DriftWithStream(void) {
                     EFFECT_USE_UPDATE | 1, &options);
 }
 
-/// Lift raises the rock at the cave's mouth.
+/// Lift on the rock in the cave beyond the summit raises it out of the way to
+/// Gasp's pool.
 void TrialRoad_LiftCaveRock(void) { GameFlag_Set(FLAG_CAVE_ROCK_LIFTED); }
 
-/// Cyclone ("Conjure wind to scatter weeds.") scatters the weeds it touches.
+/// Cyclone on the clumps of weeds around Gasp's pool scatters the ones it
+/// touches.
 void TrialRoad_ScatterWeeds(void) {
   FieldCyclone_CopyTouchedCells(68, 6, MAPGRID_LAYER_MIDDLE, 21, 13, 64, 64);
 }
 
-/// Cyclone scatters the weeds, and the Mad Plant hiding in them attacks.
+/// Cyclone on the left-hand weeds by the entrance of Gasp's pool, cell (4, 9),
+/// scatters them, and the Mad Plant hiding there leaps out and attacks.
 void TrialRoad_ScatterWeedsHidingMadPlant(void) {
   FieldCyclone_CopyTouchedCells(68, 6, MAPGRID_LAYER_MIDDLE, 21, 13, 64, 64);
   if (!Event_GetFlag(FLAG_MAD_PLANT(MAD_PLANT_TRIAL_ROAD))) {
@@ -1481,7 +1610,7 @@ void TrialRoad_ScatterWeedsHidingMadPlant(void) {
   }
 }
 
-/// Always 1.
+/// Always 1; nothing in the overlay calls it.
 s32 TrialRoad_ReturnTrue(void) { return 1; }
 
 #define DEFINE_TRIAL_ROAD_SET_POOL_TILES(name, n1, n2)                         \
@@ -1494,13 +1623,19 @@ s32 TrialRoad_ReturnTrue(void) { return 1; }
     Map_CopyCellsRect(n2, 30, 1, 1, 82, 15);                                   \
   }
 
-/// Shows the pools' hidden tiles.
+/// Reveal anywhere in Gasp's pool room shows the hidden tiles in the pools,
+/// at cells (10, 11), (18, 7) and (18, 15).
 DEFINE_TRIAL_ROAD_SET_POOL_TILES(TrialRoad_RevealPoolTiles, 33, 35)
 
-/// Hides the pools' tiles again.
+/// When Reveal wears off in Gasp's pool room, the tiles in the pools are
+/// hidden again.
 DEFINE_TRIAL_ROAD_SET_POOL_TILES(TrialRoad_HidePoolTiles, 34, 36)
 
-/// The gate at the top opens while the party's equipment is held.
+/// Stepping on the cell in front of the last stage's doorway at the summit
+/// during the race, cell (13, 19) or (18, 19), redraws the doorway with the
+/// sound of a door opening. XXX: whether it shows the doorway shutting behind
+/// Felix and stops its stairs leading back down, as the copied cells suggest; a
+/// render of the summit reached by the race would settle it.
 void TrialRoad_OpenSummitGate(s32 sound) {
   if (Event_GetFlag(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT)) {
     if (gTrialRoadState->mirrored == 0) {
@@ -1516,7 +1651,12 @@ void TrialRoad_OpenSummitGate(s32 sound) {
   Event_SetFlag(FLAG_SCENE_TEMP_83);
 }
 
-/// Moapa at the summit: the race's result decides his challenge.
+/// At the summit during the race, cell (13, 16) on the left path or (18, 16)
+/// on the right brings on Moapa: he speaks according to who arrived first,
+/// and the battle with him and his knights begins, chosen by how many doors
+/// he reached first. XXX: where those cells show on screen, three rows north
+/// of the doorways in the map; a render of the summit reached by the race
+/// would settle it.
 void TrialRoad_ChallengeMoapa(void) {
   s32 count = Event_GetFlag(FLAG_RIVAL_FIRST_AT_DOOR_BASE);
 
@@ -1535,8 +1675,8 @@ void TrialRoad_ChallengeMoapa(void) {
   Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_MOAPA, 4 - count);
 }
 
-/// When the object stands in column 8, sets FLAG_TRIAL_ROAD_PEAK_PILLAR_PLACED,
-/// stops its motion and lifts it one pixel.
+/// Moving or pushing the summit's stone pillar, at cell (7, 20), one cell east
+/// into column 8 settles it there for good.
 void TrialRoad_SetSummitPillar(s32 a, s32 id) {
   struct Actor *actor = Actor_GetById(id);
 
@@ -1567,8 +1707,8 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gTrialRoad_Triggers;
 }
 
-/// Readies the pillar stage: the pillar under the ivy cannot be pushed until
-/// Whirlwind blows the ivy off; each pillar gets its top.
+/// Readies the pillar stage: the middle pillar cannot be pushed until
+/// Whirlwind blows its ivy off, and Felix can jump between the pillars' tops.
 void TrialRoad_SetUpPillarStage(void) {
   if (!Event_GetFlag(FLAG_PILLAR_STAGE_IVY_BLOWN_AWAY))
     PUSH_BLOCKED(Actor_GetById(ACTOR_PILLAR_C)) = 1;
@@ -1586,7 +1726,8 @@ void TrialRoad_SetUpPillarStage(void) {
   Task_Add(TrialRoad_CheckLeaderOnPillars, TASK_PASS_FRAME);
 }
 
-/// Readies the torch stage: each pillar gets its top.
+/// Readies the torch stage: its pillars of ice cannot be pushed, and those
+/// already melted stay puddles.
 void TrialRoad_SetUpTorchStage(void) {
   TrialRoad_AddPillarTop(ACTOR_PILLAR_A);
   TrialRoad_AddPillarTop(ACTOR_PILLAR_B);
@@ -1622,8 +1763,8 @@ void TrialRoad_SetUpTorchStage(void) {
     TrialRoad_SetPillarTopLift(ACTOR_PILLAR_F, -PILLAR_HEIGHT);
 }
 
-/// Readies the stage of pillars in ivy: each stays blocked until Whirlwind
-/// blows its ivy off.
+/// Readies the ivy stage: its two overgrown pillars cannot be pushed until
+/// Whirlwind blows their ivy off.
 void TrialRoad_SetUpIvyPillarStage(void) {
   if (!Event_GetFlag(FLAG_AREA_TEMP_27))
     PUSH_BLOCKED(Actor_GetById(ACTOR_PILLAR_A)) = 1;
@@ -1645,7 +1786,9 @@ void TrialRoad_SetUpIvyPillarStage(void) {
   TrialRoad_SetJumpCellUnder(ACTOR_PILLAR_E);
 }
 
-/// Readies the pound stage: its four stakes cannot be pushed.
+/// Readies the Pound stage: its four stakes cannot be pushed, one of each pair
+/// stands raised, and the overgrown pillar cannot be pushed until Whirlwind
+/// blows its ivy off.
 void TrialRoad_SetUpPoundStage(void) {
   PUSH_BLOCKED(Actor_GetById(ACTOR_WEST_STAKE)) = 1;
   PUSH_BLOCKED(Actor_GetById(ACTOR_INNER_WEST_STAKE)) = 1;
@@ -1683,14 +1826,15 @@ void TrialRoad_SetUpPoundStage(void) {
 
 void MagmaRockInside_RestoreCrumblingPillars(const u16 *table);
 
-/// Readies the crumbling stage: the pillars already crumbled stay gone.
+/// Readies the crumbling stage: the cracked pillars already crumbled stay
+/// gone.
 void TrialRoad_SetUpCrumblingStage(void) {
   MagmaRockInside_RestoreCrumblingPillars(gTrialRoad_CrumblingPillars);
 }
 
-/// Readies the log stage: the logs cannot be pushed as blocks are and are not
-/// solid, their cells are walls (TrialRoad_BlockLogs), and the block on pillar
-/// A gets its top.
+/// Readies the log stage: the logs roll by their own events rather than
+/// sliding like blocks, their cells are walls (TrialRoad_BlockLogs), and
+/// Felix can jump onto the block.
 void TrialRoad_SetUpLogStage(void) {
   MapGrid_CopyCellAttributes(11, 22, 11, 8, 11, 64);
   MapGrid_CopyCellAttributes(79, 22, 11, 8, 79, 64);
@@ -1752,9 +1896,8 @@ struct TrialRoadFountain *TrialRoad_AddFountain(s32 slot, s32 id, s32 timer,
 #define SOUTH_FOUNTAIN_HEIGHT 32
 
 /// Readies the fountain stage: its five vents' fountains rise and fall
-/// together; each of the northern three stays hidden until it has been
-/// uncovered, and then opens its cell; the leader wades in the risen water as
-/// in a room with a second level; the block on pillar A gets its top.
+/// together, the northern three buried until Scoop digs them out; Felix rides
+/// a risen fountain as a step up, and can jump onto the block.
 void TrialRoad_SetUpFountainStage(void) {
   struct TrialRoadFountain *fountain;
 
@@ -1801,8 +1944,8 @@ void TrialRoad_SetUpFountainStage(void) {
   TrialRoad_SetJumpCellUnder(ACTOR_PILLAR_A);
 }
 
-/// Readies the sand stage: its tightrope, and the cell under the cliff's ivy
-/// open once Whirlwind has blown the ivy away.
+/// Readies the sand stage: its tightrope between two posts, and the vine on
+/// the cliff, climbable once Whirlwind has blown its ivy away.
 void TrialRoad_SetUpSandStage(void) {
   Tightrope_Initialize();
   Tightrope_Place(0, ACTOR_WEST_POST, ACTOR_EAST_POST);
@@ -1812,11 +1955,12 @@ void TrialRoad_SetUpSandStage(void) {
     Actor_SetPosition(ACTOR_SAND_STAGE_IVY, 0, 0);
 }
 
-/// Does nothing: the summit's cave needs no setting up.
+/// The cave beyond the summit needs no setting up.
 void TrialRoad_SetUpCave(void) {}
 
-/// Gasp keeps across the spot at (296, 248) from the leader; once the leader
-/// stands on it, Gasp cries and hops away to his own spot, there to be talked
+/// Gasp moves opposite to Felix about the hidden tile at cell (18, 15):
+/// whatever way Felix steps, Gasp steps the other. Once Felix stands on that
+/// tile, Gasp cries out and hops away to cell (21, 16), there to be talked
 /// to.
 void TrialRoad_GaspFlees(void) {
   struct Actor *gasp = Actor_GetById(ACTOR_GASP);
@@ -1857,9 +2001,9 @@ void TrialRoad_GaspFlees(void) {
 /// Whether the palette cycle runs; the frame it has reached.
 extern s32 gTrialRoad_PaletteCycleRunning;
 
-/// Unless Gasp is caught, readies him: until he first flees he floats 8.5
-/// pixels up, after it he stands on the ground; then he keeps away from the
-/// leader each frame (TrialRoad_GaspFlees).
+/// Readies Gasp's pool room, unless Gasp has joined the party: he floats over
+/// the water until he first hops away, and stands on the ground after; each
+/// frame he mirrors Felix (TrialRoad_GaspFlees).
 void TrialRoad_SetUpPoolRoom(void) {
   if (!Event_GetFlag(FLAG_DJINNI(DJINNI_GASP))) {
     struct Actor *actor = Actor_GetById(ACTOR_GASP);
@@ -1877,7 +2021,7 @@ void TrialRoad_SetUpPoolRoom(void) {
   }
 }
 
-/// Starts or stops the pools' palette cycle.
+/// Starts or stops the summit's colour cycle.
 void TrialRoad_SetPaletteCycleRunning(s32 value) {
   gTrialRoad_PaletteCycleRunning = value;
 }
@@ -1926,8 +2070,10 @@ void PaletteCycle_StepAt(void) {
   gTrialRoad_PaletteCycleFrame++;
 }
 
-/// Starts the pools' palette cycle, loading its colours unless mode is 2; mode
-/// 1 also starts its task.
+/// Starts the summit's colour cycle, loading its colours unless mode is 2;
+/// mode 1 also starts its task. XXX: which part of the summit the cycle
+/// animates (the purple Hover tile is likeliest); a few frames of the summit
+/// compared would settle it.
 void TrialRoad_StartPaletteCycle(s32 mode) {
   gTrialRoad_PaletteCycleRunning = 1;
   if (mode != 2)
@@ -1941,8 +2087,9 @@ void TrialRoad_StartPaletteCycle(s32 mode) {
 
 void TrialRoad_LeaveMoapaWaiting(void);
 
-/// The mountain's peak: after the battle, the victory or the defeat; on
-/// arrival, Moapa and his knights wait.
+/// Readies the summit: after the battle, Moapa's surrender or his scorn;
+/// during the race, Moapa and his knights waiting at the top if they got there
+/// first, or nobody yet.
 void TrialRoad_SetUpPeak(void) {
   s32 entrance = gMainRoutineWork.entrance;
 
@@ -2030,10 +2177,10 @@ void TrialRoad_CopyCellsBackward(s32 srcX, s32 srcY, s32 width, s32 height,
   }
 }
 
-/// Opens the door at the end of Moapa's stage, on his side of the road.
 void TrialRoad_OpenRivalDoor(s32 mirrored, s32 stage);
 
-/// Each frame of the race, moves Moapa's party on by its recording.
+/// Each frame of the race, moves Moapa's party on by its recording, and opens
+/// his door when he reaches it.
 void TrialRoad_UpdateRival(void) {
   struct TrialRoadState *state = gTrialRoadState;
   struct TrialRoadState *road = gTrialRoadState;
@@ -2428,10 +2575,11 @@ void TrialRoad_PlaceActor(s32 id, s32 x, s32 z, s32 angle) {
                              (u16)TrialRoad_MirrorAngle(angle));
 }
 
-/// Does nothing: Moapa stays where he waits.
+/// Felix got to the summit first, so Moapa is not placed yet; he arrives
+/// when Felix walks up (TrialRoad_ReachPeakFirst).
 void TrialRoad_LeaveMoapaWaiting(void) {}
 
-/// Places Moapa and his two knights at the peak.
+/// Places Moapa and his two knights at the summit, waiting for the party.
 void TrialRoad_PlaceMoapaAtPeak(void) {
   TrialRoad_PlaceActor(ACTOR_MOAPA, 288, 264, FACING_WEST);
   TrialRoad_PlaceActor(ACTOR_LEFT_KNIGHT, 296, 248, FACING_WEST);
@@ -2440,7 +2588,8 @@ void TrialRoad_PlaceMoapaAtPeak(void) {
 
 void Actor_PlaceOnActor(s32 actor, s32 value);
 
-/// The party reaches the peak first, before Moapa's men.
+/// The party gathers at the summit first, and Moapa and his knights arrive
+/// after them: "You were quite swift! You may prove a challenge yet!"
 void TrialRoad_ReachPeakFirst(void) {
   struct Actor *actor;
 
@@ -2555,7 +2704,8 @@ void TrialRoad_ReachPeakFirst(void) {
   Event_Wait(6);
 }
 
-/// The party reaches the peak after Moapa's men.
+/// Moapa and his knights are already waiting when the party reaches the
+/// summit: "You may have been slow, but you made it through Trial Road".
 void TrialRoad_ReachPeakSecond(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -2619,7 +2769,9 @@ void TrialRoad_ReachPeakSecond(void) {
 
 void PartyInventory_Discard(s32 cue);
 
-/// After beating Moapa at the peak: he gives up the Hover Jade.
+/// After the party beats Moapa at the summit, he admits their strength and
+/// gives them the Hover Jade for the Shaman's Rod, and the party goes back to
+/// the Shaman Village to rest.
 void TrialRoad_BeatMoapa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -2711,7 +2863,8 @@ void TrialRoad_BeatMoapa(void) {
   wait(30);
 }
 
-/// After losing to Moapa at the peak.
+/// After the party loses to Moapa at the summit: "You've lost. Now leave
+/// Shaman village."
 void TrialRoad_LoseToMoapa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -2750,7 +2903,9 @@ void TrialRoad_LoseToMoapa(void) {
 
 extern u32 gTrialRoad_LeftKnightLeavesScript[];
 
-/// The camera tours the road while Moapa explains its traps and its four doors.
+/// While Moapa explains the trial, the camera tours a stage: its traps, the
+/// four doors, a knight showing how the switch opens the blue chests and how
+/// filling them opens the door, and the give-up button.
 void TrialRoad_ShowTraps(void) {
   s32 i;
 
@@ -3145,8 +3300,8 @@ struct TrialRoadFountain *TrialRoad_AddFountain(s32 slot, s32 id, s32 timer,
 
 #include "shared/traps_check.h"
 
-/// Magma Rock's crumbling pillar: the listed pillar shakes, crumbles and falls
-/// away.
+/// A cracked pillar in the crumbling stage shakes, crumbles and falls away, as
+/// Magma Rock's do.
 void TrialRoad_CrumblePillar(const void *data, s32 id) {
   const struct TrapEntry *entry = data;
   struct Actor *actor = Actor_GetById(id);
@@ -3197,8 +3352,8 @@ void TrialRoad_TakePlaceOf(struct Actor *actor, struct Actor *target) {
   Actor_SetPositionAndResetMotion(target, 0, 0, 0);
 }
 
-/// Magma Rock's trap floor: a listed pillar stepped on flashes the first time
-/// and gives way under the leader the second.
+/// A cracked pillar stepped on flashes the first time and gives way under
+/// Felix the second, as Magma Rock's trap floor does.
 void TrialRoad_StepOnTrap(const u16 *table) {
   struct Actor *leader;
   struct Actor *partner;
@@ -4000,7 +4155,7 @@ void TrialRoad_JumpForward(void);
 void TrialRoad_BlowAwayPoundStageIvy(void);
 void TrialRoad_StandOnBlock(void);
 void TrialRoad_OpenSummitGate(s32 sound);
-void TrialRoad_StepPastChests(void);
+void TrialRoad_StepOffSwitch(void);
 
 // clang-format off
 LAST_DATA u32 gTrialRoad_HexDigits[] = {
@@ -4218,18 +4373,18 @@ LAST_DATA struct Trigger gTrialRoad_Triggers[] = {
 };
 
 LAST_DATA struct Trigger gTrialRoad_PillarStageTriggers[] = {
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 10, IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 11, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 20, IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 21, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 30, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 31, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
-    {TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 41, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
+    {TRIGGER_STEP, CELL_LEFT_PATH_STAIRS_DOWN, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_RIGHT_PATH_STAIRS_DOWN, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_LEFT_PATH_DOOR, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_RIGHT_PATH_DOOR, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_AROUND_WEST_GIVE_UP_BUTTON, IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, CELL_WEST_GIVE_UP_BUTTON, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, CELL_AROUND_EAST_GIVE_UP_BUTTON, IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, CELL_EAST_GIVE_UP_BUTTON, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, CELL_AROUND_WEST_SWITCH, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepOffSwitch)},
+    {TRIGGER_STEP, CELL_WEST_SWITCH, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
+    {TRIGGER_STEP, CELL_AROUND_EAST_SWITCH, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepOffSwitch)},
+    {TRIGGER_STEP, CELL_EAST_SWITCH, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
     {USE_ITEM_ON_ACTOR(ITEM_FILTER_HEAVY), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_LEFT_INNER_CHEST, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
     {USE_ITEM_ON_ACTOR(ITEM_FILTER_HEAVY), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_LEFT_OUTER_CHEST, IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
     {USE_ITEM_ON_ACTOR(ITEM_FILTER_HEAVY), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_RIGHT_INNER_CHEST, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
@@ -4238,8 +4393,8 @@ LAST_DATA struct Trigger gTrialRoad_PillarStageTriggers[] = {
     {TRIGGER_TALK, ACTOR_LEFT_OUTER_CHEST, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, ACTOR_RIGHT_INNER_CHEST, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, ACTOR_RIGHT_OUTER_CHEST, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 51, IF_FLAG_SET(FLAG_LEADER_ON_PILLARS), EVENT(TrialRoad_JumpAcrossGap)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 52, IF_FLAG_SET(FLAG_LEADER_ON_PILLARS), EVENT(TrialRoad_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_PILLAR_STAGE_GAP, IF_FLAG_SET(FLAG_LEADER_ON_PILLARS), EVENT(TrialRoad_JumpAcrossGap)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_PILLAR_STAGE_LEDGE, IF_FLAG_SET(FLAG_LEADER_ON_PILLARS), EVENT(TrialRoad_JumpForward)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_A, CONDITION_ALWAYS, EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_B, CONDITION_ALWAYS, EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
@@ -4257,18 +4412,18 @@ LAST_DATA struct Trigger gTrialRoad_PillarStageTriggers[] = {
 };
 
 LAST_DATA struct Trigger gTrialRoad_TorchStageTriggers[] = {
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 10, IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 11, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 20, IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 21, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 30, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 31, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
-    {TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 41, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
+    {TRIGGER_STEP, CELL_LEFT_PATH_STAIRS_DOWN, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_RIGHT_PATH_STAIRS_DOWN, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_LEFT_PATH_DOOR, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_RIGHT_PATH_DOOR, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_AROUND_WEST_GIVE_UP_BUTTON, IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, CELL_WEST_GIVE_UP_BUTTON, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, CELL_AROUND_EAST_GIVE_UP_BUTTON, IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, CELL_EAST_GIVE_UP_BUTTON, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, CELL_AROUND_WEST_SWITCH, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepOffSwitch)},
+    {TRIGGER_STEP, CELL_WEST_SWITCH, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
+    {TRIGGER_STEP, CELL_AROUND_EAST_SWITCH, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepOffSwitch)},
+    {TRIGGER_STEP, CELL_EAST_SWITCH, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
     {USE_ITEM_ON_ACTOR(ITEM_FILTER_HEAVY), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_LEFT_INNER_CHEST, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
     {USE_ITEM_ON_ACTOR(ITEM_FILTER_HEAVY), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_LEFT_OUTER_CHEST, IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
     {USE_ITEM_ON_ACTOR(ITEM_FILTER_HEAVY), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_RIGHT_INNER_CHEST, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
@@ -4277,8 +4432,8 @@ LAST_DATA struct Trigger gTrialRoad_TorchStageTriggers[] = {
     {TRIGGER_TALK, ACTOR_LEFT_OUTER_CHEST, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, ACTOR_RIGHT_INNER_CHEST, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, ACTOR_RIGHT_OUTER_CHEST, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 33, CONDITION_ALWAYS, EVENT(TrialRoad_JumpMeltedPuddle)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 33, CONDITION_ALWAYS, EVENT(TrialRoad_JumpMeltedPuddle)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_ICE_PILLAR_SIDE, CONDITION_ALWAYS, EVENT(TrialRoad_JumpMeltedPuddle)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_ICE_PILLAR_SIDE, CONDITION_ALWAYS, EVENT(TrialRoad_JumpMeltedPuddle)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(TrialRoad_ClearJumpUnderTorchStagePillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_A, CONDITION_ALWAYS, EVENT(TrialRoad_ClearJumpUnderTorchStagePillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_B, CONDITION_ALWAYS, EVENT(TrialRoad_ClearJumpUnderTorchStagePillar)},
@@ -4297,18 +4452,18 @@ LAST_DATA struct Trigger gTrialRoad_TorchStageTriggers[] = {
 };
 
 LAST_DATA struct Trigger gTrialRoad_IvyPillarStageTriggers[] = {
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 10, IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 11, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 20, IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 21, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 30, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 31, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
-    {TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 41, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
+    {TRIGGER_STEP, CELL_LEFT_PATH_STAIRS_DOWN, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_RIGHT_PATH_STAIRS_DOWN, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_LEFT_PATH_DOOR, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_RIGHT_PATH_DOOR, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_AROUND_WEST_GIVE_UP_BUTTON, IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, CELL_WEST_GIVE_UP_BUTTON, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, CELL_AROUND_EAST_GIVE_UP_BUTTON, IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, CELL_EAST_GIVE_UP_BUTTON, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, CELL_AROUND_WEST_SWITCH, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepOffSwitch)},
+    {TRIGGER_STEP, CELL_WEST_SWITCH, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
+    {TRIGGER_STEP, CELL_AROUND_EAST_SWITCH, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepOffSwitch)},
+    {TRIGGER_STEP, CELL_EAST_SWITCH, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
     {USE_ITEM_ON_ACTOR(ITEM_FILTER_HEAVY), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_LEFT_INNER_CHEST, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
     {USE_ITEM_ON_ACTOR(ITEM_FILTER_HEAVY), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_LEFT_OUTER_CHEST, IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
     {USE_ITEM_ON_ACTOR(ITEM_FILTER_HEAVY), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_RIGHT_INNER_CHEST, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
@@ -4317,7 +4472,7 @@ LAST_DATA struct Trigger gTrialRoad_IvyPillarStageTriggers[] = {
     {TRIGGER_TALK, ACTOR_LEFT_OUTER_CHEST, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, ACTOR_RIGHT_INNER_CHEST, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, ACTOR_RIGHT_OUTER_CHEST, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 33, CONDITION_ALWAYS, EVENT(TrialRoad_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_IVY_STAGE_LEDGE, CONDITION_ALWAYS, EVENT(TrialRoad_JumpForward)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_A, IF_FLAG_SET(FLAG_AREA_TEMP_27), EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PILLAR_B, IF_FLAG_SET(FLAG_AREA_TEMP_28), EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
@@ -4336,18 +4491,18 @@ LAST_DATA struct Trigger gTrialRoad_IvyPillarStageTriggers[] = {
 };
 
 LAST_DATA struct Trigger gTrialRoad_PoundStageTriggers[] = {
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 10, IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 11, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 20, IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 21, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 30, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 31, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
-    {TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 41, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
+    {TRIGGER_STEP, CELL_LEFT_PATH_STAIRS_DOWN, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_RIGHT_PATH_STAIRS_DOWN, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_LEFT_PATH_DOOR, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_RIGHT_PATH_DOOR, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_AROUND_WEST_GIVE_UP_BUTTON, IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, CELL_WEST_GIVE_UP_BUTTON, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, CELL_AROUND_EAST_GIVE_UP_BUTTON, IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, CELL_EAST_GIVE_UP_BUTTON, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, CELL_AROUND_WEST_SWITCH, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepOffSwitch)},
+    {TRIGGER_STEP, CELL_WEST_SWITCH, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
+    {TRIGGER_STEP, CELL_AROUND_EAST_SWITCH, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepOffSwitch)},
+    {TRIGGER_STEP, CELL_EAST_SWITCH, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
     {USE_ITEM_ON_ACTOR(ITEM_FILTER_HEAVY), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_LEFT_INNER_CHEST, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
     {USE_ITEM_ON_ACTOR(ITEM_FILTER_HEAVY), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_LEFT_OUTER_CHEST, IF_FLAG_SET(FLAG_OUTER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
     {USE_ITEM_ON_ACTOR(ITEM_FILTER_HEAVY), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_RIGHT_INNER_CHEST, IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
@@ -4356,15 +4511,15 @@ LAST_DATA struct Trigger gTrialRoad_PoundStageTriggers[] = {
     {TRIGGER_TALK, ACTOR_LEFT_OUTER_CHEST, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, ACTOR_RIGHT_INNER_CHEST, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, ACTOR_RIGHT_OUTER_CHEST, CONDITION_ALWAYS, EVENT(TrialRoad_ExamineChest)},
-    {STEP_TRIGGER_WALKING, 50, CONDITION_ALWAYS, EVENT(TrialRoad_LandOnPillar)},
-    {STEP_TRIGGER_WALKING, 51, CONDITION_ALWAYS, EVENT(TrialRoad_LandOnPillar)},
-    {STEP_TRIGGER_WALKING, 52, CONDITION_ALWAYS, EVENT(TrialRoad_LandOnPillar)},
-    {STEP_TRIGGER_WALKING, 53, CONDITION_ALWAYS, EVENT(TrialRoad_LandOnPillar)},
-    {TRIGGER_STEP, 50, FLAG_INNER_WEST_STAKE_RAISED, EVENT(TrialRoad_StepOntoWestStake)},
-    {TRIGGER_STEP, 51, IF_FLAG_SET(FLAG_INNER_WEST_STAKE_RAISED), EVENT(TrialRoad_StepOntoInnerWestStake)},
-    {TRIGGER_STEP, 52, FLAG_EAST_STAKE_RAISED, EVENT(TrialRoad_StepOntoInnerEastStake)},
-    {TRIGGER_STEP, 53, IF_FLAG_SET(FLAG_EAST_STAKE_RAISED), EVENT(TrialRoad_StepOntoEastStake)},
-    {STEP_TRIGGER_WALKING, 60, CONDITION_ALWAYS, EVENT(TrialRoad_LandOnPillar)},
+    {STEP_TRIGGER_WALKING, CELL_WEST_STAKE, CONDITION_ALWAYS, EVENT(TrialRoad_LandOnPillar)},
+    {STEP_TRIGGER_WALKING, CELL_INNER_WEST_STAKE, CONDITION_ALWAYS, EVENT(TrialRoad_LandOnPillar)},
+    {STEP_TRIGGER_WALKING, CELL_INNER_EAST_STAKE, CONDITION_ALWAYS, EVENT(TrialRoad_LandOnPillar)},
+    {STEP_TRIGGER_WALKING, CELL_EAST_STAKE, CONDITION_ALWAYS, EVENT(TrialRoad_LandOnPillar)},
+    {TRIGGER_STEP, CELL_WEST_STAKE, FLAG_INNER_WEST_STAKE_RAISED, EVENT(TrialRoad_StepOntoWestStake)},
+    {TRIGGER_STEP, CELL_INNER_WEST_STAKE, IF_FLAG_SET(FLAG_INNER_WEST_STAKE_RAISED), EVENT(TrialRoad_StepOntoInnerWestStake)},
+    {TRIGGER_STEP, CELL_INNER_EAST_STAKE, FLAG_EAST_STAKE_RAISED, EVENT(TrialRoad_StepOntoInnerEastStake)},
+    {TRIGGER_STEP, CELL_EAST_STAKE, IF_FLAG_SET(FLAG_EAST_STAKE_RAISED), EVENT(TrialRoad_StepOntoEastStake)},
+    {STEP_TRIGGER_WALKING, CELL_STAKE_GROUND, CONDITION_ALWAYS, EVENT(TrialRoad_LandOnPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_A, CONDITION_ALWAYS, EVENT(TrialRoad_CheckStakesCovered)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_B, IF_FLAG_SET(FLAG_POUND_STAGE_IVY_BLOWN_AWAY), EVENT(TrialRoad_CheckStakesCovered)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_C, CONDITION_ALWAYS, EVENT(TrialRoad_CheckStakesCovered)},
@@ -4382,22 +4537,30 @@ LAST_DATA s16 gTrialRoad_CrumblingPillars[] = {
 // clang-format on
 
 LAST_DATA struct Trigger gTrialRoad_CrumblingStageTriggers[] = {
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 10, IF_FLAG_SET(FLAG_GIVE_UP_ASKED),
-     EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 11, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 20, IF_FLAG_SET(FLAG_GIVE_UP_ASKED),
-     EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 21, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 30, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED),
-     EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 31, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
-    {TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED),
-     EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 41, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
+    {TRIGGER_STEP, CELL_LEFT_PATH_STAIRS_DOWN, CONDITION_ALWAYS,
+     EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_RIGHT_PATH_STAIRS_DOWN, CONDITION_ALWAYS,
+     EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_LEFT_PATH_DOOR, CONDITION_ALWAYS,
+     EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_RIGHT_PATH_DOOR, CONDITION_ALWAYS,
+     EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_AROUND_WEST_GIVE_UP_BUTTON,
+     IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, CELL_WEST_GIVE_UP_BUTTON, FLAG_GIVE_UP_ASKED,
+     EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, CELL_AROUND_EAST_GIVE_UP_BUTTON,
+     IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, CELL_EAST_GIVE_UP_BUTTON, FLAG_GIVE_UP_ASKED,
+     EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, CELL_AROUND_WEST_SWITCH,
+     IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepOffSwitch)},
+    {TRIGGER_STEP, CELL_WEST_SWITCH, FLAG_STAGE_CHESTS_OPENED,
+     EVENT(TrialRoad_OpenChests)},
+    {TRIGGER_STEP, CELL_AROUND_EAST_SWITCH,
+     IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepOffSwitch)},
+    {TRIGGER_STEP, CELL_EAST_SWITCH, FLAG_STAGE_CHESTS_OPENED,
+     EVENT(TrialRoad_OpenChests)},
     {USE_ITEM_ON_ACTOR(ITEM_FILTER_HEAVY),
      TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_LEFT_INNER_CHEST,
      IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
@@ -4418,42 +4581,52 @@ LAST_DATA struct Trigger gTrialRoad_CrumblingStageTriggers[] = {
      EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, ACTOR_RIGHT_OUTER_CHEST, CONDITION_ALWAYS,
      EVENT(TrialRoad_ExamineChest)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 33, CONDITION_ALWAYS,
-     EVENT(TrialRoad_JumpForward)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 33, CONDITION_ALWAYS,
-     EVENT(TrialRoad_JumpForward)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 50, CONDITION_ALWAYS,
-     EVENT(TrialRoad_JumpForward)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 51, CONDITION_ALWAYS,
-     EVENT(TrialRoad_JumpForward)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 34, CONDITION_ALWAYS,
-     EVENT(TrialRoad_CheckCrumblingPillars)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 34, CONDITION_ALWAYS,
-     EVENT(TrialRoad_CheckCrumblingPillars)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 50,
-     FLAG_AREA_TEMP_43, EVENT(TrialRoad_CrumbleWestPillar)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 51,
-     FLAG_AREA_TEMP_45, EVENT(TrialRoad_CrumbleEastPillar)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_CRUMBLING_STAGE_LEDGE,
+     CONDITION_ALWAYS, EVENT(TrialRoad_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_CRUMBLING_STAGE_LEDGE,
+     CONDITION_ALWAYS, EVENT(TrialRoad_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_WEST_CRUMBLING_PILLAR,
+     CONDITION_ALWAYS, EVENT(TrialRoad_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_EAST_CRUMBLING_PILLAR,
+     CONDITION_ALWAYS, EVENT(TrialRoad_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BESIDE_CRUMBLING_PILLAR,
+     CONDITION_ALWAYS, EVENT(TrialRoad_CheckCrumblingPillars)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BESIDE_CRUMBLING_PILLAR,
+     CONDITION_ALWAYS, EVENT(TrialRoad_CheckCrumblingPillars)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
+     CELL_WEST_CRUMBLING_PILLAR, FLAG_AREA_TEMP_43,
+     EVENT(TrialRoad_CrumbleWestPillar)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS),
+     CELL_EAST_CRUMBLING_PILLAR, FLAG_AREA_TEMP_45,
+     EVENT(TrialRoad_CrumbleEastPillar)},
     {TRIGGER_TABLE_END},
 };
 
 LAST_DATA struct Trigger gTrialRoad_LogStageTriggers[] = {
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 10, IF_FLAG_SET(FLAG_GIVE_UP_ASKED),
-     EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 11, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 20, IF_FLAG_SET(FLAG_GIVE_UP_ASKED),
-     EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 21, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 30, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED),
-     EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 31, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
-    {TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED),
-     EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 41, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
+    {TRIGGER_STEP, CELL_LEFT_PATH_STAIRS_DOWN, CONDITION_ALWAYS,
+     EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_RIGHT_PATH_STAIRS_DOWN, CONDITION_ALWAYS,
+     EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_LEFT_PATH_DOOR, CONDITION_ALWAYS,
+     EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_RIGHT_PATH_DOOR, CONDITION_ALWAYS,
+     EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_AROUND_WEST_GIVE_UP_BUTTON,
+     IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, CELL_WEST_GIVE_UP_BUTTON, FLAG_GIVE_UP_ASKED,
+     EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, CELL_AROUND_EAST_GIVE_UP_BUTTON,
+     IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, CELL_EAST_GIVE_UP_BUTTON, FLAG_GIVE_UP_ASKED,
+     EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, CELL_AROUND_WEST_SWITCH,
+     IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepOffSwitch)},
+    {TRIGGER_STEP, CELL_WEST_SWITCH, FLAG_STAGE_CHESTS_OPENED,
+     EVENT(TrialRoad_OpenChests)},
+    {TRIGGER_STEP, CELL_AROUND_EAST_SWITCH,
+     IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepOffSwitch)},
+    {TRIGGER_STEP, CELL_EAST_SWITCH, FLAG_STAGE_CHESTS_OPENED,
+     EVENT(TrialRoad_OpenChests)},
     {USE_ITEM_ON_ACTOR(ITEM_FILTER_HEAVY),
      TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_LEFT_INNER_CHEST,
      IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
@@ -4474,32 +4647,32 @@ LAST_DATA struct Trigger gTrialRoad_LogStageTriggers[] = {
      EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, ACTOR_RIGHT_OUTER_CHEST, CONDITION_ALWAYS,
      EVENT(TrialRoad_ExamineChest)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 33, CONDITION_ALWAYS,
-     EVENT(TrialRoad_JumpForward)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 50, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushUpperLogWest)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 50, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushUpperLogEast)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 51, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushLowerLogWest)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 51, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushLowerLogEast)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 50, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushEastLogNorth)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 50, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushEastLogSouth)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 51, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushEastLogNorth)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 51, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushEastLogSouth)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 52, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushEastLogNorth)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 52, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushEastLogSouthOrClimbDown)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 53, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushEastLogNorth)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 53, CONDITION_ALWAYS,
-     EVENT(TrialRoad_PushEastLogSouth)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_LOG_STAGE_LEDGE,
+     CONDITION_ALWAYS, EVENT(TrialRoad_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_UPPER_LOG_ROWS,
+     CONDITION_ALWAYS, EVENT(TrialRoad_PushUpperLogWest)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_UPPER_LOG_ROWS,
+     CONDITION_ALWAYS, EVENT(TrialRoad_PushUpperLogEast)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_LOWER_LOG_ROWS,
+     CONDITION_ALWAYS, EVENT(TrialRoad_PushLowerLogWest)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_LOWER_LOG_ROWS,
+     CONDITION_ALWAYS, EVENT(TrialRoad_PushLowerLogEast)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_UPPER_LOG_ROWS,
+     CONDITION_ALWAYS, EVENT(TrialRoad_PushEastLogNorth)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_UPPER_LOG_ROWS,
+     CONDITION_ALWAYS, EVENT(TrialRoad_PushEastLogSouth)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_LOWER_LOG_ROWS,
+     CONDITION_ALWAYS, EVENT(TrialRoad_PushEastLogNorth)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_LOWER_LOG_ROWS,
+     CONDITION_ALWAYS, EVENT(TrialRoad_PushEastLogSouth)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_EAST_LOG_NORTH_END,
+     CONDITION_ALWAYS, EVENT(TrialRoad_PushEastLogNorth)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_EAST_LOG_NORTH_END,
+     CONDITION_ALWAYS, EVENT(TrialRoad_PushEastLogSouthOrClimbDown)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_EAST_LOG_SOUTH_END,
+     CONDITION_ALWAYS, EVENT(TrialRoad_PushEastLogNorth)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_EAST_LOG_SOUTH_END,
+     CONDITION_ALWAYS, EVENT(TrialRoad_PushEastLogSouth)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS,
      EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
@@ -4513,22 +4686,30 @@ LAST_DATA struct Trigger gTrialRoad_LogStageTriggers[] = {
 };
 
 LAST_DATA struct Trigger gTrialRoad_FountainStageTriggers[] = {
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 10, IF_FLAG_SET(FLAG_GIVE_UP_ASKED),
-     EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 11, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 20, IF_FLAG_SET(FLAG_GIVE_UP_ASKED),
-     EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 21, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 30, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED),
-     EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 31, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
-    {TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED),
-     EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 41, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
+    {TRIGGER_STEP, CELL_LEFT_PATH_STAIRS_DOWN, CONDITION_ALWAYS,
+     EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_RIGHT_PATH_STAIRS_DOWN, CONDITION_ALWAYS,
+     EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_LEFT_PATH_DOOR, CONDITION_ALWAYS,
+     EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_RIGHT_PATH_DOOR, CONDITION_ALWAYS,
+     EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_AROUND_WEST_GIVE_UP_BUTTON,
+     IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, CELL_WEST_GIVE_UP_BUTTON, FLAG_GIVE_UP_ASKED,
+     EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, CELL_AROUND_EAST_GIVE_UP_BUTTON,
+     IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, CELL_EAST_GIVE_UP_BUTTON, FLAG_GIVE_UP_ASKED,
+     EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, CELL_AROUND_WEST_SWITCH,
+     IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepOffSwitch)},
+    {TRIGGER_STEP, CELL_WEST_SWITCH, FLAG_STAGE_CHESTS_OPENED,
+     EVENT(TrialRoad_OpenChests)},
+    {TRIGGER_STEP, CELL_AROUND_EAST_SWITCH,
+     IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepOffSwitch)},
+    {TRIGGER_STEP, CELL_EAST_SWITCH, FLAG_STAGE_CHESTS_OPENED,
+     EVENT(TrialRoad_OpenChests)},
     {USE_ITEM_ON_ACTOR(ITEM_FILTER_HEAVY),
      TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_LEFT_INNER_CHEST,
      IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
@@ -4549,7 +4730,8 @@ LAST_DATA struct Trigger gTrialRoad_FountainStageTriggers[] = {
      EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, ACTOR_RIGHT_OUTER_CHEST, CONDITION_ALWAYS,
      EVENT(TrialRoad_ExamineChest)},
-    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(TrialRoad_StandOnBlock)},
+    {TRIGGER_STEP, CELL_BLOCK_TRACK, CONDITION_ALWAYS,
+     EVENT(TrialRoad_StandOnBlock)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS,
      EVENT(TrialRoad_ClearJumpUnderPushedPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
@@ -4559,11 +4741,11 @@ LAST_DATA struct Trigger gTrialRoad_FountainStageTriggers[] = {
      EVENT(TrialRoad_SetJumpUnderPushedPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PILLAR_A, CONDITION_ALWAYS,
      EVENT(TrialRoad_SetJumpUnderPushedPillar)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 50,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), CELL_WEST_VENT,
      FLAG_AREA_TEMP_63, EVENT(TrialRoad_UncoverWestVent)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 51,
-     FLAG_AREA_TEMP_64, EVENT(TrialRoad_UncoverMiddleVent)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 52,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS),
+     CELL_MIDDLE_VENT, FLAG_AREA_TEMP_64, EVENT(TrialRoad_UncoverMiddleVent)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), CELL_EAST_VENT,
      FLAG_AREA_TEMP_65, EVENT(TrialRoad_UncoverEastVent)},
     {TRIGGER_TABLE_END},
 };
@@ -4575,22 +4757,30 @@ LAST_DATA const s32 *gFieldEffect_DurationScripts[] = {
 };
 
 LAST_DATA struct Trigger gTrialRoad_SandStageTriggers[] = {
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(TrialRoad_TakeStairs)},
-    {TRIGGER_STEP, 10, IF_FLAG_SET(FLAG_GIVE_UP_ASKED),
-     EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 11, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 20, IF_FLAG_SET(FLAG_GIVE_UP_ASKED),
-     EVENT(TrialRoad_ClearGiveUpAsked)},
-    {TRIGGER_STEP, 21, FLAG_GIVE_UP_ASKED, EVENT(TrialRoad_OfferToGiveUp)},
-    {TRIGGER_STEP, 30, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED),
-     EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 31, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
-    {TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED),
-     EVENT(TrialRoad_StepPastChests)},
-    {TRIGGER_STEP, 41, FLAG_STAGE_CHESTS_OPENED, EVENT(TrialRoad_OpenChests)},
+    {TRIGGER_STEP, CELL_LEFT_PATH_STAIRS_DOWN, CONDITION_ALWAYS,
+     EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_RIGHT_PATH_STAIRS_DOWN, CONDITION_ALWAYS,
+     EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_LEFT_PATH_DOOR, CONDITION_ALWAYS,
+     EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_RIGHT_PATH_DOOR, CONDITION_ALWAYS,
+     EVENT(TrialRoad_TakeStairs)},
+    {TRIGGER_STEP, CELL_AROUND_WEST_GIVE_UP_BUTTON,
+     IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, CELL_WEST_GIVE_UP_BUTTON, FLAG_GIVE_UP_ASKED,
+     EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, CELL_AROUND_EAST_GIVE_UP_BUTTON,
+     IF_FLAG_SET(FLAG_GIVE_UP_ASKED), EVENT(TrialRoad_ClearGiveUpAsked)},
+    {TRIGGER_STEP, CELL_EAST_GIVE_UP_BUTTON, FLAG_GIVE_UP_ASKED,
+     EVENT(TrialRoad_OfferToGiveUp)},
+    {TRIGGER_STEP, CELL_AROUND_WEST_SWITCH,
+     IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepOffSwitch)},
+    {TRIGGER_STEP, CELL_WEST_SWITCH, FLAG_STAGE_CHESTS_OPENED,
+     EVENT(TrialRoad_OpenChests)},
+    {TRIGGER_STEP, CELL_AROUND_EAST_SWITCH,
+     IF_FLAG_SET(FLAG_STAGE_CHESTS_OPENED), EVENT(TrialRoad_StepOffSwitch)},
+    {TRIGGER_STEP, CELL_EAST_SWITCH, FLAG_STAGE_CHESTS_OPENED,
+     EVENT(TrialRoad_OpenChests)},
     {USE_ITEM_ON_ACTOR(ITEM_FILTER_HEAVY),
      TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_LEFT_INNER_CHEST,
      IF_FLAG_SET(FLAG_INNER_CHEST_OPEN), EVENT(TrialRoad_PutItemInChest)},
@@ -4611,7 +4801,8 @@ LAST_DATA struct Trigger gTrialRoad_SandStageTriggers[] = {
      EVENT(TrialRoad_ExamineChest)},
     {TRIGGER_TALK, ACTOR_RIGHT_OUTER_CHEST, CONDITION_ALWAYS,
      EVENT(TrialRoad_ExamineChest)},
-    {TRIGGER_STEP, 50, CONDITION_ALWAYS, EVENT(TrialRoad_DriftWithStream)},
+    {TRIGGER_STEP, CELL_STREAM, CONDITION_ALWAYS,
+     EVENT(TrialRoad_DriftWithStream)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0,
      CONDITION_ALWAYS, EVENT(TrialRoad_StartSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
@@ -4633,10 +4824,11 @@ LAST_DATA struct Trigger gTrialRoad_CaveRockTriggers[] = {
 
 LAST_DATA struct Trigger gTrialRoad_GaspTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 33,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_WEEDS,
      CONDITION_ALWAYS, EVENT(TrialRoad_ScatterWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 34,
-     CONDITION_ALWAYS, EVENT(TrialRoad_ScatterWeedsHidingMadPlant)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_WEEDS_HIDING_MAD_PLANT, CONDITION_ALWAYS,
+     EVENT(TrialRoad_ScatterWeedsHidingMadPlant)},
     {TRIGGER_TALK, ACTOR_GASP, CONDITION_ALWAYS, EVENT(TrialRoad_FightGasp)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(TrialRoad_RevealPoolTiles)},
@@ -4646,10 +4838,13 @@ LAST_DATA struct Trigger gTrialRoad_GaspTriggers[] = {
 };
 
 LAST_DATA struct Trigger gTrialRoad_SummitTriggers[] = {
-    {TRIGGER_STEP, 33, FLAG_SCENE_TEMP_83, EVENT(TrialRoad_OpenSummitGate)},
-    {TRIGGER_STEP, 40, IF_FLAG_SET(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT),
+    {TRIGGER_STEP, CELL_SUMMIT_DOORWAY, FLAG_SCENE_TEMP_83,
+     EVENT(TrialRoad_OpenSummitGate)},
+    {TRIGGER_STEP, CELL_LEFT_PATH_SUMMIT,
+     IF_FLAG_SET(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT),
      EVENT(TrialRoad_ChallengeMoapa)},
-    {TRIGGER_STEP, 41, IF_FLAG_SET(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT),
+    {TRIGGER_STEP, CELL_RIGHT_PATH_SUMMIT,
+     IF_FLAG_SET(FLAG_TRIAL_ROAD_HOLDS_EQUIPMENT),
      EVENT(TrialRoad_ChallengeMoapa)},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},

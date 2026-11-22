@@ -1172,7 +1172,7 @@ void DehkanPlateau_CannonLeapsAway(void) {
 /// south at (25, 16) to (27, 17)): Cannon starts, casts Pound on the stake in
 /// his way so that a great fist drives it into the ground, and runs on south
 /// over it, cracking open a crack behind him.
-void DehkanPlateau_CannonPoundsPillar(void) {
+void DehkanPlateau_CannonPoundsStake(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Actor_WatchAndSetScript(gMainRoutineWork.leaderActorId,
@@ -2585,7 +2585,7 @@ struct Trigger gDehkanPlateau_TightropesTriggers[] = {
     {TRIGGER_EXIT, 24, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 25, CONDITION_ALWAYS, 8},
     {TRIGGER_STEP, 30, FLAG_CANNON_LEAPT_AWAY, EVENT(DehkanPlateau_CannonLeapsAway)},
-    {TRIGGER_STEP, 31, FLAG_CANNON_POUNDED_STAKE, EVENT(DehkanPlateau_CannonPoundsPillar)},
+    {TRIGGER_STEP, 31, FLAG_CANNON_POUNDED_STAKE, EVENT(DehkanPlateau_CannonPoundsStake)},
     {TRIGGER_STEP, 32, FLAG_CANNON_CRACKED_PILLARS, EVENT(DehkanPlateau_CannonCracksPillars)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_TIGHTROPES_ROPE_LOW_POST, FLAG_TIGHTROPES_ROPE_LASHED, 0},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_TIGHTROPES_STAKE, FLAG_TIGHTROPES_STAKE_POUNDED, EVENT(DehkanPlateau_PoundTightropesStake)},

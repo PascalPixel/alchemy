@@ -65,7 +65,7 @@ void DehkanPlateau_PushVinePillar(void);
 void DehkanPlateau_LiftTightropesVinePillar(void);
 void DehkanPlateau_FinishMovingVinePillar(void);
 void DehkanPlateau_CannonFleesOverCracks(void);
-void DehkanPlateau_CannonPoundsPillar(void);
+void DehkanPlateau_CannonPoundsStake(void);
 
 void DehkanPlateau_CannonCracksPillars(void);
 void DehkanPlateau_CannonPoundsLeaderThrough(void);

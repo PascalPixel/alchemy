@@ -1,8 +1,16 @@
 /// @file
-/// Yallam, the village by Taopo Swamp: its children's song game, run round the
-/// rings of the playground to the words of Yepp's songs of the stars, the moon
-/// and the sun, the Cyclone spots that hide its treasure, and the log Force
-/// pushes down to reach the Masamune.
+/// Yallam, the village near Taopo Swamp where Sunshine the blacksmith lives
+/// (its houses, inn and shops are in yallam_rooms.c). East of the village is a
+/// meadow of stumps ringed by worn paths round a big tree, where four children
+/// play the game that goes with Yepp's songs: asked, the boy standing there
+/// leads Felix and Jenna round the rings to the words of the songs of the
+/// stars, the moon and the sun, which tell the way through the Sea of Time.
+/// Cyclone scatters weeds round the village: the pair south of the Sanctum's
+/// door hide an Antidote and the three in the south-east corner a Nut. Once
+/// the party has Force, the log standing beside the cave mouth near Sunshine's
+/// house can be tipped into the gap below it, and Cyclone on the weed patch in
+/// the north-west corner opens a hole down into the cave that leads to the
+/// Masamune's chest.
 #include "fixed_math.h"
 #include "flags.h"
 #include "macros.h"
@@ -64,8 +72,8 @@ enum YallamActorId {
   ACTOR_BOATSMAN_TAUGHT_LITTLE
 };
 
-/// The song game's actors at entrance 15, numbering the rows of
-/// gYallam_SongGamePlacements: the four children who play it.
+/// The children's meadow's actors, numbering the rows of
+/// gYallam_SongGamePlacements: the four children who play the song game.
 enum YallamSongGameActorId {
   /// "Yepp's songs are a lot of fun, because he made this game..."; he offers
   /// the song (Yallam_OfferYeppSong) and leads the game.
@@ -102,7 +110,19 @@ enum {
   CHILD_TALKING = 2
 };
 
-/// Where Cyclone uncovers each treasure spot, in pixels.
+/// The map cells Cyclone answers on, by the behaviour the map gives them:
+/// each set of weeds it scatters.
+enum YallamCell {
+  CELL_WEEDS_OVER_CAVE_HOLE = 20,
+  CELL_WEEDS_BELOW_SHOPS = 21,
+  CELL_WEEDS_OVER_ANTIDOTE = 22,
+  CELL_CORNER_WEEDS = 23,
+  CELL_WEEDS_OVER_NUT = 24,
+  CELL_WEEDS_BY_SANCTUM = 25
+};
+
+/// Where the Antidote and the Nut lie once Cyclone has scattered the weeds
+/// over them, in pixels.
 #define ANTIDOTE_SPOT_X 424
 #define ANTIDOTE_SPOT_Z 232
 #define NUT_SPOT_X 680
@@ -119,16 +139,13 @@ void Yallam_SingMoonSong(void);
 void Yallam_SingSunSong(void);
 void Yallam_StartRunningChildren(void);
 
-void Yallam_ClearFirstSpot(void);
+void Yallam_UncoverCaveHole(void);
 
-/// Cyclone at the second spot.
-void Yallam_ClearSecondSpot(void);
+void Yallam_ScatterWeedsBelowShops(void);
 
-/// Cyclone at the fourth spot.
-void Yallam_ClearFourthSpot(void);
+void Yallam_ScatterCornerWeeds(void);
 
-/// Cyclone at the sixth spot.
-void Yallam_ClearSixthSpot(void);
+void Yallam_ScatterWeedsBySanctum(void);
 
 void Yallam_OfferYeppSong(void);
 
@@ -297,8 +314,9 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/// The children's song game at the playground: the village's exit 12 leads to
-/// its entrance 15, and its exit 15 back to the village's entrance 12.
+/// The children's meadow, where the song game is played: the path off the
+/// village's east edge (cells (45, 15) to (45, 17)) leads there, and its own
+/// way out back to the village.
 enum {
   YALLAM_TO_SONG_GAME = 12,
   YALLAM_FROM_SONG_GAME = 12,
@@ -319,8 +337,13 @@ const u8 *Scene_GetActorPlacements(void) {
   return gYallam_Placements;
 }
 
-/// The party leader walks into one of Yallam's doors, which opens with its cell
-/// animation, and leaves by the exit of the door's number.
+/// Walking north into one of Yallam's doors opens it with a click and takes
+/// Felix inside: the inn's (cell (35, 11)), Sunshine's by the log (cell
+/// (15, 11)), the two other huts' (cells (34, 21) and (28, 23)), the three
+/// shops' in the ledge (cells (20, 20), (16, 19) and (13, 20)) or the
+/// Sanctum's wide door in the cliff (cells (26, 8) and (27, 8)).
+/// Each door's cells carry its exit's number, which also picks its picture
+/// as it opens from `gYallam_Doors`.
 void Yallam_EnterDoor(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   u32 i;
@@ -357,21 +380,34 @@ void Yallam_EnterDoor(void) {
   Event_End();
 }
 
-/// Cyclone at one of the village's six spots blows away what covers the ground;
-/// the third and fifth uncover an item the first time, pushing the leader back
-/// if it stands there.
-void Yallam_ClearFirstSpot(void) {
+/// Cyclone cast in the weed patch in the village's north-west corner (cells
+/// (3, 7) to (7, 11)) scatters the weeds and uncovers a wood-rimmed hole in
+/// the middle of the patch, the way down into the cave that leads to the
+/// Masamune's chest.
+/// The hole's picture and its exit to the cave (`YALLAM_TO_YALLAM_CAVE_WEST`)
+/// are copied from a spare cell below the village.
+void Yallam_UncoverCaveHole(void) {
   TileCopies_CopyTouchedCells(67, 25, 5, 5, 67, 5, 1);
   MapGrid_CopyCellsTo(23, 29, 5, 6, 1, 1);
   MapGrid_CopyCellAttributes(23, 29, 1, 1, 5, 8);
 }
 
-void Yallam_ClearSecondSpot(void) {
+/// Cyclone cast by the weeds on the ledge below the shops' doors (cells
+/// (15, 22) and (16, 22)) scatters them; nothing lies under them.
+// XXX: the eastern of the two weeds south of the Sanctum's door (cell
+// (27, 14) on the raised ground) also runs this, which would scatter the weeds
+// below the shops and leave that pair standing; a recording of Cyclone cast
+// there would settle what the player sees.
+void Yallam_ScatterWeedsBelowShops(void) {
   FieldTileCopies_CopyTouchedCells(67, 25, 2, 1, 79, 22, 1);
 }
 
-/// Cyclone at the third spot uncovers the Antidote the first time.
-void Yallam_ClearThirdSpot(void) {
+/// Cyclone cast at the pair of weeds on the raised ground south of the
+/// Sanctum's door (cell (26, 14)) scatters both and uncovers the Antidote
+/// that lies under them, to be picked up there.
+/// Until the Antidote is taken, its hidden item (`ACTOR_HIDDEN_ANTIDOTE`) is
+/// set at the spot, and if Felix is standing on it he hops a cell east, off it.
+void Yallam_UncoverAntidote(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(26, 95, 2, 1, 26, 76, 2);
@@ -391,12 +427,19 @@ void Yallam_ClearThirdSpot(void) {
   }
 }
 
-void Yallam_ClearFourthSpot(void) {
+/// Cyclone cast at the three weeds in the village's south-east corner (cells
+/// (44, 22), (43, 23) and (44, 23)) scatters them all; the Nut lies under the
+/// one at cell (42, 21) (Yallam_UncoverNut).
+void Yallam_ScatterCornerWeeds(void) {
   FieldTileCopies_CopyTouchedCells(67, 25, 3, 3, 106, 20, 1);
 }
 
-/// Cyclone at the fifth spot uncovers the Nut the first time.
-void Yallam_ClearFifthSpot(void) {
+/// Cyclone cast at the westernmost of the three weeds in the village's
+/// south-east corner (cell (42, 21)) scatters them all and uncovers the Nut
+/// under it, to be picked up there.
+/// Until the Nut is taken, its hidden item is set at the spot, and if Felix is
+/// standing on it he hops a cell north, off it.
+void Yallam_UncoverNut(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(67, 25, 3, 3, 106, 20, 1);
@@ -416,7 +459,9 @@ void Yallam_ClearFifthSpot(void) {
   }
 }
 
-void Yallam_ClearSixthSpot(void) {
+/// Cyclone cast at the two weeds just west of the Sanctum's door (cells
+/// (24, 8) and (23, 9)) scatters them; nothing lies under them.
+void Yallam_ScatterWeedsBySanctum(void) {
   FieldTileCopies_CopyTouchedCells(67, 25, 2, 2, 87, 8, 1);
 }
 
@@ -433,8 +478,10 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gYallam_Triggers;
 }
 
-/// The child at the playground, spoken to from any side, offers to show one of
-/// Yepp's songs and its game.
+/// The boy standing in the children's meadow asks "Do you want to hear one of
+/// the songs Yepp wrote?". A yes starts the song game (Yallam_ShowSongGame); a
+/// no, and he says this is where all the kids in Yallam come to play.
+/// Felix talks to him facing any way but west, south-west or north-west.
 void Yallam_OfferYeppSong(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -448,8 +495,12 @@ void Yallam_OfferYeppSong(void) {
   Event_End();
 }
 
-/// The circles child stops running while it talks, turning to the leader and
-/// back again, or while Mind Read reads it.
+/// The boy running round the big tree in the children's meadow stops,
+/// turns to Felix and says running round in circles while singing one of
+/// Yepp's songs is pretty tough, then runs on; Mind Read hears that there is a
+/// lot to remember for each song.
+/// The boy keeps his heading through the talk, so he runs on the way he was
+/// going; Mind Read stops him without turning him.
 void Yallam_TalkAboutSongCircles(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_Get(ACTOR_CIRCLES_CHILD);
@@ -475,8 +526,10 @@ void Yallam_TalkAboutSongCircles(void) {
   Event_End();
 }
 
-/// The game child stops running while it talks, turning to the leader and
-/// back again, or while Mind Read reads it.
+/// The girl with a topknot running round the big tree in the children's meadow
+/// stops, turns to Felix and says the game that goes with the song is tough and
+/// she wants to play something else, then runs on; Mind Read hears she once
+/// heard that children's songs and stories have hidden meanings.
 void Yallam_TalkAboutSongGame(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_Get(ACTOR_GAME_CHILD);
@@ -510,8 +563,8 @@ s32 Yallam_HasArrived(struct Actor *actor) {
   return 0;
 }
 
-/// One step of a runner's path round the playground in the song game, by its
-/// step counter, stopping or going on by the game's mode.
+/// One step of a runner's path round the meadow's rings in the song game, by
+/// its step counter, stopping or going on by the game's mode.
 void Yallam_RunSongPath(s32 actorId) {
   struct Actor *actor = Actor_GetById(actorId);
   u8 s = actor->riseCounter;
@@ -1486,9 +1539,9 @@ extern u32 gYallam_SongLeaderStarts[];
 extern u32 gYallam_GameChildStarts[];
 extern u32 gYallam_CirclesChildStarts[];
 
-/// The song leader shows the party the stars song's game: the children take
-/// their places and run its path with the leader, verse by verse; then he
-/// offers the second song.
+/// The boy sings the song of the stars ("If you want to go to the stars...")
+/// while the children lead Felix and Jenna round the meadow's rings, one verse
+/// at a time; then he offers the second song.
 void Yallam_ShowSongGame(void) {
   struct Actor *actor = Actor_Get(ACTOR_SONG_LEADER);
   struct Actor *leader;
@@ -1616,8 +1669,8 @@ void Yallam_ShowSongGame(void) {
 /// The moon song's words, sung verse by verse.
 extern u8 MsgIfYouWant[];
 
-/// The moon song, its path run verse by verse; then the song leader offers the
-/// third song.
+/// The song of the moon, sung and run round the meadow's rings verse by verse
+/// as the stars song was; then the boy offers the third song.
 void Yallam_SingMoonSong(void) {
   struct Actor *actor = Actor_Get(ACTOR_SONG_LEADER);
 
@@ -1694,8 +1747,9 @@ void Yallam_SingMoonSong(void) {
 /// The sun song's words, sung verse by verse.
 extern u8 MsgIfYouWantTo[];
 
-/// The sun song, its path run verse by verse; then each child leaps away and
-/// back in turn, and the song leader ends the games.
+/// The song of the sun, sung and run round the meadow's rings verse by verse;
+/// then each child hops away and back in turn, the boy says that is all the
+/// games they have, and the screen fades back to the village.
 void Yallam_SingSunSong(void) {
   struct Actor *actor = Actor_Get(ACTOR_SONG_LEADER);
   FIXED x, z;
@@ -1811,7 +1865,7 @@ void Yallam_SingSunSong(void) {
   FieldEvent_SetExitRequest(YALLAM_EXIT_SONG_GAME);
 }
 
-/// Once Force has pushed it, the log lies where it fell.
+/// Once Force has pushed it, the log stands in the gap where it fell.
 void Yallam_PlaceFallenLog(void) {
   if (Event_GetFlag(FLAG_YALLAM_LOG_FALLEN)) {
     SET_ACTOR_POSITION(Actor_Get(ACTOR_FALLING_LOG), toFIXED(168), 0,
@@ -1836,10 +1890,16 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-/// The Force trigger's first phase, which does nothing here.
+/// Nothing happens as Force first reaches the log; the push itself is
+/// Yallam_ForceLogDown.
 void Yallam_DoNothing(void) {}
 
-/// Force pushes the log off its ledge; it tumbles down and lands as a step.
+/// Force cast at the log standing on its stump east of the cave mouth near
+/// Sunshine's house tips it over west: it spins off the ledge with a crash and
+/// drops upright into the gap below (cell (10, 12)), a post Felix can now hop
+/// onto.
+/// The hop comes from the map's own hop cell at (8, 12), whose flags are
+/// copied onto the log's cell.
 void Yallam_ForceLogDown(void) {
   s32 step;
   s32 i;
@@ -1867,7 +1927,7 @@ void Yallam_ForceLogDown(void) {
   FieldActor_WaitForMove(actor);
   FieldEvent_Wait(2);
   Event_PlaySound(SE_LOG_FALL);
-  // The log lies flat and still where it fell.
+  // The log stands upright and still where it fell.
   i = 0;
   sprite->rotation = i;
   actor->x.fixed = toFIXED(168);
@@ -1878,9 +1938,8 @@ void Yallam_ForceLogDown(void) {
   MapGrid_CopyCellAttributes(8, 12, 1, 1, 10, 12);
 }
 
-/// The circles child and the game child run their rings by the playground
-/// (Yallam_UpdateRunningChild), the circles child after the game child and the
-/// game child after the circles child.
+/// The boy and the girl with a topknot run round the big tree in the
+/// children's meadow, each after the other (Yallam_UpdateRunningChild).
 void Yallam_StartRunningChildren(void) {
   struct Actor *actor = Actor_Get(ACTOR_CIRCLES_CHILD);
   struct Actor *other;
@@ -1895,13 +1954,13 @@ void Yallam_StartRunningChildren(void) {
 }
 
 void Yallam_EnterDoor(void);
-void Yallam_ClearThirdSpot(void);
-void Yallam_ClearFifthSpot(void);
+void Yallam_UncoverAntidote(void);
+void Yallam_UncoverNut(void);
 void Yallam_TalkAboutSongCircles(void);
 
 extern s32 gYallam_StandingLogLowered[];
 
-/// The log standing on the ledge, raised onto its stump.
+/// The log standing on its stump on the ledge, raised onto it.
 s32 gYallam_LogRaised[] = {
     SC_ANIMATION(3),
     SC_SET(SW_MOTION, 0),
@@ -1929,7 +1988,7 @@ s32 gYallam_StandingLogLowered[] = {
 };
 
 // clang-format off
-/// The circles child runs round a six-sided ring by the playground.
+/// The boy runs round the big tree in the children's meadow, a six-sided lap.
 u32 gYallam_CirclesChildRuns[] = {
     SC_ANIMATION(ANIM_WALK),
     SC_SPEED(1),
@@ -2153,7 +2212,7 @@ struct ActorPlacement gYallam_CavePlacements[] = {
     {SCENE_TABLE_END},
 };
 
-/// The playground at the song game, in YallamSongGameActorId order, and Jenna.
+/// The children's meadow, in YallamSongGameActorId order, and Jenna.
 struct ActorPlacement gYallam_SongGamePlacements[] = {
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 312, 0, 872, FACING_WEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, (s32)gYallam_CirclesChildRuns, 312, 0, 776, FACING_NORTH, TALK_FACING_KEEP, 0),
@@ -2191,7 +2250,7 @@ u16 gYallam_SanctumDoorOpening[] = {
     MAPGRID_ANIMATION_STEPS_END,
 };
 
-/// Each door's opening and its cell, by its step trigger's number.
+/// Each door's opening and the cell it is drawn at, by its exit's number.
 struct MapGridCellAnimation gYallam_Doors[] = {
     {gYallam_DoorOpening, 98, 19},
     {gYallam_SecondDoorOpening, 92, 20},
@@ -2205,25 +2264,25 @@ struct MapGridCellAnimation gYallam_Doors[] = {
 
 /// The village: its exits and doors, its people, the Cyclone spots and the log.
 struct Trigger gYallam_Triggers[] = {
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(Yallam_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(Yallam_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(Yallam_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(Yallam_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT(Yallam_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS, EVENT(Yallam_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS, EVENT(Yallam_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS, EVENT(Yallam_EnterDoor)},
-    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
-    {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_SOUTH, 13, CONDITION_ALWAYS, 13},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 20, CONDITION_ALWAYS, EVENT(Yallam_ClearFirstSpot)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 21, CONDITION_ALWAYS, EVENT(Yallam_ClearSecondSpot)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 22, CONDITION_ALWAYS, EVENT(Yallam_ClearThirdSpot)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 23, CONDITION_ALWAYS, EVENT(Yallam_ClearFourthSpot)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 24, CONDITION_ALWAYS, EVENT(Yallam_ClearFifthSpot)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 25, CONDITION_ALWAYS, EVENT(Yallam_ClearSixthSpot)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), YALLAM_TO_YALLAM_ROOMS_INN_SOUTHEAST, CONDITION_ALWAYS, EVENT(Yallam_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), YALLAM_TO_YALLAM_ROOMS_INN_SOUTH, CONDITION_ALWAYS, EVENT(Yallam_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), YALLAM_TO_YALLAM_ROOMS_SHOPS_EAST, CONDITION_ALWAYS, EVENT(Yallam_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), YALLAM_TO_YALLAM_ROOMS_INN_WEST, CONDITION_ALWAYS, EVENT(Yallam_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), YALLAM_TO_YALLAM_ROOMS_SHOPS_NORTH, CONDITION_ALWAYS, EVENT(Yallam_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), YALLAM_TO_YALLAM_ROOMS_SHOPS_WEST, CONDITION_ALWAYS, EVENT(Yallam_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), YALLAM_TO_YALLAM_ROOMS_INN_NORTHEAST, CONDITION_ALWAYS, EVENT(Yallam_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), YALLAM_TO_MIKASALLA_ROOMS_SANCTUM, CONDITION_ALWAYS, EVENT(Yallam_EnterDoor)},
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, YALLAM_TO_YALLAM_CAVE_EAST, CONDITION_ALWAYS, YALLAM_TO_YALLAM_CAVE_EAST},
+    {TRIGGER_EXIT, YALLAM_TO_WORLD_MAP_SOUTH, CONDITION_ALWAYS, YALLAM_TO_WORLD_MAP_SOUTH},
+    {TRIGGER_EXIT, YALLAM_TO_WORLD_MAP_NORTH, CONDITION_ALWAYS, YALLAM_TO_WORLD_MAP_NORTH},
+    {TRIGGER_EXIT, YALLAM_TO_SONG_GAME, CONDITION_ALWAYS, YALLAM_TO_SONG_GAME},
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_SOUTH, YALLAM_TO_YALLAM_CAVE_WEST, CONDITION_ALWAYS, YALLAM_TO_YALLAM_CAVE_WEST},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_WEEDS_OVER_CAVE_HOLE, CONDITION_ALWAYS, EVENT(Yallam_UncoverCaveHole)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_WEEDS_BELOW_SHOPS, CONDITION_ALWAYS, EVENT(Yallam_ScatterWeedsBelowShops)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_WEEDS_OVER_ANTIDOTE, CONDITION_ALWAYS, EVENT(Yallam_UncoverAntidote)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_CORNER_WEEDS, CONDITION_ALWAYS, EVENT(Yallam_ScatterCornerWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_WEEDS_OVER_NUT, CONDITION_ALWAYS, EVENT(Yallam_UncoverNut)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_WEEDS_BY_SANCTUM, CONDITION_ALWAYS, EVENT(Yallam_ScatterWeedsBySanctum)},
     {TRIGGER_TALK, ACTOR_VILLAGER_FEW_VISITORS, CONDITION_ALWAYS, MSGNO(MsgYallamDoesnT)},
     {TRIGGER_TALK, ACTOR_VILLAGER_YEPP_DIED, CONDITION_ALWAYS, MSGNO(MsgOurMasterBoatsman)},
     {TRIGGER_TALK, ACTOR_VILLAGER_IF_YEPP_LIVED, CONDITION_ALWAYS, MSGNO(MsgIfYeppWere)},
@@ -2247,15 +2306,16 @@ struct Trigger gYallam_Triggers[] = {
 
 /// The cave's exits.
 struct Trigger gYallam_CaveTriggers[] = {
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, YALLAM_CAVE_TO_YALLAM_EAST, CONDITION_ALWAYS, YALLAM_CAVE_TO_YALLAM_EAST},
+    {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, YALLAM_CAVE_TO_YALLAM_WEST, CONDITION_ALWAYS, YALLAM_CAVE_TO_YALLAM_WEST},
     {TRIGGER_TABLE_END},
 };
 // clang-format on
 
 /// The song game's exit and its children.
 struct Trigger gYallam_SongGameTriggers[] = {
-    {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
+    {TRIGGER_EXIT, YALLAM_EXIT_SONG_GAME, CONDITION_ALWAYS,
+     YALLAM_EXIT_SONG_GAME},
     {TALK_TRIGGER_FACING(FACING_EAST), ACTOR_SONG_LEADER, CONDITION_ALWAYS,
      EVENT(Yallam_OfferYeppSong)},
     {TALK_TRIGGER_FACING(FACING_SOUTHEAST), ACTOR_SONG_LEADER, CONDITION_ALWAYS,

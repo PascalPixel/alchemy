@@ -1159,7 +1159,7 @@ void BattleEffect_RunFormChange(struct BattleEffectParams *args, s32 kind) {
       for (i = 0; i != 4; i++) {
         s32 start = gFormChange_WaveStarts[i] + FORM_CHANGE_BURST;
 
-        model->scrollV = (frame * 8 + i * 32) & 127;
+        model->scrollV = (frame * 8 + i * 32) & TEXTURE_SCROLL_MASK;
         if (frame > start) {
           bias = (start - frame) * 8 + 56;
           if (bias > BAND_SHADE_BRIGHTEST)
@@ -1441,7 +1441,7 @@ void Palette_StepFadeTransfer(void) {
 
     (*step)++;
     ColorBuffer_ScaleFar(battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
-                         FIXED_ONE - *step * CANVAS_FADE_STEP,
+                         FIXED_ONE - *step * BACKGROUND_LEVEL_STEP,
                          BATTLE_BACKGROUND_COLORS);
     (*framesLeft)--;
   }

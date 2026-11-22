@@ -42,6 +42,7 @@
 #include "system/input.h"
 #include "field/screen_transition.h"
 #include "field/object.h"
+#include "field/field_sequence.h"
 #include "field/event.h"
 #include "gamepak/far_call/window.h"
 #include "field/ground_mask.h"
@@ -245,33 +246,32 @@ void ItemDisplay_RaiseAboveLeader(struct Actor *actor) {
   leader->facing = FACING_SOUTH;
 }
 
-/// Shows a found item's picture: flags bit 0 adds sparkles and bit 1 raises it
-/// above the leader, with waits of 60 and 80 frames around that when both are
-/// set.
+/// Shows a found item's picture as flags choose (ItemDisplayFlag), with waits
+/// of 60 and 80 frames around its raising when both are set.
 void ItemDisplay_ShowPicture(struct Actor *actor, s32 flags) {
   struct Actor *leader;
 
   if (actor != NULL) {
     leader = Actor_Lookup(Party_GetLeaderActor());
-    if (flags & 1) {
+    if (flags & ITEM_DISPLAY_SPARKLES) {
       Actor_SetSpriteFlagsFar(actor, 0);
       Actor_StartScriptFar(actor, gFieldEffect_ParticleEmitterScript);
       ((struct Actor *)actor)->velocityY = toFIXED(2);
       ((struct Actor *)actor)->gravity = toFIXED(1) / 4;
       ((struct Actor *)actor)->update = ItemDisplay_EmitSparkles;
     }
-    if (flags == 3)
+    if (flags == (ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED))
       wait(60);
-    if (flags & 2)
+    if (flags & ITEM_DISPLAY_RAISED)
       ItemDisplay_RaiseAboveLeader(actor);
-    if (flags == 3)
+    if (flags == (ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED))
       wait(80);
     Actor_SelectAnimationFar(leader, ANIM_STAND);
   }
 }
 
-/// Shows the picture of item 36 pixels above the party leader for 80 frames;
-/// flags bit 0 adds sparkles and bit 1 raises it as a found item.
+/// Shows the picture of item 36 pixels above the party leader for 80 frames,
+/// as flags choose (ItemDisplayFlag).
 void ItemDisplay_ShowItem(s32 item, s32 flags) {
   struct Actor *leader = Actor_Lookup(Party_GetLeaderActor());
   GlyphTransfer *transfer =
@@ -293,9 +293,9 @@ void ItemDisplay_ShowItem(s32 item, s32 flags) {
     VramCache_Load(sprite->slot, ICON_TILE_BYTES, transfer->tiles);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
 
-    if (flags & 1)
+    if (flags & ITEM_DISPLAY_SPARKLES)
       actor->update = ItemDisplay_EmitSparkles;
-    if (flags & 2)
+    if (flags & ITEM_DISPLAY_RAISED)
       ItemDisplay_RaiseAboveLeader(actor);
 
     wait(80);

@@ -788,8 +788,8 @@ s32 MagmaRock_LookUpCellStatue(s32 x, s32 z, u16 *table) {
 
 /// As Burst acts on a statue's cell: finds the statue in the room's table and
 /// blinks it red (MagmaRock_FlashStatue), every fourth frame while Burst's
-/// explosions shake the ground (stage 2) and every other one at its last blast
-/// (stage 3).
+/// explosions shake the ground (BURST_STAGE_SMALL_BLAST) and every other one at
+/// its last blast (BURST_STAGE_GREAT_BLAST).
 void MagmaRock_TargetStatue(s32 stage) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   s16 *table = gMagmaRock_SlideStatues;
@@ -807,7 +807,7 @@ void MagmaRock_TargetStatue(s32 stage) {
   } else if (party->next == SCENE_MAGMA_ROCK_STATUE) {
     table = gMagmaRock_StatueStatues;
   }
-  if (stage == 2) {
+  if (stage == BURST_STAGE_SMALL_BLAST) {
     struct Actor *target;
 
     MagmaRock_FindStatue(table);
@@ -815,7 +815,7 @@ void MagmaRock_TargetStatue(s32 stage) {
     target->flashMask = 4;
     target->update = (ObjectUpdate)MagmaRock_FlashStatue;
   }
-  if (stage == 3) {
+  if (stage == BURST_STAGE_GREAT_BLAST) {
     struct Actor *target;
 
     MagmaRock_FindStatue(table);
@@ -989,21 +989,22 @@ void MagmaRock_IgniteStatue(void) {
 }
 
 /// Burst on a statue or a cracked pillar: rocks fall round it while Burst
-/// lasts, one a frame while its explosions shake the ground (stage 2) and eight
-/// at its last blast (stage 3), which also takes the target away; a cracked
+/// lasts, one a frame while its explosions shake the ground
+/// (BURST_STAGE_SMALL_BLAST) and eight at its last blast
+/// (BURST_STAGE_GREAT_BLAST), which also takes the target away; a cracked
 /// pillar crumbles meanwhile (PILLAR_CRUMBLE_FRAME).
 void MagmaRock_BurstStatue(s32 stage, s32 frame) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
   if (frame == 0)
     MagmaRock_StartFallingRocks();
-  if (stage == 2) {
+  if (stage == BURST_STAGE_SMALL_BLAST) {
     struct Actor *actor = work->child;
 
     MagmaRock_DropRocks(actor->x.fixed, actor->y.fixed + toFIXED(15),
                         actor->z.fixed, 1);
   }
-  if (stage == 3) {
+  if (stage == BURST_STAGE_GREAT_BLAST) {
     struct Actor *actor = work->child;
     struct Actor *target;
 
@@ -1543,8 +1544,8 @@ void MagmaRock_FlashTarget(struct Actor *actor) {
 
 /// Burst on the great fire, as the statue's fire hits it: it blinks white, and
 /// flame puffs scatter and rocks fall while the explosions shake the ground
-/// (stage 2); at the last blast (stage 3) the fire goes out and the rocks round
-/// it scatter, opening the way in.
+/// (BURST_STAGE_SMALL_BLAST); at the last blast (BURST_STAGE_GREAT_BLAST) the
+/// fire goes out and the rocks round it scatter, opening the way in.
 void MagmaRock_BlastWayIn(s32 stage, s32 frame) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
 
@@ -1556,13 +1557,13 @@ void MagmaRock_BlastWayIn(s32 stage, s32 frame) {
     actor->flashMask = 4;
     actor->update = (void *)MagmaRock_FlashTarget;
   }
-  if (stage == 2) {
+  if (stage == BURST_STAGE_SMALL_BLAST) {
     MagmaRock_ScatterEmbers(work->child->x.fixed, work->child->z.fixed);
     MagmaRock_DropRocks(work->child->x.fixed,
                         work->child->y.fixed + toFIXED(15),
                         work->child->z.fixed, 1);
   }
-  if (stage == 3) {
+  if (stage == BURST_STAGE_GREAT_BLAST) {
     struct Actor *target;
     s32 last = 8;
 

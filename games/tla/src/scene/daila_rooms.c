@@ -102,9 +102,6 @@ enum DailaRoomsActorIdAfterRescue {
 /// this overlay also holds: the family by entrance 7.
 enum { ENTRANCE_COW_ISLET_HOUSE = 7 };
 
-/// Daila's inn, as Inn_CheckIn numbers the inns.
-enum { DAILA_INN = 0 };
-
 /// The sanctuary's actors, numbering the rows of
 /// gDailaRooms_SanctumPlacements.
 enum DailaSanctuaryActorId {
@@ -512,7 +509,8 @@ void DailaRooms_TakeSeaGodsTear(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if (PartyInventory_FindRoom(item) >= 0) {
-    ItemDisplay_ShowPicture(Actor_GetById(ACTOR_SEA_GODS_TEAR), 3);
+    ItemDisplay_ShowPicture(Actor_GetById(ACTOR_SEA_GODS_TEAR),
+                            ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
     Sound_Play(MUS_TREASURE_FOUND);
     MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
     // "Felix got ...."
@@ -522,7 +520,8 @@ void DailaRooms_TakeSeaGodsTear(void) {
     Actor_SetPosition(ACTOR_TEAR_SPOT, 232, 194);
     GameFlag_Set(FLAG_SEA_GODS_TEAR_TAKEN);
   } else {
-    ItemDisplay_ShowPicture(Actor_GetById(ACTOR_SEA_GODS_TEAR), 3);
+    ItemDisplay_ShowPicture(Actor_GetById(ACTOR_SEA_GODS_TEAR),
+                            ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
     Sound_Play(MUS_TREASURE_FOUND);
     if (DailaRooms_GiveItem(item, 0) != -1) {
       Actor_SetPosition(ACTOR_SEA_GODS_TEAR, 0, 0);

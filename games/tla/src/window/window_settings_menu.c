@@ -7,6 +7,7 @@
 #include "fixed_math.h"
 #include "sounds.h"
 #include "window/settings_menu.h"
+#include "window/screens.h"
 
 /// The settings menu's rows, in the order of their help messages
 /// (MsgWindowColorHelp on) and of OptionMenuWork.option.
@@ -347,21 +348,18 @@ struct Window *SettingsMenu_Open(void) {
 #endif
 #endif
 
-// The heading above the settings window, a picture of gMenuTitlePictures:
-// Japanese takes 8, the Settings heading; from patch 1 the screen takes 7, the
-// Pause heading the Pause menu also shows.
+// The heading above the settings window: Japanese shows the Settings heading;
+// from patch 1 the screen shows the Pause heading the Pause menu also shows.
 #if TLA_PATCH_1
-#define SETTINGS_HEADING 7
+#define SETTINGS_HEADING MENU_TITLE_PAUSE
 #else
-#define SETTINGS_HEADING 8
+#define SETTINGS_HEADING MENU_TITLE_SETTINGS
 #endif
 
 extern u8 MsgMessageSpeedSlow[], MsgSpeechOff[], MsgAutoSleepOff[],
     MsgWindowColorHelp[], MsgSleepModeHelp[];
 extern const u8 gSettingsMenu_HuePresets[], gSettingsMenu_BrightnessPresets[];
 
-struct WindowSprite *MenuTitle_Create(s32 group, struct Window *input, s32 x,
-                                      s32 y);
 void Icon_PrepareActorFar(struct WindowSprite *icon);
 void CommandIcon_Load(s32 index, s32 value, s32 flag);
 void FieldMessage_Show(s32 message, s32 mode);
@@ -708,7 +706,7 @@ s32 PauseMenu_Choose(s32 initial) {
   work = Ram_HeapSlots->settingsMenu;
   wait(1);
   window = PauseMenu_Open();
-  pair = MenuTitle_Create(7, window, 40, HEADING_Y);
+  pair = MenuTitle_Create(MENU_TITLE_PAUSE, window, 40, HEADING_Y);
   if (settingsOnly != 0) {
     rows = 1;
     first = PAUSE_MENU_CHANGE_SETTINGS;

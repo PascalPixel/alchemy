@@ -35,11 +35,6 @@
 /// they are open.
 #define MENU_SAVED_TILE_BYTES 8192
 
-/// The bytes of the menu work, heap block HEAP_SLOT_MENU: ShopWork's size, the
-/// largest of the screens' views of it. Each screen's run function takes the
-/// block as it opens and releases it as it closes.
-#define MENU_WORK_SIZE 3308
-
 /// The Djinn change DjinnMenu_DrawStatPreview previews, with the Djinn in the
 /// work's sides removePairSlot and addPairSlot.
 enum DjinnPreviewMode {

@@ -33,6 +33,7 @@
 #include "field/field_sequence_event.h"
 #include "system/dma.h"
 #include "field/actor.h"
+#include "field/field_sequence.h"
 #include "fixed_math.h"
 #include "battle/battle_unit.h"
 #include "window/window.h"
@@ -165,26 +166,22 @@ void DebugBrowser_Portraits(void);
 /// The shop and sanctum message browsers: talking to ACTOR_SANCTUM_MESSAGES and
 /// the three after it.
 void ShopTest_BrowseWeaponShopMessages(void) {
-  ShopTest_BrowseMessageRange((s32)MsgWeaponShopWelcome,
-                              MsgArmorShopWelcome - MsgWeaponShopWelcome);
+  ShopTest_BrowseMessageRange((s32)MsgWeaponShopWelcome, SHOP_MESSAGES);
 }
 
 /// Browses the armor shop's messages.
 void ShopTest_BrowseArmorShopMessages(void) {
-  ShopTest_BrowseMessageRange((s32)MsgArmorShopWelcome,
-                              MsgArmorShopWelcome - MsgWeaponShopWelcome);
+  ShopTest_BrowseMessageRange((s32)MsgArmorShopWelcome, SHOP_MESSAGES);
 }
 
 /// Browses the item shop's messages.
 void ShopTest_BrowseItemShopMessages(void) {
-  ShopTest_BrowseMessageRange((s32)MsgItemShopWelcome,
-                              MsgArmorShopWelcome - MsgWeaponShopWelcome);
+  ShopTest_BrowseMessageRange((s32)MsgItemShopWelcome, SHOP_MESSAGES);
 }
 
 /// Browses the Sanctum's messages.
 void ShopTest_BrowseSanctumMessages(void) {
-  ShopTest_BrowseMessageRange((s32)MsgWelcomeWearyWanderers,
-                              MsgRightWhenI - MsgWelcomeWearyWanderers);
+  ShopTest_BrowseMessageRange((s32)MsgWelcomeWearyWanderers, SANCTUM_MESSAGES);
 }
 
 /// The shops and the inn, each passed the keeper's actor id.
@@ -202,7 +199,7 @@ void ShopTest_OpenItemShop(s32 keeper) { Shop_Run(SHOP_DAILA_ITEMS, keeper); }
 void ShopTest_OpenGeneralStore(s32 keeper) { Shop_Run(SHOP_IZUMO, keeper); }
 
 /// Opens the inn.
-void ShopTest_OpenInn(s32 keeper) { Inn_CheckIn(0, keeper); }
+void ShopTest_OpenInn(s32 keeper) { Inn_CheckIn(DAILA_INN, keeper); }
 
 /// Opens the Sanctum.
 void ShopTest_OpenSanctum(void) { Sanctum_Run(); }
@@ -298,7 +295,7 @@ void ShopTest_TalkToSunshinesWife(s32 actor) {
       Event_SetMessageId(message + 4);
       // "OK, here you go!"
       Event_ShowMessageAndWait(actor, 0);
-      ItemDisplay_ShowItem(item, 3);
+      ItemDisplay_ShowItem(item, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
       PartyInventory_GiveItem(item, 0);
       Forge_SetItem(0);
       Party_AdjustCoins(-price);

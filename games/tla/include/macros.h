@@ -11,8 +11,8 @@
 
 /// Set the position or the velocity of a particle, a piece of debris or an
 /// object in one statement.
-#define SET_POSITION(p, px, py, pz)                                            \
-  ((p)->x = (px), (p)->y = (py), (p)->z = (pz))
+#define SET_POSITION(p, newX, newY, newZ)                                      \
+  ((p)->x = (newX), (p)->y = (newY), (p)->z = (newZ))
 #define SET_VELOCITY(p, vx, vy, vz)                                            \
   ((p)->velocityX = (vx), (p)->velocityY = (vy), (p)->velocityZ = (vz))
 

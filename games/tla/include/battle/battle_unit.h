@@ -319,6 +319,15 @@ struct BattleAIState {
 /// (Unit.resistanceStage) adds to every element's.
 #define RESISTANCE_PER_STAGE 20
 
+/// Unit.psySeal's layout: its low three bits Bind's turns left, the seal Bind
+/// casts (seven turns, which may end sooner); above them Luff's, cast as
+/// PSY_SEAL_LUFF and losing PSY_SEAL_LUFF_TURN a turn, so it lasts two and
+/// never ends early.
+#define PSY_SEAL_BIND_MASK 7
+#define PSY_SEAL_BIND 7
+#define PSY_SEAL_LUFF 16
+#define PSY_SEAL_LUFF_TURN 8
+
 /// A unit in battle: a party member's or an enemy's stats, Psynergy, items,
 /// Djinn and statuses.
 struct Unit {
@@ -410,8 +419,8 @@ struct Unit {
   u8 stun;
   u8 sleep;
   ///@}
-  /// bits: 7..3 Luff (16 when cast, minus 8 a turn) | 2..0 Bind's turns
-  /// (7 when cast). Psynergy is sealed while any bit is set.
+  /// Psynergy is sealed while any bit is set: Luff's seal above
+  /// PSY_SEAL_BIND_MASK, Bind's turns within it.
   u8 psySeal;
   u8 regenerate; ///< HP regeneration's turns left, 5 when cast
   s8 reflect;    ///< Reflect's turns left, 7 when cast

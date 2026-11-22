@@ -1107,7 +1107,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
     model->mesh = gHaures_BandMesh;
     model->vertices = verts;
     bandTexture.pixels = work->sheet;
-    model->scrollU = (frame * 8) & 127;
+    model->scrollU = (frame * 8) & TEXTURE_SCROLL_MASK;
     for (i = 0; i != 2; i++) {
       s32 start = gHaures_BandStarts[i];
 
@@ -1150,7 +1150,7 @@ void BattleEffect_RunHaures(struct BattleEffectParams *args) {
         sh = (80 - frame) * 8;
       }
       model->shade = sh;
-      model->scrollU = (frame * 8) & 127;
+      model->scrollU = (frame * 8) & TEXTURE_SCROLL_MASK;
       bandTexture.pixels = work->sheet;
       if (frame <= 71) {
         v = FIXEDtoINT(Trig_Sin(frame * (TRIG_TURN / 64) - DEGtoANG(315)) *

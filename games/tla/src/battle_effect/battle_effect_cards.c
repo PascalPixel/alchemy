@@ -133,7 +133,7 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
     Resource_LoadAndDecompress(RESOURCE_PALETTE_RAMP_IMAGE,
                                work->sheet + STAT_REDUCTION_SHARD_PICTURES, 0,
                                0);
-    for (i = 1; i != STAT_REDUCTION_SHARD_COPIES; i++) {
+    for (i = 1; i != DIMMED_COPIES; i++) {
       for (j = 0; j != STAT_REDUCTION_SHARD_BYTES; j++) {
         s32 shade = work->sheet[STAT_REDUCTION_SHARD_PICTURES + j];
 
@@ -421,8 +421,8 @@ void BattleEffect_RunCards(struct BattleEffectParams *args, s32 mode) {
 
         if (time > SWORD_CARD_DAGGER_FRAMES + 4) {
           fade = (time - SWORD_CARD_DAGGER_FRAMES) / 4;
-          if (fade > STAT_REDUCTION_SHARD_COPIES - 1)
-            fade = STAT_REDUCTION_SHARD_COPIES - 1;
+          if (fade > DIMMED_COPIES - 1)
+            fade = DIMMED_COPIES - 1;
         }
         for (i = 0; i != SWORD_CARD_SHARDS; i++) {
           s32 picture;

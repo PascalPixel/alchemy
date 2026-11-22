@@ -380,7 +380,7 @@ void BattleEffect_RunUlysses(struct BattleEffectParams *args) {
       }
     }
   }
-  BattleEffect_SpawnObjects(ULYSSES_MAGE_SPRITES + 1, 655, 3);
+  BattleEffect_SpawnObjects(ULYSSES_MAGE_SPRITES + 1, SPRITE_ULYSSES, 3);
   REG_BG2PA = Q_8_8(0.5);
   REG_BG2PA = Q_8_8(1);
   REG_BLDALPHA = EFFECT_BLEND_ADD;

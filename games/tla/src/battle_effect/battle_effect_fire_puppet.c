@@ -196,7 +196,7 @@ void BattleEffect_RunFirePuppet(struct BattleEffectParams *args) {
       model->texture = &texture;
       EffectPosition_ProjectScaledBattler(args->user, &caster);
       model->scrollV = 0;
-      model->scrollU = 127 & ~(frame << 2);
+      model->scrollU = TEXTURE_SCROLL_MASK & ~(frame << 2);
       Matrix_Initialize();
       Matrix_Translate(INTtoFIXED(caster.x / 2 - CANVAS_SIZE / 2),
                        INTtoFIXED(caster.y) - toFIXED(42), 0);

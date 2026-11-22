@@ -1380,22 +1380,22 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
         red = RGB_RED(colorWork);
         green = RGB_GREEN(colorWork);
         blue = RGB_BLUE(colorWork);
-        colorWork = Iwram_SignedDivide(red + green + blue, 10);
+        colorWork = Iwram_SignedDivide(red + green + blue, SEPIA_SHADE_DIVISOR);
         red = colorWork * 4 + 5;
         blue = colorWork * 3 + 5;
         green = colorWork * 3 + 5;
-        if (red < 8)
-          red = 8;
-        if (green < 8)
-          green = 8;
-        if (blue < 8)
-          blue = 8;
-        if (red > 28)
-          red = 28;
-        if (green > 28)
-          green = 28;
-        if (blue > 28)
-          blue = 28;
+        if (red < SEPIA_LEVEL_MIN)
+          red = SEPIA_LEVEL_MIN;
+        if (green < SEPIA_LEVEL_MIN)
+          green = SEPIA_LEVEL_MIN;
+        if (blue < SEPIA_LEVEL_MIN)
+          blue = SEPIA_LEVEL_MIN;
+        if (red > SEPIA_LEVEL_MAX)
+          red = SEPIA_LEVEL_MAX;
+        if (green > SEPIA_LEVEL_MAX)
+          green = SEPIA_LEVEL_MAX;
+        if (blue > SEPIA_LEVEL_MAX)
+          blue = SEPIA_LEVEL_MAX;
         *destination++ = gTitleIntro_ChannelCurveLight[blue];
         *destination++ = gTitleIntro_ChannelCurveLight[green];
         *destination++ = gTitleIntro_ChannelCurveLight[red];
@@ -1427,18 +1427,18 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
         red = RGB_RED(colorWork);
         green = RGB_GREEN(colorWork);
         blue = RGB_BLUE(colorWork);
-        if (red < 10)
-          red = 10;
-        if (green < 16)
-          green = 16;
-        if (blue < 16)
-          blue = 16;
-        if (red > 28)
-          red = 28;
-        if (green > 24)
-          green = 24;
-        if (blue > 26)
-          blue = 26;
+        if (red < MUTED_RED_MIN)
+          red = MUTED_RED_MIN;
+        if (green < MUTED_GREEN_MIN)
+          green = MUTED_GREEN_MIN;
+        if (blue < MUTED_BLUE_MIN)
+          blue = MUTED_BLUE_MIN;
+        if (red > MUTED_RED_MAX)
+          red = MUTED_RED_MAX;
+        if (green > MUTED_GREEN_MAX)
+          green = MUTED_GREEN_MAX;
+        if (blue > MUTED_BLUE_MAX)
+          blue = MUTED_BLUE_MAX;
         green += 2;
         blue += 2;
         red = TitlePaletteFade_ClampComponent(red);
@@ -1532,7 +1532,7 @@ void TitlePaletteFade_BuildColors(u32 mode, u16 *source, u16 *destination,
       green = ((colorWork << BRIGHTNESS_GREEN_SHIFT) &
                (GREEN_BITS << BRIGHTNESS_GREEN_SHIFT));
       blue = (colorWork & BLUE_BITS);
-      colorWork = Iwram_SignedDivide(red + green + blue, 96);
+      colorWork = Iwram_SignedDivide(red + green + blue, CUSTOM_TINT_DIVISOR);
       tintedRed = colorWork * tintRed;
       green = colorWork * tintGreen;
       blue = colorWork * tintBlue;

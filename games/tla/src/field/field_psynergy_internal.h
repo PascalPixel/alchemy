@@ -118,6 +118,10 @@ struct CycloneWork {
 #define GLOW_GREEN_SWING 8
 #define GLOW_BLUE 12
 #define GLOW_BLUE_SWING 10
+/// The cycling shine of Burst's and Pound's canvas: one channel or two swing
+/// CANVAS_SHINE_SWING levels either side of CANVAS_SHINE_MIDDLE.
+#define CANVAS_SHINE_MIDDLE 16
+#define CANVAS_SHINE_SWING 12
 
 /// A 256-colour picture's size in the 16-colour tiles a sprite counts.
 #define OBJ_TILES_PER_8BPP_TILE (TILE_SIZE_8BPP / TILE_SIZE_4BPP)

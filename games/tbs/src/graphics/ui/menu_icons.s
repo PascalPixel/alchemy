@@ -2,7 +2,7 @@
 	.balign 4
 	.global gItemIcons
 gItemIcons:
-	.4byte Icon_Item000
+	.4byte Icon_ItemNone
 	.4byte Icon_ItemLongSword
 	.4byte Icon_ItemBroadSword
 	.4byte Icon_ItemClaymore
@@ -252,16 +252,16 @@ gItemIcons:
 	.4byte Icon_Item247
 	.4byte Icon_Item248
 	.4byte Icon_Item249
-	.4byte Icon_Item250
-	.4byte Icon_Item251
-	.4byte Icon_Item252
-	.4byte Icon_Item253
-	.4byte Icon_Item254
+	.4byte Icon_ItemUnusedStripedShield
+	.4byte Icon_ItemUnusedMagicRod
+	.4byte Icon_ItemUnusedLeatherCap
+	.4byte Icon_ItemUnusedGreyHelm
+	.4byte Icon_ItemUnusedClosedHelm
 	.global gItemIconsEnd
 gItemIconsEnd:
 	.4byte -1
-Icon_Item000:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_000.icon4"
+Icon_ItemNone:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_none.icon4"
 Icon_ItemLongSword:
 	.incbin "games/tbs/src/graphics/ui/menu_icons/item_long_sword.icon4"
 Icon_ItemBroadSword:
@@ -768,21 +768,21 @@ Icon_Item248:
 	.incbin "games/tbs/src/graphics/ui/menu_icons/item_248.icon4"
 Icon_Item249:
 	.incbin "games/tbs/src/graphics/ui/menu_icons/item_249.icon4"
-Icon_Item250:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_250.icon4"
-Icon_Item251:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_251.icon4"
-Icon_Item252:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_252.icon4"
-Icon_Item253:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_253.icon4"
-Icon_Item254:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/item_254.icon4"
+Icon_ItemUnusedStripedShield:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_unused_striped_shield.icon4"
+Icon_ItemUnusedMagicRod:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_unused_magic_rod.icon4"
+Icon_ItemUnusedLeatherCap:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_unused_leather_cap.icon4"
+Icon_ItemUnusedGreyHelm:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_unused_grey_helm.icon4"
+Icon_ItemUnusedClosedHelm:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/item_unused_closed_helm.icon4"
 	.balign 4, 0
 	.balign 4
 	.global gPsynergyIcons
 gPsynergyIcons:
-	.4byte Icon_Psynergy000
+	.4byte Icon_PsynergyNothing
 	.4byte Icon_PsynergyQuake
 	.4byte Icon_PsynergyEarthquake
 	.4byte Icon_PsynergyQuakeSphere
@@ -822,10 +822,10 @@ gPsynergyIcons:
 	.4byte Icon_PsynergyVolcano
 	.4byte Icon_PsynergyEruption
 	.4byte Icon_PsynergyPyroclasm
-	.4byte Icon_Psynergy040
+	.4byte Icon_PsynergyBlast
 	.4byte Icon_PsynergyMadBlast
 	.4byte Icon_PsynergyFieryBlast
-	.4byte Icon_Psynergy043
+	.4byte Icon_PsynergyBlastStrong
 	.4byte Icon_PsynergyNova
 	.4byte Icon_PsynergySupernova
 	.4byte Icon_PsynergyBolt
@@ -945,8 +945,8 @@ gPsynergyIcons:
 	.global gPsynergyIconsEnd
 gPsynergyIconsEnd:
 	.4byte -1
-Icon_Psynergy000:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_000.icon4"
+Icon_PsynergyNothing:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_nothing.icon4"
 Icon_PsynergyQuake:
 	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_quake.icon4"
 Icon_PsynergyEarthquake:
@@ -1025,14 +1025,14 @@ Icon_PsynergyEruption:
 	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_eruption.icon4"
 Icon_PsynergyPyroclasm:
 	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_pyroclasm.icon4"
-Icon_Psynergy040:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_040.icon4"
+Icon_PsynergyBlast:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_blast.icon4"
 Icon_PsynergyMadBlast:
 	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_mad_blast.icon4"
 Icon_PsynergyFieryBlast:
 	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_fiery_blast.icon4"
-Icon_Psynergy043:
-	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_043.icon4"
+Icon_PsynergyBlastStrong:
+	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_blast_strong.icon4"
 Icon_PsynergyNova:
 	.incbin "games/tbs/src/graphics/ui/menu_icons/psynergy_nova.icon4"
 Icon_PsynergySupernova:

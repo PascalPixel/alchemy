@@ -1,10 +1,24 @@
 /// @file
-/// Contigo, the village below Jupiter Lighthouse, and the rooms of its
-/// overlay: the village with its Teleport circle, its weeds for Cyclone and
-/// the Djinn Salt and Shine; its houses, shops, inn and Sanctum, where Isaac's
-/// party and Felix's are reunited (Contigo_TheReunion); the hall of Lucky
-/// Dice, Super Lucky Dice and Lucky Wheels; and the Anemos geoglyph, where the
-/// villagers build the wings, below the Anemos Sanctum's front.
+/// Contigo, the village of the Jupiter clan north of Atteka Inlet, beside the
+/// crater below Jupiter Lighthouse, and the rooms of its overlay: the houses,
+/// shops, inn and Sanctum, the three game tents, and the Anemos geoglyph east
+/// of the village, where the villagers build the Wings of Anemos in front of
+/// the Anemos Sanctum.
+///
+/// On Felix's first visit the village is busy with the wings. Scoop in the
+/// open gap of the big weed patch east of the village gate finds the Djinni
+/// Salt, and Cyclone on the clump of weeds beside the house at the top of the
+/// hill uncovers a Bramble Seed. The tent left of the inn holds Lucky Wheels,
+/// and the two tents north of the Teleport circle Super Lucky Dice (west) and
+/// Lucky Dice (east). Once Jupiter Lighthouse's beacon is lit, the villagers
+/// are away transporting the wings and four doors are locked; Isaac's party
+/// waits in the house at the top of the hill, and walking in starts the
+/// reunion (Contigo_TheReunion). That house becomes Hamma's new home, and on
+/// the party's first visit after the ship has its wings she talks with Ivan
+/// (Contigo_ReturnToNewHome). In a linked game, Force on the tree stump
+/// behind the inn frees the Djinni Shine. Late in the game, Reveal in front of
+/// the Sanctum opens its middle door, and Teleport on the circle in the middle
+/// of the village leads into the Anemos Inner Sanctum.
 
 #include "types.h"
 #include "macros.h"
@@ -31,9 +45,62 @@
 /// (Contigo_ReturnToNewHome).
 #define FLAG_HAMMA_WELCOMED_PARTY 0x9d1
 
-/// The village's temp flag: the camera follows the leader across the whole
-/// village, rather than its western part alone (Contigo_WidenCameraBounds).
+/// The village's temp flag: the camera follows the leader east past the
+/// village gate as far as the weed patch, rather than stopping at the gate
+/// (Contigo_WidenCameraBounds).
 #define FLAG_WHOLE_VILLAGE_IN_VIEW FLAG_SCENE_TEMP_00
+
+/// The map cells the village's, the geoglyph's and the houses' trigger rows
+/// answer. A door's cell takes the number of the exit it leaves by, so those
+/// rows use the exit's own name.
+enum ContigoCellBehavior {
+  /// The geoglyph's west edge, where the path from the village's east edge
+  /// comes in.
+  CELL_BEHAVIOR_GEOGLYPH_WEST_EDGE = 12,
+  /// The doors at the head of the Sanctum's west, middle and east steps.
+  CELL_BEHAVIOR_SANCTUM_WEST_DOOR = 13,
+  CELL_BEHAVIOR_SANCTUM_MIDDLE_DOOR = 14,
+  CELL_BEHAVIOR_SANCTUM_EAST_DOOR = 15,
+  /// A door shut while the villagers are away with the wings
+  /// (Contigo_LockDoors).
+  CELL_BEHAVIOR_LOCKED_DOOR = 19,
+  /// Across the three ways from the middle of the village down to its south
+  /// part: the north line keeps the view west of the gate, the south one lets
+  /// it follow the leader east.
+  CELL_BEHAVIOR_VIEW_WEST_OF_GATE = 20,
+  CELL_BEHAVIOR_VIEW_EAST_OF_GATE = 21,
+  /// Just inside the door of Hamma's new home.
+  CELL_BEHAVIOR_INSIDE_HAMMAS_DOOR = 20,
+  /// The Sanctum's carved wall beside the translation sign.
+  CELL_BEHAVIOR_CARVED_WALL = 22,
+  /// The signs outside the three game tents.
+  CELL_BEHAVIOR_LUCKY_WHEELS_SIGN = 24,
+  CELL_BEHAVIOR_SUPER_LUCKY_DICE_SIGN = 25,
+  CELL_BEHAVIOR_LUCKY_DICE_SIGN = 26,
+  CELL_BEHAVIOR_TELEPORT_CIRCLE = 30,
+  /// The open gap in the middle of the weed patch, where Salt hides.
+  CELL_BEHAVIOR_WEED_PATCH_GAP = 32,
+  /// The clumps of weeds about the village, and the five rows of the big
+  /// patch east of the gate, from north to south.
+  CELL_BEHAVIOR_WEEDS_WEST_OF_ITEM_SHOP = 39,
+  CELL_BEHAVIOR_WEEDS_BEHIND_INN,
+  CELL_BEHAVIOR_WEEDS_OVER_BRAMBLE_SEED,
+  CELL_BEHAVIOR_WEEDS_WEST_OF_WEAPON_SHOP,
+  CELL_BEHAVIOR_WEEDS_BY_GATE,
+  CELL_BEHAVIOR_WEEDS_BELOW_LUCKY_WHEELS,
+  CELL_BEHAVIOR_WEEDS_ON_CLIFF_WEST,
+  CELL_BEHAVIOR_WEEDS_ON_CLIFF_EAST,
+  CELL_BEHAVIOR_WEED_PATCH_TOP_ROW,
+  CELL_BEHAVIOR_WEED_PATCH_SECOND_ROW,
+  CELL_BEHAVIOR_WEED_PATCH_MIDDLE_ROW,
+  CELL_BEHAVIOR_WEED_PATCH_FOURTH_ROW,
+  CELL_BEHAVIOR_WEED_PATCH_BOTTOM_ROW,
+  /// The pots and ovens in the houses: the bean soup, the corn bread and the
+  /// cookies.
+  CELL_BEHAVIOR_BEAN_SOUP = 200,
+  CELL_BEHAVIOR_CORN_BREAD,
+  CELL_BEHAVIOR_COOKIES
+};
 
 /// The tile row of Hamma's portrait as she and Isaac speak at once in the
 /// reunion (Contigo_TheReunion): two rows higher from the first patch on.
@@ -334,58 +401,6 @@ extern u16 gContigo_ShimmerColors[];
 extern u16 gContigo_CycleSlots[];
 extern s32 gContigo_ShiverScript[];
 extern u32 gContigo_SparkleTiles[];
-void Contigo_FreedDjinniJoinsParty(void);
-void Contigo_ExamineWall(void);
-void Contigo_ReadSign(void);
-
-void Contigo_ReadLuckyWheelsSign(void);
-
-void Contigo_ReadLuckyDiceSign(void);
-void Scene_ShowEntranceLocked(void);
-void Contigo_AskAboutWindLegend(void);
-void Contigo_BabyThinks(void);
-void Contigo_TalkToWeaponMerchant(void);
-void Contigo_TalkToArmorMerchant(void);
-
-void Contigo_TalkToInnkeeper(void);
-
-void Contigo_AskAboutSuperDice(void);
-void Contigo_ReadSuperLuckyDiceRules(void);
-void Contigo_ReadLuckyDiceRules(void);
-void Contigo_ReadLuckyDicePairs(void);
-void Contigo_TalkToWheelsAttendant(void);
-void Contigo_ReadLuckyWheelsRules(void);
-void Contigo_ReadLuckyWheelsPrizes(void);
-void Contigo_AskAboutGeoglyph(void);
-void Contigo_TalkToDoubtingBoy(void);
-void Contigo_TalkAboutTheShip(void);
-void Contigo_ScatterFirstWeeds(void);
-void Contigo_ScatterSecondWeeds(void);
-
-void Contigo_ScatterWeedsOverBrambleSeed(void);
-
-void Contigo_ScatterFourthWeeds(void);
-void Contigo_ScatterFifthWeeds(void);
-void Contigo_ScatterSixthWeeds(void);
-void Contigo_ScatterSeventhWeeds(void);
-void Contigo_ScatterEighthWeeds(void);
-void Contigo_ScatterFirstWeedRow(void);
-void Contigo_ScatterSecondWeedRow(void);
-void Contigo_ScatterThirdWeedRow(void);
-void Contigo_ScatterFourthWeedRow(void);
-void Contigo_ScatterFifthWeedRow(void);
-void Contigo_WidenCameraBounds(void);
-void Contigo_NarrowCameraBounds(void);
-void Contigo_ScoopForSalt(void);
-void Contigo_RevealMiddleDoor(void);
-
-void Contigo_ForceFreesDjinni(void);
-
-void Contigo_OfferLuckyDice(void);
-void Contigo_OfferSuperLuckyDice(void);
-void Contigo_EnterSanctumWestDoor(void);
-void Contigo_EnterSanctumEastDoor(void);
-void Contigo_ReturnToNewHome(void);
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
@@ -512,13 +527,15 @@ void Actor_StartScript(struct FieldEffect *effect, const s32 *script);
 #undef EFFECT_SET_MODE
 #undef EFFECT_SET_SCRIPT
 
-/// Salt, dug up in the patch of weeds, joins the party.
+/// Salt, popped up out of the gap in the weed patch east of the village gate,
+/// joins the party: "Felix found the Venus Djinni Salt!"
 void Contigo_SaltJoinsParty(void) {
   Djinn_JoinParty(ACTOR_SALT, DJINNI_SALT / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_SALT));
 }
 
-/// Shine, freed from the tree stump by Force, joins the party.
+/// Talking to Shine where it landed, beside the tree stump behind the inn,
+/// once Force has freed it: the Mars Djinni joins the party.
 void Contigo_FreedDjinniJoinsParty(void) {
   Djinn_JoinParty(ACTOR_SHINE, DJINNI_SHINE / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_SHINE));
@@ -656,7 +673,9 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gContigo_Triggers;
 }
 
-/// Examining the wall by the geoglyph: characters are carved into it.
+/// Felix examines the Sanctum's front wall between its west and middle steps,
+/// behind the translation sign (cells (45, 18) and (46, 18)): "There are
+/// characters carved into it", which he cannot make sense of.
 void Contigo_ExamineWall(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -665,7 +684,8 @@ void Contigo_ExamineWall(void) {
   Event_End();
 }
 
-/// Reading the sign that translates the wall's characters.
+/// Felix reads the small sign in front of the Sanctum's carved wall: "The
+/// characters from the wall are translated" on it.
 void Contigo_ReadSign(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -674,7 +694,8 @@ void Contigo_ReadSign(void) {
   Event_End();
 }
 
-/// Reading the sign to the Lucky Wheels.
+/// Felix reads the sign outside the Lucky Wheels tent, left of the inn (cell
+/// (4, 55)): "Turn the slot and get a prize! The lottery slots are over here."
 void Contigo_ReadLuckyWheelsSign(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -683,8 +704,10 @@ void Contigo_ReadLuckyWheelsSign(void) {
   Event_End();
 }
 
-/// Reading the sign to the Lucky Dice.
-void Contigo_ReadLuckyDiceSign(void) {
+/// Felix reads the sign west of the two tents north of the Teleport circle
+/// (cell (11, 47)), which points to Super Lucky Dice in the west tent: "Drop
+/// some cash and double up! The hi-lo dice are over here!"
+void Contigo_ReadSuperLuckyDiceSign(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   // "Drop some cash and double up! The hi-lo dice are over here!"
@@ -692,8 +715,10 @@ void Contigo_ReadLuckyDiceSign(void) {
   Event_End();
 }
 
-/// Reading the sign to the Super Lucky Dice.
-void Contigo_ReadSuperDiceSign(void) {
+/// Felix reads the sign east of the two tents north of the Teleport circle
+/// (cell (19, 47)), which points to Lucky Dice in the east tent: "You never
+/// know what the dice will do next! Come and give our dice a toss!"
+void Contigo_ReadLuckyDiceSign(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   // "You never know what the dice will do next! Come and give our dice a..."
@@ -703,8 +728,9 @@ void Contigo_ReadSuperDiceSign(void) {
 
 #include "shared/scene_show_entrance_locked.h"
 
-/// A young man asks whether the party knows the legend of the people who could
-/// fly on the wind.
+/// Until Jupiter Lighthouse is lit, the young man a few steps inside the
+/// village gate asks Felix whether he knows the legend of the people who could
+/// control the wind and air, and answers his yes or no.
 void Contigo_AskAboutWindLegend(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -761,9 +787,11 @@ void Contigo_RaiseLeaves(void) {
   }
 }
 
-/// Examining the baby: its brow furrows, a whirlwind grows over it and leaves
-/// whirl up in it while the room dims, then it babbles and its family talk of
-/// the house.
+/// Talking to the baby in its cradle, in the house north of the weapon shop:
+/// "The baby's forehead is furrowed, like it's thinking." The room turns dark
+/// blue, a whirlwind grows over the cradle and leaves whirl up in it, then the
+/// light comes back, the baby babbles "Babu bawaba bibaw.", and its brother
+/// grumbles that the shabby old house is drafty.
 void Contigo_BabyThinks(void) {
   struct Actor *effect;
   FIXED x = toFIXED(706);
@@ -857,8 +885,9 @@ enum {
 /// Contigo's inn, as Inn_CheckIn numbers the inns.
 enum { CONTIGO_INN = 12 };
 
-/// The item merchant: facing the counter opens the shop; otherwise she talks of
-/// the wings.
+/// Talking to the item merchant across her counter, in the west of the two
+/// houses south of the Teleport circle, opens the item shop; from any other
+/// side she talks of the wings.
 void Contigo_TalkToItemMerchant(void) {
   if (Leader_IsFacingNorth()) {
     Shop_Run(SHOP_CONTIGO_ITEMS, ACTOR_ITEM_MERCHANT);
@@ -876,8 +905,9 @@ void Contigo_TalkToItemMerchant(void) {
   }
 }
 
-/// The weapon merchant: facing the counter opens the shop; otherwise he talks
-/// of Atteka's traditions.
+/// Talking to the weapon merchant, the west of the two men behind the counter
+/// in the shop east of the Teleport circle, across it opens his shop; from any
+/// other side he talks of Atteka's traditions.
 void Contigo_TalkToWeaponMerchant(void) {
   if (Leader_IsFacingNorth()) {
     Shop_Run(SHOP_CONTIGO_WEAPONS, ACTOR_WEAPON_MERCHANT);
@@ -895,8 +925,9 @@ void Contigo_TalkToWeaponMerchant(void) {
   }
 }
 
-/// The armor merchant: facing the counter opens the shop; otherwise she talks
-/// of the mining in the ruins.
+/// Talking to the armor merchant, the east of the two men behind the counter
+/// in the shop east of the Teleport circle, across it opens his shop; from any
+/// other side he talks of the mining in the ruins.
 void Contigo_TalkToArmorMerchant(void) {
   if (Leader_IsFacingNorth()) {
     Shop_Run(SHOP_CONTIGO_ARMOR, ACTOR_ARMOR_MERCHANT);
@@ -914,8 +945,9 @@ void Contigo_TalkToArmorMerchant(void) {
   }
 }
 
-/// The innkeeper: facing the counter checks in; otherwise she talks of the
-/// visitors and the wings.
+/// Talking to the innkeeper across the counter of the inn, right of the Lucky
+/// Wheels tent, offers a night's rest; from any other side the innkeeper talks
+/// of the visitors and the wings.
 void Contigo_TalkToInnkeeper(void) {
   if (Leader_IsFacingNorth()) {
     Inn_CheckIn(CONTIGO_INN, ACTOR_INNKEEPER);
@@ -936,8 +968,9 @@ void Contigo_TalkToInnkeeper(void) {
   }
 }
 
-/// The healer: facing the counter opens the Sanctum; otherwise he talks of the
-/// miracle of the wings.
+/// Talking to the healer across his counter, at the head of the red carpet in
+/// the Sanctum north-east of the Teleport circle, offers the Sanctum's
+/// healing; from any other side he talks of the miracle of the wings.
 void Contigo_TalkToHealer(void) {
   if (Leader_IsFacingNorth()) {
     Sanctum_Run(ACTOR_HEALER);
@@ -958,8 +991,8 @@ void Contigo_TalkToHealer(void) {
   }
 }
 
-/// A player in the dice hall asks whether the party has played Super Lucky Dice
-/// before.
+/// In the Super Lucky Dice tent, one of the players asks Felix whether he has
+/// ever played Superdice before, and answers his yes or no.
 void Contigo_AskAboutSuperDice(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -969,7 +1002,8 @@ void Contigo_AskAboutSuperDice(void) {
   Event_End();
 }
 
-/// Reading the sign of Super Lucky Dice's rules.
+/// Felix reads the rules sign in the Super Lucky Dice tent: four dice thrown at
+/// once, what matching pairs and fours win, and the hi-lo game after a win.
 void Contigo_ReadSuperLuckyDiceRules(void) {
   s32 msg;
 
@@ -997,7 +1031,8 @@ void Contigo_ReadSuperLuckyDiceRules(void) {
   Event_End();
 }
 
-/// Reading the first sign of Lucky Dice's rules.
+/// Felix reads the first of the two signs in the Lucky Dice tent: throw the
+/// dice on the table and try to get the same numbers.
 void Contigo_ReadLuckyDiceRules(void) {
   s32 msg;
 
@@ -1015,8 +1050,8 @@ void Contigo_ReadLuckyDiceRules(void) {
   Event_End();
 }
 
-/// Reading Lucky Dice's second sign: what pairs, triples and four of a kind
-/// win.
+/// Felix reads the second sign in the Lucky Dice tent: what pairs, triples and
+/// four of a kind win.
 void Contigo_ReadLuckyDicePairs(void) {
   s32 msg;
 
@@ -1038,7 +1073,8 @@ void Contigo_ReadLuckyDicePairs(void) {
   Event_End();
 }
 
-/// Talking to the Lucky Wheels attendant (Contigo_OfferLuckyWheels).
+/// Talking to the young woman by the slot machine in the Lucky Wheels tent
+/// offers a game for game tickets (Contigo_OfferLuckyWheels).
 void Contigo_TalkToWheelsAttendant(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1046,7 +1082,8 @@ void Contigo_TalkToWheelsAttendant(void) {
   Event_End();
 }
 
-/// Reading the sign of Lucky Wheels' rules.
+/// Felix reads the rules sign in the Lucky Wheels tent: five pulls of the
+/// lever, stars to hold a wheel, and more lines for more tickets.
 void Contigo_ReadLuckyWheelsRules(void) {
   s32 msg;
 
@@ -1068,7 +1105,8 @@ void Contigo_ReadLuckyWheelsRules(void) {
   Event_End();
 }
 
-/// Reading the sign of Lucky Wheels' prizes.
+/// Felix reads the prizes sign in the Lucky Wheels tent: shirts, rings and
+/// boots win their kind, stars and hearts win items, and the Moon is wild.
 void Contigo_ReadLuckyWheelsPrizes(void) {
   s32 msg;
 
@@ -1091,8 +1129,9 @@ void Contigo_ReadLuckyWheelsPrizes(void) {
   Event_End();
 }
 
-/// A man in a long robe asks whether the party has looked at the Anemos
-/// geoglyph.
+/// On Felix's first visit, the man in a long robe between the Sanctum's middle
+/// and east steps asks whether he has taken a good look at the Anemos
+/// geoglyph, and answers his yes or no.
 void Contigo_AskAboutGeoglyph(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1102,9 +1141,10 @@ void Contigo_AskAboutGeoglyph(void) {
   Event_End();
 }
 
-/// The boy walking with the girl talks of the geoglyphs and of the city of the
-/// Anemos, which he will not believe flew, turning to the leader unless Mind
-/// Read is cast on him, and back after.
+/// Talking to the boy walking about the middle of the village with a girl: he
+/// talks of the geoglyphs and of the crater where the city of the Anemos is
+/// said to have stood, and Mind Read hears that he will not believe it flew.
+/// He turns to Felix to talk, but not for Mind Read, and turns back after.
 void Contigo_TalkToDoubtingBoy(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_GetById(ACTOR_BOY_DOUBTING_THE_LEGENDS);
@@ -1143,8 +1183,10 @@ void Contigo_TalkToDoubtingBoy(void) {
   Event_End();
 }
 
-/// The girl by the ship talks of the wings, turning to the leader unless Mind
-/// Read is cast on her, and back after.
+/// Talking to the girl walking about the middle of the village with the boy:
+/// she talks of the wings the village built and, once they are gone, of seeing
+/// the ship take off; Mind Read hears her thoughts on the same. She turns to
+/// Felix to talk, but not for Mind Read, and turns back after.
 void Contigo_TalkAboutTheShip(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_GetById(ACTOR_GIRL_ON_THE_SHIP);
@@ -1179,8 +1221,10 @@ void Contigo_TalkAboutTheShip(void) {
 
 void Teleport_PlaySparks(void);
 
-/// Teleport on the circle: it shimmers, the sparks play, and the party leaves
-/// for the Anemos Inner Sanctum, to arrive there by Teleport.
+/// Teleport cast on the carved stone circle in the middle of the village
+/// (cells (16, 50) and (17, 50)): the village turns grey, the circle shimmers
+/// and sparks of coloured light rise, and the party arrives on a circle like
+/// it in the Anemos Inner Sanctum.
 void Contigo_TeleportOut(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
@@ -1192,18 +1236,23 @@ void Contigo_TeleportOut(void) {
   Teleport_StopShimmer();
 }
 
-/// Cyclone scatters a clump of weeds, as each clump and each row of the weed
-/// patch south-east of the village below does with its own cells.
-void Contigo_ScatterFirstWeeds(void) {
+/// Cyclone scatters the clump of weeds just west of the item shop, the west of
+/// the two houses south of the Teleport circle (cell (8, 56)), leaving bare
+/// ground. Each clump's event copies bare ground from a cell nearby over the
+/// clump's cells that Cyclone's whirl touched. Where the ground is raised, as
+/// here, a clump is drawn some rows north of the cell it answers on.
+void Contigo_ScatterWeedsWestOfItemShop(void) {
   FieldTileCopies_CopyTouchedCells(3, 50, 1, 1, 8, 54, 0);
 }
 
-/// Cyclone scatters the second clump of weeds.
-void Contigo_ScatterSecondWeeds(void) {
+/// Cyclone scatters the clump of weeds behind the inn, beside the tree stump
+/// where Shine is stuck (cells (2, 45) and (3, 45)), leaving bare ground.
+void Contigo_ScatterWeedsBehindInn(void) {
   FieldTileCopies_CopyTouchedCells(4, 43, 2, 1, 2, 43, 0);
 }
 
-/// The scene's own name for TileCopies_CopyTouchedCells.
+/// The scene's own name for TileCopies_CopyTouchedCells, which the Bramble
+/// Seed's clump calls.
 static __inline__ void Contigo_CopyTouchedCells(s32 sourceX, s32 sourceZ,
                                                 s32 width, s32 height,
                                                 s32 windowX, s32 windowZ,
@@ -1212,8 +1261,10 @@ static __inline__ void Contigo_CopyTouchedCells(s32 sourceX, s32 sourceZ,
                               layer);
 }
 
-/// Cyclone scatters the weeds over the Bramble Seed: unless it was taken, the
-/// seed is shown, and a leader standing on its spot hops back off it.
+/// Cyclone scatters the clump of weeds beside the east wall of the house at
+/// the top of the hill (cell (17, 41)), and unless it was taken the Bramble
+/// Seed lies uncovered there. If Felix stands on that very spot, he hops a
+/// step north off it.
 void Contigo_ScatterWeedsOverBrambleSeed(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
 
@@ -1234,74 +1285,98 @@ void Contigo_ScatterWeedsOverBrambleSeed(void) {
   }
 }
 
-/// Cyclone scatters the fourth clump of weeds.
-void Contigo_ScatterFourthWeeds(void) {
+/// Cyclone scatters the clump of weeds against the west wall of the weapon and
+/// armor shop, east of the Teleport circle (cells (23, 49) and (23, 50)),
+/// leaving bare ground.
+void Contigo_ScatterWeedsWestOfWeaponShop(void) {
   FieldTileCopies_CopyTouchedCells(29, 35, 1, 2, 23, 47, 0);
 }
 
-/// Cyclone scatters the fifth clump of weeds.
-void Contigo_ScatterFifthWeeds(void) {
+/// Cyclone scatters the weeds just east of the village gate's east post (cells
+/// (29, 59) and (30, 58) to (30, 60)), leaving bare ground.
+void Contigo_ScatterWeedsByGate(void) {
   FieldTileCopies_CopyTouchedCells(32, 55, 2, 3, 29, 58, 0);
 }
 
-/// Cyclone scatters the sixth clump of weeds.
-void Contigo_ScatterSixthWeeds(void) {
+/// Cyclone scatters the clump of weeds below the Lucky Wheels tent, at the
+/// edge of the slope (cell (3, 58)), leaving bare ground.
+void Contigo_ScatterWeedsBelowLuckyWheels(void) {
   FieldTileCopies_CopyTouchedCells(3, 60, 1, 1, 3, 56, 0);
 }
 
-/// Cyclone scatters the seventh clump of weeds.
-void Contigo_ScatterSeventhWeeds(void) {
+/// Cyclone scatters the western of the two clumps of weeds on top of the cliff
+/// south of the item shop (cells (7, 60) and (8, 60)), leaving bare ground.
+void Contigo_ScatterWeedsOnCliffWest(void) {
   FieldTileCopies_CopyTouchedCells(7, 62, 2, 1, 7, 58, 0);
 }
 
-/// Cyclone scatters the eighth clump of weeds.
-void Contigo_ScatterEighthWeeds(void) {
+/// Cyclone scatters the eastern of the two clumps of weeds on top of the cliff
+/// south of the item shop (cells (10, 61) and (11, 61)), leaving bare ground.
+void Contigo_ScatterWeedsOnCliffEast(void) {
   FieldTileCopies_CopyTouchedCells(10, 63, 2, 1, 10, 59, 0);
 }
 
-/// Cyclone scatters the first row of the weed patch.
-void Contigo_ScatterFirstWeedRow(void) {
+/// Cyclone scatters the top row of the big weed patch east of the village gate
+/// (cells (40, 57) to (42, 57)), leaving bare ground. The patch's five rows
+/// each have an event, and they and the weeds by the gate take their bare
+/// ground from a cell between the gate and the patch.
+void Contigo_ScatterWeedPatchTopRow(void) {
   FieldTileCopies_CopyTouchedCells(32, 55, 3, 1, 40, 57, 0);
 }
 
-/// Cyclone scatters the second row of the weed patch.
-void Contigo_ScatterSecondWeedRow(void) {
+/// Cyclone scatters the second row from the top of the big weed patch east of
+/// the village gate (cells (39, 58) to (43, 58)), leaving bare ground.
+void Contigo_ScatterWeedPatchSecondRow(void) {
   FieldTileCopies_CopyTouchedCells(32, 55, 5, 1, 39, 58, 0);
 }
 
-/// Cyclone scatters the third row of the weed patch.
-void Contigo_ScatterThirdWeedRow(void) {
+/// Cyclone scatters the middle row of the big weed patch east of the village
+/// gate, either side of the open gap where Salt hides (cells (39, 59),
+/// (40, 59), (42, 59) and (43, 59)), leaving bare ground.
+void Contigo_ScatterWeedPatchMiddleRow(void) {
   FieldTileCopies_CopyTouchedCells(32, 55, 5, 1, 39, 59, 0);
 }
 
-/// Cyclone scatters the fourth row of the weed patch.
-void Contigo_ScatterFourthWeedRow(void) {
+/// Cyclone scatters the second row from the bottom of the big weed patch east
+/// of the village gate (cells (39, 60) to (43, 60)), leaving bare ground.
+void Contigo_ScatterWeedPatchFourthRow(void) {
   FieldTileCopies_CopyTouchedCells(32, 55, 5, 1, 39, 60, 0);
 }
 
-/// Cyclone scatters the fifth row of the weed patch.
-void Contigo_ScatterFifthWeedRow(void) {
+/// Cyclone scatters the bottom row of the big weed patch east of the village
+/// gate (cells (40, 61) to (42, 61)), leaving bare ground.
+void Contigo_ScatterWeedPatchBottomRow(void) {
   FieldTileCopies_CopyTouchedCells(32, 55, 3, 1, 40, 61, 0);
 }
 
-/// Lets the camera follow the leader across the whole village, held by a scene
-/// flag.
+/// Nothing visible happens when Felix walks south from the middle of the
+/// village into its south part, on one of the three ways in: west of the item
+/// shop, between it and the house beside it, or east of that house (cells
+/// (5, 55) to (8, 55), (14, 55) and (18, 57) to (20, 57)). From then on the
+/// view follows him east past the village gate to the big weed patch, where
+/// it stopped just past the gate before. FLAG_WHOLE_VILLAGE_IN_VIEW marks the
+/// wider view.
 void Contigo_WidenCameraBounds(void) {
   Field_SetCameraBounds(0, toFIXED(512), toFIXED(880), toFIXED(1024));
   GameFlag_Set(FLAG_WHOLE_VILLAGE_IN_VIEW);
 }
 
-/// Holds the camera to the village's western part again.
+/// Nothing visible happens when Felix walks back north from the village's
+/// south part into its middle, on one of the three ways (cells (4, 54) to
+/// (8, 54), (14, 54) and (18, 56) to (20, 56)); the view stops at the village
+/// gate again, and FLAG_WHOLE_VILLAGE_IN_VIEW is cleared.
 void Contigo_NarrowCameraBounds(void) {
   Field_SetCameraBounds(0, toFIXED(512), toFIXED(512), toFIXED(1024));
   GameFlag_Clear(FLAG_WHOLE_VILLAGE_IN_VIEW);
 }
 
-/// The trigger Scoop raises once Salt has appeared: it joins the party.
+/// The trigger Contigo_ScoopForSalt raises once Salt has popped up, which runs
+/// Contigo_SaltJoinsParty.
 enum ContigoRaisedTrigger { RAISED_SALT_FOUND = 200 };
 
-/// Scoop in the gap in the middle of the weed patch: until the party has Salt,
-/// Salt appears there and turns to the leader.
+/// Scoop cast in the open gap in the middle of the big weed patch east of the
+/// village gate (cell (41, 59)): until the party has Salt, the Venus Djinni
+/// pops up there, turns to Felix and joins the party.
 void Contigo_ScoopForSalt(void) {
   if (!GameFlag_Get(FLAG_DJINNI(DJINNI_SALT))) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -1316,25 +1391,35 @@ void Contigo_ScoopForSalt(void) {
   }
 }
 
-/// Reveal at the Sanctum's front: redraws the head of its middle steps and
-/// puts the way in to the Anemos Inner Sanctum's entrance (cell code 14, kept
-/// out of reach at the top of the map) at their foot.
+/// Reveal cast anywhere at the geoglyph or the Sanctum's front shows the
+/// Sanctum's middle door, at the head of its main steps, standing open, and
+/// while Reveal lasts walking north into it (cells (48, 19) and (49, 19))
+/// leads inside, on the way to the Dragon Skin's chest. The open door is the
+/// picture the unused Contigo_EnterSanctumMiddleDoor would open it with; the
+/// doorway's exit cells are kept out of reach at the top of the map, (48, 1),
+/// and copied into place.
 void Contigo_RevealMiddleDoor(void) {
+  // XXX: whether the middle door is seen standing open under Reveal; a
+  // recording with Felix casting at the foot of the middle steps would settle
+  // it (the recorder casts from the west steps, outside Reveal's circle).
   MapGrid_CopyCellsTo(27, 4, 48, 12, 1, 2);
   MapGrid_CopyCellPictureIndicesRect(27, 6, 49, 12, 1, 2);
   MapGrid_CopyCellAttributes(48, 1, 2, 1, 48, 19);
 }
 
-/// As Reveal fades, puts the middle steps and the cells at their foot back.
+/// As Reveal fades in front of the Sanctum, its middle door shows shut again
+/// and walking into it leads nowhere.
 void Contigo_HideMiddleDoor(void) {
   MapGrid_CopyCellsTo(27, 8, 48, 12, 1, 2);
   MapGrid_CopyCellPictureIndicesRect(27, 10, 49, 12, 1, 2);
   MapGrid_CopyCellAttributes(48, 0, 2, 1, 48, 19);
 }
 
-/// Force on the tree stump where Shine is stuck: the ground shakes, a ring of
-/// dust bursts out, and Shine leaps free, the leader hopping aside if it lands
-/// on him.
+/// Force cast on the tree stump behind the inn, where Shine is stuck: the
+/// ground shakes with a thump, a ring of dust bursts out of the stump, and
+/// Shine leaps out and lands just north-west of it, Felix hopping aside if it
+/// lands on him. Force comes only with the Orb of Force, carried over from The
+/// Broken Seal in a linked game.
 void Contigo_ForceFreesDjinni(void) {
   struct Actor *actor = Actor_GetById(ACTOR_SHINE);
   struct Actor *leader;
@@ -1380,9 +1465,10 @@ void Contigo_ForceFreesDjinni(void) {
   Event_End();
 }
 
-/// Once the beacon is lit, while everyone has left town with the wings: shuts
-/// the doors of two houses, the item shop and the weapon and armor shop, and
-/// locks them (cell code 19, Scene_ShowEntranceLocked).
+/// Once Jupiter Lighthouse's beacon is lit, while the villagers are away
+/// transporting the wings: the doors of the item shop, the house beside it,
+/// the weapon and armor shop and the baby's house north of it show shut, and
+/// trying one says it is locked (Scene_ShowEntranceLocked).
 void Contigo_LockDoors(void) {
   MapGrid_CopyCellsTo(0, 1, 26, 42, 1, 2);
   MapGrid_CopyCellPictureIndicesRect(0, 1, 26, 48, 1, 2);
@@ -1446,9 +1532,10 @@ void Contigo_SetUpWingParts(void) {
 extern void MessageArgument_Push(s32 value, s32 kind);
 void Event_LeaveFor(s32 scene, s32 entrance);
 
-/// The Lucky Wheels attendant in Contigo checks tickets and inventory space
-/// before sending the party to the game; spoken is nonzero as the party comes
-/// back from it.
+/// The Lucky Wheels attendant asks whether Felix will use his game tickets,
+/// warns when the party has little room for prizes, and sends it to the slot
+/// machine; `spoken` is nonzero as the party comes back from a game, when she
+/// asks only whether to keep playing.
 void Contigo_OfferLuckyWheels(s32 spoken) {
   s32 tickets = PartyInventory_CountItem(ITEM_GAME_TICKET);
   s32 room;
@@ -1544,18 +1631,18 @@ s32 Contigo_SelectLuckyWheelsPrize(s32 icon) {
 
 extern u8 gSceneState[];
 
-/// The dice games cost this many coins for each level of the party's average
-/// level; a win of LUCKY_DICE_MEDIUM_WIN coins or more, or of
-/// LUCKY_DICE_LARGE_WIN, is greeted with a bigger jingle.
+/// The dice games cost 10 coins for each level of the party's average level;
+/// a win of 5,000 coins or more, or of 20,000, is greeted with a bigger
+/// jingle.
 enum {
   LUCKY_DICE_COINS_PER_LEVEL = 10,
   LUCKY_DICE_MEDIUM_WIN = 5000,
   LUCKY_DICE_LARGE_WIN = 20000
 };
 
-/// Talking to the Lucky Dice attendant in Contigo offers a game, at
-/// LUCKY_DICE_COINS_PER_LEVEL coins for each level of the party's average
-/// level.
+/// Talking to the young man running the Lucky Dice tent offers a game,
+/// at 10 coins for each level of the party's average level: "Hey, buddy,
+/// wanna try yer luck at the dice?"
 void Contigo_OfferLuckyDice(void) {
   u32 price = Party_GetAverageLevel() * LUCKY_DICE_COINS_PER_LEVEL;
 
@@ -1598,14 +1685,18 @@ void Contigo_OfferLuckyDice(void) {
   Event_End();
 }
 
-/// Talking to the Super Lucky Dice attendant offers a game at the same price,
-/// which his offer does not say.
+/// Talking to the young man running the Super Lucky Dice tent offers a game at
+/// the same price as Lucky Dice, which his offer does not say:
+/// "Welcome, welcome, step right up! Care for a round of Super Lucky Dice?"
 void Contigo_OfferSuperLuckyDice(void) {
   u32 price = Party_GetAverageLevel() * LUCKY_DICE_COINS_PER_LEVEL;
 
   Event_Start();
   Event_ResolvePendingActions(0);
   if ((u32)gMainRoutineWork.coins < price) {
+    // XXX: this line is shown at the Lucky Dice attendant, who stands in the
+    // next tent; a render with fewer coins than the price would show where
+    // its box appears.
     Event_SetMessageId((s32)MsgContigoSorryPalButYouveGotta);
     // "Sorry, pal, but you've gotta have more coins to play."
     FieldMessage_ShowAtActor(ACTOR_LUCKY_DICE_ATTENDANT, 0);
@@ -1651,8 +1742,8 @@ void Contigo_ShrinkActor(s32 id) {
   actor->radius = 8;
 }
 
-/// Opens one of the doors at the head of the Sanctum's steps, two cells of map
-/// edits, and walks the leader in through it.
+/// A thump, and the door at the head of the Sanctum's steps shows open; Felix
+/// walks slowly in through it and the screen fades out.
 void Contigo_OpenSanctumDoor(s32 sourceX, s32 sourceY, s32 doorX, s32 doorY) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1676,8 +1767,9 @@ void Contigo_OpenSanctumDoor(s32 sourceX, s32 sourceY, s32 doorX, s32 doorY) {
   Event_WaitTransitionFrames();
 }
 
-/// Walking into the Sanctum's west door: it opens onto the Anemos Inner
-/// Sanctum's entrance.
+/// Felix walks up the Sanctum's west steps into its door (cells (42, 20) and
+/// (43, 20)): it opens with a thump, he walks in, and he arrives in a small
+/// stone room of the Sanctum with dragon statues.
 void Contigo_EnterSanctumWestDoor(void) {
   Contigo_OpenSanctumDoor(27, 0, 42, 13);
   Import_EventSetExitRequest(
@@ -1692,8 +1784,9 @@ UNUSED void Contigo_EnterSanctumMiddleDoor(void) {
       CONTIGO_GEOGLYPH_TO_ANEMOS_INNER_SANCTUM_ENTRANCE_NORTHEAST);
 }
 
-/// Walking into the Sanctum's east door: it opens onto the Anemos Inner
-/// Sanctum's entrance.
+/// Felix walks up the Sanctum's east steps into its door (cells (54, 20) and
+/// (55, 20)): it opens with a thump, he walks in, and he arrives in a small
+/// stone room of the Sanctum with dragon statues.
 void Contigo_EnterSanctumEastDoor(void) {
   Contigo_OpenSanctumDoor(27, 0, 54, 13);
   Import_EventSetExitRequest(
@@ -1709,10 +1802,11 @@ struct SparkleWork gContigo_SparkleWork BSS_DATA ALIGNED(16);
 void Contigo_StartSparkle(struct Actor *actor, struct SparkleWork *work);
 void Contigo_StopSparkle(struct Actor *actor);
 
-/// The reunion with Isaac's party, on entering this room from the village's
-/// north once the beacon is lit (Contigo_InitializeShops): the two parties
-/// make peace, Kraden tells why Felix has been lighting the beacons, and
-/// Hamma comes to send them all to Mars Lighthouse as one party.
+/// Walking into the house at the top of the hill once Jupiter Lighthouse's
+/// beacon is lit: Isaac, Garet, Mia and Ivan are waiting, and the reunion
+/// begins (Contigo_InitializeShops). The two parties make peace, Kraden tells
+/// why Felix has been lighting the beacons, and Hamma comes to send them all
+/// to Mars Lighthouse as one party.
 void Contigo_TheReunion(void) {
   struct Actor *actor;
   s32 answer;
@@ -2256,9 +2350,10 @@ void Contigo_TheReunion(void) {
 
 extern u32 gContigo_LeaderVisitsScript[];
 
-/// The party's first step into Hamma's house after it set out with the wings:
-/// she welcomes it to her new home, tells Ivan why she kept from him that she
-/// is his sister, and warns that the world is falling into ruin unless Mars
+/// The party's first steps into the house at the top of the hill after the
+/// ship has its wings (cells (7, 25) to (12, 25), just inside the door): Hamma
+/// welcomes it to her new home, tells Ivan why she kept from him that she is
+/// his sister, and warns that the world is falling into ruin unless Mars
 /// Lighthouse is lit.
 void Contigo_ReturnToNewHome(void) {
   if (GameFlag_Get(FLAG_SET_OUT_WITH_WINGS)) {
@@ -2554,11 +2649,12 @@ void Contigo_KeepPriorityWithLeader(void) {
   }
 }
 
-/// Sets up the village: the two walking children stop when faced
-/// (Contigo_PauseWhenFaced); once the beacon is lit, until the party sets out
-/// with the wings, the girl and the old woman are gone and four doors are
-/// locked; Shine waits where it landed until caught; arriving by four ways in
-/// from the south, the camera follows the leader across the whole village;
+/// Sets up the village: the two children walking about its middle stop when
+/// faced (Contigo_PauseWhenFaced); once Jupiter Lighthouse's beacon is lit,
+/// until the ship has its wings, the girl and the old woman are gone and four
+/// doors are locked; Shine waits where it landed until caught. Arriving by the
+/// gate, or out of the two houses south of the Teleport circle or the Lucky
+/// Wheels tent, the view follows Felix east past the gate to the weed patch;
 /// then the Teleport circle's colours are set.
 void Contigo_InitializeVillage(void) {
   struct Actor *actor = Actor_GetById(ACTOR_BOY_DOUBTING_THE_LEGENDS);
@@ -2609,9 +2705,9 @@ void Contigo_InitializeVillage(void) {
                     gContigo_ShimmerColors, gContigo_CycleSlots);
 }
 
-/// Sets up the geoglyph: before the beacon is lit the wings' parts lie by it;
-/// after, they and their workers are gone, the men in long robes too until the
-/// party sets out.
+/// Sets up the geoglyph: until Jupiter Lighthouse's beacon is lit the wings'
+/// parts lie on it among the workers; after, they and the workers are gone,
+/// and the men in long robes too until the ship has its wings.
 void Contigo_InitializeGeoglyph(void) {
   Contigo_ShrinkActor(ACTOR_SIGN);
   if (GameFlag_Get(FLAG_JUPITER_BEACON_LIT) != 0) {
@@ -2651,8 +2747,10 @@ void Contigo_InitializeGeoglyph(void) {
   }
 }
 
-/// Sets up the shops' room: the reunion with Isaac's party on its entrance, or
-/// the baby and the villagers by the progress of the story.
+/// Sets up the houses: walking into the house at the top of the hill once the
+/// beacon is lit starts the reunion; in the others the baby lies in its
+/// cradle, the old man on Hesperia shivers once the ship has its wings, and
+/// the workers resting at the inn are gone after the reunion.
 void Contigo_InitializeShops(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   if (gMainRoutineWork.entrance == CONTIGO_SHOPS_FROM_CONTIGO_NORTH) {
@@ -2804,8 +2902,9 @@ void Contigo_InitializeLuckyDice(void) {
 void Actor_SetSpriteColorMode(struct Actor *, u32);
 s32 BattleEffect_GetObjectDepth(struct Actor *actor);
 
-/// The sparkle's update: raises two pairs of sprites over the actor, a pair
-/// starting every 16 frames, until both have climbed RING_CLIMB pixels.
+/// The sparkle's update, played over Hamma as she speaks of Mars Lighthouse in
+/// the reunion: two pairs of white half-rings rise around her, a pair starting
+/// every 16 frames, until both have climbed RING_CLIMB pixels.
 void Contigo_RaiseSparkle(struct Actor *actor) {
   struct Vector3 position;
   s32 x, z;
@@ -3329,34 +3428,34 @@ struct Trigger gContigo_Triggers[] = {
 };
 
 struct Trigger gContigo_VillageTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, CONTIGO_TO_WORLD_MAP},
-    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 2, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_SHOPS_SOUTH},
-    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 3, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_SHOPS_SOUTHWEST},
-    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 4, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_LUCKY_DICE_SOUTHWEST},
-    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 5, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_SHOPS_WEST},
-    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 6, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_LUCKY_DICE_NORTHEAST},
-    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 7, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_LUCKY_DICE_EAST},
-    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 8, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_SHOPS_EAST},
-    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 9, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_SHOPS_NORTHEAST_A},
-    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 10, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_SHOPS_NORTHEAST_B},
-    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 11, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_SHOPS_NORTH},
-    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_GEOGLYPH},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), 30, CONDITION_ALWAYS, EVENT(Contigo_TeleportOut)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 39, CONDITION_ALWAYS, EVENT(Contigo_ScatterFirstWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 40, CONDITION_ALWAYS, EVENT(Contigo_ScatterSecondWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 41, CONDITION_ALWAYS, EVENT(Contigo_ScatterWeedsOverBrambleSeed)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 42, CONDITION_ALWAYS, EVENT(Contigo_ScatterFourthWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 43, CONDITION_ALWAYS, EVENT(Contigo_ScatterFifthWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 44, CONDITION_ALWAYS, EVENT(Contigo_ScatterSixthWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 45, CONDITION_ALWAYS, EVENT(Contigo_ScatterSeventhWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 46, CONDITION_ALWAYS, EVENT(Contigo_ScatterEighthWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 47, CONDITION_ALWAYS, EVENT(Contigo_ScatterFirstWeedRow)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 48, CONDITION_ALWAYS, EVENT(Contigo_ScatterSecondWeedRow)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 49, CONDITION_ALWAYS, EVENT(Contigo_ScatterThirdWeedRow)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 50, CONDITION_ALWAYS, EVENT(Contigo_ScatterFourthWeedRow)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 51, CONDITION_ALWAYS, EVENT(Contigo_ScatterFifthWeedRow)},
-    {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(Contigo_NarrowCameraBounds)},
-    {TRIGGER_STEP, 21, CONDITION_ALWAYS, EVENT(Contigo_WidenCameraBounds)},
+    {TRIGGER_EXIT, CONTIGO_TO_WORLD_MAP, CONDITION_ALWAYS, CONTIGO_TO_WORLD_MAP},
+    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, CONTIGO_TO_CONTIGO_SHOPS_SOUTH, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_SHOPS_SOUTH},
+    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, CONTIGO_TO_CONTIGO_SHOPS_SOUTHWEST, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_SHOPS_SOUTHWEST},
+    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, CONTIGO_TO_CONTIGO_LUCKY_DICE_SOUTHWEST, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_LUCKY_DICE_SOUTHWEST},
+    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, CONTIGO_TO_CONTIGO_SHOPS_WEST, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_SHOPS_WEST},
+    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, CONTIGO_TO_CONTIGO_LUCKY_DICE_NORTHEAST, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_LUCKY_DICE_NORTHEAST},
+    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, CONTIGO_TO_CONTIGO_LUCKY_DICE_EAST, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_LUCKY_DICE_EAST},
+    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, CONTIGO_TO_CONTIGO_SHOPS_EAST, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_SHOPS_EAST},
+    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, CONTIGO_TO_CONTIGO_SHOPS_NORTHEAST_A, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_SHOPS_NORTHEAST_A},
+    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, CONTIGO_TO_CONTIGO_SHOPS_NORTHEAST_B, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_SHOPS_NORTHEAST_B},
+    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, CONTIGO_TO_CONTIGO_SHOPS_NORTH, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_SHOPS_NORTH},
+    {TRIGGER_EXIT, CONTIGO_TO_CONTIGO_GEOGLYPH, CONDITION_ALWAYS, CONTIGO_TO_CONTIGO_GEOGLYPH},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST), CELL_BEHAVIOR_TELEPORT_CIRCLE, CONDITION_ALWAYS, EVENT(Contigo_TeleportOut)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_WEEDS_WEST_OF_ITEM_SHOP, CONDITION_ALWAYS, EVENT(Contigo_ScatterWeedsWestOfItemShop)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_WEEDS_BEHIND_INN, CONDITION_ALWAYS, EVENT(Contigo_ScatterWeedsBehindInn)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_WEEDS_OVER_BRAMBLE_SEED, CONDITION_ALWAYS, EVENT(Contigo_ScatterWeedsOverBrambleSeed)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_WEEDS_WEST_OF_WEAPON_SHOP, CONDITION_ALWAYS, EVENT(Contigo_ScatterWeedsWestOfWeaponShop)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_WEEDS_BY_GATE, CONDITION_ALWAYS, EVENT(Contigo_ScatterWeedsByGate)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_WEEDS_BELOW_LUCKY_WHEELS, CONDITION_ALWAYS, EVENT(Contigo_ScatterWeedsBelowLuckyWheels)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_WEEDS_ON_CLIFF_WEST, CONDITION_ALWAYS, EVENT(Contigo_ScatterWeedsOnCliffWest)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_WEEDS_ON_CLIFF_EAST, CONDITION_ALWAYS, EVENT(Contigo_ScatterWeedsOnCliffEast)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_WEED_PATCH_TOP_ROW, CONDITION_ALWAYS, EVENT(Contigo_ScatterWeedPatchTopRow)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_WEED_PATCH_SECOND_ROW, CONDITION_ALWAYS, EVENT(Contigo_ScatterWeedPatchSecondRow)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_WEED_PATCH_MIDDLE_ROW, CONDITION_ALWAYS, EVENT(Contigo_ScatterWeedPatchMiddleRow)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_WEED_PATCH_FOURTH_ROW, CONDITION_ALWAYS, EVENT(Contigo_ScatterWeedPatchFourthRow)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_WEED_PATCH_BOTTOM_ROW, CONDITION_ALWAYS, EVENT(Contigo_ScatterWeedPatchBottomRow)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_VIEW_WEST_OF_GATE, CONDITION_ALWAYS, EVENT(Contigo_NarrowCameraBounds)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_VIEW_EAST_OF_GATE, CONDITION_ALWAYS, EVENT(Contigo_WidenCameraBounds)},
     {PSYNERGY_ON_ACTOR(ABILITY_FORCE), ACTOR_SHINE, FLAG_SHINE_FREED, EVENT(Contigo_ForceFreesDjinni)},
     {TRIGGER_TALK, ACTOR_SHINE, IF_FLAG_SET(FLAG_SHINE_FREED), EVENT(Contigo_FreedDjinniJoinsParty)},
     {TRIGGER_TALK, ACTOR_YOUNG_MAN_ON_THE_WIND_LEGEND, FLAG_JUPITER_BEACON_LIT, EVENT(Contigo_AskAboutWindLegend)},
@@ -3397,20 +3496,20 @@ struct Trigger gContigo_VillageTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_BOY_DOUBTING_THE_LEGENDS, CONDITION_ALWAYS, EVENT(Contigo_TalkToDoubtingBoy)},
     {TRIGGER_TALK, ACTOR_GIRL_ON_THE_SHIP, CONDITION_ALWAYS, EVENT(Contigo_TalkAboutTheShip)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GIRL_ON_THE_SHIP, CONDITION_ALWAYS, EVENT(Contigo_TalkAboutTheShip)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 32, CONDITION_ALWAYS, EVENT(Contigo_ScoopForSalt)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_WEED_PATCH_GAP, CONDITION_ALWAYS, EVENT(Contigo_ScoopForSalt)},
     {TRIGGER_RAISED, RAISED_SALT_FOUND, CONDITION_ALWAYS, EVENT(Contigo_SaltJoinsParty)},
-    {TRIGGER_EXAMINE, 24, CONDITION_ALWAYS, EVENT(Contigo_ReadLuckyWheelsSign)},
-    {TRIGGER_EXAMINE, 25, CONDITION_ALWAYS, EVENT(Contigo_ReadLuckyDiceSign)},
-    {TRIGGER_EXAMINE, 26, CONDITION_ALWAYS, EVENT(Contigo_ReadSuperDiceSign)},
-    {EXAMINE_TRIGGER_FACING(FACING_NORTH), 19, CONDITION_ALWAYS, EVENT(Scene_ShowEntranceLocked)},
+    {TRIGGER_EXAMINE, CELL_BEHAVIOR_LUCKY_WHEELS_SIGN, CONDITION_ALWAYS, EVENT(Contigo_ReadLuckyWheelsSign)},
+    {TRIGGER_EXAMINE, CELL_BEHAVIOR_SUPER_LUCKY_DICE_SIGN, CONDITION_ALWAYS, EVENT(Contigo_ReadSuperLuckyDiceSign)},
+    {TRIGGER_EXAMINE, CELL_BEHAVIOR_LUCKY_DICE_SIGN, CONDITION_ALWAYS, EVENT(Contigo_ReadLuckyDiceSign)},
+    {EXAMINE_TRIGGER_FACING(FACING_NORTH), CELL_BEHAVIOR_LOCKED_DOOR, CONDITION_ALWAYS, EVENT(Scene_ShowEntranceLocked)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gContigo_GeoglyphTriggers[] = {
-    {TRIGGER_EXIT, 12, CONDITION_ALWAYS, CONTIGO_GEOGLYPH_TO_CONTIGO},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS, EVENT(Contigo_EnterSanctumWestDoor)},
-    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 14, CONDITION_ALWAYS, CONTIGO_GEOGLYPH_TO_ANEMOS_INNER_SANCTUM_ENTRANCE_NORTHEAST},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 15, CONDITION_ALWAYS, EVENT(Contigo_EnterSanctumEastDoor)},
+    {TRIGGER_EXIT, CELL_BEHAVIOR_GEOGLYPH_WEST_EDGE, CONDITION_ALWAYS, CONTIGO_GEOGLYPH_TO_CONTIGO},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_SANCTUM_WEST_DOOR, CONDITION_ALWAYS, EVENT(Contigo_EnterSanctumWestDoor)},
+    {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, CELL_BEHAVIOR_SANCTUM_MIDDLE_DOOR, CONDITION_ALWAYS, CONTIGO_GEOGLYPH_TO_ANEMOS_INNER_SANCTUM_ENTRANCE_NORTHEAST},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_SANCTUM_EAST_DOOR, CONDITION_ALWAYS, EVENT(Contigo_EnterSanctumEastDoor)},
     {TRIGGER_TALK, ACTOR_VISITOR_FROM_AFAR, CONDITION_ALWAYS, MSGNO(MsgContigoIveComeALongWay)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_VISITOR_FROM_AFAR, CONDITION_ALWAYS, MSGNO(MsgContigoTheGuysCarryingTheOther)},
     {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_WINGS, CONDITION_ALWAYS, MSGNO(MsgContigoTheWingsAreAlmostDone)},
@@ -3441,7 +3540,7 @@ struct Trigger gContigo_GeoglyphTriggers[] = {
     {TRIGGER_TALK, ACTOR_MAN_ON_HAMMET, CONDITION_ALWAYS, MSGNO(MsgContigoHesAnOddBoyBut)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_HAMMET, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoSomeoneToldMeThatHammet)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_HAMMET, CONDITION_ALWAYS, MSGNO(MsgContigoIvanWasSupposedToBe)},
-    {TRIGGER_EXAMINE, 22, CONDITION_ALWAYS, EVENT(Contigo_ExamineWall)},
+    {TRIGGER_EXAMINE, CELL_BEHAVIOR_CARVED_WALL, CONDITION_ALWAYS, EVENT(Contigo_ExamineWall)},
     {TRIGGER_TALK, ACTOR_SIGN, CONDITION_ALWAYS, EVENT(Contigo_ReadSign)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(Contigo_RevealMiddleDoor)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(Contigo_HideMiddleDoor)},
@@ -3449,13 +3548,13 @@ struct Trigger gContigo_GeoglyphTriggers[] = {
 };
 
 struct Trigger gContigo_ShopsTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, CONTIGO_SHOPS_TO_CONTIGO_SOUTH},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, CONTIGO_SHOPS_TO_CONTIGO_SOUTHWEST},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, CONTIGO_SHOPS_TO_CONTIGO_NORTHEAST_B},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, CONTIGO_SHOPS_TO_CONTIGO_EAST},
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, CONTIGO_SHOPS_TO_CONTIGO_NORTHEAST_A},
-    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, CONTIGO_SHOPS_TO_CONTIGO_WEST},
-    {TRIGGER_EXIT, 21, CONDITION_ALWAYS, CONTIGO_SHOPS_TO_ATTEKA_INLET_GEODE},
+    {TRIGGER_EXIT, CONTIGO_SHOPS_TO_CONTIGO_SOUTH, CONDITION_ALWAYS, CONTIGO_SHOPS_TO_CONTIGO_SOUTH},
+    {TRIGGER_EXIT, CONTIGO_SHOPS_TO_CONTIGO_SOUTHWEST, CONDITION_ALWAYS, CONTIGO_SHOPS_TO_CONTIGO_SOUTHWEST},
+    {TRIGGER_EXIT, CONTIGO_SHOPS_TO_CONTIGO_NORTHEAST_B, CONDITION_ALWAYS, CONTIGO_SHOPS_TO_CONTIGO_NORTHEAST_B},
+    {TRIGGER_EXIT, CONTIGO_SHOPS_TO_CONTIGO_EAST, CONDITION_ALWAYS, CONTIGO_SHOPS_TO_CONTIGO_EAST},
+    {TRIGGER_EXIT, CONTIGO_SHOPS_TO_CONTIGO_NORTHEAST_A, CONDITION_ALWAYS, CONTIGO_SHOPS_TO_CONTIGO_NORTHEAST_A},
+    {TRIGGER_EXIT, CONTIGO_SHOPS_TO_CONTIGO_WEST, CONDITION_ALWAYS, CONTIGO_SHOPS_TO_CONTIGO_WEST},
+    {TRIGGER_EXIT, CONTIGO_SHOPS_TO_ATTEKA_INLET_GEODE, CONDITION_ALWAYS, CONTIGO_SHOPS_TO_ATTEKA_INLET_GEODE},
     {TRIGGER_TALK, ACTOR_MAN_ON_IVANS_RETURN, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheSiblingsWhoInheritedThe)},
     {TRIGGER_TALK, ACTOR_MAN_ON_IVANS_RETURN, CONDITION_ALWAYS, MSGNO(MsgContigoIGuessTheLighthouseWas)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_ON_IVANS_RETURN, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoTheFamiliesOfChildrenWho)},
@@ -3534,27 +3633,27 @@ struct Trigger gContigo_ShopsTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, FLAG_JUPITER_BEACON_LIT, MSGNO(MsgContigoIfISeeTheWings)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, FLAG_SET_OUT_WITH_WINGS, MSGNO(MsgContigoPerhapsIfISeeA)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgContigoItWasAShockTo)},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoTheresABrightRedSoup))},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoAhTheSmellOfFresh))},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoContigosFamousForTheseCookies))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_BEAN_SOUP, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoTheresABrightRedSoup))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_CORN_BREAD, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoAhTheSmellOfFresh))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_COOKIES, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoContigosFamousForTheseCookies))},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gContigo_ShopsReunionTriggers[] = {
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, CONTIGO_SHOPS_TO_CONTIGO_NORTH},
+    {TRIGGER_EXIT, CONTIGO_SHOPS_TO_CONTIGO_NORTH, CONDITION_ALWAYS, CONTIGO_SHOPS_TO_CONTIGO_NORTH},
     {TRIGGER_TALK, ACTOR_HAMMA, CONDITION_ALWAYS, MSGNO(MsgContigoNoMatterWhatHappensYou)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HAMMA, CONDITION_ALWAYS, MSGNO(MsgContigoMyHeartIsWithYou)},
-    {TRIGGER_STEP, 20, FLAG_HAMMA_WELCOMED_PARTY, EVENT(Contigo_ReturnToNewHome)},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoTheresABrightRedSoup))},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 201, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoAhTheSmellOfFresh))},
-    {EXAMINE_TRIGGER(EXAMINE_OVEN), 202, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoContigosFamousForTheseCookies))},
+    {TRIGGER_STEP, CELL_BEHAVIOR_INSIDE_HAMMAS_DOOR, FLAG_HAMMA_WELCOMED_PARTY, EVENT(Contigo_ReturnToNewHome)},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_BEAN_SOUP, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoTheresABrightRedSoup))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_CORN_BREAD, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoAhTheSmellOfFresh))},
+    {EXAMINE_TRIGGER(EXAMINE_OVEN), CELL_BEHAVIOR_COOKIES, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgContigoContigosFamousForTheseCookies))},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gContigo_LuckyDiceTriggers[] = {
-    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, CONTIGO_LUCKY_DICE_TO_CONTIGO_NORTHEAST},
-    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, CONTIGO_LUCKY_DICE_TO_CONTIGO_EAST},
-    {TRIGGER_EXIT, 10, CONDITION_ALWAYS, CONTIGO_LUCKY_DICE_TO_CONTIGO_SOUTHWEST},
+    {TRIGGER_EXIT, CONTIGO_LUCKY_DICE_TO_CONTIGO_NORTHEAST, CONDITION_ALWAYS, CONTIGO_LUCKY_DICE_TO_CONTIGO_NORTHEAST},
+    {TRIGGER_EXIT, CONTIGO_LUCKY_DICE_TO_CONTIGO_EAST, CONDITION_ALWAYS, CONTIGO_LUCKY_DICE_TO_CONTIGO_EAST},
+    {TRIGGER_EXIT, CONTIGO_LUCKY_DICE_TO_CONTIGO_SOUTHWEST, CONDITION_ALWAYS, CONTIGO_LUCKY_DICE_TO_CONTIGO_SOUTHWEST},
     {TRIGGER_TALK, ACTOR_SUPER_LUCKY_DICE_ATTENDANT, CONDITION_ALWAYS, EVENT(Contigo_OfferSuperLuckyDice)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SUPER_LUCKY_DICE_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgContigoWhenTheyLoseTheyCall)},
     {TRIGGER_TALK, ACTOR_SUPER_LUCKY_DICE_RULES_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgContigoIfYouWantToLearn)},

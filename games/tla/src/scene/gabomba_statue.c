@@ -1396,7 +1396,7 @@ void GabombaStatue_CogsTurnBack(void) {
   Event_PlaySound(SE_GABOMBA_STATUE_COGS);
   GabombaStatue_TurnCogs(0);
   FieldEvent_Wait(40);
-  Event_PlaySound(SE_582);
+  Event_PlaySound(SE_LEMURIAN_SHIP_LIFT_FAST);
   actor->motionFlags = 0;
   actor->y.fixed = toFIXED(8);
   FieldEvent_Wait(10);

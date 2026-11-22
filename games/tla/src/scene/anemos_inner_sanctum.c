@@ -1098,7 +1098,7 @@ void AnemosInnerSanctum_PressRoundSwitch(void) {
     FieldCamera_MoveToActorById(id, 1);
     FieldCamera_WaitForArrival();
     FieldEvent_Wait(10);
-    Event_PlaySound(SE_582);
+    Event_PlaySound(SE_LEMURIAN_SHIP_LIFT_FAST);
     Actor_SetAnimation(id, ARROW_PANEL_ANIMATION_UP);
     Event_SetFlag(FLAG_LIFT_READY);
     Actor_Get(id)->motionFlags = ACTOR_FLOATS;

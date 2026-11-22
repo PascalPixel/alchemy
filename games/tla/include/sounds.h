@@ -655,7 +655,7 @@ enum SoundId {
   /// turning its arrow up and floating once the room's seven round switches are
   /// pressed (AnemosInnerSanctum_PressRoundSwitch), and the Gabomba Statue's
   /// flashing cog dropping into place (GabombaStatue_CogsTurnBack).
-  SE_582,
+  SE_LEMURIAN_SHIP_LIFT_FAST,
   /// SE_ICE_CRACK's second note alone, held longer; nothing plays it.
   SE_UNUSED_ICE_CRACK_SINGLE,
   /// Played as the party presses a switch or button in Mars Lighthouse, the

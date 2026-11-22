@@ -2122,7 +2122,8 @@ void KandoreanTemple_StartLiftRoom(void) {
   FieldEffect_StartBlankOverlay(0);
 }
 
-/// Sets up the second room.
+/// Sets up the Mimic's room. Outside the Japanese edition, coming into it
+/// from Poi's hall does not show the area's name again.
 void KandoreanTemple_StartMimicRoom(void) {
   FieldEffect_StartBlankOverlay(0);
 #if TLA_PATCH_1 /* From patch 1. */

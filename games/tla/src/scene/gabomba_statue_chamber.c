@@ -1,10 +1,26 @@
 /// @file
-/// The Gabomba Statue's inner chamber, in three rooms of this overlay: the way
-/// down by the lift, and the chamber where the party finds the Black Crystal
-/// gone (GabombaStatueChamber_WhereIsTheOrb), Akafubu offers to retrieve it
-/// (GabombaStatueChamber_AkafubuOffersToHelp), reaches the chamber
-/// (GabombaStatueChamber_AkafubuReachesChamber), and the Great Gabomba speaks,
-/// naming him witch doctor (GabombaStatueChamber_GabombaNamesWitchDoctor).
+/// The innermost rooms of the Gabomba Statue at Kibombo, three in this
+/// overlay: the small idol's chamber in the statue's head, the corridor with
+/// the lift, and the final chamber where the Great Gabomba speaks.
+///
+/// In the small idol's chamber a groove runs from the idol at the north, down
+/// the statue's tongue between two pink drums. A ladder in the west alcove
+/// leads down to the room of pinions, and one in the east up to the room of
+/// the arrow panels behind the eyes. Once the ceremony's charges reach the
+/// statue it swallows the black orb, and the party comes in to find it gone
+/// (GabombaStatueChamber_WhereIsTheOrb): they remember it rolling up the
+/// groove into the hole under the idol, and Akafubu comes up the tongue behind
+/// them. When the party has told him where the orb went, he sets the Dragon's
+/// Eye in the idol, which slides east to open a passage north
+/// (GabombaStatueChamber_AkafubuOffersToHelp). The passage leads to a long
+/// corridor whose lift carries Felix down a shaft
+/// (GabombaStatueChamber_RideLiftDown) to the final chamber. There Akafubu
+/// waits before a seated idol with the orb in its hands
+/// (GabombaStatueChamber_AkafubuReachesChamber). Examining the idol, Felix
+/// hears the Great Gabomba name Akafubu witch doctor, give a message for him,
+/// open a hole east of the idol and give back the orb
+/// (GabombaStatueChamber_GabombaNamesWitchDoctor). On a later visit that
+/// hole's ladder leads down to the Gabomba Catacombs.
 #include "flags.h"
 #include "item_ids.h"
 #include "sprite_ids.h"
@@ -60,19 +76,20 @@ extern struct SceneRegion gGabombaStatueChamber_IdolExitRegions[];
 #include "fixed_math.h"
 #include "window/window.h"
 
-/// How far, in pixels, the lift's map layers move between the two floors, a
-/// pixel a frame.
+/// How far, in pixels, the lift goes down the shaft, a pixel a frame. The lift
+/// stays on screen and the map's layers move up past it.
 #define LIFT_TRAVEL 352
-/// The frames over which the layers' blend shifts a step every four frames.
+/// The frames over which the corridor around the lift fades into the shaft's
+/// brick walls, or back, a step every four frames.
 #define LIFT_BLEND_FRAMES 63
 /// The lift's blend weight for its second target at the given step, rising
 /// one every four steps; the first target keeps the rest of BLEND_WEIGHT_MAX
 /// (BLEND_ALPHA's bottom and top).
 #define LIFT_BLEND_BOTTOM(step) (((step) + 1) / 4)
-/// Rising, the blend starts shifting this many pixels into the ride.
-#define LIFT_RISE_BLEND_START 17
-/// Settling back, it stops shifting this many pixels before the end.
-#define LIFT_SETTLE_BLEND_END 33
+/// Going down, the corridor starts fading this many pixels into the ride.
+#define LIFT_DESCENT_BLEND_START 17
+/// Coming back up, it has faded back in this many pixels before the top.
+#define LIFT_ASCENT_BLEND_END 33
 /// The frames the Black Crystal rises over the idol, half a pixel a frame, as
 /// the Great Gabomba begins, and the frame Akafubu startles at it.
 #define CRYSTAL_RISE_FRAMES 80
@@ -80,22 +97,25 @@ extern struct SceneRegion gGabombaStatueChamber_IdolExitRegions[];
 /// The stone door halves in the final chamber's six alcoves, three to each,
 /// along the path up to the idol.
 #define STONE_DOOR_HALVES 18
-/// Set once the lift has carried the leader, while he stays on it: its step
-/// trigger waits until he steps off.
+/// Set once the lift has carried Felix, while he stays on it, so that it does
+/// not set off again until he steps off its south edge at the top.
 #define FLAG_LEADER_ON_LIFT FLAG_SCENE_TEMP_06
-/// Set while the lift is up, the party having ridden it.
-#define FLAG_LIFT_UP FLAG_SCENE_TEMP_07
+/// Set once Felix has ridden the lift down to the foot of the shaft.
+#define FLAG_LIFT_DOWN FLAG_SCENE_TEMP_07
 
-/// The idol's room (SceneId_GabombaStatueChamberIdol): the seated idol, and
-/// Kraden ("It vanished into that hole!") and Akafubu ("Who... Who are
-/// you!?"); Piers's, Sheba's and Jenna's rows take their own numbers.
+/// The small idol's chamber (SceneId_GabombaStatueChamberIdol): the seated
+/// idol, and Kraden ("It vanished into that hole!") and Akafubu ("Who... Who
+/// are you!?"); Piers's, Sheba's and Jenna's rows take their own numbers.
 enum {
   ACTOR_SEATED_IDOL = ACTOR_FIRST_PLACED,
-  ACTOR_LEFT_DRUM, ///< the two pink drums that turn as the Black Crystal rolls
+  /// The two pink drums either side of the groove where the tongue begins,
+  /// which turn as the black orb rolls between them.
+  ACTOR_LEFT_DRUM,
   ACTOR_RIGHT_DRUM,
   ACTOR_KRADEN,
   ACTOR_AKAFUBU,
-  /// The Black Crystal as it rolls into the hole, drawn as its item icon.
+  /// The black orb rolling up the groove into the hole, as the party
+  /// remembers it, drawn as the Black Crystal's item icon.
   ACTOR_BLACK_CRYSTAL
 };
 
@@ -114,6 +134,20 @@ enum {
   ACTOR_FIRST_DOOR_HALF ///< the first of the STONE_DOOR_HALVES
 };
 
+/// The cell behaviors of the trigger tables. A hole's cells take the number
+/// of the exit its ladder leaves by, and a doorway's that of its exit.
+enum GabombaStatueChamberCellBehavior {
+  /// The lift, at the north end of the corridor: cells (18, 11) to (22, 11).
+  CELL_BEHAVIOR_LIFT = 3,
+  /// The corridor just south of the lift: cells (19, 12) to (21, 12).
+  CELL_BEHAVIOR_SOUTH_OF_LIFT,
+  /// The final chamber's path a few steps south of where Akafubu stands:
+  /// cells (23, 11) to (25, 11).
+  CELL_BEHAVIOR_BELOW_AKAFUBU = 10,
+  /// The final chamber's seated idol, holding the black orb: cell (24, 5).
+  CELL_BEHAVIOR_IDOL
+};
+
 void GabombaStatueChamber_OpenSecondHole(void);
 
 void GabombaStatueChamber_KeepItemWithStatue();
@@ -121,12 +155,6 @@ void GabombaStatueChamber_InitializeIdol(void);
 void GabombaStatueChamber_InitializeLift(void);
 
 void GabombaStatueChamber_InitializeWitchDoctor(void);
-
-void GabombaStatueChamber_ArriveByLift(void);
-void GabombaStatueChamber_GabombaNamesWitchDoctor(void);
-void GabombaStatueChamber_StepIntoFirstHole(void);
-void GabombaStatueChamber_StepIntoSecondHole(void);
-void GabombaStatueChamber_RideLiftUp(void);
 
 extern s32 gGabombaStatueChamber_MirroredScript[];
 
@@ -166,8 +194,9 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gGabombaStatueChamber_Triggers;
 }
 
-/// The Great Gabomba speaks through the seated idol: it glows warm and shows
-/// the next message centred on the screen.
+/// The Great Gabomba speaks a line through the seated idol: the idol glows
+/// gold, and its words appear in white across the middle of the screen, with
+/// no window.
 void GabombaStatueChamber_StatueSpeaks(void) {
   volatile u16 *color = (volatile u16 *)&CENTERED_TEXT_COLOR;
   struct FieldWork *work;
@@ -187,7 +216,8 @@ void GabombaStatueChamber_StatueSpeaks(void) {
   Actor_SetAnimationById(ACTOR_SEATED_IDOL, 1);
 }
 
-/// The item shown above the statue, while it is there.
+/// The item shown on the idol, while it is there: the Dragon's Eye in the
+/// small idol's chamber, the black orb in the final chamber.
 extern struct Actor *gGabombaStatueChamber_ShownItem;
 extern u32 gGabombaStatueChamber_SpinScript[];
 extern s32 gGabombaStatueChamber_ChestDescendsScript[];
@@ -195,8 +225,20 @@ extern u32 gGabombaStatueChamber_ChestRisesScript[];
 extern u32 gGabombaStatueChamber_PartyLeavesScript[];
 void ActorSystem_ResumeProjectionAndHideLayers(void);
 
-/// The Great Gabomba names Akafubu witch doctor, gives the party the Black
-/// Crystal and sends it back to Kibombo, the message carried.
+/// Felix examines the seated idol in the final chamber (cell (24, 5)), the
+/// black orb in its hands, and the Great Gabomba speaks: the room darkens,
+/// the orb rises over the idol, and the voice names Akafubu witch doctor. He
+/// changes into feathers and gown and hurries off south, too soon for the
+/// gift, a chest, that sinks before the idol. The Gabomba gives Felix its
+/// message for Akafubu, opens a hole with a ladder east of the idol in a flash
+/// of white, and gives him the orb. The screen goes dark, and Felix tells
+/// Akafubu the message in Kibombo by dawn.
+///
+/// The Black Crystal is the item the party calls the black orb. The chest is
+/// the Gabomba's magic, kept back until Akafubu earns it; it rises away again
+/// as the voice says it will pass the magic on to no one yet. The second hole
+/// is GabombaStatueChamber_OpenSecondHole, drawn while `ACTOR_HOLE_COVER`
+/// whitens its cell. Kraden's two yes-or-no questions only choose his replies.
 void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   struct Actor *actor, *leader;
   u32 i;
@@ -480,11 +522,13 @@ void GabombaStatueChamber_GabombaNamesWitchDoctor(void) {
   gMainRoutineWork.retreatEntrance = 1;
   gMainRoutineWork.restartScene = SCENE_KIBOMBO_HOUSES;
   gMainRoutineWork.restartEntrance = 6;
-  Import_EventSetExitRequest(3);
+  Import_EventSetExitRequest(
+      GABOMBA_STATUE_CHAMBER_WITCH_DOCTOR_TO_KIBOMBO_HOUSES);
 }
 
-/// The leader walks to the hole at (x, z), in pixels, climbs down into it and
-/// takes the exit of the step trigger he stands on.
+/// Felix walks to the hole at (x, z), in pixels, turns north and climbs down
+/// its ladder out of sight, and the screen goes dark. He leaves by the exit
+/// whose number the hole's cells hold.
 void GabombaStatueChamber_DropIntoHole(s32 x, s32 z) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -508,13 +552,17 @@ void GabombaStatueChamber_DropIntoHole(s32 x, s32 z) {
   Import_EventSetExitRequest(work->stepTrigger);
 }
 
-/// Stepping onto the first hole drops the leader into it.
+/// Felix walks north into the hole in the small idol's chamber, in the narrow
+/// alcove west of the idol (cell (19, 10)), and climbs down its ladder to the
+/// room of pinions below.
 void GabombaStatueChamber_StepIntoFirstHole(void) {
   GabombaStatueChamber_DropIntoHole(312, 144);
 }
 
-/// Walking into the second hole drops the leader into it, unless he only
-/// touches its edge without pressing toward it.
+/// Felix walks into the hole the Great Gabomba opened east of the final
+/// chamber's idol (cell (26, 6)) and climbs down its ladder to the Gabomba
+/// Catacombs. The four cells beside the hole answer only while he presses
+/// toward it, so that he can walk round it without falling in.
 void GabombaStatueChamber_StepIntoSecondHole(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 x = FIELD_CELL(leader->x.fixed);
@@ -536,9 +584,15 @@ void GabombaStatueChamber_StepIntoSecondHole(void) {
 
 void BlendScript_Suspend(void);
 
-/// The party arrives by the lift: the room's upper layers start raised and
-/// sink back into place frame by frame, their blend fading as they go.
-void GabombaStatueChamber_ArriveByLift(void) {
+/// Coming back from the final chamber, Felix arrives at the foot of the lift
+/// shaft, steps south onto the lift, and it carries him up to the top, the
+/// brick walls sliding down past it until the corridor fades back in around
+/// him. It stops at the north end of the corridor (cell (20, 11)) that leads
+/// south to the small idol's chamber.
+///
+/// The ride is the descent played backwards: the map's layers start
+/// `LIFT_TRAVEL` pixels on and come back a pixel a frame.
+void GabombaStatueChamber_RideLiftBackUp(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *lower = &map->layers[0];
   struct MapLayer *upper = &map->layers[2];
@@ -549,8 +603,8 @@ void GabombaStatueChamber_ArriveByLift(void) {
   BlendScript_Suspend();
   step = 1;
   for (i = 0; i < LIFT_TRAVEL; i++) {
-    if (i >= LIFT_RISE_BLEND_START &&
-        i < LIFT_RISE_BLEND_START + LIFT_BLEND_FRAMES) {
+    if (i >= LIFT_DESCENT_BLEND_START &&
+        i < LIFT_DESCENT_BLEND_START + LIFT_BLEND_FRAMES) {
       s32 blend = LIFT_BLEND_BOTTOM(step) << 8;
 
       blend |= BLEND_WEIGHT_MAX - LIFT_BLEND_BOTTOM(step);
@@ -570,8 +624,8 @@ void GabombaStatueChamber_ArriveByLift(void) {
   Sound_Play(SE_MATERIALIZE);
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
   for (; i != 0; i--) {
-    if (i >= LIFT_SETTLE_BLEND_END &&
-        i < LIFT_SETTLE_BLEND_END + LIFT_BLEND_FRAMES) {
+    if (i >= LIFT_ASCENT_BLEND_END &&
+        i < LIFT_ASCENT_BLEND_END + LIFT_BLEND_FRAMES) {
       s32 blend = LIFT_BLEND_BOTTOM(step) << 8;
 
       blend |= BLEND_WEIGHT_MAX - LIFT_BLEND_BOTTOM(step);
@@ -591,9 +645,15 @@ void GabombaStatueChamber_ArriveByLift(void) {
   Event_End();
 }
 
-/// The leader steps onto the lift and rides it up, the room's layers fading as
-/// they move.
-void GabombaStatueChamber_RideLiftUp(void) {
+/// Felix steps onto the lift at the north end of the corridor from the small
+/// idol's chamber (cells (18, 11) to (22, 11)), turns to face south, and it
+/// carries him down the shaft: the corridor fades into brick walls that slide
+/// up past him until the lift stops at the foot, where the way on leads north
+/// to the final chamber.
+///
+/// The lift never moves on screen; both map layers scroll `LIFT_TRAVEL`
+/// pixels, and Felix is put on the lower floor's layer at the end.
+void GabombaStatueChamber_RideLiftDown(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *lower = &map->layers[0];
   struct MapLayer *upper = &map->layers[2];
@@ -611,7 +671,7 @@ void GabombaStatueChamber_RideLiftUp(void) {
   step = 1;
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
   for (i = 0; i <= LIFT_TRAVEL - 1; i++) {
-    if ((u32)(i - LIFT_RISE_BLEND_START) <= LIFT_BLEND_FRAMES - 1) {
+    if ((u32)(i - LIFT_DESCENT_BLEND_START) <= LIFT_BLEND_FRAMES - 1) {
       s32 blend = LIFT_BLEND_BOTTOM(step) << 8;
 
       blend |= BLEND_WEIGHT_MAX - LIFT_BLEND_BOTTOM(step);
@@ -629,16 +689,21 @@ void GabombaStatueChamber_RideLiftUp(void) {
   Event_Wait(20);
   Actor_GetById(gMainRoutineWork.leaderActorId)->layer = 1;
   GameFlag_Set(FLAG_LEADER_ON_LIFT);
-  GameFlag_Set(FLAG_LIFT_UP);
+  GameFlag_Set(FLAG_LIFT_DOWN);
   Event_End();
 }
 
-/// Stepping off the lift lets it be ridden again.
+/// Nothing visible happens when Felix steps off the lift at the top onto the
+/// corridor south of it (cells (19, 12) to (21, 12)). The game notes that he
+/// has left it, so that stepping back on carries him down again.
 void GabombaStatueChamber_StepOffLift(void) {
   GameFlag_Clear(FLAG_LEADER_ON_LIFT);
 }
 
-/// Akafubu reaches the final chamber and wonders what he must do there.
+/// As Felix walks up the path of the final chamber towards the idol (cells
+/// (23, 11) to (25, 11)), the view moves up to Akafubu standing before it,
+/// who says he has followed Oeia's instructions to this chamber but does not
+/// know what he must do here to become witch doctor. It plays once.
 void GabombaStatueChamber_AkafubuReachesChamber(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -664,12 +729,14 @@ void GabombaStatueChamber_AkafubuReachesChamber(void) {
   Event_End();
 }
 
-/// Each frame, keeps the shown item over the seated idol.
+/// Each frame, keeps the item shown on the idol with the idol, so that the
+/// Dragon's Eye slides aside with it.
 void GabombaStatueChamber_KeepItemWithStatue(struct Actor *actor) {
   actor->x.fixed = Actor_GetById(ACTOR_SEATED_IDOL)->x.fixed;
 }
 
-/// Shows the Dragon's Eye over the seated idol, as its item icon.
+/// Shows the Dragon's Eye, its red item icon, set in the front of the small
+/// idol, where Akafubu places it.
 void GabombaStatueChamber_ShowDragonsEye(void) {
   struct Actor *statue = Actor_GetById(ACTOR_SEATED_IDOL);
   s32 x = statue->x.fixed;
@@ -699,7 +766,8 @@ void GabombaStatueChamber_ShowDragonsEye(void) {
   }
 }
 
-/// Shows the Black Crystal over the seated idol, as its item icon.
+/// Shows the black orb, the Black Crystal's item icon, resting in the hands of
+/// the final chamber's idol.
 void GabombaStatueChamber_ShowBlackCrystal(void) {
   struct Actor *statue = Actor_GetById(ACTOR_SEATED_IDOL);
   s32 x = statue->x.fixed;
@@ -729,21 +797,27 @@ void GabombaStatueChamber_ShowBlackCrystal(void) {
   }
 }
 
-/// Opens the passage behind the seated idol in the map.
-void GabombaStatueChamber_OpenThePassage(void) {
+/// Unrolls the statue's tongue in the map: the orange roll between the two
+/// pink drums becomes a tongue running south out of the small idol's chamber,
+/// its end (cells (23, 21) to (25, 21)) the way out to the statue grounds.
+void GabombaStatueChamber_UnrollTongue(void) {
   MapGrid_CopyCellPictureIndicesRect(85, 78, 22, 79, 5, 11);
   MapGrid_CopyCellAttributes(85, 78, 5, 11, 22, 15);
   MapGrid_CopyCellsTo(86, 30, 86, 20, 5, 2);
   MapGrid_CopyCellPictureIndicesRect(86, 30, 84, 22, 9, 2);
 }
 
-/// Makes the opened passage's cells walkable.
-void GabombaStatueChamber_SetPassageCells(void) {
+/// Moves the small idol's place in the map with it as it slides east: its old
+/// cell (24, 9), in front of the passage north, is freed and cell (26, 9)
+/// blocked.
+void GabombaStatueChamber_UncoverPassage(void) {
   Map_CopyCellAttributeRect(23, 1, 3, 1, 23, 9);
   Map_CopyCellAttributeRect(23, 0, 3, 1, 25, 9);
 }
 
-/// Opens the second hole, the way down to the Gabomba Catacombs, in the map.
+/// Opens the hole east of the final chamber's idol in the map, its ladder the
+/// way down to the Gabomba Catacombs: the hole at cell (26, 6) and the four
+/// cells around it that lead in.
 void GabombaStatueChamber_OpenSecondHole(void) {
   MapGrid_CopyCellPictureIndicesRect(0, 1, 26, 6, 1, 1);
   MapGrid_CopyCellPictureIndicesRect(0, 65, 26, 70, 1, 1);
@@ -752,8 +826,16 @@ void GabombaStatueChamber_OpenSecondHole(void) {
 
 extern u32 gGabombaStatueChamber_WalkOffScript[];
 
-/// In the chamber the party finds the Black Crystal gone: "The black orb...
-/// Where is it?"
+/// The party comes into the small idol's chamber after the statue has
+/// swallowed the black orb, and Piers asks where it is. In sepia, the view
+/// follows the orb as they remember it rolling up the groove between the pink
+/// drums and vanishing into the hole under the idol. Sheba sees light beyond
+/// the hole, Akafubu comes up the tongue demanding who they are, and Jenna
+/// leads him off east with the party to the room of the arrow panels.
+///
+/// It plays on arriving from the ceremony by
+/// `GABOMBA_STATUE_CHAMBER_IDOL_FROM_KIBOMBO_STATUE_GROUNDS_CEREMONY_NORTH`.
+/// The question "Are you Kibombo!?" only chooses Akafubu's reply.
 void GabombaStatueChamber_WhereIsTheOrb(void) {
   struct Actor *crystal =
       (struct Actor *)((s32)Actor_GetById(ACTOR_BLACK_CRYSTAL));
@@ -791,7 +873,7 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
                    (s32)((GlyphTransfer *)block)->tiles);
     HeapSlot_Release(HEAP_SLOT_GLYPH_TRANSFER);
   }
-  GabombaStatueChamber_OpenThePassage();
+  GabombaStatueChamber_UnrollTongue();
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
@@ -953,20 +1035,27 @@ void GabombaStatueChamber_WhereIsTheOrb(void) {
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
   GameFlag_Set(FLAG_KEEP_PARTY_POSITION);
-  Import_EventSetExitRequest(2);
+  Import_EventSetExitRequest(
+      GABOMBA_STATUE_CHAMBER_IDOL_TO_GABOMBA_STATUE_ARROWS_EAST);
 }
 
 extern u32 gGabombaStatueChamber_AkafubuPath[];
 
-/// Akafubu opens the passage with the Dragon's Eye and offers to retrieve the
-/// orb, and the party talks over whether to trust him.
+/// Back in the small idol's chamber with the party, Akafubu walks up to the
+/// idol and sets the Dragon's Eye in it, and the idol slides east, opening a
+/// passage north behind it. He says he might be able to retrieve the orb and
+/// goes in, and the party talks over whether to trust him before following.
+///
+/// It plays on arriving from the room of the arrow panels by
+/// `GABOMBA_STATUE_CHAMBER_IDOL_FROM_GABOMBA_STATUE_ARROWS_WEST`. Answering No
+/// to Jenna's question is counted by GabombaStatueChamber_CountAnswer.
 void GabombaStatueChamber_AkafubuOffersToHelp(void) {
   struct HeapSlots *heap;
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
   FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
   System_Wait(1);
-  GabombaStatueChamber_OpenThePassage();
+  GabombaStatueChamber_UnrollTongue();
   MapGrid_CenterOnFollowedPoint();
   System_Wait(1);
   Actor_SetPositionAndFacing(gMainRoutineWork.leaderActorId, toFIXED(360),
@@ -1001,7 +1090,7 @@ void GabombaStatueChamber_AkafubuOffersToHelp(void) {
   FieldEvent_Wait(40);
   Event_PlaySound(SE_PUSH);
   Actor_GetById(ACTOR_SEATED_IDOL)->motionFlags = 0;
-  GabombaStatueChamber_SetPassageCells();
+  GabombaStatueChamber_UncoverPassage();
   Actor_SetSpeed(ACTOR_SEATED_IDOL, 0.4);
   Actor_MoveToAndWait(ACTOR_SEATED_IDOL, 424, 152);
   Actor_FaceDirectionAndWait(ACTOR_AKAFUBU, FACING_SOUTH_SOUTHWEST);
@@ -1091,17 +1180,19 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// Sets up the idol's room: the passage opened once Akafubu has offered his
-/// help, or else his first two events; entering by its third entrance sets
-/// where Retreat leads.
+/// Sets up the small idol's chamber. Once Akafubu has offered his help, the
+/// tongue is out and the idol stands aside from the passage, the Dragon's Eye
+/// in it; before that, arriving from the ceremony or from the arrow panels
+/// plays his two scenes. Coming in by the tongue makes Retreat in the final
+/// chamber lead back to it.
 void GabombaStatueChamber_InitializeIdol(void) {
   Actor_DisableById(ACTOR_SEATED_IDOL);
   Actor_DisableById(ACTOR_LEFT_DRUM);
   Actor_DisableById(ACTOR_RIGHT_DRUM);
   wait(1);
   if (GameFlag_Get(FLAG_AKAFUBU_OFFERED_HELP)) {
-    GabombaStatueChamber_OpenThePassage();
-    GabombaStatueChamber_SetPassageCells();
+    GabombaStatueChamber_UnrollTongue();
+    GabombaStatueChamber_UncoverPassage();
     Actor_SetPosition(ACTOR_SEATED_IDOL, 424, 152);
     wait(1);
     GabombaStatueChamber_ShowDragonsEye();
@@ -1109,11 +1200,13 @@ void GabombaStatueChamber_InitializeIdol(void) {
     s32 entrance;
 
     entrance = gMainRoutineWork.entrance;
-    if (entrance == 5) {
+    if (entrance ==
+        GABOMBA_STATUE_CHAMBER_IDOL_FROM_KIBOMBO_STATUE_GROUNDS_CEREMONY_NORTH) {
       GabombaStatueChamber_WhereIsTheOrb();
       return;
     }
-    if (entrance == 6) {
+    if (entrance ==
+        GABOMBA_STATUE_CHAMBER_IDOL_FROM_GABOMBA_STATUE_ARROWS_WEST) {
       GabombaStatueChamber_AkafubuOffersToHelp();
       return;
     }
@@ -1121,18 +1214,20 @@ void GabombaStatueChamber_InitializeIdol(void) {
   {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
-    if (party->entrance == 3) {
+    if (party->entrance ==
+        GABOMBA_STATUE_CHAMBER_IDOL_FROM_KIBOMBO_STATUE_GROUNDS) {
       GameFlag_Clear(FLAG_GABOMBA_RETREAT_TO_PINION);
       GameFlag_Set(FLAG_GABOMBA_RETREAT_TO_IDOL);
     }
   }
 }
 
-/// Sets up the lift room: raised if the party left it up, or brought down if
-/// the party arrives by it.
+/// Sets up the corridor with the lift: with the lift at the foot of the shaft
+/// if the party left it there, or riding back up if the party arrives from the
+/// final chamber.
 void GabombaStatueChamber_InitializeLift(void) {
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION)) {
-    if (GameFlag_Get(FLAG_LIFT_UP)) {
+    if (GameFlag_Get(FLAG_LIFT_DOWN)) {
       struct MapWork *map = Ram_HeapSlots->mapGrid;
       struct MapLayer *front = &map->layers[0];
       struct MapLayer *back = &map->layers[2];
@@ -1141,8 +1236,8 @@ void GabombaStatueChamber_InitializeLift(void) {
 
       BlendScript_Suspend();
       for (i = 0; i < LIFT_TRAVEL; i++) {
-        if (i >= LIFT_RISE_BLEND_START &&
-            i <= LIFT_RISE_BLEND_START + LIFT_BLEND_FRAMES - 1) {
+        if (i >= LIFT_DESCENT_BLEND_START &&
+            i <= LIFT_DESCENT_BLEND_START + LIFT_BLEND_FRAMES - 1) {
           u32 alpha = LIFT_BLEND_BOTTOM(blend) << 8;
 
           alpha |= BLEND_WEIGHT_MAX - LIFT_BLEND_BOTTOM(blend);
@@ -1155,15 +1250,17 @@ void GabombaStatueChamber_InitializeLift(void) {
       MapGrid_CenterOnFollowedPoint();
       wait(1);
     }
-  } else if (gMainRoutineWork.entrance == 2) {
-    GabombaStatueChamber_ArriveByLift();
+  } else if (
+      gMainRoutineWork.entrance ==
+      GABOMBA_STATUE_CHAMBER_LIFT_FROM_GABOMBA_STATUE_CHAMBER_WITCH_DOCTOR) {
+    GabombaStatueChamber_RideLiftBackUp();
   }
 }
 
-/// Sets up the chamber: its second hole open once the message of the Gabomba
-/// is carried, or else the place of the Black Crystal; arriving by entrance 2,
-/// Retreat leads back to the statue's top or to the chamber's first room, by
-/// the way the party came.
+/// Sets up the final chamber: once the Gabomba's message is carried, its hole
+/// is open and Akafubu gone; before that, the black orb rests in the idol's
+/// hands. Climbing up from the Gabomba Catacombs, Retreat leads back to where
+/// the party came into the statue: the hall of pinions, or the tongue.
 void GabombaStatueChamber_InitializeWitchDoctor(void) {
   u32 i;
 
@@ -1178,22 +1275,21 @@ void GabombaStatueChamber_InitializeWitchDoctor(void) {
     GabombaStatueChamber_ShowBlackCrystal();
   }
 #if TLA_PATCH_1 /* The Japanese edition does not set the retreat. */
-  if (gMainRoutineWork.entrance == 2) {
+  if (gMainRoutineWork.entrance ==
+      GABOMBA_STATUE_CHAMBER_WITCH_DOCTOR_FROM_GABOMBA_CATACOMBS_TELEPORTERS) {
     if (GameFlag_Get(FLAG_GABOMBA_RETREAT_TO_PINION)) {
       gMainRoutineWork.retreatScene = SCENE_GABOMBA_STATUE_PINION;
       gMainRoutineWork.retreatEntrance = 1;
     } else if (GameFlag_Get(FLAG_GABOMBA_RETREAT_TO_IDOL)) {
       gMainRoutineWork.retreatScene = SCENE_GABOMBA_STATUE_CHAMBER_IDOL;
-      gMainRoutineWork.retreatEntrance = 3;
+      gMainRoutineWork.retreatEntrance =
+          GABOMBA_STATUE_CHAMBER_IDOL_FROM_KIBOMBO_STATUE_GROUNDS;
     }
   }
 #endif
 }
 
 #include "text/msg_ids.h"
-
-void GabombaStatueChamber_StepOffLift(void);
-void GabombaStatueChamber_AkafubuReachesChamber(void);
 
 // clang-format off
 u32 gGabombaStatueChamber_WalkOffScript[] = {
@@ -1333,33 +1429,48 @@ struct ActorPlacement gGabombaStatueChamber_Placements[] = {
 // clang-format on
 
 struct Trigger gGabombaStatueChamber_IdolTriggers[] = {
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     GABOMBA_STATUE_CHAMBER_IDOL_TO_GABOMBA_STATUE_COGS, CONDITION_ALWAYS,
      EVENT(GabombaStatueChamber_StepIntoFirstHole)},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
+    {TRIGGER_EXIT, GABOMBA_STATUE_CHAMBER_IDOL_TO_KIBOMBO_STATUE_GROUNDS,
+     CONDITION_ALWAYS, GABOMBA_STATUE_CHAMBER_IDOL_TO_KIBOMBO_STATUE_GROUNDS},
+    {TRIGGER_EXIT, GABOMBA_STATUE_CHAMBER_IDOL_TO_GABOMBA_STATUE_CHAMBER_LIFT,
+     CONDITION_ALWAYS,
+     GABOMBA_STATUE_CHAMBER_IDOL_TO_GABOMBA_STATUE_CHAMBER_LIFT},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gGabombaStatueChamber_LiftTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, 3, FLAG_LEADER_ON_LIFT,
-     EVENT(GabombaStatueChamber_RideLiftUp)},
-    {TRIGGER_STEP, 4, CONDITION_ALWAYS,
+    {TRIGGER_EXIT, GABOMBA_STATUE_CHAMBER_LIFT_TO_GABOMBA_STATUE_CHAMBER_IDOL,
+     CONDITION_ALWAYS,
+     GABOMBA_STATUE_CHAMBER_LIFT_TO_GABOMBA_STATUE_CHAMBER_IDOL},
+    {TRIGGER_EXIT,
+     GABOMBA_STATUE_CHAMBER_LIFT_TO_GABOMBA_STATUE_CHAMBER_WITCH_DOCTOR,
+     CONDITION_ALWAYS,
+     GABOMBA_STATUE_CHAMBER_LIFT_TO_GABOMBA_STATUE_CHAMBER_WITCH_DOCTOR},
+    {TRIGGER_STEP, CELL_BEHAVIOR_LIFT, FLAG_LEADER_ON_LIFT,
+     EVENT(GabombaStatueChamber_RideLiftDown)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_SOUTH_OF_LIFT, CONDITION_ALWAYS,
      EVENT(GabombaStatueChamber_StepOffLift)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gGabombaStatueChamber_WitchDoctorTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {STEP_TRIGGER_WALKING, 2, CONDITION_ALWAYS,
-     EVENT(GabombaStatueChamber_StepIntoSecondHole)},
-    {TRIGGER_STEP, 10, FLAG_AKAFUBU_REACHED_CHAMBER,
+    {TRIGGER_EXIT,
+     GABOMBA_STATUE_CHAMBER_WITCH_DOCTOR_TO_GABOMBA_STATUE_CHAMBER_LIFT,
+     CONDITION_ALWAYS,
+     GABOMBA_STATUE_CHAMBER_WITCH_DOCTOR_TO_GABOMBA_STATUE_CHAMBER_LIFT},
+    {STEP_TRIGGER_WALKING,
+     GABOMBA_STATUE_CHAMBER_WITCH_DOCTOR_TO_GABOMBA_CATACOMBS_TELEPORTERS,
+     CONDITION_ALWAYS, EVENT(GabombaStatueChamber_StepIntoSecondHole)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BELOW_AKAFUBU, FLAG_AKAFUBU_REACHED_CHAMBER,
      EVENT(GabombaStatueChamber_AkafubuReachesChamber)},
-    {TRIGGER_TALK, 10, CONDITION_ALWAYS, MSGNO(MsgYourBlackOrb)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), 10, CONDITION_ALWAYS,
-     MSGNO(MsgOeiaWhatAm)},
-    {EXAMINE_TRIGGER_FACING(FACING_NORTH), 11, FLAG_GABOMBA_MESSAGE_CARRIED,
+    {TRIGGER_TALK, ACTOR_CHAMBER_AKAFUBU, CONDITION_ALWAYS,
+     MSGNO(MsgYourBlackOrb)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_CHAMBER_AKAFUBU,
+     CONDITION_ALWAYS, MSGNO(MsgOeiaWhatAm)},
+    {EXAMINE_TRIGGER_FACING(FACING_NORTH), CELL_BEHAVIOR_IDOL,
+     FLAG_GABOMBA_MESSAGE_CARRIED,
      EVENT(GabombaStatueChamber_GabombaNamesWitchDoctor)},
     {TRIGGER_TABLE_END},
 };

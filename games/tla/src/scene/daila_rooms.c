@@ -1,12 +1,21 @@
 /// @file
-/// Daila's rooms, in two scenes that share this overlay.
+/// Daila's rooms, in two scenes that share this overlay: the houses
+/// (DailaRoomsHouses) and the sanctuary (DailaRoomsSanctum).
 ///
-/// DailaRoomsHouses is the village's houses, shops and inn, with other
-/// tables once Tavi is rescued (FLAG_TAVI_RESCUED). DailaRoomsSanctum is
-/// the sanctuary, whose floor lies under water until Tavi is rescued; then it
-/// is drained (Scene_PrepareMap), leaving three puddles that Frost raises into
-/// pillars of ice (Scene_RaiseHeldActor, gDailaRooms_PillarFrozenFlags) up to
-/// the Sea God's Tear (DailaRooms_TakeSeaGodsTear).
+/// The houses are six rooms, one behind each door of the village: Riki's
+/// home, Tavi's home, the middle house, the mayor's house, the inn and the
+/// weapon and armor shop. The same scene also holds the house on the islet
+/// with the cow, reached from North Osenia. Once Tavi is rescued
+/// (FLAG_TAVI_RESCUED) the people have other things to say, the two boys are
+/// home eating, and a woman at the inn is caught practising for the dinner
+/// show.
+///
+/// The sanctuary, up the steps at the north of the village, has a healer at
+/// his counter, and behind him the Sea God's statue with the Sea God's Tear at
+/// its foot, beyond a pool of water. Once Tavi is rescued the water has drained
+/// to three puddles (Scene_PrepareMap). Felix can hop over them, and Frost
+/// raises each into a pillar of ice; with the two on the left frozen he can
+/// reach the Tear and take it (DailaRooms_TakeSeaGodsTear).
 
 #include "shared/tables.h"
 #include "field/emote.h"
@@ -42,19 +51,31 @@
 #include "version.h"
 #include "text/msg_ids.h"
 
+/// The cells beside each of the sanctuary's puddles once it has drained, named
+/// by the side they lie on: walking from one into the puddle hops over it.
+enum DailaRoomsCell {
+  CELL_NORTH_OF_PUDDLE = 30,
+  CELL_WEST_OF_PUDDLE,
+  CELL_EAST_OF_PUDDLE,
+  CELL_SOUTH_OF_PUDDLE,
+  /// The foot of the statue where the Sea God's Tear lies, cell (14, 12).
+  CELL_SEA_GODS_TEAR = 40
+};
+
 /// The houses, shops and inn of DailaRoomsHouses, numbering the rows its
 /// two placement tables share.
 enum DailaRoomsActorId {
-  /// Riki's parents, in the house by entrance 1, scolding the boy who took his
-  /// father's fishing pole.
+  /// Riki's parents, in his home at the west of the village, scolding the boy
+  /// who took his father's fishing pole.
   ACTOR_RIKIS_FATHER = ACTOR_FIRST_PLACED,
   ACTOR_RIKIS_MOTHER,
   /// Tavi's parents, next door, waiting for him with his three o'clock snack.
   ACTOR_TAVIS_FATHER,
   ACTOR_TAVIS_MOTHER,
-  /// An old man who sends boat seekers to Madra.
+  /// An old man in the middle house who sends boat seekers to Madra.
   ACTOR_OLD_MAN_ON_MADRA,
-  /// An old woman who tells the way to the Kandorean Temple.
+  /// An old woman in the middle house who tells the way to the Kandorean
+  /// Temple.
   ACTOR_OLD_WOMAN_ON_THE_KANDOREAN_TEMPLE,
   /// "In all my years as mayor, I've never seen a wave like that before..."
   ACTOR_MAYOR,
@@ -74,13 +95,12 @@ enum DailaRoomsActorId {
   /// A guest of the inn who longs for Madra's seafood.
   ACTOR_GUEST_ON_MADRAS_SEAFOOD,
   /// Until Tavi is rescued: the family in the house on the islet with the cow,
-  /// whose sons
-  /// try the Sea of Time.
+  /// whose sons try the Sea of Time.
   ACTOR_WOMAN_ON_THE_CURRENTS,
   ACTOR_OLD_MAN_ON_THE_RED_ROCKS,
   ACTOR_OLD_WOMAN_ON_HER_SONS,
-  /// A blank actor on the armor shop's counter, so the merchant behind it
-  /// answers from across it.
+  /// An unseen actor on the armor shop's counter, so that the merchant behind
+  /// it answers Felix from across it.
   ACTOR_ARMOR_COUNTER
 };
 
@@ -108,11 +128,12 @@ enum DailaSanctuaryActorId {
   /// The sanctuary's healer, who sends travelers with nowhere to go to Poi at
   /// the Kandorean Temple, and once that is done heals the party.
   ACTOR_HEALER = ACTOR_FIRST_PLACED,
-  /// An actor with no picture at the pillars' top that holds the Tear: the
-  /// game shows the item on it (Actor_SetItemIcon) until it is taken.
+  /// The Sea God's Tear at the statue's foot: an actor with no picture of its
+  /// own, on which the game draws the item (Actor_SetItemIcon) until it is
+  /// taken.
   ACTOR_SEA_GODS_TEAR,
-  /// The three puddles on the drained floor, which Frost raises into pillars
-  /// of ice.
+  /// The three puddles on the drained floor, from west to east, which Frost
+  /// raises into pillars of ice.
   ACTOR_FIRST_PUDDLE,
   ACTOR_SECOND_PUDDLE,
   ACTOR_THIRD_PUDDLE,
@@ -144,15 +165,6 @@ s32 DailaRooms_GiveItem(s32 item, s32 mode);
 void Scene_FadeInAndClearFlag(void);
 
 void FieldEffect_StartBlankOverlay(s32 mode);
-
-void DailaRooms_TalkToArmorMerchantOnceTaviIsRescued(s32 a0);
-
-void DailaRooms_AskGoingToMadra(void);
-void DailaRooms_TalkCaughtPracticing(void);
-
-void Scene_RaiseHeldActor(void);
-
-void DailaRooms_TakeSeaGodsTear(void);
 
 void Field_TryJumpForward(void);
 
@@ -217,8 +229,8 @@ UNUSED void DailaRooms_StartleAtTheLeader(s32 unused, s32 actor) {
   FieldEvent_Wait(10);
 }
 
-/// Mind Read on the armor shop's counter before Tavi is rescued: the merchant
-/// behind it thinks of the two scamps.
+/// Mind Read on the armor merchant behind the left-hand counter of the shop,
+/// before Tavi is rescued: he thinks of the two scamps.
 s32 DailaRooms_ReadArmorMerchantsMind(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -229,8 +241,8 @@ s32 DailaRooms_ReadArmorMerchantsMind(void) {
   return 0;
 }
 
-/// Mind Read on the armor shop's counter once Tavi is rescued: the merchant
-/// behind it thinks of hidden treasure.
+/// Mind Read on the armor merchant once Tavi is rescued: he thinks of hidden
+/// treasure.
 s32 DailaRooms_ReadArmorMerchantsMindAfterRescue(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -267,8 +279,9 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 s32 Inn_CheckIn(s32 mode, s32 objectId);
 
-/// The weapon merchant sells across his counter, and otherwise warns of the
-/// roads south.
+/// The weapon merchant at the right-hand counter of the shop sells to Felix
+/// when he talks to him from in front of it, facing north; from any other side
+/// he warns of the roads south.
 void DailaRooms_TalkToWeaponMerchant(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
@@ -284,8 +297,9 @@ void DailaRooms_TalkToWeaponMerchant(s32 actor) {
   }
 }
 
-/// The armor merchant sells across his counter, and otherwise asks what brings
-/// the party to Daila.
+/// The armor merchant at the left-hand counter of the shop sells to Felix when
+/// he talks to him from in front of it, facing north; from any other side he
+/// asks what brings the party to Daila.
 void DailaRooms_TalkToArmorMerchant(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
@@ -301,8 +315,8 @@ void DailaRooms_TalkToArmorMerchant(s32 actor) {
   }
 }
 
-/// The innkeeper takes guests across the counter to the north, and otherwise
-/// wonders what to cook.
+/// The innkeeper offers a room when Felix talks to him across the counter at
+/// his east side, facing west; from any other side he wonders what to cook.
 void DailaRooms_TalkToInnkeeper(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
@@ -318,9 +332,10 @@ void DailaRooms_TalkToInnkeeper(s32 actor) {
   }
 }
 
-/// The sanctuary's healer, until he has sent the party on, asks whether they
-/// have time and nowhere to go, whatever they answer, and remembers it
-/// (FLAG_DAILA_HEALER_SENT_TO_POI); after that he heals across his counter.
+/// The sanctuary's healer first asks whether the party has a lot of time and
+/// nowhere to go, and sends them to Poi at the Kandorean Temple whatever they
+/// answer. After that he heals when Felix talks to him from in front of his
+/// counter, facing north, and from any other side asks again.
 void DailaRooms_TalkToHealer(s32 actor) {
   s32 msg;
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
@@ -366,8 +381,9 @@ void DailaRooms_TalkToHealer(s32 actor) {
   }
 }
 
-/// The sanctuary's healer once Tavi is rescued: he heals across his counter,
-/// and otherwise sends the party to Madra.
+/// Once Tavi is rescued, the sanctuary's healer heals when Felix talks to him
+/// from in front of his counter, facing north, and from any other side tells
+/// the party there is nothing left for them in Daila.
 void DailaRooms_TalkToHealerOnceTaviIsRescued(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
@@ -383,7 +399,8 @@ void DailaRooms_TalkToHealerOnceTaviIsRescued(s32 actor) {
   }
 }
 
-/// As DailaRooms_TalkToWeaponMerchant, telling of Daila's pirate past.
+/// Once Tavi is rescued, the weapon merchant still sells from in front of his
+/// counter, and from any other side tells of Daila's pirate past.
 void DailaRooms_TalkToWeaponMerchantOnceTaviIsRescued(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
@@ -399,7 +416,8 @@ void DailaRooms_TalkToWeaponMerchantOnceTaviIsRescued(s32 actor) {
   }
 }
 
-/// As DailaRooms_TalkToArmorMerchant, on how spacious the village is.
+/// Once Tavi is rescued, the armor merchant still sells from in front of his
+/// counter, and from any other side talks of how spacious the village is.
 void DailaRooms_TalkToArmorMerchantOnceTaviIsRescued(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
@@ -415,7 +433,9 @@ void DailaRooms_TalkToArmorMerchantOnceTaviIsRescued(s32 actor) {
   }
 }
 
-/// As DailaRooms_TalkToInnkeeper, wondering when the boats will be mended.
+/// Once Tavi is rescued, the innkeeper still offers a room across the counter
+/// at his east side, and from any other side wonders when the fishermen can
+/// put to sea again.
 void DailaRooms_TalkToInnkeeperOnceTaviIsRescued(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
@@ -431,7 +451,8 @@ void DailaRooms_TalkToInnkeeperOnceTaviIsRescued(s32 actor) {
   }
 }
 
-/// The old man asks whether the party is going to Madra once Tavi is rescued.
+/// Once Tavi is rescued, the old man in the middle house asks whether Felix is
+/// going to Madra, and answers yes or no.
 void DailaRooms_AskGoingToMadra(void) {
   s32 msg;
 
@@ -452,7 +473,8 @@ void DailaRooms_AskGoingToMadra(void) {
   Event_End();
 }
 
-/// The mayor asks whether the party is looking for a boat too.
+/// Once Tavi is rescued, the mayor in his house asks whether the party is
+/// looking for a boat too, and answers yes or no.
 void DailaRooms_TalkNoBoats(void) {
   s32 msg;
 
@@ -473,8 +495,8 @@ void DailaRooms_TalkNoBoats(void) {
   Event_End();
 }
 
-/// The performer caught practising for the dinner show hopes no one was
-/// watching.
+/// Once Tavi is rescued, the woman at the inn caught practising for the dinner
+/// show hopes Felix was not watching, then explains.
 void DailaRooms_TalkCaughtPracticing(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -494,8 +516,10 @@ void DailaRooms_TalkCaughtPracticing(void) {
 void ItemDisplay_ShowPicture(struct Actor *actor, s32 mode);
 void Actor_StartIdle(struct Actor *actor);
 
-/// Takes the Sea God's Tear from the top of the pillars, or, when the bags are
-/// full and nothing is dropped for it, puts it back.
+/// Felix picks up the Sea God's Tear at the foot of the statue behind the
+/// healer (cell (14, 12)): "Felix got the Sea God's Tear." When the party's
+/// bags are full he is asked what to drop for it, and if he keeps everything
+/// the Tear stays where it was.
 void DailaRooms_TakeSeaGodsTear(void) {
   s32 savedGravity;
   s32 savedVelocityY;
@@ -714,7 +738,9 @@ s32 Scene_PrepareMap(void) {
 
 #include "shared/scene_fade_in_and_clear_flag.h"
 
-/// The step triggers of the cells to jump from, one for each heading.
+/// Felix hops over one of the sanctuary's drained puddles when he walks into
+/// it from the cell beside it on any side, landing on the far side if the
+/// ground there is clear.
 void DailaRooms_JumpForward(void) { Field_TryJumpForward(); }
 
 // clang-format off
@@ -928,13 +954,13 @@ struct ActorPlacement gDailaRooms_HousesPlacementsOnceTaviIsRescued[] = {
 
 /// The houses' doors, talk and Mind Read before Tavi is rescued.
 struct Trigger gDailaRooms_HousesEvents[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, DAILA_ROOMS_HOUSES_TO_DAILA_WEST, CONDITION_ALWAYS, DAILA_ROOMS_HOUSES_TO_DAILA_WEST},
+    {TRIGGER_EXIT, DAILA_ROOMS_HOUSES_TO_DAILA_NORTHWEST, CONDITION_ALWAYS, DAILA_ROOMS_HOUSES_TO_DAILA_NORTHWEST},
+    {TRIGGER_EXIT, DAILA_ROOMS_HOUSES_TO_DAILA_NORTHEAST, CONDITION_ALWAYS, DAILA_ROOMS_HOUSES_TO_DAILA_NORTHEAST},
+    {TRIGGER_EXIT, DAILA_ROOMS_HOUSES_TO_DAILA_EAST, CONDITION_ALWAYS, DAILA_ROOMS_HOUSES_TO_DAILA_EAST},
+    {TRIGGER_EXIT, DAILA_ROOMS_HOUSES_TO_DAILA_SOUTHWEST, CONDITION_ALWAYS, DAILA_ROOMS_HOUSES_TO_DAILA_SOUTHWEST},
+    {TRIGGER_EXIT, DAILA_ROOMS_HOUSES_TO_DAILA_SOUTHEAST, CONDITION_ALWAYS, DAILA_ROOMS_HOUSES_TO_DAILA_SOUTHEAST},
+    {TRIGGER_EXIT, DAILA_ROOMS_HOUSES_TO_NORTH_OSENIA_ISLET, CONDITION_ALWAYS, DAILA_ROOMS_HOUSES_TO_NORTH_OSENIA_ISLET},
     {TRIGGER_TALK, ACTOR_RIKIS_FATHER, CONDITION_ALWAYS, MSGNO(MsgFieldRikisReallyInForItWhen)},
     {TRIGGER_TALK, ACTOR_RIKIS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgFieldThatNoGoodKidOfMine)},
     {TRIGGER_TALK, ACTOR_TAVIS_FATHER, CONDITION_ALWAYS, MSGNO(MsgFieldIWonderWhereOurLittleTavi)},
@@ -980,7 +1006,8 @@ struct Trigger gDailaRooms_HousesEvents[] = {
 
 /// The sanctuary's doors, talk and Mind Read before Tavi is rescued.
 struct Trigger gDailaRooms_SanctumEvents[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, DAILA_ROOMS_SANCTUM_TO_DAILA, CONDITION_ALWAYS, DAILA_ROOMS_SANCTUM_TO_DAILA},
+    // Unused: the sanctuary has no cells for exits 2 to 6, nor exits of those numbers.
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
@@ -993,13 +1020,13 @@ struct Trigger gDailaRooms_SanctumEvents[] = {
 
 /// The houses' doors, talk and Mind Read once Tavi is rescued.
 struct Trigger gDailaRooms_HousesEventsOnceTaviIsRescued[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, DAILA_ROOMS_HOUSES_TO_DAILA_WEST, CONDITION_ALWAYS, DAILA_ROOMS_HOUSES_TO_DAILA_WEST},
+    {TRIGGER_EXIT, DAILA_ROOMS_HOUSES_TO_DAILA_NORTHWEST, CONDITION_ALWAYS, DAILA_ROOMS_HOUSES_TO_DAILA_NORTHWEST},
+    {TRIGGER_EXIT, DAILA_ROOMS_HOUSES_TO_DAILA_NORTHEAST, CONDITION_ALWAYS, DAILA_ROOMS_HOUSES_TO_DAILA_NORTHEAST},
+    {TRIGGER_EXIT, DAILA_ROOMS_HOUSES_TO_DAILA_EAST, CONDITION_ALWAYS, DAILA_ROOMS_HOUSES_TO_DAILA_EAST},
+    {TRIGGER_EXIT, DAILA_ROOMS_HOUSES_TO_DAILA_SOUTHWEST, CONDITION_ALWAYS, DAILA_ROOMS_HOUSES_TO_DAILA_SOUTHWEST},
+    {TRIGGER_EXIT, DAILA_ROOMS_HOUSES_TO_DAILA_SOUTHEAST, CONDITION_ALWAYS, DAILA_ROOMS_HOUSES_TO_DAILA_SOUTHEAST},
+    {TRIGGER_EXIT, DAILA_ROOMS_HOUSES_TO_NORTH_OSENIA_ISLET, CONDITION_ALWAYS, DAILA_ROOMS_HOUSES_TO_NORTH_OSENIA_ISLET},
     {TRIGGER_TALK, ACTOR_RIKIS_FATHER, CONDITION_ALWAYS, MSGNO(MsgFieldLetMeTellYouKidsAre)},
     {TRIGGER_TALK, ACTOR_RIKIS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgFieldWhoStaysOutsideUntilHesAbsolutely)},
     {TRIGGER_TALK, ACTOR_TAVIS_FATHER, CONDITION_ALWAYS, MSGNO(MsgFieldOurLittleOneIsFinallyHome)},
@@ -1052,21 +1079,22 @@ struct Trigger gDailaRooms_HousesEventsOnceTaviIsRescued[] = {
 /// The sanctuary once Tavi is rescued: Frost on the three puddles, the jumps
 /// between the pillars and the Tear at their top.
 struct Trigger gDailaRooms_SanctumEventsOnceTaviIsRescued[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, DAILA_ROOMS_SANCTUM_TO_DAILA, CONDITION_ALWAYS, DAILA_ROOMS_SANCTUM_TO_DAILA},
+    // Unused: the sanctuary has no cells for exits 2 to 6, nor exits of those numbers.
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 30, CONDITION_ALWAYS, EVENT(DailaRooms_JumpForward)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 31, CONDITION_ALWAYS, EVENT(DailaRooms_JumpForward)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 32, CONDITION_ALWAYS, EVENT(DailaRooms_JumpForward)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 33, CONDITION_ALWAYS, EVENT(DailaRooms_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_NORTH_OF_PUDDLE, CONDITION_ALWAYS, EVENT(DailaRooms_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_WEST_OF_PUDDLE, CONDITION_ALWAYS, EVENT(DailaRooms_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_EAST_OF_PUDDLE, CONDITION_ALWAYS, EVENT(DailaRooms_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_SOUTH_OF_PUDDLE, CONDITION_ALWAYS, EVENT(DailaRooms_JumpForward)},
     {TRIGGER_TALK, ACTOR_HEALER, CONDITION_ALWAYS, EVENT(DailaRooms_TalkToHealerOnceTaviIsRescued)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_HEALER, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsBoringVillage)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE, FLAG_DAILA_SANCTUARY_PUDDLE_FROZEN_FIRST + 0, EVENT(Scene_RaiseHeldActor)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SECOND_PUDDLE, FLAG_DAILA_SANCTUARY_PUDDLE_FROZEN_FIRST + 1, EVENT(Scene_RaiseHeldActor)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_THIRD_PUDDLE, FLAG_DAILA_SANCTUARY_PUDDLE_FROZEN_FIRST + 2, EVENT(Scene_RaiseHeldActor)},
-    {TRIGGER_EXAMINE, 40, FLAG_SEA_GODS_TEAR_TAKEN, EVENT(DailaRooms_TakeSeaGodsTear)},
+    {TRIGGER_EXAMINE, CELL_SEA_GODS_TEAR, FLAG_SEA_GODS_TEAR_TAKEN, EVENT(DailaRooms_TakeSeaGodsTear)},
     {TRIGGER_TABLE_END},
 };

@@ -1,16 +1,24 @@
 /// @file
-/// Eastern Alhafra, the dock where the ship Briggs bought lies with its mast
-/// pinned under a huge block. On the first visit the party overhears his
-/// sailors (EasternAlhafra_OverhearWorkers); Briggs himself is fought and
-/// caught aboard (eastern_alhafra_ship.c). The mast is then cleared as a
-/// puzzle: crates and rocks pushed or Moved into the water
+/// Eastern Alhafra, the harbour east of the town, where the sailing ship
+/// Briggs's Champa crew bought lies at the end of a pier with its broken mast
+/// fallen across the water to the eastern dock, the sail spread under it and
+/// a huge block of stone pinning its tip. On the first visit the party, coming
+/// aboard, overhears the sailors at the mast give up
+/// (EasternAlhafra_OverhearWorkers), then catches Briggs below decks
+/// (eastern_alhafra_ship.c). Coming out again, Kraden asks whether the party
+/// means to help (EasternAlhafra_AskToHelpWithMast), and the mast is cleared
+/// as a puzzle: the rocks pushed off the sail's poles into the water
 /// (EasternAlhafra_FinishPushing), the log rolled in (EasternAlhafra_RollLog),
-/// the stake holding the ropes Pounded (EasternAlhafra_PoundStake), and the
-/// block on the mast Burst (EasternAlhafra_BurstMastBlock). The workers
-/// tell the mayor (EasternAlhafra_WorkersTellMayor), Briggs escapes and sails
-/// off in the ship (EasternAlhafra_BriggsStealsShip), and the mayor finds it
-/// gone (EasternAlhafra_MayorFindsShipGone). The water ripples by an HBlank
-/// wave on BG1 (EasternAlhafra_StartWave).
+/// the crates Moved in as stepping stones, the stake on the cliff Pounded to
+/// free the ropes (EasternAlhafra_PoundStake), and at last, once the party has
+/// Burst from Tundaria Tower, the block blasted apart
+/// (EasternAlhafra_BurstMastBlock). Two workers see the block gone and run for
+/// the mayor (EasternAlhafra_WorkersSeeBlockGone), who comes down the pier to
+/// look and invites the party to his manor (EasternAlhafra_WorkersTellMayor),
+/// where Briggs escapes. Back at the pier, Briggs sails off in the ship
+/// (EasternAlhafra_BriggsStealsShip) and the mayor blames everyone
+/// (EasternAlhafra_MayorFindsShipGone). The harbour's water ripples all the
+/// while (EasternAlhafra_StartWave).
 #include "battle/battle.h"
 #include "field/field.h"
 #include "game/game.h"
@@ -55,12 +63,12 @@
 #define FACING_QUARTER(facing) ((facing) & 0xc000)
 
 /// Story flags of the mast puzzle and its events.
-#define FLAG_FIRST_CRATE_SUNK 0x8a0  ///< ACTOR_FIRST_CRATE
-#define FLAG_SECOND_CRATE_SUNK 0x8a1 ///< ACTOR_SECOND_CRATE
+#define FLAG_DOCK_CRATE_SUNK 0x8a0 ///< ACTOR_DOCK_CRATE
+#define FLAG_SAIL_CRATE_SUNK 0x8a1 ///< ACTOR_SAIL_CRATE
 #define FLAG_EASTERN_ALHAFRA_STAKE_POUNDED 0x8a2
 #define FLAG_EASTERN_ALHAFRA_ROPE_LASHED 0x8a3
-#define FLAG_LAST_ROCK_SUNK 0x8a4  ///< ACTOR_LAST_ROCK
-#define FLAG_FIRST_ROCK_SUNK 0x8a5 ///< ACTOR_FIRST_ROCK
+#define FLAG_ROCK_UNDER_LOG_SUNK 0x8a4 ///< ACTOR_ROCK_UNDER_LOG
+#define FLAG_EAST_POLE_ROCK_SUNK 0x8a5 ///< ACTOR_EAST_POLE_ROCK
 #define FLAG_LOG_ROLLED 0x8a6
 #define FLAG_TALKED_TO_SAILOR 0x8a8
 #define FLAG_OVERHEARD_WORKERS 0x8a9
@@ -77,6 +85,37 @@ enum { ENTRANCE_AFTER_SHIP_STOLEN = 99 };
 /// alhafra_manor.c names it.
 enum { ENTRANCE_MANOR_BRIGGS_ESCAPES = 81 };
 
+/// What the map's cells hold for this scene's triggers, besides the two exits
+/// (whose cells hold their exit numbers).
+enum EasternAlhafraCell {
+  /// Under the huge block on the mast's tip, cell (30, 25).
+  CELL_MAST_BLOCK = 10,
+  /// Beside the log's west end, cells (19, 27) to (19, 31).
+  CELL_BESIDE_LOG = 11,
+  /// Along the sail's west pole, where the rock under the log rolls, cells
+  /// (21, 28) to (21, 31), and the pole's south tip at (21, 32).
+  ///@{
+  CELL_WEST_POLE = 12,
+  CELL_WEST_POLE_TIP = 13,
+  ///@}
+  /// The deck just southwest of the cabin door, cell (14, 24).
+  CELL_BY_CABIN_DOOR = 20,
+  /// Halfway down the pier, cells (8, 32) and (9, 32), and at its foot,
+  /// (7, 34) to (9, 34).
+  ///@{
+  CELL_PIER = 21,
+  CELL_PIER_FOOT = 22,
+  ///@}
+  /// Across the deck south of the cabin door, cells (14, 26) to (18, 26).
+  CELL_ACROSS_DECK = 23,
+  /// Two steps south of the huge block, cell (30, 27), and right beside it,
+  /// (30, 26).
+  ///@{
+  CELL_BELOW_MAST_BLOCK = 24,
+  CELL_BESIDE_MAST_BLOCK = 25,
+  ///@}
+};
+
 /// The dock's things and people before Briggs is caught, numbering the rows of
 /// gEasternAlhafra_Placements whose sprites are not the party's; the things
 /// keep their rows in gEasternAlhafra_PlacementsAfterBriggsCaught.
@@ -87,31 +126,34 @@ enum EasternAlhafraActorId {
   ACTOR_ROPE_POST = ACTOR_FIRST_PLACED,
   ACTOR_SECOND_ROPE_POST,
   ///@}
-  /// The two crates pushed or Moved into the water, where they sink.
+  /// The two crates pushed or Moved into the water, where each sinks and
+  /// stays as a stepping stone Felix hops across: the one on the dock east of
+  /// the sail, and the one at the foot of the sail.
   ///@{
-  ACTOR_FIRST_CRATE,
-  ACTOR_SECOND_CRATE,
+  ACTOR_DOCK_CRATE,
+  ACTOR_SAIL_CRATE,
   ///@}
-  /// The ends of the tightrope from the top of the sail's west pole down to
-  /// the mast (Tightrope_Place).
+  /// The ends of the tightrope from the top of the sail's west pole across to
+  /// its east pole (Tightrope_Place).
   ///@{
   ACTOR_TIGHTROPE_START,
   ACTOR_TIGHTROPE_END,
   ///@}
-  /// The stake Pound drives down, freeing the two ropes it holds taut.
+  /// The stake on the cliff top east of the sail, which Pound drives down,
+  /// freeing the two ropes it holds taut.
   ACTOR_STAKE,
   /// The log lying across the sail's west pole, rolled into the water
   /// (EasternAlhafra_RollLog).
   ACTOR_LOG,
-  /// The two rocks among the junk: the last on the sail's west pole just south
-  /// of the log, which rolls only once this rock has sunk, and the first on
-  /// the mast.
+  /// The two pale round rocks among the junk: one on the sail's west pole just
+  /// south of the log, which rolls only once this rock has sunk, and one on the
+  /// sail's east pole.
   ///@{
-  ACTOR_LAST_ROCK,
-  ACTOR_FIRST_ROCK,
+  ACTOR_ROCK_UNDER_LOG,
+  ACTOR_EAST_POLE_ROCK,
   ///@}
-  /// The two ropes from the mast to the stake, each from its start on the
-  /// mast to its end at the stake, until the stake is Pounded.
+  /// The two ropes from the sail's east pole to the stake, each from its start
+  /// on the pole to its end at the stake, until the stake is Pounded.
   ///@{
   ACTOR_FIRST_STAKE_ROPE_START,
   ACTOR_FIRST_STAKE_ROPE_END,
@@ -185,18 +227,6 @@ extern u32 gEasternAlhafra_FirstWorkerRunScript[];
 extern u32 gEasternAlhafra_SecondWorkerRunScript[];
 extern s32 gEasternAlhafra_RunOffScript[];
 
-void EasternAlhafra_RollLog(void);
-
-void EasternAlhafra_TalkToSailor(void);
-
-void EasternAlhafra_StepOntoMast(void);
-
-void EasternAlhafra_IgnoreDiagonalStep(void);
-void EasternAlhafra_GiveUpOnMastBlock(void);
-void EasternAlhafra_AskToHelpWithMast(void);
-void EasternAlhafra_WorkersTellMayor(void);
-void EasternAlhafra_BriggsStealsShip(void);
-
 /// Sets up a falling rock's width by height sprite of the given shape at its
 /// first tile.
 void EasternAlhafra_InitializeRockSprite(struct EffectSprite *sprite, s32 width,
@@ -248,9 +278,10 @@ void *Scene_GetActorPlacements(void) {
   return gEasternAlhafra_Placements;
 }
 
-/// Burst on the block pinning the mast: each small blast (mode 2)
-/// throws two rocks from it and the great one (mode 3) thirty, and as the
-/// blasts die down (mode 1) the mast is cleared.
+/// Felix casts Burst on the huge block pinning the mast's tip, at the east
+/// end of the mast by the dock (cell (30, 25)), and it is blasted apart. Each
+/// small blast (mode 2) throws two chips of rock from it and the great one
+/// (mode 3) thirty; as the blasts die down (mode 1) the mast is clear.
 void EasternAlhafra_BurstMastBlock(s32 mode, s32 frame) {
   if (frame == 0)
     EasternAlhafra_StartFallingRocks();
@@ -266,9 +297,10 @@ void EasternAlhafra_BurstMastBlock(s32 mode, s32 frame) {
     EasternAlhafra_EndFallingRocks();
 }
 
-/// Pound on the stake: it sinks, and the two ropes it held taut fall slack
-/// toward the mast, redrawn each frame for up to a second until both their
-/// ends have arrived.
+/// Felix Pounds the stake on the cliff top east of the sail: it sinks into the
+/// ground, and the two ropes it held taut fall slack onto the sail's east pole.
+/// The ropes are redrawn each frame, for up to a second, until both their
+/// loose ends have arrived.
 void EasternAlhafra_PoundStake(s32 mode, s32 frame) {
   struct Actor *firstEnd;
   struct Actor *secondEnd;
@@ -306,10 +338,12 @@ void EasternAlhafra_PoundStake(s32 mode, s32 frame) {
   }
 }
 
-/// As crate or rock id is pushed or Moved: it stops following the terrain,
-/// and the first crate, at either of its first two cells with the leader in the
-/// cell west of it, walls that cell on layer 2 until
-/// EasternAlhafra_FinishPushing opens it again.
+/// Nothing visible happens as Felix begins to push or Move one of the crates
+/// or rocks of the mast's junk; the game only lets it keep its height as it
+/// moves, instead of following the ground under it. When he stands just west of
+/// the dock crate, on its first two cells, his own cell is walled until
+/// EasternAlhafra_FinishPushing, so that a pull of Move cannot drag the crate
+/// onto him.
 void EasternAlhafra_StartPushing(s32 unused, s32 id) {
   struct Actor *leader;
   struct Actor *actor;
@@ -320,7 +354,7 @@ void EasternAlhafra_StartPushing(s32 unused, s32 id) {
   leader = Actor_Get(gMainRoutineWork.leaderActorId);
   actor = Actor_Get(id);
   actor->motionFlags = 0;
-  if (id == ACTOR_FIRST_CRATE) {
+  if (id == ACTOR_DOCK_CRATE) {
     leaderX = FIELD_CELL(leader->x.fixed);
     x = FIELD_CELL(actor->x.fixed);
     z = FIELD_CELL(actor->z.fixed);
@@ -341,8 +375,12 @@ s32 Party_FindOwnerWithAction();
 void Event_Start();
 void Event_End();
 
-/// Once crate or rock id stops: at its own spot in the water it sinks with
-/// three splashes and its flag is set.
+/// A crate or rock that Felix has pushed or Moved off the junk into the water
+/// falls in and sinks with three splashes. Each has its own spot: the dock
+/// crate at cell (31, 32), the crate at the foot of the sail at (25, 33), the
+/// rock under the log at (21, 33) and the east pole's rock at (27, 33). A
+/// crate stays there just under the water as a stepping stone Felix can hop
+/// across; a rock is gone. Stopping anywhere else, nothing happens.
 void EasternAlhafra_FinishPushing(s32 mode, s32 id) {
   struct Actor *actor;
   struct Actor *splashes[4];
@@ -356,28 +394,28 @@ void EasternAlhafra_FinishPushing(s32 mode, s32 id) {
   x = FIELD_CELL(actor->x.fixed);
   sinks = 0;
   z = FIELD_CELL(actor->z.fixed);
-  if (id == ACTOR_FIRST_CRATE) {
+  if (id == ACTOR_DOCK_CRATE) {
     FieldMapGrid_SetCellBehavior(toFIXED(528), toFIXED(512), 2, 0);
     FieldMapGrid_SetCellBehavior(toFIXED(512), toFIXED(512), 2, 0);
   }
   if (x == 31 && z == 32) {
-    Event_SetFlag(FLAG_FIRST_CRATE_SUNK);
+    Event_SetFlag(FLAG_DOCK_CRATE_SUNK);
     sinks = 1;
   }
   if (x == 25 && z == 33) {
-    Event_SetFlag(FLAG_SECOND_CRATE_SUNK);
+    Event_SetFlag(FLAG_SAIL_CRATE_SUNK);
     sinks = 1;
   }
   if (x == 21 && z == 33) {
-    Event_SetFlag(FLAG_LAST_ROCK_SUNK);
+    Event_SetFlag(FLAG_ROCK_UNDER_LOG_SUNK);
     sinks = 1;
   }
   if (x == 27 && z == 33) {
-    Event_SetFlag(FLAG_FIRST_ROCK_SUNK);
+    Event_SetFlag(FLAG_EAST_POLE_ROCK_SUNK);
     sinks = 1;
   }
   if (sinks) {
-    if (id != ACTOR_FIRST_CRATE)
+    if (id != ACTOR_DOCK_CRATE)
       Event_PlaySound(SE_FALL);
     actor->gravity = toFIXED(9) / 100;
     actor->motionFlags = ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -409,9 +447,11 @@ void EasternAlhafra_FinishPushing(s32 mode, s32 id) {
   }
 }
 
-/// As the last rock is pushed: walls the cells beside its way down the mast
-/// and opens the one where it falls.
-void EasternAlhafra_StartPushingLastRock(s32 unused, s32 id) {
+/// Nothing visible happens as Felix begins to push the rock under the log
+/// along the sail's west pole. The game walls the cells on either side of the
+/// pole, so that the rock can only roll along it, and opens the water at the
+/// pole's south tip (cell (21, 33)) for it to fall into.
+void EasternAlhafra_StartPushingRockUnderLog(s32 unused, s32 id) {
   EasternAlhafra_StartPushing(unused, id);
   FieldMapGrid_SetCellBehavior(toFIXED(320), toFIXED(464), 2,
                                CELL_BEHAVIOR_WALL);
@@ -432,9 +472,11 @@ void EasternAlhafra_StartPushingLastRock(s32 unused, s32 id) {
   FieldMapGrid_SetCellBehavior(toFIXED(336), toFIXED(528), 2, 0);
 }
 
-/// Once the last rock stops: undoes its walls, and in the water at its spot the
-/// camera watches it sink.
-void EasternAlhafra_FinishPushingLastRock(s32 mode, s32 id) {
+/// The rock under the log stops after a push along the sail's west pole. If it
+/// has come off the pole's south tip into the water (cell (21, 33)), the
+/// camera turns to watch it sink and comes back to Felix. The walls beside the
+/// pole come down again.
+void EasternAlhafra_FinishPushingRockUnderLog(s32 mode, s32 id) {
   struct Actor *actor;
   s32 x;
   s32 z;
@@ -466,25 +508,32 @@ void EasternAlhafra_FinishPushingLastRock(s32 mode, s32 id) {
 void EasternAlhafra_OverhearWorkers(void);
 void PushTarget_Push(struct PushTarget target);
 
-/// Pushing the log: once the last rock has sunk, a push from the side rolls it
-/// into the water, opening the way along the mast.
+/// Felix walks into the log lying across the sail's west pole from its west
+/// end (cells (19, 27) to (19, 31)). Once the rock under the log has sunk,
+/// pushing it south rolls it off the pole into the water, the camera watching
+/// it splash down, and the way along the pole is open. Before that, or pushing
+/// north, he only shoves it along.
+// XXX: what a shove of the log before the rock has sunk looks like, and the
+// roll itself; a recording of Felix walking into the log (the recorder runs
+// out of time on it) would settle both.
 void EasternAlhafra_RollLog(void) {
   struct Actor *log;
-  struct Actor *lastRock;
+  struct Actor *rock;
   struct PushTarget slide;
   s32 facing;
   s32 frames;
 
   log = Actor_GetById(ACTOR_LOG);
-  lastRock = Actor_GetById(ACTOR_LAST_ROCK);
+  rock = Actor_GetById(ACTOR_ROCK_UNDER_LOG);
   // The cardinal heading nearest the leader's facing.
   facing = FACING_QUARTER(
       Actor_GetById(gMainRoutineWork.leaderActorId)->facing + DEGtoANG(45));
-  if (lastRock != NULL && Event_GetFlag(FLAG_LAST_ROCK_SUNK) == 0)
-    MapGrid_SetCellBehavior(lastRock->x.fixed, lastRock->z.fixed, 2,
+  if (rock != NULL && Event_GetFlag(FLAG_ROCK_UNDER_LOG_SUNK) == 0)
+    MapGrid_SetCellBehavior(rock->x.fixed, rock->z.fixed, 2,
                             CELL_BEHAVIOR_WALL);
   if (PushTarget_FindSlide(&slide) != 0) {
-    if (Event_GetFlag(FLAG_LAST_ROCK_SUNK) == 0 || facing == FACING_NORTH) {
+    if (Event_GetFlag(FLAG_ROCK_UNDER_LOG_SUNK) == 0 ||
+        facing == FACING_NORTH) {
       PushTarget_Push(slide);
     } else {
       Event_SetFlag(FLAG_LOG_ROLLED);
@@ -517,26 +566,32 @@ void EasternAlhafra_RollLog(void) {
       Event_End();
     }
   }
-  if (lastRock != NULL && Event_GetFlag(FLAG_LAST_ROCK_SUNK) == 0)
-    MapGrid_SetCellBehavior(lastRock->x.fixed, lastRock->z.fixed, 2, 0);
+  if (rock != NULL && Event_GetFlag(FLAG_ROCK_UNDER_LOG_SUNK) == 0)
+    MapGrid_SetCellBehavior(rock->x.fixed, rock->z.fixed, 2, 0);
 }
 
-/// The leader pushes what is ahead of him: the last rock or the log.
+/// Felix walks north or south into the rock under the log, along the sail's
+/// west pole (cells (21, 28) to (21, 32)), and pushes it a cell along the pole;
+/// if the log is ahead of him instead, he pushes the log
+/// (EasternAlhafra_RollLog).
 void EasternAlhafra_PushAhead(s32 mode) {
   s32 target;
 
   target = Field_FindNearbyTalkTarget(gMainRoutineWork.leaderActorId);
-  if (target == ACTOR_LAST_ROCK) {
-    EasternAlhafra_StartPushingLastRock(mode, ACTOR_LAST_ROCK);
+  if (target == ACTOR_ROCK_UNDER_LOG) {
+    EasternAlhafra_StartPushingRockUnderLog(mode, ACTOR_ROCK_UNDER_LOG);
     if (Leader_CanPushObjectAhead() != 0)
       EasternAlhafra_PushObjectAhead();
-    EasternAlhafra_FinishPushingLastRock(mode, ACTOR_LAST_ROCK);
+    EasternAlhafra_FinishPushingRockUnderLog(mode, ACTOR_ROCK_UNDER_LOG);
   } else if (target == ACTOR_LOG) {
     EasternAlhafra_RollLog();
   }
 }
 
-/// Talking to the sailor who has given up on the mast, and his questions.
+/// Felix talks to the Champa sailor standing by the log at the edge of the
+/// ship, who has given up on the mast. He asks whether the party is new in
+/// town and curious about the ship, and tells what a sailing ship is; Mind
+/// Read on him before talking starts the same talk.
 void EasternAlhafra_TalkToSailor(void) {
   Event_SetFlag(FLAG_TALKED_TO_SAILOR);
   Event_Start();
@@ -591,18 +646,21 @@ void EasternAlhafra_TalkToSailor(void) {
   Event_End();
 }
 
-/// Stepping onto the mast: before Briggs is caught the party overhears his
-/// sailors; after, once the first crate has sunk while no one can Burst, Kraden
-/// asks whether the party is finished here; and once the mast is clear the
-/// workers see the block gone.
-void EasternAlhafra_StepOntoMast(void) {
+/// Felix walks over the deck just southwest of the cabin door (cell
+/// (14, 24)). The first time, before Briggs is caught, the party overhears the
+/// sailors at the mast (EasternAlhafra_OverhearWorkers). After he is caught,
+/// once the dock crate has sunk while no one has Burst, Kraden asks whether
+/// the party is finished here (EasternAlhafra_AskIfFinished). Once the block
+/// is Burst, two workers see it gone (EasternAlhafra_WorkersSeeBlockGone).
+/// Otherwise nothing happens.
+void EasternAlhafra_StepByCabinDoor(void) {
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED)) {
     if (Event_GetFlag(FLAG_WORKERS_SAW_BLOCK_GONE) == 0) {
       Event_SetFlag(FLAG_WORKERS_SAW_BLOCK_GONE);
       EasternAlhafra_WorkersSeeBlockGone();
     }
   } else if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
-    if (Event_GetFlag(FLAG_FIRST_CRATE_SUNK) &&
+    if (Event_GetFlag(FLAG_DOCK_CRATE_SUNK) &&
         Party_FindOwnerWithAction(ABILITY_BURST) == -1 &&
         Event_GetFlag(FLAG_ASKED_IF_FINISHED) == 0) {
       Event_SetFlag(FLAG_ASKED_IF_FINISHED);
@@ -614,8 +672,8 @@ void EasternAlhafra_StepOntoMast(void) {
   }
 }
 
-/// Stepping into a door: it opens, the leader walks through and the scene
-/// leaves by the exit given.
+/// Felix steps into a door: it opens, he walks through, and the screen fades
+/// as he leaves by the exit given.
 void EasternAlhafra_OpenDoorAndEnter(struct MapGridCellAnimation *step,
                                      s32 countdown, s32 unused) {
   Event_Start();
@@ -633,23 +691,29 @@ void EasternAlhafra_OpenDoorAndEnter(struct MapGridCellAnimation *step,
   Event_End();
 }
 
-/// Stepping into the ship's door: it opens and the leader walks aboard.
+/// Felix walks north into the cabin door at the north end of the ship's deck
+/// (cell (16, 23)); it opens and he goes inside, down into the ship.
 void EasternAlhafra_EnterShip(s32 countdown) {
   EasternAlhafra_OpenDoorAndEnter(&gEasternAlhafra_ShipDoor, countdown, 0);
 }
 
-/// Walking into the log's or the last rock's cells toward the northwest or the
-/// southeast, or between those and north or south: nothing happens, where a
-/// walk straight north or south pushes.
+/// Nothing happens when Felix walks diagonally into the log or the rock under
+/// it on the sail's west pole (toward the northwest or southeast, or between
+/// those and north or south); only walking straight north or south pushes
+/// them.
 void EasternAlhafra_IgnoreDiagonalStep(void) {}
 
-/// Stepping beside the block on the mast.
+/// Nothing visible happens when Felix steps up beside the huge block on the
+/// mast's tip (cell (30, 26)); the game only notes it, so that walking away
+/// again without Burst has Jenna speak (EasternAlhafra_GiveUpOnMastBlock).
 void EasternAlhafra_ReachMastBlock(void) {
   GameFlag_Set(FLAG_REACHED_MAST_BLOCK);
 }
 
-/// Walking away from the block before the party can Burst it: Jenna says it
-/// will have to wait.
+/// Walking south away from the huge block on the mast (cell (30, 27)) after
+/// standing beside it, while no one in the party has Burst, Jenna comes up to
+/// Felix: "I don't know what we're going to do about this rock...". She says
+/// it once; after that, and once anyone can Burst, nothing happens.
 void EasternAlhafra_GiveUpOnMastBlock(void) {
   struct Actor *leader;
 
@@ -722,8 +786,10 @@ void EasternAlhafra_FillWaveLines(void) {
   gEasternAlhafra_WaveTableIndex[0] ^= 1;
 }
 
-/// Starts BG1's HBlank wave: a line table filled each frame, its DMA started
-/// in the VBlank pass.
+/// The harbour's water ripples from the moment the scene starts: each line of
+/// the background layer BG1 is shifted up or down by up to 2 pixels along a
+/// wave that climbs the screen. A table of the lines is filled each frame and
+/// handed to an HBlank DMA in the VBlank pass.
 void EasternAlhafra_StartWave(void) {
   Task_AddFrame(EasternAlhafra_FillWaveLines, TASK_PASS_FRAME);
   Task_AddFrame(EasternAlhafra_StartWaveDma, TASK_PASS_VBLANK);
@@ -731,10 +797,12 @@ void EasternAlhafra_StartWave(void) {
 
 void Pillar_Place(const u16 *list);
 
-/// Sets up the docks: the wave; once the workers have told the mayor, the
-/// people the pirates knocked down and the cleared mast; the mayor's arrival
-/// after the ship is stolen; the junk the party has sunk, the ropes and the
-/// stake.
+/// Sets up the harbour: the rippling water; once the workers have fetched the
+/// mayor, the ship gone from the pier with all the junk, and until Briggs has
+/// sailed off, the people his pirates knocked down lying at the pier's foot;
+/// the mayor finding the ship gone, when the party comes back after Briggs
+/// sails off; and the junk the party has sunk, the Lashed rope, the ropes to
+/// the stake and the stake.
 s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 flag;
@@ -774,8 +842,8 @@ s32 Scene_Initialize(void) {
       MapGrid_CopyCellAttributes(10, 24, 1, 1, 11, 24);
       Actor_SetPosition(ACTOR_SECOND_ROPE_POST, 0, 0);
       Actor_SetPosition(ACTOR_ROPE_POST, 0, 0);
-      Actor_SetPosition(ACTOR_FIRST_CRATE, 0, 0);
-      Actor_SetPosition(ACTOR_SECOND_CRATE, 0, 0);
+      Actor_SetPosition(ACTOR_DOCK_CRATE, 0, 0);
+      Actor_SetPosition(ACTOR_SAIL_CRATE, 0, 0);
       Actor_SetPosition(ACTOR_LOG, 0, 0);
     }
   }
@@ -846,11 +914,11 @@ s32 Scene_Initialize(void) {
     Tightrope_Place(2, ACTOR_SECOND_STAKE_ROPE_START,
                     ACTOR_SECOND_STAKE_ROPE_END);
   }
-  actor = Actor_Get(ACTOR_LAST_ROCK);
+  actor = Actor_Get(ACTOR_ROCK_UNDER_LOG);
   Actor_SetSpriteFlags(actor, 0);
-  actor = Actor_Get(ACTOR_FIRST_ROCK);
+  actor = Actor_Get(ACTOR_EAST_POLE_ROCK);
   Actor_SetSpriteFlags(actor, 0);
-  FieldActor_SetSpritePriority(ACTOR_FIRST_CRATE, 2);
+  FieldActor_SetSpritePriority(ACTOR_DOCK_CRATE, 2);
   Actor_Get(ACTOR_SAILOR_WHO_PAID_FOR_THE_SHIP)->riseCounter = 1;
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT) != 0 &&
       Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) == 0) {
@@ -864,8 +932,9 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// Puts the log, rocks and crates where the party has sunk them, and the
-/// cleared mast's cells once it is clear.
+/// Puts the log and crates the party has sunk under the water, where Felix
+/// can hop across the crates, takes the sunk rocks away, and once the block is
+/// Burst clears its cells from the mast's tip.
 void EasternAlhafra_PlaceClearedDebris(void) {
   struct Actor *actor;
 
@@ -882,25 +951,25 @@ void EasternAlhafra_PlaceClearedDebris(void) {
     FieldMapGrid_SetCellBehavior(toFIXED(336), toFIXED(528), 0, 0);
     FieldMapGrid_SetCellBehavior(toFIXED(352), toFIXED(528), 0, 0);
   }
-  if (Event_GetFlag(FLAG_LAST_ROCK_SUNK)) {
-    Actor_SetPosition(ACTOR_LAST_ROCK, 0, 0);
+  if (Event_GetFlag(FLAG_ROCK_UNDER_LOG_SUNK)) {
+    Actor_SetPosition(ACTOR_ROCK_UNDER_LOG, 0, 0);
   }
-  if (Event_GetFlag(FLAG_FIRST_ROCK_SUNK)) {
-    Actor_SetPosition(ACTOR_FIRST_ROCK, 0, 0);
+  if (Event_GetFlag(FLAG_EAST_POLE_ROCK_SUNK)) {
+    Actor_SetPosition(ACTOR_EAST_POLE_ROCK, 0, 0);
   }
-  if (Event_GetFlag(FLAG_FIRST_CRATE_SUNK)) {
-    actor = Actor_Get(ACTOR_FIRST_CRATE);
-    Actor_SetPosition(ACTOR_FIRST_CRATE, 504, 520);
-    Actor_SetAnimation(ACTOR_FIRST_CRATE, 2);
+  if (Event_GetFlag(FLAG_DOCK_CRATE_SUNK)) {
+    actor = Actor_Get(ACTOR_DOCK_CRATE);
+    Actor_SetPosition(ACTOR_DOCK_CRATE, 504, 520);
+    Actor_SetAnimation(ACTOR_DOCK_CRATE, 2);
     actor->collisionFlags = 0;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     FieldMapGrid_SetCellBehavior(actor->x.fixed, actor->z.fixed, 0, 0);
     MapGrid_SetAttributeBAt(actor->x.fixed, actor->z.fixed, 0, MAP_CELL_JUMP);
   }
-  if (Event_GetFlag(FLAG_SECOND_CRATE_SUNK)) {
-    actor = Actor_Get(ACTOR_SECOND_CRATE);
-    Actor_SetPosition(ACTOR_SECOND_CRATE, 408, 536);
-    Actor_SetAnimation(ACTOR_SECOND_CRATE, 2);
+  if (Event_GetFlag(FLAG_SAIL_CRATE_SUNK)) {
+    actor = Actor_Get(ACTOR_SAIL_CRATE);
+    Actor_SetPosition(ACTOR_SAIL_CRATE, 408, 536);
+    Actor_SetAnimation(ACTOR_SAIL_CRATE, 2);
     actor->collisionFlags = 0;
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     FieldMapGrid_SetCellBehavior(actor->x.fixed, actor->z.fixed, 0, 0);
@@ -911,7 +980,11 @@ void EasternAlhafra_PlaceClearedDebris(void) {
   }
 }
 
-/// The party overhears the workers at the mast on its first visit.
+/// The first time Felix comes aboard and walks by the cabin door, the party
+/// lines up at the deck's edge to watch the Champa sailors at the mast:
+/// "It's... It's no use!" They grumble that the junk has to come off the mast,
+/// the rope has to be untangled and the huge rock is beyond them, and that they
+/// can do nothing until Zack finishes the canoe.
 void EasternAlhafra_OverhearWorkers(void) {
   struct Actor *leader;
 
@@ -947,7 +1020,7 @@ void EasternAlhafra_OverhearWorkers(void) {
   Actor_FaceDirection(ACTOR_SAILOR_LONGING_FOR_CHAMPA, FACING_SOUTH_SOUTHWEST,
                       0);
   FieldEvent_Wait(20);
-  EventCamera_MoveToActor(ACTOR_SECOND_CRATE, 1);
+  EventCamera_MoveToActor(ACTOR_SAIL_CRATE, 1);
   FieldCamera_WaitForArrival();
   FieldEvent_Wait(10);
   // "If we could just get some decent footing, we could have this thing..."
@@ -1069,8 +1142,10 @@ void EasternAlhafra_OverhearWorkers(void) {
   return;
 }
 
-/// Once Briggs is caught and before the mast is clear, Kraden and the others
-/// talk over helping with it.
+/// After Briggs is caught, when Felix crosses the deck from the cabin door
+/// (cells (14, 26) to (18, 26)), Kraden asks: "You do plan to help with the
+/// mast, right?" Sheba and Jenna talk it over, and the party agrees to get to
+/// work. It happens once, and not after the mast is clear.
 void EasternAlhafra_AskToHelpWithMast(void) {
   struct Actor *leader;
 
@@ -1157,9 +1232,10 @@ void EasternAlhafra_AskToHelpWithMast(void) {
   Event_End();
 }
 
-/// With the first crate sunk and no one able to Burst, Kraden asks whether the
-/// party is finished here; Sheba and Jenna differ, and without Piers Kraden
-/// muses on the Madrans' ship, before the party moves on.
+/// Once the dock crate has sunk and only the huge block is left, while no one
+/// in the party has Burst, Kraden asks: "Are you finished here, Felix?" Sheba
+/// and Jenna differ over giving up; without Piers, Kraden muses on asking the
+/// Madrans for their ship, and the party moves on.
 void EasternAlhafra_AskIfFinished(void) {
   struct Actor *leader;
 
@@ -1310,8 +1386,8 @@ void EasternAlhafra_PopQuestionMark(FIXED x, FIXED y, FIXED z, u16 rotation,
   }
 }
 
-/// Four question marks pop up over the actor's head in turn, right and left,
-/// as Briggs tries to remember what he swore to do.
+/// Four question marks pop up over Briggs's head in turn, right and left, as
+/// he tries to remember what he swore to do to Felix.
 void EasternAlhafra_PopQuestionMarks(s32 id) {
   struct Actor *actor = Actor_Get(id);
 
@@ -1337,9 +1413,10 @@ void EasternAlhafra_PopQuestionMarks(s32 id) {
   FieldEvent_Wait(15);
 }
 
-/// Once the mast is clear, two workers find the block gone and run to tell the
-/// mayor, and Chaucha, brought by Eoleo, guesses the party did it and goes to
-/// tell Briggs.
+/// Heading off the ship once the block is Burst, Felix sees two workers below
+/// the ship find it gone: "Hey! That block on the mast has disappeared!" They
+/// run to tell the mayor, and Chaucha, brought by Eoleo, guesses the party did
+/// it and goes to tell Briggs.
 void EasternAlhafra_WorkersSeeBlockGone(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1453,10 +1530,11 @@ void EasternAlhafra_WorkersSeeBlockGone(void) {
   Event_End();
 }
 
-/// Once the mast is clear, the workers bring the mayor and Jiya to see the
-/// block gone; the mayor sends them to gather the townspeople and asks the
-/// party back to his manor, where Briggs escapes
-/// (ENTRANCE_MANOR_BRIGGS_ESCAPES).
+/// Walking down the pier toward town once the block is Burst (cells (8, 32)
+/// and (9, 32)), Felix meets the workers bringing the mayor and Jiya to see:
+/// "It's gone! That huge block is really gone!" The mayor sends the workers to
+/// gather the townspeople to raise the mast and invites the party back to his
+/// manor to rest, where a guard brings word that Briggs has escaped.
 void EasternAlhafra_WorkersTellMayor(void) {
   if (Event_GetFlag(FLAG_ALHAFRA_MAST_CLEARED) == 0)
     return;
@@ -1760,9 +1838,12 @@ void EasternAlhafra_WorkersTellMayor(void) {
   Event_End();
 }
 
-/// Once the mast is clear and Briggs has escaped, he sails off in the ship,
-/// taunting the party, and the scene starts over at ENTRANCE_AFTER_SHIP_STOLEN
-/// for the mayor (EasternAlhafra_MayorFindsShipGone).
+/// Back at the foot of the pier after Briggs's escape (cells (7, 34) to
+/// (9, 34)), Felix sees Briggs sailing off in the ship with Chaucha: "Briggs,
+/// where are you taking my boat?" Briggs says he paid for it fair and square,
+/// taunts the party from the deck ("Neener neener neener!") and sails away.
+/// The music fades, and the party finds itself back on the pier with the
+/// mayor (EasternAlhafra_MayorFindsShipGone).
 void EasternAlhafra_BriggsStealsShip(void) {
   struct MapWork *map;
   s32 frames;
@@ -2037,9 +2118,10 @@ void EasternAlhafra_BriggsStealsShip(void) {
   Event_SetDestination(SCENE_EASTERN_ALHAFRA, ENTRANCE_AFTER_SHIP_STOLEN);
 }
 
-/// Back at the docks after Briggs has sailed: the mayor blames everyone, rouses
-/// the knocked-down workers and storms off to his manor, and Kraden talks it
-/// over with Felix.
+/// Back on the pier after Briggs has sailed off: the mayor shouts "What!!! You
+/// let Briggs get away!", hauls the knocked-down workers to their feet, blames
+/// them all, tells Felix there will be no reward and storms off to his manor.
+/// Kraden thinks Briggs is heading back to Champa.
 void EasternAlhafra_MayorFindsShipGone(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -2630,8 +2712,6 @@ void PushTarget_Push(struct PushTarget target) {
 
 #include "text/msg_ids.h"
 
-void EasternAlhafra_ReachMastBlock(void);
-
 // clang-format off
 u16 gPushKinds[PUSH_KINDS] = {
     SPRITE_LOG_WEST_EAST, SPRITE_LOG_NORTH_SOUTH,
@@ -2648,7 +2728,7 @@ s8 gPushFootprints[][4] = {
 
 /// Unused: a list of one actor, the first crate, ended by ACTOR_LIST_END.
 u16 gEasternAlhafra_UnusedActorList[] = {
-    ACTOR_FIRST_CRATE, ACTOR_LIST_END,
+    ACTOR_DOCK_CRATE, ACTOR_LIST_END,
 };
 
 /// The stake Pound sinks: actor, how its cell opens (Actor_SetCellOpen) and its
@@ -2668,8 +2748,8 @@ struct SceneEntrance gSceneEntrances[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(EasternAlhafra),
-    SCENE_EXIT_UNLESS(1, Alhafra, 11, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, EasternAlhafraShip, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(EASTERN_ALHAFRA_TO_ALHAFRA, Alhafra, ALHAFRA_FROM_EASTERN_ALHAFRA, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(EASTERN_ALHAFRA_TO_EASTERN_ALHAFRA_SHIP, EasternAlhafraShip, EASTERN_ALHAFRA_SHIP_FROM_EASTERN_ALHAFRA, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
@@ -2682,8 +2762,8 @@ struct ActorPlacement gEasternAlhafra_Placements[] = {
     ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 336, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(467, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 472, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(467, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WHITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 472, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WHITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 444, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 482, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 444, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2708,8 +2788,8 @@ struct ActorPlacement gEasternAlhafra_PlacementsAfterBriggsCaught[] = {
     ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STAKE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 488, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_LOG_WEST_EAST, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 336, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(467, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 472, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(467, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WHITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 472, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_WHITE_ROCK, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 440, 0, 456, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 444, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 482, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_CLEAR_COLLISION, 444, 0, 376, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2741,8 +2821,8 @@ struct MapGridCellAnimation gEasternAlhafra_ShipDoor = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(EasternAlhafra_EnterShip)},
+    {TRIGGER_EXIT, EASTERN_ALHAFRA_TO_ALHAFRA, CONDITION_ALWAYS, EASTERN_ALHAFRA_TO_ALHAFRA},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), EASTERN_ALHAFRA_TO_EASTERN_ALHAFRA_SHIP, CONDITION_ALWAYS, EVENT(EasternAlhafra_EnterShip)},
     {TRIGGER_TALK, ACTOR_SAILOR_GIVING_UP, CONDITION_ALWAYS, EVENT(EasternAlhafra_TalkToSailor)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SAILOR_GIVING_UP | TRIGGER_SUBJECT_OWN_EFFECT, FLAG_TALKED_TO_SAILOR, EVENT(EasternAlhafra_TalkToSailor)},
     {TRIGGER_TALK, ACTOR_SAILOR_WHO_PAID_FOR_THE_SHIP, CONDITION_ALWAYS, MSGNO(MsgWePaidBig)},
@@ -2758,38 +2838,38 @@ struct Trigger gSceneEvents[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_KNOCKED_DOWN, CONDITION_ALWAYS, MSGNO(MsgBriggsSPirates)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_MAN_KNOCKED_DOWN, CONDITION_ALWAYS, MSGNO(MsgIJustCame)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_FIRST_WORKER, CONDITION_ALWAYS, MSGNO(MsgBriggsSaidTheBoat)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), 10, FLAG_ALHAFRA_MAST_CLEARED, EVENT(EasternAlhafra_BurstMastBlock)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_BURST, PSYNERGY_PHASE_ACTS), CELL_MAST_BLOCK, FLAG_ALHAFRA_MAST_CLEARED, EVENT(EasternAlhafra_BurstMastBlock)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_POST, FLAG_EASTERN_ALHAFRA_ROPE_LASHED, 0},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS), ACTOR_STAKE, FLAG_EASTERN_ALHAFRA_STAKE_POUNDED, EVENT(EasternAlhafra_PoundStake)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_CRATE, FLAG_FIRST_CRATE_SUNK, EVENT(EasternAlhafra_StartPushing)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_CRATE, FLAG_FIRST_CRATE_SUNK, EVENT(EasternAlhafra_FinishPushing)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_SECOND_CRATE, FLAG_SECOND_CRATE_SUNK, EVENT(EasternAlhafra_StartPushing)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_CRATE, FLAG_SECOND_CRATE_SUNK, EVENT(EasternAlhafra_FinishPushing)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_LAST_ROCK, FLAG_LAST_ROCK_SUNK, EVENT(EasternAlhafra_StartPushingLastRock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LAST_ROCK, FLAG_LAST_ROCK_SUNK, EVENT(EasternAlhafra_FinishPushingLastRock)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_ROCK, FLAG_FIRST_ROCK_SUNK, EVENT(EasternAlhafra_StartPushing)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_ROCK, FLAG_FIRST_ROCK_SUNK, EVENT(EasternAlhafra_FinishPushing)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_DOCK_CRATE, FLAG_DOCK_CRATE_SUNK, EVENT(EasternAlhafra_StartPushing)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_DOCK_CRATE, FLAG_DOCK_CRATE_SUNK, EVENT(EasternAlhafra_FinishPushing)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_SAIL_CRATE, FLAG_SAIL_CRATE_SUNK, EVENT(EasternAlhafra_StartPushing)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SAIL_CRATE, FLAG_SAIL_CRATE_SUNK, EVENT(EasternAlhafra_FinishPushing)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_ROCK_UNDER_LOG, FLAG_ROCK_UNDER_LOG_SUNK, EVENT(EasternAlhafra_StartPushingRockUnderLog)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROCK_UNDER_LOG, FLAG_ROCK_UNDER_LOG_SUNK, EVENT(EasternAlhafra_FinishPushingRockUnderLog)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_EAST_POLE_ROCK, FLAG_EAST_POLE_ROCK_SUNK, EVENT(EasternAlhafra_StartPushing)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_EAST_POLE_ROCK, FLAG_EAST_POLE_ROCK_SUNK, EVENT(EasternAlhafra_FinishPushing)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(EasternAlhafra_StartPushing)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(EasternAlhafra_FinishPushing)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT(EasternAlhafra_PushAhead)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 12, CONDITION_ALWAYS, EVENT(EasternAlhafra_PushAhead)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 13, CONDITION_ALWAYS, EVENT(EasternAlhafra_PushAhead)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 11, CONDITION_ALWAYS, EVENT(EasternAlhafra_RollLog)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT(EasternAlhafra_RollLog)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTHWEST), 12, CONDITION_ALWAYS, EVENT(EasternAlhafra_IgnoreDiagonalStep)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH_NORTHWEST), 12, CONDITION_ALWAYS, EVENT(EasternAlhafra_IgnoreDiagonalStep)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTHEAST), 12, CONDITION_ALWAYS, EVENT(EasternAlhafra_IgnoreDiagonalStep)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH_SOUTHEAST), 12, CONDITION_ALWAYS, EVENT(EasternAlhafra_IgnoreDiagonalStep)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTHWEST), 11, CONDITION_ALWAYS, EVENT(EasternAlhafra_IgnoreDiagonalStep)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH_NORTHWEST), 11, CONDITION_ALWAYS, EVENT(EasternAlhafra_IgnoreDiagonalStep)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTHEAST), 11, CONDITION_ALWAYS, EVENT(EasternAlhafra_IgnoreDiagonalStep)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH_SOUTHEAST), 11, CONDITION_ALWAYS, EVENT(EasternAlhafra_IgnoreDiagonalStep)},
-    {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(EasternAlhafra_StepOntoMast)},
-    {TRIGGER_STEP, 21, FLAG_WORKERS_TOLD_MAYOR, EVENT(EasternAlhafra_WorkersTellMayor)},
-    {TRIGGER_STEP, 22, FLAG_ALHAFRA_SHIP_GONE, EVENT(EasternAlhafra_BriggsStealsShip)},
-    {TRIGGER_STEP, 23, FLAG_ASKED_TO_HELP, EVENT(EasternAlhafra_AskToHelpWithMast)},
-    {TRIGGER_STEP, 24, FLAG_GAVE_UP_ON_MAST_BLOCK, EVENT(EasternAlhafra_GiveUpOnMastBlock)},
-    {TRIGGER_STEP, 25, FLAG_REACHED_MAST_BLOCK, EVENT(EasternAlhafra_ReachMastBlock)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_WEST_POLE, CONDITION_ALWAYS, EVENT(EasternAlhafra_PushAhead)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_WEST_POLE, CONDITION_ALWAYS, EVENT(EasternAlhafra_PushAhead)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_WEST_POLE_TIP, CONDITION_ALWAYS, EVENT(EasternAlhafra_PushAhead)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BESIDE_LOG, CONDITION_ALWAYS, EVENT(EasternAlhafra_RollLog)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BESIDE_LOG, CONDITION_ALWAYS, EVENT(EasternAlhafra_RollLog)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTHWEST), CELL_WEST_POLE, CONDITION_ALWAYS, EVENT(EasternAlhafra_IgnoreDiagonalStep)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH_NORTHWEST), CELL_WEST_POLE, CONDITION_ALWAYS, EVENT(EasternAlhafra_IgnoreDiagonalStep)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTHEAST), CELL_WEST_POLE, CONDITION_ALWAYS, EVENT(EasternAlhafra_IgnoreDiagonalStep)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH_SOUTHEAST), CELL_WEST_POLE, CONDITION_ALWAYS, EVENT(EasternAlhafra_IgnoreDiagonalStep)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTHWEST), CELL_BESIDE_LOG, CONDITION_ALWAYS, EVENT(EasternAlhafra_IgnoreDiagonalStep)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH_NORTHWEST), CELL_BESIDE_LOG, CONDITION_ALWAYS, EVENT(EasternAlhafra_IgnoreDiagonalStep)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTHEAST), CELL_BESIDE_LOG, CONDITION_ALWAYS, EVENT(EasternAlhafra_IgnoreDiagonalStep)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH_SOUTHEAST), CELL_BESIDE_LOG, CONDITION_ALWAYS, EVENT(EasternAlhafra_IgnoreDiagonalStep)},
+    {TRIGGER_STEP, CELL_BY_CABIN_DOOR, CONDITION_ALWAYS, EVENT(EasternAlhafra_StepByCabinDoor)},
+    {TRIGGER_STEP, CELL_PIER, FLAG_WORKERS_TOLD_MAYOR, EVENT(EasternAlhafra_WorkersTellMayor)},
+    {TRIGGER_STEP, CELL_PIER_FOOT, FLAG_ALHAFRA_SHIP_GONE, EVENT(EasternAlhafra_BriggsStealsShip)},
+    {TRIGGER_STEP, CELL_ACROSS_DECK, FLAG_ASKED_TO_HELP, EVENT(EasternAlhafra_AskToHelpWithMast)},
+    {TRIGGER_STEP, CELL_BELOW_MAST_BLOCK, FLAG_GAVE_UP_ON_MAST_BLOCK, EVENT(EasternAlhafra_GiveUpOnMastBlock)},
+    {TRIGGER_STEP, CELL_BESIDE_MAST_BLOCK, FLAG_REACHED_MAST_BLOCK, EVENT(EasternAlhafra_ReachMastBlock)},
     {TRIGGER_TABLE_END},
 };
 

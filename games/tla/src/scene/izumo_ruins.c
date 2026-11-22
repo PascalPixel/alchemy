@@ -1,12 +1,20 @@
 /// @file
-/// The Izumo Ruins, under the stone circle of Izumo, in two rooms that share
-/// this overlay (SceneId_IzumoRuinsFirstRoom, SceneId_IzumoRuinsSecondRoom).
-/// Sand carries the party across the sandy floor (IzumoRuins_SinkIntoSand),
-/// Frost freezes the puddles (IzumoRuins_FreezePuddle), Pound sinks wooden
-/// stakes (IzumoRuins_PoundStake), Move sets the stone pillars in place
-/// (IzumoRuins_FinishMovingPillar), grey pillars crumble under a second step
-/// (shared/crumbling_pillar.h), and Parch dries the pool before the room of
-/// the stone tablet (IzumoRuins_ParchThePool).
+/// The Izumo Ruins, the grey caves under the ring of giant stones in Izumo,
+/// reached by the ladder Reveal shows in the ring's centre. They are two
+/// scenes that share this overlay (SceneId_IzumoRuinsFirstRoom,
+/// SceneId_IzumoRuinsSecondRoom), each of several rooms.
+///
+/// In the first room's south part, where the ladder comes down, two wooden
+/// stakes stand between two puddles across the floor, with patches of sand
+/// beside them: Sand takes Felix through the sand (IzumoRuins_SinkIntoSand),
+/// Frost freezes the puddles into pillars of ice (IzumoRuins_FreezePuddle) and
+/// Pound drives the stakes down (IzumoRuins_PoundStake). Its north part has a
+/// third stake by a strip of sand and a stone pillar Move pulls along
+/// (IzumoRuins_FinishMovingPillar), and grey pillars crumble under a second
+/// step (shared/crumbling_pillar.h). The second scene, a floor down, holds the
+/// Phantasmal Mail, two more stakes and a green pool: Parch dries the pool
+/// (IzumoRuins_ParchThePool) and opens the way to the room of the stone tablet
+/// that teaches Ulysses, which stands in a ring of six stone pillars.
 #include "system/iwram_call.h"
 #include "field/field_sequence.h"
 #include "field/actor.h"
@@ -106,16 +114,21 @@ extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
 
-/// Set as Parch dries the pool before the room of the stone tablet.
+/// Set as Parch dries the green pool on the way to the room of the stone
+/// tablet.
 #define FLAG_IZUMO_RUINS_POOL_PARCHED 0x941
+/// The green pool's cells, which answer Parch.
+enum { CELL_POOL = 50 };
 
-/// Both rooms' first two actors: wooden stakes Pound sinks
-/// (gIzumoRuins_FirstRoomStakes, gIzumoRuins_SecondRoomStakes).
+/// Both scenes' first two actors: wooden stakes Pound drives down
+/// (gIzumoRuins_FirstRoomStakes, gIzumoRuins_SecondRoomStakes), at cells
+/// (10, 51) and (12, 51) in the first and (27, 34) and (25, 34) in the second.
 enum { ACTOR_FIRST_STAKE = ACTOR_FIRST_PLACED, ACTOR_SECOND_STAKE };
 
-/// The first room's other actors: the puddles Frost freezes, west and east of
-/// its first two stakes, a third stake to the north, and the stone pillar Move
-/// pushes.
+/// The first scene's other actors: the puddles Frost freezes, west and east of
+/// its first two stakes (cells (8, 51) and (14, 51)), a third stake in the
+/// north part by the strip of sand (cell (43, 15)), and the stone pillar Move
+/// pulls, at the north end (cell (32, 5)).
 enum {
   ACTOR_WEST_PUDDLE = ACTOR_FIRST_PLACED + 2,
   ACTOR_EAST_PUDDLE,
@@ -123,8 +136,8 @@ enum {
   ACTOR_FIRST_ROOM_PILLAR
 };
 
-/// The second room's six stone pillars Move pushes, in a ring round the stone
-/// tablet at its north end.
+/// The second scene's six stone pillars Move pushes, in a ring round the stone
+/// tablet in its room in the east.
 enum {
   ACTOR_RING_NORTHWEST_PILLAR = ACTOR_FIRST_PLACED + 2,
   ACTOR_RING_NORTHEAST_PILLAR,
@@ -134,12 +147,12 @@ enum {
   ACTOR_RING_EAST_PILLAR
 };
 
-/// Set while Pound has driven a stake into the ground: each room's first and
-/// second, and the first room's third.
+/// Set while Pound has driven a stake into the ground: each scene's first and
+/// second, and the first scene's third.
 #define FLAG_FIRST_STAKE_POUNDED FLAG_SCENE_TEMP_00
 #define FLAG_SECOND_STAKE_POUNDED FLAG_SCENE_TEMP_01
 #define FLAG_THIRD_STAKE_POUNDED FLAG_SCENE_TEMP_02
-/// Set once Frost has frozen a puddle of the first room.
+/// Set once Frost has frozen a puddle of the first scene.
 #define FLAG_WEST_PUDDLE_FROZEN FLAG_SCENE_TEMP_03
 #define FLAG_EAST_PUDDLE_FROZEN FLAG_SCENE_TEMP_04
 
@@ -158,13 +171,12 @@ enum {
 
 void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height);
 
-/// Fits the cells under a stake to its flag (kept in its timer). Sunk, the
-/// overhead cell is a wall, the ground cell is no gap to jump, and the cell
-/// sinks STAKE_HEIGHT_STEPS unless the stake's ground is the map's; standing,
-/// the overhead cell is sand where the ground is sand and a wall otherwise,
-/// the ground cell is a gap the leader jumps across, and the cell rises to the
-/// stake's top. A sunk stake is drawn at sprite priority 3, a standing one at
-/// 2.
+/// Fits the cell under a stake to whether it stands or is driven down (its
+/// flag, kept in its timer). Standing, its top is a step STAKE_HEIGHT_STEPS
+/// above the floor that Felix jumps onto and across, and under Sand it blocks
+/// the way unless the floor round it is sand. Driven down, the cell is floor
+/// again, closed to Felix under the sand. A driven stake is drawn behind
+/// whoever walks over it.
 void IzumoRuins_ShowStakeState(struct Actor *actor) {
   s32 column = FIELD_CELL(actor->x.fixed);
   s32 row = FIELD_CELL(actor->z.fixed);
@@ -195,7 +207,7 @@ void IzumoRuins_ShowStakeState(struct Actor *actor) {
 }
 
 /// Places Pound's stakes from a list of rows (actor, unused, flag), ended by
-/// -1: each shows its sunk or standing state by its flag.
+/// -1: each standing, or driven down if its flag is set.
 void IzumoRuins_PlaceStakes(u16 *list) {
   struct Actor *actor;
   s32 flag;
@@ -236,8 +248,14 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gIzumoRuins_ActorPlacements;
 }
 
-/// Pound on a stake sinks it (Pound_SinkTarget, by the room's list); as it
-/// lands (mode 1) its cells follow (IzumoRuins_ShowStakeState).
+/// Pound on one of the ruins' wooden stakes: the giant fist hammers it down
+/// flush with the floor, so that it is no longer a step to jump on. The stakes
+/// are the pair between the puddles where the ladder comes down, the one by
+/// the strip of sand in the first scene's north part, and the pair in the
+/// second scene.
+///
+/// Pound_SinkTarget animates the blow from the scene's list of stakes; as the
+/// stake lands (mode 1) IzumoRuins_ShowStakeState makes its cell floor.
 void IzumoRuins_PoundStake(s32 mode, s32 target) {
   struct FieldEffectWork *work = Ram_HeapSlots->fieldEffectWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
@@ -252,7 +270,9 @@ void IzumoRuins_PoundStake(s32 mode, s32 target) {
     IzumoRuins_ShowStakeState(Actor_Get(work->secondActorId));
 }
 
-/// Frost on a puddle: it becomes an ice pillar, drawn by the cells under it.
+/// Frost on one of the two puddles either side of the stakes where the ladder
+/// comes down (cells (8, 51) and (14, 51)) freezes it into a pillar of ice
+/// that Felix can jump onto.
 void IzumoRuins_FreezePuddle(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor;
@@ -266,8 +286,10 @@ void IzumoRuins_FreezePuddle(void) {
   Event_End();
 }
 
-/// Where the cell under the leader is sand (CELL_BEHAVIOR_SAND in its high
-/// byte), the leader walks on the upper layer, in the sand.
+/// Casting Sand while standing on one of the ruins' sand patches takes Felix
+/// into the sand: the game moves him onto the map's sand layer, where he can
+/// travel only through sand cells, under the stakes and past what blocks the
+/// floor above. Cast off the sand, nothing changes.
 void IzumoRuins_SinkIntoSand(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 cell =
@@ -278,15 +300,18 @@ void IzumoRuins_SinkIntoSand(void) {
     leader->layer = 2;
 }
 
-/// Puts the leader on map layer 0.
-void Leader_SetLayer(void) {
+/// As Sand wears off, Felix comes up out of the sand onto the ruins' floor:
+/// the game puts him back on the map's ground layer.
+void IzumoRuins_RiseOutOfSand(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
   leader->layer = 0;
 }
 
-/// Move's cast on a pillar lifts it; in the second room the gap south of the
-/// stone tablet is first made a wall.
+/// Move (or a push) takes hold of a stone pillar: the one at the north end of
+/// the first scene, or one of the six round the stone tablet. Round the
+/// tablet, the cell south of it between the ring's two south pillars is first
+/// closed, so that no pillar can be set down in the way to it.
 void IzumoRuins_StartMovingPillar(void) {
   if (gMainRoutineWork.next == SCENE_IZUMO_RUINS_FIRST_ROOM) {
     Actor_LiftTargetBlock(gIzumoRuins_FirstRoomPillars);
@@ -301,8 +326,8 @@ void IzumoRuins_StartMovingPillar(void) {
   }
 }
 
-/// Move sets a pillar down; in the second room the gap south of the stone
-/// tablet is open ground again.
+/// Move sets a stone pillar down; round the stone tablet the way in from the
+/// south is open floor again.
 void IzumoRuins_FinishMovingPillar(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -316,7 +341,9 @@ void IzumoRuins_FinishMovingPillar(void) {
   Event_End();
 }
 
-/// Parch dries the pool before the room of the stone tablet, for good.
+/// Parch cast at the green pool in the west of the second scene (cells (8, 14)
+/// to (14, 21)) dries it for good: the water is gone, and its bed is floor
+/// that leads on towards the room of the stone tablet.
 void IzumoRuins_ParchThePool(void) {
   Event_Start();
   MapGrid_CopyCellAttributes(7, 2, 8, 7, 7, 12);
@@ -333,9 +360,9 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gIzumoRuins_SecondRoomTriggers;
 }
 
-/// Sets up the room being entered: the window in, its movable and Pound's
-/// pillars, the first room's puddles, and the second room's pool if parched.
-/// Returns 0.
+/// Sets up the scene being entered: the window in, its stone pillars and
+/// stakes, the first scene's puddles, and the second scene's pool dried if
+/// Parch has dried it. Returns 0.
 s32 Scene_Initialize(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor;
@@ -391,7 +418,7 @@ u32 gRubble_BurstScript[] = {
 
 #include "shared/field_effect_duration_scripts.c"
 
-/// The pillars Move can lift in each room, ended by -1.
+/// The stone pillars Move can push in each scene, ended by -1.
 s16 gIzumoRuins_FirstRoomPillars[] = {
     ACTOR_FIRST_ROOM_PILLAR, -1,
 };
@@ -409,8 +436,8 @@ const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_LongScript,
 };
 
-/// Pound's stakes in each room (IzumoRuins_PlaceStakes): actor, unused, and
-/// the flag set while it is sunk; ended by -1.
+/// Pound's stakes in each scene (IzumoRuins_PlaceStakes): actor, unused, and
+/// the flag set while it is driven down; ended by -1.
 s16 gIzumoRuins_FirstRoomStakes[] = {
     ACTOR_FIRST_STAKE, 0, FLAG_FIRST_STAKE_POUNDED,
     ACTOR_SECOND_STAKE, 0, FLAG_SECOND_STAKE_POUNDED,
@@ -424,7 +451,7 @@ s16 gIzumoRuins_SecondRoomStakes[] = {
     -1,
 };
 
-/// The first room's puddles Frost freezes: actor and the flag set once frozen,
+/// The first scene's puddles Frost freezes: actor and the flag set once frozen,
 /// ended by -1.
 s16 gIzumoRuins_Puddles[] = {
     ACTOR_WEST_PUDDLE, FLAG_WEST_PUDDLE_FROZEN,
@@ -434,8 +461,8 @@ s16 gIzumoRuins_Puddles[] = {
 
 #include "shared/scene_entrances_default.c"
 
-/// The top of the ladder up out of each room, which takes the leader out by
-/// its exit.
+/// The top of the ladder up out of each scene, which takes Felix out by its
+/// exit: up to Izumo from the first, up to the first from the second.
 struct SceneRegion gIzumoRuins_FirstRoomRegions[] = {
     {208, 44, 752, 224, 60, 768, CONDITION_ALWAYS,
      IZUMO_RUINS_FIRST_ROOM_TO_IZUMO},
@@ -507,7 +534,7 @@ struct Trigger gIzumoRuins_FirstRoomTriggers[] = {
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0,
      CONDITION_ALWAYS, EVENT(IzumoRuins_SinkIntoSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS,
-     EVENT(Leader_SetLayer)},
+     EVENT(IzumoRuins_RiseOutOfSand)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_FIRST_ROOM_PILLAR, CONDITION_ALWAYS,
      EVENT(IzumoRuins_StartMovingPillar)},
@@ -527,7 +554,7 @@ struct Trigger gIzumoRuins_SecondRoomTriggers[] = {
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_POUND, PSYNERGY_PHASE_ACTS),
      ACTOR_SECOND_STAKE, FLAG_SECOND_STAKE_POUNDED,
      EVENT(IzumoRuins_PoundStake)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 50,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), CELL_POOL,
      CONDITION_ALWAYS, EVENT(IzumoRuins_ParchThePool)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST),
      ACTOR_RING_NORTHWEST_PILLAR, CONDITION_ALWAYS,

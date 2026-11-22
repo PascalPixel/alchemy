@@ -544,7 +544,7 @@ void MarsLighthouseEntrance_CheckIce(void) {
 /// circle in the room behind the burst ice wall. The first time, the game
 /// moves him and the camera there itself; after that it takes the exit
 /// between the two circles.
-void MarsLighthouseEntrance_Teleport(void) {
+void MarsLighthouseEntrance_TeleportFromLapisNorthCircle(void) {
   if (!Flag_IsSet(FLAG_TELEPORTED_ONCE)) {
     Teleport_StartShimmer();
     Event_Start();
@@ -609,7 +609,7 @@ void MarsLighthouseEntrance_BurstIceSheet(s32 state, s32 frame) {
 
 /// Felix casts Blaze at the urn torch at the west end of the main hall: a
 /// fireball sets off east along the hall toward the big sheet of ice.
-void MarsLighthouseEntrance_BlazeLapisStatue(void) {
+void MarsLighthouseEntrance_BlazeLapisTorch(void) {
   MarsLighthouseEntrance_ShootFireballAtLapisIceSheet();
 }
 
@@ -745,7 +745,7 @@ void MarsLighthouseEntrance_SlideStatueOnIce(s32 unused, s32 id) {
 /// Felix casts Blaze at the urn torch at the west end of the room beyond the
 /// first black ice: the camera moves to the torch as it sends a fireball east
 /// toward the sheet of ice over the lower passage.
-void MarsLighthouseEntrance_BlazeHiddenCircleWestStatue(void) {
+void MarsLighthouseEntrance_BlazeHiddenCircleWestTorch(void) {
   FieldCamera_SetSpeed(1);
   FieldCamera_MoveTo(88, CAMERA_KEEP, 696, 1);
   MarsLighthouseEntrance_ShootFireballAtHiddenCircleIceSheet();
@@ -782,7 +782,7 @@ void MarsLighthouseEntrance_CrackHiddenCircleIceSheet(void) {
 /// Felix casts Blaze at the urn torch under the great carved dragon face in
 /// the right-hand room of ice cones: the torch sends a fireball rolling south
 /// through the ice.
-void MarsLighthouseEntrance_BlazeHiddenCircleEastStatue(void) {
+void MarsLighthouseEntrance_BlazeHiddenCircleEastTorch(void) {
   MarsLighthouseEntrance_ShootFireballThroughIce();
 }
 
@@ -2675,7 +2675,7 @@ struct Trigger gMarsLighthouseEntrance_LapisTriggers[] = {
      EVENT(MarsLighthouseEntrance_TeleportFromLapisSouthCircle)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_TELEPORT, PSYNERGY_PHASE_AFTER_CAST),
      LAPIS_NORTH_CIRCLE, CONDITION_ALWAYS,
-     EVENT(MarsLighthouseEntrance_Teleport)},
+     EVENT(MarsLighthouseEntrance_TeleportFromLapisNorthCircle)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PUSHED_STATUE,
      FLAG_LAPIS_STATUE_BLOCKS_FLAMES,
      EVENT(MarsLighthouseEntrance_PushStatueIntoFlames)},
@@ -2691,7 +2691,7 @@ struct Trigger gMarsLighthouseEntrance_LapisTriggers[] = {
      ACTOR_LIT_TORCH, CONDITION_ALWAYS, 0},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_HITS),
      ACTOR_LAPIS_TORCH_A, CONDITION_ALWAYS,
-     EVENT(MarsLighthouseEntrance_BlazeLapisStatue)},
+     EVENT(MarsLighthouseEntrance_BlazeLapisTorch)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END),
      ACTOR_LAPIS_TORCH_A, CONDITION_ALWAYS,
      EVENT(MarsLighthouseEntrance_WatchFireballCrackIce)},
@@ -2768,7 +2768,7 @@ struct Trigger gMarsLighthouseEntrance_HiddenCircleTriggers[] = {
      ACTOR_WEST_LIT_TORCH, CONDITION_ALWAYS, 0},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_HITS),
      ACTOR_WEST_TORCH, CONDITION_ALWAYS,
-     EVENT(MarsLighthouseEntrance_BlazeHiddenCircleWestStatue)},
+     EVENT(MarsLighthouseEntrance_BlazeHiddenCircleWestTorch)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END),
      ACTOR_WEST_TORCH, CONDITION_ALWAYS,
      EVENT(MarsLighthouseEntrance_WatchFireballCrackHiddenCircleIce)},
@@ -2776,7 +2776,7 @@ struct Trigger gMarsLighthouseEntrance_HiddenCircleTriggers[] = {
      ACTOR_EAST_LIT_TORCH, CONDITION_ALWAYS, 0},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_HITS),
      ACTOR_EAST_TORCH, CONDITION_ALWAYS,
-     EVENT(MarsLighthouseEntrance_BlazeHiddenCircleEastStatue)},
+     EVENT(MarsLighthouseEntrance_BlazeHiddenCircleEastTorch)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_BLAZE, PSYNERGY_PHASE_AFTER_END),
      ACTOR_EAST_TORCH, CONDITION_ALWAYS,
      EVENT(MarsLighthouseEntrance_WatchFireballMeltIce)},

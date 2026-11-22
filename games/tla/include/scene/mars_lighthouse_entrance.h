@@ -82,19 +82,19 @@ void MarsLighthouseEntrance_StartPoundIceCone(s32 mode, s32 index);
 
 void MarsLighthouseEntrance_CheckIce(void);
 
-void MarsLighthouseEntrance_Teleport(void);
+void MarsLighthouseEntrance_TeleportFromLapisNorthCircle(void);
 
-void MarsLighthouseEntrance_BlazeLapisStatue(void);
+void MarsLighthouseEntrance_BlazeLapisTorch(void);
 
 void MarsLighthouseEntrance_BlockRetreatAtChest(void);
 
 void MarsLighthouseEntrance_TeleportFromBalm(void);
 
-void MarsLighthouseEntrance_BlazeHiddenCircleWestStatue(void);
+void MarsLighthouseEntrance_BlazeHiddenCircleWestTorch(void);
 
 void MarsLighthouseEntrance_WatchFireballCrackHiddenCircleIce(void);
 
-void MarsLighthouseEntrance_BlazeHiddenCircleEastStatue(void);
+void MarsLighthouseEntrance_BlazeHiddenCircleEastTorch(void);
 
 void MarsLighthouseEntrance_WatchFireballMeltIce(void);
 

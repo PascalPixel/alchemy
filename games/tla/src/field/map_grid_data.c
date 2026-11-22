@@ -626,9 +626,9 @@ const struct MapResources gMaps[] = {
     {726, 727, {663, 664, 665}, 666}, // shaman_village_cave
     {728, 729, {730, 731, 732}, 733}, // shaman_village_trial_grounds
     {734, 735, {736, 737, 738}, 739}, // shaman_village
-    {740, 741, {736, 737, 738}, 739}, // shaman_village_aroma
-    {742, 743, {744, 745, 746}, 747}, // shaman_village_inn
-    {742, 748, {744, 745, 746}, 747}, // shaman_village_inn
+    {740, 741, {736, 737, 738}, 739}, // shaman_village_north_end
+    {742, 743, {744, 745, 746}, 747}, // shaman_village_houses
+    {742, 748, {744, 745, 746}, 747}, // shaman_village_houses
     {223, 749, {225, 226, 227}, 228}, // mikasalla_rooms_sanctum
     {750, 751, {97, 98, 752}, 100}, // anemos_inner_sanctum_dragon_skin_chest
     {753, 751, {97, 98, 752}, 100}, // anemos_inner_sanctum_elevator

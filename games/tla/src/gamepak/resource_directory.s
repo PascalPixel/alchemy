@@ -1370,16 +1370,16 @@ Resource_DirectoryTable:
 	resource , Tileset_ShamanVillageTilesB
 	resource , Tileset_ShamanVillageTilesC
 	resource , Tileset_ShamanVillageTilesD
-	resource , Field_ShamanVillageAroma
-	resource , Tileset_PaletteShamanVillageAroma
-	resource , Field_ShamanVillageInn
-	resource , Tileset_ShamanVillageInnPalette
-	resource , Tileset_ShamanVillageInnTilesA
-	resource , Tileset_ShamanVillageInnTilesB
-	resource , Tileset_ShamanVillageInnTilesC
-	resource , Tileset_ShamanVillageInnTilesD
-	resource , Tileset_PaletteShamanVillageInnA
-	resource , Tileset_PaletteShamanVillageInnB
+	resource , Field_ShamanVillageNorthEnd
+	resource , Tileset_PaletteShamanVillageNorthEnd
+	resource , Field_ShamanVillageHouses
+	resource , Tileset_ShamanVillageHousesPalette
+	resource , Tileset_ShamanVillageHousesTilesA
+	resource , Tileset_ShamanVillageHousesTilesB
+	resource , Tileset_ShamanVillageHousesTilesC
+	resource , Tileset_ShamanVillageHousesTilesD
+	resource , Tileset_PaletteShamanVillageHousesA
+	resource , Tileset_PaletteShamanVillageHousesB
 	resource , Field_AnemosInnerSanctumDragonSkinChest
 	resource , Tileset_AnemosInnerSanctumDragonSkinChestPalette
 	resource , Tileset_AnemosInnerSanctumDragonSkinChestTilesA

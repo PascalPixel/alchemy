@@ -588,12 +588,12 @@ extern char SceneId_ShamanVillageTrialGrounds;
   ((s32)&SceneId_ShamanVillageTrialGrounds)
 extern char SceneId_ShamanVillage;
 #define SCENE_SHAMAN_VILLAGE ((s32)&SceneId_ShamanVillage)
-extern char SceneId_ShamanVillageAroma;
-#define SCENE_SHAMAN_VILLAGE_AROMA ((s32)&SceneId_ShamanVillageAroma)
-extern char SceneId_ShamanVillageInn;
-#define SCENE_SHAMAN_VILLAGE_INN ((s32)&SceneId_ShamanVillageInn)
-extern char SceneId_ShamanVillageShop;
-#define SCENE_SHAMAN_VILLAGE_SHOP ((s32)&SceneId_ShamanVillageShop)
+extern char SceneId_ShamanVillageNorthEnd;
+#define SCENE_SHAMAN_VILLAGE_NORTH_END ((s32)&SceneId_ShamanVillageNorthEnd)
+extern char SceneId_ShamanVillageHouses;
+#define SCENE_SHAMAN_VILLAGE_HOUSES ((s32)&SceneId_ShamanVillageHouses)
+extern char SceneId_ShamanVillageTents;
+#define SCENE_SHAMAN_VILLAGE_TENTS ((s32)&SceneId_ShamanVillageTents)
 extern char SceneId_ShamanVillageSanctum;
 #define SCENE_SHAMAN_VILLAGE_SANCTUM ((s32)&SceneId_ShamanVillageSanctum)
 extern char SceneId_LemurianShipCabins;

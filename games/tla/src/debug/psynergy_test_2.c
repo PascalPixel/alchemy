@@ -111,7 +111,8 @@ void PsynergyTest2_BurstWall(s32 mode) {
 void PsynergyTest2_StepIntoBattle(void) {
   if (!Event_GetFlag(FLAG_BATTLE_FOUGHT)) {
     Event_SetFlag(FLAG_BATTLE_FOUGHT);
-    Field_RequestBattleFromEncounterTable(14, 0);
+    Field_RequestBattleFromEncounterTable(
+        ENCOUNTER_ZONE_WORLD_MAP_BEACH_AND_GRASSLAND, 0);
   }
 }
 

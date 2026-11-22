@@ -331,6 +331,10 @@ void Field_RequestBattleFromEncounterTable(s32 zone, s32 slot);
 /// one slot per stage door the party reached first (slots 0 to 4), then Karst
 /// and Agatio's three battles on Jupiter Lighthouse's aerie (slots 5 to 7).
 #define ENCOUNTER_TABLE_MOAPA 13
+/// The World Map's encounter zone of region 1's beach, shallows and grassland,
+/// which the Psynergy test room's battles also take (slot 0, one or two Giant
+/// Bats).
+#define ENCOUNTER_ZONE_WORLD_MAP_BEACH_AND_GRASSLAND 14
 
 /// The event battles: the Flame Dragons in Mars Lighthouse (slot 0), the Doom
 /// Dragon on its aerie (1), the gladiators in the Shaman Village Cave (2), the

@@ -692,8 +692,8 @@ void BattleEffect_RunWaterSheet(struct BattleEffectParams *args, s32 mode) {
     model->mesh = mesh;
     model->vertices = vertices;
     model->shade = shade;
-    model->scrollU = (frame + phase) & 127;
-    model->scrollV = 127 & ~frame;
+    model->scrollU = (frame + phase) & TEXTURE_SCROLL_MASK;
+    model->scrollV = TEXTURE_SCROLL_MASK & ~frame;
     Render_TransformVertices(gMapGridCellBuffer, vertices, 128);
     Render_DrawModelList(model);
 

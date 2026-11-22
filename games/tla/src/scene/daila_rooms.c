@@ -102,9 +102,6 @@ enum DailaRoomsActorIdAfterRescue {
 /// this overlay also holds: the family by entrance 7.
 enum { ENTRANCE_COW_ISLET_HOUSE = 7 };
 
-/// Daila's inn, as Inn_CheckIn numbers the inns.
-enum { DAILA_INN = 0 };
-
 /// The sanctuary's actors, numbering the rows of
 /// gDailaRooms_SanctumPlacements.
 enum DailaSanctuaryActorId {

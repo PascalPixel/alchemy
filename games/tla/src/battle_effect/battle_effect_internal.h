@@ -465,10 +465,10 @@ enum RedCrescentPicture {
 #define SHARD_TURN 96
 /// PaletteRampImage's shard pictures (drawn through gStatChange_ShardPictures),
 /// where the stat reduction and the Sword Card decode them in the sheet,
-/// followed by seven copies of them, each darker than the one before.
+/// followed by DIMMED_COPIES - 1 copies of them, each darker than the one
+/// before.
 #define STAT_REDUCTION_SHARD_PICTURES 9600
 #define STAT_REDUCTION_SHARD_BYTES 696 ///< bytes in each copy
-#define STAT_REDUCTION_SHARD_COPIES 8  ///< the pictures and their darker copies
 
 /// LightningPillarSheet's pillar, in two pictures.
 #define LIGHTNING_PILLAR_WIDTH 48
@@ -564,6 +564,20 @@ enum RedCrescentPicture {
 
 /// The bytes of one set of the ten mote pictures: 2 * (1 + 4 + ... + 100).
 #define MOTE_SET_BYTES 770
+/// A picture's dimmed copies: DIMMED_COPIES of it, copy i with every level
+/// capped at DIMMED_COPY_CAP(i), 7 levels lower than the copy before, copy 0
+/// not at all. Thor's ring darkens through copies of the mote pictures, a stat
+/// reduction's shards through copies of the shard.
+#define DIMMED_COPIES 8
+#define DIMMED_COPY_CAP(copy) (CANVAS_LEVEL_BRIGHTEST + 1 - (copy) * 7)
+/// Caps a colour level at cap, and at 0 from below.
+#define EFFECT_CAP_LEVEL(level, cap)                                           \
+  {                                                                            \
+    if ((level) > (cap))                                                       \
+      (level) = (cap);                                                         \
+    if ((level) < 0)                                                           \
+      (level) = 0;                                                             \
+  }
 /// The bytes of ParticleSpritesD's ten flare pictures, 2 to 20 pixels square:
 /// 4 * (1 + 4 + ... + 100).
 #define FLARE_SET_BYTES 1540

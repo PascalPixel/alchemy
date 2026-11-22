@@ -4,17 +4,28 @@
 ///
 /// Isaac and Garet, with Ivan and Mia, have climbed the lighthouse after
 /// Saturos and Menardi, who hold Jenna and Kraden and carry the Elemental
-/// Stars. They come too late to stop the beacon being lit.
+/// Stars. Ply on the statue below the rainbow turns the last waterfall to
+/// stream upward, and the party comes out at the top. They come too late to
+/// stop the beacon being lit.
 ///
-/// - The first arrival (MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT,
+/// The aerie is three tower tops in the sky. The party lands on the east one,
+/// where a Psynergy Stone lies. The beacon stands on the middle one, at the
+/// head of a wide flight of stairs, with two statues either side of it. The
+/// west one is a lift, a tower top with a statue on it that sinks to the
+/// ground and rises again. Three floating platforms bridge each gap, and the
+/// leader jumps from one to the next.
+///
+/// - The arrival (MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT,
 ///   MercuryLighthouseAerie_PartyArrives). The Adepts of the lit element regain
-///   their PP, the aerie shakes, and in a flash the party stands at the top.
-///   Touching cell behavior 5 (MercuryLighthouseAerie_ConfrontSaturos), Garet
-///   sees `It's too late! The lighthouse has already been lit!` Mia learns that
-///   the party came from Vale to recover the Elemental Stars, and that Vale
-///   protected Sol Sanctum as her clan protects the lighthouse. Jenna calls
-///   out, and Felix, Menardi and Saturos face the party. Saturos sends Menardi
-///   on to the next lighthouse with Jenna, Kraden and Felix, and fights the
+///   their PP, the aerie shakes, and in a white flash the party lies on the
+///   east tower top. They get up and gather round Isaac.
+/// - The beacon (MercuryLighthouseAerie_ConfrontSaturos). Climbing the stairs
+///   to it, Garet sees `It's too late! The lighthouse has already been lit!`
+///   Mia learns that the party came from Vale to recover the Elemental Stars,
+///   and that Vale protected Sol Sanctum as her clan protects the lighthouse.
+///   Jenna calls out from the west tower top, where Kraden, Felix and Menardi
+///   hold her. Saturos sends Menardi on to the next lighthouse with the others,
+///   and Menardi leaps onto the lift, which sinks with them. Saturos fights the
 ///   party alone (ENCOUNTER_ZONE_SCRIPTED_TRET_MERCURY, slot 2), the light of
 ///   Mercury weakening his Psynergy.
 /// - Back from the battle (MERCURY_LIGHTHOUSE_AERIE_AFTER_SATUROS_BATTLE,
@@ -23,31 +34,25 @@
 ///   the clan of fire, had his power bound by the lighthouse's water, which
 ///   lent Mia, of the Mercury Clan like Alex, endless Psynergy. Alex was only
 ///   stalling until Saturos recovered. Saturos rises, Alex asks whether the
-///   party still holds the Mars Star, and the two exit over to the lift and
-///   ride it down. Mia means to go with the party, since with the lighthouse
-///   lit the fountain will run over with healing water again
-///   (FLAG_MERCURY_LIGHTHOUSE_AERIE_ALEX_APPEARED, and
+///   party still holds the Mars Star, and the two vanish in sparkles,
+///   reappear on the lift and ride it down. Mia means to go with the party,
+///   since with the lighthouse lit the fountain will run over with healing
+///   water again (FLAG_MERCURY_LIGHTHOUSE_AERIE_ALEX_APPEARED, and
 ///   FLAG_SATUROS_BEATEN_AT_MERCURY, which Imil, Bilibin and the lighthouse
 ///   test).
-/// - Getting about. Six platforms dip under the leader, who jumps two cells
-///   from one to the next (cell behaviors 10 and 11;
-///   places/mercury-lighthouse-aerie/events/MercuryLighthouseAerie_StepOntoPlatform.gif).
-///   The lift leads down to Mercury Lighthouse's
-///   SceneId_MercuryLighthouseExterior (mercury_lighthouse.c), arriving at
-///   MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE by the Fountain
-///   of Healing. Cell behavior 6 calls the lift up, and cell behavior 12 rides
-///   it down (MERCURY_LIGHTHOUSE_AERIE_TO_MERCURY_LIGHTHOUSE_EXTERIOR).
-///   Arriving by it (MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR)
-///   leaves it up
-///   (places/mercury-lighthouse-aerie/events/MercuryLighthouseAerie_RideLiftDown.gif).
-///   A Psynergy Stone can be found here.
+/// - Leaving. The stairs on the west side of the beacon's tower bring the
+///   lift back up if it is down, and stepping onto it from the
+///   westmost platform rides it down to the ground before Mercury Lighthouse,
+///   by the Fountain of Healing (SceneId_MercuryLighthouseExterior,
+///   mercury_lighthouse.c). Coming up that way
+///   (MERCURY_LIGHTHOUSE_AERIE_FROM_MERCURY_LIGHTHOUSE_EXTERIOR) leaves the
+///   lift up.
 ///
 /// Every arrival sets FLAG_MERCURY_LIGHTHOUSE_LIT, under which Mercury Adepts
 /// regain PP faster.
 ///
-/// On the aerie Retreat is blocked, the beacon flickers and sheds sparks by
-/// task (MercuryLighthouseAerie_FlickerBeacon), and the platforms start 50
-/// pixels down.
+/// On the aerie Retreat is blocked, and the beacon flickers and sheds sparks
+/// (MercuryLighthouseAerie_FlickerBeacon).
 ///
 /// Jenna, Kraden, Felix and Menardi are placed only on the first arrival. Every
 /// other entrance sets FLAG_HOSTAGES_GONE before the actor placements are read.
@@ -90,6 +95,24 @@
 #include "system/system_call.h"
 #include "text/msg_ids.h"
 
+/// The cell behaviors the aerie's triggers answer.
+enum MercuryLighthouseAerieCellBehavior {
+  /// The stairs up to the beacon, cells (20, 14) and (21, 14).
+  CELL_BEHAVIOR_BEACON_STAIRS = 5,
+  /// The stairs on the west side of the beacon's tower, cell (12, 9), from
+  /// which the lift is called up.
+  CELL_BEHAVIOR_LIFT_LANDING = 6,
+  /// The six floating platforms.
+  CELL_BEHAVIOR_PLATFORM = 10,
+  /// The ground beside the platforms: the foot of the stairs either side of
+  /// the beacon's tower and the east tower top.
+  CELL_BEHAVIOR_PLATFORM_EDGE = 11,
+  /// The lift's floor, cell (6, 10), stepped onto from the westmost platform.
+  CELL_BEHAVIOR_LIFT = 12,
+  /// Where the Psynergy Stone lies on the east tower top, cell (31, 8).
+  CELL_BEHAVIOR_PSYNERGY_STONE = 100
+};
+
 extern struct SceneEntrance gMercuryLighthouseAerieEntrances[];
 extern u32 gMercuryLighthouseAerieExits[];
 extern struct ActorPlacement gMercuryLighthouseAerieActorPlacements[];
@@ -108,13 +131,13 @@ enum MercuryLighthouseAerieActorId {
   /// Flickers between two sizes and sheds sparks while in view
   /// (MercuryLighthouseAerie_FlickerBeacon).
   ACTOR_BEACON = ACTOR_FIRST_PLACED,
-  /// A statue, drawn as the lighthouse's statues all are, standing on the lift.
-  /// It rides up and down with it.
+  /// The statue on the lift, the west tower top. It rides up and down with
+  /// it.
   ACTOR_LIFT_STATUE,
   /// Four more statues flank the beacon, two on each side of it. The two east
   /// of it, ACTOR_FIRST_BEACON_STATUE + 2 and + 3, are drawn mirrored.
   ACTOR_FIRST_BEACON_STATUE,
-  /// Six of them.
+  /// The six floating platforms, three in each gap between the towers.
   ACTOR_FIRST_PLATFORM = ACTOR_FIRST_PLACED + 6,
   /// The two platforms that stand on the lift and go up and down with it.
   ACTOR_FIRST_LIFT_PLATFORM = ACTOR_FIRST_PLATFORM + 3,
@@ -165,9 +188,9 @@ const struct SceneEntrance *Scene_GetEntrances(void) {
 
 const struct SceneExitRegion *Scene_GetExitRegions(void) { return 0; }
 
-/// Returns the one exit, the lift down to SceneId_MercuryLighthouseExterior's
-/// MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE, by the Fountain
-/// of Healing.
+/// Returns the one exit, the lift down to the ground before Mercury
+/// Lighthouse, by the Fountain of Healing
+/// (MERCURY_LIGHTHOUSE_EXTERIOR_FROM_MERCURY_LIGHTHOUSE_AERIE).
 const u32 *Scene_GetExits(void) { return gMercuryLighthouseAerieExits; }
 
 /// Returns the actors, with Jenna, Kraden, Felix and Menardi placed only on the
@@ -259,8 +282,13 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// Lighthouse Aerie, at MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT unless
-/// returning after a battle: the party arrives at the top.
+/// The party arrives at the top: the aerie shakes, a white flash fills the
+/// screen, and Isaac, Garet, Ivan and Mia lie on the east tower top, then get
+/// up and gather round Isaac.
+///
+/// It plays at MERCURY_LIGHTHOUSE_AERIE_AFTER_BEACON_LIT, the entrance the
+/// world map sends the party to after the waterfall below turns to stream
+/// upward, but not on a return from a battle there.
 static void MercuryLighthouseAerie_PartyArrives(void) {
   struct Actor *leader;
 
@@ -361,8 +389,15 @@ static void MercuryLighthouseAerie_PartyArrives(void) {
 #include "shared/actor_distance.c"
 #include "shared/actor_nearest.c"
 
-/// Walking off the edge of a platform (cell behavior 10 or 11) makes the
-/// leader jump across, if the ground two cells ahead is clear.
+/// Walking on from a platform, or from the tower edge beside one, makes Isaac
+/// crouch and leap two cells to the next platform or tower top, if there is
+/// ground there to land on.
+///
+/// The cells are the platforms in the gaps west and east of the beacon's
+/// tower, cells (6, 12), (8, 12), (10, 12), (27, 12), (29, 12) and (31, 12),
+/// and the ground beside them: the foot of the stairs either side of the
+/// beacon's tower, (12, 12) and (25, 12), and the east tower top, (31, 10).
+/// Before the leap every platform is set floating again.
 static void MercuryLighthouseAerie_JumpToNextPlatform(void) {
   struct Actor *actor;
   struct FieldPosition position;
@@ -395,8 +430,12 @@ static void MercuryLighthouseAerie_JumpToNextPlatform(void) {
   }
 }
 
-/// Landing on a platform (cell behavior 10, while not on one) makes it dip
-/// under the leader and spring back up.
+/// Landing on one of the floating platforms makes it dip under Isaac and
+/// spring back up.
+///
+/// The platforms are cells (6, 12), (8, 12) and (10, 12) west of the beacon's
+/// tower and (27, 12), (29, 12) and (31, 12) east of it. The one under him
+/// stops floating and holds still while he stands on it (FLAG_ON_PLATFORM).
 static void MercuryLighthouseAerie_LandOnPlatform(void) {
   struct Actor *leader;
   struct Actor *platform;
@@ -434,8 +473,13 @@ static void MercuryLighthouseAerie_LandOnPlatform(void) {
   Event_End();
 }
 
-/// Stepping back onto the floor (cell behavior 11), and before each jump, sets
-/// the platforms floating again.
+/// Nothing visible happens when Isaac steps off the platforms onto the foot of
+/// the stairs either side of the beacon's tower, cells (12, 12) and (25, 12),
+/// or onto the east tower top at cell (31, 10). The game sets every platform
+/// floating again, the one he left included, which stopped under him when he
+/// landed.
+///
+/// The leap from one platform to the next calls it too.
 static void MercuryLighthouseAerie_FloatPlatforms(void) {
   Actor_Get(ACTOR_PARTY_LEADER)->motionFlags =
       ACTOR_FOLLOWS_TERRAIN | ACTOR_FALLS;
@@ -447,8 +491,14 @@ static void MercuryLighthouseAerie_FloatPlatforms(void) {
   Actor_Get(ACTOR_FIRST_PLATFORM + 5)->motionFlags = ACTOR_FLOATS;
 }
 
-/// Lighthouse Aerie: touching cell behavior 5 by the beacon. The party finds it
-/// lit, and Saturos fights them alone.
+/// Climbing the wide stairs up to the beacon, at cells (20, 14) and (21, 14),
+/// the party finds it already lit, Menardi rides the lift down with Jenna,
+/// Kraden and Felix, and Saturos fights the party alone.
+///
+/// Garet sees `It's too late! The lighthouse has already been lit!` The
+/// party gathers on the stairs and talks it over with Mia before Jenna calls
+/// out from the west tower top. It plays until Saturos is beaten
+/// (FLAG_MERCURY_LIGHTHOUSE_AERIE_ALEX_APPEARED).
 static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   struct Actor *actor;
 
@@ -926,9 +976,12 @@ static void MercuryLighthouseAerie_ConfrontSaturos(void) {
   Event_End();
 }
 
-/// Lighthouse Aerie, at MERCURY_LIGHTHOUSE_AERIE_AFTER_SATUROS_BATTLE, back
-/// from the battle, unless returning after another: Saturos is beaten, but not
-/// for long.
+/// Back from the battle, Saturos is beaten, but Alex appears, stalls until
+/// Saturos recovers and leaves with him on the lift.
+///
+/// It plays at MERCURY_LIGHTHOUSE_AERIE_AFTER_SATUROS_BATTLE, unless the party
+/// returns there after another battle. If the lift is down it is raised for
+/// them first.
 static void MercuryLighthouseAerie_AlexAppears(void) {
   Event_Start();
   Actor_Get(ACTOR_LIFT_STATUE)->motionFlags = 0;
@@ -1516,7 +1569,12 @@ static void MercuryLighthouseAerie_AlexAppears(void) {
   Event_End();
 }
 
-/// Lighthouse Aerie: touching cell behavior 6 while the lift is down.
+/// Walking down the stairs on the west side of the beacon's tower, at cell
+/// (12, 9), brings the lift back up while it is down.
+///
+/// The camera pans west to the empty space, the lift rises into it with its
+/// statue and the two platforms it carries, and the camera comes back to
+/// Isaac. It stays up (FLAG_LIFT_UP).
 static void MercuryLighthouseAerie_CallLift(void) {
   struct MapGridLayerScroll *lift;
 
@@ -1545,7 +1603,13 @@ static void MercuryLighthouseAerie_CallLift(void) {
   Event_End();
 }
 
-/// Lighthouse Aerie: touching cell behavior 12.
+/// Stepping onto the lift from the westmost platform, at cell (6, 10), rides
+/// it down to the ground before Mercury Lighthouse, by the Fountain of
+/// Healing.
+///
+/// Isaac walks to the middle of the lift and turns to face south, and the lift
+/// sinks with him before the party leaves by
+/// MERCURY_LIGHTHOUSE_AERIE_TO_MERCURY_LIGHTHOUSE_EXTERIOR.
 static void MercuryLighthouseAerie_RideLiftDown(void) {
   Event_Start();
   Actor_SetSpeed(ACTOR_PARTY_LEADER, 0.5);
@@ -1560,7 +1624,7 @@ static void MercuryLighthouseAerie_RideLiftDown(void) {
   Event_End();
 }
 
-/// Saturos and Alex exit out in a column of sparkles and vanish.
+/// Saturos and Alex vanish in a column of sparkles.
 static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
   struct EffectOptions options;
   struct Actor *left;
@@ -1611,7 +1675,8 @@ static void MercuryLighthouseAerie_SaturosAndAlexWarpOut(void) {
   Actor_SetPosition(ACTOR_ALEX, 0, 0);
 }
 
-/// Saturos and Alex exit in where they have been placed.
+/// Saturos and Alex appear in a column of sparkles where they have been
+/// placed.
 static void MercuryLighthouseAerie_SaturosAndAlexWarpIn(void) {
   struct EffectOptions options;
   struct Actor *left;
@@ -1775,8 +1840,8 @@ static void MercuryLighthouseAerie_RaiseLift(void) {
 
 /// Unused: Alex casts Ply on the lift's statue.
 ///
-/// Nothing calls it. In the game, Alex and Saturos exit over to the lift and
-/// ride it down without it (MercuryLighthouseAerie_AlexAppears).
+/// Nothing calls it. In the game, Alex and Saturos vanish, appear on the lift
+/// and ride it down without it (MercuryLighthouseAerie_AlexAppears).
 UNUSED static void MercuryLighthouseAerie_UnusedAlexCastsPly(void) {
   // XXX (no evidence): what this was for; no event plays it.
   FieldPsynergy_LoadResources(ABILITY_PLY, 1);
@@ -1949,20 +2014,22 @@ struct ActorPlacement gMercuryLighthouseAerieActorPlacements[] = {
 // clang-format on
 
 struct Trigger gMercuryLighthouseAerieTriggers[] = {
-    {TRIGGER_STEP, 5, FLAG_MERCURY_LIGHTHOUSE_AERIE_ALEX_APPEARED,
+    {TRIGGER_STEP, CELL_BEHAVIOR_BEACON_STAIRS,
+     FLAG_MERCURY_LIGHTHOUSE_AERIE_ALEX_APPEARED,
      EVENT(MercuryLighthouseAerie_ConfrontSaturos)},
-    {TRIGGER_STEP, 6, FLAG_LIFT_UP, EVENT(MercuryLighthouseAerie_CallLift)},
-    {STEP_TRIGGER_WALKING, 11, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_LIFT_LANDING, FLAG_LIFT_UP,
+     EVENT(MercuryLighthouseAerie_CallLift)},
+    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_PLATFORM_EDGE, CONDITION_ALWAYS,
      EVENT(MercuryLighthouseAerie_JumpToNextPlatform)},
-    {TRIGGER_STEP, 11, CONDITION_ALWAYS,
+    {TRIGGER_STEP, CELL_BEHAVIOR_PLATFORM_EDGE, CONDITION_ALWAYS,
      EVENT(MercuryLighthouseAerie_FloatPlatforms)},
-    {STEP_TRIGGER_WALKING, 10, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_PLATFORM, CONDITION_ALWAYS,
      EVENT(MercuryLighthouseAerie_JumpToNextPlatform)},
-    {TRIGGER_STEP, 10, FLAG_ON_PLATFORM,
+    {TRIGGER_STEP, CELL_BEHAVIOR_PLATFORM, FLAG_ON_PLATFORM,
      EVENT(MercuryLighthouseAerie_LandOnPlatform)},
-    {EXAMINE_TRIGGER(EXAMINE_SILENT), 100, FLAG_PSYNERGY_STONE,
-     FIND_PSYNERGY_STONE},
-    {TRIGGER_STEP, 12, CONDITION_ALWAYS,
+    {EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_PSYNERGY_STONE,
+     FLAG_PSYNERGY_STONE, FIND_PSYNERGY_STONE},
+    {TRIGGER_STEP, CELL_BEHAVIOR_LIFT, CONDITION_ALWAYS,
      EVENT(MercuryLighthouseAerie_RideLiftDown)},
     {TRIGGER_TABLE_END},
 };

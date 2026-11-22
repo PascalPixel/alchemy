@@ -1258,7 +1258,7 @@ void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
   wait(1);
 }
 
-void Actor_MoveToObject(s32 id, s32 target);
+void Actor_PlaceOnActor(s32 id, s32 target);
 void BlendScript_Suspend(void);
 void BlendScript_Resume(void);
 
@@ -1280,7 +1280,7 @@ void GaiaRockInside_ReadSandTablet(void) {
     Actor_WalkTo(gMainRoutineWork.leaderActorId, 440, 328);
     FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
   }
-  Actor_MoveToObject(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
   Actor_WalkTo(gMainRoutineWork.leaderActorId, 470, 354);
   Actor_WalkTo(ACTOR_KRADEN, 446, 354);
   FieldActor_WaitForMoveById(gMainRoutineWork.leaderActorId);
@@ -1535,7 +1535,7 @@ void GaiaRockInside_CheckAltar(void) {
 }
 
 #include "text/msg_ids.h"
-void Actor_MoveToObject(s32 id, s32 target);
+void Actor_PlaceOnActor(s32 id, s32 target);
 
 /// How a stone face trembles while the doll dances on its altar: for
 /// FACE_TREMBLE_FRAMES, then on as it slides aside, for FACE_SLIDE_FRAMES_MAX
@@ -1566,7 +1566,7 @@ void GaiaRockInside_PlaceDollOnFirstAltar(void) {
   Actor_SetSpritePriorityDirect(doll, 1);
   work = &gMainRoutineWork;
   leaderId = &work->leaderActorId;
-  Actor_MoveToObject(ACTOR_FIRST_ALTAR_DOLL, *leaderId);
+  Actor_PlaceOnActor(ACTOR_FIRST_ALTAR_DOLL, *leaderId);
   Actor_SetDestination(ACTOR_FIRST_ALTAR_DOLL, 496, 712);
   doll->velocityY = toFIXED(6);
   FieldActor_WaitForMoveById(ACTOR_FIRST_ALTAR_DOLL);
@@ -1647,7 +1647,7 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
   FieldMessage_Show((s32)MsgGaiaRockInsidePlacedADollOnThe, 1);
   Sound_Play(SE_DOLL_PLACED);
   Actor_SetSpritePriorityDirect(partner, 1);
-  Actor_MoveToObject(ACTOR_TWIN_ALTARS_DOLL, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_TWIN_ALTARS_DOLL, gMainRoutineWork.leaderActorId);
   Actor_SetDestination(ACTOR_TWIN_ALTARS_DOLL, 528, 372);
   partner->velocityY = toFIXED(6);
   Actor_WaitForMoveById(ACTOR_TWIN_ALTARS_DOLL);
@@ -1741,7 +1741,7 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
   FieldMessage_Show((s32)MsgGaiaRockInsidePlacedADollOnThe, 1);
   Sound_Play(SE_DOLL_PLACED);
   Actor_SetSpritePriorityDirect(partner, 1);
-  Actor_MoveToObject(ACTOR_TWIN_ALTARS_DOLL, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_TWIN_ALTARS_DOLL, gMainRoutineWork.leaderActorId);
   Actor_SetDestination(ACTOR_TWIN_ALTARS_DOLL, 672, 372);
   partner->velocityY = toFIXED(6);
   Actor_WaitForMoveById(ACTOR_TWIN_ALTARS_DOLL);
@@ -1835,7 +1835,7 @@ void GaiaRockInside_PlaceDollOnAltarAltar(void) {
   FieldMessage_Show((s32)MsgGaiaRockInsidePlacedADollOnThe, 1);
   Sound_Play(SE_DOLL_PLACED);
   Actor_SetSpritePriorityDirect(partner, 1);
-  Actor_MoveToObject(ACTOR_ALTAR_DOLL, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_ALTAR_DOLL, gMainRoutineWork.leaderActorId);
   Actor_SetDestination(ACTOR_ALTAR_DOLL, 336, 396);
   partner->velocityY = toFIXED(6);
   Actor_WaitForMoveById(ACTOR_ALTAR_DOLL);
@@ -3833,15 +3833,15 @@ struct ActorPlacement gGaiaRockInside_TwinAltarsActorPlacements[] = {
 };
 
 struct ActorPlacement gGaiaRockInside_PlatformsActorPlacements[] = {
-    ACTOR_PLACEMENT(320, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(320, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(320, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(320, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(320, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(320, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(320, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(320, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(320, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_LEAFY_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_LEAFY_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_LEAFY_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_LEAFY_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_LEAFY_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_LEAFY_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_LEAFY_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_LEAFY_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_LEAFY_PLATFORM, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 

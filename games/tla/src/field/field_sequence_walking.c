@@ -252,7 +252,7 @@ void Field_UpdateWalking(u32 layer, FIXED x, FIXED y, FIXED z) {
   if ((gMainRoutineWork.movementMode <= LEADER_MOVEMENT_WORLD_MAP ||
        gMainRoutineWork.movementMode == LEADER_MOVEMENT_SHIP_ON_MAP ||
        gMainRoutineWork.movementMode == LEADER_MOVEMENT_SHIP) &&
-      leader != NULL && leader->targetX != TARGET_UNSET) {
+      leader != NULL && leader->targetX != ACTOR_NO_TARGET) {
     zone = 0;
     speed = leader->speedLimit;
     if (GameFlag_Get(FLAG_LURE_CAP))
@@ -262,7 +262,7 @@ void Field_UpdateWalking(u32 layer, FIXED x, FIXED y, FIXED z) {
     } else {
       if (attributes & MAP_CELL_SECOND_ZONE)
         zone = 1;
-      work->encounter = Encounter_RollTerrain(zone, speed);
+      work->encounter = Encounter_RollMapStep(zone, speed);
     }
 
     // Every FIXED_ONE of distance walked (counted at half speed on ground whose

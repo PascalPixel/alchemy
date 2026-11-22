@@ -191,7 +191,7 @@ extern const u8 gMovementType_FaceLeaderScript[];
 extern const u8 gMovementType_ClearCollisionScript[];
 extern const u8 gMovementType_SquashScript[];
 extern const u8 gMovementType_TakeLeaderLayerScript[];
-extern const u8 gMovementType_ResetActionScript[];
+extern const u8 gMovementType_IgnoreRisesScript[];
 extern const u8 gMovementType_ClearChildScript[];
 
 /// Starts an actor's movement type: an enum MovementType, or any other value as
@@ -226,8 +226,8 @@ void Actor_SetMovementType(struct Actor *actor, s32 kind) {
   case MOVEMENT_TYPE_TAKE_LEADER_LAYER:
     kind = (s32)gMovementType_TakeLeaderLayerScript;
     break;
-  case MOVEMENT_TYPE_RESET_ACTION:
-    kind = (s32)gMovementType_ResetActionScript;
+  case MOVEMENT_TYPE_IGNORE_RISES:
+    kind = (s32)gMovementType_IgnoreRisesScript;
     break;
   case MOVEMENT_TYPE_CLEAR_CHILD:
     kind = (s32)gMovementType_ClearChildScript;

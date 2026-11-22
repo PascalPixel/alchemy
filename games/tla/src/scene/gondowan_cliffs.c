@@ -166,9 +166,6 @@ struct Geyser {
   struct Actor *rider; ///< the platform at its top, which the leader rides
 };
 
-/// The pixels the cliffs' geyser rises to.
-#define GEYSER_MAX_HEIGHT 64
-
 /// The geysers' work, kept in the inventory snapshot's spare room.
 struct GeyserWork {
   s16 entry;        ///< the VRAM cache entry holding the column's tiles
@@ -232,7 +229,7 @@ void GondowanCliffs_LeapStumpIntoWater(s32 mode, s32 id) {
       sprite->rotation -= TRIG_TURN / 256;
       actor->x.fixed -=
           Trig_Cos(((struct FieldSprite *)actor->sprite)->rotation) / 2;
-      actor->targetX = TARGET_UNSET;
+      actor->targetX = ACTOR_NO_TARGET;
     }
     actor->update = GondowanCliffs_SpinStump;
     Actor_SetSpeed(id, 3);
@@ -389,7 +386,7 @@ void GondowanCliffs_SetUpPass(void) {
   Task_AddFrame(GondowanCliffs_CycleWaterColors, TASK_PASS_FRAME);
 }
 
-void Actor_MoveToObject(s32 actor, s32 target);
+void Actor_PlaceOnActor(s32 actor, s32 target);
 
 /// While Piers still needs help, Kraden, Jenna and Sheba stop the party at the
 /// cliffs and turn it back to Kibombo.
@@ -399,14 +396,14 @@ void GondowanCliffs_TurnBackToHelpPiers(void) {
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 552, 488);
-  Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
   FieldActor_WatchAndSetScript(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 568, 480);
   FieldActor_WatchAndSetScript(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 584, 472);
   FieldActor_WatchAndSetScript(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 608, 472);
   FieldEvent_SetMessageId((s32)MsgWhereDoYou);
   FieldActor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_WINCE, 20);

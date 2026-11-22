@@ -1427,7 +1427,7 @@ void AquaRockInside_PiersLearnsParch(s32 firstId, s32 secondId) {
   wait(1);
 }
 
-void Actor_MoveToObject();
+void Actor_PlaceOnActor();
 
 /// Reading the Parch tablet: Piers reads it and learns Parch, the water drains,
 /// and he leaves the party's side; afterwards only its text.
@@ -1444,7 +1444,7 @@ void AquaRockInside_ReadParchTablet(void) {
   }
   FieldEvent_SetMessageId((s32)&MsgCheckedTheTabletIt);
   gFieldWork->message = (gFieldWork->message + 1);
-  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
   FieldEvent_Wait(1);
   Actor_WalkTo(gMainRoutineWork.leaderActorId, 256, 184);
   Actor_WalkTo(ACTOR_PIERS, 274, 184);

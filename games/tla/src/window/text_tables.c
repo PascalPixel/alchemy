@@ -38,7 +38,7 @@ const u8 gFont_GlyphWidths[] = {
 
 // clang-format off
 /// The {background, foreground} pens of the eight text colours.
-const u8 gText_ColourPens[16] = {
+const u8 gFont_ColorPens[16] = {
     0, 3,
     13, 13,
     14, 15,

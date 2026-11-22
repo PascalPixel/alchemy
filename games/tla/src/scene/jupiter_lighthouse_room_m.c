@@ -1260,7 +1260,7 @@ void JupiterLighthouse_IsaacAndIvanAreHurt(void) {
   FieldUnit_AddPp(IVAN, -ALL_HP_OR_PP);
   Unit_AddPp(ISAAC, -ALL_HP_OR_PP);
   gMainRoutineWork.leaderActorId = ACTOR_ISAAC;
-  Field_RequestBattleFromEncounterTable(102, 4);
+  Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 4);
 }
 
 /// Places Isaac and Ivan lying hurt after the fight, with Jenna, Sheba and

@@ -124,7 +124,7 @@ s32 *Memory_ClearWordIfSet(s32 *p) {
 /// closed, then the windows opened directly, which it does not wait for.
 void Window_CloseAll(void) {
   struct WindowWork *work;
-  struct UiChannelSlot *message;
+  struct Message *message;
   struct Window *win;
   u32 done;
   struct Window *window;
@@ -132,29 +132,29 @@ void Window_CloseAll(void) {
   s32 i;
 
   work = WINDOW_WORK;
-  message = work->channels;
+  message = work->messages;
   win = work->windows;
   i = 0;
   do {
-    window = message->work;
+    window = message->window;
     if (window != 0 && window->flags != 0)
       Window_Close(window, 0);
     i++;
     message++;
-  } while (i != ARRAY_COUNT(work->channels));
+  } while (i != ARRAY_COUNT(work->messages));
 
   // Free each message whose window has closed; while one is still closing,
   // wait a frame. The zoom's stage and duration are read as one word.
   for (;;) {
     done = 1;
-    message = work->channels;
+    message = work->messages;
     i = 0;
     do {
-      pollWindow = message->work;
+      pollWindow = message->window;
       if (pollWindow != 0) {
         if ((*(s32 *)&pollWindow->zoomStage) == 0) {
           if (pollWindow->flags == 0)
-            message->work = NULL;
+            message->window = NULL;
           else
             done = 0;
         } else {
@@ -163,7 +163,7 @@ void Window_CloseAll(void) {
       }
       i++;
       message++;
-    } while (i != ARRAY_COUNT(work->channels));
+    } while (i != ARRAY_COUNT(work->messages));
     if (done)
       break;
     wait(1);
@@ -202,20 +202,20 @@ void Window_ShowFlashFrame(struct Window **window, s32 offset) {
 /// flashes through the flash border's pictures as the countdown runs, the plain
 /// border returns two frames before its end, and the flash tiles are restored
 /// at the end.
-void Window_StepSwellEffect(struct UiChannelSlot *message) {
-  if (message->work->animation == WINDOW_ANIMATION_SWELL) {
+void Window_StepSwellEffect(struct Message *message) {
+  if (message->window->animation == WINDOW_ANIMATION_SWELL) {
     if (message->countdown == 10)
-      Window_ShowFlashFrame(&message->work, 3 * FLASH_FRAME_BYTES);
+      Window_ShowFlashFrame(&message->window, 3 * FLASH_FRAME_BYTES);
     else if (message->countdown == 9)
-      Window_ShowFlashFrame(&message->work, 2 * FLASH_FRAME_BYTES);
+      Window_ShowFlashFrame(&message->window, 2 * FLASH_FRAME_BYTES);
     else if (message->countdown == 8)
-      Window_ShowFlashFrame(&message->work, 1 * FLASH_FRAME_BYTES);
+      Window_ShowFlashFrame(&message->window, 1 * FLASH_FRAME_BYTES);
     else if (message->countdown == 6)
-      Window_ShowFlashFrame(&message->work, 2 * FLASH_FRAME_BYTES);
+      Window_ShowFlashFrame(&message->window, 2 * FLASH_FRAME_BYTES);
     else if (message->countdown == 4)
-      Window_ShowFlashFrame(&message->work, 3 * FLASH_FRAME_BYTES);
+      Window_ShowFlashFrame(&message->window, 3 * FLASH_FRAME_BYTES);
     if (message->countdown == 2) {
-      struct Window *window = message->work;
+      struct Window *window = message->window;
 
       Window_DrawBorder((s16)window->x, (s16)window->y, window->width,
                         window->height);
@@ -225,7 +225,7 @@ void Window_StepSwellEffect(struct UiChannelSlot *message) {
       Dma_Set(Resource_GetTableEntry(RESOURCE_WINDOW_BORDER_FLASH),
               (void *)FLASH_FRAME_TILES, DMA_COPY_WORDS(FLASH_FRAME_BYTES / 4),
               REG_DMA3);
-      message->work->animation = 0;
+      message->window->animation = 0;
     }
   }
 }
@@ -282,7 +282,7 @@ u32 MessageArgument_Lookup(u32 kind, u32 clear) {
 
 /// Ends a message's pause early: when the message waits on a sound that has
 /// finished, or while A, B, L or R is held.
-s32 Text_CheckPauseSkipped(struct UiChannelSlot *message) {
+s32 Text_CheckPauseSkipped(struct Message *message) {
   struct WindowWork *work = WINDOW_WORK;
   s32 cancelKeys = 0;
 
@@ -303,7 +303,7 @@ s32 Text_CheckPauseSkipped(struct UiChannelSlot *message) {
 /// presses while WindowWork.mindRead is set). While B is held the text also
 /// goes on by itself once the wait's countdown runs down
 /// (gMessageSpeed_HeldPageDelays); while it is up the countdown stays at 2.
-s32 Text_CheckTextDismissed(struct UiChannelSlot *message) {
+s32 Text_CheckTextDismissed(struct Message *message) {
   struct WindowWork *work = WINDOW_WORK;
   s32 cancelKeys = 0;
   u32 pressedKeys;
@@ -331,13 +331,13 @@ s32 Text_CheckTextDismissed(struct UiChannelSlot *message) {
 /// Closes each message's window whose text has ended, then waits ten frames.
 void Message_CloseFinishedWindows(void) {
   s32 i;
-  struct UiChannelSlot *message;
+  struct Message *message;
   struct Window *window;
 
-  message = WINDOW_WORK->channels;
+  message = WINDOW_WORK->messages;
   i = 0;
   do {
-    window = message->work;
+    window = message->window;
     // The zoom's stage and duration are read as one word: both zero.
     if (window != NULL && *(s32 *)&window->zoomStage == 0 &&
         window->flags != 0 && window->state != 0) {
@@ -345,7 +345,7 @@ void Message_CloseFinishedWindows(void) {
     }
     i++;
     message++;
-  } while (i != ARRAY_COUNT(WINDOW_WORK->channels));
+  } while (i != ARRAY_COUNT(WINDOW_WORK->messages));
   wait(10);
 }
 
@@ -397,7 +397,9 @@ void FieldMessage_ShowCentered(s32 message, s32 mode, s32 yOffset) {
 /// Decodes message and empties the argument table; returns where its
 /// decoded text starts. The Djinn and party join messages
 /// (screens_joined.c) use it.
-s32 Message_DecodeMode1(s32 message) { return Message_Decode(message, 1); }
+s32 Message_DecodeAndClearArguments(s32 message) {
+  return Message_Decode(message, 1);
+}
 
 /// Decodes message after the text decoded last, over its terminator.
 void Message_DecodeAppend(s32 message) {
@@ -795,10 +797,12 @@ struct Window *Portrait_OpenWindow(s32 speaker, s32 portraitOption, s32 x,
   portraitY = -4;
   portraitX = portraitY;
   if (work->mindRead != 0) {
-    window = Window_Create(x, y, 6, 5, WINDOW_FLAG_INSTANT);
+    window = Window_Create(x, y, PORTRAIT_WINDOW_TILES + 1,
+                           PORTRAIT_WINDOW_TILES, WINDOW_FLAG_INSTANT);
     portraitX = 0;
   } else {
-    window = Window_Create(x, y, 5, 5, WINDOW_FLAG_INSTANT);
+    window = Window_Create(x, y, PORTRAIT_WINDOW_TILES, PORTRAIT_WINDOW_TILES,
+                           WINDOW_FLAG_INSTANT);
   }
   if (window != 0) {
     Portrait_Create(speaker, portraitOption, -1, window, portraitX, portraitY);

@@ -929,7 +929,7 @@ void FieldPsynergy_Retreat(void) {
   Actor_SetSpriteFlagsFar(actor, 0);
   actor->motionFlags = 0;
   actor->update = (ObjectUpdate)FieldEffect_UpdateRetreatCaster;
-  actor->targetX = TARGET_UNSET;
+  actor->targetX = ACTOR_NO_TARGET;
   SET_POSITION(&pos, actor->x.fixed, actor->y.fixed, actor->z.fixed);
   Camera_WorldToScreen(&pos);
   i = 0;

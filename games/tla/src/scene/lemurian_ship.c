@@ -254,7 +254,7 @@ void Event_WaitTransitionFrames(void);
 void FlagBlock_PlaceAll(const void *script);
 void Event_StartScreenTransition(void);
 
-void Actor_MoveToObject(s32 actor, s32 target);
+void Actor_PlaceOnActor(s32 actor, s32 target);
 
 /// The cabin doors (gLemurianShip_Doors).
 #define CABIN_DOOR_COUNT 10
@@ -1138,10 +1138,10 @@ void LemurianShip_SetBlackCrystal(void) {
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 808, 208);
   FieldCamera_SetSpeed(0.8);
   FieldCamera_MoveTo(808, CAMERA_KEEP, 176, 1);
-  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_ENGINE_ROOM_KRADEN, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_ENGINE_ROOM_KRADEN, gMainRoutineWork.leaderActorId);
   wait(1);
   Actor_SetSpeed(ACTOR_PIERS, 0.8);
   Actor_SetSpeed(ACTOR_SHEBA, 0.8);
@@ -2076,7 +2076,7 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(8, LemurianShipAquaHydra, ENTRANCE_RUNNING_ENGINE_ROOM_FROM_CORRIDOR, EXIT_FLAG_NONE),
     SCENE_EXIT(9, LemurianShipAquaHydra, ENTRANCE_CORRIDOR_FROM_ENGINE_ROOM),
     SCENE_EXIT(LEMURIAN_SHIP_AQUA_HYDRA_TO_LEMURIAN_SHIP_CABINS_EAST, LemurianShipCabins, LEMURIAN_SHIP_CABINS_FROM_LEMURIAN_SHIP_AQUA_HYDRA_EAST_B),
-    SCENE_EXIT(LEMURIAN_SHIP_AQUA_HYDRA_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_LEMURIAN_SHIP_AQUA_HYDRA),
+    SCENE_EXIT(LEMURIAN_SHIP_AQUA_HYDRA_TO_WORLD_MAP, WorldMap, WORLD_MAP_SAIL_TO_DECK),
     SCENE_EXITS_END,
 };
 

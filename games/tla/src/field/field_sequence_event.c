@@ -57,8 +57,8 @@ void Leader_StopMoving(void) {
   struct Actor *actor = Actor_Lookup(Party_GetLeaderActor());
   actor->speedLimit = FIXED_ONE;
   actor->acceleration = toFIXED(1) / 2;
-  actor->targetX = TARGET_UNSET;
-  actor->targetZ = TARGET_UNSET;
+  actor->targetX = ACTOR_NO_TARGET;
+  actor->targetZ = ACTOR_NO_TARGET;
   actor->velocityX = 0;
   actor->velocityZ = 0;
   if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_KEYS)

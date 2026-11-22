@@ -95,7 +95,7 @@ s32 Scene_Initialize(void) {
     Event_SetDestination(SCENE_TITLE, TITLE_PROLOGUE);
     return 0;
   }
-  if (gMainRoutineWork.entrance == TITLE_CREDITS) {
+  if (gMainRoutineWork.entrance == TITLE_STORY_CRAWL) {
     Event_PlaySound(MUS_THE_BROKEN_SEAL);
     // "Ages ago, or so the stories / tell, the power of Alchemy..."
     Credits_Run(1);

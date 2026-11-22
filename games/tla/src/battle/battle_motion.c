@@ -248,19 +248,19 @@ void BattleMotion_ApplyPairMidpoint(s32 firstId, s32 secondId) {
 
   x1 = first->targetX;
   second = secondSlot->object;
-  if (x1 == TARGET_UNSET) {
+  if (x1 == ACTOR_NO_TARGET) {
     x1 = first->x;
   }
   z1 = first->targetZ;
-  if (z1 == TARGET_UNSET) {
+  if (z1 == ACTOR_NO_TARGET) {
     z1 = first->z;
   }
   x2 = second->targetX;
-  if (x2 == TARGET_UNSET) {
+  if (x2 == ACTOR_NO_TARGET) {
     x2 = second->x;
   }
   z2 = second->targetZ;
-  if (z2 == TARGET_UNSET) {
+  if (z2 == ACTOR_NO_TARGET) {
     z2 = second->z;
   }
 
@@ -306,7 +306,7 @@ s32 BattleMotion_ProjectScaledPosition(s32 slot, s32 *screen) {
   UNUSED s32 unused[3];
 
   BattleCamera_ApplyTransform();
-  scale = Iwram_MulFX(Render_ProjectPoint(&object->x, screen), record->scale);
+  scale = Iwram_MulFX(Matrix_ProjectPoint(&object->x, screen), record->scale);
   screen[1] -= Iwram_MulFX(scale, FIXEDtoINT(BattleUnit_GetEffectHeight(slot)));
   return 0;
 }
@@ -320,7 +320,7 @@ s32 BattleMotion_ProjectConditionalPosition(s32 slot, s32 *screen) {
   FIXED scale;
 
   BattleCamera_ApplyTransform();
-  scale = Iwram_MulFX(Render_ProjectPoint(&object->x, screen), record->scale);
+  scale = Iwram_MulFX(Matrix_ProjectPoint(&object->x, screen), record->scale);
   if (BattleSprite_IsSmall(Unit_Get(slot)->enemyId) != 0)
     screen[1] -= Iwram_MulFX(scale, EFFECT_HEIGHT_SMALL);
   else

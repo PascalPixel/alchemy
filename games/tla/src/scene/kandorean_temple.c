@@ -256,7 +256,7 @@ void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                  s32 g);
 void FieldEffect_StartBlankOverlay(s32 a);
 void KandoreanTemple_StartGate(void);
-void Actor_MoveToObject(s32 id, s32 target);
+void Actor_PlaceOnActor(s32 id, s32 target);
 extern s32 gKandoreanTemple_MeditateScript[];
 extern s32 gKandoreanTemple_LevitateScript[];
 
@@ -1067,7 +1067,7 @@ void KandoreanTemple_RunWestVent(void) {
       if (GameFlag_Get(FLAG_ON_WEST_LIFT)) {
         leader = Actor_GetById(gMainRoutineWork.leaderActorId);
         leader->y.fixed = cover->y.fixed + toFIXED(4);
-        leader->targetY = TARGET_UNSET;
+        leader->targetY = ACTOR_NO_TARGET;
         leader->velocityY = 0;
       }
     } else if (*timer == VENT_SHUT) {
@@ -1211,7 +1211,7 @@ void KandoreanTemple_RunEastVent(void) {
       if (GameFlag_Get(FLAG_ON_EAST_LIFT)) {
         leader = Actor_GetById(gMainRoutineWork.leaderActorId);
         leader->y.fixed = cover->y.fixed + toFIXED(4);
-        leader->targetY = TARGET_UNSET;
+        leader->targetY = ACTOR_NO_TARGET;
         leader->velocityY = 0;
       }
     } else if (t == VENT_SHUT) {
@@ -3018,7 +3018,7 @@ void KandoreanTemple_PassTheTest(void) {
   Actor_WalkToAndWait(ACTOR_POI, 456, 408);
   // "Wait... You're not one of my students! Who are you!?"
   Event_ShowMessageAndWait(ACTOR_POI, 0);
-  Actor_MoveToObject(ACTOR_POIS_ROOM_KRADEN, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_POIS_ROOM_KRADEN, gMainRoutineWork.leaderActorId);
   wait(1);
   Actor_SetSpeed(ACTOR_POIS_ROOM_KRADEN, 0.8);
   Actor_WalkToAndWait(ACTOR_POIS_ROOM_KRADEN, 376, 392);

@@ -295,10 +295,6 @@ void System_CopyBuildStamp(void);
 
 void System_VBlankHandler(void);
 
-/// The inner product, copied to the stack to run (system_matrix.c's
-/// RelocatedInnerProduct).
-extern const u32 Math_InnerProductCode[];
-
 s32 System_GetLanguage(void);
 
 void Save_SetProgressCallback(void (*progress)(s32 step));

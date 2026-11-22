@@ -12,8 +12,8 @@
 	.endm
 
 	.section .rodata
-	.global gScene_AreaNameRules
-gScene_AreaNameRules:
+	.global gArea_NameRules
+gArea_NameRules:
 	area_name AREA_TITLE_SCREEN, -1, 0
 	area_name AREA_CLEAR_DATA, -1, 1
 	area_name AREA_WORLD_MAP, -1, 2

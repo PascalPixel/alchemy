@@ -425,14 +425,14 @@ void Leader_Search(void);
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   switch (gMainRoutineWork.entrance) {
-  case WORLD_MAP_FROM_IDEJIMA_NORTH_A:
+  case WORLD_MAP_VENUS_COLLAPSE:
     return gWorldMap_CollapsePlacements;
-  case WORLD_MAP_FROM_IDEJIMA_NORTHEAST:
+  case WORLD_MAP_DRIFT_NORTH:
     return gWorldMap_DriftPlacements;
-  case WORLD_MAP_FROM_LEMURIAN_SHIP_MAIN_DECK_SOUTH:
+  case WORLD_MAP_FIRST_VOYAGE:
     if (!Event_GetFlag(FLAG_SHIP_SAILABLE))
       return gWorldMap_FirstVoyagePlacements;
-  case WORLD_MAP_FROM_IDEJIMA_NORTH_B:
+  case WORLD_MAP_IDEJIMA_DRIFTING:
     return gWorldMap_DriftingIdejimaPlacements;
   default:
     return gWorldMapActorPlacements;
@@ -629,7 +629,7 @@ void WorldMap_LeaveShip(void) {
   }
 }
 
-void Actor_MoveToObject(s32 actor, s32 target);
+void Actor_PlaceOnActor(s32 actor, s32 target);
 
 /// Going aboard from the map: the ship's position is kept in gMainRoutineWork
 /// for the way back.
@@ -685,7 +685,7 @@ void WorldMap_RefuseToRunAway(void) {
     FieldEvent_ResolvePendingActions(0);
     if (Event_GetFlag(FLAG_JENNA_POINTED_TO_CONTIGO)) {
       FieldEffect_ScheduleRatioTransition(FIXED_ONE * 7 / 5, 6);
-      Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
+      Actor_PlaceOnActor(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
       System_Wait(1);
       Actor_WalkToAndWait(ACTOR_JENNA, (x << 4) + 24, (z << 4) - 12);
       Actor_FaceDirection(ACTOR_JENNA, southwest, 0);
@@ -704,7 +704,7 @@ void WorldMap_RefuseToRunAway(void) {
       s32 besideZ;
 
       FieldEffect_ScheduleRatioTransition(FIXED_ONE * 7 / 5, 6);
-      Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
+      Actor_PlaceOnActor(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
       System_Wait(1);
       x <<= 4;
       besideZ = (z << 4) - 12;
@@ -901,10 +901,10 @@ s32 Scene_Initialize(void) {
     if (GameFlag_Get(FLAG_BANDIT_ON_WORLD_MAP))
       WorldMap_FightBanditAndThieves(gMainRoutineWork.entrance);
     break;
-  case WORLD_MAP_FROM_IDEJIMA_NORTH_B:
+  case WORLD_MAP_IDEJIMA_DRIFTING:
     WorldMap_ShowIdejimaDrifting();
     break;
-  case WORLD_MAP_FROM_AQUA_ROCK_MOAI_NORTH:
+  case WORLD_MAP_CARRIED_TO_AQUA_ROCK:
     WorldMap_CarryPartyToAquaRock();
     break;
   case WORLD_MAP_FROM_LOHO:
@@ -914,10 +914,10 @@ s32 Scene_Initialize(void) {
       WorldMap_DeliverLohoCannon();
     }
     break;
-  case WORLD_MAP_FROM_IDEJIMA_NORTH_A:
+  case WORLD_MAP_VENUS_COLLAPSE:
     WorldMap_WatchVenusLighthouseCollapse();
     break;
-  case WORLD_MAP_FROM_IDEJIMA_NORTHEAST:
+  case WORLD_MAP_DRIFT_NORTH:
     WorldMap_DriftNorthOfContinent();
     break;
   case WORLD_MAP_PIERS_DJINN:
@@ -932,13 +932,13 @@ s32 Scene_Initialize(void) {
   case WORLD_MAP_ALHAFRA_MANOR_VIEW:
     WorldMap_PanToAlhafraManor();
     break;
-  case WORLD_MAP_FROM_LEMURIAN_SHIP_MAIN_DECK_SOUTH:
+  case WORLD_MAP_FIRST_VOYAGE:
     WorldMap_TakeTheTiller();
     break;
-  case WORLD_MAP_FROM_LEMURIAN_SHIP_AQUA_HYDRA:
+  case WORLD_MAP_SAIL_TO_DECK:
     WorldMap_SailToShipDeck();
     break;
-  case WORLD_MAP_FROM_JUPITER_LIGHTHOUSE_AERIE_BEACON:
+  case WORLD_MAP_JUPITER_BEACON:
     WorldMap_PlayLighthouseTransition(2);
     FieldActor_SetSpriteColor(Actor_GetById(ACTOR_PIERS), SPRITE_COLOR_HIDDEN);
     Actor_SetPosition(ACTOR_PIERS, 7277, 7300);
@@ -1130,7 +1130,7 @@ void WorldMap_FightBanditAndThieves(s32 entrance) {
     Event_SetDefeatDestination(SCENE_WORLD_MAP, WORLD_MAP_BANDIT_LOST);
     WorldMap_ReloadPendingAreaGraphics();
     FieldCamera_MoveTo(CAMERA_KEEP, CAMERA_KEEP, CAMERA_KEEP, 0);
-    Field_RequestBattleFromEncounterTable(102, 3);
+    Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_SCRIPTED, 3);
   } else if (entrance == WORLD_MAP_BANDIT_LOST) {
     Event_ClearFlag(FLAG_BANDIT_ON_WORLD_MAP);
     facingSouth = FACING_SOUTH;
@@ -1608,7 +1608,7 @@ void WorldMap_MeetEcho(void) {
   Event_ResolvePendingActions(0);
   Event_StartScreenTransition();
   Event_WaitTransitionFrames();
-  Actor_MoveToObject(ACTOR_ECHO, owner);
+  Actor_PlaceOnActor(ACTOR_ECHO, owner);
   djinni->velocityY = toFIXED(10);
   FieldActor_SetMoveTargetFX(djinni, x, 0, z);
   Event_Wait(30);
@@ -2831,7 +2831,7 @@ LATE_DATA struct SceneEntrance gSceneEntrances[] = {
 LATE_DATA u32 gSceneExits[] = {
     SCENE_EXITS(WorldMap),
     SCENE_EXIT(WORLD_MAP_TO_IDEJIMA_DRIFTING, WorldMap,
-               WORLD_MAP_FROM_IDEJIMA_NORTH_B),
+               WORLD_MAP_IDEJIMA_DRIFTING),
     SCENE_EXIT(WORLD_MAP_TO_IDEJIMA_NORTHEAST, Idejima,
                IDEJIMA_FROM_WORLD_MAP_SOUTH),
     SCENE_EXIT(WORLD_MAP_TO_LEMURIAN_SHIP_TILLER_A, LemurianShipTiller,

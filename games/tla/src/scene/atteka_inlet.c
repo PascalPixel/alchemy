@@ -340,7 +340,7 @@ void AttekaInlet_HammaShowsTheWings(void) {
   }
 }
 
-void Actor_MoveToObject(s32 id, s32 target);
+void Actor_PlaceOnActor(s32 id, s32 target);
 
 /// Kraden comes to the party leader and asks whether to set out, as in
 /// AttekaInlet_AskKradenToSetSail; after a no the leader steps back.
@@ -349,7 +349,7 @@ void AttekaInlet_KradenAsksToSetSail(void) {
 
   Event_Start();
   Event_ResolvePendingActions(0);
-  Actor_MoveToObject(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
   wait(1);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_NORTHWEST, 0);
   Actor_SetSpeed(ACTOR_KRADEN, 0.8);
@@ -482,7 +482,7 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Actor_SetHorizontalPositionAndAngleWithTerrain(
       ACTOR_HAMMETS_MESSENGER, toFIXED(504), toFIXED(460), angle);
   wait(1);
-  Event_SetMessageId((s32)MsgHeyWait2);
+  Event_SetMessageId((s32)MsgAttekaInletHeyWait);
   // "Hey, wait!"
   Event_ShowMessageAndWait(ACTOR_HAMMETS_MESSENGER, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);

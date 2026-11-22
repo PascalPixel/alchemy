@@ -116,7 +116,7 @@ void Window_OverlayTilePattern(u16 *entry, u16 *mirror, s32 pattern,
 #define TEXT_IS_NARROW_TILE(code) ((code) == WINDOW_TILE_HP_LABEL_END)
 #endif
 
-extern const u8 gText_ColourPens[];
+extern const u8 gFont_ColorPens[];
 
 /// Draws a string of 16-bit character codes with the window font into tiles of
 /// their own, starting x pixels into the first tile, and points tiles (and the
@@ -148,7 +148,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
   // pens maps a font pixel, 1 or 3 (the font's two shades), to a colour; 0
   // leaves the background.
   if (paletteBits == BG_TILE_PALETTE(WINDOW_PALETTE)) {
-    pens[1] = gText_ColourPens[work->colour & (PALETTE_COLORS - 1)];
+    pens[1] = gFont_ColorPens[work->colour & (PALETTE_COLORS - 1)];
     pens[3] = 3;
     Iwram_FillWords(canvas, TILE_TEXT_CANVAS_SIZE,
                     PIXELS_8BPP(WINDOW_BACKGROUND_COLOR));
@@ -169,7 +169,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
         switch (glyphCode) {
         case TEXT_COLOR:
           work->colour = *text++;
-          pens[1] = gText_ColourPens[work->colour & (PALETTE_COLORS - 1)];
+          pens[1] = gFont_ColorPens[work->colour & (PALETTE_COLORS - 1)];
           break;
         // TEXT_COLORS_RESET, TEXT_OUTLINE and TEXT_LINE_SPACING all reset the
         // colour here, and the last two leave their operand to be read as the
@@ -178,7 +178,7 @@ s32 Text_DrawStringAsTiles(u16 *text, u16 *tiles, u16 *mirror, s32 x) {
         case TEXT_OUTLINE:
         case TEXT_LINE_SPACING:
           work->colour = TEXT_COLOR_WHITE;
-          pens[1] = gText_ColourPens[work->colour];
+          pens[1] = gFont_ColorPens[work->colour];
           break;
         case TEXT_NEWLINE:
           x += TILE_TEXT_NEWLINE_WIDTH;

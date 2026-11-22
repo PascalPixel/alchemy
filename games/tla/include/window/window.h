@@ -29,7 +29,7 @@ enum { WINDOW_SPRITE_COUNT = 64 };
 #define TEXT_EXTRA_TILE_FIRST 512
 
 /// The window system's work: its text tile and upload state, the windows'
-/// tilemap, the windows, the three text channels, the 64 window sprites, and
+/// tilemap, the windows, the three text messages, the 64 window sprites, and
 /// the decoded message and its arguments.
 struct WindowWork {
   u16 nextTextTile;  ///< the text tile the next search for a free one starts at
@@ -42,16 +42,16 @@ struct WindowWork {
   u8 textPalette;       ///< text tiles' palette; 15 by default
   u16 tilemap[20][32];  ///< the windows' BG tilemap
   struct Window windows[WINDOW_COUNT];
-  struct UiChannelSlot channels[3];
+  struct Message messages[3];
   struct WindowSprite sprites[WINDOW_SPRITE_COUNT];
   struct WindowSpriteList freeSprites; ///< the sprites not in any window
   /// Per text tile (tiles 128 to 255, then 512 to 639): bit 0 once allocated,
   /// bit 1 while the tilemap shows it, 0 when free.
   u8 textTileState[2 * TEXT_TILES];
-  u16 lineSpacing;            ///< the current channel's, copied in to draw
+  u16 lineSpacing;            ///< the current message's, copied in to draw
   u16 unusedAfterLineSpacing; ///< set to 1 with the text style; not read
-  u16 outline;                ///< the current channel's, copied in to draw
-  u16 colour;                 ///< the current channel's, copied in to draw
+  u16 outline;                ///< the current message's, copied in to draw
+  u16 colour;                 ///< the current message's, copied in to draw
   u16 textBuffer[TEXT_BUFFER_MASK + 1]; ///< decoded text, a ring of codes
   u16 glyphSpacing;                     ///< 9 with the text style
   u16 textBufferEnd;     ///< where the next code goes in textBuffer
@@ -69,14 +69,14 @@ struct WindowWork {
   u8 waitingForSound;        ///< set while a message waits on its sound
   u8 haltingSpeech;          ///< cleared together with spacingAfter
   u8 spacingAfter;
-  /// Nonzero lets a tall message fit in 32 pixels, its channel then placing
-  /// glyphs by y / 320 (UiChannelSlot.compressLines).
+  /// Nonzero lets a tall message fit in 32 pixels, placing its glyphs by
+  /// y / 320 (Message.compressLines).
   s8 textMode;
 };
 
 STATIC_ASSERT(offsetof(struct WindowWork, tilemap) == 8);
 STATIC_ASSERT(offsetof(struct WindowWork, windows) == 1288);
-STATIC_ASSERT(offsetof(struct WindowWork, channels) == 1720);
+STATIC_ASSERT(offsetof(struct WindowWork, messages) == 1720);
 STATIC_ASSERT(offsetof(struct WindowWork, sprites) == 1840);
 STATIC_ASSERT(offsetof(struct WindowWork, freeSprites.head) == 3632);
 STATIC_ASSERT(offsetof(struct WindowWork, freeSprites.tailLink) == 3636);
@@ -260,7 +260,7 @@ enum CommandIcon {
   COMMAND_ICON_COINS = 32,
   COMMAND_ICON_LUCKY_MEDALS = 33,
   // The settings menu's choices and the Pause menu's entries
-  // (gOptionMenu_SpeedIcons to gOptionMenu_SleepIcons), whose command names
+  // (gSettingsMenu_SpeedIcons to gSettingsMenu_SleepIcons), whose command names
   // are placeholders.
   COMMAND_ICON_SPEED_SLOW = 34,
   COMMAND_ICON_SPEED_NORMAL = 35,
@@ -448,7 +448,7 @@ s32 Save_ScanFileSummaries(void);
 void Text_UseExtraTiles(s32 allowAlternateTiles);
 
 s32 Message_CopyExpanded(s32 key, u16 *destination, u32 capacity);
-s32 Message_DecodeMode1(s32 message);
+s32 Message_DecodeAndClearArguments(s32 message);
 void Message_DecodeAppend(s32 message);
 
 void MenuCursor_AdvanceFar(struct MenuCursor *cursor);
@@ -562,14 +562,14 @@ enum PauseMenuEntry {
   PAUSE_MENU_DEBUG_L = 21
 };
 
-#define WINDOW_HUE_COUNT 24 ///< "Window color" takes 0 to 23
+#define WINDOW_COLOR_COUNT 24 ///< "Window color" takes 0 to 23
 /// "Window brightness" takes 0 to 14.
 #define WINDOW_BRIGHTNESS_COUNT 15
 
 /// The brightness that adds nothing to the hue's colour.
 #define WINDOW_BRIGHTNESS_NEUTRAL 7
 
-/// Steps round gPaletteGlow_WaveTable's colour wheel; each hue is four.
+/// Steps round gWindowColor_WaveTable's colour wheel; each hue is four.
 #define WINDOW_COLOR_WHEEL_STEPS 96
 
 /// How many levels HIGHLIGHT_PALETTE lightens each channel of
@@ -601,5 +601,9 @@ enum MessageWindowOption {
   MESSAGE_WINDOW_ANCHOR_BOTTOM = 16, ///< WINDOW_FLAG_ANCHOR_BOTTOM
   MESSAGE_WINDOW_FIXED_X = 32        ///< WINDOW_FLAG_FIXED_X
 };
+
+/// Portrait_OpenWindow's window is PORTRAIT_WINDOW_TILES tiles square, a tile
+/// wider while minds are read.
+#define PORTRAIT_WINDOW_TILES 5
 
 #endif

@@ -15,7 +15,7 @@ struct ModelVertex {
   s8 unused; ///< no code names it
 };
 
-/// One projected vertex, as Render_ProjectPoint leaves it.
+/// One projected vertex, as Matrix_ProjectPoint leaves it.
 struct ProjectedVertex {
   s16 x;      ///< screen pixels
   s16 y;      ///< screen pixels
@@ -54,7 +54,7 @@ struct RenderModel {
 /// copied into IWRAM for a run of its kind, and its texture with it where there
 /// is room.
 void Render_DrawModelList(struct RenderModel *model);
-/// Projects count model vertices through Render_ProjectPoint into screen
+/// Projects count model vertices through Matrix_ProjectPoint into screen
 /// coordinates.
 void Render_ProjectVertices(struct ModelVertex *vertices,
                             struct ProjectedVertex *screen, s32 count);

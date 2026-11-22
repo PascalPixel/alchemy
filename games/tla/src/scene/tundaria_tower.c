@@ -795,7 +795,7 @@ void TundariaTower_SetLeaderCellShape(s32 a, s32 b);
 
 void TundariaTower_SpawnDustRing(void);
 
-void Actor_MoveToObject(s32 id, s32 target);
+void Actor_PlaceOnActor(s32 id, s32 target);
 
 union FieldObject *gTundariaTower_Reflection BSS_DATA;
 volatile s16 gSlideOnIce_Stopped BSS_DATA;
@@ -1272,9 +1272,9 @@ UNUSED void TundariaTower_RestorePillars(u16 *list) {
   s32 index;
   u8 *grid = gMapShapeGrid; // the shape grid, read once
 
-  Actor_MoveToObject(ACTOR_FIRST_PLACED, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_FIRST_PLACED + 1, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_FIRST_PLACED + 2, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_FIRST_PLACED, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_FIRST_PLACED + 1, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_FIRST_PLACED + 2, gMainRoutineWork.leaderActorId);
   wait(1);
   TundariaTower_FreezePillar(ACTOR_FIRST_PLACED);
   TundariaTower_FreezePillar(ACTOR_FIRST_PLACED + 1);
@@ -1503,17 +1503,6 @@ void TundariaTower_SetLeaderCellShape(s32 level, s32 layer) {
 }
 
 #include "shared/particle_update_falling.h"
-
-/// The falling rocks' work: their tiles, the rocks and their sprites, in a ring
-/// that next walks round.
-struct RockWork {
-  u8 tiles[1280];
-  struct Rock rocks[ROCK_COUNT];
-  struct EffectSprite sprites[ROCK_COUNT];
-  s16 next;
-  u16 tileBase;
-  s16 resource;
-};
 
 // Spawns count rocks around (x, y, z), each pushed out at a random angle and
 // thrown up and out along it.

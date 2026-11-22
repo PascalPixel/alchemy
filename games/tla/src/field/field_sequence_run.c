@@ -103,7 +103,7 @@ s32 FieldSequence_Run(void) {
   ActorSystem_InitializeFar(mode);
   Field_ClearRequests();
   work->triggers = (const void *)SCENE_ENTRIES->triggers();
-  BattleMap_ApplySceneEntranceView();
+  Field_ApplyEntrance();
   Actor_ResetForLeader((s32)SCENE_ENTRIES->placements());
   Field_PlaceTreasureSpots();
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION))
@@ -504,7 +504,7 @@ s32 FieldSequence_Run(void) {
     GameFlag_Clear(FLAG_FIELD_HANDLING_REQUESTS);
     if (Field_GetPartyActor() != NULL)
       Actor_StartRenderModeScriptFar();
-    pending = &gMainRoutineWork.pendingThird;
+    pending = &gMainRoutineWork.sandActive;
     do {
       wait(1);
       leader = Field_GetPartyActor();
@@ -765,7 +765,7 @@ s16 Stream_ReadS16(u8 **cursor) {
 /// Places the party where it enters: by the scene's entrance row for
 /// gMainRoutineWork.entrance, else on a map by the map's own entrance stream
 /// (Field_PlaceAtEntrance), else by the scene's first entrance row.
-void BattleMap_ApplySceneEntranceView(void) {
+void Field_ApplyEntrance(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   s32 done;
 

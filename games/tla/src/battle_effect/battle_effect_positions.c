@@ -22,7 +22,7 @@ s32 BattleUnit_ProjectToScreen(s32 unit, s32 *screen) {
   object = BattleObject_GetFar(unit)->object;
   info = GetMotionRecordFar(object, 0);
   EFFECT_VIEW_FROM_CAMERA(camera);
-  scale = Iwram_MulFX(Render_ProjectPoint(&object->x, screen), info->scale);
+  scale = Iwram_MulFX(Matrix_ProjectPoint(&object->x, screen), info->scale);
   screen[1] -=
       Iwram_MulFX(scale, FIXEDtoINT(BattleUnit_GetEffectHeightFar(unit)) >> 1);
   return 0;
@@ -307,7 +307,7 @@ void BattleEffect_RunAttackSlash(struct BattleEffectParams *args) {
         s32 size = spark->variant;
 
         if (size > 0) {
-          Render_ProjectPoint(&spark->x, &screen.x);
+          Matrix_ProjectPoint(&spark->x, &screen.x);
           screen.x += scrollX;
           size >>= 3;
           size += 2;

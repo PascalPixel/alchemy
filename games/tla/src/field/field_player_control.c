@@ -244,9 +244,9 @@ push_objects:
             if (!MapGrid_CheckCollision(other, &testPosition)) {
               Vector_AddPolarOffset(toFIXED(1) / 4, direction,
                                     (struct FieldPosition *)&other->x.fixed);
-              other->targetX = TARGET_UNSET;
-              other->targetY = TARGET_UNSET;
-              other->targetZ = TARGET_UNSET;
+              other->targetX = ACTOR_NO_TARGET;
+              other->targetY = ACTOR_NO_TARGET;
+              other->targetZ = ACTOR_NO_TARGET;
               pushed |= 1;
               continue;
             }
@@ -283,9 +283,9 @@ counted:
   }
 
   if (collision != 0) {
-    actor->targetX = TARGET_UNSET;
-    actor->targetY = TARGET_UNSET;
-    actor->targetZ = TARGET_UNSET;
+    actor->targetX = ACTOR_NO_TARGET;
+    actor->targetY = ACTOR_NO_TARGET;
+    actor->targetZ = ACTOR_NO_TARGET;
     if (collision & PLAYER_STEP_BLOCKED) {
       s32 difference;
 
@@ -341,7 +341,7 @@ s32 Field_RequestShortcut(u32 assignment) {
 /// Checks the keys the player has configured: the menu, examine and start
 /// keys set their request and return 1, the two shortcut keys pass on their
 /// assignment (Field_RequestShortcut). While the Ring is out, any of the five
-/// asks for the Ring again (ABILITY_RING, packed), which ends it. Returns 0
+/// asks for the Ring again (ABILITY_MAGNET, packed), which ends it. Returns 0
 /// when none is pressed.
 s32 Field_CheckConfiguredKeys(void) {
   struct FieldWork *work = gFieldWork;
@@ -355,7 +355,7 @@ s32 Field_CheckConfiguredKeys(void) {
         (gInput.pressed & gMainRoutineWork.startKeys) ||
         (gInput.pressed & gMainRoutineWork.firstShortcutKeys) ||
         (gInput.pressed & gMainRoutineWork.secondShortcutKeys)) {
-      work->psynergy = ABILITY_RING | ACT_PACKED;
+      work->psynergy = ABILITY_MAGNET | ACT_PACKED;
       return 1;
     }
     return 0;
@@ -520,7 +520,7 @@ s32 Actor_UpdatePlayerControl(struct Actor *actor) {
           SAME_CELL(contact.x, other->x.fixed) &&
           SAME_CELL(contact.z, other->z.fixed) &&
 #endif
-          other->targetX == TARGET_UNSET && other->targetZ == other->targetX)
+          other->targetX == ACTOR_NO_TARGET && other->targetZ == other->targetX)
         goto clear;
     }
     if (onObject && !MapGrid_CheckCollision(actor, &position)) {
@@ -649,9 +649,9 @@ push_objects:
             if (!MapGrid_CheckCollision(other, &testPosition)) {
               Vector_AddPolarOffset(toFIXED(1) / 4, direction,
                                     (struct FieldPosition *)&other->x.fixed);
-              other->targetX = TARGET_UNSET;
-              other->targetY = TARGET_UNSET;
-              other->targetZ = TARGET_UNSET;
+              other->targetX = ACTOR_NO_TARGET;
+              other->targetY = ACTOR_NO_TARGET;
+              other->targetZ = ACTOR_NO_TARGET;
               pushed |= 1;
               continue;
             }
@@ -688,9 +688,9 @@ counted:
   }
 
   if (collision != 0) {
-    actor->targetX = TARGET_UNSET;
-    actor->targetY = TARGET_UNSET;
-    actor->targetZ = TARGET_UNSET;
+    actor->targetX = ACTOR_NO_TARGET;
+    actor->targetY = ACTOR_NO_TARGET;
+    actor->targetZ = ACTOR_NO_TARGET;
     actor->velocityX = 0;
     actor->velocityZ = 0;
     if (collision & PLAYER_STEP_BLOCKED) {

@@ -1,7 +1,7 @@
 /// @file
 /// The 110 encounter zones, by zone number: each zone's rate, level,
 /// formations and their weights. A field zone's comment gives its area name
-/// (gScene_AreaNameRules) and the scenes and entrances that take it
+/// (gArea_NameRules) and the scenes and entrances that take it
 /// (gScene_EncounterRules); a World Map zone's, its encounter regions and
 /// the battle environments that take it (gWorldMap_EncounterRules); a Djinni
 /// zone's, the Djinn whose battles it holds (gEncounter_AreaEntryTable).
@@ -9,7 +9,7 @@
 #include "field/encounter_zone.h"
 
 // clang-format off
-const struct EncounterZone gEncounter_EnemyGroupTable[] = {
+const struct EncounterZone gEncounterZones[] = {
     // None: a ground whose zone is 0 has no random battles
     {0},
     // Djinni battles: DJINNI_FLINT to DJINNI_SALT
@@ -57,7 +57,7 @@ const struct EncounterZone gEncounter_EnemyGroupTable[] = {
         .formations = {49, 50, 51, 52, 53, 637},
         .weights = {10, 10, 10, 10, 10, 10},
     },
-    // zone 10
+    // ENCOUNTER_ZONE_SCRIPTED_YAMPI_DESERT_ALHAFRA
     {
         .formations = {55, 56},
         .weights = {10, 10},
@@ -693,7 +693,7 @@ const struct EncounterZone gEncounter_EnemyGroupTable[] = {
         .formations = {621, 622, 623, 624, 625, 626, 627, 628},
         .weights = {10, 10, 10, 10, 20, 20, 20, 20},
     },
-    // zone 102
+    // ENCOUNTER_ZONE_SCRIPTED
     {
         .formations = {77, 78, 635, 636, 638},
         .weights = {10, 10, 10, 10, 10},

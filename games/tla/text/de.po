@@ -69900,7 +69900,7 @@ msgstr ""
 "Wir sollten jetzt besser gehen.\n"
 "Beeilen wir uns, {actor_name:5}!{end_wait}"
 
-msgctxt "MsgHeyWait2"
+msgctxt "MsgAttekaInletHeyWait"
 msgid "11891"
 msgstr "Hey, wartet!{end_wait}"
 

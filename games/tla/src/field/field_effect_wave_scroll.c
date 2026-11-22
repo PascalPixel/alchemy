@@ -10,15 +10,9 @@
 #include "system/dma.h"
 #include "system/io_reg.h"
 #include "system/frame.h"
+#include "resource_ids.h"
 
 extern s16 WAVE_SCROLL_LINES[];
-
-/// A line's swing on the sine wave falls by half a pixel a line down the
-/// screen, to nothing at WAVE_SCROLL_CALM_LINE.
-#define WAVE_SCROLL_CALM_LINE 144
-/// A line scrolled past these is pulled back by as much.
-#define WAVE_SCROLL_MAX 56
-#define WAVE_SCROLL_MIN (-64)
 
 void WAVE_SCROLL(void) {
   s16 *line = WAVE_SCROLL_LINES;
@@ -53,7 +47,3 @@ void WAVE_SCROLL(void) {
   Dma_Set(source, (void *)scroll, DMA_HBLANK_HALFWORD_PER_LINE,
           (volatile u32 *)dma);
 }
-
-#undef WAVE_SCROLL_CALM_LINE
-#undef WAVE_SCROLL_MAX
-#undef WAVE_SCROLL_MIN

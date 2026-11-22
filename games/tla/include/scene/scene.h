@@ -521,6 +521,8 @@ extern const u8 gField_GeyserTiles[];
 #define GEYSER_PERIOD_FRAMES 360
 #define GEYSER_RISE_FRAME 60
 #define GEYSER_FALL_FRAME 240
+/// The pixels a geyser rises to.
+#define GEYSER_MAX_HEIGHT 64
 /// The terrain id and collision slot of the first geyser: the geysers take the
 /// last GEYSER_ENTRIES of the 256 terrain ids.
 #define GEYSER_FIRST_TERRAIN (256 - GEYSER_ENTRIES)

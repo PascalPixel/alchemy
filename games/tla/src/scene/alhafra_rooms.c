@@ -344,31 +344,29 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gAlhafraRooms_Triggers;
 }
 
-s32 BattleEffect_DrawSpriteAtWorldPosition(struct EffectSprite *sprite, s32 x,
-                                           s32 y, s32 z);
+s32 EffectSprite_DrawAtWorldXYZ(struct EffectSprite *sprite, s32 x, s32 y,
+                                s32 z);
 void EffectSprite_InitWithFadeOverlay(struct EffectSprite *sprite, s32 pivotX,
                                       s32 pivotY, u32 attributes);
 
 /// The first guest's update: draws its extra sprite 12 pixels above it.
 s32 AlhafraRooms_DrawFirstGuestSprite(struct Actor *guest) {
-  BattleEffect_DrawSpriteAtWorldPosition(
-      &gAlhafraRooms_FirstGuestSprite, guest->x.fixed,
-      guest->y.fixed + toFIXED(12), guest->z.fixed);
+  EffectSprite_DrawAtWorldXYZ(&gAlhafraRooms_FirstGuestSprite, guest->x.fixed,
+                              guest->y.fixed + toFIXED(12), guest->z.fixed);
   return 0;
 }
 
 /// The second guest's update: draws its extra sprite 8 pixels above it.
 s32 AlhafraRooms_DrawSecondGuestSprite(struct Actor *guest) {
-  BattleEffect_DrawSpriteAtWorldPosition(
-      &gAlhafraRooms_SecondGuestSprite, guest->x.fixed,
-      guest->y.fixed + toFIXED(8), guest->z.fixed);
+  EffectSprite_DrawAtWorldXYZ(&gAlhafraRooms_SecondGuestSprite, guest->x.fixed,
+                              guest->y.fixed + toFIXED(8), guest->z.fixed);
   return 0;
 }
 
 // The Japanese edition sets no FLAG_SCENE_TEMP_00 by the leader's position and
 // places neither sailor of the Crossbone Isle tale.
 #if TLA_PATCH_1
-void BattleEffect_FillOverlayTiles(s32 mode);
+void FadeOverlay_FillTiles(s32 mode);
 
 /// Sets up the houses: the guests' extra sprites, and once the mast is cleared
 /// the two sailors in Alex's room.
@@ -380,7 +378,7 @@ s32 Scene_Initialize(void) {
   FieldActor_SetSpritePriority(ACTOR_ALEX, 3);
   FieldActor_SetSpritePriority(ACTOR_DEMANDING_GUEST, 3);
   FieldActor_SetSpritePriority(ACTOR_DEMANDING_GUESTS_WIFE, 3);
-  BattleEffect_FillOverlayTiles(0);
+  FadeOverlay_FillTiles(0);
   Call4((void (*)())EffectSprite_InitWithFadeOverlay,
         (s32)&gAlhafraRooms_FirstGuestSprite, 8, 15, OBJ_SIZE_16X16);
   Call4((void (*)())EffectSprite_InitWithFadeOverlay,
@@ -415,7 +413,7 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 #else
-void BattleEffect_FillOverlayTiles(s32 mode);
+void FadeOverlay_FillTiles(s32 mode);
 
 /// Sets up the houses and the guests' extra sprites.
 s32 Scene_Initialize(void) {
@@ -426,7 +424,7 @@ s32 Scene_Initialize(void) {
   FieldActor_SetSpritePriority(ACTOR_ALEX, 3);
   FieldActor_SetSpritePriority(ACTOR_DEMANDING_GUEST, 3);
   FieldActor_SetSpritePriority(ACTOR_DEMANDING_GUESTS_WIFE, 3);
-  BattleEffect_FillOverlayTiles(0);
+  FadeOverlay_FillTiles(0);
   Call4((void (*)())EffectSprite_InitWithFadeOverlay,
         (s32)&gAlhafraRooms_FirstGuestSprite, 8, 15, OBJ_SIZE_16X16);
   Call4((void (*)())EffectSprite_InitWithFadeOverlay,

@@ -119,9 +119,9 @@ update_object:
     Actor_SelectAnimation(actor, movementAnimation);
 
   if (collision != 0) {
-    actor->targetX = TARGET_UNSET;
-    actor->targetY = TARGET_UNSET;
-    actor->targetZ = TARGET_UNSET;
+    actor->targetX = ACTOR_NO_TARGET;
+    actor->targetY = ACTOR_NO_TARGET;
+    actor->targetZ = ACTOR_NO_TARGET;
     actor->velocityX = 0;
     actor->velocityZ = 0;
     if ((collision & PLAYER_STEP_BLOCKED) != 0) {
@@ -418,9 +418,9 @@ push_objects:
             if (!MapGrid_CheckCollision(other, &testPosition)) {
               Vector_AddPolarOffset(toFIXED(1) / 4, direction,
                                     (struct FieldPosition *)&other->x.fixed);
-              other->targetX = TARGET_UNSET;
-              other->targetY = TARGET_UNSET;
-              other->targetZ = TARGET_UNSET;
+              other->targetX = ACTOR_NO_TARGET;
+              other->targetY = ACTOR_NO_TARGET;
+              other->targetZ = ACTOR_NO_TARGET;
               pushed |= 1;
               continue;
             }
@@ -455,9 +455,9 @@ counted:
   }
 
   if (collision != 0) {
-    actor->targetX = TARGET_UNSET;
-    actor->targetY = TARGET_UNSET;
-    actor->targetZ = TARGET_UNSET;
+    actor->targetX = ACTOR_NO_TARGET;
+    actor->targetY = ACTOR_NO_TARGET;
+    actor->targetZ = ACTOR_NO_TARGET;
     actor->velocityX = 0;
     actor->velocityZ = 0;
     if (collision & PLAYER_STEP_BLOCKED) {
@@ -649,9 +649,9 @@ update_object:
   }
 
   if (collision != 0) {
-    actor->targetX = TARGET_UNSET;
-    actor->targetY = TARGET_UNSET;
-    actor->targetZ = TARGET_UNSET;
+    actor->targetX = ACTOR_NO_TARGET;
+    actor->targetY = ACTOR_NO_TARGET;
+    actor->targetZ = ACTOR_NO_TARGET;
     actor->velocityX = 0;
     actor->velocityZ = 0;
     if ((collision & PLAYER_STEP_BLOCKED) != 0) {
@@ -868,9 +868,9 @@ s32 Actor_FlyOnWorldMap(struct Actor *actor) {
     Actor_SelectAnimation(actor, 2);
 
   if (collision != 0) {
-    actor->targetX = TARGET_UNSET;
-    actor->targetY = TARGET_UNSET;
-    actor->targetZ = TARGET_UNSET;
+    actor->targetX = ACTOR_NO_TARGET;
+    actor->targetY = ACTOR_NO_TARGET;
+    actor->targetZ = ACTOR_NO_TARGET;
     actor->velocityX = 0;
     actor->velocityZ = 0;
     if ((collision & PLAYER_STEP_BLOCKED) != 0) {

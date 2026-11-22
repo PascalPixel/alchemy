@@ -51,7 +51,7 @@ struct BurstWork {
 };
 
 /// The palette of Burst's explosions, loaded into BURST_EXPLOSION_PALETTE.
-extern const u16 gBurst_SparkPalette[];
+extern const u16 gBurst_ExplosionPalette[];
 
 #define BURST_NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
 
@@ -86,7 +86,7 @@ void FieldPsynergy_UpdateBurst(void) {
       Io_Write16(green | blue | red, palette++);
     }
   } else if (work->paletteMode == 2) {
-    Dma_Set(gBurst_SparkPalette,
+    Dma_Set(gBurst_ExplosionPalette,
             (void *)&OBJ_PLTT_COLOR(BURST_EXPLOSION_PALETTE, 0),
             DMA_COPY_HALFWORDS(16), REG_DMA3);
     work->paletteMode = 0;

@@ -31,8 +31,8 @@ extern volatile u8 gScreenFadeTargetLevel; ///< the brightness the fade ends at
 /// The two tiles of the link screen's page arrows, which Link_DrawPageArrows
 /// shifts and merges into the window border each frame.
 extern u8 gRomShiftedTilePair[];
-/// Matrix_BuildLookAt's ARM dot product, seven words it copies onto its
-/// stack to run.
+/// Matrix_BuildLookAt's dot product, a Thumb entry and its ARM code: eight
+/// words it copies onto its stack to run.
 extern const u32 RelocatedInnerProduct[];
 /// The size of Decompress_MoveToFrontLzCommandsCode, which
 /// Decompress_MoveToFrontLz copies to the heap.

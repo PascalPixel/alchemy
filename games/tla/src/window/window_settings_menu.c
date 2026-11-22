@@ -35,7 +35,7 @@ u16 Color_ScaleComponents(s16 *rgb, FIXED redScale, FIXED greenScale,
   return red;
 }
 
-extern const u8 gPaletteGlow_WaveTable[];
+extern const u8 gWindowColor_WaveTable[];
 
 u16 Color_ScaleComponents(s16 *rgb, FIXED redScale, FIXED greenScale,
                           FIXED blueScale);
@@ -60,13 +60,13 @@ void WindowColor_Apply(s32 phase, s32 brightness) {
   s16 blue;
   s16 offset;
 
-  step = ((phase + WINDOW_HUE_COUNT / 2) % WINDOW_HUE_COUNT) * 4;
+  step = ((phase + WINDOW_COLOR_COUNT / 2) % WINDOW_COLOR_COUNT) * 4;
   offset = brightness - WINDOW_BRIGHTNESS_NEUTRAL;
-  red = gPaletteGlow_WaveTable[(step % WINDOW_COLOR_WHEEL_STEPS)] + offset;
-  green = gPaletteGlow_WaveTable[(step + WINDOW_COLOR_WHEEL_STEPS / 3) %
+  red = gWindowColor_WaveTable[(step % WINDOW_COLOR_WHEEL_STEPS)] + offset;
+  green = gWindowColor_WaveTable[(step + WINDOW_COLOR_WHEEL_STEPS / 3) %
                                  WINDOW_COLOR_WHEEL_STEPS] +
           offset;
-  blue = gPaletteGlow_WaveTable[(step + WINDOW_COLOR_WHEEL_STEPS * 2 / 3) %
+  blue = gWindowColor_WaveTable[(step + WINDOW_COLOR_WHEEL_STEPS * 2 / 3) %
                                 WINDOW_COLOR_WHEEL_STEPS] +
          offset;
   CLAMP(red, 0, RGB_LEVEL_MAX);
@@ -152,7 +152,7 @@ void SettingsMenu_InitializeWork(void) {
   Dma_Set((const void *)&zero, work,
           DMA_FILL_WORDS(sizeof(struct OptionMenuWork) / 4), REG_DMA3);
   work->option[SETTINGS_ROW_WINDOW_COLOR] = gMainRoutineWork.windowHue;
-  work->optionCount[SETTINGS_ROW_WINDOW_COLOR] = WINDOW_HUE_COUNT;
+  work->optionCount[SETTINGS_ROW_WINDOW_COLOR] = WINDOW_COLOR_COUNT;
   work->option[SETTINGS_ROW_WINDOW_BRIGHTNESS] =
       gMainRoutineWork.windowBrightness;
   work->optionCount[SETTINGS_ROW_WINDOW_BRIGHTNESS] = WINDOW_BRIGHTNESS_COUNT;
@@ -202,11 +202,11 @@ void SettingsMenu_Release(void) {
 
 extern const u8 gPointingHandTiles[];
 extern const u8 gSettingsMenu_SliderTiles[];
-extern const u16 gWorkspaceOptions_SliderPalette[];
+extern const u16 gSettingsMenu_SliderPalette[];
 
-extern s8 gOptionMenu_SpeedIcons[];
-extern s8 gOptionMenu_SpeechIcons[];
-extern s8 gOptionMenu_SleepIcons[];
+extern s8 gSettingsMenu_SpeedIcons[];
+extern s8 gSettingsMenu_SpeechIcons[];
+extern s8 gSettingsMenu_SleepIcons[];
 extern u8 MsgSpeechLabel[];
 extern u8 MsgAutoSleepLabel[];
 
@@ -258,7 +258,7 @@ struct Window *SettingsMenu_Open(void) {
 
   x = VramCache_FindFreeEntry();
   if (x < VRAM_CACHE_ENTRY_COUNT) {
-    Dma_Set(gWorkspaceOptions_SliderPalette,
+    Dma_Set(gSettingsMenu_SliderPalette,
             (void *)&OBJ_PLTT_COLOR(SLIDER_PALETTE, 0), DMA_COPY_HALFWORDS(32),
             REG_DMA3);
     VramCache_Load(x, 256, gSettingsMenu_SliderTiles);
@@ -305,22 +305,22 @@ struct Window *SettingsMenu_Open(void) {
   }
 
   y = 28;
-  work->choiceIcons[0][0] =
-      CommandIcon_Create(gOptionMenu_SpeedIcons[0], 0, win, OPTION_CHOICE_X, y);
-  work->choiceIcons[0][1] = CommandIcon_Create(gOptionMenu_SpeedIcons[1], 0,
+  work->choiceIcons[0][0] = CommandIcon_Create(gSettingsMenu_SpeedIcons[0], 0,
+                                               win, OPTION_CHOICE_X, y);
+  work->choiceIcons[0][1] = CommandIcon_Create(gSettingsMenu_SpeedIcons[1], 0,
                                                win, OPTION_CHOICE_X + 24, y);
-  work->choiceIcons[0][2] = CommandIcon_Create(gOptionMenu_SpeedIcons[2], 0,
+  work->choiceIcons[0][2] = CommandIcon_Create(gSettingsMenu_SpeedIcons[2], 0,
                                                win, OPTION_CHOICE_X + 48, y);
   y = 52;
   work->choiceIcons[1][0] =
-      CommandIcon_Create(gOptionMenu_SpeechIcons[0], 0, win, 100, y);
+      CommandIcon_Create(gSettingsMenu_SpeechIcons[0], 0, win, 100, y);
   work->choiceIcons[1][1] =
-      CommandIcon_Create(gOptionMenu_SpeechIcons[1], 0, win, 124, y);
+      CommandIcon_Create(gSettingsMenu_SpeechIcons[1], 0, win, 124, y);
   y = 76;
   work->choiceIcons[2][0] =
-      CommandIcon_Create(gOptionMenu_SleepIcons[0], 0, win, 100, y);
+      CommandIcon_Create(gSettingsMenu_SleepIcons[0], 0, win, 100, y);
   work->choiceIcons[2][1] =
-      CommandIcon_Create(gOptionMenu_SleepIcons[1], 0, win, 124, y);
+      CommandIcon_Create(gSettingsMenu_SleepIcons[1], 0, win, 124, y);
   return win;
 }
 
@@ -358,7 +358,7 @@ struct Window *SettingsMenu_Open(void) {
 
 extern u8 MsgMessageSpeedSlow[], MsgSpeechOff[], MsgAutoSleepOff[],
     MsgWindowColorHelp[], MsgSleepModeHelp[];
-extern const u8 gOptionMenu_HuePresets[], gOptionMenu_BrightnessPresets[];
+extern const u8 gSettingsMenu_HuePresets[], gSettingsMenu_BrightnessPresets[];
 
 struct WindowSprite *MenuTitle_Create(s32 group, struct Window *input, s32 x,
                                       s32 y);
@@ -422,7 +422,7 @@ s32 SettingsMenu_Run(void) {
         dimmed = 0;
         if (i != work->option[SETTINGS_ROW_MESSAGE_SPEED])
           dimmed = 1;
-        CommandIcon_Load(gOptionMenu_SpeedIcons[i], resourceIndex, dimmed);
+        CommandIcon_Load(gSettingsMenu_SpeedIcons[i], resourceIndex, dimmed);
       }
       for (i = 0; i <= 1; i++) {
         icon = work->choiceIcons[1][i];
@@ -432,7 +432,7 @@ s32 SettingsMenu_Run(void) {
         dimmed = 0;
         if (i != work->option[SETTINGS_ROW_SPEECH])
           dimmed = 1;
-        CommandIcon_Load(gOptionMenu_SpeechIcons[i], resourceIndex, dimmed);
+        CommandIcon_Load(gSettingsMenu_SpeechIcons[i], resourceIndex, dimmed);
       }
       for (i = 0; i <= 1; i++) {
         icon = work->choiceIcons[2][i];
@@ -442,7 +442,7 @@ s32 SettingsMenu_Run(void) {
         dimmed = 0;
         if (i != work->option[SETTINGS_ROW_AUTO_SLEEP])
           dimmed = 1;
-        CommandIcon_Load(gOptionMenu_SleepIcons[i], resourceIndex, dimmed);
+        CommandIcon_Load(gSettingsMenu_SleepIcons[i], resourceIndex, dimmed);
       }
 
       x = (s16)settingsWindow->x * 8 + OPTION_SLIDER_X;
@@ -496,8 +496,8 @@ s32 SettingsMenu_Run(void) {
       redraw = 1;
       if (work->preset > 5)
         work->preset = 0;
-      *windowColor = gOptionMenu_HuePresets[work->preset];
-      *brightness = gOptionMenu_BrightnessPresets[work->preset];
+      *windowColor = gSettingsMenu_HuePresets[work->preset];
+      *brightness = gSettingsMenu_BrightnessPresets[work->preset];
       continue;
     }
     if (gInput.pressed & (KEY_A | KEY_START)) {

@@ -781,6 +781,13 @@ extern char ResourceId_WhirlwindTiles;
 #define WHIRLWIND_MAP_WIDTH 16
 #define WHIRLWIND_MAP_HEIGHT 18
 #define WHIRLWIND_FILL_TILE 16
+/// Whirlwind's sway (field/field_effect_wave_scroll.c): each line of its
+/// picture swings by half its height above WAVE_SCROLL_CALM_LINE, the picture's
+/// foot, and a line swung past WAVE_SCROLL_MAX pixels one way or
+/// WAVE_SCROLL_MIN the other is pulled back by as much.
+#define WAVE_SCROLL_CALM_LINE (WHIRLWIND_MAP_HEIGHT * 8)
+#define WAVE_SCROLL_MAX 56
+#define WAVE_SCROLL_MIN (-64)
 /// Loaded by AirsRockInside_WakeHallStatue, AirsRockInside_WakeVialChestStatue,
 /// AirsRock_WhirlwindOpensTheTop and JupiterLighthouse_FlashSky.
 extern char ResourceId_LightningMap;

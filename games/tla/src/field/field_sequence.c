@@ -38,7 +38,7 @@
 
 // The object's functions its parts call before their definitions.
 void Actor_SetHorizontalPositionWithTerrain(u32 objectId, FIXED x, FIXED z);
-void Actor_MoveToObject(u32 objectId, u32 otherId);
+void Actor_PlaceOnActor(u32 objectId, u32 otherId);
 
 // The parts, in ROM order (The Broken Seal's src/README.md, "Objects and
 // parts").

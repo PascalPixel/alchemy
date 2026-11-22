@@ -516,7 +516,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
         ScreenTransition_AllocateAndClearState();
     state->mode = variant;
     state->value = TRANSITION_OPEN;
-    ScreenTransition_FillTilemapAndSolidTile(DISSOLVE_COVER_COLOR);
+    ScreenTransition_FillTilemapAndColorTile(DISSOLVE_COVER_COLOR);
     wait(1);
     Task_Add(ScreenTransition_UpdateDissolve, TASK_PASS_FRAME);
     IO_WRITE_QUEUE_PUSH((u32)&REG_DISPCNT, REG_DISPCNT | display->dispcnt,
@@ -543,7 +543,7 @@ void ScreenTransition_Start(s32 mode, s32 frames) {
       state->duration = frames;
       state->step = 0;
     } else {
-      Task_Add(ScreenTransition_UpdateFromCentre, TASK_PASS_FRAME);
+      Task_Add(ScreenTransition_UpdateFromCenter, TASK_PASS_FRAME);
       Irq_SetHandler(IRQ_HBLANK, 0, ScreenTransition_UpdateScanline);
       state->start = DISPLAY_HEIGHT / 2;
       state->end = 0;
@@ -595,7 +595,7 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
         ScreenTransition_AllocateAndClearState();
     state->mode = variant;
     state->value = TRANSITION_OPEN;
-    ScreenTransition_FillTilemapAndSolidTile(0);
+    ScreenTransition_FillTilemapAndColorTile(0);
     wait(1);
     Task_Add(ScreenTransition_UpdateDissolve, TASK_PASS_FRAME);
     state->start = TRANSITION_OPEN;
@@ -617,7 +617,7 @@ void ScreenTransition_Finish(s32 mode, s32 frames) {
       state->duration = frames;
       state->step = 0;
     } else {
-      Task_Add(ScreenTransition_UpdateFromCentre, TASK_PASS_FRAME);
+      Task_Add(ScreenTransition_UpdateFromCenter, TASK_PASS_FRAME);
       Irq_SetHandler(IRQ_HBLANK, 0, ScreenTransition_UpdateScanline);
       state->start = 0;
       state->end = DISPLAY_HEIGHT / 2;
@@ -701,7 +701,7 @@ void ScreenTransition_Update(void) {
 }
 
 /// As ScreenTransition_Update, but the lines flicker every other frame.
-void ScreenTransition_UpdateFromCentre(void) {
+void ScreenTransition_UpdateFromCenter(void) {
   struct ScreenTransitionState *state;
   struct MapViewWork *window;
   s8 *duration;
@@ -715,7 +715,7 @@ void ScreenTransition_UpdateFromCentre(void) {
 
     if (*step >= *duration) {
       *duration = 0;
-      Task_Remove(ScreenTransition_UpdateFromCentre);
+      Task_Remove(ScreenTransition_UpdateFromCenter);
       Irq_SetHandler(IRQ_HBLANK, 0, 0);
       return;
     } else {
@@ -853,7 +853,7 @@ void ScreenTransition_UpdateDissolve(void) {
 
 /// Fills background screen block 4 with tile 0 in WINDOW_PALETTE and, unless
 /// color is -1, makes tile 0 solid color.
-void ScreenTransition_FillTilemapAndSolidTile(s32 color) {
+void ScreenTransition_FillTilemapAndColorTile(s32 color) {
   struct ScreenTransitionState *work = Ram_HeapSlots->screenTransition;
   Dma_Fill32(WINDOW_TILE_PAIR(BG_TILE_PALETTE(WINDOW_PALETTE)),
              BG_SCREEN_BLOCK(4),
@@ -879,7 +879,7 @@ void ScreenTransition_InitializeState(s32 mode) {
 
   state = HeapSlot_AllocEwram(HEAP_SLOT_SCREEN_TRANSITION, sizeof(*state));
   Dma_Fill32(0, state, sizeof(*state));
-  ScreenTransition_FillTilemapAndSolidTile(0);
+  ScreenTransition_FillTilemapAndColorTile(0);
   state->mode = mode;
   state->value = 0;
   Task_Add(ScreenTransition_UpdateDissolve, TASK_PASS_FRAME);

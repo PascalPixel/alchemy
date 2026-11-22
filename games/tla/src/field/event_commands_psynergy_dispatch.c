@@ -332,7 +332,7 @@ s32 BattleEffect_GetObjectDepth(struct Actor *actor) {
     point[0] = actor->x.fixed;
     point[1] = actor->y.fixed;
     point[2] = actor->z.fixed;
-    Render_ProjectPoint(point, screen);
+    Matrix_ProjectPoint(point, screen);
     depth = (WORLD_MAP_GROUND_DEPTH - screen[2]) / 2 + WORLD_MAP_GROUND_SLOT;
     if (depth <= 0)
       depth = 1;

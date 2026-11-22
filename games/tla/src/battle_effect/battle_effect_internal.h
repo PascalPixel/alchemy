@@ -305,14 +305,18 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define EFFECT_DRAW_PICTURE(draw, canvas, sheet, name, x, y)                   \
   (draw)(canvas, (sheet) + (name), x, y, name##_WIDTH, name##_HEIGHT)
 
+/// A bite's half pictures (TwelveModeImage's closing fangs, each drawn beside
+/// its mirror): the canvas row they start at, and their size.
+#define TARGET_STRIKE_BITE_Y 56
+#define TARGET_STRIKE_BITE_WIDTH 18
+#define TARGET_STRIKE_BITE_HEIGHT 48
+
 /// The battle background's picture as BG1 shows it from BG character block 2,
 /// one byte a pixel.
 #define BATTLE_BACKGROUND_WIDTH 256
 #define BATTLE_BACKGROUND_HEIGHT 120
 #define BATTLE_BACKGROUND_BYTES                                                \
   (BATTLE_BACKGROUND_WIDTH * BATTLE_BACKGROUND_HEIGHT)
-/// The battle background's colours, BG palettes 6 to 13.
-#define BATTLE_BACKGROUND_COLORS (8 * PALETTE_COLORS)
 /// A background's scroll (struct BgScroll) is a halfword: a negative scroll is
 /// held BG_SCROLL_WRAP above itself, and read back by taking it away.
 #define BG_SCROLL_WRAP (1 << 16)
@@ -1144,7 +1148,7 @@ s32 Inn_RoomPrice(s32 innId);
 void Palette_LoadBasicSpriteColors(void);
 u32 Random16(void);
 void ReleaseBattleObjectRecordsFar(s32 actor);
-s32 Render_ProjectPoint(const void *point, s32 *screen);
+s32 Matrix_ProjectPoint(const void *point, s32 *screen);
 void Matrix_TranslateVector(const FIXED *pos);
 void Matrix_Translate(FIXED x, FIXED y, FIXED z);
 void Matrix_ScaleVector(FIXED *scale);

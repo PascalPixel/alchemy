@@ -581,7 +581,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
 
         battle->brightness = value;
         ColorBuffer_Scale(palette, (u32)BATTLE_BG_PALETTE, value,
-                          BATTLE_BG_PALETTE_COLORS);
+                          BATTLE_BACKGROUND_COLORS);
       }
       wait(1);
       targetOrFadeIndex++;

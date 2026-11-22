@@ -134,7 +134,7 @@ void Idejima_WakeSheba(void);
 void Idejima_CatchUpWithFelix(void);
 void Idejima_WonderWhereAlexHasGone(void);
 void Party_RestoreHpPp(s32 a);
-void Actor_MoveToObject();
+void Actor_PlaceOnActor();
 /// Counts the answer just given (Event_CountAnswerFar).
 void Idejima_CountAnswer();
 
@@ -612,7 +612,7 @@ void Idejima_WonderWhereAlexHasGone(void) {
   FieldCamera_MoveTo(108, CAMERA_KEEP, 720, 1);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
   Actor_WalkToAndWait(gMainRoutineWork.leaderActorId, 86, 712);
-  Actor_MoveToObject(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
   System_Wait(1);
   Actor_SetSpeed(ACTOR_KRADEN, 0.8);
   Actor_WalkToAndWait(ACTOR_KRADEN, 104, 712);
@@ -640,8 +640,8 @@ void Idejima_WonderWhereAlexHasGone(void) {
   Actor_ShowEmote(ACTOR_KRADEN, EMOTE_IN_FRONT | EMOTE_LIGHT_BULB, 40);
   // "He might have gone to look for a ship."
   Event_ShowMessage(ACTOR_KRADEN, 0);
-  Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
   System_Wait(1);
   Actor_SetSpeed(ACTOR_SHEBA, 0.8);
   Actor_SetSpeed(ACTOR_JENNA, 0.8);
@@ -961,7 +961,7 @@ void Idejima_BreakAwayFromGondowan(void) {
   Actor_WalkToAndWait(ACTOR_JENNA, 204, 196);
   Actor_WalkToAndWait(ACTOR_JENNA, 208, 218);
   Actor_FaceDirection(ACTOR_JENNA, FACING_SOUTHWEST, 0);
-  Actor_MoveToObject(ACTOR_KRADEN, ACTOR_JENNA);
+  Actor_PlaceOnActor(ACTOR_KRADEN, ACTOR_JENNA);
   System_Wait(1);
   Actor_SetSpeed(ACTOR_KRADEN, 0.8);
   Actor_WalkToAndWait(ACTOR_KRADEN, 186, 216);
@@ -2018,9 +2018,9 @@ u32 gIdejimaExits[] = {
     SCENE_EXITS(Idejima),
     SCENE_EXIT(EXIT_DOOR, Idejima, ENTRANCE_FROM_DOOR_AGAIN),
     SCENE_EXIT(IDEJIMA_TO_WORLD_MAP_SOUTHWEST, WorldMap, WORLD_MAP_FROM_IDEJIMA_SOUTHWEST),
-    SCENE_EXIT(IDEJIMA_TO_WORLD_MAP_NORTH_A, WorldMap, WORLD_MAP_FROM_IDEJIMA_NORTH_A),
+    SCENE_EXIT(IDEJIMA_TO_WORLD_MAP_NORTH_A, WorldMap, WORLD_MAP_VENUS_COLLAPSE),
     SCENE_EXIT(IDEJIMA_TO_TITLE, Title, TITLE_FROM_IDEJIMA),
-    SCENE_EXIT(IDEJIMA_TO_WORLD_MAP_NORTHEAST, WorldMap, WORLD_MAP_FROM_IDEJIMA_NORTHEAST),
+    SCENE_EXIT(IDEJIMA_TO_WORLD_MAP_NORTHEAST, WorldMap, WORLD_MAP_DRIFT_NORTH),
     SCENE_EXITS_END,
 };
 

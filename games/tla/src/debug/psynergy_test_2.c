@@ -47,12 +47,11 @@ enum PsynergyTest2ActorId {
   ACTOR_SECOND_POST, ///< the rope's other end
 };
 
-#define ROCK_SHEET_BYTES 1280 ///< the falling rock's pictures, decompressed
-#define ROCK_FRAMES 20        ///< how long a rock flies
+#define ROCK_FRAMES 20 ///< how long a rock flies
 
-/// The rocks a talk scatters, in the menu's heap slot: their tiles, 64 rocks
-/// and their sprites, the next rock to use, and where the tiles are in VRAM.
-struct RockWork {
+/// The rocks a talk scatters, in the menu's heap slot: the scenes' struct
+/// RockWork with each rock read as a particle.
+struct RockParticleWork {
   u8 tiles[ROCK_SHEET_BYTES];
   struct Particle rocks[ROCK_COUNT];
   struct EffectSprite sprites[ROCK_COUNT];
@@ -153,7 +152,7 @@ void EffectSprite_DrawAtWorldPosition(struct EffectSprite *sprite,
 /// Each frame of the rocks: each of the 64 younger than 20 frames is drawn,
 /// its picture one of eight as it ages, and falls.
 void PsynergyTest2_UpdateRocks(void) {
-  struct RockWork *work = Ram_HeapSlots->menuWork;
+  struct RockParticleWork *work = Ram_HeapSlots->menuWork;
   struct Particle *particle = work->rocks;
   struct EffectSprite *sprite = work->sprites;
   s32 i;
@@ -221,7 +220,7 @@ struct Trigger gSceneEvents[] = {
 /// Throws `count` rocks out of (x, y, z): each starts 8 pixels or more away
 /// at a random angle and flies up and outward.
 void PsynergyTest2_SpawnRocks(s32 x, s32 y, s32 z, s32 count) {
-  struct RockWork *work = Ram_HeapSlots->menuWork;
+  struct RockParticleWork *work = Ram_HeapSlots->menuWork;
   struct Particle *rock;
   s32 angle;
   s32 i;
@@ -251,8 +250,8 @@ void PsynergyTest2_SpawnRocks(s32 x, s32 y, s32 z, s32 count) {
 
 /// Loads the rocks' tiles, hides all 64 and starts PsynergyTest2_UpdateRocks.
 void PsynergyTest2_StartRocks(void) {
-  struct RockWork *work =
-      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct RockWork));
+  struct RockParticleWork *work =
+      HeapSlot_Alloc(HEAP_SLOT_MENU, sizeof(struct RockParticleWork));
   s32 entry;
   s32 tile;
   s32 i;
@@ -281,7 +280,7 @@ void PsynergyTest2_StartRocks(void) {
 
 /// Stops the rocks and frees their tiles and work.
 void PsynergyTest2_EndRocks(void) {
-  struct RockWork *work = Ram_HeapSlots->menuWork;
+  struct RockParticleWork *work = Ram_HeapSlots->menuWork;
 
   FieldTask_Remove(PsynergyTest2_UpdateRocks);
   VramCache_FreeEntry(work->resource);

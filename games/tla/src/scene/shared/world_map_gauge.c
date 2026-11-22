@@ -128,7 +128,7 @@ void Gauge_Update(void) {
   }
   Gauge_Draw(Party_GetPpRatio());
   attributes = OBJ_SIZE_32X16;
-  Call2((void (*)())Render_ProjectPoint, (s32)(&leader->x.fixed),
+  Call2((void (*)())Matrix_ProjectPoint, (s32)(&leader->x.fixed),
         (s32)(screen));
   // The 32 by 16 gauge, centred 32 pixels above the leader.
   {

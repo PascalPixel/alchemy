@@ -165,9 +165,9 @@ const s32 gMovementType_ClearChildScript[] = {
     SC_END,
 };
 
-/// MOVEMENT_TYPE_RESET_ACTION: the actor takes its cells' priority even where
+/// MOVEMENT_TYPE_IGNORE_RISES: the actor takes its cells' priority even where
 /// the ground in front rises.
-const s32 gMovementType_ResetActionScript[] = {
+const s32 gMovementType_IgnoreRisesScript[] = {
     SC_CALL(Actor_IgnoreRises),
     SC_END,
 };

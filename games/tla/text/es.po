@@ -65649,7 +65649,7 @@ msgstr ""
 "Bueno, deberíamos irnos...\n"
 "¡Démonos prisa, {actor_name:5}!{end_wait}"
 
-msgctxt "MsgHeyWait2"
+msgctxt "MsgAttekaInletHeyWait"
 msgid "11855"
 msgstr "¡Eh, espera!{end_wait}"
 

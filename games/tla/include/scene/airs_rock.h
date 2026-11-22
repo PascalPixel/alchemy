@@ -16,6 +16,9 @@
 /// another actor to end on it.
 #define WHIRLWIND_REACH 8
 
+/// A statue breathes a whirlwind every this many frames.
+#define WHIRLWIND_BREATH_FRAMES 240
+
 s32 MapCell_GetAttributes(u32 layer, s32 x, s32 y);
 
 extern struct SceneRegion gAirsRock_StormBrandChestRegions[];

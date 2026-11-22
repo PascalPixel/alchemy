@@ -522,7 +522,7 @@ end:
   return 0;
 }
 
-s32 Actor_MoveToObject();
+s32 Actor_PlaceOnActor();
 s32 Summon_ShowLearnedMessage();
 
 /// The spring's statue opens and gives the prize: an item, or, for the first
@@ -585,7 +585,7 @@ void LemuriaSpring_GivePrize(s32 item) {
   Event_PlaySound(SE_RECOVERY);
   if (item == PRIZE_ECLIPSE) {
     prize = Actor_Get(ACTOR_LEMURIA_SPRING_SUMMON_TABLET);
-    Actor_MoveToObject(ACTOR_LEMURIA_SPRING_SUMMON_TABLET,
+    Actor_PlaceOnActor(ACTOR_LEMURIA_SPRING_SUMMON_TABLET,
                        gMainRoutineWork.leaderActorId);
     prize->motionFlags = 0;
     prize->y.fixed = toFIXED(32);

@@ -474,7 +474,7 @@ top:
             WindowColor_Apply(party->windowHue, party->windowBrightness);
             RESTORE_SAVE_IMAGE()
             ClearData_Apply(TRANSFERRED_SAVE);
-            party->difficulty = 1;
+            party->difficulty = DIFFICULTY_EASY;
           }
           goto leave;
         }
@@ -485,7 +485,7 @@ top:
       Message_CloseFinishedWindows();
       if (i == YES) {
         Event_SetFlag(FLAG_HARD_LEVEL);
-        gMainRoutineWork.difficulty = 2;
+        gMainRoutineWork.difficulty = DIFFICULTY_HARD;
         goto leave;
       }
       // "Play on Normal level? (Default difficulty)"
@@ -496,7 +496,7 @@ top:
         goto save;
     }
   leave:
-    Event_SetDestination(SCENE_TITLE, TITLE_CREDITS);
+    Event_SetDestination(SCENE_TITLE, TITLE_STORY_CRAWL);
     goto finish;
   }
   if (result == SAVE_ACTION_CONTINUE) {

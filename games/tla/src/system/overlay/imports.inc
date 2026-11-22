@@ -44,7 +44,7 @@
 	export Oam_AddSpriteAtDepth, Oam_AddSpriteAtDepthClampedFar
 	export Oam_AddSpriteAtDepthClamped, Oam_AddSpriteAtDepthClampedFar
 	export Window_LoadGraphics, Window_LoadGraphicsFar
-	export Render_ProjectPoint, Render_ProjectPointFar
+	export Matrix_ProjectPoint, Matrix_ProjectPointFar
 	export Resource_GetTableEntry, Resource_GetTableEntryFar
 	export ScreenFade_ToWhite, ScreenFade_ToWhiteFar
 	export Resource_ReservedNoOp, Resource_ReservedNoOpFar
@@ -259,7 +259,7 @@
 	export Actor_WaitForMoveById, Actor_WaitForMoveByIdFar
 	export Actor_SetHorizontalPositionWithTerrain, Actor_SetHorizontalPositionWithTerrainFar
 	export Actor_SetHorizontalPositionAndAngleWithTerrain, Actor_SetHorizontalPositionAndAngleWithTerrainFar
-	export Actor_MoveToObject, Actor_MoveToObjectFar
+	export Actor_PlaceOnActor, Actor_PlaceOnActorFar
 	export Actor_SetAnimationById, Actor_SetAnimationByIdFar
 	export Actor_SetAnimationSpeedById, Actor_SetAnimationSpeedByIdFar
 	export Actor_SetAnimationAndWait, Actor_SetAnimationAndWaitFar
@@ -467,12 +467,12 @@
 	export MapGrid_ClearAttributeBBitsAt, MapGrid_ClearAttributeBBitsAtFar
 	export Teleport_PlaySparksAndFade, Teleport_PlaySparksAndFadeFar
 	export AlhafraManor_CountAnswer, Event_CountAnswerFar
-	export BattleEffect_FillOverlayTiles, BattleEffect_FillOverlayTilesFar
+	export FadeOverlay_FillTiles, FadeOverlay_FillTilesFar
 	export Cyclone_CopyTouchedCells, Cyclone_CopyTouchedCellsFar
 	export Import_DebugMadPlantLeap, MadPlant_LeapAtLeaderFar
 	export Tightrope_Settle, Tightrope_SettleFar
 	export EffectSprite_InitWithFadeOverlay, EffectSprite_InitWithFadeOverlayFar
-	export BattleEffect_DrawSpriteAtWorldPosition, BattleEffect_DrawSpriteAtWorldPositionFar
+	export EffectSprite_DrawAtWorldXYZ, EffectSprite_DrawAtWorldXYZFar
 	export Actor_ResetTargetsAndVelocity, Actor_ResetTargetsAndVelocityFar
 	export Shop_Run, Shop_RunFar
 	export Actor_CycleSpriteColors, Actor_CycleSpriteColorsFar

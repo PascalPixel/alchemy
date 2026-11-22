@@ -586,7 +586,7 @@ void MagmaRock_ThrowEmbers(struct Actor *actor) {
     linked->x.fixed = actor->x.fixed;
     linked->y.fixed = actor->y.fixed;
     linked->z.fixed = actor->z.fixed;
-    linked->update = MagmaRock_RollMagmaRock;
+    linked->update = MagmaRock_MoveFireball;
   }
   (*timer)++;
 }
@@ -625,7 +625,7 @@ FIXED Trig_Cos(s32 angle);
 /// embers; running into the leader raises TRIGGER_FIREBALL_HITS_LEADER and
 /// takes it away, and reaching the statue hands it over
 /// (MagmaRock_ThrowEmbers).
-void MagmaRock_RollMagmaRock(struct Actor *actor) {
+void MagmaRock_MoveFireball(struct Actor *actor) {
   FIXED step;
   struct Actor *partner;
   struct Actor *leader;
@@ -690,7 +690,7 @@ void MagmaRock_PlaceFireball(u16 id, s16 first, s16 side) {
   *pairFirst = first;
   facing = side ^ 1;
   actor->rollSide = facing;
-  actor->update = (void *)MagmaRock_RollMagmaRock;
+  actor->update = (void *)MagmaRock_MoveFireball;
   next = left + 1;
   flags = &actor->motionFlags;
   if (right != 0) {
@@ -1694,7 +1694,7 @@ void MagmaRock_LandLeader(void) {
     actor->velocityY = 0;
     actor->groundHeight = height;
     actor->y.fixed = height;
-    actor->targetY = TARGET_UNSET;
+    actor->targetY = ACTOR_NO_TARGET;
     EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
   }
 }
@@ -2181,7 +2181,7 @@ UNUSED void MagmaRock_CrumblePillar(struct MagmaRockCrumblingPillar *entry,
 
 #include "shared/pillar_take_out_of_play.c"
 
-void Actor_MoveToObject(s32 id, s32 owner);
+void Actor_PlaceOnActor(s32 id, s32 owner);
 
 #include "shared/pillar_restore.h"
 
@@ -2352,17 +2352,6 @@ void BattleEffect_StepVector3(struct Particle *particle, s32 damping,
 
 #include "shared/particle_update_falling.h"
 
-/// The falling rocks' work: their tiles, the rocks and their sprites, in a ring
-/// that next walks round.
-struct RockWork {
-  u8 tiles[1280];
-  struct Rock rocks[ROCK_COUNT];
-  struct EffectSprite sprites[ROCK_COUNT];
-  s16 next;
-  u16 tileBase;
-  s16 resource;
-};
-
 /// Drops count rocks from (x, y, z), each flung out at a random angle.
 void MagmaRock_DropRocks(s32 x, s32 y, s32 z, s32 count) {
   struct RockWork *work;
@@ -2414,7 +2403,7 @@ void MagmaRock_StartFallingRocks(void) {
   Import_DecompressTaggedLz(Resource_GetTableEntry(RESOURCE_FALLING_ROCK),
                             work);
   entry = VramCache_FindFreeEntry();
-  tile = Vram_Load(entry, 1280, work);
+  tile = Vram_Load(entry, sizeof(work->tiles), work);
   work->tileBase = tile;
   work->resource = entry;
   rock = work->rocks;

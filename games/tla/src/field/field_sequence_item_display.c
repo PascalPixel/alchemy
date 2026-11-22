@@ -51,7 +51,7 @@
 /// treasure spots: a leader within 16 pixels of a treasure spot's actor is
 /// moved 20 pixels from it, in the direction it stood, and loses its move
 /// target.
-void Leader_StepAwayFromNearbyActor(void) {
+void TreasureSpot_MoveLeaderAway(void) {
   struct Actor *leader;
   struct Actor *other;
   FIXED dx;
@@ -69,9 +69,9 @@ void Leader_StepAwayFromNearbyActor(void) {
         leader->z.fixed = other->z.fixed;
         Vector_AddPolarOffset(toFIXED(20), (u16)Trig_Atan(dz, dx),
                               &leader->x.fixed);
-        leader->targetX = TARGET_UNSET;
-        leader->targetY = TARGET_UNSET;
-        leader->targetZ = TARGET_UNSET;
+        leader->targetX = ACTOR_NO_TARGET;
+        leader->targetY = ACTOR_NO_TARGET;
+        leader->targetZ = ACTOR_NO_TARGET;
         break;
       }
   }

@@ -33,19 +33,19 @@ void Text_ScrollCanvasUp(s32 step) {
   }
 }
 
-s32 Message_Type(struct UiChannelSlot *channel);
-struct UiChannelSlot;
-void Window_StepSwellEffect(struct UiChannelSlot *window);
+s32 Message_Type(struct Message *channel);
+struct Message;
+void Window_StepSwellEffect(struct Message *window);
 
 /// The per-frame message update: each message whose window is fully open runs
 /// its window animation or types more text, and on the text's end marks the
 /// window done (state 1) or closes it.
 void Message_UpdateAll(void) {
-  struct UiChannelSlot *channel = WINDOW_WORK->channels;
+  struct Message *channel = WINDOW_WORK->messages;
   s32 channelNo = 0;
 
   do {
-    struct Window *current = channel->work;
+    struct Window *current = channel->window;
 
     // A zooming window is left alone until its zoom ends.
     if (current != NULL && *(s32 *)&current->zoomStage == 0) {
@@ -53,7 +53,7 @@ void Message_UpdateAll(void) {
 
       // Flags 0 with no zoom left: the window has closed.
       if (flags == 0) {
-        channel->work = NULL;
+        channel->window = NULL;
       } else {
         s32 pending = current->animation;
         s32 step;
@@ -64,10 +64,10 @@ void Message_UpdateAll(void) {
           step = Message_Type(channel);
           switch (step) {
           case CHANNEL_STEP_ENDED:
-            channel->work->state = 1;
+            channel->window->state = 1;
             break;
           case CHANNEL_STEP_CLOSE: {
-            struct Window *window = channel->work;
+            struct Window *window = channel->window;
 
             Window_Close(window, (u16)(window->flags & WINDOW_FLAG_INSTANT));
             // pending is 0 here: it clears the channel.
@@ -78,7 +78,7 @@ void Message_UpdateAll(void) {
             channel->colour = pending;
             channel->outline = pending;
             channel->lineSpacing = pending;
-            channel->work->state = 1;
+            channel->window->state = 1;
             break;
           }
           }
@@ -91,10 +91,10 @@ void Message_UpdateAll(void) {
 }
 
 void Text_ScrollCanvasUp(s32 step);
-void Text_StartCanvasScroll(struct UiChannelSlot *channel);
-void Message_ApplyStyle(struct UiChannelSlot *channel);
-s32 Text_CheckPauseSkipped(struct UiChannelSlot *channel);
-s32 Text_CheckTextDismissed(struct UiChannelSlot *channel);
+void Text_StartCanvasScroll(struct Message *channel);
+void Message_ApplyStyle(struct Message *channel);
+s32 Text_CheckPauseSkipped(struct Message *channel);
+s32 Text_CheckTextDismissed(struct Message *channel);
 void WindowSprite_PrepareForRedraw(struct Window *window);
 
 #define TEXT_SPEED gMainRoutineWork.messageSpeed
@@ -105,7 +105,7 @@ void WindowSprite_PrepareForRedraw(struct Window *window);
 /// speed's glyphs a frame (gMessageSpeed_Steps) outside battle, where a space
 /// or a control code also ends it; in battle it is 8 glyphs, 13 after a frame
 /// that took two VBlanks and 18 after one that took three or more.
-s32 Message_Type(struct UiChannelSlot *channel) {
+s32 Message_Type(struct Message *channel) {
   struct WindowWork *work = WINDOW_WORK;
   // DEAD: the held keys are read here and never used; the ROM keeps the load.
   u32 keys = gInput.held;
@@ -162,7 +162,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
       switch (code) {
       case TEXT_NEWLINE:
         channel->x = channel->startX;
-        if (channel->work->flags & WINDOW_FLAG_TEXT_CANVAS) {
+        if (channel->window->flags & WINDOW_FLAG_TEXT_CANVAS) {
           if (channel->y >= 13 << 8) {
             Text_StartCanvasScroll(channel);
             glyphsLeft = 1;
@@ -183,7 +183,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
             gInput.pendingPressed = 0;
         }
         if (Text_CheckTextDismissed(channel) == 0) {
-          struct Window *pane = channel->work;
+          struct Window *pane = channel->window;
 
           if (pane->width == 0 || pane->height == 0 ||
               work->pageArrowShown != 0)
@@ -193,7 +193,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
           work->pageArrowShown = 1;
           break;
         }
-        window = channel->work;
+        window = channel->window;
         entryIndex = channel->entry;
         x = (s16)window->x;
         y = (s16)window->y;
@@ -300,7 +300,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
 
       case TEXT_WINDOW_STATE:
         channel->entry = (channel->entry + 1) & TEXT_BUFFER_MASK;
-        channel->work->animation = work->textBuffer[channel->entry];
+        channel->window->animation = work->textBuffer[channel->entry];
         channel->countdown = 11;
         channel->entry = (channel->entry + 1) & TEXT_BUFFER_MASK;
         break;
@@ -335,7 +335,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
 #endif
 #if LANGUAGE != LANGUAGE_JAPANESE
 #if TLA_PATCH_4
-      if (!(channel->work->flags & WINDOW_FLAG_TEXT_CANVAS) &&
+      if (!(channel->window->flags & WINDOW_FLAG_TEXT_CANVAS) &&
           code > TEXT_SPACE && nextCode > TEXT_SPACE) {
         s16 pairWidth = gFont_Glyphs[code - TEXT_SPACE].width +
                         gFont_Glyphs[nextCode - TEXT_SPACE].width;
@@ -351,7 +351,7 @@ s32 Message_Type(struct UiChannelSlot *channel) {
         }
       }
 #else
-      if (!(channel->work->flags & WINDOW_FLAG_TEXT_CANVAS) &&
+      if (!(channel->window->flags & WINDOW_FLAG_TEXT_CANVAS) &&
           code > TEXT_SPACE && nextCode > TEXT_SPACE &&
           (u16)(gFont_Glyphs[code - TEXT_SPACE].width +
                 gFont_Glyphs[nextCode - TEXT_SPACE].width) <= 15) {
@@ -362,8 +362,8 @@ s32 Message_Type(struct UiChannelSlot *channel) {
 #endif
       if (work->textMode != 0 && channel->compressLines != 0)
         pixelY = (channel->y + 128) / 320 - 3;
-      glyphWidth =
-          Glyph_Draw(channel->work, code, pixelX, pixelY, GLYPH_DRAW_CHARACTER);
+      glyphWidth = Glyph_Draw(channel->window, code, pixelX, pixelY,
+                              GLYPH_DRAW_CHARACTER);
       channel->glyphDelay = gMessageSpeed_Delays[TEXT_SPEED];
       if (glyphWidth == 0)
         return CHANNEL_STEP_CLOSE;

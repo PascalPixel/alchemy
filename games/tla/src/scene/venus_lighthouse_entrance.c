@@ -226,7 +226,7 @@ s32 Scene_Initialize(void) {
     Actor_SetPosition(ACTOR_WORKMAN_SENT_TO_CAVES, 0, 0);
   }
   if (gMainRoutineWork.entrance ==
-      VENUS_LIGHTHOUSE_ENTRANCE_FROM_VENUS_LIGHTHOUSE_B) {
+      VENUS_LIGHTHOUSE_ENTRANCE_FROM_VENUS_LIGHTHOUSE) {
     if (!Event_GetFlag(FLAG_VENUS_LIGHTHOUSE_BIRDS_LANDED)) {
       Event_Start();
       FieldEvent_ResolvePendingActions(0);
@@ -1530,8 +1530,8 @@ void VenusLighthouseEntrance_StopDust(void) {
 
 struct SceneEntrance gSceneEntrances[] = {
     {0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
-    {VENUS_LIGHTHOUSE_ENTRANCE_FROM_VENUS_LIGHTHOUSE_B, CONDITION_ALWAYS, 376,
-     0, 104, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
+    {VENUS_LIGHTHOUSE_ENTRANCE_FROM_VENUS_LIGHTHOUSE, CONDITION_ALWAYS, 376, 0,
+     104, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {10, CONDITION_ALWAYS, 376, 0, 232, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {11, CONDITION_ALWAYS, 384, 0, 392, FACING_SOUTH, 0, -1, -1, -1, -1, 0},
     {12, CONDITION_ALWAYS, 112, 0, 272, FACING_SOUTH, 0, -1, -1, -1, -1, 0},

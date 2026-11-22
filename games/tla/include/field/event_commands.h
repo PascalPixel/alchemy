@@ -308,6 +308,10 @@ void Field_RequestBattleFromEncounterTable(s32 zone, s32 slot);
 /// FLAG_MAD_PLANT's order.
 #define ENCOUNTER_TABLE_MAD_PLANTS 106
 
+/// The encounter zone of two story battles: the King Scorpion's in the Yampi
+/// Desert (slot 0), then Briggs and his crew's on his ship at Alhafra (slot
+/// 1).
+#define ENCOUNTER_ZONE_SCRIPTED_YAMPI_DESERT_ALHAFRA 10
 /// The encounter zone of the battles below deck of the Lemurian Ship: slot 0
 /// an Aqua Jelly, slot 1 the Aqua Hydra.
 #define ENCOUNTER_TABLE_AQUA_JELLIES 11
@@ -320,6 +324,12 @@ void Field_RequestBattleFromEncounterTable(s32 zone, s32 slot);
 /// one slot per stage door the party reached first (slots 0 to 4), then Karst
 /// and Agatio's three battles on Jupiter Lighthouse's aerie (slots 5 to 7).
 #define ENCOUNTER_TABLE_MOAPA 13
+
+/// The event battles: the Flame Dragons in Mars Lighthouse (slot 0), the Doom
+/// Dragon on its aerie (1), the gladiators in the Shaman Village Cave (2), the
+/// World Map's bandits (3) and Agatio and Karst's fight with Isaac in Jupiter
+/// Lighthouse (4).
+#define ENCOUNTER_ZONE_SCRIPTED 102
 
 /// The encounter zone of the battles with four guardians of hidden places, one
 /// slot each (HiddenBoss).

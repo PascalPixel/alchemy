@@ -193,13 +193,13 @@ extern struct TerrainRule gWorldMap_EncounterRules[];
 
 extern struct TerrainRule gWorldMap_ShipEncounterRules[];
 
-extern const struct EncounterZone gEncounter_EnemyGroupTable[];
+extern const struct EncounterZone gEncounterZones[];
 
 /// Each scene's music by scene or group, entrance and flag (cue_rules.s).
-extern const struct SceneCueRule gScene_CueRuleTable[];
+extern const struct MapMusicRule gScene_MusicRules[];
 
 /// Each scene's area name by scene or group and entrance (area_name_rules.s).
-extern const struct SceneAreaNameRule gScene_AreaNameRules[];
+extern const struct AreaNameRule gArea_NameRules[];
 
 extern const s16 gParty_PairResolveRules[];
 

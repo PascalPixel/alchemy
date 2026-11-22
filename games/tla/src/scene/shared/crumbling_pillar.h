@@ -181,7 +181,7 @@ void CrumblingPillar_Prepare(s32 id) {
   Actor_DisableById(id);
 }
 
-void Actor_MoveToObject(s32 id, s32 target);
+void Actor_PlaceOnActor(s32 id, s32 target);
 
 /// As CrumblingPillar_Place, in a room whose pillars share one sprite: first
 /// loads the stand-in's and the two pictures' sprites beside the leader, the
@@ -191,10 +191,10 @@ void CrumblingPillar_PlaceWithStandIns(u16 *list) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   u8 *grid;
 
-  Actor_MoveToObject(ACTOR_PILLAR_STAND_IN, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_CRACKED_PILLAR_SPRITE,
+  Actor_PlaceOnActor(ACTOR_PILLAR_STAND_IN, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_CRACKED_PILLAR_SPRITE,
                      gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_WHOLE_PILLAR_SPRITE, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_WHOLE_PILLAR_SPRITE, gMainRoutineWork.leaderActorId);
   System_Wait(1);
   CrumblingPillar_Prepare(ACTOR_PILLAR_STAND_IN);
   CrumblingPillar_Prepare(ACTOR_CRACKED_PILLAR_SPRITE);

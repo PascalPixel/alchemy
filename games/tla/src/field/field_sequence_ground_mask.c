@@ -199,7 +199,7 @@ void BlankOverlay_Resume(void) { Task_ResumeAll(BlankOverlay_DrawMarks); }
 /// (VRAM_CACHE_ENTRY_FADE_OVERLAY) with PIXELS_8BPP(1) when solid is set, which
 /// in these 16-colour tiles is colour 1 in every other column (no caller sets
 /// it), else clears them.
-void BattleEffect_FillOverlayTiles(s32 solid) {
+void FadeOverlay_FillTiles(s32 solid) {
   void *buffer = HeapSlot_Alloc(HEAP_SLOT_TILE_SCRATCH, 1024);
 
   if (solid == 0) {
@@ -226,8 +226,8 @@ void EffectSprite_InitWithFadeOverlay(struct EffectSprite *sprite, s32 pivotX,
 
 /// Projects the world position (x, y, z) to the screen, stores it as the
 /// effect sprite's position and draws the sprite.
-void BattleEffect_DrawSpriteAtWorldPosition(struct EffectSprite *sprite, s32 x,
-                                            s32 y, s32 z) {
+void EffectSprite_DrawAtWorldXYZ(struct EffectSprite *sprite, s32 x, s32 y,
+                                 s32 z) {
   s32 position[3];
 
   SET_VECTOR(position, x, y, z);

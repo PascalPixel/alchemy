@@ -236,10 +236,10 @@ struct TargetTrack {
   s8 index;
 };
 
-/// One line of a window's HDMA shape: its left edge and its span.
+/// One line's horizontal window edges, each a WIN_RANGE value.
 struct WindowLine {
-  u16 left;
-  u16 span;
+  u16 window0; ///< for WIN0H
+  u16 window1; ///< for WIN1H
 };
 
 /// A page of the icon menu's window shape: one WindowLine for each of the

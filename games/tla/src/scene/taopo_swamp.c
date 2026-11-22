@@ -925,7 +925,7 @@ void TaopoSwamp_TremorPillar(void) {
     ((struct FieldSprite *)rock->sprite)->rotation -= TRIG_TURN / 256;
     rock->x.fixed -=
         Trig_Cos(((struct FieldSprite *)rock->sprite)->rotation) / 2;
-    rock->targetX = TARGET_UNSET;
+    rock->targetX = ACTOR_NO_TARGET;
   }
   rock->update = TaopoSwamp_SpinRockPile;
   Actor_SetSpeed(ACTOR_TREMOR_ROCK_PILE, 2);

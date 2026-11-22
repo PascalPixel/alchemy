@@ -57,7 +57,7 @@ void Camera_WorldToScreen(struct Vector3 *position) {
   if (((struct FieldWork *)slots->fieldWork)->mode == ACTOR_SYSTEM_WORLD_MAP) {
     s32 result[3];
 
-    Render_ProjectPoint(position, result);
+    Matrix_ProjectPoint(position, result);
     position->x = INTtoFIXED(result[0]);
     position->z = INTtoFIXED(result[1]);
     position->y = 0;

@@ -31,7 +31,7 @@ enum {
   /// A new game, once the clear-data screen has its difficulty: the story
   /// crawl ("Ages ago, or so the stories tell...") over Credits_Run's slide
   /// show, then TITLE_PROLOGUE.
-  TITLE_CREDITS = 8,
+  TITLE_STORY_CRAWL = 8,
   /// Unused: nothing sends the party here. The Golden Sun logo with "To Be
   /// Continued" under it, held up to a minute, then TITLE_PROLOGUE.
   TITLE_TO_BE_CONTINUED = 10,
@@ -111,14 +111,14 @@ enum {
   WORLD_MAP_FROM_NORTHERN_REACHES_NORTH = 61,
   WORLD_MAP_FROM_PROX_SOUTH_GATE = 62,
   WORLD_MAP_FROM_PROX_MOLD = 63,
-  WORLD_MAP_FROM_IDEJIMA_NORTH_A = 64,
-  WORLD_MAP_FROM_IDEJIMA_NORTHEAST = 65,
-  WORLD_MAP_FROM_LEMURIAN_SHIP_MAIN_DECK_SOUTH = 68,
-  WORLD_MAP_FROM_LEMURIAN_SHIP_AQUA_HYDRA = 69,
+  WORLD_MAP_VENUS_COLLAPSE = 64,
+  WORLD_MAP_DRIFT_NORTH = 65,
+  WORLD_MAP_FIRST_VOYAGE = 68,
+  WORLD_MAP_SAIL_TO_DECK = 69,
   WORLD_MAP_FROM_LEMURIAN_SHIP_TILLER_B = 71,
-  WORLD_MAP_FROM_JUPITER_LIGHTHOUSE_AERIE_BEACON = 72,
-  WORLD_MAP_FROM_IDEJIMA_NORTH_B = 77,
-  WORLD_MAP_FROM_AQUA_ROCK_MOAI_NORTH = 78,
+  WORLD_MAP_JUPITER_BEACON = 72,
+  WORLD_MAP_IDEJIMA_DRIFTING = 77,
+  WORLD_MAP_CARRIED_TO_AQUA_ROCK = 78,
   WORLD_MAP_FROM_NORTH_OSENIA_ISLET_B = 80,
   WORLD_MAP_FROM_NORTH_OSENIA_ISLET_C = 81,
   WORLD_MAP_FROM_CAVERNS_OSENIA = 82,
@@ -219,8 +219,8 @@ enum {
 
 /// SceneId_VenusLighthouseEntrance's entrances.
 enum {
-  VENUS_LIGHTHOUSE_ENTRANCE_FROM_VENUS_LIGHTHOUSE_A = 2,
-  VENUS_LIGHTHOUSE_ENTRANCE_FROM_VENUS_LIGHTHOUSE_B = 9,
+  VENUS_LIGHTHOUSE_ENTRANCE_FROM_SUHALLA_GATE_HOUSE_EAST = 2,
+  VENUS_LIGHTHOUSE_ENTRANCE_FROM_VENUS_LIGHTHOUSE = 9,
   /// Where a battle lost in the prologue sends the party, from Suhalla Gate's
   /// three rooms and from the Ruffian's battle here: Jenna wakes by the door.
   VENUS_LIGHTHOUSE_ENTRANCE_AFTER_DEFEAT = 98,

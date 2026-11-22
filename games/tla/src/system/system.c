@@ -19,7 +19,7 @@
 ///                   vram_cache.c: VramCache_Load
 ///   Memory          heap.c: HeapSlot_Alloc, Heap_Alloc
 ///   3D              transform.c: Matrix_RotateTranslate,
-///                   Render_ProjectPoint
+///                   Matrix_ProjectPoint
 ///   Saving          save.c: Save_ReadPart, Save_InvalidateSector
 ///   Link cable      serial.c: Serial_Initialize
 

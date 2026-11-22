@@ -159,7 +159,7 @@ void Caverns_PlaceAngaraBlocks(const s16 *data) {
     leader->y.fixed = leader->groundHeight =
         Map_GetTerrainHeight(leader->layer, leader->x.fixed, leader->z.fixed);
     leader->velocityY = 0;
-    leader->targetY = TARGET_UNSET;
+    leader->targetY = ACTOR_NO_TARGET;
     FieldCamera_FollowActor(gMainRoutineWork.leaderActorId, 0);
   }
 }

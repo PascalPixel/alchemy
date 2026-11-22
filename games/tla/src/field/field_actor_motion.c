@@ -14,16 +14,16 @@ s32 Actor_IsTargetUnset(struct Actor *actor) {
   s32 first;
   s32 second;
 
-  // One compare of three values: all must equal TARGET_UNSET, or with
+  // One compare of three values: all must equal ACTOR_NO_TARGET, or with
   // motion flags only x and z.
   if (actor->motionFlags == 0) {
     second = actor->targetX;
-    if (second != TARGET_UNSET)
+    if (second != ACTOR_NO_TARGET)
       return 0;
     first = actor->targetY;
   } else {
     first = actor->targetX;
-    second = TARGET_UNSET;
+    second = ACTOR_NO_TARGET;
   }
   if (first != second || actor->targetZ != first)
     return 0;
@@ -166,7 +166,7 @@ void Actor_UpdateAllThumb(void) {
     z = object->z;
     if (object->frozen == 0) {
       if (object->motionFlags == 0) {
-        if (object->targetX != TARGET_UNSET) {
+        if (object->targetX != ACTOR_NO_TARGET) {
           dx = (object->targetX - x) / 65536;
           dy = (object->targetY - y) / 65536;
           dz = (object->targetZ - z) / 65536;
@@ -216,7 +216,7 @@ void Actor_UpdateAllThumb(void) {
         }
       } else {
         // On the ground: steer in the XZ plane the same way.
-        if (object->targetX != TARGET_UNSET) {
+        if (object->targetX != ACTOR_NO_TARGET) {
           dx = (object->targetX - x) / 65536;
           dz = (object->targetZ - z) / 65536;
           distance = toFIXED(Iwram_Sqrt(Object_Square(dx) + Object_Square(dz)));
@@ -403,9 +403,9 @@ void Actor_UpdateAllThumb(void) {
           object->velocityY = 0;
         }
       }
-      object->targetX = TARGET_UNSET;
-      object->targetY = TARGET_UNSET;
-      object->targetZ = TARGET_UNSET;
+      object->targetX = ACTOR_NO_TARGET;
+      object->targetY = ACTOR_NO_TARGET;
+      object->targetZ = ACTOR_NO_TARGET;
       object->arrivalAxis = 0;
     }
 
@@ -479,9 +479,9 @@ void Actor_MoveWithCarriers(void) {
 void Actor_SetPositionAndResetMotion(struct Actor *actor, FIXED x, FIXED y,
                                      FIXED z) {
   actor->z.fixed = z;
-  actor->targetX = TARGET_UNSET;
-  actor->targetY = TARGET_UNSET;
-  actor->targetZ = TARGET_UNSET;
+  actor->targetX = ACTOR_NO_TARGET;
+  actor->targetY = ACTOR_NO_TARGET;
+  actor->targetZ = ACTOR_NO_TARGET;
   actor->x.fixed = x;
   actor->y.fixed = y;
   SET_VELOCITY(actor, 0, 0, 0);
@@ -511,9 +511,9 @@ void Actor_SetMoveTarget(struct Actor *actor, FIXED x, FIXED y, FIXED z) {
   }
   if (distance < FIXED_ONE) {
     SET_ACTOR_POSITION(actor, x, y, z);
-    actor->targetX = TARGET_UNSET;
-    actor->targetY = TARGET_UNSET;
-    actor->targetZ = TARGET_UNSET;
+    actor->targetX = ACTOR_NO_TARGET;
+    actor->targetY = ACTOR_NO_TARGET;
+    actor->targetZ = ACTOR_NO_TARGET;
     return;
   }
   if (actor->snapToTarget == 0) {

@@ -230,7 +230,7 @@ s32 BattleEnemy_ClaimNameLetter(s32 classId, s32 unused) {
     if (battle->lastNameLetter[classIndex] < 0) {
       battle->lastNameLetter[classIndex] = 1;
       battle->nameLetterMasks[classIndex] = 3;
-      return NAME_LETTER_FIRST_TOO | 1;
+      return ENEMY_LETTER_FIRST_TOO | 1;
     }
     // The next suffix after the last given that is free; after 32 tries the
     // last one tried is reused.
@@ -529,11 +529,11 @@ s32 BattleFormation_BuildEnemyList(s32 recordId) {
       struct Unit *unit;
       s32 enemyId;
 
-      if (suffix & NAME_LETTER_FIRST_TOO)
+      if (suffix & ENEMY_LETTER_FIRST_TOO)
         BattleEnemy_LetterFirstOfKind(enemyClasses[memberOrEnemyIndex]);
       BattleUnit_SetFar(memberOrEnemyIndex + FIRST_ENEMY_UNIT,
                         enemyClasses[memberOrEnemyIndex],
-                        suffix & NAME_LETTER_MASK);
+                        suffix & ENEMY_LETTER_MASK);
       unit = Unit_Get(memberOrEnemyIndex + FIRST_ENEMY_UNIT);
       if (levelAdjustment != 0)
         BattleEnemy_AdjustLevel(memberOrEnemyIndex + FIRST_ENEMY_UNIT,

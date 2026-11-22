@@ -180,7 +180,7 @@ enum MovementType {
   /// gMovementType_SquashScript: squashes and stretches for ever.
   MOVEMENT_TYPE_SQUASH = 8,
   MOVEMENT_TYPE_TAKE_LEADER_LAYER = 9, ///< gMovementType_TakeLeaderLayerScript
-  MOVEMENT_TYPE_RESET_ACTION = 10,     ///< gMovementType_ResetActionScript
+  MOVEMENT_TYPE_IGNORE_RISES = 10,     ///< gMovementType_IgnoreRisesScript
   MOVEMENT_TYPE_CLEAR_CHILD = 11       ///< gMovementType_ClearChildScript
 };
 

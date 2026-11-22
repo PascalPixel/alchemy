@@ -559,7 +559,8 @@ void EasternAlhafraShip_MayorArrives(void) {
                                   ENTRANCE_AFTER_BRIGGS_BATTLE);
 
   gMainRoutineWork.battleType = BATTLE_TYPE_NO_ESCAPE;
-  Field_RequestBattleFromEncounterTable(10, 1);
+  Field_RequestBattleFromEncounterTable(
+      ENCOUNTER_ZONE_SCRIPTED_YAMPI_DESERT_ALHAFRA, 1);
   Event_End();
 }
 

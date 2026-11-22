@@ -56,7 +56,7 @@ FarCall_RuntimeTable:
 	export Matrix_RotateTranslateFar, Matrix_RotateTranslate
 	export Matrix_RotateTranslateScaleFar, Matrix_RotateTranslateScale
 	export Matrix_SetLookAtFar, Matrix_SetLookAt
-	export Render_ProjectPointFar, Render_ProjectPoint
+	export Matrix_ProjectPointFar, Matrix_ProjectPoint
 	export Projection_SetFieldOfViewFar, Projection_SetFieldOfView
 	export Projection_SetFar, Projection_Set
 	export System_CopyBuildStampFar, System_CopyBuildStamp

@@ -622,7 +622,7 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
   u32 size;
 
   if (Ram_HeapSlots->actorSystem->suspended == 0) {
-    z = Render_ProjectPoint(point, screen);
+    z = Matrix_ProjectPoint(point, screen);
     if (screen[2] != 0 &&
         (u32)(screen[0] + PROJECTED_MARGIN) <=
             DISPLAY_WIDTH + 2 * PROJECTED_MARGIN &&
@@ -690,7 +690,7 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
         ground[0] = point[0];
         ground[1] = 0;
         ground[2] = point[2];
-        Render_ProjectPoint(ground, screen);
+        Matrix_ProjectPoint(ground, screen);
         size = SHADOW_HALF_WIDTH;
         if (affine == 3)
           size = 2 * SHADOW_HALF_WIDTH;
@@ -715,7 +715,7 @@ void Render_PlaceProjectedSprite(struct Sprite *sprite, s32 *point, s32 *scale,
 
 /// Sets the colour mode (enum SpriteColorMode) of the sprite's first sprite
 /// animation and has it drawn again.
-void Animation_ApplyChildValueToFirst(struct Sprite *sprite, u32 colorMode) {
+void Sprite_SetFirstAnimationColorMode(struct Sprite *sprite, u32 colorMode) {
   if (sprite != NULL) {
     sprite->entries[0]->colorMode = colorMode;
     sprite->dirty = 1;

@@ -248,15 +248,15 @@ void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height,
   canvas->dirty = 1;
 }
 
-/// Returns 0 if any of the three channels has a window still writing (state
+/// Returns 0 if any of the three messages has a window still writing (state
 /// is zero), else 1.
 s32 Message_AllTyped(void) {
-  struct UiChannelSlot *ch;
+  struct Message *ch;
   s32 i;
 
-  ch = WINDOW_WORK->channels;
+  ch = WINDOW_WORK->messages;
   for (i = 0; i != MESSAGE_COUNT; i++, ch++) {
-    if (ch->work != NULL && ch->work->state == 0)
+    if (ch->window != NULL && ch->window->state == 0)
       return 0;
   }
   return 1;

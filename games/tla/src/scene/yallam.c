@@ -505,7 +505,7 @@ void Yallam_TalkAboutSongGame(void) {
 s32 Yallam_HasArrived(struct Actor *actor) {
   s32 x = actor->targetX;
 
-  if (x == TARGET_UNSET && actor->targetZ == TARGET_UNSET)
+  if (x == ACTOR_NO_TARGET && actor->targetZ == ACTOR_NO_TARGET)
     return 1;
   return 0;
 }

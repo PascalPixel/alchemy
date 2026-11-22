@@ -1396,7 +1396,7 @@ void GabombaStatue_CogsTurnBack(void) {
   Event_PlaySound(SE_GABOMBA_STATUE_COGS);
   GabombaStatue_TurnCogs(0);
   FieldEvent_Wait(40);
-  Event_PlaySound(SE_582);
+  Event_PlaySound(SE_LEMURIAN_SHIP_LIFT_FAST);
   actor->motionFlags = 0;
   actor->y.fixed = toFIXED(8);
   FieldEvent_Wait(10);
@@ -1837,7 +1837,7 @@ void GabombaStatue_LandFromFall(void) {
 }
 
 extern u32 gGabombaStatue_LeaderFocusScript[];
-void Actor_MoveToObject(s32 id, s32 target);
+void Actor_PlaceOnActor(s32 id, s32 target);
 void GabombaStatue_ReleaseCharges(void);
 
 /// Coming up the hole into the arrows room as the ceremony starts below:
@@ -1854,10 +1854,10 @@ void GabombaStatue_FocusEnergies(void) {
   FieldEvent_SetMessageId(MsgGabombaFocusEnergies);
   // "Focus your energies!"
   Event_ShowMessage(ACTOR_AKAFUBU, 0);
-  Actor_MoveToObject(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
-  Actor_MoveToObject(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_JENNA, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_SHEBA, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_PIERS, gMainRoutineWork.leaderActorId);
   System_Wait(1);
   Actor_SetSpeed(gMainRoutineWork.leaderActorId, 0.8);
   Actor_SetSpeed(ACTOR_JENNA, 0.8);
@@ -2276,7 +2276,7 @@ void GabombaStatue_SawEnergyFlow(void) {
 /// again.
 void GabombaStatue_KradenNoticesTiming(void) {
   GabombaStatue_StopClock();
-  Actor_MoveToObject(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
+  Actor_PlaceOnActor(ACTOR_KRADEN, gMainRoutineWork.leaderActorId);
   FieldActor_SetSpriteColor(Actor_Get(ACTOR_KRADEN), SPRITE_COLOR_HIDDEN);
   System_Wait(10);
   FieldEvent_SetMessageId(MsgGabombaChannelTiming);

@@ -50,6 +50,9 @@ STATIC_ASSERT(offsetof(struct BattlePlaybackWork, pendingSound) == 360);
 /// The most actions a turn's queue holds.
 enum { BATTLE_ACTION_CAPACITY = 20 };
 
+/// The battle background's colours, BG palettes 6 to 13.
+#define BATTLE_BACKGROUND_COLORS (8 * PALETTE_COLORS)
+
 struct Window;
 
 /// The battle message, as far as its offset in the window:

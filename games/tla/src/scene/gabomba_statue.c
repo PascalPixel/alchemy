@@ -1820,7 +1820,10 @@ void GabombaStatue_SendCharge(s32 id, s32 colorMode, s32 statueId, s32 angle) {
 
 #include "../field/field_effect_advance_motion.c"
 
-/// The leader falls in from the cog above and lands with a thump beside Steel.
+/// Felix drops off the south end of a pink drum in the mouse's room above and
+/// falls into Steel's room, landing with a thump in a ring of dust; he sits a
+/// moment as the screen shakes, then stands. One of the two drums lands him
+/// beside Steel, who can then be talked to.
 void GabombaStatue_LandFromFall(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   u32 i;
@@ -2332,7 +2335,9 @@ void GabombaStatue_KradenNoticesTiming(void) {
   GabombaStatue_RestartClock();
 }
 
-/// Prepares the current room.
+/// Sets up whichever room of the statue is being entered: its cogs turning,
+/// stopped by the rope or turned the other way by the stakes, then the room's
+/// own things.
 s32 Scene_Initialize(void) {
   s16 scene;
 

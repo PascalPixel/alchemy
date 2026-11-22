@@ -25,25 +25,30 @@
 /// first row that matches picks the time. A few ask a yes-or-no question (the
 /// Bilibin_AskAbout functions).
 ///
-/// Bilibin's doors open before the party walks in (Bilibin_OpenDoorAndLeave).
-/// They are step triggers 3 to 9, the numbers of the exits they take. Six lead
-/// into Bilibin's buildings (SceneId_CottageRoomsC) and the seventh into the
-/// Bilibin Sanctum. Coming out of the Sanctum (BILIBIN_FROM_SANCTUM) the area
-/// name is not shown again.
+/// Walking up to a door in Bilibin opens it before the party walks in
+/// (Bilibin_OpenDoorAndLeave). Six lead into Bilibin's buildings
+/// (SceneId_CottageRoomsC): the inn in the south-east (cell (23, 22)), the
+/// houses east (12, 20), west (6, 21) and north (10, 13), the item shop
+/// (4, 13) and the weapon and armor shop (18, 11). The seventh is the Sanctum's
+/// double door at the top right (24..25, 10). Each door's cell has the number
+/// of the exit it takes as its behaviour. Coming out of the Sanctum
+/// (BILIBIN_FROM_SANCTUM) the area name is not shown again.
 ///
 /// The other exits lead to the World Map, to the garden of McCoy's Palace and,
-/// two ways, into the Treasury.
+/// two ways, into the Treasury, the cave where Gust hides.
 ///
-/// One way is past the ivy at the west edge (ACTOR_IVY), which is gone when the
-/// party comes back out that way (BILIBIN_FROM_BILIBIN_TREASURY_WEST). Its
-/// Whirlwind row runs no event, so Field_UsePsynergy only aims Whirlwind at it
-/// and the ivy stays.
+/// One way is the cave mouth at the west edge, behind a bush of ivy
+/// (ACTOR_IVY). The walkthrough reaches it from the Sanctum over the pillar
+/// tops and blows the ivy away with Whirlwind. The ivy's Whirlwind row runs no
+/// event of its own, so nothing remembers that, and the ivy is back on the next
+/// visit unless the party has just come out of that cave
+/// (BILIBIN_FROM_BILIBIN_TREASURY_WEST).
 ///
-/// The other way is from the cell a statue (ACTOR_VILLAGE_STATUE) stands on,
-/// once Move or a push slides it aside. Bilibin_UpdateVillageStatueCells keeps
-/// the cells of the statue's lane in step and hops the leader clear if it lands
-/// on him. Coming back out that way (BILIBIN_FROM_BILIBIN_TREASURY_EAST) the
-/// party finds the statue moved.
+/// The other way is a hole under the golden statue (ACTOR_VILLAGE_STATUE) in
+/// front of the weapon and armor shop, at cell (16, 13). Pushed or moved off
+/// it, the statue uncovers the hole, which drops into the Treasury's upper
+/// room. Coming back out that way (BILIBIN_FROM_BILIBIN_TREASURY_EAST) the
+/// party finds the statue one cell west of the hole.
 ///
 /// FLAG_BILIBIN_KEEPING_MCCOY_WAITING is set while McCoy's gate guards have let
 /// the party in (FLAG_MCCOY_PALACE_ADMITTED) but it has not yet entered the
@@ -57,9 +62,12 @@
 /// `McCoy's Hidden Warehouse`. Gust, a Jupiter Djinni, is placed there until he
 /// joins the party when spoken to (Bilibin_GustJoins).
 ///
-/// A second statue (ACTOR_TREASURY_STATUE) slides along one column, and
-/// Bilibin_UpdateTreasuryStatueCells keeps the two cells it can stand on in
-/// step.
+/// In its upper room a second golden statue (ACTOR_TREASURY_STATUE) stands
+/// in an alcove at the top of a narrow walkway between two pools, and Gust
+/// waits on a ledge to the east. The statue slides up and down the walkway
+/// under Move or a push. Where it is not, its alcove lets Isaac hop east or
+/// west across the pools, and the foot of the walkway lets him hop south off it
+/// (Bilibin_UpdateTreasuryStatueCells).
 ///
 /// Arriving by BILIBIN_TREASURY_UPPER_FROM_LOWER or
 /// BILIBIN_TREASURY_FROM_BILIBIN_NORTH the leader starts 16 pixels above the
@@ -71,10 +79,10 @@
 /// Its sign reads `This area is off-limits to all those without a permit.
 /// —Lord McCoy`, and a door there stays locked.
 ///
-/// A stack of crates (ACTOR_BARRICADE_CRATES) slides a cell at a time under
-/// Move or a push, and Bilibin_UpdateCratesCells rewrites the ten cells of its
-/// lane after each move (its recording,
-/// places/bilibin-barricade/events/Bilibin_UpdateCratesCells.gif).
+/// The barricade is a wall of wooden crates. The stack of two crates at its
+/// left end (ACTOR_BARRICADE_CRATES) slides out under Move or a push, which
+/// opens the way through to Kolima, as the walkthrough has it
+/// (Bilibin_UpdateCratesCells).
 ///
 /// By the river stand three trees, one on another's shoulders. They are
 /// ACTOR_BOTTOM_TREE, ACTOR_MIDDLE_TREE and ACTOR_JILL_TREE at one spot, 0, 32
@@ -88,8 +96,9 @@
 /// invisible actor (ACTOR_FALLEN_TREE_STAND_IN) that answers for it, and puts
 /// Jill's tree in the water.
 ///
-/// Move on her (Bilibin_PullJillFromRiver) works once she is in cell column 6,
-/// by the bank. The leader pulls her ashore in three tugs, and
+/// Standing in the shallows below the fallen tree, Isaac can use Move on her
+/// (Bilibin_PullJillFromRiver). Once Move has brought her one cell east (cell
+/// column 6), he pulls her ashore in three tugs, and
 /// FLAG_BILIBIN_JILL_RESCUED keeps her there.
 ///
 /// While whoever the player controls wades in the river,
@@ -100,8 +109,9 @@
 /// children again on the bank (ACTOR_GANG_MEMBER_EAST, ACTOR_GANG_MEMBER_WEST
 /// and ACTOR_JILL). If Jill was never pulled out she is missing.
 ///
-/// If she was, stepping up to them (step trigger 13) plays
-/// Bilibin_JillGivesHardNut, which gives the leader a Hard Nut
+/// If she was, walking up beside the three (cells (13, 10..12) to their west
+/// and (18, 10..12) to their east) plays Bilibin_JillGivesHardNut: Jill thanks
+/// Isaac and gives him a Hard Nut
 /// (FLAG_BILIBIN_JILL_GIFT_RECEIVED). From then on the three turn to watch him.
 
 #include "ability_ids.h"
@@ -152,20 +162,45 @@ extern s32 gPushedActor_DirectionSteps[];
 extern s32 gBilibin_RippleScript[];
 
 static void Bilibin_RestoreVillageActors(void);
+/// Move on the golden statue in front of Bilibin's weapon and armor shop slides
+/// it a cell. Moved off cell (16, 13), it uncovers the hole into the Treasury;
+/// moved back on, it covers it again.
+///
+/// The same work follows every push and every arrival in Bilibin. The cells of
+/// the statue's dotted square, (15..17, 12..14), are made ground that pushes
+/// the statue again, the statue's own cell is walled off, and the hole's cell
+/// is given its exit unless the statue stands on it. If the statue lands on
+/// the hole while Isaac is standing on it, he starts with a "!" and hops clear,
+/// to the north or the east.
 static void Bilibin_UpdateVillageStatueCells(void);
 static void Bilibin_RestoreRiverActors(void);
+/// Move on the stack of two crates at the left end of the Bilibin Barricade
+/// drags it out of the wall of crates, opening a gap through the barricade to
+/// the road to Kolima.
+///
+/// The same work follows every push and every arrival at the barricade: the
+/// ten cells round the crate's place, listed in gBilibin_CratesLaneCells, are
+/// made ground that pushes the crate, and the crate's own cell is walled off.
 static void Bilibin_UpdateCratesCells(void);
 static void Bilibin_SetUpTreasury(void);
 static void Bilibin_UpdateWadingRipples(void);
 static void Bilibin_SpawnRipple(struct Actor *actor);
+/// Move on the golden statue in the Treasury slides it up or down the walkway
+/// between the two pools, where Gust waits on the ledge to the east.
+///
+/// The statue rests either in its alcove at the top, cell (14, 6), or at the
+/// walkway's foot, cell (14, 9). The same work follows every push and every
+/// arrival: the cell the statue stands on is walled off, the alcove when empty
+/// lets Isaac hop east or west across the pools, and the foot when empty lets
+/// him push the statue back up or hop south off the walkway.
 static void Bilibin_UpdateTreasuryStatueCells(void);
 
 /// Actors of Bilibin, numbering its actor placements from
 /// ACTOR_FIRST_PLACED. The ten villagers are named by what they say before
 /// the curse is lifted.
 enum BilibinActorId {
-  /// Ivy drawn half as tall again at the west edge, where the way into the
-  /// Treasury runs. Its Whirlwind row runs nothing.
+  /// The bush of ivy over the cave mouth at the west edge, the way into the
+  /// Treasury, drawn half as tall again. Whirlwind blows it away.
   ACTOR_IVY = ACTOR_FIRST_PLACED,
   /// The man turned into a tree at the village entrance, drawn as a tree.
   ACTOR_TREE_MAN,
@@ -189,7 +224,8 @@ enum BilibinActorId {
   ACTOR_STRONGMAN_IMIL_TOWER,
   /// A man with a pickaxe.
   ACTOR_VILLAGER_STRANGE_CREATURES,
-  /// A statue that slides a cell under Move or a push.
+  /// The golden statue in front of the weapon and armor shop, over the hole
+  /// into the Treasury. It slides a cell under Move or a push.
   ACTOR_VILLAGE_STATUE,
   /// The same man once the curse is lifted, a stocky, muscular man with black
   /// hair.
@@ -199,7 +235,8 @@ enum BilibinActorId {
 /// Actors of the Bilibin Barricade (BilibinBarricade), numbering its
 /// actor placements from ACTOR_FIRST_PLACED.
 enum BilibinBarricadeActorId {
-  /// A stack of crates that slides a cell under Move or a push.
+  /// The stack of two crates at the barricade's left end, which slides a cell
+  /// under Move or a push.
   ACTOR_BARRICADE_CRATES = ACTOR_FIRST_PLACED,
   /// The bottom of the three trees.
   ACTOR_BOTTOM_TREE,
@@ -227,7 +264,8 @@ enum BilibinBarricadeActorId {
 /// Actors of the Bilibin Treasury (BilibinTreasury), numbering its
 /// actor placements from ACTOR_FIRST_PLACED.
 enum BilibinTreasuryActorId {
-  /// A statue that slides along one column under Move or a push.
+  /// The golden statue at the top of the walkway between the pools, which
+  /// slides up and down it under Move or a push.
   ACTOR_TREASURY_STATUE = ACTOR_FIRST_PLACED,
   /// Gust, a Jupiter Djinni, placed until he has joined.
   ACTOR_GUST
@@ -414,8 +452,14 @@ static void Bilibin_AskAboutImil(void) {
   Event_End();
 }
 
-/// Walking into one of Bilibin's doors opens it. Everyone stops, the door opens
-/// and the leader walks through it.
+/// Walking up to a door in Bilibin opens it, and Isaac walks in: the inn
+/// (cell (23, 22)), the houses east (12, 20), west (6, 21) and north (10, 13),
+/// the item shop (4, 13), the weapon and armor shop (18, 11) or the Sanctum's
+/// double door (24..25, 10).
+///
+/// Everyone in town stops where they are while the door opens. The Sanctum's
+/// door opens with a thump instead of the sound of the others, and the screen
+/// fades as Isaac walks through.
 static void Bilibin_OpenDoorAndLeave(void) {
   u32 actorSlot;
   struct Actor *actor;
@@ -463,8 +507,11 @@ static void Bilibin_OpenDoorAndLeave(void) {
   Event_End();
 }
 
-/// Move on Jill's tree in the river at the Bilibin Barricade, until she is
-/// rescued, lets the leader pull her ashore.
+/// Move on Jill's tree, adrift in the river at the Bilibin Barricade, lets
+/// Isaac pull her ashore. Once Move has brought her one cell east, into cell
+/// column 6, he hauls her out in three tugs, walks back up the bank, and her
+/// thought comes through: she thanks him for saving her from being washed
+/// downstream.
 static void Bilibin_PullJillFromRiver(void) {
   struct Actor *leader;
   struct Actor *jillTree;
@@ -521,10 +568,11 @@ static void Bilibin_PullJillFromRiver(void) {
   }
 }
 
-/// Walking into the statue in the Bilibin Treasury or the crates at the Bilibin
-/// Barricade, the leader jumps forward onto them where he can
-/// (Field_TryJumpForward).
-static void Bilibin_JumpOntoStatueOrCrates(void) { Field_TryJumpForward(); }
+/// Walking on into a gap from one of a few ledges, Isaac hops across it: in the
+/// Treasury east or west across the pools from the statue's empty alcove, or
+/// south off the foot of the walkway; at the Bilibin Barricade north from cell
+/// (14, 10), or west from cell (8, 17) beside the crates.
+static void Bilibin_HopAcross(void) { Field_TryJumpForward(); }
 
 /// Jill and her friends thank the leader with a Hard Nut.
 static void Bilibin_JillGivesHardNut(void) {
@@ -686,8 +734,6 @@ static void Bilibin_RestoreVillageActors(void) {
 /// Bilibin Treasury.
 enum { TREASURY_WAY_COLUMN = 16, TREASURY_WAY_ROW = 13 };
 
-/// Updates the cells around the statue in Bilibin after it moves. It runs after
-/// Move, a push, or entry.
 static void Bilibin_UpdateVillageStatueCells(void) {
   s32 leaderRow;
   s32 leaderColumn;
@@ -702,7 +748,7 @@ static void Bilibin_UpdateVillageStatueCells(void) {
   leaderColumn = FIELD_CELL(leader->x.fixed);
   leaderRow = FIELD_CELL(leader->z.fixed);
   statueX = statue->x.fixed;
-  // Repaint the statue's lane before clearing the cells it currently occupies.
+  // Make the statue's square plain pushing ground, then wall off its cell.
   MapGrid_CopyCellAttributes(15, 11, 3, 1, 15, 12);
   MapGrid_CopyCellAttributes(15, 11, 3, 1, 15, 13);
   MapGrid_CopyCellAttributes(15, 11, 3, 1, 15, 14);
@@ -798,12 +844,9 @@ static void Bilibin_RestoreRiverActors(void) {
   Bilibin_UpdateCratesCells();
 }
 
-/// The cells of the crates' lane, as gBilibin_CratesLaneCells lists them.
+/// The cells round the crate's place, as gBilibin_CratesLaneCells lists them.
 #define CRATES_LANE_CELLS 10
 
-/// After the crates at the Bilibin Barricade move (Move, a push, or entry),
-/// restores the CRATES_LANE_CELLS cells of their lane, then marks the cell they
-/// stand on.
 static void Bilibin_UpdateCratesCells(void) {
   struct Actor *actor;
   s32 cratesColumn;
@@ -899,7 +942,8 @@ static void Bilibin_PushStatueOrCrates(void) {
   }
 }
 
-/// Runs every frame at the Bilibin Barricade.
+/// While Isaac wades in the river at the Bilibin Barricade, west of the fallen
+/// tree, a ripple spreads from his feet every 30 frames. It runs every frame.
 static void Bilibin_UpdateWadingRipples(void) {
   struct Actor *actor;
 
@@ -941,8 +985,6 @@ static void Bilibin_SpawnRipple(struct Actor *actor) {
   sprite->image.priority = 3;
 }
 
-/// After the statue in the Bilibin Treasury moves (Move, a push, or entry),
-/// updates the two cells it can stand on, rows 6 and 9 of its column.
 static void Bilibin_UpdateTreasuryStatueCells(void) {
   struct Actor *statue;
 
@@ -1216,8 +1258,8 @@ struct Trigger gBilibinBarricadeTriggers[] = {
     { EXAMINE_TRIGGER(EXAMINE_SILENT), 30, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgFieldDoorTightlyLocked)) },
     { TRIGGER_STEP, 13, FLAG_BILIBIN_JILL_GIFT_RECEIVED, EVENT(Bilibin_JillGivesHardNut) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_JILL_TREE, FLAG_BILIBIN_JILL_RESCUED, EVENT(Bilibin_PullJillFromRiver) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(Bilibin_JumpOntoStatueOrCrates) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 10, CONDITION_ALWAYS, EVENT(Bilibin_JumpOntoStatueOrCrates) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 9, CONDITION_ALWAYS, EVENT(Bilibin_HopAcross) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 10, CONDITION_ALWAYS, EVENT(Bilibin_HopAcross) },
     { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS, EVENT(Bilibin_PushStatueOrCrates) },
     { STEP_TRIGGER_WALKING, 12, CONDITION_ALWAYS, EVENT(Bilibin_PushStatueOrCrates) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_BARRICADE_CRATES, CONDITION_ALWAYS, EVENT(Bilibin_UpdateCratesCells) },
@@ -1233,9 +1275,9 @@ struct Trigger gBilibinTreasuryTriggers[] = {
     { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 11, CONDITION_ALWAYS, EVENT(Bilibin_PushStatueOrCrates) },
     { STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 12, CONDITION_ALWAYS, EVENT(Bilibin_PushStatueOrCrates) },
     { STEP_TRIGGER_WALKING, 13, CONDITION_ALWAYS, EVENT(Bilibin_PushStatueOrCrates) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT(Bilibin_JumpOntoStatueOrCrates) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT(Bilibin_JumpOntoStatueOrCrates) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 12, CONDITION_ALWAYS, EVENT(Bilibin_JumpOntoStatueOrCrates) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_EAST), 11, CONDITION_ALWAYS, EVENT(Bilibin_HopAcross) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 11, CONDITION_ALWAYS, EVENT(Bilibin_HopAcross) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 12, CONDITION_ALWAYS, EVENT(Bilibin_HopAcross) },
     { TRIGGER_TABLE_END },
 };
 

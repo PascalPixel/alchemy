@@ -221,9 +221,9 @@ void JupiterLighthouse_StepOnLowerCrackedTile(s32 arg) {
 /// second step it gives way and the party falls to the room below. On the two
 /// tiles under the hall's south ledge, cells (18, 34) and (8, 39), he is drawn
 /// behind the ledge (`FieldActor_SetSpritePriority`) as he falls.
-// XXX: which ledge cells (18, 34) and (8, 39) sit under; a recording of a
-// fall through either would settle it.
 void JupiterLighthouse_StepOnUpperCrackedTile(s32 arg) {
+  // XXX: which ledge cells (18, 34) and (8, 39) sit under; a recording of a
+  // fall through either would settle it.
   struct Actor *leader;
   s32 x;
   s32 z;

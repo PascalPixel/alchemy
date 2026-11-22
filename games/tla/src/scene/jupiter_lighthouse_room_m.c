@@ -237,9 +237,9 @@ void JupiterLighthouse_RideUpperWhirlwind(void) {
 /// east whirlwind's path at cell (65, 42): his Hover ends, and a whirlwind
 /// blows out, catches him and carries him off towards the right tower
 /// (Whirlwind_CarryLeader). Walking there without Hover does nothing.
-// XXX: where the east whirlwind sets Felix down; a recording of Hover from the
-// lit pad, the energy block in its gap, would settle it.
 void JupiterLighthouse_RideWhirlwind(void) {
+  // XXX: where the east whirlwind sets Felix down; a recording of Hover from
+  // the lit pad, the energy block in its gap, would settle it.
   if (gWhirlwindRiding == 0) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
@@ -345,9 +345,9 @@ extern void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 /// Nothing visible happens as Felix starts to push the energy block, by
 /// walking into it or with Move. The cell under it is lowered a little
 /// (`MapGrid_SetCellHeight`) for the push.
-// XXX: what lowering the energy block's cell changes for the push; a recording
-// of the block pushed off its cell would settle it.
 void JupiterLighthouse_StartMovingBlock(s32 unused, s32 id) {
+  // XXX: what lowering the energy block's cell changes for the push; a
+  // recording of the block pushed off its cell would settle it.
   struct Actor *actor = Actor_Get(id);
 
   Call4(MapGrid_SetCellHeight, actor->x.fixed, actor->z.fixed, 0, -8);

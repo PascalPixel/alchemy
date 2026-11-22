@@ -657,14 +657,14 @@ enum { DRAIN_SINK_PIXELS = 24 };
 
 /// The first drain, after the Frost Jewel is found.
 static void AltinPeak_DrainFirstWater(void) {
-  struct MapGridScrollWork *map = gMapGridWork[0];
+  struct MapGridScrollWork *grid = gMapGridWork[0];
   struct MapGridLayerScroll *water;
   s32 step;
 
   Sound_Play(SE_WATER_DRAIN);
   MapGrid_SetShake(2, 2, 1);
   Event_Wait(10);
-  water = &map->layers[MAPGRID_LAYER_OVERHEAD];
+  water = &grid->layers[MAPGRID_LAYER_OVERHEAD];
   for (step = 0; step < DRAIN_SINK_PIXELS; step++) {
     water->offsetY -= toFIXED(1);
     wait(4);
@@ -684,7 +684,7 @@ static void AltinPeak_DrainFirstWater(void) {
 /// The second drain is the same sinking and flicker over the cells the water
 /// leaves behind, which then take their dry form.
 static void AltinPeak_DrainSecondWater(void) {
-  struct MapGridScrollWork *map = gMapGridWork[0];
+  struct MapGridScrollWork *grid = gMapGridWork[0];
   struct MapGridLayerScroll *water;
   s32 step;
 
@@ -692,7 +692,7 @@ static void AltinPeak_DrainSecondWater(void) {
   Sound_Play(SE_WATER_DRAIN);
   MapGrid_SetShake(2, 2, 1);
   Event_Wait(10);
-  water = &map->layers[MAPGRID_LAYER_OVERHEAD];
+  water = &grid->layers[MAPGRID_LAYER_OVERHEAD];
   for (step = 0; step < DRAIN_SINK_PIXELS; step++) {
     water->offsetY -= toFIXED(1);
     wait(4);
@@ -704,7 +704,7 @@ static void AltinPeak_DrainSecondWater(void) {
 
 /// The third drain, likewise.
 static void AltinPeak_DrainThirdWater(void) {
-  struct MapGridScrollWork *map = gMapGridWork[0];
+  struct MapGridScrollWork *grid = gMapGridWork[0];
   struct MapGridLayerScroll *water;
   s32 step;
 
@@ -714,7 +714,7 @@ static void AltinPeak_DrainThirdWater(void) {
   Sound_Play(SE_WATER_DRAIN);
   MapGrid_SetShake(2, 2, 1);
   Event_Wait(10);
-  water = &map->layers[MAPGRID_LAYER_OVERHEAD];
+  water = &grid->layers[MAPGRID_LAYER_OVERHEAD];
   for (step = 0; step < DRAIN_SINK_PIXELS; step++) {
     water->offsetY -= toFIXED(1);
     wait(4);

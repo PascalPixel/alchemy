@@ -1,20 +1,21 @@
 /// @file
-/// The Mars Lighthouse's central hall and the ways to its four towers, in six
-/// rooms that share this overlay.
+/// The Mars Lighthouse's central hall, the four ledges in the rain that lead
+/// from it to the element towers, and the beacon ledge at the top of each
+/// tower, all sharing this overlay.
 ///
-/// In the hall (SceneId_MarsLighthouseRoomMInscriptions) four inscriptions name
-/// the peoples who ruled earth, water, fire and wind, and the great dragon
-/// statue speaks: without the Mars Star it sends the party away; with it, once
-/// the lighthouse has turned to fire, it bids them set the four spirits aflame.
-/// Four ledges in the rain lead from the hall to the four towers, and each
-/// tower comes out on the beacon ledge (SceneId_MarsLighthouseRoomMFlame),
-/// where Blaze lights its element's flame. Each flame lit burns on one of the
-/// hall's four robed statues and makes its element's inscription glow. With
-/// all four lit the statue says the heavens await, a fireball from its mouth
-/// breaks the floor before it to show a round carving, and Teleport there
-/// carries the party up to the aerie. Once the lighthouse has thawed, the
-/// hall's four doorways light purple as the leader nears them.
-
+/// Felix reaches the hall up the stairs from the lighthouse's entrance. The
+/// great dragon statue at its head speaks as he steps in: without the Mars
+/// Star it tells him to begone; with it, once the lighthouse has thawed, it
+/// bids him set the four spirits aflame. Four inscriptions hang beside the
+/// statue, two on the floor by its chin and two on the gallery by its head,
+/// naming the peoples who ruled earth, water, fire and wind. Each tower comes
+/// out on a beacon ledge in the rain, where Blaze at the torch lights that
+/// element's flame. Each flame lit burns on one of the hall's four robed
+/// statues and makes its element's inscription glow. With all four lit the
+/// statue says the heavens await, a fireball from its mouth breaks the floor
+/// before it to show a round carving, and Teleport there carries the party up
+/// to the aerie. Once the lighthouse has thawed, the gallery's arched doorways
+/// light purple as Felix walks up to them.
 #include "system/task.h"
 #include "graphics/palette_buffers.h"
 #include "sprite_ids.h"
@@ -174,22 +175,6 @@ void Actor_Blink(struct Actor *actor);
 
 extern u32 gCrumbs_Script[];
 extern u32 gEmbers_Script[];
-
-void MarsLighthouseRoomM_LeaveLedge(void);
-
-void MarsLighthouseRoomM_StartBlazeOnTorch(void);
-
-void MarsLighthouseRoomM_WatchBlazeReachFlame(void);
-
-void MarsLighthouseRoomM_TeleportToAerie(void);
-
-void MarsLighthouseRoomM_ReadEarthInscription(void);
-void MarsLighthouseRoomM_ReadWaterInscription(void);
-void MarsLighthouseRoomM_ReadFireInscription(void);
-
-void MarsLighthouseRoomM_ReadWindInscription(void);
-
-void MarsLighthouseRoomM_HearDragonStatue(void);
 
 extern s32 gMarsLighthouseRoomM_StatueScript[];
 
@@ -377,27 +362,31 @@ void MarsLighthouseRoomM_CycleLedgeInscription(void) {
   gMarsLighthouseRoomM_LedgeCycleFrame++;
 }
 
-/// The ledge's way back leads into the tower it was reached from.
+/// Walking back into the doorway at the top of the beacon ledge's steps
+/// (cell (31, 17)) takes Felix back into the tower he came up through.
 void MarsLighthouseRoomM_LeaveLedge(void) {
   Event_PlaySound(SE_MAP_EXIT);
   FieldEvent_SetExitRequest(gMainRoutineWork.entrance);
 }
 
-/// Blaze is cast at the ledge's torch: this cast's jet of flame is the long
-/// one, which reaches up to the flame.
+/// Nothing visible happens yet when Felix casts Blaze at the torch on the
+/// beacon ledge; the game only marks this cast's jet of flame as the long one,
+/// so that it carries past the torch up to the beacon flame.
 void MarsLighthouseRoomM_StartBlazeOnTorch(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
   event->blazeLongSpray = 1;
 }
 
-/// The camera follows Blaze up to the flame.
+/// As Felix's Blaze on the beacon ledge's torch flies on past it, the camera
+/// follows the fire up to the unlit beacon.
 void MarsLighthouseRoomM_WatchBlazeReachFlame(void) {
   FieldCamera_MoveToActorById(ACTOR_LEDGE_BLAZE_TARGET, 1);
   FieldCamera_WaitForArrival();
 }
 
-/// Blaze ends on the flame: a flash, and the tower's element's flame is lit.
+/// Blaze reaches the beacon above the ledge's torch: the screen flashes white
+/// with a chime, and the beacon of the tower Felix came up through is lit.
 void MarsLighthouseRoomM_LightFlame(void) {
   struct FieldWork *work;
 
@@ -496,16 +485,10 @@ void MarsLighthouseRoomM_CycleHallInscriptions(void) {
   gMarsLighthouseRoomM_HallCycleFrame++;
 }
 
-// In a render of the thawed hall (render event --scene
-// MarsLighthouseRoomMInscriptions --event MarsLighthouseRoomM_StepTowardDoorway
-// --edition tla-en, which enters by entrance 12) the arch the party came in by
-// stands lit; as the leader steps beside the doorway above it, that arch is
-// gone and the upper one, its opening purple, is shown whole at once over the
-// bare carved wall, the blend still full from the arrival, then fades back to
-// the bare wall over some 16 frames.
-/// Each frame the doorway, an arch with a purple opening drawn on BG1 over the
-/// wall, fades one step toward its target; fully shown it opens the way through
-/// the wall, and gone it closes it.
+/// Each frame, the purple light in the arched doorway Felix last stepped up to
+/// fades one step in or out. Fully lit, the doorway opens a way through the
+/// wall (the cells under its arch are copied from the open template); faded
+/// out, the wall closes again.
 void MarsLighthouseRoomM_FadeDoorway(void) {
   s32 step;
 
@@ -546,9 +529,11 @@ void MarsLighthouseRoomM_FadeDoorway(void) {
   }
 }
 
-/// Stepping on a cell before a doorway: the last doorway's light is taken
-/// away, this one's put up, and it fades in from the cell under the arch or
-/// out from those beside it.
+/// Once the lighthouse has thawed, stepping under one of the hall's four
+/// arched doorways, two each side of the dragon statue, lights its opening
+/// purple with a hum, and stepping to the cells beside it fades it out again.
+/// The arch under Venus's doorway is cell (18, 10), Mercury's (9, 11), Mars's
+/// (18, 11) and Jupiter's (9, 10); the last doorway lit is put away first.
 void MarsLighthouseRoomM_StepTowardDoorway(s32 state) {
   s32 next;
   s32 odd;
@@ -585,7 +570,8 @@ void MarsLighthouseRoomM_StepTowardDoorway(s32 state) {
     MapGrid_CopyCellsLayered(0, 125, 3, 3, 8, 67);
 }
 
-/// As the statue speaks, the four doorways' lights flicker up and fade away.
+/// As the dragon statue speaks, the four arched doorways light up purple
+/// together, flicker and fade away.
 void MarsLighthouseRoomM_FlashDoorways(void) {
   MapGrid_CopyCellsLayered(0, 125, 3, 3, 17, 67);
   MapGrid_CopyCellsLayered(0, 125, 3, 3, 8, 72);
@@ -613,8 +599,9 @@ void MarsLighthouseRoomM_FlashDoorways(void) {
 
 void BlendScript_Suspend(void);
 
-/// On arriving in the hall: the light of the doorway the party came through is
-/// shown, one step short of full so the next fade opens its way, or none.
+/// On arriving in the hall through one of its arched doorways, that doorway
+/// is shown lit purple behind Felix (one step short of full, so the next fade
+/// opens its way); arriving any other way, all four are dark.
 void MarsLighthouseRoomM_StartDoorways(s32 entrance) {
   s32 cell = -1;
   s16 *blend;
@@ -660,7 +647,10 @@ void MarsLighthouseRoomM_StartDoorways(s32 entrance) {
   Task_AddFrame(MarsLighthouseRoomM_FadeDoorway, TASK_PASS_FRAME);
 }
 
-/// Teleport on the broken floor: the party leaves for the aerie.
+/// Felix casts Teleport on the round carving the dragon statue's fireball
+/// uncovered in the floor before it (cells (12, 12) to (15, 14)): the screen
+/// turns red, sparks swirl round the party, and they arrive on the carved
+/// octagon of the Mars Lighthouse Aerie in the storm.
 void MarsLighthouseRoomM_TeleportToAerie(void) {
   Teleport_StartShimmer();
   Teleport_PlaySparks();
@@ -898,7 +888,9 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-/// "Mankind... With the power of wisdom, they ruled the earth."
+/// Felix reads the inscription on the hall's gallery east of the dragon
+/// statue's head: the screen dims to green and "Mankind... With the power of
+/// wisdom, they ruled the earth." appears across it.
 void MarsLighthouseRoomM_ReadEarthInscription(void) {
   u16 *color = (u16 *)&CENTERED_TEXT_COLOR;
 
@@ -918,7 +910,9 @@ void MarsLighthouseRoomM_ReadEarthInscription(void) {
   Event_End();
 }
 
-/// "Fish... With cold courage, they ruled the water."
+/// Felix reads the inscription on the hall's floor west of the dragon statue's
+/// chin: the screen dims to green and "Fish... With cold courage, they ruled
+/// the water." appears across it.
 void MarsLighthouseRoomM_ReadWaterInscription(void) {
   u16 *color = (u16 *)&CENTERED_TEXT_COLOR;
 
@@ -938,7 +932,9 @@ void MarsLighthouseRoomM_ReadWaterInscription(void) {
   Event_End();
 }
 
-/// "Dragons... Burning with might, they ruled the fires."
+/// Felix reads the inscription on the hall's floor east of the dragon statue's
+/// chin: the screen dims to green and "Dragons... Burning with might, they
+/// ruled the fires." appears across it.
 void MarsLighthouseRoomM_ReadFireInscription(void) {
   u16 *color = (u16 *)&CENTERED_TEXT_COLOR;
 
@@ -958,7 +954,9 @@ void MarsLighthouseRoomM_ReadFireInscription(void) {
   Event_End();
 }
 
-/// "Bird... On the wings of truth, they ruled the winds."
+/// Felix reads the inscription on the hall's gallery west of the dragon
+/// statue's head: the screen dims to green and "Bird... On the wings of truth,
+/// they ruled the winds." appears across it.
 void MarsLighthouseRoomM_ReadWindInscription(void) {
   u16 *color = (u16 *)&CENTERED_TEXT_COLOR;
 
@@ -1019,9 +1017,13 @@ void MarsLighthouseRoomM_BreakFloorTile(s32 x, s32 z, s32 sourceX, s32 sourceY,
   MapGrid_CopyCellsTo(sourceX, sourceY, cellX + 64, cellY, 1, 1);
 }
 
-/// Before the great dragon statue: without the Mars Star it sends the party
-/// away, once; with it (and, from patch 1, the lighthouse turned to fire) it
-/// bids them set the four spirits aflame, and the four doorways flash.
+/// The great dragon statue at the head of the hall speaks as Felix steps in
+/// from the stairs (cells (11, 16) to (16, 16)): the camera rises to it and
+/// the screen dims to green. Without the Mars Star it says "If you do not hold
+/// the star, you shall not ascend to the heavens... Begone!", once. With the
+/// star it bids the party set the four spirits aflame and the gallery's four
+/// doorways flash, after which it speaks no more; from patch 1 it waits for
+/// the lighthouse to have thawed as well.
 void MarsLighthouseRoomM_HearDragonStatue(void) {
   if (PartyInventory_FindMember(ITEM_MYTHRIL_BAG_MARS_STAR) == -1) {
     if (!Event_GetFlag(FLAG_TOLD_TO_BEGONE)) {
@@ -1374,8 +1376,6 @@ void Actor_SetSpritePriorityDirect(struct Actor *actor, s32 mode);
 #include "shared/actor_pop_up.h"
 
 #include "shared/actor_park.h"
-
-void MarsLighthouseRoomM_LightFlame(void);
 
 s32 gMarsLighthouseRoomM_StatueScript[] = {
     SC_CALL(MarsLighthouseRoomM_SetUpStatue),

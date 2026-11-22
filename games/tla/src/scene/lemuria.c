@@ -1,7 +1,16 @@
 /// @file
-/// Lemuria, the hidden city beyond the Sea of Time: its doors and houses, the
-/// children, the spring, the vine Growth raises, the treasure Scoop finds, and
-/// the water's rippling scroll and cycling colours.
+/// Lemuria, the hidden city beyond the Sea of Time, which Piers leads the party
+/// into. At the top of the avenue the two palace guards stop the party until
+/// Piers speaks for it, and Kraden runs up from the paths above the spring to
+/// admire the palace, calling Felix back if he heads down the stairs through
+/// the colonnade first. The Senate, Piers's uncle's house and a girl's house
+/// open off the west of the town, the Spring of Lemuria is in the middle, and
+/// in the east stands Lunpa's tower, whose stuck front door sends the party up
+/// a rope to the window above it. Growth on a sprout at the cliff's edge below
+/// the tower grows a vine down to the cow's pasture, whose weeds Cyclone
+/// scatters (one clump hides a Hard Nut), and Scoop digs up a Lucky Medal, a
+/// Rusty Sword, a Bone and Star Dust about the town. The water ripples and its
+/// colours cycle.
 
 #include "system/task.h"
 #include "sprite_ids.h"
@@ -45,15 +54,15 @@
 /// Lemuria, by the rows of gActorPlacements; Piers' row goes to his party
 /// slot.
 enum LemuriaActorId {
-  /// The posts of the rope Lash ties east of the house with the broken door:
-  /// the low one on the grass, where the rope lies coiled, and the high one on
-  /// the ledge above.
+  /// The posts of the rope Lash ties up the east side of Lunpa's tower: the
+  /// low one on the grass, where the rope lies coiled, and the high one on the
+  /// tower's middle balcony.
   ACTOR_ROPE_LOW_POST = ACTOR_FIRST_PLACED,
   ACTOR_ROPE_HIGH_POST,
   ACTOR_SPROUT, ///< grown into a hanging vine (FLAG_LEMURIA_VINE_GROWN)
   ACTOR_SIGN,   ///< "House of the Senate", below the Senate's door
   /// A girl at the south of the town, whom the events dress as Kraden to speak
-  /// his lines, and as the Lemurian at the broken door's window;
+  /// his lines, and as Lunpa on the top balcony of his tower;
   /// Lemuria_RestoreGirl puts her back.
   ACTOR_KRADEN_STAND_IN,
   /// "Lemuria has no disease, no war..."
@@ -77,7 +86,7 @@ enum LemuriaActorId {
   ACTOR_EAST_PALACE_GUARD,
   /// "If you and Lunpa..."
   ACTOR_GIRL_ON_LUNPA,
-  /// The rope the Lemurian lets down from the broken door's window
+  /// The rope Lunpa throws down from his tower's middle balcony
   /// (FLAG_LEMURIA_ROPE_LET_DOWN): its end on the ground, and the post at the
   /// window it lies coiled at and is thrown from (Rope_Place, Rope_Lash).
   ACTOR_LET_DOWN_ROPE_LOW_END,
@@ -87,18 +96,30 @@ enum LemuriaActorId {
   ACTOR_SPRING             ///< Lemuria_DrinkFromSpring
 };
 
-/// The cells whose step and examine triggers run Lemuria's events: before the
-/// palace guards, the paths west and east of the avenue above the spring, the
-/// stairs up through the colonnade, the spring's pool and the broken door. A
-/// door's or an exit's cells take the number of the exit they lead through
-/// (LEMURIA_TO_), which Lemuria_EnterDoor passes to FieldEvent_SetExitRequest.
+/// The cells whose step, examine and Psynergy triggers run Lemuria's events:
+/// before the palace guards, the paths west and east of the avenue above the
+/// spring, the stairs down through the colonnade, the spring's pool, Lunpa's
+/// stuck front door, the clumps of weeds Cyclone scatters and the spots Scoop
+/// digs. A door's or an exit's cells take the number of the exit they lead
+/// through (LEMURIA_TO_), which Lemuria_EnterDoor passes to
+/// FieldEvent_SetExitRequest. A Scoop spot's number is its row in the scene's
+/// treasure spots and items.
 enum LemuriaCellBehavior {
   CELL_BEHAVIOR_LEMURIA_BEFORE_PALACE = 20,
   CELL_BEHAVIOR_LEMURIA_WEST_PATH,
   CELL_BEHAVIOR_LEMURIA_EAST_PATH,
   CELL_BEHAVIOR_LEMURIA_COLONNADE_STAIRS,
   CELL_BEHAVIOR_LEMURIA_SPRING = 25,
-  CELL_BEHAVIOR_LEMURIA_BROKEN_DOOR = 40
+  CELL_BEHAVIOR_LEMURIA_WEST_WEEDS = 30,
+  CELL_BEHAVIOR_LEMURIA_PASTURE_WEEDS,
+  CELL_BEHAVIOR_LEMURIA_WEEDS_SOUTH_OF_COW,
+  CELL_BEHAVIOR_LEMURIA_WEEDS_NORTH_OF_COW,
+  CELL_BEHAVIOR_LEMURIA_HARD_NUT_WEEDS = 38,
+  CELL_BEHAVIOR_LEMURIA_STUCK_DOOR = 40,
+  CELL_BEHAVIOR_LEMURIA_LUCKY_MEDAL = 104,
+  CELL_BEHAVIOR_LEMURIA_RUSTY_SWORD,
+  CELL_BEHAVIOR_LEMURIA_BONE = 107,
+  CELL_BEHAVIOR_LEMURIA_STAR_DUST
 };
 
 /// Set once the party has taken the test of luck offered at the Spring of
@@ -110,8 +131,8 @@ enum LemuriaCellBehavior {
 /// Set once the party has marvelled at the city ("This place is remarkable...
 /// Truly remarkable...").
 #define FLAG_LEMURIA_CITY_ADMIRED 0x964
-/// Set once the Lemurian at the window has told the party the door is broken
-/// and to climb through ("The door's broken, I'm afraid.").
+/// Set once Lunpa has told the party from his balcony that his door is broken
+/// and to climb through the window above it ("The door's broken, I'm afraid.").
 #define FLAG_LEMURIA_TOLD_DOOR_IS_BROKEN 0x968
 /// Set once the Lemurian has let a rope down from the window ("There! Is that
 /// better? Now climb up here.").
@@ -131,8 +152,8 @@ extern u16 gLemuria_WideDoorOpening[];
 
 #include "shared/position_distance.h"
 
-/// Set once the party has taken the Hard Nut the fifth weeds hide (Lemuria's
-/// scene item 106).
+/// Set once the party has taken the Hard Nut hidden in the pasture's weeds
+/// (Lemuria's scene item 106).
 #define FLAG_LEMURIA_HARD_NUT 0xfbb
 
 /// Set once Lash has tied the rope between the low post and the high one;
@@ -203,13 +224,13 @@ s32 Lemuria_NoticeLeader(struct Actor *self) {
 
 s32 MapGrid_GetAttributeBAt(s32 x, s32 z, s32 layer);
 
-extern struct MapGridCellAnimation gLemuria_FirstDoor;
-extern struct MapGridCellAnimation gLemuria_SecondDoor;
+extern struct MapGridCellAnimation gLemuria_UnclesDoor;
+extern struct MapGridCellAnimation gLemuria_GirlsHouseDoor;
 extern struct MapGridCellAnimation gLemuria_SenateDoor;
-extern struct MapGridCellAnimation gLemuria_ThirdDoor;
+extern struct MapGridCellAnimation gLemuria_LunpasWindow;
 extern struct MapGridCellAnimation gLemuria_PalaceFrontDoor;
 extern struct MapGridCellAnimation gLemuria_PalaceUpperDoor;
-extern struct MapGridCellAnimation gLemuria_FourthDoor;
+extern struct MapGridCellAnimation gLemuria_LunpasDoor;
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -221,7 +242,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-/// Puts the girl who stood in for Kraden back in her place, as herself.
+/// Puts the girl who stood in for Kraden or Lunpa back in her place at the
+/// south of the town, as herself.
 void Lemuria_RestoreGirl(void) {
   Actor_SetPosition(ACTOR_KRADEN_STAND_IN, 488, 1256);
   Actor_SetFirstSpriteAnimation(Actor_Get(ACTOR_KRADEN_STAND_IN),
@@ -230,8 +252,8 @@ void Lemuria_RestoreGirl(void) {
   Actor_FaceDirection(ACTOR_KRADEN_STAND_IN, FACING_WEST, 0);
 }
 
-/// The leader opens one of Lemuria's doors and walks in, centred on it or
-/// straight ahead by `mode`.
+/// The door opens and Felix walks in through it, lined up with it first
+/// (`mode` 0) or straight ahead (`mode` 1), as the screen closes.
 void Lemuria_OpenDoorAndEnter(const struct MapGridCellAnimation *door, s32 exit,
                               s32 mode) {
   s32 id;
@@ -255,12 +277,16 @@ void Lemuria_OpenDoorAndEnter(const struct MapGridCellAnimation *door, s32 exit,
   Event_End();
 }
 
-/// The party leader walks into one of Lemuria's doors, the door's cells giving
-/// the exit; the Senate's is locked once the party has met King Hydros.
-/// "The door is locked... It sounds as if there's a raucous caucus going on
-/// inside..."
+/// Felix walks north into one of Lemuria's doors: the door opens and he goes
+/// in. The doors are those of Piers's uncle's house left of the spring, cell
+/// (22, 47); the girl's house, cell (35, 47); the House of the Senate in the
+/// west, cell (9, 40); the window above Lunpa's door, cell (54, 45), and
+/// Lunpa's own door below it, cell (54, 50); and the palace's front and upper
+/// doors, cells (28, 20) and (28, 13). Once the party has met King Hydros the
+/// Senate's door stays shut: "The door is locked... It sounds as if there's a
+/// raucous caucus going on inside..."
 void Lemuria_EnterDoor(s32 exit) {
-  const struct MapGridCellAnimation *door = &gLemuria_FirstDoor;
+  const struct MapGridCellAnimation *door = &gLemuria_UnclesDoor;
   s32 mode = 0;
 
   if (exit == LEMURIA_TO_LEMURIA_ROOMS_WEST_C &&
@@ -271,11 +297,11 @@ void Lemuria_EnterDoor(s32 exit) {
     return;
   }
   if (exit == LEMURIA_TO_LEMURIA_ROOMS_WEST_A) {
-    door = &gLemuria_FirstDoor;
+    door = &gLemuria_UnclesDoor;
     mode = 0;
   }
   if (exit == LEMURIA_TO_LEMURIA_ROOMS_WEST_B) {
-    door = &gLemuria_SecondDoor;
+    door = &gLemuria_GirlsHouseDoor;
     mode = 0;
   }
   if (exit == LEMURIA_TO_LEMURIA_ROOMS_WEST_C) {
@@ -283,7 +309,7 @@ void Lemuria_EnterDoor(s32 exit) {
     mode = 1;
   }
   if (exit == LEMURIA_TO_LEMURIA_ROOMS_EAST_A) {
-    door = &gLemuria_ThirdDoor;
+    door = &gLemuria_LunpasWindow;
     mode = 0;
   }
   if (exit == LEMURIA_TO_LEMURIA_PALACE_SOUTH) {
@@ -295,15 +321,17 @@ void Lemuria_EnterDoor(s32 exit) {
     mode = 1;
   }
   if (exit == LEMURIA_TO_LEMURIA_ROOMS_EAST_C) {
-    door = &gLemuria_FourthDoor;
+    door = &gLemuria_LunpasDoor;
     mode = 0;
   }
   Lemuria_OpenDoorAndEnter(door, exit, mode);
 }
 
-/// The spoiled child's talk: one message, and Actor_TurnToFaceEachOther with
-/// the party leader, while no field Psynergy is pending, another while one is;
-/// the child's facing is restored after.
+/// Felix talks to the child who walks about with another in the west of the
+/// town: the child stops and turns to him, "It has been many, many years since
+/// a new child was born in Lemuria." Mind Read hears the child think,
+/// "Everyone spoils me so much... I don't ever want to grow up!" Afterwards
+/// the child faces the way it was walking again.
 void Lemuria_TalkToSpoiledChild(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_Get(ACTOR_SPOILED_CHILD);
@@ -327,7 +355,10 @@ void Lemuria_TalkToSpoiledChild(void) {
   System_Wait(1);
 }
 
-/// The same for the lonely child.
+/// Felix talks to the other walking child in the west of the town: the child
+/// stops and turns to him, "We are the only children in Lemuria. I often wish
+/// there were other children to play with." Mind Read hears the child wonder,
+/// "Are there other children in the lands beyond the Sea of Time?"
 void Lemuria_TalkToLonelyChild(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_Get(ACTOR_LONELY_CHILD);
@@ -351,34 +382,43 @@ void Lemuria_TalkToLonelyChild(void) {
   System_Wait(1);
 }
 
-/// Cyclone scatters the first weeds: the cells under them are copied from a
-/// window of bare ground; so for the next three.
-void Lemuria_CycloneFirstWeeds(void) {
+/// Felix casts Cyclone on the lone clump of weeds south-east of the spring,
+/// cells (39, 67) to (40, 68): leaves whirl up and the clump is gone, leaving
+/// bare grass. The bare ground is copied over the clump from a spare patch of
+/// the map with `FieldTileCopies_CopyTouchedCells`.
+void Lemuria_CycloneWestWeeds(void) {
   FieldTileCopies_CopyTouchedCells(37, 72, 2, 2, 39, 71, 2);
 }
 
-/// As Lemuria_CycloneFirstWeeds.
-void Lemuria_CycloneSecondWeeds(void) {
+/// Felix casts Cyclone on the weeds beside the tree in the cow's pasture, below
+/// the cliff under Lunpa's tower, cells (49, 67) to (52, 69): leaves whirl up
+/// and the clumps are gone, leaving bare grass.
+void Lemuria_CyclonePastureWeeds(void) {
   FieldTileCopies_CopyTouchedCells(59, 64, 4, 3, 49, 71, 2);
 }
 
-/// As Lemuria_CycloneFirstWeeds.
-void Lemuria_CycloneThirdWeeds(void) {
+/// Felix casts Cyclone on the clump of weeds just south of the cow in its
+/// pasture, cell (53, 65): leaves whirl up and the clump is gone.
+void Lemuria_CycloneWeedsSouthOfCow(void) {
   FieldTileCopies_CopyTouchedCells(52, 69, 1, 1, 53, 69, 2);
 }
 
-/// As Lemuria_CycloneFirstWeeds.
-void Lemuria_CycloneFourthWeeds(void) {
+/// Felix casts Cyclone on the clump of weeds just north of the cow, at the foot
+/// of the cliff the vine hangs down, cell (52, 60): leaves whirl up and the
+/// clump is gone.
+void Lemuria_CycloneWeedsNorthOfCow(void) {
   FieldTileCopies_CopyTouchedCells(53, 64, 1, 1, 52, 64, 2);
 }
 
 /// Where the Hard Nut shows once its weeds are scattered.
 enum { HARD_NUT_X = 808, HARD_NUT_Z = 1176 };
 
-/// Cyclone scatters the fifth weeds, among the second's: those cells clear as
-/// the second's do, the Hard Nut they hid shows until it is taken, and a leader
-/// standing on its cell hops off it.
-void Lemuria_CycloneFifthWeeds(void) {
+/// Felix casts Cyclone over the south of the weeds beside the tree in the
+/// cow's pasture, cell (50, 69): the clumps are gone as for
+/// Lemuria_CyclonePastureWeeds, and a Hard Nut lies in the grass where they
+/// were until it is picked up. If Felix stands on that very spot he hops a step
+/// east off it.
+void Lemuria_CycloneHardNutWeeds(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(59, 64, 4, 3, 49, 71, 2);
@@ -400,9 +440,9 @@ void Lemuria_CycloneFifthWeeds(void) {
 
 void Teleport_PlaySparksAndFade(void);
 
-/// Teleports the party, with sparks and a fade, to Lemuria before its second
-/// house door. No trigger or call of the scene reaches it.
-void Lemuria_TeleportToSecondDoor(void) {
+/// Unused: teleports the party, with sparks and a fade, to the door of the
+/// girl's house. No trigger or call of the scene reaches it.
+void Lemuria_TeleportToGirlsHouse(void) {
   struct MainRoutineWork *party;
 
   Teleport_PlaySparksAndFade();
@@ -412,7 +452,9 @@ void Lemuria_TeleportToSecondDoor(void) {
   party->teleportState = 2;
 }
 
-/// Growth on the sprout: the vine grows, and its two cells can be climbed.
+/// Felix casts Growth on the sprout at the cliff's edge below Lunpa's tower: a
+/// vine grows down the cliff, and from then on Felix can climb it down to the
+/// cow's pasture and back up. The vine stays grown.
 void Lemuria_GrowVine(void) {
   FIXED x;
   FIXED z;
@@ -428,53 +470,69 @@ void Lemuria_GrowVine(void) {
       x, z, 0, MapGrid_GetAttributeBAt(x, z, 0) | MAP_CELL_CLIMBABLE);
 }
 
-/// The Scoop spots: each digs up its treasure actor and sets its flag.
-void Lemuria_ScoopFirstTreasure(s32 id) {
+/// Unused: Scoop digs up the Water of Life of Lemuria's first treasure spot. No
+/// trigger reaches it.
+void Lemuria_ScoopWaterOfLife(s32 id) {
   Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR, FLAG_AREA_TEMP_00);
 }
 
-/// The second Scoop spot.
-void Lemuria_ScoopSecondTreasure(s32 id) {
+/// Unused: Scoop digs up the Nut of Lemuria's second treasure spot. No trigger
+/// reaches it.
+void Lemuria_ScoopNut(s32 id) {
   Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 1, FLAG_AREA_TEMP_01);
 }
 
-/// The third Scoop spot.
-void Lemuria_ScoopThirdTreasure(s32 id) {
+/// Unused: Scoop digs up the Bramble Seed of Lemuria's third treasure spot. No
+/// trigger reaches it.
+void Lemuria_ScoopBrambleSeed(s32 id) {
   Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 2, FLAG_AREA_TEMP_02);
 }
 
-/// The fourth Scoop spot.
-void Lemuria_ScoopFourthTreasure(s32 id) {
+/// Felix casts Scoop on the patch of ground right of the Spring of Lemuria,
+/// where a butterfly flutters, cell (33, 61): he digs up a Lucky Medal.
+void Lemuria_ScoopLuckyMedal(s32 id) {
   Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 3, FLAG_AREA_TEMP_03);
 }
 
-/// The fifth Scoop spot.
-void Lemuria_ScoopFifthTreasure(s32 id) {
+/// Felix casts Scoop on the patch of ground near Lunpa's tower in the east of
+/// the town, where a butterfly flutters, cell (55, 58): he digs up a Rusty
+/// Sword.
+void Lemuria_ScoopRustySword(s32 id) {
   Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 4, FLAG_AREA_TEMP_04);
 }
 
-/// The sixth Scoop spot, its treasure actor the seventh.
-void Lemuria_ScoopSixthTreasure(s32 id) {
+/// Felix casts Scoop on the patch of ground near the dog, where a butterfly
+/// flutters, cell (23, 38): he digs up a Bone.
+void Lemuria_ScoopBone(s32 id) {
   Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 6, FLAG_AREA_TEMP_06);
 }
 
-/// The seventh Scoop spot.
-void Lemuria_ScoopSeventhTreasure(s32 id) {
+/// Felix casts Scoop on the patch of ground left of the palace, where a
+/// butterfly flutters, cell (18, 26): he digs up Star Dust.
+void Lemuria_ScoopStarDust(s32 id) {
   Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 7, FLAG_AREA_TEMP_07);
 }
 
-/// The eighth Scoop spot.
-void Lemuria_ScoopEighthTreasure(s32 id) {
+/// Unused: Scoop digs up the Vial of Lemuria's ninth treasure spot. No trigger
+/// reaches it.
+void Lemuria_ScoopVial(s32 id) {
   Event_DigUpTreasure(id, FIELD_TREASURE_ACTOR + 8, FLAG_AREA_TEMP_08);
 }
 
 s32 Party_FindOwnerWithAction();
 void Rope_Coil();
 
-/// A door that will not open, until a Lemurian inside takes Piers's companions
-/// in another way.
-/// "The door doesn't want to open."
-void Lemuria_KnockAtBrokenDoor(void) {
+/// Felix checks the front door of Lunpa's tower in the east of the town, cell
+/// (54, 52): "The door doesn't want to open." Once Piers has gone to his
+/// mother's grave, the first time, Lunpa looks down from the top balcony and
+/// asks whether they are Piers's traveling companions: "The door's
+/// broken, I'm afraid. But I opened up a window just above the door." If no
+/// one in the party has Lash and the rope east of the tower is not tied, Felix
+/// just looks up, and Lunpa throws a rope down from the middle balcony: "There!
+/// Is that better? Now climb up here." From up on the tower, or once Lunpa
+/// has burst the door open, checking it does nothing. A girl of the town stands
+/// in for Lunpa.
+void Lemuria_TryStuckDoor(void) {
   struct Actor *actor;
 
   if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed > toFIXED(96) ||
@@ -562,8 +620,10 @@ void Lemuria_KnockAtBrokenDoor(void) {
 
 void Party_RestoreHpPp(s32 value);
 
+/// Felix drinks from the spring in the middle of the town, the turtles' pool
+/// beside the man who offers the test of luck, cells (27, 57) to (30, 58):
 /// "Felix and the others drank of the spring. Their HP and PP were fully
-/// replenished!"
+/// replenished!" From up on the spring's rim nothing happens.
 void Lemuria_DrinkFromSpring(void) {
   FIXED y = Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed;
 
@@ -577,7 +637,10 @@ void Lemuria_DrinkFromSpring(void) {
   }
 }
 
-/// The man at the spring offers a test of luck at the Spring of Lemuria, once.
+/// Felix talks to the man before the spring: "Do you wish to test your luck at
+/// the Spring of Lemuria?" Said yes, he tells the party how; said no, he steps
+/// aside so that the party can walk up to the spring. From then on he only
+/// wishes the party good luck.
 void Lemuria_OfferSpringLuck(void) {
   if (Event_GetFlag(FLAG_LEMURIA_SPRING_LUCK_TRIED)) {
     Actor_FaceActor(ACTOR_MAN_AT_THE_SPRING, gMainRoutineWork.leaderActorId, 0);
@@ -782,9 +845,12 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// Kraden, stepping onto the path west or east of the avenue, looks round and
-/// runs up it to the palace.
-/// "Oh! Goodness! Felix! Look over here! This palace is magnificient!"
+/// Felix steps onto the stone path west of the spring's avenue, cells (22, 56)
+/// to (23, 57), or east of it, cells (34, 56) to (35, 57), before the party has
+/// gone up to the palace: Kraden comes out, looks round, "Oh! Goodness!", and
+/// runs up the avenue and the stairs through the colonnade, jumping for joy:
+/// "Felix! Look over here! This palace is magnificient!" Felix follows him up
+/// the stairs.
 void Lemuria_AdmirePalace(s32 id) {
   struct Actor *leader;
   s32 a;
@@ -860,7 +926,10 @@ void Lemuria_AdmirePalace(s32 id) {
   Event_End();
 }
 
-/// "Where are you going, Felix? Let's take a longer look around!"
+/// Felix heads down the stairs through the colonnade, cells (28, 45) and
+/// (29, 45), before the party has gone up to the palace: Kraden comes up behind
+/// him, "Where are you going, Felix? Let's take a longer look around!", and
+/// Felix steps back up.
 void Lemuria_KeepLookingAround(void) {
   struct Actor *leader;
 
@@ -891,9 +960,11 @@ void Lemuria_KeepLookingAround(void) {
   Event_End();
 }
 
-/// The party marvels at the city, and is stopped by a Lemurian who has never
-/// seen it before.
-/// "This place is remarkable... Truly remarkable..."
+/// Felix walks up to the palace at the top of the avenue, cells (28, 33) and
+/// (29, 33), the first time: Kraden marvels, "This place is remarkable...
+/// Truly remarkable...", and the two guards at the palace stair stop the
+/// party, "Who goes there! I've not seen you in Lemuria before!", until Piers
+/// steps forward and asks to see King Hydros.
 void Lemuria_MarvelAtCity(void) {
   struct Actor *leader;
   s32 result;
@@ -1202,7 +1273,7 @@ void Actor_TakeLeaderLayer(void);
 /// An actor's per-frame hook: it is drawn on the party leader's layer.
 void Lemuria_TakeLeaderLayer(void) { Actor_TakeLeaderLayer(); }
 
-extern u16 gLemuria_ThirdDoorOpening[];
+extern u16 gLemuria_WindowOpening[];
 
 // clang-format off
 /// The spoiled child's walk.
@@ -1303,29 +1374,30 @@ u16 gLemuria_WideDoorOpening[] = {
     MAPGRID_ANIMATION_STEPS_END,
 };
 
-/// The third door opens in one frame.
-u16 gLemuria_ThirdDoorOpening[] = {
+/// The window on Lunpa's balcony opens in one frame.
+u16 gLemuria_WindowOpening[] = {
     MAPGRID_ANIMATION_STEP(3, 1, 1, 1, 0),
     MAPGRID_ANIMATION_STEPS_END,
 };
 // clang-format on
 
-/// The first house door's opening, at its place on the map grid.
-struct MapGridCellAnimation gLemuria_FirstDoor = {(s32)gLemuria_DoorOpening, 22,
-                                                  47};
+/// The opening of the door of Piers's uncle's house, at its place on the map
+/// grid.
+struct MapGridCellAnimation gLemuria_UnclesDoor = {(s32)gLemuria_DoorOpening,
+                                                   22, 47};
 
-/// The second house door's opening, at its place on the map grid.
-struct MapGridCellAnimation gLemuria_SecondDoor = {(s32)gLemuria_DoorOpening,
-                                                   35, 47};
+/// The opening of the door of the girl's house, at its place on the map grid.
+struct MapGridCellAnimation gLemuria_GirlsHouseDoor = {
+    (s32)gLemuria_DoorOpening, 35, 47};
 
 /// The Senate's door's opening, at its place on the map grid.
 struct MapGridCellAnimation gLemuria_SenateDoor = {gLemuria_WideDoorOpening, 9,
                                                    40};
 
-/// The opening of the third house door, the one the Lemurian at its window
-/// calls broken, at its place on the map grid.
-struct MapGridCellAnimation gLemuria_ThirdDoor = {gLemuria_ThirdDoorOpening, 54,
-                                                  45};
+/// The opening of the window on the middle balcony of Lunpa's tower, which
+/// Lunpa opened for the party, at its place on the map grid.
+struct MapGridCellAnimation gLemuria_LunpasWindow = {gLemuria_WindowOpening, 54,
+                                                     45};
 
 /// The palace front door's opening, at its place on the map grid.
 struct MapGridCellAnimation gLemuria_PalaceFrontDoor = {
@@ -1335,8 +1407,9 @@ struct MapGridCellAnimation gLemuria_PalaceFrontDoor = {
 struct MapGridCellAnimation gLemuria_PalaceUpperDoor = {
     gLemuria_WideDoorOpening, 28, 13};
 
-/// The fourth house door's opening, at its place on the map grid.
-struct MapGridCellAnimation gLemuria_FourthDoor = {(s32)gLemuria_DoorOpening,
+/// The opening of the front door of Lunpa's tower, at its place on the map
+/// grid.
+struct MapGridCellAnimation gLemuria_LunpasDoor = {(s32)gLemuria_DoorOpening,
                                                    54, 50};
 
 struct Trigger gSceneEvents[] = {
@@ -1470,29 +1543,37 @@ struct Trigger gSceneEvents[] = {
      EVENT(Lemuria_DrinkFromSpring)},
     {TRIGGER_EXAMINE, CELL_BEHAVIOR_LEMURIA_SPRING, CONDITION_ALWAYS,
      EVENT(Lemuria_DrinkFromSpring)},
-    {TRIGGER_EXAMINE, CELL_BEHAVIOR_LEMURIA_BROKEN_DOOR, CONDITION_ALWAYS,
-     EVENT(Lemuria_KnockAtBrokenDoor)},
+    {TRIGGER_EXAMINE, CELL_BEHAVIOR_LEMURIA_STUCK_DOOR, CONDITION_ALWAYS,
+     EVENT(Lemuria_TryStuckDoor)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_LOW_POST,
      FLAG_LEMURIA_ROPE_TIED, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_LEMURIA_VINE_GROWN,
      EVENT(Lemuria_GrowVine)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30,
-     CONDITION_ALWAYS, EVENT(Lemuria_CycloneFirstWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 31,
-     CONDITION_ALWAYS, EVENT(Lemuria_CycloneSecondWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 32,
-     CONDITION_ALWAYS, EVENT(Lemuria_CycloneThirdWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 33,
-     CONDITION_ALWAYS, EVENT(Lemuria_CycloneFourthWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 38,
-     CONDITION_ALWAYS, EVENT(Lemuria_CycloneFifthWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 104,
-     FLAG_AREA_TEMP_03, EVENT(Lemuria_ScoopFourthTreasure)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 105,
-     FLAG_AREA_TEMP_04, EVENT(Lemuria_ScoopFifthTreasure)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 107,
-     FLAG_AREA_TEMP_06, EVENT(Lemuria_ScoopSixthTreasure)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 108,
-     FLAG_AREA_TEMP_07, EVENT(Lemuria_ScoopSeventhTreasure)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_LEMURIA_WEST_WEEDS, CONDITION_ALWAYS,
+     EVENT(Lemuria_CycloneWestWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_LEMURIA_PASTURE_WEEDS, CONDITION_ALWAYS,
+     EVENT(Lemuria_CyclonePastureWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_LEMURIA_WEEDS_SOUTH_OF_COW, CONDITION_ALWAYS,
+     EVENT(Lemuria_CycloneWeedsSouthOfCow)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_LEMURIA_WEEDS_NORTH_OF_COW, CONDITION_ALWAYS,
+     EVENT(Lemuria_CycloneWeedsNorthOfCow)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_LEMURIA_HARD_NUT_WEEDS, CONDITION_ALWAYS,
+     EVENT(Lemuria_CycloneHardNutWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_LEMURIA_LUCKY_MEDAL, FLAG_AREA_TEMP_03,
+     EVENT(Lemuria_ScoopLuckyMedal)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_LEMURIA_RUSTY_SWORD, FLAG_AREA_TEMP_04,
+     EVENT(Lemuria_ScoopRustySword)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_LEMURIA_BONE, FLAG_AREA_TEMP_06, EVENT(Lemuria_ScoopBone)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS),
+     CELL_BEHAVIOR_LEMURIA_STAR_DUST, FLAG_AREA_TEMP_07,
+     EVENT(Lemuria_ScoopStarDust)},
     {TRIGGER_TABLE_END},
 };

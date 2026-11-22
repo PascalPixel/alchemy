@@ -13,7 +13,7 @@ void WindowSystem_InitBattleFar(s32 mode);
 /// Opens the party status window, sized by PartyStatus_BuildLayoutBounds, and
 /// draws it, holding the tilemap upload meanwhile.
 void PartyStatus_CreateWindowFar(s32 layout);
-/// Returns 0 if any of the three channels has a window still writing (state is
+/// Returns 0 if any of the three messages has a window still writing (state is
 /// zero), else 1.
 s32 Message_AllTypedFar(void);
 /// Returns gWindow_FixedTileBlocks[0], whatever no is.

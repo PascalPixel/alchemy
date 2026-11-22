@@ -514,7 +514,7 @@ void TrialRoad_PoundStake(s32 id, s32 phase, s32 frame);
 void TrialRoad_StepOntoStake(s32 id, s32 other, s32 flag, s32 side);
 void TrialRoad_PushLog(s32 id, s32 dx, s32 dz, s32 axis);
 void TrialRoad_UncoverVent(s32 id, s32 phase, s32 frame);
-void MagmaRockInside_CheckCrumblingStep(const u16 *table);
+void Leader_CheckCrumblingStep(const u16 *table);
 void TrialRoad_CrumblePillar(const void *data, s32 a);
 
 void TrialRoad_ClearGiveUpAsked(void);
@@ -1263,7 +1263,7 @@ void TrialRoad_LandOnPillar(void) {
 /// east or the west: the first time it flashes, and the second time it
 /// crumbles under Felix and drops him to the ground.
 void TrialRoad_CheckCrumblingPillars(void) {
-  MagmaRockInside_CheckCrumblingStep(gTrialRoad_CrumblingPillars);
+  Leader_CheckCrumblingStep(gTrialRoad_CrumblingPillars);
 }
 
 /// Burst on the crumbling stage's west cracked pillar crumbles it away.
@@ -3298,7 +3298,7 @@ struct TrialRoadFountain *TrialRoad_AddFountain(s32 slot, s32 id, s32 timer,
 
 #include "shared/pillar_restore_raised.h"
 
-#include "shared/traps_check.h"
+#include "shared/leader_check_crumbling_step.h"
 
 /// A cracked pillar in the crumbling stage shakes, crumbles and falls away, as
 /// Magma Rock's do.

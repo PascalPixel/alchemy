@@ -1,6 +1,6 @@
 /// Checks the trap under the leader: the first step sets it off, the second
 /// drops it.
-void MagmaRockInside_CheckCrumblingStep(const u16 *table) {
+void Leader_CheckCrumblingStep(const u16 *table) {
   struct Actor *leader;
   struct Actor *trap;
   FIXED position[3];

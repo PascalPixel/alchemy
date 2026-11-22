@@ -39,9 +39,7 @@ struct BurstWork {
   struct FieldPsynergyParticle bursts[BURST_EXPLOSION_COUNT];
   s16 phase; ///< the stage of the cast; FIELD_PSYNERGY_FINISHED once it ends
   s16 timer; ///< frames into the stage
-  /// Passed to the target's event each frame: 2 for a small explosion, 3 for
-  /// the great one, 1 as it dies down, 0 otherwise.
-  s16 shake;
+  s16 shake; ///< passed to the target's event each frame (BurstStage)
   u16 burstTile; ///< the explosion's first tile
   s16 nextBurst; ///< the explosion slot used next
   s16 newBursts; ///< explosions to start this frame
@@ -69,19 +67,22 @@ void FieldPsynergy_UpdateBurst(void) {
   s32 red;
   s32 blue;
 
-  work->shake = 0;
+  work->shake = BURST_STAGE_QUIET;
   if (work->paletteMode == 1) {
     palette = (volatile u16 *)&OBJ_PLTT_COLOR(CANVAS_PALETTE, 0);
     i = 0;
     frames = &canvas->drawnFrames;
     red = RGB_LEVEL_MAX;
     blue = RGB(0, 0, RGB_LEVEL_MAX);
-    // The glow's 32 colours: red and blue full, green 16 give or take 12 on a
-    // sine wave a 32nd of a turn on from colour to colour, which moves on a
-    // colour every two frames.
+    // The glow's 32 colours: red and blue full, green on a sine wave a 32nd
+    // of a turn on from colour to colour, which moves on a colour every two
+    // frames.
     for (; i < PALETTE_COLORS * 2; i++) {
       u32 angle = ((((u32)*frames >> 1) + i) * TRIG_TURN + TRIG_TURN * 9) / 32;
-      s32 green = RGB(0, FIXEDtoINT(Trig_Sin(angle) * 12) + 16, 0);
+      s32 green = RGB(0,
+                      FIXEDtoINT(Trig_Sin(angle) * CANVAS_SHINE_SWING) +
+                          CANVAS_SHINE_MIDDLE,
+                      0);
 
       Io_Write16(green | blue | red, palette++);
     }
@@ -184,7 +185,7 @@ void FieldPsynergy_UpdateBurst(void) {
       if ((work->timer & 7) == 0) {
         MapGrid_SetScreenShakeFar(toFIXED(3), toFIXED(3), BURST_SHAKE_DECAY);
         work->newBursts = 1;
-        work->shake = 2;
+        work->shake = BURST_STAGE_SMALL_BLAST;
       }
       canvas->command = CANVAS_UPLOAD_AND_DARKEN_FOUR_LEVELS;
       if (work->timer == 16)
@@ -196,7 +197,7 @@ void FieldPsynergy_UpdateBurst(void) {
       if ((work->timer & 7) == 0) {
         MapGrid_SetScreenShakeFar(toFIXED(3), toFIXED(3), BURST_SHAKE_DECAY);
         work->newBursts = 1;
-        work->shake = 2;
+        work->shake = BURST_STAGE_SMALL_BLAST;
       }
       if (work->timer == 128)
         BURST_NEXT_PHASE(work);
@@ -214,10 +215,10 @@ void FieldPsynergy_UpdateBurst(void) {
         MapGrid_SetScreenShakeFar(toFIXED(12), toFIXED(12), BURST_SHAKE_DECAY);
         Sound_PlayFar(SE_CRASH);
         if (work->timer == 0)
-          work->shake = 3;
+          work->shake = BURST_STAGE_GREAT_BLAST;
       }
       if (work->timer == 20)
-        work->shake = 1;
+        work->shake = BURST_STAGE_DYING_DOWN;
       if (work->timer == 72) {
         work->phase = FIELD_PSYNERGY_FINISHED;
         work->timer = -1;

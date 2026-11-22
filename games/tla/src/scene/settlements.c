@@ -404,7 +404,7 @@ void Settlements_CatchApple(void) {
   FieldEvent_ResolvePendingActions(0);
   Actor_SetPosition(ACTOR_APPLE, 0, 0);
   Event_SetFlag(FLAG_KALT_ISLAND_APPLE_TAKEN);
-  ItemDisplay_ShowItem(ITEM_APPLE, 3);
+  ItemDisplay_ShowItem(ITEM_APPLE, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
   mode = 0;
   Party_GiveItem(ITEM_APPLE, mode);
   Event_End();

@@ -33,6 +33,7 @@
 #include "field/scene_call.h"
 #include "window/window.h"
 #include "field/field_sprite.h"
+#include "field/field_sequence.h"
 #include "text/msg_ids.h"
 
 /// Set once the worker has popped up out of the hole for this visit.
@@ -1298,7 +1299,8 @@ void Madra_MeetKarst(void) {
   Actor_WalkByAndWaitById(ACTOR_MAYOR, 16, 8);
   Actor_FaceDirection(ACTOR_MAYOR, FACING_SOUTH, 0);
   if (PartyInventory_FindRoom(ITEM_CYCLONE_CHIP) >= 0) {
-    ItemDisplay_ShowItem(ITEM_CYCLONE_CHIP, 3);
+    ItemDisplay_ShowItem(ITEM_CYCLONE_CHIP,
+                         ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
     PartyInventory_GiveItem(ITEM_CYCLONE_CHIP, 0);
     (gFieldWork->message)++;
     Actor_FaceDirectionById(ACTOR_FELIX, FACING_NORTH, 0);

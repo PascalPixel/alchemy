@@ -1850,7 +1850,8 @@ void KandoreanTemple_ReceiveLash(void) {
   Event_ShowMessage(SPEAKER_WINDOW_BELOW | ACTOR_POI, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, (u16)angle, 10);
   if (gKandoreanTemple_LashPebble != 0)
-    ItemDisplay_ShowPicture(gKandoreanTemple_LashPebble, 3);
+    ItemDisplay_ShowPicture(gKandoreanTemple_LashPebble,
+                            ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
   Party_GiveItem(ITEM_LASH_PEBBLE, 0);
   if (gKandoreanTemple_LashPebble != 0)
     Actor_Release(gKandoreanTemple_LashPebble);

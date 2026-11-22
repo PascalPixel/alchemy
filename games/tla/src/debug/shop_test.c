@@ -33,6 +33,7 @@
 #include "field/field_sequence_event.h"
 #include "system/dma.h"
 #include "field/actor.h"
+#include "field/field_sequence.h"
 #include "fixed_math.h"
 #include "battle/battle_unit.h"
 #include "window/window.h"
@@ -298,7 +299,7 @@ void ShopTest_TalkToSunshinesWife(s32 actor) {
       Event_SetMessageId(message + 4);
       // "OK, here you go!"
       Event_ShowMessageAndWait(actor, 0);
-      ItemDisplay_ShowItem(item, 3);
+      ItemDisplay_ShowItem(item, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
       PartyInventory_GiveItem(item, 0);
       Forge_SetItem(0);
       Party_AdjustCoins(-price);

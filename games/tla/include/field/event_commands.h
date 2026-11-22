@@ -168,6 +168,13 @@ void FieldPsynergy_Blaze(void);
 void FieldPsynergy_Sand(void);
 
 void FieldPsynergy_Burst(void);
+/// The stage Burst passes its target's event each frame (BurstWork.shake).
+enum BurstStage {
+  BURST_STAGE_QUIET,       ///< no explosion this frame
+  BURST_STAGE_DYING_DOWN,  ///< the great blast dying down
+  BURST_STAGE_SMALL_BLAST, ///< a small explosion shakes the ground
+  BURST_STAGE_GREAT_BLAST  ///< the last and largest blast
+};
 
 void FieldPsynergy_Pound(void);
 

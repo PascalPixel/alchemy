@@ -17,8 +17,6 @@
 /// The shine's colours, two palettes of the canvas: blue full, red and green
 /// swinging together round their middle as the cycle steps.
 #define POUND_SHINE_COLORS (2 * PALETTE_COLORS)
-#define POUND_SHINE_MIDDLE 16
-#define POUND_SHINE_SWING 12
 /// The pieces the fist shatters into when it cannot come down.
 #define POUND_SHATTER_PIECES 16
 /// The glow under the fist, 64 pixels square in 16 colours.
@@ -60,11 +58,11 @@ void FieldPsynergy_UpdatePound(void) {
       s32 blue = RGB(0, 0, RGB_LEVEL_MAX);
 
       red = Trig_Sin((INTtoFIXED(((u32)*frames >> 1) + i) + phase) >> 5) *
-            POUND_SHINE_SWING;
+            CANVAS_SHINE_SWING;
       green = Trig_Sin((INTtoFIXED(((u32)*frames >> 1) + i) + phase) >> 5) *
-              POUND_SHINE_SWING;
-      red = FIXEDtoINT(red) + POUND_SHINE_MIDDLE;
-      green = FIXEDtoINT(green) + POUND_SHINE_MIDDLE;
+              CANVAS_SHINE_SWING;
+      red = FIXEDtoINT(red) + CANVAS_SHINE_MIDDLE;
+      green = FIXEDtoINT(green) + CANVAS_SHINE_MIDDLE;
       Io_Write16(RGB(0, green, 0) | blue | red,
                  &OBJ_PLTT_COLOR(CANVAS_PALETTE, i));
     }
@@ -389,8 +387,6 @@ void Picture_ShiftColumnsByWave(u8 *source, u8 *destination, s32 phase) {
   }
 }
 #undef POUND_SHINE_COLORS
-#undef POUND_SHINE_MIDDLE
-#undef POUND_SHINE_SWING
 #undef POUND_SHATTER_PIECES
 #undef POUND_GLOW_SIZE
 #undef WAVE_PICTURE_SIZE

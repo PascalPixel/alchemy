@@ -1,11 +1,14 @@
 /// @file
 /// Mikasalla, the village in the far south of Osenia, and the tunnels under
-/// it, in two scenes that share this overlay (SceneId_Mikasalla, the village,
-/// and SceneId_MikasallaNorth, the tunnels).
+/// it, in two scenes that share this overlay (`SceneId_Mikasalla`, the village,
+/// and `SceneId_MikasallaNorth`, the tunnels).
 ///
-/// Scoop digs up a ladder by the sheep (Mikasalla_DigUpLadder); the tunnels
-/// come out in the cliff behind the inn, and on a path north of the village
-/// Spark the Mars Djinni joins the party (Mikasalla_MeetSpark).
+/// The inn is the northeast door, the general store the northwest one, and the
+/// Sanctum the wide door in the west cliff. Once the party has crossed the
+/// desert, Scoop in the sheep pen in the southwest corner digs up a ladder down
+/// to the tunnels. Parch dries up the tunnels' water, and their far end comes
+/// out in the cliff behind the inn, where Spark the Mars Djinni joins the party
+/// without a fight.
 
 #include "flags.h"
 #include "sprite_ids.h"
@@ -42,6 +45,23 @@
 /// the cave's ladder, and the hole in the chamber's floor.
 enum { MIKASALLA_NORTH_CAVE_LADDER = 2, MIKASALLA_NORTH_CHAMBER_HOLE = 3 };
 
+/// The cells round a ladder top that climb Felix down it, by the way he walks
+/// in. The dug ladder in the sheep pen has the first three, round its top at
+/// cell (5, 40); the hole in the tunnels' chamber floor has the last two, at
+/// cells (25, 7) to (27, 7).
+enum {
+  CELL_LADDER_TOP_FROM_NORTH = 30,
+  CELL_LADDER_TOP_FROM_WEST,
+  CELL_LADDER_TOP_FROM_EAST,
+  CELL_LADDER_TOP_FROM_SOUTH,
+  CELL_LADDER_TOP_FROM_SOUTH_BESIDE
+};
+
+/// The patch of ground in the sheep pen that Scoop digs, cell (5, 41).
+#define CELL_BURIED_LADDER 50
+/// The tunnels' water, which Parch dries.
+#define CELL_TUNNEL_WATER 60
+
 extern struct SceneRegion gMikasalla_TunnelRegions[];
 extern struct ActorPlacement gMikasalla_VillagePlacements[];
 extern struct ActorPlacement gMikasalla_TunnelPlacements[];
@@ -55,7 +75,7 @@ extern s16 gMikasalla_WideDoorOpening[];
 extern s32 gMikasalla_ChickenPaces[];
 extern s32 gMikasalla_SheepPaces[];
 
-/// The village's actors, numbering the rows of gMikasalla_VillagePlacements.
+/// The village's actors, numbering the rows of `gMikasalla_VillagePlacements`.
 enum MikasallaActorId {
   ACTOR_VILLAGER_NO_VISITORS = ACTOR_FIRST_PLACED,
   /// Mikasalla_AskLookingForSomeone's villager.
@@ -107,10 +127,16 @@ struct VillageDoor {
 
 extern struct VillageDoor gMikasalla_Doors[];
 
-/// The party leader walks into one of the village's doors. Everyone stops, the
-/// door opens with its cell animation (gMikasalla_Doors), and the leader walks
-/// in and leaves by the exit of the door's number. The Sanctum's wide door in
-/// the cliff is entered without the walk.
+/// Felix walks north into one of the village's doors: the inn's, the northeast
+/// door at cell (20, 32); the general store's, to the northwest at (13, 36);
+/// the house of the old man who climbs Air's Rock, to the east at (22, 40);
+/// the explorer's family's, to the southwest at (11, 43); or the Sanctum's wide
+/// door in the west cliff at (5, 31). Everyone stops, the door opens,
+/// and he walks in.
+///
+/// Each door's cell carries the number of the exit it leaves by, and
+/// `gMikasalla_Doors` holds its opening, drawn over its cells. The Sanctum's
+/// door is entered without the walk.
 void Mikasalla_EnterDoor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   u32 id;
@@ -145,8 +171,8 @@ void Mikasalla_EnterDoor(void) {
   Event_End();
 }
 
-/// Spark, the Mars Djinni behind the inn, joins the party when spoken to,
-/// without a fight.
+/// Felix talks to Spark, the Mars Djinni on the path behind the inn, and Spark
+/// joins the party without a fight.
 void Mikasalla_MeetSpark(void) {
   Djinn_JoinParty(ACTOR_SPARK, DJINNI_SPARK / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_SPARK));
@@ -160,8 +186,8 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gMikasalla_VillageTriggers;
 }
 
-/// A villager asks whether the party is looking for someone, and answers either
-/// way that strangers are rare here.
+/// The woman in a white dress south of the inn asks Felix whether he is looking
+/// for someone; either way, she says strangers are rare here.
 void Mikasalla_AskLookingForSomeone(void) {
   s32 msg;
 
@@ -185,8 +211,9 @@ void Mikasalla_AskLookingForSomeone(void) {
   Event_End();
 }
 
-/// Scoop on the patch of ground by the sheep digs up the ladder down to the
-/// tunnels, and it stays dug, Scene_PrepareMap redrawing it on every visit.
+/// Felix casts Scoop in the sheep pen in the village's southwest corner, cell
+/// (5, 41), and digs up a ladder down to the tunnels under the village. It
+/// stays dug on later visits.
 void Mikasalla_DigUpLadder(void) {
   MapGrid_CopyCellsTo(5, 49, 5, 41, 1, 1);
   MapGrid_CopyCellAttributes(4, 48, 3, 2, 4, 40);
@@ -210,9 +237,9 @@ static inline void Mikasalla_DryTunnels(void) {
   MapGrid_CopyCells(30, 92, 2, 2, 17, 92);
 }
 
-/// Parch on the water in the tunnels dries it up: the water's tile animations
-/// stop and dry ground is drawn over its pools, once a visit, as
-/// Scene_PrepareMap draws it again on a return.
+/// Felix casts Parch on the water in the tunnels under the village: the screen
+/// flashes, and the water is gone, leaving bare ground to walk across. It stays
+/// dry until the party leaves, and is dried again on a return.
 void Mikasalla_CastParch(void) {
   if (Event_GetFlag(FLAG_MIKASALLA_TUNNELS_PARCHED) == 0) {
     Mikasalla_DryTunnels();
@@ -241,9 +268,9 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-/// The leader, already beside a ladder top, turns north, steps onto the rungs
-/// and climbs down out of sight, then leaves down the dug ladder from the
-/// village to the tunnels, or from the tunnels' chamber to the cave below.
+/// Felix, at a ladder top, turns north, steps onto the rungs and climbs down
+/// out of sight: down the dug ladder from the sheep pen to the tunnels, or
+/// down the hole in the chamber's floor to the cave below.
 void Mikasalla_ClimbDownLadder(void) {
   s32 exit;
   s32 drop;
@@ -272,8 +299,9 @@ void Mikasalla_ClimbDownLadder(void) {
   Event_End();
 }
 
-/// Stepping onto a ladder top facing east: the leader steps up and across onto
-/// the rungs and climbs down.
+/// Felix walks east into the dug ladder in the sheep pen from its west side,
+/// cell (4, 41): he steps up and across onto the rungs and climbs down into
+/// the tunnels.
 void Mikasalla_StepOntoLadderFacingEast(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -282,8 +310,9 @@ void Mikasalla_StepOntoLadderFacingEast(void) {
   Mikasalla_ClimbDownLadder();
 }
 
-/// Stepping onto a ladder top facing west: the leader steps up and across onto
-/// the rungs and climbs down.
+/// Felix walks west into the dug ladder in the sheep pen from its east side,
+/// cell (6, 41): he steps up and across onto the rungs and climbs down into
+/// the tunnels.
 void Mikasalla_StepOntoLadderFacingWest(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -292,7 +321,8 @@ void Mikasalla_StepOntoLadderFacingWest(void) {
   Mikasalla_ClimbDownLadder();
 }
 
-/// Stepping onto a ladder top facing south: Felix turns north and climbs down.
+/// Felix walks south onto the top of the dug ladder in the sheep pen, cell
+/// (5, 40): he turns round and climbs down into the tunnels.
 void Mikasalla_TurnAndClimbDownLadder(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -300,8 +330,9 @@ void Mikasalla_TurnAndClimbDownLadder(void) {
   Mikasalla_ClimbDownLadder();
 }
 
-/// Stepping onto a ladder top facing north: the leader steps onto the rungs
-/// from whichever side of the cell he stands and climbs down.
+/// Felix walks north into the hole in the floor of the small chamber at the
+/// tunnels' north end, cell (26, 7): he steps onto its ladder from whichever
+/// side he stands and climbs down into the cave below.
 void Mikasalla_StepOntoLadderFacingNorth(void) {
   s32 x = Actor_GetById(ACTOR_FELIX)->x.part[0].integer;
 
@@ -318,8 +349,9 @@ void Mikasalla_StepOntoLadderFacingNorth(void) {
   Mikasalla_ClimbDownLadder();
 }
 
-/// Stepping onto a ladder top straight ahead: the leader steps onto the rungs
-/// and climbs down.
+/// Felix walks north into the hole in the floor of the small chamber at the
+/// tunnels' north end, beside its ladder, cell (25, 7) or (27, 7): he steps
+/// onto the ladder and climbs down into the cave below.
 void Mikasalla_StepOntoLadderAhead(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -361,8 +393,8 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-/// The tunnels' exit regions (Scene_GetExitRegions): the tops of the ladders up
-/// to the village and up to the chamber.
+/// The tunnels' ways out at the tops of their ladders: up to the sheep pen,
+/// and up from the cave to the chamber.
 struct SceneRegion gMikasalla_TunnelRegions[] = {
     {68, 28, 404, 76, 36, 412, CONDITION_ALWAYS, MIKASALLA_NORTH_TO_MIKASALLA_SOUTH},
     {244, 28, 100, 252, 36, 108, CONDITION_ALWAYS, MIKASALLA_NORTH_CAVE_LADDER},
@@ -579,7 +611,7 @@ s32 gMikasalla_SheepPaces[] = {
       SC_END,                                                                  
   };
 
-/// The village (enum MikasallaActorId).
+/// The village (`enum MikasallaActorId`).
 struct ActorPlacement gMikasalla_VillagePlacements[] = {
     ACTOR_PLACEMENT(SPRITE_MAN_IN_GREEN_VEST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 360, 0, 552, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_WHITE_DRESS, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 600, FACING_SOUTH, TALK_FACING_PARTY_THEN_WATCH, 0),
@@ -595,20 +627,20 @@ struct ActorPlacement gMikasalla_VillagePlacements[] = {
     {SCENE_TABLE_END},
 };
 
-/// The tunnels under the village (MikasallaNorth).
+/// The tunnels under the village.
 struct ActorPlacement gMikasalla_TunnelPlacements[] = {
     {SCENE_TABLE_END},
 };
 // clang-format on
 
 // clang-format off
-/// The village's doors, talk, Mind Read, the ladders, and Spark.
+/// The village's doors, talk, Mind Read, the dug ladder, and Spark.
 struct Trigger gMikasalla_VillageTriggers[] = {
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 1, CONDITION_ALWAYS, EVENT(Mikasalla_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS, EVENT(Mikasalla_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS, EVENT(Mikasalla_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(Mikasalla_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS, EVENT(Mikasalla_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MIKASALLA_TO_MIKASALLA_ROOMS_HOUSES_NORTHEAST, CONDITION_ALWAYS, EVENT(Mikasalla_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MIKASALLA_TO_MIKASALLA_ROOMS_HOUSES_NORTHWEST, CONDITION_ALWAYS, EVENT(Mikasalla_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MIKASALLA_TO_MIKASALLA_ROOMS_HOUSES_EAST, CONDITION_ALWAYS, EVENT(Mikasalla_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MIKASALLA_TO_MIKASALLA_ROOMS_HOUSES_SOUTHWEST, CONDITION_ALWAYS, EVENT(Mikasalla_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), MIKASALLA_TO_MIKASALLA_ROOMS_SANCTUM, CONDITION_ALWAYS, EVENT(Mikasalla_EnterDoor)},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
@@ -616,9 +648,9 @@ struct Trigger gMikasalla_VillageTriggers[] = {
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 30, CONDITION_ALWAYS, EVENT(Mikasalla_TurnAndClimbDownLadder)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 31, CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderFacingEast)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 32, CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderFacingWest)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_LADDER_TOP_FROM_NORTH, CONDITION_ALWAYS, EVENT(Mikasalla_TurnAndClimbDownLadder)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_LADDER_TOP_FROM_WEST, CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderFacingEast)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_LADDER_TOP_FROM_EAST, CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderFacingWest)},
     {TRIGGER_TALK, ACTOR_VILLAGER_NO_VISITORS, CONDITION_ALWAYS, MSGNO(MsgFieldItSBeenALong)},
     {TRIGGER_TALK, ACTOR_VILLAGER_LOOKING_FOR_SOMEONE, CONDITION_ALWAYS, EVENT(Mikasalla_AskLookingForSomeone)},
     {TRIGGER_TALK, ACTOR_VILLAGER_AFTER_EARTHQUAKE, CONDITION_ALWAYS, MSGNO(MsgFieldIWentOutToInvestigate)},
@@ -641,27 +673,31 @@ struct Trigger gMikasalla_VillageTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SHEEP, CONDITION_ALWAYS, MSGNO(MsgFieldOhYeahMmmIJust)},
     {TRIGGER_TALK, ACTOR_SPARK, CONDITION_ALWAYS, EVENT(Mikasalla_MeetSpark)},
     {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgFieldItSCompletelyFullOf))},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 50, CONDITION_ALWAYS, EVENT(Mikasalla_DigUpLadder)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), CELL_BURIED_LADDER, CONDITION_ALWAYS, EVENT(Mikasalla_DigUpLadder)},
     {TRIGGER_TABLE_END},
 };
 // clang-format on
 
-/// The tunnels' exits and the ladders.
+/// The tunnels' exits, the hole in the chamber's floor, and the water Parch
+/// dries.
+// The rows for a ladder top entered from the north, west or east answer no
+// cell of the tunnels' map: only the village's dug ladder has those.
 struct Trigger gMikasalla_TunnelTriggers[] = {
     {TRIGGER_EXIT, MIKASALLA_NORTH_CHAMBER_HOLE, CONDITION_ALWAYS,
      MIKASALLA_NORTH_CHAMBER_HOLE},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 30, CONDITION_ALWAYS,
-     EVENT(Mikasalla_TurnAndClimbDownLadder)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 31, CONDITION_ALWAYS,
-     EVENT(Mikasalla_StepOntoLadderFacingEast)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 32, CONDITION_ALWAYS,
-     EVENT(Mikasalla_StepOntoLadderFacingWest)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 33, CONDITION_ALWAYS,
-     EVENT(Mikasalla_StepOntoLadderFacingNorth)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 34, CONDITION_ALWAYS,
-     EVENT(Mikasalla_StepOntoLadderAhead)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 60,
-     FLAG_MIKASALLA_TUNNELS_PARCHED, EVENT(Mikasalla_CastParch)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_LADDER_TOP_FROM_NORTH,
+     CONDITION_ALWAYS, EVENT(Mikasalla_TurnAndClimbDownLadder)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_LADDER_TOP_FROM_WEST,
+     CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderFacingEast)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_LADDER_TOP_FROM_EAST,
+     CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderFacingWest)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_LADDER_TOP_FROM_SOUTH,
+     CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderFacingNorth)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_LADDER_TOP_FROM_SOUTH_BESIDE,
+     CONDITION_ALWAYS, EVENT(Mikasalla_StepOntoLadderAhead)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS),
+     CELL_TUNNEL_WATER, FLAG_MIKASALLA_TUNNELS_PARCHED,
+     EVENT(Mikasalla_CastParch)},
     {TRIGGER_TABLE_END},
 };

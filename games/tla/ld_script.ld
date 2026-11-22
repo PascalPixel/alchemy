@@ -646,7 +646,7 @@ SECTIONS
         "*/games/tla/sound/songs/se_take_flight.o"(.rodata)
         "*/games/tla/sound/songs/se_eruption_columns.o"(.rodata)
         "*/games/tla/sound/songs/se_unused_eruption_columns_low.o"(.rodata)
-        "*/games/tla/sound/songs/se_stop_music_player_5.o"(.rodata)
+        "*/games/tla/sound/songs/se_stop_exit_se.o"(.rodata)
         "*/games/tla/sound/songs/se_tolbi_spring_toss.o"(.rodata)
         "*/games/tla/sound/songs/se_tolbi_spring_obstacle_hit.o"(.rodata)
         "*/games/tla/sound/songs/se_lucky_dice_throw.o"(.rodata)

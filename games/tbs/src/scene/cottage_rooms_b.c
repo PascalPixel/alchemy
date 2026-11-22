@@ -1,13 +1,13 @@
 /// @file
-/// Cottage rooms B (SceneId_CottageRoomsB) is a sheet of rooms drawn as
-/// cottages.
+/// Cottage rooms B (SceneId_CottageRoomsB) holds the insides of Vale's wooden
+/// houses: Isaac's home, Vale's inn, the forge and Kraden's study, and one
+/// room of Babi's Palace in Tolbi drawn in the same style.
 ///
 /// The game packs rooms of several places that share a tile style onto one
 /// map. Each room is a camera box of its own, and the entrance the party comes
-/// in by chooses it.
-///
-/// This sheet's rooms are in Vale but for one in Babi's Palace. Its tables and
-/// setup choose by the entrance and the story flags.
+/// in by chooses it. In each of Vale's rooms the way out is a doorway at the
+/// south of the room. The people and events are chosen by the entrance and by
+/// how far the story has gone.
 ///
 /// Here are the rooms in story order, by the exits that lead in:
 ///
@@ -48,11 +48,11 @@
 ///   makes him take his tunic (FLAG_ISAAC_WEARS_TUNIC) and leads him downstairs
 ///   (COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA, to
 ///   COTTAGE_ROOMS_B_ISAACS_HOUSE_FROM_UPSTAIRS_WITH_DORA). There
-///   CottageRoomsB_HurryToThePlaza plays. Kyle, Isaac's father, calls them to
-///   hurry. ACTOR_FLAME_AND_SMOKE shakes outside the house, then turns to
-///   smoke and rises away. They run for the plaza, where the village takes
-///   refuge, by COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WITH_DORA into
-///   ValePrologue (VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WITH_DORA). While
+///   CottageRoomsB_HurryToThePlaza plays. Kyle, Isaac's father, comes in at
+///   the front door and calls them to hurry. The candle on the table flickers,
+///   flares up and goes out in a wisp of smoke. They run for the plaza, where
+///   the village takes refuge, by COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WITH_DORA
+///   into ValePrologue (VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WITH_DORA). While
 ///   FLAG_VALE_STORM is set the villagers are put out of sight, lightning
 ///   flashes, and COTTAGE_ROOMS_B_TO_VALE leads into the storm
 ///   (ValePrologue) instead of Vale (gCottageRoomsB_StormExits). Kyle dies
@@ -178,10 +178,10 @@ enum CottageRoomsBActorId {
   /// vale_prologue.c). "Isaac, Dora, hurry! The Boulder could fall at any
   /// second!"
   ACTOR_KYLE,
-  /// SPRITE_FLAME_AND_SMOKE, whose frames are a flame and wisps of smoke. It is
-  /// placed outside the house only for CottageRoomsB_HurryToThePlaza. There it
-  /// shakes, then flares up as its animation turns from flame to smoke, and
-  /// rises 18 pixels as it shrinks away.
+  /// The candle flame on the table downstairs in Isaac's house
+  /// (SPRITE_FLAME_AND_SMOKE, whose frames are a flame and wisps of smoke),
+  /// placed only for CottageRoomsB_HurryToThePlaza. There it flickers, then
+  /// flares up and goes out, its smoke rising 18 pixels as it shrinks away.
   ACTOR_FLAME_AND_SMOKE,
   /// A young man with brown hair who lost his father in the storm and means to
   /// be a smith. "My father also died in that storm three years ago." Once the
@@ -406,13 +406,16 @@ static void CottageRoomsB_CloseScreenAndExit(s32 exitNumber) {
 // (gCottageRoomsB_Exits, or gCottageRoomsB_StormExits on the stormy
 // night).
 
-/// Leads to ValePlaza (VALE_PLAZA_FROM_COTTAGE_ROOMS_B_WEST).
+/// Walking out of the forge, through the doorway at the south of the room,
+/// comes out at its door on the west edge of Vale's plaza
+/// (VALE_PLAZA_FROM_COTTAGE_ROOMS_B_WEST).
 static void CottageRoomsB_ExitToValePlazaNorthwest(void) {
   Sound_Play(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHWEST);
 }
 
-/// Leads to Kraden's cottage
+/// Walking out of Kraden's study, through the doorway at the south of the
+/// room, comes back out at the door of his cottage
 /// (VALE_KRADENS_COTTAGE_FROM_COTTAGE_ROOMS_B_NORTH).
 static void CottageRoomsB_ExitToValeKradensCottageNorth(void) {
   Sound_Play(SE_MAP_EXIT);
@@ -420,58 +423,70 @@ static void CottageRoomsB_ExitToValeKradensCottageNorth(void) {
       COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_NORTH);
 }
 
-/// Leads to ValePlaza (VALE_PLAZA_FROM_COTTAGE_ROOMS_B_NORTH).
+/// Walking out of the second forge room, through the doorway at the south of
+/// the room, comes out at its doorway in the northeast of Vale's plaza
+/// (VALE_PLAZA_FROM_COTTAGE_ROOMS_B_NORTH).
 static void CottageRoomsB_ExitToValePlazaNortheast(void) {
   Sound_Play(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHEAST);
 }
 
-/// Leads to ValePlaza (VALE_PLAZA_FROM_COTTAGE_ROOMS_B_SOUTH).
+/// Walking out of Vale's inn, through the doorway at the south of the room
+/// with the innkeeper's counter, comes out at the inn's door in the southeast
+/// of Vale's plaza (VALE_PLAZA_FROM_COTTAGE_ROOMS_B_SOUTH).
 static void CottageRoomsB_ExitToValePlazaWest(void) {
   Sound_Play(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_PLAZA_WEST);
 }
 
-/// Climbs the inn's stairs to its guest room, at
-/// COTTAGE_ROOMS_B_VALE_INN_FROM_GROUND_FLOOR.
+/// Climbing the stairs beside the counter of Vale's inn takes the party up to
+/// its guest room.
 static void CottageRoomsB_ExitToInnUpstairs(void) {
   Sound_Play(SE_STAIRS_UP);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_VALE_INN_TO_UPSTAIRS);
 }
 
-/// Leads to Vale (VALE_FROM_COTTAGE_ROOMS_B), or on the stormy night to
-/// ValePrologue (VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_ISAACS_HOUSE).
+/// Walking out of Isaac's house by its front door, at the south of the ground
+/// floor, comes out in Vale before the house (VALE_FROM_COTTAGE_ROOMS_B). On
+/// the stormy night at the start of the game it comes out into the storm
+/// (VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_ISAACS_HOUSE).
 static void CottageRoomsB_ExitToVale(void) {
   Sound_Play(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE);
 }
 
-/// Climbs the stairs of Isaac's house to its upper floor.
+/// Climbing the stairs of Isaac's house takes the party up to his bedroom.
 static void CottageRoomsB_ExitToIsaacsHouseUpstairs(void) {
   Sound_Play(SE_STAIRS_UP);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_UPSTAIRS);
 }
 
-/// Goes back down the stairs of the inn's guest room.
+/// Going down the stairs from the guest room of Vale's inn takes the party
+/// back to the innkeeper's counter.
 static void CottageRoomsB_ExitToInnDownstairs(void) {
   Sound_Play(SE_STAIRS_DOWN);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_VALE_INN_TO_GROUND_FLOOR);
 }
 
-/// Goes back down the stairs on the upper floor of Isaac's house.
+/// Going down the stairs from Isaac's bedroom takes the party to the ground
+/// floor of his house.
 static void CottageRoomsB_ExitToIsaacsHouseDownstairs(void) {
   Sound_Play(SE_STAIRS_DOWN);
   CottageRoomsB_CloseScreenAndExit(
       COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR);
 }
 
-/// Leads to ValePrologue (VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WEST).
+/// On the stormy night, walking out of the house with two beds by its west
+/// door comes back out into the storm
+/// (VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_WEST).
 static void CottageRoomsB_ExitToValePrologueWest(void) {
   Sound_Play(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WEST);
 }
 
-/// Leads to ValePrologue (VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_EAST).
+/// On the stormy night, walking out of the house with two beds by its east
+/// door comes back out into the storm
+/// (VALE_PROLOGUE_FROM_COTTAGE_ROOMS_B_EAST).
 static void CottageRoomsB_ExitToValePrologueEast(void) {
   Sound_Play(SE_MAP_EXIT);
   CottageRoomsB_CloseScreenAndExit(COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_EAST);
@@ -546,8 +561,9 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// In their house in Vale on the stormy night, Dora wakes Isaac, makes him take
-/// his tunic, and leads him out into the storm.
+/// In Isaac's bedroom on the stormy night that begins a new game, Dora wakes
+/// him because the Mt. Aleph Boulder is going to fall. She reaches his tunic
+/// with Catch, has him put it on, and leads him downstairs.
 static void CottageRoomsB_DoraWakesIsaac(void) {
   s32 firstMessage;
   struct Sprite *sprite;
@@ -704,13 +720,16 @@ static void CottageRoomsB_DoraWakesIsaac(void) {
       COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR_WITH_DORA);
 }
 
-/// Selects the hardware blend targets for the storm.
+/// Writes the blend registers, for the glow around the candle in Isaac's house
+/// on the stormy night.
 static inline void SetBlendTarget(u32 value) { REG_BLDCNT = value; }
 
 static inline void SetBlendAlpha(u32 value) { REG_BLDALPHA = value; }
 
-/// Outside the house in Vale on the stormy night, Kyle calls to Isaac and Dora
-/// to hurry, and they run to the plaza.
+/// Downstairs in Isaac's house on the stormy night, Kyle comes in at the front
+/// door and calls to Isaac and Dora to hurry, the Boulder could fall at any
+/// second. He runs back out, the candle on the table flares up and goes out,
+/// and Isaac and Dora run out after him to take refuge in the plaza.
 static void CottageRoomsB_HurryToThePlaza(void) {
   struct Actor *actor;
   struct Sprite *sprite;
@@ -836,7 +855,12 @@ ramp:
   Import_EventSetExitRequest(COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WITH_DORA);
 }
 
-/// Vale's innkeeper offers a room from behind the counter.
+/// Talking to Vale's innkeeper offers a room when Isaac faces her eastwards
+/// or northwards, from in front of her counter. Facing her southwards or
+/// westwards, from her own side of it, she talks instead: of the three
+/// strange travellers staying at the inn, later of the eruption they caused,
+/// and back from Kalay she welcomes Isaac home and asks why he would stay at
+/// an inn.
 static void CottageRoomsB_TalkToInnkeeper(void) {
   if ((u32)(Actor_Get(ACTOR_PARTY_LEADER)->facing - FACING_SOUTHEAST) >
       TRIG_TURN * 9 / 16) {
@@ -870,8 +894,8 @@ static void CottageRoomsB_TalkToInnkeeper(void) {
   }
 }
 
-/// Back from Kalay, a burly grey-haired man at Vale's inn
-/// (ACTOR_MAN_ISAAC_HAS_GROWN) remarks how much Isaac has grown.
+/// Back from Kalay, the burly grey-haired man at Vale's inn remarks how much
+/// Isaac has grown, once the innkeeper has welcomed him home.
 static void CottageRoomsB_RemarkIsaacHasGrown(void) {
   Event_Start();
   Actor_FaceActor(ACTOR_MAN_ISAAC_HAS_GROWN, ACTOR_PARTY_LEADER, 10);
@@ -883,8 +907,8 @@ static void CottageRoomsB_RemarkIsaacHasGrown(void) {
   Event_End();
 }
 
-/// Mind Read on Vale's innkeeper hears that Dora would not let Isaac stay in
-/// Vale.
+/// Mind Read on Vale's innkeeper, back from Kalay, hears her wonder whether
+/// Isaac has come to the inn because Dora would not let him stay at home.
 static void CottageRoomsB_ReadInnkeepersThoughts(void) {
   Event_Start();
   Event_SetMessageId(MsgValeDoraWouldntLetHimStay);
@@ -894,8 +918,8 @@ static void CottageRoomsB_ReadInnkeepersThoughts(void) {
   Event_End();
 }
 
-/// Mind Read on ACTOR_MAN_ISAAC_HAS_GROWN at Vale's inn hears that Dora was
-/// struck with illness.
+/// Mind Read on the burly grey-haired man at Vale's inn, back from Kalay,
+/// hears him wonder whether Isaac knows that Dora was struck with an illness.
 static void CottageRoomsB_ReadThoughtsAboutDorasIllness(void) {
   Event_Start();
   Event_SetMessageId(MsgValeDoraWasStruckWithIllness);
@@ -905,7 +929,14 @@ static void CottageRoomsB_ReadThoughtsAboutDorasIllness(void) {
   Event_End();
 }
 
-/// Back from Kalay, Isaac visits Dora in her sickbed at home in Vale.
+/// Back from Kalay, the first time Isaac talks to Dora in her sickbed at home,
+/// she takes him for the innkeeper, then scolds him for coming back before his
+/// quest is done. She insists she has only caught a cold, gets out of bed and
+/// hops about to show she is well, and sends him on his way.
+///
+/// Mind Read on her starts the same visit. She is less surprised by Isaac's
+/// answers when Mind Read on the innkeeper or the grey-haired man has told him
+/// of her illness (FLAG_READ_THOUGHTS_ABOUT_DORA).
 static void CottageRoomsB_VisitSickDora(void) {
   s32 firstMessage;
 
@@ -1029,8 +1060,10 @@ static void CottageRoomsB_VisitSickDora(void) {
   Event_End();
 }
 
-/// Talking to Dora at home in Vale, back from Kalay, after Isaac has visited
-/// her.
+/// Talking to Dora again after that visit: while she is still up she tells
+/// Isaac not to worry and to do his best to complete his quest, coughing. On
+/// any later visit home she is back in bed, murmuring "Kyle... Don't go...",
+/// and the narration says she is dreaming.
 static void CottageRoomsB_TalkToDora(void) {
   s32 message;
 
@@ -1055,7 +1088,10 @@ static void CottageRoomsB_TalkToDora(void) {
   Event_End();
 }
 
-/// Restores the room's tiles and cell behaviors outside the storm.
+/// When it is not the stormy night, puts back a two-by-two patch of the map
+/// from its spare cells: the ground of cells (25, 25) to (26, 26), on the
+/// ground floor of Isaac's house, and the picture of cells (25, 85) to
+/// (26, 86).
 static void CottageRoomsB_RestoreRoomPatch(void) {
   MapGrid_CopyCellsTo(22, 85, 25, 85, 2, 2);
   MapGrid_CopyCellAttributes(25, 15, 2, 2, 25, 25);
@@ -1199,7 +1235,7 @@ UNUSED static void CottageRoomsB_CyclePaletteWithoutParticles(void) {
   Scene_CycleColorModesOnOddFrames(Actor_Get(ACTOR_TUNIC));
 }
 
-/// Catch plays from Dora on the tunic, then its actors are released.
+/// Dora casts Catch on Isaac's tunic beside his bed.
 static void CottageRoomsB_DemonstrateCatch(void) {
   FieldPsynergy_LoadResources(ABILITY_CATCH, 1);
   FieldPsynergy_SetupActorPair(ACTOR_DORA, ACTOR_TUNIC);
@@ -1533,17 +1569,17 @@ struct ActorPlacement gCottageRoomsB_BabiScholarsActorPlacements[] = {
 };
 
 struct Trigger gCottageRoomsB_StormTriggers[] = {
-    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaNorthwest) },
-    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValeKradensCottageNorth) },
-    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaNortheast) },
-    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaWest) },
-    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToInnUpstairs) },
-    { TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToVale) },
-    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseUpstairs) },
-    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToInnDownstairs) },
-    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseDownstairs) },
-    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePrologueWest) },
-    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePrologueEast) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHWEST, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaNorthwest) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_NORTH, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValeKradensCottageNorth) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHEAST, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaNortheast) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_TO_VALE_PLAZA_WEST, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaWest) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_VALE_INN_TO_UPSTAIRS, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToInnUpstairs) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_TO_VALE, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToVale) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_UPSTAIRS, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseUpstairs) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_VALE_INN_TO_GROUND_FLOOR, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToInnDownstairs) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseDownstairs) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WEST, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePrologueWest) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_EAST, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePrologueEast) },
     { EXAMINE_TRIGGER(EXAMINE_WOODEN_BOX), 100, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeWoodenBoxEmpty)) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), 101, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgValeJarEmpty)) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), 102, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgVaultButDidntFindAnything)) },
@@ -1564,17 +1600,17 @@ struct Trigger gCottageRoomsB_Triggers[] = {
     { TRIGGER_TALK, ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgValeTwoOfThoseThreeGuestsStaying) },
     { TRIGGER_TALK, ACTOR_MASKED_MAN, CONDITION_ALWAYS, EVENT(CottageRoomsB_AskIsaacHisBusiness) },
     { TRIGGER_TALK, ACTOR_INNKEEPER, CONDITION_ALWAYS, EVENT(CottageRoomsB_TalkToInnkeeper) },
-    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaNorthwest) },
-    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValeKradensCottageNorth) },
-    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaNortheast) },
-    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaWest) },
-    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToInnUpstairs) },
-    { TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToVale) },
-    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseUpstairs) },
-    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToInnDownstairs) },
-    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseDownstairs) },
-    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePrologueWest) },
-    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePrologueEast) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHWEST, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaNorthwest) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_NORTH, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValeKradensCottageNorth) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHEAST, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaNortheast) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_TO_VALE_PLAZA_WEST, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaWest) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_VALE_INN_TO_UPSTAIRS, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToInnUpstairs) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_TO_VALE, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToVale) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_UPSTAIRS, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseUpstairs) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_VALE_INN_TO_GROUND_FLOOR, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToInnDownstairs) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseDownstairs) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WEST, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePrologueWest) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_EAST, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePrologueEast) },
     { EXAMINE_TRIGGER(EXAMINE_WOODEN_BOX), 100, FLAG_VALE_WOODEN_BOX_HERB, FIND_ITEM(ITEM_HERB) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), 101, FLAG_VALE_JAR_COINS, FIND_COINS(5) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), 102, FLAG_VALE_BARREL_COIN, FIND_COINS(1) },
@@ -1599,17 +1635,17 @@ struct Trigger gCottageRoomsB_TriggersAfterLeaving[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_YOUNG_MAN_SAW_MASK, CONDITION_ALWAYS, MSGNO(MsgValeIWonderIfFelixChangedMuch) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INN_WORKER, CONDITION_ALWAYS, MSGNO(MsgValeFelixAndHisGangMustHave) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_INNKEEPER, CONDITION_ALWAYS, MSGNO(MsgValeWhoCouldHaveKnownThatMasked) },
-    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaNorthwest) },
-    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValeKradensCottageNorth) },
-    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaNortheast) },
-    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaWest) },
-    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToInnUpstairs) },
-    { TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToVale) },
-    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseUpstairs) },
-    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToInnDownstairs) },
-    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseDownstairs) },
-    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePrologueWest) },
-    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePrologueEast) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHWEST, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaNorthwest) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_NORTH, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValeKradensCottageNorth) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHEAST, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaNortheast) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_TO_VALE_PLAZA_WEST, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaWest) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_VALE_INN_TO_UPSTAIRS, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToInnUpstairs) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_TO_VALE, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToVale) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_UPSTAIRS, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseUpstairs) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_VALE_INN_TO_GROUND_FLOOR, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToInnDownstairs) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseDownstairs) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WEST, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePrologueWest) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_EAST, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePrologueEast) },
     { EXAMINE_TRIGGER(EXAMINE_WOODEN_BOX), 100, FLAG_VALE_WOODEN_BOX_HERB, FIND_ITEM(ITEM_HERB) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), 101, FLAG_VALE_JAR_COINS, FIND_COINS(5) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), 102, FLAG_VALE_BARREL_COIN, FIND_COINS(1) },
@@ -1646,17 +1682,17 @@ struct Trigger gCottageRoomsB_TriggersAfterKalay[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_DORA, FLAG_VISITED_SICK_DORA, EVENT(CottageRoomsB_VisitSickDora) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DORA, FLAG_VALE_DORA_OUT_OF_BED, MSGNO(MsgValeKyleWatchOutTheBoulderThe) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_DORA, CONDITION_ALWAYS, MSGNO(MsgValeImSorryISeemedSoHarsh) },
-    { TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaNorthwest) },
-    { TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValeKradensCottageNorth) },
-    { TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaNortheast) },
-    { TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaWest) },
-    { TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToInnUpstairs) },
-    { TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToVale) },
-    { TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseUpstairs) },
-    { TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToInnDownstairs) },
-    { TRIGGER_STEP, 9, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseDownstairs) },
-    { TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePrologueWest) },
-    { TRIGGER_STEP, 11, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePrologueEast) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHWEST, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaNorthwest) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_TO_VALE_KRADENS_COTTAGE_NORTH, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValeKradensCottageNorth) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_TO_VALE_PLAZA_NORTHEAST, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaNortheast) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_TO_VALE_PLAZA_WEST, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePlazaWest) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_VALE_INN_TO_UPSTAIRS, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToInnUpstairs) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_TO_VALE, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToVale) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_UPSTAIRS, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseUpstairs) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_VALE_INN_TO_GROUND_FLOOR, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToInnDownstairs) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_ISAACS_HOUSE_TO_GROUND_FLOOR, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToIsaacsHouseDownstairs) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_WEST, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePrologueWest) },
+    { TRIGGER_STEP, COTTAGE_ROOMS_B_TO_VALE_PROLOGUE_EAST, CONDITION_ALWAYS, EVENT(CottageRoomsB_ExitToValePrologueEast) },
     { EXAMINE_TRIGGER(EXAMINE_WOODEN_BOX), 100, FLAG_VALE_WOODEN_BOX_HERB, FIND_ITEM(ITEM_HERB) },
     { EXAMINE_TRIGGER(EXAMINE_JAR), 101, FLAG_VALE_JAR_COINS, FIND_COINS(5) },
     { EXAMINE_TRIGGER(EXAMINE_BARREL), 102, FLAG_VALE_BARREL_COIN, FIND_COINS(1) },

@@ -1,50 +1,42 @@
 /// @file
-/// Goma Cave (SceneId_GomaCavePillar), the room of two pillars and a stump,
-/// in the cave in the Goma Range that the mayor of Vault tells the party to
-/// pass through on the way to Bilibin.
+/// Goma Cave (SceneId_GomaCavePillar), the middle floor of the cave in the
+/// Goma Range that the party passes through between Vault and Bilibin. Three
+/// things here are moved with Move: a tall stone pillar by the north wall (the
+/// west pillar), a squat stump, and a second tall pillar on the floor in the
+/// east.
 ///
-/// The party comes in from the cave's first room (goma_cave_stream.c), and
-/// the room's puzzle is Move on three things.
+/// The party comes down the west stairs from the cave's first room
+/// (goma_cave_stream.c). At the far east of the floor the second pillar can be
+/// pushed by walking into it or with Move, into its socket at the foot of a
+/// ledge, cell (38, 14). It settles there with a thump and a puff of dust and
+/// stays (FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE). Its top is then level with the
+/// ledges above, a stepping stone between the ledge where a man stands and the
+/// ledge of Forge, a Mars Djinni.
 ///
-/// - The west pillar slides between two places a step apart, and the map
-///   grid cells along its track follow it (FLAG_GOMA_CAVE_WEST_PILLAR_MOVED
-///   says which).
-/// - The stump is pushed a step at a time. Once it reaches the edge at column
-///   25 it teeters, shedding dust, tips over and falls into the room below
-///   (goma_cave_pond.c) with a crash that shakes the screen. The cells at the
-///   edge change (FLAG_GOMA_CAVE_STUMP_FELL).
-/// - The east pillar can also be pushed by walking into it. When it reaches
-///   cell (38, 14) it sinks two pixels into the floor with a burst of
-///   fragments and stays there (FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE).
+/// Later the party comes back up the stairs from the pond room below
+/// (goma_cave_pond.c). Move slides the west pillar a step east or back west
+/// (FLAG_GOMA_CAVE_WEST_PILLAR_MOVED), and where it stands decides which
+/// squares beside it Isaac can jump across. Beyond it, Move pushes the stump
+/// east a step at a time. At the edge it rocks, shedding dust, tips over and
+/// drops with a crash into the water of the pond room
+/// (FLAG_GOMA_CAVE_STUMP_FELL), where it opens the way east, back up to Forge.
+/// A chest on the ledge east of the west pillar holds a Lucky Medal.
 ///
-/// Coming back in on the east side, from the first room or from the room
-/// below (GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_STREAM_EAST,
-/// GOMA_CAVE_PILLAR_FROM_GOMA_CAVE_POND_EAST), the party finds the east pillar
-/// set into the floor underfoot, with the cells along it changed.
+/// The man beside Forge fought it and lost it: `Did you see something strange
+/// over there? I fought it, but it fled.` Talking to Forge makes him jump in
+/// surprise, and the Djinni's battle begins. After a win he fidgets while
+/// Forge joins the party, then is amazed and walks away for good
+/// (FLAG_GOMA_CAVE_WITNESS_LEFT). After a loss or an escape Forge hides until
+/// the room is entered again (FLAG_DJINNI_HIDING(DJINNI_FORGE)), and the man
+/// says `Hmmm... It must be hiding somewhere again...`.
 ///
-/// All three are area temp flags, so the room is as it started again once the
-/// party leaves Goma Cave's four scenes.
+/// All three moved things are area temp flags, so the room is as it started
+/// again once the party leaves Goma Cave's four scenes.
 ///
-/// Walking west into a gap (cell behavior 20) jumps the leader across it, and
-/// a chest holds a Lucky Medal.
-///
-/// Forge, a Mars Djinni, waits here beside a man who once fought it: `Did you
-/// see something strange over there? I fought it, but it fled.` Talking to
-/// Forge makes him jump in surprise, and the Djinni's battle begins.
-///
-/// After a win the room reloads with the Djinni's event still pending, so the
-/// man fidgets on a timer while Forge joins the party. Once it has, the timer
-/// raises RAISED_FORGE_JOINED, and the man is amazed and walks away for good
-/// (FLAG_GOMA_CAVE_WITNESS_LEFT).
-///
-/// After a loss or an escape Forge hides until the room is entered again
-/// (FLAG_DJINNI_HIDING(DJINNI_FORGE)), and the man says `Hmmm... It must be
-/// hiding somewhere again...`.
-///
-/// Two ways lead back to the first room
+/// Two stairways lead back to the first room
 /// (GOMA_CAVE_PILLAR_TO_GOMA_CAVE_STREAM_WEST and
-/// GOMA_CAVE_PILLAR_TO_GOMA_CAVE_STREAM_EAST) and three down to the room
-/// below (GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_WEST,
+/// GOMA_CAVE_PILLAR_TO_GOMA_CAVE_STREAM_EAST) and three down to the pond room
+/// (GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_WEST,
 /// GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_SOUTH and
 /// GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_EAST).
 ///
@@ -89,11 +81,12 @@ enum GomaCavePillarFragmentPlane { PLANE_XY = 0, PLANE_XZ = 1, PLANE_YZ = 2 };
 /// The room's actors, numbered in the order of
 /// gGomaCavePillar_ActorPlacements.
 enum GomaCavePillarActorId {
-  /// Slides between two places.
+  /// The tall pillar by the north wall, which slides between two places.
   ACTOR_WEST_PILLAR = ACTOR_FIRST_PLACED,
   /// Pushed over the edge into the room below.
   ACTOR_STUMP,
-  /// Sinks into the floor in its place.
+  /// The tall pillar in the east of the floor, pushed into its socket at the
+  /// foot of the ledges.
   ACTOR_EAST_PILLAR,
   /// Hides the stump where it drops behind the floor in front of the ledge.
   ///
@@ -118,22 +111,26 @@ enum GomaCavePillarActorId {
 /// Only the debug scene selector reaches it.
 enum { ENTRANCE_STUMP_FALL = 99 };
 
+/// The cell on Forge's ledge from which walking west jumps onto the east
+/// pillar.
+enum { CELL_BEHAVIOR_GOMA_CAVE_JUMP_TO_PILLAR = 20 };
+
 /// The trigger the man's timer raises once Forge has joined the party
 /// (GomaCavePillar_WatchForgeJoin).
 enum GomaCavePillarRaisedTrigger { RAISED_FORGE_JOINED = 99 };
 
 #include "shared/staged_actor.c"
 
-/// Talking to Forge, a Mars Djinni, in Goma Cave: the man beside it jumps in
-/// surprise, and the battle with the Djinni begins.
+/// Isaac talks to Forge, the Mars Djinni on the ledge in the east: the man
+/// beside it jumps in surprise, and the battle with the Djinni begins.
 static void GomaCavePillar_FightForge(void) {
   Actor_ShowEmote(ACTOR_WITNESS, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 0);
   Actor_Jump(ACTOR_WITNESS, 2, 0);
   Field_RequestDjinnBattle(ACTOR_FORGE, DJINNI_FORGE);
 }
 
-/// Advances the fragment's selected coordinate plane and keeps its targets in
-/// step.
+/// Moves a fragment of dust by its two rates each frame, in the plane its
+/// place names.
 static void GomaCavePillar_UpdateFragment(struct Actor *fragment) {
   // The actor's speed and acceleration slots carry the two selected axis
   // steps.
@@ -161,7 +158,7 @@ static void GomaCavePillar_UpdateFragment(struct Actor *fragment) {
   }
 }
 
-/// Applies child value 15 at the end of a fragment's lifetime.
+/// Hides a fragment of dust at the end of its script.
 static s32 GomaCavePillar_FinishFragment(struct Actor *actor) {
   Actor_SetSpriteColor(actor, SPRITE_COLOR_HIDDEN);
   return 0;
@@ -226,13 +223,19 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gGomaCavePillar_ActorPlacements;
 }
 
-/// Copies the map grid cells for the west pillar on either side of its track.
+/// Copies the cells around the west pillar for one of its two places from the
+/// spare stretch of map that holds them.
 static inline void GomaCavePillar_CopyWestPillarCells(s32 sourceColumn) {
   MapGrid_CopyCellAttributes(sourceColumn, 40, 6, 3, 18, 6);
 }
 
-/// Move on the west pillar in Goma Cave: it slides between its two places,
-/// and the map grid cells follow it.
+/// Isaac casts Move on the west pillar, by the north wall: it slides a step
+/// east, or back west to where it started, and the squares beside it that
+/// can be jumped across change with it.
+///
+/// Where it started, the jump squares are on its east side; moved east, they
+/// are on its west side. Both sets are copied from a spare stretch of the
+/// map below the room.
 static void GomaCavePillar_MoveWestPillar(void) {
   s32 x;
 
@@ -310,7 +313,14 @@ static void GomaCavePillar_DropStumpFragments(void) {
 
 s32 gGomaCavePillar_WitnessFrames;
 
-/// Move on the stump in Goma Cave, until it falls (FLAG_GOMA_CAVE_STUMP_FELL).
+/// Isaac casts Move on the stump in the middle of the room. Pushed to the
+/// edge, it rocks there shedding dust, tips over and drops out of sight, and
+/// the screen shakes as it lands in the water of the pond room below
+/// (FLAG_GOMA_CAVE_STUMP_FELL).
+///
+/// Short of the edge, Move pushes it a step and the event has nothing to do.
+/// A black crate (`ACTOR_MASK_FOR_STUMP`) is moved in front of the edge while
+/// it falls, so the stump seems to drop behind the floor.
 static void GomaCavePillar_PushStumpOver(void) {
   s32 column;
   FIXED fixedX;
@@ -378,8 +388,8 @@ static void GomaCavePillar_PushStumpOver(void) {
   Event_End();
 }
 
-/// Once the east pillar reaches its place (cell 38, 14), it sinks two pixels
-/// into the floor and six fragments fly out around it.
+/// Once the east pillar reaches its socket at the foot of the ledge, cell
+/// (38, 14), it settles into it with a thump and a puff of dust.
 static void GomaCavePillar_SettleEastPillar(void) {
   s32 x;
   s32 z;
@@ -419,7 +429,8 @@ static void GomaCavePillar_SettleEastPillar(void) {
   }
 }
 
-/// Move on the east pillar in Goma Cave, until it is in its place
+/// Isaac casts Move on the tall pillar in the east of the floor: it slides a
+/// step, and settles into its socket once it reaches it
 /// (FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE).
 static void GomaCavePillar_MoveEastPillar(void) {
   Event_Start();
@@ -427,8 +438,8 @@ static void GomaCavePillar_MoveEastPillar(void) {
   Event_End();
 }
 
-/// Walking into the east pillar in Goma Cave pushes it a step, until it is in
-/// its place.
+/// Isaac walks into the tall pillar in the east of the floor and pushes it a
+/// step, until it settles into its socket at the foot of the ledge.
 static void GomaCavePillar_PushEastPillar(void) {
   Event_Start();
   PushedActor_AdvancePair();
@@ -436,8 +447,11 @@ static void GomaCavePillar_PushEastPillar(void) {
   Event_End();
 }
 
-/// Walking west into the gap in Goma Cave (cell behavior 20): the leader
-/// jumps across it.
+/// Isaac, walking west from Forge's ledge at cell (40, 14), jumps across the
+/// gap onto the top of the east pillar, back towards the man's ledge.
+///
+/// The cell only becomes a jump when the party comes in on the east side with
+/// the pillar in its socket (Scene_Initialize).
 static void GomaCavePillar_JumpGapWest(void) {
 #if TBS_PATCH_1
   Field_TryJumpForward();
@@ -480,8 +494,9 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gGomaCavePillar_Triggers;
 }
 
-/// Back from a won battle with Forge, the man who fought it reacts on a timer
-/// while the Djinni joins the party.
+/// Back from a won battle with Forge, the man who fought it winces, fidgets
+/// and shakes his head while the Djinni joins the party, then raises
+/// `RAISED_FORGE_JOINED`.
 static void GomaCavePillar_WatchForgeJoin(void) {
   struct FieldWork *work;
   s32 frame;
@@ -508,8 +523,9 @@ static void GomaCavePillar_WatchForgeJoin(void) {
     work->raisedTrigger = RAISED_FORGE_JOINED;
 }
 
-/// Raised in Goma Cave once Forge has joined the party: the man who fought it
-/// is amazed.
+/// Once Forge has joined the party, the man who fought it is amazed: "You
+/// got it? Wow, that's pretty impressive!" He nods and walks away to the
+/// south west, gone for good (FLAG_GOMA_CAVE_WITNESS_LEFT).
 static void GomaCavePillar_WitnessCheersForgeCaught(void) {
   Task_Remove(GomaCavePillar_WatchForgeJoin);
   Event_Start();
@@ -533,7 +549,8 @@ static void GomaCavePillar_WitnessCheersForgeCaught(void) {
 }
 
 /// Sets up the room as the party enters: the pillars and the stump where the
-/// party left them.
+/// party left them, and the east pillar's top as a stepping stone when the
+/// party comes in on the east side.
 s32 Scene_Initialize(void) {
   struct FieldWork *work;
 
@@ -587,8 +604,7 @@ s32 Scene_Initialize(void) {
 #include "shared/pushed_actor_tables.c"
 // clang-format off
 
-/// The scripts a pillar fragment can run, chosen by the low bits of its spawn
-/// value.
+/// How long a fragment of dust lasts, chosen by FRAGMENT_KIND.
 struct EffectDurationScripts gGomaCavePillar_FragmentScripts = {{
     gGomaCavePillar_FragmentScriptShort,
     gGomaCavePillar_FragmentScriptMedium,
@@ -657,7 +673,7 @@ struct Trigger gGomaCavePillar_Triggers[] = {
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 8, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_POND_EAST },
     { TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 9, CONDITION_ALWAYS, GOMA_CAVE_PILLAR_TO_GOMA_CAVE_STREAM_EAST },
     { TRIGGER_STEP | STEP_TRIGGER_FLAG_WALKING, ACTOR_EAST_PILLAR, FLAG_GOMA_CAVE_EAST_PILLAR_IN_PLACE, EVENT(GomaCavePillar_PushEastPillar) },
-    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), 20, CONDITION_ALWAYS, EVENT(GomaCavePillar_JumpGapWest) },
+    { STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_GOMA_CAVE_JUMP_TO_PILLAR, CONDITION_ALWAYS, EVENT(GomaCavePillar_JumpGapWest) },
     { TRIGGER_TALK, ACTOR_FORGE, CONDITION_ALWAYS, EVENT(GomaCavePillar_FightForge) },
     { TRIGGER_TALK, ACTOR_WITNESS, FLAG_DJINNI_HIDING(DJINNI_FORGE), MSGNO(MsgVaultDidYouSeeSomethingStrangeOver) },
     { TRIGGER_TALK, ACTOR_WITNESS, CONDITION_ALWAYS, MSGNO(MsgVaultHmmmItMustBeHidingSomewhere) },

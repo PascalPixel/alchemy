@@ -35,11 +35,12 @@
 ///   the second the Hunter's Sword. The battle is ENCOUNTER_ZONE_COLOSSO's
 ///   fifth or sixth group, the Navampa with or without the Claymore.
 ///
-/// Stepping onto the Scales of Justice's western ledge tips the scales (step
-/// trigger 15, ColosseumNavampaMatch_StepOnScales). The ledge goes down, with
-/// the rider, towards 4 pixels high, and the eastern ledge goes up towards 32.
-/// Stepping off (step trigger 16) swings them back. The weight Move sets on
-/// the western ledge does the same.
+/// Stepping onto the Scales of Justice's western ledge tips the scales
+/// (ColosseumNavampaMatch_StepOnScales): the ledge sinks almost to the floor
+/// with Isaac on it, and the eastern ledge rises. Stepping off swings them
+/// back. The weight Move sets on the western ledge tips them the same way, and
+/// once Frost has frozen the puddle on the eastern ledge
+/// (ColosseumNavampaMatch_FreezeOnScales) stepping on no longer moves them.
 ///
 /// Win or lose, the third match ends Colosso.
 /// COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON and _LOST set FLAG_COLOSSO_OVER, and
@@ -209,12 +210,14 @@ enum {
   ACTOR_SCALES_EAST_LEDGE = 11,
   ACTOR_SCALES_WEIGHT = 12,
   ACTOR_STONE = 13,
-  /// East of the Wall Wedge's pistons, by the operator. Move on it needs
-  /// nothing more (ColosseumNavampaMatch_IgnoreMove).
+  /// A stone pillar east of the Wall Wedge's pistons, by the operator. It can
+  /// be pushed or moved, and nothing else comes of it
+  /// (ColosseumNavampaMatch_JustMoveRock).
   ACTOR_ROCK = 14,
-  /// The log-rolling area's three stones. Each settles where Move drops it
-  /// (ColosseumNavampaMatch_SettleStones, FLAG_FIRST_LOG_AREA_STONE_SETTLED and
-  /// the two after it).
+  /// The log-rolling area's three stone pillars. One pushed or moved off the
+  /// ledge stays down in the tank as a step
+  /// (ColosseumNavampaMatch_UpdateLogAreaStoneCells,
+  /// FLAG_FIRST_LOG_AREA_STONE_SETTLED and the two after it).
   ACTOR_LOG_AREA_STONE_A = 15,
   ACTOR_LOG_AREA_STONE_B = 16,
   ACTOR_LOG_AREA_STONE_C = 17,
@@ -405,8 +408,9 @@ static void ColosseumNavampaMatch_RideMovingSidewalk(void) {
   }
 }
 
-/// Growth on the plant on Colosseum Final 3's stages makes it grow and open a
-/// shortcut (FLAG_PLANT_GROWN).
+/// Growth on the sprout in the Free-Climb Area, the fourth stage (cell
+/// (49, 12)), grows it into a vine, a shortcut that saves the racer time
+/// (FLAG_PLANT_GROWN).
 static void ColosseumNavampaMatch_GrowPlant(void) {
   GameFlag_Set(FLAG_PLANT_GROWN);
   MapGrid_CopyCellAttributes(47, 61, 1, 4, 49, 61);
@@ -532,8 +536,13 @@ static void ColosseumNavampaMatch_PushWeight(void) {
   ColosseumNavampaMatch_SetWeightOnScales();
 }
 
-/// Move on the stone on Colosseum Final 3's stages, and each push, keeps where
-/// it stands.
+/// Move on the stone pillar of the Stepping-Stone Stage, the second stage,
+/// slides it along its row; the walkthrough has Garet push it east to give the
+/// racer a step across. The same work follows every push.
+///
+/// The pillar's column is kept in FLAG_STONE_COLUMN, so that a friend's Move
+/// during Lend a Hand still holds for the race. Row 11 of the stage is made
+/// plain again, and the pillar's own cell is given the top of a pillar.
 static void ColosseumNavampaMatch_MoveStone(void) {
   s32 x;
 
@@ -543,16 +552,23 @@ static void ColosseumNavampaMatch_MoveStone(void) {
   MapGrid_CopyCellAttributes(17, 11, 1, 1, x, 11);
 }
 
-/// Move on ACTOR_ROCK in Colosseum Final 3 needs nothing more.
-static void ColosseumNavampaMatch_IgnoreMove(void) {}
+/// Move on the stone pillar by the Wall Wedge's operator, east of the pistons,
+/// just slides it; nothing else happens.
+static void ColosseumNavampaMatch_JustMoveRock(void) {}
 
-/// Walking into a rock on Colosseum Final 3's stages (step trigger 22) pushes
-/// it.
+/// Walking into the stone pillar by the Wall Wedge's operator, from the row
+/// it stands in (cells (43..45, 11)), pushes it a cell.
 static void ColosseumNavampaMatch_PushRock(void) { Colosso_PushActorAhead(); }
 
-/// Move on one of the log-rolling area's three stones, and each push there,
-/// settles the stones.
-static void ColosseumNavampaMatch_SettleStones(void) {
+/// Move on one of the three stone pillars of the last stage, the log-rolling
+/// area, slides it a cell. A pillar that comes down off the ledge into the
+/// tank stays there, drawn under the party, as a square to hop across, and
+/// the long log can no longer roll over that cell.
+///
+/// Each pillar that has come down is remembered by its flag
+/// (FLAG_FIRST_LOG_AREA_STONE_SETTLED and the two after it), and its cell is
+/// marked in both copies of the map, the second 52 rows further down.
+static void ColosseumNavampaMatch_UpdateLogAreaStoneCells(void) {
   struct Actor *actor;
   s32 slot;
   s32 x;
@@ -747,7 +763,7 @@ static void ColosseumNavampaMatch_RollLongLog(void) {
   return;
 far:
   Colosso_PushActorAhead();
-  ColosseumNavampaMatch_SettleStones();
+  ColosseumNavampaMatch_UpdateLogAreaStoneCells();
 }
 
 /// Displays the activated moving sidewalk and plays its arrival sounds.
@@ -788,9 +804,13 @@ static void ColosseumNavampaMatch_HaltWall(void) {
   Task_Remove(ColosseumNavampaMatch_UpdateWallWedge);
 }
 
-/// Raised by the Wall Wedge (4) as the rider passes through the pistons'
-/// northern opening.
-static void ColosseumNavampaMatch_PassNorthWallOpening(void) {
+/// A piston of the Wall Wedge, the third stage, punching halfway out while
+/// Isaac stands before it on the walkway's north row (row 11) shoves him a
+/// cell and a half south.
+///
+/// ColosseumNavampaMatch_UpdateWallWedge raises this event with the piston's
+/// animation number, PISTON_ANIMATION_PUSH_HALF_OUT.
+static void ColosseumNavampaMatch_ShovedByPiston(void) {
   struct Actor *actor;
   s32 z;
 
@@ -806,9 +826,13 @@ static void ColosseumNavampaMatch_PassNorthWallOpening(void) {
   Actor_WaitForMove(actor);
 }
 
-/// Raised by the Wall Wedge (5) as the rider passes through the pistons'
-/// southern opening.
-static void ColosseumNavampaMatch_PassSouthWallOpening(void) {
+/// A piston of the Wall Wedge punching all the way out while Isaac stands
+/// before it on the walkway's south row (row 12) shoves him off the walkway,
+/// and he drops down the ledge below.
+///
+/// ColosseumNavampaMatch_UpdateWallWedge raises this event with the piston's
+/// animation number, PISTON_ANIMATION_PUSH_OUT.
+static void ColosseumNavampaMatch_ShovedOffWalkway(void) {
   struct Actor *actor;
   s32 z;
 
@@ -916,17 +940,20 @@ static void ColosseumNavampaMatch_ReachArena(void) {
   GameFlag_Set(FLAG_KEEP_MUSIC_ONCE);
 }
 
-/// Walking into something on Colosseum Final 3's stages (step trigger 90)
-/// makes the leader jump forward where he can.
-static void ColosseumNavampaMatch_JumpAtLogAreaEnd(void) {
+/// Walking on from the east end of the log-rolling area (cell (83, 13)) hops
+/// Isaac forward across the gap, if no stone pillar stands in the way and
+/// there is somewhere to land.
+static void ColosseumNavampaMatch_HopFromLogAreaEnd(void) {
   if (Colosso_FindActorAhead() == 0) {
     Field_TryJumpForward();
   }
 }
 
-/// Walking into something by the Scales of Justice (step trigger 91) pushes
-/// the weight, and checks anything else.
-static void ColosseumNavampaMatch_PushWeightOrCheckAhead(void) {
+/// Walking on from the east edge of the weight's square by the Scales of
+/// Justice (cell (8, 12)) pushes the weight if it stands ahead, perhaps onto
+/// the scales. With nothing there, Isaac hops forward across the gap where
+/// there is somewhere to land.
+static void ColosseumNavampaMatch_PushWeightOrHopAcross(void) {
   if (Colosso_FindActorAhead() == 0) {
     Field_TryJumpForward();
   } else {
@@ -1646,7 +1673,7 @@ static void ColosseumNavampaMatch_TalkToWallWedgeAttendant(s32 guideId) {
                              work->raisedTrigger != PISTON_ANIMATION_PUSH_OUT;
            promptResult++)
         wait(1);
-      ColosseumNavampaMatch_PassSouthWallOpening();
+      ColosseumNavampaMatch_ShovedOffWalkway();
       Actor_FaceDirection(ACTOR_PARTY_LEADER, FACING_NORTH, 20);
       Actor_ShowEmote(ACTOR_PARTY_LEADER, EMOTE_IN_FRONT | EMOTE_ANGER_VEIN,
                       60);
@@ -2072,18 +2099,18 @@ s32 gColosseumNavampaMatch_WallWedgeStep = 0;
 u32 gColosseumNavampaMatch_WallWedgeTimer = 0;
 
 struct Trigger gColosseumNavampaMatchTriggers[] = {
-    { STEP_TRIGGER_WALKING, 90, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_JumpAtLogAreaEnd) },
-    { STEP_TRIGGER_WALKING, 91, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_PushWeightOrCheckAhead) },
+    { STEP_TRIGGER_WALKING, 90, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_HopFromLogAreaEnd) },
+    { STEP_TRIGGER_WALKING, 91, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_PushWeightOrHopAcross) },
     { TRIGGER_STEP, 11, FLAG_SIDEWALK_LOG_KNOCKED_OFF, EVENT(ColosseumNavampaMatch_RideMovingSidewalk) },
     { STEP_TRIGGER_WALKING, 20, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_PushWeight) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SCALES_WEIGHT, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_SetWeightOnScales) },
     { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_MoveStone) },
     { STEP_TRIGGER_WALKING, 22, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_PushRock) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROCK, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_IgnoreMove) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ROCK, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_JustMoveRock) },
     { STEP_TRIGGER_WALKING, CELL_BEHAVIOR_LONG_LOG, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_RollLongLog) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LOG_AREA_STONE_A, FLAG_FIRST_LOG_AREA_STONE_SETTLED, EVENT(ColosseumNavampaMatch_SettleStones) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LOG_AREA_STONE_B, FLAG_FIRST_LOG_AREA_STONE_SETTLED + 1, EVENT(ColosseumNavampaMatch_SettleStones) },
-    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LOG_AREA_STONE_C, FLAG_FIRST_LOG_AREA_STONE_SETTLED + 2, EVENT(ColosseumNavampaMatch_SettleStones) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LOG_AREA_STONE_A, FLAG_FIRST_LOG_AREA_STONE_SETTLED, EVENT(ColosseumNavampaMatch_UpdateLogAreaStoneCells) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LOG_AREA_STONE_B, FLAG_FIRST_LOG_AREA_STONE_SETTLED + 1, EVENT(ColosseumNavampaMatch_UpdateLogAreaStoneCells) },
+    { PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LOG_AREA_STONE_C, FLAG_FIRST_LOG_AREA_STONE_SETTLED + 2, EVENT(ColosseumNavampaMatch_UpdateLogAreaStoneCells) },
     { TRIGGER_STEP, 15, FLAG_ON_SCALES, EVENT(ColosseumNavampaMatch_StepOnScales) },
     { TRIGGER_STEP, 16, IF_FLAG_SET(FLAG_ON_SCALES), EVENT(ColosseumNavampaMatch_StepOffScales) },
     { TRIGGER_STEP, 50, FLAG_COLOSSEUM_ARENA_CLOSED, EVENT(ColosseumNavampaMatch_ReachArena) },
@@ -2094,8 +2121,8 @@ struct Trigger gColosseumNavampaMatchTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_GROWTH_PLANT, FLAG_PLANT_GROWN, EVENT(ColosseumNavampaMatch_GrowPlant) },
     { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_WALL_OPERATOR, FLAG_WALL_WEDGE_HALTED, EVENT(ColosseumNavampaMatch_HaltWall) },
     { PSYNERGY_PHASE_ON_ACTOR(ABILITY_FORCE, PSYNERGY_PHASE_ACTS), ACTOR_SIDEWALK_LOG, FLAG_SIDEWALK_LOG_KNOCKED_OFF, EVENT(ColosseumNavampaMatch_ForceSidewalkLog) },
-    { TRIGGER_RAISED, 4, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_PassNorthWallOpening) },
-    { TRIGGER_RAISED, 5, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_PassSouthWallOpening) },
+    { TRIGGER_RAISED, PISTON_ANIMATION_PUSH_HALF_OUT, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_ShovedByPiston) },
+    { TRIGGER_RAISED, PISTON_ANIMATION_PUSH_OUT, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_ShovedOffWalkway) },
     { TRIGGER_TALK, ACTOR_GUIDE, CONDITION_ALWAYS, EVENT(Colosso_AskReadyToRace) },
     { TRIGGER_TALK, ACTOR_SCALES_ATTENDANT, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_TalkToScalesAttendant) },
     { TRIGGER_TALK, ACTOR_STEPPING_STONE_ATTENDANT, CONDITION_ALWAYS, EVENT(ColosseumNavampaMatch_TalkToSteppingStoneAttendant) },

@@ -283,13 +283,6 @@ enum {
   FIELD_VIEW_HEIGHT = toFIXED(160)   ///< the screen's height
 };
 
-/// Sprite ids the field's own code creates actors of.
-enum {
-  /// The puffs the ship leaves behind it as it sails or flies low, on
-  /// gActor_WakeScript (spr_356.png).
-  WORLD_MAP_SPRITE_WAKE = 356
-};
-
 /// How a layout's cell picture data is packed: the method byte
 /// TileMap_DecodeStagedBuffer reads before the halfwords.
 enum CellPicturePacking {

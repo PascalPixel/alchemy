@@ -12,7 +12,7 @@ Field_Test4:
 	map_block Field_Test4
 	map_block Field_Test4, .LField_Test4_SCENE
 .LField_Test4_CELL_PICTURES:
-	.incbin "games/tla/src/map/map_000/cell_pictures.delta0.lz"
+	.incbin "games/tla/src/map/empty_map/cell_pictures.delta0.lz"
 	.balign 4, 0
 .LField_Test4_SHAPES:
 	.incbin "games/tla/src/map/kibombo_mountains_waft/shapes.table.lz"
@@ -24,7 +24,7 @@ Field_Test4:
 	.incbin "games/tla/src/map/kibombo_mountains_waft/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Test4_SCENE:
-	.incbin "games/tla/src/map/map_000/scene.scene.lz"
+	.incbin "games/tla/src/map/empty_map/scene.scene.lz"
 	.balign 4, 0
 	.global Resource_Data632
 Resource_Data632:

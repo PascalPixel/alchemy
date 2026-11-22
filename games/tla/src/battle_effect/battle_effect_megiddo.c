@@ -194,7 +194,7 @@ void BattleEffect_RunMegiddo(struct BattleEffectParams *args) {
       Sound_PlayFar(SE_LAUNCH);
     }
     if (frame == 143) {
-      Sound_PlayFar(SE_191);
+      Sound_PlayFar(SE_TABLET_RISE_HIGH);
     }
     if (frame == 171) {
       Sound_PlayFar(SE_CRASH);

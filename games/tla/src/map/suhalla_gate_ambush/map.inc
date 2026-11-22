@@ -30,5 +30,5 @@ Field_SuhallaGateAmbush:
 	.incbin "games/tla/src/map/lobby/blend.script.lz"
 	.balign 4, 0
 .LField_SuhallaGateAmbush_SCENE:
-	.incbin "games/tla/src/map/map_000/scene.scene.lz"
+	.incbin "games/tla/src/map/empty_map/scene.scene.lz"
 	.balign 4, 0

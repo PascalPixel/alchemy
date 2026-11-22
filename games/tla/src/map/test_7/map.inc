@@ -12,7 +12,7 @@ Field_Test7:
 	map_block Field_Test7
 	map_block Field_Test7, .LField_Test7_SCENE
 .LField_Test7_CELL_PICTURES:
-	.incbin "games/tla/src/map/map_000/cell_pictures.delta0.lz"
+	.incbin "games/tla/src/map/empty_map/cell_pictures.delta0.lz"
 	.balign 4, 0
 .LField_Test7_SHAPES:
 	.incbin "games/tla/src/map/daila_flooded/shapes.table.lz"
@@ -24,7 +24,7 @@ Field_Test7:
 	.incbin "games/tla/src/map/daila_flooded/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Test7_SCENE:
-	.incbin "games/tla/src/map/map_000/scene.scene.lz"
+	.incbin "games/tla/src/map/empty_map/scene.scene.lz"
 	.balign 4, 0
 	.global Resource_Data644
 Resource_Data644:

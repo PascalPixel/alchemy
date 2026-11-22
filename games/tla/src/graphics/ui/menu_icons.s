@@ -2,7 +2,7 @@
 	.balign 4
 	.global gItemIcons
 gItemIcons:
-	.4byte Icon_Item000
+	.4byte Icon_ItemNone
 	.4byte Icon_ItemLongSword
 	.4byte Icon_ItemBroadSword
 	.4byte Icon_ItemClaymore
@@ -372,12 +372,12 @@ gItemIcons:
 	.4byte Icon_Item367
 	.4byte Icon_Item368
 	.4byte Icon_Item369
-	.4byte Icon_Item000
+	.4byte Icon_ItemNone
 	.global gItemIconsEnd
 gItemIconsEnd:
 	.4byte -1
-Icon_Item000:
-	.incbin "games/tla/src/graphics/ui/menu_icons/item_000.icon4"
+Icon_ItemNone:
+	.incbin "games/tla/src/graphics/ui/menu_icons/item_none.icon4"
 Icon_ItemLongSword:
 	.incbin "games/tla/src/graphics/ui/menu_icons/item_long_sword.icon4"
 Icon_ItemBroadSword:
@@ -1120,7 +1120,7 @@ Icon_Item369:
 	.balign 4
 	.global gPsynergyIcons
 gPsynergyIcons:
-	.4byte Icon_Psynergy000
+	.4byte Icon_PsynergyNothing
 	.4byte Icon_PsynergyQuake
 	.4byte Icon_PsynergyEarthquake
 	.4byte Icon_PsynergyQuakeSphere
@@ -1383,8 +1383,8 @@ gPsynergyIcons:
 	.global gPsynergyIconsEnd
 gPsynergyIconsEnd:
 	.4byte -1
-Icon_Psynergy000:
-	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_000.icon4"
+Icon_PsynergyNothing:
+	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_nothing.icon4"
 Icon_PsynergyQuake:
 	.incbin "games/tla/src/graphics/ui/menu_icons/psynergy_quake.icon4"
 Icon_PsynergyEarthquake:

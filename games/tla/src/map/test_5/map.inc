@@ -12,7 +12,7 @@ Field_Test5:
 	map_block Field_Test5
 	map_block Field_Test5, .LField_Test5_SCENE
 .LField_Test5_CELL_PICTURES:
-	.incbin "games/tla/src/map/map_000/cell_pictures.delta0.lz"
+	.incbin "games/tla/src/map/empty_map/cell_pictures.delta0.lz"
 	.balign 4, 0
 .LField_Test5_SHAPES:
 	.incbin "games/tla/src/map/test_5/shapes.table.lz"
@@ -24,7 +24,7 @@ Field_Test5:
 	.incbin "games/tla/src/map/test_5/shape_grid.plane.lz"
 	.balign 4, 0
 .LField_Test5_SCENE:
-	.incbin "games/tla/src/map/map_000/scene.scene.lz"
+	.incbin "games/tla/src/map/empty_map/scene.scene.lz"
 	.balign 4, 0
 	.global Resource_Data638
 Resource_Data638:

@@ -11,10 +11,10 @@ gNameEntry_KeyboardTilemap:
 	.incbin "games/tla/src/window/keyboard_ja.table.lz"
 	.global gNameEntry_AlternateKeyboardTilemap
 gNameEntry_AlternateKeyboardTilemap:
-	.incbin "games/tla/src/window/keyboard_j2.table.lz"
-	.global NameEntry_KeyboardTilemap3
-NameEntry_KeyboardTilemap3:
-	.incbin "games/tla/src/window/keyboard_j3.table.lz"
+	.incbin "games/tla/src/window/keyboard_ja_latin.table.lz"
+	.global NameEntry_UnusedKeyboardTilemap
+NameEntry_UnusedKeyboardTilemap:
+	.incbin "games/tla/src/window/keyboard_ja_latin_unused.table.lz"
 	.else
 	.ifdef TLA_EDITION_ES
 	.incbin "games/tla/src/window/keyboard_es.table.lz"

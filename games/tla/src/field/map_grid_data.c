@@ -411,7 +411,7 @@ const struct MapResources gMaps[] = {
     {69, 63, {64, 65, 66}, 67}, // kandorean_temple_chestbeaters
     {70, 63, {64, 65, 66}, 67}, // kandorean_temple_pillar
     {71, 63, {64, 65, 66}, 67}, // kandorean_temple_stream
-    {72, 63, {64, 65, 66}, 67}, // kandorean_temple_steam
+    {72, 63, {64, 65, 66}, 67}, // kandorean_temple_current
     {73, 63, {64, 65, 66}, 67}, // kandorean_temple_fog
     {74, 75, {45, 76, 47}, 48}, // kandorean_temple_gate
     {77, 78, {79, 80, 81}, 82}, // kandorean_temple_poi

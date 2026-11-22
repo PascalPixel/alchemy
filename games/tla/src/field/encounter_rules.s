@@ -18,7 +18,7 @@ gScene_EncounterRules:
 	encounter_rule KandoreanTempleMimic, -1, -1, 16, 0
 	encounter_rule KandoreanTempleChestbeaters, -1, -1, 18, 0
 	encounter_rule KandoreanTemplePillar, 2, -1, 17, 0
-	encounter_rule KandoreanTempleSteam, -1, -1, 17, 0
+	encounter_rule KandoreanTempleCurrent, -1, -1, 17, 0
 	encounter_rule KandoreanTempleFog, 3, -1, 18, 0
 	encounter_rule KandoreanTempleFog, 4, -1, 18, 0
 	encounter_rule KandoreanTempleFog, -1, -1, 16, 0

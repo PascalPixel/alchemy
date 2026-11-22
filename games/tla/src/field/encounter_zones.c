@@ -98,7 +98,7 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {251, 252, 253, 254, 255, 256, 257, 258},
         .weights = {20, 20, 20, 10, 10, 5, 5, 5},
     },
-    // Kandorean Temple: SceneId_KandoreanTempleLifts, SceneId_KandoreanTemplePillar entrance 2, SceneId_KandoreanTempleSteam
+    // Kandorean Temple: SceneId_KandoreanTempleLifts, SceneId_KandoreanTemplePillar entrance 2, SceneId_KandoreanTempleCurrent
     {
         .rate = 50,
         .level = 4,

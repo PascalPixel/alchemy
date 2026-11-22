@@ -20,7 +20,7 @@
 	.include "games/tla/src/map/kandorean_temple_chestbeaters/map.inc"
 	.include "games/tla/src/map/kandorean_temple_pillar/map.inc"
 	.include "games/tla/src/map/kandorean_temple_stream/map.inc"
-	.include "games/tla/src/map/kandorean_temple_steam/map.inc"
+	.include "games/tla/src/map/kandorean_temple_current/map.inc"
 	.include "games/tla/src/map/kandorean_temple_fog/map.inc"
 	.include "games/tla/src/map/kandorean_temple_gate/map.inc"
 	.include "games/tla/src/map/kandorean_temple_poi/map.inc"

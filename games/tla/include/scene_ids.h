@@ -52,8 +52,8 @@ extern char SceneId_KandoreanTemplePillar;
 #define SCENE_KANDOREAN_TEMPLE_PILLAR ((s32)&SceneId_KandoreanTemplePillar)
 extern char SceneId_KandoreanTempleStream;
 #define SCENE_KANDOREAN_TEMPLE_STREAM ((s32)&SceneId_KandoreanTempleStream)
-extern char SceneId_KandoreanTempleSteam;
-#define SCENE_KANDOREAN_TEMPLE_STEAM ((s32)&SceneId_KandoreanTempleSteam)
+extern char SceneId_KandoreanTempleCurrent;
+#define SCENE_KANDOREAN_TEMPLE_CURRENT ((s32)&SceneId_KandoreanTempleCurrent)
 /// The Kandorean Temple room where Fog is fought.
 extern char SceneId_KandoreanTempleFog;
 #define SCENE_KANDOREAN_TEMPLE_FOG ((s32)&SceneId_KandoreanTempleFog)

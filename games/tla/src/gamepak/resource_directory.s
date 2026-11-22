@@ -702,7 +702,7 @@ Resource_DirectoryTable:
 	resource , Field_KandoreanTempleChestbeaters
 	resource , Field_KandoreanTemplePillar
 	resource , Field_KandoreanTempleStream
-	resource , Field_KandoreanTempleSteam
+	resource , Field_KandoreanTempleCurrent
 	resource , Field_KandoreanTempleFog
 	resource , Field_KandoreanTempleGate
 	resource , Tileset_KandoreanTempleGatePalette

@@ -1,37 +1,26 @@
 /// @file
-/// Lacquer rooms B (SceneId_LacquerRoomsB), a sheet of rooms drawn in red
-/// lacquer, all of them Xian's: its houses, shops and inn, which the area names
-/// call Xian, and the room behind Master Feh's school.
+/// The insides of Xian (SceneId_LacquerRoomsB): its houses, its inn and its
+/// shop, red lacquered rooms laid side by side on one sheet, and the small
+/// bedroom behind Master Feh's school.
 ///
-/// Each of Xian's doors leads to a room here, and each room leads back out to
-/// its door:
+/// Each of Xian's doors opens into a room of its own here. Three are villagers'
+/// houses, two to a house. The inn's front room has the innkeeper and a cook,
+/// and an inner doorway leads to the room behind it with its beds. In the shop
+/// the weapon, armor and item merchants stand side by side behind one long
+/// white counter. Every villager has a line, and a thought for Mind Read, for
+/// before and after the village hears that Hsu is trapped
+/// (FLAG_XIAN_HEARD_HSU_TRAPPED); two of them ask a question with an answer
+/// for yes and one for no. The merchants and the innkeeper serve the party
+/// only when spoken to across the counter, and otherwise just talk.
 ///
-/// - LACQUER_ROOMS_B_HOUSE, LACQUER_ROOMS_B_HOUSE_NORTH and
-///   LACQUER_ROOMS_B_FROM_XIAN_EAST are villagers' houses.
-/// - LACQUER_ROOMS_B_INN_SOUTH opens into the inn, where
-///   LACQUER_ROOMS_B_INN_TO_INN_GUEST_ROOMS leads on into its guest rooms and
-///   LACQUER_ROOMS_B_INN_GUEST_ROOMS_TO_INN back.
-/// - LACQUER_ROOMS_B_WEAPON_AND_ARMOR_SHOP opens into the weapon, armor and
-///   item shops.
-///
-/// As in the village, every line has a row for each side of
-/// FLAG_XIAN_HEARD_HSU_TRAPPED, and two villagers' questions have a reply for a
-/// yes and one for a no. The shopkeepers and the innkeeper serve the party only
-/// when spoken to across the counter, and otherwise talk.
-///
-/// The room behind Master Feh's school
-/// (LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL) is reached only from the
-/// school (LACQUER_ROOMS_A_FEHS_SCHOOL_TO_HOUSE, in fuchin_temple.c) and has
-/// its own tables (Scene_GetTriggers).
-///
-/// Once Xian has heard of Hsu, Master Feh, Feizhi and Hsu are there, Hsu lying
-/// in the bed (ANIM_HSU_IN_BED; the room's render with Hsu placed).
-///
-/// FLAG_HSU_RESCUED_WITHOUT_PARTY, set when the party left the desert with Hsu
-/// still trapped (lamakan_desert.c), picks whether Feizhi thanks the party and
-/// Master Hama or Hama alone, and what Mind Read hears from each of them.
-///
-/// Arriving here clears FLAG_SHOW_AREA_NAME.
+/// The bedroom is reached only through a door of Master Feh's school
+/// (fuchin_temple.c) and has its own actors and triggers. Once Xian has heard
+/// of Hsu, he lies there in bed with Feizhi at his side and Master Feh by the
+/// wall. If the party lifted the boulder off him at the Alpine Crossing,
+/// Feizhi thanks it and Master Hama; if he was freed while the party was away
+/// (FLAG_HSU_RESCUED_WITHOUT_PARTY), she thanks Hama alone, and the three of
+/// them think otherwise under Mind Read. Coming in from the school clears
+/// FLAG_SHOW_AREA_NAME.
 
 #include "ability_ids.h"
 #include "flags.h"
@@ -63,26 +52,25 @@ extern struct Trigger gLacquerRoomsB_SchoolRoomTriggers[];
 /// gLacquerRoomsB_ActorPlacements. Each villager is named by what they
 /// talk of before Xian hears of Hsu.
 enum LacquerRoomsBActorId {
-  /// A man with a topknot, in the room at LACQUER_ROOMS_B_HOUSE.
+  /// A man with a topknot, at the table of his house.
   ACTOR_MAN_ON_THE_MULBERRY_HARVEST = ACTOR_FIRST_PLACED,
-  /// A woman in a green apron, in the same room.
+  /// A woman in a green apron, in the same house.
   ACTOR_FARM_WORKER,
-  /// A young man, in the room at LACQUER_ROOMS_B_HOUSE_NORTH.
+  /// A young man in a blue jacket, at the back of another house.
   ACTOR_YOUNG_MAN_ON_SILK_ROAD,
-  /// A young woman who walks about the same room.
+  /// A young woman with black hair who walks about the same house.
   ACTOR_WOMAN_ON_TOLBI,
-  /// An old man, in the room at LACQUER_ROOMS_B_FROM_XIAN_EAST.
+  /// An old man in blue, by the door of the third house.
   ACTOR_OLD_MAN_ON_THE_ALTIN_ROAD,
-  /// An old woman with a cane, in the same room.
+  /// An old woman with a cane, in the same house.
   ACTOR_OLD_WOMAN_ON_THE_ALTIN_MINE,
   ACTOR_XIAN_WEAPON_MERCHANT,
   ACTOR_XIAN_ARMOR_MERCHANT,
   ACTOR_XIAN_ITEM_MERCHANT,
   ACTOR_XIAN_INNKEEPER,
-  /// A woman in an apron who walks about the inn's second room.
+  /// A woman in a pink apron who walks about the inn's back room.
   ACTOR_WOMAN_AWAITING_MERCHANTS,
-  /// A man in a cook's cap, in the inn's room at LACQUER_ROOMS_B_INN_SOUTH,
-  /// with the innkeeper.
+  /// A man in a cook's cap, in the inn's front room with the innkeeper.
   ACTOR_COOK
 };
 
@@ -93,15 +81,13 @@ enum {
   XIAN_INN = 5
 };
 
-/// The actors placed in the room behind Master Feh's school
-/// (LACQUER_ROOMS_B_FROM_LACQUER_ROOMS_A_FEHS_SCHOOL), where they stand once
-/// Xian has heard of Hsu. Its dialogue shows them: Master Feh says Feizhi's
-/// prediction came true, Feizhi welcomes the party, and Hsu was injured on his
-/// way from Lama Temple.
+/// The three in the bedroom behind Master Feh's school once Xian has heard of
+/// Hsu: Master Feh, who says Feizhi's prediction came true, Feizhi, and Hsu,
+/// hurt by the rocks on his way from Lama Temple.
 enum { ACTOR_FEH = ACTOR_FIRST_PLACED, ACTOR_FEIZHI, ACTOR_HSU };
 
 /// Hsu on his back with his arms at his sides, as he lies in the bed in the
-/// room behind the school (hsu.png's frame 36; the room's render).
+/// bedroom behind the school (hsu.png's frame 36).
 enum { ANIM_HSU_IN_BED = 6 };
 
 #include "shared/field_effect_create.c"
@@ -131,8 +117,9 @@ static inline u32 LacquerRoomsB_GetLeaderFacing(void) {
   return leader->facing;
 }
 
-/// Talking to Xian's weapon merchant across the counter opens the weapon shop.
-/// From elsewhere the merchant talks of martial arts.
+/// Talking to the bald weapon merchant in Xian's shop from in front of the
+/// counter opens the weapon shop. From anywhere else he talks of martial arts,
+/// or once the village has heard of Hsu, of the lesson his injury taught.
 static void LacquerRoomsB_TalkToWeaponMerchant(void) {
   u32 leaderFacing = LacquerRoomsB_GetLeaderFacing();
 
@@ -151,8 +138,9 @@ static void LacquerRoomsB_TalkToWeaponMerchant(void) {
   Event_End();
 }
 
-/// Talking to Xian's armor merchant across the counter opens the armor shop.
-/// From elsewhere the merchant talks of armor and kung fu.
+/// Talking to the young armor merchant in Xian's shop from in front of the
+/// counter opens the armor shop. From anywhere else he talks of armor and kung
+/// fu.
 static void LacquerRoomsB_TalkToArmorMerchant(void) {
   u32 leaderFacing = LacquerRoomsB_GetLeaderFacing();
 
@@ -171,7 +159,10 @@ static void LacquerRoomsB_TalkToArmorMerchant(void) {
   Event_End();
 }
 
-/// Talking to Xian's item merchant across the counter opens the item shop.
+/// Talking to the item merchant, the woman at the end of Xian's shop counter,
+/// from in front of it opens the item shop. From anywhere else she talks of
+/// Xian's armor, or once the village has heard of Hsu, asks whether the party
+/// means to cross the desert.
 static void LacquerRoomsB_TalkToItemMerchant(void) {
   u32 leaderFacing = LacquerRoomsB_GetLeaderFacing();
 
@@ -193,8 +184,9 @@ static void LacquerRoomsB_TalkToItemMerchant(void) {
   Event_End();
 }
 
-/// Talking to Xian's innkeeper across the counter opens the inn. From elsewhere
-/// the innkeeper talks of towns and travelers.
+/// Talking to Xian's innkeeper across his counter, from the west, lets the
+/// party stay at the inn. From anywhere else he talks of towns, or of how few
+/// guests come these days.
 static void LacquerRoomsB_TalkToInnkeeper(void) {
   u32 leaderFacing = LacquerRoomsB_GetLeaderFacing();
 
@@ -212,7 +204,8 @@ static void LacquerRoomsB_TalkToInnkeeper(void) {
   Event_End();
 }
 
-/// A young man in a house in Xian asks whether something is wrong on Silk Road.
+/// Once Xian has heard of Hsu, a young man at home asks whether something is
+/// wrong on Silk Road and in Lamakan Desert.
 static void LacquerRoomsB_AskAboutSilkRoad(void) {
   Event_Start();
   Event_SetMessageId(MsgXianSomethingWrongOnSilkRoad);
@@ -223,8 +216,8 @@ static void LacquerRoomsB_AskAboutSilkRoad(void) {
   Event_End();
 }
 
-/// An old man in a house in Xian, ACTOR_OLD_MAN_ON_THE_ALTIN_ROAD, asks after
-/// the news of Hsu whether the monsters in Altin spat water.
+/// Once Xian has heard of Hsu, an old man at home asks whether the monsters in
+/// Altin really spat water, as Feizhi says.
 static void LacquerRoomsB_AskAboutAltinMonsters(void) {
   Event_Start();
   Event_SetMessageId(MsgXianDidMonstersInAltinSpit);
@@ -235,7 +228,9 @@ static void LacquerRoomsB_AskAboutAltinMonsters(void) {
   Event_End();
 }
 
-/// Feizhi thanks the party and Master Hama for freeing Hsu, in Xian.
+/// In the bedroom behind Master Feh's school, Feizhi welcomes the party, turns
+/// to look at Hsu in his bed and back, and thanks it and Master Hama for
+/// saving him.
 static void LacquerRoomsB_FeizhiThanksParty(void) {
   Event_Start();
   Event_SetMessageId(MsgXianWarriorWelcome);
@@ -259,8 +254,9 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gLacquerRoomsB_Triggers;
 }
 
-/// Opens the room through a window transition and places hidden still actors of
-/// SPRITE_CHEST's sheet (Actor_CreateConfigured).
+/// Each room opens with the window transition. The inn and the shop also get
+/// unseen still actors of SPRITE_CHEST's sheet near their counters
+/// (Actor_CreateConfigured), and the bedroom lays Hsu in his bed.
 s32 Scene_Initialize(void) {
   s16 entrance;
 

@@ -98,7 +98,7 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {251, 252, 253, 254, 255, 256, 257, 258},
         .weights = {20, 20, 20, 10, 10, 5, 5, 5},
     },
-    // Kandorean Temple: SceneId_KandoreanTempleLifts, SceneId_KandoreanTemplePillar entrance 2, SceneId_KandoreanTempleSteam
+    // Kandorean Temple: SceneId_KandoreanTempleLifts, SceneId_KandoreanTemplePillar entrance 2, SceneId_KandoreanTempleCurrent
     {
         .rate = 50,
         .level = 4,
@@ -203,14 +203,14 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {311, 312, 313, 314, 315, 316, 317, 318},
         .weights = {20, 20, 10, 10, 10, 5, 5},
     },
-    // Yampi Desert: SceneId_YampiDesertPsynergyStone, SceneId_YampiDesertTreasurePit, SceneId_YampiDesertSpringCave, SceneId_YampiDesertBlowMaceChest
+    // Yampi Desert: SceneId_YampiDesertPsynergyStone, SceneId_YampiDesertCoinsPuddle, SceneId_YampiDesertSpringCave, SceneId_YampiDesertBlowMaceChest
     {
         .rate = 60,
         .level = 9,
         .formations = {311, 312, 313, 314, 315, 316, 317, 318},
         .weights = {10, 10, 20, 20, 10, 10, 5, 5},
     },
-    // Yampi Desert: SceneId_YampiDesertSandPass, SceneId_YampiDesertTrainersWhipChest, SceneId_YampiDesertMedalSpot
+    // Yampi Desert: SceneId_YampiDesertSandPass, SceneId_YampiDesertTrainersWhipChest, SceneId_YampiDesertHiddenPsynergyStone
     {
         .rate = 60,
         .level = 9,
@@ -469,7 +469,7 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {531, 532, 533, 534, 535, 536, 537, 538},
         .weights = {10, 10, 10, 10, 20, 20, 30, 30},
     },
-    // Islet Cave: SceneId_IsletCaveMeld
+    // Islet Cave: SceneId_IsletCaveHalls
     {
         .rate = 50,
         .level = 25,
@@ -511,7 +511,7 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {451, 452, 453, 454, 455, 456, 457, 458},
         .weights = {5, 5, 10, 20, 20, 15, 10, 5},
     },
-    // Tundaria Tower: SceneId_TundariaTowerLiftPillars
+    // Tundaria Tower: SceneId_TundariaTowerPillarPuzzle
     {
         .rate = 50,
         .level = 26,
@@ -665,14 +665,14 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {601, 602, 603, 604, 605, 606, 607, 608},
         .weights = {5, 5, 5, 10, 10, 20, 20, 20},
     },
-    // Islet Cave: SceneId_IsletCaveSerac
+    // Islet Cave: SceneId_IsletCaveCorridors
     {
         .rate = 15,
         .level = 38,
         .formations = {611, 612, 613, 614, 615, 616, 617, 618},
         .weights = {20, 20, 5, 5, 10, 10, 10, 10},
     },
-    // Islet Cave: SceneId_IsletCaveSerac
+    // Islet Cave: SceneId_IsletCaveCorridors
     {
         .rate = 15,
         .level = 38,

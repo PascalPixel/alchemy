@@ -2,7 +2,7 @@
 /// The Islet Cave, which the lonely turtle on the Sea of Time Islet opens once
 /// he has Li'l Turtle for a friend. Its three maps are all here.
 ///
-/// The halls (SCENE_ISLET_CAVE_MELD): stairs come down from the islet into a
+/// The halls (SCENE_ISLET_CAVE_HALLS): stairs come down from the islet into a
 /// small south room, and more stairs lead down from it into the west hall, a
 /// lake with an island holding a Teleport circle. Golden logs float in the
 /// water and carry Felix across as he walks onto them (IsletCave_RideLog): one
@@ -13,7 +13,7 @@
 ///
 /// With Teleport, the island's circle sends the party to a second circle on a
 /// ledge at the north of the lake, behind which a doorway leads into five
-/// corridors (SCENE_ISLET_CAVE_SERAC), each darker and bluer than the last
+/// corridors (SCENE_ISLET_CAVE_CORRIDORS), each darker and bluer than the last
 /// (IsletCave_DarkenPalette). Serac, a Mercury Djinni, hides in the winged
 /// statue of the second corridor until Tremor shakes him out. The fifth
 /// corridor's door opens on the Sentinel's room (SCENE_ISLET_CAVE_SENTINEL),
@@ -303,9 +303,9 @@ extern struct Trigger gIsletCave_SentinelRoomTriggers[];
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_ISLET_CAVE_MELD)
+  if (scene == SCENE_ISLET_CAVE_HALLS)
     return gIsletCave_HallPlacements;
-  if (scene == SCENE_ISLET_CAVE_SERAC)
+  if (scene == SCENE_ISLET_CAVE_CORRIDORS)
     return gIsletCave_CorridorPlacements;
   return gIsletCave_SentinelRoomPlacements;
 }
@@ -313,7 +313,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 const struct Trigger *Scene_GetTriggers(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_ISLET_CAVE_SERAC)
+  if (scene == SCENE_ISLET_CAVE_CORRIDORS)
     return gIsletCave_CorridorTriggers;
   if (scene == SCENE_ISLET_CAVE_SENTINEL)
     return gIsletCave_SentinelRoomTriggers;
@@ -472,7 +472,7 @@ s32 Scene_Initialize(void) {
 
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 9);
   FieldEffect_StartBlankOverlay(0);
-  if (gMainRoutineWork.next == SCENE_ISLET_CAVE_MELD) {
+  if (gMainRoutineWork.next == SCENE_ISLET_CAVE_HALLS) {
     IsletCave_PlaceLogs();
     Palette_SetColors(gIsletCave_PaletteSlots, gIsletCave_PaletteColors,
                       gIsletCave_CycleColors, gIsletCave_CycleSlots);
@@ -482,7 +482,7 @@ s32 Scene_Initialize(void) {
       Actor_SetPosition(ACTOR_SENTINEL, 0, 0);
       GameFlag_Set(FLAG_SENTINEL_DEFEATED);
     }
-  } else if (gMainRoutineWork.next == SCENE_ISLET_CAVE_SERAC) {
+  } else if (gMainRoutineWork.next == SCENE_ISLET_CAVE_CORRIDORS) {
     if (GameFlag_Get(FLAG_DJINNI(DJINNI_SERAC)) ||
         GameFlag_Get(FLAG_DJINNI_HIDING(DJINNI_SERAC))) {
       GameFlag_Set(FLAG_SERAC_REVEALED);
@@ -492,9 +492,9 @@ s32 Scene_Initialize(void) {
                                 gIsletCave_TremorTargetScript);
     }
   }
-  if (gMainRoutineWork.next == SCENE_ISLET_CAVE_SERAC ||
+  if (gMainRoutineWork.next == SCENE_ISLET_CAVE_CORRIDORS ||
       gMainRoutineWork.next == SCENE_ISLET_CAVE_SENTINEL) {
-    if (gMainRoutineWork.next == SCENE_ISLET_CAVE_SERAC)
+    if (gMainRoutineWork.next == SCENE_ISLET_CAVE_CORRIDORS)
       dim = (gMainRoutineWork.entrance - 3) / 2;
     else
       dim = 3;
@@ -990,30 +990,30 @@ s32 gIsletCave_TremorTargetScript[] = {
 #include "shared/scene_entrances_default.c"
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(IsletCaveMeld),
+    SCENE_EXITS(IsletCaveHalls),
     SCENE_EXIT_UNLESS(1, SeaOfTimeIslet, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, IsletCaveMeld, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, IsletCaveMeld, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, IsletCaveMeld, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, IsletCaveMeld, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, IsletCaveMeld, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, IsletCaveMeld, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, IsletCaveSerac, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, IsletCaveMeld, 10, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(10, IsletCaveMeld, 9, EXIT_FLAG_NONE),
-    SCENE_EXITS(IsletCaveSerac),
-    SCENE_EXIT_UNLESS(1, IsletCaveMeld, 8, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, IsletCaveSerac, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, IsletCaveSerac, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, IsletCaveSerac, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, IsletCaveSerac, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, IsletCaveSerac, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, IsletCaveSerac, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, IsletCaveSerac, 9, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(9, IsletCaveSerac, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, IsletCaveHalls, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, IsletCaveHalls, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, IsletCaveHalls, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, IsletCaveHalls, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, IsletCaveHalls, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, IsletCaveHalls, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, IsletCaveCorridors, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, IsletCaveHalls, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, IsletCaveHalls, 9, EXIT_FLAG_NONE),
+    SCENE_EXITS(IsletCaveCorridors),
+    SCENE_EXIT_UNLESS(1, IsletCaveHalls, 8, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, IsletCaveCorridors, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, IsletCaveCorridors, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(4, IsletCaveCorridors, 5, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(5, IsletCaveCorridors, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(6, IsletCaveCorridors, 7, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(7, IsletCaveCorridors, 6, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(8, IsletCaveCorridors, 9, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(9, IsletCaveCorridors, 8, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(10, IsletCaveSentinel, 1, EXIT_FLAG_NONE),
     SCENE_EXITS(IsletCaveSentinel),
-    SCENE_EXIT_UNLESS(1, IsletCaveSerac, 10, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, IsletCaveCorridors, 10, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 

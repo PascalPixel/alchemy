@@ -398,7 +398,7 @@ const struct MapResources gMaps[] = {
     {6, 7, {8, 9, 10}, 11}, // lobby
     {12, 13, {14, 15, 16}, 17}, // venus_lighthouse_entrance
     {18, 19, {20, 21, 22}, 23}, // venus_lighthouse
-    {24, 25, {26, 27, 28}, 29}, // suhalla_gate_house
+    {24, 25, {26, 27, 28}, 29}, // suhalla_gate_road
     {30, 25, {26, 27, 28}, 29}, // suhalla_gate_ambush
     {31, 32, {33, 34, 35}, 36}, // suhalla_gate_psynergy_stone
     {37, 38, {39, 40, 41}, 42}, // idejima
@@ -411,7 +411,7 @@ const struct MapResources gMaps[] = {
     {69, 63, {64, 65, 66}, 67}, // kandorean_temple_chestbeaters
     {70, 63, {64, 65, 66}, 67}, // kandorean_temple_pillar
     {71, 63, {64, 65, 66}, 67}, // kandorean_temple_stream
-    {72, 63, {64, 65, 66}, 67}, // kandorean_temple_steam
+    {72, 63, {64, 65, 66}, 67}, // kandorean_temple_current
     {73, 63, {64, 65, 66}, 67}, // kandorean_temple_fog
     {74, 75, {45, 76, 47}, 48}, // kandorean_temple_gate
     {77, 78, {79, 80, 81}, 82}, // kandorean_temple_poi
@@ -449,8 +449,8 @@ const struct MapResources gMaps[] = {
     {217, 218, {219, 220, 221}, 222}, // mikasalla_rooms
     {223, 224, {225, 226, 227}, 228}, // mikasalla_rooms_sanctum
     {229, 230, {197, 209, 210}, 200}, // garoh
-    {231, 232, {197, 209, 210}, 200}, // garoh_hypnos_sword_chest
-    {233, 232, {197, 209, 210}, 200}, // garoh_blocks
+    {231, 232, {197, 209, 210}, 200}, // garoh_path
+    {233, 232, {197, 209, 210}, 200}, // garoh_way_up
     {234, 235, {79, 80, 81}, 82}, // garoh_tunnels
     {236, 237, {79, 80, 81}, 82}, // garoh_werewolf_cave
     {223, 238, {225, 226, 227}, 228}, // mikasalla_rooms_sanctum
@@ -461,10 +461,10 @@ const struct MapResources gMaps[] = {
     {249, 243, {244, 245, 246}, 247}, // yampi_desert_blitz
     {250, 243, {244, 245, 246}, 247}, // yampi_desert_psynergy_stone
     {251, 243, {244, 245, 246}, 247}, // yampi_desert_king_scorpion
-    {252, 243, {244, 245, 246}, 247}, // yampi_desert_treasure_pit
+    {252, 243, {244, 245, 246}, 247}, // yampi_desert_coins_puddle
     {253, 243, {244, 245, 246}, 247}, // yampi_desert_sand_pass
     {254, 243, {244, 245, 246}, 247}, // yampi_desert_trainers_whip_chest
-    {255, 243, {244, 245, 246}, 247}, // yampi_desert_medal_spot
+    {255, 243, {244, 245, 246}, 247}, // yampi_desert_hidden_psynergy_stone
     {256, 243, {244, 245, 246}, 247}, // yampi_desert_scorpion_pit
     {257, 243, {244, 245, 246}, 247}, // yampi_desert_spring_cave
     {258, 243, {244, 245, 246}, 247}, // yampi_desert_blow_mace_chest
@@ -576,7 +576,7 @@ const struct MapResources gMaps[] = {
     {587, 581, {582, 583, 584}, 585}, // champa_cliff_caves_obaba
     {588, 581, {582, 583, 584}, 585}, // champa_cliff_caves_avimander
     {589, 590, {225, 226, 227}, 228}, // champa_sanctum
-    {591, 592, {593, 594, 595}, 596}, // sea_of_time_whirlpool
+    {591, 592, {593, 594, 595}, 596}, // sea_of_time_swirls
     {597, 598, {599, 600, 601}, 602}, // sea_of_time_to_lemuria
     {603, 430, {604, 605, 606}, 607}, // lemurian_ship_tiller
     {608, 609, {97, 98, 99}, 100}, // ankohl_ruins_stone_faces
@@ -598,7 +598,7 @@ const struct MapResources gMaps[] = {
     {648, 649, {97, 98, 99}, 100}, // tundaria_tower_ice_slide
     {650, 651, {97, 98, 99}, 100}, // tundaria_tower_reflux
     {652, 653, {97, 98, 99}, 100}, // tundaria_tower_ice_columns
-    {654, 655, {97, 98, 99}, 100}, // tundaria_tower_lift_pillars
+    {654, 655, {97, 98, 99}, 100}, // tundaria_tower_pillar_puzzle
     {656, 657, {103, 104, 658}, 106}, // tundaria_tower_entrance
     {659, 660, {103, 104, 658}, 106}, // tundaria_tower_burst_brooch
     {661, 662, {663, 664, 665}, 666}, // gondowan_settlement_cave
@@ -626,9 +626,9 @@ const struct MapResources gMaps[] = {
     {726, 727, {663, 664, 665}, 666}, // shaman_village_cave
     {728, 729, {730, 731, 732}, 733}, // shaman_village_trial_grounds
     {734, 735, {736, 737, 738}, 739}, // shaman_village
-    {740, 741, {736, 737, 738}, 739}, // shaman_village_aroma
-    {742, 743, {744, 745, 746}, 747}, // shaman_village_inn
-    {742, 748, {744, 745, 746}, 747}, // shaman_village_inn
+    {740, 741, {736, 737, 738}, 739}, // shaman_village_north_end
+    {742, 743, {744, 745, 746}, 747}, // shaman_village_houses
+    {742, 748, {744, 745, 746}, 747}, // shaman_village_houses
     {223, 749, {225, 226, 227}, 228}, // mikasalla_rooms_sanctum
     {750, 751, {97, 98, 752}, 100}, // anemos_inner_sanctum_dragon_skin_chest
     {753, 751, {97, 98, 752}, 100}, // anemos_inner_sanctum_elevator
@@ -707,8 +707,8 @@ const struct MapResources gMaps[] = {
     {888, 889, {890, 891, 892}, 893}, // treasure_isle_jesters_armlet_chest
     {894, 895, {878, 879, 880}, 881}, // treasure_isle_gale
     {896, 895, {878, 879, 880}, 881}, // treasure_isle_guardian
-    {897, 898, {899, 900, 901}, 902}, // islet_cave_meld
-    {903, 904, {187, 188, 189}, 190}, // islet_cave_serac
+    {897, 898, {899, 900, 901}, 902}, // islet_cave_halls
+    {903, 904, {187, 188, 189}, 190}, // islet_cave_corridors
     {905, 906, {187, 188, 189}, 190}, // islet_cave_sentinel
     {907, 908, {139, 140, 141}, 142}, // caverns_indra
     {909, 910, {911, 912, 913}, 914}, // caverns_osenia

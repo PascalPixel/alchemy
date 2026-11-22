@@ -1,7 +1,7 @@
 /// @file
 /// Garoh, the village of werewolves that guards Air's Rock, in five scenes that
-/// share this overlay: the way up from the world map (SceneId_GarohBlocks),
-/// the path up to the village (SceneId_GarohHypnosSwordChest, whose chest
+/// share this overlay: the way up from the world map (SceneId_GarohWayUp),
+/// the path up to the village (SceneId_GarohPath, whose chest
 /// holds the Hypnos Sword), the village itself (SceneId_Garoh), the tunnels
 /// under its houses (SceneId_GarohTunnels) and the cave behind the rock by the
 /// sanctum (SceneId_GarohWerewolfCave).
@@ -138,8 +138,8 @@ enum GarohVillageActorId {
 };
 
 /// The path up to the village and the werewolves' cave
-/// (SceneId_GarohHypnosSwordChest and SceneId_GarohWerewolfCave), numbering the
-/// rows of gGaroh_WerewolfCaveActorPlacements; GarohHypnosSwordChest places the
+/// (SceneId_GarohPath and SceneId_GarohWerewolfCave), numbering the
+/// rows of gGaroh_WerewolfCaveActorPlacements; GarohPath places the
 /// werewolf and Kraden on the same rows.
 enum GarohWerewolfActorId {
   ACTOR_WEREWOLF = ACTOR_FIRST_PLACED,
@@ -160,10 +160,10 @@ enum {
   ACTOR_PATH_TIGHTROPE_POST_B
 };
 
-/// The stone pillars on the way up to the village (SceneId_GarohBlocks),
+/// The stone pillars on the way up to the village (SceneId_GarohWayUp),
 /// numbering the rows of gGaroh_BlocksActorPlacements: Move or a push takes
 /// each onto the slot where it sinks.
-enum GarohBlocksActorId {
+enum GarohWayUpActorId {
   ACTOR_FIRST_PILLAR = ACTOR_FIRST_PLACED,
   ACTOR_SECOND_PILLAR,
   ACTOR_THIRD_PILLAR,
@@ -348,9 +348,9 @@ const void *Scene_GetActorPlacements(void) {
       return gGaroh_VillageDayActorPlacements;
     return gGaroh_VillageActorPlacements;
   }
-  if (scene == SCENE_GAROH_HYPNOS_SWORD_CHEST)
+  if (scene == SCENE_GAROH_PATH)
     return gGaroh_HypnosSwordChestActorPlacements;
-  if (scene == SCENE_GAROH_BLOCKS)
+  if (scene == SCENE_GAROH_WAY_UP)
     return gGaroh_BlocksActorPlacements;
   if (scene == SCENE_GAROH_TUNNELS)
     return gGaroh_TunnelsActorPlacements;
@@ -651,9 +651,9 @@ const void *Scene_GetTriggers(void) {
       return gGaroh_VillageDayTriggers;
     return gGaroh_VillageTriggers;
   }
-  if (scene == SCENE_GAROH_HYPNOS_SWORD_CHEST)
+  if (scene == SCENE_GAROH_PATH)
     return gGaroh_HypnosSwordChestTriggers;
-  if (scene == SCENE_GAROH_BLOCKS)
+  if (scene == SCENE_GAROH_WAY_UP)
     return gGaroh_BlocksTriggers;
   if (scene == SCENE_GAROH_TUNNELS)
     return gGaroh_TunnelsTriggers;
@@ -708,9 +708,9 @@ s32 Scene_Initialize(void) {
     if (gMainRoutineWork.next == SCENE_GAROH) {
       Event_SetFlag(FLAG_GAROH_REACHED_VILLAGE);
       Garoh_InitializeVillage();
-    } else if (gMainRoutineWork.next == SCENE_GAROH_HYPNOS_SWORD_CHEST) {
+    } else if (gMainRoutineWork.next == SCENE_GAROH_PATH) {
       Garoh_InitializeHypnosSwordChest();
-    } else if (gMainRoutineWork.next == SCENE_GAROH_BLOCKS) {
+    } else if (gMainRoutineWork.next == SCENE_GAROH_WAY_UP) {
       Garoh_InitializeBlocks();
       if (Event_GetFlag(FLAG_GAROH_REACHED_VILLAGE)) {
         gMainRoutineWork.restartScene = SCENE_GAROH_ROOMS_SANCTUM;
@@ -999,7 +999,7 @@ void Garoh_CrossLowerTwilightLine(void) {
 
   if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED)) {
     Flag_Set(FLAG_CROSSED_LOWER_TWILIGHT_LINE);
-    if (gMainRoutineWork.entrance == GAROH_BLOCKS_FROM_WORLD_MAP) {
+    if (gMainRoutineWork.entrance == GAROH_WAY_UP_FROM_WORLD_MAP) {
       PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
       Flag_Set(FLAG_GAROH_NIGHT);
       Flag_Set(FLAG_EVENING);
@@ -1023,8 +1023,7 @@ void Garoh_CrossUpperTwilightLine(void) {
 
   if (!Flag_IsSet(FLAG_GAROH_SECRET_SHARED)) {
     Flag_Set(FLAG_CROSSED_UPPER_TWILIGHT_LINE);
-    if (gMainRoutineWork.entrance ==
-        GAROH_BLOCKS_FROM_GAROH_HYPNOS_SWORD_CHEST) {
+    if (gMainRoutineWork.entrance == GAROH_WAY_UP_FROM_GAROH_PATH) {
       PaletteFade_ApplyTarget(PALETTE_TINT_WARM, 1);
       Flag_Set(FLAG_GAROH_NIGHT);
       Flag_Set(FLAG_EVENING);
@@ -2880,16 +2879,16 @@ u32 gSceneExits[] = {
     SCENE_EXIT_UNLESS(7, GarohTunnels, 4, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(8, GarohTunnels, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(9, GarohTunnels, 11, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(10, GarohHypnosSwordChest, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(11, GarohHypnosSwordChest, 3, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(10, GarohPath, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(11, GarohPath, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(12, GarohWerewolfCave, 1, EXIT_FLAG_NONE),
-    SCENE_EXITS(GarohHypnosSwordChest),
-    SCENE_EXIT_UNLESS(1, GarohBlocks, 2, EXIT_FLAG_NONE),
+    SCENE_EXITS(GarohPath),
+    SCENE_EXIT_UNLESS(1, GarohWayUp, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, Garoh, 10, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, Garoh, 11, EXIT_FLAG_NONE),
-    SCENE_EXITS(GarohBlocks),
+    SCENE_EXITS(GarohWayUp),
     SCENE_EXIT_UNLESS(1, WorldMap, 15, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, GarohHypnosSwordChest, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(2, GarohPath, 1, EXIT_FLAG_NONE),
     SCENE_EXITS(GarohTunnels),
     SCENE_EXIT_UNLESS(1, Garoh, 8, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, GarohTunnels, 3, EXIT_FLAG_NONE),
@@ -3039,9 +3038,8 @@ struct Trigger gGaroh_Triggers[] = {
 // clang-format on
 
 struct Trigger gGaroh_VillageTriggers[] = {
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
-     GAROH_TO_GAROH_ROOMS_HOUSES_SOUTHEAST, CONDITION_ALWAYS,
-     EVENT(Garoh_OpenDoorAndEnter)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), GAROH_TO_GAROH_ROOMS_HOUSES_SOUTH,
+     CONDITION_ALWAYS, EVENT(Garoh_OpenDoorAndEnter)},
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 2, CONDITION_ALWAYS, 2},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
      GAROH_TO_GAROH_ROOMS_HOUSES_NORTHWEST, CONDITION_ALWAYS,
@@ -3049,8 +3047,9 @@ struct Trigger gGaroh_VillageTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
      GAROH_TO_GAROH_ROOMS_HOUSES_SOUTHWEST, CONDITION_ALWAYS,
      EVENT(Garoh_OpenDoorAndEnter)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), GAROH_TO_GAROH_ROOMS_HOUSES_EAST,
-     CONDITION_ALWAYS, EVENT(Garoh_OpenDoorAndEnter)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     GAROH_TO_GAROH_ROOMS_HOUSES_SOUTHEAST, CONDITION_ALWAYS,
+     EVENT(Garoh_OpenDoorAndEnter)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), GAROH_TO_GAROH_ROOMS_SANCTUM,
      CONDITION_ALWAYS, EVENT(Garoh_OpenDoorAndEnter)},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, 7},
@@ -3088,9 +3087,8 @@ struct Trigger gGaroh_VillageTriggers[] = {
 };
 
 struct Trigger gGaroh_VillageDayTriggers[] = {
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
-     GAROH_TO_GAROH_ROOMS_HOUSES_SOUTHEAST, CONDITION_ALWAYS,
-     EVENT(Garoh_OpenDoorAndEnter)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), GAROH_TO_GAROH_ROOMS_HOUSES_SOUTH,
+     CONDITION_ALWAYS, EVENT(Garoh_OpenDoorAndEnter)},
     {TRIGGER_EXIT | TRIGGER_FLAG_FACING | FACING_NORTH, 2, CONDITION_ALWAYS, 2},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
      GAROH_TO_GAROH_ROOMS_HOUSES_NORTHWEST, CONDITION_ALWAYS,
@@ -3098,8 +3096,9 @@ struct Trigger gGaroh_VillageDayTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
      GAROH_TO_GAROH_ROOMS_HOUSES_SOUTHWEST, CONDITION_ALWAYS,
      EVENT(Garoh_OpenDoorAndEnter)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), GAROH_TO_GAROH_ROOMS_HOUSES_EAST,
-     CONDITION_ALWAYS, EVENT(Garoh_OpenDoorAndEnter)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
+     GAROH_TO_GAROH_ROOMS_HOUSES_SOUTHEAST, CONDITION_ALWAYS,
+     EVENT(Garoh_OpenDoorAndEnter)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), GAROH_TO_GAROH_ROOMS_SANCTUM,
      CONDITION_ALWAYS, EVENT(Garoh_OpenDoorAndEnter)},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, 7},

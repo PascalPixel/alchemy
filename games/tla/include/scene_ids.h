@@ -22,8 +22,8 @@ extern char SceneId_VenusLighthouseEntrance;
 #define SCENE_VENUS_LIGHTHOUSE_ENTRANCE ((s32)&SceneId_VenusLighthouseEntrance)
 extern char SceneId_VenusLighthouse;
 #define SCENE_VENUS_LIGHTHOUSE ((s32)&SceneId_VenusLighthouse)
-extern char SceneId_SuhallaGateHouse;
-#define SCENE_SUHALLA_GATE_HOUSE ((s32)&SceneId_SuhallaGateHouse)
+extern char SceneId_SuhallaGateRoad;
+#define SCENE_SUHALLA_GATE_ROAD ((s32)&SceneId_SuhallaGateRoad)
 extern char SceneId_SuhallaGateAmbush;
 #define SCENE_SUHALLA_GATE_AMBUSH ((s32)&SceneId_SuhallaGateAmbush)
 extern char SceneId_SuhallaGatePsynergyStone;
@@ -52,8 +52,8 @@ extern char SceneId_KandoreanTemplePillar;
 #define SCENE_KANDOREAN_TEMPLE_PILLAR ((s32)&SceneId_KandoreanTemplePillar)
 extern char SceneId_KandoreanTempleStream;
 #define SCENE_KANDOREAN_TEMPLE_STREAM ((s32)&SceneId_KandoreanTempleStream)
-extern char SceneId_KandoreanTempleSteam;
-#define SCENE_KANDOREAN_TEMPLE_STEAM ((s32)&SceneId_KandoreanTempleSteam)
+extern char SceneId_KandoreanTempleCurrent;
+#define SCENE_KANDOREAN_TEMPLE_CURRENT ((s32)&SceneId_KandoreanTempleCurrent)
 /// The Kandorean Temple room where Fog is fought.
 extern char SceneId_KandoreanTempleFog;
 #define SCENE_KANDOREAN_TEMPLE_FOG ((s32)&SceneId_KandoreanTempleFog)
@@ -76,15 +76,16 @@ extern char SceneId_YampiDesertPsynergyStone;
   ((s32)&SceneId_YampiDesertPsynergyStone)
 extern char SceneId_YampiDesertKingScorpion;
 #define SCENE_YAMPI_DESERT_KING_SCORPION ((s32)&SceneId_YampiDesertKingScorpion)
-extern char SceneId_YampiDesertTreasurePit;
-#define SCENE_YAMPI_DESERT_TREASURE_PIT ((s32)&SceneId_YampiDesertTreasurePit)
+extern char SceneId_YampiDesertCoinsPuddle;
+#define SCENE_YAMPI_DESERT_COINS_PUDDLE ((s32)&SceneId_YampiDesertCoinsPuddle)
 extern char SceneId_YampiDesertSandPass;
 #define SCENE_YAMPI_DESERT_SAND_PASS ((s32)&SceneId_YampiDesertSandPass)
 extern char SceneId_YampiDesertTrainersWhipChest;
 #define SCENE_YAMPI_DESERT_TRAINERS_WHIP_CHEST                                 \
   ((s32)&SceneId_YampiDesertTrainersWhipChest)
-extern char SceneId_YampiDesertMedalSpot;
-#define SCENE_YAMPI_DESERT_MEDAL_SPOT ((s32)&SceneId_YampiDesertMedalSpot)
+extern char SceneId_YampiDesertHiddenPsynergyStone;
+#define SCENE_YAMPI_DESERT_HIDDEN_PSYNERGY_STONE                               \
+  ((s32)&SceneId_YampiDesertHiddenPsynergyStone)
 extern char SceneId_YampiDesertScorpionPit;
 #define SCENE_YAMPI_DESERT_SCORPION_PIT ((s32)&SceneId_YampiDesertScorpionPit)
 extern char SceneId_YampiDesertSpringCave;
@@ -143,8 +144,8 @@ extern char SceneId_Alhafra;
 #define SCENE_ALHAFRA ((s32)&SceneId_Alhafra)
 extern char SceneId_AlhafraRooms;
 #define SCENE_ALHAFRA_ROOMS ((s32)&SceneId_AlhafraRooms)
-extern char SceneId_SeaOfTimeWhirlpool;
-#define SCENE_SEA_OF_TIME_WHIRLPOOL ((s32)&SceneId_SeaOfTimeWhirlpool)
+extern char SceneId_SeaOfTimeSwirls;
+#define SCENE_SEA_OF_TIME_SWIRLS ((s32)&SceneId_SeaOfTimeSwirls)
 extern char SceneId_SeaOfTimeToLemuria;
 #define SCENE_SEA_OF_TIME_TO_LEMURIA ((s32)&SceneId_SeaOfTimeToLemuria)
 extern char SceneId_LemuriaEntrance;
@@ -190,10 +191,10 @@ extern char SceneId_MikasallaRoomsSanctum;
 #define SCENE_MIKASALLA_ROOMS_SANCTUM ((s32)&SceneId_MikasallaRoomsSanctum)
 extern char SceneId_Garoh;
 #define SCENE_GAROH ((s32)&SceneId_Garoh)
-extern char SceneId_GarohHypnosSwordChest;
-#define SCENE_GAROH_HYPNOS_SWORD_CHEST ((s32)&SceneId_GarohHypnosSwordChest)
-extern char SceneId_GarohBlocks;
-#define SCENE_GAROH_BLOCKS ((s32)&SceneId_GarohBlocks)
+extern char SceneId_GarohPath;
+#define SCENE_GAROH_PATH ((s32)&SceneId_GarohPath)
+extern char SceneId_GarohWayUp;
+#define SCENE_GAROH_WAY_UP ((s32)&SceneId_GarohWayUp)
 extern char SceneId_GarohTunnels;
 #define SCENE_GAROH_TUNNELS ((s32)&SceneId_GarohTunnels)
 extern char SceneId_GarohWerewolfCave;
@@ -323,9 +324,9 @@ extern char SceneId_TundariaTowerReflux;
 #define SCENE_TUNDARIA_TOWER_REFLUX ((s32)&SceneId_TundariaTowerReflux)
 extern char SceneId_TundariaTowerIceColumns;
 #define SCENE_TUNDARIA_TOWER_ICE_COLUMNS ((s32)&SceneId_TundariaTowerIceColumns)
-extern char SceneId_TundariaTowerLiftPillars;
-#define SCENE_TUNDARIA_TOWER_LIFT_PILLARS                                      \
-  ((s32)&SceneId_TundariaTowerLiftPillars)
+extern char SceneId_TundariaTowerPillarPuzzle;
+#define SCENE_TUNDARIA_TOWER_PILLAR_PUZZLE                                     \
+  ((s32)&SceneId_TundariaTowerPillarPuzzle)
 extern char SceneId_TundariaTowerBurstBrooch;
 #define SCENE_TUNDARIA_TOWER_BURST_BROOCH                                      \
   ((s32)&SceneId_TundariaTowerBurstBrooch)
@@ -401,11 +402,11 @@ extern char SceneId_KibomboMountainsDiskAxeChest;
 extern char SceneId_KibomboMountainsCavern;
 #define SCENE_KIBOMBO_MOUNTAINS_CAVERN ((s32)&SceneId_KibomboMountainsCavern)
 /// The Islet Cave room where Meld is fought.
-extern char SceneId_IsletCaveMeld;
-#define SCENE_ISLET_CAVE_MELD ((s32)&SceneId_IsletCaveMeld)
+extern char SceneId_IsletCaveHalls;
+#define SCENE_ISLET_CAVE_HALLS ((s32)&SceneId_IsletCaveHalls)
 /// The Islet Cave room where Serac is fought.
-extern char SceneId_IsletCaveSerac;
-#define SCENE_ISLET_CAVE_SERAC ((s32)&SceneId_IsletCaveSerac)
+extern char SceneId_IsletCaveCorridors;
+#define SCENE_ISLET_CAVE_CORRIDORS ((s32)&SceneId_IsletCaveCorridors)
 /// The Islet Cave room where the Sentinel waits.
 extern char SceneId_IsletCaveSentinel;
 #define SCENE_ISLET_CAVE_SENTINEL ((s32)&SceneId_IsletCaveSentinel)
@@ -587,12 +588,12 @@ extern char SceneId_ShamanVillageTrialGrounds;
   ((s32)&SceneId_ShamanVillageTrialGrounds)
 extern char SceneId_ShamanVillage;
 #define SCENE_SHAMAN_VILLAGE ((s32)&SceneId_ShamanVillage)
-extern char SceneId_ShamanVillageAroma;
-#define SCENE_SHAMAN_VILLAGE_AROMA ((s32)&SceneId_ShamanVillageAroma)
-extern char SceneId_ShamanVillageInn;
-#define SCENE_SHAMAN_VILLAGE_INN ((s32)&SceneId_ShamanVillageInn)
-extern char SceneId_ShamanVillageShop;
-#define SCENE_SHAMAN_VILLAGE_SHOP ((s32)&SceneId_ShamanVillageShop)
+extern char SceneId_ShamanVillageNorthEnd;
+#define SCENE_SHAMAN_VILLAGE_NORTH_END ((s32)&SceneId_ShamanVillageNorthEnd)
+extern char SceneId_ShamanVillageHouses;
+#define SCENE_SHAMAN_VILLAGE_HOUSES ((s32)&SceneId_ShamanVillageHouses)
+extern char SceneId_ShamanVillageTents;
+#define SCENE_SHAMAN_VILLAGE_TENTS ((s32)&SceneId_ShamanVillageTents)
 extern char SceneId_ShamanVillageSanctum;
 #define SCENE_SHAMAN_VILLAGE_SANCTUM ((s32)&SceneId_ShamanVillageSanctum)
 extern char SceneId_LemurianShipCabins;

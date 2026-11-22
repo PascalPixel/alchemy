@@ -744,75 +744,91 @@ void MarsLighthouseRoomF_CrackCenterWall(s32 burst) {
 /// (cell (3, 57)): a whirlwind lifts the party spinning and sets them down on
 /// the circle of the small room at the foot of the long corridor. Each circle
 /// of the Jupiter tower has its own exit, of the number its cells carry.
-void MarsLighthouseRoomF_CycloneToExit2(void) { Import_EventSetExitRequest(2); }
+void MarsLighthouseRoomF_CycloneOnFirstHallWestCircle(void) {
+  Import_EventSetExitRequest(2);
+}
 
 /// Felix casts Cyclone on the circle of the small room at the foot of the long
 /// corridor (cell (34, 16)): a whirlwind lifts the party spinning and sets them
 /// down on the west circle of the first hall.
-void MarsLighthouseRoomF_CycloneToExit3(void) { Import_EventSetExitRequest(3); }
+void MarsLighthouseRoomF_CycloneOnCorridorFootCircle(void) {
+  Import_EventSetExitRequest(3);
+}
 
 /// Felix casts Cyclone on the east circle of the Jupiter tower's first hall
 /// (cell (21, 57)): a whirlwind lifts the party spinning and sets them down on
 /// the first circle of the narrow room.
-void MarsLighthouseRoomF_CycloneToExit4(void) { Import_EventSetExitRequest(4); }
+void MarsLighthouseRoomF_CycloneOnFirstHallEastCircle(void) {
+  Import_EventSetExitRequest(4);
+}
 
 /// Felix casts Cyclone on the first circle of the narrow room (cell (41, 40)):
 /// a whirlwind lifts the party spinning and sets them down on the east circle
 /// of the first hall.
-void MarsLighthouseRoomF_CycloneToExit5(void) { Import_EventSetExitRequest(5); }
+void MarsLighthouseRoomF_CycloneOnNarrowRoomFirstCircle(void) {
+  Import_EventSetExitRequest(5);
+}
 
 /// Felix casts Cyclone on the east circle at the head of the long corridor
 /// (cell (37, 5)): a whirlwind lifts the party spinning and sets them down in
 /// the south-west of the big room of the white dragon statue.
-void MarsLighthouseRoomF_CycloneToExit6(void) { Import_EventSetExitRequest(6); }
+void MarsLighthouseRoomF_CycloneOnCorridorHeadEastCircle(void) {
+  Import_EventSetExitRequest(6);
+}
 
 /// Felix casts Cyclone on the west circle at the head of the long corridor
 /// (cell (32, 5)): a whirlwind lifts the party spinning and sets them down in
 /// the far west of the big room.
-void MarsLighthouseRoomF_CycloneToExit7(void) { Import_EventSetExitRequest(7); }
+void MarsLighthouseRoomF_CycloneOnCorridorHeadWestCircle(void) {
+  Import_EventSetExitRequest(7);
+}
 
 /// Felix casts Cyclone on the raised circle in the middle of the big room
 /// (cell (18, 24)): a whirlwind lifts the party spinning and
 /// sets them down on the first circle of the room with two circles.
-void MarsLighthouseRoomF_CycloneToExit8(void) { Import_EventSetExitRequest(8); }
+void MarsLighthouseRoomF_CycloneOnBigRoomRaisedCircle(void) {
+  Import_EventSetExitRequest(8);
+}
 
 /// Felix casts Cyclone on the first circle of the room with two circles (cell
 /// (31, 60)): a whirlwind lifts the party spinning and sets them down on the
 /// raised circle in the middle of the big room.
-void MarsLighthouseRoomF_CycloneToExit9(void) { Import_EventSetExitRequest(9); }
+void MarsLighthouseRoomF_CycloneOnTwoCircleRoomFirstCircle(void) {
+  Import_EventSetExitRequest(9);
+}
 
 /// Felix casts Cyclone on the second circle of the room with two circles (cell
 /// (36, 57)): a whirlwind lifts the party spinning and sets them down on a
 /// ledge in the north-east of the big room.
-void MarsLighthouseRoomF_CycloneToExit10(void) {
+void MarsLighthouseRoomF_CycloneOnTwoCircleRoomSecondCircle(void) {
   Import_EventSetExitRequest(10);
 }
 
 /// Felix casts Cyclone on the circle at the east of the big room (cell (24,
 /// 19)): a whirlwind lifts the party spinning and sets them down on the second
 /// circle of the narrow room.
-void MarsLighthouseRoomF_CycloneToExit11(void) {
+void MarsLighthouseRoomF_CycloneOnBigRoomEastCircle(void) {
   Import_EventSetExitRequest(11);
 }
 
 /// Felix casts Cyclone on the second circle of the narrow room (cell (43, 29)):
 /// a whirlwind lifts the party spinning and sets them down on the circle at the
 /// east of the big room.
-void MarsLighthouseRoomF_CycloneToExit12(void) {
+void MarsLighthouseRoomF_CycloneOnNarrowRoomSecondCircle(void) {
   Import_EventSetExitRequest(12);
 }
 
 /// Felix casts Cyclone on the circle west of the big room's middle (cell
 /// (13, 14)): a whirlwind lifts the party spinning and
 /// sets them down on the circle under the great carved dragon.
-void MarsLighthouseRoomF_CycloneToExit13(void) {
+void MarsLighthouseRoomF_CycloneOnBigRoomWestCircle(void) {
   Import_EventSetExitRequest(13);
 }
 
 /// Felix casts Cyclone on the circle under the great carved dragon (cell (54,
 /// 12)): a whirlwind lifts the party spinning and sets them down on the circle
 /// west of the big room's middle.
-void MarsLighthouseRoomF_CycloneToExit14(void) {
+void MarsLighthouseRoomF_CycloneOnCarvedDragonCircle(void) {
   Import_EventSetExitRequest(14);
 }
 
@@ -2468,19 +2484,19 @@ LATE_DATA struct Trigger gMarsLighthouseRoomF_JupiterTowerTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 2, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CycloneToExit2)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 3, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CycloneToExit3)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 4, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CycloneToExit4)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 5, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CycloneToExit5)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 6, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CycloneToExit6)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 7, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CycloneToExit7)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 8, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CycloneToExit8)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 9, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CycloneToExit9)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 10, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CycloneToExit10)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 11, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CycloneToExit11)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 12, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CycloneToExit12)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 13, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CycloneToExit13)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 14, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CycloneToExit14)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 2, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CycloneOnFirstHallWestCircle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 3, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CycloneOnCorridorFootCircle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 4, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CycloneOnFirstHallEastCircle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 5, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CycloneOnNarrowRoomFirstCircle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 6, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CycloneOnCorridorHeadEastCircle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 7, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CycloneOnCorridorHeadWestCircle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 8, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CycloneOnBigRoomRaisedCircle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 9, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CycloneOnTwoCircleRoomFirstCircle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 10, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CycloneOnTwoCircleRoomSecondCircle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 11, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CycloneOnBigRoomEastCircle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 12, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CycloneOnNarrowRoomSecondCircle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 13, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CycloneOnBigRoomWestCircle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 14, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_CycloneOnCarvedDragonCircle)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_DROPPING_BLOCK, FLAG_BLOCK_DROPPED, EVENT(MarsLighthouseRoomF_DropBlock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_JUPITER_STATUE, FLAG_JUPITER_STATUE_BLOCKS_FLAMES, EVENT(MarsLighthouseRoomF_MoveJupiterStatueIntoFlames)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(MarsLighthouseRoomF_RevealSteppingStones)},

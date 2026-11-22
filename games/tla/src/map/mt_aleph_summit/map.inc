@@ -15,7 +15,7 @@ Field_MtAlephSummit:
 	.incbin "games/tla/src/map/mt_aleph_summit/cell_pictures.delta1.lz"
 	.balign 4, 0
 .LField_MtAlephSummit_SHAPES:
-	.incbin "games/tla/src/map/sea_of_time_whirlpool/shapes.table.lz"
+	.incbin "games/tla/src/map/sea_of_time_swirls/shapes.table.lz"
 	.balign 4, 0
 .LField_MtAlephSummit_GRID:
 	.incbin "games/tla/src/map/mt_aleph_summit/map.grid.lz"

@@ -910,10 +910,12 @@ s32 Scene_Initialize(void) {
         gMainRoutineWork.retreatScene = SCENE_YAMPI_DESERT_TRAINERS_WHIP_CHEST;
         gMainRoutineWork.retreatEntrance =
             YAMPI_DESERT_TRAINERS_WHIP_CHEST_FROM_WORLD_MAP;
-      } else if (Event_GetFlag(FLAG_YAMPI_DESERT_ENTERED_BY_MEDAL_SPOT)) {
-        gMainRoutineWork.retreatScene = SCENE_YAMPI_DESERT_MEDAL_SPOT;
+      } else if (Event_GetFlag(
+                     FLAG_YAMPI_DESERT_ENTERED_BY_HIDDEN_PSYNERGY_STONE)) {
+        gMainRoutineWork.retreatScene =
+            SCENE_YAMPI_DESERT_HIDDEN_PSYNERGY_STONE;
         gMainRoutineWork.retreatEntrance =
-            YAMPI_DESERT_MEDAL_SPOT_FROM_WORLD_MAP;
+            YAMPI_DESERT_HIDDEN_PSYNERGY_STONE_FROM_WORLD_MAP;
       }
     }
   }

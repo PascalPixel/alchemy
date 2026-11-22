@@ -85,9 +85,9 @@ enum ShamanVillageTrialActorId {
   ACTOR_KRADEN
 };
 
-/// Moapa at home, the fourth row of gShamanVillageInnActorPlacements (the
+/// Moapa at home, the fourth row of gShamanVillageHousesActorPlacements (the
 /// village's houses and inn), with the inn's counter and its innkeeper after.
-enum ShamanVillageInnActorId {
+enum ShamanVillageHousesActorId {
   ACTOR_MOAPA_AT_HOME = ACTOR_FIRST_PLACED + 3,
   ACTOR_INN_COUNTER,
   ACTOR_INNKEEPER
@@ -306,7 +306,7 @@ extern u32 gShamanVillage_PiersWatchesShebaScript[];
 extern u32 gShamanVillage_HeadForTrialRoadScript[];
 extern u32 gShamanVillage_ReturnToLeaderAtSandScript[];
 void ShamanVillage_SetUpTrialGrounds(void);
-void ShamanVillage_SetUpAromaRoom(void);
+void ShamanVillage_SetUpNorthEnd(void);
 void ShamanVillage_SetUpVillage(void);
 void ShamanVillage_SetUpInn(void);
 void ShamanVillage_SetUpSanctum(void);
@@ -360,7 +360,7 @@ void ShamanVillage_CountDownToStart(void);
 extern s32 gShamanVillage_EnterDoorScript[];
 extern s32 gShamanVillage_HopFortuneTellerScript[];
 extern struct SceneEntrance gShamanVillage_Entrances[];
-extern struct SceneEntrance gShamanVillageShopEntrances[];
+extern struct SceneEntrance gShamanVillageTentsEntrances[];
 extern struct SceneEntrance gShamanVillageSanctumEntrances[];
 
 /// Felix talks to Aroma, the Jupiter Djinni on the ledge east of the
@@ -374,8 +374,8 @@ void ShamanVillage_MeetAroma(void) {
 const struct SceneEntrance *Scene_GetEntrances(void) {
   s16 scene = gMainRoutineWork.next;
 
-  if (scene == SCENE_SHAMAN_VILLAGE_SHOP)
-    return gShamanVillageShopEntrances;
+  if (scene == SCENE_SHAMAN_VILLAGE_TENTS)
+    return gShamanVillageTentsEntrances;
   if (scene == SCENE_SHAMAN_VILLAGE_SANCTUM)
     return gShamanVillageSanctumEntrances;
   return gShamanVillage_Entrances;
@@ -387,11 +387,11 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 extern struct ActorPlacement gShamanVillage_Placements[];
 extern struct ActorPlacement gShamanVillageTrialGroundsActorPlacements[];
-extern struct ActorPlacement gShamanVillageAromaRoomActorPlacements[];
+extern struct ActorPlacement gShamanVillageNorthEndActorPlacements[];
 
 extern struct ActorPlacement gShamanVillageVillageActorPlacements[];
-extern struct ActorPlacement gShamanVillageInnActorPlacements[];
-extern struct ActorPlacement gShamanVillageShopActorPlacements[];
+extern struct ActorPlacement gShamanVillageHousesActorPlacements[];
+extern struct ActorPlacement gShamanVillageTentsActorPlacements[];
 extern struct ActorPlacement gShamanVillageSanctumActorPlacements[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
@@ -399,18 +399,18 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
   if (scene == SCENE_SHAMAN_VILLAGE_TRIAL_GROUNDS)
     return gShamanVillageTrialGroundsActorPlacements;
-  if (scene == SCENE_SHAMAN_VILLAGE_AROMA)
-    return gShamanVillageAromaRoomActorPlacements;
+  if (scene == SCENE_SHAMAN_VILLAGE_NORTH_END)
+    return gShamanVillageNorthEndActorPlacements;
   if (scene == SCENE_SHAMAN_VILLAGE) {
     if (Event_GetFlag(FLAG_MOAPA_BEATEN))
       gShamanVillageVillageActorPlacements[0].talkFacing =
           TALK_FACING_PARTY_AND_BACK;
     return gShamanVillageVillageActorPlacements;
   }
-  if (scene == SCENE_SHAMAN_VILLAGE_INN)
-    return gShamanVillageInnActorPlacements;
-  if (scene == SCENE_SHAMAN_VILLAGE_SHOP)
-    return gShamanVillageShopActorPlacements;
+  if (scene == SCENE_SHAMAN_VILLAGE_HOUSES)
+    return gShamanVillageHousesActorPlacements;
+  if (scene == SCENE_SHAMAN_VILLAGE_TENTS)
+    return gShamanVillageTentsActorPlacements;
   if (scene == SCENE_SHAMAN_VILLAGE_SANCTUM)
     return gShamanVillageSanctumActorPlacements;
   return gShamanVillage_Placements;
@@ -719,10 +719,10 @@ void ShamanVillage_BlowAwaySand(void) {
 
 extern struct Trigger gShamanVillage_Triggers[];
 extern struct Trigger gShamanVillageTrialGroundsTriggers[];
-extern struct Trigger gShamanVillageAromaRoomTriggers[];
+extern struct Trigger gShamanVillageNorthEndTriggers[];
 extern struct Trigger gShamanVillageVillageTriggers[];
-extern struct Trigger gShamanVillageInnTriggers[];
-extern struct Trigger gShamanVillageShopTriggers[];
+extern struct Trigger gShamanVillageHousesTriggers[];
+extern struct Trigger gShamanVillageTentsTriggers[];
 extern struct Trigger gShamanVillageSanctumTriggers[];
 
 const struct Trigger *Scene_GetTriggers(void) {
@@ -730,14 +730,14 @@ const struct Trigger *Scene_GetTriggers(void) {
 
   if (scene == SCENE_SHAMAN_VILLAGE_TRIAL_GROUNDS)
     return gShamanVillageTrialGroundsTriggers;
-  if (scene == SCENE_SHAMAN_VILLAGE_AROMA)
-    return gShamanVillageAromaRoomTriggers;
+  if (scene == SCENE_SHAMAN_VILLAGE_NORTH_END)
+    return gShamanVillageNorthEndTriggers;
   if (scene == SCENE_SHAMAN_VILLAGE)
     return gShamanVillageVillageTriggers;
-  if (scene == SCENE_SHAMAN_VILLAGE_INN)
-    return gShamanVillageInnTriggers;
-  if (scene == SCENE_SHAMAN_VILLAGE_SHOP)
-    return gShamanVillageShopTriggers;
+  if (scene == SCENE_SHAMAN_VILLAGE_HOUSES)
+    return gShamanVillageHousesTriggers;
+  if (scene == SCENE_SHAMAN_VILLAGE_TENTS)
+    return gShamanVillageTentsTriggers;
   if (scene == SCENE_SHAMAN_VILLAGE_SANCTUM)
     return gShamanVillageSanctumTriggers;
   return gShamanVillage_Triggers;
@@ -897,7 +897,7 @@ void Inn_PlaySleep(s32 roomPrice);
 enum { SHOP_SHAMAN_VILLAGE = 29 };
 
 /// The Shaman Village's inn, as Inn_CheckIn numbers the inns.
-enum { SHAMAN_VILLAGE_INN = 11 };
+enum { SHAMAN_VILLAGE_HOUSES = 11 };
 
 /// Felix talks to the innkeeper across the inn's counter. Before Moapa is
 /// beaten the innkeeper says nothing, and a card on the counter reads "Put ...
@@ -908,7 +908,7 @@ enum { SHAMAN_VILLAGE_INN = 11 };
 void ShamanVillage_TalkToInnkeeper(void) {
   if (Event_GetFlag(FLAG_MOAPA_BEATEN)) {
     if (ShamanVillage_IsFacingCounter()) {
-      Inn_CheckIn(SHAMAN_VILLAGE_INN, ACTOR_INNKEEPER);
+      Inn_CheckIn(SHAMAN_VILLAGE_HOUSES, ACTOR_INNKEEPER);
     } else {
       Event_Start();
       Event_ResolvePendingActions(0);
@@ -920,7 +920,7 @@ void ShamanVillage_TalkToInnkeeper(void) {
     Event_Start();
     Event_ResolvePendingActions(0);
     if (ShamanVillage_IsFacingCounter()) {
-      u32 price = Inn_QuoteRoomPrice(SHAMAN_VILLAGE_INN);
+      u32 price = Inn_QuoteRoomPrice(SHAMAN_VILLAGE_HOUSES);
 
       Actor_SetAnimation(ACTOR_INNKEEPER, 5);
       Event_Wait(30);
@@ -2644,7 +2644,8 @@ void ShamanVillage_EnterMoapasHouse(void) {
     Event_PlaySound(SE_MAP_EXIT);
     Event_FinishScreenTransition();
     Event_WaitTransitionFrames();
-    Import_EventSetExitRequest(SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_INN_NORTHWEST);
+    Import_EventSetExitRequest(
+        SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_HOUSES_NORTHWEST);
   } else {
     ShamanVillage_EnterDoor(43, 40, 7, 6, 1, 2);
   }
@@ -2759,11 +2760,11 @@ s32 Scene_Initialize(void) {
 
   if (scene == SCENE_SHAMAN_VILLAGE_TRIAL_GROUNDS)
     ShamanVillage_SetUpTrialGrounds();
-  else if (scene == SCENE_SHAMAN_VILLAGE_AROMA)
-    ShamanVillage_SetUpAromaRoom();
+  else if (scene == SCENE_SHAMAN_VILLAGE_NORTH_END)
+    ShamanVillage_SetUpNorthEnd();
   else if (scene == SCENE_SHAMAN_VILLAGE)
     ShamanVillage_SetUpVillage();
-  else if (scene == SCENE_SHAMAN_VILLAGE_INN)
+  else if (scene == SCENE_SHAMAN_VILLAGE_HOUSES)
     ShamanVillage_SetUpInn();
   else if (scene == SCENE_SHAMAN_VILLAGE_SANCTUM)
     ShamanVillage_SetUpSanctum();
@@ -2820,7 +2821,7 @@ void ShamanVillage_SetUpTrialGrounds(void) {
 // XXX: what that change at the gate of Trial Road looks like or allows; a
 // probe of the gate with FLAG_SHAMAN_VILLAGE_SHAMANS_ROD_SHOWN set and clear
 // would settle it.
-void ShamanVillage_SetUpAromaRoom(void) {
+void ShamanVillage_SetUpNorthEnd(void) {
   struct Actor *actor;
 
   Actor_SetAnimation(ACTOR_FIRST_TORCH, 2);
@@ -2977,9 +2978,9 @@ void ShamanVillage_SetUpInn(void) {
     Actor_SetPosition(ACTOR_CHEF, 0, 0);
   }
   if ((gMainRoutineWork.entrance ==
-           SHAMAN_VILLAGE_INN_FROM_TRIAL_ROAD_SUMMIT_EAST_A ||
+           SHAMAN_VILLAGE_HOUSES_FROM_TRIAL_ROAD_SUMMIT_EAST_A ||
        gMainRoutineWork.entrance ==
-           SHAMAN_VILLAGE_INN_FROM_TRIAL_ROAD_SUMMIT_EAST_B) &&
+           SHAMAN_VILLAGE_HOUSES_FROM_TRIAL_ROAD_SUMMIT_EAST_B) &&
       !Event_GetFlag(FLAG_KEEP_PARTY_POSITION)) {
     Party_RestoreHpPp(1);
     Event_Start();
@@ -3011,7 +3012,7 @@ void ShamanVillage_SetUpInn(void) {
         ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId)), 1);
     Event_End();
     if (gMainRoutineWork.entrance ==
-        SHAMAN_VILLAGE_INN_FROM_TRIAL_ROAD_SUMMIT_EAST_A) {
+        SHAMAN_VILLAGE_HOUSES_FROM_TRIAL_ROAD_SUMMIT_EAST_A) {
       Event_SetFlag(FLAG_MOAPA_BEATEN);
       Event_SetFlag(FLAG_SHAMAN_VILLAGE_DOORS_OPEN);
     }
@@ -3411,7 +3412,7 @@ struct SceneEntrance gShamanVillage_Entrances[] = {
     {SCENE_TABLE_END},
 };
 
-struct SceneEntrance gShamanVillageShopEntrances[] = {
+struct SceneEntrance gShamanVillageTentsEntrances[] = {
     {15, CONDITION_ALWAYS, 544, 0, 680, FACING_NORTH, 0, 420, 560, 660, 720, 0},
     {16, CONDITION_ALWAYS, 752, 0, 680, FACING_NORTH, 0, 630, 560, 870, 720, 0},
     {17, CONDITION_ALWAYS, 544, 0, 904, FACING_NORTH, 0, 420, 780, 660, 940, 0},
@@ -3427,51 +3428,51 @@ u32 gSceneExits[] = {
     SCENE_EXITS(ShamanVillageTrialGrounds),
     SCENE_EXIT(SHAMAN_VILLAGE_TRIAL_GROUNDS_TO_TRIAL_ROAD_STAGES_A, TrialRoadStages, TRIAL_ROAD_STAGES_FROM_SHAMAN_VILLAGE_TRIAL_GROUNDS_E),
     SCENE_EXIT(SHAMAN_VILLAGE_TRIAL_GROUNDS_TO_TRIAL_ROAD_STAGES_B, TrialRoadStages, TRIAL_ROAD_STAGES_FROM_SHAMAN_VILLAGE_TRIAL_GROUNDS_F),
-    SCENE_EXIT(SHAMAN_VILLAGE_TRIAL_GROUNDS_TO_SHAMAN_VILLAGE_AROMA, ShamanVillageAroma, SHAMAN_VILLAGE_AROMA_FROM_SHAMAN_VILLAGE_TRIAL_GROUNDS),
+    SCENE_EXIT(SHAMAN_VILLAGE_TRIAL_GROUNDS_TO_SHAMAN_VILLAGE_NORTH_END, ShamanVillageNorthEnd, SHAMAN_VILLAGE_NORTH_END_FROM_SHAMAN_VILLAGE_TRIAL_GROUNDS),
     SCENE_EXIT(SHAMAN_VILLAGE_TRIAL_GROUNDS_TO_TRIAL_ROAD_STAGES_D, TrialRoadStages, TRIAL_ROAD_STAGES_FROM_SHAMAN_VILLAGE_TRIAL_GROUNDS_G),
     SCENE_EXIT(SHAMAN_VILLAGE_TRIAL_GROUNDS_TO_TRIAL_ROAD_STAGES_E, TrialRoadStages, TRIAL_ROAD_STAGES_FROM_SHAMAN_VILLAGE_TRIAL_GROUNDS_E),
     SCENE_EXIT(SHAMAN_VILLAGE_TRIAL_GROUNDS_TO_TRIAL_ROAD_STAGES_F, TrialRoadStages, TRIAL_ROAD_STAGES_FROM_SHAMAN_VILLAGE_TRIAL_GROUNDS_F),
-    SCENE_EXITS(ShamanVillageAroma),
-    SCENE_EXIT(SHAMAN_VILLAGE_AROMA_TO_SHAMAN_VILLAGE_TRIAL_GROUNDS, ShamanVillageTrialGrounds, SHAMAN_VILLAGE_TRIAL_GROUNDS_FROM_SHAMAN_VILLAGE_AROMA),
-    SCENE_EXIT(SHAMAN_VILLAGE_AROMA_TO_SHAMAN_VILLAGE_SOUTH, ShamanVillage, SHAMAN_VILLAGE_FROM_SHAMAN_VILLAGE_AROMA_SOUTH),
-    SCENE_EXIT(SHAMAN_VILLAGE_AROMA_TO_SHAMAN_VILLAGE_NORTHWEST, ShamanVillage, SHAMAN_VILLAGE_FROM_SHAMAN_VILLAGE_AROMA_NORTHWEST),
-    SCENE_EXIT(SHAMAN_VILLAGE_AROMA_TO_SHAMAN_VILLAGE_SHOP, ShamanVillageShop, SHAMAN_VILLAGE_SHOP_FROM_SHAMAN_VILLAGE_AROMA),
-    SCENE_EXIT(SHAMAN_VILLAGE_AROMA_TO_SHAMAN_VILLAGE_NORTHEAST, ShamanVillage, SHAMAN_VILLAGE_FROM_SHAMAN_VILLAGE_AROMA_NORTHEAST),
-    SCENE_EXIT(SHAMAN_VILLAGE_AROMA_TO_SHAMAN_VILLAGE_SOUTHEAST, ShamanVillage, SHAMAN_VILLAGE_FROM_SHAMAN_VILLAGE_AROMA_SOUTHEAST),
+    SCENE_EXITS(ShamanVillageNorthEnd),
+    SCENE_EXIT(SHAMAN_VILLAGE_NORTH_END_TO_SHAMAN_VILLAGE_TRIAL_GROUNDS, ShamanVillageTrialGrounds, SHAMAN_VILLAGE_TRIAL_GROUNDS_FROM_SHAMAN_VILLAGE_NORTH_END),
+    SCENE_EXIT(SHAMAN_VILLAGE_NORTH_END_TO_SHAMAN_VILLAGE_SOUTH, ShamanVillage, SHAMAN_VILLAGE_FROM_SHAMAN_VILLAGE_NORTH_END_SOUTH),
+    SCENE_EXIT(SHAMAN_VILLAGE_NORTH_END_TO_SHAMAN_VILLAGE_NORTHWEST, ShamanVillage, SHAMAN_VILLAGE_FROM_SHAMAN_VILLAGE_NORTH_END_NORTHWEST),
+    SCENE_EXIT(SHAMAN_VILLAGE_NORTH_END_TO_SHAMAN_VILLAGE_TENTS, ShamanVillageTents, SHAMAN_VILLAGE_TENTS_FROM_SHAMAN_VILLAGE_NORTH_END),
+    SCENE_EXIT(SHAMAN_VILLAGE_NORTH_END_TO_SHAMAN_VILLAGE_NORTHEAST, ShamanVillage, SHAMAN_VILLAGE_FROM_SHAMAN_VILLAGE_NORTH_END_NORTHEAST),
+    SCENE_EXIT(SHAMAN_VILLAGE_NORTH_END_TO_SHAMAN_VILLAGE_SOUTHEAST, ShamanVillage, SHAMAN_VILLAGE_FROM_SHAMAN_VILLAGE_NORTH_END_SOUTHEAST),
     SCENE_EXITS(ShamanVillage),
     SCENE_EXIT(SHAMAN_VILLAGE_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_SHAMAN_VILLAGE),
-    SCENE_EXIT(SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_SHOP_EAST, ShamanVillageShop, SHAMAN_VILLAGE_SHOP_FROM_SHAMAN_VILLAGE_EAST),
-    SCENE_EXIT(SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_SHOP_WEST, ShamanVillageShop, SHAMAN_VILLAGE_SHOP_FROM_SHAMAN_VILLAGE_WEST),
-    SCENE_EXIT(SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_INN_SOUTHWEST_A, ShamanVillageInn, SHAMAN_VILLAGE_INN_FROM_SHAMAN_VILLAGE_SOUTHWEST_A),
-    SCENE_EXIT(SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_INN_SOUTHWEST_B, ShamanVillageInn, SHAMAN_VILLAGE_INN_FROM_SHAMAN_VILLAGE_SOUTHWEST_B),
-    SCENE_EXIT(SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_INN_EAST_A, ShamanVillageInn, SHAMAN_VILLAGE_INN_FROM_SHAMAN_VILLAGE_EAST_A),
-    SCENE_EXIT(SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_INN_EAST_B, ShamanVillageInn, SHAMAN_VILLAGE_INN_FROM_SHAMAN_VILLAGE_EAST_B),
-    SCENE_EXIT(SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_AROMA_SOUTH, ShamanVillageAroma, SHAMAN_VILLAGE_AROMA_FROM_SHAMAN_VILLAGE_SOUTH),
-    SCENE_EXIT(SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_AROMA_SOUTHEAST, ShamanVillageAroma, SHAMAN_VILLAGE_AROMA_FROM_SHAMAN_VILLAGE_SOUTHEAST),
+    SCENE_EXIT(SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_TENTS_EAST, ShamanVillageTents, SHAMAN_VILLAGE_TENTS_FROM_SHAMAN_VILLAGE_EAST),
+    SCENE_EXIT(SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_TENTS_WEST, ShamanVillageTents, SHAMAN_VILLAGE_TENTS_FROM_SHAMAN_VILLAGE_WEST),
+    SCENE_EXIT(SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_HOUSES_SOUTHWEST_A, ShamanVillageHouses, SHAMAN_VILLAGE_HOUSES_FROM_SHAMAN_VILLAGE_SOUTHWEST_A),
+    SCENE_EXIT(SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_HOUSES_SOUTHWEST_B, ShamanVillageHouses, SHAMAN_VILLAGE_HOUSES_FROM_SHAMAN_VILLAGE_SOUTHWEST_B),
+    SCENE_EXIT(SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_HOUSES_EAST_A, ShamanVillageHouses, SHAMAN_VILLAGE_HOUSES_FROM_SHAMAN_VILLAGE_EAST_A),
+    SCENE_EXIT(SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_HOUSES_EAST_B, ShamanVillageHouses, SHAMAN_VILLAGE_HOUSES_FROM_SHAMAN_VILLAGE_EAST_B),
+    SCENE_EXIT(SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_NORTH_END_SOUTH, ShamanVillageNorthEnd, SHAMAN_VILLAGE_NORTH_END_FROM_SHAMAN_VILLAGE_SOUTH),
+    SCENE_EXIT(SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_NORTH_END_SOUTHEAST, ShamanVillageNorthEnd, SHAMAN_VILLAGE_NORTH_END_FROM_SHAMAN_VILLAGE_SOUTHEAST),
     SCENE_EXIT(SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_SANCTUM, ShamanVillageSanctum, SHAMAN_VILLAGE_SANCTUM_FROM_SHAMAN_VILLAGE),
-    SCENE_EXIT(SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_AROMA_NORTHWEST, ShamanVillageAroma, SHAMAN_VILLAGE_AROMA_FROM_SHAMAN_VILLAGE_NORTHWEST),
-    SCENE_EXIT(SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_INN_NORTH, ShamanVillageInn, SHAMAN_VILLAGE_INN_FROM_SHAMAN_VILLAGE_NORTH),
-    SCENE_EXIT(SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_INN_NORTHWEST, ShamanVillageInn, SHAMAN_VILLAGE_INN_FROM_SHAMAN_VILLAGE_NORTHWEST),
-    SCENE_EXIT(SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_AROMA_NORTHEAST, ShamanVillageAroma, SHAMAN_VILLAGE_AROMA_FROM_SHAMAN_VILLAGE_NORTHEAST),
-    SCENE_EXITS(ShamanVillageInn),
-    SCENE_EXIT(SHAMAN_VILLAGE_INN_TO_SHAMAN_VILLAGE_NORTHWEST, ShamanVillage, SHAMAN_VILLAGE_FROM_SHAMAN_VILLAGE_INN_NORTHWEST),
-    SCENE_EXIT(2, ShamanVillageInn, 4),
-    SCENE_EXIT(SHAMAN_VILLAGE_INN_TO_SHAMAN_VILLAGE_NORTH, ShamanVillage, SHAMAN_VILLAGE_FROM_SHAMAN_VILLAGE_INN_NORTH),
-    SCENE_EXIT(4, ShamanVillageInn, 2),
-    SCENE_EXIT(5, ShamanVillageInn, 9),
-    SCENE_EXIT(SHAMAN_VILLAGE_INN_TO_SHAMAN_VILLAGE_SOUTHWEST_A, ShamanVillage, SHAMAN_VILLAGE_FROM_SHAMAN_VILLAGE_INN_SOUTHWEST_A),
-    SCENE_EXIT(7, ShamanVillageInn, 10),
-    SCENE_EXIT(SHAMAN_VILLAGE_INN_TO_SHAMAN_VILLAGE_SOUTHWEST_B, ShamanVillage, SHAMAN_VILLAGE_FROM_SHAMAN_VILLAGE_INN_SOUTHWEST_B),
-    SCENE_EXIT(9, ShamanVillageInn, 5),
-    SCENE_EXIT(10, ShamanVillageInn, 7),
-    SCENE_EXIT(SHAMAN_VILLAGE_INN_TO_SHAMAN_VILLAGE_EAST_A, ShamanVillage, SHAMAN_VILLAGE_FROM_SHAMAN_VILLAGE_INN_EAST_A),
-    SCENE_EXIT(12, ShamanVillageInn, 14),
-    SCENE_EXIT(SHAMAN_VILLAGE_INN_TO_SHAMAN_VILLAGE_EAST_B, ShamanVillage, SHAMAN_VILLAGE_FROM_SHAMAN_VILLAGE_INN_EAST_B),
-    SCENE_EXIT(14, ShamanVillageInn, 12),
-    SCENE_EXITS(ShamanVillageShop),
-    SCENE_EXIT(SHAMAN_VILLAGE_SHOP_TO_SHAMAN_VILLAGE_EAST, ShamanVillage, SHAMAN_VILLAGE_FROM_SHAMAN_VILLAGE_SHOP_EAST),
-    SCENE_EXIT(SHAMAN_VILLAGE_SHOP_TO_SHAMAN_VILLAGE_WEST, ShamanVillage, SHAMAN_VILLAGE_FROM_SHAMAN_VILLAGE_SHOP_WEST),
-    SCENE_EXIT(SHAMAN_VILLAGE_SHOP_TO_SHAMAN_VILLAGE_AROMA, ShamanVillageAroma, SHAMAN_VILLAGE_AROMA_FROM_SHAMAN_VILLAGE_SHOP),
+    SCENE_EXIT(SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_NORTH_END_NORTHWEST, ShamanVillageNorthEnd, SHAMAN_VILLAGE_NORTH_END_FROM_SHAMAN_VILLAGE_NORTHWEST),
+    SCENE_EXIT(SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_HOUSES_NORTH, ShamanVillageHouses, SHAMAN_VILLAGE_HOUSES_FROM_SHAMAN_VILLAGE_NORTH),
+    SCENE_EXIT(SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_HOUSES_NORTHWEST, ShamanVillageHouses, SHAMAN_VILLAGE_HOUSES_FROM_SHAMAN_VILLAGE_NORTHWEST),
+    SCENE_EXIT(SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_NORTH_END_NORTHEAST, ShamanVillageNorthEnd, SHAMAN_VILLAGE_NORTH_END_FROM_SHAMAN_VILLAGE_NORTHEAST),
+    SCENE_EXITS(ShamanVillageHouses),
+    SCENE_EXIT(SHAMAN_VILLAGE_HOUSES_TO_SHAMAN_VILLAGE_NORTHWEST, ShamanVillage, SHAMAN_VILLAGE_FROM_SHAMAN_VILLAGE_HOUSES_NORTHWEST),
+    SCENE_EXIT(2, ShamanVillageHouses, 4),
+    SCENE_EXIT(SHAMAN_VILLAGE_HOUSES_TO_SHAMAN_VILLAGE_NORTH, ShamanVillage, SHAMAN_VILLAGE_FROM_SHAMAN_VILLAGE_HOUSES_NORTH),
+    SCENE_EXIT(4, ShamanVillageHouses, 2),
+    SCENE_EXIT(5, ShamanVillageHouses, 9),
+    SCENE_EXIT(SHAMAN_VILLAGE_HOUSES_TO_SHAMAN_VILLAGE_SOUTHWEST_A, ShamanVillage, SHAMAN_VILLAGE_FROM_SHAMAN_VILLAGE_HOUSES_SOUTHWEST_A),
+    SCENE_EXIT(7, ShamanVillageHouses, 10),
+    SCENE_EXIT(SHAMAN_VILLAGE_HOUSES_TO_SHAMAN_VILLAGE_SOUTHWEST_B, ShamanVillage, SHAMAN_VILLAGE_FROM_SHAMAN_VILLAGE_HOUSES_SOUTHWEST_B),
+    SCENE_EXIT(9, ShamanVillageHouses, 5),
+    SCENE_EXIT(10, ShamanVillageHouses, 7),
+    SCENE_EXIT(SHAMAN_VILLAGE_HOUSES_TO_SHAMAN_VILLAGE_EAST_A, ShamanVillage, SHAMAN_VILLAGE_FROM_SHAMAN_VILLAGE_HOUSES_EAST_A),
+    SCENE_EXIT(12, ShamanVillageHouses, 14),
+    SCENE_EXIT(SHAMAN_VILLAGE_HOUSES_TO_SHAMAN_VILLAGE_EAST_B, ShamanVillage, SHAMAN_VILLAGE_FROM_SHAMAN_VILLAGE_HOUSES_EAST_B),
+    SCENE_EXIT(14, ShamanVillageHouses, 12),
+    SCENE_EXITS(ShamanVillageTents),
+    SCENE_EXIT(SHAMAN_VILLAGE_TENTS_TO_SHAMAN_VILLAGE_EAST, ShamanVillage, SHAMAN_VILLAGE_FROM_SHAMAN_VILLAGE_TENTS_EAST),
+    SCENE_EXIT(SHAMAN_VILLAGE_TENTS_TO_SHAMAN_VILLAGE_WEST, ShamanVillage, SHAMAN_VILLAGE_FROM_SHAMAN_VILLAGE_TENTS_WEST),
+    SCENE_EXIT(SHAMAN_VILLAGE_TENTS_TO_SHAMAN_VILLAGE_NORTH_END, ShamanVillageNorthEnd, SHAMAN_VILLAGE_NORTH_END_FROM_SHAMAN_VILLAGE_TENTS),
     SCENE_EXITS(ShamanVillageSanctum),
     SCENE_EXIT(SHAMAN_VILLAGE_SANCTUM_TO_SHAMAN_VILLAGE, ShamanVillage, SHAMAN_VILLAGE_FROM_SHAMAN_VILLAGE_SANCTUM),
     SCENE_EXITS_END,
@@ -3499,7 +3500,7 @@ struct ActorPlacement gShamanVillageTrialGroundsActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gShamanVillageAromaRoomActorPlacements[] = {
+struct ActorPlacement gShamanVillageNorthEndActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 184, 0, 120, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 248, 0, 120, FACING_EAST, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TORCH, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 216, FACING_EAST, TALK_FACING_KEEP, 0),
@@ -3535,7 +3536,7 @@ struct ActorPlacement gShamanVillageVillageActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gShamanVillageInnActorPlacements[] = {
+struct ActorPlacement gShamanVillageHousesActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_WOMAN_IN_PURPLE_SKIRT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 112, 0, 90, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_WANDER_NEAR, 110, 0, 172, FACING_SOUTH, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(SPRITE_GIRL_WITH_TOPKNOT, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 126, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -3551,7 +3552,7 @@ struct ActorPlacement gShamanVillageInnActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-struct ActorPlacement gShamanVillageShopActorPlacements[] = {
+struct ActorPlacement gShamanVillageTentsActorPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_OLD_MAN_IN_GREY_ROBE, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 568, 0, 678, FACING_NORTH_NORTHWEST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_OLD_WOMAN_WITH_HEADBAND, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 508, 0, 656, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
     ACTOR_PLACEMENT(SPRITE_BOY_WITH_BLACK_HAIR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 542, 0, 628, FACING_SOUTH_SOUTHEAST, TALK_FACING_PARTY, 0),
@@ -3621,7 +3622,7 @@ struct Trigger gShamanVillageTrialGroundsTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gShamanVillageAromaRoomTriggers[] = {
+struct Trigger gShamanVillageNorthEndTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -3666,17 +3667,17 @@ struct Trigger gShamanVillageVillageTriggers[] = {
          TRIGGER_FLAG_FACING | FACING_NORTH,
      3, IF_FLAG_SET(FLAG_SHAMAN_VILLAGE_DOORS_OPEN), 3},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
-     SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_INN_SOUTHWEST_A, CONDITION_ALWAYS,
+     SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_HOUSES_SOUTHWEST_A, CONDITION_ALWAYS,
      EVENT(ShamanVillage_EnterInn)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
-     SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_INN_SOUTHWEST_B, CONDITION_ALWAYS,
+     SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_HOUSES_SOUTHWEST_B, CONDITION_ALWAYS,
      EVENT(ShamanVillage_EnterSouthwestHouse)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
-     SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_INN_EAST_A,
+     SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_HOUSES_EAST_A,
      IF_FLAG_SET(FLAG_SHAMAN_VILLAGE_DOORS_OPEN),
      EVENT(ShamanVillage_EnterLowerEastHouse)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
-     SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_INN_EAST_B,
+     SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_HOUSES_EAST_B,
      IF_FLAG_SET(FLAG_SHAMAN_VILLAGE_DOORS_OPEN),
      EVENT(ShamanVillage_EnterUpperEastHouse)},
     {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
@@ -3686,13 +3687,13 @@ struct Trigger gShamanVillageVillageTriggers[] = {
      10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
-     SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_INN_NORTH, CONDITION_ALWAYS,
+     SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_HOUSES_NORTH, CONDITION_ALWAYS,
      EVENT(ShamanVillage_EnterRiversideHouse)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
-     SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_INN_NORTHWEST,
+     SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_HOUSES_NORTHWEST,
      FLAG_SHAMAN_VILLAGE_MOAPA_MET, EVENT(ShamanVillage_MeetMoapa)},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH),
-     SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_INN_NORTHWEST, CONDITION_ALWAYS,
+     SHAMAN_VILLAGE_TO_SHAMAN_VILLAGE_HOUSES_NORTHWEST, CONDITION_ALWAYS,
      EVENT(ShamanVillage_EnterMoapasHouse)},
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_VILLAGE_ROPE_POST,
@@ -3785,7 +3786,7 @@ struct Trigger gShamanVillageVillageTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gShamanVillageInnTriggers[] = {
+struct Trigger gShamanVillageHousesTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
@@ -3872,7 +3873,7 @@ struct Trigger gShamanVillageInnTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-struct Trigger gShamanVillageShopTriggers[] = {
+struct Trigger gShamanVillageTentsTriggers[] = {
     {TRIGGER_EXIT, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_EXIT, 16, CONDITION_ALWAYS, 16},
     {TRIGGER_EXIT, 17, CONDITION_ALWAYS, 17},

@@ -26,7 +26,7 @@ gScenes:
 	scene StaffCredit, 0x64c, AREA_STAFF_CREDIT, SCENE_TYPE_OTHER, 1, 0
 	scene VenusLighthouseEntrance, 0x64d, AREA_VENUS_LIGHTHOUSE, SCENE_TYPE_TOWN, 3, 1
 	scene VenusLighthouse, 0x64e, AREA_VENUS_LIGHTHOUSE, SCENE_TYPE_TOWN, 4, 1
-	scene SuhallaGateHouse, 0x64f, AREA_SUHALLA_GATE, SCENE_TYPE_OTHER, 5, 1
+	scene SuhallaGateRoad, 0x64f, AREA_SUHALLA_GATE, SCENE_TYPE_OTHER, 5, 1
 	scene SuhallaGateAmbush, 0x64f, AREA_SUHALLA_GATE, SCENE_TYPE_OTHER, 6, 1
 	scene SuhallaGatePsynergyStone, 0x64f, AREA_SUHALLA_GATE, SCENE_TYPE_OTHER, 7, 1
 	scene Idejima, 0x650, AREA_IDEJIMA, SCENE_TYPE_TOWN, 8, 1
@@ -39,7 +39,7 @@ gScenes:
 	scene KandoreanTempleChestbeaters, 0x653, AREA_KANDOREAN_TEMPLE, SCENE_TYPE_OTHER, 15, 0
 	scene KandoreanTemplePillar, 0x653, AREA_KANDOREAN_TEMPLE, SCENE_TYPE_OTHER, 16, 0
 	scene KandoreanTempleStream, 0x653, AREA_KANDOREAN_TEMPLE, SCENE_TYPE_OTHER, 17, 0
-	scene KandoreanTempleSteam, 0x653, AREA_KANDOREAN_TEMPLE, SCENE_TYPE_OTHER, 18, 0
+	scene KandoreanTempleCurrent, 0x653, AREA_KANDOREAN_TEMPLE, SCENE_TYPE_OTHER, 18, 0
 	scene KandoreanTempleFog, 0x653, AREA_KANDOREAN_TEMPLE, SCENE_TYPE_OTHER, 19, 0
 	scene KandoreanTempleGate, 0x653, AREA_KANDOREAN_TEMPLE_GATE, SCENE_TYPE_TOWN, 20, 1
 	scene KandoreanTemplePoi, 0x653, AREA_KANDOREAN_TEMPLE_GATE, SCENE_TYPE_TOWN, 21, 0
@@ -80,8 +80,8 @@ gScenes:
 	scene MikasallaRoomsHouses, 0x65e, AREA_MIKASALLA, SCENE_TYPE_TOWN, 53, 0
 	scene MikasallaRoomsSanctum, 0x65e, AREA_MIKASALLA, SCENE_TYPE_TOWN, 54, 0
 	scene Garoh, 0x65f, AREA_GAROH, SCENE_TYPE_TOWN, 55, 1
-	scene GarohHypnosSwordChest, 0x65f, AREA_GAROH, SCENE_TYPE_TOWN, 56, 1
-	scene GarohBlocks, 0x65f, AREA_GAROH, SCENE_TYPE_TOWN, 57, 1
+	scene GarohPath, 0x65f, AREA_GAROH, SCENE_TYPE_TOWN, 56, 1
+	scene GarohWayUp, 0x65f, AREA_GAROH, SCENE_TYPE_TOWN, 57, 1
 	scene GarohTunnels, 0x65f, AREA_GAROH, SCENE_TYPE_TOWN, 58, 1
 	scene GarohWerewolfCave, 0x65f, AREA_GAROH, SCENE_TYPE_TOWN, 59, 1
 	scene GarohRoomsHouses, 0x660, AREA_GAROH, SCENE_TYPE_TOWN, 61, 0
@@ -92,10 +92,10 @@ gScenes:
 	scene YampiDesertBlitz, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 65, 1
 	scene YampiDesertPsynergyStone, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 66, 1
 	scene YampiDesertKingScorpion, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 67, 1
-	scene YampiDesertTreasurePit, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 68, 1
+	scene YampiDesertCoinsPuddle, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 68, 1
 	scene YampiDesertSandPass, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 69, 1
 	scene YampiDesertTrainersWhipChest, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 70, 1
-	scene YampiDesertMedalSpot, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 71, 1
+	scene YampiDesertHiddenPsynergyStone, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 71, 1
 	scene YampiDesertScorpionPit, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 72, 1
 	scene YampiDesertSpringCave, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 73, 1
 	scene YampiDesertBlowMaceChest, 0x661, AREA_YAMPI_DESERT, SCENE_TYPE_OTHER, 74, 1
@@ -156,8 +156,8 @@ gScenes:
 	scene NorthOseniaIslet, 0x674, AREA_NORTH_OSENIA_ISLET, SCENE_TYPE_TOWN, 131, 1
 	scene SoutheastAngaraIslet, 0x674, AREA_SOUTHEAST_ANGARA_ISLET, SCENE_TYPE_TOWN, 129, 0
 	scene SeaOfTimeIslet, 0x674, AREA_SEA_OF_TIME_ISLET, SCENE_TYPE_TOWN, 132, 1
-	scene IsletCaveMeld, 0x675, AREA_ISLET_CAVE, SCENE_TYPE_OTHER, 314, 0
-	scene IsletCaveSerac, 0x675, AREA_ISLET_CAVE, SCENE_TYPE_OTHER, 315, 0
+	scene IsletCaveHalls, 0x675, AREA_ISLET_CAVE, SCENE_TYPE_OTHER, 314, 0
+	scene IsletCaveCorridors, 0x675, AREA_ISLET_CAVE, SCENE_TYPE_OTHER, 315, 0
 	scene IsletCaveSentinel, 0x675, AREA_ISLET_CAVE, SCENE_TYPE_OTHER, 316, 0
 	scene Yallam, 0x676, AREA_YALLAM, SCENE_TYPE_TOWN, 133, 1
 	scene YallamCave, 0x676, AREA_YALLAM, SCENE_TYPE_TOWN, 136, 1
@@ -217,7 +217,7 @@ gScenes:
 	scene AnkohlRuinsSandDoors, 0x686, AREA_ANKOHL_RUINS, SCENE_TYPE_OTHER, 191, 0
 	scene AnkohlRuinsEntrance, 0x686, AREA_ANKOHL_RUINS, SCENE_TYPE_OTHER, 192, 1
 	scene AnkohlRuinsLeftProng, 0x686, AREA_ANKOHL_RUINS, SCENE_TYPE_OTHER, 193, 0
-	scene SeaOfTimeWhirlpool, 0x687, AREA_SEA_OF_TIME, SCENE_TYPE_OTHER, 183, 0
+	scene SeaOfTimeSwirls, 0x687, AREA_SEA_OF_TIME, SCENE_TYPE_OTHER, 183, 0
 	scene SeaOfTimeToLemuria, 0x687, AREA_SEA_OF_TIME, SCENE_TYPE_OTHER, 184, 0
 	scene LemuriaEntrance, 0x688, AREA_LEMURIA_ENTRANCE, SCENE_TYPE_TOWN, 195, 0
 	scene LemuriaDock, 0x689, AREA_LEMURIA_ENTRANCE, SCENE_TYPE_TOWN, 194, 0
@@ -231,7 +231,7 @@ gScenes:
 	scene TundariaTowerIceSlide, 0x68f, AREA_TUNDARIA_TOWER, SCENE_TYPE_OTHER, 202, 0
 	scene TundariaTowerReflux, 0x68f, AREA_TUNDARIA_TOWER, SCENE_TYPE_OTHER, 203, 0
 	scene TundariaTowerIceColumns, 0x68f, AREA_TUNDARIA_TOWER, SCENE_TYPE_OTHER, 204, 0
-	scene TundariaTowerLiftPillars, 0x68f, AREA_TUNDARIA_TOWER, SCENE_TYPE_OTHER, 205, 0
+	scene TundariaTowerPillarPuzzle, 0x68f, AREA_TUNDARIA_TOWER, SCENE_TYPE_OTHER, 205, 0
 	scene TundariaTowerBurstBrooch, 0x68f, AREA_TUNDARIA_TOWER, SCENE_TYPE_OTHER, 207, 0
 	scene GondowanSettlement, 0x690, AREA_GONDOWAN_SETTLEMENT, SCENE_TYPE_TOWN, 210, 1
 	scene GondowanSettlementHouses, 0x690, AREA_GONDOWAN_SETTLEMENT, SCENE_TYPE_TOWN, 99, 0
@@ -263,9 +263,9 @@ gScenes:
 	scene ShamanVillageCave, 0x695, AREA_SHAMAN_VILLAGE_CAVE, SCENE_TYPE_TOWN, 230, 1
 	scene ShamanVillageTrialGrounds, 0x696, AREA_SHAMAN_VILLAGE, SCENE_TYPE_OTHER, 231, 1
 	scene ShamanVillage, 0x696, AREA_SHAMAN_VILLAGE, SCENE_TYPE_OTHER, 232, 1
-	scene ShamanVillageAroma, 0x696, AREA_SHAMAN_VILLAGE, SCENE_TYPE_OTHER, 233, 1
-	scene ShamanVillageInn, 0x696, AREA_SHAMAN_VILLAGE, SCENE_TYPE_OTHER, 234, 0
-	scene ShamanVillageShop, 0x696, AREA_SHAMAN_VILLAGE, SCENE_TYPE_OTHER, 235, 0
+	scene ShamanVillageNorthEnd, 0x696, AREA_SHAMAN_VILLAGE, SCENE_TYPE_OTHER, 233, 1
+	scene ShamanVillageHouses, 0x696, AREA_SHAMAN_VILLAGE, SCENE_TYPE_OTHER, 234, 0
+	scene ShamanVillageTents, 0x696, AREA_SHAMAN_VILLAGE, SCENE_TYPE_OTHER, 235, 0
 	scene ShamanVillageSanctum, 0x696, AREA_SHAMAN_VILLAGE, SCENE_TYPE_OTHER, 236, 0
 	scene TrialRoadStages, 0x697, AREA_TRIAL_ROAD, SCENE_TYPE_OTHER, 243, 1
 	scene TrialRoadSummit, 0x697, AREA_TRIAL_ROAD, SCENE_TYPE_OTHER, 246, 1

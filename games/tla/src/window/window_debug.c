@@ -301,8 +301,8 @@ void DebugWarp_KaoruSpecial4(void) {
   GameFlag_Set(FLAG_SHAMAN_VILLAGE_SAND_CLEARED);
   GameFlag_Set(FLAG_SHAMAN_VILLAGE_SHAMANS_ROD_SHOWN);
   GameFlag_Set(FLAG_SHAMAN_VILLAGE_MOAPA_MET);
-  Event_SetDestinationFar(SCENE_SHAMAN_VILLAGE_INN,
-                          SHAMAN_VILLAGE_INN_FROM_TRIAL_ROAD_SUMMIT_EAST_A);
+  Event_SetDestinationFar(SCENE_SHAMAN_VILLAGE_HOUSES,
+                          SHAMAN_VILLAGE_HOUSES_FROM_TRIAL_ROAD_SUMMIT_EAST_A);
 }
 
 /// Preset 6, "Kaoru Special3": the Mars beacon lit and Prox's clan met and

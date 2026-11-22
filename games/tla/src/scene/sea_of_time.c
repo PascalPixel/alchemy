@@ -91,7 +91,7 @@ extern u32 gSeaOfTime_LastLapFrame;
 
 void SeaOfTime_TimeWaves(void);
 
-extern struct Trigger gSeaOfTime_WhirlpoolTriggers[];
+extern struct Trigger gSeaOfTime_SwirlsTriggers[];
 
 extern struct Trigger gSeaOfTime_NorthPartTriggers[];
 extern struct Trigger gSeaOfTime_SouthPartTriggers[];
@@ -161,7 +161,7 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern struct ActorPlacement gSeaOfTime_WhirlpoolPlacements[];
+extern struct ActorPlacement gSeaOfTime_SwirlsPlacements[];
 
 /// The Lemurian ship the party sails, and the rocks that rise in the last
 /// stretch. The ship's row places it blank, and it wears the ship's sheet
@@ -254,7 +254,7 @@ enum {
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_SEA_OF_TIME_TO_LEMURIA)
     return gSeaOfTime_ToLemuriaPlacements;
-  return gSeaOfTime_WhirlpoolPlacements;
+  return gSeaOfTime_SwirlsPlacements;
 }
 
 /// The 32-pixel square, two cells across, that a 16.16 coordinate lies in, and
@@ -957,10 +957,10 @@ void SeaOfTime_SweptBack(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if (!Event_GetFlag(FLAG_SWEPT_BACK_ONCE)) {
-    Import_EventSetExitRequest(SEA_OF_TIME_WHIRLPOOL_TO_LEMURIAN_SHIP_TILLER);
+    Import_EventSetExitRequest(SEA_OF_TIME_SWIRLS_TO_LEMURIAN_SHIP_TILLER);
     Event_SetFlag(FLAG_SWEPT_BACK_ONCE);
   } else {
-    Import_EventSetExitRequest(SEA_OF_TIME_WHIRLPOOL_TO_WORLD_MAP);
+    Import_EventSetExitRequest(SEA_OF_TIME_SWIRLS_TO_WORLD_MAP);
   }
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -1187,8 +1187,8 @@ DEFINE_LEAVE_BY_EXIT(SeaOfTime_LeaveForWorldMap,
 DEFINE_LEAVE_BY_EXIT(SeaOfTime_ReturnNorth, EXIT_BACK_NORTH)
 
 const struct Trigger *Scene_GetTriggers(void) {
-  if (gMainRoutineWork.next == SCENE_SEA_OF_TIME_WHIRLPOOL)
-    return gSeaOfTime_WhirlpoolTriggers;
+  if (gMainRoutineWork.next == SCENE_SEA_OF_TIME_SWIRLS)
+    return gSeaOfTime_SwirlsTriggers;
   if (gMainRoutineWork.entrance <= NORTH_PART_LAST_ENTRANCE)
     return gSeaOfTime_NorthPartTriggers;
   return gSeaOfTime_SouthPartTriggers;
@@ -1478,7 +1478,7 @@ void SeaOfTime_Open(void) {
 /// until it is broken.
 s32 Scene_Initialize(void) {
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
-  if (gMainRoutineWork.next == SCENE_SEA_OF_TIME_WHIRLPOOL) {
+  if (gMainRoutineWork.next == SCENE_SEA_OF_TIME_SWIRLS) {
     gSeaOfTime_WaveStartFrame = gFrameCount;
     gSeaOfTime_WaveState = 1;
     Dma_Set((const void *)&BG_PLTT_COLOR(SEA_PALETTE, 1),
@@ -1584,13 +1584,13 @@ s32 gSeaOfTime_ShipRests[] = {
 #include "shared/scene_entrances_default.c"
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(SeaOfTimeWhirlpool),
+    SCENE_EXITS(SeaOfTimeSwirls),
     SCENE_EXIT_UNLESS(1, WorldMap, 42, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, SeaOfTimeToLemuria, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, SeaOfTimeWhirlpool, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(3, SeaOfTimeSwirls, 1, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, LemurianShipTiller, 20, EXIT_FLAG_NONE),
     SCENE_EXITS(SeaOfTimeToLemuria),
-    SCENE_EXIT_UNLESS(1, SeaOfTimeWhirlpool, 2, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(1, SeaOfTimeSwirls, 2, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, SeaOfTimeToLemuria, 6, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, WorldMap, 44, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(4, WorldMap, 43, EXIT_FLAG_NONE),
@@ -1598,7 +1598,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS_END,
 };
 
-struct ActorPlacement gSeaOfTime_WhirlpoolPlacements[] = {
+struct ActorPlacement gSeaOfTime_SwirlsPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_BLANK, CONDITION_ALWAYS, (s32)gSeaOfTime_ShipRests,
                     120, 0, 280, FACING_NORTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
@@ -1637,11 +1637,11 @@ volatile u32 gSeaOfTime_WaveStartFrame = 0;
 
 u32 gSeaOfTime_WaveState = 0;
 
-struct Trigger gSeaOfTime_WhirlpoolTriggers[] = {
-    {TRIGGER_EXIT, SEA_OF_TIME_WHIRLPOOL_TO_WORLD_MAP, CONDITION_ALWAYS,
-     SEA_OF_TIME_WHIRLPOOL_TO_WORLD_MAP},
-    {TRIGGER_EXIT, SEA_OF_TIME_WHIRLPOOL_TO_SEA_OF_TIME_TO_LEMURIA,
-     CONDITION_ALWAYS, SEA_OF_TIME_WHIRLPOOL_TO_SEA_OF_TIME_TO_LEMURIA},
+struct Trigger gSeaOfTime_SwirlsTriggers[] = {
+    {TRIGGER_EXIT, SEA_OF_TIME_SWIRLS_TO_WORLD_MAP, CONDITION_ALWAYS,
+     SEA_OF_TIME_SWIRLS_TO_WORLD_MAP},
+    {TRIGGER_EXIT, SEA_OF_TIME_SWIRLS_TO_SEA_OF_TIME_TO_LEMURIA,
+     CONDITION_ALWAYS, SEA_OF_TIME_SWIRLS_TO_SEA_OF_TIME_TO_LEMURIA},
     {TRIGGER_STEP, CELL_BEHAVIOR_SWEPT_BACK, CONDITION_ALWAYS,
      EVENT(SeaOfTime_SweptBack)},
     {TRIGGER_STEP, CELL_BEHAVIOR_SWIRL_RING_SOUTH, CONDITION_ALWAYS,
@@ -1698,8 +1698,8 @@ struct Trigger gSeaOfTime_WhirlpoolTriggers[] = {
 };
 
 struct Trigger gSeaOfTime_NorthPartTriggers[] = {
-    {TRIGGER_EXIT, SEA_OF_TIME_TO_LEMURIA_TO_SEA_OF_TIME_WHIRLPOOL,
-     CONDITION_ALWAYS, SEA_OF_TIME_TO_LEMURIA_TO_SEA_OF_TIME_WHIRLPOOL},
+    {TRIGGER_EXIT, SEA_OF_TIME_TO_LEMURIA_TO_SEA_OF_TIME_SWIRLS,
+     CONDITION_ALWAYS, SEA_OF_TIME_TO_LEMURIA_TO_SEA_OF_TIME_SWIRLS},
     {TRIGGER_EXIT, EXIT_TO_SOUTH_PART, CONDITION_ALWAYS, EXIT_TO_SOUTH_PART},
     {TRIGGER_EXIT, SEA_OF_TIME_TO_LEMURIA_TO_WORLD_MAP_NORTH, CONDITION_ALWAYS,
      SEA_OF_TIME_TO_LEMURIA_TO_WORLD_MAP_NORTH},

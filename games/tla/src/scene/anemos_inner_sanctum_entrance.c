@@ -82,7 +82,7 @@ void Field_TryJumpForward(void);
 #include "../field/field_effect_move.c"
 
 /// The hall's and the last room's actors
-/// (gAnemosInnerSanctumEntrance_HallPlacements).
+/// (gAnemosInnerSanctumEntrance_Placements).
 enum AnemosInnerSanctumEntranceActorId {
   /// "I am the shadow, the keeper of light."
   ACTOR_SHADOW = ACTOR_FIRST_PLACED,
@@ -146,13 +146,14 @@ const struct SceneRegion *Scene_GetExitRegions(void) { return 0; }
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-extern LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_Placements[];
-extern struct ActorPlacement gAnemosInnerSanctumEntrance_HallPlacements[];
+extern LATE_DATA struct ActorPlacement
+    gAnemosInnerSanctumEntrance_EmptyPlacements[];
+extern struct ActorPlacement gAnemosInnerSanctumEntrance_Placements[];
 
 const struct ActorPlacement *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctumEntrance)
-    return gAnemosInnerSanctumEntrance_HallPlacements;
-  return gAnemosInnerSanctumEntrance_Placements;
+    return gAnemosInnerSanctumEntrance_Placements;
+  return gAnemosInnerSanctumEntrance_EmptyPlacements;
 }
 
 /// As the blocks set the party down before him, the shadow at the door
@@ -364,13 +365,13 @@ void AnemosInnerSanctumEntrance_OpenTheWay(void) {
 /// Unused: does nothing.
 void AnemosInnerSanctumEntrance_DoNothing(void) {}
 
+extern struct Trigger gAnemosInnerSanctumEntrance_EmptyTriggers[];
 extern struct Trigger gAnemosInnerSanctumEntrance_Triggers[];
-extern struct Trigger gAnemosInnerSanctumEntrance_HallTriggers[];
 
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == (s32)&SceneId_AnemosInnerSanctumEntrance)
-    return gAnemosInnerSanctumEntrance_HallTriggers;
-  return gAnemosInnerSanctumEntrance_Triggers;
+    return gAnemosInnerSanctumEntrance_Triggers;
+  return gAnemosInnerSanctumEntrance_EmptyTriggers;
 }
 
 /// Whether the game flag is set.
@@ -621,13 +622,14 @@ LATE_DATA u32 gSceneExits[] = {
 };
 
 /// The scene's other room's actors: none.
-LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_Placements[] = {
-    {SCENE_TABLE_END},
+LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_EmptyPlacements[] =
+    {
+        {SCENE_TABLE_END},
 };
 
 /// The hall's and the last room's actors, in
 /// AnemosInnerSanctumEntranceActorId's order.
-LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_HallPlacements[] = {
+LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_Placements[] = {
     ACTOR_PLACEMENT(SPRITE_DULLAHAN, FLAG_DULLAHAN_BEATEN, MOVEMENT_TYPE_STAND,
                     200, 0, 104, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
     ACTOR_PLACEMENT(430, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 232, 0, 424,
@@ -690,13 +692,13 @@ LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_HallPlacements[] = {
 };
 
 /// The scene's other room's triggers: none.
-LATE_DATA struct Trigger gAnemosInnerSanctumEntrance_Triggers[] = {
+LATE_DATA struct Trigger gAnemosInnerSanctumEntrance_EmptyTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
 /// The scene's exits, the last room's floor for pushing, Move on each block and
 /// Hover on the blocks' cells.
-LATE_DATA struct Trigger gAnemosInnerSanctumEntrance_HallTriggers[] = {
+LATE_DATA struct Trigger gAnemosInnerSanctumEntrance_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},

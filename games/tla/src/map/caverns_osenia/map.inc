@@ -39,7 +39,7 @@ Tileset_CavernsOseniaPalette:
 	.global Tileset_CavernsOseniaTilesA
 Tileset_CavernsOseniaTilesA:
 	.incbin "games/tla/src/graphics/tileset/caverns_osenia/tiles_a.4bpp.mtf"
-	.byte 0xe2	@ PACKER: left in the buffer by Tileset_IsletCaveMeldTilesA+0x2afb
+	.byte 0xe2	@ PACKER: left in the buffer by Tileset_IsletCaveHallsTilesA+0x2afb
 	.global Tileset_CavernsOseniaTilesB
 Tileset_CavernsOseniaTilesB:
 	.incbin "games/tla/src/graphics/tileset/caverns_osenia/tiles_b.4bpp.mtf"

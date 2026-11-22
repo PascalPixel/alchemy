@@ -1148,7 +1148,7 @@
 /// back there.
 #define FLAG_YAMPI_DESERT_ENTERED_BY_GUARDIAN_RING_CHEST 0xa29
 #define FLAG_YAMPI_DESERT_ENTERED_BY_TRAINERS_WHIP_CHEST 0xa2a
-#define FLAG_YAMPI_DESERT_ENTERED_BY_MEDAL_SPOT 0xa2b
+#define FLAG_YAMPI_DESERT_ENTERED_BY_HIDDEN_PSYNERGY_STONE 0xa2b
 /// Yallam's hidden Nut, uncovered with Cyclone.
 #define FLAG_YALLAM_NUT 0xf60
 /// Yallam's hidden Antidote, uncovered with Cyclone.

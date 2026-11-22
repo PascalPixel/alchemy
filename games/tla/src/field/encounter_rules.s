@@ -18,7 +18,7 @@ gScene_EncounterRules:
 	encounter_rule KandoreanTempleMimic, -1, -1, 16, 0
 	encounter_rule KandoreanTempleChestbeaters, -1, -1, 18, 0
 	encounter_rule KandoreanTemplePillar, 2, -1, 17, 0
-	encounter_rule KandoreanTempleSteam, -1, -1, 17, 0
+	encounter_rule KandoreanTempleCurrent, -1, -1, 17, 0
 	encounter_rule KandoreanTempleFog, 3, -1, 18, 0
 	encounter_rule KandoreanTempleFog, 4, -1, 18, 0
 	encounter_rule KandoreanTempleFog, -1, -1, 16, 0
@@ -47,10 +47,10 @@ gScene_EncounterRules:
 	encounter_rule YampiDesertGuardianRingChest, -1, -1, 31, 0
 	encounter_rule YampiDesertBlitz, -1, -1, 31, 0
 	encounter_rule YampiDesertPsynergyStone, -1, -1, 32, 0
-	encounter_rule YampiDesertTreasurePit, -1, -1, 32, 0
+	encounter_rule YampiDesertCoinsPuddle, -1, -1, 32, 0
 	encounter_rule YampiDesertSandPass, -1, -1, 33, 0
 	encounter_rule YampiDesertTrainersWhipChest, -1, -1, 33, 0
-	encounter_rule YampiDesertMedalSpot, -1, -1, 33, 0
+	encounter_rule YampiDesertHiddenPsynergyStone, -1, -1, 33, 0
 	encounter_rule YampiDesertSpringCave, -1, -1, 32, 0
 	encounter_rule YampiDesertBlowMaceChest, -1, -1, 32, 0
 	encounter_rule AirsRockStormBrandChest, -1, -1, 34, 0
@@ -150,7 +150,7 @@ gScene_EncounterRules:
 	encounter_rule TundariaTowerIceSlide, -1, -1, 74, 0
 	encounter_rule TundariaTowerReflux, -1, -1, 75, 0
 	encounter_rule TundariaTowerIceColumns, -1, -1, 75, 0
-	encounter_rule TundariaTowerLiftPillars, -1, -1, 76, 0
+	encounter_rule TundariaTowerPillarPuzzle, -1, -1, 76, 0
 	encounter_rule JupiterLighthouseBasementTeleporters, -1, -1, 82, 0
 	encounter_rule JupiterLighthouseRoomGateButton, -1, -1, 82, 0
 	encounter_rule JupiterLighthouseRoomBeam, -1, -1, 82, 0
@@ -230,8 +230,8 @@ gScene_EncounterRules:
 	encounter_rule ShamanVillageCave, -1, -1, 0, 81
 	encounter_rule TrialRoadCaveRock, -1, -1, 85, 0
 	encounter_rule TrialRoadGasp, -1, -1, 85, 0
-	encounter_rule IsletCaveMeld, -1, -1, 70, 0
-	encounter_rule IsletCaveSerac, -1, -1, 98, 99
+	encounter_rule IsletCaveHalls, -1, -1, 70, 0
+	encounter_rule IsletCaveCorridors, -1, -1, 98, 99
 	encounter_rule AnemosInnerSanctumElevator, -1, -1, 100, 0
 	encounter_rule AnemosInnerSanctumSwitches, -1, -1, 100, 0
 	encounter_rule AnemosInnerSanctumOrihalconChest, 1, -1, 100, 0

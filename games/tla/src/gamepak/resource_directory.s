@@ -654,12 +654,12 @@ Resource_DirectoryTable:
 	resource , Tileset_VenusLighthouseTilesB
 	resource , Tileset_VenusLighthouseTilesC
 	resource , Tileset_VenusLighthouseTilesD
-	resource , Field_SuhallaGateHouse
-	resource , Tileset_SuhallaGateHousePalette
-	resource , Tileset_SuhallaGateHouseTilesA
-	resource , Tileset_SuhallaGateHouseTilesB
-	resource , Tileset_SuhallaGateHouseTilesC
-	resource , Tileset_SuhallaGateHouseTilesD
+	resource , Field_SuhallaGateRoad
+	resource , Tileset_SuhallaGateRoadPalette
+	resource , Tileset_SuhallaGateRoadTilesA
+	resource , Tileset_SuhallaGateRoadTilesB
+	resource , Tileset_SuhallaGateRoadTilesC
+	resource , Tileset_SuhallaGateRoadTilesD
 	resource , Field_SuhallaGateAmbush
 	resource , Field_SuhallaGatePsynergyStone
 	resource , Tileset_SuhallaGatePsynergyStonePalette
@@ -702,7 +702,7 @@ Resource_DirectoryTable:
 	resource , Field_KandoreanTempleChestbeaters
 	resource , Field_KandoreanTemplePillar
 	resource , Field_KandoreanTempleStream
-	resource , Field_KandoreanTempleSteam
+	resource , Field_KandoreanTempleCurrent
 	resource , Field_KandoreanTempleFog
 	resource , Field_KandoreanTempleGate
 	resource , Tileset_KandoreanTempleGatePalette
@@ -861,9 +861,9 @@ Resource_DirectoryTable:
 	resource , Tileset_MikasallaRoomsSanctumTilesD
 	resource , Field_Garoh
 	resource , Tileset_PaletteGaroh
-	resource , Field_GarohHypnosSwordChest
-	resource , Tileset_PaletteGarohHypnosSwordChest
-	resource , Field_GarohBlocks
+	resource , Field_GarohPath
+	resource , Tileset_PaletteGarohPath
+	resource , Field_GarohWayUp
 	resource , Field_GarohTunnels
 	resource , Tileset_PaletteGaroh4
 	resource , Field_GarohWerewolfCave
@@ -882,10 +882,10 @@ Resource_DirectoryTable:
 	resource , Field_YampiDesertBlitz
 	resource , Field_YampiDesertPsynergyStone
 	resource , Field_YampiDesertKingScorpion
-	resource , Field_YampiDesertTreasurePit
+	resource , Field_YampiDesertCoinsPuddle
 	resource , Field_YampiDesertSandPass
 	resource , Field_YampiDesertTrainersWhipChest
-	resource , Field_YampiDesertMedalSpot
+	resource , Field_YampiDesertHiddenPsynergyStone
 	resource , Field_YampiDesertScorpionPit
 	resource , Field_YampiDesertSpringCave
 	resource , Field_YampiDesertBlowMaceChest
@@ -1221,12 +1221,12 @@ Resource_DirectoryTable:
 	resource , Field_ChampaCliffCavesAvimander
 	resource , Field_ChampaSanctum
 	resource , Tileset_PaletteChampaSanctum
-	resource , Field_SeaOfTimeWhirlpool
-	resource , Tileset_SeaOfTimeWhirlpoolPalette
-	resource , Tileset_SeaOfTimeWhirlpoolTilesA
-	resource , Tileset_SeaOfTimeWhirlpoolTilesB
-	resource , Tileset_SeaOfTimeWhirlpoolTilesC
-	resource , Tileset_SeaOfTimeWhirlpoolTilesD
+	resource , Field_SeaOfTimeSwirls
+	resource , Tileset_SeaOfTimeSwirlsPalette
+	resource , Tileset_SeaOfTimeSwirlsTilesA
+	resource , Tileset_SeaOfTimeSwirlsTilesB
+	resource , Tileset_SeaOfTimeSwirlsTilesC
+	resource , Tileset_SeaOfTimeSwirlsTilesD
 	resource , Field_SeaOfTimeToLemuria
 	resource , Tileset_SeaOfTimeToLemuriaPalette
 	resource , Tileset_SeaOfTimeToLemuriaTilesA
@@ -1284,7 +1284,7 @@ Resource_DirectoryTable:
 	resource , Tileset_PaletteTundariaTowerReflux
 	resource , Field_TundariaTowerIceColumns
 	resource , Tileset_PaletteTundariaTower5
-	resource , Field_TundariaTowerLiftPillars
+	resource , Field_TundariaTowerPillarPuzzle
 	resource , Tileset_PaletteTundariaTower6
 	resource , Field_TundariaTowerEntrance
 	resource , Tileset_TundariaTowerEntrancePalette
@@ -1370,16 +1370,16 @@ Resource_DirectoryTable:
 	resource , Tileset_ShamanVillageTilesB
 	resource , Tileset_ShamanVillageTilesC
 	resource , Tileset_ShamanVillageTilesD
-	resource , Field_ShamanVillageAroma
-	resource , Tileset_PaletteShamanVillageAroma
-	resource , Field_ShamanVillageInn
-	resource , Tileset_ShamanVillageInnPalette
-	resource , Tileset_ShamanVillageInnTilesA
-	resource , Tileset_ShamanVillageInnTilesB
-	resource , Tileset_ShamanVillageInnTilesC
-	resource , Tileset_ShamanVillageInnTilesD
-	resource , Tileset_PaletteShamanVillageInnA
-	resource , Tileset_PaletteShamanVillageInnB
+	resource , Field_ShamanVillageNorthEnd
+	resource , Tileset_PaletteShamanVillageNorthEnd
+	resource , Field_ShamanVillageHouses
+	resource , Tileset_ShamanVillageHousesPalette
+	resource , Tileset_ShamanVillageHousesTilesA
+	resource , Tileset_ShamanVillageHousesTilesB
+	resource , Tileset_ShamanVillageHousesTilesC
+	resource , Tileset_ShamanVillageHousesTilesD
+	resource , Tileset_PaletteShamanVillageHousesA
+	resource , Tileset_PaletteShamanVillageHousesB
 	resource , Field_AnemosInnerSanctumDragonSkinChest
 	resource , Tileset_AnemosInnerSanctumDragonSkinChestPalette
 	resource , Tileset_AnemosInnerSanctumDragonSkinChestTilesA
@@ -1527,14 +1527,14 @@ Resource_DirectoryTable:
 	resource , Field_TreasureIsleGale
 	resource , Tileset_PaletteTreasureIsleGale
 	resource , Field_TreasureIsleGuardian
-	resource , Field_IsletCaveMeld
-	resource , Tileset_IsletCaveMeldPalette
-	resource , Tileset_IsletCaveMeldTilesA
-	resource , Tileset_IsletCaveMeldTilesB
-	resource , Tileset_IsletCaveMeldTilesC
-	resource , Tileset_IsletCaveMeldTilesD
-	resource , Field_IsletCaveSerac
-	resource , Tileset_PaletteIsletCaveSerac
+	resource , Field_IsletCaveHalls
+	resource , Tileset_IsletCaveHallsPalette
+	resource , Tileset_IsletCaveHallsTilesA
+	resource , Tileset_IsletCaveHallsTilesB
+	resource , Tileset_IsletCaveHallsTilesC
+	resource , Tileset_IsletCaveHallsTilesD
+	resource , Field_IsletCaveCorridors
+	resource , Tileset_PaletteIsletCaveCorridors
 	resource , Field_IsletCaveSentinel
 	resource , Tileset_PaletteIsletCaveSentinel
 	resource , Field_CavernsIndra

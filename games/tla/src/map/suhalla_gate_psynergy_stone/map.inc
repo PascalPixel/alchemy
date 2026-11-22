@@ -38,7 +38,7 @@ Tileset_SuhallaGatePsynergyStonePalette:
 	.global Tileset_SuhallaGatePsynergyStoneTilesA
 Tileset_SuhallaGatePsynergyStoneTilesA:
 	.incbin "games/tla/src/graphics/tileset/suhalla_gate_psynergy_stone/tiles_a.4bpp.mtf"
-	.byte 0xd1	@ PACKER: left in the buffer by Tileset_SuhallaGateHouseTilesA+0x2afb
+	.byte 0xd1	@ PACKER: left in the buffer by Tileset_SuhallaGateRoadTilesA+0x2afb
 	.global Tileset_SuhallaGatePsynergyStoneTilesB
 Tileset_SuhallaGatePsynergyStoneTilesB:
 	.incbin "games/tla/src/graphics/tileset/suhalla_gate_psynergy_stone/tiles_b.4bpp.mtf"

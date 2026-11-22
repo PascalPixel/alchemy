@@ -3,7 +3,7 @@
 /// to Idejima, while Alex holds back the soldiers behind them. Its three rooms
 /// share this overlay:
 ///
-/// - The road past the gate (SceneId_SuhallaGateHouse), coming from the Venus
+/// - The road past the gate (SceneId_SuhallaGateRoad), coming from the Venus
 ///   Lighthouse in the east, where a Ruffian spots the two and fights them
 ///   (SuhallaGate_RuffianSpotsParty), and a door in the rock at its west end
 ///   leads on to the cliffs.
@@ -150,7 +150,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
   if (scene == SCENE_SUHALLA_GATE_AMBUSH)
     return gSuhallaGate_CliffsPlacements;
-  if (scene == SCENE_SUHALLA_GATE_HOUSE)
+  if (scene == SCENE_SUHALLA_GATE_ROAD)
     return gSuhallaGate_RoadPlacements;
   return gSuhallaGate_CavePlacements;
 }
@@ -220,7 +220,7 @@ s32 Scene_Initialize(void) {
   work = Ram_HeapSlots->fieldWork;
   work->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
   scene = gMainRoutineWork.next;
-  if (scene == SCENE_SUHALLA_GATE_HOUSE)
+  if (scene == SCENE_SUHALLA_GATE_ROAD)
     SuhallaGate_SetUpRoad();
   else if (scene == SCENE_SUHALLA_GATE_AMBUSH)
     SuhallaGate_SetUpCliffs();
@@ -243,7 +243,7 @@ UNUSED void SuhallaGate_OpenCliffsCell(void) {
 /// `ACTOR_ISAAC` in through the doorway, as The Broken Seal's doors walk their
 /// leader, but here Jenna leads and Isaac is not on stage, so nobody is seen to
 /// go in.
-void SuhallaGate_EnterHouse(void) {
+void SuhallaGate_EnterRockDoor(void) {
   s32 value = gFieldWork->stepTrigger;
 
   Actor_GetById(ACTOR_ISAAC)->motionFlags = 0;
@@ -299,7 +299,7 @@ void SuhallaGate_RuffianSpotsParty(void) {
   // "Who cares! I can handle some girl and her grandpa!"
   Event_ShowMessageThenWait(ACTOR_ROAD_RUFFIAN, 0, 10);
   Actor_WalkToAndWait(ACTOR_ROAD_RUFFIAN, 456, 312);
-  Event_SetAfterBattleDestination(SCENE_SUHALLA_GATE_HOUSE,
+  Event_SetAfterBattleDestination(SCENE_SUHALLA_GATE_ROAD,
                                   ENTRANCE_AFTER_SUHALLA_GATE_BATTLE);
   Event_SetDefeatDestination(SCENE_VENUS_LIGHTHOUSE_ENTRANCE,
                              VENUS_LIGHTHOUSE_ENTRANCE_AFTER_DEFEAT);
@@ -561,19 +561,19 @@ s32 gSuhallaGate_SquashScript[] = {
 struct SceneEntrance gSuhallaGate_RoadEntrances[] = {
     {0, CONDITION_ALWAYS, 152, 0, 504, FACING_SOUTH, 0, 32, 32, 272, 544, 0},
     {1, CONDITION_ALWAYS, 152, 0, 520, FACING_NORTH, 0, 32, 32, 272, 544, 0},
-    {SUHALLA_GATE_HOUSE_FROM_SUHALLA_GATE_AMBUSH_A, CONDITION_ALWAYS, 248, 0, 280, FACING_WEST, 0, 32, 32, 272, 544, 0},
+    {SUHALLA_GATE_ROAD_FROM_SUHALLA_GATE_AMBUSH_A, CONDITION_ALWAYS, 248, 0, 280, FACING_WEST, 0, 32, 32, 272, 544, 0},
     {3, CONDITION_ALWAYS, 136, 0, 304, FACING_SOUTH, 0, 32, 32, 272, 544, 0},
-    {SUHALLA_GATE_HOUSE_FROM_SUHALLA_GATE_AMBUSH_B, CONDITION_ALWAYS, 360, 0, 296, FACING_EAST, 0, 336, 32, 736, 496, 0},
-    {SUHALLA_GATE_HOUSE_FROM_VENUS_LIGHTHOUSE_ENTRANCE_EAST, CONDITION_ALWAYS, 664, 0, 424, FACING_WEST, 0, 336, 32, 736, 496, 0},
+    {SUHALLA_GATE_ROAD_FROM_SUHALLA_GATE_AMBUSH_B, CONDITION_ALWAYS, 360, 0, 296, FACING_EAST, 0, 336, 32, 736, 496, 0},
+    {SUHALLA_GATE_ROAD_FROM_VENUS_LIGHTHOUSE_ENTRANCE_EAST, CONDITION_ALWAYS, 664, 0, 424, FACING_WEST, 0, 336, 32, 736, 496, 0},
     {ENTRANCE_AFTER_SUHALLA_GATE_BATTLE, CONDITION_ALWAYS, 472, 0, 312, FACING_WEST, 0, 336, 32, 736, 496, 0},
     {SCENE_TABLE_END},
 };
 
 struct SceneEntrance gSuhallaGate_CliffsEntrances[] = {
-    {SUHALLA_GATE_AMBUSH_FROM_SUHALLA_GATE_HOUSE_A, CONDITION_ALWAYS, 40, 0, 304, FACING_EAST, 0, 16, 32, 416, 480, 0},
+    {SUHALLA_GATE_AMBUSH_FROM_SUHALLA_GATE_ROAD_A, CONDITION_ALWAYS, 40, 0, 304, FACING_EAST, 0, 16, 32, 416, 480, 0},
     {2, CONDITION_ALWAYS, 392, 0, 368, FACING_WEST, 0, 16, 32, 416, 480, 0},
     {3, CONDITION_ALWAYS, 40, 0, 912, FACING_EAST, 0, 16, 608, 720, 1008, 0},
-    {SUHALLA_GATE_AMBUSH_FROM_SUHALLA_GATE_HOUSE_B, CONDITION_ALWAYS, 680, 0, 904, FACING_WEST, 0, 16, 608, 720, 1008, 0},
+    {SUHALLA_GATE_AMBUSH_FROM_SUHALLA_GATE_ROAD_B, CONDITION_ALWAYS, 680, 0, 904, FACING_WEST, 0, 16, 608, 720, 1008, 0},
     {SUHALLA_GATE_AMBUSH_FROM_SUHALLA_GATE_PSYNERGY_STONE, CONDITION_ALWAYS, 616, 0, 920, FACING_SOUTH, 0, 16, 608, 720, 1008, 0},
     {ENTRANCE_AFTER_SUHALLA_GATE_BATTLE, CONDITION_ALWAYS, 616, 0, 920, FACING_SOUTH, 0, 16, 608, 720, 1008, 0},
     {SCENE_TABLE_END},
@@ -589,15 +589,15 @@ struct SceneEntrance gSuhallaGate_CaveEntrances[] = {
 };
 
 u32 gSceneExits[] = {
-    SCENE_EXITS(SuhallaGateHouse),
-    SCENE_EXIT(SUHALLA_GATE_HOUSE_TO_SUHALLA_GATE_AMBUSH_A, SuhallaGateAmbush, SUHALLA_GATE_AMBUSH_FROM_SUHALLA_GATE_HOUSE_A),
-    SCENE_EXIT(SUHALLA_GATE_HOUSE_TO_SUHALLA_GATE_AMBUSH_B, SuhallaGateAmbush, SUHALLA_GATE_AMBUSH_FROM_SUHALLA_GATE_HOUSE_B),
-    SCENE_EXIT(SUHALLA_GATE_HOUSE_TO_VENUS_LIGHTHOUSE_ENTRANCE_EAST, VenusLighthouseEntrance, VENUS_LIGHTHOUSE_ENTRANCE_FROM_SUHALLA_GATE_HOUSE_EAST),
+    SCENE_EXITS(SuhallaGateRoad),
+    SCENE_EXIT(SUHALLA_GATE_ROAD_TO_SUHALLA_GATE_AMBUSH_A, SuhallaGateAmbush, SUHALLA_GATE_AMBUSH_FROM_SUHALLA_GATE_ROAD_A),
+    SCENE_EXIT(SUHALLA_GATE_ROAD_TO_SUHALLA_GATE_AMBUSH_B, SuhallaGateAmbush, SUHALLA_GATE_AMBUSH_FROM_SUHALLA_GATE_ROAD_B),
+    SCENE_EXIT(SUHALLA_GATE_ROAD_TO_VENUS_LIGHTHOUSE_ENTRANCE_EAST, VenusLighthouseEntrance, VENUS_LIGHTHOUSE_ENTRANCE_FROM_SUHALLA_GATE_ROAD_EAST),
     SCENE_EXITS(SuhallaGateAmbush),
-    SCENE_EXIT(SUHALLA_GATE_AMBUSH_TO_SUHALLA_GATE_HOUSE_A, SuhallaGateHouse, SUHALLA_GATE_HOUSE_FROM_SUHALLA_GATE_AMBUSH_A),
+    SCENE_EXIT(SUHALLA_GATE_AMBUSH_TO_SUHALLA_GATE_ROAD_A, SuhallaGateRoad, SUHALLA_GATE_ROAD_FROM_SUHALLA_GATE_AMBUSH_A),
     SCENE_EXIT(2, SuhallaGateAmbush, 3),
     SCENE_EXIT(3, SuhallaGateAmbush, 2),
-    SCENE_EXIT(SUHALLA_GATE_AMBUSH_TO_SUHALLA_GATE_HOUSE_B, SuhallaGateHouse, SUHALLA_GATE_HOUSE_FROM_SUHALLA_GATE_AMBUSH_B),
+    SCENE_EXIT(SUHALLA_GATE_AMBUSH_TO_SUHALLA_GATE_ROAD_B, SuhallaGateRoad, SUHALLA_GATE_ROAD_FROM_SUHALLA_GATE_AMBUSH_B),
     SCENE_EXIT(SUHALLA_GATE_AMBUSH_TO_SUHALLA_GATE_PSYNERGY_STONE, SuhallaGatePsynergyStone, SUHALLA_GATE_PSYNERGY_STONE_FROM_SUHALLA_GATE_AMBUSH),
     SCENE_EXITS(SuhallaGatePsynergyStone),
     SCENE_EXIT(SUHALLA_GATE_PSYNERGY_STONE_TO_SUHALLA_GATE_AMBUSH, SuhallaGateAmbush, SUHALLA_GATE_AMBUSH_FROM_SUHALLA_GATE_PSYNERGY_STONE),
@@ -635,13 +635,13 @@ struct ActorPlacement gSuhallaGate_RoadPlacements[] = {
 struct Trigger gSuhallaGate_RoadTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS,
-     SUHALLA_GATE_HOUSE_TO_SUHALLA_GATE_AMBUSH_A},
+     SUHALLA_GATE_ROAD_TO_SUHALLA_GATE_AMBUSH_A},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS,
-     SUHALLA_GATE_HOUSE_TO_SUHALLA_GATE_AMBUSH_B},
+     SUHALLA_GATE_ROAD_TO_SUHALLA_GATE_AMBUSH_B},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS,
-     SUHALLA_GATE_HOUSE_TO_VENUS_LIGHTHOUSE_ENTRANCE_EAST},
+     SUHALLA_GATE_ROAD_TO_VENUS_LIGHTHOUSE_ENTRANCE_EAST},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), ROAD_DOOR_CELL, CONDITION_ALWAYS,
-     EVENT(SuhallaGate_EnterHouse)},
+     EVENT(SuhallaGate_EnterRockDoor)},
     {TRIGGER_STEP, RUFFIAN_SPOTS_PARTY_CELL, FLAG_SUHALLA_GATE_RUFFIAN_BEATEN,
      EVENT(SuhallaGate_RuffianSpotsParty)},
     // Unused: no cell of the road's map runs it.
@@ -654,11 +654,11 @@ struct Trigger gSuhallaGate_RoadTriggers[] = {
 
 struct Trigger gSuhallaGate_CliffsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS,
-     SUHALLA_GATE_AMBUSH_TO_SUHALLA_GATE_HOUSE_A},
+     SUHALLA_GATE_AMBUSH_TO_SUHALLA_GATE_ROAD_A},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS,
-     SUHALLA_GATE_AMBUSH_TO_SUHALLA_GATE_HOUSE_B},
+     SUHALLA_GATE_AMBUSH_TO_SUHALLA_GATE_ROAD_B},
     // The way into the cave, until the ambush is beaten.
     {TRIGGER_STEP, 5, FLAG_SUHALLA_GATE_AMBUSH_BEATEN,
      EVENT(SuhallaGate_RuffiansAmbushParty)},

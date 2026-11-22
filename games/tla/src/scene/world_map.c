@@ -174,7 +174,7 @@ void WorldMap_ShowIdejimaDrifting(void);
 
 void WorldMap_DriftNorthOfContinent(void);
 
-void WorldMap_PanToAlhafraManor(void);
+void WorldMap_ShowAirsRockFromAlhafra(void);
 
 void WorldMap_TakeTheTiller(void);
 void WorldMap_SailToShipDeck(void);
@@ -949,7 +949,7 @@ s32 Scene_Initialize(void) {
     }
     break;
   case WORLD_MAP_ALHAFRA_MANOR_VIEW:
-    WorldMap_PanToAlhafraManor();
+    WorldMap_ShowAirsRockFromAlhafra();
     break;
   case WORLD_MAP_FIRST_VOYAGE:
     WorldMap_TakeTheTiller();
@@ -2016,7 +2016,7 @@ void WorldMap_DriftNorthOfContinent(void) {
 /// When the man gazing out from Alhafra's manor shows Felix Air's Rock, the
 /// World Map's view glides over to the rock, Felix hidden; pressing any
 /// button returns him to the manor.
-void WorldMap_PanToAlhafraManor(void) {
+void WorldMap_ShowAirsRockFromAlhafra(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->scaleX = 0;
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
   Event_StartScreenTransition();

@@ -1723,7 +1723,7 @@ enum {
 enum {
   ALHAFRA_MANOR_FROM_ALHAFRA = 1,
   /// Back from the view of Air's Rock on the World Map, beside the man who
-  /// showed it (world_map.c's WorldMap_PanToAlhafraManor).
+  /// showed it (world_map.c's WorldMap_ShowAirsRockFromAlhafra).
   ALHAFRA_MANOR_FROM_WORLD_MAP_VIEW = 80,
 };
 /// SceneId_AlhafraManor's exits.

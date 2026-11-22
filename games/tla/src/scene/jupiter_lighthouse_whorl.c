@@ -858,8 +858,6 @@ struct CellTarget;
 struct CellTargetEntry;
 struct LightOam;
 
-void Whirlwind_CarryLeader(void);
-
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];

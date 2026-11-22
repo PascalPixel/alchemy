@@ -73,7 +73,7 @@ u16 EraseAtmelFlashBlock(u16 block);
 u16 ProgramAtmelFlashSector(u32 sector, const u8 *source);
 u16 ProgramAtmelFlashBlock(u16 block, u8 *source);
 void FlashTimerIntr(void);
-s32 SetFlashTimerIntr(u8 timer_index, void (**callback)(void));
+s32 SetFlashTimerIntr(u8 timerIndex, void (**callback)(void));
 void ReadFlashCore(const u8 *source, u8 *destination, u32 size);
 void ReadFlash(u16 sector, u32 offset, u8 *destination, s32 size);
 u8 *VerifyFlashCore(u8 *left, u8 *right, u16 size);
@@ -97,9 +97,9 @@ extern u16 gFlashSavedIme;
 extern u8 gFlashTimeoutFlag;
 /// The timer, 0 to 3, the flash library times its operations with.
 extern u8 gFlashTimerNum;
-s32 CountRemainingErasedFlashBytes(u8 *ptr);
+s32 CountRemainingErasedFlashBytes(u8 *cursor);
 s32 RunFlashEraseVerifier(u8 *sector, s32 (*verify)(u8 *));
-void StartFlashTimer(u8 index);
+void StartFlashTimer(u8 timingIndex);
 /// The chip's program routine (FlashSetupInfo.program), which
 /// Save_WriteSector calls.
 extern u16 (*gProgramFlashSector)(u16 sector, u8 *source);

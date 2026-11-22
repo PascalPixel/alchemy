@@ -707,8 +707,8 @@ const struct MapResources gMaps[] = {
     {888, 889, {890, 891, 892}, 893}, // treasure_isle_jesters_armlet_chest
     {894, 895, {878, 879, 880}, 881}, // treasure_isle_gale
     {896, 895, {878, 879, 880}, 881}, // treasure_isle_guardian
-    {897, 898, {899, 900, 901}, 902}, // islet_cave_meld
-    {903, 904, {187, 188, 189}, 190}, // islet_cave_serac
+    {897, 898, {899, 900, 901}, 902}, // islet_cave_halls
+    {903, 904, {187, 188, 189}, 190}, // islet_cave_corridors
     {905, 906, {187, 188, 189}, 190}, // islet_cave_sentinel
     {907, 908, {139, 140, 141}, 142}, // caverns_indra
     {909, 910, {911, 912, 913}, 914}, // caverns_osenia

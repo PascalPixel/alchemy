@@ -1527,14 +1527,14 @@ Resource_DirectoryTable:
 	resource , Field_TreasureIsleGale
 	resource , Tileset_PaletteTreasureIsleGale
 	resource , Field_TreasureIsleGuardian
-	resource , Field_IsletCaveMeld
-	resource , Tileset_IsletCaveMeldPalette
-	resource , Tileset_IsletCaveMeldTilesA
-	resource , Tileset_IsletCaveMeldTilesB
-	resource , Tileset_IsletCaveMeldTilesC
-	resource , Tileset_IsletCaveMeldTilesD
-	resource , Field_IsletCaveSerac
-	resource , Tileset_PaletteIsletCaveSerac
+	resource , Field_IsletCaveHalls
+	resource , Tileset_IsletCaveHallsPalette
+	resource , Tileset_IsletCaveHallsTilesA
+	resource , Tileset_IsletCaveHallsTilesB
+	resource , Tileset_IsletCaveHallsTilesC
+	resource , Tileset_IsletCaveHallsTilesD
+	resource , Field_IsletCaveCorridors
+	resource , Tileset_PaletteIsletCaveCorridors
 	resource , Field_IsletCaveSentinel
 	resource , Tileset_PaletteIsletCaveSentinel
 	resource , Field_CavernsIndra

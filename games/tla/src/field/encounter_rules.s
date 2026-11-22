@@ -230,8 +230,8 @@ gScene_EncounterRules:
 	encounter_rule ShamanVillageCave, -1, -1, 0, 81
 	encounter_rule TrialRoadCaveRock, -1, -1, 85, 0
 	encounter_rule TrialRoadGasp, -1, -1, 85, 0
-	encounter_rule IsletCaveMeld, -1, -1, 70, 0
-	encounter_rule IsletCaveSerac, -1, -1, 98, 99
+	encounter_rule IsletCaveHalls, -1, -1, 70, 0
+	encounter_rule IsletCaveCorridors, -1, -1, 98, 99
 	encounter_rule AnemosInnerSanctumElevator, -1, -1, 100, 0
 	encounter_rule AnemosInnerSanctumSwitches, -1, -1, 100, 0
 	encounter_rule AnemosInnerSanctumOrihalconChest, 1, -1, 100, 0

@@ -469,7 +469,7 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {531, 532, 533, 534, 535, 536, 537, 538},
         .weights = {10, 10, 10, 10, 20, 20, 30, 30},
     },
-    // Islet Cave: SceneId_IsletCaveMeld
+    // Islet Cave: SceneId_IsletCaveHalls
     {
         .rate = 50,
         .level = 25,
@@ -665,14 +665,14 @@ const struct EncounterZone gEncounterZones[] = {
         .formations = {601, 602, 603, 604, 605, 606, 607, 608},
         .weights = {5, 5, 5, 10, 10, 20, 20, 20},
     },
-    // Islet Cave: SceneId_IsletCaveSerac
+    // Islet Cave: SceneId_IsletCaveCorridors
     {
         .rate = 15,
         .level = 38,
         .formations = {611, 612, 613, 614, 615, 616, 617, 618},
         .weights = {20, 20, 5, 5, 10, 10, 10, 10},
     },
-    // Islet Cave: SceneId_IsletCaveSerac
+    // Islet Cave: SceneId_IsletCaveCorridors
     {
         .rate = 15,
         .level = 38,

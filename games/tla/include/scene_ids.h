@@ -402,11 +402,11 @@ extern char SceneId_KibomboMountainsDiskAxeChest;
 extern char SceneId_KibomboMountainsCavern;
 #define SCENE_KIBOMBO_MOUNTAINS_CAVERN ((s32)&SceneId_KibomboMountainsCavern)
 /// The Islet Cave room where Meld is fought.
-extern char SceneId_IsletCaveMeld;
-#define SCENE_ISLET_CAVE_MELD ((s32)&SceneId_IsletCaveMeld)
+extern char SceneId_IsletCaveHalls;
+#define SCENE_ISLET_CAVE_HALLS ((s32)&SceneId_IsletCaveHalls)
 /// The Islet Cave room where Serac is fought.
-extern char SceneId_IsletCaveSerac;
-#define SCENE_ISLET_CAVE_SERAC ((s32)&SceneId_IsletCaveSerac)
+extern char SceneId_IsletCaveCorridors;
+#define SCENE_ISLET_CAVE_CORRIDORS ((s32)&SceneId_IsletCaveCorridors)
 /// The Islet Cave room where the Sentinel waits.
 extern char SceneId_IsletCaveSentinel;
 #define SCENE_ISLET_CAVE_SENTINEL ((s32)&SceneId_IsletCaveSentinel)

@@ -130,7 +130,13 @@ enum WorldMapCellBehavior {
   CELL_BEHAVIOR_WORLD_MAP_CHILL,
   CELL_BEHAVIOR_WORLD_MAP_WHEEZE,
   CELL_BEHAVIOR_WORLD_MAP_PETRA,
-  CELL_BEHAVIOR_WORLD_MAP_CORE
+  CELL_BEHAVIOR_WORLD_MAP_CORE,
+  /// The landing where the ship moors at Atteka Inlet
+  /// (WorldMap_MoorAtAttekaInlet).
+  CELL_BEHAVIOR_WORLD_MAP_ATTEKA_INLET_LANDING = 52,
+  /// The ground round the ways out of Gondowan that Jenna will not take
+  /// before the parties meet at Contigo (WorldMap_RefuseToRunAway).
+  CELL_BEHAVIOR_WORLD_MAP_AWAY_FROM_CONTIGO = 53
 };
 
 /// The World Map's blocks (struct WorldMapBlocks): 32 pixels square, 32 to a
@@ -189,7 +195,7 @@ void WorldMap_MeetCore(void);
 void WorldMap_SetUpFlyingShip(void);
 
 void WorldMap_SetUpShip(void);
-void WorldMap_GoAboard(void);
+void WorldMap_MoorAtAttekaInlet(void);
 
 void WorldMap_RefuseToRunAway(void);
 
@@ -281,33 +287,41 @@ void Party_RestoreHpPp(s32 value);
   }
 #endif
 
-/// Walking into Iron on the World Map may start his battle
-/// (WORLD_MAP_TRY_ENCOUNTER); so for each Djinni below.
+/// Walking about the patch of ground east of Madra, over the small bridge and
+/// down by the water, may meet the Venus Djinni Iron and start his battle, as
+/// a random battle would (WORLD_MAP_TRY_ENCOUNTER); if he escapes, walking on
+/// there meets him again.
 void WorldMap_MeetIron(void) {
   WORLD_MAP_TRY_ENCOUNTER(DJINN_NO_HOP | ACTOR_IRON, DJINNI_IRON)
 }
 
-/// Walking into Sour may start his battle.
+/// Walking about the field between Mikasalla and Osenia Cavern may meet the
+/// Mercury Djinni Sour and start his battle.
 void WorldMap_MeetSour(void) {
   WORLD_MAP_TRY_ENCOUNTER(DJINN_NO_HOP | ACTOR_SOUR, DJINNI_SOUR)
 }
 
-/// Walking into Chill may start his battle.
+/// Walking about the field near the beach far south of Naribwe may meet the
+/// Mercury Djinni Chill and start his battle.
 void WorldMap_MeetChill(void) {
   WORLD_MAP_TRY_ENCOUNTER(DJINN_NO_HOP | ACTOR_CHILL, DJINNI_CHILL)
 }
 
-/// Walking into Wheeze may start his battle.
+/// Walking about the dead-end inlet south-west of Tundaria Tower may meet the
+/// Jupiter Djinni Wheeze and start his battle.
 void WorldMap_MeetWheeze(void) {
   WORLD_MAP_TRY_ENCOUNTER(DJINN_NO_HOP | ACTOR_WHEEZE, DJINNI_WHEEZE)
 }
 
-/// Walking into Petra may start her battle.
+/// Walking about the patch of ground north of Hesperia may meet the Venus
+/// Djinni Petra and start her battle.
 void WorldMap_MeetPetra(void) {
   WORLD_MAP_TRY_ENCOUNTER(DJINN_NO_HOP | ACTOR_PETRA, DJINNI_PETRA)
 }
 
-/// Walking into Core may start his battle.
+/// Walking about the clearings in the east of Atteka, the lower continent
+/// beyond its western beach, may meet the Mars Djinni Core and start his
+/// battle.
 void WorldMap_MeetCore(void) {
   WORLD_MAP_TRY_ENCOUNTER(DJINN_NO_HOP | ACTOR_CORE, DJINNI_CORE)
 }
@@ -439,8 +453,8 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   }
 }
 
-/// The flying ship takes the map: Hover's name is shown first while the ship
-/// hovers, the PP gauge goes up, and the field's pending actions are cleared.
+/// When the ship takes to the air over the World Map, "Hover" is shown
+/// while it rises, and the PP gauge appears, since flying uses the party's PP.
 void WorldMap_SetUpFlyingShip(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -631,15 +645,17 @@ void WorldMap_LeaveShip(void) {
 
 void Actor_PlaceOnActor(s32 actor, s32 target);
 
-/// Going aboard from the map: the ship's position is kept in gMainRoutineWork
-/// for the way back.
-void WorldMap_GoAboard(void) {
+/// Sailing up to the landing at Atteka Inlet moors the ship there: the
+/// screen fades and the party goes ashore into the inlet, by the ship's
+/// cabins. Where the ship lay is kept, to find it there again; a flying ship
+/// comes down to the water first.
+void WorldMap_MoorAtAttekaInlet(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader = Actor_Get(ACTOR_SHIP);
 
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
-  if (gMainRoutineWork.movementMode == 8)
+  if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_FLYING_SHIP)
     WorldMap_SetUpShip();
   Event_FinishScreenTransition();
   Event_WaitTransitionFrames();
@@ -835,20 +851,23 @@ void WorldMap_ShowGoldenBoots(void) {
   Event_SetFlag(FLAG_GOLDEN_BOOTS_ON_MAP);
 }
 
-/// Prox's way in, chosen by the leader's approach from the north or south;
-/// so for Yallam and Daila below.
+/// Walking onto Prox from the World Map: coming from the north, the party
+/// enters by its northern way in (SceneId_ProxMold), and from the south by
+/// its south gate. Yallam and Daila choose their way in the same way.
 void WorldMap_EnterProx(s32 id) {
   WorldMap_SelectExitByZ(id, WORLD_MAP_TO_PROX_MOLD,
                          WORLD_MAP_TO_PROX_SOUTH_GATE);
 }
 
-/// Yallam's way in, chosen by the leader's approach.
+/// Walking onto Yallam from the World Map: coming from the north, the party
+/// enters by its north side, and from the south by its south side.
 void WorldMap_EnterYallam(s32 id) {
   WorldMap_SelectExitByZ(id, WORLD_MAP_TO_YALLAM_SOUTH_B,
                          WORLD_MAP_TO_YALLAM_SOUTH_A);
 }
 
-/// Daila's way in, chosen by the leader's approach.
+/// Walking onto Daila from the World Map: coming from the north, the party
+/// enters by its north side, and from the south by its south side.
 void WorldMap_EnterDaila(s32 id) {
   WorldMap_SelectExitByZ(id, WORLD_MAP_TO_DAILA_NORTH,
                          WORLD_MAP_TO_DAILA_SOUTH);
@@ -1994,8 +2013,9 @@ void WorldMap_DriftNorthOfContinent(void) {
   FieldEvent_SetExitRequest(WORLD_MAP_TO_IDEJIMA_NORTHEAST);
 }
 
-/// The leader is hidden and released, the screen fades and the camera moves;
-/// once a key is held the scene changes to SceneId_AlhafraManor.
+/// When the man gazing out from Alhafra's manor shows Felix Air's Rock, the
+/// World Map's view glides over to the rock, Felix hidden; pressing any
+/// button returns him to the manor.
 void WorldMap_PanToAlhafraManor(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->scaleX = 0;
   Actor_SetSpriteFlags(Actor_GetById(gMainRoutineWork.leaderActorId), 0);
@@ -3221,8 +3241,10 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 43, CONDITION_ALWAYS, 43},
     {TRIGGER_EXIT, 44, CONDITION_ALWAYS, 44},
     {TRIGGER_EXIT, 45, CONDITION_ALWAYS, 45},
-    {TRIGGER_STEP, 52, CONDITION_ALWAYS, EVENT(WorldMap_GoAboard)},
-    {TRIGGER_STEP, 53, CONDITION_ALWAYS, EVENT(WorldMap_RefuseToRunAway)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_WORLD_MAP_ATTEKA_INLET_LANDING,
+     CONDITION_ALWAYS, EVENT(WorldMap_MoorAtAttekaInlet)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_WORLD_MAP_AWAY_FROM_CONTIGO, CONDITION_ALWAYS,
+     EVENT(WorldMap_RefuseToRunAway)},
     {TRIGGER_STEP, 40, FLAG_SHIP_HAS_FLOWN, EVENT(WorldMap_TakeOff)},
     {TRIGGER_EXIT, 60, CONDITION_ALWAYS, 60},
     {TRIGGER_EXIT, 61, CONDITION_ALWAYS, 61},

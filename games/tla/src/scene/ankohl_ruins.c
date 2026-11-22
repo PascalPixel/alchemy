@@ -1,7 +1,25 @@
 /// @file
-/// The Ankohl Ruins, whose old ruins hold the Left Prong behind the Sand
-/// puzzles, in seven rooms that share this overlay
-/// (SceneId_AnkohlRuinsStoneFaces to SceneId_AnkohlRuinsLeftProng).
+/// The Ankohl Ruins, where Felix, once Gaia Rock has given him Sand, climbs
+/// through the old ruins to the Left Prong of the Trident of Ankohl lying on
+/// their top.
+/// Past the forest at the doorway, the halls of the stone faces come first:
+/// Whirlwind clears their weeds, some of which hide the way on, and Move
+/// pushes each of the seven stone faces in the north wall off its ledge to
+/// open the doorway behind it. In the Thanatos Mace's rooms Move pushes the
+/// left half of a stone face against its right half and sand pours down into
+/// a slope. Move also pushes pillars aside, one by the Nut's chest, one in the
+/// great face's rooms, three in the face halves' rooms and one in the Crystal
+/// Powder's rooms. In each of the two sand rooms a switch makes the great
+/// stone face in the north wall pour sand until the room is full, and a
+/// button on the far ledge, reached on the sand, opens the way on. In the
+/// face halves' rooms flowing sand carries Felix down a slide. In the great
+/// face's rooms Move pushes the right half of the great face into place, its
+/// eyes glow, and stepping into its corridor sets it sliding down at
+/// Felix, who hides from it under the Sand. In the Crystal Powder's rooms
+/// Reveal shows a gap that Move pushes a half face into; it lands in the face
+/// halves' rooms, where Move pushes it against the other half and sand pours
+/// into a slope. From the Crystal Powder's rooms a way leads out onto the top
+/// of the ruins.
 #include "../field/actor_set_sprite_priority.c"
 #include "field/actor_script.h"
 #include "fixed_math.h"
@@ -23,56 +41,72 @@
 #include "field/field_sprite.h"
 #include "field/event_inline.h"
 
-/// The seven stone faces of the first room Move pushes off the ledge, one flag
-/// a face; the macro takes the face's actor.
+/// The seven stone faces Move pushes off their ledge in the halls of the stone
+/// faces, one flag a face; the macro takes the face's actor.
 #define FLAG_STONE_FACE_A_MOVED 0x9d2
 #define FLAG_STONE_FACE_MOVED(face)                                            \
   (FLAG_STONE_FACE_A_MOVED - ACTOR_STONE_FACE_A + (face))
-/// The ruins' weeds Whirlwind scatters, one flag a clump: the first room's
-/// fourteen from FLAG_FIRST_ROOM_WEEDS_A_SCATTERED, the Thanatos Mace room's
-/// three, then the fourth room's seven; the macros take the clump's actor.
-#define FLAG_FIRST_ROOM_WEEDS_A_SCATTERED 0x990
+/// The ruins' weeds Whirlwind scatters, one flag a clump: the fourteen of the
+/// halls of the stone faces from FLAG_STONE_FACES_WEEDS_A_SCATTERED, the
+/// Thanatos Mace's rooms' three, then the face halves' rooms' seven; the macros
+/// take the clump's actor.
+#define FLAG_STONE_FACES_WEEDS_A_SCATTERED 0x990
 #define FLAG_THANATOS_WEEDS_A_SCATTERED 0x99e
-#define FLAG_FOURTH_ROOM_WEEDS_A_SCATTERED 0x9a1
-#define FLAG_FIRST_ROOM_WEEDS_SCATTERED(weeds)                                 \
-  (FLAG_FIRST_ROOM_WEEDS_A_SCATTERED - ACTOR_FIRST_ROOM_WEEDS_A + (weeds))
+#define FLAG_FACE_HALVES_WEEDS_A_SCATTERED 0x9a1
+#define FLAG_STONE_FACES_WEEDS_SCATTERED(weeds)                                \
+  (FLAG_STONE_FACES_WEEDS_A_SCATTERED - ACTOR_STONE_FACES_WEEDS_A + (weeds))
 #define FLAG_THANATOS_WEEDS_SCATTERED(weeds)                                   \
   (FLAG_THANATOS_WEEDS_A_SCATTERED - ACTOR_THANATOS_WEEDS_A + (weeds))
-#define FLAG_FOURTH_ROOM_WEEDS_SCATTERED(weeds)                                \
-  (FLAG_FOURTH_ROOM_WEEDS_A_SCATTERED - ACTOR_FOURTH_ROOM_WEEDS_A + (weeds))
-/// The pillars Move has pushed into place: the first room's, the third's, and
-/// the fourth room's three.
-#define FLAG_FIRST_ROOM_PILLAR_MOVED 0x9c6
-#define FLAG_THIRD_ROOM_PILLAR_MOVED 0x9c7
-#define FLAG_FOURTH_ROOM_PILLAR_MOVED 0x9c8
-#define FLAG_FOURTH_ROOM_SECOND_PILLAR_MOVED 0x9c9
-#define FLAG_FOURTH_ROOM_THIRD_PILLAR_MOVED 0x9ca
-#define FLAG_FIFTH_ROOM_PILLAR_MOVED 0x9cb
-/// The halves of the stone face pushed into place in the fourth room, the
-/// fifth room's half pushed into its gap, the Thanatos Mace room's half, and
-/// the third room's.
+#define FLAG_FACE_HALVES_WEEDS_SCATTERED(weeds)                                \
+  (FLAG_FACE_HALVES_WEEDS_A_SCATTERED - ACTOR_FACE_HALVES_WEEDS_A + (weeds))
+/// The pillars Move has pushed to the end of their tracks: the one by the
+/// Nut's chest, the great face's rooms' one, the face halves' rooms' three and
+/// the Crystal Powder's rooms' one.
+#define FLAG_NUT_CHEST_PILLAR_MOVED 0x9c6
+#define FLAG_GREAT_FACE_ROOMS_PILLAR_MOVED 0x9c7
+#define FLAG_FACE_HALVES_PILLAR_MOVED 0x9c8
+#define FLAG_FACE_HALVES_SECOND_PILLAR_MOVED 0x9c9
+#define FLAG_FACE_HALVES_THIRD_PILLAR_MOVED 0x9ca
+#define FLAG_CRYSTAL_POWDER_PILLAR_MOVED 0x9cb
+/// The halves of stone faces pushed into place: the face halves' rooms' two,
+/// the half pushed into the Crystal Powder's rooms' gap, the Thanatos Mace's
+/// rooms' half, and the great face's right half.
 #define FLAG_LEFT_FACE_HALF_PLACED 0x9d9
 #define FLAG_RIGHT_FACE_HALF_PLACED 0x9da
 #define FLAG_FACE_HALF_PUSHED_INTO_GAP 0x9db
 #define FLAG_THANATOS_FACE_HALF_PLACED 0x9dc
 #define FLAG_GREAT_FACE_HALF_PLACED 0x9dd
-/// The sand doors opened by their switches in the sand rooms, the first and the
-/// second.
+/// The doors the buttons on the sand rooms' far ledges open, the first room's
+/// and the second's.
 #define FLAG_FIRST_SAND_DOOR_OPENED 0x9e2
 #define FLAG_SECOND_SAND_DOOR_OPENED 0x9e3
-/// The sand rooms' switches pressed, the sand rising in each.
+/// The sand rooms' switches pressed, for this visit: the sand is rising or
+/// has risen in each.
 #define FLAG_FIRST_SAND_SWITCH_PRESSED FLAG_SCENE_TEMP_02
 #define FLAG_SECOND_SAND_SWITCH_PRESSED FLAG_SCENE_TEMP_03
-/// Set while Reveal is shown: the sand's sprites are hidden, and the fifth
-/// room's gap lies open.
+/// Set while Reveal is up: the sand rooms stop trimming the sand's edge, and
+/// from patch 1 the Crystal Powder's rooms' gap lies open to a pushed half
+/// face.
 #define FLAG_ANKOHL_RUINS_REVEAL_SHOWN FLAG_SCENE_TEMP_05
 
-/// The trigger codes the rooms' code raises or tests: the great face's cells
-/// that board it, the ledge the flowing sand carries the leader off, and the
-/// sand rooms' next rise.
+/// The cell behaviours the rooms' trigger tables answer: the foot of the great
+/// face's corridor and the cell right in front of the face at its top; the
+/// sand rooms' switches and their far ledges' buttons; and the pit in the
+/// Crystal Powder's rooms Felix jumps down into the face halves' rooms.
 enum {
-  TRIGGER_BOARD_GREAT_FACE = 40,
-  TRIGGER_PUSHED_OFF_LEDGE = 66,
+  CELL_BEHAVIOR_GREAT_FACE_CORRIDOR_FOOT = 40,
+  CELL_BEHAVIOR_BEFORE_GREAT_FACE = 41,
+  CELL_BEHAVIOR_FIRST_SAND_SWITCH = 40,
+  CELL_BEHAVIOR_FIRST_SAND_DOOR_BUTTON = 41,
+  CELL_BEHAVIOR_SECOND_SAND_SWITCH = 42,
+  CELL_BEHAVIOR_SECOND_SAND_DOOR_BUTTON = 43,
+  CELL_BEHAVIOR_PIT_TO_FACE_HALVES = 13
+};
+
+/// The triggers the rooms' code raises: the flowing sand carrying Felix off a
+/// ledge, and each sand room's next rise.
+enum {
+  TRIGGER_CARRIED_OFF_LEDGE = 66,
   TRIGGER_RAISE_FIRST_SAND = 68,
   TRIGGER_RAISE_SECOND_SAND = 69
 };
@@ -85,30 +119,30 @@ enum {
 /// The cell column each pillar Move pushes stands in at its track's end, where
 /// its flag is set and the set-up places it again.
 enum {
-  FIRST_ROOM_PILLAR_END_COLUMN = 4,
-  THIRD_ROOM_PILLAR_END_COLUMN = 32,
-  FOURTH_ROOM_PILLAR_END_COLUMN = 2,
-  FOURTH_ROOM_SECOND_PILLAR_END_COLUMN = 39,
-  FOURTH_ROOM_THIRD_PILLAR_END_COLUMN = 38,
-  FIFTH_ROOM_PILLAR_END_COLUMN = 17
+  NUT_CHEST_PILLAR_END_COLUMN = 4,
+  GREAT_FACE_ROOMS_PILLAR_END_COLUMN = 32,
+  FACE_HALVES_PILLAR_END_COLUMN = 2,
+  FACE_HALVES_SECOND_PILLAR_END_COLUMN = 39,
+  FACE_HALVES_THIRD_PILLAR_END_COLUMN = 38,
+  CRYSTAL_POWDER_PILLAR_END_COLUMN = 17
 };
 
-/// The row past the first room's ledge: a stone face pushed into it falls.
+/// The row below the stone faces' ledge: a face pushed into it falls.
 #define STONE_FACE_DROP_ROW 31
 
-/// The cell of the fifth room's gap the half face drops into.
+/// The cell of the Crystal Powder's rooms' gap the half face drops into.
 #define GAP_COLUMN 26
 #define GAP_ROW 35
 
-/// The Thanatos Mace room's entrances up the stairs from its south hall, east
-/// and west, into the hall of its face half.
+/// The Thanatos Mace's rooms' entrances up the stairs from their south hall,
+/// east and west, into the hall of the face half.
 enum {
   THANATOS_FACE_HALL_FROM_EAST_STAIRS = 15,
   THANATOS_FACE_HALL_FROM_WEST_STAIRS = 17
 };
 
-/// The face halves room's first entrance into the hall of the halves, where its
-/// sand flows; the hall's entrances are numbered on from it.
+/// The face halves' rooms' first entrance into the hall of the halves, where
+/// the sand flows; the hall's entrances are numbered on from it.
 #define FACE_HALVES_HALL_FIRST_ENTRANCE                                        \
   ANKOHL_RUINS_FACE_HALVES_FROM_ANKOHL_RUINS_THANATOS_MACE_CHEST_WEST
 
@@ -120,10 +154,11 @@ enum {
 /// tiles of colour 1.
 #define SAND_MASK_BYTES (4 * TILE_SIZE_4BPP)
 
-/// The first room (gAnkohlRuins_StoneFacesPlacements).
-enum AnkohlRuinsFirstRoomActorId {
-  ACTOR_FIRST_ROOM_PILLAR = ACTOR_FIRST_PLACED,
-  /// The seven stone faces.
+/// The halls of the stone faces (gAnkohlRuins_StoneFacesPlacements).
+enum AnkohlRuinsStoneFacesActorId {
+  /// The pillar beside the Nut's chest, in the room behind the westmost face.
+  ACTOR_NUT_CHEST_PILLAR = ACTOR_FIRST_PLACED,
+  /// The seven stone faces in the north wall, west to east.
   ///@{
   ACTOR_STONE_FACE_A = ACTOR_FIRST_PLACED + 2,
   ACTOR_STONE_FACE_B,
@@ -137,24 +172,24 @@ enum AnkohlRuinsFirstRoomActorId {
   ///@}
   /// The fourteen clumps of weeds.
   ///@{
-  ACTOR_FIRST_ROOM_WEEDS_A,
-  ACTOR_FIRST_ROOM_WEEDS_B,
-  ACTOR_FIRST_ROOM_WEEDS_C,
-  ACTOR_FIRST_ROOM_WEEDS_D,
-  ACTOR_FIRST_ROOM_WEEDS_E,
-  ACTOR_FIRST_ROOM_WEEDS_F,
-  ACTOR_FIRST_ROOM_WEEDS_G,
-  ACTOR_FIRST_ROOM_WEEDS_H,
-  ACTOR_FIRST_ROOM_WEEDS_I,
-  ACTOR_FIRST_ROOM_WEEDS_J,
-  ACTOR_FIRST_ROOM_WEEDS_K,
-  ACTOR_FIRST_ROOM_WEEDS_L,
-  ACTOR_FIRST_ROOM_WEEDS_M,
-  ACTOR_FIRST_ROOM_WEEDS_N,
+  ACTOR_STONE_FACES_WEEDS_A,
+  ACTOR_STONE_FACES_WEEDS_B,
+  ACTOR_STONE_FACES_WEEDS_C,
+  ACTOR_STONE_FACES_WEEDS_D,
+  ACTOR_STONE_FACES_WEEDS_E,
+  ACTOR_STONE_FACES_WEEDS_F,
+  ACTOR_STONE_FACES_WEEDS_G,
+  ACTOR_STONE_FACES_WEEDS_H,
+  ACTOR_STONE_FACES_WEEDS_I,
+  ACTOR_STONE_FACES_WEEDS_J,
+  ACTOR_STONE_FACES_WEEDS_K,
+  ACTOR_STONE_FACES_WEEDS_L,
+  ACTOR_STONE_FACES_WEEDS_M,
+  ACTOR_STONE_FACES_WEEDS_N,
   ///@}
 };
 
-/// The Thanatos Mace chest's room (gAnkohlRuins_ThanatosMaceChestPlacements).
+/// The Thanatos Mace's rooms (gAnkohlRuins_ThanatosMaceChestPlacements).
 enum AnkohlRuinsThanatosMaceChestActorId {
   /// The left half of a stone face, pushed into place.
   ACTOR_THANATOS_FACE_HALF = ACTOR_FIRST_PLACED,
@@ -166,51 +201,53 @@ enum AnkohlRuinsThanatosMaceChestActorId {
   ///@}
 };
 
-/// The third room (gAnkohlRuins_GreatFacePlacements).
-enum AnkohlRuinsThirdRoomActorId {
-  ACTOR_THIRD_ROOM_PILLAR = ACTOR_FIRST_PLACED,
-  /// The great stone face the party rides down the sand.
+/// The great face's rooms (gAnkohlRuins_GreatFacePlacements).
+enum AnkohlRuinsGreatFaceActorId {
+  ACTOR_GREAT_FACE_ROOMS_PILLAR = ACTOR_FIRST_PLACED,
+  /// The great stone face, which slides down its corridor once its right half
+  /// is in place.
   ACTOR_GREAT_FACE,
-  /// The half face Move pushes beside it.
+  /// Its right half, which Move pushes against it.
   ACTOR_GREAT_FACE_HALF
 };
 
-/// The fourth room (gAnkohlRuins_FaceHalvesPlacements).
-enum AnkohlRuinsFourthRoomActorId {
-  ACTOR_FOURTH_ROOM_PILLAR = ACTOR_FIRST_PLACED,
-  /// The two halves of a stone face.
+/// The face halves' rooms (gAnkohlRuins_FaceHalvesPlacements).
+enum AnkohlRuinsFaceHalvesActorId {
+  ACTOR_FACE_HALVES_PILLAR = ACTOR_FIRST_PLACED,
+  /// The two halves of a stone face: the left one stands in the room, the
+  /// right one falls in through the Crystal Powder's rooms' gap.
   ///@{
   ACTOR_LEFT_FACE_HALF,
   ACTOR_RIGHT_FACE_HALF,
   ///@}
   /// Its seven clumps of weeds.
   ///@{
-  ACTOR_FOURTH_ROOM_WEEDS_A,
-  ACTOR_FOURTH_ROOM_WEEDS_B,
-  ACTOR_FOURTH_ROOM_WEEDS_C,
-  ACTOR_FOURTH_ROOM_WEEDS_D,
-  ACTOR_FOURTH_ROOM_WEEDS_E,
-  ACTOR_FOURTH_ROOM_WEEDS_F,
-  ACTOR_FOURTH_ROOM_WEEDS_G,
+  ACTOR_FACE_HALVES_WEEDS_A,
+  ACTOR_FACE_HALVES_WEEDS_B,
+  ACTOR_FACE_HALVES_WEEDS_C,
+  ACTOR_FACE_HALVES_WEEDS_D,
+  ACTOR_FACE_HALVES_WEEDS_E,
+  ACTOR_FACE_HALVES_WEEDS_F,
+  ACTOR_FACE_HALVES_WEEDS_G,
   ///@}
-  ACTOR_FOURTH_ROOM_SECOND_PILLAR,
-  ACTOR_FOURTH_ROOM_THIRD_PILLAR
+  ACTOR_FACE_HALVES_SECOND_PILLAR,
+  ACTOR_FACE_HALVES_THIRD_PILLAR
 };
 
-/// The fifth room (gAnkohlRuins_CrystalPowderChestPlacements).
-enum AnkohlRuinsFifthRoomActorId {
-  ACTOR_FIFTH_ROOM_PILLAR = ACTOR_FIRST_PLACED,
+/// The Crystal Powder's rooms (gAnkohlRuins_CrystalPowderChestPlacements).
+enum AnkohlRuinsCrystalPowderChestActorId {
+  ACTOR_CRYSTAL_POWDER_PILLAR = ACTOR_FIRST_PLACED,
   /// The half face pushed into the gap Reveal shows.
   ACTOR_FACE_HALF_FOR_THE_GAP
 };
 
-/// The Left Prong's chest, raised out of the sand.
+/// The Left Prong, lying on the top of the ruins.
 #define ACTOR_LEFT_PRONG_CHEST 64
 
 void AnkohlRuins_SettleObject(s32 id, s32 cue);
 void AnkohlRuins_RaiseFirstSand(void);
 void AnkohlRuins_RaiseSecondSand(void);
-void AnkohlRuins_RideRaftDown(void);
+void AnkohlRuins_SlideGreatFace(void);
 
 /// Whether the game flag is set.
 static inline s32 AnkohlRuins_FlagCheck(s32 flag) { return GameFlag_Get(flag); }
@@ -300,8 +337,10 @@ static __inline__ void AnkohlRuins_JumpActorDownLedge(s32 id, s32 pose,
   Actor_JumpDownLedge(id, pose, param);
 }
 
-/// The leader jumps down the ledge and falls to the room below, arriving
-/// falling.
+/// Felix walks south into the pit in the middle of a small room of the Crystal
+/// Powder's rooms and jumps down it; the screen fades and he drops into the
+/// face halves' rooms beside the left half of the stone face, landing in a
+/// ring of dust (AnkohlRuins_LandFromFall).
 void AnkohlRuins_JumpDownLedge(void) {
   FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
   AnkohlRuins_JumpActorDownLedge(gMainRoutineWork.leaderActorId,
@@ -322,8 +361,8 @@ void AnkohlRuins_JumpDownLedge(void) {
 
 #if TLA_PATCH_1
 
-/// From patch 1: the leader drops in from above, lands in a ring of dust and
-/// shakes the ground.
+/// Felix drops into the face halves' rooms from the pit above, lands sitting
+/// in a ring of dust and shakes the ground, then stands up. From patch 1.
 void AnkohlRuins_LandFromFall(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct EffectOptions options;
@@ -423,45 +462,48 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gAnkohlRuins_Placements;
 }
 
-/// Sand takes the leader into the sand layer.
+/// Felix sinks into the ground with Sand and moves on the sand layer, under
+/// the ruins' blocks and pillars.
 void AnkohlRuins_SinkIntoSand(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->layer = 2;
 }
 
-/// Sand ends: the leader is back on the ground layer.
+/// Felix comes up out of the Sand and walks on the ground again.
 void AnkohlRuins_RiseFromSand(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->layer = 0;
 }
 
-/// Before Move: opens the cells under the pillar about to move in the rooms
-/// that have one (the first, third, fourth and fifth); in the fifth, the half
-/// face for the gap also copies the rows the gap opens (from patch 1, only
-/// while Reveal is shown).
+/// Nothing visible happens as Felix starts to cast Move on one of the ruins'
+/// pillars; the game rewrites the floor cells around the pillar for the push.
+/// It rewrites the cells beside the pillar by the Nut's chest, the great face's
+/// rooms' pillar, the face halves' rooms' three and the Crystal Powder's rooms'
+/// one. For the half face beside the Crystal Powder's rooms' gap it copies in
+/// the gap's cells, from patch 1 only while Reveal shows the gap.
 void AnkohlRuins_StartMovingPillar(s32 unused, s32 id) {
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_STONE_FACES) {
-    if (id == ACTOR_FIRST_ROOM_PILLAR) {
+    if (id == ACTOR_NUT_CHEST_PILLAR) {
       MapGrid_CopyCellAttributes(4, 68, 1, 1, 4, 69);
       MapGrid_CopyCellAttributes(3, 68, 1, 1, 3, 70);
     }
   }
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_FACE_HALVES) {
-    if (id == ACTOR_FOURTH_ROOM_THIRD_PILLAR) {
+    if (id == ACTOR_FACE_HALVES_THIRD_PILLAR) {
       MapGrid_CopyCellAttributes(35, 72, 1, 1, 38, 72);
       MapGrid_CopyCellAttributes(36, 72, 1, 1, 37, 73);
     }
-    if (id == ACTOR_FOURTH_ROOM_PILLAR)
+    if (id == ACTOR_FACE_HALVES_PILLAR)
       MapGrid_CopyCellAttributes(2, 113, 1, 1, 3, 113);
-    if (id == ACTOR_FOURTH_ROOM_SECOND_PILLAR)
+    if (id == ACTOR_FACE_HALVES_SECOND_PILLAR)
       MapGrid_CopyCellAttributes(39, 93, 1, 1, 40, 93);
   }
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_GREAT_FACE) {
-    if (id == ACTOR_THIRD_ROOM_PILLAR) {
+    if (id == ACTOR_GREAT_FACE_ROOMS_PILLAR) {
       MapGrid_CopyCellAttributes(32, 69, 1, 1, 32, 70);
       MapGrid_CopyCellAttributes(33, 69, 1, 1, 33, 71);
     }
   }
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST) {
-    if (id == ACTOR_FIFTH_ROOM_PILLAR) {
+    if (id == ACTOR_CRYSTAL_POWDER_PILLAR) {
       MapGrid_CopyCellAttributes(17, 85, 1, 1, 17, 83);
       MapGrid_CopyCellAttributes(19, 84, 1, 1, 18, 82);
       MapGrid_CopyCellAttributes(19, 84, 1, 1, 19, 83);
@@ -476,65 +518,68 @@ void AnkohlRuins_StartMovingPillar(s32 unused, s32 id) {
   }
 }
 
-/// Copies the cells the object with the given id has pushed open in rooms 1,
-/// 3, 4 and 5, and sets flags FLAG_FIRST_ROOM_PILLAR_MOVED to
-/// FLAG_FIFTH_ROOM_PILLAR_MOVED when it stands at the end of its track.
+/// Felix pushes one of the ruins' pillars a cell along with Move, and pushed to
+/// the end of its short track it stays there for good: the one beside the
+/// Nut's chest slides east into its groove.
+/// The game fixes the cells the pillar has left and entered, and at the
+/// track's end sets the pillar's flag, so that the set-up puts it there again.
 void AnkohlRuins_FinishMovingPillar(s32 unused, s32 id) {
   struct Actor *actor = Actor_Get(id);
 
-  if (id == ACTOR_FIRST_ROOM_PILLAR &&
+  if (id == ACTOR_NUT_CHEST_PILLAR &&
       gMainRoutineWork.next == SCENE_ANKOHL_RUINS_STONE_FACES) {
-    if (FIELD_CELL(actor->x.fixed) == FIRST_ROOM_PILLAR_END_COLUMN) {
+    if (FIELD_CELL(actor->x.fixed) == NUT_CHEST_PILLAR_END_COLUMN) {
       MapGrid_CopyCellAttributes(4, 68, 1, 1, 2, 69);
-      Event_SetFlag(FLAG_FIRST_ROOM_PILLAR_MOVED);
+      Event_SetFlag(FLAG_NUT_CHEST_PILLAR_MOVED);
     }
     MapGrid_CopyCellAttributes(3, 68, 1, 1, 4, 69);
     MapGrid_CopyCellAttributes(3, 69, 1, 1, 3, 70);
   }
-  if (id == ACTOR_THIRD_ROOM_PILLAR &&
+  if (id == ACTOR_GREAT_FACE_ROOMS_PILLAR &&
       gMainRoutineWork.next == SCENE_ANKOHL_RUINS_GREAT_FACE) {
     MapGrid_CopyCellAttributes(32, 71, 1, 1, 33, 71);
     MapGrid_CopyCellAttributes(31, 70, 1, 1, 32, 70);
-    if (FIELD_CELL(actor->x.fixed) == THIRD_ROOM_PILLAR_END_COLUMN) {
+    if (FIELD_CELL(actor->x.fixed) == GREAT_FACE_ROOMS_PILLAR_END_COLUMN) {
       MapGrid_CopyCellAttributes(32, 69, 1, 1, 33, 69);
-      Event_SetFlag(FLAG_THIRD_ROOM_PILLAR_MOVED);
+      Event_SetFlag(FLAG_GREAT_FACE_ROOMS_PILLAR_MOVED);
     }
   }
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_FACE_HALVES) {
-    if (id == ACTOR_FOURTH_ROOM_PILLAR) {
+    if (id == ACTOR_FACE_HALVES_PILLAR) {
       MapGrid_CopyCellAttributes(3, 114, 1, 1, 3, 113);
-      if (FIELD_CELL(actor->x.fixed) == FOURTH_ROOM_PILLAR_END_COLUMN)
-        Event_SetFlag(FLAG_FOURTH_ROOM_PILLAR_MOVED);
+      if (FIELD_CELL(actor->x.fixed) == FACE_HALVES_PILLAR_END_COLUMN)
+        Event_SetFlag(FLAG_FACE_HALVES_PILLAR_MOVED);
     }
-    if (id == ACTOR_FOURTH_ROOM_SECOND_PILLAR) {
+    if (id == ACTOR_FACE_HALVES_SECOND_PILLAR) {
       MapGrid_CopyCellAttributes(40, 94, 1, 1, 40, 93);
-      if (FIELD_CELL(actor->x.fixed) == FOURTH_ROOM_SECOND_PILLAR_END_COLUMN)
-        Event_SetFlag(FLAG_FOURTH_ROOM_SECOND_PILLAR_MOVED);
+      if (FIELD_CELL(actor->x.fixed) == FACE_HALVES_SECOND_PILLAR_END_COLUMN)
+        Event_SetFlag(FLAG_FACE_HALVES_SECOND_PILLAR_MOVED);
     }
-    if (id == ACTOR_FOURTH_ROOM_THIRD_PILLAR) {
+    if (id == ACTOR_FACE_HALVES_THIRD_PILLAR) {
       MapGrid_CopyCellAttributes(36, 72, 1, 1, 38, 72);
       MapGrid_CopyCellAttributes(37, 74, 1, 1, 37, 73);
-      if (FIELD_CELL(actor->x.fixed) == FOURTH_ROOM_THIRD_PILLAR_END_COLUMN) {
+      if (FIELD_CELL(actor->x.fixed) == FACE_HALVES_THIRD_PILLAR_END_COLUMN) {
         MapGrid_CopyCellAttributes(37, 70, 1, 1, 37, 71);
-        Event_SetFlag(FLAG_FOURTH_ROOM_THIRD_PILLAR_MOVED);
+        Event_SetFlag(FLAG_FACE_HALVES_THIRD_PILLAR_MOVED);
       }
     }
   }
-  if (id == ACTOR_FIFTH_ROOM_PILLAR &&
+  if (id == ACTOR_CRYSTAL_POWDER_PILLAR &&
       gMainRoutineWork.next == SCENE_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST) {
     MapGrid_CopyCellAttributes(16, 83, 1, 1, 17, 83);
     MapGrid_CopyCellAttributes(19, 82, 1, 1, 18, 82);
     MapGrid_CopyCellAttributes(19, 82, 1, 1, 19, 83);
-    if (FIELD_CELL(actor->x.fixed) == FIFTH_ROOM_PILLAR_END_COLUMN) {
+    if (FIELD_CELL(actor->x.fixed) == CRYSTAL_POWDER_PILLAR_END_COLUMN) {
       MapGrid_CopyCellAttributes(16, 84, 1, 1, 18, 84);
-      Event_SetFlag(FLAG_FIFTH_ROOM_PILLAR_MOVED);
+      Event_SetFlag(FLAG_CRYSTAL_POWDER_PILLAR_MOVED);
     }
   }
 }
 
-/// Move on a stone face: pushed past the ledge (STONE_FACE_DROP_ROW) it falls
-/// and is gone, its flag set.
-void AnkohlRuins_DropPillar(s32 unused, s32 objectId) {
+/// Felix pushes one of the seven stone faces in the north wall of the halls of
+/// the stone faces south off its ledge with Move; it falls with a puff of dust
+/// and is gone for good, leaving open the doorway it stood in front of.
+void AnkohlRuins_PushStoneFaceOffLedge(s32 unused, s32 objectId) {
   s32 id = objectId;
   struct Actor *actor = Actor_Get(id);
   s16 frames = 60;
@@ -567,9 +612,10 @@ void AnkohlRuins_DropPillar(s32 unused, s32 objectId) {
   }
 }
 
-/// An actor falls and settles: it follows the ground and falls for at most 60
-/// frames, until it stops, the cue sounds, if any, and ten frames later it
-/// stands still again; Gaia Rock's GaiaRock_DropPillar is the same routine.
+/// A pushed half face, or Felix, falls to the ground below and lands, the cue
+/// sounding if there is one: it falls for at most a second, and ten frames
+/// after it lands it stands still again. Gaia Rock's GaiaRock_DropPillar is
+/// the same routine.
 void AnkohlRuins_SettleObject(s32 id, s32 cue) {
   s32 frames = 60;
   struct Actor *actor = Actor_Get(id);
@@ -587,8 +633,8 @@ void AnkohlRuins_SettleObject(s32 id, s32 cue) {
   actor->motionFlags = 0;
 }
 
-/// Pours sand: `rows` rows of `count` grains a cell apart, each row two pixels
-/// further south, `frames` apart.
+/// Sand pours down from above: `rows` rows of `count` grains a cell apart,
+/// each row two pixels further south, `frames` apart.
 void AnkohlRuins_PourSand(s32 rows, s32 frames, s32 x, s32 y, s32 startZ,
                           s32 count) {
   struct EffectOptions params;
@@ -624,12 +670,13 @@ void AnkohlRuins_PourSand(s32 rows, s32 frames, s32 x, s32 y, s32 startZ,
   }
 }
 
-/// When the two face halves stand on cells (12, 45) and (14, 45),
-/// each sets its flag (FLAG_LEFT_FACE_HALF_PLACED,
-/// FLAG_RIGHT_FACE_HALF_PLACED); once both are set, shakes the screen, copies
-/// the cells of rows 2 to 6 and 13 in two columns and has AnkohlRuins_PourSand
-/// pour sand between them, as AnkohlRuins_PlaceThanatosFaceHalf does for the
-/// Thanatos Mace room's half.
+/// Felix pushes a half of the stone face in the face halves' rooms with Move,
+/// and once it reaches its place, the left half at cell (12, 45) and the
+/// right half beside it at (14, 45), it settles with a boom. When both halves
+/// are in place the ground shakes, the camera looks at the face, and sand
+/// pours down below it, row by row, into a slope.
+/// The slope is the face's cells copied in from beside the room, a row at a
+/// time, as in AnkohlRuins_PlaceThanatosFaceHalf.
 void AnkohlRuins_PlaceFaceHalves(s32 unused, s32 id) {
   struct Actor *actor = Actor_GetById(id);
   s32 column = FIELD_CELL(actor->x.fixed);
@@ -685,9 +732,11 @@ void AnkohlRuins_PlaceFaceHalves(s32 unused, s32 id) {
   Event_End();
 }
 
-/// When the Thanatos Mace room's face half stands on cell (12, 5): sets flag
-/// FLAG_THANATOS_FACE_HALF_PLACED, shakes the screen, and sand pours down from
-/// it row by row (AnkohlRuins_PourSand) as its cells are copied in.
+/// Felix pushes the left half of the stone face in the back room of the
+/// Thanatos Mace's rooms east with Move, and when it meets the right half in
+/// the wall, at cell (12, 5), it settles with a boom: the ground shakes, the
+/// camera looks at the face, and sand pours down from it, row by row, and
+/// fills the hall below it.
 void AnkohlRuins_PlaceThanatosFaceHalf(s32 unused, s32 id) {
   struct Actor *pillar = Actor_GetById(id);
   s32 column = FIELD_CELL(pillar->x.fixed);
@@ -727,8 +776,11 @@ void AnkohlRuins_PlaceThanatosFaceHalf(s32 unused, s32 id) {
   Event_End();
 }
 
-/// Move on the great face's half to cell (15, 24): it settles, the great face's
-/// eyes glow, and the face can be ridden down the sand.
+/// Felix pushes the right half of the great stone face west with Move, and when
+/// it meets the face, at cell (15, 24), it sinks into place with a thump, the
+/// face is whole, and its eyes glow green.
+/// Now stepping into the face's corridor sets it sliding
+/// (AnkohlRuins_StartGreatFaceSliding).
 void AnkohlRuins_PlaceGreatFaceHalf(s32 unused, s32 id) {
   struct Actor *actor = Actor_GetById(id);
   s32 x = FIELD_CELL(actor->x.fixed);
@@ -756,9 +808,12 @@ void AnkohlRuins_PlaceGreatFaceHalf(s32 unused, s32 id) {
 
 extern struct MapCell gMapGridCellBuffer[];
 
-/// Each frame on flowing sand: the leader and the camera drift south half a
-/// pixel, and where the way south ends he is carried off the ledge
-/// (TRIGGER_PUSHED_OFF_LEDGE).
+/// Felix, standing on the sand that flows down the face halves' rooms' slide
+/// or the Crystal Powder's rooms' sand, drifts south with it, and where it
+/// runs over a drop it carries him off (AnkohlRuins_CarriedOffLedge).
+/// It runs every frame from the room's set-up, and moves him and the camera
+/// half a pixel south on cells marked MAP_CELL_FLOWING_SAND, unless he is
+/// under the Sand.
 void AnkohlRuins_FlowWithSand(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct FieldWork *work = (struct FieldWork *)Ram_HeapSlots->fieldWork;
@@ -791,13 +846,15 @@ void AnkohlRuins_FlowWithSand(void) {
   position[1] = leader->y.fixed;
   position[2] = leader->z.fixed + toFIXED(8);
   if (MapGrid_CheckCollision(leader, position) < 0)
-    work->stepTrigger = TRIGGER_PUSHED_OFF_LEDGE;
+    work->stepTrigger = TRIGGER_CARRIED_OFF_LEDGE;
   leader->z.fixed += toFIXED(1) / 2;
   companion->z.fixed += toFIXED(1) / 2;
 }
 
-/// The leader, pushed off a ledge, slips forward, is startled and falls.
-void AnkohlRuins_PushedOffLedge(void) {
+/// Felix, carried by the flowing sand to the edge of a drop in the Crystal
+/// Powder's rooms, slides over it, starts with a "!" and falls to the floor
+/// below with a thump.
+void AnkohlRuins_CarriedOffLedge(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
 
   Event_Start();
@@ -819,9 +876,12 @@ void AnkohlRuins_PushedOffLedge(void) {
   Event_End();
 }
 
-/// After a push: the fourth room's face halves go to
-/// AnkohlRuins_PlaceFaceHalves, everything else to
-/// AnkohlRuins_FinishMovingPillar.
+/// Felix pushes a face half or a pillar in the face halves' rooms by walking
+/// into it, as Move does; the halves go on as AnkohlRuins_PlaceFaceHalves and
+/// the pillars as AnkohlRuins_FinishMovingPillar.
+// XXX: whether walking into a half or a pillar here moves it at all, or the
+// row only finishes a push Move began; a render of Felix walking into the left
+// half would settle it.
 void AnkohlRuins_FinishPushing(s32 a, s32 id) {
   if (id == ACTOR_LEFT_FACE_HALF || id == ACTOR_RIGHT_FACE_HALF)
     AnkohlRuins_PlaceFaceHalves(a, id);
@@ -829,21 +889,27 @@ void AnkohlRuins_FinishPushing(s32 a, s32 id) {
     AnkohlRuins_FinishMovingPillar(a, id);
 }
 
-/// Whirlwind ("Conjure wind to scatter weeds.") on a clump of weeds: its room's
-/// flag for that clump is set.
+/// Felix casts Whirlwind ("Conjure wind to scatter weeds.") on a clump of weeds
+/// in the halls of the stone faces, the Thanatos Mace's rooms or the face
+/// halves' rooms: the leaves blow away and the clump is gone for good. Most
+/// hide nothing; a few hide the way on, such as the one in the middle of the
+/// entrance hall and the one at the upper left of the halls, over a stairway.
+/// Whirlwind itself blows the clump away; this only sets its flag, so that
+/// the set-up leaves it out next time.
 void AnkohlRuins_ScatterWeeds(s32 a, s32 id) {
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_STONE_FACES)
-    Event_SetFlag(FLAG_FIRST_ROOM_WEEDS_SCATTERED(id));
+    Event_SetFlag(FLAG_STONE_FACES_WEEDS_SCATTERED(id));
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_THANATOS_MACE_CHEST)
     Event_SetFlag(FLAG_THANATOS_WEEDS_SCATTERED(id));
   if (gMainRoutineWork.next == SCENE_ANKOHL_RUINS_FACE_HALVES)
-    Event_SetFlag(FLAG_FOURTH_ROOM_WEEDS_SCATTERED(id));
+    Event_SetFlag(FLAG_FACE_HALVES_WEEDS_SCATTERED(id));
 }
 
-/// Each frame, while Reveal is not shown and the sand is
-/// less than 32 pixels deep, places the eight sprites of the sand's window,
-/// each moved by the level as its kind says, and raises map layer 1, the sand,
-/// by the level over its base.
+/// The rising sand of the sand rooms, drawn each frame: the sand's picture is
+/// raised to its level, and its edges against the ledges are trimmed.
+/// Until the sand is 32 pixels deep, and while Reveal is not up, eight sprites
+/// drawn into the object window mask its edge, each moved by the level as its
+/// kind says; map layer 1, the sand, is scrolled by the level over its base.
 void AnkohlRuins_DrawSand(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   s32 *view = &map->viewX;
@@ -920,8 +986,9 @@ void AnkohlRuins_DrawSand(void) {
   }
 }
 
-/// Sets up the sand rooms' rising sand: its tile in VRAM, the window, the
-/// drawing task, and the falling sand's sprites by the entrance.
+/// Sets up the sand rooms' rising sand on entering one: the tile of the masks
+/// that trim its edge, the window they draw into, the task that draws it, and
+/// the masks for the room the entrance leads into.
 void AnkohlRuins_InitSand(s32 unused) {
   struct AnkohlRuinsSpriteWork *work = &gAnkohlRuins_Sand;
   u32 *tiles = Heap_Alloc(SAND_MASK_BYTES);
@@ -1003,8 +1070,9 @@ void AnkohlRuins_InitSand(s32 unused) {
   }
 }
 
-/// Counts the frames to the sand's next rise; when they run out, the room's
-/// sand rises again (TRIGGER_RAISE_FIRST_SAND or TRIGGER_RAISE_SECOND_SAND).
+/// Counts the time to the sand's next rise after the switch; when it runs out,
+/// the room's sand rises again (TRIGGER_RAISE_FIRST_SAND or
+/// TRIGGER_RAISE_SECOND_SAND).
 void AnkohlRuins_CountSandTime(void) {
   struct FieldWork *work = (struct FieldWork *)Ram_HeapSlots->fieldWork;
 
@@ -1021,8 +1089,12 @@ void AnkohlRuins_CountSandTime(void) {
 
 extern struct AnkohlRuinsSandRow gAnkohlRuins_FirstSandRows[];
 
-/// The first sand room's sand rises a step in sixteen moves, lifting the leader
-/// standing on it, and its cells follow the new level.
+/// The sand in the first sand room rises a step as the ground shakes and the
+/// great stone face in the north wall pours, lifting Felix if he stands on it,
+/// until the room is full and the door button on the far ledge can be reached.
+/// A step takes SAND_RISE_MOVES moves; after it the room's cells, read from
+/// gAnkohlRuins_FirstSandRows, follow the new level, and while the sand is
+/// below 32 pixels the next rise is timed (AnkohlRuins_CountSandTime).
 void AnkohlRuins_RaiseFirstSand(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct MapWork *map = (struct MapWork *)Ram_HeapSlots->mapGrid;
@@ -1105,8 +1177,8 @@ void AnkohlRuins_RaiseFirstSand(void) {
 
 extern struct AnkohlRuinsSandRow gAnkohlRuins_SecondSandRows[];
 
-/// The second sand room's sand rises a step in sixteen moves, lifting the
-/// leader standing on it, and its cells follow the new level.
+/// The sand in the second sand room rises a step, as in the first
+/// (AnkohlRuins_RaiseFirstSand), the shaking harder.
 void AnkohlRuins_RaiseSecondSand(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct MapWork *map = (struct MapWork *)Ram_HeapSlots->mapGrid;
@@ -1189,8 +1261,10 @@ void AnkohlRuins_RaiseSecondSand(void) {
     MapGrid_CopyCellAttributes(18, 7, 1, 1, 4, 23);
 }
 
-/// The first sand room's switch: the sand rises a step, and slowly another
-/// and another until the room is full.
+/// Felix steps onto the grey switch on the west ledge of the first sand room
+/// (cell (1, 7)): the great stone face in the north wall opens its mouth and
+/// pours sand, which rises a step, then slowly another and another until the
+/// room is full. Saving is barred while it rises.
 void AnkohlRuins_PressFirstSandSwitch(void) {
   s32 done = AnkohlRuins_FlagCheck(FLAG_FIRST_SAND_SWITCH_PRESSED);
 
@@ -1213,8 +1287,9 @@ void AnkohlRuins_PressFirstSandSwitch(void) {
   }
 }
 
-/// Defines a sand door's opening: once, under flag n1, a button sounds and the
-/// door at (n2, n3) slides open, its cell taking (n4, n5)'s attributes.
+/// Defines a sand room's door button: the first time it is stepped on, under
+/// flag n1, it clicks and the door at cell (n2, n3) slides open with a boom,
+/// its cell taking (n4, n5)'s attributes.
 #define DEFINE_ANKOHL_RUINS_OPEN_ONCE(name, n1, n2, n3, n4, n5)                \
   void name(void) {                                                            \
     if (AnkohlRuins_FlagCheck(n1) == 0) {                                      \
@@ -1231,12 +1306,15 @@ void AnkohlRuins_PressFirstSandSwitch(void) {
     }                                                                          \
   }
 
-/// Stepping on the first sand room's door button opens its door.
+/// Felix, carried up by the sand to the east ledge of the first sand room,
+/// steps on its button (cell (18, 8)) and the door in the north-east wall
+/// slides open.
 DEFINE_ANKOHL_RUINS_OPEN_ONCE(AnkohlRuins_OpenFirstSandDoor,
                               FLAG_FIRST_SAND_DOOR_OPENED, 14, 65, 15, 5)
 
-/// The second sand room's switch: the sand rises a step, and faster than the
-/// first room's another and another until the room is full.
+/// Felix steps onto the grey switch on the east ledge of the second sand room
+/// (cell (12, 25)): the great stone face in the north wall pours sand, which
+/// rises as in the first sand room but faster.
 void AnkohlRuins_PressSecondSandSwitch(void) {
   s32 done = AnkohlRuins_FlagCheck(FLAG_SECOND_SAND_SWITCH_PRESSED);
 
@@ -1259,42 +1337,51 @@ void AnkohlRuins_PressSecondSandSwitch(void) {
   }
 }
 
-/// Stepping on the second sand room's door button opens its door.
+/// Felix steps on the second sand room's door button and the door in its
+/// north-west wall slides open.
+// XXX: the button's cell, behaviour 43, is (18, 7) in the map, beside the first
+// sand room's; where the player finds it in the second room, and whether the
+// map's rows there are raised by the sand's height, a render of Felix on the
+// full second room's ledge would settle.
 DEFINE_ANKOHL_RUINS_OPEN_ONCE(AnkohlRuins_OpenSecondSandDoor,
                               FLAG_SECOND_SAND_DOOR_OPENED, 2, 83, 1, 23)
 
-/// Each frame, moves the raft (the great face) four fifths of a pixel down the
-/// sand and carries the leader and the camera's actor with it while the leader
-/// stands on it; shifts the cells under it in rows 31 to 37
-/// (setting FLAG_SAND_CANNOT_END meanwhile), and past row 41 removes itself,
-/// stops the shaking, opens the landing and sets FLAG_SCENE_TEMP_01.
-void AnkohlRuins_RideRaftDown(void) {
-  struct Actor *rider = gFieldWork->camera;
-  struct Actor *raft = Actor_GetById(ACTOR_GREAT_FACE);
+/// The great stone face slides south down its corridor, shoving Felix ahead
+/// of it if he stands in its way and carrying him along if he stands right
+/// behind it, unless he is under the Sand; it stops at the corridor's foot.
+/// It moves four fifths of a pixel a frame. While it passes the sand patch
+/// midway, rows 31 to 36, Sand cannot end (FLAG_SAND_CANNOT_END). Past row 41
+/// it stops, the shaking dies away with a sound, the cells at the corridor's
+/// foot change and FLAG_SCENE_TEMP_01 keeps them so for this visit.
+// XXX: what the cells it leaves at the corridor's foot let Felix do; a render
+// after the slide would settle it.
+void AnkohlRuins_SlideGreatFace(void) {
+  struct Actor *camera = gFieldWork->camera;
+  struct Actor *face = Actor_GetById(ACTOR_GREAT_FACE);
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct FieldWork *work = (struct FieldWork *)Ram_HeapSlots->fieldWork;
   s32 column;
   s32 row;
 
   if (GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS) &&
-      work->stepTrigger != TRIGGER_BOARD_GREAT_FACE)
+      work->stepTrigger != CELL_BEHAVIOR_GREAT_FACE_CORRIDOR_FOOT)
     return;
-  raft->z.fixed += toFIXED(4) / 5;
+  face->z.fixed += toFIXED(4) / 5;
   column = FIELD_CELL(leader->x.fixed);
   if (gMainRoutineWork.movementMode != LEADER_MOVEMENT_SAND && column > 12 &&
       column <= 15) {
-    if (raft->z.fixed + toFIXED(24) >= leader->z.fixed &&
-        leader->z.fixed >= raft->z.fixed) {
-      leader->z.fixed = raft->z.fixed + toFIXED(24);
-      rider->z.fixed = raft->z.fixed + toFIXED(24);
+    if (face->z.fixed + toFIXED(24) >= leader->z.fixed &&
+        leader->z.fixed >= face->z.fixed) {
+      leader->z.fixed = face->z.fixed + toFIXED(24);
+      camera->z.fixed = face->z.fixed + toFIXED(24);
     }
-    if (raft->z.fixed >= leader->z.fixed &&
-        leader->z.fixed >= raft->z.fixed - toFIXED(16)) {
-      leader->z.fixed = raft->z.fixed - toFIXED(16);
-      rider->z.fixed = raft->z.fixed - toFIXED(16);
+    if (face->z.fixed >= leader->z.fixed &&
+        leader->z.fixed >= face->z.fixed - toFIXED(16)) {
+      leader->z.fixed = face->z.fixed - toFIXED(16);
+      camera->z.fixed = face->z.fixed - toFIXED(16);
     }
   }
-  row = FIELD_CELL(raft->z.fixed);
+  row = FIELD_CELL(face->z.fixed);
   if ((u16)(row - 31) <= 4 && !AnkohlRuins_FlagCheck(FLAG_SAND_CANNOT_END)) {
     MapGrid_CopyCellAttributes(35, 83, 5, 4, 12, 96);
     Event_SetFlag(FLAG_SAND_CANNOT_END);
@@ -1304,7 +1391,7 @@ void AnkohlRuins_RideRaftDown(void) {
     Event_ClearFlag(FLAG_SAND_CANNOT_END);
   }
   if (row > 41) {
-    FieldTask_Remove(AnkohlRuins_RideRaftDown);
+    FieldTask_Remove(AnkohlRuins_SlideGreatFace);
     MapGrid_SetShake(SHAKE_KEEP, SHAKE_KEEP, 0.9);
     MapGrid_CopyCellAttributes(41, 48, 3, 2, 13, 41);
     Event_SetFlag(FLAG_SCENE_TEMP_01);
@@ -1314,13 +1401,16 @@ void AnkohlRuins_RideRaftDown(void) {
   }
 }
 
-/// Stepping onto the great face, once its half is placed: the ground shakes and
-/// it starts down the sand with the party.
-void AnkohlRuins_BoardRaft(void) {
+/// Once the great face is whole, Felix stepping into the foot of its corridor
+/// (cells (13, 42) to (15, 42)) sets it moving: there is a rush, the ground
+/// shakes, the camera looks up the corridor at the face as it starts to slide
+/// down towards him, and then follows Felix again.
+/// Saving and battles are barred while it slides.
+void AnkohlRuins_StartGreatFaceSliding(void) {
   s32 z = FIELD_CELL(Actor_Get(ACTOR_GREAT_FACE)->z.fixed);
 
   if (Event_GetFlag(FLAG_GREAT_FACE_HALF_PLACED) != 0 && z == 24) {
-    s32 found = Task_Find(AnkohlRuins_RideRaftDown);
+    s32 found = Task_Find(AnkohlRuins_SlideGreatFace);
 
     if (found == -1) {
       Event_Start();
@@ -1330,7 +1420,7 @@ void AnkohlRuins_BoardRaft(void) {
       FieldEvent_Wait(10);
       FieldCamera_MoveTo(232, CAMERA_KEEP, 392, 1);
       FieldCamera_WaitForArrival();
-      Task_AddFrame(AnkohlRuins_RideRaftDown, TASK_PASS_FRAME);
+      Task_AddFrame(AnkohlRuins_SlideGreatFace, TASK_PASS_FRAME);
       FieldEvent_Wait(40);
       EventCamera_FollowActor(gMainRoutineWork.leaderActorId, 1);
       FieldCamera_WaitForArrival();
@@ -1343,12 +1433,14 @@ void AnkohlRuins_BoardRaft(void) {
   }
 }
 
-/// As AnkohlRuins_BoardRaft, without the camera's pan.
-void AnkohlRuins_BoardRaftAgain(void) {
+/// Once the great face is whole, Felix stepping right in front of it at the top
+/// of its corridor (cell (13, 26)) sets it sliding at once, the ground
+/// shaking, with no look up the corridor.
+void AnkohlRuins_StartGreatFaceSlidingUpClose(void) {
   s32 z = FIELD_CELL(Actor_Get(ACTOR_GREAT_FACE)->z.fixed);
 
   if (Event_GetFlag(FLAG_GREAT_FACE_HALF_PLACED) != 0 && z == 24) {
-    void (*func)(void) = AnkohlRuins_RideRaftDown;
+    void (*func)(void) = AnkohlRuins_SlideGreatFace;
 
     if (Task_Find(func) == -1) {
       MapGrid_SetShake(2, 2, 1);
@@ -1371,8 +1463,10 @@ extern struct Trigger gAnkohlRuins_CrystalPowderChestTriggers[];
 extern struct Trigger gAnkohlRuins_SandDoorsTriggers[];
 extern struct Trigger gAnkohlRuins_LeftProngTriggers[];
 
-/// Move on the fifth room's half face to cell (26, 35): it drops into the gap
-/// and the scene reloads.
+/// Felix pushes the half face in the room of brown and red blocks of the
+/// Crystal Powder's rooms into the gap Reveal shows (cell (26, 35)): it falls
+/// in, and the screen fades to the face halves' rooms below, where it drops
+/// in from above with a thump, then back to Felix.
 void AnkohlRuins_PushStatueIntoGap(void) {
   struct Actor *actor = Actor_Get(ACTOR_FACE_HALF_FOR_THE_GAP);
 
@@ -1391,7 +1485,8 @@ void AnkohlRuins_PushStatueIntoGap(void) {
 #endif
 }
 
-/// Reveal shows the fifth room's gap.
+/// Reveal in the Crystal Powder's rooms shows a gap in the floor of the room of
+/// brown and red blocks, beside the half face (cells (25, 34) to (27, 38)).
 void AnkohlRuins_RevealGap(void) {
 #if TLA_PATCH_1 /* The Japanese edition leaves the flag alone. */
   Event_SetFlag(FLAG_ANKOHL_RUINS_REVEAL_SHOWN);
@@ -1400,7 +1495,8 @@ void AnkohlRuins_RevealGap(void) {
   MapGrid_CopyCells(35, 98, 3, 3, 25, 98);
 }
 
-/// Reveal ends: the gap is hidden again.
+/// As Reveal fades, the gap in the room of brown and red blocks is hidden
+/// again.
 void AnkohlRuins_HideGap(void) {
 #if TLA_PATCH_1
   Event_ClearFlag(FLAG_ANKOHL_RUINS_REVEAL_SHOWN);
@@ -1409,12 +1505,13 @@ void AnkohlRuins_HideGap(void) {
   MapGrid_CopyCells(40, 98, 3, 3, 25, 98);
 }
 
-/// Reveal begins: the sand's sprites are hidden.
+/// Nothing visible happens to the sand when Felix casts Reveal in the sand
+/// rooms; the game stops trimming the sand's edge while Reveal is up.
 void AnkohlRuins_StartReveal(void) {
   GameFlag_Set(FLAG_ANKOHL_RUINS_REVEAL_SHOWN);
 }
 
-/// Reveal ends: the sand's sprites show again.
+/// As Reveal fades in the sand rooms the sand's edge is trimmed again.
 void AnkohlRuins_EndReveal(void) {
   GameFlag_Clear(FLAG_ANKOHL_RUINS_REVEAL_SHOWN);
 }
@@ -1437,7 +1534,8 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gAnkohlRuins_Triggers;
 }
 
-/// Each frame of the Left Prong's chest: a sparkle every eighth frame about it.
+/// The Left Prong, lying on top of the ruins, sparkles: a sparkle rises about
+/// it every eighth frame.
 void AnkohlRuins_SparkleChest(struct Actor *actor) {
   struct EffectOptions params;
   u32 phase = gFrameCount & 7;
@@ -1459,13 +1557,13 @@ void AnkohlRuins_SparkleChest(struct Actor *actor) {
 }
 
 void AnkohlRuins_RiseFromSand(void);
-void AnkohlRuins_PushedOffLedge(void);
+void AnkohlRuins_CarriedOffLedge(void);
 void AnkohlRuins_PressFirstSandSwitch(void);
 void AnkohlRuins_OpenFirstSandDoor(void);
 void AnkohlRuins_PressSecondSandSwitch(void);
 void AnkohlRuins_OpenSecondSandDoor(void);
-void AnkohlRuins_BoardRaft(void);
-void AnkohlRuins_BoardRaftAgain(void);
+void AnkohlRuins_StartGreatFaceSliding(void);
+void AnkohlRuins_StartGreatFaceSlidingUpClose(void);
 void AnkohlRuins_PushStatueIntoGap(void);
 void AnkohlRuins_RevealGap(void);
 void AnkohlRuins_StartReveal(void);
@@ -1475,7 +1573,7 @@ extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
 extern s32 gAnkohlRuins_WeedsScript[];
-extern u32 gAnkohlRuins_ThanatosMaceChestScript[];
+extern u32 gAnkohlRuins_FaceHalfScript[];
 extern u32 gAnkohlRuins_GreatFaceScript[];
 
 struct AnkohlRuinsSpriteWork;
@@ -1515,36 +1613,50 @@ s32 Scene_Initialize(s32 a0) {
       Actor_SetPosition(ACTOR_STONE_FACE_F, 0, 0);
     if (GameFlag_Get(FLAG_STONE_FACE_MOVED(ACTOR_STONE_FACE_G)))
       Actor_SetPosition(ACTOR_STONE_FACE_G, 0, 0);
-    if (GameFlag_Get(FLAG_FIRST_ROOM_WEEDS_SCATTERED(ACTOR_FIRST_ROOM_WEEDS_A)))
-      Actor_SetPosition(ACTOR_FIRST_ROOM_WEEDS_A, 0, 0);
-    if (GameFlag_Get(FLAG_FIRST_ROOM_WEEDS_SCATTERED(ACTOR_FIRST_ROOM_WEEDS_B)))
-      Actor_SetPosition(ACTOR_FIRST_ROOM_WEEDS_B, 0, 0);
-    if (GameFlag_Get(FLAG_FIRST_ROOM_WEEDS_SCATTERED(ACTOR_FIRST_ROOM_WEEDS_C)))
-      Actor_SetPosition(ACTOR_FIRST_ROOM_WEEDS_C, 0, 0);
-    if (GameFlag_Get(FLAG_FIRST_ROOM_WEEDS_SCATTERED(ACTOR_FIRST_ROOM_WEEDS_D)))
-      Actor_SetPosition(ACTOR_FIRST_ROOM_WEEDS_D, 0, 0);
-    if (GameFlag_Get(FLAG_FIRST_ROOM_WEEDS_SCATTERED(ACTOR_FIRST_ROOM_WEEDS_E)))
-      Actor_SetPosition(ACTOR_FIRST_ROOM_WEEDS_E, 0, 0);
-    if (GameFlag_Get(FLAG_FIRST_ROOM_WEEDS_SCATTERED(ACTOR_FIRST_ROOM_WEEDS_F)))
-      Actor_SetPosition(ACTOR_FIRST_ROOM_WEEDS_F, 0, 0);
-    if (GameFlag_Get(FLAG_FIRST_ROOM_WEEDS_SCATTERED(ACTOR_FIRST_ROOM_WEEDS_G)))
-      Actor_SetPosition(ACTOR_FIRST_ROOM_WEEDS_G, 0, 0);
-    if (GameFlag_Get(FLAG_FIRST_ROOM_WEEDS_SCATTERED(ACTOR_FIRST_ROOM_WEEDS_H)))
-      Actor_SetPosition(ACTOR_FIRST_ROOM_WEEDS_H, 0, 0);
-    if (GameFlag_Get(FLAG_FIRST_ROOM_WEEDS_SCATTERED(ACTOR_FIRST_ROOM_WEEDS_I)))
-      Actor_SetPosition(ACTOR_FIRST_ROOM_WEEDS_I, 0, 0);
-    if (GameFlag_Get(FLAG_FIRST_ROOM_WEEDS_SCATTERED(ACTOR_FIRST_ROOM_WEEDS_J)))
-      Actor_SetPosition(ACTOR_FIRST_ROOM_WEEDS_J, 0, 0);
-    if (GameFlag_Get(FLAG_FIRST_ROOM_WEEDS_SCATTERED(ACTOR_FIRST_ROOM_WEEDS_K)))
-      Actor_SetPosition(ACTOR_FIRST_ROOM_WEEDS_K, 0, 0);
-    if (GameFlag_Get(FLAG_FIRST_ROOM_WEEDS_SCATTERED(ACTOR_FIRST_ROOM_WEEDS_L)))
-      Actor_SetPosition(ACTOR_FIRST_ROOM_WEEDS_L, 0, 0);
-    if (GameFlag_Get(FLAG_FIRST_ROOM_WEEDS_SCATTERED(ACTOR_FIRST_ROOM_WEEDS_M)))
-      Actor_SetPosition(ACTOR_FIRST_ROOM_WEEDS_M, 0, 0);
-    if (GameFlag_Get(FLAG_FIRST_ROOM_WEEDS_SCATTERED(ACTOR_FIRST_ROOM_WEEDS_N)))
-      Actor_SetPosition(ACTOR_FIRST_ROOM_WEEDS_N, 0, 0);
-    if (GameFlag_Get(FLAG_FIRST_ROOM_PILLAR_MOVED)) {
-      Actor_SetPosition(ACTOR_FIRST_ROOM_PILLAR, 72, 88);
+    if (GameFlag_Get(
+            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_A)))
+      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_A, 0, 0);
+    if (GameFlag_Get(
+            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_B)))
+      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_B, 0, 0);
+    if (GameFlag_Get(
+            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_C)))
+      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_C, 0, 0);
+    if (GameFlag_Get(
+            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_D)))
+      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_D, 0, 0);
+    if (GameFlag_Get(
+            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_E)))
+      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_E, 0, 0);
+    if (GameFlag_Get(
+            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_F)))
+      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_F, 0, 0);
+    if (GameFlag_Get(
+            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_G)))
+      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_G, 0, 0);
+    if (GameFlag_Get(
+            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_H)))
+      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_H, 0, 0);
+    if (GameFlag_Get(
+            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_I)))
+      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_I, 0, 0);
+    if (GameFlag_Get(
+            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_J)))
+      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_J, 0, 0);
+    if (GameFlag_Get(
+            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_K)))
+      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_K, 0, 0);
+    if (GameFlag_Get(
+            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_L)))
+      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_L, 0, 0);
+    if (GameFlag_Get(
+            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_M)))
+      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_M, 0, 0);
+    if (GameFlag_Get(
+            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_N)))
+      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_N, 0, 0);
+    if (GameFlag_Get(FLAG_NUT_CHEST_PILLAR_MOVED)) {
+      Actor_SetPosition(ACTOR_NUT_CHEST_PILLAR, 72, 88);
       MapGrid_CopyCellAttributes(4, 68, 1, 1, 2, 69);
     }
   } else if (scene == SCENE_ANKOHL_RUINS_THANATOS_MACE_CHEST) {
@@ -1570,8 +1682,8 @@ s32 Scene_Initialize(s32 a0) {
         Event_PlaySound(SE_ANKOHL_RUINS_PIECE);
     }
   } else if (scene == SCENE_ANKOHL_RUINS_GREAT_FACE) {
-    if (GameFlag_Get(FLAG_THIRD_ROOM_PILLAR_MOVED)) {
-      Actor_SetPosition(ACTOR_THIRD_ROOM_PILLAR, 520, 104);
+    if (GameFlag_Get(FLAG_GREAT_FACE_ROOMS_PILLAR_MOVED)) {
+      Actor_SetPosition(ACTOR_GREAT_FACE_ROOMS_PILLAR, 520, 104);
       MapGrid_CopyCellAttributes(32, 69, 1, 1, 33, 69);
     }
     if (GameFlag_Get(FLAG_GREAT_FACE_HALF_PLACED)) {
@@ -1587,32 +1699,32 @@ s32 Scene_Initialize(s32 a0) {
     }
   } else if (scene == SCENE_ANKOHL_RUINS_FACE_HALVES) {
     if (GameFlag_Get(
-            FLAG_FOURTH_ROOM_WEEDS_SCATTERED(ACTOR_FOURTH_ROOM_WEEDS_A)))
-      Actor_SetPosition(ACTOR_FOURTH_ROOM_WEEDS_A, 0, 0);
+            FLAG_FACE_HALVES_WEEDS_SCATTERED(ACTOR_FACE_HALVES_WEEDS_A)))
+      Actor_SetPosition(ACTOR_FACE_HALVES_WEEDS_A, 0, 0);
     if (GameFlag_Get(
-            FLAG_FOURTH_ROOM_WEEDS_SCATTERED(ACTOR_FOURTH_ROOM_WEEDS_B)))
-      Actor_SetPosition(ACTOR_FOURTH_ROOM_WEEDS_B, 0, 0);
+            FLAG_FACE_HALVES_WEEDS_SCATTERED(ACTOR_FACE_HALVES_WEEDS_B)))
+      Actor_SetPosition(ACTOR_FACE_HALVES_WEEDS_B, 0, 0);
     if (GameFlag_Get(
-            FLAG_FOURTH_ROOM_WEEDS_SCATTERED(ACTOR_FOURTH_ROOM_WEEDS_C)))
-      Actor_SetPosition(ACTOR_FOURTH_ROOM_WEEDS_C, 0, 0);
+            FLAG_FACE_HALVES_WEEDS_SCATTERED(ACTOR_FACE_HALVES_WEEDS_C)))
+      Actor_SetPosition(ACTOR_FACE_HALVES_WEEDS_C, 0, 0);
     if (GameFlag_Get(
-            FLAG_FOURTH_ROOM_WEEDS_SCATTERED(ACTOR_FOURTH_ROOM_WEEDS_D)))
-      Actor_SetPosition(ACTOR_FOURTH_ROOM_WEEDS_D, 0, 0);
+            FLAG_FACE_HALVES_WEEDS_SCATTERED(ACTOR_FACE_HALVES_WEEDS_D)))
+      Actor_SetPosition(ACTOR_FACE_HALVES_WEEDS_D, 0, 0);
     if (GameFlag_Get(
-            FLAG_FOURTH_ROOM_WEEDS_SCATTERED(ACTOR_FOURTH_ROOM_WEEDS_E)))
-      Actor_SetPosition(ACTOR_FOURTH_ROOM_WEEDS_E, 0, 0);
+            FLAG_FACE_HALVES_WEEDS_SCATTERED(ACTOR_FACE_HALVES_WEEDS_E)))
+      Actor_SetPosition(ACTOR_FACE_HALVES_WEEDS_E, 0, 0);
     if (GameFlag_Get(
-            FLAG_FOURTH_ROOM_WEEDS_SCATTERED(ACTOR_FOURTH_ROOM_WEEDS_F)))
-      Actor_SetPosition(ACTOR_FOURTH_ROOM_WEEDS_F, 0, 0);
+            FLAG_FACE_HALVES_WEEDS_SCATTERED(ACTOR_FACE_HALVES_WEEDS_F)))
+      Actor_SetPosition(ACTOR_FACE_HALVES_WEEDS_F, 0, 0);
     if (GameFlag_Get(
-            FLAG_FOURTH_ROOM_WEEDS_SCATTERED(ACTOR_FOURTH_ROOM_WEEDS_G)))
-      Actor_SetPosition(ACTOR_FOURTH_ROOM_WEEDS_G, 0, 0);
-    if (GameFlag_Get(FLAG_FOURTH_ROOM_PILLAR_MOVED))
-      Actor_SetPosition(ACTOR_FOURTH_ROOM_PILLAR, 40, 776);
-    if (GameFlag_Get(FLAG_FOURTH_ROOM_SECOND_PILLAR_MOVED))
-      Actor_SetPosition(ACTOR_FOURTH_ROOM_SECOND_PILLAR, 632, 456);
-    if (GameFlag_Get(FLAG_FOURTH_ROOM_THIRD_PILLAR_MOVED)) {
-      Actor_SetPosition(ACTOR_FOURTH_ROOM_THIRD_PILLAR, 616, 136);
+            FLAG_FACE_HALVES_WEEDS_SCATTERED(ACTOR_FACE_HALVES_WEEDS_G)))
+      Actor_SetPosition(ACTOR_FACE_HALVES_WEEDS_G, 0, 0);
+    if (GameFlag_Get(FLAG_FACE_HALVES_PILLAR_MOVED))
+      Actor_SetPosition(ACTOR_FACE_HALVES_PILLAR, 40, 776);
+    if (GameFlag_Get(FLAG_FACE_HALVES_SECOND_PILLAR_MOVED))
+      Actor_SetPosition(ACTOR_FACE_HALVES_SECOND_PILLAR, 632, 456);
+    if (GameFlag_Get(FLAG_FACE_HALVES_THIRD_PILLAR_MOVED)) {
+      Actor_SetPosition(ACTOR_FACE_HALVES_THIRD_PILLAR, 616, 136);
       MapGrid_CopyCells(37, 70, 1, 1, 37, 71);
     }
     if (GameFlag_Get(FLAG_LEFT_FACE_HALF_PLACED)) {
@@ -1683,8 +1795,8 @@ s32 Scene_Initialize(s32 a0) {
   } else if (scene == SCENE_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST) {
     if (GameFlag_Get(FLAG_FACE_HALF_PUSHED_INTO_GAP))
       Actor_SetPosition(ACTOR_FACE_HALF_FOR_THE_GAP, 0, 0);
-    if (GameFlag_Get(FLAG_FIFTH_ROOM_PILLAR_MOVED)) {
-      Actor_SetPosition(ACTOR_FIFTH_ROOM_PILLAR, 280, 312);
+    if (GameFlag_Get(FLAG_CRYSTAL_POWDER_PILLAR_MOVED)) {
+      Actor_SetPosition(ACTOR_CRYSTAL_POWDER_PILLAR, 280, 312);
       MapGrid_CopyCellAttributes(16, 84, 1, 1, 18, 84);
     }
     if (work->entrance == 1 ||
@@ -1799,36 +1911,50 @@ s32 Scene_Initialize(s32 a0) {
       Actor_SetPosition(ACTOR_STONE_FACE_F, 0, 0);
     if (GameFlag_Get(FLAG_STONE_FACE_MOVED(ACTOR_STONE_FACE_G)))
       Actor_SetPosition(ACTOR_STONE_FACE_G, 0, 0);
-    if (GameFlag_Get(FLAG_FIRST_ROOM_WEEDS_SCATTERED(ACTOR_FIRST_ROOM_WEEDS_A)))
-      Actor_SetPosition(ACTOR_FIRST_ROOM_WEEDS_A, 0, 0);
-    if (GameFlag_Get(FLAG_FIRST_ROOM_WEEDS_SCATTERED(ACTOR_FIRST_ROOM_WEEDS_B)))
-      Actor_SetPosition(ACTOR_FIRST_ROOM_WEEDS_B, 0, 0);
-    if (GameFlag_Get(FLAG_FIRST_ROOM_WEEDS_SCATTERED(ACTOR_FIRST_ROOM_WEEDS_C)))
-      Actor_SetPosition(ACTOR_FIRST_ROOM_WEEDS_C, 0, 0);
-    if (GameFlag_Get(FLAG_FIRST_ROOM_WEEDS_SCATTERED(ACTOR_FIRST_ROOM_WEEDS_D)))
-      Actor_SetPosition(ACTOR_FIRST_ROOM_WEEDS_D, 0, 0);
-    if (GameFlag_Get(FLAG_FIRST_ROOM_WEEDS_SCATTERED(ACTOR_FIRST_ROOM_WEEDS_E)))
-      Actor_SetPosition(ACTOR_FIRST_ROOM_WEEDS_E, 0, 0);
-    if (GameFlag_Get(FLAG_FIRST_ROOM_WEEDS_SCATTERED(ACTOR_FIRST_ROOM_WEEDS_F)))
-      Actor_SetPosition(ACTOR_FIRST_ROOM_WEEDS_F, 0, 0);
-    if (GameFlag_Get(FLAG_FIRST_ROOM_WEEDS_SCATTERED(ACTOR_FIRST_ROOM_WEEDS_G)))
-      Actor_SetPosition(ACTOR_FIRST_ROOM_WEEDS_G, 0, 0);
-    if (GameFlag_Get(FLAG_FIRST_ROOM_WEEDS_SCATTERED(ACTOR_FIRST_ROOM_WEEDS_H)))
-      Actor_SetPosition(ACTOR_FIRST_ROOM_WEEDS_H, 0, 0);
-    if (GameFlag_Get(FLAG_FIRST_ROOM_WEEDS_SCATTERED(ACTOR_FIRST_ROOM_WEEDS_I)))
-      Actor_SetPosition(ACTOR_FIRST_ROOM_WEEDS_I, 0, 0);
-    if (GameFlag_Get(FLAG_FIRST_ROOM_WEEDS_SCATTERED(ACTOR_FIRST_ROOM_WEEDS_J)))
-      Actor_SetPosition(ACTOR_FIRST_ROOM_WEEDS_J, 0, 0);
-    if (GameFlag_Get(FLAG_FIRST_ROOM_WEEDS_SCATTERED(ACTOR_FIRST_ROOM_WEEDS_K)))
-      Actor_SetPosition(ACTOR_FIRST_ROOM_WEEDS_K, 0, 0);
-    if (GameFlag_Get(FLAG_FIRST_ROOM_WEEDS_SCATTERED(ACTOR_FIRST_ROOM_WEEDS_L)))
-      Actor_SetPosition(ACTOR_FIRST_ROOM_WEEDS_L, 0, 0);
-    if (GameFlag_Get(FLAG_FIRST_ROOM_WEEDS_SCATTERED(ACTOR_FIRST_ROOM_WEEDS_M)))
-      Actor_SetPosition(ACTOR_FIRST_ROOM_WEEDS_M, 0, 0);
-    if (GameFlag_Get(FLAG_FIRST_ROOM_WEEDS_SCATTERED(ACTOR_FIRST_ROOM_WEEDS_N)))
-      Actor_SetPosition(ACTOR_FIRST_ROOM_WEEDS_N, 0, 0);
-    if (GameFlag_Get(FLAG_FIRST_ROOM_PILLAR_MOVED)) {
-      Actor_SetPosition(ACTOR_FIRST_ROOM_PILLAR, 72, 88);
+    if (GameFlag_Get(
+            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_A)))
+      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_A, 0, 0);
+    if (GameFlag_Get(
+            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_B)))
+      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_B, 0, 0);
+    if (GameFlag_Get(
+            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_C)))
+      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_C, 0, 0);
+    if (GameFlag_Get(
+            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_D)))
+      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_D, 0, 0);
+    if (GameFlag_Get(
+            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_E)))
+      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_E, 0, 0);
+    if (GameFlag_Get(
+            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_F)))
+      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_F, 0, 0);
+    if (GameFlag_Get(
+            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_G)))
+      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_G, 0, 0);
+    if (GameFlag_Get(
+            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_H)))
+      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_H, 0, 0);
+    if (GameFlag_Get(
+            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_I)))
+      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_I, 0, 0);
+    if (GameFlag_Get(
+            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_J)))
+      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_J, 0, 0);
+    if (GameFlag_Get(
+            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_K)))
+      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_K, 0, 0);
+    if (GameFlag_Get(
+            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_L)))
+      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_L, 0, 0);
+    if (GameFlag_Get(
+            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_M)))
+      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_M, 0, 0);
+    if (GameFlag_Get(
+            FLAG_STONE_FACES_WEEDS_SCATTERED(ACTOR_STONE_FACES_WEEDS_N)))
+      Actor_SetPosition(ACTOR_STONE_FACES_WEEDS_N, 0, 0);
+    if (GameFlag_Get(FLAG_NUT_CHEST_PILLAR_MOVED)) {
+      Actor_SetPosition(ACTOR_NUT_CHEST_PILLAR, 72, 88);
       MapGrid_CopyCellAttributes(4, 68, 1, 1, 2, 69);
     }
   } else if (scene == SCENE_ANKOHL_RUINS_THANATOS_MACE_CHEST) {
@@ -1854,8 +1980,8 @@ s32 Scene_Initialize(s32 a0) {
         Event_PlaySound(SE_ANKOHL_RUINS_PIECE);
     }
   } else if (scene == SCENE_ANKOHL_RUINS_GREAT_FACE) {
-    if (GameFlag_Get(FLAG_THIRD_ROOM_PILLAR_MOVED)) {
-      Actor_SetPosition(ACTOR_THIRD_ROOM_PILLAR, 520, 104);
+    if (GameFlag_Get(FLAG_GREAT_FACE_ROOMS_PILLAR_MOVED)) {
+      Actor_SetPosition(ACTOR_GREAT_FACE_ROOMS_PILLAR, 520, 104);
       MapGrid_CopyCellAttributes(32, 69, 1, 1, 33, 69);
     }
     if (GameFlag_Get(FLAG_GREAT_FACE_HALF_PLACED)) {
@@ -1871,32 +1997,32 @@ s32 Scene_Initialize(s32 a0) {
     }
   } else if (scene == SCENE_ANKOHL_RUINS_FACE_HALVES) {
     if (GameFlag_Get(
-            FLAG_FOURTH_ROOM_WEEDS_SCATTERED(ACTOR_FOURTH_ROOM_WEEDS_A)))
-      Actor_SetPosition(ACTOR_FOURTH_ROOM_WEEDS_A, 0, 0);
+            FLAG_FACE_HALVES_WEEDS_SCATTERED(ACTOR_FACE_HALVES_WEEDS_A)))
+      Actor_SetPosition(ACTOR_FACE_HALVES_WEEDS_A, 0, 0);
     if (GameFlag_Get(
-            FLAG_FOURTH_ROOM_WEEDS_SCATTERED(ACTOR_FOURTH_ROOM_WEEDS_B)))
-      Actor_SetPosition(ACTOR_FOURTH_ROOM_WEEDS_B, 0, 0);
+            FLAG_FACE_HALVES_WEEDS_SCATTERED(ACTOR_FACE_HALVES_WEEDS_B)))
+      Actor_SetPosition(ACTOR_FACE_HALVES_WEEDS_B, 0, 0);
     if (GameFlag_Get(
-            FLAG_FOURTH_ROOM_WEEDS_SCATTERED(ACTOR_FOURTH_ROOM_WEEDS_C)))
-      Actor_SetPosition(ACTOR_FOURTH_ROOM_WEEDS_C, 0, 0);
+            FLAG_FACE_HALVES_WEEDS_SCATTERED(ACTOR_FACE_HALVES_WEEDS_C)))
+      Actor_SetPosition(ACTOR_FACE_HALVES_WEEDS_C, 0, 0);
     if (GameFlag_Get(
-            FLAG_FOURTH_ROOM_WEEDS_SCATTERED(ACTOR_FOURTH_ROOM_WEEDS_D)))
-      Actor_SetPosition(ACTOR_FOURTH_ROOM_WEEDS_D, 0, 0);
+            FLAG_FACE_HALVES_WEEDS_SCATTERED(ACTOR_FACE_HALVES_WEEDS_D)))
+      Actor_SetPosition(ACTOR_FACE_HALVES_WEEDS_D, 0, 0);
     if (GameFlag_Get(
-            FLAG_FOURTH_ROOM_WEEDS_SCATTERED(ACTOR_FOURTH_ROOM_WEEDS_E)))
-      Actor_SetPosition(ACTOR_FOURTH_ROOM_WEEDS_E, 0, 0);
+            FLAG_FACE_HALVES_WEEDS_SCATTERED(ACTOR_FACE_HALVES_WEEDS_E)))
+      Actor_SetPosition(ACTOR_FACE_HALVES_WEEDS_E, 0, 0);
     if (GameFlag_Get(
-            FLAG_FOURTH_ROOM_WEEDS_SCATTERED(ACTOR_FOURTH_ROOM_WEEDS_F)))
-      Actor_SetPosition(ACTOR_FOURTH_ROOM_WEEDS_F, 0, 0);
+            FLAG_FACE_HALVES_WEEDS_SCATTERED(ACTOR_FACE_HALVES_WEEDS_F)))
+      Actor_SetPosition(ACTOR_FACE_HALVES_WEEDS_F, 0, 0);
     if (GameFlag_Get(
-            FLAG_FOURTH_ROOM_WEEDS_SCATTERED(ACTOR_FOURTH_ROOM_WEEDS_G)))
-      Actor_SetPosition(ACTOR_FOURTH_ROOM_WEEDS_G, 0, 0);
-    if (GameFlag_Get(FLAG_FOURTH_ROOM_PILLAR_MOVED))
-      Actor_SetPosition(ACTOR_FOURTH_ROOM_PILLAR, 40, 776);
-    if (GameFlag_Get(FLAG_FOURTH_ROOM_SECOND_PILLAR_MOVED))
-      Actor_SetPosition(ACTOR_FOURTH_ROOM_SECOND_PILLAR, 632, 456);
-    if (GameFlag_Get(FLAG_FOURTH_ROOM_THIRD_PILLAR_MOVED)) {
-      Actor_SetPosition(ACTOR_FOURTH_ROOM_THIRD_PILLAR, 616, 136);
+            FLAG_FACE_HALVES_WEEDS_SCATTERED(ACTOR_FACE_HALVES_WEEDS_G)))
+      Actor_SetPosition(ACTOR_FACE_HALVES_WEEDS_G, 0, 0);
+    if (GameFlag_Get(FLAG_FACE_HALVES_PILLAR_MOVED))
+      Actor_SetPosition(ACTOR_FACE_HALVES_PILLAR, 40, 776);
+    if (GameFlag_Get(FLAG_FACE_HALVES_SECOND_PILLAR_MOVED))
+      Actor_SetPosition(ACTOR_FACE_HALVES_SECOND_PILLAR, 632, 456);
+    if (GameFlag_Get(FLAG_FACE_HALVES_THIRD_PILLAR_MOVED)) {
+      Actor_SetPosition(ACTOR_FACE_HALVES_THIRD_PILLAR, 616, 136);
       MapGrid_CopyCells(37, 70, 1, 1, 37, 71);
     }
     if (GameFlag_Get(FLAG_LEFT_FACE_HALF_PLACED)) {
@@ -1959,8 +2085,8 @@ s32 Scene_Initialize(s32 a0) {
   } else if (scene == SCENE_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST) {
     if (GameFlag_Get(FLAG_FACE_HALF_PUSHED_INTO_GAP))
       Actor_SetPosition(ACTOR_FACE_HALF_FOR_THE_GAP, 0, 0);
-    if (GameFlag_Get(FLAG_FIFTH_ROOM_PILLAR_MOVED)) {
-      Actor_SetPosition(ACTOR_FIFTH_ROOM_PILLAR, 280, 312);
+    if (GameFlag_Get(FLAG_CRYSTAL_POWDER_PILLAR_MOVED)) {
+      Actor_SetPosition(ACTOR_CRYSTAL_POWDER_PILLAR, 280, 312);
       MapGrid_CopyCellAttributes(16, 84, 1, 1, 18, 84);
     }
     if (work->entrance == 1 ||
@@ -2080,14 +2206,14 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-/// The fifth room's way through to the Left Prong's room.
+/// The Crystal Powder's rooms' way out onto the top of the ruins.
 struct SceneRegion gAnkohlRuins_CrystalPowderChestExitRegions[] = {
     {819, 238, 852, 827, 246, 860, CONDITION_ALWAYS,
      ANKOHL_RUINS_CRYSTAL_POWDER_CHEST_TO_ANKOHL_RUINS_LEFT_PRONG},
     {SCENE_TABLE_END},
 };
 
-/// The Left Prong's room's way back to the fifth room.
+/// The way back down from the top of the ruins to the Crystal Powder's rooms.
 struct SceneRegion gAnkohlRuins_LeftProngExitRegions[] = {
     {180, -26, 164, 188, -18, 172, CONDITION_ALWAYS,
      ANKOHL_RUINS_LEFT_PRONG_TO_ANKOHL_RUINS_CRYSTAL_POWDER_CHEST},
@@ -2207,7 +2333,8 @@ u32 gSceneExits[] = {
 /// The weeds' script: each clump stands half as tall again, and is set up by
 /// AnkohlRuins_SetUpWeeds. Work value 11 sets the Y scale as SW_SCALE_Y does
 /// (gActorScript_OperandHandlerTable gives both one handler), and a probe of
-/// the first room (render probe --scene AnkohlRuinsStoneFaces) shows its
+/// the halls of the stone faces (render probe --scene AnkohlRuinsStoneFaces)
+/// shows their
 /// fourteen clumps at a Y scale of 1.5 and an X scale of 1.
 s32 gAnkohlRuins_WeedsScript[] = {
     SC_SET(SW_SCALE_Y_DUPLICATE, FIXED_ONE * 3 / 2),
@@ -2215,8 +2342,8 @@ s32 gAnkohlRuins_WeedsScript[] = {
     SC_END,
 };
 
-/// The Thanatos Mace chest's script: it stands still.
-u32 gAnkohlRuins_ThanatosMaceChestScript[] = {
+/// The face halves' script: each stands still until pushed.
+u32 gAnkohlRuins_FaceHalfScript[] = {
     SC_SET(SW_MOTION, 0),
     SC_END,
 };
@@ -2227,12 +2354,13 @@ u32 gAnkohlRuins_GreatFaceScript[] = {
     SC_END,
 };
 
-/// The scene's other rooms' actors: none.
+/// The forest at the ruins' doorway: no actors.
 struct ActorPlacement gAnkohlRuins_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-/// The first room's actors, in AnkohlRuinsFirstRoomActorId's order.
+/// The halls of the stone faces' actors, in AnkohlRuinsStoneFacesActorId's
+/// order.
 struct ActorPlacement gAnkohlRuins_StoneFacesPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 88, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_UNSEEN_MARKER, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 8, 0, 8, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2260,28 +2388,28 @@ struct ActorPlacement gAnkohlRuins_StoneFacesPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-/// The Thanatos Mace chest's room's actors, in its enum's order.
+/// The Thanatos Mace's rooms' actors, in its enum's order.
 struct ActorPlacement gAnkohlRuins_ThanatosMaceChestPlacements[] = {
-    ACTOR_PLACEMENT(SPRITE_STONE_FACE_PILLAR_HALF_A, CONDITION_ALWAYS, (s32)gAnkohlRuins_ThanatosMaceChestScript, 120, 0, 88, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_FACE_PILLAR_HALF_A, CONDITION_ALWAYS, (s32)gAnkohlRuins_FaceHalfScript, 120, 0, 88, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_WeedsScript, 472, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_WeedsScript, 520, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_WeedsScript, 600, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
-/// The third room's actors, in AnkohlRuinsThirdRoomActorId's order.
+/// The great face's rooms' actors, in AnkohlRuinsGreatFaceActorId's order.
 struct ActorPlacement gAnkohlRuins_GreatFacePlacements[] = {
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 536, 0, 104, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_STONE_FACE, CONDITION_ALWAYS, (s32)gAnkohlRuins_GreatFaceScript, 232, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_STONE_FACE_PILLAR_HALF_B, CONDITION_ALWAYS, (s32)gAnkohlRuins_ThanatosMaceChestScript, 296, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_FACE_PILLAR_HALF_B, CONDITION_ALWAYS, (s32)gAnkohlRuins_FaceHalfScript, 296, 0, 392, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
-/// The fourth room's actors, in AnkohlRuinsFourthRoomActorId's order.
+/// The face halves' rooms' actors, in AnkohlRuinsFaceHalvesActorId's order.
 struct ActorPlacement gAnkohlRuins_FaceHalvesPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 56, 0, 776, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_STONE_FACE_PILLAR_HALF_A, CONDITION_ALWAYS, (s32)gAnkohlRuins_ThanatosMaceChestScript, 104, 0, 760, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_STONE_FACE_PILLAR_HALF_B, CONDITION_ALWAYS, (s32)gAnkohlRuins_ThanatosMaceChestScript, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_FACE_PILLAR_HALF_A, CONDITION_ALWAYS, (s32)gAnkohlRuins_FaceHalfScript, 104, 0, 760, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_FACE_PILLAR_HALF_B, CONDITION_ALWAYS, (s32)gAnkohlRuins_FaceHalfScript, 0, 0, 0, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_WeedsScript, 424, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_WeedsScript, 504, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_IVY, CONDITION_ALWAYS, (s32)gAnkohlRuins_WeedsScript, 712, 0, 120, FACING_SOUTH, TALK_FACING_KEEP, 0),
@@ -2294,10 +2422,11 @@ struct ActorPlacement gAnkohlRuins_FaceHalvesPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-/// The fifth room's actors, in AnkohlRuinsFifthRoomActorId's order.
+/// The Crystal Powder's rooms' actors, in
+/// AnkohlRuinsCrystalPowderChestActorId's order.
 struct ActorPlacement gAnkohlRuins_CrystalPowderChestPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_STONE_PILLAR, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 296, 0, 312, FACING_SOUTH, TALK_FACING_KEEP, 0),
-    ACTOR_PLACEMENT(SPRITE_STONE_FACE_PILLAR_HALF_B, CONDITION_ALWAYS, (s32)gAnkohlRuins_ThanatosMaceChestScript, 440, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),
+    ACTOR_PLACEMENT(SPRITE_STONE_FACE_PILLAR_HALF_B, CONDITION_ALWAYS, (s32)gAnkohlRuins_FaceHalfScript, 440, 0, 584, FACING_SOUTH, TALK_FACING_KEEP, 0),
     {SCENE_TABLE_END},
 };
 
@@ -2306,7 +2435,7 @@ struct ActorPlacement gAnkohlRuins_SandDoorsPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-/// The Left Prong's room's actors: none.
+/// The top of the ruins' actors: none.
 struct ActorPlacement gAnkohlRuins_LeftProngPlacements[] = {
     {SCENE_TABLE_END},
 };
@@ -2326,15 +2455,15 @@ s32 gAnkohlRuins_SandStep = toFIXED(1) / 2;
 /// Which sand room's switch was pressed: 1 or 2.
 s32 gAnkohlRuins_SandRoom = 0;
 
-/// The scene's other rooms' triggers: two exits.
+/// The forest at the ruins' doorway: its two exits.
 struct Trigger gAnkohlRuins_Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_TABLE_END},
 };
 
-/// The first room's exits and stairs, Sand, Move on its stone faces and pillar,
-/// and Whirlwind on its ivy.
+/// The halls of the stone faces' exits and stairs, Sand, Move on the stone
+/// faces and the pillar, and Whirlwind on the weeds.
 struct Trigger gAnkohlRuins_StoneFacesTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -2369,36 +2498,36 @@ struct Trigger gAnkohlRuins_StoneFacesTriggers[] = {
     {TRIGGER_EXIT, 31, CONDITION_ALWAYS, 31},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 32, CONDITION_ALWAYS, 32},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 33, CONDITION_ALWAYS, 33},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_ROOM_PILLAR, FLAG_FIRST_ROOM_PILLAR_MOVED, EVENT(AnkohlRuins_FinishMovingPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_ROOM_PILLAR, FLAG_FIRST_ROOM_PILLAR_MOVED, EVENT(AnkohlRuins_StartMovingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_FACE_A, FLAG_STONE_FACE_MOVED(ACTOR_STONE_FACE_A), EVENT(AnkohlRuins_DropPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_FACE_B, FLAG_STONE_FACE_MOVED(ACTOR_STONE_FACE_B), EVENT(AnkohlRuins_DropPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_FACE_C, FLAG_STONE_FACE_MOVED(ACTOR_STONE_FACE_C), EVENT(AnkohlRuins_DropPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_FACE_D, FLAG_STONE_FACE_MOVED(ACTOR_STONE_FACE_D), EVENT(AnkohlRuins_DropPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_FACE_E, FLAG_STONE_FACE_MOVED(ACTOR_STONE_FACE_E), EVENT(AnkohlRuins_DropPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_FACE_F, FLAG_STONE_FACE_MOVED(ACTOR_STONE_FACE_F), EVENT(AnkohlRuins_DropPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_FACE_G, FLAG_STONE_FACE_MOVED(ACTOR_STONE_FACE_G), EVENT(AnkohlRuins_DropPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_ROOM_WEEDS_A, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_ROOM_WEEDS_B, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_ROOM_WEEDS_C, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_ROOM_WEEDS_D, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_ROOM_WEEDS_E, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_ROOM_WEEDS_F, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_ROOM_WEEDS_G, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_ROOM_WEEDS_H, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_ROOM_WEEDS_I, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_ROOM_WEEDS_J, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_ROOM_WEEDS_K, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_ROOM_WEEDS_L, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_ROOM_WEEDS_M, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_ROOM_WEEDS_N, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_NUT_CHEST_PILLAR, FLAG_NUT_CHEST_PILLAR_MOVED, EVENT(AnkohlRuins_FinishMovingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_NUT_CHEST_PILLAR, FLAG_NUT_CHEST_PILLAR_MOVED, EVENT(AnkohlRuins_StartMovingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_FACE_A, FLAG_STONE_FACE_MOVED(ACTOR_STONE_FACE_A), EVENT(AnkohlRuins_PushStoneFaceOffLedge)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_FACE_B, FLAG_STONE_FACE_MOVED(ACTOR_STONE_FACE_B), EVENT(AnkohlRuins_PushStoneFaceOffLedge)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_FACE_C, FLAG_STONE_FACE_MOVED(ACTOR_STONE_FACE_C), EVENT(AnkohlRuins_PushStoneFaceOffLedge)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_FACE_D, FLAG_STONE_FACE_MOVED(ACTOR_STONE_FACE_D), EVENT(AnkohlRuins_PushStoneFaceOffLedge)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_FACE_E, FLAG_STONE_FACE_MOVED(ACTOR_STONE_FACE_E), EVENT(AnkohlRuins_PushStoneFaceOffLedge)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_FACE_F, FLAG_STONE_FACE_MOVED(ACTOR_STONE_FACE_F), EVENT(AnkohlRuins_PushStoneFaceOffLedge)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_FACE_G, FLAG_STONE_FACE_MOVED(ACTOR_STONE_FACE_G), EVENT(AnkohlRuins_PushStoneFaceOffLedge)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_STONE_FACES_WEEDS_A, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_STONE_FACES_WEEDS_B, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_STONE_FACES_WEEDS_C, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_STONE_FACES_WEEDS_D, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_STONE_FACES_WEEDS_E, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_STONE_FACES_WEEDS_F, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_STONE_FACES_WEEDS_G, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_STONE_FACES_WEEDS_H, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_STONE_FACES_WEEDS_I, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_STONE_FACES_WEEDS_J, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_STONE_FACES_WEEDS_K, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_STONE_FACES_WEEDS_L, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_STONE_FACES_WEEDS_M, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_STONE_FACES_WEEDS_N, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_SinkIntoSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_RiseFromSand)},
     {TRIGGER_TABLE_END},
 };
 
-/// The Thanatos Mace chest's room's exits and stairs, Sand, Move on the face
-/// half and Whirlwind on its ivy.
+/// The Thanatos Mace's rooms' exits and stairs, Sand, Move on the face half and
+/// Whirlwind on the weeds.
 struct Trigger gAnkohlRuins_ThanatosMaceChestTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
@@ -2426,8 +2555,8 @@ struct Trigger gAnkohlRuins_ThanatosMaceChestTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// The third room's exits and stairs, Sand, Move on its pillar and the great
-/// face's half, and the steps that board the raft.
+/// The great face's rooms' exits and stairs, Sand, Move on the pillar and the
+/// great face's right half, and the steps that set the face sliding.
 struct Trigger gAnkohlRuins_GreatFaceTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
@@ -2441,10 +2570,10 @@ struct Trigger gAnkohlRuins_GreatFaceTriggers[] = {
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {TRIGGER_STEP, TRIGGER_BOARD_GREAT_FACE, CONDITION_ALWAYS, EVENT(AnkohlRuins_BoardRaft)},
-    {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(AnkohlRuins_BoardRaftAgain)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_THIRD_ROOM_PILLAR, FLAG_THIRD_ROOM_PILLAR_MOVED, EVENT(AnkohlRuins_StartMovingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_THIRD_ROOM_PILLAR, FLAG_THIRD_ROOM_PILLAR_MOVED, EVENT(AnkohlRuins_FinishMovingPillar)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_GREAT_FACE_CORRIDOR_FOOT, CONDITION_ALWAYS, EVENT(AnkohlRuins_StartGreatFaceSliding)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BEFORE_GREAT_FACE, CONDITION_ALWAYS, EVENT(AnkohlRuins_StartGreatFaceSlidingUpClose)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_GREAT_FACE_ROOMS_PILLAR, FLAG_GREAT_FACE_ROOMS_PILLAR_MOVED, EVENT(AnkohlRuins_StartMovingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_GREAT_FACE_ROOMS_PILLAR, FLAG_GREAT_FACE_ROOMS_PILLAR_MOVED, EVENT(AnkohlRuins_FinishMovingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_GREAT_FACE_HALF, FLAG_GREAT_FACE_HALF_PLACED, EVENT(AnkohlRuins_PlaceGreatFaceHalf)},
     {TRIGGER_PUSHED, ACTOR_GREAT_FACE_HALF, FLAG_GREAT_FACE_HALF_PLACED, EVENT(AnkohlRuins_PlaceGreatFaceHalf)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_SinkIntoSand)},
@@ -2452,8 +2581,8 @@ struct Trigger gAnkohlRuins_GreatFaceTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// The fourth room's exits and stairs, Sand, Move on the face halves and its
-/// pillars, and Whirlwind on its ivy.
+/// The face halves' rooms' exits and stairs, Sand, Move on the face halves and
+/// the pillars, and Whirlwind on the weeds.
 struct Trigger gAnkohlRuins_FaceHalvesTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
@@ -2471,29 +2600,29 @@ struct Trigger gAnkohlRuins_FaceHalvesTriggers[] = {
     {TRIGGER_EXIT, 14, CONDITION_ALWAYS, 14},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 15, CONDITION_ALWAYS, 15},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 16, CONDITION_ALWAYS, 16},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FOURTH_ROOM_WEEDS_A, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FOURTH_ROOM_WEEDS_B, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FOURTH_ROOM_WEEDS_C, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FOURTH_ROOM_WEEDS_D, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FOURTH_ROOM_WEEDS_E, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FOURTH_ROOM_WEEDS_F, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FOURTH_ROOM_WEEDS_G, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FACE_HALVES_WEEDS_A, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FACE_HALVES_WEEDS_B, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FACE_HALVES_WEEDS_C, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FACE_HALVES_WEEDS_D, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FACE_HALVES_WEEDS_E, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FACE_HALVES_WEEDS_F, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FACE_HALVES_WEEDS_G, CONDITION_ALWAYS, EVENT(AnkohlRuins_ScatterWeeds)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_FinishPushing)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LEFT_FACE_HALF, CONDITION_ALWAYS, EVENT(AnkohlRuins_PlaceFaceHalves)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_RIGHT_FACE_HALF, CONDITION_ALWAYS, EVENT(AnkohlRuins_PlaceFaceHalves)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FOURTH_ROOM_PILLAR, FLAG_FOURTH_ROOM_PILLAR_MOVED, EVENT(AnkohlRuins_StartMovingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FOURTH_ROOM_PILLAR, FLAG_FOURTH_ROOM_PILLAR_MOVED, EVENT(AnkohlRuins_FinishMovingPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FOURTH_ROOM_SECOND_PILLAR, FLAG_FOURTH_ROOM_SECOND_PILLAR_MOVED, EVENT(AnkohlRuins_StartMovingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FOURTH_ROOM_SECOND_PILLAR, FLAG_FOURTH_ROOM_SECOND_PILLAR_MOVED, EVENT(AnkohlRuins_FinishMovingPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FOURTH_ROOM_THIRD_PILLAR, FLAG_FOURTH_ROOM_THIRD_PILLAR_MOVED, EVENT(AnkohlRuins_StartMovingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FOURTH_ROOM_THIRD_PILLAR, FLAG_FOURTH_ROOM_THIRD_PILLAR_MOVED, EVENT(AnkohlRuins_FinishMovingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FACE_HALVES_PILLAR, FLAG_FACE_HALVES_PILLAR_MOVED, EVENT(AnkohlRuins_StartMovingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FACE_HALVES_PILLAR, FLAG_FACE_HALVES_PILLAR_MOVED, EVENT(AnkohlRuins_FinishMovingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FACE_HALVES_SECOND_PILLAR, FLAG_FACE_HALVES_SECOND_PILLAR_MOVED, EVENT(AnkohlRuins_StartMovingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FACE_HALVES_SECOND_PILLAR, FLAG_FACE_HALVES_SECOND_PILLAR_MOVED, EVENT(AnkohlRuins_FinishMovingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FACE_HALVES_THIRD_PILLAR, FLAG_FACE_HALVES_THIRD_PILLAR_MOVED, EVENT(AnkohlRuins_StartMovingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FACE_HALVES_THIRD_PILLAR, FLAG_FACE_HALVES_THIRD_PILLAR_MOVED, EVENT(AnkohlRuins_FinishMovingPillar)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_SinkIntoSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_RiseFromSand)},
     {TRIGGER_TABLE_END},
 };
 
-/// The fifth room's exits and stairs, its ledges, Sand, Move on its pillar and
-/// the half face, and Reveal on the gap.
+/// The Crystal Powder's rooms' exits and stairs, the pit, the flowing sand's
+/// drop, Sand, Move on the pillar and the half face, and Reveal on the gap.
 struct Trigger gAnkohlRuins_CrystalPowderChestTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
@@ -2506,11 +2635,11 @@ struct Trigger gAnkohlRuins_CrystalPowderChestTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 9, CONDITION_ALWAYS, 9},
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 13, CONDITION_ALWAYS, EVENT(AnkohlRuins_JumpDownLedge)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_PIT_TO_FACE_HALVES, CONDITION_ALWAYS, EVENT(AnkohlRuins_JumpDownLedge)},
     {TRIGGER_EXIT, 26, CONDITION_ALWAYS, 26},
-    {TRIGGER_STEP, TRIGGER_PUSHED_OFF_LEDGE, CONDITION_ALWAYS, EVENT(AnkohlRuins_PushedOffLedge)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIFTH_ROOM_PILLAR, FLAG_FIFTH_ROOM_PILLAR_MOVED, EVENT(AnkohlRuins_StartMovingPillar)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIFTH_ROOM_PILLAR, FLAG_FIFTH_ROOM_PILLAR_MOVED, EVENT(AnkohlRuins_FinishMovingPillar)},
+    {TRIGGER_STEP, TRIGGER_CARRIED_OFF_LEDGE, CONDITION_ALWAYS, EVENT(AnkohlRuins_CarriedOffLedge)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_CRYSTAL_POWDER_PILLAR, FLAG_CRYSTAL_POWDER_PILLAR_MOVED, EVENT(AnkohlRuins_StartMovingPillar)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CRYSTAL_POWDER_PILLAR, FLAG_CRYSTAL_POWDER_PILLAR_MOVED, EVENT(AnkohlRuins_FinishMovingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FACE_HALF_FOR_THE_GAP, FLAG_FACE_HALF_PUSHED_INTO_GAP, EVENT(AnkohlRuins_StartMovingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FACE_HALF_FOR_THE_GAP, FLAG_FACE_HALF_PUSHED_INTO_GAP, EVENT(AnkohlRuins_PushStatueIntoGap)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_RevealGap)},
@@ -2520,8 +2649,8 @@ struct Trigger gAnkohlRuins_CrystalPowderChestTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// The sand rooms' exits and stairs, Sand, Reveal, the switches, the doors and
-/// the rising sand.
+/// The sand rooms' exits and stairs, Sand, Reveal, the switches, the door
+/// buttons and the rising sand.
 struct Trigger gAnkohlRuins_SandDoorsTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
@@ -2529,10 +2658,10 @@ struct Trigger gAnkohlRuins_SandDoorsTriggers[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 23, CONDITION_ALWAYS, 23},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 28, CONDITION_ALWAYS, 28},
-    {TRIGGER_STEP, 40, FLAG_FIRST_SAND_SWITCH_PRESSED, EVENT(AnkohlRuins_PressFirstSandSwitch)},
-    {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(AnkohlRuins_OpenFirstSandDoor)},
-    {TRIGGER_STEP, 42, FLAG_SECOND_SAND_SWITCH_PRESSED, EVENT(AnkohlRuins_PressSecondSandSwitch)},
-    {TRIGGER_STEP, 43, CONDITION_ALWAYS, EVENT(AnkohlRuins_OpenSecondSandDoor)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_FIRST_SAND_SWITCH, FLAG_FIRST_SAND_SWITCH_PRESSED, EVENT(AnkohlRuins_PressFirstSandSwitch)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_FIRST_SAND_DOOR_BUTTON, CONDITION_ALWAYS, EVENT(AnkohlRuins_OpenFirstSandDoor)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_SECOND_SAND_SWITCH, FLAG_SECOND_SAND_SWITCH_PRESSED, EVENT(AnkohlRuins_PressSecondSandSwitch)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_SECOND_SAND_DOOR_BUTTON, CONDITION_ALWAYS, EVENT(AnkohlRuins_OpenSecondSandDoor)},
     {TRIGGER_RAISED, TRIGGER_RAISE_FIRST_SAND, CONDITION_ALWAYS, EVENT(AnkohlRuins_RaiseFirstSand)},
     {TRIGGER_RAISED, TRIGGER_RAISE_SECOND_SAND, CONDITION_ALWAYS, EVENT(AnkohlRuins_RaiseSecondSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(AnkohlRuins_SinkIntoSand)},
@@ -2542,7 +2671,7 @@ struct Trigger gAnkohlRuins_SandDoorsTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// The Left Prong's room's triggers: none.
+/// The top of the ruins' triggers: none.
 struct Trigger gAnkohlRuins_LeftProngTriggers[] = {
     {TRIGGER_TABLE_END},
 };

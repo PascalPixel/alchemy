@@ -1,9 +1,17 @@
 /// @file
-/// Ancient Lemuria, the shore before the hidden city, where the Lemurians meet
-/// the party that defeated Poseidon (AncientLemuria_MeetTheLemurians). Cyclone
-/// on the first weeds brings out Rime, the Mercury Djinni, which hides in the
-/// blue statue until Tremor shakes it out (AncientLemuria_CycloneRevealsRime,
-/// AncientLemuria_TremorShakesOutRime).
+/// Ancient Lemuria, the ruined shore before the hidden city, where the
+/// party lands after getting past Poseidon.
+///
+/// From the boat dock at the south, the party climbs the shore. Move pushes
+/// a blue statue onto its spot by the path north, cell (8, 36), and the
+/// Psynergy brings out two Lemurians, who wonder whether this is the party
+/// that defeated Poseidon and, seeing Piers, hurry back into the city
+/// (AncientLemuria_MeetTheLemurians). Cyclone clears six patches of weeds;
+/// under the first is Rime, the Mercury Djinni, which hops off and hides in
+/// another blue statue until Tremor shakes it out
+/// (AncientLemuria_CycloneRevealsRime, AncientLemuria_TremorShakesOutRime).
+/// Walking back to the dock before King Hydros is met, Kraden calls Felix
+/// back to keep exploring.
 
 #include "system/task.h"
 #include "types.h"
@@ -77,14 +85,15 @@ enum AncientLemuriaActorId {
   ACTOR_RIMES_STATUE
 };
 
-/// Talking to Rime once it is out: it joins the party.
+/// Felix talks to Rime once Tremor has shaken it out of its statue, and it
+/// joins the party.
 void AncientLemuria_RimeJoins(void) {
   Djinn_JoinParty(ACTOR_RIME, DJINNI_RIME / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_RIME));
 }
 
-/// The update of the statue Rime hides in: it rocks from side to side,
-/// clicking as each rock starts.
+/// The statue Rime hides in rocks from side to side, clicking as each rock
+/// starts.
 void AncientLemuria_RockTheStatue(struct Actor *actor) {
   struct FieldSprite *sprite = actor->sprite;
   s16 time = actor->timer++;
@@ -95,7 +104,7 @@ void AncientLemuria_RockTheStatue(struct Actor *actor) {
     Sound_Play(SE_SWITCH);
 }
 
-/// Stops actor id rocking.
+/// The rocking statue stands still.
 void AncientLemuria_StillTheStatue(s32 id) {
   struct Actor *actor = Actor_GetById(id);
   struct FieldSprite *sprite = actor->sprite;
@@ -115,22 +124,28 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-/// A step trigger (cell behavior 20): the camera keeps south of z 750, short
-/// of the shore's upper part.
+/// Nothing visible happens as Felix walks over cells (8, 52) to (12, 52), on
+/// the path by the boat dock; the game stops the view scrolling north of the
+/// dock's stretch of shore, so the shore above stays out of sight.
+// XXX: whether the view stops as Felix walks down to the dock or up from it;
+// a recording of the walk across both rows would settle it.
 void AncientLemuria_KeepCameraSouth(void) {
   ((struct MapWork *)Ram_HeapSlots->mapGrid)->minZ = toFIXED(750);
 }
 
-/// A step trigger (cell behavior 21): the camera may go north to z 352 again.
+/// Nothing visible happens as Felix walks over the next row, cells (8, 53) to
+/// (12, 53); the view may scroll north over the whole shore again.
 void AncientLemuria_LetCameraNorth(void) {
   ((struct MapWork *)Ram_HeapSlots->mapGrid)->minZ = toFIXED(352);
 }
 
-/// Move lifts the blue statue; nothing else happens.
+/// Nothing more than the move itself happens as Felix starts casting Move on
+/// the blue statue by the path north.
 void AncientLemuria_StartMovingStatue(void) {}
 
-/// Move sets the blue statue down: on cell (8, 36) it stays moved, and once it
-/// is the Lemurians come out to meet the party.
+/// Felix moves the blue statue by the path north with Move. Set down on its
+/// spot beside the ledge, cell (8, 36), it stays there, and the two Lemurians
+/// come out to meet the party (AncientLemuria_MeetTheLemurians).
 void AncientLemuria_FinishMovingStatue(s32 unused, s32 id) {
   struct Actor *actor = Actor_GetById(id);
   s32 x = FIELD_CELL(actor->x.fixed);
@@ -149,9 +164,10 @@ static inline void Hop(s32 dx, s32 dz) {
   Event_Wait(3);
 }
 
-/// Cyclone on the first weeds brings out Rime, once: it spins as it grows, hops
-/// away with the leader after it and hides in the blue statue, which starts to
-/// rock.
+/// Felix casts Cyclone on the first patch of weeds (cell (5, 13)): the weeds
+/// blow away and, the first time, Rime pops out of the ground, spinning as it
+/// grows, then hops off east with Felix turning to watch it and hides in a blue
+/// statue, which starts to rock.
 void AncientLemuria_CycloneRevealsRime(void) {
   struct Actor *actor;
   s32 frame;
@@ -206,32 +222,38 @@ void AncientLemuria_CycloneRevealsRime(void) {
   Actor_GetById(ACTOR_RIMES_STATUE)->timer = 0;
 }
 
-/// Cyclone on the second weeds scatters them; so for the next four.
+/// Felix casts Cyclone on the second patch of weeds (cell (8, 9)), and
+/// they blow away.
 void AncientLemuria_CycloneSecondWeeds(void) {
   FieldTileCopies_CopyTouchedCells(9, 9, 2, 3, 8, 9, 0);
 }
 
-/// As AncientLemuria_CycloneSecondWeeds.
+/// Felix casts Cyclone on the third patch of weeds (cell (12, 7)), and
+/// they blow away.
 void AncientLemuria_CycloneThirdWeeds(void) {
   FieldTileCopies_CopyTouchedCells(38, 0, 5, 2, 12, 7, 0);
 }
 
-/// As AncientLemuria_CycloneSecondWeeds.
+/// Felix casts Cyclone on the fourth patch of weeds (cell (14, 11)), and they
+/// blow away.
 void AncientLemuria_CycloneFourthWeeds(void) {
   FieldTileCopies_CopyTouchedCells(39, 2, 4, 3, 14, 11, 0);
 }
 
-/// As AncientLemuria_CycloneSecondWeeds.
+/// Felix casts Cyclone on the fifth patch of weeds (cell (21, 9)), and they
+/// blow away.
 void AncientLemuria_CycloneFifthWeeds(void) {
   FieldTileCopies_CopyTouchedCells(39, 2, 3, 3, 21, 9, 0);
 }
 
-/// As AncientLemuria_CycloneSecondWeeds.
+/// Felix casts Cyclone on the sixth patch of weeds (cell (25, 8)), and they
+/// blow away.
 void AncientLemuria_CycloneSixthWeeds(void) {
   FieldTileCopies_CopyTouchedCells(39, 0, 4, 3, 25, 8, 0);
 }
 
-/// As Tremor starts, the statue Rime hides in stops rocking.
+/// As Felix starts casting Tremor on the rocking statue Rime hides in, it
+/// stands still.
 void AncientLemuria_StartTremorOnTheStatue(void) {
   AncientLemuria_StillTheStatue(ACTOR_RIMES_STATUE);
 }
@@ -270,9 +292,9 @@ void AncientLemuria_TremorShakesOutRime(void) {
   Actor_WaitForMoveById(ACTOR_RIME);
 }
 
-/// Walking south to the boat dock: once the Lemurians have met the party and
-/// until King Hydros is met, Kraden calls Felix back to keep exploring;
-/// otherwise the party leaves.
+/// Felix walks south onto the boat dock: once the Lemurians have met the
+/// party and until King Hydros is met, Kraden calls him back to keep
+/// exploring; otherwise the party leaves Lemuria by boat.
 void AncientLemuria_HeadForTheDock(void) {
   struct Actor *actor;
 
@@ -388,7 +410,8 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-/// A step trigger at the ledge: the leader jumps forward if the way is clear.
+/// Felix walks east off the ledge beside the blue statue's spot (cell
+/// (9, 36)) and jumps across, if nothing stands in the way.
 void AncientLemuria_JumpForward(void) { Field_TryJumpForward(); }
 
 void Actor_PlaceOnActor();

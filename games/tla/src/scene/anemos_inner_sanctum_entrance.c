@@ -1,7 +1,14 @@
 /// @file
-/// The entrance to the Anemos Inner Sanctum, sealed under Contigo, which the
-/// party reaches with Teleport once it has all seventy-two Djinn
-/// (SceneId_AnemosInnerSanctumEntrance).
+/// The Anemos Inner Sanctum's hall under Contigo, which the party reaches by
+/// Teleport from the circle in the middle of the town, and in the same map
+/// the Sanctum's last room (SceneId_AnemosInnerSanctumEntrance).
+///
+/// In the last room six grey stone blocks, each with a glowing symbol on
+/// top, stand around a dark square. Felix pushes them or moves them with
+/// Move until all six stand on the square; their symbols light up, and Hover
+/// cast standing on them floats the party north across the gap to the
+/// shadow who keeps the light. He challenges them, and the battle with the
+/// Dullahan begins; once he is beaten, his light rises in his place.
 #include "../field/actor_set_sprite_priority.c"
 #include "field/actor_script.h"
 #include "fixed_math.h"
@@ -74,7 +81,8 @@ void Field_TryJumpForward(void);
 
 #include "../field/field_effect_move.c"
 
-/// The entrance room (gAnemosInnerSanctumEntrance_HallPlacements).
+/// The hall's and the last room's actors
+/// (gAnemosInnerSanctumEntrance_HallPlacements).
 enum AnemosInnerSanctumEntranceActorId {
   /// "I am the shadow, the keeper of light."
   ACTOR_SHADOW = ACTOR_FIRST_PLACED,
@@ -147,8 +155,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gAnemosInnerSanctumEntrance_Placements;
 }
 
-/// The shadow at the door speaks, the room warms, and the battle with the
-/// Dullahan starts, one the party cannot run from.
+/// As the blocks set the party down before him, the shadow at the door
+/// speaks, the room's colours warm, and the battle with the Dullahan starts,
+/// one the party cannot run from.
 void AnemosInnerSanctumEntrance_ShadowChallenges(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -168,8 +177,8 @@ void AnemosInnerSanctumEntrance_ShadowChallenges(void) {
   GameFlag_Set(FLAG_DULLAHAN_FOUGHT);
 }
 
-/// After the Dullahan's battle: the shadow and his light flash white, and the
-/// light swells and rises over him while he shrinks away.
+/// Back from beating the Dullahan, the shadow and his light flash white, and
+/// the light swells and rises over him while he shrinks away.
 void AnemosInnerSanctumEntrance_GlowRises(void) {
   struct Actor *actor = Actor_GetById(ACTOR_LIGHT);
 
@@ -195,8 +204,8 @@ void AnemosInnerSanctumEntrance_GlowRises(void) {
   Event_End();
 }
 
-/// Leaves the six blocks standing in their places, their bob counter at 1 and
-/// no per-frame hook.
+/// Nothing visible: leaves the six blocks standing where they are, no longer
+/// pushed.
 void AnemosInnerSanctumEntrance_PlaceBlocks(void) {
   s32 i;
 
@@ -208,8 +217,8 @@ void AnemosInnerSanctumEntrance_PlaceBlocks(void) {
   }
 }
 
-/// A sliding block's per-frame hook: draws its shadow while the ground under
-/// it is no more than 32 pixels down, and none below that.
+/// A floating block's shadow shows on the ground while the ground is near
+/// under it, and not over the gap.
 void AnemosInnerSanctumEntrance_ShadowByHeight(struct Actor *actor) {
   if ((actor->groundHeight = Map_GetTerrainHeight(
            0, actor->x.fixed, actor->z.fixed)) >= -toFIXED(32))
@@ -220,9 +229,13 @@ void AnemosInnerSanctumEntrance_ShadowByHeight(struct Actor *actor) {
 
 extern s8 gAnemosInnerSanctumEntrance_BlockSpots[];
 
-/// Move on a block: once every block stands on its cell of
-/// gAnemosInnerSanctumEntrance_BlockSpots, the symbols flicker and the blocks
-/// stay placed for the visit.
+/// Felix moves one of the six symbol blocks in the last room, with Move or by
+/// pushing it. Once all six stand together on the dark square in the middle
+/// of the room (cells (11, 27) to (13, 28)), their symbols light up and
+/// flicker with a rising sound, and the blocks stay put for the rest of the
+/// visit.
+///
+/// Each block has its own spot, in gAnemosInnerSanctumEntrance_BlockSpots.
 void AnemosInnerSanctumEntrance_MoveBlock(s32 a, s32 b) {
   s32 i;
 
@@ -249,8 +262,11 @@ void AnemosInnerSanctumEntrance_MoveBlock(s32 a, s32 b) {
   AnemosInnerSanctumEntrance_PlaceBlocks();
 }
 
-/// A step on a pushing cell: pushes the block ahead and checks the blocks'
-/// places, or, with nothing to push, lets the leader jump forward off a ledge.
+/// Felix walks into one of the six symbol blocks on the last room's floor and
+/// pushes it a cell ahead, as AnemosInnerSanctumEntrance_MoveBlock; walking
+/// to the edge of the floor with no block ahead, he jumps off it instead.
+// XXX: which edges he jumps off (the gap's?); a recording of Felix walking
+// off the floor's edge would settle it.
 void AnemosInnerSanctumEntrance_StepWhilePushing(s32 a) {
   struct MainRoutineWork *party;
   s32 held = Leader_CanPushObjectAhead();
@@ -267,9 +283,12 @@ void AnemosInnerSanctumEntrance_StepWhilePushing(s32 a) {
   }
 }
 
-/// Hover on the placed blocks' cells: the six blocks hop up, slide 19 cells
-/// away from the leader and settle; facing north with the Dullahan unbeaten,
-/// the shadow then challenges the party.
+/// Felix casts Hover standing on the six blocks once their symbols are lit:
+/// one after another they hop up, then float the party 19 cells north across
+/// the gap (from cell (12, 28) to (12, 9)) and settle with a thump. If the
+/// Dullahan is not yet beaten, the shadow then challenges the party
+/// (AnemosInnerSanctumEntrance_ShadowChallenges). Cast again on the far side,
+/// it floats them back south.
 void AnemosInnerSanctumEntrance_OpenTheWay(void) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 shift = toFIXED(304);
@@ -357,7 +376,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 /// Whether the game flag is set.
 static __inline__ s32 Flag_Test(s32 flag) { return GameFlag_Get(flag); }
 
-/// Opens with the window transition. In the entrance room, gives the six
+/// Opens with the window transition. In the last room, gives the six
 /// blocks their symbols, lets the leader stand on them, and once they are
 /// placed this visit leaves them placed and flickering. Back from the
 /// Dullahan's battle, the light rises.
@@ -606,7 +625,8 @@ LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_Placements[] = {
     {SCENE_TABLE_END},
 };
 
-/// The entrance room's actors, in AnemosInnerSanctumEntranceActorId's order.
+/// The hall's and the last room's actors, in
+/// AnemosInnerSanctumEntranceActorId's order.
 LATE_DATA struct ActorPlacement gAnemosInnerSanctumEntrance_HallPlacements[] = {
     ACTOR_PLACEMENT(SPRITE_DULLAHAN, FLAG_DULLAHAN_BEATEN, MOVEMENT_TYPE_STAND,
                     200, 0, 104, FACING_EAST, TALK_FACING_PARTY_AND_BACK, 0),
@@ -674,8 +694,8 @@ LATE_DATA struct Trigger gAnemosInnerSanctumEntrance_Triggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// The entrance room's exits, its pushing cells, Move on each block and Hover
-/// on the blocks' cells.
+/// The scene's exits, the last room's floor for pushing, Move on each block and
+/// Hover on the blocks' cells.
 LATE_DATA struct Trigger gAnemosInnerSanctumEntrance_HallTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},

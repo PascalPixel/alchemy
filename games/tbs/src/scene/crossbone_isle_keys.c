@@ -21,9 +21,10 @@
 /// - SceneId_CrossboneIsleStatues, off the fourth, where five statues of a
 ///   robed woman wait, lit in circles by braziers in the dark.
 ///
-///   As the leader crosses each one's stretch of the room, it steps out after
-///   him unless he is hidden by Cloak. It goes back home once he is past
-///   (FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER while one is after him).
+///   As the leader crosses each one's stretch of the room, it glides out onto
+///   him and pushes him back south unless he is hidden by Cloak, then goes
+///   back home (FLAG_CROSSBONE_ISLE_STATUE_AFTER_LEADER while one is after
+///   him).
 ///
 ///   Halt stops one where it stands, and Reveal clears the translucent layer
 ///   over the room while it lasts.
@@ -616,9 +617,9 @@ static void CrossboneIsleKeys_CheckFirstPursuerTrigger(void) {
   }
 }
 
-/// Raised in CrossboneIsleStatues (91): the first pursuer follows the
-/// leader, then goes back home.
-static void CrossboneIsleKeys_DodgeFirstPursuer(void) {
+/// Raised in CrossboneIsleStatues (RAISED_FIRST_CHASE): the first statue
+/// glides onto the leader and pushes him back south, then glides home.
+static void CrossboneIsleKeys_FirstStatuePushesLeaderBack(void) {
   struct Actor *leader;
 
   Event_Start();
@@ -658,9 +659,9 @@ static void CrossboneIsleKeys_CheckSecondPursuerTrigger(void) {
   }
 }
 
-/// Raised in CrossboneIsleStatues (92): the second pursuer follows the
-/// leader, then goes back home.
-static void CrossboneIsleKeys_DodgeSecondPursuer(void) {
+/// Raised in CrossboneIsleStatues (RAISED_SECOND_CHASE): the second statue
+/// glides onto the leader and pushes him back south, then glides home.
+static void CrossboneIsleKeys_SecondStatuePushesLeaderBack(void) {
   struct Actor *leader;
 
   Event_Start();
@@ -725,9 +726,10 @@ UNUSED static void CrossboneIsleKeys_TrackFifthPursuerColumn(void) {
   CrossboneIsleKeys_TrackPursuerColumn(2);
 }
 
-/// Touching step trigger 61 in CrossboneIsleStatues: the third pursuer
-/// follows the leader, then goes back home.
-static void CrossboneIsleKeys_DodgeThirdPursuer(void) {
+/// Touching step trigger 61 in CrossboneIsleStatues: unless Halt holds it,
+/// the third statue glides onto the leader and pushes him back south, then
+/// glides home.
+static void CrossboneIsleKeys_ThirdStatuePushesLeaderBack(void) {
   struct Actor *leader;
 
   if (gMainRoutineWork.haltedActor != ACTOR_THIRD_STATUE) {
@@ -753,9 +755,10 @@ static void CrossboneIsleKeys_DodgeThirdPursuer(void) {
   }
 }
 
-/// Touching step trigger 62 in CrossboneIsleStatues: the fourth pursuer lines
-/// up and goes after the leader.
-static void CrossboneIsleKeys_DodgeFourthPursuer(void) {
+/// Touching step trigger 62 in CrossboneIsleStatues: unless Halt holds it,
+/// the fourth statue lines up with the leader's column, glides onto him and
+/// pushes him back south, then glides home.
+static void CrossboneIsleKeys_FourthStatuePushesLeaderBack(void) {
   struct Actor *leader;
 
   if (gMainRoutineWork.haltedActor != ACTOR_FOURTH_STATUE) {
@@ -806,9 +809,9 @@ static void CrossboneIsleKeys_CheckFifthPursuerTrigger(void) {
   }
 }
 
-/// Raised in CrossboneIsleStatues (96): the fifth pursuer follows the
-/// leader, then goes back home.
-static void CrossboneIsleKeys_DodgeFifthPursuer(void) {
+/// Raised in CrossboneIsleStatues (RAISED_FIFTH_CHASE): the fifth statue
+/// glides onto the leader and pushes him back south, then glides home.
+static void CrossboneIsleKeys_FifthStatuePushesLeaderBack(void) {
   struct Actor *leader;
 
   Event_Start();
@@ -1526,11 +1529,11 @@ struct Trigger gCrossboneIsleStatuesTriggers[] = {
     { TRIGGER_EXIT, 2, CONDITION_ALWAYS, CROSSBONE_ISLE_STATUES_TO_CROSSBONE_ISLE_FOURTH_FLOOR_WEST },
     { TRIGGER_STEP, 53, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_ThirdStatueShadowsLeader) },
     { TRIGGER_STEP, 54, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_FourthStatueShadowsLeader) },
-    { TRIGGER_STEP, 61, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_DodgeThirdPursuer) },
-    { TRIGGER_STEP, 62, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_DodgeFourthPursuer) },
-    { TRIGGER_RAISED, RAISED_FIFTH_CHASE, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_DodgeFifthPursuer) },
-    { TRIGGER_RAISED, RAISED_SECOND_CHASE, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_DodgeSecondPursuer) },
-    { TRIGGER_RAISED, RAISED_FIRST_CHASE, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_DodgeFirstPursuer) },
+    { TRIGGER_STEP, 61, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_ThirdStatuePushesLeaderBack) },
+    { TRIGGER_STEP, 62, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_FourthStatuePushesLeaderBack) },
+    { TRIGGER_RAISED, RAISED_FIFTH_CHASE, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_FifthStatuePushesLeaderBack) },
+    { TRIGGER_RAISED, RAISED_SECOND_CHASE, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_SecondStatuePushesLeaderBack) },
+    { TRIGGER_RAISED, RAISED_FIRST_CHASE, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_FirstStatuePushesLeaderBack) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_CastRevealInStatueRoom) },
     { PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_RevealEndsInStatueRoom) },
     { PSYNERGY_ON_ACTOR(ABILITY_HALT), ACTOR_FIRST_STATUE, CONDITION_ALWAYS, EVENT(CrossboneIsleKeys_HaltPursuer) },

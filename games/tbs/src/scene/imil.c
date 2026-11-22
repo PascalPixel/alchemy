@@ -37,8 +37,9 @@
 ///   blocked cell or one too high stops him.
 ///
 ///   Move pushes the snowman only when cast from the snow, not from the
-///   river's ice or the raised ground. Once it lands at cell (15, 7) it stays
-///   there for the rest of the visit (a temporary flag).
+///   river's ice or the raised ground. Once it lands on SNOWMAN_MOVED_COLUMN,
+///   SNOWMAN_MOVED_ROW it stays there for the rest of the visit (a temporary
+///   flag).
 ///
 ///   Searching finds 9 coins, a Vial and a Lucky Medal.
 ///
@@ -209,6 +210,11 @@ enum ImilTownFlag {
   /// Move has pushed the snowman to its place, for the rest of the visit.
   FLAG_IMIL_SNOWMAN_MOVED = FLAG_SCENE_TEMP_03
 };
+
+/// The map cell Move leaves the snowman on, the one west of where it stands
+/// (262, 124).
+#define SNOWMAN_MOVED_COLUMN 15
+#define SNOWMAN_MOVED_ROW 7
 
 /// Imil's shops, by their numbers in the shop table.
 enum { SHOP_IMIL_WEAPONS = 10, SHOP_IMIL_ARMOR = 11, SHOP_IMIL_ITEMS = 12 };
@@ -1263,30 +1269,33 @@ static void Imil_UpdateFootprints(void) {
   return;
 }
 
-/// Move on Imil's snowman, while the leader leaves footprints: once it is
-/// at cell (15, 7) it stays there for the rest of the visit.
+/// Move on Imil's snowman, while the leader leaves footprints: cell
+/// SNOWMAN_MOVED_COLUMN, SNOWMAN_MOVED_ROW takes the attributes of the cell
+/// north of it for the rest of the visit, once the snowman is there (before
+/// TBS_PATCH_3, wherever Move took it).
 static void Imil_PlaceMovedSnowman(void) {
-  s32 a;
-  s32 b;
+  s32 column;
+  s32 row;
 
 #if TBS_PATCH_3
   struct Actor *actor = Actor_Get(ACTOR_SNOWMAN);
 
-  a = FIELD_CELL(actor->x.fixed);
-  if (a != 15)
+  column = FIELD_CELL(actor->x.fixed);
+  if (column != SNOWMAN_MOVED_COLUMN)
     return;
-  b = FIELD_CELL(actor->z.fixed);
-  if (b != 7)
+  row = FIELD_CELL(actor->z.fixed);
+  if (row != SNOWMAN_MOVED_ROW)
     return;
   Import_GameFlagSet(FLAG_IMIL_SNOWMAN_MOVED);
   Actor_SetSpritePriority(ACTOR_SNOWMAN, 3);
 #else
   Import_GameFlagSet(FLAG_IMIL_SNOWMAN_MOVED);
   Actor_SetSpritePriority(ACTOR_SNOWMAN, 3);
-  a = 15;
-  b = 7;
+  column = SNOWMAN_MOVED_COLUMN;
+  row = SNOWMAN_MOVED_ROW;
 #endif
-  MapGrid_CopyCellAttributes(15, 6, 1, 1, a, b);
+  MapGrid_CopyCellAttributes(SNOWMAN_MOVED_COLUMN, SNOWMAN_MOVED_ROW - 1, 1, 1,
+                             column, row);
 }
 
 /// Walking onto the path north out of Imil: the leader faces north and goes

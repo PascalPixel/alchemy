@@ -1,11 +1,18 @@
 /// @file
-/// Air's Rock's inside, the rooms of this overlay within the rock in Osenia:
-/// tightropes, pillars to Move, stakes to Pound, and twister rocks and Wind
-/// Stones to Whirlwind, whose gusts carry pillars, blow away golden barriers
-/// and turn bridges. Vents puff steam that blows the leader off ledges, and
-/// stepping stones vanish behind him. At its heart
-/// Sheba reads the tablet and learns Reveal (AirsRockInside_ReadRevealTablet,
-/// walked to by AirsRockInside_WalkToRevealTablet), and a Psynergy Stone
+/// Inside Air's Rock, reached through the doorway the lightning opens at its
+/// top, with a golden door low on its cliff also leading into the great hall
+/// (airs_rock.c): the hall and the rooms around it, their doorways marked by
+/// coloured dots.
+///
+/// Felix moves pillars with Move or by pushing them, so that they fill gaps
+/// or block the vents whose puffs of steam blow him off his path; Pound
+/// sinks one of a pair of stakes and raises the other; Whirlwind on a Wind
+/// Stone sends a gust that carries pillars, blows golden barriers away and
+/// turns bridges, and on a twister rock wakes the statues, whose little
+/// whirlwinds carry the party. The party crosses tightropes and stepping
+/// stones that vanish behind them. At the heart of the rock, in the room of
+/// the Reveal tablet, Sheba reads the tablet and learns Reveal
+/// (AirsRockInside_ReadRevealTablet), and a Psynergy Stone in another room
 /// restores the party's PP (AirsRockInside_CheckPsynergyStone).
 
 #include "field/field_sequence.h"
@@ -138,6 +145,14 @@ enum AirsRockInsideCellBehavior {
   CELL_BEHAVIOR_AIRS_ROCK_INSIDE_TOWER_DOOR = 30,
   CELL_BEHAVIOR_AIRS_ROCK_INSIDE_REVEAL_TABLET = 30,
   CELL_BEHAVIOR_AIRS_ROCK_INSIDE_PSYNERGY_STONE = 30,
+  /// The stepping stones Felix is drawn standing on: two kinds, a stack of
+  /// two and the same one row nearer, and the Reveal tablet room's stones that
+  /// light gold under him (AirsRockInside_StampCellUnderLeader and the rest).
+  CELL_BEHAVIOR_AIRS_ROCK_INSIDE_STEPPING_STONE = 80,
+  CELL_BEHAVIOR_AIRS_ROCK_INSIDE_OTHER_STEPPING_STONE,
+  CELL_BEHAVIOR_AIRS_ROCK_INSIDE_STACKED_STONES,
+  CELL_BEHAVIOR_AIRS_ROCK_INSIDE_STACKED_STONES_NEARER,
+  CELL_BEHAVIOR_AIRS_ROCK_INSIDE_LIGHTING_STONE = 90,
   CELL_BEHAVIOR_AIRS_ROCK_INSIDE_WHIRLWIND_END = 212,
   CELL_BEHAVIOR_AIRS_ROCK_INSIDE_STAKE_TOP = 212
 };
@@ -390,7 +405,7 @@ void AirsRockInside_FinishPushingPillar(void);
 void AirsRockInside_WakeVialChestStatue(void);
 void AirsRockInside_JumpDownLedge(void);
 void AirsRockInside_RideClarityCircletVent(void);
-void AirsRockInside_StepOnVanishingStone(void);
+void AirsRockInside_StepOffVanishingStone(void);
 void AirsRockInside_StampWideCellUnderLeader(void);
 void AirsRockInside_HideRevealedDoors(void);
 void AirsRockInside_RevealDoors(void);
@@ -503,11 +518,17 @@ void AirsRockInside_DriftMote(struct Actor *actor) {
   actor->y.fixed += actor->speedLimit;
 }
 
-/// Whirlwind on a twister rock or a Wind Stone: the scene's own effect runs in
-/// place of Whirlwind's.
+/// Nothing visible happens of its own as Felix starts casting Whirlwind on a
+/// twister rock or a Wind Stone inside the rock; the game clears what is
+/// pending so that the cast can go on to the rock's or stone's own whirlwind
+/// (AirsRockInside_TakeOverWhirlwind).
 void AirsRockInside_StartWhirlwind(void) { Event_ResolvePendingActions(0); }
 
-/// Tells Whirlwind's effect that the scene runs its own.
+/// Nothing visible happens of its own as Felix casts Whirlwind on a twister
+/// rock or a Wind Stone inside the rock; the game tells Whirlwind to leave out
+/// its usual little whirlwind, so that what follows is the rock's or the
+/// stone's own (AirsRockInside_BlowGust, AirsRockInside_WakeHallStatue and
+/// AirsRockInside_WakeVialChestStatue).
 void AirsRockInside_TakeOverWhirlwind(void) {
   ((struct FieldEffectWork *)Ram_HeapSlots->fieldEffectWork)->childOption = 1;
 }
@@ -1637,10 +1658,11 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gAirsRockInside_Placements;
 }
 
-/// A task: once the leader stands still on a new cell, the cells stamped under
-/// the last are restored; in the Reveal tablet room, leaving a cell with a
-/// collision code raises TRIGGER_LEFT_CELL plus the code, which for a vanishing
-/// stone is its trigger (TRIGGER_FIRST_VANISHING_STONE on).
+/// Nothing visible of its own: once Felix stands still on a new cell, the
+/// stepping stone he last stood on is drawn as before; in the Reveal tablet
+/// room, leaving a cell with a collision code raises TRIGGER_LEFT_CELL plus the
+/// code, which for a vanishing stone is its trigger
+/// (TRIGGER_FIRST_VANISHING_STONE on).
 void AirsRockInside_RestoreCellBehindLeader(void) {
   struct Actor *actor = Actor_GetById(Party_GetLeaderActor());
   s32 x = FIELD_CELL(actor->x.fixed);
@@ -1678,9 +1700,14 @@ void AirsRockInside_StartRestoringCells(void) {
   Task_Add(AirsRockInside_RestoreCellBehindLeader, TASK_PASS_FRAME);
 }
 
-/// As the leader steps onto a new cell, saves the cells under it and stamps the
-/// floor's marked cells in their place; AirsRockInside_RestoreCellBehindLeader
-/// puts them back once he has left.
+/// As Felix steps onto one of the yellow stepping stones marked with a
+/// diamond, in the great hall and the rooms around it, the stone is drawn
+/// again under his feet, in front of what lies behind it, so that he is seen
+/// standing on it; nothing else changes. The stone goes back to its own
+/// picture once he has left it (AirsRockInside_RestoreCellBehindLeader).
+///
+/// The cells under him are saved at (73, 72) and the stone's picture kept at
+/// (70, 72) is copied in their place.
 void AirsRockInside_StampCellUnderLeader(void) {
   struct Actor *actor = Actor_GetById(Party_GetLeaderActor());
   s32 x = FIELD_CELL(actor->x.fixed);
@@ -1715,8 +1742,9 @@ void AirsRockInside_StampCellUnderLeader(void) {
                            gAirsRockInside_StampedX, gAirsRockInside_StampedZ);
 }
 
-/// As AirsRockInside_StampWideCellUnderLeader for the other rooms' floors, by
-/// scene.
+/// The same for the stepping stones of a second kind, in the hall, the Vial
+/// chest room, the Reveal tablet's room and the Elixir chest room: the stone
+/// is drawn again under Felix's feet from the picture kept at (71, 72).
 void AirsRockInside_StampOtherCellUnderLeader(void) {
   struct Actor *actor = Actor_GetById(Party_GetLeaderActor());
   s32 x = FIELD_CELL(actor->x.fixed);
@@ -1748,8 +1776,9 @@ void AirsRockInside_StampOtherCellUnderLeader(void) {
                            gAirsRockInside_StampedX, gAirsRockInside_StampedZ);
 }
 
-/// When the leader steps onto a new cell, saves the 1 by 3 cells under him at
-/// (73, 72) and stamps the cells kept at (72, 72) in their place.
+/// As Felix steps onto a stepping stone stacked on another, three cells of
+/// the picture under him are saved at (73, 72) and the stack's picture kept
+/// at (72, 72) is drawn in their place.
 #define DEFINE_AIRS_ROCK_INSIDE_TRACK_LEADER_CELL(name, n1)                    \
   void name(void) {                                                            \
     struct Actor *actor = Actor_GetById(Party_GetLeaderActor());               \
@@ -1771,12 +1800,13 @@ void AirsRockInside_StampOtherCellUnderLeader(void) {
     }                                                                          \
   }
 
-/// Stepping on the Reveal tablet room's floor: the 1 by 3 cells under the
-/// leader are stamped as it walks.
+/// As Felix steps onto one of the stacked stepping stones in the great hall,
+/// the stack is drawn again under his feet, in front of the wall behind it,
+/// so that he is seen standing on top of it; nothing else changes.
 DEFINE_AIRS_ROCK_INSIDE_TRACK_LEADER_CELL(
     AirsRockInside_StampTallCellUnderLeader, 64)
 
-/// As AirsRockInside_StampTallCellUnderLeader, one row nearer.
+/// The same for the stacked stepping stones one row nearer the screen.
 DEFINE_AIRS_ROCK_INSIDE_TRACK_LEADER_CELL(
     AirsRockInside_StampTallCellUnderLeaderNearer, 63)
 
@@ -1880,9 +1910,11 @@ void AirsRockInside_FlickerTarget(struct Actor *actor) {
   Actor_SetSpriteColor(actor, (u8)(bit * actor->riseCounter));
 }
 
-/// Whirlwind on the hall's twister rock: it glows and the light it sends wakes
-/// the statue beside it, which starts breathing whirlwinds
-/// (FLAG_AIRS_ROCK_HALL_STATUE_WOKEN).
+/// Felix casts Whirlwind on the twister rock in the great hall: it glows, a
+/// ball of purple light flies north up the hall to the great stone face,
+/// whose eyes light red as its mouth opens with a rumble and rocks fall, and
+/// from then on its statues breathe whirlwinds the party can ride. The rock
+/// turns grey, spent.
 void AirsRockInside_WakeHallStatue(void) {
   u16 *buffer = Heap_Alloc(LIGHTNING_TILES * TILE_SIZE_4BPP);
   u16 *cell;
@@ -2051,9 +2083,11 @@ void AirsRockInside_OpenTabletRoomDoor(void) {
   Event_End();
 }
 
-/// Move lifts a pillar: each room frees the cells its pillars block; the paired
-/// statues room also clears two cells' shapes and the coins chest room stops
-/// its statue's timer.
+/// Nothing visible happens of its own as Felix starts to push a pillar or a
+/// statue inside the rock, or casts Move on one; the game takes it off the
+/// cells it was blocking so that it can slide. In the paired statues room it
+/// also smooths two cells' ground, and in the coins chest room the statue
+/// being moved stops breathing whirlwinds.
 void AirsRockInside_StartPushingPillar(void) {
   s16 scene = gMainRoutineWork.next;
 
@@ -2077,10 +2111,13 @@ void AirsRockInside_StartPushingPillar(void) {
   }
 }
 
-/// Move sets a pillar down: one left above the ground drops onto it with a
-/// thump; then where it stopped sets that pillar's flag, and in the paired
-/// statues' room and the face warp room the cells along its rows are marked
-/// or cleared again.
+/// Once Felix has pushed or moved a pillar or a statue inside the rock: one
+/// left over lower ground drops onto it with a thump, and one left in the
+/// place it belongs stays there on later visits, as a shortcut or a step.
+///
+/// In the paired statues' room and the face warp room the cells along the
+/// pillar's rows are marked or cleared again, which in the face warp room
+/// decides which vents it keeps still.
 void AirsRockInside_FinishPushingPillar(void) {
   struct Actor *pushed =
       ((struct FieldWork *)Ram_HeapSlots->fieldWork)->movedBlock;
@@ -2181,9 +2218,11 @@ void AirsRockInside_FinishPushingPillar(void) {
   Event_End();
 }
 
-/// Whirlwind on the Vial chest room's twister rock: BG0 is loaded
-/// with the light it sends, which flashes across the room, opens the cells at
-/// (68, 84) and wakes the statue (FLAG_AIRS_ROCK_VIAL_CHEST_STATUE_WOKEN).
+/// Felix casts Whirlwind on the twister rock in the Vial chest room: it
+/// glows, a ball of purple light flies north to the room's great stone face,
+/// whose eyes light red and whose mouth opens with a roar (the cells from
+/// (12, 77) down), and the statue below it wakes and starts breathing
+/// whirlwinds. The rock turns grey, spent.
 void AirsRockInside_WakeVialChestStatue(void) {
   u16 *buffer = Heap_Alloc(LIGHTNING_TILES * TILE_SIZE_4BPP);
   u16 *cell;
@@ -2329,9 +2368,10 @@ void AirsRockInside_JumpDownLedge(void) {
   Event_End();
 }
 
-/// A vent's puff has reached the leader in the Clarity Circlet chest room:
-/// north of z 654 he is blown down to (376, 668) with a chime, without
-/// turning.
+/// A puff of steam from one of the vents in the Clarity Circlet chest room
+/// catches Felix north of the vents and, with a chime, blows him back south
+/// to cell (23, 41) in front of them, without turning him round. South of
+/// them the puff does nothing.
 void AirsRockInside_RideClarityCircletVent(void) {
 
   if (Actor_GetById(gMainRoutineWork.leaderActorId)->z.part[0].integer > 653)
@@ -2388,12 +2428,16 @@ void AirsRockInside_VanishStone(s32 x, s32 y) {
   REG_DISPCNT &= ~DISPCNT_OBJWIN_ON;
 }
 
-/// Stepping off a vanishing stone: on either end of the row
-/// (CELL_BEHAVIOR_AIRS_ROCK_INSIDE_STONES_SOUTH_END or _NORTH_END) the stone
-/// only vanishes once FLAG_STONE_VANISHED is set; elsewhere the
-/// cell under the leader is stamped, the stone in the trigger's row vanishes,
-/// and FLAG_STONE_VANISHED and the stone's own flag are set.
-void AirsRockInside_StepOnVanishingStone(void) {
+/// Felix steps off one of the stepping stones that cross the Reveal tablet's
+/// room, and it fades away behind him with a drip, leaving a gap, for good.
+/// Stepping from a stone back onto the floor at either end of the row, the
+/// stone goes only once another already has.
+///
+/// The floor at the ends is read as
+/// CELL_BEHAVIOR_AIRS_ROCK_INSIDE_STONES_SOUTH_END and _NORTH_END on the
+/// overhead layer; FLAG_STONE_VANISHED says a stone has gone, and each stone
+/// has its own flag.
+void AirsRockInside_StepOffVanishingStone(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *leader;
   s32 cell, row = 54;
@@ -2418,9 +2462,12 @@ void AirsRockInside_StepOnVanishingStone(void) {
   }
 }
 
-/// As AirsRockInside_StampTallCellUnderLeader with a 1 by 2 block: saves the
-/// cells 64 columns across from the leader at (73, 72) and stamps the cells
-/// kept at (70, 74) in their place.
+/// As Felix steps onto one of the stepping stones on row 19 of the Reveal
+/// tablet's room, beside its two hidden doorways, it lights up gold under his
+/// feet, and goes back to yellow once he has left it.
+///
+/// Two cells of the overhead layer under him are saved at (73, 72) and the
+/// lit stone's picture kept at (70, 74) is drawn in their place.
 void AirsRockInside_StampWideCellUnderLeader(void) {
   struct Actor *actor = Actor_GetById(Party_GetLeaderActor());
   s32 x = FIELD_CELL(actor->x.fixed);
@@ -2452,10 +2499,13 @@ extern u32 gAirsRockInside_OrbitSparkScript[];
     MapGrid_CopyCellPictureIndicesRect(n2, 17, 88, 19, 1, 2);                  \
   }
 
-/// As Reveal fades, the hidden doors of the Reveal tablet room close again.
+/// Nothing visible of its own: as Reveal fades, the Reveal tablet room's two
+/// hidden doorways, at cells (8, 19) and (24, 19), are walls again.
 DEFINE_AIRS_ROCK_INSIDE_SET_DOORS(AirsRockInside_HideRevealedDoors, 26, 90)
 
-/// Reveal shows the room's hidden doors.
+/// Felix casts Reveal in the Reveal tablet's room, and two hidden doorways
+/// show in its walls, at cells (8, 19) and (24, 19), for as long as it
+/// lasts.
 DEFINE_AIRS_ROCK_INSIDE_SET_DOORS(AirsRockInside_RevealDoors, 25, 89)
 
 /// Leaves a small spark where the orbiter is.
@@ -2730,8 +2780,8 @@ void AirsRockInside_ReadRevealTablet(void) {
   }
 }
 
-/// Examining the tablet from the south: read already, it says so; otherwise
-/// the leader walks round to face it and Sheba reads it.
+/// Felix examines the Reveal tablet from the south: read already,
+/// it says so; otherwise he walks round to its front and Sheba reads it.
 void AirsRockInside_WalkToRevealTablet(void) {
   if (GameFlag_Get(FLAG_REVEAL_TABLET_READ)) {
     Event_Start();
@@ -2765,17 +2815,21 @@ void AirsRockInside_WalkToRevealTablet(void) {
     }                                                                          \
   }
 
-/// Examining the tablet from its east side: as
-/// AirsRockInside_WalkToRevealTablet.
+/// Felix examines the Reveal tablet from its east side, facing west: he walks
+/// round to its front and Sheba reads it, as from the south
+/// (AirsRockInside_WalkToRevealTablet).
 DEFINE_AIRS_ROCK_INSIDE_READ_TABLET(AirsRockInside_ReadTabletFacingWest, 280)
 
-/// Examining it from its west side: as AirsRockInside_WalkToRevealTablet.
+/// Felix examines the Reveal tablet from its west side, facing east: the same.
 DEFINE_AIRS_ROCK_INSIDE_READ_TABLET(AirsRockInside_ReadTabletFacingEast, 248)
 
-/// Walking west into the tablet room's ledge: nothing happens.
+/// Nothing happens as Felix walks west into the ledge of the Reveal tablet's
+/// room.
 void AirsRockInside_IgnoreStep(void) {}
 
-/// Move on the Elixir chest room's pillar: its place sets the area flag.
+/// Felix casts Move on the pillar in the Elixir chest room; nothing more than
+/// the move shows, but the game remembers whether it now stands on the
+/// turning bridge, which then cannot turn under a gust.
 void AirsRockInside_MoveElixirChestPillar(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -2787,7 +2841,8 @@ void AirsRockInside_MoveElixirChestPillar(void) {
   Event_End();
 }
 
-/// Pound on one of the paired stakes room's stakes
+/// Felix casts Pound on one of the four stakes in the paired stakes room: it
+/// sinks into the floor and the other stake of its pair rises
 /// (AirsRockInside_PoundStake).
 void AirsRockInside_PoundPairedStakesStake(s32 mode, s32 step) {
   AirsRockInside_PoundStake(mode, step);
@@ -3825,10 +3880,10 @@ struct Trigger gAirsRockInside_HallTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 14, CONDITION_ALWAYS, 14},
     {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_AIRS_ROCK_INSIDE_TOWER_DOOR, CONDITION_ALWAYS, EVENT(AirsRockInside_OpenTabletRoomDoor)},
     {TRIGGER_STEP, CELL_BEHAVIOR_AIRS_ROCK_INSIDE_TOWER_DOOR, CONDITION_ALWAYS, EVENT(AirsRockInside_StampOtherCellUnderLeader)},
-    {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(AirsRockInside_StampCellUnderLeader)},
-    {TRIGGER_STEP, 81, CONDITION_ALWAYS, EVENT(AirsRockInside_StampOtherCellUnderLeader)},
-    {TRIGGER_STEP, 82, CONDITION_ALWAYS, EVENT(AirsRockInside_StampTallCellUnderLeader)},
-    {TRIGGER_STEP, 83, CONDITION_ALWAYS, EVENT(AirsRockInside_StampTallCellUnderLeaderNearer)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_AIRS_ROCK_INSIDE_STEPPING_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_StampCellUnderLeader)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_AIRS_ROCK_INSIDE_OTHER_STEPPING_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_StampOtherCellUnderLeader)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_AIRS_ROCK_INSIDE_STACKED_STONES, CONDITION_ALWAYS, EVENT(AirsRockInside_StampTallCellUnderLeader)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_AIRS_ROCK_INSIDE_STACKED_STONES_NEARER, CONDITION_ALWAYS, EVENT(AirsRockInside_StampTallCellUnderLeaderNearer)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), ACTOR_HALL_TWISTER_ROCK, FLAG_AIRS_ROCK_HALL_STATUE_WOKEN, EVENT(AirsRockInside_StartWhirlwind)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_HALL_TWISTER_ROCK, FLAG_AIRS_ROCK_HALL_STATUE_WOKEN, EVENT(AirsRockInside_TakeOverWhirlwind)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_HALL_TWISTER_ROCK, FLAG_AIRS_ROCK_HALL_STATUE_WOKEN, EVENT(AirsRockInside_WakeHallStatue)},
@@ -3844,8 +3899,8 @@ struct Trigger gAirsRockInside_VialChestTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_AIRS_ROCK_INSIDE_VIAL_CHEST_LEDGE, CONDITION_ALWAYS, EVENT(AirsRockInside_JumpDownLedge)},
-    {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(AirsRockInside_StampCellUnderLeader)},
-    {TRIGGER_STEP, 81, CONDITION_ALWAYS, EVENT(AirsRockInside_StampOtherCellUnderLeader)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_AIRS_ROCK_INSIDE_STEPPING_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_StampCellUnderLeader)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_AIRS_ROCK_INSIDE_OTHER_STEPPING_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_StampOtherCellUnderLeader)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_VIAL_CHEST_EAST_PILLAR, FLAG_AIRS_ROCK_VIAL_CHEST_EAST_PILLAR_PLACED, EVENT(AirsRockInside_StartPushingPillar)},
@@ -3862,7 +3917,7 @@ struct Trigger gAirsRockInside_VialChestTriggers[] = {
 struct Trigger gAirsRockInside_ClarityCircletChestTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(AirsRockInside_StampCellUnderLeader)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_AIRS_ROCK_INSIDE_STEPPING_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_StampCellUnderLeader)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_CLARITY_CIRCLET_CHEST_FIRST_PILLAR, FLAG_AIRS_ROCK_CLARITY_CIRCLET_CHEST_FIRST_PILLAR_PLACED, EVENT(AirsRockInside_StartPushingPillar)},
@@ -3898,9 +3953,9 @@ struct Trigger gAirsRockInside_TightropesTriggers[] = {
 
 struct Trigger gAirsRockInside_RevealTabletTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(AirsRockInside_StampCellUnderLeader)},
-    {TRIGGER_STEP, 81, CONDITION_ALWAYS, EVENT(AirsRockInside_StampOtherCellUnderLeader)},
-    {TRIGGER_STEP, 90, CONDITION_ALWAYS, EVENT(AirsRockInside_StampWideCellUnderLeader)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_AIRS_ROCK_INSIDE_STEPPING_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_StampCellUnderLeader)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_AIRS_ROCK_INSIDE_OTHER_STEPPING_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_StampOtherCellUnderLeader)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_AIRS_ROCK_INSIDE_LIGHTING_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_StampWideCellUnderLeader)},
     {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 12, CONDITION_ALWAYS, EVENT(AirsRockInside_IgnoreStep)},
     {EXAMINE_TRIGGER_FACING(FACING_NORTH), CELL_BEHAVIOR_AIRS_ROCK_INSIDE_REVEAL_TABLET, CONDITION_ALWAYS, EVENT(AirsRockInside_ReadRevealTablet)},
     {EXAMINE_TRIGGER_FACING(FACING_SOUTH), CELL_BEHAVIOR_AIRS_ROCK_INSIDE_REVEAL_TABLET, CONDITION_ALWAYS, EVENT(AirsRockInside_WalkToRevealTablet)},
@@ -3908,19 +3963,19 @@ struct Trigger gAirsRockInside_RevealTabletTriggers[] = {
     {EXAMINE_TRIGGER_FACING(FACING_EAST), CELL_BEHAVIOR_AIRS_ROCK_INSIDE_REVEAL_TABLET, CONDITION_ALWAYS, EVENT(AirsRockInside_ReadTabletFacingEast)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(AirsRockInside_RevealDoors)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(AirsRockInside_HideRevealedDoors)},
-    {TRIGGER_RAISED, TRIGGER_FIRST_VANISHING_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_StepOnVanishingStone)},
-    {TRIGGER_RAISED, TRIGGER_FIRST_VANISHING_STONE + 1, CONDITION_ALWAYS, EVENT(AirsRockInside_StepOnVanishingStone)},
-    {TRIGGER_RAISED, TRIGGER_FIRST_VANISHING_STONE + 2, CONDITION_ALWAYS, EVENT(AirsRockInside_StepOnVanishingStone)},
-    {TRIGGER_RAISED, TRIGGER_FIRST_VANISHING_STONE + 3, CONDITION_ALWAYS, EVENT(AirsRockInside_StepOnVanishingStone)},
-    {TRIGGER_RAISED, TRIGGER_FIRST_VANISHING_STONE + 4, CONDITION_ALWAYS, EVENT(AirsRockInside_StepOnVanishingStone)},
+    {TRIGGER_RAISED, TRIGGER_FIRST_VANISHING_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_StepOffVanishingStone)},
+    {TRIGGER_RAISED, TRIGGER_FIRST_VANISHING_STONE + 1, CONDITION_ALWAYS, EVENT(AirsRockInside_StepOffVanishingStone)},
+    {TRIGGER_RAISED, TRIGGER_FIRST_VANISHING_STONE + 2, CONDITION_ALWAYS, EVENT(AirsRockInside_StepOffVanishingStone)},
+    {TRIGGER_RAISED, TRIGGER_FIRST_VANISHING_STONE + 3, CONDITION_ALWAYS, EVENT(AirsRockInside_StepOffVanishingStone)},
+    {TRIGGER_RAISED, TRIGGER_FIRST_VANISHING_STONE + 4, CONDITION_ALWAYS, EVENT(AirsRockInside_StepOffVanishingStone)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gAirsRockInside_ElixirChestTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(AirsRockInside_StampCellUnderLeader)},
-    {TRIGGER_STEP, 81, CONDITION_ALWAYS, EVENT(AirsRockInside_StampOtherCellUnderLeader)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_AIRS_ROCK_INSIDE_STEPPING_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_StampCellUnderLeader)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_AIRS_ROCK_INSIDE_OTHER_STEPPING_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_StampOtherCellUnderLeader)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ELIXIR_CHEST_PILLAR, FLAG_AIRS_ROCK_ELIXIR_CHEST_PILLAR_MOVED, EVENT(AirsRockInside_MoveElixirChestPillar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_FIRST), ACTOR_ELIXIR_CHEST_SOUTH_WIND_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_StartWhirlwind)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_WHIRLWIND, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_ELIXIR_CHEST_SOUTH_WIND_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_TakeOverWhirlwind)},
@@ -3934,7 +3989,7 @@ struct Trigger gAirsRockInside_ElixirChestTriggers[] = {
 struct Trigger gAirsRockInside_PairedStakesTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(AirsRockInside_StampCellUnderLeader)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_AIRS_ROCK_INSIDE_STEPPING_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_StampCellUnderLeader)},
     {TRIGGER_STEP, CELL_BEHAVIOR_AIRS_ROCK_INSIDE_STAKE_TOP, CONDITION_ALWAYS, EVENT(AirsRockInside_StepOntoStake)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},
@@ -3985,7 +4040,7 @@ struct Trigger gAirsRockInside_FaceWarpTriggers[] = {
 struct Trigger gAirsRockInside_CoinsChestTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_STEP, 80, CONDITION_ALWAYS, EVENT(AirsRockInside_StampCellUnderLeader)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_AIRS_ROCK_INSIDE_STEPPING_STONE, CONDITION_ALWAYS, EVENT(AirsRockInside_StampCellUnderLeader)},
     {TRIGGER_RAISED, RAISED_RIDE_WHIRLWIND, CONDITION_ALWAYS, EVENT(AirsRockInside_RideWhirlwind)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(AirsRockInside_StartPushingPillar)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(AirsRockInside_FinishPushingPillar)},

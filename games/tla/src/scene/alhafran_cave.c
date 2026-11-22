@@ -1,14 +1,17 @@
 /// @file
-/// The Alhafran Cave under the mayor's manor, in two scenes that share this
-/// overlay: the cave behind the rear entrance (SceneId_AlhafranCave), which the
-/// hungry boy's father lets the party into, and the town's jail
-/// (SceneId_AlhafraJail). Once Briggs and his crew are jailed, his wife Chaucha
-/// and their son Eoleo visit him, and the boy shows Psynergy of his own
-/// (AlhafranCave_ChauchaAndEoleoVisit). Pound sinks a stake
-/// (AlhafranCave_PoundStake), Frost freezes a puddle
-/// (AlhafranCave_FreezePuddle), and the cells under the cave's bridges rise to
-/// their decks while the leader walks the ledges above the channel
-/// (AlhafranCave_RaiseBridgeCells).
+/// The Alhafran Cave under the town, in two scenes that share this overlay:
+/// the cave behind the rear entrance by the mayor's home, which the hungry
+/// boy's father lets the party into once they give the boy Large Bread
+/// (SceneId_AlhafranCave), and the town's jail with the caves beyond it
+/// (SceneId_AlhafraJail).
+///
+/// After Briggs and his crew are jailed, his wife Chaucha and their son Eoleo
+/// visit him as Felix walks into the jail, and the boy lifts the cell's key
+/// with Psynergy of his own until his father stops him
+/// (AlhafranCave_ChauchaAndEoleoVisit). In the caves, Pound and Lash reach
+/// three chests; once Briggs has escaped, a pillar no longer blocks the way,
+/// and Frost on a puddle makes a pillar of ice up to three more
+/// (AlhafranCave_FreezePuddle).
 
 #include "flags.h"
 #include "battle/battle.h"
@@ -55,8 +58,8 @@ void AlhafranCave_StartMovingCrate(void);
 void AlhafranCave_FinishMovingCrate(void);
 void FlagBlock_PlaceAllMarkingEdges(const void *data);
 
-/// Set while the cells under the bridges stand at the bridges' height, so the
-/// leader on the ledges crosses them rather than the channel below.
+/// Set while the ground under the cave's bridges stands at their height, so
+/// that the leader walks over them rather than under.
 #define FLAG_BRIDGE_CELLS_RAISED FLAG_SCENE_TEMP_04
 /// Set once Lash has tied the jail's rope.
 #define FLAG_JAIL_ROPE_TIED FLAG_SCENE_TEMP_00
@@ -165,19 +168,22 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gAlhafranCave_CaveActorPlacements;
 }
 
-/// Pound sinks the jail's stake.
+/// Felix casts Pound on the stake in the caves beyond the jail and drives it
+/// into the ground.
 void AlhafranCave_PoundStake(s32 mode, s32 frame) {
   Pound_SinkTarget(gAlhafranCave_PoundStakes, mode, frame);
 }
 
-/// Move lifts the crate; nothing else happens.
+/// Nothing more than the move itself happens as Felix starts casting Move on
+/// the crate in the jail.
 void AlhafranCave_StartMovingCrate(void) {}
 
-/// Move sets the crate down; nothing else happens.
+/// Nothing more than the move itself happens once Move has set the jail's
+/// crate down.
 void AlhafranCave_FinishMovingCrate(void) {}
 
-/// Briggs asks whether the party has stopped by for a visit, and answers yes or
-/// no.
+/// Felix talks to Briggs in his cell, who asks whether he has stopped by for
+/// a visit, and answers yes or no.
 void AlhafranCave_TalkToBriggs(s32 id) {
   FieldEvent_SetMessageId((s32)MsgOhStoppedBy);
   // "Oh, stopped by for a visit, did you?"
@@ -195,14 +201,22 @@ void AlhafranCave_TalkToBriggs(s32 id) {
   Event_ShowMessage(id, 0);
 }
 
-/// Frost freezes the cave's puddle into a pillar of ice.
+/// Felix casts Frost on the puddle below the three chests in the cave, and it
+/// freezes into a pillar of ice that lifts the way up to them.
 void AlhafranCave_FreezePuddle(void) {
   FlagBlock_ApplyFlags(gAlhafranCave_Puddles);
 }
 
-/// Raises the cells under the southern bridge over the channel and under the
-/// broken bridge's ends to the ledges' height of 32 pixels (4 steps), and makes
-/// a wall of the cell north-west of that bridge.
+/// Nothing visible happens as Felix walks past cell (18, 8), east of the
+/// stairs up at the cave's north end; the game raises the ground under the
+/// southern stone bridge and under the broken bridge's two ends to the height
+/// of the ledges they join, so that from there he walks over the bridges
+/// rather than under them.
+///
+/// The ground goes up four steps, and the cell north-west of the southern
+/// bridge becomes a wall so that he cannot step off its end.
+// XXX: whether cell (18, 8) is where the way up onto the ledges begins; a
+// recording of the walk from the stairs up across it would settle it.
 void AlhafranCave_RaiseBridgeCells(void) {
   Event_SetFlag(FLAG_BRIDGE_CELLS_RAISED);
   FieldMapGrid_SetCellHeight(toFIXED(400), toFIXED(304), 0, 4);
@@ -213,7 +227,9 @@ void AlhafranCave_RaiseBridgeCells(void) {
   MapGrid_SetCellHeight(toFIXED(336), toFIXED(384), 0, 4);
 }
 
-/// Lowers the cells under the bridges to the floor below them.
+/// Nothing visible happens as Felix walks past cell (17, 7) or (15, 25); the
+/// game lowers the ground under the bridges to the cave's floor again, so
+/// that down there he walks under them.
 void AlhafranCave_LowerBridgeCells(void) {
   Event_ClearFlag(FLAG_BRIDGE_CELLS_RAISED);
   FieldMapGrid_SetCellHeight(toFIXED(400), toFIXED(304), 0, 0);
@@ -224,7 +240,10 @@ void AlhafranCave_LowerBridgeCells(void) {
   MapGrid_SetCellHeight(toFIXED(336), toFIXED(384), 0, 0);
 }
 
-/// Sand sinks the leader into the sand's layer.
+/// Felix casts Sand in the cave and sinks into the floor as a mound of sand;
+/// the game sets how the mound is layered against the cave's walls.
+// XXX: what goes wrong without it; a recording of Sand cast beside the
+// cave's walls would settle it.
 void AlhafranCave_CastSand(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -242,7 +261,8 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gAlhafranCave_CaveTriggers;
 }
 
-/// Notes whether the leader stands on the cave's upper level.
+/// Nothing visible: each frame the game notes whether Felix stands on the
+/// cave's upper level, for wading.
 void AlhafranCave_CheckUpperLevel(void) {
   FIXED y = Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed;
 
@@ -252,7 +272,7 @@ void AlhafranCave_CheckUpperLevel(void) {
     gMainRoutineWork.onUpperLevel = 1;
 }
 
-/// The jail's task: draws the crate's sprite where the crate stands.
+/// The jail's task: draws the crate's top where the crate stands.
 s32 AlhafranCave_DrawCrateSprite(void) {
   struct Actor *actor = Actor_Get(ACTOR_CRATE);
 
@@ -491,8 +511,12 @@ extern u8 MsgYouHereTo[];
 
 void AlhafranCave_CycleKeyColors(void);
 
-/// Briggs's wife Chaucha and their son Eoleo visit him in the jail, and Eoleo
-/// shows Psynergy of his own.
+/// Felix walks west into the jail after Briggs is caught (cells (49, 16) to
+/// (49, 19)): the jailer asks if he is here to see Briggs, and Briggs's wife
+/// Chaucha and their son Eoleo visit him. Eoleo lifts the cell's key off the
+/// guard's table with Psynergy of his own until Briggs cries out his name,
+/// then bursts into tears, and Chaucha takes him home. It happens once, and
+/// not after the mast is cleared.
 void AlhafranCave_ChauchaAndEoleoVisit(void) {
   struct Actor *eoleo;
   struct Actor *key;

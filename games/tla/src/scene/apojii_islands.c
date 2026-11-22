@@ -27,6 +27,19 @@
 #define FLAG_APOJII_ISLANDS_BRAMBLE_SEED_TAKEN 0xf9e
 /// Haze's islet: set once Lash has tied the rope between its posts.
 #define FLAG_HAZE_ROPE_TIED FLAG_SCENE_TEMP_00
+
+/// The cell behaviours the village's and the islet's trigger tables answer:
+/// the bank of the stream north of the hut by the Aqua Stone's pool, which
+/// Felix jumps across walking north; the weeds Cyclone scatters; and the weeds
+/// over a buried treasure, the village's Herb and Mint and the islet's Bramble
+/// Seed.
+enum {
+  CELL_BEHAVIOR_STREAM_BANK = 33,
+  CELL_BEHAVIOR_WEEDS = 21,
+  CELL_BEHAVIOR_WEEDS_OVER_HERB = 22,
+  CELL_BEHAVIOR_WEEDS_OVER_MINT = 23,
+  CELL_BEHAVIOR_WEEDS_OVER_BRAMBLE_SEED = 22
+};
 #include "types.h"
 #include "macros.h"
 #include "graphics/output.h"
@@ -607,12 +620,14 @@ void ApojiiIslands_ScatterWeeds(void) { SCATTER_WEEDS(68, 4, 39, 24); }
     }                                                                          \
   }
 
-/// Cyclone on the village's weeds over the Herb.
+/// Cyclone on the clump of weeds south of the Aqua Stone, at cell (23, 23),
+/// blows it away and uncovers the Herb buried there.
 DEFINE_SCATTER_WEEDS_OVER_TREASURE(ApojiiIslands_ScatterWeedsOverHerb, 68, 4,
                                    38, 21, FLAG_APOJII_ISLANDS_HERB_TAKEN,
                                    ACTOR_HERB, 376, 376)
 
-/// Cyclone on the village's weeds over the Mint.
+/// Cyclone on the clump of weeds in the village's south-east corner, at cell
+/// (37, 25), blows it away and uncovers the Mint buried there.
 DEFINE_SCATTER_WEEDS_OVER_TREASURE(ApojiiIslands_ScatterWeedsOverMint, 68, 4,
                                    38, 21, FLAG_APOJII_ISLANDS_MINT_TAKEN,
                                    ACTOR_MINT, 600, 408)
@@ -620,14 +635,20 @@ DEFINE_SCATTER_WEEDS_OVER_TREASURE(ApojiiIslands_ScatterWeedsOverMint, 68, 4,
 /// Cyclone on Haze's islet's weeds scatters them.
 void ApojiiIslands_ScatterHazeWeeds(void) { SCATTER_WEEDS(67, 8, 11, 6); }
 
-/// Cyclone on Haze's islet's weeds over the Bramble Seed.
+/// Cyclone on the clump of weeds on Haze's islet at cell (12, 9) blows it away
+/// and uncovers the Bramble Seed buried there.
 DEFINE_SCATTER_WEEDS_OVER_TREASURE(ApojiiIslands_ScatterWeedsOverBrambleSeed,
                                    67, 8, 11, 6,
                                    FLAG_APOJII_ISLANDS_BRAMBLE_SEED_TAKEN,
                                    ACTOR_BRAMBLE_SEED, 200, 152)
 
-/// Stepping onto a door: the leader walks through it and the scene leaves by
-/// the exit its step trigger numbers.
+/// Felix walks in at the door of one of the village's huts, and the screen
+/// fades to its room: the house of the man who stares at the Aqua Stone (its
+/// door at cell (29, 18)), the strict father's family's (8, 17), the old
+/// couple's in the north-east (35, 7), the inn (7, 6) or the general store
+/// (12, 5).
+/// Each door's cell behaviour is the number of the exit it leaves by, which
+/// the field keeps as `stepTrigger`.
 void ApojiiIslands_EnterDoor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -855,7 +876,14 @@ void ApojiiIslands_EnterSeaOfTimeIsletHouse(void) {
   Event_ClearFlag(FLAG_SHOW_AREA_NAME);
 }
 
-/// Lets the leader jump forward off a ledge.
+/// Felix jumps across the stream north of the hut by the Aqua Stone's pool when
+/// he walks north into its bank (cells (29, 12) and (30, 12)), landing on the
+/// grass beyond.
+/// The field's `Field_TryJumpForward` makes the jump. The second cell is one of
+/// the weeds' cells, and walking north into weeds anywhere in the village tries
+/// the same jump.
+// XXX: whether walking north into a clump of weeds away from the stream ever
+// jumps; a render of Felix walking north into one would settle it.
 void ApojiiIslands_JumpForward(void) { Field_TryJumpForward(); }
 
 /// A splash at the actor's feet, on its sprite's priority.
@@ -1369,14 +1397,14 @@ struct Trigger gApojiiIslands_VillageTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, APOJII_ISLANDS_TO_WORLD_MAP_A},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, APOJII_ISLANDS_TO_APOJII_ISLANDS_HAZE_NORTH},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, APOJII_ISLANDS_TO_APOJII_ISLANDS_HAZE_SOUTH},
-    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(ApojiiIslands_EnterDoor)},
-    {TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(ApojiiIslands_EnterDoor)},
-    {TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT(ApojiiIslands_EnterDoor)},
-    {TRIGGER_STEP, 7, CONDITION_ALWAYS, EVENT(ApojiiIslands_EnterDoor)},
-    {TRIGGER_STEP, 8, CONDITION_ALWAYS, EVENT(ApojiiIslands_EnterDoor)},
+    {TRIGGER_STEP, APOJII_ISLANDS_TO_APOJII_ISLANDS_SHOPS_SOUTHEAST, CONDITION_ALWAYS, EVENT(ApojiiIslands_EnterDoor)},
+    {TRIGGER_STEP, APOJII_ISLANDS_TO_APOJII_ISLANDS_SHOPS_SOUTHWEST, CONDITION_ALWAYS, EVENT(ApojiiIslands_EnterDoor)},
+    {TRIGGER_STEP, APOJII_ISLANDS_TO_APOJII_ISLANDS_SHOPS_EAST, CONDITION_ALWAYS, EVENT(ApojiiIslands_EnterDoor)},
+    {TRIGGER_STEP, APOJII_ISLANDS_TO_APOJII_ISLANDS_SHOPS_WEST, CONDITION_ALWAYS, EVENT(ApojiiIslands_EnterDoor)},
+    {TRIGGER_STEP, APOJII_ISLANDS_TO_APOJII_ISLANDS_SHOPS_NORTHWEST, CONDITION_ALWAYS, EVENT(ApojiiIslands_EnterDoor)},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, APOJII_ISLANDS_TO_MIKASALLA_ROOMS_SANCTUM},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 33, CONDITION_ALWAYS, EVENT(ApojiiIslands_JumpForward)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 21, CONDITION_ALWAYS, EVENT(ApojiiIslands_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_STREAM_BANK, CONDITION_ALWAYS, EVENT(ApojiiIslands_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_WEEDS, CONDITION_ALWAYS, EVENT(ApojiiIslands_JumpForward)},
     {TRIGGER_TALK, ACTOR_WELCOMING_YOUNG_MAN, CONDITION_ALWAYS, MSGNO(MsgThisIsApojii)},
     {TRIGGER_TALK, ACTOR_WOMAN_WARNING_OF_THE_EDGE, CONDITION_ALWAYS, MSGNO(MsgWhateverYouDo)},
     {TRIGGER_TALK, ACTOR_MAN_ABOUT_GAIA_FALLS, CONDITION_ALWAYS, MSGNO(MsgTheHugeWaterfall)},
@@ -1400,9 +1428,9 @@ struct Trigger gApojiiIslands_VillageTriggers[] = {
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(ApojiiIslands_RiseFromSand)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(ApojiiIslands_PauseSeaColors)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(ApojiiIslands_ResumeSeaColors)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 21, CONDITION_ALWAYS, EVENT(ApojiiIslands_ScatterWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 22, CONDITION_ALWAYS, EVENT(ApojiiIslands_ScatterWeedsOverHerb)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 23, CONDITION_ALWAYS, EVENT(ApojiiIslands_ScatterWeedsOverMint)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_WEEDS, CONDITION_ALWAYS, EVENT(ApojiiIslands_ScatterWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_WEEDS_OVER_HERB, CONDITION_ALWAYS, EVENT(ApojiiIslands_ScatterWeedsOverHerb)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_WEEDS_OVER_MINT, CONDITION_ALWAYS, EVENT(ApojiiIslands_ScatterWeedsOverMint)},
     {TRIGGER_TABLE_END},
 };
 
@@ -1452,8 +1480,8 @@ struct Trigger gApojiiIslands_HazeTriggers[] = {
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 40, CONDITION_ALWAYS, EVENT(ApojiiIslands_JumpDownLedge)},
     {TRIGGER_TALK, ACTOR_HAZE, CONDITION_ALWAYS, EVENT(ApojiiIslands_HazeJoinsParty)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_FALLS_ROPE_POST, FLAG_HAZE_ROPE_TIED, 0},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 21, CONDITION_ALWAYS, EVENT(ApojiiIslands_ScatterHazeWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 22, CONDITION_ALWAYS, EVENT(ApojiiIslands_ScatterWeedsOverBrambleSeed)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_WEEDS, CONDITION_ALWAYS, EVENT(ApojiiIslands_ScatterHazeWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_WEEDS_OVER_BRAMBLE_SEED, CONDITION_ALWAYS, EVENT(ApojiiIslands_ScatterWeedsOverBrambleSeed)},
     {TRIGGER_TABLE_END},
 };
 #undef COPY_PICTURE

@@ -125,6 +125,20 @@ extern struct ActorPlacement gAquaRock_MistSabreChestPlacements[];
 /// the edge of the falls (AquaRock_DropDownFalls).
 #define TRIGGER_DROP_DOWN_FALLS 44
 
+/// The cell behaviours the rooms' trigger tables answer: the streams the top's
+/// west and east red moai pour, the heads of the two lower red moai's streams,
+/// the streams that only ever run downhill, the streams the slopes' Water
+/// Stone turns back, and the mouth of the sparkling passage.
+enum {
+  CELL_BEHAVIOR_WEST_MOAI_STREAM = 30,
+  CELL_BEHAVIOR_EAST_MOAI_STREAM = 31,
+  CELL_BEHAVIOR_LOWER_WEST_MOAI_STREAM = 32,
+  CELL_BEHAVIOR_LOWER_EAST_MOAI_STREAM = 33,
+  CELL_BEHAVIOR_DOWNHILL_STREAM = 40,
+  CELL_BEHAVIOR_TURNING_STREAM = 41,
+  CELL_BEHAVIOR_SPARKLING_PASSAGE = 4
+};
+
 /// The slopes (gAquaRock_SlopesPlacements).
 enum AquaRockSlopesActorId {
   /// The slopes' sixteen moai: four red ones, the first two at the top, then
@@ -426,8 +440,9 @@ UNUSED void AquaRock_SpawnSparkleAtRandom(struct Actor *actor) {
   }
 }
 
-/// Each frame: a stream whose flag has changed sends a wave down it, stopping
-/// or starting it a row every four frames.
+/// A moai's stream stops or starts as a wave running down it from the moai's
+/// mouth, a row every four frames.
+/// It runs every frame, sending a wave down each stream whose flag has changed.
 void AquaRock_UpdateStreams(void) {
   struct AquaRockStream *entry;
   s32 n, i, flag;
@@ -482,9 +497,11 @@ extern s32 gAquaRock_FourthStreamTimer;
 #define STREAM_CYCLE_FRAMES 240
 #define STREAM_STOP_FRAMES 90
 
-/// Each frame, while no event runs: each red moai's stream flows and then
-/// stops for the end of its cycle; the top two stay stopped while the pillar
-/// stands before them.
+/// The four red moai's streams flow for two and a half seconds and stop for
+/// one and a half, over and over, and the top two stay stopped while the
+/// pillar stands before them.
+/// It runs every frame while no event runs, setting each stream's stopped
+/// flag, which AquaRock_UpdateStreams turns into the wave down the stream.
 void AquaRock_TimeStreams(void) {
   if (GameFlag_Get(FLAG_FIELD_HANDLING_REQUESTS))
     return;
@@ -713,10 +730,13 @@ UNUSED void Actor_WaitBelowHeight(struct Actor *actor, FIXED height) {
   }
 }
 
-/// Each frame in a stream turned back: the current carries the leader north,
-/// splashing, and at its head on the slopes spins him up and out into the Mist
-/// Sabre chest's room; while the streams run downhill the current carries him
-/// south instead.
+/// Felix, walking into one of the streams the slopes' Water Stone turns back,
+/// is carried up it, splashing, once the stone has been Doused; at the head of
+/// the slopes' stream he spins up out of the water and away into the Mist
+/// Sabre chest's room. Until then, or once Doused again, the stream carries
+/// him down instead (AquaRock_FlowWithStream).
+/// It runs every frame he stands on the stream's cells, moving him and the
+/// camera two pixels north, and leaping him up each ledge the stream climbs.
 void AquaRock_RideStreamUp(void) {
   struct Actor *leader, *carried;
   struct Vector3 ahead;
@@ -804,8 +824,12 @@ static inline u8 CellAttribute(struct MapCell *cells, s32 row, s32 col) {
   return cells->attributeB;
 }
 
-/// Each frame on a current's cell: a leader walking in is carried away, and
-/// one the current already carries over the falls' edge drops down them.
+/// Felix, stepping into the stream one of the red moai pours, is swept away
+/// down the slopes, tumbling over the ledges, and where it carries him over
+/// the edge of the falls he drops down them, flailing, to the pool below
+/// (AquaRock_DropDownFalls).
+/// It runs every frame he stands on the stream's cells while it flows; the
+/// top two moai's streams take him only while the pillar does not stop them.
 void AquaRock_StepIntoCurrent(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -976,8 +1000,10 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gAquaRock_Triggers;
 }
 
-/// Each frame on the slopes: the leader is drawn at sprite priority 2 while a
-/// current carries him, behind the falls, and at 1 otherwise.
+/// On the slopes Felix is drawn behind the falls while a current carries him,
+/// and in front of them otherwise.
+/// It runs every frame, giving his sprite priority 2 while he is carried and 1
+/// otherwise.
 void AquaRock_KeepLeaderPriority(void) {
   struct Actor *actor = Actor_GetById(Party_GetLeaderActor());
 
@@ -1335,9 +1361,11 @@ void AquaRock_SpawnSplash(struct Actor *actor) {
 
 #include "shared/actor_emit_water_drop.h"
 
-/// Each frame in a stream running downhill: the current carries the leader
-/// south, splashing, and off a ledge he drops with the water and lands sitting
-/// down.
+/// Felix, walking into one of the streams that run down the slopes, is
+/// carried down it, splashing, and off a ledge he drops with the water and
+/// lands sitting down.
+/// It runs every frame he stands on the stream's cells, moving him and the
+/// camera two pixels south until something blocks the way.
 void AquaRock_FlowWithStream(void) {
   struct Actor *anchor;
   s32 owner;
@@ -1926,13 +1954,13 @@ LATE_DATA struct Trigger gAquaRock_Triggers[] = {
 /// the dry moai and the Water Stone.
 LATE_DATA struct Trigger gAquaRock_SlopesTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {STEP_TRIGGER_FACING(FACING_NORTH), 4, CONDITION_ALWAYS, EVENT(AquaRock_EnterSparklingPassage)},
-    {TRIGGER_STEP, 30, FLAG_PILLAR_BEFORE_WEST_MOAI, EVENT(AquaRock_StepIntoCurrent)},
-    {TRIGGER_STEP, 31, FLAG_PILLAR_BEFORE_EAST_MOAI, EVENT(AquaRock_StepIntoCurrent)},
-    {TRIGGER_STEP, 32, CONDITION_ALWAYS, EVENT(AquaRock_StepIntoCurrent)},
-    {TRIGGER_STEP, 33, CONDITION_ALWAYS, EVENT(AquaRock_StepIntoCurrent)},
-    {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(AquaRock_FlowWithStream)},
-    {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(AquaRock_RideStreamUp)},
+    {STEP_TRIGGER_FACING(FACING_NORTH), CELL_BEHAVIOR_SPARKLING_PASSAGE, CONDITION_ALWAYS, EVENT(AquaRock_EnterSparklingPassage)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_WEST_MOAI_STREAM, FLAG_PILLAR_BEFORE_WEST_MOAI, EVENT(AquaRock_StepIntoCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_EAST_MOAI_STREAM, FLAG_PILLAR_BEFORE_EAST_MOAI, EVENT(AquaRock_StepIntoCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_LOWER_WEST_MOAI_STREAM, CONDITION_ALWAYS, EVENT(AquaRock_StepIntoCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_LOWER_EAST_MOAI_STREAM, CONDITION_ALWAYS, EVENT(AquaRock_StepIntoCurrent)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_DOWNHILL_STREAM, CONDITION_ALWAYS, EVENT(AquaRock_FlowWithStream)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_TURNING_STREAM, CONDITION_ALWAYS, EVENT(AquaRock_RideStreamUp)},
     {TRIGGER_RAISED, TRIGGER_DROP_DOWN_FALLS, CONDITION_ALWAYS, EVENT(AquaRock_DropDownFalls)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_DRY_MOAI, FLAG_AQUA_ROCK_DRY_MOAI_FILLED, EVENT(AquaRock_DouseDryMoai)},
     {PSYNERGY_ON_ACTOR(ABILITY_DOUSE), ACTOR_WATER_STONE, FLAG_AQUA_ROCK_STREAMS_TURNED_BACK, EVENT(AquaRock_DouseWaterStone)},
@@ -1950,8 +1978,8 @@ LATE_DATA struct Trigger gAquaRock_MistSabreChestTriggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_STEP, 40, CONDITION_ALWAYS, EVENT(AquaRock_FlowWithStream)},
-    {TRIGGER_STEP, 41, CONDITION_ALWAYS, EVENT(AquaRock_RideStreamUp)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_DOWNHILL_STREAM, CONDITION_ALWAYS, EVENT(AquaRock_FlowWithStream)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_TURNING_STREAM, CONDITION_ALWAYS, EVENT(AquaRock_RideStreamUp)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_A, FLAG_PUDDLE_A_FROZEN, EVENT(AquaRock_FreezeFirstPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_B, FLAG_PUDDLE_B_FROZEN, EVENT(AquaRock_FreezeSecondPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_PUDDLE_C, FLAG_PUDDLE_C_FROZEN, EVENT(AquaRock_FreezeThirdPuddle)},

@@ -1,9 +1,12 @@
 /// @file
-/// Madra's houses: the inn, the shops, the elder's home with the Black Crystal
-/// on its mantel, the jail where Piers is held (entrance 20), and, as a
-/// second scene, the left cavern home. The old couple trade Char the Mars
-/// Djinni for the Healing Fungus, and on the return with Piers the elder's
-/// household welcomes him home.
+/// Inside Madra's buildings: the inn, the round sanctum, the houses, the
+/// mayor's house with the Black Crystal on its mantel, the jail where Piers is
+/// held, and, as a second scene, the left cavern home in the cliff. Walking
+/// into the jail the first time, Felix sees Shin accuse Piers of being one of
+/// the Champa and Piers, angered, lift him on a shaft of ice. Later the old
+/// couple who love mushrooms trade Char, the Mars Djinni, for the Healing
+/// Fungus from the Gondowan Cliffs, and when Felix brings Piers home the
+/// mayor's household welcomes him.
 
 #include "shared/tables.h"
 #include "sprite_ids.h"
@@ -49,7 +52,8 @@ enum MadraRoomsActorId {
   /// A couple who fear what lies south in Gondowan, and then the Kibombo.
   ACTOR_OLD_MAN_WARY_OF_GONDOWAN = ACTOR_FIRST_PLACED,
   ACTOR_WOMAN_WARY_OF_GONDOWAN,
-  /// The old man who loves the rare mushrooms of the Gondowan Cliffs.
+  /// The old man who loves the rare mushrooms of the Gondowan Cliffs, in the
+  /// house south of the market.
   ACTOR_MUSHROOM_LOVER,
   /// His wife, who cooks them.
   ACTOR_MUSHROOM_COOK,
@@ -186,7 +190,10 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gMadraRooms_Placements;
 }
 
-/// "Indra is in direct contact with southern Gondowan... Will we be safe?"
+/// Talking to the auburn-haired woman in the house by the town's south-west
+/// corner: "Indra is in direct contact with southern Gondowan... Will we be
+/// safe?" Told yes, she says Felix is only trying to make her feel better;
+/// told no, she tells him to stop getting folks worked up.
 void MadraRooms_AskWillWeBeSafe(void) {
   s32 msg;
 
@@ -208,9 +215,11 @@ void MadraRooms_AskWillWeBeSafe(void) {
   Event_End();
 }
 
-/// Madra's innkeeper takes the party in across the counter (inn 1), and
-/// otherwise talks of the week's troubles, the Kibombo, and later the dead fish
-/// on the shore, which from patch 1 is a question.
+/// Talking to Madra's innkeeper from across the counter on the inn's ground
+/// floor lets the party stay the night. From any other side he talks of the
+/// week's troubles, then of the Kibombo's wicked magic, and when Felix brings
+/// Piers home of the dead fish on the shore, which the later editions ask as a
+/// question.
 void MadraRooms_TalkToInnkeeper(void) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
@@ -256,8 +265,9 @@ void MadraRooms_TalkToInnkeeper(void) {
   }
 }
 
-/// Madra's sanctum healer heals across the counter, and otherwise talks of the
-/// town's trials, the Kibombo, and later the warming sea.
+/// Talking to the healer in the round sanctum from across his counter opens the
+/// sanctum's services; from any other side he talks of the town's trials, then
+/// of the Kibombo, and later of the warming sea.
 void MadraRooms_TalkToHealer(s32 actor) {
   u16 facing = Actor_Get(gMainRoutineWork.leaderActorId)->facing;
 
@@ -277,7 +287,9 @@ void MadraRooms_TalkToHealer(s32 actor) {
   }
 }
 
-/// "Don't touch that gem! The elder gave us strict orders to protect it!"
+/// Felix goes to touch the Black Crystal on the mantel in the mayor's house:
+/// the auburn-haired woman by the table hops up, turns to him and cries "Don't
+/// touch that gem! The elder gave us strict orders to protect it!"
 void MadraRooms_GuardElderGem(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -291,8 +303,10 @@ void MadraRooms_GuardElderGem(void) {
   Event_End();
 }
 
-/// The old man who loves the rare mushrooms of the Gondowan Cliffs, before and
-/// after the party brings him one.
+/// Talking to the old man who loves the rare mushrooms of the Gondowan
+/// Cliffs, in the house south of the market: he wonders how to climb the cliffs
+/// to get one, and once he has the Healing Fungus, he looks forward to dinner,
+/// then says he ate too much.
 void MadraRooms_TalkToMushroomLover(void) {
   s32 msg;
 
@@ -318,7 +332,10 @@ void MadraRooms_TalkToMushroomLover(void) {
   }
 }
 
-/// His wife, who cooks them.
+/// Talking to the mushroom lover's wife, in the same house: she tells of her
+/// husband's love of the rare mushrooms of the Gondowan Cliffs, begs the party
+/// to find the right one once he has turned down the Laughing Fungus, and
+/// after the Healing Fungus talks of cooking it.
 void MadraRooms_TalkToMushroomCook(void) {
   if (Event_GetFlag(FLAG_MADRA_HEALING_FUNGUS_GIVEN)) {
     if (Event_GetFlag(FLAG_MADRA_FUNGUS_FOR_DINNER)) {
@@ -342,8 +359,8 @@ void MadraRooms_TalkToMushroomCook(void) {
   }
 }
 
-/// Mind Read on the mushroom lover: he thinks of the Healing Fungus he longs
-/// for, and once he has it, of dinner.
+/// Casting Mind Read on the mushroom lover: he thinks of the mushrooms he
+/// longs for, and once he has the Healing Fungus, of dinner.
 void MadraRooms_MindReadMushroomLover(void) {
   if (Event_GetFlag(FLAG_MADRA_HEALING_FUNGUS_GIVEN)) {
     if (Event_GetFlag(FLAG_MADRA_FUNGUS_FOR_DINNER)) {
@@ -369,8 +386,8 @@ void MadraRooms_MindReadMushroomLover(void) {
   }
 }
 
-/// Mind Read on the mushroom cook: she thinks of her husband's mushrooms, and
-/// once he has the Healing Fungus, of cooking it.
+/// Casting Mind Read on the mushroom lover's wife: she thinks of her husband
+/// growing old, and once he has the Healing Fungus, of cooking it.
 void MadraRooms_MindReadMushroomCook(void) {
   if (Event_GetFlag(FLAG_MADRA_HEALING_FUNGUS_GIVEN)) {
     if (Event_GetFlag(FLAG_MADRA_FUNGUS_FOR_DINNER)) {
@@ -396,9 +413,10 @@ void MadraRooms_MindReadMushroomCook(void) {
   }
 }
 
-/// The man in the jail who has been focusing for days to make ice groans with
-/// the effort, the first time, and then wonders how anyone makes ice by
-/// thinking.
+/// Talking to the man in the jail who has been trying for days to make ice as
+/// Piers did, once Felix brings Piers home: the first time on a visit he
+/// strains and groans "Uhhhnnn... UHHHNNN!", and afterwards he wonders how
+/// anyone makes ice just by thinking.
 void MadraRooms_TalkToManFocusingOnIce(void) {
   if (!Event_GetFlag(FLAG_MADRA_FOCUSING_MAN_GROANED)) {
     Event_SetFlag(FLAG_MADRA_FOCUSING_MAN_GROANED);
@@ -436,8 +454,8 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gMadraRooms_TriggersBeforeRaid;
 }
 
-/// The Black Crystal sits on the elder's mantel until the Kibombo steal it
-/// (FLAG_BRIGGS_CAUGHT), after which its actor is put out of sight.
+/// The Black Crystal sits on the mantel in the mayor's house until the Kibombo
+/// steal it in their raid (FLAG_BRIGGS_CAUGHT), after which it is gone.
 void MadraRooms_PlaceBlackCrystal(void) {
   if (Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
     Actor_SetPosition(ACTOR_BLACK_CRYSTAL, 888, 8);
@@ -448,14 +466,15 @@ void MadraRooms_PlaceBlackCrystal(void) {
 }
 
 /// Places an actor facing an angle, the angle taken as the u16 an actor's
-/// facing is; the jail's four placements, named by us.
+/// facing is.
 static inline void MadraRooms_PlaceFacing(s32 actorId, s32 x, s32 z,
                                           u16 facing) {
   Actor_SetPositionAndFacing(actorId, x, z, facing);
 }
 
-/// The jail, entrance 20 from Madra: Shin angers Piers the first time, and
-/// later Shin and his friend stand by the story flags.
+/// Sets up the jail: the first time Felix walks in, Shin angers Piers
+/// (MadraRooms_ShinAngersPiers); afterwards Shin and his friend are gone until
+/// the Kibombo's raid, when they are back in the jail.
 void MadraRooms_SetUpJail(void) {
   if (!Event_GetFlag(FLAG_BRIGGS_CAUGHT)) {
     gFieldWork->psynergyDrawFlags = 3;
@@ -486,8 +505,10 @@ void FieldPsynergy_LoadResources();
 void FieldPsynergy_SetupActorPair();
 void BattleEffect_StopMainActor();
 
-/// The rooms' setup: the leader's sprite priority, the two rooms' actors, and
-/// the sister lying ill in the cavern home, by the story flags.
+/// Sets up Madra's buildings as the party walks in: Morgan and Dekka at the inn
+/// only for a party that won Colosso in The Broken Seal, the jail, the sister
+/// lying ill in bed in the left cavern home until Briggs is caught, and the
+/// Black Crystal.
 s32 Scene_Initialize(void) {
   struct FieldSprite *sprite;
   struct FieldWork *event;
@@ -791,7 +812,9 @@ void MadraRooms_ShinAngersPiers(void) {
   return;
 }
 
-/// "Ah... When will that kindly elder return and end my imprisonment?"
+/// Talking to Piers in his cell in Madra's jail: "Ah... When will that kindly
+/// elder return and end my imprisonment? I have no time to wait, but I don't
+/// want to have to hurt anyone..."
 void MadraRooms_TalkToPiers(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -803,8 +826,9 @@ void MadraRooms_TalkToPiers(void) {
   return;
 }
 
-/// Piers feels the Mind Read.
-/// "Why did I use my Psynergy in anger? I must maintain control..."
+/// Casting Mind Read on Piers in his cell: he regrets using his Psynergy in
+/// anger, then senses someone using Psynergy and looks about for them, and
+/// wonders when he will be freed.
 void MadraRooms_MindReadPiers(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -853,9 +877,9 @@ UNUSED void MadraRooms_PiersUsesPsynergy(void) {
 extern s32 gMadraRooms_WifeWalksToBackRoom[];
 extern s32 gMadraRooms_LeaderStepsAside[];
 
-/// The couple are given the Healing Fungus from the Gondowan Cliffs, his
-/// favourite, and trade the party Char the Mars Djinni for it.
-/// "Oh, my... Is... Is that..."
+/// Felix gives the old mushroom lover the Healing Fungus from the Gondowan
+/// Cliffs: "Oh, my... Is... Is that..." He and his wife go to their back room
+/// and come back with Char, the Mars Djinni, who joins the party.
 void MadraRooms_GiveHealingFungus(void) {
   struct Actor *actor;
 
@@ -954,9 +978,9 @@ void MadraRooms_GiveHealingFungus(void) {
   Event_End();
 }
 
-/// Given the Laughing Fungus, the old man tells his wife it only looks like the
-/// right one.
-/// "No, dear... They look similar, but these aren't quite right."
+/// Felix gives the old mushroom lover the Laughing Fungus: he tells his wife
+/// "No, dear... They look similar, but these aren't quite right." and turns
+/// it down.
 void MadraRooms_GiveLaughingFungus(void) {
   struct Actor *felix;
 
@@ -1003,8 +1027,8 @@ void MadraRooms_GiveLaughingFungus(void) {
   return;
 }
 
-/// A party member runs into the leader and vanishes, as the party gathers up
-/// to leave; the four sites of the welcome-home event, named by us.
+/// A party member walks into Felix and vanishes, as the party gathers up to
+/// leave the mayor's house.
 static inline void MadraRooms_WalkIntoLeader(s32 actorId) {
   struct Actor *leader;
 
@@ -1018,8 +1042,10 @@ static inline void MadraRooms_WalkIntoLeader(s32 actorId) {
   Actor_SetPosition(actorId, 0, 0);
 }
 
-/// On the return with Piers, the elder's household welcomes him home.
-/// "Felix! You're back!"
+/// Walking into the mayor's house when Felix brings Piers home (cells (44, 5)
+/// and (44, 6), a few steps in from the door), the mayor cries "Felix! You're
+/// back!" and his household welcomes Piers home, asking after his jewel and
+/// apologising for his imprisonment.
 void MadraRooms_WelcomePiersHome(void) {
 
   Event_Start();
@@ -1144,8 +1170,8 @@ void MadraRooms_WelcomePiersHome(void) {
   return;
 }
 
-/// Leaving a second time, the household asks whether the party must go so soon.
-/// "Ah, so you'll be leaving again, will you?"
+/// The welcome's end when Piers has already agreed to sail for Lemuria: the
+/// household asks "Ah, so you'll be leaving again, will you?"
 void MadraRooms_SayFarewellAgain(void) {
   FieldEvent_SetMessageId((s32)MsgMadraInteriorsAhSoYoullBeLeaving);
   // "Ah, so you'll be leaving again, will you?"
@@ -1189,10 +1215,9 @@ void MadraRooms_SayFarewellAgain(void) {
   return;
 }
 
-/// The first farewell: the household asks the party to stay, and Piers explains
-/// why he cannot.
-/// "If you've already recovered your jewel, why don't you stay here for a bit
-/// longer?"
+/// The welcome's end when Piers has not yet agreed to sail: the household asks
+/// the party to stay a little longer now that the jewel is recovered, and
+/// Piers explains why he cannot.
 void MadraRooms_AskToStayLonger(void) {
   FieldEvent_SetMessageId((s32)MsgMadraInteriorsIfYouveAlreadyRecovered);
   Actor_SetAnimationAndWait(ACTOR_ELDERS_GRANDSON, ANIM_NOD);
@@ -1315,7 +1340,7 @@ s32 gMadraRooms_WifeWalksToBackRoom[] = {
     SC_END,
 };
 
-/// The leader's script as the old man passes: one step aside.
+/// Felix's script as the old man passes: one step aside.
 s32 gMadraRooms_LeaderStepsAside[] = {
     SC_ANIMATION(ANIM_WALK),
     SC_MOVE_XZ(339, 111),
@@ -1376,8 +1401,7 @@ s32 gMadraRooms_OldManComesBack[] = {
     SC_END,
 };
 
-/// Char's script once the old man gives him to the party: he follows the
-/// leader.
+/// Char's script once the old man gives him to the party: he follows Felix.
 s32 gMadraRooms_CharFollows[] = {
     SC_ANIMATION(ANIM_WALK),
     SC_POSITION(327, 24, 71),

@@ -1,12 +1,21 @@
 /// @file
-/// The Anemos Inner Sanctum, reached by Teleport from Contigo's circle: the
-/// Dragon Skin room, whose four element symbols light a plate for each Djinni
-/// the party has found and, with all eighteen of an element, that element's
-/// torch over the north door (AnemosInnerSanctum_LightSymbol); round switches
-/// that ready a lift (AnemosInnerSanctum_PressRoundSwitch), pillars Moved onto
-/// switches, cracked floors and Sand; mimic stones that mirror the leader's
-/// steps onto their buttons (AnemosInnerSanctum_MimicLeader); and Charon's
-/// slate (AnemosInnerSanctum_ApproachCharonSlate).
+/// The Anemos Inner Sanctum, the last and hardest dungeon, reached by
+/// Teleport from the circle in the middle of Contigo.
+///
+/// The party arrives in a room with four element symbols on its floor.
+/// Stepping onto each, Felix lights a plate for every Djinni of its element
+/// the party has; with all eighteen of an element, its torch over the north
+/// door lights, and with all four lit the door opens
+/// (AnemosInnerSanctum_LightSymbol). Beyond it, Charon's slate speaks as the
+/// party comes up to it (AnemosInnerSanctum_ApproachCharonSlate). Below, mimic
+/// stones copy Felix's steps, mirrored, until they reach a button that opens
+/// a door (AnemosInnerSanctum_MimicLeader); seven round switches make a
+/// lift float, ready to carry the party up
+/// (AnemosInnerSanctum_PressRoundSwitch); pillars are moved onto their
+/// places with Move, and a switch holds a door open while something stands
+/// on it; cracked floors give way under the party, and Sand lets Felix pass
+/// along stretches of sand. The last room, with its six symbol blocks and
+/// the Dullahan, is anemos_inner_sanctum_entrance.c.
 #include "field/field_sequence.h"
 #include "field/map_grid.h"
 #include "graphics/output.h"
@@ -931,8 +940,8 @@ void AnemosInnerSanctum_LightSymbol(void) {
   }
 }
 
-/// Stepping off a symbol onto the floor between them lets the symbols be
-/// stepped onto again.
+/// Nothing visible happens as Felix steps off a symbol onto the floor
+/// between them; the game lets the symbols be stepped onto again.
 void AnemosInnerSanctum_StepOffSymbol(void) {
   GameFlag_Clear(FLAG_SCENE_TEMP_00);
 }
@@ -941,9 +950,10 @@ extern s16 gAnemosInnerSanctum_ElevatorBlocks[];
 extern s16 gAnemosInnerSanctum_SwitchesBlocks[];
 extern s16 gAnemosInnerSanctum_OrihalconChestBlocks[];
 
-/// Move picks up a pillar: in the switches' and the Orihalcon chest's rooms,
-/// sand cells by the pillars' places are walled while it is carried, and a
-/// cell or two beside them made sand.
+/// Nothing visible of its own happens as Felix starts to move a pillar with
+/// Move; in the switches' and the Orihalcon chest's rooms, the game closes
+/// the stretch of sand by the pillar's place while it is moving, so that a
+/// mound of sand cannot pass under it, and opens a cell or two beside it.
 void AnemosInnerSanctum_StartMovingBlock(void) {
   if (gMainRoutineWork.next == SCENE_ANEMOS_INNER_SANCTUM_ELEVATOR) {
     Actor_LiftTargetBlock((s32)gAnemosInnerSanctum_ElevatorBlocks);
@@ -972,11 +982,16 @@ void AnemosInnerSanctum_StartMovingBlock(void) {
   }
 }
 
-/// Move has set a pillar down: the cells StartMovingBlock changed are put
-/// back, and a pillar set down on its place (in 8-pixel half cells) sets its
-/// flag. In the switches' room a pillar on the switch holds it down and its
-/// door open; whichever pillar is set down on pillar B's place counts as
-/// pillar B, the two trading places while the third pillar is not on its own.
+/// Once Felix has moved a pillar with Move: a pillar left in the place it
+/// belongs stays there on later visits, as a shortcut. In the switches' room,
+/// the pillar moved onto the switch presses it with a click, and the door
+/// west of it opens with a thump, for good.
+///
+/// The stretches of sand AnemosInnerSanctum_StartMovingBlock closed are
+/// opened again. Each place is checked in half cells. In the switches' room
+/// whichever pillar is set down on pillar B's place counts as pillar B, the
+/// game trading the two actors' places while the third pillar is not on its
+/// own.
 void AnemosInnerSanctum_FinishMovingBlock(void) {
   struct Actor *block = gFieldWork->movedBlock;
   s32 x;
@@ -1107,9 +1122,9 @@ void AnemosInnerSanctum_PressRoundSwitch(void) {
   }
 }
 
-/// Stepping onto the ready lift: the leader is centred on it facing south, and
-/// it rises with the party, 4 pixels and then 128 more, as the room is left by
-/// the exit up.
+/// Felix steps onto the lift once it floats ready: he walks to its middle,
+/// turns to face south, and it carries the party up out of the room to the
+/// room above.
 void AnemosInnerSanctum_RideLiftUp(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *lift;
@@ -1150,8 +1165,12 @@ void AnemosInnerSanctum_RideLiftUp(void) {
   Event_End();
 }
 
-/// Sand cast on a cell of sand: while it lasts, the leader moves on the
-/// overhead layer.
+/// Felix casts Sand standing on sand and sinks into it; as a mound of sand
+/// he can then travel along the stretch of sand, where on foot he cannot
+/// pass, until it wears off.
+///
+/// While it lasts the leader moves on the overhead layer, where the sand's
+/// own cells are.
 void AnemosInnerSanctum_SinkIntoSand(void) {
   struct Actor *actor;
   s32 behavior;
@@ -1164,7 +1183,8 @@ void AnemosInnerSanctum_SinkIntoSand(void) {
   }
 }
 
-/// As Sand fades, the leader moves on the ground layer again.
+/// Nothing visible of its own: as Sand wears off and Felix rises from the
+/// sand, the game sets him walking on the ground's cells again.
 void AnemosInnerSanctum_EndSand(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->layer = MAPGRID_LAYER_GROUND;
 }
@@ -1408,8 +1428,9 @@ void AnemosInnerSanctum_OpenMimicStoneDoor(void) {
   Event_End();
 }
 
-/// Stepping before Charon's slate the first time: the room darkens and the
-/// slate's words are shown.
+/// The first time Felix comes up to Charon's slate, the room's colours warm
+/// and the slate speaks: the power of the land to create a great darkness
+/// is for whoever attacks it.
 void AnemosInnerSanctum_ApproachCharonSlate(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1448,7 +1469,8 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gAnemosInnerSanctum_Triggers;
 }
 
-/// Teleport cast on the Dragon Skin room's circle: the party teleports back to
+/// Felix casts Teleport on the circle in the middle of the symbols' room:
+/// sparks fly as the colours cycle, and the party teleports back to
 /// Contigo.
 void AnemosInnerSanctum_TeleportOut(void) {
   PaletteCycle_Start();
@@ -1505,8 +1527,8 @@ UNUSED void AnemosInnerSanctum_EnterTheRoom(void) {
   Event_End();
 }
 
-/// Arriving up the elevator room's lift: it rises the last 48 pixels with the
-/// leader on it, its arrow up, and stays there.
+/// The party arrives up the lift in the elevator room: it rises the last of
+/// the way into the room with Felix on it and stays there.
 void AnemosInnerSanctum_ArriveOnElevatorLift(void) {
   struct Actor *lift = Actor_Get(ACTOR_ELEVATOR_LIFT);
 

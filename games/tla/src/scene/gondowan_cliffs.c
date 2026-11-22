@@ -1,13 +1,19 @@
 /// @file
-/// The Gondowan Cliffs, west of Alhafra, in two scenes that share this overlay:
-/// the cliffs (SceneId_GondowanCliffs) and the pass a rock blocks until Grind
-/// breaks it (SceneId_GondowanCliffsPass). Kindle, a Mars Djinni, waits at the
-/// end of the cliffs (GondowanCliffs_FightKindle); Frost, Whirlwind, Move and
-/// Scoop each open a way (GondowanCliffs_FreezeFirstPuddle,
-/// GondowanCliffs_BlowAwayFoliage, GondowanCliffs_LeapStumpIntoWater,
-/// GondowanCliffs_ScoopUpGeyser); and if the party heads west before helping
-/// Piers recover his Black Orb, Kraden turns them back
-/// (GondowanCliffs_TurnBackToHelpPiers).
+/// The Gondowan Cliffs, the maze of ledges, vines and slides west of Madra on
+/// the way to Kibombo, and the river channel below them (SceneId_GondowanCliffs
+/// and SceneId_GondowanCliffsPass, which share this overlay). Coming from
+/// Madra, Felix finds a dog lying in the grass by the east entrance; Scoop on
+/// the yellow sand beside it digs up a geyser that carries him up onto the
+/// cliffs to the west. Whirlwind clears the ivy from a cave mouth nearby, where
+/// Kibombo warriors are hiding. Further on, Move pushes a tree stump off its
+/// ledge into the stream as a stepping stone, and close by Kindle, a Mars
+/// Djinni, waits to be fought; the tightrope across the river in the far west
+/// leads on towards Kibombo. Two puddles can be frozen with Frost once
+/// Felix has it, the eastern one on a later visit for the Healing Fungus. If
+/// the party comes back here after meeting Piers in Kibombo and before the
+/// ceremony at the Gabomba Statue is over, Kraden, Jenna and Sheba turn Felix
+/// back. Late in the game, Grind breaks the boulder in the river channel so
+/// the ship can sail on south to the western sea.
 
 #include "system/task.h"
 #include "shared/tables.h"
@@ -75,19 +81,20 @@ enum {
   ACTOR_KRADEN
 };
 
-/// The pass's actors by their rows: the tightrope's two posts follow the reset
-/// script's actor, and the rock Grind breaks.
+/// The river channel's actors: after the unseen one that resets the tile
+/// sprites, the tightrope's two posts and the boulder Grind breaks.
 enum {
   ACTOR_PASS_TIGHTROPE_POST_A = 9,
   ACTOR_PASS_TIGHTROPE_POST_B,
   ACTOR_PASS_SEA_ROCK
 };
 
-/// The pass's entrance an event sends the party in by, aboard the ship.
+/// The river channel's entrance an event sends the party in by, aboard the
+/// ship.
 enum { ENTRANCE_PASS_BY_SHIP = 99 };
 
-/// Talking to the Djinni at the end of the cliffs starts the battle with
-/// Kindle, a Mars Djinni.
+/// Talking to the red Djinni on the ledge near the tree stump starts the battle
+/// with Kindle, a Mars Djinni, who joins Felix once beaten.
 void GondowanCliffs_FightKindle(void) {
   Field_RequestDjinnBattle(ACTOR_KINDLE, DJINNI_KINDLE);
 }
@@ -204,8 +211,14 @@ void GondowanCliffs_WaitToLand(struct Actor *actor, s32 height) {
   }
 }
 
-/// Move on the stump at the stream's edge: it rolls, leaps into the stream
-/// and lands upright in the water with a splash, a step across for the party.
+/// Pushing the tree stump west with Move to the edge of its ledge, cell
+/// (76, 34), sends it rolling off: it leaps into the stream and lands upright
+/// in the water with a thump and a splash, at cell (74, 33), a stepping stone
+/// Felix can hop onto to cross.
+///
+/// The Move row answers every push; only a push that leaves the stump in
+/// column 76 starts the leap. The landing cell takes the hop flag of the cell
+/// two rows north of it.
 void GondowanCliffs_LeapStumpIntoWater(s32 mode, s32 id) {
   struct Actor *actor = Actor_GetById(id);
   /* LEFTOVER(frame): an unused local the ROM's frame reserves and never
@@ -263,8 +276,12 @@ void GondowanCliffs_LeapStumpIntoWater(s32 mode, s32 id) {
   Event_End();
 }
 
-/// Frost on the first puddle: its ice pillar stands still and its cell can be
-/// climbed, for this visit.
+/// Frost on the puddle in the sandy gap between two ledges, near the tree
+/// stump, cell (81, 28), raises a pillar of ice there that Felix can hop onto
+/// to cross the gap; it stays until he leaves the cliffs.
+///
+/// The pillar's sprite stops moving, and the puddle's cell takes the hop flag
+/// of the cell two to its west.
 void GondowanCliffs_FreezeFirstPuddle(void) {
   struct Actor *actor = Actor_Get(ACTOR_FIRST_PUDDLE);
 
@@ -274,8 +291,12 @@ void GondowanCliffs_FreezeFirstPuddle(void) {
   Event_SetFlag(FLAG_GONDOWAN_CLIFFS_FIRST_PUDDLE_FROZEN);
 }
 
-/// Frost on the second puddle: its ice pillar stands 32 pixels tall and its
-/// cell can be climbed, for this visit.
+/// Frost on the puddle in the grass at the east end of the cliffs, cell
+/// (117, 35), raises a pillar of ice there that Felix can hop onto to jump the
+/// gap on the way to the Healing Fungus; it stays until he leaves the cliffs.
+///
+/// The pillar's sprite stops moving and its height is set to 32 pixels, and
+/// the puddle's cell takes the hop flag of the cell two to its west.
 void GondowanCliffs_FreezeSecondPuddle(void) {
   struct Actor *actor = Actor_Get(ACTOR_SECOND_PUDDLE);
 
@@ -287,13 +308,23 @@ void GondowanCliffs_FreezeSecondPuddle(void) {
   Event_SetFlag(FLAG_GONDOWAN_CLIFFS_SECOND_PUDDLE_FROZEN);
 }
 
-/// Whirlwind on the ivy blows it away for good.
+/// Whirlwind on the ivy hanging over a cave mouth west of the dog blows it
+/// away for good, opening the way into the cave where the Kibombo warriors
+/// hide.
+///
+/// The leaves are Whirlwind's own; the event only sets the flag that keeps the
+/// ivy gone and opens the cave's exit.
 void GondowanCliffs_BlowAwayFoliage(void) {
   GameFlag_Set(FLAG_GONDOWAN_CLIFFS_FOLIAGE_BLOWN);
 }
 
-/// Scoop on the geyser's sand: once the ground is dug, the geyser is dug up
-/// for good.
+/// Scoop on the patch of yellow sand beside the dog at the east end, cell
+/// (119, 45), digs up a geyser that from then on rises and falls there, a lift
+/// Felix can ride up to the cliffs above.
+///
+/// The Scoop row runs the event every frame of the dig; at `SCOOP_DUG_FRAME`
+/// it redraws the dug ground from a spare cell of the map and moves the
+/// geyser's unseen point onto it.
 void GondowanCliffs_ScoopUpGeyser(s32 stage, s32 frame) {
   struct Actor *actor;
 
@@ -309,8 +340,10 @@ void GondowanCliffs_ScoopUpGeyser(s32 stage, s32 frame) {
 
 #include "text/msg_ids.h"
 
-/// Talking to the dog barks at the leader, unless he faces the geyser's cell
-/// beside it, which opens the field menu instead.
+/// Talking to the white dog lying in the grass at the east end makes it bark
+/// "Rrruff! Rrruff!" at Felix. When Felix is facing the yellow sand beside it,
+/// cell (119, 45), the button opens the field menu instead, as it does where
+/// there is nothing to talk to, so that he can choose Scoop there.
 void GondowanCliffs_TalkToDog(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   struct {
@@ -339,7 +372,8 @@ void GondowanCliffs_TalkToDog(void) {
 extern struct Trigger gGondowanCliffs_PassTriggers[];
 extern struct Trigger gGondowanCliffs_Triggers[];
 
-/// Grind on the rock in the pass breaks it for good.
+/// Grind on the tall brown boulder standing in the river channel grinds it
+/// away for good, so the ship can sail on through.
 void GondowanCliffs_GrindTheRock(s32 unused, s32 id) {
   Actor_SetPosition(id, 0, 0);
   Event_SetFlag(FLAG_GONDOWAN_CLIFFS_ROCK_GROUND);
@@ -353,7 +387,7 @@ const struct Trigger *Scene_GetTriggers(void) {
 
 u16 gGondowanCliffs_SavedWaterColors[WATER_COLORS] BSS_DATA;
 
-/// Each frame: the water's four colours turn one step every 16 frames.
+/// Makes the water shimmer: its four colours turn one step every 16 frames.
 void GondowanCliffs_CycleWaterColors(void) {
   u16 *color = (u16 *)&BG_PLTT_COLOR(0, FIRST_WATER_COLOR);
   u32 phase = gFrameCount >> 4;
@@ -368,8 +402,8 @@ void GondowanCliffs_CycleWaterColors(void) {
   }
 }
 
-/// Sets up the pass: on arriving by ship, the leader walks again; the
-/// tightrope is strung and the water's colours start turning.
+/// Sets up the river channel: arriving aboard the ship, the party sails on, the
+/// tightrope across the channel is strung and the water starts to shimmer.
 void GondowanCliffs_SetUpPass(void) {
   if (gMainRoutineWork.entrance == ENTRANCE_PASS_BY_SHIP) {
     gMainRoutineWork.movementMode = LEADER_MOVEMENT_SHIP;
@@ -388,8 +422,11 @@ void GondowanCliffs_SetUpPass(void) {
 
 void Actor_PlaceOnActor(s32 actor, s32 target);
 
-/// While Piers still needs help, Kraden, Jenna and Sheba stop the party at the
-/// cliffs and turn it back to Kibombo.
+/// Coming back to the cliffs after meeting Piers in Kibombo, before the
+/// ceremony at the Gabomba Statue is over, the party stops as soon as it
+/// enters: Kraden asks "Felix! Where do you intend to go?", Jenna and Sheba
+/// side with him, everyone nods, and Felix walks back out to the world map to
+/// go and help Piers.
 void GondowanCliffs_TurnBackToHelpPiers(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -447,10 +484,11 @@ void GondowanCliffs_TurnBackToHelpPiers(void) {
 void Rope_Place(s32 a, s32 b, s32 c, s32 d);
 struct Geyser *Geyser_Add(s32 slot, s32 id, s32 timer, s32 low, s32 high);
 
-/// Sets up the scene being entered. The pass has its own set-up; the cliffs
-/// turn the party back while Piers still needs their help, and otherwise
-/// string the rope and tightrope, restore the ivy, the frozen puddles, the
-/// geyser and the stump as their flags say, and start the water's colours.
+/// Sets up the scene being entered. The river channel has its own set-up; the
+/// cliffs turn the party back while Piers still needs their help, and
+/// otherwise tie the rope and string the tightrope, put back the ivy, the
+/// frozen puddles, the geyser and the stump as their flags say, and start the
+/// water shimmering.
 s32 Scene_Initialize(void) {
   struct Actor *actor;
   s32 height;

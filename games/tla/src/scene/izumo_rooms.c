@@ -1,6 +1,16 @@
 /// @file
-/// Izumo's houses, inn and Sanctum, with Susa's house when entered by entrance
-/// 7, and other tables once the Great Serpent is slain (FLAG_SERPENT_SLAIN).
+/// Inside Izumo's houses on stilts, one room each: two houses in the east, the
+/// inn, the shop, Kushinada's house, the Sanctum, and the hall of Susa's house
+/// in the north, which has a cast and a story of its own.
+///
+/// Before the Serpent is slain the village mourns: Kushinada sits on her seat
+/// of stones and, taking Felix for Susa, begs him not to come for her, and in
+/// Susa's house Lady Uzume says he has gone to fight the Serpent. Once it is
+/// slain the party's first visit to Susa's house becomes the heroes' welcome
+/// (IzumoRooms_RecognizeTheHeroes): Lady Uzume and Kushinada learn who slew
+/// it, Susa comes home, and Kraden explains Psynergy. Afterwards Lady Uzume
+/// takes the Dancing Idol and gives the party Coal, the Mars Djinni
+/// (IzumoRooms_GiveUzumeTheDoll).
 
 #include "shared/tables.h"
 #include "types.h"
@@ -28,17 +38,22 @@
 #include "shop/shop.h"
 #include "text/msg_ids.h"
 
-/// Story flags: Uzume has told the party where Susa went; her prayer for him
-/// has been read with Mind Read; Kushinada has asked Susa not to come for her;
-/// and Uzume has caught the party reading her mind ("Trying again, Felix?").
+/// Story flags: Lady Uzume has told the party where Susa went; her prayer for
+/// him has been read with Mind Read; Kushinada has begged "Susa" not to come
+/// for her; and Lady Uzume has caught the party reading her mind ("Trying
+/// again, Felix?").
 #define FLAG_UZUME_SPOKE_OF_SUSA 0x922
 #define FLAG_UZUMES_PRAYER_READ 0x923
 #define FLAG_KUSHINADA_ASKED_SUSA_NOT_TO_COME 0x925
 #define FLAG_UZUME_MIND_READ 0x92b
-/// Set as Izumo recognizes the heroes in Susa's house, and cleared by entering
-/// any other room: while it is set, the two dancers and the old men by the
-/// drums stay off stage.
+/// Set as Susa's house welcomes the heroes (and again as Lady Uzume takes the
+/// Dancing Idol), and cleared on entering any other room: while it is set, the
+/// two women in red and the old men by the drums stay off stage.
 #define FLAG_HEROES_JUST_RECOGNIZED FLAG_AREA_TEMP_50
+
+/// The cells across the hall of Susa's house, on its east and west sides,
+/// where the heroes' welcome starts.
+enum { CELL_EAST_SIDE_OF_THE_HALL = 22, CELL_WEST_SIDE_OF_THE_HALL };
 
 extern struct ActorPlacement gIzumoRooms_ActorPlacements[];
 extern struct ActorPlacement gIzumoRooms_SusasHouseActorPlacements[];
@@ -57,7 +72,7 @@ extern s32 gIzumoRooms_SecondDancerScript[];
 extern s32 gIzumoRooms_HeavingScript[];
 
 /// Whether the other of the two women dancing in Susa's house is clear of the
-/// spot by the doorway this one steps to; their scripts wait on it.
+/// spot by the doorway this one steps to; each one's dance waits on it.
 #define DEFINE_IZUMO_ROOMS_IS_CLEAR(name, n1, n2)                              \
   s32 name(void) {                                                             \
     struct Actor *actor = Actor_GetById(n1);                                   \
@@ -103,14 +118,14 @@ const struct Trigger *Scene_GetTriggers(void) {
 }
 
 /// Before the Serpent is slain: Kushinada, whose turn it is to be offered to
-/// the Serpent, and the Sanctum's priest ("Why would our guardian spirit demand
-/// a sacrifice?"), who keeps his trade once it is slain.
+/// it, and the Sanctum's priest ("Why would our guardian spirit demand a
+/// sacrifice?"), who stands behind the same counter once it is slain.
 enum { ACTOR_KUSHINADA = 17, ACTOR_PRIEST = 22, ACTOR_PRIEST_ONCE_SLAIN = 12 };
 
-/// Susa's house before the Serpent is slain: Lady Uzume, Susa's
-/// sister ("If the serpent defeats Susa, I'll...be alone."), with two women
-/// dancing ("There's no point dancing if Okuni's not here...") and two old men
-/// by the drums.
+/// Susa's house before the Serpent is slain: Lady Uzume, Susa's sister ("If
+/// the serpent defeats Susa, I'll...be alone."), with two women dancing
+/// ("There's no point dancing if Okuni's not here...") and two old men by the
+/// drums.
 enum {
   ACTOR_SUSAS_HOUSE_UZUME = 8,
   ACTOR_SUSAS_HOUSE_FIRST_DANCER,
@@ -120,9 +135,10 @@ enum {
 };
 
 /// Once the Serpent is slain, Susa's house holds Lady Uzume ("This is my home,
-/// and I am having a private conversation."), the same four, Kushinada,
-/// Susa, the man who saw the heroes come down Mt. Mikage ("Yes... After the
-/// serpent's roar, these warriors appeared.") and Kraden.
+/// and I am having a private conversation."), the same four, Kushinada, Susa,
+/// the villager who saw the heroes come down the mountain ("Yes... After the
+/// serpent's roar, these warriors appeared."), the party for the welcome, and
+/// Coal.
 enum {
   ACTOR_UZUME = 15,
   ACTOR_FIRST_DANCER,
@@ -136,9 +152,9 @@ enum {
   ACTOR_COAL ///< the Mars Djinni Uzume gives the party
 };
 
-/// The priest: across the counter, the Sanctum's healing; from elsewhere, why
-/// the guardian spirit would want a sacrifice, or once the Serpent is slain how
-/// the island flourishes.
+/// Talking to the priest in the Sanctum across his counter opens the Sanctum's
+/// healing. From any other side he asks why the guardian spirit would demand a
+/// sacrifice, or once the Serpent is slain says the island is flourishing.
 void IzumoRooms_TalkToPriest(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
@@ -163,8 +179,9 @@ void IzumoRooms_TalkToPriest(s32 actor) {
 /// Izumo's inn, as Inn_CheckIn numbers the inns.
 enum { IZUMO_INN = 9 };
 
-/// The innkeeper: across the counter, Izumo's inn; from elsewhere, the legend
-/// of the Serpent, or once it is slain news of Briggs.
+/// Talking to the innkeeper across his counter offers a night at Izumo's inn.
+/// From any other side he says he never believed the legend of the Serpent,
+/// or once it is slain that Briggs from Champa hasn't been by selling fish.
 void IzumoRooms_TalkToInnkeeper(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
@@ -183,8 +200,9 @@ void IzumoRooms_TalkToInnkeeper(s32 actor) {
   }
 }
 
-/// The merchant: across the counter, Izumo's shop; from elsewhere, the powers
-/// of Izumo's leaders.
+/// Talking to the shopkeeper across her counter opens Izumo's shop. From any
+/// other side she speaks of the special powers of Izumo's leaders, or once the
+/// Serpent is slain of the wonders the party must see on its travels.
 void IzumoRooms_TalkToMerchant(s32 actor) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
@@ -203,8 +221,10 @@ void IzumoRooms_TalkToMerchant(s32 actor) {
   }
 }
 
-/// Lady Uzume, the first time, tells where Susa has gone and why; then she
-/// fears being left alone.
+/// Talking to Lady Uzume in Susa's house before the Serpent is slain: the
+/// first time she says Susa has gone to fight the Serpent to save Kushinada,
+/// all for naught since a hero will surely appear, and each time she fears
+/// she will be alone if it defeats him.
 void IzumoRooms_AskAfterSusa(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -240,7 +260,8 @@ void IzumoRooms_AskAfterSusa(void) {
   Event_End();
 }
 
-/// Mind Read on Lady Uzume before the Serpent is slain: her prayer for Susa.
+/// Mind Read on Lady Uzume before the Serpent is slain shows her prayer that
+/// the guardian's anger is not aroused and that Susa will be protected.
 void IzumoRooms_ReadPrayerForSusa(void) {
   GameFlag_Set(FLAG_UZUMES_PRAYER_READ);
   Event_SetMessageId((s32)MsgIPrayThat);
@@ -248,9 +269,10 @@ void IzumoRooms_ReadPrayerForSusa(void) {
   Event_ShowMessageAndWait(ACTOR_SUSAS_HOUSE_UZUME, 0);
 }
 
-/// Lady Uzume after the festival begins: she invites the party to enjoy it, and
-/// with the Dancing Idol in hand the field menu opens to give it; once she has
-/// it, she means to climb Mt. Mikage herself.
+/// Talking to Lady Uzume in Susa's house once the Serpent is slain: she
+/// invites the party to enjoy the festival, and if one of the party carries the
+/// Dancing Idol the field menu opens so that it can be given to her. Once she
+/// has it, she says she can explore Mt. Mikage on her own with it.
 void IzumoRooms_TalkToUzume(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -272,8 +294,10 @@ void IzumoRooms_TalkToUzume(void) {
   Event_End();
 }
 
-/// One of the dancers in Susa's house asks whether the party went into Mt.
-/// Mikage too, and answers by the reply.
+/// The west one of the two women in red in Susa's house, once the Serpent is
+/// slain, asks whether the party went into the mountain too: either way she
+/// tells of the legend of a dancing doll of mysterious power hidden up there,
+/// which Lady Uzume would love to have.
 void IzumoRooms_AskAboutMtMikage(void) {
   s32 msg;
 
@@ -294,9 +318,10 @@ void IzumoRooms_AskAboutMtMikage(void) {
   Event_End();
 }
 
-/// Mind Read on Lady Uzume once the Serpent is slain: she catches the party,
-/// scolding it if her prayer was read before; the second time she sends it
-/// away.
+/// Mind Read on Lady Uzume once the Serpent is slain: she notices it ("And what
+/// were you planning to do, once you'd read my mind, hm?"), and scolds Felix
+/// if her prayer was read before; tried again, she calls him a pest who can see
+/// her mind but not her heart.
 void IzumoRooms_ReadUzumesMind(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -326,9 +351,11 @@ void IzumoRooms_ReadUzumesMind(void) {
   Event_End();
 }
 
-/// Kushinada, the first time, asks Susa not to come for her and explains why
-/// she will be offered to the Serpent; then she asks him not to save her, and
-/// the leader steps back.
+/// Talking to Kushinada on her seat of stones in her house in the north-west,
+/// before the Serpent is slain: she takes Felix for Susa without looking up.
+/// The first time she begs him not to come for her, lest she lose the courage
+/// to be offered for Izumo; after that only "Susa, please... Don't try to save
+/// me." Each time Felix steps back from her.
 s32 IzumoRooms_KushinadaAsksSusaNotToCome(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -369,12 +396,18 @@ s32 IzumoRooms_KushinadaAsksSusaNotToCome(void) {
   return 0;
 }
 
-/// Entering Susa's house from the east, Izumo recognizes the heroes.
+/// The first time the party comes into Susa's house after the Serpent is
+/// slain, Felix walking up the east side of the hall (cell (12, 35)) comes upon
+/// Lady Uzume and Kushinada hearing that warriors came out of the mountain,
+/// and the welcome of the heroes begins.
 void IzumoRooms_HeroesComeFromTheEast(void) {
   IzumoRooms_RecognizeTheHeroes(0);
 }
 
-/// Entering Susa's house from the west, Izumo recognizes the heroes.
+/// The first time the party comes into Susa's house after the Serpent is
+/// slain, Felix walking up the west side of the hall (cell (5, 35)) comes upon
+/// Lady Uzume and Kushinada hearing that warriors came out of the mountain,
+/// and the welcome of the heroes begins.
 void IzumoRooms_HeroesComeFromTheWest(void) {
   IzumoRooms_RecognizeTheHeroes(1);
 }
@@ -389,11 +422,19 @@ enum FinishingBlowMessage {
   SUSA_HARDLY_A_FINISHING_BLOW = 11
 };
 
-/// Izumo hears that warriors appeared from within Mt. Mikage and recognizes
-/// the party as the heroes, through three answers; the party gathers again
-/// and FLAG_IZUMO_RECOGNIZED_THE_HEROES is set. Mode 0 and mode 1
-/// (IzumoRooms_HeroesComeFromTheEast and
-/// IzumoRooms_HeroesComeFromTheWest) start the party at different spots.
+/// The heroes' welcome in Susa's house. A villager tells Lady Uzume and
+/// Kushinada that warriors came out of the mountain after the Serpent's roar;
+/// Lady Uzume orders the strangers out of her home until the villager knows
+/// them for the heroes, and she bids them welcome. The party introduce
+/// themselves, and Lady Uzume shows them her Move. Susa walks in from the
+/// entrance, Kraden explains Psynergy and Alchemy, and Felix answers three
+/// questions: whether the party slew the Serpent only for its quest, whether
+/// Susa dealt the finishing blow, and whether Susa deserves the reward. The
+/// party say they must leave for Lemuria and vow to return.
+///
+/// Mode 0 (IzumoRooms_HeroesComeFromTheEast) and mode 1
+/// (IzumoRooms_HeroesComeFromTheWest) walk the party, Lady Uzume, the villager
+/// and Susa on the side of the hall Felix came up.
 void IzumoRooms_RecognizeTheHeroes(s32 mode) {
   struct Actor *person, *leader;
   s32 answer, message;
@@ -1191,10 +1232,11 @@ void IzumoRooms_RecognizeTheHeroes(s32 mode) {
   Event_End();
 }
 
-/// The Move cast below has nothing to move.
+/// Lady Uzume's Move in the welcome has nothing to move.
 s32 IzumoRooms_FindNoMoveTarget(void) { return -1; }
 
-/// Uzume casts Move, with no target.
+/// Lady Uzume casts Move in the welcome ("Tell me, is it something
+/// like...this?") with nothing to move.
 void IzumoRooms_ShowMove(void) {
   FieldPsynergy_LoadResources(ABILITY_MOVE, 1);
   FieldPsynergy_SetupActorPair(ACTOR_UZUME, -1);
@@ -1208,8 +1250,9 @@ void IzumoRooms_ShowMove(void) {
   FieldPsynergy_End();
 }
 
-/// Lady Uzume takes the Dancing Idol, asks where it was found, and in thanks
-/// brings out Coal, the Mars Djinni.
+/// Using the Dancing Idol on Lady Uzume in Susa's house: Felix steps up to
+/// her, she asks whether it was found at the peak of the mountain, and in
+/// thanks gives the party her pet, Coal, the Mars Djinni.
 void IzumoRooms_GiveUzumeTheDoll(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1294,9 +1337,10 @@ void IzumoRooms_GiveUzumeTheDoll(void) {
   Event_End();
 }
 
-/// Sets up Izumo's houses as the party enters: the window in, Susa's house for
-/// the heroes' welcome or the festival, and Kushinada and the villagers before
-/// the Serpent is slain. Returns 0.
+/// Sets up the room the party enters: the window in, Susa's house for the
+/// heroes' welcome or after it, Kushinada sobbing on her seat before the
+/// Serpent is slain, and the dancers and old men in Susa's house before it.
+/// Returns 0.
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_SHAPE);
@@ -1348,8 +1392,9 @@ s32 Scene_PrepareMap(void) { return 0; }
 
 extern s32 gIzumoRooms_KushinadaHeavingScript[];
 
-/// The dancers in Susa's house step to the doorway and back with a hop, each
-/// waiting until the other is clear of the spot.
+/// The two women dancing in Susa's house before the Serpent is slain step to
+/// the doorway and back with a hop, each waiting until the other is clear of
+/// the spot.
 s32 gIzumoRooms_FirstDancerScript[] = {
     SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
     SC_ACCELERATION(0.2),
@@ -1449,8 +1494,9 @@ s32 gIzumoRooms_SecondDancerScript[] = {
 };
 
 // clang-format off
-/// A girl heaves with sobs ("*Sniff* How could we sacrifice our beloved
-/// Kushinada?"): her sprite is squashed and stretched three times, then rests.
+/// A girl in the Sanctum heaves with sobs ("*Sniff* How could we sacrifice our
+/// beloved Kushinada?"): her sprite is squashed and stretched three times, then
+/// rests.
 s32 gIzumoRooms_HeavingScript[] = {
     SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
     SC_ANIMATION(0),
@@ -1509,8 +1555,8 @@ s32 gIzumoRooms_HeavingScript[] = {
     -1,
 };
 
-/// Kushinada on her seat of stones heaves as gIzumoRooms_HeavingScript's girl
-/// does, with longer rests.
+/// Kushinada on her seat of stones heaves with sobs as the girl in the
+/// Sanctum does, with longer rests.
 s32 gIzumoRooms_KushinadaHeavingScript[] = {
     SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_PUSHABLE | ACTOR_SOLID),
     SC_LABEL(1),
@@ -1647,13 +1693,20 @@ struct ActorPlacement gIzumoRooms_ActorPlacementsOnceTheSerpentIsSlain[] = {
 // clang-format on
 
 struct Trigger gIzumoRooms_Triggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, IZUMO_ROOMS_TO_IZUMO_SOUTHEAST_A, CONDITION_ALWAYS,
+     IZUMO_ROOMS_TO_IZUMO_SOUTHEAST_A},
+    {TRIGGER_EXIT, IZUMO_ROOMS_TO_IZUMO_SOUTHEAST_B, CONDITION_ALWAYS,
+     IZUMO_ROOMS_TO_IZUMO_SOUTHEAST_B},
+    {TRIGGER_EXIT, IZUMO_ROOMS_TO_IZUMO_SOUTHWEST, CONDITION_ALWAYS,
+     IZUMO_ROOMS_TO_IZUMO_SOUTHWEST},
+    {TRIGGER_EXIT, IZUMO_ROOMS_TO_IZUMO_SOUTH, CONDITION_ALWAYS,
+     IZUMO_ROOMS_TO_IZUMO_SOUTH},
+    {TRIGGER_EXIT, IZUMO_ROOMS_TO_IZUMO_NORTHWEST, CONDITION_ALWAYS,
+     IZUMO_ROOMS_TO_IZUMO_NORTHWEST},
+    {TRIGGER_EXIT, IZUMO_ROOMS_TO_IZUMO_NORTHEAST, CONDITION_ALWAYS,
+     IZUMO_ROOMS_TO_IZUMO_NORTHEAST},
+    {TRIGGER_EXIT, IZUMO_ROOMS_TO_IZUMO_NORTH, CONDITION_ALWAYS,
+     IZUMO_ROOMS_TO_IZUMO_NORTH},
     {TRIGGER_STEP, 21, CONDITION_ALWAYS,
      EVENT(IzumoRooms_KushinadaAsksSusaNotToCome)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, MSGNO(MsgOkuniKushinadaAnd)},
@@ -1708,13 +1761,20 @@ struct Trigger gIzumoRooms_Triggers[] = {
 };
 
 struct Trigger gIzumoRooms_SusasHouseTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, IZUMO_ROOMS_TO_IZUMO_SOUTHEAST_A, CONDITION_ALWAYS,
+     IZUMO_ROOMS_TO_IZUMO_SOUTHEAST_A},
+    {TRIGGER_EXIT, IZUMO_ROOMS_TO_IZUMO_SOUTHEAST_B, CONDITION_ALWAYS,
+     IZUMO_ROOMS_TO_IZUMO_SOUTHEAST_B},
+    {TRIGGER_EXIT, IZUMO_ROOMS_TO_IZUMO_SOUTHWEST, CONDITION_ALWAYS,
+     IZUMO_ROOMS_TO_IZUMO_SOUTHWEST},
+    {TRIGGER_EXIT, IZUMO_ROOMS_TO_IZUMO_SOUTH, CONDITION_ALWAYS,
+     IZUMO_ROOMS_TO_IZUMO_SOUTH},
+    {TRIGGER_EXIT, IZUMO_ROOMS_TO_IZUMO_NORTHWEST, CONDITION_ALWAYS,
+     IZUMO_ROOMS_TO_IZUMO_NORTHWEST},
+    {TRIGGER_EXIT, IZUMO_ROOMS_TO_IZUMO_NORTHEAST, CONDITION_ALWAYS,
+     IZUMO_ROOMS_TO_IZUMO_NORTHEAST},
+    {TRIGGER_EXIT, IZUMO_ROOMS_TO_IZUMO_NORTH, CONDITION_ALWAYS,
+     IZUMO_ROOMS_TO_IZUMO_NORTH},
     {TRIGGER_TALK, ACTOR_SUSAS_HOUSE_UZUME, CONDITION_ALWAYS,
      EVENT(IzumoRooms_AskAfterSusa)},
     {TRIGGER_TALK, ACTOR_SUSAS_HOUSE_FIRST_DANCER, CONDITION_ALWAYS,
@@ -1739,16 +1799,23 @@ struct Trigger gIzumoRooms_SusasHouseTriggers[] = {
 };
 
 struct Trigger gIzumoRooms_TriggersOnceTheSerpentIsSlain[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_STEP, 22, FLAG_IZUMO_RECOGNIZED_THE_HEROES,
+    {TRIGGER_EXIT, IZUMO_ROOMS_TO_IZUMO_SOUTHEAST_A, CONDITION_ALWAYS,
+     IZUMO_ROOMS_TO_IZUMO_SOUTHEAST_A},
+    {TRIGGER_EXIT, IZUMO_ROOMS_TO_IZUMO_SOUTHEAST_B, CONDITION_ALWAYS,
+     IZUMO_ROOMS_TO_IZUMO_SOUTHEAST_B},
+    {TRIGGER_EXIT, IZUMO_ROOMS_TO_IZUMO_SOUTHWEST, CONDITION_ALWAYS,
+     IZUMO_ROOMS_TO_IZUMO_SOUTHWEST},
+    {TRIGGER_EXIT, IZUMO_ROOMS_TO_IZUMO_SOUTH, CONDITION_ALWAYS,
+     IZUMO_ROOMS_TO_IZUMO_SOUTH},
+    {TRIGGER_EXIT, IZUMO_ROOMS_TO_IZUMO_NORTHWEST, CONDITION_ALWAYS,
+     IZUMO_ROOMS_TO_IZUMO_NORTHWEST},
+    {TRIGGER_EXIT, IZUMO_ROOMS_TO_IZUMO_NORTHEAST, CONDITION_ALWAYS,
+     IZUMO_ROOMS_TO_IZUMO_NORTHEAST},
+    {TRIGGER_EXIT, IZUMO_ROOMS_TO_IZUMO_NORTH, CONDITION_ALWAYS,
+     IZUMO_ROOMS_TO_IZUMO_NORTH},
+    {TRIGGER_STEP, CELL_EAST_SIDE_OF_THE_HALL, FLAG_IZUMO_RECOGNIZED_THE_HEROES,
      EVENT(IzumoRooms_HeroesComeFromTheEast)},
-    {TRIGGER_STEP, 23, FLAG_IZUMO_RECOGNIZED_THE_HEROES,
+    {TRIGGER_STEP, CELL_WEST_SIDE_OF_THE_HALL, FLAG_IZUMO_RECOGNIZED_THE_HEROES,
      EVENT(IzumoRooms_HeroesComeFromTheWest)},
     {TRIGGER_TALK, 8, CONDITION_ALWAYS, EVENT(IzumoRooms_TalkToMerchant)},
     {TRIGGER_TALK, 9, CONDITION_ALWAYS, MSGNO(MsgMyGoodsAre)},

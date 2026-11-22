@@ -1,13 +1,22 @@
 /// @file
-/// Izumo, the village in the far east of the Eastern Sea, plagued by the
-/// Serpent until the party slays it. Move sets the misaligned stone of its
-/// stone circle back in place (Izumo_FinishMovingStone), and Reveal then shows
-/// the way down to the Izumo Ruins (Izumo_RevealTheStoneCircle,
-/// Izumo_DescendIntoTheRuins). Cyclone scatters its weeds
-/// (Izumo_CycloneFirstWeeds to Izumo_CycloneNinthWeeds). Once the Serpent is
-/// slain the village holds a festival, its dancers turning on the spot
-/// (gIzumo_FirstDanceScript), and as the party leaves it is stopped to be
-/// thanked and told the legend of the Cloud Brand
+/// Izumo, the village of houses on stilts on the far eastern island of the
+/// Eastern Sea. Kushinada is to be offered there to the Serpent of Mt. Mikage
+/// (Gaia Rock). A river winds through it. Susa and Lady Uzume's house stands
+/// in the north, Kushinada's in the north-west, the inn and the shop in the
+/// west and the Sanctum on the raised ground in the east.
+///
+/// North of the houses a ring of giant stones stands on an island in the
+/// river, guarded by a woman at its bridge, and one stone of the ring is out
+/// of line. Move pushes it east back into place (Izumo_FinishMovingStone), and
+/// with it there Reveal shows the way down into the Izumo Ruins in the ring's
+/// centre (Izumo_RevealTheStoneCircle, Izumo_DescendIntoTheRuins). Cyclone
+/// scatters the village's weeds: under them lie two Antidotes in the
+/// south-east corner and a Lucky Medal on the raised ground north of the inn.
+///
+/// Once the Serpent is slain the village holds a festival, its dancers turning
+/// on the spot in the square (gIzumo_FirstDanceScript). The first time the
+/// party leaves Susa's house after being hailed there as heroes, Susa runs out
+/// after it to thank it and tells it the legend of the Cloud Brand
 /// (Izumo_StopThePartyToThankThem).
 
 #include "shared/tables.h"
@@ -39,17 +48,31 @@
 #include "field/sprite.h"
 #include "sprite_ids.h"
 
-/// Set as the stone circle's guard finds the misaligned stone back in place.
+/// Set once the stone circle's guard has seen the stone back in its place.
 #define FLAG_GUARD_SAW_STONE_MOVED 0x924
-/// Set while Move has set the stone in its place, for this visit.
+/// Set while the out-of-line stone stands back in the ring, for this visit.
 #define FLAG_STONE_IN_PLACE FLAG_SCENE_TEMP_50
-/// Set while Reveal is shown.
+/// Set while Reveal is showing.
 #define FLAG_REVEALING FLAG_AREA_TEMP_01
 
-/// The village's actors the events move: the stone Move sets back in the
-/// circle, Okuni the dancer, the circle's guard, the woman on the porch west of
-/// the north-west house's door, the seven who dance once the Serpent is slain,
-/// and Susa.
+/// The village's map cells that answer Cyclone: the weeds over the two
+/// Antidotes and the Lucky Medal, and the rest of each patch.
+enum {
+  CELL_SOUTHEAST_WEEDS = 21,
+  CELL_WEEDS_OVER_FIRST_ANTIDOTE,
+  CELL_WEEDS_OVER_SECOND_ANTIDOTE,
+  CELL_WEEDS_BY_THE_SHOP,
+  CELL_RIVERBANK_WEEDS,
+  CELL_LEDGE_WEEDS,
+  CELL_WEEDS_OVER_LUCKY_MEDAL,
+  CELL_WEEDS_BY_THE_SANCTUM,
+  CELL_STONE_CIRCLE_WEEDS
+};
+
+/// The village's actors the events move: the stone out of line in the ring,
+/// Okuni the dancer, the woman who guards the ring, the woman on the porch west
+/// of Kushinada's door, the seven who dance once the Serpent is slain, and
+/// Susa.
 enum {
   ACTOR_MISALIGNED_STONE = 12,
   ACTOR_OKUNI = 15,
@@ -64,24 +87,25 @@ enum {
   ACTOR_DANCER_G,
   ACTOR_SUSA
 };
-/// Set while Susa, refused, waits by the gate.
+/// Set while Susa, his thanks refused, waits in the doorway of his house.
 #define FLAG_SUSA_WAITS FLAG_AREA_TEMP_02
-/// Set as the party is stopped on its way out to be thanked.
+/// Set as Susa stops the party outside his house to thank it.
 #define FLAG_STOPPED_TO_THANK_THE_PARTY 0x929
-/// Set once the token of gratitude has been offered.
+/// Set once Susa has told the party the legend of the Cloud Brand.
 #define FLAG_TOKEN_OFFERED 0x92a
 
-/// The misaligned stone's cell, and the cell east of it where it belongs in
-/// the circle.
+/// The out-of-line stone's cell, and the cell east of it where it belongs in
+/// the ring.
 #define STONE_MISALIGNED_CELL_X 19
 #define STONE_IN_PLACE_CELL_X 20
 #define STONE_CELL_Z 9
-/// The stone circle's center: a leader standing there as Reveal opens the way
-/// down is set just north of it.
+/// The ring's centre, where Reveal shows the way down: a leader standing there
+/// as it opens is set on the cell north of it.
 #define CIRCLE_CENTER_CELL_X 23
 #define CIRCLE_CENTER_CELL_Z 9
 
-/// Where Cyclone uncovers each treasure spot under the weeds, in pixels.
+/// Where the two Antidotes and the Lucky Medal lie under the weeds, in pixels:
+/// cells (28, 36), (29, 34) and (10, 20).
 #define FIRST_ANTIDOTE_SPOT_X 456
 #define FIRST_ANTIDOTE_SPOT_Z 584
 #define SECOND_ANTIDOTE_SPOT_X 472
@@ -89,8 +113,8 @@ enum {
 #define LUCKY_MEDAL_SPOT_X 168
 #define LUCKY_MEDAL_SPOT_Z 328
 
-/// The water's three background palettes, from the first, and the colours of
-/// each that rotate.
+/// The river's three palettes, from the first, and the colours of each that
+/// shift to make it shimmer.
 #define FIRST_WATER_PALETTE 3
 #define WATER_FIRST_COLOR 1
 #define WATER_LAST_COLOR 14
@@ -137,8 +161,7 @@ s32 Actor_ShowEmoteById(s32 actorId, s32 emote, s32 frames);
 void FieldEffect_SetAttached(s32 id, s32 a);
 void FieldCamera_WaitForArrival(void);
 void FieldCamera_MoveToActorById(s32 id, s32 value);
-/// Leaves the scene by an exit (Event_SetExitRequest, through the overlay's
-/// import).
+/// Leaves Izumo by one of its exits, as Event_SetExitRequest does.
 void Izumo_SetExitRequest(s32 value);
 void Actor_PlaceBlocks(const s16 *data);
 void Actor_LiftTargetBlock(const s16 *data);
@@ -150,14 +173,20 @@ void Izumo_RotateWaterColors(void);
 void Izumo_StopThePartyToThankThem(void);
 void Izumo_TellTheCloudBrandLegend(void);
 
-/// Move on the stone circle: lifts the misaligned stone.
+/// Move (or a push) takes hold of the stone out of line in the ring of giant
+/// stones, on the west side of the ring at cell (19, 9).
 void Izumo_StartMovingStone(void) {
   Actor_LiftTargetBlock(gIzumo_StonesToMove);
 }
 
-/// Move sets the misaligned stone down: back in its place in the circle, the
-/// guard notices the first time and Reveal shows the way down; moved off it,
-/// the way closes again.
+/// Move sets the out-of-line stone down. Pushed east into the gap in the
+/// ring, cell (20, 9), it is back in place: the first time, the woman guarding
+/// the ring turns to look, cries "The misaligned stone! It's back in its
+/// original position!" and decides Susa or Kushinada must have moved it. Pushed
+/// back west to cell (19, 9), it is out of line again.
+///
+/// While Reveal is showing, the way down in the ring's centre opens or closes
+/// with the stone.
 void Izumo_FinishMovingStone(void) {
   struct Actor *actor = Actor_GetById(ACTOR_MISALIGNED_STONE);
   s32 x = FIELD_CELL(actor->x.fixed);
@@ -218,14 +247,17 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gIzumo_ActorPlacements;
 }
 
-/// Cyclone scatters the first of the village's nine weeds.
-void Izumo_CycloneFirstWeeds(void) {
+/// Cyclone cast in the weeds of the village's south-east corner, between the
+/// river and the trees along the east edge (cells (23, 30) to (30, 38)),
+/// scatters those within two cells of Felix.
+void Izumo_ScatterSoutheastWeeds(void) {
   FieldTileCopies_CopyTouchedCells(53, 5, 8, 9, 23, 30, 0);
 }
 
-/// Cyclone clears the second patch and, unless its flag is set, uncovers a
-/// treasure spot there, pushing off a leader standing on it.
-void Izumo_CycloneSecondWeeds(void) {
+/// Cyclone cast standing on cell (28, 36) in the south-east weeds scatters
+/// them and, until it is found, uncovers an Antidote under Felix's feet: he
+/// jumps a cell west off it, and it lies in the cleared grass.
+void Izumo_ScatterWeedsOverFirstAntidote(void) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(53, 5, 8, 9, 23, 30, 0);
@@ -249,8 +281,10 @@ void Izumo_CycloneSecondWeeds(void) {
   }
 }
 
-/// Cyclone clears the third patch, as the second does with its own cell.
-void Izumo_CycloneThirdWeeds(void) {
+/// Cyclone cast standing on cell (29, 34) in the south-east weeds scatters
+/// them and, until it is found, uncovers the second Antidote under Felix's
+/// feet: he jumps a cell north off it, and it lies in the cleared grass.
+void Izumo_ScatterWeedsOverSecondAntidote(void) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(53, 5, 8, 9, 23, 30, 0);
@@ -275,23 +309,33 @@ void Izumo_CycloneThirdWeeds(void) {
   }
 }
 
-/// Cyclone scatters the fourth weeds.
-void Izumo_CycloneFourthWeeds(void) {
+/// Cyclone cast in the weeds around the shop south of the inn (on the riverbank
+/// west of it at cells (7, 32) and (7, 33), and south and east of its ladder)
+/// scatters those within two cells of Felix.
+void Izumo_ScatterWeedsByTheShop(void) {
   FieldTileCopies_CopyTouchedCells(44, 5, 8, 5, 7, 32, 0);
 }
 
-/// Cyclone scatters the fifth weeds.
-void Izumo_CycloneFifthWeeds(void) {
+/// Cyclone cast in the weeds on the bank where the river turns west, north-east
+/// of the inn (cells (16, 24), (17, 24) and (19, 23)), scatters those within
+/// two cells of Felix.
+void Izumo_ScatterRiverbankWeeds(void) {
   FieldTileCopies_CopyTouchedCells(55, 0, 4, 2, 16, 23, 0);
 }
 
-/// Cyclone scatters the sixth weeds.
-void Izumo_CycloneSixthWeeds(void) {
+/// Cyclone cast in the weeds along the edge of the raised ground north of the
+/// inn scatters those within two cells of Felix. The ground stands 32 pixels
+/// high, so the cells Felix casts from, (9, 20) to (14, 21), lie two rows south
+/// of where the weeds show on screen.
+void Izumo_ScatterLedgeWeeds(void) {
   FieldTileCopies_CopyTouchedCells(42, 0, 6, 2, 9, 18, 0);
 }
 
-/// Cyclone clears the seventh patch, as the second does with its own cell.
-void Izumo_CycloneSeventhWeeds(void) {
+/// Cyclone cast standing on cell (10, 20), in the weeds on the raised ground
+/// north of the inn, scatters them and, until it is found, uncovers the Lucky
+/// Medal under Felix's feet: he jumps a cell east off it, and it lies in the
+/// cleared grass.
+void Izumo_ScatterWeedsOverLuckyMedal(void) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(42, 0, 6, 2, 9, 18, 0);
@@ -313,17 +357,23 @@ void Izumo_CycloneSeventhWeeds(void) {
   }
 }
 
-/// Cyclone scatters the eighth weeds.
-void Izumo_CycloneEighthWeeds(void) {
+/// Cyclone cast in the weeds by the ladder of the Sanctum, on the raised ground
+/// in the east (cells (24, 18) to (28, 21)), scatters those within two cells of
+/// Felix.
+void Izumo_ScatterWeedsByTheSanctum(void) {
   FieldTileCopies_CopyTouchedCells(49, 0, 5, 4, 24, 16, 0);
 }
 
-/// Cyclone scatters the ninth weeds.
-void Izumo_CycloneNinthWeeds(void) {
+/// Cyclone cast in the weeds just west of the ring of giant stones (cells
+/// (16, 11) and (20, 11)) scatters those within two cells of Felix.
+void Izumo_ScatterStoneCircleWeeds(void) {
   FieldTileCopies_CopyTouchedCells(36, 0, 5, 3, 16, 9, 0);
 }
 
-/// The leader walks through a door, leaving by the step trigger's exit.
+/// Felix climbs the ladder of one of the village's houses on stilts to its
+/// door and goes in: the inn, the shop, the Sanctum, Kushinada's house, Susa's
+/// house or one of the two houses in the east. The door's cell names the
+/// exit, and so the room.
 void Izumo_EnterDoor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -346,8 +396,11 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gIzumo_Triggers;
 }
 
-/// The ring of stones: one line after the flag is set, otherwise the full talk
-/// and its answer.
+/// The woman guarding the ring of giant stones, at the east end of its bridge,
+/// asks whether the party sees that one stone is out of line: yes brings
+/// "Susa moved it... He didn't even use his hands.", no "You're...not terribly
+/// observant, are you?". Once the stone is back she only marvels at a power
+/// that moves stones without touching them.
 void Izumo_TalkToStoneCircleGuard(s32 actor) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -372,9 +425,9 @@ void Izumo_TalkToStoneCircleGuard(s32 actor) {
   Event_End();
 }
 
-/// The stone circle's guard during the festival: he shows the ring of stones
-/// and asks a question, or once the stone has moved complains he must still
-/// stand guard.
+/// The ring's guard during the festival asks the same question about the
+/// out-of-line stone, or once it is back complains "But it's a festival! Why do
+/// I have to keep guarding the stone circle?"
 void Izumo_TalkToFestivalStoneCircleGuard(s32 actor) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -399,7 +452,10 @@ void Izumo_TalkToFestivalStoneCircleGuard(s32 actor) {
   Event_End();
 }
 
-/// A villager asks about Lady Uzume and her family, and answers by the reply.
+/// An old woman dancing in the square at the festival asks whether it
+/// surprises the party that Lady Uzume and the others aren't blood relatives:
+/// yes brings that their power may make them siblings after all, no that she is
+/// glad Lady Uzume used her powers for the good of all.
 void Izumo_TellOfUzumesFamily(s32 actor) {
   const u8 *message;
 
@@ -419,8 +475,8 @@ void Izumo_TellOfUzumesFamily(s32 actor) {
   Event_End();
 }
 
-/// Every fourth frame, the rotating colours of each water palette move up by
-/// one.
+/// The river shimmers: every fourth frame the shifting colours of each of its
+/// palettes move along by one.
 void Izumo_RotateWaterColors(void) {
   s16 saved;
   s32 index;
@@ -446,8 +502,11 @@ void Izumo_RotateWaterColors(void) {
   }
 }
 
-/// Susa stops the party on its way out to offer a weapon; refused, he waits by
-/// the gate; accepted, he tells the Cloud Brand's legend.
+/// As the party comes down from Susa's house after the heroes' welcome, Susa
+/// comes out of the door after it ("Felix, wait!"): he could not let it leave
+/// without thanks, and asks whether warriors need weapons. Yes, and he tells
+/// the legend of the Cloud Brand. No, and he goes back up to his doorway and
+/// waits there, blocking it.
 void Izumo_StopThePartyToThankThem(void) {
   GameFlag_Set(FLAG_STOPPED_TO_THANK_THE_PARTY);
   Event_Start();
@@ -505,7 +564,8 @@ void Izumo_StopThePartyToThankThem(void) {
 }
 
 /// Susa tells the legend of the Cloud Brand, hidden where the Serpent's tail
-/// fell, and leaves for Kushinada.
+/// fell, says he left something for the party at the dragon, and goes back into
+/// his house to Kushinada.
 void Izumo_TellTheCloudBrandLegend(void) {
   Event_SetMessageId(MsgThisTokenIsn);
   Actor_ShowEmoteById(ACTOR_SUSA, EMOTE_IN_FRONT | EMOTE_SMILE, 30);
@@ -551,8 +611,10 @@ void Izumo_TellTheCloudBrandLegend(void) {
   GameFlag_Clear(FLAG_SUSA_WAITS);
 }
 
-/// Susa, waiting by the gate, offers his token of gratitude again; once told,
-/// he repeats that it is a legend.
+/// Talking to Susa in his doorway, or reading his mind: he offers his token of
+/// gratitude again ("Would you be willing to accept a token of my
+/// gratitude?"), and yes brings the legend of the Cloud Brand. Once it is told
+/// he says the legend calls it a powerful weapon for fighting dragons.
 void Izumo_OfferATokenOfGratitude(void) {
   if (!GameFlag_Get(FLAG_TOKEN_OFFERED)) {
     const u8 *message;
@@ -576,8 +638,10 @@ void Izumo_OfferATokenOfGratitude(void) {
   }
 }
 
-/// Sets up Izumo as the party enters: the fade in, the water's colours, the
-/// stone circle, and once the Serpent is slain the dancers and Susa.
+/// Sets up Izumo as the party enters: the fade in, the river's shimmer, the
+/// ring's stones, and once the Serpent is slain the dancers, Susa's thanks the
+/// first time the party leaves his house as heroes, and Susa waiting in his
+/// doorway while his thanks are refused.
 s32 Scene_Initialize(void) {
   GameFlag_Clear(FLAG_SUSA_WAITS);
   gFieldWork->transition = SCENE_TRANSITION(TRANSITION_BACKDROP_FADE, 0);
@@ -616,7 +680,9 @@ s32 Scene_Initialize(void) {
 /// Nothing to prepare before the map is built. Returns 0.
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// Reveal on the stone circle: shows the way down if the stone is in place.
+/// Reveal shows a way down in the centre of the ring of giant stones, cell
+/// (23, 9). It can be climbed down only while the out-of-line stone is back in
+/// place; a leader standing on the centre then is set on the cell north of it.
 void Izumo_RevealTheStoneCircle(void) {
   struct Actor *actor = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 x = FIELD_CELL(actor->x.fixed);
@@ -635,15 +701,15 @@ void Izumo_RevealTheStoneCircle(void) {
   }
 }
 
-/// Reveal ends: the stone circle's way down is hidden.
+/// As Reveal fades the way down in the ring's centre is hidden again.
 void Izumo_HideTheStoneCircle(void) {
   GameFlag_Clear(FLAG_REVEALING);
   MapGrid_CopyCellPictureIndicesRect(40, 8, 22, 8, 3, 3);
   Call6((void (*)())Map_CopyCellAttributeRect, 40, 8, 3, 3, 22, 8);
 }
 
-/// Felix walks down into the stone circle's opening and the scene leaves for
-/// the Izumo Ruins.
+/// Felix, facing north, backs into the opening in the ring's centre and climbs
+/// down it as down a ladder, and the scene leaves for the Izumo Ruins.
 void Izumo_DescendIntoTheRuins(void) {
   s32 value = gFieldWork->stepTrigger;
 
@@ -663,7 +729,8 @@ void Izumo_DescendIntoTheRuins(void) {
   Izumo_SetExitRequest(value);
 }
 
-/// Felix steps in from the circle's left and goes down into the ruins.
+/// Felix walks into the opening in the ring from its west side, cell (22, 9):
+/// he steps round to its north side and climbs down into the ruins.
 void Izumo_EnterTheRuinsFromTheLeft(void) {
   Call3((void (*)())Actor_WalkByAndWaitById, ACTOR_FELIX, 0, -14);
   Actor_WalkByAndWaitById(ACTOR_FELIX, 16, 0);
@@ -671,7 +738,8 @@ void Izumo_EnterTheRuinsFromTheLeft(void) {
   Izumo_DescendIntoTheRuins();
 }
 
-/// Felix steps in from the circle's right and goes down into the ruins.
+/// Felix walks into the opening in the ring from its east side, cell (24, 9):
+/// he steps round to its north side and climbs down into the ruins.
 void Izumo_EnterTheRuinsFromTheRight(void) {
   Call3((void (*)())Actor_WalkByAndWaitById, ACTOR_FELIX, 0, -14);
   Actor_WalkByAndWaitById(ACTOR_FELIX, -16, 0);
@@ -679,7 +747,8 @@ void Izumo_EnterTheRuinsFromTheRight(void) {
   Izumo_DescendIntoTheRuins();
 }
 
-/// Felix faces the circle's opening and goes down into the ruins.
+/// Felix walks south into the opening in the ring from its north side, cell
+/// (23, 8), turns round and climbs down into the ruins.
 void Izumo_EnterTheRuins(void) {
   Actor_FaceDirectionById(ACTOR_FELIX, FACING_NORTH, 0);
   FieldEvent_Wait(10);
@@ -688,7 +757,7 @@ void Izumo_EnterTheRuins(void) {
 
 #include "text/msg_ids.h"
 
-/// The stones Move can lift, ended by -1: the misaligned stone.
+/// The stones Move can push, ended by -1: the one out of line in the ring.
 s16 gIzumo_StonesToMove[] = {
     ACTOR_MISALIGNED_STONE,
     -1,
@@ -873,15 +942,24 @@ u32 gIzumo_SixthDanceScript[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(Izumo),
-    SCENE_EXIT_UNLESS(1, WorldMap, 38, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(2, IzumoRooms, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(3, IzumoRooms, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, IzumoRooms, 3, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, IzumoRooms, 4, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(6, IzumoRooms, 5, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(7, IzumoRooms, 6, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(8, IzumoRooms, 7, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(10, IzumoRuinsFirstRoom, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(IZUMO_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_IZUMO,
+                      EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(IZUMO_TO_IZUMO_ROOMS_SOUTHEAST_A, IzumoRooms,
+                      IZUMO_ROOMS_FROM_IZUMO_SOUTHEAST_A, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(IZUMO_TO_IZUMO_ROOMS_SOUTHEAST_B, IzumoRooms,
+                      IZUMO_ROOMS_FROM_IZUMO_SOUTHEAST_B, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(IZUMO_TO_IZUMO_ROOMS_SOUTHWEST, IzumoRooms,
+                      IZUMO_ROOMS_FROM_IZUMO_SOUTHWEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(IZUMO_TO_IZUMO_ROOMS_SOUTH, IzumoRooms,
+                      IZUMO_ROOMS_FROM_IZUMO_SOUTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(IZUMO_TO_IZUMO_ROOMS_NORTHWEST, IzumoRooms,
+                      IZUMO_ROOMS_FROM_IZUMO_NORTHWEST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(IZUMO_TO_IZUMO_ROOMS_NORTHEAST, IzumoRooms,
+                      IZUMO_ROOMS_FROM_IZUMO_NORTHEAST, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(IZUMO_TO_IZUMO_ROOMS_NORTH, IzumoRooms,
+                      IZUMO_ROOMS_FROM_IZUMO_NORTH, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(IZUMO_TO_IZUMO_RUINS_FIRST_ROOM, IzumoRuinsFirstRoom,
+                      IZUMO_RUINS_FIRST_ROOM_FROM_IZUMO, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
@@ -939,27 +1017,27 @@ struct ActorPlacement gIzumo_ActorPlacementsOnceTheSerpentIsSlain[] = {
 // clang-format on
 
 struct Trigger gIzumo_Triggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
-     EVENT(Izumo_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
-     EVENT(Izumo_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS,
-     EVENT(Izumo_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS,
-     EVENT(Izumo_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS,
-     EVENT(Izumo_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS,
-     EVENT(Izumo_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, CONDITION_ALWAYS,
-     EVENT(Izumo_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS,
-     EVENT(Izumo_EnterTheRuins)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 10, CONDITION_ALWAYS,
-     EVENT(Izumo_EnterTheRuinsFromTheRight)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS,
-     EVENT(Izumo_EnterTheRuinsFromTheLeft)},
+    {TRIGGER_EXIT, IZUMO_TO_WORLD_MAP, CONDITION_ALWAYS, IZUMO_TO_WORLD_MAP},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), IZUMO_TO_IZUMO_ROOMS_SOUTHEAST_A,
+     CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), IZUMO_TO_IZUMO_ROOMS_SOUTHEAST_B,
+     CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), IZUMO_TO_IZUMO_ROOMS_SOUTHWEST,
+     CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), IZUMO_TO_IZUMO_ROOMS_SOUTH,
+     CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), IZUMO_TO_IZUMO_ROOMS_NORTHWEST,
+     CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), IZUMO_TO_IZUMO_ROOMS_NORTHEAST,
+     CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), IZUMO_TO_IZUMO_ROOMS_NORTH,
+     CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), IZUMO_TO_IZUMO_RUINS_FIRST_ROOM,
+     CONDITION_ALWAYS, EVENT(Izumo_EnterTheRuins)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), IZUMO_TO_IZUMO_RUINS_FIRST_ROOM,
+     CONDITION_ALWAYS, EVENT(Izumo_EnterTheRuinsFromTheRight)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), IZUMO_TO_IZUMO_RUINS_FIRST_ROOM,
+     CONDITION_ALWAYS, EVENT(Izumo_EnterTheRuinsFromTheLeft)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgWeVeHad)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgMyNameS)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgLadyUzumeDoesn)},
@@ -999,24 +1077,32 @@ struct Trigger gIzumo_Triggers[] = {
      CONDITION_ALWAYS, EVENT(Izumo_StartMovingStone)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 12, CONDITION_ALWAYS,
      EVENT(Izumo_FinishMovingStone)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 21,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneFirstWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 22,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneSecondWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 23,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneThirdWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 24,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneFourthWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 25,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneFifthWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 26,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneSixthWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 27,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneSeventhWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 28,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneEighthWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 29,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneNinthWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_SOUTHEAST_WEEDS, CONDITION_ALWAYS,
+     EVENT(Izumo_ScatterSoutheastWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_WEEDS_OVER_FIRST_ANTIDOTE, CONDITION_ALWAYS,
+     EVENT(Izumo_ScatterWeedsOverFirstAntidote)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_WEEDS_OVER_SECOND_ANTIDOTE, CONDITION_ALWAYS,
+     EVENT(Izumo_ScatterWeedsOverSecondAntidote)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_WEEDS_BY_THE_SHOP, CONDITION_ALWAYS,
+     EVENT(Izumo_ScatterWeedsByTheShop)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_RIVERBANK_WEEDS, CONDITION_ALWAYS,
+     EVENT(Izumo_ScatterRiverbankWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_LEDGE_WEEDS, CONDITION_ALWAYS, EVENT(Izumo_ScatterLedgeWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_WEEDS_OVER_LUCKY_MEDAL, CONDITION_ALWAYS,
+     EVENT(Izumo_ScatterWeedsOverLuckyMedal)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_WEEDS_BY_THE_SANCTUM, CONDITION_ALWAYS,
+     EVENT(Izumo_ScatterWeedsByTheSanctum)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_STONE_CIRCLE_WEEDS, CONDITION_ALWAYS,
+     EVENT(Izumo_ScatterStoneCircleWeeds)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(Izumo_RevealTheStoneCircle)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
@@ -1025,27 +1111,27 @@ struct Trigger gIzumo_Triggers[] = {
 };
 
 struct Trigger gIzumo_TriggersOnceTheSerpentIsSlain[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 2, CONDITION_ALWAYS,
-     EVENT(Izumo_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 3, CONDITION_ALWAYS,
-     EVENT(Izumo_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 4, CONDITION_ALWAYS,
-     EVENT(Izumo_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 5, CONDITION_ALWAYS,
-     EVENT(Izumo_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 6, CONDITION_ALWAYS,
-     EVENT(Izumo_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 7, CONDITION_ALWAYS,
-     EVENT(Izumo_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 8, FLAG_SUSA_WAITS,
-     EVENT(Izumo_EnterDoor)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 10, CONDITION_ALWAYS,
-     EVENT(Izumo_EnterTheRuins)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 10, CONDITION_ALWAYS,
-     EVENT(Izumo_EnterTheRuinsFromTheRight)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS,
-     EVENT(Izumo_EnterTheRuinsFromTheLeft)},
+    {TRIGGER_EXIT, IZUMO_TO_WORLD_MAP, CONDITION_ALWAYS, IZUMO_TO_WORLD_MAP},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), IZUMO_TO_IZUMO_ROOMS_SOUTHEAST_A,
+     CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), IZUMO_TO_IZUMO_ROOMS_SOUTHEAST_B,
+     CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), IZUMO_TO_IZUMO_ROOMS_SOUTHWEST,
+     CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), IZUMO_TO_IZUMO_ROOMS_SOUTH,
+     CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), IZUMO_TO_IZUMO_ROOMS_NORTHWEST,
+     CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), IZUMO_TO_IZUMO_ROOMS_NORTHEAST,
+     CONDITION_ALWAYS, EVENT(Izumo_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), IZUMO_TO_IZUMO_ROOMS_NORTH,
+     FLAG_SUSA_WAITS, EVENT(Izumo_EnterDoor)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), IZUMO_TO_IZUMO_RUINS_FIRST_ROOM,
+     CONDITION_ALWAYS, EVENT(Izumo_EnterTheRuins)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), IZUMO_TO_IZUMO_RUINS_FIRST_ROOM,
+     CONDITION_ALWAYS, EVENT(Izumo_EnterTheRuinsFromTheRight)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), IZUMO_TO_IZUMO_RUINS_FIRST_ROOM,
+     CONDITION_ALWAYS, EVENT(Izumo_EnterTheRuinsFromTheLeft)},
     {TRIGGER_TALK, 14, CONDITION_ALWAYS, MSGNO(MsgThoseScreamsFrom)},
     {TRIGGER_TALK, 15, CONDITION_ALWAYS, MSGNO(MsgWeRePlanning)},
     {TRIGGER_TALK, 16, CONDITION_ALWAYS, MSGNO(MsgSusaHasChanged)},
@@ -1115,24 +1201,32 @@ struct Trigger gIzumo_TriggersOnceTheSerpentIsSlain[] = {
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0,
      CONDITION_ALWAYS, EVENT(Izumo_HideTheStoneCircle)},
 #if TLA_PATCH_1 /* From patch 1. */
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 21,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneFirstWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 22,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneSecondWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 23,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneThirdWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 24,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneFourthWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 25,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneFifthWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 26,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneSixthWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 27,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneSeventhWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 28,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneEighthWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 29,
-     CONDITION_ALWAYS, EVENT(Izumo_CycloneNinthWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_SOUTHEAST_WEEDS, CONDITION_ALWAYS,
+     EVENT(Izumo_ScatterSoutheastWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_WEEDS_OVER_FIRST_ANTIDOTE, CONDITION_ALWAYS,
+     EVENT(Izumo_ScatterWeedsOverFirstAntidote)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_WEEDS_OVER_SECOND_ANTIDOTE, CONDITION_ALWAYS,
+     EVENT(Izumo_ScatterWeedsOverSecondAntidote)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_WEEDS_BY_THE_SHOP, CONDITION_ALWAYS,
+     EVENT(Izumo_ScatterWeedsByTheShop)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_RIVERBANK_WEEDS, CONDITION_ALWAYS,
+     EVENT(Izumo_ScatterRiverbankWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_LEDGE_WEEDS, CONDITION_ALWAYS, EVENT(Izumo_ScatterLedgeWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_WEEDS_OVER_LUCKY_MEDAL, CONDITION_ALWAYS,
+     EVENT(Izumo_ScatterWeedsOverLuckyMedal)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_WEEDS_BY_THE_SANCTUM, CONDITION_ALWAYS,
+     EVENT(Izumo_ScatterWeedsByTheSanctum)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS),
+     CELL_STONE_CIRCLE_WEEDS, CONDITION_ALWAYS,
+     EVENT(Izumo_ScatterStoneCircleWeeds)},
 #endif
     {TRIGGER_TABLE_END},
 };

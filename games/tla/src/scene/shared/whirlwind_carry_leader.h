@@ -1,5 +1,7 @@
-/// The leader spins in the whirlwind that caught it, then drops beside it and
-/// the camera follows again.
+/// A whirlwind blown out of a wall catches Felix: he spins inside it, lifted a
+/// little, as it carries him along, and when it dies away he drops to the
+/// ground beside where it stopped with a thud, and the camera follows him
+/// again.
 void Whirlwind_CarryLeader(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);

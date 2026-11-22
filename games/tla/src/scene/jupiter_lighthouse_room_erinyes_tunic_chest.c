@@ -1,11 +1,17 @@
 /// @file
-/// The room of gaps and fallen columns in Jupiter Lighthouse, where the
-/// Erinyes Tunic's chest stands. The party jumps the gaps between its ledges
-/// (JupiterLighthouse_JumpForward), pushes a fallen column off a ledge to the
-/// floor below (JupiterLighthouse_PushColumnOffTheLedge), and Moves two pillars
-/// into the gaps in the floor (JupiterLighthouse_FinishMovingPillar). A Cyclone
-/// teleporter leads on (JupiterLighthouse_LeaveByCyclone), and cracked tiles
-/// drop the leader to the floor below.
+/// The rooms west and south of Jupiter Lighthouse's central room. In the north
+/// west, the first puzzle up the left path: four fallen columns lie on a raised
+/// floor, and the Erinyes Tunic's chest stands across a mossy trench to the
+/// east. Felix pushes the columns about until the middle one of the lower
+/// three can be pushed east off the floor's edge; it drops into the trench at
+/// cells (16, 11) to (16, 14) (JupiterLighthouse_PushColumnOffTheLedge), and he
+/// hops over it to the chest and back (JupiterLighthouse_JumpForward). In the
+/// south hall, Cyclone on the purple teleporter pad at
+/// cell (9, 51) takes him one level up (JupiterLighthouse_LeaveByCyclone).
+/// Later, when he comes back with the Blue Key, a stone pillar stands on each
+/// of the hall's two high ledges beside a hanging chain; Moved one cell towards
+/// its chain, each drops into the gap below the ledge and makes a shortcut
+/// between the tower's two sides (JupiterLighthouse_FinishMovingPillar).
 
 #include "system/system.h"
 #include "system/io_write.h"
@@ -55,27 +61,38 @@ struct PushTarget {
 
 /// Set once the column has been pushed off the ledge this visit.
 #define FLAG_COLUMN_OFF_LEDGE FLAG_SCENE_TEMP_00
-/// Set as Move drops each pillar into its gap.
+/// Set as Move drops the west or east pillar into its gap.
 #define FLAG_LEFT_PILLAR_IN_GAP 0xa04
 #define FLAG_RIGHT_PILLAR_IN_GAP 0xa05
 
-/// The room's four fallen columns, the third the one the leader pushes off the
-/// ledge, and the two pillars Move drops into the gaps.
+/// The four fallen columns, the third the one Felix pushes off into the trench,
+/// and the two pillars Move drops into the gaps in the south hall.
 enum {
   ACTOR_FIRST_COLUMN = ACTOR_FIRST_PLACED,
   ACTOR_SECOND_COLUMN,
   ACTOR_LEDGE_COLUMN,
   ACTOR_FOURTH_COLUMN,
-  /// The two chains that hang either side of the stairs (HangingVine_Place).
+  /// The two chains that hang beside the pillars' ledges (HangingVine_Place).
   ACTOR_WEST_CHAIN,
   ACTOR_EAST_CHAIN,
   ACTOR_LEFT_PILLAR = ACTOR_FIRST_PLACED + 6,
   ACTOR_RIGHT_PILLAR
 };
 
-/// The entrances at (152, 840) and (696, 840), where the leader arrives in a
-/// ring (Actor_DepartInRing).
+/// The entrances at (152, 840) and (696, 840), where Felix arrives in a ring
+/// (Actor_DepartInRing).
 enum { ENTRANCE_WEST_RING = 12, ENTRANCE_EAST_RING = 13 };
+/// The rooms' own cell behaviors.
+enum JupiterLighthouseRoomErinyesTunicChestCellBehavior {
+  /// The raised floor round the fallen columns, cells (5, 5) to (14, 14), where
+  /// walking into a column pushes it.
+  CELL_BEHAVIOR_BESIDE_COLUMNS = 30,
+  /// The trench's east bank by the chest, cells (18, 11) and (18, 12), where
+  /// walking west jumps back over the trench.
+  CELL_BEHAVIOR_TRENCH_EAST_BANK,
+  /// The purple teleporter pad in the south hall, cell (9, 51).
+  CELL_BEHAVIOR_CYCLONE_TELEPORTER = 40
+};
 
 void Scene_SetArrivalFlags(s32 a);
 void Actor_SetSpritePriorityDirect(struct Actor *actor, s32 a);
@@ -131,15 +148,19 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-/// The ledge column's update while it is pushed: at cell (14, 12), below the
-/// ledge, it is drawn at priority 2.
+/// The pushed column's update while Felix pushes it: once it reaches cell
+/// (14, 12), at the raised floor's east edge, it is drawn a step further back
+/// (`Actor_SetSpritePriorityDirect`) for its fall into the trench.
 void JupiterLighthouse_DrawColumnBelowLedge(struct Actor *actor) {
   if (FIELD_CELL(actor->x.fixed) == 14 && FIELD_CELL(actor->z.fixed) == 12)
     Actor_SetSpritePriorityDirect(actor, 2);
 }
 
-/// The leader pushes the ledge column; pushed to cell (16, 12) it falls off the
-/// ledge with a thud and the four cells it lands across sink to the floor.
+/// Felix walks into one of the fallen columns on the raised floor and pushes
+/// it; it slides until something stops it. The middle one of the lower three,
+/// pushed east to the floor's edge, falls into the mossy trench with a heavy
+/// thud and lies across it at cells (16, 11) to (16, 14), so that Felix can hop
+/// over it to the Erinyes Tunic's chest.
 void JupiterLighthouse_PushColumnOffTheLedge(void) {
   struct Actor *actor = Actor_Get(ACTOR_LEDGE_COLUMN);
   struct PushTarget target;
@@ -167,12 +188,14 @@ void JupiterLighthouse_PushColumnOffTheLedge(void) {
   actor->update = 0;
 }
 
-/// Move takes hold of a pillar: nothing to do in this room.
+/// Nothing visible happens as Move takes hold of a pillar on a ledge in the
+/// south hall; these rooms need no cells changed before the push.
 void JupiterLighthouse_StartMovingPillar(void) {}
 
-/// Sets FLAG_LEFT_PILLAR_IN_GAP or FLAG_RIGHT_PILLAR_IN_GAP when the pillar
-/// stands on cell (20, 36) or (32, 36), then waits up to 30 frames for it to
-/// land and lifts it there.
+/// The stone pillar on the south hall's west or east ledge, Moved one cell
+/// towards the hanging chain beside it, drops off the ledge into the gap below
+/// (cell (20, 36) in the west, (32, 36) in the east) with a heavy thud and
+/// stays there, its top level with the floor, a shortcut across.
 void JupiterLighthouse_FinishMovingPillar(s32 unused, s32 id) {
   struct Actor *actor = Actor_Get(id);
   s32 placed = 0;
@@ -198,8 +221,9 @@ void JupiterLighthouse_FinishMovingPillar(s32 unused, s32 id) {
   }
 }
 
-/// Cyclone on the teleporter's pad takes the party to the room of locked
-/// doors, where they arrive in a ring.
+/// Felix casts Cyclone on the purple teleporter pad in the south hall, cell
+/// (9, 51): the whirlwind lifts the party one level up, into the room of the
+/// locked doors, where they arrive in a ring.
 void JupiterLighthouse_LeaveByCyclone(void) {
   Import_EventSetExitRequest(
       JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_TO_JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_SOUTHWEST);
@@ -207,8 +231,8 @@ void JupiterLighthouse_LeaveByCyclone(void) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-/// Sets up the room as the party enters: the window in, the two chains, and the
-/// teleporter's ring the party arrives in. Returns 0.
+/// Sets up the rooms as the party enters: the two chains, and the ring the
+/// party arrives in by a teleporter. Returns 0.
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -223,10 +247,9 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// Sets the scene's arrival flags; puts the pillars back in their gaps, fixes
-/// the four columns in their cells, and sinks the cells the ledge column fell
-/// across.
-/// Returns 0.
+/// Sets the scene's arrival flags; puts the pillars back in their gaps, makes
+/// the four columns block their cells, and lays the pushed column across the
+/// trench again once it has fallen in. Returns 0.
 s32 Scene_PrepareMap(void) {
   struct Actor *actor;
   s32 i;
@@ -277,7 +300,9 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-/// The leader jumps forward over the gap, where it can.
+/// Walking west off the trench's east bank by the Erinyes Tunic's chest, cell
+/// (18, 11) or (18, 12), Felix jumps back over the trench, once the column lies
+/// in it to land on.
 void JupiterLighthouse_JumpForward(void) { Field_TryJumpForward(); }
 
 #include "shared/scene_set_arrival_flags.c"
@@ -644,15 +669,15 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {STEP_TRIGGER_WALKING, 30, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PushColumnOffTheLedge)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 31, CONDITION_ALWAYS, EVENT(JupiterLighthouse_JumpForward)},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 12, CONDITION_ALWAYS, 0},
-    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), 13, CONDITION_ALWAYS, 0},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 14, CONDITION_ALWAYS, (u32)((u8 *)JupiterLighthouse_StartMovingPillar + 1)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 14, CONDITION_ALWAYS, EVENT(JupiterLighthouse_FinishMovingPillar)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 15, CONDITION_ALWAYS, (u32)((u8 *)JupiterLighthouse_StartMovingPillar + 1)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 15, CONDITION_ALWAYS, EVENT(JupiterLighthouse_FinishMovingPillar)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 40, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LeaveByCyclone)},
+    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_BESIDE_COLUMNS, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PushColumnOffTheLedge)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_TRENCH_EAST_BANK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_JumpForward)},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_WEST_CHAIN, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_EAST_CHAIN, CONDITION_ALWAYS, 0},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_LEFT_PILLAR, CONDITION_ALWAYS, (u32)((u8 *)JupiterLighthouse_StartMovingPillar + 1)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_LEFT_PILLAR, CONDITION_ALWAYS, EVENT(JupiterLighthouse_FinishMovingPillar)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_RIGHT_PILLAR, CONDITION_ALWAYS, (u32)((u8 *)JupiterLighthouse_StartMovingPillar + 1)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_RIGHT_PILLAR, CONDITION_ALWAYS, EVENT(JupiterLighthouse_FinishMovingPillar)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_CYCLONE_TELEPORTER, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LeaveByCyclone)},
     {TRIGGER_TABLE_END},
 };
 

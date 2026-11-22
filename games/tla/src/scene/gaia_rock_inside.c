@@ -1,12 +1,38 @@
 /// @file
-/// Gaia Rock's inside, the rooms of this overlay near Izumo: the party places
-/// the doll on the altar by the entrance and on the altars deeper in
-/// (GaiaRockInside_PlaceDollOnFirstAltar to
-/// GaiaRockInside_PlaceDollOnAltarAltar), each one weakening the Serpent, and
-/// clears overgrowth and cobwebs with Cyclone. In the Serpent's lair Susa
-/// fights to save Kushinada (GaiaRockInside_MeetSusa); examining the Serpent
-/// starts the battle with it (GaiaRockInside_ChallengeSerpent). Felix reads
-/// the rock's tablet and learns Sand (GaiaRockInside_ReadSandTablet).
+/// Gaia Rock's inside, under the great rock near Izumo where the Serpent
+/// lives, in five scenes of one overlay.
+///
+/// The cave mouth on the first cliffs (gaia_rock.c) opens onto the first
+/// altar's room (SceneId_GaiaRockInsideFirstAltar), where two great red faces
+/// on the north wall stand in two doorways, one either side of an altar. The
+/// Dancing Idol, found on the altar on top of the rock, dances on this altar
+/// and the faces slide aside (GaiaRockInside_PlaceDollOnFirstAltar). Three
+/// ways open: through the west and east doorways to the room of leafy
+/// platforms (SceneId_GaiaRockInsidePlatforms), and a third, past two stumps
+/// Felix Moves out of the way, to the maze.
+///
+/// Cyclone on the bushes of the platforms' room sets its leafy platforms
+/// swaying (GaiaRockInside_CycloneStartsPlatforms), and they carry the party
+/// on to the twin altars' room (SceneId_GaiaRockInsideTwinAltars) and the
+/// altar room above it (SceneId_GaiaRockInsideAltar). There Cyclone flushes a
+/// Mad Plant out of the bushes, three stone heads burst out of a wall of
+/// handholds under Felix, and Cyclone tears a great cobweb so that the altar
+/// it holds falls into the twin altars' room. Four beams of sunlight can be
+/// let down into the Serpent's lair: the Dancing Idol makes the face over each
+/// of three altars slide aside, and Cyclone clears the bushes under the
+/// fourth beam in the twin altars' room. While the Serpent lives, the game
+/// shows each new beam falling into the lair.
+///
+/// The maze (SceneId_GaiaRockInsideMaze by entrances 1 to 4) is fourteen
+/// rooms alike, a crossroads with a little plant in the middle that Growth
+/// turns into an arrow pointing the way on. Beyond it is the Serpent's lair
+/// (the same scene by entrances 9 to 20), where Susa feeds the Serpent casks
+/// of Dragonsbane to save Kushinada. The fewer beams reach the lair, the more
+/// the Serpent heals in battle (GaiaRockInside_ChallengeSerpent). Once the
+/// party beats it Susa slays it, and a slate rises from the floor that
+/// teaches Felix Sand (GaiaRockInside_ReadSandTablet). With Sand he passes the
+/// stone Serpent to the Cloud Brand behind it
+/// (GaiaRockInside_FindCloudBrand).
 
 #include "types.h"
 #include "macros.h"
@@ -62,15 +88,17 @@
 #define EFFECT_SPRITE_PRIORITY
 #include "../field/field_effect_spawn.c"
 
-/// The four beams of sunlight that reach the Serpent's lair: a carved face
-/// slides aside when the doll dances on its altar, and Cyclone clears the
-/// bushes in the twin altars' room (GaiaRockInside_OpenHallPassages).
+/// The four beams of sunlight that reach the Serpent's lair. Three are set
+/// once the face over the altar room's altar, the west altar or the east altar
+/// has slid aside, the fourth once Cyclone has cleared the bushes under the
+/// twin altars' room's beam.
+/// GaiaRockInside_DrawSunbeams draws them in the lair.
 #define FLAG_ALTAR_ROOM_SUNBEAM 0x9bc
 #define FLAG_WEST_ALTAR_SUNBEAM 0x9bd
 #define FLAG_EAST_ALTAR_SUNBEAM 0x9be
 #define FLAG_BUSHES_SUNBEAM 0x9bf
-/// A beam opened before the Serpent is slain, shown shining into the lair
-/// (Scene_Initialize, entrance 20) before its flag above is set.
+/// A beam let in before the Serpent is slain, waiting to be shown falling into
+/// the lair (Scene_Initialize, entrance 20), which then sets its flag above.
 #define FLAG_ALTAR_ROOM_SUNBEAM_TO_SHOW FLAG_AREA_TEMP_07
 #define FLAG_WEST_ALTAR_SUNBEAM_TO_SHOW FLAG_AREA_TEMP_08
 #define FLAG_EAST_ALTAR_SUNBEAM_TO_SHOW FLAG_AREA_TEMP_09
@@ -80,39 +108,78 @@
 #define FLAG_MET_SUSA 0x9de     ///< "Who are you? How did you get here?"
 #define FLAG_LEARNED_SAND 0x9ba ///< Felix touched the slate and learned Sand
 #define FLAG_SAND_TABLET_RAISED 0x9ee ///< the slate rose from the lair's floor
-#define FLAG_ALTAR_FELL 0x9c4         ///< Cyclone tore the cobweb holding it
+#define FLAG_ALTAR_FELL 0x9c4         ///< Cyclone tore the cobweb holding it up
 #define FLAG_FIRST_ALTAR_FACES_MOVED 0xa62
 #define FLAG_PLATFORMS_SWAYING 0xa63
-/// The statues that rise where the leader steps in the altar room.
+/// The three stone heads that burst out of the altar room's wall of handholds
+/// under Felix; each stays out until the party enters another area.
 #define FLAG_STATUE_A_RISEN FLAG_AREA_TEMP_03
 #define FLAG_STATUE_B_RISEN FLAG_AREA_TEMP_04
 #define FLAG_STATUE_C_RISEN FLAG_AREA_TEMP_05
-/// The two stumps' places in gGaiaRockInside_StumpSpots, a half byte each.
+/// Where the first altar's room's two stumps were Moved to, kept so that they
+/// stay there (GaiaRockInside_RecordStumpSpots).
 #define FLAG_STUMP_SPOTS FLAG_SCENE_TEMP_10
-/// While the party holds Susa up the cask waits for him, and while it holds
-/// the cask up Susa waits for it (GaiaRockInside_CheckBlocked).
+/// While the party stands in Susa's way the cask waits for him, and while it
+/// stands in the cask's way Susa waits for it (GaiaRockInside_CheckBlocked).
 #define FLAG_SUSA_WAITS_FOR_CASK FLAG_SCENE_TEMP_05
 #define FLAG_CASK_WAITS_FOR_SUSA FLAG_SCENE_TEMP_06
 
-/// The maze's one actor, in the middle of each of its screens.
+/// The cell behaviors of the trigger tables, by room.
+enum GaiaRockInsideCellBehavior {
+  /// The four ways out of a maze room, in the order of enum MazeWay.
+  CELL_BEHAVIOR_MAZE_SOUTH = 1,
+  CELL_BEHAVIOR_MAZE_WEST,
+  CELL_BEHAVIOR_MAZE_EAST,
+  CELL_BEHAVIOR_MAZE_NORTH,
+  /// The bushes Cyclone clears: the patch in the platforms' room, and the
+  /// cross of five under the beam of sunlight in the twin altars' room.
+  CELL_BEHAVIOR_PLATFORMS_BUSHES = 20,
+  CELL_BEHAVIOR_SUNBEAM_BUSHES = 20,
+  /// The altar room's wall of handholds: its three trap holds, west to east,
+  /// in its overhead layer (GaiaRock_TriggerWallCell reads them as Felix
+  /// climbs).
+  CELL_BEHAVIOR_WEST_STONE_HEAD = 30,
+  CELL_BEHAVIOR_MIDDLE_STONE_HEAD,
+  CELL_BEHAVIOR_EAST_STONE_HEAD,
+  /// The altar room's bushes: those ringing the altar, those over the Mad
+  /// Plant and the one it hides under, the cobweb, and the ledge at the
+  /// cobweb's north edge (a cell of the web for Cyclone).
+  CELL_BEHAVIOR_ALTAR_BUSHES = 40,
+  CELL_BEHAVIOR_MAD_PLANT_BUSHES,
+  CELL_BEHAVIOR_COBWEB,
+  CELL_BEHAVIOR_COBWEB_LEDGE,
+  CELL_BEHAVIOR_MAD_PLANT,
+  /// The lair: the steps just east of where Susa works, the floor before the
+  /// Serpent, the cup of Dragonsbane at its feet, the Serpent itself, and the
+  /// Cloud Brand's spot behind its tail.
+  CELL_BEHAVIOR_BY_SUSA = 40,
+  CELL_BEHAVIOR_BEFORE_SERPENT = 42,
+  CELL_BEHAVIOR_CUP = 50,
+  CELL_BEHAVIOR_SERPENT = 55,
+  CELL_BEHAVIOR_SERPENT_WEST,
+  CELL_BEHAVIOR_CLOUD_BRAND = 77
+};
+
+/// The maze's one actor, in the middle of each of its rooms.
 enum {
   /// A sprig that Growth turns into an arrow pointing the way on
   /// (GaiaRockInside_PlantPointsTheWay).
   ACTOR_ARROW_PLANT = 8
 };
 
-/// The exit the lair would take after showing a beam if none waited: the maze
-/// has no exit of this number, but the party only comes in by entrance 20 from
-/// the event of a face or bushes that sets a beam's flag first.
+/// The exit the lair would take after showing a beam if none waited to be
+/// shown: the scene has no exit of this number, but the party only comes in by
+/// entrance 20 from an event that has just let a beam in.
 #define EXIT_NO_SUNBEAM 20
 
-/// The trigger Susa's hook raises when the party has blocked him or his cask
-/// (GaiaRockInside_CheckBlocked).
+/// The trigger Susa's hook raises when the party has stood in his or his
+/// cask's way for half a second (GaiaRockInside_CheckBlocked).
 #define RAISED_SUSA_BLOCKED 42
 
-/// The lair's entrances: its way in, and where the battle with the Serpent
-/// returns the party: won, lost without the Dancing Idol, and lost holding it
-/// before any beam of sunlight reaches it (GaiaRockInside_ChallengeSerpent).
+/// The lair's entrances: its way in from the south, and where the battle with
+/// the Serpent brings the party back: won, lost without the Dancing Idol, and
+/// lost holding it before any beam of sunlight reaches the lair
+/// (GaiaRockInside_ChallengeSerpent).
 enum {
   ENTRANCE_LAIR = 9,
   ENTRANCE_SERPENT_BEATEN = 10,
@@ -121,6 +188,8 @@ enum {
 };
 
 /// The Serpent's lair (SceneId_GaiaRockInsideMaze by entrances 9 to 20).
+/// The Serpent sits on the sand at its north end; Susa works among the casks
+/// south of it.
 enum {
   ACTOR_SERPENT = 8,
   /// The cask of Dragonsbane Susa feeds the Serpent from: "How many casks
@@ -133,9 +202,10 @@ enum {
   ACTOR_SAND_TABLET = 12
 };
 
-/// The room of the first altar (SceneId_GaiaRockInsideFirstAltar): two carved
-/// faces whose cups pour Dragonsbane once the doll dances on the altar between
-/// them, and the two stumps of the Move puzzle on its east side.
+/// The room of the first altar (SceneId_GaiaRockInsideFirstAltar): the two
+/// great red faces that stand in the doorways either side of the altar until
+/// the Dancing Idol dances on it, and the two stumps Felix Moves out of the
+/// way on the path to the maze.
 enum {
   ACTOR_FIRST_ALTAR_WEST_FACE = 8,
   ACTOR_FIRST_ALTAR_EAST_FACE = 9,
@@ -146,8 +216,9 @@ enum {
   ACTOR_FIRST_ALTAR_DOLL = 13
 };
 
-/// The room of the twin altars (SceneId_GaiaRockInsideTwinAltars): a face over
-/// each altar.
+/// The room of the twin altars (SceneId_GaiaRockInsideTwinAltars): a face on
+/// the north wall over each altar. The east altar is the one that falls
+/// through from the altar room when Cyclone tears its cobweb.
 enum {
   ACTOR_WEST_FACE = 8,
   ACTOR_EAST_FACE = 9,
@@ -156,16 +227,18 @@ enum {
   ACTOR_TWIN_ALTARS_DOLL = 12
 };
 
-/// The room whose leafy platforms Cyclone sets swaying
-/// (GaiaRockInside_StartPlatforms): its nine platforms.
+/// The nine leafy platforms Cyclone sets swaying in the platforms' room
+/// (GaiaRockInside_StartPlatforms).
 enum { ACTOR_FIRST_PLATFORM = 8, ACTOR_LAST_PLATFORM = 16 };
 
-/// The altar room under the cobweb (SceneId_GaiaRockInsideAltar).
+/// The altar room (SceneId_GaiaRockInsideAltar): the altar ringed by bushes in
+/// its west part, with a face on the wall beside it, the wall of handholds
+/// along its south part, and the altar on the great cobweb in its east part.
 enum {
   ACTOR_ALTAR_FACE = 8,
   ACTOR_ALTAR = 9,
   ACTOR_HANGING_VINE = 10,
-  /// The three statues that rise where the leader steps
+  /// The three stone heads that burst out of the wall of handholds under Felix
   /// (GaiaRockInside_StatueRisesUnderLeader).
   ACTOR_STATUE_A = 11,
   ACTOR_STATUE_B = 12,
@@ -278,7 +351,7 @@ void GaiaRockInside_PlacePlatform(s32 id, s32 x, s32 z);
 void GaiaRockInside_SetPlatformMode(u32 id, s8 mode);
 void GaiaRockInside_SwayPlatforms(void);
 
-void GaiaRockInside_SetMazeLayer(s32 layer, s32 keep);
+void GaiaRockInside_BlankLayer(s32 layer, s32 keep);
 
 extern u16 gGaiaRockInside_LairBlendScript[12];
 
@@ -295,40 +368,6 @@ static inline void MapGrid_CopyRawCells(s32 x, s32 z, s32 width, s32 height,
   Map_CopyRawCellsRect(x, z, width, height, cellX, cellZ);
 }
 
-void GaiaRockInside_JumpDownByAltar(void);
-
-void GaiaRockInside_CycloneStartsPlatforms(void);
-
-void GaiaRockInside_CycloneMadPlant(void);
-
-void GaiaRockInside_CycloneClearsMadPlantBushes(void);
-
-void GaiaRockInside_CycloneClearsCobweb(void);
-
-void GaiaRockInside_SusaSaysMoveAside(void);
-
-void GaiaRockInside_MeetSusa(void);
-void GaiaRockInside_TalkToSusa(void);
-void GaiaRockInside_ReadSusasMind(void);
-
-void GaiaRockInside_RaiseSandTablet(void);
-void GaiaRockInside_ChallengeSerpent(void);
-
-void Leader_SetLayerByte(void);
-
-void GaiaRockInside_EndSand(void);
-void GaiaRockInside_FindCloudBrand(void);
-void GaiaRockInside_CheckAltar(void);
-void GaiaRockInside_PlaceDollOnFirstAltar(void);
-void GaiaRockInside_PlaceDollOnWestAltar(void);
-void GaiaRockInside_PlaceDollOnEastAltar(void);
-void GaiaRockInside_PlaceDollOnAltarAltar(void);
-
-void GaiaRockInside_StepOnFirstStatueSpot(void);
-
-void GaiaRockInside_StepOnSecondStatueSpot(void);
-void GaiaRockInside_StepOnThirdStatueSpot(void);
-
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
@@ -343,15 +382,18 @@ const struct SceneRegion *Scene_GetExitRegions(void) {
   return 0;
 }
 
-/// An actor jumps down off the ledge before it (Actor_JumpDownLedge).
+/// An actor springs down off the ledge before it (Actor_JumpDownLedge).
 static __inline__ void GaiaRockInside_JumpDownLedge(s32 id, s32 pose,
                                                     s32 param) {
   Actor_JumpDownLedge(id, pose, param);
 }
 
-/// Stepping off the ledge by the altar: the leader jumps down to the room
-/// below.
-void GaiaRockInside_JumpDownByAltar(void) {
+/// Felix walks south off the ledge at the north edge of the altar room's
+/// cobweb pit, cell (44, 20), springs down past the altar through the web and
+/// drops out of sight; he lands in the twin altars' room below in a ring of
+/// dust (GaiaRockInside_RaiseDust). Once the altar has fallen he jumps into the
+/// empty pit the same way.
+void GaiaRockInside_JumpDownCobwebPit(void) {
   FieldActor_SetSpritePriority(gMainRoutineWork.leaderActorId, 3);
   OverlayObject_PrepareObject(toFIXED(712), 0, toFIXED(468), SPRITE_CRATE);
   OverlayObject_PrepareObject(toFIXED(712), 0, toFIXED(490), SPRITE_CRATE);
@@ -374,9 +416,11 @@ void GaiaRockInside_JumpDownByAltar(void) {
 #endif
 
 #if TLA_PATCH_1
-/// Arriving in the lair by entrance 3 from above: the leader drops from 130
-/// pixels up and lands in a ring of dust with a thump that shakes the room.
-/// The Japanese edition has no form of this function here.
+/// Felix lands in the twin altars' room after jumping down the altar room's
+/// cobweb pit (GaiaRockInside_JumpDownCobwebPit): he drops in from 130 pixels
+/// up, east of the east altar's face, into a ring of dust with a thump that
+/// shakes the room, and sits a moment before he stands. The Japanese edition
+/// has no form of this function here.
 void GaiaRockInside_RaiseDust(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   u32 i;
@@ -441,10 +485,11 @@ void GaiaRockInside_RaiseDust(void) {
 
 const u32 *Scene_GetExits(void) { return gSceneExits; }
 
-/// Susa feeds the Serpent Dragonsbane cask by cask
-/// (gGaiaRockInside_SusaWalksOffScript): he sets a cask down, pushes it,
-/// throws it to the Serpent's mouth, where it tips and pours, and the empty
-/// cask is tossed aside and bursts. The routines below are its steps.
+/// Susa feeds the Serpent Dragonsbane cask by cask, over and over
+/// (gGaiaRockInside_SusaFeedsSerpentScript): he sets a cask down among the
+/// others south of the Serpent, pushes it a cell east, and throws it up onto
+/// the cup at the Serpent's feet, where it tips and pours; then he tosses the
+/// empty cask aside, where it bursts. The routines below are its steps.
 ///
 /// The cask lands and holds still on its third animation.
 s32 GaiaRockInside_CaskRests(void) {
@@ -456,7 +501,7 @@ s32 GaiaRockInside_CaskRests(void) {
   return 0;
 }
 
-/// The cask tips a step toward the Serpent's mouth.
+/// The cask tips a step over the cup.
 s32 GaiaRockInside_CaskTips(void) {
   struct Actor *actor;
 
@@ -538,7 +583,7 @@ s32 GaiaRockInside_SusaPushesCask(void) {
   return 0;
 }
 
-/// Susa throws the cask up to the Serpent's mouth.
+/// Susa throws the cask up onto the cup at the Serpent's feet.
 s32 GaiaRockInside_SusaThrowsCask(void) {
   struct Actor *actor;
 
@@ -551,7 +596,7 @@ s32 GaiaRockInside_SusaThrowsCask(void) {
   return 0;
 }
 
-/// At the mouth the cask tips, pours and rights itself again.
+/// On the cup the cask tips, pours and rights itself again.
 s32 GaiaRockInside_CaskEmpties(void) {
   struct Actor *cask;
 
@@ -599,7 +644,8 @@ s32 GaiaRockInside_CaskBursts(void) {
   return 0;
 }
 
-/// The empty cask is tossed aside, away from where the leader stands.
+/// The empty cask is tossed aside, west or east, away from where the leader
+/// stands.
 s32 GaiaRockInside_TossCask(void) {
   struct Actor *actor = Actor_Get(ACTOR_CASK);
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
@@ -615,9 +661,9 @@ s32 GaiaRockInside_TossCask(void) {
 /// to move, and the most the count keeps.
 enum { SUSA_BLOCKED_FRAMES = 30, SUSA_BLOCKED_FRAMES_MAX = 35 };
 
-/// Susa's hook while he works: when he or the cask has been stopped by the
-/// party for SUSA_BLOCKED_FRAMES, the trigger GaiaRockInside_SusaSaysMoveAside
-/// is raised; while one is blocked the other waits.
+/// Susa's hook while he works: when the party has stood in his or the cask's
+/// way for SUSA_BLOCKED_FRAMES, he tells them to move
+/// (GaiaRockInside_SusaSaysMoveAside); while one is held up the other waits.
 void GaiaRockInside_CheckBlocked(struct Actor *actor) {
   struct Actor *other = Actor_Get(ACTOR_CASK);
 
@@ -662,7 +708,8 @@ extern struct ActorPlacement gGaiaRockInside_FirstAltarActorPlacements[];
 extern s32 gGaiaRockInside_ArrowFrame;
 extern s32 gGaiaRockInside_SquashXScript[];
 
-/// Return the table for the current room.
+/// Returns the current room's actors; the maze's rooms and the lair share a
+/// scene, told apart by entrance.
 const void *Scene_GetActorPlacements(void) {
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_FIRST_ALTAR)
     return gGaiaRockInside_FirstAltarActorPlacements;
@@ -683,9 +730,9 @@ const void *Scene_GetActorPlacements(void) {
 #define ARROW_ANIMATION(heading) ((((heading) & 0xc000) >> 14) + 2)
 #define ARROW_UP_OR_DOWN(heading) ((heading) & 0x4000)
 
-/// The update of a maze plant Growth has turned into an arrow: it flickers, and
-/// every 32 frames stretches along its arrow, sideways here and up and down in
-/// GaiaRockInside_PulseUpDownArrow.
+/// The update of a maze plant Growth has turned into an arrow: it flashes, and
+/// about twice a second stretches along its arrow with a drip, sideways here
+/// and up and down in GaiaRockInside_PulseUpDownArrow.
 void GaiaRockInside_PulseSidewaysArrow(struct Actor *actor) {
   s32 value = 0;
 
@@ -715,8 +762,10 @@ void GaiaRockInside_PulseUpDownArrow(struct Actor *actor) {
   gGaiaRockInside_ArrowFrame++;
 }
 
-/// Growth on the plant of a maze step: it grows into an arrow pointing the way
-/// on, and stays one from then on.
+/// Felix casts Growth on the little plant in the middle of a maze room, and it
+/// grows into a green arrow that flashes and pulses, pointing the way on to
+/// the next room. It points again whenever the party comes back to that room
+/// on this visit.
 void GaiaRockInside_PlantPointsTheWay(s32 unused, u32 id) {
   struct Actor *actor = Actor_Get(id);
   u32 direction;
@@ -736,9 +785,12 @@ void GaiaRockInside_PlantPointsTheWay(s32 unused, u32 id) {
   System_Wait(20);
 }
 
-/// Cyclone on the bushes of the twin altars' room blows them away; once the
-/// cell they hid is clear its beam of sunlight opens (a leader standing there
-/// hops aside), shown shining into the lair first while the Serpent lives.
+/// Felix casts Cyclone on the cross of five bushes south-east of the east face
+/// in the twin altars' room, around cell (38, 25), where a beam of
+/// sunlight shines down from the ceiling. Once the middle bush is gone the beam
+/// falls through the hole it hid, cell (38, 25), and down into the Serpent's
+/// lair; Felix hops aside if he stands on the hole. While the Serpent lives,
+/// the game first shows the beam falling into the lair.
 void GaiaRockInside_CycloneClearsTwinAltarsBushes(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
@@ -775,8 +827,10 @@ static __inline__ void GaiaRockInside_MadPlantLeaps(s32 sprite, s32 x, s32 z) {
   MadPlant_LeapAtLeader(sprite, x, z);
 }
 
-/// Cyclone on the bushes by the platforms: they blow away, and the first time
-/// the platforms start to sway.
+/// Felix casts Cyclone on the patch of bushes in the platforms' room, cells
+/// (16, 25) to (20, 29): they blow away, and the first time nine leafy
+/// platforms appear over the room's holes and start to sway, which carry the
+/// party across.
 void GaiaRockInside_CycloneStartsPlatforms(void) {
   FieldCyclone_CopyTouchedCells(16, 25, 0, 5, 5, 40, 8);
   if (GameFlag_Test_(FLAG_PLATFORMS_SWAYING) == 0) {
@@ -785,8 +839,10 @@ void GaiaRockInside_CycloneStartsPlatforms(void) {
   }
 }
 
-/// Cyclone on the bushes hiding a Mad Plant: they blow away, and until it is
-/// beaten the plant leaps out to fight.
+/// Felix casts Cyclone on the bushes north-west of the altar in the altar
+/// room, at the south-east bush of the patch, cell (20, 21): they blow away,
+/// and until it is beaten a Mad Plant hiding there leaps out at him and a
+/// battle starts that the party cannot run from.
 void GaiaRockInside_CycloneMadPlant(void) {
   FieldCyclone_CopyTouchedCells(18, 17, 0, 3, 3, 31, 0);
   if (Event_GetFlag(FLAG_MAD_PLANT(2)) == 0) {
@@ -797,21 +853,29 @@ void GaiaRockInside_CycloneMadPlant(void) {
   }
 }
 
-/// Cyclone on the bushes around the altar blows them away.
+/// Felix casts Cyclone on the bushes ringing the altar in the altar room's west
+/// part, cells (19, 24) to (22, 26), and they blow away, leaving the altar
+/// clear.
 void GaiaRockInside_CycloneClearsAltarBushes(void) {
   FieldCyclone_CopyTouchedCells(19, 24, 0, 4, 3, 31, 4);
 }
 
-/// Cyclone on another cell of the Mad Plant's bushes
-/// (GaiaRockInside_CycloneMadPlant) blows them away, the plant staying put.
+/// Felix casts Cyclone on the Mad Plant's bushes, north-west of the altar in
+/// the altar room, away from the south-east bush it hides under, cells (18, 19)
+/// to (20, 21): they blow away, and no Mad Plant leaps out
+/// (GaiaRockInside_CycloneMadPlant).
 void GaiaRockInside_CycloneClearsMadPlantBushes(void) {
   FieldCyclone_CopyTouchedCells(18, 17, 0, 3, 3, 31, 0);
 }
 
 extern struct CellPoint gGaiaRockInside_CobwebCells[12];
 
-/// Cyclone on the cobweb: once it is torn, the altar it held shakes and drops,
-/// the leader steps back from under it, and the party goes on below.
+/// Felix casts Cyclone on the great cobweb in the altar room's east part, at
+/// any of its edge cells around (40, 20) to (47, 27). The web tears; the
+/// altar on it shakes, Felix steps aside if he stands just south of it, and
+/// the altar drops into the pit. The game then shows it landing in the twin
+/// altars' room below as the east altar, and brings the party back to the
+/// pit's edge.
 void GaiaRockInside_CycloneClearsCobweb(void) {
   struct Actor *guard;
   struct Actor *leader;
@@ -864,10 +928,12 @@ void GaiaRockInside_CycloneClearsCobweb(void) {
   Actor_SetPosition(ACTOR_FALLING_ALTAR, 0, 0);
   ObjectTable_Snapshot();
   Event_SetFlag(FLAG_ALTAR_FELL);
-  FieldEvent_SetExitRequest(9);
+  FieldEvent_SetExitRequest(
+      GAIA_ROCK_INSIDE_ALTAR_TO_GAIA_ROCK_INSIDE_TWIN_ALTARS_SOUTHEAST_B);
 }
 
-/// Walking into Susa: "Move out of the way there."
+/// Felix stands in the way of Susa or the cask he is pushing in the lair for
+/// half a second, and Susa says "Move out of the way there."
 void GaiaRockInside_SusaSaysMoveAside(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -877,7 +943,7 @@ void GaiaRockInside_SusaSaysMoveAside(void) {
   Event_End();
 }
 
-/// Stops Susa and the cask he is handling where they are, keeping Susa's actor,
+/// Stops Susa and the cask he is handling where they are, keeping Susa's
 /// place and animation to be given back after a talk.
 void GaiaRockInside_SaveSusa(void) {
   struct Actor *walker = Actor_Get(ACTOR_CASK);
@@ -936,10 +1002,11 @@ void GaiaRockInside_RestoreSusa(void) {
   Actor_SetAnimationSpeed(actor, gGaiaRockInside_SavedSusaAnimationStep);
 }
 
-/// Stepping near Susa the first time: he turns on the party ("Who are you? How
-/// did you get here?"), tells them to stand aside while the camera looks at the
-/// Serpent, and goes back to his place; if he was walking back while a cask
-/// was tossed, his saved place is where he was going.
+/// Felix reaches the steps just east of where Susa works in the lair, cell
+/// (32, 28), the first time. Susa turns on him ("Who are you? How did you get
+/// here?"), explains he is getting the Serpent to drink Dragonsbane while the
+/// view pans to it, tells the party to stand aside, and goes back to work. If
+/// he was walking back from tossing a cask, he takes up where he was going.
 void GaiaRockInside_MeetSusa(void) {
   struct Actor *actor = Actor_Get(ACTOR_CASK);
 
@@ -993,10 +1060,12 @@ void GaiaRockInside_MeetSusa(void) {
   Event_End();
 }
 
-/// Talking to Susa, unless the party is holding him up. After his attack on
-/// the Serpent he says he is done for once any beam of sunlight reaches the
-/// lair, and otherwise that the Serpent is still too strong; before it he
-/// stops, turns to the leader and sends the party aside.
+/// Felix talks to Susa in the lair. While Susa feeds the Serpent he stops,
+/// turns and tells the party to stand aside ("If you understand, then get out
+/// of my way."). Once he has attacked it and lies hurt, he says the Serpent is
+/// still too strong, or, once any beam of sunlight reaches the lair, "I'm done
+/// for... That dragon has finished me off...". While the party is in his way
+/// nothing happens (GaiaRockInside_SusaSaysMoveAside speaks instead).
 void GaiaRockInside_TalkToSusa(void) {
   if (Actor_Get(ACTOR_SUSA)->refused > 2)
     return;
@@ -1030,8 +1099,10 @@ void GaiaRockInside_TalkToSusa(void) {
   Event_End();
 }
 
-/// Mind Read on Susa: what he thinks of the party once they hold the Dancing
-/// Idol, or otherwise of the Serpent and his casks.
+/// Felix reads Susa's mind in the lair. While Susa works: "How many casks does
+/// it take to weaken this stupid serpent?"; once the party holds the Dancing
+/// Idol: "Who do they think they are? I'm the only one who can save
+/// Kushinada."
 void GaiaRockInside_ReadSusasMind(void) {
   struct Actor *actor;
   s32 holder;
@@ -1130,8 +1201,9 @@ extern s32 gGaiaRockInside_FallingSparkScript[];
 extern s32 gGaiaRockInside_TabletSettleScript[];
 extern s32 gGaiaRockInside_FelixSettleScript[];
 
-/// Felix touches the slate in the lair and learns Sand: he and the slate rise
-/// among circling sparks, then settle.
+/// Felix touches the slate in the lair and learns Sand: the screen warms to
+/// gold, the slate and then Felix rise among circling sparks, a white flash,
+/// and they settle again.
 void GaiaRockInside_FelixLearnsSand(s32 idA, s32 idB) {
   struct Actor *a = Actor_GetById(idA);
   struct Actor *b = Actor_GetById(idB);
@@ -1262,9 +1334,11 @@ void Actor_PlaceOnActor(s32 id, s32 target);
 void BlendScript_Suspend(void);
 void BlendScript_Resume(void);
 
-/// Talking to the slate: Kraden urges Felix to touch it, the ground shakes and
-/// the slate teaches him Sand (GaiaRockInside_FelixLearnsSand), and Kraden
-/// walks back into the party.
+/// Felix searches the slate that rose beside the slain Serpent ("Wielder of
+/// Earth's might, Lay your hands upon this stone."). Kraden steps out of the
+/// party ("That'd be you, Felix. Touch it."), Felix touches it, the ground
+/// shakes and the slate teaches him Sand (GaiaRockInside_FelixLearnsSand), and
+/// Kraden walks back into the party.
 void GaiaRockInside_ReadSandTablet(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   u16 level;
@@ -1373,8 +1447,8 @@ void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
 
-/// A ring of dust spreads from the slate's place, one puff every eighth of a
-/// turn.
+/// A ring of dust spreads from where the slate rises, one puff every eighth of
+/// a turn.
 void GaiaRockInside_RingOfDust(void) {
   FIXED velocity[3];
   struct EffectOptions options;
@@ -1401,9 +1475,14 @@ void GaiaRockInside_RingOfDust(void) {
 /// The pixels the slate rises from the lair's floor, one every 2 frames.
 enum { TABLET_RISE_PIXELS = 20 };
 
-/// Stepping before the slain Serpent the first time: the ground shakes and the
-/// slate rises from the floor, in two rings of dust.
+/// Felix steps onto the floor before the slain Serpent, cells (29, 24) to (31,
+/// 24), and the ground shakes and the slate rises from the floor west of it,
+/// in two rings of dust, unless it has risen already.
 void GaiaRockInside_RaiseSandTablet(void) {
+  // XXX: play may never reach this. The scene after the battle
+  // (Scene_Initialize, entrance 10) raises the slate itself, and later visits
+  // come by entrance 9, whose table lacks this trigger; a way back into the
+  // lair by entrances 10 to 12 once the Serpent is slain would settle it.
   struct Actor *person;
   struct Actor *actor;
   u16 level;
@@ -1459,10 +1538,15 @@ void GaiaRockInside_RaiseSandTablet(void) {
 
 #include "text/msg_ids.h"
 
-/// Examining the Serpent: once it is slain, it only looks almost alive;
-/// otherwise the battle starts, as hard as the beams of sunlight still shut out
-/// make it. Winning comes back by entrance 10; losing by entrance 11, or by 12
-/// when the party carries the doll and opened no beam.
+/// Felix examines the Serpent on the sand at the north end of the lair, and
+/// the battle with it starts, one the party cannot run from. The fewer beams of
+/// sunlight reach the lair, the more it heals each turn. Won, Susa comes back
+/// and slays it, and the slate rises (Scene_Initialize, entrance 10). Lost
+/// without the Dancing Idol, Susa scolds the party ("You! You cannot fight the
+/// serpent!"); lost holding it before any beam reaches the lair, Susa, lying
+/// hurt, says Dragonsbane alone cannot beat it. Either way the party is sent
+/// back to its restart point. Once it is slain the Serpent, turned to stone,
+/// only "looks almost alive".
 void GaiaRockInside_ChallengeSerpent(void) {
   s32 count;
 
@@ -1491,18 +1575,22 @@ void GaiaRockInside_ChallengeSerpent(void) {
 
 #include "text/msg_ids.h"
 
-/// Puts the leader on map layer 2, through its byte.
-void Leader_SetLayerByte(void) {
+/// Felix casts Sand in the lair and sinks into the sand as a moving mound; he
+/// now moves on the map's sand layer, by which he can pass the Serpent to the
+/// Cloud Brand behind its tail.
+void GaiaRockInside_SinkIntoSand(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->layer = 2;
 }
 
-/// Puts the leader back on map layer 0 as Sand ends.
-void GaiaRockInside_EndSand(void) {
+/// Felix comes up out of the sand as Sand ends, and walks on the floor again.
+void GaiaRockInside_RiseFromSand(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->layer = 0;
 }
 
-/// The Cloud Brand's treasure spot is raised to where the party can reach it,
-/// and its chest is opened without the message of checking it.
+/// Felix examines the floor by the end of the Serpent's tail, cell (34, 18),
+/// which he reaches with Sand, and finds the Cloud Brand. The game raises the
+/// hidden item to the raised floor's height there and gives it without the
+/// usual message of searching.
 void GaiaRockInside_FindCloudBrand(void) {
   struct Actor *actor;
 
@@ -1515,7 +1603,9 @@ void GaiaRockInside_FindCloudBrand(void) {
   Scene_TalkToActor(FIELD_TALK_SILENT | (FIELD_TREASURE_ACTOR + 2));
 }
 
-/// Examines the altar.
+/// Felix examines one of the altars where the Dancing Idol dances: "Felix
+/// checked the altar. It looks like something can be placed here." Holding the
+/// Dancing Idol, the field menu then opens so that he can use it.
 void GaiaRockInside_CheckAltar(void) {
   const u8 *message = MsgCheckedTheAltar;
   const u8 *next;
@@ -1548,7 +1638,11 @@ enum {
   FACE_TREMBLE_LONG_FRAMES = 120
 };
 
-/// Placing the doll on the first altar: its two faces stir.
+/// Felix uses the Dancing Idol on the altar in the first altar's room. The doll
+/// hops onto the altar and dances, the two great red faces either side of it
+/// glare and glow, and the first time they tremble and slide in toward the
+/// altar, uncovering the doorways behind them, west at cell (25, 42) and east
+/// at cell (36, 42). The doll hops back to Felix.
 void GaiaRockInside_PlaceDollOnFirstAltar(void) {
   struct Actor *westFace = Actor_Get(ACTOR_FIRST_ALTAR_WEST_FACE);
   struct Actor *eastFace = Actor_Get(ACTOR_FIRST_ALTAR_EAST_FACE);
@@ -1628,11 +1722,13 @@ void GaiaRockInside_PlaceDollOnFirstAltar(void) {
   Event_End();
 }
 
-/// The doll placed on an altar under a face (this one, the east altar's and
-/// the altar room's are alike): the doll hops onto the altar and dances, the
-/// face shakes, and the first time it slides aside and lets in its beam of
-/// sunlight; the doll hops back to the leader. Before the Serpent is slain the
-/// party is taken to the lair to see the beam shine in (entrance 20).
+/// Felix uses the Dancing Idol on the west altar of the twin altars' room. The
+/// doll hops onto the altar and dances, and the face on the wall above glares
+/// and trembles. The first time, the face slides east and uncovers a shaft
+/// of sunlight, whose beam falls into the hole in the floor before it and
+/// down into the Serpent's lair; the doll hops back to Felix, and while the
+/// Serpent lives the game first shows the beam falling into the lair. The
+/// east altar's and the altar room's are alike.
 void GaiaRockInside_PlaceDollOnWestAltar(void) {
   struct Actor *actor;
   struct Actor *partner;
@@ -1725,7 +1821,9 @@ void GaiaRockInside_PlaceDollOnWestAltar(void) {
   }
 }
 
-/// The doll placed on the east altar, as on the west one
+/// Felix uses the Dancing Idol on the east altar of the twin altars' room, the
+/// one that fell from the altar room's cobweb; the face above it slides east
+/// and lets in its beam, as on the west altar
 /// (GaiaRockInside_PlaceDollOnWestAltar).
 void GaiaRockInside_PlaceDollOnEastAltar(void) {
   struct Actor *actor;
@@ -1819,8 +1917,11 @@ void GaiaRockInside_PlaceDollOnEastAltar(void) {
   }
 }
 
-/// The doll placed on the altar room's altar, as on the west one
-/// (GaiaRockInside_PlaceDollOnWestAltar).
+/// Felix uses the Dancing Idol on the altar ringed by bushes in the altar
+/// room's west part; the face on the wall beside it slides west and lets in
+/// its beam, as on the twin altars' west altar
+/// (GaiaRockInside_PlaceDollOnWestAltar). It is the first beam the walkthrough
+/// lets in.
 void GaiaRockInside_PlaceDollOnAltarAltar(void) {
   struct Actor *actor;
   struct Actor *partner;
@@ -1911,13 +2012,16 @@ void GaiaRockInside_PlaceDollOnAltarAltar(void) {
   }
 }
 
-/// The cells listed in gGaiaRockInside_StumpSpots, from 1; 0 is none.
+/// The spots listed in gGaiaRockInside_StumpSpots, from 1; 0 is none.
 enum { STUMP_SPOTS = 11 };
 
 extern s16 gGaiaRockInside_StumpSpots[][2];
 
-/// Records which of eleven listed cells the two stumps stand on, as the two
-/// halves of the byte flag FLAG_STUMP_SPOTS.
+/// Felix Moves or pushes one of the two stumps on the way to the maze in the
+/// first altar's room, east of the altar. Nothing more shows than the stump
+/// sliding; the game remembers where both stumps now stand, so that they are
+/// still there when the party comes back. Each is kept as one of the
+/// STUMP_SPOTS places it can stand, the two in halves of FLAG_STUMP_SPOTS.
 s32 GaiaRockInside_RecordStumpSpots(void) {
   struct Actor *first = Actor_Get(ACTOR_STUMP_A);
   s8 firstIndex = 0;
@@ -1944,18 +2048,27 @@ s32 GaiaRockInside_RecordStumpSpots(void) {
   }
 }
 
-/// Stepping on the first statue's spot raises it under the leader.
-void GaiaRockInside_StepOnFirstStatueSpot(void) {
+/// Climbing the wall of handholds along the altar room's south part, Felix
+/// reaches its west trap hold, drawn at cell (24, 37) (cell (24, 101) of the
+/// wall's overhead layer): a yellow stone head with red eyes bursts out of the
+/// wall under him in a shower of rocks, he flails, and he is left standing on
+/// it, no longer climbing (GaiaRockInside_StatueRisesUnderLeader).
+void GaiaRockInside_ClimbOntoWestStoneHead(void) {
+  // XXX: the recording ends there; whether he then falls to the floor, as the
+  // outside's stone faces make him, would take a recording that runs on.
   GaiaRockInside_StatueRisesUnderLeader(ACTOR_STATUE_A, FLAG_STATUE_A_RISEN);
 }
 
-/// Stepping on the second statue's spot raises it under the leader.
-void GaiaRockInside_StepOnSecondStatueSpot(void) {
+/// As GaiaRockInside_ClimbOntoWestStoneHead, for the middle trap hold, a
+/// little lower and to the east: drawn at cell (28, 39), cell (28, 103) of the
+/// overhead layer.
+void GaiaRockInside_ClimbOntoMiddleStoneHead(void) {
   GaiaRockInside_StatueRisesUnderLeader(ACTOR_STATUE_B, FLAG_STATUE_B_RISEN);
 }
 
-/// Stepping on the third statue's spot raises it under the leader.
-void GaiaRockInside_StepOnThirdStatueSpot(void) {
+/// As GaiaRockInside_ClimbOntoWestStoneHead, for the east trap hold: drawn at
+/// cell (35, 39), cell (35, 103) of the overhead layer.
+void GaiaRockInside_ClimbOntoEastStoneHead(void) {
   GaiaRockInside_StatueRisesUnderLeader(ACTOR_STATUE_C, FLAG_STATUE_C_RISEN);
 }
 
@@ -1967,7 +2080,9 @@ extern struct Trigger gGaiaRockInside_TwinAltarsTriggers[];
 extern struct Trigger gGaiaRockInside_PlatformsTriggers[];
 extern struct Trigger gGaiaRockInside_AltarTriggers[];
 
-/// Returns the current room's table.
+/// Returns the current room's triggers: the lair has one table while the
+/// Serpent lives and the party comes in by its way in, another after the
+/// battle.
 const struct Trigger *Scene_GetTriggers(void) {
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_FIRST_ALTAR)
     return gGaiaRockInside_FirstAltarTriggers;
@@ -2027,9 +2142,9 @@ void GaiaRockInside_PlacePlatform(s32 id, s32 dx, s32 dz) {
 
 extern struct SwayState gSceneState;
 
-/// The platforms' frame task: they all stop while the menu is open or
-/// Psynergy is cast; otherwise, at frame 60 of every 240 each leans out one way
-/// and at frame 180 they come back.
+/// The platforms' frame task: every four seconds each platform glides three
+/// cells out one way, and two seconds later back home. They all stop while the
+/// menu is open or Psynergy is cast.
 void GaiaRockInside_SwayPlatforms(void) {
   struct SwayState *state = &gSceneState;
   u16 *pending = &state->pending;
@@ -2102,12 +2217,12 @@ void GaiaRockInside_StartPlatforms(u8 mode) {
   Task_AddFrame(GaiaRockInside_SwayPlatforms, TASK_PASS_FRAME);
 }
 
-/// Opens the passages on each side of the hall by how many of its two pairs of
-/// flags (FLAG_ALTAR_ROOM_SUNBEAM and FLAG_WEST_ALTAR_SUNBEAM,
-/// FLAG_EAST_ALTAR_SUNBEAM and FLAG_BUSHES_SUNBEAM) are set: both open
-/// the wide way, one a side way, and a single side opened alone also opens its
-/// connecting cells.
-void GaiaRockInside_OpenHallPassages(void) {
+/// Draws the beams of sunlight let into the lair, pale shafts slanting down
+/// from its top left and top right: the altar room's and the west altar's on
+/// the west side, the east altar's and the bushes' on the east. Each side has
+/// a picture for each one of its pair alone and one for both, and a strip
+/// between the sides that changes with what each shows.
+void GaiaRockInside_DrawSunbeams(void) {
   u8 a = GameFlag_Get(FLAG_ALTAR_ROOM_SUNBEAM);
   u8 third = GameFlag_Get(FLAG_EAST_ALTAR_SUNBEAM);
   s32 b = GameFlag_Get(FLAG_WEST_ALTAR_SUNBEAM);
@@ -2179,7 +2294,7 @@ void GaiaRockInside_OpenHallPassages(void) {
 extern u32 gGaiaRockInside_SerpentGlowScript[];
 extern u32 gGaiaRockInside_SerpentSmokeScript[];
 extern u32 gGaiaRockInside_KushinadaScript[];
-extern s32 gGaiaRockInside_SusaWalksOffScript[];
+extern s32 gGaiaRockInside_SusaFeedsSerpentScript[];
 
 struct Actor *OverlayObject_PrepareObject(s32 x, s32 y, s32 z, s32 kind);
 s32 __modsi3(s32 numerator, s32 denominator);
@@ -2205,8 +2320,16 @@ void Event_FinishScreenTransition(void);
 void Event_StartScreenTransition(void);
 void Event_WaitTransitionFrames(void);
 
-/// Room entry for the five Gaia Rock rooms, chosen by scene, then by entrance
-/// in the first room.
+/// Sets up the room the party arrives in. In the lair: the beams of sunlight
+/// let in, the stone Serpent and the slate once it is slain, the scene of a
+/// new beam falling into the lair (entrance 20), Susa's attack on the Serpent
+/// the first time the party comes holding the Dancing Idol, and the scenes
+/// after the battle with it (entrances 10 to 12). In the first altar's room,
+/// the faces and stumps where the party left them; in the platforms' room, the
+/// platforms once they sway; in the twin altars' room, the faces, beams and
+/// fallen altar, and the altar landing as it falls from the cobweb (entrance
+/// 6); in the altar room, the vine, the stone heads, the face and the fallen
+/// cobweb.
 s32 Scene_Initialize(void) {
   struct MainRoutineWork *room;
   struct MainRoutineWork *work;
@@ -2220,7 +2343,7 @@ s32 Scene_Initialize(void) {
     early = &work->entrance;
     if (work->entrance > 8) {
       Actor_SetSpriteFlags(Actor_GetById(ACTOR_SERPENT), 0);
-      GaiaRockInside_OpenHallPassages();
+      GaiaRockInside_DrawSunbeams();
     }
     if (*early == GAIA_ROCK_INSIDE_MAZE_FROM_GAIA_ROCK_INSIDE_TWIN_ALTARS_A) {
       Event_Start();
@@ -2257,7 +2380,7 @@ s32 Scene_Initialize(void) {
           ending = GAIA_ROCK_INSIDE_MAZE_TO_GAIA_ROCK_INSIDE_TWIN_ALTARS_D;
         }
         Sound_Play(SE_EYES_GLOW);
-        GaiaRockInside_OpenHallPassages();
+        GaiaRockInside_DrawSunbeams();
         Event_Wait(15);
         Actor_SetAnimationById(ACTOR_SERPENT, 3);
         Sound_Play(SE_SEA_OF_TIME_OPENS);
@@ -2478,7 +2601,7 @@ s32 Scene_Initialize(void) {
           if (!Test(FLAG_KEEP_PARTY_POSITION)) {
             Actor_SetPosition(ACTOR_SUSA, 472, 456);
             Actor_SetMovementTypeById(ACTOR_SUSA,
-                                      gGaiaRockInside_SusaWalksOffScript);
+                                      gGaiaRockInside_SusaFeedsSerpentScript);
           }
         }
       }
@@ -2875,17 +2998,22 @@ enum {
   OVERHEAD_PART_D
 };
 
-/// Clears map layer 1 of every cell but those of collision code keep.
-void GaiaRockInside_ClearMazeLayer(s32 keep) {
-  GaiaRockInside_SetMazeLayer(1, keep);
+/// Blanks the overhead layer of an altar room but for the part keep, the one
+/// around the entrance the party arrives by.
+void GaiaRockInside_KeepOverheadPart(s32 keep) {
+  GaiaRockInside_BlankLayer(1, keep);
 }
 
 struct Unit *Unit_Get(u32 unitId);
 void BlendScript_Start(u16 *script);
 
-/// Prepares the map: in the maze, lays the path from the leader's name and
-/// draws the step the party stands on, or readies the lair's blend; in the
-/// altar rooms, clears the overhead layer of all but the entrance's part.
+/// Prepares the map. In the maze it lays the path, from the letters of the
+/// leader's name, once a visit, and draws the room the party stands in, with
+/// the Mimic's chest in the third room and the Rusty Mace's in the ninth, and
+/// the plant's arrow if Growth has shown it; in the lair it starts the slow
+/// shimmer of its overhead layer, where the beams of sunlight are drawn. In the
+/// first altar's room and the altar room it blanks the overhead layer but for
+/// the part around the entrance.
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_MAZE) {
     u8 *map = (u8 *)Ram_HeapSlots->mapGrid;
@@ -2958,19 +3086,19 @@ s32 Scene_PrepareMap(void) {
     case 2:
     case 5:
     case 8:
-      GaiaRockInside_ClearMazeLayer(OVERHEAD_PART_A);
+      GaiaRockInside_KeepOverheadPart(OVERHEAD_PART_A);
       break;
     case 9:
     case GAIA_ROCK_INSIDE_FIRST_ALTAR_FROM_GAIA_ROCK_INSIDE_PLATFORMS_EAST:
-      GaiaRockInside_ClearMazeLayer(OVERHEAD_PART_C);
+      GaiaRockInside_KeepOverheadPart(OVERHEAD_PART_C);
       break;
     case 3:
     case GAIA_ROCK_INSIDE_FIRST_ALTAR_FROM_GAIA_ROCK_INSIDE_MAZE:
-      GaiaRockInside_ClearMazeLayer(OVERHEAD_PART_D);
+      GaiaRockInside_KeepOverheadPart(OVERHEAD_PART_D);
       break;
     case 6:
     case GAIA_ROCK_INSIDE_FIRST_ALTAR_FROM_GAIA_ROCK_INSIDE_PLATFORMS_WEST:
-      GaiaRockInside_ClearMazeLayer(OVERHEAD_PART_B);
+      GaiaRockInside_KeepOverheadPart(OVERHEAD_PART_B);
       break;
     }
   } else if (gMainRoutineWork.next == SCENE_GAIA_ROCK_INSIDE_ALTAR) {
@@ -2978,15 +3106,15 @@ s32 Scene_PrepareMap(void) {
     case 1:
     case 3:
     case 5:
-      GaiaRockInside_ClearMazeLayer(OVERHEAD_PART_A);
+      GaiaRockInside_KeepOverheadPart(OVERHEAD_PART_A);
       break;
     case 2:
     case GAIA_ROCK_INSIDE_ALTAR_FROM_GAIA_ROCK_INSIDE_MAZE_A:
     case GAIA_ROCK_INSIDE_ALTAR_FROM_GAIA_ROCK_INSIDE_TWIN_ALTARS_NORTHWEST:
-      GaiaRockInside_ClearMazeLayer(OVERHEAD_PART_B);
+      GaiaRockInside_KeepOverheadPart(OVERHEAD_PART_B);
       break;
     case GAIA_ROCK_INSIDE_ALTAR_FROM_GAIA_ROCK_INSIDE_TWIN_ALTARS_SOUTHEAST_A_A:
-      GaiaRockInside_ClearMazeLayer(OVERHEAD_PART_C);
+      GaiaRockInside_KeepOverheadPart(OVERHEAD_PART_C);
       break;
     }
   }
@@ -3223,8 +3351,13 @@ restart:
   gRandomSeed = saved;
 }
 
-/// Leaving a maze step by a way: out of the maze, or on to the step it leads
-/// to (a dead end leads back to the first).
+/// Felix walks out of a maze room by one of its four ways, and a room just
+/// like it appears. The way the plant's arrow points leads on to the next
+/// room, and the way the party came in leads back to the last. Going straight
+/// on where the path turns leads back along it, to the room where it last
+/// turned, and the fourth way leads back into the same room. South out of the
+/// first room leads back to the first altar's room, and the way on from the
+/// fourteenth into the Serpent's lair.
 void GaiaRockInside_TakeMazeExit(s32 direction) {
   s32 *state = &gPath->current;
   u8 *row = (u8 *)state + *state * 8;
@@ -3247,9 +3380,9 @@ void GaiaRockInside_TakeMazeExit(s32 direction) {
 
 extern s8 gGaiaRockInside_MazeOrigins[][2];
 
-/// From the third state on, for each of the two map layers:
-/// MapGrid_CopyRawCells with the state's origin plus the layer's cell, a 15 by
-/// 10 size and the layer's cell plus one.
+/// Draws the maze room the party stands in, a 15 by 10 cell screen copied from
+/// the room's own place in the map (gGaiaRockInside_MazeOrigins), on both
+/// layers; the first room is drawn where it stands.
 void GaiaRockInside_DrawMazeRoom(void) {
   s32 state = gPath->current;
   s8 *origin = gGaiaRockInside_MazeOrigins[state];
@@ -3297,7 +3430,7 @@ s32 GaiaRockInside_GetMazeWayOn(void) {
 
 /// Fills every cell of a map layer within the map's bounds with its first
 /// cell, but those of collision code 0 or keep.
-void GaiaRockInside_SetMazeLayer(s32 layer, s32 keep) {
+void GaiaRockInside_BlankLayer(s32 layer, s32 keep) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *mapLayer = &map->layers[layer];
   u32 *cells = (u32 *)mapLayer->cells;
@@ -3323,7 +3456,8 @@ void GaiaRockInside_SetMazeLayer(s32 layer, s32 keep) {
 
 #include "shared/gaia_rock_trigger_wall_cell.c"
 
-/// Stands a statue on the cell at (x, y, z), its wall cell blocked.
+/// Sets stone head id out of the wall where (x, y, z) is drawn, and makes that
+/// cell of the wall solid.
 void GaiaRockInside_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
   struct Actor *actor = Actor_Get(id);
   struct MapCell *cell =
@@ -3344,8 +3478,10 @@ void GaiaRockInside_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
 extern s32 gGaiaRockInside_StatueRiseScript[];
 extern u32 gGaiaRockInside_FlyingRockScript[];
 
-/// A statue rises under the leader in a burst of rocks, lifting him with it;
-/// he lands on top, and its flag is set.
+/// Stone head id bursts out of the wall of handholds under Felix in a shower
+/// of rocks as the screen shakes. He flails, drops onto whatever is under him,
+/// the view settles on him, and he is left walking rather than climbing; flag
+/// then keeps the head out.
 void GaiaRockInside_StatueRisesUnderLeader(s32 id, s32 flag) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 gravity = leader->gravity;
@@ -3427,9 +3563,6 @@ void GaiaRockInside_StartWallTriggers(void) {
 }
 
 #include "text/msg_ids.h"
-
-void GaiaRockInside_CycloneClearsTwinAltarsBushes(void);
-void GaiaRockInside_CycloneClearsAltarBushes(void);
 
 extern u32 gGaiaRockInside_IdleScript[];
 extern u32 gGaiaRockInside_StumpScript[];
@@ -3601,7 +3734,8 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-/// The altar room's way down beside the altar, to the twin altars' room.
+/// A region below the floor of the altar room's cobweb pit, which leads down
+/// to the twin altars' room.
 struct SceneRegion gGaiaRockInside_AltarExitRegions[] = {
     {700, -30, 330, 720, -10, 350, CONDITION_ALWAYS,
      GAIA_ROCK_INSIDE_ALTAR_TO_GAIA_ROCK_INSIDE_TWIN_ALTARS_SOUTHEAST_A_B},
@@ -3740,7 +3874,7 @@ s32 gGaiaRockInside_CaskTossedRightScript[] = {
     SC_LOOP(SC_FOREVER, SC_TO(1)),
 };
 
-s32 gGaiaRockInside_SusaWalksOffScript[] = {
+s32 gGaiaRockInside_SusaFeedsSerpentScript[] = {
     SC_SPEED(1),
     SC_SET(SW_HOOK, (s32)GaiaRockInside_CheckBlocked),
     SC_SET(SW_COLLISION, 129),
@@ -3909,10 +4043,10 @@ s32 gGaiaRockInside_SquashXScript[] = {
 s32 gGaiaRockInside_ArrowFrame = 0;
 
 struct Trigger gGaiaRockInside_Triggers[] = {
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(GaiaRockInside_TakeMazeExit)},
-    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(GaiaRockInside_TakeMazeExit)},
-    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(GaiaRockInside_TakeMazeExit)},
-    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(GaiaRockInside_TakeMazeExit)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_MAZE_SOUTH, CONDITION_ALWAYS, EVENT(GaiaRockInside_TakeMazeExit)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_MAZE_WEST, CONDITION_ALWAYS, EVENT(GaiaRockInside_TakeMazeExit)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_MAZE_EAST, CONDITION_ALWAYS, EVENT(GaiaRockInside_TakeMazeExit)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_MAZE_NORTH, CONDITION_ALWAYS, EVENT(GaiaRockInside_TakeMazeExit)},
     {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_ARROW_PLANT, FLAG_PLANT_POINTING, EVENT(GaiaRockInside_PlantPointsTheWay)},
     {TRIGGER_TABLE_END},
 };
@@ -3920,28 +4054,28 @@ struct Trigger gGaiaRockInside_Triggers[] = {
 struct Trigger gGaiaRockInside_LairTriggers[] = {
     {TRIGGER_RAISED, RAISED_SUSA_BLOCKED, CONDITION_ALWAYS, EVENT(GaiaRockInside_SusaSaysMoveAside)},
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_STEP, 40, FLAG_MET_SUSA, EVENT(GaiaRockInside_MeetSusa)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BY_SUSA, FLAG_MET_SUSA, EVENT(GaiaRockInside_MeetSusa)},
     {TRIGGER_TALK, ACTOR_SUSA, CONDITION_ALWAYS, EVENT(GaiaRockInside_TalkToSusa)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SUSA, CONDITION_ALWAYS, EVENT(GaiaRockInside_ReadSusasMind)},
     {TRIGGER_TALK, ACTOR_SAND_TABLET, CONDITION_ALWAYS, EVENT(GaiaRockInside_ReadSandTablet)},
-    {EXAMINE_TRIGGER(EXAMINE_GROUND), 50, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGaiaRockInsideTheCupsAreOverflowingWith))},
-    {TRIGGER_EXAMINE, 55, CONDITION_ALWAYS, EVENT(GaiaRockInside_ChallengeSerpent)},
-    {TRIGGER_EXAMINE, 56, CONDITION_ALWAYS, EVENT(GaiaRockInside_ChallengeSerpent)},
-    {EXAMINE_TRIGGER(EXAMINE_GROUND), 77, FLAG_CLOUD_BRAND_FOUND, EVENT(GaiaRockInside_FindCloudBrand)},
-    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(Leader_SetLayerByte)},
-    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(GaiaRockInside_EndSand)},
+    {EXAMINE_TRIGGER(EXAMINE_GROUND), CELL_BEHAVIOR_CUP, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGaiaRockInsideTheCupsAreOverflowingWith))},
+    {TRIGGER_EXAMINE, CELL_BEHAVIOR_SERPENT, CONDITION_ALWAYS, EVENT(GaiaRockInside_ChallengeSerpent)},
+    {TRIGGER_EXAMINE, CELL_BEHAVIOR_SERPENT_WEST, CONDITION_ALWAYS, EVENT(GaiaRockInside_ChallengeSerpent)},
+    {EXAMINE_TRIGGER(EXAMINE_GROUND), CELL_BEHAVIOR_CLOUD_BRAND, FLAG_CLOUD_BRAND_FOUND, EVENT(GaiaRockInside_FindCloudBrand)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(GaiaRockInside_SinkIntoSand)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(GaiaRockInside_RiseFromSand)},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gGaiaRockInside_SlainLairTriggers[] = {
     {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_STEP, 42, CONDITION_ALWAYS, EVENT(GaiaRockInside_RaiseSandTablet)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BEFORE_SERPENT, CONDITION_ALWAYS, EVENT(GaiaRockInside_RaiseSandTablet)},
     {TRIGGER_TALK, ACTOR_SAND_TABLET, CONDITION_ALWAYS, EVENT(GaiaRockInside_ReadSandTablet)},
-    {EXAMINE_TRIGGER(EXAMINE_GROUND), 50, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGaiaRockInsideTheCupsAreOverflowingWith))},
-    {TRIGGER_EXAMINE, 55, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGaiaRockInsideTheSerpentWithItsEyes))},
-    {EXAMINE_TRIGGER(EXAMINE_GROUND), 77, FLAG_CLOUD_BRAND_FOUND, EVENT(GaiaRockInside_FindCloudBrand)},
-    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(Leader_SetLayerByte)},
-    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(GaiaRockInside_EndSand)},
+    {EXAMINE_TRIGGER(EXAMINE_GROUND), CELL_BEHAVIOR_CUP, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGaiaRockInsideTheCupsAreOverflowingWith))},
+    {TRIGGER_EXAMINE, CELL_BEHAVIOR_SERPENT, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgGaiaRockInsideTheSerpentWithItsEyes))},
+    {EXAMINE_TRIGGER(EXAMINE_GROUND), CELL_BEHAVIOR_CLOUD_BRAND, FLAG_CLOUD_BRAND_FOUND, EVENT(GaiaRockInside_FindCloudBrand)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(GaiaRockInside_SinkIntoSand)},
+    {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(GaiaRockInside_RiseFromSand)},
     {TRIGGER_TABLE_END},
 };
 
@@ -3972,7 +4106,7 @@ struct Trigger gGaiaRockInside_TwinAltarsTriggers[] = {
     {USE_ITEM_ON_ACTOR(ITEM_DANCING_IDOL), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_WEST_ALTAR, CONDITION_ALWAYS, EVENT(GaiaRockInside_PlaceDollOnWestAltar)},
     {TRIGGER_TALK, ACTOR_EAST_ALTAR, CONDITION_ALWAYS, EVENT(GaiaRockInside_CheckAltar)},
     {USE_ITEM_ON_ACTOR(ITEM_DANCING_IDOL), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_EAST_ALTAR, CONDITION_ALWAYS, EVENT(GaiaRockInside_PlaceDollOnEastAltar)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 20, CONDITION_ALWAYS, EVENT(GaiaRockInside_CycloneClearsTwinAltarsBushes)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_SUNBEAM_BUSHES, CONDITION_ALWAYS, EVENT(GaiaRockInside_CycloneClearsTwinAltarsBushes)},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), -1, 0, 0},
 };
 
@@ -3980,7 +4114,7 @@ struct Trigger gGaiaRockInside_PlatformsTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 20, CONDITION_ALWAYS, EVENT(GaiaRockInside_CycloneStartsPlatforms)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_PLATFORMS_BUSHES, CONDITION_ALWAYS, EVENT(GaiaRockInside_CycloneStartsPlatforms)},
     {TRIGGER_TABLE_END},
 };
 
@@ -3992,18 +4126,18 @@ struct Trigger gGaiaRockInside_AltarTriggers[] = {
     {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 7, CONDITION_ALWAYS, 7},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 43, CONDITION_ALWAYS, EVENT(GaiaRockInside_JumpDownByAltar)},
-    {TRIGGER_STEP, 30, FLAG_STATUE_A_RISEN, EVENT(GaiaRockInside_StepOnFirstStatueSpot)},
-    {TRIGGER_STEP, 31, FLAG_STATUE_B_RISEN, EVENT(GaiaRockInside_StepOnSecondStatueSpot)},
-    {TRIGGER_STEP, 32, FLAG_STATUE_C_RISEN, EVENT(GaiaRockInside_StepOnThirdStatueSpot)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_COBWEB_LEDGE, CONDITION_ALWAYS, EVENT(GaiaRockInside_JumpDownCobwebPit)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_WEST_STONE_HEAD, FLAG_STATUE_A_RISEN, EVENT(GaiaRockInside_ClimbOntoWestStoneHead)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_MIDDLE_STONE_HEAD, FLAG_STATUE_B_RISEN, EVENT(GaiaRockInside_ClimbOntoMiddleStoneHead)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_EAST_STONE_HEAD, FLAG_STATUE_C_RISEN, EVENT(GaiaRockInside_ClimbOntoEastStoneHead)},
     {TRIGGER_TALK, ACTOR_ALTAR, CONDITION_ALWAYS, EVENT(GaiaRockInside_CheckAltar)},
     {USE_ITEM_ON_ACTOR(ITEM_DANCING_IDOL), TRIGGER_SUBJECT_OWN_EFFECT | ACTOR_ALTAR, CONDITION_ALWAYS, EVENT(GaiaRockInside_PlaceDollOnAltarAltar)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_HANGING_VINE, CONDITION_ALWAYS, 0},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 40, CONDITION_ALWAYS, EVENT(GaiaRockInside_CycloneClearsAltarBushes)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 41, CONDITION_ALWAYS, EVENT(GaiaRockInside_CycloneClearsMadPlantBushes)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 42, CONDITION_ALWAYS, EVENT(GaiaRockInside_CycloneClearsCobweb)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 43, CONDITION_ALWAYS, EVENT(GaiaRockInside_CycloneClearsCobweb)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 44, CONDITION_ALWAYS, EVENT(GaiaRockInside_CycloneMadPlant)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_ALTAR_BUSHES, CONDITION_ALWAYS, EVENT(GaiaRockInside_CycloneClearsAltarBushes)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_MAD_PLANT_BUSHES, CONDITION_ALWAYS, EVENT(GaiaRockInside_CycloneClearsMadPlantBushes)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_COBWEB, CONDITION_ALWAYS, EVENT(GaiaRockInside_CycloneClearsCobweb)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_COBWEB_LEDGE, CONDITION_ALWAYS, EVENT(GaiaRockInside_CycloneClearsCobweb)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_MAD_PLANT, CONDITION_ALWAYS, EVENT(GaiaRockInside_CycloneMadPlant)},
     {TRIGGER_TABLE_END},
 };
 

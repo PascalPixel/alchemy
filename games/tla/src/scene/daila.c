@@ -1,19 +1,21 @@
 /// @file
-/// Daila, the northernmost town of Indra, where the tidal wave left salt
-/// puddles all over the streets, in two scenes that share this overlay.
+/// Daila, the village in the north of Indra that Felix reaches first after the
+/// tidal wave, in two scenes that share this overlay.
 ///
-/// The village is two scenes: SCENE_DAILA_FLOODED, under the standing salt
-/// water the tidal wave left, and SCENE_DAILA once Tavi is rescued and it has
-/// drained to puddles; the getters pick each scene's tables by
-/// gMainRoutineWork.next. Doors into the houses are step triggers 1 to 6
-/// (Daila_EnterDoor).
+/// On the first visit (SCENE_DAILA_FLOODED) the wave's salt water still stands
+/// in pools in the streets, an old man lies where it knocked him over, and the
+/// villagers wonder where Riki and Tavi have gone. Once Tavi is rescued from
+/// the Shrine of the Sea God the village is SCENE_DAILA: the water has drained
+/// to six small puddles, and walking up to the mayor's door on his rise in the
+/// east brings Alex out of it, off to Madra to find a boat (Daila_MeetAlex).
+/// The getters pick each scene's tables by gMainRoutineWork.next.
 ///
-/// Once it drains, Alex waits for the party by the inn and goes on alone to
-/// Madra (Daila_MeetAlex). Six puddles lie in its streets: Parch dries one for
-/// the visit (Daila_ParchFirstPuddle to Daila_ParchSixthPuddle) and Frost
-/// freezes one into a pillar of ice to jump onto from the cells around it
-/// (Scene_RaiseHeldActor, gDailaRooms_PillarFrozenFlags). Scoop on one spot
-/// digs up a Psy Crystal (Daila_DigUpPsyCrystal).
+/// In both, six doors lead into the houses (Daila_EnterDoor), the sanctuary
+/// stands at the top of the steps in the north, and the village is left by
+/// the south road or the far northwest corner. In the drained village Felix
+/// hops over a puddle he walks into (Daila_JumpForward), Parch dries one up,
+/// Frost freezes one into a pillar of ice, and Scoop beside the puddle west of
+/// the big tree in the southeast digs up a Psy Crystal.
 
 #include "field/field_sequence_event.h"
 #include "battle/battle.h"
@@ -39,8 +41,42 @@
 #include "fixed_math.h"
 #include "shop/shop.h"
 
+/// The map cells the trigger tables answer, as map.txt numbers them. Each
+/// door's cell is the number of the exit it leaves by, in both scenes.
+enum DailaCell {
+  CELL_RIKIS_HOUSE_DOOR = DAILA_FLOODED_TO_DAILA_ROOMS_HOUSES_WEST,
+  CELL_TAVIS_HOUSE_DOOR = DAILA_FLOODED_TO_DAILA_ROOMS_HOUSES_NORTHWEST,
+  CELL_MIDDLE_HOUSE_DOOR = DAILA_FLOODED_TO_DAILA_ROOMS_HOUSES_NORTHEAST,
+  CELL_MAYORS_HOUSE_DOOR = DAILA_FLOODED_TO_DAILA_ROOMS_HOUSES_EAST,
+  CELL_INN_DOOR = DAILA_FLOODED_TO_DAILA_ROOMS_HOUSES_SOUTHWEST,
+  CELL_WEAPON_AND_ARMOR_SHOP_DOOR =
+      DAILA_FLOODED_TO_DAILA_ROOMS_HOUSES_SOUTHEAST,
+  CELL_SANCTUARY_DOOR = DAILA_FLOODED_TO_DAILA_ROOMS_SANCTUM,
+  CELL_SOUTH_ROAD = DAILA_FLOODED_TO_WORLD_MAP_SOUTH,
+  CELL_NORTHWEST_ROAD = DAILA_FLOODED_TO_WORLD_MAP_NORTH,
+  /// Just south of the mayor's door, cell (29, 17).
+  CELL_BEFORE_MAYORS_DOOR = 20,
+  /// The cells beside each puddle, named by the side they lie on: walking
+  /// from one into the puddle hops over it.
+  CELL_NORTH_OF_PUDDLE = 30,
+  CELL_WEST_OF_PUDDLE,
+  CELL_EAST_OF_PUDDLE,
+  CELL_SOUTH_OF_PUDDLE,
+  /// The puddles' own cells, in the order of map.txt's rows.
+  CELL_FIRST_PUDDLE = 60,
+  CELL_FOURTH_PUDDLE,
+  CELL_SECOND_PUDDLE,
+  CELL_THIRD_PUDDLE,
+  CELL_FIFTH_PUDDLE,
+  CELL_SIXTH_PUDDLE,
+  /// Cell (30, 22), northeast of the third puddle, where the Psy Crystal lies.
+  CELL_BURIED_PSY_CRYSTAL = 100,
+  /// The well west of the middle house, cells (14, 19) to (15, 20).
+  CELL_WELL = 200
+};
+
 /// The drained village's puddles dried by Parch for this visit, one flag each,
-/// in the order of the puddles' rows, and frozen into pillars by Frost.
+/// in the order of the puddles' rows.
 #define FLAG_DAILA_FIRST_PUDDLE_PARCHED 0x210
 #define FLAG_DAILA_SECOND_PUDDLE_PARCHED 0x211
 #define FLAG_DAILA_THIRD_PUDDLE_PARCHED 0x212
@@ -84,7 +120,7 @@ enum DailaActorId {
   /// "Bleah! I fell in a puddle and got my clothes dirty! Mom's gonna have a
   /// fit!"
   ACTOR_CHILD_WHO_FELL_IN_A_PUDDLE,
-  /// The keeper of the item stall across from the inn.
+  /// The keeper of the item stall east of the inn.
   ACTOR_ITEM_SHOPKEEPER,
   ACTOR_FIRST_PUDDLE,
   ACTOR_SECOND_PUDDLE,
@@ -133,8 +169,12 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
     return gDailaFloodedActorPlacements;
 }
 
-/// Stepping onto one of the village's doors: the leader walks through it and
-/// the scene leaves by the exit of its number.
+/// Felix walks in at the door of one of the village's six houses: Riki's in
+/// the west (cell (7, 20)), Tavi's (cell (12, 17)), the middle house (cell (21,
+/// 19)), the mayor's on its rise (cell (29, 16)), the inn (cell (13, 27)) or
+/// the weapon and armor shop (cell (23, 27)). The door sound plays, he steps
+/// on into the dark doorway, and the screen closes in a circle on him before
+/// he appears inside. The door's cell is the number of the exit taken.
 void Daila_EnterDoor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -153,7 +193,9 @@ void Daila_EnterDoor(void) {
   Event_End();
 }
 
-/// Scoop on the puddle's cell digs up the buried Psy Crystal.
+/// Scoop just northeast of the puddle west of the big tree, in the village's
+/// southeast (cell (30, 22)), digs up a Psy Crystal: a hand scoops at the
+/// earth, the crystal pops out and Felix holds it up.
 void Daila_DigUpPsyCrystal(s32 mode) {
   Event_DigUpTreasure(mode, ACTOR_PSY_CRYSTAL, FLAG_DAILA_PSY_CRYSTAL_DUG);
 }
@@ -165,8 +207,9 @@ const struct Trigger *Scene_GetTriggers(void) {
     return gDailaFloodedTriggers;
 }
 
-/// The greeter asks once whether the party has been to Daila before; after
-/// that, he marvels that the wave hurt no one.
+/// The villager wandering at the west edge of the flooded village asks once
+/// whether Felix has been to Daila before, and answers yes or no; after that he
+/// marvels that the wave hurt no one.
 void Daila_TalkBeenBefore(void) {
   s32 msg;
 
@@ -194,8 +237,8 @@ void Daila_TalkBeenBefore(void) {
   }
 }
 
-/// A villager asks whether all of Indra seemed to move when the tidal wave hit,
-/// and answers the choice.
+/// A woman in the flooded village asks whether all of Indra seemed to move
+/// when the tidal wave hit, and answers yes or no.
 void Daila_TalkIndraMoved(void) {
   s32 msg;
 
@@ -224,7 +267,8 @@ void Daila_TalkIndraMoved(void) {
 #define BOAT_ASKER ACTOR_WOMAN_WHO_FELT_INDRA_MOVE
 #endif
 
-/// A sailor asks whether the party wants a boat, and answers the choice.
+/// A sailor in the flooded village asks whether Felix wants a boat, and
+/// answers yes or no.
 void Daila_TalkBoat(void) {
   s32 msg;
 
@@ -245,8 +289,9 @@ void Daila_TalkBoat(void) {
   Event_End();
 }
 
-/// Daila's item shop: facing the counter opens it; otherwise the keeper worries
-/// that Tavi and Riki have not been seen lately.
+/// The keeper of the item stall east of the inn sells to Felix when he talks
+/// to her from in front of the counter, facing north; from any other side she
+/// worries that Tavi and Riki have not been seen lately.
 void Daila_AskAfterTaviAndRiki(s32 keeper) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
@@ -262,8 +307,9 @@ void Daila_AskAfterTaviAndRiki(s32 keeper) {
   }
 }
 
-/// The old man knocked over asks whether the party thought the wave hurt his
-/// hip, and answers the choice.
+/// The old man the wave knocked over, on his feet again once the village
+/// drains, asks whether Felix thought it was the wave that hurt his hip, and
+/// answers yes or no.
 void Daila_TalkHip(void) {
   s32 msg;
 
@@ -284,8 +330,9 @@ void Daila_TalkHip(void) {
   Event_End();
 }
 
-/// Daila's item shop once Tavi and Riki are home: facing the counter opens it;
-/// otherwise the keeper tells of their return.
+/// Once Tavi and Riki are home, the keeper of the item stall sells to Felix
+/// from in front of the counter, as before, and from any other side tells of
+/// their return.
 void Daila_TaviAndRikiAreHome(s32 keeper) {
   u16 facing = Actor_GetById(gMainRoutineWork.leaderActorId)->facing;
 
@@ -301,7 +348,8 @@ void Daila_TaviAndRikiAreHome(s32 keeper) {
   }
 }
 
-/// Brings the actor to the player character's position.
+/// The party member walks into Felix and vanishes, as the party does when a
+/// scene ends.
 static inline void Actor_JoinLeader(s32 actor) {
   struct Actor *leader;
 
@@ -325,8 +373,11 @@ enum MeetAlexMessage {
   MEET_ALEX_PREOCCUPIED = 15
 };
 
-/// Alex waits for the party in the street, says the mayor sent him to look for
-/// a boat in Madra, turns down their company and leaves.
+/// As Felix walks up to the mayor's door (cell (29, 17)), Alex steps out of
+/// it and calls to him. The party gathers, Alex says the mayor told him to try
+/// Madra for a boat, Jenna asks whether to go with him, and whatever Felix
+/// answers Alex prefers to work alone and walks off south. It happens once,
+/// and only before Felix has been to Madra's gate and before Piers joins.
 void Daila_MeetAlex(void) {
   s32 msg;
 
@@ -509,9 +560,9 @@ void Daila_MeetAlex(void) {
   GameFlag_Set(FLAG_DAILA_MET_ALEX);
 }
 
-/// Parch on a puddle's cell dries it for the visit: the dry cell at column
-/// fromX of row y is copied over it at toX, the puddle is hidden and its flag
-/// set.
+/// Parch on a puddle dries it for the visit: the puddle disappears, its flag
+/// is set, and the cell just west of it (column fromX of row y) is copied
+/// over its own at toX.
 #define DEFINE_DAILA_PARCH_PUDDLE(name, fromX, y, toX, actor, flag)            \
   void name(void) {                                                            \
     Event_Start();                                                             \
@@ -522,28 +573,33 @@ void Daila_MeetAlex(void) {
     Event_End();                                                               \
   }
 
-/// Parch on the first puddle dries it up. The puddle is gone for the visit and
-/// `FLAG_DAILA_FIRST_PUDDLE_PARCHED` set.
+/// Parch on the puddle west of the well (cell (11, 19)) dries it up: the
+/// puddle disappears, and its cell becomes like the ground beside it for the
+/// rest of the visit.
 DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchFirstPuddle, 10, 19, 11,
                           ACTOR_FIRST_PUDDLE, FLAG_DAILA_FIRST_PUDDLE_PARCHED)
 
-/// Parch on the second puddle dries it up. The puddle is gone for the visit
-/// and `FLAG_DAILA_SECOND_PUDDLE_PARCHED` set.
+/// Parch on the puddle east of the middle house (cell (26, 20)) dries it up:
+/// the puddle disappears, and its cell becomes like the ground beside it for
+/// the rest of the visit.
 DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchSecondPuddle, 25, 20, 26,
                           ACTOR_SECOND_PUDDLE, FLAG_DAILA_SECOND_PUDDLE_PARCHED)
 
-/// Parch on the third puddle dries it up. The puddle is gone for the visit and
-/// `FLAG_DAILA_THIRD_PUDDLE_PARCHED` set.
+/// Parch on the puddle west of the big tree in the southeast (cell (29, 23))
+/// dries it up: the puddle disappears, and its cell becomes like the ground
+/// beside it for the rest of the visit.
 DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchThirdPuddle, 28, 23, 29,
                           ACTOR_THIRD_PUDDLE, FLAG_DAILA_THIRD_PUDDLE_PARCHED)
 
-/// Parch on the fourth puddle dries it up. The puddle is gone for the visit
-/// and `FLAG_DAILA_FOURTH_PUDDLE_PARCHED` set.
+/// Parch on the puddle below the sanctuary's steps (cell (18, 11)) dries it up:
+/// the puddle disappears, and its cell becomes like the ground beside it for
+/// the rest of the visit.
 DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchFourthPuddle, 17, 11, 18,
                           ACTOR_FOURTH_PUDDLE, FLAG_DAILA_FOURTH_PUDDLE_PARCHED)
 
-/// Parch on the fifth puddle dries it up. The puddle is gone for the visit and
-/// `FLAG_DAILA_FIFTH_PUDDLE_PARCHED` set.
+/// Parch on the puddle beside the mayor's door (cell (31, 17)) dries it up: the
+/// puddle disappears, and its cell becomes like the ground beside it for the
+/// rest of the visit.
 DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchFifthPuddle, 30, 17, 31,
                           ACTOR_FIFTH_PUDDLE, FLAG_DAILA_FIFTH_PUDDLE_PARCHED)
 
@@ -555,9 +611,8 @@ DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchFifthPuddle, 30, 17, 31,
 #else
 #define SIXTH_PUDDLE_HIDDEN (ACTOR_SIXTH_PUDDLE + 2)
 #endif
-/// Parch on the sixth puddle dries it up. Its cell dries and
-/// `FLAG_DAILA_SIXTH_PUDDLE_PARCHED` is set, but without `BUGFIX` the puddle
-/// itself stays.
+/// Parch on the puddle north of the item stall (cell (17, 23)) dries its cell
+/// like the others, but without `BUGFIX` the puddle itself stays in sight.
 DEFINE_DAILA_PARCH_PUDDLE(Daila_ParchSixthPuddle, 16, 23, 17,
                           SIXTH_PUDDLE_HIDDEN, FLAG_DAILA_SIXTH_PUDDLE_PARCHED)
 
@@ -596,7 +651,9 @@ s32 Scene_PrepareMap(void) {
   return 0;
 }
 
-/// The step triggers of the cells to jump from, one for each heading.
+/// Felix hops over a puddle of the drained village when he walks into it
+/// from the cell beside it on any side, landing on the far side if the ground
+/// there is clear.
 void Daila_JumpForward(void) { Field_TryJumpForward(); }
 
 // clang-format off
@@ -829,15 +886,23 @@ struct ActorPlacement gDailaActorPlacements[] = {
 };
 
 struct Trigger gDailaFloodedTriggers[] = {
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
-    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
-    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
-    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
-    {TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
-    {TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
-    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, DAILA_FLOODED_TO_DAILA_ROOMS_SANCTUM},
-    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, DAILA_FLOODED_TO_WORLD_MAP_SOUTH},
-    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, DAILA_FLOODED_TO_WORLD_MAP_NORTH},
+    {TRIGGER_STEP, CELL_RIKIS_HOUSE_DOOR, CONDITION_ALWAYS,
+     EVENT(Daila_EnterDoor)},
+    {TRIGGER_STEP, CELL_TAVIS_HOUSE_DOOR, CONDITION_ALWAYS,
+     EVENT(Daila_EnterDoor)},
+    {TRIGGER_STEP, CELL_MIDDLE_HOUSE_DOOR, CONDITION_ALWAYS,
+     EVENT(Daila_EnterDoor)},
+    {TRIGGER_STEP, CELL_MAYORS_HOUSE_DOOR, CONDITION_ALWAYS,
+     EVENT(Daila_EnterDoor)},
+    {TRIGGER_STEP, CELL_INN_DOOR, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
+    {TRIGGER_STEP, CELL_WEAPON_AND_ARMOR_SHOP_DOOR, CONDITION_ALWAYS,
+     EVENT(Daila_EnterDoor)},
+    {TRIGGER_EXIT, CELL_SANCTUARY_DOOR, CONDITION_ALWAYS,
+     DAILA_FLOODED_TO_DAILA_ROOMS_SANCTUM},
+    {TRIGGER_EXIT, CELL_SOUTH_ROAD, CONDITION_ALWAYS,
+     DAILA_FLOODED_TO_WORLD_MAP_SOUTH},
+    {TRIGGER_EXIT, CELL_NORTHWEST_ROAD, CONDITION_ALWAYS,
+     DAILA_FLOODED_TO_WORLD_MAP_NORTH},
     {TRIGGER_TALK, ACTOR_VILLAGER_ASKING_IF_BEEN_BEFORE, CONDITION_ALWAYS,
      EVENT(Daila_TalkBeenBefore)},
     {TRIGGER_TALK, ACTOR_WOMAN_WHO_FELT_INDRA_MOVE, CONDITION_ALWAYS,
@@ -896,30 +961,36 @@ struct Trigger gDailaFloodedTriggers[] = {
      CONDITION_ALWAYS, MSGNO(MsgFieldBleccchThisWatersSaaalty)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_SHOPKEEPER,
      CONDITION_ALWAYS, MSGNO(MsgFieldImSureThoseTwoWentTo)},
-    {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS,
+    {EXAMINE_TRIGGER(EXAMINE_WELL), CELL_WELL, CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgDailaWellSeawater))},
     {TRIGGER_TABLE_END},
 };
 
 struct Trigger gDailaTriggers[] = {
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
-    {TRIGGER_STEP, 2, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
-    {TRIGGER_STEP, 3, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
-    {TRIGGER_STEP, 4, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
-    {TRIGGER_STEP, 5, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
-    {TRIGGER_STEP, 6, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
-    {TRIGGER_EXIT, 7, CONDITION_ALWAYS, 7},
-    {TRIGGER_EXIT, 8, CONDITION_ALWAYS, 8},
-    {TRIGGER_EXIT, 9, CONDITION_ALWAYS, 9},
-    {TRIGGER_STEP, 20, CONDITION_ALWAYS, EVENT(Daila_MeetAlex)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 30, CONDITION_ALWAYS,
-     EVENT(Daila_JumpForward)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 31, CONDITION_ALWAYS,
-     EVENT(Daila_JumpForward)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 32, CONDITION_ALWAYS,
-     EVENT(Daila_JumpForward)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 33, CONDITION_ALWAYS,
-     EVENT(Daila_JumpForward)},
+    {TRIGGER_STEP, CELL_RIKIS_HOUSE_DOOR, CONDITION_ALWAYS,
+     EVENT(Daila_EnterDoor)},
+    {TRIGGER_STEP, CELL_TAVIS_HOUSE_DOOR, CONDITION_ALWAYS,
+     EVENT(Daila_EnterDoor)},
+    {TRIGGER_STEP, CELL_MIDDLE_HOUSE_DOOR, CONDITION_ALWAYS,
+     EVENT(Daila_EnterDoor)},
+    {TRIGGER_STEP, CELL_MAYORS_HOUSE_DOOR, CONDITION_ALWAYS,
+     EVENT(Daila_EnterDoor)},
+    {TRIGGER_STEP, CELL_INN_DOOR, CONDITION_ALWAYS, EVENT(Daila_EnterDoor)},
+    {TRIGGER_STEP, CELL_WEAPON_AND_ARMOR_SHOP_DOOR, CONDITION_ALWAYS,
+     EVENT(Daila_EnterDoor)},
+    {TRIGGER_EXIT, CELL_SANCTUARY_DOOR, CONDITION_ALWAYS, 7},
+    {TRIGGER_EXIT, CELL_SOUTH_ROAD, CONDITION_ALWAYS, 8},
+    {TRIGGER_EXIT, CELL_NORTHWEST_ROAD, CONDITION_ALWAYS, 9},
+    {TRIGGER_STEP, CELL_BEFORE_MAYORS_DOOR, CONDITION_ALWAYS,
+     EVENT(Daila_MeetAlex)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_NORTH_OF_PUDDLE,
+     CONDITION_ALWAYS, EVENT(Daila_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_WEST_OF_PUDDLE,
+     CONDITION_ALWAYS, EVENT(Daila_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_EAST_OF_PUDDLE,
+     CONDITION_ALWAYS, EVENT(Daila_JumpForward)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_SOUTH_OF_PUDDLE,
+     CONDITION_ALWAYS, EVENT(Daila_JumpForward)},
     {TRIGGER_TALK, ACTOR_VILLAGER_ASKING_IF_BEEN_BEFORE, CONDITION_ALWAYS,
      MSGNO(MsgFieldAfterThatWaveHitIWas)},
     {TRIGGER_TALK, ACTOR_WOMAN_WHO_FELT_INDRA_MOVE, CONDITION_ALWAYS,
@@ -978,31 +1049,40 @@ struct Trigger gDailaTriggers[] = {
      CONDITION_ALWAYS, MSGNO(MsgFieldICaughtMyFootOnSomething)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_ITEM_SHOPKEEPER,
      CONDITION_ALWAYS, MSGNO(MsgDailaTaviRikiPunishment)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 60,
-     FLAG_DAILA_FIRST_PUDDLE_PARCHED, EVENT(Daila_ParchFirstPuddle)},
-// BUG: cells 61 to 63 lie under the fourth, second and third puddles but take
-// the flags of the second, third and fourth, so drying the second puddle
-// turns off Parch on the fourth, the third the second's, and the fourth the
-// third's, for the rest of the visit.
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS),
+     CELL_FIRST_PUDDLE, FLAG_DAILA_FIRST_PUDDLE_PARCHED,
+     EVENT(Daila_ParchFirstPuddle)},
+// BUG: the rows for the fourth, second and third puddles take the flags of
+// the second, third and fourth, so drying the second puddle turns off Parch on
+// the fourth, the third the second's, and the fourth the third's, for the
+// rest of the visit.
 #if BUGFIX
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 61,
-     FLAG_DAILA_FOURTH_PUDDLE_PARCHED, EVENT(Daila_ParchFourthPuddle)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 62,
-     FLAG_DAILA_SECOND_PUDDLE_PARCHED, EVENT(Daila_ParchSecondPuddle)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 63,
-     FLAG_DAILA_THIRD_PUDDLE_PARCHED, EVENT(Daila_ParchThirdPuddle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS),
+     CELL_FOURTH_PUDDLE, FLAG_DAILA_FOURTH_PUDDLE_PARCHED,
+     EVENT(Daila_ParchFourthPuddle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS),
+     CELL_SECOND_PUDDLE, FLAG_DAILA_SECOND_PUDDLE_PARCHED,
+     EVENT(Daila_ParchSecondPuddle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS),
+     CELL_THIRD_PUDDLE, FLAG_DAILA_THIRD_PUDDLE_PARCHED,
+     EVENT(Daila_ParchThirdPuddle)},
 #else
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 61,
-     FLAG_DAILA_SECOND_PUDDLE_PARCHED, EVENT(Daila_ParchFourthPuddle)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 62,
-     FLAG_DAILA_THIRD_PUDDLE_PARCHED, EVENT(Daila_ParchSecondPuddle)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 63,
-     FLAG_DAILA_FOURTH_PUDDLE_PARCHED, EVENT(Daila_ParchThirdPuddle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS),
+     CELL_FOURTH_PUDDLE, FLAG_DAILA_SECOND_PUDDLE_PARCHED,
+     EVENT(Daila_ParchFourthPuddle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS),
+     CELL_SECOND_PUDDLE, FLAG_DAILA_THIRD_PUDDLE_PARCHED,
+     EVENT(Daila_ParchSecondPuddle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS),
+     CELL_THIRD_PUDDLE, FLAG_DAILA_FOURTH_PUDDLE_PARCHED,
+     EVENT(Daila_ParchThirdPuddle)},
 #endif
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 64,
-     FLAG_DAILA_FIFTH_PUDDLE_PARCHED, EVENT(Daila_ParchFifthPuddle)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 65,
-     FLAG_DAILA_SIXTH_PUDDLE_PARCHED, EVENT(Daila_ParchSixthPuddle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS),
+     CELL_FIFTH_PUDDLE, FLAG_DAILA_FIFTH_PUDDLE_PARCHED,
+     EVENT(Daila_ParchFifthPuddle)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS),
+     CELL_SIXTH_PUDDLE, FLAG_DAILA_SIXTH_PUDDLE_PARCHED,
+     EVENT(Daila_ParchSixthPuddle)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_FIRST_PUDDLE,
      FLAG_DAILA_PUDDLE_FROZEN_FIRST + 0, EVENT(Scene_RaiseHeldActor)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SECOND_PUDDLE,
@@ -1015,9 +1095,10 @@ struct Trigger gDailaTriggers[] = {
      FLAG_DAILA_PUDDLE_FROZEN_FIRST + 4, EVENT(Scene_RaiseHeldActor)},
     {PSYNERGY_ON_ACTOR(ABILITY_FROST), ACTOR_SIXTH_PUDDLE,
      FLAG_DAILA_PUDDLE_FROZEN_FIRST + 5, EVENT(Scene_RaiseHeldActor)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS), 100,
-     FLAG_DAILA_PSY_CRYSTAL_DUG, EVENT(Daila_DigUpPsyCrystal)},
-    {EXAMINE_TRIGGER(EXAMINE_WELL), 200, CONDITION_ALWAYS,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_SCOOP, PSYNERGY_PHASE_ACTS),
+     CELL_BURIED_PSY_CRYSTAL, FLAG_DAILA_PSY_CRYSTAL_DUG,
+     EVENT(Daila_DigUpPsyCrystal)},
+    {EXAMINE_TRIGGER(EXAMINE_WELL), CELL_WELL, CONDITION_ALWAYS,
      FIND_MESSAGE(MSGNO(MsgDailaWellSeawater))},
     {TRIGGER_TABLE_END},
 };

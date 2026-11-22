@@ -1,13 +1,15 @@
 /// @file
-/// Champa, the pirates' village on the coast of the Great Western Sea, whose
-/// people are fed once Briggs returns with the Ankohl jewels. Two of its
-/// sailors spot Felix and run to warn Briggs (Champa_SailorsSpotFelix); on the
-/// road out of the village Alex, who left the party when it landed on Indra,
-/// meets it again with Karst and Agatio (Champa_MeetAlex), Jenna and Sheba
-/// glaring at each other on the way (Champa_JennaAndShebaGlare). In a game
-/// linked with The Broken Seal, Feizhi arrives with a gift
-/// (Champa_FeizhiArrives). The getters pick later tables once Briggs has sailed
-/// from Alhafra.
+/// Champa, the hungry seafaring village on the edge of Angara, its huts on
+/// cliffs and rafts about two waterfalls, whose people wait for Briggs to come
+/// home with food. The party comes in from the south over a plank bridge and
+/// up the path past six gravestones, where in a game linked with The Broken
+/// Seal Feizhi runs up to give Felix the gift she meant for Isaac
+/// (Champa_FeizhiArrives). Leaving by the same bridge the first time, the
+/// party meets Alex, who left it on Indra, with Karst and Agatio
+/// (Champa_MeetAlex); after he has gone, Kraden's hints leave Jenna and Sheba
+/// at odds (Champa_JennaAndShebaGlare). Once Briggs has sailed from Alhafra,
+/// the people and triggers change, and two sailors at the mouth of Briggs's
+/// cave spot Felix and send Briggs running inside (Champa_SailorsSpotFelix).
 
 #include "system/task.h"
 #include "shared/tables.h"
@@ -64,8 +66,8 @@ static inline void Actor_HeadToward(s32 id, s32 target) {
 #define FLAG_SAILORS_SPOTTED_FELIX 0x973 ///< two sailors ran to warn Briggs
 #define FLAG_FEIZHIS_GIFT_WAITING 0xa74  ///< Feizhi holds out her gift
 #define FLAG_FEIZHI_CAME 0xa75 ///< Feizhi came, taking Felix for a friend
-/// The party crossed the road into the village, so Alex meets it on its way
-/// back out (Champa_MeetAlex).
+/// The party walked up the path into the village, so Alex meets it on the
+/// plank bridge on its way back out (Champa_MeetAlex).
 #define FLAG_WALKED_INTO_THE_VILLAGE 0x970
 
 /// The last of the two waterfalls' colours in background palettes 3, 4 and 5,
@@ -118,7 +120,8 @@ enum ChampaActorId {
   ACTOR_ROCK,
   /// "I bet you're wondering why only sailors and their families..."
   ACTOR_WOMAN_ON_THE_CLIFF,
-  /// Who meet the party on the cliff (Champa_MeetAlex).
+  /// Who meet the party on the plank bridge at the village's south end
+  /// (Champa_MeetAlex).
   ACTOR_ALEX,
   ACTOR_KARST,
   ACTOR_AGATIO,
@@ -153,15 +156,15 @@ const s16 *Scene_GetActorPlacements(void) {
   return gChampa_ActorPlacements;
 }
 
-/// The leader's update while it walks into the tent on one of the two boats: it
-/// shrinks by 3/128 of its size each frame.
+/// Felix, each frame as he walks into the tent on one of the two rafts: he
+/// shrinks by 3/128 of his size, as if going in under the canvas.
 void Champa_ShrinkIntoTent(struct Actor *actor) {
   actor->scaleX += -(FIXED_ONE * 3 / 128);
   actor->scaleY += -(FIXED_ONE * 3 / 128);
 }
 
-/// Stepping into a door: it opens, the leader walks through and the scene
-/// leaves by the exit given. The door's map edit is not played.
+/// Walking into a door of Champa: it opens with a sound, Felix walks in and the
+/// screen goes to the room behind it. The door's map edit is not played.
 void Champa_OpenDoorAndEnter(const struct MapGridCellAnimation *opening,
                              s32 door, s32 mode) {
   s32 id;
@@ -186,9 +189,10 @@ void Champa_OpenDoorAndEnter(const struct MapGridCellAnimation *opening,
 
 void TilesetAnim_Resume(s32 channel);
 
-/// Walking into a door: the boats' tents shrink the leader as it goes in; the
-/// sanctum's stone door swings open (SANCTUM_DOOR_ANIMATION); the others open
-/// plainly.
+/// Walking north into one of Champa's doors or cave mouths takes the party in:
+/// into the tents on the two rafts Felix shrinks as he goes, the sanctum's
+/// stone door swings open first (SANCTUM_DOOR_ANIMATION), and the others he
+/// simply walks through.
 void Champa_EnterDoor(s32 door) {
   struct MapGridCellAnimation *table = gChampa_Doors;
 
@@ -203,8 +207,9 @@ void Champa_EnterDoor(s32 door) {
   }
 }
 
-/// Reveal by the six gravestones: the Viking Helm's chest stands out of the
-/// ground.
+/// Reveal cast anywhere in Champa shows the hidden chest among the six
+/// gravestones east of the path into the village, holding the Viking Helm, for
+/// as long as the Psynergy lasts.
 void Champa_RevealTreasureSpot(void) {
 
   TreasureSpot_SetPosition(ACTOR_VIKING_HELM_CHEST, toFIXED(392), toFIXED(568));
@@ -212,15 +217,17 @@ void Champa_RevealTreasureSpot(void) {
   Actor_Get(ACTOR_VIKING_HELM_CHEST)->y.fixed = toFIXED(32);
 }
 
-/// Reveal ends: the Viking Helm's chest goes back under the ground.
+/// When Reveal fades, the chest among the six gravestones is hidden again.
 void Champa_HideTreasureSpot(void) {
   TreasureSpot_SetPosition(ACTOR_VIKING_HELM_CHEST, 0, 0);
 }
 
 #include "text/msg_ids.h"
 
-/// Once Briggs has sailed, two sailors spot Felix and run to warn Briggs, who
-/// flees from his house.
+/// Walking up to the two sailors by the mouth of Briggs's cave in the cliff
+/// (cells (12, 19) and (12, 20)) after Briggs has escaped from Alhafra: they
+/// turn, "Whoa! You... You're Felix!", and yell to Briggs, who comes out, sees
+/// that it is really him and runs back into the cave, the sailors after him.
 void Champa_SailorsSpotFelix(void) {
 
   Event_SetFlag(FLAG_SAILORS_SPOTTED_FELIX);
@@ -303,8 +310,9 @@ void Champa_SailorsSpotFelix(void) {
   Event_End();
 }
 
-/// The boy practicing Psynergy stands up straight, tells of Eoleo's strange
-/// ability and goes back to squashing himself.
+/// Talking to the boy practising Psynergy by his small rock: he stands up
+/// straight, tells of Eoleo's strange ability, and goes back to straining at
+/// the rock, squashed down with the effort.
 void Champa_TalkToPracticingBoy(s32 actorId) {
   struct Actor *actor = Actor_Get(actorId);
 
@@ -317,8 +325,10 @@ void Champa_TalkToPracticingBoy(s32 actorId) {
   Actor_SetMovementType(actor, MOVEMENT_TYPE_SQUASH);
 }
 
-/// A villager asks whether the party came to Champa for Briggs's treasure, and
-/// answers the yes or the no.
+/// Talking to the woman who waited for Champa to prosper, once Briggs has
+/// sailed: "Hey, you just came to Champa not too long ago, didn't you?" Either
+/// way she tells how Briggs found ancient pirate treasure and fed the
+/// village.
 void Champa_TellOfBriggsTreasure(s32 actor) {
   s32 msg = (s32)&MsgChampaHeyYouJustCameTo;
 
@@ -335,8 +345,9 @@ void Champa_TellOfBriggsTreasure(s32 actor) {
   Event_ShowMessage(actor, 0);
 }
 
-/// The old man asks whether the party has been to Ankohl Ruins, or, once Briggs
-/// has sailed, whether they would know why he took so long to return.
+/// Talking to the old man by the old woman: he asks whether the party has been
+/// to Ankohl Ruins, or, once Briggs has sailed, whether they want to know why
+/// Briggs took so long to return, and answers the yes or the no.
 void Champa_AskAboutAnkohlRuins(s32 actor) {
   if (Event_GetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA)) {
     FieldEvent_SetMessageId((s32)MsgChampaBriggsTookALongTime);
@@ -367,8 +378,9 @@ void Champa_AskAboutAnkohlRuins(s32 actor) {
   }
 }
 
-/// A villager tells of Obaba, the last of the Ankohl, the first time, and then
-/// of how she acts since Briggs came back.
+/// Talking to the sailor who speaks of the matriarch, once Briggs has sailed:
+/// the first time he tells of Obaba, last of the Ankohl, and after that of how
+/// she acts now that Briggs is back.
 void Champa_TellOfObaba(s32 actor) {
 
   if (!Event_GetFlag(FLAG_TOLD_OF_OBABA)) {
@@ -381,8 +393,8 @@ void Champa_TellOfObaba(s32 actor) {
   Event_ShowMessage(actor, 0);
 }
 
-/// A sailor asks whether Champa's sailors are well liked outside the village,
-/// and answers the yes or the no.
+/// Talking to the sailor who asks "The Champa sailors aren't...well liked
+/// outside of here, are we?", and hearing his answer to the yes or the no.
 void Champa_AskIfSailorsAreWellLiked(s32 actor) {
   s32 msg = (s32)&MsgChampaTheChampaSailorsArentWell;
 
@@ -399,8 +411,8 @@ void Champa_AskIfSailorsAreWellLiked(s32 actor) {
   Event_ShowMessage(actor, 0);
 }
 
-/// Feizhi's gift taken: the Golden Ring, which stays if the party cannot carry
-/// it.
+/// Talking to the charm Feizhi left on the path takes it, the Golden Ring; if
+/// the party cannot carry it, it stays there for later.
 void Champa_TakeFeizhisGift(s32 actor) {
 
   Event_Start();
@@ -411,8 +423,8 @@ void Champa_TakeFeizhisGift(s32 actor) {
   Event_End();
 }
 
-/// Sets Feizhi's gift, the Golden Ring, where she left it, and marks it
-/// waiting.
+/// Feizhi's gift, the Golden Ring, shown as an item on the path where she set
+/// it down, and marked as waiting to be taken.
 void Champa_FeizhiHoldsHerGift(void) {
   FieldActor_ShowItemIconById(ACTOR_FEIZHIS_GIFT, ITEM_GOLDEN_RING);
   {
@@ -422,9 +434,12 @@ void Champa_FeizhiHoldsHerGift(void) {
   Event_SetFlag(FLAG_FEIZHIS_GIFT_WAITING);
 }
 
-/// With Hsu rescued in The Broken Seal's data, Feizhi comes to Champa taking
-/// Felix for Isaac, talks with Kraden and leaves her gift; from patch 1 not
-/// once Isaac is in the party.
+/// Walking up the path past the six gravestones (cells (18, 35) to (20, 35)),
+/// in a game linked with a Broken Seal save in which Hsu was rescued, brings
+/// Feizhi running up behind with "Isaac!". She takes Felix for Isaac, finds he
+/// is not, is teased by Kraden, and leaves the party the good luck charm she
+/// made for Isaac, the Golden Ring, before she goes home. In every edition but
+/// the Japanese she no longer comes once Isaac has joined the party.
 void Champa_FeizhiArrives(void) {
 #if TLA_PATCH_1
 #endif
@@ -572,8 +587,9 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gChampa_Triggers;
 }
 
-/// The two waterfalls flow: every other frame, colours 1 to
-/// WATERFALL_LAST_COLOR of background palettes 3, 4 and 5 turn one place on.
+/// Champa's two waterfalls flow: every other frame, the bands of blues they are
+/// drawn in, colours 1 to WATERFALL_LAST_COLOR of background palettes 3, 4 and
+/// 5, turn one place on.
 void Champa_CycleWaterfallPalettes(void) {
   if ((gFrameCount & 1) == 0) {
     s16 saved;
@@ -631,8 +647,8 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// Once Briggs has sailed, crates of the food he brought stand on the road
-/// into the village. Returns 0.
+/// Once Briggs has sailed, crates of the food he brought stand in the village.
+/// Returns 0.
 s32 Scene_PrepareMap(void) {
 
   if (Event_GetFlag(FLAG_BRIGGS_SAILED_FROM_ALHAFRA)) {
@@ -646,7 +662,8 @@ extern u32 gChampa_GlareSparkScript[];
 
 void Actor_StartScript(struct Actor *actor, const void *script);
 
-/// A spark at a point, its sprite turned to `angle`, for `frames` frames.
+/// A spark over someone's head, drawn with the emote sprite turned to `angle`,
+/// for `frames` frames.
 void Champa_SpawnGlareSpark(s32 x, s32 y, s32 z, s32 angle, s32 frames) {
   s16 value = angle;
   struct Actor *actor;
@@ -665,12 +682,18 @@ void Champa_SpawnGlareSpark(s32 x, s32 y, s32 z, s32 angle, s32 frames) {
   }
 }
 
-/// Two sparks over each of the two actors in turn, as Jenna and Sheba glare.
+/// Jenna and Sheba, turned to each other while Kraden talks of what he has
+/// learned, each get a spark over the head in turn, twice, each with a chime,
+/// before they both say they do not follow him.
 void Champa_JennaAndShebaGlare(s32 firstId, s32 secondId) {
   struct Actor *first = Actor_Get(firstId);
   struct Actor *second = Actor_Get(secondId);
   s32 rise = toFIXED(28);
   FIXED y;
+
+  // XXX: what the sparks look like on screen (glare, surprise); a recording of
+  // Champa_MeetAlex, which needs the party to have walked into the village
+  // first, would settle it.
 
   y = first->y.fixed;
   Champa_SpawnGlareSpark(first->x.fixed, y + rise, first->z.fixed,
@@ -732,8 +755,10 @@ void Champa_CloseTwoMessages(s32 first, s32 second) {
   Window_CloseMatchingId(secondSprite);
 }
 
-/// Crossing the road into the village: Alex now meets the party on its way
-/// out.
+/// Nothing visible happens when the party, coming in from the south, walks up
+/// the path past the plank bridge (cells (17, 40) to (22, 40)): the game notes
+/// that it has entered the village, so that Alex meets it on the bridge on its
+/// way back out.
 void Champa_WalkIntoTheVillage(void) {
   GameFlag_Set(FLAG_WALKED_INTO_THE_VILLAGE);
 }
@@ -743,9 +768,13 @@ static __inline__ void Champa_MessageOpen(s32 speaker, s32 flags) {
   FieldMessage_ShowAtActor(speaker, flags);
 }
 
-/// On the road out of the village Alex waits: "I see you've caught up with me
-/// again" (MsgChampaISeeYouveCaughtUp), and the party answers him; Karst and
-/// Agatio join him, and he leaves with news of Babi's death.
+/// Walking back south onto the plank bridge out of Champa (cell (19, 42)) the
+/// first time, after going into the village, has Alex call "I see you've
+/// caught up with me again, Felix" and come down the path to meet the party.
+/// Karst and Agatio walk up from either side to press it on to Jupiter
+/// Lighthouse, Alex tells Kraden that Lord Babi is dead, and once they have
+/// gone, Kraden's hints about what he has learned leave Jenna and Sheba
+/// demanding to be told.
 void Champa_MeetAlex(void) {
 
   if (!Event_GetFlag(FLAG_WALKED_INTO_THE_VILLAGE)) {
@@ -1542,8 +1571,8 @@ struct ActorPlacement gChampa_ActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-/// Champa's actors once Briggs has sailed from Alhafra: the sailors who spot
-/// Felix and Briggs too.
+/// Champa's actors once Briggs has sailed from Alhafra: the sailors at the mouth
+/// of his cave and Briggs too.
 struct ActorPlacement gChampa_ActorPlacementsOnceBriggsSailed[] = {
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 200, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, 0),
     ACTOR_PLACEMENT(SPRITE_TIGHTROPE_POST, CONDITION_ALWAYS, MOVEMENT_TYPE_STAND, 344, 0, 408, FACING_SOUTH, TALK_FACING_KEEP, ACTOR_PLACEMENT_SHARE_PREVIOUS_SPRITE),

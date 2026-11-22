@@ -283,7 +283,7 @@ Sound_SeVoices:
 	voice 0x00, 60, 0, 0, Sound_WaveSpinAway, 255, 0, 255, 226
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
 	voice 0x01, 60, 0, 0, 2, 0, 0, 15, 0
-	voice 0x00, 60, 0, 0, Sound_Wave69, 255, 0, 255, 226
+	voice 0x00, 60, 0, 0, Sound_WaveBirdCall, 255, 0, 255, 226
 	voice 0x00, 60, 0, 0, Sound_WaveWade, 128, 0, 255, 226
 
 @ What look like two keysplit tables, unused: keys 0-35 take 0 and 36-71

@@ -1,12 +1,24 @@
 /// @file
-/// The Gabomba Statue above Kibombo, in the seven rooms of this overlay: halls
-/// of pinions and cogs the party rides and hops across, stopped by Lashing a
-/// rope (GabombaStatue_LashRope) and turned the other way by Pounding the two
-/// stakes beside a flashing cog (GabombaStatue_PoundStake). In the arrows room
-/// at the top the party hears the ceremony below and mends the channel that
-/// must bring the two orb statues' magical charges to the statue in the middle
-/// at once (GabombaStatue_FocusEnergies to GabombaStatue_KradenNoticesTiming),
-/// turning its blocks with the arrow panels and Pounding them back in.
+/// Inside the Gabomba Statue at Kibombo, the seven rooms of this overlay: halls
+/// of turning cogs and pinions that Felix rides and hops across.
+///
+/// From the statue grounds the party comes into the hall of pinions, whose
+/// turning pinions in the south-west pull Felix through to the north. Above
+/// lie the room of corridors with the Bone Armlet's chest, and the room of the
+/// flashing cog, where Lash on a rope stops every cog
+/// (GabombaStatue_LashRope) so that Felix can cross to the ladder up to
+/// Steel's room and the mouse's room, where a mouse shows how to hop from cog
+/// to cog (GabombaStatue_MouseShowsTheWay). Back in the room of the flashing
+/// cog, Pound on the two stakes beside it turns all the cogs the other way
+/// (GabombaStatue_PoundStake); a pink drum in the mouse's room then drops
+/// Felix beside the Venus Djinni Steel. The way on leads through the pinions
+/// of the room below the small idol's chamber, up to the chamber and to the
+/// room of the arrow panels behind the statue's eyes. There the party watches
+/// the ceremony's two magical charges stick in a broken channel and mends it
+/// (GabombaStatue_FocusEnergies to GabombaStatue_KradenNoticesTiming): Pound
+/// on the stake raises the channel's blocks, the arrow panels turn them, and
+/// Pound sets each back in, until the blue and the red orb statues' charges
+/// reach the statue in the middle at once.
 
 #include "../field/actor_set_sprite_priority.c"
 
@@ -24,7 +36,7 @@
 #define FLAG_GABOMBA_TIMING_NOTICED 0x9ec
 #define FLAG_GABOMBA_FIRST_STAKE_POUNDED 0x8ce  ///< the west stake
 #define FLAG_GABOMBA_SECOND_STAKE_POUNDED 0x8cf ///< the east stake
-/// The mouse that shows the way across the turntable room has been seen.
+/// The mouse that shows the way across the cogs of its room has been seen.
 #define FLAG_GABOMBA_MOUSE_SEEN 0xa6c
 /// The two magical charges reached the statue in the middle at different
 /// times.
@@ -41,7 +53,7 @@
 /// The offering below has been heard (GabombaStatue_HearTheOffering).
 #define FLAG_OFFERING_HEARD FLAG_SCENE_TEMP_05
 
-/// The mouse of the turntable room that runs ahead and shows the way
+/// The mouse that runs ahead across the cogs of its room and shows the way
 /// (GabombaStatue_MouseShowsTheWay).
 enum { ACTOR_MOUSE = 39 };
 
@@ -132,8 +144,9 @@ enum {
   ACTOR_PINION_E
 };
 
-/// The cell behaviors of the rooms' trigger tables. A hole drops the leader to
-/// the room below. Between two pinions the leader is pulled through to the
+/// The cell behaviors of the rooms' trigger tables. A hole is the top of a
+/// ladder down to the room below, and its number is that of the exit it
+/// leaves by. Between two pinions the leader is pulled through to the
 /// other side, the cells taking the second behavior while the cogs turn back
 /// (GabombaStatue_TurnCogs copies them in). The cells under a cog
 /// (GabombaStatue_DrawCogCells) carry the leader with it, and the cells past a
@@ -221,10 +234,11 @@ extern const s32 *gFieldEffect_DurationScripts[];
 #define EFFECT_SET_SCRIPT Actor_StartScript
 #include "../field/field_effect_spawn.c"
 
-/// Steel, the Djinni waiting in this room.
+/// Steel, the Venus Djinni waiting in Steel's room.
 enum { ACTOR_STEEL = 33 };
 
-/// Talking to Steel starts its battle.
+/// Talking to Steel, beside whom Felix lands after riding a pink drum off the
+/// mouse's room, starts its battle.
 void GabombaStatue_FightSteel(void) {
   Field_RequestDjinnBattle(ACTOR_STEEL, DJINNI_STEEL);
 }
@@ -518,7 +532,10 @@ enum { ROPE_STOP_FRAMES = 25 };
 #define DIFF_WITHIN(a, b, limit)                                               \
   ((a) - (b) >= 0 ? (a) - (b) <= (limit) : (b) - (a) <= (limit))
 
-/// Lash on the rope between the posts: tied, it stops the cogs.
+/// Lash on the rope by the cogs in the north-west of the room of the flashing
+/// cog, between the posts at cells (18, 5) and (20, 5), ties it to a tooth of
+/// the blue cog. As it pulls taut the tooth rocks to a halt, and every cog in
+/// the room stops, so Felix can cross them to the ladder on the east side.
 void GabombaStatue_LashRope(void) {
   struct Actor *actor = Actor_Get(ACTOR_FIRST_ROPE_POST_B);
   s32 direction;
@@ -725,7 +742,7 @@ void GabombaStatue_RideSlidingCog(void) {
   }
 }
 
-/// The ride on a pink drum of the turntable room ends at its south end: the
+/// The ride on a pink drum of the mouse's room ends at its south end: the
 /// leader drops off it to the room below.
 void GabombaStatue_EndRide(struct Actor *actor) {
   u32 i;
@@ -764,7 +781,7 @@ void GabombaStatue_EndRide(struct Actor *actor) {
 
 /// Standing on a roller carries the leader north or south as it rolls, a blue
 /// pillar one way and a pink drum the other, kept on its middle; 20 pixels
-/// from its centre he hops off the end. A drum of the turntable room carries
+/// from its centre he hops off the end. A drum of the mouse's room carries
 /// him off its south end and down to Steel's room.
 void GabombaStatue_RideRoller(void) {
   struct Actor *actor, *platform;
@@ -880,7 +897,9 @@ void GabombaStatue_HopAcrossNorthOrSouth(void) {
   }
 }
 
-/// A little mouse pops up and hops from cog to cog, showing the way across.
+/// When Felix walks to the far west of the mouse's room, cell (14, 10), a
+/// little mouse pops up, squeaks, and hops from cog to cog, showing the way
+/// across. It does so once.
 void GabombaStatue_MouseShowsTheWay(struct Actor *actor) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -1084,8 +1103,9 @@ const u8 *Scene_GetTriggers(void) {
   return table;
 }
 
-/// The leader walks to the hole at x, z and climbs down into it to the room
-/// below, the scene leaving by the hole's exit.
+/// Felix walks to the top of the ladder at x, z, turns his back and climbs
+/// down it, and the screen closes on him as he leaves for the room below by
+/// the ladder's exit.
 void GabombaStatue_ClimbDownHole(s32 x, s32 z) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
@@ -1109,9 +1129,9 @@ void GabombaStatue_ClimbDownHole(s32 x, s32 z) {
   FieldEvent_SetExitRequest(work->stepTrigger);
 }
 
-/// A hole the leader drops into only when he walks into it: from the cells
+/// A ladder down that Felix takes only when he walks into it: from the squares
 /// beside it on row, pushing east or west, or from the one south of it, pushing
-/// north.
+/// north. Brushing past it does nothing.
 #define DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(                                  \
     name, row, westColumn, eastColumn, southColumn, southRow, holeX, holeZ)    \
   void name(void) {                                                            \
@@ -1131,12 +1151,15 @@ void GabombaStatue_ClimbDownHole(s32 x, s32 z) {
     GabombaStatue_ClimbDownHole(holeX, holeZ);                                 \
   }
 
-/// The Bone Armlet chest room's hole, walked into from the west, the east or
-/// the south.
+/// Felix climbs down the ladder in the north of the room of corridors, where
+/// the Mimic and the Bone Armlet's chest are, at cell (19, 11), back to the
+/// hall of pinions below, when he walks into it from the west, the east or the
+/// south.
 DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(GabombaStatue_StepIntoBoneArmletChestHole,
                                      11, 18, 20, 19, 12, 312, 180)
 
-/// The same for a hole with a cell on each of its four sides.
+/// The same for a ladder down with a square to walk in from on each of its
+/// four sides.
 #define DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(name, column, northRow,      \
                                                   southRow, row, westColumn,   \
                                                   eastColumn, holeX, holeZ)    \
@@ -1159,11 +1182,15 @@ DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(GabombaStatue_StepIntoBoneArmletChestHole,
     GabombaStatue_ClimbDownHole(holeX, holeZ);                                 \
   }
 
-/// The Elixir chest room's hole, walked into from any side.
+/// Felix climbs down the ladder in the north of the room of the rope, the
+/// stakes and the flashing cog, at cell (29, 12), back to the room of
+/// corridors below, when he walks into it from any side.
 DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(GabombaStatue_StepIntoElixirChestHole,
                                           29, 11, 13, 12, 28, 30, 472, 196)
 
-/// The Steel room's first hole, walked into from the west or the south.
+/// Felix climbs down the ladder in the north-east of Steel's room, at cell
+/// (33, 7), to the north-east of the room of the rope and the flashing cog
+/// below, when he walks into it from the west or the south.
 void GabombaStatue_StepIntoFirstSteelHole(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = FIELD_CELL(leader->x.fixed);
@@ -1178,7 +1205,9 @@ void GabombaStatue_StepIntoFirstSteelHole(void) {
   GabombaStatue_ClimbDownHole(536, 112);
 }
 
-/// The Steel room's second hole, walked into from any side.
+/// Felix climbs down the ladder in the west of Steel's room, at cell (6, 13),
+/// to the west of the room of the rope and the flashing cog below, when he
+/// walks into it from any side.
 void GabombaStatue_StepIntoSecondSteelHole(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = FIELD_CELL(leader->x.fixed);
@@ -1198,8 +1227,9 @@ void GabombaStatue_StepIntoSecondSteelHole(void) {
   GabombaStatue_ClimbDownHole(104, 208);
 }
 
-/// The Steel room's third hole, walked into from the north, the west or the
-/// south.
+/// Felix climbs down the ladder in the east of Steel's room, at cell (42, 13),
+/// to the east of the room of the rope and the flashing cog below, when he
+/// walks into it from the north, the west or the south.
 void GabombaStatue_StepIntoThirdSteelHole(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = FIELD_CELL(leader->x.fixed);
@@ -1223,17 +1253,21 @@ void GabombaStatue_StepIntoThirdSteelHole(void) {
   GabombaStatue_ClimbDownHole(680, 208);
 }
 
-/// The turntable room's first hole, walked into from the west, the east or the
-/// south.
+/// Felix climbs down the ladder in the north of the mouse's room, at cell
+/// (24, 7), to Steel's room below, when he walks into it from the west, the
+/// east or the south.
 DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(GabombaStatue_StepIntoFirstTurntableHole,
                                      7, 23, 25, 24, 8, 392, 112)
 
-/// The turntable room's second hole, walked into from the west, the east or
-/// the south.
+/// Felix climbs down the ladder in the west of the mouse's room, at cell
+/// (6, 9), to the west of Steel's room below, when he walks into it from the
+/// west, the east or the south.
 DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD(GabombaStatue_StepIntoSecondTurntableHole,
                                      9, 5, 7, 6, 10, 104, 146)
 
-/// The turntable room's third hole, walked into from the east or the south.
+/// Felix climbs down the ladder in the east of the mouse's room, beside its
+/// east blue cog at cell (42, 9), to the east of Steel's room below, when he
+/// walks into it from the east or the south.
 void GabombaStatue_StepIntoThirdTurntableHole(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = FIELD_CELL(leader->x.fixed);
@@ -1246,12 +1280,15 @@ void GabombaStatue_StepIntoThirdTurntableHole(void) {
   GabombaStatue_ClimbDownHole(680, 146);
 }
 
-/// The cogs room's hole, walked into from any side.
+/// Felix climbs down the ladder in the middle of the room below the small
+/// idol's chamber, at cell (27, 18), back to the mouse's room, when he walks
+/// into it from any side.
 DEFINE_GABOMBA_STATUE_STEP_WHEN_HELD_FOUR(GabombaStatue_StepIntoCogsHole, 27,
                                           17, 19, 18, 26, 28, 440, 288)
 
-/// The arrows room's hole, walked into from the west or the south: the leader
-/// climbs down into it to the room below.
+/// Felix climbs down the ladder in the north-east of the room of the arrow
+/// panels, at cell (29, 9), back to the small idol's chamber below, when he
+/// walks into it from the west or the south.
 void GabombaStatue_StepIntoArrowsHole(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 x = FIELD_CELL(actor->x.fixed);
@@ -1284,8 +1321,8 @@ void GabombaStatue_StepIntoArrowsHole(void) {
   FieldEvent_SetExitRequest(work->stepTrigger);
 }
 
-/// Stepping into a gap between two pinions: they carry the leader through to
-/// (x, z).
+/// Felix walks into the gap between two turning pinions, which grind and pull
+/// him through to (x, z) on the other side.
 #define DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(name, x, z)                       \
   void name(struct Actor *actor) {                                             \
     Event_Start();                                                             \
@@ -1296,12 +1333,14 @@ void GabombaStatue_StepIntoArrowsHole(void) {
     Event_End();                                                               \
   }
 
-/// The pinions at the pinion room's gap carry the leader through to the north.
+/// Walking into the gap between the pinions in the south-west of the hall of
+/// pinions, cell (9, 28), Felix is pulled through them to the north.
 DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(GabombaStatue_PinionsCarryLeaderNorth, 152,
                                      424)
 
-/// With the cogs turned back, the pinions at the pinion room's gap throw the
-/// leader out to the south.
+/// Once the cogs turn the other way, the pinions in the south-west of the hall
+/// of pinions throw Felix back out to the south when he walks into their gap,
+/// and he lands with a rattle, leaning back.
 void GabombaStatue_PinionsThrowLeaderSouth(void) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
 
@@ -1319,22 +1358,24 @@ void GabombaStatue_PinionsThrowLeaderSouth(void) {
   Event_End();
 }
 
-/// The pinions at the Elixir chest room's gap carry the leader through to the
-/// south.
+/// Walking into the gap between the pinions in the north of the room of the
+/// flashing cog, cell (23, 9), Felix is pulled through them to the south.
 DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(
     GabombaStatue_ElixirPinionsCarryLeaderSouth, 376, 200)
 
-/// With the cogs turned back, the pinions at the Elixir chest room's gap carry
-/// the leader through to the north.
+/// Once the cogs turn the other way, the pinions in the south of the room of
+/// the flashing cog, cell (24, 22), pull Felix through them to the north.
 DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(
     GabombaStatue_ElixirPinionsCarryLeaderNorth, 376, 136)
 
-/// The pinions at the cogs room's gap carry the leader through to the south.
+/// Walking into the gap between the pinions in the room below the small
+/// idol's chamber, cell (27, 12), Felix is pulled through them to the south.
 DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(GabombaStatue_CogsPinionsCarryLeaderSouth,
                                      440, 248)
 
-/// With the cogs turned back, the pinions at the cogs room's gap carry the
-/// leader through to the north.
+/// Once the cogs turn the other way, the pinions east of the first in the room
+/// below the small idol's chamber, cell (35, 13), pull Felix through them to
+/// the north.
 DEFINE_GABOMBA_STATUE_WALK_LEADER_TO(GabombaStatue_CogsPinionsCarryLeaderNorth,
                                      440, 184)
 
@@ -1374,7 +1415,9 @@ void Actors_SetDrawn(s32 show, s32 first, u32 count) {
   }
 }
 
-/// Pound on a stake sinks it; with both Pounded, the cogs turn back.
+/// Pound on one of the two stakes either side of the flashing cog in the south
+/// of its room, cells (20, 30) and (24, 30), drives it into the floor. Once
+/// both are down, the cogs turn the other way.
 void GabombaStatue_PoundStake(s32 a, s32 b) {
   Pound_SinkTarget(gGabombaStatue_Stakes, a, b);
   if (Event_GetFlag(FLAG_GABOMBA_FIRST_STAKE_POUNDED) &&
@@ -1382,8 +1425,9 @@ void GabombaStatue_PoundStake(s32 a, s32 b) {
     gFieldWork->raisedTrigger = RAISED_COGS_TURN_BACK;
 }
 
-/// With both stakes Pounded, the flashing cog drops into place, and all the
-/// cogs start turning the other way.
+/// When the second stake by the flashing cog is Pounded, the view pans to the
+/// cog between the two stakes, the cogs stop with a clank, the flashing cog
+/// bobs up and settles, and every cog starts turning the other way.
 void GabombaStatue_CogsTurnBack(void) {
   struct Actor *actor = Actor_Get(ACTOR_FLASHING_COG);
 
@@ -2323,8 +2367,8 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
-/// Coming into the pinion room from outside sets the cogs and the stakes back
-/// as they were.
+/// Coming into the hall of pinions from outside sets the cogs and the stakes
+/// back as they were.
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.next == SCENE_GABOMBA_STATUE_PINION &&
       gMainRoutineWork.entrance ==
@@ -2372,7 +2416,7 @@ void GabombaStatue_InitializeElixirChest(void) {
   GabombaStatue_HideElixirChestHoleShadows();
 }
 
-/// Sets up Steel's room: its rope, and the fall in from the turntable room.
+/// Sets up Steel's room: its rope, and the fall in from the mouse's room.
 void GabombaStatue_InitializeSteel(void) {
   Rope_Initialize();
   FieldRope_Place(0, FLAG_GABOMBA_FIRST_ROPE_TIED, ACTOR_STEEL_ROPE_POST_A,
@@ -2390,7 +2434,7 @@ void GabombaStatue_InitializeSteel(void) {
   }
 }
 
-/// Sets up the cogs room: its rope, coiled.
+/// Sets up the room below the small idol's chamber: its rope, coiled.
 void GabombaStatue_InitializeCogs(void) {
   Rope_Initialize();
   Value3((s32 (*)())GabombaStatue_CoilRope, 0, ACTOR_COGS_ROPE_POST_A,
@@ -2490,7 +2534,8 @@ void GabombaStatue_InitializeArrows(void) {
   }
 }
 
-/// Sets up the pinion room; coming in from outside, Retreat leads back to it.
+/// Sets up the hall of pinions; coming in from outside, Retreat leads back to
+/// it.
 void GabombaStatue_InitializePinion(void) {
   Actor_Get(gMainRoutineWork.leaderActorId)->priorityFlags |=
       ACTOR_PRIORITY_IGNORES_RISES;
@@ -3821,13 +3866,6 @@ u32 gGabombaStatue_PinionReleaseScript[] = {
     SC_RELEASE,
 };
 
-void GabombaStatue_FightSteel(void);
-void GabombaStatue_LashRope(void);
-void GabombaStatue_RideBlueCog(void);
-void GabombaStatue_StepIntoSecondSteelHole(void);
-void GabombaStatue_StepIntoThirdTurntableHole(void);
-void GabombaStatue_StakeStandsUp(void);
-
 // clang-format off
 /// Unused: gGabombaStatue_TurnedPieces from its second byte to its 21st.
 LATE_DATA u8 gGabombaStatue_UnusedTurnedPieces[] = {
@@ -3966,7 +4004,7 @@ LATE_DATA u32 gGabombaStatue_AkafubuComesUpScript[] = {
     SC_END,
 };
 
-/// The Elixir chest room's stakes: actor, the mode its cells open with, and
+/// The stakes beside the flashing cog: actor, the mode its cells open with, and
 /// the flag Pounding it sets.
 LATE_DATA s16 gGabombaStatue_Stakes[] = {
     ACTOR_FIRST_STAKE, 2, FLAG_GABOMBA_FIRST_STAKE_POUNDED, ACTOR_SECOND_STAKE, 2, FLAG_GABOMBA_SECOND_STAKE_POUNDED, -1, 0,

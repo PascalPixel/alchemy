@@ -1799,10 +1799,12 @@ ask:
 }
 
 /// Nothing visible happens as Felix steps onto the ring of cells (19, 7) to
-/// (21, 10) among the painted poles in the north of the village; the ground
-/// mask's two marks (`FadeOverlayWork`) start following him.
+/// (21, 10) among the painted poles in the north of the village. The village
+/// keeps two masks (`FadeOverlayWork`, drawn by `BlankOverlay_DrawMarks`) that
+/// cover whatever of Felix a raised cell beside him should hide; from here they
+/// follow him.
 void Kibombo_OverlayFollowsLeader(void) {
-  // XXX: what the ground mask's marks show by the poles, if anything; a
+  // XXX: whether the masks visibly hide part of Felix behind a pole; a
   // recording of Felix walking round cells (20, 8) and (20, 9) would settle it.
   struct FadeOverlayWork *work = Ram_HeapSlots->fadeOverlay;
 
@@ -1811,8 +1813,8 @@ void Kibombo_OverlayFollowsLeader(void) {
 }
 
 /// Nothing visible happens as Felix steps onto cell (20, 8) or (20, 9), in the
-/// middle of that ring among the painted poles; the ground mask's marks stop
-/// following him.
+/// middle of that ring among the painted poles; the masks that hide him behind
+/// raised cells stop following him.
 void Kibombo_OverlayStopsFollowing(void) {
   struct FadeOverlayWork *work = Ram_HeapSlots->fadeOverlay;
 
@@ -2569,8 +2571,12 @@ void Kibombo_EnterVent(void) {
   Kibombo_ClimbDownLadder(376, 288);
 }
 
-/// Fades the screen in and runs Kibombo_FlickerStatueFires each frame for up to
-/// 160 frames, or until A, B or Start is held, then fades out.
+/// During the ceremony the screen shows the Great Gabomba's face close up, its
+/// fires flickering, for about three seconds or until A, B or Start is held,
+/// then goes dark and returns to the grounds.
+///
+/// The flicker is `Kibombo_FlickerStatueFires`, run for up to 160 frames after
+/// a wait of 20.
 void Kibombo_GazeAtStatue(void) {
   u32 i;
 
@@ -2593,7 +2599,13 @@ void Kibombo_GazeAtStatue(void) {
       GABOMBA_STATUE_FACE_TO_KIBOMBO_STATUE_GROUNDS_CEREMONY_EAST_B);
 }
 
-/// Three flashes of light, each with the camera at another place.
+/// During the ceremony the Great Gabomba's face is shown close up and the
+/// screen flashes white three times, with a sound each time, the view jumping
+/// to another part of the statue after each flash; after the third the screen
+/// goes dark and returns to the grounds.
+///
+/// XXX: what the second and third views, around (584, 248) and (248, 536),
+/// show; a recording from the face's entrance 10 would settle it.
 void Kibombo_StatueFlashes(void) {
   Sound_Play(SE_POWER_UP);
   PaletteFade_ApplyTarget(RGB_WHITE, 0);
@@ -2891,7 +2903,9 @@ void Kibombo_WitchDoctorFeelsPower(void) {
       KIBOMBO_STATUE_GROUNDS_CEREMONY_TO_GABOMBA_STATUE_ARROWS_SOUTH);
 }
 
-/// Fades in on the ceremony with the Great Gabomba's mouth shut.
+/// The screen opens on the ceremony at the statue, with Felix hidden, the
+/// fires flickering and the Great Gabomba's mouth open, its eyes ringed with
+/// light; each step of the offering that follows sets the mouth as it needs.
 void Kibombo_OpenCeremonyScene(void) {
   struct FieldWork *work;
 

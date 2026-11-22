@@ -641,9 +641,9 @@ enum SoundId {
   /// The lifts of Mercury Lighthouse and its aerie, as they carry the party.
   SE_LIFT,
   SE_224,
-  /// Unused: nothing plays it here. The Lost Age plays the same sequence at
-  /// Moloch's frame 90.
-  SE_225,
+  /// Unused: nothing plays it here. The Lost Age plays the same sequence as
+  /// Moloch's white cloud billows up from the ground.
+  SE_CLOUD_BILLOW,
   /// A pusher and its log moving together: the Colosso, Crossbone Isle and
   /// Donpa's judgment in the Lunpa Fortress.
   SE_LOG_PUSH,

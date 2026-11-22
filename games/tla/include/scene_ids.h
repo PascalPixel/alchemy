@@ -130,8 +130,9 @@ extern char SceneId_AirsRockInsideElixirChest;
 extern char SceneId_AirsRockInsidePairedStakes;
 #define SCENE_AIRS_ROCK_INSIDE_PAIRED_STAKES                                   \
   ((s32)&SceneId_AirsRockInsidePairedStakes)
-extern char SceneId_AirsRockInsideFaceWarp;
-#define SCENE_AIRS_ROCK_INSIDE_FACE_WARP ((s32)&SceneId_AirsRockInsideFaceWarp)
+extern char SceneId_AirsRockInsideFaceVents;
+#define SCENE_AIRS_ROCK_INSIDE_FACE_VENTS                                      \
+  ((s32)&SceneId_AirsRockInsideFaceVents)
 extern char SceneId_AirsRockInsideCoinsChest;
 #define SCENE_AIRS_ROCK_INSIDE_COINS_CHEST                                     \
   ((s32)&SceneId_AirsRockInsideCoinsChest)

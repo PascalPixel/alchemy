@@ -88,7 +88,7 @@
 	.include "games/tla/src/map/airs_rock_inside_reveal_tablet/map.inc"
 	.include "games/tla/src/map/airs_rock_inside_elixir_chest/map.inc"
 	.include "games/tla/src/map/airs_rock_inside_paired_stakes/map.inc"
-	.include "games/tla/src/map/airs_rock_inside_face_warp/map.inc"
+	.include "games/tla/src/map/airs_rock_inside_face_vents/map.inc"
 	.include "games/tla/src/map/airs_rock_inside_coins_chest/map.inc"
 	.include "games/tla/src/map/airs_rock_inside_psynergy_stone/map.inc"
 	.include "games/tla/src/map/alhafra/map.inc"

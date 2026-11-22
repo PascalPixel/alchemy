@@ -481,7 +481,7 @@ const struct MapResources gMaps[] = {
     {285, 277, {278, 279, 280}, 281}, // airs_rock_inside_reveal_tablet
     {286, 277, {278, 279, 280}, 281}, // airs_rock_inside_elixir_chest
     {287, 277, {278, 279, 280}, 281}, // airs_rock_inside_paired_stakes
-    {288, 277, {278, 279, 280}, 281}, // airs_rock_inside_face_warp
+    {288, 277, {278, 279, 280}, 281}, // airs_rock_inside_face_vents
     {289, 277, {278, 279, 280}, 281}, // airs_rock_inside_coins_chest
     {290, 291, {292, 293, 294}, 295}, // airs_rock_inside_psynergy_stone
     {296, 297, {151, 152, 153}, 154}, // alhafra

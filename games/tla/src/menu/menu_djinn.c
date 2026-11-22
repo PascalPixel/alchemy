@@ -819,7 +819,7 @@ void Window_SetInteriorRectPalette(struct Window *panel, s32 x, s32 y,
 
 /// Builds a message's render entries and queues them in window; returns 0 when
 /// the message is empty or there is no window.
-struct UiChannelSlot *Message_OpenDecodedFar(void *window, s32 message);
+struct Message *Message_OpenDecodedFar(void *window, s32 message);
 
 /// The Djinn menu's help, opened by Select on the first chooser: a list of
 /// seven topics (Djinn, Set, Standby, Summon, Recovery, Class, Psynergy) with
@@ -836,7 +836,7 @@ s32 DjinnMenu_ShowHelp(void) {
   s32 previous;
   s32 selection;
   struct Window *list;
-  struct UiChannelSlot *channel;
+  struct Message *channel;
   s32 message;
   s32 helpIndex;
   s32 listMessage;
@@ -913,13 +913,13 @@ s32 DjinnMenu_ShowHelp(void) {
     ((struct WindowWork *)Ram_HeapSlots->windowWork)->pageArrowShown = 0;
     WindowSprite_PrepareForRedrawFar(helpWindow);
     {
-      struct Window *window = channel->work;
+      struct Window *window = channel->window;
 
       window->zoomStage = 0;
       window->duration = 0;
       window->state = 0;
     }
-    channel->work = 0;
+    channel->window = 0;
   } while (result == 0);
   ((struct WindowWork *)Ram_HeapSlots->windowWork)->holdTilemapUpload = 1;
   WindowSprite_ClearListFar(statusWindow);

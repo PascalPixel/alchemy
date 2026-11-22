@@ -34,8 +34,8 @@
 // Called before their definitions; the screens object calls them with no
 // declaration in scope.
 void Window_MapTextCanvasTiles(s32 x, s32 y, u32 width, u32 height, s32 whole);
-struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,
-                                    s32 y, u16 *spacing, s32 flags);
+struct Message *Message_Start(struct Window *window, s32 entry, s32 x, s32 y,
+                              u16 *spacing, s32 flags);
 
 // The parts, in ROM order (The Broken Seal's src/README.md, "Objects and
 // parts").

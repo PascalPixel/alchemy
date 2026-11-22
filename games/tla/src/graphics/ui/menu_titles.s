@@ -6,7 +6,7 @@
 	.global gMenuTitlePictures
 gMenuTitlePictures:
 	.4byte UiLabel_Save, UiLabel_Continue, UiLabel_Copy, UiLabel_Erase, UiLabel_Battle
-	.4byte UiLabel_Transfer, UiLabel_Update, UiLabel_Pause, UiLabel_Setup
+	.4byte UiLabel_Transfer, UiLabel_Update, UiLabel_Pause, UiLabel_Settings
 	.ifdef TLA_EDITION_JA
 UiLabel_Save:
 	.incbin "games/tla/src/graphics/ui/menu_titles/save_ja.4bpp32x16.plz"
@@ -24,8 +24,8 @@ UiLabel_Update:
 	.incbin "games/tla/src/graphics/ui/menu_titles/update_ja.4bpp32x16.plz"
 UiLabel_Pause:
 	.incbin "games/tla/src/graphics/ui/menu_titles/pause_ja.4bpp32x16.plz"
-UiLabel_Setup:
-	.incbin "games/tla/src/graphics/ui/menu_titles/setup_ja.4bpp32x16.plz"
+UiLabel_Settings:
+	.incbin "games/tla/src/graphics/ui/menu_titles/settings_ja.4bpp32x16.plz"
 	.endif
 	.ifdef TLA_EDITION_EN
 UiLabel_Save:
@@ -44,8 +44,8 @@ UiLabel_Update:
 	.incbin "games/tla/src/graphics/ui/menu_titles/update_en.4bpp32x16.plz"
 UiLabel_Pause:
 	.incbin "games/tla/src/graphics/ui/menu_titles/pause_en.4bpp32x16.plz"
-UiLabel_Setup:
-	.incbin "games/tla/src/graphics/ui/menu_titles/setup_en.4bpp32x16.plz"
+UiLabel_Settings:
+	.incbin "games/tla/src/graphics/ui/menu_titles/settings_en.4bpp32x16.plz"
 	.endif
 	.ifdef TLA_EDITION_DE
 UiLabel_Save:
@@ -64,8 +64,8 @@ UiLabel_Update:
 	.incbin "games/tla/src/graphics/ui/menu_titles/update_en.4bpp32x16.plz"
 UiLabel_Pause:
 	.incbin "games/tla/src/graphics/ui/menu_titles/pause_de.4bpp32x16.plz"
-UiLabel_Setup:
-	.incbin "games/tla/src/graphics/ui/menu_titles/setup_de.4bpp32x16.plz"
+UiLabel_Settings:
+	.incbin "games/tla/src/graphics/ui/menu_titles/settings_de.4bpp32x16.plz"
 	.endif
 	.ifdef TLA_EDITION_ES
 UiLabel_Save:
@@ -84,8 +84,8 @@ UiLabel_Update:
 	.incbin "games/tla/src/graphics/ui/menu_titles/update_es.4bpp32x16.plz"
 UiLabel_Pause:
 	.incbin "games/tla/src/graphics/ui/menu_titles/pause_es.4bpp32x16.plz"
-UiLabel_Setup:
-	.incbin "games/tla/src/graphics/ui/menu_titles/setup_es.4bpp32x16.plz"
+UiLabel_Settings:
+	.incbin "games/tla/src/graphics/ui/menu_titles/settings_es.4bpp32x16.plz"
 	.endif
 	.ifdef TLA_EDITION_FR
 UiLabel_Save:
@@ -104,8 +104,8 @@ UiLabel_Update:
 	.incbin "games/tla/src/graphics/ui/menu_titles/update_fr.4bpp32x16.plz"
 UiLabel_Pause:
 	.incbin "games/tla/src/graphics/ui/menu_titles/pause_fr.4bpp32x16.plz"
-UiLabel_Setup:
-	.incbin "games/tla/src/graphics/ui/menu_titles/setup_fr.4bpp32x16.plz"
+UiLabel_Settings:
+	.incbin "games/tla/src/graphics/ui/menu_titles/settings_fr.4bpp32x16.plz"
 	.endif
 	.ifdef TLA_EDITION_IT
 UiLabel_Save:
@@ -124,7 +124,7 @@ UiLabel_Update:
 	.incbin "games/tla/src/graphics/ui/menu_titles/update_it.4bpp32x16.plz"
 UiLabel_Pause:
 	.incbin "games/tla/src/graphics/ui/menu_titles/pause_es.4bpp32x16.plz"
-UiLabel_Setup:
-	.incbin "games/tla/src/graphics/ui/menu_titles/setup_it.4bpp32x16.plz"
+UiLabel_Settings:
+	.incbin "games/tla/src/graphics/ui/menu_titles/settings_it.4bpp32x16.plz"
 	.endif
 	.balign 4, 0

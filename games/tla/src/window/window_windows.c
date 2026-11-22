@@ -489,21 +489,21 @@ void WindowSprite_Release(struct WindowSprite *entry) {
 /// extra gap between characters, in 1/256 pixels (or none for NULL), and is
 /// copied, so the caller's array need not outlive the call; flags is kept with
 /// the message (nonzero keeps the window's size from page to page).
-struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,
-                                    s32 y, u16 *spacing, s32 flags) {
+struct Message *Message_Start(struct Window *window, s32 entry, s32 x, s32 y,
+                              u16 *spacing, s32 flags) {
   struct WindowWork *work = WINDOW_WORK;
-  struct UiChannelSlot *render = work->channels;
-  struct UiChannelSlot *found = NULL;
+  struct Message *render = work->messages;
+  struct Message *found = NULL;
   u32 i;
 
   for (i = 0; i != MESSAGE_COUNT; i++, render++) {
-    if (render->work == NULL) {
+    if (render->window == NULL) {
       found = render;
       break;
     }
   }
   if (found != NULL) {
-    found->work = window;
+    found->window = window;
     found->startX = x << 8;
     found->x = x << 8;
     found->y = y << 8;
@@ -529,24 +529,24 @@ struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,
   return found;
 }
 
-void Text_StartCanvasScroll(struct UiChannelSlot *channel);
+void Text_StartCanvasScroll(struct Message *channel);
 
 /// Starts a channel typing the decoded text at entry into the battle message
 /// window. A channel that already serves a finished window continues below
 /// its last line (scrolling up once both lines are used) unless keepPosition
 /// is set. Returns the channel, or NULL when all three are busy.
-struct UiChannelSlot *BattleMessage_Continue(struct Window *window, s32 entry,
-                                             s32 keepPosition) {
-  struct UiChannelSlot *slot;
-  struct UiChannelSlot *selected;
+struct Message *BattleMessage_Continue(struct Window *window, s32 entry,
+                                       s32 keepPosition) {
+  struct Message *slot;
+  struct Message *selected;
   u16 *spacing;
   u16 lineSpacing;
   u32 index;
 
-  slot = WINDOW_WORK->channels;
+  slot = WINDOW_WORK->messages;
   selected = 0;
   for (index = 0; index != MESSAGE_COUNT; slot++, index++) {
-    if (slot->work == 0 || slot->work->state != 0) {
+    if (slot->window == 0 || slot->window->state != 0) {
       selected = slot;
       break;
     }
@@ -555,9 +555,9 @@ struct UiChannelSlot *BattleMessage_Continue(struct Window *window, s32 entry,
   if (selected != 0) {
     // Positions are in 1/256 pixel: the first line is 10 pixels down, the
     // second 13 pixels below it, and after the second the text scrolls up.
-    if (selected->work == 0) {
+    if (selected->window == 0) {
       selected->y = 10 << 8;
-      selected->work = window;
+      selected->window = window;
       selected->x = 3 << 8;
     } else if (keepPosition == 0) {
       if (selected->y == 0) {
@@ -571,7 +571,7 @@ struct UiChannelSlot *BattleMessage_Continue(struct Window *window, s32 entry,
     }
 
     selected->startX = 3 << 8;
-    selected->work->state = 0;
+    selected->window->state = 0;
     // Start the next text run without retaining the previous run's style.
     selected->colour = TEXT_COLOR_WHITE;
     selected->entry = entry;
@@ -604,18 +604,18 @@ s32 Text_FillCanvasBackground(void) {
 /// Resets the pen and text style of the first idle message, clearing the canvas
 /// when the message still has a window.
 void Message_ResetIdle(void) {
-  struct UiChannelSlot *slot = WINDOW_WORK->channels;
-  struct UiChannelSlot *selection = 0;
+  struct Message *slot = WINDOW_WORK->messages;
+  struct Message *selection = 0;
   s32 i;
 
   for (i = 0; i != MESSAGE_COUNT; slot++, i++) {
-    if (slot->work == 0 || slot->work->state != 0) {
+    if (slot->window == 0 || slot->window->state != 0) {
       selection = slot;
       break;
     }
   }
   if (selection != 0) {
-    if (selection->work != 0) {
+    if (selection->window != 0) {
       Text_ClearCanvas();
       selection->y = 0;
     }
@@ -629,7 +629,7 @@ void Message_ResetIdle(void) {
 
 /// Copies the message's text colour, outline and line spacing into the shared
 /// glyph renderer before that message draws its next character.
-void Message_ApplyStyle(struct UiChannelSlot *channel) {
+void Message_ApplyStyle(struct Message *channel) {
   struct WindowWork *work = WINDOW_WORK;
 
   work->colour = channel->colour;
@@ -640,6 +640,6 @@ void Message_ApplyStyle(struct UiChannelSlot *channel) {
 /// Starts a message scrolling its canvas up a line: 12 pixel rows, 6 a
 /// frame over two frames (Message_Type, Text_ScrollCanvasUp), during which
 /// the message types nothing.
-void Text_StartCanvasScroll(struct UiChannelSlot *channel) {
+void Text_StartCanvasScroll(struct Message *channel) {
   channel->transition = 2;
 }

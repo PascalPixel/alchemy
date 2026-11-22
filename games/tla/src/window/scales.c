@@ -34,7 +34,7 @@ const s8 gMenu_CursorBobOffsets[16] = {
 /// The window colour wheel: one colour channel's level (0 to 31) by hue step,
 /// fading out, resting and fading in; The Broken Seal's 25 further steps are
 /// gone.
-const u8 gPaletteGlow_WaveTable[96] = {
+const u8 gWindowColor_WaveTable[96] = {
     31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16,
     15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -45,32 +45,32 @@ const u8 gPaletteGlow_WaveTable[96] = {
 
 /// The settings menu's command icons for each setting's choices: message speed
 /// Slow, Normal and Fast.
-const s8 gOptionMenu_SpeedIcons[3] = {
+const s8 gSettingsMenu_SpeedIcons[3] = {
     COMMAND_ICON_SPEED_SLOW,
     COMMAND_ICON_SPEED_NORMAL,
     COMMAND_ICON_SPEED_FAST,
 };
 
 /// Speech Off and On.
-const s8 gOptionMenu_SpeechIcons[2] = {
+const s8 gSettingsMenu_SpeechIcons[2] = {
     COMMAND_ICON_SPEECH_OFF,
     COMMAND_ICON_SPEECH_ON,
 };
 
 /// Auto-Sleep Off and On.
-const s8 gOptionMenu_SleepIcons[2] = {
+const s8 gSettingsMenu_SleepIcons[2] = {
     COMMAND_ICON_AUTO_SLEEP_OFF,
     COMMAND_ICON_AUTO_SLEEP_ON,
 };
 
 /// The window colour presets SELECT cycles through on the settings menu: the
 /// colour (hue, 0 to 23) of each.
-const u8 gOptionMenu_HuePresets[6] = {
+const u8 gSettingsMenu_HuePresets[6] = {
     4, 16, 8, 21, 1, 13,
 };
 
 /// The brightness (0 to 14, 7 neutral) of each preset.
-const u8 gOptionMenu_BrightnessPresets[6] = {
+const u8 gSettingsMenu_BrightnessPresets[6] = {
     0, 11, 13, 7, 14, 14,
 };
 

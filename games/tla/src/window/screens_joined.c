@@ -24,8 +24,8 @@ s32 Screens_ReturnZero(void) { return 0; }
 // Icon_LoadWithPalette's last argument), as a call with no declaration in
 // scope compiles; UBFIX declares it whole and passes 0.
 #ifdef UBFIX
-struct UiChannelSlot *Message_Start(struct Window *window, s32 entry, s32 x,
-                                    s32 y, u16 *spacing, s32 flags);
+struct Message *Message_Start(struct Window *window, s32 entry, s32 x, s32 y,
+                              u16 *spacing, s32 flags);
 #endif
 
 /// Shows that a Djinni joined a party member while the join jingle
@@ -71,7 +71,7 @@ void Djinn_ShowJoinedMessage(s32 member, s32 element, s32 djinn) {
                              ABILITY_DJINNI_FIRST,
                          MESSAGE_ARGUMENT_ABILITY);
 
-    text = Message_DecodeMode1(element + (s32)MsgFoundVenusDjinni);
+    text = Message_DecodeAndClearArguments(element + (s32)MsgFoundVenusDjinni);
 
 #ifdef UBFIX
     Message_Start(window, text, 36, 2, NULL, 0);
@@ -129,10 +129,11 @@ void Party_ShowJoinedMessage(s32 member) {
     work->speakerVoiceCountdown = 0;
     MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
 #ifdef UBFIX
-    Message_Start(window, Message_DecodeMode1((s32)MsgJoinedParty), 36, 2, NULL,
-                  0);
+    Message_Start(window, Message_DecodeAndClearArguments((s32)MsgJoinedParty),
+                  36, 2, NULL, 0);
 #else
-    Message_Start(window, Message_DecodeMode1((s32)MsgJoinedParty), 36, 2, 0);
+    Message_Start(window, Message_DecodeAndClearArguments((s32)MsgJoinedParty),
+                  36, 2, 0);
 #endif
     Sound_PlayFar(MUS_A_NEW_ALLY);
     do {
@@ -194,11 +195,13 @@ void Party_ShowPairJoinedMessage(s32 first, s32 second) {
     MessageArgument_Push(second, MESSAGE_ARGUMENT_ACTOR);
 
 #ifdef UBFIX
-    Message_Start(window, Message_DecodeMode1((s32)MsgPairJoinedParty), 68, 2,
-                  NULL, 0);
+    Message_Start(window,
+                  Message_DecodeAndClearArguments((s32)MsgPairJoinedParty), 68,
+                  2, NULL, 0);
 #else
-    Message_Start(window, Message_DecodeMode1((s32)MsgPairJoinedParty), 68, 2,
-                  0);
+    Message_Start(window,
+                  Message_DecodeAndClearArguments((s32)MsgPairJoinedParty), 68,
+                  2, 0);
 #endif
 
     Sound_PlayFar(MUS_A_NEW_ALLY);
@@ -255,7 +258,7 @@ void Summon_ShowLearnedMessage(s32 summon) {
   work->speakerVoiceCountdown = 0;
   MessageArgument_Push(gSummon_Abilities[summon & (SUMMON_END - 1)],
                        MESSAGE_ARGUMENT_ABILITY);
-  entries = Message_DecodeMode1((s32)MsgCanNowSummon);
+  entries = Message_DecodeAndClearArguments((s32)MsgCanNowSummon);
   // UB: five of Message_Start's six arguments, as above; the flags are the
   // stack word resource takes, which nothing sets. UBFIX passes 0.
 #ifdef UBFIX
@@ -277,7 +280,7 @@ void Summon_ShowLearnedMessage(s32 summon) {
     return;
   MessageArgument_Push(gSummon_Abilities[summon & (SUMMON_END - 1)],
                        MESSAGE_ARGUMENT_ABILITY);
-  entries = Message_DecodeMode1((s32)MsgToSummon);
+  entries = Message_DecodeAndClearArguments((s32)MsgToSummon);
   djinn = SummonDefinition_Get(summon)->djinnRequired;
   for (i = 0; i < 4; i++)
     counts[i] = djinn[i];

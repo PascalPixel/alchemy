@@ -933,7 +933,7 @@ void IconMenu_DrawIcons(void) {
     span = ((span - halfWidth) << 8) + (span + halfWidth) + 23;
     lastLine = work->entries[work->selection].y + ICON_ROW_LINES;
     lastLine += PULSE_OVERHANG_LINES(pulseScale);
-    edge = &page->lines[ICON_ROW_LINES].span;
+    edge = &page->lines[ICON_ROW_LINES].window1;
     index = ICON_ROW_LINES;
     if (index < lastLine) {
       do {
@@ -946,7 +946,7 @@ void IconMenu_DrawIcons(void) {
     if (work->selection == 0)
       span -= PULSE_OVERHANG_X(pulseScale);
     span <<= 8;
-    edge = &page->lines[0].span;
+    edge = &page->lines[0].window1;
     for (index = 0; index < ICON_ROW_LINES; index++) {
       *edge = (*edge & WIN_RANGE_END_MASK) | span;
       edge += 2;
@@ -959,7 +959,7 @@ void IconMenu_DrawIcons(void) {
     span = ((span - halfWidth) << 8) + (span + halfWidth) + 23;
     firstLine = work->entries[work->selection].y;
     firstLine -= PULSE_OVERHANG_LINES(pulseScale);
-    edge = &page->lines[firstLine].span;
+    edge = &page->lines[firstLine].window1;
     index = firstLine;
     if (index < ICON_MENU_BOTTOM_ROW * 8) {
       do {
@@ -972,7 +972,7 @@ void IconMenu_DrawIcons(void) {
     if (work->selection == 0)
       span -= PULSE_OVERHANG_X(pulseScale);
     span <<= 8;
-    edge = &page->lines[ICON_MENU_BOTTOM_ROW * 8].span;
+    edge = &page->lines[ICON_MENU_BOTTOM_ROW * 8].window1;
     for (index = ICON_MENU_BOTTOM_ROW * 8; index < DISPLAY_HEIGHT; index++) {
       // firstLine, done with, carries the mask that keeps the right edge.
       firstLine = WIN_RANGE_END_MASK;

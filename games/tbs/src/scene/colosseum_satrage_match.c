@@ -816,14 +816,15 @@ static void ColosseumSatrageMatch_HaltLifts(void) {
 /// Reaching Colosseum Final 2's arena, the leader takes a prize and fights
 /// Satrage.
 static void ColosseumSatrageMatch_ReachArena(void) {
-  s32 opponentFinishedFirst;
-  s32 refreshCount;
-  s32 resultBase = 2;
+  s32 opponentFirst;
+  s32 i;
+  s32 opponentFirstSlot = 2;
   Colosso_NoOp();
   Event_Start();
-  opponentFinishedFirst = Colosso_TakePrize(ITEM_CHAIN_MAIL, ITEM_COTTON_SHIRT);
+  opponentFirst = Colosso_TakePrize(ITEM_CHAIN_MAIL, ITEM_COTTON_SHIRT);
   Colosso_WaitForOpponentToFinish();
-  for (refreshCount = 0; refreshCount < 10; refreshCount++) {
+  // Up to ten waits of 300 frames while the opponent holds up his prize.
+  for (i = 0; i < 10; i++) {
     Actor_WaitForScriptEndById(ACTOR_OPPONENT);
   }
   Actor_SetSpeed(ACTOR_OPPONENT, 1);
@@ -844,7 +845,7 @@ static void ColosseumSatrageMatch_ReachArena(void) {
   Actor_SetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_FIGHTING_STANCE);
   Event_Wait(10);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_COLOSSO,
-                                        resultBase - opponentFinishedFirst + 1);
+                                        opponentFirstSlot - opponentFirst + 1);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Event_SetAfterBattleDestination(SCENE_COLOSSEUM_SATRAGE_MATCH,
                                   COLOSSEUM_SATRAGE_MATCH_AFTER_MATCH_WON);

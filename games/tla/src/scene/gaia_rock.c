@@ -1,9 +1,24 @@
 /// @file
-/// Gaia Rock's outside, near Izumo, in the rooms of this overlay: pillars
-/// Moved across gaps, slides and climbing walls, vines that swing in the wind
-/// of the statues (HangingVine_Place), and the altar where Reveal shows the
-/// Dancing Idol the party carries inside (gaia_rock_inside.c); after the
-/// Serpent, Susa asks here whether the party will tell Kushinada they slew it.
+/// The outside of Gaia Rock, the great rock near Izumo where the Serpent
+/// lives, in three areas of this overlay.
+///
+/// The path from the world map runs north under stone arches to the cliffs,
+/// where a dark cave mouth leads into the rock (gaia_rock_inside.c); the way
+/// up is outside. On the first cliffs (SceneId_GaiaRockSusa) Felix pushes a
+/// stone pillar west along a ledge until it drops into a gap and bridges it
+/// (GaiaRock_FinishMovingPillar), climbs walls of handholds and rides slides,
+/// and sees a stone statue blow whirlwinds at a hanging vine to set it
+/// swinging. Whirlwind on another vine, over a gap, swings him across, and a
+/// second pillar Moved east off the ledge beyond drops into a notch below. On
+/// the next cliffs (SceneId_GaiaRockStatueSpots) more statues blow at vines,
+/// and on a great wall of handholds three stone faces lie in wait: when Felix
+/// climbs onto one it bursts out under him and knocks him off the holds
+/// (GaiaRock_ClimbOntoLowestStoneFace). Beyond, a pillar slides in a slot, and
+/// on the mesa past it Reveal shows the Dancing Idol on an altar ringed by
+/// pillars (GaiaRock_RevealIdol), for Uzume in Izumo. Once the party has
+/// fought the Serpent inside, they come out to find Susa lying worn out by
+/// the cave mouth, and he asks whether they will tell Kushinada they slew it
+/// (GaiaRock_SusaAsksAboutTheSerpent).
 
 #include "shared/tables.h"
 #include "shared/gaia_rock.h"
@@ -42,11 +57,12 @@
 #include "fixed_math.h"
 #include "text/msg_ids.h"
 
-/// The ledge where the party finds Susa beaten (SceneId_GaiaRockSusa): the
-/// eight vines the wind swings, the two pillars Moved into the gaps, the statue
-/// that blows wind, a whirlwind's row parked off the map (the whirlwinds the
-/// statue blows are spawned), and Susa ("Kushinada's safe... She's safe!
-/// Nothing else matters.").
+/// The first cliffs, from the world map's path to the cave mouth
+/// (SceneId_GaiaRockSusa): the eight hanging vines, the two pillars Moved into
+/// the gaps, the statue that blows whirlwinds, a whirlwind's row parked off the
+/// map (the whirlwinds the statue blows are spawned), and Susa, who lies by
+/// the cave mouth after the Serpent ("Kushinada's safe... She's safe! Nothing
+/// else matters.").
 enum {
   ACTOR_FIRST_VINE = ACTOR_FIRST_PLACED,
   ACTOR_FIRST_PILLAR = ACTOR_FIRST_VINE + 8,
@@ -56,31 +72,46 @@ enum {
   ACTOR_SUSA
 };
 
-/// The room of the three statue spots (SceneId_GaiaRockStatueSpots): seven
-/// vines, two wind statues, and the three statues that rise under the leader.
+/// The next cliffs, with the great wall of handholds
+/// (SceneId_GaiaRockStatueSpots): seven hanging vines, two statues that blow
+/// wind, and the three stone faces that burst out of the wall under Felix.
 enum {
   ACTOR_FIRST_RISING_STATUE = ACTOR_FIRST_VINE + 9,
   ACTOR_SECOND_RISING_STATUE,
   ACTOR_THIRD_RISING_STATUE
 };
 
-/// The room of the Dancing Idol (SceneId_GaiaRockDancingIdol): the pillar the
-/// party pushes, the altar and the Dancing Idol on it.
+/// The top, with the altar's mesa (SceneId_GaiaRockDancingIdol): the pillar
+/// that slides in its slot, the altar and the Dancing Idol on it.
 enum {
   ACTOR_PUSHED_PILLAR = ACTOR_FIRST_PLACED,
   ACTOR_ALTAR = ACTOR_FIRST_PLACED + 7,
   ACTOR_DANCING_IDOL
 };
 
-/// The three statue spots, each set once its statue has risen.
+/// Set once each stone face has burst out of the great wall, so that it stays
+/// out until the party enters another area.
 #define FLAG_FIRST_STATUE_RISEN FLAG_AREA_TEMP_00
 #define FLAG_SECOND_STATUE_RISEN FLAG_AREA_TEMP_01
 #define FLAG_THIRD_STATUE_RISEN FLAG_AREA_TEMP_02
 
 /// The two pillars Moved into the gaps: each stands sunk into its gap, its top
-/// level with the ledge it was Moved along.
+/// level with the ledge it was Moved along, for good.
 #define FLAG_FIRST_PILLAR_DROPPED 0x920
 #define FLAG_SECOND_PILLAR_DROPPED 0x921
+
+/// The cell behaviors of the trigger tables.
+enum GaiaRockCellBehavior {
+  /// The bushes below the cliff east of the cave mouth, which answer Cyclone.
+  CELL_BEHAVIOR_CAVE_MOUTH_BUSHES = 20,
+  /// The great wall's three trap holds, lowest first, in its overhead layer
+  /// (GaiaRock_TriggerWallCell reads them as Felix climbs).
+  CELL_BEHAVIOR_LOWEST_STONE_FACE = 20,
+  CELL_BEHAVIOR_MIDDLE_STONE_FACE,
+  CELL_BEHAVIOR_HIGHEST_STONE_FACE,
+  /// The path just south of where Susa lies by the cave mouth.
+  CELL_BEHAVIOR_PAST_SUSA = 42
+};
 
 /// The whirlwind's circling leaves.
 enum { WHIRLWIND_LEAVES = 16 };
@@ -135,20 +166,33 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gGaiaRock_Placements;
 }
 
-/// Raises the first statue under the leader on its spot.
-void GaiaRock_StepOnFirstStatueSpot(void) {
+/// Climbing the great wall of handholds, Felix reaches the lowest of its three
+/// trap holds, near the middle of the wall: a stone face bursts out of the
+/// rock under him in a shower of stones, and he flails and loses his hold on
+/// the wall. The hold is cell (111, 50) of the wall's overhead layer, drawn at
+/// (47, 50); the face stays out, and the hold is solid rock, until the party
+/// enters another area.
+///
+/// XXX: the recording ends with Felix standing on the face, no longer
+/// climbing; the walkthrough says he then falls all the way down. A recording
+/// that runs on past the event would show the fall.
+void GaiaRock_ClimbOntoLowestStoneFace(void) {
   GaiaRock_StatueRisesUnderLeader(ACTOR_FIRST_RISING_STATUE,
                                   FLAG_FIRST_STATUE_RISEN);
 }
 
-/// Raises the second statue under the leader on its spot.
-void GaiaRock_StepOnSecondStatueSpot(void) {
+/// As GaiaRock_ClimbOntoLowestStoneFace, for the middle trap hold, a little
+/// higher and to the east: cell (113, 42) of the overhead layer, drawn at
+/// (49, 42).
+void GaiaRock_ClimbOntoMiddleStoneFace(void) {
   GaiaRock_StatueRisesUnderLeader(ACTOR_SECOND_RISING_STATUE,
                                   FLAG_SECOND_STATUE_RISEN);
 }
 
-/// Raises the third statue under the leader on its spot.
-void GaiaRock_StepOnThirdStatueSpot(void) {
+/// As GaiaRock_ClimbOntoLowestStoneFace, for the highest trap hold, a little
+/// west of the middle one: cell (112, 33) of the overhead layer, drawn at (48,
+/// 33).
+void GaiaRock_ClimbOntoHighestStoneFace(void) {
   GaiaRock_StatueRisesUnderLeader(ACTOR_THIRD_RISING_STATUE,
                                   FLAG_THIRD_STATUE_RISEN);
 }
@@ -191,7 +235,10 @@ void GaiaRock_DropPillar(s32 id, s32 cue) {
 }
 #endif
 
-/// As Move takes the first pillar, frees the cells under its gap.
+/// Nothing visible happens as Felix's Move takes hold of the stone pillar on
+/// the west ledge of the first cliffs, standing at cell (7, 27); the game
+/// changes one cell of the map's lower half beside it so that it can slide.
+/// GaiaRock_FinishMovingPillar changes it back.
 void GaiaRock_StartMovingPillar(void) {
   MapGrid_CopyCellAttributes(7, 90, 1, 1, 8, 91);
 }
@@ -204,8 +251,14 @@ void GaiaRock_StartMovingPillar(void) {
 #define DROP_PILLAR(id) GaiaRock_DropPillar(id, SE_BOOM)
 #endif
 
-/// A pillar set down after a Move: the first drops into its gap once Moved far
-/// enough west, the second bridges its gap as it passes over it to (79, 12).
+/// A pillar of the first cliffs stops after a push or a Move. The pillar on
+/// the west ledge, once pushed or Moved west over the gap at cell (5, 27),
+/// drops in, its top level with the ledge, so that Felix can walk
+/// across. The pillar on the ledge past the swinging vine, at cell (37, 46),
+/// once Moved east off the ledge's end drops onto the ledge below, and one
+/// Move more sets it for good in the notch where a grey block shows, cell
+/// (40, 46), its top a square Felix hops across. (The walkthrough says to Move
+/// it to the left; the game takes it east.)
 void GaiaRock_FinishMovingPillar(s32 unused, s32 id) {
   struct Actor *actor = Actor_Get(id);
 
@@ -237,25 +290,39 @@ void GaiaRock_FinishMovingPillar(s32 unused, s32 id) {
 void TileCopies_CopyTouchedCells(s32 a, s32 b, s32 c, s32 d, s32 e, s32 f,
                                  s32 g);
 
-/// As the pillar is pushed or Moved, frees the cell it stands on.
+/// Nothing visible happens as Felix starts to push or Move the stone pillar at
+/// the east edge of the summit where he arrives, which slides north and south
+/// in its slot (cells (13, 14) to (13, 18)); the game frees the slot's cell
+/// under it so that it can slide.
 void GaiaRock_StartPushingPillar(void) {
   MapGrid_CopyCellAttributes(
       13, 18, 1, 1, 13, FIELD_CELL(Actor_Get(ACTOR_PUSHED_PILLAR)->z.fixed));
 }
 
-/// Once the pillar stops, blocks the cell it now stands on.
+/// Nothing visible happens when the pillar in its slot at the east edge of the
+/// first summit stops; the game makes its cell a square Felix hops across, so
+/// that he can jump over the pillar's top. Moved to the slot's south end, cell
+/// (13, 18), it opens the way on to the altar.
 void GaiaRock_FinishPushingPillar(void) {
   MapGrid_CopyCellAttributes(
       11, 14, 1, 1, 13, FIELD_CELL(Actor_Get(ACTOR_PUSHED_PILLAR)->z.fixed));
 }
 
-/// Cyclone on the overgrown wall: copies the cleared cells over it, opening
-/// the way.
+/// Felix casts Cyclone among the bushes below the cliff east of the cave mouth
+/// (cells (49, 48), (51, 48), (50, 49), (58, 48), (59, 47) and a few more).
+/// Cast at the foot of the handholds there, nothing changes but Cyclone's own
+/// whirl of leaves. The game clears the cells within Cyclone's reach of the
+/// overhead layer's block from the cave mouth east and south, cells (110, 47)
+/// to (123, 58) of map.txt, taking blank ones from the map's spare corner.
+///
+/// XXX: what that block hides is unchecked; a Cyclone cast in the thicket
+/// south-east of the cave mouth, compared before and after, would settle it.
 void GaiaRock_CycloneClearsWall(void) {
   FieldTileCopies_CopyTouchedCells(110, 64, 14, 12, 110, 47, 1);
 }
 
-/// Reveal: shows the Dancing Idol on the altar until it is taken.
+/// Casting Reveal at the top of the cliffs shows the Dancing Idol standing on
+/// the altar, on the mesa ringed by six pillars, until the party has taken it.
 void GaiaRock_RevealIdol(void) {
   struct Actor *actor = Actor_Get(FIELD_TREASURE_ACTOR);
   s32 done;
@@ -270,14 +337,16 @@ void GaiaRock_RevealIdol(void) {
   }
 }
 
-/// As Reveal fades, hides the Dancing Idol again.
+/// As Reveal wears off, the Dancing Idol vanishes from the altar again.
 void GaiaRock_HideIdol(void) {
   if (Actor_Get(FIELD_TREASURE_ACTOR) != NULL)
     Actor_SetPosition(FIELD_TREASURE_ACTOR, 0, 0);
 }
 
-/// The altar: with the Dancing Idol revealed the party takes it; before that
-/// the leader senses something and the field menu opens, and after, nothing.
+/// Felix examines the altar on the mesa ringed by six pillars: "Felix checked
+/// the altar." With the Dancing Idol revealed on it, he takes it. Before that
+/// he says "I'm...sensing something..." and the field menu opens, a hint to
+/// cast Reveal; once it is taken, "I can't feel anything...".
 void GaiaRock_CheckAltar(void) {
   struct Actor *actor = Actor_Get(FIELD_TREASURE_ACTOR);
 
@@ -294,8 +363,11 @@ void GaiaRock_CheckAltar(void) {
   }
 }
 
-/// Once the Serpent is slain, Susa stops the party as it passes: "You're going
-/// to tell Kushinada that you defeated the serpent, aren't you?"
+/// Once the Serpent is slain, Felix walks past Susa, who lies by the cave mouth
+/// (on the cells just south of him, (45, 52) to (50, 52)), and Susa asks:
+/// "You're going to tell Kushinada that you defeated the serpent, aren't
+/// you?" Yes: "Ha ha ha! Of course!" No: he says they should accept the
+/// credit. It plays once.
 void GaiaRock_SusaAsksAboutTheSerpent(void) {
   if (Event_GetFlag(FLAG_SERPENT_SLAIN)) {
     Event_Start();
@@ -309,7 +381,9 @@ void GaiaRock_SusaAsksAboutTheSerpent(void) {
   }
 }
 
-/// Talking to Susa, before and after he has asked about the serpent.
+/// Talking to Susa where he lies by the cave mouth: before he has asked about
+/// the serpent, "If you're going to Izumo, tell my sister that I'm still
+/// alive."; after, he asks again.
 void GaiaRock_TalkToSusa(void) {
   if (Event_GetFlag(FLAG_SUSA_REJOICES)) {
     FieldEvent_SetMessageId(MsgYouReGoing);
@@ -321,7 +395,9 @@ void GaiaRock_TalkToSusa(void) {
   }
 }
 
-/// Mind Read on Susa, before and after he has asked about the serpent.
+/// Mind Read on Susa where he lies by the cave mouth: "I really got worked
+/// over, but as long as Kushinada's safe, it was worth it." before he has
+/// asked about the serpent, "Kushinada's safe... She's safe!" after.
 void GaiaRock_MindReadSusa(void) {
   if (Event_GetFlag(FLAG_SUSA_REJOICES)) {
     FieldEvent_SetMessageId(MsgKushinadaSSafe);
@@ -447,7 +523,7 @@ static inline struct HangingVineSlot *FindSlot(s32 id) {
   return found;
 }
 
-/// The whirlwind reaches the first vine and starts it swinging.
+/// The statue's whirlwind reaches the vine beside it and starts it swinging.
 void GaiaRock_WhirlwindBlowsVine(void) {
   struct HangingVineSlot *slot = FindSlot(ACTOR_FIRST_VINE);
 
@@ -455,7 +531,7 @@ void GaiaRock_WhirlwindBlowsVine(void) {
   slot->swing = TRIG_TURN / 1024;
 }
 
-/// The whirlwind swings the first vine wider.
+/// The statue's whirlwind swings the vine beside it wider.
 void GaiaRock_WhirlwindBlowsVineHarder(void) {
   struct HangingVineSlot *slot = FindSlot(ACTOR_FIRST_VINE);
 
@@ -465,7 +541,8 @@ void GaiaRock_WhirlwindBlowsVineHarder(void) {
 
 void Actor_PlaySoundInView(struct Actor *actor, s32 a);
 
-/// Every 256 frames the wind statue blows a whirlwind westward.
+/// Every 256 frames the stone statue on the upper ledge of the first cliffs
+/// blows a whirlwind west at the hanging vine beside it, setting it swinging.
 void GaiaRock_StatueBlowsWind(void) {
   struct Actor *actor = Actor_Get(ACTOR_WIND_STATUE);
   u8 phase = gFrameCount;
@@ -617,8 +694,8 @@ s32 Scene_PrepareMap(void) {
 
 #include "shared/gaia_rock_trigger_wall_cell.c"
 
-/// Stands statue id risen on the cell under (x, y, z), in 16.16 pixels, and
-/// blocks that cell.
+/// Sets stone face id out of the wall at the hold under (x, y, z), in 16.16
+/// pixels, and makes that hold solid rock.
 void GaiaRock_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
   struct Actor *actor = Actor_Get(id);
   struct MapCell *cell =
@@ -636,8 +713,10 @@ void GaiaRock_PlaceStatue(s32 id, s32 x, s32 y, s32 z) {
   Actor_SetSpriteFlags(actor, 0);
 }
 
-/// The statue id rises under the leader in a burst of rocks and lifts him; once
-/// he is back on the ground, the flag is set.
+/// Stone face id bursts out of the wall of handholds under Felix in a shower
+/// of stones as the screen shakes. He flails, drops onto whatever ground is
+/// under him, the view settles on him, and he is left walking rather than
+/// climbing; flag then keeps the face out.
 void GaiaRock_StatueRisesUnderLeader(s32 id, s32 flag) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   s32 gravity = leader->gravity;
@@ -737,18 +816,18 @@ struct SceneRegion gGaiaRock_StatueSpotsExitRegions[] = {
 
 u32 gSceneExits[] = {
     SCENE_EXITS(GaiaRockSusa),
-    SCENE_EXIT_UNLESS(1, GaiaRockStatueSpots, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAIA_ROCK_SUSA_TO_GAIA_ROCK_STATUE_SPOTS, GaiaRockStatueSpots, GAIA_ROCK_STATUE_SPOTS_FROM_GAIA_ROCK_SUSA, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, GaiaRockSusa, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, GaiaRockSusa, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, GaiaRockInsideFirstAltar, 1, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(5, WorldMap, 39, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAIA_ROCK_SUSA_TO_GAIA_ROCK_INSIDE_FIRST_ALTAR, GaiaRockInsideFirstAltar, GAIA_ROCK_INSIDE_FIRST_ALTAR_FROM_GAIA_ROCK_SUSA, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAIA_ROCK_SUSA_TO_WORLD_MAP, WorldMap, WORLD_MAP_FROM_GAIA_ROCK_SUSA, EXIT_FLAG_NONE),
     SCENE_EXITS(GaiaRockStatueSpots),
-    SCENE_EXIT_UNLESS(1, GaiaRockSusa, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAIA_ROCK_STATUE_SPOTS_TO_GAIA_ROCK_SUSA, GaiaRockSusa, GAIA_ROCK_SUSA_FROM_GAIA_ROCK_STATUE_SPOTS, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(2, GaiaRockStatueSpots, 3, EXIT_FLAG_NONE),
     SCENE_EXIT_UNLESS(3, GaiaRockStatueSpots, 2, EXIT_FLAG_NONE),
-    SCENE_EXIT_UNLESS(4, GaiaRockDancingIdol, 1, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAIA_ROCK_STATUE_SPOTS_TO_GAIA_ROCK_DANCING_IDOL, GaiaRockDancingIdol, GAIA_ROCK_DANCING_IDOL_FROM_GAIA_ROCK_STATUE_SPOTS, EXIT_FLAG_NONE),
     SCENE_EXITS(GaiaRockDancingIdol),
-    SCENE_EXIT_UNLESS(1, GaiaRockStatueSpots, 4, EXIT_FLAG_NONE),
+    SCENE_EXIT_UNLESS(GAIA_ROCK_DANCING_IDOL_TO_GAIA_ROCK_STATUE_SPOTS, GaiaRockStatueSpots, GAIA_ROCK_STATUE_SPOTS_FROM_GAIA_ROCK_DANCING_IDOL, EXIT_FLAG_NONE),
     SCENE_EXITS_END,
 };
 
@@ -813,10 +892,10 @@ struct Trigger gGaiaRock_UnusedTriggers[] = {
 };
 
 struct Trigger gGaiaRock_SusaTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_STEP, 42, FLAG_SUSA_REJOICES, EVENT(GaiaRock_SusaAsksAboutTheSerpent)},
+    {TRIGGER_EXIT, GAIA_ROCK_SUSA_TO_GAIA_ROCK_STATUE_SPOTS, CONDITION_ALWAYS, GAIA_ROCK_SUSA_TO_GAIA_ROCK_STATUE_SPOTS},
+    {TRIGGER_EXIT, GAIA_ROCK_SUSA_TO_GAIA_ROCK_INSIDE_FIRST_ALTAR, CONDITION_ALWAYS, GAIA_ROCK_SUSA_TO_GAIA_ROCK_INSIDE_FIRST_ALTAR},
+    {TRIGGER_EXIT, GAIA_ROCK_SUSA_TO_WORLD_MAP, CONDITION_ALWAYS, GAIA_ROCK_SUSA_TO_WORLD_MAP},
+    {TRIGGER_STEP, CELL_BEHAVIOR_PAST_SUSA, FLAG_SUSA_REJOICES, EVENT(GaiaRock_SusaAsksAboutTheSerpent)},
     {TRIGGER_TALK, ACTOR_SUSA, CONDITION_ALWAYS, EVENT(GaiaRock_TalkToSusa)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SUSA, CONDITION_ALWAYS, EVENT(GaiaRock_MindReadSusa)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_VINE, CONDITION_ALWAYS, 0},
@@ -827,7 +906,7 @@ struct Trigger gGaiaRock_SusaTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_VINE + 5, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_VINE + 6, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_VINE + 7, CONDITION_ALWAYS, 0},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 20, CONDITION_ALWAYS, EVENT(GaiaRock_CycloneClearsWall)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_CAVE_MOUTH_BUSHES, CONDITION_ALWAYS, EVENT(GaiaRock_CycloneClearsWall)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_FIRST_PILLAR, FLAG_FIRST_PILLAR_DROPPED, EVENT(GaiaRock_StartMovingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_FIRST_PILLAR, FLAG_FIRST_PILLAR_DROPPED, EVENT(GaiaRock_FinishMovingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_SECOND_PILLAR, FLAG_SECOND_PILLAR_DROPPED, EVENT(GaiaRock_FinishMovingPillar)},
@@ -836,11 +915,11 @@ struct Trigger gGaiaRock_SusaTriggers[] = {
 };
 
 struct Trigger gGaiaRock_StatueSpotsTriggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {TRIGGER_STEP, 20, FLAG_FIRST_STATUE_RISEN, EVENT(GaiaRock_StepOnFirstStatueSpot)},
-    {TRIGGER_STEP, 21, FLAG_SECOND_STATUE_RISEN, EVENT(GaiaRock_StepOnSecondStatueSpot)},
-    {TRIGGER_STEP, 22, FLAG_THIRD_STATUE_RISEN, EVENT(GaiaRock_StepOnThirdStatueSpot)},
+    {TRIGGER_EXIT, GAIA_ROCK_STATUE_SPOTS_TO_GAIA_ROCK_SUSA, CONDITION_ALWAYS, GAIA_ROCK_STATUE_SPOTS_TO_GAIA_ROCK_SUSA},
+    {TRIGGER_EXIT, GAIA_ROCK_STATUE_SPOTS_TO_GAIA_ROCK_DANCING_IDOL, CONDITION_ALWAYS, GAIA_ROCK_STATUE_SPOTS_TO_GAIA_ROCK_DANCING_IDOL},
+    {TRIGGER_STEP, CELL_BEHAVIOR_LOWEST_STONE_FACE, FLAG_FIRST_STATUE_RISEN, EVENT(GaiaRock_ClimbOntoLowestStoneFace)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_MIDDLE_STONE_FACE, FLAG_SECOND_STATUE_RISEN, EVENT(GaiaRock_ClimbOntoMiddleStoneFace)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_HIGHEST_STONE_FACE, FLAG_THIRD_STATUE_RISEN, EVENT(GaiaRock_ClimbOntoHighestStoneFace)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_VINE, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_VINE + 1, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_FIRST_VINE + 2, CONDITION_ALWAYS, 0},
@@ -852,7 +931,7 @@ struct Trigger gGaiaRock_StatueSpotsTriggers[] = {
 };
 
 struct Trigger gGaiaRock_Triggers[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
+    {TRIGGER_EXIT, GAIA_ROCK_DANCING_IDOL_TO_GAIA_ROCK_STATUE_SPOTS, CONDITION_ALWAYS, GAIA_ROCK_DANCING_IDOL_TO_GAIA_ROCK_STATUE_SPOTS},
     {TRIGGER_TALK, ACTOR_ALTAR, CONDITION_ALWAYS, EVENT(GaiaRock_CheckAltar)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_PUSHED_PILLAR, CONDITION_ALWAYS, EVENT(GaiaRock_StartPushingPillar)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_PUSHED_PILLAR, CONDITION_ALWAYS, EVENT(GaiaRock_FinishPushingPillar)},

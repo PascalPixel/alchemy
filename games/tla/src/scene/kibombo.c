@@ -3759,13 +3759,10 @@ void Kibombo_InitializeHouses(void) {
 
 /// Felix walks west off the ledge by the inn in the south east of the village,
 /// cell (25, 27), and jumps across onto the top of the nearest painted pole;
-/// walking north from cell (19, 8), among the poles in the north of the
-/// village, jumps him on the same way.
-void Kibombo_JumpForward(void) {
-  // XXX: where the jump north from cell (19, 8) lands; a recording of Felix
-  // walking north into that cell would settle it.
-  Field_TryJumpForward();
-}
+/// standing on top of the pole at cell (19, 8), among the poles in the north
+/// of the village, and walking north, he jumps onto the top of the next pole
+/// north.
+void Kibombo_JumpForward(void) { Field_TryJumpForward(); }
 
 void Kibombo_AskAboutFewerWarriors(void);
 void Kibombo_AskAboutRevenge(void);

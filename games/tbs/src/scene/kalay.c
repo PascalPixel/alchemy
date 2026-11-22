@@ -2138,10 +2138,14 @@ static void Kalay_UpdateTunnelPassages(void) {
   }
 }
 
-/// An actor script call, each frame: a tunnel particle swells and drifts, each
-/// frame losing a 256th of its sideways speed and a 16th of its vertical speed.
-/// On its last frame it stops and moves to x 0 at height 0, and then it is
-/// released.
+/// The share of a tunnel particle's sideways and vertical speed that drag takes
+/// each frame, as one part in this many.
+#define TUNNEL_PARTICLE_DRAG_X 256
+#define TUNNEL_PARTICLE_DRAG_Y 16
+
+/// An actor script call, each frame: a tunnel particle swells and drifts,
+/// slowed by drag. On its last frame it stops and moves to x 0 at height 0, and
+/// then it is released.
 // UB: returns nothing, so SC_CALL takes whatever value is left as its result,
 // which is not 0, and calls it again the next frame; UBFIX returns 1.
 #ifdef UBFIX
@@ -2167,8 +2171,8 @@ static void Kalay_UpdateTunnelParticle(struct Actor *particle) {
   particle->y.fixed += particle->velocityY;
   velocityX = particle->velocityX;
   velocityY = particle->velocityY;
-  particle->velocityX = velocityX - velocityX / 256;
-  particle->velocityY = velocityY - velocityY / 16;
+  particle->velocityX = velocityX - velocityX / TUNNEL_PARTICLE_DRAG_X;
+  particle->velocityY = velocityY - velocityY / TUNNEL_PARTICLE_DRAG_Y;
   particle->timer--;
 #ifdef UBFIX
   return 1;

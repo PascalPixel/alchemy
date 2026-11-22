@@ -87,13 +87,13 @@ enum { FLAG_VALE_PARTY_LEFT = 0x815 };
 /// A scene's entrance: where and facing which way the party arrives,
 /// and the camera's bounds there (-1 for none).
 struct SceneEntrance {
-  s16 entrance;     ///< the entrance number the main routine's work names; -1
-                    ///< ends
-  s16 requiredFlag; ///< a flag that must be set, or -1 for none
-  s16 x;            ///< pixels
-  s16 y;            ///< pixels
-  s16 z;            ///< pixels
-  u16 facing;       ///< 1/65536 turns (enum Facing)
+  /// The entrance number the main routine's work names; -1 ends the table.
+  s16 entrance;
+  s16 requiredFlag;      ///< a flag that must be set, or -1 for none
+  s16 x;                 ///< pixels
+  s16 y;                 ///< pixels
+  s16 z;                 ///< pixels
+  u16 facing;            ///< 1/65536 turns (enum Facing)
   s16 unusedAfterFacing; ///< 0 in every table; not read
   s16 cameraLeft;        ///< pixels
   s16 cameraTop;         ///< pixels
@@ -137,10 +137,11 @@ STATIC_ASSERT(offsetof(struct SceneEntrance, cameraLeft) == 14);
 enum {
   /// Runs nothing and returns 0; nothing in the game sends the party there.
   SEQUENCE_NONE = 507,
-  SEQUENCE_SLOTS = 508, ///< Lucky Wheels, from its room in Tolbi,
-                        ///< SceneId_StuccoRoomsC (lucky_wheels.c)
-  SEQUENCE_DICE = 509,  ///< Lucky Dice, from its room in Tolbi,
-                        ///< SceneId_StuccoRoomsC (lucky_dice.c)
+  /// Lucky Wheels, from its room in Tolbi, SceneId_StuccoRoomsC
+  /// (lucky_wheels.c).
+  SEQUENCE_SLOTS = 508,
+  /// Lucky Dice, from its room in Tolbi, SceneId_StuccoRoomsC (lucky_dice.c).
+  SEQUENCE_DICE = 509,
   /// A battle; the entrance is the formation, and the result -1 a
   /// defeat.
   SEQUENCE_BATTLE = 510
@@ -232,8 +233,8 @@ struct Trigger {
   /// What the trigger answers: an actor id, a cell behavior, a treasure spot id
   /// or a raised value.
   s16 subject;
-  s16 condition; ///< CONDITION_ALWAYS, a flag | CONDITION_FLAG_SET set, else
-                 ///< the flag clear
+  /// CONDITION_ALWAYS, a flag | CONDITION_FLAG_SET set, else the flag clear.
+  s16 condition;
   /// A message below TRIGGER_RESULT_MESSAGE_END, else an event; for an exit,
   /// the exit kind its scene's exit table matches, and for an examine trigger,
   /// a FIND_ value.
@@ -290,7 +291,7 @@ enum ExitStyle {
 #define FIELD_RAISED_TRIGGER_MENUS 250
 
 /// A step trigger that needs the leader to have pushed against it for more
-/// than 12 frames, or 2 with STEP_TRIGGER_FLAG_QUICK.
+/// than FIELD_PUSH_FRAMES frames, or 2 with STEP_TRIGGER_FLAG_QUICK.
 #define STEP_TRIGGER_FLAG_WALKING 0x200
 /// With STEP_TRIGGER_FLAG_WALKING, 2 frames of pushing are enough.
 #define STEP_TRIGGER_FLAG_QUICK 0x800
@@ -373,7 +374,10 @@ enum PsynergyEventTarget {
 #define TALK_TRIGGER_FACING(facing)                                            \
   (TRIGGER_TALK | TRIGGER_FLAG_FACING | (facing))
 
-/// What an examine trigger is on, EXAMINE_TRIGGER()'s control bits 8..4.
+/// What an examine trigger is on, EXAMINE_TRIGGER()'s control bits 8..4: it
+/// picks the line Field_ExamineCell shows before the search's result,
+/// MsgTileChecked + target ("checked the jar..."), and EXAMINE_SILENT
+/// shows none.
 enum ExamineTarget {
   EXAMINE_SILENT = 0,
   EXAMINE_CHEST = 1,

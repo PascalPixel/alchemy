@@ -45,8 +45,8 @@ enum ItemFlags {
   /// MsgRareSellOffer, and second rank among the spoils
   /// (BattleSpoils_RankItem).
   ITEM_RARE = 4,
-  /// An important item: never dropped, worth nothing to a shop
-  /// (Shop_SalePrice), and first among a battle's drops kept.
+  /// "An important item" on the Item screen: never dropped, worth nothing to
+  /// a shop (Shop_SalePrice), and first among a battle's drops kept.
   ITEM_INDISPENSABLE = 8,
   ITEM_STACKABLE = 16 ///< kept in one inventory entry with a quantity
 };
@@ -71,8 +71,8 @@ enum EquipmentGroup {
 /// An item's type (struct ItemDefinition's type, item_table.c's type field).
 /// A unit equips one item of each type, except Psynergy items.
 enum ItemType {
-  ITEM_TYPE_NONE =
-      0, ///< not equipment: Herb, Game Ticket, the keys, unused rows
+  /// Not equipment: Herb, Game Ticket, the keys, unused rows.
+  ITEM_TYPE_NONE = 0,
   ITEM_TYPE_WEAPON = 1, ///< swords, axes, maces, rods and staffs
   ITEM_TYPE_ARMOR = 2,  ///< armor, clothes and robes
   ITEM_TYPE_SHIELD = 3, ///< shields, gloves and armlets
@@ -91,6 +91,8 @@ enum ItemType {
 /// stats (ClassDefinition) and the EQUIP_EFFECT_SCALE_ effects are in tenths.
 #define STAT_SCALE_ONE 10
 
+/// What an effect of an equipped item does (EquipEffect.kind); the Item screen
+/// names each by MsgEquipEffectName + kind ("Max HP", "Luck").
 enum EquipEffectKind {
   EQUIP_EFFECT_NONE,
   EQUIP_EFFECT_ADD_HP,
@@ -117,7 +119,10 @@ enum EquipEffectKind {
   EQUIP_EFFECT_ADD_MERCURY_RESIST,
   EQUIP_EFFECT_ADD_MARS_RESIST,
   EQUIP_EFFECT_ADD_JUPITER_RESIST,
-  EQUIP_EFFECT_ADD_UNLEASH_CHANCE, ///< percent added to the weapon's unleash
+  /// "Critical Hits increase": each point adds a percent to the weapon's
+  /// unleash chance and half a percent to a plain attack's chance of a
+  /// critical hit.
+  EQUIP_EFFECT_ADD_UNLEASH_CHANCE,
   /// Summed by Unit_Calculate into equipBonus[1]; no item of item_table.c has
   /// it, the item menu draws no line for it, and nothing reads the total.
   EQUIP_EFFECT_ADD_COUNTERSTRIKE_RATE,
@@ -161,9 +166,9 @@ struct ItemDefinition {
   u16 unleashAbility; ///< the action a weapon unleashes, or 0
   u8 padding[4];
   long element; ///< a weapon's attack element; ELEMENT_NONE for none
-  struct EquipEffect
-      effects[EQUIP_EFFECT_SLOTS]; ///< what it does while equipped
-  u16 abilityId;                   ///< the ability used, or taught as Psynergy
+  /// What it does while equipped.
+  struct EquipEffect effects[EQUIP_EFFECT_SLOTS];
+  u16 abilityId; ///< the ability used, or taught as Psynergy
 };
 
 STATIC_ASSERT(sizeof(struct ItemDefinition) == 44);

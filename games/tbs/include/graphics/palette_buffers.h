@@ -8,23 +8,24 @@
 #include "edition.h"
 #include "static_assert.h"
 #include "types.h"
+#include "system/io_reg.h"
 
-/// The colour channels a TitlePaletteFade moves: B, G and R for each of its 512
-/// colours.
-#define TITLE_PALETTE_FADE_CHANNELS (512 * 3)
+/// The colour channels a TitlePaletteFade moves: B, G and R for each of the
+/// palette's colours.
+#define TITLE_PALETTE_FADE_CHANNELS (PLTT_COLORS * 3)
 
 /// The background colours a PaletteFade moves, palettes 0 to 13; as many
 /// sprite colours follow them.
-#define PALETTE_FADE_BG_COLORS 224
+#define PALETTE_FADE_BG_COLORS (14 * PALETTE_COLORS)
 /// The colour channels a PaletteFade moves: B, G and R for each of its
 /// background and sprite colours.
 #define PALETTE_FADE_CHANNELS (2 * PALETTE_FADE_BG_COLORS * 3)
 
-/// A palette fade for all 512 palette colours: the source palette, the shown
+/// A palette fade for every palette colour: the source palette, the shown
 /// and target colour channels, their steps, and two pages of packed colours.
 struct TitlePaletteFade {
-  /// The source palette, RGB555: 256 BG colours, then 256 sprite colours.
-  u16 palette[512];
+  /// The source palette, RGB555: the BG colours, then the sprite colours.
+  u16 palette[PLTT_COLORS];
   /// The shown colours, as B, G and R channels shifted up 10 bits, three a
   /// colour.
   u16 current[TITLE_PALETTE_FADE_CHANNELS];
@@ -33,7 +34,7 @@ struct TitlePaletteFade {
   u16 delta[TITLE_PALETTE_FADE_CHANNELS];  ///< added to each current channel
                                            ///< each frame
   /// Two pages of RGB555 colours: one is built while the other is queued.
-  u16 packed[2][512];
+  u16 packed[2][PLTT_COLORS];
   u8 page;     ///< the packed page queued this frame
   s8 duration; ///< frames; 0 when the colours are not moving
   u8 step;     ///< frames
@@ -51,9 +52,9 @@ STATIC_ASSERT(offsetof(struct TitlePaletteFade, page) == 12288);
 /// palettes: the source palette, the shown and target colour channels, their
 /// per-frame steps, and two pages of packed RGB555 colours queued each frame.
 struct PaletteFade {
-  /// The source palette, RGB555: 224 BG colours, then 224 sprite colours;
+  /// The source palette, RGB555: the BG colours, then as many sprite colours;
   /// palette[0] is the backdrop.
-  u16 palette[448];
+  u16 palette[2 * PALETTE_FADE_BG_COLORS];
   /// The shown colours, as B, G and R channels shifted up 10 bits, three a
   /// colour.
   u16 current[PALETTE_FADE_CHANNELS];
@@ -62,7 +63,7 @@ struct PaletteFade {
   u16 delta[PALETTE_FADE_CHANNELS];  ///< added to each current channel each
                                      ///< frame
   /// Two pages of RGB555 colours: one is built while the other is queued.
-  u16 packed[2][448];
+  u16 packed[2][2 * PALETTE_FADE_BG_COLORS];
   u8 page;     ///< the packed page queued this frame
   s8 duration; ///< frames; 0 when the colours are not moving
   s8 step;     ///< frames
@@ -80,8 +81,8 @@ extern u16 gTitleIntro_ChannelCurve[32];
 extern u16 gTitleIntro_ChannelCurveLight[32];
 extern u16 gTitleIntro_ChannelCurveContrast[32];
 
-/// A palette tint, a palette fade's build mode: below 0x8000 one RGB555 colour
-/// for all.
+/// A palette tint, a palette fade's build mode: below PALETTE_TINT_FROM_SOURCE,
+/// one RGB555 colour for all.
 enum PaletteTint {
   /// The backdrop colour (palette RAM's first colour) for all.
   PALETTE_TINT_FROM_SOURCE = 0x8000,

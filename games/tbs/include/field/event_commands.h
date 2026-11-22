@@ -1,6 +1,11 @@
 #ifndef ALCHEMY_EVENT_COMMANDS_H
 #define ALCHEMY_EVENT_COMMANDS_H
 
+/// @file
+/// What event_commands.c declares for the files that use it: the commands
+/// events run, moving on the field, weather and line scrolls, Djinn joining
+/// the party, each field Psynergy and its effects, and the World Map screen.
+
 #include "fixed_math.h"
 #include "types.h"
 #include "field/field_particle.h"
@@ -13,12 +18,12 @@ struct Actor;
 
 /// A step of the current field Psynergy (FieldPsynergy_RunHandler).
 enum FieldPsynergyHandler {
-  FIELD_PSYNERGY_HANDLER_UNTARGETED =
-      0, ///< casts it with no target (FieldPsynergy_Run)
+  /// Casts it with no target (FieldPsynergy_Run).
+  FIELD_PSYNERGY_HANDLER_UNTARGETED = 0,
   /// Casts it on its target, secondActorId (FieldPsynergy_Dispatch).
   FIELD_PSYNERGY_HANDLER_ON_TARGET = 1,
   FIELD_PSYNERGY_HANDLER_FINISH = 2,
-  FIELD_PSYNERGY_HANDLER_EXTRA = 3 ///< runs its kind's extra handler
+  FIELD_PSYNERGY_HANDLER_EXTRA = 3 ///< Runs its kind's extra handler.
 };
 
 /// A field Psynergy, as the field kind: the type column of
@@ -26,6 +31,7 @@ enum FieldPsynergyHandler {
 enum FieldPsynergy {
   FIELD_PSYNERGY_MOVE = 1,
   FIELD_PSYNERGY_MIND_READ = 2,
+  /// Ply, Ply Well and Pure Ply.
   FIELD_PSYNERGY_PLY = 3,
   FIELD_PSYNERGY_FORCE = 4,
   FIELD_PSYNERGY_DOUSE = 5,
@@ -310,7 +316,7 @@ void FieldPsynergy_GreyMindReadPalette(void);
 void FieldPsynergy_RestoreMindReadPalette(void);
 /// What Input_GetDpadAngle returns when no direction, or a diagonal, is held:
 /// the blank entries of gFieldEffect_CyclePatternWords.
-#define DPAD_ANGLE_NONE 0xffff
+#define DPAD_ANGLE_NONE 65535
 s32 Input_GetDpadAngle(u32 unused);
 void FieldEffect_UpdateMoveHand(struct Actor *actor);
 void FieldPsynergy_SteerPushedTarget(s32 targetId);

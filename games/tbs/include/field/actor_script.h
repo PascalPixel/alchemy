@@ -61,8 +61,8 @@ enum ActorScriptCommand {
 /// A jump's operand: the label SC_LABEL(n), which ActorScript_FindLabel
 /// matches without bit 30.
 #define SC_TO(n) (s32)(0xc0000000 | (n) << 16)
-#define SC_TOP 0          ///< Script start
-#define SC_FOREVER 0xffff ///< An SC_LOOP count that never runs out
+#define SC_TOP 0         ///< Script start
+#define SC_FOREVER 65535 ///< An SC_LOOP count that never runs out
 
 #define SC_WAIT(n) SCRIPT_CMD_WAIT, (n) ///< Wait n frames.
 #define SC_SYNC SCRIPT_CMD_SYNC         ///< Wait for arrival.
@@ -118,7 +118,7 @@ enum ActorScriptCommand {
 /// Switch the sprites to animation v.
 #define SC_ANIMATION(v) SCRIPT_CMD_ANIMATION, (v)
 #define SC_NOP(v) SCRIPT_CMD_NOP, (v) ///< Skip its operand.
-#define SC_SE(n) SCRIPT_CMD_SE, (n)   ///< Play sound n
+#define SC_SE(n) SCRIPT_CMD_SE, (n)   ///< Play sound n.
 #define SC_BASE SCRIPT_CMD_BASE       ///< Restart from the next word.
 /// Hide the sprites (ACTOR_SPRITE_NONE).
 #define SC_HIDE_SPRITES SCRIPT_CMD_HIDE_SPRITES

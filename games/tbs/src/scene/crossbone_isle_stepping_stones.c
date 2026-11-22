@@ -1241,8 +1241,7 @@ static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
   struct EffectOptions options;
   s32 velocityX;
   FIXED velocityY;
-  u32 draw;
-  u32 mask;
+  u32 angle;
 
   if ((gFrameCount & 2) != 0)
     return;
@@ -1256,9 +1255,8 @@ static void CrossboneIsleSteppingStones_SpawnFrostParticle(void) {
   options.targetScaleY = 8 * FIXED_ONE / 5;
   // A random angle, of which options.rotation keeps the top four bits: a
   // random sixteenth of a turn.
-  draw = Random_Next();
-  mask = 0x0ffff000 & draw;
-  options.rotation = mask;
+  angle = Random_Next() & 0x0ffff000;
+  options.rotation = angle;
   options.update = CrossboneIsleSteppingStones_UpdateDampedParticle;
 
   velocityX = -(INTtoFIXED(Random_Below(5)) + toFIXED(6));

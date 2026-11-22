@@ -75,7 +75,7 @@ u32 gKolimaForestFloodgate_NewLevelScroll[3] BSS_DATA;
 /// The percent chance that a line of the river shows its new level: 0 when the
 /// rumble starts (SE_WATER_LEVEL), then a point higher each frame up to 101
 /// (KolimaForestFloodgate_FlipFloodgateSwitch).
-u32 gKolimaForestFloodgate_NewLevelChance BSS_DATA;
+u32 gKolimaForestFloodgate_NewLevelPercent BSS_DATA;
 
 struct Actor;
 
@@ -251,16 +251,16 @@ static void KolimaForestFloodgate_DrawWaterLevel(void) {
   KolimaForestFloodgate_MarkShortLogCells();
 }
 
-/// HBlank callback: gives each line of the river, at random with
-/// gKolimaForestFloodgate_NewLevelChance, the scroll that shows its new level.
-/// The HBlank after line n sets line n + 1's scroll.
+/// HBlank callback: gives each line of the river, with a chance of
+/// gKolimaForestFloodgate_NewLevelPercent in 100, the scroll that shows its new
+/// level. The HBlank after line n sets line n + 1's scroll.
 static void KolimaForestFloodgate_ChangeRiverLines(void) {
   u16 line = REG_VCOUNT;
   u32 *source = (u32 *)&gBgScroll[1];
   volatile u32 *destination = (volatile u32 *)&REG_BG1HOFS;
 
   if (line == DISPLAY_TOTAL_LINES - 1 || line < RIVER_LAST_LINE) {
-    if ((Random_Below(100)) < gKolimaForestFloodgate_NewLevelChance) {
+    if (Random_Below(100) < gKolimaForestFloodgate_NewLevelPercent) {
       source = gKolimaForestFloodgate_NewLevelScroll;
     }
   }
@@ -290,7 +290,7 @@ static void KolimaForestFloodgate_CaptureNewLevelScroll(void) {
 /// In Kolima Forest (SceneId_KolimaForestFloodgate), searching the Floodgate
 /// Switch flips it. "Isaac flipped the switch."
 static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
-  s32 nextChance;
+  s32 nextPercent;
 
   Event_Start();
   FieldCamera_SetSpeed(1);
@@ -356,17 +356,17 @@ static void KolimaForestFloodgate_FlipFloodgateSwitch(void) {
 
   // Each frame captures the scroll, and the HBlank handler shows the river's
   // lines at their new level, more often as the chance climbs to 100%.
-  gKolimaForestFloodgate_NewLevelChance = 0;
+  gKolimaForestFloodgate_NewLevelPercent = 0;
   Task_AddFrame(KolimaForestFloodgate_CaptureNewLevelScroll, TASK_PASS_FRAME);
   wait(1);
   Irq_SetHandler(IRQ_HBLANK, 0, KolimaForestFloodgate_ChangeRiverLines);
   Sound_Play(SE_WATER_LEVEL);
-  gKolimaForestFloodgate_NewLevelChance = 0;
+  gKolimaForestFloodgate_NewLevelPercent = 0;
   do {
     wait(1);
-    nextChance = gKolimaForestFloodgate_NewLevelChance + 1;
-    gKolimaForestFloodgate_NewLevelChance += 1;
-  } while (nextChance <= 100);
+    nextPercent = gKolimaForestFloodgate_NewLevelPercent + 1;
+    gKolimaForestFloodgate_NewLevelPercent += 1;
+  } while (nextPercent <= 100);
   Sound_Play(SOUND_FADE_OUT_ACTION_SE);
   if (*gKolimaForestFloodgate_WaterHigh == 0) {
     MapGrid_DrawCellPanel(9, 19, 16, 5, *gKolimaForestFloodgate_WaterHigh, 9,

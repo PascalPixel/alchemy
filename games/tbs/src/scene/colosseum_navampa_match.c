@@ -280,7 +280,7 @@ enum { PISTON_COUNT = 5, PISTON_SPACING = 32 };
 /// The Wall Wedge pistons' animations (piston.png). Each piston is two actors:
 /// its body, and PISTON_COUNT actors on, its tip, which shows below the body
 /// when it is all the way out and plays the body's animation +
-/// PISTON_TIP_ANIMATIONS.
+/// PISTON_ANIMATION_TIP.
 enum PistonAnimation {
   PISTON_ANIMATION_IN = 1,
   PISTON_ANIMATION_HALF_OUT = 2,
@@ -289,7 +289,7 @@ enum PistonAnimation {
   PISTON_ANIMATION_PUSH_OUT = 5,      ///< from half out to all the way out
   PISTON_ANIMATION_PULL_HALF_IN = 6,  ///< from out to half out
   PISTON_ANIMATION_PULL_IN = 7,       ///< from half out to in
-  PISTON_TIP_ANIMATIONS = 8
+  PISTON_ANIMATION_TIP = 8
 };
 
 /// The cells where the long log's ride starts
@@ -324,7 +324,7 @@ static void ColosseumNavampaMatch_UpdateWallWedge(void) {
       kind = gColosseumNavampaMatch_WallWedgeCycle
           [gColosseumNavampaMatch_WallWedgeStep][i - ACTOR_FIRST_PISTON];
       Actor_SetAnimation(i, kind);
-      Actor_SetAnimation(i + PISTON_COUNT, kind + PISTON_TIP_ANIMATIONS);
+      Actor_SetAnimation(i + PISTON_COUNT, kind + PISTON_ANIMATION_TIP);
       MapGrid_CopyCellAttributeRect(32, 11, 1, 2,
                                     (i - ACTOR_FIRST_PISTON) * 2 + 33, 11);
       if (kind != PISTON_ANIMATION_PULL_IN) {
@@ -878,13 +878,14 @@ ColosseumNavampaMatch_UnusedAskToControlCharacter(s32 characterId) {
 /// Reaching Colosseum Final 3's arena, the leader takes a prize and fights
 /// Navampa.
 static void ColosseumNavampaMatch_ReachArena(void) {
-  s32 place;
+  s32 opponentFirst;
   s32 i;
-  s32 last = 4;
+  s32 opponentFirstSlot = 4;
   Colosso_NoOp();
   Event_Start();
-  place = Colosso_TakePrize(ITEM_CLAYMORE, ITEM_HUNTERS_SWORD);
+  opponentFirst = Colosso_TakePrize(ITEM_CLAYMORE, ITEM_HUNTERS_SWORD);
   Colosso_WaitForOpponentToFinish();
+  // Up to ten waits of 300 frames while the opponent holds up his prize.
   for (i = 0; i < 10; i++) {
     Actor_WaitForScriptEndById(ACTOR_OPPONENT);
   }
@@ -906,7 +907,7 @@ static void ColosseumNavampaMatch_ReachArena(void) {
   Actor_SetAnimation(ACTOR_OPPONENT, WARRIOR_ANIMATION_FIGHTING_STANCE);
   Event_Wait(10);
   Field_RequestBattleFromEncounterTable(ENCOUNTER_ZONE_COLOSSO,
-                                        last - place + 1);
+                                        opponentFirstSlot - opponentFirst + 1);
   Battle_SetType(BATTLE_TYPE_SCRIPTED);
   Event_SetAfterBattleDestination(SCENE_COLOSSEUM_NAVAMPA_MATCH,
                                   COLOSSEUM_NAVAMPA_MATCH_AFTER_MATCH_WON);
@@ -1035,7 +1036,7 @@ s32 Scene_Initialize(void) {
       actor->motionFlags = 0;
       actor->y.fixed = toFIXED(32);
       Actor_SelectAnimation(actor,
-                            PISTON_ANIMATION_HALF_OUT + PISTON_TIP_ANIMATIONS);
+                            PISTON_ANIMATION_HALF_OUT + PISTON_ANIMATION_TIP);
       MapGrid_CopyCellAttributes(74, 12, 1, 1, i * 2 - 3, 11);
     }
     Actor_SetAnimation(ACTOR_WALL_OPERATOR, 10);

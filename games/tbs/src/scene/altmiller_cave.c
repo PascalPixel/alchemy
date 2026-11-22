@@ -634,12 +634,9 @@ static void AltmillerCave_SpinLights(void) {
   } else if (phase == WHEEL_STOPPING) {
     s32 chosenLight = CAVE_SIGNED_STATE(CAVE_CHOSEN_LIGHT);
     s32 chosenAngle = Math_Divide(chosenLight * TRIG_TURN, LIGHT_COUNT);
+    s16 fromTop = wheel->angle - chosenAngle - DEGtoANG(90);
 
-    // The angle from the chosen light to the top, as a halfword, within
-    // WHEEL_LOW_SPEED - 1 either way.
-    if ((u32)(((wheel->angle - chosenAngle) << 16) +
-              ((WHEEL_LOW_SPEED - 1 - DEGtoANG(90)) << 16)) <=
-        (2 * (WHEEL_LOW_SPEED - 1)) << 16) {
+    if (fromTop > -WHEEL_LOW_SPEED && fromTop < WHEEL_LOW_SPEED) {
       wheel->angle = chosenAngle + DEGtoANG(90);
       wheel->phase = WHEEL_STOPPED;
       wheel->speed = 0;

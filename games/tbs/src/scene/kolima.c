@@ -445,11 +445,10 @@ static void Kolima_LowerBridge(void) {
       Actor_SetSpriteFlags(debris, 0);
       debris->sprite->image.priority = 0;
       debris->timer = (Random_Below(40)) + 40;
-      debris->velocityX = (s32)((toFIXED(debrisIndex & 3) + toFIXED(1))) >> 1;
+      debris->velocityX = (toFIXED(debrisIndex & 3) + toFIXED(1)) >> 1;
       debris->velocityZ = toFIXED(1);
       if (debrisIndex & 1) {
-        debris->velocityX =
-            -((s32)(toFIXED(debrisIndex & 3) + toFIXED(1)) >> 1);
+        debris->velocityX = -((toFIXED(debrisIndex & 3) + toFIXED(1)) >> 1);
       }
       Actor_SelectAnimation(debris, 1);
       Actor_StartScript(debris, gKolima_DebrisScript);

@@ -26,7 +26,7 @@ gScenes:
 	scene StaffCredit, 0x64c, AREA_STAFF_CREDIT, SCENE_TYPE_OTHER, 1, 0
 	scene VenusLighthouseEntrance, 0x64d, AREA_VENUS_LIGHTHOUSE, SCENE_TYPE_TOWN, 3, 1
 	scene VenusLighthouse, 0x64e, AREA_VENUS_LIGHTHOUSE, SCENE_TYPE_TOWN, 4, 1
-	scene SuhallaGateHouse, 0x64f, AREA_SUHALLA_GATE, SCENE_TYPE_OTHER, 5, 1
+	scene SuhallaGateRoad, 0x64f, AREA_SUHALLA_GATE, SCENE_TYPE_OTHER, 5, 1
 	scene SuhallaGateAmbush, 0x64f, AREA_SUHALLA_GATE, SCENE_TYPE_OTHER, 6, 1
 	scene SuhallaGatePsynergyStone, 0x64f, AREA_SUHALLA_GATE, SCENE_TYPE_OTHER, 7, 1
 	scene Idejima, 0x650, AREA_IDEJIMA, SCENE_TYPE_TOWN, 8, 1

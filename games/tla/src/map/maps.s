@@ -7,7 +7,7 @@
 	.include "games/tla/src/map/lobby/map.inc"
 	.include "games/tla/src/map/venus_lighthouse_entrance/map.inc"
 	.include "games/tla/src/map/venus_lighthouse/map.inc"
-	.include "games/tla/src/map/suhalla_gate_house/map.inc"
+	.include "games/tla/src/map/suhalla_gate_road/map.inc"
 	.include "games/tla/src/map/suhalla_gate_ambush/map.inc"
 	.include "games/tla/src/map/suhalla_gate_psynergy_stone/map.inc"
 	.include "games/tla/src/map/idejima/map.inc"

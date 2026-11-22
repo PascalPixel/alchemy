@@ -22,8 +22,8 @@ extern char SceneId_VenusLighthouseEntrance;
 #define SCENE_VENUS_LIGHTHOUSE_ENTRANCE ((s32)&SceneId_VenusLighthouseEntrance)
 extern char SceneId_VenusLighthouse;
 #define SCENE_VENUS_LIGHTHOUSE ((s32)&SceneId_VenusLighthouse)
-extern char SceneId_SuhallaGateHouse;
-#define SCENE_SUHALLA_GATE_HOUSE ((s32)&SceneId_SuhallaGateHouse)
+extern char SceneId_SuhallaGateRoad;
+#define SCENE_SUHALLA_GATE_ROAD ((s32)&SceneId_SuhallaGateRoad)
 extern char SceneId_SuhallaGateAmbush;
 #define SCENE_SUHALLA_GATE_AMBUSH ((s32)&SceneId_SuhallaGateAmbush)
 extern char SceneId_SuhallaGatePsynergyStone;

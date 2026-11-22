@@ -654,12 +654,12 @@ Resource_DirectoryTable:
 	resource , Tileset_VenusLighthouseTilesB
 	resource , Tileset_VenusLighthouseTilesC
 	resource , Tileset_VenusLighthouseTilesD
-	resource , Field_SuhallaGateHouse
-	resource , Tileset_SuhallaGateHousePalette
-	resource , Tileset_SuhallaGateHouseTilesA
-	resource , Tileset_SuhallaGateHouseTilesB
-	resource , Tileset_SuhallaGateHouseTilesC
-	resource , Tileset_SuhallaGateHouseTilesD
+	resource , Field_SuhallaGateRoad
+	resource , Tileset_SuhallaGateRoadPalette
+	resource , Tileset_SuhallaGateRoadTilesA
+	resource , Tileset_SuhallaGateRoadTilesB
+	resource , Tileset_SuhallaGateRoadTilesC
+	resource , Tileset_SuhallaGateRoadTilesD
 	resource , Field_SuhallaGateAmbush
 	resource , Field_SuhallaGatePsynergyStone
 	resource , Tileset_SuhallaGatePsynergyStonePalette

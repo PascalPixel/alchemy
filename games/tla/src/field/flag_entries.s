@@ -29,7 +29,7 @@ gFlagEntries:
 	place 12, 0x00, SPRITE_UNSEEN_MARKER, 10394, 9380, 90, -1, SceneId_OseniaCliffs, -1, 0, -1
 	place 13, 0x00, SPRITE_WORLD_MAP_CLIFFS, 10412, 9395, 90, -1, SceneId_OseniaCliffs, -1, 0, -1
 	place 14, 0x11, SPRITE_WORLD_MAP_FOREST_VILLAGE, 11125, 10660, 90, -1, SceneId_Mikasalla, -1, SceneId_Mikasalla, -1
-	place 15, 0x11, SPRITE_WORLD_MAP_FOREST_VILLAGE, 12068, 10440, 90, -1, SceneId_GarohBlocks, -1, SceneId_GarohBlocks, -1
+	place 15, 0x11, SPRITE_WORLD_MAP_FOREST_VILLAGE, 12068, 10440, 90, -1, SceneId_GarohWayUp, -1, SceneId_GarohWayUp, -1
 	place 16, 0x02, SPRITE_WORLD_MAP_AIRS_ROCK, 11880, 10064, 90, -1, SceneId_AirsRockStormBrandChest, -1, 0, -1
 	place 19, 0x00, SPRITE_WORLD_MAP_CAVE, 11910, 9700, 90, -1, SceneId_YampiDesertGuardianRingChest, -1, 0, -1
 	place 20, 0x11, SPRITE_WORLD_MAP_TOWN, 11633, 9366, 90, -1, SceneId_Alhafra, -1, SceneId_Alhafra, -1

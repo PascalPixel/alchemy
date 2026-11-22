@@ -861,9 +861,9 @@ Resource_DirectoryTable:
 	resource , Tileset_MikasallaRoomsSanctumTilesD
 	resource , Field_Garoh
 	resource , Tileset_PaletteGaroh
-	resource , Field_GarohHypnosSwordChest
-	resource , Tileset_PaletteGarohHypnosSwordChest
-	resource , Field_GarohBlocks
+	resource , Field_GarohPath
+	resource , Tileset_PaletteGarohPath
+	resource , Field_GarohWayUp
 	resource , Field_GarohTunnels
 	resource , Tileset_PaletteGaroh4
 	resource , Field_GarohWerewolfCave

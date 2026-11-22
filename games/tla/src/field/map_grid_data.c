@@ -449,8 +449,8 @@ const struct MapResources gMaps[] = {
     {217, 218, {219, 220, 221}, 222}, // mikasalla_rooms
     {223, 224, {225, 226, 227}, 228}, // mikasalla_rooms_sanctum
     {229, 230, {197, 209, 210}, 200}, // garoh
-    {231, 232, {197, 209, 210}, 200}, // garoh_hypnos_sword_chest
-    {233, 232, {197, 209, 210}, 200}, // garoh_blocks
+    {231, 232, {197, 209, 210}, 200}, // garoh_path
+    {233, 232, {197, 209, 210}, 200}, // garoh_way_up
     {234, 235, {79, 80, 81}, 82}, // garoh_tunnels
     {236, 237, {79, 80, 81}, 82}, // garoh_werewolf_cave
     {223, 238, {225, 226, 227}, 228}, // mikasalla_rooms_sanctum

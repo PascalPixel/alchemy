@@ -80,8 +80,8 @@ gScenes:
 	scene MikasallaRoomsHouses, 0x65e, AREA_MIKASALLA, SCENE_TYPE_TOWN, 53, 0
 	scene MikasallaRoomsSanctum, 0x65e, AREA_MIKASALLA, SCENE_TYPE_TOWN, 54, 0
 	scene Garoh, 0x65f, AREA_GAROH, SCENE_TYPE_TOWN, 55, 1
-	scene GarohHypnosSwordChest, 0x65f, AREA_GAROH, SCENE_TYPE_TOWN, 56, 1
-	scene GarohBlocks, 0x65f, AREA_GAROH, SCENE_TYPE_TOWN, 57, 1
+	scene GarohPath, 0x65f, AREA_GAROH, SCENE_TYPE_TOWN, 56, 1
+	scene GarohWayUp, 0x65f, AREA_GAROH, SCENE_TYPE_TOWN, 57, 1
 	scene GarohTunnels, 0x65f, AREA_GAROH, SCENE_TYPE_TOWN, 58, 1
 	scene GarohWerewolfCave, 0x65f, AREA_GAROH, SCENE_TYPE_TOWN, 59, 1
 	scene GarohRoomsHouses, 0x660, AREA_GAROH, SCENE_TYPE_TOWN, 61, 0

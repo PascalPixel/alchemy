@@ -191,10 +191,10 @@ extern char SceneId_MikasallaRoomsSanctum;
 #define SCENE_MIKASALLA_ROOMS_SANCTUM ((s32)&SceneId_MikasallaRoomsSanctum)
 extern char SceneId_Garoh;
 #define SCENE_GAROH ((s32)&SceneId_Garoh)
-extern char SceneId_GarohHypnosSwordChest;
-#define SCENE_GAROH_HYPNOS_SWORD_CHEST ((s32)&SceneId_GarohHypnosSwordChest)
-extern char SceneId_GarohBlocks;
-#define SCENE_GAROH_BLOCKS ((s32)&SceneId_GarohBlocks)
+extern char SceneId_GarohPath;
+#define SCENE_GAROH_PATH ((s32)&SceneId_GarohPath)
+extern char SceneId_GarohWayUp;
+#define SCENE_GAROH_WAY_UP ((s32)&SceneId_GarohWayUp)
 extern char SceneId_GarohTunnels;
 #define SCENE_GAROH_TUNNELS ((s32)&SceneId_GarohTunnels)
 extern char SceneId_GarohWerewolfCave;

@@ -584,16 +584,26 @@ static void FuchinTemple_StudentAsksAboutFeh(void) {
   Event_End();
 }
 
+/// The training tree's sprite rotation in sixteenths of a turn (FACING_STEP)
+/// as it falls sideways: it stands at TREE_STANDING_STEP and lies a quarter
+/// turn to either side.
+enum {
+  TREE_STANDING_STEP = DEGtoANG(180) / FACING_STEP,
+  TREE_FALLEN_WEST_STEP = DEGtoANG(90) / FACING_STEP,
+  TREE_FALLEN_EAST_STEP = DEGtoANG(270) / FACING_STEP
+};
+
 /// Rotates the training tree through its westward arc and scatters particles.
 static void FuchinTemple_KnockTreeDownWest(void) {
   struct Actor *tree = Actor_Get(ACTOR_TRAINING_TREE);
   u32 turnStep;
   s32 angle;
 
-  for (turnStep = 8; turnStep > 3; turnStep--) {
+  for (turnStep = TREE_STANDING_STEP; turnStep >= TREE_FALLEN_WEST_STEP;
+       turnStep--) {
     angle = turnStep * FACING_STEP;
     tree->sprite->rotation = angle;
-    wait((turnStep - 4) * 2);
+    wait((turnStep - TREE_FALLEN_WEST_STEP) * 2);
     tree->x.fixed += Trig_Cos(angle) * 6;
     tree->z.fixed += Trig_Sin(angle) * 6;
   }
@@ -621,10 +631,11 @@ static void FuchinTemple_KnockTreeDownEast(void) {
   s32 angle;
 
   tree = Actor_Get(ACTOR_TRAINING_TREE);
-  for (turnStep = 8; turnStep <= 12; turnStep++) {
+  for (turnStep = TREE_STANDING_STEP; turnStep <= TREE_FALLEN_EAST_STEP;
+       turnStep++) {
     angle = turnStep * FACING_STEP;
     tree->sprite->rotation = angle;
-    wait((12 - turnStep) * 2);
+    wait((TREE_FALLEN_EAST_STEP - turnStep) * 2);
     tree->x.fixed -= Trig_Cos(angle) * 6;
     tree->z.fixed -= Trig_Sin(angle) * 6;
   }

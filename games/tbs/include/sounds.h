@@ -291,7 +291,8 @@ enum SoundId {
   /// Footsteps at the Mercury Lighthouse entrance, and the leader spraying sand
   /// in Lamakan Desert.
   SE_FOOTSTEP,
-  SE_119,
+  /// Unused: SE_FOOTSTEP's two notes far lower on its voice; nothing plays it.
+  SE_UNUSED_FOOTSTEP_LOW,
   SE_120,
   /// The guards throwing the leader out of Lunpa.
   SE_SCUFFLE,
@@ -452,7 +453,9 @@ enum SoundId {
   /// Unused: nothing plays it here. The Lost Age plays the same sequence as the
   /// birds land on Venus Lighthouse's entrance and fly off.
   SE_BIRD_WINGS,
-  SE_166,
+  /// Unused: SE_AMBIENT_WIND's note seven semitones lower on the same noise
+  /// voice, at full volume; nothing plays it.
+  SE_UNUSED_AMBIENT_WIND_LOW,
   /// A map transition effect.
   SE_MAP_TRANSITION,
   /// Unused: nothing plays it here. The Lost Age plays the same sequence three
@@ -544,7 +547,7 @@ enum SoundId {
   SE_WARP,
   /// Unused: nothing plays it here. The Lost Age plays the same sequence as
   /// Gaia Rock's altar faces part, at Zagan's frame 32 and in Megiddo's dive.
-  SE_191,
+  SE_TABLET_RISE_HIGH,
   /// Unused: nothing plays it here. The Lost Age plays the same sequence for
   /// Shriek's and Harpy's cry.
   SE_SHRIEK,
@@ -643,7 +646,7 @@ enum SoundId {
   SE_224,
   /// Unused: nothing plays it here. The Lost Age plays the same sequence as
   /// Moloch's white cloud billows up from the ground.
-  SE_CLOUD_BILLOW,
+  SE_CLOUD_BILLOWS,
   /// A pusher and its log moving together: the Colosso, Crossbone Isle and
   /// Donpa's judgment in the Lunpa Fortress.
   SE_LOG_PUSH,

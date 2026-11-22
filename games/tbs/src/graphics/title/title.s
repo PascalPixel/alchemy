@@ -2,7 +2,7 @@
 	.section .rodata
 	.global Title_IntroGraphicsA
 Title_IntroGraphicsA:
-	.incbin "games/tbs/src/graphics/title/intro_sun_1.gbapal"
+	.incbin "games/tbs/src/graphics/title/intro_sun_glare.gbapal"
 	.incbin "games/tbs/src/graphics/title/intro_sun.parts.plz"
 	.ifeq EDITION_INTERNATIONAL
 	.byte 0x43	@ PACKER: left in the buffer by Window_Tiles+0x1177

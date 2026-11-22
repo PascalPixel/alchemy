@@ -1,7 +1,15 @@
 /// @file
-/// Yallam's houses and shops, with Sunshine the blacksmith, who forges the
-/// rare materials the party brings him into weapons and armor once rain has
-/// let him reach Taopo Swamp.
+/// The insides of Yallam's huts and shops. One map holds four huts: the two
+/// houses behind the south-east and south doors, the inn behind the north-east
+/// door, and Sunshine's house and smithy behind the west door by the log. The
+/// other holds the three doors in the ledge: the weapon and armor shop (the
+/// west door, under the sword sign), the item shop (the north door) and an old
+/// couple's house (the east door).
+/// Sunshine the blacksmith lies in bed: "if it ain't a'rainin', I ain't
+/// a'workin'!", since without rain he cannot get into Taopo Swamp for his
+/// materials. Once the party carries a rusty weapon or a rare material, he gets
+/// up and forges it; after a night at the inn or a trip out of Yallam, his
+/// wife hands over what he made, for a price.
 #include "fixed_math.h"
 #include "flags.h"
 #include "item_ids.h"
@@ -39,7 +47,7 @@ void MessageArgument_Push(u32 value, u32 kind);
 
 /// The actors of SceneId_YallamRoomsInn, numbering the rows of
 /// gYallamRoomsInnPlacements: its map holds two houses, the inn and Sunshine's
-/// smithy.
+/// house and smithy.
 enum YallamRoomsInnActorId {
   /// "Yepp had three different songs he used to sing."
   ACTOR_YEPP_SONGS_VILLAGER = ACTOR_FIRST_PLACED,
@@ -230,7 +238,10 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gYallamRooms_Triggers;
 }
 
-/// "Do you like children's songs?"
+/// The woman pacing among the crates of the house behind Yallam's south-east
+/// door asks "Do you like children's songs?". Yes, and she says she doesn't
+/// care for them herself, lyrics that make no sense and a stupid dance; no,
+/// and she agrees she hates them and will write a better one some day.
 void YallamRooms_AskLikeChildrensSongs(void) {
   s32 msg;
 
@@ -392,11 +403,15 @@ s32 YallamRooms_PartyHasForgeMaterial(void) {
   return 0;
 }
 
-/// Sunshine, talked to in bed or across his counter. The forge opens once the
-/// party carries a material, and stays open while he works or his wife holds
-/// what he made. With it open and nothing pending, a yes brings him to the
-/// forge; if he takes a material, he walks off to work and his child moves
-/// aside.
+/// Sunshine, talked to as he lies in bed, asks whether the party is after a
+/// really unique item and either way won't work till it rains. Once the party
+/// carries a rusty weapon or a rare material he asks instead whether they want
+/// something special made: a yes, and he gets out of bed, meets Felix by the
+/// forge and picks what to work on, then walks off to the anvil as his child
+/// steps aside. While he works, or while his wife holds what he made, he says
+/// so.
+/// The forge stays open (`FLAG_FORGE_OPEN`) while he works or his wife holds
+/// the item, even once the party carries no more material.
 void YallamRooms_TalkToSunshine(void) {
   s32 message;
 
@@ -576,8 +591,8 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 // clang-format off
-/// The villager who asks about children's songs paces between two corners of
-/// the room.
+/// The woman who asks about children's songs paces among the crates of the
+/// house behind Yallam's south-east door.
 u32 gYallamRooms_ChildrensSongsVillagerPacing[] = {
     SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_PUSHABLE | ACTOR_SOLID),
     SC_ACCELERATION(0.1),
@@ -601,7 +616,8 @@ u32 gYallamRooms_ChildrensSongsVillagerPacing[] = {
     SC_WAIT(20),
     SC_LOOP(SC_FOREVER, SC_TO(1)),
     SC_END,
-    // Unused: a second walk, between two spots of the east house, which no
+    // Unused: a second walk, between two spots of the house behind the south
+    // door, which no
     // row takes.
     SC_SET(SW_COLLISION, ACTOR_BLOCKED_BY_SOLID | ACTOR_SOLID),
     SC_ACCELERATION(0.1),
@@ -647,8 +663,8 @@ struct ActorPlacement gYallamRooms_Placements[] = {
 };
 // clang-format on
 
-/// The two houses, the inn and Sunshine's smithy, in YallamRoomsInnActorId
-/// order.
+/// The two houses, the inn and Sunshine's house and smithy, in
+/// YallamRoomsInnActorId order.
 struct ActorPlacement gYallamRoomsInnPlacements[] = {
 #if !TLA_PATCH_2
     ACTOR_PLACEMENT(SPRITE_SUNSHINES_CHILD, CONDITION_ALWAYS,

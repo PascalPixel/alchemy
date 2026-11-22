@@ -1,14 +1,17 @@
 /// @file
-/// The great hall of Jupiter Lighthouse's right tower, behind its archer
-/// statue, where the Jupiter Djinni Whorl waits on a ledge
-/// (JupiterLighthouse_FightWhorl). Two path blocks, one carrying a straight
-/// piece of the floor's path and one a corner, pushed or Moved into two of the
-/// three gaps in the floor of the east hall (JupiterLighthouse_PlacePathBlock),
-/// light the path and raise a stake; Pounding it throws the blocks back out of
-/// their gaps (JupiterLighthouse_RaiseBlocksFromGaps). In the west hall a third
-/// block in its gap lights the path the grey blocks stand on, and the west
-/// stake Pounded throws it out. The pillar pushed onto the button by the pit
-/// raises the bridge across it for good, a shortcut.
+/// The lower rooms of Jupiter Lighthouse's right tower, past its stone archer
+/// statue. In the big east hall the Jupiter Djinni Whorl waits on a ledge
+/// (JupiterLighthouse_FightWhorl). Two energy path blocks, one carrying a
+/// straight piece of the path and one a corner, pushed or Moved into two of the
+/// three gaps in its floor (JupiterLighthouse_PlacePathBlock), light the path
+/// to new Hover pads and raise a cone-shaped stake; Pound on the stake throws
+/// the blocks back out of their gaps to try another layout
+/// (JupiterLighthouse_RaiseBlocksFromGaps), and one layout reaches Whorl. In
+/// the west hall a third block, pushed into the gap at cell (8, 12), lights the
+/// path under six grey blocks, which rise so that Felix can jump across from
+/// block to block, and the west stake Pounded throws it out again. Down in the
+/// room of the pit, the stone pillar pushed or Moved one cell west onto the
+/// purple button lowers the bridge across the pit for good, a shortcut.
 #include "flags.h"
 #include "djinn_ids.h"
 #include "types.h"
@@ -82,9 +85,9 @@ enum PathBlockPlace {
 #define FLAG_WEST_STAKE_SUNK 0xa17
 /// The third path block lies in its gap below the west hall's north door.
 #define FLAG_THIRD_BLOCK_IN_GAP 0xa1a
-/// The pillar stands on the button by the pit: the bridge stays up.
+/// The pillar stands on the button by the pit: the bridge stays across it.
 #define FLAG_BUTTON_PILLAR_PLACED 0xa1b
-/// Set while the leader stands on the button, which holds the bridge up.
+/// Set while Felix stands on the button, which holds the bridge across.
 #define FLAG_BRIDGE_BUTTON_HELD FLAG_SCENE_TEMP_02
 
 /// The east hall's three gaps, by cell.
@@ -100,6 +103,22 @@ enum PathBlockPlace {
 /// The button by the pit, by cell.
 #define BUTTON_CELL_X 8
 #define BUTTON_CELL_Z 37
+/// The rooms' own cell behaviors.
+enum JupiterLighthouseWhorlCellBehavior {
+  /// The purple button by the pit, cell (8, 37), and the eight cells round
+  /// it.
+  CELL_BEHAVIOR_BRIDGE_BUTTON = 20,
+  CELL_BEHAVIOR_OFF_BRIDGE_BUTTON,
+  /// The west hall's floor among the grey blocks, (8, 16) to (15, 20), where
+  /// Felix jumps from block to block while they stand raised.
+  CELL_BEHAVIOR_GREY_BLOCK_JUMP = 30,
+  /// The cells beside the gaps, each named for the side of the gap it is on:
+  /// walking into the gap from it pushes a block or jumps across.
+  CELL_BEHAVIOR_EAST_OF_GAP = 40,
+  CELL_BEHAVIOR_SOUTH_OF_GAP,
+  CELL_BEHAVIOR_WEST_OF_GAP,
+  CELL_BEHAVIOR_NORTH_OF_GAP
+};
 /// A gap's floor, 16 pixels below the hall's, where a thrown block starts.
 #define GAP_FLOOR_HEIGHT toFIXED(-16)
 /// The most frames the room waits for a block to come down.
@@ -143,7 +162,8 @@ void MapGrid_SetCellHeight(s32 x, s32 z, s32 layer, s32 height);
 void MapGrid_ClearAttributeBBitsAt(s32 x, s32 z, s32 layer, s32 bits);
 void Field_TryJumpForward(void);
 
-/// Talking to Whorl: the Djinni fights the party.
+/// Felix talks to Whorl on its ledge in the east hall, facing north: the
+/// Jupiter Djinni fights the party.
 void JupiterLighthouse_FightWhorl(void) {
   Field_RequestDjinnBattle(ACTOR_WHORL, DJINNI_WHORL);
 }
@@ -158,8 +178,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-/// Swings the bridge's two halves up out of the pit to lie across it; in mode
-/// 1 with its sound and a frame halfway up.
+/// The bridge's two panels, standing on end at the pit's sides, swing down to
+/// lie across it; with `mode` 1 they do so with a thud and a picture halfway
+/// down, otherwise they simply lie there.
 void JupiterLighthouse_RaiseBridge(s32 mode) {
   if (mode == 1) {
     Event_PlaySound(SE_IMPACT);
@@ -170,7 +191,7 @@ void JupiterLighthouse_RaiseBridge(s32 mode) {
   MapGrid_CopyCellAttributes(12, 41, 4, 1, 12, 35);
 }
 
-/// Lets the bridge's two halves swing back down into the pit.
+/// The bridge's two panels swing back up on end with a heavy thud.
 void JupiterLighthouse_LowerBridge(void) {
   Event_PlaySound(SE_HEAVY_IMPACT);
   MapGrid_CopyCellsLayered(76, 42, 4, 3, 76, 35);
@@ -179,7 +200,8 @@ void JupiterLighthouse_LowerBridge(void) {
   MapGrid_CopyCellAttributes(12, 36, 4, 1, 12, 35);
 }
 
-/// Raises the bridge for good once the pillar stands on the button.
+/// Lays the bridge across the pit for good once the pillar stands on the
+/// button.
 void JupiterLighthouse_CheckPillarOnButton(void) {
   struct Actor *actor = Actor_Get(ACTOR_BUTTON_PILLAR);
 
@@ -191,8 +213,9 @@ void JupiterLighthouse_CheckPillarOnButton(void) {
   }
 }
 
-/// The leader steps onto the button: the bridge rises, held up while the
-/// leader stands there.
+/// Felix steps onto the purple button by the pit, cell (8, 37): the bridge's
+/// panels swing down across the pit with a thud, and stay while he stands
+/// there.
 void JupiterLighthouse_StepOnButton(void) {
   if (!Event_GetFlag(FLAG_BRIDGE_BUTTON_HELD)) {
     Event_SetFlag(FLAG_BRIDGE_BUTTON_HELD);
@@ -200,8 +223,9 @@ void JupiterLighthouse_StepOnButton(void) {
   }
 }
 
-/// The leader steps off the button: the bridge the button held up falls
-/// again, unless the pillar now stands on the button.
+/// Felix steps off the purple button by the pit: the bridge's panels swing back
+/// up on end with a heavy thud. If the stone pillar has just been pushed onto
+/// the button, the bridge stays across the pit for good instead.
 void JupiterLighthouse_StepOffButton(void) {
   if (Event_GetFlag(FLAG_BRIDGE_BUTTON_HELD) == 1) {
     Event_ClearFlag(FLAG_BRIDGE_BUTTON_HELD);
@@ -210,8 +234,9 @@ void JupiterLighthouse_StepOffButton(void) {
   JupiterLighthouse_CheckPillarOnButton();
 }
 
-/// After the pillar is pushed or Moved: once it settles, checks whether it
-/// stands on the button.
+/// The stone pillar beside the purple button by the pit, Moved one cell west
+/// onto the button at cell (8, 37), holds the bridge across the pit for good,
+/// a shortcut back through the tower. Moved anywhere else, it does nothing.
 void JupiterLighthouse_MoveButtonPillar(void) {
   System_Wait(10);
   JupiterLighthouse_CheckPillarOnButton();
@@ -405,8 +430,9 @@ void JupiterLighthouse_LightWestPath(s32 mode) {
   }
 }
 
-/// As a push or Move takes up a block: the third block's cell goes back to the
-/// west hall's floor, six height steps up, and is no longer a cell to jump.
+/// Nothing visible happens as Felix starts to push or Move an energy path
+/// block. When it is the west hall's block, the cell it leaves becomes plain
+/// floor again, no longer a step to jump onto.
 void JupiterLighthouse_LiftPathBlock(s32 unused, s32 id) {
   struct Actor *actor = Actor_Get(id);
 
@@ -420,11 +446,14 @@ void JupiterLighthouse_LiftPathBlock(s32 unused, s32 id) {
 s32 Map_GetTerrainHeight(s32 layer, s32 x, s32 z);
 void MapGrid_SetAttributeBBitsAt(s32 x, s32 z, s32 layer, s32 bits);
 
-/// A path block set down after a push or Move: it falls into place, and in a
-/// gap it lights the path there. Once both of the first two lie in gaps the
-/// east stake rises; the third, in its gap, lights the west hall's path and
-/// raises the west stake. Set down anywhere else, the third block's cell stands
-/// its 16 pixels higher, a cell to jump onto.
+/// An energy path block, pushed or Moved, comes to rest, landing with a thump
+/// if it dropped off a ledge. In one of the east hall's three gaps, (35, 15),
+/// (31, 16) or (33, 10), it sinks in and lights the path through it, with a
+/// sound where the lit path reaches it; once both blocks lie in gaps, the
+/// camera turns to the cone-shaped stake as it rises. The west hall's block, in
+/// its gap at cell (8, 12), lights the path under the grey blocks and raises
+/// the west stake. Set down anywhere else, the west hall's block stands as a
+/// step Felix can jump onto.
 void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
   struct Actor *actor = Actor_GetById(id);
   s32 place;
@@ -514,10 +543,13 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
   }
 }
 
-/// As Pound is cast: ends what the party was doing.
+/// Nothing visible happens as Felix starts to cast Pound on the east hall's
+/// stake; whatever the hall was still doing is settled first
+/// (`Event_ResolvePendingActions`).
 void JupiterLighthouse_StartPound(void) { Event_ResolvePendingActions(0); }
 
-/// Pound on one of the room's stakes: sinks it into the floor.
+/// Pound hammers the cone-shaped stake in the east or the west hall down into
+/// the floor.
 void JupiterLighthouse_SinkPoundTarget(s32 mode, s32 frame) {
   Pound_SinkTarget(gJupiterLighthouse_WhorlPoundTargets, mode, frame);
 }
@@ -536,8 +568,9 @@ void JupiterLighthouse_ThrowOutBlock(s32 id, s32 x, s32 z, s32 dx, s32 dz) {
   Event_PlaySound(SE_WHIRLWIND);
 }
 
-/// The east stake Pounded down throws the two blocks back out of their gaps,
-/// the camera watching.
+/// Once Pound has hammered the east hall's stake down, the camera turns to the
+/// gaps and the two energy path blocks fly up out of them with a rush of wind,
+/// each landing on the floor beside its gap, and the path goes dark.
 void JupiterLighthouse_RaiseBlocksFromGaps(void) {
   struct Actor *actor;
   s32 i;
@@ -606,7 +639,9 @@ void JupiterLighthouse_RaiseBlocksFromGaps(void) {
   FieldCamera_WaitForArrival();
 }
 
-/// The west stake Pounded down throws the third block back out of its gap.
+/// Once Pound has hammered the west hall's stake down, its energy path block
+/// flies up out of its gap at cell (8, 12) and lands beside it, and the path
+/// under the grey blocks goes dark, letting them down.
 void JupiterLighthouse_RaiseThirdBlockFromGap(void) {
   struct Actor *actor;
   s32 i;
@@ -626,8 +661,10 @@ void JupiterLighthouse_RaiseThirdBlockFromGap(void) {
   actor->motionFlags = 0;
 }
 
-/// Walking into a block on the floor pushes it; walking at a gap with no block
-/// in it jumps across.
+/// Felix walks towards a gap from a cell beside it, in the east hall or round
+/// the west hall's gap: a block in front of him he pushes; an empty gap he
+/// jumps across, where there is floor to land on; over a gap a block fills,
+/// he walks on.
 void JupiterLighthouse_JumpOrPushBlock(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *straight = Actor_Get(ACTOR_STRAIGHT_PATH_BLOCK);
@@ -673,7 +710,9 @@ void JupiterLighthouse_JumpOrPushBlock(void) {
     Leader_PushObjectAhead();
 }
 
-/// A jump spot's step: the leader jumps forward.
+/// Felix walks among the raised grey blocks in the west hall, between cells
+/// (8, 16) and (15, 20), while its path is lit: he jumps forward onto the next
+/// block, where there is one to land on.
 void JupiterLighthouse_JumpForward(void) { Field_TryJumpForward(); }
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
@@ -682,7 +721,7 @@ void Actors_SetCellsOpen();
 void LightSprites_InitB();
 void LightSprites_AddCounted();
 
-/// Sets up the hall as the party enters: the archer statue at three quarters
+/// Sets up the rooms as the party enters: the archer statue at three quarters
 /// of its size, the stakes and the bridge as their flags leave them, the
 /// blocks' glow, and the grey blocks as platforms. Returns 0.
 s32 Scene_Initialize(void) {
@@ -818,8 +857,6 @@ void Actor_StartScript(struct Actor *actor, const s32 *script);
 struct CellTarget;
 struct CellTargetEntry;
 struct LightOam;
-
-void Whirlwind_CarryLeader(void);
 
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
@@ -968,13 +1005,13 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {STEP_TRIGGER_WALKING, 30, IF_FLAG_SET(FLAG_THIRD_BLOCK_IN_GAP), EVENT(JupiterLighthouse_JumpForward)},
-    {TRIGGER_STEP, 20, FLAG_BUTTON_PILLAR_PLACED, EVENT(JupiterLighthouse_StepOnButton)},
-    {TRIGGER_STEP, 21, FLAG_BUTTON_PILLAR_PLACED, EVENT(JupiterLighthouse_StepOffButton)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 40, CONDITION_ALWAYS, EVENT(JupiterLighthouse_JumpOrPushBlock)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 41, CONDITION_ALWAYS, EVENT(JupiterLighthouse_JumpOrPushBlock)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 42, CONDITION_ALWAYS, EVENT(JupiterLighthouse_JumpOrPushBlock)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 43, CONDITION_ALWAYS, EVENT(JupiterLighthouse_JumpOrPushBlock)},
+    {STEP_TRIGGER_WALKING, CELL_BEHAVIOR_GREY_BLOCK_JUMP, IF_FLAG_SET(FLAG_THIRD_BLOCK_IN_GAP), EVENT(JupiterLighthouse_JumpForward)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BRIDGE_BUTTON, FLAG_BUTTON_PILLAR_PLACED, EVENT(JupiterLighthouse_StepOnButton)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_OFF_BRIDGE_BUTTON, FLAG_BUTTON_PILLAR_PLACED, EVENT(JupiterLighthouse_StepOffButton)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_EAST_OF_GAP, CONDITION_ALWAYS, EVENT(JupiterLighthouse_JumpOrPushBlock)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), CELL_BEHAVIOR_SOUTH_OF_GAP, CONDITION_ALWAYS, EVENT(JupiterLighthouse_JumpOrPushBlock)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), CELL_BEHAVIOR_WEST_OF_GAP, CONDITION_ALWAYS, EVENT(JupiterLighthouse_JumpOrPushBlock)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), CELL_BEHAVIOR_NORTH_OF_GAP, CONDITION_ALWAYS, EVENT(JupiterLighthouse_JumpOrPushBlock)},
     {TALK_TRIGGER_FACING(FACING_NORTH), ACTOR_WHORL, CONDITION_ALWAYS, EVENT(JupiterLighthouse_FightWhorl)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_STRAIGHT_PATH_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LiftPathBlock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STRAIGHT_PATH_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_PlacePathBlock)},

@@ -345,11 +345,6 @@ s32 BattleMessage_WaitForAdvanceAt(s32 x, s32 y);
 /// BattleWork.palette, darkened or not.
 #define BATTLE_BG_PALETTE ((u16 *)&BG_PLTT_COLOR(6, 0))
 
-/// The battle background's darkening step (BattleBackground_SetPaletteLevel,
-/// BattleBackground_Load, the element glow): each level takes a sixtieth from
-/// the 16.16 brightness, so level 60 is black.
-#define BACKGROUND_LEVEL_STEP (FIXED_ONE / 60)
-
 /// BG1 during a battle: 256 colours, priority 3, its map in screen block
 /// BATTLE_BG1_SCREEN_BLOCK.
 #define BATTLE_BG1CNT                                                          \

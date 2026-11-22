@@ -1,14 +1,17 @@
 /// @file
-/// The hall of hover tiles at the top of Jupiter Lighthouse's right tower,
-/// below the aerie. While Hover holds the party up, the hall's stairs down are
-/// walled off (JupiterLighthouse_StartHovering), and stone faces blow
-/// whirlwinds across the lower hall's floor and the upper ledges as the party
-/// passes their cells (JupiterLighthouse_RaiseWhirlwind,
-/// JupiterLighthouse_RaiseUpperWhirlwind).
-/// Cracked tiles give way under a second step
-/// (JupiterLighthouse_StepOnLowerCrackedTile,
-/// JupiterLighthouse_StepOnUpperCrackedTile); the way on leads out to the
-/// aerie.
+/// The upper rooms of Jupiter Lighthouse's right tower, the last before its
+/// top. First a hall floored with cracked tiles, where two stone faces in the
+/// walls blow whirlwinds across the floor at Felix as he passes
+/// (JupiterLighthouse_RaiseWhirlwind), and a cracked tile gives way under a
+/// second step, dropping the party to the room below
+/// (JupiterLighthouse_StepOnUpperCrackedTile). Then, south and up, the hall
+/// of Hover pads, where Felix can Hover almost anywhere: two lines of dark
+/// cracked tiles run up it, and four stone statues in its middle blow
+/// whirlwinds along the two rows in front of them at Felix as he floats past
+/// (JupiterLighthouse_RaiseUpperWhirlwind). Its west passage leads to the
+/// Phaeton's Blade's chest, its east one on towards the top; the stairs down
+/// between the statues are walled off while he Hovers
+/// (JupiterLighthouse_StartHovering).
 ///
 /// The cracked tiles' code comes last, in two parts with the shared field
 /// effect code linked between them.
@@ -57,9 +60,10 @@
 /// that blows, which the whirlwind takes its place and heading from.
 enum { ACTOR_WHIRLWIND_SOURCE = ACTOR_FIRST_PLACED };
 
-/// The step triggers before the stone faces that blow whirlwinds: two on the
-/// lower hall's floor, blowing west and east, and four up on the hover hall's
-/// ledges, the west pair blowing west and the east pair east.
+/// The step triggers before the stone faces that blow whirlwinds: two rows of
+/// the cracked hall's floor, (8, 37) to (17, 37) blown west and (9, 42) to
+/// (18, 42) blown east, and four short rows before the statues in the Hover
+/// hall, at rows 11 and 17, the west pair blown west and the east pair east.
 enum {
   TRIGGER_FLOOR_WHIRLWIND_WEST = 30,
   TRIGGER_FLOOR_WHIRLWIND_EAST = 31,
@@ -69,17 +73,17 @@ enum {
   TRIGGER_UPPER_WHIRLWIND_NORTHEAST
 };
 
-/// A cracked tile's cell behavior up on the hover hall's ledges, which takes
-/// the next one up as it cracks; the floors' are CELL_BEHAVIOR_CRACKED_TILE.
+/// A cracked tile's cell behavior in the cracked hall, which takes the next one
+/// up as it cracks; the Hover hall's are CELL_BEHAVIOR_CRACKED_TILE.
 enum { CELL_BEHAVIOR_UPPER_CRACKED_TILE = 43 };
 
-/// Through a cracked tile of the ledges to the floor below, on the room's own
+/// Through a cracked tile of the cracked hall to the room below, on the same
 /// map: the exit and the entrance it lands at share the number, as
 /// THROUGH_CRACKED_TILE's do.
 enum { THROUGH_UPPER_CRACKED_TILE = 14 };
 
-/// The entrances Scene_Initialize tells apart: the lower hall's two stairs,
-/// north and south, and the hover hall's two.
+/// The entrances Scene_Initialize tells apart: the cracked hall's two stairs,
+/// north and south, and the Hover hall's two.
 enum {
   ENTRANCE_LOWER_HALL_NORTH = 3,
   ENTRANCE_LOWER_HALL_SOUTH = 5,
@@ -87,7 +91,7 @@ enum {
   ENTRANCE_HOVER_HALL_NORTH = 7
 };
 
-/// The hover hall's stairs down, at (544, 272), whose cell takes the exit by
+/// The Hover hall's stairs down, cell (34, 17), whose cell takes the exit by
 /// its number.
 enum { EXIT_HOVER_HALL_STAIRS = 6 };
 
@@ -110,7 +114,6 @@ s16 gLightSpritePriority BSS_DATA;
 struct CellTarget gCrackedTiles BSS_DATA;
 s32 BattleEffect_GetObjectPriority(struct Actor *actor);
 void JupiterLighthouse_StopHovering(void);
-void Whirlwind_CarryLeader(void);
 void MapGrid_SetCellHeight();
 void MapGrid_SetAttributeBAt();
 
@@ -127,22 +130,28 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 s32 CrackedTile_Step();
 struct Actor *Whirlwind_SpawnUpper();
 
-/// As Hover lifts the party: while the leader hovers, the stairs down at
-/// (544, 272) are walled off.
+/// Nothing visible happens when Felix starts to Hover; while he floats, the
+/// Hover hall's stairs down between the statues, cell (34, 17), are walled
+/// off, so that he cannot drift down them.
 void JupiterLighthouse_StartHovering(void) {
   if (gMainRoutineWork.movementMode == LEADER_MOVEMENT_HOVER)
     FieldMapGrid_SetCellBehavior(toFIXED(544), toFIXED(272), 0,
                                  CELL_BEHAVIOR_WALL);
 }
 
-/// As Hover ends: the stairs at (544, 272) lead down again.
+/// Nothing visible happens when Felix's Hover ends; the Hover hall's stairs
+/// down, cell (34, 17), lead down again.
 void JupiterLighthouse_StopHovering(void) {
   MapGrid_SetCellBehavior(toFIXED(544), toFIXED(272), 0,
                           EXIT_HOVER_HALL_STAIRS);
 }
 
-/// Stepping before a stone face of the lower hall's floor: unless a whirlwind
-/// is already carrying the party, the face blows one across the hall.
+/// Felix walks across the row in front of a stone face in the cracked hall's
+/// wall, cells (8, 37) to (17, 37) or (9, 42) to (18, 42): the face blows a
+/// big whirlwind at him that catches him and carries him spinning across the
+/// hall, west along the first row or east along the second, and drops him
+/// (Whirlwind_CarryLeader). Nothing happens while a whirlwind is already
+/// carrying him.
 void JupiterLighthouse_RaiseWhirlwind(s32 id) {
   struct Actor *actor;
 
@@ -162,9 +171,12 @@ void JupiterLighthouse_RaiseWhirlwind(s32 id) {
   }
 }
 
-/// Stepping before a stone face of the hover hall's ledges: unless a whirlwind
-/// is already carrying the party, the face blows a slower one, at a pixel a
-/// frame, from 32 pixels up.
+/// Felix, Hovering in the Hover hall, floats across the row in front of one of
+/// the four stone statues in its middle, at row 11 or 17: the statue blows a
+/// slower whirlwind at him, west from the west pair or east from the east
+/// pair, over the line of dark cracked tiles, and it carries him off
+/// (Whirlwind_CarryLeader). Walking there without Hover, or while a whirlwind
+/// is already carrying him, does nothing.
 void JupiterLighthouse_RaiseUpperWhirlwind(s32 id) {
   struct Actor *actor;
   struct Actor *motion;
@@ -196,17 +208,22 @@ void JupiterLighthouse_RaiseUpperWhirlwind(s32 id) {
   }
 }
 
-/// A step on a cracked tile of the floor: a fall drops the party to the floor
-/// below.
+/// Felix steps on a cracked tile in the Hover hall with his feet on the floor:
+/// it gives way under him (a tile not yet cracked takes one step first) and
+/// the party falls to the cracked hall below.
 void JupiterLighthouse_StepOnLowerCrackedTile(s32 arg) {
   if (Actor_Get(gMainRoutineWork.leaderActorId)->y.fixed == 0 &&
       CrackedTile_Step(arg) != 0)
     FieldEvent_SetExitRequest(THROUGH_CRACKED_TILE);
 }
 
-/// A step on a cracked tile of the upper ledges, on the floor's level: two
-/// cells draw the leader behind the ledge, and a fall drops the party below.
+/// Felix steps on a cracked tile in the cracked hall: it cracks, and at the
+/// second step it gives way and the party falls to the room below. On the two
+/// tiles under the hall's south ledge, cells (18, 34) and (8, 39), he is drawn
+/// behind the ledge (`FieldActor_SetSpritePriority`) as he falls.
 void JupiterLighthouse_StepOnUpperCrackedTile(s32 arg) {
+  // XXX: which ledge cells (18, 34) and (8, 39) sit under; a recording of a
+  // fall through either would settle it.
   struct Actor *leader;
   s32 x;
   s32 z;
@@ -224,8 +241,11 @@ void JupiterLighthouse_StepOnUpperCrackedTile(s32 arg) {
   }
 }
 
-/// A step on a cell of CELL_BEHAVIOR_CRACKED_TILE + 1: on the floor, a cracked
-/// tile; up on the ledges, the four cells before the upper stone faces.
+/// Felix steps on one of the dark cracked tiles in the two lines running up
+/// the Hover hall, columns 25 and 43. With his feet on the floor it gives way
+/// at once and the party falls to the cracked hall below. Hovering over it at
+/// row 11 or 17, in front of a statue, he is blown away as on the rows before
+/// the statues (JupiterLighthouse_RaiseUpperWhirlwind).
 void JupiterLighthouse_StepOnCrackedTileOrWhirlwind(s32 arg) {
   struct Actor *leader;
   s32 x;
@@ -258,9 +278,9 @@ void JupiterLighthouse_StepOnCrackedTileOrWhirlwind(s32 arg) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-/// Sets up the hall: its treasure chest at sprite priority 3, its cracked
-/// tiles, and the landing of a leader who fell through one from the floor
-/// above.
+/// Sets up the rooms: the Phaeton's Blade's chest set back in the drawing order
+/// (`FieldActor_SetSpritePriority`), the cracked tiles, and the landing when
+/// the party fell through a crack from the hall above.
 s32 Scene_Initialize(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -503,7 +523,6 @@ struct CellTargetEntry;
 void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect);
 void CrackedTile_Crack(struct CellTarget *table, struct CellTargetEntry *entry);
 void JupiterLighthouse_StopHovering(void);
-void Whirlwind_CarryLeader(void);
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 

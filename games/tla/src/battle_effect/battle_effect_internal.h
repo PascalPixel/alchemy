@@ -92,7 +92,7 @@ struct ElementStreaksWork {
   s32 halvePending; ///< the streaks are drawn: halve the canvas into VRAM
   /// Frames of the background's fade left (BattleEffect_DimBackgroundStep).
   s32 fadeFrames;
-  s32 fadeStep; ///< the fade's steps so far, CANVAS_FADE_STEP each
+  s32 fadeStep; ///< the fade's steps so far, BACKGROUND_LEVEL_STEP each
 };
 
 /// An EffectSprite as Cruel Ruin reads its OAM attribute 2: its tile, priority
@@ -328,8 +328,6 @@ extern const struct Scale gProcne_UnitScale; ///< the comets' unit scale
 #define BG1_CLEAR_TILE 1023
 /// BG character block 2's first tile, counted from BG1's character base.
 #define BG1_BLOCK2_FIRST_TILE (2 * BG_CHAR_SIZE / TILE_SIZE_8BPP)
-/// One step of the battle background's fade, a sixtieth of the full colour.
-#define CANVAS_FADE_STEP (FIXED_ONE / 60)
 /// The bytes of one 16-colour palette.
 #define PALETTE_BANK_BYTES 32
 /// A word of two palette entries, both `color`, to fill a palette a word at a
@@ -465,10 +463,10 @@ enum RedCrescentPicture {
 #define SHARD_TURN 96
 /// PaletteRampImage's shard pictures (drawn through gStatChange_ShardPictures),
 /// where the stat reduction and the Sword Card decode them in the sheet,
-/// followed by seven copies of them, each darker than the one before.
+/// followed by DIMMED_COPIES - 1 copies of them, each darker than the one
+/// before.
 #define STAT_REDUCTION_SHARD_PICTURES 9600
 #define STAT_REDUCTION_SHARD_BYTES 696 ///< bytes in each copy
-#define STAT_REDUCTION_SHARD_COPIES 8  ///< the pictures and their darker copies
 
 /// LightningPillarSheet's pillar, in two pictures.
 #define LIGHTNING_PILLAR_WIDTH 48
@@ -564,6 +562,20 @@ enum RedCrescentPicture {
 
 /// The bytes of one set of the ten mote pictures: 2 * (1 + 4 + ... + 100).
 #define MOTE_SET_BYTES 770
+/// A picture's dimmed copies: DIMMED_COPIES of it, copy i with every level
+/// capped at DIMMED_COPY_CAP(i), 7 levels lower than the copy before, copy 0
+/// not at all. Thor's ring darkens through copies of the mote pictures, a stat
+/// reduction's shards through copies of the shard.
+#define DIMMED_COPIES 8
+#define DIMMED_COPY_CAP(copy) (CANVAS_LEVEL_BRIGHTEST + 1 - (copy) * 7)
+/// Caps a colour level at cap, and at 0 from below.
+#define EFFECT_CAP_LEVEL(level, cap)                                           \
+  {                                                                            \
+    if ((level) > (cap))                                                       \
+      (level) = (cap);                                                         \
+    if ((level) < 0)                                                           \
+      (level) = 0;                                                             \
+  }
 /// The bytes of ParticleSpritesD's ten flare pictures, 2 to 20 pixels square:
 /// 4 * (1 + 4 + ... + 100).
 #define FLARE_SET_BYTES 1540

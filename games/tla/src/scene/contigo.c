@@ -2885,7 +2885,8 @@ void Contigo_InitializeLuckyDice(void) {
           MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
           // "You won ...! Here you go.", then "And you won ...! Here you go."
           Event_ShowMessageAndWait(ACTOR_LUCKY_WHEELS_ATTENDANT, 0);
-          ItemDisplay_ShowItem(item, 3);
+          ItemDisplay_ShowItem(item,
+                               ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
           PartyInventory_GiveItem(item, 0);
           Actor_FaceDirectionAndWait(ACTOR_ISAAC, FACING_NORTH);
         }

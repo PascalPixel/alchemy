@@ -1,13 +1,16 @@
 /// @file
-/// Beneath Jupiter Lighthouse, reached by the Cyclone teleporter in its
-/// grounds (SceneId_JupiterLighthouseBasementTeleporters). Cyclone scatters the
-/// weeds round each teleporter and a patch between them where a Mad Plant
-/// hides (JupiterLighthouse_UncoverMadPlant); Hover on the purple tile crosses
-/// to the far teleporter, whose Cyclone takes the party up to the ground floor
-/// inside the main gates (JupiterLighthouse_TeleportToGroundFloor), and the
-/// near one back up to the grounds. Its side room
-/// (SceneId_JupiterLighthouseBasementPsynergyStone) holds a Psynergy Stone, and
-/// sixteen sparks rise and sway out of the dark in its middle.
+/// The grey caves beneath Jupiter Lighthouse, reached by the teleporter in the
+/// sandy dead end of its grounds
+/// (SceneId_JupiterLighthouseBasementTeleporters). The party arrives on the
+/// near teleporter in the west. Cyclone scatters the weeds round each
+/// teleporter and a patch in the lower right corner of the cave, where a Mad
+/// Plant hides (JupiterLighthouse_UncoverMadPlant). Hover on the purple tile
+/// crosses to the far teleporter in the east, whose Cyclone takes the party up
+/// to the ground floor inside the main gates
+/// (JupiterLighthouse_TeleportToGroundFloor), and the near one back up to the
+/// grounds. Its side room (SceneId_JupiterLighthouseBasementPsynergyStone)
+/// holds a Psynergy Stone, and sixteen sparks rise and sway out of the dark in
+/// its middle.
 #include "flags.h"
 #include "battle/battle.h"
 #include "field/field_sequence.h"
@@ -59,16 +62,17 @@
 /// swells.
 #define JUPITER_LIGHTHOUSE_BASEMENT_SPARK_COUNT 16
 
-/// The cells Cyclone acts on in the teleporters' room: the weeds round the
+/// The cells Cyclone acts on in the teleporters' cave: the weeds round the
 /// near teleporter, the five of the Mad Plant's patch that hide nothing, the
-/// weeds round the far teleporter, the two teleporters and the Mad Plant's own.
+/// weeds round the far teleporter, the two teleporters (cells (5, 26) and
+/// (46, 32)) and the Mad Plant's own, cell (26, 30).
 enum {
-  TRIGGER_NEAR_WEEDS = 30,
-  TRIGGER_MAD_PLANT_WEEDS,
-  TRIGGER_FAR_WEEDS,
-  TRIGGER_NEAR_TELEPORTER,
-  TRIGGER_FAR_TELEPORTER,
-  TRIGGER_MAD_PLANT = 38
+  CELL_NEAR_WEEDS = 30,
+  CELL_MAD_PLANT_WEEDS,
+  CELL_FAR_WEEDS,
+  CELL_NEAR_TELEPORTER,
+  CELL_FAR_TELEPORTER,
+  CELL_MAD_PLANT = 38
 };
 
 struct EffectOptions;
@@ -127,19 +131,23 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 extern struct Trigger gJupiterLighthouseBasement_TeleportersTriggers[];
 extern struct Trigger gJupiterLighthouseBasement_PsynergyStoneTriggers[];
 
-/// Cyclone scatters the weeds round the near teleporter, the one up to the
-/// grounds.
+/// Cyclone cast in the weeds round the near teleporter in the west of the
+/// cave, the one up to the grounds, scatters those within two cells of Felix.
 void JupiterLighthouse_ScatterNearWeeds(void) {
   FieldTileCopies_CopyTouchedCells(69, 0, 4, 4, 67, 24, 1);
 }
 
-/// Cyclone scatters weeds of the patch a Mad Plant hides in.
+/// Cyclone cast in the patch of weeds in the lower right corner of the cave
+/// (cells (25, 28) to (28, 29)) scatters those within two cells of Felix;
+/// only from the patch's middle, cell (26, 30), does it uncover the Mad Plant.
 void JupiterLighthouse_ScatterMadPlantWeeds(void) {
   FieldTileCopies_CopyTouchedCells(64, 0, 4, 3, 89, 28, 1);
 }
 
-/// Cyclone scatters the weeds over the Mad Plant: until it is beaten it leaps
-/// at the leader and its battle begins.
+/// Cyclone cast standing on cell (26, 30), in the middle of the weeds in the
+/// cave's lower right corner, scatters them, and until it is beaten a Mad
+/// Plant leaps out at Felix and a battle with it begins, one the party cannot
+/// run from.
 void JupiterLighthouse_UncoverMadPlant(void) {
   FieldTileCopies_CopyTouchedCells(64, 0, 4, 3, 89, 28, 1);
   if (!Event_GetFlag(FLAG_MAD_PLANT(3))) {
@@ -150,19 +158,22 @@ void JupiterLighthouse_UncoverMadPlant(void) {
   }
 }
 
-/// Cyclone scatters the weeds round the far teleporter, the one up to the
-/// ground floor.
+/// Cyclone cast in the weeds round the far teleporter in the east of the
+/// cave, the one up to the ground floor, scatters those within two cells of
+/// Felix.
 void JupiterLighthouse_ScatterFarWeeds(void) {
   FieldTileCopies_CopyTouchedCells(69, 1, 4, 3, 108, 31, 1);
 }
 
-/// The near teleporter's ring takes the party up to the grounds.
+/// Cyclone on the near teleporter, cell (5, 26), lifts the party back up to
+/// the grounds before the lighthouse.
 void JupiterLighthouse_TeleportToEntrance(void) {
   Import_EventSetExitRequest(
       JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS_TO_JUPITER_LIGHTHOUSE_ENTRANCE);
 }
 
-/// The far teleporter's ring takes the party up to the ground floor.
+/// Cyclone on the far teleporter, cell (46, 32), lifts the party up into the
+/// lighthouse's ground floor, inside its gates.
 void JupiterLighthouse_TeleportToGroundFloor(void) {
   Import_EventSetExitRequest(
       JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS_TO_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON);
@@ -427,12 +438,12 @@ struct Trigger gJupiterLighthouseBasement_TeleportersTriggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), TRIGGER_NEAR_WEEDS, CONDITION_ALWAYS, EVENT(JupiterLighthouse_ScatterNearWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), TRIGGER_MAD_PLANT_WEEDS, CONDITION_ALWAYS, EVENT(JupiterLighthouse_ScatterMadPlantWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), TRIGGER_FAR_WEEDS, CONDITION_ALWAYS, EVENT(JupiterLighthouse_ScatterFarWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), TRIGGER_NEAR_TELEPORTER, CONDITION_ALWAYS, EVENT(JupiterLighthouse_TeleportToEntrance)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), TRIGGER_FAR_TELEPORTER, CONDITION_ALWAYS, EVENT(JupiterLighthouse_TeleportToGroundFloor)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), TRIGGER_MAD_PLANT, CONDITION_ALWAYS, EVENT(JupiterLighthouse_UncoverMadPlant)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_NEAR_WEEDS, CONDITION_ALWAYS, EVENT(JupiterLighthouse_ScatterNearWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_MAD_PLANT_WEEDS, CONDITION_ALWAYS, EVENT(JupiterLighthouse_ScatterMadPlantWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_FAR_WEEDS, CONDITION_ALWAYS, EVENT(JupiterLighthouse_ScatterFarWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_NEAR_TELEPORTER, CONDITION_ALWAYS, EVENT(JupiterLighthouse_TeleportToEntrance)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_FAR_TELEPORTER, CONDITION_ALWAYS, EVENT(JupiterLighthouse_TeleportToGroundFloor)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_MAD_PLANT, CONDITION_ALWAYS, EVENT(JupiterLighthouse_UncoverMadPlant)},
     {TRIGGER_TABLE_END},
 };
 

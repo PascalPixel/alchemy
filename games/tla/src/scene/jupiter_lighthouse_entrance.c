@@ -1,11 +1,14 @@
 /// @file
-/// The grounds before Jupiter Lighthouse's main gates, reached from the world
-/// map. Cyclone scatters five weeds
-/// (JupiterLighthouse_CycloneFirstWeeds to JupiterLighthouse_CycloneFifthWeeds,
-/// JupiterLighthouse_CycloneUncoversTheSpot), and at the dead end Cyclone on
-/// the teleporter carries the party down to the basement
-/// (JupiterLighthouse_LeaveByCyclone). The gates lead into the ground floor,
-/// once they are opened from within.
+/// The sandy grounds before Jupiter Lighthouse, reached from the world map at
+/// their south edge. The lighthouse's front wall runs across the north, with a
+/// door at each end (cells (11, 16) and (27, 16)) that leads into the ground
+/// floor once its gates are opened from within.
+///
+/// The way round to the west ends in a dead end with a purple teleporter pad
+/// among weeds, cell (7, 21): Cyclone on it lifts the party away to the
+/// basement beneath the lighthouse (JupiterLighthouse_TeleportToBasement).
+/// Weeds also grow in three patches along the path under the front wall, and
+/// Cyclone there uncovers a Mint (JupiterLighthouse_ScatterWeedsOverMint).
 ///
 /// The cracked tiles' code is in
 /// jupiter_lighthouse_entrance/, in two parts the shared field effect objects
@@ -71,13 +74,25 @@ struct CellTarget gCrackedTiles BSS_DATA;
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
-void JupiterLighthouse_CycloneSecondWeeds(void);
-void JupiterLighthouse_CycloneFourthWeeds(void);
-void JupiterLighthouse_CycloneFifthWeeds(void);
-void JupiterLighthouse_CycloneUncoversTheSpot(void);
-void JupiterLighthouse_LeaveByCyclone(void);
+void JupiterLighthouse_ScatterWeedsSouthOfTheTeleporter(void);
+void JupiterLighthouse_ScatterWeedsBelowTheStairs(void);
+void JupiterLighthouse_ScatterEastWeeds(void);
+void JupiterLighthouse_ScatterWeedsOverMint(void);
+void JupiterLighthouse_TeleportToBasement(void);
 
 void MapGrid_SetAttributeBAt();
+
+/// The grounds' map cells that answer Cyclone: the weeds round the teleporter
+/// pad and under the front wall, the pad itself, and the weeds over the Mint.
+enum {
+  CELL_WEEDS_NORTH_OF_THE_TELEPORTER = 30,
+  CELL_WEEDS_SOUTH_OF_THE_TELEPORTER,
+  CELL_WEST_WEEDS,
+  CELL_WEEDS_BELOW_THE_STAIRS,
+  CELL_EAST_WEEDS,
+  CELL_TELEPORTER,
+  CELL_WEEDS_OVER_MINT
+};
 
 const struct SceneEntrance *Scene_GetEntrances(void) { return gSceneEntrances; }
 
@@ -89,38 +104,48 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-/// Cyclone scatters the entrance's first weeds.
-void JupiterLighthouse_CycloneFirstWeeds(void) {
+/// Cyclone cast in the weeds just north of the teleporter pad in the west dead
+/// end (cells (9, 19), (6, 20) and (7, 20)) scatters those within two cells of
+/// Felix.
+void JupiterLighthouse_ScatterWeedsNorthOfTheTeleporter(void) {
   FieldTileCopies_CopyTouchedCells(56, 0, 4, 2, 70, 19, 1);
 }
 
-/// Cyclone scatters the second weeds.
-void JupiterLighthouse_CycloneSecondWeeds(void) {
+/// Cyclone cast in the weeds just south of the teleporter pad in the west dead
+/// end (cells (5, 22) to (8, 23)) scatters those within two cells of Felix.
+void JupiterLighthouse_ScatterWeedsSouthOfTheTeleporter(void) {
   FieldTileCopies_CopyTouchedCells(56, 0, 4, 2, 69, 22, 1);
 }
 
-/// Cyclone scatters the third weeds.
-void JupiterLighthouse_CycloneThirdWeeds(void) {
+/// Cyclone cast in the weeds under the west end of the lighthouse's front
+/// wall (cells (15, 25) to (17, 27)) scatters those within two cells of Felix.
+void JupiterLighthouse_ScatterWestWeeds(void) {
   FieldTileCopies_CopyTouchedCells(56, 0, 3, 3, 79, 25, 1);
 }
 
-/// Cyclone scatters the fourth weeds.
-void JupiterLighthouse_CycloneFourthWeeds(void) {
+/// Cyclone cast in the weeds below the stairs in the middle of the
+/// lighthouse's front (cells (21, 26) to (25, 28)) scatters those within two
+/// cells of Felix.
+void JupiterLighthouse_ScatterWeedsBelowTheStairs(void) {
   FieldTileCopies_CopyTouchedCells(56, 0, 5, 3, 85, 26, 1);
 }
 
-/// Cyclone scatters the fifth weeds.
-void JupiterLighthouse_CycloneFifthWeeds(void) {
+/// Cyclone cast in the weeds under the east part of the lighthouse's front
+/// (cells (30, 26) to (34, 28)) scatters those within two cells of Felix.
+void JupiterLighthouse_ScatterEastWeeds(void) {
   FieldTileCopies_CopyTouchedCells(56, 0, 5, 3, 94, 26, 1);
 }
 
-/// Where the Mint lies buried under the third weeds.
+/// Where the Mint lies under the weeds below the west end of the front wall:
+/// cell (17, 27).
 #define MINT_SPOT_X 280
 #define MINT_SPOT_Z 440
 
-/// Cyclone clears the third patch and, unless its flag is set, uncovers the
-/// Mint's treasure spot there, pushing off a leader standing on it.
-void JupiterLighthouse_CycloneUncoversTheSpot(void) {
+/// Cyclone cast standing on cell (17, 27), in the weeds under the west end of
+/// the lighthouse's front wall, scatters them and, until it is found, uncovers
+/// a Mint under Felix's feet: he jumps a cell west off it, and its green leaf
+/// lies in the cleared sand.
+void JupiterLighthouse_ScatterWeedsOverMint(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
 
   FieldTileCopies_CopyTouchedCells(56, 0, 3, 3, 79, 25, 1);
@@ -140,13 +165,19 @@ void JupiterLighthouse_CycloneUncoversTheSpot(void) {
   }
 }
 
-/// Leaves by exit 4.
-void JupiterLighthouse_LeaveByCyclone(void) { Import_EventSetExitRequest(4); }
+/// Cyclone on the purple teleporter pad in the west dead end, cell (7, 21):
+/// the whirlwind lifts Felix up off the screen, and he drops onto the near
+/// teleporter in the cave beneath the lighthouse.
+void JupiterLighthouse_TeleportToBasement(void) {
+  Import_EventSetExitRequest(
+      JUPITER_LIGHTHOUSE_ENTRANCE_TO_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS);
+}
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-/// Sets up the entrance as the party enters: the fade in, the teleporter's ring
-/// the party arrives in, and Contigo's shops as where a defeat returns to.
+/// Sets up the grounds as the party enters: the fade in, the teleporter's
+/// ring when the party arrives by it, and Contigo's shops as where a defeat
+/// returns to.
 /// Returns 0.
 s32 Scene_Initialize(void) {
   s32 clear;
@@ -257,17 +288,17 @@ struct ActorPlacement gActorPlacements[] = {
 };
 
 struct Trigger gSceneEvents[] = {
-    {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
-    {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneFirstWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 31, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneSecondWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 32, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneThirdWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 33, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneFourthWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 34, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneFifthWeeds)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 35, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LeaveByCyclone)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 36, CONDITION_ALWAYS, EVENT(JupiterLighthouse_CycloneUncoversTheSpot)},
+    {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_ENTRANCE_TO_WORLD_MAP, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ENTRANCE_TO_WORLD_MAP},
+    {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_ENTRANCE_TO_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_EAST, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ENTRANCE_TO_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_EAST},
+    {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_ENTRANCE_TO_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_WEST, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ENTRANCE_TO_JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_WEST},
+    {TRIGGER_EXIT, JUPITER_LIGHTHOUSE_ENTRANCE_TO_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS, CONDITION_ALWAYS, JUPITER_LIGHTHOUSE_ENTRANCE_TO_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_WEEDS_NORTH_OF_THE_TELEPORTER, CONDITION_ALWAYS, EVENT(JupiterLighthouse_ScatterWeedsNorthOfTheTeleporter)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_WEEDS_SOUTH_OF_THE_TELEPORTER, CONDITION_ALWAYS, EVENT(JupiterLighthouse_ScatterWeedsSouthOfTheTeleporter)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_WEST_WEEDS, CONDITION_ALWAYS, EVENT(JupiterLighthouse_ScatterWestWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_WEEDS_BELOW_THE_STAIRS, CONDITION_ALWAYS, EVENT(JupiterLighthouse_ScatterWeedsBelowTheStairs)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_EAST_WEEDS, CONDITION_ALWAYS, EVENT(JupiterLighthouse_ScatterEastWeeds)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_TELEPORTER, CONDITION_ALWAYS, EVENT(JupiterLighthouse_TeleportToBasement)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_WEEDS_OVER_MINT, CONDITION_ALWAYS, EVENT(JupiterLighthouse_ScatterWeedsOverMint)},
     {TRIGGER_TABLE_END},
 };
 
@@ -330,11 +361,11 @@ void MapGrid_CenterOnFollowedPoint(void);
 void FieldEffect_Spawn(s32 x, s32 y, s32 z, s32 velocityX, s32 velocityY,
                        s32 velocityZ, u32 flags,
                        const struct EffectOptions *options);
-void JupiterLighthouse_CycloneSecondWeeds(void);
-void JupiterLighthouse_CycloneFourthWeeds(void);
-void JupiterLighthouse_CycloneFifthWeeds(void);
-void JupiterLighthouse_CycloneUncoversTheSpot(void);
-void JupiterLighthouse_LeaveByCyclone(void);
+void JupiterLighthouse_ScatterWeedsSouthOfTheTeleporter(void);
+void JupiterLighthouse_ScatterWeedsBelowTheStairs(void);
+void JupiterLighthouse_ScatterEastWeeds(void);
+void JupiterLighthouse_ScatterWeedsOverMint(void);
+void JupiterLighthouse_TeleportToBasement(void);
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];

@@ -59,17 +59,6 @@
 #include "game/character_ids.h"
 #include "system/save.h"
 
-/// The file menu's choices, as FileList_SelectAction returns them
-/// (gMenu_SaveSlotActionByPosition), as The Broken Seal's enum FileAction.
-enum FileAction {
-  SAVE_ACTION_NEW_GAME = 0,
-  SAVE_ACTION_CONTINUE = 1,
-  SAVE_ACTION_COPY = 2,
-  SAVE_ACTION_ERASE = 3,
-  SAVE_ACTION_BATTLE = 4,
-  SAVE_ACTION_UPDATE = 5
-};
-
 /// The two secret button codes: unlocked, held and progress of each.
 extern s16 gClear_CodeUnlocked;
 

@@ -36,6 +36,7 @@
 #include "field/event_inline.h"
 #include "system/ram_buffer.h"
 #include "field/actor_script.h"
+#include "field/field_sequence.h"
 #include "fixed_math.h"
 
 #include "text/msg_ids.h"
@@ -490,7 +491,7 @@ void Alhafra_FindGoldCoins(void) {
   Actor_SetAnimationById(ACTOR_LUCKY_MOTHER, 5);
   Sound_Play(MUS_LEVEL_UP);
   gMainRoutineWork.leaderActorId = ACTOR_LUCKY_MOTHER;
-  ItemDisplay_ShowItem(0, 3);
+  ItemDisplay_ShowItem(0, ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
   gMainRoutineWork.leaderActorId = ACTOR_FELIX;
   Event_Wait(50);
   FieldActor_Jump(ACTOR_LUCKY_MOTHERS_HUSBAND, 6, 15);

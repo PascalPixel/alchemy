@@ -91,9 +91,42 @@ void MenuTitle_Bob(struct WindowSprite *object);
 struct Window;
 struct WindowSprite *Portrait_Create(s32 speaker, s32 option, s32 side,
                                      struct Window *window, s32 x, s32 y);
-struct WindowSprite *MenuTitle_Create(s32 group, struct Window *input, s32 x,
+/// The 64x16 headings of gMenuTitlePictures that MenuTitle_Create shows, in
+/// their order: the file menu's, in FileMenuMode's order, then the Pause
+/// and Settings headings.
+enum MenuTitlePicture {
+  MENU_TITLE_SAVE,
+  MENU_TITLE_CONTINUE,
+  MENU_TITLE_COPY,
+  MENU_TITLE_ERASE,
+  MENU_TITLE_BATTLE,
+  MENU_TITLE_TRANSFER,
+  MENU_TITLE_UPDATE,
+  MENU_TITLE_PAUSE,
+  MENU_TITLE_SETTINGS
+};
+
+struct WindowSprite *MenuTitle_Create(s32 picture, struct Window *window, s32 x,
                                       s32 y);
+void WindowSprite_Pulse(struct WindowSprite *obj);
+
+/// The file menu's choices, as FileList_SelectAction returns them
+/// (gMenu_SaveSlotActionByPosition).
+enum FileAction {
+  SAVE_ACTION_NEW_GAME = 0,
+  SAVE_ACTION_CONTINUE = 1,
+  SAVE_ACTION_COPY = 2,
+  SAVE_ACTION_ERASE = 3,
+  SAVE_ACTION_BATTLE = 4,
+  SAVE_ACTION_UPDATE = 5
+};
+
 s32 FileList_SelectAction(void);
+
+/// The bytes of the menu work, heap block HEAP_SLOT_MENU: ShopWork's size, the
+/// largest of the screens' views of it. Each screen's run function takes the
+/// block as it opens and releases it as it closes.
+#define MENU_WORK_SIZE 3308
 
 /// The OAM entry of a window sprite, as the Djinn preview places its stat
 /// arrows (DjinnMenu_DrawStatArrow): from the output's byte 16 on.

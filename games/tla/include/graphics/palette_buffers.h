@@ -137,6 +137,25 @@ enum PaletteTint {
 #define BRIGHTNESS_RED_SHIFT (RGB_BLUE_SHIFT + 1)
 #define BRIGHTNESS_GREEN_SHIFT (RGB_BLUE_SHIFT - RGB_GREEN_SHIFT + 2)
 
+/// PALETTE_TINT_CUSTOM gives each channel the brightness 2R + 4G + B times the
+/// tint's level over this, so white reaches full level under a tint level of
+/// 14.
+#define CUSTOM_TINT_DIVISOR 96
+
+/// PALETTE_TINT_SEPIA's shade is a colour's R + G + B over this, 0 to 9.
+#define SEPIA_SHADE_DIVISOR 10
+/// PALETTE_TINT_SEPIA holds each channel to these levels.
+#define SEPIA_LEVEL_MIN 8
+#define SEPIA_LEVEL_MAX 28
+
+/// The title's PALETTE_TINT_MUTED holds each channel to its own range.
+#define MUTED_RED_MIN 10
+#define MUTED_RED_MAX 28
+#define MUTED_GREEN_MIN 16
+#define MUTED_GREEN_MAX 24
+#define MUTED_BLUE_MIN 16
+#define MUTED_BLUE_MAX 26
+
 /// Which palettes TitlePaletteFade_BuildColors builds.
 enum PaletteSelection {
   PALETTES_ALL = 0,

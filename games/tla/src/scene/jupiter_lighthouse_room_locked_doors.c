@@ -1,14 +1,20 @@
 /// @file
-/// The room of hovering blocks and locked doors in Jupiter Lighthouse. The Red
-/// Key and the Blue Key open its two doors (JupiterLighthouse_UseRedKey,
-/// JupiterLighthouse_UseBlueKey), Reveal shows a hidden passage and its block
-/// (JupiterLighthouse_RevealThePassage), and once the lighthouse is activated
-/// its blocks hover, Move setting one on its cell to bridge the gap
-/// (JupiterLighthouse_FinishMovingBlock). Two Cyclone teleporters lead on
+/// The level of Jupiter Lighthouse above its central room, with the red and
+/// blue locked doors that lead out to the two towers. Felix first comes up here
+/// by the Cyclone teleporter in front of the red door, at cell (9, 22), and the
+/// Red Key opens it (JupiterLighthouse_UseRedKey); the teleporter in front of
+/// the blue door, at cell (41, 22), only takes him back down
 /// (JupiterLighthouse_LeaveByFirstCyclone,
-/// JupiterLighthouse_LeaveBySecondCyclone), a beam of light carries the party
-/// up from the room below, and lights circle up the beam
-/// (JupiterLighthouse_SendUpBeamLights). Its cracked tiles' code comes last.
+/// JupiterLighthouse_LeaveBySecondCyclone), and the Blue Key opens that door
+/// (JupiterLighthouse_UseBlueKey). In the room at the back, Reveal shows the
+/// hidden floor across to the jumping puzzle room, and once the lighthouse is
+/// activated a hidden block among six hovering ones, the way to the Psy
+/// Crystal (JupiterLighthouse_RevealThePassage). Further south, the beam of
+/// light from the central room rises through the floor, lights circling up it
+/// (JupiterLighthouse_SendUpBeamLights), and brings Felix up among a row of
+/// hovering blocks; the grey block in the pit west of them, Moved one cell
+/// east, rises into line with the row, the way to the Potion's chest
+/// (JupiterLighthouse_FinishMovingBlock).
 
 #include "shared/tables.h"
 #include "flags.h"
@@ -58,8 +64,18 @@
 /// the gap.
 #define FLAG_BRIDGE_BLOCK_RAISED 0xa06
 
-/// The bridge block's cell, where it rises to hover in line with the others.
+/// The bridge block's cell, at the west end of the row of hovering blocks
+/// round the beam, where it rises into line with them.
 enum { BRIDGE_BLOCK_CELL_X = 10, BRIDGE_BLOCK_CELL_Z = 32 };
+/// The level's own cell behaviors.
+enum JupiterLighthouseRoomLockedDoorsCellBehavior {
+  CELL_BEHAVIOR_RED_DOOR = 20,  ///< cell (10, 20)
+  CELL_BEHAVIOR_BLUE_DOOR = 21, ///< cell (40, 20)
+  /// The teleporter pads in front of the red and the blue door, cells (9, 22)
+  /// and (41, 22).
+  CELL_BEHAVIOR_RED_DOOR_TELEPORTER = 40,
+  CELL_BEHAVIOR_BLUE_DOOR_TELEPORTER
+};
 
 /// The room's blocks, numbering the rows of gActorPlacements.
 enum JupiterLighthouseBlockId {
@@ -67,16 +83,14 @@ enum JupiterLighthouseBlockId {
   ACTOR_FIRST_BLOCK = ACTOR_FIRST_PLACED,
   /// The block Reveal shows on the hidden passage.
   ACTOR_HIDDEN_BLOCK = ACTOR_FIRST_PLACED + 6,
-  /// The block Move sets on its cell to bridge the gap.
+  /// The block in the pit west of the beam's row, which Move sets on its cell
+  /// to bridge the gap.
   ACTOR_BRIDGE_BLOCK,
   /// The first of three more that rise once the lighthouse is activated.
   ACTOR_LAST_BLOCKS,
-  /// The unseen block at the top of the beam of light, between the hovering
-  /// blocks: the party the beam carries up stands on it. A probe of the
-  /// activated room by the beam (render probe --scene
-  /// JupiterLighthouseRoomLockedDoors --entrance 11 --set 0xa00) finds it
-  /// raised at the beam's place, (232, 520), and the leader 16 pixels above it
-  /// at the beam's top among the hovering blocks, nothing drawn under him.
+  /// The unseen block at the top of the beam of light, (232, 520), in the
+  /// row of hovering blocks: once the lighthouse is activated, Felix carried
+  /// up the beam stands on it, nothing drawn under him.
   ACTOR_BEAM_TOP_BLOCK = ACTOR_LAST_BLOCKS + 3
 };
 
@@ -126,8 +140,10 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-/// Reveal: shows the hidden passage and its block, and lets the party jump
-/// the gap there; once the lighthouse is activated the block hovers.
+/// Felix casts Reveal in the room at the back: a hidden stretch of floor shows
+/// at cell (19, 10), and he can jump across the gap there. Once the lighthouse
+/// is activated, Reveal also shows a hidden block hovering at cell (31, 10),
+/// in the middle of the six hovering blocks, which he can jump across too.
 void JupiterLighthouse_RevealThePassage(void) {
   MapGrid_CopyCellsLayered(17, 10, 1, 4, 19, 10);
   MapGrid_CopyCellAttributes(17, 10, 1, 1, 19, 10);
@@ -141,8 +157,8 @@ void JupiterLighthouse_RevealThePassage(void) {
   }
 }
 
-/// As Reveal fades, and on entering the room: covers the passage again and
-/// puts its block away.
+/// As Reveal wears off, and on entering the level: the hidden floor and the
+/// hidden block vanish again.
 void JupiterLighthouse_HideThePassage(void) {
   MapGrid_CopyCellsLayered(16, 10, 1, 4, 19, 10);
   MapGrid_CopyCellAttributes(16, 10, 1, 1, 19, 10);
@@ -150,13 +166,17 @@ void JupiterLighthouse_HideThePassage(void) {
   MapGrid_CopyCellAttributes(30, 10, 1, 1, 31, 10);
 }
 
-/// As Move is cast on the bridge block: puts its sprite at priority 2.
+/// Nothing visible happens as Move takes hold of the grey block in the pit west
+/// of the beam's row; its sprite's drawing order is set
+/// (`Actor_SetSpritePriority`) for the slide.
 void JupiterLighthouse_StartMovingBlock(s32 unused, s32 id) {
   Actor_SetSpritePriority(id, 2);
 }
 
-/// After Move: once the bridge block sits on its cell over the gap, it rises
-/// 32 pixels and hovers there for good.
+/// The grey block in the pit west of the beam's row, Moved one cell east to
+/// cell (10, 32), rises out of the pit and hovers there for good in line with
+/// the others, a step for Felix on the way to the Potion's chest. Moved
+/// anywhere else, it stays in the pit.
 void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
   struct Actor *actor;
   s32 i;
@@ -174,34 +194,36 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
   }
 }
 
-/// Takes the party down the first Cyclone teleporter, to the southwest of
-/// the Erinyes Tunic's room.
+/// Felix casts Cyclone on the purple teleporter pad in front of the red door,
+/// cell (9, 22): the party goes back down to the south hall below, by its west
+/// side.
 void JupiterLighthouse_LeaveByFirstCyclone(void) {
   Import_EventSetExitRequest(
       JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_SOUTHWEST);
 }
 
-/// Takes the party down the second Cyclone teleporter, to the southeast of
-/// the Erinyes Tunic's room.
+/// Felix casts Cyclone on the purple teleporter pad in front of the blue door,
+/// cell (41, 22): the party goes back down to the south hall below, by its east
+/// side.
 void JupiterLighthouse_LeaveBySecondCyclone(void) {
   Import_EventSetExitRequest(
       JUPITER_LIGHTHOUSE_ROOM_LOCKED_DOORS_TO_JUPITER_LIGHTHOUSE_ROOM_ERINYES_TUNIC_CHEST_SOUTHEAST);
 }
 
-/// Draws the red door open and lets the party through it.
+/// Shows the red door at cell (10, 20) open and lets the party through it.
 void JupiterLighthouse_OpenRedDoor(void) {
   MapGrid_CopyCellsLayered(73, 18, 1, 4, 74, 18);
   MapGrid_CopyCellAttributes(10, 9, 1, 1, 10, 20);
 }
 
-/// Draws the blue door open and lets the party through it.
+/// Shows the blue door at cell (40, 20) open and lets the party through it.
 void JupiterLighthouse_OpenBlueDoor(void) {
   MapGrid_CopyCellsLayered(103, 18, 1, 4, 104, 18);
   MapGrid_CopyCellAttributes(40, 9, 1, 1, 40, 20);
 }
 
-/// The Red Key used on its door: the door opens with a thud and the key is
-/// used up.
+/// Felix uses the Red Key at the red door, cell (10, 20), north of the
+/// teleporter pad: the door opens with a heavy thud and the key is gone.
 void JupiterLighthouse_UseRedKey(s32 item) {
   Event_SetFlag(FLAG_RED_DOOR_OPENED);
   Event_PlaySound(SE_HEAVY_IMPACT);
@@ -209,8 +231,8 @@ void JupiterLighthouse_UseRedKey(s32 item) {
   PartyInventory_Remove(item);
 }
 
-/// The Blue Key used on its door: the door opens with a thud and the key is
-/// used up.
+/// Felix uses the Blue Key at the blue door, cell (40, 20), north of the
+/// teleporter pad: the door opens with a heavy thud and the key is gone.
 void JupiterLighthouse_UseBlueKey(s32 item) {
   Event_SetFlag(FLAG_BLUE_DOOR_OPENED);
   Event_PlaySound(SE_HEAVY_IMPACT);
@@ -218,7 +240,8 @@ void JupiterLighthouse_UseBlueKey(s32 item) {
   PartyInventory_Remove(item);
 }
 
-/// Examining a locked door: says it is locked.
+/// Felix checks the red or the blue door before it is open: "The door's
+/// locked."
 void JupiterLighthouse_TryLockedDoor(void) {
   gFieldWork->fieldMenu = 1;
   // "The door's locked."
@@ -276,10 +299,10 @@ void JupiterLighthouse_SendUpBeamLights(void) {
   }
 }
 
-/// Sets up the room as the party enters: the passage hidden, each opened door
-/// drawn open, the lights sent up the beam, and a party come up from the room
-/// below carried, spinning, up the beam to land on the floor, or one come by
-/// Cyclone from the Erinyes Tunic's room arriving in a ring. Returns 0.
+/// Sets up the level as the party enters: the hidden floor hidden, each opened
+/// door open, the lights sent up the beam, and Felix, come from the central
+/// room, carried spinning up the beam to land among the hovering blocks, or,
+/// come by Cyclone from the south hall, arriving in a ring. Returns 0.
 s32 Scene_Initialize(void) {
   struct Actor *leader;
   s32 flag;
@@ -336,8 +359,8 @@ s32 Scene_Initialize(void) {
 void JupiterLighthouse_LoadPalettes(s32 value);
 
 /// Sets the scene's arrival flags and loads the lighthouse's palettes; lets
-/// the leader walk onto the blocks, raises them once the lighthouse is
-/// activated, and puts the bridge block back over the gap. Returns 0.
+/// Felix walk onto the blocks, raises them once the lighthouse is activated,
+/// and puts the bridge block back in line. Returns 0.
 s32 Scene_PrepareMap(void) {
   Scene_SetArrivalFlags(0);
   JupiterLighthouse_LoadPalettes(0);
@@ -484,16 +507,16 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {TRIGGER_EXAMINE, 20, FLAG_RED_DOOR_OPENED, EVENT(JupiterLighthouse_TryLockedDoor)},
-    {TRIGGER_EXAMINE, 21, FLAG_BLUE_DOOR_OPENED, EVENT(JupiterLighthouse_TryLockedDoor)},
-    {USE_ITEM(ITEM_RED_KEY), 20, FLAG_RED_DOOR_OPENED, EVENT(JupiterLighthouse_UseRedKey)},
-    {USE_ITEM(ITEM_BLUE_KEY), 21, FLAG_BLUE_DOOR_OPENED, EVENT(JupiterLighthouse_UseBlueKey)},
+    {TRIGGER_EXAMINE, CELL_BEHAVIOR_RED_DOOR, FLAG_RED_DOOR_OPENED, EVENT(JupiterLighthouse_TryLockedDoor)},
+    {TRIGGER_EXAMINE, CELL_BEHAVIOR_BLUE_DOOR, FLAG_BLUE_DOOR_OPENED, EVENT(JupiterLighthouse_TryLockedDoor)},
+    {USE_ITEM(ITEM_RED_KEY), CELL_BEHAVIOR_RED_DOOR, FLAG_RED_DOOR_OPENED, EVENT(JupiterLighthouse_UseRedKey)},
+    {USE_ITEM(ITEM_BLUE_KEY), CELL_BEHAVIOR_BLUE_DOOR, FLAG_BLUE_DOOR_OPENED, EVENT(JupiterLighthouse_UseBlueKey)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RevealThePassage)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(JupiterLighthouse_HideThePassage)},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_BRIDGE_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartMovingBlock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_BRIDGE_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_FinishMovingBlock)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 40, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LeaveByFirstCyclone)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 41, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LeaveBySecondCyclone)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_RED_DOOR_TELEPORTER, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LeaveByFirstCyclone)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_BLUE_DOOR_TELEPORTER, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LeaveBySecondCyclone)},
     {TRIGGER_TABLE_END},
 };
 

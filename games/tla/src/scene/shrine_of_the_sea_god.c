@@ -250,6 +250,41 @@ enum ShrineOfTheSeaGodLedgeStep {
   STEP_LEDGE_SOUTHWEST_WAY_UP
 };
 
+/// The cells that run the other rooms' events, each room numbering its own
+/// after the numbers of its exits.
+enum ShrineOfTheSeaGodCell {
+  /// The rope room's cells (14, 20) to (18, 20) and (18, 21), where Riki tries
+  /// the rope again.
+  RIKI_THROWS_ROPE_CELL = 10,
+  /// The crossroads' cells at the ends of its bridges and by its north
+  /// doorways: (15, 12), (14, 16) to (16, 16), (23, 13), (23, 20),
+  /// (34, 13) to (34, 15) and (35, 20) to (35, 22).
+  CROSSROADS_BRIDGE_END_CELL = 10,
+  /// The foot of the crossroads' ladder below the bridges, cell (29, 22).
+  CROSSROADS_LADDER_FOOT_CELL = 11,
+  /// Where Breath, seen again east of the bridges, flees south.
+  CROSSROADS_BREATH_FLEES_SOUTH_CELL = 12,
+  /// The crossroads' broken bridge.
+  CROSSROADS_BROKEN_BRIDGE_CELL = 15,
+  /// The ledge room's stairs up from the south, where Breath runs north under
+  /// the bridge.
+  LEDGE_ROOM_SOUTH_STAIRS_CELL = 10,
+  /// South of the ledge, cells (19, 34) to (21, 34), where Breath runs west
+  /// past the leader.
+  LEDGE_ROOM_SOUTH_PATH_CELL = 11,
+  /// The path up toward the ledge's south-west corner, cells (15, 20) to
+  /// (18, 23), where Breath hops onto the ledge.
+  LEDGE_ROOM_WAY_UP_CELL = 12,
+  /// The pillar room's first broken bridge, cell (20, 13).
+  FIRST_BROKEN_BRIDGE_CELL = 5,
+  /// Its second broken bridge, cell (25, 22).
+  SECOND_BROKEN_BRIDGE_CELL = 6,
+  /// Before the crystal statue on the island, cell (15, 9).
+  ISLAND_STATUE_CELL = 10,
+  /// Before the crystal statue in the room above the island, cell (21, 15).
+  STATUE_ROOM_STATUE_CELL = 1
+};
+
 /// Talking to Breath from up on the ledge, once the torch has stopped it,
 /// starts its battle.
 void ShrineOfTheSeaGod_FightBreath(void) {
@@ -413,7 +448,7 @@ void ShrineOfTheSeaGod_OpenFieldMenu(void) {
   work->fieldMenu = 1;
 }
 
-/// The island room's water rises a step, lifting the leader, the camera and the
+/// The island room's water rises a step, lifting Felix, the camera and the
 /// floating logs with it.
 void ShrineOfTheSeaGod_LiftWithWater(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
@@ -468,8 +503,9 @@ void BlendScript_Suspend(void);
 /// steps, then lifts the party half a pixel a step for as many again.
 #define WATER_RISE_STEPS 24
 
-/// The Sea God's Tear used on the island's statue makes the water rise and
-/// carries the party up to the statue room.
+/// Using the Sea God's Tear on the crystal statue on the island: the room
+/// rumbles, the water rises round the island over the stepping stones, and it
+/// carries Felix up to the room above (ShrineOfTheSeaGod_RiseOnWater).
 void ShrineOfTheSeaGod_UseSeaGodsTear(void) {
   u32 i;
 
@@ -534,8 +570,8 @@ void ShrineOfTheSeaGod_UseSeaGodsTear(void) {
       SHRINE_OF_THE_SEA_GOD_SEA_GODS_TEAR_TO_SHRINE_OF_THE_SEA_GOD_STATUE);
 }
 
-/// The island room's water falls a step, lowering the leader, the camera and
-/// the floating logs with it.
+/// The island room's water falls a step, lowering Felix, the camera and the
+/// floating logs with it.
 void ShrineOfTheSeaGod_LowerWithWater(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *water = &map->layers[0];
@@ -584,8 +620,8 @@ void ShrineOfTheSeaGod_LowerWaterBand(s32 x, s32 y) {
   }
 }
 
-/// Back on the island after the Tear in the statue room, the water sinks to
-/// where it was.
+/// Back on the island after using the Tear in the room above, the water drains
+/// away round Felix until the stepping stones show again.
 void ShrineOfTheSeaGod_LowerWater(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *water = &map->layers[0];
@@ -701,8 +737,9 @@ extern s16 gShrineOfTheSeaGod_PushedActors[];
 /// starts to close.
 #define STATUE_ROOM_CLOSE_STEPS 10
 
-/// Arriving from the island on the water: the leader and the ground layer start
-/// STATUE_ROOM_RISE pixels down and rise into place as the screen opens.
+/// Arriving in the room above the island, Felix rises up through the floor on
+/// the crystal statue's platform as the screen opens. The platform is the
+/// ground layer, which starts STATUE_ROOM_RISE pixels down with him.
 void ShrineOfTheSeaGod_RiseOnWater(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *layer;
@@ -748,9 +785,11 @@ void ShrineOfTheSeaGod_RiseOnWater(void) {
   Event_End();
 }
 
-/// The Sea God's Tear used on the statue room's statue: the leader turns south
-/// and sinks with the ground layer, STATUE_ROOM_RISE pixels, back down to the
-/// island, the screen closing near the end.
+/// Using the Sea God's Tear on the crystal statue in the room above the island
+/// takes Felix back down: he turns to face south, the statue's platform sinks
+/// into the floor with him, the screen closes round him, and he is back on the
+/// island, where the water drains away (ShrineOfTheSeaGod_LowerWater). The
+/// platform is the ground layer, lowered STATUE_ROOM_RISE pixels with him.
 void ShrineOfTheSeaGod_SinkWithWater(void) {
   struct MapWork *map = Ram_HeapSlots->mapGrid;
   struct MapLayer *layer;
@@ -785,25 +824,32 @@ void ShrineOfTheSeaGod_SinkWithWater(void) {
       SHRINE_OF_THE_SEA_GOD_STATUE_TO_SHRINE_OF_THE_SEA_GOD_SEA_GODS_TEAR);
 }
 
-/// Sets up a puddle Frost can freeze, disabled until it does.
+/// Sets up one of the ledge room's puddles, its ice pillar not shown until
+/// Frost freezes it.
 void ShrineOfTheSeaGod_SetUpPuddle(s32 actor) {
   Actor_DisableById(actor);
   Actor_GetById(actor)->priorityFlags |= ACTOR_PRIORITY_IGNORES_RISES;
 }
 
-/// Frost on the first puddle turns it to an ice pillar.
+/// Frost on the westernmost of the three puddles west of Breath's ledge, cell
+/// (8, 18), freezes it into a pillar of ice. Felix hops along the three ice
+/// pillars to the way out at the room's north-west, cell (7, 12), to the room
+/// with the pillar over the hole; each frozen cell is given the hop of the
+/// spare cell in the map's corner, (0, 0).
 void ShrineOfTheSeaGod_FreezeFirstPuddle(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 8, 18);
   GameFlag_Set(FLAG_SHRINE_FIRST_PUDDLE_FROZEN);
 }
 
-/// Frost on the second puddle turns it to an ice pillar.
+/// Frost on the puddle two cells east of the first, cell (10, 18), the south
+/// one of the pair beside it, freezes it into a pillar of ice to hop along.
 void ShrineOfTheSeaGod_FreezeSecondPuddle(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 10, 18);
   GameFlag_Set(FLAG_SHRINE_SECOND_PUDDLE_FROZEN);
 }
 
-/// Frost on the third puddle turns it to an ice pillar.
+/// Frost on the north puddle of that pair, cell (10, 17), freezes it into a
+/// pillar of ice to hop along.
 void ShrineOfTheSeaGod_FreezeThirdPuddle(void) {
   MapGrid_CopyCellAttributes(0, 0, 1, 1, 10, 17);
   GameFlag_Set(FLAG_SHRINE_THIRD_PUDDLE_FROZEN);
@@ -970,15 +1016,19 @@ void ShrineOfTheSeaGod_HideBlocks(void) {
 
 #include "shared/actors_set_hidden.c"
 
-/// Stepping out in front of the crossroads' bridges, the leader is drawn in
-/// front of them.
+/// Nothing visible happens when Felix steps onto a cell at the end of one of
+/// the crossroads' bridges or by its north doorways. The game sets him to be
+/// drawn in front of the bridges from then on, so that he shows on top of the
+/// one he walks across, until he comes down the ladder below them.
 void ShrineOfTheSeaGod_DrawLeaderInFront(void) {
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 1);
   GameFlag_Set(FLAG_LEADER_IN_FRONT);
 }
 
-/// Stepping back behind the crossroads' bridges, the leader takes the priority
-/// of the cells under him again.
+/// Nothing visible happens when Felix comes down to the foot of the
+/// crossroads' ladder below the bridges, cell (29, 22). The game lets the
+/// ground under him decide again how he is drawn, so that he passes behind the
+/// bridges overhead.
 void ShrineOfTheSeaGod_DrawLeaderBehind(void) {
   Actor_SetSpritePriority(gMainRoutineWork.leaderActorId, 2);
   Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
@@ -1912,12 +1962,18 @@ void ShrineOfTheSeaGod_LightTorch(void) {
   Actor_DisableById(ACTOR_TORCH_FLAME_MARKER);
 }
 
-/// Sand sinks the leader into the sand's layer.
+/// Casting Sand in the rope room turns Felix to sand as anywhere, and here also
+/// lets him slip under the rocks at the room's west edge into the dark beyond.
+/// The cells sand can cross are on the map's overhead layer, and the game
+/// moves him onto it.
 void ShrineOfTheSeaGod_CastSand(void) {
+  // XXX: where the sand's way under the west rocks leads; a recording of Felix
+  // as sand following it would settle it.
   Actor_GetById(gMainRoutineWork.leaderActorId)->layer = 2;
 }
 
-/// The leader rises out of the sand.
+/// As Sand wears off, Felix rises out of the sand and walks on the ground layer
+/// again.
 void ShrineOfTheSeaGod_EndSand(void) {
   Actor_GetById(gMainRoutineWork.leaderActorId)->layer = 0;
 }
@@ -2600,7 +2656,7 @@ struct Trigger gShrineOfTheSeaGodRopeTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_ROPE_ROOM_EAST_POST, FLAG_SHRINE_ROPE_TIED, EVENT(ShrineOfTheSeaGod_LashRope)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_AFTER_CAST), 0, CONDITION_ALWAYS, EVENT(ShrineOfTheSeaGod_CastSand)},
     {PSYNERGY_ANYWHERE(ABILITY_SAND, PSYNERGY_PHASE_FADES), 0, CONDITION_ALWAYS, EVENT(ShrineOfTheSeaGod_EndSand)},
-    {TRIGGER_STEP, 10, FLAG_RIKI_GAVE_UP, EVENT(ShrineOfTheSeaGod_ThrowRopeAgain)},
+    {TRIGGER_STEP, RIKI_THROWS_ROPE_CELL, FLAG_RIKI_GAVE_UP, EVENT(ShrineOfTheSeaGod_ThrowRopeAgain)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2619,11 +2675,11 @@ struct Trigger gShrineOfTheSeaGodCrossroadsTriggers[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_CROSSROADS_PILLAR, FLAG_CROSSROADS_PILLAR_MOVED, EVENT(ShrineOfTheSeaGod_LiftBlock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_CROSSROADS_PILLAR, FLAG_CROSSROADS_PILLAR_MOVED, EVENT(ShrineOfTheSeaGod_MovePillar)},
-    {TRIGGER_STEP, 10, FLAG_LEADER_IN_FRONT, EVENT(ShrineOfTheSeaGod_DrawLeaderInFront)},
-    {TRIGGER_STEP, 11, IF_FLAG_SET(FLAG_LEADER_IN_FRONT), EVENT(ShrineOfTheSeaGod_DrawLeaderBehind)},
-    {TRIGGER_STEP, 15, FLAG_CROSSROADS_BRIDGE_BROKEN, EVENT(ShrineOfTheSeaGod_BreakCrossroadsBridge)},
-    {TRIGGER_STEP, 11, FLAG_DJINNI_FLED_EAST, EVENT(ShrineOfTheSeaGod_DjinniFleesEast)},
-    {TRIGGER_STEP, 12, FLAG_DJINNI_FLED_SOUTH, EVENT(ShrineOfTheSeaGod_DjinniFleesSouth)},
+    {TRIGGER_STEP, CROSSROADS_BRIDGE_END_CELL, FLAG_LEADER_IN_FRONT, EVENT(ShrineOfTheSeaGod_DrawLeaderInFront)},
+    {TRIGGER_STEP, CROSSROADS_LADDER_FOOT_CELL, IF_FLAG_SET(FLAG_LEADER_IN_FRONT), EVENT(ShrineOfTheSeaGod_DrawLeaderBehind)},
+    {TRIGGER_STEP, CROSSROADS_BROKEN_BRIDGE_CELL, FLAG_CROSSROADS_BRIDGE_BROKEN, EVENT(ShrineOfTheSeaGod_BreakCrossroadsBridge)},
+    {TRIGGER_STEP, CROSSROADS_LADDER_FOOT_CELL, FLAG_DJINNI_FLED_EAST, EVENT(ShrineOfTheSeaGod_DjinniFleesEast)},
+    {TRIGGER_STEP, CROSSROADS_BREATH_FLEES_SOUTH_CELL, FLAG_DJINNI_FLED_SOUTH, EVENT(ShrineOfTheSeaGod_DjinniFleesSouth)},
     {TRIGGER_TABLE_END},
 };
 
@@ -2657,11 +2713,11 @@ struct Trigger gShrineOfTheSeaGodBreathTriggers[] = {
      ACTOR_TORCH, CONDITION_ALWAYS, EVENT(ShrineOfTheSeaGod_LiftBlock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_TORCH, CONDITION_ALWAYS,
      EVENT(ShrineOfTheSeaGod_SetDownTorch)},
-    {TRIGGER_STEP, 10, FLAG_DJINNI_BY_LEDGE,
+    {TRIGGER_STEP, LEDGE_ROOM_SOUTH_STAIRS_CELL, FLAG_DJINNI_BY_LEDGE,
      EVENT(ShrineOfTheSeaGod_DjinniRunsNorth)},
-    {TRIGGER_STEP, 11, FLAG_DJINNI_BY_LEDGE,
+    {TRIGGER_STEP, LEDGE_ROOM_SOUTH_PATH_CELL, FLAG_DJINNI_BY_LEDGE,
      EVENT(ShrineOfTheSeaGod_DjinniRunsWest)},
-    {TRIGGER_STEP, 12, FLAG_DJINNI_ON_LEDGE,
+    {TRIGGER_STEP, LEDGE_ROOM_WAY_UP_CELL, FLAG_DJINNI_ON_LEDGE,
      EVENT(ShrineOfTheSeaGod_DjinniHopsOntoLedge)},
     {TRIGGER_STEP, STEP_LEDGE_SOUTHEAST_WAY_UP, FLAG_DJINNI_CHASE_OVER,
      EVENT(ShrineOfTheSeaGod_ChaseDjinni)},
@@ -2701,9 +2757,9 @@ struct Trigger gShrineOfTheSeaGodPillarsTriggers[] = {
      FLAG_SHRINE_ROPE_TIED, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_NORTH_ROPE_WEST_POST,
      FLAG_SHRINE_SECOND_ROPE_TIED, 0},
-    {TRIGGER_STEP, 5, FLAG_FIRST_BRIDGE_BROKEN,
+    {TRIGGER_STEP, FIRST_BROKEN_BRIDGE_CELL, FLAG_FIRST_BRIDGE_BROKEN,
      EVENT(ShrineOfTheSeaGod_BreakFirstBridge)},
-    {TRIGGER_STEP, 6, FLAG_SECOND_BRIDGE_BROKEN,
+    {TRIGGER_STEP, SECOND_BROKEN_BRIDGE_CELL, FLAG_SECOND_BRIDGE_BROKEN,
      EVENT(ShrineOfTheSeaGod_BreakSecondBridge)},
     {TRIGGER_TALK, ACTOR_CHEST_NORTHWEST_MARKER, CONDITION_ALWAYS,
      EVENT(ShrineOfTheSeaGod_OpenFieldMenu)},
@@ -2717,9 +2773,9 @@ struct Trigger gShrineOfTheSeaGodPillarsTriggers[] = {
 struct Trigger gShrineOfTheSeaGodSeaGodsTearTriggers[] = {
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_UP, 2, CONDITION_ALWAYS, 2},
-    {TRIGGER_EXAMINE, 10, CONDITION_ALWAYS,
+    {TRIGGER_EXAMINE, ISLAND_STATUE_CELL, CONDITION_ALWAYS,
      EVENT(ShrineOfTheSeaGod_ExamineStatue)},
-    {USE_ITEM(ITEM_SEA_GODS_TEAR), 10, CONDITION_ALWAYS,
+    {USE_ITEM(ITEM_SEA_GODS_TEAR), ISLAND_STATUE_CELL, CONDITION_ALWAYS,
      EVENT(ShrineOfTheSeaGod_UseSeaGodsTear)},
     {PSYNERGY_ANYWHERE(ABILITY_REVEAL, PSYNERGY_PHASE_ACTS), 0,
      CONDITION_ALWAYS, EVENT(ShrineOfTheSeaGod_RevealStone)},
@@ -2729,9 +2785,9 @@ struct Trigger gShrineOfTheSeaGodSeaGodsTearTriggers[] = {
 };
 
 struct Trigger gShrineOfTheSeaGodStatueTriggers[] = {
-    {TRIGGER_EXAMINE, 1, CONDITION_ALWAYS,
+    {TRIGGER_EXAMINE, STATUE_ROOM_STATUE_CELL, CONDITION_ALWAYS,
      EVENT(ShrineOfTheSeaGod_ExamineStatue)},
-    {USE_ITEM(ITEM_SEA_GODS_TEAR), 1, CONDITION_ALWAYS,
+    {USE_ITEM(ITEM_SEA_GODS_TEAR), STATUE_ROOM_STATUE_CELL, CONDITION_ALWAYS,
      EVENT(ShrineOfTheSeaGod_SinkWithWater)},
     {TRIGGER_TABLE_END},
 };

@@ -1,13 +1,18 @@
 /// @file
-/// The four caverns that each keep a Summon tablet, in four scenes that share
-/// this overlay: Indra Cavern west of the Lemurian ship (SceneId_CavernsIndra),
-/// where Lash and Move reach Zagan's tablet; Osenia Cavern north of Mikasalla
-/// (CavernsOsenia), where Scoop opens the way to Megaera's
-/// (Caverns_ScoopOseniaPassage); Atteka Cavern (CavernsAtteka), where Parch
-/// dries the water before Coatlicue's (Caverns_ParchAttekaWater); and Angara
-/// Cavern north of Loho (CavernsAngara), where two grey blocks are carried and
-/// stacked to reach Haurus's (Caverns_StartMovingAngaraBlock,
-/// Caverns_FinishMovingAngaraBlock).
+/// The four small caves that each keep a Summon's stone tablet, in four scenes
+/// that share this overlay. In Indra Cavern, west of where the Lemurian ship
+/// lands on Indra (SceneId_CavernsIndra), Lash ties a rope up to a ledge and
+/// Move pushes a stone pillar across a gap, so that Felix can leap to Zagan's
+/// tablet (Caverns_JumpEastAcrossGap). In Osenia Cavern, far north of Mikasalla
+/// (CavernsOsenia), a maze of rocks walls Megaera's tablet in: Felix climbs
+/// down a hole into a tunnel, and Scoop digs the hole at its other end
+/// (Caverns_ScoopOseniaPassage). In Atteka Cavern, which only the flying ship
+/// reaches (CavernsAtteka), Parch dries the pool before Coatlicue's tablet
+/// (Caverns_ParchAttekaWater). In Angara Cavern, north of Loho
+/// (CavernsAngara), a stone door leads down to Haurus's chamber
+/// (Caverns_OpenAngaraDoor), where two grey spiral blocks are pushed, Moved and
+/// Carried until one stands on the other as a step up to the tablet
+/// (Caverns_FinishMovingAngaraBlock).
 #include "types.h"
 #include "system/io_reg.h"
 #include "field/scene_tables.h"
@@ -128,8 +133,10 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 #include "text/msg_ids.h"
 
-/// Sets the grey blocks of Angara Cavern on their cells: each cell rises two
-/// steps under its block and is marked occupied.
+/// Nothing visible happens: Angara Cavern's two spiral blocks are made solid
+/// where they stand. The ground under each is raised by a block's height, two
+/// steps, and its cell marked as one the leader jumps onto, so that Felix can
+/// climb onto a block and stand on it.
 void Caverns_PlaceAngaraBlocks(const s16 *data) {
   const u16 *ids = (const u16 *)data;
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
@@ -183,9 +190,11 @@ static __inline__ s32 Actor_GetPixelZ(struct Actor *actor) {
 #define ANGARA_NORTH_ROW_Z 536
 #define ANGARA_SOUTH_ROW_Z 552
 
-/// Raises (offset 1) or lowers (-1) by eight steps, 64 pixels, the cells about
-/// the moving block's path, by where the block stands: two cells by the ledge
-/// while it is up there, else the row it is not in.
+/// Nothing visible happens: while a spiral block moves, the floor around its
+/// path in Angara's chamber is raised out of its way (`offset` 1) and lowered
+/// back afterwards (-1), by eight steps: the two cells by the ledge while the
+/// block is up on it, else the three cells of whichever of the two rows the
+/// block is not in.
 void Caverns_ShiftAngaraCellHeights(s32 offset) {
   struct Actor *block = gFieldWork->movedBlock;
   s32 height;
@@ -217,8 +226,10 @@ void Caverns_ShiftAngaraCellHeights(s32 offset) {
   }
 }
 
-/// Before a push, Move or Carry: finds the block ahead of the leader (or the
-/// one Psynergy holds) and frees its cell.
+/// Nothing visible happens as Felix starts to push, Move or Carry one of the
+/// two spiral blocks in Angara Cavern's chamber: the game finds the block (the
+/// one ahead of him, or the one the Psynergy's hand holds) and lowers the
+/// ground under it back to the floor, so that the block can leave its cell.
 void Caverns_StartMovingAngaraBlock(void) {
   FIXED position[3];
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -268,7 +279,8 @@ void Caverns_StartMovingAngaraBlock(void) {
 /// a DUST_DRAG_Z-th of its speed north or south.
 enum { DUST_DRAG_X = 12, DUST_DRAG_Z = 10 };
 
-/// A dust puff's step: drifts, slows, grows and spins.
+/// One puff of the ring of dust a fallen block throws up: each frame it drifts
+/// outwards, slows, grows and spins.
 void Caverns_DriftDust(union FieldObject *object) {
   struct FieldEffect *effect = &object->effect;
 
@@ -282,8 +294,8 @@ void Caverns_DriftDust(union FieldObject *object) {
   effect->sprite->rotation += effect->spin;
 }
 
-/// The top block's update: draws the leader in front of it while he is south of
-/// it.
+/// The block stacked on top of the other, each frame: Felix is drawn in front
+/// of it while he stands south of it, and behind it otherwise.
 void Caverns_LayerLeaderByTopBlock(struct Actor *actor) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   FIXED leaderZ = leader->z.fixed;
@@ -297,9 +309,13 @@ void Caverns_LayerLeaderByTopBlock(struct Actor *actor) {
   }
 }
 
-/// After the block has moved: a block left over a drop falls with a thump and a
-/// ring of dust, and one landing on the other block stays on top of it; then
-/// its new cell rises under it.
+/// When a push, Move or Carry has finished moving one of the spiral blocks in
+/// Angara Cavern's chamber, a block left with no ground under it drops: onto
+/// the floor below with a thump and a ring of dust, or onto the other block,
+/// where it stays, the two stacked into a step up to Haurus's tablet. Then the
+/// ground under the block rises again so that it stands solid where it is.
+/// A block dropping onto a cell that has a behaviour sinks out of sight
+/// instead, as a yellow block, and is gone.
 void Caverns_FinishMovingAngaraBlock(void) {
   FIXED velocity[3];
   struct EffectOptions options;
@@ -441,17 +457,18 @@ s32 Scene_PrepareMap(void) {
 #define INDRA_PILLAR_ROW 10
 #define INDRA_GAP_COLUMN 16
 
-/// Indra's cavern: the post on the floor with the rope Lash throws, the post up
-/// on the ledge it is tied to, and the rock pillar Move pushes.
+/// Indra Cavern's things: the post on the floor with the rope Lash throws, the
+/// post up on the east ledge it is tied to, and the stone pillar Move pushes
+/// across the gap between the ledges.
 enum CavernsIndraActorId {
   ACTOR_LOWER_ROPE_POST = ACTOR_FIRST_PLACED,
   ACTOR_UPPER_ROPE_POST,
   ACTOR_PILLAR
 };
 
-/// Indra Cavern on entry: strings the rope between its posts (tied once
-/// FLAG_INDRA_ROPE_TIED is set), stills the pillar and marks its cell as a gap
-/// to jump onto.
+/// Indra Cavern on entry: the rope lies by its post, or runs up to the ledge
+/// once Lash has tied it (FLAG_INDRA_ROPE_TIED); the stone pillar stands still,
+/// and its cell is one the leader jumps onto.
 void Caverns_InitializeIndra(void) {
   struct Actor *actor;
 
@@ -469,8 +486,9 @@ void Caverns_InitializeIndra(void) {
   }
 }
 
-/// Move on Indra Cavern's pillar: stills it, sets its row's cells back to plain
-/// floor and marks its new cell as a gap to jump onto.
+/// Move on the stone pillar at the edge of the ledge by Zagan's tablet pushes
+/// it one cell east into the gap; afterwards its new cell is the one the
+/// leader jumps onto, and the cells it left are plain floor again.
 void Caverns_MoveIndraPillar(s32 unused, s32 id) {
   struct Actor *actor = Actor_GetById(id);
 
@@ -513,13 +531,17 @@ s32 Caverns_JumpAcross(struct Actor *actor, struct FieldCoordinate *position) {
   return 0;
 }
 
-/// Indra Cavern: walking east onto the gap's edge jumps the leader 32 pixels
-/// across it.
+/// Walking east off the ledge by Zagan's tablet in Indra Cavern (cell (12, 10))
+/// makes Felix spring and leap two cells east over the gap, when nothing blocks
+/// where he would land.
 void Caverns_JumpEastAcrossGap(void) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   s32 position[3];
   FIXED x;
 
+  // XXX: whether the leap lands Felix on the stone pillar once Move has pushed
+  // it into the gap; a recording of the jump after the Move would settle it,
+  // which the recorder could not stage from the ledge.
   x = leader->x.fixed;
   x += toFIXED(32);
   SET_VECTOR(position, x, leader->y.fixed, leader->z.fixed);
@@ -527,12 +549,12 @@ void Caverns_JumpEastAcrossGap(void) {
 }
 
 /// Osenia Cavern's one actor, the row of gCaverns_Placements: an unseen marker
-/// Caverns_WalkIntoPassage sets down as the leader climbs into a passage.
+/// Caverns_WalkIntoPassage sets down by the hole as Felix climbs into it.
 enum CavernsOseniaActorId { ACTOR_PASSAGE_MARKER = ACTOR_FIRST_PLACED };
 
 void Caverns_OpenOseniaPassage(void);
 
-/// Osenia Cavern's map: once Scoop has dug it, the passage stands open.
+/// Osenia Cavern's map: once Scoop has dug it, the second hole stays open.
 void Caverns_PrepareOsenia(void) {
   s32 scooped;
 
@@ -543,8 +565,9 @@ void Caverns_PrepareOsenia(void) {
   return;
 }
 
-/// Opens Osenia Cavern's passage in the map: the dug cells and their
-/// attributes copied over the closed ones.
+/// Digs Osenia Cavern's second hole into the map: a hole and the cells around
+/// it, copied with their behaviours from a spare one beside the cave, over the
+/// sand in the pocket of rocks (cells (18, 12) to (20, 14)).
 void Caverns_OpenOseniaPassage(void) {
   MapGrid_CopyCellPictureIndicesRect(35, 12, 18, 12, 3, 3);
   MapGrid_CopyCellAttributes(35, 12, 3, 3, 18, 12);
@@ -552,8 +575,9 @@ void Caverns_OpenOseniaPassage(void) {
   return;
 }
 
-/// Osenia Cavern: the leader steps down into a passage and leaves for its other
-/// end, by the trigger stepped on.
+/// Felix, over one of Osenia Cavern's two holes, turns his back and climbs down
+/// into it, and the screen leaves for the tunnel below: from the west hole to
+/// its west end, from the hole Scoop dug to its east end.
 void Caverns_WalkIntoPassage(void) {
   s32 value = ((struct FieldWork *)Ram_HeapSlots->fieldWork)->stepTrigger;
 
@@ -576,8 +600,9 @@ void Caverns_WalkIntoPassage(void) {
   Import_EventSetExitRequest(value);
 }
 
-/// Osenia Cavern: walking east into a passage's mouth steps up and across, then
-/// down into it.
+/// Walking east into one of Osenia Cavern's holes in the floor (cell (8, 13),
+/// or (18, 13) once Scoop has dug the second) brings Felix round over the hole,
+/// and he climbs down into it to the tunnel below.
 void Caverns_WalkEastIntoPassage(void) {
   Actor_WalkByAndWait(ACTOR_FELIX, 0, -14);
   Actor_WalkByAndWaitById(ACTOR_FELIX, 16, 0);
@@ -586,8 +611,9 @@ void Caverns_WalkEastIntoPassage(void) {
   return;
 }
 
-/// Osenia Cavern: walking west into a passage's mouth steps up and across, then
-/// down into it.
+/// Walking west into one of Osenia Cavern's holes in the floor (cell (10, 13),
+/// or (20, 13) once Scoop has dug the second) brings Felix round over the hole,
+/// and he climbs down into it to the tunnel below.
 void Caverns_WalkWestIntoPassage(void) {
   Actor_WalkByAndWait(ACTOR_FELIX, 0, -14);
   Actor_WalkByAndWaitById(ACTOR_FELIX, -16, 0);
@@ -596,8 +622,9 @@ void Caverns_WalkWestIntoPassage(void) {
   return;
 }
 
-/// Osenia Cavern: walking south into a passage's mouth turns the leader north
-/// and takes him down into it.
+/// Walking south into one of Osenia Cavern's holes in the floor (cell (9, 12),
+/// or (19, 12) once Scoop has dug the second) has Felix turn his back, as on a
+/// ladder, and climb down into it to the tunnel below.
 void Caverns_WalkSouthIntoPassage(void) {
   Actor_FaceDirectionById(ACTOR_FELIX, FACING_NORTH, 0);
   Event_Wait(10);
@@ -605,7 +632,9 @@ void Caverns_WalkSouthIntoPassage(void) {
   return;
 }
 
-/// Scoop on Osenia Cavern's sand: as it digs, opens the passage for good.
+/// Scoop on the sand in the pocket of rocks east of Osenia Cavern's middle
+/// (cell (19, 13)) digs a second hole there for good, the tunnel's way up to
+/// Megaera's side of the rocks.
 void Caverns_ScoopOseniaPassage(s32 mode) {
   if (mode == 1) {
     Caverns_OpenOseniaPassage();
@@ -614,7 +643,7 @@ void Caverns_ScoopOseniaPassage(s32 mode) {
   return;
 }
 
-/// Atteka Cavern's map: once Parch has dried it, the water stays gone.
+/// Atteka Cavern's map: once Parch has dried the pool, it stays dry.
 void Caverns_PrepareAtteka(void) {
   s32 parched;
 
@@ -627,8 +656,9 @@ void Caverns_PrepareAtteka(void) {
   return;
 }
 
-/// Parch on Atteka Cavern's water: dries it, opening the way to Coatlicue's
-/// tablet, for good.
+/// Parch on the green pool before Coatlicue's tablet in Atteka Cavern dries it
+/// up for good in a burst of heat and a white flash, opening the way to the
+/// tablet.
 void Caverns_ParchAttekaWater(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -640,8 +670,9 @@ void Caverns_ParchAttekaWater(void) {
   return;
 }
 
-/// Angara Cavern's map: entered by entrance 5 or 6, the cells at columns 28 and
-/// 36 of row 5 take the attributes of those of row 0.
+/// Angara Cavern's map: when the party arrives by entrance 5 or 6, the two
+/// staircases at cells (28, 5) and (36, 5) lead on by the exits of cells
+/// (28, 0) and (36, 0) instead of their own.
 void Caverns_PrepareAngara(void) {
   if ((u16)(gMainRoutineWork.entrance - 5) <= 1) {
     MapGrid_CopyCellAttributes(28, 0, 1, 1, 28, 5);
@@ -649,7 +680,8 @@ void Caverns_PrepareAngara(void) {
   }
 }
 
-/// Angara Cavern's actors, numbering gCaverns_AngaraPlacements.
+/// Angara Cavern's things in Haurus's chamber, numbering
+/// gCaverns_AngaraPlacements.
 enum CavernsAngaraActorId {
   /// The two grey blocks carved with a spiral, one on the floor and one up on
   /// the ledge, carried until one stands on top of the other.
@@ -661,9 +693,9 @@ enum CavernsAngaraActorId {
   ACTOR_EAST_CANDLESTICK
 };
 
-/// Angara Cavern on entry: sets the two grey blocks on their cells, lets them
-/// stand over rises, and keeps the searches for a block off the tablet's
-/// candlesticks.
+/// Angara Cavern on entry: the two spiral blocks stand solid where they were
+/// left, are drawn over the ground's rises, and the tablet's candlesticks are
+/// left out of the search for a block to push.
 void Caverns_InitializeAngara(void) {
   Caverns_PlaceAngaraBlocks(gCaverns_AngaraBlocks);
   Actor_GetById(ACTOR_FIRST_BLOCK)->priorityFlags |=
@@ -674,7 +706,9 @@ void Caverns_InitializeAngara(void) {
   Actor_GetById(ACTOR_EAST_CANDLESTICK)->collisionFlags |= ACTOR_NOT_TARGETED;
 }
 
-/// Walking into Angara Cavern's door opens it and leaves by exit 8.
+/// Walking north into the grey stone door at the west end of the small cave
+/// room in Angara Cavern (cell (6, 32)) opens it, and the screen wipes to
+/// Haurus's chamber beyond.
 void Caverns_OpenAngaraDoor(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -690,7 +724,7 @@ void Caverns_OpenAngaraDoor(void) {
 // clang-format off
 #include "shared/field_effect_duration_scripts.c"
 
-/// The grey blocks of Angara Cavern, by actor id, ended by -1.
+/// The spiral blocks of Angara Cavern's chamber, by actor id, ended by -1.
 s16 gCaverns_AngaraBlocks[] = {
     ACTOR_FIRST_BLOCK, ACTOR_SECOND_BLOCK, -1, 0,
 };
@@ -706,7 +740,8 @@ struct SceneEntrance gSceneEntrances[] = {
     {SCENE_TABLE_END},
 };
 
-/// Osenia Cavern's exit regions: the two passages' mouths, exits 4 and 5.
+/// Osenia Cavern's exit regions: the tunnel's two ends, climbed up to the west
+/// hole (exit 4) and to the one Scoop digs (exit 5).
 s16 gCaverns_OseniaRegions[] = {
     132, 28, 692, 140, 36, 700, -1, 4,
     292, 28, 692, 300, 36, 700, -1, 5,
@@ -760,8 +795,8 @@ struct ActorPlacement gCaverns_AngaraPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-/// Osenia Cavern's exit, its two passages' mouths walked into from three sides,
-/// and Scoop on its sand.
+/// Osenia Cavern's exit, its two holes walked into from three sides, and Scoop
+/// on the sand where the second is dug.
 struct Trigger gCaverns_OseniaTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, CAVERNS_OSENIA_TO_WORLD_MAP},
     {STEP_TRIGGER_WALKING_INTO(FACING_SOUTH), 2, CONDITION_ALWAYS, EVENT(Caverns_WalkSouthIntoPassage)},
@@ -774,7 +809,8 @@ struct Trigger gCaverns_OseniaTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// Indra Cavern's exit, its gap, Lash on the rope post and Move on the pillar.
+/// Indra Cavern's exit, the ledge's edge by the gap, Lash on the rope post and
+/// Move on the pillar.
 struct Trigger gCaverns_IndraTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, CAVERNS_INDRA_TO_WORLD_MAP},
     {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 10, CONDITION_ALWAYS, EVENT(Caverns_JumpEastAcrossGap)},
@@ -783,15 +819,15 @@ struct Trigger gCaverns_IndraTriggers[] = {
     {TRIGGER_TABLE_END},
 };
 
-/// Atteka Cavern's exit and Parch on its water.
+/// Atteka Cavern's exit and Parch on its pool.
 struct Trigger gCaverns_AttekaTriggers[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, CAVERNS_ATTEKA_TO_WORLD_MAP},
     {PSYNERGY_PHASE_ON_CELL(ABILITY_PARCH, PSYNERGY_PHASE_ACTS), 60, CONDITION_ALWAYS, EVENT(Caverns_ParchAttekaWater)},
     {TRIGGER_TABLE_END},
 };
 
-/// Angara Cavern's exits and stairs, its door, and pushing, Move and Carry on
-/// either grey block until they are stacked.
+/// Angara Cavern's exits and stairs, its stone door, and pushing, Move and Carry
+/// on either spiral block until they are stacked.
 struct Trigger gCaverns_AngaraTriggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, CAVERNS_ANGARA_TO_WORLD_MAP},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 2, CONDITION_ALWAYS, 2},

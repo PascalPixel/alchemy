@@ -1,9 +1,18 @@
 /// @file
-/// Treasure Isle, the cave in the north-east of the world, its five rooms one
-/// overlay: pillars Move pushes aside or onto their places, buttons that raise
-/// spiky rocks out of the water for Grind to break, boulders Lift raises out
-/// of the way, Gale the Jupiter Djinni, a Venus Djinni, and the Star Magician,
-/// the guardian of water.
+/// Treasure Isle, the island cave in the north-east corner of the world, its
+/// five rooms one overlay. It can be entered early, but finishing it needs
+/// Grind and Isaac's Lift.
+///
+/// Past the entrance room's three pillars, the chests' room is a lake of small
+/// islands joined by jumps and a tightrope: a red button on one island raises
+/// spiky rocks out of the water, which Grind breaks again, and a pillar Moved
+/// onto a switch in its east part raises one more. The Jester's Armlet room
+/// beyond has another button and three spiky rocks in a row. In Gale's room,
+/// boulders stand in the way; Lift raises them into the air for good, and Gale,
+/// the Jupiter Djinni, waits on the west side. In the last rooms, a Venus
+/// Djinni from The Broken Seal that the party lacks waits in the west room,
+/// and in the east chamber the Star Magician, the guardian of water, fights
+/// for the Azul tablet behind it.
 #include "djinn_ids.h"
 #include "edition.h"
 #include "fixed_math.h"
@@ -144,8 +153,25 @@ enum { ACTOR_STAR_MAGICIAN = ACTOR_FIRST_PLACED, ACTOR_VENUS_DJINNI };
 #define CHESTS_SECOND_PILLAR_MOVED_X 680
 #define CHESTS_SECOND_PILLAR_MOVED_Z 664
 
-/// The cell behaviors of the spiky rocks' cells, the first of each room's
-/// list; Grind's trigger on each passes it.
+/// What the rooms' map cells do when Felix steps on them or casts at them,
+/// beside their exits.
+enum {
+  /// The red button in the chests' and the Jester's Armlet rooms.
+  TRIGGER_BUTTON = 30,
+  /// The switch in the chests' room's east part, cell (42, 41).
+  TRIGGER_SWITCH = 31,
+  /// A cell Felix jumps two cells on from, over a gap in the water.
+  TRIGGER_JUMP = 35,
+  /// In Gale's room, the cells beside its first six boulders Felix jumps
+  /// from, west and east in turn, two to a boulder.
+  TRIGGER_FIRST_BOULDER_JUMP = 31,
+  /// The cells before the Star Magician in the last chamber.
+  TRIGGER_BEFORE_STAR_MAGICIAN = 42
+};
+
+/// The cells Grind breaks each spiky rock from, the chests' room's from
+/// CHESTS_FIRST_ROCK_CELL and the Jester's Armlet room's from
+/// ARMLET_FIRST_ROCK_CELL, in the order of their rooms' lists.
 #define CHESTS_FIRST_ROCK_CELL 40
 #define ARMLET_FIRST_ROCK_CELL 50
 
@@ -181,29 +207,11 @@ s32 Tightrope_Place(s32 a, s32 b, s32 c);
 
 s32 Field_TryJumpForward();
 
-void TreasureIsle_FightGale(void);
-
-void TreasureIsle_VenusDjinniJoins(void);
-
-void TreasureIsle_LiftFirstRock(void);
-
-void TreasureIsle_LiftFourthRock(void);
-
-void TreasureIsle_LiftFifthRock(void);
-
-void TreasureIsle_LiftSixthRock(void);
-void TreasureIsle_LiftSeventhRock(void);
-
-void TreasureIsle_LiftEighthRock(void);
-
-void TreasureIsle_MeetStarMagician(void);
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
 extern u32 gFieldEffect_LongScript[];
 extern u32 gTreasureIsle_PostStill[];
 extern u32 gTreasureIsle_LiftRockScale[];
-
-void TreasureIsle_PressRoom2Button(void);
 
 /// One palette's sixteen colours.
 struct Palette {
@@ -310,10 +318,12 @@ void TreasureIsle_RaiseSpikyRock(struct TreasureIsleCell *cells, s16 index) {
   TreasureIsle_SetSpikyRock(cells, index);
 }
 
-/// The chests' room's button: each of its first four spiky rocks not yet risen
-/// rises in turn (TreasureIsle_RaiseSpikyRock), all in one event, and its flag
-/// is set.
-void TreasureIsle_PressRoom2Button(void) {
+/// Stepping on the red button on a small island in the chests' room's water,
+/// cell (9, 15), raises the room's first four spiky rocks out of the water one
+/// after another, the camera going to each as it bursts up in a spray: at
+/// cells (7, 21), (7, 17), (12, 15) and (9, 11). A rock Grind has broken rises
+/// again; one still standing is left as it is.
+void TreasureIsle_PressChestsRoomButton(void) {
   s16 count = 0;
 
   if (!Event_GetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(0))) {
@@ -351,10 +361,11 @@ void TreasureIsle_PressRoom2Button(void) {
     Event_End();
 }
 
-/// The Jester's Armlet room's button: each of its three spiky rocks not yet
-/// risen rises in turn (TreasureIsle_RaiseSpikyRock), all in one event, and its
-/// flag is set.
-void TreasureIsle_PressRoom3Button(void) {
+/// Stepping on the red button in the Jester's Armlet room, cell (47, 27),
+/// raises the room's three spiky rocks out of the water in a row, one after
+/// another, at cells (41, 23), (47, 23) and (53, 23). A rock Grind has broken
+/// rises again.
+void TreasureIsle_PressArmletRoomButton(void) {
   s16 count = 0;
 
   if (!Event_GetFlag(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(0))) {
@@ -384,8 +395,9 @@ void TreasureIsle_PressRoom3Button(void) {
     Event_End();
 }
 
-/// The chests' room's fifth spiky rock rises, once, as Move pushes the second
-/// stone pillar onto its switch.
+/// Stepping on the switch in the chests' room's east part, cell (42, 41), or
+/// pushing its stone pillar onto it, raises a fifth spiky rock out of the
+/// water at cell (46, 38), once.
 void TreasureIsle_RaiseLastSpikyRock(void) {
   if (!Event_GetFlag(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(4))) {
     Event_Start();
@@ -396,9 +408,10 @@ void TreasureIsle_RaiseLastSpikyRock(void) {
   }
 }
 
-/// After Move or a push moves a stone pillar: a pillar that has reached its
-/// place sets its flag, and the chests' room's second pillar at its place
-/// raises the last spiky rock (TreasureIsle_RaiseLastSpikyRock).
+/// Nothing more is seen when Move or a push leaves one of the stone pillars
+/// where it belongs: the game notes it, so the pillar is put back there next
+/// time. The pillar in the chests' room's east part, left on its switch, cell
+/// (42, 41), raises the fifth spiky rock (TreasureIsle_RaiseLastSpikyRock).
 void TreasureIsle_SettleMovedPillar(s32 unused, s32 id) {
   struct Actor *actor = Actor_Get(id);
 
@@ -446,15 +459,18 @@ void TreasureIsle_FightGale(void) {
   Field_RequestDjinnBattle(ACTOR_GALE, DJINNI_GALE);
 }
 
-/// The Venus Djinni waiting here joins the party without a fight.
+/// Talking to the Venus Djinni waiting in the west room before the Star
+/// Magician's chamber, cell (12, 8), makes it join the party without a fight.
+/// It is one of The Broken Seal's Venus Djinn the party lacks, and is not
+/// there when none is lacking.
 void TreasureIsle_VenusDjinniJoins(void) {
   Djinn_JoinParty(ACTOR_VENUS_DJINNI, DJINNI_EARTH19 / DJINN_PER_ELEMENT,
                   DJINNI_INDEX(DJINNI_EARTH19));
 }
 
-/// Grind on a spiky rock: it crumbles over three steps and its cell opens
-/// again (its flag cleared), the frame passed by the Psynergy and `id` the
-/// rock's cell behavior.
+/// Grind on a spiky rock in the chests' or the Jester's Armlet room crushes it
+/// back into the water in three steps, clearing the way. Grind calls this as
+/// it plays, with how far it has got in `frame`, and `id` says which rock.
 void TreasureIsle_GrindSpikyRock(s32 unused, s32 frame, s32 id) {
   struct TreasureIsleCell *cells;
 
@@ -488,41 +504,50 @@ void TreasureIsle_GrindSpikyRock(s32 unused, s32 frame, s32 id) {
     Event_SetFlag(FLAG_TREASURE_ISLE_BOULDER_LIFTED(n));                       \
   }
 
-/// Lift raises the first boulder of Gale's room out of the way for good. It
-/// sets `FLAG_TREASURE_ISLE_BOULDER_LIFTED(0)`.
+/// Lift on the east boulder of the south row in the west of Gale's room, cell
+/// (20, 20), raises it into the air out of the way for good. While it stands,
+/// Felix can jump across it from the cells either side.
 DEFINE_LIFT_ROCK(TreasureIsle_LiftFirstRock, 0)
 
-/// Lift raises the second boulder of Gale's room out of the way for good. It
-/// sets `FLAG_TREASURE_ISLE_BOULDER_LIFTED(1)`.
+/// Lift on the middle boulder of the south row in the west of Gale's room, cell
+/// (13, 19), raises it into the air out of the way for good. While it stands,
+/// Felix can jump across it.
 DEFINE_LIFT_ROCK(TreasureIsle_LiftSecondRock, 1)
 
-/// Lift raises the third boulder of Gale's room out of the way for good. It
-/// sets `FLAG_TREASURE_ISLE_BOULDER_LIFTED(2)`.
+/// Lift on the west boulder of the south row in the west of Gale's room, cell
+/// (6, 20), raises it into the air out of the way for good. While it stands,
+/// Felix can jump across it.
 DEFINE_LIFT_ROCK(TreasureIsle_LiftThirdRock, 2)
 
-/// Lift raises the fourth boulder of Gale's room out of the way for good. It
-/// sets `FLAG_TREASURE_ISLE_BOULDER_LIFTED(3)`.
+/// Lift on the east boulder of the north row in the west of Gale's room, cell
+/// (19, 13), raises it into the air out of the way for good. While it stands,
+/// Felix can jump across it.
 DEFINE_LIFT_ROCK(TreasureIsle_LiftFourthRock, 3)
 
-/// Lift raises the fifth boulder of Gale's room out of the way for good. It
-/// sets `FLAG_TREASURE_ISLE_BOULDER_LIFTED(4)`.
+/// Lift on the middle boulder of the north row in the west of Gale's room, cell
+/// (13, 12), raises it into the air out of the way for good. While it stands,
+/// Felix can jump across it.
 DEFINE_LIFT_ROCK(TreasureIsle_LiftFifthRock, 4)
 
-/// Lift raises the sixth boulder of Gale's room out of the way for good. It
-/// sets `FLAG_TREASURE_ISLE_BOULDER_LIFTED(5)`.
+/// Lift on the west boulder of the north row in the west of Gale's room, cell
+/// (7, 13), raises it into the air out of the way for good. While it stands,
+/// Felix can jump across it.
 DEFINE_LIFT_ROCK(TreasureIsle_LiftSixthRock, 5)
 
-/// Lift raises the seventh boulder of Gale's room out of the way for good. It
-/// sets `FLAG_TREASURE_ISLE_BOULDER_LIFTED(6)`.
+/// Lift on the boulder blocking the narrow passage north in the south-east of
+/// Gale's room, cell (46, 45), raises it into the air above the passage for
+/// good.
 DEFINE_LIFT_ROCK(TreasureIsle_LiftSeventhRock, 6)
 
-/// Lift raises the eighth boulder of Gale's room out of the way for good. It
-/// sets `FLAG_TREASURE_ISLE_BOULDER_LIFTED(7)`.
+/// Lift on the boulder in the south of Gale's room, cell (26, 42), raises it
+/// into the air out of the way for good.
 DEFINE_LIFT_ROCK(TreasureIsle_LiftEighthRock, 7)
 
-/// The Star Magician, the guardian of water, glows and speaks ("I am the
-/// guardian of water. If you would claim my power, you must prove your
-/// worth."), turns to the leader and starts its battle, which cannot be fled.
+/// Walking up the steps to the Star Magician in the last chamber, cells (48,
+/// 10) to (50, 10), until it is beaten: it stirs, the screen glows warm, and it
+/// says "I am the guardian of water. If you would claim my power, you must
+/// prove your worth." Then it moves at Felix and the battle with it and its
+/// balls starts, with no escape.
 void TreasureIsle_MeetStarMagician(void) {
   struct Actor *leader;
 
@@ -689,12 +714,11 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// Steps onto a pillar top, a post or a boulder: the leader jumps ahead if it
-/// can land.
+/// Walking towards a gap from one of its jump cells, Felix jumps two cells
+/// across it if there is ground to land on: in the chests' room from cell (18,
+/// 11) east, in the Jester's Armlet room from cell (43, 15) north or east, and
+/// in Gale's room across a standing boulder.
 void TreasureIsle_JumpForward(void) { Field_TryJumpForward(); }
-
-void TreasureIsle_LiftSecondRock(void);
-void TreasureIsle_LiftThirdRock(void);
 
 // clang-format off
 #include "shared/field_effect_duration_scripts.c"
@@ -865,24 +889,30 @@ struct Trigger gTreasureIsle_Room2Triggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
-    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(TreasureIsle_PressRoom2Button)},
-    {TRIGGER_STEP, 31, CONDITION_ALWAYS,
+    {TRIGGER_STEP, TRIGGER_BUTTON, CONDITION_ALWAYS,
+     EVENT(TreasureIsle_PressChestsRoomButton)},
+    {TRIGGER_STEP, TRIGGER_SWITCH, CONDITION_ALWAYS,
      EVENT(TreasureIsle_RaiseLastSpikyRock)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 35, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), TRIGGER_JUMP, CONDITION_ALWAYS,
      EVENT(TreasureIsle_JumpForward)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS), 40,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS),
+     CHESTS_FIRST_ROCK_CELL,
      IF_FLAG_SET(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(0)),
      EVENT(TreasureIsle_GrindSpikyRock)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS), 41,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS),
+     CHESTS_FIRST_ROCK_CELL + 1,
      IF_FLAG_SET(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(1)),
      EVENT(TreasureIsle_GrindSpikyRock)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS), 42,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS),
+     CHESTS_FIRST_ROCK_CELL + 2,
      IF_FLAG_SET(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(2)),
      EVENT(TreasureIsle_GrindSpikyRock)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS), 43,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS),
+     CHESTS_FIRST_ROCK_CELL + 3,
      IF_FLAG_SET(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(3)),
      EVENT(TreasureIsle_GrindSpikyRock)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS), 44,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS),
+     CHESTS_FIRST_ROCK_CELL + 4,
      IF_FLAG_SET(FLAG_TREASURE_ISLE_CHESTS_ROCK_RISEN(4)),
      EVENT(TreasureIsle_GrindSpikyRock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_PILLAR,
@@ -901,18 +931,22 @@ struct Trigger gTreasureIsle_Room3Triggers[] = {
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT | EXIT_STYLE_STAIRS_DOWN, 5, CONDITION_ALWAYS, 5},
-    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), 35, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_NORTH), TRIGGER_JUMP, CONDITION_ALWAYS,
      EVENT(TreasureIsle_JumpForward)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 35, CONDITION_ALWAYS,
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), TRIGGER_JUMP, CONDITION_ALWAYS,
      EVENT(TreasureIsle_JumpForward)},
-    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(TreasureIsle_PressRoom3Button)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS), 50,
+    {TRIGGER_STEP, TRIGGER_BUTTON, CONDITION_ALWAYS,
+     EVENT(TreasureIsle_PressArmletRoomButton)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS),
+     ARMLET_FIRST_ROCK_CELL,
      IF_FLAG_SET(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(0)),
      EVENT(TreasureIsle_GrindSpikyRock)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS), 51,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS),
+     ARMLET_FIRST_ROCK_CELL + 1,
      IF_FLAG_SET(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(1)),
      EVENT(TreasureIsle_GrindSpikyRock)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS), 52,
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_GRIND, PSYNERGY_PHASE_ACTS),
+     ARMLET_FIRST_ROCK_CELL + 2,
      IF_FLAG_SET(FLAG_TREASURE_ISLE_ARMLET_ROCK_RISEN(2)),
      EVENT(TreasureIsle_GrindSpikyRock)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_STONE_PILLAR,
@@ -933,29 +967,29 @@ struct Trigger gTreasureIsle_Room4Triggers[] = {
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, 4},
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_EXIT, 6, CONDITION_ALWAYS, 6},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 31,
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), TRIGGER_FIRST_BOULDER_JUMP,
      FLAG_TREASURE_ISLE_BOULDER_LIFTED(0), EVENT(TreasureIsle_JumpForward)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 32,
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), TRIGGER_FIRST_BOULDER_JUMP + 1,
      FLAG_TREASURE_ISLE_BOULDER_LIFTED(0), EVENT(TreasureIsle_JumpForward)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 33,
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), TRIGGER_FIRST_BOULDER_JUMP + 2,
      FLAG_TREASURE_ISLE_BOULDER_LIFTED(1), EVENT(TreasureIsle_JumpForward)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 34,
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), TRIGGER_FIRST_BOULDER_JUMP + 3,
      FLAG_TREASURE_ISLE_BOULDER_LIFTED(1), EVENT(TreasureIsle_JumpForward)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 35,
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), TRIGGER_FIRST_BOULDER_JUMP + 4,
      FLAG_TREASURE_ISLE_BOULDER_LIFTED(2), EVENT(TreasureIsle_JumpForward)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 36,
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), TRIGGER_FIRST_BOULDER_JUMP + 5,
      FLAG_TREASURE_ISLE_BOULDER_LIFTED(2), EVENT(TreasureIsle_JumpForward)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 37,
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), TRIGGER_FIRST_BOULDER_JUMP + 6,
      FLAG_TREASURE_ISLE_BOULDER_LIFTED(3), EVENT(TreasureIsle_JumpForward)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 38,
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), TRIGGER_FIRST_BOULDER_JUMP + 7,
      FLAG_TREASURE_ISLE_BOULDER_LIFTED(3), EVENT(TreasureIsle_JumpForward)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 39,
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), TRIGGER_FIRST_BOULDER_JUMP + 8,
      FLAG_TREASURE_ISLE_BOULDER_LIFTED(4), EVENT(TreasureIsle_JumpForward)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 40,
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), TRIGGER_FIRST_BOULDER_JUMP + 9,
      FLAG_TREASURE_ISLE_BOULDER_LIFTED(4), EVENT(TreasureIsle_JumpForward)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 41,
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), TRIGGER_FIRST_BOULDER_JUMP + 10,
      FLAG_TREASURE_ISLE_BOULDER_LIFTED(5), EVENT(TreasureIsle_JumpForward)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), 42,
+    {STEP_TRIGGER_WALKING_INTO(FACING_EAST), TRIGGER_FIRST_BOULDER_JUMP + 11,
      FLAG_TREASURE_ISLE_BOULDER_LIFTED(5), EVENT(TreasureIsle_JumpForward)},
     {GALE_TALK_TRIGGER, ACTOR_GALE, CONDITION_ALWAYS,
      EVENT(TreasureIsle_FightGale)},
@@ -987,7 +1021,7 @@ struct Trigger gTreasureIsle_Room5Triggers[] = {
     {TRIGGER_EXIT, 1, CONDITION_ALWAYS, 1},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, 2},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, 3},
-    {TRIGGER_STEP, 42, FLAG_STAR_MAGICIAN_BEATEN,
+    {TRIGGER_STEP, TRIGGER_BEFORE_STAR_MAGICIAN, FLAG_STAR_MAGICIAN_BEATEN,
      EVENT(TreasureIsle_MeetStarMagician)},
     {TRIGGER_TALK, ACTOR_VENUS_DJINNI, CONDITION_ALWAYS,
      EVENT(TreasureIsle_VenusDjinniJoins)},

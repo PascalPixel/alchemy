@@ -613,7 +613,7 @@ void BattleEffect_DrawStreaks(void) {
 }
 
 /// Each frame while frames are left, darkens the battle background's 128
-/// colours by one more CANVAS_FADE_STEP into BG palettes 6 to 13.
+/// colours by one more BACKGROUND_LEVEL_STEP into BG palettes 6 to 13.
 void BattleEffect_DimBackgroundStep(void) {
   struct ElementStreaksWork *work = Ram_HeapSlots->battleEffect;
   struct BattleWork *battle = Ram_HeapSlots->battleWork;
@@ -621,7 +621,7 @@ void BattleEffect_DimBackgroundStep(void) {
   if (work->fadeFrames > 0) {
     work->fadeStep++;
     ColorBuffer_ScaleFar(battle->palette, (void *)&BG_PLTT_COLOR(6, 0),
-                         FIXED_ONE - work->fadeStep * CANVAS_FADE_STEP,
+                         FIXED_ONE - work->fadeStep * BACKGROUND_LEVEL_STEP,
                          BATTLE_BACKGROUND_COLORS);
     work->fadeFrames--;
   }

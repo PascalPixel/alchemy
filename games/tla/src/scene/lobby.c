@@ -1,7 +1,15 @@
 /// @file
-/// The Battle Arena's lobby, The Broken Seal's arena reworked: two players
-/// link, trade their parties' records and fight, or fight the monster record;
-/// a visitor takes song requests.
+/// The Battle Arena's lobby, The Broken Seal's arena reworked, reached from the
+/// File Screen's Battle mode. The party waits in a stone hall: the attendant
+/// stands behind the counter left of the arched door to the arena, a strongman
+/// behind the counter right of it keeps the tally of linked wins, the board
+/// above the door shows in three digits the most won in a row, and a healer
+/// waits on the carpeted floor above. With a second Game Boy Advance linked,
+/// the two players step onto the diamond mark before the arched door, trade
+/// their parties and fight; alone, the attendant offers Monster Battles.
+/// Holding L or R while talking to the woman who likes her men macho opens a
+/// song request, and a few visitors stand below the hall, out of reach: among
+/// them a developer's helper who loads debug parameters.
 
 #include "battle/battle.h"
 #include "sprite_ids.h"
@@ -69,7 +77,10 @@ const u32 *Scene_GetExits(void) { return gSceneExits; }
 
 /// The lobby's people, by the rows of gActorPlacements, as The Broken Seal's
 /// Battle Arena keeps them where it has the same ones; the party's rows go to
-/// their party slots.
+/// their party slots. The fumbling visitor, the debug helper, the visitor who
+/// wins and loses, the one who tells the Monster Battle rules and the song
+/// request taker stand at z 376 to 384, below the hall's south wall and past
+/// the camera's box, where the player can neither walk nor see them.
 
 enum LinkLobbyActorId {
   ACTOR_ATTENDANT = ACTOR_FIRST_PLACED, ///< arranges every battle
@@ -125,6 +136,14 @@ enum LobbySlot {
   /// Replaces the signature when no partner answers the attendant and during
   /// a monster series.
   LOBBY_SLOT_ALONE = 5
+};
+
+/// The hall's cells, as map.txt has them.
+enum LobbyCellBehavior {
+  /// The hall's south doorway, cell (13, 18): the way out.
+  CELL_BEHAVIOR_WAY_OUT = 1,
+  /// The diamond mark before the arched door to the arena, cell (13, 11).
+  CELL_BEHAVIOR_ARENA_MARK = 10
 };
 
 /// The lobby's raised triggers (FieldWork.raisedTrigger).
@@ -304,8 +323,9 @@ s32 LinkLobby_PollPeerReady(void) {
   return result;
 }
 
-/// The attendant asks the player into the circle once both consoles agree, and
-/// again after 300 calls.
+/// Once both linked players have agreed to a battle, the attendant behind the
+/// left counter says, "If you want to participate, please step into the
+/// circle!", and asks again if the player waits.
 s32 LinkLobby_PromptToParticipate(void) {
   s32 set;
 
@@ -331,7 +351,7 @@ s32 LinkLobby_PromptToParticipate(void) {
   Event_End();
 }
 
-/// The attendant says the link was disconnected.
+/// The attendant behind the left counter says, "The link was disconnected."
 s32 LinkLobby_ReportDisconnection(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -700,8 +720,11 @@ void TilesetAnim_Pause(s32 layer);
 void Field_RequestBattleFromEncounterTable(s32 a, s32 b);
 struct Window *Message_OpenWindow(const u8 *message, s32 x, s32 y, s32 flags);
 
-/// Touching the lobby counter: waits for the opponent, walks the lead to the
-/// arena door, swaps party records and starts the link battle.
+/// Felix steps onto the diamond mark before the arched door to the arena, cell
+/// (13, 11), once he has applied: "Awaiting your opponent..." shows until the
+/// other player steps on theirs, the attendant says "Good luck!", Felix walks
+/// to the door, the two parties are traded over the link and the battle
+/// starts. After choosing a Monster Battle, the mark starts it at once.
 s32 LinkLobby_EnterBattle(void) {
   struct FieldWork *work;
   s32 failed;
@@ -831,7 +854,10 @@ s32 LinkLobby_EnterBattle(void) {
   Event_End();
 }
 
-/// The lobby clerk: offers the link battle, or reports on the one waiting.
+/// Felix talks to the attendant behind the counter left of the arched door:
+/// with no other player linked, "You do not have an opponent. Would you like
+/// to battle a monster?"; with one, she explains the Battle Arena the first
+/// time and then asks, "Would you like to apply?"
 s32 LinkLobby_ChooseBattleMode(void) {
   s32 answer;
   s32 msg;
@@ -926,7 +952,9 @@ s32 LinkLobby_ChooseBattleMode(void) {
 void MessageArgument_ClearAll(void);
 void MessageArgument_Push(s32 value, s32 digits);
 
-/// Tells the leader's win count, total or in a row by the way the lead faces.
+/// Felix talks to the man behind the counter right of the arched door: across
+/// the counter, from the south, he tells the linked battles won in all; from
+/// any other side, the most won in a row, which the board on the wall shows.
 s32 LinkLobby_ReportWinTallies(s32 actor) {
   u32 facing = Actor_GetById(ACTOR_FELIX)->facing;
   s32 base;
@@ -971,7 +999,12 @@ void WindowSprite_PrepareForRedraw();
 void Text_DrawNumber();
 s32 DebugParameterSet_Load();
 
-/// Talking to ACTOR_DEBUG_HELPER loads a debug parameter set.
+/// A developer's leftover: the white-bearded man in green placed below the
+/// hall, where the player cannot walk, says "Choose your parameters here." and
+/// lets the player pick a debug parameter set by number with Left and Right.
+/// The man at the right counter answers, "The settings are made. The rest is up
+/// to you.", or for a set that does not exist, "There's no such parameter. Ask
+/// Mr. Sugimoto."
 s32 LinkLobby_ChooseDebugParameterSet(s32 actorId) {
   s32 window;
   s32 choice;
@@ -1035,7 +1068,8 @@ s32 LinkLobby_ChooseDebugParameterSet(s32 actorId) {
   Event_End();
 }
 
-/// The lobby's healer opens the sanctum.
+/// Felix talks to the healer on the carpeted floor above the hall: she offers a
+/// Sanctum's services.
 void LinkLobby_OpenSanctum(s32 actor) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1080,10 +1114,15 @@ void WindowSprite_PrepareForRedraw(s32 window);
 void Text_DrawNumber(s32 value, s32 digits, s32 window, s32 x, s32 y);
 void Window_Close(s32 window, s32 release);
 
-/// A song request: the player picks a sound by number, only the ones already
-/// heard unless all are unlocked (Start, Up and L held as it opens, or this
-/// game or a file on the cartridge cleared), and hears it, until B.
-/// "You have a song request?"
+/// "You have a song request?": the player picks a piece of music or a sound by
+/// number with Left and Right and hears it with A, until B ends it with "Come
+/// back when you're ready to rock!"
+///
+/// Only the ones already heard in the game can be picked, unless Start, Up and
+/// L are held as the request opens, or this game or a file on the cartridge has
+/// been cleared. The woman in red takes requests while L or R is held
+/// (LinkLobby_TalkToVisitor); ACTOR_SONG_REQUEST_TAKER, a strongman, stands
+/// below the hall where the player cannot walk.
 void LinkLobby_TakeSongRequest(s32 actor) {
   s32 window;
   s32 song;
@@ -1166,8 +1205,8 @@ void Import_EventSetDestination(s32 scene, s32 entrance);
 void Actor_FaceActorById(s32 actor, s32 target, s32 frames);
 void FieldMessage_Show(s32 no, s32 flags);
 
-/// Talking to a party member waiting in the lobby: what they say follows the
-/// last linked battle.
+/// Felix talks to a member of his party waiting in the hall: what they say
+/// follows whether they will fight, and how the last linked battle went.
 s32 LinkLobby_TalkByProgress(s32 actor) {
   s32 base = (s32)MsgLobbyItsOurTurnLetsGo;
   s32 lead = LinkLobby_PartyContains(ACTOR_FELIX);
@@ -1205,8 +1244,11 @@ s32 LinkLobby_TalkByProgress(s32 actor) {
   Event_End();
 }
 
-/// Step trigger 1, the way out: stops the link, loads the normal reverb code
-/// and goes back to the File Screen (its entrance FILE_SCREEN_FROM_SANCTUM).
+/// Felix walks out of the hall's south doorway, cell (13, 18): the link ends
+/// and the game returns to the File Screen.
+///
+/// The serial handlers come off and the sound's normal reverb is loaded again
+/// before the scene leaves for SCENE_CLEAR's entrance 1.
 s32 LinkLobby_LeaveArena(void) {
   Serial_RemoveIrqHandlers();
   Sound_LoadReverbCode(SOUND_REVERB_NORMAL);
@@ -1216,9 +1258,12 @@ s32 LinkLobby_LeaveArena(void) {
 #endif
 }
 
-/// The visitors' talk, by whether one has spoken this visit
-/// (FLAG_LINK_LOBBY_VISITOR_SPOKE); the macho-loving visitor takes song
-/// requests while L or R is held.
+/// Felix talks to the woman in the striped top at the west of the hall, "You
+/// look a little scrawny, but guys like you are often surprisingly strong...",
+/// and the woman in red beside her turns to him: "Fighting a guy with a build
+/// like that would really wear me out! Whew!" Once a visitor has spoken this
+/// visit, she says "I'll be rooting..." instead. Talking to the woman in red
+/// gives "I like my men macho", or with L or R held, a song request.
 s32 LinkLobby_TalkToVisitor(s32 actor) {
   s32 message;
 
@@ -1270,8 +1315,10 @@ s32 LinkLobby_TalkToVisitor(s32 actor) {
   Event_End();
 }
 
-/// Talking to ACTOR_PARTY_ORDER_VISITOR, who explains how up to three allies
-/// are chosen for a linked battle, by the party's size.
+/// Felix talks to the fair-haired boy on the raised floor at the west of the
+/// hall: he explains that up to three allies fight in a linked battle, in
+/// words that follow the party's size, and the next time, how to change the
+/// party's order on the status screen.
 s32 LinkLobby_ExplainPartyOrder(s32 actor) {
   s32 message;
 
@@ -1296,8 +1343,9 @@ s32 LinkLobby_ExplainPartyOrder(s32 actor) {
   Event_End();
 }
 
-/// Talking to ACTOR_MONSTER_WINS_TELLER, who reports the most Monster Battles
-/// won in a row, or before any, that he will count them.
+/// Felix talks to the old man with a cane right of the arched door: he tells
+/// the most Monster Battles won in a row, or before any, "I can't wait to see
+/// how many Monster Battles you win."
 s32 LinkLobby_ReportMonsterRecord(s32 id) {
   struct MainRoutineWork *gs;
 
@@ -1829,8 +1877,10 @@ struct Trigger gSceneEvents[] = {
      EVENT(LinkLobby_TakeSongRequest)},
     {TRIGGER_TALK, ACTOR_GUTLESS_VISITOR, CONDITION_ALWAYS,
      MSGNO(MsgLobbyIDontHaveGuts)},
-    {TRIGGER_STEP, 10, CONDITION_ALWAYS, EVENT(LinkLobby_EnterBattle)},
-    {TRIGGER_STEP, 1, CONDITION_ALWAYS, EVENT(LinkLobby_LeaveArena)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_ARENA_MARK, CONDITION_ALWAYS,
+     EVENT(LinkLobby_EnterBattle)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_WAY_OUT, CONDITION_ALWAYS,
+     EVENT(LinkLobby_LeaveArena)},
     {TRIGGER_RAISED, LOBBY_EVENT_PROMPT, CONDITION_ALWAYS,
      EVENT(LinkLobby_PromptToParticipate)},
     {TRIGGER_RAISED, LOBBY_EVENT_DISCONNECTED, CONDITION_ALWAYS,

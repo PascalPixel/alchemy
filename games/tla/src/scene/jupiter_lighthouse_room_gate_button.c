@@ -1,12 +1,14 @@
 /// @file
 /// The ground floor of Jupiter Lighthouse, inside its main gates. The party
-/// first comes in from below, by the basement's Cyclone teleporter (entrance
-/// 6). Standing on the button by the gates holds them open
-/// (JupiterLighthouse_StepOnButton, JupiterLighthouse_StepOffButton); the
-/// pillar pushed onto it opens them for good
-/// (JupiterLighthouse_CheckBlockOnCell), so the way out to the entrance stays
-/// open. A Cyclone on the teleporter here leads back down
-/// (JupiterLighthouse_LeaveByCyclone).
+/// first comes in from below, rising out of the basement's Cyclone teleporter.
+/// Two sandstone gates close the passage north and south of a purple button at
+/// cell (17, 33). Standing on the button holds them open
+/// (JupiterLighthouse_StepOnButton), and they slide shut as Felix steps off
+/// (JupiterLighthouse_StepOffButton); the stone pillar west of it, pushed or
+/// Moved three cells east onto the button, opens them for good
+/// (JupiterLighthouse_CheckBlockOnCell), so the way in from the lighthouse's
+/// entrance stays open. Cyclone on the teleporter pad at cell (29, 47) takes
+/// the party back down (JupiterLighthouse_LeaveByCyclone).
 
 #include "shared/tables.h"
 #include "flags.h"
@@ -49,11 +51,10 @@
 #include "system/io_write.h"
 #include "field/field_effect.h"
 
-/// Set while the leader stands on the button by the gates, which holds them
-/// open.
+/// Set while Felix stands on the button by the gates, which holds them open.
 #define FLAG_GATES_BUTTON_HELD FLAG_SCENE_TEMP_00
 
-/// The pillar the party pushes onto the button by the gates, after the two
+/// The stone pillar Felix pushes onto the button by the gates, after the two
 /// winged statues in gActorPlacements.
 enum { ACTOR_GATES_PILLAR = ACTOR_FIRST_PLACED + 2 };
 
@@ -61,8 +62,10 @@ enum { ACTOR_GATES_PILLAR = ACTOR_FIRST_PLACED + 2 };
 enum { GATES_BUTTON_CELL_X = 17, GATES_BUTTON_CELL_Z = 33 };
 
 /// The step triggers of the button: its cell, and the eight cells round it
-/// that the leader steps off it onto.
+/// that Felix steps off it onto.
 enum { TRIGGER_GATES_BUTTON = 20, TRIGGER_OFF_GATES_BUTTON = 21 };
+/// The teleporter pad's cell behavior, at cell (29, 47).
+enum { CELL_BEHAVIOR_CYCLONE_TELEPORTER = 30 };
 
 struct Actor;
 struct LightOam;
@@ -94,14 +97,15 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-/// Cyclone on the teleporter: takes the party back down to the basement.
+/// Felix casts Cyclone on the purple teleporter pad, cell (29, 47): the
+/// whirlwind takes the party back down to the basement's teleporters.
 void JupiterLighthouse_LeaveByCyclone(void) {
   FieldEvent_SetExitRequest(
       JUPITER_LIGHTHOUSE_ROOM_GATE_BUTTON_TO_JUPITER_LIGHTHOUSE_BASEMENT_TELEPORTERS);
 }
 
-/// Opens the gates; with animate 1 they thud and show their half-open picture
-/// first.
+/// Opens both sandstone gates; with `animate` 1 they thud and slide open
+/// through their half-open picture, otherwise they simply stand open.
 void JupiterLighthouse_OpenGates(s32 animate) {
   if (animate == 1) {
     Event_PlaySound(SE_IMPACT);
@@ -115,7 +119,8 @@ void JupiterLighthouse_OpenGates(s32 animate) {
   MapGrid_CopyCellAttributes(20, 22, 2, 1, 15, 39);
 }
 
-/// Closes the gates with a heavy thud, through their half-open picture.
+/// Slides both sandstone gates shut with a heavy thud, through their half-open
+/// picture.
 void JupiterLighthouse_CloseGates(void) {
   Event_PlaySound(SE_HEAVY_IMPACT);
   MapGrid_CopyCellsLayered(81, 20, 2, 3, 79, 29);
@@ -127,7 +132,7 @@ void JupiterLighthouse_CloseGates(void) {
   MapGrid_CopyCellAttributes(23, 22, 2, 1, 15, 39);
 }
 
-/// Opens the gates for good once the pillar stands on the button.
+/// Opens the gates for good once the stone pillar stands on the button.
 void JupiterLighthouse_CheckBlockOnCell(void) {
   struct Actor *actor = Actor_Get(ACTOR_GATES_PILLAR);
 
@@ -139,8 +144,8 @@ void JupiterLighthouse_CheckBlockOnCell(void) {
   }
 }
 
-/// The leader steps onto the button: the gates open and FLAG_GATES_BUTTON_HELD
-/// says the button holds them.
+/// Felix steps onto the purple button between the gates, cell (17, 33): both
+/// gates slide open with a thud, and stay open while he stands on it.
 void JupiterLighthouse_StepOnButton(void) {
   if (!Event_GetFlag(FLAG_GATES_BUTTON_HELD)) {
     Event_SetFlag(FLAG_GATES_BUTTON_HELD);
@@ -148,8 +153,9 @@ void JupiterLighthouse_StepOnButton(void) {
   }
 }
 
-/// The leader steps off the button: gates the button held open close, unless
-/// the pillar now stands on it.
+/// Felix steps off the purple button onto one of the cells round it: the gates
+/// he held open slide shut with a heavy thud. If the stone pillar has just been
+/// pushed onto the button, they open for good instead.
 void JupiterLighthouse_StepOffButton(void) {
   if (Event_GetFlag(FLAG_GATES_BUTTON_HELD) == 1) {
     Event_ClearFlag(FLAG_GATES_BUTTON_HELD);
@@ -162,9 +168,8 @@ void JupiterLighthouse_StepOffButton(void) {
 
 const struct Trigger *Scene_GetTriggers(void) { return gSceneEvents; }
 
-/// Sets up the floor: a leader arriving by the teleporter comes up in its ring
-/// of light, and the gates stand open while the pillar or the leader holds the
-/// button.
+/// Sets up the floor: Felix arriving by the teleporter comes up in its ring of
+/// light, and the gates stand open while the pillar or Felix holds the button.
 s32 Scene_Initialize(void) {
   gFieldWork->transition =
       SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
@@ -281,7 +286,7 @@ struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 5, CONDITION_ALWAYS, 5},
     {TRIGGER_STEP, TRIGGER_GATES_BUTTON, FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED, EVENT(JupiterLighthouse_StepOnButton)},
     {TRIGGER_STEP, TRIGGER_OFF_GATES_BUTTON, FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED, EVENT(JupiterLighthouse_StepOffButton)},
-    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), 30, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LeaveByCyclone)},
+    {PSYNERGY_PHASE_ON_CELL(ABILITY_CYCLONE, PSYNERGY_PHASE_ACTS), CELL_BEHAVIOR_CYCLONE_TELEPORTER, CONDITION_ALWAYS, EVENT(JupiterLighthouse_LeaveByCyclone)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_GATES_PILLAR, FLAG_JUPITER_LIGHTHOUSE_GATES_PILLAR_PLACED, EVENT(JupiterLighthouse_FinishMovingBlock)},
     {TRIGGER_TABLE_END},
 };

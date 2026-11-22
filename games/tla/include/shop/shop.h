@@ -29,6 +29,16 @@ enum {
   SHOP_IZUMO = 24
 };
 
+/// The lines of one shop, as many as the weapon shop's, and of a sanctum, as
+/// the debug rooms' message browsers count them (text/msg_ids.h).
+#define SHOP_MESSAGES (MsgArmorShopWelcome - MsgWeaponShopWelcome)
+#define SANCTUM_MESSAGES (MsgRightWhenI - MsgWelcomeWearyWanderers)
+
+/// Daila's inn, as Inn_CheckIn numbers the inns, which the debug rooms'
+/// innkeepers also open. A town no other room opens an inn of names its inn
+/// itself.
+enum { DAILA_INN = 0 };
+
 void Shop_InitializeWork(void);
 void Shop_ReleaseWork(void);
 s32 Shop_SelectBuy(void);

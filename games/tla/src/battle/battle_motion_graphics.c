@@ -585,7 +585,7 @@ s32 BattleStaging_RunItem(struct BattlePlan *plan, s32 unused,
       }
       wait(1);
       targetOrFadeIndex++;
-      fade += FIXED_ONE / 60;
+      fade += BACKGROUND_LEVEL_STEP;
     } while (targetOrFadeIndex < 20);
     if (plan->battleEffect & EFFECT_BY_ID_RANGE)
       BattleEffect_RunByIdRangeFar(&work);

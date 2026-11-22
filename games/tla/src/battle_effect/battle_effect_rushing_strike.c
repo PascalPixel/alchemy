@@ -585,7 +585,7 @@ void BattleEffect_RunRisingDragonEnemy(struct BattleEffectParams *args) {
         texture.logHeight = 5;
         texture.pixels = work->sheet;
         model->mesh = strip;
-        model->scrollU = 127 & ~(frame << 2);
+        model->scrollU = TEXTURE_SCROLL_MASK & ~(frame << 2);
         Matrix_Initialize();
         Matrix_Scale(FIXED_ONE / 2, FIXED_ONE, FIXED_ONE / 2);
         Matrix_Push();

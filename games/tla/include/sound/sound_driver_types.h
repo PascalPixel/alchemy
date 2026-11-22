@@ -20,6 +20,8 @@
 /// CPU cycles from one VBlank to the next: 228 lines of 1232 cycles, which
 /// timer 0's reload divides by a VBlank's samples.
 #define SOUND_CYCLES_PER_VBLANK (228 * 1232)
+/// 1.0 in the 24-bit fixed point SampleFreqSet takes the rate's reciprocal in.
+#define SOUND_RATE_STEP_ONE (1 << 24)
 
 // A sound mode word, as m4aSoundMode and a song header's mode byte take it,
 // under pret's names (include/gba/m4a_internal.h); a zero field leaves its

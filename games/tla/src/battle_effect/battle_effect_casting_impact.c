@@ -2647,7 +2647,7 @@ void BattleEffect_RunCastingImpact(struct BattleEffectParams *action,
         model->mesh = gBattleEffect_RingMesh;
         for (i = 0; i != 4; i++) {
           start = gCastingImpact_ArmorCrushWaveStarts[i] + 4;
-          model->scrollV = (frame * 8 + i * 32) & 127;
+          model->scrollV = (frame * 8 + i * 32) & TEXTURE_SCROLL_MASK;
           if (frame == start + 4)
             Sound_PlayFar(SE_LAUNCH);
           if (frame > start) {

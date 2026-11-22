@@ -1,14 +1,16 @@
 /// @file
 /// The Mars Lighthouse's dragon hall, high in the frozen lighthouse, where two
-/// Flame Dragons sleep in a block of ice before a statue with a face.
+/// Flame Dragons sleep in a block of ice below a great dragon's head carved in
+/// the north wall, with the corridor and the small room that lead to it.
 ///
-/// Blaze on the torches sends two sparkles round the hall, each launching a
-/// fireball into the ice, which cracks; Burst on the crack frees the dragons,
-/// which wake and fight. Beaten, they are Agatio and Karst, too weak and cold
-/// to go on: they ask Felix to light the beacon and leave him the Mars Star.
-/// Taken up into the Mythril Bag and set in the statue's face, the star turns
-/// the lighthouse back to fire and its ice is gone, here and in every room
-/// below.
+/// Two torches stand on stands before the frozen dragons, the east one
+/// burning. Blaze from the burning torch lights the other, which sends two
+/// sparkles round the hall, each launching a fireball into the ice, which
+/// cracks; Burst on the crack frees the dragons, which wake and fight. Beaten,
+/// they are Agatio and Karst, too weak and cold to go on: they ask Felix to
+/// light the beacon and leave him the Mars Star. Taken up into the Mythril Bag
+/// and set in the dragon head's face, the star turns the lighthouse back to
+/// fire and its ice is gone, here and in every room below.
 
 #include "graphics/output.h"
 #include "system/task.h"
@@ -97,12 +99,12 @@ enum {
   EXIT_TO_CORRIDOR_EAST_DOORWAY
 };
 
-/// The trigger Burst raises once the ice is gone: the dragons wake.
+/// Raised by Burst once the ice is gone: the dragons wake.
 #define DRAGONS_WAKE_TRIGGER 20
-/// The tile code of the ice the dragons sleep in, which Burst breaks.
+/// The cells of the ice the dragons sleep in, which Burst breaks.
 #define DRAGON_ICE_TILE 20
-/// The tile code of the statue's face, which asks for something to be placed
-/// in it, and on which the Mars Star is used.
+/// The cell before the great dragon head on the north wall, which asks for
+/// something to be placed in it, and on which the Mars Star is used.
 #define STATUE_FACE_TILE 21
 
 enum {
@@ -147,28 +149,34 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gActorPlacements;
 }
 
-/// Blaze is cast at the east torch: this cast's jet of flame is the long
-/// one (BLAZE_LONG_SPRAY, faster and longer than BLAZE_SPRAY), which Blaze
-/// takes when it finds no torch and the field work's blazeLongSpray is set.
-/// Each cast clears it as it starts (FieldPsynergy_LoadResources).
+/// Felix casts Blaze at the burning torch on the east stand before the frozen
+/// dragons, and its jet of flame comes out long and fast.
+///
+/// The cast sets `blazeLongSpray`, which gives Blaze its long jet in place of
+/// the short one; every cast clears it again as it starts.
+// XXX: whether the long jet is what carries the flame across to the unlit
+// torch on the west stand; a recording of Blaze cast westward from east of the
+// burning torch would settle it (the recorder casts it eastward, at nothing).
 void MarsLighthouseStarRoom_StartBlazeOnStatue(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
 
   event->blazeLongSpray = 1;
 }
 
-/// Blaze reaches the west torch: it shoots its two fireballs.
+/// Blaze's flame reaches the unlit torch on the west stand before the frozen
+/// dragons, which sends out the two sparkles that launch the fireballs.
 void MarsLighthouseStarRoom_BlazeStatue(void) {
   MarsLighthouseStarRoom_ShootFireballs();
 }
 
-/// Blaze ends; the fireballs go on alone.
+/// Nothing happens when Blaze ends at the west torch; the sparkles and
+/// fireballs go on alone.
 void MarsLighthouseStarRoom_EndBlazeOnStatue(void) {}
 
 FIXED Trig_Cos(s32 angle);
 void Actor_SetupScriptedPart(struct Actor *actor, s32 priority);
 
-/// Import_ActorCreate, through an inline as the star room's effects call it.
+/// Creates one of the dragon hall's effects at a point in the room.
 static __inline__ struct Actor *
 MarsLighthouseStarRoom_CreateActor(s32 kind, s32 x, s32 y, s32 z) {
   return Import_ActorCreate(kind, x, y, z);
@@ -265,7 +273,8 @@ void MarsLighthouseStarRoom_EastFireballCracksIce(void) {
 
 void MarsLighthouseStarRoom_ClearDragonIce(void);
 
-/// Burst on the crack: a flash, the ice gone, chips flying, and the dragons
+/// Felix casts Burst on the cracked ice the Flame Dragons sleep in, cells
+/// (41, 14) to (43, 14): a flash, the ice gone, chips flying, and the dragons
 /// wake.
 void MarsLighthouseStarRoom_BurstIce(s32 phase, s32 frame) {
   if (phase == 1) {
@@ -644,7 +653,8 @@ void MarsLighthouseStarRoom_CreateMarsStar(s32 rise) {
 
 void Event_End(void);
 
-/// Karst: "Your hand...so warm..."
+/// Felix talks to Karst, lying on the floor of the dragon hall where her
+/// dragon fell: "Your hand...so warm... People have such warm hands..."
 void MarsLighthouseStarRoom_HoldWarmHand(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -662,8 +672,11 @@ void Inventory_Equip(s32 owner, s32 slot);
 void Actor_Release(struct Actor *actor);
 void FieldCamera_WaitForArrival(void);
 
-/// Agatio bids Felix hurry; the first time, the Mars Star flies to Felix, goes
-/// into the Mythril Bag, and the statue's face asks for it.
+/// Felix talks to Agatio, lying on the floor of the dragon hall: "It's too late
+/// for us now... Hurry, light the beacon." The first time, the Mars Star flies
+/// up from the floor to Felix and goes into the Mythril Bag, and the view turns
+/// to the great dragon head on the north wall, which glows and speaks: "You who
+/// hold the star, open your heart..."
 void MarsLighthouseStarRoom_TakeMarsStar(void) {
   struct Actor *leader;
   struct Actor *actor;
@@ -753,8 +766,9 @@ void MarsLighthouseStarRoom_LayDownAdept(s32 id) {
   }
 }
 
-/// "There's a space for you to place something." Then the field menu opens,
-/// for the party to choose what to place.
+/// Felix examines the great dragon head on the north wall of the dragon hall,
+/// cell (42, 8): "There's a space for you to place something." Then the field
+/// menu opens, for the party to choose what to place.
 void MarsLighthouseStarRoom_ExamineStatue(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
 
@@ -771,8 +785,10 @@ void MarsLighthouseStarRoom_SpawnRisingSparks(void);
 
 #if !TLA_PATCH_1
 
-/// The Mars Star set in the statue's face: the room shakes, sparks rise, the
-/// ice melts away and the lighthouse turns to fire; the star falls back out.
+/// Felix uses the Mars Star on the great dragon head on the north wall of the
+/// dragon hall and sets it in the head's face: the room shakes, sparks rise,
+/// the ice melts into lava and the lighthouse turns back to fire; the star
+/// falls back out.
 void MarsLighthouseStarRoom_UseMarsStar(void) {
   struct Actor **slot;
   struct Actor *actor;
@@ -899,8 +915,10 @@ void MarsLighthouseStarRoom_UseMarsStar(void) {
 
 #else
 
-/// The Mars Star set in the statue's face: the room shakes, sparks rise, the
-/// ice melts away and the lighthouse turns to fire; the star falls back out.
+/// Felix uses the Mars Star on the great dragon head on the north wall of the
+/// dragon hall and sets it in the head's face: the room shakes, sparks rise,
+/// the ice melts into lava and the lighthouse turns back to fire; the star
+/// falls back out.
 void MarsLighthouseStarRoom_UseMarsStar(void) {
   s32 flag;
   struct Actor **slot, **placedStarSlot;
@@ -1344,8 +1362,12 @@ void MarsLighthouseStarRoom_KnockBackIfHit(void) {
     Leader_KnockBack();
 }
 
-/// Hit by a rolling fireball: the leader is hurt, blinks, and is carried along
-/// with it (FlameHitWork.car, the fireball's actor) until it stops.
+/// A rolling fireball hits Felix in the dragon hall once the Flame Dragons are
+/// beaten: he is hurt, sits down blinking, and is carried along with the
+/// fireball until it stops.
+///
+/// The fireball is the hit work's `car`; Felix moves by its step each frame,
+/// stopping at the centre of a cell where the floor ends.
 s32 Fireball_CarryLeader(void) {
   struct FieldWork *event = Ram_HeapSlots->fieldWork;
   struct FlameHitWork *ride;
@@ -1533,8 +1555,6 @@ void CrackedTile_PlaceLanding(s32 x, s32 z, s32 effect) {
     gFieldWork->transition = effect;
   }
 }
-
-void MarsLighthouseStarRoom_ExamineStatue(void);
 
 extern s32 gMarsLighthouseStarRoom_TorchScript[];
 

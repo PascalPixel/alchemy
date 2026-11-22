@@ -1000,7 +1000,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
   s32 i;
   s32 y;
 
-  spriteWork = HeapSlot_Alloc(HEAP_SLOT_MENU, 3308);
+  spriteWork = HeapSlot_Alloc(HEAP_SLOT_MENU, MENU_WORK_SIZE);
   save = Ram_HeapSlots->saveWork;
   summaryWindow = NULL;
   partyWindow = NULL;
@@ -1074,7 +1074,7 @@ s32 FileList_SelectFile(s32 selectedFile, s32 menuMode) {
     }
   }
 
-  Dma_Fill32(0, spriteWork, 3308);
+  Dma_Fill32(0, spriteWork, MENU_WORK_SIZE);
   FileList_StartPulse();
   fileList = Window_Create(1, 2, 28, 7, WINDOW_FLAG_INSTANT);
   for (i = 0, summary = save->summary; i < SAVE_FILE_COUNT; i++, summary++) {

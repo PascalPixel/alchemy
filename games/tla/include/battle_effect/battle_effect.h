@@ -511,14 +511,14 @@ void RagingHeat_FillGradientCanvas(void);
 void BattleEffect_AdvanceScrollOnInterval(void);
 s32 BattleEffect_BuildBlitter(s32 slot, s32 widthShift, s32 heightShift,
                               s32 flags, u32 mode);
-void Palette_BrightenBattleBg(s32 r, s32 g, s32 b);
-void Palette_BrightenSavedBattleBg(s32 red, s32 green, s32 blue);
+void Palette_BrightenBattleBg(s32 redStep, s32 greenStep, s32 blueStep);
+void Palette_BrightenSavedBattleBg(s32 redStep, s32 greenStep, s32 blueStep);
 void Mesh_BuildCylinderBand(struct MeshVertex *vertices,
                             struct MeshTriangle *triangles, s32 segments);
 void Graphics_LoadGreyRamp(void); // a grey ramp from color 1
 void Mesh_BuildGrid(struct MeshTriangle *triangles, s32 columns, s32 rows,
                     s32 cellWidth, s32 cellHeight);
-void Palette_BrightenBgEntries(s32 red, s32 green, s32 blue);
+void Palette_BrightenBgEntries(s32 blueStep, s32 greenStep, s32 redStep);
 void BattleEffect_ConfigureEffectDisplay(void);
 void BattleEffect_ClearActorTimers(void);
 void BattleEffect_DrawClippedCanvasLine(s32 x0, s32 y0, s32 x1, s32 y1,

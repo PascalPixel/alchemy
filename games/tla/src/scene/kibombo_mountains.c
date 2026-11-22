@@ -1,10 +1,21 @@
 /// @file
 /// The Kibombo Mountains, the pass the Kibombo warriors guard on the way to
-/// their village, in the rooms of this overlay: crates the party pushes and
-/// vines it climbs while it keeps out of the guards' sight, a guard who sees
-/// it sending it back, a guard dog and its bone, the bush Whirlwind blows away
-/// from a small cavern's way in, and the Jupiter Djinni Waft
-/// (KibomboMountains_FightWaft).
+/// their village, in three rooms: the chest room with the Disk Axe, the ledges
+/// above it where Waft hides, and the small cavern behind a bush.
+///
+/// As the party nears the pass, warriors report to one another that the way is
+/// clear (KibomboMountains_GuardsReport), and from then on any guard who sees
+/// Felix shouts for the others and the party is marched back down the road
+/// (KibomboMountains_GuardSpotsParty). In the chest room the party climbs the
+/// vines past the second guard, hops across the two crates below him once they
+/// are pushed into place, drops a pillar into the gap in the west as a
+/// shortcut, and pushes the crate along the first guard's ledge to hide
+/// behind it; the rope over the third guard is tied with Lash. On the ledges
+/// above, a crate pushed off a ledge knocks out the guard below, a pillar
+/// dropped into the dog's run shuts the dog in, and Tremor shakes a bone off a
+/// crate to keep the dog busy; Whirlwind blows the bush from the cavern's way
+/// in. Later, with Frost and Growth, an ice pillar and a vine lead up to Waft
+/// (KibomboMountains_FightWaft), and the warriors let the party pass.
 
 #include "flags.h"
 #include "sprite_ids.h"
@@ -96,11 +107,8 @@ enum KibomboMountainsWaftActorId {
   ACTOR_BONE,
   ACTOR_WAFT,
   /// Unused: an unseen marker under the trees south of the dog's pillar. It
-  /// draws nothing and no trigger or event names it; Scene_Initialize only
-  /// takes away its shadow and collision, fixes its sprite priority at 1 and
-  /// sorts it as underfoot (ACTOR_PRIORITY_UNDERFOOT). The room watched beside
-  /// it (render guide moment, MOMENT_PLACE=107,4 MOMENT_STAND=712,640
-  /// MOMENT_ACTORS=19) shows it among the trees, changing nothing on screen.
+  /// draws nothing, and no trigger or event names it; the room only takes away
+  /// its shadow and collision as it opens.
   ACTOR_UNSEEN_MARKER
 };
 
@@ -151,38 +159,40 @@ enum KibomboMountainsDiskAxeChestEntrance {
 #define GUARD_CRATE_CELL_X 53
 #define GUARD_CRATE_CELL_Z 36
 
+/// The rooms' own cell behaviours, named by what stands near them.
+enum KibomboMountainsCellBehavior {
+  /// Waft's ledges: south west of the upper guard, cells (35, 21) to
+  /// (35, 23), and south east of him, (41, 23) to (41, 26); by the north end
+  /// of the dog's run, (49, 22) to (49, 24), (45, 24) and (45, 25); south of
+  /// the lower guard's path, (51, 36) to (51, 38) and (47, 38) to (47, 40),
+  /// and south east of it, (54, 38) to (55, 41); and by the south end of the
+  /// dog's run, (50, 30) to (50, 32).
+  CELL_BEHAVIOR_WEST_OF_UPPER_GUARD = 20,
+  CELL_BEHAVIOR_EAST_OF_UPPER_GUARD,
+  CELL_BEHAVIOR_NORTH_END_OF_DOG_RUN,
+  CELL_BEHAVIOR_SOUTH_OF_LOWER_GUARD,
+  CELL_BEHAVIOR_SOUTH_EAST_OF_LOWER_GUARD,
+  CELL_BEHAVIOR_SOUTH_END_OF_DOG_RUN,
+  /// Waft's ledges: the edge Felix jumps west from, cell (43, 30).
+  CELL_BEHAVIOR_JUMP_WEST = 33,
+  /// The chest room: the first guard's ledge west of where he paces, cells
+  /// (8, 18) to (10, 19), and east of it, (16, 18) to (19, 18); east of the
+  /// second guard, (18, 28) to (18, 30), and south of him, (14, 30) to
+  /// (17, 32); between the torches below him, (15, 33) to (16, 34); and the
+  /// rope's line above the third guard, (26, 12) and (27, 12), and the cells
+  /// west of him, (25, 15), (24, 16) and (25, 16).
+  CELL_BEHAVIOR_WEST_OF_FIRST_GUARD = 30,
+  CELL_BEHAVIOR_EAST_OF_FIRST_GUARD,
+  CELL_BEHAVIOR_EAST_OF_SECOND_GUARD,
+  CELL_BEHAVIOR_SOUTH_OF_SECOND_GUARD,
+  CELL_BEHAVIOR_BETWEEN_TORCHES,
+  CELL_BEHAVIOR_ROPE_ABOVE_THIRD_GUARD,
+  CELL_BEHAVIOR_WEST_OF_THIRD_GUARD
+};
+
 /// A trigger's subject that answers only while the leader faces `facing`.
 #define FACING_SUBJECT(facing, target)                                         \
   ((s16)((facing) | TRIGGER_SUBJECT_NEEDS_FACING | (target)))
-
-void KibomboMountains_GuardSpotsParty(s32 guard);
-void KibomboMountains_DogSpotsParty(s32 dog);
-
-void KibomboMountains_TremorDropsBone(void);
-
-void KibomboMountains_JumpForward(void);
-
-void KibomboMountains_FreezeFirstPuddle(void);
-
-void KibomboMountains_FreezeSecondPuddle(void);
-
-void KibomboMountains_GuardsReport(void);
-
-void KibomboMountains_StepWestOfCrate(void);
-
-void KibomboMountains_StepEastOfCrate(void);
-
-void KibomboMountains_StepBeforeSecondGuard(void);
-
-void KibomboMountains_StepBeforeSecondGuardAgain(void);
-
-void KibomboMountains_StepBeforeThirdGuard(void);
-
-void KibomboMountains_StepBeforeThirdGuardAgain(void);
-void KibomboMountains_StepBeforeUpperGuard(void);
-void KibomboMountains_StepBeforeUpperGuardAgain(void);
-void KibomboMountains_StepBeforeLowerGuardAgain(void);
-void KibomboMountains_StepSouthOfDog(void);
 
 extern s32 gKibomboMountains_TorchScript[];
 extern s32 gKibomboMountains_CrateScript[];
@@ -191,15 +201,14 @@ extern s32 gKibomboMountains_PaceScript[];
 extern s32 gKibomboMountains_DogRunScript[];
 extern s32 gKibomboMountains_SecondGuardPaceScript[];
 
-void KibomboMountains_StepBeforeLowerGuard(void);
-
 void Rope_Place(s32 index, s32 flag, s32 post, s32 otherPost);
 
 #include "shared/field_rope_place.c"
 
 void Field_TryJumpForward(void);
 
-/// Talking to Waft starts its battle.
+/// Felix talks to Waft, the Jupiter Djinni on the high ledge reached by
+/// the ice pillar and the vine: Waft fights.
 void KibomboMountains_FightWaft(void) {
   Field_RequestDjinnBattle(ACTOR_WAFT, DJINNI_WAFT);
 }
@@ -226,7 +235,9 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gKibomboMountains_Placements;
 }
 
-/// Frost freezes the puddle into a pillar to climb.
+/// Piers casts Frost on the puddle on the third level of Waft's ledges: it
+/// freezes into an ice pillar, and the cell beside it, (22, 32), becomes one
+/// Felix can hop across on its top.
 void KibomboMountains_FreezePuddle(void) {
   struct Actor *actor = Actor_Get(ACTOR_PUDDLE);
 
@@ -236,7 +247,8 @@ void KibomboMountains_FreezePuddle(void) {
   Event_SetFlag(FLAG_WAFT_ROOM_PUDDLE_FROZEN);
 }
 
-/// Growth on the plant: it grows into a vine to climb to Waft.
+/// Growth on the sprout near Waft's ledge: it grows into a vine, and cells
+/// (28, 33) and (28, 34) become climbable, up to Waft.
 void KibomboMountains_GrowVine(void) {
   MapGrid_CopyCellAttributes(30, 35, 1, 1, 28, 34);
   MapGrid_CopyCellAttributes(30, 34, 1, 1, 28, 33);
@@ -245,8 +257,10 @@ void KibomboMountains_GrowVine(void) {
 
 #include "shared/actor_wait_to_land.h"
 
-/// Before the crate over the lower guard is moved, it is drawn above him.
-void KibomboMountains_StartPushingCrate(s32 unused, s32 id) {
+/// Nothing visible happens as Felix starts pushing the crate on the ledge above
+/// the lower guard's path, cell (55, 34). The crate's sprite is set to be drawn
+/// in front of the guard, so that it covers him if it lands on him.
+void KibomboMountains_StartPushingGuardCrate(s32 unused, s32 id) {
   if (id == ACTOR_GUARD_CRATE)
     FieldActor_SetSpritePriority(ACTOR_GUARD_CRATE, 1);
 }
@@ -256,9 +270,14 @@ extern s32 gKibomboMountains_CrateJumpScript[];
 void Actor_StartScript(struct Actor *actor, const s32 *script);
 void Actor_StartIdle(struct Actor *actor);
 
-/// A pillar or crate pushed off its ledge: the pillar dropped across the
-/// dog's run shuts the dog in on one side, and the crate dropped on the lower
-/// guard knocks him out, while missing him only puzzles him.
+/// Felix pushes the pillar or the crate off its ledge on Waft's ledges. The
+/// pillar lands in the middle of the dog's run, cell (47, 28), shutting the
+/// dog in north or south of it (a dog caught under it cries out and is
+/// pushed aside), and Felix can hop across its top. The crate lands on the
+/// lower guard's path, cell (53, 36): if the guard is under it, he walks into
+/// it and is trapped, the crate rocking as he struggles; if not, the guard
+/// jumps, looks at the crate puzzled, shakes his head and walks on, and the
+/// crate can be pushed again.
 void KibomboMountains_DropOffLedge(s32 unused, s32 id) {
   struct Actor saved;
 
@@ -336,8 +355,10 @@ void KibomboMountains_DropOffLedge(s32 unused, s32 id) {
   }
 }
 
-/// Tremor on the crate under the bone: the bone drops, and the dog, unless
-/// shut in to the south, runs to it and stays there eating.
+/// Felix casts Tremor on the crate with the bone on it, by the north end of
+/// the dog's run, facing it from the south or the west: the crate shakes, the
+/// bone drops to the ground, and the dog, unless shut in south of the pillar,
+/// runs to it and stays there eating, no longer watching the run.
 void KibomboMountains_TremorDropsBone(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -360,15 +381,18 @@ void KibomboMountains_TremorDropsBone(void) {
   Event_End();
 }
 
-/// Whirlwind blows away the bush over the small cavern's way in.
+/// Felix casts Whirlwind on the bush on Waft's ledges: the bush
+/// blows away, and the opening behind it leads into the small cavern.
 void KibomboMountains_BlowAwayBush(void) {
   GameFlag_Set(FLAG_KIBOMBO_BUSH_BLOWN_AWAY);
 }
 
-/// The leader jumps the gap ahead.
+/// Felix walks west off the edge at cell (43, 30) on Waft's ledges and jumps
+/// the gap ahead.
 void KibomboMountains_JumpForward(void) { Field_TryJumpForward(); }
 
-/// Frost freezes the chest room's first puddle into a pillar.
+/// Piers casts Frost on the puddle high in the north west of the chest room,
+/// cell (4, 16): it freezes into an ice pillar Felix can hop across.
 void KibomboMountains_FreezeFirstPuddle(void) {
   struct Actor *actor = Actor_Get(ACTOR_FIRST_PUDDLE);
 
@@ -378,7 +402,8 @@ void KibomboMountains_FreezeFirstPuddle(void) {
   Event_SetFlag(FLAG_DISK_AXE_ROOM_FIRST_PUDDLE_FROZEN);
 }
 
-/// Frost freezes the chest room's second puddle into a pillar.
+/// Piers casts Frost on the puddle on the west path of the chest room, cell
+/// (10, 30): it freezes into an ice pillar Felix can hop across.
 void KibomboMountains_FreezeSecondPuddle(void) {
   struct Actor *actor = Actor_Get(ACTOR_SECOND_PUDDLE);
 
@@ -388,8 +413,11 @@ void KibomboMountains_FreezeSecondPuddle(void) {
   Event_SetFlag(FLAG_DISK_AXE_ROOM_SECOND_PUDDLE_FROZEN);
 }
 
-/// As a pair of the chest room's crates starts to move, the cells under them
-/// are cleared.
+/// Nothing visible happens as Felix starts pushing one of the chest room's two
+/// pairs of crates: the pair on the first guard's ledge, (8, 18) and (19, 15),
+/// or the pair below the second guard, (20, 34) and (27, 33). The ground the
+/// pair stood on is laid back from the copy kept beside the map, so that the
+/// cells they leave are ordinary ground again.
 void KibomboMountains_StartPushingChestRoomCrate(s32 unused, s32 id) {
   if (id == ACTOR_LOWER_WEST_CRATE || id == ACTOR_LOWER_EAST_CRATE)
     MapGrid_CopyCellAttributes(120, 33, 8, 2, 20, 33);
@@ -407,8 +435,11 @@ void KibomboMountains_SetCrateCell(s32 id, s32 sourceX, s32 sourceY) {
   MapGrid_CopyCellAttributes(sourceX, sourceY, 1, 1, x, z);
 }
 
-/// A crate or pillar moved in the chest room: a pillar pushed off its ledge
-/// lands for good, and a pair of crates leaves its cells solid.
+/// Felix finishes pushing a crate or pillar in the chest room. The pillar in
+/// the west, pushed off its ledge into the gap at cell (4, 28), lands for good
+/// as a shortcut Felix can hop across; the pillar by the chest, dropped to
+/// cell (28, 30), lands where he can climb it. Where the two crates below the
+/// second guard stop, Felix can hop across their tops.
 void KibomboMountains_FinishPushingChestRoomCrate(s32 unused, s32 id) {
   if (id == ACTOR_FIRST_DROPPED_PILLAR) {
     struct Actor *actor = Actor_Get(ACTOR_FIRST_DROPPED_PILLAR);
@@ -567,8 +598,11 @@ s32 Scene_Initialize(void) {
 
 s32 Scene_PrepareMap(void) { return 0; }
 
-/// The first time the party climbs the pass: "Is the way clear?" Two warriors
-/// report, and one goes back to his watch.
+/// The first time Felix climbs the stairs between the two torches below the
+/// stone gateway the second guard keeps, cells (15, 33) to (16, 34): a warrior
+/// comes asking "Is the way clear?", the second guard reports that the strange
+/// one has not been seen, and the warrior hurries off to find whoever attacked
+/// their guards, leaving him on watch.
 void KibomboMountains_GuardsReport(void) {
   Event_Start();
   FieldEvent_ResolvePendingActions(0);
@@ -632,8 +666,11 @@ void KibomboMountains_WalkSlowly(s32 id) {
   actor->speedLimit = toFIXED(1) / 2;
 }
 
-/// Caught: "Here! The intruder is here!" The warriors march the party back down
-/// the road.
+/// Caught for the first time on this visit, the party is back at the top of
+/// the stairs between two torches, below the second guard's stone gateway,
+/// surrounded by six warriors: "Here! The intruder is here! Kibombo does not
+/// permit visitors!" Two of them walk Felix down the stairs, and all of them
+/// leave.
 void KibomboMountains_GuardsTurnPartyBack(void) {
   s32 leader = gMainRoutineWork.leaderActorId;
 
@@ -711,8 +748,9 @@ void KibomboMountains_GuardsTurnPartyBack(void) {
   Event_SetFlag(FLAG_TURNED_BACK);
 }
 
-/// Sends the party back to the foot of the pass, by whether it was turned back
-/// on this visit.
+/// Sends the party back to the stairs below the second guard's gateway:
+/// the first time on a visit to be met by the warriors, after that only put
+/// back.
 void KibomboMountains_SendPartyBack(void) {
   s32 moved = Event_GetFlag(FLAG_TURNED_BACK);
   s32 scene = SCENE_KIBOMBO_MOUNTAINS_DISK_AXE_CHEST;
@@ -723,7 +761,9 @@ void KibomboMountains_SendPartyBack(void) {
     Event_SetDestination(scene, ENTRANCE_CAUGHT);
 }
 
-/// A warrior sees the party: "Guards! An intruder!"
+/// A guard sees Felix: he starts, turns to face him, "Guards! An intruder!
+/// Someone is trying to pass! To arms, Kibombo warriors! To arms!", and the
+/// party is sent back to the stairs below the second guard's gateway.
 void KibomboMountains_GuardSpotsParty(s32 id) {
   s32 leader = gMainRoutineWork.leaderActorId;
 
@@ -747,7 +787,9 @@ void KibomboMountains_GuardSpotsParty(s32 id) {
   Event_End();
 }
 
-/// The dog sees the party and barks for the warriors.
+/// The guard dog sees Felix: it starts, "Grrrrr! Rrrruff! Rrufff!", the upper
+/// guard shouts "An intruder! Repel the intruder immediately!", and the party
+/// is sent back to the stairs below the second guard's gateway.
 void KibomboMountains_DogSpotsParty(s32 id) {
   s32 leader = gMainRoutineWork.leaderActorId;
 
@@ -771,8 +813,10 @@ void KibomboMountains_DogSpotsParty(s32 id) {
   Event_End();
 }
 
-/// Stepping in the first guard's sight, unless the crate hides the leader.
-void KibomboMountains_StepWestOfCrate(void) {
+/// Felix steps onto the first guard's ledge west of where he paces, cells
+/// (8, 18) to (10, 19): the guard sees him and the party is sent back, unless
+/// the west crate stands just east of Felix in the same row, hiding him.
+void KibomboMountains_StepWestOfFirstGuard(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *crate = Actor_Get(ACTOR_WEST_CRATE);
 
@@ -784,9 +828,10 @@ void KibomboMountains_StepWestOfCrate(void) {
   KibomboMountains_GuardSpotsParty(ACTOR_FIRST_GUARD);
 }
 
-/// Stepping in the first guard's sight east of the crates, unless the east
-/// crate hides the leader.
-void KibomboMountains_StepEastOfCrate(void) {
+/// Felix steps onto the first guard's ledge east of where he paces, cells
+/// (16, 18) to (19, 18): the guard sees him and the party is sent back, unless
+/// the east crate stands just west of Felix in the same row, hiding him.
+void KibomboMountains_StepEastOfFirstGuard(void) {
   struct Actor *leader = Actor_Get(gMainRoutineWork.leaderActorId);
   struct Actor *crate = Actor_Get(ACTOR_EAST_CRATE);
 
@@ -798,71 +843,77 @@ void KibomboMountains_StepEastOfCrate(void) {
   KibomboMountains_GuardSpotsParty(ACTOR_FIRST_GUARD);
 }
 
-/// Stepping into the second guard's sight.
-void KibomboMountains_StepBeforeSecondGuard(void) {
+/// Felix steps east of the second guard, cells (18, 28) to (18, 30): the
+/// guard sees him and the party is sent back.
+void KibomboMountains_StepEastOfSecondGuard(void) {
   KibomboMountains_GuardSpotsParty(ACTOR_SECOND_GUARD);
 }
 
-/// Stepping into the second guard's sight further on.
-void KibomboMountains_StepBeforeSecondGuardAgain(void) {
+/// Felix steps south of the second guard, cells (14, 30) to (17, 32), in
+/// front of where he looks: the guard sees him and the party is sent back.
+void KibomboMountains_StepSouthOfSecondGuard(void) {
   KibomboMountains_GuardSpotsParty(ACTOR_SECOND_GUARD);
 }
 
-/// Stepping into the third guard's sight, unless crossing the rope.
-void KibomboMountains_StepBeforeThirdGuard(void) {
+/// Felix steps onto the line of the rope above the third guard, cells
+/// (26, 12) and (27, 12): walking the rope he is not seen, but anywhere else
+/// there the guard sees him and the party is sent back.
+void KibomboMountains_StepOnRopeAboveThirdGuard(void) {
   if (gMainRoutineWork.movementMode != LEADER_MOVEMENT_ROPE)
     KibomboMountains_GuardSpotsParty(ACTOR_THIRD_GUARD);
 }
 
-/// Stepping into the third guard's sight further on.
-void KibomboMountains_StepBeforeThirdGuardAgain(void) {
+/// Felix steps west of the third guard, cells (25, 15), (24, 16) and
+/// (25, 16): the guard sees him and the party is sent back.
+void KibomboMountains_StepWestOfThirdGuard(void) {
   KibomboMountains_GuardSpotsParty(ACTOR_THIRD_GUARD);
 }
 
-/// Stepping into the upper guard's sight.
-void KibomboMountains_StepBeforeUpperGuard(void) {
+/// Felix steps south west of the upper guard on Waft's ledges, cells (35, 21)
+/// to (35, 23): the guard sees him and the party is sent back.
+void KibomboMountains_StepWestOfUpperGuard(void) {
   KibomboMountains_GuardSpotsParty(ACTOR_UPPER_GUARD);
 }
 
-/// Stepping into the upper guard's sight further on.
-void KibomboMountains_StepBeforeUpperGuardAgain(void) {
+/// Felix steps south east of the upper guard, cells (41, 23) to (41, 26): the
+/// guard sees him and the party is sent back.
+void KibomboMountains_StepEastOfUpperGuard(void) {
   KibomboMountains_GuardSpotsParty(ACTOR_UPPER_GUARD);
 }
 
-/// Stepping north of the dog: it spots the party unless it is eating the bone
-/// or shut in to the south.
-void KibomboMountains_StepNorthOfDog(void) {
+/// Felix steps by the north end of the dog's run, cells (49, 22) to (49, 24),
+/// (45, 24) and (45, 25): the dog sees him and barks, and the party is sent
+/// back, unless the dog is eating the bone or shut in south of the pillar.
+void KibomboMountains_StepByNorthEndOfDogRun(void) {
   if (!Event_GetFlag(FLAG_DOG_EATING_BONE) &&
       !Event_GetFlag(FLAG_DOG_SHUT_SOUTH))
     KibomboMountains_DogSpotsParty(ACTOR_GUARD_DOG);
 }
 
-/// Stepping into the lower guard's sight, unless a crate knocked him out.
-void KibomboMountains_StepBeforeLowerGuard(void) {
+/// Felix steps south of the lower guard's path, cells (51, 36) to (51, 38) and
+/// (47, 38) to (47, 40): the guard sees him and the party is sent back, unless
+/// the crate has trapped him.
+void KibomboMountains_StepSouthOfLowerGuard(void) {
   if (!Event_GetFlag(FLAG_GUARD_KNOCKED_OUT))
     KibomboMountains_GuardSpotsParty(ACTOR_LOWER_GUARD);
 }
 
-/// Stepping into the lower guard's sight further on, unless a crate knocked
-/// him out.
-void KibomboMountains_StepBeforeLowerGuardAgain(void) {
+/// Felix steps south east of the lower guard's path, cells (54, 38) to
+/// (55, 41): the guard sees him and the party is sent back, unless the crate
+/// has trapped him.
+void KibomboMountains_StepSouthEastOfLowerGuard(void) {
   if (!Event_GetFlag(FLAG_GUARD_KNOCKED_OUT))
     KibomboMountains_GuardSpotsParty(ACTOR_LOWER_GUARD);
 }
 
-/// Stepping south of the dog: it spots the party unless it is eating the bone
-/// or shut in to the north.
-void KibomboMountains_StepSouthOfDog(void) {
+/// Felix steps by the south end of the dog's run, cells (50, 30) to (50, 32):
+/// the dog sees him and barks, and the party is sent back, unless the dog is
+/// eating the bone or shut in north of the pillar.
+void KibomboMountains_StepBySouthEndOfDogRun(void) {
   if (!Event_GetFlag(FLAG_DOG_SHUT_NORTH) &&
       !Event_GetFlag(FLAG_DOG_EATING_BONE))
     KibomboMountains_DogSpotsParty(ACTOR_GUARD_DOG);
 }
-
-void KibomboMountains_FightWaft(void);
-void KibomboMountains_FreezePuddle(void);
-void KibomboMountains_GrowVine(void);
-void KibomboMountains_BlowAwayBush(void);
-void KibomboMountains_StepNorthOfDog(void);
 
 extern s32 gKibomboMountains_FirstGuardPaceScript[];
 
@@ -1125,14 +1176,14 @@ struct Trigger gKibomboMountains_WaftTriggers[] = {
     {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 5, CONDITION_ALWAYS, KIBOMBO_MOUNTAINS_WAFT_TO_KIBOMBO_MOUNTAINS_CAVERN_NORTH},
     {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 6, IF_FLAG_SET(FLAG_KIBOMBO_BUSH_BLOWN_AWAY), KIBOMBO_MOUNTAINS_WAFT_TO_KIBOMBO_MOUNTAINS_CAVERN_SOUTH_A},
     {TRIGGER_EXIT | STEP_TRIGGER_FLAG_WALKING | STEP_TRIGGER_FLAG_QUICK | TRIGGER_FLAG_FACING | FACING_NORTH, 7, CONDITION_ALWAYS, KIBOMBO_MOUNTAINS_WAFT_TO_KIBOMBO_MOUNTAINS_CAVERN_SOUTH_B},
-    {TRIGGER_STEP, 20, FLAG_KIBOMBO_LETS_PARTY_PASS, EVENT(KibomboMountains_StepBeforeUpperGuard)},
-    {TRIGGER_STEP, 21, FLAG_KIBOMBO_LETS_PARTY_PASS, EVENT(KibomboMountains_StepBeforeUpperGuardAgain)},
-    {TRIGGER_STEP, 22, FLAG_KIBOMBO_LETS_PARTY_PASS, EVENT(KibomboMountains_StepNorthOfDog)},
-    {TRIGGER_STEP, 23, FLAG_KIBOMBO_LETS_PARTY_PASS, EVENT(KibomboMountains_StepBeforeLowerGuard)},
-    {TRIGGER_STEP, 24, FLAG_KIBOMBO_LETS_PARTY_PASS, EVENT(KibomboMountains_StepBeforeLowerGuardAgain)},
-    {TRIGGER_STEP, 25, FLAG_KIBOMBO_LETS_PARTY_PASS, EVENT(KibomboMountains_StepSouthOfDog)},
-    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), 33, CONDITION_ALWAYS, EVENT(KibomboMountains_JumpForward)},
-    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(KibomboMountains_StartPushingCrate)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_WEST_OF_UPPER_GUARD, FLAG_KIBOMBO_LETS_PARTY_PASS, EVENT(KibomboMountains_StepWestOfUpperGuard)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_EAST_OF_UPPER_GUARD, FLAG_KIBOMBO_LETS_PARTY_PASS, EVENT(KibomboMountains_StepEastOfUpperGuard)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_NORTH_END_OF_DOG_RUN, FLAG_KIBOMBO_LETS_PARTY_PASS, EVENT(KibomboMountains_StepByNorthEndOfDogRun)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_SOUTH_OF_LOWER_GUARD, FLAG_KIBOMBO_LETS_PARTY_PASS, EVENT(KibomboMountains_StepSouthOfLowerGuard)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_SOUTH_EAST_OF_LOWER_GUARD, FLAG_KIBOMBO_LETS_PARTY_PASS, EVENT(KibomboMountains_StepSouthEastOfLowerGuard)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_SOUTH_END_OF_DOG_RUN, FLAG_KIBOMBO_LETS_PARTY_PASS, EVENT(KibomboMountains_StepBySouthEndOfDogRun)},
+    {STEP_TRIGGER_WALKING_INTO(FACING_WEST), CELL_BEHAVIOR_JUMP_WEST, CONDITION_ALWAYS, EVENT(KibomboMountains_JumpForward)},
+    {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(KibomboMountains_StartPushingGuardCrate)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(KibomboMountains_DropOffLedge)},
     {TRIGGER_TALK, ACTOR_GUARD_DOG, IF_FLAG_SET(FLAG_DOG_EATING_BONE), MSGNO(MsgKibomboMountainsSniffSniffLickLickLick)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUARD_DOG, IF_FLAG_SET(FLAG_DOG_EATING_BONE), MSGNO(MsgKibomboMountainsBoneThatsMyFavruffLick)},
@@ -1144,7 +1195,7 @@ struct Trigger gKibomboMountains_WaftTriggers[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_GROWTH), ACTOR_SPROUT, FLAG_SPROUT_GROWN, EVENT(KibomboMountains_GrowVine)},
     {PSYNERGY_ON_ACTOR(ABILITY_WHIRLWIND), ACTOR_CAVERN_BUSH, CONDITION_ALWAYS, EVENT(KibomboMountains_BlowAwayBush)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_DOG_PILLAR, CONDITION_ALWAYS, EVENT(KibomboMountains_DropOffLedge)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_GUARD_CRATE, FLAG_GUARD_KNOCKED_OUT, EVENT(KibomboMountains_StartPushingCrate)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_GUARD_CRATE, FLAG_GUARD_KNOCKED_OUT, EVENT(KibomboMountains_StartPushingGuardCrate)},
     {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_GUARD_CRATE, FLAG_GUARD_KNOCKED_OUT, EVENT(KibomboMountains_DropOffLedge)},
     {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), FACING_SUBJECT(FACING_NORTH, ACTOR_BONE_CRATE), FLAG_DOG_EATING_BONE, EVENT(KibomboMountains_TremorDropsBone)},
     {PSYNERGY_ON_ACTOR(ABILITY_TREMOR), FACING_SUBJECT(FACING_EAST, ACTOR_BONE_CRATE), FLAG_DOG_EATING_BONE, EVENT(KibomboMountains_TremorDropsBone)},
@@ -1157,13 +1208,13 @@ struct Trigger gKibomboMountains_DiskAxeChestTriggers[] = {
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS, KIBOMBO_MOUNTAINS_DISK_AXE_CHEST_TO_KIBOMBO_MOUNTAINS_WAFT_EAST_A},
     {TRIGGER_EXIT, 3, CONDITION_ALWAYS, KIBOMBO_MOUNTAINS_DISK_AXE_CHEST_TO_KIBOMBO_MOUNTAINS_WAFT_EAST_B},
     {TRIGGER_EXIT, 4, CONDITION_ALWAYS, KIBOMBO_MOUNTAINS_DISK_AXE_CHEST_TO_KIBOMBO_MOUNTAINS_WAFT_WEST},
-    {TRIGGER_STEP, 30, FLAG_KIBOMBO_LETS_PARTY_PASS, EVENT(KibomboMountains_StepWestOfCrate)},
-    {TRIGGER_STEP, 31, FLAG_KIBOMBO_LETS_PARTY_PASS, EVENT(KibomboMountains_StepEastOfCrate)},
-    {TRIGGER_STEP, 32, FLAG_KIBOMBO_LETS_PARTY_PASS, EVENT(KibomboMountains_StepBeforeSecondGuard)},
-    {TRIGGER_STEP, 33, FLAG_KIBOMBO_LETS_PARTY_PASS, EVENT(KibomboMountains_StepBeforeSecondGuardAgain)},
-    {TRIGGER_STEP, 34, FLAG_KIBOMBO_GUARDS_REPORTED, EVENT(KibomboMountains_GuardsReport)},
-    {TRIGGER_STEP, 35, FLAG_KIBOMBO_LETS_PARTY_PASS, EVENT(KibomboMountains_StepBeforeThirdGuard)},
-    {TRIGGER_STEP, 36, FLAG_KIBOMBO_LETS_PARTY_PASS, EVENT(KibomboMountains_StepBeforeThirdGuardAgain)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_WEST_OF_FIRST_GUARD, FLAG_KIBOMBO_LETS_PARTY_PASS, EVENT(KibomboMountains_StepWestOfFirstGuard)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_EAST_OF_FIRST_GUARD, FLAG_KIBOMBO_LETS_PARTY_PASS, EVENT(KibomboMountains_StepEastOfFirstGuard)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_EAST_OF_SECOND_GUARD, FLAG_KIBOMBO_LETS_PARTY_PASS, EVENT(KibomboMountains_StepEastOfSecondGuard)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_SOUTH_OF_SECOND_GUARD, FLAG_KIBOMBO_LETS_PARTY_PASS, EVENT(KibomboMountains_StepSouthOfSecondGuard)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_BETWEEN_TORCHES, FLAG_KIBOMBO_GUARDS_REPORTED, EVENT(KibomboMountains_GuardsReport)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_ROPE_ABOVE_THIRD_GUARD, FLAG_KIBOMBO_LETS_PARTY_PASS, EVENT(KibomboMountains_StepOnRopeAboveThirdGuard)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_WEST_OF_THIRD_GUARD, FLAG_KIBOMBO_LETS_PARTY_PASS, EVENT(KibomboMountains_StepWestOfThirdGuard)},
     {TRIGGER_PUSH, 0, CONDITION_ALWAYS, EVENT(KibomboMountains_StartPushingChestRoomCrate)},
     {TRIGGER_PUSHED, 0, CONDITION_ALWAYS, EVENT(KibomboMountains_FinishPushingChestRoomCrate)},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_WEST_ROPE_POST, FLAG_KIBOMBO_ROPE_TIED, 0},

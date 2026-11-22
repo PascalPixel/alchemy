@@ -283,7 +283,7 @@ void BattleEffect_RunRisingDragon(struct BattleEffectParams *args) {
           texture.logHeight = 5;
           texture.pixels = work->sheet;
           model->mesh = stripMesh;
-          model->scrollU = 127 & ~(frame << 3);
+          model->scrollU = TEXTURE_SCROLL_MASK & ~(frame << 3);
           Matrix_Initialize();
           if (args->side == EFFECT_SIDE_ENEMIES) {
             Matrix_Translate(INTtoFIXED(source.x / 2 - 68),

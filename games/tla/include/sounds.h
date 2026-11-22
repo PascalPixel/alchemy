@@ -126,16 +126,16 @@ enum SoundId {
   /// The battle music: the usual one, and with Felix in the front row.
   MUS_BATTLE_THE_LOST_AGE,
   /// Battle music gEncounter_BattleMusic gives Briggs's battle on his ship at
-  /// Eastern Alhafra (encounter table 10, slot 1) and encounter table 13's
-  /// slots 0 to 4.
+  /// Eastern Alhafra (ENCOUNTER_ZONE_SCRIPTED_YAMPI_DESERT_ALHAFRA, slot 1) and
+  /// ENCOUNTER_TABLE_MOAPA's slots 0 to 4.
   MUS_BRIGGS_BATTLE,
   /// Plays as the Aqua Hydra rises before the Lemurian Ship
   /// (LemurianShip_FightAquaHydra).
   MUS_AQUA_HYDRA,
   /// Plays as Karst and Agatio wake as the Flame Dragons in the Mars Star room.
   MUS_BATTLE_WITH_FLAME_DRAGON,
-  /// Battle music of the Doom Dragon at Mars Lighthouse's aerie (encounter
-  /// table 102, slot 1).
+  /// Battle music of the Doom Dragon at Mars Lighthouse's aerie
+  /// (ENCOUNTER_ZONE_SCRIPTED, slot 1).
   MUS_BATTLE_WITH_DOOM_DRAGON,
   /// The Broken Seal's MUS_TEST_YOUR_SKILLS, note for note: after a link
   /// battle's
@@ -780,16 +780,16 @@ enum SoundId {
   /// The battle music when Isaac is in the front row and Felix is not.
   MUS_BATTLE_THE_BROKEN_SEAL = 750,
   /// The Broken Seal's MUS_SWORN_ENEMIES_STAND_IN_YOUR_WAY, the battle music
-  /// gEncounter_BattleMusic gives encounter table 103's slot 0.
+  /// gEncounter_BattleMusic gives ENCOUNTER_TABLE_HIDDEN_BOSSES's slot 0.
   MUS_BATTLE_WITH_STAR_MAGICIAN,
   /// The Broken Seal's MUS_BATTLING_A_POWERFUL_FOE, note for note.
   MUS_BATTLE_WITH_VALUKAR,
   /// The Broken Seal's MUS_BATTLE_WITH_SATUROS_AND_MENARDI, the battle music
-  /// gEncounter_BattleMusic gives encounter table 103's slot 2.
+  /// gEncounter_BattleMusic gives ENCOUNTER_TABLE_HIDDEN_BOSSES's slot 2.
   MUS_BATTLE_WITH_SENTINEL,
   /// The Broken Seal's MUS_BATTLE_WITH_THE_FUSION_DRAGON, the battle music
   /// gEncounter_BattleMusic gives the Shadow's battle at the Anemos Inner
-  /// Sanctum's entrance (encounter table 103, slot 3).
+  /// Sanctum's entrance (ENCOUNTER_TABLE_HIDDEN_BOSSES, slot 3).
   MUS_BATTLE_WITH_DULLAHAN,
   /// The Broken Seal's MUS_TO_BE_CONTINUED, note for note, on the song
   /// table's last row; nothing in this game plays it.

@@ -27,8 +27,6 @@ void Clear64byte(void *block) {
 /// VBlanks a second.
 #define SOUND_VBLANK_RATE_E4 597275
 #define SOUND_RATE_E4_UNIT 10000
-/// 1.0 in the 24-bit fixed point SampleFreqSet takes the rate's reciprocal in.
-#define SOUND_RATE_STEP_ONE (1 << 24)
 
 /// The PCM notes and volume SoundInit starts with, until m4aSoundInit sets the
 /// game's mode: 8 notes at full volume.

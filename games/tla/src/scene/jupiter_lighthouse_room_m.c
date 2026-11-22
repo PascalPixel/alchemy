@@ -1,10 +1,22 @@
 /// @file
-/// Jupiter Lighthouse outside its aerie, where the party finds Isaac's: Garet
+/// The terraces high outside Jupiter Lighthouse, over the clouds, which link
+/// its main tower, by the red and blue doors, with its left and right towers.
+/// On the walkway west to the left tower, a whirlwind blows Felix back east if
+/// he walks into its path (JupiterLighthouse_RideUpperWhirlwind). Outside the
+/// upper doorway, the grey block pushed one cell east onto a trapdoor and the
+/// purple button in front of the doorway make a shortcut: standing on the
+/// button opens the trapdoor and the block drops through
+/// (JupiterLighthouse_OpenFloor). Pushed into its gap, the energy block draws a
+/// bolt of lightning that lights the path to a Hover pad
+/// (JupiterLighthouse_FinishMovingBlock); Hovering from it, Felix is caught by
+/// a whirlwind that takes him on towards the right tower
+/// (JupiterLighthouse_RideWhirlwind). Once both halves of the well's lid are
+/// lifted, on the way back to the aerie the party finds Isaac's party: Garet
 /// hangs from the ledge, Mia unable to pull him up, while Isaac and Ivan fight
-/// Karst and Agatio (JupiterLighthouse_StartTheFight), the party arrives to
+/// Karst and Agatio (JupiterLighthouse_StartTheFight); the party arrives to
 /// watch (JupiterLighthouse_PartyArrivesAtTheFight), and Isaac and Ivan are
 /// hurt (JupiterLighthouse_IsaacAndIvanAreHurt) and fall
-/// (JupiterLighthouse_IsaacAndIvanFall). Its whirlwinds and blocks lead on.
+/// (JupiterLighthouse_IsaacAndIvanFall).
 #include "flags.h"
 #include "game/character_ids.h"
 #include "types.h"
@@ -54,11 +66,11 @@ void Leader_CenterInCell(void);
 #include "field/actor_script.h"
 #include "fixed_math.h"
 
-/// The energy block pushed into its gap below the aerie's doors: lightning
-/// strikes it, and the path's grooves light up to the hover tile beyond.
+/// The energy block pushed into its gap: lightning has struck it, and the
+/// path's grooves light up to the Hover pad beyond.
 #define FLAG_ENERGY_BLOCK_IN_GAP 0xa0c
-/// The gray block pushed over the opened floor has dropped through, a
-/// shortcut to the rooms below.
+/// The grey block pushed over the trapdoor has dropped through it, a shortcut
+/// to the rooms below.
 #define FLAG_GRAY_BLOCK_DROPPED 0xa0d
 /// For this visit: Lash has tied the rope between the two tightrope posts.
 #define FLAG_JUPITER_LIGHTHOUSE_ROPE_TIED FLAG_SCENE_TEMP_00
@@ -105,8 +117,6 @@ void JupiterLighthouse_RideWhirlwind(void);
 void JupiterLighthouse_OpenFloor(void);
 
 void JupiterLighthouse_CloseFloor(void);
-
-void Whirlwind_CarryLeader(void);
 
 extern u32 gFieldEffect_ShortScript[];
 extern u32 gFieldEffect_MediumScript[];
@@ -159,6 +169,19 @@ enum { ENTRANCE_AFTER_THE_FIGHT = 77, ENTRANCE_ISAAC_AND_IVAN_FALL = 99 };
 
 /// The energy block's gap: the cell it drops into and lights the path from.
 enum { ENERGY_BLOCK_GAP_CELL_X = 63, ENERGY_BLOCK_GAP_CELL_Z = 15 };
+/// The terraces' own cell behaviors.
+enum JupiterLighthouseRoomMCellBehavior {
+  /// The west walkway's cells (13, 9) to (20, 9), in the west whirlwind's
+  /// path.
+  CELL_BEHAVIOR_WEST_WHIRLWIND_PATH = 30,
+  /// Cell (65, 42), past the Hover pad the energy block lights, in the east
+  /// whirlwind's path.
+  CELL_BEHAVIOR_EAST_WHIRLWIND_PATH,
+  /// The purple button in front of the upper doorway, cell (41, 39), and the
+  /// eight cells round it.
+  CELL_BEHAVIOR_TRAPDOOR_BUTTON,
+  CELL_BEHAVIOR_OFF_TRAPDOOR_BUTTON
+};
 
 /// The bits of a lightning map entry that number the map's tiles from 512;
 /// cleared, the map draws the tiles at the start of character block 0.
@@ -177,10 +200,9 @@ enum {
   /// The two tightrope posts Lash ties the rope between.
   ACTOR_EAST_ROPE_POST = 21,
   ACTOR_WEST_ROPE_POST = 22,
-  /// The gray block pushed over the floor that opens by the aerie
-  /// (JupiterLighthouse_OpenFloor).
+  /// The grey block pushed onto the trapdoor (JupiterLighthouse_OpenFloor).
   ACTOR_GRAY_BLOCK = 23,
-  /// The points the two upper whirlwinds rise from.
+  /// The unseen points the west and east whirlwinds blow out from.
   ACTOR_WEST_UPPER_GUST = 24,
   ACTOR_EAST_UPPER_GUST = 25,
   /// "And I'm Agatio."
@@ -199,8 +221,11 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 
 struct Actor *Whirlwind_SpawnUpper(struct Actor *source);
 
-/// A step on the west ledge's event: unless a whirlwind already carries the
-/// party, one rises from the west upper point and carries it.
+/// Felix walks into the west whirlwind's path, on the walkway towards the left
+/// tower at cells (13, 9) to (20, 9): a whirlwind blows out at him, catches him
+/// and carries him spinning back east along the walkway, over the clouds, to
+/// the doorway (Whirlwind_CarryLeader). Nothing happens while a whirlwind is
+/// already carrying him.
 void JupiterLighthouse_RideUpperWhirlwind(void) {
   if (gWhirlwindRiding == 0) {
     Whirlwind_SpawnUpper(Actor_Get(ACTOR_WEST_UPPER_GUST));
@@ -208,10 +233,13 @@ void JupiterLighthouse_RideUpperWhirlwind(void) {
   }
 }
 
-/// A step on the east event while the party hovers: unless a whirlwind already
-/// carries it, Hover ends there and a whirlwind from the east upper point
-/// carries the party.
+/// Felix, Hovering from the Hover pad the energy block lights, floats into the
+/// east whirlwind's path at cell (65, 42): his Hover ends, and a whirlwind
+/// blows out, catches him and carries him off towards the right tower
+/// (Whirlwind_CarryLeader). Walking there without Hover does nothing.
 void JupiterLighthouse_RideWhirlwind(void) {
+  // XXX: where the east whirlwind sets Felix down; a recording of Hover from
+  // the lit pad, the energy block in its gap, would settle it.
   if (gWhirlwindRiding == 0) {
     struct MainRoutineWork *party = &gMainRoutineWork;
 
@@ -229,9 +257,10 @@ void JupiterLighthouse_RideWhirlwind(void) {
 
 s32 Actor_EmitRisingSparks(struct Actor *actor);
 
-/// Lightning strikes the energy block: the bolt is drawn on BG0 over a white
-/// flash, the map shakes, Felix jumps back, sparks rise from the block, and
-/// the gap beyond becomes a floor Hover holds the party over.
+/// Lightning strikes the energy block in a white flash, the ground shakes,
+/// Felix jumps back, sparks rise from the block, and the path lights up to the
+/// Hover pad beyond the gap, at cell (65, 10). The bolt is a picture drawn on
+/// the first background layer, faded out over the scene.
 void JupiterLighthouse_FlashSky(void) {
   u16 *buffer;
   u16 *p;
@@ -313,9 +342,12 @@ void JupiterLighthouse_FlashSky(void) {
 
 extern void MapGrid_SetCellHeight(s32 x, s32 z, s32 a, s32 b);
 
-/// As Move takes the energy block: the height of the cell under it is set to
-/// -8.
+/// Nothing visible happens as Felix starts to push the energy block, by
+/// walking into it or with Move. The cell under it is lowered a little
+/// (`MapGrid_SetCellHeight`) for the push.
 void JupiterLighthouse_StartMovingBlock(s32 unused, s32 id) {
+  // XXX: what lowering the energy block's cell changes for the push; a
+  // recording of the block pushed off its cell would settle it.
   struct Actor *actor = Actor_Get(id);
 
   Call4(MapGrid_SetCellHeight, actor->x.fixed, actor->z.fixed, 0, -8);
@@ -327,9 +359,12 @@ static __inline__ void JupiterLighthouse_SetCellHeight(s32 x, s32 z, s32 a,
   MapGrid_SetCellHeight(x, z, a, b);
 }
 
-/// As Move sets the energy block down: in its gap it drops in, the leader
-/// steps back to look about, lightning strikes the block and the puzzle's
-/// jingle plays.
+/// The energy block, pushed or Moved three cells east into the gap at cell (63,
+/// 15), drops in with a heavy thud. Felix steps back west of the gap, the light
+/// turns warm, he looks about with a question mark and leans back, and
+/// lightning strikes the block (JupiterLighthouse_FlashSky); the camera then
+/// follows the lit path to the Hover pad as the puzzle-solved jingle plays.
+/// Anywhere else, the block simply stands where it is put.
 void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
   struct Actor *leader = Actor_GetById(gMainRoutineWork.leaderActorId);
   struct Actor *actor = Actor_GetById(id);
@@ -417,9 +452,13 @@ void JupiterLighthouse_FinishMovingBlock(s32 unused, s32 id) {
   JupiterLighthouse_SetCellHeight(actor->x.fixed, actor->z.fixed, 0, -6);
 }
 
-/// Standing on the button opens the floor by the aerie, until the lid is off;
-/// the grey block pushed over the opening drops through, once, landing with a
-/// shake and sliding off sideways when it was over the middle.
+/// Felix steps onto the purple button in front of the upper doorway, cell (41,
+/// 39): the camera turns to the trapdoor of two green panels nearby, which
+/// swing open. If the grey block has been pushed one cell east onto it, it
+/// falls through, the first time only, a few levels down to the rooms below
+/// with a crash and a shake: over the trapdoor's middle it first lands on a
+/// ledge with a shake and slides off sideways. Once the well's lid is lifted
+/// the button does nothing.
 void JupiterLighthouse_OpenFloor(void) {
   struct Actor *actor = Actor_GetById(ACTOR_GRAY_BLOCK);
   s32 spot = 0;
@@ -516,8 +555,9 @@ void JupiterLighthouse_OpenFloor(void) {
   Event_End();
 }
 
-/// Stepping off the button: until the lid is lifted, the floor by the aerie
-/// closes again with a thud.
+/// Felix steps off the purple button in front of the upper doorway: the camera
+/// turns to the trapdoor, which swings shut with a thud. Once the well's lid is
+/// lifted the trapdoor stays as it is.
 void JupiterLighthouse_CloseFloor(void) {
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LID_LIFTED) != 0)
     return;
@@ -1716,8 +1756,8 @@ void JupiterLighthouse_IsaacAndIvanFall(void) {
   Event_End();
 }
 
-/// Sets up the outside of the aerie: the eight hanging vines (the first placed
-/// actors) and the rope, the floor as it was left open, and once the lid is
+/// Sets up the terraces: the eight hanging chains (the first placed actors)
+/// and the rope, the trapdoor as it was left open, and once the lid is
 /// off the reunion as far as it has gone: the fight to watch, the fight
 /// itself, Isaac and Ivan fallen, or the hurt left behind once they have gone
 /// up to the aerie.
@@ -1794,7 +1834,7 @@ void LightSprites_InitC();
 void LightSprites_Add();
 
 /// Loads the lighthouse's palettes and the energy block's light; once the block
-/// is in its gap, sets it there with the lit path and the hover floor beyond.
+/// is in its gap, sets it there with the lit path and the Hover pad beyond.
 s32 Scene_PrepareMap(void) {
   struct Actor *actor;
 
@@ -2069,20 +2109,20 @@ LATE_DATA struct Trigger gSceneEvents[] = {
     {TRIGGER_EXIT, 10, CONDITION_ALWAYS, 10},
     {TRIGGER_EXIT, 11, CONDITION_ALWAYS, 11},
     {TRIGGER_EXIT, 12, CONDITION_ALWAYS, 12},
-    {TRIGGER_STEP, 30, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RideUpperWhirlwind)},
-    {TRIGGER_STEP, 31, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RideWhirlwind)},
-    {TRIGGER_STEP, 32, FLAG_SCENE_TEMP_02, EVENT(JupiterLighthouse_OpenFloor)},
-    {TRIGGER_STEP, 33, IF_FLAG_SET(FLAG_SCENE_TEMP_02), EVENT(JupiterLighthouse_CloseFloor)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_WEST_WHIRLWIND_PATH, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RideUpperWhirlwind)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_EAST_WHIRLWIND_PATH, CONDITION_ALWAYS, EVENT(JupiterLighthouse_RideWhirlwind)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_TRAPDOOR_BUTTON, FLAG_SCENE_TEMP_02, EVENT(JupiterLighthouse_OpenFloor)},
+    {TRIGGER_STEP, CELL_BEHAVIOR_OFF_TRAPDOOR_BUTTON, IF_FLAG_SET(FLAG_SCENE_TEMP_02), EVENT(JupiterLighthouse_CloseFloor)},
     {TRIGGER_TALK, ACTOR_ISAAC, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), EVENT(JupiterLighthouse_TalkAfterTheFight)},
     {TRIGGER_TALK, ACTOR_IVAN, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), EVENT(JupiterLighthouse_TalkAfterTheFight)},
     {TRIGGER_TALK, ACTOR_SHEBA, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), EVENT(JupiterLighthouse_TalkAfterTheFight)},
     {TRIGGER_TALK, ACTOR_JENNA, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), EVENT(JupiterLighthouse_TalkAfterTheFight)},
     {TRIGGER_TALK, ACTOR_KRADEN, IF_FLAG_SET(FLAG_ISAAC_AND_IVAN_FELL), EVENT(JupiterLighthouse_TalkAfterTheFight)},
-    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), 20, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartMovingBlock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 20, CONDITION_ALWAYS, EVENT(JupiterLighthouse_FinishMovingBlock)},
+    {PSYNERGY_PHASE_ON_ACTOR(ABILITY_MOVE, PSYNERGY_PHASE_BEFORE_CAST), ACTOR_ENERGY_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartMovingBlock)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_ENERGY_BLOCK, CONDITION_ALWAYS, EVENT(JupiterLighthouse_FinishMovingBlock)},
     {TRIGGER_PUSH, -1, CONDITION_ALWAYS, EVENT(JupiterLighthouse_StartMovingBlock)},
     {TRIGGER_PUSHED, -1, CONDITION_ALWAYS, EVENT(JupiterLighthouse_FinishMovingBlock)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), 23, CONDITION_ALWAYS, 0},
+    {PSYNERGY_ON_ACTOR(ABILITY_MOVE), ACTOR_GRAY_BLOCK, CONDITION_ALWAYS, 0},
     {PSYNERGY_ON_ACTOR(ABILITY_LASH), ACTOR_EAST_ROPE_POST, FLAG_JUPITER_LIGHTHOUSE_ROPE_TIED, 0},
     {TRIGGER_RAISED, RAISED_RIDE_WHIRLWIND, CONDITION_ALWAYS, EVENT(Whirlwind_CarryLeader)},
     {TRIGGER_TABLE_END},

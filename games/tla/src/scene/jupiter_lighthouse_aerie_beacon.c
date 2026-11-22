@@ -85,6 +85,10 @@ enum {
   ACTOR_STAR_SHADOW = 37
 };
 
+/// The cells on the way up to the well where Karst and Agatio meet Felix, and
+/// the row before the well where he can cast the Jupiter Star.
+enum { CELL_BEFORE_KARST_AND_AGATIO = 100, CELL_BEFORE_THE_WELL };
+
 /// The entrances the beacon's events arrive by: back from the World Map's
 /// view of the lit beacon, and after each battle with Karst and Agatio.
 enum {
@@ -338,8 +342,9 @@ UNUSED void JupiterLighthouse_RaiseBeaconLight(void) {
   gJupiterLighthouse_BeaconRiseFrame++;
 }
 
-/// Once Isaac and Ivan have fallen and before the beacon is lit, Karst and
-/// Agatio wait by the well and tell Felix to light it.
+/// Walking up towards the well in the aerie's centre (cells (33, 21) and
+/// (34, 21)) once Isaac and Ivan have fallen, Felix is met by Karst and
+/// Agatio waiting there: "You're late, Felix!" and "Now light the beacon!".
 void JupiterLighthouse_KarstAndAgatioWait(void) {
 
   if (Event_GetFlag(FLAG_ISAAC_AND_IVAN_FELL)) {
@@ -449,10 +454,15 @@ s32 PartyInventory_Remove(s32 item_id);
 
 extern s32 gJupiterLighthouse_BeamOpenScript[];
 
-/// Asks whether to cast the Elemental Star into the well. Agreed, Felix throws
-/// the Jupiter Star in, its light rises in two beams and the beacon is lit, and
-/// the scene leaves for the World Map's view of the lit beacon, which brings
-/// the party back by ENTRANCE_BEACON_LIT.
+/// Stepping up to the well in the aerie's centre (cells (29, 18) to (34, 18))
+/// once Isaac and Ivan have fallen, Felix is asked whether to cast the
+/// Elemental Star into its wide hole. Yes, and he throws the Jupiter Star in,
+/// its light rises out of the well in two beams and the beacon is lit; the
+/// lit beacon is shown from the world map, then the party returns to the aerie
+/// beside it. No, and he steps back from the well.
+///
+/// The party returns by ENTRANCE_BEACON_LIT, where Karst and Agatio turn on it
+/// (JupiterLighthouse_BeaconIsLit).
 void JupiterLighthouse_CastTheJupiterStar(void) {
   s32 answer, state;
   struct Actor *felix, *star, *shadow, *bottom, *top;
@@ -664,8 +674,9 @@ void JupiterLighthouse_CastTheJupiterStar(void) {
 struct Unit *Unit_Get(u32 unitId);
 void Inventory_Equip(s32 id, s32 slot);
 
-/// ENTRANCE_BEACON_LIT: Karst and Agatio turn on Felix and Piers,
-/// give back the Mythril Bag, and the first battle with them begins.
+/// Back on the aerie beside the lit beacon, Karst and Agatio turn on Felix and
+/// Piers, give back the Mythril Bag, and the first battle with them begins.
+/// The party arrives by ENTRANCE_BEACON_LIT.
 void JupiterLighthouse_BeaconIsLit(void) {
   struct FieldWork *work;
   s32 slot;
@@ -848,8 +859,9 @@ void JupiterLighthouse_BeaconIsLit(void) {
 /// (Scene_ReturnFromSequence), so he goes into it downed.
 #define DEFEAT_REVIVAL_HP_TAKEN 10
 
-/// ENTRANCE_AFTER_FIRST_BATTLE: Jenna comes to help, joins Felix and the second
-/// battle with Karst and Agatio begins.
+/// After the first battle with Karst and Agatio on the aerie, Jenna comes to
+/// help, joins Felix, and the second battle begins. The party arrives by
+/// ENTRANCE_AFTER_FIRST_BATTLE.
 void JupiterLighthouse_JennaJoinsTheFight(void) {
   s32 northwest;
   s32 southeast;
@@ -954,8 +966,9 @@ void JupiterLighthouse_JennaJoinsTheFight(void) {
   Field_RequestBattleFromEncounterTable(ENCOUNTER_TABLE_MOAPA, 6);
 }
 
-/// ENTRANCE_AFTER_SECOND_BATTLE: Sheba comes to help, joins the party and the
-/// last battle with Karst and Agatio begins.
+/// After the second battle on the aerie, Sheba comes to help, joins the party,
+/// and the last battle with Karst and Agatio begins. The party arrives by
+/// ENTRANCE_AFTER_SECOND_BATTLE.
 void JupiterLighthouse_ShebaJoinsTheFight(void) {
   s32 northwest = FACING_NORTHWEST;
   s32 southeast;
@@ -1086,9 +1099,10 @@ extern s32 gJupiterLighthouse_WalkToPlatformsScript[];
 extern s32 gJupiterLighthouse_HopWestOverPlatformsScript[];
 extern s32 gJupiterLighthouse_HopEastOverPlatformsScript[];
 
-/// ENTRANCE_LAST_BATTLE_LOST: Alex arrives and takes Karst and Agatio down on
-/// the elevator; Isaac's party comes up, Mia heals Felix's party, and both
-/// parties leave on the elevator.
+/// When the party loses the last battle on the aerie, Alex arrives and takes
+/// Karst and Agatio down on the elevator; Isaac's party comes up, Mia heals
+/// Felix's party, and both parties leave on the elevator. The party arrives by
+/// ENTRANCE_LAST_BATTLE_LOST.
 void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   s32 northwest;
   s32 southeast;
@@ -1589,9 +1603,10 @@ void JupiterLighthouse_KarstAndAgatioRetreat(void) {
   return;
 }
 
-/// ENTRANCE_LAST_BATTLE_WON: Alex heals Karst and Agatio and takes them down on
-/// the elevator; Isaac's party comes up, and both parties leave on the
-/// elevator.
+/// When the party wins the last battle on the aerie, Alex heals Karst and
+/// Agatio and takes them down on the elevator; Isaac's party comes up, and
+/// both parties leave on the elevator. The party arrives by
+/// ENTRANCE_LAST_BATTLE_WON.
 void JupiterLighthouse_WeBeatThem(void) {
   s32 northwest;
   s32 southeast;
@@ -2681,9 +2696,9 @@ LATE_DATA struct Trigger gSceneEvents[] = {
      JUPITER_LIGHTHOUSE_AERIE_BEACON_TO_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_A},
     {TRIGGER_EXIT, 2, CONDITION_ALWAYS,
      JUPITER_LIGHTHOUSE_AERIE_BEACON_TO_JUPITER_LIGHTHOUSE_ROOM_CRACKED_FLOOR_B},
-    {TRIGGER_STEP, 100, FLAG_SCENE_TEMP_00,
+    {TRIGGER_STEP, CELL_BEFORE_KARST_AND_AGATIO, FLAG_SCENE_TEMP_00,
      EVENT(JupiterLighthouse_KarstAndAgatioWait)},
-    {TRIGGER_STEP, 101, FLAG_JUPITER_BEACON_LIT,
+    {TRIGGER_STEP, CELL_BEFORE_THE_WELL, FLAG_JUPITER_BEACON_LIT,
      EVENT(JupiterLighthouse_CastTheJupiterStar)},
     {TRIGGER_TALK, ACTOR_KARST, CONDITION_ALWAYS, MSGNO(MsgOnceYouVe)},
     {TRIGGER_TALK, ACTOR_AGATIO, CONDITION_ALWAYS, MSGNO(MsgOnceJupiterIs)},

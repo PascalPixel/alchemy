@@ -1574,7 +1574,8 @@ void DehkanPlateau_TakePoundCube(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   if (gDehkanPlateau_PoundCube != 0)
-    ItemDisplay_ShowPicture(gDehkanPlateau_PoundCube, 3);
+    ItemDisplay_ShowPicture(gDehkanPlateau_PoundCube,
+                            ITEM_DISPLAY_SPARKLES | ITEM_DISPLAY_RAISED);
   PartyInventory_GiveItem(ITEM_POUND_CUBE, 0);
   if (gDehkanPlateau_PoundCube != 0)
     Actor_Release(gDehkanPlateau_PoundCube);

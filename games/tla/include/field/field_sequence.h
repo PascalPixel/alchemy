@@ -111,6 +111,12 @@ void *Scene_FindActorTalkTrigger(s32 id);
 s32 Field_FindNearbyTalkTarget(s32 id);
 s32 Field_UseItem(s32 arg, s32 slot);
 void Actor_ReleaseIfPresent(struct Actor *actor);
+/// How ItemDisplay_ShowItem and ItemDisplay_ShowPicture show a found item.
+enum ItemDisplayFlag {
+  ITEM_DISPLAY_SPARKLES = 1, ///< sparkles rise from it
+  ITEM_DISPLAY_RAISED = 2    ///< the leader raises it overhead
+};
+
 void ItemDisplay_RaiseAboveLeader(struct Actor *actor);
 void FieldPsynergy_Lift(void);
 s32 Speaker_GetVoice(s32 id);

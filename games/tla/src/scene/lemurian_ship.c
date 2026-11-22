@@ -1,13 +1,21 @@
 /// @file
 /// The Lemurian Ship below deck, at the East Indra Shore, in two scenes
 /// (SceneId_LemurianShipCabins and SceneId_LemurianShipAquaHydra) whose rooms
-/// are told apart by the entrance used. Aqua Jellies fill the cabins: each one
-/// beaten melts into a puddle Frost turns to ice to stand on, and crates are
-/// pushed between them. A frightened jelly flees down the lift; the last one
-/// calls the others together into the Aqua Hydra, whose fall floods the hold
-/// until Parch dries it. Douse fills the two pillars that sink on their drop
-/// tiles and open the way to the engine room, where Piers sets the Black
-/// Crystal and the ship sails.
+/// are told apart by the entrance used.
+///
+/// Piers leads the party down from the main deck through the captain's cabin
+/// into rooms full of Aqua Jellies. Each jelly beaten melts into a puddle that
+/// Frost turns into a pillar of ice to jump across, and tall crates are pushed
+/// between them: two jellies in the first room, six and a crate in the room of
+/// the lift, seven and a crate in the room after it. A jelly by the lift takes
+/// fright and flees down it; beaten below, it leaves a puddle that Frost
+/// freezes to hold the lift up. In the hold the last jelly calls the others
+/// together into the Aqua Hydra, and once it is beaten the hold floods, keeping
+/// its chest out of reach until Parch dries it on a later visit. In the room of
+/// two pillars below, the left pillar already stands sunk in its square; Douse
+/// fills the right one and Move pushes it onto the tile marked with a drop of
+/// water, where it sinks too and opens the arched doorway to the engine room.
+/// There Piers sets the Black Crystal in its pedestal and the ship sails.
 #include "system/task.h"
 #include "graphics/palette_buffers.h"
 #include "sprite_ids.h"
@@ -337,8 +345,12 @@ struct ActorPlacement *Scene_GetActorPlacements(void) {
   return gLemurianShip_Placements;
 }
 
-/// The leader opens the cabin door at the step trigger and walks through, the
-/// actors held still.
+/// Felix walks north into one of the cabins' wooden doors: it swings open, he
+/// steps through, and the screen closes and opens on the room beyond.
+///
+/// The doors are gLemurianShip_Doors, found by the cell's step trigger, which
+/// is also the exit taken; the first is the captain's cabin's, cell (4, 4).
+/// Every placed actor stops moving while he goes.
 void LemurianShip_OpenDoor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor;
@@ -379,9 +391,12 @@ void LemurianShip_OpenDoor(void) {
   Import_EventSetExitRequest(work->stepTrigger);
 }
 
-/// The leader opens a lower-deck door and walks through; once the Aqua Hydra
-/// is beaten and until Parch dries the hold, the hold's doors open on its
-/// flooded rows.
+/// Felix walks north into one of the two doors at the top of the hold, cells
+/// (4, 4) and (10, 4): it swings open and he steps through.
+///
+/// While the hold is flooded (after the Aqua Hydra, until Parch) the party
+/// walks a copy of the hold drawn 19 rows further south, and the doors there,
+/// cells (4, 23) and (10, 23), are the last rows of gLemurianShip_LowerDoors.
 void LemurianShip_OpenLowerDoor(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor;
@@ -417,8 +432,9 @@ void LemurianShip_OpenLowerDoor(void) {
   Import_EventSetExitRequest(work->stepTrigger);
 }
 
-/// Once the pillars have sunk and opened the way, the leader walks into the
-/// passage and shrinks away into it.
+/// Once both pillars have sunk, Felix walks north into the arched doorway at
+/// the top of the room of two pillars, cell (32, 6), and shrinks away into the
+/// passage as the screen closes. Before that, walking into it does nothing.
 void LemurianShip_WalkIntoPassage(void) {
   if (Event_GetFlag(FLAG_PILLAR_WAY_OPEN)) {
     struct FieldWork *work = Ram_HeapSlots->fieldWork;
@@ -501,8 +517,10 @@ const struct Trigger *Scene_GetTriggers(void) {
   return gLemurianShip_Triggers;
 }
 
-/// The lift's switch: once the engine runs it raises or lowers the lift; before
-/// that, "There's no reaction... It doesn't seem to be running."
+/// Felix checks the lever beside the lift in the room of six jellies, cell
+/// (53, 3): before the engine runs, "There's no reaction... It doesn't seem to
+/// be running."; once it runs, the lift goes down or comes back up with a
+/// crunch, or does nothing while the frozen puddle holds it up.
 void LemurianShip_ExamineLiftSwitch(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -535,22 +553,27 @@ void LemurianShip_ExamineLiftSwitch(void) {
   Event_End();
 }
 
-/// As Move or a push starts on a crate, it is taken up to be moved.
+/// Nothing visible happens as Felix starts to Move or push the tall crate in
+/// the room of six jellies or of seven jellies; the game takes the crate up so
+/// that it can slide (`Actor_LiftTargetBlock`).
 void LemurianShip_LiftCrate(void) {
   Actor_LiftTargetBlock(gLemurianShip_Crate);
 }
 
-/// Once moved, the crate is set down.
+/// Felix slides the tall crate one cell with Move or a push, in the room of six
+/// jellies or of seven jellies; it stays where it stops, so that the frozen
+/// puddles and the crate make a row to jump along.
 void LemurianShip_SetDownCrate(void) { Actor_PlaceMovedBlock(); }
 
-/// As Move or a push starts on the crate on the ledge, it is taken up to be
-/// moved.
+/// Nothing visible happens as Felix starts to Move or push the tall crate on
+/// the ledge by the stairs; the game takes the crate up so that it can slide.
 void LemurianShip_LiftLedgeCrate(void) {
   Actor_LiftTargetBlock(gLemurianShip_Crate);
 }
 
-/// Once moved, the ledge crate is set down; set down at the ledge's edge it
-/// drops to the floor below.
+/// Felix slides the tall crate along the ledge by the stairs with Move or a
+/// push. Once it reaches cell (16, 46), at the ledge's edge, it falls with a
+/// thump to the floor below and stays there.
 void LemurianShip_PushCrateOffLedge(void) {
   struct Actor *actor;
   s32 x;
@@ -578,30 +601,38 @@ void LemurianShip_PushCrateOffLedge(void) {
   }
 }
 
-/// Frost freezes a puddle in the room of two jellies.
+/// Felix casts Frost on the puddle a jelly left in the first room below deck:
+/// it freezes into a pillar of ice he can jump onto, the way to the room's
+/// chest.
 void LemurianShip_FreezeTwoJellyRoomPuddle(void) {
   FlagBlock_ApplyFlags(gLemurianShip_TwoJellyRoomPuddles);
 }
 
-/// Frost freezes a puddle in the room of six jellies.
+/// Felix casts Frost on a puddle a jelly left in the room of six jellies: it
+/// freezes into a pillar of ice to jump along.
 void LemurianShip_FreezeSixJellyRoomPuddle(void) {
   FlagBlock_ApplyFlags(gLemurianShip_SixJellyRoomPuddles);
 }
 
-/// Frost freezes the puddle by the lift, and its cells can be stood on.
+/// Felix casts Frost on the puddle the frightened jelly left beside the lift in
+/// the room of six jellies: it freezes into ice that keeps the lift up, so that
+/// stepping onto it no longer drops it.
 void LemurianShip_FreezeLiftPuddle(void) {
   MapGrid_CopyCellAttributes(110, 1, 3, 1, 110, 4);
   Event_SetFlag((FLAG_PUDDLE_FROZEN + JELLY_SIX_JELLY_ROOM_A));
 }
 
-/// Frost freezes a puddle in the room of seven jellies.
+/// Felix casts Frost on a puddle a jelly left in the room of seven jellies: it
+/// freezes into a pillar of ice to jump along.
 void LemurianShip_FreezeSevenJellyRoomPuddle(void) {
   FlagBlock_ApplyFlags(gLemurianShip_SevenJellyRoomPuddles);
 }
 
-/// Stepping onto the lift before the engine runs: it gives way with a jolt and
-/// the leader jumps clear; until the jelly by the lift is beaten, the jelly
-/// comes onto it first.
+/// Felix steps onto the grated lift at the top right of the room of six
+/// jellies from the east, cell (52, 4), before the engine runs and before its
+/// puddle is frozen: the lift shudders and sinks, Felix jumps back off, and it
+/// comes back up with a crunch. While the jelly that fled down it is still
+/// unbeaten, it rides up on the lift and hops off beside it.
 void LemurianShip_StepOnLift(void) {
   struct Actor *leader;
   struct Actor *helper;
@@ -681,7 +712,10 @@ void LemurianShip_StepOnLift(void) {
   }
 }
 
-/// Stepping onto the lift from its west side before the engine runs.
+/// Felix steps onto the grated lift from its west side, cell (50, 4), before
+/// the engine runs and before its puddle is frozen: as from the east, the lift
+/// shudders and sinks, Felix jumps back off, and it comes back up with a
+/// crunch.
 void LemurianShip_StepOnLiftWestSide(void) {
   struct Actor *leader;
 
@@ -726,25 +760,25 @@ void LemurianShip_StepOnLiftWestSide(void) {
     GameFlag_Set(id + (FLAG_FIGHTING_JELLY + (firstJelly) - (firstActor)));    \
   }
 
-/// Talking to a jelly in the room of two jellies starts a battle with it. The
-/// jelly turns to the leader and quivers, the battle cannot be run from, and
-/// its `FLAG_FIGHTING_JELLY` flag lets a win melt it into a puddle.
+/// Felix talks to an Aqua Jelly in the first room below deck: it turns to him
+/// and quivers, and a battle starts that cannot be run from. Its
+/// `FLAG_FIGHTING_JELLY` flag lets a win melt it into a puddle.
 DEFINE_JELLY_BATTLE(LemurianShip_FightTwoJellyRoomJelly, JELLY_TWO_JELLY_ROOM_A,
                     ACTOR_TWO_JELLY_ROOM_JELLY_A)
 
-/// Talking to a jelly in the room of six jellies starts a battle with it. The
-/// jelly turns to the leader and quivers, the battle cannot be run from, and
-/// its `FLAG_FIGHTING_JELLY` flag lets a win melt it into a puddle.
+/// Felix talks to an Aqua Jelly in the room of six jellies: it turns to him and
+/// quivers, and a battle starts that cannot be run from. Its
+/// `FLAG_FIGHTING_JELLY` flag lets a win melt it into a puddle.
 DEFINE_JELLY_BATTLE(LemurianShip_FightSixJellyRoomJelly, JELLY_SIX_JELLY_ROOM_A,
                     ACTOR_SIX_JELLY_ROOM_JELLY_A)
 
-/// Talking to a jelly in the room of seven jellies starts a battle with it. The
-/// jelly turns to the leader and quivers, the battle cannot be run from, and
-/// its `FLAG_FIGHTING_JELLY` flag lets a win melt it into a puddle.
+/// Felix talks to an Aqua Jelly in the room of seven jellies: it turns to him
+/// and quivers, and a battle starts that cannot be run from. Its
+/// `FLAG_FIGHTING_JELLY` flag lets a win melt it into a puddle.
 DEFINE_JELLY_BATTLE(LemurianShip_FightSevenJellyRoomJelly,
                     JELLY_SEVEN_JELLY_ROOM_A, ACTOR_SEVEN_JELLY_ROOM_JELLY_A)
 
-/// Sends a jelly leaping into the middle of the hold, where the Aqua Hydra
+/// A jelly in the hold leaps into the middle of it, where the Aqua Hydra
 /// forms.
 void LemurianShip_LeapIntoHydra(s32 id) {
   struct Actor *actor = ((struct Actor *)Actor_GetById(id));
@@ -755,8 +789,9 @@ void LemurianShip_LeapIntoHydra(s32 id) {
   Actor_SetDestination(id, 120, 120);
 }
 
-/// The jellies in the hold leap together into the Aqua Hydra, and its battle
-/// begins.
+/// Felix talks to the jelly in the middle of the hold: the five around it
+/// quiver, cry out and leap into it, and it swells into the Aqua Hydra, whose
+/// battle cannot be run from.
 void LemurianShip_FightAquaHydra(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -791,8 +826,10 @@ void LemurianShip_FightAquaHydra(void) {
   Event_SetFlag((FLAG_FIGHTING_JELLY + JELLY_AQUA_HYDRA));
 }
 
-/// A pillar full of water pushed onto its drop tile sinks into the floor;
-/// with both sunk, the way to the engine room opens.
+/// In the room of two pillars, a pillar full of water that stands on its tile
+/// marked with a drop of water, cell (35, 9) for the right one and (29, 9) for
+/// the left, sinks slowly into the floor with a rumble. Once both have sunk, a
+/// thump opens the arched doorway to the engine room.
 void LemurianShip_CheckPillarsOnDropTiles(void) {
   struct Actor *actor;
   struct Actor *leader;
@@ -885,14 +922,15 @@ void LemurianShip_CheckPillarsOnDropTiles(void) {
   }
 }
 
-/// As Move or a push starts on one of the two pillars, it is taken up to be
-/// moved.
+/// Nothing visible happens as Felix starts to Move or push one of the two
+/// pillars; the game takes it up so that it can slide.
 void LemurianShip_LiftPillar(void) {
   Actor_LiftTargetBlock(gLemurianShip_Pillars);
 }
 
-/// Once moved, a pillar is set down, and whether both stand on their drop
-/// tiles is checked.
+/// Felix slides one of the two pillars a cell with Move or a push. If it is
+/// full of water and stops on its tile marked with a drop of water, it sinks;
+/// once both have sunk, the arched doorway opens.
 void LemurianShip_SetDownPillar(void) {
   Actor_PlaceMovedBlock();
   LemurianShip_CheckPillarsOnDropTiles();
@@ -906,21 +944,27 @@ void LemurianShip_SetDownPillar(void) {
     LemurianShip_CheckPillarsOnDropTiles();                                    \
   }
 
-/// Douse fills the right pillar with water.
+/// Felix casts Douse on the hollow white pillar on the right of the room of two
+/// pillars: rain falls into it and it fills with water, ready to sink once it
+/// stands on the tile marked with a drop of water.
 DEFINE_DOUSE_PILLAR(LemurianShip_DouseRightPillar, ACTOR_RIGHT_PILLAR,
                     FLAG_RIGHT_PILLAR_FULL)
 
-/// Douse fills the left pillar with water.
+/// Felix casts Douse on the left pillar of the room of two pillars, once it has
+/// risen again: it fills with water, ready to sink on its tile.
 DEFINE_DOUSE_PILLAR(LemurianShip_DouseLeftPillar, ACTOR_LEFT_PILLAR,
                     FLAG_LEFT_PILLAR_FULL)
 
-/// Shows the puddle by the right pillar in its own colours.
+/// Felix casts Frost on the water in the right pillar after it has sunk: the
+/// water, unseen until now, shows as it freezes into a pillar of ice.
 void LemurianShip_ShowRightPillarPuddle(void) {
   FieldActor_SetSpriteColor(
       ((struct Actor *)Actor_GetById(ACTOR_RIGHT_PILLAR_PUDDLE)), 0);
 }
 
-/// Shows the puddle by the left pillar in its own colours.
+/// Felix casts Frost on the water in the sunk left pillar, cell (29, 9): the
+/// water, unseen until now, shows as it freezes into a pillar of ice above the
+/// sunk pillar.
 void LemurianShip_ShowLeftPillarPuddle(void) {
   FieldActor_SetSpriteColor(
       ((struct Actor *)Actor_GetById(ACTOR_LEFT_PILLAR_PUDDLE)), 0);
@@ -953,16 +997,30 @@ void LemurianShip_ShowLeftPillarPuddle(void) {
     Event_End();                                                               \
   }
 
-/// The right pillar, emptied, rises again and closes the way on.
+/// Once the water on the sunk right pillar is gone, the pillar rises out of
+/// the floor with a chime and a thump, and the arched doorway closes again.
+///
+/// XXX: nothing in this file takes the water (its puddle) away; a recording of
+/// the frozen water being pushed off or melting would say what the player
+/// does to raise the pillar.
 DEFINE_RAISE_PILLAR(LemurianShip_RaiseRightPillar, ACTOR_RIGHT_PILLAR,
                     FLAG_RIGHT_PILLAR_SUNK, FLAG_RIGHT_PILLAR_FULL, 35)
 
-/// The left pillar, emptied, rises again and closes the way on.
+/// Once the water on the sunk left pillar is gone, the pillar rises out of
+/// the floor with a chime and a thump, and the arched doorway closes again.
+///
+/// XXX: nothing in this file takes the water (its puddle) away; a recording of
+/// the frozen water being pushed off or melting would say what the player
+/// does to raise the pillar.
 DEFINE_RAISE_PILLAR(LemurianShip_RaiseLeftPillar, ACTOR_LEFT_PILLAR,
                     FLAG_LEFT_PILLAR_SUNK, FLAG_LEFT_PILLAR_FULL, 29)
 
-/// Parch dries the flooded hold: the party and the chest the flood carried off
-/// are set back where the floor is dry.
+/// Felix casts Parch in the flooded hold: the water dries up, and the chest the
+/// flood had kept out of reach, with its Mist Potion, can be opened.
+///
+/// The flooded hold is a copy drawn 304 pixels further south; Parch moves the
+/// party and the chest back to the dry hold, which looks the same without the
+/// water, and sets the camera's bounds to it.
 void LemurianShip_ParchHold(void) {
   struct Actor *leader =
       ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId));
@@ -989,7 +1047,9 @@ void LemurianShip_ParchHold(void) {
   Event_End();
 }
 
-/// Settles the field's pending actions as Parch is cast.
+/// Nothing visible happens as Felix begins to cast Parch in the flooded hold;
+/// the game settles any actions still pending before LemurianShip_ParchHold
+/// dries it.
 void LemurianShip_StartParch(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1053,8 +1113,8 @@ void LemurianShip_KeepPillarRoomPuddles(void) {
 #endif
 }
 
-/// A task: draws the hold's water rippling around the cell the leader stands
-/// in.
+/// A task: in the flooded hold, draws the water rippling around Felix as he
+/// wades.
 void LemurianShip_RippleAroundLeader(void) {
   struct Actor *leader =
       ((struct Actor *)Actor_GetById(gMainRoutineWork.leaderActorId));
@@ -1083,7 +1143,8 @@ void LemurianShip_RippleAroundLeader(void) {
   }
 }
 
-/// A task: once a sunk pillar's puddle is gone, the pillar rises again.
+/// A task: once the water on a sunk pillar is gone (its puddle is no longer
+/// placed), the pillar rises again.
 void LemurianShip_WatchPillarPuddles(void) {
   struct FieldWork *work = Ram_HeapSlots->fieldWork;
   struct Actor *actor;
@@ -1104,7 +1165,8 @@ void LemurianShip_WatchPillarPuddles(void) {
   }
 }
 
-/// A task: a glint drifts in from around the orb toward its centre.
+/// A task: as Piers sets the Black Crystal, glints of light drift in from
+/// around the pedestal toward it.
 void LemurianShip_DrawLightToOrb(void) {
   s32 position[3];
   struct Actor *actor;
@@ -1124,9 +1186,10 @@ void LemurianShip_DrawLightToOrb(void) {
   }
 }
 
-/// In the engine room Piers sets the Black Crystal in its pedestal and the
-/// engine starts: the monsters are gone and the ship sails out.
-/// "How did all these monsters get on board?"
+/// Felix walks into the engine room for the first time: Piers steps up to the
+/// pedestal, "How did all these monsters get on board?", and sets the Black
+/// Crystal in it. Light gathers, the engine starts, and the ship sails out to
+/// sea with every monster aboard gone.
 void LemurianShip_SetBlackCrystal(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
@@ -1206,7 +1269,8 @@ void LemurianShip_SetBlackCrystal(void) {
   Import_EventSetExitRequest(LEMURIAN_SHIP_AQUA_HYDRA_TO_WORLD_MAP);
 }
 
-/// A beaten jelly melts into a puddle where it stood.
+/// Back from a battle with an Aqua Jelly, the jelly melts away where it stood
+/// and a puddle spreads in its place.
 void LemurianShip_MeltJellyIntoPuddle(s32 actorId, s32 id) {
   struct Actor *actor = ((struct Actor *)Actor_GetById(id));
 
@@ -1225,8 +1289,8 @@ void LemurianShip_MeltJellyIntoPuddle(s32 actorId, s32 id) {
   Event_End();
 }
 
-/// On entering the room of six jellies, the jelly by the lift takes fright and
-/// flees, until it is beaten.
+/// Felix comes into the room of six jellies while the jelly by the lift is
+/// unbeaten: it takes fright, jumps and flees down the lift.
 void LemurianShip_ScareJellyOnArrival(void) {
   if (Event_GetFlag((FLAG_JELLIES_BEATEN + JELLY_SIX_JELLY_ROOM_A)) == 0) {
     Event_Start();
@@ -1239,8 +1303,8 @@ void LemurianShip_ScareJellyOnArrival(void) {
   }
 }
 
-/// Stepping near the jelly by the lift: it takes fright and flees, until it is
-/// beaten.
+/// Felix steps near the jelly by the lift, cell (54, 5), while it is unbeaten
+/// and back up: it takes fright and flees down the lift again.
 void LemurianShip_ScareJelly(void) {
   if (Event_GetFlag((FLAG_JELLIES_BEATEN + JELLY_SIX_JELLY_ROOM_A)) == 0) {
     Event_Start();
@@ -1250,7 +1314,7 @@ void LemurianShip_ScareJelly(void) {
   }
 }
 
-/// The jelly by the lift jumps, and flees down the lift.
+/// The jelly by the lift startles, jumps and flees down the lift.
 void LemurianShip_JellyFlees(void) {
   struct Actor *actor =
       ((struct Actor *)Actor_GetById(ACTOR_SIX_JELLY_ROOM_JELLY_A));
@@ -1271,7 +1335,8 @@ void LemurianShip_JellyFlees(void) {
   Event_SetFlag(FLAG_JELLY_FLED);
 }
 
-/// A pause of two seconds, with its sound, as the hold floods.
+/// Back from beating the Aqua Hydra, the party stands in the flooded hold; a
+/// sound plays and the game waits two seconds before Felix can move.
 void LemurianShip_FloodHold(void) {
   Event_Start();
   Event_ResolvePendingActions(0);

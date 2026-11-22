@@ -482,7 +482,7 @@ void AttekaInlet_HammetsMessengerArrives(void) {
   Actor_SetHorizontalPositionAndAngleWithTerrain(
       ACTOR_HAMMETS_MESSENGER, toFIXED(504), toFIXED(460), angle);
   wait(1);
-  Event_SetMessageId((s32)MsgHeyWait2);
+  Event_SetMessageId((s32)MsgAttekaInletHeyWait);
   // "Hey, wait!"
   Event_ShowMessageAndWait(ACTOR_HAMMETS_MESSENGER, 0);
   Actor_FaceDirectionById(gMainRoutineWork.leaderActorId, FACING_SOUTH, 0);

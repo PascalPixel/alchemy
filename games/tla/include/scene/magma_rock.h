@@ -41,7 +41,7 @@ extern s16 gMagmaRock_SalamanderTailHighEastPillars[];
 extern s16 gMagmaRock_SalamanderTailLowWestPillars[];
 extern s16 gMagmaRock_SalamanderTailLowEastPillars[];
 
-void MagmaRock_RollMagmaRock(struct Actor *actor);
+void MagmaRock_MoveFireball(struct Actor *actor);
 
 extern u32 gMagmaRock_EmberScript[];
 

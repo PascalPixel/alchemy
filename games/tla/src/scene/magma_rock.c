@@ -586,7 +586,7 @@ void MagmaRock_ThrowEmbers(struct Actor *actor) {
     linked->x.fixed = actor->x.fixed;
     linked->y.fixed = actor->y.fixed;
     linked->z.fixed = actor->z.fixed;
-    linked->update = MagmaRock_RollMagmaRock;
+    linked->update = MagmaRock_MoveFireball;
   }
   (*timer)++;
 }
@@ -625,7 +625,7 @@ FIXED Trig_Cos(s32 angle);
 /// embers; running into the leader raises TRIGGER_FIREBALL_HITS_LEADER and
 /// takes it away, and reaching the statue hands it over
 /// (MagmaRock_ThrowEmbers).
-void MagmaRock_RollMagmaRock(struct Actor *actor) {
+void MagmaRock_MoveFireball(struct Actor *actor) {
   FIXED step;
   struct Actor *partner;
   struct Actor *leader;
@@ -690,7 +690,7 @@ void MagmaRock_PlaceFireball(u16 id, s16 first, s16 side) {
   *pairFirst = first;
   facing = side ^ 1;
   actor->rollSide = facing;
-  actor->update = (void *)MagmaRock_RollMagmaRock;
+  actor->update = (void *)MagmaRock_MoveFireball;
   next = left + 1;
   flags = &actor->motionFlags;
   if (right != 0) {

@@ -64664,7 +64664,7 @@ msgstr ""
 "さて 先をいそごうかのう\n"
 "出発じゃぞ {actor_name:5}。{end_wait}"
 
-msgctxt "MsgHeyWait2"
+msgctxt "MsgAttekaInletHeyWait"
 msgid "11699"
 msgstr "おーい まってくれ!{end_wait}"
 

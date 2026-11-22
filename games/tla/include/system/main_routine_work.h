@@ -83,7 +83,7 @@ struct MainRoutineWork {
   /// already).
   s8 wheelsPrizes[8];
   /// For each icon, which of its three prizes it gave last
-  /// (Contigo_PickPrize).
+  /// (Contigo_SelectLuckyWheelsPrize).
   s8 wheelsPrizeCursors[6];
   u8 unusedAfterWheelsPrizes[134]; ///< no code names it
   s16 next;

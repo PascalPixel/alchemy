@@ -231,11 +231,11 @@ struct Actor {
       u8 unusedBeforeToothPhase[2]; ///< refused and frozen
       u8 toothPhase;
     };
-    /// A magma rock rolling between a pair of statues at Magma Rock
-    /// (MagmaRock_RollMagmaRock).
+    /// A fireball flying between a pair of statues at Magma Rock
+    /// (MagmaRock_MoveFireball).
     struct {
       u8 unusedBeforeRollSide[2]; ///< refused and frozen
-      u8 rollSide; ///< 0 or 1: which statue of its pair it rolls toward
+      u8 rollSide; ///< 0 or 1: which statue of its pair it flies toward
     };
     /// A part of a statue's rising flame at Magma Rock
     /// (MagmaRock_RaiseFlamePart).

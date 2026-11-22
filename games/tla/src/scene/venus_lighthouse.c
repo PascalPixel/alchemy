@@ -1337,7 +1337,7 @@ u32 gSceneExits[] = {
     SCENE_EXITS(VenusLighthouse),
     SCENE_EXIT(VENUS_LIGHTHOUSE_TO_VENUS_LIGHTHOUSE_ENTRANCE,
                VenusLighthouseEntrance,
-               VENUS_LIGHTHOUSE_ENTRANCE_FROM_VENUS_LIGHTHOUSE_B),
+               VENUS_LIGHTHOUSE_ENTRANCE_FROM_VENUS_LIGHTHOUSE),
     SCENE_EXIT(2, VenusLighthouse, 3),
     SCENE_EXIT(3, VenusLighthouse, 2),
     SCENE_EXIT(4, VenusLighthouse, 31),

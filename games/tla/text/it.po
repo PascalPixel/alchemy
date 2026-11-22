@@ -65444,7 +65444,7 @@ msgstr ""
 "Dovremmo andare...\n"
 "Sbrighiamoci, {actor_name:5}!{end_wait}"
 
-msgctxt "MsgHeyWait2"
+msgctxt "MsgAttekaInletHeyWait"
 msgid "11848"
 msgstr "Ehi, un attimo!{end_wait}"
 

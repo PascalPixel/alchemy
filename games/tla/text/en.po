@@ -64091,7 +64091,7 @@ msgstr ""
 "Well, we should be going...\n"
 "Let's hurry on, {actor_name:5}!{end_wait}"
 
-msgctxt "MsgHeyWait2"
+msgctxt "MsgAttekaInletHeyWait"
 msgid "11397"
 msgstr "Hey, wait!{end_wait}"
 

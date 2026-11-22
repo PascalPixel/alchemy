@@ -496,7 +496,7 @@ top:
         goto save;
     }
   leave:
-    Event_SetDestination(SCENE_TITLE, TITLE_CREDITS);
+    Event_SetDestination(SCENE_TITLE, TITLE_STORY_CRAWL);
     goto finish;
   }
   if (result == SAVE_ACTION_CONTINUE) {

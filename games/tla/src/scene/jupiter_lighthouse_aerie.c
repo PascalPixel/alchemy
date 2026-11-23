@@ -96,9 +96,25 @@ enum BeamSide { BEAM_LEFT, BEAM_RIGHT };
 /// The frames a path block set down in its gap is given to land.
 #define PATH_BLOCK_LANDING_FRAMES 30
 
+/// A path block dropped into its gap: the gap's cells become the path's, in
+/// their pictures and as floor Felix can walk on.
+#define JupiterLighthouse_FillLeftGap()                                        \
+  (MapGrid_CopyCellsLayered(66, 39, 1, 1, 70, 10),                             \
+   MapGrid_CopyCellsLayered(5, 75, 1, 1, 6, 75),                               \
+   MapGrid_CopyCellAttributes(5, 12, 1, 1, 6, 12))
+#define JupiterLighthouse_FillRightGap()                                       \
+  (MapGrid_CopyCellsLayered(68, 39, 1, 1, 121, 10),                            \
+   MapGrid_CopyCellsLayered(58, 75, 1, 1, 57, 75),                             \
+   MapGrid_CopyCellAttributes(58, 12, 1, 1, 57, 12))
+/// The path to an archer lit, once its gap is filled.
+#define JupiterLighthouse_LightLeftPath()                                      \
+  MapGrid_CopyCellsLayered(70, 39, 1, 1, 71, 10)
+#define JupiterLighthouse_LightRightPath()                                     \
+  MapGrid_CopyCellsLayered(72, 39, 1, 1, 120, 10)
+
 extern s32 gPaletteCycleFrame;
 
-/// Sets the counter, its value built as a word.
+/// Sets the palette cycle's frame (gPaletteCycleFrame).
 static inline void PaletteCycle_SetFrame(s32 value) {
   gPaletteCycleFrame = value;
 }
@@ -326,12 +342,10 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
       FieldActor_Stop(gMainRoutineWork.leaderActorId);
       Actor_SetPosition(id, 0, 0);
       Event_PlaySound(SE_HEAVY_IMPACT);
-      MapGrid_CopyCellsLayered(66, 39, 1, 1, 70, 10);
-      MapGrid_CopyCellsLayered(5, 75, 1, 1, 6, 75);
-      MapGrid_CopyCellAttributes(5, 12, 1, 1, 6, 12);
+      JupiterLighthouse_FillLeftGap();
       FieldEvent_Wait(30);
       Event_PlaySound(SE_MAP_TRANSITION);
-      MapGrid_CopyCellsLayered(70, 39, 1, 1, 71, 10);
+      JupiterLighthouse_LightLeftPath();
       FieldEvent_Wait(20);
       JupiterLighthouse_ShootAtLeftAngel();
     } else {
@@ -358,12 +372,10 @@ void JupiterLighthouse_PlacePathBlock(s32 unused, s32 id) {
       FieldActor_Stop(gMainRoutineWork.leaderActorId);
       Actor_SetPosition(id, 0, 0);
       Event_PlaySound(SE_HEAVY_IMPACT);
-      MapGrid_CopyCellsLayered(68, 39, 1, 1, 121, 10);
-      MapGrid_CopyCellsLayered(58, 75, 1, 1, 57, 75);
-      MapGrid_CopyCellAttributes(58, 12, 1, 1, 57, 12);
+      JupiterLighthouse_FillRightGap();
       FieldEvent_Wait(30);
       Event_PlaySound(SE_MAP_TRANSITION);
-      MapGrid_CopyCellsLayered(72, 39, 1, 1, 120, 10);
+      JupiterLighthouse_LightRightPath();
       FieldEvent_Wait(20);
       JupiterLighthouse_ShootAtRightAngel();
     } else {
@@ -420,10 +432,8 @@ s32 Scene_PrepareMap(void) {
   LightSprites_InitB();
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_LEFT_ANGEL_SHOT)) {
     Actor_SetPosition(ACTOR_LEFT_PATH_BLOCK, 0, 0);
-    MapGrid_CopyCellsLayered(66, 39, 1, 1, 70, 10);
-    MapGrid_CopyCellsLayered(5, 75, 1, 1, 6, 75);
-    MapGrid_CopyCellAttributes(5, 12, 1, 1, 6, 12);
-    MapGrid_CopyCellsLayered(70, 39, 1, 1, 71, 10);
+    JupiterLighthouse_FillLeftGap();
+    JupiterLighthouse_LightLeftPath();
   } else {
     LightSprites_Add(ACTOR_LEFT_PATH_BLOCK, 3);
     Actor_Get(ACTOR_LEFT_PATH_BLOCK)->priorityFlags |=
@@ -435,10 +445,8 @@ s32 Scene_PrepareMap(void) {
                         PATH_BLOCK_TOP_HEIGHT);
   if (Event_GetFlag(FLAG_JUPITER_LIGHTHOUSE_RIGHT_ANGEL_SHOT)) {
     Actor_SetPosition(ACTOR_RIGHT_PATH_BLOCK, 0, 0);
-    MapGrid_CopyCellsLayered(68, 39, 1, 1, 121, 10);
-    MapGrid_CopyCellsLayered(58, 75, 1, 1, 57, 75);
-    MapGrid_CopyCellAttributes(58, 12, 1, 1, 57, 12);
-    MapGrid_CopyCellsLayered(72, 39, 1, 1, 120, 10);
+    JupiterLighthouse_FillRightGap();
+    JupiterLighthouse_LightRightPath();
   } else {
     LightSprites_Add(ACTOR_RIGHT_PATH_BLOCK, 5);
     Actor_Get(ACTOR_RIGHT_PATH_BLOCK)->priorityFlags |=
@@ -542,8 +550,8 @@ struct BeamWork {
   s8 loop;
   s8 still;
   s8 side;
-  struct Actor *first;
-  struct Actor *second;
+  struct Actor *archer;
+  struct Actor *angel;
 };
 
 /// The value t of n steps of the way from from to to.
@@ -664,7 +672,7 @@ void JupiterLighthouse_UpdateBeam(void) {
   case BEAM_SHRINK:
     if (work->frame == 0) {
       Sound_Play(SE_SHIMMER);
-      JupiterLighthouse_StartBeamFlicker(work->second);
+      JupiterLighthouse_StartBeamFlicker(work->angel);
     }
     large = &work->large;
     large->scaleY = large->scaleX = large->scaleX - toFIXED(1) / 32;
@@ -748,8 +756,8 @@ void JupiterLighthouse_StartBeam(s32 archerId, s32 angelId, s32 side) {
   s32 age;
   s32 size;
 
-  work->first = Actor_Get(archerId);
-  work->second = Actor_Get(angelId);
+  work->archer = Actor_Get(archerId);
+  work->angel = Actor_Get(angelId);
   Decompress_TaggedLz(Resource_GetTableEntry(RESOURCE_STAR_SPARKLE_FADE), work);
   smallEntry = VramCache_FindFreeEntry();
   smallTile = Vram_Load(smallEntry, SPARKLE_BYTES, work);
@@ -805,7 +813,7 @@ void JupiterLighthouse_StartBeam(s32 archerId, s32 angelId, s32 side) {
   FieldActor_SetMoveTargetFX(carrier, work->carried[0], work->carried[1],
                              work->carried[2]);
   Event_PlaySound(SE_SWIRL);
-  JupiterLighthouse_StartBeamFlicker(work->first);
+  JupiterLighthouse_StartBeamFlicker(work->archer);
   FieldEvent_Wait(40);
   work->side = side;
   work->step = BEAM_GATHER;
@@ -867,10 +875,11 @@ void Actor_SetSpriteFlags(struct Actor *actor, u32 value);
 
 #include "shared/cracked_tile_step.h"
 
-/// Entering by a cracked tile's fall: puts the leader and the camera in the
-/// cell below the one that gave way, offset by (dx, dz), drops it in, and sets
-/// the scene's transition.
-void JupiterLighthouse_CheckCrackedTile(s32 dx, s32 dz, s32 value) {
+/// Unused here: on landing below a cracked tile, puts the leader on the cell
+/// the flag bytes saved, offset by (dx, dz), and starts the screen transition,
+/// as the rooms with cracked floors do (CrackedTile_PlaceLanding); the aerie
+/// has none to fall through.
+UNUSED void CrackedTile_PlaceLanding(s32 dx, s32 dz, s32 transition) {
   struct Actor *actor = Actor_Get(gMainRoutineWork.leaderActorId);
   struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct CellTarget *work = &gCrackedTiles;
@@ -878,18 +887,18 @@ void JupiterLighthouse_CheckCrackedTile(s32 dx, s32 dz, s32 value) {
   s32 z = FieldGameFlag_GetByte(work->flagByte + 8);
 
   if (x != 0 || z != 0) {
-    struct Actor *shadow;
+    struct Actor *camera;
 
     GameFlag_SetByte(work->flagByte, 0);
     GameFlag_SetByte(work->flagByte + 8, 0);
     actor->x.fixed = FIELD_CELL_CENTER(x + dx);
     actor->z.fixed = FIELD_CELL_CENTER(z + dz);
-    shadow = field->camera;
-    shadow->x.fixed = actor->x.fixed;
-    shadow->z.fixed = actor->z.fixed;
+    camera = field->camera;
+    camera->x.fixed = actor->x.fixed;
+    camera->z.fixed = actor->z.fixed;
     MapGrid_CenterOnFollowedPoint();
     CrackedTile_DropIn();
-    gFieldWork->transition = value;
+    gFieldWork->transition = transition;
   }
 }
 

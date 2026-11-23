@@ -151,6 +151,27 @@ extern u8 gDebugTextEnabled;
 #define CREDITS_GLYPH_LEFT_PIXEL_BIT 0x80
 /// A message of the story crawl takes two scroll lines of 8 pixels.
 #define CRAWL_MESSAGE_PIXELS (2 * 8)
+/// gDisplayScroll_Busy while the story crawl runs: what its last line stopped
+/// it on. A crawl line of dashes draws nothing and stops the crawl, the dashes
+/// past the first saying how (Text_DrawMessageToCanvas).
+enum CrawlStop {
+  CRAWL_SCROLLING = 0,
+  /// "--": the crawl waits for the next slide, which A or B releases.
+  CRAWL_STOP_FOR_SLIDE = 1,
+  CRAWL_STOP_END = 2, ///< "---", the crawl's last line: the crawl ends
+  CRAWL_STOP_LONG = 3 ///< "----", which no crawl line has
+};
+
+/// Credits_Run's modes: the title's story crawl over the slideshow, or the
+/// staff credits from a page, CREDITS_MODE_FIRST_PAGE being their first.
+enum CreditsMode { CREDITS_MODE_STORY_CRAWL = 1, CREDITS_MODE_FIRST_PAGE = 2 };
+
+/// Where Credits_DrawLine places a line in its 192 pixels.
+enum CreditsAlignment {
+  CREDITS_ALIGN_LEFT = 0,
+  CREDITS_ALIGN_CENTER = 1,
+  CREDITS_ALIGN_RIGHT = 2
+};
 
 /// The ending's scrolling pictures: a map buffer of 15 columns, each a strip of
 /// 4 KB copied into its own 2 KB screen block, 31 rows of 64 bytes at a time.
@@ -314,10 +335,11 @@ void Credits_ScrollBackgrounds(void) {
   }
 }
 
-/// The credits and slide show driver. It resets the task table, starts the
-/// scroll task and sets up BG2, BG3 and blending; mode 1 cross-fades the slides
-/// until START or the scroll ends, other modes start the scrolling credits
-/// (mode - 2) and wait for their end.
+/// Runs the title's story crawl or the staff credits over the greyed battle
+/// backdrops. The story crawl (CREDITS_MODE_STORY_CRAWL) cross-fades a new
+/// backdrop each time the crawl stops for one, until Start or the crawl's end;
+/// any other mode scrolls the staff credits from page mode -
+/// CREDITS_MODE_FIRST_PAGE and returns once they have run out.
 s32 Credits_Run(s32 mode) {
   s32 slide;
   s32 step;
@@ -350,8 +372,7 @@ s32 Credits_Run(s32 mode) {
                  BLDCNT_TGT2_BD,
              &REG_BLDCNT);
 
-  if (mode == 1) {
-
+  if (mode == CREDITS_MODE_STORY_CRAWL) {
     Credits_InitCrawlSprites();
     wait(60);
     for (slide = 0;; slide++) {
@@ -374,10 +395,12 @@ s32 Credits_Run(s32 mode) {
       }
       if (*count == 0) {
         do {
+          // DEAD: a read of the pressed keys nothing uses; the ROM keeps its
+          // load.
           gInput.pressed;
           if (gInput.held & KEY_START)
             goto done;
-          if (gDisplayScroll_Busy == 2)
+          if (gDisplayScroll_Busy == CRAWL_STOP_END)
             goto done;
           wait(1);
         } while (gCredits_PendingSlides == 0);
@@ -385,7 +408,7 @@ s32 Credits_Run(s32 mode) {
       gCredits_PendingSlides--;
     }
   } else {
-    Credits_InitTextSpritesAtPage(mode - 2);
+    Credits_InitTextSpritesAtPage(mode - CREDITS_MODE_FIRST_PAGE);
     while (gDisplayScroll_Busy <= CREDITS_FRAMES_AFTER_END)
       wait(1);
     Credits_StopTextSprites();
@@ -427,17 +450,17 @@ void Credits_UpdateCrawlSprites(void) {
   Dma_Set(gDisplayScroll_Objects, (void *)OAM, DMA_COPY_WORDS(OAM_SIZE / 4),
           REG_DMA3);
 
-  if (gDisplayScroll_Busy == 1 && (gInput.held & (KEY_A | KEY_B))) {
-    gDisplayScroll_Busy = 0;
+  if (gDisplayScroll_Busy == CRAWL_STOP_FOR_SLIDE &&
+      (gInput.held & (KEY_A | KEY_B))) {
+    gDisplayScroll_Busy = CRAWL_SCROLLING;
     gCredits_PendingSlides++;
   }
 #if TLA_PATCH_1
-  // From patch 1 a held button also releases state 3; the Japanese release
-  // checks only state 1.
-  if (gDisplayScroll_Busy == 3 && (gInput.held & (KEY_A | KEY_B)))
-    gDisplayScroll_Busy = 0;
+  // From patch 1 A or B also goes on past a "----" line, without a slide.
+  if (gDisplayScroll_Busy == CRAWL_STOP_LONG && (gInput.held & (KEY_A | KEY_B)))
+    gDisplayScroll_Busy = CRAWL_SCROLLING;
 #endif
-  if (gDisplayScroll_Busy == 0) {
+  if (gDisplayScroll_Busy == CRAWL_SCROLLING) {
     if ((gVBlankCount & 3) == 0)
       gDisplayScroll_Position++;
     if ((gInput.held & KEY_B) && (gVBlankCount & 3))
@@ -452,14 +475,14 @@ void Credits_DrawEnteringCrawlLine(void) {
   u32 current;
   s32 line;
 
-  if (gDisplayScroll_Busy == 0) {
+  if (gDisplayScroll_Busy == CRAWL_SCROLLING) {
     current = gDisplayScroll_Position;
     if ((s16)gDisplayScroll_Position / CRAWL_MESSAGE_PIXELS !=
         gDisplayScroll_LastPosition / CRAWL_MESSAGE_PIXELS) {
       gDisplayScroll_LastPosition = current;
       line = (s16)((s16)gDisplayScroll_Position / 8);
       gDisplayScroll_Busy = DisplayScroll_DrawMessageLine(
-          line / 2 + first - 1, CREDITS_RING_LINE(line), 1);
+          line / 2 + first - 1, CREDITS_RING_LINE(line), CREDITS_ALIGN_CENTER);
     }
   }
 }
@@ -539,7 +562,8 @@ void Credits_InitCrawlSprites(void) {
   Task_Add(Credits_UpdateCrawlSprites, TASK_PASS_VBLANK);
   Task_Add(Credits_DrawEnteringCrawlLine, TASK_PASS_FRAME);
   for (i = 0; i < CREDITS_RING_ROWS; i++)
-    Credits_DrawLine(gDisplayScroll_LineTable[0], i * CREDITS_LINE_TILES, 1);
+    Credits_DrawLine(gDisplayScroll_LineTable[0], i * CREDITS_LINE_TILES,
+                     CREDITS_ALIGN_CENTER);
 }
 
 /// Draws one line of the credits' scrolling text: the message is drawn into a
@@ -621,8 +645,9 @@ void Credits_UpdateTextSprites(void) {
 }
 
 /// A task added by Credits_InitTextSpritesAtPage: draws each line entering the
-/// credits sixteen rows ahead of the visible top. A line table value of 255
-/// ends the text, and blank rows follow it.
+/// credits sixteen rows ahead of the visible top. A page mark stops the
+/// scroll, and blank rows follow it while gDisplayScroll_Busy counts the
+/// frames since.
 void Credits_DrawEnteringLine(void) {
   s32 position;
   u32 current;
@@ -635,23 +660,25 @@ void Credits_DrawEnteringLine(void) {
   if (gDisplayScroll_Busy != 0) {
     gDisplayScroll_Busy++;
     Credits_DrawLine(gDisplayScroll_LineTable[0],
-                     CREDITS_RING_LINE(position / 8), 1);
+                     CREDITS_RING_LINE(position / 8), CREDITS_ALIGN_CENTER);
   } else if (position / 8 != gDisplayScroll_LastPosition / 8) {
     gDisplayScroll_LastPosition = current;
     text = gDisplayScroll_LineTable[line];
     if (text == CREDITS_PAGE_MARK) {
       gDisplayScroll_Busy = 1;
-      Credits_DrawLine(gDisplayScroll_LineTable[0], CREDITS_RING_LINE(line), 1);
+      Credits_DrawLine(gDisplayScroll_LineTable[0], CREDITS_RING_LINE(line),
+                       CREDITS_ALIGN_CENTER);
     } else {
-      gDisplayScroll_Busy = Credits_DrawLine(text, CREDITS_RING_LINE(line), 1);
+      gDisplayScroll_Busy =
+          Credits_DrawLine(text, CREDITS_RING_LINE(line), CREDITS_ALIGN_CENTER);
     }
   }
 }
 
 /// Starts the scrolling credits at a page, as Credits_InitCrawlSprites starts
 /// them at the top: counts the line table's 255 page marks up to the page asked
-/// for (at most 500 lines, stopping at the end mark 0) and sets the scroll
-/// there, then builds the sprite table and its tiles, adds
+/// for (at most CREDITS_MAX_LINES lines, stopping at the end) and sets the
+/// scroll there, then builds the sprite table and its tiles, adds
 /// Credits_UpdateTextSprites and Credits_DrawEnteringLine to the task table and
 /// draws the first 32 lines blank.
 void Credits_InitTextSpritesAtPage(s32 page) {
@@ -744,7 +771,8 @@ void Credits_InitTextSpritesAtPage(s32 page) {
   Task_Add(Credits_UpdateTextSprites, TASK_PASS_VBLANK);
   Task_Add(Credits_DrawEnteringLine, TASK_PASS_FRAME);
   for (i = 0; i < CREDITS_RING_ROWS; i++)
-    Credits_DrawLine(gDisplayScroll_LineTable[0], i * CREDITS_LINE_TILES, 1);
+    Credits_DrawLine(gDisplayScroll_LineTable[0], i * CREDITS_LINE_TILES,
+                     CREDITS_ALIGN_CENTER);
 }
 
 /// Ends the scrolling credits: blanks the tile ring, removes their two tasks
@@ -754,7 +782,8 @@ void Credits_StopTextSprites(void) {
   u32 *objects;
 
   for (i = 0; i < CREDITS_RING_ROWS; i++)
-    Credits_DrawLine(gDisplayScroll_LineTable[0], i * CREDITS_LINE_TILES, 1);
+    Credits_DrawLine(gDisplayScroll_LineTable[0], i * CREDITS_LINE_TILES,
+                     CREDITS_ALIGN_CENTER);
   Task_Remove(Credits_UpdateTextSprites);
   Task_Remove(Credits_DrawEnteringLine);
   objects = (u32 *)gDisplayScroll_Objects;
@@ -818,9 +847,9 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
     if (sourceValue >= ' ')
       textAdvance += gCredits_GlyphWidths[sourceValue - ' '];
   }
-  if (alignment == 2)
+  if (alignment == CREDITS_ALIGN_RIGHT)
     startX = lineWidth - textAdvance;
-  else if (alignment == 1)
+  else if (alignment == CREDITS_ALIGN_CENTER)
     startX = (lineWidth - textAdvance) / 2;
 
   // Rasterize each glyph and its one-pixel shadow at the aligned start.
@@ -884,10 +913,11 @@ s32 Credits_DrawLine(const u8 *text, s32 firstTile, s32 alignment) {
   return 0;
 }
 
-/// Unused: an empty function nothing calls, after the pool.
+/// Unused: an empty routine nothing calls.
 UNUSED void Credits_ReservedNoOp(void) {}
 
-/// Sets the position the credits' scroll moves to.
+/// Sets the row the ending's scrolling picture moves to, in pixels from its
+/// top, at most gEndingPicture_Speed a frame.
 void SceneState_SetScrollTarget(u16 row) { gEndingPicture_TargetRow = row; }
 
 /// Copies 15 columns of a scrolling picture's map into a wrapping 2 KB

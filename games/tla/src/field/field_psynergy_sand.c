@@ -48,6 +48,18 @@ struct SandWork {
 
 s32 MapGrid_IsClimbableCell(s32 x, s32 z, s32 layer);
 
+/// Actor_CheckBlocked's bit for another solid actor overlapping the actor.
+#define BLOCKED_BY_ACTOR 2
+
+/// Why the Sand ends (FieldPsynergy_WatchSandGround).
+enum SandEnd {
+  SAND_GOES_ON = 0,
+  SAND_END_UPPER_LEVEL = 1, ///< the leader is on a scene's upper level
+  SAND_END_OFF_SAND = 2,
+  SAND_END_OFF_CLIMB = 3,  ///< climbing as sand, it left the climbable cells
+  SAND_END_FACING_WALL = 4 ///< climbing as sand, the cell above is not one
+};
+
 /// Task of the Sand: ends it (cue ABILITY_SAND | ACT_PACKED) when the leader,
 /// not blocked by another actor, stands off sand or on a scene's upper level
 /// (gMainRoutineWork.onUpperLevel), or while it climbs as sand it leaves a
@@ -56,29 +68,30 @@ void FieldPsynergy_WatchSandGround(void) {
   struct FieldWork *field = Ram_HeapSlots->fieldWork;
   struct MainRoutineWork *party = &gMainRoutineWork;
   struct Actor *actor = Actor_Lookup(party->leaderActorId);
-  s32 reason = 0;
+  s32 reason = SAND_GOES_ON;
 
   if (party->onUpperLevel != 0)
-    reason = 1;
+    reason = SAND_END_UPPER_LEVEL;
   if (MapGrid_IsSandCell(actor->x.fixed, actor->z.fixed, actor->layer) == 0)
-    reason = 2;
+    reason = SAND_END_OFF_SAND;
   if (party->movementMode == LEADER_MOVEMENT_SAND && actor->userValue != 0 &&
       actor->timer == 0) {
     FIXED x;
     FIXED z;
 
     if (MapGrid_IsClimbableCell(actor->x.fixed, actor->z.fixed, 2) == 0)
-      reason = 3;
+      reason = SAND_END_OFF_CLIMB;
     x = (actor->x.fixed & FIELD_CELL_MASK) + toFIXED(8);
     z = (actor->z.fixed & FIELD_CELL_MASK) - toFIXED(8);
     if (MapGrid_IsClimbableCell(x, z, 2) == 0)
-      reason = 4;
+      reason = SAND_END_FACING_WALL;
   }
-  if (reason != 0 && (Actor_CheckBlocked(actor) & 2) == 0)
+  if (reason != SAND_GOES_ON &&
+      (Actor_CheckBlocked(actor) & BLOCKED_BY_ACTOR) == 0)
     field->psynergy = ABILITY_SAND | ACT_PACKED;
 }
 
-// How a picture is stored.
+/// How a picture is stored.
 #define PICTURE_FORMAT_TAGGED_LZ 1 ///< one tagged LZ stream
 #define PICTURE_FORMAT_COMPRESSED                                              \
   3 ///< compressed, then run through the decoder
@@ -142,8 +155,6 @@ void FieldPsynergy_DecodePicture(struct PictureSource *source, void *buffer,
     HeapSlot_Release(HEAP_SLOT_FRAME_SCRATCH);
 }
 #undef ACTOR_FIRST_LAYER
-#undef SCRIPT_OBJECT_COUNT
-#undef EVENT_MODE_NO_CELL_TEST
 #undef PICTURE_FORMAT_TAGGED_LZ
 #undef PICTURE_FORMAT_COMPRESSED
 
@@ -206,8 +217,8 @@ void Sand_InitLeaderSprite(struct EffectSprite *sprite, s32 tiles) {
 /// Draws Sand_InitLeaderSprite's sprite.
 void Sand_DrawLeaderSprite(void *sprite) { EffectSprite_Draw(sprite); }
 
-/// One grain of sand thrown up round the leader as it sinks: placed 2 pixels
-/// up and 2 out when the leader stands (high), else 4 out, drifting outward,
+/// One grain of sand thrown up round the leader as it sinks: 4 pixels out,
+/// or, cast off sand (high), 2 pixels up and 2 out and drifting more slowly;
 /// drawn small just in front of the leader.
 void Sand_SpawnGrain(struct EffectSprite *sprite,
                      struct FieldPsynergyParticle *particle, s32 unused,
@@ -560,3 +571,4 @@ void FieldPsynergy_Sand(void) {
 #undef SAND_RISE_PHASE
 #undef OAM_BELOW_SHAPE_OR_SIZE
 #undef OAM_SIZE_32X32_BYTE
+#undef BLOCKED_BY_ACTOR

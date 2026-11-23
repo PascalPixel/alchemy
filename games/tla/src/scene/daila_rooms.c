@@ -7,7 +7,7 @@
 /// weapon and armor shop. The same scene also holds the house on the islet
 /// with the cow, reached from North Osenia. Once Tavi is rescued
 /// (FLAG_TAVI_RESCUED) the people have other things to say, the two boys are
-/// home eating, and a woman at the inn is caught practising for the dinner
+/// home eating, and a woman at the inn is caught practicing for the dinner
 /// show.
 ///
 /// The sanctuary, up the steps at the north of the village, has a healer at
@@ -88,7 +88,7 @@ enum DailaRoomsActorId {
   ACTOR_WEAPON_MERCHANT,
   ACTOR_ARMOR_MERCHANT,
   ACTOR_INNKEEPER,
-  /// The innkeeper's one helper, who later practises for the dinner show.
+  /// The innkeeper's one helper, who later practices for the dinner show.
   ACTOR_INN_WORKER,
   /// A guest of the inn, a man carrying a pack, who misses Madra's food.
   ACTOR_TRAVELER_FROM_MADRA,
@@ -110,13 +110,17 @@ enum DailaRoomsActorIdAfterRescue {
   /// The two boys, back home, with their mouths full.
   ACTOR_RIKI = ACTOR_GUEST_ON_MADRAS_SEAFOOD + 1,
   ACTOR_TAVI,
-  /// A woman of the inn caught practising for the dinner show.
-  ACTOR_PRACTISING_PERFORMER,
+  /// A woman of the inn caught practicing for the dinner show.
+  ACTOR_PRACTICING_PERFORMER,
   ACTOR_WOMAN_ON_THE_CURRENTS_AFTER_RESCUE,
   ACTOR_OLD_MAN_ON_THE_RED_ROCKS_AFTER_RESCUE,
   ACTOR_OLD_WOMAN_ON_HER_SONS_AFTER_RESCUE,
   ACTOR_ARMOR_COUNTER_AFTER_RESCUE
 };
+
+/// Riki's and Tavi's own animation 5: eating at the table at home, their mouths
+/// full.
+enum { ANIM_EATING = 5 };
 
 /// The way into the house on the islet with the cow (NorthOseniaIslet), which
 /// this overlay also holds: the family by entrance 7.
@@ -144,7 +148,7 @@ enum DailaSanctuaryActorId {
 /// The first of three flags, one for each of the sanctuary's puddles Frost has
 /// frozen into a pillar for this visit, by gDailaRooms_PillarFrozenFlags.
 #define FLAG_DAILA_SANCTUARY_PUDDLE_FROZEN_FIRST 0x220
-/// Holds which of his two spots the practising man has jumped to last.
+/// Holds which of his two spots the practicing man has jumped to last.
 #define FLAG_DAILA_PRACTICE_AT_DOOR 0x200
 
 extern s32 gDailaRooms_ExitsOnceTaviIsRescued[];
@@ -191,7 +195,7 @@ const struct ActorPlacement *Scene_GetActorPlacements(void) {
 /// Unused: does nothing.
 UNUSED void DailaRooms_EmptyHook(void) {}
 
-/// Unused: the practising man shouts and jumps to the other of his two spots.
+/// Unused: the practicing man shouts and jumps to the other of his two spots.
 UNUSED void DailaRooms_PracticeShout(s32 unused, s32 actor) {
   FieldActor_ShowEmote(actor, EMOTE_IN_FRONT | EMOTE_EXCLAMATION, 50);
   Actor_Jump(actor, 6, 15);
@@ -215,7 +219,7 @@ UNUSED void DailaRooms_PracticeShout(s32 unused, s32 actor) {
   FieldEvent_Wait(20);
 }
 
-/// Unused: the practising man turns to the leader, startled.
+/// Unused: the practicing man turns to the leader, startled.
 UNUSED void DailaRooms_StartleAtTheLeader(s32 unused, s32 actor) {
   Actor_FaceActorById(actor, ACTOR_FELIX, 0);
   FieldEvent_Wait(10);
@@ -263,16 +267,16 @@ UNUSED void DailaRooms_StartLeaderEvent(void) {
 extern struct Trigger gDailaRooms_HousesEvents[];
 
 const struct Trigger *Scene_GetTriggers(void) {
-  s32 flag = GameFlag_Get(FLAG_TAVI_RESCUED);
-  struct MainRoutineWork *party = &gMainRoutineWork;
-  s32 id = SCENE_DAILA_ROOMS_SANCTUM;
+  s32 taviRescued = GameFlag_Get(FLAG_TAVI_RESCUED);
+  struct MainRoutineWork *work = &gMainRoutineWork;
+  s32 sanctum = SCENE_DAILA_ROOMS_SANCTUM;
 
-  if (flag) {
-    if (party->next == id)
+  if (taviRescued) {
+    if (work->next == sanctum)
       return gDailaRooms_SanctumEventsOnceTaviIsRescued;
     return gDailaRooms_HousesEventsOnceTaviIsRescued;
   }
-  if (party->next == id)
+  if (work->next == sanctum)
     return gDailaRooms_SanctumEvents;
   return gDailaRooms_HousesEvents;
 }
@@ -475,7 +479,7 @@ void DailaRooms_AskGoingToMadra(void) {
 
 /// Once Tavi is rescued, the mayor in his house asks whether the party is
 /// looking for a boat too, and answers yes or no.
-void DailaRooms_TalkNoBoats(void) {
+void DailaRooms_AskLookingForBoat(void) {
   s32 msg;
 
   Event_Start();
@@ -495,19 +499,19 @@ void DailaRooms_TalkNoBoats(void) {
   Event_End();
 }
 
-/// Once Tavi is rescued, the woman at the inn caught practising for the dinner
+/// Once Tavi is rescued, the woman at the inn caught practicing for the dinner
 /// show hopes Felix was not watching, then explains.
 void DailaRooms_TalkCaughtPracticing(void) {
   Event_Start();
   Event_ResolvePendingActions(0);
   Event_SetMessageId((s32)MsgDailaInteriorsWatchingPractice);
   // "Er... Aheh heh... You... weren't watching, were you?"
-  Event_ShowMessageAndWait(ACTOR_PRACTISING_PERFORMER, 0);
+  Event_ShowMessageAndWait(ACTOR_PRACTICING_PERFORMER, 0);
   FieldEvent_Wait(30);
-  Actor_SetAnimationById(ACTOR_PRACTISING_PERFORMER, ANIM_NOD);
+  Actor_SetAnimationById(ACTOR_PRACTICING_PERFORMER, ANIM_NOD);
   FieldEvent_Wait(30);
   // "I was just practicing for the show we're putting on tonight."
-  Event_ShowMessageAndWait(ACTOR_PRACTISING_PERFORMER, 0);
+  Event_ShowMessageAndWait(ACTOR_PRACTICING_PERFORMER, 0);
   Event_End();
 }
 
@@ -571,7 +575,8 @@ void DailaRooms_TakeSeaGodsTear(void) {
 }
 
 /// Gives an item to the party, asking what to drop when no one has room for
-/// it; returns who took it, or -1.
+/// it; returns who took it, or -1. The overlay's own copy of the field's
+/// PartyInventory_GiveItem.
 s32 DailaRooms_GiveItem(s32 item, s32 unused) {
   struct FieldWork *work;
   s32 saved;
@@ -621,7 +626,8 @@ s32 DailaRooms_GiveItem(s32 item, s32 unused) {
       if (Inventory_CountItem(member, item) >= INVENTORY_STACK_MAX) {
         MessageArgument_Push(member, MESSAGE_ARGUMENT_ACTOR);
         MessageArgument_Push(item, MESSAGE_ARGUMENT_ITEM);
-        // "Empty"
+        // That member already carries a full stack of the item; the line
+        // this shows reads only "Empty".
         FieldMessage_Show((s32)MsgItemDropPrompt + 7, FIELD_MESSAGE_ZOOM);
         continue;
       }
@@ -682,9 +688,9 @@ s32 Scene_Initialize(void) {
       Scene_FadeInAndClearFlag();
     } else {
       if (GameFlag_Get(FLAG_TAVI_RESCUED)) {
-        Actor_SetAnimationById(ACTOR_RIKI, 5);
+        Actor_SetAnimationById(ACTOR_RIKI, ANIM_EATING);
         Actor_SetSpriteFlags(Actor_GetById(ACTOR_RIKI), 0);
-        Actor_SetAnimationById(ACTOR_TAVI, 5);
+        Actor_SetAnimationById(ACTOR_TAVI, ANIM_EATING);
         Actor_SetSpriteFlags(Actor_GetById(ACTOR_TAVI), 0);
       }
       Actor_GetById(gMainRoutineWork.leaderActorId)->priorityFlags |=
@@ -727,6 +733,8 @@ s32 Scene_Initialize(void) {
   return 0;
 }
 
+/// Once Tavi is rescued, draws the sanctuary's pool drained down to its three
+/// puddles, from the map's spare copy of it.
 s32 Scene_PrepareMap(void) {
   if (gMainRoutineWork.next == SCENE_DAILA_ROOMS_SANCTUM &&
       GameFlag_Get(FLAG_TAVI_RESCUED)) {
@@ -1033,7 +1041,7 @@ struct Trigger gDailaRooms_HousesEventsOnceTaviIsRescued[] = {
     {TRIGGER_TALK, ACTOR_TAVIS_MOTHER, CONDITION_ALWAYS, MSGNO(MsgFieldTaviWolfedDownHisSnackAnd)},
     {TRIGGER_TALK, ACTOR_OLD_MAN_ON_MADRA, CONDITION_ALWAYS, EVENT(DailaRooms_AskGoingToMadra)},
     {TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_THE_KANDOREAN_TEMPLE, CONDITION_ALWAYS, MSGNO(MsgFieldIThinkMadraIsEastOf)},
-    {TRIGGER_TALK, ACTOR_MAYOR, CONDITION_ALWAYS, EVENT(DailaRooms_TalkNoBoats)},
+    {TRIGGER_TALK, ACTOR_MAYOR, CONDITION_ALWAYS, EVENT(DailaRooms_AskLookingForBoat)},
     {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_NOISE, CONDITION_ALWAYS, MSGNO(MsgFieldItsTooDangerousToGoTo)},
     {TRIGGER_TALK, ACTOR_MAN_ON_THE_RUMBLING, CONDITION_ALWAYS, MSGNO(MsgFieldWhoWasThatGuyIWonder)},
     {TRIGGER_TALK, ACTOR_WOMAN_ON_DAILAS_LUCK, CONDITION_ALWAYS, MSGNO(MsgFieldWhyDidThePirateBriggsPlague)},
@@ -1045,7 +1053,7 @@ struct Trigger gDailaRooms_HousesEventsOnceTaviIsRescued[] = {
     {TRIGGER_TALK, ACTOR_GUEST_ON_MADRAS_SEAFOOD, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsVegetablesAgain)},
     {TRIGGER_TALK, ACTOR_RIKI, CONDITION_ALWAYS, MSGNO(MsgFieldMmmMmnphDadWasSoMad)},
     {TRIGGER_TALK, ACTOR_TAVI, CONDITION_ALWAYS, MSGNO(MsgFieldMmmphMmmmDontTellAnyoneWe)},
-    {TRIGGER_TALK, ACTOR_PRACTISING_PERFORMER, CONDITION_ALWAYS, EVENT(DailaRooms_TalkCaughtPracticing)},
+    {TRIGGER_TALK, ACTOR_PRACTICING_PERFORMER, CONDITION_ALWAYS, EVENT(DailaRooms_TalkCaughtPracticing)},
     {TRIGGER_TALK, ACTOR_WOMAN_ON_THE_CURRENTS_AFTER_RESCUE, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeCurrents)},
     {TRIGGER_TALK, ACTOR_OLD_MAN_ON_THE_RED_ROCKS_AFTER_RESCUE, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeRedRocks)},
     {TRIGGER_TALK, ACTOR_OLD_WOMAN_ON_HER_SONS_AFTER_RESCUE, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeThreeGenerations)},
@@ -1068,7 +1076,7 @@ struct Trigger gDailaRooms_HousesEventsOnceTaviIsRescued[] = {
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_GUEST_ON_MADRAS_SEAFOOD, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsGuestDance)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_RIKI, CONDITION_ALWAYS, MSGNO(MsgFieldIStillWantToCatchThat)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TAVI, CONDITION_ALWAYS, MSGNO(MsgFieldImSureGladIMadeIt)},
-    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PRACTISING_PERFORMER, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsSeafoodStory)},
+    {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_PRACTICING_PERFORMER, CONDITION_ALWAYS, MSGNO(MsgDailaInteriorsSeafoodStory)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_WOMAN_ON_THE_CURRENTS_AFTER_RESCUE, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeHusbandDizzy)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_MAN_ON_THE_RED_ROCKS_AFTER_RESCUE, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeYeppToldMe)},
     {PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_OLD_WOMAN_ON_HER_SONS_AFTER_RESCUE, CONDITION_ALWAYS, MSGNO(MsgSeaOfTimeGiveUp)},

@@ -354,9 +354,9 @@ struct Actor *Actor_FindAtCell(s32 *position, s32 mode);
 void Dust_Scatter(s32 spread);
 void Leader_SetCellShapeAt(s32 heightOffset, s32 layer);
 void MagmaRockInside_SpawnDustRing(void);
-extern u32 gRubble_SprayScript[];
+extern u32 gDust_ScatterScript[];
 
-extern u32 gRubble_BurstScript[];
+extern u32 gDust_BurstScript[];
 
 /// Decompresses a tagged LZ resource through the overlay's import.
 void MagmaRockInside_DecompressTaggedLz(void *entry, void *destination);
@@ -2836,7 +2836,7 @@ UNUSED void MagmaRockInside_StepOnTrap(const u16 *table) {
 
 void Actor_StartScript(struct Actor *actor, const void *data);
 
-#include "shared/rubble_scatter.c"
+#include "shared/dust_scatter.c"
 
 /// Throws a ring of 16 dust clouds out from the leader as a pillar lands.
 void MagmaRockInside_SpawnDustRing(void) {
@@ -2857,7 +2857,7 @@ void MagmaRockInside_SpawnDustRing(void) {
       effect->collisionFlags = 0;
       Actor_SetSpriteFlags(effect, 0);
       Actor_SelectAnimation(effect, 2);
-      Actor_StartScript(effect, gRubble_BurstScript);
+      Actor_StartScript(effect, gDust_BurstScript);
       effect->velocity.x = Trig_Cos(i * FACING_STEP);
       effect->velocity.y = 0;
       effect->velocity.z = Math_Sin(i * FACING_STEP);
@@ -3151,9 +3151,9 @@ s32 gMagmaRockInside_OrbitScript[] = {
 
 #include "shared/lesson_scripts.c"
 
-#include "shared/rubble_spray_script.c"
+#include "shared/dust_scatter_script.c"
 
-#include "shared/rubble_burst_script.c"
+#include "shared/dust_burst_script.c"
 
 const s32 *gFieldEffect_DurationScripts[] = {
     gFieldEffect_ShortScript,

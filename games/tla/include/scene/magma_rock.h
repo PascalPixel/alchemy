@@ -75,9 +75,9 @@ void MagmaRock_PlaceTightrope();
 s32 Field_TryJumpForward(void);
 
 void Dust_Scatter(s32 spread);
-extern u32 gRubble_SprayScript[];
+extern u32 gDust_ScatterScript[];
 
-extern u32 gRubble_BurstScript[];
+extern u32 gDust_BurstScript[];
 
 void MagmaRock_FireStatue(void);
 

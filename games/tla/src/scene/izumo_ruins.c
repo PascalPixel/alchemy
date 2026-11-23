@@ -53,8 +53,8 @@ extern struct Trigger gIzumoRuins_FirstRoomTriggers[];
 extern struct Trigger gIzumoRuins_SecondRoomTriggers[];
 
 void IzumoRuins_PlaceStakes(u16 *list);
-void Rubble_Spray(s32 mode);
-void Rubble_Burst(void);
+void Dust_Scatter(s32 mode);
+void Dust_Burst(void);
 void MapGrid_CenterOnFollowedPoint(void);
 s32 Actor_GetCellIndex(struct Actor *actor);
 void Actor_PlaceBlocks(const void *data);
@@ -91,7 +91,7 @@ void Actor_SetCellOpen(s32 id, u32 kind, s32 flag, s32 layer);
 
 #include "../field/field_effect_advance_motion_priority.c"
 
-#include "shared/rubble.h"
+#include "shared/dust.h"
 
 s32 MapCollision_FindOrAddTag(s32 terrainId, s32 value, s32 height);
 
@@ -406,9 +406,9 @@ s32 Scene_Initialize(void) {
 s32 Scene_PrepareMap(void) { return 0; }
 
 // clang-format off
-#include "shared/rubble_spray_script.c"
+#include "shared/dust_scatter_script.c"
 
-#include "shared/rubble_burst_script.c"
+#include "shared/dust_burst_script.c"
 
 #include "shared/field_effect_duration_scripts.c"
 

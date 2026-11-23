@@ -22,8 +22,8 @@
 /// In the order the player meets them:
 ///
 /// - The first room (`SceneId_FuchinFallsCaveEntrance`), behind the falls. On
-///   the south shore a tablet reads `The dragon's flame illuminates the path of
-///   truth in darkness.` The crosswise log on the right floats north to the
+///   the south shore a tablet reads "The dragon's flame illuminates the path of
+///   truth in darkness." The crosswise log on the right floats north to the
 ///   ledge with a chest, which is a Mimic. The one on the left floats north to
 ///   the ledge below the room's north half, a pool of stumps that Isaac hops
 ///   across to the doorway in its north-east corner. An upright log at the
@@ -35,8 +35,8 @@
 /// - The dragon statue's room (`SceneId_FuchinFallsCaveDragonStatue`), up the
 ///   stairs at that room's north-west. Its northern half is dark and blue, its
 ///   floor a field of spikes with an eyeless stone dragon in the north-east
-///   corner, and a tablet in its southern half reads `Rays of light give birth
-///   to shadows, revealing the way.` Using the Dragon's Eye on the statue makes
+///   corner, and a tablet in its southern half reads "Rays of light give birth
+///   to shadows, revealing the way." Using the Dragon's Eye on the statue makes
 ///   the dragon breathe fire, lights the room and shows the shadow of a hidden
 ///   path across the spikes. The path leads to two doorways in the north wall.
 /// - The room of the Arctic Blade (`SceneId_FuchinFallsCaveArcticBlade`), down
@@ -49,11 +49,11 @@
 ///   its east side and fights when spoken to. Its doorway in the north leads to
 ///   the south end of the Dragon's Eye room.
 /// - The room of Ki (`SceneId_FuchinFallsCaveOrbOfForce`), through the
-///   doorways the hidden path leads to. A tablet reads `The secret of Ki shall
-///   be revealed to the disciples of truth.`, and the chest beside it holds the
+///   doorways the hidden path leads to. A tablet reads "The secret of Ki shall
+///   be revealed to the disciples of truth.", and the chest beside it holds the
 ///   Orb of Force (FLAG_FUCHIN_FALLS_ORB_OF_FORCE_FOUND), which ends the test.
 ///
-/// For the programmer: each log's place is an area temp flag named beside the
+/// Each log's place is an area temp flag named beside the
 /// includes, and each room's rebuild routine puts its logs where their flags
 /// say. It also rewrites the cells of every log's run, copied from spare cells
 /// that each room's map keeps beside it: the cells under a log get the step
@@ -301,8 +301,8 @@ static void Imil_SlideActorAcrossIce(void);
 /// (FuchinFallsCave_FadeOverlayFollowsLeader).
 s32 gImilFuchinFalls_TrackLeader;
 
-/// EffectOptions cut after its scales: the caller's frame holds only these 24
-/// bytes.
+/// The fields of EffectOptions that the dragon's fire sets, up to its scales,
+/// passed to ImilFuchinFalls_SpawnDust in their place.
 struct CaveDustOptions {
   s32 priority;
   s32 palette;
@@ -1196,7 +1196,7 @@ static struct Actor *FuchinFallsCave_CreateHiddenActor(s32 x, s32 y, s32 z,
     actor->priorityFlags |= ACTOR_PRIORITY_UNDERFOOT;
     return actor;
   }
-  return 0;
+  return NULL;
 }
 
 const struct Trigger *Scene_GetTriggers(void) {
@@ -1487,7 +1487,8 @@ static void FuchinFallsCave_FadeOverlayStopsFollowing(void) {
 /// Sets up the scene as the party enters: Isaac walks up to Fever in Imil Falls
 /// Cave, and each room of Fuchin Falls Cave is put in order.
 s32 Scene_Initialize(void) {
-  gFieldWork->transition = SCENE_TRANSITION(TRANSITION_WINDOW, 4);
+  gFieldWork->transition =
+      SCENE_TRANSITION(TRANSITION_WINDOW, WINDOW_TRANSITION_INTERLACED_WIPE);
   if (GameFlag_Get(FLAG_KEEP_PARTY_POSITION) == 0 &&
       gMainRoutineWork.next == SCENE_IMIL_FALLS_CAVE) {
     GameFlag_Set(FLAG_RETREAT_BLOCKED);
@@ -1695,14 +1696,14 @@ static void FuchinFallsCave_FindDragonsEye(void) {
 }
 
 /// Moves and grows a puff of the dragon's fire for one frame.
-static void FuchinFallsCave_UpdateDustMotion(struct Actor *raw) {
-  struct FieldEffect *object = ((struct FieldEffect *)raw);
+static void FuchinFallsCave_UpdateDustMotion(struct Actor *actor) {
+  struct FieldEffect *puff = ((struct FieldEffect *)actor);
 
-  object->x += object->velocity.x;
-  object->y += object->velocity.y;
-  object->z += object->velocity.z;
-  object->scaleX += object->scaleRateX;
-  object->scaleY += object->scaleRateY;
+  puff->x += puff->velocity.x;
+  puff->y += puff->velocity.y;
+  puff->z += puff->velocity.z;
+  puff->scaleX += puff->scaleRateX;
+  puff->scaleY += puff->scaleRateY;
 }
 
 /// Hides a puff of the dragon's fire when its script has run out.
@@ -1847,8 +1848,8 @@ static void FuchinFallsCave_LightDragonWithEye(void) {
   Event_End();
 }
 
-/// Isaac reads the tablet on the first room's south shore (cell (15, 35)): `The
-/// dragon's flame illuminates the path of truth in darkness.`
+/// Isaac reads the tablet on the first room's south shore (cell (15, 35)): "The
+/// dragon's flame illuminates the path of truth in darkness."
 static void FuchinFallsCave_ReadDragonFlameInscription(void) {
   Event_Start();
   FieldMessage_Show(MsgFuchinDragonFlameShowsPath, 1);
@@ -1856,7 +1857,7 @@ static void FuchinFallsCave_ReadDragonFlameInscription(void) {
 }
 
 /// Isaac reads the tablet beside the chest in the room of Ki (cell (16, 5)):
-/// `The secret of Ki shall be revealed to the disciples of truth.`
+/// "The secret of Ki shall be revealed to the disciples of truth."
 static void FuchinFallsCave_ReadKiInscription(void) {
   Event_Start();
   FieldMessage_Show(MsgFuchinSecretKiRevealed, 1);
@@ -1864,7 +1865,7 @@ static void FuchinFallsCave_ReadKiInscription(void) {
 }
 
 /// Isaac reads the tablet in the south half of the dragon statue's room (cell
-/// (15, 29)): `Rays of light give birth to shadows, revealing the way.`
+/// (15, 29)): "Rays of light give birth to shadows, revealing the way."
 static void FuchinFallsCave_ReadShadowInscription(void) {
   Event_Start();
   FieldMessage_Show(MsgFuchinLightRevealsShadows, 1);
@@ -1872,8 +1873,8 @@ static void FuchinFallsCave_ReadShadowInscription(void) {
 }
 
 /// Isaac looks at the dragon statue from the steps below it (cells (20, 14) to
-/// (22, 14)): `It's a statue of an eyeless dragon.`, and once the eye is set,
-/// `It's a statue of a dragon with burning red eyes.`
+/// (22, 14)): "It's a statue of an eyeless dragon.", and once the eye is set,
+/// "It's a statue of a dragon with burning red eyes."
 ///
 /// While the party carries the Dragon's Eye, the field menu opens after the
 /// first, so that the player can use it.
@@ -2049,18 +2050,18 @@ s16 gImilFuchinFalls_SlideHeadings[] = {
 struct Actor *gImilFuchinFalls_DragonsEye = NULL;
 
 struct SceneEntrance gImilFuchinFalls_NoEntrances[] = {
-    { 0, CONDITION_ALWAYS, 256, 0, 600, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 256, 0, 600, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { SCENE_TABLE_END },
 };
 
 struct SceneEntrance gImilFuchinFalls_ImilFallsCaveEntrances[] = {
-    { 0, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 172, 0, 149, FACING_SOUTH, 0, -1, -1, -1, -1, 0 },
     { IMIL_FALLS_CAVE_FROM_IMIL, CONDITION_ALWAYS, 264, 0, 289, FACING_NORTH, 0, 135, 62, 376, 328, 0 },
     { SCENE_TABLE_END },
 };
 
 struct SceneEntrance gImilFuchinFalls_EntranceEntrances[] = {
-    { 0, CONDITION_ALWAYS, 248, 0, 600, FACING_SOUTH, 0, 64, 64, 416, 656, 0 },
+    { ENTRANCE_DEFAULT, CONDITION_ALWAYS, 248, 0, 600, FACING_SOUTH, 0, 64, 64, 416, 656, 0 },
     { FUCHIN_FALLS_CAVE_ENTRANCE_FROM_FUCHIN_TEMPLE_GROUNDS, CONDITION_ALWAYS, 248, 0, 632, FACING_NORTH, 0, 64, 368, 416, 656, 0 },
     { FUCHIN_FALLS_CAVE_ENTRANCE_FROM_FUCHIN_FALLS_CAVE_ZEPHYR, CONDITION_ALWAYS, 376, 0, 488, FACING_SOUTH, 0, 64, 368, 416, 656, 0 },
     { FUCHIN_FALLS_CAVE_ENTRANCE_FROM_FUCHIN_FALLS_CAVE_ARCTIC_BLADE, CONDITION_ALWAYS, 120, 0, 488, FACING_SOUTH, 0, 64, 368, 416, 656, 0 },

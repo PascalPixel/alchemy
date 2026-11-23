@@ -1199,10 +1199,10 @@ void YampiDesert_SetBlocksShown(s32 show) {
 
 /// Nothing visible happens when Felix steps onto the sand round the corner of
 /// the flowing sand in the Trainer's Whip's chest's room (cells (48, 23) to
-/// (51, 23) and (48, 24) to (48, 26)); the game puts two invisible blocks in
-/// place at cells (51, 26) and (51, 27).
-// XXX: which way the blocks stop Felix from going, and why only from outside
-// the corner; a recording of walking there would settle it.
+/// (51, 23) and (48, 24) to (48, 26)) after the inner corner has hidden the two
+/// blocks at cells (51, 26) and (51, 27): the game marks them placed again.
+/// The room's set-up hid both with Actor_Hide, see-through and without
+/// collision, so placed or not they stop nothing and show nothing.
 void YampiDesert_ShowBlocks(void) {
   YampiDesert_SetBlocksShown(1);
   GameFlag_Set(FLAG_YAMPI_DESERT_BLOCKS_SHOWN);

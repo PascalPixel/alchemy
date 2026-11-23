@@ -1401,19 +1401,7 @@ void GabombaStatue_HideLadderTopBlocks(void) {
   Event_ClearFlag(FLAG_LADDER_TOP_BLOCKS_DRAWN);
 }
 
-/// Draws count actors from first, or hides them.
-void Actors_SetDrawn(s32 show, s32 first, u32 count) {
-  u32 i;
-
-  for (i = 0; i < count; i++) {
-    struct Actor *actor = Actor_Get(first + i);
-
-    if (show)
-      actor->priorityFlags &= ~ACTOR_PRIORITY_NOT_DRAWN;
-    else
-      actor->priorityFlags |= ACTOR_PRIORITY_NOT_DRAWN;
-  }
-}
+#include "shared/actors_set_hidden.c"
 
 /// Pound on one of the two stakes either side of the flashing cog in the south
 /// of its room, cells (20, 30) and (24, 30), drives it into the floor. Once

@@ -15,14 +15,11 @@
 
 #include "sprite_ids.h"
 
-/// The particles of dust and sparkles Scoop throws up; a dig at nothing draws
-/// the first SCOOP_DRAWN_DUST, a dig on a target the first
+/// A dig at nothing draws the first SCOOP_DRAWN_DUST of the particles of dust
+/// and sparkles Scoop throws up, a dig on a target the first
 /// SCOOP_DRAWN_TARGET_DUST.
-#define SCOOP_PARTICLE_COUNT 64
 #define SCOOP_DRAWN_DUST 18
 #define SCOOP_DRAWN_TARGET_DUST 20
-/// The earth that rises as the ground is dug, 32 pixels square in 256 colours.
-#define SCOOP_PICTURE_SIZE 32
 /// The sparkles the hand bursts into when it cannot dig.
 #define SCOOP_SPARKLES 16
 /// A dig at nothing turns something up when Random16() falls below this, one
@@ -30,26 +27,6 @@
 /// times in four, and coins otherwise.
 #define SCOOP_FIND_CHANCE (FIXED_ONE / 16)
 #define SCOOP_ITEM_CHANCE (FIXED_ONE * 3 / 4)
-
-/// Scoop's work (heap slot HEAP_SLOT_BATTLE_EFFECT): the dust and sparkle
-/// tiles, the picture that ripples as the ground is dug, 64 particles, the
-/// sprite that digs and the one left where it dug, and the stage of the cast.
-struct ScoopWork {
-  u8 tiles[1024];
-  u8 picture[SCOOP_PICTURE_SIZE * SCOOP_PICTURE_SIZE];
-  struct EffectSprite sprites[SCOOP_PARTICLE_COUNT];
-  struct FieldPsynergyParticle particles[SCOOP_PARTICLE_COUNT];
-  struct EffectSprite pictureSprite;
-  s16 phase; ///< the stage of the cast; FIELD_PSYNERGY_FINISHED once it ends
-  s16 timer; ///< frames into the stage
-  s16 particleTile;
-  s16 pictureTile;
-  struct Actor *actor; ///< SPRITE_SCOOP_HAND, which digs and sinks as it does
-  struct Actor *other; ///< SPRITE_BROWN_BOULDER (grey where lit), where it digs
-  /// The kind of dig: 2 cast on a target; cast at nothing, 1 one time in
-  /// sixteen (an item turns up), else 0, or 3 where lit is set.
-  s16 mode;
-};
 
 #define NEXT_PHASE(work) ((work)->phase++, (work)->timer = -1)
 

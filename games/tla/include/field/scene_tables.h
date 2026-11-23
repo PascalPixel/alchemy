@@ -64,6 +64,8 @@ enum { FACING_NUDGE = 10 };
 /// The sixteenth of a turn a facing lies in, as a number from 0 (east) to 15,
 /// which indexes the scenes' sixteen-direction step tables.
 #define FACING_INDEX(facing) ((facing) >> 12)
+/// The facing at the start of the sixteenth of a turn numbered index.
+#define FACING_FROM_INDEX(index) ((index) << 12)
 
 /// The cardinal heading nearest to facing: the shop counters turn a customer
 /// this way.

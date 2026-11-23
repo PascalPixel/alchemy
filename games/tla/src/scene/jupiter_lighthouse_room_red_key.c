@@ -101,7 +101,7 @@ struct Actor;
 struct CellTarget;
 struct CellTargetEntry;
 
-extern u32 gOrbScript[];
+extern u32 gOrb_RisingScript[];
 
 void JupiterLighthouse_StartSparkRing(const s32 *from, const s32 *to);
 
@@ -257,7 +257,7 @@ void Orb_SpawnRising(void) {
   }
   if (effect != 0) {
     sprite = effect->sprite;
-    Actor_StartScript(effect, gOrbScript);
+    Actor_StartScript(effect, gOrb_RisingScript);
     FieldActor_SetSpriteColor(effect, SPRITE_COLOR_GRB);
     effect->motionFlags = 0;
     angle = Random16() & 0xffff000;
@@ -961,18 +961,7 @@ struct ActorPlacement gActorPlacements[] = {
     {SCENE_TABLE_END},
 };
 
-u32 gOrbScript[] = {                                                               
-      SC_SET(SW_SCALE_X, toFIXED(0.8)),                                              
-      SC_SET(SW_SCALE_Y, toFIXED(0.8)),                                              
-      SC_ANIMATION(1),                                                               
-      SC_LABEL(1),                                                             
-      SC_ADD(SW_Y, toFIXED(1)),                                                 
-      SC_WAIT(1),                                                              
-      SC_LOOP(16, SC_TO(1)),                                                   
-      SC_POSITION(0, 0, 0),                                                    
-      SC_WAIT(1),                                                              
-      SC_RELEASE,                                                                 
-  };
+#include "shared/orb_rising_script.c"
 
 s32 gJupiterLighthouse_PulseStep = 0;
 

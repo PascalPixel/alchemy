@@ -330,7 +330,7 @@ extern s16 gMagmaRockInside_CrackedPillarsPillars[];
 
 extern s16 gMagmaRockInside_EmberStonePillars[];
 
-void MagmaRockInside_MarkBlockCells(u16 *ids);
+void Blocks_MarkCells(u16 *ids);
 
 void MagmaRockInside_WaitForLanding(struct Actor *actor);
 
@@ -468,41 +468,7 @@ void MagmaRockInside_WaitForLanding(struct Actor *actor) {
 
 #include "shared/map_cell_set.c"
 
-/// For each pillar of a list ended by ACTOR_LIST_END: clears its mark and,
-/// where it stands on a climbable cell (MAP_CELL_CLIMBABLE, as draining the
-/// lava leaves its cell), walls off the cells north and south of it and sets
-/// the mark.
-void MagmaRockInside_MarkBlockCells(u16 *ids) {
-  struct Actor *actor;
-  u8 *blocked;
-  struct MapWork *map;
-  struct MapCell **cells;
-  struct MapCell *cell;
-  s32 x, z;
-
-  for (; *ids != ACTOR_LIST_END; ids++) {
-    actor = Actor_Get(*ids);
-    blocked = &actor->riseEnabled;
-    *blocked = 0;
-    if (MapCell_GetAttributes(MAPGRID_LAYER_GROUND, FIELD_CELL(actor->x.fixed),
-                              FIELD_CELL(actor->z.fixed)) &
-        MAP_CELL_CLIMBABLE) {
-      map = Ram_HeapSlots->mapGrid;
-      if (map == NULL)
-        return;
-      cells = &map->layers[MAPGRID_LAYER_OVERHEAD].cells;
-      z = FIELD_CELL(actor->z.fixed - actor->y.fixed);
-      x = FIELD_CELL(actor->x.fixed);
-      cell = *cells;
-      cell += x + ((z + 1) << 7);
-      cell->collisionCode = CELL_BEHAVIOR_WALL;
-      cell = *cells;
-      cell += x + ((z - 1) << 7);
-      cell->collisionCode = CELL_BEHAVIOR_WALL;
-      *blocked = 1;
-    }
-  }
-}
+#include "shared/blocks_mark_cells.c"
 
 // Clears the object's mark and the cells ahead of and behind it that the mark
 // blocked.
@@ -636,7 +602,7 @@ void MagmaRockInside_FinishPushingPillar(void) {
   Actor_PlaceMovedBlock();
   scene = gMainRoutineWork.next;
   if (scene == SCENE_MAGMA_ROCK_INSIDE_SALAMANDER_TAIL_CHEST) {
-    MagmaRockInside_MarkBlockCells(gMagmaRockInside_SalamanderTailChestPillars);
+    Blocks_MarkCells(gMagmaRockInside_SalamanderTailChestPillars);
     if (Map_GetTerrainHeight(2, actor->x.fixed, actor->z.fixed) !=
         actor->y.fixed) {
       actor->layer = 2;
@@ -666,7 +632,7 @@ void MagmaRockInside_FinishPushingPillar(void) {
       actor->layer = 0;
     }
   } else if (scene == SCENE_MAGMA_ROCK_INSIDE_EMBER_STONE) {
-    MagmaRockInside_MarkBlockCells(gMagmaRockInside_EmberStonePillars);
+    Blocks_MarkCells(gMagmaRockInside_EmberStonePillars);
     if (Map_GetTerrainHeight(2, actor->x.fixed, actor->z.fixed) !=
         actor->y.fixed) {
       struct Actor *copy;

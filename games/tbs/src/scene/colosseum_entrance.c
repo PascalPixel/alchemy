@@ -225,6 +225,10 @@ enum FlagBearerAnimation {
   FLAG_BEARER_ANIMATION_WHITE_FLAG = 6 ///< raises a white flag: he cleared it
 };
 
+/// A trial warrior standing with his back turned, arms at his sides, before
+/// the pillar (warrior_in_golden_helmet.tsv's picture 38).
+enum { WARRIOR_ANIMATION_BACK_TURNED = 11 };
+
 /// The four soldiers of gColosseumSoldiersActorPlacements (SPRITE_SOLDIER).
 ///
 /// They brief the party at COLOSSEUM_FROM_COLOSSEUM_ENTRANCE, congratulate
@@ -275,7 +279,9 @@ enum ColosseumCellBehavior {
   /// (ColosseumEntrance_FinalsStart).
   CELL_BEHAVIOR_COLOSSEUM_FINALS_LINE = 12,
   /// The cells behind it (ColosseumEntrance_StepBackFromFinalsLine).
-  CELL_BEHAVIOR_COLOSSEUM_BEHIND_FINALS_LINE = 13
+  CELL_BEHAVIOR_COLOSSEUM_BEHIND_FINALS_LINE = 13,
+  /// A locked door, cell (7, 9): "It is locked."
+  CELL_BEHAVIOR_COLOSSEUM_LOCKED_DOOR = 50
 };
 
 /// The temporary flags the colosseum's scenes keep.
@@ -1028,7 +1034,7 @@ static void ColosseumEntrance_ShowFailedTrial(void) {
   Actor_WalkToAndWait(ACTOR_FAILING_WARRIOR, 185, 920);
   Actor_FaceDirection(ACTOR_FAILING_WARRIOR, FACING_NORTH, 20);
   Actor_WalkToAndWait(ACTOR_FAILING_WARRIOR, 185, 916);
-  Actor_SetAnimation(ACTOR_FAILING_WARRIOR, 11);
+  Actor_SetAnimation(ACTOR_FAILING_WARRIOR, WARRIOR_ANIMATION_BACK_TURNED);
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_FAILING_WARRIOR, 1);
   Event_Wait(60);
@@ -1174,7 +1180,7 @@ static void ColosseumEntrance_ShowClearedTrial(void) {
   Actor_WalkToAndWait(ACTOR_CLEARING_WARRIOR, 185, 920);
   Actor_FaceDirection(ACTOR_CLEARING_WARRIOR, FACING_NORTH, 20);
   Actor_WalkToAndWait(ACTOR_CLEARING_WARRIOR, 185, 916);
-  Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, 11);
+  Actor_SetAnimation(ACTOR_CLEARING_WARRIOR, WARRIOR_ANIMATION_BACK_TURNED);
   Event_Wait(40);
   Actor_RunRepeatedMotion(ACTOR_CLEARING_WARRIOR, 1);
   Event_Wait(60);
@@ -2312,7 +2318,7 @@ struct Trigger gColosseumTriggers[] = {
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SPECTATOR_ENCHANTED, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceWhatFantasticPhysiquesWhyIfI) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_SPECTATOR_WAITED_A_YEAR, CONDITION_ALWAYS, MSGNO(MsgColossoDidntThinkBattles) },
     { PSYNERGY_ON_ACTOR(ABILITY_MIND_READ), ACTOR_TRIAL_ATTENDANT, CONDITION_ALWAYS, MSGNO(MsgColosseumEntranceNoMatterHowGoodAWarrior) },
-    { EXAMINE_TRIGGER(EXAMINE_SILENT), 50, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgXianItIsLocked)) },
+    { EXAMINE_TRIGGER(EXAMINE_SILENT), CELL_BEHAVIOR_COLOSSEUM_LOCKED_DOOR, CONDITION_ALWAYS, FIND_MESSAGE(MSGNO(MsgXianItIsLocked)) },
     { TRIGGER_TABLE_END },
 };
 

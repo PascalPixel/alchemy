@@ -90,13 +90,16 @@ const s32 gActorScript_EndScript[1] = {
     SC_END,
 };
 
-/// Halfwords that follow the main script; no code in The Broken Seal names
+/// Halfwords that follow the idle script; no code in The Broken Seal names
 /// them.
 const s16 gActorScript_EndScriptTail[8] = {
     4096, -8192, 12288, -16384, 24576, -32768, 16384, 0,
 };
 
-/// The heading for each state of the direction pad (bits 4-7 of the keys: Right, Left, Up, Down), in 1/65536 turns: Right is 0, Down DEGtoANG(90), Left DEGtoANG(180) and Up TRIG_TURN * 3 / 4; WORLD_MAP_KEY_HEADING_NONE means no direction is held, or only an opposite pair.
+/// The heading for each state of the direction pad (bits 4-7 of the keys:
+/// Right, Left, Up, Down), in 1/65536 turns: Right is 0, Down DEGtoANG(90),
+/// Left DEGtoANG(180) and Up TRIG_TURN * 3 / 4; WORLD_MAP_KEY_HEADING_NONE
+/// means no direction is held, or only an opposite pair.
 const u16 gWorldMap_KeyHeadings[16] = {
     WORLD_MAP_KEY_HEADING_NONE, 0, DEGtoANG(180), WORLD_MAP_KEY_HEADING_NONE,
     TRIG_TURN * 3 / 4, TRIG_TURN * 7 / 8, TRIG_TURN * 5 / 8, TRIG_TURN * 3 / 4,
@@ -104,14 +107,14 @@ const u16 gWorldMap_KeyHeadings[16] = {
     WORLD_MAP_KEY_HEADING_NONE, 0, DEGtoANG(180), WORLD_MAP_KEY_HEADING_NONE,
 };
 
-/// Two scripts for the world map's footprint and dust effects: wait 120 or 30
+/// Two scripts for the World Map's footprint and dust effects: wait 120 or 30
 /// frames, then release the actor.
 const s32 gWorldMap_FootprintActions[6] = {
     SC_WAIT(120), SC_RELEASE,
     SC_WAIT(30), SC_RELEASE,
 };
 
-/// The yaw the world map camera leans to for each state of the direction pad,
+/// The yaw the World Map camera leans to for each state of the direction pad,
 /// in 1/65536 turns: Right -512 and Left 512, or -384 and 384 with Up or Down
 /// but not both; 0 otherwise.
 const s32 gWorldMap_KeyYaws[16] = {

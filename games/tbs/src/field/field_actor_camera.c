@@ -118,8 +118,8 @@ void ActorSystem_PlaceSprites(void) {
         drawPosition.height = actor->y.fixed;
         drawPosition.y = dz;
         drawPosition.groundHeight = actor->groundHeight;
-        // ACTOR_PRIORITY_UNDERFOOT and bit 2 move the point 320 pixels up or
-        // down the map with its height and ground height, so the sprite and
+        // ACTOR_PRIORITY_UNDERFOOT and _OVERHEAD move the point 320 pixels up
+        // or down the map with its height and ground height, so the sprite and
         // shadow stay where they are on screen; only the draw slot changes,
         // which Render_ApplyProjectedPlacement takes from the point's y before
         // its height is taken off.
@@ -128,7 +128,7 @@ void ActorSystem_PlaceSprites(void) {
           drawPosition.y += -toFIXED(320);
           drawPosition.groundHeight += -toFIXED(320);
         }
-        if (actor->priorityFlags & 4) {
+        if (actor->priorityFlags & ACTOR_PRIORITY_OVERHEAD) {
           drawPosition.height += toFIXED(320);
           drawPosition.y += toFIXED(320);
           drawPosition.groundHeight += toFIXED(320);
